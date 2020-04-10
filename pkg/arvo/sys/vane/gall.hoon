@@ -50,115 +50,63 @@
   ==
 --
 |%
-::  +state: all state
+::  +state: versioned gall state
 ::
-++  state
-  $:  :: state version
-      ::
-      %4
-      :: agents by ship
-      ::
-      =agents
-  ==
++$  state  [%5 =agents]
 ::  +subscribers: subscriber data
 ::
-++  subscribers
-  $:  :: incoming subscribers
-      ::
-      incoming=bitt
-      :: outgoing subscribers
-      ::
++$  subscribers
+  $:  incoming=bitt
       outgoing=boat
   ==
 ::  +agents: ship state
 ::
-++  agents
-  $:  ::  system duct
-      ::
-      system-duct=duct
-      ::  outstanding request queue
-      ::
-      outstanding=(map [wire duct] (qeu remote-request))
-      ::  foreign contacts
-      ::
-      contacts=(set ship)
-      ::  running agents
-      ::
-      running=(map term running-agent)
-      ::  waiting queue
-      ::
-      blocked=(map term blocked)
-  ==
-::  +routes: new cuff
+::    system-duct: TODO document
+::    outstanding: outstanding request queue
+::    contacts: other ships we've talked to
+::    running: agents that have been started
+::    blocked: queue of tasks waiting for target agent to start
+::    latest: most recent revision of each known Clay desk
 ::
-++  routes
-  $:  :: disclosing to
-      ::
-      disclosing=(unit (set ship))
-      :: attributed to
-      ::
-      attributing=ship
++$  agents
+  $:  system-duct=duct
+      outstanding=(map [wire duct] (qeu remote-request))
+      contacts=(set ship)
+      running=(map term running-agent)
+      blocked=(map term blocked)
+      latest=(map desk aeon:clay)
   ==
 ::  +running-agent: agent state
 ::
-++  running-agent
-  $:  :: cache
-      ::
-      cache=worm
-      :: control duct
-      ::
-      control-duct=duct
-      :: unstopped
-      ::
++$  running-agent
+  $:  control-duct=duct
       live=?
-      :: statistics
-      ::
       =stats
-      :: subscribers
-      ::
       =subscribers
-      ::  agent core
-      ::
       =agent
-      :: update control
-      ::
       =beak
-      :: req'd translations
-      ::
       marks=(map duct mark)
   ==
-:: +blocked: blocked tasks
+:: +blocked: queue of blocked tasks
 ::
-++  blocked  (qeu (trel duct routes deal))
++$  blocked  (qeu (trel duct routes deal))
+::  +routes: new cuff; TODO: document
+::
++$  routes
+  $:  disclosing=(unit (set ship))
+      attributing=ship
+  ==
 :: +stats: statistics
 ::
-++  stats
-  $:  :: change number
-      ::
-      change=@ud
-      :: entropy
-      ::
++$  stats
+  $:  change=@ud
       eny=@uvJ
-      :: time
-      ::
       time=@da
   ==
 --
 .  ==
 =|  =state
-|=  $:  :: identity
-        ::
-        our=ship
-        :: urban time
-        ::
-        now=@da
-        :: entropy
-        ::
-        eny=@uvJ
-        :: activate
-        ::
-        ski=sley
-    ==
+|=  [our=ship now=@da eny=@uvJ sky=sley]
 ~%  %gall-top  ..is  ~
 |%
 ::  +gall-payload:  gall payload
@@ -190,19 +138,6 @@
     ::
     =/  resolved  (flop moves)
     [resolved gall-payload]
-  ::  +mo-boot: start new agent
-  ::
-  ++  mo-boot
-    |=  dap=term
-    ^+  mo-core
-    =/  daz  ~(key by running.agents.state)
-    ?:  (~(has in daz) dap)
-      %-  (slog leaf+"gall: already running {<dap>}" ~)
-      mo-core
-    =.  hen  ~[/gall]
-    =?  mo-core  ?=(^ daz)  (mo-pass /sys/lyv %kill ~)
-    =/  fiz  (~(run in (~(put in daz) dap)) |=(d=term /app/[d]/hoon))
-    (mo-pass /sys/lyv %f %make %home case=~ fiz maz=~ caz=~)
   ::  +mo-pass: prepend a standard %pass to the current list of moves.
   ::
   ++  mo-pass
@@ -219,7 +154,20 @@
     ::
     =/  =move  [hen [%give gift]]
     mo-core(moves [move moves])
-  ::  +mo-receive-core: receives an app core built by %ford.
+  ::  +mo-boot: start new agent
+  ::
+  ++  mo-boot
+    |=  dap=term
+    ^+  mo-core
+    =/  daz  ~(key by running.agents.state)
+    ?:  (~(has in daz) dap)
+      %-  (slog leaf+"gall: already running {<dap>}" ~)
+      mo-core
+    =.  hen  ~[/gall]
+    =?  mo-core  ?=(^ daz)  (mo-pass /sys/lyv %kill ~)
+    =/  fiz  (~(run in (~(put in daz) dap)) |=(d=term /app/[d]/hoon))
+    (mo-pass /sys/lyv %f %make %home case=~ fiz maz=~ caz=~)
+  ::  +mo-take-agent: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
   ::    is already running.  If so, we update its beak in %gall's state,
@@ -233,19 +181,8 @@
   ::
   ++  mo-take-agent
     ~/  %mo-take-agent
-    |=  [=term =beak =made-result:ford]
+    |=  [=term =beak vax=vase]
     ^+  mo-core
-    ::
-    ?:  ?=([%incomplete *] made-result)
-      (mo-give %onto %.n tang.made-result)
-    ::
-    =/  build-result  build-result.made-result
-    ::
-    ?:  ?=([%error *] build-result)
-      (mo-give %onto %.n message.build-result)
-    ::
-    =/  =cage  (result-to-cage:ford build-result)
-    =/  result-vase  q.cage
     =/  maybe-agent=(unit running-agent)
       (~(get by running.agents.state) term)
     ::
@@ -255,10 +192,11 @@
         (~(put by running.agents.state) term agent)
       =/  =routes  [disclosing=~ attributing=our]
       =/  app  (ap-abed:ap term routes)
-      =.  app  (ap-reinstall:app result-vase)
+      =.  app  (ap-reinstall:app vax)
       ap-abet:app
+    ::  TODO: crash on bad agent instead of print and no-op?
     ::
-    =/  maybe-new-agent  (mule |.(!<(agent result-vase)))
+    =/  maybe-new-agent  (mule |.(!<(agent vax)))
     ?:  ?=(%| -.maybe-new-agent)
       =/  err  [[%leaf "{<term>}: not valid agent"] p.maybe-new-agent]
       (mo-give %onto %.n err)
@@ -394,7 +332,7 @@
     ::
     ?+  -.path  !!
       %era  (mo-handle-sys-era path sign-arvo)
-      %cor  (mo-handle-sys-lyv path sign-arvo)
+      %lyv  (mo-handle-sys-lyv path sign-arvo)
       %lag  (mo-handle-sys-lag path sign-arvo)
       %pel  (mo-handle-sys-pel path sign-arvo)
       %rep  (mo-handle-sys-rep path sign-arvo)
@@ -415,18 +353,19 @@
   ::  +mo-handle-sys-lyv: receive a live build result from %ford
   ::
   ++  mo-handle-sys-lyv
-    |=  [=path =sign-arvo]
+    |=  [=path syn=sign-arvo]
     ^+  mo-core
     ::
-    ?>  ?=([%cor @ @ @ @ ~] path)
-    ?>  ?=([%f %made *] sign-arvo)
-    =/  beak-path  t.t.path
-    =/  =beak
-      =/  =ship  (slav %p i.beak-path)
-      =/  =desk  i.t.beak-path
-      =/  =case  [%da (slav %da i.t.t.beak-path)]
-      [ship desk case]
-    (mo-receive-core i.t.path beak result.sign-arvo)
+    ?>  ?=([%f %made *] syn)
+    =.  latest.agents  (~(put by latest.agents) %home aeon.made.syn)
+    ?:  ?=(%| -.made.syn)
+      %-  (slog leaf+"gall: failed to build agents" p.made.syn)
+      mo-core
+    =/  =beak  [our %home da+aeon.made.syn]
+    %+  roll  ~(tap by fiz.made.syn)
+    |=  [[pax=path vax=vase] cor=_mo-core]
+    =/  dap=term  ?>(?=([%app @ *] pax) i.t.pax)
+    (mo-take-take-agent:cor dap beak vax)
   ::  +mo-handle-sys-lag: handle an ames %clog notification
   ::
   ++  mo-handle-sys-lag

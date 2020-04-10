@@ -37,17 +37,21 @@
   ::  $gift: response from ford
   ::
   ::    %made: build result
-  ::     case: version at which this result was built
+  ::     aeon: version at which this result was built
   ::      fiz: (re)built hoon files
   ::      maz: (re)built mark $dais's
   ::      caz: (re)built mark conversion gates
   ::
   +$  gift
     $%  $:  %made
-            =case:clay
-            fiz=(map path (each vase tang))
-            maz=(map mark (each dais tang))
-            caz=(map [a=mark b=mark] (each $-(vase vase) tang))
+            =aeon:clay
+            $=  made
+            %+  each
+              $:  fiz=(map path vase)
+                  maz=(map mark dais)
+                  caz=(map [a=mark b=mark] $-(vase vase))
+              ==
+            tang
         ==
         [%mass p=mass]
     ==

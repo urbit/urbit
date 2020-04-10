@@ -2743,7 +2743,7 @@
     ?>  ?=(^ das)
     ::  translate the case to a date
     ::
-    =/  cas  [%da (case-to-date case.n.das)]
+    =/  cas  [%ud (case-to-aeon case.n.das)]
     =-  (emit hen %slip %b %drip !>([%wris cas -]))
     (~(run in `(set mood)`das) |=(m/mood [care.m path.m]))
   ::
