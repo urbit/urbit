@@ -16,48 +16,48 @@ import { deSig } from '/lib/util';
 export class ChatScreen extends Component {
   constructor(props) {
     super(props);
- 
+
     this.state = {
       numPages: 1,
       scrollLocked: false
     };
- 
+
     this.hasAskedForMessages = false;
     this.onScroll = this.onScroll.bind(this);
- 
+
     this.updateReadInterval = setInterval(
       this.updateReadNumber.bind(this),
       1000
     );
   }
- 
+
   componentDidMount() {
     this.updateReadNumber();
     this.askForMessages();
   }
- 
+
   componentWillUnmount() {
     if (this.updateReadInterval) {
       clearInterval(this.updateReadInterval);
       this.updateReadInterval = null;
     }
   }
- 
+
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
- 
+
     if (
       prevProps.match.params.station !== props.match.params.station ||
       prevProps.match.params.ship !== props.match.params.ship
     ) {
       this.hasAskedForMessages = false;
-      
+
       if (props.envelopes.length < 100) {
         this.askForMessages();
       }
- 
+
       clearInterval(this.updateReadInterval);
- 
+
       this.setState(
         { scrollLocked: false },
         () => {
@@ -76,19 +76,22 @@ export class ChatScreen extends Component {
       props.history.push("/~chat");
     } else if (
       props.envelopes.length - prevProps.envelopes.length >=
-      200
+      40
     ) {
       this.hasAskedForMessages = false;
+      this.setState({ scrollLocked: false }, () => {
+        this.scrollToBottom();
+      })
     }
   }
- 
+
   updateReadNumber() {
     const { props, state } = this;
     if (props.read < props.length) {
       props.api.chat.read(props.station);
     }
   }
- 
+
   askForMessages() {
     const { props, state } = this;
 
@@ -120,19 +123,20 @@ export class ChatScreen extends Component {
       props.subscription.fetchMessages(start, end - 1, props.station);
     }
   }
- 
+
   scrollToBottom() {
     if (!this.state.scrollLocked && this.scrollElement) {
-      this.scrollElement.scrollIntoView({ behavior: "smooth" });
+      this.scrollElement.scrollIntoView();
     }
   }
- 
+
   onScroll(e) {
     if (
-      navigator.userAgent.includes("Safari") &&
-      navigator.userAgent.includes("Chrome")
+      (navigator.userAgent.includes("Safari") &&
+      navigator.userAgent.includes("Chrome")) ||
+      navigator.userAgent.includes("Firefox")
     ) {
-      // Google Chrome
+      // Google Chrome and Firefox
       if (e.target.scrollTop === 0) {
         this.setState(
           {
@@ -177,32 +181,33 @@ export class ChatScreen extends Component {
       console.log("Your browser is not supported.");
     }
   }
- 
-  render() {
+
+  chatWindow() {
+
+    // Replace with just the "not Firefox" implementation
+    // when Firefox #1042151 is patched.
+
     const { props, state } = this;
- 
+
     let messages = props.envelopes.slice(0);
- 
-    let lastMsgNum = messages.length > 0 ? messages.length : 0;
- 
     if (messages.length > 100 * state.numPages) {
       messages = messages.slice(
         messages.length - 100 * state.numPages,
         messages.length
       );
     }
- 
+
     let pendingMessages = props.pendingMessages.has(props.station)
       ? props.pendingMessages.get(props.station)
       : [];
- 
-    pendingMessages.map(function(value) {
+
+    pendingMessages.map(function (value) {
       return (value.pending = true);
     });
- 
+
     let reversedMessages = messages.concat(pendingMessages);
     reversedMessages = reversedMessages.reverse();
- 
+
     reversedMessages = reversedMessages.map((msg, i) => {
       // Render sigil if previous message is not by the same sender
       let aut = ["author"];
@@ -213,7 +218,7 @@ export class ChatScreen extends Component {
       let paddingBot =
         _.get(reversedMessages[i - 1], aut) !==
         _.get(msg, aut, msg.author);
- 
+
       return (
         <Message
           key={msg.uid}
@@ -226,23 +231,80 @@ export class ChatScreen extends Component {
         />
       );
     });
- 
+
+    if (navigator.userAgent.includes("Firefox")) {
+      return (
+        <div className="overflow-y-scroll h-100" onScroll={this.onScroll}>
+          <div
+            className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
+            style={{ resize: "vertical" }}
+          >
+            <div
+              ref={el => {
+                this.scrollElement = el;
+              }}></div>
+            {(
+              !(props.station in props.chatSynced) &&
+              (reversedMessages.length > 0)
+            ) ? (
+                <ResubscribeElement
+                  api={props.api}
+                  host={props.match.params.ship}
+                  station={props.station} />
+              ) : (<div />)
+            }
+            {reversedMessages}
+          </div>
+        </div>
+      )}
+    else {
+      return (
+        <div
+          className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
+          style={{ height: "100%", resize: "vertical" }}
+        >
+          <div
+            ref={el => {
+              this.scrollElement = el;
+            }}></div>
+          {(
+            !(props.station in props.chatSynced) &&
+            (reversedMessages.length > 0)
+          ) ? (
+              <ResubscribeElement
+                api={props.api}
+                host={props.match.params.ship}
+                station={props.station} />
+            ) : (<div />)
+          }
+          {reversedMessages}
+        </div>
+      )}
+    }
+
+  render() {
+    const { props, state } = this;
+
+    let messages = props.envelopes.slice(0);
+
+    let lastMsgNum = messages.length > 0 ? messages.length : 0;
+
     let group = Array.from(props.permission.who.values());
- 
+
     const isinPopout = props.popout ? "popout/" : "";
- 
+
     let ownerContact = (window.ship in props.contacts)
       ? props.contacts[window.ship] : false;
- 
+
     let title = props.station.substr(1);
- 
+
     if (props.association && "metadata" in props.association) {
       title =
         props.association.metadata.title !== ""
           ? props.association.metadata.title
           : props.station.substr(1);
     }
- 
+
     return (
       <div
         key={props.station}
@@ -278,26 +340,7 @@ export class ChatScreen extends Component {
             api={props.api}
           />
         </div>
-        <div
-          className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
-          style={{ height: "100%", resize: "vertical" }}
-          onScroll={this.onScroll}>
-          <div
-            ref={el => {
-              this.scrollElement = el;
-            }}></div>
-            { (
-                !(props.station in props.chatSynced) &&
-                (reversedMessages.length > 0)
-              ) ? (
-                  <ResubscribeElement
-                    api={props.api}
-                    host={props.match.params.ship}
-                    station={props.station} />
-                ) : (<div/>)
-            }
-            {reversedMessages}
-        </div>
+        {this.chatWindow()}
         <ChatInput
           api={props.api}
           numMsgs={lastMsgNum}
