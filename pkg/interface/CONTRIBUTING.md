@@ -36,6 +36,23 @@ Please also ensure your pull request fits our standards for
 [arvo]: /pkg/arvo
 [interface]:/pkg/interface
 
+## Linting
+
+The Urbit interface uses Eslint to lint the JavaScript code. To install the
+linter and for usage through the command, do the following:
+```bash
+$ cd ./pkg/interface
+$ npm install
+$ npm run lint
+```
+
+To use the linter, run npm scripts
+```bash
+$ npm run lint # lints all files in `interface`
+$ npm run lint-file ./chat/**/*.js # lints all .js files in `interface/chat`
+$ npm run lint-file ./chat/src/index.js # lints a single chosen file
+```
+
 ### Gall
 
 Presently, Gall documentation is still in [progress][gall], but a good
