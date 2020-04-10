@@ -79,9 +79,11 @@ export class ChatScreen extends Component {
       40
     ) {
       this.hasAskedForMessages = false;
-      this.setState({ scrollLocked: false }, () => {
-        this.scrollToBottom();
-      })
+      if (prevProps.envelopes.length <= 20) {
+        this.setState({ scrollLocked: false }, () => {
+          this.scrollToBottom();
+        })
+      }
     }
   }
 
