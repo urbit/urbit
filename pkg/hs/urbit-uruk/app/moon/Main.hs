@@ -5,8 +5,8 @@ module Main (main) where
 import ClassyPrelude
 import Urbit.Moon.Repl
 
-import Prelude                (read)
-import Text.Show.Pretty       (pPrint)
+import Prelude          (read)
+import Text.Show.Pretty (pPrint)
 
 --------------------------------------------------------------------------------
 

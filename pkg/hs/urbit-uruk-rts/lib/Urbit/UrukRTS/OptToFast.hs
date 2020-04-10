@@ -78,25 +78,15 @@ compile arity numRegs = go
   rec [] = F.SLF
   rec xs =
     let len = length xs
-    in  if 0 == numRegs
-        then case (compare len arity, xs) of
-               (EQ, [x]         ) -> F.REC1R (go x)
-               (EQ, [x, y]      ) -> F.REC2R (go x) (go y)
-               (EQ, [x, y, z]   ) -> F.REC3R (go x) (go y) (go z)
-               (EQ, [x, y, z, p]) -> F.REC4R (go x) (go y) (go z) (go p)
-               (EQ, [x, y, z, p, q]) -> F.REC5R (go x) (go y) (go z) (go p) (go q)
-               (EQ, xs          ) -> F.RECNR (goArgs xs)
-               (LT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
-               (GT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
-        else case (compare len arity, xs) of
-               (EQ, [x]         ) -> F.REC1 (go x)
-               (EQ, [x, y]      ) -> F.REC2 (go x) (go y)
-               (EQ, [x, y, z]   ) -> F.REC3 (go x) (go y) (go z)
-               (EQ, [x, y, z, p]) -> F.REC4 (go x) (go y) (go z) (go p)
-               (EQ, [x, y, z, p, q]) -> F.REC5 (go x) (go y) (go z) (go p) (go q)
-               (EQ, xs          ) -> F.RECN (goArgs xs)
-               (LT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
-               (GT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
+    in case (compare len arity, xs) of
+         (EQ, [x]         ) -> F.REC1 (go x)
+         (EQ, [x, y]      ) -> F.REC2 (go x) (go y)
+         (EQ, [x, y, z]   ) -> F.REC3 (go x) (go y) (go z)
+         (EQ, [x, y, z, p]) -> F.REC4 (go x) (go y) (go z) (go p)
+         (EQ, [x, y, z, p, q]) -> F.REC5 (go x) (go y) (go z) (go p) (go q)
+         (EQ, xs          ) -> F.RECN (goArgs xs)
+         (LT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
+         (GT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
 
   kal F.Seq     [x, y] = F.SEQ (go x) (go y)
   kal F.Ded     [x]    = F.DED (go x)

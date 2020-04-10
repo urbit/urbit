@@ -1,5 +1,5 @@
 :: Complete Mandlebrot demo
-::
+
 :: This is a port of enough of hoon.hoon's standard library and the hoon code in
 :: mandelbrot.hoon into one file for demo.
 ::
@@ -413,8 +413,8 @@
   %+  cons  space
   (cons (ntot b) (cons space (cons (ntot c) (cons space null))))
 ::
-=/  build-ppm-inner
-  ~/  1  build-ppm-inner
+=/  build-ppm-line
+  ~/  1  build-ppm-line
   |=  y
   %+  weld
     %-  zing
@@ -431,7 +431,7 @@
   %+  weld  (cons '2' (cons '5' (cons '5' (cons 10 null))))
   %-  zing
   %+  turn  (mandelbrot w h)
-  build-ppm-inner
+  build-ppm-line
 
 ::  Takes a list and a function
 =/  list-id

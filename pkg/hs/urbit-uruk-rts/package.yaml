@@ -28,6 +28,7 @@ executables:
 dependencies:
   - base
   - bound
+  - bytestring
   - classy-prelude
   - containers
   - deriving-compat
@@ -45,8 +46,11 @@ dependencies:
   - primitive
   - raw-strings-qq
   - serialise
+  - store
   - template-haskell
   - text
+  - time
+  - unagi-chan
   - urbit-atom
   - urbit-uruk
   - vector

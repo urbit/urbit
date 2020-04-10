@@ -1,5 +1,5 @@
 {-# LANGUAGE CPP #-}
-{-# OPTIONS_GHC -funbox-strict-fields -Werror #-}
+{-- OPTIONS_GHC -funbox-strict-fields -Werror #-}
 
 {-
     Note that On 64 bit machines, GHC will always use pointer tagging
@@ -81,18 +81,33 @@ import Urbit.Moon.Arity
 import Urbit.Uruk.Class
 import Urbit.UrukRTS.Types
 
-import Control.Arrow     ((>>>))
-import Control.Exception (throw, try)
-import Data.Bits         (shiftL, (.|.))
-import Data.Function     ((&))
-import GHC.Exts          (fromList, toList)
-import Numeric.Natural   (Natural)
-import Prelude           ((!!))
-import Text.Show.Pretty  (pPrint, ppShow)
+import Control.Arrow         ((>>>))
+import Control.Concurrent    (threadDelay)
+import Control.Exception     (throw, try)
+import Data.Bits             (shiftL, (.|.))
+import Data.Function         ((&))
+import Data.Time.Clock.POSIX (POSIXTime, getPOSIXTime)
+import GHC.Exts              (fromList, toList)
+import Numeric.Natural       (Natural)
+import Prelude               ((!!))
+import Text.Show.Pretty      (pPrint, ppShow)
 
+import qualified Data.ByteString           as BS
+import qualified Data.Store                as Store
+import qualified Data.Store.TH             as Store
+import qualified System.IO                 as Sys
 import qualified Urbit.Atom                as Atom
 import qualified Urbit.UrukRTS.JetOptimize as Opt
 import qualified Urbit.UrukRTS.OptToFast   as Opt
+
+
+-- Profiling Events ------------------------------------------------------------
+
+data Event = Event !Bool !POSIXTime !Jet
+
+data EventDisk = EventDisk !Bool !Word64 !ByteString
+
+Store.makeStore ''EventDisk
 
 
 --------------------------------------------------------------------------------
@@ -412,50 +427,26 @@ withFallback :: Jet -> CloN -> IO Val -> IO Val
 {-# INLINE withFallback #-}
 withFallback j args act = do
   res <- act
-  -- traceResu j (toList args) res
+  traceResu j (toList args) res
   pure res
-
-
 {- catch act $ \(TypeError why) -> do
   putStrLn ("FALLBACK: " <> why)
   callFunFull (valFun $ jBody j) args
 -}
 
-traceCall :: Jet -> [Val] -> Bool -> IO ()
-traceCall j xs reg = putStrLn ("CALL (" <> body <> ")")
- where
-  body = intercalate " " (tshow j <> note : fmap tshow xs)
-  note = if reg && jRegs j /= 0
-         then "{" <> tshow (jRegs j) <> "}"
-         else ""
-
-traceResu :: Jet -> [Val] -> Val -> IO ()
-traceResu j xs val = putStrLn ("RETR (" <> body <> ")\n  ==>  " <> tshow val)
- where
-  body = intercalate " " (tshow j : fmap tshow xs)
-
 execJet1 :: Jet -> Val -> IO Val
 execJet1 !j !x = do
-  -- traceCall j [x] False
+  traceCall j [x] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x]
   let refr = \case
         0 -> pure x
         n -> throwIO (BadRef j n)
   withFallback j args (execJetBody j refr reg setReg)
-
-execJet1R :: Jet -> Val -> IO Val
-execJet1R !j !x = do
-  -- traceCall j [x] True
-  let args = fromList [x]
-  let refr = \case
-        0 -> pure x
-        n -> throwIO (BadRef j n)
-  withFallback j args (execJetBodyR j refr)
 
 execJet2 :: Jet -> Val -> Val -> IO Val
 execJet2 !j !x !y = do
-  -- traceCall j [x,y] False
+  traceCall j [x,y] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y]
   let refr = \case
@@ -463,43 +454,22 @@ execJet2 !j !x !y = do
         1 -> pure y
         n -> throwIO (BadRef j n)
   withFallback j args (execJetBody j refr reg setReg)
-
-execJet2R :: Jet -> Val -> Val -> IO Val
-execJet2R !j !x !y = do
-  -- traceCall j [x,y] True
-  let args = fromList [x, y]
-  let refr = \case
-        0 -> pure x
-        1 -> pure y
-        n -> throwIO (BadRef j n)
-  withFallback j args (execJetBodyR j refr)
 
 execJet3 :: Jet -> Val -> Val -> Val -> IO Val
 execJet3 !j !x !y !z = do
-  -- traceCall j [x,y,z] False
+  traceCall j [x,y,z] False
   (reg, setReg) <- mkRegs (jRegs j)
-  let args = fromList [x, y, z]
-      refr = \case
-        0 -> pure x
-        1 -> pure y
-        2 -> pure z
-        n -> throwIO (BadRef j n)
-  withFallback j args (execJetBody j refr reg setReg)
-
-execJet3R :: Jet -> Val -> Val -> Val -> IO Val
-execJet3R !j !x !y !z = do
-  -- traceCall j [x,y,z] True
   let args = fromList [x, y, z]
   let refr = \case
         0 -> pure x
         1 -> pure y
         2 -> pure z
         n -> throwIO (BadRef j n)
-  withFallback j args (execJetBodyR j refr)
+  withFallback j args (execJetBody j refr reg setReg)
 
 execJet4 :: Jet -> Val -> Val -> Val -> Val -> IO Val
 execJet4 !j !x !y !z !p = do
-  -- traceCall j [x,y,z,p] False
+  traceCall j [x,y,z,p] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z, p]
   let refr = \case
@@ -509,22 +479,10 @@ execJet4 !j !x !y !z !p = do
         3 -> pure p
         n -> throwIO (BadRef j n)
   withFallback j args (execJetBody j refr reg setReg)
-
-execJet4R :: Jet -> Val -> Val -> Val -> Val -> IO Val
-execJet4R !j !x !y !z !p = do
-  -- traceCall j [x,y,z,p] True
-  let args = fromList [x, y, z, p]
-  let refr = \case
-        0 -> pure x
-        1 -> pure y
-        2 -> pure z
-        3 -> pure p
-        n -> throwIO (BadRef j n)
-  withFallback j args (execJetBodyR j refr)
 
 execJet5 :: Jet -> Val -> Val -> Val -> Val -> Val -> IO Val
 execJet5 !j !x !y !z !p !q = do
-  -- traceCall j [x,y,z,p] False
+  traceCall j [x,y,z,p] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z, p, q]
   let refr = \case
@@ -536,33 +494,71 @@ execJet5 !j !x !y !z !p !q = do
         n -> throwIO (BadRef j n)
   withFallback j args (execJetBody j refr reg setReg)
 
-execJet5R :: Jet -> Val -> Val -> Val -> Val -> Val -> IO Val
-execJet5R !j !x !y !z !p !q = do
-  -- traceCall j [x,y,z,p] True
-  let args = fromList [x, y, z, p, q]
-  let refr = \case
-        0 -> pure x
-        1 -> pure y
-        2 -> pure z
-        3 -> pure p
-        4 -> pure q
-        n -> throwIO (BadRef j n)
-  withFallback j args (execJetBodyR j refr)
-
-
 execJetN :: Jet -> CloN -> IO Val
 execJetN !j !xs = do
-  -- traceCall j (toList xs) (jRegs j /= 0)
+  traceCall j (toList xs) (jRegs j /= 0)
   (reg, setReg) <- mkRegs (jRegs j)
   let refr = pure . indexSmallArray xs
   withFallback j xs (execJetBody j refr reg setReg)
 
-execJetNR :: Jet -> CloN -> IO Val
-execJetNR !j !xs = do
-  -- traceCall j (toList xs) (jRegs j /= 0)
-  let refr = pure . indexSmallArray xs
-  withFallback j xs (execJetBodyR j refr)
 
+-- Self-Calls (No Tracing) -----------------------------------------------------
+
+recJet1 :: Jet -> Val -> IO Val
+recJet1 !j !x = do
+  (reg, setReg) <- mkRegs (jRegs j)
+  let refr = \case
+        0 -> pure x
+        n -> throwIO (BadRef j n)
+  execJetBody j refr reg setReg
+
+recJet2 :: Jet -> Val -> Val -> IO Val
+recJet2 !j !x !y = do
+  (reg, setReg) <- mkRegs (jRegs j)
+  let refr = \case
+        0 -> pure x
+        1 -> pure y
+        n -> throwIO (BadRef j n)
+  execJetBody j refr reg setReg
+
+recJet3 :: Jet -> Val -> Val -> Val -> IO Val
+recJet3 !j !x !y !z = do
+  (reg, setReg) <- mkRegs (jRegs j)
+  let refr = \case
+        0 -> pure x
+        1 -> pure y
+        2 -> pure z
+        n -> throwIO (BadRef j n)
+  execJetBody j refr reg setReg
+
+recJet4 :: Jet -> Val -> Val -> Val -> Val -> IO Val
+recJet4 !j !x !y !z !p = do
+  (reg, setReg) <- mkRegs (jRegs j)
+  let refr = \case
+        0 -> pure x
+        1 -> pure y
+        2 -> pure z
+        3 -> pure p
+        n -> throwIO (BadRef j n)
+  execJetBody j refr reg setReg
+
+recJet5 :: Jet -> Val -> Val -> Val -> Val -> Val -> IO Val
+recJet5 !j !x !y !z !p !q = do
+  (reg, setReg) <- mkRegs (jRegs j)
+  let refr = \case
+        0 -> pure x
+        1 -> pure y
+        2 -> pure z
+        3 -> pure p
+        4 -> pure q
+        n -> throwIO (BadRef j n)
+  execJetBody j refr reg setReg
+
+recJetN :: Jet -> CloN -> IO Val
+recJetN !j !xs = do
+  (reg, setReg) <- mkRegs (jRegs j)
+  let refr = pure . indexSmallArray xs
+  execJetBody j refr reg setReg
 
 -- Primitive Implementation ----------------------------------------------------
 
@@ -731,18 +727,12 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     VAL   v         -> pure v
     REF   i         -> ref i
     REG   i         -> reg i
-    REC1  x         -> join (execJet1 j <$> go x)
-    REC1R x         -> join (execJet1R j <$> go x)
-    REC2  x y       -> join (execJet2 j <$> go x <*> go y)
-    REC2R x y       -> join (execJet2R j <$> go x <*> go y)
-    REC3  x y z     -> join (execJet3 j <$> go x <*> go y <*> go z)
-    REC3R x y z     -> join (execJet3R j <$> go x <*> go y <*> go z)
-    REC4  x y z p   -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
-    REC4R x y z p   -> join (execJet4R j <$> go x <*> go y <*> go z <*> go p)
-    REC5  x y z p q -> join (execJet5 j <$> go x <*> go y <*> go z <*> go p <*> go q)
-    REC5R x y z p q -> join (execJet5R j <$> go x <*> go y <*> go z <*> go p <*> go q)
-    RECN  xs        -> join (execJetN j <$> traverse go xs)
-    RECNR xs        -> join (execJetNR j <$> traverse go xs)
+    REC1  x         -> join (recJet1 j <$> go x)
+    REC2  x y       -> join (recJet2 j <$> go x <*> go y)
+    REC3  x y z     -> join (recJet3 j <$> go x <*> go y <*> go z)
+    REC4  x y z p   -> join (recJet4 j <$> go x <*> go y <*> go z <*> go p)
+    REC5  x y z p q -> join (recJet5 j <$> go x <*> go y <*> go z <*> go p <*> go q)
+    RECN  xs        -> join (recJetN j <$> traverse go xs)
     SLF             -> pure (jetVal j)
     SEQ x y         -> go x >> go y
     DED x           -> throwIO . Crash =<< go x
@@ -801,18 +791,12 @@ execJetBodyR !j !ref = go (jFast j)
     CAS i x l r     -> error "execJetBodyR: unexpected register write"
     VAL   v         -> pure v
     REF   i         -> ref i
-    REC1  x         -> join (execJet1 j <$> go x)
-    REC1R x         -> join (execJet1R j <$> go x)
-    REC2  x y       -> join (execJet2 j <$> go x <*> go y)
-    REC2R x y       -> join (execJet2R j <$> go x <*> go y)
-    REC3  x y z     -> join (execJet3 j <$> go x <*> go y <*> go z)
-    REC3R x y z     -> join (execJet3R j <$> go x <*> go y <*> go z)
-    REC4  x y z p   -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
-    REC4R x y z p   -> join (execJet4R j <$> go x <*> go y <*> go z <*> go p)
-    REC5  x y z p q -> join (execJet5 j <$> go x <*> go y <*> go z <*> go p <*> go q)
-    REC5R x y z p q -> join (execJet5R j <$> go x <*> go y <*> go z <*> go p <*> go q)
-    RECN  xs        -> join (execJetN j <$> traverse go xs)
-    RECNR xs        -> join (execJetNR j <$> traverse go xs)
+    REC1  x         -> join (recJet1 j <$> go x)
+    REC2  x y       -> join (recJet2 j <$> go x <*> go y)
+    REC3  x y z     -> join (recJet3 j <$> go x <*> go y <*> go z)
+    REC4  x y z p   -> join (recJet4 j <$> go x <*> go y <*> go z <*> go p)
+    REC5  x y z p q -> join (recJet5 j <$> go x <*> go y <*> go z <*> go p <*> go q)
+    RECN  xs        -> join (recJetN j <$> traverse go xs)
     SLF             -> pure (jetVal j)
     SEQ x y         -> go x >> go y
     DED x           -> throwIO . Crash =<< go x
@@ -854,3 +838,128 @@ execJetBodyR !j !ref = go (jFast j)
         print ("iff", cv, t, e)
         print ("iff.cond", c)
         throwIO (TypeError "iff-not-bol")
+
+
+-- Profiling -------------------------------------------------------------------
+
+vProfQ :: IORef [Event]
+vProfQ = unsafePerformIO (newIORef [])
+
+vProfDone :: TVar Bool
+vProfDone = unsafePerformIO (newTVarIO False)
+
+toDisk :: Event -> EventDisk
+toDisk (Event star time jett) =
+  EventDisk
+    star
+    (round (1000000 * time) :: Word64)
+    (jetTagFast (jName jett))
+
+{-# INLINE jetTagFast #-}
+jetTagFast :: Val -> ByteString
+jetTagFast = \case
+  VNat n -> Atom.atomBytes n
+  _      -> error "TODO"
+
+dumpEventsFile :: FilePath -> IO ()
+dumpEventsFile fp = do
+  Sys.withFile fp Sys.WriteMode $ \h -> do
+    hSetBuffering h (BlockBuffering (Just 1_000_000))
+    dumpEvents h
+    hFlush h
+
+{-# INLINE dumpEvents #-}
+dumpEvents :: Handle -> IO ()
+dumpEvents h = do
+  tid <- async go
+  void (wait tid)
+ where
+  go = do
+    done <- atomically (readTVar vProfDone)
+    evs  <- atomicModifyIORef vProfQ (\es -> ([], es))
+    let numevs = length evs
+    unless (null evs) $ do
+      -- putStrLn ("{" <> tshow numevs <> "}")
+      BS.hPut h $ Store.encode $ toDisk <$> evs
+    unless (null evs && done) $ do
+      when (numevs < 333) $ do
+        threadDelay 100_000
+      go
+
+{-# INLINE jetOkToTrace #-}
+jetOkToTrace :: Jet -> Bool
+jetOkToTrace j = case jName j of
+  VNat 7627107                -> False -- cat
+  VNat 1684825463             -> False -- weld
+  VNat 1907323525685090546547 -> False -- ssum-aneg
+  VNat 1936617315             -> False -- cons
+  VNat 1752460403             -> False -- slth
+  VNat 1651864435             -> False -- ssub
+  VNat 2129405593459937866611 -> False -- ssub-apos
+  VNat 1836413811             -> False -- ssum
+  VNat 123584151057773        -> False -- mul-fp
+  VNat 1819635059             -> False -- smul
+  VNat 1986618483             -> False -- sdiv
+  VNat 1952542323             -> False -- snat
+  VNat 2003136115             -> False -- snew
+  VNat 1935827315             -> False -- sabs
+  VNat 474181366643           -> False -- ssign
+  _                           -> True
+
+{-# INLINE traceCall #-}
+traceCall :: Jet -> [Val] -> Bool -> IO ()
+traceCall j xs reg = do
+  when (jetOkToTrace j) $ do
+    t <- getPOSIXTime
+    atomicModifyIORef vProfQ (\es -> (Event True t j:es, ()))
+
+{-# INLINE traceResu #-}
+traceResu :: Jet -> [Val] -> Val -> IO ()
+traceResu j xs val = do
+  when (jetOkToTrace j) $ do
+    t <- getPOSIXTime
+    atomicModifyIORef vProfQ (\es -> (Event False t j:es, ()))
+
+
+--------------------------------------------------------------------------------
+
+loadProfLog :: FilePath -> IO [EventDisk]
+loadProfLog fp = do
+  bs <- readFile fp
+  go [] bs
+ where
+  go :: [EventDisk] -> ByteString -> IO [EventDisk]
+  go acc bs | null bs = pure acc
+  go acc bs = do
+    (off, val) <- Store.decodeIOPortionWith Store.peek bs
+    let acc' = acc <> reverse val
+    go acc' (BS.drop off bs)
+
+toJSON :: FilePath -> FilePath -> IO ()
+toJSON binFP jsoFP = do
+  evs <- loadProfLog binFP
+  Sys.withFile jsoFP Sys.WriteMode $ \jh -> do
+    case evs of
+      []   -> pure ()
+      e:es -> do
+        BS.hPut jh "[ "
+        eventJson jh e
+        for_ evs $ \ev -> do
+          BS.hPut jh ", "
+          eventJson jh ev
+
+eventJson :: Handle -> EventDisk -> IO ()
+eventJson h (EventDisk True tim nam) = do
+  BS.hPut h
+    "{\"ph\":\"B\",\"cat\":\"j\",\"pid\":1,\"tid\":1,\"args\":{},\"ts\":"
+  Sys.hPutStr h (show tim)
+  BS.hPut h ",\"name\":\""
+  BS.hPut h nam
+  BS.hPut h "\"}\n"
+eventJson h (EventDisk False tim nam) = do
+  Sys.hPutStr h
+    "{\"ph\":\"E\",\"cat\":\"j\",\"pid\":1,\"tid\":1,\"args\":{},\"ts\":"
+  Sys.hPutStr h (show tim)
+  Sys.hPutStr h ",\"name\":\""
+  BS.hPut h nam
+  Sys.hPutStr h "\"}\n"

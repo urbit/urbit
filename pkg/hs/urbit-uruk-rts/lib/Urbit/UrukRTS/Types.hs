@@ -3,8 +3,6 @@
 
 {-
     TODO Fill out reduce.
-    TODO K should not evaluate tail.
-      TODO Or, find a way to make K not need to short-circuit.
 
     Note that On 64 bit machines, GHC will always use pointer tagging
     as long as there are less than 8 constructors. So, anything that is
@@ -260,20 +258,14 @@ data Exp
   | REG   !Int                    --  Register Reference
   | SLF                           --  Self Reference
 
-  | IFF   !Exp !Exp !Exp          --  If-Then-Else
-  | CAS   !Int !Exp !Exp !Exp     --  Pattern Match
-  | REC1  !Exp                    --  Recursive Call
-  | REC1R !Exp                    --  Recursive Call (No Registers)
-  | REC2  !Exp !Exp               --  Recursive Call
-  | REC2R !Exp !Exp               --  Recursive Call (No Registers)
-  | REC3  !Exp !Exp !Exp          --  Recursive Call
-  | REC3R !Exp !Exp !Exp          --  Recursive Call (No Registers)
-  | REC4  !Exp !Exp !Exp !Exp     --  Recursive Call
-  | REC4R !Exp !Exp !Exp !Exp     --  Recursive Call (No Registers)
+  | IFF   !Exp !Exp !Exp           --  If-Then-Else
+  | CAS   !Int !Exp !Exp !Exp      --  Pattern Match
+  | REC1  !Exp                     --  Recursive Call
+  | REC2  !Exp !Exp                --  Recursive Call
+  | REC3  !Exp !Exp !Exp           --  Recursive Call
+  | REC4  !Exp !Exp !Exp !Exp      --  Recursive Call
   | REC5  !Exp !Exp !Exp !Exp !Exp --  Recursive Call
-  | REC5R !Exp !Exp !Exp !Exp !Exp --  Recursive Call (No Registers)
-  | RECN  !(SmallArray Exp)       --  Recursive Call
-  | RECNR !(SmallArray Exp)       --  Recursive Call (No Registers)
+  | RECN  !(SmallArray Exp)        --  Recursive Call
 
   | SEQ !Exp !Exp                 --  Evaluate head, return tail
   | DED !Exp                      --  Evaluate argument, then crash.
