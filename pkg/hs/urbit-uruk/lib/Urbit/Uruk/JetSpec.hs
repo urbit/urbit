@@ -1,9 +1,9 @@
 module Urbit.Uruk.JetSpec (jetSpec) where
 
 import ClassyPrelude
-import Urbit.Uruk.Dash.Exp (SingJet(..))
-import Data.FileEmbed    (embedStringFile)
+import Data.FileEmbed      (embedStringFile)
 import Text.RawString.QQ
+import Urbit.Uruk.Dash.Exp (SingJet(..))
 
 
 --------------------------------------------------------------------------------
@@ -57,6 +57,9 @@ jetSpec = [r|
 ++  (lef x l r)  (l x)
 ++  (rit x l r)  (r x)
 ++  (cas b l r)  (b l r)
+
+++  (lcon h t nod emp)  (nod h t)
+++  (lnil nod emp)      (emp uni)
 
 ++  (yes t f)    t
 ++  (nah t f)    f

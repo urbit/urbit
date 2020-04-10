@@ -68,7 +68,7 @@
 
 module Urbit.UrukRTS where
 
-import ClassyPrelude             hiding (evaluate, fromList, seq, toList, try)
+import ClassyPrelude           hiding (evaluate, fromList, seq, toList, try)
 import Control.Monad.Primitive
 #if !defined(__GHCJS__)
 import Data.Flat
@@ -127,20 +127,20 @@ instance Uruk Val where
   -- TODO XX HACK Need to fix arities for value constructors (con/lef/rit)
   uArity = Just . AriOth . fromIntegral . fNeed . valFun
 
-  uGlobal "add" = Just $ mkNode 2 Add
-  uGlobal "lef" = Just $ mkNode 1 Lef -- hack, actually 3
-  uGlobal "rit" = Just $ mkNode 1 Rit -- hack, actually 3
-  uGlobal "pak" = Just $ mkNode 1 Pak
-  uGlobal "zer" = Just $ mkNode 1 Zer
-  uGlobal "eql" = Just $ mkNode 2 Eql
-  uGlobal "inc" = Just $ mkNode 1 Inc
-  uGlobal "dec" = Just $ mkNode 1 Dec
-  uGlobal "fec" = Just $ mkNode 1 Fec
-  uGlobal "ded" = Just $ mkNode 1 Ded
-  uGlobal "car" = Just $ mkNode 1 Car
-  uGlobal "cdr" = Just $ mkNode 1 Cdr
-  uGlobal "sub" = Just $ mkNode 2 Sub
-  uGlobal "mul" = Just $ mkNode 2 Mul
+  uGlobal "add"   = Just $ mkNode 2 Add
+  uGlobal "lef"   = Just $ mkNode 1 Lef -- hack, actually 3
+  uGlobal "rit"   = Just $ mkNode 1 Rit -- hack, actually 3
+  uGlobal "pak"   = Just $ mkNode 1 Pak
+  uGlobal "zer"   = Just $ mkNode 1 Zer
+  uGlobal "eql"   = Just $ mkNode 2 Eql
+  uGlobal "inc"   = Just $ mkNode 1 Inc
+  uGlobal "dec"   = Just $ mkNode 1 Dec
+  uGlobal "fec"   = Just $ mkNode 1 Fec
+  uGlobal "ded"   = Just $ mkNode 1 Ded
+  uGlobal "car"   = Just $ mkNode 1 Car
+  uGlobal "cdr"   = Just $ mkNode 1 Cdr
+  uGlobal "sub"   = Just $ mkNode 2 Sub
+  uGlobal "mul"   = Just $ mkNode 2 Mul
 
   uGlobal "lsh"   = Just $ mkNode 2 Lsh
   uGlobal "lth"   = Just $ mkNode 2 Lth
@@ -151,7 +151,10 @@ instance Uruk Val where
   uGlobal "trace" = Just $ mkNode 2 Tra
   uGlobal "mod"   = Just $ mkNode 2 Mod
 
-  uGlobal _     = Nothing
+  uGlobal "lcon"  = Just $ mkNode 2 Lcon
+  uGlobal "lnil"  = Just $ mkNode 2 Lnil
+
+  uGlobal _       = Nothing
 
 
 -- Useful Types ----------------------------------------------------------------
@@ -305,6 +308,9 @@ reduce !no !xs = do
     Cdr       -> cdr x
     Cas       -> cas x y z
     Nat n     -> nat n x y
+
+    Lcon      -> lcons x y
+    Lnil      -> pure (VLis [])
 
     --  S₁fgx   = (fx)(gx)
     --  S₂fgxy  = (fxy)(gxy)
@@ -598,6 +604,12 @@ nat n inc zer = go n
     0 -> pure zer
     n -> kVA inc (go (n-1))
 
+lcons :: Val -> Val -> IO Val
+{-# INLINE lcons #-}
+lcons x (VLis rest)           = pure (VLis (x:rest))
+lcons x (VFun (Fun 2 Lnil _)) = pure (VLis [x])
+lcons _ _                     = throwIO (TypeError "lcons-not-list")
+
 pak :: Val -> IO Val
 {-# INLINE pak #-}
 pak (VNat n) = pure (VNat n)
@@ -674,14 +686,14 @@ dTra x y = do
 sub :: Val -> Val -> IO Val
 {-# INLINE sub #-}
 sub (VNat x) (VNat y) | y > x = pure (VLef VUni)
-sub (VNat x) (VNat y)         = pure (VRit (VNat (x - y)))
-sub _        _                = throwIO (TypeError "sub-not-nat")
+sub (VNat x) (VNat y) = pure (VRit (VNat (x - y)))
+sub _        _        = throwIO (TypeError "sub-not-nat")
 
 dFub :: Val -> Val -> IO Val
 {-# INLINE dFub #-}
 dFub (VNat x) (VNat y) | y > x = pure (VNat 0)
-dFub (VNat x) (VNat y)         = pure (VNat (x - y))
-dFub _        _                = throwIO (TypeError "fub-not-nat")
+dFub (VNat x) (VNat y) = pure (VNat (x - y))
+dFub _        _        = throwIO (TypeError "fub-not-nat")
 
 zer :: Val -> IO Val
 {-# INLINE zer #-}
@@ -779,6 +791,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     LEF x           -> VLef <$> go x
     RIT x           -> VRit <$> go x
     CON x y         -> VCon <$> go x <*> go y
+    LNIL            -> pure $ VLis []
     IFF c t e       -> go c >>= \case
       VBol True  -> go t
       VBol False -> go e
@@ -790,6 +803,15 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
       VLef lv -> setReg i lv >> go l
       VRit rv -> setReg i rv >> go r
       _       -> throwIO (TypeError "cas-not-sum")
+    LCON x y        -> do
+      fx <- go x;
+      go y >>= \case
+
+        VLis rest -> pure $ VLis (fx:rest)
+        r -> throwIO (TypeError ("lcons-not-list: " ++ (tshow r)))
+
+
+
 
 execJetBodyR :: Jet -> (Int -> IO Val) -> IO Val
 {-# INLINE execJetBodyR #-}
@@ -847,6 +869,7 @@ execJetBodyR !j !ref = go (jFast j)
     LEF x          -> VLef <$> go x
     RIT x          -> VRit <$> go x
     CON x y        -> VCon <$> go x <*> go y
+    LNIL           -> pure $ VLis []
     IFF c t e      -> go c >>= \case
       VBol True  -> go t
       VBol False -> go e
@@ -854,3 +877,8 @@ execJetBodyR !j !ref = go (jFast j)
         print ("iff", cv, t, e)
         print ("iff.cond", c)
         throwIO (TypeError "iff-not-bol")
+    LCON x y        -> do
+      fx <- go x;
+      go y >>= \case
+        VLis rest -> pure $ VLis (fx:rest)
+        r -> throwIO (TypeError ("lcons-not-list: " ++ (tshow r)))
