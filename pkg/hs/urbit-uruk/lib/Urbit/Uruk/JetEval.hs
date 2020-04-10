@@ -111,6 +111,14 @@ pattern Cas = N (M (MS CAS) 3 [])
 
 pattern Trace = N (M (MS TRACE) 2 [])
 
+pattern LconC = N (M (MS LCON) 4 [])
+pattern Lnil = N (M (MS LNIL) 2 [])
+
+pattern Gulf = N (M (MS GULF) 2 [])
+pattern Snag = N (M (MS SNAG) 2 [])
+pattern Turn = N (M (MS TURN) 2 [])
+pattern Weld = N (M (MS WELD) 2 [])
+
 type Exp = Dash.ExpTree Ur
 type Val = Exp
 
@@ -162,6 +170,12 @@ instance Uruk Exp where
   uGlobal "not" = Just Not
   uGlobal "xor" = Just Xor
   uGlobal "trace" = Just Trace
+  uGlobal "lcon" = Just LconC
+  uGlobal "lnil" = Just Lnil
+  uGlobal "gulf" = Just Gulf
+  uGlobal "snag" = Just Snag
+  uGlobal "turn" = Just Turn
+  uGlobal "weld" = Just Weld
   uGlobal _     = Nothing
 
   uArity (N (J n))     = pure $ AriJay n

@@ -28,72 +28,10 @@
 
 ::  List operations
 
-::  Left tagged cons cell
-=/  cons
-  ~/  2  cons
-  |=  (head tail)
-  (lef [head tail])
-
-::  Right tagged null terminator
-=/  null
-  (rit uni)
-
-::  Takes a list and a function
-=/  turn-
-  ~/  2  turn
-  ..  $
-  |=  (data fun)
-  ?-  data
-    p  (cons (fun (car p)) ($ (cdr p) fun))
-    y  null
-  ==
-
-=/  gulf
-  ~/  2  gulf
-  ..  $
-  |=  (a b)
-  ?:  (eql a (inc b))
-    null
-  (cons a ($ (inc a) b))
-
-::  Assemble a list of natural numbers, aligned to the nearest :a bit blocks
-=/  rapp
-  ~/  2  rapp
-  ..  $
-  |=  (a b)
-  ?-  b
-    l  (cat a (car l) ($ a (cdr l)))
-    r  0
-  ==
-
 :: Tape to cord
 =/  crip
   ~/  1  crip
   (rap 8)
-
-::  Takes two lists and returns the two concatendated
-=/  weld
-  ~/  2  weld
-  ..  $
-  |=  (first second)
-  %^  cas  first
-    |=  p
-    (cons (car p) ($ (cdr p) second))
-  ::
-    |=  nil
-    second
-
-::  Take a list of lists and welds each one together
-=/  zing-
-  ~/  1  zing
-  ..  $
-  |=  rest
-  %^  cas  rest
-    |=  p
-    (weld (car p) ($ (cdr p)))
-  ::
-    |=  nil
-    null
 
 ::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -267,7 +205,7 @@
   (sdiv (smul over i10000) under)
 
 ::  output color triples
-=/  plasma-colors
+=/  base-plasma-colors
   :*  [12 7 134]  [16 7 135]  [19 6 137]  [21 6 138]  [24 6 139]
       [27 6 140]  [29 6 141]  [31 5 142]  [33 5 143]  [35 5 144]
       [37 5 145]  [39 5 146]  [41 5 147]  [43 5 148]  [45 4 148]
@@ -321,6 +259,18 @@
       [242 240 38]  [242 241 38]  [241 243 38]  [240 245 37]  [240 246 35]
       [239 248 33]
   ==
+
+:: HACK: There should be a :~ operator in moon.
+:: Moon knows about cons cells, but not lists; transform the formats.
+=/  cadr-to-list
+  ~/  1  cadr-to-list
+  ..  $
+  |=  l
+  %+  l
+    <n (lcon (car n) ($ (cdr n)))>
+  lnil
+
+=/  plasma-colors  (cadr-to-list base-plasma-colors)
 
 ::  look through the con list above for index idx.
 =/  ur-snag
@@ -412,26 +362,24 @@
   |=  x
   (calc-pixel (to-fp x) (to-fp y) fp-width fp-height)
 
-::(mandelbrot 5 5)
-
 =/  ntot-loop
   ~/  2  ntot-loop
   ..  $
   |=  (num list)
   ?:  (zer num)  list
-  ($ (div num 10) (cons (add (mod num 10) '0') list))
+  ($ (div num 10) (lcon (add (mod num 10) '0') list))
 
 ::  renders a natural as a tape, in the spirit of itoa
 =/  ntot
   ~/  1  ntot
   |=  num
   ?:  (zer num)
-    (cons '0' null)
-  (ntot-loop num null)
+    (lcon '0' lnil)
+  (ntot-loop num lnil)
 
 ::  a list containing just the space character
-=/  space    (cons ' ' null)
-=/  newline  (cons 10 null)
+=/  space    (lcon ' ' lnil)
+=/  newline  (lcon 10 lnil)
 
 ::  renders three integers as a space deliminated tape.
 =/  nums
@@ -441,9 +389,9 @@
   =/  b  (car (cdr triple))
   =/  c  (cdr (cdr triple))
   %-  zing
-  %+  cons  (ntot a)
-  %+  cons  space
-  (cons (ntot b) (cons space (cons (ntot c) (cons space null))))
+  %+  lcon  (ntot a)
+  %+  lcon  space
+  (lcon (ntot b) (lcon space (lcon (ntot c) (lcon space lnil))))
 ::
 =/  build-ppm-line
   ~/  1  build-ppm-line
@@ -457,56 +405,16 @@
   ~/  2  build-ppm
   |=  (w h)
   %-  crip
-  %+  weld  (cons 'P' (cons '3' (cons 10 null)))
+  %+  weld  (lcon 'P' (lcon '3' (lcon 10 lnil)))
   %+  weld
-    (zing (cons (ntot w) (cons space (cons (ntot h) (cons newline null)))))
-  %+  weld  (cons '2' (cons '5' (cons '5' (cons 10 null))))
+    (zing (lcon (ntot w) (lcon space (lcon (ntot h) (lcon newline lnil)))))
+  %+  weld  (lcon '2' (lcon '5' (lcon '5' (lcon 10 lnil))))
   %-  zing
   %+  turn  (mandelbrot w h)
   build-ppm-line
 
-::  Takes a list and a function
-=/  list-id
-  ~/  1  list-id
-  ..  $
-  |=  data
-  ?-  data
-    p  (cons (I (car p)) ($ (cdr p)))
-    y  null
-  ==
-
-::  ~/  2  asdfasdf
-::  ..  $
-::  |=  (x y)
-::  ?-  x
-  ::  p  (y p)
-  ::  p  (y p)
-::  ==
-
-::  (build-ppm 10 10)
-
-::(turn (cons 3 (cons 4 null)) <x (div x 2)>)
-
-:: =/  foo
-  :: ~/  1  foo
-  :: |=  x
-  :: ?-  (lef x)
-    :: l
-      :: ?-  l
-        :: ll  [l ll]
-        :: lr  [l lr]
-      :: ==
-    :: r
-      :: ?-  r
-        :: rl  [r rl]
-        :: rr  [r rr]
-      :: ==
-  :: ==
-
-:: (foo (lef (lef 3)))
-
 :: Doing a 20x20 render takes 4m40s.
-(build-ppm 40 40)
+(build-ppm 300 300)
 
 :: TODO: The following should run in a reasonable amount of time
 ::(build-ppm 1000 1000)
@@ -516,7 +424,7 @@
 ::  |   0
 ::  |   (REF 0)
 ::  |   (CALN
-::  |      (VAL J2_cons_65331)
+::  |      (VAL J2_lcon_65331)
 ::  |      (fromListN
 ::  |         2
 ::  |         [ CALN (REF 0) (fromListN 1 [ CAR (REG 0) ])

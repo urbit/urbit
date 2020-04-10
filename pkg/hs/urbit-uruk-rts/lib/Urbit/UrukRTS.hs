@@ -68,7 +68,7 @@
 
 module Urbit.UrukRTS where
 
-import ClassyPrelude             hiding (evaluate, fromList, seq, toList, try)
+import ClassyPrelude           hiding (evaluate, fromList, seq, toList, try)
 import Control.Monad.Primitive
 #if !defined(__GHCJS__)
 import Data.Flat
@@ -83,13 +83,14 @@ import Urbit.UrukRTS.Types
 
 import Control.Arrow         ((>>>))
 import Control.Concurrent    (threadDelay)
-import Control.Exception     (throw, try, evaluate)
+import Control.Exception     (evaluate, throw, try)
 import Data.Bits             (shiftL, (.|.))
 import Data.Function         ((&))
 import Data.Time.Clock.POSIX (POSIXTime, getPOSIXTime)
 import GHC.Exts              (fromList, toList)
 import Numeric.Natural       (Natural)
 import Prelude               ((!!))
+import Safe                  (atMay)
 import Text.Show.Pretty      (pPrint, ppShow)
 
 import qualified Data.ByteString           as BS
@@ -143,20 +144,20 @@ instance Uruk Val where
   -- TODO XX HACK Need to fix arities for value constructors (con/lef/rit)
   uArity = Just . AriOth . fromIntegral . fNeed . valFun
 
-  uGlobal "add" = Just $ mkNode 2 Add
-  uGlobal "lef" = Just $ mkNode 1 Lef -- hack, actually 3
-  uGlobal "rit" = Just $ mkNode 1 Rit -- hack, actually 3
-  uGlobal "pak" = Just $ mkNode 1 Pak
-  uGlobal "zer" = Just $ mkNode 1 Zer
-  uGlobal "eql" = Just $ mkNode 2 Eql
-  uGlobal "inc" = Just $ mkNode 1 Inc
-  uGlobal "dec" = Just $ mkNode 1 Dec
-  uGlobal "fec" = Just $ mkNode 1 Fec
-  uGlobal "ded" = Just $ mkNode 1 Ded
-  uGlobal "car" = Just $ mkNode 1 Car
-  uGlobal "cdr" = Just $ mkNode 1 Cdr
-  uGlobal "sub" = Just $ mkNode 2 Sub
-  uGlobal "mul" = Just $ mkNode 2 Mul
+  uGlobal "add"   = Just $ mkNode 2 Add
+  uGlobal "lef"   = Just $ mkNode 1 Lef -- hack, actually 3
+  uGlobal "rit"   = Just $ mkNode 1 Rit -- hack, actually 3
+  uGlobal "pak"   = Just $ mkNode 1 Pak
+  uGlobal "zer"   = Just $ mkNode 1 Zer
+  uGlobal "eql"   = Just $ mkNode 2 Eql
+  uGlobal "inc"   = Just $ mkNode 1 Inc
+  uGlobal "dec"   = Just $ mkNode 1 Dec
+  uGlobal "fec"   = Just $ mkNode 1 Fec
+  uGlobal "ded"   = Just $ mkNode 1 Ded
+  uGlobal "car"   = Just $ mkNode 1 Car
+  uGlobal "cdr"   = Just $ mkNode 1 Cdr
+  uGlobal "sub"   = Just $ mkNode 2 Sub
+  uGlobal "mul"   = Just $ mkNode 2 Mul
 
   uGlobal "lsh"   = Just $ mkNode 2 Lsh
   uGlobal "lth"   = Just $ mkNode 2 Lth
@@ -169,10 +170,16 @@ instance Uruk Val where
 
   uGlobal "let"   = Just $ mkNode 2 Let
   uGlobal "rap"   = Just $ mkNode 2 Rap
-  uGlobal "turn"  = Just $ mkNode 2 Turn
   uGlobal "zing"  = Just $ mkNode 1 Zing
 
-  uGlobal _     = Nothing
+  uGlobal "lcon"  = Just $ mkNode 2 Lcon  -- hack, actually 4
+  uGlobal "lnil"  = Just $ mkNode 2 Lnil
+  uGlobal "gulf"  = Just $ mkNode 2 Gulf
+  uGlobal "snag"  = Just $ mkNode 2 Snag
+  uGlobal "turn"  = Just $ mkNode 2 Turn
+  uGlobal "weld"  = Just $ mkNode 2 Weld
+
+  uGlobal _       = Nothing
 
 
 -- Useful Types ----------------------------------------------------------------
@@ -311,7 +318,6 @@ reduce !no !xs = do
     Tra       -> dTra x y
     Mod       -> dMod x y
     Rap       -> dRap x y
-    Turn      -> dTurn x y
     Zing      -> dZing x
 
     Inc       -> inc x
@@ -329,6 +335,13 @@ reduce !no !xs = do
     Cas       -> dCas x y z
     Let       -> dLet x y
     Nat n     -> nat n x y
+
+    Lcon      -> lcons x y
+    Lnil      -> pure (VLis [])
+    Gulf      -> gulf x y
+    Snag      -> snag x y
+    Turn      -> dTurn x y
+    Weld      -> weld x y
 
     --  S₁fgx   = (fx)(gx)
     --  S₂fgxy  = (fxy)(gxy)
@@ -591,6 +604,9 @@ dCas :: Val -> Val -> Val -> IO Val
 {-# INLINE dCas #-}
 dCas (VLef x) l r = kVV l x
 dCas (VRit x) l r = kVV r x
+dCas (VLis (x:xs)) l r = kVV l (VCon x (VLis xs))
+dCas (VLis [])     l r = kVV r VUni               -- technically could happen
+dCas (VFun (Fun 2 Lnil mempty)) l r = kVV r VUni -- the main loop termination
 dCas c        _ _ = do
   pPrint c
   throwIO (TypeError "cas-not-sum")
@@ -606,6 +622,38 @@ nat n inc zer = go n
   go = \case
     0 -> pure zer
     n -> kVA inc (go (n-1))
+
+lcons :: Val -> Val -> IO Val
+{-# INLINE lcons #-}
+lcons x (VLis rest)           = pure (VLis (x:rest))
+lcons x (VFun (Fun 2 Lnil _)) = pure (VLis [x])
+lcons _ _                     = throwIO (TypeError "lcons-not-list")
+
+gulf :: Val -> Val -> IO Val
+gulf (VNat x) (VNat y) = pure $ VLis [VNat n | n <- [x..y]]
+gulf _ _               = throwIO (TypeError "gulf-not-nats")
+
+snag :: Val -> Val -> IO Val
+{-# INLINE snag #-}
+snag (VNat n) (VLis x) = case atMay x (fromIntegral n) of
+  Nothing -> throwIO (TypeError "snag-fail")  -- TODO: Should be "Crash"
+  Just y  -> pure y
+snag _ _               = throwIO (TypeError "snag-bag-args")
+
+dTurn :: Val -> Val -> IO Val
+{-# INLINE dTurn #-}
+dTurn (VLis x) fun = VLis <$> mapM (kVV fun) x
+dTurn y _          = throwIO (TypeError ("turn-not-list: " ++ (tshow y)))
+
+weld :: Val -> Val -> IO Val
+{-# INLINE weld #-}
+weld (VLis x) (VLis y) = pure $ VLis (x ++ y)
+-- TODO: Make the nil case handling not so ugly.
+weld (VFun (Fun 2 Lnil _)) (VFun (Fun 2 Lnil _)) = pure $ VLis []
+weld (VLis x) (VFun (Fun 2 Lnil _)) = pure $ VLis x
+weld (VFun (Fun 2 Lnil _)) (VLis y) = pure $ VLis y
+weld a b               = throwIO (TypeError ("weld-not-lists: a=" ++
+                                             (tshow a) ++ ", b=" ++ (tshow b)))
 
 pak :: Val -> IO Val
 {-# INLINE pak #-}
@@ -665,48 +713,30 @@ dRap (VNat 8) y = dCrip y
 dRap (VNat _) y = throwIO (TypeError "only (rap 8) is jetted.")
 dRap _        _ = throwIO (TypeError "rap-not-nat")
 
-dTurn :: Val -> Val -> IO Val
-{-# INLINE dTurn #-}
-dTurn xs f = do
-  rs <- for (parseList xs) (kVV f)
-  evaluate (listToVal rs)
- where
-  parseList :: Val -> [Val]
-  parseList (VRit VUni      ) = []
-  parseList (VLef (VCon h t)) = h : parseList t
-  parseList _                 = throw (TypeError "turn-not-list")
-
-listToVal :: [Val] -> Val
-{-# INLINE listToVal #-}
-listToVal []    = VRit VUni
-listToVal (h:t) = VLef (VCon h (listToVal t))
-
-
 dZing :: Val -> IO Val
 {-# INLINE dZing #-}
-dZing = evaluate . listToVal . mconcat . parseLists
+dZing = evaluate . VLis . mconcat . parseLists
  where
   parseLists :: Val -> [[Val]]
   parseLists = fmap parseList . parseList
 
   parseList :: Val -> [Val]
-  parseList (VRit VUni      ) = []
-  parseList (VLef (VCon h t)) = h : parseList t
-  parseList _                 = throw (TypeError "zing-not-list")
+  parseList (VLis x) = x
+  parseList _        = throw (TypeError "zing-not-list")
 
 dCrip :: Val -> IO Val
 {-# INLINE dCrip #-}
 dCrip = evaluate . VNat . Atom.bytesAtom . BS.pack . parseTape
  where
   parseTape :: Val -> [Word8]
-  parseTape (VRit VUni      ) = []
-  parseTape (VLef (VCon h t)) = parseByte h : parseTape t
+  parseTape (VLis []        ) = []
+  parseTape (VLis (x:xs)    ) = parseByte x : parseTape (VLis xs)
   parseTape _                 = throw (TypeError "crip-not-list")
 
   parseByte :: Val -> Word8
   parseByte (VNat h) | h >= 256 = throw (TypeError "crip-elem-not-byte")
-  parseByte (VNat h)            = fromIntegral h
-  parseByte _                   = throw (TypeError "crip-elem-not-nat")
+  parseByte (VNat h) = fromIntegral h
+  parseByte _        = throw (TypeError "crip-elem-not-nat")
 
 dXor :: Val -> Val -> IO Val
 {-# INLINE dXor #-}
@@ -732,14 +762,14 @@ dTra x y = do
 sub :: Val -> Val -> IO Val
 {-# INLINE sub #-}
 sub (VNat x) (VNat y) | y > x = pure (VLef VUni)
-sub (VNat x) (VNat y)         = pure (VRit (VNat (x - y)))
-sub _        _                = throwIO (TypeError "sub-not-nat")
+sub (VNat x) (VNat y) = pure (VRit (VNat (x - y)))
+sub _        _        = throwIO (TypeError "sub-not-nat")
 
 dFub :: Val -> Val -> IO Val
 {-# INLINE dFub #-}
 dFub (VNat x) (VNat y) | y > x = pure (VNat 0)
-dFub (VNat x) (VNat y)         = pure (VNat (x - y))
-dFub _        _                = throwIO (TypeError "fub-not-nat")
+dFub (VNat x) (VNat y) = pure (VNat (x - y))
+dFub _        _        = throwIO (TypeError "fub-not-nat")
 
 zer :: Val -> IO Val
 {-# INLINE zer #-}
@@ -834,6 +864,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     LEF x           -> VLef <$> go x
     RIT x           -> VRit <$> go x
     CON x y         -> VCon <$> go x <*> go y
+    LNIL            -> pure $ VLis []
     IFF c t e       -> go c >>= \case
       VBol True  -> go t
       VBol False -> go e
@@ -845,7 +876,20 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     CAS i x l r -> go x >>= \case
       VLef lv -> setReg i lv >> go l
       VRit rv -> setReg i rv >> go r
+      -- TODO: Move from con cell construction to curry so |=((h t) ...) works?
+      VLis (x:xs) -> setReg i (VCon x (VLis xs)) >> go l
+      VLis []     -> setReg i VUni >> go r
+      VFun (Fun 2 Lnil mempty) -> setReg i VUni >> go r
       _       -> throwIO (TypeError "cas-not-sum")
+    LCON x y       -> do
+      fx <- go x;
+      go y >>= \case
+
+        VLis rest -> pure $ VLis (fx:rest)
+        r -> throwIO (TypeError ("lcons-not-list: " ++ (tshow r)))
+
+
+
 
 
 -- Profiling -------------------------------------------------------------------
@@ -897,28 +941,28 @@ dumpEvents h = do
 {-# INLINE jetOkToTrace #-}
 jetOkToTrace :: Jet -> Bool
 jetOkToTrace j = case jName j of
-  VNat 123584151057773 -> False -- mul-fp
-  VNat 135882211239269503500120678 -> False -- fraction-fp
-  VNat 1651864435 -> False -- ssub
-  VNat 1684825463 -> False -- weld
-  VNat 1752460403 -> False -- slth
-  VNat 1819635059 -> False -- smul
-  VNat 1836413811 -> False -- ssum
-  VNat 1907323525685090546547 -> False -- ssum-aneg
-  VNat 1935827315 -> False -- sabs
-  VNat 1936617315 -> False -- cons
-  VNat 1952542323 -> False -- snat
-  VNat 1953461358 -> False -- ntot
-  VNat 1986618483 -> False -- sdiv
-  VNat 2003136115 -> False -- snew
-  VNat 2074065091858577454190 -> False -- ntot-loop
-  VNat 2129405593459937866611 -> False -- ssub-apos
+  VNat 123584151057773                                -> False -- mul-fp
+  VNat 135882211239269503500120678                    -> False -- fraction-fp
+  VNat 1651864435                                     -> False -- ssub
+  VNat 1684825463                                     -> False -- weld
+  VNat 1752460403                                     -> False -- slth
+  VNat 1819635059                                     -> False -- smul
+  VNat 1836413811                                     -> False -- ssum
+  VNat 1907323525685090546547                         -> False -- ssum-aneg
+  VNat 1935827315                                     -> False -- sabs
+  VNat 1936617315                                     -> False -- cons
+  VNat 1952542323                                     -> False -- snat
+  VNat 1953461358                                     -> False -- ntot
+  VNat 1986618483                                     -> False -- sdiv
+  VNat 2003136115                                     -> False -- snew
+  VNat 2074065091858577454190                         -> False -- ntot-loop
+  VNat 2129405593459937866611                         -> False -- ssub-apos
   VNat 2551989185581783952010596030736099647343583587 -> False -- calculate-color-for
-  VNat 29099049607852661 -> False -- ur-snag
-  VNat 474181366643 -> False -- ssign
-  VNat 482750590836 -> False -- to-fp
-  VNat 7627107 -> False -- cat
-  _ -> True
+  VNat 29099049607852661                              -> False -- ur-snag
+  VNat 474181366643                                   -> False -- ssign
+  VNat 482750590836                                   -> False -- to-fp
+  VNat 7627107                                        -> False -- cat
+  _                                                   -> True
 
 {-# INLINE traceCall #-}
 traceCall :: Jet -> [Val] -> Bool -> IO ()

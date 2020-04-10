@@ -13,10 +13,10 @@ where
 
 import ClassyPrelude
 
-import Data.Tree (Tree(Node))
-import Urbit.Pos (Pos)
-import Numeric.Natural (Natural)
+import Data.Tree        (Tree(Node))
+import Numeric.Natural  (Natural)
 import Urbit.Moon.Arity ()
+import Urbit.Pos        (Pos)
 
 import qualified Data.Char  as C
 import qualified Urbit.Atom as Atom
@@ -63,6 +63,12 @@ data SingJet
   | CAR
   | CDR
   | TRACE
+  | LCON
+  | LNIL
+  | GULF
+  | TURN
+  | SNAG
+  | WELD
  deriving (Eq, Ord, Read, Show, Enum, Bounded, Generic)
  deriving anyclass NFData
 

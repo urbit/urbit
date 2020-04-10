@@ -45,6 +45,7 @@ dependencies:
   - pretty-show
   - primitive
   - raw-strings-qq
+  - safe
   - serialise
   - store
   - template-haskell

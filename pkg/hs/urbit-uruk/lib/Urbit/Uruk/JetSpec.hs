@@ -1,9 +1,9 @@
 module Urbit.Uruk.JetSpec (jetSpec) where
 
 import ClassyPrelude
-import Urbit.Uruk.Dash.Exp (SingJet(..))
-import Data.FileEmbed    (embedStringFile)
+import Data.FileEmbed      (embedStringFile)
 import Text.RawString.QQ
+import Urbit.Uruk.Dash.Exp (SingJet(..))
 
 
 --------------------------------------------------------------------------------
@@ -58,6 +58,9 @@ jetSpec = [r|
 ++  (rit x l r)  (r x)
 ++  (cas b l r)  (b l r)
 
+++  (lcon h t nod emp)  (nod (con h t))
+++  (lnil nod emp)      (emp uni)
+
 ++  (yes t f)    t
 ++  (nah t f)    f
 ++  (iff c t e)  (c t e uni)
@@ -104,4 +107,39 @@ jetSpec = [r|
 ++  (mod a b)  (fub a (mul b (div a b)))
 
 ++  (trace x y)  (y uni)
+
+++  snag
+  %-  (J J %snag)
+  %-  fix
+  |=  ($ idx l)
+  %+  (cas l)
+    |=  n
+    %+  (iff (eql 0 idx))
+      <u (car n)>
+    <u ($ (fec idx) (cdr n))>
+  <u (ded %snag-fail)>
+
+++  weld
+  %-  (J J %weld)
+  %-  fix
+  |=  ($ a b)
+  %+  (cas a)
+    <p (lcon (car p) ($ (cdr p) b))>
+  <u b>
+
+++  turn
+  %-  (J J %turn)
+  %-  fix
+  |=  ($ b fun)
+  %+  (cas b)
+    <p (lcon (fun (car p)) ($ (cdr p) fun))>
+  <u lnil>
+
+++  gulf
+  %-  (J J %gulf)
+  %-  fix
+  |=  ($ a b)
+  %+  (gte b a)
+    <p (lcon a ($ (inc a) b))>
+  <u lnil>
 |]

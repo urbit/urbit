@@ -1,5 +1,5 @@
 {-# LANGUAGE CPP #-}
-{-# OPTIONS_GHC -funbox-strict-fields -Werror #-}
+{-# OPTIONS_GHC -funbox-strict-fields #-}
 
 {-
     TODO Fill out reduce.
@@ -11,7 +11,7 @@
 
 module Urbit.UrukRTS.Types where
 
-import ClassyPrelude             hiding (evaluate, fromList, try, seq)
+import ClassyPrelude             hiding (evaluate, fromList, seq, try)
 import Control.Monad.Primitive
 import Data.Primitive.Array
 import Data.Primitive.SmallArray
@@ -22,16 +22,16 @@ import System.IO.Unsafe
 import Data.Flat
 #endif
 
-import Control.Arrow            ((>>>))
-import Control.Exception        (throw, try)
-import Data.Bits                (shiftL, (.|.))
-import Data.Char                (isPrint, isSpace)
-import Data.Function            ((&))
-import Numeric.Natural          (Natural)
-import Prelude                  ((!!))
+import Control.Arrow     ((>>>))
+import Control.Exception (throw, try)
+import Data.Bits         (shiftL, (.|.))
+import Data.Char         (isPrint, isSpace)
+import Data.Function     ((&))
+import Numeric.Natural   (Natural)
+import Prelude           ((!!))
 
-import qualified GHC.Exts                 as GHC.Exts
-import qualified Urbit.Atom               as Atom
+import qualified GHC.Exts   as GHC.Exts
+import qualified Urbit.Atom as Atom
 
 
 -- Useful Types ----------------------------------------------------------------
@@ -152,8 +152,14 @@ data Node
   | Tra
   | Mod
   | Rap
-  | Turn
   | Zing
+
+  | Lcon
+  | Lnil
+  | Gulf
+  | Snag
+  | Turn
+  | Weld
 
  deriving (Eq, Ord, Generic, Hashable)
 
@@ -205,8 +211,14 @@ instance Show Node where
     Tra       -> "TRA"
     Mod       -> "MOD"
     Rap       -> "RAP"
-    Turn      -> "TURN"
     Zing      -> "ZING"
+
+    Lcon      -> "LCON"
+    Lnil      -> "LNIL"
+    Gulf      -> "GULF"
+    Snag      -> "SNAG"
+    Turn      -> "TURN"
+    Weld      -> "WELD"
 
 data Fun = Fun
   { fNeed :: !Int
@@ -228,6 +240,7 @@ data Val
   | VRit !Val
   | VNat !Nat
   | VBol !Bool
+  | VLis ![Val]
   | VFun !Fun
  deriving (Eq, Ord, Generic, Hashable)
 
@@ -239,17 +252,19 @@ instance NFData Val where
     VRit _   -> ()
     VNat _   -> ()
     VBol _   -> ()
+    VLis _   -> ()
     VFun _   -> ()
 
 instance Show Val where
   show = \case
     VUni       -> "U"
-    VCon x y   -> "[" <> show x <> ", " <> show y <> "]"
+    VCon x y   -> "(" <> show x <> " " <> show y <> ")"
     VLef x     -> "L" <> show x
     VRit x     -> "R" <> show x
     VNat n     -> showNat n
     VBol True  -> "Y"
     VBol False -> "N"
+    VLis vals  -> "[" <> (unpack $ intercalate ", " $ map show vals) <> "]"
     VFun f     -> show f
 
 showNat :: Nat -> String
@@ -307,6 +322,9 @@ data Exp
   | LEF !Exp                      --  Left Constructor
   | RIT !Exp                      --  Right Constructor
 
+  | LCON !Exp !Exp                --  List cons
+  | LNIL                          --  List termination
+
   | JET1 !Jet !Exp                --  Fully saturated jet call.
   | JET2 !Jet !Exp !Exp           --  Fully saturated jet call.
   | JET3 !Jet !Exp !Exp !Exp      --  Fully saturated jet call.
@@ -342,7 +360,9 @@ valFun = \case
   VRit r   -> Fun 2 Rit (fromList [r])
   VNat n   -> Fun 2 (Nat n) mempty
   VBol b   -> Fun 2 (Bol b) mempty
-  VFun f   -> f
+  VLis (x:xs) -> Fun 2 Lcon (fromList [x, VLis xs])
+  VLis []     -> Fun 2 Lnil mempty
+  VFun f      -> f
 
 nodeArity :: Node -> Int
 nodeArity = \case
@@ -388,5 +408,10 @@ nodeArity = \case
   Tra   -> 2
   Mod   -> 2
   Rap   -> 2
+
+  Lcon  -> 2 -- Hack to convert to value after first arg, actually 4.
+  Lnil  -> 2
+  Gulf  -> 2
+  Snag  -> 2
   Turn  -> 2
-  Zing  -> 1
+  Weld  -> 2
