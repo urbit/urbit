@@ -28,8 +28,6 @@ export class ChatUpdateReducer {
     if (data) {
       state.inbox[data.path].envelopes =
         state.inbox[data.path].envelopes.concat(data.envelopes);
-      state.inbox[data.path].config.length =
-        state.inbox[data.path].config.length + data.envelopes.length;
     }
   }
 

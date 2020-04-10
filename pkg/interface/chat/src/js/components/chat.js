@@ -75,8 +75,7 @@ export class ChatScreen extends Component {
 
       props.history.push("/~chat");
     } else if (
-      props.envelopes.length - prevProps.envelopes.length >=
-      200
+      props.envelopes.length >= prevProps.envelopes.length + 10
     ) {
       this.hasAskedForMessages = false;
     }
@@ -107,11 +106,12 @@ export class ChatScreen extends Component {
       return;
     }
 
-    let start = props.envelopes[props.envelopes.length - 1].number;
+    let start =
+      props.length - props.envelopes[props.envelopes.length - 1].number;
     if (start > 0) {
-      let end = start + 200 < props.length ? start + 200 : props.length;
+      let end = start + 300 < props.length ? start + 300 : props.length;
       this.hasAskedForMessages = true;
-      props.subscription.fetchMessages(start, end, props.station);
+      props.subscription.fetchMessages(start + 1, end, props.station);
     }
   }
  
