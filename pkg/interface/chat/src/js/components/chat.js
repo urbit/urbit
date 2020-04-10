@@ -16,48 +16,48 @@ import { deSig } from '/lib/util';
 export class ChatScreen extends Component {
   constructor(props) {
     super(props);
- 
+
     this.state = {
       numPages: 1,
       scrollLocked: false
     };
- 
+
     this.hasAskedForMessages = false;
     this.onScroll = this.onScroll.bind(this);
- 
+
     this.updateReadInterval = setInterval(
       this.updateReadNumber.bind(this),
       1000
     );
   }
- 
+
   componentDidMount() {
     this.updateReadNumber();
     this.askForMessages();
   }
- 
+
   componentWillUnmount() {
     if (this.updateReadInterval) {
       clearInterval(this.updateReadInterval);
       this.updateReadInterval = null;
     }
   }
- 
+
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
- 
+
     if (
       prevProps.match.params.station !== props.match.params.station ||
       prevProps.match.params.ship !== props.match.params.ship
     ) {
       this.hasAskedForMessages = false;
-      
+
       if (props.envelopes.length < 100) {
         this.askForMessages();
       }
- 
+
       clearInterval(this.updateReadInterval);
- 
+
       this.setState(
         { scrollLocked: false },
         () => {
@@ -81,14 +81,14 @@ export class ChatScreen extends Component {
       this.hasAskedForMessages = false;
     }
   }
- 
+
   updateReadNumber() {
     const { props, state } = this;
     if (props.read < props.length) {
       props.api.chat.read(props.station);
     }
   }
- 
+
   askForMessages() {
     const { props, state } = this;
 
@@ -120,16 +120,16 @@ export class ChatScreen extends Component {
       props.subscription.fetchMessages(start, end - 1, props.station);
     }
   }
- 
+
   scrollToBottom() {
     if (!this.state.scrollLocked && this.scrollElement) {
       this.scrollElement.scrollIntoView({ behavior: "smooth" });
     }
   }
- 
+
   onScroll(e) {
     if (
-      navigator.userAgent.includes("Safari") &&
+      navigator.userAgent.includes("Safari") ||
       navigator.userAgent.includes("Chrome")
     ) {
       // Google Chrome
@@ -177,32 +177,32 @@ export class ChatScreen extends Component {
       console.log("Your browser is not supported.");
     }
   }
- 
+
   render() {
     const { props, state } = this;
- 
+
     let messages = props.envelopes.slice(0);
- 
+
     let lastMsgNum = messages.length > 0 ? messages.length : 0;
- 
+
     if (messages.length > 100 * state.numPages) {
       messages = messages.slice(
         messages.length - 100 * state.numPages,
         messages.length
       );
     }
- 
+
     let pendingMessages = props.pendingMessages.has(props.station)
       ? props.pendingMessages.get(props.station)
       : [];
- 
+
     pendingMessages.map(function(value) {
       return (value.pending = true);
     });
- 
+
     let reversedMessages = messages.concat(pendingMessages);
     reversedMessages = reversedMessages.reverse();
- 
+
     reversedMessages = reversedMessages.map((msg, i) => {
       // Render sigil if previous message is not by the same sender
       let aut = ["author"];
@@ -213,7 +213,7 @@ export class ChatScreen extends Component {
       let paddingBot =
         _.get(reversedMessages[i - 1], aut) !==
         _.get(msg, aut, msg.author);
- 
+
       return (
         <Message
           key={msg.uid}
@@ -226,23 +226,23 @@ export class ChatScreen extends Component {
         />
       );
     });
- 
+
     let group = Array.from(props.permission.who.values());
- 
+
     const isinPopout = props.popout ? "popout/" : "";
- 
+
     let ownerContact = (window.ship in props.contacts)
       ? props.contacts[window.ship] : false;
- 
+
     let title = props.station.substr(1);
- 
+
     if (props.association && "metadata" in props.association) {
       title =
         props.association.metadata.title !== ""
           ? props.association.metadata.title
           : props.station.substr(1);
     }
- 
+
     return (
       <div
         key={props.station}
@@ -253,7 +253,7 @@ export class ChatScreen extends Component {
           <Link to="/~chat/">{"⟵ All Chats"}</Link>
         </div>
         <div
-          className={"pl4 pt2 bb b--gray4 b--gray1-d bg-gray0-d flex relative" +
+          className={"pl4 pt2 bb b--gray4 b--gray1-d bg-gray0-d flex relative " +
           "overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"}
           style={{ height: 48 }}>
           <SidebarSwitcher
