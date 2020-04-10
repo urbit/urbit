@@ -10,6 +10,8 @@ export class ProfileOverlay extends Component {
     const { name, ship, color } = this.props;
     return (
       <div
+        onMouseLeave={this.props.onMouseLeave}
+        onMouseEnter={this.props.onMouseEnter}
         style={{ top: "-250px" }}
         className="flex-col shadow-6 br2 bg-white inter absolute z-1 f9 lh-solid"
       >

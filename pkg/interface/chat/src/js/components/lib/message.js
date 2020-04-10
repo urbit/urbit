@@ -15,8 +15,11 @@ export class Message extends Component {
     this.state = {
       unfold: false,
       copied: false,
+      profileClicked: false,
+      profileCaptured: false
     };
     this.unFoldEmbed = this.unFoldEmbed.bind(this);
+    this.profileToggle = this.profileToggle.bind(this);
   }
 
   unFoldEmbed(id) {
@@ -25,6 +28,23 @@ export class Message extends Component {
     this.setState({unfold: unfoldState});
     let iframe = this.refs.iframe;
     iframe.setAttribute('src', iframe.getAttribute('data-src'));
+  }
+
+  profileToggle() {
+    this.setState(({ profileClicked: true }));
+    setTimeout(() => {
+      this.setState({ profileClicked: false });
+    }, 2000);
+  }
+
+  profileCaptured(profileCaptured) {
+    if(!profileCaptured) {
+      setTimeout(() => {
+        this.setState({ profileCaptured });
+      }, 500);
+      return;
+    }
+    this.setState({ profileCaptured })
   }
 
   renderContent() {
@@ -169,8 +189,16 @@ export class Message extends Component {
           style={{
             minHeight: "min-content"
           }}>
-          <ProfileOverlay ship={props.msg.author} name={contact.nickname} color={color} />
-          <div className="fl mr3 v-top bg-white bg-gray0-d">
+          { (state.profileClicked || state.profileCaptured) && (
+            <ProfileOverlay
+              ship={props.msg.author}
+              name={contact.nickname}
+              color={color}
+              onMouseEnter={() => this.profileCaptured(true)}
+              onMouseLeave={() => this.profileCaptured(false)}
+            />
+          )}
+          <div onClick={this.profileToggle} className="fl pr3 v-top bg-white bg-gray0-d pointer">
             <Sigil
               ship={props.msg.author}
               size={24}
