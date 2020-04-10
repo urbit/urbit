@@ -12,6 +12,10 @@ export class Sidebar extends Component {
     this.props.history.push('/~chat/new');
   }
 
+  onClickDm() {
+    this.props.history.push('/~chat/new/dm');
+  }
+
   onClickJoin() {
     this.props.history.push('/~chat/join')
   }
@@ -107,6 +111,11 @@ export class Sidebar extends Component {
             className="dib f9 pointer green2 gray4-d mr4"
             onClick={this.onClickNew.bind(this)}>
             New Chat
+          </a>
+          <a
+            className="dib f9 pointer green2 gray4-d mr4"
+            onClick={this.onClickDm.bind(this)}>
+            DM
           </a>
           <a
             className="dib f9 pointer gray4-d"

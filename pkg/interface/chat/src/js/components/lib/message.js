@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Sigil } from '/components/lib/icons/sigil';
 import { ProfileOverlay } from '/components/lib/profile-overlay';
+import { OverlaySigil } from '/components/lib/overlay-sigil';
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom'
 import { uxToHex, cite, writeText } from '/lib/util';
@@ -15,27 +16,8 @@ export class Message extends Component {
     this.state = {
       unfold: false,
       copied: false,
-      profileClicked: false,
-      profileCaptured: false,
-      containerOffset: 0,
-      containerHeight: 0,
     };
     this.unFoldEmbed = this.unFoldEmbed.bind(this);
-    this.profileToggle = this.profileToggle.bind(this);
-    this.containerRef = React.createRef();
-    this.profileCaptured = this.profileCaptured.bind(this);
-    this.updateContainerInterval = setInterval(this.updateContainerOffset.bind(this), 1000);
-  }
-
-  componentDidMount() {
-    this.updateContainerOffset();
-  }
-
-  componentWillUnmount() {
-    if(this.updateContainerInterval) {
-      clearInterval(this.updateContainerInterval);
-      this.updateContainerInterval = null;
-    }
   }
 
   unFoldEmbed(id) {
@@ -46,34 +28,6 @@ export class Message extends Component {
     iframe.setAttribute('src', iframe.getAttribute('data-src'));
   }
 
-  profileToggle() {
-    this.setState(({ profileClicked: true }));
-    setTimeout(() => {
-      this.setState({ profileClicked: false });
-    }, 2000);
-  }
-
-  profileCaptured(profileCaptured) {
-    if(!profileCaptured) {
-      setTimeout(() => {
-        this.setState({ profileCaptured });
-      }, 500);
-      return;
-    }
-    this.setState({ profileCaptured })
-  }
-
-  updateContainerOffset() {
-    if(this.containerRef && this.containerRef.current) {
-      const { scrollHeight, clientHeight, scrollTop } = this.containerRef.current.offsetParent;
-      const offset = scrollHeight - clientHeight;
-      const { offsetTop, offsetHeight } = this.containerRef.current;
-      const normalized = offset + (offsetTop );
-
-
-      this.setState({ containerOffset: normalized, containerHeight: clientHeight });
-    }
-  }
 
   renderContent() {
     const { props } = this;
@@ -218,26 +172,12 @@ export class Message extends Component {
           style={{
             minHeight: "min-content"
           }}>
-
-          <div onClick={this.profileToggle} className="fl pr3 v-top bg-white bg-gray0-d pointer relative">
-            { (state.profileClicked || state.profileCaptured) && (
-              <ProfileOverlay
-                ship={props.msg.author}
-                name={contact.nickname}
-                color={color}
-                offset={state.containerOffset}
-                height={state.containerHeight}
-                onMouseEnter={() => this.profileCaptured(true)}
-                onMouseLeave={() => this.profileCaptured(false)}
-              />
-            )}
-            <Sigil
-              ship={props.msg.author}
-              size={24}
-              color={color}
-              classes={sigilClass}
-              />
-          </div>
+         <OverlaySigil
+           ship={props.msg.author}
+           name={contact.nickname}
+           color={color}
+           sigilClass={sigilClass}
+           className="fl pr3 v-top bg-white bg-gray0-d" />
           <div
             className="fr clamp-message white-d"
             style={{ flexGrow: 1, marginTop: -8 }}>

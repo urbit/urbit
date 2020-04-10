@@ -280,7 +280,7 @@ export class InviteSearch extends Component {
 
   render() {
     const { props, state } = this;
-    let searchDisabled = false;
+    let searchDisabled = props.disabled;
     if (props.invites.groups) {
       if (props.invites.groups.length > 0) {
         searchDisabled = true;
