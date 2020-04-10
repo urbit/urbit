@@ -1,18 +1,33 @@
 import React, { Component } from "react";
 import { Sigil } from "/components/lib/icons/sigil";
 
+const HEIGHT = 250;
+
 export class ProfileOverlay extends Component {
   constructor() {
     super();
   }
 
   render() {
-    const { name, ship, color } = this.props;
+    const { name, ship, color, offset, height } = this.props;
+
+    let top, bottom;
+    if (offset < HEIGHT / 2) {
+      top = `0px`;
+    }
+    if (height - offset < HEIGHT / 1.5) {
+      bottom = `0px`;
+    }
+    if (!(top || bottom)) {
+      bottom = `-${Math.round(HEIGHT / 2) - 20}px`;
+    }
+    const containerStyle = { top, bottom, left: "100%" };
+
     return (
       <div
         onMouseLeave={this.props.onMouseLeave}
         onMouseEnter={this.props.onMouseEnter}
-        style={{ top: "-250px" }}
+        style={containerStyle}
         className="flex-col shadow-6 br2 bg-white inter absolute z-1 f9 lh-solid"
       >
         <div style={{ height: "160px" }}>

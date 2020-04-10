@@ -16,10 +16,26 @@ export class Message extends Component {
       unfold: false,
       copied: false,
       profileClicked: false,
-      profileCaptured: false
+      profileCaptured: false,
+      containerOffset: 0,
+      containerHeight: 0,
     };
     this.unFoldEmbed = this.unFoldEmbed.bind(this);
     this.profileToggle = this.profileToggle.bind(this);
+    this.containerRef = React.createRef();
+    this.profileCaptured = this.profileCaptured.bind(this);
+    this.updateContainerInterval = setInterval(this.updateContainerOffset.bind(this), 1000);
+  }
+
+  componentDidMount() {
+    this.updateContainerOffset();
+  }
+
+  componentWillUnmount() {
+    if(this.updateContainerInterval) {
+      clearInterval(this.updateContainerInterval);
+      this.updateContainerInterval = null;
+    }
   }
 
   unFoldEmbed(id) {
@@ -45,6 +61,18 @@ export class Message extends Component {
       return;
     }
     this.setState({ profileCaptured })
+  }
+
+  updateContainerOffset() {
+    if(this.containerRef && this.containerRef.current) {
+      const { scrollHeight, clientHeight, scrollTop } = this.containerRef.current.offsetParent;
+      const offset = scrollHeight - clientHeight;
+      const { offsetTop, offsetHeight } = this.containerRef.current;
+      const normalized = offset + (offsetTop );
+
+
+      this.setState({ containerOffset: normalized, containerHeight: clientHeight });
+    }
   }
 
   renderContent() {
@@ -183,22 +211,26 @@ export class Message extends Component {
 
       return (
         <div
+          ref={this.containerRef}
           className={
-            "relative w-100 f8 pl3 pt4 pr3 cf flex lh-copy " + " " + pending
+            "w-100 f8 pl3 pt4 pr3 cf flex lh-copy " + " " + pending
           }
           style={{
             minHeight: "min-content"
           }}>
-          { (state.profileClicked || state.profileCaptured) && (
-            <ProfileOverlay
-              ship={props.msg.author}
-              name={contact.nickname}
-              color={color}
-              onMouseEnter={() => this.profileCaptured(true)}
-              onMouseLeave={() => this.profileCaptured(false)}
-            />
-          )}
-          <div onClick={this.profileToggle} className="fl pr3 v-top bg-white bg-gray0-d pointer">
+
+          <div onClick={this.profileToggle} className="fl pr3 v-top bg-white bg-gray0-d pointer relative">
+            { (state.profileClicked || state.profileCaptured) && (
+              <ProfileOverlay
+                ship={props.msg.author}
+                name={contact.nickname}
+                color={color}
+                offset={state.containerOffset}
+                height={state.containerHeight}
+                onMouseEnter={() => this.profileCaptured(true)}
+                onMouseLeave={() => this.profileCaptured(false)}
+              />
+            )}
             <Sigil
               ship={props.msg.author}
               size={24}

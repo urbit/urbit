@@ -279,7 +279,7 @@ export class ChatScreen extends Component {
           />
         </div>
         <div
-          className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
+          className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse relative"
           style={{ height: "100%", resize: "vertical" }}
           onScroll={this.onScroll}>
           <div
