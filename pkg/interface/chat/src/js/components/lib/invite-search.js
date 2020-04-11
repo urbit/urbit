@@ -127,8 +127,8 @@ export class InviteSearch extends Component {
           isValid = false;
         }
 
-        if (shipMatches.length === 0 && isValid) {
-          shipMatches.push(searchTerm);
+        if (isValid && shipMatches.findIndex(s => s === searchTerm) < 0) {
+          shipMatches.unshift(searchTerm);
         }
       }
 
