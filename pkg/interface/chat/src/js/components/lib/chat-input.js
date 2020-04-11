@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import Mousetrap from 'mousetrap';
-import cn from 'classnames';
 
 import { Sigil } from '/components/lib/icons/sigil';
+import { ShipSearch } from '/components/lib/ship-search';
 
 import { uuid, uxToHex, hexToRgba } from '/lib/util';
 
@@ -25,77 +25,6 @@ function getAdvance(a, b) {
   return res;
 }
 
-function ChatInputSuggestion({ ship, contacts, selected, onSelect }) {
-  let contact = contacts[ship];
-  let color = "#000000";
-  let sigilClass = "v-mid mix-blend-diff"
-  let nickname;
-  let nameStyle = {};
-  const isSelected = ship === selected;
-  if (contact) {
-    const hex = uxToHex(contact.color);
-    color = `#${hex}`;
-    nameStyle.color = hexToRgba(hex, .7);
-    nameStyle.textShadow = '0px 0px 0px #000';
-    nameStyle.filter = 'contrast(1.3) saturate(1.5)';
-    sigilClass = "v-mid";
-    nickname = contact.nickname;
-  }
-
-  return (
-    <div
-      onClick={() => onSelect(ship)}
-      className={cn(
-        'f8 pv1 ph3 pointer hover-bg-gray1-d hover-bg-gray4 relative flex items-center',
-        {
-          'white-d bg-gray0-d bg-white': !isSelected,
-          'black-d bg-gray1-d bg-gray4': isSelected,
-        }
-      )}
-      key={ship}
-    >
-      <Sigil
-        ship={'~' + ship}
-        size={24}
-        color={color}
-        classes={sigilClass}
-      />
-      { nickname && (
-        <p style={nameStyle} className="dib ml4 b" >{nickname}</p>)
-      }
-      <div className="mono gray2 ml4">
-        {'~' + ship}
-      </div>
-      <p className="nowrap ml4">
-        {status}
-      </p>
-    </div>
-  );
-
-}
-
-function ChatInputSuggestions({ suggestions, onSelect, selected, contacts }) {
-  return (
-    <div
-      style={{
-        bottom: '90%',
-        left: '48px'
-      }}
-      className={
-        'absolute black white-d bg-white bg-gray0-d ' +
-        'w7 pv3 z-1 mt1 ba b--gray1-d b--gray4'
-      }>
-      {suggestions.map(ship =>
-        (<ChatInputSuggestion
-           onSelect={onSelect}
-           key={ship}
-           selected={selected}
-           contacts={contacts}
-           ship={ship} />)
-      )}
-    </div>
-  );
-}
 
 export class ChatInput extends Component {
   constructor(props) {
@@ -104,8 +33,7 @@ export class ChatInput extends Component {
     this.state = {
       message: '',
       textareaHeight: DEFAULT_INPUT_HEIGHT,
-      patpSuggestions: [],
-      selectedSuggestion: null
+      patpSearch: ''
     };
 
     this.textareaRef = React.createRef();
@@ -113,13 +41,10 @@ export class ChatInput extends Component {
     this.messageSubmit = this.messageSubmit.bind(this);
     this.messageChange = this.messageChange.bind(this);
 
-    this.onEnter = this.onEnter.bind(this);
 
     this.patpAutocomplete = this.patpAutocomplete.bind(this);
-    this.nextAutocompleteSuggestion = this.nextAutocompleteSuggestion.bind(this);
     this.completePatp = this.completePatp.bind(this);
 
-    this.clearSuggestions = this.clearSuggestions.bind(this);
 
     // Call once per frame @ 60hz
     this.textareaInput = _.debounce(this.textareaInput.bind(this), 16);
@@ -170,130 +95,68 @@ export class ChatInput extends Component {
     this.bindShortcuts();
   }
 
-  nextAutocompleteSuggestion(backward = false) {
-    const { patpSuggestions } = this.state;
-    let idx = patpSuggestions.findIndex(s => s === this.state.selectedSuggestion);
-
-    idx = backward ? idx - 1 : idx + 1;
-    idx = idx % patpSuggestions.length;
-    if(idx < 0) {
-      idx = patpSuggestions.length - 1;
-    }
-
-    this.setState({ selectedSuggestion: patpSuggestions[idx] });
-  }
-
 
   patpAutocomplete(message, fresh = false) {
     const match = /~([a-zA-Z\-]*)$/.exec(message);
 
     if (!match ) {
-      this.setState({ patpSuggestions: [] })
+      this.bindShortcuts();
+      this.setState({ patpSearch: '' })
       return;
     }
+    this.unbindShortcuts();
+    this.setState({ patpSearch: match[1].toLowerCase() });
 
-
-    const needle = match[1].toLowerCase();
-
-    const matchString = hay => {
-      hay = hay.toLowerCase();
-
-      return hay.startsWith(needle)
-        || _.some(_.words(hay), s => s.startsWith(needle));
-    };
-
-
-    const contacts = _.chain(this.props.contacts)
-      .defaultTo({})
-      .map((details, ship) => ({...details, ship }))
-      .filter(({ nickname, ship }) => matchString(nickname) || matchString(ship))
-      .map('ship')
-      .value()
-
-    const suggestions = _.chain(this.props.envelopes)
-      .defaultTo([])
-      .map("author")
-      .uniq()
-      .reverse()
-      .filter(matchString)
-      .union(contacts)
-      .filter(s => s.length < 28) // exclude comets
-      .take(5)
-      .value();
-
-    let newState = {
-      patpSuggestions: suggestions,
-      selectedSuggestion: suggestions[0]
-    };
-
-    this.setState(newState);
   }
 
-  clearSuggestions() {
+  clearSearch() {
     this.setState({
-      patpSuggestions: []
+      patpSearch: ''
     })
   }
 
   completePatp(suggestion) {
+    this.bindShortcuts();
     this.setState({
       message: this.state.message.replace(
         /[a-zA-Z\-]*$/,
         suggestion
       ),
-      patpSuggestions: []
+      patpSearch: ''
     });
   }
 
-  onEnter(e) {
-    if (this.state.patpSuggestions.length !== 0) {
-      this.completePatp(this.state.selectedSuggestion);
-    } else {
-      this.messageSubmit(e);
-    }
-  }
 
   bindShortcuts() {
-    let mousetrap = Mousetrap(this.textareaRef.current);
-    mousetrap.bind('enter', e => {
+    if(!this.mousetrap) {
+      this.mousetrap = new Mousetrap(this.textareaRef.current);
+    }
+    this.mousetrap.bind('enter', e => {
       e.preventDefault();
-      e.stopPropagation();
 
-      this.onEnter(e);
+      if(this.state.patpSearch.length === 0) {
+        this.messageSubmit();
+      }
     });
 
 
-    mousetrap.bind('tab', e => {
+    this.mousetrap.bind('tab', e => {
       e.preventDefault();
       e.stopPropagation();
-      if(this.state.patpSuggestions.length === 0) {
+      if(this.state.patpSearch.length === 0) {
         this.patpAutocomplete(this.state.message, true);
-      } else {
-        this.nextAutocompleteSuggestion(false);
       }
     });
-    mousetrap.bind(['up', 'shift+tab'], e => {
-      if(this.state.patpSuggestions.length !== 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.nextAutocompleteSuggestion(true)
-      }
-
-    });
-    mousetrap.bind('down', e => {
-      if(this.state.patpSuggestions.length !== 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.nextAutocompleteSuggestion(false)
-      }
-    });
-    mousetrap.bind('esc', e => {
-      if(this.state.patpSuggestions.length !== 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.clearSuggestions();
-      }})
   }
+
+  unbindShortcuts() {
+    if(!this.mousetrap) {
+      return;
+    }
+    this.mousetrap.unbind('enter')
+    this.mousetrap.unbind('tab')
+  }
+
 
   messageChange(event) {
     const message = event.target.value;
@@ -301,8 +164,8 @@ export class ChatInput extends Component {
       message
     });
 
-    const { patpSuggestions } = this.state;
-    if(patpSuggestions.length !== 0) {
+    const { patpSearch } = this.state;
+    if(patpSearch.length !== 0) {
       this.patpAutocomplete(message, false);
     }
 
@@ -431,17 +294,24 @@ export class ChatInput extends Component {
     let sigilClass = !!props.ownerContact
       ? "" : "mix-blend-diff";
 
+    const candidates = _.chain(this.props.envelopes)
+      .defaultTo([])
+      .map("author")
+      .uniq()
+      .reverse()
+      .value();
+
     return (
       <div className="pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white bg-gray0-d relative"
       style={{ flexGrow: 1 }}>
-        {state.patpSuggestions.length !== 0 && (
-          <ChatInputSuggestions
-            onSelect={this.completePatp}
-            suggestions={state.patpSuggestions}
-            selected={state.selectedSuggestion}
-            contacts={props.contacts}
-          />
-        )}
+        <ShipSearch
+          popover
+          onSelect={this.completePatp}
+          contacts={props.contacts}
+          candidates={candidates}
+          searchTerm={this.state.patpSearch}
+          inputRef={this.textareaRef.current}
+        />
 
         <div
           className="fl"

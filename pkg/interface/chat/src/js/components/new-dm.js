@@ -101,10 +101,6 @@ export class NewDmScreen extends Component {
   render() {
     const { props, state } = this;
 
-    let createClasses = state.ship
-      ? "pointer db f9 green2 bg-gray0-d ba pv3 ph4 b--green2"
-      : "pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 b--gray3";
-
     return (
       <div
         className={
@@ -117,26 +113,6 @@ export class NewDmScreen extends Component {
         </div>
         <h2 className="mb3 f8">New DM</h2>
         <div className="w-100">
-          <p className="f8 mt4 lh-copy db">With who?</p>
-          <InviteSearch
-            groups={{}}
-            contacts={props.contacts}
-            associations={props.associations}
-            groupResults={false}
-            shipResults={true}
-            disabled={!!state.ship}
-            invites={{
-              groups: [],
-              ships: state.ship ? [state.ship] : []
-            }}
-            setInvite={this.setInvite}
-          />
-          <button
-            onClick={this.onClickCreate}
-            className={createClasses + " mt4"}
-          >
-            Start Chat
-          </button>
           <Spinner
             awaiting={this.state.awaiting}
             classes="mt4"
