@@ -1,22 +1,30 @@
 ::  contact-hook:
 ::
-/-  *group-store, *group-hook, *contact-hook, *invite-store
-/+  *contact-json, default-agent
+/-  *group-store,
+    *group-hook,
+    *contact-hook,
+    *invite-store,
+    *metadata-hook,
+    *metadata-store
+/+  *contact-json, default-agent, dbug
 |%
 +$  card  card:agent:gall
 ::
 +$  versioned-state
   $%  state-zero
+      state-one
   ==
 ::
-+$  state-zero
-  $:  %0
-      synced=(map path ship)
++$  state-zero  [%0 state-base]
++$  state-one   [%1 state-base]
++$  state-base
+  $:  synced=(map path ship)
       invite-created=_|
   ==
 --
-=|  state-zero
+=|  state-one
 =*  state  -
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -34,8 +42,18 @@
     ==
   ++  on-save   !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
+    |=  old-vase=vase
+    ^-  (quip card _this)
+    =/  old  !<(versioned-state old-vase)
+    ?:  ?=(%1 -.old)
+      [~ this(state old)]
+    =/  upgraded-state
+      %*  .  *state-one
+          synced  synced
+          invite-created  invite-created
+      ==
+    :_  this(state upgraded-state)
+    [%pass /group %agent [our.bol %group-store] %watch /updates]~
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -242,7 +260,10 @@
         %delete
       =.  synced  (~(del by synced) path.fact)
       :_  state
-      [(group-poke [%unbundle path.fact])]~
+      :~  (group-poke [%unbundle path.fact])
+          (metadata-hook-poke [%remove path.fact]) 
+          (metadata-poke [%remove path.fact [%contacts path.fact]])
+      ==
     ==
   ::
   ++  foreign
@@ -252,13 +273,38 @@
         %contacts
       =/  owner  (~(got by synced) path.fact)
       ?>  =(owner src.bol)
-      %+  weld
-      :~  (contact-poke [%delete path.fact])
-          (contact-poke [%create path.fact])
+      =/  have-contacts=(unit contacts)
+        (contacts-scry path.fact)
+      ?~  have-contacts
+        ::  if we don't have any contacts yet,
+        ::  create the entry, and %add every contact
+        ::
+        :-  (contact-poke [%create path.fact])
+        %+  turn  ~(tap by contacts.fact)
+        |=  [=ship =contact]
+        (contact-poke [%add path.fact ship contact])
+      ::  if we already have some, decide between %add, %remove and recreate
+      ::  on a per-contact basis
+      ::
+      %-  zing
+      %+  turn
+        %~  tap  in
+        %-  ~(uni in ~(key by contacts.fact))
+        ~(key by u.have-contacts)
+      |=  =ship
+      ^-  (list card)
+      =/  have=(unit contact)  (~(get by u.have-contacts) ship)
+      =/  want=(unit contact)  (~(get by contacts.fact) ship)
+      ?~  have
+        [(contact-poke %add path.fact ship (need want))]~
+      ?~  want
+        [(contact-poke %remove path.fact ship)]~
+      ?:  =(u.want u.have)  ~
+      ::TODO  probably want an %all edit-field that resolves to more granular
+      ::      updates within the contact-store?
+      :~  (contact-poke %remove path.fact ship)
+          (contact-poke %add path.fact ship u.want)
       ==
-      %+  turn  ~(tap by contacts.fact)
-      |=  [=ship =contact]
-      (contact-poke [%add path.fact ship contact])
     ::
         %add
       =/  owner  (~(got by synced) path.fact)
@@ -352,7 +398,9 @@
       (poke-hook-action [%add-synced ship.invite.fact path.invite.fact])
     :-  
     %+  welp
-      [(group-hook-poke [%add ship.invite.fact path.invite.fact])]~
+      :~  (group-hook-poke [%add ship.invite.fact path.invite.fact])
+          (metadata-hook-poke [%add-synced ship.invite.fact path.invite.fact]) 
+      ==
     -.changes
     +.changes
   ==
@@ -376,6 +424,16 @@
   |=  act=group-action
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
+::
+++  metadata-poke
+  |=  act=metadata-action
+  ^-  card
+  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
+::
+++  metadata-hook-poke
+  |=  act=metadata-hook-action
+  ^-  card
+  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
 ::
 ++  contacts-scry
   |=  pax=path
@@ -402,6 +460,6 @@
   =/  shp  (~(get by synced) t.pax)
   ?~  shp  ~
   ?:  =(u.shp our.bol)
-    [%pass pax %agent [our.bol %chat-store] %leave ~]~
-  [%pass pax %agent [u.shp %chat-hook] %leave ~]~
+    [%pass pax %agent [our.bol %contact-store] %leave ~]~
+  [%pass pax %agent [u.shp %contact-hook] %leave ~]~
 --

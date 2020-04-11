@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Sigil } from '/components/lib/icons/sigil';
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom'
-import { uxToHex } from '/lib/util';
+import { uxToHex, cite } from '/lib/util';
 import urbitOb from 'urbit-ob';
 import moment from 'moment';
 import _ from 'lodash';
@@ -34,13 +34,13 @@ export class Message extends Component {
         (!!letter.code.output &&
          letter.code.output.length && letter.code.output.length > 0) ?
         (
-          <pre className="clamp-attachment pa1 mt0 mb0">
+          <pre className="f7 clamp-attachment pa1 mt0 mb0">
             {letter.code.output[0].join('\n')}
           </pre>
         ) : null;
       return (
         <span>
-          <pre className="clamp-attachment pa1 mt0 mb0 bg-light-gray">
+          <pre className="f7 clamp-attachment pa1 mt0 mb0 bg-light-gray">
             {letter.code.expression}
           </pre>
           {outputElement}
@@ -50,8 +50,6 @@ export class Message extends Component {
       let imgMatch =
         /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM)$/
         .exec(letter.url);
-      // this is jank
-      // TODO do we know ID lenght?
       let youTubeRegex = new RegExp(''
       + /(?:https?:\/\/(?:[a-z]+.)?)/.source // protocol
       + /(?:youtu\.?be(?:\.com)?\/)(?:embed\/)?/.source // short and long-links
@@ -72,7 +70,7 @@ export class Message extends Component {
           ></img>
         );
         return (
-          <a className="f7 lh-copy v-top bb word-break-all"
+          <a className="f7 lh-copy v-top word-break-all"
             href={letter.url}
             target="_blank"
             rel="noopener noreferrer">
@@ -102,7 +100,7 @@ export class Message extends Component {
           rel="noopener noreferrer">
             {letter.url}
         </a>
-        <a className="f7 pointer pl2 lh-copy v-top word-break-all"
+        <a className="ml2 f7 pointer lh-copy v-top"
         onClick={e => this.unFoldEmbed()}>
           [embed]
           </a>
@@ -126,29 +124,13 @@ export class Message extends Component {
         </p>
       );
     } else {
-      let chatroom = letter.text.match(
-        /(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z])+([/-])?)+/
-        );
-      if ((chatroom !== null) // matched possible chatroom
-        && (chatroom[1].length > 2) // possible ship?
-        && (urbitOb.isValidPatp(chatroom[1]) // valid patp?
-        && (chatroom[0] === letter.text))) { // entire message is room name?
-          return (
-            <Link
-            className="bb b--black f7 mono lh-copy v-top"
-            to={"/~chat/join/" + chatroom.input}>
-              {letter.text}
-            </Link>
-          );
-        }
-      else {
+        let text = letter.text.split ('\n').map ((item, i) => <p className='f7 lh-copy v-top' key={i}>{item}</p>);
         return (
-          <p className='f7 lh-copy v-top'>
-            {letter.text}
-          </p>
+          <section>
+            {text}
+          </section>
         );
-      }
-  }
+    }
   }
 
   render() {
@@ -163,13 +145,20 @@ export class Message extends Component {
 
       let contact = !!(props.msg.author in props.contacts)
         ? props.contacts[props.msg.author] : false;
-      let name = props.msg.author;
+      let name = `~${props.msg.author}`;
       let color = "#000000";
+      let sigilClass = "mix-blend-diff"
       if (contact) {
         name = (contact.nickname.length > 0)
           ? contact.nickname : `~${props.msg.author}`;
         color = `#${uxToHex(contact.color)}`;
+        sigilClass = "";
       }
+
+      if (`~${props.msg.author}` === name) {
+        name = cite(props.msg.author);
+      }
+
       return (
         <div
           className={
@@ -178,18 +167,24 @@ export class Message extends Component {
           style={{
             minHeight: "min-content"
           }}>
-          <div className="fl mr3 v-top">
+          <div className="fl mr3 v-top bg-white bg-gray0-d">
             <Sigil
               ship={props.msg.author}
               size={24}
-              color={color} />
+              color={color}
+              classes={sigilClass}
+              />
           </div>
           <div
             className="fr clamp-message white-d"
             style={{ flexGrow: 1, marginTop: -8 }}>
             <div className="hide-child" style={paddingTop}>
-              <p className="v-mid f9 gray2 dib mr3">
-              <div className={contact.nickname ? null : "mono"}>{name}</div>
+              <p className="v-mid f9 gray2 dib mr3 c-default">
+                <span
+                  className={contact.nickname ? null : "mono"}
+                  title={`~${props.msg.author}`}>
+                    {name}
+                </span>
               </p>
               <p className="v-mid mono f9 gray2 dib">{timestamp}</p>
               <p className="v-mid mono f9 ml2 gray2 dib child dn-s">{datestamp}</p>

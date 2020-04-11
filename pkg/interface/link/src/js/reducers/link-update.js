@@ -177,6 +177,7 @@ export class LinkUpdateReducer {
       pages.local[i] = (page < pages.totalPages);
     }
     pages[i] = items.concat(pages[i]);
+    pages[i].sort((a, b) => b.time - a.time);
     pages.totalItems = pages.totalItems + items.length;
     if (pages[i].length <= PAGE_SIZE) {
       pages.totalPages = Math.ceil(pages.totalItems / PAGE_SIZE);

@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { Route, Link } from "react-router-dom";
-import { base64urlEncode } from "../../lib/util";
+import { makeRoutePath, cite } from "../../lib/util";
 import moment from "moment";
 
 export class LinkPreview extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      timeSinceLinkPost: this.getTimeSinceLinkPost()
+      timeSinceLinkPost: this.getTimeSinceLinkPost(),
+      embed: ""
     };
   }
 
@@ -27,6 +28,27 @@ export class LinkPreview extends Component {
         timeSinceLinkPost: this.getTimeSinceLinkPost()
       });
     }, 60000);
+
+    // check for soundcloud for fetching embed
+    let soundcloudRegex = new RegExp('' +
+      /(https?:\/\/(?:www.)?soundcloud.com\/[\w-]+\/?(?:sets\/)?[\w-]+)/.source
+    );
+
+    let isSoundcloud = soundcloudRegex.exec(this.props.url);
+
+    if (isSoundcloud && this.state.embed === "") {
+      fetch(
+        'https://soundcloud.com/oembed?format=json&url=' +
+        encodeURIComponent(this.props.url))
+        .then((response) => {
+          return response.json();
+        })
+        .then((json) => {
+          this.setState({ embed: json.html })
+        });
+    } else if (!isSoundcloud) {
+      this.setState({ embed: "" });
+    }
   }
 
   componentWillUnmount() {
@@ -97,33 +119,25 @@ export class LinkPreview extends Component {
       <div className="pb6 w-100">
         <div
           className={"w-100 tc " + (ytMatch ? "embed-container" : "")}>
-          {embed}
+          {embed || <div dangerouslySetInnerHTML={{__html: this.state.embed}}/>}
         </div>
-        <div className="flex flex-column ml2 pt6">
+        <div className="flex flex-column ml2 pt6 flex-auto">
           <a href={props.url} className="w-100 flex" target="_blank">
-            <p className="f8 truncate" style={{overflow: "visible"}}>
+            <p className="f8 truncate">
               {props.title}
-              <span className="gray2 ml2 flex-shrink-0">{hostname} ↗</span>
             </p>
+            <span className="gray2 ml2 f8 dib v-btm flex-shrink-0">{hostname} ↗</span>
           </a>
           <div className="w-100 pt1">
-            <span className={"f9 pr2 white-d v-mid " + nameClass}>
-              {props.nickname ? props.nickname : "~" + props.ship}
+            <span className={"f9 pr2 white-d v-mid " + nameClass}
+            title={props.ship}>
+              {props.nickname ? props.nickname : cite(props.ship)}
             </span>
             <span className="f9 inter gray2 pr3 v-mid">
               {this.state.timeSinceLinkPost}
             </span>
             <Link
-              to={
-                "/~link" +
-                props.groupPath +
-                "/" +
-                props.page +
-                "/" +
-                props.linkIndex +
-                "/" +
-                base64urlEncode(props.url)
-              }
+              to={makeRoutePath(props.resourcePath, props.popout, props.page, props.url, props.linkIndex)}
               className="v-top">
               <span className="f9 inter gray2">{props.comments}</span>
             </Link>

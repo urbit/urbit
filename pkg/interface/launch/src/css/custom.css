@@ -13,11 +13,19 @@ p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
   font-family: Inter, sans-serif;
 }
 
+a:any-link {
+  color: unset;
+}
+
 a:-webkit-any-link {
   color: unset;
 }
 
 textarea, select, input, button { outline: none; }
+
+.c-default {
+  cursor: default;
+}
 
 .mono {
   font-family: "Source Code Pro", monospace;
@@ -25,4 +33,32 @@ textarea, select, input, button { outline: none; }
 
 .mix-blend-diff {
   mix-blend-mode: difference;
+}
+
+/* dark */
+@media all and (prefers-color-scheme: dark) {
+  body {
+    background-color: #333;
+  }
+  .bg-gray0-d {
+    background-color: #333;
+  }
+  .bg-gray1-d {
+    background-color: #4d4d4d;
+  }
+  .bg-gray2-d {
+    background-color: #7f7f7f;
+  }
+  .b--gray1-d {
+    border-color: #4d4d4d;
+  }
+  .white-d {
+    color: #fff;
+  }
+  .invert-d {
+    filter: invert(1);
+  }
+  .hover-bg-gray1-d:hover {
+    background-color: #4d4d4d;
+  }
 }

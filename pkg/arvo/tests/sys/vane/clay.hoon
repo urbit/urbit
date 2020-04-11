@@ -1,4 +1,4 @@
-/+  *test, test-ford
+/+  *test, test-ford-external
 ::
 /=  clay-raw  /:  /===/sys/vane/clay  /!noun/
 ::
@@ -69,7 +69,7 @@
           %+  weld
             (expect-eq !>(%.n) !>(live.note))
           ::
-          %-  expect-schematic:test-ford
+          %-  expect-schematic:test-ford-external
           :_  schematic.note
           ^-  schematic:ford
           :+  %pin  ~1111.1.1
@@ -200,7 +200,7 @@
         %+  weld
           (expect-eq !>(%.n) !>(live.note))
         ::
-        %-  expect-schematic:test-ford
+        %-  expect-schematic:test-ford-external
         :_  schematic.note
         ^-  schematic:ford
         [%pin ~1111.1.1 %list ~]
@@ -250,7 +250,7 @@
         %+  weld
           (expect-eq !>(%.n) !>(live.note))
         ::
-        %-  expect-schematic:test-ford
+        %-  expect-schematic:test-ford-external
         :_  schematic.note
         ^-  schematic:ford
         :-  %list
@@ -430,7 +430,7 @@
           %+  weld
             (expect-eq !>(%.n) !>(live.note))
           ::
-          %-  expect-schematic:test-ford
+          %-  expect-schematic:test-ford-external
           :_  schematic.note
           ^-  schematic:ford
           :+  %pin  ~2222.2.2
@@ -474,7 +474,7 @@
   ::
   =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (call:clay-core call-args)
+  =^  moves  clay-gate  (call:clay-core [duct ~ type wrapped-task]:call-args)
   ::
   =/  output=tang
     %+  expect-eq
@@ -495,7 +495,7 @@
   ::
   =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (call:clay-core call-args)
+  =^  moves  clay-gate  (call:clay-core [duct ~ type wrapped-task]:call-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::
@@ -513,7 +513,7 @@
   ::
   =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (take:clay-core take-args)
+  =^  moves  clay-gate  (take:clay-core [wire duct ~ wrapped-sign]:take-args)
   ::
   =/  output=tang
     %+  expect-eq
@@ -534,7 +534,7 @@
   ::
   =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  clay-gate  (take:clay-core take-args)
+  =^  moves  clay-gate  (take:clay-core [wire duct ~ wrapped-sign]:take-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::

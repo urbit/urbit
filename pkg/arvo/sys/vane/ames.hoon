@@ -119,6 +119,7 @@
   (slog leaf/"ames: {(scow %p ship)}: {(print)}" ~)
 --
 =>
+~%  %ames-generics  ..is  ~
 |%
 +|  %generics
 ::  $mk-item: constructor for +ordered-map item type
@@ -916,19 +917,25 @@
     ::  +call: handle request $task
     ::
     ++  call
-      |=  [=duct type=* wrapped-task=(hobo task)]
+      |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task)]
       ::
-      =/  =task
-        ?.  ?=(%soft -.wrapped-task)
-          wrapped-task
-        ~|  our^%ames-fail-soft
-        ;;(task p.wrapped-task)
+      =/  =task  ((harden task) wrapped-task)
+      ::
+      ::  error notifications "downcast" to %crud or %hole
+      ::
+      =?  task  ?=(^ dud)
+        ?-  -.task
+          %crud  ~|(%crud-in-crud !!)
+          %hear  [%hole [lane blob]:task]
+          *      [%crud -.task tang.u.dud]
+        ==
+      ::
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
         ::  process %born using wrapped adult ames
         ::
-        =^  moves  adult-gate  (call:adult-core duct type task)
+        =^  moves  adult-gate  (call:adult-core duct dud type task)
         ::  if no events were queued up, metamorphose
         ::
         ?~  queued-events
@@ -940,13 +947,19 @@
         [moves larval-gate]
       ::  any other event: enqueue it until we have a .unix-duct
       ::
+      ::    XX what to do with errors?
+      ::
       =.  queued-events  (~(put to queued-events) %call duct type task)
       [~ larval-gate]
     ::  +take: handle response $sign
     ::
     ++  take
-      |=  [=wire =duct type=* =sign]
+      |=  [=wire =duct dud=(unit goof) type=* =sign]
+      ?^  dud
+        ~|(%ames-larval-take-dud (mean tang.u.dud))
       ::  enqueue event if not a larval drainage timer
+      ::
+      ::    XX what to do with errors?
       ::
       ?.  =(/larva wire)
         =.  queued-events  (~(put to queued-events) %take wire duct type sign)
@@ -986,8 +999,8 @@
       =^  first-event  queued-events  ~(get to queued-events)
       =^  moves  adult-gate
         ?-  -.first-event
-          %call  (call:adult-core +.first-event)
-          %take  (take:adult-core +.first-event)
+          %call  (call:adult-core [duct ~ type wrapped-task]:+.first-event)
+          %take  (take:adult-core [wire duct ~ type sign]:+.first-event)
         ==
       ::  .queued-events has been cleared; metamorphose
       ::
@@ -1053,14 +1066,19 @@
 ::  +call: handle request $task
 ::
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task)]
+  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task)]
   ^-  [(list move) _ames-gate]
   ::
-  =/  =task
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ~|  %ames-bad-task^p.wrapped-task
-    ;;(task p.wrapped-task)
+  =/  =task  ((harden task) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud or %hole
+  ::
+  =?  task  ?=(^ dud)
+    ?-  -.task
+      %crud  ~|(%crud-in-crud !!)
+      %hear  [%hole [lane blob]:task]
+      *      [%crud -.task tang.u.dud]
+    ==
   ::
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::
@@ -1085,8 +1103,11 @@
 ::  +take: handle response $sign
 ::
 ++  take
-  |=  [=wire =duct type=* =sign]
+  |=  [=wire =duct dud=(unit goof) type=* =sign]
   ^-  [(list move) _ames-gate]
+  ?^  dud
+    ~|(%ames-take-dud (mean tang.u.dud))
+  ::
   ::
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::
@@ -1230,6 +1251,7 @@
 --
 ::  helpers
 ::
+~%  %ames-helpers  +>+  ~
 |%
 ++  per-event
   =|  moves=(list move)
@@ -1893,6 +1915,20 @@
           todos(packets (~(put in packets.todos) blob))
         ::
         =/  =peer-state  +.u.ship-state
+        ::
+        ::  XX  routing hack to mimic old ames.
+        ::
+        ::    Before removing this, consider: moons when their planet is
+        ::    behind a NAT; a planet receiving initial acknowledgment
+        ::    from a star; a planet talking to another planet under
+        ::    another galaxy.
+        ::
+        ?:  ?|  =(our ship)
+                ?&  !=(final-ship ship)
+                    !=(%czar (clan:title ship))
+                ==
+            ==
+          (try-next-sponsor sponsor.peer-state)
         ::
         ?:  =(our ship)
           ::  if forwarding, don't send to sponsor to avoid loops
@@ -3105,7 +3141,7 @@
         message-sink
       ::  ack all other packets
       ::
-      %-  (trace rcv.veb |.("send ack {<seq^fragment-num>}"))
+      %-  (trace rcv.veb |.("send ack-1 {<seq^fragment-num^num-fragments>}"))
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
     ::
@@ -3146,7 +3182,7 @@
     ::  ack any packet other than the last one, and continue either way
     ::
     =?  message-sink  !is-last-fragment
-      %-  (trace rcv.veb |.("send ack {<seq^fragment-num>}"))
+      %-  (trace rcv.veb |.("send ack-2 {<seq^fragment-num^num-fragments>}"))
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
     ::

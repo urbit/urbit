@@ -158,9 +158,8 @@ commit that updates the source.
 
 ## Releases
 
-We typically create releases by cherry picking appropriate commits from
-`master` and tagging the result, so any given commit in `master` may not
-actually be present in the latest release.
+We typically create releases by tagging appropriate commits on `master`, so any
+given commit in `master` may not actually be present in the latest release.
 
 We perform updates by pushing releases over-the-air to `~zod` approximately
 once per week, so any contribution that can be deployed OTA will usually find

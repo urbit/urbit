@@ -14,6 +14,28 @@ const innerSize = 124; //clock size
 //   }
 // }
 
+let text = "#000000", background = "#ffffff";
+
+let dark = window.matchMedia('(prefers-color-scheme: dark)');
+
+if (dark.matches) {
+  text = "#7f7f7f";
+  background = "#333";
+}
+
+function darkColors(dark) {
+  if (dark.matches) {
+    text = "#7f7f7f";
+    background = "#333";
+  } else {
+    text = "#000000";
+    background = "#ffffff"
+  }
+ }
+
+dark.addListener(darkColors);
+
+
 const toRelativeTime = (date, referenceTime, unit) => moment(date)
   .diff(referenceTime, unit)
 
@@ -182,7 +204,7 @@ class Clock extends Component {
       ctr,
       -1,
       2 * Math.PI,
-      '#FFFFFF'
+      background
     )
 
     // Day
@@ -309,7 +331,7 @@ class Clock extends Component {
       ctr-1,
       -1,
       2 * Math.PI,
-      '#000000',
+      text,
       1
     );
 
@@ -321,7 +343,7 @@ class Clock extends Component {
       ctr,
       -1,
       2 * Math.PI,
-      '#FFFFFF',
+      background,
       1
     );
 
@@ -333,7 +355,7 @@ class Clock extends Component {
       ctr/1.85,
       -1,
       2 * Math.PI,
-      '#FFFFFF'
+      background
     )
 
     // Center white circle border
@@ -344,7 +366,7 @@ class Clock extends Component {
       ctr/1.85,
       -1,
       2 * Math.PI,
-      '#000000',
+      text,
       1
     );
 
@@ -354,10 +376,10 @@ class Clock extends Component {
       : moment().format('h:mm A')
     const dateText = moment().format('MMM Do')
     ctx.textAlign = 'center'
-    ctx.fillStyle = '#000000'
+    ctx.fillStyle = text
     ctx.font = '12px Inter'
     ctx.fillText(timeText, ctr, ctr + 6 - 7)
-    ctx.fillStyle = '#B1B1B1'
+    ctx.fillStyle = text
     ctx.font = '12px Inter'
     ctx.fillText(dateText, ctr, ctr + 6 + 7)
 
@@ -381,10 +403,9 @@ export default class ClockTile extends Component {
 
   renderWrapper(child) {
     return (
-      <div className="" style={{
+      <div className="bg-white bg-gray0-d" style={{
         width: outerSize,
         height: outerSize,
-        background: '#fff'
       }}>
         {child}
       </div>

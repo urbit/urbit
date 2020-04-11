@@ -1,20 +1,31 @@
 import _ from 'lodash';
 import classnames from 'classnames';
 
-
-export function uuid() {
-  let str = "0v"
-  str += Math.ceil(Math.random()*8)+"."
-  for (var i = 0; i < 5; i++) {
-    let _str = Math.ceil(Math.random()*10000000).toString(32);
-    _str = ("00000"+_str).substr(-5,5);
-    str += _str+".";
+export function makeRoutePath(
+  resource, popout = false, page = 0, url = null, index = 0, compage = 0
+) {
+  let route = '/~link' + (popout ? '/popout' : '') + resource;
+  if (!url) {
+    if (page !== 0) {
+      route = route + '/' + page;
+    }
+  } else {
+    route = `${route}/${page}/${index}/${base64urlEncode(url)}`;
+    if (compage !== 0) {
+      route = route + '/' + compage;
+    }
   }
+  return route;
+}
 
-  return str.slice(0,-1);
+export function amOwnerOfGroup(groupPath) {
+  if (!groupPath) return false;
+  const groupOwner = /(\/~)?\/~([a-z-]{3,})\/.*/.exec(groupPath)[2];
+  return (window.ship === groupOwner);
 }
 
 export function getContactDetails(contact) {
+  const member = !contact;
   contact = contact || {
     'nickname': '',
     'avatar': 'TODO',
@@ -22,7 +33,7 @@ export function getContactDetails(contact) {
   };
   const nickname = contact.nickname || '';
   const color = uxToHex(contact.color || '0x0');
-  return {nickname, color};
+  return {nickname, color, member};
 }
 
 // encodes string into base64url,
@@ -134,4 +145,45 @@ export function uxToHex(ux) {
   } else {
     return ux.replace('.', '').padStart(6, '0');
   }
+}
+
+// trim patps to match dojo, chat-cli
+export function cite(ship) {
+  let patp = ship, shortened = "";
+  if (patp.startsWith("~")) {
+    patp = patp.substr(1);
+  }
+  // comet
+  if (patp.length === 56) {
+    shortened = "~" + patp.slice(0, 6) + "_" + patp.slice(50, 56);
+    return shortened;
+  }
+  // moon
+  if (patp.length === 27) {
+    shortened = "~" + patp.slice(14, 20) + "^" + patp.slice(21, 27);
+    return shortened;
+  }
+  return `~${patp}`;
+}
+
+export function alphabetiseAssociations(associations) {
+  let result = {};
+  Object.keys(associations).sort((a, b) => {
+    let aName = a.substr(1);
+    let bName = b.substr(1);
+    if (a.metadata && a.metadata.title) {
+      aName = a.metadata.title !== ""
+        ? a.metadata.title
+        : a.substr(1);
+    }
+    if (b.metadata && b.metadata.title) {
+      bName = b.metadata.title !== ""
+        ? b.metadata.title
+        : b.substr(1);
+    }
+    return aName.toLowerCase().localeCompare(bName.toLowerCase());
+  }).map((each) => {
+    result[each] = associations[each];
+  })
+  return result;
 }

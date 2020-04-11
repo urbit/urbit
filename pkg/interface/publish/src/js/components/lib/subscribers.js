@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Dropdown } from './dropdown';
+import { cite } from '../../lib/util';
 
 export class Subscribers extends Component {
   constructor(props){
@@ -54,21 +55,21 @@ export class Subscribers extends Component {
           width = 258;
           let url = `/~contacts${writePath}`;
           options = [{
-            cls: "tl pointer",
+            cls: "bg-transparent white-d tl pointer w-100 db hover-bg-gray4 hover-bg-gray1-d ph2 pv3",
             txt: "Manage this group in the contacts view",
             action: () => {this.redirect(url)}
           }];
         } else {
           width = 157;
           options = [{
-            cls: "tl pointer",
+            cls: "bg-transparent white-d tl pointer w-100 db hover-bg-gray4 hover-bg-gray1-d ph2 pv3",
             txt: "Demote to subscriber",
             action: () => {this.removeUser(`~${who}`, writePath)}
           }];
         }
         return (
           <div className="flex justify-between" key={i}>
-            <div className="f9 mono mr2">{`~${who}`}</div>
+            <div className="f9 mono mr2">{`${cite(who)}`}</div>
             <Dropdown
               options={options}
               width={width}
@@ -92,18 +93,18 @@ export class Subscribers extends Component {
         let width = 162;
         subscribers = this.props.notebook.subscribers.map((who, i) => {
           let options = [
-            { cls: "tl mb2 pointer",
+            { cls: "white-d tl pointer w-100 db hover-bg-gray4 hover-bg-gray1-d bg-transparent ph2 pv3",
               txt: "Promote to participant",
               action: () => {this.addUser(who, writePath)}
             },
-            { cls: "tl red2 pointer",
+            { cls: "tl red2 pointer w-100 db hover-bg-gray4 hover-bg-gray1-d bg-transparent ph2 pv3",
               txt: "Ban",
               action: () => {this.addUser(who, readPath)}
             },
           ];
           return (
             <div className="flex justify-between" key={i}>
-              <div className="f9 mono mr2">{who}</div>
+              <div className="f9 mono mr2">{cite(who)}</div>
               <Dropdown
                 options={options}
                 width={width}
@@ -168,7 +169,7 @@ export class Subscribers extends Component {
         <div className="flex flex-column">
           <div className="f9 gray2">Host</div>
           <div className="flex justify-between mt3">
-            <div className="f9 mono mr2">{this.props.host}</div>
+            <div className="f9 mono mr2">{cite(this.props.host)}</div>
           </div>
         </div>
         <div className="flex flex-column">

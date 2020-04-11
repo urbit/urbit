@@ -1,6 +1,6 @@
 :: contact-store: data store that holds group-based contact data
 ::
-/+  *contact-json, default-agent
+/+  *contact-json, default-agent, dbug
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -18,6 +18,7 @@
 ::
 =|  state-zero
 =*  state  -
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall

@@ -21,13 +21,11 @@ export class Root extends Component {
 
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
-    this.setSpinner = this.setSpinner.bind(this);
   }
 
-  setSpinner(spinner) {
-    this.setState({
-      spinner
-    });
+  componentDidMount() {
+    //preload spinner asset
+    new Image().src = "/~chat/img/Spinner.png";
   }
 
   render() {
@@ -48,18 +46,22 @@ export class Root extends Component {
         state.inbox[stat].config.length > state.inbox[stat].config.read;
     });
 
-    let invites = '/chat' in state.invites ?
-      state.invites['/chat'] : {};
+    let invites = !!state.invites ? state.invites : {'/chat': {}, '/contacts': {}};
 
     let contacts = !!state.contacts ? state.contacts : {};
+    let associations = !!state.associations ? state.associations : {chat: {}, contacts: {}};
 
-    const renderChannelSidebar = (props) => (
+    const renderChannelSidebar = (props, station) => (
       <Sidebar
         inbox={state.inbox}
         messagePreviews={messagePreviews}
-        invites={invites}
+        associations={associations}
+        selectedGroups={state.selectedGroups}
+        contacts={contacts}
+        invites={invites["/chat"] || {}}
         unreads={unreads}
         api={api}
+        station={station}
         {...props}
       />
     );
@@ -73,6 +75,8 @@ export class Root extends Component {
             render={props => {
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   chatHideonMobile={true}
                   sidebarShown={state.sidebarShown}
                   sidebar={renderChannelSidebar(props)}
@@ -94,16 +98,18 @@ export class Root extends Component {
             render={props => {
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   sidebarHideOnMobile={true}
-                  spinner={this.state.spinner}
                   sidebar={renderChannelSidebar(props)}
                   sidebarShown={state.sidebarShown}
                 >
                   <NewScreen
-                    setSpinner={this.setSpinner}
                     api={api}
                     inbox={state.inbox || {}}
-                    groups={state.groups || {}}
+                    permissions={state.permissions || {}}
+                    contacts={state.contacts || {}}
+                    associations={associations.contacts}
                     {...props}
                   />
                 </Skeleton>
@@ -121,9 +127,10 @@ export class Root extends Component {
                 station = '/~' + station;
               }
 
-
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   sidebarHideOnMobile={true}
                   sidebar={renderChannelSidebar(props)}
                   sidebarShown={state.sidebarShown}
@@ -146,7 +153,7 @@ export class Root extends Component {
               let sig = props.match.url.includes("/~/");
               if (sig) {
                 station = '/~' + station;
-              } 
+              }
               let mailbox = state.inbox[station] || {
                 config: {
                   read: 0,
@@ -155,30 +162,48 @@ export class Root extends Component {
                 envelopes: []
               };
 
-              let roomContacts = (station in contacts)
-                ? contacts[station] : {};
+              let roomContacts = {};
+              let associatedGroup =
+                station in associations["chat"] &&
+                "group-path" in associations.chat[station]
+                  ? associations.chat[station]["group-path"]
+                  : "";
 
-              let group = state.groups[station] || new Set([]);
+              if ((associations.chat[station]) && (associatedGroup in contacts)) {
+                roomContacts = contacts[associatedGroup]
+              }
+
+              let association =
+                station in associations["chat"] ? associations.chat[station] : {};
+
+              let permission =
+                station in state.permissions ? state.permissions[station] : {
+                  who: new Set([]),
+                  kind: 'white'
+                };
               let popout = props.match.url.includes("/popout/");
 
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   sidebarHideOnMobile={true}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
-                  sidebar={renderChannelSidebar(props)}
+                  sidebar={renderChannelSidebar(props, station)}
                 >
                   <ChatScreen
+                    chatSynced={state.chatSynced}
                     station={station}
+                    association={association}
                     api={api}
                     subscription={subscription}
                     read={mailbox.config.read}
                     length={mailbox.config.length}
                     envelopes={mailbox.envelopes}
                     inbox={state.inbox}
-                    group={group}
                     contacts={roomContacts}
-                    permissions={state.permissions}
+                    permission={permission}
                     pendingMessages={state.pendingMessages}
                     popout={popout}
                     sidebarShown={state.sidebarShown}
@@ -197,7 +222,7 @@ export class Root extends Component {
               let sig = props.match.url.includes("/~/");
               if (sig) {
                 station = '/~' + station;
-              } 
+              }
 
               let permission = state.permissions[station] || {
                 kind: "",
@@ -205,22 +230,25 @@ export class Root extends Component {
               };
               let popout = props.match.url.includes("/popout/");
 
-              let roomContacts = (station in contacts)
-                ? contacts[station] : {};
+              let association =
+                station in associations["chat"] ? associations.chat[station] : {};
 
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   sidebarHideOnMobile={true}
                   sidebarShown={state.sidebarShown}
                   popout={popout}
-                  sidebar={renderChannelSidebar(props)}
+                  sidebar={renderChannelSidebar(props, station)}
                 >
                   <MemberScreen
                     {...props}
                     api={api}
                     station={station}
+                    association={association}
                     permission={permission}
-                    contacts={roomContacts}
+                    contacts={contacts}
                     permissions={state.permissions}
                     popout={popout}
                     sidebarShown={state.sidebarShown}
@@ -238,26 +266,37 @@ export class Root extends Component {
               let sig = props.match.url.includes("/~/");
               if (sig) {
                 station = '/~' + station;
-              } 
-              let group = state.groups[station] || new Set([]);
+              }
 
               let popout = props.match.url.includes("/popout/");
 
+              let permission = state.permissions[station] || {
+                kind: "",
+                who: new Set([])
+              };
+
+              let association =
+                station in associations["chat"] ? associations.chat[station] : {};
+
               return (
                 <Skeleton
+                  associations={associations}
+                  invites={invites}
                   sidebarHideOnMobile={true}
-                  spinner={this.state.spinner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
-                  sidebar={renderChannelSidebar(props)}
+                  sidebar={renderChannelSidebar(props, station)}
                 >
                   <SettingsScreen
                     {...props}
                     station={station}
-                    setSpinner={this.setSpinner}
+                    association={association}
+                    permission={permission}
+                    permissions={state.permissions || {}}
+                    contacts={state.contacts || {}}
+                    associations={associations.contacts}
                     api={api}
                     station={station}
-                    group={group}
                     inbox={state.inbox}
                     popout={popout}
                     sidebarShown={state.sidebarShown}

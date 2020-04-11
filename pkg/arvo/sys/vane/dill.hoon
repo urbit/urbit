@@ -145,7 +145,8 @@
 --
 =|  all/axle
 |=  [our=ship now=@da eny=@uvJ ski=sley]                ::  current invocation
-=>  |%
+=>  ~%  %dill  ..is  ~
+    |%
     ++  as                                              ::  per cause
       =|  moz/(list move)
       |_  [hen=duct axon]
@@ -512,14 +513,21 @@
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
   |=  $:  hen=duct
+          dud=(unit goof)
           type=*
           wrapped-task=(hobo task:able)
       ==
   ^+  [*(list move) ..^$]
-  =/  task=task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ;;(task:able p.wrapped-task)
+  ~|  wrapped-task
+  =/  task=task:able  ((harden task:able) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud
+  ::
+  =?  task  ?=(^ dud)
+    ~|  %crud-in-crud
+    ?<  ?=(%crud -.task)
+    [%crud -.task tang.u.dud]
+  ::
   ::  the boot event passes thru %dill for initial duct distribution
   ::
   ?:  ?=(%boot -.task)
@@ -623,8 +631,11 @@
 ++  stay  all
 ::
 ++  take                                                ::  process move
-  |=  {tea/wire hen/duct hin/(hypo sign)}
+  |=  {tea/wire hen/duct dud/(unit goof) hin/(hypo sign)}
   ^+  [*(list move) ..^$]
+  ?^  dud
+    ~|(%dill-take-dud (mean tang.u.dud))
+  ::
   =/  nus  (ax hen)
   ?~  nus
     ::  :hen is an unrecognized duct

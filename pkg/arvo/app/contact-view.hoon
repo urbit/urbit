@@ -1,8 +1,15 @@
 ::  contact-view: sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *group-store, *group-hook, *invite-store, *contact-hook
-/+  *server, *contact-json, base64, default-agent
+/-  *group-store,
+    *group-hook,
+    *invite-store,
+    *contact-hook,
+    *metadata-store,
+    *metadata-hook,
+    *permission-group-hook,
+    *permission-hook
+/+  *server, *contact-json, default-agent, dbug
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -38,7 +45,9 @@
 |%
 +$  card  card:agent:gall
 --
+=*  state  -
 ::
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -51,8 +60,7 @@
     ^-  (quip card _this)
     :_  this
     :~  [%pass /updates %agent [our.bowl %contact-store] %watch /updates]
-        [%pass / %arvo %e %connect [~ /'~contacts'] %contact-view]
-        (launch-poke:cc [%contact-view /primary '/~contacts/js/tile.js'])
+        [%pass / %arvo %e %connect [~ /'~groups'] %contact-view]
         (contact-poke:cc [%create /~/default])
         (group-poke:cc [%bundle /~/default])
         (contact-poke:cc [%add /~/default our.bowl *contact])
@@ -101,7 +109,7 @@
       ==
     ==
   ::
-  ++  on-arvo   
+  ++  on-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     ?.  ?=(%bound +<.sign-arvo)
@@ -126,18 +134,24 @@
   ?-  -.act
       %create
     ?>  ?=([@ *] path.act)
-    :~  (group-poke [%bundle path.act])
-        (contact-poke [%create path.act])
-        (contact-hook-poke [%add-owned path.act])
-        (group-hook-poke [%add our.bol path.act])
-        (group-poke [%add (~(put in ships.act) our.bol) path.act])
-    ==
+    %+  weld
+      :~  (group-poke [%bundle path.act])
+          (contact-poke [%create path.act])
+          (contact-hook-poke [%add-owned path.act])
+          (group-hook-poke [%add our.bol path.act])
+          (group-poke [%add (~(put in ships.act) our.bol) path.act])
+          (perm-group-hook-poke [%associate path.act [[path.act %white] ~ ~]])
+          (permission-hook-poke [%add-owned path.act path.act])
+      ==
+    (create-metadata path.act title.act description.act)
   ::
       %delete
+    %+  weld
     :~  (group-poke [%unbundle path.act])
         (contact-poke [%delete path.act])
         (contact-hook-poke [%remove path.act])
     ==
+    (delete-metadata path.act)
   ::
       %remove
     :~  (group-poke [%remove [ship.act ~ ~] path.act])
@@ -159,31 +173,31 @@
       ''
     i.back-path
   ?+  site.url  not-found:gen
-      [%'~contacts' %css %index ~]  (css-response:gen style)
-      [%'~contacts' %js %index ~]   (js-response:gen script)
-      [%'~contacts' %js %tile ~]    (js-response:gen tile-js)
-      [%'~contacts' %img *]
+      [%'~groups' %css %index ~]  (css-response:gen style)
+      [%'~groups' %js %index ~]   (js-response:gen script)
+      [%'~groups' %js %tile ~]    (js-response:gen tile-js)
+      [%'~groups' %img *]
     (png-response:gen (as-octs:mimes:html (~(got by contact-png) `@ta`name)))
   ::
   ::  avatar images
   ::
-      [%'~contacts' %avatar @ *]
-    =/  pax=path  `path`t.t.site.url 
-    ?~  pax  not-found:gen
-    =/  pas  `path`(flop pax)
-    ?~  pas  not-found:gen
-    =/  pav  `path`(flop t.pas)
-    ~&  pav+pav
-    ~&  name+name
-    =/  contact  (contact-scry `path`(weld pav [name]~))
-    ?~  contact  not-found:gen
-    ?~  avatar.u.contact  not-found:gen
-    =*  avatar  u.avatar.u.contact
-    =/  decoded  (de:base64 q.octs.avatar)
-    ?~  decoded  not-found:gen
-    [[200 ['content-type' content-type.avatar]~] `u.decoded]
+::      [%'~groups' %avatar @ *]
+::    =/  pax=path  `path`t.t.site.url
+::    ?~  pax  not-found:gen
+::    =/  pas  `path`(flop pax)
+::    ?~  pas  not-found:gen
+::    =/  pav  `path`(flop t.pas)
+::    ~&  pav+pav
+::    ~&  name+name
+::    =/  contact  (contact-scry `path`(weld pav [name]~))
+::    ?~  contact  not-found:gen
+::    ?~  avatar.u.contact  not-found:gen
+::    =*  avatar  u.avatar.u.contact
+::    =/  decoded  (de:base64 q.octs.avatar)
+::    ?~  decoded  not-found:gen
+::    [[200 ['content-type' content-type.avatar]~] `u.decoded]
   ::
-      [%'~contacts' *]  (html-response:gen index)
+      [%'~groups' *]  (html-response:gen index)
   ==
 ::
 ::  +utilities
@@ -203,11 +217,6 @@
   ^-  card
   [%pass / %agent [ship %contact-hook] %poke %contact-action !>(act)]
 ::
-++  launch-poke
-  |=  act=[@tas path @t]
-  ^-  card
-   [%pass / %agent [our.bol %launch] %poke %launch-action !>(act)]
-::
 ++  group-poke
   |=  act=group-action
   ^-  card
@@ -217,6 +226,51 @@
   |=  act=group-hook-action
   ^-  card
   [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
+::
+++  metadata-poke
+  |=  act=metadata-action
+  ^-  card
+  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
+::
+++  metadata-hook-poke
+  |=  act=metadata-hook-action
+  ^-  card
+  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
+::
+++  perm-group-hook-poke
+  |=  act=permission-group-hook-action
+  ^-  card
+  :*  %pass  /  %agent  [our.bol %permission-group-hook]
+      %poke  %permission-group-hook-action  !>(act)
+  ==
+::
+++  permission-hook-poke
+  |=  act=permission-hook-action
+  ^-  card
+  :*  %pass  /  %agent  [our.bol %permission-hook]
+      %poke  %permission-hook-action  !>(act)
+  ==
+::
+++  create-metadata
+  |=  [=path title=@t description=@t]
+  ^-  (list card)
+  =/  =metadata
+    %*  .  *metadata
+        title         title
+        description   description
+        date-created  now.bol
+        creator       our.bol
+    ==
+  :~  (metadata-poke [%add path [%contacts path] metadata])
+      (metadata-hook-poke [%add-owned path])
+  ==
+::
+++  delete-metadata
+  |=  =path
+  ^-  (list card)
+  :~  (metadata-poke [%remove path [%contacts path]])
+      (metadata-hook-poke [%remove path])
+  ==
 ::
 ++  all-scry
   ^-  rolodex

@@ -1345,7 +1345,7 @@
       a(r c)
     c(l a(r l.c))
   ::
-  ++  rep                                               ::  replace by product
+  ++  rep                                               ::  reduce to product
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
@@ -1600,7 +1600,7 @@
       a(r d)
     d(l a(r l.d))
   ::
-  ++  rep                                               ::  replace by product
+  ++  rep                                               ::  reduce to product
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
@@ -9863,6 +9863,8 @@
                   next
                 ?~  u.tyr
                   $(sut q.sut, lon [~ lon], p.heg +(p.heg))
+                ?.  =(0 p.heg)
+                  next(p.heg (dec p.heg))
                 =+  tor=(fund way u.u.tyr)
                 ?-  -.tor
                   %&  [%& (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]

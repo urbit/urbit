@@ -1,8 +1,12 @@
 ::  +dbug: tell /lib/dbug app to print some generic state
 ::
 ::    :app +dbug
+::      the entire state
+::    :app +dbug %bowl
 ::      the entire bowl
-::    :app +dbug [direction] [specifics]
+::    :app +dbug [%state 'thing']
+::      data at thing.state. allows for complex hoon, like '(lent thing)'
+::    :app +dbug [direction specifics]
 ::      all in subs matching the parameters
 ::      direction: %incoming or %outgoing
 ::      specifics:
@@ -19,14 +23,14 @@
         *
         ::  inline arguments
         ::
-        args=?(~ [what=?(%bowl %state) ~] [=what =about ~])
+        args=?(~ [what=?(%bowl %state) ~] [=poke ~])
         ::  named arguments
         ::
         ~
     ==
 :-  %dbug
 ?-  args
-  ~        [%bowl *about]
-  [@ ~]    [what.args *about]
-  [@ * ~]  [what about]:args
+  ~          [%state '']
+  [@ ~]      ?-(what.args %bowl [%bowl ~], %state [%state ''])
+  [[@ *] ~]  poke.args
 ==

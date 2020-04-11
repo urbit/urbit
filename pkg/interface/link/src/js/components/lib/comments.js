@@ -19,7 +19,7 @@ export class Comments extends Component {
     ) {
       this.setState({requested: this.props.commentPage});
       api.getCommentsPage(
-        this.props.groupPath,
+        this.props.resourcePath,
         this.props.url,
         this.props.commentPage);
     }
@@ -52,7 +52,7 @@ export class Comments extends Component {
         ? props.contacts
         : {};
 
-      const {nickname, color} = getContactDetails(contacts[ship]);
+      const {nickname, color, member} = getContactDetails(contacts[ship]);
 
       let nameClass = nickname ? "inter" : "mono";
 
@@ -65,6 +65,7 @@ export class Comments extends Component {
           nickname={nickname}
           nameClass={nameClass}
           color={color}
+          member={member}
         />
       )
     })
@@ -72,8 +73,8 @@ export class Comments extends Component {
       <div>
         {commentsList}
         <CommentsPagination
-        key={props.groupPath + props.commentPage}
-        groupPath={props.groupPath}
+        key={props.resourcePath + props.commentPage}
+        resourcePath={props.resourcePath}
         popout={props.popout}
         linkPage={props.linkPage}
         linkIndex={props.linkIndex}

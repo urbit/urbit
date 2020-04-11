@@ -429,9 +429,6 @@
              .tr {
                text-align: right;
              }
-             .pt1 {
-               padding-top: 0.25rem;
-             }
              .pb2 {
                padding-bottom: 0.5rem;
              }
@@ -454,6 +451,23 @@
                left: 50%;
                transform: translate(-50%, -50%);
              }
+             @media all and (prefers-color-scheme: dark) {
+               html, body {
+                 background-color: #333;
+                 color: #fff;
+               }
+               a, a:visited {
+                 color: #fff;
+               }
+               input {
+                 background: #333;
+                 color: #fff;
+                 border: 1px solid #7f7f7f;
+               }
+               input:focus {
+                 border: 1px solid #fff;
+               }
+             }
              @media all and (min-width: 34.375rem) {
                .tc-ns {
                  text-align: center;
@@ -473,7 +487,7 @@
           ;p:"Urbit ID"
           ;input(value "{(scow %p our)}", disabled "true", class "mono");
           ;p:"Access Key"
-          ;p.f9.gray2.pt1
+          ;p.f9.gray2
             ; Get key from Bridge, or
             ;span.mono.pr1:"+code"
             ; in dojo
@@ -482,7 +496,7 @@
             ;input
               =type  "password"
               =name  "password"
-              =placeholder  "~sampel-ticlyt-migfun-falmel"
+              =placeholder  "sampel-ticlyt-migfun-falmel"
               =class  "mono"
               =autofocus  "true";
             ;input(type "hidden", name "redirect", value redirect-str);
@@ -1087,11 +1101,12 @@
             complete=%.y
         ==
       ::
+      =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
       %-  handle-response
       :*  %start
           :-  status-code=307
           ^=  headers
-            :~  ['location' u.redirect]
+            :~  ['location' actual-redirect]
                 ['set-cookie' cookie-line]
             ==
           data=~
@@ -2042,14 +2057,18 @@
 ~%  %http-server  ..is  ~
 |%
 ++  call
-  |=  [=duct type=* wrapped-task=(hobo task:able)]
+  |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
   ^-  [(list move) _http-server-gate]
   ::
-  =/  task=task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ~|  [%p-wrapped-task p.wrapped-task]
-    ;;(task:able p.wrapped-task)
+  =/  task=task:able  ((harden task:able) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud
+  ::
+  =?  task  ?=(^ dud)
+    ~|  %crud-in-crud
+    ?<  ?=(%crud -.task)
+    [%crud -.task tang.u.dud]
+  ::
   ::  %crud: notifies us of an event failure
   ::
   ?:  ?=(%crud -.task)
@@ -2230,8 +2249,10 @@
   ==
 ::
 ++  take
-  |=  [=wire =duct wrapped-sign=(hypo sign)]
+  |=  [=wire =duct dud=(unit goof) wrapped-sign=(hypo sign)]
   ^-  [(list move) _http-server-gate]
+  ?^  dud
+    ~|(%eyre-take-dud (mean tang.u.dud))
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign

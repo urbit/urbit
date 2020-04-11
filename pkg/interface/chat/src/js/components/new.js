@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { InviteSearch } from './lib/invite-search';
+import { Spinner } from './lib/icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { uuid, isPatTa, deSig } from '/lib/util';
 import urbitOb from 'urbit-ob';
@@ -10,6 +11,8 @@ export class NewScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      title: '',
+      description: '',
       idName: '',
       groups: [],
       ships: [],
@@ -17,11 +20,12 @@ export class NewScreen extends Component {
       idError: false,
       inviteError: false,
       allowHistory: true,
-      createGroup: true
+      createGroup: false,
+      awaiting: false
     };
 
-    this.idName = React.createRef();
-    this.idChange = this.idChange.bind(this);
+    this.titleChange = this.titleChange.bind(this);
+    this.descriptionChange = this.descriptionChange.bind(this);
     this.securityChange = this.securityChange.bind(this);
     this.allowHistoryChange = this.allowHistoryChange.bind(this);
     this.setInvite = this.setInvite.bind(this);
@@ -39,27 +43,26 @@ export class NewScreen extends Component {
     }
   }
 
-  idChange(event) {
+  titleChange(event) {
+    let asciiSafe = event.target.value.toLowerCase()
+      .replace(/[^a-z0-9~_.-]/g, "-");
     this.setState({
-      idName: event.target.value
+      idName: asciiSafe,
+      title: event.target.value
+    });
+  }
+
+  descriptionChange(event) {
+    this.setState({
+      description: event.target.value
     });
   }
 
   setInvite(value) {
-    if (value.groups.length > 0) {
-      let idName = value.groups[0].split('/')[2];
-      this.idName.current.value = idName;
-      this.setState({
-        idName,
-        groups: value.groups,
-        ships: value.ships
-      });
-    } else {
-      this.setState({
-        groups: value.groups,
-        ships: value.ships
-      });
-    }
+    this.setState({
+      groups: value.groups,
+      ships: value.ships
+    });
   }
 
   securityChange(event) {
@@ -93,13 +96,7 @@ export class NewScreen extends Component {
   onClickCreate() {
     const { props, state } = this;
 
-    let validChar = /^[a-z0-9~_.-]*$/;
-
-    let invalid = (
-      (!state.idName) || (!validChar.test(state.idName))
-    );
-
-    if (invalid) {
+    if (!state.title) {
       this.setState({
         idError: true,
         inviteError: false
@@ -143,20 +140,33 @@ export class NewScreen extends Component {
       error: false,
       success: true,
       group: [],
-      ships: []
+      ships: [],
+      awaiting: true
     }, () => {
-      props.setSpinner(true);
       // if we want a "proper group" that can be managed from the contacts UI,
       // we make a path of the form /~zod/cool-group
       // if not, we make a path of the form /~/~zod/free-chat
-      let chatPath = `/~${window.ship}${station}`;
-      if (!state.createGroup || state.groups.length === 0) {
-        chatPath = `/~${chatPath}`;
+      let appPath = `/~${window.ship}${station}`;
+      if (!state.createGroup && state.groups.length === 0) {
+        appPath = `/~${appPath}`;
       }
-      props.api.chatView.create(
-        chatPath, state.security, aud, state.allowHistory
+      let groupPath = appPath;
+      if (state.groups.length > 0) {
+        groupPath = state.groups[0];
+      }
+      let submit = props.api.chatView.create(
+        state.title,
+        state.description,
+        appPath,
+        groupPath,
+        state.security,
+        aud,
+        state.allowHistory
       );
-      props.history.push(`/~chat/room${chatPath}`);
+      submit.then(() => {
+        this.setState({awaiting: false});
+        props.history.push(`/~chat/room${appPath}`);
+      })
     });
   }
 
@@ -178,10 +188,8 @@ export class NewScreen extends Component {
       : "pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 b--gray3";
 
     let idClasses =
-      "f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 ";
-    if (state.groups.length > 0) {
-      idClasses = idClasses + " o-40";
-    }
+      "f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 " +
+      "focus-b--black focus-b--white-d ";
 
     let idErrElem = (<span />);
     if (state.idError) {
@@ -210,6 +218,11 @@ export class NewScreen extends Component {
       );
     }
 
+    let groups = {};
+    Object.keys(props.permissions).forEach((pem) => {
+      groups[pem] = props.permissions[pem].who;
+    });
+
     return (
       <div
         className={
@@ -222,30 +235,42 @@ export class NewScreen extends Component {
         <h2 className="mb3 f8">New Chat</h2>
         <div className="w-100">
           <p className="f8 mt3 lh-copy db">Name</p>
-          <p className="f9 gray2 db mb2 pt1">
-            Lowercase alphanumeric characters, dashes, and slashes only
-          </p>
           <textarea
             className={idClasses}
-            placeholder="secret-chat"
+            placeholder="Secret Chat"
             rows={1}
             style={{
               resize: "none"
             }}
-            onChange={this.idChange}
-            ref={this.idName}
-            disabled={(state.groups.length > 0) ? "disabled" : false}
+            onChange={this.titleChange}
           />
-          {idErrElem}
+              {idErrElem}
+          <p className="f8 mt3 lh-copy db">
+            Description
+            <span className="gray3"> (Optional)</span>
+          </p>
+          <textarea
+            className={idClasses}
+            placeholder="The coolest chat"
+            rows={1}
+            style={{
+              resize: "none"
+            }}
+            onChange={this.descriptionChange}
+          />
           <p className="f8 mt4 lh-copy db">
             Invite
             <span className="gray3"> (Optional)</span>
           </p>
           <p className="f9 gray2 db mb2 pt1">
-            Selected entities will be able to post to chat
+            Selected groups or ships will be able to post to chat
           </p>
           <InviteSearch
-            groups={props.groups}
+            groups={groups}
+            contacts={props.contacts}
+            associations={props.associations}
+            groupResults={true}
+            shipResults={true}
             invites={{
               groups: state.groups,
               ships: state.ships
@@ -270,6 +295,7 @@ export class NewScreen extends Component {
             className={createClasses}>
             Start Chat
           </button>
+          <Spinner awaiting={this.state.awaiting} classes="mt4" text="Creating chat..." />
         </div>
       </div>
     );

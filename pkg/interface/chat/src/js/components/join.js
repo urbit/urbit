@@ -64,14 +64,14 @@ export class JoinScreen extends Component {
     }
 
     let station = text.split('/');
-    let sig = state.station.includes("/~/");
-    let ship = !!sig ? station[2] : station[1];
+    let sig = state.station.includes("~/");
+    let ship = !!sig ? station[1] : station[0];
 
     station = station.join('/');
 
     if (
-      station.length < 2 ||
-      (!!sig && station.length < 3) ||
+      (!sig && station.split('/').length < 2) ||
+      (!!sig && station.split('/').length < 3) ||
       !urbitOb.isValidPatp(ship)
     ) {
       this.setState({
@@ -80,7 +80,7 @@ export class JoinScreen extends Component {
       return;
     }
 
-    props.api.chatView.join(ship, station, true);
+    props.api.chatView.join(ship, `/${station}`, true);
   }
 
   stationChange(event) {
@@ -115,11 +115,12 @@ export class JoinScreen extends Component {
         </div>
         <h2 className="mb3 f8">Join Existing Chat</h2>
         <div className="w-100">
-          <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/chat-name</span></p>
+          <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/chat-name</span> or <span className="mono">~/~ship/chat-name</span></p>
           <p className="f9 gray2 mb4">Chat names use lowercase, hyphens, and slashes.</p>
           <textarea
             ref={ e => { this.textarea = e; } }
-            className="f7 mono ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 mb2 db"
+            className={"f7 mono ba bg-gray0-d white-d pa3 mb2 db " +
+            "focus-b--black focus-b--white-d b--gray3 b--gray2-d"}
             placeholder="~zod/chatroom"
             spellCheck="false"
             rows={1}

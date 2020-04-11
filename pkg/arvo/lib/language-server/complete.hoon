@@ -4,7 +4,7 @@
 =/  debug  |
 |%
 +*  option  [item]
-  [=term detail=item]
+  [term=cord detail=item]
 ::
 ::  Like +rose except also produces line number
 ::
@@ -73,7 +73,7 @@
   |*  [sid=term options=(list (option))]
   =/  match
     %+  skim  options
-    |=  [id=term *]
+    |=  [id=cord *]
     =(sid id)
   ?~  match
     ~
@@ -82,17 +82,18 @@
 ::  Get all the identifiers that start with sid.
 ::
 ++  search-prefix
-  |*  [sid=term ids=(list (option))]
+  |*  [sid=cord ids=(list (option))]
   ^+  ids
   %+  skim  ids
-  |=  [id=term *]
+  |=  [id=cord *]
+  ^-  ?(%.y %.n)
   =(sid (end 3 (met 3 sid) id))
 ::
 ::  Get the longest prefix of a list of identifiers.
 ::
 ++  longest-match
   |=  matches=(list (option))
-  ^-  term
+  ^-  cord
   ?~  matches
     ''
   =/  n  1
@@ -344,4 +345,32 @@
   :-  %&
   ~?  >  debug  %parsed-good
   ((cury tab-list-hoon sut) tssg+sources.p.res)
+::
+:: Generators
+++  tab-generators
+  |=  [pfix=path app=(unit term) gens=(list term)]
+  ^-  (list (option tank))
+  %+  turn  gens
+  |=  gen=term
+  ^-  (option tank)
+  =/  pax=path
+    (weld pfix ~[gen %hoon])
+  =/  file
+    .^(@t %cx pax)
+  :_  (render-help file)
+  ?~  app
+    (cat 3 '+' gen)
+  ?:  =(%hood u.app)
+    (cat 3 '|' gen)
+  :((cury cat 3) ':' u.app '|' gen)
+::  Stolen from +help
+++  render-help
+  |=  a=@t
+  ^-  tank
+  :-  %leaf
+  =/  c  (to-wain:format a)
+  ?~  c  "~"
+  ?.  =('::  ' (end 3 4 i.c))
+    "<undocumented>"
+  (trip i.c)
 --

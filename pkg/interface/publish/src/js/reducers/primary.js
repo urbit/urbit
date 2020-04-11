@@ -109,6 +109,7 @@ export class PrimaryReducer {
     let host = Object.keys(json)[0];
     let book = Object.keys(json[host])[0];
     if (state.notebooks[host] && state.notebooks[host][book]) {
+      state.notebooks[host][book]["comments"] = json[host][book]["comments"];
       state.notebooks[host][book]["date-created"] = json[host][book]["date-created"];
       state.notebooks[host][book]["num-notes"] = json[host][book]["num-notes"];
       state.notebooks[host][book]["num-unread"] = json[host][book]["num-unread"];
@@ -229,7 +230,10 @@ export class PrimaryReducer {
         state.notebooks[host][book].notes &&
         state.notebooks[host][book].notes[noteId])
     {
-      state.notebooks[host][book].notes[noteId]["read"] = true;
+      if (!state.notebooks[host][book].notes[noteId]["read"]) {
+        state.notebooks[host][book].notes[noteId]["read"] = true;
+        state.notebooks[host][book]["num-unread"] -= 1;
+      }
     }
   }
 

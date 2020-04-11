@@ -5,7 +5,7 @@
 =,  behn
 |=  pit=vase
 =>  |%
-    +$  move  [p=duct q=(wind note gift:able)]
+    +$  move  [p=duct q=(wite note gift:able)]
     +$  note                                            ::  out request $->
       $~  [%b %wait *@da]                               ::
       $%  $:  %b                                        ::   to self
@@ -34,7 +34,9 @@
     +$  timer  [date=@da =duct]
     --
 ::
-=>  |%
+=>
+~%  %behn  ..is  ~
+|%
 ++  per-event
   =|  moves=(list move)
   |=  [[our=ship now=@da =duct] state=behn-state]
@@ -52,16 +54,12 @@
     ^+  [moves state]
     ::  behn must get activated before other vanes in a %wake
     ::
-    ::    TODO: uncomment this case after switching %crud tags
+    ?.  =(%wake tag)
+      ~&  %behn-crud-not-wake^tag
+      [[duct %slip %d %flog %crud tag error]~ state]
     ::
-    ::    We don't know how to handle other errors, so relay them to %dill
-    ::    to be printed and don't treat them as timer failures.
-    ::
-    ::  ?.  =(%wake tag)
-    ::    ~&  %behn-crud-not-first-activation^tag
-    ::    [[duct %slip %d %flog %crud tag error]~ state]
-    ::
-    ?:  =(~ timers.state)  ~|  %behn-crud-no-timer^tag^error  !!
+    ?:  =(~ timers.state)
+      ~|(%behn-crud-no-timer^tag^error !!)
     ::
     (wake `error)
   ::  +rest: cancel the timer at :date, then adjust unix wakeup
@@ -97,12 +95,17 @@
     ^+  event-core
     =/  drip  (~(got by movs.drips.state) num)
     =.  movs.drips.state  (~(del by movs.drips.state) num)
-    ?^  error
-      ::  if the receiver errored, drop it
+    =/  =move
+      =/  card  [%give %meta drip]
+      ?~  error
+        [duct card]
+      =/  =tang
+        (weld u.error `tang`[leaf/"drip failed" ~])
+      ::  XX should be
+      ::  [duct %hurl fail/tang card]
       ::
-      %.  event-core
-      (slog leaf/"drip failed" (flop u.error))
-    event-core(moves [duct %give %meta drip]~)
+      [duct %pass /drip-slog %d %flog %crud %drip-fail tang]
+    event-core(moves [move moves])
   ::  +trim: in response to memory pressue
   ::
   ++  trim  [moves state]
@@ -246,15 +249,20 @@
 ::
 ++  call
   |=  $:  hen=duct
+          dud=(unit goof)
           type=*
           wrapped-task=(hobo task:able)
       ==
   ^-  [(list move) _behn-gate]
   ::
-  =/  =task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ;;(task:able p.wrapped-task)
+  =/  =task:able  ((harden task:able) wrapped-task)
+  ::
+  ::  error notifications "downcast" to %crud
+  ::
+  =?  task  ?=(^ dud)
+    ~|  %crud-in-crud
+    ?<  ?=(%crud -.task)
+    [%crud -.task tang.u.dud]
   ::
   =/  event-core  (per-event [our now hen] state)
   ::
@@ -294,8 +302,11 @@
 ::
 ++  stay  state
 ++  take
-  |=  [tea=wire hen=duct hin=(hypo sign)]
+  |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
   ^-  [(list move) _behn-gate]
+  ?^  dud
+    ~|(%behn-take-dud (mean tang.u.dud))
+  ::
   ?>  ?=([%drip @ ~] tea)
   =/  event-core  (per-event [our now hen] state)
   =^  moves  state

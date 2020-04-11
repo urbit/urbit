@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { InviteSearch } from './invite-search';
+import { Spinner } from './icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { uuid, isPatTa, deSig, stringToSymbol } from "/lib/util";
 import urbitOb from 'urbit-ob';
@@ -15,6 +16,7 @@ export class NewScreen extends Component {
         groups: [],
         ships: []
       },
+      disabled: false,
       createGroup: false,
       awaiting: false,
     };
@@ -75,7 +77,7 @@ export class NewScreen extends Component {
       };
     } else {
       groupInfo = {
-        "group-path": `/~/publish/~${window.ship}/${bookId}`,
+        "group-path": `/~/~${window.ship}/${bookId}`,
         "invitees": state.invites.ships,
         "use-preexisting": false,
         "make-managed": false,
@@ -91,9 +93,9 @@ export class NewScreen extends Component {
         group: groupInfo
       }
     }
-
-    this.setState({awaiting: bookId}, () => {
-      props.api.action("publish", "publish-action", action);
+    this.setState({awaiting: bookId, disabled: true}, () => {
+      props.api.action("publish", "publish-action", action).then(() => {
+      });
     });
   }
 
@@ -103,8 +105,8 @@ export class NewScreen extends Component {
        : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
 
     let createClasses = "pointer db f9 green2 bg-gray0-d ba pv3 ph4 mv7 b--green2";
-    if (!this.state.idName) {
-      createClasses = "pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 mv7 b--gray3";
+    if (!this.state.idName || this.state.disabled) {
+      createClasses = "db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 mv7 b--gray3";
     }
 
     let createGroupToggle =
@@ -131,12 +133,12 @@ export class NewScreen extends Component {
           Notebook must have a valid name.
         </span>
       );
-    }
+      }
 
     return (
       <div
         className={
-          "h-100 w-100 mw6 pa3 pt4 overflow-x-hidden flex flex-column"
+          "h-100 w-100 mw6 pa3 pt4 overflow-x-hidden flex flex-column white-d"
         }>
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
           <Link to="/~publish/">{"⟵ All Notebooks"}</Link>
@@ -148,7 +150,8 @@ export class NewScreen extends Component {
             Provide a name for your notebook
           </p>
           <textarea
-            className="f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100"
+            className={"f7 ba bg-gray0-d white-d pa3 db w-100 " +
+            "focus-b--black focus-b--white-d b--gray3 b--gray2-d"}
             placeholder="eg. My Journal"
             rows={1}
             style={{
@@ -164,7 +167,8 @@ export class NewScreen extends Component {
           </p>
           <p className="f9 gray2 db mb2 pt1">What's your notebook about?</p>
           <textarea
-            className="f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100"
+            className={"f7 ba bg-gray0-d white-d pa3 db w-100 " +
+            "focus-b--black focus-b--white-d b--gray3 b--gray2-d"}
             placeholder="Notebook description"
             rows={1}
             style={{
@@ -179,18 +183,24 @@ export class NewScreen extends Component {
             (Optional)
           </span>
           </p>
-          <p className="f9 gray2 db mb2 pt1">Select an initial read-only audience for your notebook</p>
+          <p className="f9 gray2 db mb2 pt1">Selected ships will be invited to read your notebook. Selected groups will be invited to read and write notes.</p>
           <InviteSearch
+            associations={this.props.associations}
+            groupResults={true}
+            shipResults={true}
             groups={this.props.groups}
+            contacts={this.props.contacts}
             invites={this.state.invites}
             setInvite={this.setInvite}
           />
           {createGroupToggle}
           <button
+          disabled={this.state.disabled}
           onClick={this.onClickCreate.bind(this)}
           className={createClasses}>
           Create Notebook
           </button>
+          <Spinner awaiting={this.state.awaiting} classes="mt3" text="Creating notebook..."/>
         </div>
       </div>
     );

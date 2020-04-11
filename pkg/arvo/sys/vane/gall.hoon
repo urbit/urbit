@@ -38,6 +38,7 @@
       %watch-as
       %poke
       %leave
+      %missing
   ==
 --
 |%
@@ -54,7 +55,7 @@
 ++  state
   $:  :: state version
       ::
-      %3
+      %4
       :: agents by ship
       ::
       =agents
@@ -420,6 +421,7 @@
     |=  =ship
     ^+  mo-core
     =.  mo-core  (mo-untrack-ship ship)
+    =.  mo-core  (mo-filter-queue ship)
     =/  agents=(list [name=term =running-agent])  ~(tap by running.agents.state)
     |-  ^+  mo-core
     ?~  agents
@@ -610,12 +612,16 @@
         [%a %done *]
       =^  remote-request  outstanding.agents.state
         ?~  t.t.t.wire
+          =/  full-wire  sys+wire
           =/  stand
-            %+  ~(gut by outstanding.agents.state)  [sys+wire hen]
-            *(qeu remote-request)
-          ~|  [sys+wire=wire hen=hen stand=stand outs=outstanding.agents.state]
+            %+  ~(gut by outstanding.agents.state)  [full-wire hen]
+            ::  default is do nothing; should only hit if cleared queue
+            ::  in +load 3-to-4
+            ::
+            (~(put to *(qeu remote-request)) %missing)
+          ~|  [full-wire=full-wire hen=hen stand=stand outs=outstanding.agents.state]
           =^  rr  stand  ~(get to stand)
-          [rr (~(put by outstanding.agents.state) [wire hen] stand)]
+          [rr (~(put by outstanding.agents.state) [full-wire hen] stand)]
         ::  non-null case of wire is old, remove on next breach after
         ::  2019/12
         ::
@@ -631,6 +637,7 @@
         %watch     (mo-give %unto %watch-ack err)
         %poke      (mo-give %unto %poke-ack err)
         %leave     mo-core
+        %missing   (mo-give:(mo-give %unto %watch-ack err) %unto %poke-ack err)
       ==
     ::
         [%a %boon *]
@@ -718,6 +725,28 @@
       =/  card  [%slip %g %deal sock term deal]
       [duct card]
     $(moves [move moves])
+  ::  +mo-filter-queue: remove all blocked tasks from ship.
+  ::
+  ++  mo-filter-queue
+    |=  =ship
+    =/  agents=(list [name=term =blocked])  ~(tap by blocked.agents.state)
+    =|  new-agents=(map term blocked)
+    |-  ^+  mo-core
+    ?~  agents
+      mo-core(blocked.agents.state new-agents)
+    =|  new-blocked=blocked
+    |-  ^+  mo-core
+    ?:  =(~ blocked.i.agents)
+      ?~  new-blocked
+        ^$(agents t.agents)
+      %=  ^$
+        agents      t.agents
+        new-agents  (~(put by new-agents) name.i.agents new-blocked)
+      ==
+    =^  mov  blocked.i.agents  ~(get to blocked.i.agents)
+    =?  new-blocked  !=(ship attributing.q.p.mov)
+      (~(put to new-blocked) mov)
+    $
   ::  +mo-beak: assemble a beak for the specified agent.
   ::
   ++  mo-beak
@@ -1472,16 +1501,13 @@
 ::
 ++  call
   ~%  %gall-call  +>   ~
-  |=  [=duct hic=(hypo (hobo task:able))]
+  |=  [=duct dud=(unit goof) hic=(hypo (hobo task:able))]
   ^-  [(list move) _gall-payload]
+  ?^  dud
+    ~|(%gall-call-dud (mean tang.u.dud))
   ::
   ~|  [%gall-call-failed duct q.hic]
-  ::  make sure our task is hard
-  ::
-  =/  =task:able
-    ?.  ?=(%soft -.q.hic)
-      q.hic
-    ;;  task:able  p.q.hic
+  =/  =task:able  ((harden task:able) q.hic)
   ::
   =/  initialised  (mo-abed:mo duct)
   ?-    -.task
@@ -1509,6 +1535,9 @@
   ::
       %goad
     mo-abet:(mo-goad:initialised force.task agent.task)
+  ::
+      %sear
+    mo-abet:(mo-filter-queue:initialised ship.task)
   ::
       %init
     =/  payload  gall-payload(system-duct.agents.state duct)
@@ -1581,16 +1610,32 @@
   =?  all-state  ?=(%2 -.all-state)
     (state-2-to-3 all-state)
   ::
-  ?>  ?=(%3 -.all-state)
+  =?  all-state  ?=(%3 -.all-state)
+    (state-3-to-4 all-state)
+  ::
+  ?>  ?=(%4 -.all-state)
   gall-payload(state all-state)
   ::
   ::  +all-state: upgrade path
   ::
-  ++  all-state  $%(state-0 state-1 state-2 ^state)
+  ++  all-state  $%(state-0 state-1 state-2 state-3 ^state)
+  ::
+  ++  state-3-to-4
+    |=  =state-3
+    ^-  ^state
+    %=    state-3
+        -  %4
+        outstanding.agents  ~
+    ==
+  ::
+  ++  state-3
+    $:  %3
+        =agents
+    ==
   ::
   ++  state-2-to-3
     |=  =state-2
-    ^-  ^state
+    ^-  state-3
     %=    state-2
         -  %3
         running.agents-2
@@ -1968,8 +2013,10 @@
 ::
 ++  take
   ~/  %gall-take
-  |=  [=wire =duct hin=(hypo sign-arvo)]
+  |=  [=wire =duct dud=(unit goof) hin=(hypo sign-arvo)]
   ^-  [(list move) _gall-payload]
+  ?^  dud
+    ~|(%gall-take-dud (mean tang.u.dud))
   ::
   ~|  [%gall-take-failed wire]
   ::

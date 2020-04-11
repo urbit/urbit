@@ -8,6 +8,7 @@ import { JoinScreen } from '/components/lib/join';
 import { Notebook } from '/components/lib/notebook';
 import { Note } from '/components/lib/note';
 import { NewPost } from '/components/lib/new-post';
+import { EditPost } from '/components/lib/edit-post';
 
 
 export class Root extends Component {
@@ -18,10 +19,17 @@ export class Root extends Component {
     store.setStateHandler(this.setState.bind(this));
   }
 
+  componentDidMount() {
+    //preload spinner asset
+    new Image().src = "/~publish/Spinner.png";
+  }
+
   render() {
     const { props, state } = this;
 
     let contacts = !!state.contacts ? state.contacts : {};
+    let associations = !!state.associations ? state.associations : {contacts: {}}
+    let selectedGroups = !!state.selectedGroups ? state.selectedGroups : [];
 
     return (
       <BrowserRouter>
@@ -35,6 +43,8 @@ export class Root extends Component {
               sidebarShown={true}
               invites={state.invites}
               notebooks={state.notebooks}
+              associations={associations}
+              selectedGroups={selectedGroups}
               contacts={contacts}>
                 <div className={`h-100 w-100 overflow-x-hidden flex flex-column
                  bg-white bg-gray0-d dn db-ns`}>
@@ -58,18 +68,24 @@ export class Root extends Component {
             sidebarShown={state.sidebarShown}
             invites={state.invites}
             notebooks={state.notebooks}
+            associations={associations}
+            selectedGroups={selectedGroups}
             contacts={contacts}>
               <NewScreen
+                associations={associations.contacts}
                 notebooks={state.notebooks}
                 groups={state.groups}
+                contacts={contacts}
                 api={api}
                 {...props}
               />
             </Skeleton>
           )
         }}/>
-      <Route exact path="/~publish/join"
+      <Route exact path="/~publish/join/:ship?/:notebook?"
               render={ (props) => {
+                let ship = props.match.params.ship || "";
+                let notebook = props.match.params.notebook || "";
                 return (
                   <Skeleton
                   popout={false}
@@ -78,8 +94,14 @@ export class Root extends Component {
                   sidebarShown={state.sidebarShown}
                   invites={state.invites}
                   notebooks={state.notebooks}
+                  associations={associations}
+                  selectedGroups={selectedGroups}
                   contacts={contacts}>
-                    <JoinScreen notebooks={state.notebooks} {...props} />
+                    <JoinScreen
+                    notebooks={state.notebooks}
+                    ship={ship}
+                    notebook={notebook}
+                    {...props} />
                   </Skeleton>
                 )
               }}/>
@@ -110,6 +132,8 @@ export class Root extends Component {
                 sidebarShown={state.sidebarShown}
                 invites={state.invites}
                 notebooks={state.notebooks}
+                associations={associations}
+                selectedGroups={selectedGroups}
                 contacts={contacts}
                 path={path}>
                 <NewPost
@@ -132,7 +156,9 @@ export class Root extends Component {
                 sidebarShown={state.sidebarShown}
                 invites={state.invites}
                 notebooks={state.notebooks}
+                associations={associations}
                 contacts={contacts}
+                selectedGroups={selectedGroups}
                 path={path}>
                 <Notebook
                   notebooks={state.notebooks}
@@ -150,7 +176,7 @@ export class Root extends Component {
             );
           }
         }}/>
-      <Route exact path="/~publish/:popout?/note/:ship/:notebook/:note"
+      <Route exact path="/~publish/:popout?/note/:ship/:notebook/:note/:edit?"
         render={ (props) => {
           let ship = props.match.params.ship || "";
           let notebook = props.match.params.notebook || "";
@@ -164,32 +190,63 @@ export class Root extends Component {
           let notebookContacts = (bookGroupPath in state.contacts)
             ? contacts[bookGroupPath] : {};
 
-          return (
-            <Skeleton
+          let edit = !!props.match.params.edit || false;
+
+          if (edit) {
+            return (
+              <Skeleton
               popout={popout}
               active={"rightPanel"}
               rightPanelHide={false}
               sidebarShown={state.sidebarShown}
               invites={state.invites}
               notebooks={state.notebooks}
+              selectedGroups={selectedGroups}
+              associations={associations}
               contacts={contacts}
               path={path}>
-              <Note
+              <EditPost
                 notebooks={state.notebooks}
                 book={notebook}
-                contacts={notebookContacts}
-                ship={ship}
                 note={note}
+                ship={ship}
                 sidebarShown={state.sidebarShown}
                 popout={popout}
-                {...props}
-              />
-            </Skeleton>
-          );
+                {...props}/>
+              </Skeleton>
+            )
+          }
+          else {
+            return (
+              <Skeleton
+                popout={popout}
+                active={"rightPanel"}
+                rightPanelHide={false}
+                sidebarShown={state.sidebarShown}
+                invites={state.invites}
+                notebooks={state.notebooks}
+                associations={associations}
+                selectedGroups={selectedGroups}
+                contacts={contacts}
+                path={path}>
+                <Note
+                  notebooks={state.notebooks}
+                  book={notebook}
+                  groups={state.groups}
+                  contacts={notebookContacts}
+                  ship={ship}
+                  note={note}
+                  sidebarShown={state.sidebarShown}
+                  popout={popout}
+                  {...props}
+                />
+              </Skeleton>
+            );
+          }
         }}/>
       </BrowserRouter>
     )
   }
 }
 
-export default Root
+export default Root;

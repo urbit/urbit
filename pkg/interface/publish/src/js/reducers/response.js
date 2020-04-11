@@ -20,6 +20,8 @@ export class ResponseReducer {
         break;
       case "local":
         this.sidebarToggle(json, state);
+        this.setSelected(json, state);
+        break;
       default:
         break;
     }
@@ -199,6 +201,13 @@ export class ResponseReducer {
     let data = _.has(json.data, 'sidebarToggle', false);
     if (data) {
         state.sidebarShown = json.data.sidebarToggle;
+    }
+  }
+
+  setSelected(json, state) {
+    let data = _.has(json.data, 'selected', false);
+    if (data) {
+      state.selectedGroups = json.data.selected;
     }
   }
 

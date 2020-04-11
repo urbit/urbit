@@ -117,6 +117,7 @@
       %link-listen-hook
       %link-view
       %metadata-store
+      %metadata-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -222,9 +223,35 @@
   ==
 ::
 ++  on-load
-  |=  %1
-  =<  se-abet  =<  se-view
-  (se-born %home %goad)
+  |=  ver=?(%1 %2)
+  ?-    ver
+      %1
+    =<  se-abet  =<  se-view
+    =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
+    =<  (se-born %home %goad)
+    =<  (se-born %home %metadata-store)
+    =<  (se-born %home %metadata-hook)
+    =<  (se-born %home %contact-store)
+    =<  (se-born %home %contact-hook)
+    =<  (se-born %home %contact-view)
+    =<  (se-born %home %link-store)
+    =<  (se-born %home %link-proxy-hook)
+    =<  (se-born %home %link-listen-hook)
+    (se-born %home %link-view)
+  ::
+      %2
+    =<  se-abet  =<  se-view
+    =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
+    =<  (se-born %home %metadata-store)
+    =<  (se-born %home %metadata-hook)
+    =<  (se-born %home %contact-store)
+    =<  (se-born %home %contact-hook)
+    =<  (se-born %home %contact-view)
+    =<  (se-born %home %link-store)
+    =<  (se-born %home %link-proxy-hook)
+    =<  (se-born %home %link-listen-hook)
+    (se-born %home %link-view)
+  ==
 ::
 ++  reap-phat                                         ::  ack connect
   |=  {way/wire saw/(unit tang)}

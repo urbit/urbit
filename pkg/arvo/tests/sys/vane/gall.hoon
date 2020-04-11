@@ -69,7 +69,7 @@
   ::
   =/  gall-core  (gall-gate our=~nec now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  gall-gate  (call:gall-core call-args)
+  =^  moves  gall-gate  (call:gall-core [duct ~ type wrapped-task]:call-args)
   ::
   =/  output=tang
     %+  expect-eq

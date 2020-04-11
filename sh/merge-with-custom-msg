@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 usage() {
     local error="$1"
 
@@ -41,9 +43,40 @@ fi
 REV=$1
 PR=$2
 
-TARGET=$(echo $REV | sed s_origin/__)
+if [[ -z "$PR" ]]; then
+    usage "PULL_REQUEST not specified"
+fi
 
-MERGE_MSG="Merge branch '$TARGET' (#$PR)"
+KERNEL_CHANGED=`git diff --name-status $REV -- pkg/arvo/sys`
+PILLS_CHANGED=`git diff --name-status $REV -- bin`
 
-git merge --no-ff --signoff --log -m "$MERGE_MSG" $REV
+echo "Pre-merge checklist:"
+echo
+echo "Arvo:"
+echo "* Is this contribution OTA-updateable on top of the latest release?"
+echo "* Does this contribution include updated pills, if applicable?"
+echo
+echo "General:"
+echo "* Does this contribution contain tests for sanity checks, regressions, etc.?"
+echo "* Are commit prefixes present and accurate?"
+echo "* Have all WIP/FIXME/DONTCOMMIT commits been squashed?"
+echo "* Do commits contain long-form descriptions, if applicable?"
+echo
+
+if [[ ! -z $KERNEL_CHANGED && -z $PILLS_CHANGED ]]
+then
+  echo "**WARNING**: kernel has changed, but pills have not"
+  echo $KERNEL_CHANGED
+  echo
+fi
+
+TARGET_MSG=$(echo $REV | sed s_origin/__)
+MERGE_MSG="Merge branch '$TARGET_MSG' (#$PR)"
+
+read -p "Proceed with merge? (y/n)" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  git merge --no-ff --signoff --log -m "$MERGE_MSG" $REV
+fi
 

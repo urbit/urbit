@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 if [ -n "${TRAVIS_TAG-}" ]
 then
@@ -12,12 +12,22 @@ else
   ver="$(git rev-parse HEAD)"
 fi
 
+traced () {
+  echo '$' "$@" >&2; "$@"
+}
+
 mkdir -p release
 
 for plat in linux64 darwin
 do
   sh/cross urbit "$plat"
 
-  echo "packaging release/urbit-$plat-$ver.tgz"
-  (cd cross/$plat; tar cz .) > release/urbit-$plat-$ver.tgz
+  tmp=$(mktemp -d)
+  mkdir -p $tmp/$ver-$plat
+  traced cp -r cross/$plat/* $tmp/$ver-$plat
+
+  echo "packaging release/$ver-$plat.tgz"
+  (cd $tmp; tar cz $ver-$plat) > release/$ver-$plat.tgz
+
+  rm -rf $tmp
 done

@@ -1,7 +1,7 @@
 ::  group-store: data store for groups of ships
 ::
 /-  *group-store
-/+  default-agent
+/+  default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -22,6 +22,9 @@
 ::
 =|  state-zero
 =*  state  -
+::
+%-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall

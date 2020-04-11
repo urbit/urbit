@@ -27,27 +27,26 @@ export class Skeleton extends Component {
       ? "" : "ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl";
 
     let popoutBorder = this.props.popout
-      ? "" : "ba-m ba-l ba-xl b--gray2 br1 ";
+      ? "" : "ba-m ba-l ba-xl b--gray4 b--gray1-d br1 ";
 
     return (
       // app outer skeleton
       <div className={"absolute h-100 w-100 bg-gray0-d " + popoutWindow}>
-      <HeaderBar spinner={this.props.spinner} />
+      <HeaderBar associations={this.props.associations} invites={this.props.invites} />
       {/* app window borders */}
         <div className={
             `cf w-100 flex ` +
             popoutBorder +
-            (this.props.chatHideonMobile ? "h-100 " : "h-100-minus-40-s ") +
             (this.props.popout
               ? "h-100"
-              : "h-100-minus-40-m h-100-minus-40-l h-100-minus-40-xl")
+              : "h-100 h-100-minus-40-m h-100-minus-40-l h-100-minus-40-xl")
           }>
           {/* sidebar skeleton, hidden on mobile when in chat panel */}
           <div
             className={
               `fl h-100 br b--gray4 b--gray1-d overflow-x-hidden
-              flex-basis-full-s flex-basis-300-m flex-basis-300-l
-              flex-basis-300-xl ` +
+              flex-basis-full-s flex-basis-250-m flex-basis-250-l
+              flex-basis-250-xl ` +
               sidebarHide +
               " " +
               sidebarHideOnMobile
@@ -57,7 +56,7 @@ export class Skeleton extends Component {
               <a className="pl3 pb6" href="/">
                 {"⟵ Landscape"}
               </a>
-              <div className="bb b--gray4 white-d inter f8 pl3 pt6 pb3">
+              <div className="bb b--gray4 b--gray1-d white-d inter f8 pl3 pt6 pb3">
                 All Chats
               </div>
             </div>

@@ -5,6 +5,7 @@ export class LocalReducer {
         let data = _.get(json, 'local', false);
         if (data) {
             this.sidebarToggle(data, state);
+            this.setSelected(data, state);
         }
     }
 
@@ -13,5 +14,12 @@ export class LocalReducer {
         if (data) {
             state.sidebarShown = obj.sidebarToggle;
         }
+    }
+
+    setSelected(obj, state) {
+      let data = _.has(obj, 'selected', false);
+      if (data) {
+        state.selectedGroups = obj.selected;
+      }
     }
 }

@@ -19,7 +19,7 @@
   ==
   ;body
     ;h1:"Ran generator"
-    ::  ;p:"Executing on {<(scot %p our)>}."
+    ;p:"Executing on {<(scot %p p.bek)>}."
     ;p:"The method was {<(trip method)>}."
     ;p:"The url was {<(trip url)>}."
   ==

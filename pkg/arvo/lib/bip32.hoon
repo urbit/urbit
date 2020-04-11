@@ -212,5 +212,5 @@
 ::
 ++  hash160
   |=  d=@
-  (ripemd-160:ripemd:crypto 256 (sha-256:sha d))
+  (ripemd-160:ripemd:crypto 32 (sha-256:sha d))
 --

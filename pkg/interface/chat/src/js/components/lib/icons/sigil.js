@@ -10,12 +10,14 @@ export class Sigil extends Component {
 
     if (props.ship.length > 14) {
       return (
-        <div className="bg-black dib" style={{width: props.size, height: props.size}}>
+        <div
+        className={"bg-black dib " + classes}
+        style={{width: props.size, height: props.size}}>
         </div>
       );
     } else {
       return (
-        <div className={"dib " + classes} style={{ flexBasis: 32, backgroundColor: props.color }}>
+        <div className={"dib " + classes} style={{ flexBasis: props.size, backgroundColor: props.color }}>
           {sigil({
             patp: props.ship,
             renderer: reactRenderer,

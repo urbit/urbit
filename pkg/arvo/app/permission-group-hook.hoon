@@ -3,7 +3,7 @@
 ::    mirror the ships in specified groups to specified permission paths
 ::
 /-  *group-store, *permission-group-hook
-/+  *permission-json, default-agent, verb
+/+  *permission-json, default-agent, verb, dbug
 ::
 |%
 +$  state
@@ -25,6 +25,7 @@
 =*  state  -
 ::
 %+  verb  |
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -116,7 +117,6 @@
     (snoc (recreate-permissions perm-paths associate) (watch-group group))
   ::
   =/  grp  (group-scry group)
-  ~&  associate+grp
   =.  u.perms  (~(uni in u.perms) perm-paths)
   :_  state(relation (~(put by relation) group u.perms))
   %+  weld

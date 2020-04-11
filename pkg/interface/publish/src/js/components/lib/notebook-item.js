@@ -5,41 +5,19 @@ export class NotebookItem extends Component {
   render() {
     let { props } = this;
 
-    let selectedClass = (props.selected) ? "bg-gray5 b--gray4" : "b--gray4";
-
-    let postCount = (props.total === 1)
-      ? `${props.total} post` : `${props.total} posts`;
+    let selectedClass = (props.selected) ? "bg-gray5 bg-gray1-d c-default" : "pointer hover-bg-gray5 hover-bg-gray1-d";
 
     let unread = (props.unreadCount > 0)
-      ? `${props.unreadCount} unread` : "";
-
-    let notebookContacts = (props.contactsPath in props.contacts)
-      ? props.contacts[props.contactsPath] : {};
-    let contact = !!(props.author.substr(1) in notebookContacts)
-      ? notebookContacts[props.author.substr(1)] : false;
-
-    let name = props.author;
-    if (contact) {
-      name = (contact.nickname.length > 0)
-        ? contact.nickname : props.author;
-    }
+      ? <p className="dib f9 fr"><span className="dib white bg-gray3 bg-gray2-d fw6 br1" style={{ padding: "1px 5px" }}>
+        {props.unreadCount}
+      </span></p> : <span/>;
 
     return (
       <Link
       to={"/~publish/notebook/" + props.path}>
-        <div className={"w-100 v-mid f9 pl4 bb " + selectedClass}>
-          <p className="f9 pt1">{props.title}</p>
-          <p className="f9 gray2">by
-            <span className={"pl1 " + ((name === props.author) ? "mono" : "")}>
-              {name}
-            </span>
-          </p>
-          <p className="f9 pb1">
-          {postCount}
-            <span className="green2 ml3">
-              {unread}
-            </span>
-          </p>
+        <div className={"w-100 v-mid f9 ph4 pv1 " + selectedClass}>
+          <p className="dib f9">{props.title}</p>
+          {unread}
         </div>
       </Link>
     );

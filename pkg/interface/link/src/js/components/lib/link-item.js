@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import { Sigil } from '/components/lib/icons/sigil';
 import { Route, Link } from 'react-router-dom';
-import { base64urlEncode } from '../../lib/util';
+import { makeRoutePath, cite } from '../../lib/util';
 
 export class LinkItem extends Component {
   constructor(props) {
@@ -34,7 +34,7 @@ export class LinkItem extends Component {
   }
 
   markPostAsSeen() {
-    api.seenLink(this.props.groupPath, this.props.url);
+    api.seenLink(this.props.resourcePath, this.props.url);
   }
 
   render() {
@@ -58,37 +58,40 @@ export class LinkItem extends Component {
       hostname = hostname[4];
     }
 
-    let encodedUrl = base64urlEncode(props.url);
-
     let comments = props.comments + " comment" + ((props.comments === 1) ? "" : "s");
 
+    let member = this.props.member || false;
     return (
-      <div className="w-100 pv3 flex">
+      <div className="w-100 pv3 flex bg-white bg-gray0-d">
         <Sigil
           ship={"~" + props.ship}
-          size={36}
+          size={38}
           color={"#" + props.color}
+          classes={(member ? "mix-blend-diff" : "")}
             />
-        <div className="flex flex-column ml2">
+        <div className="flex flex-column ml2 flex-auto">
           <a href={props.url}
           className="w-100 flex"
           target="_blank"
           onClick={this.markPostAsSeen}>
             <p className="f8 truncate">{props.title}
-              <span className="gray2 dib truncate-m mw4-m v-btm ml2">{hostname} ↗</span>
             </p>
+            <span className="gray2 dib v-btm ml2 f8 flex-shrink-0">{hostname} ↗</span>
           </a>
           <div className="w-100 pt1">
-            <span className={"f9 pr2 v-mid " + mono}>{(props.nickname)
-            ? props.nickname
-            : "~" + props.ship}</span>
+            <span className={"f9 pr2 v-mid " + mono}
+            title={props.ship}>
+            {(props.nickname)
+              ? props.nickname
+              : cite(props.ship)}
+            </span>
           <span
             className={seenState + " f9 inter pr3 v-mid"}
             onClick={this.markPostAsSeen}>
             {this.state.timeSinceLinkPost}
           </span>
           <Link to=
-          {"/~link" + props.popout + props.groupPath + "/" + props.page + "/" + props.linkIndex + "/" + encodedUrl}
+            {makeRoutePath(props.resourcePath, props.popout, props.page, props.url, props.linkIndex)}
           className="v-top"
           onClick={this.markPostAsSeen}>
             <span className="f9 inter gray2">

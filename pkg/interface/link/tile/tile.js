@@ -11,7 +11,7 @@ export default class LinkTile extends Component {
     let displayUnseen = unseenCount <= 0
       ? null
       : <p
-          className="absolute green2"
+          className="absolute green2 white-d"
           style={{
             bottom: 6,
             fontWeight: 400,
@@ -22,15 +22,16 @@ export default class LinkTile extends Component {
         </p>;
 
     return (
-      <div className="w-100 h-100 relative ba b--black bg-white">
+      <div className={"w-100 h-100 relative ba b--black b--gray1-d " +
+      "bg-white bg-gray0-d"}>
         <a className="w-100 h-100 db pa2 bn" href="/~link">
           <p
-            className="f9 black absolute"
+            className="f9 black white-d absolute"
             style={{ left: 8, top: 8 }}>
             Links
           </p>
           <img
-            className="absolute"
+            className="absolute invert-d"
             style={{ left: 39, top: 39 }}
             src="/~link/img/Tile.png"
             width={48}

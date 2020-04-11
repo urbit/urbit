@@ -1,7 +1,7 @@
 ::  eth-watcher: ethereum event log collector
 ::
 /-  *eth-watcher, spider
-/+  default-agent, verb
+/+  default-agent, verb, dbug
 =,  ethereum-types
 =,  able:jael
 ::
@@ -57,6 +57,7 @@
 ::
 ::  Main
 ::
+%-  agent:dbug
 ^-  agent:gall
 =|  state=app-state
 %+  verb  |

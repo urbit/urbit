@@ -84,6 +84,10 @@ h2 {
   font-family: "Source Code Pro", monospace;
 }
 
+.bg-welcome-green {
+  background-color: #ECF6F2;
+}
+
 .list-ship {
   line-height: 2.2;
 }
@@ -108,11 +112,26 @@ h2 {
   font-family: "Inter", sans-serif;
 }
 
+/* spinner */
+
+.spin-active {
+  animation: spin 2s infinite;
+}
+
+@keyframes spin {
+  0% {transform: rotate(0deg);}
+  25% {transform: rotate(90deg);}
+  50% {transform: rotate(180deg);}
+  75% {transform: rotate(270deg);}
+  100% {transform: rotate(360deg);}
+}
+
 /* embeds */
 .embed-container {
   position: relative;
   height: 0;
   overflow: hidden;
+  padding-bottom: 28.125%;
 }
 
 .embed-container iframe, .embed-container object, .embed-container embed {
@@ -171,8 +190,8 @@ h2 {
 }
 
 @media all and (min-width: 34.375em) and (max-width: 46.875em) {
-  .flex-basis-300-m {
-    flex-basis: 300px;
+  .flex-basis-250-m {
+    flex-basis: 250px;
   }
   .h-100-minus-40-m {
     height: calc(100% - 40px);
@@ -183,8 +202,8 @@ h2 {
 }
 
 @media all and (min-width: 46.875em) and (max-width: 60em) {
-  .flex-basis-300-l {
-    flex-basis: 300px;
+  .flex-basis-250-l {
+    flex-basis: 250px;
   }
   .h-100-minus-40-l {
     height: calc(100% - 40px);
@@ -195,14 +214,11 @@ h2 {
 }
 
 @media all and (min-width: 60em) {
-  .flex-basis-300-xl {
-    flex-basis: 300px;
+  .flex-basis-250-xl {
+    flex-basis: 250px;
   }
   .h-100-minus-40-xl {
     height: calc(100% - 40px);
-  }
-  .embed-container {
-    padding-bottom: 28.125%;
   }
 }
 
@@ -264,7 +280,7 @@ h2 {
   a {
     color: #fff;
   }
-  .hover-black-d:hover {
-    color: #000;
+  .hover-bg-gray1-d:hover {
+    background-color: #4d4d4d;
   }
 }

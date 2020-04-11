@@ -1,4 +1,4 @@
-/+  *test, *test-ford
+/+  *test, *test-ford-external
 ::
 /=  http-server-raw  /:  /===/sys/vane/eyre  /!noun/
 ::
@@ -1956,7 +1956,7 @@
   ::
   =/  http-server-core  (http-server-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  http-server-gate  (call:http-server-core call-args)
+  =^  moves  http-server-gate  (call:http-server-core [duct ~ type wrapped-task]:call-args)
   ::
   =/  output=tang
     %+  expect-eq
@@ -1976,7 +1976,7 @@
   ::
   =/  http-server-core  (http-server-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  http-server-gate  (call:http-server-core call-args)
+  =^  moves  http-server-gate  (call:http-server-core [duct ~ type wrapped-task]:call-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::
@@ -1986,14 +1986,14 @@
   |=  $:  http-server-gate=_http-server-gate
           now=@da
           scry=sley
-          take-args=[=wire =duct wrapped-task=(hypo sign:http-server-gate)]
+          take-args=[=wire =duct wrapped-sign=(hypo sign:http-server-gate)]
           expected-moves=(list move:http-server-gate)
       ==
   ^-  [tang _http-server-gate]
   ::
   =/  http-server-core  (http-server-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  http-server-gate  (take:http-server-core take-args)
+  =^  moves  http-server-gate  (take:http-server-core [wire duct ~ wrapped-sign]:take-args)
   ::
   =/  output=tang
     %+  expect-eq
@@ -2006,14 +2006,14 @@
   |=  $:  http-server-gate=_http-server-gate
           now=@da
           scry=sley
-          take-args=[=wire =duct wrapped-task=(hypo sign:http-server-gate)]
+          take-args=[=wire =duct wrapped-sign=(hypo sign:http-server-gate)]
           move-comparator=$-((list move:http-server-gate) tang)
       ==
   ^-  [tang _http-server-gate]
   ::
   =/  http-server-core  (http-server-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  http-server-gate  (take:http-server-core take-args)
+  =^  moves  http-server-gate  (take:http-server-core [wire duct ~ wrapped-sign]:take-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::

@@ -1,16 +1,15 @@
 :: chat-store: data store that holds linear sequences of chat messages
 ::
-/+  *chat-json, *chat-eval, default-agent
+/+  *chat-json, *chat-eval, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-zero
+      state-one
   ==
 ::
-+$  state-zero
-  $:  %0
-      =inbox
-  ==
++$  state-zero  [%0 =inbox]
++$  state-one   [%1 =inbox]
 ::
 +$  diff
   $%  [%chat-initial inbox]
@@ -19,8 +18,11 @@
   ==
 --
 ::
-=|  state-zero
+=|  state-one
 =*  state  -
+::
+%-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -32,8 +34,12 @@
   ++  on-init   on-init:def
   ++  on-save   !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
+    |=  old-vase=vase
+    =/  old  !<(versioned-state old-vase)
+    ?:  ?=(%1 -.old)
+      [~ this(state old)]
+    :_  this(state [%1 inbox.old])
+    [%pass /lo-chst %agent [our.bowl %chat-hook] %poke %noun !>(%store-load)]~
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -49,8 +55,8 @@
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
     |^
+    ?>  (team:title our.bowl src.bowl)
     =/  cards=(list card)
       ?+    path  (on-watch:def path)
           [%keys ~]     (give %chat-update !>([%keys ~(key by inbox)]))
@@ -149,17 +155,21 @@
   ?-  -.action
       %create    (handle-create action)
       %delete    (handle-delete action)
-      %message   (handle-message action)
-      %messages  (handle-messages action)
       %read      (handle-read action)
+      %messages  (handle-messages action)
+      %message
+        ?.  =(our.bol author.envelope.action)
+          (handle-message action)
+        =^  message-moves  state  (handle-message action)
+        =^  read-moves  state  (handle-read [%read path.action])
+        [(weld message-moves read-moves) state]
   ==
 ::
 ++  handle-create
   |=  act=chat-action
   ^-  (quip card _state)
   ?>  ?=(%create -.act)
-  ?:  (~(has by inbox) path.act)
-    [~ state]
+  ?:  (~(has by inbox) path.act)  [~ state]
   :-  (send-diff path.act act)
   state(inbox (~(put by inbox) path.act *mailbox))
 ::
@@ -168,8 +178,7 @@
   ^-  (quip card _state)
   ?>  ?=(%delete -.act)
   =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
-  ?~  mailbox
-    [~ state]
+  ?~  mailbox  [~ state]
   :-  (send-diff path.act act)
   state(inbox (~(del by inbox) path.act))
 ::
@@ -181,8 +190,8 @@
   ?~  mailbox
     [~ state]
   =.  letter.envelope.act  (evaluate-letter [author letter]:envelope.act)
-  =.  u.mailbox  (append-envelope u.mailbox envelope.act)
-  :-  (send-diff path.act act)
+  =^  envelope  u.mailbox  (append-envelope u.mailbox envelope.act)
+  :-  (send-diff path.act act(envelope envelope))
   state(inbox (~(put by inbox) path.act u.mailbox))
 ::
 ++  handle-messages
@@ -204,8 +213,8 @@
         evaluated-envelopes
     ==
   =.  letter.i.envelopes.act  (evaluate-letter [author letter]:i.envelopes.act)
-  =.  evaluated-envelopes  (snoc evaluated-envelopes i.envelopes.act)
-  =.  u.mailbox  (append-envelope u.mailbox i.envelopes.act)
+  =^  envelope  u.mailbox  (append-envelope u.mailbox i.envelopes.act)
+  =.  evaluated-envelopes  (snoc evaluated-envelopes envelope)
   $(envelopes.act t.envelopes.act)
 ::
 ++  handle-read
@@ -233,12 +242,12 @@
 ::
 ++  append-envelope
   |=  [=mailbox =envelope]
-  ^-  ^mailbox
+  ^+  [envelope mailbox]
   =.  number.envelope  +(length.config.mailbox)
   =:  length.config.mailbox  +(length.config.mailbox)
       envelopes.mailbox  (snoc envelopes.mailbox envelope)
   ==
-  mailbox
+  [envelope mailbox]
 ::
 ++  update-subscribers
   |=  [pax=path update=chat-update]

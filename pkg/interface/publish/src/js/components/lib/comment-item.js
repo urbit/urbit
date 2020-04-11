@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { Sigil } from './icons/sigil';
-import { uxToHex } from '../../lib/util';
+import { uxToHex, cite } from '../../lib/util';
 
 export class CommentItem extends Component {
   constructor(props){
@@ -29,6 +29,7 @@ export class CommentItem extends Component {
     });
   }
   render() {
+    let pending = !!this.props.pending ? "o-60" : "";
     let commentData = this.props.comment[Object.keys(this.props.comment)[0]];
     let content = commentData.content.split("\n").map((line, i)=> {
       return (
@@ -42,23 +43,30 @@ export class CommentItem extends Component {
 
     let name = commentData.author;
     let color = "#000000";
+    let classes = "mix-blend-diff";
     if (contact) {
       name = (contact.nickname.length > 0)
         ? contact.nickname : commentData.author;
       color = `#${uxToHex(contact.color)}`;
+      classes = "";
     }
 
+    if (name === commentData.author) {
+      name = cite(commentData.author);
+    }
 
     return (
-      <div>
-        <div className="flex mv3">
+      <div className={pending}>
+        <div className="flex mv3 bg-white bg-gray0-d">
         <Sigil
           ship={commentData.author}
           size={24}
           color={color}
+          classes={classes}
         />
-          <div className={"f9 mh2 pt1" +
-          ((name === commentData.author) ? " mono" : "")}>
+          <div className={"f9 mh2 pt1 " +
+            (contact.nickname ? null : "mono")}
+            title={commentData.author}>
             {name}
           </div>
           <div className="f9 gray3 pt1">{date}</div>

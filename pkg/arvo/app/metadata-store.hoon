@@ -1,4 +1,4 @@
-::  metadata-store: data store for application metadata and mappings 
+::  metadata-store: data store for application metadata and mappings
 ::  between groups and resources within applications
 ::
 ::  group-paths are expected to be an existing group path
@@ -19,9 +19,9 @@
 ::  /resource-indices                              all resource indices
 ::  /metadata/%group-path/%app-name/%app-path      specific metadatum
 ::  /app-name/%app-name                            associations for app
+::  /group/%group-path                             associations for group
 ::
-/-  *metadata-store
-/+  default-agent
+/+  *metadata-json, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 ::
@@ -40,6 +40,8 @@
 ::
 =|  state-zero
 =*  state  -
+%+  verb  |
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -71,7 +73,7 @@
     |^
     =/  cards=(list card)
       ?+  path  (on-watch:def path)
-          [%all ~]      (give %metadata-update !>([%associatons associations]))
+          [%all ~]      (give %metadata-update !>([%associations associations]))
           [%updates ~]  ~
           [%app-name @ ~]
         =/  =app-name  i.t.path
@@ -100,10 +102,14 @@
       =/  =app-name  i.t.t.path
       ``noun+!>((metadata-for-app:mc app-name))
     ::
+        [%x %group *]
+      =/  =group-path  t.t.path
+      ``noun+!>((metadata-for-group:mc group-path))
+    ::
         [%x %metadata @ @ @ ~]
       =/  =group-path  (stab (slav %t i.t.t.path))
       =/  =resource    [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
-      ``noun+!>((~(got by associations) [group-path resource]))
+      ``noun+!>((~(get by associations) [group-path resource]))
     ==
   ::
   ++  on-agent  on-agent:def
@@ -165,11 +171,21 @@
 ::
 ++  metadata-for-app
   |=  =app-name
-  %-  ~(gas by *(map [group-path resource] metadata))
-  %+  turn  ~(tap in (~(got by app-indices) app-name))
+  ^-  ^associations
+  %-  ~(gas by *^associations)
+  %+  turn  ~(tap in (~(gut by app-indices) app-name ~))
   |=  [=group-path =app-path]
   :-  [group-path [app-name app-path]]
   (~(got by associations) [group-path [app-name app-path]])
+::
+++  metadata-for-group
+  |=  =group-path
+  ^-  ^associations
+  %-  ~(gas by *^associations)
+  %+  turn  ~(tap in (~(gut by group-indices) group-path ~))
+  |=  =resource
+  :-  [group-path resource]
+  (~(got by associations) [group-path resource])
 ::
 ++  send-diff
   |=  [=app-name upd=metadata-update]
