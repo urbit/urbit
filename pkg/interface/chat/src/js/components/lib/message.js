@@ -174,7 +174,7 @@ export class Message extends Component {
           }}>
          <OverlaySigil
            ship={props.msg.author}
-           name={contact.nickname}
+           contact={contact}
            color={color}
            sigilClass={sigilClass}
            className="fl pr3 v-top bg-white bg-gray0-d" />

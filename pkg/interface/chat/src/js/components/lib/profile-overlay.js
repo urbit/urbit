@@ -11,7 +11,7 @@ export class ProfileOverlay extends Component {
   }
 
   render() {
-    const { name, ship, color, topSpace, bottomSpace } = this.props;
+    const { contact, ship, color, topSpace, bottomSpace } = this.props;
 
     let top, bottom;
     if (topSpace < HEIGHT / 2) {
@@ -24,6 +24,8 @@ export class ProfileOverlay extends Component {
       bottom = `-${Math.round(HEIGHT / 2)}px`;
     }
     const containerStyle = { top, bottom, left: "100%" };
+
+    const isOwn = window.ship === ship;
 
     return (
       <div
@@ -42,14 +44,26 @@ export class ProfileOverlay extends Component {
           />
         </div>
         <div className="pv3 pl3 pr2">
-          {name && <div className="b white-d">{name}</div>}
+          {contact && contact.nickname && (
+            <div className="b white-d">{contact.nickname}</div>
+          )}
           <div className="mono gray2">{cite(`~${ship}`)}</div>
-          <Link
-            to={`/~chat/new/dm/~${ship}`}
-            className="b--green0 b--green2-d b--solid bw1 green2 mt3 tc pa2 pointer db"
-          >
-            Send Message
-          </Link>
+          {!isOwn && (
+            <Link
+              to={`/~chat/new/dm/~${ship}`}
+              className="b--green0 b--green2-d b--solid bw1 green2 mt3 tc pa2 pointer db"
+            >
+              Send Message
+            </Link>
+          )}
+          {isOwn && (
+            <a
+              href="/~groups/me"
+              className="b--gray3 b--solid bw1 black white-d mt3 tc pa2 pointer db"
+            >
+              Edit Group Identity
+            </a>
+          )}
         </div>
       </div>
     );

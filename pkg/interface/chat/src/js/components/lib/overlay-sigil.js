@@ -76,7 +76,7 @@ export class OverlaySigil extends Component {
         {(state.profileClicked || state.profileCaptured) && (
           <ProfileOverlay
             ship={props.ship}
-            name={props.name}
+            contact={props.contact}
             color={props.color}
             topSpace={state.topSpace}
             bottomSpace={state.bottomSpace}
