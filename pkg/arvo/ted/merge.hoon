@@ -141,8 +141,57 @@
     ==
   ::
       ?(%meet %mate %meld)
-    ~&  %merge-not-implemented
-    !!
+    ?:  =(r.ali-yaki r.bob-yaki)
+      (pure:m ~)
+    ?:  (~(has in (reachable-takos r.bob-yaki)) r.ali-yaki)
+      (pure:m ~)
+    ?:  (~(has in (reachable-takos r.ali-yaki)) r.bob-yaki)
+      $(germ %fine)
+    =/  merge-points  find-merge-points
+    ?~  merge-points
+      %^  error  %merge-no-merge-base
+        leaf+"consider a %this or %that merge to get a mergebase"
+      ~
+    =/  merge-point=yaki  n.merge-points
+    ?.  ?=(%meet germ)
+      ~&  %merge-not-implemented
+      !!
+    =/  ali-diffs=cane  (calc-diffs ali-yaki merge-point)
+    =/  bob-diffs=cane  (calc-diffs bob-yaki merge-point)
+    =/  both-diffs=(map path *)
+      %-  %~  int  by
+          %-  ~(uni by `(map path *)`new.ali-diffs)
+          %-  ~(uni by `(map path *)`cal.ali-diffs)
+          %-  ~(uni by `(map path *)`can.ali-diffs)
+          `(map path *)`old.ali-diffs
+      %-  ~(uni by `(map path *)`new.bob-diffs)
+      %-  ~(uni by `(map path *)`cal.bob-diffs)
+      %-  ~(uni by `(map path *)`can.bob-diffs)
+      `(map path *)`old.bob-diffs
+    ?.  =(~ both-diffs)
+      %:  error  %meet-conflict  >~(key by both-diffs)<
+        leaf+"consider a %mate merge"  ~
+      ==
+    =/  not-deleted=(map path lobe)
+      %+  roll  ~(tap by (~(uni by old.ali-diffs) old.bob-diffs))
+      =<  .(not-deleted q.merge-point)
+      |=  [[pax=path ~] not-deleted=(map path lobe)]
+      (~(del by not-deleted) pax)
+    =/  hat=(map path lobe)
+      %-  ~(uni by not-deleted)
+      %-  ~(uni by new.ali-diffs)
+      %-  ~(uni by new.bob-diffs)
+      %-  ~(uni by cal.ali-diffs)
+      cal.bob-diffs
+    %:  pure:m
+      ~
+      conflicts=~
+      bop=~
+      new=(make-yaki [r.bob-yaki r.ali-yaki ~] hat wen)
+      deletes=get-deletes
+      changes=get-changes
+      lat=~
+    ==
   ==
   ::
   ++  reachable-takos
@@ -179,6 +228,85 @@
     ?:  |(=(a b) =(~ a))
       ~
     `path
+  ::
+  ::  Find the most recent common ancestor(s).
+  ::
+  ::    Pretty sure this could be a lot more efficient.
+  ::
+  ++  find-merge-points
+    ^-  (set yaki)
+    =/  start-path  /(scot %p our)/[bob-desk]/(scot %da wen)
+    %-  reduce-merge-points
+    =+  r=(reachable-takos r.ali-yaki)
+    |-  ^-  (set yaki)
+    ?:  (~(has in r) r.bob-yaki)  (~(put in *(set yaki)) bob-yaki)
+    %+  roll  p.bob-yaki
+    |=  [t=tako s=(set yaki)]
+    ?:  (~(has in r) t)
+      (~(put in s) .^(yaki %cs (weld start-path /yaki/(scot %uv t))))
+    (~(uni in s) ^$(bob-yaki .^(yaki %cs (weld start-path /yaki/(scot %uv t)))))
+  ::
+  ::  Eliminate redundant merge-point candidates
+  ::
+  ++  reduce-merge-points
+    |=  unk=(set yaki)
+    =|  gud=(set yaki)
+    =/  zar=(map tako (set tako))
+      %+  roll  ~(tap in unk)
+      |=  [yak=yaki qar=(map tako (set tako))]
+      (~(put by qar) r.yak (reachable-takos r.yak))
+    |-
+    ^-  (set yaki)
+    ?~  unk  gud
+    =+  bun=(~(del in `(set yaki)`unk) n.unk)
+    ?:  %+  levy  ~(tap by (~(uni in gud) bun))
+        |=  yak=yaki
+        !(~(has in (~(got by zar) r.yak)) r.n.unk)
+      $(gud (~(put in gud) n.unk), unk bun)
+    $(unk bun)
+  ::
+  ::  The set of changes between the mergebase and one of the desks being merged
+  ::
+  ::  --  `new` is the set of files in the new desk and not in the mergebase.
+  ::  --  `cal` is the set of changes in the new desk from the mergebase except
+  ::      for any that are also in the other new desk.
+  ::  --  `can` is the set of changes in the new desk from the mergebase that
+  ::      are also in the other new desk (potential conflicts).
+  ::  --  `old` is the set of files in the mergebase and not in the new desk.
+  ::
+  +$  cane
+    $:  new/(map path lobe)
+        cal/(map path lobe)
+        can/(map path cage)
+        old/(map path ~)
+    ==
+  ::
+  ::  Calculate cane knowing there are no files changed by both desks
+  ::
+  ++  calc-diffs
+    |=  [hed=yaki bas=yaki]
+    ^-  cane
+    :*  %-  molt
+        %+  skip  ~(tap by q.hed)
+        |=  [pax=path lob=lobe]
+        (~(has by q.bas) pax)
+      ::
+        %-  molt
+        %+  skip  ~(tap by q.hed)
+        |=  [pax=path lob=lobe]
+        =+  (~(get by q.bas) pax)
+        |(=(~ -) =([~ lob] -))
+      ::
+        ~
+      ::
+        %-  malt  ^-  (list [path ~])
+        %+  murn  ~(tap by q.bas)
+        |=  [pax=path lob=lobe]
+        ^-  (unit (pair path ~))
+        ?.  =(~ (~(get by q.hed) pax))
+          ~
+        `[pax ~]
+    ==
   --
 ::
 ++  checkout
