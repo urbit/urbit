@@ -23,8 +23,11 @@
 =/  ali-tako=tako  (~(got by hit.ali-dome) let.ali-dome)
 =+  .^(=ali=yaki %cs (weld start-path /yaki/(scot %uv ali-tako)))
 =+  .^(=bob=dome %cv start-path)
-=/  bob-tako=tako  (~(got by hit.bob-dome) let.bob-dome)
-=+  .^(=bob=yaki %cs (weld start-path /yaki/(scot %uv bob-tako)))
+=/  bob-yaki=(unit yaki)
+  ?~  let.bob-dome
+    ~
+  =/  bob-tako=tako  (~(got by hit.bob-dome) let.bob-dome)
+  `.^(=bob=yaki %cs (weld start-path /yaki/(scot %uv bob-tako)))
 ::
 ;<  =merge-result   bind:m  (merge ali-yaki bob-yaki)
 ?~  merge-result
@@ -34,7 +37,7 @@
 ;<  [=ankh changes=(map path cage)]  bind:m
   (checkout bob-dome new.u.merge-result [deletes changes]:u.merge-result)
 ;<  mim=(map path (unit mime))  bind:m
-  (checkout-cache:clay-commit bob-desk deletes.u.merge-result changes)
+  (checkout-cache:clay-commit ali-ship ali-desk deletes.u.merge-result changes)
 =/  args  [bob-desk r.new.u.merge-result rang ankh mim]
 ;<  ~  bind:m
   (send-raw-card:strandio %pass /merg/[bob-desk]/[ali-desk] %arvo %c %park args)
@@ -50,15 +53,13 @@
           lat=(map lobe blob)
       ==
 ++  merge
-  |=  [=ali=yaki =bob=yaki]
-  |^
+  |=  [=ali=yaki bob-yaki=(unit yaki)]
   =/  m  (strand ,merge-result)
   ^-  form:m
-  ?-    germ
+  ?:  ?=(%init germ)
   ::
   ::  If this is an %init merge, we set the ali's commit to be bob's.
   ::
-      %init
     %:  pure:m
       ~
       conflicts=~
@@ -68,6 +69,9 @@
       changes=~(key by q.ali-yaki)
       lat=~
     ==
+  =/  bob-yaki  (need bob-yaki)
+  |^
+  ?-    germ
   ::
   ::  If this is a %this merge, we check to see if ali's and bob's commits
   ::  are the same, in which case we're done.  Otherwise, we check to see
@@ -123,7 +127,9 @@
     ?:  (~(has in (reachable-takos r.bob-yaki)) r.ali-yaki)
       (pure:m ~)
     ?.  (~(has in (reachable-takos r.ali-yaki)) r.bob-yaki)
-      (strand-fail:strandio %bad-fine-merge ~)
+      %^  error  %bad-fine-merge
+        leaf+"tried fast-forward but is not ancestor or descendant"
+      ~
     %:  pure:m
       ~
       conflicts=~
@@ -193,7 +199,7 @@
     |=  [=start=path =lobe]
     ^-  schematic:ford
     =+  .^(=blob %cs (weld start-path /blob/(scot %uv lobe)))
-    =/  =disc:ford  [our bob-desk]
+    =/  =disc:ford  [ali-ship ali-desk]
     ?-  -.blob
       %direct  (page-to-schematic disc q.blob)
       %delta   [%pact disc $(lobe q.q.blob) (page-to-schematic disc r.blob)]
@@ -205,4 +211,12 @@
       [%volt disc page]
     [%$ p.page [%atom %t ~] q.page]
   --
+::
+++  error
+  |=  [=term =tang]
+  %:  strand-fail:strandio  term
+    leaf+"failed merge from {<ali-ship>}/{<ali-desk>} to {<our>}/{<bob-desk>}"
+    leaf+"with strategy germ"
+    tang
+  ==
 --

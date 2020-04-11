@@ -58,7 +58,7 @@
 ::  Produce a mime cache
 ::
 ++  checkout-cache
-  |=  [=desk deletes=(set path) changes=(map path cage)]
+  |=  [=ship =desk deletes=(set path) changes=(map path cage)]
   =/  m  (strand ,(map path (unit mime)))
   ^-  form:m
   ;<  our=@p  bind:m  get-our:strandio

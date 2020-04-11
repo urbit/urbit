@@ -58,7 +58,7 @@
 ::
 =/  =ankh  (checkout:clay-commit ank.dome deletes cast-results)
 ;<  mim=(map path (unit mime))  bind:m
-  (checkout-cache:clay-commit desk deletes cast-results)
+  (checkout-cache:clay-commit our desk deletes cast-results)
 ::  Send to clay
 ::
 =/  args  [desk r.new-yaki rang ankh mim]

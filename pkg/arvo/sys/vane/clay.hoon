@@ -1122,7 +1122,6 @@
   ::
   =/  ford-disc=disc:ford
     ?:  =(p.ali-disc p.bob-disc)
-
       ali-disc
     bob-disc
   |^
