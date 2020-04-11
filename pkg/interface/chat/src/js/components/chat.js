@@ -100,7 +100,7 @@ export class ChatScreen extends Component {
     }
 
     if (
-      state.numPages * 100 >= props.length ||
+      (props.length >= 100 && state.numPages * 100 >= props.length) ||
       this.hasAskedForMessages ||
       props.length <= 0
     ) {
