@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { Sigil } from "/components/lib/icons/sigil";
-import { ProfileOverlay } from "/components/lib/profile-overlay";
+import {
+  ProfileOverlay,
+  OVERLAY_HEIGHT
+} from "/components/lib/profile-overlay";
 
 export class OverlaySigil extends Component {
   constructor() {
@@ -14,7 +17,8 @@ export class OverlaySigil extends Component {
 
     this.containerRef = React.createRef();
 
-    this.profileToggle = this.profileToggle.bind(this);
+    this.profileShow = this.profileShow.bind(this);
+    this.profileHide = this.profileHide.bind(this);
     this.updateContainerInterval = setInterval(
       this.updateContainerOffset.bind(this),
       1000
@@ -32,33 +36,24 @@ export class OverlaySigil extends Component {
     }
   }
 
-  profileToggle() {
+  profileShow() {
     this.setState({ profileClicked: true });
-    setTimeout(() => {
-      this.setState({ profileClicked: false });
-    }, 2000);
   }
 
-  profileCaptured(profileCaptured) {
-    if (!profileCaptured) {
-      setTimeout(() => {
-        this.setState({ profileCaptured });
-      }, 500);
-      return;
-    }
-    this.setState({ profileCaptured });
+  profileHide() {
+    this.setState({ profileClicked: false });
   }
 
   updateContainerOffset() {
     if (this.containerRef && this.containerRef.current) {
       const parent = this.containerRef.current.offsetParent;
-      const { offsetTop, offsetHeight } = this.containerRef.current;
+      const { offsetTop } = this.containerRef.current;
 
       // coordinate system is inverted bc flex-row-reverse
-      const bottomSpace = parent.scrollTop - offsetTop + parent.offsetTop;
-
+      const bottomSpace = parent.scrollTop - offsetTop + OVERLAY_HEIGHT / 2;
+      const topSpace = parent.clientHeight - bottomSpace - OVERLAY_HEIGHT;
       this.setState({
-        topSpace: parent.clientHeight - bottomSpace - offsetHeight,
+        topSpace,
         bottomSpace
       });
     }
@@ -68,20 +63,19 @@ export class OverlaySigil extends Component {
     const { props, state } = this;
     return (
       <div
-        onClick={this.profileToggle}
+        onClick={this.profileShow}
         className={props.className + " pointer relative"}
         ref={this.containerRef}
         style={{ height: "24px" }}
       >
-        {(state.profileClicked || state.profileCaptured) && (
+        {state.profileClicked && (
           <ProfileOverlay
             ship={props.ship}
             contact={props.contact}
             color={props.color}
             topSpace={state.topSpace}
             bottomSpace={state.bottomSpace}
-            onMouseEnter={() => this.profileCaptured(true)}
-            onMouseLeave={() => this.profileCaptured(false)}
+            onDismiss={this.profileHide}
           />
         )}
         <Sigil

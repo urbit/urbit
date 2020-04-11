@@ -3,25 +3,49 @@ import { Link } from "react-router-dom";
 import { cite } from "/lib/util";
 import { Sigil } from "/components/lib/icons/sigil";
 
-const HEIGHT = 250;
+export const OVERLAY_HEIGHT = 250;
 
 export class ProfileOverlay extends Component {
   constructor() {
     super();
+
+    this.popoverRef = React.createRef();
+    this.onDocumentClick = this.onDocumentClick.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener("mousedown", this.onDocumentClick);
+    document.addEventListener("touchstart", this.onDocumentClick);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("mousedown", this.onDocumentClick);
+    document.removeEventListener("touchstart", this.onDocumentClick);
+  }
+
+  onDocumentClick(event) {
+    const { popoverRef } = this;
+    // Do nothing if clicking ref's element or descendent elements
+    if (!popoverRef.current || popoverRef.current.contains(event.target)) {
+      return;
+    }
+
+    this.props.onDismiss();
   }
 
   render() {
     const { contact, ship, color, topSpace, bottomSpace } = this.props;
 
     let top, bottom;
-    if (topSpace < HEIGHT / 2) {
+    debugger;
+    if (topSpace < OVERLAY_HEIGHT / 2) {
       top = `0px`;
     }
-    if (bottomSpace < HEIGHT / 2) {
+    if (bottomSpace < OVERLAY_HEIGHT / 2) {
       bottom = `0px`;
     }
     if (!(top || bottom)) {
-      bottom = `-${Math.round(HEIGHT / 2)}px`;
+      bottom = `-${Math.round(OVERLAY_HEIGHT / 2)}px`;
     }
     const containerStyle = { top, bottom, left: "100%" };
 
@@ -29,8 +53,7 @@ export class ProfileOverlay extends Component {
 
     return (
       <div
-        onMouseLeave={this.props.onMouseLeave}
-        onMouseEnter={this.props.onMouseEnter}
+        ref={this.popoverRef}
         style={containerStyle}
         className="flex-col shadow-6 br2 bg-white bg-gray0-d inter absolute z-1 f9 lh-solid"
       >
