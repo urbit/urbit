@@ -131,6 +131,7 @@ irregular =
     , Nat 0 <$ char '~'
     , Wut (singleton 0) <$ string "$~"
     , Pat <$ char '@'
+    , Hol <$ char '_'  -- TODO right choice?
     ]
   where
     tagTy = char '$' *> (atom <|> textToAtom <$> sym)

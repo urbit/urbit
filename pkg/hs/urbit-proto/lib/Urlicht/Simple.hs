@@ -20,7 +20,7 @@ data Simple a
   -- elimination forms
   | App (Simple a) (Simple a)
   -- flow control
-  | Let (Simple a) (Simple a) (Scope B Simple a)
+  | Let (Simple a) (Scope B Simple a)
   -- meta
   | Hol
   deriving (Functor, Foldable, Traversable)

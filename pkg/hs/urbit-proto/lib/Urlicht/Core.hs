@@ -23,7 +23,7 @@ data Core a
   -- elimination forms
   | App (Core a) (Core a)
   -- flow control
-  | Let (Core a) (Core a) (Scope B Core a)
+  | Let (Core a) (Scope B Core a)
   deriving (Functor, Foldable, Traversable)
 
 deriveEq1   ''Core
@@ -93,8 +93,9 @@ eval = \case
   --
   App c d -> vApp (eval c) (eval d)
   --
-  Let c _ sc -> eval $ instantiate1 c sc
+  Let c sc -> eval $ instantiate1 c sc
 
+-- Likewise with metacontext here?
 quote :: Value a -> Core a
 quote = go
   where

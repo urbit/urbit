@@ -41,6 +41,8 @@ data Hoon a
   | Obj (Map Atom (Hoon a))
   | Cls (Map Atom (Hoon a))
   | Col Atom (Hoon a)
+  --
+  | Hol
   -- Runes
   | HaxBuc (Map Atom (Hoon a))
   | HaxCen (Map Atom (Hoon a))
@@ -107,6 +109,8 @@ instance Monad Hoon where
   Cls tcs >>= f = Cls (tcs <&> (>>= f))
   Col a x >>= f = Col a (x >>= f)
   --
+  Hol >>= f = Hol
+  --
   HaxBuc tcs >>= f = HaxBuc (tcs <&> (>>= f))
   HaxCen tcs >>= f = HaxCen (tcs <&> (>>= f))
   HaxCol x b >>= f = HaxCol (x >>= f) (b >>>= f)
@@ -169,6 +173,8 @@ desugar = go
       Obj cs    -> go $ BarCen cs
       Cls tcs   -> go $ HaxCen tcs
       Col a h   -> go $ App h (Nat a)
+      --
+      Hol -> error "desugar: unsupported feature: _"
       --
       HaxBuc tcs   -> C.Cel (mkCasAbs tcs)
       HaxCen tcs   -> C.Fun (mkCasAbs tcs)

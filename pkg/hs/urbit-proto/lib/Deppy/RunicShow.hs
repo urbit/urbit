@@ -156,6 +156,7 @@ toRunic = go
     go = \case
         C.Hax          -> Leaf "#"
         C.Pat          -> Leaf "@"
+        C.Hol          -> Leaf "_"
         C.Var t        -> Leaf t
         C.Nat a        -> tagLit a
         C.Col a x      -> appTag a x
