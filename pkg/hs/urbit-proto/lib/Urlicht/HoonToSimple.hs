@@ -45,6 +45,8 @@ down = go
       Cls tcs   -> error "down: unsupported feature: {||}"
       Col a h   -> error "down: unsupported feature: x:"
       --
+      Hol -> S.Hol
+      --
       HaxBuc tcs   -> error "down: unsupported feature: #$"
       HaxCen tcs   -> error "down: unsupported feature: #%"
       HaxCol t b   -> go $ Cel t b
@@ -79,10 +81,10 @@ up = go
       S.Typ -> Hax
       S.Fun s ss -> Fun (go s) (hoist go ss)
       --
-      S.Lam ss -> Lam (Nat 0) (hoist go ss)  -- FIXME
+      S.Lam ss -> Lam Hol (hoist go ss)  -- FIXME
       --
       S.App s t -> App (go s) (go t)
       --
       S.Let s ss -> TisFas (go s) (hoist go ss)
       --
-      S.Hol -> undefined
+      S.Hol -> Hol
