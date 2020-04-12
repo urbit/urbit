@@ -118,6 +118,7 @@ compile arity numRegs = go
   kal F.Div     [x,y]  = F.DIV (go x) (go y)
   kal F.Tra     [x,y]  = F.TRA (go x) (go y)
   kal F.Mod     [x,y]  = F.MOD (go x) (go y)
+  kal F.Rap     [x,y]  = F.RAP (go x) (go y)
 
   kal F.Sub     [x, y] = F.SUB (go x) (go y)
   kal F.Mul     [x, y] = F.MUL (go x) (go y)

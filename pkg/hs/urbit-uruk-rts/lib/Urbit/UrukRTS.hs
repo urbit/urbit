@@ -83,7 +83,7 @@ import Urbit.UrukRTS.Types
 
 import Control.Arrow         ((>>>))
 import Control.Concurrent    (threadDelay)
-import Control.Exception     (throw, try)
+import Control.Exception     (throw, try, evaluate)
 import Data.Bits             (shiftL, (.|.))
 import Data.Function         ((&))
 import Data.Time.Clock.POSIX (POSIXTime, getPOSIXTime)
@@ -165,6 +165,8 @@ instance Uruk Val where
   uGlobal "div"   = Just $ mkNode 2 Div
   uGlobal "trace" = Just $ mkNode 2 Tra
   uGlobal "mod"   = Just $ mkNode 2 Mod
+
+  uGlobal "rap"   = Just $ mkNode 2 Rap
 
   uGlobal _     = Nothing
 
@@ -304,7 +306,7 @@ reduce !no !xs = do
     Div       -> dDiv x y
     Tra       -> dTra x y
     Mod       -> dMod x y
-
+    Rap       -> dRap x y
 
     Inc       -> inc x
     Dec       -> dec x
@@ -646,6 +648,25 @@ dMod :: Val -> Val -> IO Val
 dMod (VNat x) (VNat y) = pure (VNat (x `mod` y))
 dMod _        _        = throwIO (TypeError "mod-not-nat")
 
+dRap :: Val -> Val -> IO Val
+{-# INLINE dRap #-}
+dRap (VNat 8) y = dCrip y
+dRap (VNat _) y = throwIO (TypeError "only (rap 8) is jetted.")
+dRap _        _ = throwIO (TypeError "rap-not-nat")
+
+dCrip :: Val -> IO Val
+dCrip = evaluate . VNat . Atom.bytesAtom . BS.pack . parseTape
+ where
+  parseTape :: Val -> [Word8]
+  parseTape (VRit VUni      ) = []
+  parseTape (VLef (VCon h t)) = parseByte h : parseTape t
+  parseTape _                 = throw (TypeError "crip-not-list")
+
+  parseByte :: Val -> Word8
+  parseByte (VNat h) | h >= 256 = throw (TypeError "crip-elem-not-byte")
+  parseByte (VNat h)            = fromIntegral h
+  parseByte _                   = throw (TypeError "crip-elem-not-nat")
+
 dXor :: Val -> Val -> IO Val
 {-# INLINE dXor #-}
 dXor (VBol True ) (VBol True ) = pure (VBol False)
@@ -758,6 +779,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     DIV  x y        -> join (dDiv <$> go x <*> go y)
     TRA  x y        -> join (dTra <$> go x <*> go y)
     MOD  x y        -> join (dMod <$> go x <*> go y)
+    RAP  x y        -> join (dRap <$> go x <*> go y)
 
     SUB  x y        -> join (sub <$> go x <*> go y)
     ZER x           -> join (zer <$> go x)
@@ -780,64 +802,6 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
       VLef lv -> setReg i lv >> go l
       VRit rv -> setReg i rv >> go r
       _       -> throwIO (TypeError "cas-not-sum")
-
-execJetBodyR :: Jet -> (Int -> IO Val) -> IO Val
-{-# INLINE execJetBodyR #-}
-execJetBodyR !j !ref = go (jFast j)
- where
-  go :: Exp -> IO Val
-  go = \case
-    REG i           -> error "execJetBodyR: unexpected register read"
-    CAS i x l r     -> error "execJetBodyR: unexpected register write"
-    VAL   v         -> pure v
-    REF   i         -> ref i
-    REC1  x         -> join (recJet1 j <$> go x)
-    REC2  x y       -> join (recJet2 j <$> go x <*> go y)
-    REC3  x y z     -> join (recJet3 j <$> go x <*> go y <*> go z)
-    REC4  x y z p   -> join (recJet4 j <$> go x <*> go y <*> go z <*> go p)
-    REC5  x y z p q -> join (recJet5 j <$> go x <*> go y <*> go z <*> go p <*> go q)
-    RECN  xs        -> join (recJetN j <$> traverse go xs)
-    SLF             -> pure (jetVal j)
-    SEQ x y         -> go x >> go y
-    DED x           -> throwIO . Crash =<< go x
-    INC x           -> join (inc <$> go x)
-    DEC x           -> join (dec <$> go x)
-    FEC x           -> join (fec <$> go x)
-    JET1 j x        -> join (execJet1 j <$> go x)
-    JET2 j x y      -> join (execJet2 j <$> go x <*> go y)
-    JET3 j x y z    -> join (execJet3 j <$> go x <*> go y <*> go z)
-    JET4 j x y z p  -> join (execJet4 j <$> go x <*> go y <*> go z <*> go p)
-    JET5 j x y z p q -> join (execJet5 j <$> go x <*> go y <*> go z <*> go p <*> go q)
-    JETN j xs       -> join (execJetN j <$> traverse go xs)
-    ADD  x y        -> join (add <$> go x <*> go y)
-    MUL  x y        -> join (mul <$> go x <*> go y)
-
-    LTH  x y       -> join (dLth <$> go x <*> go y)
-    LSH  x y       -> join (dLsh <$> go x <*> go y)
-    FUB  x y       -> join (dFub <$> go x <*> go y)
-    NOT  x         -> join (dNot <$> go x)
-    XOR  x y       -> join (dXor <$> go x <*> go y)
-    DIV  x y       -> join (dDiv <$> go x <*> go y)
-    TRA  x y       -> join (dTra <$> go x <*> go y)
-    MOD  x y       -> join (dMod <$> go x <*> go y)
-
-    SUB  x y       -> join (sub <$> go x <*> go y)
-    ZER x          -> join (zer <$> go x)
-    EQL x y        -> join (eql <$> go x <*> go y)
-    CAR x          -> join (car <$> go x)
-    CDR x          -> join (cdr <$> go x)
-    CLON f xs      -> cloN f <$> traverse go xs
-    CALN f xs      -> do { f <- go f; kVAn f (go <$> xs) }
-    LEF x          -> VLef <$> go x
-    RIT x          -> VRit <$> go x
-    CON x y        -> VCon <$> go x <*> go y
-    IFF c t e      -> go c >>= \case
-      VBol True  -> go t
-      VBol False -> go e
-      cv         -> do
-        print ("iff", cv, t, e)
-        print ("iff.cond", c)
-        throwIO (TypeError "iff-not-bol")
 
 
 -- Profiling -------------------------------------------------------------------
@@ -889,22 +853,28 @@ dumpEvents h = do
 {-# INLINE jetOkToTrace #-}
 jetOkToTrace :: Jet -> Bool
 jetOkToTrace j = case jName j of
-  VNat 7627107                -> False -- cat
-  VNat 1684825463             -> False -- weld
+  VNat 123584151057773 -> False -- mul-fp
+  VNat 135882211239269503500120678 -> False -- fraction-fp
+  VNat 1651864435 -> False -- ssub
+  VNat 1684825463 -> False -- weld
+  VNat 1752460403 -> False -- slth
+  VNat 1819635059 -> False -- smul
+  VNat 1836413811 -> False -- ssum
   VNat 1907323525685090546547 -> False -- ssum-aneg
-  VNat 1936617315             -> False -- cons
-  VNat 1752460403             -> False -- slth
-  VNat 1651864435             -> False -- ssub
+  VNat 1935827315 -> False -- sabs
+  VNat 1936617315 -> False -- cons
+  VNat 1952542323 -> False -- snat
+  VNat 1953461358 -> False -- ntot
+  VNat 1986618483 -> False -- sdiv
+  VNat 2003136115 -> False -- snew
+  VNat 2074065091858577454190 -> False -- ntot-loop
   VNat 2129405593459937866611 -> False -- ssub-apos
-  VNat 1836413811             -> False -- ssum
-  VNat 123584151057773        -> False -- mul-fp
-  VNat 1819635059             -> False -- smul
-  VNat 1986618483             -> False -- sdiv
-  VNat 1952542323             -> False -- snat
-  VNat 2003136115             -> False -- snew
-  VNat 1935827315             -> False -- sabs
-  VNat 474181366643           -> False -- ssign
-  _                           -> True
+  VNat 2551989185581783952010596030736099647343583587 -> False -- calculate-color-for
+  VNat 29099049607852661 -> False -- ur-snag
+  VNat 474181366643 -> False -- ssign
+  VNat 482750590836 -> False -- to-fp
+  VNat 7627107 -> False -- cat
+  _ -> True
 
 {-# INLINE traceCall #-}
 traceCall :: Jet -> [Val] -> Bool -> IO ()

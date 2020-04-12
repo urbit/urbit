@@ -57,8 +57,8 @@
   (cons a ($ (inc a) b))
 
 ::  Assemble a list of natural numbers, aligned to the nearest :a bit blocks
-=/  rap
-  ~/  2  rap
+=/  rapp
+  ~/  2  rapp
   ..  $
   |=  (a b)
   ?-  b
@@ -474,7 +474,7 @@
 :: (foo (lef (lef 3)))
 
 :: Doing a 20x20 render takes 4m40s.
-(build-ppm 100 100)
+(build-ppm 300 300)
 
 :: TODO: The following should run in a reasonable amount of time
 ::(build-ppm 1000 1000)

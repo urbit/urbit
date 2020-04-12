@@ -150,6 +150,7 @@ data Node
   | Div
   | Tra
   | Mod
+  | Rap
 
  deriving (Eq, Ord, Generic, Hashable)
 
@@ -199,6 +200,7 @@ instance Show Node where
     Div       -> "DIV"
     Tra       -> "TRA"
     Mod       -> "MOD"
+    Rap       -> "RAP"
 
 data Fun = Fun
   { fNeed :: !Int
@@ -284,6 +286,7 @@ data Exp
   | DIV !Exp !Exp                 --  Atom division
   | TRA !Exp !Exp                 --  Execution Trace
   | MOD !Exp !Exp                 --  Atom Modulus
+  | RAP !Exp !Exp                 --  (Generalized) tape to cord.
 
   | SUB !Exp !Exp                 --  Subtract
   | ZER !Exp                      --  Is Zero?
@@ -374,3 +377,4 @@ nodeArity = \case
   Div   -> 2
   Tra   -> 2
   Mod   -> 2
+  Rap   -> 2
