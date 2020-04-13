@@ -34,6 +34,7 @@ moonToLambda = go
     M.Str n     -> B.Pri (uNat (Atom.utf8Atom n))
     M.Con a b   -> B.Pri uCon :@ go a :@ go b
     M.Cas x l r -> B.Pri uCas :@ go x :@ go (M.Lam l) :@ go (M.Lam r)
+    M.Let x k   -> B.Pri uLet :@ go x :@ go (M.Lam k)
     M.Iff c t e -> B.Pri uIff :@ go c :@ lam t :@ lam e
     M.Jet n t b -> jay n :@ tag t :@ go b
 

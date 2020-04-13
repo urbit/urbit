@@ -19,6 +19,7 @@ data Exp a
     | Jet Nat Text (Exp a)
     | Sig
     | Con (Exp a) (Exp a)
+    | Let (Exp a) (Scope () Exp a)
     | Cas (Exp a) (Scope () Exp a) (Scope () Exp a)
     | Iff (Exp a) (Exp a) (Exp a)
     | Lit Nat
@@ -67,6 +68,7 @@ instance Monad Exp where
   Con x y   >>= f = Con (x >>= f) (y >>= f)
   Iff c t e >>= f = Iff (c >>= f) (t >>= f) (e >>= f)
   Cas x l r >>= f = Cas (x >>= f) (l >>>= f) (r >>>= f)
+  Let x k   >>= f = Let (x >>= f) (k >>>= f)
   Sig       >>= _ = Sig
   Lit n     >>= _ = Lit n
   Bol b     >>= _ = Bol b
@@ -120,7 +122,7 @@ bind = go
     ALam v b               -> Lam (abstract1 v (go b))
     AVar v                 -> Var v
     AApp x y               -> App (go x) (go y)
-    ALet n x b             -> go (ALam n b `AApp` x)
+    ALet n x b             -> Let (go x) (abstract1 n (go b))
     ASig                   -> Sig
     ACon x y               -> Con (go x) (go y)
     AJet r n b             -> Jet r n (go b)
