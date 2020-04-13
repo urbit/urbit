@@ -16,6 +16,7 @@
     group-hook, permission-hook, permission-group-hook,
     metadata-hook, contact-view
 /+  *link, metadata, *server, default-agent, verb, dbug
+~%  %link-view-top  ..is  ~
 ::
 |%
 +$  state-0
@@ -154,6 +155,7 @@
   ++  on-fail   on-fail:def
   --
 ::
+~%  %link-view-logic  ..card  ~
 |_  =bowl:gall
 +*  md  ~(. metadata bowl)
 ::
@@ -488,6 +490,7 @@
 ::    }
 ::
 ++  give-initial-submissions
+  ~/  %link-view-initial-submissions
   |=  [p=@ud =path]
   ^-  (list card)
   :_  ?:  =(0 p)  ~
