@@ -8,6 +8,8 @@ data Error
   | ESpine
   | EScope
   | EOccurs
+  | EName
+  | ENotFun
 
 instance (Show Error) where
   show = \case
@@ -16,3 +18,5 @@ instance (Show Error) where
     ESpine -> "If you would please refrain from applying metas to non-vars."
     EScope -> "Please sir! Your extraneous vars make unification quite hard."
     EOccurs -> "Begging your pardon sir, but I never did understand recursion."
+    EName -> "I'm afraid I don't recognize that variable, sir."
+    ENotFun -> "A function type, if you please."

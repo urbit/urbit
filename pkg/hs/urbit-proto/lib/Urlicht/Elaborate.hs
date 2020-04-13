@@ -38,14 +38,85 @@ nameHack = Name "??" ()
 
 -- | To elaborate a hole we create a new meta and apply it to all the vars
 -- in scope. Kovacs is able to eliminate shadowed vars lol.
-metastasize :: Env a -> Elab (Core a)
-metastasize env = do
+newMetaWithSpine :: Env a -> Elab (Core a)
+newMetaWithSpine env = do
   m <- freshMeta
   pure $ foldr (flip App) (Met m) (Var <$> scope env)
 
 freshFun :: Env a -> Elab (ValueType a, Scope B ValueType a)
 freshFun env = do
-  a <- metastasize env
-  undefined
+  a <- newMetaWithSpine env
+  -- FIXME maybe we really do need to eval relative to a context with lets
+  let v = eval a
+  b <- newMetaWithSpine (bind env nameHack v)
+  pure (v, toScope (eval b))
 
+check :: Eq a => Env a -> S.Simple a -> ValueType a -> Elab (Core a)
+check env simp ty = do
+  ty <- crank ty
+  let
+    checkInfer = do
+      (ty', c) <- infer env simp
+      -- TODO better error
+      unify ty ty'
+      pure c
+  case (simp, ty) of
+    (S.Var{}, _) -> checkInfer
+    (S.Typ{}, _) -> checkInfer
+    (S.Fun{}, _) -> checkInfer
+    (S.Lam ss, VFun t st) ->
+      -- TODO avoid fromScope/toScope
+      Lam . toScope <$>
+        check (bind env nameHack t) (fromScope ss) (fromScope st)
+    (S.Lam{}, _) -> checkInfer
+    (S.App{}, _) -> checkInfer
+    (S.Let sRhs sBody, _) -> do
+      -- TODO I guess put a type annotation in lets which can be Hol :/
+      (tyRhs, cRhs) <- infer env sRhs
+      Let cRhs . toScope <$>
+        check (bind env nameHack tyRhs) (fromScope sBody) (F <$> ty)
+    (S.Hol, _) -> newMetaWithSpine env
 
+infer :: Eq a => Env a -> S.Simple a -> Elab (ValueType a, Core a)
+infer env = \case
+  S.Var x -> case scry env x of
+    Just ty -> pure (ty, Var x)
+    Nothing -> report EName
+  S.Typ -> pure (VTyp, Typ)
+  S.Fun s ss -> do
+    c <- check env s VTyp
+    sc <- toScope <$> check (bind env nameHack (eval c)) (fromScope ss) VTyp
+    pure (VTyp, Fun c sc)
+  S.Lam ss -> do
+    (t, st) <- freshFun env
+    c <- check env (S.Lam ss) (VFun t st)
+    pure (VFun t st, c)
+  S.App fun arg -> do
+    (tFun, cFun) <- infer env fun
+    (a, b) <- crank tFun >>= \case
+      VFun a b -> pure (a, b)
+      -- It's like Hindley-Milner
+      tFun@VMAp{} -> do
+        (a, b) <- freshFun env
+        -- TODO better errors
+        unify tFun (VFun a b)
+        pure (a, b)
+      _ -> report ENotFun
+    cArg <- check env arg a
+    -- TODO make succ less
+    let tRes = eval $ instantiate (const cArg) (hoist quote b)
+    pure (tRes, App cFun cArg)
+      
+  S.Let sRhs sBod -> do
+    (tyRhs, cRhs) <- infer env sRhs
+    (tyBod, cBod) <- infer (bind env nameHack tyRhs) (fromScope sBod)
+    -- I guess evaluating with let rhs would be nice here
+    let
+      tyBod' = eval $ quote tyBod >>= \case
+        F x -> Var x
+        B _ -> cRhs
+    pure (tyBod', Let cRhs (toScope cBod))
+  S.Hol -> do
+    t <-newMetaWithSpine env
+    c <-newMetaWithSpine env
+    pure (eval t, c)

@@ -2,6 +2,7 @@ module Urlicht.Elab where
 
 import ClassyPrelude
 
+import Bound.Scope
 import Control.Monad.Except
 import Control.Monad.State.Strict
 import Data.IntMap.Strict as M
@@ -37,3 +38,16 @@ freshMeta = do
 
 report :: MonadError e m => e -> m a
 report = throwError
+
+-- | Inline any (newly) known metas into the value and evaluate
+crank :: Value a -> Elab (Value a)
+crank = go where
+  go :: Value a -> Elab (Value a)
+  go = \case
+    VVAp x vs  -> VVAp x <$> traverse go vs
+    VMAp m vs  -> lookupMeta m >>= \case
+      Just v  -> vApps v <$> traverse go vs
+      Nothing -> VMAp m  <$> traverse go vs
+    VTyp       -> pure VTyp
+    VFun v sv  -> VFun <$> go v <*> transverseScope go sv
+    VLam sv    -> VLam <$> transverseScope go sv
