@@ -436,7 +436,7 @@ withFallback :: Jet -> CloN -> IO Val -> IO Val
 {-# INLINE withFallback #-}
 withFallback j args act = do
   res <- act
-  traceResu j (toList args) res
+  -- traceResu j (toList args) res
   pure res
 {- catch act $ \(TypeError why) -> do
   putStrLn ("FALLBACK: " <> why)
@@ -445,7 +445,7 @@ withFallback j args act = do
 
 execJet1 :: Jet -> Val -> IO Val
 execJet1 !j !x = do
-  traceCall j [x] False
+  -- traceCall j [x] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x]
   let refr = \case
@@ -455,7 +455,7 @@ execJet1 !j !x = do
 
 execJet2 :: Jet -> Val -> Val -> IO Val
 execJet2 !j !x !y = do
-  traceCall j [x,y] False
+  -- traceCall j [x,y] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y]
   let refr = \case
@@ -466,7 +466,7 @@ execJet2 !j !x !y = do
 
 execJet3 :: Jet -> Val -> Val -> Val -> IO Val
 execJet3 !j !x !y !z = do
-  traceCall j [x,y,z] False
+  -- traceCall j [x,y,z] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z]
   let refr = \case
@@ -478,7 +478,7 @@ execJet3 !j !x !y !z = do
 
 execJet4 :: Jet -> Val -> Val -> Val -> Val -> IO Val
 execJet4 !j !x !y !z !p = do
-  traceCall j [x,y,z,p] False
+  -- traceCall j [x,y,z,p] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z, p]
   let refr = \case
@@ -491,7 +491,7 @@ execJet4 !j !x !y !z !p = do
 
 execJet5 :: Jet -> Val -> Val -> Val -> Val -> Val -> IO Val
 execJet5 !j !x !y !z !p !q = do
-  traceCall j [x,y,z,p] False
+  -- traceCall j [x,y,z,p] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z, p, q]
   let refr = \case
@@ -505,7 +505,7 @@ execJet5 !j !x !y !z !p !q = do
 
 execJetN :: Jet -> CloN -> IO Val
 execJetN !j !xs = do
-  traceCall j (toList xs) (jRegs j /= 0)
+  -- traceCall j (toList xs) (jRegs j /= 0)
   (reg, setReg) <- mkRegs (jRegs j)
   let refr = pure . indexSmallArray xs
   withFallback j xs (execJetBody j refr reg setReg)

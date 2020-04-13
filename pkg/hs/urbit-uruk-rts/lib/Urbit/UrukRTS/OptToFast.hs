@@ -37,16 +37,18 @@ numReg = go 0
     O.ValKal _ vs -> maxi (acc : fmap (go acc) vs)
     O.ValRec _    -> acc
     O.ValRef _ vs -> maxi (acc : fmap (go acc) vs)
-    O.ValReg n vs -> maxi (fromIntegral (n+1) : acc : fmap (go acc) vs)
+    O.ValReg n vs -> maxi (count n : acc : fmap (go acc) vs)
     O.ValIff c t e xs ->
       maxi (acc : go acc c : go acc t : go acc e : fmap (go acc) xs)
-    O.ValCas c l r xs ->
-      maxi (acc : go acc c : go (acc + 1) l : go (acc + 1) r : fmap (go acc) xs)
-    O.ValLet c k   xs ->
-      maxi (acc : go acc c : go (acc + 1) k : fmap (go acc) xs)
+    O.ValCas reg c l r xs ->
+      maxi (count reg : acc : go acc c : go acc l : go acc r : fmap (go acc) xs)
+    O.ValLet reg c k   xs ->
+      maxi (count reg : acc : go acc c : go acc k : fmap (go acc) xs)
+
+  count :: Natural -> Int
+  count = fromIntegral . succ
 
 {-
-    TODO CAS !Int !Exp !Exp !Exp  --  Pattern Match
     TODO VAL (VFun ..)
 
     TODO Detect undersaturated calls
@@ -69,11 +71,14 @@ compile arity numRegs = go
     O.ValIff i t e xs -> F.CALN (F.IFF (go i) (go t) (go e)) (goArgs xs)
 
     -- TODO Register Allocation.
-    O.ValCas x l r [] -> F.CAS 0 (go x) (go l) (go r)
-    O.ValCas x l r xs -> F.CALN (F.CAS 0 (go x) (go l) (go r)) (goArgs xs)
-    O.ValLet x k   [] -> F.LET 0 (go x) (go k)
-    O.ValLet x k   xs -> F.CALN (F.LET 0 (go x) (go k)) (goArgs xs)
+    O.ValCas reg x l r [] -> F.CAS (int reg) (go x) (go l) (go r)
+    O.ValCas reg x l r xs -> F.CALN (F.CAS (int reg) (go x) (go l) (go r)) (goArgs xs)
+    O.ValLet reg x k   [] -> F.LET (int reg) (go x) (go k)
+    O.ValLet reg x k   xs -> F.CALN (F.LET (int reg) (go x) (go k)) (goArgs xs)
     O.ValKal ur xs    -> kal ur xs
+
+  int :: Natural -> Int
+  int = fromIntegral
 
   rec [] = F.SLF
   rec xs =

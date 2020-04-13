@@ -101,8 +101,8 @@ data Exp
     | Ref Nat [Exp]
     | Reg Nat [Exp]
     | Iff Exp Exp Exp [Exp]
-    | Cas Exp Exp Exp [Exp]
-    | Let Exp Exp [Exp]
+    | Cas Nat Exp Exp Exp [Exp]
+    | Let Nat Exp Exp [Exp]
     | App Exp Exp
   deriving stock (Eq, Ord, Generic)
 
@@ -123,8 +123,8 @@ data Val
     | ValRef Nat [Val]
     | ValReg Nat [Val]
     | ValIff Val Val Val [Val]
-    | ValCas Val Val Val [Val]
-    | ValLet Val Val [Val]
+    | ValCas Nat Val Val Val [Val]
+    | ValLet Nat Val Val [Val]
   deriving stock (Eq, Ord, Generic)
 
 instance Show Exp where
@@ -135,8 +135,8 @@ instance Show Exp where
         Ref n xs     → sexp "(" ")" ["V" <> show n] xs
         Reg n xs     → sexp "(" ")" ["R" <> show n] xs
         Iff c t e xs → sexp "(" ")" ["If", show c, show t, show e] xs
-        Cas x l r xs → sexp "(" ")" ["Case", show x, show l, show r] xs
-        Let x k xs   → sexp "(" ")" ["Let", show x, show k] xs
+        Cas reg x l r xs → sexp "(" ")" ["Case{" <> show reg <> "}", show x, show l, show r] xs
+        Let reg x k xs   → sexp "(" ")" ["Let{" <> show reg <> "}", show x, show k] xs
         App x y      → sexp "(" ")" [] [x,y]
       where
         sexp ∷ Show a => String → String → [String] → [a] → String
@@ -155,10 +155,10 @@ prettyExp = go
         Reg n xs     → sexp "("   ")" ["R" <> show n] (go <$> xs)
         Iff c t e [] → sexp "?:(" ")" [go c, go t, go e] []
         Iff c t e xs → sexp "("   ")" [go $ Iff c t e []] (go <$> xs)
-        Cas x l r [] → sexp "?-(" ")" [go x, go l, go r] []
-        Cas x l r xs → sexp "("   ")" [go $ Cas x l r []] (go <$> xs)
-        Let x k []   → sexp "/=(" ")" [go x, go k] []
-        Let x k xs   → sexp "("   ")" [go $ Let x k []] (go <$> xs)
+        Cas _reg x l r [] → sexp "?-(" ")" [go x, go l, go r] []
+        Cas reg x l r xs → sexp "("   ")" [go $ Cas reg x l r []] (go <$> xs)
+        Let _reg x k []   → sexp "/=(" ")" [go x, go k] []
+        Let reg x k xs   → sexp "("   ")" [go $ Let reg x k []] (go <$> xs)
         App x y      → sexp "("   ")" [] [go x, go y]
       where
         sexp ∷ String → String → [String] → [String] → String
@@ -174,8 +174,8 @@ instance Show Val where
         ValRef n xs     → sexp "(" ")" ["V" <> show n] xs
         ValReg n xs     → sexp "(" ")" ["R" <> show n] xs
         ValIff c t e xs → sexp "(" ")" ["If", show c, show t, show e] xs
-        ValCas x l r xs → sexp "(" ")" ["Case", show x, show l, show r] xs
-        ValLet x k xs   → sexp "(" ")" ["Let", show x, show k] xs
+        ValCas reg x l r xs → sexp "(" ")" ["Case{" <> show reg <> "}", show x, show l, show r] xs
+        ValLet reg x k xs   → sexp "(" ")" ["Let{" <> show reg <> "}", show x, show k] xs
       where
         sexp ∷ Show a => String → String → [String] → [a] → String
         sexp _ _ [h] [] = h
@@ -192,28 +192,31 @@ recursive (Code _ _ _ v) = go v
         ValReg _ vs     → any go vs
         ValKal _ vs     → any go vs
         ValIff c t e xs → any go ([c,t,e] <> xs)
-        ValCas x l r xs → any go ([x,l,r] <> xs)
-        ValLet x k xs   → any go ([x,k] <> xs)
+        ValCas _reg x l r xs → any go ([x,l,r] <> xs)
+        ValLet _reg x k xs   → any go ([x,k] <> xs)
 
 infixl 5 %;
 
 (%) ∷ Exp → Exp → Exp
 (%) = App
 
-simplify :: Node -> [Exp] -> Exp
-simplify = curry $ \case
-  (VS    , [x, y, z] ) -> (x % z) % (y % z)
-  (VK    , [x, y]    ) -> x
-  (VSeq  , [x, y]    ) -> y
-  (VIn _ , f : xs    ) -> app f xs
-  (VBn _ , f : g : xs) -> f % app g xs
-  (VCn _ , f : g : xs) -> app f xs % g
-  (VSn _ , f : g : xs) -> app f xs % app g xs
-  (VIff  , [c, t, e] ) -> Iff c (t % unit) (e % unit) []
-  (VCas  , [x, l, r] ) -> Cas x (l % reg 0) (r % reg 0) []
-  (VLet  , [x, k]    ) -> Let x (k % reg 0) []
+simplify :: Nat -> Node -> [Exp] -> (Exp, Nat)
+simplify nextReg = curry $ \case
+  (VS    , [x, y, z] ) -> keep $ (x % z) % (y % z)
+  (VK    , [x, y]    ) -> keep x
+  (VSeq  , [x, y]    ) -> keep y
+  (VIn _ , f : xs    ) -> keep $ app f xs
+  (VBn _ , f : g : xs) -> keep $ f % app g xs
+  (VCn _ , f : g : xs) -> keep $ app f xs % g
+  (VSn _ , f : g : xs) -> keep $ app f xs % app g xs
+  (VIff  , [c, t, e] ) -> keep $ Iff c (t % unit) (e % unit) []
+  (VCas  , [x, l, r] ) -> incr $ (Cas nextReg x (l % reg nextReg) (r % reg nextReg) [])
+  (VLet  , [x, k]    ) -> incr $ (Let nextReg x (k % reg nextReg) [])
   (n     , xs        ) -> error ("simplify: bad arity (" <> show n <> " " <> show xs <> ")")
  where
+  keep x = (x, nextReg)
+  incr x = (x, succ nextReg)
+
   app acc = \case
     []     -> acc
     x : xs -> app (acc % x) xs
@@ -235,8 +238,8 @@ abst = g 0
         Ref n xs        → Ref n (g d <$> xs)
         Reg n xs        → Reg n (g d <$> xs) -- TODO
         Iff c t e xs    → Iff (g d c) (g d t) (g d e) (g d <$> xs)
-        Cas x l r xs    → Cas (g d x) (g (d+1) l) (g (d+1) r) (g d <$> xs)
-        Let x k xs      → Let (g d x) (g (d+1) k) (g d <$> xs)
+        Cas reg x l r xs    → Cas reg (g d x) (g (d+1) l) (g (d+1) r) (g d <$> xs)
+        Let reg x k xs      → Let reg (g d x) (g (d+1) k) (g d <$> xs)
         App x y         → error "TODO: Handle `App` in `abst`"
 
 unit ∷ Exp
@@ -253,31 +256,37 @@ pattern J x = Just x
 infixl :@
 pattern x :@ y = App x y
 
-nok ∷ Exp → Maybe Exp
-nok = \case
-    (nok→J x) :@ y → Just (App x y)
-    x :@ (nok→J y) → Just (App x y)
+nok :: Nat -> Exp -> Maybe (Exp, Nat)
+nok nr = go
+ where
+  go :: Exp -> Maybe (Exp, Nat)
+  go = \case
+    (go→J (x,r')) :@ y → Just (App x y, r')
+    x :@ (go→J (y,r')) → Just (App x y, r')
 
     --  Because unit is passed to branches, needs further simplification.
-    Iff c (nok→J t) e xs → Just (Iff c t e xs)
-    Iff c t (nok→J e) xs → Just (Iff c t e xs)
+    Iff c (go→J (t,r')) e xs → Just (Iff c t e xs, r')
+    Iff c t (go→J (e,r')) xs → Just (Iff c t e xs, r')
 
     --  Result of pattern match is passed into cases on the stack.
-    Cas v (nok→J l) r xs → Just (Cas v l r xs)
-    Cas v l (nok→J r) xs → Just (Cas v l r xs)
-    Let v (nok→J k) xs   → Just (Let v k xs)
+    Cas reg v (go→J (l,r')) r xs → Just (Cas reg v l r xs, r')
+    Cas reg v l (go→J (r,r')) xs → Just (Cas reg v l r xs, r')
+    Let reg v (go→J (k,r')) xs   → Just (Let reg v k xs, r')
 
-    Clo 1 f xs   :@ x → Just $ simplify f (snoc xs x)
-    Clo n f xs   :@ x → Just $ Clo (n-1) f (snoc xs x)
-    Kal f xs     :@ x → Just $ Kal f (snoc xs x)
-    Rec xs       :@ x → Just $ Rec (snoc xs x)
-    Iff c t e xs :@ x → Just $ Iff c t e (snoc xs x)
-    Cas v l r xs :@ x → Just $ Cas v l r (snoc xs x)
-    Let v k xs   :@ x → Just $ Let v k (snoc xs x)
-    Ref n xs     :@ x → Just $ Ref n (snoc xs x)
-    Reg n xs     :@ x → Just $ Reg n (snoc xs x)
+    Clo 1 f xs   :@ x → Just $ simplify nr f (snoc xs x)
+    Clo n f xs   :@ x → done $ Clo (n-1) f (snoc xs x)
+    Kal f xs     :@ x → done $ Kal f (snoc xs x)
+    Rec xs       :@ x → done $ Rec (snoc xs x)
+    Iff c t e xs :@ x → done $ Iff c t e (snoc xs x)
+    Cas reg v l r xs :@ x → done $ Cas reg v l r (snoc xs x)
+    Let reg v k xs   :@ x → done $ Let reg v k (snoc xs x)
+    Ref n xs     :@ x → done $ Ref n (snoc xs x)
+    Reg n xs     :@ x → done $ Reg n (snoc xs x)
 
     _ → Nothing
+
+  done :: Exp -> Maybe (Exp, Nat)
+  done x = Just (x, nr)
 
 {-
     App (Clo 11
@@ -302,25 +311,26 @@ nok = \case
     _                       → Nothing
 -}
 
-call ∷ Exp → Exp → Exp
-call f x = f & \case
-    Clo 1 f xs   → simplify f (snoc xs x)
-    Clo n f xs   → Clo (n-1) f (snoc xs x)
-    Kal f xs     → Kal f (snoc xs x)
-    Rec xs       → Rec (snoc xs x)
-    Ref n xs     → Ref n (snoc xs x)
-    Reg n xs     → Reg n (snoc xs x)
-    Iff c t e xs → Iff c t e (snoc xs x)
-    Cas x l r xs → Cas x l r (snoc xs x)
-    Let x k   xs → Let x k   (snoc xs x)
+call ∷ Nat → Exp → Exp → (Exp, Nat)
+call nextReg f x = f & \case
+    Clo 1 f xs   → simplify nextReg f (snoc xs x)
+    Clo n f xs   → done $ Clo (n-1) f (snoc xs x)
+    Kal f xs     → done $ Kal f (snoc xs x)
+    Rec xs       → done $ Rec (snoc xs x)
+    Ref n xs     → done $ Ref n (snoc xs x)
+    Reg n xs     → done $ Reg n (snoc xs x)
+    Iff c t e xs → done $ Iff c t e (snoc xs x)
+    Cas reg x l r xs → done $ Cas reg x l r (snoc xs x)
+    Let reg x k   xs → done $ Let reg x k   (snoc xs x)
     App x y      → error "TODO: Handle `App` in `call` (?)"
+ where
+  done x = (x, nextReg)
 
-eval ∷ Exp → IO Exp
-eval exp = do
-    --  putStrLn (pack $ prettyExp exp)
-    nok exp & \case
-        Nothing → pure exp
-        Just e' → eval e'
+eval :: Nat -> Exp -> IO (Exp, Nat)
+eval reg exp = do
+  nok reg exp & \case
+    Nothing         -> pure (exp, reg)
+    Just (e', reg') -> eval reg' e'
 
 nodeRaw :: Nat -> Node -> F.Node
 nodeRaw arity = \case
@@ -336,7 +346,7 @@ nodeRaw arity = \case
   VLet  -> F.Let
 
 evaluate ∷ Exp → IO Val
-evaluate = fmap go . eval
+evaluate = fmap (go . fst) . eval 0
   where
     go = \case
         Clo r n xs   → ValKal (nodeRaw (fromIntegral r) n) (go <$> xs)
@@ -345,8 +355,8 @@ evaluate = fmap go . eval
         Ref n xs     → ValRef n (go <$> xs)
         Reg n xs     → ValReg n (go <$> xs)
         Iff c t e xs → ValIff (go c) (go t) (go e) (go <$> xs)
-        Cas v l r xs → ValCas (go v) (go l) (go r) (go <$> xs)
-        Let v k xs   → ValLet (go v) (go k) (go <$> xs)
+        Cas reg v l r xs → ValCas reg (go v) (go l) (go r) (go <$> xs)
+        Let reg v k xs   → ValLet reg (go v) (go k) (go <$> xs)
         App x y      → trace (show x) $
                        trace (show y) $
                        error "This should not happen"
@@ -438,8 +448,8 @@ valExp = go
     ValRef n xs     -> Ref n (go <$> xs)
     ValReg n xs     -> Reg n (go <$> xs)
     ValIff c t e xs -> Iff (go c) (go t) (go e) (go <$> xs)
-    ValCas x l r xs -> Cas (go x) (go l) (go r) (go <$> xs)
-    ValLet x k   xs -> Let (go x) (go k)        (go <$> xs)
+    ValCas reg x l r xs -> Cas reg (go x) (go l) (go r) (go <$> xs)
+    ValLet reg x k   xs -> Let reg (go x) (go k)        (go <$> xs)
 
   rawExp :: F.Node -> [Exp] -> Exp
   rawExp rn xs = rn & \case

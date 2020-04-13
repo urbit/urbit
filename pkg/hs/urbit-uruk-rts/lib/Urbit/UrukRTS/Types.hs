@@ -256,7 +256,7 @@ showNat :: Nat -> String
 showNat at@(Atom.atomUtf8 -> Right nm) =
   let okChar c = isPrint c || isSpace c
   in  if all okChar nm
-      then "'" <> (unpack $ intercalate "\\n" $ lines nm) <> "'"
+      then "\"" <> (unpack $ intercalate "\\n" $ lines nm) <> "\""
       else show at
 showNat at = show at
 

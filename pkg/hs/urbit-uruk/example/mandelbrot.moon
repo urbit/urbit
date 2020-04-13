@@ -113,7 +113,7 @@
   |=  (sign val)
   ?:  sign
     (rit val)
-  ?:  (eql val 0)
+  ?:  (zer val)
     ::  no such thing as negative zero
     (rit val)
   (lef val)
@@ -142,37 +142,29 @@
     pos  %.y
   ==
 
-=/  ssum-aneg
-  ~/  2  ssum-aneg
-  |=  (aneg b)
-  ?-  b
-    bneg
-      (snew %.n (add aneg bneg))
-    bpos
-      ?:  (lth aneg bpos)
-        (snew %.n (fub bpos aneg))
-      (snew %.y (fub aneg bpos))
-  ==
-
-=/  ssum-apos
-  ~/  2  ssum-apos
-  |=  (apos b)
-  ?-  b
-    bneg
-      ?:  (lth apos bneg)
-        (snew %.n (fub bneg apos))
-      (snew %.y (fub apos bneg))
-    bpos
-      (snew %.y (add apos bpos))
-  ==
-
 ::  Addition (+sum:si)
 =/  ssum
   ~/  2  ssum
   |=  (a b)
-  ?-    a
-    aneg  (ssum-aneg aneg b)
-    apos  (ssum-apos apos b)
+  ?-  a
+    aneg
+      ?-  b
+        bneg
+          (snew %.n (add aneg bneg))
+        bpos
+          ?:  (lth aneg bpos)
+            (snew %.n (fub bpos aneg))
+          (snew %.y (fub aneg bpos))
+      ==
+    apos
+      ?-  b
+        bneg
+          ?:  (lth apos bneg)
+            (snew %.n (fub bneg apos))
+          (snew %.y (fub apos bneg))
+        bpos
+          (snew %.y (add apos bpos))
+      ==
   ==
 
 :: Subtraction (+dif:si)
@@ -228,11 +220,21 @@
 
 =/  max-iterations  254
 
+=/  i0      (snat 0)
+=/  i2      (snat 2)
+=/  i10     (snat 10)
+=/  i1000   (snat 1000)
+=/  i10000  (snat 10.000)
+=/  i20000  (snat 20.000)
+=/  i25000  (snat 25.000)
+=/  i12500  (snat 12.500)
+=/  i40000  (snat 40.000)
+
 ::  Normal natural number to signed fixed-point representation.
 =/  to-fp
   ~/  1  to-fp
   |=  x
-  (smul (snat x) (snat 10.000))
+  (smul (snat x) i10000)
 
 ::  Add fixed-pint numbers.
 =/  add-fp
@@ -246,14 +248,14 @@
 =/  mul-fp
   ~/  2  mul-fp
   |=  (a b)
-  (sdiv (smul (sdiv a (snat 10)) b) (snat 1.000))
+  (sdiv (smul (sdiv a i10) b) i1000)
 
 ::  Testing crud.
 ::
 :: :*  (to-fp 2)
 ::     (to-fp 5)
-::     :: (sdiv (to-fp 2) (snat 10))
-::     (sdiv (smul (sdiv (to-fp 2) (snat 10)) (to-fp 5)) (snat 1.000))
+::     :: (sdiv (to-fp 2) i10)
+::     (sdiv (smul (sdiv (to-fp 2) i10) (to-fp 5)) i1000)
 :: ==
 
 
@@ -262,7 +264,7 @@
 =/  fraction-fp
   ~/  2  fraction-fp
   |=  (over under)
-  (sdiv (smul over (snat 10.000)) under)
+  (sdiv (smul over i10000) under)
 
 ::  output color triples
 =/  plasma-colors
@@ -336,6 +338,33 @@
     [0 0 0]
   (ur-snag o plasma-colors)
 
+::
+=/  calc-pixel-loop-inlined
+  ~/  5  calc-pixel-loop-inlined
+  ..  $
+  |=  (cr ci i x0 y0)
+  ?:  (not (lth i max-iterations))
+    [0 0 0]
+  ::
+  =/  xx  (sdiv (smul (sdiv x0 i10) x0) i1000)
+  =/  yy  (sdiv (smul (sdiv y0 i10) y0) i1000)
+  ::
+  ?:  (not (slth (ssum xx yy) i40000))
+    ?:  (eql i 255)
+      [0 0 0]
+    (ur-snag i plasma-colors)
+  ::
+  %^    ($ cr ci)
+      (inc i)
+    (ssum (ssum xx (snew (not (ssign yy)) (sabs yy))) cr)
+  (ssum (smul i2 (sdiv (smul (sdiv x0 i10) y0) i1000)) ci)
+
+::  calc-color-for
+::  mul-fp
+::  slth
+::  smul
+::  ssum
+
 ::  Compiler should do this automatically (lambda lifting)
 =/  calc-pixel-loop
   ~/  5  calc-pixel-loop
@@ -347,22 +376,25 @@
   =/  xx  (mul-fp x0 x0)
   =/  yy  (mul-fp y0 y0)
   ::
-  ?:  (not (slth (add-fp xx yy) (snew %.y 40.000)))
+  ?:  (not (slth (add-fp xx yy) i40000))
     (calculate-color-for i)
   ::
-  =/  nu-x0  (add-fp (sub-fp xx yy) cr)
-  =/  nu-y0  (add-fp (smul (snat 2) (mul-fp x0 y0)) ci)
-  ::
-  ($ cr ci (inc i) nu-x0 nu-y0)
+  %^    ($ cr ci)
+      (inc i)
+    (add-fp (sub-fp xx yy) cr)
+  (add-fp (smul i2 (mul-fp x0 y0)) ci)
 
 =/  calc-pixel
   ~/  4  calc-pixel
   |=  (scr-x scr-y width height)
   ::
-  =/  cr   (sub-fp (mul-fp (fraction-fp scr-x width) (snat 25.000)) (snat 20.000))
-  =/  ci   (sub-fp (mul-fp (fraction-fp scr-y height) (snat 25.000)) (snat 12.500))
-  ::
-  (calc-pixel-loop cr ci 0 (snat 0) (snat 0))
+  %*  calc-pixel-loop-inlined
+    (sub-fp (mul-fp (fraction-fp scr-x width) i25000) i20000)   :: cr
+    (sub-fp (mul-fp (fraction-fp scr-y height) i25000) i12500)  :: ci
+    0
+    i0
+    i0
+  ==
 
 =/  mandelbrot
   ~/  2  mandelbrot
@@ -474,7 +506,7 @@
 :: (foo (lef (lef 3)))
 
 :: Doing a 20x20 render takes 4m40s.
-(build-ppm 300 300)
+(build-ppm 40 40)
 
 :: TODO: The following should run in a reasonable amount of time
 ::(build-ppm 1000 1000)
