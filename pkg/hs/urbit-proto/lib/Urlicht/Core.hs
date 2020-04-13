@@ -45,7 +45,7 @@ data Value a
   = VVAp a [Value a]                  -- ^ free var applied to (reversed) args
   | VMAp Meta [Value a]               -- ^ metavar applied to (reversed) args
   | VTyp
-  | VFun (Value a) (Scope B Value a)
+  | VFun (Value a) (Scope B Value a)  -- TODO maybe just use Value (Var B a)?
   | VLam (Scope B Value a)
   deriving (Functor, Foldable, Traversable)
 
@@ -77,6 +77,20 @@ vApp (VMAp m vs) v = VMAp m (v:vs)
 vApp (VLam sv)   v = instantiate1 v sv
 vApp _           _ = error "vApp: applying non-function"
 
+vApps :: Value a -> [Value a] -> Value a
+vApps = foldr (flip vApp)
+
+forMetas_ :: forall f a b. Monad f => Value a -> (Meta -> f b) -> f ()
+forMetas_ v f = go v where
+  go :: forall a. Value a -> f ()
+  go = \case
+    VVAp x vs -> traverse_ go vs
+    VMAp m vs -> f m >> traverse_ go vs
+    VTyp -> pure ()
+    -- TODO don't use fromScope
+    VFun v sv -> go v >> go (fromScope sv)
+    VLam sv -> go (fromScope sv)
+
 -- Kovacs does this relative to a metacontext, instantiating known vars; why?
 -- is it just to manage substitution on recursion, or is this info needed from
 -- the elaborator?
@@ -96,13 +110,12 @@ eval = \case
 
 -- Likewise with metacontext here?
 quote :: Value a -> Core a
-quote = go
-  where
-    go :: Value a -> Core a
-    go = \case
-      VVAp x vs -> foldr (\v acc -> App acc (go v)) (Var x) vs
-      VMAp m vs -> foldr (\v acc -> App acc (go v)) (Met m) vs
-      VTyp      -> Typ
-      VFun v sv -> Fun (go v) (hoist go sv)
-      VLam sv   -> Lam (hoist go sv)
+quote = go where
+  go :: Value a -> Core a
+  go = \case
+    VVAp x vs -> foldr (\v acc -> App acc (go v)) (Var x) vs
+    VMAp m vs -> foldr (\v acc -> App acc (go v)) (Met m) vs
+    VTyp      -> Typ
+    VFun v sv -> Fun (go v) (hoist go sv)
+    VLam sv   -> Lam (hoist go sv)
 
