@@ -77,6 +77,7 @@
     ^-  (quip card _this)
     ?+  path          (on-watch:def path)
         [%contacts *]  [(watch-contacts:cc t.path) this]
+        [%synced *]    [(watch-synced:cc t.path) this]
     ==
   ::
   ++  on-agent
@@ -201,6 +202,12 @@
     %give  %fact  ~  %contact-update
     !>([%contacts pax contacts])
   ==  ==
+::
+++  watch-synced
+  |=  pax=path
+  ^-  (list card)
+  ?>  (team:title our.bol src.bol)
+  [%give %fact ~ %contact-hook-update !>([%initial synced])]~
 ::
 ++  watch-ack
   |=  [wir=wire saw=(unit tang)]
@@ -353,7 +360,8 @@
     |=  =path
     ^-  (quip card _state)
     ?.  (~(has by synced) path)
-      [~ state]
+      :_  state
+      [(contact-poke [%delete path])]~
     :_  state(synced (~(del by synced) path))
     :~  [%pass [%contacts path] %agent [our.bol %contact-store] %leave ~]
         [(contact-poke [%delete path])]

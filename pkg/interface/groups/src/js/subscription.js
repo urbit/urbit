@@ -5,47 +5,52 @@ import urbitOb from 'urbit-ob';
 
 
 export class Subscription {
+
+  constructor() {
+    this.firstRoundSubscriptionComplete = false;
+  }
+
   start() {
     if (api.authTokens) {
-      this.initializeContacts();
+      this.firstRoundSubscription();
     } else {
       console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
     }
   }
 
-  initializeContacts() {
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'contact-view',
+  subscribe(path, app) {
+    api.bind(path, 'PUT', api.authTokens.ship, app,
       this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'invite-view',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/all', 'PUT', api.authTokens.ship, 'group-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/all', 'PUT', api.authTokens.ship, 'metadata-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
+      (err) => {
+        console.log(err);
+        this.subscribe(path, app);
+      },
+      () => {
+        this.subscribe(path, app);
+      });
+  }
+
+  firstRoundSubscription() {
+    this.subscribe('/primary', 'contact-view');
+  }
+
+  secondRoundSubscriptions() {
+    this.subscribe('/synced', 'contact-hook');
+    this.subscribe('/primary', 'invite-view');
+    this.subscribe('/all', 'group-store');
+    this.subscribe('/all', 'metadata-store');
+  }
+
+  handleEvent(diff) {
+    if (!this.firstRoundSubscriptionComplete) {
+      this.firstRoundSubscriptionComplete = true;
+      this.secondRoundSubscriptions();
+    }
+    store.handleEvent(diff);
   }
 
   handleEvent(diff) {
     store.handleEvent(diff);
-  }
-
-  handleError(err) {
-    console.error(err);
-  }
-
-  handleQuitSilently(quit) {
-    // no-op
-  }
-
-  handleQuitAndResubscribe(quit) {
-    // TODO: resubscribe
   }
 }
 

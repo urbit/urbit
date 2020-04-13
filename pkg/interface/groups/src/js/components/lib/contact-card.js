@@ -323,6 +323,7 @@ export class ContactCard extends Component {
         this.setState({awaiting: false});
         props.history.push(`/~groups${destination}`);
       });
+      api.contactView.delete(props.path);
     }))
   }
 
