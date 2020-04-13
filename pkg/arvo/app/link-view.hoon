@@ -1,13 +1,13 @@
 ::  link-view: frontend endpoints
 ::
 ::  endpoints, mapping onto link-store's paths. p is for page as in pagination.
-::  updates only work for page 0.
+::  only the /0/submissions endpoint provides updates.
 ::  as with link-store, urls are expected to use +wood encoding.
 ::
-::    /json/[p]/submissions                           pages for all groups
-::    /json/[p]/submissions/[some-group]              page for one group
-::    /json/[p]/discussions/[wood-url]/[some-group]   page for url in group
-::    /json/[n]/submission/[wood-url]/[some-group]    nth matching submission
+::    /json/0/submissions                             initial + updates for all
+::    /json/[p]/submissions/[collection]              page for one collection
+::    /json/[p]/discussions/[wood-url]/[collection]   page for url in collection
+::    /json/[n]/submission/[wood-url]/[collection]    nth matching submission
 ::    /json/seen                                      mark-as-read updates
 ::
 /-  *link-view,
@@ -491,9 +491,11 @@
 ::
 ++  give-initial-submissions
   ~/  %link-view-initial-submissions
-  |=  [p=@ud =path]
+  |=  [p=@ud =requested=path]
   ^-  (list card)
-  :_  ?:  =(0 p)  ~
+  :_  ::  only keep the base case alive (for updates), kick all others
+      ::
+      ?:  &(=(0 p) ?=(~ requested-path))  ~
       [%give %kick ~ ~]~
   =;  =json
     [%give %fact ~ %json !>(json)]
@@ -501,9 +503,9 @@
   %-  pairs:enjs:format
   %+  turn
     %~  tap  by
-    %+  scry-for  (map ^path submissions)
-    [%submissions path]
-  |=  [=^path =submissions]
+    %+  scry-for  (map path submissions)
+    [%submissions requested-path]
+  |=  [=path =submissions]
   ^-  [@t json]
   :-  (spat path)
   =;  =json
@@ -516,6 +518,15 @@
     %~  wyt  in
     %+  scry-for  (set url)
     [%unseen path]
+  ?:  &(=(0 p) ?=(~ requested-path))
+    ::  for a broad-scope initial result, only give total counts
+    ::
+    =,  enjs:format
+    %-  pairs
+    =+  l=(lent submissions)
+    :~  'totalItems'^(numb l)
+        'totalPages'^(numb (div l page-size))
+    ==
   %^  page-to-json  p
     %+  get-paginated  `p
     submissions

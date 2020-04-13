@@ -19,11 +19,18 @@ export class Links extends Component {
     this.componentDidUpdate();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     const linkPage = this.props.page;
-    if ( (this.props.page != 0) &&
-         (!this.props.links[linkPage] ||
-          this.props.links.local[linkPage])
+    // if we just navigated to this particular page,
+    // and don't have links for it yet,
+    // or the links we have might not be complete,
+    // request the links for that page.
+    if ( (!prevProps ||
+          linkPage !== prevProps.page ||
+          this.props.resourcePath !== prevProps.resourcePath
+         ) &&
+         !this.props.links[linkPage] ||
+         this.props.links.local[linkPage]
     ) {
       api.getPage(this.props.resourcePath, this.props.page);
     }
