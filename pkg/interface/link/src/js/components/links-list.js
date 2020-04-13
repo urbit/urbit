@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { LoadingScreen } from './loading';
+import { MessageScreen } from '/components/lib/message-screen';
 import { LinksTabBar } from './lib/links-tabbar';
 import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { Route, Link } from "react-router-dom";
@@ -59,15 +60,8 @@ export class Links extends Component {
 
     let LinkList = (<LoadingScreen/>);
     if (props.links && props.links.totalItems === 0) {
-      //TODO the below re-used from landing screen. refactor into MessageScreen?
       LinkList = (
-        <div className="h-100 w-100 overflow-x-hidden bg-white bg-gray0-d dn db-ns">
-          <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
-            <p className="f8 pt3 gray2 w-100 h-100 dtc v-mid tc">
-              Start by posting a link to this collection.
-            </p>
-          </div>
-        </div>
+        <MessageScreen text="Start by posting a link to this collection."/>
       );
     } else if (Object.keys(links).length > 0) {
       LinkList = Object.keys(links)
