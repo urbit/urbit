@@ -57,38 +57,52 @@ export class Links extends Component {
     ? Number(props.links.totalPages)
     : 1;
 
-    let LinkList = Object.keys(links)
-    .map((linkIndex) => {
-      let linksObj = props.links[linkPage];
-      let { title, url, time, ship } = linksObj[linkIndex];
-      const seen = props.seen[url];
-      let members = {};
+    let LinkList = (<LoadingScreen/>);
+    if (props.links && props.links.totalItems === 0) {
+      //TODO the below re-used from landing screen. refactor into MessageScreen?
+      LinkList = (
+        <div className="h-100 w-100 overflow-x-hidden bg-white bg-gray0-d dn db-ns">
+          <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
+            <p className="f8 pt3 gray2 w-100 h-100 dtc v-mid tc">
+              Start by posting a link to this collection.
+            </p>
+          </div>
+        </div>
+      );
+    } else if (Object.keys(links).length > 0) {
+      LinkList = Object.keys(links)
+      .map((linkIndex) => {
+        let linksObj = props.links[linkPage];
+        let { title, url, time, ship } = linksObj[linkIndex];
+        const seen = props.seen[url];
+        let members = {};
 
-      const commentCount = props.comments[url]
-        ? props.comments[url].totalItems
-        : linksObj[linkIndex].commentCount || 0;
+        const commentCount = props.comments[url]
+          ? props.comments[url].totalItems
+          : linksObj[linkIndex].commentCount || 0;
 
-      const {nickname, color, member} = getContactDetails(props.contacts[ship]);
+        const {nickname, color, member} = getContactDetails(props.contacts[ship]);
 
-      return (
-        <LinkItem
-        key={time}
-        title={title}
-        page={props.page}
-        linkIndex={linkIndex}
-        url={url}
-        timestamp={time}
-        seen={seen}
-        nickname={nickname}
-        ship={ship}
-        color={color}
-        member={member}
-        comments={commentCount}
-        resourcePath={props.resourcePath}
-        popout={props.popout}
-        />
-      )
-    })
+        return (
+          <LinkItem
+          key={time}
+          title={title}
+          page={props.page}
+          linkIndex={linkIndex}
+          url={url}
+          timestamp={time}
+          seen={seen}
+          nickname={nickname}
+          ship={ship}
+          color={color}
+          member={member}
+          comments={commentCount}
+          resourcePath={props.resourcePath}
+          popout={props.popout}
+          />
+        )
+      });
+    }
 
     return (
       <div
