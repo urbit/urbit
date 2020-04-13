@@ -32,6 +32,7 @@
     "del": "^5.1.0",
     "lodash": "^4.17.11",
     "moment": "^2.20.1",
+    "mousetrap": "^1.6.5",
     "react": "^16.5.2",
     "react-codemirror2": "^6.0.0",
     "react-dom": "^16.8.6",
