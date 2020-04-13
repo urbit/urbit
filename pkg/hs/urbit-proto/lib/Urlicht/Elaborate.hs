@@ -23,15 +23,15 @@ import Urlicht.Unify
 -- Kovacs (and I suppose Brady too) also stores the value associated with
 -- a let binder, but for the life of me I can't figure out why. Does it
 -- somehow give more specificity to unification solutions?
-type Env a = [(a, ValueType a)]
+type Env a = [(a, Type a)]
 
-scry :: Eq a => Env a -> a -> Maybe (ValueType a)
+scry :: Eq a => Env a -> a -> Maybe (Type a)
 scry = flip lookup
 
 scope :: Env a -> [a]
 scope = map fst
 
-bind :: Env a -> b -> ValueType a -> Env (Var b a)
+bind :: Env a -> b -> Type a -> Env (Var b a)
 bind bs b t = (B b, fmap F t) : fmap (\(x, v) -> (F x, fmap F v)) bs
 
 nameHack = Name "??" ()
@@ -43,7 +43,7 @@ newMetaWithSpine env = do
   m <- freshMeta
   pure $ foldr (flip App) (Met m) (Var <$> scope env)
 
-freshFun :: Env a -> Elab (ValueType a, Scope B ValueType a)
+freshFun :: Env a -> Elab (Type a, Scope B Type a)
 freshFun env = do
   a <- newMetaWithSpine env
   -- FIXME maybe we really do need to eval relative to a context with lets
@@ -51,7 +51,7 @@ freshFun env = do
   b <- newMetaWithSpine (bind env nameHack v)
   pure (v, toScope (eval b))
 
-check :: Eq a => Env a -> S.Simple a -> ValueType a -> Elab (Core a)
+check :: Eq a => Env a -> S.Simple a -> Type a -> Elab (Core a)
 check env simp ty = do
   ty <- crank ty
   let
@@ -77,7 +77,7 @@ check env simp ty = do
         check (bind env nameHack tyRhs) (fromScope sBody) (F <$> ty)
     (S.Hol, _) -> newMetaWithSpine env
 
-infer :: Eq a => Env a -> S.Simple a -> Elab (ValueType a, Core a)
+infer :: Eq a => Env a -> S.Simple a -> Elab (Type a, Core a)
 infer env = \case
   S.Var x -> case scry env x of
     Just ty -> pure (ty, Var x)

@@ -7,7 +7,6 @@ import Bound.Name
 import Control.Monad.Morph (hoist)
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 
-type CoreType = Core
 type B = Name Text ()
 type Meta = Int
 
@@ -36,7 +35,7 @@ deriving instance Ord a  => Ord  (Core a)
 deriving instance Read a => Read (Core a)
 deriving instance Show a => Show (Core a)
 
-type ValueType = Value
+type Type = Value
 
 -- | Terms in normal form. Kovacs distinguishes these, which is nice for type
 -- safety, but also, supposedly, opens the way to faster performance with
