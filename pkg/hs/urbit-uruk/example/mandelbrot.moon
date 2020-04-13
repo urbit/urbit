@@ -39,7 +39,7 @@
   (rit uni)
 
 ::  Takes a list and a function
-=/  turn
+=/  turn-
   ~/  2  turn
   ..  $
   |=  (data fun)
@@ -84,7 +84,7 @@
     second
 
 ::  Take a list of lists and welds each one together
-=/  zing
+=/  zing-
   ~/  1  zing
   ..  $
   |=  rest

@@ -30,6 +30,7 @@ class Show p => Uruk p where
   uUni :: p
   uCon :: p
   uSeq :: p
+  uLet :: p
   uCas :: p
   uFix :: p
   uIff :: p
@@ -65,6 +66,7 @@ instance Uruk p => Uruk (Either Text p) where
   uCon = pure uCon
 
   uSeq = pure uSeq
+  uLet = pure uLet
   uCas = pure uCas
   uFix = pure uFix
   uIff = pure uIff

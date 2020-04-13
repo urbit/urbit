@@ -138,6 +138,7 @@ data Node
   | Lef
   | Rit
   | Cas
+  | Let
   | Con
   | Car
   | Cdr
@@ -151,6 +152,8 @@ data Node
   | Tra
   | Mod
   | Rap
+  | Turn
+  | Zing
 
  deriving (Eq, Ord, Generic, Hashable)
 
@@ -188,6 +191,7 @@ instance Show Node where
     Lef       -> "LEF"
     Rit       -> "RIT"
     Cas       -> "CAS"
+    Let       -> "LET"
     Con       -> "CON"
     Car       -> "CAR"
     Cdr       -> "CDR"
@@ -201,6 +205,8 @@ instance Show Node where
     Tra       -> "TRA"
     Mod       -> "MOD"
     Rap       -> "RAP"
+    Turn      -> "TURN"
+    Zing      -> "ZING"
 
 data Fun = Fun
   { fNeed :: !Int
@@ -262,6 +268,7 @@ data Exp
 
   | IFF   !Exp !Exp !Exp           --  If-Then-Else
   | CAS   !Int !Exp !Exp !Exp      --  Pattern Match
+  | LET   !Int !Exp !Exp           --  Pattern Match on single value
   | REC1  !Exp                     --  Recursive Call
   | REC2  !Exp !Exp                --  Recursive Call
   | REC3  !Exp !Exp !Exp           --  Recursive Call
@@ -287,6 +294,8 @@ data Exp
   | TRA !Exp !Exp                 --  Execution Trace
   | MOD !Exp !Exp                 --  Atom Modulus
   | RAP !Exp !Exp                 --  (Generalized) tape to cord.
+  | TURN !Exp !Exp                --  Map over a list
+  | ZING !Exp                     --  Concatenate list of lists
 
   | SUB !Exp !Exp                 --  Subtract
   | ZER !Exp                      --  Is Zero?
@@ -364,7 +373,8 @@ nodeArity = \case
   Uni   -> 1
   Lef   -> 1 -- Hack to convert to value after first arg, actually 3.
   Rit   -> 1 -- Hack to convert to value after first arg, actually 3.
-  Cas   -> 4
+  Cas   -> 3
+  Let   -> 2
   Con   -> 2 -- Hack to convert to value after two args, actually 3.
   Car   -> 1
   Cdr   -> 1
@@ -378,3 +388,5 @@ nodeArity = \case
   Tra   -> 2
   Mod   -> 2
   Rap   -> 2
+  Turn  -> 2
+  Zing  -> 1

@@ -42,6 +42,8 @@ numReg = go 0
       maxi (acc : go acc c : go acc t : go acc e : fmap (go acc) xs)
     O.ValCas c l r xs ->
       maxi (acc : go acc c : go (acc + 1) l : go (acc + 1) r : fmap (go acc) xs)
+    O.ValLet c k   xs ->
+      maxi (acc : go acc c : go (acc + 1) k : fmap (go acc) xs)
 
 {-
     TODO CAS !Int !Exp !Exp !Exp  --  Pattern Match
@@ -52,10 +54,6 @@ numReg = go 0
 
     TODO Detect fully saturated calls.
       (No AST node for this yet)
-
-    TODO Detect fully saturated calls to jets.
-      JETN !Jet !(SmallArray Exp)   --  Fully saturated call
-      JET2 !Jet !Exp !Exp           --  Fully saturated call
 -}
 
 compile :: Int -> Int -> O.Val -> F.Exp
@@ -73,6 +71,8 @@ compile arity numRegs = go
     -- TODO Register Allocation.
     O.ValCas x l r [] -> F.CAS 0 (go x) (go l) (go r)
     O.ValCas x l r xs -> F.CALN (F.CAS 0 (go x) (go l) (go r)) (goArgs xs)
+    O.ValLet x k   [] -> F.LET 0 (go x) (go k)
+    O.ValLet x k   xs -> F.CALN (F.LET 0 (go x) (go k)) (goArgs xs)
     O.ValKal ur xs    -> kal ur xs
 
   rec [] = F.SLF
@@ -119,6 +119,8 @@ compile arity numRegs = go
   kal F.Tra     [x,y]  = F.TRA (go x) (go y)
   kal F.Mod     [x,y]  = F.MOD (go x) (go y)
   kal F.Rap     [x,y]  = F.RAP (go x) (go y)
+  kal F.Turn    [x,y]  = F.TURN (go x) (go y)
+  kal F.Zing    [x]    = F.ZING (go x)
 
   kal F.Sub     [x, y] = F.SUB (go x) (go y)
   kal F.Mul     [x, y] = F.MUL (go x) (go y)

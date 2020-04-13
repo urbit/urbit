@@ -29,6 +29,7 @@ data Node
     | VSn Pos
     | VIff
     | VCas
+    | VLet
   deriving stock (Eq, Ord, Generic)
 
 instance Show Node where
@@ -45,6 +46,7 @@ instance Show Node where
     VCn n -> "C" <> show n
     VIff  -> "Iff"
     VCas  -> "Cas"
+    VLet  -> "Let"
 
 data Code = Code
     { cArgs :: Pos
@@ -90,7 +92,7 @@ instance Show Code where
 
     `App` is unevaluated function application.
 
-    `Cas` and `Iff` are understood control flow.
+    `Let`, `Cas`, and `Iff` are understood control flow.
 -}
 data Exp
     = Clo Int Node [Exp]
@@ -100,6 +102,7 @@ data Exp
     | Reg Nat [Exp]
     | Iff Exp Exp Exp [Exp]
     | Cas Exp Exp Exp [Exp]
+    | Let Exp Exp [Exp]
     | App Exp Exp
   deriving stock (Eq, Ord, Generic)
 
@@ -121,6 +124,7 @@ data Val
     | ValReg Nat [Val]
     | ValIff Val Val Val [Val]
     | ValCas Val Val Val [Val]
+    | ValLet Val Val [Val]
   deriving stock (Eq, Ord, Generic)
 
 instance Show Exp where
@@ -132,6 +136,7 @@ instance Show Exp where
         Reg n xs     → sexp "(" ")" ["R" <> show n] xs
         Iff c t e xs → sexp "(" ")" ["If", show c, show t, show e] xs
         Cas x l r xs → sexp "(" ")" ["Case", show x, show l, show r] xs
+        Let x k xs   → sexp "(" ")" ["Let", show x, show k] xs
         App x y      → sexp "(" ")" [] [x,y]
       where
         sexp ∷ Show a => String → String → [String] → [a] → String
@@ -152,6 +157,8 @@ prettyExp = go
         Iff c t e xs → sexp "("   ")" [go $ Iff c t e []] (go <$> xs)
         Cas x l r [] → sexp "?-(" ")" [go x, go l, go r] []
         Cas x l r xs → sexp "("   ")" [go $ Cas x l r []] (go <$> xs)
+        Let x k []   → sexp "/=(" ")" [go x, go k] []
+        Let x k xs   → sexp "("   ")" [go $ Let x k []] (go <$> xs)
         App x y      → sexp "("   ")" [] [go x, go y]
       where
         sexp ∷ String → String → [String] → [String] → String
@@ -168,6 +175,7 @@ instance Show Val where
         ValReg n xs     → sexp "(" ")" ["R" <> show n] xs
         ValIff c t e xs → sexp "(" ")" ["If", show c, show t, show e] xs
         ValCas x l r xs → sexp "(" ")" ["Case", show x, show l, show r] xs
+        ValLet x k xs   → sexp "(" ")" ["Let", show x, show k] xs
       where
         sexp ∷ Show a => String → String → [String] → [a] → String
         sexp _ _ [h] [] = h
@@ -185,6 +193,7 @@ recursive (Code _ _ _ v) = go v
         ValKal _ vs     → any go vs
         ValIff c t e xs → any go ([c,t,e] <> xs)
         ValCas x l r xs → any go ([x,l,r] <> xs)
+        ValLet x k xs   → any go ([x,k] <> xs)
 
 infixl 5 %;
 
@@ -202,6 +211,7 @@ simplify = curry $ \case
   (VSn _ , f : g : xs) -> app f xs % app g xs
   (VIff  , [c, t, e] ) -> Iff c (t % unit) (e % unit) []
   (VCas  , [x, l, r] ) -> Cas x (l % reg 0) (r % reg 0) []
+  (VLet  , [x, k]    ) -> Let x (k % reg 0) []
   (n     , xs        ) -> error ("simplify: bad arity (" <> show n <> " " <> show xs <> ")")
  where
   app acc = \case
@@ -226,6 +236,7 @@ abst = g 0
         Reg n xs        → Reg n (g d <$> xs) -- TODO
         Iff c t e xs    → Iff (g d c) (g d t) (g d e) (g d <$> xs)
         Cas x l r xs    → Cas (g d x) (g (d+1) l) (g (d+1) r) (g d <$> xs)
+        Let x k xs      → Let (g d x) (g (d+1) k) (g d <$> xs)
         App x y         → error "TODO: Handle `App` in `abst`"
 
 unit ∷ Exp
@@ -254,6 +265,7 @@ nok = \case
     --  Result of pattern match is passed into cases on the stack.
     Cas v (nok→J l) r xs → Just (Cas v l r xs)
     Cas v l (nok→J r) xs → Just (Cas v l r xs)
+    Let v (nok→J k) xs   → Just (Let v k xs)
 
     Clo 1 f xs   :@ x → Just $ simplify f (snoc xs x)
     Clo n f xs   :@ x → Just $ Clo (n-1) f (snoc xs x)
@@ -261,6 +273,7 @@ nok = \case
     Rec xs       :@ x → Just $ Rec (snoc xs x)
     Iff c t e xs :@ x → Just $ Iff c t e (snoc xs x)
     Cas v l r xs :@ x → Just $ Cas v l r (snoc xs x)
+    Let v k xs   :@ x → Just $ Let v k (snoc xs x)
     Ref n xs     :@ x → Just $ Ref n (snoc xs x)
     Reg n xs     :@ x → Just $ Reg n (snoc xs x)
 
@@ -299,6 +312,7 @@ call f x = f & \case
     Reg n xs     → Reg n (snoc xs x)
     Iff c t e xs → Iff c t e (snoc xs x)
     Cas x l r xs → Cas x l r (snoc xs x)
+    Let x k   xs → Let x k   (snoc xs x)
     App x y      → error "TODO: Handle `App` in `call` (?)"
 
 eval ∷ Exp → IO Exp
@@ -319,6 +333,7 @@ nodeRaw arity = \case
   VSeq  -> F.Seq
   VIff  -> F.Iff
   VCas  -> F.Cas
+  VLet  -> F.Let
 
 evaluate ∷ Exp → IO Val
 evaluate = fmap go . eval
@@ -331,6 +346,7 @@ evaluate = fmap go . eval
         Reg n xs     → ValReg n (go <$> xs)
         Iff c t e xs → ValIff (go c) (go t) (go e) (go <$> xs)
         Cas v l r xs → ValCas (go v) (go l) (go r) (go <$> xs)
+        Let v k xs   → ValLet (go v) (go k) (go <$> xs)
         App x y      → trace (show x) $
                        trace (show y) $
                        error "This should not happen"
@@ -423,6 +439,7 @@ valExp = go
     ValReg n xs     -> Reg n (go <$> xs)
     ValIff c t e xs -> Iff (go c) (go t) (go e) (go <$> xs)
     ValCas x l r xs -> Cas (go x) (go l) (go r) (go <$> xs)
+    ValLet x k   xs -> Let (go x) (go k)        (go <$> xs)
 
   rawExp :: F.Node -> [Exp] -> Exp
   rawExp rn xs = rn & \case
@@ -435,6 +452,7 @@ valExp = go
     F.Seq   -> clo 2 VSeq
     F.Iff   -> clo 3 VIff
     F.Cas   -> clo 3 VCas
+    F.Let   -> clo 2 VLet
     other  -> kal other
    where
     kal :: F.Node -> Exp

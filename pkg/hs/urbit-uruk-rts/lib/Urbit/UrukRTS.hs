@@ -135,6 +135,7 @@ instance Uruk Val where
   uCon = mkNode 2 Con -- hack, actually 3
   uSeq = mkNode 2 Seq
   uCas = mkNode 3 Cas
+  uLet = mkNode 2 Let
   uFix = mkNode 2 Fix
   uIff = mkNode 3 Iff
 
@@ -166,7 +167,10 @@ instance Uruk Val where
   uGlobal "trace" = Just $ mkNode 2 Tra
   uGlobal "mod"   = Just $ mkNode 2 Mod
 
+  uGlobal "let"   = Just $ mkNode 2 Let
   uGlobal "rap"   = Just $ mkNode 2 Rap
+  uGlobal "turn"  = Just $ mkNode 2 Turn
+  uGlobal "zing"  = Just $ mkNode 1 Zing
 
   uGlobal _     = Nothing
 
@@ -307,6 +311,8 @@ reduce !no !xs = do
     Tra       -> dTra x y
     Mod       -> dMod x y
     Rap       -> dRap x y
+    Turn      -> dTurn x y
+    Zing      -> dZing x
 
     Inc       -> inc x
     Dec       -> dec x
@@ -320,7 +326,8 @@ reduce !no !xs = do
     Con       -> pure (VCon x y)
     Car       -> car x
     Cdr       -> cdr x
-    Cas       -> cas x y z
+    Cas       -> dCas x y z
+    Let       -> dLet x y
     Nat n     -> nat n x y
 
     --  S₁fgx   = (fx)(gx)
@@ -576,11 +583,15 @@ dIff c            t e = do
   print ("dIff", c, t, e)
   throwIO (TypeError "iff-not-bol")
 
-cas :: Val -> Val -> Val -> IO Val
-{-# INLINE cas #-}
-cas (VLef x) l r = kVV l x
-cas (VRit x) l r = kVV r x
-cas c        _ _ = do
+dLet :: Val -> Val -> IO Val
+{-# INLINE dLet #-}
+dLet x k = kVV k x
+
+dCas :: Val -> Val -> Val -> IO Val
+{-# INLINE dCas #-}
+dCas (VLef x) l r = kVV l x
+dCas (VRit x) l r = kVV r x
+dCas c        _ _ = do
   pPrint c
   throwIO (TypeError "cas-not-sum")
 
@@ -654,7 +665,37 @@ dRap (VNat 8) y = dCrip y
 dRap (VNat _) y = throwIO (TypeError "only (rap 8) is jetted.")
 dRap _        _ = throwIO (TypeError "rap-not-nat")
 
+dTurn :: Val -> Val -> IO Val
+{-# INLINE dTurn #-}
+dTurn xs f = do
+  rs <- for (parseList xs) (kVV f)
+  evaluate (listToVal rs)
+ where
+  parseList :: Val -> [Val]
+  parseList (VRit VUni      ) = []
+  parseList (VLef (VCon h t)) = h : parseList t
+  parseList _                 = throw (TypeError "turn-not-list")
+
+listToVal :: [Val] -> Val
+{-# INLINE listToVal #-}
+listToVal []    = VRit VUni
+listToVal (h:t) = VLef (VCon h (listToVal t))
+
+
+dZing :: Val -> IO Val
+{-# INLINE dZing #-}
+dZing = evaluate . listToVal . mconcat . parseLists
+ where
+  parseLists :: Val -> [[Val]]
+  parseLists = fmap parseList . parseList
+
+  parseList :: Val -> [Val]
+  parseList (VRit VUni      ) = []
+  parseList (VLef (VCon h t)) = h : parseList t
+  parseList _                 = throw (TypeError "zing-not-list")
+
 dCrip :: Val -> IO Val
+{-# INLINE dCrip #-}
 dCrip = evaluate . VNat . Atom.bytesAtom . BS.pack . parseTape
  where
   parseTape :: Val -> [Word8]
@@ -780,6 +821,8 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     TRA  x y        -> join (dTra <$> go x <*> go y)
     MOD  x y        -> join (dMod <$> go x <*> go y)
     RAP  x y        -> join (dRap <$> go x <*> go y)
+    TURN x y        -> join (dTurn <$> go x <*> go y)
+    ZING x          -> join (dZing <$> go x)
 
     SUB  x y        -> join (sub <$> go x <*> go y)
     ZER x           -> join (zer <$> go x)
@@ -798,6 +841,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
         print ("iff", cv, t, e)
         print ("iff.cond", c)
         throwIO (TypeError "iff-not-bol")
+    LET i x k  -> (go x >>= setReg i) >> go k
     CAS i x l r -> go x >>= \case
       VLef lv -> setReg i lv >> go l
       VRit rv -> setReg i rv >> go r
