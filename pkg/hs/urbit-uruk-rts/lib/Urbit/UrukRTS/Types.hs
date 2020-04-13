@@ -122,6 +122,7 @@ data Node
   | Seq
   | Fix
   | Nat Nat
+  | Int Integer
   | Bol Bool
   | Iff
   | Pak
@@ -155,6 +156,20 @@ data Node
   | Turn
   | Zing
 
+  | IntPositive
+  | IntNegative
+
+  | IntAbs
+  | IntAdd
+  | IntDiv
+  | IntIsZer
+  | IntIsNeg
+  | IntIsPos
+  | IntLth
+  | IntMul
+  | IntNegate
+  | IntSub
+
  deriving (Eq, Ord, Generic, Hashable)
 
 instance Show Node where
@@ -174,6 +189,7 @@ instance Show Node where
     Seq       -> "SEQ"
     Fix       -> "FIX"
     Nat n     -> show n
+    Int i     -> show i
     Bol True  -> "YES"
     Bol False -> "NAH"
     Iff       -> "IFF"
@@ -208,6 +224,20 @@ instance Show Node where
     Turn      -> "TURN"
     Zing      -> "ZING"
 
+    IntPositive -> "INT_POSITIVE"
+    IntNegative -> "INT_NEGATIVE"
+
+    IntAbs -> "INT_ABS"
+    IntAdd -> "INT_ADD"
+    IntDiv -> "INT_DIV"
+    IntIsZer -> "INT_IS_ZER"
+    IntIsNeg -> "INT_IS_NEG"
+    IntIsPos -> "INT_IS_POS"
+    IntLth -> "INT_LTH"
+    IntMul -> "INT_MUL"
+    IntNegate -> "INT_NEGATE"
+    IntSub -> "INT_SUB"
+
 data Fun = Fun
   { fNeed :: !Int
   , fHead :: !Node
@@ -227,6 +257,7 @@ data Val
   | VLef !Val
   | VRit !Val
   | VNat !Nat
+  | VInt !Integer
   | VBol !Bool
   | VFun !Fun
  deriving (Eq, Ord, Generic, Hashable)
@@ -238,6 +269,7 @@ instance NFData Val where
     VLef _   -> ()
     VRit _   -> ()
     VNat _   -> ()
+    VInt _   -> ()
     VBol _   -> ()
     VFun _   -> ()
 
@@ -248,9 +280,14 @@ instance Show Val where
     VLef x     -> "L" <> show x
     VRit x     -> "R" <> show x
     VNat n     -> showNat n
+    VInt i     -> showInt i
     VBol True  -> "Y"
     VBol False -> "N"
     VFun f     -> show f
+
+showInt :: Integer -> String
+showInt x | x >= 0 = "+" <> show x
+showInt x          = "-" <> show (abs x)
 
 showNat :: Nat -> String
 showNat at@(Atom.atomUtf8 -> Right nm) =
@@ -297,6 +334,20 @@ data Exp
   | TURN !Exp !Exp                --  Map over a list
   | ZING !Exp                     --  Concatenate list of lists
 
+  | INT_POSITIVE !Exp
+  | INT_NEGATIVE !Exp
+
+  | INT_ABS !Exp
+  | INT_ADD !Exp !Exp
+  | INT_DIV !Exp !Exp
+  | INT_IS_ZER !Exp
+  | INT_IS_NEG !Exp
+  | INT_IS_POS !Exp
+  | INT_LTH !Exp !Exp
+  | INT_MUL !Exp !Exp
+  | INT_NEGATE !Exp
+  | INT_SUB !Exp !Exp
+
   | SUB !Exp !Exp                 --  Subtract
   | ZER !Exp                      --  Is Zero?
   | EQL !Exp !Exp                 --  Atom equality.
@@ -341,6 +392,7 @@ valFun = \case
   VLef l   -> Fun 2 Lef (fromList [l])
   VRit r   -> Fun 2 Rit (fromList [r])
   VNat n   -> Fun 2 (Nat n) mempty
+  VInt i   -> Fun 1 (Int i) mempty
   VBol b   -> Fun 2 (Bol b) mempty
   VFun f   -> f
 
@@ -358,6 +410,7 @@ nodeArity = \case
   Seq   -> 2
   Fix   -> 2
   Nat n -> 2
+  Int n -> 1
   Bol b -> 2
   Iff   -> 3
   Pak   -> 1
@@ -390,3 +443,17 @@ nodeArity = \case
   Rap   -> 2
   Turn  -> 2
   Zing  -> 1
+
+  IntPositive -> 1
+  IntNegative -> 1
+
+  IntAbs -> 1
+  IntAdd -> 2
+  IntDiv -> 2
+  IntIsZer -> 1
+  IntIsNeg -> 1
+  IntIsPos -> 1
+  IntLth -> 2
+  IntMul -> 2
+  IntNegate -> 1
+  IntSub -> 2

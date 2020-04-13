@@ -107,100 +107,100 @@
 :: Positive is all natural numbers including 0, (Negative 0) is invalid, so we
 :: don't have negative and positive zero.
 
-::  New signed natural (+new:si)
-=/  snew
-  ~/  2  snew
-  |=  (sign val)
-  ?:  sign
-    (rit val)
-  ?:  (zer val)
-    ::  no such thing as negative zero
-    (rit val)
-  (lef val)
-
-::  Natural to Signed (+sun:si)
-=/  snat
-  ~/  1  snat
-  |=  n
-  (snew %.y n)
-
-::  Absolute value (+abs:si)
-=/  sabs
-  ~/  1  sabs
-  |=  s
-  ?-  s
-    neg  neg
-    pos  pos
-  ==
-
-::  Sign bit as boolean (+syn:si)
-=/  ssign
-  ~/  1  ssign
-  |=  s
-  ?-  s
-    neg  %.n
-    pos  %.y
-  ==
-
-::  Addition (+sum:si)
-=/  ssum
-  ~/  2  ssum
-  |=  (a b)
-  ?-  a
-    aneg
-      ?-  b
-        bneg
-          (snew %.n (add aneg bneg))
-        bpos
-          ?:  (lth aneg bpos)
-            (snew %.n (fub bpos aneg))
-          (snew %.y (fub aneg bpos))
-      ==
-    apos
-      ?-  b
-        bneg
-          ?:  (lth apos bneg)
-            (snew %.n (fub bneg apos))
-          (snew %.y (fub apos bneg))
-        bpos
-          (snew %.y (add apos bpos))
-      ==
-  ==
-
-:: Subtraction (+dif:si)
-=/  ssub
-  ~/  2  ssub
-  |=  (a b)
-  %+  ssum  a
-  (snew (not (ssign b)) (sabs b))
-
-:: Multiplication (+pro:si)
-=/  smul
-  ~/  2  smul
-  |=  (a b)
-  (snew (not (xor (ssign a) (ssign b))) (mul (sabs a) (sabs b)))
-
-:: Division (+fra:si)
-=/  sdiv
-  ~/  2  sdiv
-  |=  (a b)
-  (snew (not (xor (ssign a) (ssign b))) (div (sabs a) (sabs b)))
-
-:: signed less than, a < b
-=/  slth
-  ~/  2  slth
-  |=  (a b)
-  ?:  (ssign a)  :: a positive
-    ?:  (ssign b)  :: b positive
-      (lth (sabs a) (sabs b))
-    %.n
-  :: a is negative
-  ?:  (ssign b)
-    %.y
-  :: b is negative
-  ?:  (eql (sabs a) (sabs b))
-    %.n
-  (not (lth (sabs a) (sabs b)))
+::::  New signed natural (+new:si)
+::=/  snew
+::  ~/  2  snew
+::  |=  (sign val)
+::  ?:  sign
+::    (rit val)
+::  ?:  (zer val)
+::    ::  no such thing as negative zero
+::    (rit val)
+::  (lef val)
+::
+::::  Natural to Signed (+sun:si)
+::=/  snat
+::  ~/  1  snat
+::  |=  n
+::  (snew %.y n)
+::
+::::  Absolute value (+abs:si)
+::=/  sabs
+::  ~/  1  sabs
+::  |=  s
+::  ?-  s
+::    neg  neg
+::    pos  pos
+::  ==
+::
+::::  Sign bit as boolean (+syn:si)
+::=/  ssign
+::  ~/  1  ssign
+::  |=  s
+::  ?-  s
+::    neg  %.n
+::    pos  %.y
+::  ==
+::
+::::  Addition (+sum:si)
+::=/  ssum
+::  ~/  2  ssum
+::  |=  (a b)
+::  ?-  a
+::    aneg
+::      ?-  b
+::        bneg
+::          (snew %.n (add aneg bneg))
+::        bpos
+::          ?:  (lth aneg bpos)
+::            (snew %.n (fub bpos aneg))
+::          (snew %.y (fub aneg bpos))
+::      ==
+::    apos
+::      ?-  b
+::        bneg
+::          ?:  (lth apos bneg)
+::            (snew %.n (fub bneg apos))
+::          (snew %.y (fub apos bneg))
+::        bpos
+::          (snew %.y (add apos bpos))
+::      ==
+::  ==
+::
+:::: Subtraction (+dif:si)
+::=/  ssub
+::  ~/  2  ssub
+::  |=  (a b)
+::  %+  ssum  a
+::  (snew (not (ssign b)) (sabs b))
+::
+:::: Multiplication (+pro:si)
+::=/  smul
+::  ~/  2  smul
+::  |=  (a b)
+::  (snew (not (xor (ssign a) (ssign b))) (mul (sabs a) (sabs b)))
+::
+:::: Division (+fra:si)
+::=/  sdiv
+::  ~/  2  sdiv
+::  |=  (a b)
+::  (snew (not (xor (ssign a) (ssign b))) (div (sabs a) (sabs b)))
+::
+:::: signed less than, a < b
+::=/  slth
+::  ~/  2  slth
+::  |=  (a b)
+::  ?:  (ssign a)  :: a positive
+::    ?:  (ssign b)  :: b positive
+::      (lth (sabs a) (sabs b))
+::    %.n
+::  :: a is negative
+::  ?:  (ssign b)
+::    %.y
+::  :: b is negative
+::  ?:  (eql (sabs a) (sabs b))
+::    %.n
+::  (not (lth (sabs a) (sabs b)))
 
 ::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -213,49 +213,49 @@
 :: point, so that 10.000 is floating 1.0.
 ::
 
-=/  left-edge    (snew %.n 21.000)
-=/  right-edge   (snew %.y 15.000)
-=/  top-edge     (snew %.y 15.000)
-=/  bottom-edge  (snew %.n 15.000)
+=/  left-edge    (int-negative 21.000)
+=/  right-edge   (int-positive 15.000)
+=/  top-edge     (int-positive 15.000)
+=/  bottom-edge  (int-negative 15.000)
 
 =/  max-iterations  254
 
-=/  i0      (snat 0)
-=/  i2      (snat 2)
-=/  i10     (snat 10)
-=/  i1000   (snat 1000)
-=/  i10000  (snat 10.000)
-=/  i20000  (snat 20.000)
-=/  i25000  (snat 25.000)
-=/  i12500  (snat 12.500)
-=/  i40000  (snat 40.000)
+=/  i0      (int-positive 0)
+=/  i2      (int-positive 2)
+=/  i10     (int-positive 10)
+=/  i1000   (int-positive 1000)
+=/  i10000  (int-positive 10.000)
+=/  i20000  (int-positive 20.000)
+=/  i25000  (int-positive 25.000)
+=/  i12500  (int-positive 12.500)
+=/  i40000  (int-positive 40.000)
 
 ::  Normal natural number to signed fixed-point representation.
 =/  to-fp
   ~/  1  to-fp
   |=  x
-  (smul (snat x) i10000)
+  (int-mul (int-positive x) i10000)
 
 ::  Add fixed-pint numbers.
 =/  add-fp
-  ssum
+  int-add
 
 ::  Subtract fixed-point numbers.
 =/  sub-fp
-  ssub
+  int-sub
 
 ::  Multiply fixed-point numbers.
 =/  mul-fp
   ~/  2  mul-fp
   |=  (a b)
-  (sdiv (smul (sdiv a i10) b) i1000)
+  (int-div (int-mul (int-div a i10) b) i1000)
 
 ::  Testing crud.
 ::
 :: :*  (to-fp 2)
 ::     (to-fp 5)
-::     :: (sdiv (to-fp 2) i10)
-::     (sdiv (smul (sdiv (to-fp 2) i10) (to-fp 5)) i1000)
+::     :: (int-div (to-fp 2) i10)
+::     (int-div (int-mul (int-div (to-fp 2) i10) (to-fp 5)) i1000)
 :: ==
 
 
@@ -264,7 +264,7 @@
 =/  fraction-fp
   ~/  2  fraction-fp
   |=  (over under)
-  (sdiv (smul over i10000) under)
+  (int-div (int-mul over (int-positive 10.000)) under)
 
 ::  output color triples
 =/  plasma-colors
@@ -346,24 +346,24 @@
   ?:  (not (lth i max-iterations))
     [0 0 0]
   ::
-  =/  xx  (sdiv (smul (sdiv x0 i10) x0) i1000)
-  =/  yy  (sdiv (smul (sdiv y0 i10) y0) i1000)
+  =/  xx  (int-div (int-mul (int-div x0 i10) x0) i1000)
+  =/  yy  (int-div (int-mul (int-div y0 i10) y0) i1000)
   ::
-  ?:  (not (slth (ssum xx yy) i40000))
+  ?:  (not (int-lth (int-add xx yy) i40000))
     ?:  (eql i 255)
       [0 0 0]
     (ur-snag i plasma-colors)
   ::
   %^    ($ cr ci)
       (inc i)
-    (ssum (ssum xx (snew (not (ssign yy)) (sabs yy))) cr)
-  (ssum (smul i2 (sdiv (smul (sdiv x0 i10) y0) i1000)) ci)
+    (add-fp (sub-fp xx yy) cr)
+  (add-fp (int-mul i2 (int-div (int-mul (int-div x0 i10) y0) i1000)) ci)
 
 ::  calc-color-for
 ::  mul-fp
-::  slth
+::  int-lth
 ::  smul
-::  ssum
+::  int-add
 
 ::  Compiler should do this automatically (lambda lifting)
 =/  calc-pixel-loop
@@ -376,13 +376,13 @@
   =/  xx  (mul-fp x0 x0)
   =/  yy  (mul-fp y0 y0)
   ::
-  ?:  (not (slth (add-fp xx yy) i40000))
+  ?:  (not (int-lth (add-fp xx yy) i40000))
     (calculate-color-for i)
   ::
   %^    ($ cr ci)
       (inc i)
     (add-fp (sub-fp xx yy) cr)
-  (add-fp (smul i2 (mul-fp x0 y0)) ci)
+  (add-fp (int-mul i2 (mul-fp x0 y0)) ci)
 
 =/  calc-pixel
   ~/  4  calc-pixel
@@ -505,8 +505,13 @@
 
 :: (foo (lef (lef 3)))
 
+=/  foo
+  ~/  1  foo
+  |=  x
+  (int-add x i10000)
+
 :: Doing a 20x20 render takes 4m40s.
-(build-ppm 40 40)
+(build-ppm 100 100)
 
 :: TODO: The following should run in a reasonable amount of time
 ::(build-ppm 1000 1000)

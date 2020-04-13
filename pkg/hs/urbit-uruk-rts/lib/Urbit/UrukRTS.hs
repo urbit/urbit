@@ -1,5 +1,5 @@
 {-# LANGUAGE CPP #-}
-{-- OPTIONS_GHC -funbox-strict-fields -Werror #-}
+{-# OPTIONS_GHC -funbox-strict-fields -Werror #-}
 
 {-
     Note that On 64 bit machines, GHC will always use pointer tagging
@@ -172,6 +172,20 @@ instance Uruk Val where
   uGlobal "turn"  = Just $ mkNode 2 Turn
   uGlobal "zing"  = Just $ mkNode 1 Zing
 
+  uGlobal "int-positive" = Just $ mkNode 1 IntPositive
+  uGlobal "int-negative" = Just $ mkNode 1 IntNegative
+
+  uGlobal "int-abs" = Just $ mkNode 2 IntAbs
+  uGlobal "int-add" = Just $ mkNode 2 IntAdd
+  uGlobal "int-div" = Just $ mkNode 2 IntDiv
+  uGlobal "int-is-zer" = Just $ mkNode 1 IntIsZer
+  uGlobal "int-is-neg" = Just $ mkNode 1 IntIsNeg
+  uGlobal "int-is-pos" = Just $ mkNode 1 IntIsPos
+  uGlobal "int-lth" = Just $ mkNode 2 IntLth
+  uGlobal "int-mul" = Just $ mkNode 2 IntMul
+  uGlobal "int-negate" = Just $ mkNode 1 IntNegate
+  uGlobal "int-sub" = Just $ mkNode 2 IntSub
+
   uGlobal _     = Nothing
 
 
@@ -314,6 +328,20 @@ reduce !no !xs = do
     Turn      -> dTurn x y
     Zing      -> dZing x
 
+    IntPositive -> dIntPositive x
+    IntNegative -> dIntNegative x
+
+    IntAbs -> dIntAbs x
+    IntAdd -> dIntAdd x y
+    IntDiv -> dIntDiv x y
+    IntIsZer -> dIntIsZer x
+    IntIsNeg -> dIntIsNeg x
+    IntIsPos -> dIntIsPos x
+    IntLth -> dIntLth x y
+    IntMul -> dIntMul x y
+    IntNegate -> dIntNegate x
+    IntSub -> dIntSub x y
+
     Inc       -> inc x
     Dec       -> dec x
     Fec       -> fec x
@@ -328,7 +356,8 @@ reduce !no !xs = do
     Cdr       -> cdr x
     Cas       -> dCas x y z
     Let       -> dLet x y
-    Nat n     -> nat n x y
+    Nat n     -> dNat n x y
+    Int i     -> dInt i x
 
     --  S₁fgx   = (fx)(gx)
     --  S₂fgxy  = (fxy)(gxy)
@@ -436,7 +465,7 @@ withFallback :: Jet -> CloN -> IO Val -> IO Val
 {-# INLINE withFallback #-}
 withFallback j args act = do
   res <- act
-  -- traceResu j (toList args) res
+  traceResu j (toList args) res
   pure res
 {- catch act $ \(TypeError why) -> do
   putStrLn ("FALLBACK: " <> why)
@@ -445,7 +474,7 @@ withFallback j args act = do
 
 execJet1 :: Jet -> Val -> IO Val
 execJet1 !j !x = do
-  -- traceCall j [x] False
+  traceCall j [x] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x]
   let refr = \case
@@ -455,7 +484,7 @@ execJet1 !j !x = do
 
 execJet2 :: Jet -> Val -> Val -> IO Val
 execJet2 !j !x !y = do
-  -- traceCall j [x,y] False
+  traceCall j [x,y] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y]
   let refr = \case
@@ -466,7 +495,7 @@ execJet2 !j !x !y = do
 
 execJet3 :: Jet -> Val -> Val -> Val -> IO Val
 execJet3 !j !x !y !z = do
-  -- traceCall j [x,y,z] False
+  traceCall j [x,y,z] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z]
   let refr = \case
@@ -478,7 +507,7 @@ execJet3 !j !x !y !z = do
 
 execJet4 :: Jet -> Val -> Val -> Val -> Val -> IO Val
 execJet4 !j !x !y !z !p = do
-  -- traceCall j [x,y,z,p] False
+  traceCall j [x,y,z,p] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z, p]
   let refr = \case
@@ -491,7 +520,7 @@ execJet4 !j !x !y !z !p = do
 
 execJet5 :: Jet -> Val -> Val -> Val -> Val -> Val -> IO Val
 execJet5 !j !x !y !z !p !q = do
-  -- traceCall j [x,y,z,p] False
+  traceCall j [x,y,z,p] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z, p, q]
   let refr = \case
@@ -505,7 +534,7 @@ execJet5 !j !x !y !z !p !q = do
 
 execJetN :: Jet -> CloN -> IO Val
 execJetN !j !xs = do
-  -- traceCall j (toList xs) (jRegs j /= 0)
+  traceCall j (toList xs) (jRegs j /= 0)
   (reg, setReg) <- mkRegs (jRegs j)
   let refr = pure . indexSmallArray xs
   withFallback j xs (execJetBody j refr reg setReg)
@@ -599,13 +628,17 @@ seq :: Val -> Val -> IO Val
 {-# INLINE seq #-}
 seq x y = pure y
 
-nat :: Natural -> Val -> Val -> IO Val
-{-# INLINE nat #-}
-nat n inc zer = go n
+dNat :: Natural -> Val -> Val -> IO Val
+{-# INLINE dNat #-}
+dNat n inc zer = go n
  where
   go = \case
     0 -> pure zer
     n -> kVA inc (go (n-1))
+
+dInt :: Integer -> Val -> IO Val
+dInt i f | i >= 0 = kVVV f (VBol True) (VNat (fromIntegral i))
+dInt i f          = kVVV f (VBol False) (VNat (fromIntegral $ negate i))
 
 pak :: Val -> IO Val
 {-# INLINE pak #-}
@@ -664,6 +697,69 @@ dRap :: Val -> Val -> IO Val
 dRap (VNat 8) y = dCrip y
 dRap (VNat _) y = throwIO (TypeError "only (rap 8) is jetted.")
 dRap _        _ = throwIO (TypeError "rap-not-nat")
+
+dIntPositive :: Val -> IO Val
+{-# INLINE dIntPositive #-}
+dIntPositive (VNat n) = pure $ VInt $ fromIntegral n
+dIntPositive _        = throwIO $ TypeError "int-positive-not-nat"
+
+dIntNegative :: Val -> IO Val
+{-# INLINE dIntNegative #-}
+dIntNegative (VNat n) = pure $ VInt $ negate $ fromIntegral n
+dIntNegative _        = throwIO $ TypeError "int-positive-not-nat"
+
+dIntAbs :: Val -> IO Val
+{-# INLINE dIntAbs #-}
+dIntAbs (VInt i) = pure (VInt (abs i))
+dIntAbs x        = throwIO $ TypeError "int-abs: not int"
+
+dIntAdd :: Val -> Val -> IO Val
+{-# INLINE dIntAdd #-}
+dIntAdd (VInt x) (VInt y) = pure $ VInt (x + y)
+dIntAdd _        _        = throwIO $ TypeError "int-add-not-int"
+
+dIntDiv :: Val -> Val -> IO Val
+{-# INLINE dIntDiv #-}
+dIntDiv (VInt x) (VInt y) = pure $ VInt (x `div` y)
+dIntDiv _        _        = throwIO $ TypeError "int-div-not-int"
+
+dIntIsZer :: Val -> IO Val
+{-# INLINE dIntIsZer #-}
+dIntIsZer (VInt i) = pure $ VBol (i == 0)
+dIntIsZer _        = throwIO $ TypeError "int-is-zer-not-int"
+
+dIntIsNeg :: Val -> IO Val
+{-# INLINE dIntIsNeg #-}
+dIntIsNeg (VInt i) = pure $ VBol (i < 0)
+dIntIsNeg _        = throwIO $ TypeError "int-is-neg-not-int"
+
+dIntIsPos :: Val -> IO Val
+{-# INLINE dIntIsPos #-}
+dIntIsPos (VInt i) = pure $ VBol (i > 0)
+dIntIsPos _        = throwIO $ TypeError "int-is-pos-not-int"
+
+dIntLth :: Val -> Val -> IO Val
+{-# INLINE dIntLth #-}
+dIntLth (VInt x) (VInt y) = pure $ VBol (x < y)
+dIntLth _        _        = throwIO $ TypeError "int-lth-not-int"
+
+dIntMul :: Val -> Val -> IO Val
+{-# INLINE dIntMul #-}
+dIntMul (VInt x) (VInt y) = pure $ VInt (x * y)
+dIntMul x        y        = do
+  print ("int-mu", x, y)
+  throwIO $ TypeError "int-mul-not-int"
+
+dIntNegate :: Val -> IO Val
+{-# INLINE dIntNegate #-}
+dIntNegate (VInt x) = pure $ VInt (negate x)
+dIntNegate _        = throwIO $ TypeError "int-negate-not-int"
+
+dIntSub :: Val -> Val -> IO Val
+{-# INLINE dIntSub #-}
+dIntSub (VInt x) (VInt y) = pure $ VInt (x - y)
+dIntSub _        _        = throwIO $ TypeError "int-sub-not-int"
+
 
 dTurn :: Val -> Val -> IO Val
 {-# INLINE dTurn #-}
@@ -824,6 +920,20 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     TURN x y        -> join (dTurn <$> go x <*> go y)
     ZING x          -> join (dZing <$> go x)
 
+    INT_POSITIVE x -> join (dIntPositive <$> go x)
+    INT_NEGATIVE x -> join (dIntNegative <$> go x)
+
+    INT_ABS x -> join (dIntAbs <$> go x)
+    INT_ADD x y -> join (dIntAdd <$> go x <*> go y)
+    INT_DIV x y -> join (dIntDiv <$> go x <*> go y)
+    INT_IS_ZER x -> join (dIntIsZer <$> go x)
+    INT_IS_NEG x -> join (dIntIsNeg <$> go x)
+    INT_IS_POS x -> join (dIntIsPos <$> go x)
+    INT_LTH x y -> join (dIntLth <$> go x <*> go y)
+    INT_MUL x y -> join (dIntMul <$> go x <*> go y)
+    INT_NEGATE x -> join (dIntNegate <$> go x)
+    INT_SUB x y -> join (dIntSub <$> go x <*> go y)
+
     SUB  x y        -> join (sub <$> go x <*> go y)
     ZER x           -> join (zer <$> go x)
     EQL x y         -> join (eql <$> go x <*> go y)
@@ -923,6 +1033,7 @@ jetOkToTrace j = case jName j of
 {-# INLINE traceCall #-}
 traceCall :: Jet -> [Val] -> Bool -> IO ()
 traceCall j xs reg = do
+  -- print ("KAL", j)
   when (jetOkToTrace j) $ do
     t <- getPOSIXTime
     atomicModifyIORef vProfQ (\es -> (Event True t j:es, ()))
@@ -930,6 +1041,7 @@ traceCall j xs reg = do
 {-# INLINE traceResu #-}
 traceResu :: Jet -> [Val] -> Val -> IO ()
 traceResu j xs val = do
+  -- print ("END", j)
   when (jetOkToTrace j) $ do
     t <- getPOSIXTime
     atomicModifyIORef vProfQ (\es -> (Event False t j:es, ()))

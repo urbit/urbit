@@ -106,6 +106,7 @@ compile arity numRegs = go
   kal F.Rit     [x]    = rit (go x)
 
   kal (F.Nat n) []     = F.VAL (F.VNat n)
+  kal (F.Int n) []     = F.VAL (F.VInt n)
   kal (F.Bol b) []     = F.VAL (F.VBol b)
 
   kal F.Inc     [x]    = F.INC (go x)
@@ -170,6 +171,7 @@ nodeFun n = F.Fun (F.nodeArity n) n mempty
 rawExp :: F.Node -> F.Exp
 rawExp = \case
   F.Nat n -> F.VAL (F.VNat n)
+  F.Int i -> F.VAL (F.VInt i)
   F.Bol b -> F.VAL (F.VBol b)
   F.Uni   -> F.VAL F.VUni
   n       -> F.VAL (F.VFun (nodeFun n))
