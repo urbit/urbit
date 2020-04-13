@@ -119,4 +119,3 @@ quote = go where
     VTyp      -> Typ
     VFun v sv -> Fun (go v) (hoist go sv)
     VLam sv   -> Lam (hoist go sv)
-

@@ -7,6 +7,7 @@ import ClassyPrelude
 
 import Bound
 import Bound.Name
+import Bound.Scope
 import Control.Monad.Morph (hoist)
 
 import Urlicht.Core
@@ -120,3 +121,19 @@ infer env = \case
     t <-newMetaWithSpine env
     c <-newMetaWithSpine env
     pure (eval t, c)
+
+-- | Inline metavariables.
+zonk :: Core a -> Elab (Core a)
+zonk = go where
+  go :: Core a -> Elab (Core a)
+  go = \case
+    v@Var{}  -> pure v
+    Met m    -> lookupMeta m >>= \case
+      Just v  -> go (quote v)
+      Nothing -> pure (Met m)
+    Typ      -> pure Typ
+    Fun c sc -> Fun <$> go c <*> transverseScope go sc
+    Lam sc   -> Lam <$> transverseScope go sc
+    App c d  -> App <$> go c <*> go d
+    Let c sc -> Let <$> go c <*> transverseScope go sc
+

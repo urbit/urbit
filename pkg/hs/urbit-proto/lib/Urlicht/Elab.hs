@@ -20,6 +20,9 @@ data ElabState = ElabState
 
 type Elab a = StateT ElabState (Either Error) a
 
+runElab :: Elab a -> a
+runElab = either (error . show) id . flip evalStateT (ElabState 0 mempty)
+
 --lookupMeta :: Metas -> Meta -> Maybe (Value a)
 --lookupMeta ms m = vacuous <$> M.lookup m ms
 
@@ -46,7 +49,7 @@ crank = go where
   go = \case
     VVAp x vs  -> VVAp x <$> traverse go vs
     VMAp m vs  -> lookupMeta m >>= \case
-      Just v  -> vApps v <$> traverse go vs
+      Just v  -> crank =<< vApps v <$> traverse go vs
       Nothing -> VMAp m  <$> traverse go vs
     VTyp       -> pure VTyp
     VFun v sv  -> VFun <$> go v <*> transverseScope go sv
