@@ -36,6 +36,8 @@ deriving instance Ord a  => Ord  (Core a)
 deriving instance Read a => Read (Core a)
 deriving instance Show a => Show (Core a)
 
+type ValueType = Value
+
 -- | Terms in normal form. Kovacs distinguishes these, which is nice for type
 -- safety, but also, supposedly, opens the way to faster performance with
 -- better representations. For example, we might eventually do our compile-time

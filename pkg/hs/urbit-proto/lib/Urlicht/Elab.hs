@@ -29,5 +29,11 @@ bindMeta :: Meta -> Value Void -> Elab ()
 bindMeta m v = modify \ElabState{..} ->
   ElabState{ _metas = M.insert m v _metas, .. }
 
+freshMeta :: Elab Meta
+freshMeta = do
+  m <- gets _nextMeta
+  modify \ElabState{..} -> ElabState{ _nextMeta = _nextMeta + 1, ..}
+  pure m
+
 report :: MonadError e m => e -> m a
 report = throwError
