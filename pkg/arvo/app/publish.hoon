@@ -330,6 +330,11 @@
     ^-  (quip card _this)
     ?+  mar  (on-poke:def mar vas)
     ::
+        %noun
+      ?:  =(q.vas %flush-limbo)
+        [~ this(limbo [~ ~])]
+      [~ this]
+    ::
         %handle-http-request
       =+  !<([id=@ta req=inbound-request:eyre] vas)
       :_  this
@@ -364,7 +369,45 @@
     ==
   ::
   ++  on-leave  on-leave:def
-  ++  on-peek   on-peek:def
+  ++  on-peek
+    |=  pax=path
+    ^-  (unit (unit cage))
+    ?+  pax  (on-peek:def pax)
+    ::
+        [%t %limbo ~]
+      :^  ~  ~  %noun
+      !>  ^-  (list path)
+      %+  weld
+        %+  turn  ~(tap by notes.limbo)
+        |=  [[who=@p book=@tas note=@tas] *]
+        ^-  path
+        /(scot %p who)/[book]/[note]
+      %+  turn  ~(tap by comments.limbo)
+      |=  [[who=@p book=@tas note=@tas comment=@da] *]
+      ^-  path
+      /(scot %p who)/[book]/[note]/(scot %ds comment)
+    ::
+        [%x %limbo @ @ @ ~]
+      =/  host=(unit @p)  (slaw %p i.t.t.pax)
+      ?~  host  [~ ~]
+      =/  book-name  i.t.t.t.pax
+      =/  note-name  i.t.t.t.t.pax
+      =/  note  (~(get by notes.limbo) u.host book-name note-name)
+      ?~  note  ~
+      ``noun+!>(u.note)
+    ::
+        [%x %limbo @ @ @ @ ~]
+      =/  host=(unit @p)           (slaw %p i.t.t.pax)
+      =/  comment-date=(unit @da)  (slaw %da i.t.t.t.t.t.pax)
+      ?~  host          [~ ~]
+      ?~  comment-date  [~ ~]
+      =/  book-name  i.t.t.t.pax
+      =/  note-name  i.t.t.t.t.pax
+      =/  comment
+        (~(get by comments.limbo) u.host book-name note-name u.comment-date)
+      ?~  comment  ~
+      ``noun+!>(u.comment)
+    ==
   ::
   ++  on-agent
     |=  [wir=wire sin=sign:agent:gall]
