@@ -328,8 +328,7 @@
   ++  on-poke
     |=  [mar=mark vas=vase]
     ^-  (quip card _this)
-    ?+  mar
-      (on-poke:def mar vas)
+    ?+  mar  (on-poke:def mar vas)
     ::
         %handle-http-request
       =+  !<([id=@ta req=inbound-request:eyre] vas)
@@ -373,7 +372,7 @@
     ?-    -.sin
         %poke-ack
       ?~  p.sin
-        (on-agent:def wir sin)
+        [~ this]
       =^  cards  state
         (handle-poke-fail:main wir)
       [cards this]
@@ -1233,7 +1232,7 @@
   |=  act=action
   ^-  (quip card _state)
   ?-    -.act
-  ::  %new-book
+  ::  %new-book: Make groups and save publish info file.
   ::
       %new-book
     ?.  (team:title our.bol src.bol)
@@ -1252,7 +1251,10 @@
     =/  pax=path  /app/publish/notebooks/[book.act]/publish-info
     :_  state
     [(write-file pax %publish-info !>(new-book)) cards]
-  ::  %new-note
+  ::  %new-note:
+  ::    If poke is from us, eagerly store new note in books. If poke is to us,
+  ::    save file, otherwise forward the poke. If forwarded poke fails, note is
+  ::    removed from books and stored in limbo.
   ::
       %new-note
     =/  book=(unit notebook)  (~(get by books) who.act book.act)
@@ -1304,6 +1306,9 @@
     :_  cards
     [(write-file pax %udon !>(file))]
   ::  %new-comment
+  ::    If poke is from us, eagerly store new comment in books. If poke is to
+  ::    us, save file, otherwise forward the poke. If forwarded poke fails,
+  ::    comment is removed from books and stored in limbo.
   ::
       %new-comment
     =/  book=(unit notebook)  (~(get by books) who.act book.act)
@@ -1354,7 +1359,7 @@
       %+  weld  /app/publish/notebooks
       /[book.act]/[note.act]/(scot %da now.bol)/publish-comment
     [(write-file pax %publish-comment !>(new-comment(pending %.n)))]~
-  ::  %edit-book
+  ::  %edit-book: Make groups and save publish-info file
   ::
       %edit-book
     ?.  (team:title our.bol src.bol)
@@ -1376,7 +1381,10 @@
     =/  pax=path  /app/publish/notebooks/[book.act]/publish-info
     :_  state
     [(write-file pax %publish-info !>(new-info)) cards]
-  ::  %edit-note
+  ::  %edit-note:
+  ::    If poke is from us, eagerly store new note in books, and place the old
+  ::    note in limbo. If poke is to us, save file, otherwise forward the poke.
+  ::    If forwarded poke fails, old note is restored from limbo.
   ::
       %edit-note
     =/  book=(unit notebook)  (~(get by books) who.act book.act)
@@ -1432,6 +1440,10 @@
       ~|("action not permitted" !!)
     =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
     [(write-file pax %udon !>(file))]~
+  ::  %edit-comment:
+  ::    If poke is from us, eagerly store new comment in books, and place the
+  ::    old note in limbo. If poke is to us, save file, otherwise forward the
+  ::    poke. If forwarded poke fails, old comment is restored from limbo.
   ::
       %edit-comment
     =/  book=(unit notebook)  (~(get by books) who.act book.act)
@@ -1492,6 +1504,7 @@
       %+  weld  /app/publish/notebooks
       /[book.act]/[note.act]/[comment.act]/publish-comment
     [(write-file pax %publish-comment !>(new-comment(pending %.n)))]~
+  ::  %del-book: Delete whole notebook directory, delete groups and permissions
   ::
       %del-book
     ?.  (team:title our.bol src.bol)
@@ -1512,7 +1525,10 @@
     =?  cards  =('~' i.subscribers.u.book)
       [(group-poke [%unbundle subscribers.u.book]) cards]
     [cards state]
-  ::  %del-note
+  ::  %del-note:
+  ::    If poke is from us, eagerly remove note from books, and place the
+  ::    old note in limbo. If poke is to us, save file, otherwise forward the
+  ::    poke. If forwarded poke fails, old note is restored from limbo.
   ::
       %del-note
     =/  book=(unit notebook)  (~(get by books) who.act book.act)
@@ -1547,7 +1563,10 @@
       ~|("action not permitted" !!)
     =/  pax=path  /app/publish/notebooks/[book.act]/[note.act]/udon
     [(delete-file pax)]~
-  ::  %del-comment
+  ::  %del-comment:
+  ::    If poke is from us, eagerly remove comment from books, and place the
+  ::    old note in limbo. If poke is to us, save file, otherwise forward the
+  ::    poke. If forwarded poke fails, old comment is restored from limbo.
   ::
       %del-comment
     =/  book=(unit notebook)  (~(get by books) who.act book.act)
@@ -1601,12 +1620,14 @@
       %+  weld  /app/publish/notebooks
       /[book.act]/[note.act]/[comment.act]/publish-comment
     [(delete-file pax)]~
+  ::  %subscribe
   ::
       %subscribe
     ?>  (team:title our.bol src.bol)
     =/  wir=wire  /subscribe/(scot %p who.act)/[book.act]
     :_  state
     [%pass wir %agent [who.act %publish] %watch /notebook/[book.act]]~
+  ::  %unsubscribe
   ::
       %unsubscribe
     ?>  (team:title our.bol src.bol)
@@ -1616,6 +1637,7 @@
     :~  `card`[%pass wir %agent [who.act %publish] %leave ~]
         `card`[%give %fact [/primary]~ %publish-primary-delta !>(del)]
     ==
+  ::  %read
   ::
       %read
     ?>  (team:title our.bol src.bol)
