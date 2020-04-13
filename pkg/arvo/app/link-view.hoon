@@ -161,15 +161,16 @@
 ::
 ++  page-size  25
 ++  get-paginated
-  |*  [p=(unit @ud) l=(list)]
-  ^-  [total=@ud pages=@ud page=_l]
-  :+  (lent l)
-    %+  add  (div (lent l) page-size)
-    (min 1 (mod (lent l) page-size))
-  ?~  p  l
-  %+  scag  page-size
-  %+  slag  (mul u.p page-size)
-  l
+  |*  [page=(unit @ud) list=(list)]
+  ^-  [total=@ud pages=@ud page=_list]
+  =/  l=@ud  (lent list)
+  :+  l
+    %+  add  (div l page-size)
+    (min 1 (mod l page-size))
+  ?~  page  list
+  %+  swag
+    [(mul u.page page-size) page-size]
+  list
 ::
 ++  page-to-json
   =,  enjs:format
