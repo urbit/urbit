@@ -1913,6 +1913,8 @@
     =/  old-note  (~(get by notes.u.book) note.del)
     ?~  old-note
       [~ sty]
+    ?:  =(our.bol author.u.old-note)
+      [~ sty]
     =/  new-note=note
       %=  data.del
         date-created  date-created.u.old-note
@@ -1932,6 +1934,11 @@
       [~ sty]
     =/  note  (~(get by notes.u.book) note.del)
     ?~  note
+      [~ sty]
+    =/  old-comment  (~(get by comments.u.note) comment-date.del)
+    ?~  old-comment
+      [~ sty]
+    ?:  =(our.bol author.u.old-comment)
       [~ sty]
     =.  comments.u.note  (~(put by comments.u.note) comment-date.del data.del)
     =.  notes.u.book  (~(put by notes.u.book) note.del u.note)
