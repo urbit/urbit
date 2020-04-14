@@ -90,7 +90,6 @@ import Data.Time.Clock.POSIX (POSIXTime, getPOSIXTime)
 import GHC.Exts              (fromList, toList)
 import Numeric.Natural       (Natural)
 import Prelude               ((!!))
-import Safe                  (atMay)
 import Text.Show.Pretty      (pPrint, ppShow)
 
 import qualified Data.ByteString           as BS
@@ -332,7 +331,6 @@ reduce !no !xs = do
     Tra       -> dTra x y
     Mod       -> dMod x y
     Rap       -> dRap x y
-    Zing      -> dZing x
 
     Lis l -> dLis l x y
 
@@ -370,9 +368,10 @@ reduce !no !xs = do
     LCon      -> dLCon x y
     LNil      -> pure (VLis [])
     Gulf      -> dGulf x y
-    Snag      -> snag x y
+    Snag      -> dSnag x y
     Turn      -> dTurn x y
     Weld      -> dWeld x y
+    Zing      -> dZing x
 
     --  S₁fgx   = (fx)(gx)
     --  S₂fgxy  = (fxy)(gxy)
@@ -662,7 +661,7 @@ dLis (x:xs) n c = kVVV c x (VLis xs)
 dInt :: Integer -> Val -> IO Val
 {-# INLINE dInt #-}
 dInt i f | i >= 0 = kVVV f (VBol True) (VNat (fromIntegral i))
-dInt i f          = kVVV f (VBol False) (VNat (fromIntegral $ negate i))
+dInt i f = kVVV f (VBol False) (VNat (fromIntegral $ negate i))
 
 dLCon :: Val -> Val -> IO Val
 {-# INLINE dLCon #-}
@@ -678,14 +677,14 @@ dGulf :: Val -> Val -> IO Val
 dGulf (VNat x) (VNat y) = pure $ VLis [VNat n | n <- [x..y]]
 dGulf _ _               = throwIO (TypeError "dGulf-not-nats")
 
-snag :: Val -> Val -> IO Val
-{-# INLINE snag #-}
-snag (VNat n) (VLis x) = case atMay x (fromIntegral n) of
-  Nothing -> throwIO (TypeError "snag-fail")  -- TODO: Should be "Crash"
-  Just y  -> pure y
-snag x y = do
-  print ("snag", x, y)
-  throwIO (TypeError "snag-bag-args")
+
+dSnag :: Val -> Val -> IO Val
+{-# INLINE dSnag #-}
+dSnag (VNat n) (VLis (x:xs)) | n > 0 = dSnag (VNat (n - 1)) (VLis xs)
+dSnag (VNat 0) (VLis (x:xs)) = pure x
+dSnag (VNat _) (VLis []) = throwIO (TypeError "snag-fail")  -- TODO: "Crash"
+dSnag idx lst            =
+  throwIO (TypeError ("snag-bag-args: " ++ (tshow idx) ++ ", " ++ (tshow lst)))
 
 dTurn :: Val -> Val -> IO Val
 {-# INLINE dTurn #-}
@@ -965,8 +964,10 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     TRA  x y        -> join (dTra <$> go x <*> go y)
     MOD  x y        -> join (dMod <$> go x <*> go y)
     RAP  x y        -> join (dRap <$> go x <*> go y)
+    GULF x y        -> join (dGulf <$> go x <*> go y)
+    SNAG x y        -> join (dSnag <$> go x <*> go y)
     TURN x y        -> join (dTurn <$> go x <*> go y)
-    SNAG x y        -> join (snag <$> go x <*> go y)
+    WELD x y        -> join (dWeld <$> go x <*> go y)
     ZING x          -> join (dZing <$> go x)
 
     INT_POSITIVE x -> join (dIntPositive <$> go x)
@@ -1088,6 +1089,7 @@ jetOkToTrace j = case jName j of
   VNat 2129405593459937866611                         -> False -- ssub-apos
   VNat 2551989185581783952010596030736099647343583587 -> False -- calculate-color-for
   VNat 29099049607852661                              -> False -- ur-snag
+  VNat 1734438515                                     -> False -- snag
   VNat 474181366643                                   -> False -- ssign
   VNat 482750590836                                   -> False -- to-fp
   VNat 7627107                                        -> False -- cat

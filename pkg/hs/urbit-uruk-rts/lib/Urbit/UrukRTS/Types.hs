@@ -306,7 +306,7 @@ instance Show Val where
 
 showInt :: Integer -> String
 showInt x | x >= 0 = "+" <> show x
-showInt x          = "-" <> show (abs x)
+showInt x = "-" <> show (abs x)
 
 showNat :: Nat -> String
 showNat at@(Atom.atomUtf8 -> Right nm) =
@@ -350,8 +350,10 @@ data Exp
   | TRA !Exp !Exp                 --  Execution Trace
   | MOD !Exp !Exp                 --  Atom Modulus
   | RAP !Exp !Exp                 --  (Generalized) tape to cord.
+  | GULF !Exp !Exp                --  Natural range to list
+  | SNAG !Exp !Exp                --  List lookup by index
   | TURN !Exp !Exp                --  Map over a list
-  | SNAG !Exp !Exp                --  Index into list
+  | WELD !Exp !Exp                --  Concatenate two lists
   | ZING !Exp                     --  Concatenate list of lists
 
   | INT_POSITIVE !Exp
