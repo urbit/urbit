@@ -1,11 +1,21 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { Sigil } from './icons/sigil';
+import { CommentInput } from './comment-input';
 import { uxToHex, cite } from '../../lib/util';
+import { Spinner } from './icons/icon-spinner';
 
 export class CommentItem extends Component {
   constructor(props){
     super(props);
+
+    this.state = {
+      editing: false,
+      commentBody: ''
+    };
+
+    this.commentChange = this.commentChange.bind(this);
+    this.commentEdit = this.commentEdit.bind(this);
     moment.updateLocale('en', {
       relativeTime: {
         past: function(input) {
@@ -28,6 +38,31 @@ export class CommentItem extends Component {
       }
     });
   }
+
+  commentEdit() {
+    let commentPath = Object.keys(this.props.comment)[0];
+    let commentBody = this.props.comment[commentPath].content;
+    this.setState({ editing: true, commentBody });
+  }
+
+  focusTextArea(text) {
+    text && text.focus();
+  }
+
+  commentChange(e) {
+    this.setState({
+      commentBody: e.target.value
+    })
+  }
+
+  cancelEdit() {
+    this.setState({ editing: false, commentBody: '' })
+  }
+
+  onUpdate() {
+    this.props.onUpdate(this.state.commentBody);
+  }
+
   render() {
     let pending = !!this.props.pending ? "o-60" : "";
     let commentData = this.props.comment[Object.keys(this.props.comment)[0]];
@@ -55,8 +90,13 @@ export class CommentItem extends Component {
       name = cite(commentData.author);
     }
 
+    const { editing } = this.state;
+
+    const disabled = this.props.pending
+          ||  window.ship !== commentData.author.slice(1);
+
     return (
-      <div className={pending}>
+      <div className={"mb8 " + pending}>
         <div className="flex mv3 bg-white bg-gray0-d">
         <Sigil
           ship={commentData.author}
@@ -70,10 +110,43 @@ export class CommentItem extends Component {
             {name}
           </div>
           <div className="f9 gray3 pt1">{date}</div>
+          { !editing && !disabled && (
+            <>
+              <div onClick={this.commentEdit} className="green2 pointer ml2 f9 pt1">
+                Edit
+              </div>
+              <div onClick={this.props.onDelete} className="red2 pointer ml2 f9 pt1">
+                Delete
+              </div>
+            </>
+          ) }
+          { editing && (
+            <>
+             <div onClick={this.cancelEdit.bind(this)} className="red2 pointer ml2 f9 pt1">
+                Cancel
+              </div>
+
+            </>
+          ) }
+
         </div>
-        <div className="f8 lh-solid mb8 mb2">
-          {content}
+        <div className="f8 lh-solid mb2">
+          { !editing && content }
+          { editing && (
+            <CommentInput style={{resize:'vertical'}}
+              ref={(el) => {this.focusTextArea(el)}}
+              onChange={this.commentChange}
+              value={this.state.commentBody}
+              onSubmit={this.onUpdate.bind(this)}>
+            </CommentInput>
+          )}
         </div>
+        { editing && (
+          <div onClick={this.onUpdate.bind(this)} className="green2 pointer f9 pt1 b--green2 ba pa2 dib">
+            Submit
+          </div>
+        )}
+
       </div>
     )
   }

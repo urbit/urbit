@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { CommentItem } from './comment-item';
+import { CommentInput } from './comment-input';
 import { dateToDa } from '/lib/util';
 import { Spinner } from './icons/icon-spinner';
 
@@ -8,11 +9,12 @@ export class Comments extends Component {
     super(props);
     this.state = {
       commentBody: '',
-      disabled: false,
-      pending: new Set()
+      pending: new Set(),
+      awaiting: null,
     }
     this.commentSubmit = this.commentSubmit.bind(this);
     this.commentChange = this.commentChange.bind(this);
+
   }
 
   componentDidUpdate(prevProps) {
@@ -50,10 +52,10 @@ export class Comments extends Component {
    this.setState({pending: pendingState});
 
    this.textArea.value = '';
-   this.setState({commentBody: "", disabled: true});
+   this.setState({commentBody: "", awaiting: 'new'});
    let submit = window.api.action("publish", "publish-action", comment);
    submit.then(() => {
-     this.setState({ disabled: false });
+     this.setState({ awaiting: null });
     })
    }
 
@@ -61,6 +63,45 @@ export class Comments extends Component {
     this.setState({
       commentBody: evt.target.value,
     })
+  }
+
+  commentUpdate(idx, body) {
+
+    let path = Object.keys(this.props.comments[idx])[0];
+    let comment = {
+      "edit-comment": {
+        who: this.props.ship.slice(1),
+        book: this.props.book,
+        note: this.props.note,
+        body: body,
+        comment: path
+      }
+    };
+
+    this.setState({ awaiting: 'edit' })
+
+    window.api
+      .action('publish', 'publish-action', comment)
+      .then(() => { this.setState({ awaiting: null }) })
+
+  }
+
+  commentDelete(idx) {
+    let path = Object.keys(this.props.comments[idx])[0];
+    let comment = {
+      "del-comment": {
+        who: this.props.ship.slice(1),
+        book: this.props.book,
+        note: this.props.note,
+        comment: path
+      }
+    };
+
+    this.setState({ awaiting: { kind: 'del', what: idx }})
+    window.api
+      .action('publish', 'publish-action', comment)
+      .then(() => { this.setState({ awaiting: null }) })
+
   }
 
   render() {
@@ -93,43 +134,42 @@ export class Comments extends Component {
           comment={com}
           key={i}
           contacts={this.props.contacts}
+          onUpdate={u => this.commentUpdate(i, u)}
+          onDelete={() => this.commentDelete(i)}
+          disabled={!!this.state.awaiting}
           />
       );
     })
 
-    let disableComment = ((this.state.commentBody === '') || (this.state.disabled === true));
+    let disableComment = ((this.state.commentBody === '') || (!!this.state.awaiting));
     let commentClass = (disableComment)
       ?  "bg-transparent f9 pa2 br1 ba b--gray2 gray2"
       :  "bg-transparent f9 pa2 br1 ba b--gray2 black white-d pointer";
+
+    let spinnerText =
+        this.state.awaiting === 'new'
+        ? 'Posting commment...'
+        : this.state.awaiting  === 'edit'
+        ? 'Updating comment...'
+        : 'Deleting comment...';
 
     return (
       <div>
         <div className="mv8 relative">
           <div>
-            <textarea style={{resize:'vertical'}}
+            <CommentInput style={{resize:'vertical'}}
               ref={(el) => {this.textArea = el}}
-              id="comment"
-              name="comment"
-              placeholder="Leave a comment here"
-              className={"f9 db border-box w-100 ba b--gray3 pt3 ph3 br1 " +
-              "b--gray2-d mb2 focus-b--black focus-b--white-d white-d bg-gray0-d"}
-              aria-describedby="comment-desc"
-              style={{height: "4rem"}}
               onChange={this.commentChange}
-              onKeyDown={(e) => {
-                if ((e.getModifierState("Control") || event.metaKey)
-                  && e.key === "Enter") {
-                    this.commentSubmit();
-                  }
-              }}>
-            </textarea>
+              value={this.state.commentBody}
+              onSubmit={this.commentSubmit}>
+            </CommentInput>
           </div>
           <button disabled={disableComment}
             onClick={this.commentSubmit}
             className={commentClass}>
             Add comment
           </button>
-          <Spinner text="Posting comment..." awaiting={this.state.disabled} classes="absolute bottom-0 right-0 pb2"/>
+          <Spinner text={spinnerText} awaiting={this.state.awaiting} classes="absolute bottom-0 right-0 pb2"/>
         </div>
         {pendingArray}
         {commentArray}
