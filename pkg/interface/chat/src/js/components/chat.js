@@ -19,10 +19,15 @@ export class ChatScreen extends Component {
 
     this.state = {
       numPages: 1,
-      scrollLocked: false
+      scrollLocked: false,
+      // only for FF
+      lastScrollHeight: null,
+      scrollBottom: false
     };
 
     this.hasAskedForMessages = false;
+
+    this.lastScrollEvent = null;
     this.onScroll = this.onScroll.bind(this);
 
     this.updateReadInterval = setInterval(
@@ -78,12 +83,22 @@ export class ChatScreen extends Component {
     } else if (
       props.envelopes.length >= prevProps.envelopes.length + 10
     ) {
+      if(navigator.userAgent.includes('Firefox')) {
+        // new messages came in, restore FF scroll pos
+        this.recalculateScrollTop();
+      }
       this.hasAskedForMessages = false;
       if (prevProps.envelopes.length <= 20) {
         this.setState({ scrollLocked: false }, () => {
           this.scrollToBottom();
         })
       }
+    } else if (
+      navigator.userAgent.includes("Firefox") &&
+        props.length !== prevProps.length &&
+        state.scrollBottom
+    ) {
+      this.scrollToBottom();
     }
   }
 
@@ -123,8 +138,27 @@ export class ChatScreen extends Component {
 
   scrollToBottom() {
     if (!this.state.scrollLocked && this.scrollElement) {
-      this.scrollElement.scrollIntoView();
+      if(navigator.userAgent.includes('Firefox')) {
+        this.scrollElement.scrollIntoView(false);
+      } else {
+        this.scrollElement.scrollIntoView(true);
+      }
     }
+  }
+
+  // Restore chat position on FF when new messages come in
+  recalculateScrollTop() {
+    if(!this.lastScrollEvent) {
+      return;
+    }
+
+    const { lastScrollHeight } = this.state;
+    let { target } = this.lastScrollEvent;
+    if(target.scrollTop !== 0) {
+      return;
+    }
+    target.scrollTop = target.scrollHeight - lastScrollHeight;
+
   }
 
   onScroll(e) {
@@ -135,6 +169,16 @@ export class ChatScreen extends Component {
     ) {
       // Google Chrome and Firefox
       if (e.target.scrollTop === 0) {
+
+        // Save scroll position for FF
+        if (navigator.userAgent.includes('Firefox')) {
+
+          e.persist();
+          this.lastScrollEvent = e;
+          this.setState({
+            lastScrollHeight: e.target.scrollHeight
+          })
+        }
         this.setState(
           {
             numPages: this.state.numPages + 1,
@@ -150,8 +194,11 @@ export class ChatScreen extends Component {
       ) {
         this.setState({
           numPages: 1,
-          scrollLocked: false
+          scrollLocked: false,
+          scrollBottom: true
         });
+      } else if (navigator.userAgent.includes('Firefox')) {
+        this.setState({ scrollBottom: false });
       }
     } else if (navigator.userAgent.includes("Safari")) {
       // Safari
