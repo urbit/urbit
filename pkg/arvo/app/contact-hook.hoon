@@ -138,6 +138,7 @@
     ^-  (list card)
     ::  local
     ?:  (team:title our.bol src.bol)
+      ?.  (~(has by synced) path)  ~
       =/  shp  ?:(=(path /~/default) our.bol (~(got by synced) path))
       =/  appl  ?:(=(shp our.bol) %contact-store %contact-hook)
       [%pass / %agent [shp appl] %poke %contact-action !>(act)]~
@@ -161,7 +162,9 @@
       [~ state]
     =.  synced  (~(put by synced) path.act our.bol)
     :_  state
-    [%pass contact-path %agent [our.bol %contact-store] %watch contact-path]~
+    :~  [%pass contact-path %agent [our.bol %contact-store] %watch contact-path]
+        [%give %fact ~ %contact-hook-update !>([%initial synced])]
+    ==
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
@@ -169,7 +172,9 @@
     =.  synced  (~(put by synced) path.act ship.act)
     =/  contact-path  [%contacts path.act]
     :_  state
-    [%pass contact-path %agent [ship.act %contact-hook] %watch contact-path]~
+    :~  [%pass contact-path %agent [ship.act %contact-hook] %watch contact-path]
+        [%give %fact ~ %contact-hook-update !>([%initial synced])]
+    ==
   ::
       %remove
     =/  ship  (~(get by synced) path.act)
@@ -180,13 +185,17 @@
       %-  zing
       :~  (pull-wire [%contacts path.act])
           [%give %kick ~[[%contacts path.act]] ~]~
+          [%give %fact ~ %contact-hook-update !>([%initial synced])]~
       ==
     ?.  |(=(u.ship src.bol) (team:title our.bol src.bol))
       ::  if neither ship = source or source = us, do nothing
       [~ state]
     ::  delete a foreign ship's path
-    :-  (pull-wire [%contacts path.act])
-    state(synced (~(del by synced) path.act))
+    :_  state(synced (~(del by synced) path.act))
+    %-  zing
+    :~  (pull-wire [%contacts path.act])
+        [%give %fact ~ %contact-hook-update !>([%initial synced])]~
+    ==
   ==
 ::
 ++  watch-contacts

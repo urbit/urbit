@@ -49,9 +49,6 @@ export class Subscription {
     store.handleEvent(diff);
   }
 
-  handleEvent(diff) {
-    store.handleEvent(diff);
-  }
 }
 
 export let subscription = new Subscription();
