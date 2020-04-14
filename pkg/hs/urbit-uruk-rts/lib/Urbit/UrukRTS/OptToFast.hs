@@ -1,9 +1,9 @@
 module Urbit.UrukRTS.OptToFast (optToFast) where
 
-import ClassyPrelude    hiding (evaluate, try, fromList)
-import System.IO.Unsafe
+import ClassyPrelude             hiding (evaluate, fromList, try)
 import Data.Primitive.Array
 import Data.Primitive.SmallArray
+import System.IO.Unsafe
 
 import Control.Arrow    ((>>>))
 import Data.Function    ((&))
@@ -29,8 +29,8 @@ numReg :: O.Val -> Int
 numReg = go 0
  where
   maxi :: [Int] -> Int
-  maxi []       = 0
-  maxi (x:xs)   = max x (maxi xs)
+  maxi []     = 0
+  maxi (x:xs) = max x (maxi xs)
 
   go :: Int -> O.Val -> Int
   go acc = \case
@@ -84,14 +84,14 @@ compile arity numRegs = go
   rec xs =
     let len = length xs
     in case (compare len arity, xs) of
-         (EQ, [x]         ) -> F.REC1 (go x)
-         (EQ, [x, y]      ) -> F.REC2 (go x) (go y)
-         (EQ, [x, y, z]   ) -> F.REC3 (go x) (go y) (go z)
-         (EQ, [x, y, z, p]) -> F.REC4 (go x) (go y) (go z) (go p)
+         (EQ, [x]         )    -> F.REC1 (go x)
+         (EQ, [x, y]      )    -> F.REC2 (go x) (go y)
+         (EQ, [x, y, z]   )    -> F.REC3 (go x) (go y) (go z)
+         (EQ, [x, y, z, p])    -> F.REC4 (go x) (go y) (go z) (go p)
          (EQ, [x, y, z, p, q]) -> F.REC5 (go x) (go y) (go z) (go p) (go q)
-         (EQ, xs          ) -> F.RECN (goArgs xs)
-         (LT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
-         (GT, xs          ) -> F.CALN F.SLF (goArgs xs) -- TODO
+         (EQ, xs          )    -> F.RECN (goArgs xs)
+         (LT, xs          )    -> F.CALN F.SLF (goArgs xs) -- TODO
+         (GT, xs          )    -> F.CALN F.SLF (goArgs xs) -- TODO
 
   kal F.Seq     [x, y] = F.SEQ (go x) (go y)
   kal F.Ded     [x]    = F.DED (go x)
@@ -124,7 +124,10 @@ compile arity numRegs = go
   kal F.Tra     [x,y]  = F.TRA (go x) (go y)
   kal F.Mod     [x,y]  = F.MOD (go x) (go y)
   kal F.Rap     [x,y]  = F.RAP (go x) (go y)
+  kal F.Gulf    [x,y]  = F.GULF (go x) (go y)
+  kal F.Snag    [x,y]  = F.SNAG (go x) (go y)
   kal F.Turn    [x,y]  = F.TURN (go x) (go y)
+  kal F.Weld    [x,y]  = F.WELD (go x) (go y)
   kal F.Zing    [x]    = F.ZING (go x)
 
   kal F.Sub     [x, y] = F.SUB (go x) (go y)

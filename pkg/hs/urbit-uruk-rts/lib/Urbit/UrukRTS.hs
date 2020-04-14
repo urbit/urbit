@@ -318,7 +318,6 @@ reduce !no !xs = do
     Tra       -> dTra x y
     Mod       -> dMod x y
     Rap       -> dRap x y
-    Zing      -> dZing x
 
     Inc       -> inc x
     Dec       -> dec x
@@ -338,10 +337,11 @@ reduce !no !xs = do
 
     Lcon      -> lcons x y
     Lnil      -> pure (VLis [])
-    Gulf      -> gulf x y
-    Snag      -> snag x y
+    Gulf      -> dGulf x y
+    Snag      -> dSnag x y
     Turn      -> dTurn x y
-    Weld      -> weld x y
+    Weld      -> dWeld x y
+    Zing      -> dZing x
 
     --  S₁fgx   = (fx)(gx)
     --  S₂fgxy  = (fxy)(gxy)
@@ -629,30 +629,32 @@ lcons x (VLis rest)           = pure (VLis (x:rest))
 lcons x (VFun (Fun 2 Lnil _)) = pure (VLis [x])
 lcons _ _                     = throwIO (TypeError "lcons-not-list")
 
-gulf :: Val -> Val -> IO Val
-gulf (VNat x) (VNat y) = pure $ VLis [VNat n | n <- [x..y]]
-gulf _ _               = throwIO (TypeError "gulf-not-nats")
+dGulf :: Val -> Val -> IO Val
+{-# INLINE dGulf #-}
+dGulf (VNat x) (VNat y) = pure $ VLis [VNat n | n <- [x..y]]
+dGulf _ _               = throwIO (TypeError "gulf-not-nats")
 
-snag :: Val -> Val -> IO Val
-{-# INLINE snag #-}
-snag (VNat n) (VLis x) = case atMay x (fromIntegral n) of
-  Nothing -> throwIO (TypeError "snag-fail")  -- TODO: Should be "Crash"
-  Just y  -> pure y
-snag _ _               = throwIO (TypeError "snag-bag-args")
+dSnag :: Val -> Val -> IO Val
+{-# INLINE dSnag #-}
+dSnag (VNat n) (VLis (x:xs)) | n > 0 = dSnag (VNat (n - 1)) (VLis xs)
+dSnag (VNat 0) (VLis (x:xs)) = pure x
+dSnag (VNat _) (VLis []) = throwIO (TypeError "snag-fail")  -- TODO: "Crash"
+dSnag idx lst           = throwIO (TypeError ("snag-bag-args: " ++ (tshow idx) ++
+                                             ", " ++ (tshow lst)))
 
 dTurn :: Val -> Val -> IO Val
 {-# INLINE dTurn #-}
 dTurn (VLis x) fun = VLis <$> mapM (kVV fun) x
 dTurn y _          = throwIO (TypeError ("turn-not-list: " ++ (tshow y)))
 
-weld :: Val -> Val -> IO Val
-{-# INLINE weld #-}
-weld (VLis x) (VLis y) = pure $ VLis (x ++ y)
+dWeld :: Val -> Val -> IO Val
+{-# INLINE dWeld #-}
+dWeld (VLis x) (VLis y) = pure $ VLis (x ++ y)
 -- TODO: Make the nil case handling not so ugly.
-weld (VFun (Fun 2 Lnil _)) (VFun (Fun 2 Lnil _)) = pure $ VLis []
-weld (VLis x) (VFun (Fun 2 Lnil _)) = pure $ VLis x
-weld (VFun (Fun 2 Lnil _)) (VLis y) = pure $ VLis y
-weld a b               = throwIO (TypeError ("weld-not-lists: a=" ++
+dWeld (VFun (Fun 2 Lnil _)) (VFun (Fun 2 Lnil _)) = pure $ VLis []
+dWeld (VLis x) (VFun (Fun 2 Lnil _)) = pure $ VLis x
+dWeld (VFun (Fun 2 Lnil _)) (VLis y) = pure $ VLis y
+dWeld a b               = throwIO (TypeError ("weld-not-lists: a=" ++
                                              (tshow a) ++ ", b=" ++ (tshow b)))
 
 pak :: Val -> IO Val
@@ -851,7 +853,10 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     TRA  x y        -> join (dTra <$> go x <*> go y)
     MOD  x y        -> join (dMod <$> go x <*> go y)
     RAP  x y        -> join (dRap <$> go x <*> go y)
+    GULF x y        -> join (dGulf <$> go x <*> go y)
+    SNAG x y        -> join (dSnag <$> go x <*> go y)
     TURN x y        -> join (dTurn <$> go x <*> go y)
+    WELD x y        -> join (dWeld <$> go x <*> go y)
     ZING x          -> join (dZing <$> go x)
 
     SUB  x y        -> join (sub <$> go x <*> go y)
@@ -959,6 +964,7 @@ jetOkToTrace j = case jName j of
   VNat 2129405593459937866611                         -> False -- ssub-apos
   VNat 2551989185581783952010596030736099647343583587 -> False -- calculate-color-for
   VNat 29099049607852661                              -> False -- ur-snag
+  VNat 1734438515                                     -> False -- snag
   VNat 474181366643                                   -> False -- ssign
   VNat 482750590836                                   -> False -- to-fp
   VNat 7627107                                        -> False -- cat

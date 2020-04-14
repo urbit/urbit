@@ -309,7 +309,10 @@ data Exp
   | TRA !Exp !Exp                 --  Execution Trace
   | MOD !Exp !Exp                 --  Atom Modulus
   | RAP !Exp !Exp                 --  (Generalized) tape to cord.
+  | GULF !Exp !Exp                --  Natural range to list
+  | SNAG !Exp !Exp                --  List lookup by index
   | TURN !Exp !Exp                --  Map over a list
+  | WELD !Exp !Exp                --  Concatenate two lists
   | ZING !Exp                     --  Concatenate list of lists
 
   | SUB !Exp !Exp                 --  Subtract
@@ -415,3 +418,4 @@ nodeArity = \case
   Snag  -> 2
   Turn  -> 2
   Weld  -> 2
+  Zing  -> 1

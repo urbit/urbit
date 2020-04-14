@@ -265,28 +265,20 @@
 =/  cadr-to-list
   ~/  1  cadr-to-list
   ..  $
-  |=  l
-  %+  l
-    <n (lcon (car n) ($ (cdr n)))>
-  lnil
-
-=/  plasma-colors  (cadr-to-list base-plasma-colors)
-
-::  look through the con list above for index idx.
-=/  ur-snag
-  ~/  2  ur-snag
-  ..  $
-  |=  (idx l)
+  |=  (l idx)
+  %+  trace  ['idx' idx]  |=  ignore
   ?:  (eql idx 0)
-    (car l)
-  ($ (fec idx) (cdr l))
+    (lcon (car l) lnil)
+  (lcon (car l) ($ (cdr l) (fec idx)))
+
+=/  plasma-colors  (cadr-to-list base-plasma-colors 255)
 
 =/  calculate-color-for
   ~/  1  calculate-color-for
   |=  o
   ?:  (eql o 255)
     [0 0 0]
-  (ur-snag o plasma-colors)
+  (snag o plasma-colors)
 
 ::
 =/  calc-pixel-loop-inlined
@@ -302,7 +294,7 @@
   ?:  (not (slth (ssum xx yy) i40000))
     ?:  (eql i 255)
       [0 0 0]
-    (ur-snag i plasma-colors)
+    (snag i plasma-colors)
   ::
   %^    ($ cr ci)
       (inc i)
@@ -414,7 +406,7 @@
   build-ppm-line
 
 :: Doing a 20x20 render takes 4m40s.
-(build-ppm 300 300)
+(build-ppm 400 400)
 
 :: TODO: The following should run in a reasonable amount of time
 ::(build-ppm 1000 1000)
