@@ -9,7 +9,20 @@ import { LocalReducer } from '/reducers/local.js';
 
 class Store {
   constructor() {
-    this.state = {
+    this.state = this.initialState();
+
+    this.initialReducer = new InitialReducer();
+    this.permissionUpdateReducer = new PermissionUpdateReducer();
+    this.contactUpdateReducer = new ContactUpdateReducer();
+    this.chatUpdateReducer = new ChatUpdateReducer();
+    this.inviteUpdateReducer = new InviteUpdateReducer();
+    this.metadataReducer = new MetadataReducer();
+    this.localReducer = new LocalReducer();
+    this.setState = () => {};
+  }
+
+  initialState() {
+    return {
       inbox: {},
       chatSynced: {},
       contacts: {},
@@ -24,15 +37,6 @@ class Store {
       pendingMessages: new Map([]),
       chatInitialized: false
     };
-
-    this.initialReducer = new InitialReducer();
-    this.permissionUpdateReducer = new PermissionUpdateReducer();
-    this.contactUpdateReducer = new ContactUpdateReducer();
-    this.chatUpdateReducer = new ChatUpdateReducer();
-    this.inviteUpdateReducer = new InviteUpdateReducer();
-    this.metadataReducer = new MetadataReducer();
-    this.localReducer = new LocalReducer();
-    this.setState = () => {};
   }
 
   setStateHandler(setState) {
@@ -41,6 +45,11 @@ class Store {
 
   handleEvent(data) {
     let json = data.data;
+
+    if ('clear' in json && json.clear) {
+      this.setState(this.initialState());
+      return;
+    }
 
     console.log(json);
     this.initialReducer.reduce(json, this.state);

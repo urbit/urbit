@@ -1,5 +1,17 @@
 class Channel {
   constructor() {
+    this.init();
+    this.deleteOnUnload();
+
+    //  a way to handle channel errors
+    //
+    //
+    this.onChannelError = (err) => {
+      console.error('event source error: ', err);
+    };
+  }
+
+  init() {
     //  unique identifier: current time and random number
     //
     this.uid =
@@ -40,8 +52,10 @@ class Channel {
     //    disconnect function may be called exactly once.
     //
     this.outstandingSubscriptions = new Map();
+  }
 
-    this.deleteOnUnload();
+  setOnChannelError(onError = (err) => {}) {
+    this.onChannelError = onError;
   }
 
   deleteOnUnload() {
@@ -196,8 +210,9 @@ class Channel {
     }
 
     this.eventSource.onerror = e => {
-      console.error("eventSource error:", e);
       this.delete();
+      this.init();
+      this.onChannelError(e);
     }
   }
 
