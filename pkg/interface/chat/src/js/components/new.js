@@ -124,7 +124,7 @@ export class NewScreen extends Component {
       }
     });
 
-    if(state.ships.length === 1 && state.security === 'village') {
+    if(state.ships.length === 1 && state.security === 'village' && !state.createGroup) {
       props.history.push(`/~chat/new/dm/${aud[0]}`);
     }
 
