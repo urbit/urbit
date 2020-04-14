@@ -347,11 +347,12 @@ data Exp
   | NOT !Exp                      --  Boolean Not
   | XOR !Exp !Exp                 --  (?) XOR
   | DIV !Exp !Exp                 --  Atom division
-  | TRA !Exp !Exp                 --  Execution Trace
+  | TRA !Exp                      --  Print Log Message
   | MOD !Exp !Exp                 --  Atom Modulus
   | RAP !Exp !Exp                 --  (Generalized) tape to cord.
   | TURN !Exp !Exp                --  Map over a list
   | SNAG !Exp !Exp                --  Index into list
+  | WELD !Exp !Exp                --  Concatenate two lists.
   | ZING !Exp                     --  Concatenate list of lists
 
   | INT_POSITIVE !Exp
@@ -380,6 +381,7 @@ data Exp
 
   | LCON !Exp !Exp                --  List cons
   | LNIL                          --  List termination
+  | GULF !Exp !Exp                --  TODO: What does GULF do?
 
   | JET1 !Jet !Exp                --  Fully saturated jet call.
   | JET2 !Jet !Exp !Exp           --  Fully saturated jet call.
@@ -462,7 +464,7 @@ nodeArity = \case
   Not   -> 1
   Xor   -> 2
   Div   -> 2
-  Tra   -> 2
+  Tra   -> 1
   Mod   -> 2
   Rap   -> 2
 

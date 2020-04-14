@@ -594,6 +594,18 @@
     i0
   ==
 
+=/  mandelbrot-pixel
+  ~/  4  mandelbrot-pixel
+  |=  (fp-width fp-height y x)
+  (calc-pixel (to-fp x) (to-fp y) fp-width fp-height)
+
+=/  mandelbrot-line
+  ~/  4  mandelbrot-line
+  |=  (fp-width fp-height width-pixels y)
+  =/  ig  (trace ['line' y])
+  %+  turn  width-pixels
+  (mandelbrot-pixel fp-width fp-height y)
+
 =/  mandelbrot
   ~/  2  mandelbrot
   |=  (width height)
@@ -603,12 +615,7 @@
   =/  width-pixels  (gulf 0 (fub width 1))
   ::
   %+  turn  (gulf 0 (fub height 1))
-  |=  y
-  %+  trace  ['line' y]
-  |=  ignore
-  %+  turn  width-pixels
-  |=  x
-  (calc-pixel (to-fp x) (to-fp y) fp-width fp-height)
+  (mandelbrot-line fp-width fp-height width-pixels)
 
 =/  ntot-loop
   ~/  2  ntot-loop

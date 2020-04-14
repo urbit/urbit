@@ -165,7 +165,7 @@ instance Uruk Val where
   uGlobal "not"          = Just $ mkNode 1 Not
   uGlobal "xor"          = Just $ mkNode 2 Xor
   uGlobal "div"          = Just $ mkNode 2 Div
-  uGlobal "trace"        = Just $ mkNode 2 Tra
+  uGlobal "trace"        = Just $ mkNode 1 Tra
   uGlobal "mod"          = Just $ mkNode 2 Mod
 
   uGlobal "let"          = Just $ mkNode 2 Let
@@ -329,7 +329,7 @@ reduce !no !xs = do
     Not       -> dNot x
     Xor       -> dXor x y
     Div       -> dDiv x y
-    Tra       -> dTra x y
+    Tra       -> dTra x
     Mod       -> dMod x y
     Rap       -> dRap x y
     Zing      -> dZing x
@@ -867,11 +867,11 @@ dDiv x        y        = do
   print ("div",x,y)
   throwIO (TypeError "div-not-nat")
 
-dTra :: Val -> Val -> IO Val
+dTra :: Val -> IO Val
 {-# INLINE dTra #-}
-dTra x y = do
+dTra x = do
   putStrLn ("TRACE: " <> tshow x)
-  kVV y VUni
+  pure VUni
 
 sub :: Val -> Val -> IO Val
 {-# INLINE sub #-}
@@ -962,12 +962,13 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     NOT  x          -> join (dNot <$> go x)
     XOR  x y        -> join (dXor <$> go x <*> go y)
     DIV  x y        -> join (dDiv <$> go x <*> go y)
-    TRA  x y        -> join (dTra <$> go x <*> go y)
+    TRA  x          -> join (dTra <$> go x)
     MOD  x y        -> join (dMod <$> go x <*> go y)
     RAP  x y        -> join (dRap <$> go x <*> go y)
     TURN x y        -> join (dTurn <$> go x <*> go y)
     SNAG x y        -> join (snag <$> go x <*> go y)
     ZING x          -> join (dZing <$> go x)
+    WELD x y        -> join (dWeld <$> go x <*> go y)
 
     INT_POSITIVE x -> join (dIntPositive <$> go x)
     INT_NEGATIVE x -> join (dIntNegative <$> go x)
@@ -993,7 +994,9 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     LEF x           -> VLef <$> go x
     RIT x           -> VRit <$> go x
     CON x y         -> VCon <$> go x <*> go y
-    LNIL            -> pure $ VLis []
+    LNIL            -> pure (VLis [])
+    GULF x y        -> join (dGulf <$> go x <*> go y)
+    LCON x y        -> join (dLCon <$> go x <*> go y)
     IFF c t e       -> go c >>= \case
       VBol True  -> go t
       VBol False -> go e
@@ -1010,16 +1013,6 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
       VLis []     -> setReg i VUni >> go r
       VFun (Fun 2 LNil mempty) -> setReg i VUni >> go r
       _       -> throwIO (TypeError "cas-not-sum")
-    LCON x y       -> do
-      fx <- go x;
-      go y >>= \case
-
-        VLis rest -> pure $ VLis (fx:rest)
-        r -> throwIO (TypeError ("lcon-not-list: " ++ (tshow r)))
-
-
-
-
 
 -- Profiling -------------------------------------------------------------------
 
