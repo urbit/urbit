@@ -11,7 +11,7 @@
 
 module Urbit.UrukRTS.Types where
 
-import ClassyPrelude             hiding (evaluate, fromList, try, seq)
+import ClassyPrelude             hiding (evaluate, fromList, seq, try)
 import Control.Monad.Primitive
 import Data.Primitive.Array
 import Data.Primitive.SmallArray
@@ -22,16 +22,16 @@ import System.IO.Unsafe
 import Data.Flat
 #endif
 
-import Control.Arrow            ((>>>))
-import Control.Exception        (throw, try)
-import Data.Bits                (shiftL, (.|.))
-import Data.Char                (isPrint, isSpace)
-import Data.Function            ((&))
-import Numeric.Natural          (Natural)
-import Prelude                  ((!!))
+import Control.Arrow     ((>>>))
+import Control.Exception (throw, try)
+import Data.Bits         (shiftL, (.|.))
+import Data.Char         (isPrint, isSpace)
+import Data.Function     ((&))
+import Numeric.Natural   (Natural)
+import Prelude           ((!!))
 
-import qualified GHC.Exts                 as GHC.Exts
-import qualified Urbit.Atom               as Atom
+import qualified GHC.Exts   as GHC.Exts
+import qualified Urbit.Atom as Atom
 
 
 -- Useful Types ----------------------------------------------------------------
@@ -123,6 +123,7 @@ data Node
   | Fix
   | Nat Nat
   | Int Integer
+  | Lis [Val]
   | Bol Bool
   | Iff
   | Pak
@@ -153,7 +154,6 @@ data Node
   | Tra
   | Mod
   | Rap
-  | Turn
   | Zing
 
   | IntPositive
@@ -170,73 +170,86 @@ data Node
   | IntNegate
   | IntSub
 
+  | LCon
+  | LNil
+  | Gulf
+  | Snag
+  | Turn
+  | Weld
  deriving (Eq, Ord, Generic, Hashable)
 
 instance Show Node where
   show = \case
-    Jay n     -> replicate (fromIntegral n) 'J'
-    Kay       -> "K"
-    Ess       -> "S"
-    Dee       -> "D"
-    Jut j     -> show j
-    Eye 1     -> "I"
-    Bee 1     -> "B"
-    Sea 1     -> "C"
-    Eye n     -> "I" <> show n
-    Bee n     -> "B" <> show n
-    Sea n     -> "C" <> show n
-    Sen n     -> "S" <> show n
-    Seq       -> "SEQ"
-    Fix       -> "FIX"
-    Nat n     -> show n
-    Int i     -> show i
-    Bol True  -> "YES"
-    Bol False -> "NAH"
-    Iff       -> "IFF"
-    Pak       -> "PAK"
-    Zer       -> "ZER"
-    Eql       -> "EQL"
-    Add       -> "ADD"
-    Inc       -> "INC"
-    Dec       -> "DEC"
-    Fec       -> "FEC"
-    Mul       -> "MUL"
-    Sub       -> "SUB"
-    Ded       -> "DED"
-    Uni       -> "UNI"
-    Lef       -> "LEF"
-    Rit       -> "RIT"
-    Cas       -> "CAS"
-    Let       -> "LET"
-    Con       -> "CON"
-    Car       -> "CAR"
-    Cdr       -> "CDR"
+    Jay n       -> replicate (fromIntegral n) 'J'
+    Kay         -> "K"
+    Ess         -> "S"
+    Dee         -> "D"
+    Jut j       -> show j
+    Eye 1       -> "I"
+    Bee 1       -> "B"
+    Sea 1       -> "C"
+    Eye n       -> "I" <> show n
+    Bee n       -> "B" <> show n
+    Sea n       -> "C" <> show n
+    Sen n       -> "S" <> show n
+    Seq         -> "SEQ"
+    Fix         -> "FIX"
+    Nat n       -> show n
+    Int i       -> show i
+    Lis l       -> show l
+    Bol True    -> "YES"
+    Bol False   -> "NAH"
+    Iff         -> "IFF"
+    Pak         -> "PAK"
+    Zer         -> "ZER"
+    Eql         -> "EQL"
+    Add         -> "ADD"
+    Inc         -> "INC"
+    Dec         -> "DEC"
+    Fec         -> "FEC"
+    Mul         -> "MUL"
+    Sub         -> "SUB"
+    Ded         -> "DED"
+    Uni         -> "UNI"
+    Lef         -> "LEF"
+    Rit         -> "RIT"
+    Cas         -> "CAS"
+    Let         -> "LET"
+    Con         -> "CON"
+    Car         -> "CAR"
+    Cdr         -> "CDR"
 
-    Lsh       -> "LSH"
-    Lth       -> "LTH"
-    Fub       -> "FUB"
-    Not       -> "NOT"
-    Xor       -> "XOR"
-    Div       -> "DIV"
-    Tra       -> "TRA"
-    Mod       -> "MOD"
-    Rap       -> "RAP"
-    Turn      -> "TURN"
-    Zing      -> "ZING"
+    Lsh         -> "LSH"
+    Lth         -> "LTH"
+    Fub         -> "FUB"
+    Not         -> "NOT"
+    Xor         -> "XOR"
+    Div         -> "DIV"
+    Tra         -> "TRA"
+    Mod         -> "MOD"
+    Rap         -> "RAP"
+    Zing        -> "ZING"
 
     IntPositive -> "INT_POSITIVE"
     IntNegative -> "INT_NEGATIVE"
 
-    IntAbs -> "INT_ABS"
-    IntAdd -> "INT_ADD"
-    IntDiv -> "INT_DIV"
-    IntIsZer -> "INT_IS_ZER"
-    IntIsNeg -> "INT_IS_NEG"
-    IntIsPos -> "INT_IS_POS"
-    IntLth -> "INT_LTH"
-    IntMul -> "INT_MUL"
-    IntNegate -> "INT_NEGATE"
-    IntSub -> "INT_SUB"
+    IntAbs      -> "INT_ABS"
+    IntAdd      -> "INT_ADD"
+    IntDiv      -> "INT_DIV"
+    IntIsZer    -> "INT_IS_ZER"
+    IntIsNeg    -> "INT_IS_NEG"
+    IntIsPos    -> "INT_IS_POS"
+    IntLth      -> "INT_LTH"
+    IntMul      -> "INT_MUL"
+    IntNegate   -> "INT_NEGATE"
+    IntSub      -> "INT_SUB"
+
+    LCon        -> "LCON"
+    LNil        -> "LNIL"
+    Gulf        -> "GULF"
+    Snag        -> "SNAG"
+    Turn        -> "TURN"
+    Weld        -> "WELD"
 
 data Fun = Fun
   { fNeed :: !Int
@@ -259,6 +272,7 @@ data Val
   | VNat !Nat
   | VInt !Integer
   | VBol !Bool
+  | VLis ![Val]
   | VFun !Fun
  deriving (Eq, Ord, Generic, Hashable)
 
@@ -271,19 +285,24 @@ instance NFData Val where
     VNat _   -> ()
     VInt _   -> ()
     VBol _   -> ()
+    VLis _   -> ()
     VFun _   -> ()
 
 instance Show Val where
   show = \case
     VUni       -> "U"
-    VCon x y   -> "[" <> show x <> ", " <> show y <> "]"
+    VCon x y   -> "(" <> intercalate "," (show <$> unrollCons [x] y) <> ")"
     VLef x     -> "L" <> show x
     VRit x     -> "R" <> show x
     VNat n     -> showNat n
     VInt i     -> showInt i
     VBol True  -> "Y"
     VBol False -> "N"
+    VLis vals  -> show vals
     VFun f     -> show f
+   where
+    unrollCons acc (VCon x y) = unrollCons (x : acc) y
+    unrollCons acc val        = reverse (val : acc)
 
 showInt :: Integer -> String
 showInt x | x >= 0 = "+" <> show x
@@ -292,7 +311,7 @@ showInt x          = "-" <> show (abs x)
 showNat :: Nat -> String
 showNat at@(Atom.atomUtf8 -> Right nm) =
   let okChar c = isPrint c || isSpace c
-  in  if all okChar nm
+  in  if all okChar nm && length nm > 1
       then "\"" <> (unpack $ intercalate "\\n" $ lines nm) <> "\""
       else show at
 showNat at = show at
@@ -358,6 +377,9 @@ data Exp
   | LEF !Exp                      --  Left Constructor
   | RIT !Exp                      --  Right Constructor
 
+  | LCON !Exp !Exp                --  List cons
+  | LNIL                          --  List termination
+
   | JET1 !Jet !Exp                --  Fully saturated jet call.
   | JET2 !Jet !Exp !Exp           --  Fully saturated jet call.
   | JET3 !Jet !Exp !Exp !Exp      --  Fully saturated jet call.
@@ -394,7 +416,9 @@ valFun = \case
   VNat n   -> Fun 2 (Nat n) mempty
   VInt i   -> Fun 1 (Int i) mempty
   VBol b   -> Fun 2 (Bol b) mempty
-  VFun f   -> f
+  VLis (x:xs) -> Fun 2 LCon (fromList [x, VLis xs])
+  VLis []     -> Fun 2 LNil mempty
+  VFun f      -> f
 
 nodeArity :: Node -> Int
 nodeArity = \case
@@ -441,7 +465,15 @@ nodeArity = \case
   Tra   -> 2
   Mod   -> 2
   Rap   -> 2
+
+  Gulf  -> 2
+  LCon  -> 2 -- Hack to convert to value after first arg, actually 4.
+  LNil  -> 2
+  Lis []    -> 2
+  Lis (_:_) -> 2
+  Snag  -> 2
   Turn  -> 2
+  Weld  -> 2
   Zing  -> 1
 
   IntPositive -> 1
