@@ -314,7 +314,7 @@ reduce !no !xs = do
     Ess   -> kVVA x z (kVV y z)
     Kay   -> pure x
     Jay n -> case x of
-      VFun (Fun 2 (Jay 1) _) -> pure (VFun (Fun 1 (Jay (n + 1)) (clo1 y)))
+      VFun (Fun 2 (Jay 1) _) -> pure (VFun (Fun 1 (Jay (n + 1)) (mkClo1 y)))
       _                      -> jetRegister n x y
 
     Dee       -> pure $ jam x
@@ -910,6 +910,26 @@ cdr _          = throwIO (TypeError "cdr-not-con")
 
 -- Interpreter -----------------------------------------------------------------
 
+clo1 :: Fun -> Val -> Val
+{-# INLINE clo1 #-}
+clo1 f x = cloN f (fromList [x])
+
+clo2 :: Fun -> Val -> Val -> Val
+{-# INLINE clo2 #-}
+clo2 f x y = cloN f (fromList [x,y])
+
+clo3 :: Fun -> Val -> Val -> Val -> Val
+{-# INLINE clo3 #-}
+clo3 f x y z = cloN f (fromList [x,y,z])
+
+clo4 :: Fun -> Val -> Val -> Val -> Val -> Val
+{-# INLINE clo4 #-}
+clo4 f x y z p = cloN f (fromList [x,y,z,p])
+
+clo5 :: Fun -> Val -> Val -> Val -> Val -> Val -> Val
+{-# INLINE clo5 #-}
+clo5 f x y z p q = cloN f (fromList [x,y,z,p,q])
+
 cloN :: Fun -> CloN -> Val
 {-# INLINE cloN #-}
 cloN (Fun {..}) xs = VFun $ Fun rem fHead $ fArgs <> xs
@@ -989,7 +1009,14 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     EQL x y         -> join (eql <$> go x <*> go y)
     CAR x           -> join (car <$> go x)
     CDR x           -> join (cdr <$> go x)
-    CLON f xs       -> cloN f <$> traverse go xs
+
+    CLO1 f x         -> clo1 f <$> go x
+    CLO2 f x y       -> clo2 f <$> go x <*> go y
+    CLO3 f x y z     -> clo3 f <$> go x <*> go y <*> go z
+    CLO4 f x y z p   -> clo4 f <$> go x <*> go y <*> go z <*> go p
+    CLO5 f x y z p q -> clo5 f <$> go x <*> go y <*> go z <*> go p <*> go q
+    CLON f xs        -> cloN f <$> traverse go xs
+
     CALN f xs       -> do { f <- go f; kVAn f (go <$> xs) }
     LEF x           -> VLef <$> go x
     RIT x           -> VRit <$> go x

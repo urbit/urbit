@@ -52,8 +52,8 @@ addCloN :: CloN -> Val -> CloN
 {-# INLINE addCloN #-}
 addCloN xs x = xs <> GHC.Exts.fromList [x] -- TODO Slow
 
-clo1 :: Val -> CloN
-clo1 x = GHC.Exts.fromList [x]
+mkClo1 :: Val -> CloN
+mkClo1 x = GHC.Exts.fromList [x]
 
 
 -- Arguments -------------------------------------------------------------------
@@ -390,7 +390,13 @@ data Exp
   | JET5 !Jet !Exp !Exp !Exp !Exp !Exp --  Fully saturated jet call.
   | JETN !Jet !(SmallArray Exp)   --  Fully saturated jet call.
 
-  | CLON !Fun !(SmallArray Exp)   --  Undersaturated call
+  | CLO1 !Fun !Exp                     --  Undersaturated call
+  | CLO2 !Fun !Exp !Exp                --  Undersaturated call
+  | CLO3 !Fun !Exp !Exp !Exp           --  Undersaturated call
+  | CLO4 !Fun !Exp !Exp !Exp !Exp      --  Undersaturated call
+  | CLO5 !Fun !Exp !Exp !Exp !Exp !Exp --  Undersaturated call
+  | CLON !Fun !(SmallArray Exp)        --  Undersaturated call
+
   | CALN !Exp !(SmallArray Exp)   --  Call of unknown saturation
  deriving (Eq, Ord, Show)
 

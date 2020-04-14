@@ -178,7 +178,32 @@ compile arity numRegs = go
     | F.jArgs j == length xs
     = F.JETN j (fromList (go <$> xs))
 
-  kal f          []    = rawExp f
+  kal f []    = rawExp f
+
+  kal (F.Jut j) [x]
+    | F.jArgs j > 1
+    = F.CLO1 (F.Fun (F.jArgs j) (F.Jut j) mempty) (go x)
+
+  kal (F.Jut j) [x,y]
+    | F.jArgs j > 2
+    = F.CLO2 (F.Fun (F.jArgs j) (F.Jut j) mempty) (go x) (go y)
+
+  kal (F.Jut j) [x,y,z]
+    | F.jArgs j > 3
+    = F.CLO3 (F.Fun (F.jArgs j) (F.Jut j) mempty) (go x) (go y) (go z)
+
+  kal (F.Jut j) [x,y,z,p]
+    | F.jArgs j > 4
+    = F.CLO4 (F.Fun (F.jArgs j) (F.Jut j) mempty) (go x) (go y) (go z) (go p)
+
+  kal (F.Jut j) [x,y,z,p,q]
+    | F.jArgs j > 5
+    = F.CLO5 (F.Fun (F.jArgs j) (F.Jut j) mempty) (go x) (go y) (go z) (go p) (go q)
+
+  kal (F.Jut j) xs
+    | F.jArgs j > length xs
+    = F.CLON (F.Fun (F.jArgs j) (F.Jut j) mempty) (fromList (go <$> xs))
+
   kal f          xs    = F.CALN (rawExp f) (goArgs xs)
 
   con (F.VAL x) (F.VAL y) = F.VAL (F.VCon x y)
