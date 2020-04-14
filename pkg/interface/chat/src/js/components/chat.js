@@ -274,6 +274,7 @@ export class ChatScreen extends Component {
               this.scrollElement = el;
             }}></div>
             { (
+                props.chatSynced &&
                 !(props.station in props.chatSynced) &&
                 (messages.length > 0)
               ) ? (

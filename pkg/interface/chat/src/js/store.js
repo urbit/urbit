@@ -24,7 +24,7 @@ class Store {
   initialState() {
     return {
       inbox: {},
-      chatSynced: {},
+      chatSynced: null,
       contacts: {},
       permissions: {},
       invites: {},
