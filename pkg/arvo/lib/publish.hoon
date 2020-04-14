@@ -60,11 +60,11 @@
   (notebook-short-json book)
 ::
 ++  notebooks-map-json
-  |=  [our=@p books=(map @tas notebook) subs=(map [@p @tas] notebook)]
+  |=  [our=@p books=(map [@p @tas] notebook)]
   ^-  json
   =,  enjs:format
-  =/  subs-notebooks-map=json
-    %-  ~(rep by subs)
+  =/  notebooks-map=json
+    %-  ~(rep by books)
     |=  [[[host=@p book-name=@tas] book=notebook] out=json]
     ^-  json
     =/  host-ta  (scot %p host)
@@ -79,22 +79,9 @@
     =.  p.u.books  (~(put by p.u.books) book-name (notebook-short-json book))
     :-  %o
     (~(put by p.out) host-ta u.books)
-  =?  subs-notebooks-map  ?=(~ subs-notebooks-map)
+  =?  notebooks-map  ?=(~ notebooks-map)
     [%o ~]
-  =/  our-notebooks-map=json
-    %-  ~(rep by books)
-    |=  [[book-name=@tas book=notebook] out=json]
-    ^-  json
-    ?~  out
-      (frond book-name (notebook-short-json book))
-    ?>  ?=(%o -.out)
-    :-  %o
-    (~(put by p.out) book-name (notebook-short-json book))
-  ?~  our-notebooks-map
-    subs-notebooks-map
-  ?>  ?=(%o -.subs-notebooks-map)
-  :-  %o
-  (~(put by p.subs-notebooks-map) (scot %p our) our-notebooks-map)
+  notebooks-map
 ::
 ++  notebook-short-json
   |=  book=notebook
@@ -170,6 +157,7 @@
       num-comments+(numb ~(wyt by comments.note))
       comments+(comments-page comments.note 0 50)
       read+b+read.note
+      pending+b+pending.note
   ==
 ::
 ++  notes-by-date
@@ -197,6 +185,7 @@
       num-comments+(numb ~(wyt by comments.note))
       read+b+read.note
       snippet+s+snippet.note
+      pending+b+pending.note
   ==
 ::
 ++  notes-page
@@ -246,5 +235,6 @@
   :~  author+s+(scot %p author.com)
       date-created+(time date-created.com)
       content+s+content.com
+      pending+b+pending.com
   ==
 --

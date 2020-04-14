@@ -399,56 +399,31 @@
   ^-  (list card)
   ?>  ?=(^ pax)
   =/  last  (dec (lent pax))
-  =/  backlog-start=(unit @ud)
-    %+  rush
-      (snag last `(list @ta)`pax)
-    dem:ag
+  =/  backlog-latest=(unit @ud)  (rush (snag last `(list @ta)`pax) dem:ag)
   =/  pas  `path`(oust [last 1] `(list @ta)`pax)
   ?>  ?=([* ^] pas)
   ?>  (~(has by synced) pas)
-  ::  check if read is permitted
   ?>  (is-permitted src.bol pas)
+  =/  envs  envelopes:(need (chat-scry pas))
+  =/  length  (lent envs)
+  =/  latest
+    ?~  backlog-latest  length
+    ?:  (gth u.backlog-latest length)  length
+    (sub length u.backlog-latest)
+  =.  envs  (scag latest envs)
+  =/  =vase  !>([%messages pas 0 latest envs])
   %-  zing
   :~  [%give %fact ~ %chat-update !>([%create pas])]~
-      ?.  ?&(?=(^ backlog-start) (~(has by allow-history) pas))  ~
-      (paginate-messages pas (need (chat-scry pas)) u.backlog-start)
+      ?.  ?&(?=(^ backlog-latest) (~(has by allow-history) pas))  ~
+      [%give %fact ~ %chat-update vase]~
       [%give %kick [%backlog pax]~ `src.bol]~
   ==
-::
-++  paginate-messages
-  |=  [=path =mailbox start=@ud]
-  ^-  (list card)
-  =/  cards=(list card)  ~
-  =/  end  (lent envelopes.mailbox)
-  ?:  |((gte start end) =(end 0))
-    cards
-  =.  envelopes.mailbox  (slag start `(list envelope)`envelopes.mailbox)
-  |-  ^-  (list card)
-  ?~  envelopes.mailbox
-    cards
-  ?:  (lte end 5.000)
-    =.  cards
-      %+  snoc  cards
-      %-  messages-fact
-      [path start (lent envelopes.mailbox) envelopes.mailbox]
-    $(envelopes.mailbox ~)
-  =.  cards
-    %+  snoc  cards
-    %-  messages-fact
-    :^  path  start
-    (add start 5.000)
-    (scag 5.000 `(list envelope)`envelopes.mailbox)
-  =:  start  (add start 5.000)
-      end    (sub end 5.000)
-  ==
-  $(envelopes.mailbox (slag 5.000 `(list envelope)`envelopes.mailbox))
 ::
 ++  fact-invite-update
   |=  [wir=wire fact=invite-update]
   ^-  (quip card _state)
   :_  state
   ?+  -.fact  ~
-  ::
       %accepted
     =/  ask-history  ?~((chat-scry path.invite.fact) %.y %.n)
     =*  shp       ship.invite.fact
@@ -643,11 +618,6 @@
   |=  act=invite-action
   ^-  card
   [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(act)]
-::
-++  messages-fact
-  |=  [=path start=@ud end=@ud envelopes=(list envelope)]
-  ^-  card
-  [%give %fact ~ %chat-update !>([%messages path start end envelopes])]
 ::
 ++  sec-to-perm
   |=  [pax=path =kind]
