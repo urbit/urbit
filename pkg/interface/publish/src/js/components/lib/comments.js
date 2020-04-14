@@ -11,6 +11,7 @@ export class Comments extends Component {
       commentBody: '',
       pending: new Set(),
       awaiting: null,
+      editing: null,
     }
     this.commentSubmit = this.commentSubmit.bind(this);
     this.commentChange = this.commentChange.bind(this);
@@ -65,6 +66,15 @@ export class Comments extends Component {
     })
   }
 
+  commentEdit(idx) {
+    this.setState({ editing: idx });
+  }
+
+  commentEditCancel() {
+    this.setState({ editing: null });
+  }
+
+
   commentUpdate(idx, body) {
 
     let path = Object.keys(this.props.comments[idx])[0];
@@ -82,8 +92,7 @@ export class Comments extends Component {
 
     window.api
       .action('publish', 'publish-action', comment)
-      .then(() => { this.setState({ awaiting: null }) })
-
+      .then(() => { this.setState({ awaiting: null, editing: null }) })
   }
 
   commentDelete(idx) {
@@ -108,6 +117,8 @@ export class Comments extends Component {
     if (!this.props.enabled) {
       return null;
     }
+
+    const { editing } = this.state;
 
     let pendingArray = Array.from(this.state.pending).map((com, i) => {
       let da = dateToDa(new Date);
@@ -136,6 +147,9 @@ export class Comments extends Component {
           contacts={this.props.contacts}
           onUpdate={u => this.commentUpdate(i, u)}
           onDelete={() => this.commentDelete(i)}
+          onEdit={() => this.commentEdit(i)}
+          onEditCancel={this.commentEditCancel.bind(this)}
+          editing={i === editing}
           disabled={!!this.state.awaiting}
           />
       );
