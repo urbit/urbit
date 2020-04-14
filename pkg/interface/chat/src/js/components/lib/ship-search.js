@@ -261,6 +261,7 @@ export class ShipSearchInput extends Component {
   componentDidMount() {
     document.addEventListener("mousedown", this.onClick);
     document.addEventListener("touchstart", this.onClick);
+    this.inputRef.current.focus();
   }
 
   componentWillUnmount() {

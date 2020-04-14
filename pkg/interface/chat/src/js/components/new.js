@@ -124,6 +124,10 @@ export class NewScreen extends Component {
       }
     });
 
+    if(state.ships.length === 1 && state.security === 'village') {
+      props.history.push(`/~chat/new/dm/${aud[0]}`);
+    }
+
     if (!isValid) {
       this.setState({
         inviteError: true,
