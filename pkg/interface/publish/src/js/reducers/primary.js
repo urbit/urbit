@@ -60,18 +60,22 @@ export class PrimaryReducer {
     let book   = Object.keys(json[host])[0];
     let noteId = json[host][book]["note-id"];
     if (state.notebooks[host] && state.notebooks[host][book]) {
-      if (state.notebooks[host][book]["notes-by-date"]) {
-        state.notebooks[host][book]["notes-by-date"].unshift(noteId);
-      } else {
-        state.notebooks[host][book]["notes-by-date"] = [noteId];
-      }
-
       if (state.notebooks[host][book].notes) {
+        if (state.notebooks[host][book].notes[noteId] &&
+            state.notebooks[host][book].notes[noteId].pending)
+        {
+          state.notebooks[host][book].notes[noteId].pending = false;
+          return;
+        }
+        if (state.notebooks[host][book]["notes-by-date"]) {
+          state.notebooks[host][book]["notes-by-date"].unshift(noteId);
+        } else {
+          state.notebooks[host][book]["notes-by-date"] = [noteId];
+        }
         state.notebooks[host][book].notes[noteId] = json[host][book];
       } else {
         state.notebooks[host][book].notes = {[noteId]: json[host][book]};
       }
-
       state.notebooks[host][book]["num-notes"] += 1;
       if (!json[host][book].read) {
         state.notebooks[host][book]["num-unread"] += 1;
@@ -79,7 +83,6 @@ export class PrimaryReducer {
       let prevNoteId = state.notebooks[host][book]["notes-by-date"][1] || null;
       state.notebooks[host][book].notes[noteId]["prev-note"] = prevNoteId
       state.notebooks[host][book].notes[noteId]["next-note"] = null;
-
       if (state.notebooks[host][book].notes[prevNoteId]) {
         state.notebooks[host][book].notes[prevNoteId]["next-note"] = noteId;
       }
@@ -96,10 +99,26 @@ export class PrimaryReducer {
         state.notebooks[host][book].notes &&
         state.notebooks[host][book].notes[note])
     {
-      state.notebooks[host][book].notes[note]["num-comments"] += 1;
+
       if (state.notebooks[host][book].notes[note].comments) {
-        state.notebooks[host][book].notes[note].comments.unshift(comment);
+        let limboCommentIdx =
+          _.findIndex(state.notebooks[host][book].notes[note].comments, (o) => {
+          let oldVal = o[Object.keys(o)[0]];
+          let newVal = comment[Object.keys(comment)[0]];
+          return (oldVal.pending &&
+            (oldVal.author ===  newVal.author) &&
+            (oldVal.content === newVal.content)
+          );
+        });
+        if (limboCommentIdx === -1) {
+          state.notebooks[host][book].notes[note]["num-comments"] += 1;
+          state.notebooks[host][book].notes[note].comments.unshift(comment);
+        } else {
+          state.notebooks[host][book].notes[note].comments[limboCommentIdx] =
+            comment;
+        }
       } else if (state.notebooks[host][book].notes[note]["num-comments"] === 1) {
+        state.notebooks[host][book].notes[note]["num-comments"] += 1;
         state.notebooks[host][book].notes[note].comments = [comment];
       }
     }

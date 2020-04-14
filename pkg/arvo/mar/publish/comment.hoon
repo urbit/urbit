@@ -44,7 +44,7 @@
         %+  cook
           |=  [author=@ @ @ date-created=@da @ content=@t]
           ^-  comment
-          [author date-created content]
+          [author date-created content %.n]
         old-parser
       ==
     --
