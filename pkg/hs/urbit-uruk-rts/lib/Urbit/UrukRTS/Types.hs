@@ -351,6 +351,7 @@ data Exp
   | MOD !Exp !Exp                 --  Atom Modulus
   | RAP !Exp !Exp                 --  (Generalized) tape to cord.
   | TURN !Exp !Exp                --  Map over a list
+  | SNAG !Exp !Exp                --  Index into list
   | ZING !Exp                     --  Concatenate list of lists
 
   | INT_POSITIVE !Exp
@@ -416,9 +417,8 @@ valFun = \case
   VNat n   -> Fun 2 (Nat n) mempty
   VInt i   -> Fun 1 (Int i) mempty
   VBol b   -> Fun 2 (Bol b) mempty
-  VLis (x:xs) -> Fun 2 LCon (fromList [x, VLis xs])
-  VLis []     -> Fun 2 LNil mempty
-  VFun f      -> f
+  VLis xs  -> Fun 2 (Lis xs) mempty
+  VFun f   -> f
 
 nodeArity :: Node -> Int
 nodeArity = \case

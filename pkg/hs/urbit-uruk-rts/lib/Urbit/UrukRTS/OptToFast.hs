@@ -128,9 +128,24 @@ compile arity numRegs = go
   kal F.Rap     [x,y]  = F.RAP (go x) (go y)
   kal F.Turn    [x,y]  = F.TURN (go x) (go y)
   kal F.Zing    [x]    = F.ZING (go x)
+  kal F.Snag    [x,y]  = F.SNAG (go x) (go y)
 
   kal F.Sub     [x, y] = F.SUB (go x) (go y)
   kal F.Mul     [x, y] = F.MUL (go x) (go y)
+
+  kal F.IntPositive [x] = F.INT_POSITIVE (go x)
+  kal F.IntNegative [x] = F.INT_NEGATIVE (go x)
+
+  kal F.IntAbs [x] = F.INT_ABS (go x)
+  kal F.IntAdd [x,y] = F.INT_ADD (go x) (go y)
+  kal F.IntDiv [x,y] = F.INT_DIV (go x) (go y)
+  kal F.IntIsZer [x] = F.INT_IS_ZER (go x)
+  kal F.IntIsNeg [x] = F.INT_IS_NEG (go x)
+  kal F.IntIsPos [x] = F.INT_IS_POS (go x)
+  kal F.IntLth [x,y] = F.INT_LTH (go x) (go y)
+  kal F.IntMul [x,y] = F.INT_MUL (go x) (go y)
+  kal F.IntNegate [x] = F.INT_NEGATE (go x)
+  kal F.IntSub [x,y] = F.INT_SUB (go x) (go y)
 
   kal (F.Jut (j@F.Jet{ jArgs = 1 })) [x]
     = F.JET1 j (go x)

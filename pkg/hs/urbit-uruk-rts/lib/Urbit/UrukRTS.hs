@@ -966,6 +966,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     MOD  x y        -> join (dMod <$> go x <*> go y)
     RAP  x y        -> join (dRap <$> go x <*> go y)
     TURN x y        -> join (dTurn <$> go x <*> go y)
+    SNAG x y        -> join (snag <$> go x <*> go y)
     ZING x          -> join (dZing <$> go x)
 
     INT_POSITIVE x -> join (dIntPositive <$> go x)
