@@ -668,8 +668,5 @@
   %+  turn  (mandelbrot w h)
   build-ppm-line
 
-:: Doing a 20x20 render takes 4m40s.
+:: This takes around 1m30s.
 (build-ppm 1000 1000)
-
-:: TODO: The following should run in a reasonable amount of time
-::(build-ppm 1000 1000)
