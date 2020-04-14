@@ -100,6 +100,7 @@ import qualified System.IO                 as Sys
 import qualified Urbit.Atom                as Atom
 import qualified Urbit.UrukRTS.JetOptimize as Opt
 import qualified Urbit.UrukRTS.OptToFast   as Opt
+import qualified Urbit.UrukRTS.Inline      as Opt
 
 
 -- Profiling Events ------------------------------------------------------------
@@ -283,7 +284,7 @@ jetRegister args name body = do
   putStrLn "JET REGISTRATION"
 
   cod <- Opt.compile args name body
-  let jet = Opt.optToFast cod
+  let jet = Opt.inline (Opt.optToFast cod)
 
   putStrLn ("  args: " <> tshow args)
   putStrLn ("  name: " <> tshow jet)
