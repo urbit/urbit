@@ -201,7 +201,7 @@ export class Note extends Component {
         ref={el => {
           this.scrollElement = el;
         }}>
-        <div className="h-100 flex flex-column items-center mt4 ph4 pb4">
+        <div className="h-100 flex flex-column items-center pa4">
           <div className="w-100 flex justify-center pb6">
             <SidebarSwitcher
               popout={props.popout}
