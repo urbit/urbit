@@ -571,9 +571,6 @@
       [%mailbox @ *]
     ~&  mailbox-kick+wir
     ?.  (~(has by synced) t.wir)  [~ state]
-    ?.  (is-permitted our.bol t.wir)
-      :_  state
-      ~[(chat-view-poke %delete t.wir)]
     ~&  %chat-hook-resubscribe
     =/  =ship  (~(got by synced) t.wir)
     =/  mailbox=(unit mailbox)  (chat-scry t.wir)
@@ -605,7 +602,8 @@
   ::
       [%backlog @ @ @ *]
     =/  chat=path  (oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-    %.  (poke-chat-hook-action %remove chat)
+    :_  state
+    %.  ~[(chat-view-poke %delete pax)]
     %-  slog
     :*  leaf+"chat-hook failed subscribe on {(spud chat)}"
         leaf+"stack trace:"
