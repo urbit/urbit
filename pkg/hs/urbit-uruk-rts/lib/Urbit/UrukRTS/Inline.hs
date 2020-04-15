@@ -113,6 +113,7 @@ inline j@F.Jet{..} =
     SNAG x y -> SNAG <$> go x <*> go y
     WELD x y -> WELD <$> go x <*> go y
     ZING x -> ZING <$> go x
+    NTOT x -> NTOT <$> go x
 
     INT_POSITIVE x -> INT_POSITIVE <$> go x
     INT_NEGATIVE x -> INT_NEGATIVE <$> go x
@@ -202,6 +203,7 @@ subst (refReg, regReg) = go
     SNAG x y -> SNAG (go x) (go y)
     WELD x y -> WELD (go x) (go y)
     ZING x -> ZING (go x)
+    NTOT x -> NTOT (go x)
 
     INT_POSITIVE x -> INT_POSITIVE (go x)
     INT_NEGATIVE x -> INT_NEGATIVE (go x)

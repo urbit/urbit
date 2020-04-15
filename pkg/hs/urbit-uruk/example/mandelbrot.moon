@@ -625,8 +625,8 @@
   ($ (div num 10) (lcon (add (mod num 10) '0') list))
 
 ::  renders a natural as a tape, in the spirit of itoa
-=/  ntot
-  ~/  1  ntot
+=/  ntot-slow
+  ~/  1  ntot-slow
   |=  num
   ?:  (zer num)
     (lcon '0' lnil)
@@ -648,12 +648,24 @@
   %+  lcon  space
   (lcon (ntot b) (lcon space (lcon (ntot c) (lcon space lnil))))
 ::
+=/  nums-let-optimized
+  ~/  1  nums-let-optimized
+  |=  triple
+  %-  zing
+  %+  lcon  (ntot (car triple))
+  %+  lcon  space
+  %+  lcon  (ntot (car (cdr triple)))
+  %+  lcon  space
+  %+  lcon  (ntot (cdr (cdr triple)))
+  %+  lcon  space
+  lnil
+::
 =/  build-ppm-line
   ~/  1  build-ppm-line
   |=  y
   %+  weld
     %-  zing
-    %+  turn  y  nums
+    %+  turn  y  nums-let-optimized
   newline
 ::
 =/  build-ppm
@@ -668,5 +680,5 @@
   %+  turn  (mandelbrot w h)
   build-ppm-line
 
-:: This takes around 1m30s.
-(build-ppm 1 1)
+:: This takes around 1m15s.
+(build-ppm 1000 1000)

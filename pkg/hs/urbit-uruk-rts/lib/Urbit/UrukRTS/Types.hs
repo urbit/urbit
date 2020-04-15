@@ -156,6 +156,7 @@ data Node
   | Mod
   | Rap
   | Zing
+  | Ntot
 
   | IntPositive
   | IntNegative
@@ -230,6 +231,7 @@ instance Show Node where
     Mod         -> "MOD"
     Rap         -> "RAP"
     Zing        -> "ZING"
+    Ntot        -> "NTOT"
 
     IntPositive -> "INT_POSITIVE"
     IntNegative -> "INT_NEGATIVE"
@@ -355,6 +357,7 @@ data Exp
   | SNAG !Exp !Exp                --  Index into list
   | WELD !Exp !Exp                --  Concatenate two lists.
   | ZING !Exp                     --  Concatenate list of lists
+  | NTOT !Exp                     --  Render atom as tape.
 
   | INT_POSITIVE !Exp
   | INT_NEGATIVE !Exp
@@ -484,6 +487,7 @@ nodeArity = \case
   Turn  -> 2
   Weld  -> 2
   Zing  -> 1
+  Ntot  -> 1
 
   IntPositive -> 1
   IntNegative -> 1

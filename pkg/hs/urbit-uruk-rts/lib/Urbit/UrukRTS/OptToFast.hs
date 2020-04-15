@@ -129,6 +129,7 @@ compile arity numRegs = go
   kal F.Rap     [x,y]  = F.RAP (go x) (go y)
   kal F.Turn    [x,y]  = F.TURN (go x) (go y)
   kal F.Zing    [x]    = F.ZING (go x)
+  kal F.Ntot    [x]    = F.NTOT (go x)
   kal F.Snag    [x,y]  = F.SNAG (go x) (go y)
   kal F.Weld    [x,y]  = F.WELD (go x) (go y)
   kal F.LCon    [x,y]  =

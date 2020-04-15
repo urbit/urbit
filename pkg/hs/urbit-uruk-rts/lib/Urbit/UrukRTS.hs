@@ -94,13 +94,14 @@ import Safe                  (atMay)
 import Text.Show.Pretty      (pPrint, ppShow)
 
 import qualified Data.ByteString           as BS
+import qualified Data.Char                 as C
 import qualified Data.Store                as Store
 import qualified Data.Store.TH             as Store
 import qualified System.IO                 as Sys
 import qualified Urbit.Atom                as Atom
+import qualified Urbit.UrukRTS.Inline      as Opt
 import qualified Urbit.UrukRTS.JetOptimize as Opt
 import qualified Urbit.UrukRTS.OptToFast   as Opt
-import qualified Urbit.UrukRTS.Inline      as Opt
 
 
 -- Profiling Events ------------------------------------------------------------
@@ -172,6 +173,7 @@ instance Uruk Val where
   uGlobal "let"          = Just $ mkNode 2 Let
   uGlobal "rap"          = Just $ mkNode 2 Rap
   uGlobal "zing"         = Just $ mkNode 1 Zing
+  uGlobal "ntot"         = Just $ mkNode 1 Ntot
 
   uGlobal "int-positive" = Just $ mkNode 1 IntPositive
   uGlobal "int-negative" = Just $ mkNode 1 IntNegative
@@ -334,6 +336,7 @@ reduce !no !xs = do
     Mod       -> dMod x y
     Rap       -> dRap x y
     Zing      -> dZing x
+    Ntot      -> dNtot x
 
     Lis l -> dLis l x y
 
@@ -536,7 +539,7 @@ execJet4 !j !x !y !z !p = do
 
 execJet5 :: Jet -> Val -> Val -> Val -> Val -> Val -> IO Val
 execJet5 !j !x !y !z !p !q = do
-  traceCall j [x,y,z,p] False
+  traceCall j [x,y,z,p,q] False
   (reg, setReg) <- mkRegs (jRegs j)
   let args = fromList [x, y, z, p, q]
   let refr = \case
@@ -839,6 +842,12 @@ dZing = evaluate . VLis . mconcat . parseLists
   parseList (VLis x) = x
   parseList _        = throw (TypeError "zing-not-list")
 
+dNtot :: Val -> IO Val
+{-# INLINE dNtot #-}
+dNtot (VNat n) =
+  evaluate $ force $ VLis $ fmap (VNat . fromIntegral . C.ord) $ show n
+dNtot n = throwIO (TypeError "ntot-not-nat")
+
 dCrip :: Val -> IO Val
 {-# INLINE dCrip #-}
 dCrip = evaluate . VNat . Atom.bytesAtom . BS.pack . parseTape
@@ -989,6 +998,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     TURN x y        -> join (dTurn <$> go x <*> go y)
     SNAG x y        -> join (snag <$> go x <*> go y)
     ZING x          -> join (dZing <$> go x)
+    NTOT x          -> join (dNtot <$> go x)
     WELD x y        -> join (dWeld <$> go x <*> go y)
 
     INT_POSITIVE x -> join (dIntPositive <$> go x)
