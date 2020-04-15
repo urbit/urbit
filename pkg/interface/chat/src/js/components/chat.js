@@ -183,7 +183,7 @@ export class ChatScreen extends Component {
     }
  
     let pendingMessages = props.pendingMessages.has(props.station)
-      ? props.pendingMessages.get(props.station).reverse()
+      ? props.pendingMessages.get(props.station)
       : [];
  
     pendingMessages.map(function(value) {
