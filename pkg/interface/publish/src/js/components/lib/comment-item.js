@@ -117,15 +117,6 @@ export class CommentItem extends Component {
               </div>
             </>
           ) }
-          { editing && (
-            <>
-              <div onClick={this.props.onEditCancel} className="red2 pointer ml2 f9 pt1">
-                Cancel
-              </div>
-
-            </>
-          ) }
-
         </div>
         <div className="f8 lh-solid mb2">
           { !editing && content }
@@ -139,8 +130,13 @@ export class CommentItem extends Component {
           )}
         </div>
         { editing && (
-          <div onClick={this.onUpdate.bind(this)} className="green2 pointer f9 pt1 b--green2 ba pa2 dib">
-            Submit
+          <div className="flex">
+            <div onClick={this.onUpdate.bind(this)} className="br1 green2 pointer f9 pt1 b--green2 ba pa2 dib">
+              Submit
+            </div>
+            <div onClick={this.props.onEditCancel} className="br1 black white-d pointer f9 b--gray2 ba pa2 dib ml2">
+              Cancel
+            </div>
           </div>
         )}
 
