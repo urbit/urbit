@@ -363,15 +363,22 @@
     ==
   ::
       %remove
-    =/  ship  (~(get by synced) path.act)
-    ?~  ship  [~ state]
+    =/  ship=(unit ship)
+      =/  ship  (~(get by synced) path.act)
+      ?^  ship  ship
+      =?  path.act  ?=([%'~' *] path.act)  t.path.act
+      ?~  path.act  ~
+      (slaw %p i.path.act)
+    ?~  ship
+      ~&  [dap.bol %unknown-host-cannot-leave path.act]
+      [~ state]
     ?:  &(!=(u.ship src.bol) ?!((team:title our.bol src.bol)))
       [~ state]
     =.  synced  (~(del by synced) path.act)
     :_  state
     %-  zing
-    :~  (pull-wire [%backlog (weld path.act /0)])
-        (pull-wire [%mailbox path.act])
+    :~  (pull-wire u.ship [%backlog (weld path.act /0)])
+        (pull-wire u.ship [%mailbox path.act])
         [%give %kick ~[[%mailbox path.act]] ~]~
         [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]~
     ==
@@ -709,12 +716,9 @@
   ==
 ::
 ++  pull-wire
-  |=  pax=path
+  |=  [=ship =wire]
   ^-  (list card)
-  ?>  ?=(^ pax)
-  =/  shp  (~(get by synced) t.pax)
-  ?~  shp  ~
-  ?:  =(u.shp our.bol)
-    [%pass pax %agent [our.bol %chat-store] %leave ~]~
-  [%pass pax %agent [u.shp %chat-hook] %leave ~]~
+  ?:  =(ship our.bol)
+    [%pass wire %agent [our.bol %chat-store] %leave ~]~
+  [%pass wire %agent [ship %chat-hook] %leave ~]~
 --
