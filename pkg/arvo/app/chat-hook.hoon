@@ -571,6 +571,9 @@
       [%mailbox @ *]
     ~&  mailbox-kick+wir
     ?.  (~(has by synced) t.wir)  [~ state]
+    ?.  (is-permitted our.bol t.wir)
+      :_  state
+      ~[(chat-view-poke %delete t.wir)]
     ~&  %chat-hook-resubscribe
     =/  =ship  (~(got by synced) t.wir)
     =/  mailbox=(unit mailbox)  (chat-scry t.wir)
