@@ -70,7 +70,21 @@
     $(ankh u.kid, path t.path)
   ::  +get-fit: produce file at path with /'s maybe converted to -'s
   ::
-  ++  get-fit  |=(path *(unit [path cage]))
+  ++  get-fit
+    |=  pax=path
+    ^-  (unit path)
+    ?>  ?=([* * ~] pax)
+    =;  pux=(unit path)
+      ?~(pux ~ `[i.pax u.pux])
+    =.  ankh  (~(got by dir.ankh) i.pax)
+    ?^  got=(get t.pax)
+      `t.pax
+    =/  seg=tape  (trip i.t.pax)
+    ?~  dex=(find "-" seg)
+      ~
+    =/  hed  (crip (scag u.dex seg))
+    =/  tal  (crip (slag +(u.dex) seg))
+    $(pax /[hed]/[tal])
   --
 --
 |%
@@ -219,7 +233,7 @@
     |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
     ^-  [vase _state]
     ?~  taz  [sut state]
-    =^  pin=vase  state  (run-fit /[wer]/[pax.i.taz])
+    =^  pin=vase  state  (build-fit /[wer]/[pax.i.taz])
     =?  p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.pin]
     $(sut (slop pin sut), taz t.taz)
   ::
@@ -235,12 +249,9 @@
     ^-  [vase _state]
     [!>(..zuse) state]  ::  TODO implement
   ::
-  ++  run-fit
+  ++  build-fit
     |=  pax=path
     ^-  [vase _state]
-    =/  res=(unit [pux=path =cage])  (~(get-fit an ankh) pax)
-    ?~  res  ~|(no-file+pax !!)
-    ::  TODO
-    !!
+    (build-file ~|(no-file+pax (need (~(get-fit an ankh) pax))))
   --
 --
