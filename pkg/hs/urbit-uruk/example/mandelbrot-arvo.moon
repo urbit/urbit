@@ -681,7 +681,7 @@
 ::     ($ eq (cdr link) k)
 ::   <u (rit uni)>
 
-::  always returns a list, replacing the key if equivalent
+:: ::  always returns a list, replacing the key if equivalent
 :: =/  add-assoc
 ::   ~/  5  add-assoc
 ::   ..  $
@@ -719,6 +719,7 @@
   %.n
 
 =/  arvo
+  ~/  3  arvo
   ..  $
   |=  (cache w h)
   ?-    (find-assoc is-cons-nat-eq cache (con w h))

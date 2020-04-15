@@ -185,7 +185,7 @@ instance Uruk Val where
   uGlobal "int-negate"   = Just $ mkNode 1 IntNegate
   uGlobal "int-sub"      = Just $ mkNode 2 IntSub
 
-  uGlobal "box"          = Just $ mkNode 1 Box  -- hack, actually 2
+  uGlobal "box"          = Just $ mkNode 1 MkBox
   uGlobal "unbox"        = Just $ mkNode 2 Unbox
 
   uGlobal "lcon"         = Just $ mkNode 2 LCon      -- hack, actually 4
@@ -354,7 +354,8 @@ reduce !no !xs = do
     IntNegate -> dIntNegate x
     IntSub -> dIntSub x y
 
-    Box       -> pure (VBox x)
+    MkBox     -> pure (VBox x)
+    Box x     -> pure x
     Unbox     -> dUnbox x
 
     Inc       -> inc x
@@ -866,7 +867,10 @@ dIntSub _        _        = throwIO $ TypeError "int-sub-not-int"
 dUnbox :: Val -> IO Val
 {-# INLINE dUnbox #-}
 dUnbox (VBox x) = pure x
-dUnbox _        = throwIO $ TypeError "unbox-not-box"
+dUnbox (VFun (Fun 1 (Box x) _)) = pure $ x
+dUnbox x        = do
+  print x
+  throwIO $ TypeError "unbox-not-box"
 
 listToVal :: [Val] -> Val
 {-# INLINE listToVal #-}
@@ -940,7 +944,10 @@ zer v        = throwIO (TypeError ("zer-not-nat: " <> tshow v))
 eql :: Val -> Val -> IO Val
 {-# INLINE eql #-}
 eql (VNat x) (VNat y) = pure (VBol (x == y))
-eql _        _        = throwIO (TypeError "eql-not-nat")
+eql x        y        = do
+  print x
+  print y
+  throwIO (TypeError "eql-not-nat")
 
 car :: Val -> IO Val
 {-# INLINE car #-}

@@ -153,7 +153,7 @@ compile arity numRegs = go
   kal F.IntNegate [x] = F.INT_NEGATE (go x)
   kal F.IntSub [x,y] = F.INT_SUB (go x) (go y)
 
-  kal F.Box [x] = F.BOX (go x)
+  kal (F.Box x) [] = F.VAL (F.VBox x)
   kal F.Unbox [x] = F.UNBOX (go x)
 
   kal (F.Jut (j@F.Jet{ jArgs = 1 })) [x]

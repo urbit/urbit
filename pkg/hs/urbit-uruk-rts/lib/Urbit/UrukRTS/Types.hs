@@ -170,7 +170,8 @@ data Node
   | IntNegate
   | IntSub
 
-  | Box
+  | MkBox
+  | Box Val
   | Unbox
 
   | LCon
@@ -250,7 +251,8 @@ instance Show Node where
     IntNegate   -> "INT_NEGATE"
     IntSub      -> "INT_SUB"
 
-    Box         -> "BOX"
+    MkBox       -> "MKBOX"
+    Box v       -> "BOX(" <> show v <> ")"
     Unbox       -> "UNBOX"
 
     LCon        -> "LCON"
@@ -441,7 +443,7 @@ valFun = \case
   VInt i   -> Fun 1 (Int i) mempty
   VBol b   -> Fun 2 (Bol b) mempty
   VLis xs  -> Fun 2 (Lis xs) mempty
-  VBox x   -> Fun 1 Kay (fromList [x])
+  VBox x   -> Fun 1 (Box x) mempty
   VFun f   -> f
 
 nodeArity :: Node -> Int
@@ -514,7 +516,8 @@ nodeArity = \case
   IntNegate -> 1
   IntSub -> 2
 
-  Box -> 2
+  MkBox -> 1
+  Box _ -> 1
   Unbox -> 1
 
   AddAssoc -> 5
