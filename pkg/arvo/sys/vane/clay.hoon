@@ -88,6 +88,7 @@
       hit/(map aeon tako)                               ::  versions by id
       lab/(map @tas aeon)                               ::  labels
       mim/(map path mime)                               ::  mime cache
+      fod/ford-cache                                    ::  ford cache
   ==                                                    ::
 ::
 ::  Commit state.
@@ -106,6 +107,34 @@
       dif/(list (trel path lobe cage))                  ::  changes
       mut/(list (trel path lobe cage))                  ::  mutations
   ==                                                    ::
+::
+::  Ford cache
+::
++$  ford-cache
+  $:  vases=(map path [res=vase dez=(set path)])
+      marks=(map mark [res=dais dez=(set path)])
+      casts=(map mars [res=tube dez=(set path)])
+  ==
+::  $mars: mark conversion request
+::  $tube: mark conversion gate
++$  mars  [a=mark b=mark]
++$  tube  $-(vase vase)
+::  $dais: processed mark core
+::
++$  dais
+  $_  ^|
+  |_  sam=vase
+  ++  bunt  sam
+  ++  diff  |~(new=_sam *vase)
+  ++  form  *mark
+  ++  join  |~([a=vase b=vase] *(unit (unit vase)))
+  ++  mash
+    |~  [a=[ship desk diff=vase] b=[ship desk diff=vase]]
+    *(unit vase)
+  ++  pact  |~(diff=vase sam)
+  ++  vale  |~(noun sam)
+  ++  volt  |~(noun sam)
+  --
 ::
 ::  Hash of a blob, for lookup in the object store (lat.ran)
 ::
@@ -2928,6 +2957,26 @@
         lat.ran  (~(uni by lat.rang) lat.ran)
       ==
     wake:ergo
+    ::
+    ++  promote-ford
+      |=  [=ford-cache deletes=(set path) changes=(map path (each page lobe))]
+      =/  invalid=(set path)  (~(uni in deletes) ~(key by changes))
+      =:  vases.ford-cache  ((invalidate path vase) vases.ford-cache invalid)
+          marks.ford-cache  ((invalidate mark dais) marks.ford-cache invalid)
+          casts.ford-cache  ((invalidate mars tube) casts.ford-cache invalid)
+        ==
+      ford-cache
+    ::
+    ++  invalidate
+      |*  [key=mold value=mold]
+      |=  [cache=(map key [value dez=(set path)]) invalid=(set path)]
+      =/  builds=(list [key value dez=(set path)])  ~(tap by cache)
+      |-  ^+  cache
+      ?~  builds
+        ~
+      ?:  ?=(^ (~(int in dez.i.builds) invalid))
+        $(builds t.builds)
+      (~(put by $(builds t.builds)) i.builds)
     ::
     ++  ergo
       ^+  ..park

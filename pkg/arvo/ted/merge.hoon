@@ -44,14 +44,15 @@
 (pure:m !>(~))
 ::
 +$  merge-result
-      %-  unit
-      $:  conflicts=(set path)
-          bop=(map path cage)
-          new=yaki
-          deletes=(set path)
-          changes=(set path)
-          lat=(map lobe blob)
-      ==
+  %-  unit
+  $:  conflicts=(set path)
+      bop=(map path cage)
+      new=yaki
+      deletes=(set path)
+      changes=(set path)
+      lat=(map lobe blob)
+  ==
+::
 ++  merge
   |=  [=ali=yaki bob-yaki=(unit yaki)]
   =/  m  (strand ,merge-result)
