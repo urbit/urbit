@@ -202,7 +202,7 @@
 =/  fraction-fp
   ~/  2  fraction-fp
   |=  (over under)
-  (int-div (int-mul over (int-positive 10.000)) under)
+  (int-div (int-mul over i10000) under)
 
 ::  output color triples
 :: =/  base-plasma-colors
