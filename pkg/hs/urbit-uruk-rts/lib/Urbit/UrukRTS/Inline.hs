@@ -3,22 +3,46 @@ module Urbit.UrukRTS.Inline (inline) where
 import ClassyPrelude
 
 import Urbit.UrukRTS.Types (Exp(..))
+import Data.Primitive.SmallArray
 
 --port qualified Urbit.UrukRTS.JetOptimize as O
 import qualified Urbit.UrukRTS.Types       as F
 
 --------------------------------------------------------------------------------
 
+inlineJet1 :: F.Jet -> Exp -> Exp
+inlineJet1 j x =
+  case F.jLoop j of
+    True -> JET1 j x
+    False -> JET1 j x
+ -- False -> LET 0 x (F.jFast j) -- replace REF with REG
+
+inlineJet2 :: F.Jet -> Exp -> Exp -> Exp
+inlineJet2 = JET2
+
+inlineJet3 :: F.Jet -> Exp -> Exp -> Exp -> Exp
+inlineJet3 = JET3
+
+inlineJet4 :: F.Jet -> Exp -> Exp -> Exp -> Exp -> Exp
+inlineJet4 = JET4
+
+inlineJet5 :: F.Jet -> Exp -> Exp -> Exp -> Exp -> Exp -> Exp
+inlineJet5 = JET5
+
+inlineJetN :: F.Jet -> SmallArray Exp -> Exp
+inlineJetN = JETN
+
 inline :: F.Jet -> F.Jet
 inline j@F.Jet{..} = j { F.jFast = go jFast }
  where
+  go :: Exp -> Exp
   go = \case
-    JET1 j x         -> JET1 j x
-    JET2 j x y       -> JET2 j x y
-    JET3 j x y z     -> JET3 j x y z
-    JET4 j x y z p   -> JET4 j x y z p
-    JET5 j x y z p q -> JET5 j x y z p q
-    JETN j xs        -> JETN j xs
+    JET1 j x         -> inlineJet1 j (go x)
+    JET2 j x y       -> inlineJet2 j (go x) (go y)
+    JET3 j x y z     -> inlineJet3 j (go x) (go y) (go z)
+    JET4 j x y z p   -> inlineJet4 j (go x) (go y) (go z) (go p)
+    JET5 j x y z p q -> inlineJet5 j (go x) (go y) (go z) (go p) (go q)
+    JETN j xs        -> inlineJetN j (go <$> xs)
 
     -- Boilerplate for traversal. Can be abstracted over, but too lazy
     -- to do it now.

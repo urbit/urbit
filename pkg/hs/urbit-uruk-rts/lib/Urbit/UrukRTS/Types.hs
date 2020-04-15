@@ -88,12 +88,13 @@ data Jet = Jet
   , jName :: Val
   , jBody :: Val
   , jFast :: !Exp
+  , jLoop :: Bool
   , jRegs :: !Int -- Number of registers needed.
   }
  deriving (Eq, Ord)
 
 instance Hashable Jet where
-  hashWithSalt i (Jet a n b _ _) =
+  hashWithSalt i (Jet a n b _ _ _) =
     hashWithSalt i (a,n,b)
 
 instance Show Jet where

@@ -17,12 +17,13 @@ import qualified Urbit.UrukRTS.Types       as F
 --------------------------------------------------------------------------------
 
 optToFast ∷ O.Code → F.Jet
-optToFast (O.Code args nm bod exp) = F.Jet{..}
+optToFast (O.Code args nm bod exp lop) = F.Jet{..}
  where
   jArgs = fromIntegral args
   jName = nm
   jBody = bod
   jFast = compile jArgs jRegs exp
+  jLoop = lop
   jRegs = numReg exp
 
 numReg :: O.Val -> Int

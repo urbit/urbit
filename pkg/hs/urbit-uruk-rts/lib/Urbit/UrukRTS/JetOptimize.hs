@@ -53,6 +53,7 @@ data Code = Code
     , cName :: F.Val
     , cBody :: F.Val
     , cFast :: Val
+    , cLoop :: Bool
     }
   deriving stock (Eq, Ord, Generic)
 
@@ -62,7 +63,7 @@ sym i | i >= length syms = "v" <> show i
 sym i                    = syms !! i
 
 instance Show Code where
-    show c@(Code n nm _ v) =
+    show c@(Code n nm _ v lop) =
         regr <> header (fromIntegral n) <> prettyVal v
       where
         arity ∷ Int
@@ -71,9 +72,9 @@ instance Show Code where
         regr = "~/  " <> show n <> "  " <> show nm <> "\n"
 
         header ∷ Int → String
-        header 0 | recursive c = "..  $\n"
-        header 0               = ""
-        header n               = header (n-1) <> "|=  " <> sym (arity - n) <> "\n"
+        header 0 | lop = "..  $\n"
+        header 0       = ""
+        header n       = header (n-1) <> "|=  " <> sym (arity - n) <> "\n"
 
 {- |
     There are three kinds of things
@@ -182,18 +183,6 @@ instance Show Val where
         sexp a z hs  xs = a <> intercalate " " (hs <> (show <$> xs)) <> z
 
 --------------------------------------------------------------------------------
-
-recursive ∷ Code → Bool
-recursive (Code _ _ _ v) = go v
-  where
-    go = \case
-        ValRec _        → True
-        ValRef _ vs     → any go vs
-        ValReg _ vs     → any go vs
-        ValKal _ vs     → any go vs
-        ValIff c t e xs → any go ([c,t,e] <> xs)
-        ValCas _reg x l r xs → any go ([x,l,r] <> xs)
-        ValLet _reg x k xs   → any go ([x,k] <> xs)
 
 infixl 5 %;
 
@@ -369,21 +358,26 @@ evaluate = fmap (go . fst) . eval 0
       becomes: `(body Rec $1 $0)`
 -}
 jetCode :: Pos -> F.Val -> F.Val -> IO Code
-jetCode arity nm bod =
-  (fmap (Code arity nm bod) . evaluate . addArgs (nat arity) . addRecur) bod
+jetCode arity nm bod = do
+  let (ex1, lop) = addRecur bod
+  exp <- evaluate $ addArgs (nat arity) ex1
+  pure (Code arity nm bod exp lop)
  where
 
   addArgs :: Nat -> Exp -> Exp
   addArgs 0 x = x
   addArgs n x = addArgs (n - 1) (x % ref (n - 1))
 
-  addRecur :: F.Val -> Exp
+  addRecur :: F.Val -> (Exp, Bool)
   addRecur = \case
-    F.VFun (F.Fun 1 F.Fix xs) -> fastExp (F.getCloN xs 0) % Rec []
-    body                      -> fastExp body
+    F.VFun (F.Fun 1 F.Fix xs) -> (fastExp (F.getCloN xs 0) % Rec [], True)
+    body                      -> (fastExp body, False)
 
 funCode ∷ F.Val → IO Code
-funCode body = Code 1 fak fak <$> evaluate (fastExp body % ref 0)
+funCode body = do
+  Code 1 fak fak <$> evaluate (fastExp body % ref 0)
+  bExp <- evaluate (fastExp body % ref 0)
+  pure (Code 1 fak fak bExp False)
  where
   fak = error "TODO: funCode.fak"
 
