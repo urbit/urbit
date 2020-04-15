@@ -583,15 +583,15 @@
     [%pass chat-history %agent [ship %chat-hook] %watch chat-history]~
   ::
       [%backlog @ @ *]
-    =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-    ?.  (~(has by synced) pax)  [~ state]
+    =/  chat=path  (oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    ?.  (~(has by synced) chat)  [~ state]
     =/  =ship
       ?:  =('~' i.t.wir)
         (slav %p i.t.t.wir)
       (slav %p i.t.wir)
-    =.  pax  ?~((chat-scry pax) wir [%mailbox pax])
+    =/  =path  ?~((chat-scry chat) wir [%mailbox chat])
     :_  state
-    [%pass pax %agent [ship %chat-hook] %watch pax]~
+    [%pass path %agent [ship %chat-hook] %watch path]~
   ==
 ::
 ++  watch-ack
@@ -603,10 +603,10 @@
     (poke-chat-hook-action %remove t.wir)
   ::
       [%backlog @ @ @ *]
-    =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-    %.  (poke-chat-hook-action %remove pax)
+    =/  chat=path  (oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    %.  (poke-chat-hook-action %remove chat)
     %-  slog
-    :*  leaf+"chat-hook failed subscribe on {(spud pax)}"
+    :*  leaf+"chat-hook failed subscribe on {(spud chat)}"
         leaf+"stack trace:"
         u.saw
     ==
