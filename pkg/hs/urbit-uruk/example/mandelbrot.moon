@@ -536,33 +536,13 @@
     [0 0 0]
   (snag o plasma-colors)
 
-=/  calc-pixel-loop-inlined
-  ~/  5  calc-pixel-loop-inlined
-  ..  $
-  |=  (cr ci i x0 y0)
-  ?:  (not (lth i max-iterations))
-    [0 0 0]
-  ::
-  =/  xx  (int-div (int-mul (int-div x0 i10) x0) i1000)
-  =/  yy  (int-div (int-mul (int-div y0 i10) y0) i1000)
-  ::
-  ?:  (not (int-lth (int-add xx yy) i40000))
-    ?:  (eql i 255)
-      [0 0 0]
-    (snag i plasma-colors)
-  ::
-  %^    ($ cr ci)
-      (inc i)
-    (add-fp (sub-fp xx yy) cr)
-  (add-fp (int-mul i2 (int-div (int-mul (int-div x0 i10) y0) i1000)) ci)
-
 ::  Compiler should do this automatically (lambda lifting)
 =/  calc-pixel-loop
   ~/  5  calc-pixel-loop
   ..  $
   |=  (cr ci i x0 y0)
   ?:  (not (lth i max-iterations))
-    (calculate-color-for 255)
+    [0 0 0]  ::  (calculate-color-for 255)
   ::
   =/  xx  (mul-fp x0 x0)
   =/  yy  (mul-fp y0 y0)
@@ -578,14 +558,9 @@
 =/  calc-pixel
   ~/  4  calc-pixel
   |=  (scr-x scr-y width height)
-  ::
-  %*  calc-pixel-loop-inlined
-    (sub-fp (mul-fp (fraction-fp scr-x width) i25000) i20000)   :: cr
-    (sub-fp (mul-fp (fraction-fp scr-y height) i25000) i12500)  :: ci
-    0
-    i0
-    i0
-  ==
+  =/  cr   (sub-fp (mul-fp (fraction-fp scr-x width) i25000) i20000)
+  =/  ci   (sub-fp (mul-fp (fraction-fp scr-y height) i25000) i12500)
+  (calc-pixel-loop cr ci 0 i0 i0)
 
 =/  mandelbrot-pixel
   ~/  4  mandelbrot-pixel

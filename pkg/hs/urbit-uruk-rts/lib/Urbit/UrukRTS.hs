@@ -100,6 +100,7 @@ import qualified Data.Store.TH             as Store
 import qualified System.IO                 as Sys
 import qualified Urbit.Atom                as Atom
 import qualified Urbit.UrukRTS.Inline      as Opt
+import qualified Urbit.UrukRTS.RegOpt      as Opt
 import qualified Urbit.UrukRTS.JetOptimize as Opt
 import qualified Urbit.UrukRTS.OptToFast   as Opt
 
@@ -286,7 +287,7 @@ jetRegister args name body = do
   -- putStrLn "JET REGISTRATION"
 
   cod <- Opt.compile args name body
-  let jet = Opt.inline (Opt.optToFast cod)
+  let jet = (Opt.regOpt . Opt.inline . Opt.optToFast) cod
 
   -- putStrLn ("  args: " <> tshow args)
   -- putStrLn ("  name: " <> tshow jet)
@@ -1044,6 +1045,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
         print ("iff.cond", c)
         throwIO (TypeError "iff-not-bol")
     LET i x k  -> (go x >>= setReg i) >> go k
+    THE x k  -> go x >> go k
 
     FOR i lisExp bod -> do
       -- putStrLn "FOR"

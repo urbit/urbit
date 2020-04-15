@@ -142,6 +142,7 @@ inline j@Jet{..} =
     IFF x t e -> IFF <$> go x <*> go t <*> go e
     CAS i x y z -> CAS i <$> go x <*> go y <*> go z
     LET i x y -> LET i <$> go x <*> go y
+    THE x y -> THE <$> go x <*> go y
     FOR i l b -> FOR i <$> go l <*> go b
 
     REC1 x -> REC1 <$> go x
@@ -234,6 +235,7 @@ subst (refReg, regReg) = go
     IFF x t e -> IFF (go x) (go t) (go e)
     CAS i x y z -> CAS (regReg i) (go x) (go y) (go z)
     LET i x y -> LET (regReg i) (go x) (go y)
+    THE x y -> THE (go x) (go y)
     FOR i l f -> FOR (regReg i) (go l) (go f)
 
     REC1 x -> REC1 (go x)

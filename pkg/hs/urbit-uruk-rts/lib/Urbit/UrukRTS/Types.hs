@@ -91,7 +91,7 @@ data Jet = Jet
   , jLoop :: Bool
   , jRegs :: !Int -- Number of registers needed.
   }
- deriving (Eq, Ord)
+ deriving (Eq, Ord, Generic, NFData)
 
 instance Hashable Jet where
   hashWithSalt i (Jet a n b _ _ _) =
@@ -178,7 +178,7 @@ data Node
   | Snag
   | Turn
   | Weld
- deriving (Eq, Ord, Generic, Hashable)
+ deriving (Eq, Ord, Generic, Hashable, NFData)
 
 instance Show Node where
   show = \case
@@ -259,7 +259,7 @@ data Fun = Fun
   , fHead :: !Node
   , fArgs :: CloN -- Lazy on purpose.
   }
- deriving (Eq, Ord, Generic, Hashable)
+ deriving (Eq, Ord, Generic, Hashable, NFData)
 
 instance Show Fun where
   show (Fun _ h args) = if sizeofSmallArray args == 0
@@ -328,6 +328,8 @@ data Exp
   | IFF   !Exp !Exp !Exp           --  If-Then-Else
   | CAS   !Int !Exp !Exp !Exp      --  Pattern Match
   | LET   !Int !Exp !Exp           --  Pattern Match on single value
+
+  | THE   !Exp !Exp                --  Let binding with unused result.
   | FOR   !Int !Exp !Exp           --  Optimized Map over a list
 
   | REC1  !Exp                     --  Recursive Call
@@ -404,7 +406,10 @@ data Exp
   | CLON !Fun !(SmallArray Exp)        --  Undersaturated call
 
   | CALN !Exp !(SmallArray Exp)   --  Call of unknown saturation
- deriving (Eq, Ord, Show)
+ deriving (Eq, Ord, Show, Generic, NFData)
+
+instance NFData a => NFData (SmallArray a) where
+  rnf !_ = ()
 
 
 -- Exceptions ------------------------------------------------------------------
