@@ -283,21 +283,22 @@ indent = unlines . fmap ("    | " <>) . lines
 
 jetRegister :: Int -> Val -> Val -> IO Val
 jetRegister args name body = do
-  putStrLn "JET REGISTRATION"
+  -- putStrLn "JET REGISTRATION"
 
   cod <- Opt.compile args name body
   let jet = Opt.inline (Opt.optToFast cod)
 
-  putStrLn ("  args: " <> tshow args)
-  putStrLn ("  name: " <> tshow jet)
+  -- putStrLn ("  args: " <> tshow args)
+  -- putStrLn ("  name: " <> tshow jet)
 
-  putStrLn ("  body:")
-  putStrLn (indent $ pack $ ppShow body)
+  -- putStrLn ("  body:")
+  -- putStrLn (indent $ pack $ ppShow body)
 
-  putStrLn "  code:"
-  putStrLn (indent (pack $ ppShow cod))
+  -- putStrLn "  code:"
+  -- putStrLn (indent (pack $ ppShow cod))
 
-  putStrLn "  fast:"
+  putStrLn ("\nJET: " <> tshow jet <> ":")
+  -- putStrLn "  fast:"
   putStrLn (indent $ pack $ ppShow $ jFast jet)
 
   pure (VFun (Fun args (Jut jet) mempty))

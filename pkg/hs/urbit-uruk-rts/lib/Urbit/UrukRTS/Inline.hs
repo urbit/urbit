@@ -2,9 +2,10 @@ module Urbit.UrukRTS.Inline (inline) where
 
 import ClassyPrelude
 
-import Urbit.UrukRTS.Types (Exp(..))
-import Data.Primitive.SmallArray
-import Control.Monad.State.Strict
+import Control.Monad.State.Strict (State, get, put, runState)
+import Data.Primitive.SmallArray  (SmallArray)
+import Text.Show.Pretty           (ppShow)
+import Urbit.UrukRTS.Types        (Exp(..))
 
 import qualified GHC.Exts            as GHC.Exts
 import qualified Urbit.UrukRTS.Types as F
@@ -34,8 +35,11 @@ inlineJetNoLoop j xs = do
   nextReg <- get
   newBody <- doSubst j
   let res = bindArgs nextReg xs newBody
-  traceM ("INLINE: " <> show res)
+  traceM ("\nINLINE:")
+  traceM $ indent $ ppShow res
   pure res
+ where
+  indent = unlines . fmap ("    | " <>) . lines
 
 inlineJet1 :: F.Jet -> Exp -> State Int Exp
 inlineJet1 j x = unlessRecur j (JET1 j x) $ inlineJetNoLoop j [x]

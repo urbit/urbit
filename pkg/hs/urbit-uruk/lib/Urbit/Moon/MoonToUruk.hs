@@ -100,10 +100,10 @@ compileFile lkup strict comp eval inpu = do
   go :: Map Text p -> [AST.Decl] -> AST -> Either Text p
   go env []              e = doOne env e
   go env (Decl n v : ds) e = do
-    traceM ("[" <> unpack n <> "]")
+    -- traceM ("[" <> unpack n <> "]")
     val <- doOne env v
-    traceM (ppShow val)
-    traceM ""
+    -- traceM (ppShow val)
+    -- traceM ""
     go (insertMap n val env) ds e
 
   doOne :: Map Text p -> AST -> Either Text p
