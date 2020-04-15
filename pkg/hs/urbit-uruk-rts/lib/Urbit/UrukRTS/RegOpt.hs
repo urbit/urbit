@@ -33,8 +33,9 @@ import Control.Monad.State.Strict (State, get, put, runState)
 --------------------------------------------------------------------------------
 
 regOpt :: Jet -> Jet
--- Opt j = j { jFast = traceShowId $ noUseless (traceShowId $ jFast j) }
-regOpt j = j { jFast = noUseless (jFast j) }
+regOpt j = j { jFast = newFast, jRegs = newReg }
+ where
+  (newFast, newReg) = reNumber $ noUseless $ jFast j
 
 isTrivial :: Exp -> Bool
 isTrivial = \case
@@ -44,6 +45,119 @@ isTrivial = \case
   REG _ -> True
   LNIL  -> True
   _     -> False
+
+reNumber :: Exp -> (Exp, Int)
+reNumber topExp = runState (go (0, mempty) topExp) 0
+ where
+  go :: (Int, Map Int Int) -> Exp -> State Int Exp
+  go a = \case
+    JET1 f x         -> JET1 f <$> go a x
+    JET2 f x y       -> JET2 f <$> go a x <*> go a y
+    JET3 f x y z     -> JET3 f <$> go a x <*> go a y <*> go a z
+    JET4 f x y z p   -> JET4 f <$> go a x <*> go a y <*> go a z <*> go a p
+    JET5 f x y z p q -> JET5 f <$> go a x <*> go a y <*> go a z <*> go a p <*> go a q
+    JETN f xs        -> JETN f <$> traverse (go a) xs
+    TURN l f         -> TURN <$> go a l <*> go a f
+
+    SLF   -> pure $ SLF
+    VAL v -> pure $ VAL v
+    REF i -> pure $ REF i
+    REG i -> REG <$> gi i
+     where
+      gi :: Int -> State Int Int
+      gi i = case lookup i t of
+               Nothing -> error ("unbound register: " <> show i)
+               Just ix -> pure ix
+
+    THE x y -> THE <$> go a x <*> go a y
+
+    IFF x t e -> IFF <$> go a x <*> go a t <*> go a e
+    CAS i x y z -> do
+      get >>= (put . max (n+1))
+      let a' = (n+1, insertMap i n t)
+      CAS n <$> go a' x <*> go a' y <*> go a' z
+    LET i x y -> do
+      get >>= (put . max (n+1))
+      let a' = (n+1, insertMap i n t)
+      LET n <$> go a' x <*> go a' y
+    FOR i l b -> do
+      get >>= (put . max (n+1))
+      let a' = (n+1, insertMap i n t)
+      FOR n <$> go a' l <*> go a' b
+
+    REC1 x -> REC1 <$> go a x
+    REC2 x y -> REC2 <$> go a x <*> go a y
+    REC3 x y z -> REC3 <$> go a x <*> go a y <*> go a z
+    REC4 x y z p -> REC4 <$> go a x <*> go a y <*> go a z <*> go a p
+    REC5 x y z p q -> REC5 <$> go a x <*> go a y <*> go a z <*> go a p <*> go a q
+    RECN xs -> RECN <$> traverse (go a) xs
+
+    SEQ x y -> SEQ <$> go a x <*> go a y
+    DED x -> DED <$> go a x
+
+    INC x -> INC <$> go a x
+    DEC x -> DEC <$> go a x
+    FEC x -> FEC <$> go a x
+    ADD x y -> ADD <$> go a x <*> go a y
+    MUL x y -> MUL <$> go a x <*> go a y
+
+    LSH x y -> LSH <$> go a x <*> go a y
+    LTH x y -> LTH <$> go a x <*> go a y
+    FUB x y -> FUB <$> go a x <*> go a y
+    NOT x -> NOT <$> go a x
+    XOR x y -> XOR <$> go a x <*> go a y
+    DIV x y -> DIV <$> go a x <*> go a y
+    TRA x -> TRA <$> go a x
+    MOD x y -> MOD <$> go a x <*> go a y
+    RAP x y -> RAP <$> go a x <*> go a y
+
+    SNAG x y -> SNAG <$> go a x <*> go a y
+    WELD x y -> WELD <$> go a x <*> go a y
+    ZING x -> ZING <$> go a x
+    NTOT x -> NTOT <$> go a x
+
+    INT_POSITIVE x -> INT_POSITIVE <$> go a x
+    INT_NEGATIVE x -> INT_NEGATIVE <$> go a x
+
+    INT_ABS x -> INT_ABS <$> go a x
+    INT_ADD x y -> INT_ADD <$> go a x <*> go a y
+    INT_DIV x y -> INT_DIV <$> go a x <*> go a y
+    INT_IS_ZER x -> INT_IS_ZER <$> go a x
+    INT_IS_NEG x -> INT_IS_NEG <$> go a x
+    INT_IS_POS x -> INT_IS_POS <$> go a x
+    INT_LTH x y -> INT_LTH <$> go a x <*> go a y
+    INT_MUL x y -> INT_MUL <$> go a x <*> go a y
+    INT_NEGATE x -> INT_NEGATE <$> go a x
+    INT_SUB x y -> INT_SUB <$> go a x <*> go a y
+
+    SUB x y -> SUB <$> go a x <*> go a y
+    ZER x -> ZER <$> go a x
+    EQL x y -> EQL <$> go a x <*> go a y
+
+    CON x y -> CON <$> go a x <*> go a y
+    CAR x -> CAR <$> go a x
+    CDR x -> CDR <$> go a x
+    LEF x -> LEF <$> go a x
+    RIT x -> RIT <$> go a x
+
+    LCON x y -> LCON <$> go a x <*> go a y
+    LNIL -> pure LNIL
+    GULF x y -> GULF <$> go a x <*> go a y
+
+    CLO1 f x         -> CLO1 f <$> go a x
+    CLO2 f x y       -> CLO2 f <$> go a x <*> go a y
+    CLO3 f x y z     -> CLO3 f <$> go a x <*> go a y <*> go a z
+    CLO4 f x y z p   -> CLO4 f <$> go a x <*> go a y <*> go a z <*> go a p
+    CLO5 f x y z p q -> CLO5 f <$> go a x <*> go a y <*> go a z <*> go a p <*> go a q
+    CLON f xs -> CLON f <$> traverse (go a) xs
+    CALN f xs -> CALN <$> go a f <*> traverse (go a) xs
+   where
+    n :: Int
+    n = fst a
+
+    t :: Map Int Int
+    t = snd a
+
 
 noUseless :: Exp -> Exp
 noUseless = go
