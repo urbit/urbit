@@ -178,6 +178,7 @@ data Node
   | Weld
 
   | AddAssoc
+  | FindAssoc
  deriving (Eq, Ord, Generic, Hashable)
 
 instance Show Node where
@@ -254,6 +255,7 @@ instance Show Node where
     Weld        -> "WELD"
 
     AddAssoc    -> "ADD_ASSOC"
+    FindAssoc   -> "FIND_ASSOC"
 
 data Fun = Fun
   { fNeed :: !Int
@@ -360,7 +362,8 @@ data Exp
   | WELD !Exp !Exp                --  Concatenate two lists
   | ZING !Exp                     --  Concatenate list of lists
 
-  | ADD_ASSOC !Exp !Exp !Exp !Exp !Exp -- Add to assoc list
+  | ADD_ASSOC !Exp !Exp !Exp !Exp !Exp  -- Add to assoc list
+  | FIND_ASSOC !Exp !Exp !Exp     --  Find in assoc list
 
   | INT_POSITIVE !Exp
   | INT_NEGATIVE !Exp
@@ -499,3 +502,4 @@ nodeArity = \case
   IntSub -> 2
 
   AddAssoc -> 5
+  FindAssoc -> 3

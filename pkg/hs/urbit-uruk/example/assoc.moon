@@ -4,17 +4,17 @@
 :: We want a structure that's easy to jet. So we build an assoc list of cons
 :: cells. In the interpreter, this turns into VLis [(VCon Val Val)].
 
-=/  find-assoc
-  ..  $
-  |=  (eq l k)
-  %+  (cas l)
-    |=  link
-    =/  entry  (car link)
-    =/  e-key  (car entry)
-    ?:  (eql e-key k)
-      (lef (cdr entry))
-    ($ eq (cdr link) k)
-  <u (rit uni)>
+:: =/  find-assoc
+::   ..  $
+::   |=  (eq l k)
+::   %+  (cas l)
+::     |=  link
+::     =/  entry  (car link)
+::     =/  e-key  (car entry)
+::     ?:  (eql e-key k)
+::       (lef (cdr entry))
+::     ($ eq (cdr link) k)
+::   <u (rit uni)>
 
 ::  always returns a list, replacing the key if equivalent
 :: =/  add-assoc
@@ -43,3 +43,4 @@
 =/  f  (add-assoc lth eql e 5 5)
 
 (find-assoc eql f 3)
+

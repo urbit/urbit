@@ -193,6 +193,7 @@ instance Uruk Val where
   uGlobal "weld"         = Just $ mkNode 2 Weld
 
   uGlobal "add-assoc"    = Just $ mkNode 5 AddAssoc
+  uGlobal "find-assoc"   = Just $ mkNode 3 FindAssoc
 
   uGlobal _              = Nothing
 
@@ -376,6 +377,7 @@ reduce !no !xs = do
     Zing      -> dZing x
 
     AddAssoc  -> dAddAssoc x y z (v 3) (v 4)
+    FindAssoc -> dFindAssoc x y z
 
     --  S₁fgx   = (fx)(gx)
     --  S₂fgxy  = (fxy)(gxy)
@@ -663,6 +665,17 @@ dAddAssoc _ _ (VLis []) k v = pure $ VLis [VCon k v]
 dAddAssoc _ _ (VFun (Fun 2 LNil mempty)) k v = pure $ VLis [VCon k v]
 dAddAssoc _ _ (VFun (Fun 2 (Lis []) mempty)) k v = pure $ VLis [VCon k v]
 dAddAssoc _ _ _ _ _ = throwIO (TypeError ("dAddAssoc type error somewhere"))
+
+dFindAssoc :: Val -> Val -> Val -> IO Val
+dFindAssoc eq (VLis ((VCon curKey curVal):xs)) k =
+  kVVV eq curKey k >>= \case
+    VBol True -> pure $ VLef curVal
+    VBol False -> dFindAssoc eq (VLis xs) k
+    _ -> throw (TypeError "find-assoc-eq-not-bool")
+dFindAssoc _ (VLis []) _ = pure $ VRit VUni
+dFindAssoc _ (VFun (Fun 2 LNil mempty)) _ = pure $ VRit VUni
+dFindAssoc _ (VFun (Fun 2 (Lis []) mempty)) _ = pure $ VRit VUni
+dFindAssoc _ _ _ = throwIO (TypeError "dFindAssoc type error somewhere")
 
 seq :: Val -> Val -> IO Val
 {-# INLINE seq #-}
@@ -993,7 +1006,11 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     WELD x y        -> join (dWeld <$> go x <*> go y)
     ZING x          -> join (dZing <$> go x)
 
-    ADD_ASSOC x y z p q -> join (dAddAssoc <$> go x <*> go y <*> go z <*> go p <*> go q)
+    -- TODO: It looks like we're going down the slow paths for these in reduce
+    -- even though we have definitions in OptToFast?
+    ADD_ASSOC x y z p q -> join (dAddAssoc <$> go x <*> go y <*> go z <*>
+                                 go p <*> go q)
+    FIND_ASSOC x y z -> join (dFindAssoc <$> go x <*> go y <*> go z)
 
     INT_POSITIVE x -> join (dIntPositive <$> go x)
     INT_NEGATIVE x -> join (dIntNegative <$> go x)

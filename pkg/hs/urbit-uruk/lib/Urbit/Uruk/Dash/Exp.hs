@@ -70,6 +70,7 @@ data SingJet
   | SNAG
   | WELD
   | ADD_ASSOC
+  | FIND_ASSOC
  deriving (Eq, Ord, Read, Show, Enum, Bounded, Generic)
  deriving anyclass NFData
 

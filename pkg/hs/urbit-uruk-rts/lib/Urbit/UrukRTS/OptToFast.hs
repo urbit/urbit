@@ -135,6 +135,10 @@ compile arity numRegs = go
   kal F.Sub     [x, y] = F.SUB (go x) (go y)
   kal F.Mul     [x, y] = F.MUL (go x) (go y)
 
+  kal F.AddAssoc [a, b, c, d, e] =
+    F.ADD_ASSOC (go a) (go b) (go c) (go d) (go e)
+  kal F.FindAssoc [x, y, z] = F.FIND_ASSOC (go x) (go y) (go z)
+
   kal F.IntPositive [x] = F.INT_POSITIVE (go x)
   kal F.IntNegative [x] = F.INT_NEGATIVE (go x)
 
