@@ -119,6 +119,8 @@ pattern Snag = N (M (MS SNAG) 2 [])
 pattern Turn = N (M (MS TURN) 2 [])
 pattern Weld = N (M (MS WELD) 2 [])
 
+pattern AddAssoc = N (M (MS ADD_ASSOC) 5 [])
+
 type Exp = Dash.ExpTree Ur
 type Val = Exp
 
@@ -176,6 +178,7 @@ instance Uruk Exp where
   uGlobal "snag" = Just Snag
   uGlobal "turn" = Just Turn
   uGlobal "weld" = Just Weld
+  uGlobal "add-assoc" = Just AddAssoc
   uGlobal _     = Nothing
 
   uArity (N (J n))     = pure $ AriJay n

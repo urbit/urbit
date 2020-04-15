@@ -192,6 +192,8 @@ instance Uruk Val where
   uGlobal "turn"         = Just $ mkNode 2 Turn
   uGlobal "weld"         = Just $ mkNode 2 Weld
 
+  uGlobal "add-assoc"    = Just $ mkNode 5 AddAssoc
+
   uGlobal _              = Nothing
 
 
@@ -372,6 +374,8 @@ reduce !no !xs = do
     Turn      -> dTurn x y
     Weld      -> dWeld x y
     Zing      -> dZing x
+
+    AddAssoc  -> dAddAssoc x y z (v 3) (v 4)
 
     --  S₁fgx   = (fx)(gx)
     --  S₂fgxy  = (fxy)(gxy)
@@ -637,9 +641,28 @@ dCas (VRit x) l r = kVV r x
 dCas (VLis (x:xs)) l r = kVV l (VCon x (VLis xs))
 dCas (VLis [])     l r = kVV r VUni               -- technically could happen
 dCas (VFun (Fun 2 LNil mempty)) l r = kVV r VUni -- the main loop termination
+dCas (VFun (Fun 2 (Lis []) mempty)) l r = kVV r VUni -- the main loop termination
 dCas c        _ _ = do
   pPrint c
-  throwIO (TypeError "cas-not-sum")
+  throwIO (TypeError "cas-not-sum: ")
+
+dAddAssoc :: Val -> Val -> Val -> Val -> Val -> IO Val
+dAddAssoc lt eq (VLis ((VCon curKey curVal):xs)) k v =
+  kVVV eq curKey k >>= \case
+    VBol True -> pure $ VLis ((VCon k v):xs)
+    VBol False -> kVVV lt curKey k >>= \case
+      VBol True -> do
+        dAddAssoc lt eq (VLis xs) k v >>= \case
+          (VLis recursed) -> pure $ VLis ((VCon curKey curVal):recursed)
+          _ -> throw (TypeError ("impossible-in-dass-assoc"))
+      VBol False -> do
+        pure $ VLis ((VCon k v):(VCon curKey curVal):xs)
+      _ -> throwIO (TypeError ("add-assoc-lt-not-bool"))
+    _ -> throwIO (TypeError ("add-assoc-eq-not-bool"))
+dAddAssoc _ _ (VLis []) k v = pure $ VLis [VCon k v]
+dAddAssoc _ _ (VFun (Fun 2 LNil mempty)) k v = pure $ VLis [VCon k v]
+dAddAssoc _ _ (VFun (Fun 2 (Lis []) mempty)) k v = pure $ VLis [VCon k v]
+dAddAssoc _ _ _ _ _ = throwIO (TypeError ("dAddAssoc type error somewhere"))
 
 seq :: Val -> Val -> IO Val
 {-# INLINE seq #-}
@@ -970,6 +993,8 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     WELD x y        -> join (dWeld <$> go x <*> go y)
     ZING x          -> join (dZing <$> go x)
 
+    ADD_ASSOC x y z p q -> join (dAddAssoc <$> go x <*> go y <*> go z <*> go p <*> go q)
+
     INT_POSITIVE x -> join (dIntPositive <$> go x)
     INT_NEGATIVE x -> join (dIntNegative <$> go x)
 
@@ -1010,6 +1035,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
       VLis (x:xs) -> setReg i (VCon x (VLis xs)) >> go l
       VLis []     -> setReg i VUni >> go r
       VFun (Fun 2 LNil mempty) -> setReg i VUni >> go r
+      VFun (Fun 2 (Lis []) mempty) -> setReg i VUni >> go r
       _       -> throwIO (TypeError "cas-not-sum")
     LCON x y       -> do
       fx <- go x;
