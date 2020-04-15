@@ -358,6 +358,8 @@
       %+  weld  path.act
       ?~(mailbox /0 /(scot %ud (lent envelopes.u.mailbox)))
     :_  state
+    ::TODO  we shouldn't include the trailing /0 or similar in the wire,
+    ::      we never use it anywhere, and it complicates other logic. see #2746
     :~  [%pass chat-history %agent [ship.act %chat-hook] %watch chat-history]
         [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
     ==
@@ -376,11 +378,10 @@
       [~ state]
     =.  synced  (~(del by synced) path.act)
     :_  state
-    %-  zing
-    :~  (pull-wire u.ship [%backlog (weld path.act /0)])
+    :*  [%give %kick ~[[%mailbox path.act]] ~]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
         (pull-wire u.ship [%mailbox path.act])
-        [%give %kick ~[[%mailbox path.act]] ~]~
-        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]~
+        (pull-backlog-subscriptions u.ship path.act)
     ==
   ==
 ::
@@ -715,10 +716,23 @@
     (snoc `^path`path %noun)
   ==
 ::
+++  pull-backlog-subscriptions
+  |=  [target=ship chat=path]
+  ^-  (list card)
+  %+  murn  ~(tap by wex.bol)
+  |=  [[=wire =ship =term] [acked=? =path]]
+  ^-  (unit card)
+  ?.  ?&  =(ship target)
+          ?=([%backlog *] wire)
+          =(`1 (find chat wire))
+      ==
+    ~
+  `(pull-wire target wire)
+::
 ++  pull-wire
   |=  [=ship =wire]
-  ^-  (list card)
+  ^-  card
   ?:  =(ship our.bol)
-    [%pass wire %agent [our.bol %chat-store] %leave ~]~
-  [%pass wire %agent [ship %chat-hook] %leave ~]~
+    [%pass wire %agent [our.bol %chat-store] %leave ~]
+  [%pass wire %agent [ship %chat-hook] %leave ~]
 --
