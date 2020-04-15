@@ -1,17 +1,17 @@
-{-- OPTIONS_GHC -Wall -Werror #-}
+{-# OPTIONS_GHC -Wall -Werror #-}
 
 module Urbit.UrukRTS.Inline (inline) where
 
 import ClassyPrelude
 
+import Urbit.UrukRTS.Types
+
+--port Text.Show.Pretty           (ppShow)
+
 import Control.Monad.State.Strict (State, get, put, runState)
 import Data.Primitive.SmallArray  (SmallArray)
-import Text.Show.Pretty           (ppShow)
-import Urbit.UrukRTS.Types        (Exp(..), Jet(..), Val(..))
 
-import qualified GHC.Exts            as GHC.Exts
-import qualified Urbit.UrukRTS.Types as F
---port qualified Urbit.UrukRTS.JetOptimize as O
+import qualified GHC.Exts as GHC.Exts
 
 --------------------------------------------------------------------------------
 
@@ -41,31 +41,31 @@ inlineJetNoLoop j xs = do
   nextReg <- get
   newBody <- doSubst j
   let res = bindArgs nextReg xs newBody
-  traceM ("\nINLINE:")
-  traceM $ indent $ ppShow res
+  -- traceM ("\nINLINE:")
+  -- traceM $ indent $ ppShow res
   pure res
 
-indent :: String -> String
-indent = unlines . fmap ("    | " <>) . lines
+-- indent :: String -> String
+-- indent = unlines . fmap ("    | " <>) . lines
 
-inlineJet1 :: F.Jet -> Exp -> State Int Exp
+inlineJet1 :: Jet -> Exp -> State Int Exp
 inlineJet1 j x = unlessRecur j (JET1 j x) $ inlineJetNoLoop j [x]
 
-inlineJet2 :: F.Jet -> Exp -> Exp -> State Int Exp
+inlineJet2 :: Jet -> Exp -> Exp -> State Int Exp
 inlineJet2 j x y = unlessRecur j (JET2 j x y) $ inlineJetNoLoop j [x,y]
 
-inlineJet3 :: F.Jet -> Exp -> Exp -> Exp -> State Int Exp
+inlineJet3 :: Jet -> Exp -> Exp -> Exp -> State Int Exp
 inlineJet3 j x y z = unlessRecur j (JET3 j x y z) $ inlineJetNoLoop j [x,y,z]
 
-inlineJet4 :: F.Jet -> Exp -> Exp -> Exp -> Exp -> State Int Exp
+inlineJet4 :: Jet -> Exp -> Exp -> Exp -> Exp -> State Int Exp
 inlineJet4 j x y z p =
   unlessRecur j (JET4 j x y z p) $ inlineJetNoLoop j [x, y, z, p]
 
-inlineJet5 :: F.Jet -> Exp -> Exp -> Exp -> Exp -> Exp -> State Int Exp
+inlineJet5 :: Jet -> Exp -> Exp -> Exp -> Exp -> Exp -> State Int Exp
 inlineJet5 j x y z p q =
   unlessRecur j (JET5 j x y z p q) $ inlineJetNoLoop j [x, y, z, p, q]
 
-inlineJetN :: F.Jet -> SmallArray Exp -> State Int Exp
+inlineJetN :: Jet -> SmallArray Exp -> State Int Exp
 inlineJetN j xs =
   unlessRecur j (JETN j xs) $ inlineJetNoLoop j (GHC.Exts.toList xs)
 
@@ -75,9 +75,9 @@ inlineJetN j xs =
   -- , fArgs :: CloN -- Lazy on purpose.
   -- }
 
-staticJetOneArgLeft :: Exp -> Maybe (F.Jet, [Exp])
+staticJetOneArgLeft :: Exp -> Maybe (Jet, [Exp])
 staticJetOneArgLeft = \case
-  VAL (F.VFun f)   -> doFun f []
+  VAL (VFun f)     -> doFun f []
   CLO1 f x         -> doFun f [x]
   CLO2 f x y       -> doFun f [x, y]
   CLO3 f x y z     -> doFun f [x, y, z]
@@ -86,8 +86,8 @@ staticJetOneArgLeft = \case
   CLON f xs        -> doFun f (GHC.Exts.toList xs)
   _                -> Nothing
  where
-  doFun :: F.Fun -> [Exp] -> Maybe (F.Jet, [Exp])
-  doFun (F.Fun {..}) xs = do
+  doFun :: Fun -> [Exp] -> Maybe (Jet, [Exp])
+  doFun (Fun {..}) xs = do
     let expectedArgs = length xs + 1
     -- This can be relaxed! We can take closure params and put them on
     -- the stack.
@@ -97,30 +97,29 @@ staticJetOneArgLeft = \case
     guard (jArgs j == expectedArgs)
     pure (j, xs)
 
-  nodeJut :: F.Node -> Maybe Jet
-  nodeJut (F.Jut j) = pure j
+  nodeJut :: Node -> Maybe Jet
+  nodeJut (Jut j) = pure j
   nodeJut _         = Nothing
 
 inlineTurn :: Exp -> Exp -> State Int Exp
 inlineTurn lis f = case staticJetOneArgLeft f of
   Nothing -> do
-    traceM ("\nNOINLINE.TURN:")
-    traceM $ indent $ ppShow f
+    -- traceM ("\nNOINLINE.TURN:")
+    -- traceM $ indent $ ppShow f
     pure (TURN lis f)
   Just (j, xs) -> unlessRecur j (TURN lis f) $ do
     nextReg <- get
     newBody <- doSubst j
     turnReg <- pure (nextReg + (jArgs j - 1)) -- last argument
     res     <- pure $ bindArgs nextReg xs $ FOR turnReg lis $ newBody
-    traceM ("\nINLINE.TURN:")
-    traceM $ indent $ ppShow res
+    -- traceM ("\nINLINE.TURN:")
+    -- traceM $ indent $ ppShow res
     pure res
 
--- TODO Need to update jRegs
-inline :: F.Jet -> F.Jet
-inline j@F.Jet{..} =
+inline :: Jet -> Jet
+inline j@Jet{..} =
   let (bod, reg) = runState (go jFast) jRegs
-  in  j { F.jFast = bod, F.jRegs = reg }
+  in  j { jFast = bod, jRegs = reg }
  where
   go :: Exp -> State Int Exp
   go = \case
@@ -212,7 +211,7 @@ inline j@F.Jet{..} =
     CLON f xs -> CLON f <$> traverse go xs
     CALN f xs -> CALN <$> go f <*> traverse go xs
 
-subst :: (Int -> Int, Int -> Int) -> F.Exp -> F.Exp
+subst :: (Int -> Int, Int -> Int) -> Exp -> Exp
 subst (refReg, regReg) = go
  where
   go :: Exp -> Exp

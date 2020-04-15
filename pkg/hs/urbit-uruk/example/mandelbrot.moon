@@ -536,7 +536,6 @@
     [0 0 0]
   (snag o plasma-colors)
 
-::
 =/  calc-pixel-loop-inlined
   ~/  5  calc-pixel-loop-inlined
   ..  $
@@ -556,12 +555,6 @@
       (inc i)
     (add-fp (sub-fp xx yy) cr)
   (add-fp (int-mul i2 (int-div (int-mul (int-div x0 i10) y0) i1000)) ci)
-
-::  calc-color-for
-::  mul-fp
-::  int-lth
-::  smul
-::  int-add
 
 ::  Compiler should do this automatically (lambda lifting)
 =/  calc-pixel-loop
