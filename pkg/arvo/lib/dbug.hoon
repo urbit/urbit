@@ -35,7 +35,7 @@
     =/  dbug
       !<(poke vase)
     =;  =tang
-      ((slog tang) [~ this])
+      ((%*(. slog pri 1) tang) [~ this])
     ?-  -.dbug
       %bowl   [(sell !>(bowl))]~
     ::
