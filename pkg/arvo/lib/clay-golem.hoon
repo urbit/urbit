@@ -55,30 +55,29 @@
 ::  +an: $ankh interface door
 ::
 ++  an
-  |_  =ankh
+  |_  nak=ankh
   ::  +get: produce file at path
   ::
   ++  get
     |=  =path
     ^-  (unit cage)
     ?~  path
-      ?~  fil.ankh
+      ?~  fil.nak
         ~
-      `q.u.fil.ankh
-    ?~  kid=(~(get by dir.ankh) i.path)
+      `q.u.fil.nak
+    ?~  kid=(~(get by dir.nak) i.path)
       ~
-    $(ankh u.kid, path t.path)
+    $(nak u.kid, path t.path)
   ::  +get-fit: produce file at path with /'s maybe converted to -'s
   ::
   ++  get-fit
     |=  pax=path
     ^-  (unit path)
     ?>  ?=([* * ~] pax)
-    =;  pux=(unit path)
-      ?~(pux ~ `[i.pax u.pux])
-    =.  ankh  (~(got by dir.ankh) i.pax)
+    =-  ?~(- ~ `[i.pax u.-])
+    =.  nak  (~(got by dir.nak) i.pax)
     ?^  got=(get t.pax)
-      `t.pax
+      (some t.pax)
     =/  seg=tape  (trip i.t.pax)
     ?~  dex=(find "-" seg)
       ~
