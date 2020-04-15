@@ -6,39 +6,57 @@ import Urbit.UrukRTS.Types (Exp(..))
 import Data.Primitive.SmallArray
 import Control.Monad.State.Strict
 
+import qualified GHC.Exts            as GHC.Exts
+import qualified Urbit.UrukRTS.Types as F
 --port qualified Urbit.UrukRTS.JetOptimize as O
-import qualified Urbit.UrukRTS.Types       as F
 
 --------------------------------------------------------------------------------
 
+unlessRecur :: F.Jet -> Exp -> State Int Exp -> State Int Exp
+unlessRecur j fallback act | F.jLoop j = pure fallback
+unlessRecur j fallback act             = act
+
+doSubst :: F.Jet -> State Int Exp
+doSubst F.Jet{..} = do
+  nextReg <- get
+  let argRegF i = nextReg + i
+  let regRegF i = nextReg + i + jArgs
+  put (nextReg + jArgs + jRegs)
+  pure $ subst (argRegF, regRegF) jFast
+
+bindArgs :: Int -> [Exp] -> Exp -> Exp
+bindArgs reg args funBody = case args of
+  []     -> funBody
+  x : xs -> LET reg x (bindArgs (succ reg) xs funBody)
+
+inlineJetNoLoop :: F.Jet -> [Exp] -> State Int Exp
+inlineJetNoLoop j xs = do
+  nextReg <- get
+  newBody <- doSubst j
+  let res = bindArgs nextReg xs newBody
+  traceM ("INLINE: " <> show res)
+  pure res
+
 inlineJet1 :: F.Jet -> Exp -> State Int Exp
-inlineJet1 j x = do
-  case F.jLoop j of
-    True -> pure (JET1 j x)
-    False -> do
-      nextReg <- get
-      put (nextReg + F.jArgs j + F.jRegs j)
-      let argRegF i = nextReg + i
-      let regRegF i = nextReg + i + nArgs
-      traceM ("INLINE: " <> show (LET nextReg x $ subst (argRegF, regRegF) $ F.jFast j))
-      pure $ LET nextReg x $ subst (argRegF, regRegF) $ F.jFast j
- where
-  nArgs = F.jArgs j
+inlineJet1 j x = unlessRecur j (JET1 j x) $ inlineJetNoLoop j [x]
 
 inlineJet2 :: F.Jet -> Exp -> Exp -> State Int Exp
-inlineJet2 j x y = pure $ JET2 j x y
+inlineJet2 j x y = unlessRecur j (JET2 j x y) $ inlineJetNoLoop j [x,y]
 
 inlineJet3 :: F.Jet -> Exp -> Exp -> Exp -> State Int Exp
-inlineJet3 j x y z = pure $ JET3 j x y z
+inlineJet3 j x y z = unlessRecur j (JET3 j x y z) $ inlineJetNoLoop j [x,y,z]
 
 inlineJet4 :: F.Jet -> Exp -> Exp -> Exp -> Exp -> State Int Exp
-inlineJet4 j x y z p = pure $ JET4 j x y z p
+inlineJet4 j x y z p =
+  unlessRecur j (JET4 j x y z p) $ inlineJetNoLoop j [x, y, z, p]
 
 inlineJet5 :: F.Jet -> Exp -> Exp -> Exp -> Exp -> Exp -> State Int Exp
-inlineJet5 j x y z p q = pure $ JET5 j x y z p q
+inlineJet5 j x y z p q =
+  unlessRecur j (JET5 j x y z p q) $ inlineJetNoLoop j [x, y, z, p, q]
 
 inlineJetN :: F.Jet -> SmallArray Exp -> State Int Exp
-inlineJetN j xs = pure $ JETN j xs
+inlineJetN j xs =
+  unlessRecur j (JETN j xs) $ inlineJetNoLoop j (GHC.Exts.toList xs)
 
 -- TODO Need to update jRegs
 inline :: F.Jet -> F.Jet

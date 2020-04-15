@@ -669,4 +669,4 @@
   build-ppm-line
 
 :: This takes around 1m30s.
-(build-ppm 100 100)
+(build-ppm 1 1)
