@@ -34,10 +34,9 @@ export class ProfileOverlay extends Component {
   }
 
   render() {
-    const { contact, ship, color, topSpace, bottomSpace } = this.props;
+    const { contact, ship, color, topSpace, bottomSpace, group } = this.props;
 
     let top, bottom;
-    debugger;
     if (topSpace < OVERLAY_HEIGHT / 2) {
       top = `0px`;
     }
@@ -50,6 +49,10 @@ export class ProfileOverlay extends Component {
     const containerStyle = { top, bottom, left: "100%" };
 
     const isOwn = window.ship === ship;
+
+    const identityHref = group["group-path"].startsWith("/~/")
+      ? "/~groups/me"
+      : `/~groups/view${group["group-path"]}/${window.ship}`;
 
     return (
       <div
@@ -81,8 +84,8 @@ export class ProfileOverlay extends Component {
           )}
           {isOwn && (
             <a
-              href="/~groups/me"
-              className="b--gray3 b--solid bw1 black white-d mt3 tc pa2 pointer db"
+              href={identityHref}
+              className="b--black ba black white-d mt3 tc pa2 pointer db"
             >
               Edit Group Identity
             </a>

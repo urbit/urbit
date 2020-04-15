@@ -75,6 +75,7 @@ export class OverlaySigil extends Component {
             color={props.color}
             topSpace={state.topSpace}
             bottomSpace={state.bottomSpace}
+            group={props.group}
             onDismiss={this.profileHide}
           />
         )}

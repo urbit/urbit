@@ -177,6 +177,7 @@ export class Message extends Component {
            contact={contact}
            color={color}
            sigilClass={sigilClass}
+           group={props.group}
            className="fl pr3 v-top bg-white bg-gray0-d" />
           <div
             className="fr clamp-message white-d"

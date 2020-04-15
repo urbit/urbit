@@ -210,6 +210,7 @@ export class ChatScreen extends Component {
           paddingTop={paddingTop}
           paddingBot={paddingBot}
           pending={!!msg.pending}
+          group={props.association}
         />
       );
     });
