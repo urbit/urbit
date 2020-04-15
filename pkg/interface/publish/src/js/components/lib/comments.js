@@ -150,7 +150,7 @@ export class Comments extends Component {
           onEdit={() => this.commentEdit(i)}
           onEditCancel={this.commentEditCancel.bind(this)}
           editing={i === editing}
-          disabled={!!this.state.awaiting}
+          disabled={!!this.state.awaiting || editing}
           />
       );
     })
@@ -175,6 +175,7 @@ export class Comments extends Component {
               ref={(el) => {this.textArea = el}}
               onChange={this.commentChange}
               value={this.state.commentBody}
+              disabled={!!this.state.editing}
               onSubmit={this.commentSubmit}>
             </CommentInput>
           </div>

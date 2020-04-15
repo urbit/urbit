@@ -13,9 +13,22 @@ export class Subscription {
   start() {
     if (api.authTokens) {
       this.firstRoundSubscription();
+      window.urb.setOnChannelError(this.onChannelError.bind(this));
     } else {
       console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
     }
+  }
+
+  onChannelError(err) {
+    console.error('event source error: ', err);
+    console.log('initiating new channel');
+    this.firstRoundSubscriptionComplete = false;
+    setTimeout(2000, () => {
+      store.handleEvent({
+        data: { clear : true}
+      });
+      this.start();
+    });
   }
 
   subscribe(path, app) {
