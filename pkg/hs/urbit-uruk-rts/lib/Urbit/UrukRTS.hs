@@ -1044,6 +1044,23 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
         print ("iff.cond", c)
         throwIO (TypeError "iff-not-bol")
     LET i x k  -> (go x >>= setReg i) >> go k
+
+    FOR i lisExp bod -> do
+      -- putStrLn "FOR"
+      -- putStrLn ("  reg: " <> tshow i)
+      -- putStrLn ("  bod: " <> tshow bod)
+      lis <- go lisExp
+      -- putStrLn ("  lisval: " <> tshow lis)
+      xs  <- case lis of
+        VLis xs -> pure xs
+        _       -> throwIO (TypeError "turn-not-list")
+      res <- for xs $ \xv -> do
+        -- putStrLn ("  liselm:" <> tshow xv)
+        setReg i xv
+        go bod
+      -- putStrLn ("  forres:" <> tshow res)
+      pure (VLis res)
+
     CAS i x l r -> go x >>= \case
       VLef lv -> setReg i lv >> go l
       VRit rv -> setReg i rv >> go r

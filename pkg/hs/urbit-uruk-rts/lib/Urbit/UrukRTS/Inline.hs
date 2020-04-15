@@ -1,3 +1,5 @@
+{-- OPTIONS_GHC -Wall -Werror #-}
+
 module Urbit.UrukRTS.Inline (inline) where
 
 import ClassyPrelude
@@ -5,7 +7,7 @@ import ClassyPrelude
 import Control.Monad.State.Strict (State, get, put, runState)
 import Data.Primitive.SmallArray  (SmallArray)
 import Text.Show.Pretty           (ppShow)
-import Urbit.UrukRTS.Types        (Exp(..))
+import Urbit.UrukRTS.Types        (Exp(..), Jet(..), Val(..))
 
 import qualified GHC.Exts            as GHC.Exts
 import qualified Urbit.UrukRTS.Types as F
@@ -13,12 +15,16 @@ import qualified Urbit.UrukRTS.Types as F
 
 --------------------------------------------------------------------------------
 
-unlessRecur :: F.Jet -> Exp -> State Int Exp -> State Int Exp
-unlessRecur j fallback act | F.jLoop j = pure fallback
-unlessRecur j fallback act             = act
+unlessRecur :: Jet -> Exp -> State Int Exp -> State Int Exp
+unlessRecur j fallback _ | jLoop j = pure fallback
+unlessRecur _ _ act                = act
 
-doSubst :: F.Jet -> State Int Exp
-doSubst F.Jet{..} = do
+{-
+  - Stack references become register references (nextReg + i)
+  - Register references get incremented by (nextReg + jArgs)
+-}
+doSubst :: Jet -> State Int Exp
+doSubst Jet{..} = do
   nextReg <- get
   let argRegF i = nextReg + i
   let regRegF i = nextReg + i + jArgs
@@ -30,7 +36,7 @@ bindArgs reg args funBody = case args of
   []     -> funBody
   x : xs -> LET reg x (bindArgs (succ reg) xs funBody)
 
-inlineJetNoLoop :: F.Jet -> [Exp] -> State Int Exp
+inlineJetNoLoop :: Jet -> [Exp] -> State Int Exp
 inlineJetNoLoop j xs = do
   nextReg <- get
   newBody <- doSubst j
@@ -38,8 +44,9 @@ inlineJetNoLoop j xs = do
   traceM ("\nINLINE:")
   traceM $ indent $ ppShow res
   pure res
- where
-  indent = unlines . fmap ("    | " <>) . lines
+
+indent :: String -> String
+indent = unlines . fmap ("    | " <>) . lines
 
 inlineJet1 :: F.Jet -> Exp -> State Int Exp
 inlineJet1 j x = unlessRecur j (JET1 j x) $ inlineJetNoLoop j [x]
@@ -62,6 +69,53 @@ inlineJetN :: F.Jet -> SmallArray Exp -> State Int Exp
 inlineJetN j xs =
   unlessRecur j (JETN j xs) $ inlineJetNoLoop j (GHC.Exts.toList xs)
 
+-- data Fun = Fun
+  -- { fNeed :: !Int
+  -- , fHead :: !Node
+  -- , fArgs :: CloN -- Lazy on purpose.
+  -- }
+
+staticJetOneArgLeft :: Exp -> Maybe (F.Jet, [Exp])
+staticJetOneArgLeft = \case
+  VAL (F.VFun f)   -> doFun f []
+  CLO1 f x         -> doFun f [x]
+  CLO2 f x y       -> doFun f [x, y]
+  CLO3 f x y z     -> doFun f [x, y, z]
+  CLO4 f x y z p   -> doFun f [x, y, z, p]
+  CLO5 f x y z p q -> doFun f [x, y, z, p, q]
+  CLON f xs        -> doFun f (GHC.Exts.toList xs)
+  _                -> Nothing
+ where
+  doFun :: F.Fun -> [Exp] -> Maybe (F.Jet, [Exp])
+  doFun (F.Fun {..}) xs = do
+    let expectedArgs = length xs + 1
+    -- This can be relaxed! We can take closure params and put them on
+    -- the stack.
+    guard (mempty == fArgs)
+    guard (fNeed == expectedArgs)
+    j <- nodeJut fHead
+    guard (jArgs j == expectedArgs)
+    pure (j, xs)
+
+  nodeJut :: F.Node -> Maybe Jet
+  nodeJut (F.Jut j) = pure j
+  nodeJut _         = Nothing
+
+inlineTurn :: Exp -> Exp -> State Int Exp
+inlineTurn lis f = case staticJetOneArgLeft f of
+  Nothing -> do
+    traceM ("\nNOINLINE.TURN:")
+    traceM $ indent $ ppShow f
+    pure (TURN lis f)
+  Just (j, xs) -> unlessRecur j (TURN lis f) $ do
+    nextReg <- get
+    newBody <- doSubst j
+    turnReg <- pure (nextReg + (jArgs j - 1)) -- last argument
+    res     <- pure $ bindArgs nextReg xs $ FOR turnReg lis $ newBody
+    traceM ("\nINLINE.TURN:")
+    traceM $ indent $ ppShow res
+    pure res
+
 -- TODO Need to update jRegs
 inline :: F.Jet -> F.Jet
 inline j@F.Jet{..} =
@@ -70,12 +124,13 @@ inline j@F.Jet{..} =
  where
   go :: Exp -> State Int Exp
   go = \case
-    JET1 j x         -> join (inlineJet1 j <$> go x)
-    JET2 j x y       -> join (inlineJet2 j <$> go x <*> go y)
-    JET3 j x y z     -> join (inlineJet3 j <$> go x <*> go y <*> go z)
-    JET4 j x y z p   -> join (inlineJet4 j <$> go x <*> go y <*> go z <*> go p)
-    JET5 j x y z p q -> join (inlineJet5 j <$> go x <*> go y <*> go z <*> go p <*> go q)
-    JETN j xs        -> join (inlineJetN j <$> traverse go xs)
+    JET1 f x         -> join (inlineJet1 f <$> go x)
+    JET2 f x y       -> join (inlineJet2 f <$> go x <*> go y)
+    JET3 f x y z     -> join (inlineJet3 f <$> go x <*> go y <*> go z)
+    JET4 f x y z p   -> join (inlineJet4 f <$> go x <*> go y <*> go z <*> go p)
+    JET5 f x y z p q -> join (inlineJet5 f <$> go x <*> go y <*> go z <*> go p <*> go q)
+    JETN f xs        -> join (inlineJetN f <$> traverse go xs)
+    TURN l f         -> join (inlineTurn <$> go l <*> go f)
 
     -- Boilerplate for traversal. Can be abstracted over, but too lazy
     -- to do it now.
@@ -88,6 +143,8 @@ inline j@F.Jet{..} =
     IFF x t e -> IFF <$> go x <*> go t <*> go e
     CAS i x y z -> CAS i <$> go x <*> go y <*> go z
     LET i x y -> LET i <$> go x <*> go y
+    FOR i l b -> FOR i <$> go l <*> go b
+
     REC1 x -> REC1 <$> go x
     REC2 x y -> REC2 <$> go x <*> go y
     REC3 x y z -> REC3 <$> go x <*> go y <*> go z
@@ -113,7 +170,7 @@ inline j@F.Jet{..} =
     TRA x -> TRA <$> go x
     MOD x y -> MOD <$> go x <*> go y
     RAP x y -> RAP <$> go x <*> go y
-    TURN x y -> TURN <$> go x <*> go y
+
     SNAG x y -> SNAG <$> go x <*> go y
     WELD x y -> WELD <$> go x <*> go y
     ZING x -> ZING <$> go x
@@ -178,6 +235,8 @@ subst (refReg, regReg) = go
     IFF x t e -> IFF (go x) (go t) (go e)
     CAS i x y z -> CAS (regReg i) (go x) (go y) (go z)
     LET i x y -> LET (regReg i) (go x) (go y)
+    FOR i l f -> FOR (regReg i) (go l) (go f)
+
     REC1 x -> REC1 (go x)
     REC2 x y -> REC2 (go x) (go y)
     REC3 x y z -> REC3 (go x) (go y) (go z)

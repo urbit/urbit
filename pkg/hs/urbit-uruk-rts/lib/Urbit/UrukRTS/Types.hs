@@ -328,6 +328,8 @@ data Exp
   | IFF   !Exp !Exp !Exp           --  If-Then-Else
   | CAS   !Int !Exp !Exp !Exp      --  Pattern Match
   | LET   !Int !Exp !Exp           --  Pattern Match on single value
+  | FOR   !Int !Exp !Exp           --  Optimized Map over a list
+
   | REC1  !Exp                     --  Recursive Call
   | REC2  !Exp !Exp                --  Recursive Call
   | REC3  !Exp !Exp !Exp           --  Recursive Call
