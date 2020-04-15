@@ -108,6 +108,9 @@ jetSpec = [r|
 
 ++  (trace x y)  (y uni)
 
+++  (box x)  (J %box (K x))
+++  (unbox x)  (x uni)
+
 ++  snag
   %-  (J J %snag)
   %-  fix

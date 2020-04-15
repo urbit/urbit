@@ -185,6 +185,9 @@ instance Uruk Val where
   uGlobal "int-negate"   = Just $ mkNode 1 IntNegate
   uGlobal "int-sub"      = Just $ mkNode 2 IntSub
 
+  uGlobal "box"          = Just $ mkNode 1 Box  -- hack, actually 2
+  uGlobal "unbox"        = Just $ mkNode 2 Unbox
+
   uGlobal "lcon"         = Just $ mkNode 2 LCon      -- hack, actually 4
   uGlobal "lnil"         = Just $ mkNode 2 (Lis [])
   uGlobal "gulf"         = Just $ mkNode 2 Gulf
@@ -350,6 +353,9 @@ reduce !no !xs = do
     IntMul -> dIntMul x y
     IntNegate -> dIntNegate x
     IntSub -> dIntSub x y
+
+    Box       -> pure (VBox x)
+    Unbox     -> dUnbox x
 
     Inc       -> inc x
     Dec       -> dec x
@@ -857,6 +863,11 @@ dIntSub :: Val -> Val -> IO Val
 dIntSub (VInt x) (VInt y) = pure $ VInt (x - y)
 dIntSub _        _        = throwIO $ TypeError "int-sub-not-int"
 
+dUnbox :: Val -> IO Val
+{-# INLINE dUnbox #-}
+dUnbox (VBox x) = pure x
+dUnbox _        = throwIO $ TypeError "unbox-not-box"
+
 listToVal :: [Val] -> Val
 {-# INLINE listToVal #-}
 listToVal []    = VRit VUni
@@ -1025,6 +1036,9 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     INT_MUL x y -> join (dIntMul <$> go x <*> go y)
     INT_NEGATE x -> join (dIntNegate <$> go x)
     INT_SUB x y -> join (dIntSub <$> go x <*> go y)
+
+    BOX x           -> VBox <$> go x
+    UNBOX x         -> join (dUnbox <$> go x)
 
     SUB  x y        -> join (sub <$> go x <*> go y)
     ZER x           -> join (zer <$> go x)

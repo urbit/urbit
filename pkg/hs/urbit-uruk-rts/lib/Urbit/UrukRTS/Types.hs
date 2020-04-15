@@ -170,6 +170,9 @@ data Node
   | IntNegate
   | IntSub
 
+  | Box
+  | Unbox
+
   | LCon
   | LNil
   | Gulf
@@ -247,6 +250,9 @@ instance Show Node where
     IntNegate   -> "INT_NEGATE"
     IntSub      -> "INT_SUB"
 
+    Box         -> "BOX"
+    Unbox       -> "UNBOX"
+
     LCon        -> "LCON"
     LNil        -> "LNIL"
     Gulf        -> "GULF"
@@ -279,6 +285,7 @@ data Val
   | VInt !Integer
   | VBol !Bool
   | VLis ![Val]
+  | VBox !Val
   | VFun !Fun
  deriving (Eq, Ord, Generic, Hashable)
 
@@ -292,6 +299,7 @@ instance NFData Val where
     VInt _   -> ()
     VBol _   -> ()
     VLis _   -> ()
+    VBox _   -> ()
     VFun _   -> ()
 
 instance Show Val where
@@ -305,6 +313,7 @@ instance Show Val where
     VBol True  -> "Y"
     VBol False -> "N"
     VLis vals  -> show vals
+    VBox x     -> "!" <> show x
     VFun f     -> show f
    where
     unrollCons acc (VCon x y) = unrollCons (x : acc) y
@@ -379,6 +388,9 @@ data Exp
   | INT_NEGATE !Exp
   | INT_SUB !Exp !Exp
 
+  | BOX !Exp
+  | UNBOX !Exp
+
   | SUB !Exp !Exp                 --  Subtract
   | ZER !Exp                      --  Is Zero?
   | EQL !Exp !Exp                 --  Atom equality.
@@ -429,6 +441,7 @@ valFun = \case
   VInt i   -> Fun 1 (Int i) mempty
   VBol b   -> Fun 2 (Bol b) mempty
   VLis xs  -> Fun 2 (Lis xs) mempty
+  VBox x   -> Fun 1 Kay (fromList [x])
   VFun f   -> f
 
 nodeArity :: Node -> Int
@@ -500,6 +513,9 @@ nodeArity = \case
   IntMul -> 2
   IntNegate -> 1
   IntSub -> 2
+
+  Box -> 2
+  Unbox -> 1
 
   AddAssoc -> 5
   FindAssoc -> 3

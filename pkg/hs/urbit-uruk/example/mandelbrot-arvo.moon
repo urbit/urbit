@@ -724,12 +724,12 @@
   ?-    (find-assoc is-cons-nat-eq cache (con w h))
       image
     %+  trace  'cached'  |=  ignore
-    [image ($ cache)]
+    [(unbox image) ($ cache)]
   ::
       nothing
     %+  trace  'uncached'  |=  ignore
     =/  image  (build-ppm w h)
-    [image ($ (add-assoc is-cons-nat-lt is-cons-nat-eq cache (con w h) image))]
+    [image ($ (add-assoc is-cons-nat-lt is-cons-nat-eq cache (con w h) (box image)))]
   ==
 
 :: Initial function state: empty cache
