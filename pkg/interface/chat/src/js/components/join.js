@@ -27,7 +27,7 @@ export class JoinScreen extends Component {
       let sig = props.autoJoin.includes("/~/");
 
       let ship = !!sig ? station[2] : station[1];
-      station = station.join('/');
+      station = props.autoJoin;
       if (
         station.length < 2 ||
         (!!sig && station.length < 3) ||
