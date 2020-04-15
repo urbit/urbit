@@ -22,12 +22,11 @@ export class JoinScreen extends Component {
   componentDidMount() {
     const { props } = this;
     if (props.autoJoin !== "/undefined/undefined" &&
-        props.autoJoin !== "/~/undefined/undefined") {
+      props.autoJoin !== "/~/undefined/undefined") {
       let station = props.autoJoin.split('/');
       let sig = props.autoJoin.includes("/~/");
 
       let ship = !!sig ? station[2] : station[1];
-      station = props.autoJoin;
       if (
         station.length < 2 ||
         (!!sig && station.length < 3) ||
@@ -38,7 +37,7 @@ export class JoinScreen extends Component {
         });
         return;
       }
-
+      station = props.autoJoin;
 
       this.setState({
         station,
@@ -50,7 +49,7 @@ export class JoinScreen extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
     if (state.station in props.inbox ||
-        props.chatSynced !== prevProps.chatSynced) {
+       (props.chatSynced !== prevProps.chatSynced && state.station !== '/')) {
       this.setState({ awaiting: false });
       props.history.push(`/~chat/room${state.station}`);
     }
@@ -59,24 +58,13 @@ export class JoinScreen extends Component {
   onClickJoin() {
     const { props, state } = this;
 
-    let text = state.station;
-    if (text in props.inbox ||
-        text.length === 0) {
-      this.setState({
-        error: true,
-      });
-      return;
-    }
+    let station = state.station.split('/');
+    let sig = state.station.includes("/~/");
 
-    let station = text.split('/');
-    let sig = state.station.includes("~/");
-    let ship = !!sig ? station[1] : station[0];
-
-    station = station.join('/');
-
+    let ship = !!sig ? station[2] : station[1];
     if (
-      (!sig && station.split('/').length < 2) ||
-      (!!sig && station.split('/').length < 3) ||
+      station.length < 2 ||
+      (!!sig && station.length < 3) ||
       !urbitOb.isValidPatp(ship)
     ) {
       this.setState({
@@ -84,16 +72,19 @@ export class JoinScreen extends Component {
       });
       return;
     }
+    station = state.station.trim();
 
     this.setState({
+      station,
       awaiting: true,
-      station: `/${station}`
-    }, () => props.api.chatView.join(ship, `/${station}`, true))
+    }, () => {
+      props.api.chatView.join(ship, station, true)
+    });
   }
 
   stationChange(event) {
     this.setState({
-      station: event.target.value
+      station: `/${event.target.value}`
     });
   }
 
