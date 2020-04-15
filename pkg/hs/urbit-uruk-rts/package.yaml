@@ -25,6 +25,20 @@ executables:
       - "-with-rtsopts=-N"
       - -fwarn-incomplete-patterns
 
+  arvomoon:
+    main: Main.hs
+    source-dirs: app/arvomoon
+    dependencies:
+      - urbit-uruk
+      - urbit-uruk-rts
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -static
+      - -O2
+      - "-with-rtsopts=-N"
+      - -fwarn-incomplete-patterns
+
 dependencies:
   - base
   - bound

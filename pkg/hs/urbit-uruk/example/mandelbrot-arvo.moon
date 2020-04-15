@@ -732,16 +732,7 @@
     [image ($ (add-assoc is-cons-nat-lt is-cons-nat-eq cache (con w h) image))]
   ==
 
-=/  kernel  (arvo lnil)
-%+  trace  'first'  |=  ignore
-=/  kernel2  (cdr (kernel 1 1))
-%+  trace  'second'  |=  ignore
-=/  kernel3  (cdr (kernel2 2 2))
-%+  trace  'third'  |=  ignore
-=/  kernel4  (cdr (kernel3 3 3))
-
-%+  trace  'final'  |=  ignore
-::
-(car (kernel4 1 1))
+:: Initial function state: empty cache
+(arvo lnil)
 
 
