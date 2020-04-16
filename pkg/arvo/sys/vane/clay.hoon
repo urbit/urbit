@@ -2959,17 +2959,30 @@
     ++  parse-pile
       |=  [=path tex=tape]
       ^-  pile
-      ~|  parse-fail+path  ::  TODO: better error reporting
-      =/  [=mont =nail]  (parse-mont tex)
+      =/  [=mont =nail]  (parse-mont path tex)
       =/  [=hair res=(unit [src=(list hoon) ^nail])]
         ((most gap tall:(vang & path)) nail)
-      [mont tssg+src:(need res)]
+      ?^  res  [mont tssg+src:(need res)]
+      %-  mean
+      =/  lyn  p.hair
+      =/  col  q.hair
+      :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<path>}"
+          leaf+(trip (snag (dec lyn) (to-wain:format (crip tex))))
+          leaf+(runt [(dec col) '-'] "^")
+      ==
     ::
     ++  parse-mont
-      |=  tex=tape
+      |=  [=path tex=tape]
       ^-  [mont nail]
       =/  [=hair res=(unit [=mont =nail])]  (mont-rule [1 1] tex)
-      (need res)  ::  TODO: better error reporting
+      ?^  res  u.res
+      %-  mean
+      =/  lyn  p.hair
+      =/  col  q.hair
+      :~  leaf+"syntax error in imports at [{<lyn>} {<col>}] in {<path>}"
+          leaf+(trip (snag (dec lyn) (to-wain:format (crip tex))))
+          leaf+(runt [(dec col) '-'] "^")
+      ==
     ::
     ++  mont-rule
       %+  ifix  [gay gay]
