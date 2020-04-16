@@ -277,7 +277,7 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
                              0, /* flags */
                              &transaction_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: write: txn_begin fail: %s\n", mdb_strerror(ret_w));
     return;
   }
 
@@ -289,7 +289,7 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
                        flags_w,
                        &database_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: write: dbi_open fail: %s\n", mdb_strerror(ret_w));
     return;
   }
 
@@ -405,7 +405,7 @@ u3_lmdb_read_events(MDB_env* db_u,
                              MDB_RDONLY, /* flags */
                              &transaction_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: read txn_begin fail: %s\n", mdb_strerror(ret_w));
     return c3n;
   }
 
@@ -417,7 +417,7 @@ u3_lmdb_read_events(MDB_env* db_u,
                        flags_w,
                        &database_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: read: dbi_open fail: %s\n", mdb_strerror(ret_w));
     return c3n;
   }
 
@@ -425,7 +425,7 @@ u3_lmdb_read_events(MDB_env* db_u,
   MDB_cursor* cursor_u;
   ret_w = mdb_cursor_open(transaction_u, database_u, &cursor_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: cursor_open fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: read: cursor_open fail: %s\n", mdb_strerror(ret_w));
     return c3n;
   }
 
@@ -437,7 +437,7 @@ u3_lmdb_read_events(MDB_env* db_u,
 
   ret_w = mdb_cursor_get(cursor_u, &key, &val, MDB_SET_KEY);
   if (0 != ret_w) {
-    u3l_log("lmdb: could not find initial event %" PRIu64 ": %s\r\n",
+    u3l_log("lmdb: read: could not find initial event %" PRIu64 ": %s\r\n",
             first_event_d, mdb_strerror(ret_w));
     mdb_cursor_close(cursor_u);
     return c3n;
@@ -449,11 +449,11 @@ u3_lmdb_read_events(MDB_env* db_u,
     // the sequence of loaded events.
     c3_d current_id = first_event_d + loaded;
     if (key.mv_size != sizeof(c3_d)) {
-      u3l_log("lmdb: invalid cursor key\r\n");
+      u3l_log("lmdb: read: invalid cursor key\r\n");
       return c3n;
     }
     if (*(c3_d*)key.mv_data != current_id) {
-      u3l_log("lmdb: missing event in database. Expected %" PRIu64 ", received %"
+      u3l_log("lmdb: read: missing event in database. Expected %" PRIu64 ", received %"
               PRIu64 "\r\n",
               current_id,
               *(c3_d*)key.mv_data);
@@ -470,7 +470,7 @@ u3_lmdb_read_events(MDB_env* db_u,
 
     ret_w = mdb_cursor_get(cursor_u, &key, &val, MDB_NEXT);
     if (ret_w != 0 && ret_w != MDB_NOTFOUND) {
-      u3l_log("lmdb: error while loading events: %s\r\n",
+      u3l_log("lmdb: read: error while loading events: %s\r\n",
               mdb_strerror(ret_w));
       return c3n;
     }
@@ -499,7 +499,7 @@ c3_o u3_lmdb_get_latest_event_number(MDB_env* environment, c3_d* event_number)
                              0, /* flags */
                              &transaction_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: last: txn_begin fail: %s\n", mdb_strerror(ret_w));
     return c3n;
   }
 
@@ -511,7 +511,7 @@ c3_o u3_lmdb_get_latest_event_number(MDB_env* environment, c3_d* event_number)
                        flags_w,
                        &database_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: last: dbi_open fail: %s\n", mdb_strerror(ret_w));
     return c3n;
   }
 
@@ -519,7 +519,7 @@ c3_o u3_lmdb_get_latest_event_number(MDB_env* environment, c3_d* event_number)
   MDB_cursor* cursor_u;
   ret_w = mdb_cursor_open(transaction_u, database_u, &cursor_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: cursor_open fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: last: cursor_open fail: %s\n", mdb_strerror(ret_w));
     return c3n;
   }
 
@@ -569,7 +569,7 @@ c3_o u3_lmdb_write_identity(MDB_env* environment,
                              0, /* flags */
                              &transaction_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: meta write: txn_begin fail: %s\n", mdb_strerror(ret_w));
     return c3n;
   }
 
@@ -581,7 +581,7 @@ c3_o u3_lmdb_write_identity(MDB_env* environment,
                        flags_w,
                        &database_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: meta write: dbi_open fail: %s\n", mdb_strerror(ret_w));
     mdb_txn_abort(transaction_u);
     return c3n;
   }
@@ -608,7 +608,7 @@ c3_o u3_lmdb_write_identity(MDB_env* environment,
 
   ret_w = mdb_txn_commit(transaction_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: failed to commit transaction: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: meta write: failed to commit transaction: %s\n", mdb_strerror(ret_w));
     return c3n;
   }
 
@@ -629,7 +629,7 @@ c3_o u3_lmdb_read_identity(MDB_env* environment,
                              MDB_RDONLY, /* flags */
                              &transaction_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: meta read: txn_begin fail: %s\n", mdb_strerror(ret_w));
     return c3n;
   }
 
@@ -640,7 +640,7 @@ c3_o u3_lmdb_read_identity(MDB_env* environment,
                         0,
                         &database_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
+    u3l_log("lmdb: meta read: dbi_open fail: %s\n", mdb_strerror(ret_w));
     mdb_txn_abort(transaction_u);
     return c3n;
   }
