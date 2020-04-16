@@ -2697,10 +2697,17 @@
   |%
   ++  ford
     =>  |%
+        +$  build
+          $%  [%file =path]
+              [%mark =mark]
+              [%cast =mars]
+              [%vale =path]
+          ==
         +$  state
           $:  baked=(map path cage)
               cache=ford-cache
               stack=(list (set path))
+              cycle=(set build)
           ==
         --
     |=  $:  =ankh
@@ -2729,6 +2736,9 @@
       ~|  %error-validating-path^path
       ?^  cage=(~(get by baked.nub) path)
         [cage nub]
+      ?:  (~(has in cycle.nub) vale+path)
+        ~|(cycle+vale+path^stack.nub !!)
+      =.  cycle.nub  (~(put in cycle.nub) vale+path)
       ?^  change=(~(get by changes) path)
         =^  page  nub
           ?:  ?=(%& -.u.change)
@@ -2750,6 +2760,9 @@
         =?  stack.nub  ?=(^ stack.nub)
           stack.nub(i (~(uni in i.stack.nub) dez.u.got))
         [res.u.got nub]
+      ?:  (~(has in cycle.nub) mark+mak)
+        ~|(cycle+mark+mak^stack.nub !!)
+      =.  cycle.nub  (~(put in cycle.nub) mark+mak)
       =.  stack.nub  [~ stack.nub]
       =;  res=[=dais nub=state]
         =.  nub  nub.res
@@ -2841,6 +2854,8 @@
         =?  stack.nub  ?=(^ stack.nub)
           stack.nub(i (~(uni in i.stack.nub) dez.u.got))
         [res.u.got nub]
+      ?:  (~(has in cycle.nub) cast+[a b])
+        ~|(cycle+cast+[a b]^stack.nub !!)
       =.  stack.nub  [~ stack.nub]
       =;  res=[=tube nub=state]
         =.  nub  nub.res
@@ -2941,6 +2956,9 @@
         =?  stack.nub  ?=(^ stack.nub)
           stack.nub(i (~(uni in i.stack.nub) dez.u.got))
         [res.u.got nub]
+      ?:  (~(has in cycle.nub) file+path)
+        ~|(cycle+file+path^stack.nub !!)
+      =.  cycle.nub  (~(put in cycle.nub) file+path)
       =.  stack.nub  [(sy path ~) stack.nub]
       =^  cag=(unit cage)  nub  (get-value path)
       ?~  cag  ~|(no-file+path !!)
