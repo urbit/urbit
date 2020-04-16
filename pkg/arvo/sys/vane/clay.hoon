@@ -3386,12 +3386,12 @@
     ::
     ++  promote-ford
       |=  [=ford-cache deletes=(set path) changes=(map path (each page lobe))]
+      ^+  ford-cache
       =/  invalid=(set path)  (~(uni in deletes) ~(key by changes))
-      =:  vases.ford-cache  ((invalidate path vase) vases.ford-cache invalid)
-          marks.ford-cache  ((invalidate mark dais) marks.ford-cache invalid)
-          casts.ford-cache  ((invalidate mars tube) casts.ford-cache invalid)
-        ==
-      ford-cache
+      :*  ((invalidate path vase) vases.ford-cache invalid)
+          ((invalidate mark dais) marks.ford-cache invalid)
+          ((invalidate mars tube) casts.ford-cache invalid)
+      ==
     ::
     ++  invalidate
       |*  [key=mold value=mold]
