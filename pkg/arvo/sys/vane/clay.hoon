@@ -4370,9 +4370,11 @@
       ?.  ?=([@ @ ~] path)
         [~ ~]
       =/  cached=(unit [=tube *])  (~(get by casts.fod.dom) [i i.t]:path)
-      ?~  cached
-        [~ ~]
-      [~ ~ %& %tube !>(tube.u.cached)]
+      ?^  cached
+        [~ ~ %& %tube !>(tube.u.cached)]
+      =/  [=tube =state:ford:fusion]
+        (get-cast:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) [i i.t]:path)
+      [~ ~ %& %tube !>(tube)]
     ::
     ::  Gets the permissions that apply to a particular node.
     ::
