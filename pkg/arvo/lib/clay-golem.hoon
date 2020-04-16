@@ -85,104 +85,202 @@
     =/  tal  (crip (slag +(u.dex) seg))
     $(pax /[hed]/[tal])
   --
+++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
+++  with-faces
+  =|  res=(unit vase)
+  |=  vaz=(list [face=@tas =vase])
+  ^-  vase
+  ?~  vaz  (need res)
+  =/  faz  (with-face i.vaz)
+  =.  res  `?~(res faz (slop faz u.res))
+  $(vaz t.vaz)
 --
 |%
 ++  ford
+  =>  |%
+      +$  state
+        $:  baked=(map path cage)
+            cache=ford-cache
+            stack=(list (set path))
+        ==
+      --
   |=  $:  =ankh
           deletes=(set path)
           changes=(map path (each page lobe))
           file-store=(map lobe blob)
           =ford-cache
       ==
-  =/  state
-    :*  baked=*(map path cage)
-        cache=ford-cache
-        stack=*(list (set path))
-    ==
+  ::  nub: internal mutable state for this computation
+  ::
+  =|  nub=state
+  =.  cache.nub  ford-cache
   |%
   ::  +pop-stack: pop build stack, copying deps downward
   ::
   ++  pop-stack
-    ^-  [(set path) _stack.state]
-    =^  top=(set path)  stack.state  stack.state
-    =?  stack.state  ?=(^ stack.state)
-      stack.state(i (~(uni in i.stack.state) top))
-    [top stack.state]
+    ^-  [(set path) _stack.nub]
+    =^  top=(set path)  stack.nub  stack.nub
+    =?  stack.nub  ?=(^ stack.nub)
+      stack.nub(i (~(uni in i.stack.nub) top))
+    [top stack.nub]
   ::
   ++  get-value
     |=  =path
-    ^-  [(unit cage) _state]
-    ?^  cage=(~(get by baked.state) path)
-      [cage state]
+    ^-  [(unit cage) state]
+    ?^  cage=(~(get by baked.nub) path)
+      [cage nub]
     ?^  change=(~(get by changes) path)
-      =^  page  state
+      =^  page  nub
         ?:  ?=(%& -.u.change)
-          [p.u.change state]
+          [p.u.change nub]
         ~|  %ugly-lobe^p.u.change^path
         (lobe-to-page p.u.change)
-      =^  cage  state  (validate-path path page)
-      [`cage state]
+      =^  cage  nub  (validate-path path page)
+      [`cage nub]
     ?:  (~(has in deletes) path)
-      [~ state]
-    [(~(get an ankh) path) state]
+      [~ nub]
+    [(~(get an ankh) path) nub]
   ::  +get-mark: build a mark definition
   ::
-  ::   TODO: convert - to /
-  ::
   ++  get-mark
-    |=  =mark
-    ^-  [dais _state]
-    =^  cor=vase  state  (build-file /mar/[mark])
-    !!
+    |=  mak=mark
+    ^-  [dais state]
+    ?^  got=(~(get by marks.cache.nub) mak)
+      =?  stack.nub  ?=(^ stack.nub)
+        stack.nub(i (~(uni in i.stack.nub) dez.u.got))
+      [res.u.got nub]
+    =.  stack.nub  [~ stack.nub]
+    =^  cor=vase  nub  (build-fit /mar/[mak])
+    =;  res=[=dais nub=state]
+      =.  nub  nub.res
+      =^  top  stack.nub  pop-stack
+      =.  marks.cache.nub  (~(put by marks.cache.nub) mak [dais.res top])
+      [dais.res nub]
+    =/  gad=vase  (slap cor %limb %grad)
+    ?@  q.gad
+      =+  !<(mok=mark gad)
+      =^  deg=dais  nub  $(mak mok)
+      =^  tub=tube  nub  (get-cast mak mok)
+      =^  but=tube  nub  (get-cast mok mak)
+      :_  nub
+      ^-  dais
+      |_  sam=vase
+      ++  bunt  (slap cor $+6)
+      ++  diff
+        |=  new=vase
+        ^-  vase
+        (~(diff deg (tub sam)) (tub new))
+      ++  form  form:deg
+      ++  join  join:deg
+      ++  mash  mash:deg
+      ++  pact
+        |=  diff=vase
+        ^+  sam
+        (but (~(pact deg (tub sam)) diff))
+      ++  vale
+        |=  =noun
+        ^+  sam
+        (slam (slap cor ^~((ream 'noun:grab'))) !>(noun))
+      ++  volt
+        |=  =noun
+        ^+  sam
+        [p:bunt noun]
+      --
+    :_  nub
+    =+  !<(fom=mark (slap gad %limb %form))
+    ^-  dais
+    |_  sam=vase
+    ++  bunt  (slap cor $+6)
+    ++  diff
+      |=  new=vase
+      ^-  vase
+      %+  slap
+        (with-faces cor+cor sam+sam new+new ~)
+      ^~((ream '(diff:~(grad cor sam) new)'))
+    ++  form  fom
+    ++  join
+      |=  [a=vase b=vase]
+      ^-  (unit (unit vase))
+      ?:  =(q.a q.b)
+        ~
+      =;  res  `?~(q.res ~ `(slap res ^~((ream '?~(. !! u)'))))
+      (slam (slap cor ^~((ream 'join:grad'))) (slop a b))
+    ++  mash
+      |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
+      ^-  (unit vase)
+      ?:  =(q.diff.a q.diff.b)
+        ~
+      :-  ~
+      %+  slam  (slap cor ^~((ream 'mash:grad')))
+      %+  slop
+        :(slop !>(ship.a) !>(desk.a) diff.a)
+      :(slop !>(ship.b) !>(desk.b) diff.b)
+    ++  pact
+      |=  diff=vase
+      ^+  sam
+      %+  slap
+        (with-faces cor+cor sam+sam diff+diff ~)
+      ^~((ream '(pact:~(grad cor sam) diff)'))
+    ++  vale
+      |=  =noun
+      ^+  sam
+      (slam (slap cor ^~((ream 'noun:grab'))) !>(noun))
+    ++  volt
+      |=  =noun
+      ^+  sam
+      [p:bunt noun]
+    --
   ::  
   ++  get-cast
     |=  [a=mark b=mark]
-    ^-  [tube _state]
+    ^-  [tube state]
     !!
   ++  lobe-to-page
     |=  =lobe
-    ^-  [page _state]
+    ^-  [page state]
     =/  =blob  (~(got by file-store) lobe)
-    |-  ^-  [page _state]
+    |-  ^-  [page state]
     ?-    -.blob
-        %direct  [q.blob state]
+        %direct  [q.blob nub]
         %delta
       =/  [[=mark =parent=^lobe] diff=page]  [q r]:blob
-      =^  parent-page  state  $(blob (~(got by file-store) parent-lobe))
-      =^  =cage  state  (run-pact parent-page diff)
-      [[p q.q]:cage state]
+      =^  parent-page  nub  $(blob (~(got by file-store) parent-lobe))
+      =^  =cage  nub  (run-pact parent-page diff)
+      [[p q.q]:cage nub]
     ==
   ++  validate-path
     |=  [=path =page]
-    ^-  [cage _state]
+    ^-  [cage state]
     !!
   ++  cast-path
     |=  [=path =mark]
-    ^-  [cage _state]
+    ^-  [cage state]
     !!
   ++  run-pact
     |=  [old=page diff=page]
-    ^-  [cage _state]
+    ^-  [cage state]
     !!
   ++  build-file
     |=  =path
-    ^-  [vase _state]
-    ?^  got=(~(get by vases.cache.state) path)
-      [res.u.got state]
-    =.  stack.state  [(sy path ~) stack.state]
-    =^  cag=(unit cage)  state  (get-value path)
+    ^-  [vase state]
+    ?^  got=(~(get by vases.cache.nub) path)
+      =?  stack.nub  ?=(^ stack.nub)
+        stack.nub(i (~(uni in i.stack.nub) dez.u.got))
+      [res.u.got nub]
+    =.  stack.nub  [(sy path ~) stack.nub]
+    =^  cag=(unit cage)  nub  (get-value path)
     ?~  cag  ~|(no-file+path !!)
     ?>  =(%hoon p.u.cag)
     =/  tex=tape  (trip !<(@t q.u.cag))
     =/  =pile  (parse-pile path tex)
-    =^  sut=vase  state  run-reef
-    =^  sut=vase  state  (run-tauts sut %sur sur.mont.pile)
-    =^  sut=vase  state  (run-tauts sut %lib lib.mont.pile)
-    =^  sut=vase  state  (run-raw sut raw.mont.pile)
+    =^  sut=vase  nub  run-reef
+    =^  sut=vase  nub  (run-tauts sut %sur sur.mont.pile)
+    =^  sut=vase  nub  (run-tauts sut %lib lib.mont.pile)
+    =^  sut=vase  nub  (run-raw sut raw.mont.pile)
     =/  res=vase  (slap sut hoon.pile)
-    =^  top  stack.state  pop-stack
-    =.  vases.cache.state  (~(put by vases.cache.state) path [res top])
-    [res state]
+    =^  top  stack.nub  pop-stack
+    =.  vases.cache.nub  (~(put by vases.cache.nub) path [res top])
+    [res nub]
   ::
   ++  parse-pile
     |=  [=path tex=tape]
@@ -230,27 +328,27 @@
   ::
   ++  run-tauts
     |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
-    ^-  [vase _state]
-    ?~  taz  [sut state]
-    =^  pin=vase  state  (build-fit /[wer]/[pax.i.taz])
+    ^-  [vase state]
+    ?~  taz  [sut nub]
+    =^  pin=vase  nub  (build-fit /[wer]/[pax.i.taz])
     =?  p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.pin]
     $(sut (slop pin sut), taz t.taz)
   ::
   ++  run-raw
     |=  [sut=vase raw=(list [face=term =path])]
-    ^-  [vase _state]
-    ?~  raw  [sut state]
-    =^  pin=vase  state  (build-file path.i.raw)
+    ^-  [vase state]
+    ?~  raw  [sut nub]
+    =^  pin=vase  nub  (build-file path.i.raw)
     =.  p.pin  [%face face.i.raw p.pin]
     $(sut (slop pin sut), raw t.raw)
   ::
   ++  run-reef
-    ^-  [vase _state]
-    [!>(..zuse) state]  ::  TODO implement
+    ^-  [vase state]
+    [!>(..zuse) nub]  ::  TODO implement
   ::
   ++  build-fit
     |=  pax=path
-    ^-  [vase _state]
+    ^-  [vase state]
     (build-file ~|(no-file+pax (need (~(get-fit an ankh) pax))))
   --
 --
