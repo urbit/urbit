@@ -1,14 +1,62 @@
-/+  *test, test-ford-external
+/+  *test, test-ford-external, clay-raw=clay
 ::
-/=  clay-raw  /:  /===/sys/vane/clay  /!noun/
+/=  hello-gen  /:  /===/gen/hello  /hoon/
+::/=  clay-raw  /:  /===/sys/vane/clay  /!noun/
 ::
 !:
 =,  format
 ::
 =/  test-pit=vase  !>(..zuse)
 =/  clay-gate  (clay-raw test-pit)
+=/  fusion  fusion:clay-gate
 ::
 |%
+++  test-get-fit  ^-  tang
+  =/  =ankh:clay
+    :-  fil=~
+    %-  ~(gas by *(map @tas ankh:clay))
+    :~  :+  %mar  fil=~
+        %-  ~(gas by *(map @tas ankh:clay))
+        :~  :+  %foo  fil=~
+            %-  ~(gas by *(map @tas ankh:clay))
+            :~  :+  %bar  fil=~
+                %-  ~(gas by *(map @tas ankh:clay))
+                :~  :+  %hoon  fil=`[*lobe:clay hoon+!>('baz')]  dir=~
+    ==  ==  ==  ==
+  %+  expect-eq
+    !>  `(unit path)`[~ /mar/foo/bar/hoon]
+    !>  (~(get-fit an:fusion ankh) /mar/foo-bar)
+::
+++  test-parse-pile  ^-  tang
+  %+  expect-eq
+    !>  ^-  pile:fusion
+        :-  [~ ~ ~]
+        tssg+[%dbug [/sur/foo/hoon [[1 1] [1 2]]] [%cnts ~[[%.y 1]] ~]]~
+    !>  (parse-pile:(ford):fusion /sur/foo/hoon ".")
+::
+++  test-hello-gen  ^-  tang
+  =/  =ankh:clay
+    :-  fil=~
+    %-  ~(gas by *(map @tas ankh:clay))
+    :~  :+  %gen  fil=~
+        %-  ~(gas by *(map @tas ankh:clay))
+        :~  :+  %hello  fil=~
+            %-  ~(gas by *(map @tas ankh:clay))
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(hello-gen)]  dir=~
+    ==  ==  ==
+  =/  ford
+    %:  ford:fusion
+      ankh
+      deletes=~
+      changes=(my [/gen/hello/hoon &+hoon+hello-gen]~)
+      file-store=~
+      *ford-cache:fusion
+    ==
+  =/  res=vase  -:(build-file:ford /gen/hello/hoon)
+  %+  expect-eq
+    !>  noun+'hello, bob'
+    (slap res (ream '(+ [*^ [%bob ~] ~])'))
+::
 ++  test-info  ^-  tang
   =^  results0  clay-gate
     %-  clay-call  :*

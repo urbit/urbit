@@ -2726,6 +2726,7 @@
     ++  get-value
       |=  =path
       ^-  [(unit cage) state]
+      ~|  %error-validating-path^path
       ?^  cage=(~(get by baked.nub) path)
         [cage nub]
       ?^  change=(~(get by changes) path)
@@ -2744,17 +2745,18 @@
     ++  get-mark
       |=  mak=mark
       ^-  [dais state]
+      ~|  %error-building-mark^mak
       ?^  got=(~(get by marks.cache.nub) mak)
         =?  stack.nub  ?=(^ stack.nub)
           stack.nub(i (~(uni in i.stack.nub) dez.u.got))
         [res.u.got nub]
       =.  stack.nub  [~ stack.nub]
-      =^  cor=vase  nub  (build-fit /mar/[mak])
       =;  res=[=dais nub=state]
         =.  nub  nub.res
         =^  top  stack.nub  pop-stack
         =.  marks.cache.nub  (~(put by marks.cache.nub) mak [dais.res top])
         [dais.res nub]
+      =^  cor=vase  nub  (build-fit /mar/[mak])
       =/  gad=vase  (slap cor %limb %grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
@@ -2829,11 +2831,58 @@
         ^+  sam
         [p:bunt noun]
       --
+    ::  +get-cast: produce a $tube mark conversion gate from .a to .b
     ::
     ++  get-cast
       |=  [a=mark b=mark]
       ^-  [tube state]
-      !!
+      ~|  error-building-cast+[a b]
+      ?^  got=(~(get by casts.cache.nub) [a b])
+        =?  stack.nub  ?=(^ stack.nub)
+          stack.nub(i (~(uni in i.stack.nub) dez.u.got))
+        [res.u.got nub]
+      =.  stack.nub  [~ stack.nub]
+      =;  res=[=tube nub=state]
+        =.  nub  nub.res
+        =^  top  stack.nub  pop-stack
+        =.  casts.cache.nub  (~(put by casts.cache.nub) [a b] [tube.res top])
+        [tube.res nub]
+      ::  try +grow
+      ::
+      =^  old=vase  nub  (build-fit /mar/[a])
+      =/  row  (mule |.((slap old (ream (cat 3 b ':grow')))))
+      ?:  ?=(%& -.row)
+        :_  nub
+        ^-  tube
+        |=  sam=vase
+        ^-  vase
+        %+  slap
+          (with-faces old+old sam+sam ~)
+        (ream (cat 3 b ':~(grow old sam)'))
+      ::  try direct +grab
+      ::
+        =^  new=vase  nub  (build-fit /mar/[b])
+      =/  rab  (mule |.((slap new (ream (cat 3 a ':grab')))))
+      ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
+        :_(nub |=(sam=vase (slam p.rab sam)))
+      ::  try +jump
+      ::
+      =/  jum  (mule |.((slap old (ream (cat 3 b ':jump')))))
+      ?:  ?=(%& -.jum)
+        (compose-casts a !<(mark p.jum) b)
+      ::  try indirect +grab
+      ::
+      ?:  ?=(%& -.rab)
+        (compose-casts a !<(mark p.rab) b)
+      ~|(no-cast-from+[a b] !!)
+    ::
+    ++  compose-casts
+      |=  [x=mark y=mark z=mark]
+      ^-  [tube state]
+      =^  uno=tube  nub  (get-cast x y)
+      =^  dos=tube  nub  (get-cast y z)
+      :_(nub |=(sam=vase (dos (uno sam))))
+    ::
     ++  lobe-to-page
       |=  =lobe
       ^-  [page state]
@@ -2847,10 +2896,17 @@
         =^  =cage  nub  (run-pact parent-page diff)
         [[p q.q]:cage nub]
       ==
+    ::
     ++  validate-path
       |=  [=path =page]
       ^-  [cage state]
-      !!
+      ?.  =((head (flop path)) p.page)
+        !!  ::  TODO cast
+      ?:  =(%hoon p.page)
+        :_(nub [%hoon -:!>(*@t) q.page])
+      =^  =dais  nub  (get-mark p.page)
+      :_(nub [p.page (vale:dais q.page)])
+    ::
     ++  cast-path
       |=  [=path =mark]
       ^-  [cage state]
@@ -2861,6 +2917,7 @@
       !!
     ++  build-file
       |=  =path
+      ~|  %error-building^path
       ^-  [vase state]
       ?^  got=(~(get by vases.cache.nub) path)
         =?  stack.nub  ?=(^ stack.nub)
@@ -2899,6 +2956,14 @@
     ++  mont-rule
       %+  ifix  [gay gay]
       %+  cook  |=(mont +<)
+::TODO: reinstate
+::      ;~  pfix
+::        ::  parse optional /? and ignore
+::        ::
+::        ;~  pose
+::          (cold ~ ;~(plug net wut gap dem))
+::          (easy ~)
+::        ==
       ;~  plug
         %+  cook  |=((list (list taut)) (zing +<))
         %+  more  gap
@@ -4587,7 +4652,6 @@
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
-^?                                                    ::  opaque core
 |%                                                    ::
 ++  call                                              ::  handle request
   |=  $:  hen=duct
