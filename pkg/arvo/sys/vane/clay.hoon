@@ -3392,7 +3392,6 @@
     |=  [=tako =rang =ankh mim=(map path (unit mime))]
     |^
     ^+  ..park
-    =.  ..park  print
     =:  ank.dom  ankh
         let.dom  +(let.dom)
         hit.dom  (~(put by hit.dom) +(let.dom) tako)
@@ -3400,7 +3399,40 @@
         hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
       ==
+    =/  [deletes=(set path) changes=(set path)]
+      =/  previous-yaki  (aeon-to-yaki:ze (dec let.dom))
+      =/  next-yaki      (aeon-to-yaki:ze let.dom)
+      (get-changes previous-yaki next-yaki)
+    =.  ..park  (emil (print deletes changes))
+    ::
     wake:ergo
+    ::
+    ::  Find which files changed or were deleted
+    ::
+    ++  get-changes
+      |=  [old=yaki new=yaki]
+      :*  %-  silt  ^-  (list path)
+          %+  murn  ~(tap by (~(uni by q.old) q.new))
+          |=  [=path =lobe]
+          ^-  (unit ^path)
+          =/  a  (~(get by q.new) path)
+          =/  b  (~(get by q.old) path)
+          ?:  |(=(a b) !=(~ a))
+            ~
+          `path
+        ::
+          %-  silt  ^-  (list path)
+          %+  murn  ~(tap by (~(uni by q.old) q.new))
+          |=  [=path =lobe]
+          ^-  (unit ^path)
+          =/  a  (~(get by q.new) path)
+          =/  b  (~(get by q.old) path)
+          ?:  |(=(a b) =(~ a))
+            ~
+          `path
+      ==
+    ::
+    ::  Keep any parts of the ford cache whose dependencies didn't change
     ::
     ++  promote-ford
       |=  [=ford-cache deletes=(set path) changes=(map path (each page lobe))]
@@ -3422,6 +3454,8 @@
         $(builds t.builds)
       (~(put by $(builds t.builds)) i.builds)
     ::
+    ::  Emit update to unix sync
+    ::
     ++  ergo
       ^+  ..park
       =/  must  (must-ergo:util her syd mon (turn ~(tap by mim) head))
@@ -3434,21 +3468,25 @@
           [(slag len pax) (~(got by mim) pax)]
       ==
     ::
+    ::  Print notification to console
+    ::
     ++  print
-      ^+  ..park
+      |=  [deletes=(set path) changes=(set path)]
+      ^-  (list move)
+      |^
       ?~  hun
-        ..park
-      %-  emil
-      %+  turn  ~(tap by mim)
-      |=  [=path change=(unit mime)]
-      =/  car=@tD
-        ?~  change
-          '-'
-        ?:  (~(has by mim.dom) path)
-          ':'
-        '+'
-      =/  =tank
-        =/  pre=^path  ~[(scot %p our) syd (scot %ud +(let.dom))]
+        ~
+      %+  weld
+        %+  turn  ~(tap in deletes)
+        |=  =path
+        [u.hun %give %note '-' (path-to-tank path)]
+      %+  turn  ~(tap in changes)
+      |=  =path
+      [u.hun %give %note '+' (path-to-tank path)]
+      ::
+      ++  path-to-tank
+        |=  =path
+        =/  pre=^path  ~[(scot %p our) syd (scot %ud let.dom)]
         :+  %rose  ["/" "/" ~]
         %+  turn  (weld pre path)
         |=  a=cord
@@ -3456,7 +3494,7 @@
         ?:  ((sane %ta) a)
           [%leaf (trip a)]
         [%leaf (dash:us (trip a) '\'' ~)]
-      [u.hun %give %note car tank]
+      --
     --
   ::
   ::  Set permissions for a node.
