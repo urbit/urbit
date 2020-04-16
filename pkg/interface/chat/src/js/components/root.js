@@ -39,7 +39,7 @@ export class Root extends Component {
       if (envelopes.length === 0) {
         messagePreviews[stat] = false;
       } else {
-        messagePreviews[stat] = envelopes[envelopes.length - 1];
+        messagePreviews[stat] = envelopes[0];
       }
 
       unreads[stat] =
