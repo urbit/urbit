@@ -35,7 +35,7 @@
     !>  (parse-pile:(ford):fusion /sur/foo/hoon ".")
 ::
 ++  test-parse-fail  ^-  tang
-  %+  expect-crash  "parsing should have failed"
+  %-  expect-fail
   |.  (parse-pile:(ford):fusion /sur/foo/hoon "[")
 ::
 ++  test-hello-gen  ^-  tang
