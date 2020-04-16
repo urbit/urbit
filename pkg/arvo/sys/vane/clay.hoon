@@ -2666,10 +2666,16 @@
     ++  get-fit
       |=  pax=path
       ^-  (unit path)
+      ::  add the hoon extension to the result
+      ::
+      =-  ?~(- ~ `(snoc u.- %hoon))
+      |-  ^-  (unit path)
       ?>  ?=([* * ~] pax)
+      ::  put the prefix back on the result
+      ::
       =-  ?~(- ~ `[i.pax u.-])
       =.  nak  (~(got by dir.nak) i.pax)
-      ?^  got=(get t.pax)
+      ?^  got=(get (snoc t.pax %hoon))
         (some t.pax)
       =/  seg=tape  (trip i.t.pax)
       ?~  dex=(find "-" seg)
