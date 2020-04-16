@@ -2956,14 +2956,13 @@
     ++  mont-rule
       %+  ifix  [gay gay]
       %+  cook  |=(mont +<)
-::TODO: reinstate
-::      ;~  pfix
-::        ::  parse optional /? and ignore
-::        ::
-::        ;~  pose
-::          (cold ~ ;~(plug net wut gap dem))
-::          (easy ~)
-::        ==
+      ;~  pfix
+        ::  parse optional /? and ignore
+        ::
+        ;~  pose
+          (cold ~ ;~(plug net wut gap dem gap))
+          (easy ~)
+        ==
       ;~  plug
         %+  cook  |=((list (list taut)) (zing +<))
         %+  more  gap
@@ -2980,7 +2979,7 @@
         %+  ifix  [;~(plug net tis gap) gap]
         %+  cook  |=([term path] +<)
         ;~(plug sym ;~(pfix ;~(plug gap net) (more net urs:ab)))
-      ==
+      ==  ==
     ::
     ++  taut-rule
       %+  cook  |=(taut +<)
