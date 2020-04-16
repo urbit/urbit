@@ -2900,17 +2900,32 @@
     ++  validate-path
       |=  [=path =page]
       ^-  [cage state]
-      ?.  =((head (flop path)) p.page)
-        !!  ::  TODO cast
+      =/  mak=mark  (head (flop path))
+      ?:  =(mak p.page)
+        (page-to-cage page)
+      =^  [mark vax=vase]  nub  (page-to-cage page)
+      =^  =tube  nub  (get-cast p.page mak)
+      :_(nub [mak (tube vax)])
+    ::
+    ++  page-to-cage
+      |=  =page
+      ^-  [cage state]
       ?:  =(%hoon p.page)
         :_(nub [%hoon -:!>(*@t) q.page])
       =^  =dais  nub  (get-mark p.page)
       :_(nub [p.page (vale:dais q.page)])
     ::
     ++  cast-path
-      |=  [=path =mark]
+      |=  [=path mak=mark]
       ^-  [cage state]
-      !!
+      =^  cag=(unit cage)  nub  (get-value path)
+      ?~  cag  ~|(cannot-resolve-path+path !!)
+      =/  mok  (head (flop path))
+      ?:  =(mok mak)
+        [u.cag nub]
+      =^  =tube  nub  (get-cast mak mok)
+      :_(nub [mak (tube q.u.cag)])
+    ::
     ++  run-pact
       |=  [old=page diff=page]
       ^-  [cage state]
