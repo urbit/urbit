@@ -34,6 +34,33 @@
         tssg+[%dbug [/sur/foo/hoon [[1 1] [1 2]]] [%cnts ~[[%.y 1]] ~]]~
     !>  (parse-pile:(ford):fusion /sur/foo/hoon ".")
 ::
+++  test-cycle  ^-  tang
+  =/  source=@t
+    '''
+    /+  self
+    .
+    '''
+  =/  =ankh:clay
+    :-  fil=~
+    %-  ~(gas by *(map @tas ankh:clay))
+    :~  :+  %lib  fil=~
+        %-  ~(gas by *(map @tas ankh:clay))
+        :~  :+  %self  fil=~
+            %-  ~(gas by *(map @tas ankh:clay))
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(source)]  dir=~
+    ==  ==  ==
+  %-  expect-fail
+  |.
+  =/  ford
+    %:  ford:fusion
+      ankh
+      deletes=~
+      changes=~
+      file-store=~
+      *ford-cache:fusion
+    ==
+  (build-file:ford /lib/self/hoon)
+::
 ++  test-parse-fail  ^-  tang
   %-  expect-fail
   |.  (parse-pile:(ford):fusion /sur/foo/hoon "[")
