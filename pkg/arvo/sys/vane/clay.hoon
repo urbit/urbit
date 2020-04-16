@@ -2929,7 +2929,10 @@
     ++  run-pact
       |=  [old=page diff=page]
       ^-  [cage state]
-      !!
+      =^  dys=dais  nub  (get-mark p.old)
+      =^  syd=dais  nub  (get-mark p.diff)
+      :_(nub [p.old (~(pact dys (vale:dys q.old)) (vale:syd q.diff))])
+    ::
     ++  build-file
       |=  =path
       ~|  %error-building^path
