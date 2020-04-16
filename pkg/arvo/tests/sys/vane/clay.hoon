@@ -83,10 +83,16 @@
       file-store=~
       *ford-cache:fusion
     ==
-  =/  res=vase  -:(build-file:ford /gen/hello/hoon)
-  %+  expect-eq
-    !>  noun+'hello, bob'
-    (slap res (ream '(+ [*^ [%bob ~] ~])'))
+  =/  [res=vase nub=state:ford:fusion]  (build-file:ford /gen/hello/hoon)
+  ;:  weld
+    %+  expect-eq
+      !>  noun+'hello, bob'
+      (slap res (ream '(+ [*^ [%bob ~] ~])'))
+  ::
+    %+  expect-eq
+      !>  (~(gas in *(set path)) /gen/hello/hoon ~)
+      !>  dez:(~(got by vases.cache.nub) /gen/hello/hoon)
+  ==
 ::
 ++  test-info  ^-  tang
   =^  results0  clay-gate
