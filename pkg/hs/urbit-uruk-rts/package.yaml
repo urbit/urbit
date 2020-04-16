@@ -44,12 +44,15 @@ dependencies:
   - bound
   - bytestring
   - classy-prelude
+  - cryptohash-sha256
   - containers
   - deriving-compat
   - directory
   - file-embed
+  - filepath
   - ghc-prim
   - hashable
+  - hexstring
   - lens
   - megaparsec
   - mtl

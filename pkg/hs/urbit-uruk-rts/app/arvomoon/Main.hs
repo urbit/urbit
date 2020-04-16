@@ -7,6 +7,8 @@ import Control.Concurrent (threadDelay)
 import Urbit.Moon.Repl    (runFile')
 import Urbit.UrukRTS      (dumpEventsFile, kVVV, toJSON, vProfDone)
 
+import Urbit.UrukSerialize
+
 import qualified Urbit.Moon.MoonToUruk as MU
 import qualified Urbit.UrukRTS.Types   as RTS
 
@@ -52,6 +54,7 @@ useKernel kernel = HL.runInputT HL.defaultSettings (loop kernel)
               case out of
                 (RTS.VCon ppm nuKernel) -> do
                   HL.outputStrLn (show ppm)
+                  valHash <- liftIO $ writeVal nuKernel
                   loop nuKernel
 
                 _ -> do
