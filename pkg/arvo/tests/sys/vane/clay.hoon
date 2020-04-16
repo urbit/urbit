@@ -34,6 +34,10 @@
         tssg+[%dbug [/sur/foo/hoon [[1 1] [1 2]]] [%cnts ~[[%.y 1]] ~]]~
     !>  (parse-pile:(ford):fusion /sur/foo/hoon ".")
 ::
+++  test-parse-fail  ^-  tang
+  %+  expect-crash  "parsing should have failed"
+  |.  (parse-pile:(ford):fusion /sur/foo/hoon "[")
+::
 ++  test-hello-gen  ^-  tang
   =/  =ankh:clay
     :-  fil=~
