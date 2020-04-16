@@ -1964,6 +1964,9 @@
   =/  m  request-clad
   ^-  form:m
   ?-    p.p.rand
+      $a  ~|  %no-big-ford-builds-across-network-for-now  !!
+      $b  ~|  %i-guess-you-ought-to-build-your-own-marks  !!
+      $c  ~|  %casts-should-be-compiled-on-your-own-ship  !!
       $d  ~|  %totally-temporary-error-please-replace-me  !!
       $p  ~|  %requesting-foreign-permissions-is-invalid  !!
       $s  ~|  %please-dont-get-your-takos-over-a-network  !!
@@ -1972,9 +1975,7 @@
       $v  ~|  %weird-shouldnt-get-v-request-from-network  !!
       $z  ~|  %its-prolly-not-reasonable-to-request-ankh  !!
       $x  (validate-x [p.p q.p q r]:rand)
-  ::
-      $y
-    (pure:m [p.r.rand !>(;;(arch q.r.rand))])
+      $y  (pure:m [p.r.rand !>(;;(arch q.r.rand))])
   ::
       $w
     %-  pure:m
@@ -3899,6 +3900,40 @@
         $delta     (~(put in $(lob q.q.gar)) lob)
       ==
     ::
+    ++  read-a
+      |=  [=aeon =path]
+      ^-  (unit (unit (each cage lobe)))
+      ?.  =(aeon let.dom)
+        ~
+      =/  vase=(unit [=vase *])  (~(get by vases.fod.dom) path)
+      ?~  vase
+        [~ ~]
+      [~ ~ %& %vase !>(vase.u.vase)]
+    ::
+    ++  read-b
+      |=  [=aeon =path]
+      ^-  (unit (unit (each cage lobe)))
+      ?.  =(aeon let.dom)
+        ~
+      ?.  ?=([@ ~] path)
+        [~ ~]
+      =/  dais=(unit [=dais *])  (~(get by marks.fod.dom) i.path)
+      ?~  dais
+        [~ ~]
+      [~ ~ %& %dais !>(dais.u.dais)]
+    ::
+    ++  read-c
+      |=  [=aeon =path]
+      ^-  (unit (unit (each cage lobe)))
+      ?.  =(aeon let.dom)
+        ~
+      ?.  ?=([@ @ ~] path)
+        [~ ~]
+      =/  tube=(unit [=tube *])  (~(get by casts.fod.dom) [i i.t]:path)
+      ?~  tube
+        [~ ~]
+      [~ ~ %& %tube !>(tube.u.tube)]
+    ::
     ::  Gets the permissions that apply to a particular node.
     ::
     ::  If the node has no permissions of its own, we use its parent's.
@@ -4172,6 +4207,9 @@
           ~&(%no-cd-path [~ ~])
         [~ ~ %& %noun !>(~(key by dos.rom.ruf))]
       ::
+        %a  (read-a yon path.mun)
+        %b  (read-b yon path.mun)
+        %c  (read-c yon path.mun)
         %p  (read-p path.mun)
         %s  (bind (read-s yon path.mun) (lift |=(a=cage [%& a])))
         %t  (bind (read-t yon path.mun) (lift |=(a=cage [%& a])))
