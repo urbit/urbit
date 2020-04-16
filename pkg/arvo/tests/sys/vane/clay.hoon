@@ -1,6 +1,9 @@
 /+  *test, test-ford-external, clay-raw=clay
 ::
-/=  hello-gen  /:  /===/gen/hello  /hoon/
+/=  hello-gen     /:  /===/gen/hello     /hoon/
+/=  strandio-lib  /:  /===/lib/strandio  /hoon/
+/=  strand-lib    /:  /===/lib/strand    /hoon/
+/=  spider-sur    /:  /===/sur/spider    /hoon/
 ::/=  clay-raw  /:  /===/sys/vane/clay  /!noun/
 ::
 !:
@@ -92,6 +95,50 @@
     %+  expect-eq
       !>  (~(gas in *(set path)) /gen/hello/hoon ~)
       !>  dez:(~(got by vases.cache.nub) /gen/hello/hoon)
+  ==
+::
+++  test-strandio-lib  ^-  tang
+  =/  =ankh:clay
+    :-  fil=~
+    %-  ~(gas by *(map @tas ankh:clay))
+    :~  :+  %lib  fil=~
+        %-  ~(gas by *(map @tas ankh:clay))
+        :~  :+  %strandio  fil=~
+            %-  ~(gas by *(map @tas ankh:clay))
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(strandio-lib)]  dir=~
+            ==
+        ::
+            :+  %strand  fil=~
+            %-  ~(gas by *(map @tas ankh:clay))
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(strand-lib)]  dir=~
+        ==  ==
+    ::
+        :+  %sur  fil=~
+        %-  ~(gas by *(map @tas ankh:clay))
+        :~  :+  %spider  fil=~
+            %-  ~(gas by *(map @tas ankh:clay))
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(spider-sur)]  dir=~
+    ==  ==  ==
+  =/  ford
+    %:  ford:fusion
+      ankh
+      deletes=~
+      changes=~
+      file-store=~
+      *ford-cache:fusion
+    ==
+  =/  [res=vase nub=state:ford:fusion]  (build-file:ford /lib/strandio/hoon)
+  ;:  weld
+    %-  expect
+    !>((slab %get-our -.res))
+  ::
+    %+  expect-eq
+      !>  %-  ~(gas in *(set path))
+          :~  /lib/strandio/hoon
+              /lib/strand/hoon
+              /sur/spider/hoon
+          ==
+      !>  dez:(~(got by vases.cache.nub) /lib/strandio/hoon)
   ==
 ::
 ++  test-info  ^-  tang
