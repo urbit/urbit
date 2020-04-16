@@ -1,6 +1,20 @@
 ::  testing utilities meant to be directly used from files in %/tests
 ::
 |%
+++  expect-yes
+  |=  [message=tape actual=?]
+  ^-  tang
+  ?:  actual  ~
+  [leaf+message]~
+::
+++  expect-crash
+  |*  [message=tape go=(trap)]
+  ^-  tang
+  =/  res  (mule go)
+  ?-  -.res
+    %|  ~
+    %&  ~[leaf+"expected crash" leaf+message]
+  ==
 ::  +expect-eq: compares :expected and :actual and pretty-prints the result
 ::
 ++  expect-eq
