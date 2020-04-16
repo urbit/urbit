@@ -615,86 +615,225 @@
           struct _u3_writ* nex_u;               //  next in queue, or 0
         } u3_writ;
 
-      /* u3_controller: working process controller.
+      /* u3_ovum: potential event
       */
-        typedef struct _u3_controller {
+        typedef struct _u3_ovum {
+          struct _u3_auto* car_u;               //  backpointer to i/o driver
+          void*            vod_p;               //  context
+          c3_l             msc_l;               //  ms to timeout
+          u3_noun            tar;               //  target
+          u3_noun            pax;               //  wire
+          u3_noun            fav;               //  card
+          struct _u3_ovum* pre_u;               //  previous ovum
+          struct _u3_ovum* nex_u;               //  next ovum
+        } u3_ovum;
+
+      /* u3_fact: logged event
+      */
+        typedef struct _u3_fact {
+          c3_d             eve_d;               //  event number
+          c3_l             bug_l;               //  kernel mug before
+          c3_l             mug_l;               //  kernel mug after
+          u3_noun            job;               //  (pair date ovum) (XX or 0?)
+          struct _u3_fact* nex_u;               //  next in queue
+        } u3_fact;
+
+      /* u3_play: batch of logged events
+      */
+        typedef struct _u3_play {
+          struct _u3_fact* ent_u;               //  queue entry
+          struct _u3_fact* ext_u;               //  queue exit
+        } u3_play;
+
+      /* u3_work: new event, while processsing
+      */
+        typedef struct _u3_work {
+          struct _u3_ovum* egg_u;               //  unlinked ovum
+          c3_l             bug_l;               //  kernel mug before
+          u3_noun            job;               //  (pair date ovum)
+          c3_d             eve_d;               //  event number
+          c3_l             mug_l;               //  kernel mug after
+          u3_noun            act;               //  action list
+          struct _u3_work* nex_u;
+        } u3_work;
+
+      /* u3_peek: namespace read request
+      */
+        typedef struct _u3_peek {
+          u3_noun            now;               //  date
+          u3_noun            gan;               //  (unit (set ship))
+          u3_noun            pat;               //  path (serialized beam)
+        } u3_peek;
+
+      /* u3_rrit: new u3_writ
+      */
+        typedef struct _u3_rrit {
+          struct timeval  tim_tv;               //  time enqueued
+          u3_atom            mat;               //  serialized
+          c3_o             sen_o;               //  sent
+          struct _u3_rrit* nex_u;               //  next in queue, or 0
+          c3_m             typ_m;               //  tag
+          union {                               //
+            c3_w             xit_w;             //  exit code
+            c3_d             eve_d;             //  for %save or %snap
+            struct _u3_peek* pek_u;             //  read
+            struct _u3_play  pay_u;             //  recompute
+            struct _u3_work* wok_u;             //  compute
+          };
+        } u3_rrit;
+
+      /* u3_lord_cb: u3_lord callbacks
+      */
+        typedef struct _u3_lord_cb {
+          void* vod_p;
+          void (*live_f)(void*);
+          void (*slog_f)(void*, c3_w, u3_noun);
+          void (*peek_f)(void*, u3_noun gan, u3_noun pat, u3_noun dat);
+          void (*play_done_f)(void*, u3_play, c3_l mug_l);
+          void (*play_bail_f)(void*, u3_play, c3_l mug_l, c3_d eve_d, u3_noun dud);
+          void (*work_done_f)(void*, u3_work*, c3_o wap_o);
+          void (*work_bail_f)(void*, u3_work*, u3_noun lud);
+          void (*save_f)(void*, c3_d eve_d);
+          void (*snap_f)(void*, c3_d eve_d);
+          void (*exit_f)(void*, c3_o);
+        } u3_lord_cb;
+
+      /* u3_lord: serf controller.
+      */
+        typedef struct _u3_lord {
           uv_process_t         cub_u;           //  process handle
           uv_process_options_t ops_u;           //  process configuration
           uv_stdio_container_t cod_u[3];        //  process options
           time_t               wen_t;           //  process creation time
           u3_mojo              inn_u;           //  client's stdin
           u3_moat              out_u;           //  client's stdout
+          c3_w                 wag_w;           //  config flags
+          c3_c*                bin_c;           //  binary path
+          c3_c*                pax_c;           //  directory
+          c3_d                 key_d[4];        //  image key
+          u3_lord_cb            cb_u;           //  callbacks
           c3_o                 liv_o;           //  live
-          c3_d                 sen_d;           //  last event dispatched
-          c3_d                 dun_d;           //  last event completed
-          c3_d                 rel_d;           //  last event released
-          c3_l                 mug_l;           //  mug after last completion
-          struct _u3_pier*     pir_u;           //  pier backpointer
-        } u3_controller;
+          c3_y                 hon_y;           //  hoon kelvin
+          c3_y                 noc_y;           //  hoon kelvin
+          c3_d                 eve_d;           //  last event completed
+          c3_l                 mug_l;           //  mug at eve_d
+          c3_w                 dep_w;           //  queue depth
+          c3_o                 hol_o;           //  on hold
+          struct _u3_rrit*     ent_u;           //  queue entry
+          struct _u3_rrit*     ext_u;           //  queue exit
+        } u3_lord;
 
-      /* u3_disk: manage events on disk.
-      **
-      **    any event once discovered should be in one of these sets.
-      **    at present, all sets are ordered and can be defined by a
-      **    simple counter.  any events <= the counter is in the set.
+      /* u3_disk_cb: u3_disk callbacks
+      */
+        typedef struct _u3_disk_cb {
+          void* vod_p;
+          void (*read_done_f)(void*, u3_play);
+          void (*read_bail_f)(void*, c3_d eve_d);
+          void (*write_done_f)(void*, c3_d eve_d);
+          void (*write_bail_f)(void*, c3_d eve_d);
+        } u3_disk_cb;
+
+      /* u3_disk: manage event persistence.
       */
         typedef struct _u3_disk {
           u3_dire*         dir_u;               //  main pier directory
           u3_dire*         urb_u;               //  urbit system data
           u3_dire*         com_u;               //  log directory
           c3_o             liv_o;               //  live
-          c3_d             end_d;               //  byte end of file
           MDB_env*          db_u;               //  lmdb environment.
-          c3_d             moc_d;               //  commit requested
-          c3_d             com_d;               //  committed
-          struct _u3_pier* pir_u;               //  pier backpointer
+          c3_d             sen_d;               //  commit requested
+          c3_d             dun_d;               //  committed
+          u3_disk_cb        cb_u;               //  callbacks
+          uv_timer_t       tim_u;               //  read timer
+          c3_o             hol_o;               //  on hold
+          u3_play          put_u;               //  write queue
         } u3_disk;
 
-      /* u3_boot: startup controller.
+      /* u3_boot: bootstrap event sequence
       */
         typedef struct _u3_boot {
-          u3_noun          pil;                 //  pill
-          u3_noun          ven;                 //  boot event
-          struct _u3_pier* pir_u;               //  pier backpointer
+          u3_noun bot;                          //  boot formulas
+          u3_noun mod;                          //  module ova
+          u3_noun use;                          //  userpace ova
         } u3_boot;
 
-      /* u3_psat: pier state.
+      /* u3_peat: pier state. // XX rename to u3_psat
       */
         typedef enum {
-          u3_psat_init = 0,                   //  initialized
-          u3_psat_boot = 1,                   //  booting
-          u3_psat_pace = 2,                   //  replaying
-          u3_psat_play = 3,                   //  full operation
-          u3_psat_done = 4                    //  shutting down
-        } u3_psat;
+          u3_peat_init = 0,                   //  initialized
+          u3_peat_boot = 1,                   //  bootstrap
+          u3_peat_play = 2,                   //  replaying
+          u3_peat_work = 3,                   //  working
+          u3_peat_done = 4                    //  shutting down
+        } u3_peat;
+
+      /* u3_wall: pier barrier
+      */
+        typedef struct _u3_wall {
+          void*            vod_p;
+          c3_d             eve_d;
+          void (*wal_f)(void*, c3_d);
+          struct _u3_wall* nex_u;
+        } u3_wall;
+
+      /* u3_auto: abstract i/o driver
+      */
+        typedef struct _u3_auto {
+          c3_m             nam_m;
+          c3_o             liv_o;
+          struct {
+            void (*init_f)(struct _u3_auto*);
+            void (*talk_f)(struct _u3_auto*);
+            c3_o (*fete_f)(struct _u3_auto*, u3_noun pax, u3_noun fav);  // RETAIN
+            void (*exit_f)(struct _u3_auto*);  // XX close_cb?
+          } io;
+          struct {
+            void (*drop_f)(struct _u3_auto*, void*);
+            void (*work_f)(struct _u3_auto*, void*);
+            void (*done_f)(struct _u3_auto*, void*);
+            void (*swap_f)(struct _u3_auto*, void*);
+            void (*bail_f)(struct _u3_auto*, void*);
+          } ev;
+          struct _u3_ovum* ent_u;
+          struct _u3_ovum* ext_u;
+          struct _u3_auto* nex_u;
+          struct _u3_pier* pir_u;
+        } u3_auto;
 
       /* u3_pier: ship controller.
       */
         typedef struct _u3_pier {
           c3_c*            pax_c;               //  pier directory
-          c3_w             wag_w;               //  config flags
-          c3_d             gen_d;               //  last event discovered
-          c3_d             lif_d;               //  lifecycle barrier
-          u3_boot*         bot_u;               //  boot state
-          c3_d             but_d;               //  boot/restart barrier
-          c3_d             tic_d[1];            //  ticket (unstretched)
-          c3_d             sec_d[1];            //  generator (unstretched)
-          c3_d             key_d[4];            //  secret (stretched)
+          c3_w             lif_w;               //  lifecycle barrier
           c3_d             who_d[2];            //  identity
           c3_c*            who_c;               //  identity as C string
-          c3_s             por_s;               //  UDP port
           c3_o             fak_o;               //  yes iff fake security
-          u3_psat          sat_e;               //  pier state
+          c3_o             liv_o;               //  fully live
+          u3_peat          sat_e;               //  pier state
           u3_disk*         log_u;               //  event log
-          u3_controller*   god_u;               //  computer
+          u3_lord*         god_u;               //  computer
+          u3_wall*         wal_u;               //  barriers
+          u3_auto*         car_u;               //  i/o drivers
+          struct {                              //  replay queue
+            c3_d           sen_d;               //    last sent
+            c3_d           req_d;               //    last requested
+            u3_fact*       ent_u;               //    entry
+            u3_fact*       ext_u;               //    exit
+          } pay_u;                              //
+          struct {                              //  finished event queue:
+            c3_d           rel_d;               //    last released
+            u3_work*       ent_u;               //    entry
+            u3_work*       ext_u;               //    exit
+          } wok_u;                              //
+          uv_prepare_t     pep_u;               //  preloop registration
+          uv_check_t       cek_u;               //  postloop registration
+          uv_idle_t        idl_u;               //  postloop registration
+          // XX remove
+          c3_s             por_s;               //  UDP port
           u3_ames*         sam_u;               //  packet interface
           u3_behn*         teh_u;               //  behn timer
           u3_unix*         unx_u;               //  sync and clay
           u3_save*         sav_u;               //  autosave
-          u3_writ*         ent_u;               //  entry of queue
-          u3_writ*         ext_u;               //  exit of queue
-          uv_prepare_t     pep_u;               //  preloop registration
-          uv_idle_t        idl_u;               //  postloop registration
         } u3_pier;
 
       /* u3_king: all executing piers.
@@ -709,6 +848,94 @@
           u3_moor*  cli_u;                      //  connected clients
           uv_timer_t tim_u;                     //  gc timer
         } u3_daemon;
+
+        u3_ovum*
+        u3_auto_next(u3_auto* car_u);
+        void
+        u3_auto_fete(u3_auto* car_u, u3_noun act);
+
+      /* u3_auto_init(): initialize all drivers
+      */
+        void
+        u3_auto_init(u3_auto* car_u);
+
+      /* u3_auto_talk(): start all drivers
+      */
+        void
+        u3_auto_talk(u3_auto* car_u);
+
+      /* u3_auto_plan(): create and enqueue an ovum
+      */
+        u3_ovum*
+        u3_auto_plan(u3_auto* car_u,
+                     void*    vod_p,
+                     c3_l     msc_l,
+                     u3_noun    tar,
+                     u3_noun    pax,
+                     u3_noun    fav);
+
+      /* u3_auto_exit(): close all drivers
+      */
+        void
+        u3_auto_exit(u3_auto* car_u);
+
+      /* u3_auto_live(): check if all drivers are live.
+      */
+        c3_o
+        u3_auto_live(u3_auto* car_u);
+
+        u3_lord*
+        u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u);
+
+      /* u3_lord_work();
+      */
+        void
+        u3_lord_play(u3_lord* god_u, u3_play pay_u);
+
+      /* u3_lord_work();
+      */
+        void
+        u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo);
+
+        void
+        u3_lord_save(u3_lord* god_u, c3_d eve_d);
+
+      /* u3_lord_exit();
+      */
+        void
+        u3_lord_exit(u3_lord* god_u, c3_w cod_w);
+
+      /* u3_lord_snap();
+      */
+        void
+        u3_lord_snap(u3_lord* god_u, c3_d eve_d);
+
+        u3_disk*
+        u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u);
+        c3_o
+        u3_disk_read_header(u3_disk* log_u, c3_d who_d[2], c3_o* fak_o, c3_w* lif_w);
+        c3_o
+        u3_disk_write_header(u3_disk* log_u, c3_d who_d[2], c3_o fak_o, c3_w lif_w);
+        void
+        u3_disk_boot_plan(u3_disk* log_u, u3_noun job);
+        void
+        u3_disk_plan(u3_disk* log_u,
+                     c3_d     eve_d,
+                     c3_l     bug_l,
+                     c3_l     mug_l,
+                     u3_noun  job);
+        void
+        u3_disk_read(u3_disk* log_u, c3_d eve_d, c3_d len_d);
+
+      /* u3_pier_spin(): (re-)activate idle handler
+      */
+        void
+        u3_pier_spin(u3_pier* pir_u);
+
+      /* u3_disk_exit(): close the log.
+      */
+        void
+        u3_disk_exit(u3_disk* log_u);
 
 #     define u3L  u3_Host.lup_u             //  global event loop
 #     define u3Z  (&(u3_Raft))
@@ -1354,12 +1581,12 @@
       **
       ** Returns c3y on complete success; c3n on any error.
       */
-      c3_o u3_lmdb_read_events(u3_pier* pir_u,
-                               c3_d first_event_d,
-                               c3_d len_d,
-                               c3_o(*on_event_read)(u3_pier* pir_u,
-                                                    c3_d id,
-                                                    u3_noun mat));
+        c3_o
+        u3_lmdb_read_events(MDB_env* db_u,
+                            c3_d first_event_d,
+                            c3_d len_d,
+                            void* vod_p,
+                            c3_o(*on_event_read)(void*, c3_d, u3_atom));
 
       /* u3_lmdb_write_identity(): Writes log identity
       **

@@ -19,38 +19,6 @@
 #include "all.h"
 #include "vere/vere.h"
 
-typedef struct _u3_ovum {
-  struct _u3_auto* car_u;               //  backpointer to i/o driver
-  void*            vod_p;               //  context
-  c3_l             msc_l;               //  ms to timeout
-  u3_noun            tag;               //  target
-  u3_noun            pax;               //  wire
-  u3_noun            fav;               //  card
-  struct _u3_ovum* pre_u;               //  previous ovum
-  struct _u3_ovum* nex_u;               //  next ovum
-} u3_ovum;
-
-typedef struct _u3_auto {
-  c3_m             nam_m;
-  c3_o             liv_o;
-  struct {
-    void (*init_f)(struct _u3_auto*);
-    void (*talk_f)(struct _u3_auto*);
-    c3_o (*fete_f)(struct _u3_auto*, u3_noun pax, u3_noun fav);  // RETAIN
-    void (*exit_f)(struct _u3_auto*);  // XX close_cb?
-  } io;
-  struct {
-    void (*drop_f)(struct _u3_auto*, void*);
-    void (*work_f)(struct _u3_auto*, void*);
-    void (*done_f)(struct _u3_auto*, void*);
-    void (*swap_f)(struct _u3_auto*, void*);
-    void (*bail_f)(struct _u3_auto*, void*);
-  } ev;
-  struct _u3_ovum* ent_u;
-  struct _u3_ovum* ext_u;
-  struct _u3_auto* nex_u;
-} u3_auto;
-
 /* u3_auto_init(): initialize all drivers
 */
 void
@@ -106,7 +74,7 @@ u3_ovum*
 u3_auto_plan(u3_auto* car_u,
              void*    vod_p,
              c3_l     msc_l,
-             u3_noun    tag,
+             u3_noun    tar,
              u3_noun    pax,
              u3_noun    fav)
 {
@@ -114,7 +82,7 @@ u3_auto_plan(u3_auto* car_u,
   egg_u->car_u = car_u;
   egg_u->vod_p = vod_p;
   egg_u->msc_l = msc_l;
-  egg_u->tag   = tag;
+  egg_u->tar   = tar;
   egg_u->pax   = pax;
   egg_u->fav   = fav;
 
@@ -131,6 +99,8 @@ u3_auto_plan(u3_auto* car_u,
     car_u->ent_u->nex_u = egg_u;
     car_u->ent_u = egg_u;
   }
+
+  u3_pier_spin(car_u->pir_u);
 
   return egg_u;
 }
@@ -155,7 +125,7 @@ u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u)
     egg_u->car_u->ev.drop_f(egg_u->car_u, egg_u->vod_p);
   }
 
-  u3z(egg_u->tag);
+  u3z(egg_u->tar);
   u3z(egg_u->pax);
   u3z(egg_u->fav);
   c3_free(egg_u);
@@ -173,10 +143,15 @@ u3_auto_next(u3_auto* car_u)
       egg_u = car_u->ext_u;
 
       c3_assert( !egg_u->pre_u );
-      c3_assert(  egg_u->nex_u );
 
-      egg_u->nex_u->pre_u = 0;
-      car_u->ext_u = egg_u->nex_u;
+      if ( egg_u->nex_u ) {
+        egg_u->nex_u->pre_u = 0;
+        car_u->ext_u = egg_u->nex_u;
+      }
+      else {
+        car_u->ent_u = car_u->ext_u = 0;
+      }
+
       egg_u->nex_u = 0;
 
       //  XX better name?
@@ -204,7 +179,7 @@ u3_auto_fete(u3_auto* car_u, u3_noun act)
     fec = u3h(act);
     u3x_cell(fec, &pax, &fav);
 
-    while ( c3n == car_u->io.fete_f(car_u, pax, fav) ) {
+    while ( c3n == car_u->io.fete_f(car_u, u3k(pax), u3k(fav)) ) {
       if ( !car_u->nex_u ) {
         // reck_kick_norm
         // "kick: lost"

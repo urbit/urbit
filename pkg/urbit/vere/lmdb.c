@@ -390,15 +390,16 @@ void u3_lmdb_write_event(MDB_env* environment,
 **
 ** Returns c3y on complete success; c3n on any error.
 */
-c3_o u3_lmdb_read_events(u3_pier* pir_u,
-                         c3_d first_event_d,
-                         c3_d len_d,
-                         c3_o(*on_event_read)(u3_pier* pir_u, c3_d id,
-                                              u3_noun mat))
+c3_o
+u3_lmdb_read_events(MDB_env* db_u,
+                    c3_d first_event_d,
+                    c3_d len_d,
+                    void* vod_p,
+                    c3_o(*on_event_read)(void*, c3_d, u3_atom))
 {
   // Creates the read transaction.
   MDB_txn* transaction_u;
-  c3_w ret_w = mdb_txn_begin(pir_u->log_u->db_u,
+  c3_w ret_w = mdb_txn_begin(db_u,
                              //environment,
                              (MDB_txn *) NULL,
                              MDB_RDONLY, /* flags */
@@ -460,15 +461,12 @@ c3_o u3_lmdb_read_events(u3_pier* pir_u,
     }
 
     // Now build the atom version and then the cued version from the raw data
-    u3_noun mat = u3i_bytes(val.mv_size, val.mv_data);
-
-    if (on_event_read(pir_u, current_id, mat) == c3n) {
-      u3z(mat);
-      u3l_log("lmdb: aborting replay due to error.\r\n");
+    if ( c3n == on_event_read(vod_p, current_id, u3i_bytes(val.mv_size, val.mv_data)) ) {
+      //  XX remove
+      //
+      u3l_log("lmdb: read: aborting replay due to error.\r\n");
       return c3n;
     }
-
-    u3z(mat);
 
     ret_w = mdb_cursor_get(cursor_u, &key, &val, MDB_NEXT);
     if (ret_w != 0 && ret_w != MDB_NOTFOUND) {

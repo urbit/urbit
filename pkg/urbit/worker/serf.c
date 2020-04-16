@@ -1042,7 +1042,7 @@ u3_serf_boot(void)
 /* main(): main() when run as urbit-worker
 */
 c3_i
-mmain(c3_i argc, c3_c* argv[])
+main(c3_i argc, c3_c* argv[])
 {
   //  the serf is spawned with [FD 0] = events and [FD 1] = effects
   //  we dup [FD 0 & 1] so we don't accidently use them for something else
