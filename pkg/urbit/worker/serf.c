@@ -46,28 +46,27 @@
   $%  $:  %live
           $%  [%exit cod=@]
               [%save eve=@]
-              [%walk eve=@]
+              [%snap eve=@]
       ==  ==
       [%peek now=date lyc=gang pat=path]
-      [%play eve=@ lit=(list $?((pair date ovum) *))]
-      [%work eve=@ job=(pair date ovum)]
+      [%play eve=@ lit=(list ?((pair date ovum) *))]
+      [%work job=(pair date ovum)]
   ==
 ::  +plea: from serf to king
 ::
 +$  plea
-  $%  [%ripe pro=@ kel=(list (pair term @ud)) eve=@ mug=@]
+  $%  [%live ~]
+      [%ripe [pro=@ hon=@ nok=@] eve=@ mug=@]
       [%slog pri=@ =tank]
-      [%peek pat=path dat=(unit (cask))]
+      [%peek dat=(unit (cask))]
       $:  %play
-          eve=@
           $%  [%done mug=@]
-              [%bail dud=goof]
+              [%bail eve=@ mug=@ dud=goof]
       ==  ==
       $:  %work
-          eve=@
-          $%  [%done mug=@ fec=(list ovum)]
-              [%swap mug=@ job=(pair date ovum) fec=(list ovum)]
-              [%bail dud=(list goof)]
+          $%  [%done eve=@ mug=@ fec=(list ovum)]
+              [%swap eve=@ mug=@ job=(pair date ovum) fec=(list ovum)]
+              [%bail lud=(list goof)]
       ==  ==
   ==
 --
@@ -76,13 +75,9 @@ questions:
 
 - %peek
   - persistent dates? (in arvo or serf)
-  - response on block/unit?
 - %play
   - expect lifecycle on [%ripe ... eve=0 mug=0]
   - eve identifies failed event on [%play @ %bail ...]
-- %live unacknowledged, crash on failure
-  - %walk resyncs eve
-  - %save both %fast and %full? (save to where? ack? continue after?)
 - %pack
   - could just be [%save %full ...] followed by a restart
 - %mass
@@ -91,7 +86,6 @@ questions:
   - in $writ for timeouts
   - in $plea for measurement
 - duct or vane stack for spinner
-- slog back to toplevel?
 */
 
 /* _serf_space(): print n spaces.
@@ -377,7 +371,7 @@ _serf_send_slog(u3_noun hod)
 static void
 _serf_send_stdr(c3_c* str_c)
 {
-  _serf_send_slog(u3nc(c3__leaf, u3i_string(str_c)));
+  _serf_send_slog(u3nt(0, c3__leaf, u3i_tape(str_c)));
 }
 
 static void
@@ -537,7 +531,7 @@ _serf_poke_time(c3_d evt_d, c3_c* txt_c, struct timeval b4)
 /* _serf_work():  apply event, capture effects.
 */
 static u3_noun
-_serf_work(c3_d evt_d, u3_noun job)
+_serf_work(u3_noun job)
 {
   u3_noun now, ovo, gon, last_date;
   c3_w pre_w = u3a_open(u3R);
@@ -548,8 +542,8 @@ _serf_work(c3_d evt_d, u3_noun job)
 
   //  event numbers must be continuous (see [%live %walk @])
   //
-  c3_assert(evt_d == u3V.dun_d + 1ULL);
-  u3V.sen_d = evt_d;
+  c3_assert( u3V.sen_d == u3V.dun_d);
+  u3V.sen_d++;
 
   u3x_cell(job, &now, &ovo);
 
@@ -565,15 +559,15 @@ _serf_work(c3_d evt_d, u3_noun job)
     gettimeofday(&b4, 0);
     txt_c = u3r_string(u3h(u3t(ovo)));
 
-    u3l_log("serf: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
+    u3l_log("serf: work (%" PRIu64 ") %s\r\n", txt_c, u3V.sen_d);
   }
 #endif
 
   gon = u3m_soft(0, u3v_poke, u3k(ovo));
 
 #ifdef U3_EVENT_TIME_DEBUG
-  if ( bug_t {
-    _serf_poke_time(evt_d, txt_c, b4);
+  if ( bug_t ) {
+    _serf_poke_time(u3V.sen_d, txt_c, b4);
     c3_free(txt_c);
   }
 #endif
@@ -592,7 +586,9 @@ _serf_work(c3_d evt_d, u3_noun job)
     
     u3z(gon); u3z(job); u3z(last_date);
 
-    return u3nt(c3__done, u3i_words(1, &u3V.mug_l), vir);
+    return u3nc(c3__done, u3nt(u3i_chubs(1, &u3V.dun_d),
+                               u3i_words(1, &u3V.mug_l),
+                               vir));
   }
 
   //  event rejected
@@ -619,7 +615,7 @@ _serf_work(c3_d evt_d, u3_noun job)
 #ifdef U3_EVENT_TIME_DEBUG
     if ( bug_t ) {
       gettimeofday(&b4, 0);
-      u3l_log("serf: crud (%" PRIu64 ") live\r\n", evt_d);
+      u3l_log("serf: crud (%" PRIu64 ") live\r\n", u3V.sen_d);
     }
 #endif
 
@@ -627,8 +623,8 @@ _serf_work(c3_d evt_d, u3_noun job)
     gon = u3m_soft(0, u3v_poke, u3k(ovo));
 
 #ifdef U3_EVENT_TIME_DEBUG
-    if ( bug_t {
-      _serf_poke_time(evt_d, "crud", b4);
+    if ( bug_t ) {
+      _serf_poke_time(u3V.sen_d, "crud", b4);
     }
 #endif
 
@@ -646,9 +642,11 @@ _serf_work(c3_d evt_d, u3_noun job)
 
       u3z(gon); u3z(job); u3z(last_date); u3z(dud);
 
-      return u3nq(c3__swap, u3i_words(1, &u3V.mug_l),
-                            u3nc(u3k(u3A->now), ovo),
-                            vir);
+
+    return u3nc(c3__swap, u3nq(u3i_chubs(1, &u3V.dun_d),
+                               u3i_words(1, &u3V.mug_l),
+                               u3nc(u3k(u3A->now), ovo),
+                               vir));
     }
 
     //  error notification rejected
@@ -678,7 +676,7 @@ _serf_work(c3_d evt_d, u3_noun job)
 /* _serf_work_trace(): %work, with trace
 */
 static u3_noun
-_serf_work_trace(c3_d evt_d, u3_noun job)
+_serf_work_trace(u3_noun job)
 {
   c3_t  tac_t = ( 0 != u3_Host.tra_u.fil_u );
   c3_c  lab_c[2048];
@@ -693,8 +691,7 @@ _serf_work_trace(c3_d evt_d, u3_noun job)
     {
       c3_c* cad_c = u3m_pretty(cad);
       c3_c* wir_c = u3m_pretty_path(wir);
-      snprintf(lab_c, 2048, "event %" PRIu64 ": [%s %s]",
-                            evt_d, wir_c, cad_c);
+      snprintf(lab_c, 2048, "work [%s %s]", wir_c, cad_c);
       c3_free(cad_c);
       c3_free(wir_c);
     }
@@ -702,7 +699,7 @@ _serf_work_trace(c3_d evt_d, u3_noun job)
     u3t_event_trace(lab_c, 'B');
   }
 
-  pro = _serf_work(evt_d, job);
+  pro = u3nc(c3__work, _serf_work(job));
 
   if ( tac_t ) {
     u3t_event_trace(lab_c, 'E');
@@ -717,10 +714,12 @@ _serf_play_life(u3_noun eve)
   c3_d len_d;
   {
     u3_noun len = u3qb_lent(eve);
-
-    c3_assert( 1 == u3r_met(6, len) );
-    len_d = u3r_chub(1, len);
+    c3_assert( c3y == u3r_safe_chub(len, &len_d) );
+    u3z(len);
   }
+
+  c3_assert( 0ULL == u3V.sen_d );
+  u3V.sen_d = len_d;
 
   //  XX set evt_d forall lit so that %slog is accurate?
   //  XX capture bail instead of exit
@@ -730,10 +729,10 @@ _serf_play_life(u3_noun eve)
     exit(1);
   }
 
-  u3V.dun_d = u3V.sen_d = u3A->ent_d = len_d;
+  //  XX refactor to use _serf_sure_core()
+  //
+  u3V.dun_d = u3A->ent_d = u3V.sen_d;
   u3V.mug_l = u3r_mug(u3A->roc);
-
-  u3l_log("serf: (%" PRIu64 ")| core: %x\r\n", u3V.dun_d, u3V.mug_l);
 
   return u3nc(c3__done, u3V.mug_l);
 }
@@ -757,6 +756,7 @@ _serf_play_list(u3_noun eve)
 
     if ( u3_blip != u3h(gon) ) {
       u3_noun dud = u3k(u3t(gon));
+      c3_d  eve_d = u3V.sen_d;
       u3z(gon);
 
       //  restore previous time
@@ -770,8 +770,7 @@ _serf_play_list(u3_noun eve)
       //  XX reclaim/pack on meme
       //  XX retry?
       //
-
-      return u3nc(c3__bail, dud);
+      return u3nq(c3__bail, eve_d, u3V.mug_l, dud);
     }
     else {
       //  vir/(list ovum)  list of effects
@@ -808,11 +807,9 @@ _serf_play(c3_d evt_d, u3_noun lit)
 
   //  XX better condition for no kernel?
   //
-  u3_noun pro = ( 0ULL == u3V.dun_d )
-                ? _serf_play_life(lit)
-                : _serf_play_list(lit);
-
-  return u3nt(c3__play, u3i_chubs(1, &u3V.dun_d), pro);
+  return u3nc(c3__play, ( 0ULL == u3V.dun_d )
+                        ? _serf_play_life(lit)
+                        : _serf_play_list(lit));
 }
 
 // /* _serf_poke_peek(): dereference namespace.
@@ -868,20 +865,12 @@ _serf_live_exit(c3_w cod_w)
 
 /* _serf_live_save(): save snapshot.
 */
-static void
+static u3_noun
 _serf_live_save(c3_d evt_d)
 {
   c3_assert( evt_d == u3V.dun_d );
   u3e_save();
-}
-
-/* _serf_live_walk(): bump event number.
-*/
-static void
-_serf_live_walk(c3_d evt_d)
-{
-  u3l_log("serf: bump %" PRIu64 " to %" PRIu64 "\r\n", u3V.dun_d, evt_d);
-  u3V.sen_d = u3V.dun_d = evt_d;
+  return u3nc(c3__live, u3_nul);
 }
 
 /* _serf_step_trace(): initialize or rotate trace file.
@@ -900,9 +889,9 @@ _serf_step_trace(void)
   }
 }
 
-/* _serf_poke():
+/* _serf_newt_poke():
 */
-void
+static void
 _serf_newt_poke(void* vod_p, u3_noun mat)
 {
   u3_noun jar = u3ke_cue(mat);
@@ -942,7 +931,10 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
           return;
         }
 
-        case c3__save: {
+        // XX
+        //
+        case c3__save:
+        case c3__snap: {
           c3_d evt_d;
 
           if ( c3n == u3r_safe_chub(dat, &evt_d) ) {
@@ -950,19 +942,7 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
           }
 
           u3z(jar);
-          _serf_live_save(evt_d);
-          return;
-        }
-
-        case c3__walk: {
-          c3_d evt_d;
-
-          if ( c3n == u3r_safe_chub(dat, &evt_d) ) {
-            goto error;
-          }
-
-          u3z(jar);
-          _serf_live_walk(evt_d);
+          _serf_send(_serf_live_save(evt_d));
           return;
         }
       }
@@ -1004,25 +984,16 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
     }
 
     case c3__work: {
-      u3_noun evt, job;
-      c3_d evt_d;
-
-      if ( (c3n == u3r_trel(jar, 0, &evt, &job)) ||
-           (c3n == u3a_is_cell(job)) ||
-           (c3n == u3r_safe_chub(evt, &evt_d)) )
-      {
-        goto error;
-      }
-
-      u3k(job);
+      u3_noun job = u3k(u3t(jar));
       u3z(jar);
-      _serf_send(_serf_work_trace(evt_d, job));
+      _serf_send(_serf_work_trace(job));
       _serf_sure_post();
       return;
     }
   }
 
   error: {
+    // u3m_p("jar", jar);
     u3z(jar);
     _serf_newt_fail(0, "bad jar");
   }
@@ -1033,7 +1004,7 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
 static u3_noun
 _serf_ripe(void)
 {
-  u3l_log("serf: ripe %" PRIu64 "\r\n", u3V.dun_d);
+  // u3l_log("serf: ripe %" PRIu64 "\r\n", u3V.dun_d);
 
   u3V.mug_l = ( 0 == u3V.dun_d ) ? 0 : u3r_mug(u3A->roc);
   return u3nc(u3i_chubs(1, &u3V.dun_d), u3i_words(1, &u3V.mug_l));
@@ -1045,11 +1016,11 @@ void
 u3_serf_boot(void)
 {
   c3_w  pro_w = 1;
-  u3_noun kel = u3nt(u3nc(c3__hoon, 141),
-                     u3nc(c3__nock, 4),
-                     u3_nul);
+  c3_y  hon_y = 141;
+  c3_y  noc_y = 4;
+  u3_noun ver = u3nt(pro_w, hon_y, noc_y);
 
-  _serf_send(u3nq(c3__ripe, pro_w, kel, _serf_ripe()));
+  _serf_send(u3nt(c3__ripe, ver, _serf_ripe()));
 
   //  measure/print static memory usage if < 1/2 of the loom is available
   //
