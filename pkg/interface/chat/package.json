@@ -20,6 +20,7 @@
     "gulp-rename": "^1.4.0",
     "rollup": "^1.6.0",
     "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-root-import": "^0.2.3",
