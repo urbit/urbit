@@ -310,16 +310,19 @@
     %+  cook  |=(mont +<)
     ;~  plug
       %+  cook  |=((list (list taut)) (zing +<))
+      %+  ifix  [gay gay]
       %+  more  gap
       %+  ifix  [;~(plug net hep gap) gap]
       (most ;~(plug com gaw) taut-rule)
     ::
       %+  cook  |=((list (list taut)) (zing +<))
+      %+  ifix  [gay gay]
       %+  more  gap
       %+  ifix  [;~(plug net lus gap) gap]
       (most ;~(plug com gaw) taut-rule)
     ::
       %+  cook  |=((list [face=term =path]) +<)
+      %+  ifix  [gay gay]
       %+  more  gap
       %+  ifix  [;~(plug net tis gap) gap]
       %+  cook  |=([term path] +<)
