@@ -80,7 +80,6 @@ export class Root extends Component {
                 associations={associations}
                 invites={invites}
                 groups={groups}
-                rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
                 selectedGroups={selectedGroups}
                 links={links}
@@ -118,7 +117,6 @@ export class Root extends Component {
                 invites={invites}
                 groups={groups}
                 selected={resourcePath}
-                rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
                 selectedGroups={selectedGroups}
                 links={links}
@@ -155,7 +153,6 @@ export class Root extends Component {
                 invites={invites}
                 groups={groups}
                 selected={resourcePath}
-                rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
                 selectedGroups={selectedGroups}
                 popout={popout}
