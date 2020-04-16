@@ -369,7 +369,9 @@ _cm_signal_done()
   signal(SIGTERM, SIG_IGN);
   signal(SIGVTALRM, SIG_IGN);
 
+#ifndef NO_OVERFLOW
   stackoverflow_deinstall_handler();
+#endif
   {
     struct itimerval itm_u;
 
