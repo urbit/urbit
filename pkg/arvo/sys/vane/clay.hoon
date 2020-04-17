@@ -2710,7 +2710,7 @@
               [%vale =path]
           ==
         +$  state
-          $:  baked=(map path cage)
+          $:  baked=(map path (unit cage))
               cache=ford-cache
               stack=(list (set path))
               cycle=(set build)
@@ -2742,8 +2742,12 @@
       |=  =path
       ^-  [(unit cage) state]
       ~|  %error-validating-path^path
-      ?^  cage=(~(get by baked.nub) path)
-        [cage nub]
+      ?^  got=(~(get by baked.nub) path)
+        [u.got nub]
+      =;  [res=(unit cage) bun=state]
+        =.  nub  bun
+        =.  baked.nub  (~(put by baked.nub) path res)
+        [res nub]
       ?:  (~(has in cycle.nub) vale+path)
         ~|(cycle+vale+path^stack.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) vale+path)
