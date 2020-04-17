@@ -13,6 +13,26 @@ import { Sigil } from '/components/lib/icons/sigil';
 
 import { uuid, uxToHex, hexToRgba } from '/lib/util';
 
+const MARKDOWN_CONFIG = {
+  name: "markdown",
+  tokenTypeOverrides: {
+    header: "presentation",
+    quote: "presentation",
+    list1: "presentation",
+    list2: "presentation",
+    list3: "presentation",
+    hr: "presentation",
+    image: "presentation",
+    imageAltText: "presentation",
+    imageMarker: "presentation",
+    formatting: "presentation",
+    linkInline: "presentation",
+    linkEmail: "presentation",
+    linkText: "presentation",
+    linkHref: "presentation",
+  }
+}
+
 // line height
 const INPUT_LINE_HEIGHT = 28;
 
@@ -260,7 +280,7 @@ export class ChatInput extends Component {
     if(mode === 'markdown' && specialFormat) {
        editor.setOption('mode', null);
     } else if(mode === null && !specialFormat){
-       editor.setOption('mode', 'markdown');
+       editor.setOption('mode', MARKDOWN_CONFIG);
     }
 
     const { patpSuggestions } = this.state;
@@ -389,7 +409,7 @@ export class ChatInput extends Component {
     const completeActive = this.state.patpSuggestions.length !== 0;
 
     const options = {
-      mode: 'markdown',
+      mode: MARKDOWN_CONFIG,
       theme: 'tlon',
       lineNumbers: false,
       lineWrapping: true,
