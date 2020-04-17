@@ -17,6 +17,8 @@ import qualified Urbit.UrukRTS.JetOptimize as Opt
 import qualified Urbit.UrukRTS.OptToFast   as Opt
 
 
+type PierIO = ReaderT FilePath IO
+
 
 newtype Hash = Hash { unHash :: ByteString }
   deriving (Eq, Ord, Generic)
@@ -144,7 +146,7 @@ doHash = Hash . SHA256.hash
 
 -- When dumping, we also need to walk the tree.
 
-toDumpVal :: Val -> IO DumpVal
+toDumpVal :: Val -> PierIO DumpVal
 toDumpVal VUni       = pure $ DVUni
 toDumpVal (VCon l r) = DVCon <$> toDumpVal l <*> toDumpVal r
 toDumpVal (VLef l)   = DVLef <$> toDumpVal l
@@ -159,20 +161,20 @@ toDumpVal (VFun f)   = do
   bs <- (toStrict . serialise) <$> toDumpFun f
   DVFun <$> writeHashFile bs
 
-toDumpFun :: Fun -> IO DumpFun
+toDumpFun :: Fun -> PierIO DumpFun
 toDumpFun Fun{..} = do
   let dfNeed = fNeed
   dfHead <- toDumpNode fHead
   dfArgs <- mapM toDumpVal (toList fArgs)
   pure $ DumpFun{..}
 
-toDumpJet :: Jet -> IO DumpJet
+toDumpJet :: Jet -> PierIO DumpJet
 toDumpJet (Jet djArgs inName inBody _ _) = do
   djName <- toDumpVal inName
   djBody <- toDumpVal inBody
   pure $ DumpJet{..}
 
-toDumpNode :: Node -> IO DumpNode
+toDumpNode :: Node -> PierIO DumpNode
 toDumpNode (Jay x)     = pure $ DNJay x
 toDumpNode Kay         = pure $ DNKay
 toDumpNode Ess         = pure $ DNEss
@@ -249,53 +251,54 @@ toDumpNode FindAssoc   = pure $ DNFindAssoc
 
 -- Step one: we
 
-hashDir = "/Users/erg/hashData/"
-
-writeHashFile :: ByteString -> IO Hash
+writeHashFile :: ByteString -> PierIO Hash
 writeHashFile bs = do
   let rawHash = doHash bs
   let name = toText $ fromBytes $ unHash rawHash
 
+  hashDir <- ask
   let file = hashDir </> (unpack name)
-  exists <- doesFileExist $ file
+  exists <- liftIO $ doesFileExist $ file
   unless exists $ do
-    putStrLn $ "Writing " ++ name
-    writeFile file bs
+    liftIO $ putStrLn $ "Writing " ++ name
+    liftIO $ writeFile file bs
 
   pure rawHash
 
-readHashFile :: Hash -> IO ByteString
+readHashFile :: Hash -> PierIO ByteString
 readHashFile rawHash = do
   let name = toText $ fromBytes $ unHash rawHash
+  hashDir <- ask
   let file = hashDir </> (unpack name)
-
-  readFile file
+  liftIO $ readFile file
 
 -- -----------------------------------------------------------------------
 
-writeNode :: Node -> IO Hash
+writeNode :: Node -> PierIO Hash
 writeNode node = do
   dnode <- toDumpNode node
   let bs = toStrict $ serialise dnode
   writeHashFile bs
 
-writeVal :: Val -> IO Hash
+writeVal :: Val -> PierIO Hash
 writeVal val = do
   bs <- (toStrict . serialise) <$> toDumpVal val
   writeHashFile bs
 
-writeJet :: Jet -> IO Hash
+writeJet :: Jet -> PierIO Hash
 writeJet jet = do
   bs <- (toStrict . serialise) <$> toDumpJet jet
   writeHashFile bs
 
 
-writeHashTo :: String -> Hash -> IO ()
-writeHashTo name (Hash bs) = writeFile (hashDir </> name) bs
+writeHashTo :: String -> Hash -> PierIO ()
+writeHashTo name (Hash bs) = do
+  hashDir <- ask
+  liftIO $ writeFile (hashDir </> name) bs
 
 -- -----------------------------------------------------------------------
 
-fromDumpVal :: DumpVal -> IO Val
+fromDumpVal :: DumpVal -> PierIO Val
 fromDumpVal DVUni       = pure VUni
 fromDumpVal (DVCon l r) = VCon <$> fromDumpVal l <*> fromDumpVal r
 fromDumpVal (DVLef l)   = VLef <$> fromDumpVal l
@@ -307,7 +310,7 @@ fromDumpVal (DVLis xs)  = VLis <$> mapM fromDumpVal xs
 fromDumpVal (DVBox h)   = VBox <$> readVal h
 fromDumpVal (DVFun h)   = VFun <$> readFun h
 
-fromDumpFun :: DumpFun -> IO Fun
+fromDumpFun :: DumpFun -> PierIO Fun
 fromDumpFun DumpFun{..} = do
   let fNeed = dfNeed
   fHead <- fromDumpNode dfHead
@@ -315,13 +318,14 @@ fromDumpFun DumpFun{..} = do
   fArgs <- smallArrayFromList <$> mapM fromDumpVal dfArgs
   pure $ Fun{..}
 
-fromDumpJet :: DumpJet -> IO Jet
+fromDumpJet :: DumpJet -> PierIO Jet
 fromDumpJet DumpJet{..} = do
   name <- fromDumpVal djName
   body <- fromDumpVal djBody
-  Opt.optToFast <$> Opt.compile djArgs name body
+  opt <- liftIO $ Opt.compile djArgs name body
+  pure $ Opt.optToFast opt
 
-fromDumpNode :: DumpNode -> IO Node
+fromDumpNode :: DumpNode -> PierIO Node
 fromDumpNode (DNJay x)     = pure $ Jay x
 fromDumpNode DNKay         = pure $ Kay
 fromDumpNode DNEss         = pure $ Ess
@@ -397,26 +401,41 @@ fromDumpNode DNAddAssoc    = pure AddAssoc
 fromDumpNode DNFindAssoc   = pure FindAssoc
 
 
+---
 
-
-
-readVal :: Hash -> IO Val
+readVal :: Hash -> PierIO Val
 readVal h = do
   dv <- (deserialise . fromStrict) <$> readHashFile h
   fromDumpVal dv
 
-readFun :: Hash -> IO Fun
+readFun :: Hash -> PierIO Fun
 readFun h = do
   df <- (deserialise . fromStrict) <$> readHashFile h
   fromDumpFun df
 
-readJet :: Hash -> IO Jet
+readJet :: Hash -> PierIO Jet
 readJet h = do
   dv <- (deserialise . fromStrict) <$> readHashFile h
   fromDumpJet dv
 
 
-readHashFrom :: String -> IO Hash
-readHashFrom name = Hash <$> readFile (hashDir </> name)
+readHashFrom :: String -> PierIO Hash
+readHashFrom name = do
+  hashDir <- ask
+  h <- liftIO $ readFile (hashDir </> name)
+  pure (Hash h)
 
+---
 
+persistToPier :: FilePath -> Val -> IO Hash
+persistToPier pier head = flip runReaderT pier $ do
+  liftIO $ createDirectoryIfMissing False pier
+
+  headHash <- writeVal head
+  writeHashTo "HEAD" headHash
+  pure headHash
+
+loadFromPier :: FilePath -> IO Val
+loadFromPier pier = flip runReaderT pier $ do
+  headHash <- readHashFrom "HEAD"
+  readVal headHash
