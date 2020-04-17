@@ -344,9 +344,11 @@
   =*  loop-whos  $
   ?~  whos  loop-socs(socs t.socs)
   =^  caz  state
-    ?:  ?=(%remove -.upd)
-      (leave-from-peer i.socs pax.upd i.whos)
-    (listen-to-peer i.socs pax.upd i.whos)
+    ?.  ?=(%remove -.upd)
+      (listen-to-peer i.socs pax.upd i.whos)
+    ?:  =(our.bowl i.whos)
+      (handle-listen-action %leave i.socs)
+    (leave-from-peer i.socs pax.upd i.whos)
   loop-whos(whos t.whos, cards (weld cards caz))
 ::
 ::  link subscriptions

@@ -77,7 +77,7 @@ export class ChatScreen extends Component {
       );
     } else if (props.chatInitialized &&
                !(props.station in props.inbox) &&
-               !(props.station in props.chatSynced) ) {
+               (!!props.chatSynced && !(props.station in props.chatSynced))) {
 
       props.history.push("/~chat");
     } else if (
@@ -241,7 +241,7 @@ export class ChatScreen extends Component {
     }
 
     let pendingMessages = props.pendingMessages.has(props.station)
-      ? props.pendingMessages.get(props.station).reverse()
+      ? props.pendingMessages.get(props.station)
       : [];
 
     pendingMessages.map(function (value) {
@@ -302,12 +302,14 @@ export class ChatScreen extends Component {
         <div
           className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
           style={{ height: "100%", resize: "vertical" }}
+          onScroll={this.onScroll}
         >
           <div
             ref={el => {
               this.scrollElement = el;
             }}></div>
           {(
+            props.chatSynced &&
             !(props.station in props.chatSynced) &&
             (messages.length > 0)
           ) ? (
@@ -320,7 +322,7 @@ export class ChatScreen extends Component {
           {messageElements}
         </div>
       )}
-    }
+  }
 
   render() {
     const { props, state } = this;
