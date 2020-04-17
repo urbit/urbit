@@ -172,11 +172,10 @@ _pier_work(u3_pier* pir_u)
 static void
 _pier_play_plan(u3_pier* pir_u, u3_play pay_u)
 {
-  u3_fact** ent_u = &pay_u.ent_u;
   u3_fact** ext_u;
   c3_d      old_d;
 
-  if ( !pir_u->pay_u.ent_u ) {
+  if ( !pir_u->pay_u.ext_u ) {
     c3_assert( !pir_u->pay_u.ent_u );
     ext_u = &pir_u->pay_u.ext_u;
     old_d = pir_u->pay_u.sen_d;
@@ -195,36 +194,28 @@ _pier_play_plan(u3_pier* pir_u, u3_play pay_u)
 
   c3_assert( (1ULL + old_d) == pay_u.ext_u->eve_d );
 
-  *ent_u = pay_u.ent_u;
   *ext_u = pay_u.ext_u;
+  pir_u->pay_u.ent_u = pay_u.ent_u;
 }
 
+/* _pier_play_send(): detach a batch of up to [len_d] events from queue.
+*/
 static u3_play
-_pier_play_next(u3_pier* pir_u)
+_pier_play_next(u3_pier* pir_u, c3_d len_d)
 {
   u3_fact* tac_u = pir_u->pay_u.ext_u;
-  //  the first batch must be >= the lifecycle barrier
-  //
-  c3_w     len_d = ( !pir_u->pay_u.sen_d )
-                   ? c3_max(pir_u->lif_w, PIER_PLAY_BATCH)
-                   : PIER_PLAY_BATCH;
   u3_play  pay_u;
 
   //  set batch entry and exit pointers
   //
   {
     pay_u.ext_u = tac_u;
-    c3_assert( tac_u );
 
-    while ( len_d-- ) {
-      if ( !tac_u->nex_u ) {
-        break;
-      }
+    while ( len_d-- && tac_u->nex_u ) {
       tac_u = tac_u->nex_u;
     }
 
     pay_u.ent_u = tac_u;
-    c3_assert( tac_u );
   }
 
   //  detatch batch from queue
@@ -249,7 +240,12 @@ _pier_play_send(u3_pier* pir_u)
   // (god_u->dep_w > PIER_WORK_BATCH) )
   //
   if ( pir_u->pay_u.ext_u ) {
-    u3_play pay_u = _pier_play_next(pir_u);
+    //  the first batch must be >= the lifecycle barrier
+    //
+    c3_d    len_d = ( !pir_u->pay_u.sen_d )
+                    ? c3_max(pir_u->lif_w, PIER_PLAY_BATCH)
+                    : PIER_PLAY_BATCH;
+    u3_play pay_u = _pier_play_next(pir_u, len_d);
 
     //  bump sent counter
     //
@@ -268,11 +264,13 @@ _pier_play_send(u3_pier* pir_u)
 static void
 _pier_play_read(u3_pier* pir_u)
 {
-  c3_d las_d, len_d;
+  c3_d las_d;
 
   if ( pir_u->pay_u.ent_u ) {
     las_d = pir_u->pay_u.ent_u->eve_d;
 
+    //  cap the pir_u->pay_u queue depth
+    //
     if ( (las_d - pir_u->pay_u.ext_u->eve_d) >= PIER_PLAY_BATCH ) {
       return;
     }
@@ -281,20 +279,20 @@ _pier_play_read(u3_pier* pir_u)
     las_d = pir_u->pay_u.sen_d;
   }
 
-  if ( (1ULL + las_d) == pir_u->pay_u.req_d ) {
-    return;
-  }
+  {
+    c3_d nex_d = (1ULL + las_d);
+    c3_d len_d = c3_min(pir_u->log_u->dun_d - las_d, PIER_READ_BATCH);
 
-  pir_u->pay_u.req_d = (1ULL + las_d);
-
-  len_d = c3_min(pir_u->log_u->dun_d - las_d, PIER_READ_BATCH);
-
-  if ( len_d ) {
-    u3_disk_read(pir_u->log_u, (1ULL + las_d), len_d);
+    if (  len_d
+       && (nex_d > pir_u->pay_u.req_d) )
+    {
+      u3_disk_read(pir_u->log_u, nex_d, len_d);
+      pir_u->pay_u.req_d = nex_d;
 
 #ifdef VERBOSE_PIER
-    fprintf(stderr, "pier: play read %" PRIu64 " at %" PRIu64 "\r\n", len_d, (1ULL + las_d));
+      fprintf(stderr, "pier: play read %" PRIu64 " at %" PRIu64 "\r\n", len_d, nex_d);
 #endif
+    }
   }
 }
 
@@ -315,7 +313,8 @@ _pier_play(u3_pier* pir_u)
     u3l_log("pier: play boot\r\n");
   }
   else if ( god_u->eve_d == log_u->dun_d ) {
-    u3l_log("---------------- playback complete----------------\r\n");
+    u3l_log("---------------- %s complete ----------------\r\n",
+            ( u3_peat_boot == pir_u->sat_e ) ? "boot" : "playback");
     u3_term_stop_spinner();
     _pier_work_init(pir_u);
     // XX _pier_next(pir_u);
@@ -529,6 +528,8 @@ _pier_on_lord_work_bail(void* vod_p, u3_work* wok_u, u3_noun lud)
   //  XX dispose
   //
   fprintf(stderr, "pier: work: bail\r\n");
+  u3m_p("wir", u3h(u3t(wok_u->job)));
+  u3m_p("tag", u3h(u3t(u3t(wok_u->job))));
 
   _pier_next(pir_u);
 }
@@ -607,7 +608,9 @@ _pier_on_lord_live(void* vod_p)
       pir_u->sat_e = u3_peat_play;
       pir_u->pay_u.sen_d = god_u->eve_d;
 
-      u3l_log("---------------- playback starting----------------\r\n");
+      u3l_log("---------------- %s starting ----------------\r\n",
+            ( u3_peat_boot == pir_u->sat_e ) ? "boot" : "playback");
+
       if ( (1ULL + god_u->eve_d) == log_u->dun_d ) {
         u3l_log("pier: replaying event %" PRIu64 "\r\n", log_u->dun_d);
       }
@@ -617,7 +620,10 @@ _pier_on_lord_live(void* vod_p)
                 log_u->dun_d);
       }
 
-      u3_term_start_spinner(c3__play, c3y);
+      {
+        c3_m mot_m = ( u3_peat_boot == pir_u->sat_e ) ? c3__boot : c3__play;
+        u3_term_start_spinner(mot_m, c3y);
+      }
     }
     else {
       _pier_work_init(pir_u);
