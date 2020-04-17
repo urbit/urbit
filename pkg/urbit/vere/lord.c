@@ -126,13 +126,21 @@ _lord_on_exit(uv_process_t* req_u,
   }
 }
 
+/* _lord_bail_noop(): ignore subprocess error on shutdown
+*/
+static void
+_lord_bail_noop(void*       vod_p,
+                const c3_c* err_c)
+{
+}
+
 /* _lord_bail(): handle subprocess error.
 */
 static void
 _lord_bail(void*       vod_p,
            const c3_c* err_c)
 {
-  // XX ignore if shutting down
+  // XX exit?
   //
   fprintf(stderr, "\rpier: work error: %s\r\n", err_c);
 }
@@ -682,6 +690,13 @@ _lord_writ_send(u3_lord* god_u, u3_rrit* wit_u)
     _lord_writ_jam(god_u, wit_u);
     u3_newt_write(&god_u->inn_u, wit_u->mat, 0);
     wit_u->sen_o = c3y;
+
+    //  ignore subprocess error on shutdown
+    //
+    if ( c3__exit == wit_u->typ_m ) {
+      god_u->out_u.bal_f = _lord_bail_noop;
+      god_u->inn_u.bal_f = _lord_bail_noop;
+    }
   }
 }
 
