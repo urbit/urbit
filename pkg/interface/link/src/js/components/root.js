@@ -23,6 +23,7 @@ export class Root extends Component {
   constructor(props) {
     super(props);
 
+    this.totalUnseen = 0;
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
   }
@@ -41,7 +42,22 @@ export class Root extends Component {
     const associations = !!state.associations ? state.associations : {link: {}, contacts: {}};
     let links = !!state.links ? state.links : {};
     let comments = !!state.comments ? state.comments : {};
+
+
     const seen = !!state.seen ? state.seen : {};
+
+
+
+    const totalUnseen = _.reduce(
+      seen,
+      (acc, links) => acc + _.reduce(links, (total, hasSeen) => total + (hasSeen ? 0 : 1), 0),
+      0
+    );
+
+    if(totalUnseen !== this.totalUnseen) {
+      document.title = totalUnseen !== 0 ? `Links - (${totalUnseen})` : 'Links';
+      this.totalUnseen = totalUnseen;
+    }
 
     const invites = state.invites ?
       state.invites : {};

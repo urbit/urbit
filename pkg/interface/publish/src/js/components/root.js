@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Link } from "react-router-dom";
+import _ from 'lodash';
 import { store } from '/store';
 import { api } from '/api';
 import { Skeleton } from '/components/skeleton';
@@ -15,6 +16,7 @@ export class Root extends Component {
   constructor(props) {
     super(props);
 
+    this.unreadTotal = 0;
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
   }
@@ -30,6 +32,19 @@ export class Root extends Component {
     let contacts = !!state.contacts ? state.contacts : {};
     let associations = !!state.associations ? state.associations : {contacts: {}}
     let selectedGroups = !!state.selectedGroups ? state.selectedGroups : [];
+
+    const unreadTotal = _.chain(state.notebooks)
+                         .values()
+                         .map(_.values)
+                         .flatten() // flatten into array of notebooks
+                         .map('num-unread')
+                         .reduce((acc, count) => acc + count, 0)
+                         .value();
+
+    if(this.unreadTotal !== unreadTotal) {
+      document.title = unreadTotal > 0 ? `Publish - (${unreadTotal})` : 'Publish';
+      this.unreadTotal = unreadTotal;
+    }
 
     return (
       <BrowserRouter>
