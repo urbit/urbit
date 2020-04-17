@@ -397,6 +397,13 @@ export class ChatInput extends Component {
       this.editor.setOption('mode', null);
       this.editor.setOption('placeholder', "Code...");
     }
+    const value = this.editor.getValue();
+
+    // Force redraw of placeholder
+    if(value.length === 0) {
+      this.editor.setValue(' ');
+      this.editor.setValue('');
+    }
 
   }
 
@@ -445,7 +452,9 @@ export class ChatInput extends Component {
         'Enter': (cm) =>
           completeActive
             ? this.completePatp(state.selectedSuggestion)
-            : this.messageSubmit()
+            : this.messageSubmit(),
+        'Shift-3': (cm) =>
+          this.toggleCode()
       }
     };
 
