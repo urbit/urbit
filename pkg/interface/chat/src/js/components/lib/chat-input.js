@@ -146,6 +146,8 @@ export class ChatInput extends Component {
 
     this.clearSuggestions = this.clearSuggestions.bind(this);
 
+    this.toggleCode = this.toggleCode.bind(this);
+
     this.editor = null;
 
 
@@ -275,14 +277,6 @@ export class ChatInput extends Component {
 
   messageChange(editor, data, value) {
 
-    const mode = editor.getOption('mode');
-    const specialFormat = value.startsWith('#') || value.startsWith('@')
-    if(mode === 'markdown' && specialFormat) {
-       editor.setOption('mode', null);
-    } else if(mode === null && !specialFormat){
-       editor.setOption('mode', MARKDOWN_CONFIG);
-    }
-
     const { patpSuggestions } = this.state;
     if(patpSuggestions.length !== 0) {
       this.patpAutocomplete(value, false);
@@ -292,22 +286,8 @@ export class ChatInput extends Component {
 
 
   getLetterType(letter) {
-    if (letter[0] === '#') {
-      letter = letter.slice(1);
-      // remove insignificant leading whitespace.
-      // aces might be relevant to style.
-      while (letter[0] === '\n') {
-        letter = letter.slice(1);
-      }
-
-      return {
-        code: {
-          expression: letter,
-          output: undefined
-        }
-      }
-    } else if (letter[0] === '@') {
-      letter = letter.slice(1);
+    if (letter.startsWith('/me')) {
+      letter = letter.slice(3);
       // remove insignificant leading whitespace.
       // aces might be relevant to style.
       while (letter[0] === '\n') {
@@ -350,6 +330,16 @@ export class ChatInput extends Component {
       return;
     }
 
+    if(state.code) {
+      props.api.chat.message(props.station, `~${window.ship}`, Date.now(), {
+        code: {
+          expression: editorMessage,
+          output: undefined
+        }
+      });
+      this.editor.setValue('');
+      return;
+    }
     let message = [];
     editorMessage.split(" ").map((each) => {
       if (this.isUrl(each)) {
@@ -397,6 +387,19 @@ export class ChatInput extends Component {
 
   }
 
+  toggleCode() {
+    if(this.state.code) {
+      this.setState({ code: false });
+      this.editor.setOption('mode', MARKDOWN_CONFIG);
+      this.editor.setOption('placeholder', this.props.placeholder);
+    } else {
+      this.setState({ code: true });
+      this.editor.setOption('mode', null);
+      this.editor.setOption('placeholder', "Code...");
+    }
+
+  }
+
   render() {
     const { props, state } = this;
 
@@ -408,14 +411,16 @@ export class ChatInput extends Component {
 
     const completeActive = this.state.patpSuggestions.length !== 0;
 
+    const codeTheme = state.code ? ' code' : '';
+
     const options = {
       mode: MARKDOWN_CONFIG,
-      theme: 'tlon',
+      theme: 'tlon' + codeTheme,
       lineNumbers: false,
       lineWrapping: true,
       scrollbarStyle: 'native',
       cursorHeight: 0.85,
-      placeholder: props.placeholder,
+      placeholder: state.code ? "Code..." : props.placeholder,
       extraKeys: {
         Tab: (cm) =>
           completeActive
@@ -460,7 +465,7 @@ export class ChatInput extends Component {
         <div
           className="fl"
           style={{
-            marginTop: 4,
+            marginTop: 6,
             flexBasis: 24,
             height: 24
           }}>
@@ -471,13 +476,25 @@ export class ChatInput extends Component {
             classes={sigilClass}
             />
         </div>
-        <div className="fr h-100 flex bg-gray0-d lh-copy pl2 pr6 w-100" style={{ flexGrow: 1, maxHeight: '224px' }}>
-            <CodeEditor
-              options={options}
-              editorDidMount={editor => { this.editor = editor; }}
-              onChange={(e, d, v) => this.messageChange(e, d, v)}
-            />
+        <div
+          className="fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center"
+          style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 48px)' }}>
+          <CodeEditor
+            options={options}
+            editorDidMount={editor => { this.editor = editor; }}
+            onChange={(e, d, v) => this.messageChange(e, d, v)}
+          />
         </div>
+        <div style={{ height: '24px', width: '24px', flexBasis: 24, marginTop: 6 }}>
+          <img
+            style={{ filter: state.code && 'invert(100%)', height: '100%', width: '100%' }}
+            onClick={this.toggleCode}
+            src="/~chat/img/CodeEval.png"
+            className="contrast-10-d bg-white bg-none-d"
+          />
+
+        </div>
+
       </div>
     );
   }

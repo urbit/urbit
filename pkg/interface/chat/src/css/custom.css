@@ -254,6 +254,11 @@ blockquote {
     font-family: 'Inter';
 }
 
+.CodeMirror.cm-s-code.cm-s-tlon * {
+   font-family: 'Source Code Pro';
+
+}
+
 .CodeMirror-selected { background:#BAE3FE !important; color: black; }
 pre.CodeMirror-placeholder.CodeMirror-line-like { color: var(--gray); }
 
@@ -368,6 +373,14 @@ pre.CodeMirror-placeholder.CodeMirror-line-like { color: var(--gray); }
   }
   blockquote {
     border-left: 1px solid white;
+  }
+
+  .contrast-10-d {
+    filter: contrast(0.1);
+  }
+
+  .bg-none-d {
+    background: none;
   }
 
 
