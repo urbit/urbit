@@ -1,13 +1,14 @@
 module Main where
 
-import ClassyPrelude
+import ClassyPrelude        hiding (readFile, writeFile)
 import Control.Monad.Except
 
-import Control.Concurrent (threadDelay)
-import Urbit.Moon.Repl    (runFile')
-import Urbit.UrukRTS      (dumpEventsFile, kVVV, toJSON, vProfDone)
-
+import Control.Concurrent  (threadDelay)
+import Urbit.Moon.Repl     (runFile')
+import Urbit.UrukRTS       (dumpEventsFile, kVVV, toJSON, vProfDone)
 import Urbit.UrukSerialize
+
+import Data.Text.IO (readFile, writeFile)
 
 import qualified Urbit.Moon.MoonToUruk as MU
 import qualified Urbit.UrukRTS.Types   as RTS
@@ -28,12 +29,15 @@ loadKernel :: FilePath -> IO ()
 loadKernel fp = do
   traceTid <- async (dumpEventsFile "/home/benjamin/trace.bin")
   txt <- readFile fp
-  let retVal = MU.strictOlegFile' (id :: RTS.Val -> RTS.Val) (decodeUtf8 txt)
+  let retVal = MU.strictOlegFile' (id :: RTS.Val -> RTS.Val) txt
   case retVal of
     Left err -> putStrLn err
     Right val -> do
       putStr "Kernel loaded."
       useKernel val
+
+toVNat :: Int -> RTS.Val
+toVNat = RTS.VNat . fromIntegral
 
 useKernel :: RTS.Val -> IO ()
 useKernel kernel = HL.runInputT HL.defaultSettings (loop kernel)
@@ -50,12 +54,16 @@ useKernel kernel = HL.runInputT HL.defaultSettings (loop kernel)
               loop kernel
 
             Just (w, h) -> do
-              out <- liftIO $ kVVV kernel (RTS.VNat $ fromIntegral w) (RTS.VNat $ fromIntegral h)
+              out <- liftIO $ kVVV kernel (toVNat w) (toVNat h)
               case out of
                 (RTS.VCon ppm nuKernel) -> do
                   HL.outputStrLn (show ppm)
+                  -- Write the kernel.
                   valHash <- liftIO $ writeVal nuKernel
-                  loop nuKernel
+                  -- Then immediately read it back from disk, just to show that
+                  -- persistence works.
+                  nuNuKernel <- liftIO $ readVal valHash
+                  loop nuNuKernel
 
                 _ -> do
                   HL.outputStrLn "kernel didn't return a pair"

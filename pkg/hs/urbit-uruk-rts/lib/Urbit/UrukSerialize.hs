@@ -1,16 +1,20 @@
 module Urbit.UrukSerialize where
 
-import ClassyPrelude hiding (toList, writeFile)
+import ClassyPrelude hiding (readFile, toList, writeFile)
 
 import Codec.Serialise
-import Data.ByteString     hiding (putStrLn, unpack)
+import Data.ByteString           hiding (putStrLn, unpack)
 import Data.Foldable
 import Data.HexString
+import Data.Primitive.SmallArray
 import System.Directory
 import System.FilePath
 import Urbit.UrukRTS.Types
 
 import qualified Crypto.Hash.SHA256 as SHA256
+
+import qualified Urbit.UrukRTS.JetOptimize as Opt
+import qualified Urbit.UrukRTS.OptToFast   as Opt
 
 
 
@@ -110,6 +114,7 @@ data DumpJet = DumpJet {
 instance Serialise DumpJet
 
 data DumpFun = DumpFun {
+  dfNeed :: Int,
   dfHead :: DumpNode,
   dfArgs :: [DumpVal]
   }
@@ -127,7 +132,7 @@ data DumpVal
   | DVInt Integer
   | DVBol Bool
   | DVLis [DumpVal]
-  | DVBox DumpVal
+  | DVBox Hash
   | DVFun Hash
   deriving (Eq, Ord, Generic)
 
@@ -148,9 +153,7 @@ toDumpVal (VNat nat) = pure $ DVNat nat
 toDumpVal (VInt i)   = pure $ DVInt i
 toDumpVal (VBol b)   = pure $ DVBol b
 toDumpVal (VLis xs)  = DVLis <$> mapM toDumpVal xs
-
--- TODO: Boxed values should be forced into a new toplevel
-toDumpVal (VBox b)   = DVBox <$> toDumpVal b
+toDumpVal (VBox b)   = DVBox <$> writeVal b
 
 toDumpVal (VFun f)   = do
   bs <- (toStrict . serialise) <$> toDumpFun f
@@ -158,105 +161,102 @@ toDumpVal (VFun f)   = do
 
 toDumpFun :: Fun -> IO DumpFun
 toDumpFun Fun{..} = do
+  let dfNeed = fNeed
   dfHead <- toDumpNode fHead
   dfArgs <- mapM toDumpVal (toList fArgs)
   pure $ DumpFun{..}
 
-toDumpJet :: Int -> Val -> Val -> IO DumpJet
-toDumpJet djArgs inName inBody = do
+toDumpJet :: Jet -> IO DumpJet
+toDumpJet (Jet djArgs inName inBody _ _) = do
   djName <- toDumpVal inName
   djBody <- toDumpVal inBody
   pure $ DumpJet{..}
 
-
 toDumpNode :: Node -> IO DumpNode
-toDumpNode (Jay x) = pure $ DNJay x
-toDumpNode Kay = pure $ DNKay
-toDumpNode Ess = pure $ DNEss
-toDumpNode Dee = pure $ DNDee
-toDumpNode (Jut (Jet args name body _ _)) = do
-  bs <- (toStrict . serialise) <$> toDumpJet args name body
-  hash <- writeHashFile bs
-  pure $ DNJut hash
-toDumpNode (Eye x) = pure $ DNEye x
-toDumpNode (Bee x) = pure $ DNBee x
-toDumpNode (Sea x) = pure $ DNSea x
-toDumpNode (Sen x) = pure $ DNSen x
-toDumpNode Seq = pure $ DNSeq
-toDumpNode Fix = pure $ DNFix
-toDumpNode (Nat n) = pure $ DNNat n
-toDumpNode (Int i) = pure $ DNInt i
-toDumpNode (Lis v) = DNLis <$> mapM toDumpVal v -- TODO: Figure out recursion here.
-toDumpNode (Bol b) = pure $ DNBol b
-toDumpNode Iff = pure $ DNIff
-toDumpNode Pak = pure $ DNPak
-toDumpNode Zer = pure $ DNZer
-toDumpNode Eql = pure $ DNEql
-toDumpNode Add = pure $ DNAdd
-toDumpNode Inc = pure $ DNInc
-toDumpNode Dec = pure $ DNDec
-toDumpNode Fec = pure $ DNFec
-toDumpNode Mul = pure $ DNMul
-toDumpNode Sub = pure $ DNSub
-toDumpNode Ded = pure $ DNDed
-toDumpNode Uni = pure $ DNUni
-toDumpNode Lef = pure $ DNLef
-toDumpNode Rit = pure $ DNRit
-toDumpNode Cas = pure $ DNCas
-toDumpNode Let = pure $ DNLet
-toDumpNode Con = pure $ DNCon
-toDumpNode Car = pure $ DNCar
-toDumpNode Cdr = pure $ DNCdr
+toDumpNode (Jay x)     = pure $ DNJay x
+toDumpNode Kay         = pure $ DNKay
+toDumpNode Ess         = pure $ DNEss
+toDumpNode Dee         = pure $ DNDee
+toDumpNode (Jut jet)   = DNJut <$> writeJet jet
+toDumpNode (Eye x)     = pure $ DNEye x
+toDumpNode (Bee x)     = pure $ DNBee x
+toDumpNode (Sea x)     = pure $ DNSea x
+toDumpNode (Sen x)     = pure $ DNSen x
+toDumpNode Seq         = pure $ DNSeq
+toDumpNode Fix         = pure $ DNFix
+toDumpNode (Nat n)     = pure $ DNNat n
+toDumpNode (Int i)     = pure $ DNInt i
+toDumpNode (Lis v)     = DNLis <$> mapM toDumpVal v
+toDumpNode (Bol b)     = pure $ DNBol b
+toDumpNode Iff         = pure $ DNIff
+toDumpNode Pak         = pure $ DNPak
+toDumpNode Zer         = pure $ DNZer
+toDumpNode Eql         = pure $ DNEql
+toDumpNode Add         = pure $ DNAdd
+toDumpNode Inc         = pure $ DNInc
+toDumpNode Dec         = pure $ DNDec
+toDumpNode Fec         = pure $ DNFec
+toDumpNode Mul         = pure $ DNMul
+toDumpNode Sub         = pure $ DNSub
+toDumpNode Ded         = pure $ DNDed
+toDumpNode Uni         = pure $ DNUni
+toDumpNode Lef         = pure $ DNLef
+toDumpNode Rit         = pure $ DNRit
+toDumpNode Cas         = pure $ DNCas
+toDumpNode Let         = pure $ DNLet
+toDumpNode Con         = pure $ DNCon
+toDumpNode Car         = pure $ DNCar
+toDumpNode Cdr         = pure $ DNCdr
 
-toDumpNode Lsh = pure $ DNLsh
-toDumpNode Lth = pure $ DNLth
-toDumpNode Fub = pure $ DNFub
-toDumpNode Not = pure $ DNNot
-toDumpNode Xor = pure $ DNXor
-toDumpNode Div = pure $ DNDiv
-toDumpNode Tra = pure $ DNTra
-toDumpNode Mod = pure $ DNMod
-toDumpNode Rap = pure $ DNRap
-toDumpNode Zing = pure $ DNZing
+toDumpNode Lsh         = pure $ DNLsh
+toDumpNode Lth         = pure $ DNLth
+toDumpNode Fub         = pure $ DNFub
+toDumpNode Not         = pure $ DNNot
+toDumpNode Xor         = pure $ DNXor
+toDumpNode Div         = pure $ DNDiv
+toDumpNode Tra         = pure $ DNTra
+toDumpNode Mod         = pure $ DNMod
+toDumpNode Rap         = pure $ DNRap
+toDumpNode Zing        = pure $ DNZing
 
 toDumpNode IntPositive = pure $ DNIntPositive
 toDumpNode IntNegative = pure $ DNIntNegative
 
-toDumpNode IntAbs = pure $ DNIntAbs
-toDumpNode IntAdd = pure $ DNIntAdd
-toDumpNode IntDiv = pure $ DNIntDiv
-toDumpNode IntIsZer = pure $ DNIntIsZer
-toDumpNode IntIsNeg = pure $ DNIntIsNeg
-toDumpNode IntIsPos = pure $ DNIntIsPos
-toDumpNode IntLth = pure $ DNIntLth
-toDumpNode IntMul = pure $ DNIntMul
-toDumpNode IntNegate = pure $ DNIntNegate
-toDumpNode IntSub = pure $ DNIntSub
+toDumpNode IntAbs      = pure $ DNIntAbs
+toDumpNode IntAdd      = pure $ DNIntAdd
+toDumpNode IntDiv      = pure $ DNIntDiv
+toDumpNode IntIsZer    = pure $ DNIntIsZer
+toDumpNode IntIsNeg    = pure $ DNIntIsNeg
+toDumpNode IntIsPos    = pure $ DNIntIsPos
+toDumpNode IntLth      = pure $ DNIntLth
+toDumpNode IntMul      = pure $ DNIntMul
+toDumpNode IntNegate   = pure $ DNIntNegate
+toDumpNode IntSub      = pure $ DNIntSub
 
-toDumpNode MkBox = pure $ DNMkBox
-toDumpNode (Box v) = DNBox <$> writeVal v
-toDumpNode Unbox = pure $ DNUnbox
+toDumpNode MkBox       = pure $ DNMkBox
+toDumpNode (Box v)     = DNBox <$> writeVal v
+toDumpNode Unbox       = pure $ DNUnbox
 
-toDumpNode LCon = pure $ DNLCon
-toDumpNode LNil = pure $ DNLNil
-toDumpNode Gulf = pure $ DNGulf
-toDumpNode Snag = pure $ DNSnag
-toDumpNode Turn = pure $ DNTurn
-toDumpNode Weld = pure $ DNWeld
+toDumpNode LCon        = pure $ DNLCon
+toDumpNode LNil        = pure $ DNLNil
+toDumpNode Gulf        = pure $ DNGulf
+toDumpNode Snag        = pure $ DNSnag
+toDumpNode Turn        = pure $ DNTurn
+toDumpNode Weld        = pure $ DNWeld
 
-toDumpNode AddAssoc = pure $ DNAddAssoc
-toDumpNode FindAssoc = pure $ DNFindAssoc
+toDumpNode AddAssoc    = pure $ DNAddAssoc
+toDumpNode FindAssoc   = pure $ DNFindAssoc
 
 -- Step one: we
+
+hashDir = "/Users/erg/hashData/"
 
 writeHashFile :: ByteString -> IO Hash
 writeHashFile bs = do
   let rawHash = doHash bs
   let name = toText $ fromBytes $ unHash rawHash
 
-  let dir = "/Users/erg/hashData/"
-
-  let file = dir </> (unpack name)
+  let file = hashDir </> (unpack name)
   exists <- doesFileExist $ file
   unless exists $ do
     putStrLn $ "Writing " ++ name
@@ -264,6 +264,14 @@ writeHashFile bs = do
 
   pure rawHash
 
+readHashFile :: Hash -> IO ByteString
+readHashFile rawHash = do
+  let name = toText $ fromBytes $ unHash rawHash
+  let file = hashDir </> (unpack name)
+
+  readFile file
+
+-- -----------------------------------------------------------------------
 
 writeNode :: Node -> IO Hash
 writeNode node = do
@@ -271,9 +279,144 @@ writeNode node = do
   let bs = toStrict $ serialise dnode
   writeHashFile bs
 
-
 writeVal :: Val -> IO Hash
 writeVal val = do
-  dval <- toDumpVal val
-  let bs = toStrict $ serialise dval
+  bs <- (toStrict . serialise) <$> toDumpVal val
   writeHashFile bs
+
+writeJet :: Jet -> IO Hash
+writeJet jet = do
+  bs <- (toStrict . serialise) <$> toDumpJet jet
+  writeHashFile bs
+
+
+writeHashTo :: String -> Hash -> IO ()
+writeHashTo name (Hash bs) = writeFile (hashDir </> name) bs
+
+-- -----------------------------------------------------------------------
+
+fromDumpVal :: DumpVal -> IO Val
+fromDumpVal DVUni       = pure VUni
+fromDumpVal (DVCon l r) = VCon <$> fromDumpVal l <*> fromDumpVal r
+fromDumpVal (DVLef l)   = VLef <$> fromDumpVal l
+fromDumpVal (DVRit r)   = VRit <$> fromDumpVal r
+fromDumpVal (DVNat n)   = pure $ VNat n
+fromDumpVal (DVInt i)   = pure $ VInt i
+fromDumpVal (DVBol b)   = pure $ VBol b
+fromDumpVal (DVLis xs)  = VLis <$> mapM fromDumpVal xs
+fromDumpVal (DVBox h)   = VBox <$> readVal h
+fromDumpVal (DVFun h)   = VFun <$> readFun h
+
+fromDumpFun :: DumpFun -> IO Fun
+fromDumpFun DumpFun{..} = do
+  let fNeed = dfNeed
+  fHead <- fromDumpNode dfHead
+  -- let fNeed = nodeArity fHead
+  fArgs <- smallArrayFromList <$> mapM fromDumpVal dfArgs
+  pure $ Fun{..}
+
+fromDumpJet :: DumpJet -> IO Jet
+fromDumpJet DumpJet{..} = do
+  name <- fromDumpVal djName
+  body <- fromDumpVal djBody
+  Opt.optToFast <$> Opt.compile djArgs name body
+
+fromDumpNode :: DumpNode -> IO Node
+fromDumpNode (DNJay x)     = pure $ Jay x
+fromDumpNode DNKay         = pure $ Kay
+fromDumpNode DNEss         = pure $ Ess
+fromDumpNode DNDee         = pure $ Dee
+fromDumpNode (DNJut h)     = Jut <$> readJet h
+fromDumpNode (DNEye x)     = pure $ Eye x
+fromDumpNode (DNBee x)     = pure $ Bee x
+fromDumpNode (DNSea x)     = pure $ Sea x
+fromDumpNode (DNSen x)     = pure $ Sen x
+fromDumpNode DNSeq         = pure $ Seq
+fromDumpNode DNFix         = pure $ Fix
+fromDumpNode (DNNat n)     = pure $ Nat n
+fromDumpNode (DNInt i)     = pure $ Int i
+fromDumpNode (DNLis v)     = Lis <$> mapM fromDumpVal v
+fromDumpNode (DNBol b)     = pure $ Bol b
+fromDumpNode DNIff         = pure Iff
+fromDumpNode DNPak         = pure Pak
+fromDumpNode DNZer         = pure Zer
+fromDumpNode DNEql         = pure Eql
+fromDumpNode DNAdd         = pure Add
+fromDumpNode DNInc         = pure Inc
+fromDumpNode DNDec         = pure Dec
+fromDumpNode DNFec         = pure Fec
+fromDumpNode DNMul         = pure Mul
+fromDumpNode DNSub         = pure Sub
+fromDumpNode DNDed         = pure Ded
+fromDumpNode DNUni         = pure Uni
+fromDumpNode DNLef         = pure Lef
+fromDumpNode DNRit         = pure Rit
+fromDumpNode DNCas         = pure Cas
+fromDumpNode DNLet         = pure Let
+fromDumpNode DNCon         = pure Con
+fromDumpNode DNCar         = pure Car
+fromDumpNode DNCdr         = pure Cdr
+
+fromDumpNode DNLsh         = pure Lsh
+fromDumpNode DNLth         = pure Lth
+fromDumpNode DNFub         = pure Fub
+fromDumpNode DNNot         = pure Not
+fromDumpNode DNXor         = pure Xor
+fromDumpNode DNDiv         = pure Div
+fromDumpNode DNTra         = pure Tra
+fromDumpNode DNMod         = pure Mod
+fromDumpNode DNRap         = pure Rap
+fromDumpNode DNZing        = pure Zing
+
+fromDumpNode DNIntPositive = pure IntPositive
+fromDumpNode DNIntNegative = pure IntNegative
+
+fromDumpNode DNIntAbs      = pure IntAbs
+fromDumpNode DNIntAdd      = pure IntAdd
+fromDumpNode DNIntDiv      = pure IntDiv
+fromDumpNode DNIntIsZer    = pure IntIsZer
+fromDumpNode DNIntIsNeg    = pure IntIsNeg
+fromDumpNode DNIntIsPos    = pure IntIsPos
+fromDumpNode DNIntLth      = pure IntLth
+fromDumpNode DNIntMul      = pure IntMul
+fromDumpNode DNIntNegate   = pure IntNegate
+fromDumpNode DNIntSub      = pure IntSub
+
+fromDumpNode DNMkBox       = pure MkBox
+fromDumpNode (DNBox h)     = Box <$> readVal h
+fromDumpNode DNUnbox       = pure Unbox
+
+fromDumpNode DNLCon        = pure LCon
+fromDumpNode DNLNil        = pure LNil
+fromDumpNode DNGulf        = pure Gulf
+fromDumpNode DNSnag        = pure Snag
+fromDumpNode DNTurn        = pure Turn
+fromDumpNode DNWeld        = pure Weld
+
+fromDumpNode DNAddAssoc    = pure AddAssoc
+fromDumpNode DNFindAssoc   = pure FindAssoc
+
+
+
+
+
+readVal :: Hash -> IO Val
+readVal h = do
+  dv <- (deserialise . fromStrict) <$> readHashFile h
+  fromDumpVal dv
+
+readFun :: Hash -> IO Fun
+readFun h = do
+  df <- (deserialise . fromStrict) <$> readHashFile h
+  fromDumpFun df
+
+readJet :: Hash -> IO Jet
+readJet h = do
+  dv <- (deserialise . fromStrict) <$> readHashFile h
+  fromDumpJet dv
+
+
+readHashFrom :: String -> IO Hash
+readHashFrom name = Hash <$> readFile (hashDir </> name)
+
+
