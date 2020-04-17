@@ -244,11 +244,14 @@ export class ChatScreen extends Component {
       ? props.pendingMessages.get(props.station)
       : [];
 
+
     pendingMessages.map(function (value) {
       return (value.pending = true);
     });
 
-    let messageElements = pendingMessages.concat(messages).map((msg, i) => {
+    messages = pendingMessages.concat(messages);
+
+    let messageElements = messages.map((msg, i) => {
       // Render sigil if previous message is not by the same sender
       let aut = ["author"];
       let renderSigil =
@@ -284,6 +287,7 @@ export class ChatScreen extends Component {
                 this.scrollElement = el;
               }}></div>
             {(
+              props.chatSynced &&
               !(props.station in props.chatSynced) &&
               (messages.length > 0)
             ) ? (
