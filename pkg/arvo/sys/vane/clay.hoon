@@ -2695,6 +2695,12 @@
     $(vaz t.vaz)
   --
   |%
+  ::  +wrap: external wrapper
+  ::
+  ++  wrap
+    |*  [* state:ford]
+    [+<- +<+>-]  ::  cache.state
+  ::
   ++  ford
     =>  |%
         +$  build
@@ -2709,13 +2715,15 @@
               stack=(list (set path))
               cycle=(set build)
           ==
+        +$  args
+          $:  =ankh
+              deletes=(set path)
+              changes=(map path (each page lobe))
+              file-store=(map lobe blob)
+              =ford-cache
+          ==
         --
-    |=  $:  =ankh
-            deletes=(set path)
-            changes=(map path (each page lobe))
-            file-store=(map lobe blob)
-            =ford-cache
-        ==
+    |=  args
     ::  nub: internal mutable state for this computation
     ::
     =|  nub=state
@@ -2938,7 +2946,8 @@
       =/  mok  (head (flop path))
       ?:  =(mok mak)
         [u.cag nub]
-      =^  =tube  nub  (get-cast mak mok)
+      =^  =tube  nub  (get-cast mok mak)
+      ~|  error-casting+[path mok mak]
       :_(nub [mak (tube q.u.cag)])
     ::
     ++  run-pact
@@ -3389,23 +3398,53 @@
   ::    XX  needs to check tako in rang
   ::
   ++  park
-    |=  [=tako =rang =ankh mim=(map path (unit mime))]
+    ::  |=  [commit=yuki commit-store-adds=(map tako yaki) blob-store-adds=(map lobe blob)]
     |^
+    |=  [=tako =rang =ankh mim=(map path (unit mime))]
     ^+  ..park
-    =:  ank.dom  ankh
-        let.dom  +(let.dom)
+    =:  let.dom  +(let.dom)
         hit.dom  (~(put by hit.dom) +(let.dom) tako)
-        mim.dom  (apply-changes-to-mim:util mim.dom mim)
         hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
       ==
-    =/  [deletes=(set path) changes=(set path)]
+    =/  [deletes=(set path) changes=(map path (each page lobe))]
       =/  previous-yaki  (aeon-to-yaki:ze (dec let.dom))
       =/  next-yaki      (aeon-to-yaki:ze let.dom)
       (get-changes previous-yaki next-yaki)
-    =.  ..park  (emil (print deletes changes))
+    =.  ..park  (emil (print deletes ~(key by changes)))
     ::
-    wake:ergo
+    ::  promote ford cache
+    ::  promote and fill in ankh
+    ::  promote and fill in mime cache
+    ::
+    =.  fod.dom
+      (promote-ford fod.dom deletes ~(key by changes))
+    =/  =args:ford:fusion
+      [ank.dom deletes changes lat.ran fod.dom]
+    ::
+    =/  try-checkout-ankh
+      (mule |.((checkout-ankh args deletes changes ank.dom)))
+    %-  %-  slog
+        ?-  -.try-checkout-ankh
+          %&  [leaf+"checked out ankh"]~
+          %|  [leaf+"fail to checkout ankh" p.try-checkout-ankh]
+        ==
+    ::  =^  ankh  ford-cache.args
+    ::    (checkout-ankh args deletes changes ank.dom)
+    =.  ank.dom  ankh
+    =/  try-checkout-mime
+      (mule |.((checkout-mime args deletes ~(key by changes))))
+    %-  %-  slog
+        ?-  -.try-checkout-mime
+          %&  [leaf+"checked out mime"]~
+          %|  [leaf+"failed to checkout mime" p.try-checkout-mime]
+        ==
+    ::  =^  mim  ford-cache.args
+    ::    (checkout-mime args deletes ~(key by changes))
+    =.  mim.dom  (apply-changes-to-mim mim.dom mim)
+    =.  fod.dom  ford-cache.args
+    ::
+    wake:(ergo mim)
     ::
     ::  Find which files changed or were deleted
     ::
@@ -3421,23 +3460,23 @@
             ~
           `path
         ::
-          %-  silt  ^-  (list path)
+          %-  silt  ^-  (list [path (each page lobe)])
           %+  murn  ~(tap by (~(uni by q.old) q.new))
           |=  [=path =lobe]
-          ^-  (unit ^path)
+          ^-  (unit [^path (each page ^lobe)])
           =/  a  (~(get by q.new) path)
           =/  b  (~(get by q.old) path)
           ?:  |(=(a b) =(~ a))
             ~
-          `path
+          `[path |+lobe]
       ==
     ::
     ::  Keep any parts of the ford cache whose dependencies didn't change
     ::
     ++  promote-ford
-      |=  [=ford-cache deletes=(set path) changes=(map path (each page lobe))]
+      |=  [=ford-cache deletes=(set path) changes=(set path)]
       ^+  ford-cache
-      =/  invalid=(set path)  (~(uni in deletes) ~(key by changes))
+      =/  invalid=(set path)  (~(uni in deletes) changes)
       :*  ((invalidate path vase) vases.ford-cache invalid)
           ((invalidate mark dais) marks.ford-cache invalid)
           ((invalidate mars tube) casts.ford-cache invalid)
@@ -3454,9 +3493,122 @@
         $(builds t.builds)
       (~(put by $(builds t.builds)) i.builds)
     ::
+    ::  Update ankh
+    ::
+    ++  checkout-ankh
+      |=  $:  =ford=args:ford:fusion
+              deletes=(set path)
+              changes=(map path (each page lobe))
+              =ankh
+          ==
+      ^+  [ankh ford-cache.ford-args]
+      ::  Delete
+      ::
+      =.  ankh
+        =/  dels  ~(tap in deletes)
+        |-  ^-  ^ankh
+        =*  outer-loop  $
+        ?~  dels
+          ankh
+        =.  ankh
+          |-  ^-  ^ankh
+          =*  inner-loop  $
+          ?~  i.dels
+            ankh(fil ~)
+          %=    ankh
+              dir
+            %+  ~(put by dir.ankh)  i.i.dels
+            %=  inner-loop
+              i.dels  t.i.dels
+              ankh    (~(gut by dir.ankh) i.i.dels *^ankh)
+            ==
+          ==
+        outer-loop(dels t.dels)
+      ::  Add/change
+      ::
+      =/  cans=(list [=path change=(each page lobe)])  ~(tap by changes)
+      |-  ^+  [ankh ford-cache.ford-args]
+      =*  outer-loop  $
+      ?~  cans
+        [ankh ford-cache.ford-args]
+      =^  ankh  ford-cache.ford-args
+        =/  orig-path  path.i.cans
+        |-  ^+  [ankh ford-cache.ford-args]
+        =*  inner-loop  $
+        ?~  path.i.cans
+          =^  cage  ford-cache.ford-args
+            ?-    -.change.i.cans
+                %&
+              %-  wrap:fusion
+              (page-to-cage:(ford:fusion ford-args) p.change.i.cans)
+            ::
+                %|
+              =^  page  ford-cache.ford-args
+                %-  wrap:fusion
+                (lobe-to-page:(ford:fusion ford-args) p.change.i.cans)
+              (wrap:fusion (page-to-cage:(ford:fusion ford-args) page))
+            ==
+          :_  ford-cache.ford-args
+          %=    ankh
+              fil
+            :-  ~  :_  cage
+            ?-  -.change.i.cans
+                %|  p.change.i.cans
+                %&
+              %-  wrap:fusion
+              (page-to-lobe:(ford:fusion ford-args) p.change.i.cans)
+            ==
+          ==
+        =^  child-ankh  ford-cache.ford-args
+          %=  inner-loop
+            path.i.cans  t.path.i.cans
+            ankh         (~(gut by dir.ankh) i.path.i.cans *^ankh)
+          ==
+        :-  ankh(dir (~(put by dir.ankh) i.path.i.cans child-ankh))
+        ford-cache.ford-args
+      outer-loop(cans t.cans)
+    ::
+    ::  Update mime cache
+    ::
+    ++  checkout-mime
+      |=  $:  =ford=args:ford:fusion
+              deletes=(set path)
+              changes=(set path)
+          ==
+      ^-  [(map path (unit mime)) ford-cache]
+      =/  mim=(map path (unit mime))
+        =/  dels=(list path)  ~(tap by deletes)
+        |-  ^-  (map path (unit mime))
+        ?~  dels
+          ~
+        (~(put by $(dels t.dels)) i.dels ~)
+      =/  cans=(list path)  ~(tap by changes)
+      |-  ^-  [(map path (unit mime)) ford-cache]
+      ?~  cans
+        [mim ford-cache.ford-args]
+      =^  cage  ford-cache.ford-args
+        (wrap:fusion (cast-path:(ford:fusion ford-args) i.cans %mime))
+      =^  mim  ford-cache.ford-args  $(cans t.cans)
+      [(~(put by mim) i.cans `!<(mime q.cage)) ford-cache.ford-args]
+    ::
+    ::  Add or remove entries to the mime cache
+    ::
+    ++  apply-changes-to-mim
+      |=  [mim=(map path mime) changes=(map path (unit mime))]
+      ^-  (map path mime)
+      =/  changes-l=(list [pax=path change=(unit mime)])
+        ~(tap by changes)
+      |-  ^-  (map path mime)
+      ?~  changes-l
+        mim
+      ?~  change.i.changes-l
+        $(changes-l t.changes-l, mim (~(del by mim) pax.i.changes-l))
+      $(changes-l t.changes-l, mim (~(put by mim) [pax u.change]:i.changes-l))
+    ::
     ::  Emit update to unix sync
     ::
     ++  ergo
+      |=  mim=(map path (unit mime))
       ^+  ..park
       =/  must  (must-ergo:util her syd mon (turn ~(tap by mim) head))
       %-  emil
