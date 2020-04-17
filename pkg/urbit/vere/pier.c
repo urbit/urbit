@@ -747,19 +747,9 @@ u3_pier_spin(u3_pier* pir_u)
   }
 }
 
-static void
-_pier_loop_init(u3_auto* car_u);
-static void
-_pier_loop_wake(u3_auto* car_u);
-static void
-_pier_loop_exit(u3_auto* car_u);
-static c3_o
-_pier_loop_fete(u3_auto* car_u, u3_noun pax, u3_noun fav);
+static u3_auto*
+_pier_loop_init(u3_pier* pir_u);
 
-static void
-_pier_auto_noop(u3_auto* car_u, void* vod_p)
-{
-}
 /* _pier_init(): create a pier, loading existing.
 */
 static u3_pier*
@@ -776,7 +766,6 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
   //
   pir_u->sam_u = c3_calloc(sizeof(u3_ames));
   pir_u->por_s = u3_Host.ops_u.por_s;
-  pir_u->teh_u = c3_calloc(sizeof(u3_behn));
   pir_u->unx_u = c3_calloc(sizeof(u3_unix));
   pir_u->sav_u = c3_calloc(sizeof(u3_save));
 
@@ -851,25 +840,6 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
     }
   }
 
-  //  encapsulate all i/o drivers in one u3_auto (temporary)
-  {
-    u3_auto* car_u = c3_calloc(sizeof(*car_u));
-    car_u->nam_m = u3_blip;
-    car_u->liv_o = c3y;
-    car_u->pir_u = pir_u;
-    car_u->io.init_f = _pier_loop_init;
-    car_u->io.talk_f = _pier_loop_wake;
-    car_u->io.fete_f = _pier_loop_fete;
-    car_u->io.exit_f = _pier_loop_exit;
-    car_u->ev.drop_f = _pier_auto_noop;
-    car_u->ev.work_f = _pier_auto_noop;
-    car_u->ev.done_f = _pier_auto_noop;
-    car_u->ev.swap_f = _pier_auto_noop;
-    car_u->ev.bail_f = _pier_auto_noop;
-
-    pir_u->car_u = car_u;
-  }
-
   //  install in the pier table
   //
   //    XX  u3_king_plan
@@ -883,8 +853,6 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
     u3K.tab_u = c3_realloc(u3K.tab_u, u3K.all_w * sizeof(u3_pier*));
   }
   u3K.tab_u[u3K.len_w++] = pir_u;
-
-  u3_auto_init(pir_u->car_u);
 
   return pir_u;
 }
@@ -902,6 +870,8 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
     // xx dispose
     exit(1);
   }
+
+  pir_u->car_u = _pier_loop_init(pir_u);
 
   u3z(pax);
 }
@@ -1105,6 +1075,8 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
     exit(1);
   }
 
+  pir_u->car_u = _pier_loop_init(pir_u);
+
   u3z(pax);
 }
 
@@ -1158,31 +1130,6 @@ u3_pier_exit(u3_pier* pir_u)
   _pier_wall_plan(pir_u, 0, pir_u, _pier_exit_cb);
 }
 
-//  play loop:
-//
-//    _lord_live  state = play
-//    _disk_read batch
-//    disk_cb lord_play, disk_read
-//    lord_cb lord_play, disk_read ...
-//    lord_cb  state = work
-
-
-//  work loop:
-//
-//    _lord_live  state = work || play_done
-//    _auto_init
-//    _auto_next loop, fill queue
-//    lord_cb check until all live, pir_u->liv_o, "boot" cb
-//
-
-//  boot loop:
-//
-//    construct a boot sequence, commit part, enqueue part ("boot" driver, or direct?)
-//    play loop
-//    work loop
-//    
-
-
 //  startup validation
 //
 //    replay the log
@@ -1196,55 +1143,6 @@ u3_pier_exit(u3_pier* pir_u)
 //    init all the i/o drivers
 //    neighbor with sponsor
 //
-
-
-
-/* _pier_loop_init_pier(): initialize loop handlers.
-*/
-static void
-_pier_loop_init(u3_auto* car_u)
-{
-  u3_pier* pir_u = car_u->pir_u;
-  c3_l cod_l;
-
-  _pier_loop_time(pir_u);
-
-  //  for i/o drivers that still use u3A->sen
-  //
-  u3v_numb();
-
-  cod_l = u3a_lush(c3__ames);
-  u3_ames_io_init(pir_u);
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__behn);
-  u3_behn_io_init(pir_u);
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__unix);
-  u3_unix_io_init(pir_u);
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__save);
-  u3_save_io_init(pir_u);
-  u3a_lop(cod_l);
-
-  //  XX legacy handlers, not yet scoped to a pier
-  //
-  {
-    cod_l = u3a_lush(c3__term);
-    u3_term_io_init();
-    u3a_lop(cod_l);
-
-    cod_l = u3a_lush(c3__http);
-    u3_http_io_init();
-    u3a_lop(cod_l);
-
-    cod_l = u3a_lush(c3__cttp);
-    u3_cttp_io_init();
-    u3a_lop(cod_l);
-  }
-}
 
 /* _pier_loop_wake(): initialize listeners and send initial events.
 */
@@ -1276,9 +1174,9 @@ _pier_loop_wake(u3_auto* car_u)
   u3_ames_ef_bake(pir_u);
   u3a_lop(cod_l);
 
-  cod_l = u3a_lush(c3__behn);
-  u3_behn_ef_bake(pir_u);
-  u3a_lop(cod_l);
+  // cod_l = u3a_lush(c3__behn);
+  // u3_behn_ef_bake(pir_u);
+  // u3a_lop(cod_l);
 
   //  XX legacy handlers, not yet scoped to a pier
   //
@@ -1316,9 +1214,9 @@ _pier_loop_exit(u3_auto* car_u)
   u3_save_io_exit(pir_u);
   u3a_lop(cod_l);
 
-  cod_l = u3a_lush(c3__behn);
-  u3_behn_io_exit(pir_u);
-  u3a_lop(cod_l);
+  // cod_l = u3a_lush(c3__behn);
+  // u3_behn_io_exit(pir_u);
+  // u3a_lop(cod_l);
 
   //  XX legacy handlers, not yet scoped to a pier
   //
@@ -1342,6 +1240,93 @@ _pier_loop_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
 {
   u3_reck_kick(car_u->pir_u, u3nc(pax, fav));
   return c3y;
+}
+
+static void
+_pier_auto_noop(u3_auto* car_u, void* vod_p)
+{
+}
+
+/* _pier_loop_init_pier(): initialize loop handlers.
+*/
+static u3_auto*
+_pier_loop_init(u3_pier* pir_u)
+{
+  //  encapsulate all i/o drivers in one u3_auto (temporary)
+  //
+  //    XX  move to u3_auto_init(pir_u->car_u);
+  //
+
+  u3_auto*  car_u;
+  u3_auto** las_u = &car_u;
+
+  {
+    u3_auto* rac_u = u3_behn_io_init(pir_u);
+    rac_u->pir_u = pir_u;
+
+    *las_u = rac_u;
+    las_u = &rac_u->nex_u;
+  }
+
+  {
+    u3_auto* rac_u = c3_calloc(sizeof(*rac_u));
+    rac_u->nam_m = u3_blip;
+    rac_u->liv_o = c3y;
+    rac_u->pir_u = pir_u;
+    rac_u->io.talk_f = _pier_loop_wake;
+    rac_u->io.fete_f = _pier_loop_fete;
+    rac_u->io.exit_f = _pier_loop_exit;
+    rac_u->ev.drop_f = _pier_auto_noop;
+    rac_u->ev.work_f = _pier_auto_noop;
+    rac_u->ev.done_f = _pier_auto_noop;
+    rac_u->ev.swap_f = _pier_auto_noop;
+    rac_u->ev.bail_f = _pier_auto_noop;
+
+    *las_u = rac_u;
+    las_u = &rac_u->nex_u;
+  }
+
+  c3_l cod_l;
+
+  _pier_loop_time(pir_u);
+
+  //  for i/o drivers that still use u3A->sen
+  //
+  u3v_numb();
+
+  cod_l = u3a_lush(c3__ames);
+  u3_ames_io_init(pir_u);
+  u3a_lop(cod_l);
+
+  // cod_l = u3a_lush(c3__behn);
+  // u3_behn_io_init(pir_u);
+  // u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__unix);
+  u3_unix_io_init(pir_u);
+  u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__save);
+  u3_save_io_init(pir_u);
+  u3a_lop(cod_l);
+
+  //  XX legacy handlers, not yet scoped to a pier
+  //
+  {
+    cod_l = u3a_lush(c3__term);
+    u3_term_io_init();
+    u3a_lop(cod_l);
+
+    cod_l = u3a_lush(c3__http);
+    u3_http_io_init();
+    u3a_lop(cod_l);
+
+    cod_l = u3a_lush(c3__cttp);
+    u3_cttp_io_init();
+    u3a_lop(cod_l);
+  }
+
+  return car_u;
 }
 
 /* u3_pier_work(): send event; real pier pointer.

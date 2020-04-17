@@ -21,13 +21,12 @@
 
 /* u3_auto_init(): initialize all drivers
 */
-void
-u3_auto_init(u3_auto* car_u)
+u3_auto*
+u3_auto_init(void)
 {
-  while ( car_u ) {
-    car_u->io.init_f(car_u);
-    car_u = car_u->nex_u;
-  }
+  //  XX initialize i/o drivers here
+  //
+  return 0;
 }
 
 /* u3_auto_talk(): start all drivers

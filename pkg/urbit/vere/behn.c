@@ -14,34 +14,20 @@
 #include "all.h"
 #include "vere/vere.h"
 
-/* u3_behn(): initialize time timer.
+/* u3_behn: just a timer for ever
 */
-void
-u3_behn_io_init(u3_pier *pir_u)
-{
-  u3_behn* teh_u = pir_u->teh_u;
-  teh_u->alm = c3n;
-
-  uv_timer_init(u3L, &teh_u->tim_u);
-  teh_u->tim_u.data = pir_u;
-}
-
-/* u3_behn_io_exit(): terminate timer.
-*/
-void
-u3_behn_io_exit(u3_pier *pir_u)
-{
-  u3_behn* teh_u = pir_u->teh_u;
-  uv_close((uv_handle_t*)&teh_u->tim_u, 0);
-}
+  typedef struct _u3_behn {
+    u3_auto    car_u;                   //  driver
+    uv_timer_t tim_u;                   //  behn timer
+    c3_o       alm;                     //  alarm
+  } u3_behn;
 
 /* _behn_time_cb(): timer callback.
 */
 static void
 _behn_time_cb(uv_timer_t* tim_u)
 {
-  u3_pier *pir_u = tim_u->data;
-  u3_behn* teh_u = pir_u->teh_u;
+  u3_behn* teh_u = tim_u->data;
   teh_u->alm = c3n;
 
   //  start another timer for 10 minutes
@@ -60,19 +46,21 @@ _behn_time_cb(uv_timer_t* tim_u)
   // send timer event
   //
   {
-    u3_pier_work
-      (pir_u,
-       u3nt(u3_blip, c3__behn, u3_nul),
-       u3nc(c3__wake, u3_nul));
+    u3_noun pax = u3nt(u3_blip, c3__behn, u3_nul);
+    u3_noun fav = u3nc(c3__wake, u3_nul);
+
+    u3_auto_plan(&teh_u->car_u, 0, 0, u3_blip, pax, fav);
   }
 }
 
 /* u3_behn_ef_doze(): set or cancel timer
 */
-void
-u3_behn_ef_doze(u3_pier *pir_u, u3_noun wen)
+static void
+_behn_ef_doze(u3_behn* teh_u, u3_noun wen)
 {
-  u3_behn* teh_u = pir_u->teh_u;
+  if ( c3n == teh_u->car_u.liv_o ) {
+    teh_u->car_u.liv_o = c3y;
+  }
 
   if ( c3y == teh_u->alm ) {
     uv_timer_stop(&teh_u->tim_u);
@@ -96,12 +84,95 @@ u3_behn_ef_doze(u3_pier *pir_u, u3_noun wen)
   u3z(wen);
 }
 
-/* u3_behn_ef_bake(): notify %behn that we're live
+/* _behn_io_talk(): notify %behn that we're live
 */
-void
-u3_behn_ef_bake(u3_pier *pir_u)
+static void
+_behn_io_talk(u3_auto* car_u)
 {
+  //  XX remove u3A->sen
+  //
   u3_noun pax = u3nq(u3_blip, c3__behn, u3k(u3A->sen), u3_nul);
+  u3_noun fav = u3nc(c3__born, u3_nul);
 
-  u3_pier_work(pir_u, pax, u3nc(c3__born, u3_nul));
+  u3_auto_plan(car_u, 0, 0, u3_blip, pax, fav);
+}
+
+/* _behn_io_fete():
+*/
+static c3_o
+_behn_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
+{
+  u3_behn* teh_u = (u3_behn*)car_u;
+
+  u3_noun i_pax, it_pax, tag, dat;
+  c3_o ret_o;
+
+  if (  (c3n == u3r_trel(pax, &i_pax, &it_pax, 0))
+     || (c3n == u3r_cell(fav, &tag, &dat))
+     || (u3_blip  != i_pax )
+     || (c3__behn != it_pax) )
+  {
+    ret_o = c3n;
+  }
+  else {
+    ret_o = c3y;
+    _behn_ef_doze(teh_u, u3k(dat));
+  }
+
+  u3z(pax); u3z(fav);
+  return ret_o;
+}
+
+/* _behn_exit_cb();
+*/
+static void
+_behn_exit_cb(uv_timer_t* tim_u)
+{
+  u3_behn* teh_u = tim_u->data;
+  c3_free(teh_u);
+}
+
+/* _behn_io_exit(): terminate timer.
+*/
+static void
+_behn_io_exit(u3_auto* car_u)
+{
+  u3_behn* teh_u = (u3_behn*)car_u;
+  uv_close((uv_handle_t*)&teh_u->tim_u, (uv_close_cb)_behn_exit_cb);
+}
+
+static void
+_behn_ev_noop(u3_auto* car_u, void* vod_p)
+{
+}
+
+/* u3_behn(): initialize time timer.
+*/
+u3_auto*
+u3_behn_io_init(u3_pier* pir_u)
+{
+  u3_behn* teh_u = c3_calloc(sizeof(*teh_u));
+  teh_u->alm = c3n;
+
+  uv_timer_init(u3L, &teh_u->tim_u);
+  teh_u->tim_u.data = teh_u;
+
+  u3_auto* car_u = &teh_u->car_u;
+  car_u->nam_m = c3__behn;
+  //  XX factor out
+  //
+  car_u->liv_o = c3n;
+  car_u->io.talk_f = _behn_io_talk;
+  car_u->io.fete_f = _behn_io_fete;
+  car_u->io.exit_f = _behn_io_exit;
+
+  car_u->ev.drop_f = _behn_ev_noop;
+  car_u->ev.work_f = _behn_ev_noop;
+  car_u->ev.done_f = _behn_ev_noop;
+  car_u->ev.swap_f = _behn_ev_noop;
+  //  XX important
+  //
+  car_u->ev.bail_f = _behn_ev_noop;
+
+  return car_u;
 }

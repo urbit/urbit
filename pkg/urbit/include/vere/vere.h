@@ -469,13 +469,6 @@
 #endif
       } u3_unix;
 
-    /* u3_behn: just a timer for ever
-    */
-      typedef struct _u3_behn {
-        uv_timer_t tim_u;                   //  behn timer
-        c3_o       alm;                     //  alarm
-      } u3_behn;
-
     /* u2_utfo: unix terminfo strings.
     */
       typedef struct {
@@ -782,7 +775,6 @@
           c3_m             nam_m;
           c3_o             liv_o;
           struct {
-            void (*init_f)(struct _u3_auto*);
             void (*talk_f)(struct _u3_auto*);
             c3_o (*fete_f)(struct _u3_auto*, u3_noun pax, u3_noun fav);  // RETAIN
             void (*exit_f)(struct _u3_auto*);  // XX close_cb?
@@ -831,7 +823,6 @@
           // XX remove
           c3_s             por_s;               //  UDP port
           u3_ames*         sam_u;               //  packet interface
-          u3_behn*         teh_u;               //  behn timer
           u3_unix*         unx_u;               //  sync and clay
           u3_save*         sav_u;               //  autosave
         } u3_pier;
@@ -856,8 +847,8 @@
 
       /* u3_auto_init(): initialize all drivers
       */
-        void
-        u3_auto_init(u3_auto* car_u);
+        u3_auto*
+        u3_auto_init(void);
 
       /* u3_auto_talk(): start all drivers
       */
@@ -1313,24 +1304,8 @@
     **/
       /* u3_behn_io_init(): initialize behn timer.
       */
-        void
-        u3_behn_io_init(u3_pier *pir_u);
-
-      /* u3_behn_io_exit(): terminate timer.
-      */
-        void
-        u3_behn_io_exit(u3_pier *pir_u);
-
-      /* u3_behn_ef_bake(): notify %behn that we're live
-      */
-        void
-        u3_behn_ef_bake(u3_pier *pir_u);
-
-      /* u3_behn_ef_doze(): set or cancel timer
-      */
-        void
-        u3_behn_ef_doze(u3_pier *pir_u, u3_noun wen);
-
+        u3_auto*
+        u3_behn_io_init(u3_pier* pir_u);
 
     /**  HTTP server.
     **/
