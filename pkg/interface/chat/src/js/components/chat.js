@@ -12,6 +12,12 @@ import { ChatTabBar } from '/components/lib/chat-tabbar';
 import { ChatInput } from '/components/lib/chat-input';
 import { deSig } from '/lib/util';
 
+function getNumPending(props) {
+  const result = props.pendingMessages.has(props.station)
+    ? props.pendingMessages.get(props.station).length
+    : 0;
+  return result;
+}
 
 export class ChatScreen extends Component {
   constructor(props) {
@@ -22,12 +28,13 @@ export class ChatScreen extends Component {
       scrollLocked: false,
       // only for FF
       lastScrollHeight: null,
-      scrollBottom: false
+      scrollBottom: true
     };
 
     this.hasAskedForMessages = false;
+    this.lastNumPending = 0;
 
-    this.lastScrollEvent = null;
+    this.scrollContainer = null;
     this.onScroll = this.onScroll.bind(this);
 
     this.updateReadInterval = setInterval(
@@ -83,22 +90,26 @@ export class ChatScreen extends Component {
     } else if (
       props.envelopes.length >= prevProps.envelopes.length + 10
     ) {
-      if(navigator.userAgent.includes('Firefox')) {
-        // new messages came in, restore FF scroll pos
-        this.recalculateScrollTop();
-      }
       this.hasAskedForMessages = false;
-      if (prevProps.envelopes.length <= 20) {
-        this.setState({ scrollLocked: false }, () => {
+    }
+
+    // FF logic
+    if (
+      navigator.userAgent.includes("Firefox") &&
+      (props.length !== prevProps.length ||
+       props.envelopes.length !== prevProps.envelopes.length ||
+       getNumPending(props) !== this.lastNumPending ||
+       state.numPages !== prevState.numPages)
+    ) {
+      if(state.scrollBottom) {
+        setTimeout(() => {
           this.scrollToBottom();
         })
+      } else {
+        this.recalculateScrollTop();
       }
-    } else if (
-      navigator.userAgent.includes("Firefox") &&
-        props.length !== prevProps.length &&
-        state.scrollBottom
-    ) {
-      this.scrollToBottom();
+
+      this.lastNumPending = getNumPending(props);
     }
   }
 
@@ -138,23 +149,20 @@ export class ChatScreen extends Component {
 
   scrollToBottom() {
     if (!this.state.scrollLocked && this.scrollElement) {
-      if(navigator.userAgent.includes('Firefox')) {
-        this.scrollElement.scrollIntoView(false);
-      } else {
-        this.scrollElement.scrollIntoView(true);
-      }
+      this.scrollElement.scrollIntoView();
     }
   }
 
   // Restore chat position on FF when new messages come in
   recalculateScrollTop() {
-    if(!this.lastScrollEvent) {
+    if(!this.scrollContainer) {
       return;
     }
 
     const { lastScrollHeight } = this.state;
-    let { target } = this.lastScrollEvent;
-    if(target.scrollTop !== 0) {
+    let target = this.scrollContainer;
+    let newScrollTop = this.scrollContainer.scrollHeight - lastScrollHeight;
+    if(target.scrollTop !== 0 || newScrollTop === target.scrollTop) {
       return;
     }
     target.scrollTop = target.scrollHeight - lastScrollHeight;
@@ -173,8 +181,6 @@ export class ChatScreen extends Component {
         // Save scroll position for FF
         if (navigator.userAgent.includes('Firefox')) {
 
-          e.persist();
-          this.lastScrollEvent = e;
           this.setState({
             lastScrollHeight: e.target.scrollHeight
           })
@@ -277,9 +283,9 @@ export class ChatScreen extends Component {
 
     if (navigator.userAgent.includes("Firefox")) {
       return (
-        <div className="overflow-y-scroll h-100" onScroll={this.onScroll}>
+        <div className="overflow-y-scroll h-100" onScroll={this.onScroll} ref={e => { this.scrollContainer = e; }}>
           <div
-            className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
+            className="bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
             style={{ resize: "vertical" }}
           >
             <div
