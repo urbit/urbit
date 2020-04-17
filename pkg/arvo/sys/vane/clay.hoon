@@ -2710,7 +2710,7 @@
               [%vale =path]
           ==
         +$  state
-          $:  baked=(map path (unit cage))
+          $:  baked=(map path cage)
               cache=ford-cache
               stack=(list (set path))
               cycle=(set build)
@@ -2740,11 +2740,11 @@
     ::
     ++  get-value
       |=  =path
-      ^-  [(unit cage) state]
+      ^-  [cage state]
       ~|  %error-validating-path^path
       ?^  got=(~(get by baked.nub) path)
         [u.got nub]
-      =;  [res=(unit cage) bun=state]
+      =;  [res=cage bun=state]
         =.  nub  bun
         =.  baked.nub  (~(put by baked.nub) path res)
         [res nub]
@@ -2758,10 +2758,9 @@
           ~|  %ugly-lobe^p.u.change^path
           (lobe-to-page p.u.change)
         =^  cage  nub  (validate-path path page)
-        [`cage nub]
-      ?:  (~(has in deletes) path)
-        [~ nub]
-      [(~(get an ankh) path) nub]
+        [cage nub]
+      ?<  (~(has in deletes) path)
+      :_(nub (need (~(get an ankh) path)))
     ::  +get-mark: build a mark definition
     ::
     ++  get-mark
@@ -2945,14 +2944,13 @@
     ++  cast-path
       |=  [=path mak=mark]
       ^-  [cage state]
-      =^  cag=(unit cage)  nub  (get-value path)
-      ?~  cag  ~|(cannot-resolve-path+path !!)
+      =^  cag=cage  nub  (get-value path)
       =/  mok  (head (flop path))
       ?:  =(mok mak)
-        [u.cag nub]
+        [cag nub]
       =^  =tube  nub  (get-cast mok mak)
       ~|  error-casting+[path mok mak]
-      :_(nub [mak (tube q.u.cag)])
+      :_(nub [mak (tube q.cag)])
     ::
     ++  run-pact
       |=  [old=page diff=page]
@@ -2973,10 +2971,9 @@
         ~|(cycle+file+path^stack.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+path)
       =.  stack.nub  [(sy path ~) stack.nub]
-      =^  cag=(unit cage)  nub  (get-value path)
-      ?~  cag  ~|(no-file+path !!)
-      ?>  =(%hoon p.u.cag)
-      =/  tex=tape  (trip !<(@t q.u.cag))
+      =^  cag=cage  nub  (get-value path)
+      ?>  =(%hoon p.cag)
+      =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
       =^  sut=vase  nub  run-reef
       =^  sut=vase  nub  (run-tauts sut %sur sur.mont.pile)
