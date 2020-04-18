@@ -12,7 +12,7 @@
 ::
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ;<  =riot:clay  bind:m
-  (warp:strandio our.bowl %home ~ %next %a [%da now.bowl] target-path)
+  (warp:strandio our.bowl %home ~ %sing %a [%da now.bowl] target-path)
 ?~  riot
   ~&  %nothing
   (pure:m !>("nothing"))

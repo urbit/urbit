@@ -3423,25 +3423,11 @@
     =/  =args:ford:fusion
       [ank.dom deletes changes lat.ran fod.dom]
     ::
-    =/  try-checkout-ankh
-      (mule |.((checkout-ankh args deletes changes ank.dom)))
-    %-  %-  slog
-        ?-  -.try-checkout-ankh
-          %&  [leaf+"checked out ankh"]~
-          %|  [leaf+"fail to checkout ankh" p.try-checkout-ankh]
-        ==
-    ::  =^  ankh  ford-cache.args
-    ::    (checkout-ankh args deletes changes ank.dom)
+    =^  ankh  ford-cache.args
+      (checkout-ankh args deletes changes ank.dom)
     =.  ank.dom  ankh
-    =/  try-checkout-mime
-      (mule |.((checkout-mime args deletes ~(key by changes))))
-    %-  %-  slog
-        ?-  -.try-checkout-mime
-          %&  [leaf+"checked out mime"]~
-          %|  [leaf+"failed to checkout mime" p.try-checkout-mime]
-        ==
-    ::  =^  mim  ford-cache.args
-    ::    (checkout-mime args deletes ~(key by changes))
+    =^  mim  ford-cache.args
+      (checkout-mime args deletes ~(key by changes))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
     ::
@@ -3532,41 +3518,41 @@
       =*  outer-loop  $
       ?~  cans
         [ankh ford-cache.ford-args]
-      =^  ankh  ford-cache.ford-args
-        =/  orig-path  path.i.cans
+      =^  new-ankh  ford-cache.ford-args
         |-  ^+  [ankh ford-cache.ford-args]
         =*  inner-loop  $
-        ?~  path.i.cans
-          =^  cage  ford-cache.ford-args
-            ?-    -.change.i.cans
-                %&
-              %-  wrap:fusion
-              (page-to-cage:(ford:fusion ford-args) p.change.i.cans)
-            ::
-                %|
-              =^  page  ford-cache.ford-args
-                %-  wrap:fusion
-                (lobe-to-page:(ford:fusion ford-args) p.change.i.cans)
-              (wrap:fusion (page-to-cage:(ford:fusion ford-args) page))
+        ?^  path.i.cans
+          =^  child-ankh  ford-cache.ford-args
+            %=  inner-loop
+              path.i.cans  t.path.i.cans
+              ankh         (~(gut by dir.ankh) i.path.i.cans *^ankh)
             ==
-          :_  ford-cache.ford-args
-          %=    ankh
-              fil
-            :-  ~  :_  cage
-            ?-  -.change.i.cans
-                %|  p.change.i.cans
-                %&
+          :-  ankh(dir (~(put by dir.ankh) i.path.i.cans child-ankh))
+          ford-cache.ford-args
+        =^  cage  ford-cache.ford-args
+          ?-    -.change.i.cans
+              %&
+            %-  wrap:fusion
+            (page-to-cage:(ford:fusion ford-args) p.change.i.cans)
+          ::
+              %|
+            =^  page  ford-cache.ford-args
               %-  wrap:fusion
-              (page-to-lobe:(ford:fusion ford-args) p.change.i.cans)
-            ==
+              (lobe-to-page:(ford:fusion ford-args) p.change.i.cans)
+            (wrap:fusion (page-to-cage:(ford:fusion ford-args) page))
           ==
-        =^  child-ankh  ford-cache.ford-args
-          %=  inner-loop
-            path.i.cans  t.path.i.cans
-            ankh         (~(gut by dir.ankh) i.path.i.cans *^ankh)
+        :_  ford-cache.ford-args
+        %=    ankh
+            fil
+          :-  ~  :_  cage
+          ?-  -.change.i.cans
+              %|  p.change.i.cans
+              %&
+            %-  wrap:fusion
+            (page-to-lobe:(ford:fusion ford-args) p.change.i.cans)
           ==
-        :-  ankh(dir (~(put by dir.ankh) i.path.i.cans child-ankh))
-        ford-cache.ford-args
+        ==
+      =.  ankh  new-ankh
       outer-loop(cans t.cans)
     ::
     ::  Update mime cache
