@@ -358,8 +358,6 @@
       %+  weld  path.act
       ?~(mailbox /0 /(scot %ud (lent envelopes.u.mailbox)))
     :_  state
-    ::TODO  we shouldn't include the trailing /0 or similar in the wire,
-    ::      we never use it anywhere, and it complicates other logic. see #2746
     :~  [%pass chat-history %agent [ship.act %chat-hook] %watch chat-history]
         [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
     ==
