@@ -115,26 +115,6 @@
       marks=(map mark [res=dais dez=(set path)])
       casts=(map mars [res=tube dez=(set path)])
   ==
-::  $mars: mark conversion request
-::  $tube: mark conversion gate
-+$  mars  [a=mark b=mark]
-+$  tube  $-(vase vase)
-::  $dais: processed mark core
-::
-+$  dais
-  $_  ^|
-  |_  sam=vase
-  ++  bunt  sam
-  ++  diff  |~(new=_sam *vase)
-  ++  form  *mark
-  ++  join  |~([a=vase b=vase] *(unit (unit vase)))
-  ++  mash
-    |~  [a=[ship desk diff=vase] b=[ship desk diff=vase]]
-    *(unit vase)
-  ++  pact  |~(diff=vase sam)
-  ++  vale  |~(noun sam)
-  ++  volt  |~(noun sam)
-  --
 ::
 ::  Hash of a blob, for lookup in the object store (lat.ran)
 ::
@@ -2944,12 +2924,13 @@
     ++  cast-path
       |=  [=path mak=mark]
       ^-  [cage state]
-      =^  cag=cage  nub  (get-value path)
       =/  mok  (head (flop path))
+      ~|  error-casting-path+[path mok mak]
+      =^  cag=cage  nub  (get-value path)
       ?:  =(mok mak)
         [cag nub]
       =^  =tube  nub  (get-cast mok mak)
-      ~|  error-casting+[path mok mak]
+      ~|  error-running-cast+[path mok mak]
       :_(nub [mak (tube q.cag)])
     ::
     ++  run-pact
@@ -3574,6 +3555,7 @@
       ?~  cans
         [mim ford-cache.ford-args]
       =^  cage  ford-cache.ford-args
+        ~|  mime-cast-fail+i.cans
         (wrap:fusion (cast-path:(ford:fusion ford-args) i.cans %mime))
       =^  mim  ford-cache.ford-args  $(cans t.cans)
       [(~(put by mim) i.cans `!<(mime q.cage)) ford-cache.ford-args]

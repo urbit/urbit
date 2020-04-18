@@ -713,6 +713,27 @@
         %^  cat  7  (sham [%yaki (roll p add) q t])
         (sham [%tako (roll p add) q t])
     [p q has t]
+  ::  $mars: mark conversion request
+  ::  $tube: mark conversion gate
+  ::
+  +$  mars  [a=mark b=mark]
+  +$  tube  $-(vase vase)
+  ::  $dais: processed mark core
+  ::
+  +$  dais
+    $_  ^|
+    |_  sam=vase
+    ++  bunt  sam
+    ++  diff  |~(new=_sam *vase)
+    ++  form  *mark
+    ++  join  |~([a=vase b=vase] *(unit (unit vase)))
+    ++  mash
+      |~  [a=[ship desk diff=vase] b=[ship desk diff=vase]]
+      *(unit vase)
+    ++  pact  |~(diff=vase sam)
+    ++  vale  |~(noun sam)
+    ++  volt  |~(noun sam)
+    --
   --  ::clay
 ::                                                      ::::
 ::::                    ++dill                            ::  (1d) console

@@ -391,7 +391,6 @@
   ?:  ?=(%incomplete -.made-result)
     (strand-fail %ford-incomplete tang.made-result)
   (pure:m build-result.made-result)
-::
 ::  Take ford build result
 ::
 ++  take-made-result
@@ -406,7 +405,45 @@
       `[%skip ~]
     `[%done result.sign-arvo.u.in.tin]
   ==
+::  +build-fail: build the source file at the specified $beam
 ::
+++  build-file
+  |=  [[=ship =desk =case] =spur]
+  =*  arg  +<
+  =/  m  (strand ,vase)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %a case (flop spur))
+  ?~  riot
+    (strand-fail %build-file >arg< ~)
+  ?>  =(%vase p.r.u.riot)
+  (pure:m q.r.u.riot)
+::  +build-mark: build a mark definition to a $dais
+::
+++  build-mark
+  |=  [[=ship =desk =case] mak=mark]
+  =*  arg  +<
+  =/  m  (strand ,dais:clay)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %b case /[mak])
+  ?~  riot
+    (strand-fail %build-mark >arg< ~)
+  ?>  =(%dais p.r.u.riot)
+  (pure:m !<(dais:clay q.r.u.riot))
+::  +build-cast: build a mark conversion gate ($tube)
+::
+++  build-cast
+  |=  [[=ship =desk =case] =mars:clay]
+  =*  arg  +<
+  =/  m  (strand ,tube:clay)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %c case /[a.mars]/[b.mars])
+  ?~  riot
+    (strand-fail %build-cast >arg< ~)
+  ?>  =(%tube p.r.u.riot)
+  (pure:m !<(tube:clay q.r.u.riot))
 ::  Run several taggged ford builds
 ::
 ++  build-map
