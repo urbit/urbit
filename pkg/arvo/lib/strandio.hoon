@@ -417,7 +417,7 @@
   ?~  riot
     (strand-fail %build-file >arg< ~)
   ?>  =(%vase p.r.u.riot)
-  (pure:m q.r.u.riot)
+  (pure:m !<(vase q.r.u.riot))
 ::  +build-mark: build a mark definition to a $dais
 ::
 ++  build-mark
