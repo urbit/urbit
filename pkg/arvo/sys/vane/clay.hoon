@@ -3393,6 +3393,7 @@
       =/  previous-yaki  (aeon-to-yaki:ze (dec let.dom))
       =/  next-yaki      (aeon-to-yaki:ze let.dom)
       (get-changes previous-yaki next-yaki)
+    ~|  [let.dom deletes=deletes changes=~(key by changes)]
     =.  ..park  (emil (print deletes ~(key by changes)))
     ::
     ::  promote ford cache
