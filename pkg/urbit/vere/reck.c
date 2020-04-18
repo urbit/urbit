@@ -181,38 +181,38 @@ _reck_kick_arvo(u3_pier* pir_u, u3_noun pox, u3_noun fav)
 //   u3z(pox); u3z(fav); return c3n;
 // }
 
-/* _reck_kick_sync(): apply sync outputs.
-*/
-static u3_noun
-_reck_kick_sync(u3_pier* pir_u, u3_noun pox, u3_noun fav)
-{
-  switch ( u3h(fav) ) {
-    default: break;
-    case c3__dirk: {
-      u3_unix_ef_dirk(pir_u, u3k(u3t(fav)));
-      u3z(pox); u3z(fav); return c3y;
-    }
-    case c3__ergo: {
-      u3_noun mon = u3k(u3h(u3t(fav)));
-      u3_noun can = u3k(u3t(u3t(fav)));
+// /* _reck_kick_sync(): apply sync outputs.
+// */
+// static u3_noun
+// _reck_kick_sync(u3_pier* pir_u, u3_noun pox, u3_noun fav)
+// {
+//   switch ( u3h(fav) ) {
+//     default: break;
+//     case c3__dirk: {
+//       u3_unix_ef_dirk(pir_u, u3k(u3t(fav)));
+//       u3z(pox); u3z(fav); return c3y;
+//     }
+//     case c3__ergo: {
+//       u3_noun mon = u3k(u3h(u3t(fav)));
+//       u3_noun can = u3k(u3t(u3t(fav)));
 
-      u3_unix_ef_ergo(pir_u, mon, can);
-      u3z(pox); u3z(fav); return c3y;
-    } break;
-    case c3__ogre: {
-      u3_unix_ef_ogre(pir_u, u3k(u3t(fav)));
-      u3z(pox); u3z(fav); return c3y;
-    }
-    case c3__hill: {
-      u3_unix_ef_hill(pir_u, u3k(u3t(fav)));
-      u3z(pox); u3z(fav); return c3y;
-    }
-  }
+//       u3_unix_ef_ergo(pir_u, mon, can);
+//       u3z(pox); u3z(fav); return c3y;
+//     } break;
+//     case c3__ogre: {
+//       u3_unix_ef_ogre(pir_u, u3k(u3t(fav)));
+//       u3z(pox); u3z(fav); return c3y;
+//     }
+//     case c3__hill: {
+//       u3_unix_ef_hill(pir_u, u3k(u3t(fav)));
+//       u3z(pox); u3z(fav); return c3y;
+//     }
+//   }
 
-  //  XX obviously not right!
-  //  ? looks fine to me
-  u3z(pox); u3z(fav); return c3n;
-}
+//   //  XX obviously not right!
+//   //  ? looks fine to me
+//   u3z(pox); u3z(fav); return c3n;
+// }
 
 // /* _reck_kick_newt(): apply packet network outputs.
 // */
@@ -357,11 +357,11 @@ _reck_kick_spec(u3_pier* pir_u, u3_noun pox, u3_noun fav)
       //   return _reck_kick_behn(pir_u, pox, fav);
       // } break;
 
-      case c3__clay:
-      case c3__boat:
-      case c3__sync: {
-        return _reck_kick_sync(pir_u, pox, fav);
-      } break;
+      // case c3__clay:
+      // case c3__boat:
+      // case c3__sync: {
+      //   return _reck_kick_sync(pir_u, pox, fav);
+      // } break;
 
       // case c3__newt: {
       //   return _reck_kick_newt(pir_u, pox, fav);

@@ -371,51 +371,6 @@
         } sun_u;
       } u3_utat;
 
-      struct _u3_umon;
-      struct _u3_udir;
-      struct _u3_ufil;
-
-    /* u3_unod: file or directory.
-    */
-      typedef struct _u3_unod {
-        c3_o              dir;              //  c3y if dir, c3n if file
-        c3_o              dry;              //  ie, unmodified
-        c3_c*             pax_c;            //  absolute path
-        struct _u3_udir*  par_u;            //  parent
-        struct _u3_unod*  nex_u;            //  internal list
-      } u3_unod;
-
-    /* u3_ufil: synchronized file.
-    */
-      typedef struct _u3_ufil {
-        c3_o              dir;              //  c3y if dir, c3n if file
-        c3_o              dry;              //  ie, unmodified
-        c3_c*             pax_c;            //  absolute path
-        struct _u3_udir*  par_u;            //  parent
-        struct _u3_unod*  nex_u;            //  internal list
-        c3_w              mug_w;            //  mug of last %into
-        c3_w              gum_w;            //  mug of last %ergo
-      } u3_ufil;
-
-    /* u3_ufil: synchronized directory.
-    */
-      typedef struct _u3_udir {
-        c3_o              dir;              //  c3y if dir, c3n if file
-        c3_o              dry;              //  ie, unmodified
-        c3_c*             pax_c;            //  absolute path
-        struct _u3_udir*  par_u;            //  parent
-        struct _u3_unod*  nex_u;            //  internal list
-        u3_unod*          kid_u;            //  subnodes
-      } u3_udir;
-
-    /* u3_ufil: synchronized mount point.
-    */
-      typedef struct _u3_umon {
-        u3_udir          dir_u;             //  root directory, must be first
-        c3_c*            nam_c;             //  mount point name
-        struct _u3_umon* nex_u;             //  internal list
-      } u3_umon;
-
     /* u3_usig: receive signals.
     */
       typedef struct _u3_usig {
@@ -423,23 +378,6 @@
         c3_i             num_i;
         struct _u3_usig* nex_u;
       } u3_usig;
-
-    /* u3_unix: clay support system, also
-    */
-      typedef struct _u3_unix {
-        u3_umon*    mon_u;                  //  mount points
-        c3_o        alm;                    //  timer set
-        c3_o        dyr;                    //  ready to update
-#ifdef SYNCLOG
-        c3_w         lot_w;                 //  sync-slot
-        struct _u3_sylo {
-          c3_o     unx;                     //  from unix
-          c3_m     wer_m;                   //  mote saying where
-          c3_m     wot_m;                   //  mote saying what
-          c3_c*    pax_c;                   //  path
-        } sylo[1024];
-#endif
-      } u3_unix;
 
     /* u2_utfo: unix terminfo strings.
     */
@@ -794,7 +732,6 @@
           uv_idle_t        idl_u;               //  postloop registration
           // XX remove
           c3_s             por_s;               //  UDP port
-          u3_unix*         unx_u;               //  sync and clay
           u3_save*         sav_u;               //  autosave
         } u3_pier;
 
@@ -1172,71 +1109,15 @@
 
     /**  Storage, new school.
     **/
-      /* u3_unix_ef_hold():
-      */
-        void
-        u3_unix_ef_hold(void);
-
-      /* u3_unix_ef_boot(): boot actions
-      */
-        void
-        u3_unix_ef_boot(u3_pier *pir_u);
-
-      /* u3_unix_ef_bake(): initial effects for new process.
-      */
-        void
-        u3_unix_ef_bake(u3_pier *pir_u);
-
-      /* u3_unix_ef_move():
-      */
-        void
-        u3_unix_ef_move(void);
-
       /* u3_unix_initial_into_card(): create initial filesystem sync card.
       */
         u3_noun
         u3_unix_initial_into_card(c3_c* arv_c);
 
-      /* u3_unix_ef_look(): update filesystem from unix
-      */
-        void
-        u3_unix_ef_look(u3_pier *pir_u, u3_noun all);
-
-      /* u3_unix_ef_ergo(): update filesystem from urbit
-      */
-        void
-        u3_unix_ef_ergo(u3_pier *pir_u, u3_noun mon, u3_noun can);
-
-      /* u3_unix_ef_dirk(): mark mount dirty
-      */
-        void
-        u3_unix_ef_dirk(u3_pier *pir_u, u3_noun mon);
-
-      /* u3_unix_ef_ogre(): delete mount point
-      */
-        void
-        u3_unix_ef_ogre(u3_pier *pir_u, u3_noun mon);
-
-      /* u3_unix_ef_hill(): enumerate mount points
-      */
-        void
-        u3_unix_ef_hill(u3_pier *pir_u, u3_noun hil);
-
       /* u3_unix_io_init(): initialize storage.
       */
-        void
-        u3_unix_io_init(u3_pier *pir_u);
-
-      /* u3_unix_io_talk(): start listening for fs events.
-      */
-        void
-        u3_unix_io_talk(u3_pier *pir_u);
-
-      /* u3_unix_io_exit(): terminate storage.
-      */
-        void
-        u3_unix_io_exit(u3_pier *pir_u);
-
+        u3_auto*
+        u3_unix_io_init(u3_pier* pir_u);
 
     /**  behn, just a timer.
     **/
