@@ -14,6 +14,59 @@
 #include "all.h"
 #include "vere/vere.h"
 
+/* u3_csat: client connection state.
+*/
+  typedef enum {
+    u3_csat_init = 0,                   //  initialized
+    u3_csat_addr = 1,                   //  address resolution begun
+    u3_csat_quit = 2,                   //  cancellation requested
+    u3_csat_ripe = 3                    //  passed to libh2o
+  } u3_csat;
+
+/* u3_cres: response to http client.
+*/
+  typedef struct _u3_cres {
+    c3_w             sas_w;             //  status code
+    u3_noun          hed;               //  headers
+    u3_hbod*         bod_u;             //  exit of body queue
+    u3_hbod*         dob_u;             //  entry of body queue
+  } u3_cres;
+
+/* u3_creq: outgoing http request.
+*/
+  typedef struct _u3_creq {             //  client request
+    c3_l             num_l;             //  request number
+    h2o_http1client_t* cli_u;           //  h2o client
+    u3_csat          sat_e;             //  connection state
+    c3_o             sec;               //  yes == https
+    c3_w             ipf_w;             //  IP
+    c3_c*            ipf_c;             //  IP (string)
+    c3_c*            hot_c;             //  host
+    c3_s             por_s;             //  port
+    c3_c*            por_c;             //  port (string)
+    c3_c*            met_c;             //  method
+    c3_c*            url_c;             //  url
+    u3_hhed*         hed_u;             //  headers
+    u3_hbod*         bod_u;             //  body
+    u3_hbod*         rub_u;             //  exit of send queue
+    u3_hbod*         bur_u;             //  entry of send queue
+    h2o_iovec_t*     vec_u;             //  send-buffer array
+    u3_cres*         res_u;             //  nascent response
+    struct _u3_creq* nex_u;             //  next in list
+    struct _u3_creq* pre_u;             //  previous in list
+    struct _u3_cttp* ctp_u;             //  cttp backpointer
+  } u3_creq;
+
+/* u3_cttp: http client.
+*/
+  typedef struct _u3_cttp {
+    u3_auto          car_u;             //  driver
+    u3_creq*         ceq_u;             //  request list
+    h2o_timeout_t    tim_u;             //  request timeout
+    h2o_http1client_ctx_t               //
+                     ctx_u;             //  h2o client ctx
+    void*            tls_u;             //  client SSL_CTX*
+  } u3_cttp;
 
 // XX deduplicate with _http_vec_to_atom
 /* _cttp_vec_to_atom(): convert h2o_iovec_t to atom (cord)
@@ -457,9 +510,9 @@ _cttp_creq_ip(c3_w ipf_w)
 /* _cttp_creq_find(): find a request by number in the client
 */
 static u3_creq*
-_cttp_creq_find(c3_l num_l)
+_cttp_creq_find(u3_cttp* ctp_u, c3_l num_l)
 {
-  u3_creq* ceq_u = u3_Host.ctp_u.ceq_u;
+  u3_creq* ceq_u = ctp_u->ceq_u;
 
   //  XX glories of linear search
   //
@@ -475,14 +528,16 @@ _cttp_creq_find(c3_l num_l)
 /* _cttp_creq_link(): link request to client
 */
 static void
-_cttp_creq_link(u3_creq* ceq_u)
+_cttp_creq_link(u3_cttp* ctp_u, u3_creq* ceq_u)
 {
-  ceq_u->nex_u = u3_Host.ctp_u.ceq_u;
+  ceq_u->nex_u = ctp_u->ceq_u;
 
   if ( 0 != ceq_u->nex_u ) {
     ceq_u->nex_u->pre_u = ceq_u;
   }
-  u3_Host.ctp_u.ceq_u = ceq_u;
+
+  ceq_u->ctp_u = ctp_u;
+  ctp_u->ceq_u = ceq_u;
 }
 
 /* _cttp_creq_unlink(): unlink request from client
@@ -490,6 +545,8 @@ _cttp_creq_link(u3_creq* ceq_u)
 static void
 _cttp_creq_unlink(u3_creq* ceq_u)
 {
+  u3_cttp* ctp_u = ceq_u->ctp_u;
+
   if ( ceq_u->pre_u ) {
     ceq_u->pre_u->nex_u = ceq_u->nex_u;
 
@@ -498,7 +555,7 @@ _cttp_creq_unlink(u3_creq* ceq_u)
     }
   }
   else {
-    u3_Host.ctp_u.ceq_u = ceq_u->nex_u;
+    ctp_u->ceq_u = ceq_u->nex_u;
 
     if ( 0 != ceq_u->nex_u ) {
       ceq_u->nex_u->pre_u = 0;
@@ -536,7 +593,7 @@ _cttp_creq_free(u3_creq* ceq_u)
  *   We start with the (?? - JB)
  */
 static u3_creq*
-_cttp_creq_new(c3_l num_l, u3_noun hes)
+_cttp_creq_new(u3_cttp* ctp_u, c3_l num_l, u3_noun hes)
 {
   u3_creq* ceq_u = c3_calloc(sizeof(*ceq_u));
 
@@ -588,7 +645,7 @@ _cttp_creq_new(c3_l num_l, u3_noun hes)
     ceq_u->bod_u = _cttp_bod_from_octs(u3k(u3t(body)));
   }
 
-  _cttp_creq_link(ceq_u);
+  _cttp_creq_link(ctp_u, ceq_u);
 
   u3z(unit_pul);
   u3z(hes);
@@ -699,19 +756,16 @@ _cttp_creq_quit(u3_creq* ceq_u)
 }
 
 static void
-_cttp_http_client_receive(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
+_cttp_http_client_receive(u3_creq* ceq_u, c3_w sas_w, u3_noun mes, u3_noun uct)
 {
   // TODO: We want to eventually deal with partial responses, but I don't know
   // how to get that working right now.
-  u3_noun pox = u3nq(u3_blip, u3i_string("http-client"), u3k(u3A->sen), u3_nul);
+  u3_noun pax = u3nq(u3_blip, u3i_string("http-client"), u3k(u3A->sen), u3_nul);
+  u3_noun fav = u3nt(u3i_string("receive"),
+                    ceq_u->num_l,
+                    u3nq(u3i_string("start"), u3nc(sas_w, mes), uct, c3y));
 
-  u3_pier_plan(pox,
-               u3nt(u3i_string("receive"),
-                    num_l,
-                    u3nq(u3i_string("start"),
-                         u3nc(sas_w, mes),
-                         uct,
-                         c3y)));
+  u3_auto_plan(&ceq_u->ctp_u->car_u, 0, 0, u3_blip, pax, fav);
 }
 
 /* _cttp_creq_fail(): dispatch error response
@@ -725,7 +779,7 @@ _cttp_creq_fail(u3_creq* ceq_u, const c3_c* err_c)
   u3l_log("http: fail (%d, %d): %s\r\n", ceq_u->num_l, cod_w, err_c);
 
   // XX include err_c as response body?
-  _cttp_http_client_receive(ceq_u->num_l, cod_w, u3_nul, u3_nul);
+  _cttp_http_client_receive(ceq_u, cod_w, u3_nul, u3_nul);
   _cttp_creq_free(ceq_u);
 }
 
@@ -736,7 +790,7 @@ _cttp_creq_respond(u3_creq* ceq_u)
 {
   u3_cres* res_u = ceq_u->res_u;
 
-  _cttp_http_client_receive(ceq_u->num_l, res_u->sas_w, res_u->hed,
+  _cttp_http_client_receive(ceq_u, res_u->sas_w, res_u->hed,
              ( !res_u->bod_u ) ? u3_nul :
              u3nc(u3_nul, _cttp_bods_to_octs(res_u->bod_u)));
 
@@ -835,7 +889,7 @@ _cttp_creq_connect(u3_creq* ceq_u)
                ( c3y == ceq_u->sec ) ? 443 : 80;
 
   // connect by IP
-  h2o_http1client_connect(&ceq_u->cli_u, ceq_u, &u3_Host.ctp_u.ctx_u, ipf_u,
+  h2o_http1client_connect(&ceq_u->cli_u, ceq_u, &ceq_u->ctp_u->ctx_u, ipf_u,
                           por_s, c3y == ceq_u->sec, _cttp_creq_on_connect);
 
   // set hostname for TLS handshake
@@ -926,7 +980,7 @@ _cttp_creq_start(u3_creq* ceq_u)
 /* _cttp_init_tls: initialize OpenSSL context
 */
 static SSL_CTX*
-_cttp_init_tls()
+_cttp_init_tls(void)
 {
   // XX require 1.1.0 and use TLS_client_method()
   SSL_CTX* tls_u = SSL_CTX_new(SSLv23_client_method());
@@ -947,86 +1001,108 @@ _cttp_init_tls()
   return tls_u;
 }
 
-/* u3_cttp_ef_http_client(): send an %http-client (outgoing request) to cttp.
+/* _cttp_ef_http_client(): send an %http-client (outgoing request) to cttp.
 */
-void
-u3_cttp_ef_http_client(u3_noun fav)
+static c3_o
+_cttp_ef_http_client(u3_cttp* ctp_u, u3_noun tag, u3_noun dat)
 {
   u3_creq* ceq_u;
+  c3_o     ret_o;
 
-  if ( c3y == u3r_sing_c("request", u3h(fav)) ) {
-    u3_noun p_fav, q_fav;
-    u3x_cell(u3t(fav), &p_fav, &q_fav);
+  if ( c3y == u3r_sing_c("request", tag) ) {
+    u3_noun num, req;
+    c3_l  num_l;
 
-    ceq_u = _cttp_creq_new(u3r_word(0, p_fav), u3k(q_fav));
-
-    if ( ceq_u ) {
+    if (  (c3n == u3r_cell(dat, &num, &req))
+       || (c3n == u3r_safe_word(num, &num_l)) )
+    {
+      u3l_log("cttp: strange request\n");
+      ret_o = c3n;
+    }
+    else if ( (ceq_u = _cttp_creq_new(ctp_u, num_l, u3k(req))) ) {
       _cttp_creq_start(ceq_u);
+      ret_o = c3y;
     }
     else {
       u3l_log("cttp: strange request (unparsable url)\n");
+      ret_o = c3n;
     }
   }
-  else if ( c3y == u3r_sing_c("cancel-request", u3h(fav)) ) {
-    ceq_u =_cttp_creq_find(u3r_word(0, u3t(fav)));
+  else if ( c3y == u3r_sing_c("cancel-request", tag) ) {
+    c3_l num_l;
 
-    if ( ceq_u ) {
+    if ( c3n == u3r_safe_word(dat, &num_l) ) {
+      u3l_log("cttp: strange cancel-request\n");
+      ret_o = c3n;
+    }
+    else if ( (ceq_u =_cttp_creq_find(ctp_u, num_l)) ) {
       _cttp_creq_quit(ceq_u);
+      ret_o = c3y;
+    }
+    else {
+      //  accepted whether or not request exists
+      //
+      ret_o = c3y;
     }
   }
   else {
-    u3l_log("cttp: strange request (unknown type)\n");
+    u3l_log("cttp: strange effect (unknown type)\n");
+    ret_o = c3n;
   }
 
-  u3z(fav);
+  u3z(tag); u3z(dat);
+  return ret_o;
 }
 
-/* u3_cttp_ef_bake(): notify that we're live.
+/* _cttp_io_talk(): notify that we're live.
 */
-void
-u3_cttp_ef_bake()
+static void
+_cttp_io_talk(u3_auto* car_u)
 {
+  //  XX remove u3A->sen
+  //
   u3_noun pax = u3nq(u3_blip, u3i_string("http-client"), u3k(u3A->sen), u3_nul);
-  u3_pier_plan(pax, u3nc(c3__born, u3_nul));
+  u3_noun fav = u3nc(c3__born, u3_nul);
+
+  u3_auto_plan(car_u, 0, 0, u3_blip, pax, fav);
 }
 
-/* u3_cttp_io_init(): initialize http client I/O.
+/* _cttp_io_fete():
 */
-void
-u3_cttp_io_init()
+static c3_o
+_cttp_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
 {
-  //  zero-initialize h2o ctx
-  //
-  memset(&u3_Host.ctp_u.ctx_u, 0, sizeof(u3_Host.ctp_u.ctx_u));
+  u3_cttp* ctp_u = (u3_cttp*)car_u;
 
-  //  link to event loop
-  //
-  u3_Host.ctp_u.ctx_u.loop = u3L;
+  u3_noun i_pax, it_pax, tag, dat;
+  c3_o ret_o;
 
-  //  link to initialized request timeout
-  //
-  h2o_timeout_init(u3L, &u3_Host.ctp_u.tim_u, 300 * 1000);
-  u3_Host.ctp_u.ctx_u.io_timeout = &u3_Host.ctp_u.tim_u;
+  if (  (c3n == u3r_trel(pax, &i_pax, &it_pax, 0))
+     || (c3n == u3r_cell(fav, &tag, &dat))
+     || (u3_blip  != i_pax )
+     || (c3n == u3r_sing_c("http-client", it_pax)) )
+  {
+    ret_o = c3n;
+  }
+  else {
+    ret_o = _cttp_ef_http_client(ctp_u, u3k(tag), u3k(dat));
+  }
 
-  //  link to initialized tls ctx
-  //
-  u3_Host.ctp_u.tls_u = _cttp_init_tls();
-  u3_Host.ctp_u.ctx_u.ssl_ctx = u3_Host.ctp_u.tls_u;
-
-  //  zero-initialize request list
-  //
-  u3_Host.ctp_u.ceq_u = 0;
+  u3z(pax); u3z(fav);
+  return ret_o;
 }
 
-/* u3_cttp_io_exit(): shut down cttp.
+/* _cttp_io_exit(): shut down cttp.
 */
-void
-u3_cttp_io_exit(void)
+static void
+_cttp_io_exit(u3_auto* car_u)
 {
+  u3_cttp* ctp_u = (u3_cttp*)car_u;
+
   //  cancel requests
   //
   {
-    u3_creq* ceq_u = u3_Host.ctp_u.ceq_u;
+    u3_creq* ceq_u = ctp_u->ceq_u;
 
     while ( ceq_u ) {
       _cttp_creq_quit(ceq_u);
@@ -1036,6 +1112,53 @@ u3_cttp_io_exit(void)
 
   //  dispose of global resources
   //
-  h2o_timeout_dispose(u3L, &u3_Host.ctp_u.tim_u);
-  SSL_CTX_free(u3_Host.ctp_u.tls_u);
+  h2o_timeout_dispose(u3L, &ctp_u->tim_u);
+  SSL_CTX_free(ctp_u->tls_u);
+
+  //  XX dispose ctp_u
+  //
+}
+
+static void
+_cttp_ev_noop(u3_auto* car_u, void* vod_p)
+{
+}
+
+/* u3_cttp_io_init(): initialize http client I/O.
+*/
+u3_auto*
+u3_cttp_io_init(u3_pier* pir_u)
+{
+  u3_cttp* ctp_u = c3_calloc(sizeof(*ctp_u));
+
+  //  link to event loop
+  //
+  ctp_u->ctx_u.loop = u3L;
+
+  //  link to initialized request timeout
+  //
+  h2o_timeout_init(u3L, &ctp_u->tim_u, 300 * 1000);
+  ctp_u->ctx_u.io_timeout = &ctp_u->tim_u;
+
+  //  link to initialized tls ctx
+  //
+  ctp_u->tls_u = _cttp_init_tls();
+  ctp_u->ctx_u.ssl_ctx = ctp_u->tls_u;
+
+  u3_auto* car_u = &ctp_u->car_u;
+  car_u->nam_m = c3__cttp;
+  //  XX post born
+  //
+  car_u->liv_o = c3n;
+  car_u->io.talk_f = _cttp_io_talk;
+  car_u->io.fete_f = _cttp_io_fete;
+  car_u->io.exit_f = _cttp_io_exit;
+
+  car_u->ev.drop_f = _cttp_ev_noop;
+  car_u->ev.work_f = _cttp_ev_noop;
+  car_u->ev.done_f = _cttp_ev_noop;
+  car_u->ev.swap_f = _cttp_ev_noop;
+  car_u->ev.bail_f = _cttp_ev_noop;
+
+  return car_u;
 }

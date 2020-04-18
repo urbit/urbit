@@ -340,12 +340,12 @@ _reck_kick_spec(u3_pier* pir_u, u3_noun pox, u3_noun fav)
       u3z(pox); u3z(fav);
       return c3y;
     }
-    else if ( c3y == u3r_sing_c("http-client", it_pox) ) {
-      u3_cttp_ef_http_client(u3k(fav));
+    // else if ( c3y == u3r_sing_c("http-client", it_pox) ) {
+    //   u3_cttp_ef_http_client(u3k(fav));
 
-      u3z(pox); u3z(fav);
-      return c3y;
-    }
+    //   u3z(pox); u3z(fav);
+    //   return c3y;
+    // }
     else switch ( it_pox ) {
       default: u3z(pox); u3z(fav); return c3n;
 
