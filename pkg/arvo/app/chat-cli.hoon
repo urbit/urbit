@@ -19,8 +19,21 @@
 +$  card  card:agent:gall
 ::
 +$  versioned-state
-  $%  state-1
+  $%  state-2
+      state-1
       state-0
+  ==
+::
++$  state-2
+  $:  %2
+      bound=(map target glyph)                      ::  bound circle glyphs
+      binds=(jug glyph target)                      ::  circle glyph lookup
+      audience=(set target)                         ::  active targets
+      settings=(set term)                           ::  frontend flags
+      width=@ud                                     ::  display width
+      timez=(pair ? @ud)                            ::  timezone adjustment
+      cli=state=sole-share:sole-sur                 ::  console state
+      eny=@uvJ                                      ::  entropy
   ==
 ::
 +$  state-1
@@ -85,13 +98,12 @@
       [%width @ud]                                  ::  adjust display width
       [%timezone ? @ud]                             ::  adjust time printing
     ::
-      [%select $@(rel=@ud [zeros=@u abs=@ud])]      ::  rel/abs msg selection
       [%chats ~]                                    ::  list available chats
       [%help ~]                                     ::  print usage info
   ==                                                ::
 ::
 --
-=|  state-1
+=|  state-2
 =*  state  -
 ::
 %-  agent:dbug
@@ -183,14 +195,20 @@
       ?:  (~(has by wex.bowl) [/chat-store our-self %chat-store])  ~
       ~[connect]
   ::
-  ^-  state-1
+  |-  ^-  state-2
   ?-  -.u.old
+    %2  u.old
+  ::
       %1
-    =?  width.u.old  =(0 width.u.old)  80
-    u.old(bound (~(gas by *(map target glyph)) ~(tap by bound.u.old)))
+    ~&  %going-to-two-bb
+    ^-  state-2
+    =-  $(u.old [%2 -])
+    %_  +>+>.u.old
+      bound  (~(gas by *(map target glyph)) ~(tap by bound.u.old))
+    ==
   ::
       ?(~ ^)
-    :-  %1
+    =-  $(u.old [%1 -])
     %=  u.old
       grams  ~  ::NOTE  this only impacts historic message lookup in chat-cli
     ::
@@ -235,7 +253,7 @@
   =*  path  p.n.inbox
   =*  mailbox  q.n.inbox
   =/  =target  (path-to-target path)
-  =^  cards-n  state  (read-envelopes target (flop envelopes.mailbox))
+  =^  cards-n  state  (read-envelopes target envelopes.mailbox)
   =^  cards-l  state  $(inbox l.inbox)
   =^  cards-r  state  $(inbox r.inbox)
   [:(weld cards-n cards-l cards-r) state]
@@ -323,7 +341,7 @@
     %create    (notice-create (path-to-target path.upd))
     %delete    [[(show-delete:sh-out (path-to-target path.upd)) ~] state]
     %message   (read-envelope (path-to-target path.upd) envelope.upd)
-    %messages  (read-envelopes (path-to-target path.upd) (flop envelopes.upd))
+    %messages  (read-envelopes (path-to-target path.upd) envelopes.upd)
   ==
 ::
 ++  read-envelopes
@@ -399,31 +417,17 @@
   ^-  (unit target)
   =+  lax=(~(get ju binds) glyph)
   ::  no circle
-  ?:  =(~ lax)  ~
-  %-  some
-  ::  single circle
-  ?:  ?=([* ~ ~] lax)  n.lax
-  ::  in case of multiple audiences, pick the most recently active one
-  |-  ^-  target
-  ?~  grams  -:~(tap in lax)
-  =*  source  source.i.grams
-  ?:  (~(has in lax) source)
-    source
-  $(grams t.grams)
+  ?:  ?=(~ lax)  ~
+  ::NOTE  in case of multiple audiences, we just pick an arbitrary one.
+  ::      this shouldn't happen much in practice right now.
+  `n.lax
 ::  +read-envelope: add envelope to state and show it to user
 ::
 ++  read-envelope
   |=  [=target =envelope]
   ^-  (quip card _state)
-  ?:  (~(has in known) [target uid.envelope])
-    ::NOTE  we no-op only because edits aren't possible
-    [~ state]
-  :-  (show-envelope:sh-out target envelope)
-  %_  state
-    known  (~(put in known) [target uid.envelope])
-    grams  [[target envelope] grams]
-    count  +(count)
-  ==
+  :_  state
+  [(show-envelope:sh-out target envelope)]~
 ::
 ::  +sh-in: handle user input
 ::
@@ -604,8 +608,6 @@
       ::
         ;~(plug (tag %chats) (easy ~))
         ;~(plug (tag %help) (easy ~))
-      ::
-        (stag %select nump)
       ==
     ::
     ::TODO
@@ -798,7 +800,6 @@
           %width     (set-width +.job)
           %timezone  (set-timezone +.job)
         ::
-          %select    (select +.job)
           %chats     chats
           %help      help
         ==
@@ -1047,56 +1048,6 @@
     ++  set-timezone
       |=  tz=[? @ud]
       [~ state(timez tz)]
-    ::  +select: expand message from number reference
-    ::
-    ++  select
-      ::NOTE  rel is the nth most recent message,
-      ::      abs is the last message whose numbers ends in n
-      ::      (with leading zeros used for precision)
-      ::
-      |=  num=$@(rel=@ud [zeros=@u abs=@ud])
-      ^-  (quip card _state)
-      |^  ?@  num
-            =+  tum=(scow %s (new:si | +(num)))
-            ?:  (gte rel.num count)
-              %-  just-print
-              "{tum}: no such telegram"
-            (activate tum rel.num)
-          ?.  (gte abs.num count)
-            ?:  =(count 0)
-              (just-print "0: no messages")
-            =+  msg=(index (dec count) num)
-            (activate (scow %ud msg) (sub count +(msg)))
-          %-  just-print
-          "…{(reap zeros.num '0')}{(scow %ud abs.num)}: no such telegram"
-      ::  +just-print: full [cards state] output with a single print card
-      ::
-      ++  just-print
-        |=  txt=tape
-        [[(print:sh-out txt) ~] state]
-      ::  +index: get message index from absolute reference
-      ::
-      ++  index
-        |=  [max=@ud nul=@u fin=@ud]
-        ^-  @ud
-        =+  dog=|-(?:(=(0 fin) 1 (mul 10 $(fin (div fin 10)))))
-        =.  dog  (mul dog (pow 10 nul))
-        =-  ?:((lte - max) - (sub - dog))
-        (add fin (sub max (mod max dog)))
-      ::  +activate: echo message selector and print details
-      ::
-      ++  activate
-        |=  [number=tape index=@ud]
-        ^-  (quip card _state)
-        =+  gam=(snag index grams)
-        =.  audience  [source.gam ~ ~]
-        :_  state
-        ^-  (list card)
-        :~  (print:sh-out ['?' ' ' number])
-            (effect:sh-out ~(render-activate mr gam))
-            prompt:sh-out
-        ==
-      --
     ::  +chats: display list of local mailboxes
     ::
     ++  chats
@@ -1185,20 +1136,12 @@
     ==
   ::  +show-envelope: print incoming message
   ::
-  ::    every five messages, prints the message number also.
   ::    if the message mentions the user's (shortened) ship name,
   ::    and the %notify flag is set, emit a bell.
   ::
   ++  show-envelope
     |=  [=target =envelope]
     ^-  (list card)
-    %+  weld
-      ^-  (list card)
-      ?.  =(0 (mod count 5))  ~
-      :_  ~
-      =+  num=(scow %ud count)
-      %-  print
-      (runt [(sub 13 (lent num)) '-'] "[{num}]")
     =+  lis=~(render-inline mr target envelope)
     ?~  lis  ~
     :_  ~
