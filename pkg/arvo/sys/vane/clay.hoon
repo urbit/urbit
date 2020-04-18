@@ -3406,6 +3406,7 @@
     ::
     =^  ankh  ford-cache.args
       (checkout-ankh args deletes changes ank.dom)
+    =.  ankh.args  ankh
     =.  ank.dom  ankh
     =^  mim  ford-cache.args
       (checkout-mime args deletes ~(key by changes))
