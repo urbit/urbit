@@ -235,7 +235,7 @@
   =*  path  p.n.inbox
   =*  mailbox  q.n.inbox
   =/  =target  (path-to-target path)
-  =^  cards-n  state  (read-envelopes target envelopes.mailbox)
+  =^  cards-n  state  (read-envelopes target (flop envelopes.mailbox))
   =^  cards-l  state  $(inbox l.inbox)
   =^  cards-r  state  $(inbox r.inbox)
   [:(weld cards-n cards-l cards-r) state]
@@ -323,7 +323,7 @@
     %create    (notice-create (path-to-target path.upd))
     %delete    [[(show-delete:sh-out (path-to-target path.upd)) ~] state]
     %message   (read-envelope (path-to-target path.upd) envelope.upd)
-    %messages  (read-envelopes (path-to-target path.upd) envelopes.upd)
+    %messages  (read-envelopes (path-to-target path.upd) (flop envelopes.upd))
   ==
 ::
 ++  read-envelopes
