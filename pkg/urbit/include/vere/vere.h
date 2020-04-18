@@ -237,18 +237,6 @@
         void*            tls_u;             //  client SSL_CTX*
       } u3_cttp;
 
-    /* u3_pact: ames packet, coming or going.
-    */
-      typedef struct _u3_pact {
-        uv_udp_send_t    snd_u;             //  udp send request
-        c3_w             pip_w;             //  target IPv4 address
-        c3_s             por_s;             //  target port
-        c3_w             len_w;             //  length in bytes
-        c3_y*            hun_y;             //  packet buffer
-        c3_y             imp_y;             //  galaxy number (optional)
-        c3_c*            dns_c;             //  galaxy fqdn (optional)
-      } u3_pact;
-
     /* u3_lane: ames lane (IP address and port)
     */
       typedef struct _u3_lane {
@@ -330,22 +318,6 @@
         uv_file  fil_u;                     //  file, opened read-only to fsync
         u3_dent* all_u;                     //  file list
       } u3_dire;
-
-    /* u3_ames: ames networking.
-    */
-      typedef struct _u3_ames {             //  packet network state
-        union {
-          uv_udp_t    wax_u;
-          uv_handle_t had_u;
-        };
-        c3_o          liv;                  //  listener on
-        c3_o          alm;                  //  alarm on
-        c3_s          por_s;                //  public IPv4 port
-        c3_c*         dns_c;                //  domain XX multiple/fallback
-        c3_w          imp_w[256];           //  imperial IPs
-        time_t        imp_t[256];           //  imperial IP timestamps
-        c3_o          imp_o[256];           //  imperial print status
-      } u3_ames;
 
     /* u3_save: checkpoint control.
     */
@@ -822,7 +794,6 @@
           uv_idle_t        idl_u;               //  postloop registration
           // XX remove
           c3_s             por_s;               //  UDP port
-          u3_ames*         sam_u;               //  packet interface
           u3_unix*         unx_u;               //  sync and clay
           u3_save*         sav_u;               //  autosave
         } u3_pier;
@@ -1166,43 +1137,10 @@
 
     /**  Ames, packet networking.
     **/
-      /* u3_ames_ef_bake(): create ames duct.
-      */
-        void
-        u3_ames_ef_bake(u3_pier* pir_u);
-
-      /* u3_ames_ef_send(): send packet to network.
-      */
-        void
-        u3_ames_ef_send(u3_pier* pir_u,
-                        u3_noun lan,
-                        u3_noun pac);
-
-      /* u3_ames_ef_turf(): initialize ames I/O on domain(s).
-      */
-        void
-        u3_ames_ef_turf(u3_pier* pir_u,
-                        u3_noun tuf);
-
       /* u3_ames_io_init(): initialize ames I/O.
       */
-        void
+        u3_auto*
         u3_ames_io_init(u3_pier* pir_u);
-
-      /* u3_ames_io_talk(): bring up listener.
-      */
-        void
-        u3_ames_io_talk(u3_pier* pir_u);
-
-      /* u3_ames_ef_bake(): send initial events.
-      */
-        void
-        u3_ames_io_bake(u3_pier* pir_u);
-
-      /* u3_ames_io_exit(): terminate ames I/O.
-      */
-        void
-        u3_ames_io_exit(u3_pier* pir_u);
 
       /* u3_ames_decode_lane(): destructure lane from noun
       */

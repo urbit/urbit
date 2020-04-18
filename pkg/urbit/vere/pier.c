@@ -764,7 +764,6 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
 
   // XX remove
   //
-  pir_u->sam_u = c3_calloc(sizeof(u3_ames));
   pir_u->por_s = u3_Host.ops_u.por_s;
   pir_u->unx_u = c3_calloc(sizeof(u3_unix));
   pir_u->sav_u = c3_calloc(sizeof(u3_save));
@@ -1169,10 +1168,10 @@ _pier_loop_wake(u3_auto* car_u)
   u3_unix_ef_bake(pir_u);
   u3a_lop(cod_l);
 
-  cod_l = u3a_lush(c3__ames);
-  u3_ames_io_talk(pir_u);
-  u3_ames_ef_bake(pir_u);
-  u3a_lop(cod_l);
+  // cod_l = u3a_lush(c3__ames);
+  // u3_ames_io_talk(pir_u);
+  // u3_ames_ef_bake(pir_u);
+  // u3a_lop(cod_l);
 
   // cod_l = u3a_lush(c3__behn);
   // u3_behn_ef_bake(pir_u);
@@ -1206,9 +1205,9 @@ _pier_loop_exit(u3_auto* car_u)
   u3_unix_io_exit(pir_u);
   u3a_lop(cod_l);
 
-  cod_l = u3a_lush(c3__ames);
-  u3_ames_io_exit(pir_u);
-  u3a_lop(cod_l);
+  // cod_l = u3a_lush(c3__ames);
+  // u3_ames_io_exit(pir_u);
+  // u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__save);
   u3_save_io_exit(pir_u);
@@ -1269,6 +1268,14 @@ _pier_loop_init(u3_pier* pir_u)
   }
 
   {
+    u3_auto* rac_u = u3_ames_io_init(pir_u);
+    rac_u->pir_u = pir_u;
+
+    *las_u = rac_u;
+    las_u = &rac_u->nex_u;
+  }
+
+  {
     u3_auto* rac_u = c3_calloc(sizeof(*rac_u));
     rac_u->nam_m = u3_blip;
     rac_u->liv_o = c3y;
@@ -1294,9 +1301,9 @@ _pier_loop_init(u3_pier* pir_u)
   //
   u3v_numb();
 
-  cod_l = u3a_lush(c3__ames);
-  u3_ames_io_init(pir_u);
-  u3a_lop(cod_l);
+  // cod_l = u3a_lush(c3__ames);
+  // u3_ames_io_init(pir_u);
+  // u3a_lop(cod_l);
 
   // cod_l = u3a_lush(c3__behn);
   // u3_behn_io_init(pir_u);
