@@ -2607,20 +2607,17 @@
   |%
   ::  $pile: preprocessed hoon source file
   ::
+  ::    /-  sur-file            ::  surface imports from /sur
+  ::    /+  lib-file            ::  library imports from /lib
+  ::    /=  face  /path         ::  imports built hoon file at path
+  ::    /*  face  %mark  /path  ::  unbuilt file imports, as mark
+  ::
   +$  pile
-    $:  =mont
-        =hoon
-    ==
-  ::  $mont: imports declaration
-  ::
-  ::    /-  imports from /sur
-  ::    /+  imports from /lib
-  ::    /=  imports from some other path
-  ::
-  +$  mont
     $:  sur=(list taut)
         lib=(list taut)
         raw=(list [face=term =path])
+        bar=(list [face=term =mark =path])
+        =hoon
     ==
   ::  $taut: file import from /lib or /sur
   ::
@@ -2867,7 +2864,7 @@
         (ream (cat 3 b ':~(grow old sam)'))
       ::  try direct +grab
       ::
-        =^  new=vase  nub  (build-fit /mar/[b])
+      =^  new=vase  nub  (build-fit /mar/[b])
       =/  rab  (mule |.((slap new (ream (cat 3 a ':grab')))))
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
         :_(nub |=(sam=vase (slam p.rab sam)))
@@ -2942,8 +2939,8 @@
     ::
     ++  build-file
       |=  =path
-      ~|  %error-building^path
       ^-  [vase state]
+      ~|  %error-building^path
       ?^  got=(~(get by vases.cache.nub) path)
         =?  stack.nub  ?=(^ stack.nub)
           stack.nub(i (~(uni in i.stack.nub) dez.u.got))
@@ -2957,45 +2954,33 @@
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
       =^  sut=vase  nub  run-reef
-      =^  sut=vase  nub  (run-tauts sut %sur sur.mont.pile)
-      =^  sut=vase  nub  (run-tauts sut %lib lib.mont.pile)
-      =^  sut=vase  nub  (run-raw sut raw.mont.pile)
+      =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
+      =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
+      =^  sut=vase  nub  (run-raw sut raw.pile)
+      =^  sut=vase  nub  (run-bar sut bar.pile)
       =/  res=vase  (slap sut hoon.pile)
       =^  top  stack.nub  pop-stack
       =.  vases.cache.nub  (~(put by vases.cache.nub) path [res top])
       [res nub]
     ::
     ++  parse-pile
-      |=  [=path tex=tape]
+      |=  [pax=path tex=tape]
       ^-  pile
-      =/  [=mont =nail]  (parse-mont path tex)
-      =/  [=hair res=(unit [src=(list hoon) ^nail])]
-        ((most gap tall:(vang & path)) nail)
-      ?^  res  [mont tssg+src:(need res)]
+      =/  [=hair res=(unit [=pile =nail])]  ((pile-rule pax) [1 1] tex)
+      ?^  res  pile.u.res
       %-  mean
       =/  lyn  p.hair
       =/  col  q.hair
-      :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<path>}"
+      :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
           leaf+(trip (snag (dec lyn) (to-wain:format (crip tex))))
           leaf+(runt [(dec col) '-'] "^")
       ==
     ::
-    ++  parse-mont
-      |=  [=path tex=tape]
-      ^-  [mont nail]
-      =/  [=hair res=(unit [=mont =nail])]  (mont-rule [1 1] tex)
-      ?^  res  u.res
-      %-  mean
-      =/  lyn  p.hair
-      =/  col  q.hair
-      :~  leaf+"syntax error in imports at [{<lyn>} {<col>}] in {<path>}"
-          leaf+(trip (snag (dec lyn) (to-wain:format (crip tex))))
-          leaf+(runt [(dec col) '-'] "^")
-      ==
-    ::
-    ++  mont-rule
+    ++  pile-rule
+      |=  pax=path
+      %-  full
       %+  ifix  [gay gay]
-      %+  cook  |=(mont +<)
+      %+  cook  |=(pile +<)
       ;~  pfix
         ::  parse optional /? and ignore
         ::
@@ -3003,23 +2988,66 @@
           (cold ~ ;~(plug net wut gap dem gap))
           (easy ~)
         ==
-      ;~  plug
-        %+  cook  |=((list (list taut)) (zing +<))
-        %+  more  gap
-        %+  ifix  [;~(plug net hep gap) gap]
-        (most ;~(plug com gaw) taut-rule)
       ::
-        %+  cook  |=((list (list taut)) (zing +<))
-        %+  more  gap
-        %+  ifix  [;~(plug net lus gap) gap]
-        (most ;~(plug com gaw) taut-rule)
-      ::
-        %+  cook  |=((list [face=term =path]) +<)
-        %+  more  gap
-        %+  ifix  [;~(plug net tis gap) gap]
-        %+  cook  |=([term path] +<)
-        ;~(plug sym ;~(pfix ;~(plug gap net) (more net urs:ab)))
-      ==  ==
+        ;~  plug
+          ;~  pose
+            ;~  sfix
+              %+  cook  |=((list (list taut)) (zing +<))
+              %+  more  gap
+              ;~  pfix  ;~(plug net hep gap)
+                (most ;~(plug com gaw) taut-rule)
+              ==
+              gap
+            ==
+            (easy ~)
+          ==
+        ::
+          ;~  pose
+            ;~  sfix
+              %+  cook  |=((list (list taut)) (zing +<))
+              %+  more  gap
+              ;~  pfix  ;~(plug net lus gap)
+                (most ;~(plug com gaw) taut-rule)
+              ==
+              gap
+            ==
+            (easy ~)
+          ==
+        ::
+          ;~  pose
+            ;~  sfix
+              %+  cook  |=((list [face=term =path]) +<)
+              %+  more  gap
+              ;~  pfix  ;~(plug net tis gap)
+                %+  cook  |=([term path] +<)
+                ;~(plug sym ;~(pfix ;~(plug gap net) (more net urs:ab)))
+              ==
+              gap
+            ==
+            (easy ~)
+          ==
+        ::
+          ;~  pose
+            ;~  sfix
+              %+  cook  |=((list [face=term =mark =path]) +<)
+              %+  more  gap
+              ;~  pfix  ;~(plug net tar gap)
+                %+  cook  |=([term mark path] +<)
+                ;~  plug
+                  sym
+                  ;~(pfix ;~(plug gap cen) sym)
+                  ;~(pfix ;~(plug gap net) (more net urs:ab))
+                ==
+              ==
+              gap
+            ==
+            (easy ~)
+          ==
+        ::
+          %+  cook  |=(huz=(list hoon) `hoon`tssg+huz)
+          (most gap tall:(vang & pax))
+        ==
+      ==
     ::
     ++  taut-rule
       %+  cook  |=(taut +<)
@@ -3041,9 +3069,17 @@
       |=  [sut=vase raw=(list [face=term =path])]
       ^-  [vase state]
       ?~  raw  [sut nub]
-      =^  pin=vase  nub  (build-file path.i.raw)
+      =^  pin=vase  nub  (build-file (snoc path.i.raw %hoon))
       =.  p.pin  [%face face.i.raw p.pin]
       $(sut (slop pin sut), raw t.raw)
+    ::
+    ++  run-bar
+      |=  [sut=vase bar=(list [face=term =mark =path])]
+      ^-  [vase state]
+      ?~  bar  [sut nub]
+      =^  =cage  nub  (cast-path [path mark]:i.bar)
+      =.  p.q.cage  [%face face.i.bar p.q.cage]
+      $(sut (slop q.cage sut), bar t.bar)
     ::
     ++  run-reef
       ^-  [vase state]
