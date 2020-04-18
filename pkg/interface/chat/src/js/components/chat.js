@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import _ from 'lodash';
+import moment from 'moment';
 
 import { Route, Link } from "react-router-dom";
 import { store } from "/store";
@@ -10,6 +11,7 @@ import { Message } from '/components/lib/message';
 import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 import { ChatInput } from '/components/lib/chat-input';
+import { UnreadNotice } from '/components/lib/unread-notice';
 import { deSig } from '/lib/util';
 
 
@@ -24,25 +26,26 @@ export class ChatScreen extends Component {
  
     this.hasAskedForMessages = false;
     this.onScroll = this.onScroll.bind(this);
- 
-    this.updateReadInterval = setInterval(
-      this.updateReadNumber.bind(this),
-      1000
-    );
+
+    this.unreadMarker = null;
+
+    moment.updateLocale('en', {
+      calendar: {
+        sameDay: '[Today]',
+        nextDay: '[Tomorrow]',
+        nextWeek: 'dddd',
+        lastDay: '[Yesterday]',
+        lastWeek: '[Last] dddd',
+        sameElse: 'DD/MM/YYYY'
+      }
+    });
+
   }
  
   componentDidMount() {
-    this.updateReadNumber();
     this.askForMessages();
   }
- 
-  componentWillUnmount() {
-    if (this.updateReadInterval) {
-      clearInterval(this.updateReadInterval);
-      this.updateReadInterval = null;
-    }
-  }
- 
+
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
  
@@ -55,18 +58,11 @@ export class ChatScreen extends Component {
       if (props.envelopes.length < 100) {
         this.askForMessages();
       }
- 
-      clearInterval(this.updateReadInterval);
- 
+
       this.setState(
         { scrollLocked: false },
         () => {
           this.scrollToBottom();
-          this.updateReadInterval = setInterval(
-            this.updateReadNumber.bind(this),
-            1000
-          );
-          this.updateReadNumber();
         }
       );
     } else if (props.chatInitialized &&
@@ -80,14 +76,8 @@ export class ChatScreen extends Component {
       this.hasAskedForMessages = false;
     }
   }
- 
-  updateReadNumber() {
-    const { props, state } = this;
-    if (props.read < props.length) {
-      props.api.chat.read(props.station);
-    }
-  }
- 
+
+
   askForMessages() {
     const { props, state } = this;
 
@@ -170,6 +160,12 @@ export class ChatScreen extends Component {
     } else {
       console.log("Your browser is not supported.");
     }
+    if(!!this.unreadMarker &&
+       e.target.scrollHeight - e.target.scrollTop - (e.target.clientHeight * 1.5) + this.unreadMarker.offsetTop > 50 ) {
+
+      this.props.api.chat.read(this.props.station);
+
+    }
   }
  
   render() {
@@ -189,6 +185,11 @@ export class ChatScreen extends Component {
     pendingMessages.map(function(value) {
       return (value.pending = true);
     });
+
+    const unread = props.length - props.read;
+
+    const unreadMsg = unread > 0 && messages[unread - 1];
+
  
     let messageElements = pendingMessages.concat(messages).map((msg, i) => {
       // Render sigil if previous message is not by the same sender
@@ -200,8 +201,13 @@ export class ChatScreen extends Component {
       let paddingBot =
         _.get(messages[i - 1], aut) !==
         _.get(msg, aut, msg.author);
+
+      let when = ['when'];
+      let dayBreak =
+          moment(_.get(messages[i+1], when)).format('YYYY.MM.DD')  !==
+          moment(_.get(messages[i], when)).format('YYYY.MM.DD')
  
-      return (
+      const messageElem = (
         <Message
           key={msg.uid}
           msg={msg}
@@ -212,6 +218,39 @@ export class ChatScreen extends Component {
           pending={!!msg.pending}
         />
       );
+      if(unread > 0 && i === unread) {
+        return (
+          <>
+            {messageElem}
+            <div key={'unreads'+ msg.uid} ref={ref => (this.unreadMarker = ref)} className="mv2 green2 flex items-center f9">
+              <hr className="ma0 w2 b--green2 bt-0" />
+              <p className="mh4">
+                New messages below
+              </p>
+              <hr className="ma0 flex-grow-1 b--green2 bt-0" />
+              { dayBreak && (
+                 <p className="gray2 mh4">
+                   {moment(_.get(messages[i], when)).calendar()}
+                 </p>
+              )}
+              <hr style={{ width: 'calc(50% - 48px)' }} className="b--green2 ma0 bt-0"/>
+            </div>
+          </>
+        );
+      } else if(dayBreak) {
+        return (
+          <>
+            {messageElem}
+            <div key={'daybreak' + msg.uid} className="pv3 gray2 b--gray2 flex items-center justify-center f9 ">
+              <p>
+                {moment(_.get(messages[i], when)).calendar()}
+              </p>
+            </div>
+          </>
+        );
+      } else {
+        return messageElem;
+      }
     });
  
     let group = Array.from(props.permission.who.values());
@@ -229,11 +268,12 @@ export class ChatScreen extends Component {
           ? props.association.metadata.title
           : props.station.substr(1);
     }
- 
+
+
     return (
       <div
         key={props.station}
-        className="h-100 w-100 overflow-hidden flex flex-column">
+        className="h-100 w-100 overflow-hidden flex flex-column relative">
         <div
           className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
           style={{ height: "1rem" }}>
@@ -265,6 +305,13 @@ export class ChatScreen extends Component {
             api={props.api}
           />
         </div>
+        { !!unreadMsg && (
+          <UnreadNotice
+            unread={unread}
+            unreadMsg={unreadMsg}
+            onRead={() => props.api.chat.read(props.station)}
+          />
+        ) }
         <div
           className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
           style={{ height: "100%", resize: "vertical" }}
