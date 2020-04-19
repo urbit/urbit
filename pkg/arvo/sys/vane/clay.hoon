@@ -3180,13 +3180,13 @@
   ::
   ++  aver
     |=  {for/(unit ship) mun/mood}
-    ^-  (unit (unit (each cage lobe)))
+    ^-  [(unit (unit (each cage lobe))) ford-cache]
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
-      `(bind u.ezy |=(a/cage [%& a]))
+      :_(fod.dom.red `(bind u.ezy |=(a/cage [%& a])))
     =+  nao=(case-to-aeon case.mun)
     ::  ~&  [%aver-mun nao [%from syd lim case.mun]]
-    ?~(nao ~ (read-at-aeon:ze for u.nao mun))
+    ?~(nao [~ fod.dom.red] (read-at-aeon:ze for u.nao mun))
   ::
   ::  Queue a move.
   ::
@@ -3751,8 +3751,8 @@
   ++  start-request
     |=  [for=(unit ship) rav=rave]
     ^+  ..start-request
-    =/  [new-sub=(unit rove) sub-results=(list sub-result)]
-        (try-fill-sub for (rave-to-rove rav))
+    =^  [new-sub=(unit rove) sub-results=(list sub-result)]  fod.dom
+      (try-fill-sub for (rave-to-rove rav))
     =.  ..start-request  (send-sub-results sub-results [hen ~ ~])
     ?~  new-sub
       ..start-request
@@ -4150,8 +4150,8 @@
       ::  drop forgotten roves
       ::
       $(old-subs t.old-subs)
-    =/  [new-sub=(unit rove) sub-results=(list sub-result)]
-        (try-fill-sub wove.i.old-subs)
+    =^  [new-sub=(unit rove) sub-results=(list sub-result)]  fod.dom
+      (try-fill-sub wove.i.old-subs)
     =.  ..wake  (send-sub-results sub-results ducts.i.old-subs)
     =.  new-subs
       ?~  new-sub
@@ -4163,7 +4163,7 @@
   ::
   ++  try-fill-sub
     |=  [for=(unit ship) rov=rove]
-    ^-  [new-sub=(unit rove) (list sub-result)]
+    ^-  [[new-sub=(unit rove) (list sub-result)] ford-cache]
     ?-    -.rov
         %sing
       =/  cache-value=(unit (unit cage))
@@ -4171,6 +4171,7 @@
       ?^  cache-value
         ::  if we have a result in our cache, produce it
         ::
+        :_  fod.dom
         :-  ~
         ?~  u.cache-value
           [%blub ~]~
@@ -4179,10 +4180,10 @@
       ::
       =/  aeon=(unit aeon)  (case-to-aeon case.mood.rov)
       ?~  aeon
-        [`rov ~]
+        [[`rov ~] fod.dom]
       ::  we have the appropriate aeon, so read in the data
       ::
-      =/  value=(unit (unit (each cage lobe)))
+      =^  value=(unit (unit (each cage lobe)))  fod.dom
         (read-at-aeon:ze for u.aeon mood.rov)
       ?~  value
         ::  We don't have the data directly, which is potentially
@@ -4190,12 +4191,12 @@
         ::
         ?:  =(0 u.aeon)
           ~&  [%clay-sing-indirect-data-0 `path`[syd '0' path.mood.rov]]
-          [~ ~]
+          [[~ ~] fod.dom]
         ~&  [%clay-sing-indirect-data desk=syd mood=mood.rov aeon=u.aeon]
-        [`rov ~]
+        [[`rov ~] fod.dom]
       ::  we have the data, so we produce the results
       ::
-      [~ [%balk u.value mood.rov]~]
+      [[~ [%balk u.value mood.rov]~] fod.dom]
     ::
     ::  %next is just %mult with one path, so we pretend %next = %mult here.
     ::
@@ -4219,41 +4220,48 @@
       ?>  ?=(%mult -.rov)
       ::  we will either respond or store the maybe updated request.
       ::
-      =;  res=(each (map mood (unit (each cage lobe))) rove)
+      =;  [res=(each (map mood (unit (each cage lobe))) rove) fod=ford-cache]
+          :_  fod
           ?:  ?=(%& -.res)
             (respond p.res)
           (store p.res)
       ::  recurse here on next aeon if possible/needed.
       ::
-      |-  ^-  (each (map mood (unit (each cage lobe))) rove)
+      |-  ^-  [(each (map mood (unit (each cage lobe))) rove) ford-cache]
       ::  if we don't have an aeon yet, see if we have one now.
       ::
       ?~  aeon.rov
         =/  aeon=(unit aeon)  (case-to-aeon case.mool.rov)
         ::  if we still don't, wait.
         ::
-        ?~  aeon  |+rov
+        ?~  aeon  [|+rov fod.dom]
         ::  if we do, update the request and retry.
         ::
         $(aeon.rov `+(u.aeon), old-cach.rov ~, new-cach.rov ~)
       ::  if old isn't complete, try filling in the gaps.
       ::
-      =?  old-cach.rov  !(complete old-cach.rov)
+      =^  o  fod.dom
+        ?:  (complete old-cach.rov)
+          [old-cach.rov fod.dom]
         (read-unknown mool.rov(case [%ud (dec u.aeon.rov)]) old-cach.rov)
+      =.  old-cach.rov  o
       ::  if the next aeon we want to compare is in the future, wait again.
       ::
       =/  next-aeon=(unit aeon)  (case-to-aeon [%ud u.aeon.rov])
-      ?~  next-aeon  |+rov
+      ?~  next-aeon  [|+rov fod.dom]
       ::  if new isn't complete, try filling in the gaps.
       ::
-      =?  new-cach.rov  !(complete new-cach.rov)
+      =^  n  fod.dom
+        ?:  (complete new-cach.rov)
+          [new-cach.rov fod.dom]
         (read-unknown mool.rov(case [%ud u.aeon.rov]) new-cach.rov)
+      =.  new-cach.rov  n
       ::  if they're still not both complete, wait again.
       ::
       ?.  ?&  (complete old-cach.rov)
               (complete new-cach.rov)
           ==
-        |+rov
+        [|+rov fod.dom]
       ::  both complete, so check if anything has changed
       ::
       =/  changes=(map mood (unit (each cage lobe)))
@@ -4292,7 +4300,7 @@
       ::  if there are any changes, send response. if none, move on to
       ::  next aeon.
       ::
-      ?^  changes  &+changes
+      ?^  changes  [&+changes fod.dom]
       $(u.aeon.rov +(u.aeon.rov), new-cach.rov ~)
       ::
       ::  check again later
@@ -4337,6 +4345,7 @@
       ::
       ++  read-unknown
         |=  [=mool hav=(map (pair care path) cach)]
+        ^-  [_hav ford-cache]
         =?  hav  ?=(~ hav)
           %-  malt  ^-  (list (pair (pair care path) cach))
           %+  turn
@@ -4344,12 +4353,22 @@
           |=  [c=care p=path]
           ^-  [[care path] cach]
           [[c p] ~]
-        %-  ~(urn by hav)
-        |=  [[c=care p=path] o=cach]
-        ?^(o o (aver for c case.mool p))
+        |-  ^+  [hav fod.dom]
+        ?~  hav  [hav fod.dom]
+        =^  lef  fod.dom  $(hav l.hav)
+        =.  l.hav  lef
+        =^  rig  fod.dom  $(hav r.hav)
+        =.  r.hav  rig
+        =/  [[=care =path] =cach]  n.hav
+        ?^  cach
+          [hav fod.dom]
+        =^  q  fod.dom  (aver for care case.mool path)
+        =.  q.n.hav  q
+        [hav fod.dom]
       --
     ::
         %many
+      :_  fod.dom
       =/  from-aeon  (case-to-aeon from.moat.rov)
       ?~  from-aeon
         ::  haven't entered the relevant range, so do nothing
@@ -4545,51 +4564,54 @@
     ::
     ++  read-a
       |=  [=aeon =path]
-      ^-  (unit (unit (each cage lobe)))
+      ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
-        ~
+        [~ fod.dom]
       =/  cached=(unit [=vase *])  (~(get by vases.fod.dom) path)
       ?^  cached
-        [~ ~ %& %vase !>(vase.u.cached)]
+        :_(fod.dom [~ ~ %& %vase !>(vase.u.cached)])
       =/  x  (read-x aeon path)
       ?~  x
-        ~
+        [~ fod.dom]
       ?~  u.x
-        [~ ~]
+        [[~ ~] fod.dom]
       ::  should never happen at current aeon
       ?:  ?=(%| -.u.u.x)
-        ~
-      =/  [=vase =state:ford:fusion]
+        [~ fod.dom]
+      =^  =vase  fod.dom
+        %-  wrap:fusion
         (build-file:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) path)
-      [~ ~ %& %vase !>(vase)]
+      :_(fod.dom [~ ~ %& %vase !>(vase)])
     ::
     ++  read-b
       |=  [=aeon =path]
-      ^-  (unit (unit (each cage lobe)))
+      ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
-        ~
+        [~ fod.dom]
       ?.  ?=([@ ~] path)
-        [~ ~]
+        [[~ ~] fod.dom]
       =/  cached=(unit [=dais *])  (~(get by marks.fod.dom) i.path)
       ?^  cached
-        [~ ~ %& %dais !>(dais.u.cached)]
-      =/  [=dais =state:ford:fusion]
+        :_(fod.dom [~ ~ %& %dais !>(dais.u.cached)])
+      =^  =dais  fod.dom
+        %-  wrap:fusion
         (get-mark:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) i.path)
-      [~ ~ %& %dais !>(dais)]
+      :_(fod.dom [~ ~ %& %dais !>(dais)])
     ::
     ++  read-c
       |=  [=aeon =path]
-      ^-  (unit (unit (each cage lobe)))
+      ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
-        ~
+        [~ fod.dom]
       ?.  ?=([@ @ ~] path)
-        [~ ~]
+        [[~ ~] fod.dom]
       =/  cached=(unit [=tube *])  (~(get by casts.fod.dom) [i i.t]:path)
       ?^  cached
-        [~ ~ %& %tube !>(tube.u.cached)]
-      =/  [=tube =state:ford:fusion]
+        :_(fod.dom [~ ~ %& %tube !>(tube.u.cached)])
+      =^  =tube  fod.dom
+        %-  wrap:fusion
         (get-cast:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) [i i.t]:path)
-      [~ ~ %& %tube !>(tube)]
+      :_(fod.dom [~ ~ %& %tube !>(tube)])
     ::
     ::  Gets the permissions that apply to a particular node.
     ::
@@ -4851,11 +4873,13 @@
     ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  [for=(unit ship) yon=aeon mun=mood]           ::  seek and read
-      ^-  (unit (unit (each cage lobe)))
+      ^-  [(unit (unit (each cage lobe))) ford-cache]
+      =*  fod  fod.dom
       ?.  |(?=(~ for) (may-read u.for care.mun yon path.mun))
-        ~
+        [~ fod]
       ?-  care.mun
           %d
+        :_  fod
         ::  XX this should only allow reads at the current date
         ::
         ?:  !=(our her)
@@ -4867,15 +4891,15 @@
         %a  (read-a yon path.mun)
         %b  (read-b yon path.mun)
         %c  (read-c yon path.mun)
-        %p  (read-p path.mun)
-        %s  (bind (read-s yon path.mun) (lift |=(a=cage [%& a])))
-        %t  (bind (read-t yon path.mun) (lift |=(a=cage [%& a])))
-        %u  (read-u yon path.mun)
-        %v  (bind (read-v yon path.mun) (lift |=(a/cage [%& a])))
-        %w  (read-w case.mun)
-        %x  (read-x yon path.mun)
-        %y  (bind (read-y yon path.mun) (lift |=(a/cage [%& a])))
-        %z  (bind (read-z yon path.mun) (lift |=(a/cage [%& a])))
+        %p  :_(fod (read-p path.mun))
+        %s  :_(fod (bind (read-s yon path.mun) (lift |=(a=cage [%& a]))))
+        %t  :_(fod (bind (read-t yon path.mun) (lift |=(a=cage [%& a]))))
+        %u  :_(fod (read-u yon path.mun))
+        %v  :_(fod (bind (read-v yon path.mun) (lift |=(a/cage [%& a]))))
+        %w  :_(fod (read-w case.mun))
+        %x  :_(fod (read-x yon path.mun))
+        %y  :_(fod (bind (read-y yon path.mun) (lift |=(a/cage [%& a]))))
+        %z  :_(fod (bind (read-z yon path.mun) (lift |=(a/cage [%& a]))))
       ==
     ++  zu  zu:util
     --
@@ -5248,7 +5272,7 @@
     ?:  =(p.m his)  ~
     `p.m
   =/  den  ((de our now ski [/scryduct ~] ruf) his syd)
-  =+  (aver:den for u.run u.luk tyl)
+  =+  -:(aver:den for u.run u.luk tyl)
   ?~  -               -
   ?~  u.-             -
   ?:  ?=(%& -.u.u.-)  ``p.u.u.-
