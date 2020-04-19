@@ -13,49 +13,49 @@
 #include "all.h"
 #include "vere/vere.h"
 
-/* _reck_mole(): parse simple atomic mole.
-*/
-static u3_noun
-_reck_mole(u3_noun  fot,
-           u3_noun  san,
-           c3_d*    ato_d)
-{
-  u3_noun uco = u3dc("slaw", fot, san);
-  u3_noun p_uco, q_uco;
+// /* _reck_mole(): parse simple atomic mole.
+// */
+// static u3_noun
+// _reck_mole(u3_noun  fot,
+//            u3_noun  san,
+//            c3_d*    ato_d)
+// {
+//   u3_noun uco = u3dc("slaw", fot, san);
+//   u3_noun p_uco, q_uco;
 
-  if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
-       (u3_nul != p_uco) )
-  {
-    u3l_log("strange mole %s\n", u3r_string(san));
+//   if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
+//        (u3_nul != p_uco) )
+//   {
+//     u3l_log("strange mole %s\n", u3r_string(san));
 
-    u3z(fot); u3z(uco); return c3n;
-  }
-  else {
-    *ato_d = u3r_chub(0, q_uco);
+//     u3z(fot); u3z(uco); return c3n;
+//   }
+//   else {
+//     *ato_d = u3r_chub(0, q_uco);
 
-    u3z(fot); u3z(uco); return c3y;
-  }
-}
+//     u3z(fot); u3z(uco); return c3y;
+//   }
+// }
 
-/* _reck_lily(): parse little atom.
-*/
-static u3_noun
-_reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
-{
-  c3_d ato_d;
+// /* _reck_lily(): parse little atom.
+// */
+// static u3_noun
+// _reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
+// {
+//   c3_d ato_d;
 
-  if ( c3n == _reck_mole(fot, txt, &ato_d) ) {
-    return c3n;
-  } else {
-    if ( ato_d >= 0x80000000ULL ) {
-      return c3n;
-    } else {
-      *tid_l = (c3_l) ato_d;
+//   if ( c3n == _reck_mole(fot, txt, &ato_d) ) {
+//     return c3n;
+//   } else {
+//     if ( ato_d >= 0x80000000ULL ) {
+//       return c3n;
+//     } else {
+//       *tid_l = (c3_l) ato_d;
 
-      return c3y;
-    }
-  }
-}
+//       return c3y;
+//     }
+//   }
+// }
 
 /*  _reck_orchid(): parses only a number as text
  *
@@ -303,43 +303,43 @@ _reck_kick_spec(u3_pier* pir_u, u3_noun pox, u3_noun fav)
     if ( (c3n == u3r_cell(t_pox, &it_pox, &tt_pox)) ) {
       u3z(pox); u3z(fav); return c3n;
     }
-    else if ( c3y == u3r_sing_c("http-server", it_pox) ) {
-      u3_noun pud = tt_pox;
-      u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
-      c3_l    sev_l, coq_l, seq_l;
+    // else if ( c3y == u3r_sing_c("http-server", it_pox) ) {
+    //   u3_noun pud = tt_pox;
+    //   u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
+    //   c3_l    sev_l, coq_l, seq_l;
 
-      if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
-           (c3n == _reck_lily(c3__uv, u3k(p_pud), &sev_l)) )
-      {
-        u3z(pox); u3z(fav); return c3n;
-      }
+    //   if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
+    //        (c3n == _reck_lily(c3__uv, u3k(p_pud), &sev_l)) )
+    //   {
+    //     u3z(pox); u3z(fav); return c3n;
+    //   }
 
-      if ( u3_nul == t_pud ) {
-        coq_l = seq_l = 0;
-      }
-      else {
-        if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
-             (c3n == _reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
-        {
-          u3z(pox); u3z(fav); return c3n;
-        }
+    //   if ( u3_nul == t_pud ) {
+    //     coq_l = seq_l = 0;
+    //   }
+    //   else {
+    //     if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
+    //          (c3n == _reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
+    //     {
+    //       u3z(pox); u3z(fav); return c3n;
+    //     }
 
-        if ( u3_nul == tt_pud ) {
-          seq_l = 0;
-        } else {
-          if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
-               (u3_nul != s_pud) ||
-               (c3n == _reck_lily(c3__ud, u3k(r_pud), &seq_l)) )
-          {
-            u3z(pox); u3z(fav); return c3n;
-          }
-        }
-      }
-      u3_http_ef_http_server(sev_l, coq_l, seq_l, u3k(fav));
+    //     if ( u3_nul == tt_pud ) {
+    //       seq_l = 0;
+    //     } else {
+    //       if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
+    //            (u3_nul != s_pud) ||
+    //            (c3n == _reck_lily(c3__ud, u3k(r_pud), &seq_l)) )
+    //       {
+    //         u3z(pox); u3z(fav); return c3n;
+    //       }
+    //     }
+    //   }
+    //   u3_http_ef_http_server(sev_l, coq_l, seq_l, u3k(fav));
 
-      u3z(pox); u3z(fav);
-      return c3y;
-    }
+    //   u3z(pox); u3z(fav);
+    //   return c3y;
+    // }
     // else if ( c3y == u3r_sing_c("http-client", it_pox) ) {
     //   u3_cttp_ef_http_client(u3k(fav));
 
