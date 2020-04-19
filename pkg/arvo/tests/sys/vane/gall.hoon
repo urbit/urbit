@@ -1,6 +1,5 @@
 /+  *test
-::
-/=  gall-raw  /:  /===/sys/vane/gall  /!noun/
+/=  gall-raw  /sys/vane/gall
 ::
 =/  test-pit=vase  !>(..zuse)
 =/  gall-gate  (gall-raw test-pit)
