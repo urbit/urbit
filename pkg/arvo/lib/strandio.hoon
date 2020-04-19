@@ -26,6 +26,12 @@
   |=  tin=strand-input:strand
   `[%done bowl.tin]
 ::
+++  get-beak
+  =/  m  (strand ,beak)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  `[%done [our q.byk da+now]:bowl.tin]
+::
 ++  get-time
   =/  m  (strand ,@da)
   ^-  form:m
@@ -536,6 +542,15 @@
   =/  m  (strand ,riot:clay)
   ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %c %warp ship riff)
   (take-writ /warp)
+::
+++  list-tree
+  |=  [[=ship =desk =case:clay] =spur]
+  =*  arg  +<
+  =/  m  (strand ,(list path))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %t case (flop spur))
+  ?~  riot
+    (strand-fail %list-tree >arg< ~)
+  (pure:m !<((list path) q.r.u.riot))
 ::
 ::  Take Clay read result
 ::
