@@ -12,7 +12,7 @@
   $~  [*thread-form ~]
   [=thread-form kid=(map tid trie)]
 ::
-+$  trying  ?(%find %build %none)
++$  trying  ?(%build %none)
 +$  state
   $:  starting=(map yarn [=trying =vase])
       running=trie
@@ -258,13 +258,14 @@
   =/  =yarn  (~(got by tid.state) tid)
   =.  starting.state
     (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
+  ~|  sign+[- +<]:sign-arvo
   ?>  ?=([?(%b %c) %writ *] sign-arvo)
   =/  =riot:clay  p.sign-arvo
   ?~  riot
     (thread-fail-not-running tid %build-thread-error *tang)
-  ?.  ?=(%noun p.r.u.riot)
-    (thread-fail-not-running tid %build-thread-strange >u.riot< ~)
-  =/  maybe-thread  (mule |.(!<(thread q.r.u.riot)))
+  ?.  ?=(%vase p.r.u.riot)
+    (thread-fail-not-running tid %build-thread-strange >[p q]:u.riot< ~)
+  =/  maybe-thread  (mule |.(!<(thread !<(vase q.r.u.riot))))
   ?:  ?=(%| -.maybe-thread)
     (thread-fail-not-running tid %thread-not-thread ~)
   (start-thread yarn p.maybe-thread)
