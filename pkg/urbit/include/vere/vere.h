@@ -244,6 +244,7 @@
         u3_utat          tat_u;             //  control state
         struct termios   bak_u;             //  cooked terminal state
         struct termios   raw_u;             //  raw terminal state
+        struct _u3_auto* car_u;             //  driver hack
       } u3_utty;
 
     /* u3_trac: tracing information.
@@ -814,16 +815,6 @@
         u3_noun
         u3_term_get_blew(c3_l tid_l);
 
-      /* u3_term_ef_boil(): initial effects for restored server.
-      */
-        void
-        u3_term_ef_boil();
-
-      /* u3_term_ef_verb(): initial effects for verbose events.
-      */
-        void
-        u3_term_ef_verb(void);
-
       /* u3_term_ef_winc(): window change.
       */
         void
@@ -834,31 +825,10 @@
         void
         u3_term_ef_ctlc(void);
 
-      /* u3_term_ef_bake(): initial effects for new server.
-      */
-        void
-        u3_term_ef_bake(void);
-
-      /* u3_term_ef_blit(): send %blit effect to terminal.
-      */
-        void
-        u3_term_ef_blit(c3_l    tid_l,
-                        u3_noun blt);
-
       /* u3_term_io_init(): initialize terminal I/O.
       */
-        void
-        u3_term_io_init(void);
-
-      /* u3_term_io_talk(): start terminal listener.
-      */
-        void
-        u3_term_io_talk(void);
-
-      /* u3_term_io_exit(): terminate terminal I/O.
-      */
-        void
-        u3_term_io_exit(void);
+        u3_auto*
+        u3_term_io_init(u3_pier* pir_u);
 
       /* u3_term_io_hija(): hijack console for cooked print.
       */
@@ -874,6 +844,16 @@
       */
         void
         u3_term_io_loja(int x);
+
+      /* u3_term_log_init(): initialize terminal for logging
+      */
+        void
+        u3_term_log_init(void);
+
+      /* u3_term_log_exit(): clean up terminal.
+      */
+        void
+        u3_term_log_exit(void);
 
 
     /**  Ames, packet networking.

@@ -57,100 +57,100 @@
 //   }
 // }
 
-/*  _reck_orchid(): parses only a number as text
- *
- *    Parses a text string which contains a decimal number. In practice, this
- *    number is always '1'.
- */
-static u3_noun
-_reck_orchid(u3_noun fot, u3_noun txt, c3_l* tid_l)
-{
-  c3_c* str = u3r_string(txt);
-  c3_d ato_d = strtol(str, NULL, 10);
-  c3_free(str);
+// /*  _reck_orchid(): parses only a number as text
+//  *
+//  *    Parses a text string which contains a decimal number. In practice, this
+//  *    number is always '1'.
+//  */
+// static u3_noun
+// _reck_orchid(u3_noun fot, u3_noun txt, c3_l* tid_l)
+// {
+//   c3_c* str = u3r_string(txt);
+//   c3_d ato_d = strtol(str, NULL, 10);
+//   c3_free(str);
 
-  if ( ato_d >= 0x80000000ULL ) {
-    return c3n;
-  } else {
-    *tid_l = (c3_l) ato_d;
+//   if ( ato_d >= 0x80000000ULL ) {
+//     return c3n;
+//   } else {
+//     *tid_l = (c3_l) ato_d;
 
-    return c3y;
-  }
-}
+//     return c3y;
+//   }
+// }
 
-/* _reck_kick_term(): apply terminal outputs.
-*/
-static u3_noun
-_reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
-{
-  u3_noun p_fav;
+// /* _reck_kick_term(): apply terminal outputs.
+// */
+// static u3_noun
+// _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
+// {
+//   u3_noun p_fav;
 
-  if ( c3n == u3du(fav) ) {
-    u3z(pox); u3z(fav); return c3n;
-  }
-  else switch ( u3h(fav) ) {
-    default: u3z(pox); u3z(fav); return c3n;
-    case c3__bbye:
-    {
-      u3z(pox); u3z(fav); return c3y;
-    } break;
+//   if ( c3n == u3du(fav) ) {
+//     u3z(pox); u3z(fav); return c3n;
+//   }
+//   else switch ( u3h(fav) ) {
+//     default: u3z(pox); u3z(fav); return c3n;
+//     case c3__bbye:
+//     {
+//       u3z(pox); u3z(fav); return c3y;
+//     } break;
 
-    case c3__blit: p_fav = u3t(fav);
-    {
-      u3_term_ef_blit(tid_l, u3k(p_fav));
+//     case c3__blit: p_fav = u3t(fav);
+//     {
+//       u3_term_ef_blit(tid_l, u3k(p_fav));
 
-      u3z(pox); u3z(fav); return c3y;
-    } break;
+//       u3z(pox); u3z(fav); return c3y;
+//     } break;
 
-    // // this can return through dill due to our fscked up boot sequence
-    // //
-    // case c3__send: {
-    //   u3_noun lan = u3k(u3h(u3t(fav)));
-    //   u3_noun pac = u3k(u3t(u3t(fav)));
+//     // // this can return through dill due to our fscked up boot sequence
+//     // //
+//     // case c3__send: {
+//     //   u3_noun lan = u3k(u3h(u3t(fav)));
+//     //   u3_noun pac = u3k(u3t(u3t(fav)));
 
-    //   u3l_log("kick: strange send\r\n");
-    //   u3_ames_ef_send(pir_u, lan, pac);
-    //   u3z(pox); u3z(fav); return c3y;
-    // } break;
+//     //   u3l_log("kick: strange send\r\n");
+//     //   u3_ames_ef_send(pir_u, lan, pac);
+//     //   u3z(pox); u3z(fav); return c3y;
+//     // } break;
 
-    case c3__logo:
-    {
-      u3_pier_exit(pir_u);
-      u3_Host.xit_i = u3t(fav);
+//     case c3__logo:
+//     {
+//       u3_pier_exit(pir_u);
+//       u3_Host.xit_i = u3t(fav);
 
-      u3z(pox); u3z(fav); return c3y;
-    } break;
+//       u3z(pox); u3z(fav); return c3y;
+//     } break;
 
-    case c3__init: p_fav = u3t(fav);
-    {
-      // daemon ignores %init
-      // u3A->own = u3nc(u3k(p_fav), u3A->own);
-      // u3l_log("kick: init: %d\n", p_fav);
-      u3z(pox); u3z(fav); return c3y;
-    } break;
+//     case c3__init: p_fav = u3t(fav);
+//     {
+//       // daemon ignores %init
+//       // u3A->own = u3nc(u3k(p_fav), u3A->own);
+//       // u3l_log("kick: init: %d\n", p_fav);
+//       u3z(pox); u3z(fav); return c3y;
+//     } break;
 
-    case c3__mass:
-    {
-      u3z(pox); u3z(fav);
+//     case c3__mass:
+//     {
+//       u3z(pox); u3z(fav);
 
-      //  gc the daemon area
-      //
-      //    XX disabled due to known leaks; uncomment for dev
-      //
-      // uv_timer_start(&u3K.tim_u, (uv_timer_cb)u3_daemon_grab, 0, 0);
-      return c3y;
-    } break;
+//       //  gc the daemon area
+//       //
+//       //    XX disabled due to known leaks; uncomment for dev
+//       //
+//       // uv_timer_start(&u3K.tim_u, (uv_timer_cb)u3_daemon_grab, 0, 0);
+//       return c3y;
+//     } break;
 
-    //  ignore pack (processed in worker)
-    //
-    case c3__pack:
-    {
-      u3z(pox); u3z(fav);
-      return c3y;
-    } break;
-  }
-  c3_assert(!"not reached"); return 0;
-}
+//     //  ignore pack (processed in worker)
+//     //
+//     case c3__pack:
+//     {
+//       u3z(pox); u3z(fav);
+//       return c3y;
+//     } break;
+//   }
+//   c3_assert(!"not reached"); return 0;
+// }
 
 /* _reck_kick_arvo(): apply loopback effects.
 */
@@ -384,21 +384,21 @@ _reck_kick_spec(u3_pier* pir_u, u3_noun pox, u3_noun fav)
         u3z(pox); u3z(fav); return c3y;
       } break;
 
-      case c3__term: {
-        u3_noun pud = tt_pox;
-        u3_noun p_pud, q_pud;
-        c3_l    tid_l;
+      // case c3__term: {
+      //   u3_noun pud = tt_pox;
+      //   u3_noun p_pud, q_pud;
+      //   c3_l    tid_l;
 
-        if ( (c3n == u3r_cell(pud, &p_pud, &q_pud)) ||
-             (u3_nul != q_pud) ||
-             (c3n == _reck_orchid(c3__ud, u3k(p_pud), &tid_l)) )
-        {
-          u3l_log("term: bad tire\n");
-          u3z(pox); u3z(fav); return c3n;
-        } else {
-          return _reck_kick_term(pir_u, pox, tid_l, fav);
-        }
-      } break;
+      //   if ( (c3n == u3r_cell(pud, &p_pud, &q_pud)) ||
+      //        (u3_nul != q_pud) ||
+      //        (c3n == _reck_orchid(c3__ud, u3k(p_pud), &tid_l)) )
+      //   {
+      //     u3l_log("term: bad tire\n");
+      //     u3z(pox); u3z(fav); return c3n;
+      //   } else {
+      //     return _reck_kick_term(pir_u, pox, tid_l, fav);
+      //   }
+      // } break;
     }
   }
   c3_assert(!"not reached");

@@ -573,6 +573,9 @@ _pier_on_lord_exit(void* vod_p, c3_o ret_o)
     //  XX dispose
     //
     // exit(0);
+    u3_term_log_exit();
+    //  XX no can do
+    //
     uv_stop(u3L);
   }
   else {
@@ -1185,10 +1188,10 @@ _pier_loop_wake(u3_auto* car_u)
     // u3_cttp_ef_bake();
     // u3a_lop(cod_l);
 
-    cod_l = u3a_lush(c3__term);
-    u3_term_io_talk();
-    u3_term_ef_bake();
-    u3a_lop(cod_l);
+    // cod_l = u3a_lush(c3__term);
+    // u3_term_io_talk();
+    // u3_term_ef_bake();
+    // u3a_lop(cod_l);
   }
 }
 
@@ -1227,9 +1230,9 @@ _pier_loop_exit(u3_auto* car_u)
     // u3_cttp_io_exit();
     // u3a_lop(cod_l);
 
-    cod_l = u3a_lush(c3__term);
-    u3_term_io_exit();
-    u3a_lop(cod_l);
+    // cod_l = u3a_lush(c3__term);
+    // u3_term_io_exit();
+    // u3a_lop(cod_l);
   }
 }
 
@@ -1257,6 +1260,14 @@ _pier_loop_init(u3_pier* pir_u)
 
   u3_auto*  car_u;
   u3_auto** las_u = &car_u;
+
+  {
+    u3_auto* rac_u = u3_term_io_init(pir_u);
+    rac_u->pir_u = pir_u;
+
+    *las_u = rac_u;
+    las_u = &rac_u->nex_u;
+  }
 
   {
     u3_auto* rac_u = u3_unix_io_init(pir_u);
@@ -1343,9 +1354,9 @@ _pier_loop_init(u3_pier* pir_u)
   //  XX legacy handlers, not yet scoped to a pier
   //
   {
-    cod_l = u3a_lush(c3__term);
-    u3_term_io_init();
-    u3a_lop(cod_l);
+    // cod_l = u3a_lush(c3__term);
+    // u3_term_io_init();
+    // u3a_lop(cod_l);
 
     // cod_l = u3a_lush(c3__http);
     // u3_http_io_init();
@@ -1406,6 +1417,8 @@ _pier_exit_done(u3_pier* pir_u)
   // XX
   //
   _pier_loop_exit(pir_u->car_u);
+
+  u3_term_log_exit();
 
   //  XX uninstall pier from u3K.tab_u, dispose
 

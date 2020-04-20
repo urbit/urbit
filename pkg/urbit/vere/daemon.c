@@ -871,6 +871,8 @@ _daemon_loop_init()
     uv_pipe_init(u3L, &mor_u->pyp_u, 0);
     uv_pipe_connect(con_u, &mor_u->pyp_u, u3K.soc_c, _boothack_cb);
   }
+
+  u3_term_log_init();
 }
 
 /* _daemon_loop_exit(): cleanup after event loop
