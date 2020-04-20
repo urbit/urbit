@@ -2638,28 +2638,46 @@
       ?~  kid=(~(get by dir.nak) i.path)
         ~
       $(nak u.kid, path t.path)
-    ::  +get-fit: produce file at path with /'s maybe converted to -'s
+    ::  +get-fit: produce path with suffix /'s maybe converted to -'s
     ::
     ++  get-fit
-      |=  pax=path
+      |=  [pre=@tas pax=@tas]
       ^-  (unit path)
-      ::  add the hoon extension to the result
-      ::
-      =-  ?~(- ~ `(snoc u.- %hoon))
-      |-  ^-  (unit path)
-      ?>  ?=([* * ~] pax)
-      ::  put the prefix back on the result
-      ::
-      =-  ?~(- ~ `[i.pax u.-])
-      =.  nak  (~(got by dir.nak) i.pax)
-      ?^  got=(get (snoc t.pax %hoon))
-        (some t.pax)
-      =/  seg=tape  (trip i.t.pax)
-      ?~  dex=(find "-" seg)
+      ?~  nuk=(~(get by dir.nak) pre)
         ~
-      =/  hed  (crip (scag u.dex seg))
-      =/  tal  (crip (slag +(u.dex) seg))
-      $(pax /[hed]/[tal])
+      =.  nak  u.nuk
+      =/  paz  (segments pax)
+      |-  ^-  (unit path)
+      ?~  paz  ~
+      =/  pax  (snoc i.paz %hoon)
+      ?^  (get pax)
+        `[pre pax]
+      $(paz t.paz)
+    ::  +segments: compute all paths from :path-part, replacing some `/`s with `-`s
+    ::
+    ::    For example, when passed a :path-part of 'foo-bar-baz',
+    ::    the product will contain:
+    ::    ```
+    ::    dojo> (segments 'foo-bar-baz')
+    ::    ~[/foo/bar/baz /foo/bar-baz /foo-bar/baz /foo-bar-baz]
+    ::    ```
+    ::
+    ++  segments
+      |=  suffix=@tas
+      ^-  (list path)
+      =/  parser
+        (most hep (cook crip ;~(plug low (star ;~(pose low nud)))))
+      =/  torn=(list @tas)  (fall (rush suffix parser) ~[suffix])
+      |-  ^-  (list (list @tas))
+      ?<  ?=(~ torn)
+      ?:  ?=([@ ~] torn)
+        ~[torn]
+      %-  zing
+      %+  turn  $(torn t.torn)
+      |=  s=(list @tas)
+      ^-  (list (list @tas))
+      ?>  ?=(^ s)
+      ~[[i.torn s] [(crip "{(trip i.torn)}-{(trip i.s)}") t.s]]
     --
   ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
   ++  with-faces
@@ -2757,7 +2775,7 @@
         =^  top  stack.nub  pop-stack
         =.  marks.cache.nub  (~(put by marks.cache.nub) mak [dais.res top])
         [dais.res nub]
-      =^  cor=vase  nub  (build-fit /mar/[mak])
+      =^  cor=vase  nub  (build-fit %mar mak)
       =/  gad=vase  (slap cor %limb %grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
@@ -2852,7 +2870,7 @@
         [tube.res nub]
       ::  try +grow
       ::
-      =^  old=vase  nub  (build-fit /mar/[a])
+      =^  old=vase  nub  (build-fit %mar a)
       =/  row  (mule |.((slap old (ream (cat 3 b ':grow')))))
       ?:  ?=(%& -.row)
         :_  nub
@@ -2864,7 +2882,7 @@
         (ream (cat 3 b ':~(grow old sam)'))
       ::  try direct +grab
       ::
-      =^  new=vase  nub  (build-fit /mar/[b])
+      =^  new=vase  nub  (build-fit %mar b)
       =/  rab  (mule |.((slap new (ream (cat 3 a ':grab')))))
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
         :_(nub |=(sam=vase (slam p.rab sam)))
@@ -3061,7 +3079,7 @@
       |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
       ^-  [vase state]
       ?~  taz  [sut nub]
-      =^  pin=vase  nub  (build-fit /[wer]/[pax.i.taz])
+      =^  pin=vase  nub  (build-fit wer pax.i.taz)
       =?  p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.pin]
       $(sut (slop pin sut), taz t.taz)
     ::
@@ -3084,11 +3102,14 @@
     ++  run-reef
       ^-  [vase state]
       [!>(..zuse) nub]  ::  TODO implement
+    ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
+    ::
+    ::    TODO: traverses the $ankh twice; could be optimized
     ::
     ++  build-fit
-      |=  pax=path
+      |=  [pre=@tas pax=@tas]
       ^-  [vase state]
-      (build-file ~|(no-file+pax (need (~(get-fit an ankh) pax))))
+      (build-file ~|(no-file+pax (need (~(get-fit an ankh) [pre pax]))))
     --
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

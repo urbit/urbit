@@ -17,17 +17,17 @@
   =/  =ankh:clay
     :-  fil=~
     %-  ~(gas by *(map @tas ankh:clay))
-    :~  :+  %mar  fil=~
+    :~  :+  %lib  fil=~
         %-  ~(gas by *(map @tas ankh:clay))
-        :~  :+  %foo  fil=~
+        :~  :+  %language-server  fil=~
             %-  ~(gas by *(map @tas ankh:clay))
-            :~  :+  %bar  fil=~
+            :~  :+  %json  fil=~
                 %-  ~(gas by *(map @tas ankh:clay))
                 :~  :+  %hoon  fil=`[*lobe:clay hoon+!>('baz')]  dir=~
     ==  ==  ==  ==
   %+  expect-eq
-    !>  `(unit path)`[~ /mar/foo/bar/hoon]
-    !>  (~(get-fit an:fusion ankh) /mar/foo-bar)
+    !>  `(unit path)`[~ /lib/language-server/json/hoon]
+    !>  (~(get-fit an:fusion ankh) %lib %language-server-json)
 ::
 ++  test-parse-pile  ^-  tang
   %+  expect-eq
