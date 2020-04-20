@@ -1246,15 +1246,6 @@ _term_io_talk(u3_auto* car_u)
   u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
   u3_noun fav;
 
-  //  set verbose as per -v
-  //
-  //    XX should be explicit, not a toggle
-  //
-  if ( c3y == u3_Host.ops_u.veb ) {
-    fav = u3nc(c3__verb, u3_nul);
-    u3_auto_plan(car_u, 0, 0, u3_blip, u3k(pax), fav);
-  }
-
   //  send terminal dimensions
   //
   {

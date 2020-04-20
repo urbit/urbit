@@ -791,13 +791,6 @@
         u3_dire*
         u3_foil_folder(const c3_c* pax_c);         //  directory object, or 0
 
-    /**  Output.
-    **/
-      /* u3_reck_kick(): handle effect.
-      */
-        void
-        u3_reck_kick(u3_pier* pir_u, u3_noun ovo);
-
     /**  Terminal, new style.
     **/
       /* u3_term_start_spinner(): prepare spinner state. RETAIN.
@@ -924,6 +917,13 @@
         u3_auto*
         u3_cttp_io_init(u3_pier* pir_u);
 
+    /**  Root, grab bag
+    **/
+      /* u3_root_io_init(): initialize root
+      */
+        u3_auto*
+        u3_root_io_init(u3_pier* pir_u);
+
     /**  Stream messages.
     **/
       /* u3_newt_encode(): encode an atom to a length-prefixed byte buffer
@@ -977,11 +977,6 @@
         void
         u3_pier_bail(void);
 
-      /* u3_pier_work(): send event; real pier pointer.
-      */
-        void
-        u3_pier_work(u3_pier* pir_u, u3_noun pax, u3_noun fav);
-
       /* u3_pier_snap(): request checkpoint.
       */
         void
@@ -991,11 +986,6 @@
       */
         u3_pier*
         u3_pier_stub(void);
-
-      /* u3_pier_plan(): submit event; fake pier
-      */
-        void
-        u3_pier_plan(u3_noun pax, u3_noun fav);
 
       /* u3_pier_boot(): start the new pier system.
       */

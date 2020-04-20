@@ -243,10 +243,6 @@ _daemon_susp(u3_atom ship, u3_noun susp)
 void
 _daemon_vent(u3_atom ship, u3_noun vent)
 {
-  /* stub; have to find pier from ship */
-  u3z(ship);
-  u3_pier_work(u3_pier_stub(), u3h(vent), u3t(vent));
-  u3z(vent);
 }
 
 /* _daemon_doom(): doom parser

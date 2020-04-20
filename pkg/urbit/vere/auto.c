@@ -166,6 +166,22 @@ u3_auto_next(u3_auto* car_u)
   return egg_u;
 }
 
+/* _auto_fete_lost(): RETAIN
+*/
+static void
+_auto_fete_lost(u3_noun pax, u3_noun fav)
+{
+  u3_noun tox = u3do("spat", u3k(pax));
+  c3_c* tag_c = u3r_string(u3h(fav));
+  c3_c* pax_c = u3r_string(tox);
+
+  u3l_log("kick: lost %%%s on %s\n", tag_c, pax_c);
+
+  c3_free(pax_c);
+  c3_free(tag_c);
+  u3z(tox);
+}
+
 /* u3_auto_fete(): route effects to a linked driver
 */
 void
@@ -180,8 +196,7 @@ u3_auto_fete(u3_auto* car_u, u3_noun act)
 
     while ( c3n == car_u->io.fete_f(car_u, u3k(pax), u3k(fav)) ) {
       if ( !car_u->nex_u ) {
-        // reck_kick_norm
-        // "kick: lost"
+        _auto_fete_lost(pax, fav);
         break;
       }
       else {
