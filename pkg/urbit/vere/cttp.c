@@ -579,6 +579,7 @@ _cttp_creq_free(u3_creq* ceq_u)
   }
 
   c3_free(ceq_u->hot_c);
+  c3_free(ceq_u->ipf_c);
   c3_free(ceq_u->por_c);
   c3_free(ceq_u->met_c);
   c3_free(ceq_u->url_c);
@@ -675,6 +676,7 @@ static void
 _cttp_creq_fire_str(u3_creq* ceq_u, c3_c* str_c)
 {
   _cttp_creq_fire_body(ceq_u, _cttp_bod_new(strlen(str_c), str_c));
+  c3_free(str_c);
 }
 
 /* _cttp_creq_fire_heds(): attach output headers.
