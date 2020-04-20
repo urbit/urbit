@@ -578,6 +578,11 @@
                      u3_noun    pax,
                      u3_noun    fav);
 
+      /* u3_auto_drop(): dequeue and dispose an ovum.
+      */
+        void
+        u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u);
+
       /* u3_auto_exit(): close all drivers
       */
         void

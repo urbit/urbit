@@ -45,9 +45,17 @@ u3_auto_talk(u3_auto* car_u)
 void
 u3_auto_exit(u3_auto* car_u)
 {
+  u3_auto* nex_u;
+
   while ( car_u ) {
+    nex_u = car_u->nex_u;
+
+    while ( car_u->ext_u ) {
+      u3_auto_drop(car_u, car_u->ext_u);
+    }
     car_u->io.exit_f(car_u);
-    car_u = car_u->nex_u;
+
+    car_u = nex_u;
   }
 }
 
@@ -103,7 +111,6 @@ u3_auto_plan(u3_auto* car_u,
 
   return egg_u;
 }
-
 
 /* u3_auto_drop(): dequeue and dispose an ovum.
 */

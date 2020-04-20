@@ -142,8 +142,11 @@ _pier_work_fete(u3_pier* pir_u)
     fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", wok_u->eve_d);
 #endif
     u3_auto_fete(pir_u->car_u, wok_u->act);
-    //  XX dispose wok_u->egg_u
-    //
+
+    if ( wok_u->egg_u ) {
+      u3_auto_drop(wok_u->egg_u->car_u, wok_u->egg_u);
+    }
+
     c3_free(wok_u);
   }
 }
