@@ -210,7 +210,7 @@
     %kiln-keep-ford          =;(f (f !<(_+<.f vase)) poke-keep-ford)
     %kiln-autoload           =;(f (f !<(_+<.f vase)) poke-autoload)
     %kiln-overload           =;(f (f !<(_+<.f vase)) poke-overload)
-    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-overload)
+    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
     %kiln-wash-gall          =;(f (f !<(_+<.f vase)) poke-wash-gall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
