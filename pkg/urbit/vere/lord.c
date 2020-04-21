@@ -55,9 +55,6 @@
 
 #undef VERBOSE_LORD
 
-static void
-_lord_writ_spin(u3_lord* god_u);
-
 /* _lord_writ_pop(): pop the writ stack
 */
 static u3_rrit*
@@ -182,16 +179,12 @@ _lord_plea_live(u3_lord* god_u, u3_noun dat)
 
     case c3__save: {
       god_u->cb_u.save_f(god_u->cb_u.vod_p, wit_u->eve_d);
-      god_u->hol_o = c3n;
-      _lord_writ_spin(god_u);
       break;
     }
     c3_assert(!"unreachable");
 
     case c3__snap: {
       god_u->cb_u.snap_f(god_u->cb_u.vod_p, wit_u->eve_d);
-      god_u->hol_o = c3n;
-      _lord_writ_spin(god_u);
       break;
     }
     c3_assert(!"unreachable");
@@ -313,7 +306,7 @@ _lord_plea_play(u3_lord* god_u, u3_noun dat)
       c3_d eve_d;
       c3_l mug_l;
 
-      if ( (c3n == u3r_trel(u3t(dat), &eve, &mug, &dud))
+      if (  (c3n == u3r_trel(u3t(dat), &eve, &mug, &dud))
          || (c3n == u3r_safe_chub(eve, &eve_d))
          || (c3n == u3r_safe_word(mug, &mug_l))
          || (c3n == u3a_is_cell(dud)) )
@@ -513,7 +506,6 @@ u3_lord*
 u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
 {
   u3_lord* god_u = c3_calloc(sizeof *god_u);
-  god_u->hol_o = c3n;
   god_u->liv_o = c3n;
   god_u->wag_w = wag_w;
   god_u->bin_c = u3_Host.wrk_c; //  XX strcopy
@@ -690,6 +682,7 @@ _lord_writ_send(u3_lord* god_u, u3_rrit* wit_u)
     _lord_writ_jam(god_u, wit_u);
     u3_newt_write(&god_u->inn_u, wit_u->mat, 0);
     wit_u->sen_o = c3y;
+    wit_u->mat   = 0;
 
     //  ignore subprocess error on shutdown
     //
@@ -697,19 +690,6 @@ _lord_writ_send(u3_lord* god_u, u3_rrit* wit_u)
       god_u->out_u.bal_f = _lord_bail_noop;
       god_u->inn_u.bal_f = _lord_bail_noop;
     }
-  }
-}
-
-/* _lord_writ_spin();
-*/
-static void
-_lord_writ_spin(u3_lord* god_u)
-{
-  u3_rrit* wit_u = god_u->ext_u;
-
-  while ( wit_u ) {
-    _lord_writ_send(god_u, wit_u);
-    wit_u = wit_u->nex_u;
   }
 }
 
@@ -730,9 +710,7 @@ _lord_writ_plan(u3_lord* god_u, u3_rrit* wit_u)
     god_u->ent_u = wit_u;
   }
 
-  if ( c3n == god_u->hol_o ) {
-    _lord_writ_send(god_u, wit_u);
-  }
+  _lord_writ_send(god_u, wit_u);
 }
 
 /* u3_lord_exit();
@@ -757,7 +735,6 @@ u3_lord_save(u3_lord* god_u, c3_d eve_d)
   wit_u->eve_d = eve_d;
   
   _lord_writ_plan(god_u, wit_u);
-  god_u->hol_o = c3y;
 }
 
 /* u3_lord_snap();
@@ -770,7 +747,6 @@ u3_lord_snap(u3_lord* god_u, c3_d eve_d)
   wit_u->eve_d = eve_d;
 
   _lord_writ_plan(god_u, wit_u);
-  god_u->hol_o = c3y;
 }
 
 /* u3_lord_peek();

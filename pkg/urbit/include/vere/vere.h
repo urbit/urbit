@@ -426,7 +426,6 @@
           c3_d                 eve_d;           //  last event completed
           c3_l                 mug_l;           //  mug at eve_d
           c3_w                 dep_w;           //  queue depth
-          c3_o                 hol_o;           //  on hold
           struct _u3_rrit*     ent_u;           //  queue entry
           struct _u3_rrit*     ext_u;           //  queue exit
         } u3_lord;
@@ -554,7 +553,8 @@
         } u3_daemon;
 
         u3_ovum*
-        u3_auto_next(u3_auto* car_u);
+        u3_auto_next(u3_auto* car_u, u3_noun* ovo);
+
         void
         u3_auto_fete(u3_auto* car_u, u3_noun act);
 

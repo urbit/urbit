@@ -37,8 +37,6 @@ _pier_work_init(u3_pier* pir_u)
   u3_auto_talk(pir_u->car_u);
 }
 
-#define SUB_FLOOR(a, b) ( (a <= b) ? 0 : a - b )
-
 /* _pier_work_send(): send new events for processing
 */
 static void
@@ -46,26 +44,38 @@ _pier_work_send(u3_pier* pir_u)
 {
   u3_lord* god_u = pir_u->god_u;
   u3_auto* car_u = pir_u->car_u;
-  u3_wall* wal_u = pir_u->wal_u;
-  c3_w     len_w = ( wal_u )
-                   ? SUB_FLOOR(wal_u->eve_d, god_u->eve_d)
-                   : SUB_FLOOR(PIER_WORK_BATCH, god_u->dep_w);
-  c3_w       i_w = 0;
-  u3_ovum* egg_u;
+  c3_w     len_w = 0;
 
-  while (  (i_w < len_w)
-        && car_u
-        && (egg_u = u3_auto_next(car_u)) )
+  //  calculate work batch size
   {
-    //  XX cons [tar] route onto wire
-    //
-    u3_noun ovo = u3nc(u3k(egg_u->pax), u3k(egg_u->fav));
-    u3_lord_work(pir_u->god_u, egg_u, ovo);
+    u3_wall* wal_u = pir_u->wal_u;
 
-    //  queue events depth first
-    //
-    car_u = egg_u->car_u;
-    i_w++;
+    if ( !wal_u ) {
+      if ( PIER_WORK_BATCH > god_u->dep_w ) {
+        len_w = PIER_WORK_BATCH - god_u->dep_w;
+      }
+    }
+    else {
+      c3_d sen_d = god_u->eve_d + god_u->dep_w;
+      if ( wal_u->eve_d > sen_d ) {
+        len_w = wal_u->eve_d - sen_d;
+      }
+    }
+  }
+
+  //  send batch
+  //
+  {
+    u3_ovum* egg_u;
+    u3_noun    ovo;
+
+    while (  len_w-- && car_u && (egg_u = u3_auto_next(car_u, &ovo)) ) {
+      u3_lord_work(god_u, egg_u, ovo);
+
+      //  queue events depth first
+      //
+      car_u = egg_u->car_u;
+    }
   }
 }
 
@@ -368,6 +378,7 @@ _pier_wall(u3_pier* pir_u)
     //  XX check god_u->dep_w
     //
     while (  (wal_u = pir_u->wal_u)
+          && !god_u->dep_w
           && (wal_u->eve_d <= god_u->eve_d) )
     {
       pir_u->wal_u = wal_u->nex_u;

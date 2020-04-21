@@ -140,7 +140,7 @@ u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u)
 /* u3_auto_next(): select an ovum and dequeue.
 */
 u3_ovum*
-u3_auto_next(u3_auto* car_u)
+u3_auto_next(u3_auto* car_u, u3_noun* ovo)
 {
   u3_ovum* egg_u = 0;
 
@@ -163,6 +163,10 @@ u3_auto_next(u3_auto* car_u)
       //  XX better name?
       //
       egg_u->car_u->ev.work_f(egg_u->car_u, egg_u->vod_p);
+
+      //  XX cons [tar] route onto wire
+      //
+      *ovo = u3nc(u3k(egg_u->pax), u3k(egg_u->fav));
 
       return egg_u;
     }
