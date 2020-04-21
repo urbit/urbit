@@ -99,7 +99,7 @@ export class Notebook extends Component {
                   list={notesList}
                   host={props.ship}
                   notebookName={props.book}
-                  contacts={props.contacts}
+                  contacts={props.notebookContacts}
                   />
         break;
       case "about":
@@ -119,6 +119,8 @@ export class Notebook extends Component {
                   book={this.props.book}
                   notebook={notebook}
                   groups={this.props.groups}
+                  contacts={this.props.contacts}
+                  associations={this.props.associations}
                   history={this.props.history}/>
         break;
       default:
@@ -126,8 +128,8 @@ export class Notebook extends Component {
     }
 
     // displaying nicknames, sigil colors for contacts
-    let contact = !!(props.ship.substr(1) in props.contacts)
-      ? props.contacts[props.ship.substr(1)] : false;
+    let contact = !!(props.ship.substr(1) in props.notebookContacts)
+      ? props.notebookContacts[props.ship.substr(1)] : false;
     let name = props.ship;
     if (contact) {
       name = (contact.nickname.length > 0)
