@@ -556,14 +556,14 @@ _worker_sure_feck(u3_noun ovo, u3_noun vir, c3_w pre_w)
       //  XX set flag(s) in u3V so we don't repeat endlessly?
       //  XX pack here too?
       //
-      pac_o = c3y;
+      // pac_o = c3y;
       rec_o = c3y;
       pri   = 1;
     }
     else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
       //  XX we should probably jam/cue our entire state at this point
       //
-      pac_o = c3y;
+      // pac_o = c3y;
       rec_o = c3y;
       pri   = 0;
     }
@@ -766,13 +766,13 @@ _worker_poke_work(c3_d    evt_d,              //  event number
   //    in normal operation. In either case, we immediately exit.
   //
   if ( u3V.mug_l != mug_l ) {
-    u3l_log("work: invalid %%work for event %" PRIu64 ".\r\n", evt_d);
+    // u3l_log("work: invalid %%work for event %" PRIu64 ".\r\n", evt_d);
     u3l_log("work: computed mug is %x but event %" PRIu64 " expected %x.\r\n",
             u3V.mug_l,
             evt_d,
             mug_l);
-    _worker_fail(0, "bad jar");
-    return;
+    // _worker_fail(0, "bad jar");
+    // return;
   }
 
   if ( evt_d <= u3V.len_w ) {
