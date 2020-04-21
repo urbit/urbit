@@ -363,17 +363,23 @@
     ==
   ::
       %remove
-    =/  ship  (~(get by synced) path.act)
-    ?~  ship  [~ state]
+    =/  ship=(unit ship)
+      =/  ship  (~(get by synced) path.act)
+      ?^  ship  ship
+      =?  path.act  ?=([%'~' *] path.act)  t.path.act
+      ?~  path.act  ~
+      (slaw %p i.path.act)
+    ?~  ship
+      ~&  [dap.bol %unknown-host-cannot-leave path.act]
+      [~ state]
     ?:  &(!=(u.ship src.bol) ?!((team:title our.bol src.bol)))
       [~ state]
     =.  synced  (~(del by synced) path.act)
     :_  state
-    %-  zing
-    :~  (pull-wire [%backlog (weld path.act /0)])
-        (pull-wire [%mailbox path.act])
-        [%give %kick ~[[%mailbox path.act]] ~]~
-        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]~
+    :*  [%give %kick ~[[%mailbox path.act]] ~]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+        (pull-wire u.ship [%mailbox path.act])
+        (pull-backlog-subscriptions u.ship path.act)
     ==
   ==
 ::
@@ -575,15 +581,15 @@
     [%pass chat-history %agent [ship %chat-hook] %watch chat-history]~
   ::
       [%backlog @ @ *]
-    =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-    ?.  (~(has by synced) pax)  [~ state]
+    =/  chat=path  (oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    ?.  (~(has by synced) chat)  [~ state]
     =/  =ship
       ?:  =('~' i.t.wir)
         (slav %p i.t.t.wir)
       (slav %p i.t.wir)
-    =.  pax  ?~((chat-scry pax) wir [%mailbox pax])
+    =/  =path  ?~((chat-scry chat) wir [%mailbox chat])
     :_  state
-    [%pass pax %agent [ship %chat-hook] %watch pax]~
+    [%pass path %agent [ship %chat-hook] %watch path]~
   ==
 ::
 ++  watch-ack
@@ -595,10 +601,10 @@
     (poke-chat-hook-action %remove t.wir)
   ::
       [%backlog @ @ @ *]
-    =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-    %.  (poke-chat-hook-action %remove pax)
+    =/  chat=path  (oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    %.  (poke-chat-hook-action %remove chat)
     %-  slog
-    :*  leaf+"chat-hook failed subscribe on {(spud pax)}"
+    :*  leaf+"chat-hook failed subscribe on {(spud chat)}"
         leaf+"stack trace:"
         u.saw
     ==
@@ -708,13 +714,23 @@
     (snoc `^path`path %noun)
   ==
 ::
-++  pull-wire
-  |=  pax=path
+++  pull-backlog-subscriptions
+  |=  [target=ship chat=path]
   ^-  (list card)
-  ?>  ?=(^ pax)
-  =/  shp  (~(get by synced) t.pax)
-  ?~  shp  ~
-  ?:  =(u.shp our.bol)
-    [%pass pax %agent [our.bol %chat-store] %leave ~]~
-  [%pass pax %agent [u.shp %chat-hook] %leave ~]~
+  %+  murn  ~(tap by wex.bol)
+  |=  [[=wire =ship =term] [acked=? =path]]
+  ^-  (unit card)
+  ?.  ?&  =(ship target)
+          ?=([%backlog *] wire)
+          =(`1 (find chat wire))
+      ==
+    ~
+  `(pull-wire target wire)
+::
+++  pull-wire
+  |=  [=ship =wire]
+  ^-  card
+  ?:  =(ship our.bol)
+    [%pass wire %agent [our.bol %chat-store] %leave ~]
+  [%pass wire %agent [ship %chat-hook] %leave ~]
 --
