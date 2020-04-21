@@ -265,7 +265,7 @@ a {
 .md code, .md pre {
   font-family: "Source Code Pro", mono;
 }
-.md ul>li {
+.md ul>li, .md ol>li {
   line-height: 1.5;
 }
 .md a {
