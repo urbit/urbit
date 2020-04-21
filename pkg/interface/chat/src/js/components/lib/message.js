@@ -6,7 +6,34 @@ import { uxToHex, cite, writeText } from '/lib/util';
 import urbitOb from 'urbit-ob';
 import moment from 'moment';
 import _ from 'lodash';
+import ReactMarkdown from 'react-markdown';
+import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 
+const DISABLED_BLOCK_TOKENS = [
+  'indentedCode',
+  'blockquote',
+  'atxHeading',
+  'thematicBreak',
+  'list',
+  'setextHeading',
+  'html',
+  'definition',
+  'table',
+];
+
+const DISABLED_INLINE_TOKENS = [
+  'autoLink',
+  'url',
+  'email',
+  'link',
+  'reference'
+];
+
+const MessageMarkdown = React.memo(
+  props => (<ReactMarkdown
+              {...props}
+              plugins={[[RemarkDisableTokenizers, { block: DISABLED_BLOCK_TOKENS, inline: DISABLED_INLINE_TOKENS }]]}
+            />));
 
 export class Message extends Component {
   constructor() {
@@ -125,10 +152,11 @@ export class Message extends Component {
         </p>
       );
     } else {
-        let text = letter.text.split ('\n').map ((item, i) => <p className='f7 lh-copy v-top' key={i}>{item}</p>);
         return (
           <section>
-            {text}
+            <MessageMarkdown
+              source={letter.text}
+            />
           </section>
         );
     }
@@ -163,7 +191,7 @@ export class Message extends Component {
       return (
         <div
           className={
-            "w-100 f8 pl3 pt4 pr3 cf flex lh-copy " + " " + pending
+            "w-100 f7 pl3 pt4 pr3 cf flex lh-copy " + " " + pending
           }
           style={{
             minHeight: "min-content"
@@ -211,7 +239,7 @@ export class Message extends Component {
             minHeight: "min-content"
           }}>
           <p className="child pt2 pl2 pr1 mono f9 gray2 dib">{timestamp}</p>
-          <div className="fr f7 clamp-message white-d pr3" style={{ flexGrow: 1 }}>
+          <div className="fr f7 clamp-message white-d pr3 lh-copy" style={{ flexGrow: 1 }}>
            {this.renderContent()}
           </div>
         </div>

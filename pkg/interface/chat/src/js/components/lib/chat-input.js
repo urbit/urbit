@@ -3,11 +3,35 @@ import _ from 'lodash';
 import moment from 'moment';
 import Mousetrap from 'mousetrap';
 import cn from 'classnames';
+import { UnControlled as CodeEditor } from 'react-codemirror2'
+import CodeMirror from 'codemirror';
+
+import 'codemirror/mode/markdown/markdown';
+import 'codemirror/addon/display/placeholder';
 
 import { Sigil } from '/components/lib/icons/sigil';
 
 import { uuid, uxToHex, hexToRgba } from '/lib/util';
 
+const MARKDOWN_CONFIG = {
+  name: "markdown",
+  tokenTypeOverrides: {
+    header: "presentation",
+    quote: "presentation",
+    list1: "presentation",
+    list2: "presentation",
+    list3: "presentation",
+    hr: "presentation",
+    image: "presentation",
+    imageAltText: "presentation",
+    imageMarker: "presentation",
+    formatting: "presentation",
+    linkInline: "presentation",
+    linkEmail: "presentation",
+    linkText: "presentation",
+    linkHref: "presentation",
+  }
+}
 
 // line height
 const INPUT_LINE_HEIGHT = 28;
@@ -107,7 +131,6 @@ export class ChatInput extends Component {
 
     this.state = {
       message: '',
-      textareaHeight: INPUT_LINE_HEIGHT + INPUT_TOP_PADDING + 1,
       patpSuggestions: [],
       selectedSuggestion: null
     };
@@ -117,16 +140,16 @@ export class ChatInput extends Component {
     this.messageSubmit = this.messageSubmit.bind(this);
     this.messageChange = this.messageChange.bind(this);
 
-    this.onEnter = this.onEnter.bind(this);
-
     this.patpAutocomplete = this.patpAutocomplete.bind(this);
     this.nextAutocompleteSuggestion = this.nextAutocompleteSuggestion.bind(this);
     this.completePatp = this.completePatp.bind(this);
 
     this.clearSuggestions = this.clearSuggestions.bind(this);
 
-    // Call once per frame @ 60hz
-    this.textareaInput = _.debounce(this.textareaInput.bind(this), 16);
+    this.toggleCode = this.toggleCode.bind(this);
+
+    this.editor = null;
+
 
     // perf testing:
     /*let closure = () => {
@@ -168,10 +191,6 @@ export class ChatInput extends Component {
             yy: "%d years"
         }
     });
-  }
-
-  componentDidMount() {
-    this.bindShortcuts();
   }
 
   nextAutocompleteSuggestion(backward = false) {
@@ -240,104 +259,35 @@ export class ChatInput extends Component {
   }
 
   completePatp(suggestion) {
-    this.setState({
-      message: this.state.message.replace(
+    if(!this.editor) {
+      return;
+    }
+    const newMessage = this.editor.getValue().replace(
         /[a-zA-Z\-]*$/,
         suggestion
-      ),
+      );
+    this.editor.setValue(newMessage);
+    const lastRow = this.editor.lastLine();
+    const lastCol = this.editor.getLineHandle(lastRow).text.length;
+    this.editor.setCursor(lastRow, lastCol);
+    this.setState({
       patpSuggestions: []
     });
   }
 
-  onEnter(e) {
-    if (this.state.patpSuggestions.length !== 0) {
-      this.completePatp(this.state.selectedSuggestion);
-    } else {
-      this.messageSubmit(e);
-    }
-  }
-
-  bindShortcuts() {
-    let mousetrap = Mousetrap(this.textareaRef.current);
-    mousetrap.bind('enter', e => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      this.onEnter(e);
-    });
-
-
-    mousetrap.bind('tab', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      if(this.state.patpSuggestions.length === 0) {
-        this.patpAutocomplete(this.state.message, true);
-      } else {
-        this.nextAutocompleteSuggestion(false);
-      }
-    });
-    mousetrap.bind(['up', 'shift+tab'], e => {
-      if(this.state.patpSuggestions.length !== 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.nextAutocompleteSuggestion(true)
-      }
-
-    });
-    mousetrap.bind('down', e => {
-      if(this.state.patpSuggestions.length !== 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.nextAutocompleteSuggestion(false)
-      }
-    });
-    mousetrap.bind('esc', e => {
-      if(this.state.patpSuggestions.length !== 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.clearSuggestions();
-      }})
-  }
-
-  messageChange(event) {
-    const message = event.target.value;
-    this.setState({
-      message
-    });
+  messageChange(editor, data, value) {
 
     const { patpSuggestions } = this.state;
     if(patpSuggestions.length !== 0) {
-      this.patpAutocomplete(message, false);
+      this.patpAutocomplete(value, false);
     }
 
   }
 
-  textareaInput() {
-    const maxHeight = INPUT_LINE_HEIGHT * 8 + INPUT_TOP_PADDING;
-    const newHeight = `${Math.min(maxHeight, this.textareaRef.current.scrollHeight)}px`;
-
-    this.setState({
-      textareaHeight: newHeight
-    });
-  }
 
   getLetterType(letter) {
-    if (letter[0] === '#') {
-      letter = letter.slice(1);
-      // remove insignificant leading whitespace.
-      // aces might be relevant to style.
-      while (letter[0] === '\n') {
-        letter = letter.slice(1);
-      }
-
-      return {
-        code: {
-          expression: letter,
-          output: undefined
-        }
-      }
-    } else if (letter[0] === '@') {
-      letter = letter.slice(1);
+    if (letter.startsWith('/me')) {
+      letter = letter.slice(3);
       // remove insignificant leading whitespace.
       // aces might be relevant to style.
       while (letter[0] === '\n') {
@@ -370,14 +320,28 @@ export class ChatInput extends Component {
   }
 
   messageSubmit() {
+    if(!this.editor) {
+      return;
+    }
     const { props, state } = this;
+    const editorMessage = this.editor.getValue();
 
-    if (state.message === '') {
+    if (editorMessage === '') {
       return;
     }
 
+    if(state.code) {
+      props.api.chat.message(props.station, `~${window.ship}`, Date.now(), {
+        code: {
+          expression: editorMessage,
+          output: undefined
+        }
+      });
+      this.editor.setValue('');
+      return;
+    }
     let message = [];
-    state.message.split(" ").map((each) => {
+    editorMessage.split(" ").map((each) => {
       if (this.isUrl(each)) {
         if (message.length > 0) {
           message = message.join(" ");
@@ -419,10 +383,28 @@ export class ChatInput extends Component {
     // perf: 
     //setTimeout(this.closure, 2000);
 
-    this.setState({
-      message: '',
-      textareaHeight: INPUT_LINE_HEIGHT + INPUT_TOP_PADDING + 1
-    });
+    this.editor.setValue('');
+
+  }
+
+  toggleCode() {
+    if(this.state.code) {
+      this.setState({ code: false });
+      this.editor.setOption('mode', MARKDOWN_CONFIG);
+      this.editor.setOption('placeholder', this.props.placeholder);
+    } else {
+      this.setState({ code: true });
+      this.editor.setOption('mode', null);
+      this.editor.setOption('placeholder', "Code...");
+    }
+    const value = this.editor.getValue();
+
+    // Force redraw of placeholder
+    if(value.length === 0) {
+      this.editor.setValue(' ');
+      this.editor.setValue('');
+    }
+
   }
 
   render() {
@@ -433,6 +415,49 @@ export class ChatInput extends Component {
 
     let sigilClass = !!props.ownerContact
       ? "" : "mix-blend-diff";
+
+    const completeActive = this.state.patpSuggestions.length !== 0;
+
+    const codeTheme = state.code ? ' code' : '';
+
+    const options = {
+      mode: MARKDOWN_CONFIG,
+      theme: 'tlon' + codeTheme,
+      lineNumbers: false,
+      lineWrapping: true,
+      scrollbarStyle: 'native',
+      cursorHeight: 0.85,
+      placeholder: state.code ? "Code..." : props.placeholder,
+      extraKeys: {
+        Tab: (cm) =>
+          completeActive
+            ? this.nextAutocompleteSuggestion()
+            : this.patpAutocomplete(cm.getValue(), true),
+        'Shift-Tab': (cm) =>
+          completeActive
+            ? this.nextAutocompleteSuggestion(true)
+            : CodeMirror.Pass,
+        'Up': (cm) =>
+          completeActive
+            ? this.nextAutocompleteSuggestion(true)
+            : CodeMirror.Pass,
+        'Escape': (cm) =>
+          completeActive
+            ? this.clearSuggestions(true)
+            : CodeMirror.Pass,
+        'Down': (cm) =>
+          completeActive
+            ?  this.nextAutocompleteSuggestion()
+            :  CodeMirror.Pass,
+        'Enter': (cm) =>
+          completeActive
+            ? this.completePatp(state.selectedSuggestion)
+            : this.messageSubmit(),
+        'Shift-3': (cm) =>
+          this.toggleCode()
+      }
+    };
+
 
     return (
       <div className="pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white bg-gray0-d relative"
@@ -449,7 +474,7 @@ export class ChatInput extends Component {
         <div
           className="fl"
           style={{
-            marginTop: 4,
+            marginTop: 6,
             flexBasis: 24,
             height: 24
           }}>
@@ -460,22 +485,25 @@ export class ChatInput extends Component {
             classes={sigilClass}
             />
         </div>
-        <div className="fr h-100 flex bg-gray0-d" style={{ flexGrow: 1 }}>
-          <textarea
-            className={"pl3 bn bg-gray0-d white-d lh-copy"}
-            style={{ flexGrow: 1, height: state.textareaHeight, paddingTop: INPUT_TOP_PADDING, resize: "none" }}
-            autoCapitalize="none"
-            autoFocus={(
-              /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
-              navigator.userAgent
-            )) ? false : true}
-            ref={this.textareaRef}
-            placeholder={props.placeholder}
-            value={state.message}
-            onChange={this.messageChange}
-            onInput={this.textareaInput}
+        <div
+          className="fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center"
+          style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 48px)' }}>
+          <CodeEditor
+            options={options}
+            editorDidMount={editor => { this.editor = editor; }}
+            onChange={(e, d, v) => this.messageChange(e, d, v)}
           />
         </div>
+        <div style={{ height: '24px', width: '24px', flexBasis: 24, marginTop: 6 }}>
+          <img
+            style={{ filter: state.code && 'invert(100%)', height: '100%', width: '100%' }}
+            onClick={this.toggleCode}
+            src="/~chat/img/CodeEval.png"
+            className="contrast-10-d bg-white bg-none-d"
+          />
+
+        </div>
+
       </div>
     );
   }
