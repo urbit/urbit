@@ -169,6 +169,14 @@ h2 {
   border-radius: 100%;
 }
 
+.green3 {
+  color: #7ea899;
+}
+
+.unread-notice {
+  top: 48px;
+}
+
 /* responsive */
 
 @media all and (max-width: 34.375em) {
@@ -186,6 +194,9 @@ h2 {
   }
   .embed-container {
     padding-bottom: 56.25%;
+  }
+  .unread-notice {
+    top: 96px;
   }
 }
 
