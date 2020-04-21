@@ -242,7 +242,7 @@ a {
   display: none;
 }
 
-.md h1, .md h2, .md h3, .md h4, .md h5, .md p, .md a, .md ul, .md blockquote,.md code,.md pre {
+.md h1, .md h2, .md h3, .md h4, .md h5, .md p, .md a, .md ul, .md ol, .md blockquote,.md code,.md pre {
   font-size: 14px;
   margin-bottom: 16px;
 }
