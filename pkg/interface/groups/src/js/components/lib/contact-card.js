@@ -317,13 +317,12 @@ export class ContactCard extends Component {
     );
 
     this.setState({awaiting: true, type: "Removing from group"}, (() => {
-      api.contactHook.remove(props.path, `~${props.ship}`).then(() => {
+      api.contactView.delete(props.path).then(() => {
         let destination = (props.ship === window.ship)
           ? "" : props.path;
         this.setState({awaiting: false});
         props.history.push(`/~groups${destination}`);
       });
-      api.contactView.delete(props.path);
     }))
   }
 

@@ -147,9 +147,9 @@
   ::
       %delete
     %+  weld
-    :~  (group-poke [%unbundle path.act])
+    :~  (contact-hook-poke [%remove path.act])
+        (group-poke [%unbundle path.act])
         (contact-poke [%delete path.act])
-        (contact-hook-poke [%remove path.act])
     ==
     (delete-metadata path.act)
   ::
