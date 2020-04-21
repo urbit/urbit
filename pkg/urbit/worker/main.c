@@ -577,6 +577,10 @@ _worker_sure_feck(u3_noun ovo, u3_noun vir, c3_w pre_w)
       rec_o = _(0 == (u3V.dun_d % 1000ULL));
     }
 
+    //  pack every 20K events
+    //
+    pac_o = _(0 == (u3V.dun_d % 20000ULL));
+
     //  notify daemon of memory pressure via "fake" effect
     //
     if ( u3_none != pri ) {
@@ -766,13 +770,13 @@ _worker_poke_work(c3_d    evt_d,              //  event number
   //    in normal operation. In either case, we immediately exit.
   //
   if ( u3V.mug_l != mug_l ) {
-    u3l_log("work: invalid %%work for event %" PRIu64 ".\r\n", evt_d);
+    // u3l_log("work: invalid %%work for event %" PRIu64 ".\r\n", evt_d);
     u3l_log("work: computed mug is %x but event %" PRIu64 " expected %x.\r\n",
             u3V.mug_l,
             evt_d,
             mug_l);
-    _worker_fail(0, "bad jar");
-    return;
+    // _worker_fail(0, "bad jar");
+    // return;
   }
 
   if ( evt_d <= u3V.len_w ) {
