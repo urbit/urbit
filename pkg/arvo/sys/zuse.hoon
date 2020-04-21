@@ -1822,7 +1822,7 @@
       ==                                                ::
     ++  task                                            ::  incoming request
       $~  [%vega ~]                                     ::
-      $%  [$conf p=dock q=dock]                         ::  configure app
+      $%  [%conf dap=term]                              ::  start agent
           [$deal p=sock q=term r=deal]                  ::  full transmission
           [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
           [%sear =ship]                                 ::  clear pending queues
@@ -1830,7 +1830,6 @@
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           $>(%plea vane-task)                           ::  network request
-          [%wash ~]                                     ::  clear caches
           $>(%wegh vane-task)                           ::  report memory
       ==                                                ::
     --  ::able

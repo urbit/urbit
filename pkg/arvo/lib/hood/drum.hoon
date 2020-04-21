@@ -341,7 +341,7 @@
   =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   %-  se-emit(fur (~(put by fur) q.wel ~))
   =/  =wire  [%drum p.wel q.wel ~]
-  [%pass wire %arvo %g %conf [our.hid q.wel] our.hid p.wel]
+  [%pass wire %arvo %g %conf q.wel]
 ::
 ++  se-adze                                           ::  update connections
   ^+  .

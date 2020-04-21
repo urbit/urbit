@@ -362,7 +362,7 @@
         =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  +>  (pass / [%g %conf [[our ram] our %home]])
+        =.  +>  (pass / %g %conf ram)
         =.  +>  (sync %home our %base)
         =?  +>  ?=(?($earl $duke $king) can)
           (sync %base (sein our) %kids)

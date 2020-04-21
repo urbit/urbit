@@ -55,7 +55,7 @@
 ++  state
   $:  :: state version
       ::
-      %4
+      %5
       :: agents by ship
       ::
       =agents
@@ -102,10 +102,7 @@
 ::  +running-agent: agent state
 ::
 ++  running-agent
-  $:  :: cache
-      ::
-      cache=worm
-      :: control duct
+  $:  :: control duct
       ::
       control-duct=duct
       :: unstopped
@@ -280,7 +277,7 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [=term =beak =made-result:ford]
+    |=  [dap=term bek=beak =made-result:ford]
     ^+  mo-core
     ::
     ?:  ?=([%incomplete *] made-result)
@@ -293,59 +290,40 @@
     ::
     =/  =cage  (result-to-cage:ford build-result)
     =/  result-vase  q.cage
-    =/  maybe-agent=(unit running-agent)
-      (~(get by running.agents.state) term)
-    ::
-    ?^  maybe-agent
-      =/  agent  u.maybe-agent(beak beak)
+    ?^  existing=(~(get by running.agents.state) dap)
       =.  running.agents.state
-        (~(put by running.agents.state) term agent)
+        (~(put by running.agents.state) dap u.existing(beak bek))
       =/  =routes  [disclosing=~ attributing=our]
-      =/  app  (ap-abed:ap term routes)
-      =.  app  (ap-reinstall:app result-vase)
-      ap-abet:app
+      =/  ap-core  (ap-abed:ap dap routes)
+      =.  ap-core  (ap-reinstall:ap-core result-vase)
+      ap-abet:ap-core
     ::
     =/  maybe-new-agent  (mule |.(!<(agent result-vase)))
     ?:  ?=(%| -.maybe-new-agent)
-      =/  err  [[%leaf "{<term>}: not valid agent"] p.maybe-new-agent]
+      =/  err  [[%leaf "{<dap>}: not valid agent"] p.maybe-new-agent]
       (mo-give %onto %.n err)
-    =.  mo-core  (mo-new-agent term beak p.maybe-new-agent)
+    ::
+    =.  running.agents.state
+      %+  ~(put by running.agents.state)  dap
+      =/  default-agent  *running-agent
+      default-agent(control-duct hen, beak bek, agent p.maybe-new-agent)
+    ::
     =/  old  mo-core
     =/  wag
       =/  =routes  [disclosing=~ attributing=our]
-      =/  app  (ap-abed:ap term routes)
-      (ap-upgrade-state:app ~)
+      =/  ap-core  (ap-abed:ap dap routes)
+      (ap-upgrade-state:ap-core ~)
     ::
     =/  maybe-tang  -.wag
-    =/  app  +.wag
+    =/  ap-core  +.wag
     ?^  maybe-tang
       =.  mo-core  old
       (mo-give %onto %.n u.maybe-tang)
     ::
-    =.  mo-core  ap-abet:app
-    =.  mo-core  (mo-clear-queue term)
-    =/  =suss  [term %boot now]
+    =.  mo-core  ap-abet:ap-core
+    =.  mo-core  (mo-clear-queue dap)
+    =/  =suss  [dap %boot now]
     (mo-give %onto [%.y suss])
-  ::  +mo-new-agent: create a new agent and add it to %gall's state.
-  ::
-  ::    %gall maintains a collection of running agents.  This arm creates a
-  ::    new one with the provided name, beak, and state (held in a vase).
-  ::
-  ++  mo-new-agent
-    |=  [=term =beak =agent]
-    ^+  mo-core
-    ::
-    =/  running-agent
-      =/  default-agent  *running-agent
-      %_  default-agent
-        control-duct    hen
-        beak            beak
-        agent           agent
-      ==
-    ::
-    %_  mo-core
-      running.agents.state  (~(put by running.agents.state) term running-agent)
-    ==
   ::  +mo-send-foreign-request: handle local request to .ship
   ::
   ++  mo-send-foreign-request
@@ -1033,7 +1011,7 @@
           %pass
         =/  =duct  system-duct.agents.state
         =/  =wire  p.card
-        =/  =neat:agent  q.card
+        =/  =neat  q.card
         =.  wire
           ?:  ?=(%agent -.neat)
             ::  remove `our` in next breach after 2019/12 and reflect in
@@ -1045,13 +1023,9 @@
         =.  wire
           [%use agent-name wire]
         =/  =note-arvo
-          ?-    -.neat
-              %arvo  note-arvo.neat
-              %agent
-            =/  =task:able
-              =/  =sock  [our ship.neat]
-              [%deal sock [name deal]:neat]
-            [%g task]
+          ?-  -.neat
+            %arvo   note-arvo.neat
+            %agent  [%g %deal [our ship.neat] [name deal]:neat]
           ==
         [duct %pass wire note-arvo]~
       ==
@@ -1575,52 +1549,18 @@
   ~|  [%gall-call-failed duct q.hic]
   =/  =task:able  ((harden task:able) q.hic)
   ::
-  =/  initialised  (mo-abed:mo duct)
+  =/  mo-core  (mo-abed:mo duct)
   ?-    -.task
-      %conf
-    =/  =dock  p.task
-    =/  =ship  p.dock
-    ?.  =(our ship)
-      ~&  [%gall-not-ours ship]
-      [~ gall-payload]
-    ::
-    =>  (mo-boot:initialised q.dock q.task)
-    mo-abet
-  ::
+      %conf  mo-abet:(mo-boot:mo-core dap.task our %home)
       %deal
-    =/  =sock  p.task
-    =/  =term  q.task
-    =/  =deal  r.task
+    =/  [=sock =term =deal]  [p q r]:task
     ?.  =(q.sock our)
       ?>  =(p.sock our)
-      =>  (mo-send-foreign-request:initialised q.sock term deal)
-      mo-abet
-    ::
-    =>  (mo-handle-local:initialised p.sock term deal)
-    mo-abet
+      mo-abet:(mo-send-foreign-request:mo-core q.sock term deal)
+    mo-abet:(mo-handle-local:mo-core p.sock term deal)
   ::
-      %goad
-    mo-abet:(mo-goad:initialised force.task agent.task)
-  ::
-      %sear
-    mo-abet:(mo-filter-queue:initialised ship.task)
-  ::
-      %init
-    =/  payload  gall-payload(system-duct.agents.state duct)
-    [~ payload]
-  ::
-      %trim
-    ::  reuse %wash task to clear caches on memory-pressure
-    ::
-    ::    XX cancel subscriptions if =(0 trim-priority) ?
-    ::
-    ~>  %slog.[0 leaf+"gall: trim: clearing caches"]
-    =/  =move  [duct %pass / %g [%wash ~]]
-    [[move ~] gall-payload]
-  ::
-      %vega
-    [~ gall-payload]
-  ::
+      %goad  mo-abet:(mo-goad:mo-core force.task agent.task)
+      %init  [~ gall-payload(system-duct.agents.state duct)]
       %plea
     =/  =ship  ship.task
     =/  =path  path.plea.task
@@ -1631,16 +1571,12 @@
     =/  agent-name  i.t.path
     ::
     =/  =ames-request  ;;(ames-request noun)
-    =>  (mo-handle-ames-request:initialised ship agent-name ames-request)
+    =>  (mo-handle-ames-request:mo-core ship agent-name ames-request)
     mo-abet
   ::
-      %wash
-    =.  running.agents.state
-      %-  ~(run by running.agents.state)
-      |=  =running-agent
-      running-agent(cache *worm)
-    [~ gall-payload]
-  ::
+      %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
+      %trim  [~ gall-payload]
+      %vega  [~ gall-payload]
       %wegh
     =/  blocked
       =/  queued  (~(run by blocked.agents.state) |=(blocked [%.y +<]))
@@ -1679,24 +1615,60 @@
   =?  all-state  ?=(%3 -.all-state)
     (state-3-to-4 all-state)
   ::
-  ?>  ?=(%4 -.all-state)
+  =?  all-state  ?=(%4 -.all-state)
+    (state-4-to-5 all-state)
+  ::
+  ?>  ?=(%5 -.all-state)
   gall-payload(state all-state)
   ::
   ::  +all-state: upgrade path
   ::
-  ++  all-state  $%(state-0 state-1 state-2 state-3 ^state)
+  ++  all-state  $%(state-0 state-1 state-2 state-3 state-4 ^state)
+  ::
+  ++  state-4-to-5
+    |=  =state-4
+    ^-  ^state
+    %=    state-4
+        -  %5
+        running.agents-4
+      (~(run by running.agents-4.state-4) |=(running-agent-3 +<+))
+    ==
+  ::
+  ++  state-4
+    $:  %4
+        agents-4=agents-3  ::  agents-3 is unchanged in state-4
+    ==
   ::
   ++  state-3-to-4
     |=  =state-3
-    ^-  ^state
+    ^-  state-4
     %=    state-3
         -  %4
-        outstanding.agents  ~
+        outstanding.agents-3  ~
     ==
   ::
   ++  state-3
     $:  %3
-        =agents
+        =agents-3
+    ==
+  ::
+  ++  agents-3
+    $:  system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        running=(map term running-agent-3)
+        blocked=(map term blocked)
+    ==
+  ::
+  ++  running-agent-3
+    $:  cache=worm
+        control-duct=duct
+        live=?
+        =stats
+        =subscribers
+        =agent
+        =beak
+        marks=(map duct mark)
     ==
   ::
   ++  state-2-to-3
@@ -1707,7 +1679,7 @@
         running.agents-2
       %-  ~(run by running.agents-2.state-2)
       |=  =running-agent-2
-      ^-  running-agent
+      ^-  running-agent-3
       %=  running-agent-2
         agent-2  (agent-2-to-3 agent-2.running-agent-2)
       ==

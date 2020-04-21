@@ -212,7 +212,6 @@
     %kiln-overload           =;(f (f !<(_+<.f vase)) poke-overload)
     %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
     %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
-    %kiln-wash-gall          =;(f (f !<(_+<.f vase)) poke-wash-gall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
@@ -318,8 +317,6 @@
 ++  poke-gall-sear
   |=  =ship
   abet:(emit %pass /kiln %arvo %g %sear ship)
-::
-++  poke-wash-gall  |=(* abet:(emit %pass /kiln %arvo %g [%wash ~]))
 ::
 ++  done
   |=  {way/wire saw/(unit error:ames)}
