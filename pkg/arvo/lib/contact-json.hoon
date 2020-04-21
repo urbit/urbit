@@ -1,4 +1,5 @@
 /-  *contact-view
+/+  base64
 |%
 ++  nu                                              ::  parse number as hex
   |=  jon/json
@@ -62,12 +63,10 @@
     :-  %s
     %-  crip
     %-  zing
-    :~  "/~groups/img"
+    :~  "/~groups/avatar"
         (trip (spat path))
         "/"
         (trip (scot %p ship))
-        "."
-        (trip file-extension.u.avat)
     ==
   ::
       %url   s+url.u.avat
@@ -197,8 +196,15 @@
 ++  avat
   |=  jon=json
   ^-  avatar
-  =<  (parse-json jon)
-  |%
+  |^
+  =/  =avatar  (parse-json jon)
+  ?-  -.avatar
+      %url   avatar
+      %octt
+    =.  octs.avatar  (need (de:base64 q.octs.avatar))
+    avatar
+  ==
+  ::
   ++  parse-json
     %-  of:dejs:format
     :~  [%octt octt]
@@ -207,7 +213,7 @@
   ::
   ++  octt
     %-  ot:dejs:format
-    :~  [%file-extension so:dejs:format]
+    :~  [%content-type so:dejs:format]
         [%octs octet]
     ==
   ::

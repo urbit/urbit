@@ -1,25 +1,10 @@
 /-  *identity
 |%
-+$  rolodex-0  (map path contacts-0)
 +$  rolodex    (map path contacts)
-::
-+$  contacts-0  (map ship contact-0)
 +$  contacts    (map ship contact)
-::
-+$  avatar-0  [content-type=@t octs=[p=@ud q=@t]]
 +$  avatar
-  $%  [%octt [file-extension=@t octs=[p=@ud q=@t]]]
+  $%  [%octt content-type=@t octs=[p=@ud q=@t]]
       [%url url=@t]
-  ==
-::
-+$  contact-0
-  $:  nickname=@t
-      email=@t
-      phone=@t
-      website=@t
-      notes=@t
-      color=@ux
-      avatar=(unit avatar-0)
   ==
 ::
 +$  contact

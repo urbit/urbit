@@ -181,21 +181,16 @@
   ::
   ::  avatar images
   ::
-::      [%'~groups' %avatar @ *]
-::    =/  pax=path  `path`t.t.site.url
-::    ?~  pax  not-found:gen
-::    =/  pas  `path`(flop pax)
-::    ?~  pas  not-found:gen
-::    =/  pav  `path`(flop t.pas)
-::    ~&  pav+pav
-::    ~&  name+name
-::    =/  contact  (contact-scry `path`(weld pav [name]~))
-::    ?~  contact  not-found:gen
-::    ?~  avatar.u.contact  not-found:gen
-::    =*  avatar  u.avatar.u.contact
-::    =/  decoded  (de:base64 q.octs.avatar)
-::    ?~  decoded  not-found:gen
-::    [[200 ['content-type' content-type.avatar]~] `u.decoded]
+      [%'~groups' %avatar @ *]
+    =/  =path  (flop t.t.site.url)
+    ?~  path  not-found:gen
+    =/  contact  (contact-scry `^path`(snoc (flop t.path) name))
+    ?~  contact  not-found:gen
+    ?~  avatar.u.contact  not-found:gen
+    ?.  ?=(%octt -.u.avatar.u.contact)  not-found:gen
+    =/  max-3-days  ['cache-control' 'max-age=259200']
+    =/  content-type  ['content-type' content-type.u.avatar.u.contact]
+    [[200 [content-type max-3-days ~]] `octs.u.avatar.u.contact]
   ::
       [%'~groups' *]  (html-response:gen index)
   ==

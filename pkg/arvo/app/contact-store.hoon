@@ -8,6 +8,19 @@
       state-one
   ==
 ::
++$  rolodex-0  (map path contacts-0)
++$  contacts-0  (map ship contact-0)
++$  avatar-0  [content-type=@t octs=[p=@ud q=@t]]
++$  contact-0
+  $:  nickname=@t
+      email=@t
+      phone=@t
+      website=@t
+      notes=@t
+      color=@ux
+      avatar=(unit avatar-0)
+  ==
+::
 +$  state-zero
   $:  %0
       rolodex=rolodex-0
