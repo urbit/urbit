@@ -49,9 +49,18 @@ export class OverlaySigil extends Component {
       const parent = this.containerRef.current.offsetParent;
       const { offsetTop } = this.containerRef.current;
 
-      // coordinate system is inverted bc flex-row-reverse
-      const bottomSpace = parent.scrollTop - offsetTop + OVERLAY_HEIGHT / 2;
-      const topSpace = parent.clientHeight - bottomSpace - OVERLAY_HEIGHT;
+
+      let bottomSpace, topSpace;
+
+      if(navigator.userAgent.includes('Firefox')) {
+        topSpace = offsetTop - parent.scrollTop - OVERLAY_HEIGHT / 2;
+        bottomSpace = parent.clientHeight - topSpace - OVERLAY_HEIGHT;
+      } else {
+        // coordinate system is inverted bc flex-row-reverse
+        bottomSpace = parent.scrollTop - offsetTop + OVERLAY_HEIGHT / 2;
+        topSpace = parent.clientHeight - bottomSpace - OVERLAY_HEIGHT;
+
+      }
       this.setState({
         topSpace,
         bottomSpace

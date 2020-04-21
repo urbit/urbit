@@ -16,7 +16,7 @@ export class NewScreen extends Component {
       idName: '',
       groups: [],
       ships: [],
-      security: 'village',
+      security: 'channel',
       idError: false,
       inviteError: false,
       allowHistory: true,
@@ -26,7 +26,6 @@ export class NewScreen extends Component {
 
     this.titleChange = this.titleChange.bind(this);
     this.descriptionChange = this.descriptionChange.bind(this);
-    this.securityChange = this.securityChange.bind(this);
     this.allowHistoryChange = this.allowHistoryChange.bind(this);
     this.setInvite = this.setInvite.bind(this);
     this.createGroupChange = this.createGroupChange.bind(this);
@@ -65,17 +64,6 @@ export class NewScreen extends Component {
     });
   }
 
-  securityChange(event) {
-    if (this.state.createGroup) {
-      return;
-    }
-    if (event.target.checked) {
-      this.setState({security: "village"});
-    } else if (!event.target.checked) {
-      this.setState({security: "channel"});
-    }
-  }
-
   createGroupChange(event) {
     if (event.target.checked) {
       this.setState({
@@ -85,6 +73,7 @@ export class NewScreen extends Component {
     } else {
       this.setState({
         createGroup: !!event.target.checked,
+        security: 'channel'
       });
     }
   }
@@ -283,18 +272,6 @@ export class NewScreen extends Component {
             setInvite={this.setInvite}
           />
           {createGroupToggle}
-          <div className="mv7">
-            <input
-              type="checkbox"
-              style={{ WebkitAppearance: "none", width: 28 }}
-              className={inviteSwitchClasses}
-              onChange={this.securityChange}
-            />
-            <span className="dib f9 white-d inter ml3">Invite Only Chat</span>
-            <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
-              Chat participants must be invited to see chat content
-            </p>
-          </div>
           <button
             onClick={this.onClickCreate.bind(this)}
             className={createClasses}>

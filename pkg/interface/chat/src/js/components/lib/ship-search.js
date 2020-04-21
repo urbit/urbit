@@ -284,7 +284,7 @@ export class ShipSearchInput extends Component {
         className="b--gray2 b--solid ba absolute bg-white bg-gray0-d shadow-5"
       >
         <textarea
-          style={{ resize: "none" }}
+          style={{ resize: "none", maxWidth: '200px' }}
           className="ma2 pa2 b--gray4 ba b--solid w7 db bg-gray0-d white-d"
           rows={1}
           autocapitalise="none"
@@ -313,27 +313,3 @@ export class ShipSearchInput extends Component {
     );
   }
 }
-
-// import { useEffect } from 'react';
-
-// // via https:// usehooks.com/useOnClickOutside/
-// export default function useOnClickOutside(ref, handler) {
-//   useEffect(() => {
-//     const listener = event => {
-//       // Do nothing if clicking ref's element or descendent elements
-//       if (!ref.current || ref.current.contains(event.target)) {
-//         return;
-//       }
-
-//       handler(event);
-//     };
-
-//     document.addEventListener('mousedown', listener);
-//     document.addEventListener('touchstart', listener);
-
-//     return () => {
-//       document.removeEventListener('mousedown', listener);
-//       document.removeEventListener('touchstart', listener);
-//     };
-//   }, [ref, handler]);
-// }
