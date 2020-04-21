@@ -8,7 +8,11 @@ import { ShipSearch } from '/components/lib/ship-search';
 
 import { uuid, uxToHex, hexToRgba } from '/lib/util';
 
-const DEFAULT_INPUT_HEIGHT = 28;
+
+// line height
+const INPUT_LINE_HEIGHT = 28;
+
+const INPUT_TOP_PADDING = 3;
 
 
 function getAdvance(a, b) {
@@ -32,7 +36,7 @@ export class ChatInput extends Component {
 
     this.state = {
       message: '',
-      textareaHeight: DEFAULT_INPUT_HEIGHT,
+      textareaHeight: INPUT_LINE_HEIGHT + INPUT_TOP_PADDING + 1,
       patpSearch: ''
     };
 
@@ -172,9 +176,8 @@ export class ChatInput extends Component {
   }
 
   textareaInput() {
-    const newHeight = this.textareaRef.current.scrollHeight < DEFAULT_INPUT_HEIGHT * 8
-      ? `${this.textareaRef.current.scrollHeight}px`
-      : `${DEFAULT_INPUT_HEIGHT * 8}px`
+    const maxHeight = INPUT_LINE_HEIGHT * 8 + INPUT_TOP_PADDING;
+    const newHeight = `${Math.min(maxHeight, this.textareaRef.current.scrollHeight)}px`;
 
     this.setState({
       textareaHeight: newHeight
@@ -281,7 +284,7 @@ export class ChatInput extends Component {
 
     this.setState({
       message: '',
-      textareaHeight: DEFAULT_INPUT_HEIGHT
+      textareaHeight: INPUT_LINE_HEIGHT + INPUT_TOP_PADDING + 1
     });
   }
 
@@ -329,8 +332,8 @@ export class ChatInput extends Component {
         </div>
         <div className="fr h-100 flex bg-gray0-d" style={{ flexGrow: 1 }}>
           <textarea
-            className={"pl3 bn bg-gray0-d white-d"}
-            style={{ flexGrow: 1, height: state.textareaHeight, paddingTop: 6, resize: "none" }}
+            className={"pl3 bn bg-gray0-d white-d lh-copy"}
+            style={{ flexGrow: 1, height: state.textareaHeight, paddingTop: INPUT_TOP_PADDING, resize: "none" }}
             autoCapitalize="none"
             autoFocus={(
               /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(

@@ -288,12 +288,30 @@
 ++  handle-metadata-update
   |=  upd=metadata-update
   ^-  (quip card _state)
-  ?.  ?=(%remove -.upd)  [~ state]
-  ?>  =(%link app-name.resource.upd)
-  =?  listening
-      ?=(~ (groups-from-resource:md %link app-path.resource.upd))
-    (~(del in listening) app-path.resource.upd)
-  (leave-from-group app-path.resource.upd group-path.upd)
+  ?+  -.upd  [~ state]
+      %add
+    ?>  =(%link app-name.resource.upd)
+    ::  auto-listen to collections in unmanaged groups only
+    ::
+    ?.  ?=([%'~' ^] group-path.upd)  [~ state]
+    =,  resource.upd
+    =^  update  listening
+      ^-  (quip card _listening)
+      ?:  (~(has in listening) app-path)
+        [~ listening]
+      :-  [(send-update %watch app-path)]~
+      (~(put in listening) app-path)
+    =^  cards  state
+      (listen-to-group app-path group-path.upd)
+    [(weld update cards) state]
+  ::
+      %remove
+    ?>  =(%link app-name.resource.upd)
+    =?  listening
+        ?=(~ (groups-from-resource:md %link app-path.resource.upd))
+      (~(del in listening) app-path.resource.upd)
+    (leave-from-group app-path.resource.upd group-path.upd)
+  ==
 ::
 ::  groups subscriptions
 ::
@@ -344,9 +362,11 @@
   =*  loop-whos  $
   ?~  whos  loop-socs(socs t.socs)
   =^  caz  state
-    ?:  ?=(%remove -.upd)
-      (leave-from-peer i.socs pax.upd i.whos)
-    (listen-to-peer i.socs pax.upd i.whos)
+    ?.  ?=(%remove -.upd)
+      (listen-to-peer i.socs pax.upd i.whos)
+    ?:  =(our.bowl i.whos)
+      (handle-listen-action %leave i.socs)
+    (leave-from-peer i.socs pax.upd i.whos)
   loop-whos(whos t.whos, cards (weld cards caz))
 ::
 ::  link subscriptions
