@@ -245,11 +245,12 @@
   =:  starting.state  (~(put by starting.state) yarn [%build vase])
       tid.state       (~(put by tid.state) new-tid yarn)
     ==
-  ::  TODO: - to / transformation
+  =/  pax=path
+    ~|  no-file-for-thread+file
+    (need (get-fit:clay [our q.byk da+now]:bowl %ted file))
   =/  =card
     :+  %pass  /build/[new-tid]
-    =/  =riff:clay  [%home ~ %sing %a da+now.bowl /ted/[file]/hoon]
-    [%arvo %c %warp our.bowl riff]
+    [%arvo %c %warp our.bowl %home ~ %sing %a da+now.bowl pax]
   [[card ~] state]
 ::
 ++  handle-build

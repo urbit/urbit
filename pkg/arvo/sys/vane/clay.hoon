@@ -2653,31 +2653,6 @@
       ?^  (get pax)
         `[pre pax]
       $(paz t.paz)
-    ::  +segments: compute all paths from :path-part, replacing some `/`s with `-`s
-    ::
-    ::    For example, when passed a :path-part of 'foo-bar-baz',
-    ::    the product will contain:
-    ::    ```
-    ::    dojo> (segments 'foo-bar-baz')
-    ::    ~[/foo/bar/baz /foo/bar-baz /foo-bar/baz /foo-bar-baz]
-    ::    ```
-    ::
-    ++  segments
-      |=  suffix=@tas
-      ^-  (list path)
-      =/  parser
-        (most hep (cook crip ;~(plug low (star ;~(pose low nud)))))
-      =/  torn=(list @tas)  (fall (rush suffix parser) ~[suffix])
-      |-  ^-  (list (list @tas))
-      ?<  ?=(~ torn)
-      ?:  ?=([@ ~] torn)
-        ~[torn]
-      %-  zing
-      %+  turn  $(torn t.torn)
-      |=  s=(list @tas)
-      ^-  (list (list @tas))
-      ?>  ?=(^ s)
-      ~[[i.torn s] [(crip "{(trip i.torn)}-{(trip i.s)}") t.s]]
     --
   ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
   ++  with-faces
