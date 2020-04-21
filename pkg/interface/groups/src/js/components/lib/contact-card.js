@@ -367,7 +367,9 @@ export class ContactCard extends Component {
             onChange={this.sigilColorSet}
             defaultValue={defaultColor}
             key={"default" + defaultColor}
+            onKeyPress={ e => !e.key.match(/[0-9a-f]/i) ? e.preventDefault() : null}
             onBlur={(() => this.setField("color"))}
+            maxLength={6}
             style={{
               resize: "none",
               height: 40,
