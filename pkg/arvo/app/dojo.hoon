@@ -346,7 +346,7 @@
       ?:  =(/wool u.pux)
         ::  really shoud stop the thread as well
         ::
-        [%pass u.pux %agent [our.hid %spider2] %leave ~]
+        [%pass u.pux %agent [our.hid %spider] %leave ~]
       [%pass u.pux %arvo %f %kill ~]
     ::
     ++  dy-slam                                         ::  call by ford
@@ -732,11 +732,11 @@
       =.  poy  `+>+<.$(pux `/wool)
       =.  +>+>.$
         %-  he-card
-        [%pass /wool %agent [our.hid %spider2] %watch /thread-result/[tid]]
+        [%pass /wool %agent [our.hid %spider] %watch /thread-result/[tid]]
       %-  he-card
       =/  =cage  ::  also sub
         [%spider-start !>([~ `tid fil (dy-sore src)])]
-      [%pass /wool %agent [our.hid %spider2] %poke cage]
+      [%pass /wool %agent [our.hid %spider] %poke cage]
     ::
     ++  dy-make                                         ::  build step
       ^+  +>
@@ -925,7 +925,7 @@
       ?~  p.sign
         +>.$
       =.  +>.$  (he-diff(poy ~) %tan u.p.sign)
-      (he-card %pass /wool %agent [our.hid %spider2] %leave ~)
+      (he-card %pass /wool %agent [our.hid %spider] %leave ~)
     ::
         %watch-ack
       ?~  p.sign

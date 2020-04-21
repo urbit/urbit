@@ -12,7 +12,7 @@
   $~  [*thread-form ~]
   [=thread-form kid=(map tid trie)]
 ::
-+$  trying  ?(%find %build %none)
++$  trying  ?(%build %none)
 +$  state
   $:  starting=(map yarn [=trying =vase])
       running=trie
@@ -182,7 +182,6 @@
     =^  cards  state
       ?+  wire  (on-arvo:def wire sign-arvo)
         [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
-        [%find @ ~]    (handle-find:sc i.t.wire sign-arvo)
         [%build @ ~]   (handle-build:sc i.t.wire sign-arvo)
       ==
     [cards this]
@@ -243,33 +242,15 @@
     ~|  [%already-starting yarn]
     !!
   ::
-  =:  starting.state  (~(put by starting.state) yarn [%find vase])
+  =:  starting.state  (~(put by starting.state) yarn [%build vase])
       tid.state       (~(put by tid.state) new-tid yarn)
     ==
+  =/  pax=path
+    ~|  no-file-for-thread+file
+    (need (get-fit:clay [our q.byk da+now]:bowl %ted file))
   =/  =card
-    =/  =schematic:ford  [%path [our.bowl %home] %ted file]
-    [%pass /find/[new-tid] %arvo %f %build live=%.n schematic]
-  [[card ~] state]
-::
-++  handle-find
-  |=  [=tid =sign-arvo]
-  ^-  (quip card ^state)
-  =/  =yarn  (~(got by tid.state) tid)
-  =.  starting.state
-    (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
-  ?>  ?=([%f %made *] sign-arvo)
-  ?:  ?=(%incomplete -.result.sign-arvo)
-    (thread-fail-not-running tid %find-thread-incomplete tang.result.sign-arvo)
-  =/  =build-result:ford  build-result.result.sign-arvo
-  ?:  ?=(%error -.build-result)
-    (thread-fail-not-running tid %find-thread-error message.build-result)
-  ?.  ?=([%path *] +.build-result)
-    (thread-fail-not-running tid %find-thread-strange ~)
-  =.  starting.state
-    (~(jab by starting.state) yarn |=([=trying =vase] [%build vase]))
-  =/  =card
-    =/  =schematic:ford  [%core rail.build-result]
-    [%pass /build/[tid] %arvo %f %build live=%.n schematic]
+    :+  %pass  /build/[new-tid]
+    [%arvo %c %warp our.bowl %home ~ %sing %a da+now.bowl pax]
   [[card ~] state]
 ::
 ++  handle-build
@@ -278,16 +259,14 @@
   =/  =yarn  (~(got by tid.state) tid)
   =.  starting.state
     (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
-  ?>  ?=([%f %made *] sign-arvo)
-  ?:  ?=(%incomplete -.result.sign-arvo)
-    (thread-fail-not-running tid %build-thread-incomplete tang.result.sign-arvo)
-  =/  =build-result:ford  build-result.result.sign-arvo
-  ?:  ?=(%error -.build-result)
-    (thread-fail-not-running tid %build-thread-error message.build-result)
-  =/  =cage  (result-to-cage:ford build-result)
-  ?.  ?=(%noun p.cage)
-    (thread-fail-not-running tid %build-thread-strange >p.cage< ~)
-  =/  maybe-thread  (mule |.(!<(thread q.cage)))
+  ~|  sign+[- +<]:sign-arvo
+  ?>  ?=([?(%b %c) %writ *] sign-arvo)
+  =/  =riot:clay  p.sign-arvo
+  ?~  riot
+    (thread-fail-not-running tid %build-thread-error *tang)
+  ?.  ?=(%vase p.r.u.riot)
+    (thread-fail-not-running tid %build-thread-strange >[p q]:u.riot< ~)
+  =/  maybe-thread  (mule |.(!<(thread !<(vase q.r.u.riot))))
   ?:  ?=(%| -.maybe-thread)
     (thread-fail-not-running tid %thread-not-thread ~)
   (start-thread yarn p.maybe-thread)
@@ -369,14 +348,8 @@
 ++  thread-fail-not-running
   |=  [=tid =term =tang]
   =/  =yarn  (~(got by tid.state) tid)
-  :_  state(starting (~(del by starting.state) yarn))
-  %-  welp  :_  (thread-say-fail tid term tang)
-  =/  =trying  trying:(~(got by starting.state) yarn)
-  ?-  trying
-    %find   [%pass /find/[tid] %arvo %f %kill ~]~
-    %build  [%pass /build/[tid] %arvo %f %kill ~]~
-    %none   ~
-  ==
+  :-  (thread-say-fail tid term tang)
+  state(starting (~(del by starting.state) yarn))
 ::
 ++  thread-say-fail
   |=  [=tid =term =tang]
