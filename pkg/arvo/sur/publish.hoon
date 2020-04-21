@@ -25,6 +25,8 @@
       [%unsubscribe who=@p book=@tas]
   ::
       [%read who=@p book=@tas note=@tas]
+  ::
+      [%groupify book=@tas target=(unit path) inclusive=?]
   ==
 ::
 +$  comment  comment-3
