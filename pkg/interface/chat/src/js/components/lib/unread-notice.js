@@ -17,8 +17,8 @@ export class UnreadNotice extends Component {
 
     return (
       <div
-        style={{ left: "0px", top: "48px" }}
-        className="pa4 w-100 absolute z-1"
+        style={{ left: "0px" }}
+        className="pa4 w-100 absolute z-1 unread-notice"
       >
         <div className="ba b--green2 green2 bg-white bg-gray0-d flex items-center pa2 f9 justify-between br1">
           <p className="lh-copy db">
@@ -30,7 +30,7 @@ export class UnreadNotice extends Component {
             )}
             <span className="green3">{timestamp}</span>
           </p>
-          <div onClick={onRead} className="inter b--green2 pointer">
+          <div onClick={onRead} className="ml4 inter b--green2 pointer tr lh-copy">
             Mark as Read
           </div>
         </div>
