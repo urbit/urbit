@@ -380,7 +380,7 @@ export class ChatInput extends Component {
       message = [];
     }
 
-    // perf: 
+    // perf:
     //setTimeout(this.closure, 2000);
 
     this.editor.setValue('');
@@ -454,7 +454,9 @@ export class ChatInput extends Component {
             ? this.completePatp(state.selectedSuggestion)
             : this.messageSubmit(),
         'Shift-3': (cm) =>
-          this.toggleCode()
+          cm.getValue().length === 0
+            ? this.toggleCode()
+            : CodeMirror.Pass
       }
     };
 
