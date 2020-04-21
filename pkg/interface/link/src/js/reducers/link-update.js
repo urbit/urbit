@@ -37,8 +37,10 @@ export class LinkUpdateReducer {
 
         // since data contains an up-to-date full version of the page,
         // we can safely overwrite the one in state.
-        state.links[path][page] = here.page;
-        state.links[path].local[page] = false;
+        if (typeof page === 'number' && here.page) {
+          state.links[path][page] = here.page;
+          state.links[path].local[page] = false;
+        }
         state.links[path].totalPages = here.totalPages;
         state.links[path].totalItems = here.totalItems;
         state.links[path].unseenCount = here.unseenCount;
@@ -48,7 +50,7 @@ export class LinkUpdateReducer {
         if (!state.seen[path]) {
           state.seen[path] = {};
         }
-        here.page.map(submission => {
+        (here.page || []).map(submission => {
           state.seen[path][submission.url] = submission.seen;
         });
       }
