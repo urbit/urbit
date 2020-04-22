@@ -134,10 +134,8 @@
     |=  [dap=term =ship =desk]
     ^+  mo-core
     =/  =case  [%da now]
-    ?~  pax=(get-fit:clay [ship desk case] %app dap)
-      (mo-give %onto |+[leaf+"gall: no file for agent {<dap>}"]~)
     =/  =wire  /sys/cor/[dap]/(scot %p ship)/[desk]/(scot case)
-    (mo-pass wire %c %warp ship desk ~ %sing %a case u.pax)
+    (mo-pass wire %c %warp ship desk ~ %sing %a case /app/[dap]/hoon)
   ::  +mo-reboot: ask %ford to rebuild the specified agent
   ::
   ++  mo-reboot
@@ -627,7 +625,7 @@
   ::  +mo-apply: apply the supplied action to the specified agent.
   ::
   ++  mo-apply
-    |=  [agent=term =routes =deal]
+    |=  [dap=term =routes =deal]
     ^+  mo-core
     ::  TODO: Remove this horrific hack when ford pinto comes!
     =>  |%
@@ -684,39 +682,34 @@
           ==
         --
     ::
-    =/  =path
-      =/  ship  (scot %p attributing.routes)
-      /sys/val/[ship]/[agent]
-    ::
-    =/  ship-desk
-      =/  =beak  (mo-beak agent)
-      [p q]:beak
+    =/  =path  /sys/val/(scot %p attributing.routes)/[dap]
+    =/  [=ship =desk]  [p q]:(mo-beak dap)
     ::
     ?:  ?=(%raw-poke -.deal)
       ::  TODO: Remove this horrific hack when ford pinto comes!
       ?+  mark.deal
-        =/  =schematic:ford  [%vale ship-desk +.deal]
+        =/  =schematic:ford  [%vale ship^desk +.deal]
         =/  =note-arvo  [%f %build live=%.n schematic]
         (mo-pass path note-arvo)
       ::
           %chat-action
         =/  chat-act=(unit chat-action)  ((soft chat-action) noun.deal)
         ?~  chat-act
-          ~&  gall-raw-chat-poke-failed+[agent attributing.routes]
+          ~&  gall-raw-chat-poke-failed+[dap attributing.routes]
           mo-core
         =/  =cage  [%chat-action !>(u.chat-act)]
         =/  new-deal=^deal  [%poke cage]
-        =/  app  (ap-abed:ap agent routes)
+        =/  app  (ap-abed:ap dap routes)
         =.  app  (ap-apply:app new-deal)
         ap-abet:app
       ==
     ::
     ?:  ?=(%poke-as -.deal)
-      =/  =schematic:ford  [%cast ship-desk mark.deal [%$ cage.deal]]
+      =/  =schematic:ford  [%cast ship^desk mark.deal [%$ cage.deal]]
       =/  =note-arvo  [%f %build live=%.n schematic]
       (mo-pass path note-arvo)
     ::
-    =/  app  (ap-abed:ap agent routes)
+    =/  app  (ap-abed:ap dap routes)
     =.  app  (ap-apply:app deal)
     ap-abet:app
   ::  +mo-handle-local: handle locally.

@@ -1,43 +1,41 @@
+/-  *publish
+/-  *group-store
+/-  *group-hook
+/-  *permission-hook
+/-  *permission-group-hook
+/-  *permission-store
+/-  *invite-store
+/-  *metadata-store
+/-  *metadata-hook
 ::
-/-  *publish,
-    *group-store,
-    *group-hook,
-    *permission-hook,
-    *permission-group-hook,
-    *permission-store,
-    *invite-store,
-    *metadata-store,
-    *metadata-hook
 /+  *server, *publish, cram, default-agent, dbug
 ::
-/=  index
-  /^  $-(json manx)
-  /:  /===/app/publish/index  /!noun/
+/=  index  /app/publish/index
 ::
-/=  js
-  /^  octs
-  /;  as-octs:mimes:html
-  /|  /:  /===/app/publish/js/index  /js/
-      /~  ~
+/*  index-js            %js   /app/publish/js/index/js
+/*  tile-js-raw         %js   /app/publish/js/tile/js
+/*  index-css           %css  /app/publish/css/index/css
+/*  home-png            %png  /app/publish/img/home/png
+/*  popout-png          %png  /app/publish/img/popout/png
+/*  search-png          %png  /app/publish/img/search/png
+/*  switcherclosed-png  %png  /app/publish/img/switcherclosed/png
+/*  switcheropen-png    %png  /app/publish/img/switcheropen/png
+/*  tile-png            %png  /app/publish/img/tile/png
+::
+=/  as-octs  as-octs:mimes:html
+=/  tile-js  (as-octs tile-js-raw)
+=/  js       (as-octs index-js)
+=/  css      (as-octs index-css)
+::
+=/  images=(map knot @)
+  %-  ~(gas by *(map knot @))
+  :~  home+home-png
+      popout+popout-png
+      search+search-png
+      switcherclosed+switcherclosed-png
+      switcheropen+switcheropen-png
+      tile+tile-png
   ==
-::
-/=  css
-  /^  octs
-  /;  as-octs:mimes:html
-  /|  /:  /===/app/publish/css/index  /css/
-      /~  ~
-  ==
-::
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /|  /:  /===/app/publish/js/tile  /js/
-      /~  ~
-  ==
-::
-/=  images
-  /^  (map knot @)
-  /:  /===/app/publish/img  /_  /png/
 ::
 |%
 +$  card  card:agent:gall

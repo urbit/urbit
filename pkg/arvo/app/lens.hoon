@@ -1,7 +1,6 @@
 /-  lens, *sole
 /+  base64, *server, default-agent
-/=  lens-mark  /:  /===/mar/lens/command
-                   /!noun/
+/=  lens-mark  /mar/lens/command  ::  TODO: ask clay to build a $tube
 =,  format
 |%
 ::  +lens-out: json or named octet-stream
@@ -15,7 +14,6 @@
           job=(unit [eyre-id=@ta com=command:lens])
       ==
   ==
-::
 --
 ::
 =|  =state

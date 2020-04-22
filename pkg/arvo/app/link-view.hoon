@@ -10,10 +10,10 @@
 ::    /json/[n]/submission/[wood-url]/[some-group]    nth matching submission
 ::    /json/seen                                      mark-as-read updates
 ::
-/-  *link-view,
-    *invite-store, group-store,
-    group-hook, permission-hook, permission-group-hook,
-    metadata-hook, contact-view
+/-  *link-view
+/-  *invite-store, group-store
+/-  group-hook, permission-hook, permission-group-hook
+/-  metadata-hook, contact-view
 /+  *link, metadata, *server, default-agent, verb, dbug
 ::
 |%

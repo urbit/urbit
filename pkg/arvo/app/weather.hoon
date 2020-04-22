@@ -1,16 +1,11 @@
 /+  *server, *server, default-agent, dbug
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/weather/js/tile
-  /|  /js/
-      /~  ~
-  ==
-/=  weather-png
-  /^  (map knot @)
-  /:  /===/app/weather/img  /_  /png/
-=,  format
+/*  tile-js-raw  %js  /app/weather/js/tile/js
+=/  as-octs  as-octs:mimes:html
+=/  tile-js  (as-octs tile-js-raw)
 ::
+=/  weather-png=(map knot @)  ~
+::
+=,  format
 |%
 ::
 +$  card  card:agent:gall

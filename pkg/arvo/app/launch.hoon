@@ -1,26 +1,20 @@
 /-  launch
 /+  *server, default-agent, dbug
+/=  index  /app/launch/index
+/*  index-js     %js   /app/launch/js/index/js
+/*  index-css    %css  /app/launch/css/index/css
+/*  home-png     %png  /app/launch/img/home/png
+/*  favicon-png  %png  /app/launch/img/favicon/png
 ::
-/=  index
-  /^  $-(marl manx)
-  /:  /===/app/launch/index  /!noun/
-/=  script
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/launch/js/index
-  /|  /js/
-      /~  ~
+=/  as-octs  as-octs:mimes:html
+=/  script   (as-octs index-js)
+=/  style    (as-octs index-css)
+::
+=/  launch-png=(map knot @)
+  %-  ~(gas by *(map knot @))
+  :~  home+home-png
+      favicon+favicon-png
   ==
-/=  style
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/launch/css/index
-  /|  /css/
-      /~  ~
-  ==
-/=  launch-png
-  /^  (map knot @)
-  /:  /===/app/launch/img  /_  /png/
 ::
 |%
 +$  versioned-state

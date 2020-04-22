@@ -4,37 +4,28 @@
 ::
 /-  sole
 /+  *server, *soto, default-agent
-/=  index
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/soto/index
-  /|  /html/
-      /~  ~
+::
+/*  index-html     %html   /app/soto/index/html
+/*  index-js     %js   /app/soto/js/index/js
+/*  tile-js-raw     %js   /app/soto/js/tile/js
+/*  index-css     %css   /app/soto/css/index/css
+::
+/*  home-png            %png  /app/soto/img/home/png
+/*  popout-png          %png  /app/soto/img/popout/png
+/*  tile-png            %png  /app/soto/img/tile/png
+::
+=/  as-octs  as-octs:mimes:html
+=/  index    (as-octs index-html)
+=/  script   (as-octs index-js)
+=/  tile-js  (as-octs tile-js-raw)
+=/  style    (as-octs index-css)
+::
+=/  soto-png=(map knot @)
+  %-  ~(gas by *(map knot @))
+  :~  home+home-png
+      popout+popout-png
+      tile+tile-png
   ==
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/soto/js/tile
-  /|  /js/
-      /~  ~
-  ==
-/=  script
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/soto/js/index
-  /|  /js/
-      /~  ~
-  ==
-/=  style
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/soto/css/index
-  /|  /css/
-      /~  ~
-  ==
-/=  soto-png
-  /^  (map knot @)
-  /:  /===/app/soto/img  /_  /png/
 ::
 |%
 +$  card  card:agent:gall

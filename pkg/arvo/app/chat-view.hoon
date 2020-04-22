@@ -1,47 +1,50 @@
 ::  chat-view: sets up chat JS client, paginates data, and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *permission-store,
-    *permission-hook,
-    *group-store,
-    *invite-store,
-    *metadata-store,
-    *permission-group-hook,
-    *chat-hook,
-    *metadata-hook
-/+  *server, *chat-json, default-agent, verb, dbug
-/=  index
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/index
-  /|  /html/
-      /~  ~
-  ==
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/js/tile
-  /|  /js/
-      /~  ~
-  ==
-/=  script
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/js/index
-  /|  /js/
-      /~  ~
-  ==
-/=  style
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/css/index
-  /|  /css/
-      /~  ~
-  ==
-/=  chat-png
-  /^  (map knot @)
-  /:  /===/app/chat/img  /_  /png/
+/-  *permission-store
+/-  *permission-hook
+/-  *group-store
+/-  *invite-store
+/-  *metadata-store
+/-  *permission-group-hook
+/-  *chat-hook
+/-  *metadata-hook
 ::
+/+  *server, *chat-json, default-agent, verb, dbug
+::
+/*  index-html   %html  /app/chat/index/html
+/*  index-js     %js    /app/chat/js/index/js
+/*  tile-js-raw  %js    /app/chat/js/tile/js
+/*  index-css    %css   /app/chat/css/index/css
+::
+/*  chatswitcherclosed-png   %png  /app/chat/img/chatswitcherclosed/png
+/*  chatswitcherlink-png     %png  /app/chat/img/chatswitcherlink/png
+/*  home-png                 %png  /app/chat/img/home/png
+/*  icon-home-png            %png  /app/chat/img/icon-home/png
+/*  popout-png               %png  /app/chat/img/popout/png
+/*  search-png               %png  /app/chat/img/search/png
+/*  send-png                 %png  /app/chat/img/send/png
+/*  tile-png                 %png  /app/chat/img/tile/png
+/*  touch-icon-png           %png  /app/chat/img/touch-icon/png
+::
+=/  as-octs  as-octs:mimes:html
+=/  index    (as-octs index-html)
+=/  script   (as-octs index-js)
+=/  tile-js  (as-octs tile-js-raw)
+=/  style    (as-octs index-css)
+::
+=/  chat-png=(map knot @)
+  %-  ~(gas by *(map knot @))
+  :~  chatswitcherclosed+chatswitcherclosed-png
+      chatswitcherlink+chatswitcherlink-png
+      home+home-png
+      icon-home+icon-home-png
+      popout+popout-png
+      search+search-png
+      send+send-png
+      tile+tile-png
+      touch-icon+touch-icon-png
+  ==
 |%
 +$  card  card:agent:gall
 ::

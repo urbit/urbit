@@ -1,11 +1,7 @@
 /+  *server, default-agent, verb
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/clock/js/tile
-  /|  /js/
-      /~  ~
-  ==
+/*  tile  %js  /app/clock/js/tile/js
+=/  as-octs  as-octs:mimes:html
+=/  tile-js   (as-octs tile)
 =,  format
 ::
 |%

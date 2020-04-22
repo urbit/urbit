@@ -37,6 +37,42 @@
         ==
     !>  (parse-pile:(ford):fusion /sur/foo/hoon ".")
 ::
+++  test-parse-multiline-faslus  ^-  tang
+  =/  src
+    """
+    ::                                                      ::  ::
+    ::::  /hoon/hood/app                                    ::  ::
+      ::                                                    ::  ::
+    /?    310                                               ::  zuse version
+    /-  *sole
+    /+  sole                                                ::  libraries
+        ::  XX these should really be separate apps, as
+        ::     none of them interact with each other in
+        ::     any fashion; however, to reduce boot-time
+        ::     complexity and work around the current
+        ::     non-functionality of end-to-end acknowledgments,
+        ::     they have been bundled into :hood
+        ::
+        ::  |command handlers
+    /+  hood-helm, hood-kiln, hood-drum, hood-write
+    ::                                                      ::  ::
+    .
+    """
+  %+  expect-eq
+    !>  ^-  pile:fusion
+        :*  sur=`(list taut:fusion)`[~ %sole]~
+            ^=  lib  ^-  (list taut:fusion)
+            :~  [`%sole %sole]
+                [`%hood-helm %hood-helm]
+                [`%hood-kiln %hood-kiln]
+                [`%hood-drum %hood-drum]
+                [`%hood-write %hood-write]
+            ==
+            raw=~  bar=~
+            hoon=tssg+[p:(need q:(tall:(vang & /app/hood/hoon) [17 1] "."))]~
+        ==
+    !>  (parse-pile:(ford):fusion /app/hood/hoon src)
+::
 ++  test-cycle  ^-  tang
   =/  source=@t
     '''

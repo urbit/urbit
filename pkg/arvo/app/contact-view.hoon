@@ -1,47 +1,37 @@
 ::  contact-view: sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *group-store,
-    *group-hook,
-    *invite-store,
-    *contact-hook,
-    *metadata-store,
-    *metadata-hook,
-    *permission-group-hook,
-    *permission-hook
-/+  *server, *contact-json, default-agent, dbug
-/=  index
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/index
-  /|  /html/
-      /~  ~
-  ==
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/js/tile
-  /|  /js/
-      /~  ~
-  ==
-/=  script
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/js/index
-  /|  /js/
-      /~  ~
-  ==
-/=  style
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/css/index
-  /|  /css/
-      /~  ~
-  ==
-/=  contact-png
-  /^  (map knot @)
-  /:  /===/app/contacts/img  /_  /png/
+/-  *group-store
+/-  *group-hook
+/-  *invite-store
+/-  *contact-hook
+/-  *metadata-store
+/-  *metadata-hook
+/-  *permission-group-hook
+/-  *permission-hook
 ::
+/+  *server, *contact-json, default-agent, dbug
+::
+/*  index-html    %html  /app/contacts/index/html
+/*  index-js      %js    /app/contacts/js/index/js
+/*  tile-js       %js    /app/contacts/js/tile/js
+/*  index-css     %css   /app/contacts/css/index/css
+/*  home-png      %png   /app/contacts/img/home/png
+/*  tile-png      %png   /app/contacts/img/tile/png
+/*  search-png    %png   /app/contacts/img/search/png
+::
+=/  as-octs  as-octs:mimes:html
+=/  index    (as-octs index-html)
+=/  script   (as-octs index-js)
+=/  tile-js  (as-octs tile-js)
+=/  style    (as-octs index-css)
+::
+=/  contact-png=(map knot @)
+  %-  ~(gas by *(map knot @))
+  :~  home+home-png
+      tile+tile-png
+      search+search-png
+  ==
 |%
 +$  card  card:agent:gall
 --

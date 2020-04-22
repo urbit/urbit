@@ -3,7 +3,7 @@
   ::                                                    ::  ::
 /?    310                                               ::  zuse version
 /-  *sole
-/+  sole,                                               ::  libraries
+/+  sole                                                ::  libraries
     ::  XX these should really be separate apps, as
     ::     none of them interact with each other in
     ::     any fashion; however, to reduce boot-time
@@ -12,7 +12,7 @@
     ::     they have been bundled into :hood
     ::
     ::  |command handlers
-    hood-helm, hood-kiln, hood-drum, hood-write
+/+  hood-helm, hood-kiln, hood-drum, hood-write
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
