@@ -20,8 +20,11 @@ export class ContactSidebar extends Component {
     let responsiveClasses =
       props.activeDrawer === "contacts" ? "db" : "dn db-ns";
 
-    let me = (window.ship in props.defaultContacts) ?
-      props.defaultContacts[window.ship] : { color: '0x0', nickname: null};
+    let me = (window.ship in props.contacts)
+        ?  props.contacts[window.ship]
+        :  (window.ship in props.defaultContacts)
+        ?  props.defaultContacts[window.ship]
+        : { color: '0x0', nickname: null };
 
     let shareSheet =
       !(window.ship in props.contacts) ?
@@ -32,11 +35,23 @@ export class ContactSidebar extends Component {
           path={props.path}
           selected={props.path + "/" + window.ship === props.selectedContact}
         />
-      ) : (<div></div>);
+      ) : (
+        <>
+          <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">You</h2>
+          <ContactItem
+            ship={window.ship}
+            nickname={me.nickname}
+            color={me.color}
+            path={props.path}
+            selected={props.path + "/" + window.ship === props.selectedContact}
+          />
+        </>
+      );
     group.delete(window.ship);
 
     let contactItems =
       Object.keys(props.contacts)
+      .filter(c => c !== window.ship)
       .map((contact) => {
         group.delete(contact);
         let path = props.path + "/" + contact;

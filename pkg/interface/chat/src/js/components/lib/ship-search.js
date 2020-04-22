@@ -56,18 +56,52 @@ export class ShipSearch extends Component {
       suggestions: [],
       bound: false
     };
-  }
 
-  componentDidMount() {
-    this.bindShortcuts();
-    if (this.props.suggestEmpty) {
-      this.updateSuggestions();
+    this.keymap = {
+        Tab: (cm) =>
+          this.nextAutocompleteSuggestion(),
+        'Shift-Tab': (cm) =>
+          this.nextAutocompleteSuggestion(true),
+        'Up': (cm) =>
+          this.nextAutocompleteSuggestion(true),
+        'Escape': (cm) =>
+          this.props.onClear(),
+        'Down': (cm) =>
+          this.nextAutocompleteSuggestion(),
+        'Enter': (cm) => {
+          if(this.props.searchTerm !== null) {
+            this.props.onSelect(this.state.selected);
+          }
+        },
+        'Shift-3': (cm) =>
+          this.toggleCode()
     }
   }
 
+  componentDidMount() {
+    if(this.props.searchTerm !== null) {
+      this.updateSuggestions(true);
+    }
+
+  }
+
   componentDidUpdate(prevProps) {
-    const { props } = this;
+    const { props, state } = this;
+
+    if(!state.bound && props.inputRef) {
+      this.bindShortcuts();
+    }
+
+    if(props.searchTerm === null) {
+      if(state.suggestions.length > 0) {
+        this.setState({ suggestions: [] });
+      }
+      this.unbindShortcuts();
+      return;
+    }
+
     if (
+      props.searchTerm === null &&
       props.searchTerm !== prevProps.searchTerm &&
       props.searchTerm.startsWith(prevProps.searchTerm)
     ) {
@@ -76,18 +110,10 @@ export class ShipSearch extends Component {
       this.updateSuggestions(true);
     }
 
-    if (prevProps.inputRef !== props.inputRef) {
-      this.bindShortcuts();
-    }
   }
 
   updateSuggestions(isStale = false) {
     const needle = this.props.searchTerm;
-    if (needle.length === 0 && !this.props.suggestEmpty) {
-      this.unbindShortcuts();
-      this.setState({ suggestions: [] });
-      return;
-    }
     const matchString = hay => {
       hay = hay.toLowerCase();
 
@@ -127,9 +153,26 @@ export class ShipSearch extends Component {
     this.setState({ suggestions, selected: suggestions[0] });
   }
 
-  bindShortcuts() {
-    if (!this.props.inputRef || this.state.bound) {
+  bindCmShortcuts()  {
+    if(!this.props.cm) {
       return;
+    }
+    this.props.cm.addKeyMap(this.keymap);
+  }
+
+  unbindCmShortcuts() {
+    if(!this.props.cm) {
+      return;
+    }
+    this.props.cm.removeKeyMap(this.keymap);
+  }
+
+  bindShortcuts() {
+    if (this.state.bound) {
+      return;
+    }
+    if (!this.props.inputRef) {
+      return this.bindCmShortcuts();
     }
     this.setState({ bound: true });
     if (!this.mousetrap) {
@@ -164,14 +207,19 @@ export class ShipSearch extends Component {
     this.mousetrap.bind("esc", e => {
       e.preventDefault();
       e.stopPropagation();
-      this.props.onDismiss();
+      this.props.onClear();
     });
   }
 
   unbindShortcuts() {
+    if(!this.props.inputRef) {
+      this.unbindCmShortcuts()
+    }
+
     if (!this.state.bound) {
       return;
     }
+
     this.setState({ bound: false });
     this.mousetrap.unbind("enter");
     this.mousetrap.unbind("tab");
@@ -240,33 +288,42 @@ export class ShipSearchInput extends Component {
       searchTerm: ""
     };
 
-    this.inputRef = React.createRef();
-    this.popoverRef = React.createRef();
+    this.inputRef = null;
+    this.popoverRef = null;
 
     this.search = this.search.bind(this);
 
     this.onClick = this.onClick.bind(this);
+    this.setInputRef = this.setInputRef.bind(this);
   }
 
   onClick(event) {
     const { popoverRef } = this;
     // Do nothing if clicking ref's element or descendent elements
-    if (!popoverRef.current || popoverRef.current.contains(event.target)) {
+    if (!popoverRef || popoverRef.contains(event.target)) {
       return;
     }
 
-    this.props.onDismiss();
+    this.props.onClear();
   }
 
   componentDidMount() {
     document.addEventListener("mousedown", this.onClick);
     document.addEventListener("touchstart", this.onClick);
-    this.inputRef.current.focus();
   }
 
   componentWillUnmount() {
     document.removeEventListener("mousedown", this.onClick);
     document.removeEventListener("touchstart", this.onClick);
+  }
+
+  setInputRef(ref) {
+    this.inputRef = ref;
+    if(ref) {
+      ref.focus();
+    }
+    // update this.inputRef prop
+    this.forceUpdate();
   }
 
   search(e) {
@@ -279,7 +336,7 @@ export class ShipSearchInput extends Component {
 
     return (
       <div
-        ref={this.popoverRef}
+        ref={ref => (this.popoverRef = ref)}
         style={{ top: "150%", left: "-80px" }}
         className="b--gray2 b--solid ba absolute bg-white bg-gray0-d shadow-5"
       >
@@ -298,16 +355,15 @@ export class ShipSearchInput extends Component {
           placeholder="Search for a ship"
           value={state.searchTerm}
           onChange={this.search}
-          ref={this.inputRef}
+          ref={this.setInputRef}
         />
         <ShipSearch
           contacts={props.contacts}
           candidates={props.candidates}
           searchTerm={deSig(state.searchTerm)}
-          inputRef={this.inputRef.current}
+          inputRef={this.inputRef}
           onSelect={props.onSelect}
-          onDismiss={props.onDismiss}
-          suggestEmpty
+          onClear={props.onClear}
         />
       </div>
     );

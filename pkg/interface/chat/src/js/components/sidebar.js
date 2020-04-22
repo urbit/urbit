@@ -142,7 +142,7 @@ export class Sidebar extends Component {
                 contacts={{}}
                 candidates={candidates}
                 onSelect={this.goDm.bind(this)}
-                onDismiss={this.onClickDm.bind(this)}
+                onClear={this.onClickDm.bind(this)}
 
               />
             )}
