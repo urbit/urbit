@@ -5,14 +5,14 @@
 /-  sole
 /+  *server, *soto, default-agent
 ::
-/*  index-html     %html   /app/soto/index/html
-/*  index-js     %js   /app/soto/js/index/js
-/*  tile-js-raw     %js   /app/soto/js/tile/js
-/*  index-css     %css   /app/soto/css/index/css
+/*  index-html   %html  /app/soto/index/html
+/*  index-js     %js    /app/soto/js/index/js
+/*  tile-js-raw  %js    /app/soto/js/tile/js
+/*  index-css    %css   /app/soto/css/index/css
 ::
-/*  home-png            %png  /app/soto/img/home/png
-/*  popout-png          %png  /app/soto/img/popout/png
-/*  tile-png            %png  /app/soto/img/tile/png
+/*  home-png    %png  /app/soto/img/home/png
+/*  popout-png  %png  /app/soto/img/popout/png
+/*  tile-png    %png  /app/soto/img/tile/png
 ::
 =/  as-octs  as-octs:mimes:html
 =/  index    (as-octs index-html)
