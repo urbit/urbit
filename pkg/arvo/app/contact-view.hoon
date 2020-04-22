@@ -187,10 +187,13 @@
     =/  contact  (contact-scry `^path`(snoc (flop t.path) name))
     ?~  contact  not-found:gen
     ?~  avatar.u.contact  not-found:gen
-    ?.  ?=(%octt -.u.avatar.u.contact)  not-found:gen
-    =/  max-3-days  ['cache-control' 'max-age=259200']
-    =/  content-type  ['content-type' content-type.u.avatar.u.contact]
-    [[200 [content-type max-3-days ~]] `octs.u.avatar.u.contact]
+    ?-  -.u.avatar.u.contact
+        %url   [[307 ['location' url.u.avatar.u.contact]~] ~]
+        %octt
+      =/  max-3-days  ['cache-control' 'max-age=259200']
+      =/  content-type  ['content-type' content-type.u.avatar.u.contact]
+      [[200 [content-type max-3-days ~]] `octs.u.avatar.u.contact]
+    ==
   ::
       [%'~groups' *]  (html-response:gen index)
   ==
