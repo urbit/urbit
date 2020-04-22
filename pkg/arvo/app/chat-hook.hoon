@@ -602,7 +602,8 @@
   ::
       [%backlog @ @ @ *]
     =/  chat=path  (oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-    %.  (poke-chat-hook-action %remove chat)
+    :_  state
+    %.  ~[(chat-view-poke %delete pax)]
     %-  slog
     :*  leaf+"chat-hook failed subscribe on {(spud chat)}"
         leaf+"stack trace:"
