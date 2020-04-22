@@ -736,6 +736,7 @@
           {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$noop ~}                                     ::  no operation
           {$pack ~}                                     ::  compact memory
+          [%saga p=path q=*]                            ::  write to jamfile
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane

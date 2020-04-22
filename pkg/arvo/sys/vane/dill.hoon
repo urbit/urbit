@@ -574,6 +574,13 @@
   ?:  ?=(%knob -.task)
     =.  veb.all  (~(put by veb.all) tag.task level.task)
     [~ ..^$]
+  ::  write jamfile on default duct
+  ::
+  ?:  ?=(%saga -.task)
+    ?~  hey.all
+      [~ ..^$]
+    :_  ..^$
+    [u.hey.all %give %blit [%sag [%put p.task] q.task]~]~
   ::
   =/  nus  (ax hen)
   ?~  nus
