@@ -621,7 +621,7 @@
     ^-  (unit (unit cage))
     ::
     =/  app  (ap-abed:ap dap routes)
-    (ap-peek:app care dap path)
+    (ap-peek:app care path)
   ::  +mo-apply: apply the supplied action to the specified agent.
   ::
   ++  mo-apply
@@ -801,18 +801,18 @@
     ::
     ++  ap-abed
       ~/  %ap-abed
-      |=  [=term =routes]
+      |=  [dap=term =routes]
       ^+  ap-core
       ::
       =/  =yoke
-        =/  running  (~(got by yokes.state) term)
+        =/  running  (~(got by yokes.state) dap)
         =/  =stats
           :+  +(change.stats.running)
-            (shaz (mix (add term change.stats.running) eny))
+            (shaz (mix (add dap change.stats.running) eny))
           now
         running(stats stats)
       ::
-      =.  agent-name  term
+      =.  agent-name  dap
       =.  agent-routes  routes
       =.  current-agent  yoke
       =.  agent-duct  hen
@@ -987,7 +987,6 @@
     ++  ap-apply
       |=  =deal
       ^+  ap-core
-      ::
       ?-  -.deal
         %watch-as  (ap-subscribe-as +.deal)
         %poke      (ap-poke +.deal)
@@ -1000,23 +999,13 @@
     ::
     ++  ap-peek
       ~/  %ap-peek
-      |=  [=term tyl=path]
+      |=  [care=term tyl=path]
       ^-  (unit (unit cage))
+      ::  strip trailing mark off path for %x scrys
       ::
-      =/  marked
-        ?.  ?=(%x term)
-          [mark=%$ tyl=tyl]
-        ::
-        =/  =path  (flop tyl)
-        ?>  ?=(^ path)
-        [mark=i.path tyl=(flop t.path)]
-      ::
-      =/  =mark  mark.marked
-      =/  tyl  tyl.marked
-      ::
+      =?  tyl  ?=(%x care)  (flop (tail (flop tyl)))
       =/  peek-result=(each (unit (unit cage)) tang)
-        (ap-mule-peek |.((on-peek:ap-agent-core [term tyl])))
-      ::
+        (ap-mule-peek |.((on-peek:ap-agent-core [care tyl])))
       ?-  -.peek-result
         %&  p.peek-result
         %|  ((slog leaf+"peek bad result" p.peek-result) [~ ~])
@@ -1027,7 +1016,6 @@
       ~/  %ap-update-subscription
       |=  [is-ok=? =other=ship other-agent=term =wire]
       ^+  ap-core
-      ::
       ?:  is-ok
         ap-core
       (ap-kill-down wire [other-ship other-agent])
@@ -1036,7 +1024,6 @@
     ++  ap-give
       |=  =gift:agent
       ^+  ap-core
-      ::
       =/  internal-moves
         (weld (ap-from-internal %give gift) agent-moves)
       ap-core(agent-moves internal-moves)
@@ -1061,7 +1048,6 @@
     ++  ap-pass
       |=  [=path =neat]
       ^+  ap-core
-      ::
       =/  internal-moves
         (ap-from-internal %pass path neat)
       ap-core(agent-moves (weld internal-moves agent-moves))
@@ -1071,7 +1057,6 @@
       ~/  %ap-reinstall
       |=  =agent
       ^+  ap-core
-      ::
       =/  old-state=vase  ~(on-save agent.current-agent ap-construct-bowl)
       =^  error  ap-core
         (ap-install(agent.current-agent agent) `old-state)
@@ -1083,7 +1068,6 @@
     ++  ap-subscribe-as
       |=  [=mark =path]
       ^+  ap-core
-      ::
       =.  marks.current-agent  (~(put by marks.current-agent) agent-duct mark)
       (ap-subscribe path)
     ::  +ap-subscribe: apply %watch.
@@ -1092,11 +1076,9 @@
       ~/  %ap-subscribe
       |=  pax=path
       ^+  ap-core
-      ::
       =/  incoming  [attributing.agent-routes pax]
       =.  inbound.watches.current-agent
         (~(put by inbound.watches.current-agent) agent-duct incoming)
-      ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  %watch-ack  |.
         (on-watch:ap-agent-core pax)
@@ -1109,7 +1091,6 @@
       ~/  %ap-poke
       |=  =cage
       ^+  ap-core
-      ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  %poke-ack  |.
         (on-poke:ap-agent-core cage)
@@ -1119,7 +1100,6 @@
     ++  ap-error
       |=  [=term =tang]
       ^+  ap-core
-      ::
       =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
@@ -1131,7 +1111,6 @@
       ~/  %ap-generic-take
       |=  [=wire =sign-arvo]
       ^+  ap-core
-      ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire sign-arvo)
@@ -1143,7 +1122,6 @@
     ++  ap-specific-take
       |=  [=wire =sign:agent]
       ^+  ap-core
-      ::
       ~|  wire=wire
       ?>  ?=([%out @ @ *] wire)
       =/  other-ship  (slav %p i.t.wire)
