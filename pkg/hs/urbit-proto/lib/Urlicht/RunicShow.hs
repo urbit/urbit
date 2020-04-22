@@ -2,17 +2,17 @@ module Urlicht.RunicShow where
 
 import ClassyPrelude
 
-import Bound
 import Data.Function ((&))
-import Data.List (genericIndex)
 import qualified Data.Text as T
 
 import qualified Urlicht.CST as C
 import qualified Urlicht.Hoon as H
-import qualified Urlicht.HoonToSimple as HS
+import qualified Urlicht.HoonToSimple as H2S
 import qualified Urlicht.Simple as S
+import qualified Urlicht.SimpleToCoreHack as S2C
 import qualified Urlicht.Core as Core
 import qualified Urlicht.Errors as E
+import qualified Urlicht.Meta as Meta
 import qualified Urbit.Noun as N
 
 class RunicShow a where
@@ -28,50 +28,10 @@ instance RunicShow (Core.Value Text) where
   runic = runic . Core.quote
 
 instance RunicShow (Core.Core Text) where
-  runic = runic . coreUp
+  runic = runic . S2C.up
 
 instance RunicShow (S.Simple Text) where
-  runic = runic . HS.up
-
-displayMeta :: Core.Meta -> Text
-displayMeta = genericIndex names'
-  where
-    names' = fmap T.pack names
-    names, letters :: [String]
-    names = letters ++ (do n <- names; l <- letters; pure (n ++ l))
-    letters = map (\x -> [x]) ['A'..'Z']
-
-class InjectMeta a where
-  injectMeta :: Core.Meta -> a
-
-instance InjectMeta Text where
-  injectMeta = displayMeta
-
-instance (InjectMeta a, Applicative f) => InjectMeta (f a) where
-  injectMeta = pure . injectMeta
-
-coreUp :: InjectMeta a => Core.Core a -> S.Simple a
-coreUp = go
-  where
-    go :: InjectMeta a => Core.Core a -> S.Simple a
-    go = \case
-      Core.Var x -> S.Var x
-      Core.Met m -> S.Var (injectMeta m)
-      --
-      Core.Typ -> S.Typ
-      Core.Fun c sc -> S.Fun (go c) (hoistMeta go sc)
-      --
-      Core.Lam sc -> S.Lam (hoistMeta go sc)
-      --
-      Core.App c d -> S.App (go c) (go d)
-      --
-      Core.Let c sc -> S.Let (go c) (hoistMeta go sc)
-
-hoistMeta :: (Functor f, Applicative g, InjectMeta a)
-          => (forall x. InjectMeta x => f x -> g x)
-          -> Scope b f a
-          -> Scope b g a
-hoistMeta t (Scope s) = Scope $ t (fmap t <$> s)
+  runic = runic . H2S.up
 
 -- TODO how bad is UndecidableInstances?
 -- instance (Functor f, Unvar a, RunicShow (f Text)) => RunicShow (f a) where
@@ -217,6 +177,7 @@ toRunic = go
         C.Pat          -> Leaf "@"
         C.Hol          -> Leaf "_"
         C.Var t        -> Leaf t
+        C.Met m        -> Leaf (Meta.showMeta m)
         C.Nat a        -> tagLit a
         C.Col a x      -> appTag a x
         C.Hed x        -> hed x

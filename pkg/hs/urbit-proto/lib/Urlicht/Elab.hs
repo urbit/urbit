@@ -10,6 +10,7 @@ import Data.Void
 
 import Urlicht.Core
 import Urlicht.Errors
+import Urlicht.Meta
 
 type Metas = M.IntMap (Value Void)
 

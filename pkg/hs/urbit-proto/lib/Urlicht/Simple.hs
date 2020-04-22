@@ -6,12 +6,15 @@ import Bound
 import Bound.Name
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 
+import Urlicht.Meta
+
 type SimpleType = Simple
 type B = Name Text ()
 
 -- | The lowest-level unelaborated representation.
 data Simple a
   = Var a
+  | Met Meta
   -- types
   | Typ
   | Fun (Simple a) (Scope B Simple a)

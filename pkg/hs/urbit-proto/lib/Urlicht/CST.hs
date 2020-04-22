@@ -12,11 +12,13 @@ import Data.Data.Lens (uniplate)
 import Numeric.Natural
 
 import qualified Urlicht.Hoon as H
+import Urlicht.Meta
 
 type Atom = Natural
 
 data CST
   = Var Text
+  | Met Meta
   -- irregular forms
   | Hax
   | Fun [Binder] CST
@@ -76,6 +78,7 @@ abstractify = go
   where
     go = \case
       Var v -> H.Var v
+      Met m -> H.Met m
       --
       Hax -> H.Hax
       Fun bs c -> bindMany H.Fun bs (go c)
@@ -132,6 +135,7 @@ concretize = dissociate . go
   where
     go = \case
       H.Var v -> Var v
+      H.Met m -> Met m
       --
       H.Hax -> Hax
       H.Fun t b -> unbindPoly Fun t b

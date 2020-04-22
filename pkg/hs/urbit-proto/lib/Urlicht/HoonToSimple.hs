@@ -14,6 +14,7 @@ down = go
     go :: Hoon a -> S.Simple a
     go = \case
       Var v -> S.Var v
+      Met m -> S.Met m
       --
       Hax     -> S.Typ
       Fun t b -> S.Fun (go t) (hoist go b)
@@ -77,6 +78,7 @@ up = go
     go :: S.Simple a -> Hoon a
     go = \case
       S.Var x -> Var x
+      S.Met m -> Met m
       --
       S.Typ -> Hax
       S.Fun s ss -> Fun (go s) (hoist go ss)

@@ -1,7 +1,6 @@
 module Urlicht.Parser where
 
 import ClassyPrelude hiding (head, many, some, try, init, last)
-import Control.Arrow ((>>>))
 import Control.Lens
 import Numeric.Natural
 
@@ -15,6 +14,7 @@ import Prelude            (head, init, last)
 import qualified Prelude
 
 import Urlicht.CST
+import Urlicht.Meta
 -- import qualified Urlicht.Hoon as Hoon
 -- import qualified Urlicht.HoonToSimple as H2S
 -- import qualified Urlicht.Simple as Simple
@@ -79,6 +79,9 @@ symChar = oneOf (['-'] ++ ['a'..'z'] ++ ['0'..'9'])
 sym ∷ Parser Sym
 sym = pack <$> ((:) <$> alpha <*> many symChar)
 
+met :: Parser Meta
+met = readMeta <$> pack <$> some (oneOf ['A'..'Z'])
+
 atom ∷ Parser Nat
 atom = do
   init ← some digitChar
@@ -130,6 +133,7 @@ irregular =
     , Obj . mapFromList <$> grouped "{" ", " "}" entry
     , Hax <$ char '#'
     , Var <$> sym
+    , Met <$> met
     , Nat 0 <$ char '~'
     , Wut (singleton 0) <$ string "$~"
     , Pat <$ char '@'

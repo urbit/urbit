@@ -24,6 +24,7 @@ down = go
     go :: Simple a -> C.Core a
     go = \case
       Var x -> C.Var x
+      Met m -> C.Met m
       --
       Typ -> C.Typ
       Fun s ss -> C.Fun (go s) (hoist go ss)
@@ -35,3 +36,20 @@ down = go
       Let s ss -> C.Let (go s) (hoist go ss)
       --
       Hol -> error "SimpleToCoreHack.down: holes require elaboration"
+
+up :: C.Core a -> Simple a
+up = go
+  where
+    go :: C.Core a -> Simple a
+    go = \case
+      C.Var x -> Var x
+      C.Met m -> Met m
+      --
+      C.Typ -> Typ
+      C.Fun c sc -> Fun (go c) (hoist go sc)
+      --
+      C.Lam sc -> Lam (hoist go sc)
+      --
+      C.App c d -> App (go c) (go d)
+      --
+      C.Let c sc -> Let (go c) (hoist go sc)

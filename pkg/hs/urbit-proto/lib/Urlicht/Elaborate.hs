@@ -68,6 +68,7 @@ check env simp ty = do
       pure c
   case (simp, ty) of
     (S.Var{}, _) -> checkInfer
+    (S.Met m, _) -> pure $ Met m
     (S.Typ{}, _) -> checkInfer
     (S.Fun{}, _) -> checkInfer
     (S.Lam ss, VFun t st) ->
@@ -88,6 +89,7 @@ infer env = \case
   S.Var x -> case scry env x of
     Just ty -> pure (ty, Var x)
     Nothing -> report EName
+  S.Met m -> error "error: elaborating a raw metavariable"
   S.Typ -> pure (VTyp, Typ)
   S.Fun s ss -> do
     c <- check env s VTyp

@@ -1,24 +1,19 @@
 module Urlicht.Hoon where
 
 import ClassyPrelude
-import Prelude (foldr1)
 
 import Bound
 import Bound.Name
-import Bound.Scope
-import Control.Monad.Morph (hoist)
-import Control.Lens.Plated
-import Data.Data (Data)
-import Data.Data.Lens (uniplate)
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Numeric.Natural
 
-import qualified Urlicht.Core as C
+import Urlicht.Meta
 
 type Atom = Natural
 
 data Hoon a
   = Var a
+  | Met Meta
   -- irregular forms
   | Hax
   | Fun (Hoon a) (Scope (Name Text ()) Hoon a)
@@ -66,7 +61,7 @@ data Hoon a
   | WutCen (Hoon a) (Map Atom (Hoon a))
   | WutCol (Hoon a) (Hoon a) (Hoon a)
   | WutHax (Hoon a) (Map Atom (Scope (Name Text ()) Hoon a))
-  deriving (Functor, Foldable, Traversable, Data, Typeable)
+  deriving (Functor, Foldable, Traversable, Typeable)
 
 deriveEq1   ''Hoon
 deriveOrd1  ''Hoon
@@ -86,6 +81,7 @@ instance Monad Hoon where
   return = Var
   --
   Var a >>= f = f a
+  Met m >>= _ = Met m
   --
   Hax     >>= _ = Hax
   Fun t b >>= f = Fun (t >>= f) (b >>>= f)
