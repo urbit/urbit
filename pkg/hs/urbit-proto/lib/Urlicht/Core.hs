@@ -75,6 +75,7 @@ instance Monad Value where
 vApp :: Value a -> Value a -> Value a
 vApp (VVAp x vs) v = VVAp x (v:vs)
 vApp (VMAp m vs) v = VMAp m (v:vs)
+-- TODO correct?
 vApp (VLam sv)   v = instantiate1 v sv
 vApp _           _ = error "vApp: applying non-function"
 

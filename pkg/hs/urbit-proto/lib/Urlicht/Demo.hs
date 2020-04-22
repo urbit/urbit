@@ -6,12 +6,11 @@ import Prelude (putStrLn)
 import Control.Monad.State.Strict
 import Data.Function ((&))
 
-import Deppy.CST as CST
-import Deppy.Hoon as H
-import Deppy.Parser
-import Deppy.RunicShow
+import Urlicht.CST as CST
+import Urlicht.Hoon as H
+import Urlicht.Parser
+import Urlicht.RunicShow
 import qualified Urlicht.Core as C
-import Urlicht.DisplayOrphans()
 import Urlicht.Elab
 import Urlicht.Elaborate
 import qualified Urlicht.HoonToSimple as H2S

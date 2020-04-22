@@ -5,7 +5,7 @@ import ClassyPrelude
 import Control.Monad.Morph (hoist)
 
 -- TODO copy over the upper layers of deppy to separately customize.
-import Deppy.Hoon
+import Urlicht.Hoon
 import qualified Urlicht.Simple as S
 
 down :: Hoon a -> S.Simple a

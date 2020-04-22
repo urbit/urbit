@@ -7,6 +7,7 @@ import ClassyPrelude
 
 import Bound
 import Bound.Name
+import Bound.Var
 import Bound.Scope
 import Control.Monad.Morph (hoist)
 
@@ -51,6 +52,10 @@ freshFun env = do
   let v = eval a
   b <- newMetaWithSpine (bind env nameHack v)
   pure (v, toScope (eval b))
+
+-- Gamma |- e : t
+-- Gamma |- e -> t  inference  Gamma, e -> Maybe t
+-- Gamma |- e <- t  checking   Gamma, e, t -> ?
 
 check :: Eq a => Env a -> S.Simple a -> Type a -> Elab (Core a)
 check env simp ty = do
@@ -112,14 +117,11 @@ infer env = \case
     (tyRhs, cRhs) <- infer env sRhs
     (tyBod, cBod) <- infer (bind env nameHack tyRhs) (fromScope sBod)
     -- I guess evaluating with let rhs would be nice here
-    let
-      tyBod' = eval $ quote tyBod >>= \case
-        F x -> Var x
-        B _ -> cRhs
+    let tyBod' = eval $ quote tyBod >>= unvar (const cRhs) Var
     pure (tyBod', Let cRhs (toScope cBod))
   S.Hol -> do
-    t <-newMetaWithSpine env
-    c <-newMetaWithSpine env
+    t <- newMetaWithSpine env
+    c <- newMetaWithSpine env
     pure (eval t, c)
 
 -- | Inline metavariables.
