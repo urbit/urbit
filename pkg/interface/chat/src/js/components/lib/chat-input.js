@@ -31,6 +31,7 @@ const MARKDOWN_CONFIG = {
   }
 };
 
+
 export class ChatInput extends Component {
   constructor(props) {
     super(props);
@@ -116,6 +117,7 @@ export class ChatInput extends Component {
       return;
     }
     this.setState({ patpSearch: match[1].toLowerCase() });
+
   }
 
   clearSearch() {
@@ -314,7 +316,6 @@ export class ChatInput extends Component {
           searchTerm={this.state.patpSearch}
           cm={this.editor}
         />
-
         <div
           className="fl"
           style={{
