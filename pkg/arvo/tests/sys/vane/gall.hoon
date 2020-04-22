@@ -24,7 +24,7 @@
     (gall-call gall-gate time *sley call-args expected-moves)
   ::
   results
-::  +test-conf: test %conf
+::  +test-conf: test %conf: TODO: fix
 ::
 ++  test-conf
   ^-  tang
@@ -36,9 +36,7 @@
   ::
   =/  call-args
     =/  =type  -:!>(*task:able:gall)
-    =/  =task:able:gall
-      =/  =dock  [ship term]
-      [%conf dock dock]
+    =/  =task:able:gall  [%conf term]
     [duct type task]
   ::
   =/  =move:gall-gate

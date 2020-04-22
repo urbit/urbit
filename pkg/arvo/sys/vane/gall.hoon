@@ -4,14 +4,76 @@
 ::::
 |=  pit=vase
 =,  gall
-=>  =~
+=>
 |%
+::  +move: Arvo-level move
+::
++$  move  [=duct move=(wind note-arvo gift-arvo)]
+::  +state-5: overall gall state, versioned
+::
++$  state-5  [%5 state]
+::  +state: overall gall state
+::
+::    system-duct: TODO document
+::    outstanding: outstanding request queue
+::    contacts: other ships we're in communication with
+::    yokes: running agents
+::    blocked: moves to agents that haven't been started yet
+::
++$  state
+  $:  system-duct=duct
+      outstanding=(map [wire duct] (qeu remote-request))
+      contacts=(set ship)
+      yokes=(map term yoke)
+      blocked=(map term (qeu blocked-move))
+  ==
+::  +watches: subscribers and publications
+::
+::    TODO: rename this, to $ties?
+::    TODO: rename $boat and $bitt and document
+::
++$  watches  [inbound=bitt outbound=boat]
+::  +routes: new cuff; TODO: document
+::
++$  routes
+  $:  disclosing=(unit (set ship))
+      attributing=ship
+  ==
+::  +yoke: agent runner state
+::
+::    control-duct: TODO document
+::    live: is this agent running? TODO document better
+::    stats: TODO document
+::    watches: incoming and outgoing subscription state
+::    agent: agent core
+::    beak: compilation source
+::    marks: mark conversion requests
+::
++$  yoke
+  $:  control-duct=duct
+      live=?
+      =stats
+      =watches
+      =agent
+      =beak
+      marks=(map duct mark)
+  ==
+:: +blocked-move: enqueued move to an agent
+::
++$  blocked-move  [=duct =routes =deal]
+:: +stats: statistics
+::
+::   change: how many moves this agent has processed
+::   eny: entropy
+::   time: date of current event processing
+::
++$  stats  [change=@ud eny=@uvJ time=@da]
 ::  +ames-response: network response message (%boon)
 ::
 ::    %d: fact
 ::    %x: quit
 ::
-++  ames-response
++$  ames-response
   $%  [%d =mark noun=*]
       [%x ~]
   ==
@@ -22,7 +84,7 @@
 ::    %s: watch
 ::    %u: leave
 ::
-++  ames-request
++$  ames-request
   $%  [%m =mark noun=*]
       [%l =mark =path]
       [%s =path]
@@ -33,7 +95,7 @@
 ::    Used in wires to identify the kind of remote request we made.
 ::    Bijective with the tags of $ames-request.
 ::
-++  remote-request
++$  remote-request
   $?  %watch
       %watch-as
       %poke
@@ -41,121 +103,8 @@
       %missing
   ==
 --
-|%
-::  +move: Arvo-level move
-::
-++  move
-  $:  =duct
-      move=(wind note-arvo gift-arvo)
-  ==
---
-|%
-::  +state: all state
-::
-++  state
-  $:  :: state version
-      ::
-      %5
-      :: agents by ship
-      ::
-      =agents
-  ==
-::  +subscribers: subscriber data
-::
-++  subscribers
-  $:  :: incoming subscribers
-      ::
-      incoming=bitt
-      :: outgoing subscribers
-      ::
-      outgoing=boat
-  ==
-::  +agents: ship state
-::
-++  agents
-  $:  ::  system duct
-      ::
-      system-duct=duct
-      ::  outstanding request queue
-      ::
-      outstanding=(map [wire duct] (qeu remote-request))
-      ::  foreign contacts
-      ::
-      contacts=(set ship)
-      ::  running agents
-      ::
-      running=(map term running-agent)
-      ::  waiting queue
-      ::
-      blocked=(map term blocked)
-  ==
-::  +routes: new cuff
-::
-++  routes
-  $:  :: disclosing to
-      ::
-      disclosing=(unit (set ship))
-      :: attributed to
-      ::
-      attributing=ship
-  ==
-::  +running-agent: agent state
-::
-++  running-agent
-  $:  :: control duct
-      ::
-      control-duct=duct
-      :: unstopped
-      ::
-      live=?
-      :: statistics
-      ::
-      =stats
-      :: subscribers
-      ::
-      =subscribers
-      ::  agent core
-      ::
-      =agent
-      :: update control
-      ::
-      =beak
-      :: req'd translations
-      ::
-      marks=(map duct mark)
-  ==
-:: +blocked: blocked tasks
-::
-++  blocked  (qeu (trel duct routes deal))
-:: +stats: statistics
-::
-++  stats
-  $:  :: change number
-      ::
-      change=@ud
-      :: entropy
-      ::
-      eny=@uvJ
-      :: time
-      ::
-      time=@da
-  ==
---
-.  ==
-=|  =state
-|=  $:  :: identity
-        ::
-        our=ship
-        :: urban time
-        ::
-        now=@da
-        :: entropy
-        ::
-        eny=@uvJ
-        :: activate
-        ::
-        ski=sley
-    ==
+=|  state=state-5
+|=  [our=ship now=@da eny=@uvJ ski=sley]
 ~%  %gall-top  ..is  ~
 |%
 ::  +gall-payload:  gall payload
@@ -168,101 +117,47 @@
 ::
 ++  mo
   ~%  %gall-mo  +>  ~
-  |_
-    $:  hen=duct
-        moves=(list move)
-    ==
+  |_  [hen=duct moves=(list move)]
+  ::  +mo-abed: initialise state with the provided duct
+  ::  +mo-abet: finalize, reversing moves
+  ::  +mo-pass: prepend a standard %pass to the current list of moves
+  ::  +mo-give: prepend a standard %give to the current list of moves
+  ::
   ++  mo-core  .
-  ::  +mo-abed: initialise state with the provided duct.
-  ::
-  ++  mo-abed
-    |=  =duct
-    ^+  mo-core
-    ::
-    mo-core(hen duct)
-  ::  +mo-abet: resolve moves.
-  ::
-  ++  mo-abet
-    ^-  [(list move) _gall-payload]
-    ::
-    =/  resolved  (flop moves)
-    [resolved gall-payload]
-  ::
+  ++  mo-abed  |=(hun=duct mo-core(hen hun))
+  ++  mo-abet  [(flop moves) gall-payload]
+  ++  mo-pass  |=(p=[wire note-arvo] mo-core(moves [[hen pass+p] moves]))
+  ++  mo-give  |=(g=gift:able mo-core(moves [[hen give+g] moves]))
   ::  +mo-boot: ask %ford to build us a core for the specified agent.
   ::
   ++  mo-boot
-    |=  [=term =ship =desk]
+    |=  [dap=term =ship =desk]
     ^+  mo-core
-    ::
     =/  =case  [%da now]
-    =/  =wire
-      =/  ship  (scot %p ship)
-      =/  case  (scot case)
-      /sys/cor/[term]/[ship]/[desk]/[case]
-    ::
-    =/  =note-arvo
-      =/  =schematic:ford  [%core [ship desk] /hoon/[term]/app]
-      [%f %build live=%.y schematic]
-    ::
-    (mo-pass wire note-arvo)
-  ::
+    ?~  pax=(get-fit:clay [ship desk case] %app dap)
+      (mo-give %onto |+[leaf+"gall: no file for agent {<dap>}"]~)
+    =/  =wire  /sys/cor/[dap]/(scot %p ship)/[desk]/(scot case)
+    (mo-pass wire %c %warp ship desk ~ %sing %a case u.pax)
   ::  +mo-reboot: ask %ford to rebuild the specified agent
   ::
   ++  mo-reboot
-    |=  [force=? =term =ship]
+    |=  [dap=term =ship]
     ^+  mo-core
-    =/  gent  (~(got by running.agents.state) term)
-    =.  hen  control-duct.gent
+    =/  gent  (~(got by yokes.state) dap)
     =*  desk  q.beak.gent
-    ::  if we're forcing a reboot, we don't try to %kill the old build
-    ::
-    ?:  force
-      (mo-boot term ship desk)
-    ::
-    =/  =wire
-      =/  ship  (scot %p ship)
-      =/  case  (scot r.beak.gent)
-      /sys/cor/[term]/[ship]/[desk]/[case]
-    %.  [term ship desk]
-    =<  mo-boot
-    =/  =note-arvo  [%f %kill ~]
-    (mo-pass wire note-arvo)
-  ::
+    (mo-boot:(mo-abed control-duct.gent) dap ship desk)
   ::  +mo-goad: rebuild agent(s)
   ::
   ++  mo-goad
-    |=  [force=? agent=(unit dude)]
+    |=  agent=(unit dude)
     ^+  mo-core
     ?^  agent
       ~|  goad-gone+u.agent
-      (mo-reboot force u.agent our)
-    ::
-    =/  agents=(list term)
-      ~(tap in ~(key by running.agents.state))
+      (mo-reboot u.agent our)
+    =/  agents=(list term)  ~(tap in ~(key by yokes.state))
     |-  ^+  mo-core
-    ?~  agents
-      mo-core
-    %=  $
-      agents     t.agents
-      ..mo-core  (mo-reboot force i.agents our)
-    ==
-  ::
-  ::  +mo-pass: prepend a standard %pass to the current list of moves.
-  ::
-  ++  mo-pass
-    |=  pass=(pair wire note-arvo)
-    ^+  mo-core
-    ::
-    =/  =move  [hen [%pass pass]]
-    mo-core(moves [move moves])
-  ::  +mo-give: prepend a standard %give to the current list of moves.
-  ::
-  ++  mo-give
-    |=  =gift:able
-    ^+  mo-core
-    ::
-    =/  =move  [hen [%give gift]]
-    mo-core(moves [move moves])
+    ?~  agents  mo-core
+    $(agents t.agents, mo-core (mo-reboot i.agents our))
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -277,36 +172,31 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [dap=term bek=beak =made-result:ford]
+    |=  [dap=term bek=beak =rant:clay]
     ^+  mo-core
     ::
-    ?:  ?=([%incomplete *] made-result)
-      (mo-give %onto %.n tang.made-result)
+    =/  =cage  r.rant
+    ?.  =(%vase p.cage)
+      (mo-give %onto |+[leaf+"gall: bizarre mark {<p.cage>} for agent {<dap>}"]~)
     ::
-    =/  build-result  build-result.made-result
-    ::
-    ?:  ?=([%error *] build-result)
-      (mo-give %onto %.n message.build-result)
-    ::
-    =/  =cage  (result-to-cage:ford build-result)
-    =/  result-vase  q.cage
-    ?^  existing=(~(get by running.agents.state) dap)
-      =.  running.agents.state
-        (~(put by running.agents.state) dap u.existing(beak bek))
-      =/  =routes  [disclosing=~ attributing=our]
-      =/  ap-core  (ap-abed:ap dap routes)
-      =.  ap-core  (ap-reinstall:ap-core result-vase)
-      ap-abet:ap-core
-    ::
-    =/  maybe-new-agent  (mule |.(!<(agent result-vase)))
+    =/  maybe-new-agent  (mule |.(!<(agent !<(vase q.cage))))
     ?:  ?=(%| -.maybe-new-agent)
       =/  err  [[%leaf "{<dap>}: not valid agent"] p.maybe-new-agent]
       (mo-give %onto %.n err)
+    =/  =agent  p.maybe-new-agent
     ::
-    =.  running.agents.state
-      %+  ~(put by running.agents.state)  dap
-      =/  default-agent  *running-agent
-      default-agent(control-duct hen, beak bek, agent p.maybe-new-agent)
+    ?^  existing=(~(get by yokes.state) dap)
+      =.  yokes.state
+        (~(put by yokes.state) dap u.existing(beak bek))
+      =/  =routes  [disclosing=~ attributing=our]
+      =/  ap-core  (ap-abed:ap dap routes)
+      =.  ap-core  (ap-reinstall:ap-core agent)
+      ap-abet:ap-core
+    ::
+    =.  yokes.state
+      %+  ~(put by yokes.state)  dap
+      =/  default-yoke  *yoke
+      default-yoke(control-duct hen, beak bek, agent agent)
     ::
     =/  old  mo-core
     =/  wag
@@ -348,10 +238,10 @@
       =/  =path  /ge/[foreign-agent]
       [%a %plea ship %g path ames-request]
     ::
-    =.  outstanding.agents.state
+    =.  outstanding.state
       =/  stand
-        (~(gut by outstanding.agents.state) [wire hen] *(qeu remote-request))
-      (~(put by outstanding.agents.state) [wire hen] (~(put to stand) -.deal))
+        (~(gut by outstanding.state) [wire hen] *(qeu remote-request))
+      (~(put by outstanding.state) [wire hen] (~(put to stand) -.deal))
     (mo-pass wire note-arvo)
   ::  +mo-track-ship: subscribe to ames and jael for notices about .ship
   ::
@@ -360,19 +250,19 @@
     ^+  mo-core
     ::  if already contacted, no-op
     ::
-    ?:  (~(has in contacts.agents.state) ship)
+    ?:  (~(has in contacts.state) ship)
       mo-core
     ::  first contact; update state and subscribe to notifications
     ::
-    =.  contacts.agents.state  (~(put in contacts.agents.state) ship)
+    =.  contacts.state  (~(put in contacts.state) ship)
     ::  ask ames to track .ship's connectivity
     ::
-    =.  moves  [[system-duct.agents.state %pass /sys/lag %a %heed ship] moves]
+    =.  moves  [[system-duct.state %pass /sys/lag %a %heed ship] moves]
     ::  ask jael to track .ship's breaches
     ::
     =/  =note-arvo  [%j %public-keys (silt ship ~)]
     =.  moves
-      [[system-duct.agents.state %pass /sys/era note-arvo] moves]
+      [[system-duct.state %pass /sys/era note-arvo] moves]
     mo-core
   ::  +mo-untrack-ship: cancel subscriptions to ames and jael for .ship
   ::
@@ -381,17 +271,17 @@
     ^+  mo-core
     ::  if already canceled, no-op
     ::
-    ?.  (~(has in contacts.agents.state) ship)
+    ?.  (~(has in contacts.state) ship)
       mo-core
     ::  delete .ship from state and kill subscriptions
     ::
-    =.  contacts.agents.state  (~(del in contacts.agents.state) ship)
+    =.  contacts.state  (~(del in contacts.state) ship)
     ::
-    =.  moves  [[system-duct.agents.state %pass /sys/lag %a %jilt ship] moves]
+    =.  moves  [[system-duct.state %pass /sys/lag %a %jilt ship] moves]
     ::
     =/  =note-arvo  [%j %nuke (silt ship ~)]
     =.  moves
-      [[system-duct.agents.state %pass /sys/era note-arvo] moves]
+      [[system-duct.state %pass /sys/era note-arvo] moves]
     mo-core
   ::  +mo-breach: ship breached, so forget about them
   ::
@@ -399,7 +289,8 @@
     |=  =ship
     ^+  mo-core
     =.  mo-core  (mo-untrack-ship ship)
-    =/  agents=(list [name=term =running-agent])  ~(tap by running.agents.state)
+    =.  mo-core  (mo-filter-queue ship)
+    =/  agents=(list [name=term =yoke])  ~(tap by yokes.state)
     |-  ^+  mo-core
     ?~  agents
       mo-core
@@ -444,14 +335,12 @@
     ^+  mo-core
     ::
     ?>  ?=([%cor @ @ @ @ ~] path)
-    ?>  ?=([%f %made *] sign-arvo)
-    =/  beak-path  t.t.path
-    =/  =beak
-      =/  =ship  (slav %p i.beak-path)
-      =/  =desk  i.t.beak-path
-      =/  =case  [%da (slav %da i.t.t.beak-path)]
-      [ship desk case]
-    (mo-receive-core i.t.path beak result.sign-arvo)
+    =/  [dap=term her=@ta desk=@ta dat=@ta ~]  t.path
+    =/  =beak  [(slav %p her) desk da+(slav da+dat)]
+    ?>  ?=([?(%b %c) %writ *] sign-arvo)
+    ?^  p.sign-arvo
+      (mo-receive-core dap beak u.p.sign-arvo)
+    (mo-give %onto |+[leaf+"gall: failed to build agent {<dap>}"]~)
   ::  +mo-handle-sys-lag: handle an ames %clog notification
   ::
   ++  mo-handle-sys-lag
@@ -461,7 +350,7 @@
     ?>  ?=([%lag ~] path)
     ?>  ?=([%a %clog *] sign-arvo)
     ::
-    =/  agents=(list term)  ~(tap in ~(key by running.agents.state))
+    =/  agents=(list term)  ~(tap in ~(key by yokes.state))
     |-  ^+  mo-core
     ?~  agents  mo-core
     ::
@@ -587,22 +476,22 @@
     ::
     ?+    sign-arvo  !!
         [%a %done *]
-      =^  remote-request  outstanding.agents.state
+      =^  remote-request  outstanding.state
         ?~  t.t.t.wire
           =/  full-wire  sys+wire
           =/  stand
-            %+  ~(gut by outstanding.agents.state)  [full-wire hen]
+            %+  ~(gut by outstanding.state)  [full-wire hen]
             ::  default is do nothing; should only hit if cleared queue
             ::  in +load 3-to-4
             ::
             (~(put to *(qeu remote-request)) %missing)
-          ~|  [full-wire=full-wire hen=hen stand=stand outs=outstanding.agents.state]
+          ~|  [full-wire=full-wire hen=hen stand=stand outs=outstanding.state]
           =^  rr  stand  ~(get to stand)
-          [rr (~(put by outstanding.agents.state) [full-wire hen] stand)]
+          [rr (~(put by outstanding.state) [full-wire hen] stand)]
         ::  non-null case of wire is old, remove on next breach after
         ::  2019/12
         ::
-        [;;(remote-request i.t.t.t.wire) outstanding.agents.state]
+        [;;(remote-request i.t.t.t.wire) outstanding.state]
       ::
       =/  err=(unit tang)
         ?~  error=error.sign-arvo
@@ -675,59 +564,125 @@
   ::  +mo-clear-queue: clear blocked tasks from the specified running agent.
   ::
   ++  mo-clear-queue
-    |=  =term
+    |=  dap=term
     ^+  mo-core
-    ::
-    ?.  (~(has by running.agents.state) term)
+    ?.  (~(has by yokes.state) dap)
       mo-core
-    =/  maybe-blocked  (~(get by blocked.agents.state) term)
-    ?~  maybe-blocked
+    ?~  maybe-blocked=(~(get by blocked.state) dap)
       mo-core
-    ::
-    =/  =blocked  u.maybe-blocked
-    ::
+    =/  blocked=(qeu blocked-move)  u.maybe-blocked
     |-  ^+  mo-core
     ?:  =(~ blocked)
-      =/  blocked   (~(del by blocked.agents.state) term)
-      %_  mo-core
-        blocked.agents.state  blocked
-      ==
-    =^  task  blocked  [p q]:~(get to blocked)
-    =/  =duct  p.task
-    =/  =routes  q.task
-    =/  =deal  r.task
-    ::
+      =.  blocked.state  (~(del by blocked.state) dap)
+      mo-core
+    =^  [=duct =routes =deal]  blocked  ~(get to blocked)
     =/  move
       =/  =sock  [attributing.routes our]
-      =/  card  [%slip %g %deal sock term deal]
+      =/  card  [%slip %g %deal sock dap deal]
       [duct card]
     $(moves [move moves])
+  ::  +mo-filter-queue: remove all blocked tasks from ship.
+  ::
+  ++  mo-filter-queue
+    |=  =ship
+    =/  agents=(list [name=term blocked=(qeu blocked-move)])
+      ~(tap by blocked.state)
+    =|  new-agents=(map term (qeu blocked-move))
+    |-  ^+  mo-core
+    ?~  agents
+      mo-core(blocked.state new-agents)
+    =|  new-blocked=(qeu blocked-move)
+    |-  ^+  mo-core
+    ?:  =(~ blocked.i.agents)
+      ?~  new-blocked
+        ^$(agents t.agents)
+      %=  ^$
+        agents      t.agents
+        new-agents  (~(put by new-agents) name.i.agents new-blocked)
+      ==
+    =^  mov=blocked-move  blocked.i.agents  ~(get to blocked.i.agents)
+    =?  new-blocked  !=(ship attributing.routes.mov)
+      (~(put to new-blocked) mov)
+    $
   ::  +mo-beak: assemble a beak for the specified agent.
   ::
   ++  mo-beak
-    |=  =term
+    |=  dap=term
     ^-  beak
+    ?^  yoke=(~(get by yokes.state) dap)
+      beak.u.yoke
+    ::  XX this fallback is necessary, as .term could be either the source
+    ::  or the destination app. ie, it might not exist locally ...
     ::
-    ?~  running=(~(get by running.agents.state) term)
-      ::  XX this fallback is necessary, as .term could be either the source
-      ::  or the destination app. ie, it might not exist locally ...
-      ::
-      [our %home %da now]
-    beak.u.running
+    [our %home %da now]
   ::  +mo-peek:  call to +ap-peek (which is not accessible outside of +mo).
   ::
   ++  mo-peek
     ~/  %mo-peek
-    |=  [agent=term =routes =term =path]
+    |=  [dap=term =routes care=term =path]
     ^-  (unit (unit cage))
     ::
-    =/  app  (ap-abed:ap agent routes)
-    (ap-peek:app term path)
+    =/  app  (ap-abed:ap dap routes)
+    (ap-peek:app care dap path)
   ::  +mo-apply: apply the supplied action to the specified agent.
   ::
   ++  mo-apply
     |=  [agent=term =routes =deal]
     ^+  mo-core
+    ::  TODO: Remove this horrific hack when ford pinto comes!
+    =>  |%
+        +$  serial  @uvH
+        ::
+        +$  letter
+          $%  [%text text=cord]
+              [%url url=cord]
+              [%code expression=cord output=(list tank)]
+              [%me narrative=cord]
+          ==
+        ::
+        +$  envelope
+          $:  uid=serial
+              number=@
+              author=ship
+              when=time
+              =letter
+          ==
+        ::
+        +$  config
+          $:  length=@
+              read=@
+          ==
+        ::
+        +$  mailbox
+          $:  =config
+              envelopes=(list envelope)
+          ==
+        ::
+        +$  inbox  (map path mailbox)
+        ::
+        +$  chat-configs  (map path config)
+        ::
+        +$  chat-base
+          $%  [%create =path]
+              [%delete =path]
+              [%message =path =envelope]
+              [%read =path]
+          ==
+        ::
+        +$  chat-action
+          $%  ::  %messages: append a list of messages to mailbox
+              ::
+              [%messages =path envelopes=(list envelope)]
+              chat-base
+          ==
+        ::
+        +$  chat-update
+          $%  [%keys keys=(set path)]
+              [%config =path =config]
+              [%messages =path start=@ud end=@ud envelopes=(list envelope)]
+              chat-base
+          ==
+        --
     ::
     =/  =path
       =/  ship  (scot %p attributing.routes)
@@ -738,9 +693,23 @@
       [p q]:beak
     ::
     ?:  ?=(%raw-poke -.deal)
-      =/  =schematic:ford  [%vale ship-desk +.deal]
-      =/  =note-arvo  [%f %build live=%.n schematic]
-      (mo-pass path note-arvo)
+      ::  TODO: Remove this horrific hack when ford pinto comes!
+      ?+  mark.deal
+        =/  =schematic:ford  [%vale ship-desk +.deal]
+        =/  =note-arvo  [%f %build live=%.n schematic]
+        (mo-pass path note-arvo)
+      ::
+          %chat-action
+        =/  chat-act=(unit chat-action)  ((soft chat-action) noun.deal)
+        ?~  chat-act
+          ~&  gall-raw-chat-poke-failed+[agent attributing.routes]
+          mo-core
+        =/  =cage  [%chat-action !>(u.chat-act)]
+        =/  new-deal=^deal  [%poke cage]
+        =/  app  (ap-abed:ap agent routes)
+        =.  app  (ap-apply:app new-deal)
+        ap-abet:app
+      ==
     ::
     ?:  ?=(%poke-as -.deal)
       =/  =schematic:ford  [%cast ship-desk mark.deal [%$ cage.deal]]
@@ -760,19 +729,19 @@
     ^+  mo-core
     ::
     =/  =routes  [disclosing=~ attributing=ship]
-    =/  is-running  (~(has by running.agents.state) agent)
-    =/  is-blocked  (~(has by blocked.agents.state) agent)
+    =/  is-running  (~(has by yokes.state) agent)
+    =/  is-blocked  (~(has by blocked.state) agent)
     ::
     ?:  |(!is-running is-blocked)
-      =/  =blocked
-        =/  waiting  (~(get by blocked.agents.state) agent)
-        =/  deals  (fall waiting *blocked)
+      =/  blocked=(qeu blocked-move)
+        =/  waiting  (~(get by blocked.state) agent)
+        =/  deals  (fall waiting *(qeu blocked-move))
         =/  deal  [hen routes deal]
         (~(put to deals) deal)
       ::
       %-  (slog leaf+"gall: not running {<agent>} yet, got {<-.deal>}" ~)
       %_  mo-core
-        blocked.agents.state  (~(put by blocked.agents.state) agent blocked)
+        blocked.state  (~(put by blocked.state) agent blocked)
       ==
     (mo-apply agent routes deal)
   ::  +mo-handle-ames-request: handle %ames request message.
@@ -800,7 +769,6 @@
   ++  mo-handle-ames-response
     |=  =ames-response
     ^+  mo-core
-    ::
     ?-    -.ames-response
         ::  %d: diff; ask ford to validate .noun as .mark
         ::
@@ -811,7 +779,6 @@
       =/  =note-arvo
         =/  =disc:ford  [our %home]
         [%f %build live=%.n %vale disc [mark noun]:ames-response]
-      ::
       (mo-pass wire note-arvo)
     ::
         ::  %x: kick; tell agent the publisher canceled the subscription
@@ -831,7 +798,7 @@
             agent-duct=duct
             agent-moves=(list move)
             agent-config=(list (each suss tang))
-            current-agent=running-agent
+            current-agent=yoke
         ==
     ++  ap-core  .
     ::  +ap-abed: initialise state for an agent, with the supplied routes.
@@ -844,8 +811,8 @@
       |=  [=term =routes]
       ^+  ap-core
       ::
-      =/  =running-agent
-        =/  running  (~(got by running.agents.state) term)
+      =/  =yoke
+        =/  running  (~(got by yokes.state) term)
         =/  =stats
           :+  +(change.stats.running)
             (shaz (mix (add term change.stats.running) eny))
@@ -854,7 +821,7 @@
       ::
       =.  agent-name  term
       =.  agent-routes  routes
-      =.  current-agent  running-agent
+      =.  current-agent  yoke
       =.  agent-duct  hen
       ap-core
     ::  +ap-abet: resolve moves.
@@ -862,15 +829,15 @@
     ++  ap-abet
       ^+  mo-core
       ::
-      =/  running  (~(put by running.agents.state) agent-name current-agent)
+      =/  running  (~(put by yokes.state) agent-name current-agent)
       =/  moves
         =/  giver  |=(report=(each suss tang) [hen %give %onto report])
         =/  from-suss  (turn agent-config giver)
         :(weld agent-moves from-suss moves)
       ::
       %_  mo-core
-        running.agents.state  running
-        moves                 moves
+        yokes.state  running
+        moves        moves
       ==
     ::  +ap-from-internal: internal move to move.
     ::
@@ -891,7 +858,7 @@
           =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ship.gift)
           %+  turn  ducts
           |=  =duct
-          ~?  &(=(duct system-duct.agents.state) !=(agent-name %hood))
+          ~?  &(=(duct system-duct.state) !=(agent-name %hood))
             [%agent-giving-on-system-duct agent-name -.gift]
           [duct %give %unto %kick ~]
         ::
@@ -902,7 +869,7 @@
         =/  =cage  cage.gift
         %+  turn  ducts
         |=  =duct
-        ~?  &(=(duct system-duct.agents.state) !=(agent-name %hood))
+        ~?  &(=(duct system-duct.state) !=(agent-name %hood))
           [%agent-giving-on-system-duct agent-name -.gift]
         ^-  move
         =/  =mark
@@ -920,7 +887,7 @@
         [duct %pass path note-arvo]
       ::
           %pass
-        =/  =duct  system-duct.agents.state
+        =/  =duct  system-duct.state
         =/  =wire  p.card
         =/  =neat  q.card
         =.  wire
@@ -946,7 +913,7 @@
       |=  =ship
       ^+  ap-core
       =/  in=(list [=duct =^ship =path])
-        ~(tap by incoming.subscribers.current-agent)
+        ~(tap by inbound.watches.current-agent)
       |-  ^+  ap-core
       ?^  in
         =?  ap-core  =(ship ship.i.in)
@@ -955,13 +922,13 @@
         $(in t.in)
       ::
       =/  out=(list [[=wire =^ship =term] ? =path])
-        ~(tap by outgoing.subscribers.current-agent)
+        ~(tap by outbound.watches.current-agent)
       |-  ^+  ap-core
       ?~  out
         ap-core
       =?  ap-core  =(ship ship.i.out)
         =/  core
-          =.  agent-duct  system-duct.agents.state
+          =.  agent-duct  system-duct.state
           =/  way  [%out (scot %p ship) term.i.out wire.i.out]
           (ap-specific-take way %kick ~)
         core(agent-duct agent-duct)
@@ -978,7 +945,7 @@
       ^+  ap-core
       ::
       =/  in=(list [=duct =^ship =path])
-        ~(tap by incoming.subscribers.current-agent)
+        ~(tap by inbound.watches.current-agent)
       |-  ^+  ap-core
       ?~  in  ap-core
       ::
@@ -1008,7 +975,7 @@
       ^-  (list duct)
       ?:  &(?=(~ target-path) ?=(~ target-ship))
         ~[agent-duct]
-      %+  murn  ~(tap by incoming.subscribers.current-agent)
+      %+  murn  ~(tap by inbound.watches.current-agent)
       |=  [=duct =ship =path]
       ^-  (unit ^duct)
       ?~  target-ship
@@ -1088,8 +1055,8 @@
               attributing.agent-routes                ::  guest
               agent-name                              ::  agent
           ==                                          ::
-          :*  wex=outgoing.subscribers.current-agent  ::  outgoing
-              sup=incoming.subscribers.current-agent  ::  incoming
+          :*  wex=outbound.watches.current-agent  ::  outgoing
+              sup=inbound.watches.current-agent  ::  incoming
           ==                                          ::
           :*  act=change.stats.current-agent          ::  tick
               eny=eny.stats.current-agent             ::  nonce
@@ -1109,25 +1076,15 @@
     ::
     ++  ap-reinstall
       ~/  %ap-reinstall
-      |=  =vase
+      |=  =agent
       ^+  ap-core
       ::
-      =/  maybe-agent  (mule |.(!<(agent vase)))
-      ?:  ?=(%| -.maybe-agent)
-        (ap-error %new-core-not-agent p.maybe-agent)
-      ::
-      =/  prep
-        =/  =agent  p.maybe-agent
-        =/  running
-          %-  some
-          ~(on-save agent.current-agent ap-construct-bowl)
-        =/  installed  ap-install(agent.current-agent agent)
-        (installed running)
-      ::
-      =^  maybe-tang  ap-core  prep
-      ?~  maybe-tang
+      =/  old-state=vase  ~(on-save agent.current-agent ap-construct-bowl)
+      =^  error  ap-core
+        (ap-install(agent.current-agent agent) `old-state)
+      ?~  error
         ap-core
-      (ap-error %load-failed u.maybe-tang)
+      (ap-error %load-failed u.error)
     ::  +ap-subscribe-as: apply %watch-as.
     ::
     ++  ap-subscribe-as
@@ -1144,8 +1101,8 @@
       ^+  ap-core
       ::
       =/  incoming  [attributing.agent-routes pax]
-      =.  incoming.subscribers.current-agent
-        (~(put by incoming.subscribers.current-agent) agent-duct incoming)
+      =.  inbound.watches.current-agent
+        (~(put by inbound.watches.current-agent) agent-duct incoming)
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  %watch-ack  |.
@@ -1202,26 +1159,26 @@
       =/  agent-wire  t.t.t.wire
       ::  if subscription ack or close, handle before calling user code
       ::
-      =?  outgoing.subscribers.current-agent  ?=(%kick -.sign)
-        %-  ~(del by outgoing.subscribers.current-agent)
+      =?  outbound.watches.current-agent  ?=(%kick -.sign)
+        %-  ~(del by outbound.watches.current-agent)
         [agent-wire dock]
       ?:  ?&  ?=(%watch-ack -.sign)
-              !(~(has by outgoing.subscribers.current-agent) [agent-wire dock])
+              !(~(has by outbound.watches.current-agent) [agent-wire dock])
           ==
         %-  %:  slog
               leaf+"{<agent-name>}: got ack for nonexistent subscription"
               leaf+"{<dock>}: {<agent-wire>}"
               >wire=wire<
-              >out=outgoing.subscribers.current-agent<
+              >out=outbound.watches.current-agent<
               ~
             ==
         ap-core
       ::
-      =?  outgoing.subscribers.current-agent  ?=(%watch-ack -.sign)
+      =?  outbound.watches.current-agent  ?=(%watch-ack -.sign)
         ?^  p.sign
-          %-  ~(del by outgoing.subscribers.current-agent)
+          %-  ~(del by outbound.watches.current-agent)
           [agent-wire dock]
-        %+  ~(jab by outgoing.subscribers.current-agent)  [agent-wire dock]
+        %+  ~(jab by outbound.watches.current-agent)  [agent-wire dock]
         |=  [acked=? =path]
         =.  .
           ?.  acked
@@ -1245,13 +1202,13 @@
     ::  +ap-install: install wrapper.
     ::
     ++  ap-install
-      |=  maybe-vase=(unit vase)
+      |=  old-agent-state=(unit vase)
       ^-  [(unit tang) _ap-core]
       ::
-      =^  maybe-tang  ap-core  (ap-upgrade-state maybe-vase)
+      =^  maybe-tang  ap-core  (ap-upgrade-state old-agent-state)
       ::
-      =/  new-agent-config
-        =/  =term  ?~(maybe-vase %boot %bump)
+      =.  agent-config
+        =/  =term  ?~(old-agent-state %boot %bump)
         =/  possibly-suss
           ?~  maybe-tang
             =/  =suss  [agent-name term now]
@@ -1259,10 +1216,7 @@
           [%.n u.maybe-tang]
         [possibly-suss agent-config]
       ::
-      =/  next
-        ap-core(agent-config new-agent-config)
-      ::
-      [maybe-tang next]
+      [maybe-tang ap-core]
     ::  +ap-upgrade-state: low-level install.
     ::
     ++  ap-upgrade-state
@@ -1282,8 +1236,8 @@
       ^+  ap-core
       ::
       %=    ap-core
-          incoming.subscribers.current-agent
-        (~(del by incoming.subscribers.current-agent) agent-duct)
+          inbound.watches.current-agent
+        (~(del by inbound.watches.current-agent) agent-duct)
       ==
     ::  +ap-load-delete: load delete.
     ::
@@ -1291,13 +1245,13 @@
       ^+  ap-core
       ::
       =/  maybe-incoming
-        (~(get by incoming.subscribers.current-agent) agent-duct)
+        (~(get by inbound.watches.current-agent) agent-duct)
       ?~  maybe-incoming
         ap-core
       ::
       =/  incoming  u.maybe-incoming
-      =.  incoming.subscribers.current-agent
-        (~(del by incoming.subscribers.current-agent) agent-duct)
+      =.  inbound.watches.current-agent
+        (~(del by inbound.watches.current-agent) agent-duct)
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
@@ -1390,10 +1344,10 @@
       ::
       =.  agent.current-agent  +.p.result
       =/  moves  (zing (turn -.p.result ap-from-internal))
-      =.  incoming.subscribers.current-agent
+      =.  inbound.watches.current-agent
         (ap-handle-kicks moves)
       (ap-handle-peers moves)
-    ::  +ap-handle-kicks: handle cancels of incoming subscriptions
+    ::  +ap-handle-kicks: handle cancels of inbound.watches
     ::
     ++  ap-handle-kicks
       ~/  %ap-handle-kicks
@@ -1409,8 +1363,8 @@
       ::
       =/  quit-map=bitt
         (malt (turn quits |=(=duct [duct *[ship path]])))
-      (~(dif by incoming.subscribers.current-agent) quit-map)
-    ::  +ap-handle-peers: handle new outgoing subscriptions
+      (~(dif by inbound.watches.current-agent) quit-map)
+    ::  +ap-handle-peers: handle new outbound.watches
     ::
     ++  ap-handle-peers
       ~/  %ap-handle-peers
@@ -1426,8 +1380,8 @@
         ?>  ?=([%use @ @ %out @ @ *] wire)
         =/  short-wire  t.t.t.t.t.t.wire
         =/  =dock  [q.p q]:q.move.move
-        =.  outgoing.subscribers.current-agent
-          (~(del by outgoing.subscribers.current-agent) [short-wire dock])
+        =.  outbound.watches.current-agent
+          (~(del by outbound.watches.current-agent) [short-wire dock])
         $(moves t.moves, new-moves [move new-moves])
       ?.  ?=([* %pass * %g %deal * * %watch *] move)
         $(moves t.moves, new-moves [move new-moves])
@@ -1436,15 +1390,15 @@
       =/  short-wire  t.t.t.t.t.t.wire
       =/  =dock  [q.p q]:q.move.move
       =/  =path  path.r.q.move.move
-      ?:  (~(has by outgoing.subscribers.current-agent) short-wire dock)
+      ?:  (~(has by outbound.watches.current-agent) short-wire dock)
         =.  ap-core
           =/  =tang
             ~[leaf+"subscribe wire not unique" >agent-name< >short-wire< >dock<]
-          %-  (slog >out=outgoing.subscribers.current-agent< tang)
+          %-  (slog >out=outbound.watches.current-agent< tang)
           (ap-error %watch-not-unique tang)
         $(moves t.moves)
-      =.  outgoing.subscribers.current-agent
-        (~(put by outgoing.subscribers.current-agent) [short-wire dock] [| path])
+      =.  outbound.watches.current-agent
+        (~(put by outbound.watches.current-agent) [short-wire dock] [| path])
       $(moves t.moves, new-moves [move new-moves])
     --
   --
@@ -1464,18 +1418,14 @@
   ?-    -.task
       %conf  mo-abet:(mo-boot:mo-core dap.task our %home)
       %deal
-    =/  =sock  p.task
-    =/  =term  q.task
-    =/  =deal  r.task
+    =/  [=sock =term =deal]  [p q r]:task
     ?.  =(q.sock our)
       ?>  =(p.sock our)
       mo-abet:(mo-send-foreign-request:mo-core q.sock term deal)
     mo-abet:(mo-handle-local:mo-core p.sock term deal)
   ::
-      %goad  mo-abet:(mo-goad:mo-core force.task agent.task)
-      %init  [~ gall-payload(system-duct.agents.state duct)]
-      %trim  [~ gall-payload]
-      %vega  [~ gall-payload]
+      %goad  mo-abet:(mo-goad:mo-core agent.task)
+      %init  [~ gall-payload(system-duct.state duct)]
       %plea
     =/  =ship  ship.task
     =/  =path  path.plea.task
@@ -1489,18 +1439,21 @@
     =>  (mo-handle-ames-request:mo-core ship agent-name ames-request)
     mo-abet
   ::
+      %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
+      %trim  [~ gall-payload]
+      %vega  [~ gall-payload]
       %wegh
     =/  blocked
-      =/  queued  (~(run by blocked.agents.state) |=(blocked [%.y +<]))
+      =/  queued  (~(run by blocked.state) |=((qeu blocked-move) [%.y +<]))
       (sort ~(tap by queued) aor)
     ::
     =/  running
-      =/  active  (~(run by running.agents.state) |=(running-agent [%.y +<]))
+      =/  active  (~(run by yokes.state) |=(yoke [%.y +<]))
       (sort ~(tap by active) aor)
     ::
     =/  =mass
       :+  %gall  %.n
-      :~  [%foreign %.y contacts.agents.state]
+      :~  [%foreign %.y contacts.state]
           [%blocked %.n blocked]
           [%active %.n running]
           [%dot %.y state]
@@ -1535,15 +1488,15 @@
   ::
   ::  +all-state: upgrade path
   ::
-  ++  all-state  $%(state-0 state-1 state-2 state-3 state-4 ^state)
+  ++  all-state  $%(state-0 state-1 state-2 state-3 state-4 state-5)
   ::
   ++  state-4-to-5
     |=  =state-4
-    ^-  ^state
+    ^-  state-5
     %=    state-4
         -  %5
         running.agents-4
-      (~(run by running.agents-4.state-4) |=(running-agent-3 +<+))
+      (~(run by running.agents-4.state-4) |=(yoke-3 +<+))
     ==
   ::
   ++  state-4
@@ -1568,16 +1521,16 @@
     $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
-        running=(map term running-agent-3)
-        blocked=(map term blocked)
+        running=(map term yoke-3)
+        blocked=(map term (qeu blocked-move))
     ==
   ::
-  ++  running-agent-3
+  ++  yoke-3
     $:  cache=worm
         control-duct=duct
         live=?
         =stats
-        =subscribers
+        =watches
         =agent
         =beak
         marks=(map duct mark)
@@ -1590,10 +1543,10 @@
         -  %3
         running.agents-2
       %-  ~(run by running.agents-2.state-2)
-      |=  =running-agent-2
-      ^-  running-agent-3
-      %=  running-agent-2
-        agent-2  (agent-2-to-3 agent-2.running-agent-2)
+      |=  =yoke-2
+      ^-  yoke-3
+      %=  yoke-2
+        agent-2  (agent-2-to-3 agent-2.yoke-2)
       ==
     ==
   ::
@@ -1669,16 +1622,16 @@
     $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
-        running=(map term running-agent-2)
-        blocked=(map term blocked)
+        running=(map term yoke-2)
+        blocked=(map term (qeu blocked-move))
     ==
   ::
-  ++  running-agent-2
+  ++  yoke-2
     $:  cache=worm
         control-duct=duct
         live=?
         =stats
-        =subscribers
+        =watches
         =agent-2
         =beak
         marks=(map duct mark)
@@ -1757,8 +1710,8 @@
   ++  agents-1
     $:  system-duct=duct
         contacts=(set ship)
-        running=(map term running-agent-2)
-        blocked=(map term blocked)
+        running=(map term yoke-2)
+        blocked=(map term (qeu blocked-move))
     ==
   ::
   ++  state-0-to-1
@@ -1768,10 +1721,10 @@
         -  %1
         running.agents-0
       %-  ~(run by running.agents-0.state-0)
-      |=  =running-agent-0
-      ^-  running-agent-2
-      %=  running-agent-0
-        agent-0  (agent-0-to-1 agent-0.running-agent-0)
+      |=  =yoke-0
+      ^-  yoke-2
+      %=  yoke-0
+        agent-0  (agent-0-to-1 agent-0.yoke-0)
       ==
     ==
   ::
@@ -1837,16 +1790,16 @@
   ++  agents-0
     $:  system-duct=duct
         contacts=(set ship)
-        running=(map term running-agent-0)
-        blocked=(map term blocked)
+        running=(map term yoke-0)
+        blocked=(map term (qeu blocked-move))
     ==
   ::
-  ++  running-agent-0
+  ++  yoke-0
     $:  cache=worm
         control-duct=duct
         live=?
         =stats
-        =subscribers
+        =watches
         =agent-0
         =beak
         marks=(map duct mark)
@@ -1926,36 +1879,28 @@
 ::
 ++  scry
   ~/  %gall-scry
-  |=  [fur=(unit (set monk)) =term =shop =desk =coin =path]
+  |=  [fur=(unit (set monk)) care=term =shop dap=desk =coin =path]
   ^-  (unit (unit cage))
   ?.  ?=(%.y -.shop)
     ~
-  ::
   =/  =ship  p.shop
-  ?:  ?&  =(%u term)
+  ?:  ?&  =(%u care)
           =(~ path)
           =([%$ %da now] coin)
           =(our ship)
       ==
-    =/  =vase  !>((~(has by running.agents.state) desk))
-    =/  =cage  [%noun vase]
-    (some (some cage))
+    [~ ~ noun+!>((~(has by yokes.state) dap))]
   ::
   ?.  =(our ship)
     ~
-  ::
   ?.  =([%$ %da now] coin)
     ~
-  ::
-  ?.  (~(has by running.agents.state) desk)
-    (some ~)
-  ::
+  ?.  (~(has by yokes.state) dap)
+    [~ ~]
   ?.  ?=(^ path)
     ~
-  ::
-  =/  initialised  mo-abed:mo
   =/  =routes  [~ ship]
-  (mo-peek:initialised desk routes term path)
+  (mo-peek:mo dap routes care path)
 ::  +stay: save without cache
 ::
 ++  stay  state
@@ -1971,11 +1916,11 @@
   ~|  [%gall-take-failed wire]
   ::
   ?>  ?=([?(%sys %use) *] wire)
-  =/  initialised  (mo-abed:mo duct)
+  =/  mo-core  (mo-abed:mo duct)
   =/  =sign-arvo  q.hin
   =>  ?-  i.wire
-        %sys  (mo-handle-sys:initialised t.wire sign-arvo)
-        %use  (mo-handle-use:initialised t.wire hin)
+        %sys  (mo-handle-sys:mo-core t.wire sign-arvo)
+        %use  (mo-handle-use:mo-core t.wire hin)
       ==
   mo-abet
 --
