@@ -38,7 +38,8 @@ export class Sigil extends Component {
             patp: props.ship,
             renderer: reactRenderer,
             size: props.size,
-            colors: [props.color, foreground]
+            colors: [props.color, foreground],
+            class: props.svgClass
           })}
         </div>
       );

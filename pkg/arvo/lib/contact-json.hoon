@@ -1,9 +1,21 @@
-/-  *contact-view
+/-  *contact-view, *contact-hook
+/+  base64
 |%
 ++  nu                                              ::  parse number as hex
   |=  jon/json
   ?>  ?=({$s *} jon)
   (rash p.jon hex)
+::
+++  hook-update-to-json
+  |=  upd=contact-hook-update
+  =,  enjs:format
+  ^-  json
+  %+  frond  %contact-hook-update
+  %-  pairs
+  %+  turn  ~(tap by synced.upd)
+  |=  [pax=^path shp=^ship]
+  ^-  [cord json]
+  [(spat pax) s+(scot %p shp)]
 ::
 ++  rolodex-to-json
   |=  rolo=rolodex
@@ -15,38 +27,34 @@
   |=  [pax=^path =contacts]
   ^-  [cord json]
   :-  (spat pax)
-  (contacts-to-json contacts)
+  (contacts-to-json pax contacts)
 ::
 ++  contacts-to-json
-  |=  con=contacts
+  |=  [=path con=contacts]
   ^-  json
-  =,  enjs:format
-  %-  pairs
+  %-  pairs:enjs:format
   %+  turn  ~(tap by con)
-  |=  [shp=^ship =contact]
+  |=  [=ship =contact]
   ^-  [cord json]
-  :-  (crip (slag 1 (scow %p shp)))
-  (contact-to-json contact)
+  [(crip (slag 1 (scow %p ship))) (contact-to-json path ship contact)]
 ::
 ++  contact-to-json
-  |=  con=contact
+  |=  [=path =ship con=contact]
   ^-  json
-  =,  enjs:format
-  %-  pairs
+  %-  pairs:enjs:format
   :~  [%nickname s+nickname.con]
       [%email s+email.con]
       [%phone s+phone.con]
       [%website s+website.con]
       [%notes s+notes.con]
       [%color s+(scot %ux color.con)]
-      [%avatar s+'TODO']
+      [%avatar (avatar-to-json path ship avatar.con)]
   ==
 ::
 ++  edit-to-json
-  |=  edit=edit-field
+  |=  [=path =ship edit=edit-field]
   ^-  json
-  =,  enjs:format
-  %+  frond  -.edit
+  %+  frond:enjs:format  -.edit
   ?-  -.edit
     %nickname  s+nickname.edit
     %email     s+email.edit
@@ -54,7 +62,25 @@
     %website   s+website.edit
     %notes     s+notes.edit
     %color     s+(scot %ux color.edit)
-    %avatar    s+'TODO'
+    %avatar    (avatar-to-json path ship avatar.edit)
+  ==
+::
+++  avatar-to-json
+  |=  [=path =ship avat=(unit avatar)]
+  ^-  json
+  ?~  avat  ~
+  ?-  -.u.avat
+      %octt
+    :-  %s
+    %-  crip
+    %-  zing
+    :~  "/~groups/avatar"
+        (trip (spat path))
+        "/"
+        (trip (scot %p ship))
+    ==
+  ::
+      %url   s+url.u.avat
   ==
 ::
 ++  update-to-json
@@ -73,7 +99,7 @@
       %-  pairs
       :~  [%path (path path.upd)]
           [%ship (ship ship.upd)]
-          [%contact (contact-to-json contact.upd)]
+          [%contact (contact-to-json path.upd ship.upd contact.upd)]
       ==
     ?:  ?=(%remove -.upd)
       :-  %remove
@@ -86,7 +112,7 @@
       %-  pairs
       :~  [%path (path path.upd)]
           [%ship (ship ship.upd)]
-          [%edit-field (edit-to-json edit-field.upd)]
+          [%edit-field (edit-to-json path.upd ship.upd edit-field.upd)]
       ==
     [*@t *^json]
   ==
@@ -179,10 +205,31 @@
   ==
 ::
 ++  avat
-  %-  ot:dejs:format
-  :~  [%content-type so:dejs:format]
-      [%octs octet]
+  |=  jon=json
+  ^-  avatar
+  |^
+  =/  =avatar  (parse-json jon)
+  ?-  -.avatar
+      %url   avatar
+      %octt
+    =.  octs.avatar  (need (de:base64 q.octs.avatar))
+    avatar
   ==
+  ::
+  ++  parse-json
+    %-  of:dejs:format
+    :~  [%octt octt]
+        [%url url]
+    ==
+  ::
+  ++  octt
+    %-  ot:dejs:format
+    :~  [%content-type so:dejs:format]
+        [%octs octet]
+    ==
+  ::
+  ++  url  so:dejs:format
+  --
 ::
 ++  cont
   %-  ot:dejs:format

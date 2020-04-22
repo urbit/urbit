@@ -119,6 +119,9 @@ this:
 ```
 urbit-vx.y.z
 
+Note that this Vere release will by default boot fresh ships using an Urbit OS
+va.b.c pill.
+
 Release binaries:
 
 (linux64)
@@ -138,9 +141,11 @@ Contributions:
 
 The same schpeel re: release candidates applies here.
 
-Do not include implicit Urbit OS changes in Vere releases.  This used to be
-done, historically, but shouldn't be any longer.  If there are Urbit OS and
-Vere changes to be released, make two releases.
+Note that the release notes indicate which version of Urbit OS the Vere release
+will use by default when booting fresh ships.  Do not include implicit Urbit OS
+changes in Vere releases; this used to be done, historically, but shouldn't be
+any longer.  If there are Urbit OS and Vere changes to be released, make two
+separate releases.
 
 ### Deploy the update
 

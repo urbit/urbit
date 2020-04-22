@@ -5,18 +5,33 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-zero
+      state-one
+  ==
+::
++$  rolodex-0  (map path contacts-0)
++$  contacts-0  (map ship contact-0)
++$  avatar-0  [content-type=@t octs=[p=@ud q=@t]]
++$  contact-0
+  $:  nickname=@t
+      email=@t
+      phone=@t
+      website=@t
+      notes=@t
+      color=@ux
+      avatar=(unit avatar-0)
   ==
 ::
 +$  state-zero
   $:  %0
-      =rolodex
+      rolodex=rolodex-0
   ==
-+$  diff
-  $%  [%contact-update contact-update]
++$  state-one
+  $:  %1
+      =rolodex
   ==
 --
 ::
-=|  state-zero
+=|  state-one
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -30,8 +45,26 @@
   ++  on-init   on-init:def
   ++  on-save   !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
+    |=  old-vase=vase
+    =/  old  !<(versioned-state old-vase)
+    ?:  ?=(%1 -.old)
+      [~ this(state old)]
+    =/  new-rolodex=^rolodex
+      %-  ~(run by rolodex.old)
+      |=  cons=contacts-0
+      ^-  contacts
+      %-  ~(run by cons)
+      |=  con=contact-0
+      ^-  contact
+      :*  nickname.con
+          email.con
+          phone.con
+          website.con
+          notes.con
+          color.con
+          ~
+      ==
+    [~ this(state [%1 new-rolodex])]
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -142,7 +175,7 @@
   |=  [=path =ship]
   ^-  (quip card _state)
   =/  contacts  (~(got by rolodex) path)
-  ?>  (~(has by contacts) ship)
+  ?.  (~(has by contacts) ship)  [~ state]
   =.  contacts  (~(del by contacts) ship)
   :-  (send-diff path [%remove path ship])
   state(rolodex (~(put by rolodex) path contacts))

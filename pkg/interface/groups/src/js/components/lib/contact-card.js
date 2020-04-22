@@ -313,7 +313,7 @@ export class ContactCard extends Component {
     );
 
     this.setState({ awaiting: true, type: 'Removing from group' }, (() => {
-      api.contactHook.remove(props.path, `~${props.ship}`).then(() => {
+      api.contactView.delete(props.path).then(() => {
         const destination = (props.ship === window.ship)
           ? '' : props.path;
         this.setState({ awaiting: false });
@@ -379,16 +379,6 @@ export class ContactCard extends Component {
       );
     }
 
-    const removeImage = hasAvatar ? (
-        <div>
-          <button className="f9 black pointer db"
-            onClick={() => this.setField('removeAvatar')}
-          >
-            Remove photo
-          </button>
-        </div>
-      ) : '';
-
     const avatar = (hasAvatar)
       ? <img className="dib h-auto" width={128} src={props.contact.avatar} />
       : <Sigil
@@ -403,7 +393,6 @@ export class ContactCard extends Component {
         <div className="w-100 mw6 tc">
           {avatar}
           {sigilColor}
-          {removeImage}
           <div className="w-100 pt8 pb8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
             <p className="f8 mono">~{props.ship}</p>

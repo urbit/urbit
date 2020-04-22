@@ -10,6 +10,7 @@ import { Skeleton } from '/components/skeleton';
 import { NewScreen } from '/components/new';
 import { MemberScreen } from '/components/member';
 import { SettingsScreen } from '/components/settings';
+import { MessageScreen } from '/components/lib/message-screen';
 import { Links } from '/components/links-list';
 import { LinkDetail } from '/components/link';
 import { makeRoutePath, amOwnerOfGroup, base64urlDecode } from '../lib/util';
@@ -63,13 +64,7 @@ export class Root extends Component {
                 selectedGroups={selectedGroups}
                 links={links}
                 listening={state.listening}>
-                <div className="h-100 w-100 overflow-x-hidden bg-white bg-gray0-d dn db-ns">
-                <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
-                      <p className="f8 pt3 gray2 w-100 h-100 dtc v-mid tc">
-                        Select or create a collection to begin.
-                      </p>
-                    </div>
-                </div>
+                <MessageScreen text="Select or create a collection to begin."/>
               </Skeleton>
             );
           }} />
