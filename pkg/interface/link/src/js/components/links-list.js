@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { LoadingScreen } from './loading';
+import { MessageScreen } from '/components/lib/message-screen';
 import { LinksTabBar } from './lib/links-tabbar';
 import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { Route, Link } from "react-router-dom";
@@ -19,11 +20,18 @@ export class Links extends Component {
     this.componentDidUpdate();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     const linkPage = this.props.page;
-    if ( (this.props.page != 0) &&
-         (!this.props.links[linkPage] ||
-          this.props.links.local[linkPage])
+    // if we just navigated to this particular page,
+    // and don't have links for it yet,
+    // or the links we have might not be complete,
+    // request the links for that page.
+    if ( (!prevProps ||
+          linkPage !== prevProps.page ||
+          this.props.resourcePath !== prevProps.resourcePath
+         ) &&
+         !this.props.links[linkPage] ||
+         this.props.links.local[linkPage]
     ) {
       api.getPage(this.props.resourcePath, this.props.page);
     }
@@ -50,38 +58,45 @@ export class Links extends Component {
     ? Number(props.links.totalPages)
     : 1;
 
-    let LinkList = Object.keys(links)
-    .map((linkIndex) => {
-      let linksObj = props.links[linkPage];
-      let { title, url, time, ship } = linksObj[linkIndex];
-      const seen = props.seen[url];
-      let members = {};
+    let LinkList = (<LoadingScreen/>);
+    if (props.links && props.links.totalItems === 0) {
+      LinkList = (
+        <MessageScreen text="Start by posting a link to this collection."/>
+      );
+    } else if (Object.keys(links).length > 0) {
+      LinkList = Object.keys(links)
+      .map((linkIndex) => {
+        let linksObj = props.links[linkPage];
+        let { title, url, time, ship } = linksObj[linkIndex];
+        const seen = props.seen[url];
+        let members = {};
 
-      const commentCount = props.comments[url]
-        ? props.comments[url].totalItems
-        : linksObj[linkIndex].commentCount || 0;
+        const commentCount = props.comments[url]
+          ? props.comments[url].totalItems
+          : linksObj[linkIndex].commentCount || 0;
 
-      const {nickname, color, member} = getContactDetails(props.contacts[ship]);
+        const {nickname, color, member} = getContactDetails(props.contacts[ship]);
 
-      return (
-        <LinkItem
-        key={time}
-        title={title}
-        page={props.page}
-        linkIndex={linkIndex}
-        url={url}
-        timestamp={time}
-        seen={seen}
-        nickname={nickname}
-        ship={ship}
-        color={color}
-        member={member}
-        comments={commentCount}
-        resourcePath={props.resourcePath}
-        popout={props.popout}
-        />
-      )
-    })
+        return (
+          <LinkItem
+          key={time}
+          title={title}
+          page={props.page}
+          linkIndex={linkIndex}
+          url={url}
+          timestamp={time}
+          seen={seen}
+          nickname={nickname}
+          ship={ship}
+          color={color}
+          member={member}
+          comments={commentCount}
+          resourcePath={props.resourcePath}
+          popout={props.popout}
+          />
+        )
+      });
+    }
 
     return (
       <div

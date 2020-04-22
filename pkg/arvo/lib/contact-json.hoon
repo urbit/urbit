@@ -1,10 +1,21 @@
-/-  *contact-view
+/-  *contact-view, *contact-hook
 /+  base64
 |%
 ++  nu                                              ::  parse number as hex
   |=  jon/json
   ?>  ?=({$s *} jon)
   (rash p.jon hex)
+::
+++  hook-update-to-json
+  |=  upd=contact-hook-update
+  =,  enjs:format
+  ^-  json
+  %+  frond  %contact-hook-update
+  %-  pairs
+  %+  turn  ~(tap by synced.upd)
+  |=  [pax=^path shp=^ship]
+  ^-  [cord json]
+  [(spat pax) s+(scot %p shp)]
 ::
 ++  rolodex-to-json
   |=  rolo=rolodex

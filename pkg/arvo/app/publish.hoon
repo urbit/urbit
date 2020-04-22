@@ -1938,8 +1938,6 @@
     =/  old-comment  (~(get by comments.u.note) comment-date.del)
     ?~  old-comment
       [~ sty]
-    ?:  =(our.bol author.u.old-comment)
-      [~ sty]
     =.  comments.u.note  (~(put by comments.u.note) comment-date.del data.del)
     =.  notes.u.book  (~(put by notes.u.book) note.del u.note)
     (emit-updates-and-state host.del book.del u.book del sty)

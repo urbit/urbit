@@ -9,14 +9,7 @@ import { LocalReducer } from '/reducers/local.js';
 
 class Store {
   constructor() {
-    this.state = {
-      contacts: {},
-      groups: {},
-      associations: {},
-      permissions: {},
-      invites: {},
-      selectedGroups: []
-    };
+    this.state = this.initialState();
 
     this.initialReducer = new InitialReducer();
     this.groupUpdateReducer = new GroupUpdateReducer();
@@ -28,12 +21,28 @@ class Store {
     this.setState = () => {};
   }
 
+  initialState() {
+    return {
+      contacts: {},
+      groups: {},
+      associations: {},
+      permissions: {},
+      invites: {},
+      selectedGroups: []
+    };
+  }
+
   setStateHandler(setState) {
     this.setState = setState;
   }
 
   handleEvent(data) {
     let json = data.data;
+
+    if ('clear' in json && json.clear) {
+      this.setState(this.initialState());
+      return;
+    }
 
     console.log(json);
     this.initialReducer.reduce(json, this.state);
