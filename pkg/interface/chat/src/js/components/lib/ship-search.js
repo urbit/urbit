@@ -1,25 +1,26 @@
-import React, { Component } from "react";
-import _ from "lodash";
-import urbitOb from "urbit-ob";
+import React, { Component } from 'react';
+import _ from 'lodash';
+import urbitOb from 'urbit-ob';
+import Mousetrap from 'mousetrap';
 
-import cn from "classnames";
-import { Sigil } from "/components/lib/icons/sigil";
-import { hexToRgba, uxToHex, deSig } from "/lib/util";
+import cn from 'classnames';
+import { Sigil } from '/components/lib/icons/sigil';
+import { hexToRgba, uxToHex, deSig } from '/lib/util';
 
 function ShipSearchItem({ ship, contacts, selected, onSelect }) {
-  let contact = contacts[ship];
-  let color = "#000000";
-  let sigilClass = "v-mid mix-blend-diff";
+  const contact = contacts[ship];
+  let color = '#000000';
+  let sigilClass = 'v-mid mix-blend-diff';
   let nickname;
-  let nameStyle = {};
+  const nameStyle = {};
   const isSelected = ship === selected;
   if (contact) {
     const hex = uxToHex(contact.color);
     color = `#${hex}`;
     nameStyle.color = hexToRgba(hex, 0.7);
-    nameStyle.textShadow = "0px 0px 0px #000";
-    nameStyle.filter = "contrast(1.3) saturate(1.5)";
-    sigilClass = "v-mid";
+    nameStyle.textShadow = '0px 0px 0px #000';
+    nameStyle.filter = 'contrast(1.3) saturate(1.5)';
+    sigilClass = 'v-mid';
     nickname = contact.nickname;
   }
 
@@ -27,21 +28,21 @@ function ShipSearchItem({ ship, contacts, selected, onSelect }) {
     <div
       onClick={() => onSelect(ship)}
       className={cn(
-        "f8 pv1 ph3 pointer hover-bg-gray1-d hover-bg-gray4 relative flex items-center",
+        'f8 pv1 ph3 pointer hover-bg-gray1-d hover-bg-gray4 relative flex items-center',
         {
-          "white-d bg-gray0-d bg-white": !isSelected,
-          "black-d bg-gray1-d bg-gray4": isSelected
+          'white-d bg-gray0-d bg-white': !isSelected,
+          'black-d bg-gray1-d bg-gray4': isSelected
         }
       )}
       key={ship}
     >
-      <Sigil ship={"~" + ship} size={24} color={color} classes={sigilClass} />
+      <Sigil ship={'~' + ship} size={24} color={color} classes={sigilClass} />
       {nickname && (
         <p style={nameStyle} className="dib ml4 b">
           {nickname}
         </p>
       )}
-      <div className="mono gray2 gray4-d ml4">{"~" + ship}</div>
+      <div className="mono gray2 gray4-d ml4">{'~' + ship}</div>
       <p className="nowrap ml4">{status}</p>
     </div>
   );
@@ -58,31 +59,30 @@ export class ShipSearch extends Component {
     };
 
     this.keymap = {
-        Tab: (cm) =>
+        Tab: cm =>
           this.nextAutocompleteSuggestion(),
-        'Shift-Tab': (cm) =>
+        'Shift-Tab': cm =>
           this.nextAutocompleteSuggestion(true),
-        'Up': (cm) =>
+        'Up': cm =>
           this.nextAutocompleteSuggestion(true),
-        'Escape': (cm) =>
+        'Escape': cm =>
           this.props.onClear(),
-        'Down': (cm) =>
+        'Down': cm =>
           this.nextAutocompleteSuggestion(),
         'Enter': (cm) => {
           if(this.props.searchTerm !== null) {
             this.props.onSelect(this.state.selected);
           }
         },
-        'Shift-3': (cm) =>
+        'Shift-3': cm =>
           this.toggleCode()
-    }
+    };
   }
 
   componentDidMount() {
     if(this.props.searchTerm !== null) {
       this.updateSuggestions(true);
     }
-
   }
 
   componentDidUpdate(prevProps) {
@@ -109,12 +109,11 @@ export class ShipSearch extends Component {
     } else if (prevProps.searchTerm !== props.searchTerm) {
       this.updateSuggestions(true);
     }
-
   }
 
   updateSuggestions(isStale = false) {
     const needle = this.props.searchTerm;
-    const matchString = hay => {
+    const matchString = (hay) => {
       hay = hay.toLowerCase();
 
       return (
@@ -132,7 +131,7 @@ export class ShipSearch extends Component {
         .filter(
           ({ nickname, ship }) => matchString(nickname) || matchString(ship)
         )
-        .map("ship")
+        .map('ship')
         .value();
 
       const exactMatch = urbitOb.isValidPatp(`~${needle}`) ? [needle] : [];
@@ -179,7 +178,7 @@ export class ShipSearch extends Component {
       this.mousetrap = new Mousetrap(this.props.inputRef);
     }
 
-    this.mousetrap.bind("enter", e => {
+    this.mousetrap.bind('enter', (e) => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -189,22 +188,22 @@ export class ShipSearch extends Component {
       }
     });
 
-    this.mousetrap.bind("tab", e => {
+    this.mousetrap.bind('tab', (e) => {
       e.preventDefault();
       e.stopPropagation();
       this.nextAutocompleteSuggestion(false);
     });
-    this.mousetrap.bind(["up", "shift+tab"], e => {
+    this.mousetrap.bind(['up', 'shift+tab'], (e) => {
       e.preventDefault();
       e.stopPropagation();
       this.nextAutocompleteSuggestion(true);
     });
-    this.mousetrap.bind("down", e => {
+    this.mousetrap.bind('down', (e) => {
       e.preventDefault();
       e.stopPropagation();
       this.nextAutocompleteSuggestion(false);
     });
-    this.mousetrap.bind("esc", e => {
+    this.mousetrap.bind('esc', (e) => {
       e.preventDefault();
       e.stopPropagation();
       this.props.onClear();
@@ -213,7 +212,7 @@ export class ShipSearch extends Component {
 
   unbindShortcuts() {
     if(!this.props.inputRef) {
-      this.unbindCmShortcuts()
+      this.unbindCmShortcuts();
     }
 
     if (!this.state.bound) {
@@ -221,11 +220,11 @@ export class ShipSearch extends Component {
     }
 
     this.setState({ bound: false });
-    this.mousetrap.unbind("enter");
-    this.mousetrap.unbind("tab");
-    this.mousetrap.unbind(["up", "shift+tab"]);
-    this.mousetrap.unbind("down");
-    this.mousetrap.unbind("esc");
+    this.mousetrap.unbind('enter');
+    this.mousetrap.unbind('tab');
+    this.mousetrap.unbind(['up', 'shift+tab']);
+    this.mousetrap.unbind('down');
+    this.mousetrap.unbind('esc');
   }
 
   nextAutocompleteSuggestion(backward = false) {
@@ -249,22 +248,22 @@ export class ShipSearch extends Component {
       return null;
     }
 
-    const popoverClasses = (popover && " absolute ") || " ";
+    const popoverClasses = (popover && ' absolute ') || ' ';
     return (
       <div
         style={
           popover
             ? {
-                bottom: "90%",
-                left: "48px"
+                bottom: '90%',
+                left: '48px'
               }
             : {}
         }
         className={
-          "black white-d bg-white bg-gray0-d " +
-            "w7 pv3 z-1 mt1 ba b--gray1-d b--gray4" +
+          'black white-d bg-white bg-gray0-d ' +
+            'w7 pv3 z-1 mt1 ba b--gray1-d b--gray4' +
             popoverClasses +
-            className || ""
+            className || ''
         }
       >
         {suggestions.slice(0, 5).map(ship => (
@@ -285,7 +284,7 @@ export class ShipSearchInput extends Component {
   constructor() {
     super();
     this.state = {
-      searchTerm: ""
+      searchTerm: ''
     };
 
     this.inputRef = null;
@@ -308,13 +307,13 @@ export class ShipSearchInput extends Component {
   }
 
   componentDidMount() {
-    document.addEventListener("mousedown", this.onClick);
-    document.addEventListener("touchstart", this.onClick);
+    document.addEventListener('mousedown', this.onClick);
+    document.addEventListener('touchstart', this.onClick);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("mousedown", this.onClick);
-    document.removeEventListener("touchstart", this.onClick);
+    document.removeEventListener('mousedown', this.onClick);
+    document.removeEventListener('touchstart', this.onClick);
   }
 
   setInputRef(ref) {
@@ -337,11 +336,11 @@ export class ShipSearchInput extends Component {
     return (
       <div
         ref={ref => (this.popoverRef = ref)}
-        style={{ top: "150%", left: "-80px" }}
+        style={{ top: '150%', left: '-80px' }}
         className="b--gray2 b--solid ba absolute bg-white bg-gray0-d shadow-5"
       >
         <textarea
-          style={{ resize: "none", maxWidth: '200px' }}
+          style={{ resize: 'none', maxWidth: '200px' }}
           className="ma2 pa2 b--gray4 ba b--solid w7 db bg-gray0-d white-d"
           rows={1}
           autocapitalise="none"
