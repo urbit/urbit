@@ -231,6 +231,19 @@
     =/  =note-arvo  [%f %kill ~]
     (mo-pass wire note-arvo)
   ::
+  ::  +mo-dump: write gall state to jamfile
+  ::
+  ++  mo-dump
+    ^+  mo-core
+    =/  =lore
+      %-  ~(run by running.agents.state)
+      |=  ag=running-agent
+      :+  on-save:agent.ag
+        outgoing.subscribers.ag
+      incoming.subscribers.ag
+    =/  =note-arvo  [%d %saga /put/backup lore]
+    (mo-pass /sys/sag note-arvo)
+  ::
   ::  +mo-goad: rebuild agent(s)
   ::
   ++  mo-goad
@@ -447,9 +460,15 @@
       %pel  (mo-handle-sys-pel path sign-arvo)
       %rep  (mo-handle-sys-rep path sign-arvo)
       %req  (mo-handle-sys-req path sign-arvo)
+      %sag  (mo-handle-sys-sag path sign-arvo)
       %val  (mo-handle-sys-val path sign-arvo)
       %way  (mo-handle-sys-way path sign-arvo)
     ==
+  ::  +mo-handle-sys-sag: handle jamfile write
+  ::
+  ++  mo-handle-sys-sag
+    |=  [=path =sign-arvo]
+    mo-core
   ::  +mo-handle-sys-era: receive update about contact
   ::
   ++  mo-handle-sys-era
@@ -1598,6 +1617,9 @@
     ::
     =>  (mo-handle-local:initialised p.sock term deal)
     mo-abet
+  ::
+      %dump
+    mo-abet:mo-dump:initialised
   ::
       %goad
     mo-abet:(mo-goad:initialised force.task agent.task)

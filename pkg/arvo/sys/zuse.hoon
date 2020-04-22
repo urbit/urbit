@@ -1826,6 +1826,7 @@
       $%  [$conf p=dock q=dock]                         ::  configure app
           [$deal p=sock q=term r=deal]                  ::  full transmission
           [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
+          [%dump ~]                                     ::  export current state
           [%sear =ship]                                 ::  clear pending queues
           $>(%init vane-task)                           ::  set owner
           $>(%trim vane-task)                           ::  trim state
@@ -1854,6 +1855,7 @@
           ==  ==                                        ::
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
+  ++  lore  (map dude ,[state=vase wex=boat sup=bitt])   ::  jammed state for backup
   ++  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
