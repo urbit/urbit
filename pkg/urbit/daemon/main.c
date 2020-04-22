@@ -20,6 +20,7 @@
 #include <h2o.h>
 #include <curl/curl.h>
 #include <argon2.h>
+#include <lmdb.h>
 
 #define U3_GLOBAL
 #define C3_GLOBAL

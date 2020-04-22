@@ -18,6 +18,7 @@
 
 #include "all.h"
 #include "vere/vere.h"
+#include <vere/db/lmdb.h>
 
 struct _cd_read {
   c3_d             eve_d;
@@ -27,12 +28,26 @@ struct _cd_read {
   struct _u3_disk* log_u;
 };
 
-typedef struct _u3_db_batch {
-  c3_d             eve_d;               //  first event
-  c3_d             len_d;               //  number of events
-  void**           byt_p;               //  array of bytes
-  size_t*          siz_i;               //  array of lengths
-} u3_db_batch;
+/* u3_db_batch: database write batch
+*/
+  typedef struct _u3_db_batch {
+    c3_d             eve_d;               //  first event
+    c3_d             len_d;               //  number of events
+    void**           byt_p;               //  array of bytes
+    size_t*          siz_i;               //  array of lengths
+  } u3_db_batch;
+
+/* _write_request: callback struct for c3_lmdb_write_event()
+**
+**   Note that [env_u] is thread-safe, but, transactions and handles
+**   opened from it are explicitly not. [dun_f] is called on the main thread
+**
+*/
+struct _cd_save {
+  c3_o             ret_o;               //  result
+  u3_db_batch*     bat_u;               //  write batch
+  struct _u3_disk* log_u;
+};
 
 #undef VERBOSE_DISK
 
@@ -109,11 +124,23 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
       return 0;
     }
 
-    if ( 0 == (log_u->db_u = u3_lmdb_init(log_c)) ) {
-      fprintf(stderr, "disk: failed to initialize database");
-      c3_free(log_c);
-      c3_free(log_u);
-      return 0;
+    {
+      // TODO: Start with forty gigabytes on macOS and sixty otherwise for the
+      // maximum event log size. We'll need to do something more sophisticated for
+      // real in the long term, though.
+      //
+#ifdef U3_OS_osx
+      const size_t siz_w = 42949672960;
+#else
+      const size_t siz_w = 64424509440;;
+#endif
+
+      if ( 0 == (log_u->mdb_u = c3_lmdb_init(log_c, siz_w)) ) {
+        fprintf(stderr, "disk: failed to initialize database");
+        c3_free(log_c);
+        c3_free(log_u);
+        return 0;
+      }
     }
 
     c3_free(log_c);
@@ -123,8 +150,9 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
   //
   {
     log_u->dun_d = 0;
+    c3_d fir_d;
 
-    if ( c3n == u3_lmdb_get_latest_event_number(log_u->db_u, &log_u->dun_d) ) {
+    if ( c3n == c3_lmdb_gulf(log_u->mdb_u, &fir_d, &log_u->dun_d) ) {
       fprintf(stderr, "disk: failed to load latest event from database");
       c3_free(log_u);
       return 0;
@@ -138,12 +166,59 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
   return log_u;
 }
 
+static void
+_disk_meta_read_cb(void* vod_p, size_t val_i, void* val_p)
+{
+  u3_weak* mat = vod_p;
+
+  if ( val_p ) {
+    *mat = u3i_bytes(val_i, val_p);
+  }
+}
+
+static u3_weak
+_disk_read_meta(u3_disk* log_u, const c3_c* key_c)
+{
+  u3_weak mat = u3_none;
+
+  c3_lmdb_read_meta(log_u->mdb_u, &mat, "who", _disk_meta_read_cb);
+
+  if ( u3_none == mat ) {
+    return u3_none;
+  }
+
+  {
+    u3_noun pro = u3m_soft(0, u3ke_cue, mat);
+    u3_noun tag, dat;
+    u3x_cell(pro, &tag, &dat);
+
+    if ( u3_blip == tag ) {
+      u3k(dat);
+      u3z(pro);
+      return dat;
+    }
+    else {
+      fprintf(stderr, "disk: meta cue failed\r\n");
+      u3z(pro);
+      return u3_none;
+    }
+  }
+}
+
 c3_o
 u3_disk_read_header(u3_disk* log_u, c3_d* who_d, c3_o* fak_o, c3_w* lif_w)
 {
-  u3_noun who, fak, lif;
+  u3_weak who = _disk_read_meta(log_u, "who");
+  u3_weak fak = _disk_read_meta(log_u, "is-fake");
+  u3_weak lif = _disk_read_meta(log_u, "life");
 
-  if ( c3n == u3_lmdb_read_identity(log_u->db_u, &who, &fak, &lif) ) {
+  if ( u3_none == who ) {
+    return c3n;
+  }
+  else if (  (u3_none == fak)
+          || (u3_none == lif) )
+  {
+    u3z(who);
     return c3n;
   }
 
@@ -167,25 +242,64 @@ u3_disk_read_header(u3_disk* log_u, c3_d* who_d, c3_o* fak_o, c3_w* lif_w)
   }
 
   u3z(who);
-
   return c3y;
+}
+
+static c3_o
+_disk_save_meta(u3_disk* log_u, const c3_c* key_c, u3_atom dat)
+{
+  u3_atom  mat = u3ke_jam(dat);
+  c3_w   len_w = u3r_met(3, mat);
+  c3_y*  byt_y = c3_malloc(len_w);
+  c3_o   ret_o;
+
+  u3r_bytes(0, len_w, byt_y, mat);
+
+  ret_o = c3_lmdb_save_meta(log_u->mdb_u, key_c, len_w, byt_y);
+
+  u3z(mat);
+  c3_free(byt_y);
+
+  return ret_o;
 }
 
 c3_o
 u3_disk_write_header(u3_disk* log_u, c3_d who_d[2], c3_o fak_o, c3_w lif_w)
 {
   c3_assert( c3y == u3a_is_cat(lif_w) );
-  u3_noun who = u3i_chubs(2, who_d);
-  return u3_lmdb_write_identity(log_u->db_u, who, fak_o, lif_w);
+
+  if (  (c3n == _disk_save_meta(log_u, "who", u3i_chubs(2, who_d)))
+     || (c3n == _disk_save_meta(log_u, "is-fake", fak_o))
+     || (c3n == _disk_save_meta(log_u, "life", lif_w)) )
+  {
+    //  XX dispose?
+    //
+    return c3n;
+  }
+
+  return c3y;
 }
 
+static void
+_disk_free_batch(u3_db_batch* bat_u)
+{
+  while ( bat_u->len_d-- ) {
+    c3_free(bat_u->byt_p[bat_u->len_d]);
+  }
+
+  c3_free(bat_u->byt_p);
+  c3_free(bat_u->siz_i);
+  c3_free(bat_u);
+}
 
 /* _disk_commit_done(): commit complete.
  */
 static void
-_disk_commit_done(c3_o ret_o, void* vod_p, c3_d eve_d, c3_d len_d)
+_disk_commit_done(void* vod_p, c3_o ret_o, u3_db_batch* bat_u)
 {
   u3_disk* log_u = vod_p;
+  c3_d     eve_d = bat_u->eve_d;
+  c3_d     len_d = bat_u->len_d;
 
   if ( c3n == ret_o ) {
     log_u->cb_u.write_bail_f(log_u->cb_u.vod_p, eve_d + (len_d - 1ULL));
@@ -232,8 +346,69 @@ _disk_commit_done(c3_o ret_o, void* vod_p, c3_d eve_d, c3_d len_d)
     log_u->put_u.ent_u = 0;
   }
 
+  _disk_free_batch(bat_u);
+
   log_u->hol_o = c3n;
   _disk_commit(log_u);
+}
+
+
+
+
+/* _disk_commit_after_cb(): Implementation of c3_lmdb_write_event()
+**
+** This is always run on the main loop thread after the worker thread event
+** completes.
+*/
+static void
+_disk_commit_after_cb(uv_work_t* ted_u, int status)
+{
+  struct _cd_save* req_u = ted_u->data;
+  _disk_commit_done(req_u->log_u, req_u->ret_o, req_u->bat_u);
+  c3_free(req_u);
+  c3_free(ted_u);
+}
+
+/* _lmdb_write_event_cb(): Implementation of c3_lmdb_write_event()
+**
+** This is always run on a libuv background worker thread; actual nouns cannot
+** be touched here.
+*/
+static void
+_disk_commit_cb(uv_work_t* ted_u)
+{
+  struct _cd_save* req_u = ted_u->data;
+  u3_db_batch*     bat_u = req_u->bat_u;
+  req_u->ret_o = c3_lmdb_save(req_u->log_u->mdb_u,
+                              bat_u->eve_d,
+                              bat_u->len_d,
+                              bat_u->byt_p,
+                              bat_u->siz_i);
+}
+
+/* c3_lmdb_write_event(): Asynchronously writes events to the database.
+**
+** This writes all the passed in events along with log metadata updates to the
+** database as a single transaction on a worker thread. Once the transaction
+** is completed, it calls the passed in callback on the main loop thread.
+*/
+static void
+_disk_commit_start(u3_disk* log_u, u3_db_batch* bat_u)
+{
+  //  structure to pass to the worker thread.
+  //
+  struct _cd_save* req_u = c3_malloc(sizeof(*req_u));
+  req_u->log_u = log_u;
+  req_u->bat_u = bat_u;
+  req_u->ret_o = c3n;
+
+  //  queue asynchronous work to happen on another thread
+  //
+  uv_work_t* ted_u = c3_malloc(sizeof(*ted_u));
+  ted_u->data = req_u;
+
+  uv_queue_work(u3L, ted_u, _disk_commit_cb,
+                            _disk_commit_after_cb);
 }
 
 static void
@@ -281,10 +456,7 @@ _disk_commit(u3_disk* log_u)
     }
 #endif
 
-    u3_lmdb_write_event(log_u->db_u, (u3_pier*)log_u,
-                        (struct u3_lmdb_write_request*)bat_u,
-                        (void(*)(c3_o, u3_pier*, c3_d, c3_d))_disk_commit_done);
-
+    _disk_commit_start(log_u, bat_u);
     log_u->hol_o = c3y;
   }
 }
@@ -369,7 +541,7 @@ _disk_read_done_cb(uv_timer_t* tim_u)
 }
 
 static c3_o
-_disk_read_one_cb(void* vod_p, c3_d eve_d, u3_atom mat)
+_disk_read_one_cb(void* vod_p, c3_d eve_d, size_t val_i, void* val_p)
 {
   struct _cd_read* red_u = vod_p;
   u3_disk* log_u = red_u->log_u;
@@ -379,7 +551,7 @@ _disk_read_one_cb(void* vod_p, c3_d eve_d, u3_atom mat)
   {
     //  xx soft?
     //
-    u3_noun dat = u3ke_cue(mat);
+    u3_noun dat = u3ke_cue(u3i_bytes(val_i, val_p));
     u3_noun mug, job;
 
     if (  (c3n == u3r_cell(dat, &mug, &job))
@@ -420,11 +592,11 @@ _disk_read_start_cb(uv_timer_t* tim_u)
 
   uv_timer_start(&log_u->tim_u, _disk_read_done_cb, 0, 0);
 
-  if ( c3n == u3_lmdb_read_events(log_u->db_u,
-                                  red_u->eve_d,
-                                  red_u->len_d,
-                                  red_u,
-                                  _disk_read_one_cb) )
+  if ( c3n == c3_lmdb_read(log_u->mdb_u,
+                           red_u,
+                           red_u->eve_d,
+                           red_u->len_d,
+                           _disk_read_one_cb) )
   {
     log_u->cb_u.read_bail_f(log_u->cb_u.vod_p, red_u->eve_d);
   }
@@ -448,7 +620,7 @@ u3_disk_read(u3_disk* log_u, c3_d eve_d, c3_d len_d)
 void
 u3_disk_exit(u3_disk* log_u)
 {
-  u3_lmdb_shutdown(log_u->db_u);
+  c3_lmdb_exit(log_u->mdb_u);
   //  XX dispose
   //
 }
