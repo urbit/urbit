@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
-import cn from 'classnames';
 import { UnControlled as CodeEditor } from 'react-codemirror2';
-import CodeMirror from 'codemirror';
 
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
 
 import { Sigil } from '/components/lib/icons/sigil';
+import { ShipSearch } from '/components/lib/ship-search';
 
-import { uxToHex, hexToRgba } from '/lib/util';
+import { uxToHex } from '/lib/util';
 
 const MARKDOWN_CONFIG = {
   name: 'markdown',
@@ -32,78 +31,6 @@ const MARKDOWN_CONFIG = {
   }
 };
 
-function ChatInputSuggestion({ ship, contacts, selected, onSelect }) {
-  const contact = contacts[ship];
-  let color = '#000000';
-  let sigilClass = 'v-mid mix-blend-diff';
-  let nickname;
-  const nameStyle = {};
-  const isSelected = ship === selected;
-  if (contact) {
-    const hex = uxToHex(contact.color);
-    color = `#${hex}`;
-    nameStyle.color = hexToRgba(hex, .7);
-    nameStyle.textShadow = '0px 0px 0px #000';
-    nameStyle.filter = 'contrast(1.3) saturate(1.5)';
-    sigilClass = 'v-mid';
-    nickname = contact.nickname;
-  }
-
-  return (
-    <div
-      onClick={() => onSelect(ship)}
-      className={cn(
-        'f8 pv1 ph3 pointer hover-bg-gray1-d hover-bg-gray4 relative flex items-center',
-        {
-          'white-d bg-gray0-d bg-white': !isSelected,
-          'black-d bg-gray1-d bg-gray4': isSelected
-        }
-      )}
-      key={ship}
-    >
-      <Sigil
-        ship={'~' + ship}
-        size={24}
-        color={color}
-        classes={sigilClass}
-      />
-      { nickname && (
-        <p style={nameStyle} className="dib ml4 b" >{nickname}</p>)
-      }
-      <div className="mono gray2 ml4">
-        {'~' + ship}
-      </div>
-      <p className="nowrap ml4">
-        {status}
-      </p>
-    </div>
-  );
-}
-
-function ChatInputSuggestions({ suggestions, onSelect, selected, contacts }) {
-  return (
-    <div
-      style={{
-        bottom: '90%',
-        left: '48px'
-      }}
-      className={
-        'absolute black white-d bg-white bg-gray0-d ' +
-        'w7 pv3 z-1 mt1 ba b--gray1-d b--gray4'
-      }
-    >
-      {suggestions.map(ship =>
-        (<ChatInputSuggestion
-           onSelect={onSelect}
-           key={ship}
-           selected={selected}
-           contacts={contacts}
-           ship={ship}
-         />)
-      )}
-    </div>
-  );
-}
 
 export class ChatInput extends Component {
   constructor(props) {
@@ -111,8 +38,7 @@ export class ChatInput extends Component {
 
     this.state = {
       message: '',
-      patpSuggestions: [],
-      selectedSuggestion: null
+      patpSearch: null
     };
 
     this.textareaRef = React.createRef();
@@ -121,10 +47,8 @@ export class ChatInput extends Component {
     this.messageChange = this.messageChange.bind(this);
 
     this.patpAutocomplete = this.patpAutocomplete.bind(this);
-    this.nextAutocompleteSuggestion = this.nextAutocompleteSuggestion.bind(this);
     this.completePatp = this.completePatp.bind(this);
-
-    this.clearSuggestions = this.clearSuggestions.bind(this);
+    this.clearSearch = this.clearSearch.bind(this);
 
     this.toggleCode = this.toggleCode.bind(this);
 
@@ -185,52 +109,20 @@ export class ChatInput extends Component {
     this.setState({ selectedSuggestion: patpSuggestions[idx] });
   }
 
-  patpAutocomplete(message, fresh = false) {
+  patpAutocomplete(message) {
     const match = /~([a-zA-Z\-]*)$/.exec(message);
 
     if (!match ) {
-      this.setState({ patpSuggestions: [] });
+      this.setState({ patpSearch: null });
       return;
     }
+    this.setState({ patpSearch: match[1].toLowerCase() });
 
-    const needle = match[1].toLowerCase();
-
-    const matchString = (hay) => {
-      hay = hay.toLowerCase();
-
-      return hay.startsWith(needle)
-        || _.some(_.words(hay), s => s.startsWith(needle));
-    };
-
-    const contacts = _.chain(this.props.contacts)
-      .defaultTo({})
-      .map((details, ship) => ({ ...details, ship }))
-      .filter(({ nickname, ship }) => matchString(nickname) || matchString(ship))
-      .map('ship')
-      .value();
-
-    const suggestions = _.chain(this.props.envelopes)
-      .defaultTo([])
-      .map('author')
-      .uniq()
-      .reverse()
-      .filter(matchString)
-      .union(contacts)
-      .filter(s => s.length < 28) // exclude comets
-      .take(5)
-      .value();
-
-    const newState = {
-      patpSuggestions: suggestions,
-      selectedSuggestion: suggestions[0]
-    };
-
-    this.setState(newState);
   }
 
-  clearSuggestions() {
+  clearSearch() {
     this.setState({
-      patpSuggestions: []
+      patpSearch: null
     });
   }
 
@@ -247,13 +139,13 @@ export class ChatInput extends Component {
     const lastCol = this.editor.getLineHandle(lastRow).text.length;
     this.editor.setCursor(lastRow, lastCol);
     this.setState({
-      patpSuggestions: []
+      patpSearch: null
     });
   }
 
   messageChange(editor, data, value) {
-    const { patpSuggestions } = this.state;
-    if(patpSuggestions.length !== 0) {
+    const { patpSearch } = this.state;
+    if(patpSearch !== null) {
       this.patpAutocomplete(value, false);
     }
   }
@@ -384,7 +276,12 @@ export class ChatInput extends Component {
     const sigilClass = props.ownerContact
       ? '' : 'mix-blend-diff';
 
-    const completeActive = this.state.patpSuggestions.length !== 0;
+    const candidates = _.chain(this.props.envelopes)
+      .defaultTo([])
+      .map('author')
+      .uniq()
+      .reverse()
+      .value();
 
     const codeTheme = state.code ? ' code' : '';
 
@@ -398,33 +295,11 @@ export class ChatInput extends Component {
       placeholder: state.code ? 'Code...' : props.placeholder,
       extraKeys: {
         Tab: cm =>
-          completeActive
-            ? this.nextAutocompleteSuggestion()
-            : this.patpAutocomplete(cm.getValue(), true),
-        'Shift-Tab': cm =>
-          completeActive
-            ? this.nextAutocompleteSuggestion(true)
-            : CodeMirror.Pass,
-        'Up': cm =>
-          completeActive
-            ? this.nextAutocompleteSuggestion(true)
-            : CodeMirror.Pass,
-        'Escape': cm =>
-          completeActive
-            ? this.clearSuggestions(true)
-            : CodeMirror.Pass,
-        'Down': cm =>
-          completeActive
-            ?  this.nextAutocompleteSuggestion()
-            :  CodeMirror.Pass,
+          this.patpAutocomplete(cm.getValue(), true),
         'Enter': cm =>
-          completeActive
-            ? this.completePatp(state.selectedSuggestion)
-            : this.messageSubmit(),
+            this.messageSubmit(),
         'Shift-3': cm =>
-          cm.getValue().length === 0
-            ? this.toggleCode()
-            : CodeMirror.Pass
+          this.toggleCode()
       }
     };
 
@@ -432,15 +307,15 @@ export class ChatInput extends Component {
       <div className="pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white bg-gray0-d relative"
       style={{ flexGrow: 1 }}
       >
-        {state.patpSuggestions.length !== 0 && (
-          <ChatInputSuggestions
-            onSelect={this.completePatp}
-            suggestions={state.patpSuggestions}
-            selected={state.selectedSuggestion}
-            contacts={props.contacts}
-          />
-        )}
-
+        <ShipSearch
+          popover
+          onSelect={this.completePatp}
+          onClear={this.clearSearch}
+          contacts={props.contacts}
+          candidates={candidates}
+          searchTerm={this.state.patpSearch}
+          cm={this.editor}
+        />
         <div
           className="fl"
           style={{

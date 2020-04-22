@@ -5,15 +5,33 @@ import Welcome from '/components/lib/welcome.js';
 import { alphabetiseAssociations } from '../lib/util';
 import { SidebarInvite } from '/components/lib/sidebar-invite';
 import { GroupItem } from '/components/lib/group-item';
+import { ShipSearchInput } from '/components/lib/ship-search';
 
 
 export class Sidebar extends Component {
+
+  constructor() {
+    super();
+    this.state = {
+      dmOverlay: false
+    };
+  }
   onClickNew() {
     this.props.history.push('/~chat/new');
   }
 
+  onClickDm() {
+    this.setState(({ dmOverlay }) => ({ dmOverlay: !dmOverlay }) )
+  }
+
   onClickJoin() {
     this.props.history.push('/~chat/join')
+  }
+
+  goDm(ship) {
+    this.setState({ dmOverlay: false }, () => {
+      this.props.history.push(`/~chat/new/dm/~${ship}`)
+    });
   }
 
   render() {
@@ -97,6 +115,14 @@ export class Sidebar extends Component {
           />
         )
       }
+    const candidates = state.dmOverlay
+          ? _.chain(this.props.contacts)
+               .values()
+               .map(_.keys)
+               .flatten()
+               .uniq()
+               .value()
+          : [];
 
     return (
       <div
@@ -108,6 +134,25 @@ export class Sidebar extends Component {
             onClick={this.onClickNew.bind(this)}>
             New Chat
           </a>
+
+          <div className="dib relative mr4">
+            { state.dmOverlay && (
+              <ShipSearchInput
+                className="absolute"
+                contacts={{}}
+                candidates={candidates}
+                onSelect={this.goDm.bind(this)}
+                onClear={this.onClickDm.bind(this)}
+
+              />
+            )}
+          <a
+            className="f9 pointer green2 gray4-d"
+            onClick={this.onClickDm.bind(this)}>
+            DM
+          </a>
+          </div>
+
           <a
             className="dib f9 pointer gray4-d"
             onClick={this.onClickJoin.bind(this)}>

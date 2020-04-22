@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Sigil } from '/components/lib/icons/sigil';
+import { ProfileOverlay } from '/components/lib/profile-overlay';
+import { OverlaySigil } from '/components/lib/overlay-sigil';
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom'
 import { uxToHex, cite, writeText } from '/lib/util';
@@ -52,6 +54,7 @@ export class Message extends Component {
     let iframe = this.refs.iframe;
     iframe.setAttribute('src', iframe.getAttribute('data-src'));
   }
+
 
   renderContent() {
     const { props } = this;
@@ -190,20 +193,20 @@ export class Message extends Component {
 
       return (
         <div
+          ref={this.containerRef}
           className={
             "w-100 f7 pl3 pt4 pr3 cf flex lh-copy " + " " + pending
           }
           style={{
             minHeight: "min-content"
           }}>
-          <div className="fl mr3 v-top bg-white bg-gray0-d">
-            <Sigil
-              ship={props.msg.author}
-              size={24}
-              color={color}
-              classes={sigilClass}
-              />
-          </div>
+         <OverlaySigil
+           ship={props.msg.author}
+           contact={contact}
+           color={color}
+           sigilClass={sigilClass}
+           group={props.group}
+           className="fl pr3 v-top bg-white bg-gray0-d" />
           <div
             className="fr clamp-message white-d"
             style={{ flexGrow: 1, marginTop: -8 }}>

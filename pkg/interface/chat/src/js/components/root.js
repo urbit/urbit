@@ -13,6 +13,7 @@ import { MemberScreen } from '/components/member';
 import { SettingsScreen } from '/components/settings';
 import { NewScreen } from '/components/new';
 import { JoinScreen } from '/components/join';
+import { NewDmScreen } from '/components/new-dm';
 
 
 export class Root extends Component {
@@ -88,6 +89,34 @@ export class Root extends Component {
                       </p>
                     </div>
                   </div>
+                </Skeleton>
+              );
+            }}
+          />
+          <Route
+            exact
+            path="/~chat/new/dm/:ship"
+            render={props => {
+              const ship = props.match.params.ship;
+
+              return (
+                <Skeleton
+                  associations={associations}
+                  invites={invites}
+                  sidebarHideOnMobile={true}
+                  sidebar={renderChannelSidebar(props)}
+                  sidebarShown={state.sidebarShown}
+                >
+                  <NewDmScreen
+                    api={api}
+                    inbox={state.inbox || {}}
+                    permissions={state.permissions || {}}
+                    contacts={state.contacts || {}}
+                    associations={associations.contacts}
+                    chatSynced={state.chatSynced || {}}
+                    autoCreate={ship}
+                    {...props}
+                  />
                 </Skeleton>
               );
             }}

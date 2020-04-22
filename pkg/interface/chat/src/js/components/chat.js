@@ -288,6 +288,7 @@ export class ChatScreen extends Component {
           paddingTop={paddingTop}
           paddingBot={paddingBot}
           pending={!!msg.pending}
+          group={props.association}
         />
       );
       if(unread > 0 && i === unread) {
@@ -327,7 +328,7 @@ export class ChatScreen extends Component {
 
     if (navigator.userAgent.includes("Firefox")) {
       return (
-        <div className="overflow-y-scroll h-100" onScroll={this.onScroll} ref={e => { this.scrollContainer = e; }}>
+        <div className="relative overflow-y-scroll h-100" onScroll={this.onScroll} ref={e => { this.scrollContainer = e; }}>
           <div
             className="bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
             style={{ resize: "vertical" }}
@@ -358,7 +359,7 @@ export class ChatScreen extends Component {
     else {
       return (
         <div
-          className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
+          className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse relative"
           style={{ height: "100%", resize: "vertical" }}
           onScroll={this.onScroll}
         >
