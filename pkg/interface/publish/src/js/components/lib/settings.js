@@ -105,7 +105,6 @@ export class Settings extends Component {
     const { props, state } = this;
 
     this.setState({
-      isLoading: true,
       disabled: true,
       type: 'Converting'
     }, (() => {
@@ -115,7 +114,7 @@ export class Settings extends Component {
           target: state.targetGroup,
           inclusive: state.inclusive,
         }
-      }).then(() => this.setState({awaiting: false}));
+      }).then(() => this.setState({disabled: false}));
     }));
   }
 
