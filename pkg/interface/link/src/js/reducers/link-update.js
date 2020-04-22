@@ -70,8 +70,10 @@ export class LinkUpdateReducer {
       // stub in a comment count, which is more or less guaranteed to be 0
       data.pages = data.pages.map(submission => {
         submission.commentCount = 0;
+        state.seen[path][submission.url] = false;
         return submission;
       });
+
 
       // add the new submissions to state, update totals
       state.links[path] = this._addNewItems(

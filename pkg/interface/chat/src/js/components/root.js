@@ -21,6 +21,7 @@ export class Root extends Component {
     super(props);
 
     this.state = store.state;
+    this.totalUnreads = 0;
     store.setStateHandler(this.setState.bind(this));
   }
 
@@ -34,6 +35,7 @@ export class Root extends Component {
 
     let messagePreviews = {};
     let unreads = {};
+    let totalUnreads = 0;
     Object.keys(state.inbox).forEach((stat) => {
       let envelopes = state.inbox[stat].envelopes;
 
@@ -43,9 +45,16 @@ export class Root extends Component {
         messagePreviews[stat] = envelopes[0];
       }
 
-      unreads[stat] =
-        state.inbox[stat].config.length > state.inbox[stat].config.read;
+      const unread = Math.max(state.inbox[stat].config.length - state.inbox[stat].config.read, 0)
+      unreads[stat] = !!unread;
+      if(unread) {
+        totalUnreads += unread;
+      }
     });
+    if(totalUnreads !== this.totalUnreads) {
+      document.title = totalUnreads > 0 ? `Chat - (${totalUnreads})` : 'Chat';
+      this.totalUnreads = totalUnreads;
+    }
 
     let invites = !!state.invites ? state.invites : {'/chat': {}, '/contacts': {}};
 
