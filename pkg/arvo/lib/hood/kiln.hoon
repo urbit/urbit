@@ -219,6 +219,7 @@
     %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
     %kiln-start-autoload     =;(f (f !<(_+<.f vase)) poke-start-autoload)
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
+    %kiln-gall-dump          =;(f (f !<(_+<.f vase)) poke-gall-dump)
   ==
 ::
 ++  autoload
@@ -318,6 +319,9 @@
 ++  poke-gall-sear
   |=  =ship
   abet:(emit %pass /kiln %arvo %g %sear ship)
+++  poke-gall-dump
+  |=  *
+  abet:(emit %pass /kiln %arvo %g [%dump ~])
 ::
 ++  poke-wash-gall  |=(* abet:(emit %pass /kiln %arvo %g [%wash ~]))
 ::
