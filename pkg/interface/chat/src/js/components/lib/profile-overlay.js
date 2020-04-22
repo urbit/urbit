@@ -77,7 +77,7 @@ export class ProfileOverlay extends Component {
           {!isOwn && (
             <Link
               to={`/~chat/new/dm/~${ship}`}
-              className="b--green0 b--green2-d b--solid bw1 green2 mt3 tc pa2 pointer db"
+              className="b--green0 b--green2-d b--solid ba green2 mt3 tc pa2 pointer db"
             >
               Send Message
             </Link>
@@ -85,7 +85,7 @@ export class ProfileOverlay extends Component {
           {isOwn && (
             <a
               href={identityHref}
-              className="b--black ba black white-d mt3 tc pa2 pointer db"
+              className="b--black b--white-d ba black white-d mt3 tc pa2 pointer db"
             >
               Edit Group Identity
             </a>

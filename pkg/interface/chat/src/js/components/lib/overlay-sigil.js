@@ -56,9 +56,8 @@ export class OverlaySigil extends Component {
         topSpace = offsetTop - parent.scrollTop - OVERLAY_HEIGHT / 2;
         bottomSpace = parent.clientHeight - topSpace - OVERLAY_HEIGHT;
       } else {
-        // coordinate system is inverted bc flex-row-reverse
-        bottomSpace = parent.scrollTop - offsetTop + OVERLAY_HEIGHT / 2;
-        topSpace = parent.clientHeight - bottomSpace - OVERLAY_HEIGHT;
+        topSpace = offsetTop + parent.scrollHeight - parent.clientHeight - parent.scrollTop;
+        bottomSpace = parent.clientHeight - topSpace - OVERLAY_HEIGHT;
 
       }
       this.setState({

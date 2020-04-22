@@ -337,7 +337,7 @@ export class ShipSearchInput extends Component {
       <div
         ref={ref => (this.popoverRef = ref)}
         style={{ top: '150%', left: '-80px' }}
-        className="b--gray2 b--solid ba absolute bg-white bg-gray0-d shadow-5"
+        className="b--gray2 b--solid ba absolute bg-white bg-gray0-d"
       >
         <textarea
           style={{ resize: 'none', maxWidth: '200px' }}
