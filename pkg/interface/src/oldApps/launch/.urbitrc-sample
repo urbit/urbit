@@ -1,0 +1,5 @@
+module.exports = {
+  URBIT_PIERS: [
+    "/Users/bono/urbit/piers/zod/home"
+  ]
+};
