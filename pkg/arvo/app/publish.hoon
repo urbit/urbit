@@ -27,13 +27,14 @@
 =/  js       (as-octs index-js)
 =/  css      (as-octs index-css)
 ::
-=/  images=(map knot @)
-  %-  ~(gas by *(map knot @))
-  :~  home+home-png
+=/  images=(map @t octs)
+  =-  (~(run by -) as-octs:mimes:html)
+  %-  ~(gas by *(map @t @))
+  :~  [%'Home' home-png]
       popout+popout-png
       search+search-png
-      switcherclosed+switcherclosed-png
-      switcheropen+switcheropen-png
+      ['%SwitcherClosed' switcherclosed-png]
+      ['%SwitcherOpen' switcheropen-png]
       tile+tile-png
   ==
 ::
@@ -1610,10 +1611,10 @@
   ::
       [[[~ %png] [%'~publish' @t ~]] ~]
     =/  filename=@t  i.t.site.url
-    =/  img=(unit @t)  (~(get by images) filename)
+    =/  img=(unit octs)  (~(get by images) filename)
     ?~  img
       not-found:gen
-    (png-response:gen (as-octs:mimes:html u.img))
+    (png-response:gen u.img)
   ::
       [[[~ %css] [%'~publish' %index ~]] ~]
     (css-response:gen css)

@@ -26,10 +26,11 @@
 =/  tile-js  (as-octs tile-js)
 =/  style    (as-octs index-css)
 ::
-=/  contact-png=(map knot @)
-  %-  ~(gas by *(map knot @))
-  :~  home+home-png
-      tile+tile-png
+=/  contact-png=(map @t octs)
+  =-  (~(run by -) as-octs:mimes:html)
+  %-  ~(gas by *(map @t @))
+  :~  [%'Home' home-png]
+      [%'Tile' tile-png]
       search+search-png
   ==
 |%
@@ -167,7 +168,7 @@
       [%'~groups' %js %index ~]   (js-response:gen script)
       [%'~groups' %js %tile ~]    (js-response:gen tile-js)
       [%'~groups' %img *]
-    (png-response:gen (as-octs:mimes:html (~(got by contact-png) `@ta`name)))
+    (png-response:gen (~(got by contact-png) name))
   ::
   ::  avatar images
   ::

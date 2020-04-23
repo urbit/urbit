@@ -33,17 +33,17 @@
 =/  tile-js  (as-octs tile-js-raw)
 =/  style    (as-octs index-css)
 ::
-=/  chat-png=(map knot @)
-  %-  ~(gas by *(map knot @))
-  :~  chatswitcherclosed+chatswitcherclosed-png
-      chatswitcherlink+chatswitcherlink-png
-      home+home-png
-      icon-home+icon-home-png
+=/  chat-png=(map @t octs)
+  =-  (~(run by -) as-octs:mimes:html)
+  %-  ~(gas by *(map @t @))
+  :~  [%'ChatSwitcherClosed' chatswitcherclosed-png]
+      [%'ChatSwitcherLink' chatswitcherlink-png]
+      [%'Home' home-png]
+      [%'Tile' tile-png]
+      [%'Send' send-png]
+      [%'touch_icon' touch-icon-png]
       popout+popout-png
       search+search-png
-      send+send-png
-      tile+tile-png
-      touch-icon+touch-icon-png
   ==
 |%
 +$  card  card:agent:gall
@@ -176,7 +176,7 @@
     =/  img  (~(get by chat-png) name)
     ?~  img
       not-found:gen
-    (png-response:gen (as-octs:mimes:html u.img))
+    (png-response:gen u.img)
   ::
       [%'~chat' %paginate @t @t *]
     =/  start  (need (rush i.t.t.site.url dem))

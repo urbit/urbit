@@ -20,11 +20,12 @@
 =/  tile-js  (as-octs tile-js-raw)
 =/  style    (as-octs index-css)
 ::
-=/  soto-png=(map knot @)
-  %-  ~(gas by *(map knot @))
-  :~  home+home-png
+=/  soto-png=(map @t octs)
+  =-  (~(run by -) as-octs:mimes:html)
+  %-  ~(gas by *(map @t @))
+  :~  [%'Home' home-png]
       popout+popout-png
-      tile+tile-png
+      [%'Tile' tile-png]
   ==
 ::
 |%
@@ -92,7 +93,7 @@
     =/  img  (~(get by soto-png) filename)
     ?~  img
       not-found:gen
-    (png-response:gen (as-octs:mimes:html u.img))
+    (png-response:gen u.img)
   ==
 ::
 ++  on-watch

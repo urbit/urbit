@@ -210,7 +210,13 @@
     $(request-line [[`%html ~[%'~link' 'index']] args.request-line])
   =/  file=(unit octs)
     ?.  ?=([%'~link' *] site.request-line)  ~
-    (get-file-at /app/link [t.site u.ext]:request-line)
+    =/  fil=path
+      ?:  =(/img/'Tile' t.site.request-line)
+        /img/tile  ::  XX capitalization hack
+      ?:  =(/img/'Home' t.site.request-line)
+        /img/home  ::  XX capitalization hack
+      t.site.request-line
+    (get-file-at /app/link fil u.ext.request-line)
   ?~  file  not-found:gen
   ?+  u.ext.request-line  not-found:gen
     %html  (html-response:gen u.file)

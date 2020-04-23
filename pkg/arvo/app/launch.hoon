@@ -10,10 +10,11 @@
 =/  script   (as-octs index-js)
 =/  style    (as-octs index-css)
 ::
-=/  launch-png=(map knot @)
-  %-  ~(gas by *(map knot @))
-  :~  home+home-png
-      favicon+favicon-png
+=/  launch-png=(map @t octs)
+  =-  (~(run by -) as-octs:mimes:html)
+  %-  ~(gas by *(map @t @))
+  :~  [%'Home' home-png]
+      [%'Favicon' favicon-png]
   ==
 ::
 |%
@@ -101,10 +102,10 @@
       (js-response:gen script)
     ::
         [%'~launch' %img *]              :: images
-      =/  img=(unit @)  (~(get by launch-png) `@ta`name)
+      =/  img=(unit octs)  (~(get by launch-png) name)
       ?~  img
         not-found:gen
-      (png-response:gen (as-octs:mimes:html u.img))
+      (png-response:gen u.img)
     ::
         [%'~modulo' %session ~]
       =/  session-js
