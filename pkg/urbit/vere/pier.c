@@ -501,6 +501,22 @@ _pier_on_lord_play_bail(void* vod_p, u3_play pay_u,
   u3_pier_bail();
 }
 
+/* _pier_on_lord_work_spin(): start spinner
+*/
+static void
+_pier_on_lord_work_spin(void* vod_p, u3_atom pin, c3_o del_o)
+{
+  u3_term_start_spinner(pin, c3y); // (c3y == del_o) ? c3n : c3y);
+}
+
+/* _pier_on_lord_work_spin(): stop spinner
+*/
+static void
+_pier_on_lord_work_spun(void* vod_p)
+{
+  u3_term_stop_spinner();
+}
+
 /* _pier_on_lord_work_done(): event completion from worker.
 */
 static void
@@ -840,6 +856,8 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
     u3_lord_cb cb_u = {
       .vod_p = pir_u,
       .live_f = _pier_on_lord_live,
+      .spin_f = _pier_on_lord_work_spin,
+      .spun_f = _pier_on_lord_work_spun,
       .slog_f = _pier_on_lord_slog,
       // .peek_f = _pier_on_lord_peek,
       .play_done_f = _pier_on_lord_play_done,

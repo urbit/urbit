@@ -345,13 +345,21 @@ _lord_plea_play(u3_lord* god_u, u3_noun dat)
   u3z(dat);
 }
 
-/* _lord_work_next(): pass along [bug_l]
+/* _lord_work_next(): update spinner if more work is in progress.
 */
 static void
 _lord_work_next(u3_lord* god_u, c3_l bug_l)
 {
   u3_writ* wit_u = god_u->ext_u;
 
+  //  complete spinner
+  //
+  c3_assert( c3y == god_u->pin_o );
+  god_u->cb_u.spun_f(god_u->cb_u.vod_p);
+  god_u->pin_o = c3n;
+
+  //  restart spinner if more work
+  //
   while ( wit_u ) {
     if ( c3__work != wit_u->typ_m ) {
       wit_u = wit_u->nex_u;
@@ -365,6 +373,9 @@ _lord_work_next(u3_lord* god_u, c3_l bug_l)
       if ( bug_l ) {
         nex_u->bug_l = bug_l;
       }
+
+      god_u->cb_u.spin_f(god_u->cb_u.vod_p, egg_u->pin, egg_u->del_o);
+      god_u->pin_o = c3y;
       break;
     }
   }
@@ -700,6 +711,13 @@ u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo)
 
   if ( !god_u->ent_u ) {
     wit_u->wok_u->bug_l = god_u->mug_l;
+  }
+
+  //  if not spinning, start
+  //
+  if ( c3n == god_u->pin_o ) {
+    god_u->cb_u.spin_f(god_u->cb_u.vod_p, egg_u->pin, egg_u->del_o);
+    god_u->pin_o = c3y;
   }
 
   _lord_writ_plan(god_u, wit_u);

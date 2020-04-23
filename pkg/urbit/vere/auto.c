@@ -93,6 +93,11 @@ u3_auto_plan(u3_auto* car_u,
   egg_u->pax   = pax;
   egg_u->fav   = fav;
 
+  //  spinner defaults
+  //
+  egg_u->pin   = u3k(u3h(u3t(pax)));
+  egg_u->del_o = c3y;
+
   if ( !car_u->ent_u ) {
     c3_assert(!car_u->ext_u);
 
@@ -131,6 +136,7 @@ u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u)
     egg_u->car_u->ev.drop_f(egg_u->car_u, egg_u->vod_p);
   }
 
+  u3z(egg_u->pin);
   u3z(egg_u->tar);
   u3z(egg_u->pax);
   u3z(egg_u->fav);

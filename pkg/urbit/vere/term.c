@@ -592,10 +592,25 @@ _term_it_save(u3_noun pax, u3_noun pad)
   c3_free(bas_c);
 }
 
+static u3_ovum*
+_term_ovum_plan(u3_auto* car_u, u3_noun pax, u3_noun fav)
+{
+  //  XX c3__dill instead of u3_blip
+  //
+  u3_ovum* egg_u = u3_auto_plan(car_u, 0, 0, u3_blip, pax, fav);
+
+  //  term events have no spinner label
+  //
+  u3z(egg_u->pin);
+  egg_u->pin = u3_blip;
+
+  return egg_u;
+}
+
 /* _term_io_belt(): send belt.
 */
 static void
-_term_io_belt(u3_utty* uty_u, u3_noun  blb)
+_term_io_belt(u3_utty* uty_u, u3_noun blb)
 {
   //  XX s/b u3dc("scot", c3__ud, uty_u->tid_l)
   //
@@ -605,7 +620,15 @@ _term_io_belt(u3_utty* uty_u, u3_noun  blb)
   c3_assert( 1 == uty_u->tid_l );
   c3_assert( uty_u->car_u );
 
-  u3_auto_plan(uty_u->car_u, 0, 0, u3_blip, pax, fav);
+  {
+    u3_ovum* egg_u = _term_ovum_plan(uty_u->car_u, pax, fav);
+
+    //  no spinner delay on %ret
+    //
+    if ( c3__ret == u3h(blb) ) {
+      egg_u->del_o = c3n;
+    }
+  }
 }
 
 /* _term_io_suck_char(): process a single character.
@@ -814,15 +837,15 @@ _term_spin_timer_cb(uv_timer_t* tim_u)
   if ( tat_u->sun_u.why_c[0] ) {
     strncpy(cur_c, dal_c, 2);
     cur_c += 2;
-    sol_w += 1;  //  length of dal_c (utf-32)
+    sol_w += 1;    //  length of dal_c (utf-32)
 
     strncpy(cur_c, tat_u->sun_u.why_c, 4);
     cur_c += 4;
-    sol_w += 4;  // XX assumed utf-8
+    sol_w += 4;    //  XX assumed utf-8
 
     strncpy(cur_c, dar_c, 2);
     cur_c += 2;
-    sol_w += 1;  //  length of dar_c (utf-32)
+    sol_w += 1;    //  length of dar_c (utf-32)
   }
 
   *cur_c = '\0';
@@ -852,7 +875,7 @@ _term_spin_timer_cb(uv_timer_t* tim_u)
 /* u3_term_start_spinner(): prepare spinner state. RETAIN.
 */
 void
-u3_term_start_spinner(u3_noun say, c3_o now_o)
+u3_term_start_spinner(u3_atom say, c3_o del_o)
 {
   if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u = _term_main();
@@ -868,7 +891,7 @@ u3_term_start_spinner(u3_noun say, c3_o now_o)
     {
       c3_d now_d = _term_msc_out_host();
       c3_d end_d = tat_u->sun_u.end_d;
-      c3_d wen_d = (c3y == now_o) ? 0UL :
+      c3_d wen_d = (c3n == del_o) ? 0UL :
                      (now_d - end_d < _SPIN_IDLE_US) ?
                      _SPIN_WARM_US : _SPIN_COOL_US;
 
@@ -974,7 +997,7 @@ u3_term_ef_winc(void)
   c3_assert( 1 == u3_Host.uty_u->tid_l );
   c3_assert( u3_Host.uty_u->car_u );
 
-  u3_auto_plan(u3_Host.uty_u->car_u, 0, 0, u3_blip, pax, fav);
+  _term_ovum_plan(u3_Host.uty_u->car_u, pax, fav);
 }
 
 /* u3_term_ef_ctlc(): send ^C on console.
@@ -991,7 +1014,7 @@ u3_term_ef_ctlc(void)
     c3_assert( 1 == uty_u->tid_l );
     c3_assert( uty_u->car_u );
 
-    u3_auto_plan(uty_u->car_u, 0, 0, u3_blip, pax, fav);
+    _term_ovum_plan(uty_u->car_u, pax, fav);
   }
 
   _term_it_refresh_line(uty_u);
@@ -1250,7 +1273,7 @@ _term_io_talk(u3_auto* car_u)
   //
   {
     fav = u3nc(c3__blew, u3_term_get_blew(1));
-    u3_auto_plan(car_u, 0, 0, u3_blip, u3k(pax), fav);
+    _term_ovum_plan(car_u, u3k(pax), fav);
   }
 
   //  NB, term.c used to also start :dojo
@@ -1261,7 +1284,7 @@ _term_io_talk(u3_auto* car_u)
   //
   {
     fav = u3nc(c3__hail, u3_nul);
-    u3_auto_plan(car_u, 0, 0, u3_blip, pax, fav);
+    _term_ovum_plan(car_u, pax, fav);
   }
 }
 

@@ -316,6 +316,8 @@
           u3_noun            tar;               //  target
           u3_noun            pax;               //  wire
           u3_noun            fav;               //  card
+          u3_atom            pin;               //  spinner label
+          c3_o             del_o;               //  spinner delay (c3y)
           struct _u3_ovum* pre_u;               //  previous ovum
           struct _u3_ovum* nex_u;               //  next ovum
         } u3_ovum;
@@ -380,6 +382,8 @@
           void* vod_p;
           void (*live_f)(void*);
           void (*slog_f)(void*, c3_w, u3_noun);
+          void (*spin_f)(void*, u3_atom, c3_o);
+          void (*spun_f)(void*);
           void (*peek_f)(void*, u3_noun gan, u3_noun pat, u3_noun dat);
           void (*play_done_f)(void*, u3_play, c3_l mug_l);
           void (*play_bail_f)(void*, u3_play, c3_l mug_l, c3_d eve_d, u3_noun dud);
@@ -405,6 +409,7 @@
           c3_d                 key_d[4];        //  image key
           u3_lord_cb            cb_u;           //  callbacks
           c3_o                 liv_o;           //  live
+          c3_o                 pin_o;           //  spinning
           c3_y                 hon_y;           //  hoon kelvin
           c3_y                 noc_y;           //  hoon kelvin
           c3_d                 eve_d;           //  last event completed
@@ -823,7 +828,7 @@
       /* u3_term_start_spinner(): prepare spinner state. RETAIN.
       */
         void
-        u3_term_start_spinner(u3_noun say, c3_o now_o);
+        u3_term_start_spinner(u3_noun say, c3_o del_o);
 
       /* u3_term_stop_spinner(): reset spinner state and restore input line.
       */
