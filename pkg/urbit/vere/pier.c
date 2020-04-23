@@ -309,6 +309,45 @@ _pier_play_read(u3_pier* pir_u)
   }
 }
 
+/* _pier_play_init(): begin boot/replay
+*/
+static void
+_pier_play_init(u3_pier* pir_u)
+{
+  u3_lord* god_u = pir_u->god_u;
+  u3_disk* log_u = pir_u->log_u;
+
+  c3_assert( log_u->sen_d == log_u->dun_d );
+
+  switch ( pir_u->sat_e ) {
+    default: c3_assert(0);
+
+    case u3_peat_init: {
+      c3_assert( god_u->eve_d <= log_u->dun_d );
+      pir_u->sat_e = u3_peat_play;
+      pir_u->pay_u.sen_d = god_u->eve_d;
+
+      u3l_log("---------------- playback starting ----------------\r\n");
+      if ( (1ULL + god_u->eve_d) == log_u->dun_d ) {
+        u3l_log("pier: replaying event %" PRIu64 "\r\n", log_u->dun_d);
+      }
+      else {
+        u3l_log("pier: replaying events %" PRIu64 "-%" PRIu64 "\r\n",
+                (1ULL + god_u->eve_d),
+                log_u->dun_d);
+      }
+
+      u3_term_start_spinner(c3__play, c3y);
+    } break;
+
+    case u3_peat_boot: {
+      c3_assert( !god_u->eve_d );
+      u3l_log("---------------- boot starting ----------------\r\n");
+      u3_term_start_spinner(c3__boot, c3y);
+    } break;
+  }
+}
+
 /* _pier_play(): send a batch of events to the worker for log replay.
 */
 static void
@@ -321,9 +360,6 @@ _pier_play(u3_pier* pir_u)
     //  wait if we're still committing the boot sequence
     //
     c3_assert( u3_peat_boot == pir_u->sat_e );
-    // XX
-    //
-    u3l_log("pier: play boot\r\n");
   }
   else if ( god_u->eve_d == log_u->dun_d ) {
     u3l_log("---------------- %s complete ----------------\r\n",
@@ -628,39 +664,26 @@ _pier_on_lord_live(void* vod_p)
   u3_lord* god_u = pir_u->god_u;
   u3_disk* log_u = pir_u->log_u;
 
+  //  XX plan kelvin event
+  //
+
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): boot at mug %x\r\n", god_u->eve_d, god_u->mug_l);
 #endif
 
+  c3_assert( god_u->eve_d <= log_u->dun_d );
+
   if ( log_u->sen_d > log_u->dun_d ) {
     c3_assert( u3_peat_boot == pir_u->sat_e );
+    //  will init on _disk_write_done
+    //
   }
   else {
     c3_assert(  (u3_peat_boot == pir_u->sat_e)
              || (u3_peat_init == pir_u->sat_e) );
 
-    c3_assert( god_u->eve_d <= log_u->dun_d );
-
     if ( god_u->eve_d < log_u->dun_d ) {
-      pir_u->sat_e = u3_peat_play;
-      pir_u->pay_u.sen_d = god_u->eve_d;
-
-      u3l_log("---------------- %s starting ----------------\r\n",
-            ( u3_peat_boot == pir_u->sat_e ) ? "boot" : "playback");
-
-      if ( (1ULL + god_u->eve_d) == log_u->dun_d ) {
-        u3l_log("pier: replaying event %" PRIu64 "\r\n", log_u->dun_d);
-      }
-      else {
-        u3l_log("pier: replaying events %" PRIu64 "-%" PRIu64 "\r\n",
-                (1ULL + god_u->eve_d),
-                log_u->dun_d);
-      }
-
-      {
-        c3_m mot_m = ( u3_peat_boot == pir_u->sat_e ) ? c3__boot : c3__play;
-        u3_term_start_spinner(mot_m, c3y);
-      }
+      _pier_play_init(pir_u);
     }
     else {
       _pier_work_init(pir_u);
@@ -705,6 +728,7 @@ static void
 _pier_on_disk_write_done(void* vod_p, c3_d eve_d)
 {
   u3_pier* pir_u = vod_p;
+  u3_disk* log_u = pir_u->log_u;
 
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): db commit: complete\r\n", eve_d);
@@ -712,6 +736,12 @@ _pier_on_disk_write_done(void* vod_p, c3_d eve_d)
 
   if ( u3_peat_boot == pir_u->sat_e ) {
     pir_u->wok_u.rel_d = eve_d;
+
+    //  wait if we're still committing the boot sequence
+    //
+    if ( log_u->sen_d == log_u->dun_d ) {
+      _pier_play_init(pir_u);
+    }
   }
   else {
     c3_assert( u3_peat_work == pir_u->sat_e );
