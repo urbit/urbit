@@ -62,9 +62,13 @@ gulp.task('js-imports', function(cb) {
           namedExports: {
             'node_modules/react/index.js': ['Component', 'cloneElement',
             'createContext', 'createElement', 'useState', 'useRef',
-            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children' ],
-            'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef' ],
-            'node_modules/react-dom/index.js': [ 'createPortal' ]
+            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children', 'useDebugValue', 'isValidElement', 'useCallback', 'useReducer', 'useImperativeHandle' ],
+            'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef', 'typeOf' ],
+            'node_modules/react-dom/index.js': [ 'createPortal' ],
+            'node_modules/formik/node_modules/scheduler/index.js': [
+              'unstable_runWithPriority',
+              'LowPriority',
+            ],
           }
         }),
         rootImport({
@@ -121,7 +125,7 @@ gulp.task('js-imports-prod', function(cb) {
           namedExports: {
             'node_modules/react/index.js': ['Component', 'cloneElement',
             'createContext', 'createElement', 'useState', 'useRef',
-            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children' ],
+            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children', 'useDebugValue' ],
             'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef' ],
             'node_modules/react-dom/index.js': [ 'createPortal' ]
           }

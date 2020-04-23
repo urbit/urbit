@@ -5,6 +5,8 @@ import { Route, Link } from 'react-router-dom';
 import { Controlled as CodeMirror } from 'react-codemirror2'
 import { dateToDa, stringToSymbol } from '/lib/util';
 
+import { MarkdownEditor } from '@tlon/indigo-react';
+
 import 'codemirror/mode/markdown/markdown';
 
 export class NewPost extends Component {
