@@ -1,5 +1,5 @@
 /-  *s3
-/+  default-agent, verb, dbug
+/+  s3-json, default-agent, verb, dbug
 ~%  %s3-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -7,7 +7,7 @@
   $%  state-zero
   ==
 ::
-+$  state-zero  [%0 =credentials]
++$  state-zero  [%0 =credentials =configuration]
 --
 ::
 =|  state-zero
@@ -52,6 +52,18 @@
     ::
         %set-secret-access-key
       state(secret-access-key.credentials secret-access-key.act)
+    ::
+        %set-current-bucket
+      %_  state
+          current-bucket.configuration  bucket.act
+          buckets.configuration  (~(put in buckets.configuration) bucket.act)
+      ==
+    ::
+        %add-bucket
+      state(buckets.configuration (~(put in buckets.configuration) bucket.act))
+    ::
+        %remove-bucket
+      state(buckets.configuration (~(del in buckets.configuration) bucket.act))
     ==
   --
 ::
@@ -62,15 +74,18 @@
   |^
   ?>  (team:title our.bowl src.bowl)
   =/  cards=(list card)
-    ?+  path          (on-watch:def path)
-        [%all ~]  (give %s3-update !>([%credentials credentials]))
+    ?+  path      (on-watch:def path)
+        [%all ~]
+      :~  (give %s3-update !>([%credentials credentials]))
+          (give %s3-update !>([%configuration configuration]))
+      ==
     ==
   [cards this]
   ::
   ++  give
     |=  =cage
-    ^-  (list card)
-    [%give %fact ~ cage]~
+    ^-  card
+    [%give %fact ~ cage]
   --
 ::
 ++  on-leave  on-leave:def
