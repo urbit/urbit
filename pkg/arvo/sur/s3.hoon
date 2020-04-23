@@ -1,10 +1,14 @@
 |%
 +$  credentials
-  $:  api-key=@t
+  $:  endpoint=@t
+      access-key-id=@t
+      secret-access-key=@t
   ==
 ::
 +$  action
-  $%  [%set-api-key api-key=@t]
+  $%  [%set-endpoint endpoint=@t]
+      [%set-access-key-id access-key-id=@t]
+      [%set-secret-access-key secret-access-key=@t]
   ==
 ::
 +$  update

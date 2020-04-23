@@ -42,7 +42,17 @@
   ++  poke-action
     |=  act=action
     ^-  (quip card _state)
-    [~ state]
+    :-  [%give %fact [/all]~ %s3-update !>(act)]~
+    ?-  -.act
+        %set-endpoint
+      state(endpoint.credentials endpoint.act)
+    ::
+        %set-access-key-id
+      state(access-key-id.credentials access-key-id.act)
+    ::
+        %set-secret-access-key
+      state(secret-access-key.credentials secret-access-key.act)
+    ==
   --
 ::
 ++  on-watch
