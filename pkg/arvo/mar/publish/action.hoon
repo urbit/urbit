@@ -32,6 +32,7 @@
             subscribe+subscribe
             unsubscribe+unsubscribe
             read+read
+            groupify+groupify
         ==
     ::
     ++  new-book
@@ -113,6 +114,12 @@
       :~  who+(su fed:ag)
           book+so
           note+so
+      ==
+    ++  groupify
+      %-  ot
+      :~  book+so
+          target+(mu pa)
+          inclusive+bo
       ==
     ++  group-info
       %-  ot

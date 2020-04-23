@@ -135,6 +135,7 @@ export class Root extends Component {
 
           let bookGroupPath =
           state.notebooks[ship][notebook]["subscribers-group-path"];
+
           let notebookContacts = (bookGroupPath in contacts)
             ? contacts[bookGroupPath] : {};
 
@@ -181,7 +182,9 @@ export class Root extends Component {
                   ship={ship}
                   book={notebook}
                   groups={state.groups}
-                  contacts={notebookContacts}
+                  contacts={contacts}
+                  notebookContacts={notebookContacts}
+                  associations={associations.contacts}
                   sidebarShown={state.sidebarShown}
                   popout={popout}
                   permissions={state.permissions}

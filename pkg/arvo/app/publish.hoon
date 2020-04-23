@@ -1702,7 +1702,106 @@
     :~  [%give %fact [/primary]~ %publish-primary-delta !>(act)]
         [%give %fact [/publishtile]~ %json !>(jon)]
     ==
+  ::  %groupify
+  ::
+      %groupify
+    ?.  (team:title our.bol src.bol)
+      ~|("action not permitted" !!)
+    =/  book  (~(get by books) our.bol book.act)
+    ?~  book
+      ~|("nonexistent notebook: {<book.act>}" !!)
+    ::
+    =/  old-write      writers.u.book
+    =/  old-read  subscribers.u.book
+    ?>  ?=([%'~' ^] old-write)
+    =/  destroy-old-groups=(list card)
+      :~  (group-poke [%unbundle old-write])
+          (group-poke [%unbundle old-read])
+          (group-hook-poke [%remove old-write])
+          (group-hook-poke [%remove old-read])
+          (perm-hook-poke [%remove old-write])
+          (perm-hook-poke [%remove old-read])
+      ==
+    ::
+    ?~  target.act
+      :: create new group from subscribers
+      ::
+      =.  writers.u.book      (slag 1 writers.u.book)
+      =.  subscribers.u.book  writers.u.book
+      =/  del=notebook-delta  [%edit-book our.bol book.act u.book]
+      :_  state(books (~(put by books) [our.bol book.act] u.book))
+      %+  weld  destroy-old-groups
+      ^-  (list card)
+      :~  [%give %fact [/notebook/[book.act]]~ %publish-notebook-delta !>(del)]
+          [%give %fact [/primary]~ %publish-primary-delta !>(del)]
+          %-  contact-view-create
+          :*  writers.u.book
+              (get-subscribers book.act)
+              title.u.book
+              description.u.book
+          ==
+          %-  metadata-poke
+          :*  %add
+              writers.u.book
+              [%publish /(scot %p our.bol)/[book.act]]
+              title.u.book
+              description.u.book
+              0x0
+              date-created.u.book
+              our.bol
+          ==
+      ==
+    ::
+    ?>  ?=(^ u.target.act)
+    =.  writers.u.book  u.target.act
+    =.  subscribers.u.book  u.target.act
+    =/  group-host=@p  (slav %p i.u.target.act)
+    ::
+    =/  scry-pax  :(weld /=group-store/(scot %da now.bol) u.target.act /noun)
+    =/  old-group=(set @p)  (need .^((unit (set @p)) %gx scry-pax))
+    =/  dif-peeps=(set @p)  (~(dif in (get-subscribers book.act)) old-group)
+    ::
+    =/  del=notebook-delta  [%edit-book our.bol book.act u.book]
+    :_  state(books (~(put by books) [our.bol book.act] u.book))
+    %+  weld
+      %+  weld  destroy-old-groups
+      ^-  (list card)
+      :~  [%give %fact [/notebook/[book.act]]~ %publish-notebook-delta !>(del)]
+          [%give %fact [/primary]~ %publish-primary-delta !>(del)]
+          %-  metadata-poke
+          :*  %add
+              writers.u.book
+              [%publish /(scot %p our.bol)/[book.act]]
+              title.u.book
+              description.u.book
+              0x0
+              date-created.u.book
+              our.bol
+          ==
+      ==
+    ?:  ?&  inclusive.act
+            =(group-host our.bol)
+        ==
+      :: add all subscribers to group
+      ::
+      [(group-poke [%add dif-peeps u.target.act])]~
+    :: kick subscribers who are not already in group
+    ::
+    %+  turn  ~(tap in dif-peeps)
+    |=  who=@p
+    ^-  card
+    [%give %kick [/notebook/[book.act]]~ `who]
   ==
+::
+++  get-subscribers
+  |=  book=@tas
+  ^-  (set @p)
+  %+  roll  ~(val by sup.bol)
+  |=  [[who=@p pax=path] out=(set @p)]
+  ^-  (set @p)
+  ?.  ?=([%notebook @ ~] pax)  out
+  ?.  =(book i.t.pax)  out
+  (~(put in out) who)
 ::
 ++  get-notebook
   |=  [host=@p book-name=@tas sty=_state]
@@ -1731,6 +1830,11 @@
   :~  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
       [%give %fact [/publishtile]~ %json !>(jon)]
   ==
+::
+++  metadata-poke
+  |=  act=metadata-action
+  ^-  card
+  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
 ::
 ++  emit-metadata
   |=  del=metadata-delta
@@ -1761,11 +1865,6 @@
     |=  [group-path=path app-path=path =metadata]
     ^-  (list card)
     [(metadata-poke [%add group-path [%publish app-path] metadata])]~
-  ::
-  ++  metadata-poke
-    |=  act=metadata-action
-    ^-  card
-    [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
   ::
   ++  metadata-scry
     |=  [group-path=path app-path=path]
