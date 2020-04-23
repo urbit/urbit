@@ -23,27 +23,27 @@
   %+  frond:enjs  %s3-update
   %-  pairs:enjs
   :~  ?-  -.upd
-          %set-current-bucket  [%set-current-bucket s+bucket.upd]
-          %add-bucket          [%add-bucket s+bucket.upd]
-          %remove-bucket       [%remove-bucket s+bucket.upd]
-          %set-endpoint        [%set-endpoint s+endpoint.upd]
-          %set-access-key-id   [%set-access-key-id s+access-key-id.upd]
+          %set-current-bucket  [%'setCurrentBucket' s+bucket.upd]
+          %add-bucket          [%'addBucket' s+bucket.upd]
+          %remove-bucket       [%'removeBucket' s+bucket.upd]
+          %set-endpoint        [%'setEndpoint' s+endpoint.upd]
+          %set-access-key-id   [%'setAccessKeyId' s+access-key-id.upd]
           %set-secret-access-key
-        [%set-secret-access-key s+secret-access-key.upd]
+        [%'setSecretAccessKey' s+secret-access-key.upd]
       ::
           %credentials
         :-  %credentials
         %-  pairs:enjs
         :~  [%endpoint s+endpoint.credentials.upd]
-            [%access-key-id s+access-key-id.credentials.upd]
-            [%secret-access-key s+secret-access-key.credentials.upd]
+            [%'accessKeyId' s+access-key-id.credentials.upd]
+            [%'secretAccessKey' s+secret-access-key.credentials.upd]
         ==
       ::
           %configuration
         :-  %configuration
         %-  pairs:enjs
         :~  [%buckets a+(turn ~(tap in buckets.configuration.upd) |=(a=@t s+a))]
-            [%current-bucket s+current-bucket.configuration.upd]
+            [%'currentBucket' s+current-bucket.configuration.upd]
         ==
       ==
   ==
