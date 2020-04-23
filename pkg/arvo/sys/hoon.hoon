@@ -12073,6 +12073,7 @@
   ^-  (list term)
   ?+    typ  ~
       {$hold *}  $(typ ~(repo ut typ))
+      {$hint *}  $(typ ~(repo ut typ))
       {$core *}
     %-  zing
     %+  turn  ~(tap by q.r.q.typ)
