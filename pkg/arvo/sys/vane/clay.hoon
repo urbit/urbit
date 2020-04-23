@@ -2115,6 +2115,10 @@
 ::
 ++  util
   |%
+  ::  Hash a page to get a lobe.
+  ::
+  ++  page-to-lobe  |=(page (shax (jam +<)))
+  ::
   ::  Takes a list of changed paths and finds those paths that are inside a
   ::  mount point (listed in `mon`).
   ::
@@ -2854,7 +2858,8 @@
         ^-  vase
         %+  slap
           (with-faces old+old sam+sam ~)
-        (ream (cat 3 b ':~(grow old sam)'))
+        %-  ream
+        :((cury cat 3) '!:  ~!  old=old  ~!  sam=sam  ' b ':~(grow old sam)')
       ::  try direct +grab
       ::
       =^  new=vase  nub  (build-fit %mar b)
@@ -3410,22 +3415,19 @@
   ::
   ::    XX  needs to check that head is ancestor of tako
   ::    XX  needs to check tako in rang
+  ::    XX  needs to check that commit doesn't have same date
   ::
   ++  park
-    ::  |=  [commit=yuki commit-store-adds=(map tako yaki) blob-store-adds=(map lobe blob)]
     |^
-    |=  [=tako =rang =ankh mim=(map path (unit mime))]
+    |=  [=yuki =rang]
     ^+  ..park
-    =:  let.dom  +(let.dom)
-        hit.dom  (~(put by hit.dom) +(let.dom) tako)
-        hut.ran  (~(uni by hut.rang) hut.ran)
+    =:  hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
       ==
     =/  [deletes=(set path) changes=(map path (each page lobe))]
-      =/  previous-yaki  (aeon-to-yaki:ze (dec let.dom))
-      =/  next-yaki      (aeon-to-yaki:ze let.dom)
-      (get-changes previous-yaki next-yaki)
-    ~|  [let.dom deletes=deletes changes=~(key by changes)]
+      =/  previous-yaki  (aeon-to-yaki:ze let.dom)
+      (get-changes q.previous-yaki q.yuki)
+    ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
     =.  ..park  (emil (print deletes ~(key by changes)))
     ::
     ::  promote ford cache
@@ -3437,8 +3439,30 @@
     =/  =args:ford:fusion
       [ank.dom deletes changes lat.ran fod.dom]
     ::
+    =^  change-cages  ford-cache.args
+      (checkout-changes args q.yuki)
+    =/  new-blobs=(map lobe blob)
+      %-  malt
+      %+  turn  ~(tap by change-cages)
+      |=  [=path =lobe =cage]
+      [lobe %direct lobe [p q.q]:cage]
+    =/  data=(map path lobe)
+      %-  ~(urn by q.yuki)
+      |=  [=path value=(each page lobe)]
+      ?-  -.value
+        %|  p.value
+        %&  lobe:(~(got by change-cages) path)
+      ==
+    =/  =yaki  (make-yaki p.yuki data now)
+    =:  let.dom  +(let.dom)
+        hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
+        hut.ran  (~(put by hut.ran) r.yaki yaki)
+        lat.ran  (~(uni by new-blobs) lat.ran)
+      ==
+    =.  file-store.args  lat.ran
+    ::
     =^  ankh  ford-cache.args
-      (checkout-ankh args deletes changes ank.dom)
+      (checkout-ankh args deletes change-cages ank.dom)
     =.  ankh.args  ankh
     =.  ank.dom  ankh
     =^  mim  ford-cache.args
@@ -3451,26 +3475,28 @@
     ::  Find which files changed or were deleted
     ::
     ++  get-changes
-      |=  [old=yaki new=yaki]
+      |=  [old=(map path lobe) new=(map path (each page lobe))]
+      =/  old=(map path (each page lobe))
+        (~(run by old) |=(=lobe |+lobe))
       :*  %-  silt  ^-  (list path)
-          %+  murn  ~(tap by (~(uni by q.old) q.new))
-          |=  [=path =lobe]
+          %+  murn  ~(tap by (~(uni by old) new))
+          |=  [=path *]
           ^-  (unit ^path)
-          =/  a  (~(get by q.new) path)
-          =/  b  (~(get by q.old) path)
+          =/  a  (~(get by new) path)
+          =/  b  (~(get by old) path)
           ?:  |(=(a b) !=(~ a))
             ~
           `path
         ::
           %-  silt  ^-  (list [path (each page lobe)])
-          %+  murn  ~(tap by (~(uni by q.old) q.new))
-          |=  [=path =lobe]
-          ^-  (unit [^path (each page ^lobe)])
-          =/  a  (~(get by q.new) path)
-          =/  b  (~(get by q.old) path)
-          ?:  |(=(a b) =(~ a))
+          %+  murn  ~(tap by (~(uni by old) new))
+          |=  [=path *]
+          ^-  (unit [^path (each page lobe)])
+          =/  a  (~(get by new) path)
+          =/  b  (~(get by old) path)
+          ?:  |(=(a b) ?=(~ a))
             ~
-          `[path |+lobe]
+          `[path u.a]
       ==
     ::
     ::  Keep any parts of the ford cache whose dependencies didn't change
@@ -3495,12 +3521,31 @@
         $(builds t.builds)
       (~(put by $(builds t.builds)) i.builds)
     ::
+    ::  Updated q.yaki
+    ::
+    ++  checkout-changes
+      |=  [=ford=args:ford:fusion changes=(map path (each page lobe))]
+      =/  cans=(list [=path change=(each page lobe)])  ~(tap by changes)
+      |-  ^-  [(map path [=lobe =cage]) ford-cache]
+      ?~  cans
+        [~ ford-cache.ford-args]
+      =^  cage  ford-cache.ford-args
+        %-  wrap:fusion
+        (get-value:(ford:fusion ford-args) path.i.cans)
+      =/  =lobe
+        ?-  -.change.i.cans
+          %|  p.change.i.cans
+          %&  (page-to-lobe:util p.change.i.cans)
+        ==
+      =^  so-far  ford-cache.ford-args  $(cans t.cans)
+      [(~(put by so-far) path.i.cans lobe cage) ford-cache.ford-args]
+    ::
     ::  Update ankh
     ::
     ++  checkout-ankh
       |=  $:  =ford=args:ford:fusion
               deletes=(set path)
-              changes=(map path (each page lobe))
+              changes=(map path [lobe cage])
               =ankh
           ==
       ^+  [ankh ford-cache.ford-args]
@@ -3528,7 +3573,7 @@
         outer-loop(dels t.dels)
       ::  Add/change
       ::
-      =/  cans=(list [=path change=(each page lobe)])  ~(tap by changes)
+      =/  cans=(list [=path =lobe =cage])  ~(tap by changes)
       |-  ^+  [ankh ford-cache.ford-args]
       =*  outer-loop  $
       ?~  cans
@@ -3542,31 +3587,9 @@
               path.i.cans  t.path.i.cans
               ankh         (~(gut by dir.ankh) i.path.i.cans *^ankh)
             ==
-          :-  ankh(dir (~(put by dir.ankh) i.path.i.cans child-ankh))
+          :-  child-ankh(dir (~(put by dir.ankh) i.path.i.cans child-ankh))
           ford-cache.ford-args
-        =^  cage  ford-cache.ford-args
-          ?-    -.change.i.cans
-              %&
-            %-  wrap:fusion
-            (page-to-cage:(ford:fusion ford-args) p.change.i.cans)
-          ::
-              %|
-            =^  page  ford-cache.ford-args
-              %-  wrap:fusion
-              (lobe-to-page:(ford:fusion ford-args) p.change.i.cans)
-            (wrap:fusion (page-to-cage:(ford:fusion ford-args) page))
-          ==
-        :_  ford-cache.ford-args
-        %=    ankh
-            fil
-          :-  ~  :_  cage
-          ?-  -.change.i.cans
-              %|  p.change.i.cans
-              %&
-            %-  wrap:fusion
-            (page-to-lobe:(ford:fusion ford-args) p.change.i.cans)
-          ==
-        ==
+        [ankh(fil `[lobe.i.cans cage.i.cans]) ford-cache.ford-args]
       =.  ankh  new-ankh
       outer-loop(cans t.cans)
     ::
@@ -5180,7 +5203,7 @@
       %park
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
-      abet:(park:den [tak ran ank mim]:req)
+      abet:(park:den [yuk ran]:req)
     [mos ..^$]
   ::
       %perm

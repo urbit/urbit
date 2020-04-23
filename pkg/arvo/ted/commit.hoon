@@ -11,56 +11,31 @@
 =/  m  (strand ,vase)
 ^-  form:m
 ::
-::  Cast to expected marks
-::
-;<  our=@p  bind:m  get-our:strandio
-=/  cast-builds=(map path schematic:ford)
-  %-  ~(urn by changes)
-  |=  [=path =cage]
-  [%cast [our desk] =>((flop path) ?~(. %$ i)) %$ cage]
-;<  cast-results=(map path cage)  bind:m  (build-cages:strandio cast-builds)
-::
 ::  Fetch current state
 ::
+;<  our=@p  bind:m  get-our:strandio
 ;<  now=@da  bind:m  get-time:strandio
 =+  .^(=dome %cv /(scot %p our)/[desk]/(scot %da now))
 ::
-::  Apply changes to current state to create new yaki
-::
-=/  new-blobs=(map path blob)
-  %-  ~(run by cast-results)
-  |=  =cage
-  =/  =page  [p q.q]:cage
-  [%direct (page-to-lobe page) page]
+::  Apply changes to current state to create new yuki
 ::
 =/  parent-tako=tako  (~(got by hit.dome) let.dome)
-=/  all-lobes=(map path lobe)
+=/  data=(map path (each page lobe))
   =+  .^  =parent=yaki  %cs
           /(scot %p our)/[desk]/(scot %da now)/yaki/(scot %uv parent-tako)
       ==
   =/  after-deletes
     %-  ~(dif by q.parent-yaki)
     (malt (turn ~(tap in deletes) |=(=path [path *lobe])))
-  %-  ~(uni by after-deletes)
-  (~(run by new-blobs) |=(=blob p.blob))
+  =/  after=(map path (each page lobe))
+    (~(run by after-deletes) |=(=lobe |+lobe))
+  %-  ~(uni by after)
+  ^-  (map path (each page lobe))
+  (~(run by changes) |=(=cage &+[p q.q]:cage))
+=/  =yuki  [~[parent-tako] data]
 ::
-::  XX should we be getting the time later, after all async?
-;<  now=@da  bind:m  get-time:strandio
-=/  new-yaki=yaki  (make-yaki ~[parent-tako] all-lobes now)
-::
-::  Apply new blobs and yaki to rang
-::
-=/  =rang
-  :-  (~(put by hut:*rang) r.new-yaki new-yaki)
-  (malt (turn ~(tap by new-blobs) |=([=path =blob] [p.blob blob])))
-::
-::  Checkout ankh and mime cache (derived state)
-::
-=/  =ankh  (checkout:clay-commit ank.dome deletes cast-results)
-;<  mim=(map path (unit mime))  bind:m
-  (checkout-cache:clay-commit our desk deletes cast-results)
 ::  Send to clay
 ::
-=/  args  [desk r.new-yaki rang ankh mim]
+=/  args  [desk yuki *rang]
 ;<  ~  bind:m  (send-raw-card:strandio %pass /commit/[desk] %arvo %c %park args)
 (pure:m !>(~))

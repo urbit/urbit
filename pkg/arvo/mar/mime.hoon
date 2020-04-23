@@ -5,6 +5,7 @@
 ::
 |_  own/mime
 ++  grow
+  ^?
   |%
   ++  jam  `@`q.q.own
   --
