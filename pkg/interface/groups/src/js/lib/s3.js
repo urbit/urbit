@@ -61,19 +61,18 @@ class S3 {
     });
   }
 
-  putObject(body, bucket, filename) {
+  upload(bucket, filename, buffer) {
     let params = {
-        Body: body,
-        Bucket: bucket,
-        Key: filename,
+      Bucket: bucket,
+      Key:  filename,
+      Body: buffer
     };
-
     return new Promise((resolve, reject) => {
       if (!this.s3) {
         reject({ error: 'S3 not initialized!' });
         return;
       }
-      this.s3.putObject(params, (error, data) => {
+      this.s3.upload(params, (error, data) => {
         if (error) {
           reject({ error });
         } else {
@@ -81,7 +80,6 @@ class S3 {
         }
       });
     });
-
   }
 }
 
