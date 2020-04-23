@@ -451,7 +451,8 @@
           c3_d             dun_d;               //  committed
           u3_disk_cb        cb_u;               //  callbacks
           uv_timer_t       tim_u;               //  read timer
-          c3_o             hol_o;               //  on hold
+          uv_work_t        ted_u;               //  write thread
+          c3_o             ted_o;               //  c3y == active
           u3_play          put_u;               //  write queue
         } u3_disk;
 
@@ -618,32 +619,10 @@
         void
         u3_lord_snap(u3_lord* god_u, c3_d eve_d);
 
-        u3_disk*
-        u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u);
-        c3_o
-        u3_disk_read_header(u3_disk* log_u, c3_d who_d[2], c3_o* fak_o, c3_w* lif_w);
-        c3_o
-        u3_disk_write_header(u3_disk* log_u, c3_d who_d[2], c3_o fak_o, c3_w lif_w);
-        void
-        u3_disk_boot_plan(u3_disk* log_u, u3_noun job);
-        void
-        u3_disk_plan(u3_disk* log_u,
-                     c3_d     eve_d,
-                     c3_l     bug_l,
-                     c3_l     mug_l,
-                     u3_noun  job);
-        void
-        u3_disk_read(u3_disk* log_u, c3_d eve_d, c3_d len_d);
-
       /* u3_pier_spin(): (re-)activate idle handler
       */
         void
         u3_pier_spin(u3_pier* pir_u);
-
-      /* u3_disk_exit(): close the log.
-      */
-        void
-        u3_disk_exit(u3_disk* log_u);
 
 #     define u3L  u3_Host.lup_u             //  global event loop
 #     define u3Z  (&(u3_Raft))
@@ -726,6 +705,53 @@
       */
         c3_d
         u3_time_gap_ms(u3_noun now, u3_noun wen);
+
+    /**  New vere
+    **/
+      /* u3_disk_init(): load or create pier directories and event log.
+      */
+        u3_disk*
+        u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u);
+
+      /* u3_disk_exit(): close [log_u] and dispose.
+      */
+        void
+        u3_disk_exit(u3_disk* log_u);
+
+      /* u3_disk_read_meta(): read metadata.
+      */
+        c3_o
+        u3_disk_read_meta(u3_disk* log_u,
+                          c3_d*    who_d,
+                          c3_o*    fak_o,
+                          c3_w*    lif_w);
+
+      /* u3_disk_save_meta(): save metadata.
+      */
+        c3_o
+        u3_disk_save_meta(u3_disk* log_u,
+                          c3_d     who_d[2],
+                          c3_o     fak_o,
+                          c3_w     lif_w);
+
+      /* u3_disk_read(): read [len_d] events starting at [eve_d].
+      */
+        void
+        u3_disk_read(u3_disk* log_u, c3_d eve_d, c3_d len_d);
+
+      /* u3_disk_boot_plan(): XX remove, just use u3_disk_plan().
+      */
+        void
+        u3_disk_boot_plan(u3_disk* log_u, u3_noun job);
+
+      /* u3_disk_plan(): enqueue completed event for persistence.
+      */
+        void
+        u3_disk_plan(u3_disk* log_u,
+                     c3_d     eve_d,
+                     c3_l     bug_l,
+                     c3_l     mug_l,
+                     u3_noun  job);
 
     /**  Filesystem (new api).
     **/

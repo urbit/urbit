@@ -883,10 +883,13 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
 {
   u3_pier* pir_u = _pier_init(wag_w, u3r_string(pax));
 
-  if ( c3n == u3_disk_read_header(pir_u->log_u, pir_u->who_d,
-                                  &pir_u->fak_o, &pir_u->lif_w) )
+  if ( c3n == u3_disk_read_meta(pir_u->log_u,  pir_u->who_d,
+                               &pir_u->fak_o, &pir_u->lif_w) )
   {
-    // xx dispose
+    fprintf(stderr, "pier: disk read meta fail\r\n");
+    //  XX dispose
+    //
+    u3_pier_bail();
     exit(1);
   }
 
@@ -1018,8 +1021,8 @@ _pier_boot_plan(u3_pier* pir_u, u3_noun who, u3_noun ven, u3_noun pil)
     pir_u->lif_w = u3qb_lent(bot_u.bot);
   }
 
-  if ( c3n == u3_disk_write_header(pir_u->log_u, pir_u->who_d,
-                                   pir_u->fak_o, pir_u->lif_w) )
+  if ( c3n == u3_disk_save_meta(pir_u->log_u, pir_u->who_d,
+                                pir_u->fak_o, pir_u->lif_w) )
   {
     //  XX dispose bot_u
     //
@@ -1089,8 +1092,10 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
   u3_pier* pir_u = _pier_init(wag_w, u3r_string(pax));
 
   if ( c3n == _pier_boot_plan(pir_u, who, ven, pil) ) {
-    //  xx dispose
+    fprintf(stderr, "pier: boot plan fail\r\n");
+    //  XX dispose
     //
+    u3_pier_bail();
     exit(1);
   }
 
