@@ -7,12 +7,13 @@ import urbitOb from 'urbit-ob';
 export class Subscription {
 
   constructor() {
-    this.firstRoundSubscriptionComplete = false;
+    this.firstRoundComplete = false;
+    this.secondRoundComplete = false;
   }
 
   start() {
     if (api.authTokens) {
-      this.firstRoundSubscription();
+      this.firstRound();
       window.urb.setOnChannelError(this.onChannelError.bind(this));
     } else {
       console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
@@ -22,7 +23,8 @@ export class Subscription {
   onChannelError(err) {
     console.error('event source error: ', err);
     console.log('initiating new channel');
-    this.firstRoundSubscriptionComplete = false;
+    this.firstRoundComplete = false;
+    this.secondRoundComplete = false;
     setTimeout(2000, () => {
       store.handleEvent({
         data: { clear : true}
@@ -43,21 +45,28 @@ export class Subscription {
       });
   }
 
-  firstRoundSubscription() {
+  firstRound() {
     this.subscribe('/primary', 'contact-view');
   }
 
-  secondRoundSubscriptions() {
-    this.subscribe('/synced', 'contact-hook');
-    this.subscribe('/primary', 'invite-view');
+  secondRound() {
     this.subscribe('/all', 'group-store');
     this.subscribe('/all', 'metadata-store');
   }
 
+  thirdRound() {
+    this.subscribe('/synced', 'contact-hook');
+    this.subscribe('/primary', 'invite-view');
+    this.subscribe('/all', 's3-store');
+  }
+
   handleEvent(diff) {
-    if (!this.firstRoundSubscriptionComplete) {
-      this.firstRoundSubscriptionComplete = true;
-      this.secondRoundSubscriptions();
+    if (!this.firstRoundComplete) {
+      this.firstRoundComplete = true;
+      this.secondRound();
+    } else if (!this.secondRoundComplete) {
+      this.secondRoundComplete = true;
+      this.thirdRound();
     }
     store.handleEvent(diff);
   }
