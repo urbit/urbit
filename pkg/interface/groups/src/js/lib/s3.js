@@ -1,51 +1,89 @@
 const AWS = require('aws-sdk')
 
-export function configureClient() {
-  // Configure client for use with Spaces
-  const spacesEndpoint = new AWS.Endpoint('nyc3.digitaloceanspaces.com');
-  return new AWS.S3({
-      endpoint: spacesEndpoint,
-      credentials: new AWS.Credentials({
-        accessKeyId: 'ACCESS_KEY',
-        secretAccessKey: 'SECRET_KEY'
-      })
-  });
+class S3 {
+  constructor() {
+    this.endpoint = new AWS.Endpoint("");
+    this.accessKeyId = "";
+    this.secretAccesskey = "";
+
+    this.s3 = null;
+  }
+
+  setCredentials(endpoint, accessKeyId, secretAccessKey) {
+    this.endpoint = new AWS.Endpoint(endpoint);
+    this.accessKeyId = accessKeyId;
+    this.secretAccessKey = secretAccessKey;
+
+    this.s3 = 
+      new AWS.S3({
+        endpoint: this.endpoint,
+        credentials: new AWS.Credentials({
+          accessKeyId: this.accessKeyId,
+          secretAccessKey: this.secretAccessKey
+        })
+      });
+  }
+
+  createBucket(name) {
+    let params = {
+      Bucket: name,
+      ACL: "public-read"
+    };
+
+    return new Promise((resolve, reject) => {
+      if (!this.s3) {
+        reject({ error: 'S3 not initialized!' });
+        return;
+      }
+      this.s3.createBucket(params, (error, data) => {
+        if (error) {
+          reject({ error });
+        } else {
+          resolve({ data });
+        }
+      });
+    });
+  }
+
+  listBuckets() {
+    return new Promise((resolve, reject) => {
+      if (!this.s3) {
+        reject({ error: 'S3 not initialized!' });
+        return;
+      }
+      this.s3.listBuckets({}, (error, data) => {
+        if (error) {
+          reject({ error });
+        } else {
+          resolve({ data });
+        }
+      });
+    });
+  }
+
+  putObject(body, bucket, filename) {
+    let params = {
+        Body: body,
+        Bucket: bucket,
+        Key: filename,
+    };
+
+    return new Promise((resolve, reject) => {
+      if (!this.s3) {
+        reject({ error: 'S3 not initialized!' });
+        return;
+      }
+      this.s3.putObject(params, (error, data) => {
+        if (error) {
+          reject({ error });
+        } else {
+          resolve({ data });
+        }
+      });
+    });
+
+  }
 }
 
-export function createBucket() {
-  // Create a new Space
-  var params = {
-      Bucket: "my-new-space-with-a-unique-name"
-  };
-
-  s3.createBucket(params, function(err, data) {
-      if (err) console.log(err, err.stack);
-      else     console.log(data);
-  });
-}
-
-export function listBuckets() {
-  // List all Spaces in the region
-  s3.listBuckets({}, function(err, data) {
-  if (err) console.log(err, err.stack);
-      else {
-          data['Buckets'].forEach(function(space) {
-          console.log(space['Name']);
-      })};
-  });
-}
-
-export function putObject(body, bucket, key) {
-  // Add a file to a Space
-  var params = {
-      Body: "The contents of the file",
-      Bucket: "my-new-space-with-a-unique-name",
-      Key: "file.ext",
-  };
-
-  s3.putObject(params, function(err, data) {
-      if (err) console.log(err, err.stack);
-      else     console.log(data);
-  });
-}
+export let s3 = new S3();
 
