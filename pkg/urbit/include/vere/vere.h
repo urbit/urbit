@@ -307,21 +307,6 @@
 
     /**  New pier system.
     **/
-      /* u3_writ: inbound event.
-      */
-        typedef struct _u3_writ {
-          struct _u3_pier* pir_u;               //  backpointer to pier
-          u3_noun          job;                 //  (pair date ovum)
-          c3_d             evt_d;               //  event number
-          c3_d             rep_d;               //  replacement count
-          u3_noun          now;                 //  event time
-          c3_l             msc_l;               //  ms to timeout
-          c3_l             mug_l;               //  hash before executing
-          u3_atom          mat;                 //  jammed [mug_l job], or 0
-          u3_noun          act;                 //  action list
-          struct _u3_writ* nex_u;               //  next in queue, or 0
-        } u3_writ;
-
       /* u3_ovum: potential event
       */
         typedef struct _u3_ovum {
@@ -372,13 +357,13 @@
           u3_noun            pat;               //  path (serialized beam)
         } u3_peek;
 
-      /* u3_rrit: new u3_writ
+      /* u3_writ: new u3_writ
       */
-        typedef struct _u3_rrit {
+        typedef struct _u3_writ {
           struct timeval  tim_tv;               //  time enqueued
           u3_atom            mat;               //  serialized
           c3_o             sen_o;               //  sent
-          struct _u3_rrit* nex_u;               //  next in queue, or 0
+          struct _u3_writ* nex_u;               //  next in queue, or 0
           c3_m             typ_m;               //  tag
           union {                               //
             c3_w             xit_w;             //  exit code
@@ -387,7 +372,7 @@
             struct _u3_play  pay_u;             //  recompute
             struct _u3_work* wok_u;             //  compute
           };
-        } u3_rrit;
+        } u3_writ;
 
       /* u3_lord_cb: u3_lord callbacks
       */
@@ -425,8 +410,8 @@
           c3_d                 eve_d;           //  last event completed
           c3_l                 mug_l;           //  mug at eve_d
           c3_w                 dep_w;           //  queue depth
-          struct _u3_rrit*     ent_u;           //  queue entry
-          struct _u3_rrit*     ext_u;           //  queue exit
+          struct _u3_writ*     ent_u;           //  queue entry
+          struct _u3_writ*     ext_u;           //  queue exit
         } u3_lord;
 
       /* u3_disk_cb: u3_disk callbacks
@@ -593,32 +578,6 @@
         c3_o
         u3_auto_live(u3_auto* car_u);
 
-        u3_lord*
-        u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u);
-
-      /* u3_lord_work();
-      */
-        void
-        u3_lord_play(u3_lord* god_u, u3_play pay_u);
-
-      /* u3_lord_work();
-      */
-        void
-        u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo);
-
-        void
-        u3_lord_save(u3_lord* god_u, c3_d eve_d);
-
-      /* u3_lord_exit();
-      */
-        void
-        u3_lord_exit(u3_lord* god_u, c3_w cod_w);
-
-      /* u3_lord_snap();
-      */
-        void
-        u3_lord_snap(u3_lord* god_u, c3_d eve_d);
-
       /* u3_pier_spin(): (re-)activate idle handler
       */
         void
@@ -752,6 +711,44 @@
                      c3_l     bug_l,
                      c3_l     mug_l,
                      u3_noun  job);
+
+      /* u3_lord_init(): start serf.
+      */
+        u3_lord*
+        u3_lord_init(c3_c*     pax_c,
+                     c3_w      wag_w,
+                     c3_d      key_d[4],
+                     u3_lord_cb cb_u);
+
+      /* u3_lord_exit(): shutdown gracefully.
+      */
+        void
+        u3_lord_exit(u3_lord* god_u, c3_w cod_w);
+
+      /* u3_lord_save(): save portable state.
+      */
+        void
+        u3_lord_save(u3_lord* god_u, c3_d eve_d);
+
+      /* u3_lord_snap(): take a fast snapshot.
+      */
+        void
+        u3_lord_snap(u3_lord* god_u, c3_d eve_d);
+
+      /* u3_lord_work(): attempt work.
+      */
+        void
+        u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo);
+
+      /* u3_lord_play(): recompute batch.
+      */
+        void
+        u3_lord_play(u3_lord* god_u, u3_play pay_u);
+
+      /* u3_lord_peek(): read.
+      */
+        void
+        u3_lord_peek(u3_lord* god_u, u3_noun gan, u3_noun pat);
 
     /**  Filesystem (new api).
     **/
