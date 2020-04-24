@@ -567,8 +567,7 @@
           {$mont des/desk bem/beam}                     ::  mount to unix
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
-          {$park des/desk tak/tako ran/rang ank/ankh mim/(map path (unit mime))}
-                                                        ::  plumbing commit
+          {$park des/desk yuk/yuki ran/rang}            ::  plumbing commit
           {$perm des/desk pax/path rit/rite}            ::  change permissions
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
@@ -693,6 +692,10 @@
     ==                                                  ::
   ++  urge  |*(a/mold (list (unce a)))                  ::  list change
   ++  whom  (each ship @ta)                             ::  ship or named crew
+  ++  yuki                                              ::  commit
+    $:  p/(list tako)                                   ::  parents
+        q/(map path (each page lobe))                   ::  namespace
+    ==                                                  ::
   ++  yaki                                              ::  commit
     $:  p/(list tako)                                   ::  parents
         q/(map path lobe)                               ::  namespace

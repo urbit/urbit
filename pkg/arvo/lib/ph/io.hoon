@@ -46,7 +46,11 @@
   ::  probably the best option because the thread can delay until it
   ::  gets a positive ack on the subscription.
   ::
-  ;<  ~  bind:m  (sleep ~s0)
+  ::  Threads might not get built until a %writ is dripped back to
+  ::  spider.  Drips are at +(now), so we sleep until two clicks in the
+  ::  future.
+  ::
+  ;<  ~  bind:m  (sleep `@dr`2)
   (pure:m ~)
 ::
 ++  end-test
@@ -150,7 +154,7 @@
   ::  hit the first of these cases, and other ships will hit the
   ::  second.
   ::
-  ?:  ?|  (f "clay: committed initial filesystem (all)")
+  ?:  ?|  (f ":dojo>")
           (f "is your neighbor")
       ==
     (pure:m ~)
