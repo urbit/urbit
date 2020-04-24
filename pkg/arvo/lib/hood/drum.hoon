@@ -386,7 +386,10 @@
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
-  %+  roll  ~(tap in eel)
+  %+  roll
+    %+  sort
+      ~(tap in eel)
+    |=([[@ a=term] [@ b=term]] (aor a b))
   =<  .(con +>)
   |:  $:{gil/gill:gall con/_.}  ^+  con
   =.  +>.$  con
