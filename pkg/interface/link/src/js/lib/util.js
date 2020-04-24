@@ -1,6 +1,3 @@
-import _ from 'lodash';
-import classnames from 'classnames';
-
 export function makeRoutePath(
   resource, popout = false, page = 0, url = null, index = 0, compage = 0
 ) {
@@ -19,7 +16,8 @@ export function makeRoutePath(
 }
 
 export function amOwnerOfGroup(groupPath) {
-  if (!groupPath) return false;
+  if (!groupPath)
+return false;
   const groupOwner = /(\/~)?\/~([a-z-]{3,})\/.*/.exec(groupPath)[2];
   return (window.ship === groupOwner);
 }
@@ -28,12 +26,13 @@ export function getContactDetails(contact) {
   const member = !contact;
   contact = contact || {
     'nickname': '',
-    'avatar': 'TODO',
+    'avatar': null,
     'color': '0x0'
   };
   const nickname = contact.nickname || '';
   const color = uxToHex(contact.color || '0x0');
-  return {nickname, color, member};
+  const avatar = contact.avatar || null;
+  return { nickname, color, member, avatar };
 }
 
 // encodes string into base64url,
@@ -55,8 +54,8 @@ export function base64urlDecode(string) {
 }
 
 export function isPatTa(str) {
-  const r = /^[a-z,0-9,\-,\.,_,~]+$/.exec(str)
-  return !!r;
+  const r = /^[a-z,0-9,\-,\.,_,~]+$/.exec(str);
+  return Boolean(r);
 }
 
 // encode the string into @ta-safe format, using logic from +wood.
@@ -86,7 +85,7 @@ export function stringToTa(string) {
         ) {
           add = char;
         } else {
-          //TODO behavior for unicode doesn't match +wood's,
+          // TODO behavior for unicode doesn't match +wood's,
           //     but we can probably get away with that for now.
           add = '~' + charCode.toString(16) + '.';
         }
@@ -103,13 +102,13 @@ export function stringToTa(string) {
     (javascript Date object)
 */
 export function daToDate(st) {
-  var dub = function(n) {
-    return parseInt(n) < 10 ? "0" + parseInt(n) : n.toString();
+  const dub = function(n) {
+    return parseInt(n) < 10 ? '0' + parseInt(n) : n.toString();
   };
-  var da = st.split('..');
-  var bigEnd = da[0].split('.');
-  var lilEnd = da[1].split('.');
-  var ds = `${bigEnd[0].slice(1)}-${dub(bigEnd[1])}-${dub(bigEnd[2])}T${dub(lilEnd[0])}:${dub(lilEnd[1])}:${dub(lilEnd[2])}Z`;
+  const da = st.split('..');
+  const bigEnd = da[0].split('.');
+  const lilEnd = da[1].split('.');
+  const ds = `${bigEnd[0].slice(1)}-${dub(bigEnd[1])}-${dub(bigEnd[2])}T${dub(lilEnd[0])}:${dub(lilEnd[1])}:${dub(lilEnd[2])}Z`;
   return new Date(ds);
 }
 
@@ -121,8 +120,8 @@ export function daToDate(st) {
 */
 
 export function dateToDa(d, mil) {
-  var fil = function(n) {
-    return n >= 10 ? n : "0" + n;
+  const fil = function(n) {
+    return n >= 10 ? n : '0' + n;
   };
   return (
     `~${d.getUTCFullYear()}.` +
@@ -131,7 +130,7 @@ export function dateToDa(d, mil) {
     `${fil(d.getUTCHours())}.` +
     `${fil(d.getUTCMinutes())}.` +
     `${fil(d.getUTCSeconds())}` +
-    `${mil ? "..0000" : ""}`
+    `${mil ? '..0000' : ''}`
   );
 }
 
@@ -149,41 +148,41 @@ export function uxToHex(ux) {
 
 // trim patps to match dojo, chat-cli
 export function cite(ship) {
-  let patp = ship, shortened = "";
-  if (patp.startsWith("~")) {
+  let patp = ship, shortened = '';
+  if (patp.startsWith('~')) {
     patp = patp.substr(1);
   }
   // comet
   if (patp.length === 56) {
-    shortened = "~" + patp.slice(0, 6) + "_" + patp.slice(50, 56);
+    shortened = '~' + patp.slice(0, 6) + '_' + patp.slice(50, 56);
     return shortened;
   }
   // moon
   if (patp.length === 27) {
-    shortened = "~" + patp.slice(14, 20) + "^" + patp.slice(21, 27);
+    shortened = '~' + patp.slice(14, 20) + '^' + patp.slice(21, 27);
     return shortened;
   }
   return `~${patp}`;
 }
 
 export function alphabetiseAssociations(associations) {
-  let result = {};
+  const result = {};
   Object.keys(associations).sort((a, b) => {
     let aName = a.substr(1);
     let bName = b.substr(1);
     if (associations[a].metadata && associations[a].metadata.title) {
-      aName = associations[a].metadata.title !== ""
+      aName = associations[a].metadata.title !== ''
         ? associations[a].metadata.title
         : a.substr(1);
     }
     if (associations[b].metadata && associations[b].metadata.title) {
-      bName = associations[b].metadata.title !== ""
+      bName = associations[b].metadata.title !== ''
         ? associations[b].metadata.title
         : b.substr(1);
     }
     return aName.toLowerCase().localeCompare(bName.toLowerCase());
   }).map((each) => {
     result[each] = associations[each];
-  })
+  });
   return result;
 }

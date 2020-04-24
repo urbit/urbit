@@ -31,7 +31,6 @@ const MARKDOWN_CONFIG = {
   }
 };
 
-
 export class ChatInput extends Component {
   constructor(props) {
     super(props);
@@ -117,7 +116,6 @@ export class ChatInput extends Component {
       return;
     }
     this.setState({ patpSearch: match[1].toLowerCase() });
-
   }
 
   clearSearch() {
@@ -276,6 +274,15 @@ export class ChatInput extends Component {
     const sigilClass = props.ownerContact
       ? '' : 'mix-blend-diff';
 
+    const img = (props.ownerContact && (props.ownerContact.avatar !== null))
+      ? <img src={props.ownerContact.avatar} height={24} width={24} className="dib" />
+      : <Sigil
+        ship={window.ship}
+        size={24}
+        color={`#${color}`}
+        classes={sigilClass}
+        />;
+
     const candidates = _.chain(this.props.envelopes)
       .defaultTo([])
       .map('author')
@@ -324,12 +331,7 @@ export class ChatInput extends Component {
             height: 24
           }}
         >
-          <Sigil
-            ship={window.ship}
-            size={24}
-            color={`#${color}`}
-            classes={sigilClass}
-          />
+        {img}
         </div>
         <div
           className="fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center"

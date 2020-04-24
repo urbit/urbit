@@ -116,7 +116,7 @@ export class ContactCard extends Component {
         if (
           (state.avatarToSet === '') ||
           (
-            !!props.contact.avatar &&
+            Boolean(props.contact.avatar) &&
             'url' in props.contact.avatar &&
             state.avatarToSet === props.contact.avatar.url
           )
@@ -129,7 +129,7 @@ export class ContactCard extends Component {
             awaiting: true,
             type: 'Saving to group'
           }, (() => {
-            api.contactEdit(props.path, ship, { 
+            api.contactEdit(props.path, ship, {
               avatar: {
                 url: state.avatarToSet
               }
@@ -233,14 +233,6 @@ export class ContactCard extends Component {
             });
           }));
         }
-        break;
-      }
-      case 'removeAvatar': {
-        this.setState({ awaiting: true, type: 'Removing from group' }, (() => {
-            api.contactEdit(props.path, ship, { avatar: null }).then(() => {
-              this.setState({ awaiting: false });
-            });
-        }));
         break;
       }
       case 'removeEmail': {
@@ -404,9 +396,10 @@ export class ContactCard extends Component {
 
     const avatar = (hasAvatar)
       ? <span>
-          <img className="dib h-auto" 
+          <img className="dib h-auto"
              width={128}
-             src={props.contact.avatar} />
+             src={props.contact.avatar}
+          />
           <EditElement
             title="Avatar Image URL"
             defaultValue={defaultValue.avatar}
@@ -519,7 +512,7 @@ export class ContactCard extends Component {
     const hexColor = uxToHex(currentColor);
 
     const avatar =
-      ('avatar' in props.contact && props.contact.avatar !== 'TODO') ?
+      ('avatar' in props.contact && props.contact.avatar !== null) ?
       <img className="dib h-auto" width={128} src={props.contact.avatar} /> :
       <Sigil
         ship={props.ship}

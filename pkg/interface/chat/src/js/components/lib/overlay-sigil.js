@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { Sigil } from "/components/lib/icons/sigil";
+import React, { Component } from 'react';
+import { Sigil } from '/components/lib/icons/sigil';
 import {
   ProfileOverlay,
   OVERLAY_HEIGHT
-} from "/components/lib/profile-overlay";
+} from '/components/lib/profile-overlay';
 
 export class OverlaySigil extends Component {
   constructor() {
@@ -49,7 +49,6 @@ export class OverlaySigil extends Component {
       const parent = this.containerRef.current.offsetParent;
       const { offsetTop } = this.containerRef.current;
 
-
       let bottomSpace, topSpace;
 
       if(navigator.userAgent.includes('Firefox')) {
@@ -58,7 +57,6 @@ export class OverlaySigil extends Component {
       } else {
         topSpace = offsetTop + parent.scrollHeight - parent.clientHeight - parent.scrollTop;
         bottomSpace = parent.clientHeight - topSpace - OVERLAY_HEIGHT;
-
       }
       this.setState({
         topSpace,
@@ -69,12 +67,22 @@ export class OverlaySigil extends Component {
 
   render() {
     const { props, state } = this;
-    return (
+
+    const img = (props.contact && (props.contact.avatar !== null))
+      ? <img src={props.contact.avatar} height={24} width={24} className="dib" />
+      : <Sigil
+        ship={props.ship}
+        size={24}
+        color={props.color}
+        classes={props.sigilClass}
+        />;
+
+     return (
       <div
         onClick={this.profileShow}
-        className={props.className + " pointer relative"}
+        className={props.className + ' pointer relative'}
         ref={this.containerRef}
-        style={{ height: "24px" }}
+        style={{ height: '24px' }}
       >
         {state.profileClicked && (
           <ProfileOverlay
@@ -87,12 +95,7 @@ export class OverlaySigil extends Component {
             onDismiss={this.profileHide}
           />
         )}
-        <Sigil
-          ship={props.ship}
-          size={24}
-          color={props.color}
-          classes={props.sigilClass}
-        />
+        {img}
       </div>
     );
   }

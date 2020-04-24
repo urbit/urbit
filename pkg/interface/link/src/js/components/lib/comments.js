@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { CommentItem } from './comment-item';
 import { CommentsPagination } from './comments-pagination';
 
@@ -12,12 +12,12 @@ export class Comments extends Component {
   }
 
   componentDidMount() {
-    let page = this.props.commentPage;
+    const page = this.props.commentPage;
     if (!this.props.comments ||
         !this.props.comments[page] ||
         this.props.comments.local[page]
     ) {
-      this.setState({requested: this.props.commentPage});
+      this.setState({ requested: this.props.commentPage });
       api.getCommentsPage(
         this.props.resourcePath,
         this.props.url,
@@ -26,35 +26,34 @@ export class Comments extends Component {
   }
 
   render() {
-    let props = this.props;
+    const props = this.props;
 
-    let page = props.commentPage;
+    const page = props.commentPage;
 
-    let commentsObj = !!props.comments
+    const commentsObj = props.comments
     ? props.comments
     : {};
 
-    let commentsPage = !!commentsObj[page]
+    const commentsPage = commentsObj[page]
     ? commentsObj[page]
     : {};
 
-    let total = !!props.comments
+    const total = props.comments
     ? props.comments.totalPages
     : 1;
 
-    let commentsList = Object.keys(commentsPage)
+    const commentsList = Object.keys(commentsPage)
     .map((entry) => {
+      const commentObj = commentsPage[entry];
+      const { ship, time, udon } = commentObj;
 
-      let commentObj = commentsPage[entry]
-      let { ship, time, udon } = commentObj;
-
-      let contacts = !!props.contacts
+      const contacts = props.contacts
         ? props.contacts
         : {};
 
-      const {nickname, color, member} = getContactDetails(contacts[ship]);
+      const { nickname, color, member, avatar } = getContactDetails(contacts[ship]);
 
-      let nameClass = nickname ? "inter" : "mono";
+      const nameClass = nickname ? 'inter' : 'mono';
 
       return(
         <CommentItem
@@ -65,10 +64,11 @@ export class Comments extends Component {
           nickname={nickname}
           nameClass={nameClass}
           color={color}
+          avatar={avatar}
           member={member}
         />
-      )
-    })
+      );
+    });
     return (
       <div>
         {commentsList}
@@ -80,9 +80,10 @@ export class Comments extends Component {
         linkIndex={props.linkIndex}
         url={props.url}
         commentPage={props.commentPage}
-        total={total}/>
+        total={total}
+        />
       </div>
-    )
+    );
   }
 }
 
