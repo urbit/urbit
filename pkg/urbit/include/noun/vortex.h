@@ -34,6 +34,11 @@
 
   /**  Functions.
   **/
+    /* u3v_life(): execute initial lifecycle, producing Arvo core.
+    */
+      u3_noun
+      u3v_life(u3_noun eve);
+
     /* u3v_boot(): evaluate boot sequence, making a kernel
     */
       c3_o

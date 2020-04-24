@@ -379,6 +379,7 @@ _serf_sure_post(void)
 {
   if ( c3y == u3V.rec_o ) {
     u3m_reclaim();
+    u3V.rec_o = c3n;
   }
 
   //  XX this runs on replay too
@@ -387,6 +388,7 @@ _serf_sure_post(void)
 
   if ( c3y == u3V.pac_o ) {
     _serf_pack();
+    u3V.pac_o = c3n;
   }
 }
 
@@ -528,38 +530,41 @@ _serf_poke_time(c3_d evt_d, c3_c* txt_c, struct timeval b4)
 }
 #endif
 
-/* _serf_work():  apply event, capture effects.
+static u3_noun
+_serf_make_crud(u3_noun job, u3_noun dud)
+{
+  u3_noun now, ovo, wir, cad, new;
+  u3x_cell(job, &now, &ovo);
+  u3x_cell(ovo, &wir, &cad);
+
+  new = u3nt(u3i_vint(u3k(now)), u3k(wir), u3nt(c3__crud, dud, u3k(cad)));
+  u3z(job);
+  return new;
+}
+
+/* _serf_poke(): RETAIN
 */
 static u3_noun
-_serf_work(u3_noun job)
+_serf_poke(u3_noun job, c3_c* cap_c)
 {
-  u3_noun now, ovo, gon, last_date;
-  c3_w pre_w = u3a_open(u3R);
-
-  //  %work must be performed against an extant kernel
-  //
-  c3_assert( 0 != u3V.mug_l);
-
-  //  event numbers must be continuous (see [%live %walk @])
-  //
-  c3_assert( u3V.sen_d == u3V.dun_d);
-  u3V.sen_d++;
-
+  u3_noun now, ovo, wen, gon;
   u3x_cell(job, &now, &ovo);
 
-  last_date = u3A->now;
-  u3A->now  = u3k(now);
+  wen      = u3A->now;
+  u3A->now = u3k(now);
 
 #ifdef U3_EVENT_TIME_DEBUG
   struct timeval b4;
-  c3_t  bug_t = c3__belt != u3h(u3t(ovo));
+  c3_t  bug_t = (  (c3__belt != u3h(u3t(ovo)))
+                || (  (c3__crud == u3h(u3t(ovo)))
+                   && (c3__belt != u3h(u3t(u3t(u3t(ovo))))) ));
   c3_c* txt_c = 0;
 
   if ( bug_t ) {
     gettimeofday(&b4, 0);
     txt_c = u3r_string(u3h(u3t(ovo)));
 
-    u3l_log("serf: work (%" PRIu64 ") %s\r\n", txt_c, u3V.sen_d);
+    u3l_log("serf: %s (%" PRIu64 ") %s\r\n", cap_c, u3V.sen_d, txt_c);
   }
 #endif
 
@@ -571,6 +576,36 @@ _serf_work(u3_noun job)
     c3_free(txt_c);
   }
 #endif
+
+  if ( u3_blip != u3h(gon) ) {
+    u3z(u3A->now);
+    u3A->now = wen;
+  }
+  else {
+    u3z(wen);
+  }
+
+  return gon;
+}
+
+/* _serf_work():  apply event, capture effects.
+*/
+static u3_noun
+_serf_work(u3_noun job)
+{
+  u3_noun gon;
+  c3_w pre_w = u3a_open(u3R);
+
+  //  %work must be performed against an extant kernel
+  //
+  c3_assert( 0 != u3V.mug_l);
+
+  //  event numbers must be continuous
+  //
+  c3_assert( u3V.sen_d == u3V.dun_d);
+  u3V.sen_d++;
+
+  gon = _serf_poke(job, "work");
 
   //  event accepted
   //
@@ -584,49 +619,23 @@ _serf_work(u3_noun job)
     _serf_sure_core(u3k(cor));
     vir = _serf_sure_feck(pre_w, u3k(vir));
     
-    u3z(gon); u3z(job); u3z(last_date);
-
+    u3z(gon); u3z(job);
     return u3nc(c3__done, u3nt(u3i_chubs(1, &u3V.dun_d),
                                u3i_words(1, &u3V.mug_l),
                                vir));
   }
-
   //  event rejected
   //
-  {
+  else {
     //  stash $goof from first crash
     //
-    u3_noun dud = u3k(u3t(gon));
-
-    //  replace [ovo] with error notification
-    //
-    {
-      u3_noun wir, cad, dud;
-      u3x_cell(ovo, &wir, &cad);
-      ovo = u3nq(u3k(wir), c3__crud, u3k(dud), u3k(cad));
-    }
+    u3_noun dud = u3k(gon);
 
     // XX reclaim/pack on %meme first?
     //
 
-    // XX u3i_vint(u3A->now) ??
-    //
-
-#ifdef U3_EVENT_TIME_DEBUG
-    if ( bug_t ) {
-      gettimeofday(&b4, 0);
-      u3l_log("serf: crud (%" PRIu64 ") live\r\n", u3V.sen_d);
-    }
-#endif
-
-    u3z(gon);
-    gon = u3m_soft(0, u3v_poke, u3k(ovo));
-
-#ifdef U3_EVENT_TIME_DEBUG
-    if ( bug_t ) {
-      _serf_poke_time(u3V.sen_d, "crud", b4);
-    }
-#endif
+    job = _serf_make_crud(job, dud);
+    gon = _serf_poke(u3k(job), "crud");
 
     //  error notification accepted
     //
@@ -640,35 +649,22 @@ _serf_work(u3_noun job)
       _serf_sure_core(u3k(cor));
       vir = _serf_sure_feck(pre_w, u3k(vir));
 
-      u3z(gon); u3z(job); u3z(last_date); u3z(dud);
-
-
-    return u3nc(c3__swap, u3nq(u3i_chubs(1, &u3V.dun_d),
-                               u3i_words(1, &u3V.mug_l),
-                               u3nc(u3k(u3A->now), ovo),
-                               vir));
+      u3z(gon); u3z(dud);
+      return u3nc(c3__swap, u3nq(u3i_chubs(1, &u3V.dun_d),
+                                 u3i_words(1, &u3V.mug_l),
+                                 job,
+                                 vir));
     }
-
     //  error notification rejected
     //
-    {
-      //  stash $goof from second crash
-      //
-      u3_noun dud = u3k(u3t(gon));
-
-      //  restore previous time
-      //
-      u3z(u3A->now);
-      u3A->now = last_date;
-
+    else {
       u3V.sen_d = u3V.dun_d;
-
-      u3z(gon); u3z(job); u3z(ovo);
 
       // XX reclaim/pack on %meme ?
       //
 
-      return u3nq(c3__bail, u3k(u3t(gon)), dud, u3_nul);
+      u3z(job);
+      return u3nq(c3__bail, gon, dud, u3_nul);
     }
   }
 }
@@ -709,70 +705,89 @@ _serf_work_trace(u3_noun job)
 }
 
 static u3_noun
-_serf_play_life(u3_noun eve)
+_serf_writ_play_life(u3_noun eve)
 {
-  c3_d len_d;
+  u3_noun gon;
+
+  c3_assert( 0ULL == u3V.sen_d );
+
   {
     u3_noun len = u3qb_lent(eve);
-    c3_assert( c3y == u3r_safe_chub(len, &len_d) );
+    c3_assert( c3y == u3r_safe_chub(len, &u3V.sen_d) );
     u3z(len);
   }
 
-  c3_assert( 0ULL == u3V.sen_d );
-  u3V.sen_d = len_d;
-
-  //  XX set evt_d forall lit so that %slog is accurate?
-  //  XX capture bail instead of exit
+  //  ensure zero-initialized kernel
   //
-  if ( c3n == u3v_boot(eve) ) {
-    fprintf(stderr, "serf: boot failed: invalid sequence (from pill)\r\n");
-    exit(1);
+  //    XX assert?
+  //
+  u3A->roc = 0;
+
+  gon = u3m_soft(0, u3v_life, eve);
+
+  //  lifecycle sequence succeeded
+  //
+  if ( u3_blip == u3h(gon) ) {
+    //  save product as initial arvo kernel
+    //
+    _serf_sure_core(u3k(u3t(gon)));
+
+    u3z(gon);
+    return u3nc(c3__done, u3V.mug_l);
+  }
+  //  lifecycle sequence failed
+  //
+  else {
+    //  send failure message and trace
+    //
+    u3V.dun_d = u3V.sen_d = 0;
+
+    return u3nq(c3__bail, 0, 0, gon);
+  }
+}
+
+/* _serf_play_poke(): RETAIN
+*/
+static u3_noun
+_serf_play_poke(u3_noun job)
+{
+  u3_noun now, ovo, wen, gon;
+  u3x_cell(job, &now, &ovo);
+
+  wen      = u3A->now;
+  u3A->now = u3k(now);
+  gon      = u3m_soft(0, u3v_poke, u3k(ovo));
+
+  if ( u3_blip != u3h(gon) ) {
+    u3z(u3A->now);
+    u3A->now = wen;
+  }
+  else {
+    u3z(wen);
   }
 
-  //  XX refactor to use _serf_sure_core()
-  //
-  u3V.dun_d = u3A->ent_d = u3V.sen_d;
-  u3V.mug_l = u3r_mug(u3A->roc);
-
-  return u3nc(c3__done, u3V.mug_l);
+  return gon;
 }
 
 static u3_noun
-_serf_play_list(u3_noun eve)
+_serf_writ_play_list(u3_noun eve)
 {
   c3_w pre_w = u3a_open(u3R);
   u3_noun vev = eve;
-  u3_noun job, now, ovo, gon, last_date;
+  u3_noun job, gon;
 
   while ( u3_nul != eve ) {
     job = u3h(eve);
-    u3x_cell(job, &now, &ovo);
 
-    last_date = u3A->now;
-    u3A->now  = u3k(now);
+    //  bump sent event counter
+    //
     u3V.sen_d++;
 
-    gon = u3m_soft(0, u3v_poke, u3k(ovo));
+    gon = _serf_play_poke(job);
 
-    if ( u3_blip != u3h(gon) ) {
-      u3_noun dud = u3k(u3t(gon));
-      c3_d  eve_d = u3V.sen_d;
-      u3z(gon);
-
-      //  restore previous time
-      //
-      u3z(u3A->now);
-      u3A->now = last_date;
-
-      u3V.sen_d = u3V.dun_d;
-      u3z(vev);
-
-      //  XX reclaim/pack on meme
-      //  XX retry?
-      //
-      return u3nq(c3__bail, eve_d, u3V.mug_l, dud);
-    }
-    else {
+    //  event succeeded, save and continue
+    //
+    if ( u3_blip == u3h(gon) ) {
       //  vir/(list ovum)  list of effects
       //  cor/arvo         arvo core
       //
@@ -784,32 +799,56 @@ _serf_play_list(u3_noun eve)
       //  process effects to set pack/reclaim flags
       //
       u3z(_serf_sure_feck(pre_w, u3k(vir)));
+
       u3z(gon);
 
       //  skip |mass on replay
+      //
       u3z(u3V.sac);
       u3V.sac = u3_nul;
 
       eve = u3t(eve);
     }
+    //  event succeeded, save and continue
+    //
+    else {
+      u3_noun dud = u3k(u3t(gon));
+
+      //  reset sent event counter
+      //
+      u3V.sen_d   = u3V.dun_d;
+
+      u3z(gon);
+
+      //  XX reclaim/pack on meme
+      //  XX retry?
+      //
+
+      //  send failure notification
+      //
+      u3z(vev);
+      return u3nc(c3__bail, u3nt(u3i_chubs(1, &u3V.dun_d),
+                                 u3i_words(1, &u3V.mug_l),
+                                 dud));
+    }
   }
 
   u3z(vev);
-  return u3nc(c3__done, u3V.mug_l);
+  return u3nc(c3__done, u3i_words(1, &u3V.mug_l));
 }
 
-/* _serf_play(): apply events.
+/* _serf_writ_play(): apply events.
 */
 static u3_noun
-_serf_play(c3_d evt_d, u3_noun lit)
+_serf_writ_play(c3_d evt_d, u3_noun lit)
 {
   c3_assert( evt_d == 1ULL + u3V.sen_d );
 
   //  XX better condition for no kernel?
   //
   return u3nc(c3__play, ( 0ULL == u3V.dun_d )
-                        ? _serf_play_life(lit)
-                        : _serf_play_list(lit));
+                        ? _serf_writ_play_life(lit)
+                        : _serf_writ_play_list(lit));
 }
 
 // /* _serf_poke_peek(): dereference namespace.
@@ -820,10 +859,10 @@ _serf_play(c3_d evt_d, u3_noun lit)
 //   // XX u3v_peek
 // }
 
-/* _serf_live_exit(): exit on command.
+/* _serf_writ_live_exit(): exit on command.
 */
 static void
-_serf_live_exit(c3_w cod_w)
+_serf_writ_live_exit(c3_w cod_w)
 {
   if ( u3C.wag_w & u3o_debug_cpu ) {
     FILE* fil_u;
@@ -863,10 +902,10 @@ _serf_live_exit(c3_w cod_w)
   exit(cod_w);
 }
 
-/* _serf_live_save(): save snapshot.
+/* _serf_writ_live_save(): save snapshot.
 */
 static u3_noun
-_serf_live_save(c3_d evt_d)
+_serf_writ_live_save(c3_d evt_d)
 {
   c3_assert( evt_d == u3V.dun_d );
   u3e_save();
@@ -889,10 +928,10 @@ _serf_step_trace(void)
   }
 }
 
-/* _serf_newt_poke():
+/* _serf_writ():
 */
 static void
-_serf_newt_poke(void* vod_p, u3_noun mat)
+_serf_writ(void* vod_p, u3_noun mat)
 {
   u3_noun jar = u3ke_cue(mat);
 
@@ -927,7 +966,7 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
           }
 
           u3z(jar);
-          _serf_live_exit(cod_y);
+          _serf_writ_live_exit(cod_y);
           return;
         }
 
@@ -942,7 +981,7 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
           }
 
           u3z(jar);
-          _serf_send(_serf_live_save(evt_d));
+          _serf_send(_serf_writ_live_save(evt_d));
           return;
         }
       }
@@ -978,7 +1017,7 @@ _serf_newt_poke(void* vod_p, u3_noun mat)
 
       u3k(lit);
       u3z(jar);
-      _serf_send(_serf_play(evt_d, lit));
+      _serf_send(_serf_writ_play(evt_d, lit));
       _serf_sure_post();
       return;
     }
@@ -1126,7 +1165,7 @@ main(c3_i argc, c3_c* argv[])
   /* start reading
   */
   u3V.inn_u.vod_p = &u3V;
-  u3V.inn_u.pok_f = _serf_newt_poke;
+  u3V.inn_u.pok_f = _serf_writ;
   u3V.inn_u.bal_f = _serf_newt_fail;
 
   u3_newt_read(&u3V.inn_u);
