@@ -17,6 +17,7 @@ export class ContactCard extends Component {
       emailToSet: null,
       phoneToSet: null,
       websiteToSet: null,
+      avatarToSet: null,
       notesToSet: null,
       awaiting: false,
       type: 'Saving to group'
@@ -27,6 +28,7 @@ export class ContactCard extends Component {
     this.emailToSet = this.emailToSet.bind(this);
     this.phoneToSet = this.phoneToSet.bind(this);
     this.websiteToSet = this.websiteToSet.bind(this);
+    this.avatarToSet = this.avatarToSet.bind(this);
     this.notesToSet = this.notesToSet.bind(this);
     this.setField = this.setField.bind(this);
     this.shareWithGroup = this.shareWithGroup.bind(this);
@@ -43,6 +45,7 @@ export class ContactCard extends Component {
         emailToSet: null,
         phoneToSet: null,
         websiteToSet: null,
+        avatarToSet: null,
         notesToSet: null
       });
       return;
@@ -75,6 +78,10 @@ export class ContactCard extends Component {
     this.setState({ websiteToSet: value });
   }
 
+  avatarToSet(value) {
+    this.setState({ avatarToSet: value });
+  }
+
   sigilColorSet(event) {
     this.setState({ colorToSet: event.target.value });
   }
@@ -105,6 +112,34 @@ export class ContactCard extends Component {
     );
 
     switch (field) {
+      case 'avatar': {
+        if (
+          (state.avatarToSet === '') ||
+          (
+            !!props.contact.avatar &&
+            'url' in props.contact.avatar &&
+            state.avatarToSet === props.contact.avatar.url
+          )
+        ) {
+          return false;
+        }
+        const avatarTestResult = websiteTest.exec(state.avatarToSet);
+        if (avatarTestResult) {
+          this.setState({
+            awaiting: true,
+            type: 'Saving to group'
+          }, (() => {
+            api.contactEdit(props.path, ship, { 
+              avatar: {
+                url: state.avatarToSet
+              }
+            }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }));
+        }
+        break;
+      }
       case 'color': {
         let currentColor = (props.contact.color) ? props.contact.color : '000000';
         currentColor = uxToHex(currentColor);
@@ -240,6 +275,18 @@ export class ContactCard extends Component {
         }));
         break;
       }
+      case 'removeAvatar': {
+        this.setState({
+          avatarToSet: null,
+          awaiting: true,
+          type: 'Removing from group'
+        }, (() => {
+          api.contactEdit(props.path, ship, { avatar: null }).then(() => {
+            this.setState({ awaiting: false });
+          });
+        }));
+        break;
+      }
       case 'removeNotes': {
         this.setState({ notesToSet: '', awaiting: true, type: 'Removing from group' }, (() => {
           api.contactEdit(props.path, ship, { notes: '' }).then(() => {
@@ -265,6 +312,7 @@ export class ContactCard extends Component {
       email: props.rootIdentity.email,
       phone: props.rootIdentity.phone,
       website: props.rootIdentity.website,
+      avatar: { url: props.rootIdentity.avatar },
       notes: props.rootIdentity.notes,
       color: uxToHex(props.rootIdentity.color)
     } : {
@@ -272,6 +320,7 @@ export class ContactCard extends Component {
       email: props.contact.email,
       phone: props.contact.phone,
       website: props.contact.website,
+      avatar: { url: props.contact.avatar },
       notes: props.contact.notes,
       color: props.contact.color
     };
@@ -283,7 +332,7 @@ export class ContactCard extends Component {
       website: this.pickFunction(state.websiteToSet, defaultVal.website),
       notes: this.pickFunction(state.notesToSet, defaultVal.notes),
       color: this.pickFunction(state.colorToSet, defaultVal.color),
-      avatar: null
+      avatar: this.pickFunction({ url: state.avatarToSet }, defaultVal.avatar)
     };
     this.setState({ awaiting: true, type: 'Sharing with group' }, (() => {
       api.contactView.share(
@@ -330,6 +379,7 @@ export class ContactCard extends Component {
       email: props.rootIdentity.email,
       phone: props.rootIdentity.phone,
       website: props.rootIdentity.website,
+      avatar: props.rootIdentity.avatar,
       notes: props.rootIdentity.notes,
       color: props.rootIdentity.color
     } : {
@@ -337,6 +387,7 @@ export class ContactCard extends Component {
       email: props.contact.email,
       phone: props.contact.phone,
       website: props.contact.website,
+      avatar: props.contact.avatar,
       notes: props.contact.notes,
       color: props.contact.color
     };
@@ -348,51 +399,66 @@ export class ContactCard extends Component {
     let currentColor = state.colorToSet ? state.colorToSet : defaultColor;
     currentColor = uxToHex(currentColor);
 
-    let sigilColor = '';
     const hasAvatar =
-      'avatar' in props.contact && props.contact.avatar !== 'TODO';
-
-    if (!hasAvatar) {
-      sigilColor = (
-        <div className="tl mt4 mb4 w-auto ml-auto mr-auto"
-          style={{ width: 'fit-content' }}
-        >
-          <p className="f9 gray2 lh-copy">Sigil Color</p>
-          <textarea
-            className={'b--gray4 b--gray2-d black white-d bg-gray0-d f7 ba db pl2 ' +
-            'focus-b--black focus-b--white-d'}
-            onChange={this.sigilColorSet}
-            defaultValue={defaultColor}
-            key={'default' + defaultColor}
-            onKeyPress={ e => !e.key.match(/[0-9a-f]/i) ? e.preventDefault() : null}
-            onBlur={(() => this.setField('color'))}
-            maxLength={6}
-            style={{
-              resize: 'none',
-              height: 40,
-              paddingTop: 10,
-              width: 114
-            }}
-          >
-          </textarea>
-        </div>
-      );
-    }
+      'avatar' in props.contact && props.contact.avatar !== null;
 
     const avatar = (hasAvatar)
-      ? <img className="dib h-auto" width={128} src={props.contact.avatar} />
-      : <Sigil
-          ship={props.ship}
-          size={128}
-          color={'#' + currentColor}
-          key={'avatar' + currentColor}
-        />;
+      ? <span>
+          <img className="dib h-auto" 
+             width={128}
+             src={props.contact.avatar} />
+          <EditElement
+            title="Avatar Image URL"
+            defaultValue={defaultValue.avatar}
+            onChange={this.avatarToSet}
+            onDeleteClick={() => this.setField('removeAvatar')}
+            onSaveClick={() => this.setField('avatar')}
+            showButtons={!props.share}
+          />
+        </span>
+      : <span>
+          <EditElement
+            title="Avatar Image URL"
+            defaultValue={''}
+            onChange={this.avatarToSet}
+            onDeleteClick={() => this.setField('removeAvatar')}
+            onSaveClick={() => this.setField('avatar')}
+            showButtons={!props.share}
+          />
+      </span>;
 
     return (
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl pb8">
         <div className="w-100 mw6 tc">
           {avatar}
-          {sigilColor}
+          <Sigil
+            ship={props.ship}
+            size={128}
+            color={'#' + currentColor}
+            key={'avatar' + currentColor}
+          />
+          <div className="tl mt4 mb4 w-auto ml-auto mr-auto"
+            style={{ width: 'fit-content' }}
+          >
+            <p className="f9 gray2 lh-copy">Sigil Color</p>
+            <textarea
+              className={'b--gray4 b--gray2-d black white-d bg-gray0-d f7 ba db pl2 ' +
+              'focus-b--black focus-b--white-d'}
+              onChange={this.sigilColorSet}
+              defaultValue={defaultColor}
+              key={'default' + defaultColor}
+              onKeyPress={ e => !e.key.match(/[0-9a-f]/i) ? e.preventDefault() : null}
+              onBlur={(() => this.setField('color'))}
+              maxLength={6}
+              style={{
+                resize: 'none',
+                height: 40,
+                paddingTop: 10,
+                width: 114
+              }}
+            >
+            </textarea>
+          </div>
           <div className="w-100 pt8 pb8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
             <p className="f8 mono">~{props.ship}</p>

@@ -116,7 +116,7 @@ class UrbitApi {
     {notes: ''}
     {color: 'fff'}  // with no 0x prefix
     {avatar: null}
-    {avatar: {p: length, q: bytestream}}
+    {avatar: {url: ''}}
     */
     return this.contactHookAction({
       edit: {
