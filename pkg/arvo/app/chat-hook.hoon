@@ -562,8 +562,11 @@
   ?:  =(wir /permissions)
     :_  state
     [%pass /permissions %agent [our.bol %permission-store] %watch /updates]~
+  ?:  =(wir /invites)
+    :_  state
+    [%pass /invites %agent [our.bol %invite-store] %watch /invitatory/chat]~
   ::
-  ?+  wir  !!
+  ?+  wir  ~|("kick on unknown wire: {<wir>}" !!)
       [%store @ *]
     ~&  store-kick+wir
     ?.  (~(has by synced) t.wir)  [~ state]

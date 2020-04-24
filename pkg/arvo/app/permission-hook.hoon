@@ -91,7 +91,7 @@
       ?>  ?=([* ^] wire)
       ::  if we're not actively using it, we can safely ignore the %kick.
       ::
-      ?.  (~(has by synced) t.wire)
+      ?.  |((~(has by synced) t.wire) =(our.bowl ship.owner-access))
         [~ this]
       ::  otherwise, resubscribe.
       ::
