@@ -23,7 +23,7 @@
 ++  on-init
   ::  subscribe to /sys and do initial goad
   ::
-  [[(warp bowl) (wait bowl) ~] this]
+  [[(warp bowl) ~] this]
 ::
 ++  on-save   on-save:def
 ++  on-load   on-load:def

@@ -87,9 +87,10 @@
   ==
 ::
 ++  tap-yarn
-  =|  =yarn
   |=  =trie
-  ^-  (list [=^yarn =thread-form])
+  %-  flop  ::  preorder
+  =|  =yarn
+  |-  ^-  (list [=^yarn =thread-form])
   %+  welp
     ?~  yarn
       ~
@@ -134,6 +135,8 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?:  ?=(%spider-kill mark)
+      (on-load on-save)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         %spider-input  (on-poke-input:sc !<(input vase))
