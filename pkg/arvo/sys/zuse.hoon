@@ -2325,6 +2325,7 @@
           ==  ==                                        ::
   ++  dude  term                                        ::  server identity
   ++  gill  (pair ship term)                            ::  general contact
+  ++  lore  (map dude ,[state=* wex=boat sup=bitt])     ::  jammed state for backup
   ++  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct

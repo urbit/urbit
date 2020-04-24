@@ -2087,6 +2087,14 @@
   ::
   ?.  =([%$ %da now] coin)
     ~
+  ?:  =(%a term)
+    =/  =lore
+      %-  ~(run by running.agents.state)
+      |=  ag=running-agent
+      :+  q:on-save:agent.ag
+        outgoing.subscribers.ag
+      incoming.subscribers.ag
+    ``noun+!>(lore)
   ::
   ?.  (~(has by running.agents.state) desk)
     (some ~)
