@@ -1448,16 +1448,6 @@ _unix_io_exit(u3_auto* car_u)
   c3_free(unx_u);
 }
 
-/* _unix_ev_bail(): event crashed.
-*/
-static void
-_unix_ev_bail(u3_auto* car_u, u3_ovum* egg_u, u3_noun lud)
-{
-  //  XX wat do
-  //
-  u3_auto_bail_slog(egg_u, lud);
-}
-
 /* u3_unix_io_init(): initialize unix sync.
 */
 u3_auto*
@@ -1479,7 +1469,9 @@ u3_unix_io_init(u3_pier* pir_u)
   car_u->io.talk_f = _unix_io_talk;
   car_u->io.kick_f = _unix_io_kick;
   car_u->io.exit_f = _unix_io_exit;
-  car_u->ev.bail_f = _unix_ev_bail;
+  //  XX wat do
+  //
+  // car_u->ev.bail_f = ...l;
 
   return car_u;
 }

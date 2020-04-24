@@ -74,16 +74,6 @@ _hind_io_exit(u3_auto* car_u)
   u3a_lop(cod_l);
 }
 
-/* _hind_ev_bail(): event crashed.
-*/
-static void
-_hind_ev_bail(u3_auto* car_u, u3_ovum* egg_u, u3_noun lud)
-{
-  //  XX retry up to N?
-  //
-  u3_auto_bail_slog(egg_u, lud);
-}
-
 /* u3_hind_io_init():
 */
 u3_auto*
@@ -95,7 +85,7 @@ u3_hind_io_init(u3_pier* pir_u)
   car_u->io.talk_f = _hind_io_talk;
   car_u->io.kick_f = _hind_io_kick;
   car_u->io.exit_f = _hind_io_exit;
-  car_u->ev.bail_f = _hind_ev_bail;
+  // car_u->ev.bail_f = ...;
 
   //  XX moveme
   //

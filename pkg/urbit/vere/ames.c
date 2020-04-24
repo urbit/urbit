@@ -679,16 +679,6 @@ _ames_io_exit(u3_auto* car_u)
   }
 }
 
-/* _ames_ev_bail(): event crashed.
-*/
-static void
-_ames_ev_bail(u3_auto* car_u, u3_ovum* egg_u, u3_noun lud)
-{
-  //  XX track and print every N?
-  //
-  u3_auto_bail_slog(egg_u, lud);
-}
-
 /* u3_ames_io_init(): initialize ames I/O.
 */
 u3_auto*
@@ -721,7 +711,10 @@ u3_ames_io_init(u3_pier* pir_u)
   car_u->io.talk_f = _ames_io_talk;
   car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;
-  car_u->ev.bail_f = _ames_ev_bail;
+
+  //  XX track and print every N?
+  //
+  // car_u->ev.bail_f = ...;
 
   return car_u;
 

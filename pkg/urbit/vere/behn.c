@@ -140,16 +140,6 @@ _behn_io_exit(u3_auto* car_u)
   uv_close((uv_handle_t*)&teh_u->tim_u, (uv_close_cb)_behn_exit_cb);
 }
 
-/* _behn_ev_bail(): event crashed.
-*/
-static void
-_behn_ev_bail(u3_auto* car_u, u3_ovum* egg_u, u3_noun lud)
-{
-  //  XX retry up to N?
-  //
-  u3_auto_bail_slog(egg_u, lud);
-}
-
 /* u3_behn(): initialize time timer.
 */
 u3_auto*
@@ -169,7 +159,9 @@ u3_behn_io_init(u3_pier* pir_u)
   car_u->io.talk_f = _behn_io_talk;
   car_u->io.kick_f = _behn_io_kick;
   car_u->io.exit_f = _behn_io_exit;
-  car_u->ev.bail_f = _behn_ev_bail;
+  //  XX retry up to N?
+  //
+  // car_u->ev.bail_f = ...;
 
   return car_u;
 }

@@ -104,10 +104,15 @@ u3_auto_bail_slog(u3_ovum* egg_u, u3_noun lud)
 void
 u3_auto_bail(u3_ovum* egg_u, u3_noun lud)
 {
-  {
+  //  optional
+  //
+  if ( egg_u->car_u->ev.bail_f ) {
     c3_l cod_l = u3a_lush(egg_u->car_u->nam_m);
     egg_u->car_u->ev.bail_f(egg_u->car_u, egg_u, lud);
     u3a_lop(cod_l);
+  }
+  else {
+    u3_auto_bail_slog(egg_u, lud);
   }
 
   //  XX confirm
@@ -342,12 +347,11 @@ u3_auto_exit(u3_auto* car_u)
 static u3_auto*
 _auto_link(u3_auto* car_u, u3_pier* pir_u, u3_auto* nex_u)
 {
-  //  assert required callbacks are present
+  //  assert that io callbacks are present
   //
   c3_assert( car_u->io.talk_f );
   c3_assert( car_u->io.kick_f );
   c3_assert( car_u->io.exit_f );
-  c3_assert( car_u->ev.bail_f );
 
   car_u->pir_u = pir_u;
   car_u->nex_u = nex_u;
