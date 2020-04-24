@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { EditElement } from '/components/lib/edit-element';
 import { Spinner } from './icons/icon-spinner';
 import { uxToHex } from '/lib/util';
+import { S3Upload } from '/components/lib/s3-upload';
 
 export class ContactCard extends Component {
   constructor(props) {
@@ -431,6 +432,7 @@ export class ContactCard extends Component {
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl pb8">
         <div className="w-100 mw6 tc">
           {avatar}
+          <S3Upload s3Credentials={props.s3Credentials} />
           <Sigil
             ship={props.ship}
             size={128}
