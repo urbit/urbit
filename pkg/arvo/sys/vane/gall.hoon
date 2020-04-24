@@ -170,12 +170,11 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [dap=term bek=beak =rant:clay]
+    |=  [dap=term bek=beak =cage]
     ^+  mo-core
     ::
-    =/  =cage  r.rant
     ?.  =(%vase p.cage)
-      (mo-give %onto |+[leaf+"gall: bizarre mark {<p.cage>} for agent {<dap>}"]~)
+      (mo-give %onto |+[leaf+"gall: bad mark {<p.cage>} for agent {<dap>}"]~)
     ::
     =/  maybe-new-agent  (mule |.(!<(agent !<(vase q.cage))))
     ?:  ?=(%| -.maybe-new-agent)
@@ -212,6 +211,22 @@
     =.  mo-core  (mo-clear-queue dap)
     =/  =suss  [dap %boot now]
     (mo-give %onto [%.y suss])
+  ::  +mo-subscribe-to-agent-builds: request agent update notices
+  ::
+  ++  mo-subscribe-to-agent-builds
+    |=  date=@da
+    ^+  mo-core
+    =.  mo-core  (mo-abed system-duct.state)
+    =/  =wire  /sys/lyv  ::  TODO: add $aeon to wire as sanity check
+    =.  mo-core  (mo-pass /sys/lyv %c %warp our %home ~)
+    =/  =mool:clay
+      :-  da+date
+      %-  ~(gas in *(set [care:clay path]))
+      %+  turn  ~(tap in ~(key by yokes.state))
+      |=  dap=term
+      ^-  [care:clay path]
+      [%a /app/[dap]/hoon]
+    (mo-pass wire %c %warp our %home ~ %mult mool)
   ::  +mo-send-foreign-request: handle local request to .ship
   ::
   ++  mo-send-foreign-request
@@ -307,6 +322,7 @@
     ^+  mo-core
     ::
     ?+  -.path  !!
+      %lyv  (mo-handle-sys-lyv path sign-arvo)
       %era  (mo-handle-sys-era path sign-arvo)
       %cor  (mo-handle-sys-cor path sign-arvo)
       %lag  (mo-handle-sys-lag path sign-arvo)
@@ -326,7 +342,7 @@
     ?.  ?=(%breach -.public-keys-result.sign-arvo)
       mo-core
     (mo-breach who.public-keys-result.sign-arvo)
-  ::  +mo-handle-sys-cor: receive a cor from %ford.
+  ::  +mo-handle-sys-cor: receive a built agent from %clay
   ::
   ++  mo-handle-sys-cor
     |=  [=path =sign-arvo]
@@ -334,11 +350,30 @@
     ::
     ?>  ?=([%cor @ @ @ @ ~] path)
     =/  [dap=term her=@ta desk=@ta dat=@ta ~]  t.path
-    =/  =beak  [(slav %p her) desk da+(slav da+dat)]
+    =/  tim  (slav da+dat)
+    =/  =beak  [(slav %p her) desk da+tim]
     ?>  ?=([?(%b %c) %writ *] sign-arvo)
     ?^  p.sign-arvo
-      (mo-receive-core dap beak u.p.sign-arvo)
+      =.  mo-core  (mo-receive-core dap beak r.u.p.sign-arvo)
+      (mo-subscribe-to-agent-builds tim)
     (mo-give %onto |+[leaf+"gall: failed to build agent {<dap>}"]~)
+  ::
+  ::
+  ++  mo-handle-sys-lyv
+    |=  [=path =sign-arvo]
+    ^+  mo-core
+    ?>  ?=([%lyv ~] path)
+    ?>  ?=([?(%b %c) %wris *] sign-arvo)
+    =/  bek=beak  [our %home p.sign-arvo]
+    =/  nex=(list [=care:clay =^path])  ~(tap in q.sign-arvo)
+    =;  cor  (mo-subscribe-to-agent-builds:cor p.p.sign-arvo)
+    %+  roll  nex
+    |=  [[=care:clay =^path] cor=_mo-core]
+    ^+  cor
+    ?>  =(%a care)
+    =/  dap  dap:;;([%app dap=@tas %hoon ~] path)
+    =/  cage  (need (need (ski [%141 %noun] ~ %ca bek (flop path))))
+    (mo-receive-core:cor dap bek cage)
   ::  +mo-handle-sys-lag: handle an ames %clog notification
   ::
   ++  mo-handle-sys-lag
@@ -1832,7 +1867,8 @@
     $%  {$a gift:able:ames}
         $:  $b
             $%  gift:able:behn
-                [%writ riot:clay]
+                $>(%wris gift:able:clay)
+                $>(%writ gift:able:clay)
                 $>(%mere gift:able:clay)
                 $>(%unto gift:able:gall)
             ==
@@ -1882,7 +1918,7 @@
   |=  [=wire =duct dud=(unit goof) hin=(hypo sign-arvo)]
   ^-  [(list move) _gall-payload]
   ?^  dud
-    ~|(%gall-take-dud (mean tang.u.dud))
+    ~&(%gall-take-dud ((slog tang.u.dud) [~ gall-payload]))
   ::
   ~|  [%gall-take-failed wire]
   ::
