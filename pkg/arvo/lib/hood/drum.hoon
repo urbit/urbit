@@ -155,6 +155,7 @@
 =+  (~(gut by bin) ost *source)
 =*  dev  -
 |_  {moz/(list card:agent:gall) biz/(list dill-blit:dill)}
++*  this  .
 ++  diff-sole-effect-phat                             ::  app event
   |=  {way/wire fec/sole-effect}
   =<  se-abet  =<  se-view
@@ -329,19 +330,59 @@
   [%give %fact ~[/drum] %dill-blit !>(dill-blit)]
 ::
 ++  se-adit                                           ::  update servers
-  ^+  .
-  ::  ensure dojo connects after talk
-  =*  dojo-on-top  |=([a=* b=*] |(=(%dojo a) &(!=(%dojo b) (aor a b))))
-  %+  roll  (sort ~(tap in ray) dojo-on-top)
-  =<  .(con +>)
-  |:  $:{wel/well:gall con/_..se-adit}  ^+  con
-  =.  +>.$  con
-  =+  hig=(~(get by fur) q.wel)
-  ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
-  =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
-  %-  se-emit(fur (~(put by fur) q.wel ~))
+  ^+  this
+  |^
+  =/  servers=(list well:gall)
+    (sort ~(tap in ray) sort-by-priorities)
+  |-
+  ?~  servers
+    this
+  =/  wel=well:gall
+    i.servers
   =/  =wire  [%drum p.wel q.wel ~]
-  [%pass wire %arvo %g %conf [our.hid q.wel] our.hid p.wel]
+  =/  hig=(unit (unit server))
+    (~(get by fur) q.wel)
+  ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))
+    this
+  =.  fur
+    (~(put by fur) q.wel ~)
+  =.  this
+    (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
+  =.  this
+    %-  se-emit
+    [%pass wire %arvo %g %conf [our.hid q.wel] our.hid p.wel]
+  $(servers t.servers)
+  ::
+  ++  priorities
+    ^-  (list (set @))
+    :~
+      (sy ~[%dojo])  ::  ensure dojo connects first
+      %-  sy
+      :~  %permission-store
+          %chat-store
+          %contact-store
+          %group-store
+          %link-store
+          %invite-store
+          %metadata-store
+      ==
+      (sy ~[%chat-hook])  :: ensure chat-cli can sub to invites
+    ==
+  ++  sort-by-priorities
+    =/  priorities  priorities
+    |=  [[desk a=term] [desk b=term]]
+    ^-  ?
+    ?~  priorities
+      (aor a b)
+    =*  priority  i.priorities
+    ?:  &((~(has in priority) a) (~(has in priority) b))
+      (aor a b)
+    ?:  (~(has in priority) a)
+      %.y
+    ?:  (~(has in priority) b)
+      %.n
+    $(priorities t.priorities)
+  --
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
