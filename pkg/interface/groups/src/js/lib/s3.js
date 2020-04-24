@@ -1,23 +1,24 @@
-const AWS = require('aws-sdk')
-
-class S3 {
+export default class S3Client {
   constructor() {
-    this.endpoint = new AWS.Endpoint("");
+    this.s3 = null;
+    this.AWS = window.AWS;    
+
+    this.endpoint = new this.AWS.Endpoint("");
     this.accessKeyId = "";
     this.secretAccesskey = "";
-
-    this.s3 = null;
   }
 
   setCredentials(endpoint, accessKeyId, secretAccessKey) {
-    this.endpoint = new AWS.Endpoint(endpoint);
+    this.AWS = window.AWS;
+    
+    this.endpoint = new this.AWS.Endpoint(endpoint);
     this.accessKeyId = accessKeyId;
     this.secretAccessKey = secretAccessKey;
 
     this.s3 = 
-      new AWS.S3({
+      new this.AWS.S3({
         endpoint: this.endpoint,
-        credentials: new AWS.Credentials({
+        credentials: new this.AWS.Credentials({
           accessKeyId: this.accessKeyId,
           secretAccessKey: this.secretAccessKey
         })
@@ -82,6 +83,4 @@ class S3 {
     });
   }
 }
-
-export let s3 = new S3();
 
