@@ -3227,10 +3227,7 @@
     |=  {hen/duct mun/mood dat/(each cage lobe)}
     ^+  +>
     ?:  ?=(%& -.dat)
-      %-  emit
-      :*  hen  %slip  %b  %drip
-          !>([%writ ~ [care.mun case.mun syd] path.mun p.dat])
-      ==
+      (emit hen %give %writ ~ [care.mun case.mun syd] path.mun p.dat)
     %-  emit
     :*  hen  %pass  [%blab care.mun (scot case.mun) syd path.mun]
         %f  %build  live=%.n  %pin
@@ -3249,7 +3246,7 @@
     ::  translate the case to a date
     ::
     =/  cas  [%da (case-to-date case.n.das)]
-    =-  (emit hen %slip %b %drip !>([%wris cas -]))
+    =-  (emit hen %give %wris cas -)
     (~(run in `(set mood)`das) |=(m/mood [care.m path.m]))
   ::
   ::  Give next step in a subscription.
