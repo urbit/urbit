@@ -314,8 +314,8 @@
           void*            vod_p;               //  context
           c3_l             msc_l;               //  ms to timeout
           u3_noun            tar;               //  target
-          u3_noun            pax;               //  wire
-          u3_noun            fav;               //  card
+          u3_noun            wir;               //  wire
+          u3_noun            cad;               //  card
           u3_atom            pin;               //  spinner label
           c3_o             del_o;               //  spinner delay (c3y)
           struct _u3_ovum* pre_u;               //  previous ovum
@@ -480,15 +480,14 @@
           c3_o             liv_o;
           struct {
             void (*talk_f)(struct _u3_auto*);
-            c3_o (*fete_f)(struct _u3_auto*, u3_noun pax, u3_noun fav);  // RETAIN
+            c3_o (*kick_f)(struct _u3_auto*, u3_noun wir, u3_noun cad);
             void (*exit_f)(struct _u3_auto*);  // XX close_cb?
           } io;
           struct {
-            void (*drop_f)(struct _u3_auto*, void*);
-            void (*work_f)(struct _u3_auto*, void*);
-            void (*done_f)(struct _u3_auto*, void*);
-            void (*swap_f)(struct _u3_auto*, void*);
-            void (*bail_f)(struct _u3_auto*, void*);
+            void (*drop_f)(struct _u3_auto*, u3_ovum*);
+            void (*work_f)(struct _u3_auto*, u3_ovum*);
+            void (*done_f)(struct _u3_auto*, u3_ovum*, c3_o);
+            void (*bail_f)(struct _u3_auto*, u3_ovum*, u3_noun);
           } ev;
           struct _u3_ovum* ent_u;
           struct _u3_ovum* ext_u;
@@ -541,47 +540,6 @@
           u3_moor*  cli_u;                      //  connected clients
           uv_timer_t tim_u;                     //  gc timer
         } u3_daemon;
-
-        u3_ovum*
-        u3_auto_next(u3_auto* car_u, u3_noun* ovo);
-
-        void
-        u3_auto_fete(u3_auto* car_u, u3_noun act);
-
-      /* u3_auto_init(): initialize all drivers
-      */
-        u3_auto*
-        u3_auto_init(void);
-
-      /* u3_auto_talk(): start all drivers
-      */
-        void
-        u3_auto_talk(u3_auto* car_u);
-
-      /* u3_auto_plan(): create and enqueue an ovum
-      */
-        u3_ovum*
-        u3_auto_plan(u3_auto* car_u,
-                     void*    vod_p,
-                     c3_l     msc_l,
-                     u3_noun    tar,
-                     u3_noun    pax,
-                     u3_noun    fav);
-
-      /* u3_auto_drop(): dequeue and dispose an ovum.
-      */
-        void
-        u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u);
-
-      /* u3_auto_exit(): close all drivers
-      */
-        void
-        u3_auto_exit(u3_auto* car_u);
-
-      /* u3_auto_live(): check if all drivers are live.
-      */
-        c3_o
-        u3_auto_live(u3_auto* car_u);
 
       /* u3_pier_spin(): (re-)activate idle handler
       */
@@ -672,6 +630,70 @@
 
     /**  New vere
     **/
+      /* u3_auto_init(): initialize all drivers.
+      */
+        u3_auto*
+        u3_auto_init(u3_pier* pir_u);
+
+      /* u3_auto_exit(): close all drivers.
+      */
+        void
+        u3_auto_exit(u3_auto* car_u);
+
+      /* u3_auto_talk(): start all drivers.
+      */
+        void
+        u3_auto_talk(u3_auto* car_u);
+
+      /* u3_auto_live(): check if all drivers are live.
+      */
+        c3_o
+        u3_auto_live(u3_auto* car_u);
+
+      /* u3_auto_kick(): route effects to a linked driver. RETAIN
+      */
+        void
+        u3_auto_kick(u3_auto* car_u, u3_noun act);
+
+      /* u3_auto_next(): select an ovum, dequeue and construct.
+      */
+        u3_ovum*
+        u3_auto_next(u3_auto* car_u, u3_noun* ovo);
+
+      /* u3_auto_drop(): dequeue and dispose an ovum.
+      */
+        void
+        u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u);
+
+      /* u3_auto_work(): notify driver of [egg_u] commencement.
+      */
+        void
+        u3_auto_work(u3_ovum* egg_u);
+
+      /* u3_auto_done(): notify driver of [egg_u] completion.
+      */
+        void
+        u3_auto_done(u3_ovum* egg_u, c3_o wap_o);
+
+      /* u3_auto_bail(): notify driver that [egg_u] crashed.
+      */
+        void
+        u3_auto_bail(u3_ovum* egg_u, u3_noun lud);
+
+      /* u3_auto_bail_slog(): print a bail notification.
+      */
+        void
+        u3_auto_bail_slog(u3_ovum* egg_u, u3_noun lud);
+
+      /* u3_auto_plan(): create and enqueue an ovum.
+      */
+        u3_ovum*
+        u3_auto_plan(u3_auto* car_u,
+                     c3_l     msc_l,
+                     u3_noun    tar,
+                     u3_noun    wir,
+                     u3_noun    cad);
+
       /* u3_disk_init(): load or create pier directories and event log.
       */
         u3_disk*
@@ -949,12 +971,19 @@
         u3_auto*
         u3_cttp_io_init(u3_pier* pir_u);
 
-    /**  Root, grab bag
+    /**  fore, first events
     **/
-      /* u3_root_io_init(): initialize root
+      /* u3_hind_io_init(): initialize fore
       */
         u3_auto*
-        u3_root_io_init(u3_pier* pir_u);
+        u3_fore_io_init(u3_pier* pir_u);
+
+    /**  hind, defaults
+    **/
+      /* u3_hind_io_init(): initialize hint
+      */
+        u3_auto*
+        u3_hind_io_init(u3_pier* pir_u);
 
     /**  Stream messages.
     **/

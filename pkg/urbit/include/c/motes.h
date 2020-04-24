@@ -365,6 +365,7 @@
 #   define c3__dumb   c3_s4('d','u','m','b')
 #   define c3__dump   c3_s4('d','u','m','p')
 #   define c3__dust   c3_s4('d','u','s','t')
+#   define c3__e      c3_s1('e')
 #   define c3__earl   c3_s4('e','a','r','l')
 #   define c3__east   c3_s4('e','a','s','t')
 #   define c3__echo   c3_s4('e','c','h','o')

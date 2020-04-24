@@ -372,10 +372,10 @@ _http_req_unlink(u3_hreq* req_u)
 static u3_noun
 _http_req_to_duct(u3_hreq* req_u)
 {
-  return u3nt(u3_blip, u3i_string("http-server"),
-              u3nq(u3dc("scot", c3_s2('u','v'), req_u->hon_u->htp_u->sev_l),
-                   u3dc("scot", c3_s2('u','d'), req_u->hon_u->coq_l),
-                   u3dc("scot", c3_s2('u','d'), req_u->seq_l),
+  return u3nc(u3i_string("http-server"),
+              u3nq(u3dc("scot", c3__uv, req_u->hon_u->htp_u->sev_l),
+                   u3dc("scot", c3__ud, req_u->hon_u->coq_l),
+                   u3dc("scot", c3__ud, req_u->seq_l),
                    u3_nul));
 }
 
@@ -385,10 +385,10 @@ static void
 _http_req_kill(u3_hreq* req_u)
 {
   u3_httd* htd_u = req_u->hon_u->htp_u->htd_u;
-  u3_noun pax    = _http_req_to_duct(req_u);
-  u3_noun fav    = u3nc(u3i_string("cancel-request"), u3_nul);
+  u3_noun wir    = _http_req_to_duct(req_u);
+  u3_noun cad    = u3nc(u3i_string("cancel-request"), u3_nul);
 
-  u3_auto_plan(&htd_u->car_u, 0, 0, u3_blip, pax, fav);
+  u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
 }
 
 typedef struct _u3_hgen {
@@ -467,8 +467,8 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
   {
     u3_http* htp_u = req_u->hon_u->htp_u;
     u3_httd* htd_u = htp_u->htd_u;
-    u3_noun pax    = _http_req_to_duct(req_u);
-    u3_noun fav;
+    u3_noun wir    = _http_req_to_duct(req_u);
+    u3_noun cad;
 
     {
       u3_noun adr = u3nc(c3__ipv4, u3i_words(1, &req_u->hon_u->ipf_w));
@@ -476,12 +476,12 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
      //
       u3_noun dat = u3nt(htp_u->sec, adr, req);
 
-      fav = ( c3y == req_u->hon_u->htp_u->lop )
+      cad = ( c3y == req_u->hon_u->htp_u->lop )
             ? u3nc(u3i_string("request-local"), dat)
             : u3nc(u3i_string("request"), dat);
     }
 
-    u3_auto_plan(&htd_u->car_u, 0, 0, u3_blip, pax, fav);
+    u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
   }
 }
 
@@ -1607,13 +1607,10 @@ _http_serv_start_all(u3_httd* htd_u)
 
     //  XX remove [sen]
     //
-    u3_noun pax = u3nq(u3_blip,
-                       u3i_string("http-server"),
-                       u3k(u3A->sen),
-                       u3_nul);
-    u3_noun fav = u3nt(c3__live, non, sec);
+    u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
+    u3_noun cad = u3nt(c3__live, non, sec);
 
-    u3_auto_plan(&htd_u->car_u, 0, 0, u3_blip, pax, fav);
+    u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
   }
 
   _http_write_ports_file(htd_u, u3_Host.dir_c);
@@ -1732,11 +1729,10 @@ _http_io_talk(u3_auto* car_u)
 {
   //  XX remove u3A->sen
   //
-  u3_noun pax = u3nq(u3_blip, u3i_string("http-server"),
-                     u3k(u3A->sen), u3_nul);
-  u3_noun fav = u3nc(c3__born, u3_nul);
+  u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
+  u3_noun cad = u3nc(c3__born, u3_nul);
 
-  u3_auto_plan(car_u, 0, 0, u3_blip, pax, fav);
+  u3_auto_plan(car_u, 0, c3__e, wir, cad);
 
   //  XX set liv_o on done/swap?
   //
@@ -1844,28 +1840,27 @@ _reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
   }
 }
 
-/* _http_io_fete():
+/* _http_io_kick(): apply effects.
 */
 static c3_o
-_http_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
+_http_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
   u3_httd* htd_u = (u3_httd*)car_u;
 
-  u3_noun i_pax, it_pax, tt_pax, tag, dat;
+  u3_noun tag, dat, i_wir, t_wir;
 
-  if (  (c3n == u3r_trel(pax, &i_pax, &it_pax, &tt_pax))
-     || (c3n == u3r_cell(fav, &tag, &dat))
-     || (u3_blip  != i_pax )
-     || (c3n == u3r_sing_c("http-server", it_pax)) )
+  if (  (c3n == u3r_cell(wir, &i_wir, &t_wir))
+     || (c3n == u3r_cell(cad, &tag, &dat))
+     || (c3n == u3r_sing_c("http-server", i_wir)) )
   {
-    u3z(pax); u3z(fav);
+    u3z(wir); u3z(cad);
     return c3n;
   }
 
-  //  XX this needs to be rewritten, defers in cases it should not
+  //  XX this needs to be rewritten, it defers (c3n) in cases it should not
   //
   {
-    u3_noun pud = tt_pax;
+    u3_noun pud = t_wir;
     u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
     c3_l    sev_l, coq_l, seq_l;
 
@@ -1873,7 +1868,7 @@ _http_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
     if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
          (c3n == _reck_lily(c3__uv, u3k(p_pud), &sev_l)) )
     {
-      u3z(pax); u3z(fav);
+      u3z(wir); u3z(cad);
       return c3n;
     }
 
@@ -1884,7 +1879,7 @@ _http_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
       if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
            (c3n == _reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
       {
-        u3z(pax); u3z(fav);
+        u3z(wir); u3z(cad);
         return c3n;
       }
 
@@ -1895,14 +1890,14 @@ _http_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
              (u3_nul != s_pud) ||
              (c3n == _reck_lily(c3__ud, u3k(r_pud), &seq_l)) )
         {
-          u3z(pax); u3z(fav);
+          u3z(wir); u3z(cad);
           return c3n;
         }
       }
     }
 
     _http_ef_http_server(htd_u, sev_l, coq_l, seq_l, u3k(tag), u3k(dat));
-    u3z(pax); u3z(fav);
+    u3z(wir); u3z(cad);
     return c3y;
   }
 }
@@ -1931,11 +1926,15 @@ _http_io_exit(u3_auto* car_u)
   _http_release_ports_file(u3_Host.dir_c);
 }
 
+/* _http_ev_bail(): event crashed.
+*/
 static void
-_http_ev_noop(u3_auto* car_u, void* vod_p)
+_http_ev_bail(u3_auto* car_u, u3_ovum* egg_u, u3_noun lud)
 {
+  //  XX retry up to N?
+  //
+  u3_auto_bail_slog(egg_u, lud);
 }
-
 
 /* u3_http_io_init(): initialize http I/O.
 */
@@ -1948,14 +1947,9 @@ u3_http_io_init(u3_pier* pir_u)
   car_u->nam_m = c3__http;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _http_io_talk;
-  car_u->io.fete_f = _http_io_fete;
+  car_u->io.kick_f = _http_io_kick;
   car_u->io.exit_f = _http_io_exit;
-
-  car_u->ev.drop_f = _http_ev_noop;
-  car_u->ev.work_f = _http_ev_noop;
-  car_u->ev.done_f = _http_ev_noop;
-  car_u->ev.swap_f = _http_ev_noop;
-  car_u->ev.bail_f = _http_ev_noop;
+  car_u->ev.bail_f = _http_ev_bail;
 
   return car_u;
 }

@@ -46,10 +46,10 @@ _behn_time_cb(uv_timer_t* tim_u)
   // send timer event
   //
   {
-    u3_noun pax = u3nt(u3_blip, c3__behn, u3_nul);
-    u3_noun fav = u3nc(c3__wake, u3_nul);
+    u3_noun wir = u3nc(c3__behn, u3_nul);
+    u3_noun cad = u3nc(c3__wake, u3_nul);
 
-    u3_auto_plan(&teh_u->car_u, 0, 0, u3_blip, pax, fav);
+    u3_auto_plan(&teh_u->car_u, 0, c3__b, wir, cad);
   }
 }
 
@@ -91,26 +91,25 @@ _behn_io_talk(u3_auto* car_u)
 {
   //  XX remove u3A->sen
   //
-  u3_noun pax = u3nq(u3_blip, c3__behn, u3k(u3A->sen), u3_nul);
-  u3_noun fav = u3nc(c3__born, u3_nul);
+  u3_noun wir = u3nt(c3__behn, u3k(u3A->sen), u3_nul);
+  u3_noun cad = u3nc(c3__born, u3_nul);
 
-  u3_auto_plan(car_u, 0, 0, u3_blip, pax, fav);
+  u3_auto_plan(car_u, 0, c3__b, wir, cad);
 }
 
-/* _behn_io_fete():
+/* _behn_io_kick(): apply effects.
 */
 static c3_o
-_behn_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
+_behn_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
   u3_behn* teh_u = (u3_behn*)car_u;
 
-  u3_noun i_pax, it_pax, tag, dat;
+  u3_noun tag, dat, i_wir;
   c3_o ret_o;
 
-  if (  (c3n == u3r_trel(pax, &i_pax, &it_pax, 0))
-     || (c3n == u3r_cell(fav, &tag, &dat))
-     || (u3_blip  != i_pax )
-     || (c3__behn != it_pax) )
+  if (  (c3n == u3r_cell(wir, &i_wir, 0))
+     || (c3n == u3r_cell(cad, &tag, &dat))
+     || (c3__behn != i_wir) )
   {
     ret_o = c3n;
   }
@@ -119,7 +118,7 @@ _behn_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
     _behn_ef_doze(teh_u, u3k(dat));
   }
 
-  u3z(pax); u3z(fav);
+  u3z(wir); u3z(cad);
   return ret_o;
 }
 
@@ -141,9 +140,14 @@ _behn_io_exit(u3_auto* car_u)
   uv_close((uv_handle_t*)&teh_u->tim_u, (uv_close_cb)_behn_exit_cb);
 }
 
+/* _behn_ev_bail(): event crashed.
+*/
 static void
-_behn_ev_noop(u3_auto* car_u, void* vod_p)
+_behn_ev_bail(u3_auto* car_u, u3_ovum* egg_u, u3_noun lud)
 {
+  //  XX retry up to N?
+  //
+  u3_auto_bail_slog(egg_u, lud);
 }
 
 /* u3_behn(): initialize time timer.
@@ -163,16 +167,9 @@ u3_behn_io_init(u3_pier* pir_u)
   //
   car_u->liv_o = c3n;
   car_u->io.talk_f = _behn_io_talk;
-  car_u->io.fete_f = _behn_io_fete;
+  car_u->io.kick_f = _behn_io_kick;
   car_u->io.exit_f = _behn_io_exit;
-
-  car_u->ev.drop_f = _behn_ev_noop;
-  car_u->ev.work_f = _behn_ev_noop;
-  car_u->ev.done_f = _behn_ev_noop;
-  car_u->ev.swap_f = _behn_ev_noop;
-  //  XX important
-  //
-  car_u->ev.bail_f = _behn_ev_noop;
+  car_u->ev.bail_f = _behn_ev_bail;
 
   return car_u;
 }

@@ -592,12 +592,14 @@ _term_it_save(u3_noun pax, u3_noun pad)
   c3_free(bas_c);
 }
 
+/* _term_ovum_plan(): plan term ovums, configuring spinner.
+*/
 static u3_ovum*
-_term_ovum_plan(u3_auto* car_u, u3_noun pax, u3_noun fav)
+_term_ovum_plan(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
   //  XX c3__dill instead of u3_blip
   //
-  u3_ovum* egg_u = u3_auto_plan(car_u, 0, 0, u3_blip, pax, fav);
+  u3_ovum* egg_u = u3_auto_plan(car_u, 0, c3__d, wir, cad);
 
   //  term events have no spinner label
   //
@@ -614,14 +616,14 @@ _term_io_belt(u3_utty* uty_u, u3_noun blb)
 {
   //  XX s/b u3dc("scot", c3__ud, uty_u->tid_l)
   //
-  u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
-  u3_noun fav = u3nc(c3__belt, blb);
+  u3_noun wir = u3nt(c3__term, '1', u3_nul);
+  u3_noun cad = u3nc(c3__belt, blb);
 
   c3_assert( 1 == uty_u->tid_l );
   c3_assert( uty_u->car_u );
 
   {
-    u3_ovum* egg_u = _term_ovum_plan(uty_u->car_u, pax, fav);
+    u3_ovum* egg_u = _term_ovum_plan(uty_u->car_u, wir, cad);
 
     //  no spinner delay on %ret
     //
@@ -991,13 +993,13 @@ u3_term_get_blew(c3_l tid_l)
 void
 u3_term_ef_winc(void)
 {
-  u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
-  u3_noun fav = u3nc(c3__blew, u3_term_get_blew(1));
+  u3_noun wir = u3nt(c3__term, '1', u3_nul);
+  u3_noun cad = u3nc(c3__blew, u3_term_get_blew(1));
 
   c3_assert( 1 == u3_Host.uty_u->tid_l );
   c3_assert( u3_Host.uty_u->car_u );
 
-  _term_ovum_plan(u3_Host.uty_u->car_u, pax, fav);
+  _term_ovum_plan(u3_Host.uty_u->car_u, wir, cad);
 }
 
 /* u3_term_ef_ctlc(): send ^C on console.
@@ -1008,13 +1010,13 @@ u3_term_ef_ctlc(void)
   u3_utty* uty_u = _term_main();
 
   {
-    u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
-    u3_noun fav = u3nt(c3__belt, c3__ctl, 'c');
+    u3_noun wir = u3nt(c3__term, '1', u3_nul);
+    u3_noun cad = u3nt(c3__belt, c3__ctl, 'c');
 
     c3_assert( 1 == uty_u->tid_l );
     c3_assert( uty_u->car_u );
 
-    _term_ovum_plan(uty_u->car_u, pax, fav);
+    _term_ovum_plan(uty_u->car_u, wir, cad);
   }
 
   _term_it_refresh_line(uty_u);
@@ -1266,14 +1268,14 @@ _term_io_talk(u3_auto* car_u)
 
   //  XX groace hardcoded terminal number
   //
-  u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
-  u3_noun fav;
+  u3_noun wir = u3nt(c3__term, '1', u3_nul);
+  u3_noun cad;
 
   //  send terminal dimensions
   //
   {
-    fav = u3nc(c3__blew, u3_term_get_blew(1));
-    _term_ovum_plan(car_u, u3k(pax), fav);
+    cad = u3nc(c3__blew, u3_term_get_blew(1));
+    _term_ovum_plan(car_u, u3k(wir), cad);
   }
 
   //  NB, term.c used to also start :dojo
@@ -1283,8 +1285,8 @@ _term_io_talk(u3_auto* car_u)
   //  refresh terminal state
   //
   {
-    fav = u3nc(c3__hail, u3_nul);
-    _term_ovum_plan(car_u, pax, fav);
+    cad = u3nc(c3__hail, u3_nul);
+    _term_ovum_plan(car_u, wir, cad);
   }
 }
 
@@ -1309,23 +1311,22 @@ _reck_orchid(u3_noun fot, u3_noun txt, c3_l* tid_l)
   }
 }
 
-/* _term_io_fete():
+/* _term_io_kick(): apply effects.
 */
 static c3_o
-_term_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
+_term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
-  u3_noun i_pax, it_pax, tt_pax, tag, dat;
+  u3_noun tag, dat, i_wir, t_wir;
   c3_o ret_o;
 
-  if (  (c3n == u3r_trel(pax, &i_pax, &it_pax, &tt_pax))
-     || (c3n == u3r_cell(fav, &tag, &dat))
-     || (u3_blip  != i_pax )
-     || (c3__term != it_pax) )
+  if (  (c3n == u3r_cell(wir, &i_wir, &t_wir))
+     || (c3n == u3r_cell(cad, &tag, &dat))
+     || (c3__term != i_wir) )
   {
     ret_o = c3n;
   }
   else {
-    u3_noun pud = tt_pax;
+    u3_noun pud = t_wir;
     u3_noun p_pud, q_pud;
     c3_l    tid_l;
 
@@ -1407,7 +1408,7 @@ _term_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
     }
   }
 
-  u3z(pax); u3z(fav);
+  u3z(wir); u3z(cad);
   return ret_o;
 }
 
@@ -1422,9 +1423,12 @@ _term_io_exit(u3_auto* car_u)
   }
 }
 
+/* _term_ev_bail(): event crashed.
+*/
 static void
-_term_ev_noop(u3_auto* car_u, void* vod_p)
+_term_ev_bail(u3_auto* car_u, u3_ovum* egg_u, u3_noun lud)
 {
+  u3_auto_bail_slog(egg_u, lud);
 }
 
 /* u3_term_io_init(): initialize terminal
@@ -1434,21 +1438,15 @@ u3_term_io_init(u3_pier* pir_u)
 {
   u3_auto* car_u = c3_calloc(sizeof(*car_u));
 
-  if ( u3_Host.uty_u ) {
-    u3_Host.uty_u->car_u = car_u;
-  }
+  c3_assert( u3_Host.uty_u );
+  u3_Host.uty_u->car_u = car_u;
 
   car_u->nam_m = c3__term;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _term_io_talk;
-  car_u->io.fete_f = _term_io_fete;
+  car_u->io.kick_f = _term_io_kick;
   car_u->io.exit_f = _term_io_exit;
-
-  car_u->ev.drop_f = _term_ev_noop;
-  car_u->ev.work_f = _term_ev_noop;
-  car_u->ev.done_f = _term_ev_noop;
-  car_u->ev.swap_f = _term_ev_noop;
-  car_u->ev.bail_f = _term_ev_noop;
+  car_u->ev.bail_f = _term_ev_bail;
 
   return car_u;
 }

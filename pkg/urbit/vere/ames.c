@@ -379,8 +379,8 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   if (  (0 < nrd_i)
      && (0 == (0x7 & *((c3_w*)buf_u->base))) )
   {
-    u3_noun pax = u3nt(u3_blip, c3__ames, u3_nul);
-    u3_noun fav;
+    u3_noun wir = u3nc(c3__ames, u3_nul);
+    u3_noun cad;
 
     {
       u3_noun msg = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
@@ -395,10 +395,10 @@ _ames_recv_cb(uv_udp_t*        wax_u,
         lan = u3_ames_encode_lane(lan_u);
       }
 
-      fav = u3nt(c3__hear, u3nc(c3n, lan), msg);
+      cad = u3nt(c3__hear, u3nc(c3n, lan), msg);
     }
 
-    u3_auto_plan(&sam_u->car_u, 0, 0, u3_blip, pax, fav);
+    u3_auto_plan(&sam_u->car_u, 0, c3__a, wir, cad);
   }
 
   c3_free(buf_u->base);
@@ -574,17 +574,17 @@ _ames_io_talk(u3_auto* car_u)
   // send born event
   //
   {
-    u3_noun pax = u3nq(u3_blip, c3__newt, u3k(u3A->sen), u3_nul);
-    u3_noun fav = u3nc(c3__born, u3_nul);
+    u3_noun wir = u3nt(c3__newt, u3k(u3A->sen), u3_nul);
+    u3_noun cad = u3nc(c3__born, u3_nul);
 
-    u3_auto_plan(car_u, 0, 0, u3_blip, pax, fav);
+    u3_auto_plan(car_u, 0, c3__a, wir, cad);
   }
 }
 
-/* _ames_fete_newt(): apply packet network outputs.
+/* _ames_kick_newt(): apply packet network outputs.
 */
 static c3_o
-_ames_fete_newt(u3_ames* sam_u, u3_noun tag, u3_noun dat)
+_ames_kick_newt(u3_ames* sam_u, u3_noun tag, u3_noun dat)
 {
   c3_o ret_o;
 
@@ -610,24 +610,23 @@ _ames_fete_newt(u3_ames* sam_u, u3_noun tag, u3_noun dat)
   return ret_o;
 }
 
-/* _ames_io_fete():
+/* _ames_io_kick(): apply effects
 */
 static c3_o
-_ames_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
+_ames_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
   u3_ames* sam_u = (u3_ames*)car_u;
 
-  u3_noun i_pax, it_pax, tt_pax, tag, dat;
+  u3_noun tag, dat, i_wir;
   c3_o ret_o;
 
-  if (  (c3n == u3r_trel(pax, &i_pax, &it_pax, &tt_pax))
-     || (c3n == u3r_cell(fav, &tag, &dat))
-     || (u3_blip  != i_pax ) )
+  if (  (c3n == u3r_cell(wir, &i_wir, 0))
+     || (c3n == u3r_cell(cad, &tag, &dat)) )
   {
     ret_o = c3n;
   }
   else {
-    switch ( it_pax ) {
+    switch ( i_wir ) {
       default: {
         ret_o = c3n;
       } break;
@@ -635,7 +634,7 @@ _ames_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
       //  XX should also be c3__ames
       //
       case c3__newt: {
-        ret_o = _ames_fete_newt(sam_u, u3k(tag), u3k(dat));
+        ret_o = _ames_kick_newt(sam_u, u3k(tag), u3k(dat));
       } break;
 
       //  XX obsolete
@@ -656,13 +655,13 @@ _ames_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
         }
         else {
           u3l_log("kick: strange send\r\n");
-          ret_o = _ames_fete_newt(sam_u, u3k(tag), u3k(dat));
+          ret_o = _ames_kick_newt(sam_u, u3k(tag), u3k(dat));
         }
       } break;
     }
   }
 
-  u3z(pax); u3z(fav);
+  u3z(wir); u3z(cad);
   return ret_o;
 }
 
@@ -680,9 +679,14 @@ _ames_io_exit(u3_auto* car_u)
   }
 }
 
+/* _ames_ev_bail(): event crashed.
+*/
 static void
-_ames_ev_noop(u3_auto* car_u, void* vod_p)
+_ames_ev_bail(u3_auto* car_u, u3_ovum* egg_u, u3_noun lud)
 {
+  //  XX track and print every N?
+  //
+  u3_auto_bail_slog(egg_u, lud);
 }
 
 /* u3_ames_io_init(): initialize ames I/O.
@@ -715,16 +719,9 @@ u3_ames_io_init(u3_pier* pir_u)
   car_u->nam_m = c3__ames;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _ames_io_talk;
-  car_u->io.fete_f = _ames_io_fete;
+  car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;
-
-  car_u->ev.drop_f = _ames_ev_noop;
-  car_u->ev.work_f = _ames_ev_noop;
-  car_u->ev.done_f = _ames_ev_noop;
-  car_u->ev.swap_f = _ames_ev_noop;
-  //  XX track and print every N?
-  //
-  car_u->ev.bail_f = _ames_ev_noop;
+  car_u->ev.bail_f = _ames_ev_bail;
 
   return car_u;
 

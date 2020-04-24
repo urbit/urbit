@@ -760,14 +760,14 @@ _cttp_creq_quit(u3_creq* ceq_u)
 static void
 _cttp_http_client_receive(u3_creq* ceq_u, c3_w sas_w, u3_noun mes, u3_noun uct)
 {
-  // TODO: We want to eventually deal with partial responses, but I don't know
-  // how to get that working right now.
-  u3_noun pax = u3nq(u3_blip, u3i_string("http-client"), u3k(u3A->sen), u3_nul);
-  u3_noun fav = u3nt(u3i_string("receive"),
+  //  XX inject partial responses as separate events
+  //
+  u3_noun wir = u3nt(u3i_string("http-client"), u3k(u3A->sen), u3_nul);
+  u3_noun cad = u3nt(u3i_string("receive"),
                     ceq_u->num_l,
                     u3nq(u3i_string("start"), u3nc(sas_w, mes), uct, c3y));
 
-  u3_auto_plan(&ceq_u->ctp_u->car_u, 0, 0, u3_blip, pax, fav);
+  u3_auto_plan(&ceq_u->ctp_u->car_u, 0, c3__i, wir, cad);
 }
 
 /* _cttp_creq_fail(): dispatch error response
@@ -1063,26 +1063,25 @@ _cttp_io_talk(u3_auto* car_u)
 {
   //  XX remove u3A->sen
   //
-  u3_noun pax = u3nq(u3_blip, u3i_string("http-client"), u3k(u3A->sen), u3_nul);
-  u3_noun fav = u3nc(c3__born, u3_nul);
+  u3_noun wir = u3nt(u3i_string("http-client"), u3k(u3A->sen), u3_nul);
+  u3_noun cad = u3nc(c3__born, u3_nul);
 
-  u3_auto_plan(car_u, 0, 0, u3_blip, pax, fav);
+  u3_auto_plan(car_u, 0, c3__i, wir, cad);
 }
 
-/* _cttp_io_fete():
+/* _cttp_io_kick(): apply effects
 */
 static c3_o
-_cttp_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
+_cttp_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
   u3_cttp* ctp_u = (u3_cttp*)car_u;
 
-  u3_noun i_pax, it_pax, tag, dat;
+  u3_noun tag, dat, i_wir;
   c3_o ret_o;
 
-  if (  (c3n == u3r_trel(pax, &i_pax, &it_pax, 0))
-     || (c3n == u3r_cell(fav, &tag, &dat))
-     || (u3_blip  != i_pax )
-     || (c3n == u3r_sing_c("http-client", it_pax)) )
+  if (  (c3n == u3r_cell(wir, &i_wir, 0))
+     || (c3n == u3r_cell(cad, &tag, &dat))
+     || (c3n == u3r_sing_c("http-client", i_wir)) )
   {
     ret_o = c3n;
   }
@@ -1090,7 +1089,7 @@ _cttp_io_fete(u3_auto* car_u, u3_noun pax, u3_noun fav)
     ret_o = _cttp_ef_http_client(ctp_u, u3k(tag), u3k(dat));
   }
 
-  u3z(pax); u3z(fav);
+  u3z(wir); u3z(cad);
   return ret_o;
 }
 
@@ -1121,9 +1120,14 @@ _cttp_io_exit(u3_auto* car_u)
   //
 }
 
+/* _cttp_ev_bail(): event crashed.
+*/
 static void
-_cttp_ev_noop(u3_auto* car_u, void* vod_p)
+_cttp_ev_bail(u3_auto* car_u, u3_ovum* egg_u, u3_noun lud)
 {
+  //  XX retry up to N?
+  //
+  u3_auto_bail_slog(egg_u, lud);
 }
 
 /* u3_cttp_io_init(): initialize http client I/O.
@@ -1153,14 +1157,9 @@ u3_cttp_io_init(u3_pier* pir_u)
   //
   car_u->liv_o = c3n;
   car_u->io.talk_f = _cttp_io_talk;
-  car_u->io.fete_f = _cttp_io_fete;
+  car_u->io.kick_f = _cttp_io_kick;
   car_u->io.exit_f = _cttp_io_exit;
-
-  car_u->ev.drop_f = _cttp_ev_noop;
-  car_u->ev.work_f = _cttp_ev_noop;
-  car_u->ev.done_f = _cttp_ev_noop;
-  car_u->ev.swap_f = _cttp_ev_noop;
-  car_u->ev.bail_f = _cttp_ev_noop;
+  car_u->ev.bail_f = _cttp_ev_bail;
 
   return car_u;
 }

@@ -19,83 +19,26 @@
 #include "all.h"
 #include "vere/vere.h"
 
-/* u3_auto_init(): initialize all drivers
-*/
-u3_auto*
-u3_auto_init(void)
-{
-  //  XX initialize i/o drivers here
-  //
-  return 0;
-}
-
-/* u3_auto_talk(): start all drivers
-*/
-void
-u3_auto_talk(u3_auto* car_u)
-{
-  while ( car_u ) {
-    car_u->io.talk_f(car_u);
-    car_u = car_u->nex_u;
-  }
-}
-
-/* u3_auto_exit(): close all drivers
-*/
-void
-u3_auto_exit(u3_auto* car_u)
-{
-  u3_auto* nex_u;
-
-  while ( car_u ) {
-    nex_u = car_u->nex_u;
-
-    while ( car_u->ext_u ) {
-      u3_auto_drop(car_u, car_u->ext_u);
-    }
-    car_u->io.exit_f(car_u);
-
-    car_u = nex_u;
-  }
-}
-
-/* u3_auto_live(): check if all drivers are live.
-*/
-c3_o
-u3_auto_live(u3_auto* car_u)
-{
-  while ( car_u ) {
-    if ( c3n == car_u->liv_o ) {
-      return c3n;
-    }
-
-    car_u = car_u->nex_u;
-  }
-
-  return c3y;
-}
-
-/* u3_auto_plan(): create and enqueue an ovum
+/* u3_auto_plan(): create and enqueue an ovum.
 */
 u3_ovum*
 u3_auto_plan(u3_auto* car_u,
-             void*    vod_p,
              c3_l     msc_l,
              u3_noun    tar,
-             u3_noun    pax,
-             u3_noun    fav)
+             u3_noun    wir,
+             u3_noun    cad)
 {
   u3_ovum* egg_u = c3_malloc(sizeof(*egg_u));
   egg_u->car_u = car_u;
-  egg_u->vod_p = vod_p;
+  egg_u->vod_p = 0;
   egg_u->msc_l = msc_l;
   egg_u->tar   = tar;
-  egg_u->pax   = pax;
-  egg_u->fav   = fav;
+  egg_u->wir   = wir;
+  egg_u->cad   = cad;
 
   //  spinner defaults
   //
-  egg_u->pin   = u3k(u3h(u3t(pax)));
+  egg_u->pin   = u3k(u3h(wir));
   egg_u->del_o = c3y;
 
   if ( !car_u->ent_u ) {
@@ -117,6 +60,106 @@ u3_auto_plan(u3_auto* car_u,
   return egg_u;
 }
 
+/* u3_auto_bail_slog(): print a bail notification.
+*/
+void
+u3_auto_bail_slog(u3_ovum* egg_u, u3_noun lud)
+{
+  c3_c* car_c = u3r_string(egg_u->car_u->nam_m);
+  u3_noun dul = lud;
+
+  while ( u3_nul != dul ) {
+    c3_c* mot_c;
+    u3_noun mot, tan;
+
+    u3x_cell(u3h(dul), &mot, &tan);
+
+    u3l_log("\n");
+    u3_pier_punt(0, u3qb_flop(tan));
+
+    mot_c = u3r_string(mot);
+    u3l_log("%s: bail: %%%s\r\n", car_c, mot_c);
+
+    dul = u3t(dul);
+    c3_free(mot_c);
+  }
+
+  {
+    c3_c* tag_c = u3r_string(u3h(egg_u->cad));
+    u3_noun riw = u3do("spat", u3k(egg_u->wir));
+    c3_c* wir_c = u3r_string(riw);
+
+    u3l_log("%s: %%%s event on %s failed\r\n\n", car_c, tag_c, wir_c);
+    c3_free(tag_c);
+    c3_free(wir_c);
+    u3z(riw);
+  }
+
+  u3z(lud);
+  c3_free(car_c);
+}
+
+/* u3_auto_bail(): notify driver that [egg_u] crashed.
+*/
+void
+u3_auto_bail(u3_ovum* egg_u, u3_noun lud)
+{
+  {
+    c3_l cod_l = u3a_lush(egg_u->car_u->nam_m);
+    egg_u->car_u->ev.bail_f(egg_u->car_u, egg_u, lud);
+    u3a_lop(cod_l);
+  }
+
+  //  XX confirm
+  //
+  u3_auto_drop(0, egg_u);
+}
+
+/* u3_auto_done(): notify driver of [egg_u] completion.
+*/
+void
+u3_auto_done(u3_ovum* egg_u, c3_o wap_o)
+{
+  //  optional
+  //
+  if ( egg_u->car_u->ev.done_f ) {
+    c3_l cod_l = u3a_lush(egg_u->car_u->nam_m);
+    egg_u->car_u->ev.done_f(egg_u->car_u, egg_u, wap_o);
+    u3a_lop(cod_l);
+  }
+
+  //  XX dispose egg_u here?
+  //
+}
+
+/* u3_auto_work(): notify driver of [egg_u] commencement.
+*/
+void
+u3_auto_work(u3_ovum* egg_u)
+{
+  //  optional
+  //
+  if ( egg_u->car_u->ev.work_f ) {
+    c3_l cod_l = u3a_lush(egg_u->car_u->nam_m);
+    egg_u->car_u->ev.work_f(egg_u->car_u, egg_u);
+    u3a_lop(cod_l);
+  }
+}
+
+/* _auto_drop(): notify driver of dropped ovum.
+*/
+static void
+_auto_drop(u3_ovum* egg_u)
+{
+  // optional
+  //
+  if ( egg_u->car_u->ev.drop_f ) {
+    c3_l cod_l = u3a_lush(egg_u->car_u->nam_m);
+    egg_u->car_u->ev.drop_f(egg_u->car_u, egg_u->vod_p);
+    u3a_lop(cod_l);
+  }
+}
+
 /* u3_auto_drop(): dequeue and dispose an ovum.
 */
 void
@@ -133,26 +176,28 @@ u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u)
   //  notify driver if not self-caused
   //
   if ( egg_u->car_u && ( car_u != egg_u->car_u ) ) {
-    egg_u->car_u->ev.drop_f(egg_u->car_u, egg_u->vod_p);
+    _auto_drop(egg_u);
   }
 
   u3z(egg_u->pin);
   u3z(egg_u->tar);
-  u3z(egg_u->pax);
-  u3z(egg_u->fav);
+  u3z(egg_u->wir);
+  u3z(egg_u->cad);
   c3_free(egg_u);
 }
 
-/* u3_auto_next(): select an ovum and dequeue.
+/* u3_auto_next(): select an ovum, dequeue and construct.
 */
 u3_ovum*
 u3_auto_next(u3_auto* car_u, u3_noun* ovo)
 {
-  u3_ovum* egg_u = 0;
-
   while ( car_u ) {
-    if ( car_u->ext_u ) {
-      egg_u = car_u->ext_u;
+    if ( !car_u->ext_u ) {
+      car_u = car_u->nex_u;
+      continue;
+    }
+    else {
+      u3_ovum* egg_u = car_u->ext_u;
 
       c3_assert( !egg_u->pre_u );
 
@@ -166,27 +211,26 @@ u3_auto_next(u3_auto* car_u, u3_noun* ovo)
 
       egg_u->nex_u = 0;
 
-      //  XX better name?
-      //
-      egg_u->car_u->ev.work_f(egg_u->car_u, egg_u->vod_p);
+      u3_auto_work(egg_u);
 
       //  XX cons [tar] route onto wire
       //
-      *ovo = u3nc(u3k(egg_u->pax), u3k(egg_u->fav));
+      // *ovo = u3nt(u3nc(u3k(egg_u->tar), u3k(egg_u->wir)),
+      //             u3k(egg_u->cad));
+      *ovo = u3nc(u3nc(u3_blip, u3k(egg_u->wir)),
+                  u3k(egg_u->cad));
 
       return egg_u;
     }
-
-    car_u = car_u->nex_u;    
   }
 
-  return egg_u;
+  return 0;
 }
 
-/* _auto_fete_lost(): RETAIN
+/* _auto_kick_lost(): print details of unroutable effect. RETAIN
 */
 static void
-_auto_fete_lost(u3_noun pax, u3_noun fav)
+_auto_kick_lost(u3_noun pax, u3_noun fav)
 {
   u3_noun tox = u3do("spat", u3k(pax));
   c3_c* tag_c = u3r_string(u3h(fav));
@@ -199,29 +243,132 @@ _auto_fete_lost(u3_noun pax, u3_noun fav)
   u3z(tox);
 }
 
-/* u3_auto_fete(): route effects to a linked driver
+/* _auto_kick(): kick with leak label.
+*/
+static c3_o
+_auto_kick(u3_auto* car_u, u3_noun pax, u3_noun fav)
+{
+  c3_l cod_l = u3a_lush(car_u->nam_m);
+  c3_o kik_o = car_u->io.kick_f(car_u, pax, fav);
+  u3a_lop(cod_l);
+  return kik_o;
+}
+
+/* u3_auto_kick(): route effects to a linked driver. RETAIN
 */
 void
-u3_auto_fete(u3_auto* car_u, u3_noun act)
+u3_auto_kick(u3_auto* car_u, u3_noun act)
 {
-  u3_noun pax, fav, fec;
   u3_auto* rac_u = car_u;
+  u3_noun    fec, pax, wir, cad;
 
   while ( u3_nul != act ) {
     fec = u3h(act);
-    u3x_cell(fec, &pax, &fav);
+    u3x_cell(fec, &pax, &cad);
+    u3_assent(u3r_p(pax, u3_blip, &wir));
 
-    while ( c3n == car_u->io.fete_f(car_u, u3k(pax), u3k(fav)) ) {
-      if ( !car_u->nex_u ) {
-        _auto_fete_lost(pax, fav);
-        break;
+    while ( c3n == _auto_kick(car_u, u3k(wir), u3k(cad)) ) {
+      if ( car_u->nex_u ) {
+        car_u = car_u->nex_u;
+        continue;
       }
       else {
-        car_u = car_u->nex_u;
+        _auto_kick_lost(wir, cad);
+        break;
       }
     }
 
     car_u = rac_u;
     act   = u3t(act);
   }
+}
+
+/* u3_auto_live(): check if all drivers are live.
+*/
+c3_o
+u3_auto_live(u3_auto* car_u)
+{
+  while ( car_u ) {
+    if ( c3n == car_u->liv_o ) {
+      return c3n;
+    }
+
+    car_u = car_u->nex_u;
+  }
+
+  return c3y;
+}
+
+/* u3_auto_talk(): start all drivers.
+*/
+void
+u3_auto_talk(u3_auto* car_u)
+{
+  c3_l cod_l;
+
+  while ( car_u ) {
+    cod_l = u3a_lush(car_u->nam_m);
+    car_u->io.talk_f(car_u);
+    u3a_lop(cod_l);
+    car_u = car_u->nex_u;
+  }
+}
+
+/* u3_auto_exit(): close all drivers.
+*/
+void
+u3_auto_exit(u3_auto* car_u)
+{
+  u3_auto* nex_u;
+  c3_l     cod_l;
+
+  while ( car_u ) {
+    nex_u = car_u->nex_u;
+
+    // while ( car_u->ext_u ) {
+    //   u3_auto_drop(car_u, car_u->ext_u);
+    // }
+
+    cod_l = u3a_lush(car_u->nam_m);
+    car_u->io.exit_f(car_u);
+    u3a_lop(cod_l);
+
+    car_u = nex_u;
+  }
+}
+
+/* _auto_link(): validate and link initalized [car_u]
+*/
+static u3_auto*
+_auto_link(u3_auto* car_u, u3_pier* pir_u, u3_auto* nex_u)
+{
+  //  assert required callbacks are present
+  //
+  c3_assert( car_u->io.talk_f );
+  c3_assert( car_u->io.kick_f );
+  c3_assert( car_u->io.exit_f );
+  c3_assert( car_u->ev.bail_f );
+
+  car_u->pir_u = pir_u;
+  car_u->nex_u = nex_u;
+  return car_u;
+}
+
+/* u3_auto_init(): initialize all drivers.
+*/
+u3_auto*
+u3_auto_init(u3_pier* pir_u)
+{
+  u3_auto* car_u = 0;
+
+  car_u = _auto_link(u3_hind_io_init(pir_u), pir_u, car_u);
+  car_u = _auto_link(u3_ames_io_init(pir_u), pir_u, car_u);
+  car_u = _auto_link(u3_http_io_init(pir_u), pir_u, car_u);
+  car_u = _auto_link(u3_cttp_io_init(pir_u), pir_u, car_u);
+  car_u = _auto_link(u3_behn_io_init(pir_u), pir_u, car_u);
+  car_u = _auto_link(u3_unix_io_init(pir_u), pir_u, car_u);
+  car_u = _auto_link(u3_term_io_init(pir_u), pir_u, car_u);
+  car_u = _auto_link(u3_fore_io_init(pir_u), pir_u, car_u);
+
+  return car_u;
 }

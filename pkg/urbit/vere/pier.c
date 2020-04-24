@@ -140,10 +140,10 @@ _pier_work_next(u3_pier* pir_u)
   }
 }
 
-/* _pier_work_fete(): apply effects.
+/* _pier_work_kick(): apply effects.
 */
 static void
-_pier_work_fete(u3_pier* pir_u)
+_pier_work_kick(u3_pier* pir_u)
 {
   u3_work* wok_u;
 
@@ -151,12 +151,14 @@ _pier_work_fete(u3_pier* pir_u)
 #ifdef VERBOSE_PIER
     fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", wok_u->eve_d);
 #endif
-    u3_auto_fete(pir_u->car_u, wok_u->act);
+    u3_auto_kick(pir_u->car_u, wok_u->act);
 
     if ( wok_u->egg_u ) {
-      u3_auto_drop(wok_u->egg_u->car_u, wok_u->egg_u);
+      u3_auto_drop(0, wok_u->egg_u);
     }
 
+    //  XX dispose properly
+    //
     c3_free(wok_u);
   }
 }
@@ -177,7 +179,7 @@ _pier_work(u3_pier* pir_u)
   }
 
   _pier_work_send(pir_u);
-  _pier_work_fete(pir_u);
+  _pier_work_kick(pir_u);
 }
 
 /* _pier_play_plan(): enqueue events for replay.
@@ -444,7 +446,7 @@ _pier_next(u3_pier* pir_u)
     }
 
     case u3_peat_done: {
-      _pier_work_fete(pir_u);
+      _pier_work_kick(pir_u);
       break;
     }
  
@@ -560,22 +562,14 @@ _pier_on_lord_work_done(void* vod_p, u3_work* wok_u, c3_o wap_o)
 {
   u3_pier* pir_u = vod_p;
 
-  {
-    u3_ovum* egg_u = wok_u->egg_u;
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier (%" PRIu64 "): work: %s\r\n",
+                  wok_u->eve_d,
+                  ( c3y == wap_o ) ? "swap" : "done");
+#endif
 
-    if ( egg_u ) {
-      if ( c3y == wap_o ) {
-        egg_u->car_u->ev.swap_f(egg_u->car_u, egg_u->vod_p);
-      }
-      else {
-       egg_u->car_u->ev.done_f(egg_u->car_u, egg_u->vod_p); 
-      }
-    }
-  }
-
+  u3_auto_done(wok_u->egg_u, wap_o);
   _pier_work_plan(pir_u, wok_u);
-
-
   _pier_next(pir_u);
 }
 
@@ -586,20 +580,15 @@ _pier_on_lord_work_bail(void* vod_p, u3_work* wok_u, u3_noun lud)
 {
   u3_pier* pir_u = vod_p;
 
-  {
-    u3_ovum* egg_u = wok_u->egg_u;
-
-    if ( egg_u ) {
-      egg_u->car_u->ev.bail_f(egg_u->car_u, egg_u->vod_p);
-    }
-  }
-
-  //  XX print lud
-  //  XX dispose
-  //
+#ifdef VERBOSE_PIER
   fprintf(stderr, "pier: work: bail\r\n");
-  u3m_p("wir", u3h(u3t(wok_u->job)));
-  u3m_p("tag", u3h(u3t(u3t(wok_u->job))));
+#endif
+
+  u3_auto_bail(wok_u->egg_u, lud);
+
+  //  XX dispose wok_u
+  //
+  wok_u->egg_u = 0;
 
   _pier_next(pir_u);
 }
@@ -1228,71 +1217,7 @@ _pier_loop_init(u3_pier* pir_u)
   //
   u3v_numb();
 
-  //  XX  move to u3_auto_init(pir_u->car_u);
-  //
-
-  u3_auto*  car_u;
-  u3_auto** las_u = &car_u;
-
-  //  XX this should be the first to work, but last to route effects and eit
-  //
-  {
-    u3_auto* rac_u = u3_root_io_init(pir_u);
-    rac_u->pir_u = pir_u;
-
-    *las_u = rac_u;
-    las_u = &rac_u->nex_u;
-  }
-
-  {
-    u3_auto* rac_u = u3_term_io_init(pir_u);
-    rac_u->pir_u = pir_u;
-
-    *las_u = rac_u;
-    las_u = &rac_u->nex_u;
-  }
-
-  {
-    u3_auto* rac_u = u3_unix_io_init(pir_u);
-    rac_u->pir_u = pir_u;
-
-    *las_u = rac_u;
-    las_u = &rac_u->nex_u;
-  }
-
-  {
-    u3_auto* rac_u = u3_behn_io_init(pir_u);
-    rac_u->pir_u = pir_u;
-
-    *las_u = rac_u;
-    las_u = &rac_u->nex_u;
-  }
-
-  {
-    u3_auto* rac_u = u3_cttp_io_init(pir_u);
-    rac_u->pir_u = pir_u;
-
-    *las_u = rac_u;
-    las_u = &rac_u->nex_u;
-  }
-
-  {
-    u3_auto* rac_u = u3_http_io_init(pir_u);
-    rac_u->pir_u = pir_u;
-
-    *las_u = rac_u;
-    las_u = &rac_u->nex_u;
-  }
-
-  {
-    u3_auto* rac_u = u3_ames_io_init(pir_u);
-    rac_u->pir_u = pir_u;
-
-    *las_u = rac_u;
-    las_u = &rac_u->nex_u;
-  }
-
-  return car_u;
+  return u3_auto_init(pir_u);
 }
 
 /* c3_rand(): fill a 512-bit (16-word) buffer.
