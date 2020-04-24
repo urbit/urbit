@@ -50,6 +50,7 @@ export class ContactUpdateReducer {
 
   edit(json, state) {
     let data = _.get(json, 'edit', false);
+    console.log(data);
     if (
       data &&
       (data.path in state.contacts) &&
