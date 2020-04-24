@@ -25,48 +25,12 @@ export default class S3Client {
       });
   }
 
-  createBucket(name) {
-    let params = {
-      Bucket: name,
-      ACL: "public-read"
-    };
-
-    return new Promise((resolve, reject) => {
-      if (!this.s3) {
-        reject({ error: 'S3 not initialized!' });
-        return;
-      }
-      this.s3.createBucket(params, (error, data) => {
-        if (error) {
-          reject({ error });
-        } else {
-          resolve({ data });
-        }
-      });
-    });
-  }
-
-  listBuckets() {
-    return new Promise((resolve, reject) => {
-      if (!this.s3) {
-        reject({ error: 'S3 not initialized!' });
-        return;
-      }
-      this.s3.listBuckets({}, (error, data) => {
-        if (error) {
-          reject({ error });
-        } else {
-          resolve({ data });
-        }
-      });
-    });
-  }
-
   upload(bucket, filename, buffer) {
     let params = {
       Bucket: bucket,
       Key:  filename,
-      Body: buffer
+      Body: buffer,
+      ACL: 'public-read'
     };
     return new Promise((resolve, reject) => {
       if (!this.s3) {
