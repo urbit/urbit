@@ -39,8 +39,6 @@
     };                                  //
     c3_d          who_d[2];             //  identity
     c3_o          fak_o;                //  fake keys
-    c3_o          liv;                  //  listener on
-    c3_o          alm;                  //  alarm on
     c3_s          por_s;                //  public IPv4 port
     c3_c*         dns_c;                //  domain XX multiple/fallback
     c3_w          imp_w[256];           //  imperial IPs
@@ -311,7 +309,7 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
 static void
 _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
 {
-  if ( c3n == sam_u->liv ) {
+  if ( c3n == sam_u->car_u.liv_o ) {
     u3l_log("ames: not yet live, dropping outbound\r\n");
     u3z(lan); u3z(pac);
     return;
@@ -427,13 +425,6 @@ _ames_io_start(u3_ames* sam_u)
     }
   }
 
-  if ( 0 != (ret_i = uv_udp_init(u3L, &sam_u->wax_u)) ) {
-    u3l_log("ames: init: %s\n", uv_strerror(ret_i));
-    c3_assert(0);
-  }
-
-  sam_u->wax_u.data = sam_u;
-
   //  Bind and stuff.
   {
     struct sockaddr_in add_u;
@@ -477,7 +468,7 @@ _ames_io_start(u3_ames* sam_u)
 
   uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
 
-  sam_u->liv = c3y;
+  sam_u->car_u.liv_o = c3y;
   u3z(rac);
   u3z(who);
 }
@@ -544,7 +535,8 @@ static void
 _ames_ef_turf(u3_ames* sam_u, u3_noun tuf)
 {
   if ( u3_nul != tuf ) {
-    // XX save all for fallback, not just first
+    //  XX save all for fallback, not just first
+    //
     u3_noun hot = u3k(u3h(tuf));
     c3_w  len_w = _cttp_mcut_host(0, 0, u3k(hot));
 
@@ -552,13 +544,18 @@ _ames_ef_turf(u3_ames* sam_u, u3_noun tuf)
     _cttp_mcut_host(sam_u->dns_c, 0, hot);
     sam_u->dns_c[len_w] = 0;
 
+    //  XX invalidate sam_u->imp_w &c ?
+    //
+
     u3z(tuf);
   }
   else if ( (c3n == sam_u->fak_o) && (0 == sam_u->dns_c) ) {
     u3l_log("ames: turf: no domains\n");
   }
 
-  if ( c3n == sam_u->liv ) {
+  //  XX is this ever necessary?
+  //
+  if ( c3n == sam_u->car_u.liv_o ) {
     _ames_io_start(sam_u);
   }
 }
@@ -665,18 +662,22 @@ _ames_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
   return ret_o;
 }
 
+/* _ames_exit_cb(): dispose resources aftr close.
+*/
+static void
+_ames_exit_cb(uv_handle_t* had_u)
+{
+  u3_ames* sam_u = had_u->data;
+  c3_free(sam_u);
+}
+
 /* _ames_io_exit(): terminate ames I/O.
 */
 static void
 _ames_io_exit(u3_auto* car_u)
 {
   u3_ames* sam_u = (u3_ames*)car_u;
-
-  //  XX dispose
-  //
-  if ( c3y == sam_u->liv ) {
-    uv_close(&sam_u->had_u, 0);
-  }
+  uv_close(&sam_u->had_u, _ames_exit_cb);
 }
 
 /* u3_ames_io_init(): initialize ames I/O.
@@ -684,13 +685,14 @@ _ames_io_exit(u3_auto* car_u)
 u3_auto*
 u3_ames_io_init(u3_pier* pir_u)
 {
-  u3_ames* sam_u = c3_calloc(sizeof(*sam_u));
-  //  XX pass pier on init?
-  //
+  u3_ames* sam_u  = c3_calloc(sizeof(*sam_u));
   sam_u->who_d[0] = pir_u->who_d[0];
   sam_u->who_d[1] = pir_u->who_d[1];
   sam_u->por_s    = pir_u->por_s;
   sam_u->fak_o    = pir_u->fak_o;
+
+  c3_assert( !uv_udp_init(u3L, &sam_u->wax_u) );
+  sam_u->wax_u.data = sam_u;
 
   //  Disable networking for fake ships
   //
@@ -698,12 +700,6 @@ u3_ames_io_init(u3_pier* pir_u)
     u3_Host.ops_u.net = c3n;
   }
 
-  //  XX redundant
-  //
-  sam_u->liv = c3n;
-
-  //  XX uv_udp_init
-  //
 
   u3_auto* car_u = &sam_u->car_u;
   car_u->nam_m = c3__ames;

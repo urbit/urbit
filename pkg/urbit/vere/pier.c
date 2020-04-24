@@ -172,9 +172,19 @@ _pier_work(u3_pier* pir_u)
   if ( c3n == pir_u->liv_o ) {
     pir_u->liv_o = u3_auto_live(pir_u->car_u);
 
+    //  all i/o drivers are fully initialized
+    //
     if ( c3y == pir_u->liv_o ) {
-      //  XX print
-      //  XX bot_f ?
+      //  XX this is when "boot" is actually complete
+      //  XX even better would be after neighboring with our sponsor
+      //
+      u3l_log("pier: live\r\n");
+
+      //  XX move callbacking to king
+      //
+      if ( u3_Host.bot_f ) {
+        u3_Host.bot_f();
+      }
     }
   }
 
@@ -827,6 +837,7 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
 
   pir_u->pax_c = pax_c;
   pir_u->sat_e = u3_peat_init;
+  pir_u->liv_o = c3n;
 
   // XX remove
   //
@@ -1200,20 +1211,6 @@ u3_pier_exit(u3_pier* pir_u)
   u3_auto_exit(pir_u->car_u);
   _pier_wall_plan(pir_u, 0, pir_u, _pier_exit_cb);
 }
-
-//  startup validation
-//
-//    replay the log
-//    init all the i/o drivers
-//
-
-
-//  boot validation
-//
-//    play the (pill / boot-sequence)
-//    init all the i/o drivers
-//    neighbor with sponsor
-//
 
 /* _pier_loop_init_pier(): initialize loop handlers.
 */

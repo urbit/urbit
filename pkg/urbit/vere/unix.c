@@ -1268,13 +1268,15 @@ u3_unix_ef_ogre(u3_unix* unx_u, u3_noun mon)
 void
 u3_unix_ef_hill(u3_unix* unx_u, u3_noun hil)
 {
-  //  XX set car_u->liv_o
-  //
   u3_noun mon;
+
   for ( mon = hil; c3y == u3du(mon); mon = u3t(mon) ) {
     u3_umon* mon_u = _unix_get_mount_point(unx_u, u3k(u3h(mon)));
     _unix_scan_mount_point(unx_u, mon_u);
   }
+
+  unx_u->car_u.liv_o = c3y;
+
   u3z(hil);
 }
 

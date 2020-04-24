@@ -1434,7 +1434,7 @@ u3_term_io_init(u3_pier* pir_u)
   u3_Host.uty_u->car_u = car_u;
 
   car_u->nam_m = c3__term;
-  car_u->liv_o = c3n;
+  car_u->liv_o = c3y;
   car_u->io.talk_f = _term_io_talk;
   car_u->io.kick_f = _term_io_kick;
   car_u->io.exit_f = _term_io_exit;

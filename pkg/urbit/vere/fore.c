@@ -70,7 +70,9 @@ u3_fore_io_init(u3_pier* pir_u)
 {
   u3_auto* car_u = c3_calloc(sizeof(*car_u));
   car_u->nam_m = c3__fore;
-  car_u->liv_o = c3n;
+  //  XX set in done_cb for %wack
+  //
+  car_u->liv_o = c3y;
   car_u->io.talk_f = _fore_io_talk;
   car_u->io.kick_f = _fore_io_kick;
   car_u->io.exit_f = _fore_io_exit;

@@ -1143,9 +1143,10 @@ u3_cttp_io_init(u3_pier* pir_u)
 
   u3_auto* car_u = &ctp_u->car_u;
   car_u->nam_m = c3__cttp;
-  //  XX post born
+
+  //  XX set in done_cb for %born
   //
-  car_u->liv_o = c3n;
+  car_u->liv_o = c3y;
   car_u->io.talk_f = _cttp_io_talk;
   car_u->io.kick_f = _cttp_io_kick;
   car_u->io.exit_f = _cttp_io_exit;
