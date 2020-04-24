@@ -540,9 +540,6 @@
       $:  %f                                            ::  by %ford
           $>(%made gift:able:ford)                      ::
       ==                                                ::
-      $:  %g                                            ::  by %gall
-          $>(%unto gift:able:gall)                      ::
-      ==                                                ::
       $:  %j                                            ::  by %jael
           $>(%public-keys gift:able:jael)               ::
       ==                                                ::
@@ -3409,6 +3406,25 @@
       ==
     ==
   ::
+  ::  Porcelain commit
+  ::
+  ++  info
+    |=  [deletes=(set path) changes=(map path cage)]
+    =/  parent-tako=tako  (aeon-to-tako:ze let.dom)
+    =/  data=(map path (each page lobe))
+      =/  parent-yaki  (tako-to-yaki:ze parent-tako)
+      =/  after-deletes
+        %-  ~(dif by q.parent-yaki)
+        (malt (turn ~(tap in deletes) |=(=path [path *lobe])))
+      =/  after=(map path (each page lobe))
+        (~(run by after-deletes) |=(=lobe |+lobe))
+      %-  ~(uni by after)
+      ^-  (map path (each page lobe))
+      (~(run by changes) |=(=cage &+[p q.q]:cage))
+    ::
+    =/  =yuki  [~[parent-tako] data]
+    (park yuki *rang)
+  ::
   ::  Plumbing commit
   ::
   ::    Guaranteed to finish in one event.
@@ -5089,7 +5105,6 @@
   ::
       %into
     =.  hez.ruf  `hen
-    :_  ..^$
     =+  bem=(~(get by mon.ruf) des.req)
     ?:  &(?=(~ bem) !=(%$ des.req))
       ~|([%bad-mount-point-from-unix des.req] !!)
@@ -5109,16 +5124,16 @@
               ?=(%mime p.p.b)
               ?=([%hoon ~] (slag (dec (lent a)) a))
           ==
+      :_  ..^$
       :~  [hen %pass /one %c %info q.bem %& one]
           [hen %pass /two %c %info q.bem %& two]
       ==
     =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.u.dos) let.dom.u.dos))
     =+  cos=(mode-to-commit q.yak (flop s.bem) all.req fis.req)
-    =+  tid=:((cury cat 3) 'clay--' des.req '--' (scot %uv eny))
-    =+  arg=[~ `tid %commit !>([q.bem [- + ~]:cos])]
-    :~  [hen %pass /both %g %deal [our our] %spider %watch /thread-result/[tid]]
-        [hen %pass /both %g %deal [our our] %spider %poke %spider-start !>(arg)]
-    ==
+    =^  mos  ruf
+      =/  den  ((de our now ski hen ruf) our des.req)
+      abet:(info:den cos)
+    [mos ..^$]
   ::
       %merg                                               ::  direct state up
     ?:  =(%$ des.req)
@@ -5452,29 +5467,6 @@
     [~ ..^$]
   ::
       %note  [[hen %give +.q.hin]~ ..^$]
-      %unto
-    ?-    -.p.q.hin
-        %kick  [~ ..^$]
-        %poke-ack
-      ?~  p.p.q.hin
-        [~ ..^$]
-      [[hen %slip %d %flog %crud %into u.p.p.q.hin]~ ..^$]
-    ::
-        %watch-ack
-      ?~  p.p.q.hin
-        [~ ..^$]
-      [[hen %slip %d %flog %crud %into u.p.p.q.hin]~ ..^$]
-    ::
-        %fact
-      :_  ..^$
-      ?+    p.cage.p.q.hin  [hen %slip %d %flog %crud %into >%strange-into< ~]~
-          %thread-done  ~
-          %thread-fail
-        =+  !<([=term =tang] q.cage.p.q.hin)
-        [hen %slip %d %flog %crud %into >term< tang]~
-      ==
-    ==
-  ::
       %wake
     ::  TODO: handle behn errors
     ::
