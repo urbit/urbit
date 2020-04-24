@@ -56,7 +56,7 @@ _newt_send_slog(u3_noun hod)
 static void
 _newt_send_stdr(c3_c* str_c)
 {
-  _newt_send_slog(u3nt(0, c3__leaf, u3i_tape(str_c)));
+  _newt_send_slog(u3nc(0, u3i_string(str_c)));
 }
 
 /* _newt_writ():

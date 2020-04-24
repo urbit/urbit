@@ -38,7 +38,7 @@
 +$  plea
   $%  [%live ~]
       [%ripe [pro=@ hon=@ nok=@] eve=@ mug=@]
-      [%slog pri=@ =tank]
+      [%slog pri=@ ?(cord tank)]
       [%peek dat=(unit (cask))]
       $:  %play
           $%  [%done mug=@]

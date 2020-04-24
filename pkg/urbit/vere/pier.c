@@ -464,7 +464,17 @@ static void
 _pier_on_lord_slog(void* vod_p, c3_w pri_w, u3_noun tan)
 {
   u3_pier* pir_u = vod_p;
-  u3_pier_tank(0, pri_w, tan);
+
+  if ( c3y == u3a_is_atom(tan) ) {
+    c3_c* tan_c = u3r_string(tan);
+    u3C.stderr_log_f(tan_c);
+    c3_free(tan_c);
+    u3z(tan);
+  }
+  else {
+    u3_pier_tank(0, pri_w, tan);
+  }
+
   _pier_next(pir_u);
 }
 
