@@ -31,6 +31,7 @@ export class ContactSidebar extends Component {
       ( <ShareSheet
           ship={window.ship}
           nickname={me.nickname}
+          avatar={me.avatar}
           color={me.color}
           path={props.path}
           selected={props.path + '/' + window.ship === props.selectedContact}
