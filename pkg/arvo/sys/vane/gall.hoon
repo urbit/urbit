@@ -55,10 +55,13 @@
 ++  state
   $:  :: state version
       ::
-      %5
+      %6
       :: agents by ship
       ::
       =agents
+      ::  gall state for importing
+      ::
+      =lore
   ==
 ::  +subscribers: subscriber data
 ::
@@ -249,6 +252,12 @@
       agents     t.agents
       ..mo-core  (mo-reboot force i.agents our)
     ==
+  ++  mo-book
+    |=  =lore
+    ^+  mo-core
+    =.  lore.state
+      lore
+    mo-core
   ::
   ::  +mo-pass: prepend a standard %pass to the current list of moves.
   ::
@@ -1395,9 +1404,89 @@
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~
         ?~  maybe-vase
-          |.  on-init:ap-agent-core
+           ap-new-state
         |.  (on-load:ap-agent-core u.maybe-vase)
       [maybe-tang ap-core]
+    ::
+    ::  +ap-new-state: get initial state for agent
+    ::
+    ++  ap-new-state
+      ^?  |.
+      =^  init-cards  agent.current-agent
+        on-init:ap-agent-core
+      =/  old-state=(unit [state=* wex=boat sup=bitt])
+        (~(get by lore.state) agent-name)
+      ?~  old-state
+        [init-cards agent.current-agent]
+      ?:  ?|  =(agent-name %hood)
+              =(agent-name %dojo)
+              =(agent-name %chat-cli)
+              =(agent-name %eth-watcher)
+              =(agent-name %azimuth-tracker)
+              =(agent-name %spider)
+          ==
+        [init-cards agent.current-agent]
+      ~&  "Restoring {(trip agent-name)}"
+      =/  new-state=vase
+        :-  p:on-save:ap-agent-core
+        state.u.old-state
+      |^
+      =^  load-cards  agent.current-agent
+        (on-load:ap-agent-core new-state)
+      =^  leave-cards  agent.current-agent
+        (leave-incoming ~(val by sup.u.old-state))
+      =^  [init-cards=(list card:agent) kick-cards=(list card:agent)]
+          agent.current-agent
+          ::
+        (kick-outgoing ~(tap by wex.u.old-state))
+      :_  agent.current-agent
+      ;:  weld
+        init-cards
+        load-cards
+        leave-cards
+        kick-cards
+      ==
+      ::
+      ++  leave-incoming
+        =|  cards=(list card:agent)
+        |=  subs=(list (pair ship path))
+        ^-  (quip card:agent _agent.current-agent)
+        ?~  subs
+          [cards agent.current-agent]
+        =*  path  q.i.subs
+        ::
+        =^  new-cards  agent.current-agent
+          (on-leave:ap-agent-core path)
+        $(cards (weld cards new-cards), subs t.subs)
+      ::
+      ++  kick-outgoing
+        =|  cards=(list card:agent)
+        =/  =sign:agent
+          [%kick ~]
+        |=  subs=(list [[=wire =ship =term] acked=? =path])
+        ^-  [[(list card:agent) (list card:agent)] _agent.current-agent]
+        ?~  subs
+          :_  agent.current-agent
+          :-  init-cards
+          cards
+        =*  sub  i.subs
+        =.  init-cards
+          %+  skip
+            init-cards
+          |=  =card:agent
+          ^-  ?
+          ?.  ?=(%pass -.card)  %.n
+          ?.  ?=(%agent -.q.card)  %.n
+          ?:  ?=(%watch -.task.q.card)
+            =(path.sub path.task.q.card)
+          ?:  ?=(%watch-as -.task.q.card)
+            =(path.sub path.task.q.card)
+          %.n
+        ::
+        =^  new-cards  agent.current-agent
+          (on-agent:ap-agent-core wire.sub sign)
+        $(cards (weld new-cards cards), subs t.subs)
+      --
     ::  +ap-silent-delete: silent delete.
     ::
     ++  ap-silent-delete
@@ -1611,6 +1700,9 @@
       %goad
     mo-abet:(mo-goad:initialised force.task agent.task)
   ::
+      %book
+    mo-abet:(mo-book:initialised lore.task)
+  ::
       %sear
     mo-abet:(mo-filter-queue:initialised ship.task)
   ::
@@ -1691,12 +1783,25 @@
   =?  all-state  ?=(%4 -.all-state)
     (state-4-to-5 all-state)
   ::
-  ?>  ?=(%5 -.all-state)
+  =?  all-state  ?=(%5 -.all-state)
+    (state-4-to-5 all-state)
+  ::
+  ?>  ?=(%6 -.all-state)
   gall-payload(state all-state)
   ::
   ::  +all-state: upgrade path
   ::
-  ++  all-state  $%(state-0 state-1 state-2 state-3 state-4 ^state)
+  ++  all-state  $%(state-0 state-1 state-2 state-3 state-4 state-5 ^state)
+  ::
+  ++  state-5-to-6
+    |=  =state-5
+    ^-  ^state
+    [%6 agents.state-5 ~]
+  ::
+  ++  state-5
+    $:  %5
+        =agents
+    ==
   ::
   ++  state-4-to-5
     |=  =state-4

@@ -876,6 +876,7 @@
     {@ $http-client *}  %i
     {@ $http-server *}  %e
     {@ $behn *}  %b
+    {@ $gall *}  %g
   ==
 ::
 ++  is  &
