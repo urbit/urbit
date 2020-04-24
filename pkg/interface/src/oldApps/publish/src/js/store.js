@@ -1,10 +1,10 @@
-import { InitialReducer }    from './reducers/initial';
-import { PrimaryReducer }    from './reducers/primary';
-import { ResponseReducer }   from './reducers/response';
-import { GroupReducer }      from './reducers/group';
-import { InviteReducer }     from './reducers/invite';
-import { PermissionReducer } from './reducers/permission';
-import { MetadataReducer } from './reducers/metadata';
+import { InitialReducer }    from '/reducers/initial';
+import { PrimaryReducer }    from '/reducers/primary';
+import { ResponseReducer }   from '/reducers/response';
+import { GroupReducer }      from '/reducers/group';
+import { InviteReducer }     from '/reducers/invite';
+import { PermissionReducer } from '/reducers/permission';
+import { MetadataReducer } from '/reducers/metadata';
 
 class Store {
   constructor() {

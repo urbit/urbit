@@ -2,6 +2,15 @@ import * as React from "react";
 import { BrowserRouter as Router, Route, Switch, Link, useParams, useRouteMatch, withRouter } from "react-router-dom";
 import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
 import { cssReset, light, Col, Text, Row } from "@tlon/indigo-react";
+// import { api } from '/api';
+// import { store } from '/store';
+// import { subscription } from "/subscription";
+
+api.setAuthTokens({
+  ship: window.ship
+});
+
+subscription.start();
 
 import Chat from './apps/chat/Chat';
 
@@ -57,7 +66,7 @@ export default class App extends React.Component {
       <ThemeProvider theme={light}>
         <Style/>
         <Root>
-
+          HELLO
           <Router>
             <StatusBarWithRouter props={this.props}/>
             <div>

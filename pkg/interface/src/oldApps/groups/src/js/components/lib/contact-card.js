@@ -119,7 +119,8 @@ export class ContactCard extends Component {
           (state.avatarToSet === '') ||
           (
             Boolean(props.contact.avatar) &&
-            state.avatarToSet === props.contact.avatar
+            'url' in props.contact.avatar &&
+            state.avatarToSet === props.contact.avatar.url
           )
         ) {
           return false;
@@ -130,7 +131,6 @@ export class ContactCard extends Component {
             awaiting: true,
             type: 'Saving to group'
           }, (() => {
-            console.log(state.avatarToSet);
             api.contactEdit(props.path, ship, {
               avatar: {
                 url: state.avatarToSet
@@ -306,7 +306,7 @@ export class ContactCard extends Component {
       email: props.rootIdentity.email,
       phone: props.rootIdentity.phone,
       website: props.rootIdentity.website,
-      avatar: !!props.rootIdentity.avatar ? { url: props.rootIdentity.avatar } : null,
+      avatar: { url: props.rootIdentity.avatar },
       notes: props.rootIdentity.notes,
       color: uxToHex(props.rootIdentity.color)
     } : {
@@ -314,11 +314,11 @@ export class ContactCard extends Component {
       email: props.contact.email,
       phone: props.contact.phone,
       website: props.contact.website,
-      avatar: !!props.contact.avatar ? { url: props.contact.avatar } : null,
+      avatar: { url: props.contact.avatar },
       notes: props.contact.notes,
       color: props.contact.color
     };
-    
+
     const contact = {
       nickname: this.pickFunction(state.nickNameToSet, defaultVal.nickname),
       email: this.pickFunction(state.emailToSet, defaultVal.email),
@@ -327,7 +327,7 @@ export class ContactCard extends Component {
       notes: this.pickFunction(state.notesToSet, defaultVal.notes),
       color: this.pickFunction(state.colorToSet, defaultVal.color),
       avatar: this.pickFunction(
-        !!state.avatarToSet ? { url: state.avatarToSet } : null,
+        state.avatarToSet ? { url: state.avatarToSet } : null,
         defaultVal.avatar
       )
     };

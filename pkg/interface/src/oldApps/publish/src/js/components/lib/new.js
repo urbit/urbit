@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { InviteSearch } from './invite-search';
 import { Spinner } from './icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
-import { uuid, isPatTa, deSig, stringToSymbol } from '../../lib/util';
+import { uuid, isPatTa, deSig, stringToSymbol } from "/lib/util";
 import urbitOb from 'urbit-ob';
 
 export class NewScreen extends Component {

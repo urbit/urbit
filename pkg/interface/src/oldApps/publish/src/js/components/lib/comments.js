@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { CommentItem } from './comment-item';
 import { CommentInput } from './comment-input';
-import { dateToDa } from '../../lib/util';
+import { dateToDa } from '/lib/util';
 import { Spinner } from './icons/icon-spinner';
 
 export class Comments extends Component {
