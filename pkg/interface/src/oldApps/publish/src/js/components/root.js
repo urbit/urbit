@@ -1,29 +1,16 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import _ from 'lodash';
-import { cssReset, light } from "@tlon/indigo-react";
-import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
+import { store } from '/store';
+import { api } from '/api';
+import { Skeleton } from '/components/skeleton';
+import { NewScreen } from '/components/lib/new';
+import { JoinScreen } from '/components/lib/join';
+import { Notebook } from '/components/lib/notebook';
+import { Note } from '/components/lib/note';
+import { NewPost } from '/components/lib/new-post';
+import { EditPost } from '/components/lib/edit-post';
 
-import { store } from '../store';
-import { api } from '../api';
-import { Skeleton } from './skeleton';
-import { NewScreen } from './lib/new';
-import { JoinScreen } from './lib/join';
-import { Notebook } from './lib/notebook';
-import { Note } from './lib/note';
-import { NewPost } from './lib/new-post';
-import { EditPost } from './lib/edit-post';
-
-const Style = createGlobalStyle`
-  ${cssReset}
-  html {
-    background-color: ${p => p.theme.colors.white};
-  }
-
-  strong {
-    font-weight: 600;
-  }
-`
 
 export class Root extends Component {
   constructor(props) {
@@ -38,10 +25,6 @@ export class Root extends Component {
     //preload spinner asset
     new Image().src = "/~publish/Spinner.png";
   }
-
-  // updateCommentDraft(e) {
-  //   this.setState({ commentDraft: })
-  // }
 
   render() {
     const { props, state } = this;
@@ -64,9 +47,6 @@ export class Root extends Component {
     }
 
     return (
-      <ThemeProvider
-        theme={light}>
-        <Style/>
       <BrowserRouter>
         <Route exact path="/~publish"
           render={ (props) => {
@@ -283,7 +263,6 @@ export class Root extends Component {
           }
         }}/>
       </BrowserRouter>
-      </ThemeProvider>
     )
   }
 }

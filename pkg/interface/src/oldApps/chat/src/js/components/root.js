@@ -51,6 +51,7 @@ export class Root extends Component {
         totalUnreads += unread;
       }
     });
+
     if(totalUnreads !== this.totalUnreads) {
       document.title = totalUnreads > 0 ? `Chat - (${totalUnreads})` : 'Chat';
       this.totalUnreads = totalUnreads;
@@ -352,4 +353,3 @@ export class Root extends Component {
     );
   }
 }
-

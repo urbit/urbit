@@ -3,7 +3,7 @@ import { SidebarSwitcher } from './icons/icon-sidebar-switch';
 import { Spinner } from './icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-import { dateToDa } from '../../lib/util';
+import { dateToDa } from '/lib/util';
 
 import 'codemirror/mode/markdown/markdown';
 

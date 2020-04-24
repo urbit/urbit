@@ -2,12 +2,10 @@ import React, { Component } from 'react'
 import { SidebarSwitcher } from './icons/icon-sidebar-switch';
 import { Spinner } from './icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
-// import { Controlled as CodeMirror } from 'react-codemirror2'
-import { dateToDa, stringToSymbol } from '../../lib/util';
+import { Controlled as CodeMirror } from 'react-codemirror2'
+import { dateToDa, stringToSymbol } from '/lib/util';
 
-import { MarkdownEditor } from '@tlon/indigo-react';
-
-// import 'codemirror/mode/markdown/markdown';
+import 'codemirror/mode/markdown/markdown';
 
 export class NewPost extends Component {
   constructor(props) {
@@ -149,7 +147,7 @@ export class NewPost extends Component {
           </div>
 
           <div className="NewPost">
-            <MarkdownEditor
+            <CodeMirror
               value={state.body}
               options={options}
               onBeforeChange={(e, d, v) => this.bodyChange(e, d, v)}

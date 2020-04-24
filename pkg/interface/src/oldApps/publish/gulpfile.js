@@ -10,6 +10,7 @@ var del = require('del');
 var json = require('rollup-plugin-json');
 var rollupReplace = require("@rollup/plugin-replace");
 
+
 var resolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
 var rootImport = require('rollup-plugin-root-import');
@@ -61,13 +62,9 @@ gulp.task('js-imports', function(cb) {
           namedExports: {
             'node_modules/react/index.js': ['Component', 'cloneElement',
             'createContext', 'createElement', 'useState', 'useRef',
-            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children', 'useDebugValue', 'isValidElement', 'useCallback', 'useReducer', 'useImperativeHandle' ],
-            'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef', 'typeOf' ],
-            'node_modules/react-dom/index.js': [ 'createPortal' ],
-            'node_modules/formik/node_modules/scheduler/index.js': [
-              'unstable_runWithPriority',
-              'LowPriority',
-            ],
+            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children' ],
+            'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef' ],
+            'node_modules/react-dom/index.js': [ 'createPortal' ]
           }
         }),
         rootImport({
@@ -124,7 +121,7 @@ gulp.task('js-imports-prod', function(cb) {
           namedExports: {
             'node_modules/react/index.js': ['Component', 'cloneElement',
             'createContext', 'createElement', 'useState', 'useRef',
-            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children', 'useDebugValue' ],
+            'useLayoutEffect', 'useMemo', 'useEffect', 'forwardRef', 'useContext', 'Children' ],
             'node_modules/react-is/index.js': [ 'isValidElementType', 'isElement', 'ForwardRef' ],
             'node_modules/react-dom/index.js': [ 'createPortal' ]
           }

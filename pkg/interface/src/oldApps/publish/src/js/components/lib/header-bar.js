@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { GroupFilter } from "./group-filter";
-import { Sigil } from "./icons/sigil";
+import { Sigil } from "/components/lib/icons/sigil";
 
 export class HeaderBar extends Component {
   render() {
