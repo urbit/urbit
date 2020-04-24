@@ -3410,6 +3410,12 @@
   ::
   ++  info
     |=  [deletes=(set path) changes=(map path cage)]
+    ?:  =(0 let.dom)
+      ?>  ?=(~ deletes)
+      =/  data=(map path (each page lobe))
+        (~(run by changes) |=(=cage &+[p q.q]:cage))
+      (park [~ data] *rang)
+    ::
     =/  parent-tako=tako  (aeon-to-tako:ze let.dom)
     =/  data=(map path (each page lobe))
       =/  parent-yaki  (tako-to-yaki:ze parent-tako)
@@ -3441,7 +3447,10 @@
         lat.ran  (~(uni by lat.rang) lat.ran)
       ==
     =/  [deletes=(set path) changes=(map path (each page lobe))]
-      =/  previous-yaki  (aeon-to-yaki:ze let.dom)
+      =/  previous-yaki
+        ?:  =(0 let.dom)
+          *yaki
+        (aeon-to-yaki:ze let.dom)
       (get-changes q.previous-yaki q.yuki)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
     =.  ..park  (emil (print deletes ~(key by changes)))
@@ -3504,7 +3513,7 @@
             ~
           `path
         ::
-          %-  silt  ^-  (list [path (each page lobe)])
+          %-  malt  ^-  (list [path (each page lobe)])
           %+  murn  ~(tap by (~(uni by old) new))
           |=  [=path *]
           ^-  (unit [^path (each page lobe)])
@@ -5128,8 +5137,11 @@
       :~  [hen %pass /one %c %info q.bem %& one]
           [hen %pass /two %c %info q.bem %& two]
       ==
-    =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.u.dos) let.dom.u.dos))
-    =+  cos=(mode-to-commit q.yak (flop s.bem) all.req fis.req)
+    =/  =yaki
+      ?:  =(0 let.dom.u.dos)
+        *yaki
+      (~(got by hut.ran.ruf) (~(got by hit.dom.u.dos) let.dom.u.dos))
+    =+  cos=(mode-to-commit q.yaki (flop s.bem) all.req fis.req)
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
       abet:(info:den cos)
