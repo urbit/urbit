@@ -1,11 +1,11 @@
-/+  *chat-json
-=,  dejs:format
-|_  act=chat-action
+/-  *chat-view
+/+  *chat-view
+|_  act=action
 ++  grab
   |%
-  ++  noun  chat-view-action
+  ++  noun  action
   ++  json
     |=  jon=^json
-    (json-to-view-action jon)
+    (action:dejs jon)
   --
 --

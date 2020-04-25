@@ -1,9 +1,10 @@
-/+  *chat-json
+/-  *chat-store
+/+  *chat-store
 |_  box=inbox
 ::
 ++  grow
   |%
-  ++  json  (inbox-to-json box)
+  ++  json  (inbox:enjs box)
   --
 ::
 ++  grab

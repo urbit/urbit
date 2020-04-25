@@ -1,11 +1,12 @@
-/+  *chat-json
-|_  act=chat-hook-action
+/-  *chat-hook
+/+  *chat-hook
+|_  act=action
 ++  grab
   |%
-  ++  noun  chat-hook-action
+  ++  noun  action
   ++  json
     |=  jon=^json
-    (json-to-hook-action jon)
+    (action:dejs jon)
   --
 --
 

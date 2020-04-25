@@ -1,6 +1,7 @@
 :: chat-store: data store that holds linear sequences of chat messages
 ::
-/+  *chat-json, *chat-eval, default-agent, verb, dbug
+/-  store=chat-store
+/+  store-lib=chat-store, *chat-eval, default-agent, verb, dbug
 ~%  %chat-store-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -10,14 +11,14 @@
       state-two
   ==
 ::
-+$  state-zero  [%0 =inbox]
-+$  state-one   [%1 =inbox]
-+$  state-two   [%2 =inbox]
++$  state-zero  [%0 =inbox:store]
++$  state-one   [%1 =inbox:store]
++$  state-two   [%2 =inbox:store]
 ::
 +$  diff
-  $%  [%chat-initial inbox]
-      [%chat-configs chat-configs]
-      [%chat-update chat-update]
+  $%  [%chat-initial inbox:store]
+      [%chat-configs configs:store]
+      [%chat-update update:store]
   ==
 --
 ::
@@ -42,10 +43,10 @@
     =/  old  !<(versioned-state old-vase)
     ?:  ?=(%2 -.old)
       [~ this(state old)]
-    =/  reversed-inbox=^inbox
+    =/  reversed-inbox=inbox:store
       %-  ~(run by inbox.old)
-      |=  =mailbox
-      ^-  ^mailbox
+      |=  =mailbox:store
+      ^-  mailbox:store
       [config.mailbox (flop envelopes.mailbox)]
     [~ this(state [%2 reversed-inbox])]
   ::
@@ -57,7 +58,7 @@
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         %json         (poke-json:cc !<(json vase))
-        %chat-action  (poke-chat-action:cc !<(chat-action vase))
+        %chat-action  (poke-chat-action:cc !<(action:store vase))
       ==
     [cards this]
   ::
@@ -71,7 +72,7 @@
       ?+    path  (on-watch:def path)
           [%keys ~]     (give %chat-update !>([%keys ~(key by inbox)]))
           [%all ~]      (give %chat-initial !>(inbox))
-          [%configs ~]  (give %chat-configs !>((inbox-to-configs inbox)))
+          [%configs ~]  (give %chat-configs !>((inbox-to-configs:store-lib inbox)))
           [%updates ~]  ~
           [%mailbox @ *]
         ?>  (~(has by inbox) t.path)
@@ -92,7 +93,7 @@
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
         [%x %all ~]        ``noun+!>(inbox)
-        [%x %configs ~]    ``noun+!>((inbox-to-configs inbox))
+        [%x %configs ~]    ``noun+!>((inbox-to-configs:store-lib inbox))
         [%x %keys ~]       ``noun+!>(~(key by inbox))
         [%x %envelopes *]  (peek-x-envelopes:cc t.t.path)
         [%x %mailbox *]
@@ -159,10 +160,10 @@
 ++  poke-json
   |=  jon=json
   ^-  (quip card _state)
-  (poke-chat-action (json-to-action jon))
+  (poke-chat-action (action:dejs:store-lib jon))
 ::
 ++  poke-chat-action
-  |=  action=chat-action
+  |=  =action:store
   ^-  (quip card _state)
   ?-  -.action
       %create    (handle-create action)
@@ -178,43 +179,46 @@
   ==
 ::
 ++  handle-create
-  |=  act=chat-action
+  |=  =action:store
   ^-  (quip card _state)
-  ?>  ?=(%create -.act)
-  ?:  (~(has by inbox) path.act)  [~ state]
-  :-  (send-diff path.act act)
-  state(inbox (~(put by inbox) path.act *mailbox))
+  ?>  ?=(%create -.action)
+  ?:  (~(has by inbox) path.action)  [~ state]
+  :-  (send-diff path.action action)
+  state(inbox (~(put by inbox) path.action *mailbox:store))
 ::
 ++  handle-delete
-  |=  act=chat-action
+  |=  =action:store
   ^-  (quip card _state)
-  ?>  ?=(%delete -.act)
-  =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
+  ?>  ?=(%delete -.action)
+  =/  mailbox=(unit mailbox:store)
+    (~(get by inbox) path.action)
   ?~  mailbox  [~ state]
-  :-  (send-diff path.act act)
-  state(inbox (~(del by inbox) path.act))
+  :-  (send-diff path.action action)
+  state(inbox (~(del by inbox) path.action))
 ::
 ++  handle-message
-  |=  act=chat-action
+  |=  =action:store
   ^-  (quip card _state)
-  ?>  ?=(%message -.act)
-  =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
+  ?>  ?=(%message -.action)
+  =/  mailbox=(unit mailbox:store)
+    (~(get by inbox) path.action)
   ?~  mailbox
     [~ state]
-  =.  letter.envelope.act  (evaluate-letter [author letter]:envelope.act)
-  =^  envelope  u.mailbox  (prepend-envelope u.mailbox envelope.act)
-  :-  (send-diff path.act act(envelope envelope))
-  state(inbox (~(put by inbox) path.act u.mailbox))
+  =.  letter.envelope.action  (evaluate-letter [author letter]:envelope.action)
+  =^  envelope  u.mailbox  (prepend-envelope u.mailbox envelope.action)
+  :-  (send-diff path.action action(envelope envelope))
+  state(inbox (~(put by inbox) path.action u.mailbox))
 ::
 ++  handle-messages
-  |=  act=chat-action
+  |=  act=action:store
   ^-  (quip card _state)
   ?>  ?=(%messages -.act)
-  =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
+  =/  mailbox=(unit mailbox:store)
+    (~(get by inbox) path.act)
   ?~  mailbox
     [~ state]
   =.  envelopes.act  (flop envelopes.act)
-  =/  evaluated-envelopes=(list envelope)  ~
+  =|  evaluated-envelopes=(list envelope:store)
   |-  ^-  (quip card _state)
   ?~  envelopes.act
     :_  state(inbox (~(put by inbox) path.act u.mailbox))
@@ -226,10 +230,10 @@
   $(envelopes.act t.envelopes.act)
 ::
 ++  handle-read
-  |=  act=chat-action
+  |=  act=action:store
   ^-  (quip card _state)
   ?>  ?=(%read -.act)
-  =/  mailbox=(unit mailbox)  (~(get by inbox) path.act)
+  =/  mailbox=(unit mailbox:store)  (~(get by inbox) path.act)
   ?~  mailbox
     [~ state]
   =.  read.config.u.mailbox  length.config.u.mailbox
@@ -237,8 +241,8 @@
   state(inbox (~(put by inbox) path.act u.mailbox))
 ::
 ++  evaluate-letter
-  |=  [author=ship =letter]
-  ^-  ^letter
+  |=  [author=ship =letter:store]
+  ^-  letter:store
   =?  letter
       ?&  ?=(%code -.letter)
           ?=(~ output.letter)
@@ -249,7 +253,7 @@
   letter
 ::
 ++  prepend-envelope
-  |=  [=mailbox =envelope]
+  |=  [=mailbox:store =envelope:store]
   ^+  [envelope mailbox]
   =.  number.envelope  +(length.config.mailbox)
   =:  length.config.mailbox  +(length.config.mailbox)
@@ -258,12 +262,12 @@
   [envelope mailbox]
 ::
 ++  update-subscribers
-  |=  [pax=path update=chat-update]
+  |=  [pax=path =update:store]
   ^-  (list card)
   [%give %fact ~[pax] %chat-update !>(update)]~
 ::
 ++  send-diff
-  |=  [pax=path upd=chat-update]
+  |=  [pax=path upd=update:store]
   ^-  (list card)
   %-  zing
   :~  (update-subscribers /all upd)

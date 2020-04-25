@@ -9,9 +9,9 @@
 ::    we concat the ship onto the head of the path,
 ::    and trust it to take care of the rest.
 ::
-/-  *chat-store, *chat-view, *chat-hook,
+/-  store=chat-store, view=chat-view, hook=chat-hook,
     *permission-store, *group-store, *invite-store,
-    sole-sur=sole
+    *rw-security, sole-sur=sole
 /+  sole-lib=sole, chat-eval, default-agent, verb, dbug,
     auto=language-server-complete
 ::
@@ -26,7 +26,7 @@
 +$  state-1
   $:  %1
       grams=(list mail)                             ::  all messages
-      known=(set [target serial])                   ::  known message lookup
+      known=(set [target serial:store])             ::  known message lookup
       count=@ud                                     ::  (lent grams)
       bound=(map target glyph)                      ::  bound circle glyphs
       binds=(jug glyph target)                      ::  circle glyph lookup
@@ -39,7 +39,7 @@
   ==
 ::
 +$  state-0
-  $:  grams=(list [[=ship =path] envelope])         ::  all messages
+  $:  grams=(list [[=ship =path] envelope:store])   ::  all messages
       known=(set [[=ship =path] serial])            ::  known message lookup
       count=@ud                                     ::  (lent grams)
       bound=(map [=ship =path] glyph)               ::  bound circle glyphs
@@ -52,7 +52,7 @@
       eny=@uvJ                                      ::  entropy
   ==
 ::
-+$  mail  [source=target envelope]
++$  mail  [source=target envelope:store]
 +$  target  [in-group=? =ship =path]
 ::
 +$  glyph  char
@@ -62,7 +62,7 @@
 ::
 +$  command
   $%  [%target (set target)]                        ::  set messaging target
-      [%say letter]                                 ::  send message
+      [%say letter:store]                           ::  send message
       [%eval cord hoon]                             ::  send #-message
     ::
       ::
@@ -153,7 +153,7 @@
       ::
           %fact
         ?+  p.cage.sign  ~|([%chat-cli-bad-sub-mark wire p.cage.sign] !!)
-          %chat-update    (diff-chat-update:tc wire !<(chat-update q.cage.sign))
+          %chat-update    (diff-chat-update:tc wire !<(update:store q.cage.sign))
           %invite-update  (handle-invite-update:tc !<(invite-update q.cage.sign))
         ==
       ==
@@ -228,8 +228,8 @@
   ^-  (quip card _state)
   ?.  .^(? %gu /(scot %p our.bowl)/chat-store/(scot %da now.bowl))
     [~ state]
-  =/  =inbox
-    (scry-for inbox %chat-store /all)
+  =/  =inbox:store
+    (scry-for inbox:store %chat-store /all)
   |-  ^-  (quip card _state)
   ?~  inbox  [~ state]
   =*  path  p.n.inbox
@@ -317,7 +317,7 @@
 ::  +diff-chat-update: get new mailboxes & messages
 ::
 ++  diff-chat-update
-  |=  [=wire upd=chat-update]
+  |=  [=wire upd=update:store]
   ^-  (quip card _state)
   ?+  -.upd  [~ state]
     %create    (notice-create (path-to-target path.upd))
@@ -327,7 +327,7 @@
   ==
 ::
 ++  read-envelopes
-  |=  [=target envs=(list envelope)]
+  |=  [=target envs=(list envelope:store)]
   ^-  (quip card _state)
   ?~  envs  [~ state]
   =^  cards-i  state  (read-envelope target i.envs)
@@ -413,7 +413,7 @@
 ::  +read-envelope: add envelope to state and show it to user
 ::
 ++  read-envelope
-  |=  [=target =envelope]
+  |=  [=target =envelope:store]
   ^-  (quip card _state)
   ?:  (~(has in known) [target uid.envelope])
     ::NOTE  we no-op only because edits aren't possible
@@ -853,7 +853,7 @@
           %channel                         %channel
           ?(%village %village-with-group)  %village
         ==
-      ?^  (scry-for (unit mailbox) %chat-store [%mailbox real-path])
+      ?^  (scry-for (unit mailbox:store) %chat-store [%mailbox real-path])
         =-  [[- ~] state]
         %-  print:sh-out
         "{(spud path)} already exists!"
@@ -864,7 +864,7 @@
       =-  [[- moz] state]
       %^  act  %do-create  %chat-view
       :-  %chat-view-action
-      !>  ^-  chat-view-action
+      !>  ^-  action:view
       :*  %create
           (rsh 3 1 (spat path))
           ''
@@ -882,7 +882,7 @@
       =-  [[- ~] state]
       %^  act  %do-delete  %chat-view
       :-  %chat-view-action
-      !>  ^-  chat-view-action
+      !>  ^-  action:view
       [%delete (target-to-path | our-self path)]
     ::  +change-permission: modify permissions on a local chat
     ::
@@ -941,7 +941,7 @@
       ::      gives ugly %chat-hook-reap
       %^  act  %do-join  %chat-view
       :-  %chat-view-action
-      !>  ^-  chat-view-action
+      !>  ^-  action:view
       [%join ship.target (target-to-path target) (fall ask-history %.y)]
     ::  +leave: unsync & destroy mailbox
     ::
@@ -954,12 +954,12 @@
         "can't ;leave local chats, maybe use ;delete instead"
       %^  act  %do-leave  %chat-hook
       :-  %chat-hook-action
-      !>  ^-  chat-hook-action
+      !>  ^-  action:hook
       [%remove (target-to-path target)]
     ::  +say: send messages
     ::
     ++  say
-      |=  =letter
+      |=  =letter:store
       ^-  (quip card _state)
       ~!  bowl
       =/  =serial  (shaf %msg-uid eny.bowl)
@@ -969,7 +969,7 @@
       |=  =target
       %^  act  %out-message  %chat-hook
       :-  %chat-action
-      !>  ^-  chat-action
+      !>  ^-  action:store
       :+  %message  (target-to-path target)
       [serial *@ our-self now.bowl letter]
     ::  +eval: run hoon, send code and result as message
@@ -1190,7 +1190,7 @@
   ::    and the %notify flag is set, emit a bell.
   ::
   ++  show-envelope
-    |=  [=target =envelope]
+    |=  [=target =envelope:store]
     ^-  (list card)
     %+  weld
       ^-  (list card)
@@ -1311,7 +1311,7 @@
 ::
 ++  mr
   |_  $:  source=target
-          envelope
+          envelope:store
       ==
   ::  +activate: produce sole-effect for printing message details
   ::
