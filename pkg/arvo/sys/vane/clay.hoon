@@ -155,6 +155,7 @@
       cez=(map @ta crew)                                ::  permission groups
       cue=(qeu [=duct =task:able])                      ::  queued requests
       act=active-write                                  ::  active write
+      pud=(unit [=desk =yuki])                          ::  pending update
   ==                                                    ::
 ::
 ::  Currently active write
@@ -492,6 +493,7 @@
       $:  %c                                            ::  to %clay
           $>  $?  %info                                 ::  internal edit
                   %merg                                 ::  merge desks
+                  %pork                                 ::
                   %warp                                 ::
                   %werp                                 ::
               ==                                        ::
@@ -3414,7 +3416,7 @@
       ?>  ?=(~ deletes)
       =/  data=(map path (each page lobe))
         (~(run by changes) |=(=cage &+[p q.q]:cage))
-      (park [~ data] *rang)
+      (park | [~ data] *rang)
     ::
     =/  parent-tako=tako  (aeon-to-tako:ze let.dom)
     =/  data=(map path (each page lobe))
@@ -3429,7 +3431,7 @@
       (~(run by changes) |=(=cage &+[p q.q]:cage))
     ::
     =/  =yuki  [~[parent-tako] data]
-    (park yuki *rang)
+    (park | yuki *rang)
   ::
   ::  Plumbing commit
   ::
@@ -3441,7 +3443,7 @@
   ::
   ++  park
     |^
-    |=  [=yuki =rang]
+    |=  [updated=? =yuki =rang]
     ^+  ..park
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
@@ -3453,7 +3455,6 @@
         (aeon-to-yaki:ze let.dom)
       (get-changes q.previous-yaki q.yuki)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
-    =.  ..park  (emil (print deletes ~(key by changes)))
     ::
     ::  promote ford cache
     ::  promote and fill in ankh
@@ -3464,8 +3465,12 @@
     =/  =args:ford:fusion
       [ank.dom deletes changes lat.ran fod.dom]
     ::
+    ::  ?:  &(!updated !=(~ (need-sys-update changes)))
+    ::    (sys-update args yuki changes)
+    =.  ..park  (emil (print deletes ~(key by changes)))
     =^  change-cages  ford-cache.args
-      (checkout-changes args q.yuki)
+      (checkout-changes args changes)
+    ::  =/  cont  (sane-changes changes change-cages)
     =/  new-blobs=(map lobe blob)
       %-  malt
       %+  turn  ~(tap by change-cages)
@@ -3488,6 +3493,7 @@
     ::
     =^  ankh  ford-cache.args
       (checkout-ankh args deletes change-cages ank.dom)
+    ::  =/  null  (sane-ankh cont ankh)
     =.  ankh.args  ankh
     =.  ank.dom  ankh
     =^  mim  ford-cache.args
@@ -3697,6 +3703,129 @@
         ?:  ((sane %ta) a)
           [%leaf (trip a)]
         [%leaf (dash:us (trip a) '\'' ~)]
+      --
+    ::
+    ::  Check sanity
+    ::
+    ++  sane-changes
+      |=  $:  changes=(map path (each page lobe))
+              change-cages=(map path [lobe cage])
+          ==
+      ^-  [(map path [lobe cage]) args:ford:fusion]
+      =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) let.dom))
+      ::  Assert all new lobes are reachable
+      ::
+      =/  files=(list [=path =lobe])  ~(tap by q.yaki)
+      |-  ^+  *sane-changes
+      ?^  files
+        ?.  (~(has by lat.ran) lobe.i.files)
+          ~|  missing-lobe=[path lobe]
+          !!
+        $(files t.files)
+      ::
+      =/  all-changes=(map path (each page lobe))
+        =/  original=(map path (each page lobe))
+          (~(run by q.yaki) |=(=lobe |+lobe))
+        (~(uni by original) changes)
+      =/  =args:ford:fusion
+        [*ankh ~ all-changes lat.ran *ford-cache]
+      =^  all-change-cages  ford-cache.args
+        (checkout-changes args all-changes)
+      =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
+      |-  ^+  *sane-changes
+      ?^  ccs
+        ?.  =(`cage.i.ccs (~(get by all-change-cages) path.i.ccs))
+          ~|  not-same-cages+path
+          !!
+        $(ccs t.ccs)
+      [all-change-cages args]
+    ::
+    ++  sane-ankh
+      |=  $:  [change-cages=(map path [lobe cage]) =ford=args:ford:fusion]
+              =test=ankh
+          ==
+      =^  ankh  ford-cache.ford-args
+        (checkout-ankh ford-args ~ change-cages *ankh)
+      ?.  =(ankh test-ankh)
+        ~|  %not-same-ankh
+        !!
+      ~
+    ::
+    ::  Find /sys changes
+    ::
+    ++  need-sys-update
+      |=  changes=(map path (each page lobe))
+      ^-  (map path (each page lobe))
+      ~+
+      %-  malt
+      %+  skim  ~(tap by changes)
+      |=  [=path *]
+      ?|  =(/sys/hoon/hoon path)
+          =(/sys/arvo/hoon path)
+          =(/sys/zuse/hoon path)
+          =(/sys/vane (scag 2 path))
+      ==
+    ::
+    ::  Delay current update until sys update is complete
+    ::
+    ++  sys-update
+      |=  [=ford=args:ford:fusion =yuki changes=(map path (each page lobe))]
+      ^+  ..park
+      =/  updates  (need-sys-update changes)
+      ::  Don't save ford cache so it gets properly handled when we
+      ::  restart the commit
+      ::
+      =^  updates-cages=(map path [lobe cage])  ford-cache.ford-args
+        (checkout-changes ford-args updates)
+      ?>  =(~ pud)
+      =.  pud  `[syd yuki]
+      |^  ?:  (~(has by updates) /sys/hoon/hoon)
+            reset
+          ?:  (~(has by updates) /sys/arvo/hoon)
+            reset
+          ?:  (~(has by updates) /sys/zuse/hoon)
+            reboot
+          reload-all
+      ::
+      ++  reset
+        =^  hoon=cage  ford-cache.ford-args
+          %-  wrap:fusion
+          (get-value:(ford:fusion ford-args) /sys/hoon/hoon)
+        =^  arvo=cage  ford-cache.ford-args
+          %-  wrap:fusion
+          (get-value:(ford:fusion ford-args) /sys/arvo/hoon)
+        =.  ..park
+          %-  emit
+          [hen %pass /reset %d %flog %lyra !<(@t q.hoon) !<(@t q.arvo)]
+        reboot
+      ::
+      ++  reboot
+        =^  zuse=cage  ford-cache.ford-args
+          %-  wrap:fusion
+          (get-value:(ford:fusion ford-args) /sys/zuse/hoon)
+        =.  ..park
+          %-  emit
+          [hen %pass /reboot %d %flog %veer %$ /sys/zuse/hoon !<(@t q.zuse)]
+        reload-all
+      ::
+      ++  reload-all
+        =/  vanes=(list term)
+          ~[%ames %behn %clay %dill %eyre %ford %gall %iris %jael]
+        |-  ^+  ..park
+        ?~  vanes
+          (emit hen %slip %c %pork ~)
+        =.  ..park  (reload i.vanes)
+        $(vanes t.vanes)
+      ::
+      ++  reload
+        |=  =term
+        =^  vane=cage  ford-cache.ford-args
+          %-  wrap:fusion
+          (get-value:(ford:fusion ford-args) /sys/vane/[term]/hoon)
+        %-  emit
+        =/  tip  (end 3 1 term)
+        =/  =path  /sys/vane/[term]/hoon
+        [hen %pass /reload %d %flog %veer tip path !<(@t q.vane)]
       --
     --
   ::
@@ -5230,7 +5359,15 @@
       %park
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
-      abet:(park:den [yuk ran]:req)
+      abet:(park:den | [yuk ran]:req)
+    [mos ..^$]
+  ::
+      %pork
+    =/  [syd=desk =yuki]  (need pud.ruf)
+    =.  pud.ruf  ~
+    =^  mos  ruf
+      =/  den  ((de our now ski hen ruf) our syd)
+      abet:(park:den & yuki *rang)
     [mos ..^$]
   ::
       %perm

@@ -216,13 +216,20 @@
   |=  [her=ship =desk extra=@t]
   =/  m  (strand ,@t)
   ^-  form:m
+  (touch her desk /sur/aquarium/hoon extra)
+::
+::  Modify path on the given ship
+::
+++  touch
+  |=  [her=ship =desk pax=path extra=@t]
+  =/  m  (strand ,@t)
+  ^-  form:m
   ~&  >  "touching file on {<her>}/{<desk>}"
   ;<  ~        bind:m  (mount her desk)
   ;<  our=@p   bind:m  get-our
   ;<  now=@da  bind:m  get-time
   =/  host-pax
-    /(scot %p our)/home/(scot %da now)/sur/aquarium/hoon
-  =/  pax  /sur/aquarium/hoon
+    (weld /(scot %p our)/home/(scot %da now) pax)
   =/  aqua-pax
     ;:  weld
         /i/(scot %p her)/cx/(scot %p her)/[desk]/(scot %da now)
@@ -241,6 +248,13 @@
 ++  check-file-touched
   |=  [=ship =desk warped=@t]
   =/  m  (strand ,~)
+  (check-touched ship desk /sur/aquarium/hoon warped)
+::
+::  Check path on the given desk has the given contents.
+::
+++  check-touched
+  |=  [=ship =desk pax=path warped=@t]
+  =/  m  (strand ,~)
   ~&  >  "checking file touched on {<ship>}/{<desk>}"
   ;<  ~                         bind:m  (mount ship desk)
   ^-  form:m
@@ -254,7 +268,6 @@
   ::
   ?.  &(=(ship her) ?=(?(%init %ergo %doze) -.q.unix-effect))
     loop
-  =/  pax  /sur/aquarium/hoon
   =/  aqua-pax
     ;:  weld
         /i/(scot %p ship)/cx/(scot %p ship)/[desk]/(scot %da now)
