@@ -569,6 +569,7 @@
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$park des/desk yuk/yuki ran/rang}            ::  plumbing commit
           {$perm des/desk pax/path rit/rite}            ::  change permissions
+          {$pork ~}                                     ::  resume commit
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
