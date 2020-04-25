@@ -253,8 +253,8 @@
     |^
       %-  crip
       """
-      /-  test-eth
-      =/  builders  builders:test-eth
+      /-  ethers
+      =/  builders  builders:ethers
       |%
         +$  gift
           $%  [$history =loglist]
