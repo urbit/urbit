@@ -1,9 +1,7 @@
-/* include/v/vere.h
-**
-** This file is in the public domain.
+/* include/vere/vere.h
 */
 
-#include "h2o.h"
+#include <uv.h>
 
   /** Quasi-tunable parameters.
   **/
@@ -11,8 +9,6 @@
     */
 #     define FirstKernel   164
 #     define DefaultKernel 164
-
-#define RECK
 
   /** Data types.
   **/
@@ -34,15 +30,6 @@
         c3_w             len_w;
         c3_y             hun_y[0];
       } u3_hbod;
-
-    /* u3_chot: foreign host (not yet used).
-    */
-      typedef struct _u3_chot {
-        c3_w             ipf_w;             //  ip address (or 0)
-        c3_c*            hot_c;             //  hostname (no port) (or 0)
-        void*            ins_u;             //  insecure connection (or 0)
-        void*            sec_u;             //  secure connection (or 0)
-      } u3_chot;
 
     /* u3_lane: ames lane (IP address and port)
     */
