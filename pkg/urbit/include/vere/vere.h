@@ -51,17 +51,13 @@
         c3_s             por_s;             //  target port
       } u3_lane;
 
-    /* u3_poke: poke callback function.
+    /* u3_moor_poke: poke callback function.
     */
-      typedef void (*u3_poke)(void*, u3_atom);
+      typedef void (*u3_moor_poke)(void*, u3_atom);
 
-    /* u3_bail: bailout callback function.
+    /* u3_moor_bail: bailout callback function.
     */
-      typedef void (*u3_bail)(void*, const c3_c* err_c);
-
-    /* u3_done: completion function.
-    */
-      typedef void (*u3_done)(void *);
+      typedef void (*u3_moor_bail)(void*, const c3_c* err_c);
 
     /* u3_mess: blob message in process.
     */
@@ -84,9 +80,9 @@
     */
       typedef struct _u3_moat {
         uv_pipe_t        pyp_u;             //  input stream
-        u3_bail          bal_f;             //  error response function
+        u3_moor_bail     bal_f;             //  error response function
         void*            vod_p;             //  callback pointer
-        u3_poke          pok_f;             //  action function
+        u3_moor_poke     pok_f;             //  action function
         struct _u3_mess* mes_u;             //  message in progress
         c3_d             len_d;             //  length of stray bytes
         c3_y*            rag_y;             //  stray bytes
@@ -96,15 +92,15 @@
     */
       typedef struct _u3_mojo {
         uv_pipe_t pyp_u;                    //  output stream
-        u3_bail   bal_f;                    //  error response function
+        u3_moor_bail     bal_f;             //  error response function
       } u3_mojo;
 
     /* u3_moor: two-way message stream, linked list */
       typedef struct _u3_moor {
         uv_pipe_t        pyp_u;
-        u3_bail          bal_f;
+        u3_moor_bail     bal_f;
         void*            vod_p;
-        u3_poke          pok_f;
+        u3_moor_poke     pok_f;
         struct _u3_mess* mes_u;
         c3_d             len_d;
         c3_y*            rag_y;

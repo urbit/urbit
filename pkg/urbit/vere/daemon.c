@@ -384,21 +384,23 @@ _daemon_root(u3_noun root)
 /* _daemon_bail(): bail for command socket newt
 */
 void
-_daemon_bail(u3_moor *vod_p, const c3_c *err_c)
+_daemon_bail(void* vod_p, const c3_c *err_c)
 {
-  u3_moor *free_p;
+  u3_moor* mor_p = vod_p;
+  u3_moor* fre_p;
+
   u3l_log("_daemon_bail: %s\r\n", err_c);
 
-  if ( vod_p == 0 ) {
-    free_p = u3K.cli_u;
+  if ( !mor_p ) {
+    fre_p = u3K.cli_u;
     u3K.cli_u = u3K.cli_u->nex_u;
-    c3_free(free_p);
   }
   else {
-    free_p = vod_p->nex_u;
-    vod_p->nex_u = vod_p->nex_u->nex_u;
-    c3_free(free_p);
+    fre_p = mor_p->nex_u;
+    mor_p->nex_u = fre_p->nex_u;
   }
+
+  c3_free(fre_p);
 }
 
 /* _daemon_socket_connect(): callback for new connections
@@ -425,7 +427,7 @@ _daemon_socket_connect(uv_stream_t *sock, int status)
 
   uv_pipe_init(u3L, &mor_u->pyp_u, 0);
   mor_u->pok_f = _daemon_fate;
-  mor_u->bal_f = (u3_bail)_daemon_bail;
+  mor_u->bal_f = _daemon_bail;
 
   uv_accept(sock, (uv_stream_t *)&mor_u->pyp_u);
   u3_newt_read((u3_moat *)mor_u);
