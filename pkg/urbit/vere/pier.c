@@ -79,88 +79,126 @@ _pier_work_send(u3_pier* pir_u)
   }
 }
 
-/* _pier_work_plan(): enqueue computed events, send to disk.
+/* _pier_gift_plan(): enqueue effects.
 */
 static void
-_pier_work_plan(u3_pier* pir_u, u3_work* wok_u)
+_pier_gift_plan(u3_pier* pir_u, u3_gift* gif_u)
 {
-  c3_assert( wok_u->eve_d > pir_u->wok_u.rel_d );
-  c3_assert( wok_u->eve_d > pir_u->log_u->sen_d );
+  c3_assert( gif_u->eve_d > pir_u->fec_u.rel_d );
 
 #ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): compute: complete\r\n", wok_u->eve_d);
+  fprintf(stderr, "pier: (%" PRIu64 "): compute: complete\r\n", gif_u->eve_d);
 #endif
 
-  wok_u->nex_u = 0;
+  gif_u->nex_u = 0;
 
-  if ( !pir_u->wok_u.ent_u ) {
-    c3_assert( !pir_u->wok_u.ext_u );
-    pir_u->wok_u.ent_u = pir_u->wok_u.ext_u = wok_u;
+  if ( !pir_u->fec_u.ent_u ) {
+    c3_assert( !pir_u->fec_u.ext_u );
+    pir_u->fec_u.ent_u = pir_u->fec_u.ext_u = gif_u;
   }
   else {
-    pir_u->wok_u.ent_u->nex_u = wok_u;
-    pir_u->wok_u.ent_u = wok_u;
+    pir_u->fec_u.ent_u->nex_u = gif_u;
+    pir_u->fec_u.ent_u = gif_u;
   }
-
-  //  XX this is a departure from the general organization of this file
-  //
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): disk: plan\r\n", wok_u->eve_d);
-#endif
-  u3_disk_plan(pir_u->log_u,
-               wok_u->eve_d,
-               wok_u->bug_l,
-               wok_u->mug_l,
-               u3k(wok_u->job));
 }
 
-/* _pier_work_next(): dequeue finished events for effect application
+/* _pier_gift_next(): dequeue effect.
 */
-static u3_work*
-_pier_work_next(u3_pier* pir_u)
+static u3_gift*
+_pier_gift_next(u3_pier* pir_u)
 {
   u3_disk* log_u = pir_u->log_u;
-  u3_work* wok_u = pir_u->wok_u.ext_u;
+  u3_gift* gif_u = pir_u->fec_u.ext_u;
 
-  if ( !wok_u || (wok_u->eve_d > log_u->dun_d) ) {
+  if ( !gif_u || (gif_u->eve_d > log_u->dun_d) ) {
     return 0;
   }
   else {
-    pir_u->wok_u.ext_u = wok_u->nex_u;
+    pir_u->fec_u.ext_u = gif_u->nex_u;
 
-    if ( !pir_u->wok_u.ext_u ) {
-      pir_u->wok_u.ent_u = 0;
+    if ( !pir_u->fec_u.ext_u ) {
+      pir_u->fec_u.ent_u = 0;
     }
 
-    c3_assert( (1ULL + pir_u->wok_u.rel_d) == wok_u->eve_d );
-    pir_u->wok_u.rel_d = wok_u->eve_d;
+    c3_assert( (1ULL + pir_u->fec_u.rel_d) == gif_u->eve_d );
+    pir_u->fec_u.rel_d = gif_u->eve_d;
 
-    return wok_u;
+    return gif_u;
   }
 }
 
-/* _pier_work_kick(): apply effects.
+/* _pier_gift_kick(): apply effects.
 */
 static void
-_pier_work_kick(u3_pier* pir_u)
+_pier_gift_kick(u3_pier* pir_u)
 {
-  u3_work* wok_u;
+  u3_gift* gif_u;
 
-  while ( (wok_u = _pier_work_next(pir_u)) ) {
+  while ( (gif_u = _pier_gift_next(pir_u)) ) {
 #ifdef VERBOSE_PIER
-    fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", wok_u->eve_d);
+    fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", gif_u->eve_d);
 #endif
-    u3_auto_kick(pir_u->car_u, wok_u->act);
-
-    if ( wok_u->egg_u ) {
-      u3_auto_drop(0, wok_u->egg_u);
-    }
+    u3_auto_kick(pir_u->car_u, gif_u->act);
 
     //  XX dispose properly
     //
-    c3_free(wok_u);
+    c3_free(gif_u);
   }
+}
+
+/* u3_pier_peek_as():
+*/
+void
+u3_pier_peek_as(u3_pier* pir_u,
+                u3_noun    gan,
+                c3_m     car_m,
+                u3_noun    pax)
+{
+  u3_peek* pek_u = c3_malloc(sizeof(*pek_u));
+  pek_u->car_m = car_m;
+  pek_u->gan   = gan;
+  pek_u->typ_e = u3_peek_just;
+  pek_u->pax   = pax;
+
+  u3_lord_peek(pir_u->god_u, pek_u);
+}
+
+/* u3_pier_peek():
+*/
+void
+u3_pier_peek(u3_pier* pir_u, c3_m car_m, u3_noun pax)
+{
+  u3_pier_peek_as(pir_u, u3nc(u3_nul, u3_nul), car_m, pax);
+}
+
+/* u3_pier_peep_as():
+*/
+void
+u3_pier_peep_as(u3_pier* pir_u,
+                u3_noun    gan,
+                c3_m     car_m,
+                u3_atom    des,
+                u3_noun    pax)
+{
+  u3_peek* pek_u = c3_malloc(sizeof(*pek_u));
+  pek_u->car_m = car_m;
+  pek_u->gan   = gan;
+  pek_u->typ_e = u3_peek_last;
+  pek_u->las_u.des = des;
+  pek_u->las_u.pax = pax;
+
+  u3_lord_peek(pir_u->god_u, pek_u);
+}
+
+/* u3_pier_peep():
+*/
+void
+u3_pier_peep(u3_pier* pir_u,
+             c3_m     car_m,
+             u3_atom    des,
+             u3_noun    pax)
+{
+  u3_pier_peep_as(pir_u, u3nc(u3_nul, u3_nul), car_m, des, pax);
 }
 
 /* _pier_work(): advance event processing.
@@ -168,7 +206,6 @@ _pier_work_kick(u3_pier* pir_u)
 static void
 _pier_work(u3_pier* pir_u)
 {
-
   if ( c3n == pir_u->liv_o ) {
     pir_u->liv_o = u3_auto_live(pir_u->car_u);
 
@@ -189,13 +226,13 @@ _pier_work(u3_pier* pir_u)
   }
 
   _pier_work_send(pir_u);
-  _pier_work_kick(pir_u);
+  _pier_gift_kick(pir_u);
 }
 
 /* _pier_play_plan(): enqueue events for replay.
 */
 static void
-_pier_play_plan(u3_pier* pir_u, u3_play pay_u)
+_pier_play_plan(u3_pier* pir_u, u3_info pay_u)
 {
   u3_fact** ext_u;
   c3_d      old_d;
@@ -225,22 +262,22 @@ _pier_play_plan(u3_pier* pir_u, u3_play pay_u)
 
 /* _pier_play_send(): detach a batch of up to [len_d] events from queue.
 */
-static u3_play
+static u3_info
 _pier_play_next(u3_pier* pir_u, c3_d len_d)
 {
   u3_fact* tac_u = pir_u->pay_u.ext_u;
-  u3_play  pay_u;
+  u3_info  fon_u;
 
   //  set batch entry and exit pointers
   //
   {
-    pay_u.ext_u = tac_u;
+    fon_u.ext_u = tac_u;
 
     while ( len_d-- && tac_u->nex_u ) {
       tac_u = tac_u->nex_u;
     }
 
-    pay_u.ent_u = tac_u;
+    fon_u.ent_u = tac_u;
   }
 
   //  detatch batch from queue
@@ -253,7 +290,7 @@ _pier_play_next(u3_pier* pir_u, c3_d len_d)
     pir_u->pay_u.ent_u = pir_u->pay_u.ext_u = 0;
   }
 
-  return pay_u;
+  return fon_u;
 }
 
 /* _pier_play_send(): send a batch of events to the worker for replay.
@@ -270,17 +307,17 @@ _pier_play_send(u3_pier* pir_u)
     c3_d    len_d = ( !pir_u->pay_u.sen_d )
                     ? c3_max(pir_u->lif_w, PIER_PLAY_BATCH)
                     : PIER_PLAY_BATCH;
-    u3_play pay_u = _pier_play_next(pir_u, len_d);
+    u3_info fon_u = _pier_play_next(pir_u, len_d);
 
     //  bump sent counter
     //
-    pir_u->pay_u.sen_d = pay_u.ent_u->eve_d;
+    pir_u->pay_u.sen_d = fon_u.ent_u->eve_d;
 
 #ifdef VERBOSE_PIER
-    fprintf(stderr, "pier: play send %" PRIu64 "-%" PRIu64 "\r\n", pay_u.ext_u->eve_d, pay_u.ent_u->eve_d);
+    fprintf(stderr, "pier: play send %" PRIu64 "-%" PRIu64 "\r\n", fon_u.ext_u->eve_d, fon_u.ent_u->eve_d);
 #endif
 
-    u3_lord_play(pir_u->god_u, pay_u);
+    u3_lord_play(pir_u->god_u, fon_u);
   }
 }
 
@@ -456,7 +493,7 @@ _pier_next(u3_pier* pir_u)
     }
 
     case u3_peat_done: {
-      _pier_work_kick(pir_u);
+      _pier_gift_kick(pir_u);
       break;
     }
  
@@ -491,15 +528,21 @@ _pier_on_lord_slog(void* vod_p, c3_w pri_w, u3_noun tan)
 /* _pier_on_lord_peek(): namespace read response from worker.
 */
 static void
-_pier_on_lord_peek(void* vod_p, u3_noun gan, u3_noun pat, u3_noun dat);
+_pier_on_lord_peek(void* vod_p, u3_peek* pek_u, u3_noun dat)
+{
+  //  XX cache, invoke callback, dispose pek_u
+  //
+  u3m_p("lord peek", dat);
+  u3z(dat);
+}
 
 /* _pier_on_lord_play_done(): log replay batch completion from worker.
 */
 static void
-_pier_on_lord_play_done(void* vod_p, u3_play pay_u, c3_l mug_l)
+_pier_on_lord_play_done(void* vod_p, u3_info fon_u, c3_l mug_l)
 {
   u3_pier* pir_u = vod_p;
-  c3_d     las_d = pay_u.ent_u->eve_d;
+  c3_d     las_d = fon_u.ent_u->eve_d;
 
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): play: done\r\n", las_d);
@@ -507,17 +550,17 @@ _pier_on_lord_play_done(void* vod_p, u3_play pay_u, c3_l mug_l)
 
   //  XX optional
   //
-  if (  pay_u.ent_u->mug_l
-     && (pay_u.ent_u->mug_l != mug_l) )
+  if (  fon_u.ent_u->mug_l
+     && (fon_u.ent_u->mug_l != mug_l) )
   {
     //  XX printf
     //
-    u3l_log("pier: (%" PRIu64 "): play: mug mismatch %x %x\r\n", las_d, pay_u.ent_u->mug_l, mug_l);
+    u3l_log("pier: (%" PRIu64 "): play: mug mismatch %x %x\r\n", las_d, fon_u.ent_u->mug_l, mug_l);
     // u3_pier_bail();
   }
 
   {
-    u3_fact* tac_u = pay_u.ext_u;
+    u3_fact* tac_u = fon_u.ext_u;
     u3_fact* nex_u; 
 
     while ( tac_u ) {
@@ -534,7 +577,7 @@ _pier_on_lord_play_done(void* vod_p, u3_play pay_u, c3_l mug_l)
 /* _pier_on_lord_play_bail(): log replay batch failure from worker.
 */
 static void
-_pier_on_lord_play_bail(void* vod_p, u3_play pay_u,
+_pier_on_lord_play_bail(void* vod_p, u3_info fon_u,
                         c3_l mug_l, c3_d eve_d, u3_noun dud)
 {
 #ifdef VERBOSE_PIER
@@ -578,25 +621,40 @@ _pier_on_lord_work_spun(void* vod_p)
 /* _pier_on_lord_work_done(): event completion from worker.
 */
 static void
-_pier_on_lord_work_done(void* vod_p, u3_work* wok_u, c3_o wap_o)
+_pier_on_lord_work_done(void*    vod_p,
+                        u3_ovum* egg_u,
+                        u3_fact* tac_u,
+                        u3_gift* gif_u)
 {
   u3_pier* pir_u = vod_p;
 
 #ifdef VERBOSE_PIER
-  fprintf(stderr, "pier (%" PRIu64 "): work: %s\r\n",
-                  wok_u->eve_d,
-                  ( c3y == wap_o ) ? "swap" : "done");
+  fprintf(stderr, "pier (%" PRIu64 "): work: done\r\n", tac_u->eve_d);
 #endif
 
-  u3_auto_done(wok_u->egg_u, wap_o);
-  _pier_work_plan(pir_u, wok_u);
+  //  XX revise
+  //
+  u3_auto_done(egg_u, c3n);
+  u3_auto_drop(0, egg_u);
+
+  _pier_gift_plan(pir_u, gif_u);
+
+  //  XX this is a departure from the general organization of this file
+  //
+
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): disk: plan\r\n", tac_u->eve_d);
+#endif
+
+  u3_disk_plan(pir_u->log_u, tac_u);
+
   _pier_next(pir_u);
 }
 
 /* _pier_on_lord_work_bail(): event failure from worker.
 */
 static void
-_pier_on_lord_work_bail(void* vod_p, u3_work* wok_u, u3_noun lud)
+_pier_on_lord_work_bail(void* vod_p, u3_ovum* egg_u, u3_noun lud)
 {
   u3_pier* pir_u = vod_p;
 
@@ -604,38 +662,34 @@ _pier_on_lord_work_bail(void* vod_p, u3_work* wok_u, u3_noun lud)
   fprintf(stderr, "pier: work: bail\r\n");
 #endif
 
-  u3_auto_bail(wok_u->egg_u, lud);
-
-  //  XX dispose wok_u
-  //
-  wok_u->egg_u = 0;
+  u3_auto_bail(egg_u, lud);
 
   _pier_next(pir_u);
 }
 
-/* _pier_on_lord_save(): worker state-export complete (portable snapshot).
+/* _pier_on_lord_save(): worker (non-portable) snapshot complete.
 */
 static void
-_pier_on_lord_save(void* vod_p, c3_d eve_d)
+_pier_on_lord_save(void* vod_p)
 {
   u3_pier* pir_u = vod_p;
 
 #ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): lord: snap\r\n", eve_d);
+  fprintf(stderr, "pier: (%" PRIu64 "): lord: save\r\n", pir_u->god_u->eve_d);
 #endif
 
   _pier_next(pir_u);
 }
 
-/* _pier_on_lord_snap(): worker (non-portable) snapshot complete.
+/* _pier_on_lord_pack(): worker state-export complete (portable snapshot).
 */
 static void
-_pier_on_lord_snap(void* vod_p, c3_d eve_d)
+_pier_on_lord_pack(void* vod_p)
 {
   u3_pier* pir_u = vod_p;
 
 #ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): lord: snap\r\n", eve_d);
+  fprintf(stderr, "pier: (%" PRIu64 "): lord: pack\r\n", pir_u->god_u->eve_d);
 #endif
 
   _pier_next(pir_u);
@@ -705,7 +759,7 @@ _pier_on_lord_live(void* vod_p)
 /* _pier_on_disk_read_done(): event log read success.
 */
 static void
-_pier_on_disk_read_done(void* vod_p, u3_play pay_u)
+_pier_on_disk_read_done(void* vod_p, u3_info pay_u)
 {
   u3_pier* pir_u = vod_p;
 
@@ -744,7 +798,7 @@ _pier_on_disk_write_done(void* vod_p, c3_d eve_d)
 #endif
 
   if ( u3_peat_boot == pir_u->sat_e ) {
-    pir_u->wok_u.rel_d = eve_d;
+    pir_u->fec_u.rel_d = eve_d;
 
     //  wait if we're still committing the boot sequence
     //
@@ -879,7 +933,7 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
       return 0;
     }
 
-    pir_u->wok_u.rel_d = pir_u->log_u->dun_d;
+    pir_u->fec_u.rel_d = pir_u->log_u->dun_d;
   }
 
   //  start the worker process
@@ -899,13 +953,13 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
       .spin_f = _pier_on_lord_work_spin,
       .spun_f = _pier_on_lord_work_spun,
       .slog_f = _pier_on_lord_slog,
-      // .peek_f = _pier_on_lord_peek,
+      .peek_f = _pier_on_lord_peek,
       .play_done_f = _pier_on_lord_play_done,
       .play_bail_f = _pier_on_lord_play_bail,
       .work_done_f = _pier_on_lord_work_done,
       .work_bail_f = _pier_on_lord_work_bail,
       .save_f = _pier_on_lord_save,
-      .snap_f = _pier_on_lord_snap,
+      .pack_f = _pier_on_lord_pack,
       .exit_f = _pier_on_lord_exit
     };
 
@@ -1166,14 +1220,23 @@ static void
 _pier_save_cb(void* vod_p, c3_d eve_d)
 {
   u3_pier* pir_u = vod_p;
-  u3_lord_save(pir_u->god_u, eve_d);
+
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): save: send at %" PRIu64 "\r\n", pir_u->god_u->eve_d, eve_d);
+#endif
+
+  u3_lord_save(pir_u->god_u);
 }
 
-/* u3_pier_save(): save a portable snapshot.
+/* u3_pier_save(): save a non-portable snapshot
 */
 void
 u3_pier_save(u3_pier* pir_u)
 {
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): save: plan\r\n", pir_u->god_u->eve_d);
+#endif
+
   _pier_wall_plan(pir_u, 0, pir_u, _pier_save_cb);
 }
 
@@ -1181,14 +1244,23 @@ static void
 _pier_snap_cb(void* vod_p, c3_d eve_d)
 {
   u3_pier* pir_u = vod_p;
-  u3_lord_snap(pir_u->god_u, eve_d);
+
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): snap: send at %" PRIu64 "\r\n", pir_u->god_u->eve_d, eve_d);
+#endif
+
+  u3_lord_pack(pir_u->god_u);
 }
 
-/* u3_pier_snap(): save a non-portable snapshot
+/* u3_pier_pack(): save a portable snapshot.
 */
 void
-u3_pier_snap(u3_pier* pir_u)
+u3_pier_pack(u3_pier* pir_u)
 {
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): snap: plan\r\n", pir_u->god_u->eve_d);
+#endif
+
   _pier_wall_plan(pir_u, 0, pir_u, _pier_snap_cb);
 }
 
@@ -1206,7 +1278,8 @@ u3_pier_exit(u3_pier* pir_u)
 {
   pir_u->sat_e = u3_peat_done;
 
-  u3_pier_snap(pir_u);
+
+  u3_pier_save(pir_u);
   u3_disk_exit(pir_u->log_u);
   u3_auto_exit(pir_u->car_u);
   _pier_wall_plan(pir_u, 0, pir_u, _pier_exit_cb);

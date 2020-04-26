@@ -293,69 +293,94 @@
       /* u3_ovum: potential event
       */
         typedef struct _u3_ovum {
-          struct _u3_auto* car_u;               //  backpointer to i/o driver
           void*            vod_p;               //  context
           c3_l             msc_l;               //  ms to timeout
-          u3_noun            tar;               //  target
+          u3_noun            tar;               //  target (in arvo)
           u3_noun            wir;               //  wire
           u3_noun            cad;               //  card
-          u3_atom            pin;               //  spinner label
-          c3_o             del_o;               //  spinner delay (c3y)
+          struct {                              //  spinner
+            u3_atom          lab;               //    label
+            c3_o           del_o;               //    delay (c3y)
+          } pin_u;                              //
           struct _u3_ovum* pre_u;               //  previous ovum
           struct _u3_ovum* nex_u;               //  next ovum
+          struct _u3_auto* car_u;               //  backpointer to i/o driver
         } u3_ovum;
 
-      /* u3_fact: logged event
+      /* u3_fact: completed event
       */
         typedef struct _u3_fact {
           c3_d             eve_d;               //  event number
-          c3_l             bug_l;               //  kernel mug before
+          c3_l             bug_l;               //  kernel mug before XX remove
           c3_l             mug_l;               //  kernel mug after
-          u3_noun            job;               //  (pair date ovum) (XX or 0?)
+          u3_noun            job;               //  (pair date ovum)
           struct _u3_fact* nex_u;               //  next in queue
         } u3_fact;
 
-      /* u3_play: batch of logged events
+      /* u3_gift: effects
       */
-        typedef struct _u3_play {
-          struct _u3_fact* ent_u;               //  queue entry
-          struct _u3_fact* ext_u;               //  queue exit
-        } u3_play;
+        typedef struct _u3_gift {
+          c3_d             eve_d;               //  causal event number
+          u3_noun            act;               //  (list ovum)
+          struct _u3_gift* nex_u;               //  next in queue
+        } u3_gift;
 
-      /* u3_work: new event, while processsing
+      /* u3_info: ordered, contiguous slice of facts
       */
-        typedef struct _u3_work {
-          struct _u3_ovum* egg_u;               //  unlinked ovum
-          c3_l             bug_l;               //  kernel mug before
-          u3_noun            job;               //  (pair date ovum)
-          c3_d             eve_d;               //  event number
-          c3_l             mug_l;               //  kernel mug after
-          u3_noun            act;               //  action list
-          struct _u3_work* nex_u;
-        } u3_work;
+        typedef struct _u3_info {
+          u3_fact*         ent_u;               //  queue entry (highest)
+          u3_fact*         ext_u;               //  queue exit (lowest)
+        } u3_info;
+
+      /* u3_peek_type: namespace read request types
+      */
+        typedef enum {
+          u3_peek_just = 0,
+          u3_peek_last = 1
+        } u3_peek_type;
 
       /* u3_peek: namespace read request
       */
         typedef struct _u3_peek {
-          u3_noun            now;               //  date
-          u3_noun            gan;               //  (unit (set ship))
-          u3_noun            pat;               //  path (serialized beam)
+          c3_m             car_m;               //  care
+          u3_noun            gan;               //  leakset
+          u3_peek_type     typ_e;               //  type-tagged
+          union {                               //
+            u3_noun          pax;               //  /desk/case/...
+            struct {                            //
+              u3_atom        des;               //  desk
+              u3_noun        pax;               //  /...
+            } las_u;                            //
+          };                                    //
         } u3_peek;
 
-      /* u3_writ: new u3_writ
+      /* u3_writ_type: king->serf ipc message types
+      */
+        typedef enum {
+          u3_writ_work = 0,
+          u3_writ_peek = 1,
+          u3_writ_play = 2,
+          u3_writ_save = 3,
+          u3_writ_pack = 4,
+          u3_writ_exit = 5
+        } u3_writ_type;
+
+      /* u3_writ: ipc message from king to serf
       */
         typedef struct _u3_writ {
-          struct timeval  tim_tv;               //  time enqueued
+          struct timeval   tim_u;               //  time enqueued
           u3_atom            mat;               //  serialized
-          c3_o             sen_o;               //  sent
-          struct _u3_writ* nex_u;               //  next in queue, or 0
-          c3_m             typ_m;               //  tag
+          struct _u3_writ* nex_u;               //  next in queue
+          u3_writ_type     typ_e;               //  type-tagged
           union {                               //
-            c3_w             xit_w;             //  exit code
-            c3_d             eve_d;             //  for %save or %snap
-            struct _u3_peek* pek_u;             //  read
-            struct _u3_play  pay_u;             //  recompute
-            struct _u3_work* wok_u;             //  compute
+            struct {                            //  work:
+              u3_ovum*     egg_u;               //    origin
+              u3_noun        job;               //    (pair date ovum)
+            } wok_u;                            //
+            u3_peek*       pek_u;               //  peek
+            u3_info        fon_u;               //  recompute
+            c3_d           eve_d;               //  save/pack at
+            c3_w           xit_w;               //  exit code
           };
         } u3_writ;
 
@@ -367,13 +392,13 @@
           void (*slog_f)(void*, c3_w, u3_noun);
           void (*spin_f)(void*, u3_atom, c3_o);
           void (*spun_f)(void*);
-          void (*peek_f)(void*, u3_noun gan, u3_noun pat, u3_noun dat);
-          void (*play_done_f)(void*, u3_play, c3_l mug_l);
-          void (*play_bail_f)(void*, u3_play, c3_l mug_l, c3_d eve_d, u3_noun dud);
-          void (*work_done_f)(void*, u3_work*, c3_o wap_o);
-          void (*work_bail_f)(void*, u3_work*, u3_noun lud);
-          void (*save_f)(void*, c3_d eve_d);
-          void (*snap_f)(void*, c3_d eve_d);
+          void (*peek_f)(void*, u3_peek*, u3_noun);
+          void (*play_done_f)(void*, u3_info, c3_l mug_l);
+          void (*play_bail_f)(void*, u3_info, c3_l mug_l, c3_d eve_d, u3_noun dud);
+          void (*work_done_f)(void*, u3_ovum*, u3_fact*, u3_gift*);
+          void (*work_bail_f)(void*, u3_ovum*, u3_noun lud);
+          void (*save_f)(void*);
+          void (*pack_f)(void*);
           void (*exit_f)(void*, c3_o);
         } u3_lord_cb;
 
@@ -406,7 +431,7 @@
       */
         typedef struct _u3_disk_cb {
           void* vod_p;
-          void (*read_done_f)(void*, u3_play);
+          void (*read_done_f)(void*, u3_info);
           void (*read_bail_f)(void*, c3_d eve_d);
           void (*write_done_f)(void*, c3_d eve_d);
           void (*write_bail_f)(void*, c3_d eve_d);
@@ -426,7 +451,7 @@
           uv_timer_t       tim_u;               //  read timer
           uv_work_t        ted_u;               //  write thread
           c3_o             ted_o;               //  c3y == active
-          u3_play          put_u;               //  write queue
+          u3_info          put_u;               //  write queue
         } u3_disk;
 
       /* u3_boot: bootstrap event sequence
@@ -456,16 +481,21 @@
           struct _u3_wall* nex_u;
         } u3_wall;
 
+      /* u3_auto_cb: i/o driver callbacks
+      */
+        typedef struct _u3_auto_cb {
+          void (*talk_f)(struct _u3_auto*);
+          c3_o (*kick_f)(struct _u3_auto*, u3_noun, u3_noun);
+          c3_w (*mark_f)(struct _u3_auto*);
+          void (*exit_f)(struct _u3_auto*);  // XX close_cb?
+        } u3_auto_cb;
+
       /* u3_auto: abstract i/o driver
       */
         typedef struct _u3_auto {
           c3_m             nam_m;
           c3_o             liv_o;
-          struct {
-            void (*talk_f)(struct _u3_auto*);
-            c3_o (*kick_f)(struct _u3_auto*, u3_noun wir, u3_noun cad);
-            void (*exit_f)(struct _u3_auto*);  // XX close_cb?
-          } io;
+          u3_auto_cb          io;  // XX io_u;
           struct {
             void (*drop_f)(struct _u3_auto*, u3_ovum*);
             void (*work_f)(struct _u3_auto*, u3_ovum*);
@@ -500,9 +530,9 @@
           } pay_u;                              //
           struct {                              //  finished event queue:
             c3_d           rel_d;               //    last released
-            u3_work*       ent_u;               //    entry
-            u3_work*       ext_u;               //    exit
-          } wok_u;                              //
+            u3_gift*       ent_u;               //    entry
+            u3_gift*       ext_u;               //    exit
+          } fec_u;                              //
           uv_prepare_t     pep_u;               //  preloop registration
           uv_check_t       cek_u;               //  postloop registration
           uv_idle_t        idl_u;               //  postloop registration
@@ -716,11 +746,7 @@
       /* u3_disk_plan(): enqueue completed event for persistence.
       */
         void
-        u3_disk_plan(u3_disk* log_u,
-                     c3_d     eve_d,
-                     c3_l     bug_l,
-                     c3_l     mug_l,
-                     u3_noun  job);
+        u3_disk_plan(u3_disk* log_u, u3_fact* tac_u);
 
       /* u3_lord_init(): start serf.
       */
@@ -735,15 +761,15 @@
         void
         u3_lord_exit(u3_lord* god_u, c3_w cod_w);
 
-      /* u3_lord_save(): save portable state.
+      /* u3_lord_save(): save a snapshot.
       */
-        void
-        u3_lord_save(u3_lord* god_u, c3_d eve_d);
+        c3_o
+        u3_lord_save(u3_lord* god_u);
 
-      /* u3_lord_snap(): take a fast snapshot.
+      /* u3_lord_pack(): save portable state.
       */
-        void
-        u3_lord_snap(u3_lord* god_u, c3_d eve_d);
+        c3_o
+        u3_lord_pack(u3_lord* god_u);
 
       /* u3_lord_work(): attempt work.
       */
@@ -753,12 +779,12 @@
       /* u3_lord_play(): recompute batch.
       */
         void
-        u3_lord_play(u3_lord* god_u, u3_play pay_u);
+        u3_lord_play(u3_lord* god_u, u3_info fon_u);
 
-      /* u3_lord_peek(): read.
+      /* u3_lord_peek(): read namespace.
       */
         void
-        u3_lord_peek(u3_lord* god_u, u3_noun gan, u3_noun pat);
+        u3_lord_peek(u3_lord* god_u, u3_peek* pek_u);
 
     /**  Filesystem (new api).
     **/
@@ -1021,10 +1047,10 @@
         void
         u3_pier_bail(void);
 
-      /* u3_pier_snap(): request checkpoint.
+      /* u3_pier_save(): request checkpoint.
       */
         void
-        u3_pier_snap(u3_pier* pir_u);
+        u3_pier_save(u3_pier* pir_u);
 
       /* u3_pier_stub(): get the One Pier for unreconstructed code.
       */

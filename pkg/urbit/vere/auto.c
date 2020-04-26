@@ -38,8 +38,8 @@ u3_auto_plan(u3_auto* car_u,
 
   //  spinner defaults
   //
-  egg_u->pin   = u3k(u3h(wir));
-  egg_u->del_o = c3y;
+  egg_u->pin_u.lab   = u3k(u3h(wir));
+  egg_u->pin_u.del_o = c3y;
 
   if ( !car_u->ent_u ) {
     c3_assert(!car_u->ext_u);
@@ -184,7 +184,7 @@ u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u)
     _auto_drop(egg_u);
   }
 
-  u3z(egg_u->pin);
+  u3z(egg_u->pin_u.lab);
   u3z(egg_u->tar);
   u3z(egg_u->wir);
   u3z(egg_u->cad);

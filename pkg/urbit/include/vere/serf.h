@@ -34,10 +34,15 @@
       c3_o
       u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret);
 
+    /* u3_serf_peek(): read namespace.
+    */
+      u3_noun
+      u3_serf_peek(u3_serf* sef_u, u3_noun sam);
+
     /* u3_serf_play(): apply event list, producing status.
     */
       u3_noun
-      u3_serf_play(u3_serf* sef_u, c3_d evt_d, u3_noun lit);
+      u3_serf_play(u3_serf* sef_u, c3_d eve_d, u3_noun lit);
 
     /* u3_serf_work(): apply event, producing effects.
     */

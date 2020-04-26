@@ -31,7 +31,7 @@
   $%  $:  %live
           $%  [%exit cod=@]
               [%save eve=@]
-              [%snap eve=@]
+              [%pack eve=@]
       ==  ==
       [%peek now=date lyc=gang pat=path]
       [%play eve=@ lit=(list ?((pair date ovum) *))]
@@ -811,13 +811,37 @@ u3_serf_play(u3_serf* sef_u, c3_d eve_d, u3_noun lit)
                         : _serf_play_list(sef_u, lit));
 }
 
-// /* _serf_poke_peek(): dereference namespace.
-// */
-// static void
-// _serf_poke_peek(u3_noun now, u3_noun pat)
-// {
-//   // XX u3v_peek
-// }
+/* u3_serf_peek(): dereference namespace.
+*/
+u3_noun
+u3_serf_peek(u3_serf* sef_u, u3_noun sam)
+{
+  u3_noun now, lyc, pat, wen, gon, pro;
+  u3x_trel(sam, &now, &lyc, &pat);
+
+  wen      = u3A->now;
+  u3A->now = u3k(now);
+
+  //  XX pass lyc as well
+  //
+  gon = u3v_peek(u3k(pat));
+
+  //  XX preserve mark in arvo
+  //
+  if ( u3_nul == gon ) {
+    pro = u3_nul;
+  }
+  else {
+    pro = u3nt(u3_nul, c3__noun, u3k(u3t(gon)));
+    u3z(gon);
+  }
+
+  u3z(u3A->now);
+  u3A->now = wen;
+
+  u3z(sam);
+  return u3nc(c3__peek, pro);
+}
 
 /* _serf_writ_live_exit(): exit on command.
 */
@@ -916,11 +940,11 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
 
     // XX
     //
-    case c3__save: {
+    case c3__pack: {
       c3_stub;
     }
 
-    case c3__snap: {
+    case c3__save: {
       c3_d eve_d;
 
       if ( c3n == u3r_safe_chub(dat, &eve_d) ) {
@@ -980,7 +1004,8 @@ u3_serf_writ(u3_serf* sef_u, u3_noun wit, u3_noun* pel)
       } break;
 
       case c3__peek: {
-        c3_stub;
+        *pel = u3_serf_peek(sef_u, u3k(com));
+        ret_o = c3y;
       } break;
 
       case c3__play: {

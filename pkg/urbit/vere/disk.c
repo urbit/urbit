@@ -234,20 +234,9 @@ _disk_commit(u3_disk* log_u)
 /* u3_disk_plan(): enqueue completed event for persistence.
 */
 void
-u3_disk_plan(u3_disk* log_u,
-             c3_d     eve_d,
-             c3_l     bug_l,
-             c3_l     mug_l,
-             u3_noun  job)
+u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 {
-  u3_fact* tac_u = c3_malloc(sizeof(*tac_u));
-  tac_u->bug_l = bug_l;
-  tac_u->mug_l = mug_l;
-  tac_u->eve_d = eve_d;
-  tac_u->nex_u = 0;
-  tac_u->job   = job;
-
-  c3_assert( (1ULL + log_u->sen_d) == eve_d );
+  c3_assert( (1ULL + log_u->sen_d) == tac_u->eve_d );
   log_u->sen_d++;
   
   if ( !log_u->put_u.ent_u ) {
@@ -290,6 +279,8 @@ u3_disk_boot_plan(u3_disk* log_u, u3_noun job)
   fprintf(stderr, "disk: (%" PRIu64 "): db boot plan\r\n", tac_u->eve_d);
 #endif
 
+  //  XX make explicit
+  //
   _disk_commit(log_u);
 }
 
@@ -300,7 +291,7 @@ _disk_read_done_cb(uv_timer_t* tim_u)
 {
   struct _cd_read* red_u = tim_u->data;
   u3_disk* log_u = red_u->log_u;
-  u3_play  pay_u = { .ent_u = red_u->ent_u, .ext_u = red_u->ext_u };
+  u3_info  pay_u = { .ent_u = red_u->ent_u, .ext_u = red_u->ext_u };
 
   c3_assert( red_u->ent_u );
   c3_assert( red_u->ext_u );

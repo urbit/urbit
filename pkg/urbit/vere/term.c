@@ -603,8 +603,8 @@ _term_ovum_plan(u3_auto* car_u, u3_noun wir, u3_noun cad)
 
   //  term events have no spinner label
   //
-  u3z(egg_u->pin);
-  egg_u->pin = u3_blip;
+  u3z(egg_u->pin_u.lab);
+  egg_u->pin_u.lab = u3_blip;
 
   return egg_u;
 }
@@ -628,7 +628,7 @@ _term_io_belt(u3_utty* uty_u, u3_noun blb)
     //  no spinner delay on %ret
     //
     if ( c3__ret == u3h(blb) ) {
-      egg_u->del_o = c3n;
+      egg_u->pin_u.del_o = c3n;
     }
   }
 }
