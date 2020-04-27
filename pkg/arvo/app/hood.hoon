@@ -74,7 +74,7 @@
       paw                                               ::
     ::                                                  ::
     ++  hood-part                                       ::  current module state
-      $%  {$drum $2 pith-2:hood-drum}                   ::
+      $%  {$drum $3 pith-2:hood-drum}                   ::
           {$helm $0 pith:hood-helm}                     ::
           {$kiln $0 pith:hood-kiln}                     ::
           {$write $0 pith:hood-write}                   ::
