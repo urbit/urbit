@@ -251,7 +251,7 @@ u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
   _disk_commit(log_u);
 }
 
-/* u3_disk_boot_plan(): XX remove, just use u3_disk_plan().
+/* u3_disk_boot_plan(): enqueue boot sequence, without autocommit.
 */
 void
 u3_disk_boot_plan(u3_disk* log_u, u3_noun job)
@@ -278,9 +278,14 @@ u3_disk_boot_plan(u3_disk* log_u, u3_noun job)
 #ifdef VERBOSE_DISK
   fprintf(stderr, "disk: (%" PRIu64 "): db boot plan\r\n", tac_u->eve_d);
 #endif
+}
 
-  //  XX make explicit
-  //
+/* u3_disk_boot_save(): commit boot sequence.
+*/
+void
+u3_disk_boot_save(u3_disk* log_u)
+{
+  c3_assert( !log_u->dun_d );
   _disk_commit(log_u);
 }
 

@@ -26,31 +26,23 @@
 
 #undef VERBOSE_PIER
 
-// XX snapshot timer
-
-/* _pier_work_init(): begin processing new events
-*/
-static void
-_pier_work_init(u3_pier* pir_u)
-{
-  pir_u->sat_e = u3_peat_work;
-  u3_auto_talk(pir_u->car_u);
-}
-
 /* _pier_work_send(): send new events for processing
 */
 static void
-_pier_work_send(u3_pier* pir_u)
+_pier_work_send(u3_work* wok_u)
 {
+  u3_auto* car_u = wok_u->car_u;
+  u3_pier* pir_u = wok_u->pir_u;
   u3_lord* god_u = pir_u->god_u;
-  u3_auto* car_u = pir_u->car_u;
   c3_w     len_w = 0;
 
   //  calculate work batch size
   {
-    u3_wall* wal_u = pir_u->wal_u;
+    u3_wall* wal_u = wok_u->wal_u;
 
     if ( !wal_u ) {
+      //  XX work depth, or full lord send-stack depth?
+      //
       if ( PIER_WORK_BATCH > god_u->dep_w ) {
         len_w = PIER_WORK_BATCH - god_u->dep_w;
       }
@@ -82,9 +74,9 @@ _pier_work_send(u3_pier* pir_u)
 /* _pier_gift_plan(): enqueue effects.
 */
 static void
-_pier_gift_plan(u3_pier* pir_u, u3_gift* gif_u)
+_pier_gift_plan(u3_work* wok_u, u3_gift* gif_u)
 {
-  c3_assert( gif_u->eve_d > pir_u->fec_u.rel_d );
+  c3_assert( gif_u->eve_d > wok_u->fec_u.rel_d );
 
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): compute: complete\r\n", gif_u->eve_d);
@@ -92,36 +84,37 @@ _pier_gift_plan(u3_pier* pir_u, u3_gift* gif_u)
 
   gif_u->nex_u = 0;
 
-  if ( !pir_u->fec_u.ent_u ) {
-    c3_assert( !pir_u->fec_u.ext_u );
-    pir_u->fec_u.ent_u = pir_u->fec_u.ext_u = gif_u;
+  if ( !wok_u->fec_u.ent_u ) {
+    c3_assert( !wok_u->fec_u.ext_u );
+    wok_u->fec_u.ent_u = wok_u->fec_u.ext_u = gif_u;
   }
   else {
-    pir_u->fec_u.ent_u->nex_u = gif_u;
-    pir_u->fec_u.ent_u = gif_u;
+    wok_u->fec_u.ent_u->nex_u = gif_u;
+    wok_u->fec_u.ent_u = gif_u;
   }
 }
 
 /* _pier_gift_next(): dequeue effect.
 */
 static u3_gift*
-_pier_gift_next(u3_pier* pir_u)
+_pier_gift_next(u3_work* wok_u)
 {
+  u3_pier* pir_u = wok_u->pir_u;
   u3_disk* log_u = pir_u->log_u;
-  u3_gift* gif_u = pir_u->fec_u.ext_u;
+  u3_gift* gif_u = wok_u->fec_u.ext_u;
 
   if ( !gif_u || (gif_u->eve_d > log_u->dun_d) ) {
     return 0;
   }
   else {
-    pir_u->fec_u.ext_u = gif_u->nex_u;
+    wok_u->fec_u.ext_u = gif_u->nex_u;
 
-    if ( !pir_u->fec_u.ext_u ) {
-      pir_u->fec_u.ent_u = 0;
+    if ( !wok_u->fec_u.ext_u ) {
+      wok_u->fec_u.ent_u = 0;
     }
 
-    c3_assert( (1ULL + pir_u->fec_u.rel_d) == gif_u->eve_d );
-    pir_u->fec_u.rel_d = gif_u->eve_d;
+    c3_assert( (1ULL + wok_u->fec_u.rel_d) == gif_u->eve_d );
+    wok_u->fec_u.rel_d = gif_u->eve_d;
 
     return gif_u;
   }
@@ -130,15 +123,15 @@ _pier_gift_next(u3_pier* pir_u)
 /* _pier_gift_kick(): apply effects.
 */
 static void
-_pier_gift_kick(u3_pier* pir_u)
+_pier_gift_kick(u3_work* wok_u)
 {
   u3_gift* gif_u;
 
-  while ( (gif_u = _pier_gift_next(pir_u)) ) {
+  while ( (gif_u = _pier_gift_next(wok_u)) ) {
 #ifdef VERBOSE_PIER
     fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", gif_u->eve_d);
 #endif
-    u3_auto_kick(pir_u->car_u, gif_u->act);
+    u3_auto_kick(wok_u->car_u, gif_u->act);
 
     //  XX dispose properly
     //
@@ -146,68 +139,64 @@ _pier_gift_kick(u3_pier* pir_u)
   }
 }
 
-/* u3_pier_peek_as():
+/* _pier_wall_plan(): enqueue a barrier.
 */
-void
-u3_pier_peek_as(u3_pier* pir_u,
-                u3_noun    gan,
-                c3_m     car_m,
-                u3_noun    pax)
+static void
+_pier_wall_plan(u3_pier* pir_u, c3_d eve_d,
+                void* vod_p, void (*wal_f)(void*, c3_d))
 {
-  u3_peek* pek_u = c3_malloc(sizeof(*pek_u));
-  pek_u->car_m = car_m;
-  pek_u->gan   = gan;
-  pek_u->typ_e = u3_peek_just;
-  pek_u->pax   = pax;
+  c3_assert( u3_psat_work == pir_u->sat_e );
 
-  u3_lord_peek(pir_u->god_u, pek_u);
+  u3_wall* wal_u = c3_malloc(sizeof(*wal_u));
+  wal_u->vod_p = vod_p;
+  wal_u->eve_d = eve_d;
+  wal_u->wal_f = wal_f;
+
+  //  insert into [pir_u->wal_u], preserving stable sort by [eve_d]
+  //
+  {
+    u3_wall** las_u = &pir_u->wok_u->wal_u;
+
+    while ( *las_u && (eve_d <= (*las_u)->eve_d) ) {
+      las_u = &(*las_u)->nex_u;
+    }
+
+    wal_u->nex_u = *las_u;
+    *las_u = wal_u;
+  }
 }
 
-/* u3_pier_peek():
+/* _pier_wall(): process a barrier if possible.
 */
-void
-u3_pier_peek(u3_pier* pir_u, c3_m car_m, u3_noun pax)
+static void
+_pier_wall(u3_work* wok_u)
 {
-  u3_pier_peek_as(pir_u, u3nc(u3_nul, u3_nul), car_m, pax);
-}
+  u3_lord* god_u = wok_u->pir_u->god_u;
+  u3_disk* log_u = wok_u->pir_u->log_u;
 
-/* u3_pier_peep_as():
-*/
-void
-u3_pier_peep_as(u3_pier* pir_u,
-                u3_noun    gan,
-                c3_m     car_m,
-                u3_atom    des,
-                u3_noun    pax)
-{
-  u3_peek* pek_u = c3_malloc(sizeof(*pek_u));
-  pek_u->car_m = car_m;
-  pek_u->gan   = gan;
-  pek_u->typ_e = u3_peek_last;
-  pek_u->las_u.des = des;
-  pek_u->las_u.pax = pax;
+  if ( god_u->eve_d == log_u->dun_d ) {
+    u3_wall* wal_u;
 
-  u3_lord_peek(pir_u->god_u, pek_u);
-}
-
-/* u3_pier_peep():
-*/
-void
-u3_pier_peep(u3_pier* pir_u,
-             c3_m     car_m,
-             u3_atom    des,
-             u3_noun    pax)
-{
-  u3_pier_peep_as(pir_u, u3nc(u3_nul, u3_nul), car_m, des, pax);
+    while (  (wal_u = wok_u->wal_u)
+          && !god_u->dep_w
+          && (wal_u->eve_d <= god_u->eve_d) )
+    {
+      wok_u->wal_u = wal_u->nex_u;
+      wal_u->wal_f(wal_u->vod_p, god_u->eve_d);
+      c3_free(wal_u);
+    }
+  }
 }
 
 /* _pier_work(): advance event processing.
 */
 static void
-_pier_work(u3_pier* pir_u)
+_pier_work(u3_work* wok_u)
 {
+  u3_pier* pir_u = wok_u->pir_u;
+
   if ( c3n == pir_u->liv_o ) {
-    pir_u->liv_o = u3_auto_live(pir_u->car_u);
+    pir_u->liv_o = u3_auto_live(wok_u->car_u);
 
     //  all i/o drivers are fully initialized
     //
@@ -225,55 +214,269 @@ _pier_work(u3_pier* pir_u)
     }
   }
 
-  _pier_work_send(pir_u);
-  _pier_gift_kick(pir_u);
+  _pier_gift_kick(wok_u);
+  _pier_wall(wok_u);
+
+  if ( u3_psat_work == pir_u->sat_e ) {
+    _pier_work_send(wok_u);
+  }
+  else {
+    c3_assert( u3_psat_done == pir_u->sat_e );
+  }
+}
+
+/* _pier_on_lord_work_spin(): start spinner
+*/
+static void
+_pier_on_lord_work_spin(void* vod_p, u3_atom pin, c3_o del_o)
+{
+  u3_pier* pir_u = vod_p;
+
+  c3_assert(  (u3_psat_work == pir_u->sat_e)
+           || (u3_psat_done == pir_u->sat_e) );
+
+  u3_term_start_spinner(pin, del_o);
+}
+
+/* _pier_on_lord_work_spin(): stop spinner
+*/
+static void
+_pier_on_lord_work_spun(void* vod_p)
+{
+  u3_pier* pir_u = vod_p;
+
+  c3_assert(  (u3_psat_work == pir_u->sat_e)
+           || (u3_psat_done == pir_u->sat_e) );
+
+  u3_term_stop_spinner();
+}
+
+/* _pier_on_lord_work_done(): event completion from worker.
+*/
+static void
+_pier_on_lord_work_done(void*    vod_p,
+                        u3_ovum* egg_u,
+                        u3_fact* tac_u,
+                        u3_gift* gif_u)
+{
+  u3_pier* pir_u = vod_p;
+
+  c3_assert(  (u3_psat_work == pir_u->sat_e)
+           || (u3_psat_done == pir_u->sat_e) );
+
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier (%" PRIu64 "): work: done\r\n", tac_u->eve_d);
+#endif
+
+  //  XX this is a departure from the general organization of this file
+  //
+  u3_disk_plan(pir_u->log_u, tac_u);
+
+  //  XX revise
+  //
+  u3_auto_done(egg_u, c3n);
+  u3_auto_drop(0, egg_u);
+
+  _pier_gift_plan(pir_u->wok_u, gif_u);
+  _pier_work(pir_u->wok_u);
+}
+
+/* _pier_on_lord_work_bail(): event failure from worker.
+*/
+static void
+_pier_on_lord_work_bail(void* vod_p, u3_ovum* egg_u, u3_noun lud)
+{
+  u3_pier* pir_u = vod_p;
+
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: work: bail\r\n");
+#endif
+
+  c3_assert(  (u3_psat_work == pir_u->sat_e)
+           || (u3_psat_done == pir_u->sat_e) );
+
+  u3_auto_bail(egg_u, lud);
+
+  _pier_work(pir_u->wok_u);
+}
+
+/* _pier_work_time(): set time.
+*/
+static void
+_pier_work_time(u3_pier* pir_u)
+{
+  struct timeval tim_tv;
+  gettimeofday(&tim_tv, 0);
+
+  // XX save to pier
+  //
+  u3v_time(u3_time_in_tv(&tim_tv));
+}
+
+/* _pier_work_fore_cb(): run on every loop iteration before i/o polling.
+*/
+static void
+_pier_work_fore_cb(uv_prepare_t* pep_u)
+{
+  u3_work* wok_u = pep_u->data;
+  _pier_work_time(wok_u->pir_u);
+}
+
+/* _pier_work_afte_cb(): run on every loop iteration after i/o polling.
+*/
+static void
+_pier_work_afte_cb(uv_check_t* cek_u)
+{
+  u3_work* wok_u = cek_u->data;
+  _pier_work(wok_u);
+}
+
+/* _pier_work_idle_cb(): run on next loop iteration.
+*/
+static void
+_pier_work_idle_cb(uv_idle_t* idl_u)
+{
+  u3_work* wok_u = idl_u->data;
+  _pier_work(wok_u);
+  uv_idle_stop(idl_u);
+}
+
+/* u3_pier_spin(): (re-)activate idle handler
+*/
+void
+u3_pier_spin(u3_pier* pir_u)
+{
+  //  XX return c3n instead?
+  //
+  c3_assert(  (u3_psat_work == pir_u->sat_e)
+           || (u3_psat_done == pir_u->sat_e) );
+
+  u3_work* wok_u = pir_u->wok_u;
+
+  if ( !uv_is_active((uv_handle_t*)&wok_u->idl_u) ) {
+    uv_idle_start(&wok_u->idl_u, _pier_work_idle_cb);
+  }
+}
+
+/* _pier_work_init(): begin processing new events
+*/
+static void
+_pier_work_init(u3_pier* pir_u)
+{
+  u3_work* wok_u;
+
+  c3_assert(  (u3_psat_init == pir_u->sat_e)
+           || (u3_psat_play == pir_u->sat_e) );
+
+  pir_u->sat_e = u3_psat_work;
+  pir_u->wok_u = wok_u = c3_calloc(sizeof(*wok_u));
+  wok_u->pir_u = pir_u;
+  wok_u->fec_u.rel_d = pir_u->log_u->dun_d;
+
+  _pier_work_time(pir_u);
+
+  //  for i/o drivers that still use u3A->sen
+  //
+  u3v_numb();
+
+  //  XX plan kelvin event
+  //
+
+  //  XX snapshot timer
+  //  XX moveme
+  //
+  {
+    c3_l cod_l = u3a_lush(c3__save);
+    u3_save_io_init(pir_u);
+    u3a_lop(cod_l);
+  }
+
+  //  initialize pre i/o polling handle
+  //
+  uv_prepare_init(u3L, &wok_u->pep_u);
+  wok_u->pep_u.data = wok_u;
+  uv_prepare_start(&wok_u->pep_u, _pier_work_fore_cb);
+
+  //  initialize post i/o polling handle
+  //
+  uv_check_init(u3L, &wok_u->cek_u);
+  wok_u->cek_u.data = wok_u;
+  uv_check_start(&wok_u->cek_u, _pier_work_afte_cb);
+
+  //  initialize idle i/o polling handle
+  //
+  //    NB, not started
+  //
+  uv_idle_init(u3L, &wok_u->idl_u);
+  wok_u->idl_u.data = wok_u;
+
+  //  initialize i/o drivers
+  //
+  wok_u->car_u = u3_auto_init(pir_u);
+  u3_auto_talk(wok_u->car_u);
+
+  // //  setup u3_lord work callbacks
+  // //
+  // u3_lord_work_cb cb_u = {
+  //   .vod_p  = wok_u,
+  //   .spin_f = _pier_on_lord_work_spin,
+  //   .spun_f = _pier_on_lord_work_spun,
+  //   .done_f = _pier_on_lord_work_done,
+  //   .bail_f = _pier_on_lord_work_bail
+  // };
+  // u3_lord_work_init(pir_u->god_u, cb_u);
+
+  _pier_work(wok_u);
 }
 
 /* _pier_play_plan(): enqueue events for replay.
 */
 static void
-_pier_play_plan(u3_pier* pir_u, u3_info pay_u)
+_pier_play_plan(u3_play* pay_u, u3_info fon_u)
 {
   u3_fact** ext_u;
   c3_d      old_d;
 
-  if ( !pir_u->pay_u.ext_u ) {
-    c3_assert( !pir_u->pay_u.ent_u );
-    ext_u = &pir_u->pay_u.ext_u;
-    old_d = pir_u->pay_u.sen_d;
+  if ( !pay_u->ext_u ) {
+    c3_assert( !pay_u->ent_u );
+    ext_u = &pay_u->ext_u;
+    old_d = pay_u->sen_d;
   }
   else {
-    ext_u = &pir_u->pay_u.ent_u->nex_u;
-    old_d = pir_u->pay_u.ent_u->eve_d;
+    ext_u = &pay_u->ent_u->nex_u;
+    old_d = pay_u->ent_u->eve_d;
   }
 
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: play plan %" PRIu64 "-%" PRIu64 " at %" PRIu64 "\r\n",
-                  pay_u.ext_u->eve_d,
-                  pay_u.ent_u->eve_d,
+                  fon_u.ext_u->eve_d,
+                  fon_u.ent_u->eve_d,
                   old_d);
 #endif
 
-  c3_assert( (1ULL + old_d) == pay_u.ext_u->eve_d );
+  c3_assert( (1ULL + old_d) == fon_u.ext_u->eve_d );
 
-  *ext_u = pay_u.ext_u;
-  pir_u->pay_u.ent_u = pay_u.ent_u;
+  *ext_u = fon_u.ext_u;
+  pay_u->ent_u = fon_u.ent_u;
 }
 
-/* _pier_play_send(): detach a batch of up to [len_d] events from queue.
+/* _pier_play_send(): detach a batch of up to [len_w] events from queue.
 */
 static u3_info
-_pier_play_next(u3_pier* pir_u, c3_d len_d)
+_pier_play_next(u3_play* pay_u, c3_w len_w)
 {
-  u3_fact* tac_u = pir_u->pay_u.ext_u;
+  u3_fact* tac_u = pay_u->ext_u;
   u3_info  fon_u;
+
+  //  XX just share batch with lord, save last sent to pay_u->sen_u
+  //
 
   //  set batch entry and exit pointers
   //
   {
     fon_u.ext_u = tac_u;
 
-    while ( len_d-- && tac_u->nex_u ) {
+    while ( len_w-- && tac_u->nex_u ) {
       tac_u = tac_u->nex_u;
     }
 
@@ -283,11 +486,11 @@ _pier_play_next(u3_pier* pir_u, c3_d len_d)
   //  detatch batch from queue
   //
   if ( tac_u->nex_u ) {
-    pir_u->pay_u.ext_u = tac_u->nex_u;
+    pay_u->ext_u = tac_u->nex_u;
     tac_u->nex_u = 0;
   }
   else {
-    pir_u->pay_u.ent_u = pir_u->pay_u.ext_u = 0;
+    pay_u->ent_u = pay_u->ext_u = 0;
   }
 
   return fon_u;
@@ -296,22 +499,37 @@ _pier_play_next(u3_pier* pir_u, c3_d len_d)
 /* _pier_play_send(): send a batch of events to the worker for replay.
 */
 static void
-_pier_play_send(u3_pier* pir_u)
+_pier_play_send(u3_play* pay_u)
 {
+  u3_pier* pir_u = pay_u->pir_u;
+  c3_w     len_w;
+
+  //  awaiting read
+  //
+  if ( !pay_u->ext_u ) {
+    return;
+  }
+
   //  XX fill the pipe how much?
   // (god_u->dep_w > PIER_WORK_BATCH) )
   //
-  if ( pir_u->pay_u.ext_u ) {
-    //  the first batch must be >= the lifecycle barrier
-    //
-    c3_d    len_d = ( !pir_u->pay_u.sen_d )
-                    ? c3_max(pir_u->lif_w, PIER_PLAY_BATCH)
-                    : PIER_PLAY_BATCH;
-    u3_info fon_u = _pier_play_next(pir_u, len_d);
+
+  //  the first batch must be >= the lifecycle barrier
+  //
+  if ( !pay_u->sen_d ) {
+    len_w = c3_max(pir_u->lif_w, PIER_PLAY_BATCH);
+  }
+  else {
+    c3_d lef_d = (pay_u->eve_d - pay_u->sen_d);
+    len_w = c3_min(lef_d, PIER_PLAY_BATCH);
+  }
+
+  {
+    u3_info fon_u = _pier_play_next(pay_u, len_w);
 
     //  bump sent counter
     //
-    pir_u->pay_u.sen_d = fon_u.ent_u->eve_d;
+    pay_u->sen_d = fon_u.ent_u->eve_d;
 
 #ifdef VERBOSE_PIER
     fprintf(stderr, "pier: play send %" PRIu64 "-%" PRIu64 "\r\n", fon_u.ext_u->eve_d, fon_u.ent_u->eve_d);
@@ -324,21 +542,22 @@ _pier_play_send(u3_pier* pir_u)
 /* _pier_play_read(): read events from disk for replay.
 */
 static void
-_pier_play_read(u3_pier* pir_u)
+_pier_play_read(u3_play* pay_u)
 {
+  u3_pier* pir_u = pay_u->pir_u;
   c3_d las_d;
 
-  if ( pir_u->pay_u.ent_u ) {
-    las_d = pir_u->pay_u.ent_u->eve_d;
+  if ( pay_u->ent_u ) {
+    las_d = pay_u->ent_u->eve_d;
 
     //  cap the pir_u->pay_u queue depth
     //
-    if ( (las_d - pir_u->pay_u.ext_u->eve_d) >= PIER_PLAY_BATCH ) {
+    if ( (las_d - pay_u->ext_u->eve_d) >= PIER_PLAY_BATCH ) {
       return;
     }
   }
   else {
-    las_d = pir_u->pay_u.sen_d;
+    las_d = pay_u->sen_d;
   }
 
   {
@@ -346,10 +565,10 @@ _pier_play_read(u3_pier* pir_u)
     c3_d len_d = c3_min(pir_u->log_u->dun_d - las_d, PIER_READ_BATCH);
 
     if (  len_d
-       && (nex_d > pir_u->pay_u.req_d) )
+       && (nex_d > pay_u->req_d) )
     {
       u3_disk_read(pir_u->log_u, nex_d, len_d);
-      pir_u->pay_u.req_d = nex_d;
+      pay_u->req_d = nex_d;
 
 #ifdef VERBOSE_PIER
       fprintf(stderr, "pier: play read %" PRIu64 " at %" PRIu64 "\r\n", len_d, nex_d);
@@ -358,182 +577,35 @@ _pier_play_read(u3_pier* pir_u)
   }
 }
 
-/* _pier_play_init(): begin boot/replay
-*/
-static void
-_pier_play_init(u3_pier* pir_u)
-{
-  u3_lord* god_u = pir_u->god_u;
-  u3_disk* log_u = pir_u->log_u;
-
-  c3_assert( log_u->sen_d == log_u->dun_d );
-
-  switch ( pir_u->sat_e ) {
-    default: c3_assert(0);
-
-    case u3_peat_init: {
-      c3_assert( god_u->eve_d <= log_u->dun_d );
-      pir_u->sat_e = u3_peat_play;
-      pir_u->pay_u.sen_d = god_u->eve_d;
-
-      u3l_log("---------------- playback starting ----------------\r\n");
-      if ( (1ULL + god_u->eve_d) == log_u->dun_d ) {
-        u3l_log("pier: replaying event %" PRIu64 "\r\n", log_u->dun_d);
-      }
-      else {
-        u3l_log("pier: replaying events %" PRIu64 "-%" PRIu64 "\r\n",
-                (c3_d)(1ULL + god_u->eve_d),
-                log_u->dun_d);
-      }
-
-      u3_term_start_spinner(c3__play, c3y);
-    } break;
-
-    case u3_peat_boot: {
-      c3_assert( !god_u->eve_d );
-      u3l_log("---------------- boot starting ----------------\r\n");
-      u3_term_start_spinner(c3__boot, c3y);
-    } break;
-  }
-}
-
 /* _pier_play(): send a batch of events to the worker for log replay.
 */
 static void
-_pier_play(u3_pier* pir_u)
+_pier_play(u3_play* pay_u)
 {
+  u3_pier* pir_u = pay_u->pir_u;
   u3_lord* god_u = pir_u->god_u;
   u3_disk* log_u = pir_u->log_u;
 
-  if ( log_u->sen_d > log_u->dun_d ) {
-    //  wait if we're still committing the boot sequence
+  if ( god_u->eve_d == pay_u->eve_d ) {
+    //  XX should be play_cb
     //
-    c3_assert( u3_peat_boot == pir_u->sat_e );
-  }
-  else if ( god_u->eve_d == log_u->dun_d ) {
-    u3l_log("---------------- %s complete ----------------\r\n",
-            ( u3_peat_boot == pir_u->sat_e ) ? "boot" : "playback");
+    u3l_log("---------------- playback complete ----------------\r\n");
     u3_term_stop_spinner();
-    _pier_work_init(pir_u);
-    // XX _pier_next(pir_u);
+
+    if ( pay_u->eve_d < log_u->dun_d ) {
+      //  XX graceful shutdown
+      u3_pier_bail();
+      exit(0);
+    }
+    else if ( pay_u->eve_d == log_u->dun_d ) {
+      _pier_work_init(pir_u);
+    }
   }
   else {
-    c3_assert( god_u->eve_d < log_u->dun_d );
-    _pier_play_send(pir_u);
-    _pier_play_read(pir_u);
+    c3_assert( god_u->eve_d < pay_u->eve_d );
+    _pier_play_send(pay_u);
+    _pier_play_read(pay_u);
   }
-}
-
-/* _pier_wall_plan(): enqueue a barrier.
-*/
-static void
-_pier_wall_plan(u3_pier* pir_u, c3_d eve_d,
-                void* vod_p, void (*wal_f)(void*, c3_d))
-{
-  u3_wall* wal_u = c3_malloc(sizeof(*wal_u));
-  wal_u->vod_p = vod_p;
-  wal_u->eve_d = eve_d;
-  wal_u->wal_f = wal_f;
-
-  //  insert into [pir_u->wal_u], preserving stable sort by [eve_d]
-  //
-  {
-    u3_wall** las_u = &pir_u->wal_u;
-
-    while ( *las_u && (eve_d <= (*las_u)->eve_d) ) {
-      las_u = &(*las_u)->nex_u;
-    }
-
-    wal_u->nex_u = *las_u;
-    *las_u = wal_u;
-  }
-}
-
-/* _pier_wall(): process a barrier if possible.
-*/
-static void
-_pier_wall(u3_pier* pir_u)
-{
-  u3_lord* god_u = pir_u->god_u;
-  u3_disk* log_u = pir_u->log_u;
-
-  if ( god_u->eve_d == log_u->dun_d ) {
-    u3_wall* wal_u;
-
-    //  XX check god_u->dep_w
-    //
-    while (  (wal_u = pir_u->wal_u)
-          && !god_u->dep_w
-          && (wal_u->eve_d <= god_u->eve_d) )
-    {
-      pir_u->wal_u = wal_u->nex_u;
-      wal_u->wal_f(wal_u->vod_p, god_u->eve_d);
-      c3_free(wal_u);
-    }
-  }
-}
-
-/* _pier_next(): advance the pier state machine.
-*/
-static void
-_pier_next(u3_pier* pir_u)
-{
-  switch ( pir_u->sat_e ) {
-    default: c3_assert(0);
-
-    case u3_peat_work: {
-      _pier_work(pir_u);
-      break;
-    }
-
-    case u3_peat_play:
-    case u3_peat_boot: {
-      _pier_play(pir_u);
-      break;
-    }
-
-    case u3_peat_done: {
-      _pier_gift_kick(pir_u);
-      break;
-    }
- 
-    case u3_peat_init: {
-      break;
-    }
-  }
-
-  _pier_wall(pir_u);
-}
-
-/* _pier_on_lord_slog(): debug printf from worker.
-*/
-static void
-_pier_on_lord_slog(void* vod_p, c3_w pri_w, u3_noun tan)
-{
-  u3_pier* pir_u = vod_p;
-
-  if ( c3y == u3a_is_atom(tan) ) {
-    c3_c* tan_c = u3r_string(tan);
-    u3C.stderr_log_f(tan_c);
-    c3_free(tan_c);
-    u3z(tan);
-  }
-  else {
-    u3_pier_tank(0, pri_w, tan);
-  }
-
-  _pier_next(pir_u);
-}
-
-/* _pier_on_lord_peek(): namespace read response from worker.
-*/
-static void
-_pier_on_lord_peek(void* vod_p, u3_peek* pek_u, u3_noun dat)
-{
-  //  XX cache, invoke callback, dispose pek_u
-  //
-  u3m_p("lord peek", dat);
-  u3z(dat);
 }
 
 /* _pier_on_lord_play_done(): log replay batch completion from worker.
@@ -543,6 +615,8 @@ _pier_on_lord_play_done(void* vod_p, u3_info fon_u, c3_l mug_l)
 {
   u3_pier* pir_u = vod_p;
   c3_d     las_d = fon_u.ent_u->eve_d;
+
+  c3_assert( u3_psat_play == pir_u->sat_e );
 
 // #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): play: done\r\n", las_d);
@@ -571,7 +645,7 @@ _pier_on_lord_play_done(void* vod_p, u3_info fon_u, c3_l mug_l)
     }
   }
 
-  _pier_next(pir_u);
+  _pier_play(pir_u->pay_u);
 }
 
 /* _pier_on_lord_play_bail(): log replay batch failure from worker.
@@ -580,9 +654,14 @@ static void
 _pier_on_lord_play_bail(void* vod_p, u3_info fon_u,
                         c3_l mug_l, c3_d eve_d, u3_noun dud)
 {
+  u3_pier* pir_u = vod_p;
+
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): play: bail\r\n", eve_d);
 #endif
+
+  c3_assert( u3_psat_play == pir_u->sat_e );
+
   //  XX verify pay_u mug_l
   //  XX check dud mote, retry yap_u or shutdown
 
@@ -602,173 +681,53 @@ _pier_on_lord_play_bail(void* vod_p, u3_info fon_u,
   u3_pier_bail();
 }
 
-/* _pier_on_lord_work_spin(): start spinner
+/* _pier_play_init(): begin boot/replay up to [eve_d].
 */
 static void
-_pier_on_lord_work_spin(void* vod_p, u3_atom pin, c3_o del_o)
+_pier_play_init(u3_pier* pir_u, c3_d eve_d)
 {
-  u3_term_start_spinner(pin, c3y); // (c3y == del_o) ? c3n : c3y);
-}
-
-/* _pier_on_lord_work_spin(): stop spinner
-*/
-static void
-_pier_on_lord_work_spun(void* vod_p)
-{
-  u3_term_stop_spinner();
-}
-
-/* _pier_on_lord_work_done(): event completion from worker.
-*/
-static void
-_pier_on_lord_work_done(void*    vod_p,
-                        u3_ovum* egg_u,
-                        u3_fact* tac_u,
-                        u3_gift* gif_u)
-{
-  u3_pier* pir_u = vod_p;
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier (%" PRIu64 "): work: done\r\n", tac_u->eve_d);
-#endif
-
-  //  XX revise
-  //
-  u3_auto_done(egg_u, c3n);
-  u3_auto_drop(0, egg_u);
-
-  _pier_gift_plan(pir_u, gif_u);
-
-  //  XX this is a departure from the general organization of this file
-  //
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): disk: plan\r\n", tac_u->eve_d);
-#endif
-
-  u3_disk_plan(pir_u->log_u, tac_u);
-
-  _pier_next(pir_u);
-}
-
-/* _pier_on_lord_work_bail(): event failure from worker.
-*/
-static void
-_pier_on_lord_work_bail(void* vod_p, u3_ovum* egg_u, u3_noun lud)
-{
-  u3_pier* pir_u = vod_p;
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: work: bail\r\n");
-#endif
-
-  u3_auto_bail(egg_u, lud);
-
-  _pier_next(pir_u);
-}
-
-/* _pier_on_lord_save(): worker (non-portable) snapshot complete.
-*/
-static void
-_pier_on_lord_save(void* vod_p)
-{
-  u3_pier* pir_u = vod_p;
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): lord: save\r\n", pir_u->god_u->eve_d);
-#endif
-
-  _pier_next(pir_u);
-}
-
-/* _pier_on_lord_pack(): worker state-export complete (portable snapshot).
-*/
-static void
-_pier_on_lord_pack(void* vod_p)
-{
-  u3_pier* pir_u = vod_p;
-
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): lord: pack\r\n", pir_u->god_u->eve_d);
-#endif
-
-  _pier_next(pir_u);
-}
-
-/* _pier_on_lord_exit(): worker shutdown.
-*/
-static void
-_pier_on_lord_exit(void* vod_p, c3_o ret_o)
-{
-  u3_pier* pir_u = vod_p;
-
-  if ( u3_peat_done == pir_u->sat_e ) {
-    //  XX dispose
-    //
-    // exit(0);
-    u3_term_log_exit();
-    //  XX no can do
-    //
-    uv_stop(u3L);
-  }
-  else {
-    //  XX print error
-    //  XX dispose
-    u3_pier_bail();
-  }
-}
-
-/* _pier_on_lord_live(): worker is ready.
-*/
-static void
-_pier_on_lord_live(void* vod_p)
-{
-  u3_pier* pir_u = vod_p;
   u3_lord* god_u = pir_u->god_u;
   u3_disk* log_u = pir_u->log_u;
+  u3_play* pay_u;
 
-  //  XX plan kelvin event
-  //
+  c3_assert(  (u3_psat_init == pir_u->sat_e)
+           || (u3_psat_boot == pir_u->sat_e) );
 
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): boot at mug %x\r\n", god_u->eve_d, god_u->mug_l);
-#endif
+  c3_assert( eve_d >  god_u->eve_d );
+  c3_assert( eve_d <= log_u->dun_d );
 
-  c3_assert( god_u->eve_d <= log_u->dun_d );
+  pir_u->sat_e = u3_psat_play;
+  pir_u->pay_u = pay_u = c3_calloc(sizeof(*pay_u));
+  pay_u->pir_u = pir_u;
+  pay_u->eve_d = eve_d;
+  pay_u->sen_d = god_u->eve_d;
 
-  if ( log_u->sen_d > log_u->dun_d ) {
-    c3_assert( u3_peat_boot == pir_u->sat_e );
-    //  will init on _disk_write_done
-    //
+  u3l_log("---------------- playback starting ----------------\r\n");
+  if ( (1ULL + god_u->eve_d) == eve_d ) {
+    u3l_log("pier: replaying event %" PRIu64 "\r\n", eve_d);
   }
   else {
-    c3_assert(  (u3_peat_boot == pir_u->sat_e)
-             || (u3_peat_init == pir_u->sat_e) );
-
-    if ( god_u->eve_d < log_u->dun_d ) {
-      _pier_play_init(pir_u);
-    }
-    else {
-      _pier_work_init(pir_u);
-    }
+    u3l_log("pier: replaying events %" PRIu64 "-%" PRIu64 "\r\n",
+            (c3_d)(1ULL + god_u->eve_d),
+            eve_d);
   }
 
-  _pier_next(pir_u);
+  u3_term_start_spinner(c3__play, c3n);
+
+  _pier_play(pay_u);
 }
 
 /* _pier_on_disk_read_done(): event log read success.
 */
 static void
-_pier_on_disk_read_done(void* vod_p, u3_info pay_u)
+_pier_on_disk_read_done(void* vod_p, u3_info fon_u)
 {
   u3_pier* pir_u = vod_p;
 
-  c3_assert(  (u3_peat_boot == pir_u->sat_e)
-           || (u3_peat_play == pir_u->sat_e) );
+  c3_assert( u3_psat_play == pir_u->sat_e );
 
-  _pier_play_plan(pir_u, pay_u);
-
-  _pier_next(pir_u);
+  _pier_play_plan(pir_u->pay_u, fon_u);
+  _pier_play(pir_u->pay_u);
 }
 
 /* _pier_on_disk_read_bail(): event log read failure.
@@ -778,7 +737,9 @@ _pier_on_disk_read_bail(void* vod_p, c3_d eve_d)
 {
   u3_pier* pir_u = vod_p;
 
-  // XX
+  c3_assert( u3_psat_play == pir_u->sat_e );
+
+  //  XX s/b play_bail_cb
   //  
   fprintf(stderr, "pier: disk read bail\r\n");
   u3_term_stop_spinner();
@@ -797,20 +758,22 @@ _pier_on_disk_write_done(void* vod_p, c3_d eve_d)
   fprintf(stderr, "pier: (%" PRIu64 "): db commit: complete\r\n", eve_d);
 #endif
 
-  if ( u3_peat_boot == pir_u->sat_e ) {
-    pir_u->fec_u.rel_d = eve_d;
-
-    //  wait if we're still committing the boot sequence
+  if ( u3_psat_boot == pir_u->sat_e ) {
+    //  lord already live
     //
-    if ( log_u->sen_d == log_u->dun_d ) {
-      _pier_play_init(pir_u);
+    if ( c3y == pir_u->god_u->liv_o ) {
+      //  XX print bootstrap commit complete
+      //  XX s/b boot_complete_cb
+      //
+      _pier_play_init(pir_u, log_u->dun_d);
     }
   }
   else {
-    c3_assert( u3_peat_work == pir_u->sat_e );
-  }
+    c3_assert(  (u3_psat_work == pir_u->sat_e)
+             || (u3_psat_done == pir_u->sat_e) );
 
-  _pier_next(pir_u);
+    _pier_work(pir_u->wok_u);
+  }
 }
 
 /* _pier_on_disk_write_bail(): event log write failure.
@@ -820,65 +783,136 @@ _pier_on_disk_write_bail(void* vod_p, c3_d eve_d)
 {
   u3_pier* pir_u = vod_p;
 
+  if ( u3_psat_boot == pir_u->sat_e ) {
+    //  XX nice message
+    //
+  }
+
   // XX
   //
   fprintf(stderr, "pier: disk write bail\r\n");
   u3_pier_bail();
 }
 
-/* _pier_loop_time(): set time.
+/* _pier_on_lord_slog(): debug printf from worker.
 */
 static void
-_pier_loop_time(u3_pier* pir_u)
+_pier_on_lord_slog(void* vod_p, c3_w pri_w, u3_noun tan)
 {
-  struct timeval tim_tv;
-  gettimeofday(&tim_tv, 0);
+  u3_pier* pir_u = vod_p;
 
-  // XX save to pier
-  //
-  u3v_time(u3_time_in_tv(&tim_tv));
-}
-
-/* _pier_loop_before_cb(): run on every loop iteration before i/o polling.
-*/
-static void
-_pier_loop_fore_cb(uv_prepare_t* pep_u)
-{
-  u3_pier* pir_u = pep_u->data;
-  _pier_loop_time(pir_u);
-}
-
-/* _pier_loop_afte_cb(): run on every loop iteration after i/o polling.
-*/
-static void
-_pier_loop_afte_cb(uv_check_t* cek_u)
-{
-  u3_pier* pir_u = cek_u->data;
-  _pier_next(pir_u);
-}
-
-/* _pier_loop_idle_cb(): run on next loop iteration.
-*/
-static void
-_pier_loop_idle_cb(uv_idle_t* idl_u)
-{
-  u3_pier* pir_u = idl_u->data;
-  _pier_next(pir_u);
-  uv_idle_stop(idl_u);
-}
-
-/* u3_pier_spin(): (re-)activate idle handler
-*/
-void
-u3_pier_spin(u3_pier* pir_u)
-{
-  if ( !uv_is_active((uv_handle_t*)&pir_u->idl_u) ) {
-    uv_idle_start(&pir_u->idl_u, _pier_loop_idle_cb);
+  if ( c3y == u3a_is_atom(tan) ) {
+    c3_c* tan_c = u3r_string(tan);
+    u3C.stderr_log_f(tan_c);
+    c3_free(tan_c);
+    u3z(tan);
+  }
+  else {
+    u3_pier_tank(0, pri_w, tan);
   }
 }
 
-static u3_auto*
-_pier_loop_init(u3_pier* pir_u);
+/* _pier_on_lord_peek(): namespace read response from worker.
+*/
+static void
+_pier_on_lord_peek(void* vod_p, u3_peek* pek_u, u3_noun dat)
+{
+  //  XX cache, invoke callback, dispose pek_u
+  //
+  u3m_p("lord peek", dat);
+  u3z(dat);
+}
+
+/* _pier_on_lord_save(): worker (non-portable) snapshot complete.
+*/
+static void
+_pier_on_lord_save(void* vod_p)
+{
+  u3_pier* pir_u = vod_p;
+
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): lord: save\r\n", pir_u->god_u->eve_d);
+#endif
+
+  // _pier_next(pir_u);
+}
+
+/* _pier_on_lord_pack(): worker state-export complete (portable snapshot).
+*/
+static void
+_pier_on_lord_pack(void* vod_p)
+{
+  u3_pier* pir_u = vod_p;
+
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): lord: pack\r\n", pir_u->god_u->eve_d);
+#endif
+
+  // if ( u3_psat_done == pir_u->sat_e ) {
+  //   fprintf(stderr, "snap cb exit\r\n");
+  //   u3_lord_exit(pir_u->god_u, 0);
+  // }
+  // else {
+    // _pier_next(pir_u);
+  // }
+}
+
+/* _pier_on_lord_exit(): worker shutdown.
+*/
+static void
+_pier_on_lord_exit(void* vod_p, c3_o ret_o)
+{
+  u3_pier* pir_u = vod_p;
+
+  if ( u3_psat_done == pir_u->sat_e ) {
+    if ( c3n == ret_o ) {
+      u3l_log("pier: serf shutdown dirty\r\n");
+    }
+  }
+  else {
+    u3l_log("pier: serf shutdown unexpected\r\n");
+    u3_pier_bail();
+  }
+}
+
+/* _pier_on_lord_live(): worker is ready.
+*/
+static void
+_pier_on_lord_live(void* vod_p)
+{
+  u3_pier* pir_u = vod_p;
+  u3_lord* god_u = pir_u->god_u;
+  u3_disk* log_u = pir_u->log_u;
+
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): boot at mug %x\r\n", god_u->eve_d, god_u->mug_l);
+#endif
+
+  c3_assert( god_u->eve_d <= log_u->dun_d );
+
+  if ( u3_psat_boot == pir_u->sat_e ) {
+    //  boot-sequence commit complete
+    //
+    if (  log_u->sen_d
+       && (log_u->sen_d == log_u->dun_d) ) {
+      //  XX print bootstrap commit complete
+      //  XX s/b boot_complete_cb
+      //
+      _pier_play_init(pir_u, log_u->dun_d);
+    }
+  }
+  else {
+    c3_assert( u3_psat_init == pir_u->sat_e );
+    c3_assert( log_u->sen_d == log_u->dun_d );
+
+    if ( god_u->eve_d < log_u->dun_d ) {
+      _pier_play_init(pir_u, log_u->dun_d);
+    }
+    else {
+      _pier_work_init(pir_u);
+    }
+  }
+}
 
 /* _pier_init(): create a pier, loading existing.
 */
@@ -890,30 +924,13 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
   u3_pier* pir_u = c3_calloc(sizeof(*pir_u));
 
   pir_u->pax_c = pax_c;
-  pir_u->sat_e = u3_peat_init;
+  pir_u->sat_e = u3_psat_init;
   pir_u->liv_o = c3n;
 
   // XX remove
   //
   pir_u->por_s = u3_Host.ops_u.por_s;
   pir_u->sav_u = c3_calloc(sizeof(u3_save));
-
-  //  initialize pre i/o polling handle
-  //
-  uv_prepare_init(u3L, &pir_u->pep_u);
-  pir_u->pep_u.data = pir_u;
-  uv_prepare_start(&pir_u->pep_u, _pier_loop_fore_cb);
-
-  //  initialize post i/o polling handle
-  //
-  uv_check_init(u3L, &pir_u->cek_u);
-  pir_u->cek_u.data = pir_u;
-  uv_check_start(&pir_u->cek_u, _pier_loop_afte_cb);
-
-  //  NB, not started
-  //
-  uv_idle_init(u3L, &pir_u->idl_u);
-  pir_u->idl_u.data = pir_u;
 
   //  initialize persistence
   //
@@ -932,11 +949,9 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
       c3_free(pir_u);
       return 0;
     }
-
-    pir_u->fec_u.rel_d = pir_u->log_u->dun_d;
   }
 
-  //  start the worker process
+  //  initialize compute
   //
   {
     //  XX load/set secrets
@@ -1004,8 +1019,6 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
     u3_pier_bail();
     exit(1);
   }
-
-  pir_u->car_u = _pier_loop_init(pir_u);
 
   u3z(pax);
 }
@@ -1125,7 +1138,7 @@ _pier_boot_plan(u3_pier* pir_u, u3_noun who, u3_noun ven, u3_noun pil)
 {
   u3_boot bot_u;
   {
-    pir_u->sat_e = u3_peat_boot;
+    pir_u->sat_e = u3_psat_boot;
     pir_u->fak_o = ( c3__fake == u3h(ven) ) ? c3y : c3n;
     u3r_chubs(0, 2, pir_u->who_d, who);
 
@@ -1185,6 +1198,8 @@ _pier_boot_plan(u3_pier* pir_u, u3_noun who, u3_noun ven, u3_noun pil)
     }
   }
 
+  u3_disk_boot_save(pir_u->log_u);
+
   u3z(bot_u.bot);
   u3z(bot_u.mod);
   u3z(bot_u.use);
@@ -1211,8 +1226,6 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
     exit(1);
   }
 
-  pir_u->car_u = _pier_loop_init(pir_u);
-
   u3z(pax);
 }
 
@@ -1230,18 +1243,27 @@ _pier_save_cb(void* vod_p, c3_d eve_d)
 
 /* u3_pier_save(): save a non-portable snapshot
 */
-void
+c3_o
 u3_pier_save(u3_pier* pir_u)
 {
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): save: plan\r\n", pir_u->god_u->eve_d);
 #endif
+  if ( u3_psat_play == pir_u->sat_e ) {
+    u3_lord_save(pir_u->god_u);
+    return c3y;
+  }
 
-  _pier_wall_plan(pir_u, 0, pir_u, _pier_save_cb);
+  if ( u3_psat_work == pir_u->sat_e ) {
+    _pier_wall_plan(pir_u, 0, pir_u, _pier_save_cb);
+    return c3y;
+  }
+
+  return c3n;
 }
 
 static void
-_pier_snap_cb(void* vod_p, c3_d eve_d)
+_pier_pack_cb(void* vod_p, c3_d eve_d)
 {
   u3_pier* pir_u = vod_p;
 
@@ -1254,93 +1276,60 @@ _pier_snap_cb(void* vod_p, c3_d eve_d)
 
 /* u3_pier_pack(): save a portable snapshot.
 */
-void
+c3_o
 u3_pier_pack(u3_pier* pir_u)
 {
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): snap: plan\r\n", pir_u->god_u->eve_d);
 #endif
 
-  _pier_wall_plan(pir_u, 0, pir_u, _pier_snap_cb);
+  if ( u3_psat_play == pir_u->sat_e ) {
+    u3_lord_pack(pir_u->god_u);
+    return c3y;
+  }
+
+  if ( u3_psat_work == pir_u->sat_e ) {
+    _pier_wall_plan(pir_u, 0, pir_u, _pier_pack_cb);
+    return c3y;
+  }
+
+  return c3n;
 }
 
+static void
+_pier_exit_work_cb(uv_handle_t* idl_u)
+{
+  u3_work* wok_u = idl_u->data;
+  c3_free(wok_u);
+}
+
+/* _pier_exit_cb(): synchronous shutdown.
+*/
 static void
 _pier_exit_cb(void* vod_p, c3_d eve_d)
 {
   u3_pier* pir_u = vod_p;
-  u3_lord_exit(pir_u->god_u, 0);
-}
 
-/* u3_pier_exit(): shutdown.
-*/
-void
-u3_pier_exit(u3_pier* pir_u)
-{
-  pir_u->sat_e = u3_peat_done;
-
-  //  XX moveme
-  //
-  {
-    c3_l cod_l = u3a_lush(c3__save);
-    u3_save_io_exit(pir_u);
-    u3a_lop(cod_l);
-  }
-
-
-  u3_pier_save(pir_u);
-  u3_disk_exit(pir_u->log_u);
-  u3_auto_exit(pir_u->car_u);
-  _pier_wall_plan(pir_u, 0, pir_u, _pier_exit_cb);
-}
-
-/* _pier_loop_init_pier(): initialize loop handlers.
-*/
-static u3_auto*
-_pier_loop_init(u3_pier* pir_u)
-{
-
-  _pier_loop_time(pir_u);
-
-  //  for i/o drivers that still use u3A->sen
-  //
-  u3v_numb();
-
-  //  XX moveme
-  //
-  {
-    c3_l cod_l = u3a_lush(c3__save);
-    u3_save_io_init(pir_u);
-    u3a_lop(cod_l);
-  }
-
-  return u3_auto_init(pir_u);
-}
-
-/* c3_rand(): fill a 512-bit (16-word) buffer.
-*/
-void
-c3_rand(c3_w* rad_w)
-{
-  if ( 0 != ent_getentropy(rad_w, 64) ) {
-    fprintf(stderr, "c3_rand getentropy: %s\n", strerror(errno));
-    //  XX review
+  if ( pir_u->wok_u ) {
+    u3_work* wok_u = pir_u->wok_u;
+    u3_auto_exit(wok_u->car_u);
+    //  XX confirm, libuv close callback are fired with a stack discipline
     //
-    u3_pier_bail();
+    uv_close((uv_handle_t*)&wok_u->pep_u, _pier_exit_work_cb);
+    uv_close((uv_handle_t*)&wok_u->cek_u, 0);
+    uv_close((uv_handle_t*)&wok_u->idl_u, 0);
+    pir_u->wok_u = 0;
   }
-}
+  
+  if ( pir_u->log_u ) {
+    u3_disk_exit(pir_u->log_u);
+    pir_u->log_u = 0;
+  }
 
-/* _pier_exit_done(): synchronously shutting down
-*/
-static void
-_pier_exit_done(u3_pier* pir_u)
-{
-  u3_disk_exit(pir_u->log_u);
-
-  if ( 0 != pir_u->god_u ) {
+  if ( pir_u->god_u ) {
     u3_lord_exit(pir_u->god_u, 0);
+    pir_u->god_u = 0;
   }
-
-  u3_auto_exit(pir_u->car_u);
 
   u3_term_log_exit();
 
@@ -1349,6 +1338,93 @@ _pier_exit_done(u3_pier* pir_u)
   //  XX no can do
   //
   uv_stop(u3L);
+}
+
+/* u3_pier_exit(): graceful shutdown.
+*/
+void
+u3_pier_exit(u3_pier* pir_u)
+{
+  // fprintf(stderr, "pier: exit\r\n");
+
+  switch ( pir_u->sat_e ) {
+    //  XX specifically handle init/done?
+    //
+    default: {
+      fprintf(stderr, "pier: unexpected exit: %u\r\n", pir_u->sat_e);
+      c3_assert(0);
+    }
+
+    case u3_psat_boot: {
+      //  XX properly dispose boot
+      //
+      c3_free(pir_u->bot_u);
+      pir_u->bot_u = 0;
+      _pier_exit_cb(pir_u, 0);
+    } break;
+
+    case u3_psat_play: {
+      //  XX dispose play q
+      //
+      c3_free(pir_u->pay_u);
+      pir_u->pay_u = 0;
+      _pier_exit_cb(pir_u, 0);
+    } break;
+
+    case u3_psat_work: {
+      _pier_wall_plan(pir_u, 0, pir_u, _pier_save_cb);
+      _pier_wall_plan(pir_u, 0, pir_u, _pier_exit_cb);
+
+      //  XX moveme
+      //
+      {
+        c3_l cod_l = u3a_lush(c3__save);
+        u3_save_io_exit(pir_u);
+        u3a_lop(cod_l);
+      }
+    } break;
+  }
+
+  u3K.len_w = 0;
+  pir_u->sat_e = u3_psat_done;
+}
+
+/* _pier_exit_done(): force synchronous shut down.
+*/
+static void
+_pier_exit_done(u3_pier* pir_u)
+{
+  switch ( pir_u->sat_e ) {
+    default: break;
+
+    case u3_psat_boot: {
+      //  XX properly dispose boot
+      //
+      c3_free(pir_u->bot_u);
+      pir_u->bot_u = 0;
+    } break;
+
+    case u3_psat_play: {
+      //  XX dispose play q
+      //
+      c3_free(pir_u->pay_u);
+      pir_u->pay_u = 0;
+    } break;
+
+    case u3_psat_work: {
+      //  XX moveme
+      //
+      {
+        c3_l cod_l = u3a_lush(c3__save);
+        u3_save_io_exit(pir_u);
+        u3a_lop(cod_l);
+      }
+    } break;
+  }
+
+  u3K.len_w = 0;
+  pir_u->sat_e = u3_psat_done;
+  _pier_exit_cb(pir_u, 0);
 }
 
 /* u3_pier_bail(): immediately shutdown.
@@ -1362,6 +1438,33 @@ u3_pier_bail(void)
 
   fflush(stdout);
   exit(1);
+}
+
+/* u3_pier_halt(): emergency release.
+*/
+void
+u3_pier_halt(void)
+{
+  if ( 0 != u3K.len_w ) {
+    u3_disk_exit(u3_pier_stub()->log_u);
+
+    //  we should only ever try this trick once
+    //
+    u3K.len_w = 0;
+  }
+}
+
+/* c3_rand(): fill a 512-bit (16-word) buffer.
+*/
+void
+c3_rand(c3_w* rad_w)
+{
+  if ( 0 != ent_getentropy(rad_w, 64) ) {
+    fprintf(stderr, "c3_rand getentropy: %s\n", strerror(errno));
+    //  XX review
+    //
+    u3_pier_bail();
+  }
 }
 
 /* _pier_dump_tape(): dump a tape, old style.  Don't do this.

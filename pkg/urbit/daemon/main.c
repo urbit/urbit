@@ -478,9 +478,7 @@ _stop_signal(c3_i int_i)
 {
   //  if we have a pier, unmap the event log before dumping core
   //
-  if ( 0 != u3K.len_w ) {
-    u3_disk_exit(u3_pier_stub()->log_u);
-  }
+  u3_pier_halt();
 }
 
 /*
