@@ -290,6 +290,24 @@
 
     /**  New pier system.
     **/
+      /* u3_ovum_news: u3_ovum lifecycle events
+      */
+        typedef enum {
+          u3_ovum_drop = 0,                 //  unplanned
+          u3_ovum_work = 1,                 //  begun
+          u3_ovum_done = 2                  //  complete
+        } u3_ovum_news;
+
+      struct _u3_ovum;
+
+      /* u3_ovum_peer: news callback
+      */
+        typedef void (*u3_ovum_peer)(struct _u3_ovum*, u3_ovum_news);
+
+      /* u3_ovum_bail: failure callback
+      */
+        typedef void (*u3_ovum_bail)(struct _u3_ovum*, u3_noun);
+
       /* u3_ovum: potential event
       */
         typedef struct _u3_ovum {
@@ -298,10 +316,14 @@
           u3_noun            tar;               //  target (in arvo)
           u3_noun            wir;               //  wire
           u3_noun            cad;               //  card
-          struct {                              //  spinner
+          struct {                              //  spinner:
             u3_atom          lab;               //    label
             c3_o           del_o;               //    delay (c3y)
           } pin_u;                              //
+          struct {                              //  optional callbacks:
+            u3_ovum_peer  news_f;               //    progress
+            u3_ovum_bail  bail_f;               //    failure
+          } cb_u;                               //
           struct _u3_ovum* pre_u;               //  previous ovum
           struct _u3_ovum* nex_u;               //  next ovum
           struct _u3_auto* car_u;               //  backpointer to i/o driver
@@ -500,12 +522,6 @@
           c3_m             nam_m;
           c3_o             liv_o;
           u3_auto_cb          io;  // XX io_u;
-          struct {
-            void (*drop_f)(struct _u3_auto*, u3_ovum*);
-            void (*work_f)(struct _u3_auto*, u3_ovum*);
-            void (*done_f)(struct _u3_auto*, u3_ovum*, c3_o);
-            void (*bail_f)(struct _u3_auto*, u3_ovum*, u3_noun);
-          } ev;
           struct _u3_ovum* ent_u;
           struct _u3_ovum* ext_u;
           struct _u3_auto* nex_u;
@@ -704,7 +720,7 @@
       /* u3_auto_done(): notify driver of [egg_u] completion.
       */
         void
-        u3_auto_done(u3_ovum* egg_u, c3_o wap_o);
+        u3_auto_done(u3_ovum* egg_u);
 
       /* u3_auto_bail(): notify driver that [egg_u] crashed.
       */
@@ -724,6 +740,13 @@
                      u3_noun    tar,
                      u3_noun    wir,
                      u3_noun    cad);
+
+      /* u3_auto_peer(): subscribe to updates.
+      */
+        void
+        u3_auto_peer(u3_ovum*      egg_u,
+                     u3_ovum_peer news_f,
+                     u3_ovum_bail bail_f);
 
       /* u3_disk_init(): load or create pier directories and event log.
       */

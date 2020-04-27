@@ -272,10 +272,7 @@ _pier_on_lord_work_done(void*    vod_p,
   //
   u3_disk_plan(pir_u->log_u, tac_u);
 
-  //  XX revise
-  //
-  u3_auto_done(egg_u, c3n);
-  u3_auto_drop(0, egg_u);
+  u3_auto_done(egg_u);
 
   _pier_gift_plan(pir_u->wok_u, gif_u);
   _pier_work(pir_u->wok_u);

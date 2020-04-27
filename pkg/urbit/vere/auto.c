@@ -41,6 +41,9 @@ u3_auto_plan(u3_auto* car_u,
   egg_u->pin_u.lab   = u3k(u3h(wir));
   egg_u->pin_u.del_o = c3y;
 
+  egg_u->cb_u.news_f = 0;
+  egg_u->cb_u.bail_f = 0;
+
   if ( !car_u->ent_u ) {
     c3_assert(!car_u->ext_u);
 
@@ -58,6 +61,17 @@ u3_auto_plan(u3_auto* car_u,
   u3_pier_spin(car_u->pir_u);
 
   return egg_u;
+}
+
+/* u3_auto_peer(): subscribe to updates.
+*/
+void
+u3_auto_peer(u3_ovum*      egg_u,
+             u3_ovum_peer news_f,
+             u3_ovum_bail bail_f)
+{
+  egg_u->cb_u.news_f = news_f;
+  egg_u->cb_u.bail_f = bail_f;
 }
 
 /* u3_auto_bail_slog(): print a bail notification.
@@ -106,9 +120,9 @@ u3_auto_bail(u3_ovum* egg_u, u3_noun lud)
 {
   //  optional
   //
-  if ( egg_u->car_u->ev.bail_f ) {
+  if ( egg_u->cb_u.bail_f ) {
     c3_l cod_l = u3a_lush(egg_u->car_u->nam_m);
-    egg_u->car_u->ev.bail_f(egg_u->car_u, egg_u, lud);
+    egg_u->cb_u.bail_f(egg_u, lud);
     u3a_lop(cod_l);
   }
   else {
@@ -120,20 +134,30 @@ u3_auto_bail(u3_ovum* egg_u, u3_noun lud)
   u3_auto_drop(0, egg_u);
 }
 
+/* _auto_news(): notify driver of ovum status
+*/
+static void
+_auto_news(u3_ovum* egg_u, u3_ovum_news new_e)
+{
+  // optional
+  //
+  if ( egg_u->cb_u.news_f ) {
+    c3_l cod_l = u3a_lush(egg_u->car_u->nam_m);
+    egg_u->cb_u.news_f(egg_u, new_e);
+    u3a_lop(cod_l);
+  }
+}
+
 /* u3_auto_done(): notify driver of [egg_u] completion.
 */
 void
-u3_auto_done(u3_ovum* egg_u, c3_o wap_o)
+u3_auto_done(u3_ovum* egg_u)
 {
-  //  optional
-  //
-  if ( egg_u->car_u->ev.done_f ) {
-    c3_l cod_l = u3a_lush(egg_u->car_u->nam_m);
-    egg_u->car_u->ev.done_f(egg_u->car_u, egg_u, wap_o);
-    u3a_lop(cod_l);
-  }
+  _auto_news(egg_u, u3_ovum_done);
 
-  //  XX dispose egg_u here?
+  //  XX confirm
+  //
+  u3_auto_drop(0, egg_u);
   //
 }
 
@@ -142,27 +166,7 @@ u3_auto_done(u3_ovum* egg_u, c3_o wap_o)
 void
 u3_auto_work(u3_ovum* egg_u)
 {
-  //  optional
-  //
-  if ( egg_u->car_u->ev.work_f ) {
-    c3_l cod_l = u3a_lush(egg_u->car_u->nam_m);
-    egg_u->car_u->ev.work_f(egg_u->car_u, egg_u);
-    u3a_lop(cod_l);
-  }
-}
-
-/* _auto_drop(): notify driver of dropped ovum.
-*/
-static void
-_auto_drop(u3_ovum* egg_u)
-{
-  // optional
-  //
-  if ( egg_u->car_u->ev.drop_f ) {
-    c3_l cod_l = u3a_lush(egg_u->car_u->nam_m);
-    egg_u->car_u->ev.drop_f(egg_u->car_u, egg_u->vod_p);
-    u3a_lop(cod_l);
-  }
+  _auto_news(egg_u, u3_ovum_work);
 }
 
 /* u3_auto_drop(): dequeue and dispose an ovum.
@@ -181,7 +185,7 @@ u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u)
   //  notify driver if not self-caused
   //
   if ( egg_u->car_u && ( car_u != egg_u->car_u ) ) {
-    _auto_drop(egg_u);
+    _auto_news(egg_u, u3_ovum_drop);
   }
 
   u3z(egg_u->pin_u.lab);
