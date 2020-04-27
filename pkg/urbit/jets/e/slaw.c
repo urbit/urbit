@@ -49,6 +49,18 @@
     return u3nc(0, total);
   }
 
+  // parsing @p:
+  //
+  // +slaw calls +fed:ag directly. +fed:ag:
+  //
+  // - parses the text first into a number.
+  // - runs fynd:ob, which is the scrambler restore structure. And +fynd is
+  //   unjetted.
+  //
+  // The actual +po stuff, like +ins:po, is jetted but it's jetted such that it
+  // pulls the tables out of the sample, so we can't just reuse it from other
+  // jets.
+
   u3_noun
   _parse_tas(u3_noun txt) {
     // For any symbol which matches, txt will return itself as a
