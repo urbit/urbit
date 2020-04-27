@@ -35,7 +35,7 @@ export class Root extends Component {
       state.contacts['/~/default'] : {};
 
     let groups = !!state.groups ? state.groups : {};
-    let s3Credentials = !!state.s3 ? state.s3 : {};
+    let s3 = !!state.s3 ? state.s3 : {};
 
     let invites =
       (!!state.invites && '/contacts' in state.invites) ?
@@ -213,7 +213,7 @@ export class Root extends Component {
                     ship={window.ship}
                     share={true}
                     rootIdentity={rootIdentity}
-                    s3Credentials={s3Credentials}
+                    s3={s3}
                   />
                 </Skeleton>
               );
@@ -262,7 +262,7 @@ export class Root extends Component {
                     path={groupPath}
                     ship={props.match.params.contact}
                     rootIdentity={rootIdentity}
-                    s3Credentials={s3Credentials}
+                    s3={s3}
                   />
                 </Skeleton>
               );
@@ -287,7 +287,7 @@ export class Root extends Component {
                     path="/~/default"
                     contact={me}
                     ship={window.ship}
-                    s3Credentials={s3Credentials}
+                    s3={s3}
                   />
                 </Skeleton>
               );

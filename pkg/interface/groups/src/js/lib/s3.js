@@ -1,24 +1,27 @@
 export default class S3Client {
   constructor() {
     this.s3 = null;
-    this.AWS = window.AWS;    
 
-    this.endpoint = new this.AWS.Endpoint("");
+    this.endpoint = "";
     this.accessKeyId = "";
     this.secretAccesskey = "";
   }
 
   setCredentials(endpoint, accessKeyId, secretAccessKey) {
-    this.AWS = window.AWS;
-    
-    this.endpoint = new this.AWS.Endpoint(endpoint);
+    if (!window.AWS) {
+      setTimeout(() => {
+        this.setCredentials(endpoint, accessKeyId, secretAccessKey);
+      }, 2000);
+      return;
+    }
+    this.endpoint = new window.AWS.Endpoint(endpoint);
     this.accessKeyId = accessKeyId;
     this.secretAccessKey = secretAccessKey;
 
     this.s3 = 
-      new this.AWS.S3({
+      new window.AWS.S3({
         endpoint: this.endpoint,
-        credentials: new this.AWS.Credentials({
+        credentials: new window.AWS.Credentials({
           accessKeyId: this.accessKeyId,
           secretAccessKey: this.secretAccessKey
         })
@@ -41,7 +44,7 @@ export default class S3Client {
         if (error) {
           reject({ error });
         } else {
-          resolve({ data });
+          resolve(data);
         }
       });
     });

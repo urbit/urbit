@@ -118,8 +118,7 @@ export class ContactCard extends Component {
           (state.avatarToSet === '') ||
           (
             Boolean(props.contact.avatar) &&
-            'url' in props.contact.avatar &&
-            state.avatarToSet === props.contact.avatar.url
+            state.avatarToSet === props.contact.avatar
           )
         ) {
           return false;
@@ -130,6 +129,7 @@ export class ContactCard extends Component {
             awaiting: true,
             type: 'Saving to group'
           }, (() => {
+            console.log(state.avatarToSet);
             api.contactEdit(props.path, ship, {
               avatar: {
                 url: state.avatarToSet
@@ -305,7 +305,7 @@ export class ContactCard extends Component {
       email: props.rootIdentity.email,
       phone: props.rootIdentity.phone,
       website: props.rootIdentity.website,
-      avatar: { url: props.rootIdentity.avatar },
+      avatar: !!props.rootIdentity.avatar ? { url: props.rootIdentity.avatar } : null,
       notes: props.rootIdentity.notes,
       color: uxToHex(props.rootIdentity.color)
     } : {
@@ -313,7 +313,7 @@ export class ContactCard extends Component {
       email: props.contact.email,
       phone: props.contact.phone,
       website: props.contact.website,
-      avatar: { url: props.contact.avatar },
+      avatar: !!props.contact.avatar ? { url: props.contact.avatar } : null,
       notes: props.contact.notes,
       color: props.contact.color
     };
@@ -364,6 +364,18 @@ export class ContactCard extends Component {
     }));
   }
 
+  uploadSuccess(url) {
+    this.setState({
+      avatarToSet: url
+    }, () => {
+      this.setField('avatar');
+    });
+  }
+
+  uploadError(error) {
+    //  no-op for now
+  }
+
   renderEditCard() {
     const { props, state } = this;
     // if this is our first edit in a new group, propagate from root identity
@@ -395,37 +407,40 @@ export class ContactCard extends Component {
     const hasAvatar =
       'avatar' in props.contact && props.contact.avatar !== null;
 
+    const s3Upload = (!props.share) ? (
+      <span className="w-20 fl pt1">
+        <S3Upload
+          className="fr pr3"
+          configuration={props.s3.configuration}
+          credentials={props.s3.credentials}
+          uploadSuccess={this.uploadSuccess.bind(this)}
+          uploadError={this.uploadError.bind(this)}
+        />
+      </span>
+    ) : (<span className="dn"></span>);
+
     const avatar = (hasAvatar)
-      ? <span>
-          <img className="dib h-auto"
-             width={128}
-             src={props.contact.avatar}
-          />
-          <EditElement
-            title="Avatar Image URL"
-            defaultValue={defaultValue.avatar}
-            onChange={this.avatarToSet}
-            onDeleteClick={() => this.setField('removeAvatar')}
-            onSaveClick={() => this.setField('avatar')}
-            showButtons={!props.share}
-          />
-        </span>
-      : <span>
-          <EditElement
-            title="Avatar Image URL"
-            defaultValue={''}
-            onChange={this.avatarToSet}
-            onDeleteClick={() => this.setField('removeAvatar')}
-            onSaveClick={() => this.setField('avatar')}
-            showButtons={!props.share}
-          />
-      </span>;
+      ? <img className="dib h-auto"
+           width={128}
+           src={props.contact.avatar}
+        />
+      : <span className="dn"></span>;
 
     return (
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl pb8">
         <div className="w-100 mw6 tc">
           {avatar}
-          <S3Upload s3Credentials={props.s3Credentials} />
+          <span className="cf db">
+            {s3Upload}
+            <EditElement
+              className="fr w-80"
+              defaultValue={defaultValue.avatar}
+              onChange={this.avatarToSet}
+              onDeleteClick={() => this.setField('removeAvatar')}
+              onSaveClick={() => this.setField('avatar')}
+              showButtons={!props.share}
+            />
+          </span>
           <Sigil
             ship={props.ship}
             size={128}
