@@ -116,6 +116,8 @@
     u3_noun u3we_rexp(u3_noun);
     u3_noun u3we_trip(u3_noun);
 
+    u3_noun u3we_slaw(u3_noun);
+
     u3_noun u3we_pfix(u3_noun);
     u3_noun u3we_plug(u3_noun);
     u3_noun u3we_pose(u3_noun);
