@@ -67,11 +67,6 @@ _hind_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 static void
 _hind_io_exit(u3_auto* car_u)
 {
-  //  XX moveme
-  //
-  c3_l cod_l = u3a_lush(c3__save);
-  u3_save_io_exit(car_u->pir_u);
-  u3a_lop(cod_l);
 }
 
 /* u3_hind_io_init():
@@ -86,14 +81,6 @@ u3_hind_io_init(u3_pier* pir_u)
   car_u->io.kick_f = _hind_io_kick;
   car_u->io.exit_f = _hind_io_exit;
   // car_u->ev.bail_f = ...;
-
-  //  XX moveme
-  //
-  {
-    c3_l cod_l = u3a_lush(c3__save);
-    u3_save_io_init(pir_u);
-    u3a_lop(cod_l);
-  }
 
   return car_u;
 }

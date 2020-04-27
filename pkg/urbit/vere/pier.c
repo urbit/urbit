@@ -20,8 +20,8 @@
 #include "all.h"
 #include "vere/vere.h"
 
-#define PIER_READ_BATCH 100ULL
-#define PIER_PLAY_BATCH 10ULL
+#define PIER_READ_BATCH 1000ULL
+#define PIER_PLAY_BATCH 100ULL
 #define PIER_WORK_BATCH 10ULL
 
 #undef VERBOSE_PIER
@@ -382,7 +382,7 @@ _pier_play_init(u3_pier* pir_u)
       }
       else {
         u3l_log("pier: replaying events %" PRIu64 "-%" PRIu64 "\r\n",
-                (1ULL + god_u->eve_d),
+                (c3_d)(1ULL + god_u->eve_d),
                 log_u->dun_d);
       }
 
@@ -544,9 +544,9 @@ _pier_on_lord_play_done(void* vod_p, u3_info fon_u, c3_l mug_l)
   u3_pier* pir_u = vod_p;
   c3_d     las_d = fon_u.ent_u->eve_d;
 
-#ifdef VERBOSE_PIER
+// #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): play: done\r\n", las_d);
-#endif
+// #endif
 
   //  XX optional
   //
@@ -1278,6 +1278,14 @@ u3_pier_exit(u3_pier* pir_u)
 {
   pir_u->sat_e = u3_peat_done;
 
+  //  XX moveme
+  //
+  {
+    c3_l cod_l = u3a_lush(c3__save);
+    u3_save_io_exit(pir_u);
+    u3a_lop(cod_l);
+  }
+
 
   u3_pier_save(pir_u);
   u3_disk_exit(pir_u->log_u);
@@ -1296,6 +1304,14 @@ _pier_loop_init(u3_pier* pir_u)
   //  for i/o drivers that still use u3A->sen
   //
   u3v_numb();
+
+  //  XX moveme
+  //
+  {
+    c3_l cod_l = u3a_lush(c3__save);
+    u3_save_io_init(pir_u);
+    u3a_lop(cod_l);
+  }
 
   return u3_auto_init(pir_u);
 }
