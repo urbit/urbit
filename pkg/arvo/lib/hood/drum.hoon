@@ -8,8 +8,7 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  part      {$drum $3 pith-2}                         ::
-++  part-2    {$drum $2 pith-2}                         ::
+++  part      {$drum $2 pith-2}                         ::
 ++  part-old  {$drum $1 pith-1}                         ::
 ::                                                      ::
 ++  pith-1                                              ::       pre-style
@@ -132,7 +131,7 @@
   |=  our/ship
   ^-  part
   :*  %drum
-      %3
+      %2
       eel=(deft-fish our)
       ray=~
       fur=~
