@@ -360,14 +360,6 @@ export class ChatInput extends Component {
             onChange={(e, d, v) => this.messageChange(e, d, v)}
           />
         </div>
-        <div style={{ height: '24px', width: '24px', flexBasis: 24, marginTop: 6 }}>
-          <img
-            style={{ filter: state.code && 'invert(100%)', height: '100%', width: '100%' }}
-            onClick={this.toggleCode}
-            src="/~chat/img/CodeEval.png"
-            className="contrast-10-d bg-white bg-none-d"
-          />
-        </div>
         <div className="ml2"
           style={{ height: '24px', width: '24px', flexBasis: 24, marginTop: 6 }}>
           <S3Upload
@@ -375,6 +367,14 @@ export class ChatInput extends Component {
             credentials={props.s3.credentials}
             uploadSuccess={this.uploadSuccess.bind(this)}
             uploadError={this.uploadError.bind(this)}
+          />
+        </div>
+        <div style={{ height: '24px', width: '24px', flexBasis: 24, marginTop: 6 }}>
+          <img
+            style={{ filter: state.code && 'invert(100%)', height: '100%', width: '100%' }}
+            onClick={this.toggleCode}
+            src="/~chat/img/CodeEval.png"
+            className="contrast-10-d bg-white bg-none-d"
           />
         </div>
       </div>

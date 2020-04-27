@@ -3,6 +3,6 @@
 ++  grab
   |%
   ++  noun  action
-  ++  json  |=(jon=^json (json-to-action jon))
+  ++  json  json-to-action
   --
 --

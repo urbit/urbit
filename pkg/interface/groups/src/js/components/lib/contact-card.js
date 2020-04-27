@@ -317,7 +317,7 @@ export class ContactCard extends Component {
       notes: props.contact.notes,
       color: props.contact.color
     };
-
+    
     const contact = {
       nickname: this.pickFunction(state.nickNameToSet, defaultVal.nickname),
       email: this.pickFunction(state.emailToSet, defaultVal.email),
@@ -325,8 +325,12 @@ export class ContactCard extends Component {
       website: this.pickFunction(state.websiteToSet, defaultVal.website),
       notes: this.pickFunction(state.notesToSet, defaultVal.notes),
       color: this.pickFunction(state.colorToSet, defaultVal.color),
-      avatar: this.pickFunction({ url: state.avatarToSet }, defaultVal.avatar)
+      avatar: this.pickFunction(
+        !!state.avatarToSet ? { url: state.avatarToSet } : null,
+        defaultVal.avatar
+      )
     };
+
     this.setState({ awaiting: true, type: 'Sharing with group' }, (() => {
       api.contactView.share(
         `~${props.ship}`, props.path, `~${window.ship}`, contact
@@ -404,43 +408,43 @@ export class ContactCard extends Component {
     let currentColor = state.colorToSet ? state.colorToSet : defaultColor;
     currentColor = uxToHex(currentColor);
 
-    const hasAvatar =
-      'avatar' in props.contact && props.contact.avatar !== null;
-
-    const s3Upload = (!props.share) ? (
-      <span className="w-20 fl pt1">
-        <S3Upload
-          className="fr pr3"
-          configuration={props.s3.configuration}
-          credentials={props.s3.credentials}
-          uploadSuccess={this.uploadSuccess.bind(this)}
-          uploadError={this.uploadError.bind(this)}
-        />
-      </span>
-    ) : (<span className="dn"></span>);
-
-    const avatar = (hasAvatar)
+    const avatar = ('avatar' in props.contact && props.contact.avatar !== null)
       ? <img className="dib h-auto"
            width={128}
            src={props.contact.avatar}
         />
       : <span className="dn"></span>;
 
+    const imageSetter = (!props.share) ? (
+      <span className="db">
+        <p className="f9 gray2 db pb1">Avatar image url</p>
+        <span className="cf db">
+          <span className="w-20 fl pt1">
+            <S3Upload
+              className="fr pr3"
+              configuration={props.s3.configuration}
+              credentials={props.s3.credentials}
+              uploadSuccess={this.uploadSuccess.bind(this)}
+              uploadError={this.uploadError.bind(this)}
+            />
+          </span>
+          <EditElement
+            className="fr w-80"
+            defaultValue={defaultValue.avatar}
+            onChange={this.avatarToSet}
+            onDeleteClick={() => this.setField('removeAvatar')}
+            onSaveClick={() => this.setField('avatar')}
+            showButtons={!props.share}
+          />
+        </span>
+      </span>
+    ) : (<span className="dn"></span>);
+
     return (
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl pb8">
         <div className="w-100 mw6 tc">
           {avatar}
-          <span className="cf db">
-            {s3Upload}
-            <EditElement
-              className="fr w-80"
-              defaultValue={defaultValue.avatar}
-              onChange={this.avatarToSet}
-              onDeleteClick={() => this.setField('removeAvatar')}
-              onSaveClick={() => this.setField('avatar')}
-              showButtons={!props.share}
-            />
-          </span>
+          {imageSetter}
           <Sigil
             ship={props.ship}
             size={128}
