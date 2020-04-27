@@ -1419,6 +1419,8 @@ _term_io_exit(u3_auto* car_u)
     u3_utty* uty_u = _term_main();
     uv_read_stop((uv_stream_t*)&(uty_u->pop_u));
   }
+
+  c3_free(car_u);
 }
 
 /* u3_term_io_init(): initialize terminal

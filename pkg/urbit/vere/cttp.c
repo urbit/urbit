@@ -1111,13 +1111,9 @@ _cttp_io_exit(u3_auto* car_u)
     }
   }
 
-  //  dispose of global resources
-  //
   h2o_timeout_dispose(u3L, &ctp_u->tim_u);
   SSL_CTX_free(ctp_u->tls_u);
-
-  //  XX dispose ctp_u
-  //
+  c3_free(ctp_u);
 }
 
 /* u3_cttp_io_init(): initialize http client I/O.

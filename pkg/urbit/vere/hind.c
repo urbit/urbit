@@ -67,6 +67,7 @@ _hind_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 static void
 _hind_io_exit(u3_auto* car_u)
 {
+  c3_free(car_u);
 }
 
 /* u3_hind_io_init():
