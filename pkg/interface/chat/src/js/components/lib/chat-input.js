@@ -8,6 +8,7 @@ import 'codemirror/addon/display/placeholder';
 
 import { Sigil } from '/components/lib/icons/sigil';
 import { ShipSearch } from '/components/lib/ship-search';
+import { S3Upload } from '/components/lib/s3-upload';
 
 import { uxToHex } from '/lib/util';
 
@@ -265,6 +266,20 @@ export class ChatInput extends Component {
     }
   }
 
+  uploadSuccess(url) {
+    const { props } = this;
+    props.api.chat.message(
+      props.station,
+      `~${window.ship}`,
+      Date.now(),
+      { url }
+    );
+  }
+
+  uploadError(error) {
+    //  no-op for now
+  }
+
   render() {
     const { props, state } = this;
 
@@ -352,9 +367,16 @@ export class ChatInput extends Component {
             src="/~chat/img/CodeEval.png"
             className="contrast-10-d bg-white bg-none-d"
           />
-
         </div>
-
+        <div className="ml2"
+          style={{ height: '24px', width: '24px', flexBasis: 24, marginTop: 6 }}>
+          <S3Upload
+            configuration={props.s3.configuration}
+            credentials={props.s3.credentials}
+            uploadSuccess={this.uploadSuccess.bind(this)}
+            uploadError={this.uploadError.bind(this)}
+          />
+        </div>
       </div>
     );
   }
