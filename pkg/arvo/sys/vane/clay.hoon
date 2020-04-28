@@ -5493,7 +5493,15 @@
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
     :+  %clay  %|
-    :~  domestic+&+rom.ruf
+    =/  domestic
+      %+  turn  (sort ~(tap by dos.rom.ruf) aor)
+      |=  [=desk =dojo]
+      :+  desk  %|
+      :~  ankh+&+ank.dom.dojo
+          mime+&+mim.dom.dojo
+          ford+&+fod.dom.dojo
+      ==
+    :~  domestic+|+domestic
         foreign+&+hoy.ruf
         :+  %object-store  %|
         :~  commits+&+hut.ran.ruf
