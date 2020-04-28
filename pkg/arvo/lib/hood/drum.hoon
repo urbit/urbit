@@ -332,26 +332,31 @@
 ++  se-adit                                           ::  update servers
   ^+  this
   |^
-  %+  reel
+  =/  servers=(list well:gall)
     (sort ~(tap in ray) sort-by-priorities)
-  |=  [=well:gall that=_this]
-  ^+  that
-  =/  =wire  [%drum p.well q.well ~]
+  |-
+  ?~  servers
+    this
+  =/  wel=well:gall
+    i.servers
+  =/  =wire  [%drum p.wel q.wel ~]
   =/  hig=(unit (unit server))
-    (~(get by fur) q.well)
-  ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.well syd.u.u.hig)))
-    that
+    (~(get by fur) q.wel)
+  ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))
+    this
   =.  fur
-    (~(put by fur) q.well ~)
-  =.  that
-    (se-text "activated app {(trip p.well)}/{(trip q.well)}")
-  %-  se-emit
-  [%pass wire %arvo %g %conf [our.hid q.well] our.hid p.well]
+    (~(put by fur) q.wel ~)
+  =.  this
+    (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
+  =.  this
+    %-  se-emit
+    [%pass wire %arvo %g %conf [our.hid q.wel] our.hid p.wel]
+  $(servers t.servers)
   ::
   ++  priorities
     ^-  (list (set @))
     :~
-      ::  Setup stores first: depended on, but never depending
+      (sy ~[%dojo])  ::  ensure dojo connects first
       %-  sy
       :~  %permission-store
           %chat-store
@@ -361,8 +366,7 @@
           %invite-store
           %metadata-store
       ==
-      :: ensure chat-cli can sub to invites
-      (sy ~[%chat-hook])
+      (sy ~[%chat-hook])  :: ensure chat-cli can sub to invites
     ==
   ++  sort-by-priorities
     =/  priorities  priorities
@@ -385,10 +389,7 @@
   %+  roll
     %+  sort
       ~(tap in eel)
-    |=  [[@ a=term] [@ b=term]]
-    ?:  =(a %dojo)  %.y
-    ?:  =(b %dojo)  %.n
-    (aor a b)
+    |=([[@ a=term] [@ b=term]] (aor a b))
   =<  .(con +>)
   |:  $:{gil/gill:gall con/_.}  ^+  con
   =.  +>.$  con
