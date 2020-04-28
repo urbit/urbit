@@ -924,10 +924,20 @@ static c3_c* _141_tri__cofl_ha[] = {
 };
 
 
+static u3j_harm _141_tri__ob_feis_a[] = {{".2", u3wc_ob_feis}, {}};
+static u3j_harm _141_tri__ob_tail_a[] = {{".2", u3wc_ob_tail}, {}};
+static u3j_harm _141_tri__ob_fee_a[] = {{".2", u3wc_ob_fee}, {}};
+static u3j_harm _141_tri__ob_feen_a[] = {{".2", u3wc_ob_feen}, {}};
+static u3j_harm _141_tri__ob_fe_a[] = {{".2", u3wc_ob_fe}, {}};
 static u3j_harm _141_tri__ob_fen_a[] = {{".2", u3wc_ob_fen}, {}};
 static u3j_harm _141_tri__ob_eff_a[] = {{".2", u3wc_ob_eff}, {}};
 static u3j_core _141_tri__ob_d[] =
-  { { "fen", 7, _141_tri__ob_fen_a, 0, 0 },
+  { { "feis", 7, _141_tri__ob_feis_a, 0, 0 },
+    { "tail", 7, _141_tri__ob_tail_a, 0, 0 },
+    { "fee", 7, _141_tri__ob_fee_a, 0, 0 },
+    { "feen", 7, _141_tri__ob_feen_a, 0, 0 },
+    { "fe", 7, _141_tri__ob_fe_a, 0, 0 },
+    { "fen", 7, _141_tri__ob_fen_a, 0, 0 },
     { "eff", 7, _141_tri__ob_eff_a, 0, 0 },
     {}
   };
