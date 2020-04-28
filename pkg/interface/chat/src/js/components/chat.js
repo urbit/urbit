@@ -29,6 +29,7 @@ export class ChatScreen extends Component {
     this.state = {
       numPages: 1,
       scrollLocked: false,
+      read: props.read,
       // only for FF
       lastScrollHeight: null,
     };
@@ -40,6 +41,8 @@ export class ChatScreen extends Component {
     this.onScroll = this.onScroll.bind(this);
 
     this.unreadMarker = null;
+    this.scrolledToMarker = false;
+    this.setUnreadMarker = this.setUnreadMarker.bind(this);
 
     moment.updateLocale('en', {
       calendar: {
@@ -73,8 +76,13 @@ export class ChatScreen extends Component {
         this.askForMessages();
       }
 
+      this.unreadMarker = null;
+      this.scrolledToMarker = false;
       this.setState(
-        { scrollLocked: false },
+        {
+          scrollLocked: false,
+          read: props.read,
+        },
         () => {
           this.scrollToBottom();
         }
@@ -88,6 +96,11 @@ export class ChatScreen extends Component {
       props.envelopes.length >= prevProps.envelopes.length + 10
     ) {
       this.hasAskedForMessages = false;
+    } else if(props.length !== prevProps.length &&
+       prevProps.length === prevProps.read
+    ) {
+      this.setState({ read: props.length })
+      this.props.api.chat.read(this.props.station);
     }
 
     if (
@@ -183,6 +196,7 @@ export class ChatScreen extends Component {
         e.target.scrollHeight - Math.round(e.target.scrollTop) ===
         e.target.clientHeight
       ) {
+        this.dismissUnread();
         this.setState({
           numPages: 1,
           scrollLocked: false,
@@ -191,6 +205,7 @@ export class ChatScreen extends Component {
     } else if (navigator.userAgent.includes("Safari")) {
       // Safari
       if (e.target.scrollTop === 0) {
+        this.dismissUnread();
         this.setState({
           numPages: 1,
           scrollLocked: false
@@ -212,20 +227,20 @@ export class ChatScreen extends Component {
     } else {
       console.log("Your browser is not supported.");
     }
-    if(!!this.unreadMarker) {
-      if(
-        !navigator.userAgent.includes('Firefox') &&
-         e.target.scrollHeight - e.target.scrollTop - (e.target.clientHeight * 1.5) + this.unreadMarker.offsetTop > 50
-      ) {
-        this.props.api.chat.read(this.props.station);
-      } else if(navigator.userAgent.includes('Firefox') &&
-        this.unreadMarker.offsetTop - e.target.scrollTop - (e.target.clientHeight / 2) > 0
-      ) {
-        this.props.api.chat.read(this.props.station);
-      }
+  }
 
-
+  setUnreadMarker(ref) {
+    if(ref && !this.scrolledToMarker) {
+      this.setState({ scrollLocked: true }, () => {
+        ref.scrollIntoView({ block: 'center' });
+      });
+      this.scrolledToMarker = true;
     }
+    this.unreadMarker = ref;
+  }
+
+  dismissUnread() {
+    this.props.api.chat.read(this.props.station);
   }
 
   chatWindow(unread) {
@@ -282,11 +297,11 @@ export class ChatScreen extends Component {
           group={props.association}
         />
       );
-      if(unread > 0 && i === unread) {
+      if(unread > 0 && i === unread - 1) {
         return (
           <>
             {messageElem}
-            <div key={'unreads'+ msg.uid} ref={ref => (this.unreadMarker = ref)} className="mv2 green2 flex items-center f9">
+            <div key={'unreads'+ msg.uid} ref={this.setUnreadMarker} className="mv2 green2 flex items-center f9">
               <hr className="ma0 w2 b--green2 bt-0" />
               <p className="mh4">
                 New messages below
@@ -401,9 +416,12 @@ export class ChatScreen extends Component {
           : props.station.substr(1);
     }
 
-    const unread = props.length - props.read;
+    const unread = props.length - state.read;
 
     const unreadMsg = unread > 0 && messages[unread - 1];
+
+
+    const showUnreadNotice = props.length !== props.read && props.read === state.read;
 
     return (
       <div
@@ -440,11 +458,11 @@ export class ChatScreen extends Component {
             api={props.api}
           />
         </div>
-        { !!unreadMsg && (
+        { !!unreadMsg && showUnreadNotice && (
           <UnreadNotice
             unread={unread}
             unreadMsg={unreadMsg}
-            onRead={() => props.api.chat.read(props.station)}
+            onRead={() => this.dismissUnread()}
           />
         ) }
         {this.chatWindow(unread)}
