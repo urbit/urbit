@@ -31,7 +31,6 @@ export class ChatScreen extends Component {
       scrollLocked: false,
       // only for FF
       lastScrollHeight: null,
-      scrollBottom: true
     };
 
     this.hasAskedForMessages = false;
@@ -91,19 +90,14 @@ export class ChatScreen extends Component {
       this.hasAskedForMessages = false;
     }
 
-    // FF logic
     if (
-      navigator.userAgent.includes("Firefox") &&
       (props.length !== prevProps.length ||
        props.envelopes.length !== prevProps.envelopes.length ||
        getNumPending(props) !== this.lastNumPending ||
        state.numPages !== prevState.numPages)
     ) {
-      if(state.scrollBottom) {
-        setTimeout(() => {
-          this.scrollToBottom();
-        })
-      } else {
+      this.scrollToBottom();
+      if(navigator.userAgent.includes("Firefox")) {
         this.recalculateScrollTop();
       }
 
@@ -192,10 +186,7 @@ export class ChatScreen extends Component {
         this.setState({
           numPages: 1,
           scrollLocked: false,
-          scrollBottom: true
         });
-      } else if (navigator.userAgent.includes('Firefox')) {
-        this.setState({ scrollBottom: false });
       }
     } else if (navigator.userAgent.includes("Safari")) {
       // Safari
