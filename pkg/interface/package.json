@@ -9,7 +9,7 @@
     "classnames": "^2.2.6",
     "codemirror": "^5.51.0",
     "formik": "^2.1.4",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "moment": "^2.20.1",
     "mousetrap": "^1.6.5",
     "prop-types": "^15.7.2",
@@ -49,5 +49,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "MIT"
 }
