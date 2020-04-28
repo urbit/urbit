@@ -3578,7 +3578,6 @@
     =.  ank.dom  ankh
     =^  mim  ford-cache.args
       (checkout-mime args deletes ~(key by changes))
-    ~&  mim+~(key by mim)
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
     ::
