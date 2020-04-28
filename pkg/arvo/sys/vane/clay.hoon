@@ -2699,7 +2699,7 @@
     ++  get-value
       |=  =path
       ^-  [cage state]
-      ~|  %error-validating-path^path
+      ~|  %error-validating^path
       ?^  got=(~(get by baked.nub) path)
         [u.got nub]
       =;  [res=cage bun=state]
@@ -2715,7 +2715,7 @@
             [p.u.change nub]
           ~|  %ugly-lobe^p.u.change^path
           (lobe-to-page p.u.change)
-        =^  cage  nub  (validate-path path page)
+        =^  cage  nub  (validate-page path page)
         [cage nub]
       ?<  (~(has in deletes) path)
       :_(nub (need (~(get an ankh) path)))
@@ -2819,6 +2819,11 @@
       |=  [a=mark b=mark]
       ^-  [tube state]
       ~|  error-building-cast+[a b]
+      ?:  =([%mime %hoon] [a b])
+        :_  nub
+        |=  sam=vase
+        =+  !<(=mime sam)
+        !>(q.q.mime)
       ?^  got=(~(get by casts.cache.nub) [a b])
         =?  stack.nub  ?=(^ stack.nub)
           stack.nub(i (~(uni in i.stack.nub) dez.u.got))
@@ -2882,9 +2887,10 @@
         [[p q.q]:cage nub]
       ==
     ::
-    ++  validate-path
+    ++  validate-page
       |=  [=path =page]
       ^-  [cage state]
+      ~|  validate-page-fail+path^from+p.page
       =/  mak=mark  (head (flop path))
       ?:  =(mak p.page)
         (page-to-cage page)
@@ -2897,6 +2903,8 @@
       ^-  [cage state]
       ?:  =(%hoon p.page)
         :_(nub [%hoon -:!>(*@t) q.page])
+      ?:  =(%mime p.page)
+        :_(nub [%mime !>(;;(mime q.page))])
       =^  =dais  nub  (get-mark p.page)
       :_(nub [p.page (vale:dais q.page)])
     ::
@@ -3086,15 +3094,11 @@
       ?~  paz  ~|(no-file+pre^pax !!)
       =/  pux=path  pre^(snoc i.paz %hoon)
       ?:  (~(has in deletes) pux)
-        ~&  path-in-deletes+pux
         $(paz t.paz)
       ?:  (~(has by changes) pux)
-        ~&  path-in-changes+pux
         pux
       ?^  (~(get an ankh) pux)
-        ~&  path-in-ankh+pux
         pux
-      ~&  path-not-in-ankh+pux
       $(paz t.paz)
     --
   --
