@@ -25,7 +25,7 @@ data Exp a
     | Lit Nat
     | Bol Bool
     | Str Text
-    | Fix (Scope () Exp a)
+    | Fix (Exp a)
   deriving (Functor, Foldable, Traversable)
 
 data AST
@@ -52,7 +52,9 @@ deriveOrd1  ''Exp
 deriveRead1 ''Exp
 deriveShow1 ''Exp
 
-instance Show a => Show (Exp a) where showsPrec = showsPrec1
+deriving instance Eq a => Eq (Exp a)
+deriving instance Ord a => Ord (Exp a)
+deriving instance Show a => Show (Exp a)
 
 instance Applicative Exp where
   pure = Var
@@ -64,7 +66,7 @@ instance Monad Exp where
   Lam b     >>= f = Lam (b >>>= f)
   App x y   >>= f = App (x >>= f) (y >>= f)
   Jet n t b >>= f = Jet n t (b >>= f)
-  Fix b     >>= f = Fix (b >>>= f)
+  Fix b     >>= f = Fix (b >>= f)
   Con x y   >>= f = Con (x >>= f) (y >>= f)
   Iff c t e >>= f = Iff (c >>= f) (t >>= f) (e >>= f)
   Cas x l r >>= f = Cas (x >>= f) (l >>>= f) (r >>>= f)
@@ -126,7 +128,7 @@ bind = go
     ASig                   -> Sig
     ACon x y               -> Con (go x) (go y)
     AJet r n b             -> Jet r n (go b)
-    AFix n b               -> Fix (abstract1 n (go b))
+    AFix n b               -> Fix (Lam (abstract1 n (go b)))
     ACas x (ln, l) (rn, r) -> cas x ln l rn r
     AIff c t       e       -> Iff (go c) (go t) (go e)
     ALit n                 -> Lit n
@@ -135,6 +137,35 @@ bind = go
 
   cas x ln l rn r = Cas (go x) (abstract1 ln (go l)) (abstract1 rn (go r))
 
+unbind :: Exp Text -> AST
+unbind = go ("xyzpqrs" <> ['a'..]) id
+ where
+  go :: [Char] -> (a -> Text) -> Exp a -> AST
+  go vars f = \case
+    Lam b -> ALam v (go vs f' (fromScope b))
+    Var x -> AVar (f x)
+    App x y -> AApp (go vars f x) (go vars f y)
+    Jet n t b -> AJet n t (go vars f b)
+    Sig -> ASig
+    Con x y -> ACon (go vars f x) (go vars f y)
+    Let x b   -> ALet v (go vars f x) (go vs f' (fromScope b))
+    Cas x l r -> ACas (go vars f x) (v, go vs f' (fromScope l)) (v, go vs f' (fromScope r))
+    Iff c t e -> AIff (go vars f c) (go vars f t) (go vars f e)
+    Lit n -> ALit n
+    Bol b -> ABol b
+    Str t -> AStr t
+    Fix (Lam b) -> AFix v (go vs f' (fromScope b))
+    Fix _       -> error "fix-no-lam"
+   where
+
+    f' = \case
+      B () -> v
+      F fv -> f fv
+
+    v :: Text
+    vs :: [Char]
+    (v, vs) = case vars of v:vs -> (singleton v,vs)
+                           _    -> ("x", [])
 
 --------------------------------------------------------------------------------
 

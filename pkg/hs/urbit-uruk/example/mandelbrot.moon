@@ -572,6 +572,8 @@
   |=  (fp-width fp-height width-pixels y)
   =/  ig  (trace ['line' y])
   %+  turn  width-pixels
+  ::  |=  x
+  ::  (calc-pixel (to-fp x) (to-fp y) fp-width fp-height)
   (mandelbrot-pixel fp-width fp-height y)
 
 =/  mandelbrot
@@ -649,4 +651,5 @@
   build-ppm-line
 
 :: (build-ppm 1000 1000) takes just over a minute.
-(build-ppm 1000 1000)
+:: (build-ppm 1000 1000)
+(build-ppm 1 1)
