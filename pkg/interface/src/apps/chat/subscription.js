@@ -1,21 +1,17 @@
-import { api } from '/api';
-import { store } from '/store';
-
-import urbitOb from 'urbit-ob';
-
+import api from './api';
+import store from './store';
 
 export class Subscription {
-
   constructor() {
     this.firstRoundSubscriptionComplete = false;
   }
 
-  start() {
+  start(channel) {
     if (api.authTokens) {
       this.firstRoundSubscription();
-      window.urb.setOnChannelError(this.onChannelError.bind(this));
+      channel.setOnChannelError(this.onChannelError.bind(this));
     } else {
-      console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
+      console.error('~~~ ERROR: Must set api.authTokens before operation ~~~');
     }
   }
 
@@ -25,7 +21,7 @@ export class Subscription {
     this.firstRoundSubscriptionComplete = false;
     setTimeout(2000, () => {
       store.handleEvent({
-        data: { clear : true}
+        data: { clear : true }
       });
       this.start();
     });
@@ -67,14 +63,14 @@ export class Subscription {
   fetchMessages(start, end, path) {
     console.log(start, end, path);
     fetch(`/~chat/paginate/${start}/${end}${path}`)
-      .then((response) => response.json())
+      .then(response => response.json())
       .then((json) => {
         store.handleEvent({
           data: json
         });
       });
   }
-
 }
 
-export let subscription = new Subscription();
+const subscription = new Subscription();
+export default subscription;

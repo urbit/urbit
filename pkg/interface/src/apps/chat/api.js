@@ -1,13 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import { uuid } from '/lib/util';
-import { store } from '/store';
-
+import { uuid } from '../../lib/util';
+import store from './store';
 
 class UrbitApi {
-  setAuthTokens(authTokens) {
+  setAuthTokens(authTokens, channel) {
     this.authTokens = authTokens;
+    this.channel = channel;
     this.bindPaths = [];
 
     this.groups = {
@@ -38,9 +37,10 @@ class UrbitApi {
   }
 
   bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
+    console.log(this.channel);
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.subscriptionId = window.urb.subscribe(ship, app, path,
+    window.subscriptionId = this.channel.subscribe(ship, app, path,
       (err) => {
         fail(err);
       },
@@ -60,7 +60,7 @@ class UrbitApi {
 
   action(appl, mark, data) {
     return new Promise((resolve, reject) => {
-      window.urb.poke(ship, appl, mark, data,
+      this.channel.poke(ship, appl, mark, data,
         (json) => {
           resolve(json);
         },
@@ -83,7 +83,7 @@ class UrbitApi {
   }
 
   groupsAction(data) {
-    return this.action("group-store", "group-action", data);
+    return this.action('group-store', 'group-action', data);
   }
 
   groupAdd(members, path) {
@@ -103,11 +103,11 @@ class UrbitApi {
   }
 
   chatAction(data) {
-    this.action("chat-store", "json", data);
+    this.action('chat-store', 'json', data);
   }
 
   chatMessage(path, author, when, letter) {
-    let data = {
+    const data = {
       message: {
         path,
         envelope: {
@@ -120,9 +120,9 @@ class UrbitApi {
       }
     };
 
-    this.action("chat-hook", "json", data).then(() => {
+    this.action('chat-hook', 'json', data).then(() => {
       this.chatRead(path);
-    })
+    });
     data.message.envelope.author = data.message.envelope.author.substr(1);
     this.addPendingMessage(data.message);
   }
@@ -131,9 +131,8 @@ class UrbitApi {
     this.chatAction({ read: { path } });
   }
 
-
   chatHookAddSynced(ship, path, askHistory) {
-    return this.action("chat-hook", "chat-hook-action", {
+    return this.action('chat-hook', 'chat-hook-action', {
       'add-synced': {
         ship,
         path,
@@ -143,7 +142,7 @@ class UrbitApi {
   }
 
   chatViewAction(data) {
-    return this.action("chat-view", "json", data);
+    return this.action('chat-view', 'json', data);
   }
 
   chatViewCreate(
@@ -178,18 +177,18 @@ class UrbitApi {
   }
 
   chatViewGroupify(path, group = null, inclusive = false) {
-    let action = { groupify: { 'app-path': path, existing: null } };
+    const action = { groupify: { 'app-path': path, existing: null } };
     if (group) {
       action.groupify.existing = {
         'group-path': group,
         inclusive: inclusive
-      }
+      };
     }
     return this.chatViewAction(action);
   }
 
   inviteAction(data) {
-    this.action("invite-store", "json", data);
+    this.action('invite-store', 'json', data);
   }
 
   inviteAccept(uid) {
@@ -211,17 +210,17 @@ class UrbitApi {
   }
 
   metadataAction(data) {
-    return this.action("metadata-hook", "metadata-action", data);
+    return this.action('metadata-hook', 'metadata-action', data);
   }
 
   metadataAdd(appPath, groupPath, title, description, dateCreated, color) {
-    let creator = `~${window.ship}`
+    const creator = `~${window.ship}`;
     return this.metadataAction({
       add: {
-        "group-path": groupPath,
+        'group-path': groupPath,
         resource: {
-          "app-path": appPath,
-          "app-name": "chat"
+          'app-path': appPath,
+          'app-name': 'chat'
         },
         metadata: {
           title,
@@ -231,7 +230,7 @@ class UrbitApi {
           creator
         }
       }
-    })
+    });
   }
 
   sidebarToggle() {
@@ -255,9 +254,9 @@ class UrbitApi {
           selected: selected
         }
       }
-    })
+    });
   }
 }
 
-export let api = new UrbitApi();
-// window.api = api;
+const api = new UrbitApi();
+export default api;

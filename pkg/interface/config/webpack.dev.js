@@ -36,7 +36,7 @@ module.exports = {
   //   historyApiFallback: true
   // },
   plugins: [
-    new CleanWebpackPlugin(),
+    // new CleanWebpackPlugin(),
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',
     //   template: './public/index.html',
@@ -48,4 +48,7 @@ module.exports = {
     path: path.resolve(urbitrc.URBIT_PIERS[0] + '/app/launch/', 'js'),
     publicPath: '/'
   },
+  optimization: {
+    minimize: false
+  }
 };

@@ -1,11 +1,10 @@
-import { InitialReducer } from '/reducers/initial';
-import { ContactUpdateReducer } from '/reducers/contact-update';
-import { ChatUpdateReducer } from '/reducers/chat-update';
-import { InviteUpdateReducer } from '/reducers/invite-update';
-import { PermissionUpdateReducer } from '/reducers/permission-update';
-import { MetadataReducer } from '/reducers/metadata-update.js';
-import { LocalReducer } from '/reducers/local.js';
-
+import InitialReducer from '../../reducers/initial';
+import ContactUpdateReducer from '../../reducers/contact-update';
+import ChatUpdateReducer from '../../reducers/chat-update';
+import InviteUpdateReducer from '../../reducers/invite-update';
+import PermissionUpdateReducer from '../../reducers/permission-update';
+import MetadataReducer from '../../reducers/metadata-update';
+import LocalReducer from '../../reducers/local';
 
 class Store {
   constructor() {
@@ -51,7 +50,6 @@ class Store {
       return;
     }
 
-    console.log(json);
     this.initialReducer.reduce(json, this.state);
     this.permissionUpdateReducer.reduce(json, this.state);
     this.contactUpdateReducer.reduce(json, this.state);
@@ -64,5 +62,5 @@ class Store {
   }
 }
 
-export let store = new Store();
-window.store = store;
+const store = new Store();
+export default store;
