@@ -26,7 +26,7 @@ let
   urbit = pkgs.stdenv.mkDerivation {
     inherit name meta;
     exename = name;
-    src     = ../../../pkg/urbit;
+    src     = ../../../pkg/urbit-serf;
     nativeBuildInputs = deps ++ vendor;
 
     configurePhase = ''
@@ -38,8 +38,7 @@ let
       make test
 
       mkdir -p $out/bin
-      cp ./build/urbit $out/bin/$exename
-      cp ./build/urbit-worker $out/bin/$exename-worker
+      cp ./build/urbit-serf $out/bin/$exename-serf
     '';
 
     # See https://github.com/NixOS/nixpkgs/issues/18995

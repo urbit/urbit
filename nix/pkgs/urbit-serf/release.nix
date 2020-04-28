@@ -2,7 +2,7 @@
 
 {
   ent,
-  name ? "urbit",
+  name ? "urbit-serf",
   debug ? false,
   ge-additions
 }:
@@ -30,7 +30,7 @@ env.make_derivation {
 
   name              = "${name}-${env_name}";
   exename           = name;
-  src               = ../../../pkg/urbit;
+  src               = ../../../pkg/urbit-serf;
   cross_inputs      = crossdeps ++ vendor ++ [ ent ];
   builder           = ./release.sh;
 }

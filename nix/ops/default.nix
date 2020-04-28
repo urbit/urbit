@@ -6,7 +6,7 @@ let
   arvo         = tlon.arvo;
   arvo-ropsten = tlon.arvo-ropsten;
   herb         = tlon.herb;
-  urbit        = if debug then tlon.urbit-debug else tlon.urbit;
+  urbit        = if debug then tlon.urbit-serf-debug else tlon.urbit-serf;
 
   bootbrass = ../../bin/brass.pill;
   bootsolid = ../../bin/solid.pill;

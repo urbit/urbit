@@ -15,15 +15,15 @@ let
   };
 
   mkUrbit = { debug }:
-    import ./urbit {
+    import ./urbit-serf {
       inherit pkgs ent debug ge-additions;
       inherit (deps) argon2 murmur3 uv ed25519 sni scrypt softfloat3;
       inherit (deps) secp256k1 h2o ivory-header ca-header;
     };
 
-  urbit       = mkUrbit { debug = false; };
-  urbit-debug = mkUrbit { debug = true; };
+  urbit-serf       = mkUrbit { debug = false; };
+  urbit-serf-debug = mkUrbit { debug = true; };
 
 in
 
-{ inherit ent ge-additions arvo arvo-ropsten herb urbit urbit-debug; }
+{ inherit ent ge-additions arvo arvo-ropsten herb urbit-serf urbit-serf-debug; }
