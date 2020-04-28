@@ -566,6 +566,52 @@
   ^-  form:m
   |=  clad-input
   [[path note]~ ~ %done ~]
+::  By convention: paf == (weld pax pat)
+::
+++  mode-to-commit
+  |=  [hat=(map path lobe) pax=path all=? mod=mode]
+  ^-  [deletes=(set path) changes=(map path cage)]
+  =/  deletes
+    %-  silt
+    %+  turn
+      ^-  (list path)
+      %+  weld
+        ^-  (list path)
+        %+  murn  mod
+        |=  [pat=path mim=(unit mime)]
+        ^-  (unit path)
+        ?^  mim
+          ~
+        `pat
+      ^-  (list path)
+      ?.  all
+        ~
+      =+  mad=(malt mod)
+      =+  len=(lent pax)
+      =/  descendants=(list path)
+        %+  turn
+          %+  skim  ~(tap by hat)
+          |=  [paf=path lob=lobe]
+          =(pax (scag len paf))
+        |=  [paf=path lob=lobe]
+        (slag len paf)
+      %+  skim
+        descendants
+      |=  pat=path
+      (~(has by mad) pat)
+    |=  pat=path
+    (weld pax pat)
+  ::
+  =/  changes
+    %-  malt
+    %+  murn  mod
+    |=  [pat=path mim=(unit mime)]
+    ^-  (unit [path cage])
+    ?~  mim
+      ~
+    `[(weld pax pat) %mime !>(u.mim)]
+  ::
+  [deletes changes]
 ::
 ::  Wait for ford to respond
 ::
@@ -2162,14 +2208,13 @@
   ++  apply-changes-to-mim
     |=  [mim=(map path mime) changes=(map path (unit mime))]
     ^-  (map path mime)
-    =/  changes-l=(list [pax=path change=(unit mime)])
-      ~(tap by changes)
+    =/  caz=(list [pax=path change=(unit mime)])  ~(tap by changes)
     |-  ^-  (map path mime)
-    ?~  changes-l
+    ?~  caz
       mim
-    ?~  change.i.changes-l
-      $(changes-l t.changes-l, mim (~(del by mim) pax.i.changes-l))
-    $(changes-l t.changes-l, mim (~(put by mim) [pax u.change]:i.changes-l))
+    ?~  change.i.caz
+      $(caz t.caz, mim (~(del by mim) pax.i.caz))
+    $(caz t.caz, mim (~(put by mim) [pax u.change]:i.caz))
   ::
   ::  Create a schematic to validate a page.
   ::
@@ -3423,6 +3468,7 @@
   ::
   ++  info
     |=  [deletes=(set path) changes=(map path cage)]
+    ^+  ..park
     ?:  =(0 let.dom)
       ?>  ?=(~ deletes)
       =/  data=(map path (each page lobe))
@@ -3443,6 +3489,29 @@
     ::
     =/  =yuki  [~[parent-tako] data]
     (park | yuki *rang)
+  ::
+  ::  Unix commit
+  ::
+  ++  into
+    |=  [pax=path all=? mod=(list [pax=path mim=(unit mime)])]
+    ^+  ..park
+    ::  filter out unchanged, cached %mime values
+    ::
+    =.  mod
+      %+  skip  mod
+      |=  [pax=path mim=(unit mime)]
+      ?~  mim
+        |
+      ?~  mum=(~(get by mim.dom) pax)
+        |
+      ::  TODO: check mimetype
+      ::
+      =(q.u.mim q.u.mum)
+    =/  =yaki
+      ?:  =(0 let.dom)
+        *yaki
+      (~(got by hut.ran) (~(got by hit.dom) let.dom))
+    (info (mode-to-commit q.yaki pax all mod))
   ::
   ::  Plumbing commit
   ::
@@ -3509,6 +3578,7 @@
     =.  ank.dom  ankh
     =^  mim  ford-cache.args
       (checkout-mime args deletes ~(key by changes))
+    ~&  mim+~(key by mim)
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
     ::
@@ -5277,14 +5347,9 @@
       :~  [hen %pass /one %c %info q.bem %& one]
           [hen %pass /two %c %info q.bem %& two]
       ==
-    =/  =yaki
-      ?:  =(0 let.dom.u.dos)
-        *yaki
-      (~(got by hut.ran.ruf) (~(got by hit.dom.u.dos) let.dom.u.dos))
-    =+  cos=(mode-to-commit q.yaki (flop s.bem) all.req fis.req)
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
-      abet:(info:den cos)
+      abet:(into:den (flop s.bem) all.req fis.req)
     [mos ..^$]
   ::
       %merg                                               ::  direct state up
@@ -5674,52 +5739,6 @@
   ^-  rand
   [p q [p q.q]:r]
 ::
-::  By convention: paf == (weld pax pat)
-::
-++  mode-to-commit
-  |=  [hat=(map path lobe) pax=path all=? mod=mode]
-  ^-  [deletes=(set path) changes=(map path cage)]
-  =/  deletes
-    %-  silt
-    %+  turn
-      ^-  (list path)
-      %+  weld
-        ^-  (list path)
-        %+  murn  mod
-        |=  [pat=path mim=(unit mime)]
-        ^-  (unit path)
-        ?^  mim
-          ~
-        `pat
-      ^-  (list path)
-      ?.  all
-        ~
-      =+  mad=(malt mod)
-      =+  len=(lent pax)
-      =/  descendants=(list path)
-        %+  turn
-          %+  skim  ~(tap by hat)
-          |=  [paf=path lob=lobe]
-          =(pax (scag len paf))
-        |=  [paf=path lob=lobe]
-        (slag len paf)
-      %+  skim
-        descendants
-      |=  pat=path
-      (~(has by mad) pat)
-    |=  pat=path
-    (weld pax pat)
-  ::
-  =/  changes
-    %-  malt
-    %+  murn  mod
-    |=  [pat=path mim=(unit mime)]
-    ^-  (unit [path cage])
-    ?~  mim
-      ~
-    `[(weld pax pat) %mime !>(u.mim)]
-  ::
-  [deletes changes]
 ::
 ++  mode-to-soba
   |=  {hat/(map path lobe) pax/path all/? mod/mode}
