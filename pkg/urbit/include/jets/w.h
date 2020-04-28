@@ -76,6 +76,7 @@
     u3_noun u3wcp_tos(u3_noun);
     u3_noun u3wcp_tod(u3_noun);
 
+    u3_noun u3wc_ob_fen(u3_noun);
     u3_noun u3wc_ob_eff(u3_noun);
 
   /** Tier 4.

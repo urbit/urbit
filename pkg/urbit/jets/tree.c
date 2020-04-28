@@ -924,9 +924,11 @@ static c3_c* _141_tri__cofl_ha[] = {
 };
 
 
+static u3j_harm _141_tri__ob_fen_a[] = {{".2", u3wc_ob_fen}, {}};
 static u3j_harm _141_tri__ob_eff_a[] = {{".2", u3wc_ob_eff}, {}};
 static u3j_core _141_tri__ob_d[] =
-  { { "eff", 7, _141_tri__ob_eff_a, 0, 0 },
+  { { "fen", 7, _141_tri__ob_fen_a, 0, 0 },
+    { "eff", 7, _141_tri__ob_eff_a, 0, 0 },
     {}
   };
 
