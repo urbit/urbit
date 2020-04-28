@@ -70,8 +70,8 @@
     u3_noun u3qc_swp(u3_atom, u3_atom);
     u3_noun u3qc_sqt(u3_atom);
 
-    u3_noun u3qc_po_ind(u3_atom);
-    u3_noun u3qc_po_ins(u3_atom);
+    u3_noun po_find_prefix(char one, char two, char three);
+    u3_noun po_find_suffix(char one, char two, char three);
 
     u3_noun u3qc_ob_fynd(u3_atom);
 

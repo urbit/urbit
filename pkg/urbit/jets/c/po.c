@@ -3,8 +3,8 @@
 */
 #include "all.h"
 
-static u3_noun
-find_prefix(char one, char two, char three) {
+u3_noun
+po_find_prefix(char one, char two, char three) {
   switch (one) {
     case 'b': switch (two) {
       case 'a': switch (three)  {
@@ -410,8 +410,8 @@ find_prefix(char one, char two, char three) {
   }
 }
 
-static u3_noun
-find_suffix(char one, char two, char three) {
+u3_noun
+po_find_suffix(char one, char two, char three) {
   switch (one) {
     case 'b': switch (two) {
       case 'e': switch (three)  {
@@ -852,7 +852,7 @@ u3qc_po_ins(u3_noun a)
   c3_y byt_y[3];
   u3r_bytes(0, 3, byt_y, a);
 
-  return find_prefix(byt_y[0], byt_y[1], byt_y[2]);
+  return po_find_prefix(byt_y[0], byt_y[1], byt_y[2]);
 }
 
 u3_noun
@@ -875,7 +875,7 @@ u3qc_po_ind(u3_noun a)
   c3_y byt_y[3];
   u3r_bytes(0, 3, byt_y, a);
 
-  return find_suffix(byt_y[0], byt_y[1], byt_y[2]);
+  return po_find_suffix(byt_y[0], byt_y[1], byt_y[2]);
 }
 
 u3_noun
