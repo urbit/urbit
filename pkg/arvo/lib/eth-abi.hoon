@@ -1,51 +1,48 @@
 =,  ethereum-types
 
 |%
-+$  etyp  etyp:abi:ethereum
-
-+$  abi-events  (pair (map @ux @tas) (map @tas (pair (list etyp) type)))
-
-+$  contract
-  $:  name=@tas
-      write-functions=(map @tas function)
-      read-functions=(map @tas function)
-      events=(map @ux event)
-  ==
-
-+$  function
-  $:  name=@tas
-      sol-name=@tas
-      hash=@ux
-      inputs=(list func-input)
-      outputs=(list etyp)
-  ==
-+$  event
-  $:  name=@tas
-      inputs=(list event-input)
-  ==
-+$  event-input  [name=@tas type=etyp indexed=?]
-+$  func-input  [name=@tas type=etyp]
-+$  event-input-raw  [name=@t type=@t indexed=?]
-+$  func-input-raw  [name=@t type=@t]
-+$  contract-raw
-  $:  name=@t
-      entries=(list entry-raw)
-  ==
-+$  entry-raw
-  $%  [%function p=function-raw]
-      [%event p=event-raw]
-  ==
-+$  function-raw
-  $:  name=@t
-      inputs=(list func-input-raw)
-      outputs=(list @t)
-      mut=?
-      pay=?
-  ==
-+$  event-raw
-  $:  name=@t
-      inputs=(list event-input-raw)
-  ==
+  +$  etyp  etyp:abi:ethereum
+  +$  abi-events  (pair (map @ux @tas) (map @tas (pair (list etyp) type)))
+  +$  contract
+    $:  name=@tas
+        write-functions=(map @tas function)
+        read-functions=(map @tas function)
+        events=(map @ux event)
+    ==
+  +$  function
+    $:  name=@tas
+        sol-name=@tas
+        hash=@ux
+        inputs=(list func-input)
+        outputs=(list etyp)
+    ==
+  +$  event
+    $:  name=@tas
+        inputs=(list event-input)
+    ==
+  +$  event-input  [name=@tas type=etyp indexed=?]
+  +$  func-input  [name=@tas type=etyp]
+  +$  event-input-raw  [name=@t type=@t indexed=?]
+  +$  func-input-raw  [name=@t type=@t]
+  +$  contract-raw
+    $:  name=@t
+        entries=(list entry-raw)
+    ==
+  +$  entry-raw
+    $%  [%function p=function-raw]
+        [%event p=event-raw]
+    ==
+  +$  function-raw
+    $:  name=@t
+        inputs=(list func-input-raw)
+        outputs=(list @t)
+        mut=?
+        pay=?
+    ==
+  +$  event-raw
+    $:  name=@t
+        inputs=(list event-input-raw)
+    ==
 
   ++  etyp-to-type
     |*  type=etyp
@@ -99,31 +96,7 @@
       ^-  (list ?(@ux (list @ux)))
       $(types t.types, topics t.topics)
     ==
-
-
-
-:: +$  etyp
-::   $@  $?  ::  static
-::           %address  %bool
-::           %int      %uint
-::           %real     %ureal
-::           ::  dynamic
-::           %bytes    %string
-::       ==
-::   $%  ::  static
-::       [%bytes-n n=@ud]
-::       ::  dynamic
-::       [%array-n t=etyp n=@ud]
-::       [%array t=etyp]
-::   ==
-
-  ::
-  :: :: a=97, z=122, A=65, Z=90
-  ::
-  :: ::
-  :: ::
-  :: ::
-
+::
   ++  event-inputs-to-face-pairs
     |=  =event
     ^-  tape
@@ -132,6 +105,7 @@
     %+  turn  inputs.event
     |=  [=event-input]
     "{(trip name.event-input)}={(etyp-to-aura type.event-input)}"
+::
   ++  event-indexed-inputs-to-face-pairs
     |=  =event
     ^-  tape
@@ -140,6 +114,7 @@
     %+  turn  (skim inputs.event |=(i=event-input indexed.i))
     |=  [=event-input]
     "{(trip name.event-input)}={(etyp-to-topic type.event-input)}"
+::
   ++  function-inputs-to-face-pairs
     |=  =function
     ^-  tape
@@ -148,6 +123,7 @@
     %+  turn  inputs.function
     |=  [=func-input]
     "{(trip name.func-input)}={(etyp-to-aura type.func-input)}"
+::
   ++  function-outputs-to-face-pairs
     |=  =function
     %-  zing
@@ -155,8 +131,7 @@
     %+  turn  outputs.function
     |=  =etyp
     "{(etyp-to-aura etyp)}"
-
-
+::
   ++  etyp-to-topic
     |*  type=etyp
     :: ^-  tape
@@ -182,13 +157,12 @@
     ::
         [%array-n *]
       "?(@ux (list @ux))"
-      ==
-
+    ==
+::
   ++  etyp-to-aura
     |*  type=etyp
     :: ^-  tape
     ?+  type  !!
-    ::
         %address
       "@ux"
         %uint
@@ -203,43 +177,43 @@
       "octs"
         [%bytes-n *]
       "octs"
-    ::
         [%array *]
       "@ux"
-    ::
         [%array-n *]
       "@ux"
     ==
-  ::
+    ::
   ++  name-to-lower
     |=  =tape
     ^-  ^tape
     ?~  tape  ~
     =/  tape=^tape
     :_  t.tape
-    ?:  (lth i.tape 91)
-      (add i.tape 32)
-    i.tape
+      ?:  (lth i.tape 91)
+        (add i.tape 32)
+      i.tape
     %-  zing
     |-
     ?~  tape  ~
     ?~  t.tape
       [(trip i.tape) ~]
-    ?:    (lth i.t.tape 91)
+    ?:  (lth i.t.tape 91)
       =.  i.t.tape  (add i.t.tape 32)
       [(trip i.tape) "-" $(tape t.tape)]
     [(trip i.tape) $(tape t.tape)]
-
+::
   ++  code-gen-mark
     |=  [sur-name=tape type-name=tape]
-    :~  "/-  *{sur-name}"
-        "|_  {type-name}"
-        "++  grab"
-        "  |%"
-        "  ++  noun  {type-name}"
-        "  --"
-        "--"
-    ==
+    %-  crip
+    """
+    /-  *{sur-name}
+    |_  {type-name}
+    ++  grab
+      |%
+        ++  noun  {type-name}
+      --
+    --
+    """
 
 
   ++  code-gen-types
@@ -291,269 +265,227 @@
           ==
       --
       """
-    ++  nl  (trip 10)
-    ++  event-bucs
-      ^-  tape
-      %-  zing
-      ?~  events  ~
-      :-
-      =-  (zing ~["    $%  [${(trip name.i.events)} {-}]" nl])
-        (event-inputs-to-face-pairs i.events)
-      %+  turn  t.events
-      |=  =event
-      =-  (zing ~["        [${(trip name.event)} {-}]" nl])
-        (event-inputs-to-face-pairs event)
-    ++  event-indexed-bucs
-      ^-  tape
-      %-  zing
-      ?~  events  ~
-      :-
-      =-  (zing ~["    $%  [${(trip name.i.events)} " ?~(- "~]" "{-} ~]") nl])
-        (event-indexed-inputs-to-face-pairs i.events)
-      %+  turn  t.events
-      |=  =event
-      =-  (zing ~["        [${(trip name.event)} " ?~(- "~]" "{-} ~]") nl])
+      ++  nl  (trip 10)
+      ++  event-bucs
+        ^-  tape
+        %-  zing
+        ?~  events  ~
+        :-
+        =-  (zing ~["    $%  [${(trip name.i.events)} {-}]" nl])
+          (event-inputs-to-face-pairs i.events)
+        %+  turn  t.events
+        |=  =event
+        =-  (zing ~["        [${(trip name.event)} {-}]" nl])
+          (event-inputs-to-face-pairs event)
+      ++  event-indexed-bucs
+        ^-  tape
+        %-  zing
+        ?~  events  ~
+        :-
+        =-  (zing ~["    $%  [${(trip name.i.events)} " ?~(- "~]" "{-} ~]") nl])
+          (event-indexed-inputs-to-face-pairs i.events)
+        %+  turn  t.events
+        |=  =event
+        =-  (zing ~["        [${(trip name.event)} " ?~(- "~]" "{-} ~]") nl])
         (event-indexed-inputs-to-face-pairs event)
-    ++  function-calls
-      |=  functions=(list function)
-      ^-  tape
-      %-  zing
-      ?~  functions  ~
-      :-
-      =-  (zing ~["    $%  [${(trip name.i.functions)}" ?~(- " ~]" " {-}]") nl])
-        (function-inputs-to-face-pairs i.functions)
-      %+  turn  t.functions
-      |=  =function
-      =-  (zing ~["        [${(trip name.function)}" ?~(- " ~]" " {-}]") nl])
-        (function-inputs-to-face-pairs function)
-    ++  function-reads
-      |=  functions=(list function)
-      ^-  tape
-      %-  zing
-      ?~  functions  ~
-      :-  =-  (zing ~["    $%  [${(trip name.i.functions)} out={-}]" nl])
-        (function-outputs-to-face-pairs i.functions)
-      %+  turn  t.functions
-      |=  =function
-      =-  %-  zing  ~["        [${(trip name.function)} out={-}]" nl]
-        (function-outputs-to-face-pairs function)
+      ++  function-calls
+        |=  functions=(list function)
+        ^-  tape
+        %-  zing
+        ?~  functions  ~
+        :-
+        =-  (zing ~["    $%  [${(trip name.i.functions)}" ?~(- " ~]" " {-}]") nl])
+          (function-inputs-to-face-pairs i.functions)
+        %+  turn  t.functions
+        |=  =function
+        =-  (zing ~["        [${(trip name.function)}" ?~(- " ~]" " {-}]") nl])
+          (function-inputs-to-face-pairs function)
+      ++  function-reads
+        |=  functions=(list function)
+        ^-  tape
+        %-  zing
+        ?~  functions  ~
+        :-  =-  (zing ~["    $%  [${(trip name.i.functions)} out={-}]" nl])
+          (function-outputs-to-face-pairs i.functions)
+        %+  turn  t.functions
+        |=  =function
+        =-  %-  zing  ~["        [${(trip name.function)} out={-}]" nl]
+          (function-outputs-to-face-pairs function)
     --
-    :: "{(trip name.event-input)}{(etyp-to-aura type.event-input)}"
-    :: |^
-    ::   ^-  tape
-    ::   %-  zing
-    ::   %+  turn  ~(val by events.contract)
-    ::     |=  e=event
-    ::     ^-  tape
-    ::     =-  "        +$  {(trip name.e)}  [${(trip name.e)} {-}]"
-    ::     %-  zing
-    ::     :: %+  join  " "
-    ::     %+  turn  input.e
-    ::       |=  i=event-input
-    ::       ^-  tape
-    ::       "{(trip name.i)}={(etyp-to-aura type.i)}"
-    ::   --
-    ::   --
-    :: =+
-    ::
-    ::
-    :: !!
-    :: ==
-    ::   10
-    ::   ::
-    ::       "    --"  10
-    ::       "--"  10
-    ::   ==
-  ::
-  :: ++  etyp-to-aura
-  ::   |=  type=etyp
-  ::   ^-  tape
-  ::   ?+  type  "@ux"
-  ::       %address
-  ::     "@ux"
-  ::       %bool
-  ::     "?"
-  ::       %int
-  ::     "@sd"
-  ::       %uint
-  ::     "@ud"
-  ::       %string
-  ::     "@tas"
-  ::   ==
-
-++  parse-contract
-  |=  jon=json
-  =/  =contract-raw
-    =,  dejs:format
-    %.  jon  %-  ot
-    :~  ['contractName' so]
-        [%abi parse-abi]
-    ==
-  ^-  contract
-  :^    name.contract-raw
-      (get-write-functions entries.contract-raw)
-    (get-read-functions entries.contract-raw)
-  (get-events entries.contract-raw)
 ::
-++  parse-abi
-  |=  jon=json
-  =,  dejs:format
-  ^-  (list entry-raw)
-  %.  jon  %-  ar
-  |=  jan=json
-  ?>  ?=([$o *] jan)
-  =/  typ  (so (~(got by p.jan) 'type'))
-  %.  jan
-  ?+    typ  ~&  "unexpected entry type"  !!
-      %function
-    |=  jun=json
-    :-  %function
-    ^-  function-raw
-    %.  jun
-    %-  ot
-    |^
-      :~  [%name so]
-          [%inputs extract-func-input]
-          [%outputs (ar extract-func-output)]
-          [%constant |=(jen=json !(bo jen))]
-          [%payable bo]
+  ++  parse-contract
+    |=  jon=json
+    =/  =contract-raw
+      =,  dejs:format
+      %.  jon  %-  ot
+      :~  ['contractName' so]
+          [%abi parse-abi]
       ==
-      ++  extract-func-input
-        %-  ar
-        %-  ot
+    ^-  contract
+    :^    name.contract-raw
+        (get-write-functions entries.contract-raw)
+      (get-read-functions entries.contract-raw)
+    (get-events entries.contract-raw)
+::
+  ++  parse-abi
+    |=  jon=json
+    =,  dejs:format
+    ^-  (list entry-raw)
+    %.  jon  %-  ar
+    |=  jan=json
+    ?>  ?=([$o *] jan)
+    =/  typ  (so (~(got by p.jan) 'type'))
+    %.  jan
+    ?+    typ  ~&  "unexpected entry type"  !!
+        %function
+      |=  jun=json
+      :-  %function
+      ^-  function-raw
+      %.  jun
+      %-  ot
+      |^
         :~  [%name so]
-            [%type so]
+            [%inputs extract-func-input]
+            [%outputs (ar extract-func-output)]
+            [%constant |=(jen=json !(bo jen))]
+            [%payable bo]
         ==
-      ++  extract-func-output
-        |=  jyn=json
-        ?>  ?=([$o *] jyn)
-        ^-  @tas
-        (so (~(got by p.jyn) 'type'))
-    --
-  ::
-      %event
-    |=  jun=json
-    :-  %event
-    ^-  event-raw
-    %.  jun
-    %-  ot
-    :~  [%name so]
+        ++  extract-func-input
+          %-  ar
+          %-  ot
+          :~  [%name so]
+              [%type so]
+          ==
+        ++  extract-func-output
+          |=  jyn=json
+          ?>  ?=([$o *] jyn)
+          ^-  @tas
+          (so (~(got by p.jyn) 'type'))
+      --
     ::
-      :-  %inputs
-      %-  ar
+        %event
+      |=  jun=json
+      :-  %event
+      ^-  event-raw
+      %.  jun
       %-  ot
       :~  [%name so]
-          [%type so]
-          [%indexed bo]
+      ::
+          :-  %inputs
+          %-  ar
+          %-  ot
+          :~  [%name so]
+              [%type so]
+              [%indexed bo]
+          ==
       ==
     ==
-  ==
 ::
-++  get-raw-functions
-  |=  abi=(list entry-raw)
-  ^-  (list function-raw)
-  %+  roll  abi
-  |=  [e=entry-raw fs=(list function-raw)]
-    ?.  ?=([$function *] e)  fs
-    [p.e fs]
+  ++  get-raw-functions
+    |=  abi=(list entry-raw)
+    ^-  (list function-raw)
+    %+  roll  abi
+    |=  [e=entry-raw fs=(list function-raw)]
+      ?.  ?=([$function *] e)  fs
+      [p.e fs]
 ::
-++  get-raw-events
-  |=  abi=(list entry-raw)
-  ^-  (list event-raw)
-  %+  roll  abi
-  |=  [e=entry-raw fs=(list event-raw)]
-    ?.  ?=([$event *] e)  fs
-    [p.e fs]
+  ++  get-raw-events
+    |=  abi=(list entry-raw)
+    ^-  (list event-raw)
+    %+  roll  abi
+    |=  [e=entry-raw fs=(list event-raw)]
+      ?.  ?=([$event *] e)  fs
+      [p.e fs]
 ::
-++  get-events
-  |=  abi=(list entry-raw)
-  ^-  (map @ux event)
-  %+  roll  (get-raw-events abi)
-  |=  [e=event-raw es=(map @ux event)]
-  =/  =event
-    :-  (crip (name-to-lower (trip name.e)))
-    %+  turn
-      inputs.e
-    |=  i=event-input-raw
-    ^-  event-input
-    [(crip (name-to-lower (trip name.i))) (parse-type type.i) indexed.i]
-  =/  typs=(list @t)
-    %+  turn  inputs.e
-    |=  i=event-input-raw
-    type.i
-  %+  ~(put by es)
-    (get-hash name.e typs)
-    event
+  ++  get-events
+    |=  abi=(list entry-raw)
+    ^-  (map @ux event)
+    %+  roll  (get-raw-events abi)
+    |=  [e=event-raw es=(map @ux event)]
+    =/  =event
+      :-  (crip (name-to-lower (trip name.e)))
+      %+  turn
+        inputs.e
+      |=  i=event-input-raw
+      ^-  event-input
+      [(crip (name-to-lower (trip name.i))) (parse-type type.i) indexed.i]
+    =/  typs=(list @t)
+      %+  turn  inputs.e
+      |=  i=event-input-raw
+      type.i
+    %+  ~(put by es)
+      (get-hash name.e typs)
+      event
 ::
-++  get-write-functions
-  |=  abi=(list entry-raw)
-  ^-  (map @tas function)
-  %+  roll  (get-raw-functions abi)
-  |=  [f=function-raw fs=(map @tas function)]
-  ?.  mut.f  fs
-  %+  ~(put by fs)  (crip (name-to-lower (trip name.f)))
-  :*
-    (crip (name-to-lower (trip name.f)))
-    name.f
-    (get-hash name.f (turn inputs.f |=(=func-input-raw type.func-input-raw)))
-    (parse-input-types inputs.f)
-    (parse-output-types outputs.f)
-  ==
+  ++  get-write-functions
+    |=  abi=(list entry-raw)
+    ^-  (map @tas function)
+    %+  roll  (get-raw-functions abi)
+    |=  [f=function-raw fs=(map @tas function)]
+    ?.  mut.f  fs
+    %+  ~(put by fs)  (crip (name-to-lower (trip name.f)))
+    :*
+      (crip (name-to-lower (trip name.f)))
+      name.f
+      (get-hash name.f (turn inputs.f |=(=func-input-raw type.func-input-raw)))
+      (parse-input-types inputs.f)
+      (parse-output-types outputs.f)
+    ==
 ::
-++  get-read-functions
-  |=  abi=(list entry-raw)
-  ^-  (map @tas function)
-  %+  roll  (get-raw-functions abi)
-  |=  [f=function-raw fs=(map @tas function)]
-  ?:  mut.f  fs
-  %+  ~(put by fs)  (crip (name-to-lower (trip name.f)))
-  :*
-    (crip (name-to-lower (trip name.f)))
-    name.f
-    (get-hash name.f (turn inputs.f |=(=func-input-raw type.func-input-raw)))
-    (parse-input-types inputs.f)
-    (parse-output-types outputs.f)
-  ==
+  ++  get-read-functions
+    |=  abi=(list entry-raw)
+    ^-  (map @tas function)
+    %+  roll  (get-raw-functions abi)
+    |=  [f=function-raw fs=(map @tas function)]
+    ?:  mut.f  fs
+    %+  ~(put by fs)  (crip (name-to-lower (trip name.f)))
+    :*
+      (crip (name-to-lower (trip name.f)))
+      name.f
+      (get-hash name.f (turn inputs.f |=(=func-input-raw type.func-input-raw)))
+      (parse-input-types inputs.f)
+      (parse-output-types outputs.f)
+    ==
 ::
-++  parse-type
-  |=  typ=@t
-  ^-  etyp
-  ?+  (crip (scag 3 (trip typ)))
-  ~&  'unimplmented/unexpected solidity type'  !!
-    %add  %address
-    %boo  %bool
-    %int  %int
-    %uin  %uint
-    %byt  %bytes
-    %str  %string
-  ==
-++  parse-input-types
-  |=  typs=(list func-input-raw)
-  ^-  (list func-input)
-  %+  turn  typs
-  |=([name=@t type=@t] [(crip (name-to-lower (trip name))) (parse-type type)])
-++  parse-output-types
-  |=  typs=(list @t)
-  ^-  (list etyp)
-  %+  turn  typs  parse-type
+  ++  parse-type
+    |=  typ=@t
+    ^-  etyp
+    ?+  (crip (scag 3 (trip typ)))
+    ~&  'unimplmented/unexpected solidity type'  !!
+      %add  %address
+      %boo  %bool
+      %int  %int
+      %uin  %uint
+      %byt  %bytes
+      %str  %string
+    ==
+  ++  parse-input-types
+    |=  typs=(list func-input-raw)
+    ^-  (list func-input)
+    %+  turn  typs
+    |=([name=@t type=@t] [(crip (name-to-lower (trip name))) (parse-type type)])
+  ++  parse-output-types
+    |=  typs=(list @t)
+    ^-  (list etyp)
+    %+  turn  typs  parse-type
 ::
-++  get-selector
-  |=  [name=@t inputs=(list @t)]
-  ^-  cord
-  =-  (crip "{(trip name)}({-})")
-  (zing (join "," (turn inputs trip)))
-  :: %-  zing
-  :: %+  join
-  ::   ","
-  :: %+  turn
-  ::   inputs
-  :: |=  type=etyp
-  :: ?>  ?=()
-  :: trip
+  ++  get-selector
+    |=  [name=@t inputs=(list @t)]
+    ^-  cord
+    =-  (crip "{(trip name)}({-})")
+    (zing (join "," (turn inputs trip)))
+    :: %-  zing
+    :: %+  join
+    ::   ","
+    :: %+  turn
+    ::   inputs
+    :: |=  type=etyp
+    :: ?>  ?=()
+    :: trip
 ::
-++  get-hash
-  |=  [name=@t inputs=(list @t)]
-  ^-  @ux
-  =/  sig  (get-selector name inputs)
-  (keccak-256:keccak:crypto (met 3 sig) sig)
+  ++  get-hash
+    |=  [name=@t inputs=(list @t)]
+    ^-  @ux
+    =/  sig  (get-selector name inputs)
+    (keccak-256:keccak:crypto (met 3 sig) sig)
 --

@@ -29,19 +29,19 @@
         [$event-subscribe =path config=watch-config]
         [$clear =path]
         [$add-abi name=@tas =json]
-        [$add-contracts addresses=(list address:ethereum) abi=@tas]
     ==
   +$  generic-data  [@tas *]
   +$  loglist  (list (event-log-config:builders generic-data))
   +$  watch-config
     %-  watch-config:builders
-    $:(@tas topics=(list ?(* (list *))))
+    $:(name=@tas args=(list ?(@ (list @))))
 ::
   ++  builders
     |%
       ++  watch-config
         |$  [topics]
         $:  url=@ta
+            abi=@tas
             eager=?
             refresh-rate=@dr
             from=number:block

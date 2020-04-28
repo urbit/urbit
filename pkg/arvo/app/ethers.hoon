@@ -192,18 +192,23 @@
   :: ::
       %event-subscribe
     ?~  contracts.config.act  `state
-    =/  abi-name=@tas
-      %-  ~(got by contracts)  i.contracts.config.act ::  only handling one address for now
+    =.  contracts
+      %-  ~(gas by contracts)
+      ^-  (list (pair @ux @tas))
+      %+  turn  contracts.config.act
+      |=  =address:ethereum
+      [address abi.config.act]
+    =/  abi-name=@tas  abi.config.act
     =/  =abi-form
       %-  ~(got by abis)  abi-name
     =/  [hash=@ux name=@tas]
       %+  snag  0
       %+  skim  ~(tap by event-hmap.events.abi-form)
-      |=([hash=@ux name=@tas] =(name -.topics.config.act))
+      |=([hash=@ux name=@tas] =(name name.topics.config.act))
     =/  types=(list etyp:abi:ethereum)
       %-  ~(got by event-sub-tmap.events.abi-form)  name
     =/  pretopics=(list ?(@ (list @)))
-    ~[hash ((list ?(@ (list @))) +.config.act)]
+    [hash args.topics.config.act]
     =/  watcher-action=vase
     !>  ^-  poke:eth-watcher
     :+  %watch  path.act
@@ -220,7 +225,7 @@
             %poke  %eth-watcher-poke
             watcher-action
         ==
-        :*  %pass  /watch-config
+        :*  %pass  /eth-watcher
             %agent  [our.bol %eth-watch]
             %watch  [%logs path.act]
         ==
@@ -229,9 +234,12 @@
     `state
       %add-abi
     =/  =contract:eth-abi  (parse-contract:eth-abi json.act)
-    =/  =card
+    =/  sur-card=card
         %+  write-file  /sur/eth-contracts/[name.act]/hoon
       [%hoon !>((code-gen-types:eth-abi contract))]
+    =/  mark-card=card
+        %+  write-file  /mar/[(crip (zing ~["eth-contracts-" (trip name.act) "-update"]))]/hoon
+      [%hoon !>((code-gen-mark:eth-abi (zing ~["eth-contracts-" (trip name.act)]) "gift"))]
     =/  events  ~(tap by events.contract)
     =/  =event-maps
       :*  %-  molt
@@ -258,21 +266,8 @@
     =.  abis  %+  ~(put by abis)  name.act
     [events=event-maps]
     :_  state
-    [card ~]
+    [sur-card mark-card ~]
   ::
-
-      %add-contracts
-    =.  contracts
-      %-  ~(gas by contracts)
-      ^-  (list (pair @ux @tas))
-      %+  turn  addresses.act
-      |=  =address:ethereum
-      [address abi.act]
-    [~ state]
-    :: =/  =schematic:ford  [%core [our.bol q.byk.bol] (flop /sur/eth-contracts/[name.act]/hoon)]
-    :: =/  =card  [%pass /build/[name.act] %arvo %f %build | schematic]
-    :: :_  state
-    :: [card ~]
   ==
   :: ++  handle-build
   :: |=  [=path =gift:able:ford]
