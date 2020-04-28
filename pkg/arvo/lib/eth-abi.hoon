@@ -244,7 +244,7 @@
         +$  watch-config
           %-  watch-config:builders
           event-subscribe
-        +$  loglist  (list (event-log-config:builders event-subscribe))
+        +$  loglist  (list (event-log-config:builders event-update))
         +$  call
       {(function-calls read-functions)}
           ==

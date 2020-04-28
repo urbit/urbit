@@ -1,9 +1,7 @@
-/-  *erc20-store
+/-  *erc20-store, erc20=eth-contracts-erc20
 /+  default-agent
 =*  eth-key  key:ethereum
 |%
-
-
 +$  card  card:agent:gall
 +$  note
   $%
@@ -23,7 +21,6 @@
       ==
   ==
 --
-=/  transer-event=@ux  0xddf2.52ad.1be2.c89b.69c2.b068.fc37.8daa.952b.a7f1.63c4.a116.28f5.5a4d.f523.b3ef
 =|  state-0
 =*  state  -
 ^-  agent:gall
@@ -73,7 +70,33 @@
       %+  ~(put by balances)
         contract-id.poke
       [address.poke 0]
-     `this
+     =/  from-me-sub=vase
+     !>  ^-  poke:erc20
+     :+  %watch  path.act
+     :*  url=url.config.act
+         eager=eager.config.act
+         refresh-rate=refresh-rate.config.act
+         from=from.config.act
+         contracts=contracts.config.act
+         topics=[%transfer address ~ ~]
+     ==
+     =/  from-me-sub=vase
+     !>  ^-  poke:erc20
+     :+  %watch  path.act
+     :*  url=url.config.act
+         eager=eager.config.act
+         refresh-rate=refresh-rate.config.act
+         from=from.config.act
+         contracts=contracts.config.act
+         topics=[%transfer ~ address ~]
+     ==
+     =/  to-me-cage=cage
+     :-  %ethers-action
+     !>
+     :_  this
+     :~  [%pass /ethers %agent [our.bol %ethers] %poke %ethers-action from-me-sub]
+         [%pass /ethers %agent [our.bol %ethers] %poke %ethers-action to-me-sub]
+     ==
     ::
         [%set-key *]
       =/  =path  (get-path:tc key-path.poke)
@@ -107,11 +130,49 @@
     ``atom+!>(address)
     ==
 ::
-  ++  on-agent  on-agent:def
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    ^-  (quip card _this)
+    ?.  ?=([%eth-watcher ~] wire)
+      (on-agent:def wire sign)
+    ?.  ?=(%fact -.sign)
+      (on-agent:def wire sign)
+    ?.  ?=(%eth-contracts-erc20-update p.cage.sign)
+      (on-agent:def wire sign)
+    =+  !<(diff=gift:erc20 q.cage.sign)
+    ?-  diff
+      %history
+    !!
+      %log
+    (parse-event:tc event-log.diff)
+      %read-call
+    !!
+      %read-tx
+    !!
+    ==
+
   ++  on-arvo  on-arvo:def
   ++  on-fail  on-fail:def
   --
 |_  bol=bowl:gall
+++  parse-event
+  |=  =event-update:erc20
+  ?-  event-update
+    [%approval *]
+  !!
+    [%transfer *]
+  !!
+::
+  ==
+++  parse-event-2
+  |=  =event-update:erc20
+  ?-  event-update
+    [%approval @ @ @]
+  !!
+    [%transfer @ @ @]
+  !!
+::
+  ==
 ++  fetch-key
    ^-  @ux
    %+  scan  (trip (of-wain:format .^(wain %cx (get-path key-path))))
