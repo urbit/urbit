@@ -302,7 +302,7 @@ export class ChatScreen extends Component {
           <>
             {messageElem}
             <div key={'unreads'+ msg.uid} ref={this.setUnreadMarker} className="mv2 green2 flex items-center f9">
-              <hr className="ma0 w2 b--green2 bt-0" />
+              <hr className="dn-s ma0 w2 b--green2 bt-0" />
               <p className="mh4">
                 New messages below
               </p>
