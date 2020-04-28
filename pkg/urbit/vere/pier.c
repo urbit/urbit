@@ -809,17 +809,6 @@ _pier_on_lord_slog(void* vod_p, c3_w pri_w, u3_noun tan)
   }
 }
 
-/* _pier_on_lord_peek(): namespace read response from worker.
-*/
-static void
-_pier_on_lord_peek(void* vod_p, u3_peek* pek_u, u3_noun dat)
-{
-  //  XX cache, invoke callback, dispose pek_u
-  //
-  u3m_p("lord peek", dat);
-  u3z(dat);
-}
-
 /* _pier_on_lord_save(): worker (non-portable) snapshot complete.
 */
 static void
@@ -965,7 +954,6 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
       .spin_f = _pier_on_lord_work_spin,
       .spun_f = _pier_on_lord_work_spun,
       .slog_f = _pier_on_lord_slog,
-      .peek_f = _pier_on_lord_peek,
       .play_done_f = _pier_on_lord_play_done,
       .play_bail_f = _pier_on_lord_play_bail,
       .work_done_f = _pier_on_lord_work_done,

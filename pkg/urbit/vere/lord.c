@@ -278,7 +278,15 @@ _lord_plea_peek(u3_lord* god_u, u3_noun dat)
     pek_u = wit_u->pek_u;
   }
 
-  god_u->cb_u.peek_f(god_u->cb_u.vod_p, pek_u, dat);
+  //  XX cache [dat] (unless last)
+  //
+  pek_u->fun_f(pek_u->vod_p, dat);
+
+  u3z(pek_u->now);
+  u3z(pek_u->gan);
+  u3z(pek_u->ful);
+  c3_free(pek_u);
+  // god_u->cb_u.peek_f(god_u->cb_u.vod_p, pek_u, dat);
 }
 
 /* _lord_plea_play_bail(): hear serf %play %bail
@@ -590,36 +598,6 @@ _lord_writ_new(u3_lord* god_u)
   return wit_u;
 }
 
-/* _lord_writ_peek(): serialize read
-*/
-static u3_noun
-_lord_writ_peek(u3_noun now, u3_noun our, u3_peek* pek_u)
-{
-  u3_noun bem;
-
-  {
-    u3_noun car = u3k(pek_u->car_m);
-
-    switch ( pek_u->typ_e ) {
-      default: c3_assert(0);
-
-      case u3_peek_just: {
-        bem = u3nt(car, our, u3k(pek_u->pax));
-      } break;
-
-      case u3_peek_last: {
-        u3_noun des = u3k(pek_u->las_u.des);
-        u3_noun cas = u3dc("scot", c3__da, u3k(now));
-        u3_noun pax = u3k(pek_u->las_u.pax);
-
-        bem = u3nc(car, u3nq(our, des, cas, pax));
-      } break;
-    }
-  }
-
-  return u3nt(now, u3k(pek_u->gan), bem);
-}
-
 /* _lord_writ_jam(): serialize writ.
 */
 static void
@@ -636,13 +614,9 @@ _lord_writ_jam(u3_lord* god_u, u3_writ* wit_u)
       } break;
 
       case u3_writ_peek: {
-        //  XX cache
-        //
-        u3_noun our = u3dc("scot", 'p', u3i_chubs(2, ((u3_pier*)god_u->cb_u.vod_p)->who_d));
-        u3_noun now = u3_time_in_tv(&wit_u->tim_u);
-        u3_noun sam = _lord_writ_peek(now, our, wit_u->pek_u);
-
-        msg = u3nc(c3__peek, sam);
+        msg = u3nq(c3__peek, u3k(wit_u->pek_u->now),
+                             u3k(wit_u->pek_u->gan),
+                             u3k(wit_u->pek_u->ful));
       } break;
 
       case u3_writ_play: {
@@ -716,46 +690,93 @@ _lord_writ_plan(u3_lord* god_u, u3_writ* wit_u)
   _lord_writ_send(god_u, wit_u);
 }
 
-/* u3_lord_save(): save a snapshot.
-*/
-c3_o
-u3_lord_save(u3_lord* god_u)
-{
-  if ( god_u->dep_w ) {
-    return c3n;
-  }
-  else {
-    u3_writ* wit_u = _lord_writ_new(god_u);
-    wit_u->typ_e = u3_writ_save;
-    _lord_writ_plan(god_u, wit_u);
-    return c3y;
-  }
-}
-
-/* u3_lord_pack(): save portable state.
-*/
-c3_o
-u3_lord_pack(u3_lord* god_u)
-{
-  if ( god_u->dep_w ) {
-    return c3n;
-  }
-  else {
-    u3_writ* wit_u = _lord_writ_new(god_u);
-    wit_u->typ_e = u3_writ_pack;
-    _lord_writ_plan(god_u, wit_u);
-    return c3y;
-  }
-}
-
 /* u3_lord_peek(): read namespace.
 */
 void
-u3_lord_peek(u3_lord* god_u, u3_peek* pek_u)
+u3_lord_peek(u3_lord*   god_u,
+             u3_noun      gan,
+             u3_noun      ful,
+             void*      vod_p,
+             u3_peek_cb fun_f)
 {
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_peek;
-  wit_u->pek_u = pek_u;
+  wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
+  wit_u->pek_u->vod_p = vod_p;
+  wit_u->pek_u->fun_f = fun_f;
+  wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
+  wit_u->pek_u->gan   = gan;
+  wit_u->pek_u->ful   = ful;
+
+  //  XX cache check
+  //
+
+  _lord_writ_plan(god_u, wit_u);
+}
+
+/* u3_lord_peek_mine(): read namespace, injecting ship (our).
+*/
+void
+u3_lord_peek_mine(u3_lord*   god_u,
+                  u3_noun      gan,
+                  c3_m       car_m,
+                  u3_noun      pax,
+                  void*      vod_p,
+                  u3_peek_cb fun_f)
+{
+  u3_writ* wit_u = _lord_writ_new(god_u);
+  wit_u->typ_e = u3_writ_peek;
+  wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
+  wit_u->pek_u->vod_p = vod_p;
+  wit_u->pek_u->fun_f = fun_f;
+  wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
+  wit_u->pek_u->gan   = gan;
+
+  {
+    //  XX cache
+    //
+    u3_pier* pir_u = god_u->cb_u.vod_p;  //  XX do better
+    u3_noun our = u3dc("scot", 'p', u3i_chubs(2, pir_u->who_d));
+    wit_u->pek_u->ful = u3nt(car_m, our, pax);
+  }
+
+  //  XX cache check
+  //
+
+  _lord_writ_plan(god_u, wit_u);
+}
+
+/* u3_lord_peek_last(): read namespace, injecting ship (our) and case (now).
+*/
+void
+u3_lord_peek_last(u3_lord*   god_u,
+                  u3_noun      gan,
+                  c3_m       car_m,
+                  u3_atom      des,
+                  u3_noun      pax,
+                  void*      vod_p,
+                  u3_peek_cb fun_f)
+{
+  u3_writ* wit_u = _lord_writ_new(god_u);
+  wit_u->typ_e = u3_writ_peek;
+  wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
+  wit_u->pek_u->vod_p = vod_p;
+  wit_u->pek_u->fun_f = fun_f;
+  wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
+  wit_u->pek_u->gan   = gan;
+
+  {
+    //  XX cache
+    //
+    u3_pier* pir_u = god_u->cb_u.vod_p;  //  XX do better
+    u3_noun our = u3dc("scot", 'p', u3i_chubs(2, pir_u->who_d));
+    u3_noun cas = u3dc("scot", c3__da, u3k(wit_u->pek_u->now));
+
+    wit_u->pek_u->ful = u3nc(car_m, u3nq(our, des, cas, pax));
+  }
+
+  //  NB, won't be cached, result shouldn't be
+  //
   _lord_writ_plan(god_u, wit_u);
 }
 
@@ -799,6 +820,38 @@ u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo)
   }
 
   _lord_writ_plan(god_u, wit_u);
+}
+
+/* u3_lord_save(): save a snapshot.
+*/
+c3_o
+u3_lord_save(u3_lord* god_u)
+{
+  if ( god_u->dep_w ) {
+    return c3n;
+  }
+  else {
+    u3_writ* wit_u = _lord_writ_new(god_u);
+    wit_u->typ_e = u3_writ_save;
+    _lord_writ_plan(god_u, wit_u);
+    return c3y;
+  }
+}
+
+/* u3_lord_pack(): save portable state.
+*/
+c3_o
+u3_lord_pack(u3_lord* god_u)
+{
+  if ( god_u->dep_w ) {
+    return c3n;
+  }
+  else {
+    u3_writ* wit_u = _lord_writ_new(god_u);
+    wit_u->typ_e = u3_writ_pack;
+    _lord_writ_plan(god_u, wit_u);
+    return c3y;
+  }
 }
 
 /* u3_lord_exit(): shutdown gracefully.

@@ -354,26 +354,18 @@
           u3_fact*         ext_u;               //  queue exit (lowest)
         } u3_info;
 
-      /* u3_peek_type: namespace read request types
+      /* u3_peek_cb: namespace read response callback.
       */
-        typedef enum {
-          u3_peek_just = 0,
-          u3_peek_last = 1
-        } u3_peek_type;
+        typedef void (*u3_peek_cb)(void*, u3_noun);
 
       /* u3_peek: namespace read request
       */
         typedef struct _u3_peek {
-          c3_m             car_m;               //  care
+          void*            vod_p;               //  context
+          u3_peek_cb       fun_f;               //  callback
+          u3_noun            now;               //  XX
           u3_noun            gan;               //  leakset
-          u3_peek_type     typ_e;               //  type-tagged
-          union {                               //
-            u3_noun          pax;               //  /desk/case/...
-            struct {                            //
-              u3_atom        des;               //  desk
-              u3_noun        pax;               //  /...
-            } las_u;                            //
-          };                                    //
+          u3_noun            ful;               //  /care/beam
         } u3_peek;
 
       /* u3_writ_type: king->serf ipc message types
@@ -414,7 +406,6 @@
           void (*slog_f)(void*, c3_w, u3_noun);
           void (*spin_f)(void*, u3_atom, c3_o);
           void (*spun_f)(void*);
-          void (*peek_f)(void*, u3_peek*, u3_noun);
           void (*play_done_f)(void*, u3_info, c3_l mug_l);
           void (*play_bail_f)(void*, u3_info, c3_l mug_l, c3_d eve_d, u3_noun dud);
           void (*work_done_f)(void*, u3_ovum*, u3_fact*, u3_gift*);
@@ -830,7 +821,32 @@
       /* u3_lord_peek(): read namespace.
       */
         void
-        u3_lord_peek(u3_lord* god_u, u3_peek* pek_u);
+        u3_lord_peek(u3_lord*   god_u,
+                     u3_noun      gan,
+                     u3_noun      ful,
+                     void*      vod_p,
+                     u3_peek_cb fun_f);
+
+      /* u3_lord_peek_mine(): read namespace, injecting ship.
+      */
+        void
+        u3_lord_peek_mine(u3_lord*   god_u,
+                          u3_noun      gan,
+                          c3_m       car_m,
+                          u3_noun      pax,
+                          void*      vod_p,
+                          u3_peek_cb fun_f);
+
+      /* u3_lord_peek_last(): read namespace, injecting ship and case.
+      */
+        void
+        u3_lord_peek_last(u3_lord*   god_u,
+                          u3_noun      gan,
+                          c3_m       car_m,
+                          u3_atom      des,
+                          u3_noun      pax,
+                          void*      vod_p,
+                          u3_peek_cb fun_f);
 
     /**  Filesystem (new api).
     **/
