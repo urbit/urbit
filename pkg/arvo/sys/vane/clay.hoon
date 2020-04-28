@@ -2641,21 +2641,6 @@
       ?~  kid=(~(get by dir.nak) i.path)
         ~
       $(nak u.kid, path t.path)
-    ::  +get-fit: produce path with suffix /'s maybe converted to -'s
-    ::
-    ++  get-fit
-      |=  [pre=@tas pax=@tas]
-      ^-  (unit path)
-      ?~  nuk=(~(get by dir.nak) pre)
-        ~
-      =.  nak  u.nuk
-      =/  paz  (segments pax)
-      |-  ^-  (unit path)
-      ?~  paz  ~
-      =/  pax  (snoc i.paz %hoon)
-      ?^  (get pax)
-        `[pre pax]
-      $(paz t.paz)
     --
   ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
   ++  with-faces
@@ -3083,12 +3068,34 @@
       [!>(..zuse) nub]  ::  TODO implement
     ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
     ::
-    ::    TODO: traverses the $ankh twice; could be optimized
-    ::
     ++  build-fit
       |=  [pre=@tas pax=@tas]
       ^-  [vase state]
-      (build-file ~|(no-file+pax (need (~(get-fit an ankh) [pre pax]))))
+      (build-file (fit-path pre pax))
+    ::
+    ::  +fit-path: find path, maybe converting '-'s to '/'s
+    ::
+    ::    Try '-' before '/', applied left-to-right through the path,
+    ::    e.g. 'a-foo/bar' takes precedence over 'a/foo-bar'.
+    ::
+    ++  fit-path
+      |=  [pre=@tas pax=@tas]
+      ^-  path
+      =/  paz  (segments pax)
+      |-  ^-  path
+      ?~  paz  ~|(no-file+pre^pax !!)
+      =/  pux=path  pre^(snoc i.paz %hoon)
+      ?:  (~(has in deletes) pux)
+        ~&  path-in-deletes+pux
+        $(paz t.paz)
+      ?:  (~(has by changes) pux)
+        ~&  path-in-changes+pux
+        pux
+      ?^  (~(get an ankh) pux)
+        ~&  path-in-ankh+pux
+        pux
+      ~&  path-not-in-ankh+pux
+      $(paz t.paz)
     --
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
