@@ -356,7 +356,7 @@
   ++  priorities
     ^-  (list (set @))
     :~
-      (sy ~[%dojo])  ::  ensure dojo connects first
+      :: set up stores with priority: depended on, but never depending
       %-  sy
       :~  %permission-store
           %chat-store
@@ -366,7 +366,8 @@
           %invite-store
           %metadata-store
       ==
-      (sy ~[%chat-hook])  :: ensure chat-cli can sub to invites
+      :: ensure chat-cli can sub to invites
+      (sy ~[%chat-hook])
     ==
   ++  sort-by-priorities
     =/  priorities  priorities
@@ -389,7 +390,10 @@
   %+  roll
     %+  sort
       ~(tap in eel)
-    |=([[@ a=term] [@ b=term]] (aor a b))
+    |=  [[@ a=term] [@ b=term]]
+    ?:  =(a %dojo)  %.n
+    ?:  =(b %dojo)  %.y
+    (aor a b)
   =<  .(con +>)
   |:  $:{gil/gill:gall con/_.}  ^+  con
   =.  +>.$  con
