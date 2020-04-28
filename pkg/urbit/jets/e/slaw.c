@@ -61,6 +61,19 @@
   // pulls the tables out of the sample, so we can't just reuse it from other
   // jets.
 
+  /* u3_noun */
+  /* _parse_p(u3_noun txt) { */
+  /*   // The current parsing text code for @p in hoon is kinda nuts. it parses */
+  /*   // arbitrary lowercase ascii characters and then does a linear walk through */
+  /*   // the  */
+
+
+  /*   // Run the result through the scrambler to resolve the textual name to the */
+  /*   // number. */
+  /*   return u3nc(0, u3qc_ob_fynd(raw)); */
+  /* } */
+
+
   u3_noun
   _parse_tas(u3_noun txt) {
     // For any symbol which matches, txt will return itself as a

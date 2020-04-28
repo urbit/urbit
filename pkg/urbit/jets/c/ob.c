@@ -349,3 +349,42 @@ u3wc_ob_feis(u3_noun cor)
     return u3qc_ob_feis(m);
   }
 }
+
+u3_noun
+u3qc_ob_fynd(u3_atom cry)
+{
+  c3_d BIGGEST_PLANET = 0xffffffffULL;
+  c3_d SMALLEST_MOON = 0x100000000ULL;
+  c3_d BIGGEST_MOON = 0xffffffffffffffffULL;
+
+  c3_d MOON_MASK = 0xffffffff00000000ULL;
+
+  if (c3y == u3qa_gte(cry, 0x10000) &&
+      c3y == u3qa_lte(cry, u3i_chubs(1, &BIGGEST_PLANET))) {
+    return u3qa_add(0x10000, u3qc_ob_tail(u3qa_sub(cry, 0x10000)));
+  }
+
+  if (c3y == u3qa_gte(cry, u3i_chubs(1, &SMALLEST_MOON)) &&
+      c3y == u3qa_lte(cry, u3i_chubs(1, &BIGGEST_MOON))) {
+    u3_atom lo = u3qc_dis(cry, u3i_chubs(1, &BIGGEST_PLANET));
+    u3_atom hi = u3qc_dis(cry, u3i_chubs(1, &MOON_MASK));
+    return u3qc_con(hi, u3qc_ob_fynd(lo));
+  }
+
+  return cry;
+}
+
+u3_noun
+u3wc_ob_fynd(u3_noun cor)
+{
+  u3_noun m;
+
+  if ( (c3n == u3r_mean(cor, u3x_sam, &m, 0)) ||
+       (c3n == u3ud(m)) )
+  {
+    return u3m_bail(c3__exit);
+  }
+  else {
+    return u3qc_ob_fynd(m);
+  }
+}
