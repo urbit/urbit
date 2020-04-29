@@ -4,7 +4,7 @@ const path = require('path');
 const urbitrc = require('./urbitrc');
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: {
      app: './src/index.js'
   },
@@ -61,7 +61,7 @@ module.exports = {
     publicPath: '/'
   },
   optimization: {
-    minimize: false,
+    minimize: true,
     usedExports: true
   }
 };
