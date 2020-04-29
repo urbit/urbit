@@ -103,6 +103,10 @@ export class ChatScreen extends Component {
       this.props.api.chat.read(this.props.station);
     }
 
+    if(!prevProps.chatInitialized && props.chatInitialized) {
+      this.setState({ read: props.read })
+    }
+
     if (
       (props.length !== prevProps.length ||
        props.envelopes.length !== prevProps.envelopes.length ||
