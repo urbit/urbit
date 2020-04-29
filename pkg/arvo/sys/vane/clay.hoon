@@ -3522,6 +3522,7 @@
   ::    XX  needs to check that commit doesn't have same date
   ::
   ++  park
+    =/  check-sane  |
     |^
     |=  [updated=? =yuki =rang]
     ^+  ..park
@@ -3551,7 +3552,7 @@
     =.  ..park  (emil (print deletes ~(key by changes)))
     =^  change-cages  ford-cache.args
       (checkout-changes args changes)
-    ::  =/  sane-cont  (sane-changes changes change-cages)
+    =/  sane-continuation  (sane-changes changes change-cages)
     =/  new-blobs=(map lobe blob)
       %-  malt
       %+  turn  ~(tap by change-cages)
@@ -3574,7 +3575,7 @@
     ::
     =^  ankh  ford-cache.args
       (checkout-ankh args deletes change-cages ank.dom)
-    ::  =/  null  (sane-ankh sane-cont ankh)
+    =/  null  (sane-ankh sane-continuation ankh)
     =.  ankh.args  ankh
     =.  ank.dom  ankh
     =^  mim  ford-cache.args
@@ -3798,6 +3799,8 @@
               change-cages=(map path [lobe cage])
           ==
       ^-  (unit [(map path [lobe cage]) args:ford:fusion])
+      ?.  check-sane
+        ~
       =/  tak=(unit tako)  (~(get by hit.dom) let.dom)
       ?~  tak
         ~
@@ -3813,17 +3816,6 @@
         ~|  [lobe p.blob actual-lobe]
         ?>  &(=(lobe p.blob) =(lobe actual-lobe))
         ~
-      ::  Assert all new lobes are reachable
-      ::
-      ::  XX  Needs to run after dome is updated
-      ::
-      ::  =/  files=(list [=path =lobe])  ~(tap by q.yaki)
-      ::  |-  ^+  *sane-changes
-      ::  ?^  files
-      ::    ?.  (~(has by lat.ran) lobe.i.files)
-      ::      ~|  missing-lobe=[path lobe]
-      ::      !!
-      ::    $(files t.files)
       ::  Assert we calculated the same change-cages w/o cache
       ::
       ::  XX remove deletes
@@ -3850,6 +3842,26 @@
               (unit [all-changes=(map path [lobe cage]) =ford=args:ford:fusion])
               =test=ankh
           ==
+      ?.  check-sane
+        ~
+      ::  Assert all new lobes are reachable.
+      ::
+      ::  Needs to run after dome is updated
+      ::
+      =/  tak=(unit tako)  (~(get by hit.dom) let.dom)
+      ?~  tak
+        ~
+      =/  =yaki  (~(got by hut.ran) u.tak)
+      =/  files=(list [=path =lobe])  ~(tap by q.yaki)
+      |-  ^+  *sane-ankh
+      ?^  files
+        ?.  (~(has by lat.ran) lobe.i.files)
+          ~|  missing-lobe=[path lobe]
+          !!
+        $(files t.files)
+      ::
+      ::  Assert we can rebuild the ankh
+      ::
       ?~  cont
         ~
       =+  u.cont
