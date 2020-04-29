@@ -5,6 +5,7 @@ import InviteUpdateReducer from '../../reducers/invite-update';
 import PermissionUpdateReducer from '../../reducers/permission-update';
 import MetadataReducer from '../../reducers/metadata-update';
 import LocalReducer from '../../reducers/local';
+import S3Reducer from '../../reducers/s3';
 
 class Store {
   constructor() {
@@ -17,6 +18,7 @@ class Store {
     this.inviteUpdateReducer = new InviteUpdateReducer();
     this.metadataReducer = new MetadataReducer();
     this.localReducer = new LocalReducer();
+    this.s3Reducer = new S3Reducer();
     this.setState = () => {};
   }
 
@@ -34,7 +36,8 @@ class Store {
       selectedGroups: [],
       sidebarShown: true,
       pendingMessages: new Map([]),
-      chatInitialized: false
+      chatInitialized: false,
+      s3: {}
     };
   }
 
@@ -57,6 +60,7 @@ class Store {
     this.inviteUpdateReducer.reduce(json, this.state);
     this.metadataReducer.reduce(json, this.state);
     this.localReducer.reduce(json, this.state);
+    this.s3Reducer.reduce(json, this.state);
 
     this.setState(this.state);
   }
