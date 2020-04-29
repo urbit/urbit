@@ -18,6 +18,7 @@
     "react-dom": "^16.8.6",
     "react-markdown": "^4.3.1",
     "react-router-dom": "^5.0.0",
+    "remark-disable-tokenizers": "^1.0.24",
     "styled-components": "^5.1.0",
     "styled-system": "^5.1.5",
     "urbit-ob": "^5.0.0",
