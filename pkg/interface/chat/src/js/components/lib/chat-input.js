@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import { UnControlled as CodeEditor } from 'react-codemirror2';
+import CodeMirror from 'codemirror';
 
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
@@ -173,7 +174,7 @@ export class ChatInput extends Component {
 
   isUrl(string) {
     try {
-      const websiteTest = new RegExp(String(/((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source)
+      const websiteTest = new RegExp(String(/^((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source)
       );
       return websiteTest.test(string);
     } catch (e) {
@@ -306,7 +307,9 @@ export class ChatInput extends Component {
         'Enter': cm =>
             this.messageSubmit(),
         'Shift-3': cm =>
-          this.toggleCode()
+          cm.getValue().length === 0
+            ? this.toggleCode()
+            : CodeMirror.Pass
       }
     };
 
