@@ -344,6 +344,11 @@ export class ChatInput extends Component {
             options={options}
             editorDidMount={(editor) => {
             this.editor = editor;
+            if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
+                navigator.userAgent
+              )) {
+              editor.focus();
+              }
             }}
             onChange={(e, d, v) => this.messageChange(e, d, v)}
           />
