@@ -3698,7 +3698,7 @@
               path.i.cans  t.path.i.cans
               ankh         (~(gut by dir.ankh) i.path.i.cans *^ankh)
             ==
-          :-  child-ankh(dir (~(put by dir.ankh) i.path.i.cans child-ankh))
+          :-  ankh(dir (~(put by dir.ankh) i.path.i.cans child-ankh))
           ford-cache.ford-args
         [ankh(fil `[lobe.i.cans cage.i.cans]) ford-cache.ford-args]
       =.  ankh  new-ankh
