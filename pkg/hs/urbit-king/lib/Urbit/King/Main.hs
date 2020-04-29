@@ -138,11 +138,12 @@ toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
     (_   , _   , True) -> NMLocalhost
     (_   , _   , _   ) -> NMNormal
 
-  _ncNetMode   = mode
-  _ncAmesPort  = oAmesPort
-  _ncHttpPort  = oHttpPort
-  _ncHttpsPort = oHttpsPort
-  _ncLocalPort = oLoopbackPort
+  _ncNetMode     = mode
+  _ncAmesPort    = oAmesPort
+  _ncHttpPort    = oHttpPort
+  _ncHttpsPort   = oHttpsPort
+  _ncLocalPort   = oLoopbackPort
+  _ncAmesLatency = oAmesLatency
 
 tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
                    , HasConfigDir e, HasStderrLogFunc e

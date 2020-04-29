@@ -31,6 +31,7 @@ data Opts = Opts
     , oHttpPort     :: Maybe Word16
     , oHttpsPort    :: Maybe Word16
     , oLoopbackPort :: Maybe Word16
+    , oAmesLatency  :: Maybe Int
     }
   deriving (Show)
 
@@ -220,6 +221,13 @@ opts = do
       <> long "ames"
       <> help "Ames port"
       <> hidden
+
+    oAmesLatency <-
+      optional
+      $  option (map (*1000) auto)
+      $  metavar "DELAY"
+      <> long "ames-latency"
+      <> help "Milliseconds before sending ames event"
 
     oHttpPort <-
       optional

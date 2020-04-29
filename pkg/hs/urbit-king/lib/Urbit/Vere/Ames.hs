@@ -174,6 +174,10 @@ ames inst who isFake enqueueEv stderr =
                 bindSock socketVar
               Right (bs, addr) -> do
                 logTrace $ displayShow ("(ames) Received packet from ", addr)
+                mLatency <- view (networkConfigL . ncAmesLatency)
+                case mLatency of
+                  Nothing -> pure ()
+                  Just latency -> threadDelay $ latency
                 case addr of
                     SockAddrInet p a -> atomically (enqueueEv $ hearEv p a bs)
                     _                -> pure ()

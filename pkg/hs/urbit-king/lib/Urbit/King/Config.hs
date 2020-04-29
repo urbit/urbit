@@ -39,6 +39,7 @@ data NetworkConfig = NetworkConfig
   , _ncHttpPort   :: Maybe Word16
   , _ncHttpsPort  :: Maybe Word16
   , _ncLocalPort  :: Maybe Word16
+  , _ncAmesLatency :: Maybe Int
   } deriving (Show)
 
 makeLenses ''NetworkConfig
