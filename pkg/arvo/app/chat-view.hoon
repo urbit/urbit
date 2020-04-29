@@ -10,45 +10,13 @@
     *chat-hook,
     *metadata-hook
 /+  *server, *chat-json, default-agent, verb, dbug
-/=  index
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/index
-  /|  /html/
-      /~  ~
-  ==
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/js/tile
-  /|  /js/
-      /~  ~
-  ==
-/=  script
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/js/index
-  /|  /js/
-      /~  ~
-  ==
-/=  style
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/css/index
-  /|  /css/
-      /~  ~
-  ==
-/=  chat-png
-  /^  (map knot @)
-  /:  /===/app/chat/img  /_  /png/
 ::
 ~%  %chat-view-top  ..is  ~
 |%
 +$  card  card:agent:gall
 ::
 +$  poke
-  $%  [%launch-action [@tas path @t]]
-      [%chat-action chat-action]
+  $%  [%chat-action chat-action]
       [%group-action group-action]
       [%chat-hook-action chat-hook-action]
       [%permission-hook-action permission-hook-action]
@@ -68,12 +36,9 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =/  launcha  [%launch-action !>([%add %chat-view /configs '/~chat/js/tile.js'])]
     :_  this
-    :~  [%pass /updates %agent [our.bol %chat-store] %watch /updates]
-        [%pass / %arvo %e %connect [~ /'~chat'] %chat-view]
-        [%pass /chat-view %agent [our.bol %launch] %poke launcha]
-    ==
+    [%pass /updates %agent [our.bol %chat-store] %watch /updates]~
+  ::
   ++  on-poke
     ~/  %chat-view-poke
     |=  [=mark =vase]
@@ -150,7 +115,14 @@
     [~ this]
   ::
   ++  on-save  on-save:def
-  ++  on-load  on-load:def
+  ++  on-load  
+    |=  old=*
+    ^-  (quip card _this)
+    :_  this
+    :~  [%pass / %arvo %e %disconnect [~ /'~chat']]
+        [%pass / %arvo %e %connect [~ /'chat-view'] %chat-view]
+    ==
+  ::
   ++  on-leave  on-leave:def
   ++  on-peek   on-peek:def
   ++  on-fail   on-fail:def
@@ -165,18 +137,7 @@
   ^-  simple-payload:http
   =+  url=(parse-request-line url.request.inbound-request)
   ?+  site.url  not-found:gen
-      [%'~chat' %css %index ~]  (css-response:gen style)
-      [%'~chat' %js %tile ~]    (js-response:gen tile-js)
-      [%'~chat' %js %index ~]   (js-response:gen script)
-  ::
-      [%'~chat' %img @t *]
-    =/  name=@t  i.t.t.site.url
-    =/  img  (~(get by chat-png) name)
-    ?~  img
-      not-found:gen
-    (png-response:gen (as-octs:mimes:html u.img))
-  ::
-      [%'~chat' %paginate @t @t *]
+      [%'chat-view' %paginate @t @t *]
     =/  start  (need (rush i.t.t.site.url dem))
     =/  end  (need (rush i.t.t.t.site.url dem))
     =/  pax  t.t.t.t.site.url
@@ -185,8 +146,6 @@
     %-  json-to-octs
     %-  update-to-json
     [%messages pax start end envelopes]
-  ::
-      [%'~chat' *]  (html-response:gen index)
   ==
 ::
 ++  poke-json
