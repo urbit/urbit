@@ -208,6 +208,10 @@
     """
     /-  *{sur-name}
     |_  {type-name}
+    ++  grow
+      |%
+      ++  json  ({type-name}-to-json {type-name})
+      --
     ++  grab
       |%
         ++  noun  {type-name}
@@ -232,19 +236,20 @@
       |%
         +$  gift
           $%  [$history =loglist]
-              [$log event-log=event-update]
+              [$log =event-log]
               [$read-call read-call]
               [$read-tx read-tx]
           ==
         +$  poke
           $%  (make-action:builders $call call)
               (make-action:builders $send-tx send-tx)
-              [$event-subscribe =path config=(watch-config:builders watch-config)]
+              [$event-subscribe =path config=watch-config]
           ==
+        +$  event-log  (event-log-config:builders event-update)
         +$  watch-config
           %-  watch-config:builders
           event-subscribe
-        +$  loglist  (list (event-log-config:builders event-update))
+        +$  loglist  (list event-log)
         +$  call
       {(function-calls read-functions)}
           ==
@@ -312,6 +317,90 @@
         =-  %-  zing  ~["        [${(trip name.function)} out={-}]" nl]
           (function-outputs-to-face-pairs function)
     --
+  ++  code-gen-lib
+  |=  [=contract sur-name=@tas]
+  ^-  cord
+  =/  read-functions=(list function)
+  (turn ~(tap by read-functions.contract) |=([* =function] function))
+  =/  write-functions=(list function)
+  (turn ~(tap by write-functions.contract) |=([* =function] function))
+  =/  events=(list event)
+  (turn ~(tap by events.contract) |=([* =event] event))
+  |^
+    %-  crip
+    """
+    /-  *eth-contracts-{(trip sur-name)}
+    |%
+      ++  gift-to-json
+      |=  =gift
+      =,  enjs:format
+      ?-  -.gift
+          %history
+        %+  frond  %history
+        [%a (turn loglist.gift event-log-to-json)]
+          %log
+        %+  frond  %event-update
+        (event-log-to-json event-log.gift)
+          %read-call
+        !!
+          %read-tx
+        !!
+      ==
+      ++  event-log-to-json
+        |=  [=event-log]
+        ^-  json
+        =,  enjs:format
+    {log-json-cases}
+    --
+    """
+  ++  nl  (trip 10)
+  ++  log-json-cases
+    =-
+    """
+        ?-  -.event-data.event-log
+      {-}
+        ==
+    """
+    %-  zing
+    %+  turn  events
+    |=  =event
+    ^-  tape
+    =-
+    """
+            %{(trip name.event)}
+          %-  pairs
+          :~
+            [%type [%s %{(trip name.event)}]]
+            :-  %payload
+            %-  pairs
+            :~
+    {-}
+            ==
+          ==
+    """
+    (inputs-json event)
+  ++  inputs-json
+    |=  =event
+    %-  zing
+    %+  turn  inputs.event
+    |=  =event-input
+    =-
+    (zing ~["          [%{(trip name.event-input)} {-}]" nl])
+    (etyp-to-json type.event-input name.event-input)
+  ++  etyp-to-json
+    |=  [=etyp name=@tas]
+    ^-  tape
+    ?+  etyp  ~|("unimplemented etyp-to-json type" !!)
+        %uint
+      "[%n (scot %ud {(trip name)}.event-data.event-log)]"
+        %int
+      "[%n (scot %sd {(trip name)}.event-data.event-log)]"
+        %address
+      "[%s (scot %ux {(trip name)}.event-data.event-log)]"
+        %bool
+      "[%b data]"
+    ==
+  --
 ::
   ++  parse-contract
     |=  jon=json
