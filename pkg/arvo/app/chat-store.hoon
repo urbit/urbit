@@ -1,7 +1,6 @@
 :: chat-store: data store that holds linear sequences of chat messages
 ::
-/-  store=chat-store
-/+  store-lib=chat-store, *chat-eval, default-agent, verb, dbug
+/+  store=chat-store, default-agent, verb, dbug
 ~%  %chat-store-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -72,7 +71,7 @@
       ?+    path  (on-watch:def path)
           [%keys ~]     (give %chat-update !>([%keys ~(key by inbox)]))
           [%all ~]      (give %chat-initial !>(inbox))
-          [%configs ~]  (give %chat-configs !>((inbox-to-configs:store-lib inbox)))
+          [%configs ~]  (give %chat-configs !>((inbox-to-configs:store inbox)))
           [%updates ~]  ~
           [%mailbox @ *]
         ?>  (~(has by inbox) t.path)
@@ -93,7 +92,7 @@
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
         [%x %all ~]        ``noun+!>(inbox)
-        [%x %configs ~]    ``noun+!>((inbox-to-configs:store-lib inbox))
+        [%x %configs ~]    ``noun+!>((inbox-to-configs:store inbox))
         [%x %keys ~]       ``noun+!>(~(key by inbox))
         [%x %envelopes *]  (peek-x-envelopes:cc t.t.path)
         [%x %mailbox *]
@@ -160,7 +159,7 @@
 ++  poke-json
   |=  jon=json
   ^-  (quip card _state)
-  (poke-chat-action (action:dejs:store-lib jon))
+  (poke-chat-action (action:dejs:store jon))
 ::
 ++  poke-chat-action
   |=  =action:store
@@ -249,7 +248,7 @@
           (team:title our.bol author)
       ==
     =/  =hoon  (ream expression.letter)
-    letter(output (eval bol hoon))
+    letter(output (eval:store bol hoon))
   letter
 ::
 ++  prepend-envelope

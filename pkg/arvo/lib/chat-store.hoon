@@ -1,32 +1,31 @@
 /-  *chat-store
-^?
 |%
 ++  enjs
   =,  enjs:format
   |%
   ::
   ++  letter
-      |=  =^letter
-      ^-  json
-      =,  enjs:format
-      ?-  -.letter
-          %text
-      (frond %text s+text.letter)
-      ::
-          %url
-      (frond %url s+url.letter)
-      ::
-          %code
-      %+  frond  %code
-      %-  pairs
-      :~  [%expression s+expression.letter]
-          [%output a+(turn output.letter tank)]
-      ==
-      ::
-          %me
-      (frond %me s+narrative.letter)
-      ::
-      ==
+    |=  =^letter
+    ^-  json
+    =,  enjs:format
+    ?-  -.letter
+        %text
+    (frond %text s+text.letter)
+    ::
+        %url
+    (frond %url s+url.letter)
+    ::
+        %code
+    %+  frond  %code
+    %-  pairs
+    :~  [%expression s+expression.letter]
+        [%output a+(turn output.letter tank)]
+    ==
+    ::
+        %me
+    (frond %me s+narrative.letter)
+    ::
+    ==
   ::
   ++  envelope
     |=  =^envelope
@@ -200,6 +199,7 @@
     ::
     --
   --
+::
 ++  inbox-to-configs
   |=  =inbox
   ^-  configs
@@ -207,4 +207,26 @@
   |=  =mailbox
   ^-  config
   config.mailbox
+::
+++  eval
+  |=  [=bowl:gall =hoon]
+  ^-  (list tank)
+  =/  fowl=[our=@p now=@da eny=@uvJ]
+    :+  our.bowl
+      now.bowl
+    (shaz (cat 3 (mix [now eny]:bowl) %eny))
+  ::
+  =/  subject  [fowl ..zuse]
+  =/  minted=(each [=type =nock] (list tank))
+    %-  mule  |.
+    (~(mint ut -:!>(subject)) %noun hoon)
+  ?:  ?=(%| -.minted)  p.minted
+  =/  =toon
+    (mock [subject nock.p.minted] |=(^ ~))
+  ?-  -.toon
+    %0  [(sell type.p.minted p.toon) ~]
+    %1  :-  leaf+".^ unsupported in chat eval"
+        (turn ;;((list path) p.toon) smyt)
+    %2  [leaf+"crash!" p.toon]
+  ==
 --

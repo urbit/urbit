@@ -1,4 +1,3 @@
-/-  *chat-store
 /+  *chat-store
 |_  box=inbox
 ::

@@ -5,9 +5,8 @@
 /-  *permission-store, *invite-store, *metadata-store,
     *permission-hook, *group-store, *permission-group-hook,  ::TMP  for upgrade
     hook=chat-hook,
-    store=chat-store,
     view=chat-view
-/+  *chat-eval, default-agent, verb, dbug, store-lib=chat-store
+/+  default-agent, verb, dbug, store=chat-store
 ~%  %chat-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -301,7 +300,7 @@
 ++  poke-json
   |=  jon=json
   ^-  (quip card _state)
-  (poke-chat-action (action:dejs:store-lib jon))
+  (poke-chat-action (action:dejs:store jon))
 ::
 ++  poke-chat-action
   |=  act=action:store
@@ -315,7 +314,7 @@
     =*  letter  letter.envelope.act
     =?  letter  &(?=(%code -.letter) ?=(~ output.letter))
       =/  =hoon  (ream expression.letter)
-      letter(output (eval bol hoon))
+      letter(output (eval:store bol hoon))
     =/  ship  (~(got by synced) path.act)
     =/  appl  ?:(=(ship our.bol) %chat-store %chat-hook)
     [%pass / %agent [ship appl] %poke %chat-action !>(act)]~

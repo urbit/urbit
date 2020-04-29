@@ -10,12 +10,10 @@
     *chat-hook,
     *metadata-hook,
     *rw-security,
-    store=chat-store,
-    hook=chat-hook,
-    view=chat-view
+    hook=chat-hook
 /+  *server, default-agent, verb, dbug,
-    store-lib=chat-store,
-    view-lib=chat-view
+    store=chat-store,
+    view=chat-view
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -95,7 +93,7 @@
     ::
         %json
       :_  this
-      (poke-chat-view-action:cc (action:dejs:view-lib !<(json vase)))
+      (poke-chat-view-action:cc (action:dejs:view !<(json vase)))
     ::
         %chat-view-action
       :_  this
@@ -114,7 +112,7 @@
       ::  create inbox with 20 messages max per mailbox and send that along
       ::  then quit the subscription
       :_  this
-      [%give %fact ~ %json !>((inbox:enjs:store-lib truncated-inbox-scry))]~
+      [%give %fact ~ %json !>((inbox:enjs:store truncated-inbox-scry))]~
     ?:  =(/configs path)
       [[%give %fact ~ %json !>(*json)]~ this]
     (on-watch:def path)
@@ -190,7 +188,7 @@
     =/  envelopes  (envelope-scry [(scot %ud start) (scot %ud end) pax])
     %-  json-response:gen
     %-  json-to-octs
-    %-  update:enjs:store-lib
+    %-  update:enjs:store
     [%messages pax start end envelopes]
   ::
       [%'~chat' *]  (html-response:gen index)
@@ -200,7 +198,7 @@
   |=  jon=json
   ^-  (list card)
   ?>  (team:title our.bol src.bol)
-  (poke-chat-view-action (action:dejs:view-lib jon))
+  (poke-chat-view-action (action:dejs:view jon))
 ::
 ++  poke-chat-view-action
   |=  act=action:view
@@ -487,8 +485,8 @@
 ++  diff-chat-update
   |=  upd=update:store
   ^-  (list card)
-  =/  updates-json  (update:enjs:store-lib upd)
-  =/  configs-json  (configs:enjs:store-lib configs-scry)
+  =/  updates-json  (update:enjs:store upd)
+  =/  configs-json  (configs:enjs:store configs-scry)
   :~  [%give %fact ~[/primary] %json !>(updates-json)]
       [%give %fact ~[/configs] %json !>(configs-json)]
   ==

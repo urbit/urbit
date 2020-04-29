@@ -1,4 +1,3 @@
-/-  *chat-hook
 /+  *chat-hook
 |_  act=action
 ++  grab

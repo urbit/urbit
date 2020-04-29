@@ -1,4 +1,3 @@
-/-  *chat-hook
 /+  *chat-hook
 |_  upd=update
 ++  grow

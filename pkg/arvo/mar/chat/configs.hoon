@@ -1,4 +1,3 @@
-/-  *chat-store
 /+  *chat-store
 |_  cfg=configs
 ::

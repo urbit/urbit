@@ -1,4 +1,3 @@
-/-  *chat-view
 /+  *chat-view
 |_  act=action
 ++  grab

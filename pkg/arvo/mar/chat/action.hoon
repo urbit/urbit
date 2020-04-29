@@ -1,6 +1,4 @@
-/-  *chat-store
 /+  *chat-store
-=,  dejs:format
 |_  act=action
 ++  grab
   |%

@@ -1,5 +1,4 @@
 /-  *chat-view, *rw-security
-^?
 |%
 ++  dejs
   |%

@@ -1,5 +1,4 @@
 /-  *chat-hook
-^?
 |%
 ::
 ++  enjs

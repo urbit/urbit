@@ -9,10 +9,10 @@
 ::    we concat the ship onto the head of the path,
 ::    and trust it to take care of the rest.
 ::
-/-  store=chat-store, view=chat-view, hook=chat-hook,
+/-  view=chat-view, hook=chat-hook,
     *permission-store, *group-store, *invite-store,
     *rw-security, sole-sur=sole
-/+  sole-lib=sole, chat-eval, default-agent, verb, dbug,
+/+  sole-lib=sole, default-agent, verb, dbug, store=chat-store,
     auto=language-server-complete
 ::
 |%
@@ -978,7 +978,7 @@
     ::
     ++  eval
       |=  [txt=cord exe=hoon]
-      (say %code txt (eval:chat-eval bowl exe))
+      (say %code txt (eval:store bowl exe))
     ::  +lookup-glyph: print glyph info for all, glyph or target
     ::
     ++  lookup-glyph
