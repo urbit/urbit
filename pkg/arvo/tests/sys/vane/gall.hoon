@@ -31,21 +31,19 @@
   ::
   =/  =duct  ~[/init]
   =/  time  (add ~1111.1.1 ~s1)
-  =/  =term  %my-agent
+  =/  dap=term  %my-agent
   =/  ship  ~nec
   ::
   =/  call-args
     =/  =type  -:!>(*task:able:gall)
-    =/  =task:able:gall  [%conf term]
+    =/  =task:able:gall  [%conf dap]
     [duct type task]
   ::
   =/  =move:gall-gate
-    =/  =path  /sys/cor/[term]/(scot %p ship)/[term]/(scot %da time)
+    =/  =wire  /sys/cor/[dap]/(scot %p ship)/home/(scot %da time)
     =/  =note-arvo
-      =/  =schematic:ford  [%core [ship term] /hoon/[term]/app]
-      =/  =task:able:ford  [%build %.y schematic]
-      [%f task]
-    [duct %pass path note-arvo]
+      [%c %warp ship %home ~ %sing %a da+time /app/[dap]/hoon]
+    [duct %pass wire note-arvo]
   ::
   =/  expected-moves=(list move:gall-gate)  ~[move]
   ::
