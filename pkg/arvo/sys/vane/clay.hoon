@@ -3547,10 +3547,11 @@
     ::
     ::  ?:  &(!updated !=(~ (need-sys-update changes)))
     ::    (sys-update args yuki changes)
+    ::
     =.  ..park  (emil (print deletes ~(key by changes)))
     =^  change-cages  ford-cache.args
       (checkout-changes args changes)
-    ::  =/  cont  (sane-changes changes change-cages)
+    ::  =/  sane-cont  (sane-changes changes change-cages)
     =/  new-blobs=(map lobe blob)
       %-  malt
       %+  turn  ~(tap by change-cages)
@@ -3573,7 +3574,7 @@
     ::
     =^  ankh  ford-cache.args
       (checkout-ankh args deletes change-cages ank.dom)
-    ::  =/  null  (sane-ankh cont ankh)
+    ::  =/  null  (sane-ankh sane-cont ankh)
     =.  ankh.args  ankh
     =.  ank.dom  ankh
     =^  mim  ford-cache.args
@@ -3646,7 +3647,10 @@
       =/  =lobe
         ?-  -.change.i.cans
           %|  p.change.i.cans
-          %&  (page-to-lobe:util p.change.i.cans)
+          ::  Don't use p.change.i.cans because that's before casting to
+          ::  the correct mark.
+          ::
+          %&  (page-to-lobe:util [p q.q]:cage)
         ==
       =^  so-far  ford-cache.ford-args  $(cans t.cans)
       [(~(put by so-far) path.i.cans lobe cage) ford-cache.ford-args]
@@ -3793,17 +3797,36 @@
       |=  $:  changes=(map path (each page lobe))
               change-cages=(map path [lobe cage])
           ==
-      ^-  [(map path [lobe cage]) args:ford:fusion]
-      =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) let.dom))
+      ^-  (unit [(map path [lobe cage]) args:ford:fusion])
+      =/  tak=(unit tako)  (~(get by hit.dom) let.dom)
+      ?~  tak
+        ~
+      =/  =yaki  (~(got by hut.ran) u.tak)
+      ::  Assert all blobs hash to their lobe
+      ::
+      =/  foo
+        %-  ~(urn by lat.ran)
+        |=  [=lobe =blob]
+        ?:  ?=(%delta -.blob)
+          ~
+        =/  actual-lobe=^lobe  `@uv`(page-to-lobe q.blob)
+        ~|  [lobe p.blob actual-lobe]
+        ?>  &(=(lobe p.blob) =(lobe actual-lobe))
+        ~
       ::  Assert all new lobes are reachable
       ::
-      =/  files=(list [=path =lobe])  ~(tap by q.yaki)
-      |-  ^+  *sane-changes
-      ?^  files
-        ?.  (~(has by lat.ran) lobe.i.files)
-          ~|  missing-lobe=[path lobe]
-          !!
-        $(files t.files)
+      ::  XX  Needs to run after dome is updated
+      ::
+      ::  =/  files=(list [=path =lobe])  ~(tap by q.yaki)
+      ::  |-  ^+  *sane-changes
+      ::  ?^  files
+      ::    ?.  (~(has by lat.ran) lobe.i.files)
+      ::      ~|  missing-lobe=[path lobe]
+      ::      !!
+      ::    $(files t.files)
+      ::  Assert we calculated the same change-cages w/o cache
+      ::
+      ::  XX remove deletes
       ::
       =/  all-changes=(map path (each page lobe))
         =/  original=(map path (each page lobe))
@@ -3816,22 +3839,44 @@
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
       ?^  ccs
-        ?.  =(`cage.i.ccs (~(get by all-change-cages) path.i.ccs))
-          ~|  not-same-cages+path
+        ?.  =(`[lobe cage]:i.ccs (~(get by all-change-cages) path.i.ccs))
+          ~|  not-same-cages+path.i.ccs
           !!
         $(ccs t.ccs)
-      [all-change-cages args]
+      `[all-change-cages args]
     ::
     ++  sane-ankh
-      |=  $:  [change-cages=(map path [lobe cage]) =ford=args:ford:fusion]
+      |=  $:  $=  cont
+              (unit [all-changes=(map path [lobe cage]) =ford=args:ford:fusion])
               =test=ankh
           ==
+      ?~  cont
+        ~
+      =+  u.cont
       =^  ankh  ford-cache.ford-args
-        (checkout-ankh ford-args ~ change-cages *ankh)
-      ?.  =(ankh test-ankh)
-        ~|  %not-same-ankh
+        (checkout-ankh ford-args ~ all-changes *ankh)
+      =|  =path
+      |-  ^-  ~
+      =*  loop  $
+      =/  fil   (bind fil.ankh |=([=lobe =cage] [lobe p.cage q.q.cage]))
+      =/  test  (bind fil.ankh |=([=lobe =cage] [lobe p.cage q.q.cage]))
+      ?.  =(fil test)
+        ~|  [%not-same-file path ?=(~ fil.ankh) ?=(~ fil.test-ankh)]
+        ~|  ?~(fil.ankh ~ [[p p.q]:u.fil.ankh `@uv`(page-to-lobe [p q.q]:q.u.fil.ankh)])
+        ~|  ?~(fil.test-ankh ~ [[p p.q]:u.fil.test-ankh `@uv`(page-to-lobe [p q.q]:q.u.fil.test-ankh)])
         !!
-      ~
+      ?.  =(~(key by dir.ankh) ~(key by dir.test-ankh))
+        ~|  [%not-same-children path ~(key by dir.ankh) ~(key by dir.test-ankh)]
+        !!
+      =<  ~
+      %+  turn  ~(tap by dir.ankh)
+      |=  [=@ta =child=^ankh]
+      ~|  sane-ankh=[path ta]
+      %=  loop
+        path       (snoc path ta)
+        ankh       child-ankh
+        test-ankh  (~(got by dir.test-ankh) ta)
+      ==
     ::
     ::  Find /sys changes
     ::
