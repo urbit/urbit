@@ -13,22 +13,6 @@
 =/  fusion  fusion:clay-gate
 ::
 |%
-++  test-get-fit  ^-  tang
-  =/  =ankh:clay
-    :-  fil=~
-    %-  ~(gas by *(map @tas ankh:clay))
-    :~  :+  %lib  fil=~
-        %-  ~(gas by *(map @tas ankh:clay))
-        :~  :+  %language-server  fil=~
-            %-  ~(gas by *(map @tas ankh:clay))
-            :~  :+  %json  fil=~
-                %-  ~(gas by *(map @tas ankh:clay))
-                :~  :+  %hoon  fil=`[*lobe:clay hoon+!>('baz')]  dir=~
-    ==  ==  ==  ==
-  %+  expect-eq
-    !>  `(unit path)`[~ /lib/language-server/json/hoon]
-    !>  (~(get-fit an:fusion ankh) %lib %language-server-json)
-::
 ++  test-parse-pile  ^-  tang
   %+  expect-eq
     !>  ^-  pile:fusion
