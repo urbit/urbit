@@ -74,7 +74,7 @@
     :-  %s
     %-  crip
     %-  zing
-    :~  "/~groups/avatar"
+    :~  "/contact-view"
         (trip (spat path))
         "/"
         (trip (scot %p ship))

@@ -1,14 +1,4 @@
-/+  *server, *server, default-agent, verb, dbug
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/weather/js/tile
-  /|  /js/
-      /~  ~
-  ==
-/=  weather-png
-  /^  (map knot @)
-  /:  /===/app/weather/img  /_  /png/
+/+  *server, default-agent, verb, dbug
 =,  format
 ::
 |%
@@ -30,43 +20,28 @@
       weather-core  +>
       wc    ~(. weather-core bol)
       def   ~(. (default-agent this %|) bol)
-  ++  on-init
-    :_  this
-    :~  [%pass /bind/weather %arvo %e %connect [~ /'~weather'] %weather]
-        :*  %pass  /launch/weather  %agent  [our.bol %launch]  %poke
-            %launch-action  !>([%add %weather /weathertile '/~weather/js/tile.js'])
-        ==
-    ==
+  ++  on-init  [~ this]
   ++  on-save  !>(state)
   ++  on-load
     |=  old=vase
-    `this(state !<(state-zero old))
+    :_  this(state !<(state-zero old))
+    [%pass /bind/weather %arvo %e %disconnect [~ /'~weather']]~
   ::
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
     =^  cards  state
-      ?+    mark  (on-poke:def mark vase)
-          %json
-        (poke-json:wc !<(json vase))
-          %handle-http-request
-        =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
-        :_  state
-        %+  give-simple-payload:app  eyre-id
-        %+  require-authorization:app  inbound-request
-        poke-handle-http-request:wc
+      ?+  mark   (on-poke:def mark vase)
+          %json  (poke-json:wc !<(json vase))
       ==
     [cards this]
   ::
   ++  on-watch
     |=  =wire
     ^-  (quip card _this)
-    ?:  ?=([%weathertile ~] wire)
-      :_  this
-      [%give %fact ~ %json !>(data)]~
-    ?:  ?=([%http-response *] wire)
-      [~ this]
-    (on-watch:def wire)
+    ?.  ?=([%weathertile ~] wire)  (on-watch:def wire)
+    :_  this
+    [%give %fact ~ %json !>(data)]~
   ::
   ++  on-arvo
     |=  [=wire =sign-arvo]
@@ -82,7 +57,6 @@
         (http-response:wc wire client-response.sign-arvo)
       [cards this]
     (on-arvo:def wire sign-arvo)
-
   ::
   ++  on-leave  on-leave:def
   ++  on-peek   on-peek:def
@@ -142,29 +116,6 @@
     data  jon
     time  now.bol
   ==
-::
-++  poke-handle-http-request
-  |=  =inbound-request:eyre
-  ^-  simple-payload:http
-  ::
-  =/  request-line  (parse-request-line url.request.inbound-request)
-  =/  back-path  (flop site.request-line)
-  =/  name=@t
-    =/  back-path  (flop site.request-line)
-    ?~  back-path
-      ''
-    i.back-path
-  ::
-  ?~  back-path
-    not-found:gen
-  ?:  =(name 'tile')
-    (js-response:gen tile-js)
-  ?:  (lte (lent back-path) 1)
-    not-found:gen
-  ?:  =(&2:site.request-line 'img')
-    =/  img  (as-octs:mimes:html (~(got by weather-png) `@ta`name))
-    (png-response:gen img)
-  not-found:gen
 ::
 ++  wake
   |=  [wir=wire err=(unit tang)]

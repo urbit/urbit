@@ -10,38 +10,6 @@
     *permission-group-hook,
     *permission-hook
 /+  *server, *contact-json, default-agent, dbug
-/=  index
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/index
-  /|  /html/
-      /~  ~
-  ==
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/js/tile
-  /|  /js/
-      /~  ~
-  ==
-/=  script
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/js/index
-  /|  /js/
-      /~  ~
-  ==
-/=  style
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/css/index
-  /|  /css/
-      /~  ~
-  ==
-/=  contact-png
-  /^  (map knot @)
-  /:  /===/app/contacts/img  /_  /png/
-::
 |%
 +$  card  card:agent:gall
 --
@@ -60,7 +28,7 @@
     ^-  (quip card _this)
     :_  this
     :~  [%pass /updates %agent [our.bowl %contact-store] %watch /updates]
-        [%pass / %arvo %e %connect [~ /'~groups'] %contact-view]
+        
         (contact-poke:cc [%create /~/default])
         (group-poke:cc [%bundle /~/default])
         (contact-poke:cc [%add /~/default our.bowl *contact])
@@ -68,7 +36,14 @@
     ==
   ::
   ++  on-save   on-save:def
-  ++  on-load   on-load:def
+  ++  on-load
+    |=  old=*
+    ^-  (quip card _this)
+    :_  this
+    :~  [%pass / %arvo %e %disconnect [~ /'~groups']]
+        [%pass / %arvo %e %connect [~ /'contact-view'] %contact-view]
+    ==
+  ::
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
@@ -173,15 +148,7 @@
       ''
     i.back-path
   ?+  site.url  not-found:gen
-      [%'~groups' %css %index ~]  (css-response:gen style)
-      [%'~groups' %js %index ~]   (js-response:gen script)
-      [%'~groups' %js %tile ~]    (js-response:gen tile-js)
-      [%'~groups' %img *]
-    (png-response:gen (as-octs:mimes:html (~(got by contact-png) `@ta`name)))
-  ::
-  ::  avatar images
-  ::
-      [%'~groups' %avatar @ *]
+      [%'contact-view' @ *]
     =/  =path  (flop t.t.site.url)
     ?~  path  not-found:gen
     =/  contact  (contact-scry `^path`(snoc (flop t.path) name))
@@ -194,8 +161,6 @@
       =/  content-type  ['content-type' content-type.u.avatar.u.contact]
       [[200 [content-type max-3-days ~]] `octs.u.avatar.u.contact]
     ==
-  ::
-      [%'~groups' *]  (html-response:gen index)
   ==
 ::
 ::  +utilities

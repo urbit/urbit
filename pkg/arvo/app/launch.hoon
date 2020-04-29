@@ -64,9 +64,7 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this(state *[%3 state-two])
-  :~  (launch-who q.byk.bol)
-      [%pass / %arvo %e %connect [~ /] %launch]
-  ==
+  [(launch-who q.byk.bol)]~
 ::
 ++  on-save  !>(state)
 ::
@@ -94,7 +92,11 @@
     $(old-state [%3 +.old-state], cards [(launch-who q.byk.bol) cards])
   ::
       %3
-    [(flop cards) this(state old-state)]
+    :_  this(state old-state)
+    %-  zing
+    :~  (flop cards)
+        [%pass / %arvo %e %disconnect [~ /]]~
+    ==
   ==
 ::
 ++  on-poke
