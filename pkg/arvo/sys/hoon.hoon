@@ -2133,7 +2133,10 @@
   ::    3f: scrambling                                  ::
   ::    3g: molds and mold builders                     ::
   ::                                                    ::
-~%  %tri  +  ~
+~%  %tri  +
+  ==
+    %year  year
+  ==
 |%
 ::
 ::::  3a: signed and modular ints                       ::

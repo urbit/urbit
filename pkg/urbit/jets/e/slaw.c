@@ -98,8 +98,8 @@ u3_noun combine(u3_noun p, u3_noun q)
     }                                           \
   } while (0)
 
-#define CONSUME_HEP()  do {                     \
-    if (*cur != '-') {                          \
+#define CONSUME(x)  do {                        \
+    if (*cur != x) {                            \
       c3_free(c);                               \
       return 0;                                 \
     }                                           \
@@ -150,7 +150,7 @@ _parse_p(u3_noun txt) {
   }
 
   // There must now be a - or it is invalid
-  CONSUME_HEP();
+  CONSUME('-');
 
   TRY_GET_SYLLABLE(c);
 
@@ -177,7 +177,7 @@ _parse_p(u3_noun txt) {
   }
 
   // There must now be a - or it is invalid.
-  CONSUME_HEP();
+  CONSUME('-');
 
   // The next possible case is a "short" moon. (~ab-cd-ef)
   TRY_GET_SYLLABLE(e);
@@ -208,7 +208,7 @@ _parse_p(u3_noun txt) {
   }
 
   // There must now be a - or it is invalid.
-  CONSUME_HEP();
+  CONSUME('-');
 
   // The next possible case is a "long" moon. (~ab-cd-ef-gh)
   TRY_GET_SYLLABLE(g);
@@ -244,21 +244,21 @@ _parse_p(u3_noun txt) {
   // At this point, the only thing it could be is a long comet, of the form
   // ~ab-cd-ef-gh--ij-kl-mn-op
 
-  CONSUME_HEP();
-  CONSUME_HEP();
+  CONSUME('-');
+  CONSUME('-');
 
   TRY_GET_SYLLABLE(i);
   ENSURE_NOT_END();
   TRY_GET_SYLLABLE(j);
-  CONSUME_HEP();
+  CONSUME('-');
   TRY_GET_SYLLABLE(k);
   ENSURE_NOT_END();
   TRY_GET_SYLLABLE(l);
-  CONSUME_HEP();
+  CONSUME('-');
   TRY_GET_SYLLABLE(m);
   ENSURE_NOT_END();
   TRY_GET_SYLLABLE(n);
-  CONSUME_HEP();
+  CONSUME('-');
   TRY_GET_SYLLABLE(o);
   ENSURE_NOT_END();
   TRY_GET_SYLLABLE(p);
@@ -297,62 +297,149 @@ _parse_p(u3_noun txt) {
          combine(d_part, combine(c_part, combine(b_part, a_part)))))))))))))));
 }
 
+#define PARSE_NONZERO_NUMBER(numname)               \
+  c3_w numname = 0;                                 \
+  do {                                              \
+    if (cur[0] > '9' || cur[0] < '1') {             \
+      c3_free(c);                                   \
+      return 0;                                     \
+    }                                               \
+    numname = cur[0] - '0';                         \
+    cur++;                                          \
+    while (isdigit(cur[0])) {                       \
+      numname = u3qa_mul(numname, 10);              \
+      numname = u3qa_add(numname, cur[0] - '0');    \
+      cur++;                                        \
+    }                                               \
+  } while (0)
+
+u3_noun
+_parse_da(u3_noun cor, u3_noun txt) {
+  c3_c* c = u3r_string(txt);
+
+  c3_c* cur = c;
+  CONSUME('~');
+
+  // Parse out an arbitrary year number. Starts with a nonzero digit followed
+  // by a series of any digits.
+  PARSE_NONZERO_NUMBER(year);
+
+  fprintf(stderr, "Year: %d\r\n", year);
+
+  // Parse the optional negative sign for BC dates.
+  u3_noun bc = c3n;
+  if (cur[0] == '-') {
+    bc = c3y;
+    cur++;
+  }
+
+  CONSUME('.');
+
+  // Parse out a two digit month (mot:ag). Either a single digit 1-9 or 1[012].
+  c3_w month;
+  if (cur[0] == '1') {
+    if (cur[1] <= '2' && cur[1] >= '0') {
+      // This is a two number month.
+      month = 10 + cur[1] - '0';
+      cur += 2;
+    } else {
+      // This is January.
+      month = 1;
+      cur++;
+    }
+  } else if (cur[0] <= '9' && cur[0] >= '2') {
+    month = cur[0] - '0';
+    cur++;
+  } else {
+    c3_free(c);
+    return 0;
+  }
+
+  fprintf(stderr, "Month: %d\r\n", month);
+
+  CONSUME('.');
+
+  // Parse out a two digit day (dip:ag). This number can be really big, so we
+  // can track number of days since September 1993.
+  PARSE_NONZERO_NUMBER(day);
+
+  fprintf(stderr, "Day: %d\r\n", day);
+
+  if (cur[0] == 0) {
+    fprintf(stderr, "Going fast path...\r\n");
+    u3_noun hok = u3j_cook("u3we_slaw_parse_da", u3k(cor), "year");
+    u3_noun res = u3n_slam_on(hok, u3nt(u3nc(bc, year), month, u3nc(day, u3nq(0, 0, 0, 0))));
+    return u3nc(0, res);
+  }
+
+  /* CONSUME('.'); */
+  /* CONSUME('.'); */
+
+  // TODO: Cool. We've parsed a bunch of atoms. But the actual thing we return
+  // is the above run through the +year function which produces a @da.
+  return u3_none;
+}
+
 #undef ENSURE_NOT_END
-#undef CONSUME_HEP
+#undef CONSUME
 #undef TRY_GET_SYLLABLE
+#undef PARSE_NONZERO_NUMBER
 
-  u3_noun
-  _parse_tas(u3_noun txt) {
-    // For any symbol which matches, txt will return itself as a
-    // value. Therefore, this is mostly checking validity.
-    c3_c* c = u3r_string(txt);
+u3_noun
+_parse_tas(u3_noun txt) {
+  // For any symbol which matches, txt will return itself as a
+  // value. Therefore, this is mostly checking validity.
+  c3_c* c = u3r_string(txt);
 
-    // First character must represent a lowercase letter
-    c3_c* cur = c;
-    if (!islower(cur[0])) {
+  // First character must represent a lowercase letter
+  c3_c* cur = c;
+  if (!islower(cur[0])) {
+    c3_free(c);
+    return 0;
+  }
+  cur++;
+
+  while (cur[0] != 0) {
+    if (!(islower(cur[0]) || isdigit(cur[0]) || cur[0] == '-')) {
       c3_free(c);
       return 0;
     }
+
     cur++;
-
-    while (cur[0] != 0) {
-      if (!(islower(cur[0]) || isdigit(cur[0]) || cur[0] == '-')) {
-        c3_free(c);
-        return 0;
-      }
-
-      cur++;
-    }
-
-    c3_free(c);
-    return u3nc(0, u3k(txt));
   }
 
-  u3_noun
-  u3we_slaw(u3_noun cor)
-  {
-    u3_noun mod;
-    u3_noun txt;
+  c3_free(c);
+  return u3nc(0, u3k(txt));
+}
 
-    if (c3n == u3r_mean(cor, u3x_sam_2, &mod,
-                        u3x_sam_3, &txt, 0) ||
-        !_(u3a_is_cat(mod))) {
-      return u3m_bail(c3__fail);
-    }
+u3_noun
+u3we_slaw(u3_noun cor)
+{
+  u3_noun mod;
+  u3_noun txt;
 
-    switch (mod) {
-      case 'p':
-        return _parse_p(txt);
+  if (c3n == u3r_mean(cor, u3x_sam_2, &mod,
+                      u3x_sam_3, &txt, 0) ||
+      !_(u3a_is_cat(mod))) {
+    return u3m_bail(c3__fail);
+  }
 
-      case c3__ud:
-        return _parse_ud(txt);
+  switch (mod) {
+    case c3__da:
+      return _parse_da(cor, txt);
+
+    case 'p':
+      return _parse_p(txt);
+
+    case c3__ud:
+      return _parse_ud(txt);
 
       // %ta is used once in link.hoon. don't bother.
 
-      case c3__tas:
-        return _parse_tas(txt);
+    case c3__tas:
+      return _parse_tas(txt);
 
-      default:
-        return u3_none;
-    }
+    default:
+      return u3_none;
   }
+}
