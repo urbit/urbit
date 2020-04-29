@@ -71,7 +71,7 @@ h2 {
 }
 
 .clamp-attachment {
-  overflow: scroll;
+  overflow: auto;
   max-height: 10em;
   max-width: 100%;
 }
