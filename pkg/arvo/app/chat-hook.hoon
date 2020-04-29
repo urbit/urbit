@@ -2,7 +2,7 @@
 ::  mirror chat data from foreign to local based on read permissions
 ::  allow sending chat messages to foreign paths based on write perms
 ::
-/-  *permission-store, *chat-hook, *invite-store, *metadata-store,
+/-  *permission-store, *invite-store, *metadata-store,
     *permission-hook, *group-store, *permission-group-hook,  ::TMP  for upgrade
     hook=chat-hook,
     store=chat-store,
@@ -24,7 +24,7 @@
   ==
 +$  state-0  [%0 state-base]
 +$  state-base
-  $:  =synced
+  $:  =synced:hook
       invite-created=_|
       allow-history=(map path ?)
   ==

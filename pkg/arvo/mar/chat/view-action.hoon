@@ -4,8 +4,6 @@
 ++  grab
   |%
   ++  noun  action
-  ++  json
-    |=  jon=^json
-    (action:dejs jon)
+  ++  json  action:dejs
   --
 --

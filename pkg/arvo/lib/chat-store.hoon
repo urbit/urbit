@@ -29,83 +29,83 @@
       ==
   ::
   ++  envelope
-      |=  =^envelope
-      ^-  json
-      %-  pairs
-      :~  [%uid s+(scot %uv uid.envelope)]
-          [%number (numb number.envelope)]
-          [%author (ship author.envelope)]
-          [%when (time when.envelope)]
-          [%letter (letter letter.envelope)]
-      ==
+    |=  =^envelope
+    ^-  json
+    %-  pairs
+    :~  [%uid s+(scot %uv uid.envelope)]
+        [%number (numb number.envelope)]
+        [%author (ship author.envelope)]
+        [%when (time when.envelope)]
+        [%letter (letter letter.envelope)]
+    ==
   ::
   ++  config
-      |=  =^config
-      ^-  json
-      =,  enjs:format
-      %-  pairs
-      :~  [%length (numb length.config)]
-          [%read (numb read.config)]
-      ==
+    |=  =^config
+    ^-  json
+    =,  enjs:format
+    %-  pairs
+    :~  [%length (numb length.config)]
+        [%read (numb read.config)]
+    ==
   ::
   ++  configs
-      |=  cfg=^configs
-      ^-  json
-      %+  frond  %chat-configs
-      %-  pairs
-      %+  turn  ~(tap by cfg)
-      |=  [pax=^path =^config]
-      ^-  [cord json]
-      [(spat pax) (^config config)]
+    |=  cfg=^configs
+    ^-  json
+    %+  frond  %chat-configs
+    %-  pairs
+    %+  turn  ~(tap by cfg)
+    |=  [pax=^path =^config]
+    ^-  [cord json]
+    [(spat pax) (^config config)]
   ::
   ++  inbox
-      |=  box=^inbox
-      ^-  json
-      %+  frond  %chat-initial
-      %-  pairs
-      %+  turn  ~(tap by box)
-      |=  [pax=^path =mailbox]
-      ^-  [cord json]
-      :-  (spat pax)
-      %-  pairs
-      :~  [%envelopes [%a (turn envelopes.mailbox envelope)]]
-          [%config (config config.mailbox)]
-      ==
+    |=  box=^inbox
+    ^-  json
+    %+  frond  %chat-initial
+    %-  pairs
+    %+  turn  ~(tap by box)
+    |=  [pax=^path =mailbox]
+    ^-  [cord json]
+    :-  (spat pax)
+    %-  pairs
+    :~  [%envelopes [%a (turn envelopes.mailbox envelope)]]
+        [%config (config config.mailbox)]
+    ==
   ::
   ++  update
-      |=  upd=^update
-      ^-  json
-      %+  frond  %chat-update
-      %-  pairs
-      :~
-      ?:  ?=(%message -.upd)
-          :-  %message
-          %-  pairs
-          :~  [%path (path path.upd)]
-              [%envelope (envelope envelope.upd)]
-          ==
-      ?:  ?=(%messages -.upd)
-          :-  %messages
-          %-  pairs
-          :~  [%path (path path.upd)]
-              [%start (numb start.upd)]
-              [%end (numb end.upd)]
-              [%envelopes [%a (turn envelopes.upd envelope)]]
-          ==
-      ?:  ?=(%read -.upd)
-          [%read (pairs [%path (path path.upd)]~)]
-      ?:  ?=(%create -.upd)
-          [%create (pairs [%path (path path.upd)]~)]
-      ?:  ?=(%delete -.upd)
-          [%delete (pairs [%path (path path.upd)]~)]
-      ?:  ?=(%config -.upd)
-          :-  %config
-          %-  pairs
-          :~  [%path (path path.upd)]
-              [%config (config config.upd)]
-          ==
-      [*@t *json]
-      ==
+    |=  upd=^update
+    ^-  json
+    %+  frond  %chat-update
+    %-  pairs
+    :~
+    ?:  ?=(%message -.upd)
+        :-  %message
+        %-  pairs
+        :~  [%path (path path.upd)]
+            [%envelope (envelope envelope.upd)]
+        ==
+    ?:  ?=(%messages -.upd)
+        :-  %messages
+        %-  pairs
+        :~  [%path (path path.upd)]
+            [%start (numb start.upd)]
+            [%end (numb end.upd)]
+            [%envelopes [%a (turn envelopes.upd envelope)]]
+        ==
+    ?:  ?=(%read -.upd)
+        [%read (pairs [%path (path path.upd)]~)]
+    ?:  ?=(%create -.upd)
+        [%create (pairs [%path (path path.upd)]~)]
+    ?:  ?=(%delete -.upd)
+        [%delete (pairs [%path (path path.upd)]~)]
+    ?:  ?=(%config -.upd)
+        :-  %config
+        %-  pairs
+        :~  [%path (path path.upd)]
+            [%config (config config.upd)]
+        ==
+    [*@t *json]
+    ==
   --
 ++  dejs
   =,  dejs:format
