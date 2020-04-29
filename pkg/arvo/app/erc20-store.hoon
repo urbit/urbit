@@ -46,14 +46,7 @@
     =/  loaded=state-0
       !<(state-0 old)
     `this(state loaded)
-    :: ?-  -.loaded
-    ::     %0
-    ::   `this(local local.loaded)
-    ::     %1
-    ::   `this(state loaded)
-    :: ==
   ::
-
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
@@ -70,32 +63,33 @@
       %+  ~(put by balances)
         contract-id.poke
       [address.poke 0]
-     =/  from-me-sub=vase
+     =/  from-me-sub=^vase
      !>  ^-  poke:erc20
-     :+  %watch  path.act
-     :*  url=url.config.act
-         eager=eager.config.act
-         refresh-rate=refresh-rate.config.act
-         from=from.config.act
-         contracts=contracts.config.act
+     :+  %event-subscribe  /[dap.bol]
+     :*  url='http://localhost:8545'
+         abi=%erc20
+         eager=%&
+         refresh-rate=~s15
+         from=0
+         contracts=[address.poke ~]
          topics=[%transfer address ~ ~]
      ==
-     =/  from-me-sub=vase
+     =/  to-me-sub=^vase
      !>  ^-  poke:erc20
-     :+  %watch  path.act
-     :*  url=url.config.act
-         eager=eager.config.act
-         refresh-rate=refresh-rate.config.act
-         from=from.config.act
-         contracts=contracts.config.act
+     :+  %event-subscribe  /[dap.bol]
+     :*  url='http://localhost:8545'
+         abi=%erc20
+         eager=%&
+         refresh-rate=~s15
+         from=0
+         contracts=[address.poke ~]
          topics=[%transfer ~ address ~]
      ==
-     =/  to-me-cage=cage
-     :-  %ethers-action
-     !>
      :_  this
-     :~  [%pass /ethers %agent [our.bol %ethers] %poke %ethers-action from-me-sub]
-         [%pass /ethers %agent [our.bol %ethers] %poke %ethers-action to-me-sub]
+     ^-  (list card)
+     :~  [%pass /eth-watcher %agent [our.bol %ethers] %watch /logs/[dap.bol]]
+         [%pass /eth-config %agent [our.bol %ethers] %poke %ethers-action from-me-sub]
+         [%pass /eth-config %agent [our.bol %ethers] %poke %ethers-action to-me-sub]
      ==
     ::
         [%set-key *]
@@ -128,6 +122,9 @@
     ?+  path  ~
       [%x %address ~]
     ``atom+!>(address)
+      [%x %balance ^]
+    ?.  (~(has by balances) i.t.t.path)  ~
+    ``noun+!>((~(got by balances) i.t.t.path))
     ==
 ::
   ++  on-agent
@@ -141,36 +138,72 @@
       (on-agent:def wire sign)
     =+  !<(diff=gift:erc20 q.cage.sign)
     ?-  diff
-      %history
-    !!
-      %log
-    (parse-event:tc event-log.diff)
-      %read-call
-    !!
-      %read-tx
-    !!
+      [%history *]
+    `this
+    ::=^  cards  state  (apply-events:tc loglist.diff)
+    ::[cards this]
+      [%log *]
+    `this
+    ::=^  card  state  (apply-event:tc event-log.diff)
+    ::?~  card  `this
+    ::[[card ~] this]
+      [%read-call *]
+    `this
+      [%read-tx *]
+    `this
     ==
-
   ++  on-arvo  on-arvo:def
   ++  on-fail  on-fail:def
   --
 |_  bol=bowl:gall
-++  parse-event
-  |=  =event-update:erc20
-  ?-  event-update
+++  addr-to-contract
+  ^-  (map address:ethereum [=contract-id balance=@ud])
+  %-  molt
+  %+  turn  ~(tap by balances)
+  |=  [=contract-id [=address:ethereum balance=@ud]]
+  [address [contract-id balance]]
+++  apply-events
+  |=  =loglist:erc20
+  ^-  (quip card _state)
+  =/  cards=(list card)
+  %+  roll  loglist
+    |=  [=event-log:erc20 cards=(list card)]
+    ?-  event-data.event-log
+      [%approval *]
+    cards
+      [%transfer *]
+    =/  [=contract-id balance=@ud]  (~(got by addr-to-contract) address.event-log)
+    =/  new-balance=@ud
+    ?.  =(address from.event-data.event-log)
+      ?.  =(address to.event-data.event-log)
+        ~|(["unexpected event" event-log] !!)
+      (add balance value.event-data.event-log)
+    (sub balance value.event-data.event-log)
+    =.  balances
+      %+  ~(put by balances)
+        contract-id
+      [address.event-log new-balance]
+    cards
+    ==
+  [cards state]
+++  apply-event
+  |=  =event-log:erc20
+  ^-  (quip card _state)
+  ?-  event-data.event-log
     [%approval *]
-  !!
+  `state
     [%transfer *]
-  !!
-::
-  ==
-++  parse-event-2
-  |=  =event-update:erc20
-  ?-  event-update
-    [%approval @ @ @]
-  !!
-    [%transfer @ @ @]
-  !!
+  =/  [=contract-id balance=@ud]  (~(got by addr-to-contract) address.event-log)
+  =/  new-balance=@ud
+  ?.  =(address from.event-data.event-log)
+    ?.  =(address to.event-data.event-log)  ~|(["unexpected event" event-log] !!)
+    (add balance value.event-data.event-log)
+  (sub balance value.event-data.event-log)
+  =.  balances
+  %+  ~(put by balances)
+    contract-id
+  [address.event-log new-balance]
+  `state
 ::
   ==
 ++  fetch-key
@@ -187,5 +220,4 @@
     (scot %da now.bol)
     path
   ==
-
 --
