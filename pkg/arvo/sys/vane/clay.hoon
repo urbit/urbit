@@ -3765,6 +3765,8 @@
       |^
       ?~  hun
         ~
+      ?:  =(0 let.dom)
+        ~
       %+  weld
         %+  turn  ~(tap in deletes)
         |=  =path
@@ -3775,7 +3777,7 @@
       ::
       ++  path-to-tank
         |=  =path
-        =/  pre=^path  ~[(scot %p our) syd (scot %ud let.dom)]
+        =/  pre=^path  ~[(scot %p our) syd (scot %ud +(let.dom))]
         :+  %rose  ["/" "/" ~]
         %+  turn  (weld pre path)
         |=  a=cord
@@ -5333,21 +5335,8 @@
     =/  dos  (~(get by dos.rom.ruf) q.bem)
     ?~  dos
       !!  ::  fire next in queue
-    ?:  =(0 let.dom.u.dos)
-      =+  cos=(mode-to-soba ~ s.bem all.req fis.req)
-      =/  [one=soba two=soba]
-          %+  skid  cos
-          |=  [a=path b=miso]
-          ?&  ?=(%ins -.b)
-              ?=(%mime p.p.b)
-              ?=([%hoon ~] (slag (dec (lent a)) a))
-          ==
-      :_  ..^$
-      :~  [hen %pass /one %c %info q.bem %& one]
-          [hen %pass /two %c %info q.bem %& two]
-      ==
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our des.req)
+      =/  den  ((de our now ski hen ruf) our q.bem)
       abet:(into:den (flop s.bem) all.req fis.req)
     [mos ..^$]
   ::
