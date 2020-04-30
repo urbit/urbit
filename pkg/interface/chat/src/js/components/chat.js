@@ -23,6 +23,7 @@ function getNumPending(props) {
 }
 
 const ACTIVITY_TIMEOUT = 60000; // a minute
+const DEFAULT_BACKLOG_SIZE = 300;
 
 function scrollIsAtTop(container) {
   if ((navigator.userAgent.includes("Safari") &&
@@ -93,9 +94,6 @@ export class ChatScreen extends Component {
   }
 
   componentDidMount() {
-    this.askForMessages();
-    this.scrollToBottom();
-
     document.addEventListener("mousemove", this.handleActivity, false);
     document.addEventListener("mousedown", this.handleActivity, false);
     document.addEventListener("keypress", this.handleActivity, false);
@@ -120,13 +118,47 @@ export class ChatScreen extends Component {
 
     if(this.activityTimeout) {
       clearTimeout(this.activityTimeout);
-      this.activityTimeout = setTimeout(this.setInactive, ACTIVITY_TIMEOUT);
     }
+
+    this.activityTimeout = setTimeout(this.setInactive, ACTIVITY_TIMEOUT);
   }
 
   setInactive() {
     this.activityTimeout = null;
     this.setState({ active: false, scrollLocked: true });
+  }
+
+  receivedNewChat() {
+    const { props } = this;
+    this.hasAskedForMessages = false;
+
+    this.unreadMarker = null;
+    this.scrolledToMarker = false;
+
+    this.setState({ read: props.read });
+
+    const unread = props.length - props.read;
+    const unreadUnloaded = unread - props.envelopes.length;
+
+    if(unreadUnloaded + 20 > DEFAULT_BACKLOG_SIZE) {
+      this.askForMessages(unreadUnloaded + 20);
+    } else {
+      this.askForMessages(DEFAULT_BACKLOG_SIZE);
+    }
+
+    if(props.read === props.length){
+      this.scrolledToMarker = true;
+      this.setState(
+        {
+          scrollLocked: false,
+        },
+        () => {
+          this.scrollToBottom();
+        }
+      );
+    } else {
+      this.setState({ scrollLocked: true, numPages: Math.ceil(unread/100) });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -136,23 +168,7 @@ export class ChatScreen extends Component {
       prevProps.match.params.station !== props.match.params.station ||
       prevProps.match.params.ship !== props.match.params.ship
     ) {
-      this.hasAskedForMessages = false;
-
-      if (props.envelopes.length < 100) {
-        this.askForMessages();
-      }
-
-      this.unreadMarker = null;
-      this.scrolledToMarker = false;
-      this.setState(
-        {
-          scrollLocked: false,
-          read: props.read,
-        },
-        () => {
-          this.scrollToBottom();
-        }
-      );
+      this.receivedNewChat();
     } else if (props.chatInitialized &&
                !(props.station in props.inbox) &&
                (!!props.chatSynced && !(props.station in props.chatSynced))) {
@@ -163,15 +179,15 @@ export class ChatScreen extends Component {
     ) {
       this.hasAskedForMessages = false;
     } else if(props.length !== prevProps.length &&
-       prevProps.length === prevProps.read &&
+       prevProps.length === prevState.read &&
        state.active
     ) {
-      this.setState({ read: props.length })
+      this.setState({ read: props.length });
       this.props.api.chat.read(this.props.station);
     }
 
     if(!prevProps.chatInitialized && props.chatInitialized) {
-      this.setState({ read: props.read })
+      this.receivedNewChat();
     }
 
     if (
@@ -189,15 +205,8 @@ export class ChatScreen extends Component {
     }
   }
 
-  askForMessages() {
+  askForMessages(size) {
     const { props, state } = this;
-
-    if (props.envelopes.length === 0) {
-      setTimeout(() => {
-        this.askForMessages();
-      }, 500);
-      return;
-    }
 
     if (
       props.envelopes.length >= props.length ||
@@ -210,16 +219,8 @@ export class ChatScreen extends Component {
     let start =
       props.length - props.envelopes[props.envelopes.length - 1].number;
     if (start > 0) {
-      const unread = props.length - props.read;
-      const unloadedUnread = unread - props.envelopes.length;
-      const willLoadUnread = unloadedUnread > 280;
-      const offset = willLoadUnread ? unloadedUnread + 20 : 300;
-      const end = start + offset < props.length ? start + offset : props.length;
+      const end = start + size < props.length ? start + size : props.length;
       this.hasAskedForMessages = true;
-      if(willLoadUnread) {
-        // ensure unread marker is visible
-        this.setState({ numPages: Math.ceil(unread / 100) });
-      }
       props.subscription.fetchMessages(start + 1, end, props.station);
     }
   }
@@ -260,7 +261,7 @@ export class ChatScreen extends Component {
           scrollLocked: true
         },
         () => {
-          this.askForMessages();
+          this.askForMessages(DEFAULT_BACKLOG_SIZE);
         }
       );
     } else if (scrollIsAtBottom(e.target)) {
@@ -276,7 +277,8 @@ export class ChatScreen extends Component {
     if(ref && !this.scrolledToMarker) {
       this.setState({ scrollLocked: true }, () => {
         ref.scrollIntoView({ block: 'center' });
-        if(scrollIsAtBottom(ref.offsetParent)) {
+        if(ref.offsetParent &&
+           scrollIsAtBottom(ref.offsetParent)) {
           this.dismissUnread();
           this.setState({
             numPages: 1,
