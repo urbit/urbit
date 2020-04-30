@@ -611,28 +611,29 @@ static void
 _pier_on_lord_play_done(void* vod_p, u3_info fon_u, c3_l mug_l)
 {
   u3_pier* pir_u = vod_p;
-  c3_d     las_d = fon_u.ent_u->eve_d;
+  u3_fact* tac_u = fon_u.ent_u;
+  u3_fact* nex_u;
 
   c3_assert( u3_psat_play == pir_u->sat_e );
 
-// #ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): play: done\r\n", las_d);
-// #endif
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): play: done\r\n", tac_u->eve_d);
+#endif
 
   //  XX optional
   //
-  if (  fon_u.ent_u->mug_l
-     && (fon_u.ent_u->mug_l != mug_l) )
-  {
-    //  XX printf
-    //
-    u3l_log("pier: (%" PRIu64 "): play: mug mismatch %x %x\r\n", las_d, fon_u.ent_u->mug_l, mug_l);
+  if ( tac_u->mug_l && (tac_u->mug_l != mug_l) ) {
+    u3l_log("pier: (%" PRIu64 "): play: mug mismatch %x %x\r\n",
+            tac_u->eve_d,
+            tac_u->mug_l,
+            mug_l);
     // u3_pier_bail();
   }
 
+  //  dispose successful
+  //
   {
-    u3_fact* tac_u = fon_u.ext_u;
-    u3_fact* nex_u; 
+    tac_u = fon_u.ext_u;
 
     while ( tac_u ) {
       nex_u = tac_u->nex_u;
@@ -653,29 +654,71 @@ _pier_on_lord_play_bail(void* vod_p, u3_info fon_u,
 {
   u3_pier* pir_u = vod_p;
 
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): play: bail\r\n", eve_d);
-#endif
-
   c3_assert( u3_psat_play == pir_u->sat_e );
 
-  //  XX verify pay_u mug_l
-  //  XX check dud mote, retry yap_u or shutdown
+  {
+    u3_fact* tac_u = fon_u.ext_u;
+    u3_fact* nex_u;
+    c3_l     las_l = 0;
 
-  // {
-  //   u3_play* yap_u = c3_malloc(sizeof(*yap_u));
-  //   u3_fact* fac_u = pay_u->ext_u;
+    //  dispose successful
+    //
+    while ( tac_u->eve_d < eve_d ) {
+      nex_u = tac_u->nex_u;
+      las_l = tac_u->mug_l;
+      u3z(tac_u->job);
+      c3_free(tac_u);
+      tac_u = nex_u;
+    }
 
-  //   while ( fac_u->eve_d < eve_d ) {
-  //     fac_u = fac_u->nex_u;
-  //   }
+    //  XX optional
+    //
+    if ( las_l && (las_l != mug_l) ) {
+      u3l_log("pier: (%" PRIu64 "): play bail: mug mismatch %x %x\r\n",
+             (c3_d)(eve_d - 1ULL),
+             las_l,
+             mug_l);
+      // u3_pier_bail();
+    }
 
-  //   yap_u->ext_u = fac_u->nex_u;
-  //   yap_u->ent_u = pay_u->ent_u;
-  //   pay_u->ent_u = fac_u;
-  // }
+    //  XX enable to retry
+    //
+#if 0
+    {
+      u3l_log("pier: (%" PRIu64 "): play: retry\r\n", eve_d);
 
-  u3_pier_bail();
+      fon_u.ext_u = tac_u;
+
+      //  we're enqueuing here directly onto the exit.
+      //  like, _pier_play_plan() in reverse
+      //
+      if ( !pay_u->ext_u ) {
+        pay_u->ext_u = fon_u.ext_u;
+        pay_u->ent_u = fon_u.ent_u;
+      }
+      else {
+        fon_u.ent_u->nex_u = pay_u->ext_u;
+        pay_u->ext_u = fon_u.ext_u;
+      }
+
+      _pier_play(pir_u->pay_u);
+      u3z(dud);
+    }
+#else
+    {
+      u3l_log("pier: (%" PRIu64 "): play: bail\r\n", eve_d);
+      u3_pier_punt_goof("play", dud);
+      {
+        u3_noun wir, tag;
+        u3x_qual(tac_u->job, 0, &wir, &tag, 0);
+        u3_pier_punt_ovum("play", u3k(wir), u3k(tag));
+      }
+
+      u3_pier_bail();
+      exit(1);
+    }
+#endif
+  }
 }
 
 /* _pier_play_init(): begin boot/replay up to [eve_d].
@@ -1569,6 +1612,44 @@ u3_pier_punt(c3_l tab_l, u3_noun tac)
   }
 
   u3z(tac);
+}
+
+/* u3_pier_punt_goof(): dump a [mote tang] crash report.
+*/
+void
+u3_pier_punt_goof(const c3_c* cap_c, u3_noun dud)
+{
+  u3_noun bud = dud;
+  u3_noun mot, tan;
+
+  u3x_cell(dud, &mot, &tan);
+
+  u3l_log("\n");
+  u3_pier_punt(0, u3qb_flop(tan));
+
+  {
+    c3_c* mot_c = u3r_string(mot);
+    u3l_log("%s: bail: %%%s\r\n", cap_c, mot_c);
+    c3_free(mot_c);
+  }
+
+  u3z(bud);
+}
+
+/* u3_pier_punt_ovum(): print ovum details.
+*/
+void
+u3_pier_punt_ovum(const c3_c* cap_c, u3_noun wir, u3_noun tag)
+{
+  c3_c* tag_c = u3r_string(tag);
+  u3_noun riw = u3do("spat", wir);
+  c3_c* wir_c = u3r_string(riw);
+
+  u3l_log("%s: %%%s event on %s failed\r\n\n", cap_c, tag_c, wir_c);
+
+  c3_free(tag_c);
+  c3_free(wir_c);
+  u3z(riw);
 }
 
 /* u3_pier_sway(): print trace.

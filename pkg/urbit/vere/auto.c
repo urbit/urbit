@@ -81,33 +81,16 @@ u3_auto_bail_slog(u3_ovum* egg_u, u3_noun lud)
 {
   c3_c* car_c = u3r_string(egg_u->car_u->nam_m);
   u3_noun dul = lud;
+  c3_w  len_w = 1;
 
   while ( u3_nul != dul ) {
-    c3_c* mot_c;
-    u3_noun mot, tan;
-
-    u3x_cell(u3h(dul), &mot, &tan);
-
-    u3l_log("\n");
-    u3_pier_punt(0, u3qb_flop(tan));
-
-    mot_c = u3r_string(mot);
-    u3l_log("%s: bail: %%%s\r\n", car_c, mot_c);
+    u3l_log("%s: bail %u\r\n", car_c, len_w++);
+    u3_pier_punt_goof(car_c, u3k(u3h(dul)));
 
     dul = u3t(dul);
-    c3_free(mot_c);
   }
 
-  {
-    c3_c* tag_c = u3r_string(u3h(egg_u->cad));
-    u3_noun riw = u3do("spat", u3k(egg_u->wir));
-    c3_c* wir_c = u3r_string(riw);
-
-    u3l_log("%s: %%%s event on %s failed\r\n\n", car_c, tag_c, wir_c);
-    c3_free(tag_c);
-    c3_free(wir_c);
-    u3z(riw);
-  }
+  u3_pier_punt_ovum(car_c, u3k(egg_u->wir), u3k(u3h(egg_u->cad)));
 
   u3z(lud);
   c3_free(car_c);

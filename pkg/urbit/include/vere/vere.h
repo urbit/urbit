@@ -488,12 +488,9 @@
       /* u3_play: replay control.
       */
         typedef struct _u3_play {
-          //  XX batch, save/pack/wall?
-          //
           c3_d             eve_d;               //  target
           c3_d             req_d;               //  last read requested
           c3_d             sen_d;               //  last sent
-          // u3_fact*         sen_u;               //  last sent
           u3_fact*         ent_u;               //  queue entry
           u3_fact*         ext_u;               //  queue exit
           struct _u3_pier* pir_u;               //  pier backpointer
@@ -1147,6 +1144,16 @@
       */
         void
         u3_pier_punt(c3_l tab_l, u3_noun tac);
+
+      /* u3_pier_punt_goof(): dump a [mote tang] crash report.
+      */
+        void
+        u3_pier_punt_goof(const c3_c* cap_c, u3_noun dud);
+
+      /* u3_pier_punt_ovum(): print ovum details.
+      */
+        void
+        u3_pier_punt_ovum(const c3_c* cap_c, u3_noun wir, u3_noun tag);
 
       /* u3_pier_sway(): print trace.
       */
