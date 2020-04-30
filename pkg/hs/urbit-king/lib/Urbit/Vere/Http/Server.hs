@@ -216,6 +216,9 @@ writePortsFile f = writeFile f . encodeUtf8 . portsFileText
 cordBytes :: Cord -> ByteString
 cordBytes = encodeUtf8 . unCord
 
+wainBytes :: Wain -> ByteString
+wainBytes = encodeUtf8 . unWain
+
 pass :: Monad m => m ()
 pass = pure ()
 
@@ -506,7 +509,7 @@ startServ isFake conf plan = do
   logDebug "startServ"
 
   let tls = hscSecure conf <&> \(PEM key, PEM cert) ->
-              (W.tlsSettingsMemory (cordBytes cert) (cordBytes key))
+              (W.tlsSettingsMemory (wainBytes cert) (wainBytes key))
 
   sId <- io $ ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
   liv <- newTVarIO emptyLiveReqs
