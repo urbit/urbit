@@ -290,8 +290,11 @@ _serf_static_grab(void)
 static void
 _serf_pack(u3_serf* sef_u)
 {
+  //  skip for now
+  //
   // _serf_static_grab();
-  u3l_log("serf: compacting loom\r\n");
+
+  u3l_log("serf (%" PRIu64 "): compacting loom\r\n", sef_u->dun_d);
 
   if ( c3n == u3m_rock_stay(sef_u->dir_c, sef_u->dun_d) ) {
     u3l_log("serf: unable to jam state\r\n");
@@ -318,12 +321,19 @@ _serf_pack(u3_serf* sef_u)
     u3l_log("serf: warning: orphaned backup checkpoint file\r\n");
   }
 
-  if ( c3n == u3m_rock_drop(sef_u->dir_c, sef_u->dun_d) ) {
-    u3l_log("serf: warning: orphaned state file\r\n");
-  }
+  //  leave these for now
+  //
+  // if ( c3n == u3m_rock_drop(sef_u->dir_c, sef_u->dun_d) ) {
+  //   u3l_log("serf: warning: orphaned state file\r\n");
+  // }
 
-  u3l_log("serf: compacted loom\r\n");
+  u3l_log("serf (%" PRIu64 "): compacted loom\r\n", sef_u->dun_d);
+
   _serf_static_grab();
+
+  //  save now for flexibility
+  //
+  u3e_save();
 }
 
 /* u3_serf_post(): update serf state post-writ.
