@@ -253,7 +253,7 @@ pier (serf, log, ss) mStart = do
 
     atomically ded >>= \case
       Left (txt, exn) -> logError $ displayShow ("Somthing died", txt, exn)
-      Right tag       -> logError $ displayShow ("something simply exited", tag)
+      Right tag       -> logError $ displayShow ("Something simply exited", tag)
 
     atomically $ (Term.spin muxed) (Just "shutdown")
 

@@ -562,10 +562,13 @@ main = do
         CLI.CmdCon pier                         -> runAppLogFile $ connTerm pier
 
 runShips :: [(CLI.Run, CLI.Opts, Bool)] -> IO ()
-runShips []        = pure ()
-runShips [(r,o,b)] = runShip r o b
-runShips ships     =
-  error ("TODO: Support multiple ships: " <> ppShow ships)
+runShips = \case
+  []          -> pure ()
+  [(r, o, d)] -> runShip r o d
+  ships       -> do
+    threads <- for ships $ \(r, o, _) -> asyncBound (runShip r o True)
+    atomically $ asum (void . waitCatchSTM <$> threads)
+    for_ threads cancel
 
 
 --------------------------------------------------------------------------------
