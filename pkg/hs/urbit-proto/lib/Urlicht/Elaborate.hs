@@ -32,10 +32,8 @@ scry = flip lookup
 scope :: Env a -> [a]
 scope = map fst
 
-bind :: Env a -> b -> Type a -> Env (Var b a)
-bind bs b t = (B b, fmap F t) : fmap (\(x, v) -> (F x, fmap F v)) bs
-
-nameHack = ()
+bind :: Env a -> Type a -> Env (Var () a)
+bind bs t = (B (), fmap F t) : fmap (\(x, v) -> (F x, fmap F v)) bs
 
 -- | To elaborate a hole we create a new meta and apply it to all the vars
 -- in scope. Kovacs is able to eliminate shadowed vars lol.
@@ -49,7 +47,7 @@ freshFun env = do
   a <- newMetaWithSpine env
   -- FIXME maybe we really do need to eval relative to a context with lets
   let v = eval a
-  b <- newMetaWithSpine (bind env nameHack v)
+  b <- newMetaWithSpine (bind env v)
   pure (v, toScope (eval b))
 
 -- Gamma |- e : t
@@ -73,14 +71,14 @@ check env simp ty = do
     (S.Lam ss, VFun t st) ->
       -- TODO avoid fromScope/toScope
       Lam . toScope <$>
-        check (bind env nameHack t) (fromScope ss) (fromScope st)
+        check (bind env t) (fromScope ss) (fromScope st)
     (S.Lam{}, _) -> checkInfer
     (S.App{}, _) -> checkInfer
     (S.Let sRhs sBody, _) -> do
       -- TODO I guess put a type annotation in lets which can be Hol :/
       (tyRhs, cRhs) <- infer env sRhs
       Let cRhs . toScope <$>
-        check (bind env nameHack tyRhs) (fromScope sBody) (F <$> ty)
+        check (bind env tyRhs) (fromScope sBody) (F <$> ty)
     (S.Hol, _) -> newMetaWithSpine env
 
 infer :: Eq a => Env a -> S.Simple a -> Elab (Type a, Core a)
@@ -92,7 +90,7 @@ infer env = \case
   S.Typ -> pure (VTyp, Typ)
   S.Fun s ss -> do
     c <- check env s VTyp
-    sc <- toScope <$> check (bind env nameHack (eval c)) (fromScope ss) VTyp
+    sc <- toScope <$> check (bind env (eval c)) (fromScope ss) VTyp
     pure (VTyp, Fun c sc)
   S.Lam ss -> do
     (t, st) <- freshFun env
@@ -116,7 +114,7 @@ infer env = \case
       
   S.Let sRhs sBod -> do
     (tyRhs, cRhs) <- infer env sRhs
-    (tyBod, cBod) <- infer (bind env nameHack tyRhs) (fromScope sBod)
+    (tyBod, cBod) <- infer (bind env tyRhs) (fromScope sBod)
     -- I guess evaluating with let rhs would be nice here
     let tyBod' = eval $ quote tyBod >>= unvar (const cRhs) Var
     pure (tyBod', Let cRhs (toScope cBod))

@@ -208,7 +208,6 @@ concretize = dissociate . flip evalState 0 . go
       modify (+ 1)
       pure $ "v" <> tshow i
 
-
     dissociate = transform \case
       Fun bs (Fun bs' c) -> Fun (bs <> bs') c
       Cel bs (Cel bs' c) -> Cel (bs <> bs') c

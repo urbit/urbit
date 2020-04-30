@@ -4,12 +4,8 @@ module Urlicht.SimpleToCoreHack where
 -- This is a translation from Simple to Core which bypasses the elaborator,
 -- erroring out if you use a construct which would require elaboration. The
 -- point of it is to provide some syntax for core, so that we can more easily
--- tests the machinary that manipulates cores without involving ourselves in
--- what is of course the most complex user of such machinary.
---
--- The reverse translation is implemented in the display module, because the
--- way I've implemented it right now has it coupled with some printing logic
--- (in InjectMeta Text).
+-- test the machinery that manipulates cores without involving ourselves in
+-- what is of course the most complex user of such machinery.
 
 import ClassyPrelude
 
@@ -37,6 +33,7 @@ down = go
       --
       Hol -> error "SimpleToCoreHack.down: holes require elaboration"
 
+-- This one is not a hack
 up :: C.Core a -> Simple a
 up = go
   where
