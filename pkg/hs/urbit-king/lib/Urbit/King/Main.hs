@@ -549,7 +549,7 @@ main = do
     Sys.installHandler Sys.sigTERM (Sys.Catch onTermSig) Nothing
 
     CLI.parseArgs >>= \case
-        CLI.CmdRun r o d                        -> runShip r o d
+        CLI.CmdRun ships                        -> runShips ships
         CLI.CmdNew n o                          -> runApp $ newShip n o
         CLI.CmdBug (CLI.CollectAllFX pax)       -> runApp $ collectAllFx pax
         CLI.CmdBug (CLI.EventBrowser pax)       -> runApp $ startBrowser pax
@@ -560,6 +560,12 @@ main = do
         CLI.CmdBug (CLI.CheckDawn pax)          -> runApp $ checkDawn pax
         CLI.CmdBug CLI.CheckComet               -> runApp $ checkComet
         CLI.CmdCon pier                         -> runAppLogFile $ connTerm pier
+
+runShips :: [(CLI.Run, CLI.Opts, Bool)] -> IO ()
+runShips []        = pure ()
+runShips [(r,o,b)] = runShip r o b
+runShips ships     =
+  error ("TODO: Support multiple ships: " <> ppShow ships)
 
 
 --------------------------------------------------------------------------------

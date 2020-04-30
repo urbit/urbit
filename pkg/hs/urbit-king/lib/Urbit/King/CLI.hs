@@ -93,7 +93,7 @@ data Bug
 
 data Cmd
     = CmdNew New Opts
-    | CmdRun Run Opts Bool
+    | CmdRun [(Run, Opts, Bool)]
     | CmdBug Bug
     | CmdCon FilePath
   deriving (Show)
@@ -307,15 +307,13 @@ opts = do
 newShip :: Parser Cmd
 newShip = CmdNew <$> new <*> opts
 
+runOneShip :: Parser (Run, Opts, Bool)
+runOneShip = (,,) <$> fmap Run pierPath <*> opts <*> df
+ where
+  df = switch (short 'd' <> long "daemon" <> help "Daemon mode" <> hidden)
+
 runShip :: Parser Cmd
-runShip = do
-    rPierPath <- pierPath
-    o         <- opts
-    daemon    <- switch $ short 'd'
-                         <> long "daemon"
-                         <> help "Daemon mode"
-                         <> hidden
-    pure (CmdRun (Run{..}) o daemon)
+runShip = CmdRun <$> some runOneShip
 
 valPill :: Parser Bug
 valPill = do
