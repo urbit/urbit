@@ -86,7 +86,7 @@ export default class ChatApp extends React.Component {
     );
 
     return (
-      <div>
+      <div style={{ height: '100%' }}>
         <Route
           exact
           path="/~chat"

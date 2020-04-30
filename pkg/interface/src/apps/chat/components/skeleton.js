@@ -29,16 +29,12 @@ export class Skeleton extends Component {
 
     return (
       // app outer skeleton
-      <div className={'absolute h-100 w-100 bg-gray0-d ' + popoutWindow}>
+      <div style={{
+        height: 'calc(100vh - 45px)'
+      }} className={'h-100 w-100 bg-gray0-d ' + popoutWindow}
+      >
       {/* app window borders */}
-        <div className={
-            'cf w-100 flex ' +
-            popoutBorder +
-            (this.props.popout
-              ? 'h-100'
-              : 'h-100 h-100-minus-40-m h-100-minus-40-l h-100-minus-40-xl')
-          }
-        >
+        <div className={ 'cf w-100 flex h-100 ' + popoutBorder }>
           {/* sidebar skeleton, hidden on mobile when in chat panel */}
           <div
             className={

@@ -8,7 +8,7 @@ export class SidebarSwitcher extends Component {
       : 'dib-m dib-l dib-xl';
 
     return (
-      <div className="pt2">
+      <div style={{ paddingTop: '5px' }}>
         <a
           className="pointer flex-shrink-0"
           onClick={() => {
