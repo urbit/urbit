@@ -313,6 +313,36 @@ _parse_p(u3_noun txt) {
     }                                               \
   } while (0)
 
+#define PARSE_INCLUDING_ZERO_NUMBER(numname)        \
+  c3_w numname = 0;                                 \
+  do {                                              \
+    if (cur[0] > '9' || cur[0] < '0') {             \
+      c3_free(c);                                   \
+      return 0;                                     \
+    }                                               \
+    numname = cur[0] - '0';                         \
+    cur++;                                          \
+    while (isdigit(cur[0])) {                       \
+      numname = u3qa_mul(numname, 10);              \
+      numname = u3qa_add(numname, cur[0] - '0');    \
+      cur++;                                        \
+    }                                               \
+  } while (0)
+
+#define PARSE_HEX_DIGIT(out)                                \
+  do {                                                      \
+    if (cur[0] >= '0' && cur[0] <= '9') {                   \
+      out = cur[0] - '0';                                   \
+    } else if (cur[0] >= 'a' && cur[0] <= 'f') {            \
+      out = 10 + cur[0] - 'a';                              \
+    } else {                                                \
+      c3_free(c);                                           \
+      return 0;                                             \
+    }                                                       \
+    cur++; \
+  } while(0)
+
+
 u3_noun
 _parse_da(u3_noun cor, u3_noun txt) {
   c3_c* c = u3r_string(txt);
@@ -324,12 +354,10 @@ _parse_da(u3_noun cor, u3_noun txt) {
   // by a series of any digits.
   PARSE_NONZERO_NUMBER(year);
 
-  fprintf(stderr, "Year: %d\r\n", year);
-
   // Parse the optional negative sign for BC dates.
-  u3_noun bc = c3n;
+  u3_noun bc = c3y;
   if (cur[0] == '-') {
-    bc = c3y;
+    bc = c3n;
     cur++;
   }
 
@@ -355,35 +383,77 @@ _parse_da(u3_noun cor, u3_noun txt) {
     return 0;
   }
 
-  fprintf(stderr, "Month: %d\r\n", month);
-
   CONSUME('.');
 
   // Parse out a two digit day (dip:ag). This number can be really big, so we
   // can track number of days since September 1993.
   PARSE_NONZERO_NUMBER(day);
 
-  fprintf(stderr, "Day: %d\r\n", day);
-
   if (cur[0] == 0) {
-    fprintf(stderr, "Going fast path...\r\n");
+    c3_free(c);
     u3_noun hok = u3j_cook("u3we_slaw_parse_da", u3k(cor), "year");
-    u3_noun res = u3n_slam_on(hok, u3nt(u3nc(bc, year), month, u3nc(day, u3nq(0, 0, 0, 0))));
+    u3_noun res = u3n_slam_on(hok,
+                              u3nt(u3nc(bc, year), month,
+                                   u3nc(day, u3nq(0, 0, 0, 0))));
     return u3nc(0, res);
   }
 
-  /* CONSUME('.'); */
-  /* CONSUME('.'); */
+  CONSUME('.');
+  CONSUME('.');
 
-  // TODO: Cool. We've parsed a bunch of atoms. But the actual thing we return
-  // is the above run through the +year function which produces a @da.
-  return u3_none;
+  PARSE_INCLUDING_ZERO_NUMBER(hour);
+  CONSUME('.');
+  PARSE_INCLUDING_ZERO_NUMBER(minute);
+  CONSUME('.');
+  PARSE_INCLUDING_ZERO_NUMBER(second);
+
+  if (cur[0] == 0) {
+    c3_free(c);
+    u3_noun hok = u3j_cook("u3we_slaw_parse_da", u3k(cor), "year");
+    u3_noun res = u3n_slam_on(hok,
+                              u3nt(u3nc(bc, year), month,
+                                   u3nc(day, u3nq(hour, minute, second, 0))));
+    return u3nc(0, res);
+  }
+
+  CONSUME('.');
+  CONSUME('.');
+
+  // Now we have to parse a list of hexidecimal numbers 0-f of length 4 only
+  // (zero padded otherwise) separated by dots. Wat.
+  u3_atom list = 0;
+  while (1) {
+    // Parse 4 hex digits
+    int one, two, three, four;
+    PARSE_HEX_DIGIT(one);
+    PARSE_HEX_DIGIT(two);
+    PARSE_HEX_DIGIT(three);
+    PARSE_HEX_DIGIT(four);
+
+    int current = (one << 12) + (two << 8) + (three << 4) + four;
+    list = u3nc(current, list);
+
+    if (cur[0] == 0) {
+      c3_free(c);
+      list = u3qb_flop(list);
+
+      u3_noun hok = u3j_cook("u3we_slaw_parse_da", u3k(cor), "year");
+      u3_noun res = u3n_slam_on(hok,
+                                u3nt(u3nc(bc, year), month,
+                                     u3nc(day,
+                                          u3nq(hour, minute, second, list))));
+      return u3nc(0, res);
+    }
+
+    CONSUME('.');
+  }
 }
 
 #undef ENSURE_NOT_END
 #undef CONSUME
 #undef TRY_GET_SYLLABLE
 #undef PARSE_NONZERO_NUMBER
+#undef PARSE_HEX_DIGIT
 
 u3_noun
 _parse_tas(u3_noun txt) {
