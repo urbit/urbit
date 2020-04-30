@@ -1,25 +1,27 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Route, Link, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
-import { cssReset, light } from '@tlon/indigo-react';
+import { light } from '@tlon/indigo-react';
 
 import ChatApp from './apps/chat/ChatApp';
 import StatusBar from './components/StatusBar';
 
-const Style = createGlobalStyle`
-  ${cssReset}
-  html {
-    background-color: ${p => p.theme.colors.white};
-  }
-
-  strong {
-    font-weight: 600;
-  }
-`;
+// const Style = createGlobalStyle`
+//   ${cssReset}
+//   html {
+//     background-color: ${p => p.theme.colors.white};
+//   }
+//
+//   strong {
+//     font-weight: 600;
+//   }
+// `;
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
   line-height: ${p => p.theme.lineHeights.regular};
+  max-height: 100vh;
+  min-height: 100vh;
 `;
 
 const Home = () => (
@@ -46,7 +48,6 @@ export default class App extends React.Component {
   render() {
     return (
       <ThemeProvider theme={light}>
-        <Style />
         <Root>
           <Router>
             <StatusBarWithRouter props={this.props} />

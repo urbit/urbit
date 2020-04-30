@@ -50,7 +50,8 @@ export class ChatTabBar extends Component {
         </div>
         <a href={'/~chat/popout/room' + props.station} rel="noopener noreferrer"
         target="_blank"
-        className="dib fr pt2 pr1"
+        className="dib fr pr1"
+        style={{ paddingTop: '5px' }}
         >
           <img
             className={'flex-shrink-0 pr3 dn ' + hidePopoutIcon}

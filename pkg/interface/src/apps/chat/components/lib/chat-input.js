@@ -7,6 +7,8 @@ import CodeMirror from 'codemirror';
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
 
+import 'codemirror/lib/codemirror.css';
+
 import { Sigil } from '../../../../lib/sigil';
 import { ShipSearch } from './ship-search';
 import { S3Upload } from './s3-upload';
