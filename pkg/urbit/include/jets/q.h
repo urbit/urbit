@@ -72,6 +72,8 @@
 
     u3_noun po_find_prefix(char one, char two, char three);
     u3_noun po_find_suffix(char one, char two, char three);
+    void po_to_prefix(u3_noun id, c3_y* a, c3_y* b, c3_y* c);
+    void po_to_suffix(u3_noun id, c3_y* a, c3_y* b, c3_y* c);
 
     u3_noun u3qc_ob_fein(u3_atom);
     u3_noun u3qc_ob_fynd(u3_atom);
