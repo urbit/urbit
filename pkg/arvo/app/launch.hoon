@@ -1,34 +1,5 @@
 /-  launch
 /+  *server, default-agent, dbug
-::
-/=  index
-  /^  $-([json marl] manx)
-  /:  /===/app/launch/index  /!noun/
-/=  script
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/launch/js/index
-  /|  /js/
-      /~  ~
-  ==
-/=  channel-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/launch/js/channel
-  /|  /js/
-      /~  ~
-  ==
-/=  style
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/launch/css/index
-  /|  /css/
-      /~  ~
-  ==
-/=  launch-png
-  /^  (map knot @)
-  /:  /===/app/launch/img  /_  /png/
-::
 |%
 +$  versioned-state
   $%  [%0 state-zero]
@@ -136,65 +107,11 @@
         path-to-tile  (~(del by path-to-tile) subscribe.act)
       ==
     ==
-  ::
-      %handle-http-request
-    =+  !<([eyre-id=@ta =inbound-request:eyre] vas)
-    :_  this
-    %+  give-simple-payload:app    eyre-id
-    %+  require-authorization:app  inbound-request
-    |=  =inbound-request:eyre
-    ^-  simple-payload:http
-    =/  request-line  (parse-request-line url.request.inbound-request)
-    =/  name=@t
-      =/  back-path  (flop site.request-line)
-      ?~  back-path
-        ''
-      i.back-path
-    ?+  site.request-line
-      not-found:gen
-    ::
-        [~ ~]
-      =/  hym=manx
-        %+  index
-          [%b first-time]
-        ^-  marl
-        %+  turn  ~(tap by data)
-        |=  [key=@tas [jon=json url=@t]]
-        ^-  manx
-        ;script@"{(trip url)}";
-      (manx-response:gen hym)
-    ::
-        [%'~launch' %css %index ~]       :: styling
-      (css-response:gen style)
-    ::
-        [%'~launch' %js %index ~]        :: javascript
-      (js-response:gen script)
-    ::
-        [%'~launch' %img *]              :: images
-      =/  img=(unit @)  (~(get by launch-png) `@ta`name)
-      ?~  img
-        not-found:gen
-      (png-response:gen (as-octs:mimes:html u.img))
-    ::
-        [%'~modulo' %session ~]
-      =/  session-js
-        %-  as-octt:mimes:html
-        ;:  weld
-            "window.ship = '{+:(scow %p our.bol)}';"
-            "window.urb = new Channel();"
-        ==
-      (js-response:gen session-js)
-    ::
-        [%'~channel' %channel ~]
-      (js-response:gen channel-js)
-    ==
   ==
 ::
 ++  on-watch
   |=  pax=path
   ^-  (quip card _this)
-  ?:  ?=([%http-response *] pax)
-    [~ this]
   ?.  ?=([%main *] pax)
     (on-watch:def pax)
   =/  data=json
