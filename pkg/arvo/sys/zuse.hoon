@@ -567,7 +567,7 @@
           {$mont des/desk bem/beam}                     ::  mount to unix
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
-          {$park des/desk yuk/yuki ran/rang}            ::  plumbing commit
+          {$park des/desk yok/yoki ran/rang}            ::  synchronous commit
           {$perm des/desk pax/path rit/rite}            ::  change permissions
           {$pork ~}                                     ::  resume commit
           $>(%trim vane-task)                           ::  trim state
@@ -693,7 +693,8 @@
     ==                                                  ::
   ++  urge  |*(a/mold (list (unce a)))                  ::  list change
   ++  whom  (each ship @ta)                             ::  ship or named crew
-  ++  yuki                                              ::  commit
+  ++  yoki  (each yuki yaki)                            ::  commit
+  ++  yuki                                              ::  proto-commit
     $:  p/(list tako)                                   ::  parents
         q/(map path (each page lobe))                   ::  namespace
     ==                                                  ::

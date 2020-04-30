@@ -155,7 +155,7 @@
       cez=(map @ta crew)                                ::  permission groups
       cue=(qeu [=duct =task:able])                      ::  queued requests
       act=active-write                                  ::  active write
-      pud=(unit [=desk =yuki])                          ::  pending update
+      pud=(unit [=desk =yoki])                          ::  pending update
   ==                                                    ::
 ::
 ::  Currently active write
@@ -3473,7 +3473,7 @@
       ?>  ?=(~ deletes)
       =/  data=(map path (each page lobe))
         (~(run by changes) |=(=cage &+[p q.q]:cage))
-      (park | [~ data] *rang)
+      (park | &+[~ data] *rang)
     ::
     =/  parent-tako=tako  (aeon-to-tako:ze let.dom)
     =/  data=(map path (each page lobe))
@@ -3488,7 +3488,7 @@
       (~(run by changes) |=(=cage &+[p q.q]:cage))
     ::
     =/  =yuki  [~[parent-tako] data]
-    (park | yuki *rang)
+    (park | &+yuki *rang)
   ::
   ::  Unix commit
   ::
@@ -3524,17 +3524,22 @@
   ++  park
     =/  check-sane  |
     |^
-    |=  [updated=? =yuki =rang]
+    |=  [updated=? =yoki =rang]
     ^+  ..park
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
+      ==
+    =/  new-data=(map path (each page lobe))
+      ?-  -.yoki
+        %&  q.p.yoki
+        %|  (~(run by q.p.yoki) |=(=lobe |+lobe))
       ==
     =/  [deletes=(set path) changes=(map path (each page lobe))]
       =/  previous-yaki
         ?:  =(0 let.dom)
           *yaki
         (aeon-to-yaki:ze let.dom)
-      (get-changes q.previous-yaki q.yuki)
+      (get-changes q.previous-yaki new-data)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
     ::
     ::  promote ford cache
@@ -3559,13 +3564,13 @@
       |=  [=path =lobe =cage]
       [lobe %direct lobe [p q.q]:cage]
     =/  data=(map path lobe)
-      %-  ~(urn by q.yuki)
+      %-  ~(urn by new-data)
       |=  [=path value=(each page lobe)]
       ?-  -.value
         %|  p.value
         %&  lobe:(~(got by change-cages) path)
       ==
-    =/  =yaki  (make-yaki p.yuki data now)
+    =/  =yaki  (make-yaki p.p.yoki data now)
     =:  let.dom  +(let.dom)
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
@@ -3908,7 +3913,7 @@
     ::  Delay current update until sys update is complete
     ::
     ++  sys-update
-      |=  [=ford=args:ford:fusion =yuki changes=(map path (each page lobe))]
+      |=  [=ford=args:ford:fusion =yoki changes=(map path (each page lobe))]
       ^+  ..park
       =/  updates  (need-sys-update changes)
       ::  Don't save ford cache so it gets properly handled when we
@@ -3917,7 +3922,7 @@
       =^  updates-cages=(map path [lobe cage])  ford-cache.ford-args
         (checkout-changes ford-args updates)
       ?>  =(~ pud)
-      =.  pud  `[syd yuki]
+      =.  pud  `[syd yoki]
       |^  ?:  (~(has by updates) /sys/hoon/hoon)
             reset
           ?:  (~(has by updates) /sys/arvo/hoon)
@@ -5480,15 +5485,15 @@
       %park
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
-      abet:(park:den | [yuk ran]:req)
+      abet:(park:den | [yok ran]:req)
     [mos ..^$]
   ::
       %pork
-    =/  [syd=desk =yuki]  (need pud.ruf)
+    =/  [syd=desk =yoki]  (need pud.ruf)
     =.  pud.ruf  ~
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our syd)
-      abet:(park:den & yuki *rang)
+      abet:(park:den & yoki *rang)
     [mos ..^$]
   ::
       %perm
