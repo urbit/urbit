@@ -22,6 +22,36 @@ function getNumPending(props) {
   return result;
 }
 
+const ACTIVITY_TIMEOUT = 60000; // a minute
+
+function scrollIsAtTop(container) {
+  if ((navigator.userAgent.includes("Safari") &&
+      navigator.userAgent.includes("Chrome")) ||
+      navigator.userAgent.includes("Firefox")
+  ) {
+    return container.scrollTop === 0;
+  } else if (navigator.userAgent.includes("Safari")) {
+    return container.scrollHeight + Math.round(container.scrollTop) <=
+        container.clientHeight + 10;
+  } else {
+    return false;
+  }
+}
+
+function scrollIsAtBottom(container) {
+  if ((navigator.userAgent.includes("Safari") &&
+      navigator.userAgent.includes("Chrome")) ||
+      navigator.userAgent.includes("Firefox")
+  ) {
+    return container.scrollHeight - Math.round(container.scrollTop) <=
+        container.clientHeight + 10;
+  } else if (navigator.userAgent.includes("Safari")) {
+    return container.scrollTop === 0;
+  } else {
+    return false;
+  }
+}
+
 export class ChatScreen extends Component {
   constructor(props) {
     super(props);
@@ -30,6 +60,7 @@ export class ChatScreen extends Component {
       numPages: 1,
       scrollLocked: false,
       read: props.read,
+      active: true,
       // only for FF
       lastScrollHeight: null,
     };
@@ -43,6 +74,10 @@ export class ChatScreen extends Component {
     this.unreadMarker = null;
     this.scrolledToMarker = false;
     this.setUnreadMarker = this.setUnreadMarker.bind(this);
+
+    this.activityTimeout = true;
+    this.handleActivity = this.handleActivity.bind(this);
+    this.setInactive = this.setInactive.bind(this);
 
     moment.updateLocale('en', {
       calendar: {
@@ -60,8 +95,39 @@ export class ChatScreen extends Component {
   componentDidMount() {
     this.askForMessages();
     this.scrollToBottom();
+
+    document.addEventListener("mousemove", this.handleActivity, false);
+    document.addEventListener("mousedown", this.handleActivity, false);
+    document.addEventListener("keypress", this.handleActivity, false);
+    document.addEventListener("touchmove", this.handleActivity, false);
+    this.activityTimeout = setTimeout(this.setInactive, ACTIVITY_TIMEOUT);
   }
 
+  componentWillUnmount() {
+    document.removeEventListener("mousemove", this.handleActivity, false);
+    document.removeEventListener("mousedown", this.handleActivity, false);
+    document.removeEventListener("keypress", this.handleActivity, false);
+    document.removeEventListener("touchmove", this.handleActivity, false);
+    if(this.activityTimeout) {
+      clearTimeout(this.activityTimeout);
+    }
+  }
+
+  handleActivity() {
+    if(!this.state.active) {
+      this.setState({ active: true });
+    }
+
+    if(this.activityTimeout) {
+      clearTimeout(this.activityTimeout);
+      this.activityTimeout = setTimeout(this.setInactive, ACTIVITY_TIMEOUT);
+    }
+  }
+
+  setInactive() {
+    this.activityTimeout = null;
+    this.setState({ active: false, scrollLocked: true });
+  }
 
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
@@ -97,7 +163,8 @@ export class ChatScreen extends Component {
     ) {
       this.hasAskedForMessages = false;
     } else if(props.length !== prevProps.length &&
-       prevProps.length === prevProps.read
+       prevProps.length === prevProps.read &&
+       state.active
     ) {
       this.setState({ read: props.length })
       this.props.api.chat.read(this.props.station);
@@ -143,8 +210,16 @@ export class ChatScreen extends Component {
     let start =
       props.length - props.envelopes[props.envelopes.length - 1].number;
     if (start > 0) {
-      let end = start + 300 < props.length ? start + 300 : props.length;
+      const unread = props.length - props.read;
+      const unloadedUnread = unread - props.envelopes.length;
+      const willLoadUnread = unloadedUnread > 280;
+      const offset = willLoadUnread ? unloadedUnread + 20 : 300;
+      const end = start + offset < props.length ? start + offset : props.length;
       this.hasAskedForMessages = true;
+      if(willLoadUnread) {
+        // ensure unread marker is visible
+        this.setState({ numPages: Math.ceil(unread / 100) });
+      }
       props.subscription.fetchMessages(start + 1, end, props.station);
     }
   }
@@ -172,64 +247,28 @@ export class ChatScreen extends Component {
   }
 
   onScroll(e) {
-    if (
-      (navigator.userAgent.includes("Safari") &&
-      navigator.userAgent.includes("Chrome")) ||
-      navigator.userAgent.includes("Firefox")
-    ) {
-      // Google Chrome and Firefox
-      if (e.target.scrollTop === 0) {
-
-        // Save scroll position for FF
-        if (navigator.userAgent.includes('Firefox')) {
-
-          this.setState({
-            lastScrollHeight: e.target.scrollHeight
-          })
+    if(scrollIsAtTop(e.target)) {
+      // Save scroll position for FF
+      if (navigator.userAgent.includes('Firefox')) {
+        this.setState({
+          lastScrollHeight: e.target.scrollHeight
+        });
+      }
+      this.setState(
+        {
+          numPages: this.state.numPages + 1,
+          scrollLocked: true
+        },
+        () => {
+          this.askForMessages();
         }
-        this.setState(
-          {
-            numPages: this.state.numPages + 1,
-            scrollLocked: true
-          },
-          () => {
-            this.askForMessages();
-          }
-        );
-      } else if (
-        e.target.scrollHeight - Math.round(e.target.scrollTop) ===
-        e.target.clientHeight
-      ) {
-        this.dismissUnread();
-        this.setState({
-          numPages: 1,
-          scrollLocked: false,
-        });
-      }
-    } else if (navigator.userAgent.includes("Safari")) {
-      // Safari
-      if (e.target.scrollTop === 0) {
-        this.dismissUnread();
-        this.setState({
-          numPages: 1,
-          scrollLocked: false
-        });
-      } else if (
-        e.target.scrollHeight + Math.round(e.target.scrollTop) <=
-        e.target.clientHeight + 10
-      ) {
-        this.setState(
-          {
-            numPages: this.state.numPages + 1,
-            scrollLocked: true
-          },
-          () => {
-            this.askForMessages();
-          }
-        );
-      }
-    } else {
-      console.log("Your browser is not supported.");
+      );
+    } else if (scrollIsAtBottom(e.target)) {
+      this.dismissUnread();
+      this.setState({
+        numPages: 1,
+        scrollLocked: false
+      });
     }
   }
 
@@ -237,6 +276,13 @@ export class ChatScreen extends Component {
     if(ref && !this.scrolledToMarker) {
       this.setState({ scrollLocked: true }, () => {
         ref.scrollIntoView({ block: 'center' });
+        if(scrollIsAtBottom(ref.offsetParent)) {
+          this.dismissUnread();
+          this.setState({
+            numPages: 1,
+            scrollLocked: false
+          });
+        }
       });
       this.scrolledToMarker = true;
     }
@@ -478,6 +524,7 @@ export class ChatScreen extends Component {
           ownerContact={ownerContact}
           envelopes={props.envelopes}
           contacts={props.contacts}
+          onEnter={() => this.setState({ scrollLocked: false })}
           placeholder="Message..."
         />
       </div>
