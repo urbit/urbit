@@ -11,6 +11,7 @@ import Urlicht.RunicShow
 import qualified Urlicht.Core as C
 import Urlicht.Elab
 import Urlicht.Elaborate
+import Urlicht.Errors
 import qualified Urlicht.HoonToSimple as H2S
 --import qualified Urlicht.Simple as S
 import qualified Urlicht.SimpleToCoreHack as S2C

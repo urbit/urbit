@@ -81,8 +81,8 @@ runElab = either (error . unpack . runic) id
         . runElabT
 
 runElabIO :: ElabT IO a -> IO a
-runElabIO = fmap (either (error . unpack . runic) id)
-          . runExceptT
+runElabIO = either (terror . runic) pure
+        <=< runExceptT
           . flip evalStateT (ElabState 0 mempty)
           . runElabT
 
