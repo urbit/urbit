@@ -33,6 +33,7 @@ import Urbit.Vere.Pier.Types
 
 import Data.Binary.Builder (Builder, fromByteString)
 import Data.Bits           (shiftL, (.|.))
+import Data.PEM            (pemParseBS, pemWriteBS)
 import Network.Socket      (SockAddr(..))
 import System.Directory    (doesFileExist, removeFile)
 import System.Random       (randomIO)
@@ -215,6 +216,9 @@ writePortsFile f = writeFile f . encodeUtf8 . portsFileText
 
 cordBytes :: Cord -> ByteString
 cordBytes = encodeUtf8 . unCord
+
+wainBytes :: Wain -> ByteString
+wainBytes = encodeUtf8 . unWain
 
 pass :: Monad m => m ()
 pass = pure ()
@@ -499,14 +503,22 @@ httpServerPorts fak = do
 
   pure (PortsToTry { .. })
 
+parseCerts :: ByteString -> Maybe (ByteString, [ByteString])
+parseCerts bs = do
+  pems <- pemParseBS bs & either (const Nothing) Just
+  case pems of
+    [] -> Nothing
+    p:ps -> pure (pemWriteBS p, pemWriteBS <$> ps)
+
 startServ :: (HasPierConfig e, HasLogFunc e, HasNetworkConfig e)
           => Bool -> HttpServerConf -> (Ev -> STM ())
           -> RIO e Serv
 startServ isFake conf plan = do
   logDebug "startServ"
 
-  let tls = hscSecure conf <&> \(PEM key, PEM cert) ->
-              (W.tlsSettingsMemory (cordBytes cert) (cordBytes key))
+  let tls = do (PEM key, PEM certs) <- hscSecure conf
+               (cert, chain)        <- parseCerts (wainBytes certs)
+               pure $ W.tlsSettingsChainMemory cert chain $ wainBytes key
 
   sId <- io $ ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
   liv <- newTVarIO emptyLiveReqs
