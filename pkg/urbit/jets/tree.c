@@ -608,6 +608,8 @@ static c3_c* _141_qua_trip_ha[] = {
 };
 
 static u3j_harm _141_qua_slaw_a[] = {{".2", u3we_slaw}, {}};
+static u3j_harm _141_qua_scot_a[] = {{".2", u3we_scot}, {}};
+static u3j_harm _141_qua_scow_a[] = {{".2", u3we_scow}, {}};
 
 
 static u3j_harm _141_qua__po_ind_a[] = {{".2", u3wcp_ind}, {}};
@@ -887,6 +889,8 @@ static u3j_core _141_qua_d[] =
   { "mink", 7, _141_qua_mink_a, 0, _141_qua_mink_ha },
   { "mule", 7, _141_qua_mule_a, 0, _141_qua_mule_ha },
 
+  { "scot", 7, _141_qua_scot_a, 0, 0 },
+  { "scow", 7, _141_qua_scow_a, 0, 0 },
   { "slaw", 7, _141_qua_slaw_a, 0, 0 },
   {}
 };
