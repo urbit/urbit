@@ -69,7 +69,6 @@ down = go
       KetHep ht hv -> go $ The ht hv
       WutCen h cs  -> error "down: unsupported feature: ?%"
       WutCol h j k -> error "down: unsupported feature: ?:"
-      WutHax h bs  -> error "down: unsupported feature: ?#"
 
 
 up :: S.Simple a -> Hoon a

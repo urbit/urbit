@@ -3,13 +3,12 @@ module Urlicht.Core where
 import ClassyPrelude
 
 import Bound
-import Bound.Name
 import Control.Monad.Morph (hoist)
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 
 import Urlicht.Meta
 
-type B = Name Text ()
+type B = ()
 
 data Core a
   = Var a

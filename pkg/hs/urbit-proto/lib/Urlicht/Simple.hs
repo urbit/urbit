@@ -3,13 +3,11 @@ module Urlicht.Simple where
 import ClassyPrelude
 
 import Bound
-import Bound.Name
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 
 import Urlicht.Meta
 
 type SimpleType = Simple
-type B = Name Text ()
 
 -- | The lowest-level unelaborated representation.
 data Simple a
@@ -17,13 +15,13 @@ data Simple a
   | Met Meta
   -- types
   | Typ
-  | Fun (Simple a) (Scope B Simple a)
+  | Fun (Simple a) (Scope () Simple a)
   -- introduction forms
-  | Lam (Scope B Simple a)
+  | Lam (Scope () Simple a)
   -- elimination forms
   | App (Simple a) (Simple a)
   -- flow control
-  | Let (Simple a) (Scope B Simple a)
+  | Let (Simple a) (Scope () Simple a)
   -- meta
   | Hol
   deriving (Functor, Foldable, Traversable)

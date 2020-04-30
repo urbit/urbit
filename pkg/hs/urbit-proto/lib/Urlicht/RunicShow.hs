@@ -11,27 +11,35 @@ import qualified Urlicht.HoonToSimple as H2S
 import qualified Urlicht.Simple as S
 import qualified Urlicht.SimpleToCoreHack as S2C
 import qualified Urlicht.Core as Core
+import qualified Urlicht.Elab as Elab
 import qualified Urlicht.Errors as E
 import qualified Urlicht.Meta as Meta
 import qualified Urbit.Noun as N
 
 class RunicShow a where
-  runic :: a -> String
+  runic :: a -> Text
 
 instance RunicShow C.CST where
-  runic = unpack . tall . toRunic
+  runic = tall . toRunic
 
 instance RunicShow (H.Hoon Text) where
   runic = runic . C.concretize
 
-instance RunicShow (Core.Value Text) where
-  runic = runic . Core.quote
+instance RunicShow (S.Simple Text) where
+  runic = runic . H2S.up
 
 instance RunicShow (Core.Core Text) where
   runic = runic . S2C.up
 
-instance RunicShow (S.Simple Text) where
-  runic = runic . H2S.up
+instance RunicShow (Core.Value Text) where
+  runic = runic . Core.quote
+
+instance RunicShow Elab.ElabState where
+  runic Elab.ElabState{..} = foldl'
+    (<>)
+    ("Next meta: " <> Meta.showMeta _nextMeta <> "\n")
+    (map (\(m, v) -> Meta.showMeta m <> ":\n" <> runic (const ("fake" :: Text) <$> v))
+      $ mapToList _metas)
 
 -- TODO how bad is UndecidableInstances?
 -- instance (Functor f, Unvar a, RunicShow (f Text)) => RunicShow (f a) where
@@ -210,7 +218,6 @@ toRunic = go
         C.DotDot x y   -> fix x y
         C.WutCen x cs  -> switch x cs
         C.WutCol x y z -> RunC "?:" [go x, go y, go z]
-        C.WutHax x cs  -> switch' x cs
         C.Lus x        -> lus x
         C.DotLus x     -> lus x
         C.Tis x y      -> tis x y
@@ -245,9 +252,9 @@ toRunic = go
 
     switch x cs = Jog1 "?%" (go x) (jog (tag "%" "") go cs)
 
-    switch' x cs = Jog1 "?#" (go x) (mkCase <$> mapToList cs)
+    {-switch' x cs = Jog1 "?#" (go x) (mkCase <$> mapToList cs)
       where
-        mkCase (atm, (v, c)) = (IFix "[" "]" [tag "%" "" atm, Leaf v], go c)
+        mkCase (atm, (v, c)) = (IFix "[" "]" [tag "%" "" atm, Leaf v], go c)-}
 
     recLit cs = Mode wide tall
       where wide = JFix "{" "}" $ entJog $ mapToList cs

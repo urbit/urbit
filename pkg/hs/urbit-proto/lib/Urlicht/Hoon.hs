@@ -3,7 +3,6 @@ module Urlicht.Hoon where
 import ClassyPrelude
 
 import Bound
-import Bound.Name
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Numeric.Natural
 
@@ -16,12 +15,12 @@ data Hoon a
   | Met Meta
   -- irregular forms
   | Hax
-  | Fun (Hoon a) (Scope (Name Text ()) Hoon a)
-  | Cel (Hoon a) (Scope (Name Text ()) Hoon a)
+  | Fun (Hoon a) (Scope () Hoon a)
+  | Cel (Hoon a) (Scope () Hoon a)
   | Wut (Set Atom)
   | Pat
   --
-  | Lam (Hoon a) (Scope (Name Text ()) Hoon a)
+  | Lam (Hoon a) (Scope () Hoon a)
   | Cns (Hoon a) (Hoon a)
   | Nat Atom
   --
@@ -41,17 +40,17 @@ data Hoon a
   -- Runes
   | HaxBuc (Map Atom (Hoon a))
   | HaxCen (Map Atom (Hoon a))
-  | HaxCol (Hoon a) (Scope (Name Text ()) Hoon a)
-  | HaxHep (Hoon a) (Scope (Name Text ()) Hoon a)
+  | HaxCol (Hoon a) (Scope () Hoon a)
+  | HaxHep (Hoon a) (Scope () Hoon a)
   --
   | BarCen (Map Atom (Hoon a))
-  | BarTis (Hoon a) (Scope (Name Text ()) Hoon a)
+  | BarTis (Hoon a) (Scope () Hoon a)
   | CenDot (Hoon a) (Hoon a)
   | CenHep (Hoon a) (Hoon a)
   | ColHep (Hoon a) (Hoon a)
   | ColTar [Hoon a]
-  | TisFas (Hoon a) (Scope (Name Text ()) Hoon a)
-  | DotDot (Hoon a) (Scope (Name Text ()) Hoon a)
+  | TisFas (Hoon a) (Scope () Hoon a)
+  | DotDot (Hoon a) (Scope () Hoon a)
   | DotGal (Hoon a)
   | DotGar (Hoon a)
   | DotLus (Hoon a)
@@ -60,7 +59,6 @@ data Hoon a
   | KetHep (Hoon a) (Hoon a)
   | WutCen (Hoon a) (Map Atom (Hoon a))
   | WutCol (Hoon a) (Hoon a) (Hoon a)
-  | WutHax (Hoon a) (Map Atom (Scope (Name Text ()) Hoon a))
   deriving (Functor, Foldable, Traversable, Typeable)
 
 deriveEq1   ''Hoon
@@ -128,4 +126,3 @@ instance Monad Hoon where
   KetHep x y   >>= f = KetHep (x >>= f) (y >>= f)
   WutCen x cs  >>= f = WutCen (x >>= f) (cs <&> (>>= f))
   WutCol x y z >>= f = WutCol (x >>= f) (y >>= f) (z >>= f)
-  WutHax x bs  >>= f = WutHax (x >>= f) (bs <&> (>>>= f))

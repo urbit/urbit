@@ -1,6 +1,8 @@
 module Urlicht.Parser where
 
 import ClassyPrelude hiding (head, many, some, try, init, last)
+
+import Control.Arrow ((>>>))
 import Control.Lens
 import Numeric.Natural
 
@@ -15,10 +17,11 @@ import qualified Prelude
 
 import Urlicht.CST
 import Urlicht.Meta
--- import qualified Urlicht.Hoon as Hoon
--- import qualified Urlicht.HoonToSimple as H2S
--- import qualified Urlicht.Simple as Simple
--- import qualified Urlicht.Core as Core
+import qualified Urlicht.Hoon as Hoon
+import qualified Urlicht.HoonToSimple as H2S
+import qualified Urlicht.Simple as Simple
+import qualified Urlicht.SimpleToCoreHack as S2Cxxx
+import qualified Urlicht.Core as Core
 import SimpleNoun (textToAtom)
 
 -- Types -----------------------------------------------------------------------
@@ -27,7 +30,7 @@ type Nat  = Natural
 type Sym  = Text
 
 -- Marvelous convenience -------------------------------------------------------
-{-
+
 instance IsString CST where
   fromString = pack >>> parseCst >>> \case
     Right c -> c
@@ -36,9 +39,11 @@ instance IsString CST where
 instance IsString (Hoon.Hoon Text) where
   fromString = abstractify . fromString
 
+instance IsString (Simple.Simple Text) where
+  fromString = H2S.down . fromString
+
 instance IsString (Core.Core Text) where
-  fromString = Hoon.desugar . fromString
--}
+   fromString = S2Cxxx.down . fromString
 
 -- Parser Monad ----------------------------------------------------------------
 
@@ -169,7 +174,7 @@ rune = runeSwitch
   , ("^-", rune2 KetHep cst cst)
   , ("?%", runeJogging1 wutCen cst tagPat cst)
   , ("?:", rune3 WutCol cst cst cst)
-  , ("?#", runeJogging1 wutHax cst celPat cst)
+  --, ("?#", runeJogging1 wutHax cst celPat cst)
   ]
   where
     benJamin = grouped "(" " " ")" binder
@@ -177,8 +182,8 @@ rune = runeSwitch
     tagPat = textToAtom <$> tag <|> atom
     wutCen c cs = WutCen c (mapFromList cs)
     celPat = char '[' *> ((,) <$> tagPat <*> (ace *> sym)) <* char ']'
-    wutHax c stuff =
-      WutHax c (mapFromList $ map (\((a, v), d) -> (a, (v, d))) stuff)
+    --wutHax c stuff =
+    --  WutHax c (mapFromList $ map (\((a, v), d) -> (a, (v, d))) stuff)
 
 runeSwitch ∷ [(Text, Parser a)] → Parser a
 runeSwitch = choice . fmap (\(s, p) → string s *> p)

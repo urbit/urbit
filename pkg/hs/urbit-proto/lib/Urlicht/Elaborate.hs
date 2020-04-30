@@ -6,7 +6,6 @@ module Urlicht.Elaborate where
 import ClassyPrelude
 
 import Bound
-import Bound.Name
 import Bound.Var
 import Bound.Scope
 import Control.Monad.Morph (hoist)
@@ -36,7 +35,7 @@ scope = map fst
 bind :: Env a -> b -> Type a -> Env (Var b a)
 bind bs b t = (B b, fmap F t) : fmap (\(x, v) -> (F x, fmap F v)) bs
 
-nameHack = Name "??" ()
+nameHack = ()
 
 -- | To elaborate a hole we create a new meta and apply it to all the vars
 -- in scope. Kovacs is able to eliminate shadowed vars lol.

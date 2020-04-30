@@ -67,8 +67,7 @@ checkSpine vs = for vs (crank >=> chk) where
 mkSolution :: Eq a => Meta -> [a] -> Value a -> Value a
 mkSolution m xs v = foldl' step v xs
   where
-    step term x = VLam $ mapBound (Name "?") -- TODO
-                       $ abstract1 x term
+    step term x = VLam $ abstract1 x term
 
 -- | When unifying (M x y) ~ v, make sure x and y are the only free vars in v.
 -- This actually checks that \x y. v has no free vars.
