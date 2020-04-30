@@ -885,7 +885,7 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
   //  spawn new process and connect to it
   //
   {
-    c3_c* arg_c[5];
+    c3_c* arg_c[6];
     c3_c  key_c[256];
     c3_c  wag_c[11];
     c3_i  err_i;
@@ -902,7 +902,17 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
     arg_c[1] = god_u->pax_c;            //  path to checkpoint directory
     arg_c[2] = key_c;                   //  disk key
     arg_c[3] = wag_c;                   //  runtime config
-    arg_c[4] = 0;
+
+    if ( u3_Host.ops_u.roc_c ) {
+      //  XX validate
+      //
+      arg_c[4] = u3_Host.ops_u.roc_c;
+    }
+    else {
+      arg_c[4] = 0;
+    }
+
+    arg_c[5] = 0;
 
     uv_pipe_init(u3L, &god_u->inn_u.pyp_u, 0);
     uv_pipe_init(u3L, &god_u->out_u.pyp_u, 0);

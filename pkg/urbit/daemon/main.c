@@ -97,7 +97,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:A:H:I:w:u:e:F:k:p:LljacdgqstvxPDRS")) )
+                 "G:J:B:K:A:H:I:w:u:e:F:k:p:r:LljacdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'J': {
@@ -165,6 +165,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'R': {
         u3_Host.ops_u.rep = c3y;
         return c3y;
+      }
+      case 'r': {
+        u3_Host.ops_u.roc_c = strdup(optarg);
+        break;
       }
       case 'L': { u3_Host.ops_u.net = c3n; break; }
       case 'l': { u3_Host.ops_u.lit = c3y; break; }
