@@ -13,10 +13,10 @@
       key-path=path
       =address:ethereum
       node-url=_'http://localhost:8545'
-      balances=(map contract-id [=address:ethereum balance=@ud])
+      =balances
       $=  pending  $:
         next=@ud
-        txns=(map wire txn)
+        txns=(map wire pending-txn)
         bals=(map wire [=contract-id =address:ethereum])
       ==
   ==
@@ -62,7 +62,7 @@
       =.  balances
       %+  ~(put by balances)
         contract-id.poke
-      [address.poke 0]
+      [address.poke 0 ~]
      =/  from-me-sub=^vase
      !>  ^-  poke:erc20
      :+  %event-subscribe  /[dap.bol]
@@ -113,8 +113,9 @@
     |=  =path
     ^-  (quip card _this)
     ?>  (team:title our.bol src.bol)
-    ?.  =(/tx path)  (on-watch:def path)
-    [~ this]
+    ?.  =(/primary path)  (on-watch:def path)
+    :_  this
+    [[%give %fact ~[/primary] %erc20-store-gift !>([%initial balances])] ~]
 ::
   ++  on-peek
     |=  =path
@@ -139,11 +140,15 @@
     =+  !<(diff=gift:erc20 q.cage.sign)
     ?-  diff
       [%history *]
-    `this
+      =.  state  (apply-events:tc loglist.diff)
+    :_  this
+    [[%give %fact ~[/primary] %eth-contracts-erc20-update !>(diff)] ~]
     ::=^  cards  state  (apply-events:tc loglist.diff)
     ::[cards this]
       [%log *]
-    `this
+      =.  state  (apply-event:tc event-log.diff)
+    :_  this
+    [[%give %fact ~[/primary] %eth-contracts-erc20-update !>(diff)] ~]
     ::=^  card  state  (apply-event:tc event-log.diff)
     ::?~  card  `this
     ::[[card ~] this]
@@ -157,53 +162,41 @@
   --
 |_  bol=bowl:gall
 ++  addr-to-contract
-  ^-  (map address:ethereum [=contract-id balance=@ud])
+  ^-  (map address:ethereum [=contract-id balance=@ud =txn-log])
   %-  molt
   %+  turn  ~(tap by balances)
-  |=  [=contract-id [=address:ethereum balance=@ud]]
-  [address [contract-id balance]]
+  |=  [=contract-id [=address:ethereum balance=@ud =txn-log]]
+  [address [contract-id balance txn-log]]
 ++  apply-events
   |=  =loglist:erc20
-  ^-  (quip card _state)
-  =/  cards=(list card)
-  %+  roll  loglist
-    |=  [=event-log:erc20 cards=(list card)]
-    ?-  event-data.event-log
-      [%approval *]
-    cards
-      [%transfer *]
-    =/  [=contract-id balance=@ud]  (~(got by addr-to-contract) address.event-log)
-    =/  new-balance=@ud
-    ?.  =(address from.event-data.event-log)
-      ?.  =(address to.event-data.event-log)
-        ~|(["unexpected event" event-log] !!)
-      (add balance value.event-data.event-log)
-    (sub balance value.event-data.event-log)
-    =.  balances
-      %+  ~(put by balances)
-        contract-id
-      [address.event-log new-balance]
-    cards
-    ==
-  [cards state]
+  ^-  _state
+  |-
+  ?~  loglist  state
+  $(state (apply-event i.loglist), loglist t.loglist)
 ++  apply-event
   |=  =event-log:erc20
-  ^-  (quip card _state)
+  ^-  _state
   ?-  event-data.event-log
     [%approval *]
-  `state
+  state
     [%transfer *]
-  =/  [=contract-id balance=@ud]  (~(got by addr-to-contract) address.event-log)
+  =/  [=contract-id balance=@ud =txn-log]  (~(got by addr-to-contract) address.event-log)
   =/  new-balance=@ud
   ?.  =(address from.event-data.event-log)
     ?.  =(address to.event-data.event-log)  ~|(["unexpected event" event-log] !!)
     (add balance value.event-data.event-log)
   (sub balance value.event-data.event-log)
+  =.  txn-log
+    :_  txn-log
+    :*  from.event-data.event-log
+        to.event-data.event-log
+        value.event-data.event-log
+    ==
   =.  balances
   %+  ~(put by balances)
     contract-id
-  [address.event-log new-balance]
-  `state
+  [address.event-log new-balance txn-log]
+  state
 ::
   ==
 ++  fetch-key

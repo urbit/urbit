@@ -1,5 +1,6 @@
-/-  eth-watcher, *ethers
+/-  eth-watcher, ethers
 /+  default-agent, eth-abi
+=*  dog  watch-config:ethers
 |%
 +$  card  card:agent:gall
 +$  note
@@ -10,8 +11,7 @@
 +$  state-zero
   $:  $0
       abis=(map @tas abi-form)
-      watchpups=(map path (list address:abi:ethereum))
-      contracts=(map address:ethereum @tas)
+      dogs=(map path dog)
   ==
 +$  abi-form
   $:  events=event-maps
@@ -58,7 +58,7 @@
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?>  ?=(%ethers-action mark)
-    =^  cards  state  (poke-eth-test:tc !<(poke vase))
+    =^  cards  state  (poke-ethers:tc !<(poke:ethers vase))
     [cards this]
 
   ++  on-leave
@@ -67,14 +67,13 @@
     ~&  "Unsubscribed by: {<src.bowl>} on: {<path>}"
     `this
   ::
-  ++  on-watch  on-watch:def
-    :: |=  =path
-    :: ^-  (quip card _this)
-    :: `this
-    :: :: :_  this
-    :: :: Crash if we see a subscription we don't recognise
-    :: :: ?+  path  ~|("unexpected subscription" !!)
-    :: :: ==
+  ++  on-watch
+    |=  =path
+    ^-  (quip card _this)
+    ?+  path  ~|("unexpected subscription" !!)
+      [%logs *]
+    `this
+    ==
   ::
   ++  on-peek  on-peek:def
     :: |=  =path
@@ -88,7 +87,7 @@
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
-    ?.  ?=([%eth-watcher ~] wire)
+    ?.  ?=([%eth-watcher *] wire)
       (on-agent:def wire sign)
     ?.  ?=(%fact -.sign)
       (on-agent:def wire sign)
@@ -97,13 +96,15 @@
     =+  !<(diff=diff:eth-watcher q.cage.sign)
     ?-  -.diff
       %history
-    %.  `this
-    %-  slog
-    :~  leaf+"got-simple-token-history"
-        >loglist.diff<
-    ==
+    %-  (slog [leaf+"got-simple-token-history" >loglist.diff< ~])
+    =^  cards  state  (handle-history:tc t.wire loglist.diff)
+    [cards this]
   ::
-      %log      %-  (slog ~[leaf+"%got-simple-token-event" >event-log.diff<])  `this
+      %log
+    %-  (slog ~[leaf+"%got-simple-token-event" >event-log.diff<])
+    =^  cards  state  (handle-event-log:tc t.wire event-log.diff)
+    [cards this]
+
       %disavow  %-  (slog ~[leaf+"%got-simple-token-disavow" >id.diff<])  `this
     ==
   ::
@@ -131,52 +132,59 @@
   |=  [=wire =task:agent:gall]
   ^-  card
   [%pass wire %agent [our.bol %eth-watch] task]
+::
+++  handle-history
+  |=  [=wire =loglist:eth-watcher]
+  ^-  (quip card _state)
+  =/  =dog  (~(got by dogs) wire)
+  =/  =mark  (crip "eth-contracts-{(trip abi.dog)}-gift")
+  =/  logs=loglist:ethers
+  %+  turn  loglist
+  |=  =event-log:rpc:ethereum
+  (event-log-to-ethers wire event-log)
+  :_  state
+  [[%give %fact ~[[%logs wire]] mark !>([%history logs])] ~]
+::
+++  handle-event-log
+  |=  [=wire =event-log:rpc:ethereum]
+  ^-  (quip card _state)
+  =/  =dog  (~(got by dogs) wire)
+  =/  =mark  (crip "eth-contracts-{(trip abi.dog)}-gift")
+  =/  log=event-log:ethers  (event-log-to-ethers wire event-log)
+  :_  state
+  [[%give %fact ~[[%logs wire]] mark !>([%log log])] ~]
+::
+++  event-log-to-ethers
+  |=  [=wire =event-log:rpc:ethereum]
+  ^-  event-log:ethers
+  =/  =dog  (~(got by dogs) wire)
+  =/  abi-name=@tas  abi.dog
+  =/  =abi-form
+    %-  ~(got by abis)  abi-name
+  =/  [hash=@ux name=@tas]
+    %+  snag  0
+    %+  skim  ~(tap by event-hmap.events.abi-form)
+    |=([hash=@ux name=@tas] =(hash i.topics.event-log))
+  =/  data-types=(list etyp:abi:ethereum)
+    %-  ~(got by event-upd-tmap.events.abi-form)  name
+  =/  topic-types=(list etyp:abi:ethereum)
+    %-  ~(got by event-sub-tmap.events.abi-form)  name
+  =/  event-data=[@tas *]
+  ?~  t.topics.event-log  [name ~]
+  %+  event-data-to-tuple
+    [name (decode-topics:rpc:ethereum t.topics.event-log topic-types)]
+  (decode-results:rpc:ethereum data.event-log data-types)
+  [mined.event-log address.event-log event-data]
 
 ::
-:: ++  start-contract-read
-::   |=  [=wire req=proto-read-request:rpc:ethereum]
-::   ^-  (list card)
-::   =/  tid=@ta  :((cury cat 3) dap.bol '--' to.req '--' (scot %uw (mug wire)))
-::   =/  args
-::     [~ `tid %eth-read-contract !>([node-url.state req])]
-::   :~  (watch-spider wire /thread-result/[tid])
-::       (poke-spider wire %spider-start !>(args))
-::   ==
-:: ::
-:: ++  read-from-contract
-::   |=  $:  =wire
-::           =address:eth
-::           abi=contract:eth-abi
-::           func-name=@t
-::           args=(list data:abi:ethereum)
-::       ==
-::   ^-  (list card)
-::   =/  func  (~(got by write-functions.abi) func-name)
-::   %:  start-contract-read
-::     wire
-::     `func-name
-::     address
-::     ^-  dat=call-data:rpc:ethereum
-::     [(get-selector:eth-abi func-name input-sol.func) args]
-::   ==
-:: ++  setup-eth-watcher
-::   |=  =address:abi:ethereum
-::   ^-  card
-::   %+  to-eth-watcher  /setup-simple-token
-::   :+  %poke   %eth-watcher-poke
-::   !>  ^-  poke:eth-watcher
-::   :+  %watch  /simple-token
-::   :*  'http://127.0.0.1:8545/'
-::       |
-::       ~s10
-::       0
-::       [0x91b5.17a3.e903.96ea.5ab1.4343.4dda.12b6.a678.f0cc ~]
-::       ~
-::   ==
-::
-
-++  poke-eth-test
-  |=  act=poke
+++  event-data-to-tuple
+  |*  [event-topics=* event-data=*]
+  ?^  event-topics
+    :-  -.event-topics
+    $(event-topics +.event-topics)
+  [event-topics event-data]
+++  poke-ethers
+  |=  act=poke:ethers
   ^-  (quip card state-zero)
   ?-  -.act
       %call
@@ -192,12 +200,7 @@
   :: ::
       %event-subscribe
     ?~  contracts.config.act  `state
-    =.  contracts
-      %-  ~(gas by contracts)
-      ^-  (list (pair @ux @tas))
-      %+  turn  contracts.config.act
-      |=  =address:ethereum
-      [address abi.config.act]
+    =.  dogs  (~(put by dogs) path.act config.act)
     =/  abi-name=@tas  abi.config.act
     =/  =abi-form
       %-  ~(got by abis)  abi-name
@@ -225,7 +228,7 @@
             %poke  %eth-watcher-poke
             watcher-action
         ==
-        :*  %pass  /eth-watcher
+        :*  %pass   [%eth-watcher path.act]
             %agent  [our.bol %eth-watch]
             %watch  [%logs path.act]
         ==
@@ -235,10 +238,13 @@
       %add-abi
     =/  =contract:eth-abi  (parse-contract:eth-abi json.act)
     =/  sur-card=card
-        %+  write-file  /sur/eth-contracts/[name.act]/hoon
+      %+  write-file  /sur/eth-contracts/[name.act]/hoon
       [%hoon !>((code-gen-types:eth-abi contract))]
+    =/  lib-card=card
+      %+  write-file  /lib/eth-contracts/[name.act]/hoon
+      [%hoon !>((code-gen-lib:eth-abi contract name.act))]
     =/  mark-card=card
-        %+  write-file  /mar/[(crip (zing ~["eth-contracts-" (trip name.act) "-update"]))]/hoon
+      %+  write-file  /mar/[(crip (zing ~["eth-contracts-" (trip name.act) "-update"]))]/hoon
       [%hoon !>((code-gen-mark:eth-abi (zing ~["eth-contracts-" (trip name.act)]) "gift"))]
     =/  events  ~(tap by events.contract)
     =/  =event-maps
@@ -251,7 +257,7 @@
           %+  turn  events
           |=  [hash=@ux =event:eth-abi]
           :-  name.event
-          %+  turn  inputs.event
+          %+  turn  (skim inputs.event |=(e=event-input:eth-abi !indexed.e))
           |=  =event-input:eth-abi
           type.event-input
       ::
@@ -266,37 +272,10 @@
     =.  abis  %+  ~(put by abis)  name.act
     [events=event-maps]
     :_  state
-    [sur-card mark-card ~]
+    [sur-card lib-card mark-card ~]
   ::
   ==
-  :: ++  handle-build
-  :: |=  [=path =gift:able:ford]
-  :: ^-  (quip card _state)
-  :: ?.  ?=([%made *] gift)
-  ::   [~ state]
-  :: ?.  ?=([%complete *] result.gift)
-  ::   [~ state]
-  :: =/  uri=@t
-  ::   (snag 1 path)
-  :: =/  =build-result:ford
-  ::   build-result.result.gift
-  :: ?+  build-result  [~ state]
-  ::       ::
-  ::   ::   [%success %plan *]
-  ::   :: =.  preludes
-  ::   ::   (~(put by preludes) uri -:vase.build-result)
-  ::   :: [~ state]
-  ::       ::
-  ::     [%success %core *]
-  ::   =.  abi-builds
-  ::     (~(put by abi-builds) uri (_abi-form +:vase.build-result))
-  ::   %-  (slog ~[leaf+"build success"])
-  ::   `state
-  ::       ::
-  ::     [%error *]
-  ::   %-  (slog message.build-result)
-  ::   `state
-  :: ==
+  ::
   ++  our-beak  /(scot %p our.bol)/[q.byk.bol]/(scot %da now.bol)
   ++  write-file
     |=  [pax=path cay=cage]
@@ -304,4 +283,33 @@
     =.  pax  (weld our-beak pax)
     [%pass (weld /write pax) %arvo %c %info (foal:space:userlib pax cay)]
   ::
+
+
+  ::
+  :: ++  start-contract-read
+  ::   |=  [=wire req=proto-read-request:rpc:ethereum]
+  ::   ^-  (list card)
+  ::   =/  tid=@ta  :((cury cat 3) dap.bol '--' to.req '--' (scot %uw (mug wire)))
+  ::   =/  args
+  ::     [~ `tid %eth-read-contract !>([node-url.state req])]
+  ::   :~  (watch-spider wire /thread-result/[tid])
+  ::       (poke-spider wire %spider-start !>(args))
+  ::   ==
+  :: ::
+  :: ++  read-from-contract
+  ::   |=  $:  =wire
+  ::           =address:eth
+  ::           abi=contract:eth-abi
+  ::           func-name=@t
+  ::           args=(list data:abi:ethereum)
+  ::       ==
+  ::   ^-  (list card)
+  ::   =/  func  (~(got by write-functions.abi) func-name)
+  ::   %:  start-contract-read
+  ::     wire
+  ::     `func-name
+  ::     address
+  ::     ^-  dat=call-data:rpc:ethereum
+  ::     [(get-selector:eth-abi func-name input-sol.func) args]
+  ::   ==
 --
