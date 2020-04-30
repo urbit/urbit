@@ -450,6 +450,10 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
       sef_u->rec_o = c3o(sef_u->rec_o, _(0 == (sef_u->dun_d % 1000ULL)));
     }
 
+    //  pack every 50K events
+    //
+    sef_u->pac_o = c3o(sef_u->pac_o, _(0 == (sef_u->dun_d % 50000ULL)));
+
     //  notify daemon of memory pressure via "fake" effect
     //
     if ( u3_none != pri ) {
