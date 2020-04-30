@@ -13,13 +13,13 @@
       creator=@p
   ==
 ::
-+$  metadata-action
++$  action
   $%  [%add =group-path =resource =metadata]
       [%remove =group-path =resource]
   ==
 ::
-+$  metadata-update
-  $%  metadata-action
++$  update
+  $%  action
       [%associations =associations]
       [%update-metadata =group-path =resource =metadata]
   ==

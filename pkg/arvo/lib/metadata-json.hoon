@@ -24,7 +24,7 @@
 ::
 ++  json-to-action
   |=  jon=json
-  ^-  metadata-action
+  ^-  action
   =,  dejs:format
   =<  (parse-json jon)
   |%
@@ -79,7 +79,7 @@
   ==
 ::
 ++  update-to-json
-  |=  upd=metadata-update
+  |=  upd=update
   =,  enjs:format
   ^-  json
   %+  frond  %metadata-update

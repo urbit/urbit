@@ -5,7 +5,7 @@
     *permission-hook,
     *group-store,
     *invite-store,
-    *metadata-store,
+    md-store=metadata-store,
     *permission-group-hook,
     *chat-hook,
     *metadata-hook
@@ -270,9 +270,9 @@
     ?:  |(?=(~ permission) ?=(%black kind.u.permission))
       ~&  [%cannot-groupify-blacklist app-path.act]
       ~
-    =/  =metadata
-      =-  (fall - *metadata)
-      %^  scry-for  (unit metadata)
+    =/  =metadata:md-store
+      =-  (fall - *metadata:md-store)
+      %^  scry-for  (unit metadata:md-store)
         %metadata-store
       =/  encoded-path=@ta
         (scot %t (spat app-path.act))
@@ -371,8 +371,8 @@
   ++  create-metadata
     |=  [title=@t description=@t group-path=path app-path=path]
     ^-  (list card)
-    =/  =metadata
-      %*  .  *metadata
+    =/  =metadata:md-store
+      %*  .  *metadata:md-store
           title         title
           description   description
           date-created  now.bol
@@ -391,12 +391,12 @@
     [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
   ::
   ++  metadata-poke
-    |=  act=metadata-action
+    |=  act=action:md-store
     ^-  card
     [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
   ::
   ++  metadata-store-poke
-    |=  act=metadata-action
+    |=  act=action:md-store
     ^-  card
     [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
   ::
@@ -435,7 +435,7 @@
       ~&  [%weird-chat app-path]
       !!
     =/  resource-indices
-      .^  (jug resource group-path)
+      .^  (jug resource:md-store group-path:md-store)
         %gy
         (scot %p our.bol)
         %metadata-store
@@ -461,8 +461,8 @@
   ++  is-creator
     |=  [group-path=path app-name=@ta app-path=path]
     ^-  ?
-    =/  meta=(unit metadata)
-      .^  (unit metadata)
+    =/  meta=(unit metadata:md-store)
+      .^  (unit metadata:md-store)
         %gx
         (scot %p our.bol)
         %metadata-store

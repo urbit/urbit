@@ -14,7 +14,7 @@
     *invite-store, group-store,
     link-listen-hook,
     group-hook, permission-hook, permission-group-hook,
-    metadata-hook, contact-view
+    metadata-hook, contact-view, md-store=metadata-store
 /+  *link, metadata, *server, default-agent, verb, dbug
 ~%  %link-view-top  ..is  ~
 ::
@@ -299,7 +299,7 @@
         ::
         %^  do-poke  %metadata-hook
           %metadata-action
-        !>  ^-  metadata-action:md
+        !>  ^-  action:md-store
         :^  %add  group-path
           [%link path]
         %*  .  *metadata:md
@@ -423,7 +423,7 @@
   ::
   %^  do-poke  %metadata-store
     %metadata-action
-  !>  ^-  metadata-action:md
+  !>  ^-  action:md-store
   [%remove group-path [%link path]]
 ::
 ++  handle-invite

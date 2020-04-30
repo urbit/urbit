@@ -5,7 +5,7 @@
     *contact-hook,
     *invite-store,
     *metadata-hook,
-    *metadata-store
+    md-store=metadata-store
 /+  *contact-json, default-agent, dbug
 ~%  %contact-hook-top  ..is  ~
 |%
@@ -444,7 +444,7 @@
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
 ::
 ++  metadata-poke
-  |=  act=metadata-action
+  |=  act=action:md-store
   ^-  card
   [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
 ::

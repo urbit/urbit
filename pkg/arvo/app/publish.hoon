@@ -6,7 +6,7 @@
     *permission-group-hook,
     *permission-store,
     *invite-store,
-    *metadata-store,
+    md-store=metadata-store,
     *metadata-hook
 /+  *server, *publish, cram, default-agent, dbug
 ::
@@ -1832,7 +1832,7 @@
   ==
 ::
 ++  metadata-poke
-  |=  act=metadata-action
+  |=  act=action:md-store
   ^-  card
   [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
 ::
@@ -1843,8 +1843,8 @@
   ?-  -.del
       %add
     =/  preexisting  (metadata-scry group-path.del app-path.del)
-    =/  meta=metadata
-      %*  .  *metadata
+    =/  meta=metadata:md-store
+      %*  .  *metadata:md-store
           title         title.del
           description   desc.del
           date-created  created.del
@@ -1862,15 +1862,15 @@
   ==
   ::
   ++  add
-    |=  [group-path=path app-path=path =metadata]
+    |=  [group-path=path app-path=path =metadata:md-store]
     ^-  (list card)
     [(metadata-poke [%add group-path [%publish app-path] metadata])]~
   ::
   ++  metadata-scry
     |=  [group-path=path app-path=path]
-    ^-  (unit metadata)
+    ^-  (unit metadata:md-store)
     ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)  ~
-    .^  (unit metadata)
+    .^  (unit metadata:md-store)
       %gx
       (scot %p our.bol)
       %metadata-store
@@ -1892,7 +1892,7 @@
       ~|  [%weird-publish app-path]
       !!
     =/  resource-indices
-      .^  (jug resource group-path)
+      .^  (jug resource:md-store group-path:md-store)
         %gy
         (scot %p our.bol)
         %metadata-store

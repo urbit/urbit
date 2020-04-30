@@ -3,7 +3,7 @@
 ::  watch paths:
 ::  /group/%group-path                      all updates related to this group
 ::
-/-  *metadata-store, *metadata-hook
+/-  store=metadata-store, *metadata-hook
 /+  default-agent, dbug
 ~%  %metadata-hook-top  ..is  ~
 |%
@@ -14,7 +14,7 @@
 ::
 +$  state-zero
   $:  %0
-      synced=(map group-path ship)
+      synced=(map group-path:store ship)
   ==
 --
 =|  state-zero
@@ -46,7 +46,7 @@
       [cards this]
     ::
         %metadata-action
-      [(poke-action:hc !<(metadata-action vase)) this]
+      [(poke-action:hc !<(action:store vase)) this]
     == 
   ::
   ++  on-watch
@@ -66,7 +66,7 @@
       ?+  p.cage.sign  (on-agent:def wire sign)
           %metadata-update
         =^  cards  state
-          (fact-metadata-update:hc wire !<(metadata-update q.cage.sign))
+          (fact-metadata-update:hc wire !<(update:store q.cage.sign))
         [cards this]
       ==
     ==
@@ -112,7 +112,7 @@
   --
 ::
 ++  poke-action
-  |=  act=metadata-action
+  |=  act=action:store
   ^-  (list card)
   |^
   ?:  (team:title our.bowl src.bowl)
@@ -127,7 +127,7 @@
   ==
   ::
   ++  send
-    |=  =group-path
+    |=  =group-path:store
     ^-  (list card)
     =/  =ship
       %+  slav  %p
@@ -155,19 +155,19 @@
   ?>  =(our.bowl (~(got by synced) path))
   ?>  (is-permitted src.bowl path)
   %+  turn  ~(tap by (metadata-scry path))
-  |=  [[=group-path =resource] =metadata]
+  |=  [[=group-path:store =resource:store] =metadata:store]
   ^-  card
   [%give %fact ~ %metadata-update !>([%add group-path resource metadata])]
   ::
   ++  metadata-scry
     |=  pax=^path
-    ^-  associations
+    ^-  associations:store
     =.  pax  ;:(weld /=metadata-store/(scot %da now.bowl)/group pax /noun)
-    .^(associations %gx pax)
+    .^(associations:store %gx pax)
   --
 ::
 ++  fact-metadata-update
-  |=  [wir=wire fact=metadata-update]
+  |=  [wir=wire fact=update:store]
   ^-  (quip card _state)
   |^
   [?:((team:title our.bowl src.bowl) handle-local handle-foreign) state]
@@ -203,12 +203,12 @@
     ==
   ::
   ++  give
-    |=  [=path upd=metadata-update]
+    |=  [=path upd=update:store]
     ^-  (list card)
     [%give %fact ~[[%group path]] %metadata-update !>(upd)]~
   ::
   ++  poke
-    |=  act=metadata-action
+    |=  act=action:store
     ^-  (list card)
     [%pass / %agent [our.bowl %metadata-store] %poke %metadata-action !>(act)]~
   --

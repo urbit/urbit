@@ -14,7 +14,7 @@
 ::    to expede this process, we prod other potential listeners when we add
 ::    them to our metadata+groups definition.
 ::
-/-  link-listen-hook, *metadata-store, *link, group-store
+/-  link-listen-hook, md-store=metadata-store, *link, group-store
 /+  mdl=metadata, default-agent, verb, dbug
 ::
 ~%  %link-listen-hook-top  ..is  ~
@@ -26,7 +26,7 @@
   ==
 +$  state-2  state-1
 +$  state-1
-  $:  listening=(set app-path)
+  $:  listening=(set app-path:md-store)
       state-0
   ==
 +$  state-0
@@ -39,7 +39,7 @@
       ::    this also gives us the option to check & restore subscriptions,
       ::    should we ever need that.
       ::
-      reasoning=(jug [ship app-path] group-path)
+      reasoning=(jug [ship app-path:md-store] group-path:md-store)
   ==
 ::
 +$  what-target  ?(%local-pages %annotations)
@@ -95,11 +95,11 @@
       =.  state  [%2 +.old]
       =.  listening.state
         (~(run in ~(key by reasoning.old)) tail)
-      =/  resources=(list [=group-path =app-path])
+      =/  resources=(list [=group-path:md-store =app-path:md-store])
         %~  tap  in
         %.  %link
         %~  get  ju
-        .^  (jug app-name [group-path app-path])
+        .^  (jug app-name:md-store [group-path:md-store app-path:md-store])
           %gy
           (scot %p our.bowl)
           %metadata-store
@@ -123,7 +123,7 @@
       $(resources t.resources, cards (weld more-cards cards))
     ::
         %0
-      =/  listening=(set app-path)
+      =/  listening=(set app-path:md-store)
         (~(run in ~(key by reasoning.old)) tail)
       $(old [%1 listening +.old])
     ==
@@ -238,7 +238,7 @@
       :_  (~(del in listening) app-path)
       ?.(had ~ [(send-update action)]~)
     ==
-  =/  groups=(list group-path)
+  =/  groups=(list group-path:md-store)
     (groups-from-resource:md %link app-path)
   |-
   ?~  groups  [cards state]
@@ -282,11 +282,11 @@
       ~|  [dap.bowl %unexpected-mark mark]
       !!
     %-  handle-metadata-update
-    !<(metadata-update vase)
+    !<(update:md-store vase)
   ==
 ::
 ++  handle-metadata-update
-  |=  upd=metadata-update
+  |=  upd=update:md-store
   ^-  (quip card _state)
   ?+  -.upd  [~ state]
       %add
@@ -348,7 +348,7 @@
   ^-  (quip card _state)
   ?.  ?=(?(%path %add %remove) -.upd)
     [~ state]
-  =/  socs=(list app-path)
+  =/  socs=(list app-path:md-store)
     (app-paths-from-group:md %link pax.upd)
   =/  whos=(list ship)
     ~(tap in members.upd)
@@ -372,7 +372,7 @@
 ::  link subscriptions
 ::
 ++  listen-to-group
-  |=  [=app-path =group-path]
+  |=  [=app-path:md-store =group-path:md-store]
   ^-  (quip card _state)
   =/  peers=(list ship)
     ~|  group-path
@@ -389,7 +389,7 @@
   $(peers t.peers, cards (weld cards caz))
 ::
 ++  leave-from-group
-  |=  [=app-path =group-path]
+  |=  [=app-path:md-store =group-path:md-store]
   ^-  (quip card _state)
   =/  peers=(list ship)
     %~  tap  in
@@ -405,7 +405,7 @@
   $(peers t.peers, cards (weld cards caz))
 ::
 ++  listen-to-peer
-  |=  [=app-path =group-path who=ship]
+  |=  [=app-path:md-store =group-path:md-store who=ship]
   ^-  (quip card _state)
   ?:  =(our.bowl who)
     [~ state]
@@ -417,7 +417,7 @@
   (start-link-subscriptions who app-path)
 ::
 ++  leave-from-peer
-  |=  [=app-path =group-path who=ship]
+  |=  [=app-path:md-store =group-path:md-store who=ship]
   ^-  (quip card _state)
   ?:  =(our.bowl who)
     [~ state]
@@ -426,7 +426,7 @@
   (end-link-subscriptions who app-path)
 ::
 ++  start-link-subscriptions
-  |=  [=ship =app-path]
+  |=  [=ship =app-path:md-store]
   ^-  (list card)
   :~  (start-link-subscription %local-pages ship app-path)
       (start-link-subscription %annotations ship app-path)
@@ -538,7 +538,7 @@
       [[%links (target-to-wire target)] who.target %link-proxy-hook]
     |
   %+  lien  (groups-from-resource:md %link where.target)
-  |=  =group-path
+  |=  =group-path:md-store
   ^-  ?
   =-  (~(has in (fall - *group:group-store)) who.target)
   %^  scry-for  (unit group:group-store)
@@ -618,7 +618,7 @@
   [~ state]
 ::
 ++  scry-for
-  |*  [=mold =app-name =path]
+  |*  [=mold =app-name:md-store =path]
   .^  mold
     %gx
     (scot %p our.bowl)

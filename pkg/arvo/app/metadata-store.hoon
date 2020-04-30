@@ -21,6 +21,7 @@
 ::  /app-name/%app-name                            associations for app
 ::  /group/%group-path                             associations for group
 ::
+/-  store=metadata-store
 /+  *metadata-json, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
@@ -31,10 +32,10 @@
 ::
 +$  state-zero
   $:  %0
-      =associations
-      group-indices=(jug group-path resource)
-      app-indices=(jug app-name [group-path app-path])
-      resource-indices=(jug resource group-path)
+      =associations:store
+      group-indices=(jug group-path:store resource:store)
+      app-indices=(jug app-name:store [group-path:store app-path:store])
+      resource-indices=(jug resource:store group-path:store)
   ==
 --
 ::
@@ -62,7 +63,7 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?:  ?=(%metadata-action mark)
-        (poke-metadata-action:mc !<(metadata-action vase))
+        (poke-metadata-action:mc !<(action:store vase))
       (on-poke:def mark vase)
     [cards this]
   ::
@@ -99,16 +100,20 @@
         [%y %resource-indices ~]  ``noun+!>(resource-indices)
         [%x %associations ~]      ``noun+!>(associations)
         [%x %app-name @ ~]
-      =/  =app-name  i.t.t.path
+      =/  =app-name:store
+        i.t.t.path
       ``noun+!>((metadata-for-app:mc app-name))
     ::
         [%x %group *]
-      =/  =group-path  t.t.path
+      =/  =group-path:store
+        t.t.path
       ``noun+!>((metadata-for-group:mc group-path))
     ::
         [%x %metadata @ @ @ ~]
-      =/  =group-path  (stab (slav %t i.t.t.path))
-      =/  =resource    [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
+      =/  =group-path:store
+        (stab (slav %t i.t.t.path))
+      =/  =resource:store
+        [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
       ``noun+!>((~(get by associations) [group-path resource]))
     ==
   ::
@@ -119,7 +124,7 @@
 ::
 |_  =bowl:gall
 ++  poke-metadata-action
-  |=  act=metadata-action
+  |=  act=action:store
   ^-  (quip card _state)
   ?>  (team:title our.bowl src.bowl)
   ?-  -.act
@@ -131,7 +136,7 @@
   ==
 ::
 ++  handle-add
-  |=  [=group-path =resource =metadata]
+  |=  [=group-path:store =resource:store =metadata:store]
   ^-  (quip card _state)
   :-  %+  send-diff  app-name.resource
       ?.  (~(has by resource-indices) resource)
@@ -152,7 +157,7 @@
   ==
 ::
 ++  handle-remove
-  |=  [=group-path =resource]
+  |=  [=group-path:store =resource:store]
   ^-  (quip card _state)
   :-  (send-diff app-name.resource [%remove group-path resource])
   %=  state
@@ -170,25 +175,25 @@
   ==
 ::
 ++  metadata-for-app
-  |=  =app-name
-  ^-  ^associations
-  %-  ~(gas by *^associations)
+  |=  =app-name:store
+  ^-  associations:store
+  %-  ~(gas by *associations:store)
   %+  turn  ~(tap in (~(gut by app-indices) app-name ~))
-  |=  [=group-path =app-path]
+  |=  [=group-path:store =app-path:store]
   :-  [group-path [app-name app-path]]
   (~(got by associations) [group-path [app-name app-path]])
 ::
 ++  metadata-for-group
-  |=  =group-path
-  ^-  ^associations
-  %-  ~(gas by *^associations)
+  |=  =group-path:store
+  ^-  associations:store
+  %-  ~(gas by *associations:store)
   %+  turn  ~(tap in (~(gut by group-indices) group-path ~))
-  |=  =resource
+  |=  =resource:store
   :-  [group-path resource]
   (~(got by associations) [group-path resource])
 ::
 ++  send-diff
-  |=  [=app-name upd=metadata-update]
+  |=  [=app-name:store upd=update:store]
   ^-  (list card)
   |^
   %-  zing
@@ -198,7 +203,7 @@
   ==
   ::
   ++  update-subscribers
-    |=  [pax=path upd=metadata-update]
+    |=  [pax=path upd=update:store]
     ^-  (list card)
     [%give %fact ~[pax] %metadata-update !>(upd)]~
   --

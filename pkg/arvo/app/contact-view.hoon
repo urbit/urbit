@@ -5,8 +5,8 @@
     *group-hook,
     *invite-store,
     *contact-hook,
-    *metadata-store,
-    *metadata-hook,
+    md-store=metadata-store,
+    md-hook=metadata-hook,
     *permission-group-hook,
     *permission-hook
 /+  *server, *contact-json, default-agent, dbug
@@ -226,12 +226,12 @@
   [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
 ::
 ++  metadata-poke
-  |=  act=metadata-action
+  |=  act=action:md-store
   ^-  card
   [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
 ::
 ++  metadata-hook-poke
-  |=  act=metadata-hook-action
+  |=  act=metadata-hook-action:md-hook
   ^-  card
   [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
 ::
@@ -252,8 +252,8 @@
 ++  create-metadata
   |=  [=path title=@t description=@t]
   ^-  (list card)
-  =/  =metadata
-    %*  .  *metadata
+  =/  =metadata:md-store
+    %*  .  *metadata:md-store
         title         title
         description   description
         date-created  now.bol

@@ -19,7 +19,7 @@
 ::    when adding support for new paths, the only things you'll likely want
 ::    to touch are +permitted, +initial-response, & +kick-proxies.
 ::
-/-  group-store, *metadata-store
+/-  group-store, md-store=metadata-store
 /+  *link, metadata, default-agent, verb, dbug
 ~%  %link-proxy-hook-top  ..is  ~
 |%
@@ -117,7 +117,7 @@
   ~?  !.^(? %gu (scot %p our.bowl) %metadata-store (scot %da now.bowl) ~)
     %woah-md-s-not-booted  ::TODO  fallback if needed
   %+  lien  (groups-from-resource:md %link u.target)
-  |=  =group-path
+  |=  =group-path:md-store
   ^-  ?
   =-  (~(has in (fall - *group:group-store)) who)
   %^  scry-for  (unit group:group-store)
@@ -164,11 +164,11 @@
       ~|  [dap.bowl %unexpected-mark mark]
       !!
     %-  handle-metadata-update
-    !<(metadata-update vase)
+    !<(update:md-store vase)
   ==
 ::
 ++  handle-metadata-update
-  |=  upd=metadata-update
+  |=  upd=update:md-store
   ^-  (quip card _state)
   :_  state
   ?.  ?=(%remove -.upd)  ~
@@ -225,7 +225,7 @@
   ::
   %-  zing
   %+  turn  (app-paths-from-group:md %link pax.upd)
-  |=  =app-path
+  |=  =app-path:md-store
   ^-  (list card)
   %+  kick-revoked-permissions
     app-path
@@ -312,7 +312,7 @@
 ::  helpers
 ::
 ++  scry-for
-  |*  [=mold =app-name =path]
+  |*  [=mold =app-name:md-store =path]
   .^  mold
     %gx
     (scot %p our.bowl)

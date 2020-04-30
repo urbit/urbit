@@ -2,7 +2,7 @@
 ::  mirror chat data from foreign to local based on read permissions
 ::  allow sending chat messages to foreign paths based on write perms
 ::
-/-  *permission-store, *chat-hook, *invite-store, *metadata-store,
+/-  *permission-store, *chat-hook, *invite-store, md-store=metadata-store,
     *permission-hook, *group-store, *permission-group-hook  ::TMP  for upgrade
 /+  *chat-json, *chat-eval, default-agent, verb, dbug
 ~%  %chat-hook-top  ..is  ~
@@ -210,16 +210,16 @@
     ++  record-group
       |=  [group=path chat=path]
       ^-  card
-      =/  =metadata
+      =/  =metadata:md-store
         ~|  [%weird-chat-path chat]
-        %*  .  *metadata
+        %*  .  *metadata:md-store
           title         (snag 2 chat)
           date-created  now.bol
           creator       (slav %p (snag 1 chat))
         ==
       %^  make-poke  %metadata-store
         %metadata-action
-      !>  ^-  metadata-action
+      !>  ^-  action:md-store
       [%add group [%chat chat] metadata]
     --
   ::
@@ -646,7 +646,7 @@
   /invite/chat/(scot %uv uid)
 ::
 ++  chats-of-group
-  |=  =group-path
+  |=  =group-path:md-store
   ^-  (list path)
   ::  if metadata-store isn't running yet, we're still in the upgrade ota phase.
   ::  we can't get chats from the metadata-store, but can make assumptions
@@ -655,27 +655,27 @@
   ::
   ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)  ~
   %+  murn
-    ^-  (list resource)
+    ^-  (list resource:md-store)
     =;  resources
       %~  tap  in
       %+  ~(gut by resources)
         group-path
-      *(set resource)
-    .^  (jug path resource)
+      *(set resource:md-store)
+    .^  (jug path resource:md-store)
       %gy
       (scot %p our.bol)
       %metadata-store
       (scot %da now.bol)
       /group-indices
     ==
-  |=  resource
+  |=  resource:md-store
   ^-  (unit path)
   ?.  =(%chat app-name)  ~
   `app-path
 ::
 ++  groups-of-chat
   |=  chat=path
-  ^-  (list group-path)
+  ^-  (list group-path:md-store)
   ::  if metadata-store isn't running yet, we're still in the upgrade ota phase.
   ::  we can't get groups from the metadata-store, but can make assumptions
   ::  about chat path shape, and the chat that would match it.
@@ -686,8 +686,8 @@
     %~  tap  in
     %+  ~(gut by resources)
       [%chat chat]
-    *(set group-path)
-  .^  (jug resource group-path)
+    *(set group-path:md-store)
+  .^  (jug resource:md-store group-path:md-store)
     %gy
     (scot %p our.bol)
     %metadata-store
@@ -700,7 +700,7 @@
   |=  [who=ship chat=path]
   ^-  ?
   %+  lien  (groups-of-chat chat)
-  |=  =group-path
+  |=  =group-path:md-store
   %^  scry  ?
     %permission-store
   [%permitted (scot %p who) group-path]
