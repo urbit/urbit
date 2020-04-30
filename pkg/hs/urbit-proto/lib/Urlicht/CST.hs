@@ -79,12 +79,12 @@ abstractify = go
       Met m -> H.Met m
       --
       Hax -> H.Hax
-      Fun bs c -> bindMany H.Fun bs (go c)
-      Cel bs c -> bindMany H.Cel bs (go c)
+      Fun bs c -> bindManyTy H.Fun bs (go c)
+      Cel bs c -> bindManyTy H.Cel bs (go c)
       Wut s -> H.Wut s
       Pat -> H.Pat
       --
-      Lam bs c -> bindMany H.Lam bs (go c)
+      Lam bs c -> bindManyTm H.Lam bs (go c)
       Cns cs -> foldr1 H.Cns $ go <$> cs
       Nat a -> H.Nat a
       --
@@ -104,17 +104,17 @@ abstractify = go
       --
       HaxBuc tcs -> H.HaxBuc (go <$> tcs)
       HaxCen tcs -> H.HaxCen (go <$> tcs)
-      HaxCol bs c -> bindMany H.HaxCol bs (go c)
-      HaxHep bs c -> bindMany H.HaxHep bs (go c)
+      HaxCol bs c -> bindManyTy H.HaxCol bs (go c)
+      HaxHep bs c -> bindManyTy H.HaxHep bs (go c)
       --
       BarCen cs -> H.BarCen (go <$> cs)
-      BarTis bs c -> bindMany H.BarTis bs (go c)
+      BarTis bs c -> bindManyTm H.BarTis bs (go c)
       CenDot c d -> H.CenDot (go c) (go d)
       CenHep c d -> H.CenHep (go c) (go d)
       ColHep c d -> H.ColHep (go c) (go d)
       ColTar cs -> H.ColTar (go <$> cs)
       TisFas v c d -> H.TisFas (go c) (abstract1 v $ go d)
-      DotDot b c -> bind H.DotDot b (go c)
+      DotDot b c -> bindTm H.DotDot b (go c)
       DotGal c -> H.DotGal (go c)
       DotGar c -> H.DotGar (go c)
       DotLus c -> H.DotLus (go c)
@@ -123,10 +123,18 @@ abstractify = go
       KetHep c d -> H.KetHep (go c) (go d)
       WutCen c cs -> H.WutCen (go c) (go <$> cs)
       WutCol c d e -> H.WutCol (go c) (go d) (go e)
-    bind ctor (Just v,  c) h = ctor (go c) (abstract1 v h)
-    bind ctor (Nothing, c) h = ctor (go c) (abstract (const Nothing) h)
-    bindMany ctor bs h = foldr (bind ctor) h bs
-
+    -- Consider <a/b c> vs <|a/b c|>. In the first, we can drop the type b to
+    -- get the shorthand <a c>. In the second, we can drop the name a (assuming
+    -- not used in c) to get the shorthand <|b c|>. In lambda expressions, the
+    -- arg type is optional; in function types, the arg name. So the way we
+    -- interpret a binder without a / depends on what context we are in.
+    bindTy ctor (Just v,  c) h = ctor (go c) (abstract1 v h)
+    bindTy ctor (Nothing, c) h = ctor (go c) (abstract (const Nothing) h)
+    bindTm ctor (Just v,      c) h = ctor (go c) (abstract1 v h)
+    bindTm ctor (Nothing, Var v) h = ctor (H.Hol) (abstract1 v h)
+    bindTm ctor (Nothing,     _) _ = error "complex patterns not supported"
+    bindManyTy ctor bs h = foldr (bindTy ctor) h bs
+    bindManyTm ctor bs h = foldr (bindTm ctor) h bs
 concretize :: H.Hoon Text -> CST
 concretize = dissociate . flip evalState 0 . go
   where
