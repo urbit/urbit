@@ -2,15 +2,13 @@ import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
 
 import GroupFilter from './GroupFilter';
-// import { Sigil } from "/components/lib/icons/sigil";
+import { Sigil } from '../lib/sigil';
 
 const getLocationName = (basePath) => {
   if (basePath === '~chat')
 return 'Chat';
   // if (path === '~chat') return 'Publish';
 };
-
-const Sigil = () => (<div />);
 
 const StatusBar = (props) => {
   const location = useLocation();
@@ -33,10 +31,10 @@ const StatusBar = (props) => {
       }
       style={{ height: 45 }}
     >
-      <div className="fl lh-copy absolute left-0" style={{ top: 8 }}>
+      <div className="fl lh-copy absolute left-0 pl4" style={{ top: 8 }}>
       <a href="/~groups/me" className="dib v-top">
           <Sigil
-            ship={'~' + props.ship}
+            ship={'~' + window.ship}
             classes="v-mid mix-blend-diff"
             size={16}
             color={'#000000'}

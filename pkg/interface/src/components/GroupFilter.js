@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import api from '../lib/api';
 
 export default class GroupFilter extends Component {
   constructor(props) {
@@ -24,7 +25,7 @@ export default class GroupFilter extends Component {
     const selected = localStorage.getItem('urbit-selectedGroups');
     if (selected) {
       this.setState({ selected: JSON.parse(selected) }, (() => {
-        window.api.setSelected(this.state.selected);
+        api.setSelected(this.state.selected);
       }));
     }
   }
@@ -197,7 +198,7 @@ onClick={() => this.addGroup(group)}
           'f9 gray2 bb bl br b--gray3 b--gray2-d bg-gray0-d ' +
           'white-d pa3 db w-100 inter bg-gray5 lh-solid tl'
         }
-style={{ width: 251 }}
+        style={{ width: 251 }}
         >
         {allSelected}
         </div>
