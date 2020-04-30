@@ -1,4 +1,7 @@
-/-  *chat-store
+/-  sur=chat-store
+^?
+=<  [sur .]
+=,  sur
 |%
 ++  enjs
   =,  enjs:format

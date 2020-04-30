@@ -1,4 +1,7 @@
-/-  *chat-view, *rw-security
+/-  sur=chat-view, *rw-security
+^?
+=<  [sur .]
+=,  sur
 |%
 ++  dejs
   |%

@@ -1,4 +1,7 @@
-/-  *chat-hook
+/-  sur=chat-hook
+^?
+=<  [sur .]
+=,  sur
 |%
 ::
 ++  enjs
