@@ -37,12 +37,14 @@ bind bs t = (B (), fmap F t) : fmap (\(x, v) -> (F x, fmap F v)) bs
 
 -- | To elaborate a hole we create a new meta and apply it to all the vars
 -- in scope. Kovacs is able to eliminate shadowed vars lol.
-newMetaWithSpine :: Env a -> Elab (Core a)
+--
+-- TODO don't add let-bound vars to the spine.
+newMetaWithSpine :: Elab m => Env a -> m (Core a)
 newMetaWithSpine env = do
   m <- freshMeta
   pure $ foldr (flip App) (Met m) (Var <$> scope env)
 
-freshFun :: Env a -> Elab (Type a, Scope B Type a)
+freshFun :: Elab m => Env a -> m (Type a, Scope B Type a)
 freshFun env = do
   a <- newMetaWithSpine env
   -- FIXME maybe we really do need to eval relative to a context with lets
@@ -54,7 +56,7 @@ freshFun env = do
 -- Gamma |- e -> t  inference  Gamma, e -> Maybe t
 -- Gamma |- e <- t  checking   Gamma, e, t -> ?
 
-check :: Eq a => Env a -> S.Simple a -> Type a -> Elab (Core a)
+check :: (Eq a, Elab m) => Env a -> S.Simple a -> Type a -> m (Core a)
 check env simp ty = do
   ty <- crank ty
   let
@@ -81,7 +83,7 @@ check env simp ty = do
         check (bind env tyRhs) (fromScope sBody) (F <$> ty)
     (S.Hol, _) -> newMetaWithSpine env
 
-infer :: Eq a => Env a -> S.Simple a -> Elab (Type a, Core a)
+infer :: (Eq a, Elab m) => Env a -> S.Simple a -> m (Type a, Core a)
 infer env = \case
   S.Var x -> case scry env x of
     Just ty -> pure (ty, Var x)
@@ -124,9 +126,9 @@ infer env = \case
     pure (eval t, c)
 
 -- | Inline metavariables.
-zonk :: Core a -> Elab (Core a)
+zonk :: Elab m => Core a -> m (Core a)
 zonk = go where
-  go :: Core a -> Elab (Core a)
+  go :: Elab m => Core a -> m (Core a)
   go = \case
     v@Var{}  -> pure v
     Met m    -> lookupMeta m >>= \case

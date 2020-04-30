@@ -181,7 +181,7 @@ rune = runeSwitch
            <|> (: []) <$> binder
     tagPat = textToAtom <$> tag <|> atom
     wutCen c cs = WutCen c (mapFromList cs)
-    celPat = char '[' *> ((,) <$> tagPat <*> (ace *> sym)) <* char ']'
+    --celPat = char '[' *> ((,) <$> tagPat <*> (ace *> sym)) <* char ']'
     --wutHax c stuff =
     --  WutHax c (mapFromList $ map (\((a, v), d) -> (a, (v, d))) stuff)
 

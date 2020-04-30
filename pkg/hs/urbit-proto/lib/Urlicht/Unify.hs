@@ -3,8 +3,6 @@ module Urlicht.Unify where
 import ClassyPrelude
 
 import Bound
-import Bound.Name
-import Bound.Scope
 import Control.Monad.State.Strict
 import Data.Void
 
@@ -12,6 +10,7 @@ import Urlicht.Core
 import Urlicht.Elab
 import Urlicht.Errors
 import Urlicht.Meta
+import Urlicht.RunicShow
 
 -- =/ id/<|a/# a a|>  <a/# x/a a>
 -- id _ 1
@@ -22,9 +21,9 @@ import Urlicht.Meta
 -- id ((\id. @) id) i
 -- id @ 1
 
-unify :: Eq a => Value a -> Value a -> Elab ()
-unify = go where
-  go :: Eq a => Value a -> Value a -> Elab ()
+unify :: (Eq a, Elab m) => Value a -> Value a -> m ()
+unify u v = go u v where
+  go :: (Eq a, Elab m) => Value a -> Value a -> m ()
   go u v = do
     (,) <$> crank u <*> crank v >>= \case
       (VVAp x us, VVAp y vs) | x == y -> zipWithM_ go us vs  -- Ulf more cplx?
@@ -45,7 +44,7 @@ unify = go where
       _ -> report EUnify
 
 -- | Try to unify (M vs) with rhs.
-solve :: Eq a => Meta -> [Value a] -> Value a -> Elab ()
+solve :: (Eq a, Elab m) => Meta -> [Value a] -> Value a -> m ()
 solve m vs rhs = do
   xs <- checkSpine vs
   let v = mkSolution m xs rhs
@@ -53,7 +52,7 @@ solve m vs rhs = do
   v <- occursCheck m v
   bindMeta m v
 
-checkSpine :: [Value a] -> Elab [a]
+checkSpine :: Elab m => [Value a] -> m [a]
 checkSpine vs = for vs (crank >=> chk) where
   chk = \case
     VVar x -> pure x
@@ -71,7 +70,7 @@ mkSolution m xs v = foldl' step v xs
 
 -- | When unifying (M x y) ~ v, make sure x and y are the only free vars in v.
 -- This actually checks that \x y. v has no free vars.
-scopeCheck :: Value a -> Elab (Value Void)
+scopeCheck :: Elab m => Value a -> m (Value Void)
 scopeCheck = maybe (report EScope) pure . closed
 
 -- | The solution for a metavariable should not refer to that metavariable.
@@ -79,8 +78,8 @@ scopeCheck = maybe (report EScope) pure . closed
 -- instead synthesize a recursor for non-suspicious self-referential terms,
 -- e.g. to infer a recursive type. It would be interesting, but also maybe
 -- frightening, to see if we can infer recursive algorithms too. Anyway, this
--- is why the function returns Elab (Value a) rather than Elab ().
-occursCheck :: Meta -> Value a -> Elab (Value a)
+-- is why the function returns m (Value a) rather than m ().
+occursCheck :: Elab m => Meta -> Value a -> m (Value a)
 occursCheck m v = do
   forMetas_ v \n -> if m == n then report EOccurs else pure ()
   pure v

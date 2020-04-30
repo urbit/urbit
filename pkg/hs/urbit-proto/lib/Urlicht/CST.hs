@@ -4,8 +4,6 @@ import ClassyPrelude
 import Prelude (foldl1, foldr1)
 
 import Bound
-import Bound.Name
-import Bound.Scope
 import Control.Lens.Plated
 import Control.Monad.State
 import Data.Data (Data)

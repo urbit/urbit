@@ -4,6 +4,7 @@ import ClassyPrelude
 
 import Data.Function ((&))
 import qualified Data.Text as T
+import Data.Void
 
 import qualified Urlicht.CST as C
 import qualified Urlicht.Hoon as H
@@ -11,7 +12,6 @@ import qualified Urlicht.HoonToSimple as H2S
 import qualified Urlicht.Simple as S
 import qualified Urlicht.SimpleToCoreHack as S2C
 import qualified Urlicht.Core as Core
-import qualified Urlicht.Elab as Elab
 import qualified Urlicht.Errors as E
 import qualified Urlicht.Meta as Meta
 import qualified Urbit.Noun as N
@@ -34,12 +34,8 @@ instance RunicShow (Core.Core Text) where
 instance RunicShow (Core.Value Text) where
   runic = runic . Core.quote
 
-instance RunicShow Elab.ElabState where
-  runic Elab.ElabState{..} = foldl'
-    (<>)
-    ("Next meta: " <> Meta.showMeta _nextMeta <> "\n")
-    (map (\(m, v) -> Meta.showMeta m <> ":\n" <> runic (const ("fake" :: Text) <$> v))
-      $ mapToList _metas)
+instance RunicShow (Core.Value Void) where
+  runic v = runic (fmap absurd v :: Core.Value Text)
 
 -- TODO how bad is UndecidableInstances?
 -- instance (Functor f, Unvar a, RunicShow (f Text)) => RunicShow (f a) where
