@@ -76,6 +76,7 @@
     u3_noun u3wcp_tos(u3_noun);
     u3_noun u3wcp_tod(u3_noun);
 
+    u3_noun u3wc_ob_fein(u3_noun);
     u3_noun u3wc_ob_fynd(u3_noun);
     u3_noun u3wc_ob_feis(u3_noun);
     u3_noun u3wc_ob_tail(u3_noun);

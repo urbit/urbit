@@ -73,6 +73,7 @@
     u3_noun po_find_prefix(char one, char two, char three);
     u3_noun po_find_suffix(char one, char two, char three);
 
+    u3_noun u3qc_ob_fein(u3_atom);
     u3_noun u3qc_ob_fynd(u3_atom);
 
   /** Tier 4.
