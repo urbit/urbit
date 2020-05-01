@@ -2614,6 +2614,8 @@
       ?~  lob
         [~ ~]
       =+  mar=(lobe-to-mark u.lob)
+      ::  should convert any lobe to cage
+      ::
       ?.  ?=($hoon mar)
         [~ ~ %| u.lob]
       :^  ~  ~  %&
@@ -2899,7 +2901,7 @@
       =^  new=vase  nub  (build-fit %mar b)
       =/  rab  (mule |.((slap new (ream (cat 3 a ':grab')))))
       ?:  &(?=(%& -.rab) ?=(^ q.p.rab))
-        :_(nub |=(sam=vase (slam p.rab sam)))
+        :_(nub |=(sam=vase ~|([%grab a b] (slam p.rab sam))))
       ::  try +jump
       ::
       =/  jum  (mule |.((slap old (ream (cat 3 b ':jump')))))
@@ -5589,10 +5591,15 @@
     ?:  =(p.m his)  ~
     `p.m
   =/  den  ((de our now ski [/scryduct ~] ruf) his syd)
-  =+  -:(aver:den for u.run u.luk tyl)
-  ?~  -               -
-  ?~  u.-             -
-  ?:  ?=(%& -.u.u.-)  ``p.u.u.-
+  =/  result  (mule |.(-:(aver:den for u.run u.luk tyl)))
+  ?:  ?=(%| -.result)
+    %-  (slog >%clay-scry-fail< p.result)
+    ~
+  ?~  p.result               ~
+  ?~  u.p.result             [~ ~]
+  ::  should convert %| case to cage
+  ::
+  ?:  ?=(%& -.u.u.p.result)  ``p.u.u.p.result
   ~
 ::
 ++  stay  [ver ruf]
