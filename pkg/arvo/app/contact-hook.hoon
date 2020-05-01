@@ -6,7 +6,7 @@
     *invite-store,
     *metadata-hook,
     md-store=metadata-store
-/+  *contact-json, default-agent, dbug
+/+  *contact-json, default-agent, dbug, md-helper=metadata
 ~%  %contact-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -116,6 +116,7 @@
   --
 ::
 |_  bol=bowl:gall
+++  metadata  ~(. md-helper bol %contacts)
 ::
 ++  poke-json
   |=  jon=json
@@ -275,10 +276,8 @@
         %delete
       =.  synced  (~(del by synced) path.fact)
       :_  state
-      :~  (group-poke [%unbundle path.fact])
-          (metadata-hook-poke [%remove path.fact]) 
-          (metadata-poke [%remove path.fact [%contacts path.fact]])
-      ==
+      :-  (group-poke [%unbundle path.fact])
+      (remove:metadata path.fact path.fact)
     ==
   ::
   ++  foreign
@@ -417,7 +416,7 @@
     :-  
     %+  welp
       :~  (group-hook-poke [%add ship.invite.fact path.invite.fact])
-          (metadata-hook-poke [%add-synced ship.invite.fact path.invite.fact]) 
+          (add-synced:metadata ship.invite.fact path.invite.fact)
       ==
     -.changes
     +.changes
@@ -442,16 +441,6 @@
   |=  act=group-action
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
-::
-++  metadata-poke
-  |=  act=action:md-store
-  ^-  card
-  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
-::
-++  metadata-hook-poke
-  |=  act=metadata-hook-action
-  ^-  card
-  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
 ::
 ++  contacts-scry
   |=  pax=path

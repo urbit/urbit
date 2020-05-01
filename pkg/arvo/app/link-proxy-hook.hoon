@@ -96,7 +96,7 @@
   --
 ::
 |_  =bowl:gall
-+*  md  ~(. metadata bowl)
++*  md  ~(. metadata bowl %link)
 ::
 ::  permissions
 ::
@@ -114,7 +114,7 @@
       `t.t.path
     ~
   ?~  target  |
-  ~?  !.^(? %gu (scot %p our.bowl) %metadata-store (scot %da now.bowl) ~)
+  ~?  !is-running:metadata
     %woah-md-s-not-booted  ::TODO  fallback if needed
   %+  lien  (groups-from-resource:md %link u.target)
   |=  =group-path:md-store
@@ -224,7 +224,7 @@
   ::  with that group, then kick their subscriptions if they're no longer
   ::
   %-  zing
-  %+  turn  (app-paths-from-group:md %link pax.upd)
+  %+  turn  (app-paths-from-group:md pax.upd)
   |=  =app-path:md-store
   ^-  (list card)
   %+  kick-revoked-permissions

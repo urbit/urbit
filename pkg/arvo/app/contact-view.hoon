@@ -9,7 +9,7 @@
     md-hook=metadata-hook,
     *permission-group-hook,
     *permission-hook
-/+  *server, *contact-json, default-agent, dbug
+/+  *server, *contact-json, default-agent, dbug, metadata-helper=metadata
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -122,6 +122,10 @@
   --
 ::
 |_  bol=bowl:gall
+::
+++  md
+  ~(. metadata-helper bol %contact)
+::
 ++  poke-json
   |=  jon=json
   ^-  (list card)
@@ -151,7 +155,7 @@
         (group-poke [%unbundle path.act])
         (contact-poke [%delete path.act])
     ==
-    (delete-metadata path.act)
+    (remove:md path.act path.act)
   ::
       %remove
     :~  (group-poke [%remove [ship.act ~ ~] path.act])
@@ -225,16 +229,6 @@
   ^-  card
   [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
 ::
-++  metadata-poke
-  |=  act=action:md-store
-  ^-  card
-  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
-::
-++  metadata-hook-poke
-  |=  act=metadata-hook-action:md-hook
-  ^-  card
-  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
-::
 ++  perm-group-hook-poke
   |=  act=permission-group-hook-action
   ^-  card
@@ -252,22 +246,13 @@
 ++  create-metadata
   |=  [=path title=@t description=@t]
   ^-  (list card)
-  =/  =metadata:md-store
-    %*  .  *metadata:md-store
-        title         title
-        description   description
-        date-created  now.bol
-        creator       our.bol
-    ==
-  :~  (metadata-poke [%add path [%contacts path] metadata])
-      (metadata-hook-poke [%add-owned path])
-  ==
-::
-++  delete-metadata
-  |=  =path
-  ^-  (list card)
-  :~  (metadata-poke [%remove path [%contacts path]])
-      (metadata-hook-poke [%remove path])
+  =;  =metadata:md-store
+    (create:md path path metadata)
+  %*  .  *metadata:md-store
+      title         title
+      description   description
+      date-created  now.bol
+      creator       our.bol
   ==
 ::
 ++  all-scry

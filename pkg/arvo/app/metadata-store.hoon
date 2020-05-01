@@ -17,7 +17,7 @@
 ::  /group-indices                                 all group indices
 ::  /app-indices                                   all app indices
 ::  /resource-indices                              all resource indices
-::  /metadata/%group-path/%app-name/%app-path      specific metadatum
+::  /metadata/%group-path/%app-name/%app-path      specific metadata
 ::  /app-name/%app-name                            associations for app
 ::  /group/%group-path                             associations for group
 ::

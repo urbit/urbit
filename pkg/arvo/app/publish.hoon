@@ -8,7 +8,8 @@
     *invite-store,
     md-store=metadata-store,
     *metadata-hook
-/+  *server, *publish, cram, default-agent, dbug
+/+  *server, *publish, cram, default-agent, dbug,
+    metadata-helper=metadata
 ::
 /=  index
   /^  $-(json manx)
@@ -525,6 +526,7 @@
   --
 ::
 |_  bol=bowl:gall
+++  md  ~(. metadata-helper bol %publish)
 ::
 ++  read-paths
   |=  ran=rant:clay
@@ -1740,10 +1742,9 @@
               title.u.book
               description.u.book
           ==
-          %-  metadata-poke
-          :*  %add
-              writers.u.book
-              [%publish /(scot %p our.bol)/[book.act]]
+          %-  add:md
+          :*  writers.u.book
+              /(scot %p our.bol)/[book.act]
               title.u.book
               description.u.book
               0x0
@@ -1768,10 +1769,9 @@
       ^-  (list card)
       :~  [%give %fact [/notebook/[book.act]]~ %publish-notebook-delta !>(del)]
           [%give %fact [/primary]~ %publish-primary-delta !>(del)]
-          %-  metadata-poke
-          :*  %add
-              writers.u.book
-              [%publish /(scot %p our.bol)/[book.act]]
+          %-  add:md
+          :*  writers.u.book
+              /(scot %p our.bol)/[book.act]
               title.u.book
               description.u.book
               0x0
@@ -1831,86 +1831,45 @@
       [%give %fact [/publishtile]~ %json !>(jon)]
   ==
 ::
-++  metadata-poke
-  |=  act=action:md-store
-  ^-  card
-  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
-::
 ++  emit-metadata
   |=  del=metadata-delta
   ^-  (list card)
   |^
   ?-  -.del
       %add
-    =/  preexisting  (metadata-scry group-path.del app-path.del)
-    =/  meta=metadata:md-store
+    =/  preexisting  (get-metadata:md group-path.del app-path.del)
+    =/  =metadata:md-store
       %*  .  *metadata:md-store
           title         title.del
           description   desc.del
           date-created  created.del
           creator       author.del
       ==
+    :_  ~
     ?~  preexisting
-      (add group-path.del app-path.del meta)
-    =.  color.meta  color.u.preexisting
-    (add group-path.del app-path.del meta)
+      (add:md group-path.del app-path.del metadata)
+    =.  color.metadata  color.u.preexisting
+    (add:md group-path.del app-path.del metadata)
   ::
       %remove
     =/  app-path  [(scot %p author.del) /[book.del]]
     =/  group-path  (group-from-book app-path)
-    [(metadata-poke [%remove group-path [%publish app-path]])]~
+    [(remove-store:md group-path app-path) ~]
   ==
-  ::
-  ++  add
-    |=  [group-path=path app-path=path =metadata:md-store]
-    ^-  (list card)
-    [(metadata-poke [%add group-path [%publish app-path] metadata])]~
-  ::
-  ++  metadata-scry
-    |=  [group-path=path app-path=path]
-    ^-  (unit metadata:md-store)
-    ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)  ~
-    .^  (unit metadata:md-store)
-      %gx
-      (scot %p our.bol)
-      %metadata-store
-      (scot %da now.bol)
-      %metadata
-      (scot %t (spat group-path))
-      %publish
-      (scot %t (spat app-path))
-      /noun
-    ==
   ::
   ++  group-from-book
     |=  app-path=path
     ^-  path
-    ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
+    ?.  is-running:md
       ?:  ?=([@ ^] app-path)
         ~&  [%assuming-ported-legacy-publish app-path]
         [%'~' app-path]
       ~|  [%weird-publish app-path]
       !!
-    =/  resource-indices
-      .^  (jug resource:md-store group-path:md-store)
-        %gy
-        (scot %p our.bol)
-        %metadata-store
-        (scot %da now.bol)
-        /resource-indices
-      ==
-    =/  groups=(set path)  (~(got by resource-indices) [%publish app-path])
-    (snag 0 ~(tap in groups))
+    =;  groups
+      (snag 0 groups)
+    (groups-from-resource:md app-path)
   --
-::
-++  metadata-hook-poke
-  |=  act=metadata-hook-action
-  ^-  card
-  :*  %pass  /  %agent
-      [our.bol %metadata-hook]
-      %poke  %metadata-hook-action
-      !>(act)
-  ==
 ::
 ++  handle-notebook-delta
   |=  [del=notebook-delta sty=_state]
@@ -1924,7 +1883,7 @@
       :_  state
       %-  zing
       :~  cards
-          [(metadata-hook-poke [%add-owned writers.data.del])]~
+          [(add-owned:md writers.data.del) ~]
           %-  emit-metadata
           :*  %add
               writers.data.del
@@ -1940,7 +1899,7 @@
     :_  state
     :*  (group-hook-poke [%add host.del writers.data.del])
         (group-hook-poke [%add host.del subscribers.data.del])
-        (metadata-hook-poke [%add-synced host.del writers.data.del])
+        (add-synced:md host.del writers.data.del)
         cards
     ==
   ::
@@ -2057,14 +2016,14 @@
             [%give %fact [/publishtile]~ %json !>(jon)]
         ==
       ?:  (is-managed writers.u.book)  ~
-      [(metadata-hook-poke [%remove writers.u.book])]~
+      [(remove-hook:md writers.u.book) ~]
     %-  zing
     :~  [%give %fact [/notebook/[book.del]]~ %publish-notebook-delta !>(del)]~
         [%give %fact [/primary]~ %publish-primary-delta !>(del)]~
         (emit-metadata %remove host.del book.del)
       ::
         ?:  (is-managed writers.u.book)  ~
-        [(metadata-hook-poke [%remove writers.u.book])]~
+        [(remove-hook:md writers.u.book) ~]
     ==
   ::
       %del-note

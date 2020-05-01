@@ -9,7 +9,8 @@
     *permission-group-hook,
     *chat-hook,
     *metadata-hook
-/+  *server, *chat-json, default-agent, verb, dbug
+/+  *server, *chat-json, default-agent, verb, dbug,
+    metadata-helper=metadata
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -159,6 +160,7 @@
 ::
 ~%  %chat-view-library  ..card  ~
 |_  bol=bowl:gall
+++  md  ~(. metadata-helper bol %chat)
 ::
 ++  poke-handle-http-request
   |=  =inbound-request:eyre
@@ -238,13 +240,11 @@
     =*  group  u.group-path
     %-  zing
     :~  ?.  (is-creator group %chat app-path.act)  ~
-        [(metadata-poke [%remove group [%chat app-path.act]])]~
+        [(remove-store:md app-path.act group)]~
       ::
         ?:  (is-managed group)  ~
-        :~  (group-poke [%unbundle group])
-            (metadata-hook-poke [%remove group])
-            (metadata-store-poke [%remove group [%chat app-path.act]])
-        ==
+        :-  (group-poke [%unbundle group])
+        (remove:md app-path.act group)
     ==
   ::
       %join
@@ -253,7 +253,7 @@
       (group-from-chat app-path.act)
     :~  (chat-hook-poke [%add-synced ship.act app-path.act ask-history.act])
         (permission-hook-poke [%add-synced ship.act group-path])
-        (metadata-hook-poke [%add-synced ship.act group-path])
+        (add-synced:md ship.act group-path)
     ==
   ::
       %groupify
@@ -272,11 +272,7 @@
       ~
     =/  =metadata:md-store
       =-  (fall - *metadata:md-store)
-      %^  scry-for  (unit metadata:md-store)
-        %metadata-store
-      =/  encoded-path=@ta
-        (scot %t (spat app-path.act))
-      /metadata/[encoded-path]/chat/[encoded-path]
+      (get-metadata:md app-path.act app-path.act)
     ::  figure out new data
     ::
     =/  chat-path=^path      (slag 1 `path`app-path.act)
@@ -371,43 +367,22 @@
   ++  create-metadata
     |=  [title=@t description=@t group-path=path app-path=path]
     ^-  (list card)
-    =/  =metadata:md-store
-      %*  .  *metadata:md-store
-          title         title
-          description   description
-          date-created  now.bol
-          creator
-        %+  slav  %p
-        ?:  (is-managed app-path)  (snag 0 app-path)
-        (snag 1 app-path)
-      ==
-    :~  (metadata-poke [%add group-path [%chat app-path] metadata])
-        (metadata-hook-poke [%add-owned group-path])
+    =;  =metadata:md-store
+      (create:md group-path app-path metadata)
+    %*  .  *metadata:md-store
+        title         title
+        description   description
+        date-created  now.bol
+        creator
+      %+  slav  %p
+      ?:  (is-managed app-path)  (snag 0 app-path)
+      (snag 1 app-path)
     ==
   ::
   ++  contact-view-poke
     |=  act=[%create =path ships=(set ship) title=@t description=@t]
     ^-  card
     [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
-  ::
-  ++  metadata-poke
-    |=  act=action:md-store
-    ^-  card
-    [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
-  ::
-  ++  metadata-store-poke
-    |=  act=action:md-store
-    ^-  card
-    [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
-  ::
-  ++  metadata-hook-poke
-    |=  act=metadata-hook-action
-    ^-  card
-    :*  %pass  /  %agent
-        [our.bol %metadata-hook]
-        %poke  %metadata-hook-action
-        !>(act)
-    ==
   ::
   ++  send-invite
     |=  [=path =ship]
@@ -428,26 +403,16 @@
   ++  maybe-group-from-chat
     |=  app-path=path
     ^-  (unit path)
-    ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
+    ?.  is-running:md
       ?:  ?=([@ ^] app-path)
         ~&  [%assuming-ported-legacy-chat app-path]
         `[%'~' app-path]
       ~&  [%weird-chat app-path]
       !!
-    =/  resource-indices
-      .^  (jug resource:md-store group-path:md-store)
-        %gy
-        (scot %p our.bol)
-        %metadata-store
-        (scot %da now.bol)
-        /resource-indices
-      ==
-    =/  groups=(set path)
-      %+  fall
-        (~(get by resource-indices) [%chat app-path])
-      *(set path)
+    =/  groups
+      (groups-from-resource:md app-path)
     ?~  groups  ~
-    `n.groups
+    `i.groups
   ::
   ++  group-from-chat
     (cork maybe-group-from-chat need)
@@ -459,20 +424,10 @@
     !=(i.path '~')
   ::
   ++  is-creator
-    |=  [group-path=path app-name=@ta app-path=path]
+    |=  [group-path=path app-path=path]
     ^-  ?
     =/  meta=(unit metadata:md-store)
-      .^  (unit metadata:md-store)
-        %gx
-        (scot %p our.bol)
-        %metadata-store
-        (scot %da now.bol)
-        %metadata
-        (scot %t (spat group-path))
-        app-name
-        (scot %t (spat app-path))
-        /noun
-      ==
+      (get-metadata:md group-path app-path)
     ?~  meta  !!
     =(our.bol creator.u.meta)
   --

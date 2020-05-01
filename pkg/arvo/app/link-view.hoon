@@ -15,7 +15,7 @@
     link-listen-hook,
     group-hook, permission-hook, permission-group-hook,
     metadata-hook, contact-view, md-store=metadata-store
-/+  *link, metadata, *server, default-agent, verb, dbug
+/+  *link, metadata-helper=metadata, *server, default-agent, verb, dbug
 ~%  %link-view-top  ..is  ~
 ::
 |%
@@ -157,7 +157,7 @@
 ::
 ~%  %link-view-logic  ..card  ~
 |_  =bowl:gall
-+*  md  ~(. metadata bowl)
+++  md  ~(. metadata-helper bowl %link)
 ::
 ++  page-size  25
 ++  get-paginated
@@ -258,13 +258,10 @@
         %group-hook-action
       !>  ^-  group-hook-action:group-hook
       [%add ship path]:invite.upd
-    ::
       ::  sync the metadata
       ::
-      %^  do-poke  %metadata-hook
-        %metadata-hook-action
-      !>  ^-  metadata-hook-action:metadata-hook
-      [%add-synced ship path]:invite.upd
+      =,  invite.upd
+      (add-owned:md path)
   ==
 ::
 ++  handle-action
@@ -294,30 +291,22 @@
       [(scot %p our.bowl) path]
     ==
   =;  group-setup=(list card)
-    %+  weld  group-setup
-    :~  ::  add collection to metadata-store
+    %-  zing
+    :~  group-setup
+        ::  add collection to metadata-store,
+        ::  and expose it
         ::
-        %^  do-poke  %metadata-hook
-          %metadata-action
-        !>  ^-  action:md-store
-        :^  %add  group-path
-          [%link path]
-        %*  .  *metadata:md
+        %^  create:md  group-path
+          path
+        %*  .  *metadata:md-store
           title         title
           description   description
           date-created  now.bowl
           creator       our.bowl
         ==
-      ::
-        ::  expose the metadata
-        ::
-        %^  do-poke  %metadata-hook
-          %metadata-hook-action
-        !>  ^-  metadata-hook-action:metadata-hook
-        [%add-owned group-path]
-      ::
         ::  watch the collection ourselves
         ::
+        :_  ~
         %^  do-poke  %link-listen-hook
           %link-listen-action
         !>  ^-  action:link-listen-hook
@@ -391,7 +380,7 @@
   |=  =path
   ^-  (list card)
   =/  groups=(list ^path)
-    (groups-from-resource:md [%link path])
+    (groups-from-resource:md path)
   %-  zing
   %+  turn  groups
   |=  =group=^path
@@ -409,10 +398,7 @@
         !>  ^-  group-hook-action:group-hook
         [%remove group-path]
       ::
-        %^  do-poke  %metadata-hook
-          %metadata-hook-action
-        !>  ^-  metadata-hook-action:metadata-hook
-        [%remove group-path]
+        (remove-hook:md group-path)
       ::
         %^  do-poke  %group-store
           %group-action
@@ -421,16 +407,13 @@
     ==
   ::  remove collection from metadata-store
   ::
-  %^  do-poke  %metadata-store
-    %metadata-action
-  !>  ^-  action:md-store
-  [%remove group-path [%link path]]
+  (remove-store:md path group-path)
 ::
 ++  handle-invite
   |=  [=path ships=(set ship)]
   ^-  (list card)
   %-  zing
-  %+  turn  (groups-from-resource:md %link path)
+  %+  turn  (groups-from-resource:md path)
   |=  =group=^path
   ^-  (list card)
   :-  %^  do-poke  %group-store

@@ -4,7 +4,7 @@
 ::
 /-  *permission-store, *chat-hook, *invite-store, md-store=metadata-store,
     *permission-hook, *group-store, *permission-group-hook  ::TMP  for upgrade
-/+  *chat-json, *chat-eval, default-agent, verb, dbug
+/+  *chat-json, *chat-eval, default-agent, verb, dbug, md-helper=metadata
 ~%  %chat-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -217,10 +217,7 @@
           date-created  now.bol
           creator       (slav %p (snag 1 chat))
         ==
-      %^  make-poke  %metadata-store
-        %metadata-action
-      !>  ^-  action:md-store
-      [%add group [%chat chat] metadata]
+      (add:md group chat metadata)
     --
   ::
   ++  on-poke
@@ -294,6 +291,7 @@
 ::
 ~%  %chat-hook-library  ..card  ~
 |_  bol=bowl:gall
+++  md  ~(. md-helper bol %chat)
 ::
 ++  poke-json
   |=  jon=json
@@ -452,7 +450,7 @@
     ^-  (list card)
     %-  zing
     %+  turn
-      (chats-of-group pax)
+      (app-paths-from-group:md pax)
     |=  chat=path
     ^-  (list card)
     =/  owner  (~(get by synced) chat)
@@ -645,61 +643,11 @@
     %invite-store
   /invite/chat/(scot %uv uid)
 ::
-++  chats-of-group
-  |=  =group-path:md-store
-  ^-  (list path)
-  ::  if metadata-store isn't running yet, we're still in the upgrade ota phase.
-  ::  we can't get chats from the metadata-store, but can make assumptions
-  ::  about group path shape, and the chat that would match it.
-  ::TODO  remove me at some point.
-  ::
-  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)  ~
-  %+  murn
-    ^-  (list resource:md-store)
-    =;  resources
-      %~  tap  in
-      %+  ~(gut by resources)
-        group-path
-      *(set resource:md-store)
-    .^  (jug path resource:md-store)
-      %gy
-      (scot %p our.bol)
-      %metadata-store
-      (scot %da now.bol)
-      /group-indices
-    ==
-  |=  resource:md-store
-  ^-  (unit path)
-  ?.  =(%chat app-name)  ~
-  `app-path
-::
-++  groups-of-chat
-  |=  chat=path
-  ^-  (list group-path:md-store)
-  ::  if metadata-store isn't running yet, we're still in the upgrade ota phase.
-  ::  we can't get groups from the metadata-store, but can make assumptions
-  ::  about chat path shape, and the chat that would match it.
-  ::TODO  remove me at some point.
-  ::
-  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)  ~
-  =;  resources
-    %~  tap  in
-    %+  ~(gut by resources)
-      [%chat chat]
-    *(set group-path:md-store)
-  .^  (jug resource:md-store group-path:md-store)
-    %gy
-    (scot %p our.bol)
-    %metadata-store
-    (scot %da now.bol)
-    /resource-indices
-  ==
-::
 ::NOTE  this assumes permission paths match group paths
 ++  is-permitted
   |=  [who=ship chat=path]
   ^-  ?
-  %+  lien  (groups-of-chat chat)
+  %+  lien  (groups-from-resource:md chat)
   |=  =group-path:md-store
   %^  scry  ?
     %permission-store

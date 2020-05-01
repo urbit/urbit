@@ -96,16 +96,7 @@
       =.  listening.state
         (~(run in ~(key by reasoning.old)) tail)
       =/  resources=(list [=group-path:md-store =app-path:md-store])
-        %~  tap  in
-        %.  %link
-        %~  get  ju
-        .^  (jug app-name:md-store [group-path:md-store app-path:md-store])
-          %gy
-          (scot %p our.bowl)
-          %metadata-store
-          (scot %da now.bowl)
-          /app-indices
-        ==
+        resources-from-app:md:do
       =|  cards=(list card)
       |-
       ?~  resources  [cards this]
@@ -213,7 +204,7 @@
 ::
 ::
 |_  =bowl:gall
-+*  md  ~(. mdl bowl)
+++  md  ~(. mdl bowl %link)
 ::
 ::  user actions & updates
 ::
@@ -349,7 +340,7 @@
   ?.  ?=(?(%path %add %remove) -.upd)
     [~ state]
   =/  socs=(list app-path:md-store)
-    (app-paths-from-group:md %link pax.upd)
+    (app-paths-from-group:md pax.upd)
   =/  whos=(list ship)
     ~(tap in members.upd)
   =|  cards=(list card)
