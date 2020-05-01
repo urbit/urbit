@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Spinner } from './lib/icons/icon-spinner';
+import { Spinner } from '../../../components/Spinner';
 import urbitOb from 'urbit-ob';
 
 export class JoinScreen extends Component {
