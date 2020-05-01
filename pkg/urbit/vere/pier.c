@@ -619,9 +619,7 @@ _pier_on_lord_play_done(void* vod_p, u3_info fon_u, c3_l mug_l)
 
   c3_assert( u3_psat_play == pir_u->sat_e );
 
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): play: done\r\n", tac_u->eve_d);
-#endif
+  u3l_log("pier: (%" PRIu64 "): play: done\r\n", tac_u->eve_d);
 
   //  XX optional
   //
