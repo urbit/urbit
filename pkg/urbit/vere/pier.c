@@ -574,6 +574,9 @@ _pier_play_read(u3_play* pay_u)
   }
 }
 
+c3_o
+u3_pier_pack(u3_pier* pir_u);
+
 /* _pier_play(): send a batch of events to the worker for log replay.
 */
 static void
@@ -590,12 +593,17 @@ _pier_play(u3_play* pay_u)
     u3_term_stop_spinner();
 
     if ( pay_u->eve_d < log_u->dun_d ) {
-      u3l_log("pier: replay barrier reached, shutting down\r\n");
-      //  XX graceful shutdown
+      // u3l_log("pier: replay barrier reached, shutting down\r\n");
+      // //  XX graceful shutdown
+      // //
+      // u3_lord_save(pir_u->god_u);
+      // u3_pier_bail();
+      // exit(0);
+
+      //  XX temporary hack
       //
-      u3_lord_save(pir_u->god_u);
-      u3_pier_bail();
-      exit(0);
+      u3l_log("pier: replay barrier reached, packing\r\n");
+      u3_pier_pack(pir_u);
     }
     else if ( pay_u->eve_d == log_u->dun_d ) {
       _pier_work_init(pir_u);
@@ -877,6 +885,14 @@ _pier_on_lord_pack(void* vod_p)
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): lord: pack\r\n", pir_u->god_u->eve_d);
 #endif
+
+  //  XX temporary hack
+  //
+  if ( u3_psat_play == pir_u->sat_e ) {
+    u3l_log("pier: pack complete, shutting down\r\n");
+    u3_pier_bail();
+    exit(0);
+  }
 
   // if ( u3_psat_done == pir_u->sat_e ) {
   //   fprintf(stderr, "snap cb exit\r\n");
