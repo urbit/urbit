@@ -21,7 +21,7 @@ data Simple a
   -- elimination forms
   | App (Simple a) (Simple a)
   -- flow control
-  | Let (Simple a) (Scope () Simple a)
+  | Let (Simple a) (Simple a) (Scope () Simple a)
   -- meta
   | Hol
   | Asc (Simple a) (Simple a)

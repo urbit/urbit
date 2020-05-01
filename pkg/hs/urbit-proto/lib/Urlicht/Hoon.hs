@@ -49,7 +49,7 @@ data Hoon a
   | CenHep (Hoon a) (Hoon a)
   | ColHep (Hoon a) (Hoon a)
   | ColTar [Hoon a]
-  | TisFas (Hoon a) (Scope () Hoon a)
+  | TisFas (Hoon a) (Hoon a) (Scope () Hoon a)
   | DotDot (Hoon a) (Scope () Hoon a)
   | DotGal (Hoon a)
   | DotGar (Hoon a)
@@ -65,12 +65,13 @@ deriveEq1   ''Hoon
 deriveOrd1  ''Hoon
 deriveRead1 ''Hoon
 deriveShow1 ''Hoon
+makeBound   ''Hoon
 
 deriving instance Eq a   => Eq   (Hoon a)
 deriving instance Ord a  => Ord  (Hoon a)
 deriving instance Read a => Read (Hoon a)
 deriving instance Show a => Show (Hoon a)
-
+{-
 instance Applicative Hoon where
   pure = Var
   (<*>) = ap
@@ -116,7 +117,7 @@ instance Monad Hoon where
   CenHep x y   >>= f = CenHep (x >>= f) (y >>= f)
   ColHep x y   >>= f = ColHep (x >>= f) (y >>= f)
   ColTar xs    >>= f = ColTar (xs <&> (>>= f))
-  TisFas a b   >>= f = TisFas (a >>= f) (b >>>= f)
+  TisFas a b c >>= f = TisFas (a >>= f) (b >>= f) (c >>>= f)
   DotDot t b   >>= f = DotDot (t >>= f) (b >>>= f)
   DotGal x     >>= f = DotGal (x >>= f)
   DotGar x     >>= f = DotGar (x >>= f)
@@ -126,3 +127,4 @@ instance Monad Hoon where
   KetHep x y   >>= f = KetHep (x >>= f) (y >>= f)
   WutCen x cs  >>= f = WutCen (x >>= f) (cs <&> (>>= f))
   WutCol x y z >>= f = WutCol (x >>= f) (y >>= f) (z >>= f)
+-}

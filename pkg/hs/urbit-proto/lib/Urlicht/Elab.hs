@@ -33,7 +33,7 @@ class Logging m => Elab m where
       VVAp x vs  -> VVAp x <$> traverse go vs
       VMAp m vs  -> lookupMeta m >>= \case
         Just v  -> crank =<< vApps v <$> traverse go vs
-        Nothing -> VMAp m  <$> traverse go vs
+        Nothing -> VMAp m <$> traverse go vs
       VTyp       -> pure VTyp
       VFun v sv  -> VFun <$> go v <*> transverseScope go sv
       VLam sv    -> VLam <$> transverseScope go sv

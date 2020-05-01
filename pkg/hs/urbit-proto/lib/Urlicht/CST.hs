@@ -54,7 +54,7 @@ data CST
   | CenHep CST CST
   | ColHep CST CST
   | ColTar [CST]
-  | TisFas Text CST CST
+  | TisFas Binder CST CST
   | DotDot Binder CST
   | DotGal CST
   | DotGar CST
@@ -113,7 +113,8 @@ abstractify = go
       CenHep c d -> H.CenHep (go c) (go d)
       ColHep c d -> H.ColHep (go c) (go d)
       ColTar cs -> H.ColTar (go <$> cs)
-      TisFas v c d -> H.TisFas (go c) (abstract1 v $ go d)
+      TisFas bnd rhs bod ->
+        bindTm (\ty bod -> H.TisFas ty (go rhs) bod) bnd (go bod)
       DotDot b c -> bindTm H.DotDot b (go c)
       DotGal c -> H.DotGal (go c)
       DotGar c -> H.DotGar (go c)
@@ -128,6 +129,12 @@ abstractify = go
     -- not used in c) to get the shorthand <|b c|>. In lambda expressions, the
     -- arg type is optional; in function types, the arg name. So the way we
     -- interpret a binder without a / depends on what context we are in.
+    -- Perhaps it would be better for Binder to be These Text CST and let the
+    -- parser handle this logic. Oh well.
+    bindTy, bindTm :: (H.Hoon Text -> Scope () H.Hoon Text -> H.Hoon Text)
+                   -> Binder
+                   -> H.Hoon Text
+                   -> H.Hoon Text
     bindTy ctor (Just v,  c) h = ctor (go c) (abstract1 v h)
     bindTy ctor (Nothing, c) h = ctor (go c) (abstract (const Nothing) h)
     bindTm ctor (Just v,      c) h = ctor (go c) (abstract1 v h)
@@ -181,10 +188,10 @@ concretize = dissociate . flip evalState 0 . go
       H.CenHep c d -> CenHep <$> go c <*> go d
       H.ColHep c d -> ColHep <$> go c <*> go d
       H.ColTar cs -> ColTar <$> traverse go cs
-      H.TisFas h b -> do
-        ((bnd, _), c) <- unbind H.Hax b
-        h <- go h
-        pure $ TisFas (fromMaybe "_" bnd) h c
+      H.TisFas ty rhs bod -> do
+        (bnd, bod') <- unbind ty bod
+        rhs' <- go rhs
+        pure $ TisFas bnd rhs' bod'
       H.DotDot t b -> do
         (bnd, c) <- unbind t b
         pure $ DotDot bnd c
@@ -208,6 +215,7 @@ concretize = dissociate . flip evalState 0 . go
       t <- go t
       b <- go $ instantiate1 (H.Var v) b
       pure ((Just v, t), b)
+
     fresh :: State Int Text
     fresh = do
       i <- get

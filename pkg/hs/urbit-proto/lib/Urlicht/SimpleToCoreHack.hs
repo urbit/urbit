@@ -29,7 +29,7 @@ down = go
       --
       App s t -> C.App (go s) (go t)
       --
-      Let s ss -> C.Let (go s) (hoist go ss)
+      Let s t ss -> C.Let (go s) (go t) (hoist go ss)
       --
       Hol -> error "SimpleToCoreHack.down: holes require elaboration"
       Asc s _ -> go s
@@ -50,4 +50,4 @@ up = go
       --
       C.App c d -> App (go c) (go d)
       --
-      C.Let c sc -> Let (go c) (hoist go sc)
+      C.Let c t sc -> Let (go c) (go t) (hoist go sc)

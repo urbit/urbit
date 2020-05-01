@@ -22,7 +22,8 @@ down = go
       Wut _   -> error "down: unsupported feature: ?()"
       Pat     -> error "down: unsupported feature: @"
       --
-      Lam _ b -> S.Lam (hoist go b)  -- TODO remove mandatory arg type
+      Lam Hol b -> S.Lam (hoist go b)
+      Lam _ b -> error "down: no types on lambda args. trust the process."
       Cns _ _ -> error "down: unsupported feature: []"
       --
       Nat _   -> error "down: unsupported feature: 0"
@@ -54,12 +55,13 @@ down = go
       HaxHep t b   -> go $ Fun t b
       --
       BarCen cs    -> error "down: unsupported feature: |%"
-      BarTis _ b   -> S.Lam (hoist go b)
+      BarTis Hol b -> S.Lam (hoist go b)
+      BarTis _ b   -> error "down: no types on lambda args. trust the process."
       CenDot h j   -> S.App (go j) (go h)
       CenHep h j   -> S.App (go h) (go j)
       ColHep h j   -> error "down: unsupported feature: :-"
       ColTar hs    -> error "down: unsupported feature: :*"
-      TisFas h b   -> S.Let (go h) (hoist go b)
+      TisFas h t b -> S.Let (go h) (go t) (hoist go b)
       DotDot h b   -> error "down: unsupported feature: .."
       DotGal h     -> error "down: unsupported feature: .<"
       DotGar h     -> error "down: unsupported feature: .>"
@@ -82,11 +84,11 @@ up = go
       S.Typ -> Hax
       S.Fun s ss -> Fun (go s) (hoist go ss)
       --
-      S.Lam ss -> Lam Hol (hoist go ss)  -- FIXME
+      S.Lam ss -> Lam Hol (hoist go ss)
       --
       S.App s t -> App (go s) (go t)
       --
-      S.Let s ss -> TisFas (go s) (hoist go ss)
+      S.Let s t ss -> TisFas (go s) (go t) (hoist go ss)
       --
       S.Hol -> Hol
       S.Asc s t -> The (go t) (go s)

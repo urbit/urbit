@@ -21,7 +21,7 @@ data Core a
   -- elimination forms
   | App (Core a) (Core a)
   -- flow control
-  | Let (Core a) (Scope B Core a)
+  | Let (Core a) (Core a) (Scope B Core a)
   deriving (Functor, Foldable, Traversable)
 
 deriveEq1   ''Core
@@ -76,7 +76,7 @@ vApp :: Value a -> Value a -> Value a
 vApp (VVAp x vs) v = VVAp x (v:vs)
 vApp (VMAp m vs) v = VMAp m (v:vs)
 -- TODO correct?
-vApp (VLam sv)   v = instantiate1 v sv
+vApp (VLam   sv) v = instantiate1 v sv
 vApp _           _ = error "vApp: applying non-function"
 
 vApps :: Value a -> [Value a] -> Value a
@@ -108,7 +108,7 @@ eval = \case
   --
   App c d -> vApp (eval c) (eval d)
   --
-  Let c sc -> eval $ instantiate1 c sc
+  Let c t sc -> eval $ instantiate1 c sc
 
 -- Likewise with metacontext here?
 quote :: Value a -> Core a
@@ -119,4 +119,4 @@ quote = go where
     VMAp m vs -> foldr (\v acc -> App acc (go v)) (Met m) vs
     VTyp      -> Typ
     VFun v sv -> Fun (go v) (hoist go sv)
-    VLam sv   -> Lam (hoist go sv)
+    VLam sv -> Lam (hoist go sv)

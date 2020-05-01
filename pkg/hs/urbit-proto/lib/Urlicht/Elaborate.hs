@@ -76,11 +76,12 @@ check env simp ty = do
         check (bind env t) (fromScope ss) (fromScope st)
     (S.Lam{}, _) -> checkInfer
     (S.App{}, _) -> checkInfer
-    (S.Let sRhs sBody, _) -> do
-      -- TODO I guess put a type annotation in lets which can be Hol :/
-      (tyRhs, cRhs) <- infer env sRhs
-      Let cRhs . toScope <$>
-        check (bind env tyRhs) (fromScope sBody) (F <$> ty)
+    (S.Let tyRhs sRhs sBody, _) -> do
+      cTyRhs <- check env tyRhs VTyp
+      let vTyRhs = eval cTyRhs
+      cRhs <- check env sRhs vTyRhs
+      Let cTyRhs cRhs . toScope <$>
+        check (bind env vTyRhs) (fromScope sBody) (F <$> ty)
     (S.Hol, _) -> newMetaWithSpine env
     (S.Asc sExp sTy, _) -> do
       ty' <- check env sTy VTyp
@@ -117,12 +118,14 @@ infer env = \case
     -- TODO make succ less
     let tRes = eval $ instantiate (const cArg) (hoist quote b)
     pure (tRes, App cFun cArg)
-  S.Let sRhs sBod -> do
-    (tyRhs, cRhs) <- infer env sRhs
-    (tyBod, cBod) <- infer (bind env tyRhs) (fromScope sBod)
+  S.Let tyRhs sRhs sBod -> do
+    cTyRhs <- check env tyRhs VTyp
+    let vTyRhs = eval cTyRhs
+    cRhs <- check env sRhs vTyRhs
+    (tyBod, cBod) <- infer (bind env vTyRhs) (fromScope sBod)
     -- I guess evaluating with let rhs would be nice here
     let tyBod' = eval $ quote tyBod >>= unvar (const cRhs) Var
-    pure (tyBod', Let cRhs (toScope cBod))
+    pure (tyBod', Let cTyRhs cRhs (toScope cBod))
   S.Hol -> do
     t <- newMetaWithSpine env
     c <- newMetaWithSpine env
@@ -146,4 +149,4 @@ zonk = go where
     Fun c sc -> Fun <$> go c <*> transverseScope go sc
     Lam sc   -> Lam <$> transverseScope go sc
     App c d  -> App <$> go c <*> go d
-    Let c sc -> Let <$> go c <*> transverseScope go sc
+    Let t c sc -> Let <$> go t <*> go c <*> transverseScope go sc

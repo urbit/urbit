@@ -262,7 +262,7 @@ toRunic = go
       where wide = Tied (IFix "`" "`" [go x]) (go y)
             tall = RunC "^-" [go x, go y]
 
-    let_ t x y = RunC "=/" [Leaf t, go x, go y]
+    let_ b x y = RunC "=/" [binder b, go x, go y]
 
     apply xs = Mode wide tall
       where wide = IFix "(" ")" xs

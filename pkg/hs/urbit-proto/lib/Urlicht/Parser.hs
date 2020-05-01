@@ -164,7 +164,7 @@ rune = runeSwitch
   , ("%.", rune2 CenDot cst cst)
   , (":-", rune2 ColHep cst cst)
   , (":*", runeN ColTar cst)
-  , ("=/", rune3 TisFas sym cst cst)
+  , ("=/", rune3 TisFas binder cst cst)
   , ("..", rune2 DotDot binder cst)
   , (".<", rune1 DotGal cst)
   , (".>", rune1 DotGar cst)
