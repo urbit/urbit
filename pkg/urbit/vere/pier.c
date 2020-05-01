@@ -204,7 +204,7 @@ _pier_work(u3_work* wok_u)
       //  XX this is when "boot" is actually complete
       //  XX even better would be after neighboring with our sponsor
       //
-      u3l_log("pier: live\r\n");
+      u3l_log("pier (%" PRIu64 "): live\r\n", pir_u->god_u->eve_d);
 
       //  XX move callbacking to king
       //
@@ -938,7 +938,25 @@ _pier_on_lord_live(void* vod_p)
     c3_assert( log_u->sen_d == log_u->dun_d );
 
     if ( god_u->eve_d < log_u->dun_d ) {
-      _pier_play_init(pir_u, log_u->dun_d);
+      c3_d eve_d;
+
+      //  XX revisit
+      //
+      if (  u3_Host.ops_u.til_c ) {
+        if ( 1 == sscanf(u3_Host.ops_u.til_c, "%" PRIu64 "", &eve_d) ) {
+          u3l_log("pier: replay till %" PRIu64 "\r\n", eve_d);
+        }
+        else {
+          u3l_log("pier: ignoring invalid replay barrier '%s'\r\n",
+                  u3_Host.ops_u.til_c);
+          eve_d = log_u->dun_d;
+        }
+      }
+      else {
+        eve_d = log_u->dun_d;
+      }
+
+      _pier_play_init(pir_u, eve_d);
     }
     else {
       _pier_work_init(pir_u);
