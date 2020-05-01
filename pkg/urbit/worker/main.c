@@ -169,8 +169,7 @@ main(c3_i argc, c3_c* argv[])
     u3V.dir_c = strdup(dir_c);
     u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
 
-
-    {
+    if ( eve_d ) {
       c3_o roc_o;
       c3_c nam_c[8193];
       snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", u3V.dir_c, eve_d);
