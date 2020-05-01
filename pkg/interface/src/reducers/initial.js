@@ -18,6 +18,13 @@ export default class InitialReducer {
       }
     }
 
+    data = _.get(json, 'group-initial', false);
+    if (data) {
+      for (const group in data) {
+        state.groups[group] = new Set(data[group]);
+      }
+    }
+
     data = _.get(json, 'invite-initial', false);
     if (data) {
       state.invites = data;
