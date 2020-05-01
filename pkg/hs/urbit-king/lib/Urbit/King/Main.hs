@@ -1,5 +1,25 @@
-{-|
-    King Haskell Entry Point
+{- |
+  # Signal Handling (SIGTERM, SIGINT)
+
+  We handle SIGTERM by causing the main thread to raise a `UserInterrupt`
+  exception. This is the same behavior as SIGINT (the signal sent upon
+  `CTRL-C`).
+
+  The main thread is therefore responsible for handling this exception
+  and causing everything to shut down properly.
+
+  # Crashing and Shutting Down
+
+  Rule number one: The King never crashes.
+
+  This rule is asperational at the moment, but it needs to become as
+  close to truth as possible. Shut down ships in extreme cases, but
+  never let the king go down.
+-}
+
+{-
+    TODO These some old scribbled notes. They don't belong here
+    anymore. Do something about it.
 
     # Event Pruning
 
@@ -561,14 +581,68 @@ main = do
         CLI.CmdBug CLI.CheckComet               -> runApp $ checkComet
         CLI.CmdCon pier                         -> runAppLogFile $ connTerm pier
 
+
+{-
+  Runs a ship but restarts it if it crashes or shuts down on it's own.
+
+  Once `waitForKillRequ` returns, the ship will be terminated and this
+  routine will exit.
+
+  TODO Use logging system instead of printing.
+-}
+runShipRestarting :: STM () -> CLI.Run -> CLI.Opts -> IO ()
+runShipRestarting waitForKillRequ r o = do
+  let pier = pack (CLI.rPierPath r)
+      loop = runShipRestarting waitForKillRequ r o
+
+  tid <- asyncBound (runShip r o True)
+
+  let onShipExit = Left <$> waitCatchSTM tid
+      onKillRequ = Right <$> waitForKillRequ
+
+  atomically (onShipExit <|> onKillRequ) >>= \case
+    Left exit -> do
+      case exit of
+        Left  err -> putStrLn (tshow err <> ": " <> pier)
+        Right ()  -> putStrLn ("Ship exited on it's own. Why? " <> pier)
+      threadDelay 250_000
+      loop
+    Right () -> do
+      putStrLn ("King Shutdown requested. Killing: " <> pier)
+      cancel tid
+      putStrLn ("Ship terminated: " <> pier)
+
+
 runShips :: [(CLI.Run, CLI.Opts, Bool)] -> IO ()
 runShips = \case
   []          -> pure ()
   [(r, o, d)] -> runShip r o d
   ships       -> do
-    threads <- for ships $ \(r, o, _) -> asyncBound (runShip r o True)
-    atomically $ asum (void . waitCatchSTM <$> threads)
-    for_ threads cancel
+    killSignal <- newEmptyTMVarIO
+
+    let waitForKillRequ = readTMVar killSignal
+
+    shipThreads <- for ships $ \(r, o, _) -> do
+      async (runShipRestarting waitForKillRequ r o)
+
+    {-
+      This `waitAny` call never returns, so this runs until the main
+      thread is killed with an async exception. The one we expect is
+      `UserInterrupt` which will be raised on this thread upon SIGKILL
+      or SIGTERM.
+    -}
+    res <- try (waitAny shipThreads)
+
+    {-
+      Send the kill signal to all of the ships, and then wait for all
+      of them to exit.
+    -}
+    let die = do atomically (putTMVar killSignal ())
+                 for_ shipThreads waitCatch
+
+    case res of
+      Left UserInterrupt -> die
+      _                  -> die
 
 
 --------------------------------------------------------------------------------
