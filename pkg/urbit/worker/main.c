@@ -211,6 +211,8 @@ main(c3_i argc, c3_c* argv[])
 
           fprintf(stderr, "serf (%" PRIu64 "): compacted loom\r\n", eve_d);
 
+          u3V.sen_d = u3V.dun_d = eve_d;
+
           //  save now for flexibility
           //
           u3e_save();
