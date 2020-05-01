@@ -13,20 +13,20 @@
     =,  enjs:format
     ?-  -.letter
         %text
-    (frond %text s+text.letter)
+      (frond %text s+text.letter)
     ::
         %url
-    (frond %url s+url.letter)
+      (frond %url s+url.letter)
     ::
         %code
-    %+  frond  %code
-    %-  pairs
-    :~  [%expression s+expression.letter]
-        [%output a+(turn output.letter tank)]
-    ==
+      %+  frond  %code
+      %-  pairs
+      :~  [%expression s+expression.letter]
+          [%output a+(turn output.letter tank)]
+      ==
     ::
         %me
-    (frond %me s+narrative.letter)
+      (frond %me s+narrative.letter)
     ::
     ==
   ::
