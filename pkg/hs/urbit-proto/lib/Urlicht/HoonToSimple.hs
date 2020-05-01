@@ -40,8 +40,8 @@ down = go
             ColTar{} -> True
             _        -> False
           C.Cns e f _ = go c-}
-      The ht hv -> error "down: unsupported feature: ``"
-      Fas hv ht -> error "down: unsupported feature: /"
+      The ht hv -> S.Asc (go hv) (go ht)
+      Fas hv ht -> S.Asc (go hv) (go ht)
       Obj cs    -> error "down: unsupported feature: {}"
       Cls tcs   -> error "down: unsupported feature: {||}"
       Col a h   -> error "down: unsupported feature: x:"
@@ -89,3 +89,4 @@ up = go
       S.Let s ss -> TisFas (go s) (hoist go ss)
       --
       S.Hol -> Hol
+      S.Asc s t -> The (go t) (go s)

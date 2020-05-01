@@ -82,6 +82,10 @@ check env simp ty = do
       Let cRhs . toScope <$>
         check (bind env tyRhs) (fromScope sBody) (F <$> ty)
     (S.Hol, _) -> newMetaWithSpine env
+    (S.Asc sExp sTy, _) -> do
+      ty' <- check env sTy VTyp
+      unify ty (eval ty')
+      check env sExp ty
 
 infer :: (Eq a, Elab m) => Env a -> S.Simple a -> m (Type a, Core a)
 infer env = \case
@@ -113,7 +117,6 @@ infer env = \case
     -- TODO make succ less
     let tRes = eval $ instantiate (const cArg) (hoist quote b)
     pure (tRes, App cFun cArg)
-      
   S.Let sRhs sBod -> do
     (tyRhs, cRhs) <- infer env sRhs
     (tyBod, cBod) <- infer (bind env tyRhs) (fromScope sBod)
@@ -124,6 +127,11 @@ infer env = \case
     t <- newMetaWithSpine env
     c <- newMetaWithSpine env
     pure (eval t, c)
+  S.Asc exp typ -> do
+    typ <- check env typ VTyp
+    let vTy = eval typ
+    exp <- check env exp vTy
+    pure (vTy, exp)
 
 -- | Inline metavariables.
 zonk :: Elab m => Core a -> m (Core a)
@@ -139,4 +147,3 @@ zonk = go where
     Lam sc   -> Lam <$> transverseScope go sc
     App c d  -> App <$> go c <*> go d
     Let c sc -> Let <$> go c <*> transverseScope go sc
-

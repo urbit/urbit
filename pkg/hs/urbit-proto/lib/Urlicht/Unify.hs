@@ -10,7 +10,6 @@ import Urlicht.Core
 import Urlicht.Elab
 import Urlicht.Errors
 import Urlicht.Meta
-import Urlicht.RunicShow
 
 -- =/ id/<|a/# a a|>  <a/# x/a a>
 -- id _ 1

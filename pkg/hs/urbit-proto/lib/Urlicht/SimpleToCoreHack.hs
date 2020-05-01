@@ -32,6 +32,7 @@ down = go
       Let s ss -> C.Let (go s) (hoist go ss)
       --
       Hol -> error "SimpleToCoreHack.down: holes require elaboration"
+      Asc s _ -> go s
 
 -- This one is not a hack
 up :: C.Core a -> Simple a

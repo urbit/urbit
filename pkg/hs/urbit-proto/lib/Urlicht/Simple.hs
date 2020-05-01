@@ -24,6 +24,7 @@ data Simple a
   | Let (Simple a) (Scope () Simple a)
   -- meta
   | Hol
+  | Asc (Simple a) (Simple a)
   deriving (Functor, Foldable, Traversable)
 
 deriveEq1   ''Simple
