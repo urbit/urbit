@@ -21,7 +21,7 @@
 #include "vere/vere.h"
 
 #define PIER_READ_BATCH 1000ULL
-#define PIER_PLAY_BATCH 100ULL
+#define PIER_PLAY_BATCH 500ULL
 #define PIER_WORK_BATCH 10ULL
 
 #undef VERBOSE_PIER
