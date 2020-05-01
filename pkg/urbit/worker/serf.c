@@ -447,7 +447,7 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
     //    - we don't make very effective use of our free lists
     //
     else {
-      sef_u->rec_o = _(0 == (sef_u->dun_d % 1000ULL));
+      sef_u->rec_o = c3o(sef_u->rec_o, _(0 == (sef_u->dun_d % 1000ULL)));
     }
 
     //  notify daemon of memory pressure via "fake" effect
