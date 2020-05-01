@@ -564,9 +564,10 @@ main = do
 
     hSetBuffering stdout NoBuffering
 
-    let onTermSig = throwTo mainTid UserInterrupt
+    let onKillSig = throwTo mainTid UserInterrupt
 
-    Sys.installHandler Sys.sigTERM (Sys.Catch onTermSig) Nothing
+    Sys.installHandler Sys.sigTERM (Sys.Catch onKillSig) Nothing
+    Sys.installHandler Sys.sigINT  (Sys.Catch onKillSig) Nothing
 
     CLI.parseArgs >>= \case
         CLI.CmdRun ships                        -> runShips ships
@@ -626,23 +627,20 @@ runShips = \case
       async (runShipRestarting waitForKillRequ r o)
 
     {-
-      This `waitAny` call never returns, so this runs until the main
-      thread is killed with an async exception. The one we expect is
+      Since `spin` never returns, this will run until the main
+      thread is killed with an async exception.  The one we expect is
       `UserInterrupt` which will be raised on this thread upon SIGKILL
       or SIGTERM.
-    -}
-    res <- try (waitAny shipThreads)
 
-    {-
-      Send the kill signal to all of the ships, and then wait for all
-      of them to exit.
+      Once that happens, we write to `killSignal` which will cause
+      all ships to be shut down, and then we `wait` for them to finish
+      before returning.
     -}
-    let die = do atomically (putTMVar killSignal ())
-                 for_ shipThreads waitCatch
-
-    case res of
-      Left UserInterrupt -> die
-      _                  -> die
+    let spin = forever (threadDelay maxBound)
+    finally spin $ do
+      putStrLn "KING IS GOING DOWN"
+      atomically (putTMVar killSignal ())
+      for_ shipThreads waitCatch
 
 
 --------------------------------------------------------------------------------
