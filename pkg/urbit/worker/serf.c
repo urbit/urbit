@@ -976,6 +976,8 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
         return c3n;
       }
 
+      _serf_static_grab();
+
       *ret = u3nc(c3__live, u3_nul);
       return c3y;
     }
