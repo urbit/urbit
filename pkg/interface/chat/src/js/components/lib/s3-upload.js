@@ -85,8 +85,8 @@ export class S3Upload extends Component {
                  onChange={this.onChange.bind(this)} />
           <img className="invert-d"
                src="/~chat/img/ImageUpload.png"
-               width="24"
-               height="24"
+               width="16"
+               height="16"
                onClick={this.onClick.bind(this)} />
         </div>
       );

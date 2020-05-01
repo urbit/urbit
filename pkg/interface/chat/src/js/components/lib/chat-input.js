@@ -350,7 +350,7 @@ export class ChatInput extends Component {
         </div>
         <div
           className="fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center"
-          style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 48px)' }}
+          style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}
         >
           <CodeEditor
             options={options}
@@ -360,8 +360,8 @@ export class ChatInput extends Component {
             onChange={(e, d, v) => this.messageChange(e, d, v)}
           />
         </div>
-        <div className="ml2"
-          style={{ height: '24px', width: '24px', flexBasis: 24, marginTop: 6 }}>
+        <div className="ml2 mr2"
+          style={{ height: '16px', width: '16px', flexBasis: 16, marginTop: 10 }}>
           <S3Upload
             configuration={props.s3.configuration}
             credentials={props.s3.credentials}
@@ -369,7 +369,7 @@ export class ChatInput extends Component {
             uploadError={this.uploadError.bind(this)}
           />
         </div>
-        <div style={{ height: '24px', width: '24px', flexBasis: 24, marginTop: 6 }}>
+        <div style={{ height: '16px', width: '16px', flexBasis: 16, marginTop: 10 }}>
           <img
             style={{ filter: state.code && 'invert(100%)', height: '100%', width: '100%' }}
             onClick={this.toggleCode}
