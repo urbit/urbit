@@ -1298,7 +1298,7 @@ static c3_c* _141_tri_shal_ha[] = {
 
 static u3j_core _141_tri_d[] =
 { { "qua",  3, 0, _141_qua_d, _141_qua_ha, _141_qua_ho },
-  { "ob",   3, 0, _141_tri__ob_d, 0 },
+  //  { "ob",   3, 0, _141_tri__ob_d, 0 },
   { "cofl", 7, 0, _141_tri__cofl_d, _141_tri__cofl_ha },
   { "rd",   7, 0, _141_tri__rd_d, _141_tri__rd_ha },
   { "rs",   7, 0, _141_tri__rs_d, _141_tri__rs_ha },

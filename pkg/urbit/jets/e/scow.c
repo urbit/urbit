@@ -55,7 +55,9 @@ static
 u3_noun
 _print_da(u3_atom cor, u3_atom raw_da)
 {
+  u3l_log("about to cook");
   u3_noun hok = u3j_cook("u3we_scow_print_da", u3k(cor), "yore");
+  u3l_log("cooked");
   u3_noun yod = u3n_slam_on(hok, u3k(raw_da));
 
   u3_noun out = 0;
@@ -221,14 +223,17 @@ _print_ud(u3_atom ud)
   int between = 0;
   u3_atom list = 0;
 
+  u3k(ud);
+
   do {
     if (between == 3) {
       list = u3nc('.', list);
       between = 0;
     }
-    list = u3nc(u3qa_add(u3qa_mod(u3k(ud), 10), '0'), list);
+
+    list = u3nc(u3ka_add(u3ka_mod(ud, 10), '0'), list);
     between++;
-    ud = u3qa_div(ud, 10);
+    ud = u3ka_div(ud, 10);
   } while (c3n == u3r_sing(ud, 0));
 
   return list;
@@ -252,8 +257,8 @@ u3we_scow(u3_noun cor)
     case c3__da:
       return _print_da(cor, atom);
 
-    case 'p':
-      return _print_p(atom);
+    /* case 'p': */
+    /*   return _print_p(atom); */
 
     case c3__ud:
       return _print_ud(atom);
@@ -271,6 +276,7 @@ u3we_scow(u3_noun cor)
 u3_noun
 u3we_scot(u3_noun cor)
 {
+  /* u3l_log("u3we_scot"); */
   u3_noun mod;
   u3_noun atom;
 
@@ -292,11 +298,15 @@ u3we_scot(u3_noun cor)
     /*   return u3qc_rap(3, x); */
     /* } */
 
-    case 'p':
-      return u3qc_rap(3, _print_p(atom));
+    /* case 'p': */
+    /*   return u3qc_rap(3, _print_p(atom)); */
 
-    case c3__ud:
-      return u3qc_rap(3, _print_ud(atom));
+    case c3__ud: {
+      u3_atom tape = _print_ud(atom);
+      u3_atom ret = u3qc_rap(3, tape);
+      u3z(tape);
+      return ret;
+    }
 
     default:
       return u3_none;

@@ -41,3 +41,12 @@
       return u3qa_mod(a, b);
     }
   }
+
+u3_noun
+u3ka_mod(u3_noun a,
+         u3_noun b)
+{
+  u3_noun c = u3qa_mod(a, b);
+  u3z(a); u3z(b);
+  return c;
+}

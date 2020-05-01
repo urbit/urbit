@@ -5,7 +5,9 @@
   /** Tier 1.
   **/
     u3_noun u3ka_add(u3_noun a, u3_noun b);
+    u3_noun u3ka_div(u3_noun a, u3_noun b);
     u3_noun u3ka_sub(u3_noun a, u3_noun b);
+    u3_noun u3ka_mod(u3_noun a, u3_noun b);
     u3_noun u3ka_mul(u3_noun a, u3_noun b);
     u3_noun u3ka_gth(u3_noun a, u3_noun b);
     u3_noun u3ka_lte(u3_noun a, u3_noun b);
@@ -18,6 +20,10 @@
 
 /* u3kc: tier 3 functions
 */
+  u3_noun
+  u3kc_con(u3_noun a,
+           u3_noun b);
+
   /* u3kc_mix(): binary xor.
   */
     u3_noun

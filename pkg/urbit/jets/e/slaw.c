@@ -307,8 +307,8 @@ _parse_p(u3_noun txt) {
     numname = cur[0] - '0';                         \
     cur++;                                          \
     while (isdigit(cur[0])) {                       \
-      numname = u3qa_mul(numname, 10);              \
-      numname = u3qa_add(numname, cur[0] - '0');    \
+      numname = u3ka_mul(numname, 10);              \
+      numname = u3ka_add(numname, cur[0] - '0');    \
       cur++;                                        \
     }                                               \
   } while (0)
@@ -323,8 +323,8 @@ _parse_p(u3_noun txt) {
     numname = cur[0] - '0';                         \
     cur++;                                          \
     while (isdigit(cur[0])) {                       \
-      numname = u3qa_mul(numname, 10);              \
-      numname = u3qa_add(numname, cur[0] - '0');    \
+      numname = u3ka_mul(numname, 10);              \
+      numname = u3ka_add(numname, cur[0] - '0');    \
       cur++;                                        \
     }                                               \
   } while (0)
@@ -435,13 +435,15 @@ _parse_da(u3_noun cor, u3_noun txt) {
 
     if (cur[0] == 0) {
       c3_free(c);
-      list = u3qb_flop(list);
+
+      u3_noun flopped = u3qb_flop(list);
+      u3z(list);
 
       u3_noun hok = u3j_cook("u3we_slaw_parse_da", u3k(cor), "year");
       u3_noun res = u3n_slam_on(hok,
                                 u3nt(u3nc(bc, year), month,
                                      u3nc(day,
-                                          u3nq(hour, minute, second, list))));
+                                          u3nq(hour, minute, second, flopped))));
       return u3nc(0, res);
     }
 
@@ -498,8 +500,8 @@ u3we_slaw(u3_noun cor)
     case c3__da:
       return _parse_da(cor, txt);
 
-    case 'p':
-      return _parse_p(txt);
+    /* case 'p': */
+    /*   return _parse_p(txt); */
 
     case c3__ud:
       return _parse_ud(txt);
