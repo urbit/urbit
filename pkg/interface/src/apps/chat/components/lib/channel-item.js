@@ -23,7 +23,7 @@ export class ChannelItem extends Component {
 
     return (
       <div
-        className={'z1 ph4 pv1 ' + selectedCss}
+        className={'z1 ph4 pb1 ' + selectedCss}
         onClick={this.onClick.bind(this)}
       >
         <div className="w-100 v-mid">
