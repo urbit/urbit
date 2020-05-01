@@ -9,6 +9,8 @@ const getLocationName = (basePath) => {
     return 'Chat';
   if (basePath === '~dojo')
     return 'Dojo';
+  if (basePath === '~groups')
+    return 'Groups';
   // if (basePath === '~publish') return 'Publish';
 };
 

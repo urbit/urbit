@@ -8,6 +8,7 @@ import { light } from '@tlon/indigo-react';
 import ChatApp from './apps/chat/ChatApp';
 import DojoApp from './apps/dojo/DojoApp';
 import StatusBar from './components/StatusBar';
+import GroupsApp from './apps/groups/GroupsApp';
 
 // const Style = createGlobalStyle`
 //   ${cssReset}
@@ -32,7 +33,8 @@ const Home = () => (
     Home
     <Link to='/~chat'>Chat</Link>
     <Link to='/~dojo'>Dojo</Link>
-    <Link to='/~publish'>Publish</Link>
+    <Link to='/~groups'>Groups</Link>
+    {/* <Link to='/~publish'>Publish</Link> */}
   </div>
 );
 
@@ -62,6 +64,10 @@ export default class App extends React.Component {
               />
               <Route path="/~dojo" render={
                 p => <DojoApp ship={this.ship} channel={this.channel} {...p} />
+              }
+              />
+              <Route path="/~groups" render={
+                p => <GroupsApp ship={this.ship} channel={this.channel} {...p} />
               }
               />
             </div>
