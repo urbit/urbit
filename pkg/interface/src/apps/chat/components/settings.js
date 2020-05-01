@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { deSig, uxToHex, writeText } from '../../../lib/util';
 import { Link } from 'react-router-dom';
 
-import { Spinner } from './lib/icons/icon-spinner';
+import { Spinner } from '../../../components/Spinner';
 import { ChatTabBar } from './lib/chat-tabbar';
 import { InviteSearch } from '../../../components/InviteSearch';
 import SidebarSwitcher from './lib/icons/icon-sidebar-switch';

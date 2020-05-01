@@ -36,7 +36,6 @@ class UrbitApi {
   }
 
   bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
-    console.log(this.channel);
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
     window.subscriptionId = this.channel.subscribe(ship, app, path,

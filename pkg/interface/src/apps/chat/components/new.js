@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { InviteSearch } from '../../../components/InviteSearch';
-import { Spinner } from './lib/icons/icon-spinner';
+import { Spinner } from '../../../components/Spinner';
 import { Link } from 'react-router-dom';
 import { deSig } from '../../../lib/util';
 import urbitOb from 'urbit-ob';

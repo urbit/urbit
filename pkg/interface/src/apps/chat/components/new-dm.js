@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Spinner } from './lib/icons/icon-spinner';
+import { Spinner } from '../../../components/Spinner';
 import { Link } from 'react-router-dom';
 import urbitOb from 'urbit-ob';
 

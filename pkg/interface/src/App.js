@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Route, Link, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
+import './css/indigo-static.css';
+import './css/fonts.css';
 import { light } from '@tlon/indigo-react';
 
 import ChatApp from './apps/chat/ChatApp';

@@ -6,8 +6,10 @@ import { Sigil } from '../lib/sigil';
 
 const getLocationName = (basePath) => {
   if (basePath === '~chat')
-return 'Chat';
-  // if (path === '~chat') return 'Publish';
+    return 'Chat';
+  if (basePath === '~dojo')
+    return 'Dojo';
+  // if (basePath === '~publish') return 'Publish';
 };
 
 const StatusBar = (props) => {
@@ -32,7 +34,7 @@ const StatusBar = (props) => {
       style={{ height: 45 }}
     >
       <div className="fl lh-copy absolute left-0 pl4" style={{ top: 8 }}>
-      <a href="/~groups/me" className="dib v-top">
+      <a href="/~groups/me" className="dib v-top" style={{ lineHeight: 0, paddingTop: 6 }}>
           <Sigil
             ship={'~' + window.ship}
             classes="v-mid mix-blend-diff"

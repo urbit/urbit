@@ -211,7 +211,7 @@ onClick={() => this.addGroup(group)}
         onClick={() => this.toggleOpen()}
         ref={el => this.toggleButton = el}
         >
-        <p className="dib f9 pointer pv1 ph2 mw5 truncate v-mid">{currentGroup}</p>
+        <p className="inter dib f9 pointer pv1 ph2 mw5 truncate v-mid">{currentGroup}</p>
         </div>
         <div className={dropdownClass}
           style={{ maxHeight: '24rem', width: 285 }}
