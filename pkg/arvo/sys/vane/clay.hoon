@@ -3582,7 +3582,12 @@
         %|  p.value
         %&  lobe:(~(got by change-cages) path)
       ==
-    =/  =yaki  (make-yaki p.p.yoki data now)
+    =/  =yaki
+      ?-  -.yoki
+        %&  (make-yaki p.p.yoki data now)
+        %|  ?>  =(data q.p.yoki)
+            p.yoki
+      ==
     =:  let.dom  +(let.dom)
         hit.dom  (~(put by hit.dom) +(let.dom) r.yaki)
         hut.ran  (~(put by hut.ran) r.yaki yaki)
@@ -5063,7 +5068,7 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      ?.  ?=([?(%yaki %blob %hash) * ~] pax)
+      ?.  ?=([?(%yaki %blob %hash %cage) * ~] pax)
         `~
       ?-    i.pax
           %yaki
@@ -5083,6 +5088,18 @@
         ?~  yak
           ~
         ``uvi+[-:!>(*@uvI) (content-hash u.yak /)]
+      ::
+          %cage
+        ::  should save ford cache
+        ::
+        =/  =lobe  (slav %uv i.t.pax)
+        =^  =page  fod.dom
+          %-  wrap:fusion
+          (lobe-to-page:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) lobe)
+        =^  =cage  fod.dom
+          %-  wrap:fusion
+          (page-to-cage:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) page)
+        ``cage+[-:!>(*^cage) cage]
       ==
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::
