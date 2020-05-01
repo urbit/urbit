@@ -143,7 +143,7 @@
   |=  =event-log:rpc:ethereum
   (event-log-to-ethers wire event-log)
   :_  state
-  [[%give %fact ~[[%logs wire]] mark !>([%history logs])] ~]
+  [[%give %fact ~[[%logs wire]] %ethers-gift !>([%history logs])] ~]
 ::
 ++  handle-event-log
   |=  [=wire =event-log:rpc:ethereum]
@@ -152,7 +152,7 @@
   =/  =mark  (crip "eth-contracts-{(trip abi.dog)}-gift")
   =/  log=event-log:ethers  (event-log-to-ethers wire event-log)
   :_  state
-  [[%give %fact ~[[%logs wire]] mark !>([%log log])] ~]
+  [[%give %fact ~[[%logs wire]] %ethers-gift !>([%log log])] ~]
 ::
 ++  event-log-to-ethers
   |=  [=wire =event-log:rpc:ethereum]
@@ -212,8 +212,7 @@
       %-  ~(got by event-sub-tmap.events.abi-form)  name
     =/  pretopics=(list ?(@ (list @)))
     [hash args.topics.config.act]
-    =/  watcher-action=vase
-    !>  ^-  poke:eth-watcher
+    =/  =poke:eth-watcher
     :+  %watch  path.act
     :*  url=url.config.act
         eager=eager.config.act
@@ -222,11 +221,12 @@
         contracts=contracts.config.act
         topics=(encode-topics:eth-abi types pretopics)
     ==
+    %-  (slog [leaf+"eth-watcher config" >poke< ~])
     :_  state
     :~  :*  %pass  path.act
             %agent  [our.bol %eth-watch]
             %poke  %eth-watcher-poke
-            watcher-action
+            !>(poke)
         ==
         :*  %pass   [%eth-watcher path.act]
             %agent  [our.bol %eth-watch]
@@ -244,8 +244,8 @@
       %+  write-file  /lib/eth-contracts/[name.act]/hoon
       [%hoon !>((code-gen-lib:eth-abi contract name.act))]
     =/  mark-card=card
-      %+  write-file  /mar/[(crip (zing ~["eth-contracts-" (trip name.act) "-update"]))]/hoon
-      [%hoon !>((code-gen-mark:eth-abi (zing ~["eth-contracts-" (trip name.act)]) "gift"))]
+      %+  write-file  /mar/[(crip (zing ~["eth-contracts-" (trip name.act) "-gift"]))]/hoon
+      [%hoon !>((code-gen-mark:eth-abi (trip name.act)))]
     =/  events  ~(tap by events.contract)
     =/  =event-maps
       :*  %-  molt

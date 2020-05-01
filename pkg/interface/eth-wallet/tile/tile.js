@@ -28,4 +28,4 @@ export default class LinkTile extends Component {
 
 }
 
-window['eth-walletTile'] = LinkTile;
+window['eth-wallet-viewTile'] = LinkTile;

@@ -203,18 +203,22 @@
     [(trip i.tape) $(tape t.tape)]
 ::
   ++  code-gen-mark
-    |=  [sur-name=tape type-name=tape]
+    |=  [sur-name=tape]
     %-  crip
     """
-    /-  *{sur-name}
-    |_  {type-name}
+    /-  ethers
+    /+  *eth-contracts-{sur-name}
+    |_  gif=gift
     ++  grow
       |%
-      ++  json  ({type-name}-to-json {type-name})
+      ++  json  (gift-to-json gif)
       --
     ++  grab
       |%
-        ++  noun  {type-name}
+        ++  noun  gift
+        ++  ethers-gift
+        |=  gaf=gift:ethers
+        (gift gaf)
       --
     --
     """
@@ -232,11 +236,13 @@
       %-  crip
       """
       /-  ethers
+      =,  able:jael
       =/  builders  builders:ethers
       |%
         +$  gift
           $%  [$history =loglist]
               [$log =event-log]
+              [$disavow =id:block]
               [$read-call read-call]
               [$read-tx read-tx]
           ==
@@ -341,6 +347,8 @@
           %log
         %+  frond  %event-update
         (event-log-to-json event-log.gift)
+          %disavow
+        !!
           %read-call
         !!
           %read-tx
@@ -371,6 +379,7 @@
           %-  pairs
           :~
             [%type [%s %{(trip name.event)}]]
+            [%address [%s (crip ((x-co:co 1) address.event-log))]]
             :-  %payload
             %-  pairs
             :~
@@ -392,13 +401,14 @@
     ^-  tape
     ?+  etyp  ~|("unimplemented etyp-to-json type" !!)
         %uint
-      "[%n (scot %ud {(trip name)}.event-data.event-log)]"
+      "[%n (crip ((d-co:co 1) {(trip name)}.event-data.event-log))]"
         %int
-      "[%n (scot %sd {(trip name)}.event-data.event-log)]"
+      !!
+    :: "[%n (scot %sd {(trip name)}.event-data.event-log)]"
         %address
-      "[%s (scot %ux {(trip name)}.event-data.event-log)]"
+      "[%s (crip ((x-co:co 1) {(trip name)}.event-data.event-log))]"
         %bool
-      "[%b data]"
+      "[%b {(trip name)}.event-data.event-log]"
     ==
   --
 ::

@@ -3,19 +3,20 @@
 |%
   +$  gift
     $%  [$history =loglist]
-        [$log event-log=event-update]
+        [$log =event-log]
         [$read-call read-call]
         [$read-tx read-tx]
     ==
   +$  poke
     $%  (make-action:builders $call call)
         (make-action:builders $send-tx send-tx)
-        [$event-subscribe =path config=(watch-config:builders watch-config)]
+        [$event-subscribe =path config=watch-config]
     ==
+  +$  event-log  (event-log-config:builders event-update)
   +$  watch-config
     %-  watch-config:builders
     event-subscribe
-  +$  loglist  (list (event-log-config:builders event-subscribe))
+  +$  loglist  (list event-log)
   +$  call
     $%  [$allowance owner=@ux spender=@ux]
         [$balance-of account=@ux]

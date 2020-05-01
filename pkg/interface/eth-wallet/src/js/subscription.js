@@ -1,35 +1,30 @@
 import { api } from '/api';
 import { store } from '/store';
 
+import urbitOb from 'urbit-ob';
+
+
 export class Subscription {
   start() {
     if (api.authTokens) {
-      this.initializeLinks();
+      this.initializeetheventviewer();
     } else {
       console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
     }
   }
 
-  initializeLinks() {
-    // add invite, permissions flows once link stores are more than
-    // group-specific
-    api.bind('/all', 'PUT', api.authTokens.ship, 'group-store',
-    this.handleEvent.bind(this),
-    this.handleError.bind(this),
-    this.handleQuitAndResubscribe.bind(this));
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'contact-view',
+  initializeetheventviewer() {
+    api.bind('/primary', 'PUT', api.authTokens.ship, 'eth-event-viewer',
       this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
+      this.handleError.bind(this));
 
-    // open a subscription for all submissions
-    api.getPage('', 0);
-
-    // open a subscription for seen notifications
-    api.bindLinkView('/json/seen',
+    api.bind(
+      "/state/update",
+      "PUT",
+      api.authTokens.ship,
+      "eth-event-viewer",
       this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this)
+      this.handleError.bind(this)
     );
   }
 
@@ -39,16 +34,10 @@ export class Subscription {
 
   handleError(err) {
     console.error(err);
+    api.bind('/primary', 'PUT', api.authTokens.ship, 'eth-event-viewer',
+      this.handleEvent.bind(this),
+      this.handleError.bind(this));
   }
-
-  handleQuitSilently(quit) {
-    // no-op
-  }
-
-  handleQuitAndResubscribe(quit) {
-    // TODO: resubscribe
-  }
-
 }
 
 export let subscription = new Subscription();

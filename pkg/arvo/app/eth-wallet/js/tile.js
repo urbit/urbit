@@ -19348,7 +19348,7 @@
             }.call(commonjsGlobal));
             });
 
-            const _jsxFileName = "/Users/matilde/git/tlon/urbit/pkg/interface/eth-wallet/tile/tile.js";
+            const _jsxFileName = "/home/xiphi/src/urb/urbit/pkg/interface/eth-wallet/tile/tile.js";
 
             class LinkTile extends react_1 {
 
@@ -19375,7 +19375,7 @@
 
             }
 
-            window['eth-walletTile'] = LinkTile;
+            window['eth-wallet-viewTile'] = LinkTile;
 
             return LinkTile;
 

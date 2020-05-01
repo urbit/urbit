@@ -14,75 +14,9 @@ export function uuid() {
   return str.slice(0,-1);
 }
 
-export function getContactDetails(contact) {
-  contact = contact || {
-    'nickname': '',
-    'avatar': 'TODO',
-    'color': '0x0'
-  };
-  const nickname = contact.nickname || '';
-  const color = uxToHex(contact.color || '0x0');
-  return {nickname, color};
-}
-
-// encodes string into base64url,
-// by encoding into base64 and replacing non-url-safe characters.
-//
-export function base64urlEncode(string) {
-  return window.btoa(string)
-    .split('+').join('-')
-    .split('/').join('_');
-}
-
-// decode base64url. inverse of base64urlEncode above.
-//
-export function base64urlDecode(string) {
-  return window.atob(
-    string.split('_').join('/')
-          .split('-').join('+')
-  );
-}
-
 export function isPatTa(str) {
   const r = /^[a-z,0-9,\-,\.,_,~]+$/.exec(str)
   return !!r;
-}
-
-// encode the string into @ta-safe format, using logic from +wood.
-// for example, 'some Chars!' becomes '~.some.~43.hars~21.'
-//
-export function stringToTa(string) {
-  let out = '';
-  for (let i = 0; i < string.length; i++) {
-    const char = string[i];
-    let add = '';
-    switch (char) {
-      case ' ':
-        add = '.';
-        break;
-      case '.':
-        add = '~.';
-        break;
-      case '~':
-        add = '~~';
-        break;
-      default:
-        const charCode = string.charCodeAt(i);
-        if (
-          (charCode >= 97 && charCode <= 122) || // a-z
-          (charCode >= 48 && charCode <= 57)  || // 0-9
-          char === '-'
-        ) {
-          add = char;
-        } else {
-          //TODO behavior for unicode doesn't match +wood's,
-          //     but we can probably get away with that for now.
-          add = '~' + charCode.toString(16) + '.';
-        }
-    }
-    out = out + add;
-  }
-  return '~.' + out;
 }
 
 /*
@@ -128,10 +62,21 @@ export function deSig(ship) {
   return ship.replace('~', '');
 }
 
-export function uxToHex(ux) {
-  if (ux.length > 2 && ux.substr(0,2) === '0x') {
-    return ux.substr(2).replace('.', '').padStart(6, '0');
-  } else {
-    return ux.replace('.', '').padStart(6, '0');
+// trim patps to match dojo, chat-cli
+export function cite(ship) {
+  let patp = ship, shortened = "";
+  if (patp.startsWith("~")) {
+    patp = patp.substr(1);
   }
+  // comet
+  if (patp.length === 56) {
+    shortened = "~" + patp.slice(0, 6) + "_" + patp.slice(50, 56);
+    return shortened;
+  }
+  // moon
+  if (patp.length === 27) {
+    shortened = "~" + patp.slice(14, 20) + "^" + patp.slice(21, 27);
+    return shortened;
+  }
+  return `~${patp}`;
 }

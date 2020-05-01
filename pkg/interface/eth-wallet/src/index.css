@@ -1,5 +1,81 @@
 @import "css/indigo-static.css";
 @import "css/fonts.css";
-@import "css/spinner.css";
 @import "css/custom.css";
 
+.h-100-minus-56 {
+  height: calc(100% - 56px);
+}
+
+.h-100-minus-60 {
+  height: calc(100% - 60px);
+}
+
+.h-100-minus-2 {
+  height: calc(100% - 2px);
+}
+
+.w-100-minus-320 {
+  width: calc(100% - 320px);
+}
+
+.h-100-minus-40 {
+  height: calc(100% - 40px);
+}
+
+.w-320-px {
+  width: 320px;
+}
+
+.mw-180-px {
+  min-width: 180px;
+}
+
+.mw-310-px {
+  min-width: 310px;
+}
+
+.w-382-px {
+  width: 382px;
+}
+
+p,
+div {
+  font-family: "Inter", sans-serif;
+}
+
+.pointer-none {
+  pointer-events: none;
+}
+.text-center {
+  text-align: center;
+}
+
+/* responsive */
+
+@media all and (max-width: 34.375em) {
+  .mr-2-s {
+    margin-right: .5rem;
+  }
+  .ml-2-s {
+    margin-left: .5rem;
+  }
+  .h-100-minus-200-s {
+    height: calc(100% - 200px);
+  }
+  .ba-0-s {
+    border: none;
+  }
+  .w-100-s {
+    width: 100%;
+  }
+  .w-auto-s {
+    width: 100%;
+  }
+  .ml0-s {
+    margin-left: 0;
+  }
+  .mh-134-s {
+    max-height: 134px;
+    overflow: auto;
+  }
+}

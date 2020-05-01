@@ -13,7 +13,7 @@
         [$history =loglist]
         ::  %log: newly added log
         ::
-        [$log event-log=generic-data]
+        [$log =event-log]
         ::  %disavow: forget logs
         ::
         ::    this is sent when a reorg happens that invalidates
@@ -31,7 +31,8 @@
         [$add-abi name=@tas =json]
     ==
   +$  generic-data  [@tas *]
-  +$  loglist  (list (event-log-config:builders generic-data))
+  +$  loglist  (list event-log)
+  +$  event-log  (event-log-config:builders generic-data)
   +$  watch-config
     %-  watch-config:builders
     $:(name=@tas args=(list ?(@ (list @))))

@@ -57,7 +57,7 @@
         [%send-erc20 *]
       !!
         [%add-erc20 *]
-      ?.  =(address 0x0)  %-  (slog leaf+"expected ethereum key" ~)  `this
+      ?:  =(address 0x0)  %-  (slog leaf+"expected ethereum key" ~)  `this
       ::?~  address  [~ this]
       =.  balances
       %+  ~(put by balances)
@@ -87,7 +87,7 @@
      ==
      :_  this
      ^-  (list card)
-     :~  [%pass /eth-watcher %agent [our.bol %ethers] %watch /logs/[dap.bol]]
+     :~  [%pass /eth-watcher %agent [our.bol %ethers] %watch-as %eth-contracts-erc20-gift /logs/[dap.bol]]
          [%pass /eth-config %agent [our.bol %ethers] %poke %ethers-action from-me-sub]
          [%pass /eth-config %agent [our.bol %ethers] %poke %ethers-action to-me-sub]
      ==
@@ -131,13 +131,16 @@
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
+    %-  (slog [leaf+"wtf" >wire< >sign< ~])
     ?.  ?=([%eth-watcher ~] wire)
       (on-agent:def wire sign)
     ?.  ?=(%fact -.sign)
       (on-agent:def wire sign)
-    ?.  ?=(%eth-contracts-erc20-update p.cage.sign)
+    ?.  ?=(%eth-contracts-erc20-gift p.cage.sign)
       (on-agent:def wire sign)
+    %-  (slog [leaf+"before !<" ~])
     =+  !<(diff=gift:erc20 q.cage.sign)
+    %-  (slog [leaf+"got erc20 diff" >diff< ~])
     ?-  diff
       [%history *]
       =.  state  (apply-events:tc loglist.diff)
@@ -152,6 +155,8 @@
     ::=^  card  state  (apply-event:tc event-log.diff)
     ::?~  card  `this
     ::[[card ~] this]
+      [%disavow *]
+    `this
       [%read-call *]
     `this
       [%read-tx *]
@@ -182,8 +187,8 @@
     [%transfer *]
   =/  [=contract-id balance=@ud =txn-log]  (~(got by addr-to-contract) address.event-log)
   =/  new-balance=@ud
-  ?.  =(address from.event-data.event-log)
-    ?.  =(address to.event-data.event-log)  ~|(["unexpected event" event-log] !!)
+  ?.  =(address to.event-data.event-log)
+    ?.  =(address from.event-data.event-log)  ~|(["unexpected event" event-log] !!)
     (add balance value.event-data.event-log)
   (sub balance value.event-data.event-log)
   =.  txn-log
@@ -201,7 +206,9 @@
   ==
 ++  fetch-key
    ^-  @ux
-   %+  scan  (trip (of-wain:format .^(wain %cx (get-path key-path))))
+   %+  scan
+     %+  skim  (trip (of-wain:format .^(wain %cx (get-path key-path))))
+     |=(c=@t !=(c 10)) :: remove possible newlines
    ;~(pfix (jest '0x') hex)
 ++  get-path
   |=  =path
