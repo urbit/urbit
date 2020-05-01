@@ -948,10 +948,32 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
       return c3y;
     }
 
-    // XX
-    //
     case c3__pack: {
-      c3_stub;
+      c3_d eve_d;
+
+      if ( c3n == u3r_safe_chub(dat, &eve_d) ) {
+        u3z(com);
+        return c3n;
+      }
+
+      u3z(com);
+
+      if( eve_d != sef_u->dun_d ) {
+        fprintf(stderr, "serf (%" PRIu64 "): pack failed: %" PRIu64 "\r\n",
+                        sef_u->dun_d,
+                        eve_d);
+        return c3n;
+      }
+
+      u3l_log("serf (%" PRIu64 "): saving rock\r\n", sef_u->dun_d);
+
+      if ( c3n == u3m_rock_stay(sef_u->dir_c, eve_d) ) {
+        fprintf(stderr, "serf (%" PRIu64 "): unable to jam state\r\n", eve_d);
+        return c3n;
+      }
+
+      *ret = u3nc(c3__live, u3_nul);
+      return c3y;
     }
 
     case c3__save: {
