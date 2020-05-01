@@ -559,7 +559,7 @@ _pier_play_read(u3_play* pay_u)
 
   {
     c3_d nex_d = (1ULL + las_d);
-    c3_d len_d = c3_min(pir_u->log_u->dun_d - las_d, PIER_READ_BATCH);
+    c3_d len_d = c3_min(pay_u->eve_d - las_d, PIER_READ_BATCH);
 
     if (  len_d
        && (nex_d > pay_u->req_d) )
@@ -590,7 +590,10 @@ _pier_play(u3_play* pay_u)
     u3_term_stop_spinner();
 
     if ( pay_u->eve_d < log_u->dun_d ) {
+      u3l_log("pier: replay barrier reached, shutting down\r\n");
       //  XX graceful shutdown
+      //
+      u3_lord_save(pir_u->god_u);
       u3_pier_bail();
       exit(0);
     }
