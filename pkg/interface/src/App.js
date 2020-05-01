@@ -6,6 +6,7 @@ import './css/fonts.css';
 import { light } from '@tlon/indigo-react';
 
 import ChatApp from './apps/chat/ChatApp';
+import DojoApp from './apps/dojo/DojoApp';
 import StatusBar from './components/StatusBar';
 
 // const Style = createGlobalStyle`
@@ -30,7 +31,7 @@ const Home = () => (
   <div>
     Home
     <Link to='/~chat'>Chat</Link>
-    <Link to={'/~chat/new/dm/~zod'}>new/dm/~zod</Link>
+    <Link to='/~dojo'>Dojo</Link>
     <Link to='/~publish'>Publish</Link>
   </div>
 );
@@ -57,6 +58,10 @@ export default class App extends React.Component {
               <Route exact path="/" component={Home} />
               <Route path="/~chat" render={
                 p => <ChatApp ship={this.ship} channel={this.channel} {...p} />
+              }
+              />
+              <Route path="/~dojo" render={
+                p => <DojoApp ship={this.ship} channel={this.channel} {...p} />
               }
               />
             </div>
