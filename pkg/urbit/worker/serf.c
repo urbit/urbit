@@ -364,6 +364,9 @@ u3_serf_post(u3_serf* sef_u)
 static u3_noun
 _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
 {
+  c3_o rec_o = c3n;
+  c3_o pac_o = c3n;
+
   //  intercept |mass, observe |reset
   //
   {
@@ -394,13 +397,13 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
       //  reclaim memory from persistent caches on |reset
       //
       if ( c3__vega == u3h(fec) ) {
-        sef_u->rec_o = c3y;
+        rec_o = c3y;
       }
 
       //  pack memory on |pack
       //
       if ( c3__pack == u3h(fec) ) {
-        sef_u->pac_o = c3y;
+        pac_o = c3y;
       }
 
       riv = u3t(riv);
@@ -431,13 +434,13 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
       //  XX set flag(s) in u3V so we don't repeat endlessly?
       //  XX pack here too?
       //
-      sef_u->pac_o = c3y;
-      sef_u->rec_o = c3y;
+      pac_o = c3y;
+      rec_o = c3y;
       pri   = 1;
     }
     else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
-      sef_u->pac_o = c3y;
-      sef_u->rec_o = c3y;
+      pac_o = c3y;
+      rec_o = c3y;
       pri   = 0;
     }
     //  reclaim memory from persistent caches periodically
@@ -446,13 +449,15 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
     //    - bytecode caches grow rapidly and can't be simply capped
     //    - we don't make very effective use of our free lists
     //
-    else {
-      sef_u->rec_o = c3o(sef_u->rec_o, _(0 == (sef_u->dun_d % 1000ULL)));
+    else if ( 0 == (sef_u->dun_d % 1000ULL) ) {
+      rec_o = c3y;
     }
 
-    //  pack every 50K events
+    //  pack every 20K events
     //
-    sef_u->pac_o = c3o(sef_u->pac_o, _(0 == (sef_u->dun_d % 50000ULL)));
+    if ( 0 == (sef_u->dun_d % 20000ULL) ) {
+      pac_o = c3y;
+    }
 
     //  notify daemon of memory pressure via "fake" effect
     //
@@ -462,6 +467,9 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
       vir = u3nc(cad, vir);
     }
   }
+
+  sef_u->rec_o = c3o(sef_u->rec_o, rec_o);
+  sef_u->pac_o = c3o(sef_u->pac_o, pac_o);
 
   return vir;
 }
