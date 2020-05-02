@@ -32,7 +32,8 @@ export class ContactCard extends Component {
     this.notesToSet = this.notesToSet.bind(this);
     this.setField = this.setField.bind(this);
     this.shareWithGroup = this.shareWithGroup.bind(this);
-    this.removeFromGroup = this.removeFromGroup.bind(this);
+    this.removeSelfFromGroup = this.removeSelfFromGroup.bind(this);
+    this.removeOtherFromGroup = this.removeOtherFromGroup.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -335,7 +336,7 @@ export class ContactCard extends Component {
     }));
   }
 
-  removeFromGroup() {
+  removeSelfFromGroup() {
     const { props } = this;
     // share empty contact so that we can remove ourselves from group
     // if we haven't shared yet
@@ -355,10 +356,19 @@ export class ContactCard extends Component {
 
     this.setState({ awaiting: true, type: 'Removing from group' }, (() => {
       api.contactView.delete(props.path).then(() => {
-        const destination = (props.ship === window.ship)
-          ? '' : props.path;
         this.setState({ awaiting: false });
-        props.history.push(`/~groups${destination}`);
+        props.history.push(`/~groups`);
+      });
+    }));
+  }
+
+  removeOtherFromGroup() {
+    const { props } = this;
+
+    this.setState({ awaiting: true, type: 'Removing from group' }, (() => {
+      api.contactView.remove(props.path, `~${props.ship}`).then(() => {
+        this.setState({ awaiting: false });
+        props.history.push(`/~groups${props.path}`);
       });
     }));
   }
@@ -638,7 +648,7 @@ export class ContactCard extends Component {
             className={
               'bg-gray0-d mv4 mh3 pa1 f9 red2 pointer flex-shrink-0 ' + adminOpt
             }
-            onClick={this.removeFromGroup}
+            onClick={props.ship === window.ship ? this.removeSelfFromGroup : this.removeOtherFromGroup}
           >
             {props.ship === window.ship
               ? 'Leave Group'
