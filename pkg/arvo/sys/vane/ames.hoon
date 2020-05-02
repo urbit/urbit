@@ -2128,6 +2128,7 @@
     ++  dedup-message
       |=  =message-blob
       ^+  message-blob
+      ~&  >  deduping=`@p`(mug message-blob)
       =/  peers-l=(list [=ship =ship-state])  ~(tap by peers.ames-state)
       |-  ^+  message-blob
       =*  peer-loop  $
@@ -2145,11 +2146,19 @@
         ~(tap to unsent-messages.message-pump-state.i.snd-l)
       |-  ^+  message-blob
       =*  blob-loop  $
-      ?~  blob-l
+      ?^  blob-l
+        ?:  =(i.blob-l message-blob)
+          ~&  >  found=`@p`(mug i.blob-l)
+          i.blob-l
+        ~&  >  lost=`@p`(mug i.blob-l)
+        blob-loop(blob-l t.blob-l)
+      ?~  unsent-fragments.message-pump-state.i.snd-l
         bone-loop(snd-l t.snd-l)
-      ?:  =(i.blob-l message-blob)
-        i.blob-l
-      blob-loop(blob-l t.blob-l)
+      ?:  =(message-blob fragment.i.unsent-fragments.message-pump-state.i.snd-l)
+        ~&  >  found-unsent=`@p`(mug message-blob)
+        `@`fragment.i.unsent-fragments.message-pump-state.i.snd-l
+      ~&  >  lost-unsent=`@p`(mug fragment.i.unsent-fragments.message-pump-state.i.snd-l)
+      bone-loop(snd-l t.snd-l)
     ::  +on-wake: handle timer expiration
     ::
     ++  on-wake
@@ -2629,38 +2638,11 @@
     =^  =message-blob  unsent-messages.state  ~(get to unsent-messages.state)
     ::  break .message into .chunks and set as .unsent-fragments
     ::
-    =.  unsent-fragments.state
-      (turn (split-message next.state message-blob) dedup-fragment)
+    =.  unsent-fragments.state  (split-message next.state message-blob)
     ::  try to feed packets from the next message
     ::
     =.  next.state  +(next.state)
     feed-packets
-  ::  +dedup-fragment: replace with any existing copy of this packet
-  ::
-  ++  dedup-fragment
-    |=  =static-fragment
-    ^+  static-fragment
-    =/  peers-l=(list [=ship =ship-state])  ~(tap by peers)
-    |-  ^+  static-fragment
-    =*  peer-loop  $
-    ?~  peers-l
-      static-fragment
-    ?.  ?=(%known -.ship-state.i.peers-l)
-      peer-loop(peers-l t.peers-l)
-    =/  snd-l=(list [=bone =message-pump-state])
-      ~(tap by snd.ship-state.i.peers-l)
-    |-  ^+  static-fragment
-    =*  bone-loop  $
-    ?~  snd-l
-      peer-loop(peers-l t.peers-l)
-    =*  frag-l  unsent-fragments.message-pump-state.i.snd-l
-    |-  ^+  static-fragment
-    =*  frag-loop  $
-    ?~  frag-l
-      bone-loop(snd-l t.snd-l)
-    ?:  =(fragment.i.frag-l fragment.static-fragment)
-      static-fragment(fragment fragment.i.frag-l)
-    frag-loop(frag-l t.frag-l)
   ::  +run-packet-pump: call +work:packet-pump and process results
   ::
   ++  run-packet-pump
@@ -3330,20 +3312,24 @@
   (lte fragment-num.a fragment-num.b)
 ::  +split-message: split message into kilobyte-sized fragments
 ::
+::    We don't literally split it here since that would allocate many
+::    large atoms with no structural sharing.  Instead, each
+::    static-fragment has the entire message and a counter.  In
+::    +encrypt, we interpret this to get the actual fragment.
+::
 ++  split-message
   |=  [=message-num =message-blob]
   ^-  (list static-fragment)
   ::
-  =/  fragments=(list fragment)   (rip 13 message-blob)
-  =/  num-fragments=fragment-num  (lent fragments)
+  =/  num-fragments=fragment-num  (met 13 message-blob)
   =|  counter=@
   ::
   |-  ^-  (list static-fragment)
-  ?~  fragments  ~
+  ?:  (gte counter num-fragments)
+    ~
   ::
-  :-  [message-num num-fragments counter i.fragments]
-  ::
-  $(fragments t.fragments, counter +(counter))
+  :-  [message-num num-fragments counter `@`message-blob]
+  $(counter +(counter))
 ::  +assemble-fragments: concatenate fragments into a $message
 ::
 ++  assemble-fragments
@@ -3432,6 +3418,17 @@
   |=  [=symmetric-key plaintext=shut-packet]
   ^-  @
   ::
+  =.  meat.plaintext
+    ?.  ?&  ?=(%& -.meat.plaintext)
+            (gth (met 13 fragment.p.meat.plaintext) 1)
+        ==
+      meat.plaintext
+    %=    meat.plaintext
+        fragment.p
+      %^  end  13  1
+      %^  rsh  13  fragment-num.p.meat.plaintext
+      fragment.p.meat.plaintext
+    ==
   (en:crub:crypto symmetric-key (jam plaintext))
 ::  +decrypt: decrypt packet content to a $shut-packet or die
 ::
