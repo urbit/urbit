@@ -570,7 +570,7 @@ main = do
     Sys.installHandler Sys.sigINT  (Sys.Catch onKillSig) Nothing
 
     CLI.parseArgs >>= \case
-        CLI.CmdRun ships                        -> runShips ships
+        CLI.CmdRun ko ships                     -> runShips ko ships
         CLI.CmdNew n o                          -> runApp $ newShip n o
         CLI.CmdBug (CLI.CollectAllFX pax)       -> runApp $ collectAllFx pax
         CLI.CmdBug (CLI.EventBrowser pax)       -> runApp $ startBrowser pax
@@ -614,33 +614,38 @@ runShipRestarting waitForKillRequ r o = do
       putStrLn ("Ship terminated: " <> pier)
 
 
-runShips :: [(CLI.Run, CLI.Opts, Bool)] -> IO ()
-runShips = \case
-  []          -> pure ()
-  [(r, o, d)] -> runShip r o d
-  ships       -> do
-    killSignal <- newEmptyTMVarIO
+runShips :: CLI.KingOpts -> [(CLI.Run, CLI.Opts, Bool)] -> IO ()
+runShips CLI.KingOpts {..} = \case
+  []                 -> pure ()
+  [(r, o, d)]        -> runShip r o d
+  ships | sharedHttp -> error "TODO Shared HTTP not yet implemented."
+  ships              -> runMultipleShips (ships <&> \(r, o, _) -> (r, o))
+  where sharedHttp = isJust koSharedHttpPort || isJust koSharedHttpsPort
 
-    let waitForKillRequ = readTMVar killSignal
+runMultipleShips :: [(CLI.Run, CLI.Opts)] -> IO ()
+runMultipleShips ships = do
+  killSignal <- newEmptyTMVarIO
 
-    shipThreads <- for ships $ \(r, o, _) -> do
-      async (runShipRestarting waitForKillRequ r o)
+  let waitForKillRequ = readTMVar killSignal
 
-    {-
-      Since `spin` never returns, this will run until the main
-      thread is killed with an async exception.  The one we expect is
-      `UserInterrupt` which will be raised on this thread upon SIGKILL
-      or SIGTERM.
+  shipThreads <- for ships $ \(r, o) -> do
+    async (runShipRestarting waitForKillRequ r o)
 
-      Once that happens, we write to `killSignal` which will cause
-      all ships to be shut down, and then we `wait` for them to finish
-      before returning.
-    -}
-    let spin = forever (threadDelay maxBound)
-    finally spin $ do
-      putStrLn "KING IS GOING DOWN"
-      atomically (putTMVar killSignal ())
-      for_ shipThreads waitCatch
+  {-
+    Since `spin` never returns, this will run until the main
+    thread is killed with an async exception.  The one we expect is
+    `UserInterrupt` which will be raised on this thread upon SIGKILL
+    or SIGTERM.
+
+    Once that happens, we write to `killSignal` which will cause
+    all ships to be shut down, and then we `wait` for them to finish
+    before returning.
+  -}
+  let spin = forever (threadDelay maxBound)
+  finally spin $ do
+    putStrLn "KING IS GOING DOWN"
+    atomically (putTMVar killSignal ())
+    for_ shipThreads waitCatch
 
 
 --------------------------------------------------------------------------------

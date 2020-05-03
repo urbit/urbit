@@ -15,6 +15,12 @@ import System.Environment (getProgName)
 
 --------------------------------------------------------------------------------
 
+data KingOpts = KingOpts
+  { koSharedHttpPort  :: Maybe Word16
+  , koSharedHttpsPort :: Maybe Word16
+  }
+ deriving (Show)
+
 data Opts = Opts
     { oQuiet        :: Bool
     , oHashless     :: Bool
@@ -93,7 +99,7 @@ data Bug
 
 data Cmd
     = CmdNew New Opts
-    | CmdRun [(Run, Opts, Bool)]
+    | CmdRun KingOpts [(Run, Opts, Bool)]
     | CmdBug Bug
     | CmdCon FilePath
   deriving (Show)
@@ -312,8 +318,28 @@ runOneShip = (,,) <$> fmap Run pierPath <*> opts <*> df
  where
   df = switch (short 'd' <> long "daemon" <> help "Daemon mode" <> hidden)
 
+kingOpts :: Parser KingOpts
+kingOpts = do
+  koSharedHttpPort <-
+    optional
+    $  option auto
+    $  metavar "PORT"
+    <> long "shared-http-port"
+    <> help "HTTP port"
+    <> hidden
+
+  koSharedHttpsPort <-
+    optional
+    $  option auto
+    $  metavar "PORT"
+    <> long "shared-https-port"
+    <> help "HTTPS port"
+    <> hidden
+
+  pure (KingOpts{..})
+
 runShip :: Parser Cmd
-runShip = CmdRun <$> some runOneShip
+runShip = CmdRun <$> kingOpts <*> some runOneShip
 
 valPill :: Parser Bug
 valPill = do
