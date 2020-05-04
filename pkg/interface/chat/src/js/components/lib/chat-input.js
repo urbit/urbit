@@ -386,7 +386,7 @@ export class ChatInput extends Component {
             style={{ filter: state.code && 'invert(100%)', height: '100%', width: '100%' }}
             onClick={this.toggleCode}
             src="/~chat/img/CodeEval.png"
-            className="contrast-10-d bg-white bg-none-d"
+            className="contrast-10-d bg-white bg-none-d ba b--gray1-d br1"
           />
         </div>
       </div>
