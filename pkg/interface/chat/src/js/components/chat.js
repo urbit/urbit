@@ -465,6 +465,7 @@ export class ChatScreen extends Component {
           ownerContact={ownerContact}
           envelopes={props.envelopes}
           contacts={props.contacts}
+          s3={props.s3}
           placeholder="Message..."
         />
       </div>

@@ -4,6 +4,7 @@ import { GroupUpdateReducer } from '/reducers/group-update';
 import { InviteUpdateReducer } from '/reducers/invite-update';
 import { PermissionUpdateReducer } from '/reducers/permission-update';
 import { MetadataReducer } from '/reducers/metadata-update.js';
+import { S3Reducer } from '/reducers/s3.js';
 import { LocalReducer } from '/reducers/local.js';
 
 
@@ -17,6 +18,7 @@ class Store {
     this.contactUpdateReducer = new ContactUpdateReducer();
     this.inviteUpdateReducer = new InviteUpdateReducer();
     this.metadataReducer = new MetadataReducer();
+    this.s3Reducer = new S3Reducer();
     this.localReducer = new LocalReducer();
     this.setState = () => {};
   }
@@ -28,6 +30,7 @@ class Store {
       associations: {},
       permissions: {},
       invites: {},
+      s3: {},
       selectedGroups: []
     };
   }
@@ -51,6 +54,7 @@ class Store {
     this.contactUpdateReducer.reduce(json, this.state);
     this.inviteUpdateReducer.reduce(json, this.state);
     this.metadataReducer.reduce(json, this.state);
+    this.s3Reducer.reduce(json, this.state);
     this.localReducer.reduce(json, this.state);
 
     this.setState(this.state);

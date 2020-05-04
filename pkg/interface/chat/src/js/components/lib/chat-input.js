@@ -9,6 +9,7 @@ import 'codemirror/addon/display/placeholder';
 
 import { Sigil } from '/components/lib/icons/sigil';
 import { ShipSearch } from '/components/lib/ship-search';
+import { S3Upload } from '/components/lib/s3-upload';
 
 import { uxToHex } from '/lib/util';
 
@@ -266,6 +267,20 @@ export class ChatInput extends Component {
     }
   }
 
+  uploadSuccess(url) {
+    const { props } = this;
+    props.api.chat.message(
+      props.station,
+      `~${window.ship}`,
+      Date.now(),
+      { url }
+    );
+  }
+
+  uploadError(error) {
+    //  no-op for now
+  }
+
   render() {
     const { props, state } = this;
 
@@ -338,7 +353,7 @@ export class ChatInput extends Component {
         </div>
         <div
           className="fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center"
-          style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 48px)' }}
+          style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}
         >
           <CodeEditor
             options={options}
@@ -353,16 +368,23 @@ export class ChatInput extends Component {
             onChange={(e, d, v) => this.messageChange(e, d, v)}
           />
         </div>
-        <div style={{ height: '24px', width: '24px', flexBasis: 24, marginTop: 6 }}>
+        <div className="ml2 mr2"
+          style={{ height: '16px', width: '16px', flexBasis: 16, marginTop: 10 }}>
+          <S3Upload
+            configuration={props.s3.configuration}
+            credentials={props.s3.credentials}
+            uploadSuccess={this.uploadSuccess.bind(this)}
+            uploadError={this.uploadError.bind(this)}
+          />
+        </div>
+        <div style={{ height: '16px', width: '16px', flexBasis: 16, marginTop: 10 }}>
           <img
             style={{ filter: state.code && 'invert(100%)', height: '100%', width: '100%' }}
             onClick={this.toggleCode}
             src="/~chat/img/CodeEval.png"
             className="contrast-10-d bg-white bg-none-d"
           />
-
         </div>
-
       </div>
     );
   }

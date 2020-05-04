@@ -54,6 +54,7 @@ export class Subscription {
     this.subscribe('/primary', 'contact-view');
     this.subscribe('/app-name/chat', 'metadata-store');
     this.subscribe('/app-name/contacts', 'metadata-store');
+    this.subscribe('/all', 's3-store');
   }
 
   handleEvent(diff) {
