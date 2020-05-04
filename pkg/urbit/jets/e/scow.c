@@ -55,13 +55,11 @@ static
 u3_noun
 _print_da(u3_atom cor, u3_atom raw_da)
 {
-  u3l_log("about to cook");
   u3_noun hok = u3j_cook("u3we_scow_print_da", u3k(cor), "yore");
-  u3l_log("cooked");
   u3_noun yod = u3n_slam_on(hok, u3k(raw_da));
 
   u3_noun out = 0;
-  u3m_p("yod", yod);
+  //  u3m_p("yod", yod);
 
   u3_atom age, year, month, day, hour, min, sec, f;
   if (c3n == u3r_mean(yod, 4, &age,
@@ -288,15 +286,15 @@ u3we_scot(u3_noun cor)
   }
 
   switch (mod) {
-    // TODO: This causes a bail fail. why?
-    /* case c3__da: { */
-    /*   u3_noun x = _print_da(cor, atom); */
-    /*   if (x == u3_none) { */
-    /*     return x; */
-    /*   } */
-
-    /*   return u3qc_rap(3, x); */
-    /* } */
+    case c3__da: {
+      u3_noun x = _print_da(cor, atom);
+      if (x == u3_none) {
+        return x;
+      }
+      u3_noun ret = u3qc_rap(3, x);
+      u3z(x);
+      return ret;
+    }
 
     /* case 'p': */
     /*   return u3qc_rap(3, _print_p(atom)); */

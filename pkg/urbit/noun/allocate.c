@@ -1002,6 +1002,7 @@ _me_gain_use(u3_noun dog)
   u3a_box* box_u = u3a_botox(dog_w);
 
   if ( 0x7fffffff == box_u->use_w ) {
+    u3l_log("fail in _me_gain_use");
     u3m_bail(c3__fail);
   }
   else {

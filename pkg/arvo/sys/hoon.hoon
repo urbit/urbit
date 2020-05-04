@@ -2136,6 +2136,7 @@
 ~%  %tri  +
   ==
     %year  year
+    %yore  yore
   ==
 |%
 ::

@@ -91,7 +91,7 @@ u3qc_ob_fen(u3_atom r,
 
   while (1) {
     if (c3y == u3qa_lth(j, 1)) {
-      return u3qa_add(u3qa_mul(arr, a), ell);
+      return u3ka_add(u3qa_mul(arr, a), ell);
     }
 
     u3_atom f = (*prf_fun)(u3qa_sub(j, 1), ell, datum_u);
@@ -148,21 +148,20 @@ u3qc_ob_fe(u3_atom r,
             u3_atom m)
 {
   u3_atom j = 1;
-  u3_atom ell = u3qa_mod(u3k(m), u3k(a));
-  u3_atom arr = u3qa_div(u3k(m), u3k(a));
-  u3z(a);
+  u3_atom ell = u3qa_mod(m, a);
+  u3_atom arr = u3qa_div(m, a);
 
   while (1) {
     if (c3y == u3qa_gth(j, r)) {
       if (c3n == u3r_sing(u3qa_mod(r, 2), 0)) {
-        return u3qa_add(u3qa_mul(arr, a), ell);
+        return u3ka_add(u3ka_mul(arr, u3k(a)), ell);
       }
 
       if (c3y == u3r_sing(arr, a)) {
-        return u3qa_add(u3qa_mul(arr, a), ell);
+        return u3ka_add(u3ka_mul(arr, u3k(a)), ell);
       }
 
-      return u3qa_add(u3qa_mul(ell, a), arr);
+      return u3ka_add(u3ka_mul(ell, u3k(a)), arr);
     }
 
     //    u3_atom f = u3j_gate_slam(prf_u, u3nc(u3qa_sub(j, 1), arr));
@@ -170,12 +169,13 @@ u3qc_ob_fe(u3_atom r,
 
     u3_atom tmp;
     if (c3n == u3r_sing(u3qa_mod(j, 2), 0)) {
-      tmp = u3qa_mod(u3qa_add(f, ell), a);
+      tmp = u3ka_mod(u3qa_add(f, ell), u3k(a));
     } else {
-      tmp = u3qa_mod(u3qa_add(f, ell), b);
+      tmp = u3ka_mod(u3qa_add(f, ell), u3k(b));
     }
 
     j = u3qa_add(j, 1);
+    u3z(ell);
     ell = arr;
     arr = tmp;
   }
@@ -397,23 +397,32 @@ u3qc_ob_fein(u3_atom pyn)
   c3_d BIGGEST_PLANET = 0xffffffffULL;
   c3_d SMALLEST_MOON = 0x100000000ULL;
   c3_d BIGGEST_MOON = 0xffffffffffffffffULL;
-
   c3_d MOON_MASK = 0xffffffff00000000ULL;
 
-  if (c3y == u3qa_gte(u3k(pyn), 0x10000) &&
-      c3y == u3qa_lte(u3k(pyn), u3i_chubs(1, &BIGGEST_PLANET))) {
-    return u3qa_add(0x10000, u3qc_ob_feis(u3qa_sub(pyn, 0x10000)));
+  u3_atom biggest_plannet = u3i_chubs(1, &BIGGEST_PLANET);
+
+  if (c3y == u3qa_gte(pyn, 0x10000) &&
+      c3y == u3qa_lte(pyn, biggest_plannet)) {
+    u3_atom s = u3qa_sub(pyn, 0x10000);
+    u3_atom f = u3qc_ob_feis(s);
+    u3z(s);
+    u3z(biggest_plannet);
+    return u3ka_add(0x10000, f);
   }
 
-  if (c3y == u3qa_gte(u3k(pyn), u3i_chubs(1, &SMALLEST_MOON)) &&
-      c3y == u3qa_lte(u3k(pyn), u3i_chubs(1, &BIGGEST_MOON))) {
-    u3_atom lo = u3qc_dis(u3k(pyn), u3i_chubs(1, &BIGGEST_PLANET));
-    u3_atom hi = u3qc_dis(u3k(pyn), u3i_chubs(1, &MOON_MASK));
-    u3z(pyn);
-    return u3qc_con(hi, u3qc_ob_fein(lo));
+  if (c3y == u3qa_gte(pyn, u3i_chubs(1, &SMALLEST_MOON)) &&
+      c3y == u3qa_lte(pyn, u3i_chubs(1, &BIGGEST_MOON))) {
+    u3_atom lo = u3qc_dis(pyn, biggest_plannet);
+    u3_atom hi = u3qc_dis(pyn, u3i_chubs(1, &MOON_MASK));
+
+    u3_atom fein_lo = u3qc_ob_fein(lo);
+    u3z(lo);
+    u3z(biggest_plannet);
+    return u3kc_con(hi, fein_lo);
   }
 
-  return pyn;
+  u3z(biggest_plannet);
+  return u3k(pyn);
 }
 
 u3_noun
