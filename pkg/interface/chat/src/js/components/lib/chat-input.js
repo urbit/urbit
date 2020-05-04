@@ -319,8 +319,12 @@ export class ChatInput extends Component {
       extraKeys: {
         Tab: cm =>
           this.patpAutocomplete(cm.getValue(), true),
-        'Enter': cm =>
-            this.messageSubmit(),
+        'Enter': () => {
+          this.messageSubmit();
+          if (this.state.code) {
+            this.toggleCode();
+          }
+        },
         'Shift-3': cm =>
           cm.getValue().length === 0
             ? this.toggleCode()
