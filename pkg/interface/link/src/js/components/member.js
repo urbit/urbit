@@ -56,9 +56,9 @@ export class MemberScreen extends Component {
           <Link to={makeRoutePath(props.resourcePath, props.popout)}
           className="pt2 white-d">
             <h2
-              className="dib f9 fw4 v-top"
+              className="dib f9 fw4 lh-solid v-top"
               style={{ width: "max-content" }}>
-              {props.resource.title}
+              {props.resource.metadata.title}
             </h2>
           </Link>
           <LinksTabBar
@@ -70,22 +70,11 @@ export class MemberScreen extends Component {
           />
         </div>
         <div className="w-100 pl3 mt0 mt4-m mt4-l mt4-xl cf pr6">
-          <div className="w-100 w-50-l w-50-xl fl pa2 pr3 pt3 pt0-l pt0-xl">
-            <p className="f8 pb2">Members</p>
-            <p className="f9 gray2 mb3">
-              { 'Everyone with permission to use this collection.' +
-                ((isManaged && props.amOwner)
-                  ? ' Removing someone removes them from the group.'
-                  : '')
-              }
-            </p>
-            {members}
-          </div>
-          { !props.amOwner ? null : (
+          {!props.amOwner ? null : (
             <div className="w-100 w-50-l w-50-xl fl pa2 pr3 pt3 pt0-l pt0-xl">
               <p className="f8 pb2">Modify Permissions</p>
               <p className="f9 gray2 mb3">
-                { 'Invite someone to this collection.' +
+                {'Invite someone to this collection.' +
                   (isManaged
                     ? ' Adding someone adds them to the group.'
                     : '')
@@ -99,6 +88,17 @@ export class MemberScreen extends Component {
               />
             </div>
           )}
+          <div className="w-100 w-50-l w-50-xl fl pa2 pr3 pt3 pt0-l pt0-xl">
+            <p className="f8 pb2">Members</p>
+            <p className="f9 gray2 mb3">
+              { 'Everyone with permission to use this collection.' +
+                ((isManaged && props.amOwner)
+                  ? ' Removing someone removes them from the group.'
+                  : '')
+              }
+            </p>
+            {members}
+          </div>
         </div>
       </div>
     );

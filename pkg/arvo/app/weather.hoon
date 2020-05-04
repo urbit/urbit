@@ -1,4 +1,4 @@
-/+  *server, *server, default-agent
+/+  *server, *server, default-agent, verb, dbug
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
@@ -21,6 +21,8 @@
 --
 =|  state-zero
 =*  state  -
+%+  verb  |
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -32,7 +34,7 @@
     :_  this
     :~  [%pass /bind/weather %arvo %e %connect [~ /'~weather'] %weather]
         :*  %pass  /launch/weather  %agent  [our.bol %launch]  %poke
-            %launch-action  !>([%weather /weathertile '/~weather/js/tile.js'])
+            %launch-action  !>([%add %weather /weathertile '/~weather/js/tile.js'])
         ==
     ==
   ++  on-save  !>(state)

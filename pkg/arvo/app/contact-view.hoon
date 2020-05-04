@@ -9,7 +9,7 @@
     *metadata-hook,
     *permission-group-hook,
     *permission-hook
-/+  *server, *contact-json, base64, default-agent
+/+  *server, *contact-json, default-agent, dbug
 /=  index
   /^  octs
   /;  as-octs:mimes:html
@@ -45,7 +45,9 @@
 |%
 +$  card  card:agent:gall
 --
+=*  state  -
 ::
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -59,7 +61,6 @@
     :_  this
     :~  [%pass /updates %agent [our.bowl %contact-store] %watch /updates]
         [%pass / %arvo %e %connect [~ /'~groups'] %contact-view]
-        (launch-poke:cc [%contact-view /primary '/~groups/js/tile.js'])
         (contact-poke:cc [%create /~/default])
         (group-poke:cc [%bundle /~/default])
         (contact-poke:cc [%add /~/default our.bowl *contact])
@@ -146,9 +147,9 @@
   ::
       %delete
     %+  weld
-    :~  (group-poke [%unbundle path.act])
+    :~  (contact-hook-poke [%remove path.act])
+        (group-poke [%unbundle path.act])
         (contact-poke [%delete path.act])
-        (contact-hook-poke [%remove path.act])
     ==
     (delete-metadata path.act)
   ::
@@ -181,20 +182,18 @@
   ::  avatar images
   ::
       [%'~groups' %avatar @ *]
-    =/  pax=path  `path`t.t.site.url
-    ?~  pax  not-found:gen
-    =/  pas  `path`(flop pax)
-    ?~  pas  not-found:gen
-    =/  pav  `path`(flop t.pas)
-    ~&  pav+pav
-    ~&  name+name
-    =/  contact  (contact-scry `path`(weld pav [name]~))
+    =/  =path  (flop t.t.site.url)
+    ?~  path  not-found:gen
+    =/  contact  (contact-scry `^path`(snoc (flop t.path) name))
     ?~  contact  not-found:gen
     ?~  avatar.u.contact  not-found:gen
-    =*  avatar  u.avatar.u.contact
-    =/  decoded  (de:base64 q.octs.avatar)
-    ?~  decoded  not-found:gen
-    [[200 ['content-type' content-type.avatar]~] `u.decoded]
+    ?-  -.u.avatar.u.contact
+        %url   [[307 ['location' url.u.avatar.u.contact]~] ~]
+        %octt
+      =/  max-3-days  ['cache-control' 'max-age=259200']
+      =/  content-type  ['content-type' content-type.u.avatar.u.contact]
+      [[200 [content-type max-3-days ~]] `octs.u.avatar.u.contact]
+    ==
   ::
       [%'~groups' *]  (html-response:gen index)
   ==
@@ -215,11 +214,6 @@
   |=  [=ship act=contact-action]
   ^-  card
   [%pass / %agent [ship %contact-hook] %poke %contact-action !>(act)]
-::
-++  launch-poke
-  |=  act=[@tas path @t]
-  ^-  card
-   [%pass / %agent [our.bol %launch] %poke %launch-action !>(act)]
 ::
 ++  group-poke
   |=  act=group-action

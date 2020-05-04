@@ -46,6 +46,10 @@ a {
   font-family: 'Source Code Pro', monospace;
 }
 
+.bg-welcome-green {
+  background-color: #ECF6F2;
+}
+
 @media all and (max-width: 34.375em) {
   .dn-s {
     display: none;
@@ -65,8 +69,8 @@ a {
   .db-ns {
     display: block;
   }
-  .flex-basis-300-ns {
-    flex-basis: 300px;
+  .flex-basis-250-ns {
+    flex-basis: 250px;
   }
   .h-100-m-40-ns {
     height: calc(100% - 40px);
@@ -93,7 +97,14 @@ a {
 
 .NewPost {
   width: 100%;
-  height: calc(100% - 115px);
+  height: calc(100vh - 174px);
+  display: flex;
+  padding-top: 8px;
+}
+
+.EditPost {
+  width: 100%;
+  height: calc(100vh - 120px);
   display: flex;
   padding-top: 8px;
 }
@@ -156,7 +167,7 @@ a {
 .cm-s-tlon span.cm-variable-3, .cm-s-tlon span.cm-type { color: black; }
 .cm-s-tlon span.cm-property { color: black; }
 .cm-s-tlon span.cm-operator { color: black; }
-.cm-s-tlon span.cm-comment { color: black; background-color: var(--light-gray); padding:2px; border-radius: 2px;}
+.cm-s-tlon span.cm-comment { color: black; background-color: var(--light-gray); display: inline-block; border-radius: 2px;}
 .cm-s-tlon span.cm-string { color: var(--dark-gray); }
 .cm-s-tlon span.cm-string-2 { color: var(--gray); }
 .cm-s-tlon span.cm-qualifier { color: #555; }
@@ -204,7 +215,7 @@ a {
   content: "⌃";
   transform: rotate(180deg);
   position: absolute;
-  right: 4px;
+  right: 8px;
   top: 4px;
   color: #7f7f7f;
 }
@@ -231,7 +242,7 @@ a {
   display: none;
 }
 
-.md h1, .md h2, .md h3, .md h4, .md h5, .md p, .md a, .md ul, .md blockquote,.md code,.md pre {
+.md h1, .md h2, .md h3, .md h4, .md h5, .md p, .md a, .md ul, .md ol, .md blockquote,.md code,.md pre {
   font-size: 14px;
   margin-bottom: 16px;
 }
@@ -254,7 +265,7 @@ a {
 .md code, .md pre {
   font-family: "Source Code Pro", mono;
 }
-.md ul>li {
+.md ul>li, .md ol>li {
   line-height: 1.5;
 }
 .md a {
@@ -317,6 +328,9 @@ md img {
   .b--gray0-d {
     border-color: #333;
   }
+  .b--gray1-d {
+    border-color: #4d4d4d;
+  }
   .b--gray2-d {
     border-color: #7f7f7f;
   }
@@ -347,5 +361,65 @@ md img {
   .cm-s-tlon.CodeMirror {
     background: #333;
     color: #fff;
+  }
+
+  .cm-s-tlon span.cm-def {
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-variable {
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-variable-2 {
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-variable-3,
+  .cm-s-tlon span.cm-type {
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-property {
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-operator {
+    color: white;
+  }
+
+
+  .cm-s-tlon span.cm-string {
+    color: var(--gray);
+  }
+
+  .cm-s-tlon span.cm-string-2 {
+    color: var(--gray);
+  }
+
+  .cm-s-tlon span.cm-attribute {
+    color: var(--gray);
+  }
+
+  .cm-s-tlon span.cm-tag {
+    color: var(--gray);
+  }
+
+  .cm-s-tlon span.cm-link {
+    color: var(--gray);
+  }
+
+  /* set rules w/ both color & bg-color last to preserve legibility */
+  .CodeMirror-selected {
+    background: var(--medium-gray) !important;
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-comment {
+    color: black;
+    display: inline-block;
+    padding: 0;
+    background-color: rgba(255,255,255, 0.3);
+    border-radius: 2px;
   }
 }

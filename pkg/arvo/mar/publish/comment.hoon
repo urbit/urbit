@@ -40,11 +40,15 @@
       ==
     ++  both-parser
       ;~  pose
+        %+  cook
+          |=  [author=@ date-created=@da content=@t]
+          ^-  comment
+          [author date-created content %.n]
         new-parser
         %+  cook
           |=  [author=@ @ @ date-created=@da @ content=@t]
           ^-  comment
-          [author date-created content]
+          [author date-created content %.n]
         old-parser
       ==
     --

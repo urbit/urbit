@@ -118,6 +118,7 @@
       %link-view
       %metadata-store
       %metadata-hook
+      %s3-store
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -223,10 +224,11 @@
   ==
 ::
 ++  on-load
-  |=  ver=?(%1 %2)
+  |=  ver=?(%1 %2 %3)
   ?-    ver
       %1
     =<  se-abet  =<  se-view
+    =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
     =<  (se-born %home %goad)
     =<  (se-born %home %metadata-store)
     =<  (se-born %home %metadata-hook)
@@ -236,10 +238,12 @@
     =<  (se-born %home %link-store)
     =<  (se-born %home %link-proxy-hook)
     =<  (se-born %home %link-listen-hook)
-    (se-born %home %link-view)
+    =<  (se-born %home %link-view)
+    (se-born %home %s3-store)
   ::
       %2
     =<  se-abet  =<  se-view
+    =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
     =<  (se-born %home %metadata-store)
     =<  (se-born %home %metadata-hook)
     =<  (se-born %home %contact-store)
@@ -248,7 +252,22 @@
     =<  (se-born %home %link-store)
     =<  (se-born %home %link-proxy-hook)
     =<  (se-born %home %link-listen-hook)
-    (se-born %home %link-view)
+    =<  (se-born %home %link-view)
+    (se-born %home %s3-store)
+  ::
+      %3
+    =<  se-abet  =<  se-view
+    =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
+    =<  (se-born %home %metadata-store)
+    =<  (se-born %home %metadata-hook)
+    =<  (se-born %home %contact-store)
+    =<  (se-born %home %contact-hook)
+    =<  (se-born %home %contact-view)
+    =<  (se-born %home %link-store)
+    =<  (se-born %home %link-proxy-hook)
+    =<  (se-born %home %link-listen-hook)
+    =<  (se-born %home %link-view)
+    (se-born %home %s3-store)
   ==
 ::
 ++  reap-phat                                         ::  ack connect

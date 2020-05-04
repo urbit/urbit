@@ -4,7 +4,7 @@ import classnames from 'classnames';
 
 
 export class ChatTabBar extends Component {
-
+  
   render() {
     let props = this.props;
 

@@ -5,48 +5,72 @@ import urbitOb from 'urbit-ob';
 
 
 export class Subscription {
+
+  constructor() {
+    this.firstRoundComplete = false;
+    this.secondRoundComplete = false;
+  }
+
   start() {
     if (api.authTokens) {
-      this.initializeContacts();
+      this.firstRound();
+      window.urb.setOnChannelError(this.onChannelError.bind(this));
     } else {
       console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
     }
   }
 
-  initializeContacts() {
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'contact-view',
+  onChannelError(err) {
+    console.error('event source error: ', err);
+    console.log('initiating new channel');
+    this.firstRoundComplete = false;
+    this.secondRoundComplete = false;
+    setTimeout(2000, () => {
+      store.handleEvent({
+        data: { clear : true}
+      });
+      this.start();
+    });
+  }
+
+  subscribe(path, app) {
+    api.bind(path, 'PUT', api.authTokens.ship, app,
       this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'invite-view',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/all', 'PUT', api.authTokens.ship, 'group-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/all', 'PUT', api.authTokens.ship, 'metadata-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
+      (err) => {
+        console.log(err);
+        this.subscribe(path, app);
+      },
+      () => {
+        this.subscribe(path, app);
+      });
+  }
+
+  firstRound() {
+    this.subscribe('/primary', 'contact-view');
+  }
+
+  secondRound() {
+    this.subscribe('/all', 'group-store');
+    this.subscribe('/all', 'metadata-store');
+  }
+
+  thirdRound() {
+    this.subscribe('/synced', 'contact-hook');
+    this.subscribe('/primary', 'invite-view');
+    this.subscribe('/all', 's3-store');
   }
 
   handleEvent(diff) {
+    if (!this.firstRoundComplete) {
+      this.firstRoundComplete = true;
+      this.secondRound();
+    } else if (!this.secondRoundComplete) {
+      this.secondRoundComplete = true;
+      this.thirdRound();
+    }
     store.handleEvent(diff);
   }
 
-  handleError(err) {
-    console.error(err);
-  }
-
-  handleQuitSilently(quit) {
-    // no-op
-  }
-
-  handleQuitAndResubscribe(quit) {
-    // TODO: resubscribe
-  }
 }
 
 export let subscription = new Subscription();

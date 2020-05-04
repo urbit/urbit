@@ -496,7 +496,7 @@
             ;input
               =type  "password"
               =name  "password"
-              =placeholder  "~sampel-ticlyt-migfun-falmel"
+              =placeholder  "sampel-ticlyt-migfun-falmel"
               =class  "mono"
               =autofocus  "true";
             ;input(type "hidden", name "redirect", value redirect-str);
@@ -1101,11 +1101,12 @@
             complete=%.y
         ==
       ::
+      =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
       %-  handle-response
       :*  %start
           :-  status-code=307
           ^=  headers
-            :~  ['location' u.redirect]
+            :~  ['location' actual-redirect]
                 ['set-cookie' cookie-line]
             ==
           data=~
@@ -1221,7 +1222,7 @@
       ::  lookup the session id by duct
       ::
       ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
-        ~&  [%canceling-nonexistant-channel duct]
+        ~&  [%canceling-nonexistent-channel duct]
         [~ state]
       ::
       ~&  [%canceling-cancel duct]

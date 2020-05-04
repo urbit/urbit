@@ -11,8 +11,7 @@ class UrbitApi {
     this.bindPaths = [];
 
     this.contactHook = {
-      edit: this.contactEdit.bind(this),
-      remove: this.contactRemove.bind(this)
+      edit: this.contactEdit.bind(this)
     };
 
     this.contactView = {
@@ -22,7 +21,8 @@ class UrbitApi {
     };
 
     this.group = {
-      add: this.groupAdd.bind(this)
+      add: this.groupAdd.bind(this),
+      delete: this.groupRemove.bind(this)
     };
 
     this.invite = {
@@ -68,13 +68,13 @@ class UrbitApi {
     return this.action("contact-view", "json", data);
   }
 
-  contactCreate(path, ships = [], title) {
+  contactCreate(path, ships = [], title, description) {
     return this.contactViewAction({
       create: {
         path,
         ships,
         title,
-        description: ''
+        description
       }
     });
   }
@@ -83,6 +83,12 @@ class UrbitApi {
     return this.action("group-store", "group-action", {
       add: { members: ships, path }
     });
+  }
+
+  groupRemove(path, ships) {
+    return this.action("group-store", "group-action", {
+      remove: { members: ships, path }
+    })
   }
 
   contactShare(recipient, path, ship, contact) {
@@ -101,14 +107,6 @@ class UrbitApi {
     return this.action("contact-hook", "contact-action", data);
   }
 
-  contactRemove(path, ship) {
-    return this.contactHookAction({
-      remove: {
-        path, ship
-      }
-    });
-  }
-
   contactEdit(path, ship, editField) {
     /* editField can be...
     {nickname: ''}
@@ -118,7 +116,7 @@ class UrbitApi {
     {notes: ''}
     {color: 'fff'}  // with no 0x prefix
     {avatar: null}
-    {avatar: {p: length, q: bytestream}}
+    {avatar: {url: ''}}
     */
     return this.contactHookAction({
       edit: {
@@ -149,11 +147,36 @@ class UrbitApi {
     });
   }
 
-  setSpinner(boolean) {
+  metadataAction(data) {
+    console.log(data);
+    return this.action("metadata-hook", "metadata-action", data);
+  }
+
+  metadataAdd(appPath, groupPath, title, description, dateCreated, color) {
+    let creator = `~${window.ship}`;
+    return this.metadataAction({
+      add: {
+        "group-path": groupPath,
+        resource: {
+          "app-path": appPath,
+          "app-name": "contacts"
+        },
+        metadata: {
+          title,
+          description,
+          color,
+          'date-created': dateCreated,
+          creator
+        }
+      }
+    })
+  }
+
+  setSelected(selected) {
     store.handleEvent({
       data: {
         local: {
-          spinner: boolean
+          selected: selected
         }
       }
     })

@@ -5,6 +5,7 @@ import { NotebookPosts } from './notebook-posts';
 import { Subscribers } from './subscribers';
 import { Settings } from './settings';
 import Sidebar from './sidebar';
+import { cite } from '../../lib/util';
 
 export class Notebook extends Component {
   constructor(props){
@@ -98,7 +99,7 @@ export class Notebook extends Component {
                   list={notesList}
                   host={props.ship}
                   notebookName={props.book}
-                  contacts={props.contacts}
+                  contacts={props.notebookContacts}
                   />
         break;
       case "about":
@@ -118,6 +119,8 @@ export class Notebook extends Component {
                   book={this.props.book}
                   notebook={notebook}
                   groups={this.props.groups}
+                  contacts={this.props.contacts}
+                  associations={this.props.associations}
                   history={this.props.history}/>
         break;
       default:
@@ -125,12 +128,16 @@ export class Notebook extends Component {
     }
 
     // displaying nicknames, sigil colors for contacts
-    let contact = !!(props.ship.substr(1) in props.contacts)
-      ? props.contacts[props.ship.substr(1)] : false;
+    let contact = !!(props.ship.substr(1) in props.notebookContacts)
+      ? props.notebookContacts[props.ship.substr(1)] : false;
     let name = props.ship;
     if (contact) {
       name = (contact.nickname.length > 0)
         ? contact.nickname : props.ship;
+    }
+
+    if (name === props.ship) {
+      name = cite(props.ship);
     }
 
     let popout = (props.popout) ? "popout/" : "";
@@ -172,64 +179,67 @@ export class Notebook extends Component {
 
     return (
       <div
-        className="center mw6 f9 h-100"
-        style={{ paddingLeft: 16, paddingRight: 16 }}>
-        <SidebarSwitcher
-          popout={props.popout}
-          sidebarShown={props.sidebarShown}
-        />
+        className="overflow-y-scroll"
+        style={{ paddingLeft: 16, paddingRight: 16 }}
+        onScroll={this.onScroll}
+        ref={el => {
+          this.scrollElement = el;
+        }}>
         <div className="w-100 dn-m dn-l dn-xl inter pt4 pb6 f9">
           <Link to="/~publish">{"<- All Notebooks"}</Link>
         </div>
-        <Link
-        className={"dn absolute right-1 top-1 " + hiddenOnPopout}
-        to={popoutHref}
-        target="_blank"
-        >
-          <img src="/~publish/popout.png"
-            height={16}
-            width={16}
+        <div className="center mw6 f9 h-100"
+          style={{ paddingLeft: 16, paddingRight: 16 }}>
+          <SidebarSwitcher
+            popout={props.popout}
+            sidebarShown={props.sidebarShown}
           />
-        </Link>
-        <div
-          className="h-100 pt0 pt8-m pt8-l pt8-xl overflow-container no-scrollbar"
-          onScroll={this.onScroll}
-          ref={el => {
-            this.scrollElement = el;
-          }}>
-          <div
-            className="flex justify-between"
-            style={{ marginBottom: 32 }}>
-            <div className="flex-col">
-              <div className="mb1">{notebook.title}</div>
-              <span>
-                <span className="gray3 mr1">by</span>
-                <span className={props.ship === name ? "mono" : ""}>
-                  {name}
+          <Link
+          className={"dn absolute right-1 top-1 " + hiddenOnPopout}
+          to={popoutHref}
+          target="_blank"
+          >
+            <img src="/~publish/popout.png"
+              height={16}
+              width={16}
+            />
+          </Link>
+          <div className="h-100 pt0 pt8-m pt8-l pt8-xl no-scrollbar">
+            <div
+              className="flex justify-between"
+              style={{ marginBottom: 32 }}>
+              <div className="flex-col">
+                <div className="mb1">{notebook.title}</div>
+                <span>
+                  <span className="gray3 mr1">by</span>
+                  <span className={contact.nickname ? null : "mono"}
+                  title={props.ship}>
+                    {name}
+                  </span>
                 </span>
-              </span>
+              </div>
+              <div className="flex">
+                {newPost}
+                {unsub}
+              </div>
             </div>
-            <div className="flex">
-              {newPost}
-              {unsub}
+
+            <div className="flex" style={{ marginBottom: 24 }}>
+              <Link to={base} className={tabStyles.posts}>
+                All Posts
+              </Link>
+              <Link to={about} className={tabStyles.about}>
+                About
+              </Link>
+              {subsComponent}
+              {settingsComponent}
+              <div className="bb b--gray4 b--gray2-d gray2 pv4 ph2"
+                style={{ flexGrow: 1 }}></div>
             </div>
-          </div>
 
-          <div className="flex" style={{ marginBottom: 24 }}>
-            <Link to={base} className={tabStyles.posts}>
-              All Posts
-            </Link>
-            <Link to={about} className={tabStyles.about}>
-              About
-            </Link>
-            {subsComponent}
-            {settingsComponent}
-            <div className="bb b--gray4 b--gray2-d gray2 pv4 ph2"
-              style={{ flexGrow: 1 }}></div>
-          </div>
-
-          <div style={{ height: "calc(100% - 188px)" }} className="f9 lh-solid">
-            {inner}
+            <div style={{ height: "calc(100% - 188px)" }} className="f9 lh-solid">
+              {inner}
+            </div>
           </div>
         </div>
       </div>

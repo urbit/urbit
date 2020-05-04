@@ -42,6 +42,7 @@
   /^  (map knot @)
   /:  /===/app/chat/img  /_  /png/
 ::
+~%  %chat-view-top  ..is  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -58,6 +59,7 @@
 %-  agent:dbug
 ^-  agent:gall
 =<
+  ~%  %chat-view-agent-core  ..poke-handle-http-request  ~
   |_  bol=bowl:gall
   +*  this       .
       chat-core  +>
@@ -66,13 +68,14 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =/  launcha  [%launch-action !>([%chat-view /configs '/~chat/js/tile.js'])]
+    =/  launcha  [%launch-action !>([%add %chat-view /configs '/~chat/js/tile.js'])]
     :_  this
     :~  [%pass /updates %agent [our.bol %chat-store] %watch /updates]
         [%pass / %arvo %e %connect [~ /'~chat'] %chat-view]
         [%pass /chat-view %agent [our.bol %launch] %poke launcha]
     ==
   ++  on-poke
+    ~/  %chat-view-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?>  (team:title our.bol src.bol)
@@ -94,6 +97,7 @@
     ==
   ::
   ++  on-watch
+    ~/  %chat-view-watch
     |=  =path
     ^-  (quip card _this)
     ?>  (team:title our.bol src.bol)
@@ -101,7 +105,7 @@
     ?:  ?=([%http-response *] path)
       [~ this]
     ?:  =(/primary path)
-      ::  create inbox with 100 messages max per mailbox and send that along
+      ::  create inbox with 20 messages max per mailbox and send that along
       ::  then quit the subscription
       :_  this
       [%give %fact ~ %json !>((inbox-to-json truncated-inbox-scry))]~
@@ -109,24 +113,19 @@
       [[%give %fact ~ %json !>(*json)]~ this]
     (on-watch:def path)
     ::
+    ++  message-limit  20
+    ::
     ++  truncated-inbox-scry
       ^-  inbox
       =/  =inbox  .^(inbox %gx /=chat-store/(scot %da now.bol)/all/noun)
       %-  ~(run by inbox)
       |=  =mailbox
       ^-  ^mailbox
-      [config.mailbox (truncate-envelopes envelopes.mailbox)]
-    ::
-    ++  truncate-envelopes
-      |=  envelopes=(list envelope)
-      ^-  (list envelope)
-      =/  length  (lent envelopes)
-      ?:  (lth length 100)
-        envelopes
-      (swag [(sub length 100) 100] envelopes)
+      [config.mailbox (scag message-limit envelopes.mailbox)]
     --
   ::
   ++  on-agent
+    ~/  %chat-view-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     ?+    -.sign  (on-agent:def wire sign)
@@ -143,6 +142,7 @@
     ==
   ::
   ++  on-arvo
+    ~/  %chat-view-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     ?.  ?=(%bound +<.sign-arvo)
@@ -157,6 +157,7 @@
   --
 ::
 ::
+~%  %chat-view-library  ..card  ~
 |_  bol=bowl:gall
 ::
 ++  poke-handle-http-request
@@ -207,7 +208,7 @@
       ~&  %chat-already-exists
       ~
     %-  zing
-    :~  (create-chat app-path.act security.act allow-history.act)
+    :~  (create-chat app-path.act allow-history.act)
         %-  create-group
         :*  group-path.act
             app-path.act
@@ -220,20 +221,29 @@
     ==
   ::
       %delete
-    =/  group-path  (group-from-chat app-path.act)
     ?>  ?=(^ app-path.act)
+    ::  always just delete the chat from chat-store
+    ::
+    :+  (chat-hook-poke [%remove app-path.act])
+      (chat-poke [%delete app-path.act])
+    ::  if we still have metadata for the chat, remove it, and the associated
+    ::  group if it's unmanaged
+    ::
+    ::    we aren't guaranteed to have metadata: the chat might have been
+    ::    deleted by the host, which pushes metadata deletion down to us.
+    ::
+    =/  group-path=(unit path)
+      (maybe-group-from-chat app-path.act)
+    ?~  group-path  ~
+    =*  group  u.group-path
     %-  zing
-    :~  :~  (chat-hook-poke [%remove app-path.act])
-            (chat-poke [%delete app-path.act])
-        ==
+    :~  ?.  (is-creator group %chat app-path.act)  ~
+        [(metadata-poke [%remove group [%chat app-path.act]])]~
       ::
-        ?.  (is-creator group-path %chat app-path.act)  ~
-        [(metadata-poke [%remove group-path [%chat app-path.act]])]~
-      ::
-        ?:  (is-managed group-path)  ~
-        :~  (group-poke [%unbundle group-path])
-            (metadata-hook-poke [%remove group-path])
-            (metadata-store-poke [%remove group-path [%chat app-path.act]])
+        ?:  (is-managed group)  ~
+        :~  (group-poke [%unbundle group])
+            (metadata-hook-poke [%remove group])
+            (metadata-store-poke [%remove group [%chat app-path.act]])
         ==
     ==
   ::
@@ -245,25 +255,87 @@
         (permission-hook-poke [%add-synced ship.act group-path])
         (metadata-hook-poke [%add-synced ship.act group-path])
     ==
+  ::
+      %groupify
+    ?>  ?=([%'~' ^] app-path.act)
+    ::  retrieve old data
+    ::
+    =/  data=(unit mailbox)
+      (scry-for (unit mailbox) %chat-store [%mailbox app-path.act])
+    ?~  data
+      ~&  [%cannot-groupify-nonexistent app-path.act]
+      ~
+    =/  permission=(unit permission)
+      (scry-for (unit permission) %permission-store [%permission app-path.act])
+    ?:  |(?=(~ permission) ?=(%black kind.u.permission))
+      ~&  [%cannot-groupify-blacklist app-path.act]
+      ~
+    =/  =metadata
+      =-  (fall - *metadata)
+      %^  scry-for  (unit metadata)
+        %metadata-store
+      =/  encoded-path=@ta
+        (scot %t (spat app-path.act))
+      /metadata/[encoded-path]/chat/[encoded-path]
+    ::  figure out new data
+    ::
+    =/  chat-path=^path      (slag 1 `path`app-path.act)
+    ::  group-path: the group to associate with the chat
+    ::  members: members of group, if it's new
+    ::  new-members: new members of group, if it already exists
+    ::
+    =/  [group-path=path members=(set ship) new-members=(set ship)]
+      ?~  existing.act
+        [chat-path who.u.permission ~]
+      :+  group-path.u.existing.act
+        ~
+      ?.  inclusive.u.existing.act  ~
+      %-  ~(dif in who.u.permission)
+      ~|  [%groupifying-with-nonexistent-group group-path.u.existing.act]
+      %-  need
+      (group-scry group-path.u.existing.act)
+    ::  make changes
+    ::
+    ;:  weld
+      ::  delete the old chat
+      ::
+      (poke-chat-view-action %delete app-path.act)
+    ::
+      ::  create the new chat. if needed, creates the new group.
+      ::
+      %-  poke-chat-view-action
+      :*  %create
+          title.metadata
+          description.metadata
+          chat-path
+          group-path
+          %village
+          members
+          &
+      ==
+    ::
+      ::  if needed, add members to the existing group
+      ::
+      ?~  new-members  ~
+      [(group-poke [%add new-members group-path])]~
+    ::
+      ::  import messages into the new chat
+      ::
+      [(chat-poke %messages chat-path envelopes.u.data)]~
+    ==
   ==
   ::
   ++  create-chat
-    |=  [=path security=rw-security history=?]
+    |=  [=path history=?]
     ^-  (list card)
     :~  (chat-poke [%create path])
-        (chat-hook-poke [%add-owned path security history])
+        (chat-hook-poke [%add-owned path history])
     ==
   ::
   ++  create-group
     |=  [=path app-path=path sec=rw-security ships=(set ship) title=@t desc=@t]
     ^-  (list card)
-    =/  group  (group-scry path)
-    ?^  group
-      %-  zing
-      %+  turn  ~(tap in u.group)
-      |=  =ship
-      ?:  =(ship our.bol)  ~
-      [(send-invite app-path ship)]~
+    ?^  (group-scry path)  ~
     ::  do not create a managed group if this is a sig path or a blacklist
     ::
     ?:  =(sec %channel)
@@ -273,11 +345,17 @@
       ==
     ?:  (is-managed path)
       ~[(contact-view-poke [%create path ships title desc])]
-    :~  (group-poke [%bundle path])
-        (group-poke [%add ships path])
-        (create-security path sec)
-        (permission-hook-poke [%add-owned path path])
-    ==
+    %+  welp
+      :~  (group-poke [%bundle path])
+          (group-poke [%add ships path])
+          (create-security path sec)
+          (permission-hook-poke [%add-owned path path])
+      ==
+    %-  zing
+    %+  turn  ~(tap in ships)
+    |=  =ship
+    ?:  =(ship our.bol)  ~
+    [(send-invite app-path ship)]~
   ::
   ++  create-security
     |=  [pax=path sec=rw-security]
@@ -347,13 +425,13 @@
     =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
     .^((unit mailbox) %gx pax)
   ::
-  ++  group-from-chat
+  ++  maybe-group-from-chat
     |=  app-path=path
-    ^-  path
+    ^-  (unit path)
     ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
       ?:  ?=([@ ^] app-path)
         ~&  [%assuming-ported-legacy-chat app-path]
-        [%'~' app-path]
+        `[%'~' app-path]
       ~&  [%weird-chat app-path]
       !!
     =/  resource-indices
@@ -364,8 +442,15 @@
         (scot %da now.bol)
         /resource-indices
       ==
-    =/  groups=(set path)  (~(got by resource-indices) [%chat app-path])
-    (snag 0 ~(tap in groups))
+    =/  groups=(set path)
+      %+  fall
+        (~(get by resource-indices) [%chat app-path])
+      *(set path)
+    ?~  groups  ~
+    `n.groups
+  ::
+  ++  group-from-chat
+    (cork maybe-group-from-chat need)
   ::
   ++  is-managed
     |=  =path
@@ -440,16 +525,24 @@
 ++  envelope-scry
   |=  pax=path
   ^-  (list envelope)
-  =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/envelopes pax /noun)
-  .^((list envelope) %gx pax)
+  (scry-for (list envelope) %chat-store [%envelopes pax])
 ::
 ++  configs-scry
   ^-  chat-configs
-  .^(chat-configs %gx /=chat-store/(scot %da now.bol)/configs/noun)
+  (scry-for chat-configs %chat-store /configs)
 ::
 ++  group-scry
   |=  pax=path
   ^-  (unit group)
-  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
+  (scry-for (unit group) %group-store pax)
 ::
+++  scry-for
+  |*  [=mold app=term =path]
+  .^  mold
+    %gx
+    (scot %p our.bol)
+    app
+    (scot %da now.bol)
+    (snoc `^path`path %noun)
+  ==
 --

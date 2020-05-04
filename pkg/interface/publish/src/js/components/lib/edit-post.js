@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { SidebarSwitcher } from './icons/icon-sidebar-switch';
+import { Spinner } from './icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { dateToDa } from '/lib/util';
@@ -11,7 +12,8 @@ export class EditPost extends Component {
     super(props);
     this.state = {
       body: '',
-      submit: false
+      submit: false,
+      awaiting: false
     }
     this.postSubmit = this.postSubmit.bind(this);
     this.bodyChange = this.bodyChange.bind(this);
@@ -29,7 +31,7 @@ export class EditPost extends Component {
       let notebook = props.notebooks[props.ship][props.book];
       let note = notebook.notes[props.note];
       let file = note.file;
-      let body = file.slice(file.indexOf(';>') + 2);
+      let body = file.slice(file.indexOf(';>') + 3);
       this.setState({body: body});
     }
   }
@@ -48,11 +50,11 @@ export class EditPost extends Component {
         body: state.body
       }
     }
-    window.api.setSpinner(true);
+    this.setState({awaiting: true});
     window.api.action("publish", "publish-action", editNote).then(() => {
       let editIndex = props.location.pathname.indexOf("/edit");
       let noteHref = props.location.pathname.slice(0, editIndex);
-      window.api.setSpinner(false);
+      this.setState({awaiting: false});
       props.history.push(noteHref);
     });
   }
@@ -98,7 +100,7 @@ export class EditPost extends Component {
             popout={props.popout}
           />
           <button
-            className="v-mid w-100 mw6 tl h1 pl4"
+            className="v-mid bg-transparent w-100 w-80-m w-90-l mw6 tl h1 pl4"
             disabled={!state.submit}
             style={submitStyle}
             onClick={this.postSubmit}>
@@ -114,17 +116,18 @@ export class EditPost extends Component {
           />
         </Link>
         </div>
-        <div className="overflow-container mw6 center">
+        <div className="mw6 center">
         <div className="pl4">
           <div className="gray2">{date}</div>
         </div>
-        <div className="NewPost">
+        <div className="EditPost">
           <CodeMirror
             value={state.body}
             options={options}
             onBeforeChange={(e, d, v) => this.bodyChange(e, d, v)}
             onChange={(editor, data, value) => {}}
           />
+            <Spinner text="Editing post..." awaiting={this.state.awaiting} classes="absolute bottom-1 right-1 ba b--gray1-d pa2"/>
         </div>
         </div>
       </div>

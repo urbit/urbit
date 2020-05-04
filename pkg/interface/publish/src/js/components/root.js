@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Link } from "react-router-dom";
+import _ from 'lodash';
 import { store } from '/store';
 import { api } from '/api';
 import { Skeleton } from '/components/skeleton';
@@ -15,14 +16,35 @@ export class Root extends Component {
   constructor(props) {
     super(props);
 
+    this.unreadTotal = 0;
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
+  }
+
+  componentDidMount() {
+    //preload spinner asset
+    new Image().src = "/~publish/Spinner.png";
   }
 
   render() {
     const { props, state } = this;
 
     let contacts = !!state.contacts ? state.contacts : {};
+    let associations = !!state.associations ? state.associations : {contacts: {}}
+    let selectedGroups = !!state.selectedGroups ? state.selectedGroups : [];
+
+    const unreadTotal = _.chain(state.notebooks)
+                         .values()
+                         .map(_.values)
+                         .flatten() // flatten into array of notebooks
+                         .map('num-unread')
+                         .reduce((acc, count) => acc + count, 0)
+                         .value();
+
+    if(this.unreadTotal !== unreadTotal) {
+      document.title = unreadTotal > 0 ? `Publish - (${unreadTotal})` : 'Publish';
+      this.unreadTotal = unreadTotal;
+    }
 
     return (
       <BrowserRouter>
@@ -34,9 +56,10 @@ export class Root extends Component {
               active={"sidebar"}
               rightPanelHide={true}
               sidebarShown={true}
-              spinner={state.spinner}
               invites={state.invites}
               notebooks={state.notebooks}
+              associations={associations}
+              selectedGroups={selectedGroups}
               contacts={contacts}>
                 <div className={`h-100 w-100 overflow-x-hidden flex flex-column
                  bg-white bg-gray0-d dn db-ns`}>
@@ -58,11 +81,13 @@ export class Root extends Component {
             active={"rightPanel"}
             rightPanelHide={false}
             sidebarShown={state.sidebarShown}
-            spinner={state.spinner}
             invites={state.invites}
             notebooks={state.notebooks}
+            associations={associations}
+            selectedGroups={selectedGroups}
             contacts={contacts}>
               <NewScreen
+                associations={associations.contacts}
                 notebooks={state.notebooks}
                 groups={state.groups}
                 contacts={contacts}
@@ -82,9 +107,10 @@ export class Root extends Component {
                   active={"rightPanel"}
                   rightPanelHide={false}
                   sidebarShown={state.sidebarShown}
-                  spinner={state.spinner}
                   invites={state.invites}
                   notebooks={state.notebooks}
+                  associations={associations}
+                  selectedGroups={selectedGroups}
                   contacts={contacts}>
                     <JoinScreen
                     notebooks={state.notebooks}
@@ -109,6 +135,7 @@ export class Root extends Component {
 
           let bookGroupPath =
           state.notebooks[ship][notebook]["subscribers-group-path"];
+
           let notebookContacts = (bookGroupPath in contacts)
             ? contacts[bookGroupPath] : {};
 
@@ -119,9 +146,10 @@ export class Root extends Component {
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={state.sidebarShown}
-                spinner={state.spinner}
                 invites={state.invites}
                 notebooks={state.notebooks}
+                associations={associations}
+                selectedGroups={selectedGroups}
                 contacts={contacts}
                 path={path}>
                 <NewPost
@@ -142,10 +170,11 @@ export class Root extends Component {
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={state.sidebarShown}
-                spinner={state.spinner}
                 invites={state.invites}
                 notebooks={state.notebooks}
+                associations={associations}
                 contacts={contacts}
+                selectedGroups={selectedGroups}
                 path={path}>
                 <Notebook
                   notebooks={state.notebooks}
@@ -153,7 +182,9 @@ export class Root extends Component {
                   ship={ship}
                   book={notebook}
                   groups={state.groups}
-                  contacts={notebookContacts}
+                  contacts={contacts}
+                  notebookContacts={notebookContacts}
+                  associations={associations.contacts}
                   sidebarShown={state.sidebarShown}
                   popout={popout}
                   permissions={state.permissions}
@@ -186,9 +217,10 @@ export class Root extends Component {
               active={"rightPanel"}
               rightPanelHide={false}
               sidebarShown={state.sidebarShown}
-              spinner={state.spinner}
               invites={state.invites}
               notebooks={state.notebooks}
+              selectedGroups={selectedGroups}
+              associations={associations}
               contacts={contacts}
               path={path}>
               <EditPost
@@ -209,9 +241,10 @@ export class Root extends Component {
                 active={"rightPanel"}
                 rightPanelHide={false}
                 sidebarShown={state.sidebarShown}
-                spinner={state.spinner}
                 invites={state.invites}
                 notebooks={state.notebooks}
+                associations={associations}
+                selectedGroups={selectedGroups}
                 contacts={contacts}
                 path={path}>
                 <Note
@@ -234,4 +267,4 @@ export class Root extends Component {
   }
 }
 
-export default Root
+export default Root;

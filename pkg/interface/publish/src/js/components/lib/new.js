@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { InviteSearch } from './invite-search';
+import { Spinner } from './icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { uuid, isPatTa, deSig, stringToSymbol } from "/lib/util";
 import urbitOb from 'urbit-ob';
@@ -30,7 +31,6 @@ export class NewScreen extends Component {
     const { props, state } = this;
     if (props.notebooks && (("~" + window.ship) in props.notebooks)) {
       if (state.awaiting in props.notebooks["~" + window.ship]) {
-        props.api.setSpinner(false);
         let notebook = `/~${window.ship}/${state.awaiting}`;
         props.history.push("/~publish/notebook" + notebook);
       }
@@ -93,10 +93,9 @@ export class NewScreen extends Component {
         group: groupInfo
       }
     }
-
     this.setState({awaiting: bookId, disabled: true}, () => {
-      props.api.setSpinner(true);
-      props.api.action("publish", "publish-action", action);
+      props.api.action("publish", "publish-action", action).then(() => {
+      });
     });
   }
 
@@ -107,7 +106,7 @@ export class NewScreen extends Component {
 
     let createClasses = "pointer db f9 green2 bg-gray0-d ba pv3 ph4 mv7 b--green2";
     if (!this.state.idName || this.state.disabled) {
-      createClasses = "pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 mv7 b--gray3";
+      createClasses = "db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 mv7 b--gray3";
     }
 
     let createGroupToggle =
@@ -134,7 +133,7 @@ export class NewScreen extends Component {
           Notebook must have a valid name.
         </span>
       );
-    }
+      }
 
     return (
       <div
@@ -184,9 +183,11 @@ export class NewScreen extends Component {
             (Optional)
           </span>
           </p>
-          <p className="f9 gray2 db mb2 pt1">Select an initial read-only audience for your notebook</p>
+          <p className="f9 gray2 db mb2 pt1">Selected ships will be invited to read your notebook. Selected groups will be invited to read and write notes.</p>
           <InviteSearch
+            associations={this.props.associations}
             groupResults={true}
+            shipResults={true}
             groups={this.props.groups}
             contacts={this.props.contacts}
             invites={this.state.invites}
@@ -199,6 +200,7 @@ export class NewScreen extends Component {
           className={createClasses}>
           Create Notebook
           </button>
+          <Spinner awaiting={this.state.awaiting} classes="mt3" text="Creating notebook..."/>
         </div>
       </div>
     );

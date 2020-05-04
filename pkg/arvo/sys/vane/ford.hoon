@@ -3165,10 +3165,12 @@
       ?~  q.parsed
         =/  =path  (rail-to-path source-rail)
         %-  return-error
-        :-  :-  %leaf
-            %+  weld  "ford: %hood: syntax error at "
-            "[{<p.p.parsed>} {<q.p.parsed>}] in {<path>}"
-        ~
+        =/  lyn  p.p.parsed
+        =/  col  q.p.parsed
+        :~  leaf+(runt [(dec col) '-'] "^")
+            leaf+(trip (snag (dec lyn) (to-wain:format q.q.as-cage)))
+            leaf+"ford: %hood: syntax error at [{<lyn>} {<col>}] in {<path>}"
+        ==
       ::
       (return-result %success %hood p.u.q.parsed)
     ::

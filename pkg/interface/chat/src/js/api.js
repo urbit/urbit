@@ -24,6 +24,11 @@ class UrbitApi {
       create: this.chatViewCreate.bind(this),
       delete: this.chatViewDelete.bind(this),
       join: this.chatViewJoin.bind(this),
+      groupify: this.chatViewGroupify.bind(this)
+    };
+
+    this.chatHook = {
+      addSynced: this.chatHookAddSynced.bind(this)
     };
 
     this.invite = {
@@ -67,7 +72,7 @@ class UrbitApi {
 
   addPendingMessage(msg) {
     if (store.state.pendingMessages.has(msg.path)) {
-      store.state.pendingMessages.get(msg.path).push(msg.envelope);
+      store.state.pendingMessages.get(msg.path).unshift(msg.envelope);
     } else {
       store.state.pendingMessages.set(msg.path, [msg.envelope]);
     }
@@ -115,13 +120,26 @@ class UrbitApi {
       }
     };
 
-    this.action("chat-hook", "json", data);
+    this.action("chat-hook", "json", data).then(() => {
+      this.chatRead(path);
+    })
     data.message.envelope.author = data.message.envelope.author.substr(1);
     this.addPendingMessage(data.message);
   }
 
   chatRead(path, read) {
     this.chatAction({ read: { path } });
+  }
+
+
+  chatHookAddSynced(ship, path, askHistory) {
+    return this.action("chat-hook", "chat-hook-action", {
+      'add-synced': {
+        ship,
+        path,
+        'ask-history': askHistory
+      }
+    });
   }
 
   chatViewAction(data) {
@@ -157,6 +175,17 @@ class UrbitApi {
         'ask-history': askHistory
       }
     });
+  }
+
+  chatViewGroupify(path, group = null, inclusive = false) {
+    let action = { groupify: { 'app-path': path, existing: null } };
+    if (group) {
+      action.groupify.existing = {
+        'group-path': group,
+        inclusive: inclusive
+      }
+    }
+    return this.chatViewAction(action);
   }
 
   inviteAction(data) {
@@ -219,11 +248,11 @@ class UrbitApi {
     });
   }
 
-  setSpinner(boolean) {
+  setSelected(selected) {
     store.handleEvent({
       data: {
         local: {
-          spinner: boolean
+          selected: selected
         }
       }
     })

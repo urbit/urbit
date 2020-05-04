@@ -146,7 +146,7 @@
   ?^  old  [u.old tbl]
   ::
   =/  i=xkey  next.tbl
-  =/  x=xray  [i ty d ~ ~ ~ ~ ~ ~ ~ ~]
+  =/  x=xray  [i ty d ~ ~ ~ ~ ~ ~ ~]
   ::
   =.  next.tbl      +(next.tbl)
   =.  xrays.tbl     (~(put by xrays.tbl) i x)
@@ -348,9 +348,6 @@
     |=  [st=xtable [subject-of-note=type =note] x=xray]
     ^-  [xray xtable]
     ?-  -.note
-      %spot
-        =.  x  x(spot `p.note)
-        [x st]
       %help  :_  st  x(helps (~(put in helps.x) p.note))
       %know  :_  st  x(studs (~(put in studs.x) p.note))
       %made  =^  recipe  st
@@ -397,11 +394,7 @@
       ?:  =(%wet q.p.coil)  (post-xray st %noun `%noun)
       ?:  =(0 core-depth)   (post-xray st %noun `%noun)
       =.  core-depth        (dec core-depth)
-      =/  typ=type
-        [%hold ctx hoon]
-      ?:  ?=([%dbug *] hoon)
-        (main st [%hint [typ %spot p.hoon] typ])
-      (main st typ)
+      (main st [%hold ctx hoon])
     ::
     [[%core p.coil payload-xkey batt] st]
   ::
@@ -544,12 +537,8 @@
                    [studs.acc ~(tap in studs.ref-xray)]
                  |=  [acc=(set stud) new=stud]
                  (~(put in acc) new)
-    =/  spot
-      ?~  spot.ref-xray
-        spot.acc
-      spot.ref-xray
     ::
-    acc(helps helps, studs studs, recipes recipes, spot spot)
+    acc(helps helps, studs studs, recipes recipes)
   ::
   ::  Note that the `xroles` and `pats` fields may contain references
   ::  to other xrays as well. We don't bother to update those, because this
@@ -1234,7 +1223,7 @@
     =/  old=(unit xkey)  (~(get by type-map.st) ty)
     ?^  old  [u.old st]
     =/  xkey          next.st
-    =/  res=xray     [xkey ty `d ~ ~ ~ ~ ~ ~ ~ `%.n]
+    =/  res=xray     [xkey ty `d ~ ~ ~ ~ ~ ~ `%.n]
     =.  next.st      +(xkey)
     =.  xrays.st     (~(put by xrays.st) xkey.res res)
     =.  type-map.st  (~(put by type-map.st) type.res xkey.res)

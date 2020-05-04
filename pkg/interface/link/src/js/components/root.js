@@ -10,6 +10,7 @@ import { Skeleton } from '/components/skeleton';
 import { NewScreen } from '/components/new';
 import { MemberScreen } from '/components/member';
 import { SettingsScreen } from '/components/settings';
+import { MessageScreen } from '/components/lib/message-screen';
 import { Links } from '/components/links-list';
 import { LinkDetail } from '/components/link';
 import { makeRoutePath, amOwnerOfGroup, base64urlDecode } from '../lib/util';
@@ -23,8 +24,14 @@ export class Root extends Component {
   constructor(props) {
     super(props);
 
+    this.totalUnseen = 0;
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
+  }
+
+  componentDidMount() {
+    //preload spinner asset
+    new Image().src = "/~link/img/Spinner.png";
   }
 
   render() {
@@ -33,13 +40,30 @@ export class Root extends Component {
     let contacts = !!state.contacts ? state.contacts : {};
     const groups = !!state.groups ? state.groups : {};
 
-    const resources = !!state.resources ? state.resources : {};
+    const associations = !!state.associations ? state.associations : {link: {}, contacts: {}};
     let links = !!state.links ? state.links : {};
     let comments = !!state.comments ? state.comments : {};
+
+
     const seen = !!state.seen ? state.seen : {};
 
-    const invites = '/link' in state.invites ?
-      state.invites['/link'] : {};
+
+
+    const totalUnseen = _.reduce(
+      seen,
+      (acc, links) => acc + _.reduce(links, (total, hasSeen) => total + (hasSeen ? 0 : 1), 0),
+      0
+    );
+
+    if(totalUnseen !== this.totalUnseen) {
+      document.title = totalUnseen !== 0 ? `Links - (${totalUnseen})` : 'Links';
+      this.totalUnseen = totalUnseen;
+    }
+
+    const invites = state.invites ?
+      state.invites : {};
+
+    let selectedGroups = !!state.selectedGroups ? state.selectedGroups : [];
 
     return (
       <BrowserRouter><Switch>
@@ -48,20 +72,15 @@ export class Root extends Component {
             return (
               <Skeleton
                 active="collections"
-                spinner={state.spinner}
-                resources={resources}
+                associations={associations}
                 invites={invites}
                 groups={groups}
                 rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
-                links={links}>
-                <div className="h-100 w-100 overflow-x-hidden flex flex-column bg-white bg-gray0-d dn db-ns">
-                <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
-                      <p className="f8 pt3 gray2 w-100 h-100 dtc v-mid tc">
-                        Select or create a collection to begin.
-                      </p>
-                    </div>
-                </div>
+                selectedGroups={selectedGroups}
+                links={links}
+                listening={state.listening}>
+                <MessageScreen text="Select or create a collection to begin."/>
               </Skeleton>
             );
           }} />
@@ -69,15 +88,15 @@ export class Root extends Component {
           render={(props) => {
             return (
               <Skeleton
-                spinner={state.spinner}
-                resources={resources}
+                associations={associations}
                 invites={invites}
                 groups={groups}
-                rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
-                links={links}>
+                selectedGroups={selectedGroups}
+                links={links}
+                listening={state.listening}>
                 <NewScreen
-                  resources={resources}
+                  associations={associations}
                   groups={groups}
                   contacts={contacts}
                   {...props}
@@ -89,6 +108,7 @@ export class Root extends Component {
         <Route exact path="/~link/join/:resource"
           render={ (props) => {
             const resourcePath = '/' + props.match.params.resource;
+            api.joinCollection(resourcePath);
             props.history.push(makeRoutePath(resourcePath));
           }}
         />
@@ -96,28 +116,28 @@ export class Root extends Component {
           render={(props) => {
             const popout = props.match.url.includes("/popout/");
             const resourcePath = '/' + props.match.params.resource;
-            const resource = resources[resourcePath] || {};
+            const resource = associations.link[resourcePath] || {metadata: {}};
 
-            const contactDetails = contacts[resource.group] || {};
-            const group = groups[resource.group] || new Set([]);
-            const amOwner = amOwnerOfGroup(resource.group);
+            const contactDetails = contacts[resource["group-path"]] || {};
+            const group = groups[resource["group-path"]] || new Set([]);
+            const amOwner = amOwnerOfGroup(resource["group-path"]);
 
             return (
               <Skeleton
-                spinner={state.spinner}
-                resources={resources}
+                associations={associations}
                 invites={invites}
                 groups={groups}
                 selected={resourcePath}
-                rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
-                links={links}>
+                selectedGroups={selectedGroups}
+                links={links}
+                listening={state.listening}>
                 <MemberScreen
                   sidebarShown={state.sidebarShown}
                   resource={resource}
                   contacts={contacts}
                   contactDetails={contactDetails}
-                  groupPath={resource.group}
+                  groupPath={resource["group-path"]}
                   group={group}
                   amOwner={amOwner}
                   resourcePath={resourcePath}
@@ -132,28 +152,29 @@ export class Root extends Component {
           render={ (props) => {
             const popout = props.match.url.includes("/popout/");
             const resourcePath = '/' + props.match.params.resource;
-            const resource = resources[resourcePath] || false;
+            const resource = associations.link[resourcePath] || false;
 
-            const contactDetails = contacts[resource.group] || {};
-            const group = groups[resource.group] || new Set([]);
-            const amOwner = amOwnerOfGroup(resource.group);
+            const contactDetails = contacts[resource["group-path"]] || {};
+            const group = groups[resource["group-path"]] || new Set([]);
+            const amOwner = amOwnerOfGroup(resource["group-path"]);
 
             return (
               <Skeleton
-                spinner={state.spinner}
-                resources={resources}
+                associations={associations}
                 invites={invites}
                 groups={groups}
                 selected={resourcePath}
-                rightPanelHide={true}
                 sidebarShown={state.sidebarShown}
-                links={links}>
+                selectedGroups={selectedGroups}
+                popout={popout}
+                links={links}
+                listening={state.listening}>
                 <SettingsScreen
                   sidebarShown={state.sidebarShown}
                   resource={resource}
                   contacts={contacts}
                   contactDetails={contactDetails}
-                  groupPath={resource.group}
+                  groupPath={resource["group-path"]}
                   group={group}
                   amOwner={amOwner}
                   resourcePath={resourcePath}
@@ -167,11 +188,11 @@ export class Root extends Component {
           <Route exact path="/~link/(popout)?/:resource/:page?"
             render={ (props) => {
               const resourcePath = '/' + props.match.params.resource;
-              const resource = resources[resourcePath] || {};
+              const resource = associations.link[resourcePath] || {metadata: {}};
 
-              const amOwner = amOwnerOfGroup(resource.group);
+              const amOwner = amOwnerOfGroup(resource["group-path"]);
 
-              let contactDetails = contacts[resource.group] || {};
+              let contactDetails = contacts[resource["group-path"]] || {};
 
               let page = props.match.params.page || 0;
 
@@ -191,15 +212,16 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
-                  resources={resources}
+                  associations={associations}
                   invites={invites}
                   groups={groups}
                   selected={resourcePath}
                   sidebarShown={state.sidebarShown}
+                  selectedGroups={selectedGroups}
                   sidebarHideMobile={true}
                   popout={popout}
-                  links={links}>
+                  links={links}
+                  listening={state.listening}>
                   <Links
                   {...props}
                   contacts={contactDetails}
@@ -220,13 +242,13 @@ export class Root extends Component {
           <Route exact path="/~link/(popout)?/:resource/:page/:index/:encodedUrl/:commentpage?"
             render={ (props) => {
               const resourcePath = '/' + props.match.params.resource;
-              const resource = resources[resourcePath] || {};
+              const resource = associations.link[resourcePath] || {metadata: {}};
 
-              const amOwner = amOwnerOfGroup(resource.group);
+              const amOwner = amOwnerOfGroup(resource["group-path"]);
 
               let popout = props.match.url.includes("/popout/");
 
-              let contactDetails = contacts[resource.group] || {};
+              let contactDetails = contacts[resource["group-path"]] || {};
 
               let index = props.match.params.index || 0;
               let page = props.match.params.page || 0;
@@ -245,15 +267,16 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
-                  resources={resources}
+                  associations={associations}
                   invites={invites}
                   groups={groups}
                   selected={resourcePath}
                   sidebarShown={state.sidebarShown}
+                  selectedGroups={selectedGroups}
                   sidebarHideMobile={true}
                   popout={popout}
-                  links={links}>
+                  links={links}
+                  listening={state.listening}>
                   <LinkDetail
                   {...props}
                   resource={resource}
@@ -262,7 +285,7 @@ export class Root extends Component {
                   linkIndex={index}
                   contacts={contactDetails}
                   resourcePath={resourcePath}
-                  groupPath={resource.group}
+                  groupPath={resource["group-path"]}
                   amOwner={amOwner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}

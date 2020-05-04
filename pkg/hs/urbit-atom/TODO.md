@@ -1,0 +1,5 @@
+- Support big-endian CPUs (CPP flag; use GMP import/export)
+- Support `integer-simple`. (Android)
+- `atomWords` and `wordsAtom` are unacceptably slow on GHCJS.
+  - This is only used in `jam`/`cue`, so it doesn't matter for now.
+- Understand why my hand rolled import is slower than GMP import.

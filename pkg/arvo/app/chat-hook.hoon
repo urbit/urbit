@@ -5,6 +5,7 @@
 /-  *permission-store, *chat-hook, *invite-store, *metadata-store,
     *permission-hook, *group-store, *permission-group-hook  ::TMP  for upgrade
 /+  *chat-json, *chat-eval, default-agent, verb, dbug
+~%  %chat-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -13,10 +14,14 @@
       state-1
   ==
 ::
-+$  state-1  [%1 state-base]
++$  state-1
+  $:  %1
+      loaded-cards=(list card)
+      state-base
+  ==
 +$  state-0  [%0 state-base]
 +$  state-base
-  $:  synced=(map path ship)
+  $:  =synced
       invite-created=_|
       allow-history=(map path ?)
   ==
@@ -35,10 +40,11 @@
 =|  state-1
 =*  state  -
 ::
-%+  verb  |
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
+  ~%  %chat-hook-agent-core  ..poke-json  ~
   |_  bol=bowl:gall
   +*  this       .
       chat-core  +>
@@ -54,37 +60,67 @@
     ==
   ++  on-save   !>(state)
   ++  on-load
-    |=  =old=vase
+    |=  old-vase=vase
+    ^-  (quip card _this)
+    |^
     =/  old  !<(versioned-state old-vase)
     ?:  ?=(%1 -.old)
-      [~ this(state old)]
+      :_  this(state old)
+      %+  murn  ~(tap by wex.bol)
+      |=  [[=wire =ship =term] *]
+      ^-  (unit card)
+      ?.  &(?=([%mailbox *] wire) =(our.bol ship) =(%chat-store term))
+        ~
+      `[%pass wire %agent [our.bol %chat-store] %leave ~]
     ::  path structure ugprade logic
     ::
-    :_  this(state [%1 +.old])
-    %-  zing
-    %+  turn
-      %~  tap  in
-      %^  scry:cc  (set path)
-        %chat-store
-      /keys
-    |^  |=  chat=path
-        ^-  (list card)
-        =/  host=ship  (slav %p (snag 0 chat))
-        =/  newp=permission  (unify-permissions chat)
-        =/  old-group=path  [%chat chat]
-        =/  new-group=path  [%'~' chat]
-        ;:  weld
-          :~  (delete-group host (snoc old-group %read))
+    =/  keys=(set path)  (scry:cc (set path) %chat-store /keys)
+    =/  upgraded-state
+        %*  .  *state-1
+            synced  synced
+            invite-created  invite-created
+            allow-history  allow-history
+            loaded-cards
+          %-  zing
+          ^-  (list (list card))
+          %+  turn  ~(tap in keys)  generate-cards
+        ==
+    [loaded-cards.upgraded-state this(state upgraded-state)]
+    ::
+    ++  generate-cards
+      |=  old-chat=path
+      ^-  (list card)
+      =/  host=ship  (slav %p (snag 0 old-chat))
+      =/  new-chat  [%'~' old-chat]
+      =/  newp=permission  (unify-permissions old-chat)
+      =/  old-group=path  [%chat old-chat]
+      %-  zing
+      :~  :~  (delete-group host (snoc old-group %read))
               (delete-group host (snoc old-group %write))
           ==
         ::
-          (create-group new-group who.newp)
-          (hookup-group new-group kind.newp)
-          [(record-group new-group chat)]~
-        ::
-          ?.  &(=(our.bol host) ?=(%white kind.newp))  ~
-          (send-invites chat who.newp)
-        ==
+          (create-group new-chat who.newp)
+          (hookup-group new-chat kind.newp)
+          [(record-group new-chat new-chat)]~
+          (recreate-chat host old-chat new-chat)
+      ==
+    ::
+    ++  recreate-chat
+      |=  [host=ship chat=path new-chat=path]
+      ^-  (list card)
+      =/  old-mailbox=mailbox
+        (need (scry:cc (unit mailbox) %chat-store [%mailbox chat]))
+      =*  enves  envelopes.old-mailbox
+      :~  (chat-poke:cc [%delete new-chat])
+          (chat-poke:cc [%delete chat])
+          (chat-poke:cc [%create new-chat])
+          (chat-poke:cc [%messages new-chat enves])
+          (chat-poke:cc [%read new-chat])
+          %^  make-poke  %chat-hook  %chat-hook-action
+          !>  ^-  chat-hook-action
+          ?:  =(our.bol host)  [%add-owned new-chat %.y]
+          [%add-synced host new-chat %.y]
+      ==
     ::
     ++  unify-permissions
       |=  chat=path
@@ -177,52 +213,46 @@
       =/  =metadata
         ~|  [%weird-chat-path chat]
         %*  .  *metadata
-          title         (snag 1 chat)
+          title         (snag 2 chat)
           date-created  now.bol
-          creator       (slav %p (snag 0 chat))
+          creator       (slav %p (snag 1 chat))
         ==
       %^  make-poke  %metadata-store
         %metadata-action
       !>  ^-  metadata-action
       [%add group [%chat chat] metadata]
-    ::
-    ++  send-invites
-      |=  [chat=path who=(set ship)]
-      ^-  (list card)
-      %+  murn  ~(tap in who)
-      |=  =ship
-      ^-  (unit card)
-      ?:  =(our.bol ship)  ~
-      %-  some
-      %^  make-poke  %invite-hook
-        %invite-action
-      !>  ^-  invite-action
-      =/  =invite
-        =+  (crip "upgrade {(spud chat)} (please accept in OS1)")
-        [our.bol %chat-hook chat ship -]
-      [%invite /chat (sham chat ship eny.bol) invite]
     --
   ::
   ++  on-poke
+    ~/  %chat-hook-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-        %json              (poke-json:cc !<(json vase))
-        %chat-action       (poke-chat-action:cc !<(chat-action vase))
-        %chat-hook-action  (poke-chat-hook-action:cc !<(chat-hook-action vase))
+          %json              (poke-json:cc !<(json vase))
+          %chat-action       (poke-chat-action:cc !<(chat-action vase))
+          %noun
+        ?:  =(%store-load q.vase)
+          [loaded-cards.state state(loaded-cards ~)]
+        [~ state]
+      ::
+          %chat-hook-action
+        (poke-chat-hook-action:cc !<(chat-hook-action vase))
       ==
     [cards this]
   ::
   ++  on-watch
+    ~/  %chat-hook-watch
     |=  =path
     ^-  (quip card _this)
     ?+  path          (on-watch:def path)
         [%backlog *]  [(watch-backlog:cc t.path) this]
         [%mailbox *]  [(watch-mailbox:cc t.path) this]
+        [%synced *]   [(watch-synced:cc t.path) this]
     ==
   ::
   ++  on-agent
+    ~/  %chat-hook-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     ?+  -.sign  (on-agent:def wire sign)
@@ -262,6 +292,7 @@
   --
 ::
 ::
+~%  %chat-hook-library  ..card  ~
 |_  bol=bowl:gall
 ::
 ++  poke-json
@@ -287,13 +318,10 @@
     [%pass / %agent [ship appl] %poke %chat-action !>(act)]~
   ::  foreign
   =/  ship  (~(get by synced) path.act)
-  ?~  ship
-    ~
-  ?.  =(u.ship our.bol)
-    ~
+  ?~  ship  ~
+  ?.  =(u.ship our.bol)  ~
   ::  check if write is permitted
-  ?.  (is-permitted src.bol path.act)
-    ~
+  ?.  (is-permitted src.bol path.act)  ~
   =:  author.envelope.act  src.bol
       when.envelope.act  now.bol
   ==
@@ -306,15 +334,15 @@
       %add-owned
     ?>  (team:title our.bol src.bol)
     =/  chat-path  [%mailbox path.act]
-    ?:  (~(has by synced) path.act)
-      [~ state]
+    =/  chat-wire  [%store path.act]
+    ?:  (~(has by synced) path.act)  [~ state]
     =:  synced  (~(put by synced) path.act our.bol)
         allow-history  (~(put by allow-history) path.act allow-history.act)
     ==
     :_  state
-    %+  weld
-      [%pass chat-path %agent [our.bol %chat-store] %watch chat-path]~
-    (create-permission path.act security.act)
+    :~  [%pass chat-wire %agent [our.bol %chat-store] %watch chat-path]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
@@ -324,31 +352,42 @@
       =/  chat-path  [%mailbox path.act]
       :_  state
       [%pass chat-path %agent [ship.act %chat-hook] %watch chat-path]~
-    ::  TODO: only ask for backlog from previous point
-    =/  chat-history  [%backlog (weld path.act /0)]
+    =/  mailbox=(unit mailbox)  (chat-scry path.act)
+    =/  chat-history=path
+      :-  %backlog
+      %+  weld  path.act
+      ?~(mailbox /0 /(scot %ud (lent envelopes.u.mailbox)))
     :_  state
-    [%pass chat-history %agent [ship.act %chat-hook] %watch chat-history]~
+    :~  [%pass chat-history %agent [ship.act %chat-hook] %watch chat-history]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %remove
-    =/  ship  (~(get by synced) path.act)
+    =/  ship=(unit ship)
+      =/  ship  (~(get by synced) path.act)
+      ?^  ship  ship
+      =?  path.act  ?=([%'~' *] path.act)  t.path.act
+      ?~  path.act  ~
+      (slaw %p i.path.act)
     ?~  ship
+      ~&  [dap.bol %unknown-host-cannot-leave path.act]
       [~ state]
-    ?:  &(=(u.ship our.bol) (team:title our.bol src.bol))
-      ::  delete one of our.bol own paths
-      :_  state(synced (~(del by synced) path.act))
-      %-  zing
-      :~  (pull-wire [%backlog (weld path.act /0)])
-          (pull-wire [%mailbox path.act])
-          ~[(permission-poke [%delete [%chat path.act]])]
-          [%give %kick [%mailbox path.act]~ ~]~
-      ==
-    ?.  |(=(u.ship src.bol) (team:title our.bol src.bol))
-      ::  if neither ship = source or source = us, do nothing
+    ?:  &(!=(u.ship src.bol) ?!((team:title our.bol src.bol)))
       [~ state]
-    ::  delete a foreign ship's path
-    :-  (pull-wire [%mailbox path.act])
-    state(synced (~(del by synced) path.act))
+    =.  synced  (~(del by synced) path.act)
+    :_  state
+    :*  [%give %kick ~[[%mailbox path.act]] ~]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+        (pull-wire u.ship [%mailbox path.act])
+        (pull-backlog-subscriptions u.ship path.act)
+    ==
   ==
+::
+++  watch-synced
+  |=  pax=path
+  ^-  (list card)
+  ?>  (team:title our.bol src.bol)
+  [%give %fact ~ %chat-hook-update !>([%initial synced])]~
 ::
 ++  watch-mailbox
   |=  pax=path
@@ -366,56 +405,31 @@
   ^-  (list card)
   ?>  ?=(^ pax)
   =/  last  (dec (lent pax))
-  =/  backlog-start=(unit @ud)
-    %+  rush
-      (snag last `(list @ta)`pax)
-    dem:ag
+  =/  backlog-latest=(unit @ud)  (rush (snag last `(list @ta)`pax) dem:ag)
   =/  pas  `path`(oust [last 1] `(list @ta)`pax)
   ?>  ?=([* ^] pas)
   ?>  (~(has by synced) pas)
-  ::  check if read is permitted
   ?>  (is-permitted src.bol pas)
+  =/  envs  envelopes:(need (chat-scry pas))
+  =/  length  (lent envs)
+  =/  latest
+    ?~  backlog-latest  length
+    ?:  (gth u.backlog-latest length)  length
+    (sub length u.backlog-latest)
+  =.  envs  (scag latest envs)
+  =/  =vase  !>([%messages pas 0 latest envs])
   %-  zing
   :~  [%give %fact ~ %chat-update !>([%create pas])]~
-      ?.  ?&(?=(^ backlog-start) (~(has by allow-history) pas))  ~
-      (paginate-messages pas (need (chat-scry pas)) u.backlog-start)
+      ?.  ?&(?=(^ backlog-latest) (~(has by allow-history) pas))  ~
+      [%give %fact ~ %chat-update vase]~
       [%give %kick [%backlog pax]~ `src.bol]~
   ==
-::
-++  paginate-messages
-  |=  [=path =mailbox start=@ud]
-  ^-  (list card)
-  =/  cards=(list card)  ~
-  =/  end  (lent envelopes.mailbox)
-  ?:  |((gte start end) =(end 0))
-    cards
-  =.  envelopes.mailbox  (slag start `(list envelope)`envelopes.mailbox)
-  |-  ^-  (list card)
-  ?~  envelopes.mailbox
-    cards
-  ?:  (lte end 5.000)
-    =.  cards
-      %+  snoc  cards
-      %-  messages-fact
-      [path start (lent envelopes.mailbox) envelopes.mailbox]
-    $(envelopes.mailbox ~)
-  =.  cards
-    %+  snoc  cards
-    %-  messages-fact
-    :^  path  start
-    (add start 5.000)
-    (scag 5.000 `(list envelope)`envelopes.mailbox)
-  =:  start  (add start 5.000)
-      end    (sub end 5.000)
-  ==
-  $(envelopes.mailbox (slag 5.000 `(list envelope)`envelopes.mailbox))
 ::
 ++  fact-invite-update
   |=  [wir=wire fact=invite-update]
   ^-  (quip card _state)
   :_  state
   ?+  -.fact  ~
-  ::
       %accepted
     =/  ask-history  ?~((chat-scry path.invite.fact) %.y %.n)
     =*  shp       ship.invite.fact
@@ -448,7 +462,7 @@
     %+  turn  ~(tap in who)
     |=  =ship
     ?:  (is-permitted ship chat)
-      ?:  ?|(=(kind %remove) =(ship our.bol))  ~
+      ?:  ?|(=(kind %remove) =(ship our.bol) (is-managed pax))  ~
       ::  if ship has just been added to the permitted group,
       ::  send them an invite
       ~[(send-invite chat ship)]
@@ -461,6 +475,12 @@
     =/  =invite  [our.bol %chat-hook path ship '']
     =/  act=invite-action  [%invite /chat (shaf %msg-uid eny.bol) invite]
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
+  ::
+  ++  is-managed
+    |=  =path
+    ^-  ?
+    ?>  ?=(^ path)
+    !=(i.path '~')
   --
 ::
 ++  fact-chat-update
@@ -475,10 +495,12 @@
   ^-  (quip card _state)
   ?+  -.fact     [~ state]
       %delete
-    ?.  (~(has by synced) path.fact)
-      [~ state]
-    :_  state(synced (~(del by synced) path.fact))
-    [%pass [%mailbox path.fact] %agent [our.bol %chat-store] %leave ~]~
+    ?.  (~(has by synced) path.fact)  [~ state]
+    =.  synced  (~(del by synced) path.fact)
+    :_  state
+    :~  [%pass [%mailbox path.fact] %agent [our.bol %chat-store] %leave ~]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %message
     :_  state
@@ -504,13 +526,14 @@
       %delete
     ?>  ?=([* ^] path.fact)
     =/  shp  (~(get by synced) path.fact)
-    ?~  shp
-      [~ state]
-    ?.  =(u.shp src.bol)
-      [~ state]
-    :_  state(synced (~(del by synced) path.fact))
+    ?~  shp  [~ state]
+    ?.  =(u.shp src.bol)  [~ state]
+    =.  synced  (~(del by synced) path.fact)
+    :_  state
     :-  (chat-poke [%delete path.fact])
-    [%pass [%mailbox path.fact] %agent [src.bol %chat-hook] %leave ~]~
+    :~  [%pass [%mailbox path.fact] %agent [src.bol %chat-hook] %leave ~]
+        [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
+    ==
   ::
       %message
     :_  state
@@ -537,11 +560,17 @@
     [%pass /permissions %agent [our.bol %permission-store] %watch /updates]~
   ::
   ?+  wir  !!
+      [%store @ *]
+    ~&  store-kick+wir
+    ?.  (~(has by synced) t.wir)  [~ state]
+    ~&  %chat-store-resubscribe
+    =/  mailbox=(unit mailbox)  (chat-scry t.wir)
+    :_  state
+    [%pass wir %agent [our.bol %chat-store] %watch [%mailbox t.wir]]~
+  ::
       [%mailbox @ *]
     ~&  mailbox-kick+wir
-    ?.  (~(has by synced) t.wir)
-      ::  no-op
-      [~ state]
+    ?.  (~(has by synced) t.wir)  [~ state]
     ~&  %chat-hook-resubscribe
     =/  =ship  (~(got by synced) t.wir)
     =/  mailbox=(unit mailbox)  (chat-scry t.wir)
@@ -552,29 +581,34 @@
     [%pass chat-history %agent [ship %chat-hook] %watch chat-history]~
   ::
       [%backlog @ @ *]
-    =/  pax  `path`(oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
-    ?.  (~(has by synced) pax)  [~ state]
+    =/  chat=path  (oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    ?.  (~(has by synced) chat)  [~ state]
     =/  =ship
       ?:  =('~' i.t.wir)
         (slav %p i.t.t.wir)
       (slav %p i.t.wir)
-    =.  pax  ?~((chat-scry pax) wir [%mailbox pax])
+    =/  =path  ?~((chat-scry chat) wir [%mailbox chat])
     :_  state
-    [%pass pax %agent [ship %chat-hook] %watch pax]~
+    [%pass path %agent [ship %chat-hook] %watch path]~
   ==
 ::
 ++  watch-ack
   |=  [wir=wire saw=(unit tang)]
   ^-  (quip card _state)
-  ?~  saw
-    [~ state]
-  ?>  ?=(^ wir)
-  :_  state(synced (~(del by synced) t.wir))
-  %.  ~
-  %-  slog
-  :*  leaf+"chat-hook failed subscribe on {(spud t.wir)}"
-      leaf+"stack trace:"
-      u.saw
+  ?~  saw  [~ state]
+  ?+  wir  [~ state]
+      [%store @ *]
+    (poke-chat-hook-action %remove t.wir)
+  ::
+      [%backlog @ @ @ *]
+    =/  chat=path  (oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    :_  state
+    %.  ~[(chat-view-poke %delete chat)]
+    %-  slog
+    :*  leaf+"chat-hook failed subscribe on {(spud chat)}"
+        leaf+"stack trace:"
+        u.saw
+    ==
   ==
 ::
 ++  chat-poke
@@ -587,28 +621,10 @@
   ^-  card
   [%pass / %agent [our.bol %chat-view] %poke %chat-view-action !>(act)]
 ::
-++  permission-poke
-  |=  act=permission-action
-  ^-  card
-  [%pass / %agent [our.bol %permission-store] %poke %permission-action !>(act)]
-::
 ++  invite-poke
   |=  act=invite-action
   ^-  card
   [%pass / %agent [our.bol %invite-store] %poke %invite-action !>(act)]
-::
-++  messages-fact
-  |=  [=path start=@ud end=@ud envelopes=(list envelope)]
-  ^-  card
-  [%give %fact ~ %chat-update !>([%messages path start end envelopes])]
-::
-++  create-permission
-  |=  [pax=path sec=rw-security]
-  ^-  (list card)
-  ?+  sec       ~
-      %channel  ~[(permission-poke (sec-to-perm pax %black))]
-      %village  ~[(permission-poke (sec-to-perm pax %white))]
-  ==
 ::
 ++  sec-to-perm
   |=  [pax=path =kind]
@@ -637,12 +653,7 @@
   ::  about group path shape, and the chat that would match it.
   ::TODO  remove me at some point.
   ::
-  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
-    ?:  ?=([%'~' @ ^] group-path)
-      ~&  [%assuming-ported-legacy-group group-path]
-      [t.group-path]~
-    ~&  [%weird-group group-path]
-    ~
+  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)  ~
   %+  murn
     ^-  (list resource)
     =;  resources
@@ -670,12 +681,7 @@
   ::  about chat path shape, and the chat that would match it.
   ::TODO  remove me at some point.
   ::
-  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
-    ?:  ?=([@ ^] chat)
-      ~&  [%assuming-ported-legacy-chat chat]
-      [%'~' chat]~
-    ~&  [%weird-chat chat]
-    ~
+  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)  ~
   =;  resources
     %~  tap  in
     %+  ~(gut by resources)
@@ -709,13 +715,23 @@
     (snoc `^path`path %noun)
   ==
 ::
-++  pull-wire
-  |=  pax=path
+++  pull-backlog-subscriptions
+  |=  [target=ship chat=path]
   ^-  (list card)
-  ?>  ?=(^ pax)
-  =/  shp  (~(get by synced) t.pax)
-  ?~  shp  ~
-  ?:  =(u.shp our.bol)
-    [%pass pax %agent [our.bol %chat-store] %leave ~]~
-  [%pass pax %agent [u.shp %chat-hook] %leave ~]~
+  %+  murn  ~(tap by wex.bol)
+  |=  [[=wire =ship =term] [acked=? =path]]
+  ^-  (unit card)
+  ?.  ?&  =(ship target)
+          ?=([%backlog *] wire)
+          =(`1 (find chat wire))
+      ==
+    ~
+  `(pull-wire target wire)
+::
+++  pull-wire
+  |=  [=ship =wire]
+  ^-  card
+  ?:  =(ship our.bol)
+    [%pass wire %agent [our.bol %chat-store] %leave ~]
+  [%pass wire %agent [ship %chat-hook] %leave ~]
 --

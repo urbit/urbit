@@ -1825,6 +1825,7 @@
       $%  [$conf p=dock q=dock]                         ::  configure app
           [$deal p=sock q=term r=deal]                  ::  full transmission
           [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
+          [%sear =ship]                                 ::  clear pending queues
           $>(%init vane-task)                           ::  set owner
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
@@ -5835,6 +5836,7 @@
       |*  wil/(pole fist)
       |=  jon/json
       ?.  ?=({$a *} jon)  ~
+      ?.  =((lent wil) (lent p.jon))  ~
       =+  raw=((at-raw wil) p.jon)
       ?.((za raw) ~ (some (zp raw)))
     ::
@@ -6643,7 +6645,7 @@
     ::                                                  ::  ++apat:de-purl:html
     ++  apat                                            ::  2396 abs_path
       %+  cook  deft
-      (ifix [net ;~(pose net (easy ~))] (more net smeg))
+      ;~(pfix net (more net smeg))
     ::                                                  ::  ++aurf:de-purl:html
     ++  aurf                                            ::  2396 with fragment
       %+  cook  |~(a/purf a)
@@ -6705,7 +6707,7 @@
       ;~(pose pcar net wut)
     ::                                                  ::  ++pquo:de-purl:html
     ++  pquo                                            ::  normal query char
-      ;~(pose pure pesc pold net wut col)
+      ;~(pose pure pesc pold net wut col com)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
       ;~(pose aln hep dot cab sig)
@@ -6727,7 +6729,7 @@
       ;~(plug alf (star ;~(pose aln lus hep dot)))
     ::                                                  ::  ++smeg:de-purl:html
     ++  smeg                                            ::  2396 segment
-      (cook crip (plus pcar))
+      (cook crip (star pcar))
     ::                                                  ::  ++tock:de-purl:html
     ++  tock                                            ::  6265 raw value
       (cook crip (plus pcok))
@@ -8171,15 +8173,18 @@
     =>  |%
         ::  solidity types. integer bitsizes ignored
         ++  etyp
+          $@  $?  ::  static
+                  %address  %bool
+                  %int      %uint
+                  %real     %ureal
+                  ::  dynamic
+                  %bytes    %string
+              ==
           $%  ::  static
-              %address  %bool
-              %int      %uint
-              %real     %ureal
               [%bytes-n n=@ud]
               ::  dynamic
               [%array-n t=etyp n=@ud]
               [%array t=etyp]
-              %bytes    %string
           ==
         ::
         ::  solidity-style typed data. integer bitsizes ignored

@@ -6,22 +6,26 @@
     *invite-store,
     *metadata-hook,
     *metadata-store
-/+  *contact-json, default-agent
+/+  *contact-json, default-agent, dbug
+~%  %contact-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
 ::
 +$  versioned-state
   $%  state-zero
+      state-one
   ==
 ::
-+$  state-zero
-  $:  %0
-      synced=(map path ship)
++$  state-zero  [%0 state-base]
++$  state-one   [%1 state-base]
++$  state-base
+  $:  =synced
       invite-created=_|
   ==
 --
-=|  state-zero
+=|  state-one
 =*  state  -
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -39,8 +43,18 @@
     ==
   ++  on-save   !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
+    |=  old-vase=vase
+    ^-  (quip card _this)
+    =/  old  !<(versioned-state old-vase)
+    ?:  ?=(%1 -.old)
+      [~ this(state old)]
+    =/  upgraded-state
+      %*  .  *state-one
+          synced  synced
+          invite-created  invite-created
+      ==
+    :_  this(state upgraded-state)
+    [%pass /group %agent [our.bol %group-store] %watch /updates]~
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -63,6 +77,7 @@
     ^-  (quip card _this)
     ?+  path          (on-watch:def path)
         [%contacts *]  [(watch-contacts:cc t.path) this]
+        [%synced *]    [(watch-synced:cc t.path) this]
     ==
   ::
   ++  on-agent
@@ -110,30 +125,29 @@
 ++  poke-contact-action
   |=  act=contact-action
   ^-  (quip card _state)
-  |^  
   :_  state
   ?+  -.act  !!
     %edit    (handle-contact-action path.act ship.act act)
     %add     (handle-contact-action path.act ship.act act)
     %remove  (handle-contact-action path.act ship.act act)
   ==
-  ::
-  ++  handle-contact-action
-    |=  [=path =ship act=contact-action]
-    ^-  (list card)
-    ::  local
-    ?:  (team:title our.bol src.bol)
-      =/  shp  ?:(=(path /~/default) our.bol (~(got by synced) path))
-      =/  appl  ?:(=(shp our.bol) %contact-store %contact-hook)
-      [%pass / %agent [shp appl] %poke %contact-action !>(act)]~
-    ::  foreign
-    =/  shp  (~(got by synced) path)
-    ?.  |(=(shp our.bol) =(src.bol ship))  ~
-    ::  scry group to check if ship is a member
-    =/  =group  (need (group-scry path))
-    ?.  (~(has in group) shp)  ~
-    [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]~
-  --
+::
+++  handle-contact-action
+  |=  [=path =ship act=contact-action]
+  ^-  (list card)
+  ::  local
+  ?:  (team:title our.bol src.bol)
+    ?.  (~(has by synced) path)  ~
+    =/  shp  ?:(=(path /~/default) our.bol (~(got by synced) path))
+    =/  appl  ?:(=(shp our.bol) %contact-store %contact-hook)
+    [%pass / %agent [shp appl] %poke %contact-action !>(act)]~
+  ::  foreign
+  =/  shp  (~(got by synced) path)
+  ?.  |(=(shp our.bol) =(src.bol ship))  ~
+  ::  scry group to check if ship is a member
+  =/  =group  (need (group-scry path))
+  ?.  (~(has in group) shp)  ~
+  [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]~
 ::
 ++  poke-hook-action
   |=  act=contact-hook-action
@@ -146,7 +160,9 @@
       [~ state]
     =.  synced  (~(put by synced) path.act our.bol)
     :_  state
-    [%pass contact-path %agent [our.bol %contact-store] %watch contact-path]~
+    :~  [%pass contact-path %agent [our.bol %contact-store] %watch contact-path]
+        [%give %fact [/synced]~ %contact-hook-update !>([%initial synced])]
+    ==
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
@@ -154,7 +170,9 @@
     =.  synced  (~(put by synced) path.act ship.act)
     =/  contact-path  [%contacts path.act]
     :_  state
-    [%pass contact-path %agent [ship.act %contact-hook] %watch contact-path]~
+    :~  [%pass contact-path %agent [ship.act %contact-hook] %watch contact-path]
+        [%give %fact [/synced]~ %contact-hook-update !>([%initial synced])]
+    ==
   ::
       %remove
     =/  ship  (~(get by synced) path.act)
@@ -165,13 +183,20 @@
       %-  zing
       :~  (pull-wire [%contacts path.act])
           [%give %kick ~[[%contacts path.act]] ~]~
+          [%give %fact [/synced]~ %contact-hook-update !>([%initial synced])]~
       ==
     ?.  |(=(u.ship src.bol) (team:title our.bol src.bol))
       ::  if neither ship = source or source = us, do nothing
       [~ state]
     ::  delete a foreign ship's path
-    :-  (pull-wire [%contacts path.act])
-    state(synced (~(del by synced) path.act))
+    =/  cards
+      (handle-contact-action path.act our.bol [%remove path.act our.bol])
+    :_  state(synced (~(del by synced) path.act))
+    %-  zing
+    :~  (pull-wire [%contacts path.act])
+        [%give %fact [/synced]~ %contact-hook-update !>([%initial synced])]~
+        cards
+    ==
   ==
 ::
 ++  watch-contacts
@@ -183,10 +208,13 @@
   =/  =group  (need (group-scry pax))
   ?>  (~(has in group) src.bol)
   =/  contacts  (need (contacts-scry pax))
-  :~  :*
-    %give  %fact  ~  %contact-update
-    !>([%contacts pax contacts])
-  ==  ==
+  [%give %fact ~ %contact-update !>([%contacts pax contacts])]~
+::
+++  watch-synced
+  |=  pax=path
+  ^-  (list card)
+  ?>  (team:title our.bol src.bol)
+  [%give %fact ~ %contact-hook-update !>([%initial synced])]~
 ::
 ++  watch-ack
   |=  [wir=wire saw=(unit tang)]
@@ -260,22 +288,49 @@
         %contacts
       =/  owner  (~(got by synced) path.fact)
       ?>  =(owner src.bol)
-      %+  weld
-      :~  (contact-poke [%delete path.fact])
-          (contact-poke [%create path.fact])
+      =/  have-contacts=(unit contacts)
+        (contacts-scry path.fact)
+      ?~  have-contacts
+        ::  if we don't have any contacts yet,
+        ::  create the entry, and %add every contact
+        ::
+        :-  (contact-poke [%create path.fact])
+        %+  turn  ~(tap by contacts.fact)
+        |=  [=ship =contact]
+        (contact-poke [%add path.fact ship contact])
+      ::  if we already have some, decide between %add, %remove and recreate
+      ::  on a per-contact basis
+      ::
+      %-  zing
+      %+  turn
+        %~  tap  in
+        %-  ~(uni in ~(key by contacts.fact))
+        ~(key by u.have-contacts)
+      |=  =ship
+      ^-  (list card)
+      =/  have=(unit contact)  (~(get by u.have-contacts) ship)
+      =/  want=(unit contact)  (~(get by contacts.fact) ship)
+      ?~  have
+        [(contact-poke %add path.fact ship (need want))]~
+      ?~  want
+        [(contact-poke %remove path.fact ship)]~
+      ?:  =(u.want u.have)  ~
+      ::TODO  probably want an %all edit-field that resolves to more granular
+      ::      updates within the contact-store?
+      :~  (contact-poke %remove path.fact ship)
+          (contact-poke %add path.fact ship u.want)
       ==
-      %+  turn  ~(tap by contacts.fact)
-      |=  [=ship =contact]
-      (contact-poke [%add path.fact ship contact])
     ::
         %add
-      =/  owner  (~(got by synced) path.fact)
-      ?>  |(=(owner src.bol) =(src.bol ship.fact))
+      =/  owner  (~(get by synced) path.fact)
+      ?~  owner  ~
+      ?>  |(=(u.owner src.bol) =(src.bol ship.fact))
       ~[(contact-poke [%add path.fact ship.fact contact.fact])]
     ::
         %remove
-      =/  owner  (~(got by synced) path.fact)
-      ?>  |(=(owner src.bol) =(src.bol ship.fact))
+      =/  owner  (~(get by synced) path.fact)
+      ?~  owner  ~
+      ?>  |(=(u.owner src.bol) =(src.bol ship.fact))
       %+  welp
         :~  (group-poke [%remove [ship.fact ~ ~] path.fact])
             (contact-poke [%remove path.fact ship.fact])
@@ -314,7 +369,8 @@
     |=  =path
     ^-  (quip card _state)
     ?.  (~(has by synced) path)
-      [~ state]
+      :_  state
+      [(contact-poke [%delete path])]~
     :_  state(synced (~(del by synced) path))
     :~  [%pass [%contacts path] %agent [our.bol %contact-store] %leave ~]
         [(contact-poke [%delete path])]
@@ -422,6 +478,6 @@
   =/  shp  (~(get by synced) t.pax)
   ?~  shp  ~
   ?:  =(u.shp our.bol)
-    [%pass pax %agent [our.bol %chat-store] %leave ~]~
-  [%pass pax %agent [u.shp %chat-hook] %leave ~]~
+    [%pass pax %agent [our.bol %contact-store] %leave ~]~
+  [%pass pax %agent [u.shp %contact-hook] %leave ~]~
 --

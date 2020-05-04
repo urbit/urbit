@@ -22,6 +22,10 @@ export class Root extends Component {
     store.setStateHandler(this.setState.bind(this));
   }
 
+  componentDidMount() {
+    new Image().src = "/~groups/img/Spinner.png";
+  }
+
   render() {
     const { props, state } = this;
 
@@ -29,12 +33,15 @@ export class Root extends Component {
     let defaultContacts =
       (!!state.contacts && '/~/default' in state.contacts) ?
       state.contacts['/~/default'] : {};
+
     let groups = !!state.groups ? state.groups : {};
+    let s3 = !!state.s3 ? state.s3 : {};
 
     let invites =
       (!!state.invites && '/contacts' in state.invites) ?
       state.invites['/contacts'] : {};
-    let associations = !! state.associations ? state.associations : {};
+    let associations = !!state.associations ? state.associations : {};
+    let selectedGroups = !!state.selectedGroups ? state.selectedGroups : [];
 
     return (
       <BrowserRouter>
@@ -44,7 +51,7 @@ export class Root extends Component {
             return (
               <Skeleton
                 activeDrawer="groups"
-                spinner={state.spinner}
+                selectedGroups={selectedGroups}
                 history={props.history}
                 api={api}
                 contacts={contacts}
@@ -65,8 +72,8 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
+                  selectedGroups={selectedGroups}
                   api={api}
                   contacts={contacts}
                   groups={groups}
@@ -82,38 +89,46 @@ export class Root extends Component {
                 </Skeleton>
               );
           }} />
-          <Route exact path="/~groups/(detail)?/:ship/:group/"
+          <Route exact path="/~groups/(detail)?/(settings)?/:ship/:group/"
             render={ (props) => {
               let groupPath =
                 `/${props.match.params.ship}/${props.match.params.group}`;
               let groupContacts = contacts[groupPath] || {};
               let group = groups[groupPath] || new Set([]);
-              let detail = !!props.match.url.includes("/detail");
+              let detail = !!(props.match.url.includes("/detail"));
+              let settings = !!(props.match.url.includes("/settings"));
 
+              let association = (associations[groupPath])
+                ? associations[groupPath]
+                : {};
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
+                  selectedGroups={selectedGroups}
                   api={api}
                   contacts={contacts}
                   invites={invites}
                   groups={groups}
-                  activeDrawer={detail ? "detail" : "contacts"}
+                  activeDrawer={(detail || settings) ? "detail" : "contacts"}
                   selected={groupPath}
                   associations={associations}>
                   <ContactSidebar
                     contacts={groupContacts}
                     defaultContacts={defaultContacts}
                     group={group}
-                    activeDrawer={detail ? "detail" : "contacts"}
+                    activeDrawer={(detail || settings) ? "detail" : "contacts"}
+                    api={api}
                     path={groupPath}
                     {...props}
                   />
                   <GroupDetail
-                    associations={associations}
+                    association={association}
                     path={groupPath}
-                    activeDrawer={detail ? "detail" : "contacts"}
+                    group={group}
+                    activeDrawer={(detail || settings) ? "detail" : "contacts"}
+                    settings={settings}
+                    api={api}
                     {...props}
                   />
                 </Skeleton>
@@ -129,8 +144,8 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
+                  selectedGroups={selectedGroups}
                   api={api}
                   contacts={contacts}
                   groups={groups}
@@ -144,6 +159,7 @@ export class Root extends Component {
                     group={group}
                     activeDrawer="rightPanel"
                     path={groupPath}
+                    api={api}
                     {...props}
                   />
                   <AddScreen
@@ -171,9 +187,9 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   api={api}
+                  selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -186,6 +202,7 @@ export class Root extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
+                    api={api}
                     selectedContact={shipPath}
                     {...props}
                   />
@@ -196,6 +213,7 @@ export class Root extends Component {
                     ship={window.ship}
                     share={true}
                     rootIdentity={rootIdentity}
+                    s3={s3}
                   />
                 </Skeleton>
               );
@@ -219,9 +237,9 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   api={api}
+                  selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -234,6 +252,7 @@ export class Root extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
+                    api={api}
                     selectedContact={shipPath}
                     {...props}
                   />
@@ -243,6 +262,7 @@ export class Root extends Component {
                     path={groupPath}
                     ship={props.match.params.contact}
                     rootIdentity={rootIdentity}
+                    s3={s3}
                   />
                 </Skeleton>
               );
@@ -253,9 +273,9 @@ export class Root extends Component {
 
               return (
                 <Skeleton
-                  spinner={state.spinner}
                   history={props.history}
                   api={api}
+                  selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -267,6 +287,7 @@ export class Root extends Component {
                     path="/~/default"
                     contact={me}
                     ship={window.ship}
+                    s3={s3}
                   />
                 </Skeleton>
               );

@@ -6,7 +6,7 @@
 ::
 ::TODO  could maybe use /lib/proxy-hook, be renamed invite-proxy-hook
 ::
-/+  *invite-json, default-agent
+/+  *invite-json, default-agent, dbug
 ::
 |%
 +$  card  card:agent:gall
@@ -19,6 +19,8 @@
     ^-  card
     [%pass /store %agent [our %invite-store] %watch /updates]
   --
+::
+%-  agent:dbug
 ^-  agent:gall
 |_  =bowl:gall
 +*  this  .

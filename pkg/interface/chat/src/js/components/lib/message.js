@@ -1,18 +1,48 @@
 import React, { Component } from 'react';
 import { Sigil } from '/components/lib/icons/sigil';
+import { ProfileOverlay } from '/components/lib/profile-overlay';
+import { OverlaySigil } from '/components/lib/overlay-sigil';
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom'
-import { uxToHex } from '/lib/util';
+import { uxToHex, cite, writeText } from '/lib/util';
 import urbitOb from 'urbit-ob';
 import moment from 'moment';
 import _ from 'lodash';
+import ReactMarkdown from 'react-markdown';
+import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 
+const DISABLED_BLOCK_TOKENS = [
+  'indentedCode',
+  'blockquote',
+  'atxHeading',
+  'thematicBreak',
+  'list',
+  'setextHeading',
+  'html',
+  'definition',
+  'table',
+];
+
+const DISABLED_INLINE_TOKENS = [
+  'autoLink',
+  'url',
+  'email',
+  'link',
+  'reference'
+];
+
+const MessageMarkdown = React.memo(
+  props => (<ReactMarkdown
+              {...props}
+              plugins={[[RemarkDisableTokenizers, { block: DISABLED_BLOCK_TOKENS, inline: DISABLED_INLINE_TOKENS }]]}
+            />));
 
 export class Message extends Component {
   constructor() {
     super();
     this.state = {
-      unfold: false
+      unfold: false,
+      copied: false,
     };
     this.unFoldEmbed = this.unFoldEmbed.bind(this);
   }
@@ -25,6 +55,7 @@ export class Message extends Component {
     iframe.setAttribute('src', iframe.getAttribute('data-src'));
   }
 
+
   renderContent() {
     const { props } = this;
     let letter = props.msg.letter;
@@ -34,17 +65,17 @@ export class Message extends Component {
         (!!letter.code.output &&
          letter.code.output.length && letter.code.output.length > 0) ?
         (
-          <pre className="f7 clamp-attachment pa1 mt0 mb0">
+          <pre className="f7 clamp-attachment pa1 mt0 mb0 b--gray4 b--gray1-d bl br bb">
             {letter.code.output[0].join('\n')}
           </pre>
         ) : null;
       return (
-        <span>
-          <pre className="f7 clamp-attachment pa1 mt0 mb0 bg-light-gray">
+        <div className="mv2">
+          <pre className="f7 clamp-attachment pa1 mt0 mb0 bg-light-gray b--gray4 b--gray1-d ba">
             {letter.code.expression}
           </pre>
           {outputElement}
-        </span>
+        </div>
       );
     } else if ('url' in letter) {
       let imgMatch =
@@ -100,7 +131,7 @@ export class Message extends Component {
           rel="noopener noreferrer">
             {letter.url}
         </a>
-        <a className="f7 pointer lh-copy v-top"
+        <a className="ml2 f7 pointer lh-copy v-top"
         onClick={e => this.unFoldEmbed()}>
           [embed]
           </a>
@@ -124,34 +155,18 @@ export class Message extends Component {
         </p>
       );
     } else {
-      let chatroom = letter.text.match(
-        /([~][/])?(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z])+([/-])?)+/
-        );
-      if ((chatroom !== null) // matched possible chatroom
-        && (chatroom[2].length > 2) // possible ship?
-        && (urbitOb.isValidPatp(chatroom[2]) // valid patp?
-        && (chatroom[0] === letter.text))) { // entire message is room name?
-          return (
-            <Link
-            className="bb b--black b--white-d f7 mono lh-copy v-top"
-            to={"/~chat/join/" + chatroom.input}>
-              {letter.text}
-            </Link>
-          );
-        }
-      else {
-        let text = letter.text.split ('\n').map ((item, i) => <p className='f7 lh-copy v-top' key={i}>{item}</p>);
         return (
           <section>
-            {text}
+            <MessageMarkdown
+              source={letter.text}
+            />
           </section>
         );
-      }
     }
   }
 
   render() {
-    const { props } = this;
+    const { props, state } = this;
     let pending = !!props.msg.pending ? ' o-40' : '';
     let datestamp = "~" + moment.unix(props.msg.when / 1000).format('YYYY.M.D');
 
@@ -171,28 +186,44 @@ export class Message extends Component {
         color = `#${uxToHex(contact.color)}`;
         sigilClass = "";
       }
+
+      if (`~${props.msg.author}` === name) {
+        name = cite(props.msg.author);
+      }
+
       return (
         <div
+          ref={this.containerRef}
           className={
-            "w-100 f8 pl3 pt4 pr3 cf flex lh-copy " + " " + pending
+            "w-100 f7 pl3 pt4 pr3 cf flex lh-copy " + " " + pending
           }
           style={{
             minHeight: "min-content"
           }}>
-          <div className="fl mr3 v-top">
-            <Sigil
-              ship={props.msg.author}
-              size={24}
-              color={color}
-              classes={sigilClass}
-              />
-          </div>
+         <OverlaySigil
+           ship={props.msg.author}
+           contact={contact}
+           color={color}
+           sigilClass={sigilClass}
+           group={props.group}
+           className="fl pr3 v-top bg-white bg-gray0-d" />
           <div
             className="fr clamp-message white-d"
             style={{ flexGrow: 1, marginTop: -8 }}>
             <div className="hide-child" style={paddingTop}>
-              <p className="v-mid f9 gray2 dib mr3">
-                <span className={contact.nickname ? null : "mono"}>{name}</span>
+              <p className="v-mid f9 gray2 dib mr3 c-default">
+                <span
+                  className={"pointer " + (contact.nickname || state.copied ? null : "mono")}
+                  onClick={() => {
+                    writeText(props.msg.author);
+                    this.setState({ copied: true })
+                    setTimeout(() => {
+                      this.setState({ copied: false });
+                    }, 800)
+                  }}
+                  title={`~${props.msg.author}`}>
+                  {state.copied && 'Copied' || name}
+                </span>
               </p>
               <p className="v-mid mono f9 gray2 dib">{timestamp}</p>
               <p className="v-mid mono f9 ml2 gray2 dib child dn-s">{datestamp}</p>
@@ -211,7 +242,7 @@ export class Message extends Component {
             minHeight: "min-content"
           }}>
           <p className="child pt2 pl2 pr1 mono f9 gray2 dib">{timestamp}</p>
-          <div className="fr f7 clamp-message white-d pr3" style={{ flexGrow: 1 }}>
+          <div className="fr f7 clamp-message white-d pr3 lh-copy" style={{ flexGrow: 1 }}>
            {this.renderContent()}
           </div>
         </div>

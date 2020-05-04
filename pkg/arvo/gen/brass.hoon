@@ -1,3 +1,4 @@
+::  Produce a brass pill
 ::
 ::::  /hoon/brass/gen
   ::

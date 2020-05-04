@@ -320,7 +320,10 @@
   ::  add link to group submissions
   ::
   =/  =links  (~(gut by by-group) path *links)
-  =.  submissions.links
+  =^  added  submissions.links
+    ?:  ?=(^ (find ~[submission] submissions.links))
+      [| submissions.links]
+    :-  &
     (submissions:merge submissions.links ~[submission])
   =.  by-group  (~(put by by-group) path links)
   ::  add submission to global sites
@@ -330,6 +333,7 @@
   ::  send updates to subscribers
   ::
   :_  state
+  ?.  added  ~
   :_  ~
   :+  %give  %fact
   :+  :~  /submissions
@@ -346,13 +350,17 @@
   ::
   =/  urls  (~(gut by discussions) path *(map ^url discussion))
   =/  =discussion  (~(gut by urls) url *discussion)
-  =.  comments.discussion
+  =^  added  comments.discussion
+    ?:  ?=(^ (find ~[comment] comments.discussion))
+      [| comments.discussion]
+    :-  &
     (comments:merge comments.discussion ~[comment])
   =.  urls  (~(put by urls) url discussion)
   =.  discussions  (~(put by discussions) path urls)
   ::  send updates to subscribers
   ::
   :_  state
+  ?.  added  ~
   :_  ~
   :+  %give  %fact
   :+  :~  /discussions

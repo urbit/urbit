@@ -421,6 +421,7 @@
     |=  =ship
     ^+  mo-core
     =.  mo-core  (mo-untrack-ship ship)
+    =.  mo-core  (mo-filter-queue ship)
     =/  agents=(list [name=term =running-agent])  ~(tap by running.agents.state)
     |-  ^+  mo-core
     ?~  agents
@@ -724,6 +725,28 @@
       =/  card  [%slip %g %deal sock term deal]
       [duct card]
     $(moves [move moves])
+  ::  +mo-filter-queue: remove all blocked tasks from ship.
+  ::
+  ++  mo-filter-queue
+    |=  =ship
+    =/  agents=(list [name=term =blocked])  ~(tap by blocked.agents.state)
+    =|  new-agents=(map term blocked)
+    |-  ^+  mo-core
+    ?~  agents
+      mo-core(blocked.agents.state new-agents)
+    =|  new-blocked=blocked
+    |-  ^+  mo-core
+    ?:  =(~ blocked.i.agents)
+      ?~  new-blocked
+        ^$(agents t.agents)
+      %=  ^$
+        agents      t.agents
+        new-agents  (~(put by new-agents) name.i.agents new-blocked)
+      ==
+    =^  mov  blocked.i.agents  ~(get to blocked.i.agents)
+    =?  new-blocked  !=(ship attributing.q.p.mov)
+      (~(put to new-blocked) mov)
+    $
   ::  +mo-beak: assemble a beak for the specified agent.
   ::
   ++  mo-beak
@@ -750,6 +773,60 @@
   ++  mo-apply
     |=  [agent=term =routes =deal]
     ^+  mo-core
+    ::  TODO: Remove this horrific hack when ford pinto comes!
+    =>  |%
+        +$  serial  @uvH
+        ::
+        +$  letter
+          $%  [%text text=cord]
+              [%url url=cord]
+              [%code expression=cord output=(list tank)]
+              [%me narrative=cord]
+          ==
+        ::
+        +$  envelope
+          $:  uid=serial
+              number=@
+              author=ship
+              when=time
+              =letter
+          ==
+        ::
+        +$  config
+          $:  length=@
+              read=@
+          ==
+        ::
+        +$  mailbox
+          $:  =config
+              envelopes=(list envelope)
+          ==
+        ::
+        +$  inbox  (map path mailbox)
+        ::
+        +$  chat-configs  (map path config)
+        ::
+        +$  chat-base
+          $%  [%create =path]
+              [%delete =path]
+              [%message =path =envelope]
+              [%read =path]
+          ==
+        ::
+        +$  chat-action
+          $%  ::  %messages: append a list of messages to mailbox
+              ::
+              [%messages =path envelopes=(list envelope)]
+              chat-base
+          ==
+        ::
+        +$  chat-update
+          $%  [%keys keys=(set path)]
+              [%config =path =config]
+              [%messages =path start=@ud end=@ud envelopes=(list envelope)]
+              chat-base
+          ==
+        --
     ::
     =/  =path
       =/  ship  (scot %p attributing.routes)
@@ -760,9 +837,23 @@
       [p q]:beak
     ::
     ?:  ?=(%raw-poke -.deal)
-      =/  =schematic:ford  [%vale ship-desk +.deal]
-      =/  =note-arvo  [%f %build live=%.n schematic]
-      (mo-pass path note-arvo)
+      ::  TODO: Remove this horrific hack when ford pinto comes!
+      ?+  mark.deal
+        =/  =schematic:ford  [%vale ship-desk +.deal]
+        =/  =note-arvo  [%f %build live=%.n schematic]
+        (mo-pass path note-arvo)
+      ::
+          %chat-action
+        =/  chat-act=(unit chat-action)  ((soft chat-action) noun.deal)
+        ?~  chat-act
+          ~&  gall-raw-chat-poke-failed+[agent attributing.routes]
+          mo-core
+        =/  =cage  [%chat-action !>(u.chat-act)]
+        =/  new-deal=^deal  [%poke cage]
+        =/  app  (ap-abed:ap agent routes)
+        =.  app  (ap-apply:app new-deal)
+        ap-abet:app
+      ==
     ::
     ?:  ?=(%poke-as -.deal)
       =/  =schematic:ford  [%cast ship-desk mark.deal [%$ cage.deal]]
@@ -822,7 +913,6 @@
   ++  mo-handle-ames-response
     |=  =ames-response
     ^+  mo-core
-    ::
     ?-    -.ames-response
         ::  %d: diff; ask ford to validate .noun as .mark
         ::
@@ -833,7 +923,6 @@
       =/  =note-arvo
         =/  =disc:ford  [our %home]
         [%f %build live=%.n %vale disc [mark noun]:ames-response]
-      ::
       (mo-pass wire note-arvo)
     ::
         ::  %x: kick; tell agent the publisher canceled the subscription
@@ -1512,6 +1601,9 @@
   ::
       %goad
     mo-abet:(mo-goad:initialised force.task agent.task)
+  ::
+      %sear
+    mo-abet:(mo-filter-queue:initialised ship.task)
   ::
       %init
     =/  payload  gall-payload(system-duct.agents.state duct)
