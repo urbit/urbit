@@ -59,7 +59,6 @@ _print_da(u3_atom cor, u3_atom raw_da)
   u3_noun yod = u3n_slam_on(hok, u3k(raw_da));
 
   u3_noun out = 0;
-  //  u3m_p("yod", yod);
 
   u3_atom age, year, month, day, hour, min, sec, f;
   if (c3n == u3r_mean(yod, 4, &age,
@@ -168,10 +167,11 @@ _print_da(u3_atom cor, u3_atom raw_da)
 
 static
 u3_noun
-_print_p(u3_atom p)
+_print_p(u3_atom cor, u3_atom p)
 {
   // Scramble the raw number to the concealed version.
-  u3_atom sxz = u3qc_ob_fein(p);
+  u3_noun hok = u3j_cook("u3we_scow_fein_p", u3k(cor), "fein");
+  u3_atom sxz = u3n_slam_on(hok, u3k(p));
 
   // Simple galaxy case
   if (c3y == u3qa_lte(u3k(sxz), 256)) {
@@ -237,7 +237,6 @@ _print_ud(u3_atom ud)
   return list;
 }
 
-//
 u3_noun
 u3we_scow(u3_noun cor)
 {
@@ -255,8 +254,8 @@ u3we_scow(u3_noun cor)
     case c3__da:
       return _print_da(cor, atom);
 
-    /* case 'p': */
-    /*   return _print_p(atom); */
+    case 'p':
+      return _print_p(cor, atom);
 
     case c3__ud:
       return _print_ud(atom);
@@ -285,28 +284,28 @@ u3we_scot(u3_noun cor)
     return u3m_bail(c3__fail);
   }
 
+  u3_noun tape;
   switch (mod) {
-    case c3__da: {
-      u3_noun x = _print_da(cor, atom);
-      if (x == u3_none) {
-        return x;
-      }
-      u3_noun ret = u3qc_rap(3, x);
-      u3z(x);
-      return ret;
-    }
+    case c3__da:
+      tape = _print_da(cor, atom);
+      break;
 
-    /* case 'p': */
-    /*   return u3qc_rap(3, _print_p(atom)); */
+    case 'p':
+      tape = _print_p(cor, atom);
+      break;
 
-    case c3__ud: {
-      u3_atom tape = _print_ud(atom);
-      u3_atom ret = u3qc_rap(3, tape);
-      u3z(tape);
-      return ret;
-    }
+    case c3__ud:
+      tape = _print_ud(atom);
+      break;
 
     default:
       return u3_none;
   }
+
+  if (tape == u3_none) {
+    return tape;
+  }
+  u3_noun ret = u3qc_rap(3, tape);
+  u3z(tape);
+  return ret;
 }

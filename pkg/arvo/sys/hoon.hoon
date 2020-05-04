@@ -2137,6 +2137,8 @@
   ==
     %year  year
     %yore  yore
+    %fein  fein
+    %fynd  fynd
   ==
 |%
 ::
@@ -3813,49 +3815,47 @@
     (cut 3 [a 1] b)
   --
 ::
+::  +fein: conceal structure, v3.
+::
+::    +fein conceals planet-sized atoms.  The idea is that it should not be
+::    trivial to tell which planet a star has spawned under.
+::
+++  fein
+  ~/  %fein
+  |=  pyn/@  ^-  @
+  ?:  &((gte pyn 0x1.0000) (lte pyn 0xffff.ffff))
+    (add 0x1.0000 (feis:ob (sub pyn 0x1.0000)))
+  ?:  &((gte pyn 0x1.0000.0000) (lte pyn 0xffff.ffff.ffff.ffff))
+    =/  lo  (dis pyn 0xffff.ffff)
+    =/  hi  (dis pyn 0xffff.ffff.0000.0000)
+    %+  con  hi
+    $(pyn lo)
+  pyn
+::
+::  +fynd: restore structure, v3.
+::
+::    Restores obfuscated values that have been enciphered with +fein.
+::
+++  fynd
+  ~/  %fynd
+  |=  cry/@  ^-  @
+  ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
+    (add 0x1.0000 (tail:ob (sub cry 0x1.0000)))
+  ?:  &((gte cry 0x1.0000.0000) (lte cry 0xffff.ffff.ffff.ffff))
+    =/  lo  (dis cry 0xffff.ffff)
+    =/  hi  (dis cry 0xffff.ffff.0000.0000)
+    %+  con  hi
+    $(cry lo)
+  cry
+::
 ++  ob
-  ~%  %ob  +  ~
   |%
-  ::  +fein: conceal structure, v3.
-  ::
-  ::    +fein conceals planet-sized atoms.  The idea is that it should not be
-  ::    trivial to tell which planet a star has spawned under.
-  ::
-  ++  fein
-    ~/  %fein
-    |=  pyn/@  ^-  @
-    ?:  &((gte pyn 0x1.0000) (lte pyn 0xffff.ffff))
-      (add 0x1.0000 (feis (sub pyn 0x1.0000)))
-    ?:  &((gte pyn 0x1.0000.0000) (lte pyn 0xffff.ffff.ffff.ffff))
-      =/  lo  (dis pyn 0xffff.ffff)
-      =/  hi  (dis pyn 0xffff.ffff.0000.0000)
-      %+  con  hi
-      $(pyn lo)
-    pyn
-  ::
-  ::  +fynd: restore structure, v3.
-  ::
-  ::    Restores obfuscated values that have been enciphered with +fein.
-  ::
-  ++  fynd
-    ~/  %fynd
-    |=  cry/@  ^-  @
-    ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
-      (add 0x1.0000 (tail (sub cry 0x1.0000)))
-    ?:  &((gte cry 0x1.0000.0000) (lte cry 0xffff.ffff.ffff.ffff))
-      =/  lo  (dis cry 0xffff.ffff)
-      =/  hi  (dis cry 0xffff.ffff.0000.0000)
-      %+  con  hi
-      $(cry lo)
-    cry
-  ::
   ::  +feis: a four-round generalised Feistel cipher over the domain
   ::         [0, 2^32 - 2^16 - 1].
   ::
   ::    See: Black & Rogaway (2002), Ciphers for arbitrary finite domains.
   ::
   ++  feis
-    ~/  %feis
     |=  m=@
     ^-  @
     (fee 4 0xffff 0x1.0000 (mul 0xffff 0x1.0000) eff m)
@@ -3863,7 +3863,6 @@
   ::  +tail: reverse +feis.
   ::
   ++  tail
-    ~/  %tail
     |=  m=@
     ^-  @
     (feen 4 0xffff 0x1.0000 (mul 0xffff 0x1.0000) eff m)
@@ -3880,7 +3879,6 @@
   ::    m:    an input value in the domain [0, k - 1]
   ::
   ++  fee
-    ~/  %fee
     |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
     =/  c  (fe r a b prf m)
@@ -3894,7 +3892,6 @@
   ::    +fee.
   ::
   ++  feen
-    ~/  %feen
     |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
     =/  c  (fen r a b prf m)
@@ -3910,7 +3907,6 @@
   ::    to support some legacy behaviour.  See urbit/arvo#1105.
   ::
   ++  fe
-    ~/  %fe
     |=  [r=@ a=@ b=@ prf=$-([j=@ r=@] @) m=@]
     =/  j  1
     =/  ell  (mod m a)
@@ -3949,7 +3945,6 @@
   ::    to support some legacy behaviour.  See urbit/arvo#1105.
   ::
   ++  fen
-    ~/  %fen
     |=  [r=@ a=@ b=@ prf=$-([j=@ r=@] @) m=@]
     =/  j  r
     ::
@@ -3998,7 +3993,6 @@
   ::  +eff: a murmur3-based pseudorandom function.  'F' in B&R (2002).
   ::
   ++  eff
-    ~/  %eff
     |=  [j=@ r=@]
     ^-  @
     (muk (snag j raku) 2 r)
@@ -5813,7 +5807,7 @@
   ++  dim  (ape dip)
   ++  dip  (bass 10 ;~(plug sed:ab (star sid:ab)))
   ++  dum  (bass 10 (plus sid:ab))
-  ++  fed  %+  cook  fynd:ob
+  ++  fed  %+  cook  fynd
            ;~  pose
              %+  bass  0x1.0000.0000.0000.0000          ::  oversized
                ;~  plug
@@ -5925,7 +5919,7 @@
           ==
         ::
             $p
-          =+  sxz=(fein:ob q.p.lot)
+          =+  sxz=(fein q.p.lot)
           =+  dyx=(met 3 sxz)
           :-  '~'
           ?:  (lte dyx 1)

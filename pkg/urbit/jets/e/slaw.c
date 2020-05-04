@@ -48,18 +48,7 @@ _parse_ud(u3_noun txt) {
   return u3nc(0, total);
 }
 
-// parsing @p:
-//
-// +slaw calls +fed:ag directly. +fed:ag:
-//
-// - parses the text first into a number.
-// - runs fynd:ob, which is the scrambler restore structure. And +fynd is
-//   unjetted.
-//
-// The actual +po stuff, like +ins:po, is jetted but it's jetted such that it
-// pulls the tables out of the sample, so we can't just reuse it from other
-// jets.
-
+static
 u3_noun get_syllable(c3_c** cur_ptr, c3_c* one, c3_c* two, c3_c* three) {
   if (islower((*cur_ptr)[0]) && islower((*cur_ptr)[1]) &&
       islower((*cur_ptr)[2])) {
@@ -114,7 +103,7 @@ u3_noun combine(u3_noun p, u3_noun q)
   }
 
 u3_noun
-_parse_p(u3_noun txt) {
+_parse_p(u3_noun cor, u3_noun txt) {
   c3_c* c = u3r_string(txt);
 
   c3_c* cur = c;
@@ -173,7 +162,9 @@ _parse_p(u3_noun txt) {
 
     u3_atom raw = u3k(u3t(m));
     u3z(m);
-    return u3nc(0, u3qc_ob_fynd(raw));
+
+    u3_noun hok = u3j_cook("u3we_slaw_fynd_p", u3k(cor), "fynd");
+    return u3nc(0, u3n_slam_on(hok, u3k(raw)));
   }
 
   // There must now be a - or it is invalid.
@@ -204,7 +195,8 @@ _parse_p(u3_noun txt) {
 
     u3_atom raw = u3k(u3t(m));
     u3z(m);
-    return u3nc(0, u3qc_ob_fynd(raw));
+    u3_noun hok = u3j_cook("u3we_slaw_fynd_p", u3k(cor), "fynd");
+    return u3nc(0, u3n_slam_on(hok, u3k(raw)));
   }
 
   // There must now be a - or it is invalid.
@@ -238,7 +230,8 @@ _parse_p(u3_noun txt) {
 
     u3_atom raw = u3k(u3t(m));
     u3z(m);
-    return u3nc(0, u3qc_ob_fynd(raw));
+    u3_noun hok = u3j_cook("u3we_slaw_fynd_p", u3k(cor), "fynd");
+    return u3nc(0, u3n_slam_on(hok, u3k(raw)));
   }
 
   // At this point, the only thing it could be is a long comet, of the form
@@ -500,8 +493,8 @@ u3we_slaw(u3_noun cor)
     case c3__da:
       return _parse_da(cor, txt);
 
-    /* case 'p': */
-    /*   return _parse_p(txt); */
+    case 'p':
+      return _parse_p(cor, txt);
 
     case c3__ud:
       return _parse_ud(txt);

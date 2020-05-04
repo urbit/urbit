@@ -928,28 +928,6 @@ static c3_c* _141_tri__cofl_ha[] = {
 };
 
 
-static u3j_harm _141_tri__ob_fein_a[] = {{".2", u3wc_ob_fein}, {}};
-static u3j_harm _141_tri__ob_fynd_a[] = {{".2", u3wc_ob_fynd}, {}};
-static u3j_harm _141_tri__ob_feis_a[] = {{".2", u3wc_ob_feis}, {}};
-static u3j_harm _141_tri__ob_tail_a[] = {{".2", u3wc_ob_tail}, {}};
-static u3j_harm _141_tri__ob_fee_a[] = {{".2", u3wc_ob_fee}, {}};
-static u3j_harm _141_tri__ob_feen_a[] = {{".2", u3wc_ob_feen}, {}};
-static u3j_harm _141_tri__ob_fe_a[] = {{".2", u3wc_ob_fe}, {}};
-static u3j_harm _141_tri__ob_fen_a[] = {{".2", u3wc_ob_fen}, {}};
-static u3j_harm _141_tri__ob_eff_a[] = {{".2", u3wc_ob_eff}, {}};
-static u3j_core _141_tri__ob_d[] =
-  { { "fein", 7, _141_tri__ob_fein_a, 0, 0 },
-    { "fynd", 7, _141_tri__ob_fynd_a, 0, 0 },
-    { "feis", 7, _141_tri__ob_feis_a, 0, 0 },
-    { "tail", 7, _141_tri__ob_tail_a, 0, 0 },
-    { "fee", 7, _141_tri__ob_fee_a, 0, 0 },
-    { "feen", 7, _141_tri__ob_feen_a, 0, 0 },
-    { "fe", 7, _141_tri__ob_fe_a, 0, 0 },
-    { "fen", 7, _141_tri__ob_fen_a, 0, 0 },
-    { "eff", 7, _141_tri__ob_eff_a, 0, 0 },
-    {}
-  };
-
 
   static u3j_harm _141_tri__rd_add_a[] = {{".2", u3wer_add}, {}};
   static c3_c* _141_tri__rd_add_ha[] = {
@@ -1298,7 +1276,6 @@ static c3_c* _141_tri_shal_ha[] = {
 
 static u3j_core _141_tri_d[] =
 { { "qua",  3, 0, _141_qua_d, _141_qua_ha, _141_qua_ho },
-  //  { "ob",   3, 0, _141_tri__ob_d, 0 },
   { "cofl", 7, 0, _141_tri__cofl_d, _141_tri__cofl_ha },
   { "rd",   7, 0, _141_tri__rd_d, _141_tri__rd_ha },
   { "rs",   7, 0, _141_tri__rs_d, _141_tri__rs_ha },
