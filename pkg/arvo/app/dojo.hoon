@@ -676,7 +676,6 @@
       |=  [cay=cage cig=dojo-config]
       ^+  +>+>
       ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
-        ~&  p.q.cay
         ::  naked generator; takes one argument
         ::
         ?.  &(?=({* ~} p.cig) ?=(~ q.cig))
@@ -785,7 +784,7 @@
           %ur  (dy-request /hand `request:http`[%'GET' p.bil ~ ~])
           %te  (dy-wool-poke p.bil q.bil)
           %ex  (dy-mere p.bil)
-          %dv  (dy-sing /hand %a (snoc p.bil %hoon))
+          %dv  (dy-sing hand+p.bil %a (snoc p.bil %hoon))
           %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil)
           %sa
         =+  .^(=dais:clay cb+(en-beam:format he-beak /[p.bil]))
@@ -947,11 +946,11 @@
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
-    ?~  riot
-      (he-diff(poy ~) %tan >%build-fail< >(spud way)< ~)
-    =+  dye=~(. dy u.poy(pux ~))
-    ?+  way  !!
-      [%hand ~]  (dy-hand:dye noun+!<(vase q.r.u.riot))
+    ?+    way  !!
+        [%hand *]
+      ?~  riot
+        (he-diff(poy ~) %tan >%generator-build-fail< >(snoc t.way %hoon)< ~)
+      (~(dy-hand dy u.poy(pux ~)) noun+!<(vase q.r.u.riot))
     ==
   ::
   ++  he-unto                                           ::  result from agent
