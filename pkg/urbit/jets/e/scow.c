@@ -15,6 +15,22 @@ c3_y to_digit(u3_atom tig)
   }
 }
 
+static
+c3_y to_w_digit(u3_atom tig)
+{
+  if (tig == 63) {
+    return '~';
+  } else if (tig == 62) {
+    return '-';
+  } else if (tig >= 36) {
+    return 29 + tig;
+  } else if (tig >= 10) {
+    return 87 + tig;
+  } else {
+    return '0' + tig;
+  }
+}
+
 // gives the characters for a four 'digit' small hex atom.
 static
 void
@@ -229,12 +245,62 @@ _print_ud(u3_atom ud)
       between = 0;
     }
 
-    list = u3nc(u3ka_add(u3ka_mod(ud, 10), '0'), list);
+    list = u3nc(u3ka_add(u3qa_mod(ud, 10), '0'), list);
     between++;
     ud = u3ka_div(ud, 10);
   } while (c3n == u3r_sing(ud, 0));
 
   return list;
+}
+
+static
+u3_noun
+_print_uv(u3_atom uv)
+{
+  // number of characters printed "between" periods.
+  int between = 0;
+  u3_atom list = 0;
+
+  u3k(uv);
+
+  do {
+    if (between == 5) {
+      list = u3nc('.', list);
+      between = 0;
+    }
+
+    u3_atom tig = u3qa_mod(uv, 32);
+    list = u3nc(to_digit(tig), list);
+    between++;
+    uv = u3ka_div(uv, 32);
+  } while (c3n == u3r_sing(uv, 0));
+
+  return u3nt('0', 'v', list);
+}
+
+static
+u3_noun
+_print_uw(u3_atom uw)
+{
+  // number of characters printed "between" periods.
+  int between = 0;
+  u3_atom list = 0;
+
+  u3k(uw);
+
+  do {
+    if (between == 5) {
+      list = u3nc('.', list);
+      between = 0;
+    }
+
+    u3_atom tig = u3qa_mod(uw, 64);
+    list = u3nc(to_w_digit(tig), list);
+    between++;
+    uw = u3ka_div(uw, 64);
+  } while (c3n == u3r_sing(uw, 0));
+
+  return u3nt('0', 'w', list);
 }
 
 u3_noun
@@ -259,6 +325,12 @@ u3we_scow(u3_noun cor)
 
     case c3__ud:
       return _print_ud(atom);
+
+    case c3__uv:
+      return _print_uv(atom);
+
+    case c3__uw:
+      return _print_uw(atom);
 
     /*   // %ta is used once in link.hoon. don't bother. */
 
@@ -296,6 +368,14 @@ u3we_scot(u3_noun cor)
 
     case c3__ud:
       tape = _print_ud(atom);
+      break;
+
+    case c3__uv:
+      tape = _print_uv(atom);
+      break;
+
+    case c3__uw:
+      tape = _print_uw(atom);
       break;
 
     default:
