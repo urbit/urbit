@@ -31,15 +31,17 @@ _parse_ud(u3_noun txt) {
 
     if (cur[0] > '9' || cur[0] < '0') {
       c3_free(c);
+      u3z(total);
       return 0;
     }
 
-    total = u3qa_mul(total, 10);
-    total = u3qa_add(total, cur[0] - '0');
+    total = u3ka_mul(total, 10);
+    total = u3ka_add(total, cur[0] - '0');
     cur++;
 
     if (since_last_period > 3) {
       c3_free(c);
+      u3z(total);
       return 0;
     }
   }

@@ -345,7 +345,6 @@ u3we_scow(u3_noun cor)
 u3_noun
 u3we_scot(u3_noun cor)
 {
-  /* u3l_log("u3we_scot"); */
   u3_noun mod;
   u3_noun atom;
 
