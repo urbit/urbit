@@ -672,7 +672,7 @@ data Hap = Deþ Ship
          | Res ShareResp
          | Kil ()
 
-multiServ :: MultiServ -> IO ()
+multiServ :: HasLogFunc e => MultiServ -> RIO e ()
 multiServ ms = do
   case msPort ms of
     Nothing -> doNothing ms
@@ -683,16 +683,47 @@ multiServ ms = do
   sends requests to the appropriate ship, respond to requests when
   responses are given, and shuts down when the king shuts down.
 -}
-doSomething :: MultiServ -> Word16 -> IO ()
+doSomething :: HasLogFunc e => MultiServ -> Word16 -> RIO e ()
 doSomething MultiServ{..} httpPort = do
-  error "TODO"
+  logDebug "Starting HTTP server"
+
+  let httpOpts  = W.defaultSettings & W.setHost "*"
+                                    & W.setPort (fromIntegral httpPort)
+
+  sId <- io $ ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
+
+  vShips :: TVar (Map Ship ShipAPI) <- newTVarIO mempty
+  liv <- newTVarIO emptyLiveReqs
+
+  env <- ask
+
+  plan <- error "TODO"
+
+  httpTid  <- async $ io
+                    $ W.runSettings httpOpts
+                    $ app env sId liv plan Insecure
+
+  let onHapn :: STM Hap
+      onHapn = asum [ Lif <$> takeTMVar msBoot
+                    , Deþ <$> takeTMVar msDead
+                    , Res <$> (readTVar vShips >>= asum . fmap sapiRes . toList)
+                    , Kil <$> msKill
+                    ]
+
+  let loop = join $ atomically $ onHapn >>= \case
+        Deþ s       -> modifyTVar' vShips (deleteMap s) >> pure loop
+        Lif (s,api) -> modifyTVar' vShips (insertMap s api) >> pure loop
+        Res _       -> error "TODO"
+        Kil _       -> pure (cancel httpTid)
+
+  loop
 
 {-
   If the port is not set, we still run a thread for the shared server. It
   doesn't run an HTTP server, it ignores all responses, and it shuts
   down when the king shuts down.
 -}
-doNothing :: MultiServ -> IO ()
+doNothing :: MultiServ -> RIO e ()
 doNothing MultiServ{..} = do
   vShips :: TVar (Map Ship ShipAPI) <- newTVarIO mempty
 
