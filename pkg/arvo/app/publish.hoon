@@ -1857,8 +1857,9 @@
   ::
       %remove
     =/  app-path  [(scot %p author.del) /[book.del]]
-    =/  group-path  (group-from-book app-path)
-    [(metadata-poke [%remove group-path [%publish app-path]])]~
+    =/  group-path=(unit path)  (group-from-book app-path)
+    ?~  group-path  ~
+    [(metadata-poke [%remove u.group-path [%publish app-path]])]~
   ==
   ::
   ++  add
@@ -1884,11 +1885,11 @@
   ::
   ++  group-from-book
     |=  app-path=path
-    ^-  path
+    ^-  (unit path)
     ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
       ?:  ?=([@ ^] app-path)
         ~&  [%assuming-ported-legacy-publish app-path]
-        [%'~' app-path]
+        `[%'~' app-path]
       ~|  [%weird-publish app-path]
       !!
     =/  resource-indices
@@ -1899,8 +1900,10 @@
         (scot %da now.bol)
         /resource-indices
       ==
-    =/  groups=(set path)  (~(got by resource-indices) [%publish app-path])
-    (snag 0 ~(tap in groups))
+    =/  groups=(unit (set path))
+      (~(get by resource-indices) [%publish app-path])
+    ?~  groups  ~
+    `(snag 0 ~(tap in u.groups))
   --
 ::
 ++  metadata-hook-poke
