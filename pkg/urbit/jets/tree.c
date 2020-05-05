@@ -927,8 +927,6 @@ static c3_c* _141_tri__cofl_ha[] = {
   0
 };
 
-
-
   static u3j_harm _141_tri__rd_add_a[] = {{".2", u3wer_add}, {}};
   static c3_c* _141_tri__rd_add_ha[] = {
     "90dfaaadb2878d6d89a808ce4199e5bb239fa981e1c2edf24dc54aa3fcab55a5",
@@ -1288,7 +1286,6 @@ static u3j_core _141_tri_d[] =
   { "shay", 7, _141_tri_shay_a, 0, _141_tri_shay_ha },
   { "shas", 7, _141_tri_shas_a, 0, _141_tri_shas_ha },
   { "shal", 7, _141_tri_shal_a, 0, _141_tri_shal_ha },
-
   {}
 };
 static c3_c* _141_tri_ha[] = {

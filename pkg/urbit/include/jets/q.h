@@ -75,9 +75,6 @@
     void po_to_prefix(u3_noun id, c3_y* a, c3_y* b, c3_y* c);
     void po_to_suffix(u3_noun id, c3_y* a, c3_y* b, c3_y* c);
 
-    u3_noun u3qc_ob_fein(u3_atom);
-    u3_noun u3qc_ob_fynd(u3_atom);
-
   /** Tier 4.
   **/
     u3_noun u3qdb_bif(u3_noun, u3_noun);
