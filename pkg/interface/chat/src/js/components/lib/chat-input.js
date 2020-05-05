@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import { UnControlled as CodeEditor } from 'react-codemirror2';
+import CodeMirror from 'codemirror';
 
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/display/placeholder';
 
 import { Sigil } from '/components/lib/icons/sigil';
 import { ShipSearch } from '/components/lib/ship-search';
+import { S3Upload } from '/components/lib/s3-upload';
 
 import { uxToHex } from '/lib/util';
 
@@ -173,7 +175,7 @@ export class ChatInput extends Component {
 
   isUrl(string) {
     try {
-      const websiteTest = new RegExp(String(/((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source)
+      const websiteTest = new RegExp(String(/^((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source)
       );
       return websiteTest.test(string);
     } catch (e) {
@@ -267,6 +269,20 @@ export class ChatInput extends Component {
     }
   }
 
+  uploadSuccess(url) {
+    const { props } = this;
+    props.api.chat.message(
+      props.station,
+      `~${window.ship}`,
+      Date.now(),
+      { url }
+    );
+  }
+
+  uploadError(error) {
+    //  no-op for now
+  }
+
   render() {
     const { props, state } = this;
 
@@ -308,7 +324,9 @@ export class ChatInput extends Component {
         'Enter': cm =>
             this.messageSubmit(),
         'Shift-3': cm =>
-          this.toggleCode()
+          cm.getValue().length === 0
+            ? this.toggleCode()
+            : CodeMirror.Pass
       }
     };
 
@@ -337,26 +355,38 @@ export class ChatInput extends Component {
         </div>
         <div
           className="fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center"
-          style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 48px)' }}
+          style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}
         >
           <CodeEditor
             options={options}
             editorDidMount={(editor) => {
- this.editor = editor;
-}}
+            this.editor = editor;
+            if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
+                navigator.userAgent
+              )) {
+              editor.focus();
+              }
+            }}
             onChange={(e, d, v) => this.messageChange(e, d, v)}
           />
         </div>
-        <div style={{ height: '24px', width: '24px', flexBasis: 24, marginTop: 6 }}>
+        <div className="ml2 mr2"
+          style={{ height: '16px', width: '16px', flexBasis: 16, marginTop: 10 }}>
+          <S3Upload
+            configuration={props.s3.configuration}
+            credentials={props.s3.credentials}
+            uploadSuccess={this.uploadSuccess.bind(this)}
+            uploadError={this.uploadError.bind(this)}
+          />
+        </div>
+        <div style={{ height: '16px', width: '16px', flexBasis: 16, marginTop: 10 }}>
           <img
             style={{ filter: state.code && 'invert(100%)', height: '100%', width: '100%' }}
             onClick={this.toggleCode}
             src="/~chat/img/CodeEval.png"
             className="contrast-10-d bg-white bg-none-d"
           />
-
         </div>
-
       </div>
     );
   }

@@ -527,6 +527,7 @@ export class ChatScreen extends Component {
           envelopes={props.envelopes}
           contacts={props.contacts}
           onEnter={() => this.setState({ scrollLocked: false })}
+          s3={props.s3}
           placeholder="Message..."
         />
       </div>

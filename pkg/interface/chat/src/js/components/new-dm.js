@@ -11,13 +11,10 @@ export class NewDmScreen extends Component {
     super(props);
     this.state = {
       ship: null,
-      idError: false,
-      inviteError: false,
-      allowHistory: true,
+      station: null,
       awaiting: false
     };
 
-    this.setInvite = this.setInvite.bind(this);
     this.onClickCreate = this.onClickCreate.bind(this);
   }
 
@@ -26,8 +23,6 @@ export class NewDmScreen extends Component {
     if (props.autoCreate && urbitOb.isValidPatp(props.autoCreate)) {
       this.setState(
         {
-          error: false,
-          success: true,
           ship: props.autoCreate.slice(1),
           awaiting: true
         },
@@ -40,18 +35,12 @@ export class NewDmScreen extends Component {
     const { props, state } = this;
 
     if (prevProps !== props) {
-      let station = `/~${window.ship}/${state.idName}`;
-      if (station in props.inbox) {
-        props.history.push("/~chat/room" + station);
+      const { station } = this.state;
+      if (station && station in props.inbox) {
+        this.setState({ awaiting: false });
+        props.history.push(`/~chat/room${station}`);
       }
     }
-  }
-
-  setInvite(value) {
-    this.setState({
-      groups: [],
-      ship: value.ships[0]
-    });
   }
 
   onClickCreate() {
@@ -73,15 +62,11 @@ export class NewDmScreen extends Component {
 
     this.setState(
       {
-        error: false,
-        success: true,
-        group: [],
-        ship: [],
-        awaiting: true
+        station
       },
       () => {
         let groupPath = station;
-        let submit = props.api.chatView.create(
+        props.api.chatView.create(
           `~${window.ship} <-> ~${state.ship}`,
           "",
           station,
@@ -90,10 +75,6 @@ export class NewDmScreen extends Component {
           state.ship !== window.ship ? [`~${state.ship}`] : [],
           true
         );
-        submit.then(() => {
-          this.setState({ awaiting: false });
-          props.history.push(`/~chat/room${station}`);
-        });
       }
     );
   }
