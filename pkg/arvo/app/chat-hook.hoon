@@ -3,7 +3,8 @@
 ::  allow sending chat messages to foreign paths based on write perms
 ::
 /-  *permission-store, *chat-hook, *invite-store, md-store=metadata-store,
-    *permission-hook, *group-store, *permission-group-hook  ::TMP  for upgrade
+    *permission-hook, *group-store, *permission-group-hook,  ::TMP  for upgrade
+    *group
 /+  *chat-json, *chat-eval, default-agent, verb, dbug, md-helper=metadata
 ~%  %chat-hook-top  ..is  ~
 |%
@@ -648,7 +649,7 @@
   |=  [who=ship chat=path]
   ^-  ?
   %+  lien  (groups-from-resource:md chat)
-  |=  =group-path:md-store
+  |=  =group-path
   %^  scry  ?
     %permission-store
   [%permitted (scot %p who) group-path]

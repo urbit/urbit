@@ -3,7 +3,7 @@
 ::  watch paths:
 ::  /group/%group-path                      all updates related to this group
 ::
-/-  store=metadata-store, *metadata-hook
+/-  store=metadata-store, *metadata-hook, *group
 /+  default-agent, dbug
 ~%  %metadata-hook-top  ..is  ~
 |%
@@ -14,7 +14,7 @@
 ::
 +$  state-zero
   $:  %0
-      synced=(map group-path:store ship)
+      synced=(map group-path ship)
   ==
 --
 =|  state-zero
@@ -127,7 +127,7 @@
   ==
   ::
   ++  send
-    |=  =group-path:store
+    |=  =group-path
     ^-  (list card)
     =/  =ship
       %+  slav  %p
@@ -155,7 +155,7 @@
   ?>  =(our.bowl (~(got by synced) path))
   ?>  (is-permitted src.bowl path)
   %+  turn  ~(tap by (metadata-scry path))
-  |=  [[=group-path:store =resource:store] =metadata:store]
+  |=  [[=group-path =resource:store] =metadata:store]
   ^-  card
   [%give %fact ~ %metadata-update !>([%add group-path resource metadata])]
   ::

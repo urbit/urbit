@@ -19,7 +19,7 @@
 ::    when adding support for new paths, the only things you'll likely want
 ::    to touch are +permitted, +initial-response, & +kick-proxies.
 ::
-/-  group-store, md-store=metadata-store
+/-  group-store, md-store=metadata-store, *group
 /+  *link, metadata, default-agent, verb, dbug
 ~%  %link-proxy-hook-top  ..is  ~
 |%
@@ -117,7 +117,7 @@
   ~?  !is-running:metadata
     %woah-md-s-not-booted  ::TODO  fallback if needed
   %+  lien  (groups-from-resource:md %link u.target)
-  |=  =group-path:md-store
+  |=  =group-path
   ^-  ?
   =-  (~(has in (fall - *group:group-store)) who)
   %^  scry-for  (unit group:group-store)
@@ -225,7 +225,7 @@
   ::
   %-  zing
   %+  turn  (app-paths-from-group:md pax.upd)
-  |=  =app-path:md-store
+  |=  =app-path
   ^-  (list card)
   %+  kick-revoked-permissions
     app-path
@@ -312,7 +312,7 @@
 ::  helpers
 ::
 ++  scry-for
-  |*  [=mold =app-name:md-store =path]
+  |*  [=mold =app-name =path]
   .^  mold
     %gx
     (scot %p our.bowl)

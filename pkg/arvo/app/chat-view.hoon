@@ -8,7 +8,8 @@
     md-store=metadata-store,
     *permission-group-hook,
     *chat-hook,
-    *metadata-hook
+    *metadata-hook,
+    *group
 /+  *server, *chat-json, default-agent, verb, dbug,
     metadata-helper=metadata
 /=  index

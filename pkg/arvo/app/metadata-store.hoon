@@ -21,7 +21,7 @@
 ::  /app-name/%app-name                            associations for app
 ::  /group/%group-path                             associations for group
 ::
-/-  store=metadata-store
+/-  store=metadata-store, *group
 /+  *metadata-json, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
@@ -33,9 +33,9 @@
 +$  state-zero
   $:  %0
       =associations:store
-      group-indices=(jug group-path:store resource:store)
-      app-indices=(jug app-name:store [group-path:store app-path:store])
-      resource-indices=(jug resource:store group-path:store)
+      group-indices=(jug group-path resource:store)
+      app-indices=(jug app-name [group-path app-path])
+      resource-indices=(jug resource:store group-path)
   ==
 --
 ::
@@ -100,17 +100,17 @@
         [%y %resource-indices ~]  ``noun+!>(resource-indices)
         [%x %associations ~]      ``noun+!>(associations)
         [%x %app-name @ ~]
-      =/  =app-name:store
+      =/  =app-name
         i.t.t.path
       ``noun+!>((metadata-for-app:mc app-name))
     ::
         [%x %group *]
-      =/  =group-path:store
+      =/  =group-path
         t.t.path
       ``noun+!>((metadata-for-group:mc group-path))
     ::
         [%x %metadata @ @ @ ~]
-      =/  =group-path:store
+      =/  =group-path
         (stab (slav %t i.t.t.path))
       =/  =resource:store
         [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
@@ -136,7 +136,7 @@
   ==
 ::
 ++  handle-add
-  |=  [=group-path:store =resource:store =metadata:store]
+  |=  [=group-path =resource:store =metadata:store]
   ^-  (quip card _state)
   :-  %+  send-diff  app-name.resource
       ?.  (~(has by resource-indices) resource)
@@ -157,7 +157,7 @@
   ==
 ::
 ++  handle-remove
-  |=  [=group-path:store =resource:store]
+  |=  [=group-path =resource:store]
   ^-  (quip card _state)
   :-  (send-diff app-name.resource [%remove group-path resource])
   %=  state
@@ -175,16 +175,16 @@
   ==
 ::
 ++  metadata-for-app
-  |=  =app-name:store
+  |=  =app-name
   ^-  associations:store
   %-  ~(gas by *associations:store)
   %+  turn  ~(tap in (~(gut by app-indices) app-name ~))
-  |=  [=group-path:store =app-path:store]
+  |=  [=group-path =app-path]
   :-  [group-path [app-name app-path]]
   (~(got by associations) [group-path [app-name app-path]])
 ::
 ++  metadata-for-group
-  |=  =group-path:store
+  |=  =group-path
   ^-  associations:store
   %-  ~(gas by *associations:store)
   %+  turn  ~(tap in (~(gut by group-indices) group-path ~))
@@ -193,7 +193,7 @@
   (~(got by associations) [group-path resource])
 ::
 ++  send-diff
-  |=  [=app-name:store upd=update:store]
+  |=  [=app-name upd=update:store]
   ^-  (list card)
   |^
   %-  zing

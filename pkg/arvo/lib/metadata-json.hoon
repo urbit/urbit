@@ -1,4 +1,4 @@
-/-  *metadata-store
+/-  *metadata-store, *group
 |%
 ++  associations-to-json
   |=  =associations

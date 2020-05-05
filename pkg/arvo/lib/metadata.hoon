@@ -1,7 +1,8 @@
 ::  metadata: helpers for getting data from the metadata-store
 ::
-/-  *metadata-store, *metadata-hook
+/-  *metadata-store, *metadata-hook, *group
 ::
+^|
 |_  [=bowl:gall =app-name]
 ++  card  card:agent:gall
 ++  is-running
@@ -27,16 +28,17 @@
   `app-path.resource
 ::
 ++  resources-from-app
-   %~  tap  in
-   %.  app-name
-   %~  get  ju
-   .^  (jug app-name:md-store [group-path:md-store app-path:md-store])
-     %gy
-     (scot %p our.bowl)
-     %metadata-store
-     (scot %da now.bowl)
-     /app-indices
-   ==
+  ^-  (list [=group-path =app-path])
+  %~  tap  in
+  %.  app-name
+  %~  get  ju
+  .^  (jug ^app-name [group-path app-path])
+    %gy
+    (scot %p our.bowl)
+    %metadata-store
+    (scot %da now.bowl)
+    /app-indices
+  ==
 ::
 ++  groups-from-resource
   |=  =app-path

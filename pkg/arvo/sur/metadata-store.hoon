@@ -1,7 +1,7 @@
+/-  *group
+^?
 |%
-+$  group-path    path
-+$  app-name      @tas
-+$  app-path      path
+::
 +$  resource      [=app-name =app-path]
 +$  associations  (map [group-path resource] metadata)
 ::

@@ -14,7 +14,7 @@
 ::    to expede this process, we prod other potential listeners when we add
 ::    them to our metadata+groups definition.
 ::
-/-  link-listen-hook, md-store=metadata-store, *link, group-store
+/-  link-listen-hook, md-store=metadata-store, *link, group-store, *group
 /+  mdl=metadata, default-agent, verb, dbug
 ::
 ~%  %link-listen-hook-top  ..is  ~
@@ -26,7 +26,7 @@
   ==
 +$  state-2  state-1
 +$  state-1
-  $:  listening=(set app-path:md-store)
+  $:  listening=(set app-path)
       state-0
   ==
 +$  state-0
@@ -39,7 +39,7 @@
       ::    this also gives us the option to check & restore subscriptions,
       ::    should we ever need that.
       ::
-      reasoning=(jug [ship app-path:md-store] group-path:md-store)
+      reasoning=(jug [ship app-path] group-path)
   ==
 ::
 +$  what-target  ?(%local-pages %annotations)
@@ -95,7 +95,7 @@
       =.  state  [%2 +.old]
       =.  listening.state
         (~(run in ~(key by reasoning.old)) tail)
-      =/  resources=(list [=group-path:md-store =app-path:md-store])
+      =/  resources=(list [=group-path =app-path])
         resources-from-app:md:do
       =|  cards=(list card)
       |-
@@ -114,7 +114,7 @@
       $(resources t.resources, cards (weld more-cards cards))
     ::
         %0
-      =/  listening=(set app-path:md-store)
+      =/  listening=(set app-path)
         (~(run in ~(key by reasoning.old)) tail)
       $(old [%1 listening +.old])
     ==
@@ -229,7 +229,7 @@
       :_  (~(del in listening) app-path)
       ?.(had ~ [(send-update action)]~)
     ==
-  =/  groups=(list group-path:md-store)
+  =/  groups=(list group-path)
     (groups-from-resource:md %link app-path)
   |-
   ?~  groups  [cards state]
@@ -339,7 +339,7 @@
   ^-  (quip card _state)
   ?.  ?=(?(%path %add %remove) -.upd)
     [~ state]
-  =/  socs=(list app-path:md-store)
+  =/  socs=(list app-path)
     (app-paths-from-group:md pax.upd)
   =/  whos=(list ship)
     ~(tap in members.upd)
@@ -363,7 +363,7 @@
 ::  link subscriptions
 ::
 ++  listen-to-group
-  |=  [=app-path:md-store =group-path:md-store]
+  |=  [=app-path =group-path]
   ^-  (quip card _state)
   =/  peers=(list ship)
     ~|  group-path
@@ -380,7 +380,7 @@
   $(peers t.peers, cards (weld cards caz))
 ::
 ++  leave-from-group
-  |=  [=app-path:md-store =group-path:md-store]
+  |=  [=app-path =group-path]
   ^-  (quip card _state)
   =/  peers=(list ship)
     %~  tap  in
@@ -396,7 +396,7 @@
   $(peers t.peers, cards (weld cards caz))
 ::
 ++  listen-to-peer
-  |=  [=app-path:md-store =group-path:md-store who=ship]
+  |=  [=app-path =group-path who=ship]
   ^-  (quip card _state)
   ?:  =(our.bowl who)
     [~ state]
@@ -408,7 +408,7 @@
   (start-link-subscriptions who app-path)
 ::
 ++  leave-from-peer
-  |=  [=app-path:md-store =group-path:md-store who=ship]
+  |=  [=app-path =group-path who=ship]
   ^-  (quip card _state)
   ?:  =(our.bowl who)
     [~ state]
@@ -417,7 +417,7 @@
   (end-link-subscriptions who app-path)
 ::
 ++  start-link-subscriptions
-  |=  [=ship =app-path:md-store]
+  |=  [=ship =app-path]
   ^-  (list card)
   :~  (start-link-subscription %local-pages ship app-path)
       (start-link-subscription %annotations ship app-path)
@@ -529,7 +529,7 @@
       [[%links (target-to-wire target)] who.target %link-proxy-hook]
     |
   %+  lien  (groups-from-resource:md %link where.target)
-  |=  =group-path:md-store
+  |=  =group-path
   ^-  ?
   =-  (~(has in (fall - *group:group-store)) who.target)
   %^  scry-for  (unit group:group-store)
@@ -588,8 +588,9 @@
     |=  =note
     ^-  card
     %+  do-link-action
-      [%forward %annotation (scot %p who) where]
-    [%read where url.update who note]
+      `wire`[%forward %annotation (scot %p who) where]
+    ~!  [who note]
+    `action`[%read `path`where `url`url.update `comment`[who note]]
   ==
 ::
 ++  take-forward-sign
@@ -609,7 +610,7 @@
   [~ state]
 ::
 ++  scry-for
-  |*  [=mold =app-name:md-store =path]
+  |*  [=mold =app-name =path]
   .^  mold
     %gx
     (scot %p our.bowl)
