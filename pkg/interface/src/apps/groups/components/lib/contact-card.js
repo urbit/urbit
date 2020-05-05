@@ -90,203 +90,248 @@ export class ContactCard extends Component {
 
   shipParser(ship) {
     switch (ship.length) {
-      case 3: return 'Galaxy';
-      case 6: return 'Star';
-      case 13: return 'Planet';
-      case 56: return 'Comet';
-      default: return 'Unknown';
+      case 3:
+        return 'Galaxy';
+      case 6:
+        return 'Star';
+      case 13:
+        return 'Planet';
+      case 56:
+        return 'Comet';
+      default:
+        return 'Unknown';
     }
   }
 
   setField(field) {
     const { props, state } = this;
     const ship = '~' + props.ship;
-    const emailTest = new RegExp(String(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*/.source)
-      + /@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.source
+    const emailTest = new RegExp(
+      String(
+        /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*/.source
+      ) +
+        /@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+          .source
     );
 
-    const phoneTest = new RegExp(String(/^\s*(?:\+?(\d{1,3}))?/.source)
-      + /([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/.source
+    const phoneTest = new RegExp(
+      String(/^\s*(?:\+?(\d{1,3}))?/.source) +
+        /([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/
+          .source
     );
 
-    const websiteTest = new RegExp(String(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}/.source)
-      + /\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.source
+    const websiteTest = new RegExp(
+      String(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}/.source) +
+        /\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.source
     );
 
     switch (field) {
       case 'avatar': {
         if (
-          (state.avatarToSet === '') ||
-          (
-            Boolean(props.contact.avatar) &&
-            'url' in props.contact.avatar &&
-            state.avatarToSet === props.contact.avatar.url
-          )
+          state.avatarToSet === '' ||
+          (Boolean(props.contact.avatar) &&
+            state.avatarToSet === props.contact.avatar)
         ) {
           return false;
         }
         const avatarTestResult = websiteTest.exec(state.avatarToSet);
         if (avatarTestResult) {
-          this.setState({
-            awaiting: true,
-            type: 'Saving to group'
-          }, (() => {
-            api.contactEdit(props.path, ship, {
-              avatar: {
-                url: state.avatarToSet
-              }
-            }).then(() => {
-              this.setState({ awaiting: false });
-            });
-          }));
+          this.setState(
+            {
+              awaiting: true,
+              type: 'Saving to group'
+            },
+            () => {
+              console.log(state.avatarToSet);
+              api
+                .contactEdit(props.path, ship, {
+                  avatar: {
+                    url: state.avatarToSet
+                  }
+                })
+                .then(() => {
+                  this.setState({ awaiting: false });
+                });
+            }
+          );
         }
         break;
       }
       case 'color': {
-        let currentColor = (props.contact.color) ? props.contact.color : '000000';
+        let currentColor = props.contact.color ? props.contact.color : '000000';
         currentColor = uxToHex(currentColor);
         const hexExp = /([0-9A-Fa-f]{6})/;
         const hexTest = hexExp.exec(this.state.colorToSet);
 
-        if (hexTest && (hexTest[1] !== currentColor) && !props.share) {
-          this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
-            api.contactEdit(props.path, `~${props.ship}`, { color: hexTest[1] }).then(() => {
-              this.setState({ awaiting: false });
-            });
-          }));
+        if (hexTest && hexTest[1] !== currentColor && !props.share) {
+          this.setState({ awaiting: true, type: 'Saving to group' }, () => {
+            api
+              .contactEdit(props.path, `~${props.ship}`, { color: hexTest[1] })
+              .then(() => {
+                this.setState({ awaiting: false });
+              });
+          });
         }
         break;
       }
       case 'email': {
         if (
-          (state.emailToSet === '') ||
-          (state.emailToSet === props.contact.email)
+          state.emailToSet === '' ||
+          state.emailToSet === props.contact.email
         ) {
           return false;
         }
         const emailTestResult = emailTest.exec(state.emailToSet);
         if (emailTestResult) {
-          this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
-            api.contactEdit(props.path, ship, { email: state.emailToSet }).then(() => {
-              this.setState({ awaiting: false });
-            });
-          }));
+          this.setState({ awaiting: true, type: 'Saving to group' }, () => {
+            api
+              .contactEdit(props.path, ship, { email: state.emailToSet })
+              .then(() => {
+                this.setState({ awaiting: false });
+              });
+          });
         }
         break;
       }
       case 'nickname': {
         if (
-          (state.nickNameToSet === '') ||
-          (state.nickNameToSet === props.contact.nickname)
+          state.nickNameToSet === '' ||
+          state.nickNameToSet === props.contact.nickname
         ) {
           return false;
         }
-        this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
-          api.contactEdit(props.path, ship, { nickname: state.nickNameToSet }).then(() => {
-            this.setState({ awaiting: false });
-          });
-        }));
+        this.setState({ awaiting: true, type: 'Saving to group' }, () => {
+          api
+            .contactEdit(props.path, ship, { nickname: state.nickNameToSet })
+            .then(() => {
+              this.setState({ awaiting: false });
+            });
+        });
 
         break;
       }
       case 'notes': {
         if (
-          (state.notesToSet === '') ||
-          (state.notesToSet === props.contact.notes)
+          state.notesToSet === '' ||
+          state.notesToSet === props.contact.notes
         ) {
           return false;
         }
-        this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
-          api.contactEdit(props.path, ship, { notes: state.notesToSet }).then(() => {
-            this.setState({ awaiting: false });
-          });
-        }));
+        this.setState({ awaiting: true, type: 'Saving to group' }, () => {
+          api
+            .contactEdit(props.path, ship, { notes: state.notesToSet })
+            .then(() => {
+              this.setState({ awaiting: false });
+            });
+        });
         break;
       }
       case 'phone': {
         if (
-          (state.phoneToSet === '') ||
-          (state.phoneToSet === props.contact.phone)
+          state.phoneToSet === '' ||
+          state.phoneToSet === props.contact.phone
         ) {
           return false;
         }
         const phoneTestResult = phoneTest.exec(state.phoneToSet);
         if (phoneTestResult) {
-          this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
-            api.contactEdit(props.path, ship, { phone: state.phoneToSet }).then(() => {
-              this.setState({ awaiting: false });
-            });
-          }));
+          this.setState({ awaiting: true, type: 'Saving to group' }, () => {
+            api
+              .contactEdit(props.path, ship, { phone: state.phoneToSet })
+              .then(() => {
+                this.setState({ awaiting: false });
+              });
+          });
         }
         break;
       }
       case 'website': {
         if (
-          (state.websiteToSet === '') ||
-          (state.websiteToSet === props.contact.website)
+          state.websiteToSet === '' ||
+          state.websiteToSet === props.contact.website
         ) {
           return false;
         }
         const websiteTestResult = websiteTest.exec(state.websiteToSet);
         if (websiteTestResult) {
-          this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
-            api.contactEdit(props.path, ship, { website: state.websiteToSet }).then(() => {
-              this.setState({ awaiting: false });
-            });
-          }));
+          this.setState({ awaiting: true, type: 'Saving to group' }, () => {
+            api
+              .contactEdit(props.path, ship, { website: state.websiteToSet })
+              .then(() => {
+                this.setState({ awaiting: false });
+              });
+          });
         }
         break;
       }
       case 'removeEmail': {
-        this.setState({ emailToSet: '', awaiting: true, type: 'Removing from group' }, (() => {
-          api.contactEdit(props.path, ship, { email: '' }).then(() => {
-            this.setState({ awaiting: false });
-          });
-        }));
+        this.setState(
+          { emailToSet: '', awaiting: true, type: 'Removing from group' },
+          () => {
+            api.contactEdit(props.path, ship, { email: '' }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }
+        );
         break;
       }
       case 'removeNickname': {
-        this.setState({ nicknameToSet: '', awaiting: true, type: 'Removing from group' }, (() => {
-          api.contactEdit(props.path, ship, { nickname: '' }).then(() => {
-            this.setState({ awaiting: false });
-          });
-        }));
+        this.setState(
+          { nicknameToSet: '', awaiting: true, type: 'Removing from group' },
+          () => {
+            api.contactEdit(props.path, ship, { nickname: '' }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }
+        );
         break;
       }
       case 'removePhone': {
-        this.setState({ phoneToSet: '', awaiting: true, type: 'Removing from group' }, (() => {
-          api.contactEdit(props.path, ship, { phone: '' }).then(() => {
-            this.setState({ awaiting: false });
-          });
-        }));
+        this.setState(
+          { phoneToSet: '', awaiting: true, type: 'Removing from group' },
+          () => {
+            api.contactEdit(props.path, ship, { phone: '' }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }
+        );
         break;
       }
       case 'removeWebsite': {
-        this.setState({ websiteToSet: '', awaiting: true, type: 'Removing from group' }, (() => {
-          api.contactEdit(props.path, ship, { website: '' }).then(() => {
-            this.setState({ awaiting: false });
-          });
-        }));
+        this.setState(
+          { websiteToSet: '', awaiting: true, type: 'Removing from group' },
+          () => {
+            api.contactEdit(props.path, ship, { website: '' }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }
+        );
         break;
       }
       case 'removeAvatar': {
-        this.setState({
-          avatarToSet: null,
-          awaiting: true,
-          type: 'Removing from group'
-        }, (() => {
-          api.contactEdit(props.path, ship, { avatar: null }).then(() => {
-            this.setState({ awaiting: false });
-          });
-        }));
+        this.setState(
+          {
+            avatarToSet: null,
+            awaiting: true,
+            type: 'Removing from group'
+          },
+          () => {
+            api.contactEdit(props.path, ship, { avatar: null }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }
+        );
         break;
       }
       case 'removeNotes': {
-        this.setState({ notesToSet: '', awaiting: true, type: 'Removing from group' }, (() => {
-          api.contactEdit(props.path, ship, { notes: '' }).then(() => {
-            this.setState({ awaiting: false });
-          });
-        }));
+        this.setState(
+          { notesToSet: '', awaiting: true, type: 'Removing from group' },
+          () => {
+            api.contactEdit(props.path, ship, { notes: '' }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }
+        );
         break;
       }
     }
@@ -301,23 +346,27 @@ export class ContactCard extends Component {
 
   shareWithGroup() {
     const { props, state } = this;
-    const defaultVal = props.share ? {
-      nickname: props.rootIdentity.nickname,
-      email: props.rootIdentity.email,
-      phone: props.rootIdentity.phone,
-      website: props.rootIdentity.website,
-      avatar: { url: props.rootIdentity.avatar },
-      notes: props.rootIdentity.notes,
-      color: uxToHex(props.rootIdentity.color)
-    } : {
-      nickname: props.contact.nickname,
-      email: props.contact.email,
-      phone: props.contact.phone,
-      website: props.contact.website,
-      avatar: { url: props.contact.avatar },
-      notes: props.contact.notes,
-      color: props.contact.color
-    };
+    const defaultVal = props.share
+      ? {
+          nickname: props.rootIdentity.nickname,
+          email: props.rootIdentity.email,
+          phone: props.rootIdentity.phone,
+          website: props.rootIdentity.website,
+          avatar: props.rootIdentity.avatar
+            ? { url: props.rootIdentity.avatar }
+            : null,
+          notes: props.rootIdentity.notes,
+          color: uxToHex(props.rootIdentity.color)
+        }
+      : {
+          nickname: props.contact.nickname,
+          email: props.contact.email,
+          phone: props.contact.phone,
+          website: props.contact.website,
+          avatar: props.contact.avatar ? { url: props.contact.avatar } : null,
+          notes: props.contact.notes,
+          color: props.contact.color
+        };
 
     const contact = {
       nickname: this.pickFunction(state.nickNameToSet, defaultVal.nickname),
@@ -332,13 +381,13 @@ export class ContactCard extends Component {
       )
     };
 
-    this.setState({ awaiting: true, type: 'Sharing with group' }, (() => {
-      api.contactView.share(
-        `~${props.ship}`, props.path, `~${window.ship}`, contact
-      ).then(() => {
-        props.history.push(`/~groups/view${props.path}/${window.ship}`);
-      });
-    }));
+    this.setState({ awaiting: true, type: 'Sharing with group' }, () => {
+      api.contactView
+        .share(`~${props.ship}`, props.path, `~${window.ship}`, contact)
+        .then(() => {
+          props.history.push(`/~groups/view${props.path}/${window.ship}`);
+        });
+    });
   }
 
   removeSelfFromGroup() {
@@ -356,10 +405,13 @@ export class ContactCard extends Component {
     };
 
     api.contactView.share(
-      `~${props.ship}`, props.path, `~${window.ship}`, contact
+      `~${props.ship}`,
+      props.path,
+      `~${window.ship}`,
+      contact
     );
 
-    this.setState({ awaiting: true, type: 'Removing from group' }, (() => {
+    this.setState({ awaiting: true, type: 'Removing from group' }, () => {
       api.contactView.delete(props.path).then(() => {
         this.setState({ awaiting: false });
         props.history.push(`/~groups`);
@@ -375,15 +427,18 @@ export class ContactCard extends Component {
         this.setState({ awaiting: false });
         props.history.push(`/~groups${props.path}`);
       });
-    }));
+    });
   }
 
   uploadSuccess(url) {
-    this.setState({
-      avatarToSet: url
-    }, () => {
-      this.setField('avatar');
-    });
+    this.setState(
+      {
+        avatarToSet: url
+      },
+      () => {
+        this.setField('avatar');
+      }
+    );
   }
 
   uploadError(error) {
@@ -393,23 +448,25 @@ export class ContactCard extends Component {
   renderEditCard() {
     const { props, state } = this;
     // if this is our first edit in a new group, propagate from root identity
-    const defaultValue = props.share ? {
-      nickname: props.rootIdentity.nickname,
-      email: props.rootIdentity.email,
-      phone: props.rootIdentity.phone,
-      website: props.rootIdentity.website,
-      avatar: props.rootIdentity.avatar,
-      notes: props.rootIdentity.notes,
-      color: props.rootIdentity.color
-    } : {
-      nickname: props.contact.nickname,
-      email: props.contact.email,
-      phone: props.contact.phone,
-      website: props.contact.website,
-      avatar: props.contact.avatar,
-      notes: props.contact.notes,
-      color: props.contact.color
-    };
+    const defaultValue = props.share
+      ? {
+          nickname: props.rootIdentity.nickname,
+          email: props.rootIdentity.email,
+          phone: props.rootIdentity.phone,
+          website: props.rootIdentity.website,
+          avatar: props.rootIdentity.avatar,
+          notes: props.rootIdentity.notes,
+          color: props.rootIdentity.color
+        }
+      : {
+          nickname: props.contact.nickname,
+          email: props.contact.email,
+          phone: props.contact.phone,
+          website: props.contact.website,
+          avatar: props.contact.avatar,
+          notes: props.contact.notes,
+          color: props.contact.color
+        };
 
     const shipType = this.shipParser(props.ship);
 
@@ -418,14 +475,14 @@ export class ContactCard extends Component {
     let currentColor = state.colorToSet ? state.colorToSet : defaultColor;
     currentColor = uxToHex(currentColor);
 
-    const avatar = ('avatar' in props.contact && props.contact.avatar !== null)
-      ? <img className="dib h-auto"
-           width={128}
-           src={props.contact.avatar}
-        />
-      : <span className="dn"></span>;
+    const avatar =
+      'avatar' in props.contact && props.contact.avatar !== null ? (
+        <img className="dib h-auto" width={128} src={props.contact.avatar} />
+      ) : (
+        <span className="dn"></span>
+      );
 
-    const imageSetter = (!props.share) ? (
+    const imageSetter = !props.share ? (
       <span className="db">
         <p className="f9 gray2 db pb1">Avatar image url</p>
         <span className="cf db">
@@ -448,7 +505,9 @@ export class ContactCard extends Component {
           />
         </span>
       </span>
-    ) : (<span className="dn"></span>);
+    ) : (
+      <span className="dn"></span>
+    );
 
     return (
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl pb8">
@@ -461,18 +520,23 @@ export class ContactCard extends Component {
             color={'#' + currentColor}
             key={'avatar' + currentColor}
           />
-          <div className="tl mt4 mb4 w-auto ml-auto mr-auto"
+          <div
+            className="tl mt4 mb4 w-auto ml-auto mr-auto"
             style={{ width: 'fit-content' }}
           >
             <p className="f9 gray2 lh-copy">Sigil Color</p>
             <textarea
-              className={'b--gray4 b--gray2-d black white-d bg-gray0-d f7 ba db pl2 ' +
-              'focus-b--black focus-b--white-d'}
+              className={
+                'b--gray4 b--gray2-d black white-d bg-gray0-d f7 ba db pl2 ' +
+                'focus-b--black focus-b--white-d'
+              }
               onChange={this.sigilColorSet}
               defaultValue={defaultColor}
               key={'default' + defaultColor}
-              onKeyPress={ e => !e.key.match(/[0-9a-f]/i) ? e.preventDefault() : null}
-              onBlur={(() => this.setField('color'))}
+              onKeyPress={e =>
+                !e.key.match(/[0-9a-f]/i) ? e.preventDefault() : null
+              }
+              onBlur={() => this.setField('color')}
               maxLength={6}
               style={{
                 resize: 'none',
@@ -480,8 +544,7 @@ export class ContactCard extends Component {
                 paddingTop: 10,
                 width: 114
               }}
-            >
-            </textarea>
+            ></textarea>
           </div>
           <div className="w-100 pt8 pb8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
@@ -543,18 +606,21 @@ export class ContactCard extends Component {
     const hexColor = uxToHex(currentColor);
 
     const avatar =
-      ('avatar' in props.contact && props.contact.avatar !== null) ?
-      <img className="dib h-auto" width={128} src={props.contact.avatar} /> :
-      <Sigil
-        ship={props.ship}
-        size={128}
-        color={'#' + hexColor}
-        key={hexColor}
-      />;
+      'avatar' in props.contact && props.contact.avatar !== null ? (
+        <img className="dib h-auto" width={128} src={props.contact.avatar} />
+      ) : (
+        <Sigil
+          ship={props.ship}
+          size={128}
+          color={'#' + hexColor}
+          key={hexColor}
+        />
+      );
 
     const websiteHref =
-      (props.contact.website && props.contact.website.includes('://')) ?
-      props.contact.website : 'http://' + props.contact.website;
+      props.contact.website && props.contact.website.includes('://')
+        ? props.contact.website
+        : 'http://' + props.contact.website;
 
     return (
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl">
@@ -567,47 +633,43 @@ export class ContactCard extends Component {
             <p className="f8">{shipType}</p>
             <hr className="mv8 gray4 b--gray4 bb-0 b--solid" />
             <div>
-              { props.contact.nickname ? (
-                  <div>
-                    <p className="f9 gray2">Nickname</p>
-                    <p className="f8">{props.contact.nickname}</p>
-                  </div>
-                ) : null
-              }
-              { props.contact.email ? (
-                  <div>
-                    <p className="f9 mt6 gray2">Email</p>
-                    <p className="f8">{props.contact.email}</p>
-                  </div>
-                ) : null
-              }
-              { props.contact.phone ? (
-                  <div>
-                    <p className="f9 mt6 gray2">Phone</p>
-                    <p className="f8">{props.contact.phone}</p>
-                  </div>
-                ) : null
-              }
-              { props.contact.website ? (
-                  <div>
-                    <p className="f9 mt6 gray2">website</p>
-                    <a target="_blank"
-                       rel="noopener noreferrer"
-                       className="bb b--black f8"
-                       href={websiteHref}
-                    >
-                      {props.contact.website}
-                    </a>
-                  </div>
-                ) : null
-              }
-              { props.contact.notes ? (
-                  <div>
-                    <p className="f9 mt6 gray2">notes</p>
-                    <p className="f8">{props.contact.notes}</p>
-                  </div>
-                ) : null
-              }
+              {props.contact.nickname ? (
+                <div>
+                  <p className="f9 gray2">Nickname</p>
+                  <p className="f8">{props.contact.nickname}</p>
+                </div>
+              ) : null}
+              {props.contact.email ? (
+                <div>
+                  <p className="f9 mt6 gray2">Email</p>
+                  <p className="f8">{props.contact.email}</p>
+                </div>
+              ) : null}
+              {props.contact.phone ? (
+                <div>
+                  <p className="f9 mt6 gray2">Phone</p>
+                  <p className="f8">{props.contact.phone}</p>
+                </div>
+              ) : null}
+              {props.contact.website ? (
+                <div>
+                  <p className="f9 mt6 gray2">website</p>
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bb b--black f8"
+                    href={websiteHref}
+                  >
+                    {props.contact.website}
+                  </a>
+                </div>
+              ) : null}
+              {props.contact.notes ? (
+                <div>
+                  <p className="f9 mt6 gray2">notes</p>
+                  <p className="f8">{props.contact.notes}</p>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -618,21 +680,21 @@ export class ContactCard extends Component {
   render() {
     const { props, state } = this;
 
-    let editInfoText =
-      state.edit ? 'Finish' : 'Edit';
+    let editInfoText = state.edit ? 'Finish' : 'Edit';
     if (props.share && state.edit) {
       editInfoText = 'Share';
     }
 
-    const ourOpt = (props.ship === window.ship) ? 'dib' : 'dn';
+    const ourOpt = props.ship === window.ship ? 'dib' : 'dn';
 
     const adminOpt =
-       ((props.path.includes(`~${window.ship}/`)) || ((props.ship === window.ship) &&
-        !(props.path.includes('/~/default'))))
-       ? 'dib' : 'dn';
+      props.path.includes(`~${window.ship}/`) ||
+      (props.ship === window.ship && !props.path.includes('/~/default'))
+        ? 'dib'
+        : 'dn';
 
-    const meLink = (props.path === '/~/default')
-      ? '/~groups' : `/~groups/detail${props.path}`;
+    const meLink =
+      props.path === '/~/default' ? '/~groups' : `/~groups/detail${props.path}`;
 
     const card = state.edit ? this.renderEditCard() : this.renderCard();
     return (
@@ -644,9 +706,7 @@ export class ContactCard extends Component {
           }
         >
           <div className="f9 mv4 mh3 pt1 dib w-100">
-            <Link to={meLink}>
-              {'⟵'}
-            </Link>
+            <Link to={meLink}>{'⟵'}</Link>
           </div>
           <div className="flex">
             <button
@@ -671,13 +731,15 @@ export class ContactCard extends Component {
             }
             onClick={props.ship === window.ship ? this.removeSelfFromGroup : this.removeOtherFromGroup}
           >
-            {props.ship === window.ship
-              ? 'Leave Group'
-              : 'Remove from Group'}
+            {props.ship === window.ship ? 'Leave Group' : 'Remove from Group'}
           </button>
         </div>
         <div className="h-100 w-100 overflow-x-hidden pb8 white-d">{card}</div>
-        <Spinner awaiting={this.state.awaiting} text={`${this.state.type}...`} classes="absolute right-1 bottom-1 ba pa2 b--gray1-d" />
+        <Spinner
+          awaiting={this.state.awaiting}
+          text={`${this.state.type}...`}
+          classes="absolute right-1 bottom-1 ba pa2 b--gray1-d"
+        />
       </div>
     );
   }

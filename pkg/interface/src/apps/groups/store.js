@@ -5,7 +5,7 @@ import InviteUpdateReducer from '../../reducers/invite-update';
 import PermissionUpdateReducer from '../../reducers/permission-update';
 import { MetadataReducer } from './reducers/metadata-update';
 import LocalReducer from '../../reducers/local';
-import { S3Reducer } from '../../reducers/s3.js';
+import S3Reducer from '../../reducers/s3.js';
 
 class Store {
   constructor() {
