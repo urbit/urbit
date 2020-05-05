@@ -633,8 +633,9 @@
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl/gill:gall
+  =/  =path  /sole/(cat 3 'drum_' (scot %p our.hid))
   %-  se-emit(fug (~(put by fug) gyl ~))
-  [%pass (en-gill gyl) %agent gyl %watch /sole/drum]
+  [%pass (en-gill gyl) %agent gyl %watch path]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl/gill:gall
@@ -662,6 +663,8 @@
     |=  act/sole-action
     ^+  +>
     (ta-poke %sole-action !>(act))
+  ::
+  ++  ta-id  (cat 3 'drum_' (scot %p our.hid))        ::  per-ship duct id
   ::
   ++  ta-aro                                          ::  hear arrow
     |=  key/?($d $l $r $u)
@@ -703,7 +706,7 @@
     |=  ted/sole-edit
     ^+  +>
     %^    ta-act
-        %drum
+        ta-id
       %det
     [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted]
   ::
@@ -715,7 +718,7 @@
       .(str.u.ris (scag (dec (lent str.u.ris)) str.u.ris))
     ?:  =(0 pos.inp)
       ?~  buf.say.inp
-        (ta-act %drum %clr ~)
+        (ta-act ta-id %clr ~)
       ta-bel
     (ta-hom %del (dec pos.inp))
   ::
@@ -1003,10 +1006,10 @@
     ==
   ::
   ++  ta-ret                                          ::  hear return
-    (ta-act %drum %ret ~)
+    (ta-act ta-id %ret ~)
   ::
   ++  ta-tab                                          ::  hear tab
-    (ta-act %drum %tab pos.inp)
+    (ta-act ta-id %tab pos.inp)
   ::
   ++  ta-ser                                          ::  reverse search
     |=  ext/(list @c)
