@@ -1,11 +1,13 @@
 /+  *group-json
 |_  upd=group-update
+++  grad  %noun
 ++  grab
   |%
   ++  noun  group-update
   --
 ++  grow
   |%
+  ++  noun  upd
   ++  json
     =,  enjs:format
     ^-  ^json

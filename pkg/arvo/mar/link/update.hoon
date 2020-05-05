@@ -2,6 +2,7 @@
 ::
 /-  *link
 |_  =update
+++  grad  %noun
 ++  grow
   |%
   ++  noun  update

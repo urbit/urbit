@@ -4,6 +4,7 @@
 /?    310
 |_  own/manx
 ::
+++  grad  %noun
 ++  grow                                                ::  convert to
   |%
   ++  hymn  own
