@@ -633,3 +633,80 @@ serv king plan isFake =
             -- when (i == fromIntegral king) $ do
                 logDebug "respond"
                 respond drv (fromIntegral req) ev
+
+
+-- Multi-Tenet HTTP ------------------------------------------------------------
+
+{-
+  # Very First Phase: Shared HTTP, no SSL.
+
+  - Global configuration flag for shared HTTP port.
+
+  - Shared server starts before ships.
+
+  - Shared server is informed when ships go up and come down.
+
+  - Shared server delivers requests to existing HTTP driver.
+
+  - Existing HTTP driver can send responses to shared HTTP server.
+-}
+
+type ShareRequ = (ServId, ReqId, WhichServer, Address, HttpRequest)
+type ShareResp = (ServId, UD, UD, HttpEvent)
+
+data ShipAPI = ShipAPI
+  { sapiReq :: ShareRequ -> STM ()
+  , sapiRes :: STM ShareResp
+  }
+
+data MultiServ = MultiServ
+  { msPort :: Maybe Word16
+  , msShip :: TVar (Map Ship ShipAPI)
+  , msBoot :: TMVar (Ship, ShipAPI)
+  , msDead :: TMVar Ship
+  , msKill :: STM ()
+  }
+
+data Hap = Deþ Ship
+         | Lif (Ship, ShipAPI)
+         | Res ShareResp
+         | Kil ()
+
+multiServ :: MultiServ -> IO ()
+multiServ ms = do
+  case msPort ms of
+    Nothing -> doNothing ms
+    Just po -> doSomething ms po
+
+{-
+  If the port is set, we do things for real. We run an HTTP server,
+  sends requests to the appropriate ship, respond to requests when
+  responses are given, and shuts down when the king shuts down.
+-}
+doSomething :: MultiServ -> Word16 -> IO ()
+doSomething MultiServ{..} httpPort = do
+  error "TODO"
+
+{-
+  If the port is not set, we still run a thread for the shared server. It
+  doesn't run an HTTP server, it ignores all responses, and it shuts
+  down when the king shuts down.
+-}
+doNothing :: MultiServ -> IO ()
+doNothing MultiServ{..} = do
+  vShips :: TVar (Map Ship ShipAPI) <- newTVarIO mempty
+
+  let onHapn :: STM Hap
+      onHapn = asum [ Lif <$> takeTMVar msBoot
+                    , Deþ <$> takeTMVar msDead
+                    , Res <$> (readTVar vShips >>= asum . fmap sapiRes . toList)
+                    , Kil <$> msKill
+                    ]
+
+  let loop = join $ atomically $ onHapn >>= \case
+        Deþ s       -> modifyTVar' vShips (deleteMap s) >> pure loop
+        Lif (s,api) -> modifyTVar' vShips (insertMap s api) >> pure loop
+        Res _       -> pure loop
+        Kil _       -> pure (pure ())
+
+  loop
