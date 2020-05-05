@@ -58,7 +58,7 @@ module.exports = {
   output: {
     filename: 'index.js',
     chunkFilename: 'index.js',
-    path: path.resolve(urbitrc.URBIT_PIERS[0] + '/app/launch/', 'js'),
+    path: path.resolve(urbitrc.URBIT_PIERS[0] + '/app/landscape/', 'js'),
     publicPath: '/'
   },
   optimization: {
