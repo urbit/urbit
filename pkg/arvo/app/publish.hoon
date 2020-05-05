@@ -331,9 +331,16 @@
     ?+  mar  (on-poke:def mar vas)
     ::
         %noun
-      ?:  =(q.vas %flush-limbo)
-        [~ this(limbo [~ ~])]
-      [~ this]
+      ?+  q.vas
+        [~ this]
+      ::
+          %flush-limbo  [~ this(limbo [~ ~])]
+      ::
+          %reset-warp
+        =/  rav  [%sing %t [%da now.bol] /app/publish/notebooks]
+        :_  this
+        [%pass /read/paths %arvo %c %warp our.bol q.byk.bol `rav]~
+      ==
     ::
         %handle-http-request
       =+  !<([id=@ta req=inbound-request:eyre] vas)
