@@ -2,20 +2,15 @@
 /+  *server, default-agent, dbug
 |%
 +$  versioned-state
-  $%  [%0 state-zero]
-      [%1 state-two]
-      [%2 state-two]
-      [%3 state-two]
+  $%  [%0 *]
+      [%1 *]
+      [%2 *]
+      [%3 *]
+      [%4 state-zero]
   ==
 +$  state-zero
-  $:  tiles=(set tile:launch)
-      data=tile-data:launch
-      path-to-tile=(map path @tas)
-  ==
-+$  state-two
-  $:  tiles=(set tile:launch)
-      data=tile-data:launch
-      path-to-tile=(map path @tas)
+  $:  tiles=(map term tile:launch)
+      tile-ordering=(list term)
       first-time=?
   ==
 ::
@@ -25,13 +20,14 @@
   [%pass /who %arvo %e %serve [~ /who] desk /gen/who/hoon ~]
 --
 ::
-=|  [%3 state-two]
+=|  [%4 state-zero]
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
 |_  bol=bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bol)
+::
 ++  on-init
   ^-  (quip card _this)
   :_  this(state *[%3 state-two])
@@ -43,31 +39,13 @@
   |=  old=vase
   ^-  (quip card _this)
   =/  old-state  !<(versioned-state old)
-  =|  cards=(list card)
-  |-
-  ?-    -.old-state
-      %0
-    $(old-state [%1 tiles data path-to-tile %.n]:old-state)
-  ::
-      %1
-    =/  new-state=state-two
-      =,  old-state
-      :*  (~(del in tiles) [%contact-view /primary])
-          (~(del by data) %contact-view)
-          (~(del by path-to-tile) /primary)
-          first-time
-      ==
-    $(old-state [%2 new-state])
-  ::
-      %2
-    $(old-state [%3 +.old-state], cards [(launch-who q.byk.bol) cards])
-  ::
-      %3
-    :_  this(state old-state)
-    %-  zing
-    :~  (flop cards)
-        [%pass / %arvo %e %disconnect [~ /]]~
-    ==
+  ?:  ?=(%4 -.old-state)
+    [~ this(state old-state)]
+  :_  this
+  %+  weld
+    []~  ::  TODO: kill all subscriptions
+  :~  (launch-who q.byk.bol)
+      [%pass / %arvo %e %disconnect [~ /]]
   ==
 ::
 ++  on-poke
@@ -110,40 +88,30 @@
   ==
 ::
 ++  on-watch
-  |=  pax=path
+  |=  =path
   ^-  (quip card _this)
-  ?.  ?=([%main *] pax)
-    (on-watch:def pax)
-  =/  data=json
-    %-  pairs:enjs:format
-    %+  turn  ~(tap by data)
-    |=  [key=@tas [jon=json url=@t]]
-    [key jon]
-  :_  this
-  [%give %fact ~ %json !>(data)]~
-::
-++  on-leave  on-leave:def
-++  on-peek   on-peek:def
-++  on-fail   on-fail:def
-++  on-agent
-  |=  [wir=wire sin=sign:agent:gall]
-  ^-  (quip card _this)
-  ?.  ?=(%fact -.sin)
-    (on-agent:def wir sin)
-  ?.  ?=(%json p.cage.sin)
-    (on-agent:def wir sin)
+  |^
+  ?>  (team:title our.bowl src.bowl)
+  =/  cards=(list card)
+    ?+  path  (on-watch:def path)
+        [%keys ~]  (give %chat-update !>([%keys ~(key by inbox)]))
+        [%all ~]   (give %chat-initial !>(inbox))
+    ==
+  [cards this]
   ::
-  =/  jon=json   !<(json q.cage.sin)
-  =/  name=@tas  (~(got by path-to-tile) wir)
-  =/  dat=(unit [json url=@t])  (~(get by data) name)
-  ?~  dat  [~ this]
-  :_  this(data (~(put by data) name [jon url.u.dat]))
-  [%give %fact ~[/main] %json !>((frond:enjs:format name jon))]~
+  ++  give
+    |=  =cage
+    ^-  (list card)
+    [%give %fact ~ cage]~
+  --
+++  on-peek   on-peek:def
 ::
 ++  on-arvo
   |=  [wir=wire sin=sign-arvo]
   ^-  (quip card:agent:gall _this)
-  ?.  ?=(%bound +<.sin)
-    (on-arvo:def wir sin)
-  [~ this]
+  ?:  ?=(%bound +<.sin)  [~ this]
+  (on-arvo:def wir sin)
+++  on-agent  on-agent:def
+++  on-leave  on-leave:def
+++  on-fail   on-fail:def
 --
