@@ -331,9 +331,16 @@
     ?+  mar  (on-poke:def mar vas)
     ::
         %noun
-      ?:  =(q.vas %flush-limbo)
-        [~ this(limbo [~ ~])]
-      [~ this]
+      ?+  q.vas
+        [~ this]
+      ::
+          %flush-limbo  [~ this(limbo [~ ~])]
+      ::
+          %reset-warp
+        =/  rav  [%sing %t [%da now.bol] /app/publish/notebooks]
+        :_  this
+        [%pass /read/paths %arvo %c %warp our.bol q.byk.bol `rav]~
+      ==
     ::
         %handle-http-request
       =+  !<([id=@ta req=inbound-request:eyre] vas)
@@ -1857,8 +1864,9 @@
   ::
       %remove
     =/  app-path  [(scot %p author.del) /[book.del]]
-    =/  group-path  (group-from-book app-path)
-    [(metadata-poke [%remove group-path [%publish app-path]])]~
+    =/  group-path=(unit path)  (group-from-book app-path)
+    ?~  group-path  ~
+    [(metadata-poke [%remove u.group-path [%publish app-path]])]~
   ==
   ::
   ++  add
@@ -1884,13 +1892,12 @@
   ::
   ++  group-from-book
     |=  app-path=path
-    ^-  path
+    ^-  (unit path)
     ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
       ?:  ?=([@ ^] app-path)
         ~&  [%assuming-ported-legacy-publish app-path]
-        [%'~' app-path]
-      ~|  [%weird-publish app-path]
-      !!
+        `[%'~' app-path]
+      ~&([%weird-publish app-path] ~)
     =/  resource-indices
       .^  (jug resource group-path)
         %gy
@@ -1899,8 +1906,12 @@
         (scot %da now.bol)
         /resource-indices
       ==
-    =/  groups=(set path)  (~(got by resource-indices) [%publish app-path])
-    (snag 0 ~(tap in groups))
+    =/  groups=(unit (set path))
+      (~(get by resource-indices) [%publish app-path])
+    ?~  groups  ~
+    =/  group-paths  ~(tap in u.groups)
+    ?~  group-paths  ~
+    `i.group-paths
   --
 ::
 ++  metadata-hook-poke
