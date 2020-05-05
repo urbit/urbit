@@ -45,6 +45,7 @@ export default class GroupsApp extends Component {
         state.invites['/contacts'] : {};
     const associations = state.associations ? state.associations : {};
     const selectedGroups = state.selectedGroups ? state.selectedGroups : [];
+    const s3 = state.s3 ? state.s3 : {};
 
     return (
         <div>
@@ -223,6 +224,7 @@ export default class GroupsApp extends Component {
                     ship={window.ship}
                     share={true}
                     rootIdentity={rootIdentity}
+                    s3={s3}
                   />
                 </Skeleton>
               );
@@ -273,6 +275,7 @@ export default class GroupsApp extends Component {
                     path={groupPath}
                     ship={props.match.params.contact}
                     rootIdentity={rootIdentity}
+                    s3={s3}
                   />
                 </Skeleton>
               );
@@ -298,6 +301,7 @@ export default class GroupsApp extends Component {
                     history={props.history}
                     path="/~/default"
                     contact={me}
+                    s3={s3}
                     ship={window.ship}
                   />
                 </Skeleton>

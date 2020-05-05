@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import S3Client from '/lib/s3';
+import S3Client from '../../../../lib/s3';
 
 export class S3Upload extends Component {
 
@@ -48,7 +48,7 @@ export class S3Upload extends Component {
     if (!this.inputRef.current) { return; }
     let files = this.inputRef.current.files;
     if (files.length <= 0) { return; }
-    
+
     let file = files.item(0);
     let bucket = props.configuration.currentBucket;
 
