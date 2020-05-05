@@ -22,24 +22,23 @@ trap shutdown EXIT
 
 herb ./ship -p hood -d '+hood/mass'
 
-# Start the test app
+# Start the :test app
 herb ./ship -p hood -d '+hood/start %test'
 
-# Run the %cores tests
+# Run the %agents tests
 herb ./ship -d '~&  ~  ~&  %start-test-agents  ~'
 herb ./ship -p test -d '%agents'
 herb ./ship -d '~&  %finish-test-agents  ~'
 
 herb ./ship -p hood -d '+hood/mass'
 
-# Run the %renders tests
+# Run the %marks tests
 herb ./ship -d '~&  ~  ~&  %start-test-marks  ~'
 herb ./ship -p test -d '%marks'
 herb ./ship -d '~&  %finish-test-marks  ~'
 
-# Run the test thread
-herb ./ship -d '-test /' |
-  tee test-thread-output
+# Run the -test thread
+herb ./ship -d '-test /' | tee test-thread-output
 
 herb ./ship -p hood -d '+hood/mass'
 
@@ -64,7 +63,7 @@ sed -i '/finish-test-marks/,$d' test-marks-output
 mkdir $out
 
 cp test-agents-output   $out/agents
-cp test-marks-output     $out/marks
-cp test-thread-output $out/tests
+cp test-marks-output    $out/marks
+cp test-thread-output   $out/tests
 
 set +x
