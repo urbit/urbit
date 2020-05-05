@@ -2128,7 +2128,8 @@
     ++  dedup-message
       |=  =message-blob
       ^+  message-blob
-      ~&  >  deduping=`@p`(mug message-blob)
+      ?:  (lte (met 13 message-blob) 1)
+        message-blob
       =/  peers-l=(list [=ship =ship-state])  ~(tap by peers.ames-state)
       |-  ^+  message-blob
       =*  peer-loop  $
@@ -2148,16 +2149,12 @@
       =*  blob-loop  $
       ?^  blob-l
         ?:  =(i.blob-l message-blob)
-          ~&  >  found=`@p`(mug i.blob-l)
           i.blob-l
-        ~&  >  lost=`@p`(mug i.blob-l)
         blob-loop(blob-l t.blob-l)
       ?~  unsent-fragments.message-pump-state.i.snd-l
         bone-loop(snd-l t.snd-l)
       ?:  =(message-blob fragment.i.unsent-fragments.message-pump-state.i.snd-l)
-        ~&  >  found-unsent=`@p`(mug message-blob)
         `@`fragment.i.unsent-fragments.message-pump-state.i.snd-l
-      ~&  >  lost-unsent=`@p`(mug fragment.i.unsent-fragments.message-pump-state.i.snd-l)
       bone-loop(snd-l t.snd-l)
     ::  +on-wake: handle timer expiration
     ::
