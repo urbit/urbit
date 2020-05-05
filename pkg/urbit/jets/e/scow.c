@@ -332,11 +332,6 @@ u3we_scow(u3_noun cor)
     case c3__uw:
       return _print_uw(atom);
 
-    /*   // %ta is used once in link.hoon. don't bother. */
-
-    /* case c3__tas: */
-    /*   return _parse_tas(txt); */
-
     default:
       return u3_none;
   }

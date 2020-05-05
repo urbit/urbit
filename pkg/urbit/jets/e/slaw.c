@@ -75,7 +75,7 @@ u3_noun combine(u3_noun p, u3_noun q)
     return 0;
   }
 
-  u3_noun ret = u3nc(0, u3qa_add(u3k(u3t(p)), u3qa_mul(256, u3k(u3t(q)))));
+  u3_noun ret = u3nc(0, u3qa_add(u3t(p), u3qa_mul(256, u3t(q))));
   u3z(p);
   u3z(q);
 
@@ -109,11 +109,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
   c3_c* c = u3r_string(txt);
 
   c3_c* cur = c;
-  if (cur[0] != '~') {
-    c3_free(c);
-    return 0;
-  }
-  cur++;
+  CONSUME('~');
 
   // We at least have a sig prefix. We're now going to parse tuples of three
   // lowercase letters. Our naming pattern for the pieces we read is [a b c d
