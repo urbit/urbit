@@ -233,7 +233,7 @@ export class ShipSearch extends Component {
     let idx = suggestions.findIndex(s => s === this.state.selected);
 
     idx = backward ? idx - 1 : idx + 1;
-    idx = idx % suggestions.length;
+    idx = idx % Math.min(suggestions.length, 5);
     if (idx < 0) {
       idx = suggestions.length - 1;
     }
