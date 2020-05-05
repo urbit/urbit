@@ -215,7 +215,9 @@
     =/  ship  (~(get by synced.state) pax.diff)
     ?~  ship  [~ state]
     ?.  =(src.bol u.ship)  [~ state]
-    ?.  (~(has in members.diff) our.bol)  [~ state]
+    ?.  (~(has in members.diff) our.bol)
+      :_  state
+      [(group-poke pax.diff diff)]~
     =/  changes  (poke-group-hook-action [%remove pax.diff])
     :_  +.changes
     %+  welp  -.changes
