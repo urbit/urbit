@@ -3621,10 +3621,30 @@
     ::
     ::  Keep any parts of the ford cache whose dependencies didn't change
     ::
+    ::    Make sure to invalidate any paths whose '-'s or '/'s could be
+    ::    converted in an import; i.e. /mar, /lib, and /sur hoon files.
+    ::
     ++  promote-ford
       |=  [=ford-cache deletes=(set path) changes=(set path)]
       ^+  ford-cache
       =/  invalid=(set path)  (~(uni in deletes) changes)
+      =.  invalid
+        %-  ~(gas in invalid)
+        %-  zing
+        %+  turn  ~(tap in invalid)
+        |=  pax=path
+        ^-  (list path)
+        =/  xap=path  (flop pax)
+        ?.  &(=(%hoon (head xap)) ?=([?(%mar %sur %lib) @ @ *] pax))
+          ~
+        =-  (turn - |=(suf=path [i.pax (snoc suf %hoon)]))
+        %-  segments
+        %-  crip
+        =/  xup  (tail xap)                ::  lose %hoon extension
+        =/  pux  (tail (flop xup))         ::  lose static prefix
+        %+  turn  (tail (spud pux))        ::  lose leading '/'
+        |=(c=@tD `@tD`?:(=('/' c) '-' c))  ::  convert '/' to '-'
+      ::
       :*  ((invalidate path vase) vases.ford-cache invalid)
           ((invalidate mark dais) marks.ford-cache invalid)
           ((invalidate mars tube) casts.ford-cache invalid)
