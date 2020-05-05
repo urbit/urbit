@@ -297,6 +297,13 @@ export class ContactCard extends Component {
     return def;
   }
 
+  pickObject(val, key, def) {
+    if( val && (val[key] !== null )) {
+      return val;
+    }
+    return def;
+  }
+
   shareWithGroup() {
     const { props, state } = this;
     const defaultVal = props.share ? {
@@ -304,7 +311,7 @@ export class ContactCard extends Component {
       email: props.rootIdentity.email,
       phone: props.rootIdentity.phone,
       website: props.rootIdentity.website,
-      avatar: { url: props.rootIdentity.avatar },
+      avatar: props.rootIdentity.avatar,
       notes: props.rootIdentity.notes,
       color: uxToHex(props.rootIdentity.color)
     } : {
@@ -312,7 +319,7 @@ export class ContactCard extends Component {
       email: props.contact.email,
       phone: props.contact.phone,
       website: props.contact.website,
-      avatar: { url: props.contact.avatar },
+      avatar: props.contact.avatar,
       notes: props.contact.notes,
       color: props.contact.color
     };
@@ -324,7 +331,7 @@ export class ContactCard extends Component {
       website: this.pickFunction(state.websiteToSet, defaultVal.website),
       notes: this.pickFunction(state.notesToSet, defaultVal.notes),
       color: this.pickFunction(state.colorToSet, defaultVal.color),
-      avatar: this.pickFunction({ url: state.avatarToSet }, defaultVal.avatar)
+      avatar: this.pickObject(state.avatarToSet, 'url', defaultVal.avatar)
     };
     this.setState({ awaiting: true, type: 'Sharing with group' }, (() => {
       api.contactView.share(
