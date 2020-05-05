@@ -26,20 +26,20 @@ herb ./ship -p hood -d '+hood/mass'
 herb ./ship -p hood -d '+hood/start %test'
 
 # Run the %cores tests
-herb ./ship -d '~&  ~  ~&  %start-test-cores  ~'
-herb ./ship -p test -d ':-  %cores  /'
-herb ./ship -d '~&  %finish-test-cores  ~'
+herb ./ship -d '~&  ~  ~&  %start-test-agents  ~'
+herb ./ship -p test -d '%agents'
+herb ./ship -d '~&  %finish-test-agents  ~'
 
 herb ./ship -p hood -d '+hood/mass'
 
 # Run the %renders tests
-herb ./ship -d '~&  ~  ~&  %start-test-renders  ~'
-herb ./ship -p test -d ':-  %renders  /'
-herb ./ship -d '~&  %finish-test-renders  ~'
+herb ./ship -d '~&  ~  ~&  %start-test-marks  ~'
+herb ./ship -p test -d '%marks'
+herb ./ship -d '~&  %finish-test-marks  ~'
 
-# Run the test generator
-herb ./ship -d '+test, =seed `@uvI`(shaz %reproducible)' |
-  tee test-generator-output
+# Run the test thread
+herb ./ship -d '-test /' |
+  tee test-thread-output
 
 herb ./ship -p hood -d '+hood/mass'
 
@@ -51,20 +51,20 @@ shutdown
 
 # Collect output
 
-cp urbit-output test-cores-output
-cp urbit-output test-renders-output
+cp urbit-output test-agents-output
+cp urbit-output test-marks-output
 rm urbit-output
 
-sed -i '0,/start-test-renders/d'  test-renders-output
-sed -i '/finish-test-renders/,$d' test-renders-output
+sed -i '0,/start-test-agents/d'  test-agents-output
+sed -i '/finish-test-agents/,$d' test-agents-output
 
-sed -i '0,/start-test-cores/d'  test-cores-output
-sed -i '/finish-test-cores/,$d' test-cores-output
+sed -i '0,/start-test-marks/d'  test-marks-output
+sed -i '/finish-test-marks/,$d' test-marks-output
 
 mkdir $out
 
-cp test-renders-output   $out/renders
-cp test-cores-output     $out/cores
-cp test-generator-output $out/generator
+cp test-agents-output   $out/agents
+cp test-marks-output     $out/marks
+cp test-thread-output $out/tests
 
 set +x
