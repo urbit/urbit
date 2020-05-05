@@ -1,7 +1,13 @@
 |%
-+$  tile  [name=@tas subscribe=path]
++$  tile
+  $%  [%basic basic-tile]
+  ==
 ::
-+$  tile-data  (map @tas [jon=json url=@t])
++$  basic-tile
+  $:  title=cord
+      icon-url=cord
+      linked-url=cord
+  ==
 ::
 +$  action
   $%  [%add name=@tas subscribe=path url=@t]
