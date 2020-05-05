@@ -26,11 +26,10 @@
       [%pass /group-bind %arvo %e %connect [~ /'~groups'] %landscape]
       [%pass /link-bind %arvo %e %connect [~ /'~link'] %landscape]
       [%pass /dojo-bind %arvo %e %connect [~ /'~dojo'] %landscape]
-      [%pass /modulo-bind %arvo %e %connect [~ /'~modulo'] %landscape]
-      [%pass /channel-bind %arvo %e %connect [~ /'~channel'] %landscape]
-      [%pass /launch-bind %arvo %e %connect [~ /'~launch'] %landscape]
+      [%pass /landscape-bind %arvo %e %connect [~ /'~landscape'] %landscape]
       [%pass /index-bind %arvo %e %connect [~ /] %landscape]
   ==
+::
 ++  on-save  !>(state)
 ++  on-load
   |=  old-vase=vase
@@ -44,6 +43,7 @@
   ?+  mark  (on-poke:def mark vase)
       %handle-http-request
     =+  !<([id=@ta req=inbound-request:eyre] vase)
+    ~&  req
     :_  this
     %+  give-simple-payload:app    id
     %+  require-authorization:app  req
@@ -53,6 +53,7 @@
   ++  handle-http-request
     |=  =inbound-request:eyre
     ^-  simple-payload:http
+    ~&  inbound-request
     ?.  =(src.bowl our.bowl)  [[403 ~] ~]
     =*  req  request.inbound-request
     =/  req-line  (parse-request-line url.req)
@@ -63,6 +64,8 @@
   ++  handle-get
     |=  [headers=header-list:http req-line=request-line]
     ^-  simple-payload:http
+    ~&  headers
+    ~&  req-line
     ?~  ext.req-line
       $(req-line [[[~ %html] (snoc site.req-line 'index')] args.req-line])
     ?~  site.req-line  not-found:gen
@@ -73,21 +76,16 @@
       not-found:gen
     =/  file=(unit octs)
       ?+  site.req-line  ~
-          [%'' %'index' ~]  (get-file-at /app/launch [t.site u.ext]:req-line)
-          [%'~launch' *]    (get-file-at /app/launch [t.site u.ext]:req-line)
-          [%'~link' *]      (get-file-at /app/link [t.site u.ext]:req-line)
-          [%'~chat' *]      (get-file-at /app/chat [t.site u.ext]:req-line)
-          [%'~dojo' *]      (get-file-at /app/soto [t.site u.ext]:req-line)
-          [%'~groups' *]    (get-file-at /app/groups [t.site u.ext]:req-line)
-          [%'~modulo' %session ~]
-        %-  some
-        %-  as-octt:mimes:html
-        %+  weld
-          "window.ship = '{+:(scow %p our.bowl)}';"
-        "window.urb = new Channel();"
+          [%'' %'index' ~]  (get-file-at /app/landscape [t.site u.ext]:req-line)
+          [%'~link' *]      (get-file-at /app/landscape [t.site u.ext]:req-line)
+          [%'~chat' *]      (get-file-at /app/landscape [t.site u.ext]:req-line)
+          [%'~dojo' *]      (get-file-at /app/landscape [t.site u.ext]:req-line)
+          [%'~groups' *]    (get-file-at /app/landscape [t.site u.ext]:req-line)
+          [%'~landscape' %session ~]
+        (some (as-octt:mimes:html "window.ship = '{+:(scow %p our.bowl)}';"))
       ::
-          [%'~channel' %channel ~]
-        (get-file-at /app/launch/js /channel u.ext.req-line)
+          [%'~landscape' %channel ~]
+        (get-file-at /app/landscape/js /channel u.ext.req-line)
       ==
     ?~  file  not-found:gen
     ?+  u.ext.req-line  not-found:gen
@@ -121,6 +119,7 @@
 ++  on-arvo
   |=  [=wire sign=sign-arvo]
   ^-  (quip card _this)
+  ~&  [wire sign]
   ?+  +<.sign  (on-arvo:def wire sign)
       %bound   [~ this]
   ==
