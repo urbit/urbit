@@ -19,7 +19,7 @@
       ::
       card=(wind note gift:able)
   ==
-::  +note: private request from http-server to another vane
+::  +note: private request from eyre to another vane
 ::
 +$  note
   $%  ::  %b: to behn
@@ -37,14 +37,6 @@
           ::
       $%  [%flog =flog:dill]
       ==  ==
-      ::  %f: to ford
-      ::
-      $:  %f
-          ::
-          ::
-          $%  [%build live=? schematic=schematic:ford]
-              [%kill ~]
-      ==  ==
       ::  %g: to gall
       ::
       $:  %g
@@ -52,7 +44,7 @@
           ::
           $>(%deal task:able:gall)
   ==  ==
-::  +sign: private response from another vane to ford
+::  +sign: private response from another vane to eyre
 ::
 +$  sign
   $%  ::  %b: from behn
@@ -61,13 +53,6 @@
           ::
           ::
           $%  [%wake error=(unit tang)]
-      ==  ==
-      ::  %f: from ford
-      ::
-      $:  %f
-          ::
-          ::
-          $%  [%made date=@da result=made-result:ford]
       ==  ==
       ::  %g: from gall
       ::
@@ -127,7 +112,7 @@
 ::  +outstanding-connection: open http connections not fully complete:
 ::
 ::    This refers to outstanding connections where the connection to
-::    outside is opened and we are currently waiting on ford or an app to
+::    outside is opened and we are currently waiting on an app to
 ::    produce the results.
 ::
 +$  outstanding-connection
@@ -932,19 +917,48 @@
       (~(put by connections.state) duct connection)
     ::
     ?-    -.action
-    ::
         %gen
+      =/  bek=beak  [our desk.generator.action da+now]
+      =/  sup=spur  (flop path.generator.action) 
+      =/  ski       (scry [%141 %noun] ~ %ca bek sup)
+      =/  gat=vase  !<(vase q:(need (need ski)))
+      =/  res=(each vase tang)
+        %-  mule  |.
+        %+  slam
+          %+  slam  gat
+          !>([now=now eny=eny bek=bek])
+        !>([authenticated request])
+      ?:  ?=(%| -.res)
+        =+  connection=(~(got by connections.state) duct)
+        %^  return-static-data-on-duct  500  'text/html'
+        %:  internal-server-error
+            authenticated.inbound-request.connection
+            url.request.inbound-request.connection
+            p.res
+        ==
+      =/  result  !<(simple-payload:http p.res)
+      ::  ensure we have a valid content-length header
       ::
-      =-  [[duct %pass /run-build %f %build live=%.n schematic=-]~ state]
+      ::    We pass on the response and the headers the generator produces, but
+      ::    ensure that we have a single content-length header set correctly in
+      ::    the returned if this has a body, and has no content-length if there
+      ::    is no body returned to the client.
       ::
-      :+  %call
-        :+  %call
-          [%core [[our desk.generator.action] (flop path.generator.action)]]
-        ::  TODO: Figure out what goes in generators. We need to slop the
-        ::  prelude with the arguments passed in.
+      =.  headers.response-header.result
+        ?~  data.result
+          (delete-header:http 'content-length' headers.response-header.result)
         ::
-        [%$ %noun !>([[now=now eny=eny bek=[our desk.generator.action [%da now]]] ~ ~])]
-      [%$ %noun !>([authenticated request])]
+        %^  set-header:http  'content-length'
+          (crip (format-ud-as-integer p.u.data.result))
+        headers.response-header.result
+      ::
+      %-  handle-response
+      ^-  http-event:http
+      :*  %start
+          response-header.result
+          data.result
+          complete=%.y
+      ==
     ::
         %app
       :_  state
@@ -989,11 +1003,7 @@
     =.   connections.state  (~(del by connections.state) duct)
     ::
     ?-    -.action.u.connection
-    ::
-        %gen
-      :_  state
-      [duct %pass /run-build %f %kill ~]~
-    ::
+        %gen  [~ state]
         %app
       :_  state
       :_  ~
@@ -1002,12 +1012,8 @@
           %leave  ~
       ==
     ::
-        %authentication
-      [~ state]
-    ::
-        %channel
-      on-cancel-request:by-channel
-    ::
+        %authentication  [~ state]
+        %channel         on-cancel-request:by-channel
         %four-oh-four
       ::  it should be impossible for a 404 page to be asynchronous
       ::
@@ -1761,58 +1767,6 @@
       ::
       [duc %pass channel-wire [%g %deal [our ship] app %leave ~]]
     --
-  ::  +handle-ford-response: translates a ford response for the outside world
-  ::
-  ++  handle-ford-response
-    |=  made-result=made-result:ford
-    ^-  [(list move) server-state]
-    ::
-    =+  connection=(~(got by connections.state) duct)
-    ::
-    ?:  ?=(%incomplete -.made-result)
-      %^  return-static-data-on-duct  500  'text/html'
-      ::
-      %-  internal-server-error  :*
-          authenticated.inbound-request.connection
-          url.request.inbound-request.connection
-          tang.made-result
-      ==
-    ::
-    ?:  ?=(%error -.build-result.made-result)
-      %^  return-static-data-on-duct  500  'text/html'
-      ::
-      %-  internal-server-error  :*
-          authenticated.inbound-request.connection
-          url.request.inbound-request.connection
-          message.build-result.made-result
-      ==
-    ::
-    =/  =cage  (result-to-cage:ford build-result.made-result)
-    ::
-    =/  result=simple-payload:http  ;;(simple-payload:http q.q.cage)
-    ::  ensure we have a valid content-length header
-    ::
-    ::    We pass on the response and the headers the generator produces, but
-    ::    ensure that we have a single content-length header set correctly in
-    ::    the returned if this has a body, and has no content-length if there
-    ::    is no body returned to the client.
-    ::
-    =.  headers.response-header.result
-      ?~  data.result
-        (delete-header:http 'content-length' headers.response-header.result)
-      ::
-      %^  set-header:http  'content-length'
-        (crip (format-ud-as-integer p.u.data.result))
-      headers.response-header.result
-    ::
-    %-  handle-response
-    ::
-    ^-  http-event:http
-    :*  %start
-        response-header.result
-        data.result
-        complete=%.y
-    ==
   ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup
   ::
   ++  handle-gall-error
@@ -2274,7 +2228,6 @@
       ::
          %run-app-request  run-app-request
          %watch-response   watch-response
-         %run-build        run-build
          %channel          channel
          %acme             acme-ack
       ==
@@ -2342,15 +2295,6 @@
     =/  handle-response  handle-response:(per-server-event event-args)
     =^  moves  server-state.ax
       (handle-response http-event)
-    [moves http-server-gate]
-  ::
-  ++  run-build
-    ::
-    ?>  ?=([%f %made *] sign)
-    ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
-    =/  handle-ford-response  handle-ford-response:(per-server-event event-args)
-    =^  moves  server-state.ax  (handle-ford-response result.sign)
     [moves http-server-gate]
   ::
   ++  channel
