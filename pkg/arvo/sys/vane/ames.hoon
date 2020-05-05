@@ -2255,8 +2255,7 @@
       =/  =message-pump-state
         (~(gut by snd.peer-state) bone *message-pump-state)
       ::
-      =/  message-pump
-        (make-message-pump message-pump-state channel peers.ames-state)
+      =/  message-pump    (make-message-pump message-pump-state channel)
       =^  pump-gifts      message-pump-state  (work:message-pump task)
       =.  snd.peer-state  (~(put by snd.peer-state) bone message-pump-state)
       ::  process effects from |message-pump
@@ -2470,7 +2469,7 @@
 ::  +make-message-pump: constructor for |message-pump
 ::
 ++  make-message-pump
-  |=  [state=message-pump-state =channel peers=(map ship ship-state)]
+  |=  [state=message-pump-state =channel]
   =*  veb  veb.bug.channel
   =|  gifts=(list message-pump-gift)
   ::
