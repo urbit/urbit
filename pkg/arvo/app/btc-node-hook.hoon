@@ -2,7 +2,7 @@
 ::  and poke the responses into the btc-node-store
 ::
 /-  *btc-node-hook, *btc-node-store, sole
-/+  default-agent, sole, lib=btc-node-json, verb
+/+  default-agent, sole, base64, lib=btc-node-json, verb
 ::
 =>  |%
     +$  card  card:agent:gall
@@ -11,8 +11,9 @@
       ==
     ::
     +$  state-zero
-      $:  endpoint=@t
-          headers=header-list:http
+      $:  user=@t
+          pass=@t
+          endpoint=@t
       ==
     --
 ::
@@ -30,11 +31,7 @@
     ::
     ++  on-init
       ^-  (quip card _this)
-      :-  ~
-      %_  this
-        endpoint  ''
-        headers   ~
-      ==
+      [~ this(user '', pass '', endpoint '')]
     ::
     ++  on-save   !>(state)
     ++  on-load
@@ -44,41 +41,15 @@
     ++  on-poke
       |=  [=mark =vase]
       ^-  (quip card _this)
-      |^  ?+    mark    (on-poke:def mark vase)
-              %btc-node-hook-action
-            (hook-action !<(btc-node-hook-action vase))
-          ::
-              %btc-node-hook-command
-            (hook-command !<(btc-node-hook-command vase))
-          ==
-      ::
-      ++  hook-action
-        |=  act=btc-node-hook-action
-        ^-  (quip card _this)
-        =/  body=request:rpc:jstd
-          (request-to-rpc:btc-rpc:lib act)
-        =/  req=request:http
-          :*  %'POST'
-              (endpoint-url:bc act)
-              headers
-              =,  html
-              %-  some
-                %-  as-octt:mimes
-                  (en-json (request-to-json:rpc:jstd body))
-          ==
-        =/  out  *outbound-config:iris
-        :_  this
-        [%pass /[(scot %da now.bowl)] %arvo %i %request req out]~
-      ::
-      ++  hook-command
-        |=  comm=btc-node-hook-command
-        ^-  (quip card _this)
-        ?+    -.comm  ~|  [%unsupported-hook-command -.comm]  !!
-            %credentials
-          :_  this(endpoint url.comm, headers heads.comm)
-          [%pass / %arvo %d %flog [%text "credentials updated..."]]~
+      =^  cards  state
+        ?+    mark    (on-poke:def mark vase)
+            %btc-node-hook-action
+          (handle-action:bc !<(btc-node-hook-action vase))
+        ::
+            %btc-node-hook-command
+          (handle-command:bc !<(btc-node-hook-command vase))
         ==
-      --
+      [cards this]
     ::
     ++  on-watch  on-watch:def
     ++  on-leave  on-leave:def
@@ -98,6 +69,41 @@
     --
 ::
 |_  =bowl:gall
+::
+++  handle-action
+  |=  act=btc-node-hook-action
+  ^-  (quip card _state)
+  =/  body=request:rpc:jstd
+    (request-to-rpc:btc-rpc:lib act)
+  =/  =header-list:http
+    :~  ['Content-Type' 'application/json']
+        :-  'Authorization'
+        ;:  (cury cat 3)
+            'Basic '
+            %-  ~(en base64 | &)
+            (as-octs:mimes:html :((cury cat 3) user ':' pass))
+    ==  ==
+  =/  req=request:http
+    :*  %'POST'
+        (endpoint-url act)
+        header-list
+        =,  html
+        %-  some
+          %-  as-octt:mimes
+            (en-json (request-to-json:rpc:jstd body))
+    ==
+  =/  out  *outbound-config:iris
+  :_  state
+  [%pass /[(scot %da now.bowl)] %arvo %i %request req out]~
+::
+++  handle-command
+  |=  comm=btc-node-hook-command
+  ^-  (quip card _state)
+  ?+    -.comm  ~|  [%unsupported-hook-command -.comm]  !!
+      %credentials
+    :_  state(endpoint url.comm, user user.comm, pass pass.comm)
+    [%pass / %arvo %d %flog [%text "credentials updated..."]]~
+  ==
 ::
 ++  httr-to-rpc-response
   |=  hit=httr:eyre
@@ -159,7 +165,7 @@
     ~&  [%error +.rpc-resp]
     [~ state]
   %-  handle-btc-response
-    (parse-response:btc-rpc:lib rpc-resp)
+  (parse-response:btc-rpc:lib rpc-resp)
 ::
 ++  handle-btc-response
   |=  btc-resp=btc-node-hook-response

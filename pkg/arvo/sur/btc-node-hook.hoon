@@ -1945,7 +1945,7 @@
   +$  command
     $%  ::  Loads RPC node URL+credentials
         ::
-        [%credentials url=@t heads=(list [@t @t])]
+        [%credentials url=@t user=@t pass=@t]
         ::  TODO: Sync data/wallets...
         ::
         [%sync ~]
