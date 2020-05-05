@@ -2883,11 +2883,16 @@
         =^  top  stack.nub  pop-stack
         =.  casts.cache.nub  (~(put by casts.cache.nub) [a b] [tube.res top])
         [tube.res nub]
-      ::  try +grow
+      ::  try +grow; is there a +grow core with a .b arm?
       ::
       =^  old=vase  nub  (build-fit %mar a)
-      =/  row  (mule |.((slap old (ream (cat 3 b ':grow')))))
-      ?:  ?=(%& -.row)
+      ?:  =/  ram  (mule |.((slap old ^~((ream 'grow')))))
+          ?:  ?=(%| -.ram)  %.n
+          =/  lab  (mule |.((slab b p.p.ram)))
+          ?:  ?=(%| -.lab)  %.n
+          p.lab
+        ::  +grow core has .b arm; use that
+        ::
         :_  nub
         ^-  tube
         |=  sam=vase
