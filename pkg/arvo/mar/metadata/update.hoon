@@ -1,13 +1,13 @@
-/+  *metadata-json
-|_  upd=metadata-update
+/+  *metadata-store
+|_  upd=update
 ++  grow
   |%
-  ++  json  (update-to-json upd)
+  ++  json  (update:enjs upd)
   --
 ::
 ++  grab
   |%
-  ++  noun  metadata-update
+  ++  noun  update
   --
 ::
 --
