@@ -1890,8 +1890,7 @@
       ?:  ?=([@ ^] app-path)
         ~&  [%assuming-ported-legacy-publish app-path]
         `[%'~' app-path]
-      ~|  [%weird-publish app-path]
-      !!
+      ~&([%weird-publish app-path] ~)
     =/  resource-indices
       .^  (jug resource group-path)
         %gy
@@ -1903,7 +1902,9 @@
     =/  groups=(unit (set path))
       (~(get by resource-indices) [%publish app-path])
     ?~  groups  ~
-    `(snag 0 ~(tap in u.groups))
+    =/  group-paths  ~(tap in u.groups)
+    ?~  group-paths  ~
+    `i.group-paths
   --
 ::
 ++  metadata-hook-poke
