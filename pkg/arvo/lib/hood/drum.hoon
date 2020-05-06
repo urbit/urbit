@@ -119,6 +119,7 @@
       %metadata-store
       %metadata-hook
       %s3-store
+      %landscape
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -246,6 +247,7 @@
   ?>  ?=(%4 ver)
   =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
   (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
+=======
 ::
 ++  reap-phat                                         ::  ack connect
   |=  {way/wire saw/(unit tang)}
