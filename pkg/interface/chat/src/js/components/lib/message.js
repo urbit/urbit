@@ -79,7 +79,7 @@ export class Message extends Component {
       );
     } else if ('url' in letter) {
       let imgMatch =
-        /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM)$/
+        /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM|svg|SVG)$/
         .exec(letter.url);
       let youTubeRegex = new RegExp(''
       + /(?:https?:\/\/(?:[a-z]+.)?)/.source // protocol
