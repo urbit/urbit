@@ -416,13 +416,13 @@ export class ContactCard extends Component {
         this.setState({ awaiting: false });
         props.history.push(`/~groups`);
       });
-    }));
+    });
   }
 
   removeOtherFromGroup() {
     const { props } = this;
 
-    this.setState({ awaiting: true, type: 'Removing from group' }, (() => {
+    this.setState({ awaiting: true, type: 'Removing from group' }, () => {
       api.contactView.remove(props.path, `~${props.ship}`).then(() => {
         this.setState({ awaiting: false });
         props.history.push(`/~groups${props.path}`);
