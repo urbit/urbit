@@ -484,7 +484,7 @@ u3we_slaw(u3_noun cor)
   if (c3n == u3r_mean(cor, u3x_sam_2, &mod,
                       u3x_sam_3, &txt, 0) ||
       !_(u3a_is_cat(mod))) {
-    return u3m_bail(c3__fail);
+    return u3m_bail(c3__exit);
   }
 
   switch (mod) {
