@@ -445,6 +445,7 @@ export class ContactCard extends Component {
             />
           </span>
           <EditElement
+            title=""
             className="fr w-80"
             defaultValue={defaultValue.avatar}
             onChange={this.avatarToSet}
