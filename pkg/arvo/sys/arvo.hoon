@@ -1,8 +1,9 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-~>  %slog.[0 leaf+"%arvo-assembly"]
-=-  ~>  %slog.[0 leaf+"%arvo-assembled"]
+!:
+~>  %slog.[0 leaf+"arvo: assembly"]
+=-  ~>  %slog.[0 leaf+"arvo: assembled"]
     -
 =<  ::
     ::  Arvo formal interface
@@ -14,7 +15,7 @@
     ::
     |=  [now=@da ovo=*]
     ^-  *
-    ~>  %slog.[0 leaf+"arvo-event"]
+    ~>  %slog.[0 leaf+"arvo: formal event"]
     .(+> +:(poke now ovo))
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
@@ -103,7 +104,8 @@
           (pair cord (each * (list mass)))
 +$  monk  (each ship (pair @tas @ta))
 +$  move  [=duct =ball]
-+$  ovum  (pair wire curd)
++$  ovum  $~  [/ %$ **]
+          (pair wire curd)
 ::
 +$  scry-sample
   [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
@@ -170,7 +172,7 @@
   ==
 --
 =>
-~%  %hex  +>  ~
+~%  %hex  ..ut  ~
 |%
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::                section 3bE, Arvo core                ::
@@ -257,7 +259,7 @@
       +$  ovum  [=wire =card]
       --
   ::
-  ~%  %part  +>  ~
+  ~%  %part  ..part  ~
   |%
   ::
   +|  %utilities
@@ -537,6 +539,7 @@
         +$  germ  [vane=term bars=(list duct)]
         +$  plan  (pair germ (list move))
         +$  debt
+          $~  [~ ~ *germ ~]
           $:  ::  run: list of worklists
               ::  out: pending output
               ::  gem: worklist metadata
@@ -549,7 +552,7 @@
           ==
         --
     ::
-    ~%  %le  +>+>  ~
+    ~%  %le  part  ~
     =|  debt
     =*  nub  -
     ::
@@ -934,9 +937,9 @@
     ++  peek  |=(* ~)                                   ::  46
     ::
     ++  poke  |=  *                                     ::  47
-              ^-  [(list) *]
+              ^-  [(list ovum) *]
               =>  .(+< ;;([now=@da ovo=ovum] +<))
-              ^-  [(list) *]
+              ^-  [(list ovum) *]
               =.  +>.$
                 ?+  -.q.ovo
                   ::  ignore unrecognized
@@ -975,9 +978,11 @@
               ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
                 [~ +>.$]
               ~>  %slog.[0 leaf+"arvo: metamorphosis"]
+              =-  ~>  %slog.[0 leaf+"arvo: metamorphosed"]
+                  -
               =/  nyf
                 (turn vanes.^poke |=([label=@tas =vane] [label vase.vane]))
-              (load u.who now u.eny ova=~ u.bod nyf)
+              (load u.who now u.eny *pram u.bod nyf)
     ::
     ++  wish  |=  txt=*                                 ::  22
               ?>  ?=(@ txt)
@@ -1027,15 +1032,17 @@
 ::  +dram: upgrade $pram, compatible
 ::
 +$  pram
+  $~  [%345 nub=*debt:le:part]
   $%  [%345 nub=debt:le:part]
       (list ovum)
   ==
 ++  dram
   |=  ram=pram
   ^-  pram
-  ?:  ?=([%345 *] pram)
+  ?:  ?=([%345 *] ram)
     ram
   =|  nub=debt:le:part
+  ~|  ram+ram
   [%345 nub(out ;;((list ovum) ram))]
 ::  $prim: old $pram
 ::  +drum: upgrade $prim to $pram, incompatible
@@ -1046,7 +1053,7 @@
 ::
 ++  come
   |=  [who=ship now=@da yen=@ rim=prim dub=vise nyf=pone]
-  ^-  [(list) *]
+  ^-  [(list ovum) *]
   =/  fyn  (turn nyf |=([a=@tas b=vise] [a (slim b)]))
   =/  rum  (drum rim)
   (load who now yen rum (slim dub) fyn)
@@ -1054,7 +1061,7 @@
 ::
 ++  load
   |=  [who=ship now=@da yen=@ ram=pram dub=vase nyf=pane]
-  ^-  [(list) *]
+  ^-  [(list ovum) *]
   =:  our  who
       eny  yen
       bud  dub
@@ -1075,7 +1082,8 @@
 ++  poke
   |=  [now=@da ovo=ovum]
   =.  eny  (shaz (cat 3 eny now))
-  |-  ^-  [(list) *]
+  ~|  poke+-.q.ovo
+  |-  ^-  [(list ovum) *]
   ?+  -.q.ovo
     ::  Normal events are routed to a single vane
     ::
@@ -1096,7 +1104,7 @@
       ~>  %slog.[0 leaf+"arvo: trim: clearing caches"]
       (turn vanes |=([a=@tas =vane] [a vase.vane *worm]))
     ?:  ?=(%& -.zef)
-      [zef arvo]
+      [p.zef arvo]
     (feck now [fec nub]:p.zef)
   ::  Error notifications are unwrapped and routed as usual
   ::
@@ -1120,6 +1128,7 @@
 ++  lead
   |=  [now=@da nub=(unit debt:le:part)]
   ^+  le:part
+  ~|  lead+.?(nub)
   =;  el
     ?~  nub  el
     (abed:el u.nub)
@@ -1128,16 +1137,18 @@
 ::
 ++  leap
   |=  [now=@da el=_le:part]
-  ^-  [(list) *]
+  ^-  [(list ovum) *]
+  ~|  %leap
   =^  zef  vanes  loop:el
   ?:  ?=(%& -.zef)
-    [zef arvo]
+    [p.zef arvo]
   (feck now [fec nub]:p.zef)
 ::  +feck: handle an effect from a vane
 ::
 ++  feck
   |=  [now=@da ovo=ovum nub=debt:le:part]
-  ^-  [(list) *]
+  ^-  [(list ovum) *]
+  ~|  feck+-.q.ovo
   ?:  ?=(%lyra -.q.ovo)
     (vega now nub ;;([@ @] +.q.ovo))
   ?+  -.q.ovo  ~|(bad-fec+-.q.ovo !!)
@@ -1175,7 +1186,7 @@
       ==
   ::  produce a new kernel and an effect list
   ::
-  ^-  [(list) *]
+  ^-  [(list ovum) *]
   ::  compile the hoon.hoon source with the current compiler
   ::
   =/  raw
@@ -1240,7 +1251,7 @@
   =/  out  (slum gat sam)
   ::  add types to the product
   ::
-  ;;([(list) *] out)
+  ;;([(list ovum) *] out)
 ::  +veer: install %zuse or a vane
 ::
 ::    Identity is in the sample so the larval stage
@@ -1250,10 +1261,9 @@
   |=  [who=ship now=@da fav=curd]
   ^+  soul
   =>  .(fav ;;({$veer lal/@ta pax/path txt/@t} fav))
-  =-  ?:(?=(%| -.res) ((slog p.res) soul) p.res)
-  ^=  res  %-  mule  |.
+  ~|  veer+lal.fav
   ?:  =(%$ lal.fav)
-    ~&  [%tang pax.fav `@p`(mug txt.fav)]
+    ~>  %slog.[0 leaf+"zuse: {(scow p+(mug txt.fav))}"]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
     soul(bud vax)
@@ -1261,14 +1271,14 @@
       vanes
     |-  ^+  vanes
     ?~  vanes
-      ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+      ~>  %slog.[0 leaf+"{(trip lal.fav)}: {(scow p+(mug txt.fav))}"]
       =+  vin=(vint who lal.fav vil bud pax.fav txt.fav)
       ?~  vin
         vanes
       [[lal.fav vane:u.vin] vanes]
     ?.  =(lal.fav label.i.vanes)
       [i.vanes $(vanes t.vanes)]
-    ~&  [%vane `@tas`lal.fav pax.fav `@p`(mug txt.fav)]
+    ~>  %slog.[0 leaf+"{(trip lal.fav)}: {(scow p+(mug txt.fav))}"]
     :_  t.vanes
     :-  label.i.vanes
     ~|  [%failed-vane-activation now lal.fav]
