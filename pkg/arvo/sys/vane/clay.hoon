@@ -2888,7 +2888,7 @@
       =^  old=vase  nub  (build-fit %mar a)
       ?:  =/  ram  (mule |.((slap old ^~((ream 'grow')))))
           ?:  ?=(%| -.ram)  %.n
-          =/  lab  (mule |.((slab b p.p.ram)))
+          =/  lab  (mule |.((slob b p.p.ram)))
           ?:  ?=(%| -.lab)  %.n
           p.lab
         ::  +grow core has .b arm; use that
@@ -2900,7 +2900,12 @@
         %+  slap
           (with-faces old+old sam+sam ~)
         %-  ream
-        :((cury cat 3) '!:  ~!  old=old  ~!  sam=sam  ' b ':~(grow old sam)')
+        ;:  (cury cat 3)
+          '!:  '
+          '~!  old=old  '
+          '~!  sam=sam  '
+          b  ':~(grow old sam)'
+        ==
       ::  try direct +grab
       ::
       =^  new=vase  nub  (build-fit %mar b)
