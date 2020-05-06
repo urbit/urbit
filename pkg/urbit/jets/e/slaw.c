@@ -15,7 +15,7 @@ _parse_ud(u3_noun txt) {
   c3_c* cur = c;
   if (cur[0] > '9' || cur[0] < '0') {
     u3a_free(c);
-    return 0;
+    return u3_none;
   }
   c3_w total = cur[0] - '0';
   cur++;
@@ -32,7 +32,7 @@ _parse_ud(u3_noun txt) {
     if (cur[0] > '9' || cur[0] < '0') {
       u3a_free(c);
       u3z(total);
-      return 0;
+      return u3_none;
     }
 
     total = u3ka_mul(total, 10);
@@ -42,7 +42,7 @@ _parse_ud(u3_noun txt) {
     if (since_last_period > 3) {
       u3a_free(c);
       u3z(total);
-      return 0;
+      return u3_none;
     }
   }
 
@@ -85,14 +85,14 @@ u3_noun combine(u3_noun p, u3_noun q)
 #define ENSURE_NOT_END()  do {                  \
     if (*cur == 0) {                            \
       u3a_free(c);                              \
-      return 0;                                 \
+      return u3_none;                           \
     }                                           \
   } while (0)
 
 #define CONSUME(x)  do {                        \
     if (*cur != x) {                            \
       u3a_free(c);                              \
-      return 0;                                 \
+      return u3_none;                           \
     }                                           \
     cur++;                                      \
   } while (0)
@@ -101,7 +101,7 @@ u3_noun combine(u3_noun p, u3_noun q)
   c3_c prefix##_one, prefix##_two, prefix##_three;                      \
   if (c3n == get_syllable(&cur, & prefix##_one, & prefix##_two, & prefix##_three)) { \
     u3a_free(c);                                                        \
-    return 0;                                                           \
+    return u3_none;                                                     \
   }
 
 u3_noun
@@ -258,7 +258,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
     // We've parsed all of a comet shape, and there's still more in the
     // string. Error.
     u3a_free(c);
-    return 0;
+    return u3_none;
   }
 
   // We have a long comet. Time to jam it all together. We rely on combine()
@@ -293,7 +293,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
   do {                                              \
     if (cur[0] > '9' || cur[0] < '1') {             \
       u3a_free(c);                                  \
-      return 0;                                     \
+      return u3_none;                               \
     }                                               \
     numname = cur[0] - '0';                         \
     cur++;                                          \
@@ -309,7 +309,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
   do {                                              \
     if (cur[0] > '9' || cur[0] < '0') {             \
       u3a_free(c);                                  \
-      return 0;                                     \
+      return u3_none;                               \
     }                                               \
     numname = cur[0] - '0';                         \
     cur++;                                          \
@@ -328,7 +328,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
       out = 10 + cur[0] - 'a';                      \
     } else {                                        \
       u3a_free(c);                                  \
-      return 0;                                     \
+      return u3_none;                               \
     }                                               \
     cur++;                                          \
   } while(0)
@@ -371,7 +371,7 @@ _parse_da(u3_noun cor, u3_noun txt) {
     cur++;
   } else {
     u3a_free(c);
-    return 0;
+    return u3_none;
   }
 
   CONSUME('.');
