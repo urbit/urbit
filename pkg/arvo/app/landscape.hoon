@@ -43,7 +43,6 @@
   ?+  mark  (on-poke:def mark vase)
       %handle-http-request
     =+  !<([id=@ta req=inbound-request:eyre] vase)
-    ~&  req
     :_  this
     %+  give-simple-payload:app    id
     %+  require-authorization:app  req
@@ -53,7 +52,6 @@
   ++  handle-http-request
     |=  =inbound-request:eyre
     ^-  simple-payload:http
-    ~&  inbound-request
     ?.  =(src.bowl our.bowl)  [[403 ~] ~]
     =*  req  request.inbound-request
     =/  req-line  (parse-request-line url.req)
@@ -64,8 +62,6 @@
   ++  handle-get
     |=  [headers=header-list:http req-line=request-line]
     ^-  simple-payload:http
-    ~&  headers
-    ~&  req-line
     ?~  ext.req-line
       $(req-line [[[~ %html] (snoc site.req-line 'index')] args.req-line])
     ?~  site.req-line  not-found:gen
@@ -81,11 +77,11 @@
           [%'~chat' *]      (get-file-at /app/landscape [t.site u.ext]:req-line)
           [%'~dojo' *]      (get-file-at /app/landscape [t.site u.ext]:req-line)
           [%'~groups' *]    (get-file-at /app/landscape [t.site u.ext]:req-line)
-          [%'~landscape' %session ~]
+          [%'~landscape' %js %session ~]
         (some (as-octt:mimes:html "window.ship = '{+:(scow %p our.bowl)}';"))
       ::
-          [%'~landscape' %channel ~]
-        (get-file-at /app/landscape/js /channel u.ext.req-line)
+          [%'~landscape' *]
+        (get-file-at /app/landscape [t.site u.ext]:req-line)
       ==
     ?~  file  not-found:gen
     ?+  u.ext.req-line  not-found:gen
@@ -119,7 +115,6 @@
 ++  on-arvo
   |=  [=wire sign=sign-arvo]
   ^-  (quip card _this)
-  ~&  [wire sign]
   ?+  +<.sign  (on-arvo:def wire sign)
       %bound   [~ this]
   ==
