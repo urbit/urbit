@@ -133,7 +133,7 @@ export class GroupFilter extends Component {
         <span className="dib v-mid ml1">
           <img
           className="v-mid"
-          src="/~launch/img/Chevron.png"
+          src="/~landscape/img/Chevron.png"
           style={{ height: 16, width: 16, paddingBottom: 1 }}
           />
         </span>
@@ -141,7 +141,7 @@ export class GroupFilter extends Component {
       : <template className="dib fr" style={{paddingTop: 1}}>
         <span className="dib v-mid ml1">
           <img className="v-mid"
-          src="/~launch/img/Chevron.png"
+          src="/~landscape/img/Chevron.png"
           style={{ height: 16, width: 16, paddingBottom: 1 }}
           />
         </span>

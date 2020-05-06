@@ -43,11 +43,10 @@ const StatusBarWithRouter = withRouter(StatusBar);
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.channel = window.urb;
+    const Channel = window.channel;
+    this.channel = new Channel();
     this.ship = window.ship;
-    this.state = {
-
-    };
+    this.state = {};
   }
 
   render() {

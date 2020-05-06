@@ -227,4 +227,6 @@ class Channel {
   nextId() {
     return this.requestId++;
   }
-};
+}
+
+window.channel = Channel;
