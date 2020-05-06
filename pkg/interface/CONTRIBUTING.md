@@ -46,7 +46,7 @@ module.exports = {
 Edit the path between quotes `/Users/user/ships/zod/home` with wherever your 
 fake ship is located on your machine. This zod location path *must* end in `../home` to correctly intitalize 
 any code you write. Any code edited within the `urbit/urbit`will now be able to be synced to your running 
-ship, and previewed in the browser.
+ship, and previewed in the browser. Save this file in the same directory with the name `urbitrc`
 
 To set up urbit's Javascript environment, you'll need node (ideally installed
 via [nvm](https://github.com/nvm-sh/nvm)) and gulp, which will be installed 
