@@ -6,15 +6,15 @@
 #include <ctype.h>
 
 /* functions
-*/
+ */
 u3_noun
 _parse_ud(u3_noun txt) {
-  c3_c* c = u3r_string(txt);
+  c3_c* c = u3a_string(txt);
 
   // First character must represent a digit
   c3_c* cur = c;
   if (cur[0] > '9' || cur[0] < '0') {
-    c3_free(c);
+    u3a_free(c);
     return 0;
   }
   c3_w total = cur[0] - '0';
@@ -30,7 +30,7 @@ _parse_ud(u3_noun txt) {
     }
 
     if (cur[0] > '9' || cur[0] < '0') {
-      c3_free(c);
+      u3a_free(c);
       u3z(total);
       return 0;
     }
@@ -40,13 +40,13 @@ _parse_ud(u3_noun txt) {
     cur++;
 
     if (since_last_period > 3) {
-      c3_free(c);
+      u3a_free(c);
       u3z(total);
       return 0;
     }
   }
 
-  c3_free(c);
+  u3a_free(c);
   return u3nc(0, total);
 }
 
@@ -84,14 +84,14 @@ u3_noun combine(u3_noun p, u3_noun q)
 
 #define ENSURE_NOT_END()  do {                  \
     if (*cur == 0) {                            \
-      c3_free(c);                               \
+      u3a_free(c);                              \
       return 0;                                 \
     }                                           \
   } while (0)
 
 #define CONSUME(x)  do {                        \
     if (*cur != x) {                            \
-      c3_free(c);                               \
+      u3a_free(c);                              \
       return 0;                                 \
     }                                           \
     cur++;                                      \
@@ -100,13 +100,13 @@ u3_noun combine(u3_noun p, u3_noun q)
 #define TRY_GET_SYLLABLE(prefix)                                        \
   c3_c prefix##_one, prefix##_two, prefix##_three;                      \
   if (c3n == get_syllable(&cur, & prefix##_one, & prefix##_two, & prefix##_three)) { \
-    c3_free(c);                                                         \
+    u3a_free(c);                                                        \
     return 0;                                                           \
   }
 
 u3_noun
 _parse_p(u3_noun cor, u3_noun txt) {
-  c3_c* c = u3r_string(txt);
+  c3_c* c = u3a_string(txt);
 
   c3_c* cur = c;
   CONSUME('~');
@@ -120,7 +120,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
   // it's a galaxy. We don't even have to run this through the scrambler or
   // check for validity since its already a (unit @).
   if (*cur == 0) {
-    c3_free(c);
+    u3a_free(c);
     return po_find_suffix(a_one, a_two, a_three);
   }
 
@@ -132,7 +132,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
     u3_noun a_part = po_find_prefix(a_one, a_two, a_three);
     u3_noun b_part = po_find_suffix(b_one, b_two, b_three);
     u3_atom combined = combine(b_part, a_part);
-    c3_free(c);
+    u3a_free(c);
     return combined;
   }
 
@@ -152,7 +152,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
     u3_noun d_part = po_find_suffix(d_one, d_two, d_three);
 
     u3_noun m = combine(d_part, combine(c_part, combine(b_part, a_part)));
-    c3_free(c);
+    u3a_free(c);
 
     if (_(u3a_is_atom(m))) {
       return 0;
@@ -185,7 +185,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
 
     u3_noun m = combine(f_part, combine(e_part, combine(d_part,
                 combine(c_part, combine(b_part, a_part)))));
-    c3_free(c);
+    u3a_free(c);
 
     if (_(u3a_is_atom(m))) {
       return 0;
@@ -220,7 +220,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
     u3_noun m = combine(h_part, combine(g_part, combine(f_part,
                 combine(e_part, combine(d_part, combine(c_part,
                 combine(b_part, a_part)))))));
-    c3_free(c);
+    u3a_free(c);
 
     if (_(u3a_is_atom(m))) {
       return 0;
@@ -257,7 +257,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
   if (*cur != 0) {
     // We've parsed all of a comet shape, and there's still more in the
     // string. Error.
-    c3_free(c);
+    u3a_free(c);
     return 0;
   }
 
@@ -280,7 +280,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
   u3_noun o_part = po_find_prefix(o_one, o_two, o_three);
   u3_noun p_part = po_find_suffix(p_one, p_two, p_three);
 
-  c3_free(c);
+  u3a_free(c);
 
   return combine(p_part, combine(o_part, combine(n_part, combine(m_part,
          combine(l_part, combine(k_part, combine(j_part, combine(i_part,
@@ -292,7 +292,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
   c3_w numname = 0;                                 \
   do {                                              \
     if (cur[0] > '9' || cur[0] < '1') {             \
-      c3_free(c);                                   \
+      u3a_free(c);                                  \
       return 0;                                     \
     }                                               \
     numname = cur[0] - '0';                         \
@@ -308,7 +308,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
   c3_w numname = 0;                                 \
   do {                                              \
     if (cur[0] > '9' || cur[0] < '0') {             \
-      c3_free(c);                                   \
+      u3a_free(c);                                  \
       return 0;                                     \
     }                                               \
     numname = cur[0] - '0';                         \
@@ -320,23 +320,23 @@ _parse_p(u3_noun cor, u3_noun txt) {
     }                                               \
   } while (0)
 
-#define PARSE_HEX_DIGIT(out)                                \
-  do {                                                      \
-    if (cur[0] >= '0' && cur[0] <= '9') {                   \
-      out = cur[0] - '0';                                   \
-    } else if (cur[0] >= 'a' && cur[0] <= 'f') {            \
-      out = 10 + cur[0] - 'a';                              \
-    } else {                                                \
-      c3_free(c);                                           \
-      return 0;                                             \
-    }                                                       \
-    cur++; \
+#define PARSE_HEX_DIGIT(out)                        \
+  do {                                              \
+    if (cur[0] >= '0' && cur[0] <= '9') {           \
+      out = cur[0] - '0';                           \
+    } else if (cur[0] >= 'a' && cur[0] <= 'f') {    \
+      out = 10 + cur[0] - 'a';                      \
+    } else {                                        \
+      u3a_free(c);                                  \
+      return 0;                                     \
+    }                                               \
+    cur++;                                          \
   } while(0)
 
 
 u3_noun
 _parse_da(u3_noun cor, u3_noun txt) {
-  c3_c* c = u3r_string(txt);
+  c3_c* c = u3a_string(txt);
 
   c3_c* cur = c;
   CONSUME('~');
@@ -370,7 +370,7 @@ _parse_da(u3_noun cor, u3_noun txt) {
     month = cur[0] - '0';
     cur++;
   } else {
-    c3_free(c);
+    u3a_free(c);
     return 0;
   }
 
@@ -381,7 +381,7 @@ _parse_da(u3_noun cor, u3_noun txt) {
   PARSE_NONZERO_NUMBER(day);
 
   if (cur[0] == 0) {
-    c3_free(c);
+    u3a_free(c);
     u3_noun hok = u3j_cook("u3we_slaw_parse_da", u3k(cor), "year");
     u3_noun res = u3n_slam_on(hok,
                               u3nt(u3nc(bc, year), month,
@@ -399,7 +399,7 @@ _parse_da(u3_noun cor, u3_noun txt) {
   PARSE_INCLUDING_ZERO_NUMBER(second);
 
   if (cur[0] == 0) {
-    c3_free(c);
+    u3a_free(c);
     u3_noun hok = u3j_cook("u3we_slaw_parse_da", u3k(cor), "year");
     u3_noun res = u3n_slam_on(hok,
                               u3nt(u3nc(bc, year), month,
@@ -425,7 +425,7 @@ _parse_da(u3_noun cor, u3_noun txt) {
     list = u3nc(current, list);
 
     if (cur[0] == 0) {
-      c3_free(c);
+      u3a_free(c);
 
       u3_noun flopped = u3qb_flop(list);
       u3z(list);
@@ -452,26 +452,26 @@ u3_noun
 _parse_tas(u3_noun txt) {
   // For any symbol which matches, txt will return itself as a
   // value. Therefore, this is mostly checking validity.
-  c3_c* c = u3r_string(txt);
+  c3_c* c = u3a_string(txt);
 
   // First character must represent a lowercase letter
   c3_c* cur = c;
   if (!islower(cur[0])) {
-    c3_free(c);
+    u3a_free(c);
     return 0;
   }
   cur++;
 
   while (cur[0] != 0) {
     if (!(islower(cur[0]) || isdigit(cur[0]) || cur[0] == '-')) {
-      c3_free(c);
+      u3a_free(c);
       return 0;
     }
 
     cur++;
   }
 
-  c3_free(c);
+  u3a_free(c);
   return u3nc(0, u3k(txt));
 }
 
