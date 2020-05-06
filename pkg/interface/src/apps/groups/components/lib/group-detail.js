@@ -111,7 +111,7 @@ export class GroupDetail extends Component {
         </div>;
 
       return (
-        <li key={channelPath} className="f9 list flex pv1 w-100">
+        <li key={app + channelPath} className="f9 list flex pv1 w-100">
           {tile}
           <div className="flex flex-column flex-auto">
             <p className="f9 inter ml2 w-100">{title}</p>
