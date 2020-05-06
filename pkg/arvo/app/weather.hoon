@@ -23,7 +23,7 @@
   ++  on-init  [~ this]
   ++  on-save  !>(state)
   ++  on-load
-    |=  old=vase
+    |=  [old=vase breach=?]
     :_  this(state !<(state-zero old))
     [%pass /bind/weather %arvo %e %disconnect [~ /'~weather']]~
   ::

@@ -71,7 +71,8 @@
 ::
 ++  on-save   !>(state)
 ++  on-load
-  |=  old=vase
+  |=  [old=vase breach=?]
+  ?:  breach  `this
   |^
   =+  !<(old-state=app-states old)
   =?  old-state  ?=(%0 -.old-state)

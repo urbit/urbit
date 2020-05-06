@@ -342,7 +342,10 @@
     [[card ~] this]
   ::
   ++  on-save   !>(state)
-  ++  on-load   |=(old=vase `this(state !<(acme old)))
+  ++  on-load
+    |=  [old=vase breach=?]
+    ?:  breach  [~ this]
+    `this(state !<(acme old))
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)

@@ -11,7 +11,7 @@
   !>(~)
 ::
 ++  on-load
-  |=  old-state=vase
+  |=  [old-state=vase breach=?]
   `agent
 ::
 ++  on-poke

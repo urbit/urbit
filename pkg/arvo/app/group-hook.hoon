@@ -34,7 +34,7 @@
   ++  on-init  on-init:def
   ++  on-save  !>(state)
   ++  on-load
-    |=  =vase
+    |=  [=vase breach=?]
     ^-  (quip card _this)
     =/  old  !<(state-zero vase)
     :_  this(state old)

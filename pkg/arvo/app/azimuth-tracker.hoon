@@ -112,7 +112,8 @@
 ::
 ++  on-save   !>(state)
 ++  on-load
-  |=  old=vase
+  |=  [old=vase breach=?]
+  ?:  breach  `this
   `this(state !<(app-state old))
 ::
 ++  on-poke

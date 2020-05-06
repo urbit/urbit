@@ -1350,7 +1350,8 @@
   !>(state)
 ::
 ++  on-load
-  |=  old=vase
+  |=  [old=vase breach=?]
+  ?:  breach  `..on-init
   ?:  ?=(%6 +<.old)
     `..on-init(state !<(house old))
   =/  old-5  !<([%5 egg=@u hoc=(map id session)] old)

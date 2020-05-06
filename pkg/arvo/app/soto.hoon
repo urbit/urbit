@@ -34,7 +34,7 @@
 ++  on-save  !>(state)
 ::
 ++  on-load
-  |=  old-vase=vase
+  |=  [old-vase=vase breach=?]
   =/  old
     !<(versioned-state old-vase)
   ?^  old

@@ -31,7 +31,7 @@
     [[%pass /updates %agent [our.bowl %metadata-store] %watch /updates]~ this]
   ::
   ++  on-save   !>(state)
-  ++  on-load   |=(=vase `this(state !<(state-zero vase)))
+  ++  on-load   |=([=vase breach=?] `this(state !<(state-zero vase)))
   ++  on-leave  on-leave:def
   ++  on-peek   on-peek:def
   ++  on-arvo   on-arvo:def

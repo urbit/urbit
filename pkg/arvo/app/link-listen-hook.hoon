@@ -80,13 +80,20 @@
   ::
   ++  on-save  !>(state)
   ++  on-load
-    |=  =vase
+    |=  [=vase breach=?]
     ^-  (quip card _this)
     =/  old=versioned-state
       !<(versioned-state vase)
     |-
-    ?-  -.old
-      %2  [~ this(state old)]
+    ?-    -.old
+        %2
+      =.  state  old
+      ?.  breach
+        `this
+      =^  cards  state
+        reset-timers
+      [cards this]
+
     ::
         %1
       ::  the upgrade from 0 left out local-only collections.
@@ -600,6 +607,17 @@
       [%forward %annotation (scot %p who) where]
     [%read where url.update who note]
   ==
+::
+::  +reset-timers: Vane state gone, reset timers
+::
+::    Called when restoring from a breach.
+::
+++  reset-timers
+  ^-  (quip card _state)
+  %+  roll
+    ~(tap in ~(key by retry-timers))
+  |=  [=target cards=(list card) state=_state]
+  (start-retry target)
 ::
 ++  take-forward-sign
   |=  [=wire =sign:agent:gall]

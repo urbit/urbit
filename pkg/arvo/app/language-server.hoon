@@ -66,7 +66,7 @@
   ++  on-save   !>(state)
   ++  on-load
     ^+  on-load:*agent:gall
-    |=  old-state=vase
+    |=  [old-state=vase breach=?]
     ^-  (quip card _this)
     ~&  >  %lsp-upgrade
     [~ this(state *state-zero)]

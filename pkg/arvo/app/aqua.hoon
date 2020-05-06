@@ -54,8 +54,9 @@
   ++  on-init           `this
   ++  on-save  !>(all-state)
   ++  on-load
-    |=  old-state=vase
+    |=  [old-state=vase breach=?]
     ^-  step:agent:gall
+    ?:  breach  `this
     ~&  prep=%aqua
     =+  new=((soft state) !<(* old-state))
     ?~  new

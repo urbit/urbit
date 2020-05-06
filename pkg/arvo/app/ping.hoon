@@ -158,7 +158,7 @@
 ::
 ++  on-save   !>(state)
 ++  on-load
-  |=  old=vase
+  |=  [old=vase breach=?]
   =.  state  !<(_state old)
   (on-poke %noun !>(%kick))
 ::  +on-poke: positively acknowledge pokes

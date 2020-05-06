@@ -10,7 +10,7 @@
   !!
 ::
 ++  on-load
-  |~  old-state=vase
+  |~  [old-state=vase breach=?]
   ^-  (quip card:agent:gall agent:gall)
   !!
 ::

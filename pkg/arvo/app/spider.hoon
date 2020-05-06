@@ -116,7 +116,8 @@
   ++  on-init   on-init:def
   ++  on-save   clean-state:sc
   ++  on-load
-    |=  old-state=vase
+    |=  [old-state=vase breach=?]
+    ?:  breach  `this
     =+  !<(=clean-slate old-state)
     =.  tid.state  tid.clean-slate
     =/  yarns=(list yarn)
@@ -192,7 +193,7 @@
     |=  [=term =tang]
     ^-  (quip card _this)
     %-  (slog leaf+"spider crashed, killing all strands: {<term>}" tang)
-    (on-load on-save)
+    (on-load on-save %.n)
   --
 ::
 |_  =bowl:gall

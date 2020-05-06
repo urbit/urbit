@@ -88,9 +88,9 @@
     ==
   ::
   ++  on-save  !>(state)
-  ::
+  :: TODO: clay is wiped on breach
   ++  on-load
-    |=  old=vase
+    |=  [old=vase breach=?]
     ^-  (quip card _this)
     =/  old-state=(each versioned-state tang)
       (mule |.(!<(versioned-state old)))

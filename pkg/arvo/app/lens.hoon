@@ -26,7 +26,8 @@
 ++  on-init   on-init:def
 ++  on-save   !>(state)
 ++  on-load
-  |=  old=vase
+  |=  [old=vase breach=?]
+  ?:  breach  `this
   `this(state !<(^state old))
 ::
 ++  on-poke

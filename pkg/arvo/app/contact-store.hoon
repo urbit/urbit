@@ -45,7 +45,7 @@
   ++  on-init   on-init:def
   ++  on-save   !>(state)
   ++  on-load
-    |=  old-vase=vase
+    |=  [old-vase=vase breach=?]
     =/  old  !<(versioned-state old-vase)
     ?:  ?=(%1 -.old)
       [~ this(state old)]

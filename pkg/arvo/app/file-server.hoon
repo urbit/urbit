@@ -47,7 +47,7 @@
 ::
 ++  on-save  !>(state)
 ++  on-load
-  |=  old-vase=vase
+  |=  [old-vase=vase breach=?]
   ^-  (quip card _this)
   [~ this(state !<(state-zero old-vase))]
 ::

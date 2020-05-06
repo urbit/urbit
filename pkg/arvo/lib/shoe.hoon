@@ -69,7 +69,7 @@
     *vase
   ::
   ++  on-load
-    |~  vase
+    |~  [vase ?]
     *(quip card _^|(..on-init))
   ::
   ++  on-poke
@@ -166,7 +166,7 @@
   ++  on-save   !>([%shoe-app on-save:og state])
   ::
   ++  on-load
-    |=  old-state=vase
+    |=  [old-state=vase breached=?]
     ^-  (quip card:agent:gall agent:gall)
     ::  we could be upgrading from a shoe-less app, in which case the vase
     ::  contains inner application state instead of our +on-save.
@@ -174,10 +174,10 @@
     ::  +on-save tag in the vase.
     ::
     ?.  ?=([%shoe-app ^] q.old-state)
-      =^  cards  shoe  (on-load:og old-state)
+      =^  cards  shoe  (on-load:og old-state breached)
       [(deal cards) this]
     =^  old-inner  state  +:!<([%shoe-app vase state-0] old-state)
-    =^  cards      shoe   (on-load:og old-inner)
+    =^  cards      shoe   (on-load:og old-inner breached)
     [(deal cards) this]
   ::
   ++  on-poke
