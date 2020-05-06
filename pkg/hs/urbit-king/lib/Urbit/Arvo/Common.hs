@@ -78,7 +78,7 @@ instance FromNoun H.StdMethod where
 
 -- Http Server Configuration ---------------------------------------------------
 
-newtype PEM = PEM { unPEM :: Cord }
+newtype PEM = PEM { unPEM :: Wain }
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 type Key  = PEM

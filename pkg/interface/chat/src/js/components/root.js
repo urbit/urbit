@@ -60,6 +60,7 @@ export class Root extends Component {
 
     let contacts = !!state.contacts ? state.contacts : {};
     let associations = !!state.associations ? state.associations : {chat: {}, contacts: {}};
+    let s3 = !!state.s3 ? state.s3 : {};
 
     const renderChannelSidebar = (props, station) => (
       <Sidebar
@@ -244,6 +245,7 @@ export class Root extends Component {
                     inbox={state.inbox}
                     contacts={roomContacts}
                     permission={permission}
+                    s3={s3}
                     pendingMessages={state.pendingMessages}
                     popout={popout}
                     sidebarShown={state.sidebarShown}

@@ -20,6 +20,7 @@ function ShipSearchItem({ ship, contacts, selected, onSelect }) {
     nameStyle.color = hexToRgba(hex, 0.7);
     nameStyle.textShadow = '0px 0px 0px #000';
     nameStyle.filter = 'contrast(1.3) saturate(1.5)';
+    nameStyle.maxWidth = '200px';
     sigilClass = 'v-mid';
     nickname = contact.nickname;
   }
@@ -28,7 +29,7 @@ function ShipSearchItem({ ship, contacts, selected, onSelect }) {
     <div
       onClick={() => onSelect(ship)}
       className={cn(
-        'f8 pv1 ph3 pointer hover-bg-gray1-d hover-bg-gray4 relative flex items-center',
+        'f9 pv1 ph3 pointer hover-bg-gray1-d hover-bg-gray4 relative flex items-center',
         {
           'white-d bg-gray0-d bg-white': !isSelected,
           'black-d bg-gray1-d bg-gray4': isSelected
@@ -38,7 +39,7 @@ function ShipSearchItem({ ship, contacts, selected, onSelect }) {
     >
       <Sigil ship={'~' + ship} size={24} color={color} classes={sigilClass} />
       {nickname && (
-        <p style={nameStyle} className="dib ml4 b">
+        <p style={nameStyle} className="dib ml4 b truncate">
           {nickname}
         </p>
       )}
@@ -232,7 +233,7 @@ export class ShipSearch extends Component {
     let idx = suggestions.findIndex(s => s === this.state.selected);
 
     idx = backward ? idx - 1 : idx + 1;
-    idx = idx % suggestions.length;
+    idx = idx % Math.min(suggestions.length, 5);
     if (idx < 0) {
       idx = suggestions.length - 1;
     }

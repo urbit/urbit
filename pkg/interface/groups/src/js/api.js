@@ -17,6 +17,7 @@ class UrbitApi {
     this.contactView = {
       create: this.contactCreate.bind(this),
       delete: this.contactDelete.bind(this),
+      remove: this.contactRemove.bind(this),
       share: this.contactShare.bind(this)
     };
 
@@ -101,6 +102,10 @@ class UrbitApi {
 
   contactDelete(path) {
     return this.contactViewAction({ delete: { path }});
+  }
+
+  contactRemove(path, ship) {
+    return this.contactViewAction({ remove: { path, ship } });
   }
 
   contactHookAction(data) {

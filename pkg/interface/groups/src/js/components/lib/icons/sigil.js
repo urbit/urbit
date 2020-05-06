@@ -32,7 +32,7 @@ export class Sigil extends Component {
       return (
         <div
           className={'dib ' + classes}
-          style={{ flexBasis: 32, backgroundColor: props.color }}
+          style={{ flexBasis: props.size, backgroundColor: props.color }}
         >
           {sigil({
             patp: props.ship,
