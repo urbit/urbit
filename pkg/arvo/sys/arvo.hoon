@@ -1174,7 +1174,6 @@
 ::
 ++  vega
   |=  $:  ::  now: current date
-          ::  ova: actions to process after reboot
           ::  nub: vane continuation state
           ::  hun: hoon.hoon source
           ::  arv: arvo.hoon source
@@ -1242,7 +1241,7 @@
     :*  our
         now
         eny
-        nub
+        345+nub
         bud
         (turn vanes |=([label=@tas =vane] [label vase.vane]))
     ==
