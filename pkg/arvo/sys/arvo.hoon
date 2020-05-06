@@ -532,22 +532,26 @@
     =>  |%
         ::  $germ: worklist source and bar stack
         ::  $plan: worklist
+        ::  $debt: in-progress state
         ::
         +$  germ  [vane=term bars=(list duct)]
         +$  plan  (pair germ (list move))
+        +$  debt
+          $:  ::  run: list of worklists
+              ::  out: pending output
+              ::  gem: worklist metadata
+              ::  dud: propagate error
+              ::
+              run=(list plan)
+              out=(list ovum)
+              gem=germ
+              dud=(unit goof)
+          ==
         --
     ::
     ~%  %le  +>+>  ~
-    =|  $:  ::  run: list of worklists
-            ::  out: pending output
-            ::  gem: worklist metadata
-            ::  dud: propagate error
-            ::
-            run=(list plan)
-            out=(list ovum)
-            gem=germ
-            dud=(unit goof)
-        ==
+    =|  debt
+    =*  nub  -
     ::
     |_  $:  our=ship
             now=@da
@@ -557,13 +561,27 @@
             van=(map term vane)
         ==
     +*  this  .
+    ++  abed  |=(nib=debt this(nub nib))
     ::  +abet: finalize loop
     ::
+    ::    .ovo: optional effect to arvo itself
+    ::
+    ::    If ovo is ~, the loop is over; produce ova.
+    ::    Else, produce u.ovo and the unfinished .nub internal state.
+    ::
     ++  abet
-      ^-  (pair (list ovum) (list (pair term vane)))
-      :-  (flop out)
-      %+  sort
-        ~(tap by van)
+      |=  ovo=(unit ovum)
+      ^-  $:  %+  each  (list ovum)
+              $:  fec=ovum
+                  nub=debt
+              ==
+              van=(list (pair term vane))
+          ==
+      :-  ?~  ovo
+            &+(flop out)
+          |+[u.ovo nub]
+      ::
+      %+  sort  ~(tap by van)
       |=([[a=@tas *] [b=@tas *]] (aor a b))
     ::  +emit: enqueue a worklist with source
     ::
@@ -621,20 +639,24 @@
     ::  +loop: until done
     ::
     ++  loop
-      ^+  this
+      ^-  abet
       ?~  run
-        this
+        (abet ~)
       ?:  =(~ q.i.run)    :: XX TMI
         loop(run t.run)
       =.  dud  ~
       =.  gem  p.i.run
-      =^  mov  q.i.run  q.i.run
-      loop:(step mov)
+      =^  mov=move  q.i.run  q.i.run
+      =>  .(run `(list plan)`run)  ::  XX TMI
+      =^  ovo=(unit ovum)  this  (step mov)
+      ?~  ovo
+        loop
+      (abet `u.ovo)
     ::  +step: advance the loop one step by routing a move
     ::
     ++  step
       |=  =move
-      ^+  this
+      ^-  [(unit ovum) _this]
       ::
       ~?  &(!lac ?=(^ dud))  %goof
       ::
@@ -660,7 +682,7 @@
         ::
         ::  cons source onto wire, and wire onto duct
         ::
-        (call [[vane.gem wire] duct] vane task)
+        `(call [[vane.gem wire] duct] vane task)
       ::
       ::  %slip: lateral move
       ::
@@ -673,7 +695,7 @@
           :-  (runt [(lent bars.gem) '|'] "")
           [%slip vane.gem (symp +>-.task) duct]
         ::
-        (call duct vane task)
+        `(call duct vane task)
       ::
       ::  %give: return move
       ::
@@ -707,7 +729,7 @@
             (symp +>-.gift)
           duct.move
         ::
-        (take duct wire vane gift)
+        `(take duct wire vane gift)
       ::
       ::  %hurl: action with error
       ::
@@ -739,8 +761,11 @@
     ::
     ++  xeno
       |=  [=wire gift=maze]
-      ^+  this
-      this(out [[wire ;;(card q.p.gift)] out])
+      ^-  [(unit ovum) _this]
+      =/  ovo=ovum  [wire ;;(card q.p.gift)] 
+      ?:  ?=(?(%lyra %veer %wack) -.card.ovo)
+        [`ovo this]
+      [~ this(out [ovo out])]
     ::  +call: advance to target
     ::
     ++  call
@@ -909,9 +934,9 @@
     ++  peek  |=(* ~)                                   ::  46
     ::
     ++  poke  |=  *                                     ::  47
-              ^-  [(list ovum) *]
+              ^-  [(list) *]
               =>  .(+< ;;([now=@da ovo=ovum] +<))
-              ^-  [(list ovum) *]
+              ^-  [(list) *]
               =.  +>.$
                 ?+  -.q.ovo
                   ::  ignore unrecognized
@@ -928,8 +953,9 @@
                     ?^  who
                       u.who
                     =/  fip=ship  (dec (bex 128))
-                    ~>(%slog.[0 leaf+"arvo: larval identity {(scow %p fip)}"] fip)
-                  =.  ..veer  (veer our now q.ovo)
+                    ~>  %slog.[0 leaf+"arvo: larval identity {(scow %p fip)}"]
+                    fip
+                  =.  soul  (veer our now q.ovo)
                   +>.$(bod ?^(bod bod `bud.^poke))
                 ::  add entropy
                 ::
@@ -968,247 +994,188 @@
         bud=vase                                        ::  %zuse
         vanes=(list [label=@tas =vane])                 ::  modules
     ==                                                  ::
-=<  ::  Arvo structural interface
-    ::
-    |%
-    ++  come  |=  [@ @ @ (list ovum) vise pone]         ::   4
-              ^-  [(list ovum) _+>]
-              ~&  %hoon-come
-              =^  rey  +>+  (^come +<)
-              [rey +>.$]
-    ::
-    ++  load  |=  [@ @ @ (list ovum) vase pane]         ::  10
-              ^-  [(list ovum) _+>]
-              ~&  %hoon-load
-              =^  rey  +>+  (^load +<)
-              [rey +>.$]
-    ::
-    ++  peek  |=  *                                     ::  46
-              =/  rob  (^peek ;;([@da path] +<))
-              ?~  rob  ~
-              ?~  u.rob  ~
-              [~ u.u.rob]
-    ::
-    ++  poke  |=  *                                     ::  47
-              =>  .(+< ;;([now=@da ovo=ovum] +<))
-              =^  ova  +>+.$  (^poke now ovo)
-              =|  out=(list ovum)
-              |-  ^-  [(list ovum) *]
-              ?~  ova
-                [(flop out) +>.^$]
-              ::  upgrade the kernel
-              ::
-              ?:  ?=(%lyra -.q.i.ova)
-                %+  fall
-                  (vega now t.ova ;;([@ @] +.q.i.ova))
-                [~ +>.^$]
-              ::  iterate over effects, handling those on arvo proper
-              ::  and passing the rest through as output
-              ::
-              =^  vov  +>+.^$  (feck now i.ova)
-              =?  out  ?=(^ vov)  [+.vov out]
-              $(ova t.ova)
-    ::
-    ++  wish  |=(* (^wish ;;(@ta +<)))             ::  22
-    --
-::  Arvo implementation core
+::  produce an interface that vere understands
+::
+=<  arvo
+::  soul: arvo implementation core
 ::
 |%
-++  come                                                ::  load incompatible
-  |=  [who=ship now=@da yen=@ ova=(list ovum) dub=vise nyf=pone]
-  ^+  [ova +>]
-  =/  fyn  (turn nyf |=([a=@tas b=vise] [a (slim b)]))
-  (load who now yen ova (slim dub) fyn)
+++  soul  .
+::  arvo: structural interface core
 ::
-++  load                                                ::  load compatible
-  |=  [who=ship now=@da yen=@ ova=(list ovum) dub=vase nyf=pane]
-  ^+  [ova +>]
+++  arvo
+  |%
+  ++  come  |=  [@ @ @ pram vise pone]         ::   4
+            (come:soul +<)
+  ::
+  ++  load  |=  [@ @ @ pram vase pane]         ::  10
+            (load:soul +<)
+  ::
+  ++  peek  |=  *                                     ::  46
+            =/  rob  (^peek ;;([@da path] +<))
+            ?~  rob  ~
+            ?~  u.rob  ~
+            [~ u.u.rob]
+  ::
+  ++  poke  |=  *                                     ::  47
+            =>  .(+< ;;([now=@da ovo=ovum] +<))
+            (poke:soul now ovo)
+  ::
+  ++  wish  |=(* (^wish ;;(@ta +<)))             ::  22
+  --
+::  $pram: upgradeable state
+::  +dram: upgrade $pram, compatible
+::
++$  pram
+  $%  [%345 nub=debt:le:part]
+      (list ovum)
+  ==
+++  dram
+  |=  ram=pram
+  ^-  pram
+  ?:  ?=([%345 *] pram)
+    ram
+  =|  nub=debt:le:part
+  [%345 nub(out ;;((list ovum) ram))]
+::  $prim: old $pram
+::  +drum: upgrade $prim to $pram, incompatible
+::
++$  prim  pram
+++  drum  |=(prim +<)
+::  +come: load incompatible
+::
+++  come
+  |=  [who=ship now=@da yen=@ rim=prim dub=vise nyf=pone]
+  ^-  [(list) *]
+  =/  fyn  (turn nyf |=([a=@tas b=vise] [a (slim b)]))
+  =/  rum  (drum rim)
+  (load who now yen rum (slim dub) fyn)
+::  +load: load compatible
+::
+++  load
+  |=  [who=ship now=@da yen=@ ram=pram dub=vase nyf=pane]
+  ^-  [(list) *]
   =:  our  who
       eny  yen
       bud  dub
       vanes  (turn nyf |=({a/@tas b/vise} [a [b *worm]]))
     ==
-  =|  out=(list ovum)
-  |-  ^-  [(list ovum) _+>.^$]
-  ?~  ova
-    [(flop out) +>.^$]
-  ::  iterate over effects, handling those on arvo proper
-  ::  and passing the rest through as output
-  ::
-  ::    In practice, the pending effects after an upgrade
-  ::    are the %veer moves to install %zuse and the vanes,
-  ::    plus a %vega notification that the upgrade is complete.
-  ::
-  ::    N.B. this implementation assumes that %vega will be
-  ::    at the end of :ova.
-  ::
-  ?:  ?=(%vega -.q.i.ova)
-    =^  zef=(list ovum)  vanes
-      =<  abet:loop
-      %.  i.ova
-      %~  spam  le:part
-      [our now eny lac vil (~(gas by *(map term vane)) vanes)]
-    ::
-    $(out [i.ova out], ova (weld t.ova zef))
-  ::
-  =^  vov  +>.^$  (feck now i.ova)
-  =?  out  ?=(^ vov)  [+.vov out]
-  $(ova t.ova)
+  =.  ram  (dram ram)
+  ?>  ?=([%345 *] ram)
+  (leap now (lead now `nub.ram))
+::  +peek: external inspect
 ::
-++  peek                                                ::  external inspect
+++  peek
   |=  {now/@da hap/path}
   ^-  (unit (unit))
   ?~  hap  [~ ~ hoon-version]
-  %.  [[151 %noun] hap]
-  %-  sloy
-  %~  peek  le:part
-  [our now eny lac vil (~(gas by *(map term vane)) vanes)]
+  ((sloy peek:(lead now ~)) [[151 %noun] hap])
+::  +poke: external apply
 ::
-++  poke                                                ::  external apply
+++  poke
   |=  [now=@da ovo=ovum]
   =.  eny  (shaz (cat 3 eny now))
-  ^-  [(list ovum) _+>.$]
+  |-  ^-  [(list) *]
+  ?+  -.q.ovo
+    ::  Normal events are routed to a single vane
+    ::
+    (leap now (poke:(lead now ~) (dint p.ovo) ovo))
+  ::  Process these events just as if they had come from a vane
   ::
-  ::  These external events are actually effects on arvo proper.
-  ::  They can also be produced as the effects of other events.
-  ::  In either case, they fall through here to be handled
-  ::  after the fact in +feck.
-  ::
-  ?:  ?=(?(%veer %verb %wack %warn) -.q.ovo)
-    [[ovo ~] +>.$]
-  ::
+      ?(%lyra %veer %verb %wack)
+    (feck now ovo *debt:le:part)
   ::  These external events (currently only %trim) are global
   ::  notifications, spammed to every vane
   ::
-  ?:  ?=(%trim -.q.ovo)
+      %trim
     =>  .(ovo ;;((pair wire [%trim p=@ud]) ovo))
-    =^  zef  vanes
-      ^-  (pair (list ovum) (list (pair term vane)))
-      =<  abet:loop
-      %.  ovo
-      %~  spam  le:part
-      [our now eny lac vil (~(gas by *(map term vane)) vanes)]
+    =^  zef  vanes  loop:(spam:(lead now ~) ovo)
     ::  clear compiler caches if high-priority
     ::
     =?  vanes  =(0 p.q.ovo)
       ~>  %slog.[0 leaf+"arvo: trim: clearing caches"]
       (turn vanes |=([a=@tas =vane] [a vase.vane *worm]))
-    [zef +>.$]
-  ::
+    ?:  ?=(%& -.zef)
+      [zef arvo]
+    (feck now [fec nub]:p.zef)
   ::  Error notifications are unwrapped and routed as usual
   ::
-  ?:  ?=(%crud p.q.ovo)
+      %crud
     ?.  ?=(^ q.q.ovo)
       ~|([%unknown-crud q.ovo] !!)
     ::
-    =^  zef  vanes
-      =*  el
-        ~(. le:part [our now eny lac vil (~(gas by *(map term vane)) vanes)])
+    %+  leap  now
+    ?@  -.q.q.ovo
+      ::  legacy %crud, directly routed
       ::
-      =<  abet:loop
-      ?@  -.q.q.ovo
-        ::
-        ::  legacy %crud, directly routed
-        ::
-        (poke:el (dint p.ovo) ovo)
-      ::
-      ::  modern %crud, unwrapped and routed w/ $goof
-      ::
-      =/  =goof  ;;(goof -.q.q.ovo)
-      =/  =curd  ;;(curd +.q.q.ovo)
-      (crud:el (dint p.ovo) goof p.ovo curd)
+      (poke:(lead now ~) (dint p.ovo) ovo)
+    ::  modern %crud, unwrapped and routed w/ $goof
     ::
-    [zef +>.$]
-  ::  Normal events are routed to a single vane
-  ::
-  =^  zef  vanes
-    =<  abet:loop
-    %.  [(dint p.ovo) ovo]
-    %~  poke  le:part
-    [our now eny lac vil (~(gas by *(map term vane)) vanes)]
-  ::
-  [zef +>.$]
-::  +feck: handle an arvo effect
+    =/  =goof  ;;(goof -.q.q.ovo)
+    =/  =curd  ;;(curd +.q.q.ovo)
+    (crud:(lead now ~) (dint p.ovo) goof p.ovo curd)
+  ==
+::  +lead: initialize +le core
+::
+++  lead
+  |=  [now=@da nub=(unit debt:le:part)]
+  ^+  le:part
+  =;  el
+    ?~  nub  el
+    (abed:el u.nub)
+  ~(. le:part our now eny lac vil (~(gas by *(map term vane)) vanes))
+::  +leap: run vane loop and handle effects
+::
+++  leap
+  |=  [now=@da el=_le:part]
+  ^-  [(list) *]
+  =^  zef  vanes  loop:el
+  ?:  ?=(%& -.zef)
+    [zef arvo]
+  (feck now [fec nub]:p.zef)
+::  +feck: handle an effect from a vane
 ::
 ++  feck
-  |=  [now=@da ovo=ovum]
-  ^-  [(unit ovum) _+>.$]
-  ?+  -.q.ovo
-      ::  pass through unrecognized effect
-      ::
-      [[~ ovo] +>.$]
-  ::  toggle event verbose event printfs
+  |=  [now=@da ovo=ovum nub=debt:le:part]
+  ^-  [(list) *]
+  ?:  ?=(%lyra -.q.ovo)
+    (vega now nub ;;([@ @] +.q.ovo))
+  ?+  -.q.ovo  ~|(bad-fec+-.q.ovo !!)
+  ::  %verb: toggle event verbose event printfs
   ::
-      %verb
-    [~ +>.$(lac !lac)]
-  ::  install %zuse or vane
+      %verb  (leap(lac !lac) now (lead now `nub))
+  ::  %veer: install %zuse or vane
   ::
       %veer
-    [~ (veer our now q.ovo)]
-  ::  add data to memory profile
+    =.  soul  (veer our now q.ovo)
+    (leap now (lead now `nub))
+  ::  %mass: add data to memory profile
   ::
-      %mass
-    =.  q.q.ovo
-      :-  %userspace
-      :-  %|
-      :~  hoon+&+pit
-          zuse+&+bud
-          :+  %caches  %|
-          %+  turn
-            %+  sort  vanes
-            |=([a=[lab=@tas *] b=[lab=@tas *]] (aor lab.a lab.b))
-          |=([label=@tas =vane] [(cat 3 %vane- label) %& worm.vane])
-          q.q.ovo
-          :+  %vases  %|
-          %+  turn
-            %+  sort  vanes
-            |=([a=[lab=@tas *] b=[lab=@tas *]] (aor lab.a lab.b))
-          |=([label=@tas =vane] [(cat 3 %vane- label) %& vase.vane])
-          dot+&+.
-      ==
-    [[~ ovo] +>.$]
-  ::  add entropy
+      %mass  !!  ::  XX convert %mass to a spam
+  ::  %wack: add entropy
   ::
       %wack
     ?>  ?=(@ q.q.ovo)
     =.  eny  (shaz (cat 3 eny q.q.ovo))
-    [~ +>.$]
-  ::  learn of event-replacement failure
-  ::
-      %warn
-    :_  +>.$
-    ?.  ?=(^ +.q.ovo)
-      ~
-    =/  msg=tape
-      :(weld "(for %" (trip (symp +<.q.ovo)) ") failed")
-    ~>  %slog.[0 leaf+(weld "arvo: replacement event " msg)]
-    ?:  lac
-      ~
-    =/  rep
-      %-  mule  |.
-      ((slog (tang +>.q.ovo)) ~)
-    ?.(?=(%& -.rep) ~ p.rep)
+    (leap now (lead now `nub))
   ==
+::  +vega: reboot kernel
 ::
-++  vega                                                ::  reboot kernel
+++  vega
   |=  $:  ::  now: current date
           ::  ova: actions to process after reboot
+          ::  nub: vane continuation state
           ::  hun: hoon.hoon source
           ::  arv: arvo.hoon source
           ::
           now=@da
-          ova=(list ovum)
+          nub=debt:le:part
           hun=@t
           van=@t
       ==
-  ^-  (unit (pair (list ovum) *))
-  ::  virtualize; dump error if we fail
-  ::
-  =-  ?:(?=(%| -.res) ((slog p.res) ~) `p.res)
-  ^=  res  %-  mule  |.
   ::  produce a new kernel and an effect list
   ::
-  ^-  (pair (list ovum) *)
+  ^-  [(list) *]
   ::  compile the hoon.hoon source with the current compiler
   ::
   =/  raw
@@ -1264,9 +1231,7 @@
     :*  our
         now
         eny
-        ::  tack a notification onto the pending effects
-        ::
-        (weld ova [`ovum`[//arvo %vega ~] ~])
+        nub
         bud
         (turn vanes |=([label=@tas =vane] [label vase.vane]))
     ==
@@ -1275,7 +1240,7 @@
   =/  out  (slum gat sam)
   ::  add types to the product
   ::
-  [((list ovum) -.out) +.out]
+  ;;([(list) *] out)
 ::  +veer: install %zuse or a vane
 ::
 ::    Identity is in the sample so the larval stage
@@ -1283,15 +1248,16 @@
 ::
 ++  veer
   |=  [who=ship now=@da fav=curd]
+  ^+  soul
   =>  .(fav ;;({$veer lal/@ta pax/path txt/@t} fav))
-  =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
+  =-  ?:(?=(%| -.res) ((slog p.res) soul) p.res)
   ^=  res  %-  mule  |.
   ?:  =(%$ lal.fav)
     ~&  [%tang pax.fav `@p`(mug txt.fav)]
     =+  gen=(rain pax.fav txt.fav)
     =+  vax=(slap pit gen)
-    +>.^$(bud vax)
-  %_    +>.^$
+    soul(bud vax)
+  %_    soul
       vanes
     |-  ^+  vanes
     ?~  vanes
@@ -1306,10 +1272,13 @@
     :_  t.vanes
     :-  label.i.vanes
     ~|  [%failed-vane-activation now lal.fav]
-    vane:(ruck:(vent who lal.fav vil bud [vase.vane.i.vanes *worm]) pax.fav txt.fav)
+    =<  vane
+    %.  [pax txt]:fav
+    ruck:(vent who lal.fav vil bud [vase.vane.i.vanes *worm])
   ==
+::  +wish: external compute
 ::
-++  wish                                                ::  external compute
+++  wish
   |=  txt/@
   q:(slap bud (ream txt))
 --
