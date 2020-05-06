@@ -194,6 +194,8 @@ export class ChatInput extends Component {
       return;
     }
 
+    props.onEnter();
+
     if(state.code) {
       props.api.chat.message(props.station, `~${window.ship}`, Date.now(), {
         code: {
