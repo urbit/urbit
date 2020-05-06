@@ -282,41 +282,6 @@ export class ChatScreen extends Component {
         }
       });
       this.scrolledToMarker = true;
-    } else if (navigator.userAgent.includes('Safari')) {
-      // Safari
-      if (e.target.scrollTop === 0) {
-        this.setState({
-          numPages: 1,
-          scrollLocked: false
-        });
-      } else if (
-        e.target.scrollHeight + Math.round(e.target.scrollTop) <=
-        e.target.clientHeight + 10
-      ) {
-        this.setState(
-          {
-            numPages: this.state.numPages + 1,
-            scrollLocked: true
-          },
-          () => {
-            this.askForMessages();
-          }
-        );
-      }
-    } else {
-      console.log('Your browser is not supported.');
-    }
-    if(this.unreadMarker) {
-      if(
-        !navigator.userAgent.includes('Firefox') &&
-         e.target.scrollHeight - e.target.scrollTop - (e.target.clientHeight * 1.5) + this.unreadMarker.offsetTop > 50
-      ) {
-        this.props.api.chat.read(this.props.station);
-      } else if(navigator.userAgent.includes('Firefox') &&
-        this.unreadMarker.offsetTop - e.target.scrollTop - (e.target.clientHeight / 2) > 0
-      ) {
-        this.props.api.chat.read(this.props.station);
-      }
     }
     this.unreadMarker = ref;
   }
