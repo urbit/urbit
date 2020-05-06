@@ -259,7 +259,7 @@ _parse_p(u3_noun cor, u3_noun txt) {
 
   if (*cur != 0) {
     // We've parsed all of a comet shape, and there's still more in the
-    // string. Error.
+    // string. Bail back to the interpreter.
     u3a_free(c);
     return u3_none;
   }
@@ -485,9 +485,12 @@ u3we_slaw(u3_noun cor)
   u3_noun txt;
 
   if (c3n == u3r_mean(cor, u3x_sam_2, &mod,
-                      u3x_sam_3, &txt, 0) ||
-      !_(u3a_is_cat(mod))) {
+                      u3x_sam_3, &txt, 0)) {
     return u3m_bail(c3__exit);
+  }
+
+  if (!_(u3a_is_cat(mod))) {
+    return u3_none;
   }
 
   switch (mod) {

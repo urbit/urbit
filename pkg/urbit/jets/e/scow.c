@@ -204,7 +204,7 @@ _print_p(u3_atom cor, u3_atom p)
   }
 
   u3_noun list = 0;
-  for (u3_atom imp = 0; imp != dyy; ++imp) {
+  for (c3_w imp = 0; imp != dyy; ++imp) {
     u3_noun log = u3qc_end(4, 1, u3k(sxz));
     u3_noun prefix = u3qc_rsh(3, 1, u3k(log));
     u3_noun suffix = u3qc_end(3, 1, log);
@@ -249,7 +249,7 @@ _print_ud(u3_atom ud)
     list = u3nc(u3ka_add(u3qa_mod(ud, 10), '0'), list);
     between++;
     ud = u3ka_div(ud, 10);
-  } while (c3n == u3r_sing(ud, 0));
+  } while (ud != 0);
 
   return list;
 }
@@ -274,7 +274,7 @@ _print_uv(u3_atom uv)
     list = u3nc(to_digit(tig), list);
     between++;
     uv = u3ka_div(uv, 32);
-  } while (c3n == u3r_sing(uv, 0));
+  } while (uv != 0);
 
   return u3nt('0', 'v', list);
 }
@@ -299,7 +299,7 @@ _print_uw(u3_atom uw)
     list = u3nc(to_w_digit(tig), list);
     between++;
     uw = u3ka_div(uw, 64);
-  } while (c3n == u3r_sing(uw, 0));
+  } while (uw != 0);
 
   return u3nt('0', 'w', list);
 }
@@ -311,10 +311,12 @@ u3we_scow(u3_noun cor)
   u3_noun atom;
 
   if (c3n == u3r_mean(cor, u3x_sam_2, &mod,
-                      u3x_sam_3, &atom, 0) ||
-      !_(u3a_is_cat(mod))) {
-    u3l_log("u3we_scow fail\r\n");
-    return u3m_bail(c3__fail);
+                      u3x_sam_3, &atom, 0)) {
+    return u3m_bail(c3__exit);
+  }
+
+  if (!_(u3a_is_cat(mod))) {
+    return u3_none;
   }
 
   switch (mod) {
@@ -345,10 +347,12 @@ u3we_scot(u3_noun cor)
   u3_noun atom;
 
   if (c3n == u3r_mean(cor, u3x_sam_2, &mod,
-                      u3x_sam_3, &atom, 0) ||
-      !_(u3a_is_cat(mod))) {
-    u3l_log("u3we_scot fail\r\n");
-    return u3m_bail(c3__fail);
+                      u3x_sam_3, &atom, 0)) {
+    return u3m_bail(c3__exit);
+  }
+
+  if (!_(u3a_is_cat(mod))) {
+    return u3_none;
   }
 
   u3_noun tape;
