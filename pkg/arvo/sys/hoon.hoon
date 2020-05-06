@@ -2137,8 +2137,7 @@
   ==
     %year  year
     %yore  yore
-    %fein  fein
-    %fynd  fynd
+    %ob    ob
   ==
 |%
 ::
@@ -3815,41 +3814,46 @@
     (cut 3 [a 1] b)
   --
 ::
-::  +fein: conceal structure, v3.
-::
-::    +fein conceals planet-sized atoms.  The idea is that it should not be
-::    trivial to tell which planet a star has spawned under.
-::
-++  fein
-  ~/  %fein
-  |=  pyn/@  ^-  @
-  ?:  &((gte pyn 0x1.0000) (lte pyn 0xffff.ffff))
-    (add 0x1.0000 (feis:ob (sub pyn 0x1.0000)))
-  ?:  &((gte pyn 0x1.0000.0000) (lte pyn 0xffff.ffff.ffff.ffff))
-    =/  lo  (dis pyn 0xffff.ffff)
-    =/  hi  (dis pyn 0xffff.ffff.0000.0000)
-    %+  con  hi
-    $(pyn lo)
-  pyn
-::
-::  +fynd: restore structure, v3.
-::
-::    Restores obfuscated values that have been enciphered with +fein.
-::
-++  fynd
-  ~/  %fynd
-  |=  cry/@  ^-  @
-  ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
-    (add 0x1.0000 (tail:ob (sub cry 0x1.0000)))
-  ?:  &((gte cry 0x1.0000.0000) (lte cry 0xffff.ffff.ffff.ffff))
-    =/  lo  (dis cry 0xffff.ffff)
-    =/  hi  (dis cry 0xffff.ffff.0000.0000)
-    %+  con  hi
-    $(cry lo)
-  cry
-::
 ++  ob
+  ~%  %ob  ..ob
+    ==
+      %fein  fein
+      %fynd  fynd
+    ==
   |%
+  ::
+  ::  +fein: conceal structure, v3.
+  ::
+  ::    +fein conceals planet-sized atoms.  The idea is that it should not be
+  ::    trivial to tell which planet a star has spawned under.
+  ::
+  ++  fein
+    ~/  %fein
+    |=  pyn/@  ^-  @
+    ?:  &((gte pyn 0x1.0000) (lte pyn 0xffff.ffff))
+      (add 0x1.0000 (feis (sub pyn 0x1.0000)))
+    ?:  &((gte pyn 0x1.0000.0000) (lte pyn 0xffff.ffff.ffff.ffff))
+      =/  lo  (dis pyn 0xffff.ffff)
+      =/  hi  (dis pyn 0xffff.ffff.0000.0000)
+      %+  con  hi
+      $(pyn lo)
+    pyn
+  ::
+  ::  +fynd: restore structure, v3.
+  ::
+  ::    Restores obfuscated values that have been enciphered with +fein.
+  ::
+  ++  fynd
+    ~/  %fynd
+    |=  cry/@  ^-  @
+    ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
+      (add 0x1.0000 (tail (sub cry 0x1.0000)))
+    ?:  &((gte cry 0x1.0000.0000) (lte cry 0xffff.ffff.ffff.ffff))
+      =/  lo  (dis cry 0xffff.ffff)
+      =/  hi  (dis cry 0xffff.ffff.0000.0000)
+      %+  con  hi
+      $(cry lo)
+    cry
   ::  +feis: a four-round generalised Feistel cipher over the domain
   ::         [0, 2^32 - 2^16 - 1].
   ::
@@ -5807,7 +5811,7 @@
   ++  dim  (ape dip)
   ++  dip  (bass 10 ;~(plug sed:ab (star sid:ab)))
   ++  dum  (bass 10 (plus sid:ab))
-  ++  fed  %+  cook  fynd
+  ++  fed  %+  cook  fynd:ob
            ;~  pose
              %+  bass  0x1.0000.0000.0000.0000          ::  oversized
                ;~  plug
@@ -5919,7 +5923,7 @@
           ==
         ::
             $p
-          =+  sxz=(fein q.p.lot)
+          =+  sxz=(fein:ob q.p.lot)
           =+  dyx=(met 3 sxz)
           :-  '~'
           ?:  (lte dyx 1)

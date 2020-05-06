@@ -161,7 +161,8 @@ _parse_p(u3_noun cor, u3_noun txt) {
     u3_atom raw = u3k(u3t(m));
     u3z(m);
 
-    u3_noun hok = u3j_cook("u3we_slaw_fynd_p", u3k(cor), "fynd");
+    u3_noun ob = u3j_cook("u3we_slaw_ob_p", u3k(cor), "ob");
+    u3_noun hok = u3j_cook("u3we_slaw_fynd_p", ob, "fynd");
     return u3nc(0, u3n_slam_on(hok, u3k(raw)));
   }
 
@@ -193,7 +194,8 @@ _parse_p(u3_noun cor, u3_noun txt) {
 
     u3_atom raw = u3k(u3t(m));
     u3z(m);
-    u3_noun hok = u3j_cook("u3we_slaw_fynd_p", u3k(cor), "fynd");
+    u3_noun ob = u3j_cook("u3we_slaw_ob_p", u3k(cor), "ob");
+    u3_noun hok = u3j_cook("u3we_slaw_fynd_p", ob, "fynd");
     return u3nc(0, u3n_slam_on(hok, u3k(raw)));
   }
 
@@ -228,7 +230,8 @@ _parse_p(u3_noun cor, u3_noun txt) {
 
     u3_atom raw = u3k(u3t(m));
     u3z(m);
-    u3_noun hok = u3j_cook("u3we_slaw_fynd_p", u3k(cor), "fynd");
+    u3_noun ob = u3j_cook("u3we_slaw_ob_p", u3k(cor), "ob");
+    u3_noun hok = u3j_cook("u3we_slaw_fynd_p", ob, "fynd");
     return u3nc(0, u3n_slam_on(hok, u3k(raw)));
   }
 

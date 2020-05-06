@@ -186,7 +186,8 @@ u3_noun
 _print_p(u3_atom cor, u3_atom p)
 {
   // Scramble the raw number to the concealed version.
-  u3_noun hok = u3j_cook("u3we_scow_fein_p", u3k(cor), "fein");
+  u3_noun ob = u3j_cook("u3we_scow_ob_p", u3k(cor), "ob");
+  u3_noun hok = u3j_cook("u3we_scow_fein_p", ob, "fein");
   u3_atom sxz = u3n_slam_on(hok, u3k(p));
 
   // Simple galaxy case
