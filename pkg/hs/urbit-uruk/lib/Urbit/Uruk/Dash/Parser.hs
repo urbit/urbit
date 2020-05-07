@@ -1,39 +1,36 @@
-{-# OPTIONS_GHC -Wall -Werror #-}
+{-- OPTIONS_GHC -Wall -Werror #-}
 
-module Urbit.Uruk.DashParser where
+module Urbit.Uruk.Dash.Parser where
 
-import ClassyPrelude hiding (exp, init, many, some, try, elem)
+import ClassyPrelude hiding (exp, init, many, some, try, elem, Prim)
 
 import Control.Lens hiding (snoc)
 import Control.Monad.State.Lazy
 import Text.Megaparsec hiding (Pos)
 import Text.Megaparsec.Char
 import Data.Tree
+import Urbit.Pos
+import Urbit.Moon.Arity
+import Urbit.Uruk.Dash.Exp
 
-import Bound              (abstract1)
-import Data.Void          (Void, absurd)
-import Numeric.Natural    (Natural)
-import Numeric.Positive   (Positive)
-import Prelude            (read)
-import Text.Show.Pretty   (pPrint)
-import Urbit.Atom         (Atom)
-import Urbit.Uruk.JetSpec (jetSpec, SingJet(..))
-
+import Bound                 (abstract1, toScope, fromScope)
+import Bound.Var             (Var(..))
+import Data.Void             (Void, absurd)
+import Numeric.Natural       (Natural)
+import Prelude               (read)
+import Text.Show.Pretty      (pPrint, ppShow)
+import Urbit.Atom            (Atom)
+import Urbit.Uruk.JetSpec    (jetSpec)
+import Urbit.Moon.MakeStrict (makeStrict, Prim(..))
 import qualified Data.Char           as C
 import qualified Language.Haskell.TH as TH
 import qualified Urbit.Atom          as Atom
-import qualified Urbit.Uruk.Bracket  as B
+import qualified Urbit.Moon.Bracket  as B
 
 
 -- Numbers ---------------------------------------------------------------------
 
 type Nat = Natural
-
-newtype Pos = MkPos Positive
- deriving newtype (Eq, Ord, Show, Num, Enum, Real, Integral)
-
-instance NFData Pos where
-  rnf (MkPos !_) = ()
 
 
 -- Syntax Tree -----------------------------------------------------------------
@@ -49,80 +46,6 @@ data AST
 
 data Dec = Dec Text [Text] AST
   deriving (Show)
-
-
--- Combinator Trees ------------------------------------------------------------
-
-infixl 5 :&;
-
-data ExpTree n
-  = N n
-  | ExpTree n :& ExpTree n
- deriving (Eq, Ord, Generic)
- deriving anyclass NFData
-
-tree :: ExpTree a -> Tree a
-tree = go [] where
-  go a = \case
-    N n    -> Node n a
-    x :& y -> go (tree y : a) x
-
-unTree :: Tree a -> ExpTree a
-unTree (Node n xs) = foldl' (:&) (N n) (unTree <$> xs)
-
-showTree :: Show a => Tree a -> String
-showTree (Node n []) = show n
-showTree (Node n xs) =
-  '(' : intercalate " " (show n : fmap showTree xs) <> ")"
-
-instance Show a => Show (ExpTree a) where
-  show = showTree . tree
-
-
--- Jetted Uruk Expressions -----------------------------------------------------
-
-data DataJet
-  = Sn !Pos
-  | Bn !Pos
-  | Cn !Pos
-  | NAT !Nat
- deriving (Eq, Ord, Generic)
- deriving anyclass NFData
-
-data Ur
-  = S
-  | K
-  | J
-  | D
-  | DataJet DataJet
-  | SingJet SingJet
- deriving (Eq, Ord, Generic)
- deriving anyclass NFData
-
-type Exp = ExpTree Ur
-
-
-isValidChar :: Char -> Bool
-isValidChar c = or [C.isPrint c, c == '\n']
-
-instance Show DataJet where
-  show = \case
-    Sn  n                            -> 'S' : show n
-    Bn  n                            -> 'B' : show n
-    Cn  n                            -> 'C' : show n
-    NAT n | n < 2048                 -> show n
-    NAT (Atom.atomUtf8 -> Right txt)
-        | all isValidChar txt        -> "'" <> unpack txt <> "'"
-    NAT n                            -> show n
-
-instance Show Ur where
-  show = \case
-    S          -> "S"
-    K          -> "K"
-    J          -> "J"
-    D          -> "D"
-    DataJet dj -> show dj
-    SingJet sj -> show sj
 
 
 -- Parser Monad ----------------------------------------------------------------
@@ -144,8 +67,6 @@ inWideMode = withLocalState Wide
 -- Dashboard Processing --------------------------------------------------------
 
 type Env = Map Text Exp
-
-type Val = Exp
 
 type Reg = Map SingJet (Pos, Val, Val)
 
@@ -323,24 +244,12 @@ parseDecs txt =
 
 -- AST to SK -------------------------------------------------------------------
 
-astExp :: AST -> B.Exp () (Either Atom Text)
+astExp :: AST -> B.Exp Atom () Text
 astExp = \case
-  Var t   -> B.Var $ Right t
-  Tag t   -> B.Var $ Left $ Atom.utf8Atom t
+  Var t   -> B.Var t
+  Tag t   -> B.Pri $ Atom.utf8Atom t
   x :@ y  -> astExp x B.:@ astExp y
-  Lam n b -> B.Lam () (abstract1 (Right n) (astExp b))
-
-decExp :: Dec -> (Text, B.Exp () (Either Atom Text))
-decExp (Dec nm jetArgs e) = (nm, body)
- where
-  body = fromIntegral (length jetArgs) & \case
-    0 -> astExp e
-    n -> astExp (jet n nm (lam jetArgs e))
-
-expErr :: B.Exp b (Either Atom Text) -> Either Text (B.Exp b Atom)
-expErr = traverse $ \case
-  Left atom  -> Right atom
-  Right free -> Left ("Undefined Variable: " <> free)
+  Lam n b -> B.Lam () (abstract1 n (astExp b))
 
 
 -- Texting ---------------------------------------------------------------------
@@ -351,22 +260,22 @@ tryDash = do
   parseDecs txt & \case
     Left err -> putStrLn err
     Right ds -> do
-      resolv (fmap B.johnTrompBracket . decExp <$> ds) & \case
+      resolv ds & \case
         Left err -> putStrLn err
         Right (ev, rg) -> do
           pPrint (mapToList ev)
           pPrint (mapToList rg)
 
-cvt :: Text -> Env -> B.Out (B.SK (Either Atom Text)) -> Either Text Exp
+cvt :: Text -> Env -> B.Out (B.SK Atom) Text -> Either Text Exp
 cvt bind env = go
  where
   go = \case
-    B.Lam v _               -> absurd v
-    B.Var B.S               -> pure (N S)
-    B.Var B.K               -> pure (N K)
-    B.Var (B.V (Left atom)) -> pure $ N $ DataJet $ NAT atom
-    x B.:@ y                -> (:&) <$> go x <*> go y
-    B.Var (B.V (Right txt)) -> lookup txt env & \case
+    B.Lam v _      -> absurd v
+    B.Pri B.S      -> pure (N S)
+    B.Pri B.K      -> pure (N K)
+    B.Pri (B.P at) -> pure $ N $ DataJet $ NAT at
+    x B.:@ y       -> (:&) <$> go x <*> go y
+    B.Var txt      -> lookup txt env & \case
       Nothing -> Left ("Undefined variable: " <> txt <> " (in " <> bind <> ")")
       Just v  -> pure v
 
@@ -413,35 +322,128 @@ jetExp nm vl = do
     (jname, body) <- case args of { [n, b] -> Just (n, b); _ -> Nothing }
     pure (fromIntegral arity, unTree jname, unTree body)
 
-resolv :: [(Text, B.Out (B.SK (Either Atom Text)))] -> Either Text (Env, Reg)
+resolv :: [Dec] -> Either Text (Env, Reg)
 resolv = go (initialEnv, mempty)
  where
   initialEnv :: Env
   initialEnv = mapFromList [("S", N S), ("K", N K), ("J", N J), ("D", N D)]
 
-  go
-    :: (Env, Reg)
-    -> [(Text, B.Out (B.SK (Either Atom Text)))]
-    -> Either Text (Env, Reg)
+  go :: (Env, Reg) -> [Dec] -> Either Text (Env, Reg)
   go er         []            = pure er
-  go (env, reg) ((n, e) : xs) = do
-    e'  <- cvt n env e
-    e'' <- pure (eval e')
-    case jetExp n e'' of
+  go (env, reg) (d : xs) = do
+    (env', reg') <- one (env, reg) d
+    go (env', reg') xs
+
+  one :: (Env, Reg) -> Dec -> Either Text (Env, Reg)
+  one (env, reg) (Dec n args ast) = do
+    bodExp <- resolveNames n env (astExp (lam args ast))
+
+    let eagExp = makeStrict (tup reg) (jetWrap n (length args) bodExp)
+
+    -- traceM ""
+    -- traceM "[input]"
+    -- traceM (ppShow bodExp)
+    -- traceM ""
+    -- traceM "[eager]"
+    -- traceM (ppShow eagExp)
+    -- traceM ""
+
+    fulExp <- Right $! force $ eval $ ski $ B.johnTrompBracket eagExp
+
+    case jetExp n fulExp of
       Nothing -> do
-        go (insertMap n e'' env, reg) xs
+        pure (insertMap n fulExp env, reg)
       Just (sj, (arity, nm, val)) -> do
         let env' = insertMap n (N $ SingJet sj) env
         let reg' = insertMap sj (arity, nm, val) reg
-        go (env', reg') xs
+        pure (env', reg')
 
+  ski :: B.Out (B.SK Exp) Void -> Exp
+  ski = \case
+    B.Lam b _     -> absurd b
+    B.Var v       -> absurd v
+    B.Pri B.S     -> N S
+    B.Pri B.K     -> N K
+    B.Pri (B.P v) -> v
+    x B.:@ y      -> ski x :& ski y
+
+  jetWrap :: Text -> Int -> B.Exp Exp () Void -> B.Exp Exp () Void
+  jetWrap _  0       body = body
+  jetWrap nm numArgs body =
+    B.Pri (jetArityVal (fromIntegral numArgs)) B.:@ jetTagVal nm B.:@ body
+
+jetTagVal :: Text -> B.Exp Val v a
+jetTagVal = B.Pri . N . DataJet . NAT . Atom.utf8Atom
+
+jetArityVal :: Natural -> Val
+jetArityVal = go (N J)
+ where
+  go _   0 = error "jetArity: go: bad arity: 0"
+  go acc 1 = acc
+  go acc n = go (acc :& N J) (n-1)
+
+seqJet :: Exp
+seqJet = N $ SingJet SEQ
+
+eyeJet :: Pos -> Exp
+eyeJet = N . DataJet . In
+
+tup :: Reg -> Prim Exp
+tup reg = Prim{..}
+ where
+  pSeq = seqJet
+  pEye = eyeJet
+  pKay = N K
+  pApp = (:&)
+  pArg = expArity reg
+
+expArity :: Reg -> Exp -> Maybe Arity
+expArity reg = go
+ where
+  go = \case
+    N n    -> Just (urArity reg n)
+    x :& y -> join (appArity <$> go x <*> go y)
+
+urArity :: Reg -> Ur -> Arity
+urArity _ S = AriEss
+urArity _ K = AriKay
+urArity _ J = AriJay 1
+urArity _ D = AriDee
+urArity _ (DataJet (NAT _)) = AriOth 2
+urArity _ (DataJet (Sn  n)) = AriOth (2 + n)
+urArity _ (DataJet (In  n)) = AriOth n
+urArity _ (DataJet (Bn  n)) = AriOth (2 + n)
+urArity _ (DataJet (Cn  n)) = AriOth (2 + n)
+urArity r (SingJet sj     ) = case lookup sj r of
+  Nothing        -> error ("Reference to undefined jet: " <> show sj)
+  Just (n, _, _) -> AriOth n
+
+resolveNames
+  :: Text -> Env -> B.Exp Atom () Text -> Either Text (B.Exp Exp () Void)
+resolveNames bind env = fmap (go Left) . traverse res
+ where
+  go :: (a -> Either Exp b) -> B.Exp Atom () a -> B.Exp Exp () b
+  go f = \case
+    B.Pri at     -> B.Pri $ N $ DataJet $ NAT at
+    x     B.:@ y -> go f x B.:@ go f y
+    B.Lam ()   x -> B.Lam () $ toScope $ go (wrap f) $ fromScope x
+    B.Var v      -> f v & \case
+      Left  e -> B.Pri e
+      Right v -> B.Var v
+
+  wrap :: (a -> Either Exp b) -> Var () a -> Either Exp (Var () b)
+  wrap f (B ()) = Right (B ())
+  wrap f (F fv) = F <$> f fv
+
+  res :: Text -> Either Text Exp
+  res = \nam -> case lookup nam env of
+    Nothing -> Left ("Undefined variable: " <> nam <> " (in " <> bind <> ")")
+    Just v  -> Right v
+
+dashEnv :: Env
 jetsMap :: Reg
-jetsMap = parseDecs jetSpec & \case
-  Left  err -> error (unpack err)
-  Right ds  -> do
-    resolv (fmap B.johnTrompBracket . decExp <$> ds) & \case
-      Left  err     -> error (unpack err)
-      Right (_, rg) -> rg
+(dashEnv, jetsMap) =
+  either (error . unpack) id (parseDecs jetSpec >>= resolv)
 
 
 -- Template Haskell ------------------------------------------------------------
@@ -458,6 +460,7 @@ sjExp = TH.ConE . TH.mkName . show
 djExp :: DataJet -> TH.Exp
 djExp = \case
   Sn  p -> TH.ConE 'Sn `TH.AppE` intLit p
+  In  p -> TH.ConE 'In `TH.AppE` intLit p
   Bn  p -> TH.ConE 'Bn `TH.AppE` intLit p
   Cn  p -> TH.ConE 'Cn `TH.AppE` intLit p
   NAT n -> TH.ConE 'NAT `TH.AppE` intLit n
@@ -483,6 +486,7 @@ valExp = \case
 djPat :: DataJet -> TH.Pat
 djPat = \case
   Sn  p -> TH.ConP 'Sn [intLitPat p]
+  In  p -> TH.ConP 'In [intLitPat p]
   Bn  p -> TH.ConP 'Bn [intLitPat p]
   Cn  p -> TH.ConP 'Cn [intLitPat p]
   NAT n -> TH.ConP 'NAT [intLitPat n]

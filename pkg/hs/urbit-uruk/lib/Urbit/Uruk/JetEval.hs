@@ -1,20 +1,23 @@
 module Urbit.Uruk.JetEval where
 
 import ClassyPrelude
-
-import Data.Bits             (shiftL, (.|.))
-import Data.Function         ((&))
-import Data.List             (iterate, (!!))
-import Numeric.Natural       (Natural)
-import Urbit.Uruk.Class      (Uruk(..))
-import Urbit.Uruk.DashParser (DataJet(..), ExpTree(..), Pos)
-import Urbit.Uruk.JetSpec    (SingJet(..))
-
-import qualified Urbit.Atom            as Atom
-import qualified Urbit.Uruk.DashParser as Dash
-import qualified Urbit.Uruk.Jets       as Jets
-
 import Data.Tree
+
+import Data.Bits           (shiftL, (.|.))
+import Data.Function       ((&))
+import Data.List           (iterate, (!!))
+import Numeric.Natural     (Natural)
+import Urbit.Moon.Arity    (Arity(..), appArity)
+import Urbit.Pos           (Pos)
+import Urbit.Uruk.Class    (Uruk(..))
+import Urbit.Uruk.Dash.Exp (DataJet(..), ExpTree(..), SingJet(..))
+
+import qualified Debug.Trace             as Debug.Trace
+import qualified Urbit.Atom              as Atom
+import qualified Urbit.Uruk.Dash.DataJet as Jets
+import qualified Urbit.Uruk.Dash.Exp     as Dash
+import qualified Urbit.Uruk.Dash.Parser  as Dash
+import qualified Urbit.Uruk.Jets         as Jets
 
 
 -- Typse -----------------------------------------------------------------------
@@ -103,10 +106,21 @@ pattern Lsh = N (M (MS LSH) 2 [])
 pattern Not = N (M (MS NOT) 1 [])
 pattern Xor = N (M (MS XOR) 2 [])
 
-pattern Eye = N (M (MS EYE) 1 [])
+pattern Eye = N (M (MD (In 1)) 1 [])
 pattern Cas = N (M (MS CAS) 3 [])
 
 pattern Trace = N (M (MS TRACE) 2 [])
+
+pattern LconC = N (M (MS LCON) 4 [])
+pattern Lnil = N (M (MS LNIL) 2 [])
+
+pattern Gulf = N (M (MS GULF) 2 [])
+pattern Snag = N (M (MS SNAG) 2 [])
+pattern Turn = N (M (MS TURN) 2 [])
+pattern Weld = N (M (MS WELD) 2 [])
+
+pattern AddAssoc = N (M (MS ADD_ASSOC) 5 [])
+pattern FindAssoc = N (M (MS FIND_ASSOC) 3 [])
 
 type Exp = Dash.ExpTree Ur
 type Val = Exp
@@ -114,18 +128,15 @@ type Val = Exp
 instance Uruk Exp where
   uApp x y = pure (x :& y)
 
-  uJay p = NJ (fromIntegral p)
-  uKay = NK
   uEss = NS
+  uKay = NK
+  uJay p = NJ (fromIntegral p)
   uDee = ND
 
-  uBee = N $ M (MS BEE) 3 []
-  uSea = N $ M (MS SEA) 3 []
-  uEye = N $ M (MS EYE) 1 []
-
-  uBen p = N $ M (MD $ Bn $ fromIntegral p) (fromIntegral $ p+2) []
+  uBee p = N $ M (MD $ Bn $ fromIntegral p) (fromIntegral $ p+2) []
   uSen p = N $ M (MD $ Sn $ fromIntegral p) (fromIntegral $ p+2) []
-  uCen p = N $ M (MD $ Cn $ fromIntegral p) (fromIntegral $ p+2) []
+  uSea p = N $ M (MD $ Cn $ fromIntegral p) (fromIntegral $ p+2) []
+  uEye p = N $ M (MD $ In $ fromIntegral p) (fromIntegral $ p) []
 
   uNat n = N $ M (MD $ NAT n) 2 []
 
@@ -162,7 +173,22 @@ instance Uruk Exp where
   uGlobal "not" = Just Not
   uGlobal "xor" = Just Xor
   uGlobal "trace" = Just Trace
+  uGlobal "lcon" = Just LconC
+  uGlobal "lnil" = Just Lnil
+  uGlobal "gulf" = Just Gulf
+  uGlobal "snag" = Just Snag
+  uGlobal "turn" = Just Turn
+  uGlobal "weld" = Just Weld
+  uGlobal "add-assoc" = Just AddAssoc
+  uGlobal "find-assoc" = Just FindAssoc
   uGlobal _     = Nothing
+
+  uArity (N (J n))     = pure $ AriJay n
+  uArity (N K)         = pure $ AriKay
+  uArity (N S)         = pure $ AriEss
+  uArity (N D)         = pure $ AriDee
+  uArity (N (M _ n _)) = pure $ AriOth (fromIntegral n)
+  uArity (x :& y)      = join $ appArity <$> uArity x <*> uArity y
 
 
 --------------------------------------------------------------------------------
@@ -255,11 +281,9 @@ runJet = curry \case
   (MD (Bn  n), f:g:xs   ) -> Just (f :& foldl' (:&) g xs)
   (MD (Cn  n), f:g:xs   ) -> Just (foldl' (:&) f xs :& g)
   (MD (Sn  n), f:g:xs   ) -> Just (foldl' (:&) f xs :& foldl' (:&) g xs)
-  (MS EYE    , [x]      ) -> Just x
-  (MS BEE    , [f, g, x]) -> Just (f :& (g :& x))
-  (MS SEA    , [f, g, x]) -> Just (f :& x :& g)
+  (MD (In  n), [f]      ) -> Just f
+  (MD (In  n), f:xs     ) -> Just (foldl' (:&) f xs)
   (MS SEQ    , [x, y]   ) -> Just y
-  (MS YET    , [f, x, y]) -> Just (f :& x :& y)
   (MS FIX    , [f,x]    ) -> Just (f :& (Fix :& f) :& x)
   (MS IFF    , [c,t,e]  ) -> goIff c t e
   (MS PAK    , [_]      ) -> Nothing
@@ -291,15 +315,12 @@ runJet = curry \case
   (MS MOD    , [x, y]   ) -> goMod x y
   (MS TRACE  , [x, y]   ) -> goTrace x y
 
-  (MD (NAT n), _        ) -> badArgs
-  (MD (Bn  n), _        ) -> badArgs
-  (MD (Cn  n), _        ) -> badArgs
-  (MD (Sn  n), _        ) -> badArgs
-  (MS EYE    , _        ) -> badArgs
-  (MS BEE    , _        ) -> badArgs
-  (MS SEA    , _        ) -> badArgs
+  (MD (NAT _), _        ) -> badArgs
+  (MD (Bn  _), _        ) -> badArgs
+  (MD (Cn  _), _        ) -> badArgs
+  (MD (Sn  _), _        ) -> badArgs
+  (MD (In  _), _        ) -> badArgs
   (MS SEQ    , _        ) -> badArgs
-  (MS YET    , _        ) -> badArgs
   (MS FIX    , _        ) -> badArgs
   (MS IFF    , _        ) -> badArgs
   (MS PAK    , _        ) -> badArgs
@@ -406,4 +427,4 @@ runJet = curry \case
   goNat 0 i z = z
   goNat n i z = i :& goNat (pred n) i z
 
-  goTrace x y = trace ("Trace: " ++ (show x)) (Just (y :& Uni))
+  goTrace x y = Debug.Trace.trace ("Trace: " ++ (show x)) (Just (y :& Uni))

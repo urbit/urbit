@@ -1,4 +1,4 @@
-name: urbit-uruk
+name: urbit-uruk-rts
 version: 0.1.0
 license: MIT
 license-file: LICENSE
@@ -10,16 +10,49 @@ library:
     - -O2
     - -fwarn-incomplete-patterns
 
+executables:
+  supermoon:
+    main: Main.hs
+    source-dirs: app/supermoon
+    dependencies:
+      - urbit-uruk
+      - urbit-uruk-rts
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -static
+      - -O2
+      - "-with-rtsopts=-N"
+      - -fwarn-incomplete-patterns
+
+  arvomoon:
+    main: Main.hs
+    source-dirs: app/arvomoon
+    dependencies:
+      - urbit-uruk
+      - urbit-uruk-rts
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -static
+      - -O2
+      - "-with-rtsopts=-N"
+      - -fwarn-incomplete-patterns
+
 dependencies:
   - base
   - bound
+  - bytestring
   - classy-prelude
+  - cryptohash-sha256
   - containers
   - deriving-compat
   - directory
   - file-embed
+  - filepath
   - ghc-prim
   - hashable
+  - hexstring
   - lens
   - megaparsec
   - mtl
@@ -30,9 +63,13 @@ dependencies:
   - primitive
   - raw-strings-qq
   - serialise
+  - store
   - template-haskell
   - text
+  - time
+  - unagi-chan
   - urbit-atom
+  - urbit-uruk
   - vector
 
 when:
@@ -84,30 +121,3 @@ default-extensions:
   - UnboxedTuples
   - UnicodeSyntax
   - ViewPatterns
-
-executables:
-  moon:
-    main: Main.hs
-    source-dirs: app/moon
-    dependencies:
-      - urbit-uruk
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - -static
-      - -O2
-      - "-with-rtsopts=-N"
-      - -fwarn-incomplete-patterns
-
-  uruk-jets:
-    main: Main.hs
-    source-dirs: app/jets
-    dependencies:
-      - urbit-uruk
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - -static
-      - -O2
-      - "-with-rtsopts=-N"
-      - -fwarn-incomplete-patterns

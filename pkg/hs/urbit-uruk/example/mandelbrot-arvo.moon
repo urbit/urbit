@@ -662,7 +662,78 @@
   build-ppm-line
 
 :: Doing a 20x20 render takes 4m40s.
-(build-ppm 400 400)
+::(build-ppm 400 400)
 
 :: TODO: The following should run in a reasonable amount of time
 ::(build-ppm 1000 1000)
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:: =/  find-assoc
+::   ..  $
+::   |=  (eq l k)
+::   %+  (cas l)
+::     |=  link
+::     =/  entry  (car link)
+::     =/  e-key  (car entry)
+::     ?:  (eql e-key k)
+::       (lef (cdr entry))
+::     ($ eq (cdr link) k)
+::   <u (rit uni)>
+
+:: ::  always returns a list, replacing the key if equivalent
+:: =/  add-assoc
+::   ~/  5  add-assoc
+::   ..  $
+::   |=  (lt eq l k v)
+::   %+  (cas l)
+::     |=  link
+::     =/  entry  (car link)
+::     =/  e-key  (car entry)
+::     ?:  (eq e-key k)
+::       (lcon (con k v) (cdr link))
+::     ?:  (lt e-key k)
+::       (lcon entry ($ lt eq (cdr link) k v))
+::     (lcon (con k v) (lcon entry (cdr link)))
+::   ::
+::   |=  u
+::   :: if we made it to the end, this is the sorted position
+::   (lcon (con k v) lnil)
+
+=/  is-cons-nat-eq
+  ~/  2  is-cons-nat-eq
+  |=  (a b)
+  ?:  (eql (car a) (car b))
+    ?:  (eql (cdr a) (cdr b))
+      %.y
+    %.n
+  %.n
+
+=/  is-cons-nat-lt
+  ~/  2  is-cons-nat-lt
+  |=  (a b)
+  ?:  (lth (car a) (car b))
+    %.y
+  ?:  (eql (car a) (car b))
+    (lth (cdr a) (cdr b))
+  %.n
+
+=/  arvo
+  ~/  3  arvo
+  ..  $
+  |=  (cache w h)
+  ?-    (find-assoc is-cons-nat-eq cache (con w h))
+      image
+    %+  trace  'cached'  |=  ignore
+    [(unbox image) ($ cache)]
+  ::
+      nothing
+    %+  trace  'uncached'  |=  ignore
+    =/  image  (build-ppm w h)
+    [image ($ (add-assoc is-cons-nat-lt is-cons-nat-eq cache (con w h) (box image)))]
+  ==
+
+:: Initial function state: empty cache
+(arvo lnil)
+
+

@@ -10,29 +10,23 @@ import GHC.Natural
 import Urbit.Moon.AST
 import Codec.Serialise
 
-import Control.Arrow             ((>>>))
-import Data.Function             ((&))
-import System.Directory          (createDirectoryIfMissing, getHomeDirectory,
-                                  listDirectory, removeFile)
-import System.IO.Unsafe          (unsafePerformIO)
-import Text.Show.Pretty          (ppShow)
-import Urbit.Uruk.Fast.OptToFast (optToFast)
-import Urbit.Uruk.UrukDemo       (Env, EvalResult(..), Inp(..), InpResult(..))
-import Urbit.Uruk.UrukDemo       (execInp, execText, parseInps, printInpResult)
+import Control.Arrow       ((>>>))
+import Data.Function       ((&))
+import System.Directory    (createDirectoryIfMissing, getHomeDirectory,
+                            listDirectory, removeFile)
+import System.IO.Unsafe    (unsafePerformIO)
+import Text.Show.Pretty    (ppShow)
+import Urbit.Uruk.UrukDemo (Env, EvalResult(..), Inp(..), InpResult(..))
+import Urbit.Uruk.UrukDemo (execInp, execText, parseInps, printInpResult)
 
 #if !defined(__GHCJS__)
 import qualified System.Console.Haskeline as HL
 #endif
 import qualified Urbit.Atom               as Atom
-import qualified Urbit.Moon.LambdaToUruk  as Lamb
 import qualified Urbit.Moon.MoonToUruk    as MU
 import qualified Urbit.Moon.Parser        as Parser
-import qualified Urbit.Uruk.Fast          as F
-import qualified Urbit.Uruk.Fast.Types    as F
 import qualified Urbit.Uruk.JetEval       as JetEval
-import qualified Urbit.Uruk.Refr.Jetted   as Ur
-
-import qualified Urbit.Uruk.UrukDemo as Dem
+import qualified Urbit.Uruk.UrukDemo      as Dem
 
 
 --------------------------------------------------------------------------------
@@ -91,32 +85,29 @@ repl'' prompt go = HL.runInputT HL.defaultSettings loop
 
 --------------------------------------------------------------------------------
 
-goSlow :: Text -> IO (Either Text Ur.Ur)
-goSlow = fmap (fmap Ur.unClose) . runExceptT . MU.gogogo'
-
 goNew :: Text -> IO (Either Text JetEval.Exp)
 goNew = runExceptT . MU.gogogo'new
 
-goFast :: Text -> IO (Either Text F.Val)
-goFast = runExceptT . MU.gogogoFast
+goOleg :: Text -> IO (Either Text JetEval.Exp)
+goOleg = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoOleg
 
-goOleg :: Text -> IO (Either Text Ur.Ur)
-goOleg = runExceptT . MU.gogogoOleg
+goLazyOleg :: Text -> IO (Either Text JetEval.Exp)
+goLazyOleg = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoLazyOleg
 
-goLazyOleg :: Text -> IO (Either Text Ur.Ur)
-goLazyOleg = runExceptT . MU.gogogoLazyOleg
+goTromp :: Text -> IO (Either Text JetEval.Exp)
+goTromp = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoTromp
 
-goTromp :: Text -> IO (Either Text Ur.Ur)
-goTromp = runExceptT . MU.gogogoTromp
+goNaive :: Text -> IO (Either Text JetEval.Exp)
+goNaive = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoNaive
 
-goNaive :: Text -> IO (Either Text Ur.Ur)
-goNaive = runExceptT . MU.gogogoNaive
+goLazyTromp :: Text -> IO (Either Text JetEval.Exp)
+goLazyTromp = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoLazyTromp
 
-goLazyTromp :: Text -> IO (Either Text Ur.Ur)
-goLazyTromp = runExceptT . MU.gogogoLazyTromp
+goLazyNaive :: Text -> IO (Either Text JetEval.Exp)
+goLazyNaive = runExceptT . ExceptT . fmap join . unExceptT . MU.gogogoLazyNaive
 
-goLazyNaive :: Text -> IO (Either Text Ur.Ur)
-goLazyNaive = runExceptT . MU.gogogoLazyNaive
+unExceptT :: ExceptT t m a -> m (Either t a)
+unExceptT (ExceptT a) = a
 
 goInp :: Text -> IO (Either Text [Inp])
 goInp = pure . parseInps
@@ -124,15 +115,9 @@ goInp = pure . parseInps
 --------------------------------------------------------------------------------
 
 runText :: Text -> IO ()
-runText = runText' goSlow
+runText = runText' goNew
 
 #if !defined(__GHCJS__)
-replFast :: IO ()
-replFast = repl' "fast" goFast
-
-replSlow :: IO ()
-replSlow = repl' "slow" goSlow
-
 replNew :: IO ()
 replNew = repl' "slow" goNew
 
@@ -190,29 +175,26 @@ goAll = runExceptT . bar
   bar :: Text -> ExceptT Text IO Text
   bar txt = do
     naive     <- ExceptT (goNaive txt)
-    lazyNaive <- ExceptT (goLazyNaive txt)
+--  lazyNaive <- ExceptT (goLazyNaive txt)
     tromp     <- ExceptT (goTromp txt)
-    lazyTromp <- ExceptT (goLazyTromp txt)
+--  lazyTromp <- ExceptT (goLazyTromp txt)
     oleg      <- ExceptT (goOleg txt)
-    lazyoleg  <- ExceptT (goLazyOleg txt)
+--  lazyoleg  <- ExceptT (goLazyOleg txt)
 
     pure $ unlines
       [ "", "[naive]", "", pack (ppShow naive), ""
-      , "", "[lazynaive]", "", pack (ppShow lazyNaive), ""
+--    , "", "[lazynaive]", "", pack (ppShow lazyNaive), ""
       , "", "[tromp]", "", pack (ppShow tromp), ""
-      , "", "[lazytromp]", "", pack (ppShow lazyTromp), ""
+--    , "", "[lazytromp]", "", pack (ppShow lazyTromp), ""
       , "", "[oleg]", "", pack (ppShow oleg), ""
-      , "", "[lazyoleg]", "", pack (ppShow lazyoleg), ""
+--    , "", "[lazyoleg]", "", pack (ppShow lazyoleg), ""
       ]
 
 runFileSlow :: FilePath -> IO ()
-runFileSlow = runFile' goSlow
+runFileSlow = runFile' goNew
 
 runFileNew :: FilePath -> IO ()
 runFileNew = runFile' goNew
-
-runFileFast :: FilePath -> IO ()
-runFileFast = runFile' goFast
 
 runFileOleg :: FilePath -> IO ()
 runFileOleg = runFile'' goAll
@@ -224,10 +206,7 @@ evalTextUruk :: Text -> IO Text
 evalTextUruk = evalText' goInp
 
 evalText :: Text -> IO Text
-evalText = evalText' goSlow
-
-evalTextFast :: Text -> IO Text
-evalTextFast = evalText' goFast
+evalText = evalText' goNew
 
 
 -- Types -----------------------------------------------------------------------

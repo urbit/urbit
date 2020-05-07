@@ -1,30 +1,28 @@
-{-# OPTIONS_GHC -Werror #-}
+{-# OPTIONS_GHC -Wall -Werror #-}
 
 module Urbit.Uruk.Class where
 
 import ClassyPrelude
 
 import Numeric.Natural  (Natural)
-import Numeric.Positive (Positive)
+import Urbit.Pos        (Pos)
 import Urbit.Atom       (utf8Atom)
+import Urbit.Moon.Arity (Arity)
 
 --------------------------------------------------------------------------------
 
-class Uruk p where
+class Show p => Uruk p where
   uApp :: p -> p -> IO p
 
   uEss :: p
   uKay :: p
-  uJay :: Positive -> p
+  uJay :: Pos -> p
   uDee :: p
 
-  uBee :: p
-  uSea :: p
-  uEye :: p
-
-  uBen :: Positive -> p
-  uSen :: Positive -> p
-  uCen :: Positive -> p
+  uSen :: Pos -> p
+  uBee :: Pos -> p
+  uSea :: Pos -> p
+  uEye :: Pos -> p
 
   uNat :: Natural -> p
   uBol :: Bool -> p
@@ -32,9 +30,12 @@ class Uruk p where
   uUni :: p
   uCon :: p
   uSeq :: p
+  uLet :: p
   uCas :: p
   uFix :: p
   uIff :: p
+
+  uArity :: p -> Maybe Arity
 
   uGlobal :: Text -> Maybe p
   uGlobal = const Nothing
@@ -53,13 +54,10 @@ instance Uruk p => Uruk (Either Text p) where
   uJay p = pure (uJay p)
   uDee   = pure uDee
 
-  uBee = pure uBee
-  uSea = pure uSea
-  uEye = pure uEye
-
-  uBen p = pure (uBen p)
   uSen p = pure (uSen p)
-  uCen p = pure (uCen p)
+  uBee p = pure (uBee p)
+  uSea p = pure (uSea p)
+  uEye p = pure (uEye p)
 
   uNat n = pure (uNat n)
   uBol b = pure (uBol b)
@@ -68,8 +66,12 @@ instance Uruk p => Uruk (Either Text p) where
   uCon = pure uCon
 
   uSeq = pure uSeq
+  uLet = pure uLet
   uCas = pure uCas
   uFix = pure uFix
   uIff = pure uIff
+
+  uArity (Left _)  = Nothing
+  uArity (Right x) = uArity x
 
   uGlobal = sequence . pure . uGlobal
