@@ -34,26 +34,6 @@ h2 {
   font-weight: 400;
 }
 
-.body-large {
-  font-size: 20px;
-  line-height: 24px;
-}
-
-.body-medium {
-  font-size: 16px;
-  line-height: 19px;
-}
-
-.body-small {
-  font-size: 12px;
-  line-height: 16px;
-  color: #7f7f7f;
-}
-
-.label-regular {
-  font-size: 14px;
-}
-
 .inter {
   font-family: Inter, sans-serif;
 }
@@ -195,9 +175,6 @@ h2 {
   .flex-basis-full-s {
     flex-basis: 100%;
   }
-  .h-100-minus-40-s {
-    height: calc(100% - 40px);
-  }
   .h-100-minus-96-s {
     height: calc(100% - 96px);
   }
@@ -213,9 +190,6 @@ h2 {
   .flex-basis-250-m {
     flex-basis: 250px;
   }
-  .h-100-minus-40-m {
-    height: calc(100% - 40px);
-  }
   .embed-container {
     padding-bottom: 56.25%;
   }
@@ -225,9 +199,6 @@ h2 {
   .flex-basis-250-l {
     flex-basis: 250px;
   }
-  .h-100-minus-40-l {
-    height: calc(100% - 40px);
-  }
   .embed-container {
     padding-bottom: 37.5%;
   }
@@ -236,9 +207,6 @@ h2 {
 @media all and (min-width: 60em) {
   .flex-basis-250-xl {
     flex-basis: 250px;
-  }
-  .h-100-minus-40-xl {
-    height: calc(100% - 40px);
   }
 }
 

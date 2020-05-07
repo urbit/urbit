@@ -117,7 +117,7 @@ export class LinkPreview extends Component {
     return (
       <div className="pb6 w-100">
         <div
-          className={'w-100 tc ' + (ytMatch ? 'embed-container' : '')}
+          className={'w-100 tc ' + (ytMatch ? 'links embed-container' : '')}
         >
           {embed || <div dangerouslySetInnerHTML={{ __html: this.state.embed }} />}
         </div>
