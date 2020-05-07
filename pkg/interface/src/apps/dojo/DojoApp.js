@@ -32,6 +32,13 @@ export default class DojoApp extends Component {
     subscription.start(this.props.channel);
   }
 
+  componentWillUnmount() {
+    this.props.channel.delete();
+    store.handleEvent({
+      data: { clear: true }
+    });
+  }
+
   render() {
     return (
       <div

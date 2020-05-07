@@ -5,14 +5,18 @@ export const buffer = new Share();
 
 export class Store {
   constructor() {
-    this.state = {
+    this.state = this.initialState();
+    this.sync = this.sync.bind(this);
+    this.print = this.print.bind(this);
+  }
+
+  initialState() {
+    return {
       txt: [],
       prompt: '',
       cursor: 0,
       input: ''
     };
-    this.sync = this.sync.bind(this);
-    this.print = this.print.bind(this);
   }
 
   handleEvent(data) {
@@ -21,6 +25,12 @@ export class Store {
       var dojoReply = data.data;
     } else {
       var dojoReply = data;
+    }
+
+    if (dojoReply.clear) {
+      this.setState(this.initialState(), (() => {
+        return;
+      }));
     }
 
     // %mor sole-effects are nested, so throw back to handler
