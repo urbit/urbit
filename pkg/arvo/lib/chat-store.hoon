@@ -10,7 +10,6 @@
   ++  letter
     |=  =^letter
     ^-  json
-    =,  enjs:format
     ?-  -.letter
         %text
       (frond %text s+text.letter)
@@ -44,7 +43,6 @@
   ++  config
     |=  =^config
     ^-  json
-    =,  enjs:format
     %-  pairs
     :~  [%length (numb length.config)]
         [%read (numb read.config)]
