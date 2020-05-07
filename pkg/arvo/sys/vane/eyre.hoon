@@ -144,25 +144,6 @@
       ::
       bytes-sent=@ud
   ==
-::  +action: the action to take when a binding matches an incoming request
-::
-+$  action
-  $%  ::  dispatch to a generator
-      ::
-      [%gen =generator]
-      ::  dispatch to an application
-      ::
-      [%app app=term]
-      ::  internal authentication page
-      ::
-      [%authentication ~]
-      ::  gall channel system
-      ::
-      [%channel ~]
-      ::  respond with the default file not found page
-      ::
-      [%four-oh-four ~]
-  ==
 ::  +authentication-state: state used in the login system
 ::
 +$  authentication-state
@@ -2462,6 +2443,8 @@
     [~ ~]
   ?.  ?=(%$ -.lot)
     [~ ~]
+  ?:  ?=(%bindings syd)
+    ``noun+!>(bindings.server-state.ax)
   ?.  ?=(%host syd)
     [~ ~]
   %-  (lift (lift |=(a=hart:eyre [%hart !>(a)])))

@@ -1156,6 +1156,25 @@
         ::
         path=(list @t)
     ==
+  ::  +action: the action to take when a binding matches an incoming request
+  ::
+  +$  action
+    $%  ::  dispatch to a generator
+        ::
+        [%gen =generator]
+        ::  dispatch to an application
+        ::
+        [%app app=term]
+        ::  internal authentication page
+        ::
+        [%authentication ~]
+        ::  gall channel system
+        ::
+        [%channel ~]
+        ::  respond with the default file not found page
+        ::
+        [%four-oh-four ~]
+    ==
   ::  +generator: a generator on the local ship that handles requests
   ::
   ::    This refers to a generator on the local ship, run with a set of
