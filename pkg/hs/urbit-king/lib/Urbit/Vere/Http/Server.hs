@@ -22,27 +22,30 @@
                             "hosed";
 -}
 
-module Urbit.Vere.Http.Server where
+module Urbit.Vere.Http.Server
+  ( serv
+  , multiServ
+  , ShipAPI(..)
+  )
+where
 
-import Data.Conduit
-import Urbit.Arvo            hiding (ServerId, reqBody, reqUrl, secure)
-import Urbit.King.Config
-import Urbit.Noun
 import Urbit.Prelude         hiding (Builder)
+
+import Urbit.Arvo                    hiding (ServerId, reqUrl, secure)
+import Urbit.King.Config
+import Urbit.Vere.Http.Server.WAIApp hiding (ReqId)
 import Urbit.Vere.Pier.Types
 
-import Data.Binary.Builder (Builder, fromByteString)
-import Data.Bits           (shiftL, (.|.))
-import Data.PEM            (pemParseBS, pemWriteBS)
-import Network.Socket      (SockAddr(..))
-import System.Directory    (doesFileExist, removeFile)
-import System.Random       (randomIO)
-import Urbit.Vere.Http     (convertHeaders, unconvertHeaders)
+import Data.PEM         (pemParseBS, pemWriteBS)
+import Network.Socket   (SockAddr(..))
+import RIO.Prelude      (decodeUtf8Lenient)
+import System.Directory (doesFileExist, removeFile)
+import System.Random    (randomIO)
+import Urbit.Vere.Http  (convertHeaders, unconvertHeaders)
 
 import qualified Network.HTTP.Types          as H
 import qualified Network.Socket              as Net
 import qualified Network.Wai                 as W
-import qualified Network.Wai.Conduit         as W
 import qualified Network.Wai.Handler.Warp    as W
 import qualified Network.Wai.Handler.WarpTLS as W
 
@@ -52,32 +55,6 @@ import qualified Network.Wai.Handler.WarpTLS as W
 type HasShipEnv e = (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
 
 type ReqId = UD
-type SeqId = UD -- Unused, always 1
-
-{-|
-    The sequence of actions on a given request *should* be:
-
-        [%head .] [%bloc .]* %done
-
-    But we will actually accept anything, and mostly do the right
-    thing. There are two situations where we ignore ignore the data from
-    some actions.
-
-    - If you send something *after* a %done action, it will be ignored.
-    - If you send a %done before a %head, we will produce "444 No
-      Response" with an empty response body.
--}
-data RespAction
-    = RAHead ResponseHeader File
-    | RAFull ResponseHeader File
-    | RABloc File
-    | RADone
-  deriving (Eq, Ord, Show)
-
-data LiveReqs = LiveReqs
-    { nextReqId  :: ReqId
-    , activeReqs :: Map ReqId (TQueue RespAction)
-    }
 
 data Ports = Ports
     { pHttps :: Maybe Port
@@ -86,7 +63,7 @@ data Ports = Ports
     }
   deriving (Eq, Ord, Show)
 
-newtype Drv = Drv { unDrv :: MVar (Maybe Serv) }
+newtype Drv = Drv { _unDrv :: MVar (Maybe Serv) }
 
 data Serv = Serv
     { sServId    :: ServId
@@ -101,17 +78,6 @@ data Serv = Serv
     , sPortsFile :: FilePath
     , sLiveReqs  :: TVar LiveReqs
     }
-
-
--- RespAction -- Reorganized HttpEvent for Cleaner Processing ------------------
-
-reorgHttpEvent :: HttpEvent -> [RespAction]
-reorgHttpEvent = \case
-    Start head mBlk True   -> [RAFull head (fromMaybe "" mBlk)]
-    Start head mBlk False  -> [RAHead head (fromMaybe "" mBlk)]
-    Cancel ()              -> [RADone]
-    Continue mBlk isDone   -> toList (RABloc <$> mBlk)
-                           <> if isDone then [RADone] else []
 
 
 -- Generic Service Stop/Restart -- Using an MVar for Atomicity -----------------
@@ -163,35 +129,6 @@ stopService vServ kkill = do
                       pure (Nothing, res)
 
 
--- Live Requests Table -- All Requests Still Waiting for Responses -------------
-
-emptyLiveReqs :: LiveReqs
-emptyLiveReqs = LiveReqs 1 mempty
-
-respondToLiveReq :: TVar LiveReqs -> ReqId -> RespAction -> STM ()
-respondToLiveReq var req ev = do
-    mVar <- lookup req . activeReqs <$> readTVar var
-    case mVar of
-        Nothing -> pure ()
-        Just tv -> writeTQueue tv ev
-
-rmLiveReq :: TVar LiveReqs -> ReqId -> STM ()
-rmLiveReq var reqId = do
-    liv <- readTVar var
-    writeTVar var (liv { activeReqs = deleteMap reqId (activeReqs liv) })
-
-newLiveReq :: TVar LiveReqs -> STM (ReqId, TQueue RespAction)
-newLiveReq var = do
-    liv <- readTVar var
-    tmv <- newTQueue
-
-    let (nex, act) = (nextReqId liv, activeReqs liv)
-
-    writeTVar var (LiveReqs (nex+1) (insertMap nex tmv act))
-
-    pure (nex, tmv)
-
-
 -- Ports File ------------------------------------------------------------------
 
 removePortsFile :: FilePath -> RIO e ()
@@ -210,54 +147,6 @@ portsFileText Ports{..} =
 
 writePortsFile :: FilePath -> Ports -> RIO e ()
 writePortsFile f = writeFile f . encodeUtf8 . portsFileText
-
-
--- Random Helpers --------------------------------------------------------------
-
-cordBytes :: Cord -> ByteString
-cordBytes = encodeUtf8 . unCord
-
-wainBytes :: Wain -> ByteString
-wainBytes = encodeUtf8 . unWain
-
-pass :: Monad m => m ()
-pass = pure ()
-
-whenJust :: Monad m => Maybe a -> (a -> m ()) -> m ()
-whenJust Nothing  act = pure ()
-whenJust (Just a) act = act a
-
-cookMeth :: W.Request -> Maybe Method
-cookMeth = H.parseMethod . W.requestMethod >>> \case
-             Left _  -> Nothing
-             Right m -> Just m
-
-reqIdCord :: ReqId -> Cord
-reqIdCord = Cord . tshow
-
-reqBody :: W.Request -> RIO e (Maybe File)
-reqBody req = do
-    bodyLbs <- io $ W.strictRequestBody req
-    pure $ if length bodyLbs == 0
-      then Nothing
-      else Just $ File $ Octs (toStrict bodyLbs)
-
-reqAddr :: W.Request -> Address
-reqAddr = W.remoteHost >>> \case
-    SockAddrInet  _ a     -> AIpv4 (Ipv4 a)
-    SockAddrInet6 _ _ a _ -> AIpv6 (mkIpv6 a)
-    _                     -> error "invalid sock addr"
-
-mkIpv6 :: (Word32, Word32, Word32, Word32) -> Ipv6
-mkIpv6 (p, q, r, s) = Ipv6 (pBits .|. qBits .|. rBits .|. sBits)
-  where
-    pBits = shiftL (fromIntegral p) 0
-    qBits = shiftL (fromIntegral q) 32
-    rBits = shiftL (fromIntegral r) 64
-    sBits = shiftL (fromIntegral s) 96
-
-reqUrl :: W.Request -> Cord
-reqUrl r = Cord $ decodeUtf8 $ W.rawPathInfo r <> W.rawQueryString r
 
 
 -- Utilities for Constructing Events -------------------------------------------
@@ -289,106 +178,6 @@ reqEv sId reqId which addr req =
         _        ->
             servEv $ HttpServerEvRequest (sId, reqId, 1, ())
                    $ HttpServerReq (which == Secure) addr req
-
-
--- Http Server Flows -----------------------------------------------------------
-
-data Resp
-    = RHead ResponseHeader [File]
-    | RFull ResponseHeader [File]
-    | RNone
-  deriving (Show)
-
-{-|
-    This accepts all action orderings so that there are no edge-cases
-    to be handled:
-
-    - If %bloc before %head, collect it and wait for %head.
-    - If %done before %head, ignore all chunks and produce Nothing.
-
-    TODO Be strict about this instead. Ignore invalid request streams.
--}
-getResp :: TQueue RespAction -> RIO e Resp
-getResp tmv = go []
-  where
-    go çunks = atomically (readTQueue tmv) >>= \case
-                 RAHead head ç -> pure $ RHead head $ reverse (ç : çunks)
-                 RAFull head ç -> pure $ RFull head $ reverse (ç : çunks)
-                 RABloc ç      -> go (ç : çunks)
-                 RADone        -> pure RNone
-
-{-|
-    - Immediatly yield all of the initial chunks
-    - Yield the data from %bloc action.
-    - Close the stream when we hit a %done action.
--}
-streamBlocks :: HasLogFunc e
-             => e -> [File] -> TQueue RespAction
-             -> ConduitT () (Flush Builder) IO ()
-streamBlocks env init tmv =
-    for_ init yieldÇunk >> go
-  where
-    yieldFlush = \x -> yield (Chunk x) >> yield Flush
-    logDupHead = runRIO env (logError "Multiple %head actions on one request")
-
-    yieldÇunk  = \case
-        "" -> runRIO env (logTrace "sending empty chunk")
-        c  -> do runRIO env (logTrace (display ("sending chunk " <> tshow c)))
-                 (yieldFlush . fromByteString . unOcts . unFile) c
-
-    go = atomically (readTQueue tmv) >>= \case
-             RAHead head c -> logDupHead >> yieldÇunk c >> go
-             RAFull head c -> logDupHead >> yieldÇunk c >> go
-             RABloc c      -> yieldÇunk c >> go
-             RADone        -> pure ()
-
-sendResponse :: HasLogFunc e
-             => (W.Response -> IO W.ResponseReceived)
-             -> TQueue RespAction
-             -> RIO e W.ResponseReceived
-sendResponse cb tmv = do
-    env <- ask
-    getResp tmv >>= \case
-        RNone     -> io $ cb $ W.responseLBS (H.mkStatus 444 "No Response") []
-                             $ ""
-        RFull h f -> io $ cb $ W.responseLBS (hdrStatus h) (hdrHeaders h)
-                             $ fromStrict $ concat $ unOcts . unFile <$> f
-        RHead h i -> io $ cb $ W.responseSource (hdrStatus h) (hdrHeaders h)
-                             $ streamBlocks env i tmv
-  where
-    hdrHeaders :: ResponseHeader -> [H.Header]
-    hdrHeaders = unconvertHeaders . headers
-
-    hdrStatus :: ResponseHeader -> H.Status
-    hdrStatus = toEnum . fromIntegral . statusCode
-
-liveReq :: TVar LiveReqs -> RAcquire e (ReqId, TQueue RespAction)
-liveReq vLiv = mkRAcquire ins del
-  where
-    ins = atomically (newLiveReq vLiv)
-    del = atomically . rmLiveReq vLiv . fst
-
-app :: HasLogFunc e
-    => e -> ServId -> TVar LiveReqs -> (Ev -> STM ()) -> WhichServer
-    -> W.Application
-app env sId liv plan which req respond =
-   runRIO env $
-   rwith (liveReq liv) $ \(reqId, respVar) -> do
-        body <- reqBody req
-        meth <- maybe (error "bad method") pure (cookMeth req)
-
-        let addr  = reqAddr req
-            hdrs  = convertHeaders $ W.requestHeaders req
-            evReq = HttpRequest meth (reqUrl req) hdrs body
-
-        atomically $ plan (reqEv sId reqId which addr evReq)
-
-        try (sendResponse respond respVar) >>= \case
-          Right rr -> pure rr
-          Left exn -> do
-            io $ atomically $ plan (cancelEv sId reqId)
-            logError $ display ("Exception during request" <> tshow exn)
-            throwIO (exn :: SomeException)
 
 
 -- Top-Level Driver Interface --------------------------------------------------
@@ -503,12 +292,70 @@ httpServerPorts fak = do
 
   pure (PortsToTry { .. })
 
+eyreApp
+  :: HasLogFunc e
+  => e
+  -> ServId
+  -> TVar LiveReqs
+  -> (Ev -> STM ())
+  -> WhichServer
+  -> W.Application
+eyreApp env sId vLive plan which =
+  app env vLive onReq onCancel
+ where
+  bodFile "" = Nothing
+  bodFile bs = Just $ File $ Octs bs
+
+  onReq :: Word64 -> ReqInfo -> STM ()
+  onReq reqId ReqInfo{..} = do
+    let evBod = bodFile riBod
+        evHdr = convertHeaders riHdr
+        evUrl = Cord (decodeUtf8Lenient riUrl)
+        evReq = HttpRequest riMet evUrl evHdr evBod
+        reqUd = fromIntegral reqId
+        event = reqEv sId reqUd which riAdr evReq
+
+    plan event
+
+  onCancel :: Word64 -> STM ()
+  onCancel reqId = plan (cancelEv sId (fromIntegral reqId))
+
 parseCerts :: ByteString -> Maybe (ByteString, [ByteString])
 parseCerts bs = do
   pems <- pemParseBS bs & either (const Nothing) Just
   case pems of
     [] -> Nothing
     p:ps -> pure (pemWriteBS p, pemWriteBS <$> ps)
+
+fByt :: File -> ByteString
+fByt = unOcts . unFile
+
+reorgHttpEvent :: HttpEvent -> [RespAct]
+reorgHttpEvent = \case
+  Start h b True  -> [RAFull (hSta h) (hHdr h) (fByt $ fromMaybe "" b)]
+  Start h b False -> [RAHead (hSta h) (hHdr h) (fByt $ fromMaybe "" b)]
+  Cancel ()       -> [RADone]
+  Continue b done -> toList (RABloc . fByt <$> b)
+                  <> if done then [RADone] else []
+ where
+  hHdr :: ResponseHeader -> [H.Header]
+  hHdr = unconvertHeaders . headers
+
+  hSta :: ResponseHeader -> H.Status
+  hSta = toEnum . fromIntegral . statusCode
+
+
+respond :: HasLogFunc e
+        => Drv -> Word64 -> HttpEvent -> RIO e ()
+respond (Drv v) reqId ev = do
+    readMVar v >>= \case
+        Nothing -> logError "Got a response to a request that does not exist."
+        Just sv -> do logDebug $ displayShow ev
+                      for_ (reorgHttpEvent ev) $
+                        atomically . routeRespAct (sLiveReqs sv) reqId
+
+wainBytes :: Wain -> ByteString
+wainBytes = encodeUtf8 . unWain
 
 startServ :: (HasPierConfig e, HasLogFunc e, HasNetworkConfig e)
           => Bool -> HttpServerConf -> (Ev -> STM ())
@@ -546,18 +393,18 @@ startServ isFake conf plan = do
   logDebug "Starting loopback server"
   loopTid  <- async $ io
                     $ W.runSettingsSocket loopOpts loopSock
-                    $ app env sId liv plan Loopback
+                    $ eyreApp env sId liv plan Loopback
 
   logDebug "Starting HTTP server"
   httpTid  <- async $ io
                     $ W.runSettingsSocket httpOpts httpSock
-                    $ app env sId liv plan Insecure
+                    $ eyreApp env sId liv plan Insecure
 
   logDebug "Starting HTTPS server"
   httpsTid <- for tls $ \tlsOpts ->
                 async $ io
                       $ W.runTLSSocket tlsOpts httpsOpts httpsSock
-                      $ app env sId liv plan Secure
+                      $ eyreApp env sId liv plan Secure
 
   pierPath <- view pierPathL
   let por = Ports (tls <&> const httpsPort) httpPort loopPort
@@ -587,15 +434,6 @@ killServ Serv{..} = do
 
 kill :: HasLogFunc e => Drv -> RIO e ()
 kill (Drv v) = stopService v killServ >>= fromEither
-
-respond :: HasLogFunc e
-        => Drv -> ReqId -> HttpEvent -> RIO e ()
-respond (Drv v) reqId ev = do
-    readMVar v >>= \case
-        Nothing -> logWarn "Got a response to a request that does not exist."
-        Just sv -> do logDebug $ displayShow $ reorgHttpEvent ev
-                      for_ (reorgHttpEvent ev) $
-                        atomically . respondToLiveReq (sLiveReqs sv) reqId
 
 serv :: ∀e. HasShipEnv e
      => KingId -> QueueEv -> Bool
@@ -701,7 +539,7 @@ doSomething MultiServ{..} httpPort = do
 
   httpTid  <- async $ io
                     $ W.runSettings httpOpts
-                    $ app env sId liv plan Insecure
+                    $ eyreApp env sId liv plan Insecure
 
   let onHapn :: STM Hap
       onHapn = asum [ Lif <$> takeTMVar msBoot
