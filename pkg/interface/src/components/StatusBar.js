@@ -11,6 +11,8 @@ const getLocationName = (basePath) => {
     return 'Dojo';
   if (basePath === '~groups')
     return 'Groups';
+  if (basePath === '~link')
+    return 'Links';
   // if (basePath === '~publish') return 'Publish';
 };
 

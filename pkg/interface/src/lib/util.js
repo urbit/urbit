@@ -151,3 +151,101 @@ export function alphabetiseAssociations(associations) {
   });
   return result;
 }
+
+// encodes string into base64url,
+// by encoding into base64 and replacing non-url-safe characters.
+//
+export function base64urlEncode(string) {
+  return window.btoa(string)
+    .split('+').join('-')
+    .split('/').join('_');
+}
+
+// decode base64url. inverse of base64urlEncode above.
+//
+export function base64urlDecode(string) {
+  return window.atob(
+    string.split('_').join('/')
+          .split('-').join('+')
+  );
+}
+
+// encode the string into @ta-safe format, using logic from +wood.
+// for example, 'some Chars!' becomes '~.some.~43.hars~21.'
+//
+export function stringToTa(string) {
+  let out = '';
+  for (let i = 0; i < string.length; i++) {
+    const char = string[i];
+    let add = '';
+    switch (char) {
+      case ' ':
+        add = '.';
+        break;
+      case '.':
+        add = '~.';
+        break;
+      case '~':
+        add = '~~';
+        break;
+      default:
+        const charCode = string.charCodeAt(i);
+        if (
+          (charCode >= 97 && charCode <= 122) || // a-z
+          (charCode >= 48 && charCode <= 57)  || // 0-9
+          char === '-'
+        ) {
+          add = char;
+        } else {
+          // TODO behavior for unicode doesn't match +wood's,
+          //     but we can probably get away with that for now.
+          add = '~' + charCode.toString(16) + '.';
+        }
+    }
+    out = out + add;
+  }
+  return '~.' + out;
+}
+
+// used in Links
+
+export function makeRoutePath(
+  resource,
+  popout = false,
+  page = 0,
+  url = null,
+  index = 0,
+  compage = 0
+) {
+  let route = "/~link" + (popout ? "/popout" : "") + resource;
+  if (!url) {
+    if (page !== 0) {
+      route = route + "/" + page;
+    }
+  } else {
+    route = `${route}/${page}/${index}/${base64urlEncode(url)}`;
+    if (compage !== 0) {
+      route = route + "/" + compage;
+    }
+  }
+  return route;
+}
+
+export function amOwnerOfGroup(groupPath) {
+  if (!groupPath) return false;
+  const groupOwner = /(\/~)?\/~([a-z-]{3,})\/.*/.exec(groupPath)[2];
+  return window.ship === groupOwner;
+}
+
+export function getContactDetails(contact) {
+  const member = !contact;
+  contact = contact || {
+    nickname: "",
+    avatar: null,
+    color: "0x0",
+  };
+  const nickname = contact.nickname || "";
+  const color = uxToHex(contact.color || "0x0");
+  const avatar = contact.avatar || null;
+  return { nickname, color, member, avatar };
+}

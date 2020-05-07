@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Spinner } from '../../../components/Spinner';
 import { ChatTabBar } from './lib/chat-tabbar';
 import { InviteSearch } from '../../../components/InviteSearch';
-import SidebarSwitcher from './lib/icons/icon-sidebar-switch';
+import SidebarSwitcher from '../../../components/SidebarSwitch';
 
 export class SettingsScreen extends Component {
   constructor(props) {
@@ -428,6 +428,7 @@ export class SettingsScreen extends Component {
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
             popout={this.props.popout}
+            api={this.props.api}
           />
           <Link to={'/~chat/' + isinPopout + 'room' + props.station}
           className="pt2"
