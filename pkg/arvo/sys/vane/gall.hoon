@@ -1382,24 +1382,6 @@
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
-      %wegh
-    =/  blocked
-      =/  queued  (~(run by blocked.state) |=((qeu blocked-move) [%.y +<]))
-      (sort ~(tap by queued) aor)
-    ::
-    =/  running
-      =/  active  (~(run by yokes.state) |=(yoke [%.y +<]))
-      (sort ~(tap by active) aor)
-    ::
-    =/  =mass
-      :+  %gall  %.n
-      :~  [%foreign %.y contacts.state]
-          [%blocked %.n blocked]
-          [%active %.n running]
-          [%dot %.y state]
-      ==
-    ::
-    [[duct %give %mass mass]~ gall-payload]
   ==
 ::  +load: recreate vane
 ::
@@ -1825,6 +1807,22 @@
   ?.  ?=(%.y -.shop)
     ~
   =/  =ship  p.shop
+  ?:  &(=(care %$) =(path /whey))
+    =/  blocked
+      =/  queued  (~(run by blocked.state) |=((qeu blocked-move) [%.y +<]))
+      (sort ~(tap by queued) aor)
+    ::
+    =/  running
+      =/  active  (~(run by yokes.state) |=(yoke [%.y +<]))
+      (sort ~(tap by active) aor)
+    ::
+    =/  maz=(list mass)
+      :~  [%foreign %.y contacts.state]
+          [%blocked %.n blocked]
+          [%active %.n running]
+      ==
+    ``mass+!>(maz)
+  ::
   ?:  ?&  =(%u care)
           =(~ path)
           =([%$ %da now] coin)

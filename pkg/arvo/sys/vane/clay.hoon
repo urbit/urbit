@@ -5571,27 +5571,6 @@
           [%foreign-warp (scot %p her) t.pax]
         [hen %pass wire %c %werp her our ryf]
     ==
-  ::
-      %wegh
-    :_  ..^$  :_  ~
-    :^  hen  %give  %mass
-    :+  %clay  %|
-    =/  domestic
-      %+  turn  (sort ~(tap by dos.rom.ruf) aor)
-      |=  [=desk =dojo]
-      :+  desk  %|
-      :~  ankh+&+ank.dom.dojo
-          mime+&+mim.dom.dojo
-          ford+&+fod.dom.dojo
-      ==
-    :~  domestic+|+domestic
-        foreign+&+hoy.ruf
-        :+  %object-store  %|
-        :~  commits+&+hut.ran.ruf
-            blobs+&+lat.ran.ruf
-        ==
-        dot+&+ruf
-    ==
   ==
 ::
 ++  load
@@ -5604,6 +5583,8 @@
   ^-  (unit (unit cage))
   ?.  ?=(%& -.why)  ~
   =*  his  p.why
+  ?:  &(=(ren %$) =(tyl /whey))
+    ``mass+!>(whey)
   ::  ~&  scry+[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
   ::  =-  ~&  %scry-done  -
   =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
@@ -5873,4 +5854,23 @@
   ?~  -
     `[paf %ins %mime -:!>(*mime) u.mim]
   `[paf %mut %mime -:!>(*mime) u.mim]
+::  +whey: produce memory usage report
+::
+++  whey
+  ^-  (list mass)
+  =/  domestic
+    %+  turn  (sort ~(tap by dos.rom.ruf) aor)
+    |=  [=desk =dojo]
+    :+  desk  %|
+    :~  ankh+&+ank.dom.dojo
+        mime+&+mim.dom.dojo
+        ford+&+fod.dom.dojo
+    ==
+  :~  domestic+|+domestic
+      foreign+&+hoy.ruf
+      :+  %object-store  %|
+      :~  commits+&+hut.ran.ruf
+          blobs+&+lat.ran.ruf
+      ==
+  ==
 --

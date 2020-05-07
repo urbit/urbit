@@ -1095,7 +1095,6 @@
       %sift  (on-sift:event-core ships.task)
       %spew  (on-spew:event-core veb.task)
       %vega  on-vega:event-core
-      %wegh  on-wegh:event-core
       %plea  (on-plea:event-core [ship plea]:task)
     ==
   ::
@@ -1195,6 +1194,13 @@
   ?.  =(%$ ren)  [~ ~]
   ?.  =([%& our] why)
     [~ ~]
+  ?:  =(tyl /whey)
+    =/  maz=(list mass)
+      =+  [known alien]=(skid ~(val by peers.ames-state) |=(^ =(%known +<-)))
+      :~  peers-known+&+known
+          peers-alien+&+alien
+      ==
+    ``mass+!>(maz)
   ?+    syd  ~
       %peer
     ?.  ?=([@ ~] tyl)  [~ ~]
@@ -1836,20 +1842,6 @@
     ^+  event-core
     ::
     (emit unix-duct.ames-state %give %turf turfs)
-  ::  +on-wegh: produce memory usage report
-  ::
-  ++  on-wegh
-    ^+  event-core
-    ::
-    =+  [known alien]=(skid ~(tap by peers.ames-state) |=(^ =(%known +<-)))
-    ::
-    %-  emit
-    :^  duct  %give  %mass
-    :+  %ames  %|
-    :~  peers-known+&+known
-        peers-alien+&+alien
-        dot+&+ames-state
-    ==
   ::  +on-born: handle unix process restart
   ::
   ++  on-born

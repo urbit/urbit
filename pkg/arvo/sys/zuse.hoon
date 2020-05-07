@@ -211,9 +211,6 @@
       ::  kernel upgraded
       ::
       [%vega ~]
-      ::  produce labeled state (for memory measurement)
-      ::
-      [%wegh ~]
       ::  receive message via %ames
       ::
       ::    TODO: move .vane from $plea to here
@@ -396,7 +393,6 @@
     ::    %sift: limit verbosity to .ships
     ::    %spew: set verbosity toggles
     ::    %vega: kernel reload notification
-    ::    %wegh: request for memory usage report
     ::
     +$  task
       $%  [%hear =lane =blob]
@@ -411,7 +407,6 @@
           [%sift ships=(list ship)]
           [%spew veb=(list verb)]
           $>(%vega vane-task)
-          $>(%wegh vane-task)
       ==
     ::  $gift: effect from ames
     ::
@@ -425,7 +420,6 @@
     ::
     ::    System and Lifecycle Gifts
     ::
-    ::    %mass: memory usage report
     ::    %turf: domain report, relayed from jael
     ::
     +$  gift
@@ -435,7 +429,6 @@
           [%lost ~]
           [%send =lane =blob]
       ::
-          [%mass p=mass]
           [%turf turfs=(list turf)]
       ==
     --  ::able
@@ -503,7 +496,6 @@
     |%
     ++  gift                                            ::  out result <-$
       $%  [%doze p=(unit @da)]                          ::  next alarm
-          [%mass p=mass]                                ::  memory usage
           [%wake error=(unit tang)]                     ::  wakeup or failed
           [%meta p=vase]
       ==
@@ -518,7 +510,6 @@
           $>(%vega vane-task)                           ::  report upgrade
           [%wait p=@da]                                 ::  set alarm
           [%wake ~]                                     ::  timer activate
-          $>(%wegh vane-task)                           ::  report memory
       ==
     --  ::able
   --  ::behn
@@ -540,7 +531,6 @@
           {$ergo p/@tas q/mode}                         ::  version update
           {$hill p/(list @tas)}                         ::  mount points
           [%done error=(unit error:ames)]               ::  ames message (n)ack
-          {$mass p/mass}                                ::  memory usage
           {$mere p/(each (set path) (pair term tang))}  ::  merge result
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
@@ -574,7 +564,6 @@
           $>(%vega vane-task)                           ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
-          $>(%wegh vane-task)                           ::  report memory
           $>(%plea vane-task)                           ::  ames request
       ==                                                ::
     --  ::able
@@ -796,10 +785,10 @@
           {$init p/@p}                                  ::  set owner
           {$logo ~}                                     ::  logout
           {$lyra p/@t q/@t}                             ::  upgrade kernel
-          {$mass p/mass}                                ::  memory usage
           {$pack ~}                                     ::  compact memory
           {$veer p/@ta q/path r/@t}                     ::  install vane
           {$verb ~}                                     ::  verbose mode
+          [%whey ~]                                     ::  memory report
       ==                                                ::
     ++  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
@@ -910,9 +899,6 @@
           ::    not allowed.
           ::
           [%bound accepted=? =binding]
-          ::  memory usage report
-          ::
-          [%mass p=mass]
       ==
     ::
     ++  task
@@ -959,9 +945,6 @@
           ::    the first place.
           ::
           [%disconnect =binding]
-          ::  memory usage request
-          ::
-          $>(%wegh vane-task)
       ==
     ::
     --
@@ -1215,9 +1198,6 @@
           ::  %vega: report kernel upgrade
           ::
           $>(%vega vane-task)
-          ::  %wegh: produce memory usage information
-          ::
-          $>(%wegh vane-task)
           ::  %wipe: wipes stored builds
           ::
           [%wipe percent-to-remove=@ud]
@@ -1225,10 +1205,7 @@
     ::  +gift:able:ford: responses from ford
     ::
     +=  gift
-      $%  ::  %mass: memory usage; response to %wegh +task
-          ::
-          [%mass p=mass]
-          ::  %made: build result; response to %build +task
+      $%  ::  %made: build result; response to %build +task
           ::
           $:  %made
               ::  date: formal date of the build
@@ -1897,7 +1874,6 @@
     ++  gift                                            ::  outgoing result
       $%  [%boon payload=*]                             ::  ames response
           [%done error=(unit error:ames)]               ::  ames message (n)ack
-          [%mass p=mass]                                ::  memory usage
           [%onto p=(each suss tang)]                    ::  about agent
           [%unto p=sign:agent]                          ::
       ==                                                ::
@@ -1911,7 +1887,6 @@
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           $>(%plea vane-task)                           ::  network request
-          $>(%wegh vane-task)                           ::  report memory
       ==                                                ::
     --  ::able
   ++  bitt  (map duct (pair ship path))                 ::  incoming subs
@@ -2043,9 +2018,6 @@
           ::  %response: response to the caller
           ::
           [%http-response =client-response]
-          ::  memory usage report
-          ::
-          [%mass p=mass]
       ==
     ::
     ++  task
@@ -2071,9 +2043,6 @@
           ::  receives http data from outside
           ::
           [%receive id=@ud =http-event:http]
-          ::  memory usage request
-          ::
-          $>(%wegh vane-task)
       ==
     --
   ::  +client-response: one or more client responses given to the caller
@@ -2157,7 +2126,6 @@
     ::                                                  ::
     ++  gift                                            ::  out result <-$
       $%  [%init p=ship]                                ::  report install unix
-          [%mass p=mass]                                ::  memory usage report
           [%done error=(unit error:ames)]               ::  ames message (n)ack
           [%boon payload=*]                             ::  ames response
           [%private-keys =life vein=(map life ring)]    ::  private keys
@@ -2183,7 +2151,6 @@
           $>(%trim vane-task)                           ::  trim state
           [%turf ~]                                     ::  view domains
           $>(%vega vane-task)                           ::  report upgrade
-          $>(%wegh vane-task)                           ::  memory usage request
           $>(%plea vane-task)                           ::  ames request
       ==                                                ::
     ::

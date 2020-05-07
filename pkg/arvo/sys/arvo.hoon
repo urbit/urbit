@@ -104,8 +104,7 @@
           (pair cord (each * (list mass)))
 +$  monk  (each ship (pair @tas @ta))
 +$  move  [=duct =ball]
-+$  ovum  $~  [/ %$ **]
-          (pair wire curd)
++$  ovum  (pair wire curd)
 ::
 +$  scry-sample
   [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
@@ -742,6 +741,30 @@
           ball.move  wite.ball.move
         ==
       ==
+    ::  +whey: measure memory usage
+    ::
+    ++  whey
+      ^-  (list mass)
+      =/  von
+        %+  turn  
+          (sort ~(tap by van) |=([[a=@tas *] [b=@tas *]] (aor a b)))
+        |=([lal=@tas =vane] (cat 3 %vane- lal)^vane)
+      ::
+      :~  :+  %reports  %|
+          %+  turn  von
+          =/  bem=beam  [[our %home da+now] /whey]
+          |=  [lal=@tas =vane]
+          =/  met  (need (need (peek ** ~ lal bem)))
+          lal^|+;;((list mass) q.q.met)
+      ::
+          :+  %caches  %|
+          %+  turn  von
+          |=([lal=@tas =vane] lal^&+worm.vane)
+      ::
+          :+  %dregs  %|
+          %+  turn  von
+          |=([lal=@tas =vane] lal^&+vase.vane)
+      ==
     ::  +peek: read from the entire namespace
     ::
     ++  peek
@@ -752,7 +775,6 @@
       ::  XX identity is defaulted to ship from beam
       ::
       =>  .(fur ?^(fur fur `[[%& p.bed] ~ ~]))
-      ::
       ::  XX vane and care are concatenated
       ::
       =/  lal  (end 3 1 ron)
@@ -766,7 +788,7 @@
       |=  [=wire gift=maze]
       ^-  [(unit ovum) _this]
       =/  ovo=ovum  [wire ;;(card q.p.gift)] 
-      ?:  ?=(?(%lyra %veer %wack) -.card.ovo)
+      ?:  ?=(?(%lyra %veer %wack %verb %whey) -.card.ovo)
         [`ovo this]
       [~ this(out [ovo out])]
     ::  +call: advance to target
@@ -1041,8 +1063,8 @@
   ^-  pram
   ?:  ?=([%345 *] ram)
     ram
-  =|  nub=debt:le:part
   ~|  ram+ram
+  =|  nub=debt:le:part
   [%345 nub(out ;;((list ovum) ram))]
 ::  $prim: old $pram
 ::  +drum: upgrade $prim to $pram, incompatible
@@ -1054,6 +1076,7 @@
 ++  come
   |=  [who=ship now=@da yen=@ rim=prim dub=vise nyf=pone]
   ^-  [(list ovum) *]
+  ~|  %come
   =/  fyn  (turn nyf |=([a=@tas b=vise] [a (slim b)]))
   =/  rum  (drum rim)
   (load who now yen rum (slim dub) fyn)
@@ -1062,6 +1085,7 @@
 ++  load
   |=  [who=ship now=@da yen=@ ram=pram dub=vase nyf=pane]
   ^-  [(list ovum) *]
+  ~|  %load
   =:  our  who
       eny  yen
       bud  dub
@@ -1076,6 +1100,8 @@
   |=  {now/@da hap/path}
   ^-  (unit (unit))
   ?~  hap  [~ ~ hoon-version]
+  ?:  =(hap /whey)
+    ``mass+(whey now)
   ((sloy peek:(lead now ~)) [[151 %noun] hap])
 ::  +poke: external apply
 ::
@@ -1090,8 +1116,7 @@
     (leap now (poke:(lead now ~) (dint p.ovo) ovo))
   ::  Process these events just as if they had come from a vane
   ::
-      ?(%lyra %veer %verb %wack)
-    (feck now ovo *debt:le:part)
+      ?(%lyra %veer %verb %wack %whey)  (feck now ovo *debt:le:part)
   ::  These external events (currently only %trim) are global
   ::  notifications, spammed to every vane
   ::
@@ -1143,6 +1168,16 @@
   ?:  ?=(%& -.zef)
     [p.zef arvo]
   (feck now [fec nub]:p.zef)
+::  +whey: report memory usage
+::
+++  whey
+  |=  now=@da
+  ^-  mass
+  :+  %arvo  %|
+  :~  hoon+&+pit
+      zuse+&+bud
+      vane+|+whey:(lead now ~)
+  ==
 ::  +feck: handle an effect from a vane
 ::
 ++  feck
@@ -1152,17 +1187,21 @@
   ?:  ?=(%lyra -.q.ovo)
     (vega now nub ;;([@ @] +.q.ovo))
   ?+  -.q.ovo  ~|(bad-fec+-.q.ovo !!)
+  ::  produce memory usage report
+  ::
+      %whey
+    =.  out.nub  [[p.ovo mass+(whey now)] out.nub]
+    (leap now (lead now `nub))
   ::  %verb: toggle event verbose event printfs
   ::
-      %verb  (leap(lac !lac) now (lead now `nub))
+      %verb
+    =.  lac  !lac
+    (leap now (lead now `nub))
   ::  %veer: install %zuse or vane
   ::
       %veer
     =.  soul  (veer our now q.ovo)
     (leap now (lead now `nub))
-  ::  %mass: add data to memory profile
-  ::
-      %mass  !!  ::  XX convert %mass to a spam
   ::  %wack: add entropy
   ::
       %wack

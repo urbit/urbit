@@ -489,20 +489,6 @@
         %private-keys
       (curd abet:~(private-keys ~(feed su hen our now pki etn) hen))
     ::
-        %wegh
-      %_    +>
-          moz
-        :_  moz
-        ^-  move
-        :^  hen  %give  %mass
-        ^-  mass
-        :+  %jael  %|
-        :~  pki+&+pki
-            etn+&+etn
-            dot+&+lex
-        ==
-      ==
-    ::
     ::  authenticated remote request
     ::    {$west p/ship q/path r/*}
     ::
@@ -1009,6 +995,12 @@
   ::
   ?.  =(lot [%$ %da now])  ~
   ?.  =(%$ ren)  [~ ~]
+  ?:  =(tyl /whey)
+    =/  maz=(list mass)
+      :~  pki+&+pki.lex
+          etn+&+etn.lex
+      ==
+    ``mass+!>(maz)
   ?+    syd
       ~
   ::
