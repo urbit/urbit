@@ -31,6 +31,15 @@ export default class GroupsApp extends Component {
     subscription.start(this.props.channel);
   }
 
+  componentWillUnmount() {
+    this.props.channel.delete();
+    store.firstRoundComplete = false;
+    store.secondRoundComplete = false;
+    store.handleEvent({
+      data: { clear: true }
+    });
+  }
+
   render() {
     const { state } = this;
 
