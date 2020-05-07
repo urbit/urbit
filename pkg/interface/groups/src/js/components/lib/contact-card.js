@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { EditElement } from '/components/lib/edit-element';
 import { Spinner } from './icons/icon-spinner';
 import { uxToHex } from '/lib/util';
+import { S3Upload } from '/components/lib/s3-upload';
 
 export class ContactCard extends Component {
   constructor(props) {
@@ -32,7 +33,8 @@ export class ContactCard extends Component {
     this.notesToSet = this.notesToSet.bind(this);
     this.setField = this.setField.bind(this);
     this.shareWithGroup = this.shareWithGroup.bind(this);
-    this.removeFromGroup = this.removeFromGroup.bind(this);
+    this.removeSelfFromGroup = this.removeSelfFromGroup.bind(this);
+    this.removeOtherFromGroup = this.removeOtherFromGroup.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -117,8 +119,7 @@ export class ContactCard extends Component {
           (state.avatarToSet === '') ||
           (
             Boolean(props.contact.avatar) &&
-            'url' in props.contact.avatar &&
-            state.avatarToSet === props.contact.avatar.url
+            state.avatarToSet === props.contact.avatar
           )
         ) {
           return false;
@@ -129,6 +130,7 @@ export class ContactCard extends Component {
             awaiting: true,
             type: 'Saving to group'
           }, (() => {
+            console.log(state.avatarToSet);
             api.contactEdit(props.path, ship, {
               avatar: {
                 url: state.avatarToSet
@@ -304,7 +306,7 @@ export class ContactCard extends Component {
       email: props.rootIdentity.email,
       phone: props.rootIdentity.phone,
       website: props.rootIdentity.website,
-      avatar: { url: props.rootIdentity.avatar },
+      avatar: !!props.rootIdentity.avatar ? { url: props.rootIdentity.avatar } : null,
       notes: props.rootIdentity.notes,
       color: uxToHex(props.rootIdentity.color)
     } : {
@@ -312,11 +314,11 @@ export class ContactCard extends Component {
       email: props.contact.email,
       phone: props.contact.phone,
       website: props.contact.website,
-      avatar: { url: props.contact.avatar },
+      avatar: !!props.contact.avatar ? { url: props.contact.avatar } : null,
       notes: props.contact.notes,
       color: props.contact.color
     };
-
+    
     const contact = {
       nickname: this.pickFunction(state.nickNameToSet, defaultVal.nickname),
       email: this.pickFunction(state.emailToSet, defaultVal.email),
@@ -324,8 +326,12 @@ export class ContactCard extends Component {
       website: this.pickFunction(state.websiteToSet, defaultVal.website),
       notes: this.pickFunction(state.notesToSet, defaultVal.notes),
       color: this.pickFunction(state.colorToSet, defaultVal.color),
-      avatar: this.pickFunction({ url: state.avatarToSet }, defaultVal.avatar)
+      avatar: this.pickFunction(
+        !!state.avatarToSet ? { url: state.avatarToSet } : null,
+        defaultVal.avatar
+      )
     };
+
     this.setState({ awaiting: true, type: 'Sharing with group' }, (() => {
       api.contactView.share(
         `~${props.ship}`, props.path, `~${window.ship}`, contact
@@ -335,7 +341,7 @@ export class ContactCard extends Component {
     }));
   }
 
-  removeFromGroup() {
+  removeSelfFromGroup() {
     const { props } = this;
     // share empty contact so that we can remove ourselves from group
     // if we haven't shared yet
@@ -355,12 +361,33 @@ export class ContactCard extends Component {
 
     this.setState({ awaiting: true, type: 'Removing from group' }, (() => {
       api.contactView.delete(props.path).then(() => {
-        const destination = (props.ship === window.ship)
-          ? '' : props.path;
         this.setState({ awaiting: false });
-        props.history.push(`/~groups${destination}`);
+        props.history.push(`/~groups`);
       });
     }));
+  }
+
+  removeOtherFromGroup() {
+    const { props } = this;
+
+    this.setState({ awaiting: true, type: 'Removing from group' }, (() => {
+      api.contactView.remove(props.path, `~${props.ship}`).then(() => {
+        this.setState({ awaiting: false });
+        props.history.push(`/~groups${props.path}`);
+      });
+    }));
+  }
+
+  uploadSuccess(url) {
+    this.setState({
+      avatarToSet: url
+    }, () => {
+      this.setField('avatar');
+    });
+  }
+
+  uploadError(error) {
+    //  no-op for now
   }
 
   renderEditCard() {
@@ -391,17 +418,28 @@ export class ContactCard extends Component {
     let currentColor = state.colorToSet ? state.colorToSet : defaultColor;
     currentColor = uxToHex(currentColor);
 
-    const hasAvatar =
-      'avatar' in props.contact && props.contact.avatar !== null;
+    const avatar = ('avatar' in props.contact && props.contact.avatar !== null)
+      ? <img className="dib h-auto"
+           width={128}
+           src={props.contact.avatar}
+        />
+      : <span className="dn"></span>;
 
-    const avatar = (hasAvatar)
-      ? <span>
-          <img className="dib h-auto"
-             width={128}
-             src={props.contact.avatar}
-          />
+    const imageSetter = (!props.share) ? (
+      <span className="db">
+        <p className="f9 gray2 db pb1">Avatar image url</p>
+        <span className="cf db">
+          <span className="w-20 fl pt1">
+            <S3Upload
+              className="fr pr3"
+              configuration={props.s3.configuration}
+              credentials={props.s3.credentials}
+              uploadSuccess={this.uploadSuccess.bind(this)}
+              uploadError={this.uploadError.bind(this)}
+            />
+          </span>
           <EditElement
-            title="Avatar Image URL"
+            className="fr w-80"
             defaultValue={defaultValue.avatar}
             onChange={this.avatarToSet}
             onDeleteClick={() => this.setField('removeAvatar')}
@@ -409,21 +447,14 @@ export class ContactCard extends Component {
             showButtons={!props.share}
           />
         </span>
-      : <span>
-          <EditElement
-            title="Avatar Image URL"
-            defaultValue={''}
-            onChange={this.avatarToSet}
-            onDeleteClick={() => this.setField('removeAvatar')}
-            onSaveClick={() => this.setField('avatar')}
-            showButtons={!props.share}
-          />
-      </span>;
+      </span>
+    ) : (<span className="dn"></span>);
 
     return (
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl pb8">
         <div className="w-100 mw6 tc">
           {avatar}
+          {imageSetter}
           <Sigil
             ship={props.ship}
             size={128}
@@ -638,7 +669,7 @@ export class ContactCard extends Component {
             className={
               'bg-gray0-d mv4 mh3 pa1 f9 red2 pointer flex-shrink-0 ' + adminOpt
             }
-            onClick={this.removeFromGroup}
+            onClick={props.ship === window.ship ? this.removeSelfFromGroup : this.removeOtherFromGroup}
           >
             {props.ship === window.ship
               ? 'Leave Group'
