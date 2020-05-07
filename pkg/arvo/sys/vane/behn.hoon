@@ -298,7 +298,9 @@
   ::
   ?.  ?=(%& -.why)
     ~
-  [~ ~ %tank !>(>timers<)]
+  ?.  ?=(%timers syd)
+    [~ ~]
+  [~ ~ %noun !>(timers)]
 ::
 ++  stay  state
 ++  take
