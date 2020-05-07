@@ -11,6 +11,7 @@ import Urlicht.RunicShow
 import qualified Urlicht.Core as C
 import Urlicht.Elab
 import Urlicht.Elaborate
+import Urlicht.Env
 import qualified Urlicht.HoonToSimple as H2S
 --import qualified Urlicht.Simple as S
 import qualified Urlicht.SimpleToCoreHack as S2C
@@ -20,7 +21,7 @@ udemo :: Text -> IO ()
 udemo prog = runElabIO do
   s <- H2S.down . CST.abstractify <$> parse prog
   putStrLn ("SIMPLE:\n" <> runic s)
-  (t, c) <- infer [] s
+  (t, c) <- infer emptyEnv s
   t <- crank t
   c <- zonk c
   putStrLn ("ELABORATED:\n" <> runic c)

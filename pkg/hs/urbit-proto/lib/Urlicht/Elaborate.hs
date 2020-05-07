@@ -12,44 +12,24 @@ import Control.Monad.Morph (hoist)
 
 import Urlicht.Core
 import Urlicht.Elab
+import Urlicht.Env
 import Urlicht.Errors
 import qualified Urlicht.Simple as S
 import Urlicht.Unify
 
--- | Tracks the types of bound variables. It looks pretty inefficient, but
--- the other solutions I've come up with or seen so far are at least as bad.
--- Take succor in that it doesn't do worse than 141, well, except in bind.
--- But because of laziness, the cost is passed on to the consumer!
---
--- Kovacs (and I suppose Brady too) also stores the value associated with
--- a let binder, but for the life of me I can't figure out why. Does it
--- somehow give more specificity to unification solutions?
-type Env a = [(a, Type a)]
-
-scry :: Eq a => Env a -> a -> Maybe (Type a)
-scry = flip lookup
-
-scope :: Env a -> [a]
-scope = map fst
-
-bind :: Env a -> Type a -> Env (Var () a)
-bind bs t = (B (), fmap F t) : fmap (\(x, v) -> (F x, fmap F v)) bs
-
 -- | To elaborate a hole we create a new meta and apply it to all the vars
 -- in scope. Kovacs is able to eliminate shadowed vars lol.
---
--- TODO don't add let-bound vars to the spine.
 newMetaWithSpine :: Elab m => Env a -> m (Core a)
 newMetaWithSpine env = do
   m <- freshMeta
-  pure $ foldr (flip App) (Met m) (Var <$> scope env)
+  pure $ foldr (flip App) (Met m) (Var <$> unknowns env)
 
 freshFun :: Elab m => Env a -> m (Type a, Scope B Type a)
 freshFun env = do
   a <- newMetaWithSpine env
   -- FIXME maybe we really do need to eval relative to a context with lets
   let v = eval a
-  b <- newMetaWithSpine (bind env v)
+  b <- newMetaWithSpine (bind env $ Fun' v)
   pure (v, toScope (eval b))
 
 -- Gamma |- e : t
@@ -73,15 +53,16 @@ check env simp ty = do
     (S.Lam ss, VFun t st) ->
       -- TODO avoid fromScope/toScope
       Lam . toScope <$>
-        check (bind env t) (fromScope ss) (fromScope st)
+        check (bind env $ Lam' t) (fromScope ss) (fromScope st)
     (S.Lam{}, _) -> checkInfer
     (S.App{}, _) -> checkInfer
     (S.Let tyRhs sRhs sBody, _) -> do
       cTyRhs <- check env tyRhs VTyp
       let vTyRhs = eval cTyRhs
       cRhs <- check env sRhs vTyRhs
+      let vRhs = eval cRhs
       Let cTyRhs cRhs . toScope <$>
-        check (bind env vTyRhs) (fromScope sBody) (F <$> ty)
+        check (bind env $ Let' vTyRhs vRhs) (fromScope sBody) (F <$> ty)
     (S.Hol, _) -> newMetaWithSpine env
     (S.Asc sExp sTy, _) -> do
       ty' <- check env sTy VTyp
@@ -91,13 +72,13 @@ check env simp ty = do
 infer :: (Eq a, Elab m) => Env a -> S.Simple a -> m (Type a, Core a)
 infer env = \case
   S.Var x -> case scry env x of
-    Just ty -> pure (ty, Var x)
+    Just ty -> pure (binderTy ty, Var x)
     Nothing -> report EName
   S.Met m -> error "error: elaborating a raw metavariable"
   S.Typ -> pure (VTyp, Typ)
   S.Fun s ss -> do
     c <- check env s VTyp
-    sc <- toScope <$> check (bind env (eval c)) (fromScope ss) VTyp
+    sc <- toScope <$> check (bind env $ Fun' (eval c)) (fromScope ss) VTyp
     pure (VTyp, Fun c sc)
   S.Lam ss -> do
     (t, st) <- freshFun env
@@ -122,7 +103,8 @@ infer env = \case
     cTyRhs <- check env tyRhs VTyp
     let vTyRhs = eval cTyRhs
     cRhs <- check env sRhs vTyRhs
-    (tyBod, cBod) <- infer (bind env vTyRhs) (fromScope sBod)
+    let vRhs = eval cRhs
+    (tyBod, cBod) <- infer (bind env $ Let' vTyRhs vRhs) (fromScope sBod)
     -- I guess evaluating with let rhs would be nice here
     let tyBod' = eval $ quote tyBod >>= unvar (const cRhs) Var
     pure (tyBod', Let cTyRhs cRhs (toScope cBod))
