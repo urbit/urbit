@@ -1,16 +1,27 @@
 |%
++$  tiles          (map term tile)
++$  tile-ordering  (list term)
+::
 +$  tile
-  $%  [%basic basic-tile]
+  $:  type=tile-type
+      is-shown=?
   ==
 ::
-+$  basic-tile
-  $:  title=cord
-      icon-url=cord
-      linked-url=cord
++$  tile-type
+  $%  [%basic title=cord icon-url=cord linked-url=cord]
+      [%custom ~]
   ==
 ::
 +$  action
-  $%  [%add name=@tas subscribe=path url=@t]
-      [%remove name=@tas subscribe=path]
+  $%  [%add name=term =tile]
+      [%remove name=term]
+      [%change-order =tile-ordering]
+      [%change-is-shown name=term is-shown=?]
+  ==
+::
++$  update
+  $%  [%initial =tiles =tile-ordering]
+      [%keys keys=(set term)]
+      action
   ==
 --
