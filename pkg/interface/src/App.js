@@ -9,6 +9,7 @@ import ChatApp from './apps/chat/ChatApp';
 import DojoApp from './apps/dojo/DojoApp';
 import StatusBar from './components/StatusBar';
 import GroupsApp from './apps/groups/GroupsApp';
+import LinksApp from './apps/links/LinksApp';
 
 // const Style = createGlobalStyle`
 //   ${cssReset}
@@ -31,9 +32,10 @@ const Root = styled.div`
 const Home = () => (
   <div>
     Home
-    <Link to='/~chat'>Chat</Link>
-    <Link to='/~dojo'>Dojo</Link>
-    <Link to='/~groups'>Groups</Link>
+    <Link className="db" to='/~chat'>Chat</Link>
+    <Link className="db" to='/~dojo'>Dojo</Link>
+    <Link className="db" to='/~groups'>Groups</Link>
+    <Link className="db" to='/~link'>Links</Link>
     {/* <Link to='/~publish'>Publish</Link> */}
   </div>
 );
@@ -67,6 +69,10 @@ export default class App extends React.Component {
               />
               <Route path="/~groups" render={
                 p => <GroupsApp ship={this.ship} channel={this.channel} {...p} />
+              }
+              />
+              <Route path="/~link" render={
+                p => <LinksApp ship={this.ship} channel={this.channel} {...p} />
               }
               />
             </div>

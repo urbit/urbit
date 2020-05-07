@@ -6,7 +6,7 @@ import { deSig } from '../../../lib/util';
 import { ChatTabBar } from './lib/chat-tabbar';
 import { MemberElement } from './lib/member-element';
 import { InviteElement } from './lib/invite-element';
-import { SidebarSwitcher } from './lib/icons/icon-sidebar-switch.js';
+import { SidebarSwitcher } from '../../../components/SidebarSwitch';
 
 export class MemberScreen extends Component {
   render() {
@@ -72,6 +72,7 @@ export class MemberScreen extends Component {
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
             popout={this.props.popout}
+            api={this.props.api}
           />
           <Link to={'/~chat/' + isinPopout + 'room' + props.station}
           className="pt2 white-d"

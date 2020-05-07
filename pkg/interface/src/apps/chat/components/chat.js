@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { ResubscribeElement } from './lib/resubscribe-element';
 import { BacklogElement } from './lib/backlog-element';
 import { Message } from './lib/message';
-import { SidebarSwitcher } from './lib/icons/icon-sidebar-switch.js';
+import { SidebarSwitcher } from '../../../components/SidebarSwitch';
 import { ChatTabBar } from './lib/chat-tabbar';
 import { ChatInput } from './lib/chat-input';
 import { UnreadNotice } from './lib/unread-notice';
@@ -495,6 +495,7 @@ ref={(e) => {
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
             popout={this.props.popout}
+            api={this.props.api}
           />
           <Link to={'/~chat/' + isinPopout + 'room' + props.station}
           className="pt2 white-d"
