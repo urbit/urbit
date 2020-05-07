@@ -1386,10 +1386,6 @@
       ~&  acl
       `state
     ::
-        %json
-      ~&  jon=!<(json vase)
-      `state
-    ::
         %wipe
       ~&  %dojo-wipe
       =.  hoc
