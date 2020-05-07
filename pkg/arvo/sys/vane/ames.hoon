@@ -373,15 +373,8 @@
 ::
 +|  %atomics
 ::
-+$  bone           @udbone
-+$  fragment       @uwfragment
-+$  fragment-num   @udfragmentnum
-+$  message-blob   @udmessageblob
-+$  message-num    @udmessagenum
 +$  private-key    @uwprivatekey
-+$  public-key     @uwpublickey
 +$  signature      @uwsignature
-+$  symmetric-key  @uwsymmetrickey
 ::  $rank: which kind of ship address, by length
 ::
 ::    0: galaxy or star -- 2  bytes
@@ -465,13 +458,6 @@
 ::  $naxplanation: nack trace; explains which message failed and why
 ::
 +$  naxplanation  [=message-num =error]
-::  $ack: positive ack, nack packet, or nack trace
-::
-+$  ack
-  $%  [%ok ~]
-      [%nack ~]
-      [%naxplanation =error]
-  ==
 ::
 +|  %statics
 ::
@@ -498,237 +484,6 @@
 +$  bug
   $:  veb=_veb-all-off
       ships=(set ship)
-  ==
-::  $ship-state: all we know about a peer
-::
-::    %alien: no PKI data, so enqueue actions to perform once we learn it
-::    %known: we know their life and public keys, so we have a channel
-::
-+$  ship-state
-  $%  [%alien alien-agenda]
-      [%known peer-state]
-  ==
-::  $alien-agenda: what to do when we learn a peer's life and keys
-::
-::    messages: pleas local vanes have asked us to send
-::    packets: packets we've tried to send
-::    heeds: local tracking requests; passed through into $peer-state
-::
-+$  alien-agenda
-  $:  messages=(list [=duct =plea])
-      packets=(set =blob)
-      heeds=(set duct)
-  ==
-::  $peer-state: state for a peer with known life and keys
-::
-::    route: transport-layer destination for packets to peer
-::    qos: quality of service; connection status to peer
-::    ossuary: bone<->duct mapper
-::    snd: per-bone message pumps to send messages as fragments
-::    rcv: per-bone message sinks to assemble messages from fragments
-::    nax: unprocessed nacks (negative acknowledgments)
-::         Each value is ~ when we've received the ack packet but not a
-::         nack-trace, or an error when we've received a nack-trace but
-::         not the ack packet.
-::
-::         When we hear a nack packet or an explanation, if there's no
-::         entry in .nax, we make a new entry. Otherwise, if this new
-::         information completes the packet+nack-trace, we remove the
-::         entry and emit a nack to the local vane that asked us to send
-::         the message.
-::    heeds: listeners for %clog notifications
-::
-+$  peer-state
-  $:  $:  =symmetric-key
-          =life
-          =public-key
-          sponsor=ship
-      ==
-      route=(unit [direct=? =lane])
-      =qos
-      =ossuary
-      snd=(map bone message-pump-state)
-      rcv=(map bone message-sink-state)
-      nax=(set [=bone =message-num])
-      heeds=(set duct)
-  ==
-::  $qos: quality of service; how is our connection to a peer doing?
-::
-::    .last-contact: last time we heard from peer, or if %unborn, when
-::    we first started tracking time
-::
-+$  qos
-  $~  [%unborn *@da]
-  [?(%live %dead %unborn) last-contact=@da]
-::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
-::
-::    The first bone is 0. They increment by 4, since each flow includes
-::    a bit for each message determining forward vs. backward and a
-::    second bit for whether the message is on the normal flow or the
-::    associated diagnostic flow (for naxplanations).
-::
-::    The least significant bit of a $bone is:
-::    1 if "forward", i.e. we send %plea's on this flow, or
-::    0 if "backward", i.e. we receive %plea's on this flow.
-::
-::    The second-least significant bit is 1 if the bone is a
-::    naxplanation bone, and 0 otherwise.  Only naxplanation
-::    messages can be sent on a naxplanation bone, as %boon's.
-::
-+$  ossuary
-  $:  =next=bone
-      by-duct=(map duct bone)
-      by-bone=(map bone duct)
-  ==
-::  $message-pump-state: persistent state for |message-pump
-::
-::    Messages queue up in |message-pump's .unsent-messages until they
-::    can be packetized and fed into |packet-pump for sending.  When we
-::    pop a message off .unsent-messages, we push as many fragments as
-::    we can into |packet-pump, which sends every packet it eats.
-::    Packets rejected by |packet-pump are placed in .unsent-fragments.
-::
-::    When we hear a packet ack, we send it to |packet-pump to be
-::    removed from its queue of unacked packets.
-::
-::    When we hear a message ack (positive or negative), we treat that
-::    as though all fragments have been acked.  If this message is not
-::    .current, then this ack is for a future message and .current has
-::    not yet been acked, so we place the ack in .queued-message-acks.
-::
-::    If we hear a message ack before we've sent all the fragments for
-::    that message, clear .unsent-fragments and have |packet-pump delete
-::    all sent fragments from the message. If this early message ack was
-::    positive, print it out because it indicates the peer is not
-::    behaving properly.
-::
-::    If the ack is for the current message, have |packet-pump delete
-::    all packets from the message, give the message ack back
-::    to the client vane, increment .current, and check if this next
-::    message is in .queued-message-acks.  If it is, emit the message
-::    (n)ack, increment .current, and check the next message.  Repeat
-::    until .current is not fully acked.
-::
-::    The following equation is always true:
-::    .next - .current == number of messages in flight
-::
-::    At the end of a task, |message-pump sends a %halt task to
-::    |packet-pump, which can trigger a timer to be set or cleared based
-::    on congestion control calculations. When the timer fires, it will
-::    generally cause a packet to be re-sent.
-::
-::    Message sequence numbers start at 1 so that the first message will
-::    be greater than .last-acked.message-sink-state on the receiver.
-::
-::    current: sequence number of earliest message sent or being sent
-::    next: sequence number of next message to send
-::    unsent-messages: messages to be sent after current message
-::    unsent-fragments: fragments of current message waiting for sending
-::    queued-message-acks: future message acks to be applied after current
-::    packet-pump-state: state of corresponding |packet-pump
-::
-+$  message-pump-state
-  $:  current=_`message-num`1
-      next=_`message-num`1
-      unsent-messages=(qeu message-blob)
-      unsent-fragments=(list static-fragment)
-      queued-message-acks=(map message-num ack)
-      =packet-pump-state
-  ==
-+$  static-fragment
-  $:  =message-num
-      num-fragments=fragment-num
-      =fragment-num
-      =fragment
-  ==
-::  $packet-pump-state: persistent state for |packet-pump
-::
-::    next-wake: last timer we've set, or null
-::    live: packets in flight; sent but not yet acked
-::    metrics: congestion control information
-::
-+$  packet-pump-state
-  $:  next-wake=(unit @da)
-      live=(tree [live-packet-key live-packet-val])
-      metrics=pump-metrics
-  ==
-::  $pump-metrics: congestion control state for a |packet-pump
-::
-::    This is an Ames adaptation of TCP's Reno congestion control
-::    algorithm.  The information signals and their responses are
-::    identical to those of the "NewReno" variant of Reno; the
-::    implementation differs because Ames acknowledgments differ from
-::    TCP's, because this code uses functional data structures, and
-::    because TCP's sequence numbers reset when a peer becomes
-::    unresponsive, whereas Ames sequence numbers only change when a
-::    ship breaches.
-::
-::    A deviation from Reno is +fast-resend-after-ack, which re-sends
-::    timed-out packets when a peer starts responding again after a
-::    period of unresponsiveness.
-::
-::    If .skips reaches 3, we perform a fast retransmit and fast
-::    recovery.  This corresponds to Reno's handling of "three duplicate
-::    acks".
-::
-::    rto: retransmission timeout
-::    rtt: roundtrip time estimate, low-passed using EWMA
-::    rttvar: mean deviation of .rtt, also low-passed with EWMA
-::    num-live: how many packets sent, awaiting ack
-::    ssthresh: slow-start threshold
-::    cwnd: congestion window; max unacked packets
-::
-+$  pump-metrics
-  $:  rto=_~s1
-      rtt=_~s1
-      rttvar=_~s1
-      ssthresh=_10.000
-      cwnd=_1
-      num-live=@ud
-      counter=@ud
-  ==
-+$  live-packet
-  $:  key=live-packet-key
-      val=live-packet-val
-  ==
-+$  live-packet-key
-  $:  =message-num
-      =fragment-num
-  ==
-+$  live-packet-val
-  $:  packet-state
-      num-fragments=fragment-num
-      =fragment
-  ==
-+$  packet-state
-  $:  last-sent=@da
-      retries=@ud
-      skips=@ud
-  ==
-::  $message-sink-state: state of |message-sink to assemble messages
-::
-::    last-acked: highest $message-num we've fully acknowledged
-::    last-heard: highest $message-num we've heard all fragments on
-::    pending-vane-ack: heard but not processed by local vane
-::    live-messages: partially received messages
-::
-+$  message-sink-state
-  $:  last-acked=message-num
-      last-heard=message-num
-      pending-vane-ack=(qeu [=message-num message=*])
-      live-messages=(map message-num partial-rcv-message)
-      nax=(set message-num)
-  ==
-::  $partial-rcv-message: message for which we've received some fragments
-::
-::    num-fragments: total number of fragments in this message
-::    num-received: how many fragments we've received so far
-::    fragments: fragments we've received, eventually producing a $message
-::
-+$  partial-rcv-message
-  $:  num-fragments=fragment-num
-      num-received=fragment-num
-      fragments=(map fragment-num fragment)
   ==
 ::
 +|  %dialectics
@@ -1196,32 +951,19 @@
   ?.  =([%& our] why)
     [~ ~]
   ?+    syd  ~
+      %peers
+    ?^  tyl  [~ ~]
+    :^  ~  ~  %noun
+    !>  ^-  (map ship ?(%alien %known))
+    (~(run by peers.ames-state) head)
+  ::
       %peer
     ?.  ?=([@ ~] tyl)  [~ ~]
     =/  who  (slaw %p i.tyl)
     ?~  who  [~ ~]
-    =/  per  (~(get by peers.ames-state) u.who)
-    =/  res
-      ?-  per
-        ~             %unknown
-        [~ %alien *]  %alien
-        [~ %known *]
-        =,  u.per
-        :*  %known
-            symkeymug=(mug symmetric-key)
-            life=life
-            pubkey=public-key
-            sponsor=sponsor
-            route=route
-            qos=qos
-            ossuary=ossuary
-            snd=~(key by snd)
-            rcv=~(key by rcv)
-            nax=nax
-            heeds=heeds
-        ==
-      ==
-    ``noun+!>(!>(res))
+    ?~  peer=(~(get by peers.ames-state) u.who)
+      [~ ~]
+    ``noun+!>(u.peer)
   ::
       %bones
     ?.  ?=([@ ~] tyl)  [~ ~]
