@@ -1114,6 +1114,11 @@
     ::  Normal events are routed to a single vane
     ::
     (leap now (poke:(lead now ~) (dint p.ovo) ovo))
+  ::  Print warning and no-op.
+  ::
+      %warn
+    =+  (mule |.(((slog ;;(tank q.q.ovo) ~) ~)))
+    [~ arvo]
   ::  Process these events just as if they had come from a vane
   ::
       ?(%lyra %veer %verb %wack %whey)  (feck now ovo *debt:le:part)
