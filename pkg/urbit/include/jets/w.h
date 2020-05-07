@@ -89,6 +89,7 @@
     u3_noun u3wdb_put(u3_noun);
 #   define u3wdb_tap u3wdi_tap
     u3_noun u3wdb_uni(u3_noun);
+    u3_noun u3wdb_run(u3_noun);
 
     u3_noun u3wdi_bif(u3_noun);
     u3_noun u3wdi_del(u3_noun);
