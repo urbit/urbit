@@ -12,6 +12,7 @@ project ./. ({ ... }: {
   packages = {
     urbit-atom = ../../hs/urbit-atom;
     urbit-uruk = ../../hs/urbit-uruk;
+    urbit-uruk-rts = ../../hs/urbit-uruk-rts;
   };
   android.applicationId = "systems.obsidian.obelisk.examples.minimal";
   android.displayName = "Obelisk Minimal Example";

@@ -11,6 +11,7 @@ library
                , obelisk-route
                , urbit-atom
                , urbit-uruk
+               , urbit-uruk-rts
                , jsaddle
                , reflex-dom
                , reflex
@@ -30,6 +31,7 @@ executable frontend
                , common
                , urbit-atom
                , urbit-uruk
+               , urbit-uruk-rts
                , obelisk-frontend
                , obelisk-route
                , reflex-dom

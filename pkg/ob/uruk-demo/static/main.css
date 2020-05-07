@@ -85,7 +85,7 @@ input[type='checkbox'] {
 }
 
 .toggle:checked + .label-toggle + .collapsible-content {
-  max-height: 100vh;
+  max-height: none;
 }
 
 .toggle:checked + .label-toggle::before {

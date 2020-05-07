@@ -27,19 +27,25 @@ import Control.Monad.Fix           (MonadFix)
 import Language.Javascript.JSaddle (eval, liftJSM)
 import Prelude                     ()
 import System.IO.Unsafe            (unsafePerformIO)
-import Urbit.Moon.Repl             (evalText, evalTextFast)
+import Urbit.Moon.Repl             (evalText, evalText')
 import Urbit.Uruk.UrukDemo         (Env, EvalResult(..), Exp, Inp(..),
                                     InpResult(..))
 import Urbit.Uruk.UrukDemo         (execInp, execText, parseInps,
                                     prettyInpResult)
+import Urbit.UrukRTS               (dumpEventsFile, toJSON, vProfDone)
 
 import qualified Data.Text          as T
 import qualified Data.Text.Encoding as T
+
+import qualified Urbit.Moon.MoonToUruk as MU
+import qualified Urbit.UrukRTS.Types   as RTS
 
 --------------------------------------------------------------------------------
 
 thinking :: Text
 thinking = "Thinking..."
+
+evalTextFast = evalText' (pure . MU.strictOlegFile' (id :: RTS.Val -> RTS.Val))
 
 fastResult
   :: ( TriggerEvent t m
@@ -92,7 +98,7 @@ urukResult envTxt = do
   holdDyn think e
 
 
-urukResult2
+urukResultTrace
   :: ( TriggerEvent t m
      , MonadHold t m
      , Reflex t
@@ -101,10 +107,12 @@ urukResult2
      )
   => Dynamic t (Text)
   -> m (Dynamic t (Either Text (Env, [InpResult])))
-urukResult2 envTxt = do
+urukResultTrace envTxt = do
   (e, f) <- newTriggerEvent
   let think = Left thinking
 
+  -- This part of the demo can't use the fast RTS: the point of these demo
+  -- parts are that we show the the individual reduction steps to the user.
   let goInp :: Text -> Either Text (Env, [InpResult])
       goInp txt = parseInps txt >>= inpSeq (mempty :: Env)
 
@@ -434,7 +442,7 @@ reduceDemo input = do
     -- value.
 
 --    envD  <- constDyn (mempty :: Env)
-    resD  <- urukResult2 val --(zipDyn envD val)
+    resD  <- urukResultTrace val --(zipDyn envD val)
 
     -- TODO: If we stuff the initial input into the input element and live
     -- update it, we don't really want an Execute button, but a Reset one.
@@ -675,7 +683,7 @@ frontend = Frontend
           "natural number."
           ]
 
-      reduceDemo "(D (S K K K))"
+      reduceDemo "(D (S K K))"
 
       paragraph [
         "The D combinator is never run in practice though. Nock's big idea ",
