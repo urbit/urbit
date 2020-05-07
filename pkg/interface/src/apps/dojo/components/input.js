@@ -85,6 +85,7 @@ render() {
         autoCorrect="false"
         autoFocus={true}
         className="mono ml1 flex-auto dib w-100"
+        id="dojo"
         cursor={this.props.cursor}
         onClick={e => store.setState({ cursor: e.target.selectionEnd })}
         onKeyDown={this.keyPress}
