@@ -503,6 +503,14 @@ storageDemo inputLines = do
 paragraph :: (DomBuilder t m) => [Text] -> m ()
 paragraph x = el "p" (text $ unlines x)
 
+--ul :: (DomBuilder t m) => m () -> m ()
+ul x = el "ul" x
+
+li :: (DomBuilder t m) => [Text] -> m ()
+li x = el "li" (text $ unlines x)
+
+
+
 -- This runs in a monad that can be run on the client or the server.
 -- To run code in a pure client or pure server context, use one of the
 -- `prerender` functions.
@@ -533,12 +541,76 @@ frontend = Frontend
       "and you can edit it to play with it."
       ]
 
+    urdocSection "Why not Nock 4K+?" "why-not" $ do
+      paragraph [
+        "Nock was designed to be the virtual machine for a user-controlled ",
+        "computer. Aspirationally:"
+        ]
+
+      ul $ do
+        li [
+          "Nock was supposed to be so small as to be trivial for anyone to ",
+          "implement their own interpreter because of its simple nature and ",
+          "short specification, meaning that it would be easy for there to ",
+          "be a diversity of interpreters available."
+          ]
+
+        el "li" $ do
+          text "Nock was supposed to be as small as possible and perfect."
+          el "i" (text "\"Tiny and diamond perfect.\"")
+
+      paragraph [
+        "In practice, Nock 4K is none of those things."
+        ]
+
+      paragraph [
+        "Vere is the only semi-performant Nock interpreter available. While ",
+        "writing one is an interesting exercise, making it performant is ",
+        "seriously difficult because of Nock's semantics. Being able to ",
+        "edit any part of your state makes optimization difficult, and the ",
+        "semantics where jet hints attach to the returned value of a ",
+        "computation make jet matching significantly more difficult than it ",
+        "has to be."
+        ]
+
+      paragraph [
+        "And yet here we all are. Nock 4K is not good enough, but has an ",
+        "interesting set of features and innovations which are good and which ",
+        "we should keep. Mainly:"
+        ]
+
+      ul $ do
+        li [
+          "You should design your low level runtime so that everything is ",
+          "formally specified in your core language without any FFI or other ",
+          "cheating."
+          ]
+
+        li [
+          "You should design your low level runtime so you can recognize ",
+          "formal specifications and use optimized implementations at runtime.",
+          "Jets are a legitimate innovation of Nock and have been copied by ",
+          "other systems."
+          ]
+
+        li [
+          "Your system is event based. Your system state is a function which ",
+          "takes input and returns side effects and an updated function."
+          ]
+
+        li [
+          "Your entire system state is a value and this value is portable ",
+          "across interpreters."
+          ]
+
+
     urdocSection "The Basic Reduction Rules" "basic-reduction" $ do
       paragraph [
-        "What's the smallest practical combinator? Nock claim to fame is that",
-        " it fits on a T-Shirt, but it's...",
-        "",
-        " [Some more copy about simplicity, etc.]"
+        "What's the smallest practical combinator? Let's first list the ",
+        "features we need: we need to be able to perform any computation, ",
+        "we need to be able to virtualize computations, and we need to be ",
+        "able to recognize functions and values and replace them with jetted ",
+        "versions to make runtime practical."
         ]
 
       elAttr "pre" ("class" =: "docs") $ do
@@ -553,6 +625,8 @@ frontend = Frontend
           ]
 
       paragraph [
+        "The first four rules give us the strict SK calculus with a well ",
+        "defined reduction ordering. ",
         "Let's go over the rules one by one. The first reduction is the K ",
         "combinator. The K combinator returns its first argument and discards ",
         "its second:"
@@ -581,13 +655,25 @@ frontend = Frontend
       reduceDemo "(S K (S K) (S K K))"
 
       paragraph [
-        "That's it for the core of the SK system we have in Uruk. In addition ",
-        "to the core SK calculus, we have two more built-in combinators. The ",
-        "first is D, which dumps any Uruk expression as a Church-encoded ",
-        "natural number. We have this to support +mock style virtualization; ",
-        "since Uruk isn't homoiconic, we need a way to be able to implement ",
-        "an Uruk interpreter in Uruk which can interpret code from this level."
+        "That's it for the core of the SK system we have in Uruk."
         ]
+
+      el "p" $ do
+        text $ unlines [
+          "Our next requirement is being able to virtualize computations: we ",
+          "must have a way of running a function which we don't know if it ",
+          "will error by infinite looping. We thus need to be able to declare ",
+          "a +mock function with the signature "
+          ]
+
+        el "code" (text "a -> Maybe a")
+
+        text $ unlines [
+          ". Nock 4K supports virtualization by being homiconic, but since ",
+          "Uruk isn't homoiconic, we support this by having a dedicated Dump ",
+          "combinator that dumps any Uruk expression as a Church-encoded ",
+          "natural number."
+          ]
 
       reduceDemo "(D (S K K K))"
 
@@ -601,6 +687,9 @@ frontend = Frontend
         ]
 
       paragraph [
+        "Our final requirement is making functions in code legible to the ",
+        "interpreter, so that they can be replaced with optimized native ",
+        "code, if available. ",
         "The J combinator specifies a jet. The jet is a number of J letters ",
         "which specify the arity of the function, a tag which is only used ",
         "for matching, the function being jetted, and then the number of ",
@@ -622,9 +711,19 @@ frontend = Frontend
 
       paragraph [
         "In Nock 4K, the hint tag annotates the return value of an expression,",
-        " so if an expression returns a gate, the interpreter must remember ",
-        "an extra bit of matching information. In Uruk, there's no need to ",
-        "do that because the jet matching happens at reduction time."
+        " so if an expression returns a function, the interpreter must ",
+        "remember an extra bit of matching information. In Uruk, there's no ",
+        "need to do that because the jet matching happens at reduction time, ",
+        "allowing for both faster jet matching, and ahead of time ",
+        "optimizations."
+        ]
+
+      paragraph [
+        "Unlike Nock 4K, we don't bake in natural numbers or cons cells. ",
+        "Everything is made up of the unenriched lambda calculus, including ",
+        "numbers which are Church numerals. We can make this fast by doing ",
+        "data jetting, where we use jets to match the Church numeral ",
+        "functions and replace them in the interpreter with integers."
         ]
 
     ---------------------------------------------------------------------------
@@ -633,7 +732,7 @@ frontend = Frontend
       paragraph [
         "Building a new high performance functional VM is nice, but we also ",
         "want it to be a compile target for something like Hoon. So, as a ",
-        "feasibility proof, let produce a non-typed variant of Hoon and make ",
+        "feasibility proof, lets produce a non-typed variant of Hoon and make ",
         "sure we can compile it to Uruk."
         ]
 
