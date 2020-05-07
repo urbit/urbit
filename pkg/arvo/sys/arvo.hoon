@@ -3,8 +3,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 !:
 ~>  %slog.[0 leaf+"arvo: assembly"]
-=-  ~>  %slog.[0 leaf+"arvo: assembled"]
-    -
+~<  %slog.[0 leaf+"arvo: assembled"]
 =<  ::
     ::  Arvo formal interface
     ::
@@ -1000,8 +999,7 @@
               ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
                 [~ +>.$]
               ~>  %slog.[0 leaf+"arvo: metamorphosis"]
-              =-  ~>  %slog.[0 leaf+"arvo: metamorphosed"]
-                  -
+              ~<  %slog.[0 leaf+"arvo: metamorphosed"]
               =/  nyf
                 (turn vanes.^poke |=([label=@tas =vane] [label vase.vane]))
               (load u.who now u.eny *pram u.bod nyf)
@@ -1117,7 +1115,9 @@
   ::  Print warning and no-op.
   ::
       %warn
-    =+  (mule |.(((slog ;;(tank q.q.ovo) ~) ~)))
+    ?:  =(%& -:(mule |.(((slog ;;(tank q.q.ovo) ~) ~))))
+      [~ arvo]
+    ~>  %slog.[0 leaf+"arvo: %warn print-fail"]
     [~ arvo]
   ::  Process these events just as if they had come from a vane
   ::
