@@ -1635,6 +1635,9 @@ static c3_c* _141_two__in_ha[] = {
     "2cc9f005fde5314e9ad545286493a8c81b5c3b775d645ad82954f405d9414a32",
     0
   };
+
+  static u3j_harm _141_two__by_run_a[] = {{".2", u3wdb_run, c3y}, {}};
+
   static u3j_harm _141_two__by_tap_a[] = {{".2", u3wdb_tap, c3y}, {}};
   static c3_c* _141_two__by_tap_ha[] = {
     "7dde59e2bd7684e785ce9787bc394571bd1216d7a62398c703447fc951c6b352",
@@ -1655,6 +1658,7 @@ static u3j_core _141_two__by_d[] =
     // { "int", 7, _141_two__by_int_a, 0, _141_two__by_int_ha },
     { "jab", 7, _141_two__by_jab_a, 0, _141_two__by_jab_ha },
     { "put", 7, _141_two__by_put_a, 0, _141_two__by_put_ha },
+    { "run", 7, _141_two__by_run_a },
     { "tap", 7, _141_two__by_tap_a, 0, _141_two__by_tap_ha },
     // { "uni", 7, _141_two__by_uni_a, 0, _141_two__by_uni_ha },
     {}

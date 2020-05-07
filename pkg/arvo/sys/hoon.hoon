@@ -1619,6 +1619,7 @@
     [-.f a(l +.e, r +.f)]
   ::
   ++  run                                               ::  apply gate to values
+    ~/  %run
     |*  b/gate
     |-
     ?~  a  a
