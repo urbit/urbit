@@ -242,8 +242,7 @@
 ++  handle-build
   |=  [=path =gift:able:ford]
   ^-  (quip card _state)
-  ?.  ?=([%made *] gift)
-    [~ state]
+  ?>  ?=([%made *] gift)
   ?.  ?=([%complete *] result.gift)
     [~ state]
   =/  uri=@t
