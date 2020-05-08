@@ -1,33 +1,56 @@
-module Deppy.RunicShow where
+module Urbit.Urlicht.RunicShow where
 
 import ClassyPrelude
 
 import Data.Function ((&))
+import qualified Data.Text as T
+import Data.Void
 
-import qualified Data.Text  as T
-import qualified Deppy.Core as D
-import qualified Deppy.CST  as C
-import qualified Deppy.Hoon as H
+import qualified Urbit.Urlicht.CST as C
+import qualified Urbit.Urlicht.Hoon as H
+import qualified Urbit.Urlicht.HoonToSimple as H2S
+import qualified Urbit.Urlicht.Simple as S
+import qualified Urbit.Urlicht.SimpleToCoreHack as S2C
+import qualified Urbit.Urlicht.Core as Core
+import qualified Urbit.Urlicht.Errors as E
+import qualified Urbit.Urlicht.Meta as Meta
 import qualified Urbit.Noun as N
 
 class RunicShow a where
-  runic :: a -> String
+  runic :: a -> Text
 
 instance RunicShow C.CST where
-  runic = unpack . tall . toRunic
+  runic = tall . toRunic
 
 instance RunicShow (H.Hoon Text) where
   runic = runic . C.concretize
 
-instance RunicShow (D.Exp Text) where
-  runic = runic . H.resugar
+instance RunicShow (S.Simple Text) where
+  runic = runic . H2S.up
+
+instance RunicShow (Core.Core Text) where
+  runic = runic . S2C.up
+
+instance RunicShow (Core.Value Text) where
+  runic = runic . Core.quote
+
+instance RunicShow (Core.Value Void) where
+  runic v = runic (fmap absurd v :: Core.Value Text)
 
 -- TODO how bad is UndecidableInstances?
 -- instance (Functor f, Unvar a, RunicShow (f Text)) => RunicShow (f a) where
 --   runic = runic . fmap unvar
 
-instance RunicShow D.TypeError where
+instance RunicShow E.Error where
   runic = \case
+    E.EUnknown -> "Very sorry sir, but your program does not compile."
+    E.EUnify -> "Ah, excuse me, but it seems some terms don't unify."
+    E.ESpine -> "If you would please refrain from applying metas to non-vars."
+    E.EScope -> "Please sir! Your extraneous vars make unification quite hard."
+    E.EOccurs -> "Begging your pardon sir, but I never did understand recursion."
+    E.EName -> "I'm afraid I don't recognize that variable, sir."
+    E.ENotFun -> "A function type, if you please."
+  {-runic = \case
     D.NestFail t u ->
       "[nest-fail]\nACTUAL:\n" <>
       runic (D.unvar <$> t) <>
@@ -42,7 +65,7 @@ instance RunicShow D.TypeError where
     D.Other s ->
       "[other] Your program has the type error '" <>
       s <> "'. This probably corresponds to a `guard`" <>
-      " condition in Deppy.Core. Terribly sorry."
+      " condition in Deppy.Core. Terribly sorry."-}
 
 data Runic
     = Leaf Text
@@ -156,7 +179,9 @@ toRunic = go
     go = \case
         C.Hax          -> Leaf "#"
         C.Pat          -> Leaf "@"
+        C.Hol          -> Leaf "_"
         C.Var t        -> Leaf t
+        C.Met m        -> Leaf (Meta.showMeta m)
         C.Nat a        -> tagLit a
         C.Col a x      -> appTag a x
         C.Hed x        -> hed x
@@ -189,7 +214,6 @@ toRunic = go
         C.DotDot x y   -> fix x y
         C.WutCen x cs  -> switch x cs
         C.WutCol x y z -> RunC "?:" [go x, go y, go z]
-        C.WutHax x cs  -> switch' x cs
         C.Lus x        -> lus x
         C.DotLus x     -> lus x
         C.Tis x y      -> tis x y
@@ -224,9 +248,9 @@ toRunic = go
 
     switch x cs = Jog1 "?%" (go x) (jog (tag "%" "") go cs)
 
-    switch' x cs = Jog1 "?#" (go x) (mkCase <$> mapToList cs)
+    {-switch' x cs = Jog1 "?#" (go x) (mkCase <$> mapToList cs)
       where
-        mkCase (atm, (v, c)) = (IFix "[" "]" [tag "%" "" atm, Leaf v], go c)
+        mkCase (atm, (v, c)) = (IFix "[" "]" [tag "%" "" atm, Leaf v], go c)-}
 
     recLit cs = Mode wide tall
       where wide = JFix "{" "}" $ entJog $ mapToList cs
@@ -238,7 +262,7 @@ toRunic = go
       where wide = Tied (IFix "`" "`" [go x]) (go y)
             tall = RunC "^-" [go x, go y]
 
-    let_ t x y = RunC "=/" [Leaf t, go x, go y]
+    let_ b x y = RunC "=/" [binder b, go x, go y]
 
     apply xs = Mode wide tall
       where wide = IFix "(" ")" xs
