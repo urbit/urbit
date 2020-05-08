@@ -237,7 +237,11 @@ _print_ud(u3_atom ud)
 {
   // number of characters printed "between" periods.
   c3_i between = 0;
-  u3_atom list = 0;
+  u3_noun list = 0;
+
+  // increase input refcount to be consumed in u3ka_div(), which will free each
+  // intermediary state.
+  u3k(ud);
 
   do {
     if (between == 3) {
@@ -259,8 +263,10 @@ _print_uv(u3_atom uv)
 {
   // number of characters printed "between" periods.
   c3_i between = 0;
-  u3_atom list = 0;
+  u3_noun list = 0;
 
+  // increase input refcount to be consumed in u3ka_div(), which will free each
+  // intermediary state.
   u3k(uv);
 
   do {
@@ -284,8 +290,10 @@ _print_uw(u3_atom uw)
 {
   // number of characters printed "between" periods.
   c3_i between = 0;
-  u3_atom list = 0;
+  u3_noun list = 0;
 
+  // increase input refcount to be consumed in u3ka_div(), which will free each
+  // intermediary state.
   u3k(uw);
 
   do {
@@ -306,8 +314,8 @@ _print_uw(u3_atom uw)
 u3_noun
 u3we_scow(u3_noun cor)
 {
-  u3_noun mod;
-  u3_noun atom;
+  u3_atom mod;
+  u3_atom atom;
 
   if (c3n == u3r_mean(cor, u3x_sam_2, &mod,
                       u3x_sam_3, &atom, 0)) {
@@ -338,8 +346,8 @@ u3we_scow(u3_noun cor)
 u3_noun
 u3we_scot(u3_noun cor)
 {
-  u3_noun mod;
-  u3_noun atom;
+  u3_atom mod;
+  u3_atom atom;
 
   if (c3n == u3r_mean(cor, u3x_sam_2, &mod,
                       u3x_sam_3, &atom, 0)) {
