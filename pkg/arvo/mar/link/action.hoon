@@ -11,6 +11,6 @@
 ++  grab
   |%
   ++  noun  ^action
-  ++  json  action:de-json
+  ++  json  action:dejs
   --
 --

@@ -1,7 +1,10 @@
 ::  link: social bookmarking
 ::
-/-  *link-store
+/-  sur=link-store, *link
 ::
+^?
+=<  [. sur]
+=,  sur
 |%
 ++  site-from-url
   |=  =url
@@ -92,7 +95,7 @@
     [a b]
   --
 ::
-++  en-json
+++  enjs
   =,  enjs:format
   |%
   ++  update
@@ -166,7 +169,7 @@
     ==
   --
 ::
-++  de-json
+++  dejs
   =,  dejs:format
   |%
   ::  +action: json into action

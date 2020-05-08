@@ -1,6 +1,7 @@
 ::  link-store: store specific types
 ::
 /-  *link
+^?
 |%
 ::
 ::  +action: local actions

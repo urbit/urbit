@@ -14,8 +14,8 @@
 ::    to expede this process, we prod other potential listeners when we add
 ::    them to our metadata+groups definition.
 ::
-/-  *link, link-listen-hook, *metadata-store, *link-store, group-store
-/+  mdl=metadata, default-agent, verb, dbug
+/-  *link, link-listen-hook, *metadata-store, group-store
+/+  mdl=metadata, default-agent, verb, dbug, store=link-store
 ::
 ~%  %link-listen-hook-top  ..is  ~
 |%
@@ -500,11 +500,11 @@
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
         %link-initial
       %-  handle-link-initial
-      [who.target where.target !<(initial vase)]
+      [who.target where.target !<(initial:store vase)]
     ::
         %link-update
       %-  handle-link-update
-      [who.target where.target !<(update vase)]
+      [who.target where.target !<(update:store vase)]
     ==
   ==
 ::
@@ -546,7 +546,7 @@
   group-path
 ::
 ++  do-link-action
-  |=  [=wire =action]
+  |=  [=wire =action:store]
   ^-  card
   :*  %pass
       wire
@@ -558,7 +558,7 @@
   ==
 ::
 ++  handle-link-initial
-  |=  [who=ship where=path =initial]
+  |=  [who=ship where=path =initial:store]
   ^-  (quip card _state)
   ?>  =(src.bowl who)
   ?+  -.initial  ~|([dap.bowl %unexpected-initial -.initial] !!)
@@ -580,7 +580,7 @@
   ==
 ::
 ++  handle-link-update
-  |=  [who=ship where=path =update]
+  |=  [who=ship where=path =update:store]
   ^-  (quip card _state)
   ?>  =(src.bowl who)
   :_  state
@@ -594,11 +594,13 @@
   ::
       %annotations
     %+  turn  notes.update
-    |=  =note
+    |=  =^note
     ^-  card
+    ~!  who
+    ~!  note
     %+  do-link-action
-      [%forward %annotation (scot %p who) where]
-    [%read where url.update who note]
+      `wire`[%forward %annotation (scot %p who) where]
+    `action:store`[%read where url.update `comment`[who note]]
   ==
 ::
 ++  take-forward-sign
