@@ -27,7 +27,7 @@ moonToLambda = go
     M.App x y   -> go x :@ go y
     M.Var v     -> B.Var v
     M.Lam b     -> B.Lam () $ toScope $ go $ fromScope b
-    M.Fix b     -> B.Pri uFix :@ go (M.Lam b)
+    M.Fix b     -> B.Pri uFix :@ go b
     M.Sig       -> B.Pri uUni
     M.Lit n     -> B.Pri (uNat n)
     M.Bol b     -> B.Pri (uBol b)
