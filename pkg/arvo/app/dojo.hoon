@@ -1378,9 +1378,8 @@
     ::
         %revoke-access
       =/  who  !<(@p vase)
-      =/  =path  /sole/(cat 3 'drum_' (scot %p who))
       :_  state(acl (~(del in acl) who))
-      [%give %kick [path]~ `who]~
+      [%give %kick ~ `who]~
     ::
         %list-access
       ~&  acl
