@@ -1490,8 +1490,10 @@
     $(a r.a, c (peg c 7))
   ::
   ++  apt                                               ::  check correctness
+    =<  $
+    ~/  %apt
     =|  {l/(unit) r/(unit)}
-    |-  ^-  ?
+    |.  ^-  ?
     ?~  a   &
     ?&  ?~(l & &((gor p.n.a u.l) !=(p.n.a u.l)))
         ?~(r & &((gor u.r p.n.a) !=(u.r p.n.a)))

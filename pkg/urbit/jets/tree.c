@@ -1636,9 +1636,10 @@ static c3_c* _141_two__in_ha[] = {
     0
   };
 
-  static u3j_harm _141_two__by_key_a[] = {{".2", u3wdb_key}, {}};
-  static u3j_harm _141_two__by_run_a[] = {{".2", u3wdb_run}, {}};
-  static u3j_harm _141_two__by_wyt_a[] = {{".2", u3wdb_wyt}, {}};
+  static u3j_harm _141_two__by_apt_a[] = {{".2", u3wdb_apt, c3y}, {}};
+  static u3j_harm _141_two__by_key_a[] = {{".2", u3wdb_key, c3y}, {}};
+  static u3j_harm _141_two__by_run_a[] = {{".2", u3wdb_run, c3y}, {}};
+  static u3j_harm _141_two__by_wyt_a[] = {{".2", u3wdb_wyt, c3y}, {}};
 
   static u3j_harm _141_two__by_tap_a[] = {{".2", u3wdb_tap, c3y}, {}};
   static c3_c* _141_two__by_tap_ha[] = {
@@ -1651,7 +1652,8 @@ static c3_c* _141_two__in_ha[] = {
   // static c3_c* _141_two__by_uni_ha[] = {0};
 
 static u3j_core _141_two__by_d[] =
-  { { "bif", 7, _141_two__by_bif_a, 0, _141_two__by_bif_ha },
+  { { "apt", 7, _141_two__by_apt_a },
+    { "bif", 7, _141_two__by_bif_a, 0, _141_two__by_bif_ha },
     { "del", 7, _141_two__by_del_a, 0, _141_two__by_del_ha },
     { "dif", 7, _141_two__by_dif_a, 0, _141_two__by_dif_ha },
     { "gas", 7, _141_two__by_gas_a, 0, _141_two__by_gas_ha },
