@@ -1648,8 +1648,8 @@ static c3_c* _141_two__in_ha[] = {
   };
 
   // https://github.com/urbit/urbit/issues/328
-  // static u3j_harm _141_two__by_uni_a[] = {{".2", u3wdb_uni, c3y}, {}};
-  // static c3_c* _141_two__by_uni_ha[] = {0};
+  static u3j_harm _141_two__by_uni_a[] = {{".2", u3wdb_uni, c3y}, {}};
+  static c3_c* _141_two__by_uni_ha[] = {0};
 
 static u3j_core _141_two__by_d[] =
   { { "apt", 7, _141_two__by_apt_a },
@@ -1666,7 +1666,7 @@ static u3j_core _141_two__by_d[] =
     { "run", 7, _141_two__by_run_a },
     { "tap", 7, _141_two__by_tap_a, 0, _141_two__by_tap_ha },
     { "wyt", 3, _141_two__by_wyt_a },
-    // { "uni", 7, _141_two__by_uni_a, 0, _141_two__by_uni_ha },
+    { "uni", 7, _141_two__by_uni_a, 0, _141_two__by_uni_ha },
     {}
   };
 static c3_c* _141_two__by_ha[] = {

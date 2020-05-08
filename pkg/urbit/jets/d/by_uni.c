@@ -1,8 +1,5 @@
 /* j/4/by_uni.c
-** XXX THIS IS DISABLED
-** specifically, s/hor/gor/g (already done?)
-** and eliminate memory leaks
-*/
+ */
 #include "all.h"
 
 /* functions
@@ -87,8 +84,6 @@ u3qdb_uni(u3_noun a,
   }
 }
 
-//  XX disabled in tree.c, reference counts presumed wrong
-//
 u3_noun
 u3wdb_uni(u3_noun cor)
 {
