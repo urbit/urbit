@@ -6,7 +6,6 @@ packages:
   - urbit-atom
   - urbit-azimuth
   - urbit-king
-  - urbit-proto
   - urbit-uruk
 
 extra-deps:

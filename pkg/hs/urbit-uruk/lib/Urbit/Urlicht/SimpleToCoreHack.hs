@@ -1,4 +1,4 @@
-module Urlicht.SimpleToCoreHack where
+module Urbit.Urlicht.SimpleToCoreHack where
 
 -- |
 -- This is a translation from Simple to Core which bypasses the elaborator,
@@ -11,8 +11,8 @@ import ClassyPrelude
 
 import Control.Monad.Morph (hoist)
 
-import qualified Urlicht.Core as C
-import Urlicht.Simple
+import qualified Urbit.Urlicht.Core as C
+import Urbit.Urlicht.Simple
 
 down :: Simple a -> C.Core a
 down = go

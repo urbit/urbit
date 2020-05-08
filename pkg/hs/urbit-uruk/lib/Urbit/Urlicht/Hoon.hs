@@ -1,4 +1,4 @@
-module Urlicht.Hoon where
+module Urbit.Urlicht.Hoon where
 
 import ClassyPrelude
 
@@ -6,7 +6,7 @@ import Bound
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 import Numeric.Natural
 
-import Urlicht.Meta
+import Urbit.Urlicht.Meta
 
 type Atom = Natural
 

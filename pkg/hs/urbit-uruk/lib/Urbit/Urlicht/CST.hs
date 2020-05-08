@@ -1,4 +1,4 @@
-module Urlicht.CST where
+module Urbit.Urlicht.CST where
 
 import ClassyPrelude
 import Prelude (foldl1, foldr1)
@@ -10,8 +10,8 @@ import Data.Data (Data)
 import Data.Data.Lens (uniplate)
 import Numeric.Natural
 
-import qualified Urlicht.Hoon as H
-import Urlicht.Meta
+import qualified Urbit.Urlicht.Hoon as H
+import Urbit.Urlicht.Meta
 
 type Atom = Natural
 

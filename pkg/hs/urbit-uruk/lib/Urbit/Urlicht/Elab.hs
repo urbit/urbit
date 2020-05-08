@@ -1,4 +1,4 @@
-module Urlicht.Elab where
+module Urbit.Urlicht.Elab where
 
 import ClassyPrelude
 
@@ -9,10 +9,10 @@ import qualified Data.IntMap.Strict as M
 import Data.Key (forWithKey_)
 import Data.Void
 
-import Urlicht.Core
-import Urlicht.Errors
-import Urlicht.Meta
-import Urlicht.RunicShow
+import Urbit.Urlicht.Core
+import Urbit.Urlicht.Errors
+import Urbit.Urlicht.Meta
+import Urbit.Urlicht.RunicShow
 
 class Monad m => Logging m where
   info :: Text -> m ()

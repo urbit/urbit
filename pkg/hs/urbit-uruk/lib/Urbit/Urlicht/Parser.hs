@@ -1,6 +1,7 @@
-module Deppy.Parser where
+module Urbit.Urlicht.Parser where
 
 import ClassyPrelude hiding (head, many, some, try, init, last)
+
 import Control.Arrow ((>>>))
 import Control.Lens
 import Numeric.Natural
@@ -14,11 +15,14 @@ import Prelude            (head, init, last)
 
 import qualified Prelude
 
-import Deppy.CST
-import qualified Deppy.Hoon as Hoon
-import qualified Deppy.Core as Core
-import Deppy.Showings ()
-import SimpleNoun (textToAtom)
+import Urbit.Urlicht.CST
+import Urbit.Urlicht.Meta
+import qualified Urbit.Noun as N
+import qualified Urbit.Urlicht.Hoon as Hoon
+import qualified Urbit.Urlicht.HoonToSimple as H2S
+import qualified Urbit.Urlicht.Simple as Simple
+import qualified Urbit.Urlicht.SimpleToCoreHack as S2Cxxx
+import qualified Urbit.Urlicht.Core as Core
 
 -- Types -----------------------------------------------------------------------
 
@@ -35,8 +39,11 @@ instance IsString CST where
 instance IsString (Hoon.Hoon Text) where
   fromString = abstractify . fromString
 
-instance IsString (Core.Exp Text) where
-  fromString = Hoon.desugar . fromString
+instance IsString (Simple.Simple Text) where
+  fromString = H2S.down . fromString
+
+instance IsString (Core.Core Text) where
+   fromString = S2Cxxx.down . fromString
 
 -- Parser Monad ----------------------------------------------------------------
 
@@ -66,6 +73,10 @@ gap = choice [ char ' ' >> void (some spaceChar)
 whitespace ∷ Parser ()
 whitespace = ace <|> gap
 
+textToAtom :: Text -> Atom
+textToAtom t = case N.textToUtf8Atom t of
+  N.A a -> a
+
 
 -- Literals --------------------------------------------------------------------
 
@@ -76,6 +87,9 @@ symChar = oneOf (['-'] ++ ['a'..'z'] ++ ['0'..'9'])
 
 sym ∷ Parser Sym
 sym = pack <$> ((:) <$> alpha <*> many symChar)
+
+met :: Parser Meta
+met = readMeta <$> pack <$> some (oneOf ['A'..'Z'])
 
 atom ∷ Parser Nat
 atom = do
@@ -128,6 +142,7 @@ irregular =
     , Obj . mapFromList <$> grouped "{" ", " "}" entry
     , Hax <$ char '#'
     , Var <$> sym
+    , Met <$> met
     , Nat 0 <$ char '~'
     , Wut (singleton 0) <$ string "$~"
     , Pat <$ char '@'
@@ -153,7 +168,7 @@ rune = runeSwitch
   , ("%.", rune2 CenDot cst cst)
   , (":-", rune2 ColHep cst cst)
   , (":*", runeN ColTar cst)
-  , ("=/", rune3 TisFas sym cst cst)
+  , ("=/", rune3 TisFas binder cst cst)
   , ("..", rune2 DotDot binder cst)
   , (".<", rune1 DotGal cst)
   , (".>", rune1 DotGar cst)
@@ -163,16 +178,16 @@ rune = runeSwitch
   , ("^-", rune2 KetHep cst cst)
   , ("?%", runeJogging1 wutCen cst tagPat cst)
   , ("?:", rune3 WutCol cst cst cst)
-  , ("?#", runeJogging1 wutHax cst celPat cst)
+  --, ("?#", runeJogging1 wutHax cst celPat cst)
   ]
   where
     benJamin = grouped "(" " " ")" binder
            <|> (: []) <$> binder
     tagPat = textToAtom <$> tag <|> atom
     wutCen c cs = WutCen c (mapFromList cs)
-    celPat = char '[' *> ((,) <$> tagPat <*> (ace *> sym)) <* char ']'
-    wutHax c stuff =
-      WutHax c (mapFromList $ map (\((a, v), d) -> (a, (v, d))) stuff)
+    --celPat = char '[' *> ((,) <$> tagPat <*> (ace *> sym)) <* char ']'
+    --wutHax c stuff =
+    --  WutHax c (mapFromList $ map (\((a, v), d) -> (a, (v, d))) stuff)
 
 runeSwitch ∷ [(Text, Parser a)] → Parser a
 runeSwitch = choice . fmap (\(s, p) → string s *> p)

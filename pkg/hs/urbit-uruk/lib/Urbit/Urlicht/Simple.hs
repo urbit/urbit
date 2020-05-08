@@ -1,11 +1,11 @@
-module Urlicht.Simple where
+module Urbit.Urlicht.Simple where
 
 import ClassyPrelude
 
 import Bound
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 
-import Urlicht.Meta
+import Urbit.Urlicht.Meta
 
 type SimpleType = Simple
 

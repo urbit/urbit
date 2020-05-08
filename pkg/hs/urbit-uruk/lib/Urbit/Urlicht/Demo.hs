@@ -1,21 +1,21 @@
-module Urlicht.Demo where
+module Urbit.Urlicht.Demo where
 
 import ClassyPrelude
 
 import Control.Arrow ((>>>))
 
-import Urlicht.CST as CST
---import Urlicht.Hoon as H
-import Urlicht.Parser
-import Urlicht.RunicShow
-import qualified Urlicht.Core as C
-import Urlicht.Elab
-import Urlicht.Elaborate
-import Urlicht.Env
-import qualified Urlicht.HoonToSimple as H2S
---import qualified Urlicht.Simple as S
-import qualified Urlicht.SimpleToCoreHack as S2C
-import Urlicht.Unify
+import Urbit.Urlicht.CST as CST
+--import Urbit.Urlicht.Hoon as H
+import Urbit.Urlicht.Parser
+import Urbit.Urlicht.RunicShow
+import qualified Urbit.Urlicht.Core as C
+import Urbit.Urlicht.Elab
+import Urbit.Urlicht.Elaborate
+import Urbit.Urlicht.Env
+import qualified Urbit.Urlicht.HoonToSimple as H2S
+--import qualified Urbit.Urlicht.Simple as S
+import qualified Urbit.Urlicht.SimpleToCoreHack as S2C
+import Urbit.Urlicht.Unify
 
 udemo :: Text -> IO ()
 udemo prog = runElabIO do

@@ -1,4 +1,4 @@
-module Urlicht.RunicShow where
+module Urbit.Urlicht.RunicShow where
 
 import ClassyPrelude
 
@@ -6,14 +6,14 @@ import Data.Function ((&))
 import qualified Data.Text as T
 import Data.Void
 
-import qualified Urlicht.CST as C
-import qualified Urlicht.Hoon as H
-import qualified Urlicht.HoonToSimple as H2S
-import qualified Urlicht.Simple as S
-import qualified Urlicht.SimpleToCoreHack as S2C
-import qualified Urlicht.Core as Core
-import qualified Urlicht.Errors as E
-import qualified Urlicht.Meta as Meta
+import qualified Urbit.Urlicht.CST as C
+import qualified Urbit.Urlicht.Hoon as H
+import qualified Urbit.Urlicht.HoonToSimple as H2S
+import qualified Urbit.Urlicht.Simple as S
+import qualified Urbit.Urlicht.SimpleToCoreHack as S2C
+import qualified Urbit.Urlicht.Core as Core
+import qualified Urbit.Urlicht.Errors as E
+import qualified Urbit.Urlicht.Meta as Meta
 import qualified Urbit.Noun as N
 
 class RunicShow a where

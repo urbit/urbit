@@ -1,4 +1,4 @@
-module Urlicht.Unify where
+module Urbit.Urlicht.Unify where
 
 import ClassyPrelude
 
@@ -6,10 +6,10 @@ import Bound
 import Control.Monad.State.Strict
 import Data.Void
 
-import Urlicht.Core
-import Urlicht.Elab
-import Urlicht.Errors
-import Urlicht.Meta
+import Urbit.Urlicht.Core
+import Urbit.Urlicht.Elab
+import Urbit.Urlicht.Errors
+import Urbit.Urlicht.Meta
 
 -- =/ id/<|a/# a a|>  <a/# x/a a>
 -- id _ 1

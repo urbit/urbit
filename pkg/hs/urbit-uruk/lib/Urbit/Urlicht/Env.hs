@@ -1,10 +1,10 @@
-module Urlicht.Env where
+module Urbit.Urlicht.Env where
 
 import ClassyPrelude
 
 import Bound
 
-import Urlicht.Core
+import Urbit.Urlicht.Core
 
 -- | Records information about a bound variable which is presently in scope
 data Binder a

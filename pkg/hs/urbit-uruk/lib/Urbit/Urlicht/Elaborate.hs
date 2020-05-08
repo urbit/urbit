@@ -1,4 +1,4 @@
-module Urlicht.Elaborate where
+module Urbit.Urlicht.Elaborate where
 
 -- | Elaboration from Simple to Core using pattern unification and piggybacking
 -- on bidirectional typechecking. TODO more helpful comment.
@@ -10,12 +10,12 @@ import Bound.Var
 import Bound.Scope
 import Control.Monad.Morph (hoist)
 
-import Urlicht.Core
-import Urlicht.Elab
-import Urlicht.Env
-import Urlicht.Errors
-import qualified Urlicht.Simple as S
-import Urlicht.Unify
+import Urbit.Urlicht.Core
+import Urbit.Urlicht.Elab
+import Urbit.Urlicht.Env
+import Urbit.Urlicht.Errors
+import qualified Urbit.Urlicht.Simple as S
+import Urbit.Urlicht.Unify
 
 -- | To elaborate a hole we create a new meta and apply it to all the vars
 -- in scope. Kovacs is able to eliminate shadowed vars lol.

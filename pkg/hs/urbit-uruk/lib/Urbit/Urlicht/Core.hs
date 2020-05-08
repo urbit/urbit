@@ -1,4 +1,4 @@
-module Urlicht.Core where
+module Urbit.Urlicht.Core where
 
 import ClassyPrelude
 
@@ -6,7 +6,7 @@ import Bound
 import Control.Monad.Morph (hoist)
 import Data.Deriving (deriveEq1, deriveOrd1, deriveRead1, deriveShow1)
 
-import Urlicht.Meta
+import Urbit.Urlicht.Meta
 
 type B = ()
 

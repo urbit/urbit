@@ -1,12 +1,12 @@
-module Urlicht.HoonToSimple where
+module Urbit.Urlicht.HoonToSimple where
 
 import ClassyPrelude
 
 import Control.Monad.Morph (hoist)
 
 -- TODO copy over the upper layers of deppy to separately customize.
-import Urlicht.Hoon
-import qualified Urlicht.Simple as S
+import Urbit.Urlicht.Hoon
+import qualified Urbit.Urlicht.Simple as S
 
 down :: Hoon a -> S.Simple a
 down = go

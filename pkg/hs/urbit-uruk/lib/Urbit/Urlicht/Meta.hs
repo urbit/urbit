@@ -1,4 +1,4 @@
-module Urlicht.Meta (Meta, showMeta, readMeta) where
+module Urbit.Urlicht.Meta (Meta, showMeta, readMeta) where
 
 -- | A metavariable stands for a missing part of the program which the unifier
 -- is to solve for. It's important to distinguish between metas and ordinary

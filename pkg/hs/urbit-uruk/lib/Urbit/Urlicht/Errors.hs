@@ -1,4 +1,4 @@
-module Urlicht.Errors where
+module Urbit.Urlicht.Errors where
 
 import ClassyPrelude
 
