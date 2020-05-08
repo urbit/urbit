@@ -88,7 +88,7 @@ the code may lack state adapters, or it may not properly handle outstanding
 subscriptions.  It could also be code which is planned to be released only upon
 a breach (network-wide or rolling).
 
-In this case, the code maybe PR'd to a `na-release/` branch.  All rules are the
+In this case, the code may be PR'd to a `na-release/` branch.  All rules are the
 same as for release branches, except that the code does not need to apply
 cleanly to an existing ship.  If you later write state adapter or otherwise make
 it OTAable, then you may PR it to a release branch.
@@ -283,4 +283,3 @@ Post an announcement to urbit-dev.  The tag annotation, basically, is fine here
 -- I usually add the %base hash (for Urbit OS releases) and the release binary
 URLs (for Vere releases).  Check the urbit-dev archives for examples of these
 announcements.
-
