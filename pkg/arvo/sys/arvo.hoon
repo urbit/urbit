@@ -1233,7 +1233,7 @@
   ::  compile the hoon.hoon source with the current compiler
   ::
   =/  raw
-    ~&  [%hoon-compile `@p`(mug hun)]
+    ~>  %slog.[0 leaf+"vega: compiling hoon"]
     (ride %noun hun)
   ::  activate the new compiler gate, producing +ride
   ::
@@ -1249,6 +1249,7 @@
   ::
   =>  ?:  =(nex hoon-version)
         [hot=`*`raw .]
+      ~>  %slog.[0 leaf+"vega: recompiling hoon {<nex>}k"]
       ~&  [%hoon-compile-upgrade nex]
       =/  hot  (slum cop [%noun hun])
       .(cop .*(0 +.hot))
@@ -1261,15 +1262,17 @@
   ::  compile arvo
   ::
   =/  rav
-    ~&  [%arvo-compile `@p`(mug hyp) `@p`(mug van)]
+    ~>  %slog.[0 leaf+"vega: compiling kernel {(scow %p (mug hyp))}"]
     (slum cop [hyp van])
   ::  activate arvo, and extract the arvo core from the outer gate
   ::
+  ~>  %slog.[0 leaf+"vega: extracting core"]
   =/  voc  .*(hoc [%7 +.rav %0 7])
   ::  entry gate: ++load for the normal case, ++come for upgrade
   ::
   =/  gat
     =/  arm  ?:(=(nex hoon-version) 'load' 'come')
+    ~>  %slog.[0 leaf+"vega: +{(trip arm)}"]
     ::  compute the type of the arvo.hoon core
     ::
     =/  vip  -:(slum cop [-.rav '+>'])
@@ -1291,6 +1294,8 @@
     ==
   ::  call into the new kernel
   ::
+  ~>  %slog.[0 leaf+"vega: evolving"]
+  ~<  %slog.[0 leaf+"vega: evolution"]
   =/  out  (slum gat sam)
   ::  add types to the product
   ::
@@ -1303,8 +1308,8 @@
 ++  veer
   |=  [who=ship now=@da fav=curd]
   ^+  soul
-  =>  .(fav ;;({$veer lal/@ta pax/path txt/@t} fav))
-  ~|  veer+lal.fav
+  =>  .(fav ;;({$veer lal/@tas pax/path txt/@t} fav))
+  ~|  veer+[lal.fav pax.fav]
   ?:  =(%$ lal.fav)
     ~>  %slog.[0 leaf+"zuse: {(scow p+(mug txt.fav))}"]
     =+  gen=(rain pax.fav txt.fav)
@@ -1314,14 +1319,14 @@
       vanes
     |-  ^+  vanes
     ?~  vanes
-      ~>  %slog.[0 leaf+"{(trip lal.fav)}: {(scow p+(mug txt.fav))}"]
+      ~>  %slog.[0 leaf+"vane: {<lal.fav>} {(scow p+(mug txt.fav))}"]
       =+  vin=(vint who lal.fav vil bud pax.fav txt.fav)
       ?~  vin
         vanes
       [[lal.fav vane:u.vin] vanes]
     ?.  =(lal.fav label.i.vanes)
       [i.vanes $(vanes t.vanes)]
-    ~>  %slog.[0 leaf+"{(trip lal.fav)}: {(scow p+(mug txt.fav))}"]
+    ~>  %slog.[0 leaf+"vane: {<lal.fav>} {(scow p+(mug txt.fav))}"]
     :_  t.vanes
     :-  label.i.vanes
     ~|  [%failed-vane-activation now lal.fav]

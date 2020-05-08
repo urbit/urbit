@@ -275,7 +275,6 @@
           ::  make kids desk publicly readable, so syncs work.
           ::
           (show %kids):(sync %kids our %base)
-        =.  +>  autoload
         =.  +>  hood-set-boot-apps
         =.  +>  peer
         |-  ^+  +>+
@@ -307,9 +306,6 @@
       ++  sync
         |=  syn/{desk ship desk}
         (deal /sync [%poke %hood-sync -:!>(syn) syn])
-      ::
-      ++  autoload
-        (deal /autoload [%poke %kiln-start-autoload [%atom %n `~] ~])
       ::
       ++  take                                          ::  receive
         |=  {tea/wire sih/sign}

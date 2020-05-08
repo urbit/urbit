@@ -3560,8 +3560,8 @@
     =/  =args:ford:fusion
       [ank.dom deletes changes lat.ran fod.dom]
     ::
-    ::  ?:  &(!updated !=(~ (need-sys-update changes)))
-    ::    (sys-update args yuki changes)
+    ?:  &(!updated !=(~ (need-sys-update changes)))
+      (sys-update args yoki changes)
     ::
     =.  ..park  (emil (print deletes ~(key by changes)))
     =^  change-cages  ford-cache.args
