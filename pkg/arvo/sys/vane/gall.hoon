@@ -423,6 +423,12 @@
     =.  mo-core  (mo-untrack-ship ship)
     =.  mo-core  (mo-filter-queue ship)
     =/  agents=(list [name=term =running-agent])  ~(tap by running.agents.state)
+    =.  outstanding.agents.state
+      %-  malt
+      %+  skip  ~(tap by outstanding.agents.state)
+      |=  [[=wire duct] (qeu remote-request)]
+      =(/sys/way/(scot %p ship) (scag 3 wire))
+    ::
     |-  ^+  mo-core
     ?~  agents
       mo-core
