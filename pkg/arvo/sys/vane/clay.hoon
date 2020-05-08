@@ -2515,10 +2515,11 @@
       dom(lab (~(put by lab.dom) lab let.dom))
     ::
     ::  Apply a list of changes against the current state and produce
-    ::  the new state.
+    ::  the new state.  Initial and post-kernel-upgrade commits rebuild
+    ::  from scratch.
     ::
     ++  apply-changes                                   ::   apply-changes
-      |=  [change-files=(list [p=path q=misu])]
+      |=  change-files=(list [p=path q=misu])
       ^-  (map path blob)
       =+  ^=  old-files                                 ::  current state
           ?:  =(let.dom 0)                              ::  initial commit
@@ -3543,12 +3544,12 @@
         %&  q.p.yoki
         %|  (~(run by q.p.yoki) |=(=lobe |+lobe))
       ==
+    =/  old-lobes=(map path lobe)
+      ?:  =(0 let.dom)
+        ~
+      q:(aeon-to-yaki:ze let.dom)
     =/  [deletes=(set path) changes=(map path (each page lobe))]
-      =/  previous-yaki
-        ?:  =(0 let.dom)
-          *yaki
-        (aeon-to-yaki:ze let.dom)
-      (get-changes q.previous-yaki new-data)
+      (get-changes old-lobes new-data)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
     ::
     ::  promote ford cache
@@ -3560,10 +3561,18 @@
     =/  =args:ford:fusion
       [ank.dom deletes changes lat.ran fod.dom]
     ::
-    ?:  &(!updated !=(~ (need-sys-update changes)))
+    =/  sys-changes  (need-sys-update changes)
+    ?:  &(!updated !=(~ sys-changes))
       (sys-update args yoki changes)
-    ::
     =.  ..park  (emil (print deletes ~(key by changes)))
+    ::  clear caches if zuse reloaded
+    ::
+    =/  is-zuse-new=?  &(updated (was-zuse-updated sys-changes))
+    =?  fod.dom  is-zuse-new  *ford-cache
+    =?  ank.dom  is-zuse-new  *ankh
+    =?  changes  is-zuse-new
+      (changes-for-upgrade old-lobes deletes changes)
+    ::
     =^  change-cages  ford-cache.args
       (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -3603,6 +3612,7 @@
     ::
     ++  get-changes
       |=  [old=(map path lobe) new=(map path (each page lobe))]
+      ^-  [deletes=(set path) changes=(map path (each page lobe))]
       =/  old=(map path (each page lobe))
         (~(run by old) |=(=lobe |+lobe))
       :*  %-  silt  ^-  (list path)
@@ -3625,6 +3635,20 @@
             ~
           `[path u.a]
       ==
+    ::  Find all files for full desk rebuild
+    ::
+    ++  changes-for-upgrade
+      |=  $:  old=(map path lobe)
+              deletes=(set path)
+              changes=(map path (each page lobe))
+          ==
+      ^+  changes
+      =.  old
+        %+  roll  ~(tap in deletes)
+        |=  [pax=path old=_old]
+        (~(del by old) pax)
+      =/  pre=_changes  (~(run by old) |=(lob=lobe |+lob))
+      (~(uni by pre) changes)
     ::
     ::  Keep any parts of the ford cache whose dependencies didn't change
     ::
@@ -3677,6 +3701,7 @@
       ?~  cans
         [~ ford-cache.ford-args]
       =^  cage  ford-cache.ford-args
+        ~>  %slog.[0 leaf+"clay: validating {(spud path.i.cans)}"]
         %-  wrap:fusion
         (get-value:(ford:fusion ford-args) path.i.cans)
       =/  =lobe
@@ -3937,6 +3962,17 @@
           =(/sys/arvo/hoon path)
           =(/sys/zuse/hoon path)
           =(/sys/vane (scag 2 path))
+      ==
+    ::
+    ::  Did the standard library reload?
+    ::
+    ++  was-zuse-updated
+      |=  changes=(map path (each page lobe))
+      ^-  ?
+      ~+
+      ?|  (~(has by changes) /sys/hoon/hoon)
+          (~(has by changes) /sys/arvo/hoon)
+          (~(has by changes) /sys/zuse/hoon)
       ==
     ::
     ::  Delay current update until sys update is complete
