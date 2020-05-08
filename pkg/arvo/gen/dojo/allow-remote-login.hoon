@@ -1,4 +1,4 @@
-::  grant: allow a ship to link to dojo
+::  allow-remote-login: allow a ship to link to dojo
 ::
 /?    310
 ::
@@ -6,4 +6,4 @@
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [[=ship ~] ~]
     ==
-[%grant-access ship]
+[%allow-remote-login ship]

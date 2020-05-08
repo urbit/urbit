@@ -1,4 +1,4 @@
-::  revoke: revoke a ship's right to link to dojo,
+::  revoke-remote-login: revoke a ship's right to link to dojo,
 ::  kicking the ship if it is currently linked
 ::
 /?    310
@@ -7,4 +7,4 @@
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [[=ship ~] ~]
     ==
-[%revoke-access ship]
+[%revoke-remote-login ship]

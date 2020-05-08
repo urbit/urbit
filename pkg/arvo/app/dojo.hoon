@@ -1372,16 +1372,16 @@
       =+  !<([=id =command:lens] vase)
       he-abet:(~(he-lens he hid id ~ (~(got by hoc) id)) command)
     ::
-        %grant-access
+        %allow-remote-login
       =/  who  !<(@p vase)
       `state(acl (~(put in acl) who))
     ::
-        %revoke-access
+        %revoke-remote-login
       =/  who  !<(@p vase)
       :_  state(acl (~(del in acl) who))
       [%give %kick ~ `who]~
     ::
-        %list-access
+        %list-remote-logins
       ~&  acl
       `state
     ::

@@ -6,4 +6,4 @@
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [~ ~]
     ==
-[%list-access ~]
+[%list-remote-logins ~]
