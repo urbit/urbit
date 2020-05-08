@@ -576,7 +576,7 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign * %b %writ *]
+      [~ %sign * ?(%b %c) %writ *]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
     `[%done +>.sign-arvo.u.in.tin]

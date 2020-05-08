@@ -3299,10 +3299,7 @@
     |=  {hen/duct mun/mood dat/(each cage lobe)}
     ^+  +>
     ?:  ?=(%& -.dat)
-      %-  emit
-      :*  hen  %slip  %b  %drip
-          !>([%writ ~ [care.mun case.mun syd] path.mun p.dat])
-      ==
+      (emit hen %give %writ ~ [care.mun case.mun syd] path.mun p.dat)
     %-  emit
     :*  hen  %pass  [%blab care.mun (scot case.mun) syd path.mun]
         %f  %build  live=%.n  %pin
@@ -3321,7 +3318,7 @@
     ::  translate the case to a date
     ::
     =/  cas  [%da (case-to-date case.n.das)]
-    =-  (emit hen %slip %b %drip !>([%wris cas -]))
+    =-  (emit hen %give %wris cas -)
     (~(run in `(set mood)`das) |=(m/mood [care.m path.m]))
   ::
   ::  Give next step in a subscription.
@@ -3339,7 +3336,7 @@
   ::
   ++  blub
     |=  hen/duct
-    (emit hen %slip %b %drip !>([%writ ~]))
+    (emit hen %give %writ ~)
   ::
   ::  Lifts a function so that a single result can be fanned out over a set of
   ::  subscriber ducts.
@@ -4178,7 +4175,7 @@
     |=  err=(pair term tang)
     ^+  +>
     =.  +>.$
-      (emit [hen %slip %b %drip !>([%mere %| err])])
+      (emit hen %give %mere %| err)
     finish-write
   ::
   ::  Release effects and apply state changes
@@ -4186,7 +4183,7 @@
   ++  done-merge
     |=  [conflicts=(set path) =dome =rang]
     ^+  +>
-    =.  +>.$  (emit [hen %slip %b %drip !>([%mere %& conflicts])])
+    =.  +>.$  (emit hen %give %mere %& conflicts)
     =:  dom      dome
         hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
@@ -5670,14 +5667,13 @@
       ~>  %mean.|.((made-result-as-error:ford result.q.hin))
       !!                              ::  interpolate ford fail into stack trace
     :_  ..^$  :_  ~
-    :*  hen  %slip  %b  %drip  !>
-    :*  %writ  ~
+    :*  hen  %give  %writ  ~
         ^-  [care case @tas]
         [i.t.tea ;;(case +>:(slay i.t.t.tea)) i.t.t.t.tea]
     ::
         `path`t.t.t.t.tea
         `cage`(result-to-cage:ford build-result.result.q.hin)
-    ==  ==
+    ==
   ::
   ?:  ?=([%warp-index @ @ @ ~] tea)
     ?+    +<.q.hin  ~|  %clay-warp-index-strange  !!
@@ -5731,9 +5727,7 @@
       ::  ~&  [%sunk-wove desk (print-wove wove) ducts]
       ~(tap in ducts)
     =/  cancel-moves=(list move)
-      %+  turn  cancel-ducts
-      |=  =duct
-      [duct %slip %b %drip !>([%writ ~])]
+      (turn cancel-ducts |=(=duct [duct %give %writ ~]))
     ::  Clear ford cache
     ::
     =/  clear-ford-cache-moves=(list move)
