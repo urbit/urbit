@@ -1127,9 +1127,9 @@
   ::
   ++  effect
     |=  fec=sole-effect:sole-sur
+    =/  =path  /sole/(cat 3 'drum_' (scot %p our.bowl))
     ^-  card
-    ::TODO  don't hard-code session id 'drum' here
-    [%give %fact ~[/sole/drum] %sole-effect !>(fec)]
+    [%give %fact ~[path] %sole-effect !>(fec)]
   ::  +tab: print tab-complete list
   ::
   ++  tab

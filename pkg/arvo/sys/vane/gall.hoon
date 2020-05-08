@@ -1110,31 +1110,30 @@
     ++  ap-ducts-from-paths
       |=  [target-paths=(list path) target-ship=(unit ship)]
       ^-  (list duct)
-      ?:  &(?=(~ target-paths) ?=(~ target-ship))
-        ~[agent-duct]
-      %-  zing
-      %+  turn  target-paths
-      |=  =path
-      (ap-ducts-from-path `path target-ship)
-    ::  +ap-ducts-from-path: get ducts subscribed to path
-    ::
-    ++  ap-ducts-from-path
-      |=  [target-path=(unit path) target-ship=(unit ship)]
-      ^-  (list duct)
-      ?:  &(?=(~ target-path) ?=(~ target-ship))
-        ~[agent-duct]
-      %+  murn  ~(tap by incoming.subscribers.current-agent)
-      |=  [=duct =ship =path]
-      ^-  (unit ^duct)
-      ?~  target-ship
-        ?:  =(target-path `path)
-          `duct
-        ~
-      ?~  target-path
+      ?~  target-paths
+        ?~  target-ship
+          ~[agent-duct]
+        %+  murn  ~(tap by incoming.subscribers.current-agent)
+        |=  [=duct =ship =path]
+        ^-  (unit ^duct)
         ?:  =(target-ship `ship)
           `duct
         ~
-      ?:  &(=(target-path `path) =(target-ship `ship))
+      %-  zing
+      %+  turn  target-paths
+      |=  =path
+      (ap-ducts-from-path path target-ship)
+    ::  +ap-ducts-from-path: get ducts subscribed to path
+    ::
+    ++  ap-ducts-from-path
+      |=  [target-path=path target-ship=(unit ship)]
+      ^-  (list duct)
+      %+  murn  ~(tap by incoming.subscribers.current-agent)
+      |=  [=duct =ship =path]
+      ^-  (unit ^duct)
+      ?:  ?&  =(target-path path)
+              |(=(target-ship ~) =(target-ship `ship))
+          ==
         `duct
       ~
     ::  +ap-apply: apply effect.

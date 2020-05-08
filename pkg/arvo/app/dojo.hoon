@@ -12,9 +12,10 @@
 =>  |%                                                  ::  external structures
     ++  id  @tasession                                  ::  session id
     ++  house                                           ::  all state
-      $:  $5
+      $:  $6
           egg/@u                                        ::  command count
           hoc/(map id session)                          ::  conversations
+          acl/(set ship)                                ::  remote access whitelist
       ==                                                ::
     ++  session                                         ::  per conversation
       $:  say/sole-share                                ::  command-line state
@@ -1349,9 +1350,12 @@
   !>(state)
 ::
 ++  on-load
-  |=  =old-state=vase
-  =/  old-state  !<(house old-state-vase)
-  `..on-init(state old-state)
+  |=  old=vase
+  ?:  ?=(%6 +<.old)
+    `..on-init(state !<(house old))
+  =/  old-5  !<([%5 egg=@u hoc=(map id session)] old)
+  =/  =house  [%6 egg.old-5 hoc.old-5 *(set ship)]
+  `..on-init(state house)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -1359,6 +1363,7 @@
   =^  moves  state
     ^-  (quip card:agent:gall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
+    ::
         %sole-action
       =/  act  !<(sole-action vase)
       he-abet:(~(he-type he hid id.act ~ (~(got by hoc) id.act)) act)
@@ -1367,8 +1372,17 @@
       =+  !<([=id =command:lens] vase)
       he-abet:(~(he-lens he hid id ~ (~(got by hoc) id)) command)
     ::
-        %json
-      ~&  jon=!<(json vase)
+        %allow-remote-login
+      =/  who  !<(@p vase)
+      `state(acl (~(put in acl) who))
+    ::
+        %revoke-remote-login
+      =/  who  !<(@p vase)
+      :_  state(acl (~(del in acl) who))
+      [%give %kick ~ `who]~
+    ::
+        %list-remote-logins
+      ~&  acl
       `state
     ::
         %wipe
@@ -1390,8 +1404,9 @@
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:gall _..on-init)
-  ~?  !=(our.hid src.hid)  [%dojo-peer-stranger src.hid]
-  ?>  (team:title our.hid src.hid)
+  ?>  ?|  (team:title our.hid src.hid)
+          (~(has in acl) src.hid)
+      ==
   ?>  ?=([%sole @ ~] path)
   =/  id  i.t.path
   =?  hoc  (~(has by hoc) id)
