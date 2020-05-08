@@ -51,6 +51,22 @@ mergePrim = go B.Pri
   wrap :: (a -> B.Exp p b c) -> Var b a -> B.Exp p b (Var b c)
   wrap g = unvar (B.Var . B) (fmap F . g)
 
+compileExp
+  :: Uruk p
+  => (Text -> Either Text p)
+  -> (B.Exp p () Void -> B.Exp p () Void)
+  -> (B.Exp p () Void -> p)
+  -> Exp Text
+  -> Either Text (CompileTrace p)
+compileExp lkup strict comp ctBind = do
+  let ctTree = ASig
+  let ctLamb = moonToLambda ctBind
+  ctMuck <- resolve lkup ctLamb
+  let ctStik = strict ctMuck
+  let ctDone = comp ctStik
+  pure (CompileTrace{..})
+
+
 compileAST
   :: Uruk p
   => (Text -> Either Text p)
@@ -58,14 +74,9 @@ compileAST
   -> (B.Exp p () Void -> p)
   -> AST
   -> Either Text (CompileTrace p)
-compileAST lkup strict comp ctTree = do
-  let ctBind = AST.bind ctTree
-  let ctLamb = moonToLambda ctBind
-  ctMuck <- resolve lkup ctLamb
-  let ctStik = strict ctMuck
-  let ctDone = comp ctStik
-  pure (CompileTrace{..})
-
+compileAST lkup strict comp =
+  compileExp lkup strict comp . AST.bind
+  
 
 -- Compile Expression ----------------------------------------------------------
 
