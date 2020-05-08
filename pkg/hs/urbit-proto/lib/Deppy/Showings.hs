@@ -41,6 +41,7 @@ instance Display CST where
       Obj (mapToList -> cs) -> "{" <> displayEnts cs <> "}"
       Cls (mapToList -> tcs) -> "{|" <> displayEnts tcs <> "|}"
       Col a x -> displayTag "" "" a <> ":" <> display x
+      Hol -> "_"
       HaxBuc (mapToList -> cs) -> "$%(" <> displayEnts cs <> ")"
       HaxCen (mapToList -> cs) -> "$=(" <> displayEnts cs <> ")"
       HaxCol bs x -> "$:(" <> displayBound bs x <> ")"

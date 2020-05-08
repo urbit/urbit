@@ -39,6 +39,8 @@ data CST
   | Obj (Map Atom CST)
   | Cls (Map Atom CST)
   | Col Atom CST
+  --
+  | Hol
   -- Runes
   | HaxBuc (Map Atom CST)
   | HaxCen (Map Atom CST)
@@ -97,6 +99,8 @@ abstractify = go
       Cls tcs -> H.Cls (go <$> tcs)
       Col a c -> H.Col a (go c)
       --
+      Hol -> H.Hol
+      --
       HaxBuc tcs -> H.HaxBuc (go <$> tcs)
       HaxCen tcs -> H.HaxCen (go <$> tcs)
       HaxCol bs c -> bindMany H.HaxCol bs (go c)
@@ -151,6 +155,8 @@ concretize = dissociate . go
       --
       H.Cls tcs -> Cls (go <$> tcs)
       H.Col a c -> Col a (go c)
+      --
+      H.Hol -> Hol
       --
       H.HaxBuc tcs -> HaxBuc (go <$> tcs)
       H.HaxCen tcs -> HaxCen (go <$> tcs)
