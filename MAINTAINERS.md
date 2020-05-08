@@ -102,6 +102,10 @@ appropriate.
 If a commit is not something that goes into a release (eg changes to README or
 CI), it may be committed straight to master.
 
+If a hotfix is urgent, it may be PR'd straight to master.  This should only be
+done if you reasonably expect that it will be released soon and before anything
+else is released.
+
 If a series of commits that you want to release is on a release branch, but you
 really don't want to release the whole branch, you must cherry-pick them onto
 another release branch.  Cherry-picking isn't ideal because those commits will
