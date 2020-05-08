@@ -921,7 +921,9 @@
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  (flop path.generator.action) 
       =/  ski       (scry [%141 %noun] ~ %ca bek sup)
-      =/  gat=vase  !<(vase q:(need (need ski)))
+      =/  cag=cage  (need (need ski))
+      ?>  =(%vase p.cag)
+      =/  gat=vase  !<(vase q.cag)
       =/  res=(each vase tang)
         %-  mule  |.
         %+  slam
