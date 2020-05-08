@@ -55,7 +55,7 @@
 ++  state
   $:  :: state version
       ::
-      %4
+      %5
       :: agents by ship
       ::
       =agents
@@ -423,6 +423,12 @@
     =.  mo-core  (mo-untrack-ship ship)
     =.  mo-core  (mo-filter-queue ship)
     =/  agents=(list [name=term =running-agent])  ~(tap by running.agents.state)
+    =.  outstanding.agents.state
+      %-  malt
+      %+  skip  ~(tap by outstanding.agents.state)
+      |=  [[=wire duct] (qeu remote-request)]
+      =(/sys/way/(scot %p ship) (scag 3 wire))
+    ::
     |-  ^+  mo-core
     ?~  agents
       mo-core
@@ -1679,16 +1685,32 @@
   =?  all-state  ?=(%3 -.all-state)
     (state-3-to-4 all-state)
   ::
-  ?>  ?=(%4 -.all-state)
+  =?  all-state  ?=(%4 -.all-state)
+    (state-4-to-5 all-state)
+  ::
+  ?>  ?=(%5 -.all-state)
   gall-payload(state all-state)
   ::
   ::  +all-state: upgrade path
   ::
-  ++  all-state  $%(state-0 state-1 state-2 state-3 ^state)
+  ++  all-state  $%(state-0 state-1 state-2 state-3 state-4 ^state)
+  ::
+  ++  state-4-to-5
+    |=  =state-4
+    ^-  ^state
+    %=    state-4
+        -  %5
+        outstanding.agents  ~
+    ==
+  ::
+  ++  state-4
+    $:  %4
+        =agents
+    ==
   ::
   ++  state-3-to-4
     |=  =state-3
-    ^-  ^state
+    ^-  state-4
     %=    state-3
         -  %4
         outstanding.agents  ~
