@@ -1,0 +1,48 @@
+import React, { Component } from 'react';
+
+export class SearchableList extends Component {
+  // expected props:
+  // items: [{key: 'some key', jsx: <w/e>}, ...]
+  // placeholder: ''
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      query: ''
+    };
+
+    this.updateQuery = this.updateQuery.bind(this);
+  }
+
+  updateQuery(event) {
+    this.setState({ query: event.target.value });
+  }
+
+  render() {
+    const { state, props } = this;
+
+    const searchBar = (
+      <input
+        type="text"
+        placeholder={props.placeholder}
+        onChange={this.updateQuery}
+        value={state.query}
+        style={{border: '1px solid black'}}
+      />
+    );
+
+    let items = props.items.filter(item => {
+      return (state.query === '') || item.key.includes(state.query);
+    })
+    if (items.length === 0) {
+      items = 'none';
+    } else {
+      items = items.map(item => (<div style={{marginTop: '4px'}}>{item.jsx}</div>));
+    }
+
+    return (<div style={{border: '1px solid grey', padding: '4px'}}>
+      <div>{searchBar}</div>
+      <div>{items}</div>
+    </div>);
+  }
+}
