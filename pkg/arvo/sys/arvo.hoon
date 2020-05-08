@@ -844,8 +844,6 @@
   ++  ruck                                              ::  update vase
     |=  {pax/path txt/@ta}
     ^+  +>
-    =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
-    ^=  res  %-  mule  |.
     ::  XX should use real entropy and the real date
     ::
     =/  arg=vane-sample
@@ -895,13 +893,11 @@
           pax=path
           txt=@ta
       ==
-  =-  ?:(?=(%| -.res) ((slog p.res) ~) (some p.res))
-  ^=  res  %-  mule  |.
   ~|  [%failed-vint lal]
   =+  gen=(rain pax txt)
-  ~&  [%vane-parsed `@p`(mug gen)]
+  ~>  %slog.[0 leaf+"vane: parsed {(scow p+(mug gen))}"]
   =+  pro=(vent who lal vil bud [(slym (slap bud gen) bud) *worm])
-  ~&  [%vane-compiled `@p`(mug pro)]
+  ~>  %slog.[0 leaf+"vane: compiled {(scow p+(mug pro))}"]
   prime:pro
 ::
 ++  viol                                                ::  vane tools
@@ -1303,13 +1299,13 @@
 ::  +veer: install %zuse or a vane
 ::
 ::    Identity is in the sample so the larval stage
-::    can use this as well.
+::    can use this too.
 ::
 ++  veer
   |=  [who=ship now=@da fav=curd]
   ^+  soul
-  =>  .(fav ;;({$veer lal/@tas pax/path txt/@t} fav))
-  ~|  veer+[lal.fav pax.fav]
+  =>  .(fav ;;([%veer lal=@tas pax=path txt=@t] fav))
+  ~|  veer+[lal pax]:fav
   ?:  =(%$ lal.fav)
     ~>  %slog.[0 leaf+"zuse: {(scow p+(mug txt.fav))}"]
     =+  gen=(rain pax.fav txt.fav)
@@ -1320,10 +1316,8 @@
     |-  ^+  vanes
     ?~  vanes
       ~>  %slog.[0 leaf+"vane: {<lal.fav>} {(scow p+(mug txt.fav))}"]
-      =+  vin=(vint who lal.fav vil bud pax.fav txt.fav)
-      ?~  vin
-        vanes
-      [[lal.fav vane:u.vin] vanes]
+      =/  vin  (vint who lal.fav vil bud pax.fav txt.fav)
+      [[lal.fav vane.vin] vanes]
     ?.  =(lal.fav label.i.vanes)
       [i.vanes $(vanes t.vanes)]
     ~>  %slog.[0 leaf+"vane: {<lal.fav>} {(scow p+(mug txt.fav))}"]
