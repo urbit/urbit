@@ -50,7 +50,7 @@
 ::      ?
 ::    /seen/wood-url/some-path              have we seen this here
 ::
-/+  *link, default-agent, verb, dbug
+/+  *link-store, default-agent, verb, dbug
 ::
 |%
 +$  state-0

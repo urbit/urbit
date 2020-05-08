@@ -20,7 +20,7 @@
 ::    to touch are +permitted, +initial-response, & +kick-proxies.
 ::
 /-  group-store, *metadata-store
-/+  *link, metadata, default-agent, verb, dbug
+/+  *link-store, metadata, default-agent, verb, dbug
 ~%  %link-proxy-hook-top  ..is  ~
 |%
 +$  state-0

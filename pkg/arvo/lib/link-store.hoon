@@ -1,6 +1,6 @@
 ::  link: social bookmarking
 ::
-/-  *link
+/-  *link-store
 ::
 |%
 ++  site-from-url

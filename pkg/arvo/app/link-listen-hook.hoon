@@ -14,7 +14,7 @@
 ::    to expede this process, we prod other potential listeners when we add
 ::    them to our metadata+groups definition.
 ::
-/-  link-listen-hook, *metadata-store, *link, group-store
+/-  *link, link-listen-hook, *metadata-store, *link-store, group-store
 /+  mdl=metadata, default-agent, verb, dbug
 ::
 ~%  %link-listen-hook-top  ..is  ~
