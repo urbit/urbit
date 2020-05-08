@@ -4,7 +4,7 @@
 #include "all.h"
 
 u3_noun
-po_find_prefix(char one, char two, char three) {
+u3_po_find_prefix(c3_y one, c3_y two, c3_y three) {
   switch (one) {
     case 'b': switch (two) {
       case 'a': switch (three)  {
@@ -411,7 +411,7 @@ po_find_prefix(char one, char two, char three) {
 }
 
 void
-po_to_prefix(u3_noun id, c3_y* a, c3_y* b, c3_y* c)
+u3_po_to_prefix(u3_noun id, c3_y* a, c3_y* b, c3_y* c)
 {
   switch (id) {
     case 0: *a = 'd'; *b = 'o'; *c = 'z'; break;
@@ -674,9 +674,8 @@ po_to_prefix(u3_noun id, c3_y* a, c3_y* b, c3_y* c)
   }
 }
 
-
 u3_noun
-po_find_suffix(char one, char two, char three) {
+u3_po_find_suffix(c3_y one, c3_y two, c3_y three) {
   switch (one) {
     case 'b': switch (two) {
       case 'e': switch (three)  {
@@ -1083,7 +1082,7 @@ po_find_suffix(char one, char two, char three) {
 }
 
 void
-po_to_suffix(u3_noun id, c3_y* a, c3_y* b, c3_y* c)
+u3_po_to_suffix(u3_noun id, c3_y* a, c3_y* b, c3_y* c)
 {
   switch (id) {
     case 0: *a = 'z'; *b = 'o'; *c = 'd'; break;
@@ -1352,21 +1351,20 @@ u3qc_po_ins(u3_noun a)
   c3_y byt_y[3];
   u3r_bytes(0, 3, byt_y, a);
 
-  return po_find_prefix(byt_y[0], byt_y[1], byt_y[2]);
+  return u3_po_find_prefix(byt_y[0], byt_y[1], byt_y[2]);
 }
 
 u3_noun
 u3wcp_ins(u3_noun cor)
 {
   u3_noun a;
+  u3x_mean(cor, u3x_sam, &a, 0);
 
-  if ( (c3n == u3r_mean(cor, u3x_sam, &a, 0)) ||
-       (c3n == u3ud(a)) )
-  {
-    return u3m_bail(c3__exit);
-  } else {
-    return u3qc_po_ins(a);
+  if ( c3n == u3ud(a) ) {
+    return u3m_bail(c3__fail);
   }
+
+  return u3qc_po_ins(a);
 }
 
 u3_noun
@@ -1375,21 +1373,20 @@ u3qc_po_ind(u3_noun a)
   c3_y byt_y[3];
   u3r_bytes(0, 3, byt_y, a);
 
-  return po_find_suffix(byt_y[0], byt_y[1], byt_y[2]);
+  return u3_po_find_suffix(byt_y[0], byt_y[1], byt_y[2]);
 }
 
 u3_noun
 u3wcp_ind(u3_noun cor)
 {
   u3_noun a;
+  u3x_mean(cor, u3x_sam, &a, 0);
 
-  if ( (c3n == u3r_mean(cor, u3x_sam, &a, 0)) ||
-       (c3n == u3ud(a)) )
-  {
-    return u3m_bail(c3__exit);
-  } else {
-    return u3qc_po_ind(a);
+  if ( c3n == u3ud(a) ) {
+    return u3m_bail(c3__fail);
   }
+
+  return u3qc_po_ind(a);
 }
 
 u3_noun
@@ -1405,7 +1402,7 @@ u3wcp_tos(u3_noun cor)
   }
   else {
     c3_y byt_y[3];
-    po_to_prefix(a, &byt_y[0], &byt_y[1], &byt_y[2]);
+    u3_po_to_prefix(a, &byt_y[0], &byt_y[1], &byt_y[2]);
     return (byt_y[0] | (byt_y[1] << 8) | (byt_y[2] << 16));
   }
 }
@@ -1422,7 +1419,7 @@ u3wcp_tod(u3_noun cor)
     return u3m_bail(c3__exit);
   } else {
     c3_y byt_y[3];
-    po_to_suffix(a, &byt_y[0], &byt_y[1], &byt_y[2]);
+    u3_po_to_suffix(a, &byt_y[0], &byt_y[1], &byt_y[2]);
     return (byt_y[0] | (byt_y[1] << 8) | (byt_y[2] << 16));
   }
 }
