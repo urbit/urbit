@@ -23,8 +23,8 @@ import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
 import Urbit.Vere.Ames        (ames)
 import Urbit.Vere.Behn        (behn)
 import Urbit.Vere.Clay        (clay)
+import Urbit.Vere.Eyre        (eyre)
 import Urbit.Vere.Http.Client (client)
-import Urbit.Vere.Http.Server (serv)
 import Urbit.Vere.Log         (EventLog)
 import Urbit.Vere.Serf        (Serf, SerfState(..), doJob, sStderr)
 
@@ -294,7 +294,7 @@ drivers inst who isFake plan shutdownSTM termSys stderr =
   where
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who isFake plan stderr
-    (httpBorn, runHttp) = serv inst plan isFake
+    (httpBorn, runHttp) = eyre inst plan isFake
     (clayBorn, runClay) = clay inst plan
     (irisBorn, runIris) = client inst plan
     (termBorn, runTerm) = Term.term termSys shutdownSTM inst plan

@@ -22,8 +22,8 @@
                             "hosed";
 -}
 
-module Urbit.Vere.Http.Server
-  ( serv
+module Urbit.Vere.Eyre
+  ( eyre
   , multiServ
   , ShipAPI(..)
   )
@@ -31,9 +31,9 @@ where
 
 import Urbit.Prelude         hiding (Builder)
 
-import Urbit.Arvo                    hiding (ServerId, reqUrl, secure)
+import Urbit.Arvo            hiding (ServerId, reqUrl, secure)
 import Urbit.King.Config
-import Urbit.Vere.Http.Server.WAIApp hiding (ReqId)
+import Urbit.Vere.Eyre.Wai   hiding (ReqId)
 import Urbit.Vere.Pier.Types
 
 import Data.PEM         (pemParseBS, pemWriteBS)
@@ -435,10 +435,10 @@ killServ Serv{..} = do
 kill :: HasLogFunc e => Drv -> RIO e ()
 kill (Drv v) = stopService v killServ >>= fromEither
 
-serv :: ∀e. HasShipEnv e
+eyre :: ∀e. HasShipEnv e
      => KingId -> QueueEv -> Bool
      -> ([Ev], RAcquire e (EffCb e HttpServerEf))
-serv king plan isFake =
+eyre king plan isFake =
     (initialEvents, runHttpServer)
   where
     initialEvents :: [Ev]

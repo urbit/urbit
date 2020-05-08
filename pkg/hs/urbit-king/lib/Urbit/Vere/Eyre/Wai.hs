@@ -11,7 +11,7 @@
     request.
 -}
 
-module Urbit.Vere.Http.Server.WAIApp
+module Urbit.Vere.Eyre.Wai
   ( ReqId
   , RespAct(..)
   , RespApi(..)
