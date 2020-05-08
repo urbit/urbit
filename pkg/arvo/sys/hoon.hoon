@@ -1603,6 +1603,7 @@
     d(l a(r l.d))
   ::
   ++  rep                                               ::  reduce to product
+    ~/  %rep
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
@@ -1692,12 +1693,16 @@
     a(n n.a(q (b p.n.a q.n.a)), l $(a l.a), r $(a r.a))
   ::
   ++  wyt                                               ::  depth of map
-    |-  ^-  @
+    =<  $
+    ~%  %wyt  +  ~
+    |.  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   ::
   ++  key                                               ::  set of keys
+    =<  $
+    ~/  %key
     =+  b=`(set _?>(?=(^ a) p.n.a))`~
-    |-  ^+  b
+    |.  ^+  b
     ?~  a   b
     $(a r.a, b $(a l.a, b (~(put in b) p.n.a)))
   ::
