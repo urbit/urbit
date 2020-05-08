@@ -14,7 +14,7 @@
 ::    to expede this process, we prod other potential listeners when we add
 ::    them to our metadata+groups definition.
 ::
-/-  *link, link-listen-hook, *metadata-store, group-store
+/-  *link, listen-hook=link-listen-hook, *metadata-store, group-store
 /+  mdl=metadata, default-agent, verb, dbug, store=link-store
 ::
 ~%  %link-listen-hook-top  ..is  ~
@@ -167,7 +167,7 @@
       ?>  (team:title [our src]:bowl)
       =^  cards  state
         ~|  p.vase
-        (handle-listen-action:do !<(action:link-listen-hook vase))
+        (handle-listen-action:do !<(action:listen-hook vase))
       [cards this]
     ==
   ::
@@ -218,7 +218,7 @@
 ::  user actions & updates
 ::
 ++  handle-listen-action
-  |=  =action:link-listen-hook
+  |=  =action:listen-hook
   ^-  (quip card _state)
   ::NOTE  no-opping where appropriate happens further down the call stack.
   ::      we *could* no-op here, as %watch when we're already listening should
@@ -250,7 +250,7 @@
   $(cards (weld cards more-cards), groups t.groups)
 ::
 ++  send-update
-  |=  =update:link-listen-hook
+  |=  =update:listen-hook
   ^-  card
   [%give %fact ~[/listening] %link-listen-update !>(update)]
 ::

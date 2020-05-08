@@ -12,7 +12,7 @@
 ::
 /-  *link, *link-view,
     *invite-store, group-store,
-    link-listen-hook,
+    listen-hook=link-listen-hook,
     group-hook, permission-hook, permission-group-hook,
     metadata-hook, contact-view
 /+  store=link-store, metadata, *server, default-agent, verb, dbug
@@ -320,7 +320,7 @@
         ::
         %^  do-poke  %link-listen-hook
           %link-listen-action
-        !>  ^-  action:link-listen-hook
+        !>  ^-  action:listen-hook
         [%watch path]
     ==
   ?:  ?=(%group -.members)  ~
