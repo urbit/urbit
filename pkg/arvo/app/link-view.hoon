@@ -10,7 +10,7 @@
 ::    /json/[n]/submission/[wood-url]/[collection]    nth matching submission
 ::    /json/seen                                      mark-as-read updates
 ::
-/-  *link, *link-view,
+/-  *link, view=link-view,
     *invite-store, group-store,
     listen-hook=link-listen-hook,
     group-hook, permission-hook, permission-group-hook,
@@ -80,7 +80,7 @@
       [(handle-action:do !<(action:store vase)) ~]
     ::
         %link-view-action
-      (handle-view-action:do !<(view-action vase))
+      (handle-view-action:do !<(action:view vase))
     ==
   ::
   ++  on-watch
@@ -273,7 +273,7 @@
   [%pass /action %agent [our.bowl %link-store] %poke %link-action !>(action)]
 ::
 ++  handle-view-action
-  |=  act=view-action
+  |=  act=action:view
   ^-  (list card)
   ?-  -.act
     %create  (handle-create +.act)
@@ -282,7 +282,7 @@
   ==
 ::
 ++  handle-create
-  |=  [=path title=@t description=@t members=create-members real-group=?]
+  |=  [=path title=@t description=@t members=create-members:view real-group=?]
   ^-  (list card)
   =/  group-path=^path
     ?-  -.members
