@@ -19,6 +19,12 @@ binderTy = \case
   Lam' t   -> t
   Let' t _ -> t
 
+binderVal :: Binder a -> Maybe (Value a)
+binderVal = \case
+  Fun'{}   -> Nothing
+  Lam'{}   -> Nothing
+  Let' _ v -> Just v
+
 -- | Records information about all the bound variables in scope. We think of
 -- the innermost var as being "on the right" because this is the convention
 -- used with the "Gammas" in type theory texts.
@@ -36,6 +42,12 @@ scry Nil _ = Nothing
 -- F-ing so you paid it only on the first read.
 scry (Snoc _ b) (B ()) = Just (F <$> b)
 scry (Snoc e _) (F v) = fmap F <$> scry e v
+
+scryTy :: Env a -> a -> Maybe (Type a)
+scryTy env v = binderTy <$> scry env v
+
+scryVal :: Env a -> a -> Maybe (Value a)
+scryVal env = binderVal <=< scry env
 
 -- | Returns a list of all the variables bound in this scope whose values are
 -- unknown (i.e., non-let-bound vars), innermost first
