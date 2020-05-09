@@ -173,6 +173,9 @@
     |=  [dap=term bek=beak =cage]
     ^+  mo-core
     ::
+    =/  existing  (~(get by yokes.state) dap)
+    =/  re  ?~(existing "" "re")
+    ~>  %slog.[0 leaf+"gall: {re}loading {<dap>}"]
     ?.  =(%vase p.cage)
       (mo-give %onto |+[leaf+"gall: bad mark {<p.cage>} for agent {<dap>}"]~)
     ::
@@ -182,7 +185,7 @@
       (mo-give %onto %.n err)
     =/  =agent  p.maybe-new-agent
     ::
-    ?^  existing=(~(get by yokes.state) dap)
+    ?^  existing
       =.  yokes.state
         (~(put by yokes.state) dap u.existing(beak bek))
       =/  =routes  [disclosing=~ attributing=our]
@@ -354,7 +357,7 @@
       =.  mo-core  (mo-receive-core dap beak r.u.p.sign-arvo)
       (mo-subscribe-to-agent-builds tim)
     (mo-give %onto |+[leaf+"gall: failed to build agent {<dap>}"]~)
-  ::
+  ::  +mo-handle-sys-lyv: handle notice that agents have been rebuilt
   ::
   ++  mo-handle-sys-lyv
     |=  [=path =sign-arvo]
@@ -363,6 +366,8 @@
     ?>  ?=([?(%b %c) %wris *] sign-arvo)
     =/  bek=beak  [our %home p.sign-arvo]
     =/  nex=(list [=care:clay =^path])  ~(tap in q.sign-arvo)
+    ~>  %slog.[0 leaf+"gall: reloading agents"]
+    ~<  %slog.[0 leaf+"gall: reloaded agents"]
     =;  cor  (mo-subscribe-to-agent-builds:cor p.p.sign-arvo)
     %+  roll  nex
     |=  [[=care:clay =^path] cor=_mo-core]

@@ -1,6 +1,6 @@
-::                                                      ::  /van/zuse
-::                                                      ::  %reference/1
-::  %zuse: arvo library.
+::  /sys/zuse
+::  %reference/1
+::  %zuse: arvo library
 ::
 ::  %zuse is two nested cores: the first for models
 ::  (data structures), the second for engines (functions
@@ -784,7 +784,7 @@
           {$burl p/@t}                                  ::  activate url
           {$init p/@p}                                  ::  set owner
           {$logo ~}                                     ::  logout
-          {$lyra p/@t q/@t}                             ::  upgrade kernel
+          [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
           {$pack ~}                                     ::  compact memory
           {$veer p/@ta q/path r/@t}                     ::  install vane
           {$verb ~}                                     ::  verbose mode
@@ -803,7 +803,7 @@
           {$hook ~}                                     ::  this term hung up
           {$harm ~}                                     ::  all terms hung up
           $>(%init vane-task)                           ::  after gall ready
-          {$lyra p/@t q/@t}                             ::  upgrade kernel
+          [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
           {$noop ~}                                     ::  no operation
           {$pack ~}                                     ::  compact memory
           {$talk p/tank}                                ::
@@ -869,7 +869,7 @@
   ++  flog                                              ::  sent to %dill
     $%  {$crud p/@tas q/(list tank)}                    ::
         {$heft ~}                                       ::
-        {$lyra p/@t q/@t}                               ::  upgrade kernel
+        [%lyra hoon=(unit @t) arvo=@t]                  ::  upgrade kernel
         {$pack ~}                                       ::  compact memory
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane

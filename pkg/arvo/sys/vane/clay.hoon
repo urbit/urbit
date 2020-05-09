@@ -3558,11 +3558,11 @@
     ::
     =.  fod.dom
       (promote-ford fod.dom deletes ~(key by changes))
-    =/  =args:ford:fusion
-      [ank.dom deletes changes lat.ran fod.dom]
     ::
     =/  sys-changes  (need-sys-update changes)
     ?:  &(!updated !=(~ sys-changes))
+      =/  =args:ford:fusion
+        [ank.dom deletes changes lat.ran fod.dom]
       (sys-update args yoki changes)
     =.  ..park  (emil (print deletes ~(key by changes)))
     ::  clear caches if zuse reloaded
@@ -3572,6 +3572,8 @@
     =?  ank.dom  is-zuse-new  *ankh
     =?  changes  is-zuse-new
       (changes-for-upgrade old-lobes deletes changes)
+    =/  =args:ford:fusion
+      [ank.dom deletes changes lat.ran fod.dom]
     ::
     =^  change-cages  ford-cache.args
       (checkout-changes args changes)
@@ -3949,12 +3951,14 @@
         test-ankh  (~(got by dir.test-ankh) ta)
       ==
     ::
-    ::  Find /sys changes
+    ::  Find /sys changes; does not reload on first commit
     ::
     ++  need-sys-update
       |=  changes=(map path (each page lobe))
       ^-  (map path (each page lobe))
       ~+
+      ?:  =(0 let.dom)
+        ~
       %-  malt
       %+  skim  ~(tap by changes)
       |=  [=path *]
@@ -3989,24 +3993,36 @@
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
       |^  ?:  (~(has by updates) /sys/hoon/hoon)
-            reset
+            (reset &)
           ?:  (~(has by updates) /sys/arvo/hoon)
-            reset
+            (reset |)
           ?:  (~(has by updates) /sys/zuse/hoon)
             reboot
           reload-all
       ::
       ++  reset
-        =^  hoon=cage  ford-cache.ford-args
-          %-  wrap:fusion
-          (get-value:(ford:fusion ford-args) /sys/hoon/hoon)
-        =^  arvo=cage  ford-cache.ford-args
-          %-  wrap:fusion
-          (get-value:(ford:fusion ford-args) /sys/arvo/hoon)
-        =.  ..park
-          %-  emit
-          [hen %pass /reset %d %flog %lyra !<(@t q.hoon) !<(@t q.arvo)]
+        |=  new-hoon=?
+        ^+  ..park
+        ?.  new-hoon
+          =^  arvo=@t  ford-cache.ford-args  (load-sys %arvo)
+          =.  ..park  (pass-lyra hoon=~ arvo)
+          reboot
+        =^  hoon=@t  ford-cache.ford-args  (load-sys %hoon)
+        =^  arvo=@t  ford-cache.ford-args  (load-sys %arvo)
+        =.  ..park  (pass-lyra `hoon arvo)
         reboot
+      ::
+      ++  load-sys
+        |=  fil=@tas
+        ^-  [@t ford-cache]
+        =-  [!<(@t q.-<) ->]
+        %-  wrap:fusion
+        (get-value:(ford:fusion ford-args) /sys/[fil]/hoon)
+      ::
+      ++  pass-lyra
+        |=  [hoon=(unit @t) arvo=@t]
+        ^+  ..park
+        (emit hen %pass /reset %d %flog %lyra hoon arvo)
       ::
       ++  reboot
         =^  zuse=cage  ford-cache.ford-args

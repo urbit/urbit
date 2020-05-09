@@ -166,9 +166,10 @@
   %-  emil
   ^-  (list card:agent:gall)
   =/  top=path  /(scot %p our)/home/(scot %da now)/sys
-  =/  hun  .^(@ %cx (welp top /hoon/hoon))
-  =/  arv  .^(@ %cx (welp top /arvo/hoon))
-  :-  [%pass /reset %arvo %d %flog %lyra `@t`hun `@t`arv]
+  =/  hun  .^(@t %cx (welp top /hoon/hoon))
+  =/  arv  .^(@t %cx (welp top /arvo/hoon))
+  ~!  *task:able:dill
+  :-  [%pass /reset %arvo %d %flog %lyra `hun arv]
   %+  turn
     (module-ova:pill top)
   |=([=wire =flog:dill] [%pass wire %arvo %d %flog flog])

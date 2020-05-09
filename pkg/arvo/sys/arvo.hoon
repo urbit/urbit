@@ -893,7 +893,8 @@
           pax=path
           txt=@ta
       ==
-  ~|  [%failed-vint lal]
+  =;  res  ?-(-.res %& p.res, %| (mean leaf+"vint: {<lal>}" p.res))
+  %-  mule  |.
   =+  gen=(rain pax txt)
   ~>  %slog.[0 leaf+"vane: parsed {(scow p+(mug gen))}"]
   =+  pro=(vent who lal vil bud [(slym (slap bud gen) bud) *worm])
@@ -1186,7 +1187,7 @@
   ^-  [(list ovum) *]
   ~|  feck+-.q.ovo
   ?:  ?=(%lyra -.q.ovo)
-    (vega now nub ;;([@ @] +.q.ovo))
+    (vega now nub ;;([(unit @) @] +.q.ovo))
   ?+  -.q.ovo  ~|(bad-fec+-.q.ovo !!)
   ::  produce memory usage report
   ::
@@ -1215,46 +1216,65 @@
 ++  vega
   |=  $:  ::  now: current date
           ::  nub: vane continuation state
-          ::  hun: hoon.hoon source
+          ::  hun: hoon.hoon source, or ~ if unchanged
           ::  arv: arvo.hoon source
           ::
           now=@da
           nub=debt:le:part
-          hun=@t
+          hun=(unit @t)
           van=@t
       ==
   ::  produce a new kernel and an effect list
   ::
   ^-  [(list ovum) *]
-  ::  compile the hoon.hoon source with the current compiler
+  ::  go metacircular as hint to vere to run in new memory arena
   ::
-  =/  raw
-    ~>  %slog.[0 leaf+"vega: compiling hoon"]
-    (ride %noun hun)
-  ::  activate the new compiler gate, producing +ride
+  =;  res  ?-(-.res %& p.res, %| (mean leaf+"vega: ruin" p.res))
+  %-  mule  |.
+  ::  obtain hoon compiler data
   ::
-  =/  cop  .*(0 +.raw)
-  ::  find the hoon version number of the new kernel
+  ::    Arvo is compiled against the hoon.hoon vase with its outer +ride
+  ::    gate stripped off, leaving the main core.
   ::
-  =/  nex
-    (@ .*(cop q:(~(mint ut p.raw) %noun [%limb %hoon-version])))
-  ?>  |(=(nex hoon-version) =(+(nex) hoon-version))
-  ::  if we're upgrading language versions, recompile the compiler
+  ::    hyp: hoon core type
+  ::    hoc: hoon core
+  ::    cop: compiler gate
+  ::    lod: can we use the +load arm? (language-compatible upgrade)
   ::
-  ::    hot: raw compiler formula
-  ::
-  =>  ?:  =(nex hoon-version)
-        [hot=`*`raw .]
-      ~>  %slog.[0 leaf+"vega: recompiling hoon {<nex>}k"]
-      ~&  [%hoon-compile-upgrade nex]
-      =/  hot  (slum cop [%noun hun])
-      .(cop .*(0 +.hot))
-  ::  extract the hoon core from the outer gate (+ride)
-  ::
-  =/  hoc  .*(cop [%0 7])
-  ::  compute the type of the hoon.hoon core
-  ::
-  =/  hyp  -:(slum cop [-.hot '+>'])
+  =/  [hyp=* hoc=* cop=* lod=?]
+    ::  if no new hoon.hoon source, use current compiler
+    ::
+    ?~  hun
+      [-:!>(+>:ride) +>:ride ride &]
+    ::  compile new hoon.hoon source with the current compiler
+    ::
+    =/  raw
+      ~>  %slog.[0 leaf+"vega: compiling hoon"]
+      (ride %noun u.hun)
+    ::  activate the new compiler gate, producing +ride
+    ::
+    =/  cop  .*(0 +.raw)
+    ::  find the hoon version number of the new kernel
+    ::
+    =/  nex
+      (@ .*(cop q:(~(mint ut p.raw) %noun [%limb %hoon-version])))
+    ?>  |(=(nex hoon-version) =(+(nex) hoon-version))
+    ::  if we're upgrading language versions, recompile the compiler
+    ::
+    =>  ?:  =(nex hoon-version)
+          [hot=`*`raw .]
+        ~>  %slog.[0 leaf+"vega: recompiling hoon {<nex>}k"]
+        ~&  [%hoon-compile-upgrade nex]
+        =/  hot  (slum cop [%noun hun])
+        .(cop .*(0 +.hot))
+    ::  extract the hoon core from the outer gate (+ride)
+    ::
+    =/  hoc  .*(cop [%0 7])
+    ::  compute the type of the hoon.hoon core
+    ::
+    =/  hyp  -:(slum cop [-.hot '+>'])
+    ::
+    [hyp hoc cop =(nex hoon-version)]
   ::  compile arvo
   ::
   =/  rav
@@ -1267,7 +1287,7 @@
   ::  entry gate: ++load for the normal case, ++come for upgrade
   ::
   =/  gat
-    =/  arm  ?:(=(nex hoon-version) 'load' 'come')
+    =/  arm  ?:(lod 'load' 'come')
     ~>  %slog.[0 leaf+"vega: +{(trip arm)}"]
     ::  compute the type of the arvo.hoon core
     ::
@@ -1305,7 +1325,8 @@
   |=  [who=ship now=@da fav=curd]
   ^+  soul
   =>  .(fav ;;([%veer lal=@tas pax=path txt=@t] fav))
-  ~|  veer+[lal pax]:fav
+  =;  res  ?-(-.res %& p.res, %| (mean leaf+"veer: {<lal.fav>}" p.res))
+  %-  mule  |.
   ?:  =(%$ lal.fav)
     ~>  %slog.[0 leaf+"zuse: {(scow p+(mug txt.fav))}"]
     =+  gen=(rain pax.fav txt.fav)
@@ -1323,7 +1344,7 @@
     ~>  %slog.[0 leaf+"vane: {<lal.fav>} {(scow p+(mug txt.fav))}"]
     :_  t.vanes
     :-  label.i.vanes
-    ~|  [%failed-vane-activation now lal.fav]
+    ~|  [%failed-vane-activation lal.fav]
     =<  vane
     %.  [pax txt]:fav
     ruck:(vent who lal.fav vil bud [vase.vane.i.vanes *worm])
