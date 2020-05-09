@@ -7,7 +7,8 @@
     *permission-store,
     *invite-store,
     *metadata-store,
-    *metadata-hook
+    *metadata-hook,
+    *rw-security
 /+  *server, *publish, cram, default-agent, dbug
 ::
 /=  index
@@ -2126,13 +2127,13 @@
   =/  book=(unit notebook)  (~(get by books) host book-name)
   ?~  book
     ~
-  =/  notebook-json  (notebook-full-json host book-name u.book)
+  =/  notebook-json  (notebook-full:enjs host book-name u.book)
   ?>  ?=(%o -.notebook-json)
   =.  p.notebook-json
-    (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
+    (~(uni by p.notebook-json) (notes-page:enjs notes.u.book 0 50))
   =.  p.notebook-json
     (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
-  =/  notebooks-json  (notebooks-map-json our.bol books)
+  =/  notebooks-json  (notebooks-map:enjs our.bol books)
   ?>  ?=(%o -.notebooks-json)
   =/  host-books-json  (~(got by p.notebooks-json) (scot %p host))
   ?>  ?=(%o -.host-books-json)
@@ -2151,11 +2152,11 @@
   =/  note=(unit note)  (~(get by notes.u.book) note-name)
   ?~  note
     ~
-  =/  notebook-json  (notebook-full-json host book-name u.book)
+  =/  notebook-json  (notebook-full:enjs host book-name u.book)
   ?>  ?=(%o -.notebook-json)
-  =/  note-json  (note-presentation-json u.book note-name u.note)
+  =/  note-json  (note-presentation:enjs u.book note-name u.note)
   =.  p.notebook-json  (~(uni by p.notebook-json) note-json)
-  =/  notebooks-json  (notebooks-map-json our.bol books)
+  =/  notebooks-json  (notebooks-map:enjs our.bol books)
   ?>  ?=(%o -.notebooks-json)
   =/  host-books-json  (~(got by p.notebooks-json) (scot %p host))
   ?>  ?=(%o -.host-books-json)
@@ -2199,7 +2200,7 @@
       [[[~ %json] [%'~publish' %notebooks ~]] ~]
     %-  json-response:gen
     %-  json-to-octs
-    (notebooks-map-json our.bol books)
+    (notebooks-map:enjs our.bol books)
   ::
   ::  notes pagination
       [[[~ %json] [%'~publish' %notes @ @ @ @ ~]] ~]
@@ -2219,7 +2220,7 @@
     %-  json-response:gen
     %-  json-to-octs
     :-  %o
-    (notes-page notes.u.book u.start u.length)
+    (notes-page:enjs notes.u.book u.start u.length)
   ::
   ::  comments pagination
       [[[~ %json] [%'~publish' %comments @ @ @ @ @ ~]] ~]
@@ -2242,7 +2243,7 @@
       not-found:gen
     %-  json-response:gen
     %-  json-to-octs
-    (comments-page comments.u.note u.start u.length)
+    (comments-page:enjs comments.u.note u.start u.length)
   ::
   ::  single notebook with initial 50 notes in short form, as json
       [[[~ %json] [%'~publish' @ @ ~]] ~]
@@ -2254,10 +2255,10 @@
     =/  book=(unit notebook)  (~(get by books) u.host book-name)
     ?~  book
       not-found:gen
-    =/  notebook-json  (notebook-full-json u.host book-name u.book)
+    =/  notebook-json  (notebook-full:enjs u.host book-name u.book)
     ?>  ?=(%o -.notebook-json)
     =.  p.notebook-json
-      (~(uni by p.notebook-json) (notes-page notes.u.book 0 50))
+      (~(uni by p.notebook-json) (notes-page:enjs notes.u.book 0 50))
     =.  p.notebook-json
       (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
     =/  jon=json  (pairs notebook+notebook-json ~)
@@ -2277,7 +2278,7 @@
     =/  note=(unit note)  (~(get by notes.u.book) note-name)
     ?~  note
       not-found:gen
-    =/  jon=json  o+(note-presentation-json u.book note-name u.note)
+    =/  jon=json  o+(note-presentation:enjs u.book note-name u.note)
     (json-response:gen (json-to-octs jon))
   ::
   ::  presentation endpoints
@@ -2285,7 +2286,7 @@
   ::  all notebooks, short form, wrapped in html
       [[~ [%'~publish' ?(~ [%join *] [%new ~])]] ~]
     =,  enjs:format
-    =/  jon=json  (pairs notebooks+(notebooks-map-json our.bol books) ~)
+    =/  jon=json  (pairs notebooks+(notebooks-map:enjs our.bol books) ~)
     (manx-response:gen (index jon))
   ::
   ::  single notebook, with initial 50 notes in short form, wrapped in html
