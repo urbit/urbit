@@ -1,9 +1,9 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 
-import api from './api';
-import store from './store';
-import subscription from './subscription';
+import Api from './api';
+import Store from './store';
+import Subscription from './subscription';
 
 import './css/custom.css';
 
@@ -19,9 +19,17 @@ import { NewDmScreen } from './components/new-dm';
 export default class ChatApp extends React.Component {
   constructor(props) {
     super(props);
+    this.store = new Store();
+    this.store.setStateHandler(this.setState.bind(this));
+    
     this.state = store.state;
     this.totalUnreads = 0;
-    store.setStateHandler(this.setState.bind(this));
+    this.resetControllers();
+  }
+
+  resetControllers() {
+    this.api = null;
+    this.subscription = null;
   }
 
   componentDidMount() {
@@ -29,20 +37,18 @@ export default class ChatApp extends React.Component {
     // preload spinner asset
     new Image().src = '/~chat/img/Spinner.png';
 
-    api.setAuthTokens(
-      { ship: this.props.ship },
-      this.props.channel
-    );
+    this.store.clear();
+    let channel = new this.props.channel();
+    this.api = new Api(this.props.ship, channel);
 
-    subscription.start(this.props.channel);
+    this.subscription = new Subscription(this.store, this.api, channel);
+    this.subscription.start();
   }
 
   componentWillUnmount() {
-    this.props.channel.delete();
-    store.firstRoundSubscriptionComplete = false;
-    store.handleEvent({
-      data: { clear: true }
-    });
+    this.subscription.delete();
+    this.store.clear();
+    this.resetControllers();
   }
 
   render() {
@@ -87,7 +93,7 @@ export default class ChatApp extends React.Component {
         contacts={contacts}
         invites={invites['/chat'] || {}}
         unreads={unreads}
-        api={api}
+        api={this.api}
         station={station}
         {...props}
       />
@@ -133,7 +139,7 @@ export default class ChatApp extends React.Component {
                 sidebarShown={state.sidebarShown}
               >
                 <NewDmScreen
-                  api={api}
+                  api={this.api}
                   inbox={state.inbox || {}}
                   permissions={state.permissions || {}}
                   contacts={state.contacts || {}}
@@ -159,7 +165,7 @@ export default class ChatApp extends React.Component {
                 sidebarShown={state.sidebarShown}
               >
                 <NewScreen
-                  api={api}
+                  api={this.api}
                   inbox={state.inbox || {}}
                   permissions={state.permissions || {}}
                   contacts={state.contacts || {}}
@@ -191,7 +197,7 @@ export default class ChatApp extends React.Component {
                 sidebarShown={state.sidebarShown}
               >
                 <JoinScreen
-                  api={api}
+                  api={this.api}
                   inbox={state.inbox}
                   autoJoin={station}
                   chatSynced={state.chatSynced || {}}
@@ -253,8 +259,8 @@ export default class ChatApp extends React.Component {
                   chatSynced={state.chatSynced}
                   station={station}
                   association={association}
-                  api={api}
-                  subscription={subscription}
+                  api={this.api}
+                  subscription={this.subscription}
                   read={mailbox.config.read}
                   length={mailbox.config.length}
                   envelopes={mailbox.envelopes}

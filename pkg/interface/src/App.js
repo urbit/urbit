@@ -50,7 +50,8 @@ export default class App extends React.Component {
   }
 
   render() {
-    const Channel = window.channel;
+    const channel = window.channel;
+
     return (
       <ThemeProvider theme={light}>
         <Root>
@@ -59,19 +60,19 @@ export default class App extends React.Component {
             <div>
               <Route exact path="/" component={Home} />
               <Route path="/~chat" render={
-                p => <ChatApp ship={this.ship} channel={new Channel()} {...p} />
+                p => <ChatApp ship={this.ship} channel={channel} {...p} />
               }
               />
               <Route path="/~dojo" render={
-                p => <DojoApp ship={this.ship} channel={new Channel()} {...p} />
+                p => <DojoApp ship={this.ship} channel={channel} {...p} />
               }
               />
               <Route path="/~groups" render={
-                p => <GroupsApp ship={this.ship} channel={new Channel()} {...p} />
+                p => <GroupsApp ship={this.ship} channel={channel} {...p} />
               }
               />
               <Route path="/~link" render={
-                p => <LinksApp ship={this.ship} channel={new Channel()} {...p} />
+                p => <LinksApp ship={this.ship} channel={channel} {...p} />
               }
               />
             </div>

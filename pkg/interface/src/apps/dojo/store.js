@@ -1,13 +1,12 @@
 import Share from './components/lib/sole';
 import api from './api';
 
-export const buffer = new Share();
-
-export class Store {
+export default class Store {
   constructor() {
     this.state = this.initialState();
     this.sync = this.sync.bind(this);
     this.print = this.print.bind(this);
+    this.buffer = new Share();
   }
 
   initialState() {
@@ -51,7 +50,7 @@ export class Store {
       case 'hop':
         return this.setState({ cursor: dojoReply.hop });
       case 'det':
-        buffer.receive(dojoReply.det);
+        this.buffer.receive(dojoReply.det);
         return this.sync(dojoReply.det.ted);
       case 'act':
         switch (dojoReply.act) {
@@ -67,7 +66,7 @@ export class Store {
   }
 
   doEdit(ted) {
-    const detSend = buffer.transmit(ted);
+    const detSend = this.buffer.transmit(ted);
     this.sync(ted);
     return api.soto({ det: detSend });
   }
@@ -80,8 +79,8 @@ export class Store {
 
   sync(ted) {
     return this.setState({
-      input: buffer.buf,
-      cursor: buffer.transpose(ted, this.state.cursor)
+      input: this.buffer.buf,
+      cursor: this.buffer.transpose(ted, this.state.cursor)
     });
   }
 
@@ -90,5 +89,3 @@ export class Store {
   }
 }
 
-const store = new Store();
-export default store;
