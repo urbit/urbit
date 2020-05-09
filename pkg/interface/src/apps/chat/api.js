@@ -2,9 +2,10 @@ import _ from 'lodash';
 import { uuid } from '../../lib/util';
 import store from './store';
 
-class UrbitApi {
-  setAuthTokens(authTokens, channel) {
-    this.authTokens = authTokens;
+export default class Api {
+
+  constructor(ship, channel) {
+    this.ship = ship;
     this.channel = channel;
     this.bindPaths = [];
 
@@ -33,9 +34,10 @@ class UrbitApi {
       accept: this.inviteAccept.bind(this),
       decline: this.inviteDecline.bind(this)
     };
+
   }
 
-  bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
+  bind(path, method, ship = this.ship, app, success, fail, quit) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
     window.subscriptionId = this.channel.subscribe(ship, app, path,
@@ -256,5 +258,3 @@ class UrbitApi {
   }
 }
 
-const api = new UrbitApi();
-export default api;
