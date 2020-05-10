@@ -19,7 +19,8 @@
 {-# OPTIONS_GHC -Wno-deprecations #-}
 
 module Urbit.Vere.Eyre.Serv
-  ( TlsConfig(..)
+  ( ServApi(..)
+  , TlsConfig(..)
   , MultiTlsConfig
   , ReqApi(..)
   , ServType(..)
@@ -49,6 +50,11 @@ import qualified Urbit.Vere.Eyre.Wai         as E
 
 
 -- Internal Types --------------------------------------------------------------
+
+data ServApi = ServApi
+  { saKil :: STM ()
+  , saPor :: STM W.Port
+  }
 
 data TlsConfig = TlsConfig
   { tcPrKey :: ByteString
@@ -82,8 +88,6 @@ data ServConf = ServConf
   , scHost :: ServHost
   , scPort :: ServPort
   , scRedi :: Maybe W.Port
-  , scOpnd :: W.Port -> STM ()
-  , scDeth :: STM ()
   }
 
 
@@ -214,10 +218,10 @@ startServer
   -> W.Port
   -> Net.Socket
   -> Maybe W.Port
+  -> TVar E.LiveReqs
   -> RIO e ()
-startServer typ hos por sok red = do
+startServer typ hos por sok red vLive = do
   envir <- ask
-  vLive <- newTVarIO E.emptyLiveReqs
 
   let host = case hos of
         SHLocalhost -> "127.0.0.1"
@@ -266,12 +270,22 @@ configCreds TlsConfig {..} =
     Left  str -> Left (pack str)
     Right rs  -> Right rs
 
-serv :: HasLogFunc e => ServConf -> RIO e ()
-serv ServConf {..} = do
-  tid <- async runServ
-  atomically scDeth
-  cancel tid
+serv :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
+serv vLive ServConf {..} = do
+  kil <- newEmptyTMVarIO
+  por <- newEmptyTMVarIO
+
+  void $ async $ do
+    tid <- async (runServ por)
+    atomically (takeTMVar kil)
+    cancel tid
+
+  pure $ ServApi
+    { saKil = void (tryPutTMVar kil ())
+    , saPor = readTMVar por
+    }
  where
-  runServ = rwith (forceOpenSocket scHost scPort) $ \(por, sok) -> do
-    atomically (scOpnd por)
-    startServer scType scHost por sok scRedi
+  runServ vPort = do
+    rwith (forceOpenSocket scHost scPort) $ \(por, sok) -> do
+      atomically (putTMVar vPort por)
+      startServer scType scHost por sok scRedi vLive
