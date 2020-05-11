@@ -1859,12 +1859,45 @@
           ==
         now
       ::
-      =/  =message-blob  (jam payload)
+      =/  =message-blob  (dedup-message (jam payload))
       =.  peer-core  (run-message-pump bone %memo message-blob)
       ::
       ?:  &(=(%boon valence) ?=(?(%dead %unborn) -.qos.peer-state))
         check-clog
       peer-core
+    ::  +dedup-message: replace with any existing copy of this message
+    ::
+    ++  dedup-message
+      |=  =message-blob
+      ^+  message-blob
+      ?:  (lte (met 13 message-blob) 1)
+        message-blob
+      =/  peers-l=(list [=ship =ship-state])  ~(tap by peers.ames-state)
+      |-  ^+  message-blob
+      =*  peer-loop  $
+      ?~  peers-l
+        message-blob
+      ?.  ?=(%known -.ship-state.i.peers-l)
+        peer-loop(peers-l t.peers-l)
+      =/  snd-l=(list [=bone =message-pump-state])
+        ~(tap by snd.ship-state.i.peers-l)
+      |-  ^+  message-blob
+      =*  bone-loop  $
+      ?~  snd-l
+        peer-loop(peers-l t.peers-l)
+      =/  blob-l=(list ^message-blob)
+        ~(tap to unsent-messages.message-pump-state.i.snd-l)
+      |-  ^+  message-blob
+      =*  blob-loop  $
+      ?^  blob-l
+        ?:  =(i.blob-l message-blob)
+          i.blob-l
+        blob-loop(blob-l t.blob-l)
+      ?~  unsent-fragments.message-pump-state.i.snd-l
+        bone-loop(snd-l t.snd-l)
+      ?:  =(message-blob fragment.i.unsent-fragments.message-pump-state.i.snd-l)
+        `@`fragment.i.unsent-fragments.message-pump-state.i.snd-l
+      bone-loop(snd-l t.snd-l)
     ::  +on-wake: handle timer expiration
     ::
     ++  on-wake
@@ -3017,20 +3050,24 @@
   (lte fragment-num.a fragment-num.b)
 ::  +split-message: split message into kilobyte-sized fragments
 ::
+::    We don't literally split it here since that would allocate many
+::    large atoms with no structural sharing.  Instead, each
+::    static-fragment has the entire message and a counter.  In
+::    +encrypt, we interpret this to get the actual fragment.
+::
 ++  split-message
   |=  [=message-num =message-blob]
   ^-  (list static-fragment)
   ::
-  =/  fragments=(list fragment)   (rip 13 message-blob)
-  =/  num-fragments=fragment-num  (lent fragments)
+  =/  num-fragments=fragment-num  (met 13 message-blob)
   =|  counter=@
   ::
   |-  ^-  (list static-fragment)
-  ?~  fragments  ~
+  ?:  (gte counter num-fragments)
+    ~
   ::
-  :-  [message-num num-fragments counter i.fragments]
-  ::
-  $(fragments t.fragments, counter +(counter))
+  :-  [message-num num-fragments counter `@`message-blob]
+  $(counter +(counter))
 ::  +assemble-fragments: concatenate fragments into a $message
 ::
 ++  assemble-fragments
@@ -3119,6 +3156,17 @@
   |=  [=symmetric-key plaintext=shut-packet]
   ^-  @
   ::
+  =.  meat.plaintext
+    ?.  ?&  ?=(%& -.meat.plaintext)
+            (gth (met 13 fragment.p.meat.plaintext) 1)
+        ==
+      meat.plaintext
+    %=    meat.plaintext
+        fragment.p
+      %^  end  13  1
+      %^  rsh  13  fragment-num.p.meat.plaintext
+      fragment.p.meat.plaintext
+    ==
   (en:crub:crypto symmetric-key (jam plaintext))
 ::  +decrypt: decrypt packet content to a $shut-packet or die
 ::
