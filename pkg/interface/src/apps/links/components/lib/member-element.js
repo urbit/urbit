@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import { Sigil } from '../../../../lib/sigil';
 import { uxToHex, cite } from '../../../../lib/util';
-
-import api from '../../api';
-
 export class MemberElement extends Component {
   onRemove() {
     const { props } = this;
-    api.groups.remove(props.groupPath, [`~${props.ship}`]);
+    props.api.groups.remove(props.groupPath, [`~${props.ship}`]);
   }
 
   render() {

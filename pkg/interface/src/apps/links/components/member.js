@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-import api from '../api';
-
 import { Link } from 'react-router-dom';
 
 import { LoadingScreen } from './loading';
@@ -33,6 +31,7 @@ export class MemberScreen extends Component {
           ship={mem}
           groupPath={props.groupPath}
           resourcePath={props.resourcePath}
+          api={props.api}
         />
       );
     });
@@ -53,7 +52,7 @@ export class MemberScreen extends Component {
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
             popout={this.props.popout}
-            api={api}
+            api={this.props.api}
           />
           <Link to={makeRoutePath(props.resourcePath, props.popout)}
           className="pt2 white-d"

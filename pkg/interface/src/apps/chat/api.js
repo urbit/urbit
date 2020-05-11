@@ -1,12 +1,11 @@
 import _ from 'lodash';
 import { uuid } from '../../lib/util';
-import store from './store';
 
 export default class Api {
-
-  constructor(ship, channel) {
+  constructor(ship, channel, store) {
     this.ship = ship;
     this.channel = channel;
+    this.store = store;
     this.bindPaths = [];
 
     this.groups = {
@@ -34,7 +33,6 @@ export default class Api {
       accept: this.inviteAccept.bind(this),
       decline: this.inviteDecline.bind(this)
     };
-
   }
 
   bind(path, method, ship = this.ship, app, success, fail, quit) {
@@ -71,14 +69,14 @@ export default class Api {
   }
 
   addPendingMessage(msg) {
-    if (store.state.pendingMessages.has(msg.path)) {
-      store.state.pendingMessages.get(msg.path).push(msg.envelope);
+    if (this.store.state.pendingMessages.has(msg.path)) {
+      this.store.state.pendingMessages.get(msg.path).push(msg.envelope);
     } else {
-      store.state.pendingMessages.set(msg.path, [msg.envelope]);
+      this.store.state.pendingMessages.set(msg.path, [msg.envelope]);
     }
 
-    store.setState({
-      pendingMessages: store.state.pendingMessages
+    this.store.setState({
+      pendingMessages: this.store.state.pendingMessages
     });
   }
 
@@ -235,10 +233,10 @@ export default class Api {
 
   sidebarToggle() {
     let sidebarBoolean = true;
-    if (store.state.sidebarShown === true) {
+    if (this.store.state.sidebarShown === true) {
       sidebarBoolean = false;
     }
-    store.handleEvent({
+    this.store.handleEvent({
       data: {
         local: {
           'sidebarToggle': sidebarBoolean
@@ -248,7 +246,7 @@ export default class Api {
   }
 
   setSelected(selected) {
-    store.handleEvent({
+    this.store.handleEvent({
       data: {
         local: {
           selected: selected

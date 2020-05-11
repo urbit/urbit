@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-import api from '../api';
-
 import { LoadingScreen } from './loading';
 import { MessageScreen } from './lib/message-screen';
 import { LinksTabBar } from './lib/links-tabbar';
@@ -35,7 +33,7 @@ export class Links extends Component {
          !this.props.links[linkPage] ||
          this.props.links.local[linkPage]
     ) {
-      api.getPage(this.props.resourcePath, this.props.page);
+      this.props.api.getPage(this.props.resourcePath, this.props.page);
     }
   }
 
@@ -95,6 +93,7 @@ export class Links extends Component {
           comments={commentCount}
           resourcePath={props.resourcePath}
           popout={props.popout}
+          api={props.api}
           />
         );
       });
@@ -119,7 +118,7 @@ export class Links extends Component {
           <SidebarSwitcher
            sidebarShown={props.sidebarShown}
            popout={props.popout}
-           api={api}
+           api={this.props.api}
           />
          <Link to={makeRoutePath(props.resourcePath, props.popout, props.page)} className="pt2">
            <h2 className={'dib f9 fw4 lh-solid v-top'}>
@@ -136,7 +135,7 @@ export class Links extends Component {
         <div className="w-100 mt6 flex justify-center overflow-y-scroll ph4 pb4">
           <div className="w-100 mw7">
             <div className="flex">
-              <LinkSubmit resourcePath={props.resourcePath} />
+              <LinkSubmit resourcePath={props.resourcePath} api={this.props.api} />
             </div>
             <div className="pb4">
             {LinkList}

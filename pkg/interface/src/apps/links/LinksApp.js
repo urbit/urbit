@@ -3,9 +3,9 @@ import { Switch, Route } from 'react-router-dom';
 
 import _ from 'lodash';
 
-import api from './api';
-import store from './store';
-import subscription from './subscription';
+import Api from './api';
+import Store from './store';
+import Subscription from './subscription';
 
 import './css/custom.css';
 
@@ -21,23 +21,32 @@ import { makeRoutePath, amOwnerOfGroup, base64urlDecode } from '../../lib/util';
 export class LinksApp extends Component {
   constructor(props) {
     super(props);
+    this.store = new Store();
+    this.store.setStateHandler(this.setState.bind(this));
 
+    this.state = this.store.state;
     this.totalUnseen = 0;
-    this.state = store.state;
-    store.setStateHandler(this.setState.bind(this));
+    this.resetControllers();
   }
 
   componentDidMount() {
-    api.setAuthTokens({ ship: this.props.ship }, this.props.channel);
+    this.store.clear();
+    const channel = new this.props.channel();
+    this.api = new Api(this.props.ship, channel, this.store);
 
-    subscription.start(this.props.channel);
+    this.subscription = new Subscription(this.store, this.api, channel);
+    this.subscription.start();
   }
 
   componentWillUnmount() {
-    this.props.channel.delete();
-    store.handleEvent({
-      data: { clear: true }
-    });
+    this.subscription.delete();
+    this.store.clear();
+    this.resetControllers();
+  }
+
+  resetControllers() {
+    this.api = null;
+    this.subscription = null;
   }
 
   render() {
@@ -83,6 +92,7 @@ export class LinksApp extends Component {
                 selectedGroups={selectedGroups}
                 links={links}
                 listening={state.listening}
+                api={this.api}
               >
                 <MessageScreen text="Select or create a collection to begin." />
               </Skeleton>
@@ -100,11 +110,13 @@ export class LinksApp extends Component {
                 selectedGroups={selectedGroups}
                 links={links}
                 listening={state.listening}
+                api={this.api}
               >
                 <NewScreen
                   associations={associations}
                   groups={groups}
                   contacts={contacts}
+                  api={this.api}
                   {...props}
                 />
               </Skeleton>
@@ -114,7 +126,7 @@ export class LinksApp extends Component {
         <Route exact path="/~link/join/:resource"
           render={ (props) => {
             const resourcePath = '/' + props.match.params.resource;
-            api.joinCollection(resourcePath);
+            this.api.joinCollection(resourcePath);
             props.history.push(makeRoutePath(resourcePath));
           }}
         />
@@ -138,6 +150,7 @@ export class LinksApp extends Component {
                 selectedGroups={selectedGroups}
                 links={links}
                 listening={state.listening}
+                api={this.api}
               >
                 <MemberScreen
                   sidebarShown={state.sidebarShown}
@@ -149,6 +162,7 @@ export class LinksApp extends Component {
                   amOwner={amOwner}
                   resourcePath={resourcePath}
                   popout={popout}
+                  api={this.api}
                   {...props}
                 />
               </Skeleton>
@@ -176,6 +190,7 @@ export class LinksApp extends Component {
                 popout={popout}
                 links={links}
                 listening={state.listening}
+                api={this.api}
               >
                 <SettingsScreen
                   sidebarShown={state.sidebarShown}
@@ -187,6 +202,7 @@ export class LinksApp extends Component {
                   amOwner={amOwner}
                   resourcePath={resourcePath}
                   popout={popout}
+                  api={this.api}
                   {...props}
                 />
               </Skeleton>
@@ -230,6 +246,7 @@ export class LinksApp extends Component {
                   popout={popout}
                   links={links}
                   listening={state.listening}
+                  api={this.api}
                 >
                   <Links
                   {...props}
@@ -243,6 +260,7 @@ export class LinksApp extends Component {
                   amOwner={amOwner}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
+                  api={this.api}
                   />
                 </Skeleton>
               );
@@ -286,6 +304,7 @@ export class LinksApp extends Component {
                   popout={popout}
                   links={links}
                   listening={state.listening}
+                  api={this.api}
                 >
                   <LinkDetail
                   {...props}
@@ -302,6 +321,7 @@ export class LinksApp extends Component {
                   data={data}
                   comments={coms}
                   commentPage={commentPage}
+                  api={this.api}
                   />
                 </Skeleton>
               );

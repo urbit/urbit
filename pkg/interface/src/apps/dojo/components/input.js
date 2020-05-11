@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import store from '../store';
-import api from '../api';
 import { cite } from '../../../lib/util';
 import { Spinner } from '../../../components/Spinner';
 
@@ -38,22 +36,22 @@ export class Input extends Component {
   // submit on enter
   if (e.key === 'Enter') {
     this.setState({ awaiting: true, type: 'Sending to Dojo' });
-    api.soto('ret').then(() => {
+    this.props.api.soto('ret').then(() => {
       this.setState({ awaiting: false });
     });
   } else if ((e.key === 'Backspace') && (this.props.cursor > 0)) {
-    store.doEdit({ del: this.props.cursor - 1 });
-    return store.setState({ cursor: this.props.cursor - 1 });
+    this.props.store.doEdit({ del: this.props.cursor - 1 });
+    return this.props.store.setState({ cursor: this.props.cursor - 1 });
   } else if (e.key === 'Backspace') {
     return;
   } else if (e.key.startsWith('Arrow')) {
     if (e.key === 'ArrowLeft') {
       if (this.props.cursor > 0) {
-        store.setState({ cursor: this.props.cursor - 1 });
+        this.props.store.setState({ cursor: this.props.cursor - 1 });
       }
     } else if (e.key === 'ArrowRight') {
       if (this.props.cursor < this.props.input.length) {
-        store.setState({ cursor: this.props.cursor + 1 });
+        this.props.store.setState({ cursor: this.props.cursor + 1 });
       }
     }
   }
@@ -61,15 +59,15 @@ export class Input extends Component {
   // tab completion
   else if (e.key === 'Tab') {
     this.setState({ awaiting: true, type: 'Getting suggestions' });
-    api.soto({ tab: this.props.cursor }).then(() => {
+    this.props.api.soto({ tab: this.props.cursor }).then(() => {
       this.setState({ awaiting: false });
     });
   }
 
   // capture and transmit most characters
   else {
-    store.doEdit({ ins: { cha: e.key, at: this.props.cursor } });
-    store.setState({ cursor: this.props.cursor + 1 });
+    this.props.store.doEdit({ ins: { cha: e.key, at: this.props.cursor } });
+    this.props.store.setState({ cursor: this.props.cursor + 1 });
   }
 }
 
@@ -87,7 +85,7 @@ render() {
         className="mono ml1 flex-auto dib w-100"
         id="dojo"
         cursor={this.props.cursor}
-        onClick={e => store.setState({ cursor: e.target.selectionEnd })}
+        onClick={e => this.props.store.setState({ cursor: e.target.selectionEnd })}
         onKeyDown={this.keyPress}
         onPaste={(e) => {
           const clipboardData = e.clipboardData || window.clipboardData;
@@ -95,7 +93,7 @@ render() {
           paste.reduce(async (previous, next) => {
             await previous;
             this.setState({ cursor: this.props.cursor + 1 });
-            return store.doEdit({ ins: { cha: next, at: this.props.cursor } });
+            return this.props.store.doEdit({ ins: { cha: next, at: this.props.cursor } });
           }, Promise.resolve());
           e.preventDefault();
           }}

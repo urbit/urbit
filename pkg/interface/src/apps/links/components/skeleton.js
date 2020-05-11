@@ -34,6 +34,7 @@ export class Skeleton extends Component {
             sidebarShown={props.sidebarShown}
             links={props.links}
             listening={props.listening}
+            api={props.api}
         />
           <div className={'h-100 w-100 flex-auto relative ' + rightPanelHide} style={{
             flexGrow: 1

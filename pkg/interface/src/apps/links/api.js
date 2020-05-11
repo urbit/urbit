@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import { stringToTa } from '../../lib/util';
-import store from './store';
 
-class UrbitApi {
-  setAuthTokens(authTokens, channel) {
-    this.authTokens = authTokens;
+export default class Api {
+  constructor(ship, channel, store) {
+    this.ship = ship;
     this.bindPaths = [];
     this.channel = channel;
+    this.store = store;
 
     this.invite = {
       accept: this.inviteAccept.bind(this),
@@ -50,7 +50,7 @@ class UrbitApi {
     this.bind.bind(this)(
       path,
       'PUT',
-      this.authTokens.ship,
+      this.ship,
       'link-view',
       result,
       fail,
@@ -122,7 +122,7 @@ class UrbitApi {
           res.data['initial-discussions'].path = path;
           res.data['initial-discussions'].url = url;
         }
-        store.handleEvent(res);
+        this.store.handleEvent(res);
       },
       console.error,
       () => {} // no-op on quit
@@ -134,7 +134,7 @@ class UrbitApi {
     this.bindLinkView(
       endpoint,
       (dat) => {
-        store.handleEvent(dat);
+        this.store.handleEvent(dat);
       },
       console.error,
       () => {} // no-op on quit
@@ -242,10 +242,10 @@ class UrbitApi {
 
   sidebarToggle() {
     let sidebarBoolean = true;
-    if (store.state.sidebarShown === true) {
+    if (this.store.state.sidebarShown === true) {
       sidebarBoolean = false;
     }
-    store.handleEvent({
+    this.store.handleEvent({
       data: {
         local: {
           sidebarToggle: sidebarBoolean
@@ -255,7 +255,7 @@ class UrbitApi {
   }
 
   setSelected(selected) {
-    store.handleEvent({
+    this.store.handleEvent({
       data: {
         local: {
           selected: selected
@@ -264,6 +264,3 @@ class UrbitApi {
     });
   }
 }
-
-const api = new UrbitApi();
-export default api;

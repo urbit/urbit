@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 
-import api from './api';
-import subscription from './subscription';
-import { store } from './store';
+import Api from './api';
+import Subscription from './subscription';
+import Store from './store';
 
 import './css/custom.css';
 
@@ -17,27 +17,31 @@ import GroupDetail from './components/lib/group-detail';
 export default class GroupsApp extends Component {
   constructor(props) {
     super(props);
+    this.store = new Store();
+    this.store.setStateHandler(this.setState.bind(this));
 
-    this.state = store.state;
-    store.setStateHandler(this.setState.bind(this));
+    this.state = this.store.state;
+    this.resetControllers();
   }
 
   componentDidMount() {
-    api.setAuthTokens(
-      { ship: this.props.ship },
-      this.props.channel
-    );
+    this.store.clear();
+    const channel = new this.props.channel();
+    this.api = new Api(this.props.ship, channel, this.store);
 
-    subscription.start(this.props.channel);
+    this.subscription = new Subscription(this.store, this.api, channel);
+    this.subscription.start();
   }
 
   componentWillUnmount() {
-    this.props.channel.delete();
-    store.firstRoundComplete = false;
-    store.secondRoundComplete = false;
-    store.handleEvent({
-      data: { clear: true }
-    });
+    this.subscription.delete();
+    this.store.clear();
+    this.resetControllers();
+  }
+
+  resetControllers() {
+    this.api = null;
+    this.subscription = null;
   }
 
   render() {
@@ -65,7 +69,7 @@ export default class GroupsApp extends Component {
                   activeDrawer="groups"
                   selectedGroups={selectedGroups}
                   history={props.history}
-                  api={api}
+                  api={this.api}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -88,7 +92,7 @@ export default class GroupsApp extends Component {
                 <Skeleton
                   history={props.history}
                   selectedGroups={selectedGroups}
-                  api={api}
+                  api={this.api}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -99,7 +103,7 @@ export default class GroupsApp extends Component {
                     history={props.history}
                     groups={groups}
                     contacts={contacts}
-                    api={api}
+                    api={this.api}
                   />
                 </Skeleton>
               );
@@ -122,7 +126,7 @@ export default class GroupsApp extends Component {
                 <Skeleton
                   history={props.history}
                   selectedGroups={selectedGroups}
-                  api={api}
+                  api={this.api}
                   contacts={contacts}
                   invites={invites}
                   groups={groups}
@@ -135,7 +139,7 @@ export default class GroupsApp extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     activeDrawer={(detail || settings) ? 'detail' : 'contacts'}
-                    api={api}
+                    api={this.api}
                     path={groupPath}
                     {...props}
                   />
@@ -145,7 +149,7 @@ export default class GroupsApp extends Component {
                     group={group}
                     activeDrawer={(detail || settings) ? 'detail' : 'contacts'}
                     settings={settings}
-                    api={api}
+                    api={this.api}
                     {...props}
                   />
                 </Skeleton>
@@ -163,7 +167,7 @@ export default class GroupsApp extends Component {
                 <Skeleton
                   history={props.history}
                   selectedGroups={selectedGroups}
-                  api={api}
+                  api={this.api}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -177,11 +181,11 @@ export default class GroupsApp extends Component {
                     group={group}
                     activeDrawer="rightPanel"
                     path={groupPath}
-                    api={api}
+                    api={this.api}
                     {...props}
                   />
                   <AddScreen
-                    api={api}
+                    api={this.api}
                     groups={groups}
                     path={groupPath}
                     history={props.history}
@@ -207,7 +211,7 @@ export default class GroupsApp extends Component {
               return (
                 <Skeleton
                   history={props.history}
-                  api={api}
+                  api={this.api}
                   selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
@@ -222,7 +226,7 @@ export default class GroupsApp extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
-                    api={api}
+                    api={this.api}
                     selectedContact={shipPath}
                     {...props}
                   />
@@ -259,7 +263,7 @@ export default class GroupsApp extends Component {
               return (
                 <Skeleton
                   history={props.history}
-                  api={api}
+                  api={this.api}
                   selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
@@ -274,7 +278,7 @@ export default class GroupsApp extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
-                    api={api}
+                    api={this.api}
                     selectedContact={shipPath}
                     {...props}
                   />
@@ -297,7 +301,7 @@ export default class GroupsApp extends Component {
               return (
                 <Skeleton
                   history={props.history}
-                  api={api}
+                  api={this.api}
                   selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}

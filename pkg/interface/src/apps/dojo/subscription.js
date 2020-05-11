@@ -1,6 +1,3 @@
-import api from './api';
-import store from './store';
-
 export default class Subscription {
   constructor(store, api, channel) {
     this.store = store;
@@ -12,7 +9,7 @@ export default class Subscription {
   }
 
   start() {
-    if (api.ship) {
+    if (this.api.ship) {
       this.firstRound();
     } else {
       console.error('~~~ ERROR: Must set api.ship before operation ~~~');
@@ -28,7 +25,7 @@ export default class Subscription {
     console.log('initiating new channel');
     this.firstRoundComplete = false;
     setTimeout(2000, () => {
-      store.handleEvent({
+      this.store.handleEvent({
         data: { clear : true }
       });
 
@@ -37,7 +34,7 @@ export default class Subscription {
   }
 
   subscribe(path, app) {
-    api.bind(path, 'PUT', api.ship, app,
+    this.api.bind(path, 'PUT', this.api.ship, app,
       this.handleEvent.bind(this),
       (err) => {
         console.log(err);
@@ -49,11 +46,11 @@ export default class Subscription {
   }
 
   firstRound() {
-    this.subsribe('/sole/' + api.dojoId, 'dojo');
+    this.subscribe('/sole/' + this.api.dojoId, 'dojo');
   }
 
   handleEvent(diff) {
-    store.handleEvent(diff);
+    this.store.handleEvent(diff);
   }
 }
 

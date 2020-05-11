@@ -1,19 +1,25 @@
-import api from './api';
-import { store } from './store';
+export default class Subscription {
+  constructor(store, api, channel) {
+    this.store = store;
+    this.api = api;
+    this.channel = channel;
 
-export class Subscription {
-  constructor() {
+    this.channel.setOnChannelError(this.onChannelError.bind(this));
+
     this.firstRoundComplete = false;
     this.secondRoundComplete = false;
   }
 
-  start(channel) {
-    if (api.authTokens) {
+  start() {
+    if (this.api.ship) {
       this.firstRound();
-     channel.setOnChannelError(this.onChannelError.bind(this));
     } else {
-      console.error('~~~ ERROR: Must set api.authTokens before operation ~~~');
+      console.error('~~~ ERROR: Must set api.ship before operation ~~~');
     }
+  }
+
+  delete() {
+    this.channel.delete();
   }
 
   onChannelError(err) {
@@ -22,7 +28,7 @@ export class Subscription {
     this.firstRoundComplete = false;
     this.secondRoundComplete = false;
     setTimeout(2000, () => {
-      store.handleEvent({
+      this.store.handleEvent({
         data: { clear : true }
       });
       this.start();
@@ -30,7 +36,7 @@ export class Subscription {
   }
 
   subscribe(path, app) {
-    api.bind(path, 'PUT', api.authTokens.ship, app,
+    this.api.bind(path, 'PUT', this.api.ship, app,
       this.handleEvent.bind(this),
       (err) => {
         console.log(err);
@@ -64,9 +70,7 @@ export class Subscription {
       this.secondRoundComplete = true;
       this.thirdRound();
     }
-    store.handleEvent(diff);
+    this.store.handleEvent(diff);
   }
 }
 
-const subscription = new Subscription();
-export default subscription;

@@ -9,7 +9,7 @@ export default class Subscription {
   }
 
   start() {
-    if (api.ship) {
+    if (this.api.ship) {
       this.firstRound();
     } else {
       console.error('~~~ ERROR: Must set api.ship before operation ~~~');
@@ -25,7 +25,7 @@ export default class Subscription {
     console.log('initiating new channel');
     this.firstRoundComplete = false;
     setTimeout(2000, () => {
-      store.handleEvent({
+      this.store.handleEvent({
         data: { clear : true }
       });
 
@@ -34,7 +34,7 @@ export default class Subscription {
   }
 
   subscribe(path, app) {
-    api.bind(path, 'PUT', api.ship, app,
+    this.api.bind(path, 'PUT', this.api.ship, app,
       this.handleEvent.bind(this),
       (err) => {
         console.log(err);
@@ -61,9 +61,9 @@ export default class Subscription {
   handleEvent(diff) {
     if (!this.firstRoundComplete) {
       this.firstRoundComplete = true;
-      this.secondRound();
+      this.secondRoundSubscriptions();
     }
-    store.handleEvent(diff);
+    this.store.handleEvent(diff);
   }
 
   fetchMessages(start, end, path) {
@@ -71,7 +71,7 @@ export default class Subscription {
     fetch(`/chat-view/paginate/${start}/${end}${path}`)
       .then(response => response.json())
       .then((json) => {
-        store.handleEvent({
+        this.store.handleEvent({
           data: json
         });
       });

@@ -21,8 +21,8 @@ export default class ChatApp extends React.Component {
     super(props);
     this.store = new Store();
     this.store.setStateHandler(this.setState.bind(this));
-    
-    this.state = store.state;
+
+    this.state = this.store.state;
     this.totalUnreads = 0;
     this.resetControllers();
   }
@@ -38,8 +38,8 @@ export default class ChatApp extends React.Component {
     new Image().src = '/~chat/img/Spinner.png';
 
     this.store.clear();
-    let channel = new this.props.channel();
-    this.api = new Api(this.props.ship, channel);
+    const channel = new this.props.channel();
+    this.api = new Api(this.props.ship, channel, this.store);
 
     this.subscription = new Subscription(this.store, this.api, channel);
     this.subscription.start();

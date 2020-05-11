@@ -8,7 +8,7 @@ import LinkUpdateReducer from './reducers/link-update';
 import ListenUpdateReducer from './reducers/listen-update';
 import LocalReducer from '../../reducers/local';
 
-class Store {
+export default class Store {
   constructor() {
     this.state = this.initialState();
 
@@ -47,6 +47,12 @@ class Store {
     };
   }
 
+  clear() {
+    this.handleEvent({
+      data: { clear: true }
+    });
+  }
+
   handleEvent(data) {
     let json;
     if (data.data) {
@@ -74,6 +80,3 @@ class Store {
     this.setState(this.state);
   }
 }
-
-const store = new Store();
-export default store;
