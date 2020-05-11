@@ -415,7 +415,7 @@ _parse_da(u3_noun cor, u3_noun txt) {
 
   // Now we have to parse a list of hexidecimal numbers 0-f of length 4 only
   // (zero padded otherwise) separated by dots.
-  u3_atom list = 0;
+  u3_noun list = 0;
   while (1) {
     // Parse 4 hex digits
     c3_y one, two, three, four;
