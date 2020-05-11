@@ -11,12 +11,12 @@ export class ChannelsItem extends Component {
     : 'pointer hover-bg-gray5 hover-bg-gray1-d';
 
     const unseenCount = props.unseenCount > 0
-      ? <span className="dib white bg-gray3 bg-gray2-d fw6 br1" style={{ padding: '1px 5px' }}>{props.unseenCount}</span>
+      ? <span className="dib white bg-gray3 bg-gray2-d fw6 br1 absolute" style={{ padding: '1px 5px', right: 8 }}>{props.unseenCount}</span>
       : null;
 
     return (
       <Link to={makeRoutePath(props.link)}>
-        <div className={'w-100 v-mid f9 ph4 z1 pv1 ' + selectedClass}>
+        <div className={'w-100 v-mid f9 ph4 z1 pv1 relative ' + selectedClass}>
           <p className="f9 dib">{props.name}</p>
           <p className="f9 dib fr">
             {unseenCount}
