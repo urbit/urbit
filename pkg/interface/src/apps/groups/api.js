@@ -1,11 +1,11 @@
 import _ from 'lodash';
-import { store } from './store';
 
-class UrbitApi {
-  setAuthTokens(authTokens, channel) {
-    this.authTokens = authTokens;
+export default class Api {
+  constructor(ship, channel, store) {
+    this.ship = ship;
     this.bindPaths = [];
     this.channel = channel;
+    this.store = store;
 
     this.contactHook = {
       edit: this.contactEdit.bind(this)
@@ -29,7 +29,7 @@ class UrbitApi {
     };
   }
 
-  bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
+  bind(path, method, ship = this.ship, app, success, fail, quit) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
     window.subscriptionId = this.channel.subscribe(ship, app, path,
@@ -175,7 +175,7 @@ class UrbitApi {
   }
 
   setSelected(selected) {
-    store.handleEvent({
+    this.store.handleEvent({
       data: {
         local: {
           selected: selected
@@ -184,6 +184,3 @@ class UrbitApi {
     });
   }
 }
-
-const api = new UrbitApi();
-export default api;

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import api from '../../api';
 import { Spinner } from '../../../../components/Spinner';
 
 export class LinkSubmit extends Component {
@@ -22,7 +21,7 @@ export class LinkSubmit extends Component {
       ? this.state.linkTitle
       : this.state.linkValue;
       this.setState({ disabled: true });
-    api.postLink(this.props.resourcePath, link, title).then((r) => {
+    this.props.api.postLink(this.props.resourcePath, link, title).then((r) => {
       this.setState({
         disabled: false,
         linkValue: '',

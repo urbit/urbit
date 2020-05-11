@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { InviteSearch } from '../../../../components/InviteSearch';
 import { Spinner } from '../../../../components/Spinner';
 
-import api from '../../api';
-
 export class InviteElement extends Component {
   constructor(props) {
     super(props);
@@ -36,7 +34,7 @@ export class InviteElement extends Component {
       success: true,
       members: []
     }, () => {
-      api.inviteToCollection(props.resourcePath, aud).then(() => {
+      props.api.inviteToCollection(props.resourcePath, aud).then(() => {
         this.setState({ awaiting: false });
       });
     });

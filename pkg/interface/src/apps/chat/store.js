@@ -7,7 +7,7 @@ import MetadataReducer from '../../reducers/metadata-update';
 import LocalReducer from '../../reducers/local';
 import S3Reducer from '../../reducers/s3';
 
-class Store {
+export default class Store {
   constructor() {
     this.state = this.initialState();
 
@@ -45,6 +45,12 @@ class Store {
     this.setState = setState;
   }
 
+  clear() {
+    this.handleEvent({
+      data: { clear: true }
+    });
+  }
+
   handleEvent(data) {
     let json = data.data;
 
@@ -66,5 +72,3 @@ class Store {
   }
 }
 
-const store = new Store();
-export default store;

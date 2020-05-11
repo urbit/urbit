@@ -1,34 +1,56 @@
-import api from './api';
-import store from './store';
+export default class Subscription {
+  constructor(store, api, channel) {
+    this.store = store;
+    this.api = api;
+    this.channel = channel;
 
-export class Subscription {
+    this.channel.setOnChannelError(this.onChannelError.bind(this));
+    this.firstRoundComplete = false;
+  }
+
   start() {
-    if (api.authTokens) {
-      this.initializesoto();
+    if (this.api.ship) {
+      this.firstRound();
     } else {
-      console.error('~~~ ERROR: Must set api.authTokens before operation ~~~');
+      console.error('~~~ ERROR: Must set api.ship before operation ~~~');
     }
   }
 
-  initializesoto() {
-    api.bind('/sole/' + api.authTokens.dojoId,
-      'PUT', api.authTokens.ship, 'dojo',
+  delete() {
+    this.channel.delete();
+  }
+
+  onChannelError(err) {
+    console.error('event source error: ', err);
+    console.log('initiating new channel');
+    this.firstRoundComplete = false;
+    setTimeout(2000, () => {
+      this.store.handleEvent({
+        data: { clear : true }
+      });
+
+      this.start();
+    });
+  }
+
+  subscribe(path, app) {
+    this.api.bind(path, 'PUT', this.api.ship, app,
       this.handleEvent.bind(this),
-      this.handleError.bind(this));
+      (err) => {
+        console.log(err);
+        this.subscribe(path, app);
+      },
+      () => {
+        this.subscribe(path, app);
+      });
+  }
+
+  firstRound() {
+    this.subscribe('/sole/' + this.api.dojoId, 'dojo');
   }
 
   handleEvent(diff) {
-    store.handleEvent(diff);
-  }
-
-  handleError(err) {
-    console.error(err);
-    api.bind('/sole/' + api.authTokens.dojoId,
-      'PUT', api.authTokens.ship, 'dojo',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this));
+    this.store.handleEvent(diff);
   }
 }
 
-const subscription = new Subscription();
-export default subscription;

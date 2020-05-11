@@ -6,30 +6,42 @@ import { Popout } from './components/lib/icons/popout';
 import { History } from './components/history';
 import { Input } from './components/input';
 
-import store from './store';
-import api from './api';
-import subscription from './subscription';
+import Api from './api';
+import Store from './store';
+import Subscription from './subscription';
 
 import './css/custom.css';
 
 export default class DojoApp extends Component {
   constructor(props) {
     super(props);
-    this.state = store.state;
-    store.setStateHandler(this.setState.bind(this));
+    this.store = new Store();
+    this.store.setStateHandler(this.setState.bind(this));
+
+    this.state = this.store.state;
+    this.resetControllers();
+  }
+
+  resetControllers() {
+    this.api = null;
+    this.subscription = null;
   }
 
   componentDidMount() {
     window.title = 'OS1 - Dojo';
-    api.setAuthTokens(
-      {
-        ship: this.props.ship,
-        dojoId: 'soto-' + Math.random().toString(36).substring(2)
-      },
-      this.props.channel
-    );
 
-    subscription.start(this.props.channel);
+    const channel = new this.props.channel();
+    this.api = new Api(this.props.ship, channel);
+    this.store.api = this.api;
+
+    this.subscription = new Subscription(this.store, this.api, channel);
+    this.subscription.start();
+  }
+
+  componentWillUnmount() {
+    this.subscription.delete();
+    this.store.clear();
+    this.resetControllers();
   }
 
   render() {
@@ -78,6 +90,8 @@ export default class DojoApp extends Component {
                     cursor={this.state.cursor}
                     prompt={this.state.prompt}
                     input={this.state.input}
+                    api={this.api}
+                    store={this.store}
                   />
                 </div>
               </div>

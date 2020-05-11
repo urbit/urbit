@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { uuid } from '../../lib/util';
-import store from './store';
 
-class UrbitApi {
-  setAuthTokens(authTokens, channel) {
-    this.authTokens = authTokens;
+export default class Api {
+  constructor(ship, channel, store) {
+    this.ship = ship;
     this.channel = channel;
+    this.store = store;
     this.bindPaths = [];
 
     this.groups = {
@@ -35,7 +35,7 @@ class UrbitApi {
     };
   }
 
-  bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
+  bind(path, method, ship = this.ship, app, success, fail, quit) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
     window.subscriptionId = this.channel.subscribe(ship, app, path,
@@ -69,14 +69,14 @@ class UrbitApi {
   }
 
   addPendingMessage(msg) {
-    if (store.state.pendingMessages.has(msg.path)) {
-      store.state.pendingMessages.get(msg.path).push(msg.envelope);
+    if (this.store.state.pendingMessages.has(msg.path)) {
+      this.store.state.pendingMessages.get(msg.path).push(msg.envelope);
     } else {
-      store.state.pendingMessages.set(msg.path, [msg.envelope]);
+      this.store.state.pendingMessages.set(msg.path, [msg.envelope]);
     }
 
-    store.setState({
-      pendingMessages: store.state.pendingMessages
+    this.store.setState({
+      pendingMessages: this.store.state.pendingMessages
     });
   }
 
@@ -233,10 +233,10 @@ class UrbitApi {
 
   sidebarToggle() {
     let sidebarBoolean = true;
-    if (store.state.sidebarShown === true) {
+    if (this.store.state.sidebarShown === true) {
       sidebarBoolean = false;
     }
-    store.handleEvent({
+    this.store.handleEvent({
       data: {
         local: {
           'sidebarToggle': sidebarBoolean
@@ -246,7 +246,7 @@ class UrbitApi {
   }
 
   setSelected(selected) {
-    store.handleEvent({
+    this.store.handleEvent({
       data: {
         local: {
           selected: selected
@@ -256,5 +256,3 @@ class UrbitApi {
   }
 }
 
-const api = new UrbitApi();
-export default api;

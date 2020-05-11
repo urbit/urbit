@@ -45,13 +45,13 @@ const StatusBarWithRouter = withRouter(StatusBar);
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    const Channel = window.channel;
-    this.channel = new Channel();
     this.ship = window.ship;
     this.state = {};
   }
 
   render() {
+    const channel = window.channel;
+
     return (
       <ThemeProvider theme={light}>
         <Root>
@@ -60,19 +60,19 @@ export default class App extends React.Component {
             <div>
               <Route exact path="/" component={Home} />
               <Route path="/~chat" render={
-                p => <ChatApp ship={this.ship} channel={this.channel} {...p} />
+                p => <ChatApp ship={this.ship} channel={channel} {...p} />
               }
               />
               <Route path="/~dojo" render={
-                p => <DojoApp ship={this.ship} channel={this.channel} {...p} />
+                p => <DojoApp ship={this.ship} channel={channel} {...p} />
               }
               />
               <Route path="/~groups" render={
-                p => <GroupsApp ship={this.ship} channel={this.channel} {...p} />
+                p => <GroupsApp ship={this.ship} channel={channel} {...p} />
               }
               />
               <Route path="/~link" render={
-                p => <LinksApp ship={this.ship} channel={this.channel} {...p} />
+                p => <LinksApp ship={this.ship} channel={channel} {...p} />
               }
               />
             </div>

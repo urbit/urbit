@@ -16,6 +16,7 @@ export class ChannelsSidebar extends Component {
       .map((uid) => {
         return (
           <SidebarInvite
+            key={uid}
             uid={uid}
             invite={props.invites[uid]}
             api={props.api}

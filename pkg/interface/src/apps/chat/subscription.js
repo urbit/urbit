@@ -1,34 +1,40 @@
-import api from './api';
-import store from './store';
+export default class Subscription {
+  constructor(store, api, channel) {
+    this.store = store;
+    this.api = api;
+    this.channel = channel;
 
-export class Subscription {
-  constructor() {
-    this.firstRoundSubscriptionComplete = false;
+    this.channel.setOnChannelError(this.onChannelError.bind(this));
+    this.firstRoundComplete = false;
   }
 
-  start(channel) {
-    if (api.authTokens) {
-      this.firstRoundSubscription();
-      channel.setOnChannelError(this.onChannelError.bind(this));
+  start() {
+    if (this.api.ship) {
+      this.firstRound();
     } else {
-      console.error('~~~ ERROR: Must set api.authTokens before operation ~~~');
+      console.error('~~~ ERROR: Must set api.ship before operation ~~~');
     }
+  }
+
+  delete() {
+    this.channel.delete();
   }
 
   onChannelError(err) {
     console.error('event source error: ', err);
     console.log('initiating new channel');
-    this.firstRoundSubscriptionComplete = false;
+    this.firstRoundComplete = false;
     setTimeout(2000, () => {
-      store.handleEvent({
+      this.store.handleEvent({
         data: { clear : true }
       });
+
       this.start();
     });
   }
 
   subscribe(path, app) {
-    api.bind(path, 'PUT', api.authTokens.ship, app,
+    this.api.bind(path, 'PUT', this.api.ship, app,
       this.handleEvent.bind(this),
       (err) => {
         console.log(err);
@@ -39,7 +45,7 @@ export class Subscription {
       });
   }
 
-  firstRoundSubscription() {
+  firstRound() {
     this.subscribe('/primary', 'chat-view');
   }
 
@@ -53,24 +59,22 @@ export class Subscription {
   }
 
   handleEvent(diff) {
-    if (!this.firstRoundSubscriptionComplete) {
-      this.firstRoundSubscriptionComplete = true;
+    if (!this.firstRoundComplete) {
+      this.firstRoundComplete = true;
       this.secondRoundSubscriptions();
     }
-    store.handleEvent(diff);
+    this.store.handleEvent(diff);
   }
 
   fetchMessages(start, end, path) {
     console.log(start, end, path);
-    fetch(`/~chat/paginate/${start}/${end}${path}`)
+    fetch(`/chat-view/paginate/${start}/${end}${path}`)
       .then(response => response.json())
       .then((json) => {
-        store.handleEvent({
+        this.store.handleEvent({
           data: json
         });
       });
   }
 }
 
-const subscription = new Subscription();
-export default subscription;

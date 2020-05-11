@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { LinksTabBar } from './lib/links-tabbar';
 import { LinkPreview } from './lib/link-detail-preview';
 import { SidebarSwitcher } from '../../../components/SidebarSwitch';
-import api from '../api';
 import { Link } from 'react-router-dom';
 import { Comments } from './lib/comments';
 import { Spinner } from '../../../components/Spinner';
@@ -33,7 +32,7 @@ export class LinkDetail extends Component {
   componentDidMount() {
     // if we have no preloaded data, and we aren't expecting it, get it
     if (!this.state.data.title) {
-      api.getSubmission(
+      this.props.api.getSubmission(
         this.props.resourcePath, this.props.url, this.updateData.bind(this)
       );
     }
@@ -67,7 +66,7 @@ export class LinkDetail extends Component {
     pending.add(this.state.comment);
     this.setState({ pending: pending, disabled: true  });
 
-    api.postComment(
+    this.props.api.postComment(
       this.props.resourcePath,
       url,
       this.state.comment
@@ -137,7 +136,7 @@ export class LinkDetail extends Component {
           <SidebarSwitcher
             sidebarShown={props.sidebarShown}
             popout={props.popout}
-            api={api}
+            api={this.props.api}
           />
           <Link
             className="dib f9 fw4 pt2 gray2 lh-solid"
@@ -209,6 +208,7 @@ export class LinkDetail extends Component {
               url={props.url}
               linkPage={props.page}
               linkIndex={props.linkIndex}
+              api={props.api}
             />
           </div>
         </div>
