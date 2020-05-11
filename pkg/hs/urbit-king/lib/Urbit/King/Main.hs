@@ -82,6 +82,7 @@ import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Dawn
 import Urbit.Vere.Pier
+import Urbit.Vere.Eyre.Multi (multiEyre, MultiEyreApi, MultiEyreConf(..))
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Serf
 
@@ -169,10 +170,11 @@ tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
                    )
                 => Bool -> Pill -> Bool -> Serf.Flags -> Ship
                 -> LegacyBootEvent
+                -> MultiEyreApi
                 -> RIO e ()
-tryBootFromPill oExit pill lite flags ship boot = do
+tryBootFromPill oExit pill lite flags ship boot multi = do
     mStart <- newEmptyMVar
-    runOrExitImmediately bootedPier oExit mStart
+    runOrExitImmediately bootedPier oExit mStart multi
   where
     bootedPier = do
         view pierPathL >>= lockFile
@@ -181,14 +183,14 @@ tryBootFromPill oExit pill lite flags ship boot = do
         rio $ logTrace "Completed boot"
         pure sls
 
-runOrExitImmediately :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
-                        , HasConfigDir e
-                        )
-                     => RAcquire e (Serf e, Log.EventLog, SerfState)
-                     -> Bool
-                     -> MVar ()
-                     -> RIO e ()
-runOrExitImmediately getPier oExit mStart =
+runOrExitImmediately
+  :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e, HasConfigDir e)
+  => RAcquire e (Serf e, Log.EventLog, SerfState)
+  -> Bool
+  -> MVar ()
+  -> MultiEyreApi
+  -> RIO e ()
+runOrExitImmediately getPier oExit mStart multi =
     rwith getPier $ if oExit then shutdownImmediately else runPier
   where
     shutdownImmediately (serf, log, ss) = do
@@ -203,15 +205,25 @@ runOrExitImmediately getPier oExit mStart =
         logTrace "Shutdown!"
 
     runPier sls = do
-        runRAcquire $ Pier.pier sls mStart
+        runRAcquire $ Pier.pier sls mStart multi
 
-tryPlayShip :: ( HasStderrLogFunc e, HasLogFunc e, HasNetworkConfig e
-               , HasPierConfig e, HasConfigDir e
-               )
-            => Bool -> Bool -> Maybe Word64 -> Serf.Flags -> MVar () -> RIO e ()
-tryPlayShip exitImmediately fullReplay playFrom flags mStart = do
+tryPlayShip
+  :: ( HasStderrLogFunc e
+     , HasLogFunc e
+     , HasNetworkConfig e
+     , HasPierConfig e
+     , HasConfigDir e
+     )
+  => Bool
+  -> Bool
+  -> Maybe Word64
+  -> Serf.Flags
+  -> MVar ()
+  -> MultiEyreApi
+  -> RIO e ()
+tryPlayShip exitImmediately fullReplay playFrom flags mStart multi = do
     when fullReplay wipeSnapshot
-    runOrExitImmediately resumeShip exitImmediately mStart
+    runOrExitImmediately resumeShip exitImmediately mStart multi
   where
     wipeSnapshot = do
         shipPath <- view pierPathL
@@ -422,7 +434,12 @@ pillFrom (CLI.PillSourceURL url) = do
   fromNounErr noun & either (throwIO . uncurry ParseErr) pure
 
 newShip :: forall e. HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
-newShip CLI.New{..} opts
+newShip new opts = do
+  multi <- multiEyre (MultiEyreConf Nothing Nothing True) -- TODO Hack
+  newShip' multi new opts
+
+newShip' :: forall e. HasLogFunc e => MultiEyreApi -> CLI.New -> CLI.Opts -> RIO e ()
+newShip' multi CLI.New{..} opts
   | CLI.BootComet <- nBootType = do
       pill <- pillFrom nPillSource
       putStrLn "boot: retrieving list of stars currently accepting comets"
@@ -493,12 +510,12 @@ newShip CLI.New{..} opts
       let pierConfig = toPierConfig (pierPath name) opts
       let networkConfig = toNetworkConfig opts
       io $ runPierApp pierConfig networkConfig True $
-        tryBootFromPill True pill nLite flags ship bootEvent
+        tryBootFromPill True pill nLite flags ship bootEvent multi
 ------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
 
-runShip :: CLI.Run -> CLI.Opts -> Bool -> IO ()
-runShip (CLI.Run pierPath) opts daemon = do
+runShip :: CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> IO ()
+runShip (CLI.Run pierPath) opts daemon multi = do
     tid <- myThreadId
     let onTermExit = throwTo tid UserInterrupt
     mStart <- newEmptyMVar
@@ -518,6 +535,7 @@ runShip (CLI.Run pierPath) opts daemon = do
               (CLI.oDryFrom opts)
               (toSerfFlags opts)
               mStart
+              multi
     pierConfig = toPierConfig pierPath opts
     networkConfig = toNetworkConfig opts
 
@@ -591,12 +609,12 @@ main = do
 
   TODO Use logging system instead of printing.
 -}
-runShipRestarting :: STM () -> CLI.Run -> CLI.Opts -> IO ()
-runShipRestarting waitForKillRequ r o = do
+runShipRestarting :: STM () -> CLI.Run -> CLI.Opts -> MultiEyreApi -> IO ()
+runShipRestarting waitForKillRequ r o multi = do
   let pier = pack (CLI.rPierPath r)
-      loop = runShipRestarting waitForKillRequ r o
+      loop = runShipRestarting waitForKillRequ r o multi
 
-  tid <- asyncBound (runShip r o True)
+  tid <- asyncBound (runShip r o True multi)
 
   let onShipExit = Left <$> waitCatchSTM tid
       onKillRequ = Right <$> waitForKillRequ
@@ -615,21 +633,40 @@ runShipRestarting waitForKillRequ r o = do
 
 
 runShips :: CLI.KingOpts -> [(CLI.Run, CLI.Opts, Bool)] -> IO ()
-runShips CLI.KingOpts {..} = \case
-  []                 -> pure ()
-  [(r, o, d)]        -> runShip r o d
-  ships | sharedHttp -> error "TODO Shared HTTP not yet implemented."
-  ships              -> runMultipleShips (ships <&> \(r, o, _) -> (r, o))
-  where sharedHttp = isJust koSharedHttpPort || isJust koSharedHttpsPort
+runShips CLI.KingOpts {..} ships = do
+  let meConf = MultiEyreConf
+        { mecHttpPort      = fromIntegral <$> koSharedHttpPort
+        , mecHttpsPort     = fromIntegral <$> koSharedHttpsPort
+        , mecLocalhostOnly = False -- TODO Localhost-only needs to be
+                                   -- a king-wide option.
+        }
 
-runMultipleShips :: [(CLI.Run, CLI.Opts)] -> IO ()
-runMultipleShips ships = do
+  {-
+    TODO Need to rework RIO environment to fix this. Should have a
+    bunch of nested contexts:
+
+      - King has started. King has Id. Logging available.
+      - In running environment. MultiEyre and global config available.
+      - In pier environment: pier path and config available.
+      - In running ship environment: serf state, event queue available.
+  -}
+  multi <- runApp (multiEyre meConf)
+
+  go multi ships
+ where
+  go me = \case
+    []          -> pure ()
+    [(r, o, d)] -> runShip r o d me
+    ships       -> runMultipleShips (ships <&> \(r, o, _) -> (r, o)) me
+
+runMultipleShips :: [(CLI.Run, CLI.Opts)] -> MultiEyreApi -> IO ()
+runMultipleShips ships multi = do
   killSignal <- newEmptyTMVarIO
 
   let waitForKillRequ = readTMVar killSignal
 
   shipThreads <- for ships $ \(r, o) -> do
-    async (runShipRestarting waitForKillRequ r o)
+    async (runShipRestarting waitForKillRequ r o multi)
 
   {-
     Since `spin` never returns, this will run until the main

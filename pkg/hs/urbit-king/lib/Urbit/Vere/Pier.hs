@@ -24,6 +24,7 @@ import Urbit.Vere.Ames        (ames)
 import Urbit.Vere.Behn        (behn)
 import Urbit.Vere.Clay        (clay)
 import Urbit.Vere.Eyre        (eyre)
+import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
 import Urbit.Vere.Http.Client (client)
 import Urbit.Vere.Log         (EventLog)
 import Urbit.Vere.Serf        (Serf, SerfState(..), doJob, sStderr)
@@ -173,8 +174,9 @@ acquireWorker act = mkRAcquire (async act) cancel
 pier :: ∀e. (HasConfigDir e, HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
      => (Serf e, EventLog, SerfState)
      -> MVar ()
+     -> MultiEyreApi
      -> RAcquire e ()
-pier (serf, log, ss) mStart = do
+pier (serf, log, ss) mStart multi = do
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
@@ -222,7 +224,7 @@ pier (serf, log, ss) mStart = do
     -- add them.
     let showErr = atomically . Term.trace muxed . (flip append "\r\n")
     let (bootEvents, startDrivers) =
-            drivers inst ship (isFake logId)
+            drivers inst multi ship (isFake logId)
                 (writeTQueue computeQ)
                 shutdownEvent
                 (Term.TSize{tsWide=80, tsTall=24}, muxed)
@@ -283,18 +285,23 @@ data Drivers e = Drivers
     , dTerm       :: EffCb e TermEf
     }
 
-drivers :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
-        => KingId -> Ship -> Bool -> (Ev -> STM ())
-        -> STM()
-        -> (Term.TSize, Term.Client)
-        -> (Text -> RIO e ())
-        -> ([Ev], RAcquire e (Drivers e))
-drivers inst who isFake plan shutdownSTM termSys stderr =
+drivers
+  :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
+  => KingId
+  -> MultiEyreApi
+  -> Ship
+  -> Bool
+  -> (Ev -> STM ())
+  -> STM ()
+  -> (Term.TSize, Term.Client)
+  -> (Text -> RIO e ())
+  -> ([Ev], RAcquire e (Drivers e))
+drivers inst multi who isFake plan shutdownSTM termSys stderr =
     (initialEvents, runDrivers)
   where
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who isFake plan stderr
-    (httpBorn, runHttp) = eyre inst (error "TODO") who plan isFake
+    (httpBorn, runHttp) = eyre inst multi who plan isFake
     (clayBorn, runClay) = clay inst plan
     (irisBorn, runIris) = client inst plan
     (termBorn, runTerm) = Term.term termSys shutdownSTM inst plan
