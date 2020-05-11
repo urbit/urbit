@@ -1561,7 +1561,9 @@
         =.  ap-core
           =/  =tang
             ~[leaf+"subscribe wire not unique" >agent-name< >short-wire< >dock<]
-          %-  (slog >out=outgoing.subscribers.current-agent< tang)
+          =/  have
+            (~(got by outgoing.subscribers.current-agent) short-wire dock)
+          %-  (slog >out=have< tang)
           (ap-error %watch-not-unique tang)
         $(moves t.moves)
       =.  outgoing.subscribers.current-agent
