@@ -1573,10 +1573,12 @@ static c3_c* _141_two_xeb_ha[] = {
     0
   };
 
+  static u3j_harm _141_two__in_apt_a[] = {{".2", u3wdi_apt}, {}};
   static u3j_harm _141_two__in_run_a[] = {{".2", u3wdi_run}, {}};
 
 static u3j_core _141_two__in_d[] =
-  { { "bif", 7, _141_two__in_bif_a, 0, _141_two__in_bif_ha },
+  { { "apt", 7, _141_two__in_apt_a },
+    { "bif", 7, _141_two__in_bif_a, 0, _141_two__in_bif_ha },
     { "del", 7, _141_two__in_del_a, 0, _141_two__in_del_ha },
     { "dif", 7, _141_two__in_dif_a, 0, _141_two__in_dif_ha },
     { "gas", 7, _141_two__in_gas_a, 0, _141_two__in_gas_ha },

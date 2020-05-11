@@ -1196,8 +1196,10 @@
     ?|((b n.a) $(a l.a) $(a r.a))
   ::
   ++  apt                                               ::  check correctness
+    =<  $
+    ~/  %apt
     =|  {l/(unit) r/(unit)}
-    |-  ^-  ?
+    |.  ^-  ?
     ?~  a   &
     ?&  ?~(l & (gor n.a u.l))
         ?~(r & (gor u.r n.a))
@@ -1346,6 +1348,7 @@
     c(l a(r l.c))
   ::
   ++  rep                                               ::  reduce to product
+    ~/  %rep
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
