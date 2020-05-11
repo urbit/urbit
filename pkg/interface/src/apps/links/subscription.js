@@ -1,21 +1,28 @@
-import api from './api';
-import store from './store';
+export default class Subscription {
+  constructor(store, api, channel) {
+    this.store = store;
+    this.api = api;
+    this.channel = channel;
+    this.channel.setOnChannelError(this.onChannelError.bind(this));
+  }
 
-export class Subscription {
-  start(channel) {
-    if (api.authTokens) {
+  start() {
+    if (this.api.ship) {
       this.initializeLinks();
-      channel.setOnChannelError(this.onChannelError.bind(this));
     } else {
-      console.error('~~~ ERROR: Must set api.authTokens before operation ~~~');
+      console.error('~~~ ERROR: Must set api.ship before operation ~~~');
     }
+  }
+
+  delete() {
+    this.channel.delete();
   }
 
   onChannelError(err) {
     console.error('event source error: ', err);
     console.log('initiating new channel');
     setTimeout(2000, () => {
-      store.handleEvent({
+      this.store.handleEvent({
         data: { clear : true }
       });
       this.start();
@@ -23,46 +30,46 @@ export class Subscription {
   }
 
   initializeLinks() {
-    api.bind(
+    this.api.bind(
       '/all',
       'PUT',
-      api.authTokens.ship,
+      this.api.ship,
       'group-store',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this)
     );
-    api.bind(
+    this.api.bind(
       '/primary',
       'PUT',
-      api.authTokens.ship,
+      this.api.ship,
       'contact-view',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this)
     );
-    api.bind(
+    this.api.bind(
       '/primary',
       'PUT',
-      api.authTokens.ship,
+      this.api.ship,
       'invite-view',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this)
     );
-    api.bind(
+    this.api.bind(
       '/app-name/link',
       'PUT',
-      api.authTokens.ship,
+      this.api.ship,
       'metadata-store',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       this.handleQuitAndResubscribe.bind(this)
     );
-    api.bind(
+    this.api.bind(
       '/app-name/contacts',
       'PUT',
-      api.authTokens.ship,
+      this.api.ship,
       'metadata-store',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
@@ -70,10 +77,10 @@ export class Subscription {
     );
 
     // open a subscription for what collections we're listening to
-    api.bind(
+    this.api.bind(
       '/listening',
       'PUT',
-      api.authTokens.ship,
+      this.api.ship,
       'link-listen-hook',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
@@ -81,10 +88,10 @@ export class Subscription {
     );
 
     // open a subscription for all submissions
-    api.getPage('', 0);
+    this.api.getPage('', 0);
 
     // open a subscription for seen notifications
-    api.bindLinkView(
+    this.api.bindLinkView(
       '/json/seen',
       this.handleEvent.bind(this),
       this.handleError.bind(this),
@@ -93,7 +100,7 @@ export class Subscription {
   }
 
   handleEvent(diff) {
-    store.handleEvent(diff);
+    this.store.handleEvent(diff);
   }
 
   handleError(err) {
@@ -108,7 +115,3 @@ export class Subscription {
     // TODO: resubscribe
   }
 }
-
-const subscription = new Subscription();
-
-export default subscription;

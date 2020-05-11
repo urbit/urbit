@@ -5,8 +5,6 @@ import { Sigil } from '../../../../lib/sigil';
 import { Link } from 'react-router-dom';
 import { makeRoutePath, cite } from '../../../../lib/util';
 
-import api from '../../api';
-
 export class LinkItem extends Component {
   constructor(props) {
     super(props);
@@ -36,7 +34,7 @@ export class LinkItem extends Component {
   }
 
   markPostAsSeen() {
-    api.seenLink(this.props.resourcePath, this.props.url);
+    this.props.api.seenLink(this.props.resourcePath, this.props.url);
   }
 
   render() {

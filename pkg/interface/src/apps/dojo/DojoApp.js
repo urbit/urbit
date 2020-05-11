@@ -17,8 +17,8 @@ export default class DojoApp extends Component {
     super(props);
     this.store = new Store();
     this.store.setStateHandler(this.setState.bind(this));
-    
-    this.state = store.state;
+
+    this.state = this.store.state;
     this.resetControllers();
   }
 
@@ -29,14 +29,13 @@ export default class DojoApp extends Component {
 
   componentDidMount() {
     window.title = 'OS1 - Dojo';
-    
-    let channel = new this.props.channel();
+
+    const channel = new this.props.channel();
     this.api = new Api(this.props.ship, channel);
+    this.store.api = this.api;
 
     this.subscription = new Subscription(this.store, this.api, channel);
     this.subscription.start();
-
-    subscription.start(this.props.channel);
   }
 
   componentWillUnmount() {
@@ -91,6 +90,8 @@ export default class DojoApp extends Component {
                     cursor={this.state.cursor}
                     prompt={this.state.prompt}
                     input={this.state.input}
+                    api={this.api}
+                    store={this.store}
                   />
                 </div>
               </div>

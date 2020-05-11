@@ -1,6 +1,4 @@
 import Share from './components/lib/sole';
-import api from './api';
-
 export default class Store {
   constructor() {
     this.state = this.initialState();
@@ -16,6 +14,12 @@ export default class Store {
       cursor: 0,
       input: ''
     };
+  }
+
+  clear() {
+    this.handleEvent({
+      data: { clear: true }
+    });
   }
 
   handleEvent(data) {
@@ -68,7 +72,7 @@ export default class Store {
   doEdit(ted) {
     const detSend = this.buffer.transmit(ted);
     this.sync(ted);
-    return api.soto({ det: detSend });
+    return this.api.soto({ det: detSend });
   }
 
   print(txt) {

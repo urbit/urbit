@@ -3,8 +3,6 @@ import { CommentItem } from './comment-item';
 import { CommentsPagination } from './comments-pagination';
 
 import { getContactDetails } from '../../../../lib/util';
-import api from '../../api';
-
 export class Comments extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +16,7 @@ export class Comments extends Component {
         this.props.comments.local[page]
     ) {
       this.setState({ requested: this.props.commentPage });
-      api.getCommentsPage(
+      this.props.api.getCommentsPage(
         this.props.resourcePath,
         this.props.url,
         this.props.commentPage);

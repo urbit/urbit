@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-import api from '../api';
-
 import { uxToHex, makeRoutePath } from '../../../lib/util';
 import { Link } from 'react-router-dom';
 
@@ -97,7 +95,7 @@ export class SettingsScreen extends Component {
     if (hexTest && (hexTest[1] !== currentColor)) {
       if (props.amOwner) {
         this.setState({ disabled: true });
-        api.metadataAdd(
+        props.api.metadataAdd(
           props.resourcePath,
           props.groupPath,
           resource.metadata.title,
@@ -119,7 +117,7 @@ export class SettingsScreen extends Component {
       disabled: true,
       type: 'Removing'
     });
-    api.removeCollection(props.resourcePath)
+    props.api.removeCollection(props.resourcePath)
     .then(() => {
       this.setState({
         isLoading: false
@@ -135,7 +133,7 @@ export class SettingsScreen extends Component {
       disabled: true,
       type: 'Deleting'
     });
-    api.deleteCollection(props.resourcePath)
+    props.api.deleteCollection(props.resourcePath)
     .then(() => {
       this.setState({
         isLoading: false
@@ -144,7 +142,7 @@ export class SettingsScreen extends Component {
   }
 
   markAllAsSeen() {
-    api.seenLink(this.props.resourcePath);
+    this.props.api.seenLink(this.props.resourcePath);
   }
 
   renderRemove() {
@@ -210,7 +208,7 @@ export class SettingsScreen extends Component {
             onBlur={() => {
               if (props.amOwner) {
                 this.setState({ disabled: true });
-                api.metadataAdd(
+                props.api.metadataAdd(
                   props.resourcePath,
                   props.groupPath,
                   state.title,
@@ -240,7 +238,7 @@ export class SettingsScreen extends Component {
               onBlur={() => {
                 if (props.amOwner) {
                   this.setState({ disabled: true });
-                  api.metadataAdd(
+                  props.api.metadataAdd(
                     props.resourcePath,
                     props.groupPath,
                     resource.metadata.title,
@@ -305,7 +303,7 @@ export class SettingsScreen extends Component {
             <SidebarSwitcher
               sidebarShown={this.props.sidebarShown}
               popout={this.props.popout}
-              api={api}
+              api={this.props.api}
             />
             <Link to={makeRoutePath(props.resourcePath, props.popout)}
             className="pt2 white-d"
@@ -341,7 +339,7 @@ export class SettingsScreen extends Component {
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
             popout={this.props.popout}
-            api={api}
+            api={this.props.api}
           />
           <Link to={makeRoutePath(props.resourcePath, props.popout)}
           className="pt2"

@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
 export default class Api {
-
   constructor(ship, channel) {
     this.ship = ship;
     this.channel = channel;

@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 import { makeRoutePath, deSig } from '../../../lib/util';
 import urbitOb from 'urbit-ob';
 
-import api from '../api';
-
 export class NewScreen extends Component {
   constructor(props) {
     super(props);
@@ -121,7 +119,7 @@ export class NewScreen extends Component {
       ships: [],
       disabled: true
     }, () => {
-      const submit = api.createCollection(
+      const submit = props.api.createCollection(
         appPath,
         state.title,
         state.description,
