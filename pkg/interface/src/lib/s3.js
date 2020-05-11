@@ -33,7 +33,8 @@ export default class S3Client {
       Bucket: bucket,
       Key:  filename,
       Body: buffer,
-      ACL: 'public-read'
+      ACL: 'public-read',
+      ContentType: buffer.type
     };
     return new Promise((resolve, reject) => {
       if (!this.s3) {
