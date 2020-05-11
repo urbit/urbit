@@ -44,13 +44,6 @@
   =,  enjs:format
   |=  =letter
   ^-  json
-  =;  result=(each json tang)
-    ?-  -.result
-      %&  p.result
-      %|  (frond %text s+'[[json rendering error]]')
-    ==
-  %-  mule
-  |.
   ?-  -.letter
       %text
     (frond %text s+text.letter)
@@ -61,8 +54,16 @@
       %code
     %+  frond  %code
     %-  pairs
-    :~  [%expression s+expression.letter]
-        [%output a+(turn output.letter tank)]
+    :-  [%expression s+expression.letter]
+    :_  ~
+    :-  %output
+    ::  virtualize output rendering, +tank:enjs:format might crash
+    ::
+    =/  result=(each (list json) tang)
+      (mule |.((turn output.letter tank)))
+    ?-  -.result
+      %&  a+p.result
+      %|  a+[a+[%s '[[output rendering error]]']~]~
     ==
   ::
       %me
