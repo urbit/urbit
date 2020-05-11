@@ -64,16 +64,16 @@ data TlsConfig = TlsConfig
 
 type MultiTlsConfig = TVar (Map Ship Credential)
 
-data ReqApi a = ReqApi
-  { rcReq :: a -> E.ReqId -> E.ReqInfo -> STM ()
-  , rcKil :: E.ReqId -> STM ()
+data ReqApi = ReqApi
+  { rcReq :: Ship -> Word64 -> E.ReqInfo -> STM ()
+  , rcKil :: Ship -> Word64 -> STM ()
   }
 
 data ServType
-  = STHttp (ReqApi ())
-  | STHttps TlsConfig (ReqApi ())
-  | STMultiHttp (ReqApi Ship)
-  | STMultiHttps MultiTlsConfig (ReqApi Ship)
+  = STHttp Ship ReqApi
+  | STHttps Ship TlsConfig ReqApi
+  | STMultiHttp ReqApi
+  | STMultiHttps MultiTlsConfig ReqApi
 
 data ServPort
   = SPAnyPort
@@ -233,31 +233,31 @@ startServer typ hos por sok red vLive = do
           & W.setPort (fromIntegral por)
           & W.setTimeout (5 * 60)
 
-  let runAppl = E.app envir vLive
+  let runAppl who = E.app envir who vLive
       reqShip = hostShip . W.requestHeaderHost
 
   case typ of
-    STHttp api -> do
-      let app = runAppl (rcReq api ()) (rcKil api)
+    STHttp who api -> do
+      let app = runAppl who (rcReq api who) (rcKil api who)
       io (W.runSettingsSocket opts sok app)
 
-    STHttps TlsConfig {..} api -> do
+    STHttps who TlsConfig {..} api -> do
       let tls = W.tlsSettingsChainMemory tcCerti tcChain tcPrKey
-      let app = runAppl (rcReq api ()) (rcKil api)
+      let app = runAppl who (rcReq api who) (rcKil api who)
       io (W.runTLSSocket tls opts sok app)
 
     STMultiHttp api -> do
       let app req resp = do
-            ship <- reqShip req
-            runAppl (rcReq api ship) (rcKil api) req resp
+            who <- reqShip req
+            runAppl who (rcReq api who) (rcKil api who) req resp
       io (W.runSettingsSocket opts sok app)
 
     STMultiHttps mtls api -> do
       let sni = def { onServerNameIndication = onSniHdr mtls }
       let tls = W.defaultTlsSettings { W.tlsServerHooks = sni }
       let app = \req resp -> do
-            ship <- reqShip req
-            runAppl (rcReq api ship) (rcKil api) req resp
+            who <- reqShip req
+            runAppl who (rcReq api who) (rcKil api who) req resp
 
       io (W.runTLSSocket tls opts sok app)
 

@@ -4,41 +4,51 @@
 
 module Urbit.Vere.Eyre
   ( eyre
+  , multiEyre
   )
 where
 
-import Urbit.Prelude         hiding (Builder)
+import Urbit.Prelude hiding (Builder)
 
-import Urbit.Arvo            hiding (ServerId, reqUrl, secure)
+import Urbit.Arvo                hiding (ServerId, reqUrl, secure)
 import Urbit.King.Config
-import Urbit.Vere.Eyre.Wai   hiding (ReqId)
+import Urbit.Vere.Eyre.PortsFile
 import Urbit.Vere.Eyre.Serv
+import Urbit.Vere.Eyre.Service
+import Urbit.Vere.Eyre.Wai
 import Urbit.Vere.Pier.Types
 
 import Data.List.NonEmpty (NonEmpty((:|)))
 import Data.PEM           (pemParseBS, pemWriteBS)
+import Network.TLS        (Credential)
 import RIO.Prelude        (decodeUtf8Lenient)
-import System.Directory   (doesFileExist, removeFile)
 import System.Random      (randomIO)
 import Urbit.Vere.Http    (convertHeaders, unconvertHeaders)
 
 import qualified Network.HTTP.Types as H
 
 
--- Internal Types --------------------------------------------------------------
+-- Types -----------------------------------------------------------------------
 
 type HasShipEnv e = (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
 
 type ReqId = UD
 
-data Ports = Ports
-  { pHttps :: Maybe Port
-  , pHttp  :: Port
-  , pLoop  :: Port
-  }
- deriving (Eq, Ord, Show)
-
 newtype Drv = Drv (MVar (Maybe Serv))
+
+data WhichServer = Secure | Insecure | Loopback
+  deriving (Eq)
+
+data SockOpts = SockOpts
+  { soLocalhost :: Bool
+  , soWhich     :: ServPort
+  }
+
+data PortsToTry = PortsToTry
+  { pttSec :: SockOpts
+  , pttIns :: SockOpts
+  , pttLop :: SockOpts
+  }
 
 data Serv = Serv
   { sServId    :: ServId
@@ -52,118 +62,29 @@ data Serv = Serv
   }
 
 
--- Generic Service Stop/Restart -- Using an MVar for Atomicity -----------------
-
-{-|
-    Restart a running service.
-
-    This can probably be made simpler, but it
-
-    - Sets the MVar to Nothing if there was an exception whil starting
-      or stopping the service.
-
-    - Keeps the MVar lock until the restart process finishes.
--}
-restartService :: ∀e s. HasLogFunc e
-               => MVar (Maybe s)
-               -> RIO e s
-               -> (s -> RIO e ())
-               -> RIO e (Either SomeException s)
-restartService vServ sstart kkill = do
-    logDebug "restartService"
-    modifyMVar vServ $ \case
-        Nothing -> doStart
-        Just sv -> doRestart sv
-  where
-    doRestart :: s -> RIO e (Maybe s, Either SomeException s)
-    doRestart serv = do
-        logDebug "doStart"
-        try (kkill serv) >>= \case
-            Left exn -> pure (Nothing, Left exn)
-            Right () -> doStart
-
-    doStart :: RIO e (Maybe s, Either SomeException s)
-    doStart = do
-        logDebug "doStart"
-        try sstart <&> \case
-            Right s  -> (Just s,  Right s)
-            Left exn -> (Nothing, Left exn)
-
-stopService :: HasLogFunc e
-            => MVar (Maybe s)
-            -> (s -> RIO e ())
-            -> RIO e (Either SomeException ())
-stopService vServ kkill = do
-    logDebug "stopService"
-    modifyMVar vServ $ \case
-        Nothing -> pure (Nothing, Right ())
-        Just sv -> do res <- try (kkill sv)
-                      pure (Nothing, res)
-
-
--- Ports File ------------------------------------------------------------------
-
-removePortsFile :: FilePath -> RIO e ()
-removePortsFile pax =
-    io (doesFileExist pax) >>= \case
-        True  -> io $ removeFile pax
-        False -> pure ()
-
-portsFileText :: Ports -> Text
-portsFileText Ports{..} =
-  unlines $ catMaybes
-    [ pHttps <&> \p -> (tshow p <> " secure public")
-    , Just (tshow (unPort pHttp) <> " insecure public")
-    , Just (tshow (unPort pLoop) <> " insecure loopback")
-    ]
-
-writePortsFile :: FilePath -> Ports -> RIO e ()
-writePortsFile f = writeFile f . encodeUtf8 . portsFileText
-
-
 -- Utilities for Constructing Events -------------------------------------------
-
-data WhichServer = Secure | Insecure | Loopback
-  deriving (Eq)
 
 servEv :: HttpServerEv -> Ev
 servEv = EvBlip . BlipEvHttpServer
 
 bornEv :: KingId -> Ev
-bornEv king =
-    servEv $ HttpServerEvBorn (king, ()) ()
+bornEv king = servEv $ HttpServerEvBorn (king, ()) ()
 
 liveEv :: ServId -> Ports -> Ev
-liveEv sId Ports{..} =
-    servEv $ HttpServerEvLive (sId, ()) pHttp pHttps
+liveEv sId Ports {..} = servEv $ HttpServerEvLive (sId, ()) pHttp pHttps
 
 cancelEv :: ServId -> ReqId -> Ev
-cancelEv sId reqId =
-    servEv $ HttpServerEvCancelRequest (sId, reqId, 1, ()) ()
+cancelEv sId reqId = servEv $ HttpServerEvCancelRequest (sId, reqId, 1, ()) ()
 
 reqEv :: ServId -> ReqId -> WhichServer -> Address -> HttpRequest -> Ev
-reqEv sId reqId which addr req =
-    case which of
-        Loopback ->
-            servEv $ HttpServerEvRequestLocal (sId, reqId, 1, ())
-                   $ HttpServerReq False addr req
-        _        ->
-            servEv $ HttpServerEvRequest (sId, reqId, 1, ())
-                   $ HttpServerReq (which == Secure) addr req
+reqEv sId reqId which addr req = case which of
+  Loopback -> servEv $ HttpServerEvRequestLocal (sId, reqId, 1, ())
+                     $ HttpServerReq False addr req
+  _        -> servEv $ HttpServerEvRequest (sId, reqId, 1, ())
+                     $ HttpServerReq (which == Secure) addr req
 
 
--- Top-Level Driver Interface --------------------------------------------------
-
-data SockOpts = SockOpts
-  { soLocalhost :: Bool
-  , soWhich     :: ServPort
-  }
-
-data PortsToTry = PortsToTry
-  { pttSec :: SockOpts
-  , pttIns :: SockOpts
-  , pttLop :: SockOpts
-  }
+-- Based on Pier+Config, which ports should each server run? -------------------
 
 httpServerPorts :: HasShipEnv e => Bool -> RIO e PortsToTry
 httpServerPorts fak = do
@@ -190,18 +111,23 @@ httpServerPorts fak = do
 
   pure (PortsToTry { .. })
 
-parseCerts :: ByteString -> Maybe (ByteString, [ByteString])
-parseCerts bs = do
-  pems <- pemParseBS bs & either (const Nothing) Just
-  case pems of
-    [] -> Nothing
-    p:ps -> pure (pemWriteBS p, pemWriteBS <$> ps)
 
-fByt :: File -> ByteString
-fByt = unOcts . unFile
+-- Convert Between Urbit and WAI types. ----------------------------------------
 
-reorgHttpEvent :: HttpEvent -> [RespAct]
-reorgHttpEvent = \case
+parseTlsConfig :: (Key, Cert) -> Maybe TlsConfig
+parseTlsConfig (PEM key, PEM certs) = do
+  let (cerByt, keyByt) = (wainBytes certs, wainBytes key)
+  pems <- pemParseBS cerByt & either (const Nothing) Just
+  (cert, chain) <- case pems of
+    []     -> Nothing
+    p : ps -> pure (pemWriteBS p, pemWriteBS <$> ps)
+  pure $ TlsConfig keyByt cert chain
+ where
+  wainBytes :: Wain -> ByteString
+  wainBytes = encodeUtf8 . unWain
+
+parseHttpEvent :: HttpEvent -> [RespAct]
+parseHttpEvent = \case
   Start h b True  -> [RAFull (hSta h) (hHdr h) (fByt $ fromMaybe "" b)]
   Start h b False -> [RAHead (hSta h) (hHdr h) (fByt $ fromMaybe "" b)]
   Cancel ()       -> [RADone]
@@ -214,62 +140,79 @@ reorgHttpEvent = \case
   hSta :: ResponseHeader -> H.Status
   hSta = toEnum . fromIntegral . statusCode
 
-respond :: HasLogFunc e
-        => Drv -> Word64 -> HttpEvent -> RIO e ()
-respond (Drv v) reqId ev = do
-    readMVar v >>= \case
-        Nothing -> logError "Got a response to a request that does not exist."
-        Just sv -> do logTrace $ displayShow ev
-                      for_ (reorgHttpEvent ev) $
-                        atomically . routeRespAct (sLiveReqs sv) reqId
+  fByt :: File -> ByteString
+  fByt = unOcts . unFile
 
-wainBytes :: Wain -> ByteString
-wainBytes = encodeUtf8 . unWain
+requestEvent :: ServId -> WhichServer -> Word64 -> ReqInfo -> Ev
+requestEvent srvId which reqId ReqInfo{..} = reqEv srvId reqUd which riAdr evReq
+ where
+  evBod = bodFile riBod
+  evHdr = convertHeaders riHdr
+  evUrl = Cord (decodeUtf8Lenient riUrl)
+  evReq = HttpRequest riMet evUrl evHdr evBod
+  reqUd = fromIntegral reqId
 
-startServ :: (HasPierConfig e, HasLogFunc e, HasNetworkConfig e)
-          => Bool -> HttpServerConf -> (Ev -> STM ())
-          -> RIO e Serv
-startServ isFake conf plan = do
+  bodFile :: ByteString -> Maybe File
+  bodFile "" = Nothing
+  bodFile bs = Just $ File $ Octs bs
+
+
+-- Running Servers -------------------------------------------------------------
+
+execRespActs :: HasLogFunc e => Drv -> Ship -> Word64 -> HttpEvent -> RIO e ()
+execRespActs (Drv v) who reqId ev = readMVar v >>= \case
+  Nothing -> logError "Got a response to a request that does not exist."
+  Just sv -> do
+    logTrace $ displayShow ev
+    for_ (parseHttpEvent ev) $ \act -> do
+      atomically (routeRespAct who (sLiveReqs sv) reqId act)
+
+startServ
+  :: (HasPierConfig e, HasLogFunc e, HasNetworkConfig e)
+  => MultiEyreApi
+  -> Ship
+  -> Bool
+  -> HttpServerConf
+  -> (Ev -> STM ())
+  -> RIO e Serv
+startServ multi who isFake conf plan = do
   logTrace "startServ"
 
   srvId <- io $ ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
 
-  let mTls = do
-        (PEM key, PEM certs) <- hscSecure conf
-        (cert, chain)        <- parseCerts (wainBytes certs)
-        pure $ TlsConfig (wainBytes key) cert chain
+  let mTls = hscSecure conf >>= parseTlsConfig
 
   ptt <- httpServerPorts isFake
 
-  let secRedi = Nothing -- TODO
+  {-
+    TODO If configuration requests a redirect, get the HTTPS port (if
+    configuration specifies a specific port, use that. Otherwise, wait
+    for the HTTPS server to start and then use the port that it chose).
+    and run an HTTP server that simply redirects to the HTTPS server.
+  -}
+  let secRedi = Nothing
 
   let soHost :: SockOpts -> ServHost
       soHost so = if soLocalhost so then SHLocalhost else SHAnyHostOk
 
   vLive <- newTVarIO emptyLiveReqs
 
-  let bodFile "" = Nothing
-      bodFile bs = Just $ File $ Octs bs
+  let onReq :: WhichServer -> Ship -> Word64 -> ReqInfo -> STM ()
+      onReq which _ship reqId reqInfo =
+        plan (requestEvent srvId which reqId reqInfo)
 
-  let onReq :: WhichServer -> Word64 -> ReqInfo -> STM ()
-      onReq which reqId ReqInfo{..} = do
-        let evBod = bodFile riBod
-        let evHdr = convertHeaders riHdr
-        let evUrl = Cord (decodeUtf8Lenient riUrl)
-        let evReq = HttpRequest riMet evUrl evHdr evBod
-        let reqUd = fromIntegral reqId
-        let event = reqEv srvId reqUd which riAdr evReq
-        plan event
+  let onKilReq :: Ship -> Word64 -> STM ()
+      onKilReq _ship = plan . cancelEv srvId . fromIntegral
 
-  let onKilReq = plan . cancelEv srvId . fromIntegral
+  atomically (joinMultiEyre multi who mTls onReq onKilReq)
 
   logTrace "Starting loopback server"
   lop <- serv vLive $ ServConf
     { scHost = soHost (pttLop ptt)
     , scPort = soWhich (pttLop ptt)
     , scRedi = Nothing
-    , scType = STHttp $ ReqApi
-        { rcReq = \() -> onReq Loopback
+    , scType = STHttp who $ ReqApi
+        { rcReq = onReq Loopback
         , rcKil = onKilReq
         }
     }
@@ -279,8 +222,8 @@ startServ isFake conf plan = do
     { scHost = soHost (pttIns ptt)
     , scPort = soWhich (pttIns ptt)
     , scRedi = secRedi
-    , scType = STHttp $ ReqApi
-        { rcReq = \() -> onReq Insecure
+    , scType = STHttp who $ ReqApi
+        { rcReq = onReq Insecure
         , rcKil = onKilReq
         }
     }
@@ -291,8 +234,8 @@ startServ isFake conf plan = do
       { scHost = soHost (pttSec ptt)
       , scPort = soWhich (pttSec ptt)
       , scRedi = Nothing
-      , scType = STHttps tls $ ReqApi
-          { rcReq = \() -> onReq Secure
+      , scType = STHttps who tls $ ReqApi
+          { rcReq = onReq Secure
           , rcKil = onKilReq
           }
       }
@@ -308,51 +251,153 @@ startServ isFake conf plan = do
 
   logTrace $ displayShow ("EYRE", "All Servers Started.", srvId, por, fil)
 
-  pure $ Serv srvId conf lop ins mSec por fil vLive
+  pure (Serv srvId conf lop ins mSec por fil vLive)
 
-killServ :: HasLogFunc e => Serv -> RIO e ()
-killServ Serv{..} = do
-  atomically (saKil sLop)
-  atomically (saKil sIns)
-  for_ sSec (\sec -> atomically (saKil sec))
-  removePortsFile sPortsFile
 
-kill :: HasLogFunc e => Drv -> RIO e ()
-kill (Drv v) = stopService v killServ >>= fromEither
+-- Eyre Driver -----------------------------------------------------------------
 
-eyre :: ∀e. HasShipEnv e
-     => KingId -> QueueEv -> Bool
-     -> ([Ev], RAcquire e (EffCb e HttpServerEf))
-eyre king plan isFake =
-    (initialEvents, runHttpServer)
-  where
-    initialEvents :: [Ev]
-    initialEvents = [bornEv king]
+eyre
+  :: forall e
+   . HasShipEnv e
+  => KingId
+  -> MultiEyreApi
+  -> Ship
+  -> QueueEv
+  -> Bool
+  -> ([Ev], RAcquire e (EffCb e HttpServerEf))
+eyre king multi who plan isFake = (initialEvents, runHttpServer)
+ where
+  initialEvents :: [Ev]
+  initialEvents = [bornEv king]
 
-    runHttpServer :: RAcquire e (EffCb e HttpServerEf)
-    runHttpServer = handleEf <$> mkRAcquire (Drv <$> newMVar Nothing) kill
+  runHttpServer :: RAcquire e (EffCb e HttpServerEf)
+  runHttpServer = handleEf <$> mkRAcquire
+    (Drv <$> newMVar Nothing)
+    (\(Drv v) -> stopService v kill >>= fromEither)
 
-    restart :: Drv -> HttpServerConf -> RIO e Serv
-    restart (Drv var) conf = do
-        logDebug "Restarting http server"
-        res <- fromEither =<<
-                 restartService var (startServ isFake conf plan) killServ
-        logDebug "Done restating http server"
-        pure res
+  kill :: HasLogFunc e => Serv -> RIO e ()
+  kill Serv{..} = do
+    atomically (leaveMultiEyre multi who)
+    atomically (saKil sLop)
+    atomically (saKil sIns)
+    for_ sSec (\sec -> atomically (saKil sec))
+    io (removePortsFile sPortsFile)
 
-    handleEf :: Drv -> HttpServerEf -> RIO e ()
-    handleEf drv = \case
-        HSESetConfig (i, ()) conf -> do
-            -- print (i, king)
-            -- when (i == fromIntegral king) $ do
-                logDebug "restarting"
-                Serv{..} <- restart drv conf
-                logDebug "Enqueue %live"
-                atomically $ plan (liveEv sServId sPorts)
-                logDebug "Write ports file"
-                writePortsFile sPortsFile sPorts
-        HSEResponse (i, req, _seq, ()) ev -> do
-            -- print (i, king)
-            -- when (i == fromIntegral king) $ do
-                logDebug "respond"
-                respond drv (fromIntegral req) ev
+  restart :: Drv -> HttpServerConf -> RIO e Serv
+  restart (Drv var) conf = do
+    logDebug "Restarting http server"
+    let startAct = startServ multi who isFake conf plan
+    res <- fromEither =<< restartService var startAct kill
+    logDebug "Done restating http server"
+    pure res
+
+  handleEf :: Drv -> HttpServerEf -> RIO e ()
+  handleEf drv = \case
+    HSESetConfig (i, ()) conf -> do
+      logDebug (displayShow ("EYRE", "%set-config"))
+      Serv {..} <- restart drv conf
+      logDebug (displayShow ("EYRE", "%set-config", "Sending %live"))
+      atomically $ plan (liveEv sServId sPorts)
+      logDebug "Write ports file"
+      io (writePortsFile sPortsFile sPorts)
+    HSEResponse (i, req, _seq, ()) ev -> do
+      logDebug (displayShow ("EYRE", "%response"))
+      execRespActs drv who (fromIntegral req) ev
+
+
+-- Multi-Tenet HTTP ------------------------------------------------------------
+
+data MultiEyreConf = MultiEyreConf
+  { mecHttpsPort :: Maybe Port
+  , mecHttpPort :: Maybe Port
+  , mecLocalhostOnly :: Bool
+  }
+
+type OnMultiReq = WhichServer -> Ship -> Word64 -> ReqInfo -> STM ()
+
+type OnMultiKil = Ship -> Word64 -> STM ()
+
+data MultiEyreApi = MultiEyreApi
+  { meaConf :: MultiEyreConf
+  , meaLive :: TVar LiveReqs
+  , meaPlan :: TVar (Map Ship OnMultiReq)
+  , meaCanc :: TVar (Map Ship OnMultiKil)
+  , meaTlsC :: TVar (Map Ship Credential)
+  , meaKill :: STM ()
+  }
+
+joinMultiEyre
+  :: MultiEyreApi
+  -> Ship
+  -> Maybe TlsConfig
+  -> OnMultiReq
+  -> OnMultiKil
+  -> STM ()
+joinMultiEyre api who mTls onReq onKil = do
+  modifyTVar' (meaPlan api) (insertMap who onReq)
+  modifyTVar' (meaCanc api) (insertMap who onKil)
+  for_ mTls $ \tls -> do
+    configCreds tls & \case
+      Left err -> pure ()
+      Right cd -> modifyTVar' (meaTlsC api) (insertMap who cd)
+
+leaveMultiEyre :: MultiEyreApi -> Ship -> STM ()
+leaveMultiEyre MultiEyreApi {..} who = do
+  modifyTVar' meaCanc (deleteMap who)
+  modifyTVar' meaPlan (deleteMap who)
+  modifyTVar' meaTlsC (deleteMap who)
+
+multiEyre
+  :: (HasPierConfig e, HasLogFunc e, HasNetworkConfig e)
+  => MultiEyreConf
+  -> RIO e MultiEyreApi
+multiEyre conf@MultiEyreConf{..} = do
+  vLive <- newTVarIO emptyLiveReqs
+  vPlan <- newTVarIO mempty
+  vCanc <- newTVarIO (mempty :: Map Ship (Ship -> Word64 -> STM ()))
+  vTlsC <- newTVarIO mempty
+
+  let host = if mecLocalhostOnly then SHLocalhost else SHAnyHostOk
+
+  let onReq :: WhichServer -> Ship -> Word64 -> ReqInfo -> STM ()
+      onReq which who reqId reqInfo = do
+        plan <- readTVar vPlan
+        lookup who plan & \case
+          Nothing -> pure ()
+          Just cb -> cb which who reqId reqInfo
+
+  let onKil :: Ship -> Word64 -> STM ()
+      onKil who reqId = do
+        canc <- readTVar vCanc
+        lookup who canc & \case
+          Nothing -> pure ()
+          Just cb -> cb who reqId
+
+  mIns <- for mecHttpPort $ \por -> serv vLive $ ServConf
+    { scHost = host
+    , scPort = SPChoices $ singleton $ fromIntegral por
+    , scRedi = Nothing -- TODO
+    , scType = STMultiHttp $ ReqApi
+        { rcReq = onReq Insecure
+        , rcKil = onKil
+        }
+    }
+
+  mSec <- for mecHttpsPort $ \por -> serv vLive $ ServConf
+    { scHost = host
+    , scPort = SPChoices $ singleton $ fromIntegral por
+    , scRedi = Nothing
+    , scType = STMultiHttps vTlsC $ ReqApi
+        { rcReq = onReq Secure
+        , rcKil = onKil
+        }
+    }
+
+  pure $ MultiEyreApi
+    { meaLive = vLive
+    , meaPlan = vPlan
+    , meaCanc = vCanc
+    , meaTlsC = vTlsC
+    , meaConf = conf
+    , meaKill = traverse_ saKil (toList mIns <> toList mSec)
+    }

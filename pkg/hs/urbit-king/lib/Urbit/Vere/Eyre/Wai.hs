@@ -12,8 +12,7 @@
 -}
 
 module Urbit.Vere.Eyre.Wai
-  ( ReqId
-  , RespAct(..)
+  ( RespAct(..)
   , RespApi(..)
   , LiveReqs(..)
   , ReqInfo(..)
@@ -40,8 +39,6 @@ import qualified Network.Wai.Conduit as W
 
 -- Types -----------------------------------------------------------------------
 
-type ReqId = Word64
-
 data RespAct
   = RAFull H.Status [H.Header] ByteString
   | RAHead H.Status [H.Header] ByteString
@@ -55,8 +52,8 @@ data RespApi = RespApi
   }
 
 data LiveReqs = LiveReqs
-  { nextReqId  :: ReqId
-  , activeReqs :: Map ReqId RespApi
+  { nextReqId  :: Word64
+  , activeReqs :: Map Word64 (Ship, RespApi)
   }
 
 data ReqInfo = ReqInfo
@@ -73,18 +70,21 @@ data ReqInfo = ReqInfo
 emptyLiveReqs :: LiveReqs
 emptyLiveReqs = LiveReqs 1 mempty
 
-routeRespAct :: TVar LiveReqs -> ReqId -> RespAct -> STM Bool
-routeRespAct vLiv reqId act =
+routeRespAct :: Ship -> TVar LiveReqs -> Word64 -> RespAct -> STM Bool
+routeRespAct who vLiv reqId act =
   (lookup reqId . activeReqs <$> readTVar vLiv) >>= \case
-    Nothing -> pure False
-    Just tv -> raAct tv act
+    Nothing        -> pure False
+    Just (own, tv) -> do
+      if (who == own)
+      then raAct tv act
+      else pure False
 
-rmLiveReq :: TVar LiveReqs -> ReqId -> STM ()
+rmLiveReq :: TVar LiveReqs -> Word64 -> STM ()
 rmLiveReq var reqId = modifyTVar' var
   $ \liv -> liv { activeReqs = deleteMap reqId (activeReqs liv) }
 
-newLiveReq :: TVar LiveReqs -> STM (ReqId, STM RespAct)
-newLiveReq var = do
+newLiveReq :: Ship -> TVar LiveReqs -> STM (Word64, STM RespAct)
+newLiveReq who var = do
   liv <- readTVar var
   tmv <- newTQueue
   kil <- newEmptyTMVar
@@ -99,7 +99,7 @@ newLiveReq var = do
         }
 
 
-  writeTVar var (LiveReqs (nex + 1) (insertMap nex respApi act))
+  writeTVar var (LiveReqs (nex + 1) (insertMap nex (who, respApi) act))
 
   pure (nex, waitAct)
 
@@ -184,21 +184,22 @@ sendResponse cb waitAct = do
     RAHead s h b -> io $ cb $ W.responseSource s h $ streamBlocks env b waitAct
     RABloc _     -> noHeader
 
-liveReq :: TVar LiveReqs -> RAcquire e (ReqId, STM RespAct)
-liveReq vLiv = mkRAcquire ins del
+liveReq :: Ship -> TVar LiveReqs -> RAcquire e (Word64, STM RespAct)
+liveReq who vLiv = mkRAcquire ins del
  where
-  ins = atomically (newLiveReq vLiv)
+  ins = atomically (newLiveReq who vLiv)
   del = atomically . rmLiveReq vLiv . fst
 
 app
   :: HasLogFunc e
   => e
+  -> Ship
   -> TVar LiveReqs
-  -> (ReqId -> ReqInfo -> STM ())
-  -> (ReqId -> STM ())
+  -> (Word64 -> ReqInfo -> STM ())
+  -> (Word64 -> STM ())
   -> W.Application
-app env liv inform cancel req respond =
-  runRIO env $ rwith (liveReq liv) $ \(reqId, respApi) -> do
+app env who liv inform cancel req respond =
+  runRIO env $ rwith (liveReq who liv) $ \(reqId, respApi) -> do
     bod <- io (toStrict <$> W.strictRequestBody req)
     met <- maybe (error "bad method") pure (cookMeth req)
 

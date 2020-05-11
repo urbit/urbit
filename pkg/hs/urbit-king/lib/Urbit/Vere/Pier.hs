@@ -294,7 +294,7 @@ drivers inst who isFake plan shutdownSTM termSys stderr =
   where
     (behnBorn, runBehn) = behn inst plan
     (amesBorn, runAmes) = ames inst who isFake plan stderr
-    (httpBorn, runHttp) = eyre inst plan isFake
+    (httpBorn, runHttp) = eyre inst (error "TODO") who plan isFake
     (clayBorn, runClay) = clay inst plan
     (irisBorn, runIris) = client inst plan
     (termBorn, runTerm) = Term.term termSys shutdownSTM inst plan
