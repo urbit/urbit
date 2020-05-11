@@ -53,10 +53,10 @@ export class Subscribers extends Component {
         let options = [];
         if (readPath === writePath) {
           width = 258;
-          let url = `/~contacts${writePath}`;
+          let url = `/~groups${writePath}`;
           options = [{
             cls: "bg-transparent white-d tl pointer w-100 db hover-bg-gray4 hover-bg-gray1-d ph2 pv3",
-            txt: "Manage this group in the contacts view",
+            txt: "Manage this group",
             action: () => {this.redirect(url)}
           }];
         } else {
