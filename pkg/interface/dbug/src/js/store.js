@@ -1,7 +1,5 @@
-import { InitialReducer } from '/reducers/initial';
 import { LocalReducer } from '/reducers/local.js';
 import _ from 'lodash';
-
 
 class Store {
   constructor() {
@@ -16,7 +14,6 @@ class Store {
       sidebarShown: true
     };
 
-    this.initialReducer = new InitialReducer();
     this.localReducer = new LocalReducer();
     this.setState = () => {};
   }
@@ -34,7 +31,6 @@ class Store {
     }
 
     console.log('event', json);
-    this.initialReducer.reduce(json, this.state);
     this.localReducer.reduce(json, this.state);
 
     this.setState(this.state);
