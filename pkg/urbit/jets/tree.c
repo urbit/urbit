@@ -1572,6 +1572,9 @@ static c3_c* _141_two_xeb_ha[] = {
     "8369d11970bfa09bd20c5b112a353fa10e8e64c9c081e3a5b17bcf3700127add",
     0
   };
+
+  static u3j_harm _141_two__in_run_a[] = {{".2", u3wdi_run}, {}};
+
 static u3j_core _141_two__in_d[] =
   { { "bif", 7, _141_two__in_bif_a, 0, _141_two__in_bif_ha },
     { "del", 7, _141_two__in_del_a, 0, _141_two__in_del_ha },
@@ -1580,6 +1583,7 @@ static u3j_core _141_two__in_d[] =
     { "has", 7, _141_two__in_has_a, 0, _141_two__in_has_ha },
     // { "int", 7, _141_two__in_int_a, 0, _141_two__in_int_ha },
     { "put", 7, _141_two__in_put_a, 0, _141_two__in_put_ha },
+    { "run", 7, _141_two__in_run_a },
     { "tap", 7, _141_two__in_tap_a, 0, _141_two__in_tap_ha },
     { "wyt", 3, _141_two__in_wyt_a, 0, _141_two__in_wyt_ha },
     { "uni", 7, _141_two__in_uni_a, 0, _141_two__in_uni_ha },
