@@ -249,3 +249,24 @@ export function getContactDetails(contact) {
   const avatar = contact.avatar || null;
   return { nickname, color, member, avatar };
 }
+
+export function stringToSymbol(str) {
+  let result = '';
+  for (var i = 0; i < str.length; i++) {
+    var n = str.charCodeAt(i);
+    if (((n >= 97) && (n <= 122)) ||
+      ((n >= 48) && (n <= 57))) {
+      result += str[i];
+    } else if ((n >= 65) && (n <= 90)) {
+      result += String.fromCharCode(n + 32);
+    } else {
+      result += '-';
+    }
+  }
+  result = result.replace(/^[\-\d]+|\-+/g, '-');
+  result = result.replace(/^\-+|\-+$/g, '');
+  if (result === '') {
+    return dateToDa(new Date());
+  }
+  return result;
+}

@@ -10,6 +10,7 @@ import DojoApp from './apps/dojo/DojoApp';
 import StatusBar from './components/StatusBar';
 import GroupsApp from './apps/groups/GroupsApp';
 import LinksApp from './apps/links/LinksApp';
+import PublishApp from './apps/publish/PublishApp';
 
 // const Style = createGlobalStyle`
 //   ${cssReset}
@@ -36,7 +37,7 @@ const Home = () => (
     <Link className="db" to='/~dojo'>Dojo</Link>
     <Link className="db" to='/~groups'>Groups</Link>
     <Link className="db" to='/~link'>Links</Link>
-    {/* <Link to='/~publish'>Publish</Link> */}
+    <Link className="db" to='~publish'>Publish</Link>
   </div>
 );
 
@@ -73,6 +74,10 @@ export default class App extends React.Component {
               />
               <Route path="/~link" render={
                 p => <LinksApp ship={this.ship} channel={channel} {...p} />
+              }
+              />
+              <Route path="/~publish" render={
+                p => <PublishApp ship={this.ship} channel={channel} {...p} />
               }
               />
             </div>
