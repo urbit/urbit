@@ -134,5 +134,11 @@
     ^-  (quip card:agent:gall agent:gall)
     =^  cards  agent  (on-fail:ag term tang)
     [cards this]
+  ::
+  ++  on-rift
+    |=  [who=ship in=bitt:gall out=boat:gall]
+    ^-  (quip card:agent:gall agent:gall)
+    =^  cards  agent  (on-rift:ag who in out)
+    [cards this]
   --
 --

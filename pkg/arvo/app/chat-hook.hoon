@@ -289,6 +289,7 @@
   ++  on-peek   on-peek:def
   ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
+  ++  on-rift   on-rift:def
   --
 ::
 ::

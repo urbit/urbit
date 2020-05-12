@@ -193,6 +193,8 @@
     ^-  (quip card _this)
     %-  (slog leaf+"spider crashed, killing all strands: {<term>}" tang)
     (on-load on-save)
+  ::
+  ++  on-rift   on-rift:def
   --
 ::
 |_  =bowl:gall

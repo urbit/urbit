@@ -1451,4 +1451,8 @@
   =^  cards-2  ..on-init
     $(sessions t.sessions)
   [(weld cards-1 cards-2) ..on-init]
+::
+++  on-rift
+  |=  *
+  [~ ..on-init]
 --

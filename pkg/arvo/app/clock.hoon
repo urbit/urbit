@@ -117,4 +117,5 @@
   [~ this]
 ::
 ++  on-fail   on-fail:def
+++  on-rift   on-rift:def
 --

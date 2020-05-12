@@ -78,6 +78,13 @@
   %-  (print bowl "{<dap.bowl>}: on-fail with term {<term>}")
   =^  cards  agent  (on-fail:ag term tang)
   [cards this]
+::
+++  on-rift
+  |=  [who=ship =bitt:gall =boat:gall]
+  ^-  (quip card:agent:gall agent:gall)
+  %-  (print bowl "{<dap.bowl>}: on-rift for ship {<who>}")
+  =^  cards  agent  (on-rift:ag who bitt boat)
+  [cards this]
 --
 ::
 ++  print

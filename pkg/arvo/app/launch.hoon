@@ -206,6 +206,7 @@
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-fail   on-fail:def
+++  on-rift   on-rift:def
 ++  on-agent
   |=  [wir=wire sin=sign:agent:gall]
   ^-  (quip card _this)

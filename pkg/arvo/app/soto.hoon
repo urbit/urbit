@@ -126,6 +126,7 @@
   (on-arvo:def wir sin)
 ::
 ++  on-fail   on-fail:def
+++  on-rift   on-rift:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ::

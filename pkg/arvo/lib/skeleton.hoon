@@ -48,4 +48,9 @@
   |~  [term tang]
   ^-  (quip card:agent:gall agent:gall)
   !!
+::
+++  on-rift
+  |~  [ship bitt:gall boat:gall]
+  ^-  (quip card:agent:gall agent:gall)
+  !!
 --

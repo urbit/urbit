@@ -223,4 +223,7 @@
 ++  on-fail
   |=  [term tang]
   `..on-init
+++  on-rift
+  |=  *
+  `..on-init
 --

@@ -114,6 +114,7 @@
   ++  on-leave  on-leave:def
   ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
+  ++  on-rift   on-rift:def
   --
 ::
 |_  =bowl:gall

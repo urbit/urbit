@@ -94,6 +94,7 @@
   ++  on-agent  on-agent:def
   ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
+  ++  on-rift   on-rift:def
   --
 ::
 ::  unix-{effects,events,boths}: collect jar of effects and events to

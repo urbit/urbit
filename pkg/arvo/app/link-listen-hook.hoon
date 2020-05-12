@@ -209,6 +209,7 @@
   ::
   ++  on-leave  on-leave:def
   ++  on-fail   on-fail:def
+  ++  on-rift   on-rift:def
   --
 ::
 ::
