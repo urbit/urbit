@@ -153,10 +153,14 @@ export class Notebook extends Component {
     if (notebook['writers-group-path'] in props.groups) {
       const writers = notebook['writers-group-path'];
       if (props.groups[writers].has(window.ship)) {
-        newPost =
-         <Link to={newUrl} className="NotebookButton bg-light-green green2">
-           New Post
-         </Link>;
+        newPost = (
+          <Link
+            to={newUrl}
+            className='NotebookButton bg-light-green green2 ph2 pt3'
+          >
+            New Post
+          </Link>
+        );
       }
     }
 
@@ -182,57 +186,56 @@ export class Notebook extends Component {
 
     return (
       <div
-        className="overflow-y-scroll"
+        className='overflow-y-scroll'
         style={{ paddingLeft: 16, paddingRight: 16 }}
         onScroll={this.onScroll}
         ref={(el) => {
           this.scrollElement = el;
         }}
       >
-        <div className="w-100 dn-m dn-l dn-xl inter pt4 pb6 f9">
-          <Link to="/~publish">{'<- All Notebooks'}</Link>
+        <div className='w-100 dn-m dn-l dn-xl inter pt4 pb6 f9'>
+          <Link to='/~publish'>{'<- All Notebooks'}</Link>
         </div>
-        <div className="center mw6 f9 h-100"
-          style={{ paddingLeft: 16, paddingRight: 16 }}
-        >
+        <div style={{ paddingTop: 11 }}>
           <SidebarSwitcher
             popout={props.popout}
             sidebarShown={props.sidebarShown}
             api={this.props.api}
+            classes="absolute top-1"
           />
+        </div>
+        <div
+          className='center mw6 f9 h-100'
+          style={{ paddingLeft: 16, paddingRight: 16 }}
+        >
           <Link
-          className={'dn absolute right-1 top-1 ' + hiddenOnPopout}
-          to={popoutHref}
-          target="_blank"
+            className={'dn absolute right-1 top-1 ' + hiddenOnPopout}
+            to={popoutHref}
+            target='_blank'
           >
-            <img src="/~publish/popout.png"
-              height={16}
-              width={16}
-            />
+            <img src='/~publish/popout.png' height={16} width={16} />
           </Link>
-          <div className="h-100 pt0 pt8-m pt8-l pt8-xl no-scrollbar">
-            <div
-              className="flex justify-between"
-              style={{ marginBottom: 32 }}
-            >
-              <div className="flex-col">
-                <div className="mb1">{notebook.title}</div>
+          <div className='h-100 pt0 pt8-m pt8-l pt8-xl no-scrollbar'>
+            <div className='flex justify-between' style={{ marginBottom: 32 }}>
+              <div className='flex-col'>
+                <div className='mb1'>{notebook.title}</div>
                 <span>
-                  <span className="gray3 mr1">by</span>
-                  <span className={contact.nickname ? null : 'mono'}
-                  title={props.ship}
+                  <span className='gray3 mr1'>by</span>
+                  <span
+                    className={contact.nickname ? null : 'mono'}
+                    title={props.ship}
                   >
                     {name}
                   </span>
                 </span>
               </div>
-              <div className="flex">
+              <div className='flex'>
                 {newPost}
                 {unsub}
               </div>
             </div>
 
-            <div className="flex" style={{ marginBottom: 24 }}>
+            <div className='flex' style={{ marginBottom: 24 }}>
               <Link to={base} className={tabStyles.posts}>
                 All Posts
               </Link>
@@ -241,12 +244,16 @@ export class Notebook extends Component {
               </Link>
               {subsComponent}
               {settingsComponent}
-              <div className="bb b--gray4 b--gray2-d gray2 pv4 ph2"
+              <div
+                className='bb b--gray4 b--gray2-d gray2 pv4 ph2'
                 style={{ flexGrow: 1 }}
               ></div>
             </div>
 
-            <div style={{ height: 'calc(100% - 188px)' }} className="f9 lh-solid">
+            <div
+              style={{ height: 'calc(100% - 188px)' }}
+              className='f9 lh-solid'
+            >
               {inner}
             </div>
           </div>

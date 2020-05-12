@@ -196,54 +196,53 @@ export class Note extends Component {
     const baseUrl = `/~publish/${popout}notebook/${props.ship}/${props.book}`;
     return (
       <div
-        className="h-100 overflow-y-scroll"
+        className='h-100 overflow-y-scroll'
         onScroll={this.onScroll}
         ref={(el) => {
           this.scrollElement = el;
         }}
       >
-        <div className="h-100 flex flex-column items-center pa4">
-          <div className="w-100 flex justify-center pb6">
-            <SidebarSwitcher
-              popout={props.popout}
-              sidebarShown={props.sidebarShown}
-              api={this.props.api}
-            />
-            <Link className="f9 w-100 w-90-m w-90-l mw6 tl" to={baseUrl}>
+          <SidebarSwitcher
+            popout={props.popout}
+            sidebarShown={props.sidebarShown}
+            api={this.props.api}
+            classes="absolute top-1 pl4"
+          />
+        <div className='h-100 flex flex-column items-center pa4'>
+          <div className='w-100 flex justify-center pb6'>
+            <Link className='f9 w-100 w-90-m w-90-l mw6 tl' to={baseUrl}>
               {'<- Notebook index'}
             </Link>
             <Link
-            to={popoutHref}
-            className={'dn absolute right-1 top-1 ' + hiddenOnPopout}
-            target="_blank"
+              to={popoutHref}
+              className={'dn absolute right-1 top-1 ' + hiddenOnPopout}
+              target='_blank'
             >
-              <img src="/~publish/popout.png"
-                height={16}
-                width={16}
-              />
+              <img src='/~publish/popout.png' height={16} width={16} />
             </Link>
           </div>
-          <div className="w-100 mw6">
-            <div className="flex flex-column">
-              <div className="f9 mb1"
-              style={{ overflowWrap: 'break-word' }}
-              >{title}</div>
-              <div className="flex mb6">
+          <div className='w-100 mw6'>
+            <div className='flex flex-column'>
+              <div className='f9 mb1' style={{ overflowWrap: 'break-word' }}>
+                {title}
+              </div>
+              <div className='flex mb6'>
                 <div
                   className={
                     'di f9 gray2 mr2 ' + (contact.nickname ? null : 'mono')
                   }
                   title={author}
+                  style={{ lineHeight: 1.6 }}
                 >
                   {name}
                 </div>
-                <div className="di">
-                  <span className="f9 gray2 dib">{date}</span><span className="ml2 dib">{editPost}</span></div>
+                <div className='di' style={{ lineHeight: 1 }}>
+                  <span className='f9 gray2 dib'>{date}</span>
+                  <span className='ml2 dib'>{editPost}</span>
+                </div>
               </div>
             </div>
-            <div className="md"
-            style={{ overflowWrap: 'break-word' }}
-            >
+            <div className='md' style={{ overflowWrap: 'break-word' }}>
               <ReactMarkdown source={newfile} linkTarget={'_blank'} />
             </div>
             <NoteNavigation
@@ -253,7 +252,8 @@ export class Note extends Component {
               ship={props.ship}
               book={props.book}
             />
-            <Comments enabled={notebook.comments}
+            <Comments
+              enabled={notebook.comments}
               ship={props.ship}
               book={props.book}
               note={props.note}
@@ -261,7 +261,11 @@ export class Note extends Component {
               contacts={props.contacts}
               api={this.props.api}
             />
-            <Spinner text="Deleting post..." awaiting={this.state.deleting} classes="absolute bottom-1 right-1 ba b--gray1-d pa2" />
+            <Spinner
+              text='Deleting post...'
+              awaiting={this.state.deleting}
+              classes='absolute bottom-1 right-1 ba b--gray1-d pa2'
+            />
           </div>
         </div>
       </div>

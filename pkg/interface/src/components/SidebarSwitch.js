@@ -3,13 +3,17 @@ import React, { Component } from 'react';
 export class SidebarSwitcher extends Component {
   render() {
     const popoutSwitcher = this.props.popout
-      ? 'dn-m dn-l dn-xl'
-      : 'dib-m dib-l dib-xl';
+      ? ' dn-m dn-l dn-xl'
+      : ' dib-m dib-l dib-xl';
+
+    const classes = this.props.classes ? this.props.classes : '';
+
+    const paddingTop = this.props.classes ? '0px' : '5px';
 
     return (
-      <div style={{ paddingTop: '5px' }}>
+      <div className={classes} style={{ paddingTop: paddingTop }}>
         <a
-          className="pointer flex-shrink-0"
+          className='pointer flex-shrink-0'
           onClick={() => {
             this.props.api.sidebarToggle();
           }}
@@ -21,8 +25,8 @@ export class SidebarSwitcher extends Component {
                 ? '/~chat/img/ChatSwitcherLink.png'
                 : '/~chat/img/ChatSwitcherClosed.png'
             }
-            height="16"
-            width="16"
+            height='16'
+            width='16'
             style={{
               maxWidth: 16
             }}

@@ -107,16 +107,17 @@ export class NewPost extends Component {
     const newIndex = props.location.pathname.indexOf('/new');
     const backHref = props.location.pathname.slice(0, newIndex);
     return (
-      <div className="f9 h-100 relative">
-        <div className="w-100 dn-m dn-l dn-xl inter pt4 pb4 f9 pl4">
+      <div className='f9 h-100 relative publish'>
+        <div className='w-100 dn-m dn-l dn-xl inter pt4 pb4 f9 pl4'>
           <Link to={backHref}>{'<- Back'}</Link>
         </div>
-        <div className="w-100 tl pv4 flex justify-center">
           <SidebarSwitcher
-            sidebarShown={props.sidebarShown}
             popout={props.popout}
+            sidebarShown={props.sidebarShown}
             api={this.props.api}
+            classes="absolute top-1 pl4"
           />
+        <div className='w-100 tl pv4 flex justify-center'>
           <button
             className={'bg-transparent v-mid w-100 w-90-l w-80-m mw6 tl h1 pl4'}
             disabled={(!state.submit && state.disabled) || (state.awaiting !== null)}
@@ -126,37 +127,38 @@ export class NewPost extends Component {
             Publish To {notebook.title}
           </button>
           <Link
-          className={'dn absolute right-1 top-1 ' + hiddenOnPopout}
-          to={popoutHref}
-          target="_blank"
+            className={'dn absolute right-1 top-1 ' + hiddenOnPopout}
+            to={popoutHref}
+            target='_blank'
           >
-            <img src="/~publish/popout.png"
-              height={16}
-              width={16}
-            />
+            <img src='/~publish/popout.png' height={16} width={16} />
           </Link>
         </div>
-        <div className="mw6 center">
-          <div className="pa4">
+        <div className='mw6 center'>
+          <div className='pa4'>
             <input
               autoFocus
-              type="text"
-              className="bg-transparent white-d w-100 pb2"
+              type='text'
+              className='bg-transparent white-d w-100 pb2'
               onChange={this.titleChange}
-              placeholder="New Post"
+              placeholder='New Post'
             />
 
-            <div className="gray2">{date}</div>
+            <div className='gray2'>{date}</div>
           </div>
 
-          <div className="NewPost">
+          <div className='NewPost'>
             <CodeMirror
               value={state.body}
               options={options}
               onBeforeChange={(e, d, v) => this.bodyChange(e, d, v)}
               onChange={(editor, data, value) => {}}
             />
-            <Spinner text="Creating post..." awaiting={this.state.disabled} classes="absolute bottom-1 right-1 ba b--gray1-d pa2" />
+            <Spinner
+              text='Creating post...'
+              awaiting={this.state.disabled}
+              classes='absolute bottom-1 right-1 ba b--gray1-d pa2'
+            />
           </div>
         </div>
       </div>
