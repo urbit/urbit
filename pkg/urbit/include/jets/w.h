@@ -78,6 +78,8 @@
 
   /** Tier 4.
   **/
+    u3_noun u3wdb_all(u3_noun);
+    u3_noun u3wdb_any(u3_noun);
     u3_noun u3wdb_apt(u3_noun);
     u3_noun u3wdb_bif(u3_noun);
     u3_noun u3wdb_del(u3_noun);

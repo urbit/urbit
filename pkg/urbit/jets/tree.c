@@ -1644,6 +1644,8 @@ static c3_c* _141_two__in_ha[] = {
     0
   };
 
+  static u3j_harm _141_two__by_all_a[] = {{".2", u3wdb_all, c3y}, {}};
+  static u3j_harm _141_two__by_any_a[] = {{".2", u3wdb_any, c3y}, {}};
   static u3j_harm _141_two__by_apt_a[] = {{".2", u3wdb_apt, c3y}, {}};
   static u3j_harm _141_two__by_key_a[] = {{".2", u3wdb_key, c3y}, {}};
   static u3j_harm _141_two__by_rep_a[] = {{".2", u3wdb_rep, c3y}, {}};
@@ -1662,7 +1664,9 @@ static c3_c* _141_two__in_ha[] = {
   static c3_c* _141_two__by_uni_ha[] = {0};
 
 static u3j_core _141_two__by_d[] =
-  { { "apt", 7, _141_two__by_apt_a },
+  { { "all", 7, _141_two__by_all_a },
+    { "any", 7, _141_two__by_any_a },
+    { "apt", 7, _141_two__by_apt_a },
     { "bif", 7, _141_two__by_bif_a, 0, _141_two__by_bif_ha },
     { "del", 7, _141_two__by_del_a, 0, _141_two__by_del_ha },
     { "dif", 7, _141_two__by_dif_a, 0, _141_two__by_dif_ha },
