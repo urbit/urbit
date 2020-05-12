@@ -54,17 +54,15 @@ data MultiEyreApi = MultiEyreApi
 joinMultiEyre
   :: MultiEyreApi
   -> Ship
-  -> Maybe TlsConfig
+  -> Maybe Credential
   -> OnMultiReq
   -> OnMultiKil
   -> STM ()
 joinMultiEyre api who mTls onReq onKil = do
   modifyTVar' (meaPlan api) (insertMap who onReq)
   modifyTVar' (meaCanc api) (insertMap who onKil)
-  for_ mTls $ \tls -> do
-    configCreds tls & \case
-      Left err -> pure ()
-      Right cd -> modifyTVar' (meaTlsC api) (insertMap who cd)
+  for_ mTls $ \creds -> do
+    modifyTVar' (meaTlsC api) (insertMap who creds)
 
 leaveMultiEyre :: MultiEyreApi -> Ship -> STM ()
 leaveMultiEyre MultiEyreApi {..} who = do

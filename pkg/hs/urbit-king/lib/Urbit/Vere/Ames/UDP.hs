@@ -97,15 +97,14 @@ forceBind por hos = go
 -}
 sendPacket :: HasLogFunc e => ByteString -> SockAddr -> Socket -> RIO e Bool
 sendPacket fullBytes adr sok = do
-  logTrace ("AMES: UDP: Sending packet")
+  logTrace $ displayShow ("AMES", "UDP", "Sending packet.")
   res <- io $ tryIOError $ go fullBytes
   case res of
     Left err -> do
-      logError $ display ("AMES: UDP: " <> tshow err)
-      logError "AMES: UDP: Failed to send packet"
+      logError $ displayShow ("AMES", "UDP", "Failed to send packet", err)
       pure False
     Right () -> do
-      logError "AMES: UDP: Packet sent"
+      logTrace $ displayShow ("AMES", "UDP", "Packet sent.")
       pure True
  where
   go byt = do
@@ -138,7 +137,7 @@ recvPacket sok = do
 -}
 fakeUdpServ :: HasLogFunc e => RIO e UdpServ
 fakeUdpServ = do
-  logTrace "AMES: UDP: \"Starting\" fake UDP server."
+  logTrace $ displayShow ("AMES", "UDP", "\"Starting\" fake UDP server.")
   pure UdpServ { .. }
  where
   usSend = \_ _ -> pure ()
@@ -154,7 +153,7 @@ fakeUdpServ = do
 realUdpServ
   :: forall e . HasLogFunc e => PortNumber -> HostAddress -> RIO e UdpServ
 realUdpServ por hos = do
-  logTrace "AMES: UDP: Starting real UDP server."
+  logTrace $ displayShow ("AMES", "UDP", "Starting real UDP server.")
 
   env <- ask
 
@@ -174,7 +173,9 @@ realUdpServ por hos = do
   -}
   let signalBrokenSocket :: Socket -> RIO e ()
       signalBrokenSocket sock = do
-        logTrace "AMES: UDP: Socket broken. Requesting new socket"
+        logTrace $ displayShow ("AMES", "UDP"
+                               , "Socket broken. Requesting new socket"
+                               )
         atomically $ do
           mSock <- readTVar vSock
           mFail <- tryReadTMVar vFail
@@ -186,7 +187,8 @@ realUdpServ por hos = do
       enqueueRecvPacket p a b = do
         did <- atomically (tryWriteTBQueue qRecv (p, a, b))
         when (did == False) $ do
-          logWarn "AMES: UDP: Dropping inbound packet because queue is full."
+          logWarn $ displayShow $ ("AMES", "UDP",)
+            "Dropping inbound packet because queue is full."
 
       enqueueSendPacket :: SockAddr -> ByteString -> RIO e ()
       enqueueSendPacket a b = do

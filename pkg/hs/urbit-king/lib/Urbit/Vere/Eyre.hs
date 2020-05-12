@@ -172,13 +172,21 @@ startServ
   -> (Ev -> STM ())
   -> RIO e Serv
 startServ multi who isFake conf plan = do
-  logTrace "startServ"
+  logTrace (displayShow ("EYRE", "startServ"))
 
   let vLive = meaLive multi
 
   srvId <- io $ ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
 
   let mTls = hscSecure conf >>= parseTlsConfig
+
+  mCre <- mTls & \case
+   Nothing -> pure Nothing
+   Just tc -> configCreds tc & \case
+     Right rs -> pure (Just rs)
+     Left err -> do
+       logError "Couldn't Load TLS Credentials."
+       pure Nothing
 
   ptt <- httpServerPorts isFake
 
@@ -200,9 +208,11 @@ startServ multi who isFake conf plan = do
   let onKilReq :: Ship -> Word64 -> STM ()
       onKilReq _ship = plan . cancelEv srvId . fromIntegral
 
-  atomically (joinMultiEyre multi who mTls onReq onKilReq)
+  logTrace (displayShow ("EYRE", "joinMultiEyre", who, mTls, mCre))
 
-  logTrace "Starting loopback server"
+  atomically (joinMultiEyre multi who mCre onReq onKilReq)
+
+  logTrace $ displayShow ("EYRE", "Starting loopback server")
   lop <- serv vLive $ ServConf
     { scHost = soHost (pttLop ptt)
     , scPort = soWhich (pttLop ptt)
@@ -213,7 +223,7 @@ startServ multi who isFake conf plan = do
         }
     }
 
-  logTrace "Starting insecure server"
+  logTrace $ displayShow ("EYRE", "Starting insecure server")
   ins <- serv vLive $ ServConf
     { scHost = soHost (pttIns ptt)
     , scPort = soWhich (pttIns ptt)
