@@ -362,7 +362,7 @@ _cttp_mcut_pork(c3_c* buf_c, c3_w len_w, u3_noun pok)
 /* _cttp_mcut_quay(): measure/cut query.
 */
 static c3_w
-_cttp_mcut_quay(c3_c* buf_c, c3_w len_w, u3_noun quy)
+_cttp_mcut_quay(c3_c* buf_c, c3_w len_w, u3_noun quy, int amp)
 {
   if ( u3_nul == quy ) {
     return len_w;
@@ -372,13 +372,18 @@ _cttp_mcut_quay(c3_c* buf_c, c3_w len_w, u3_noun quy)
     u3_noun pi_quy = u3h(i_quy);
     u3_noun qi_quy = u3t(i_quy);
     u3_noun t_quy = u3t(quy);
+    
+    c3_w len_w;
 
-    len_w = _cttp_mcut_char(buf_c, len_w, '&');
+    if (1 == amp) {
+      len_w = _cttp_mcut_char(buf_c, len_w, '&');
+    }
+
     len_w = _cttp_mcut_cord(buf_c, len_w, u3k(pi_quy));
     len_w = _cttp_mcut_char(buf_c, len_w, '=');
     len_w = _cttp_mcut_cord(buf_c, len_w, u3k(qi_quy));
 
-    len_w = _cttp_mcut_quay(buf_c, len_w, u3k(t_quy));
+    len_w = _cttp_mcut_quay(buf_c, len_w, u3k(t_quy), 1);
   }
   u3z(quy);
   return len_w;
@@ -397,7 +402,7 @@ _cttp_mcut_url(c3_c* buf_c, c3_w len_w, u3_noun pul)
 
   if ( u3_nul != r_pul ) {
     len_w = _cttp_mcut_char(buf_c, len_w, '?');
-    len_w = _cttp_mcut_quay(buf_c, len_w, u3k(r_pul));
+    len_w = _cttp_mcut_quay(buf_c, len_w, u3k(r_pul), 0);
   }
   u3z(pul);
   return len_w;
