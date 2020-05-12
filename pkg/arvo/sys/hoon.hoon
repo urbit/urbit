@@ -1692,6 +1692,7 @@
   ::
   ::
   ++  urn                                               ::  apply gate to nodes
+    ~/  %urn
     |*  b/$-({* *} *)
     |-
     ?~  a  ~

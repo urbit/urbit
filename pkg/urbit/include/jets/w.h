@@ -91,6 +91,7 @@
     u3_noun u3wdb_put(u3_noun);
 #   define u3wdb_tap u3wdi_tap
     u3_noun u3wdb_uni(u3_noun);
+    u3_noun u3wdb_urn(u3_noun);
 #   define u3wdb_rep u3wdi_rep
     u3_noun u3wdb_run(u3_noun);
 #   define u3wdb_wyt u3wdi_wyt
