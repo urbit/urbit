@@ -72,6 +72,15 @@
 ::  +disc: a desk on a ship; can be used as a beak that varies with time
 ::
 +$  disc  [=ship =desk]
++$  deco  ?(~ $bl $br $un)                              ::  text decoration
++$  json                                                ::  normal json value
+  $@  ~                                                 ::  null
+  $%  [%a p=(list json)]                                ::  array
+      [%b p=?]                                          ::  boolean
+      [%o p=(map @t json)]                              ::  object
+      [%n p=@ta]                                        ::  number
+      [%s p=@t]                                         ::  string
+  ==                                                    ::
 ++  life  @ud                                           ::  ship key revision
 ++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
@@ -91,7 +100,14 @@
   %-  unit                                              ::  ~ ~: invalid
   (cask vase)                                           ::  marked cargo
 ::
-++  turf  (list @t)                                     ::  domain, tld first
++$  stub  (list (pair stye (list @c)))                  ::  styled unicode
++$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
++$  styl  %+  pair  (unit deco)                         ::  cascading style
+          (pair (unit tint) (unit tint))                ::
++$  styx  (list $@(@t (pair styl styx)))                ::  styled text
++$  tint  ?($r $g $b $c $m $y $k $w $~)                 ::  text color
+::
++$  turf  (list @t)                                     ::  domain, tld first
 ::                                                      ::
 ::::                      ++jstd                        ::  json standards structures
   ::                                                    ::::
@@ -1166,7 +1182,6 @@
         {$sav p/path q/@}                               ::  save to file
         {$url p/@t}                                     ::  activate url
     ==                                                  ::
-  ++  deco  ?(~ $bl $br $un)                            ::  text decoration
   ++  dill-belt                                         ::  new belt
     $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
         {$bac ~}                                        ::  true backspace

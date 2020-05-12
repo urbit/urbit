@@ -1,5 +1,9 @@
 ^?  |%
 ::
++$  tile  ::  XX: ?@(knot (pair styl knot))
+          ::
+          cord
+::
 ::  A `plum` is the intermediate representation for the pretty-printer. It
 ::  encodes hoon-shaped data with the least amount of structured needed
 ::  for formating.

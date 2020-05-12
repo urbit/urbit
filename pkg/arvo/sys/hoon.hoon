@@ -1952,7 +1952,6 @@
 +$  char  @t                                            ::  UTF8 byte
 +$  cord  @t                                            ::  UTF8, LSB first
 +$  byts  [wid=@ud dat=@]                               ::  bytes, MSB first
-+$  deco  ?($bl $br $un $~)                             ::  text decoration
 +$  date  {{a/? y/@ud} m/@ud t/tarp}                    ::  parsed date
 +$  knot  @ta                                           ::  ASCII text
 +$  noun  *                                             ::  any noun
@@ -1962,17 +1961,6 @@
           $:  auth=@tas                                 ::  standards authority
               type=path                                 ::  standard label
           ==                                            ::
-+$  stub  (list (pair stye (list @c)))                  ::  styled unicode
-+$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
-+$  styl                                                ::  cascading style
-          %+  pair  (unit deco)                         ::
-          (pair (unit tint) (unit tint))                ::
-::                                                      ::
-+$  styx  (list $@(@t (pair styl styx)))                ::  styled text
-+$  tile  ::  XX: ?@(knot (pair styl knot))
-          ::
-          cord
-+$  tint  ?($r $g $b $c $m $y $k $w $~)                 ::  text color
 +$  tang  (list tank)                                   ::  bottom-first error
 ::
 ::  $tank: formatted print tree
@@ -11429,15 +11417,6 @@
   ^-  tank
   ~|  %sell
   (~(deal us p.vax) q.vax)
-::
-++  json                                                ::  normal json value
-  $@  ~                                                 ::  null
-  $%  {$a p/(list json)}                                ::  array
-      {$b p/?}                                          ::  boolean
-      {$o p/(map @t json)}                              ::  object
-      {$n p/@ta}                                        ::  number
-      {$s p/@t}                                         ::  string
-  ==                                                    ::
 ::
 ::  +skol  $-(type tank) using `duck`.
 ::
