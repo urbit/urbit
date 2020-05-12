@@ -1939,6 +1939,10 @@
       ++  on-fail
         |~  [term tang]
         *(quip card _^|(..on-init))
+      ::
+      ++  on-rift
+        |~  [ship bitt boat]
+        *(quip card _^|(..on-init))
       --
     --
   --  ::gall
