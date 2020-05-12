@@ -29,6 +29,7 @@ module Urbit.Vere.Eyre.Serv
   , ServConf(..)
   , configCreds
   , serv
+  , fakeServ
   )
 where
 
@@ -98,6 +99,7 @@ data ServConf = ServConf
   , scHost :: ServHost
   , scPort :: ServPort
   , scRedi :: Maybe W.Port
+  , scFake :: Bool
   }
  deriving (Show)
 
@@ -282,9 +284,22 @@ configCreds TlsConfig {..} =
     Left  str -> Left (pack str)
     Right rs  -> Right rs
 
-serv :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
-serv vLive conf@ServConf {..} = do
-  logTrace (displayShow ("EYRE", "SERV", "Start", conf))
+fakeServ :: HasLogFunc e => ServConf -> RIO e ServApi
+fakeServ conf = do
+  let por = fakePort (scPort conf)
+  logTrace (displayShow ("EYRE", "SERV", "Running Fake Server", por))
+  pure $ ServApi
+    { saKil = pure ()
+    , saPor = pure por
+    }
+ where
+  fakePort :: ServPort -> W.Port
+  fakePort SPAnyPort            = 55555
+  fakePort (SPChoices (x :| _)) = x
+
+realServ :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
+realServ vLive conf@ServConf {..} = do
+  logTrace (displayShow ("EYRE", "SERV", "Running Real Server"))
   kil <- newEmptyTMVarIO
   por <- newEmptyTMVarIO
 
@@ -301,3 +316,9 @@ serv vLive conf@ServConf {..} = do
     rwith (forceOpenSocket scHost scPort) $ \(por, sok) -> do
       atomically (putTMVar vPort por)
       startServer scType scHost por sok scRedi vLive
+
+serv :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
+serv vLive conf = do
+  if scFake conf
+    then fakeServ conf
+    else realServ vLive conf

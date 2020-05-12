@@ -29,6 +29,9 @@ data Opts = Opts
     , oDryFrom      :: Maybe Word64
     , oVerbose      :: Bool
     , oAmesPort     :: Maybe Word16
+    , oNoAmes       :: Bool
+    , oNoHttp       :: Bool
+    , oNoHttps      :: Bool
     , oTrace        :: Bool
     , oCollectFx    :: Bool
     , oLocalhost    :: Bool
@@ -226,6 +229,24 @@ opts = do
       <> long "ames"
       <> help "Ames port"
       <> hidden
+
+    oNoAmes <-
+     switch
+     $  long "no-ames"
+     <> help "Run with Ames disabled."
+     <> hidden
+
+    oNoHttp <-
+     switch
+     $  long "no-http"
+     <> help "Run with HTTP disabled."
+     <> hidden
+
+    oNoHttps <-
+     switch
+     $  long "no-https"
+     <> help "Run with HTTPS disabled."
+     <> hidden
 
     oHttpPort <-
       optional

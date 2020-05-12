@@ -201,6 +201,9 @@ startServ multi who isFake conf plan = do
   let soHost :: SockOpts -> ServHost
       soHost so = if soLocalhost so then SHLocalhost else SHAnyHostOk
 
+  noHttp  <- view (networkConfigL . ncNoHttp)
+  noHttps <- view (networkConfigL . ncNoHttps)
+
   let onReq :: WhichServer -> Ship -> Word64 -> ReqInfo -> STM ()
       onReq which _ship reqId reqInfo =
         plan (requestEvent srvId which reqId reqInfo)
@@ -217,6 +220,7 @@ startServ multi who isFake conf plan = do
     { scHost = soHost (pttLop ptt)
     , scPort = soWhich (pttLop ptt)
     , scRedi = Nothing
+    , scFake = False
     , scType = STHttp who $ ReqApi
         { rcReq = onReq Loopback
         , rcKil = onKilReq
@@ -228,6 +232,7 @@ startServ multi who isFake conf plan = do
     { scHost = soHost (pttIns ptt)
     , scPort = soWhich (pttIns ptt)
     , scRedi = secRedi
+    , scFake = noHttp
     , scType = STHttp who $ ReqApi
         { rcReq = onReq Insecure
         , rcKil = onKilReq
@@ -240,6 +245,7 @@ startServ multi who isFake conf plan = do
       { scHost = soHost (pttSec ptt)
       , scPort = soWhich (pttSec ptt)
       , scRedi = Nothing
+      , scFake = noHttps
       , scType = STHttps who tls $ ReqApi
           { rcReq = onReq Secure
           , rcKil = onKilReq

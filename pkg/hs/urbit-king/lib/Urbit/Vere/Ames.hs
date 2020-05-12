@@ -70,14 +70,15 @@ hearEv p a bs =
 --------------------------------------------------------------------------------
 
 netMode :: HasNetworkConfig e => Bool -> RIO e NetworkMode
-netMode True  = pure Fake
-netMode False = view (networkConfigL . ncNetMode . to cvt)
- where
-  cvt :: NetMode -> NetworkMode
-  cvt = \case
-    NMNormal    -> Real
-    NMLocalhost -> Localhost
-    NMNone      -> NoNetwork
+netMode isFake = do
+  netMode <- view (networkConfigL . ncNetMode)
+  noAmes  <- view (networkConfigL . ncNoAmes)
+  pure $ case (noAmes, isFake, netMode) of
+    (True, _   , _          ) -> NoNetwork
+    (_   , _   , NMNone     ) -> NoNetwork
+    (_   , True, _          ) -> Fake
+    (_   , _   , NMNormal   ) -> Real
+    (_   , _   , NMLocalhost) -> Localhost
 
 udpPort :: Bool -> Ship -> HasNetworkConfig e => RIO e PortNumber
 udpPort isFake who = do

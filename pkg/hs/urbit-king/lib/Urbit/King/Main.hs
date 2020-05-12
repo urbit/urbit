@@ -165,6 +165,9 @@ toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
   _ncHttpPort  = oHttpPort
   _ncHttpsPort = oHttpsPort
   _ncLocalPort = oLoopbackPort
+  _ncNoAmes    = oNoAmes
+  _ncNoHttp    = oNoHttp
+  _ncNoHttps   = oNoHttps
 
 tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
                    , HasConfigDir e, HasStderrLogFunc e

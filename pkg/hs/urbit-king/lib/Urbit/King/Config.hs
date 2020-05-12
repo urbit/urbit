@@ -36,6 +36,9 @@ data NetMode
 data NetworkConfig = NetworkConfig
   { _ncNetMode    :: NetMode
   , _ncAmesPort   :: Maybe Word16
+  , _ncNoAmes     :: Bool
+  , _ncNoHttp     :: Bool
+  , _ncNoHttps    :: Bool
   , _ncHttpPort   :: Maybe Word16
   , _ncHttpsPort  :: Maybe Word16
   , _ncLocalPort  :: Maybe Word16
