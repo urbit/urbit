@@ -41,6 +41,7 @@ export default class PublishApp extends React.Component {
 
     this.subscription = new Subscription(this.store, this.api, channel);
     this.subscription.start();
+    this.api.fetchNotebooks();
   }
 
   componentWillUnmount() {
