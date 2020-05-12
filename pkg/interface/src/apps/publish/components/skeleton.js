@@ -12,13 +12,13 @@ export class Skeleton extends Component {
       ? props.popout : false;
 
     const popoutWindow = (popout)
-      ? '' : 'h-100-m-40-ns ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl';
+      ? '' : 'ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl';
 
     const popoutBorder = (popout)
       ? '': 'ba-m ba-l ba-xl b--gray4 b--gray1-d br1';
 
     return (
-      <div className={'absolute h-100 w-100 ' + popoutWindow}>
+      <div className={'w-100 ' + popoutWindow} style={{ height: 'calc(100vh - 45px)' }}>
         <div className={'cf w-100 h-100 flex ' + popoutBorder}>
           <Sidebar
             popout={popout}

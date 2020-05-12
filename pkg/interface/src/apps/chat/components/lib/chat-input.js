@@ -337,7 +337,7 @@ export class ChatInput extends Component {
     };
 
     return (
-      <div className="pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white bg-gray0-d relative"
+      <div className="chat pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white bg-gray0-d relative"
       style={{ flexGrow: 1 }}
       >
         <ShipSearch
