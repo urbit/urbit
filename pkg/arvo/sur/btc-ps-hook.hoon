@@ -8,7 +8,7 @@
   $%
       [%set-store-id store-id=@t]
       [%pair-client pairing-code=@t]
-      :: [%generate-private-key ~]
+      [%generate-private-key ~]
       [%get-mnemonic ~]
   ==
 +$  btc-ps-update
