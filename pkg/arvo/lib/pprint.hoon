@@ -117,14 +117,18 @@
 ++  type-to-tank
   |=  t=type
   ^-  tank
-  [%plum (type-to-plum t)]
+  :+  %rose  [~ ~ ~]
+  %+  turn  (render-type t)
+  |=(=cord leaf+(trip cord))
 ::
 ::  Pretty-print a vase to a tank.
 ::
 ++  vase-to-tank
   |=  v=vase
   ^-  tank
-  [%plum (vase-to-plum v)]
+  :+  %rose  [~ ~ ~]
+  %+  turn  (render-vase v)
+  |=(=cord leaf+(trip cord))
 ::
 ::  Render an `axis`.
 ::

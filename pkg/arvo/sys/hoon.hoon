@@ -2026,7 +2026,6 @@
 ++  tang  (list tank)                                   ::  bottom-first error
 ++  tank  $~  [%leaf ~]                                 ::
           $%  {$leaf p/tape}                            ::  printing formats
-              {$plum p/plum}                            ::
               $:  $palm                                 ::  backstep list
                   p/{p/tape q/tape r/tape s/tape}       ::
                   q/(list tank)                         ::
@@ -4936,7 +4935,6 @@
     ^-  tape
     ?-    -.tac
         $leaf  p.tac
-        $plum  ~(flat plume p.tac)
         $palm  ram(tac [%rose [p.p.tac (weld q.p.tac r.p.tac) s.p.tac] q.tac])
         $rose
       %+  weld
@@ -4954,7 +4952,6 @@
     |^  |-  ^-  wall
         ?-    -.tac
             $leaf  (rig p.tac)
-            $plum  (turn ~(tall plume p.tac) |=(=cord (trip cord)))
             $palm
           ?:  fit
             (rig ram)
