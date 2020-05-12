@@ -724,12 +724,13 @@
           (dy-vase p.u.val)
         %+  slap
           (with-faces gat+gat rep+(with-faces soz) ~)
+        %-  (slog >%try< (sell (slot 27 gat)) ~)
         :+  %cncb  ~[%gat]
         ^-  (list [wing hoon])
         %+  turn  soz
         |=  [var=term vax=vase]
         ^-  [wing hoon]
-        [~[var &+27 %gat] [%wing var %rep ~]]
+        [~[var &+27] [%wing var %rep ~]]
       (slap gat ^~((ream '(.)')))
     ::
     ++  dy-made-dial                                    ::  dialog product
@@ -847,7 +848,7 @@
       ?^  val=(dy-hoon-var hoon)
         &+u.val
       %-  mule  |.
-      :-  %hoon
+      :-  %noun
       =/  vaz=(list [term vase])
         (turn ~(tap by var) |=([lal=term cag=cage] [lal q.cag]))
       =/  sut  (slop !>([our=our now=now eny=eny]:hid) !>(..zuse))
