@@ -564,7 +564,7 @@
               her/@p  dem/desk  cas/case                ::  source
               how/germ                                  ::  method
           ==                                            ::
-          {$mont des/desk bem/beam}                     ::  mount to unix
+          {$mont pot/term bem/beam}                     ::  mount to unix
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$park des/desk yok/yoki ran/rang}            ::  synchronous commit

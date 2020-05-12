@@ -2554,73 +2554,6 @@
       =.  ankh  new-ankh
       outer-loop(cans t.cans)
     ::
-    ::  Update mime cache
-    ::
-    ++  checkout-mime
-      |=  $:  =ford=args:ford:fusion
-              deletes=(set path)
-              changes=(set path)
-          ==
-      ^-  [(map path (unit mime)) ford-cache]
-      =/  mim=(map path (unit mime))
-        =/  dels=(list path)  ~(tap by deletes)
-        |-  ^-  (map path (unit mime))
-        ?~  dels
-          ~
-        (~(put by $(dels t.dels)) i.dels ~)
-      =/  cans=(list path)  ~(tap by changes)
-      |-  ^-  [(map path (unit mime)) ford-cache]
-      ?~  cans
-        [mim ford-cache.ford-args]
-      =^  cage  ford-cache.ford-args
-        ~|  mime-cast-fail+i.cans
-        (wrap:fusion (cast-path:(ford:fusion ford-args) i.cans %mime))
-      =^  mim  ford-cache.ford-args  $(cans t.cans)
-      [(~(put by mim) i.cans `!<(mime q.cage)) ford-cache.ford-args]
-    ::
-    ::  Add or remove entries to the mime cache
-    ::
-    ++  apply-changes-to-mim
-      |=  [mim=(map path mime) changes=(map path (unit mime))]
-      ^-  (map path mime)
-      =/  changes-l=(list [pax=path change=(unit mime)])
-        ~(tap by changes)
-      |-  ^-  (map path mime)
-      ?~  changes-l
-        mim
-      ?~  change.i.changes-l
-        $(changes-l t.changes-l, mim (~(del by mim) pax.i.changes-l))
-      $(changes-l t.changes-l, mim (~(put by mim) [pax u.change]:i.changes-l))
-    ::
-    ::  Emit update to unix sync
-    ::
-    ++  ergo
-      |=  mim=(map path (unit mime))
-      ^+  ..park
-      =/  must  (must-ergo her syd mon (turn ~(tap by mim) head))
-      %-  emil
-      %+  turn  ~(tap by must)
-      |=  [pot=term len=@ud pak=(set path)]
-      :*  (need hez)  %give  %ergo  pot
-          %+  turn  ~(tap in pak)
-          |=  pax=path
-          [(slag len pax) (~(got by mim) pax)]
-      ==
-    ::
-    ::  Output is a map of mount points to {length-of-mounted-path set-of-paths}.
-    ::
-    ++  must-ergo
-      |=  [our=ship syd=desk mon=(map term beam) can/(list path)]
-      ^-  (map term (pair @ud (set path)))
-      %-  malt  ^-  (list (trel term @ud (set path)))
-      %+  murn  ~(tap by mon)
-      |=  {nam/term bem/beam}
-      ^-  (unit (trel term @ud (set path)))
-      =-  ?~(- ~ `[nam (lent s.bem) (silt `(list path)`-)])
-      %+  skim  can
-      |=  pax/path
-      &(=(p.bem our) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
-    ::
     ::  Print notification to console
     ::
     ++  print
@@ -3277,6 +3210,93 @@
         ==
       --
     --
+  ::
+  ::  Update mime cache
+  ::
+  ++  checkout-mime
+    |=  $:  =ford=args:ford:fusion
+            deletes=(set path)
+            changes=(set path)
+        ==
+    ^-  [(map path (unit mime)) ford-cache]
+    =/  mim=(map path (unit mime))
+      =/  dels=(list path)  ~(tap by deletes)
+      |-  ^-  (map path (unit mime))
+      ?~  dels
+        ~
+      (~(put by $(dels t.dels)) i.dels ~)
+    =/  cans=(list path)  ~(tap by changes)
+    |-  ^-  [(map path (unit mime)) ford-cache]
+    ?~  cans
+      [mim ford-cache.ford-args]
+    =^  cage  ford-cache.ford-args
+      ~|  mime-cast-fail+i.cans
+      (wrap:fusion (cast-path:(ford:fusion ford-args) i.cans %mime))
+    =^  mim  ford-cache.ford-args  $(cans t.cans)
+    [(~(put by mim) i.cans `!<(mime q.cage)) ford-cache.ford-args]
+  ::
+  ::  Add or remove entries to the mime cache
+  ::
+  ++  apply-changes-to-mim
+    |=  [mim=(map path mime) changes=(map path (unit mime))]
+    ^-  (map path mime)
+    =/  changes-l=(list [pax=path change=(unit mime)])
+      ~(tap by changes)
+    |-  ^-  (map path mime)
+    ?~  changes-l
+      mim
+    ?~  change.i.changes-l
+      $(changes-l t.changes-l, mim (~(del by mim) pax.i.changes-l))
+    $(changes-l t.changes-l, mim (~(put by mim) [pax u.change]:i.changes-l))
+  ::
+  ::  Emit update to unix sync
+  ::
+  ++  ergo
+    |=  mim=(map path (unit mime))
+    ^+  ..park
+    =/  must  (must-ergo her syd mon (turn ~(tap by mim) head))
+    %-  emil
+    %+  turn  ~(tap by must)
+    |=  [pot=term len=@ud pak=(set path)]
+    :*  (need hez)  %give  %ergo  pot
+        %+  turn  ~(tap in pak)
+        |=  pax=path
+        [(slag len pax) (~(got by mim) pax)]
+    ==
+  ::
+  ::  Output is a map of mount points to {length-of-mounted-path set-of-paths}.
+  ::
+  ++  must-ergo
+    |=  [our=ship syd=desk mon=(map term beam) can/(list path)]
+    ^-  (map term (pair @ud (set path)))
+    %-  malt  ^-  (list (trel term @ud (set path)))
+    %+  murn  ~(tap by mon)
+    |=  {nam/term bem/beam}
+    ^-  (unit (trel term @ud (set path)))
+    =-  ?~(- ~ `[nam (lent s.bem) (silt `(list path)`-)])
+    %+  skim  can
+    |=  pax/path
+    &(=(p.bem our) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
+  ::
+  ::  Mount a beam to unix
+  ::
+  ++  mount
+    |=  [pot=term =case =spur]
+    ^+  ..mount
+    =/  old-mon  (~(get by mon) pot)
+    ?^  old-mon
+      %-  (slog >%already-mounted< >u.old-mon< ~)
+      ..mount
+    =.  mon  (~(put by mon) pot [her syd case] spur)
+    =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) let.dom))
+    =/  changes  (~(run by q.yaki) |=(=lobe |+lobe))
+    =/  =args:ford:fusion
+      [ank.dom ~ changes lat.ran fod.dom]
+    =^  mim  ford-cache.args
+      (checkout-mime args ~ ~(key by changes))
+    =.  mim.dom  (apply-changes-to-mim mim.dom mim)
+    =.  fod.dom  ford-cache.args
+    (ergo mim)
   ::
   ::  Set permissions for a node.
   ::
@@ -4584,7 +4604,7 @@
     ::    Without this, two commits could have the same date, which
     ::    would make clay violate referential transparency.
     ::
-    =/  =desk  des.req
+    =/  =desk  +<.req
     =/  =dojo  (~(gut by dos.rom.ruf) desk *dojo)
     ?:  =(0 let.dom.dojo)
       (handle-task hen req)
@@ -4712,25 +4732,9 @@
   ::
       %mont
     =.  hez.ruf  ?^(hez.ruf hez.ruf `[[%$ %sync ~] ~])
-    =.  act.ruf
-      =/  =dojo  (~(gut by dos.rom.ruf) q.bem.req *dojo)
-      =/  writer=form:mount-clad
-        %-  %-  mount
-            :*  our
-                q.bem.req
-                now
-                (need hez.ruf)
-                dom.dojo
-                ran.ruf
-            ==
-        :*  des.req
-            bem.req
-            mon.ruf
-        ==
-      `[hen req %mount (from-form:eval:mount-clad writer)]
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) p.bem.req q.bem.req)
-      abet:(take-mount:den clad-init-sign)
+      abet:(mount:den pot.req r.bem.req s.bem.req)
     [mos ..^$]
   ::
       %dirk
@@ -4740,8 +4744,7 @@
     ?.  (~(has by mon.ruf) des.req)
       ~&  [%not-mounted des.req]
       [~ ..^$]
-    :-  ~[[u.hez.ruf %give %dirk des.req]]
-        ..^$
+    [~[[u.hez.ruf %give %dirk des.req]] ..^$]
   ::
       %ogre
     ?~  hez.ruf
