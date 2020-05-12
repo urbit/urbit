@@ -1,4 +1,6 @@
-/+  libxray=xray
+/-  *plum
+/+  *plume,
+    libxray=xray
 ::
 ::  This code pretty-prints a variety of things using the `xray` and
 ::  `plum` libraries:

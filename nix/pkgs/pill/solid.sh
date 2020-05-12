@@ -29,6 +29,7 @@ done
 cp $ARVO/app/lens.hoon   ./pier/home/app/      
 cp $ARVO/app/dojo.hoon   ./pier/home/app/      
 cp $ARVO/lib/base64.hoon ./pier/home/lib/      
+cp $ARVO/lib/plume.hoon  ./pier/home/lib/      
 cp $ARVO/lib/server.hoon ./pier/home/lib/      
 cp $ARVO/lib/sole.hoon   ./pier/home/lib/      
 cp $ARVO/lib/xray.hoon   ./pier/home/lib/      
@@ -39,6 +40,7 @@ mkdir -p ./pier/home/mar/lens/
 cp $ARVO/mar/lens/*      ./pier/home/mar/lens/ 
 
 cp $ARVO/sur/lens.hoon   ./pier/home/sur/      
+cp $ARVO/sur/plum.hoon   ./pier/home/sur/      
 cp $ARVO/sur/sole.hoon   ./pier/home/sur/      
 
 # Update +solid and its dependencies
