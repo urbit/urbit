@@ -13,7 +13,8 @@ const getLocationName = (basePath) => {
     return 'Groups';
   if (basePath === '~link')
     return 'Links';
-  // if (basePath === '~publish') return 'Publish';
+  if (basePath === '~publish')
+    return 'Publish';
 };
 
 const StatusBar = (props) => {
