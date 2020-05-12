@@ -102,6 +102,7 @@
     u3_noun u3wdi_has(u3_noun);
     u3_noun u3wdi_int(u3_noun);
     u3_noun u3wdi_put(u3_noun);
+    u3_noun u3wdi_rep(u3_noun);
     u3_noun u3wdi_run(u3_noun);
     u3_noun u3wdi_tap(u3_noun);
     u3_noun u3wdi_uni(u3_noun);

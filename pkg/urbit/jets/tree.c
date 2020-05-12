@@ -1574,6 +1574,7 @@ static c3_c* _141_two_xeb_ha[] = {
   };
 
   static u3j_harm _141_two__in_apt_a[] = {{".2", u3wdi_apt}, {}};
+  static u3j_harm _141_two__in_rep_a[] = {{".2", u3wdi_rep}, {}};
   static u3j_harm _141_two__in_run_a[] = {{".2", u3wdi_run}, {}};
 
 static u3j_core _141_two__in_d[] =
@@ -1585,6 +1586,7 @@ static u3j_core _141_two__in_d[] =
     { "has", 7, _141_two__in_has_a, 0, _141_two__in_has_ha },
     // { "int", 7, _141_two__in_int_a, 0, _141_two__in_int_ha },
     { "put", 7, _141_two__in_put_a, 0, _141_two__in_put_ha },
+    { "rep", 7, _141_two__in_rep_a },
     { "run", 7, _141_two__in_run_a },
     { "tap", 7, _141_two__in_tap_a, 0, _141_two__in_tap_ha },
     { "wyt", 3, _141_two__in_wyt_a, 0, _141_two__in_wyt_ha },
