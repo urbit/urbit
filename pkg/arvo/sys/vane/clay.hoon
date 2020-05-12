@@ -143,8 +143,7 @@
 ::      location).
 ::  --  `hez` is the unix duct that %ergo's should be sent to.
 ::  --  `cez` is a collection of named permission groups.
-::  --  `cue` is a queue of requests to perform in later events.
-::  --  `tip` is the date of the last write; if now, enqueue incoming requests.
+::  --  `pud` is an update that's waiting on a kernel upgrade
 ::
 ++  raft                                                ::  filesystem
   $:  rom=room                                          ::  domestic
@@ -153,27 +152,8 @@
       mon=(map term beam)                               ::  mount points
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
-      cue=(qeu [=duct =task:able])                      ::  queued requests
-      act=active-write                                  ::  active write
       pud=(unit [=desk =yoki])                          ::  pending update
   ==                                                    ::
-::
-::  Currently active write
-::
-++  active-write
-  %-  unit
-  $:  hen=duct
-      req=task:able
-      $=  eval-data
-      $%  [%mount mount=eval-form:eval:mount-clad]
-      ==
-  ==
-::
-::  The clad monad for mounts.
-::
-::  Just a new mount point and mime cache.
-::
-++  mount-clad  (clad ,[new-mon=(pair term beam) mim=(map path mime)])
 ::
 ::  Object store.
 ::
@@ -650,79 +630,6 @@
   %+  turn  ~(tap by cult)
   |=  [=wove ducts=(set duct)]
   [ducts (print-wove wove)]
-::
-::  Mount a beam to unix
-::
-++  mount
-  |=  $:  our=ship
-          syd=desk
-          wen=@da
-          hez=duct
-          dom=dome
-          ran=rang
-      ==
-  |^
-  |=  [pot=term bem=beam mon=(map term beam)]
-  =/  m  mount-clad
-  ^-  form:m
-  =/  old-mon  (~(get by mon) pot)
-  ?^  old-mon
-    (clad-fail %already-mounted >u.old-mon< ~)
-  =.  mon  (~(put by mon) pot bem)
-  ;<  changes=(map path (unit mime))  bind:m  (cast-to-mime bem)
-  ;<  ~                               bind:m  (ergo changes mon)
-  =/  mim  (apply-changes-to-mim:util mim.dom changes)
-  (pure:m [pot bem] mim)
-  ::
-  ++  sutil  (state:util dom dom ran)
-  ::  Initializes a new mount point.
-  ::
-  ++  cast-to-mime
-    |=  bem=beam
-    =/  m  (clad ,(map path (unit mime)))
-    ^-  form:m
-    =*  pax  s.bem
-    =/  =aeon  (need (case-to-aeon-before:sutil wen r.bem))
-    =/  must
-      =/  all  (turn ~(tap by q:(aeon-to-yaki:sutil aeon)) head)
-      (skim all |=(paf/path =(pax (scag (lent pax) paf))))
-    ?~  must
-      (pure:m ~)
-    ;<  ~  bind:m
-      %+  just-do  /ergoing
-      :*  %f  %build  live=%.n  %list
-          ^-  (list schematic:ford)
-          %+  turn  `(list path)`must
-          |=  a/path
-          :-  [%$ %path !>(a)]
-          :^  %cast  [our %home]  %mime
-          =+  (need (need (read-x:sutil & aeon a)))
-          ?:  ?=(%& -<)
-            [%$ p.-]
-          (lobe-to-schematic:sutil [our %home] a p.-)
-      ==
-    ;<  res=made-result:ford  bind:m  expect-ford
-    ?:  ?=([%incomplete *] res)
-      (clad-fail %ergo-fail-incomplete leaf+"clay ergo incomplete" tang.res)
-    ?.  ?=([%complete %success *] res)
-      (clad-fail %ergo-fail leaf+"clay ergo failed" message.build-result.res)
-    %-  pure:m
-    %-  malt  ^-  mode
-    %+  turn  (made-result-to-cages:util res)
-    |=  [pax=cage mim=cage]
-    ?.  ?=($path p.pax)
-      ~|(%ergo-bad-path-mark !!)
-    :-  ;;(path q.q.pax)
-    ?.  ?=($mime p.mim)
-      ~
-    `;;(mime q.q.mim)
-  ::
-  ::  Send changes to unix
-  ::
-  ++  ergo
-    |=  [changes=(map path (unit mime)) mon=(map term beam)]
-    (give-ergo:util hez our syd mon changes)
-  --
 ::
 ::  A simple foreign request.
 ::
@@ -3400,53 +3307,6 @@
       ..start-request
     (duce for u.new-sub)
   ::
-  ::  Continue mounting
-  ::
-  ++  take-mount
-    |=  =sign
-    ^+  +>
-    =/  m  mount-clad
-    ?~  act
-      ~|(%no-active-write !!)
-    ::  ?.  ?=(%mount -.eval-data.u.act)
-    ::    ~|(%active-not-mount !!)
-    =^  r=[moves=(list move) =eval-result:eval:m]  mount.eval-data.u.act
-      (take:eval:m mount.eval-data.u.act hen /mount/[syd] now ran sign)
-    =>  .(+>.$ (emil moves.r))  :: TMI
-    ?-  -.eval-result.r
-      %next  +>.$
-      %fail  (fail-mount err.eval-result.r)
-      %done  (done-mount value.eval-result.r)
-    ==
-  ::
-  ::  Don't release effects or apply state changes; print error
-  ::
-  ++  fail-mount
-    |=  err=(pair term tang)
-    ^+  +>
-    %-  (slog leaf+"mount failed" leaf+(trip p.err) q.err)
-    finish-write
-  ::
-  ::  Release effects and apply state changes
-  ::
-  ++  done-mount
-    |=  [new-mon=(pair term beam) mim=(map path mime)]
-    ^+  +>
-    =:  mon      (~(put by mon) new-mon)
-        mim.dom  mim
-      ==
-    finish-write
-  ::
-  ::  Start next item in write queue
-  ::
-  ++  finish-write
-    ^+  .
-    =.  act  ~
-    ?~  cue
-      .
-    =/  =duct  duct:(need ~(top to cue))
-    (emit [duct %pass /queued-request %b %wait now])
-  ::
   ::  Continue foreign request
   ::
   ++  take-foreign-request
@@ -4580,48 +4440,6 @@
     ?<  ?=(%crud -.req)
     [%crud -.req tang.u.dud]
   ::
-  ::  only one of these should be going at once, so queue
-  ::
-  ?:  ?=(?(%info %merg %mont) -.req)
-    ::  If there's an active write or a queue, enqueue
-    ::
-    ::    We only want one active write so each can be a clean
-    ::    transaction.  We don't intercept `%into` because it
-    ::    immediately translates itself into one or two `%info` calls.
-    ::
-    ?:  |(!=(~ act.ruf) !=(~ cue.ruf))
-      =.  cue.ruf  (~(put to cue.ruf) [hen req])
-      ::  ~&  :*  %clall-enqueing
-      ::          cue=(turn ~(tap to cue.ruf) |=([=duct =task:able] [duct -.task]))
-      ::          ^=  act
-      ::          ?~  act.ruf
-      ::            ~
-      ::          [hen req -.eval-data]:u.act.ruf
-      ::      ==
-      [~ ..^$]
-    ::  If the last commit happened in this event, enqueue
-    ::
-    ::    Without this, two commits could have the same date, which
-    ::    would make clay violate referential transparency.
-    ::
-    =/  =desk  +<.req
-    =/  =dojo  (~(gut by dos.rom.ruf) desk *dojo)
-    ?:  =(0 let.dom.dojo)
-      (handle-task hen req)
-    =/  sutil  (state:util dom.dojo dom.dojo ran.ruf)
-    =/  last-write=@da  t:(aeon-to-yaki:sutil let.dom.dojo)
-    ?:  !=(last-write now)
-      (handle-task hen req)
-    =.  cue.ruf  (~(put to cue.ruf) [hen req])
-    =/  wait-behn  [hen %pass /queued-request %b %wait now]
-    [[wait-behn ~] ..^$]
-  (handle-task hen req)
-::
-::  Handle a task, without worrying about write queueing
-::
-++  handle-task
-  |=  [hen=duct req=task:able]
-  ^-  [(list move) _..^$]
   ?-    -.req
       %boat
     :_  ..^$
@@ -4670,15 +4488,8 @@
     [[[hen %slip %d %flog req] ~] ..^$]
   ::
       %drop
-    ~?  =(~ act.ruf)
-      [%clay-idle cue-length=~(wyt in cue.ruf)]
-    ~?  ?=(^ act.ruf)
-      [%clay-cancelling hen -.req -.eval-data]:u.act.ruf
-    =.  act.ruf  ~
-    ?~  cue.ruf
-      [~ ..^$]
-    =/  =duct  duct:(need ~(top to cue.ruf))
-    [[duct %pass /queued-request %b %wait now]~ ..^$]
+    ~&  %clay-idle
+    [~ ..^$]
   ::
       %info
     ?:  ?=(%| -.dit.req)
@@ -4904,13 +4715,6 @@
       abet:(merge:den ali-ship ali-desk germ p.q.hin)
     [mos ..^$]
   ::
-  ?:  ?=([%mount @ *] tea)
-    =*  syd  i.t.tea
-    =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our syd)
-      abet:(take-mount:den q.hin)
-    [mos ..^$]
-  ::
   ?:  ?=([%foreign-warp *] tea)
     ?>  ?=(%writ +<.q.hin)
     :_  ..^$
@@ -5044,28 +4848,15 @@
     ?^  error.q.hin
       [[hen %slip %d %flog %crud %wake u.error.q.hin]~ ..^$]
     ::
-    ?:  ?=([%tyme @ @ ~] tea)
-      =/  her  (slav %p i.t.tea)
-      =/  syd  (slav %tas i.t.t.tea)
-      =^  mos  ruf
-        =/  den  ((de our now ski hen ruf) her syd)
-        abet:wake:den
-      [mos ..^$]
-    ::
-    =^  queued  cue.ruf  ~(get to cue.ruf)
-    ::
-    =/  queued-duct=duct       -.queued
-    =/  queued-task=task:able  +.queued
-    ::
-    ::  ~&  :*  %clay-waking
-    ::          queued-duct
-    ::          hen
-    ::          ?~(cue.ruf /empty -:(need ~(top to cue.ruf)))
-    ::      ==
-    ~|  [%mismatched-ducts %queued queued-duct %timer hen]
-    ?>  =(hen queued-duct)
-    ::
-    (handle-task hen queued-task)
+    ?.  ?=([%tyme @ @ ~] tea)
+      ~&  [%clay-strange-timer tea]
+      [~ ..^$]
+    =/  her  (slav %p i.t.tea)
+    =/  syd  (slav %tas i.t.t.tea)
+    =^  mos  ruf
+      =/  den  ((de our now ski hen ruf) her syd)
+      abet:wake:den
+    [mos ..^$]
   ::
       ::  handled in the wire dispatcher
       ::
