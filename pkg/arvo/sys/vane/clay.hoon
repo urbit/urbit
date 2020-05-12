@@ -165,17 +165,9 @@
   $:  hen=duct
       req=task:able
       $=  eval-data
-      $%  [%merge merge=eval-form:eval:merge-clad]
-          [%mount mount=eval-form:eval:mount-clad]
+      $%  [%mount mount=eval-form:eval:mount-clad]
       ==
   ==
-::
-::  The clad monad for merges.
-::
-::  Same as +commit-clad, except includes a set of paths documenting the
-::  conflicts encountered in the merge.
-::
-++  merge-clad  (clad ,[(set path) dome rang])
 ::
 ::  The clad monad for mounts.
 ::
@@ -658,760 +650,6 @@
   %+  turn  ~(tap by cult)
   |=  [=wove ducts=(set duct)]
   [ducts (print-wove wove)]
-::
-::  This transaction respresents a currently running merge.  We always
-::  say we're merging from 'ali' to 'bob'.  The basic steps, not all of
-::  which are always needed, are:
-::
-::  --  fetch ali's desk
-::  --  diff ali's desk against the mergebase
-::  --  diff bob's desk against the mergebase
-::  --  merge the diffs
-::  --  build the new state
-::  --  "checkout" (apply to actual `++dome`) the new state
-::  --  "ergo" (tell unix about) any changes
-::
-++  merge
-  ::  Global constants.  These do not change during a merge.
-  ::
-  |=  $:  our=ship
-          wen=@da
-          ali-disc=(pair ship desk)
-          bob-disc=(pair ship desk)
-          cas=case
-          mon=(map term beam)
-          hez=(unit duct)
-      ==
-  ::  Run ford operations on ali unless it's a foreign desk
-  ::
-  =/  ford-disc=disc:ford
-    ?:  =(p.ali-disc p.bob-disc)
-      ali-disc
-    bob-disc
-  |^
-  ::  Initial arguments
-  ::
-  |=  [gem=germ dom=dome ran=rang]
-  =/  m  merge-clad
-  ^-  form:m
-  =/  e  (cor dom ran)
-  ;<  [bob=(unit yaki) gem=germ]  bind:m  (get-bob:e gem)
-  ;<  [ali=yaki e=_*cor]          bind:m  fetch-ali:e
-  ;<    $=  res
-        %-  unit
-        $:  conflicts=(set path)
-            bop=(map path cage)
-            new=yaki
-            erg=(map path ?)
-            e=_*cor
-        ==
-      bind:m
-    (merge:e gem cas ali bob)
-  ?~  res
-    ::  if no changes, we're done
-    ::
-    (pure:m ~ dom:e ran:e)
-  =.  e  e.u.res
-  ;<  e=_*cor   bind:m     (checkout:e gem cas bob new.u.res bop.u.res)
-  ;<  mim=(map path mime)  bind:m  (ergo:e gem cas mon erg.u.res new.u.res)
-  =.  mim.dom.e  mim
-  (pure:m conflicts.u.res dom:e ran:e)
-  ::
-  ::  A stateful core, where the global state is a dome and a rang.
-  ::
-  ::    These are the global state variables that a merge may change.
-  ::
-  ++  cor
-    |=  [dom=dome ran=rang]
-    =/  original-dome  dom
-    |%
-    ++  this-cor  .
-    ++  sutil  (state:util original-dome dom ran)
-    ::
-    ::  Fetch the local disk, if it's there.
-    ::
-    ++  get-bob
-      |=  gem=germ
-      =/  m  (clad ,[bob=(unit yaki) gem=germ])
-      ^-  form:m
-      ?:  &(=(0 let.dom) !?=(?(%init %that) gem))
-        (error:he cas %no-bob-disc ~)
-      ?:  =(0 let.dom)
-        (pure:m ~ %init)
-      =/  tak  (~(get by hit.dom) let.dom)
-      ?~  tak
-        (error:he cas %no-bob-version ~)
-      =/  bob  (~(get by hut.ran) u.tak)
-      ?~  bob
-        (error:he cas %no-bob-commit ~)
-      (pure:m `u.bob gem)
-    ::
-    ::  Tell clay to get the state at the requested case for ali's desk.
-    ::
-    ++  fetch-ali
-      =/  m  (clad ,[ali=yaki e=_this-cor])
-      ^-  form:m
-      ;<  ~  bind:m
-        %+  just-do  /fetch-ali
-        [%c %warp p.ali-disc q.ali-disc `[%sing %v cas /]]
-      ;<  [rot=riot r=rang]  bind:m  (expect-clay ran)
-      =.  ran  r
-      ?~  rot
-        (error:he cas %bad-fetch-ali ~)
-      =/  ali-dome
-          ;;  $:  ank=*
-                  let=@ud
-                  hit=(map @ud tako)
-                  lab=(map @tas @ud)
-              ==
-          q.q.r.u.rot
-      ?:  =(0 let.ali-dome)
-        (error:he cas %no-ali-disc ~)
-      =/  tak  (~(get by hit.ali-dome) let.ali-dome)
-      ?~  tak
-        (error:he cas %no-ali-version ~)
-      =/  ali  (~(get by hut.ran) u.tak)
-      ?~  ali
-        (error:he cas %no-ali-commit ~)
-      (pure:m u.ali this-cor)
-    ::
-    ::  Produce null if nothing to do; else perform merge
-    ::
-    ++  merge
-      |=  [gem=germ cas=case ali=yaki bob=(unit yaki)]
-      =/  m
-        %-  clad
-        %-  unit
-        $:  conflicts=(set path)
-            bop=(map path cage)
-            new=yaki
-            erg=(map path ?)
-            e=_this-cor
-        ==
-      ^-  form:m
-      ?-    gem
-      ::
-      ::  If this is an %init merge, we set the ali's commit to be bob's, and
-      ::  we checkout the new state.
-      ::
-          $init
-        %^  pure:m  ~  ~
-        :^    ~
-            ali
-          (~(run by q.ali) |=(lobe %&))
-        this-cor(hut.ran (~(put by hut.ran) r.ali ali))
-      ::
-      ::  If this is a %this merge, we check to see if ali's and bob's commits
-      ::  are the same, in which case we're done.  Otherwise, we check to see
-      ::  if ali's commit is in the ancestry of bob's, in which case we're
-      ::  done.  Otherwise, we create a new commit with bob's data plus ali
-      ::  and bob as parents.
-      ::
-          $this
-        =/  bob  (need bob)
-        ?:  =(r.ali r.bob)
-          (pure:m ~)
-        ?:  (~(has in (reachable-takos:sutil r.bob)) r.ali)
-          (pure:m ~)
-        =/  new  (make-yaki:sutil [r.ali r.bob ~] q.bob wen)
-        %^  pure:m  ~  ~
-        :^    ~
-            new
-          ~
-        this-cor(hut.ran (~(put by hut.ran) r.new new))
-      ::
-      ::  If this is a %that merge, we check to see if ali's and bob's commits
-      ::  are the same, in which case we're done.  Otherwise, we create a new
-      ::  commit with ali's data plus ali and bob as parents.
-      ::
-          $that
-        =/  bob  (need bob)
-        ?:  =(r.ali r.bob)
-          (pure:m ~)
-        =/  new  (make-yaki:sutil [r.ali r.bob ~] q.ali wen)
-        %^  pure:m  ~  ~
-        :^    ~
-            new
-          %-  malt  ^-  (list {path ?})
-          %+  murn  ~(tap by (~(uni by q.bob) q.ali))
-          |=  {pax/path lob/lobe}
-          ^-  (unit {path ?})
-          =+  a=(~(get by q.ali) pax)
-          =+  b=(~(get by q.bob) pax)
-          ?:  =(a b)
-            ~
-          `[pax !=(~ a)]
-        this-cor(hut.ran (~(put by hut.ran) r.new new))
-      ::
-      ::  If this is a %fine merge, we check to see if ali's and bob's commits
-      ::  are the same, in which case we're done.  Otherwise, we check to see
-      ::  if ali's commit is in the ancestry of bob's, in which case we're
-      ::  done.  Otherwise, we check to see if bob's commit is in the ancestry
-      ::  of ali's.  If not, this is not a fast-forward merge, so we error
-      ::  out.  If it is, we add ali's commit to bob's desk and checkout.
-      ::
-          $fine
-        =/  bob  (need bob)
-        ?:  =(r.ali r.bob)
-          (pure:m ~)
-        ?:  (~(has in (reachable-takos:sutil r.bob)) r.ali)
-          (pure:m ~)
-        ?.  (~(has in (reachable-takos:sutil r.ali)) r.bob)
-          (error:he cas %bad-fine-merge ~)
-        %^  pure:m  ~  ~
-        :^    ~
-            ali
-          %-  malt  ^-  (list {path ?})
-          %+  murn  ~(tap by (~(uni by q.bob) q.ali))
-          |=  {pax/path lob/lobe}
-          ^-  (unit {path ?})
-          =+  a=(~(get by q.ali) pax)
-          =+  b=(~(get by q.bob) pax)
-          ?:  =(a b)
-            ~
-          `[pax !=(~ a)]
-        this-cor
-      ::
-      ::  If this is a %meet, %mate, or %meld merge, we may need to
-      ::  fetch more data.  If this merge is either trivial or a
-      ::  fast-forward, we short-circuit to either ++done or the %fine
-      ::  case.
-      ::
-      ::  Otherwise, we find the best common ancestor(s) with
-      ::  ++find-merge-points.  If there's no common ancestor, we error
-      ::  out.  Additionally, if there's more than one common ancestor
-      ::  (i.e. this is a criss-cross merge), we error out.  Something
-      ::  akin to git's recursive merge should probably be used here,
-      ::  but it isn't.
-      ::
-      ::  Once we have our single best common ancestor (merge base), we
-      ::  store it in bas.  If this is a %mate or %meld merge, we diff
-      ::  both against the mergebase, merge the conflicts, and build the
-      ::  new commit.
-      ::
-      ::  Otherwise (i.e. this is a %meet merge), we create a list of
-      ::  all the changes between the mergebase and ali's commit and
-      ::  store it in ali-diffs, and we put a similar list for bob's
-      ::  commit in bob-diffs.  Then we create bof, which is the a set
-      ::  of changes in both ali and bob's commits.  If this has any
-      ::  members, we have conflicts, which is an error in a %meet
-      ::  merge, so we error out.
-      ::
-      ::  Otherwise, we merge the merge base data with ali's data and
-      ::  bob's data, which produces the data for the new commit.
-      ::
-          ?($meet $mate $meld)
-        =/  bob  (need bob)
-        ?:  =(r.ali r.bob)
-          (pure:m ~)
-        ?.  (~(has by hut.ran) r.bob)
-          (error:he cas %bad-bob-tako >r.bob< ~)
-        ?:  (~(has in (reachable-takos:sutil r.bob)) r.ali)
-          (pure:m ~)
-        ?:  (~(has in (reachable-takos:sutil r.ali)) r.bob)
-          $(gem %fine)
-        =+  r=(find-merge-points:he ali bob)
-        ?~  r
-          (error:he cas %merge-no-merge-base ~)
-        ?.  ?=({* ~ ~} r)
-          =+  (lent ~(tap in `(set yaki)`r))
-          (error:he cas %merge-criss-cross >[-]< ~)
-        =/  bas  n.r
-        ?:  ?=(?($mate $meld) gem)
-          ;<  ali-diffs=cane              bind:m  (diff-bas ali bob bas)
-          ;<  bob-diffs=cane              bind:m  (diff-bas bob ali bas)
-          ;<  bof=(map path (unit cage))  bind:m
-            (merge-conflicts can.ali-diffs can.bob-diffs)
-          ;<    $:  conflicts=(set path)
-                    bop=(map path cage)
-                    new=yaki
-                    erg=(map path ?)
-                    e=_this-cor
-                ==
-              bind:m
-            (build gem ali bob bas ali-diffs bob-diffs bof)
-          (pure:m `[conflicts bop new erg e])
-        =/  ali-diffs=cane  (calc-diffs:he ali bas)
-        =/  bob-diffs=cane  (calc-diffs:he bob bas)
-        =/  bof=(map path *)
-          %-  %~  int  by
-              %-  ~(uni by `(map path *)`new.ali-diffs)
-              %-  ~(uni by `(map path *)`cal.ali-diffs)
-              %-  ~(uni by `(map path *)`can.ali-diffs)
-              `(map path *)`old.ali-diffs
-          %-  ~(uni by `(map path *)`new.bob-diffs)
-          %-  ~(uni by `(map path *)`cal.bob-diffs)
-          %-  ~(uni by `(map path *)`can.bob-diffs)
-          `(map path *)`old.bob-diffs
-        ?.  =(~ bof)
-          (error:he cas %meet-conflict >~(key by bof)< ~)
-        =/  old=(map path lobe)
-          %+  roll  ~(tap by (~(uni by old.ali-diffs) old.bob-diffs))
-          =<  .(old q.bas)
-          |=  {{pax/path ~} old/(map path lobe)}
-          (~(del by old) pax)
-        =/  hat=(map path lobe)
-          %-  ~(uni by old)
-          %-  ~(uni by new.ali-diffs)
-          %-  ~(uni by new.bob-diffs)
-          %-  ~(uni by cal.ali-diffs)
-          cal.bob-diffs
-        =/  del=(map path ?)
-          (~(run by (~(uni by old.ali-diffs) old.bob-diffs)) |=(~ %|))
-        =/  new  (make-yaki:sutil [r.ali r.bob ~] hat wen)
-        %^  pure:m  ~  ~
-        :^    ~
-            new
-          %-  ~(uni by del)
-          ^-  (map path ?)
-          %.  |=(lobe %&)
-          ~(run by (~(uni by new.ali-diffs) cal.ali-diffs))
-        this-cor(hut.ran (~(put by hut.ran) r.new new))
-      ==
-    ::
-    ::  Diff a commit against the mergebase.
-    ::
-    ++  diff-bas
-      |=  [yak=yaki yuk=yaki bas=yaki]
-      =/  m  (clad ,cane)
-      ^-  form:m
-      ;<  ~  bind:m
-        %+  just-do  /diff-bas
-        :*  %f  %build  live=%.n  %pin  wen
-            %list
-            ^-  (list schematic:ford)
-            %+  murn  ~(tap by q.bas)
-            |=  {pax/path lob/lobe}
-            ^-  (unit schematic:ford)
-            =+  a=(~(get by q.yak) pax)
-            ?~  a
-              ~
-            ?:  =(lob u.a)
-              ~
-            =+  (~(get by q.yuk) pax)
-            ?~  -
-              ~
-            ?:  =(u.a u.-)
-              ~
-            :-  ~
-            =/  disc  ford-disc
-            :-  [%$ %path !>(pax)]
-            :^  %diff  ford-disc
-              (lobe-to-schematic:sutil disc pax lob)
-            (lobe-to-schematic:sutil disc pax u.a)
-        ==
-      ;<  res=made-result:ford  bind:m  expect-ford
-      =+  tay=(made-result-to-cages-or-error:util res)
-      ?:  ?=(%| -.tay)
-        (error:he cas %diff-ali-bad-made leaf+"merge diff ali failed" p.tay)
-      =+  can=(cages-to-map:util p.tay)
-      ?:  ?=(%| -.can)
-        (error:he cas %diff-ali p.can)
-      %-  pure:m
-      :*  %-  molt
-          %+  skip  ~(tap by q.yak)
-          |=  {pax/path lob/lobe}
-          (~(has by q.bas) pax)
-        ::
-          %-  molt  ^-  (list (pair path lobe))
-          %+  murn  ~(tap by q.bas)
-          |=  {pax/path lob/lobe}
-          ^-  (unit (pair path lobe))
-          =+  a=(~(get by q.yak) pax)
-          =+  b=(~(get by q.yuk) pax)
-          ?.  ?&  ?=(^ a)
-                  !=([~ lob] a)
-                  =([~ lob] b)
-              ==
-            ~
-          `[pax +.a]
-        ::
-          p.can
-        ::
-          %-  malt  ^-  (list {path ~})
-          %+  murn  ~(tap by q.bas)
-          |=  {pax/path lob/lobe}
-          ?.  =(~ (~(get by q.yak) pax))
-            ~
-          (some pax ~)
-      ==
-    ::
-    ::  Merge diffs that are on the same file.
-    ::
-    ++  merge-conflicts
-      |=  [conflicts-ali=(map path cage) conflicts-bob=(map path cage)]
-      =/  m  (clad ,bof=(map path (unit cage)))
-      ^-  form:m
-      ;<  ~  bind:m
-        %+  just-do  /merge-conflicts
-        :*  %f  %build  live=%.n  %list
-            ^-  (list schematic:ford)
-            %+  turn
-              ~(tap by (~(int by conflicts-ali) conflicts-bob))
-            |=  {pax/path *}
-            ^-  schematic:ford
-            =+  cal=(~(got by conflicts-ali) pax)
-            =+  cob=(~(got by conflicts-bob) pax)
-            =/  her
-                =+  (slag (dec (lent pax)) pax)
-                ?~(- %$ i.-)
-            :-  [%$ %path !>(pax)]
-            [%join [p.bob-disc q.bob-disc] her [%$ cal] [%$ cob]]
-        ==
-      ;<  res=made-result:ford  bind:m  expect-ford
-      =+  tay=(made-result-to-cages-or-error:util res)
-      ?:  ?=(%| -.tay)
-        (error:he cas %merge-bad-made leaf+"merging failed" p.tay)
-      =+  can=(cages-to-map:util p.tay)
-      ?:  ?=(%| -.can)
-        (error:he cas %merge p.can)
-      %-  pure:m
-      (~(run by p.can) (flit |=({a/mark ^} !?=($null a))))
-    ::
-    ::  Apply the patches in bof to get the new merged content.
-    ::
-    ::  Gather all the changes between ali's and bob's commits and the
-    ::  mergebase.  This is similar to the %meet of ++merge, except
-    ::  where they touch the same file, we use the merged versions.
-    ::
-    ++  build
-      |=  $:  gem=germ
-              ali=yaki
-              bob=yaki
-              bas=yaki
-              dal=cane
-              dob=cane
-              bof=(map path (unit cage))
-          ==
-      =/  m
-        %-  clad
-        $:  conflicts=(set path)
-            bop=(map path cage)
-            new=yaki
-            erg=(map path ?)
-            e=_this-cor
-        ==
-      ^-  form:m
-      ;<  ~  bind:m
-        %+  just-do  /build
-        :*  %f  %build  live=%.n  %list
-            ^-  (list schematic:ford)
-            %+  murn  ~(tap by bof)
-            |=  {pax/path cay/(unit cage)}
-            ^-  (unit schematic:ford)
-            ?~  cay
-              ~
-            :-  ~
-            :-  [%$ %path !>(pax)]
-            =+  (~(get by q.bas) pax)
-            ?~  -
-              ~|  %mate-strange-diff-no-base
-              !!
-            :*  %pact
-                [p.bob-disc q.bob-disc]
-                (lobe-to-schematic:sutil ford-disc pax u.-)
-                [%$ u.cay]
-            ==
-        ==
-      ;<  res=made-result:ford  bind:m  expect-ford
-      =+  tay=(made-result-to-cages-or-error:util res)
-      ?:  ?=(%| -.tay)
-        (error:he cas %build-bad-made leaf+"delta building failed" p.tay)
-      =/  bop  (cages-to-map:util p.tay)
-      ?:  ?=(%| -.bop)
-        (error:he cas %built p.bop)
-      =/  both-patched  p.bop
-      =/  con=(map path *)                            ::  2-change conflict
-        %-  molt
-        %+  skim  ~(tap by bof)
-        |=({pax/path cay/(unit cage)} ?=(~ cay))
-      =/  cab=(map path lobe)                         ::  conflict base
-        %-  ~(urn by con)
-        |=  {pax/path *}
-        (~(got by q.bas) pax)
-      =.  con                                         ::  change+del conflict
-        %-  ~(uni by con)
-        %-  malt  ^-  (list {path *})
-        %+  skim  ~(tap by old.dal)
-        |=  {pax/path ~}
-        ?:  (~(has by new.dob) pax)
-          ~|  %strange-add-and-del
-          !!
-        (~(has by can.dob) pax)
-      =.  con                                         ::  change+del conflict
-        %-  ~(uni by con)
-        %-  malt  ^-  (list {path *})
-        %+  skim  ~(tap by old.dob)
-        |=  {pax/path ~}
-        ?:  (~(has by new.dal) pax)
-          ~|  %strange-del-and-add
-          !!
-        (~(has by can.dal) pax)
-      =.  con                                         ::  add+add conflict
-        %-  ~(uni by con)
-        %-  malt  ^-  (list {path *})
-        %+  skip  ~(tap by (~(int by new.dal) new.dob))
-        |=  {pax/path *}
-        =((~(got by new.dal) pax) (~(got by new.dob) pax))
-      ?:  &(?=($mate gem) ?=(^ con))
-        =+  (turn ~(tap by `(map path *)`con) |=({path *} >[+<-]<))
-        (error:he cas %mate-conflict -)
-      =/  old=(map path lobe)                         ::  oldies but goodies
-        %+  roll  ~(tap by (~(uni by old.dal) old.dob))
-        =<  .(old q.bas)
-        |=  {{pax/path ~} old/(map path lobe)}
-        (~(del by old) pax)
-      =/  can=(map path cage)                         ::  content changes
-        %-  molt
-        ^-  (list (pair path cage))
-        %+  murn  ~(tap by bof)
-        |=  {pax/path cay/(unit cage)}
-        ^-  (unit (pair path cage))
-        ?~  cay
-          ~
-        `[pax u.cay]
-      =^  hot  lat.ran                                ::  new content
-        ^-  {(map path lobe) (map lobe blob)}
-        %+  roll  ~(tap by can)
-        =<  .(lat lat.ran)
-        |=  {{pax/path cay/cage} hat/(map path lobe) lat/(map lobe blob)}
-        =+  ^=  bol
-            =+  (~(get by q.bas) pax)
-            ?~  -
-              ~|  %mate-strange-diff-no-base
-              !!
-            %^    make-delta-blob:sutil
-                (page-to-lobe:sutil [p q.q]:(~(got by both-patched) pax))
-              [(lobe-to-mark:sutil u.-) u.-]
-            [p q.q]:cay
-        :-  (~(put by hat) pax p.bol)
-        ?:  (~(has by lat) p.bol)
-          lat
-        (~(put by lat) p.bol bol)
-      ::  ~&  old=(~(run by old) mug)
-      ::  ~&  newdal=(~(run by new.dal) mug)
-      ::  ~&  newdob=(~(run by new.dob) mug)
-      ::  ~&  caldal=(~(run by cal.dal) mug)
-      ::  ~&  caldob=(~(run by cal.dob) mug)
-      ::  ~&  hot=(~(run by hot) mug)
-      ::  ~&  cas=(~(run by cas) mug)
-      =/  hat=(map path lobe)                         ::  all the content
-        %-  ~(uni by old)
-        %-  ~(uni by new.dal)
-        %-  ~(uni by new.dob)
-        %-  ~(uni by cal.dal)
-        %-  ~(uni by cal.dob)
-        %-  ~(uni by hot)
-        cab
-      =/  del=(map path ?)
-          (~(run by (~(uni by old.dal) old.dob)) |=(~ %|))
-      =/  new  (make-yaki:sutil [r.ali r.bob ~] hat wen)
-      %-  pure:m
-      :*  (silt (turn ~(tap by con) head))
-          both-patched
-          new
-        ::
-          %-  ~(uni by del)
-          ^-  (map path ?)
-          %.  |=(lobe %&)
-          %~  run  by
-          %-  ~(uni by new.dal)
-          %-  ~(uni by cal.dal)
-          %-  ~(uni by cab)
-          hot
-        ::
-          this-cor(hut.ran (~(put by hut.ran) r.new new))
-      ==
-    ::
-    ::  Convert new commit into actual data (i.e. blobs rather than
-    ::  lobes).  Apply the new commit to our state
-    ::
-    ++  checkout
-      |=  [gem=germ cas=case bob=(unit yaki) new=yaki bop=(map path cage)]
-      =/  m  (clad ,_this-cor)
-      ^-  form:m
-      ;<  ~  bind:m
-        =/  val=beak
-            ?:  ?=($init gem)
-              [p.ali-disc q.ali-disc cas]
-            [p.bob-disc q.bob-disc da+wen]
-        %+  just-do  /checkout
-        :*  %f  %build  live=%.n  %pin  wen  %list
-            ^-  (list schematic:ford)
-            %+  murn  ~(tap by q.new)
-            |=  {pax/path lob/lobe}
-            ^-  (unit schematic:ford)
-            ?:  (~(has by bop) pax)
-              ~
-            :+  ~
-              [%$ %path !>(pax)]
-            (merge-lobe-to-schematic:he (fall bob *yaki) ford-disc pax lob)
-        ==
-      ;<  res=made-result:ford  bind:m  expect-ford
-      =+  tay=(made-result-to-cages-or-error:util res)
-      ?:  ?=(%| -.tay)
-        (error:he cas %checkout-bad-made leaf+"merge checkout failed" p.tay)
-      =+  can=(cages-to-map:util p.tay)
-      ?:  ?=(%| -.can)
-        (error:he cas %checkout p.can)
-      =.  let.dom  +(let.dom)
-      =.  hit.dom  (~(put by hit.dom) let.dom r.new)
-      =.  ank.dom
-        %-  map-to-ankh:sutil
-        %-  ~(run by (~(uni by bop) p.can))
-        |=(cage [(page-to-lobe:sutil p q.q) +<])
-      (pure:m this-cor)
-    ::
-    ::  Cast all the content that we're going to tell unix about to
-    ::  %mime, then tell unix.
-    ::
-    ++  ergo
-      |=  [gem=germ cas=case mon=(map term beam) erg=(map path ?) new=yaki]
-      =/  m  (clad ,mim=(map path mime))
-      ^-  form:m
-      =+  must=(must-ergo:util our q.bob-disc mon (turn ~(tap by erg) head))
-      ?:  =(~ must)
-        (pure:m mim.dom)
-      =/  sum=(set path)
-        =+  (turn ~(tap by must) (corl tail tail))
-        %+  roll  -
-        |=  {pak/(set path) acc/(set path)}
-        (~(uni in acc) pak)
-      =/  val=beak
-        ?:  ?=($init gem)
-          [p.ali-disc q.ali-disc cas]
-        [p.bob-disc q.bob-disc da+wen]
-      ;<  ~  bind:m
-        %+  just-do  /ergo
-        :*  %f  %build  live=%.n  %pin  wen  %list
-            ^-  (list schematic:ford)
-            %+  turn  ~(tap in sum)
-            |=  a/path
-            ^-  schematic:ford
-            :-  [%$ %path !>(a)]
-            =+  b=(~(got by erg) a)
-            ?.  b
-              [%$ %null !>(~)]
-            =/  disc  ford-disc  ::  [p q]:val
-            :^  %cast  ford-disc  %mime
-            (lobe-to-schematic:sutil disc a (~(got by q.new) a))
-        ==
-      ;<  res=made-result:ford  bind:m  expect-ford
-      =+  tay=(made-result-to-cages-or-error:util res)
-      ?:  ?=(%| -.tay)
-        (error:he cas %ergo-bad-made leaf+"merge ergo failed" p.tay)
-      =+  =|  nac=mode
-          |-  ^-  tan=$^(mode {p/term q/tang})
-          ?~  p.tay  nac
-          =*  pax  p.i.p.tay
-          ?.  ?=($path p.pax)
-            [%ergo >[%expected-path got=p.pax]< ~]
-          =*  mim  q.i.p.tay
-          =+  mit=?.(?=($mime p.mim) ~ `;;(mime q.q.mim))
-          $(p.tay t.p.tay, nac :_(nac [;;(path q.q.pax) mit]))
-      ?:  ?=([@ *] tan)  (error:he cas tan)
-      =/  changes=(map path (unit mime))  (malt tan)
-      =/  mim  (apply-changes-to-mim:util mim.dom changes)
-      ?~  hez
-        (error:he cas %ergo-no-hez ~)
-      ;<  ~  bind:m  (give-ergo:util u.hez our q.bob-disc mon changes)
-      (pure:m mim)
-    ::
-    ::  A small set of helper functions to assist in merging.
-    ::
-    ++  he
-      |%
-      ::
-      ::  Cancel the merge gracefully and produce an error.
-      ::
-      ++  error
-        |=  [cas=case err=term tan=(list tank)]
-        (clad-fail err >ali-disc< >bob-disc< >cas< tan)
-      ::
-      ++  calc-diffs
-        |=  [hed=yaki bas=yaki]
-        ^-  cane
-        :*  %-  molt
-            %+  skip  ~(tap by q.hed)
-            |=  {pax/path lob/lobe}
-            (~(has by q.bas) pax)
-          ::
-            %-  molt
-            %+  skip  ~(tap by q.hed)
-            |=  {pax/path lob/lobe}
-            =+  (~(get by q.bas) pax)
-            |(=(~ -) =([~ lob] -))
-          ::
-            ~
-          ::
-            %-  malt  ^-  (list {path ~})
-            %+  murn  ~(tap by q.bas)
-            |=  {pax/path lob/lobe}
-            ^-  (unit (pair path ~))
-            ?.  =(~ (~(get by q.hed) pax))
-              ~
-            `[pax ~]
-        ==
-      ::
-      ::  Create a schematic to turn a lobe into a blob.
-      ::
-      ::  We short-circuit if we already have the content somewhere.
-      ::
-      ++  merge-lobe-to-schematic
-        |=  [bob=yaki disc=disc:ford pax=path lob=lobe]
-        ^-  schematic:ford
-        =+  lol=(~(get by q.bob) pax)
-        |-  ^-  schematic:ford
-        ?:  =([~ lob] lol)
-          =+  (need (need (read-x:sutil & let.dom pax)))
-          ?>  ?=(%& -<)
-          [%$ p.-]
-        ::  ?:  =([~ lob] lal)
-        ::    [%$ +:(need fil.ank:(descend-path:(zu:sutil ank:(need alh)) pax))]
-        =+  bol=(~(got by lat.ran) lob)
-        ?-  -.bol
-            $direct  (page-to-schematic:sutil disc q.bol)
-            $delta
-          [%pact disc $(lob q.q.bol) (page-to-schematic:sutil disc r.bol)]
-        ==
-      ::
-      ::  Find the most recent common ancestor(s).
-      ::
-      ++  find-merge-points
-        |=  {p/yaki q/yaki}                           ::  maybe need jet
-        ^-  (set yaki)
-        %-  reduce-merge-points
-        =+  r=(reachable-takos:sutil r.p)
-        |-  ^-  (set yaki)
-        ?:  (~(has in r) r.q)  (~(put in *(set yaki)) q)
-        %+  roll  p.q
-        |=  {t/tako s/(set yaki)}
-        ?:  (~(has in r) t)
-          (~(put in s) (tako-to-yaki:sutil t))        ::  found
-        (~(uni in s) ^$(q (tako-to-yaki:sutil t)))    ::  traverse
-      ::
-      ::  Helper for ++find-merge-points.
-      ::
-      ++  reduce-merge-points
-        |=  unk/(set yaki)                            ::  maybe need jet
-        =|  gud/(set yaki)
-        =+  ^=  zar
-            ^-  (map tako (set tako))
-            %+  roll  ~(tap in unk)
-            |=  {yak/yaki qar/(map tako (set tako))}
-            (~(put by qar) r.yak (reachable-takos:sutil r.yak))
-        |-
-        ^-  (set yaki)
-        ?~  unk  gud
-        =+  bun=(~(del in `(set yaki)`unk) n.unk)
-        ?:  %+  levy  ~(tap by (~(uni in gud) bun))
-            |=  yak/yaki
-            !(~(has in (~(got by zar) r.yak)) r.n.unk)
-          $(gud (~(put in gud) n.unk), unk bun)
-        $(unk bun)
-      --
-    --
-  --
 ::
 ::  Mount a beam to unix
 ::
@@ -2084,19 +1322,6 @@
         ::                                              :: XX check vase !evil
         ~|([%two-diffs-for-same-file pax] !!)
       ==
-    ::
-    ::  Traverse parentage and find all ancestor hashes
-    ::
-    ++  reachable-takos                                 ::  reachable
-      |=  p/tako
-      ^-  (set tako)
-      =+  y=(tako-to-yaki p)
-      %+  roll  p.y
-      =<  .(s (~(put in *(set tako)) p))
-      |=  {q/tako s/(set tako)}
-      ?:  (~(has in s) q)                               ::  already done
-        s                                               ::  hence skip
-      (~(uni in s) ^$(p q))                             ::  otherwise traverse
     ::
     ::  Get the data at a node.
     ::
@@ -2819,9 +2044,78 @@
         (lobe-to-schematic [her syd] path.mun p.dat)
     ==
   ::
-  ++  case-to-date  (cury case-to-date:util lim)
-  ++  case-to-aeon  (cury case-to-aeon-before:util lim)
-  ++  lobe-to-schematic  (cury lobe-to-schematic-p:util ?=(~ ref))
+  ++  case-to-date
+    |=  =case
+    ^-  @da
+    ::  if the case is already a date, use it.
+    ::
+    ?:  ?=([%da *] case)
+      p.case
+    ::  translate other cases to dates
+    ::
+    =/  aey  (case-to-aeon-before lim case)
+    ?~  aey  `@da`0
+    ?:  =(0 u.aey)  `@da`0
+    t:(aeon-to-yaki:ze u.aey)
+  ::
+  ++  case-to-aeon  (cury case-to-aeon-before lim)
+  ::
+  ::  Reduce a case to an aeon (version number)
+  ::
+  ::  We produce null if we can't yet reduce the case for whatever
+  ::  resaon (usually either the time or aeon hasn't happened yet or
+  ::  the label hasn't been created).
+  ::
+  ++  case-to-aeon-before
+    |=  [lim=@da lok=case]
+    ^-  (unit aeon)
+    ?-    -.lok
+        $da
+      ?:  (gth p.lok lim)  ~
+      |-  ^-  (unit aeon)
+      ?:  =(0 let.dom)  [~ 0]                         ::  avoid underflow
+      ?:  %+  gte  p.lok
+          =<  t
+          ~|  [%letdom let=let.dom hit=hit.dom hut=~(key by hut.ran)]
+          ~|  [%getdom (~(get by hit.dom) let.dom)]
+          %-  aeon-to-yaki:ze
+          let.dom
+        [~ let.dom]
+      $(let.dom (dec let.dom))
+    ::
+        $tas  (~(get by lab.dom) p.lok)
+        $ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
+    ==
+  ++  lobe-to-schematic  (cury lobe-to-schematic-p ?=(~ ref))
+  ++  lobe-to-schematic-p
+    |=  [local=? disc=disc:ford pax=path lob=lobe]
+    ^-  schematic:ford
+    =/  hat/(map path lobe)
+        ?:  =(let.dom 0)
+          ~
+        q:(aeon-to-yaki:ze let.dom)
+    =+  lol=`(unit lobe)`?.(local `0vsen.tinel (~(get by hat) pax))
+    |-  ^-  schematic:ford
+    ?:  =([~ lob] lol)
+      =+  (need (need (read-x:ze let.dom pax)))
+      ?>  ?=(%& -<)
+      [%$ p.-]
+    =+  bol=(~(got by lat.ran) lob)
+    ?-  -.bol
+      $direct  (page-to-schematic disc q.bol)
+      $delta   ~|  delta+q.q.bol
+               [%pact disc $(lob q.q.bol) (page-to-schematic disc r.bol)]
+    ==
+  ::
+  ::  Create a schematic out of a page (which is a [mark noun]).
+  ::
+  ++  page-to-schematic
+    |=  [disc=disc:ford a=page]
+    ^-  schematic:ford
+    ?.  ?=($hoon p.a)  [%volt disc a]
+    ::  %hoon bootstrapping
+    [%$ p.a [%atom %t ~] q.a]
+  ::
   ::
   ++  blas
     |=  {hen/duct das/(set mood)}
@@ -3202,7 +2496,7 @@
           ::  Don't use p.change.i.cans because that's before casting to
           ::  the correct mark.
           ::
-          %&  (page-to-lobe:util [p q.q]:cage)
+          %&  (page-to-lobe [p q.q]:cage)
         ==
       =^  so-far  ford-cache.ford-args  $(cans t.cans)
       [(~(put by so-far) path.i.cans lobe cage) ford-cache.ford-args]
@@ -3303,7 +2597,7 @@
     ++  ergo
       |=  mim=(map path (unit mime))
       ^+  ..park
-      =/  must  (must-ergo:util her syd mon (turn ~(tap by mim) head))
+      =/  must  (must-ergo her syd mon (turn ~(tap by mim) head))
       %-  emil
       %+  turn  ~(tap by must)
       |=  [pot=term len=@ud pak=(set path)]
@@ -3312,6 +2606,20 @@
           |=  pax=path
           [(slag len pax) (~(got by mim) pax)]
       ==
+    ::
+    ::  Output is a map of mount points to {length-of-mounted-path set-of-paths}.
+    ::
+    ++  must-ergo
+      |=  [our=ship syd=desk mon=(map term beam) can/(list path)]
+      ^-  (map term (pair @ud (set path)))
+      %-  malt  ^-  (list (trel term @ud (set path)))
+      %+  murn  ~(tap by mon)
+      |=  {nam/term bem/beam}
+      ^-  (unit (trel term @ud (set path)))
+      =-  ?~(- ~ `[nam (lent s.bem) (silt `(list path)`-)])
+      %+  skim  can
+      |=  pax/path
+      &(=(p.bem our) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
     ::
     ::  Print notification to console
     ::
@@ -3584,7 +2892,7 @@
           %this
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
-        ?:  (~(has in (reachable-takos r.bob-yaki)) r.ali-yaki)
+        ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
           &+~
         :*  %&  ~
             conflicts=~
@@ -3617,9 +2925,9 @@
           %fine
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
-        ?:  (~(has in (reachable-takos r.bob-yaki)) r.ali-yaki)
+        ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
           &+~
-        ?.  (~(has in (reachable-takos r.ali-yaki)) r.bob-yaki)
+        ?.  (~(has in (reachable-takos:ze r.ali-yaki)) r.bob-yaki)
           :~  %|  %bad-fine-merge
               leaf+"tried fast-forward but is not ancestor or descendant"
           ==
@@ -3628,9 +2936,9 @@
           ?(%meet %mate %meld)
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
-        ?:  (~(has in (reachable-takos r.bob-yaki)) r.ali-yaki)
+        ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
           &+~
-        ?:  (~(has in (reachable-takos r.ali-yaki)) r.bob-yaki)
+        ?:  (~(has in (reachable-takos:ze r.ali-yaki)) r.bob-yaki)
           $(germ %fine)
         =/  merge-points  find-merge-points
         ?~  merge-points
@@ -3684,18 +2992,6 @@
         ^-  (map path (each page lobe))
         (~(run by m) |=(=lobe |+lobe))
       ::
-      ++  reachable-takos
-        |=  tak=tako
-        ^-  (set tako)
-        |-  ^-  (set tako)
-        =/  =yaki  (~(got by hut.ran) tak)
-        %+  roll  p.yaki
-        =<  .(takos (~(put in *(set tako)) tak))
-        |=  [q=tako takos=(set tako)]
-        ?:  (~(has in takos) q)                         ::  already done
-          takos                                         ::  hence skip
-        (~(uni in takos) ^$(tak q))                     ::  otherwise traverse
-      ::
       ::  Find the most recent common ancestor(s).
       ::
       ::    Pretty sure this could be a lot more efficient.
@@ -3703,7 +2999,7 @@
       ++  find-merge-points
         ^-  (set yaki)
         %-  reduce-merge-points
-        =+  r=(reachable-takos r.ali-yaki)
+        =+  r=(reachable-takos:ze r.ali-yaki)
         |-  ^-  (set yaki)
         ~!  bob-yaki
         ?:  (~(has in r) r.bob-yaki)  (~(put in *(set yaki)) bob-yaki)
@@ -3721,7 +3017,7 @@
         =/  zar=(map tako (set tako))
           %+  roll  ~(tap in unk)
           |=  [yak=yaki qar=(map tako (set tako))]
-          (~(put by qar) r.yak (reachable-takos r.yak))
+          (~(put by qar) r.yak (reachable-takos:ze r.yak))
         |-
         ^-  (set yaki)
         ?~  unk  gud
@@ -4084,47 +3380,6 @@
       ..start-request
     (duce for u.new-sub)
   ::
-  ::  Continue merging
-  ::
-  ++  take-merge
-    |=  =sign
-    ^+  +>
-    =/  m  merge-clad
-    ?~  act
-      ~|(%no-active-write !!)
-    ?.  ?=(%merge -.eval-data.u.act)
-      ~|(%active-not-merge !!)
-    =^  r=[moves=(list move) =eval-result:eval:m]  merge.eval-data.u.act
-      (take:eval:m merge.eval-data.u.act hen /merge/[syd] now ran sign)
-    =>  .(+>.$ (emil moves.r))  :: TMI
-    ?-  -.eval-result.r
-      %next  +>.$
-      %fail  (fail-merge err.eval-result.r)
-      %done  (done-merge value.eval-result.r)
-    ==
-  ::
-  ::  Don't release effects or apply state changes; print error
-  ::
-  ++  fail-merge
-    |=  err=(pair term tang)
-    ^+  +>
-    =.  +>.$
-      (emit [hen %slip %b %drip !>([%mere %| err])])
-    finish-write
-  ::
-  ::  Release effects and apply state changes
-  ::
-  ++  done-merge
-    |=  [conflicts=(set path) =dome =rang]
-    ^+  +>
-    =.  +>.$  (emit [hen %slip %b %drip !>([%mere %& conflicts])])
-    =:  dom      dome
-        hut.ran  (~(uni by hut.rang) hut.ran)
-        lat.ran  (~(uni by lat.rang) lat.ran)
-      ==
-    =.  +>.$  wake
-    finish-write
-  ::
   ::  Continue mounting
   ::
   ++  take-mount
@@ -4133,8 +3388,8 @@
     =/  m  mount-clad
     ?~  act
       ~|(%no-active-write !!)
-    ?.  ?=(%mount -.eval-data.u.act)
-      ~|(%active-not-mount !!)
+    ::  ?.  ?=(%mount -.eval-data.u.act)
+    ::    ~|(%active-not-mount !!)
     =^  r=[moves=(list move) =eval-result:eval:m]  mount.eval-data.u.act
       (take:eval:m mount.eval-data.u.act hen /mount/[syd] now ran sign)
     =>  .(+>.$ (emil moves.r))  :: TMI
@@ -4730,9 +3985,6 @@
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   ::
-  ::  The useful utility functions that are common to several cores
-  ::
-  ++  util  (state:[^util] dom dom ran)
   ::
   ::  Other utility functions
   ::
@@ -4747,7 +3999,13 @@
     ++  aeon-to-yaki  |=(=aeon (tako-to-yaki (aeon-to-tako aeon)))
     ++  lobe-to-blob  ~(got by lat.ran)
     ++  tako-to-yaki  ~(got by hut.ran)
-    ++  page-to-lobe  page-to-lobe:util
+    ++  lobe-to-mark
+      |=  a/lobe
+      =>  (lobe-to-blob a)
+      ?-  -
+        $delta      p.q
+        $direct     p.q
+      ==
     ::
     ::  Checks whether two pieces of data (either cages or lobes) are the same.
     ::
@@ -4798,6 +4056,19 @@
         [~ ~]
       (data-twixt-takos (~(get by hit.dom) a) (aeon-to-tako b))
     ::
+    ::  Traverse parentage and find all ancestor hashes
+    ::
+    ++  reachable-takos                                 ::  reachable
+      |=  p/tako
+      ^-  (set tako)
+      =+  y=(tako-to-yaki p)
+      %+  roll  p.y
+      =<  .(s (~(put in *(set tako)) p))
+      |=  {q/tako s/(set tako)}
+      ?:  (~(has in s) q)                               ::  already done
+        s                                               ::  hence skip
+      (~(uni in s) ^$(p q))                             ::  otherwise traverse
+    ::
     ::  Gets the data between two commit hashes, assuming the first is an
     ::  ancestor of the second.
     ::
@@ -4808,11 +4079,11 @@
     ++  data-twixt-takos
       |=  {a/(unit tako) b/tako}
       ^-  {(set yaki) (set plop)}
-      =+  old=?~(a ~ (reachable-takos:util u.a))
+      =+  old=?~(a ~ (reachable-takos u.a))
       =/  yal/(set tako)
           %-  silt
           %+  skip
-            ~(tap in (reachable-takos:util b))
+            ~(tap in (reachable-takos b))
           |=(tak/tako (~(has in old) tak))
       :-  (silt (turn ~(tap in yal) tako-to-yaki))
       (silt (turn ~(tap in (new-lobes (new-lobes ~ old) yal)) lobe-to-blob))
@@ -5112,9 +4383,49 @@
       ?:  =(0 u.aey)  `@da`0
       t:(aeon-to-yaki u.aey)
     ::
-    ::  Gets the data at a node.
+    ::  Get the data at a node.
     ::
-    ++  read-x  (cury read-x:util ?=(~ ref))
+    ::  If it's in our ankh (current state cache), we can just produce
+    ::  the result.  Otherwise, we've got to look up the node at the
+    ::  aeon to get the content hash, use that to find the blob, and use
+    ::  the blob to get the data.  We also special-case the hoon mark
+    ::  for bootstrapping purposes.
+    ::
+    ++  read-x
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit (each cage lobe)))
+      ?:  =(0 yon)
+        [~ ~]
+      =+  tak=(~(get by hit.dom) yon)
+      ?~  tak
+        ~
+      ?:  &(?=(~ ref) =(yon let.dom))
+        :-  ~
+        %+  bind
+          fil.ank:(descend-path:(zu ank.dom) pax)
+        |=(a/{p/lobe q/cage} [%& q.a])
+      =+  yak=(tako-to-yaki u.tak)
+      =+  lob=(~(get by q.yak) pax)
+      ?~  lob
+        [~ ~]
+      =+  mar=(lobe-to-mark u.lob)
+      ::  should convert any lobe to cage
+      ::
+      ?.  ?=($hoon mar)
+        [~ ~ %| u.lob]
+      :^  ~  ~  %&
+      :+  mar  [%atom %t ~]
+      |-  ^-  @t                      ::  (urge cord) would be faster
+      =+  bol=(lobe-to-blob u.lob)
+      ?:  ?=($direct -.bol)
+        ;;(@t q.q.bol)
+      ?>  ?=($delta -.bol)
+      =+  txt=$(u.lob q.q.bol)
+      ?>  ?=($txt-diff p.r.bol)
+      =+  dif=;;((urge cord) q.r.bol)
+      =,  format
+      =+  pac=(of-wain (lurk:differ (to-wain (cat 3 txt '\0a')) dif))
+      (end 3 (dec (met 3 pac)) pac)
     ::
     ::  Gets an arch (directory listing) at a node.
     ::
@@ -5193,7 +4504,23 @@
         %y  :_(fod (bind (read-y yon path.mun) (lift |=(a/cage [%& a]))))
         %z  :_(fod (bind (read-z yon path.mun) (lift |=(a/cage [%& a]))))
       ==
-    ++  zu  zu:util
+    ::  Traverse an ankh.
+    ::
+    ++  zu                                              ::  filesystem
+      |=  ank/ankh                                      ::  filesystem state
+      =|  ram/path                                      ::  reverse path into
+      |%
+      ++  descend                                       ::  descend
+        |=  lol/@ta
+        ^+  +>
+        =+  you=(~(get by dir.ank) lol)
+        +>.$(ram [lol ram], ank ?~(you [~ ~] u.you))
+      ::
+      ++  descend-path                                  ::  descend recursively
+        |=  way/path
+        ^+  +>
+        ?~(way +> $(way t.way, +> (descend i.way)))
+      --
     --
   --
 --
