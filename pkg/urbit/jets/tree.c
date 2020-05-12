@@ -1286,6 +1286,8 @@ static c3_c* _141_tri_ha[] = {
 
 /* layer two
 */
+static u3j_harm _141_two_find_a[] = {{".2", u3wb_find, c3y}, {}};
+
 static u3j_harm _141_two_flop_a[] = {{".2", u3wb_flop, c3y}, {}};
 static c3_c* _141_two_flop_ha[] = {
   "73ac3be0119bcb822621de738f90975d98ce1ff3fb9a52853adc638271f61cd2",
@@ -1714,6 +1716,7 @@ static c3_c* _141_two_rub_ha[] = {
 static u3j_core _141_two_d[] =
 { { "tri",  3, 0, _141_tri_d, _141_tri_ha },
 
+  { "find", 7, _141_two_find_a },
   { "flop", 7, _141_two_flop_a, 0, _141_two_flop_ha },
   { "lent", 7, _141_two_lent_a, 0, _141_two_lent_ha },
   { "levy", 7, _141_two_levy_a, 0, _141_two_levy_ha },

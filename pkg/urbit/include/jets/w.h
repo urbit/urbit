@@ -20,6 +20,7 @@
     u3_noun u3wb_bind(u3_noun);
     u3_noun u3wb_clap(u3_noun);
     u3_noun u3wb_drop(u3_noun);
+    u3_noun u3wb_find(u3_noun);
     u3_noun u3wb_flop(u3_noun);
     u3_noun u3wb_lent(u3_noun);
     u3_noun u3wb_levy(u3_noun);
