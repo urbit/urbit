@@ -42,6 +42,7 @@ cp $ARVO/mar/lens/*      ./pier/home/mar/lens/
 cp $ARVO/sur/lens.hoon   ./pier/home/sur/      
 cp $ARVO/sur/plum.hoon   ./pier/home/sur/      
 cp $ARVO/sur/sole.hoon   ./pier/home/sur/      
+cp $ARVO/sur/xray.hoon   ./pier/home/sur/      
 
 # Update +solid and its dependencies
 cp $ARVO/lib/pill.hoon   ./pier/home/lib/      

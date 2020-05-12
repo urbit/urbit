@@ -1,4 +1,4 @@
-/-  *plum
+/-  *plum, *xray
 /+  *plume,
     libxray=xray
 ::

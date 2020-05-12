@@ -1,4 +1,4 @@
-/-  *plum
+/-  *plum, *xray
 ::
 ::  # Type Analysis
 ::
