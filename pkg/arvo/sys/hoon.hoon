@@ -4929,82 +4929,129 @@
   ?~  kids  (cat 3 '(' (cat 3 sym ')'))
   [%sbrk [%tree fmt kids]]
 ::
+::  |re: tank renderer
+::
 ++  re
-  |_  tac/tank
+  |_  tac=tank
+  ::  +ram: render a tank to one line (flat)
+  ::
   ++  ram
     ^-  tape
     ?-    -.tac
-        $leaf  p.tac
-        $palm  ram(tac [%rose [p.p.tac (weld q.p.tac r.p.tac) s.p.tac] q.tac])
-        $rose
+        %leaf  p.tac
+    ::
+    ::  flat %palm rendered as %rose with welded openers
+    ::
+        %palm
+      =*  mid  p.p.tac
+      =*  for  (weld q.p.tac r.p.tac)
+      =*  end  s.p.tac
+      ram(tac [%rose [mid for end] q.tac])
+    ::
+    ::  flat %rose rendered with open/mid/close
+    ::
+        %rose
+      =*  mid  p.p.tac
+      =*  for  q.p.tac
+      =*  end  r.p.tac
+      =*  lit  q.tac
       %+  weld
-        q.p.tac
+        for
       |-  ^-  tape
-      ?~  q.tac
-        r.p.tac
-      =+  voz=$(q.tac t.q.tac)
-      (weld ram(tac i.q.tac) ?~(t.q.tac voz (weld p.p.tac voz)))
+      ?~  lit
+        end
+      %+  weld
+        ram(tac i.lit)
+      =*  voz  $(lit t.lit)
+      ?~(t.lit voz (weld mid voz))
     ==
+  ::  +win: render a tank to multiple lines (tall)
+  ::
+  ::    indented by .tab, soft-wrapped at .edg
   ::
   ++  win
-    |=  {tab/@ edg/@}
-    =+  lug=`wall`~
-    |^  |-  ^-  wall
+    |=  [tab=@ud edg=@ud]
+    ::  output stack
+    ::
+    =|  lug=wall
+    |^  ^-  wall
         ?-    -.tac
-            $leaf  (rig p.tac)
-            $palm
-          ?:  fit
-            (rig ram)
-          ?~  q.tac
-            (rig q.p.tac)
-          ?~  t.q.tac
-            (rig(tab (add 2 tab), lug $(tac i.q.tac)) q.p.tac)
-          =>  .(q.tac `(list tank)`q.tac)
-          =+  lyn=(mul 2 (lent q.tac))
-          =+  ^=  qyr
-              |-  ^-  wall
-              ?~  q.tac
-                lug
-              %=  ^$
-                tac  i.q.tac
-                tab  (add tab (sub lyn 2))
-                lug  $(q.tac t.q.tac, lyn (sub lyn 2))
-              ==
-          (wig(lug qyr) q.p.tac)
+            %leaf  (rig p.tac)
         ::
-            $rose
-          ?:  fit
-            (rig ram)
+            %palm
+          =/  hom  ram
+          ?:  (lte (lent hom) (sub edg tab))
+            (rig hom)
+          ::
+          =*  for  q.p.tac
+          =*  lit  q.tac
+          ?~  lit
+            (rig for)
+          ?~  t.lit
+            =:  tab  (add 2 tab)
+                lug  $(tac i.lit)
+              ==
+            (rig for)
+          ::
+          =>  .(lit `(list tank)`lit)
+          =/  lyn  (mul 2 (lent lit))
           =.  lug
             |-  ^-  wall
-            ?~  q.tac
-              ?:(=(~ r.p.tac) lug (rig r.p.tac))
-            ^$(tac i.q.tac, lug $(q.tac t.q.tac), tab din)
-          ?:  =(~ q.p.tac)
-            lug
-          (wig q.p.tac)
+            ?~  lit
+              lug
+            =/  nyl  (sub lyn 2)
+            %=  ^$
+              tac  i.lit
+              tab  (add tab nyl)
+              lug  $(lit t.lit, lyn nyl)
+            ==
+          (wig for)
+        ::
+            %rose
+          =/  hom  ram
+          ?:  (lte (lent hom) (sub edg tab))
+            (rig hom)
+          ::
+          =*  for  q.p.tac
+          =*  end  r.p.tac
+          =*  lit  q.tac
+          =.  lug
+            |-  ^-  wall
+            ?~  lit
+              ?~(end lug (rig end))
+            %=  ^$
+              tac  i.lit
+              tab  (mod (add 2 tab) (mul 2 (div edg 3)))
+              lug  $(lit t.lit)
+            ==
+          ?~(for lug (wig for))
         ==
+    ::  +rig: indent tape and cons with output stack
     ::
-    ++  din  (mod (add 2 tab) (mul 2 (div edg 3)))
-    ++  fit  (lte (lent ram) (sub edg tab))
     ++  rig
-      |=  hom/tape
+      |=  hom=tape
       ^-  wall
       [(runt [tab ' '] hom) lug]
+    ::  +wig: indent tape and cons with output stack
+    ::
+    ::    joined with the top line if whitespace/indentation allow
     ::
     ++  wig
-      |=  hom/tape
+      |=  hom=tape
       ^-  wall
       ?~  lug
         (rig hom)
-      =+  lin=(lent hom)
-      =+  wug=:(add 1 tab lin)
+      =/  wug  :(add 1 tab (lent hom))
       ?.  =+  mir=i.lug
-          |-  ?~  mir
-                |
-              ?|(=(0 wug) ?&(=(' ' i.mir) $(mir t.mir, wug (dec wug))))
+          |-  ^-  ?
+          ?~  mir  |
+          ?|  =(0 wug)
+              ?&(=(' ' i.mir) $(mir t.mir, wug (dec wug)))
+          ==
         (rig hom)       :: ^ XX regular form?
-      [(runt [tab ' '] (weld hom `tape`[' ' (slag wug i.lug)])) t.lug]
+      :_  t.lug
+      %+  runt  [tab ' ']
+      (weld hom `tape`[' ' (slag wug i.lug)])
     --
   --
 ++  show                                                ::  XX deprecated!
