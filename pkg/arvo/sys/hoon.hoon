@@ -4948,43 +4948,8 @@
       (weld ram(tac i.q.tac) ?~(t.q.tac voz (weld p.p.tac voz)))
     ==
   ::
-  ++  ug                                                ::  horrible hack
-    |%
-    ++  ace                                             ::  strip ctrl chars
-      |=  a=tape
-      ^-  tape
-      ?~  a  ~
-      ?:  |((lth i.a 32) =(127 `@`i.a))
-        $(a t.a)
-      [i.a $(a t.a)]
-    ::
-    ++  act                                             ::  pretend tapes
-      |=  tac=tank
-      ^-  tank
-      ?-  -.tac
-        %leaf  [%leaf (hew p.tac)]
-        %plum  tac    ::  XX consider
-        %palm  :+  %palm
-                 [(hew p.p.tac) (hew q.p.tac) (hew r.p.tac) (hew s.p.tac)]
-               (turn q.tac act)
-        %rose  :+  %rose
-                 [(hew p.p.tac) (hew q.p.tac) (hew r.p.tac)]
-               (turn q.tac act)
-      ==
-    ::
-    ++  fix                                             ::  restore tapes
-      |=  wol=wall
-      %+  turn  wol
-      |=(a=tape (tufa `(list @c)``(list @)`a))
-    ::
-    ++  hew                                             ::  pretend tape
-      |=(a=tape `tape``(list @)`(tuba (ace a)))
-    --
-  ::
   ++  win
     |=  {tab/@ edg/@}
-    =.  tac  (act:ug tac)
-    %-  fix:ug
     =+  lug=`wall`~
     |^  |-  ^-  wall
         ?-    -.tac
@@ -5028,20 +4993,7 @@
     ++  rig
       |=  hom/tape
       ^-  wall
-      ?:  (lte (lent hom) (sub edg tab))
-        [(runt [tab ' '] hom) lug]
-      =>  .(tab (add tab 2), edg (sub edg 2))
-      =+  mut=(trim (sub edg tab) hom)
-      :-  (runt [(sub tab 2) ' '] ['\\' '/' (weld p.mut `_hom`['\\' '/' ~])])
-      =>  .(hom q.mut)
-      |-
-      ?~  hom
-        :-  %+  runt
-              [(sub tab 2) ' ']
-            ['\\' '/' (runt [(sub edg tab) ' '] ['\\' '/' ~])]
-        lug
-      =>  .(mut (trim (sub edg tab) hom))
-      [(runt [tab ' '] p.mut) $(hom q.mut)]
+      [(runt [tab ' '] hom) lug]
     ::
     ++  wig
       |=  hom/tape
