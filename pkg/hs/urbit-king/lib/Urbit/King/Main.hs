@@ -91,6 +91,7 @@ import Control.Exception      (AsyncException(UserInterrupt))
 import Control.Lens           ((&))
 import System.Process         (system)
 import Text.Show.Pretty       (pPrint)
+import Urbit.King.App         (App)
 import Urbit.King.App         (runApp, runAppLogFile, runAppNoLog, runPierApp)
 import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
 import Urbit.Noun.Conversions (cordToUW)
@@ -514,8 +515,8 @@ newShip' multi CLI.New{..} opts
 ------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
 
-runShip :: CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> IO ()
-runShip (CLI.Run pierPath) opts daemon multi = do
+runShip :: MonadIO m => CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> m ()
+runShip (CLI.Run pierPath) opts daemon multi = io $ do
     tid <- myThreadId
     let onTermExit = throwTo tid UserInterrupt
     mStart <- newEmptyMVar
@@ -588,7 +589,7 @@ main = do
     Sys.installHandler Sys.sigINT  (Sys.Catch onKillSig) Nothing
 
     CLI.parseArgs >>= \case
-        CLI.CmdRun ko ships                     -> runShips ko ships
+        CLI.CmdRun ko ships                     -> runApp $ runShips ko ships
         CLI.CmdNew n o                          -> runApp $ newShip n o
         CLI.CmdBug (CLI.CollectAllFX pax)       -> runApp $ collectAllFx pax
         CLI.CmdBug (CLI.EventBrowser pax)       -> runApp $ startBrowser pax
@@ -632,7 +633,7 @@ runShipRestarting waitForKillRequ r o multi = do
       putStrLn ("Ship terminated: " <> pier)
 
 
-runShips :: CLI.KingOpts -> [(CLI.Run, CLI.Opts, Bool)] -> IO ()
+runShips :: CLI.KingOpts -> [(CLI.Run, CLI.Opts, Bool)] -> RIO App ()
 runShips CLI.KingOpts {..} ships = do
   let meConf = MultiEyreConf
         { mecHttpPort      = fromIntegral <$> koSharedHttpPort
@@ -650,7 +651,7 @@ runShips CLI.KingOpts {..} ships = do
       - In pier environment: pier path and config available.
       - In running ship environment: serf state, event queue available.
   -}
-  multi <- runApp (multiEyre meConf)
+  multi <- multiEyre meConf
 
   go multi ships
  where
@@ -659,8 +660,8 @@ runShips CLI.KingOpts {..} ships = do
     [(r, o, d)] -> runShip r o d me
     ships       -> runMultipleShips (ships <&> \(r, o, _) -> (r, o)) me
 
-runMultipleShips :: [(CLI.Run, CLI.Opts)] -> MultiEyreApi -> IO ()
-runMultipleShips ships multi = do
+runMultipleShips :: MonadIO m => [(CLI.Run, CLI.Opts)] -> MultiEyreApi -> m ()
+runMultipleShips ships multi = io $ do
   killSignal <- newEmptyTMVarIO
 
   let waitForKillRequ = readTMVar killSignal

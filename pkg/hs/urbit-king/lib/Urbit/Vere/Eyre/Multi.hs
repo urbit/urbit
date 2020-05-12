@@ -33,6 +33,7 @@ data MultiEyreConf = MultiEyreConf
   , mecHttpPort :: Maybe Port
   , mecLocalhostOnly :: Bool
   }
+ deriving (Show)
 
 type OnMultiReq = WhichServer -> Ship -> Word64 -> ReqInfo -> STM ()
 
@@ -72,7 +73,9 @@ leaveMultiEyre MultiEyreApi {..} who = do
   modifyTVar' meaTlsC (deleteMap who)
 
 multiEyre :: HasLogFunc e => MultiEyreConf -> RIO e MultiEyreApi
-multiEyre conf@MultiEyreConf{..} = do
+multiEyre conf@MultiEyreConf {..} = do
+  logTrace (displayShow ("EYRE", "MULTI", conf))
+
   vLive <- newTVarIO emptyLiveReqs
   vPlan <- newTVarIO mempty
   vCanc <- newTVarIO (mempty :: Map Ship (Ship -> Word64 -> STM ()))
@@ -94,25 +97,29 @@ multiEyre conf@MultiEyreConf{..} = do
           Nothing -> pure ()
           Just cb -> cb who reqId
 
-  mIns <- for mecHttpPort $ \por -> serv vLive $ ServConf
-    { scHost = host
-    , scPort = SPChoices $ singleton $ fromIntegral por
-    , scRedi = Nothing -- TODO
-    , scType = STMultiHttp $ ReqApi
-        { rcReq = onReq Insecure
-        , rcKil = onKil
-        }
-    }
+  mIns <- for mecHttpPort $ \por -> do
+    logTrace (displayShow ("EYRE", "MULTI", "HTTP", por))
+    serv vLive $ ServConf
+      { scHost = host
+      , scPort = SPChoices $ singleton $ fromIntegral por
+      , scRedi = Nothing -- TODO
+      , scType = STMultiHttp $ ReqApi
+          { rcReq = onReq Insecure
+          , rcKil = onKil
+          }
+      }
 
-  mSec <- for mecHttpsPort $ \por -> serv vLive $ ServConf
-    { scHost = host
-    , scPort = SPChoices $ singleton $ fromIntegral por
-    , scRedi = Nothing
-    , scType = STMultiHttps vTlsC $ ReqApi
-        { rcReq = onReq Secure
-        , rcKil = onKil
-        }
-    }
+  mSec <- for mecHttpsPort $ \por -> do
+    logTrace (displayShow ("EYRE", "MULTI", "HTTPS", por))
+    serv vLive $ ServConf
+      { scHost = host
+      , scPort = SPChoices $ singleton $ fromIntegral por
+      , scRedi = Nothing
+      , scType = STMultiHttps (MTC vTlsC) $ ReqApi
+          { rcReq = onReq Secure
+          , rcKil = onKil
+          }
+      }
 
   pure $ MultiEyreApi
     { meaLive = vLive

@@ -174,6 +174,8 @@ startServ
 startServ multi who isFake conf plan = do
   logTrace "startServ"
 
+  let vLive = meaLive multi
+
   srvId <- io $ ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
 
   let mTls = hscSecure conf >>= parseTlsConfig
@@ -190,8 +192,6 @@ startServ multi who isFake conf plan = do
 
   let soHost :: SockOpts -> ServHost
       soHost so = if soLocalhost so then SHLocalhost else SHAnyHostOk
-
-  vLive <- newTVarIO emptyLiveReqs
 
   let onReq :: WhichServer -> Ship -> Word64 -> ReqInfo -> STM ()
       onReq which _ship reqId reqInfo =

@@ -136,11 +136,6 @@ noHeader = do
   logError "Response block with no response header."
   error "Bad HttpEvent: Response block with no response header."
 
-emptyChunk :: HasLogFunc e => RIO e a
-emptyChunk = do
-  logError "Bad response action: empty chunk"
-  error "Bad response action: empty chunk"
-
 dupHead :: HasLogFunc e => RIO e a
 dupHead = do
   logError "Multiple %head actions on one request"
@@ -165,7 +160,7 @@ streamBlocks env init getAct = send init >> loop
     RADone       -> pure ()
     RABloc c     -> send c >> loop
 
-  send "" = runRIO env emptyChunk
+  send "" = pure ()
   send c  = do
     runRIO env (logTrace (display ("sending chunk " <> tshow c)))
     yield $ Chunk $ fromByteString c

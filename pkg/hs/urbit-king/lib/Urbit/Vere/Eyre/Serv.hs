@@ -21,7 +21,7 @@
 module Urbit.Vere.Eyre.Serv
   ( ServApi(..)
   , TlsConfig(..)
-  , MultiTlsConfig
+  , MultiTlsConfig(..)
   , ReqApi(..)
   , ServType(..)
   , ServPort(..)
@@ -61,27 +61,37 @@ data TlsConfig = TlsConfig
   , tcCerti :: ByteString
   , tcChain :: [ByteString]
   }
+ deriving (Show)
 
-type MultiTlsConfig = TVar (Map Ship Credential)
+newtype MultiTlsConfig = MTC (TVar (Map Ship Credential))
+
+instance Show MultiTlsConfig where
+  show = const "MultiTlsConfig"
 
 data ReqApi = ReqApi
   { rcReq :: Ship -> Word64 -> E.ReqInfo -> STM ()
   , rcKil :: Ship -> Word64 -> STM ()
   }
 
+instance Show ReqApi where
+  show = const "ReqApi"
+
 data ServType
   = STHttp Ship ReqApi
   | STHttps Ship TlsConfig ReqApi
   | STMultiHttp ReqApi
   | STMultiHttps MultiTlsConfig ReqApi
+ deriving (Show)
 
 data ServPort
   = SPAnyPort
   | SPChoices (NonEmpty W.Port)
+ deriving (Show)
 
 data ServHost
   = SHLocalhost
   | SHAnyHostOk
+ deriving (Show)
 
 data ServConf = ServConf
   { scType :: ServType
@@ -89,6 +99,7 @@ data ServConf = ServConf
   , scPort :: ServPort
   , scRedi :: Maybe W.Port
   }
+ deriving (Show)
 
 
 -- Opening Sockets -------------------------------------------------------------
@@ -179,6 +190,7 @@ forceOpenSocket hos por = mkRAcquire opn kil
   kil = io . Net.close . snd
 
   opn = do
+    logTrace (displayShow ("EYRE", "SERV", "forceOpenSocket", hos, por))
     (p, s) <- retry $ case por of
       SPAnyPort    -> tryOpenAny bind
       SPChoices ps -> tryOpenChoices bind ps
@@ -202,8 +214,8 @@ hostShip (Just bs) = byteShip (hedLabel bs) & \case
   bytePatp = Ob.parsePatp . decodeUtf8Lenient
   hedLabel = fst . break (== fromIntegral (C.ord '.'))
 
-onSniHdr :: TVar (Map Ship Credential) -> Maybe String -> IO Credentials
-onSniHdr mtls mHos = do
+onSniHdr :: MultiTlsConfig -> Maybe String -> IO Credentials
+onSniHdr (MTC mtls) mHos = do
   ship <- hostShip (encodeUtf8 . pack <$> mHos)
   tabl <- atomically (readTVar mtls)
   tcfg <- lookup ship tabl & maybe (notRunning ship) pure
@@ -271,14 +283,13 @@ configCreds TlsConfig {..} =
     Right rs  -> Right rs
 
 serv :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
-serv vLive ServConf {..} = do
+serv vLive conf@ServConf {..} = do
+  logTrace (displayShow ("EYRE", "SERV", "Start", conf))
   kil <- newEmptyTMVarIO
   por <- newEmptyTMVarIO
 
-  void $ async $ do
-    tid <- async (runServ por)
-    atomically (takeTMVar kil)
-    cancel tid
+  tid <- async (runServ por)
+  _   <- async (atomically (takeTMVar kil) >> cancel tid)
 
   pure $ ServApi
     { saKil = void (tryPutTMVar kil ())
@@ -286,6 +297,7 @@ serv vLive ServConf {..} = do
     }
  where
   runServ vPort = do
+    logTrace (displayShow ("EYRE", "SERV", "runServ"))
     rwith (forceOpenSocket scHost scPort) $ \(por, sok) -> do
       atomically (putTMVar vPort por)
       startServer scType scHost por sok scRedi vLive
