@@ -5408,27 +5408,25 @@
     [[duct %pass /queued-request %b %wait now]~ ..^$]
   ::
       %info
-    ?:  =(%$ des.req)
-      ~|(%info-no-desk !!)
-    =.  act.ruf
-      =/  =dojo  (~(gut by dos.rom.ruf) des.req *dojo)
-      =/  writer=form:commit-clad
-        %-  %-  commit
-            :*  our
-                des.req
-                now
-                mon.ruf
-                hez.ruf
-                hun.rom.ruf
-            ==
-        :*  dit.req
-            dom.dojo
-            ran.ruf
-        ==
-      `[hen req %commit (from-form:eval:commit-clad writer)]
+    ?:  ?=(%| -.dit.req)
+      ~|  %labelling-not-implemented
+      !!
+    =/  [deletes=(set path) changes=(map path cage)]
+      =/  =soba  p.dit.req
+      =|  deletes=(set path)
+      =|  changes=(map path cage)
+      |-  ^+  [deletes changes]
+      ?~  soba
+        [deletes changes]
+      ?-  -.q.i.soba
+        %del  $(soba t.soba, deletes (~(put in deletes) p.i.soba))
+        %ins  $(soba t.soba, changes (~(put by changes) [p p.q]:i.soba))
+        %mut  $(soba t.soba, changes (~(put by changes) [p p.q]:i.soba))
+        %dif  ~|(%dif-not-implemented !!)
+      ==
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
-      abet:(take-commit:den clad-init-sign)
+      abet:(info:den deletes changes)
     [mos ..^$]
   ::
       %init
