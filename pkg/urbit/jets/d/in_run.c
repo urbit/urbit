@@ -19,6 +19,7 @@ _in_run(u3_noun a, u3j_site* sit_u, u3_noun* out)
 
     u3_noun nuout = u3qdi_put(*out, nu_n_a);
     u3z(*out);
+    u3z(nu_n_a);
     *out = nuout;
 
     _in_run(l_a, sit_u, out);
