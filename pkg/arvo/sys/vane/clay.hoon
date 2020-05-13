@@ -281,13 +281,6 @@
       $:  %d                                            ::  to %dill
           $>(%flog task:able:dill)                      ::
       ==                                                ::
-      $:  %f                                            ::  to %ford
-          $>  $?  %build                                ::
-                  %keep                                 ::
-                  %wipe                                 ::
-              ==                                        ::
-          task:able:ford                                ::
-      ==                                                ::
       $:  %g                                            ::  to %gall
           $>(%deal task:able:gall)                      ::
       ==                                                ::
@@ -314,9 +307,6 @@
                   %writ                                 ::
               ==                                        ::
           gift:able                                     ::
-      ==                                                ::
-      $:  %f                                            ::  by %ford
-          $>(%made gift:able:ford)                      ::
       ==                                                ::
       $:  %j                                            ::  by %jael
           $>(%public-keys gift:able:jael)               ::
@@ -1047,18 +1037,23 @@
   ::  the latter case we fetch the data at the lobe and produce that.
   ::
   ++  blab
-    |=  {hen/duct mun/mood dat/(each cage lobe)}
+    |=  [hen=duct mun=mood dat=(each cage lobe)]
     ^+  +>
-    ?:  ?=(%& -.dat)
-      %-  emit
-      :*  hen  %slip  %b  %drip
-          !>([%writ ~ [care.mun case.mun syd] path.mun p.dat])
-      ==
+    =^  =cage  fod.dom
+      ?:  ?=(%& -.dat)
+        [p.dat fod.dom]
+      =/  =args:ford:fusion
+        [ank.dom ~ ~ lat.ran fod.dom]
+      =^  =page  ford-cache.args
+        %-  wrap:fusion
+        (lobe-to-page:(ford:fusion args) p.dat)
+      =^  =cage  ford-cache.args
+        %-  wrap:fusion
+        (page-to-cage:(ford:fusion args) page)
+      [cage ford-cache.args]
     %-  emit
-    :*  hen  %pass  [%blab care.mun (scot case.mun) syd path.mun]
-        %f  %build  live=%.n  %pin
-        (case-to-date case.mun)
-        (lobe-to-schematic [her syd] path.mun p.dat)
+    :*  hen  %slip  %b  %drip
+        !>([%writ ~ [care.mun case.mun syd] path.mun cage])
     ==
   ::
   ++  case-to-date
@@ -1103,36 +1098,6 @@
         $tas  (~(get by lab.dom) p.lok)
         $ud   ?:((gth p.lok let.dom) ~ [~ p.lok])
     ==
-  ++  lobe-to-schematic  (cury lobe-to-schematic-p ?=(~ ref))
-  ++  lobe-to-schematic-p
-    |=  [local=? disc=disc:ford pax=path lob=lobe]
-    ^-  schematic:ford
-    =/  hat/(map path lobe)
-        ?:  =(let.dom 0)
-          ~
-        q:(aeon-to-yaki:ze let.dom)
-    =+  lol=`(unit lobe)`?.(local `0vsen.tinel (~(get by hat) pax))
-    |-  ^-  schematic:ford
-    ?:  =([~ lob] lol)
-      =+  (need (need (read-x:ze let.dom pax)))
-      ?>  ?=(%& -<)
-      [%$ p.-]
-    =+  bol=(~(got by lat.ran) lob)
-    ?-  -.bol
-      $direct  (page-to-schematic disc q.bol)
-      $delta   ~|  delta+q.q.bol
-               [%pact disc $(lob q.q.bol) (page-to-schematic disc r.bol)]
-    ==
-  ::
-  ::  Create a schematic out of a page (which is a [mark noun]).
-  ::
-  ++  page-to-schematic
-    |=  [disc=disc:ford a=page]
-    ^-  schematic:ford
-    ?.  ?=($hoon p.a)  [%volt disc a]
-    ::  %hoon bootstrapping
-    [%$ p.a [%atom %t ~] q.a]
-  ::
   ::
   ++  blas
     |=  {hen/duct das/(set mood)}
@@ -3816,22 +3781,6 @@
     :_  ..^$
     [hen %give %boon `(unit rand)`(bind `riot`p.q.hin rant-to-rand)]~
   ::
-  ?:  ?=([%blab care @ @ *] tea)
-    ?>  ?=(%made +<.q.hin)
-    ?.  ?=([%complete %success *] result.q.hin)
-      ~|  %blab-fail
-      ~>  %mean.|.((made-result-as-error:ford result.q.hin))
-      !!                              ::  interpolate ford fail into stack trace
-    :_  ..^$  :_  ~
-    :*  hen  %slip  %b  %drip  !>
-    :*  %writ  ~
-        ^-  [care case @tas]
-        [i.t.tea ;;(case +>:(slay i.t.t.tea)) i.t.t.t.tea]
-    ::
-        `path`t.t.t.t.tea
-        `cage`(result-to-cage:ford build-result.result.q.hin)
-    ==  ==
-  ::
   ?:  ?=([%warp-index @ @ @ ~] tea)
     ?+    +<.q.hin  ~|  %clay-warp-index-strange  !!
         %done
@@ -3887,24 +3836,16 @@
       %+  turn  cancel-ducts
       |=  =duct
       [duct %slip %b %drip !>([%writ ~])]
-    ::  Clear ford cache
-    ::
-    =/  clear-ford-cache-moves=(list move)
-      :~  [hen %pass /clear/keep %f %keep 0 1]
-          [hen %pass /clear/wipe %f %wipe 100]
-          [hen %pass /clear/kep %f %keep 2.048 64]
-      ==
     ::  delete local state of foreign desk
     ::
     =.  hoy.ruf  (~(del by hoy.ruf) who)
-    [(weld clear-ford-cache-moves cancel-moves) ..^$]
+    [cancel-moves ..^$]
   ::
   ?-    -.+.q.hin
       %public-keys  ~|([%public-keys-raw tea] !!)
       %crud
     [[[hen %slip %d %flog +.q.hin] ~] ..^$]
   ::
-      %made  ~&  %clay-raw-ford  [~ ..^$]
       %mere
     ?:  ?=(%& -.p.+.q.hin)
       ~&  'initial merge succeeded'
