@@ -41,6 +41,7 @@ import Network.TLS        (Credential, Credentials(..), ServerHooks(..))
 import Network.TLS        (credentialLoadX509ChainFromMemory)
 import RIO.Prelude        (decodeUtf8Lenient)
 
+import qualified Control.Monad.STM           as STM
 import qualified Data.Char                   as C
 import qualified Network.Socket              as Net
 import qualified Network.Wai                 as W
@@ -64,7 +65,7 @@ data TlsConfig = TlsConfig
   }
  deriving (Show)
 
-newtype MultiTlsConfig = MTC (TVar (Map Ship Credential))
+newtype MultiTlsConfig = MTC (TVar (Map Ship (TlsConfig, Credential)))
 
 instance Show MultiTlsConfig where
   show = const "MultiTlsConfig"
@@ -216,11 +217,15 @@ hostShip (Just bs) = byteShip (hedLabel bs) & \case
   bytePatp = Ob.parsePatp . decodeUtf8Lenient
   hedLabel = fst . break (== fromIntegral (C.ord '.'))
 
-onSniHdr :: MultiTlsConfig -> Maybe String -> IO Credentials
-onSniHdr (MTC mtls) mHos = do
-  ship <- hostShip (encodeUtf8 . pack <$> mHos)
+onSniHdr
+  :: HasLogFunc e => e -> MultiTlsConfig -> Maybe String -> IO Credentials
+onSniHdr env (MTC mtls) mHos = do
   tabl <- atomically (readTVar mtls)
-  tcfg <- lookup ship tabl & maybe (notRunning ship) pure
+  runRIO env $ logTrace $ displayShow $ ("EYRE", "HTTPS", "SNI", tabl, mHos)
+  ship <- hostShip (encodeUtf8 . pack <$> mHos)
+  runRIO env $ logTrace $ displayShow $ ("EYRE", "HTTPS", "SNI", ship)
+  tcfg <- lookup ship tabl & maybe (notRunning ship) (pure . snd)
+  runRIO env $ logTrace $ displayShow $ ("EYRE", "HTTPS", "SNI", tcfg)
   pure (Credentials [tcfg])
  where
   notRunning ship = error ("Ship not running: ~" <> show ship)
@@ -267,10 +272,16 @@ startServer typ hos por sok red vLive = do
       io (W.runSettingsSocket opts sok app)
 
     STMultiHttps mtls api -> do
-      let sni = def { onServerNameIndication = onSniHdr mtls }
-      let tls = W.defaultTlsSettings { W.tlsServerHooks = sni }
+      TlsConfig {..} <- atomically (getFirstTlsConfig mtls)
+
+      let sni = def { onServerNameIndication = onSniHdr envir mtls }
+
+      let tls = (W.tlsSettingsChainMemory tcCerti tcChain tcPrKey) { W.tlsServerHooks = sni }
+
       let app = \req resp -> do
+            runRIO envir $ logTrace $ displayShow ("EYRE", "HTTPS", "REQ")
             who <- reqShip req
+            runRIO envir $ logTrace $ displayShow ("EYRE", "HTTPS", "REQ", who)
             runAppl who (rcReq api who) (rcKil api who) req resp
 
       io (W.runTLSSocket tls opts sok app)
@@ -296,6 +307,13 @@ fakeServ conf = do
   fakePort :: ServPort -> W.Port
   fakePort SPAnyPort            = 55555
   fakePort (SPChoices (x :| _)) = x
+
+getFirstTlsConfig :: MultiTlsConfig -> STM TlsConfig
+getFirstTlsConfig (MTC var) = do
+  map <- readTVar var
+  case toList map of
+    []  -> STM.retry
+    x:_ -> pure (fst x)
 
 realServ :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
 realServ vLive conf@ServConf {..} = do

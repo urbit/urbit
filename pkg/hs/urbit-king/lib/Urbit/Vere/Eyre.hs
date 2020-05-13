@@ -183,7 +183,7 @@ startServ multi who isFake conf plan = do
   mCre <- mTls & \case
    Nothing -> pure Nothing
    Just tc -> configCreds tc & \case
-     Right rs -> pure (Just rs)
+     Right rs -> pure (Just (tc, rs))
      Left err -> do
        logError "Couldn't Load TLS Credentials."
        pure Nothing

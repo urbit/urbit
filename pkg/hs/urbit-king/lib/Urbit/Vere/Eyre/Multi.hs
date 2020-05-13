@@ -44,7 +44,7 @@ data MultiEyreApi = MultiEyreApi
   , meaLive :: TVar LiveReqs
   , meaPlan :: TVar (Map Ship OnMultiReq)
   , meaCanc :: TVar (Map Ship OnMultiKil)
-  , meaTlsC :: TVar (Map Ship Credential)
+  , meaTlsC :: TVar (Map Ship (TlsConfig, Credential))
   , meaKill :: STM ()
   }
 
@@ -54,7 +54,7 @@ data MultiEyreApi = MultiEyreApi
 joinMultiEyre
   :: MultiEyreApi
   -> Ship
-  -> Maybe Credential
+  -> Maybe (TlsConfig, Credential)
   -> OnMultiReq
   -> OnMultiKil
   -> STM ()
