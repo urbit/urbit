@@ -3992,13 +3992,23 @@
         (checkout-changes ford-args updates)
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
-      |^  ?:  (~(has by updates) /sys/hoon/hoon)
+      |^  %.  [hen %slip %c %pork ~]
+          =<  emit
+          ?:  (~(has by updates) /sys/hoon/hoon)
             (reset &)
           ?:  (~(has by updates) /sys/arvo/hoon)
             (reset |)
           ?:  (~(has by updates) /sys/zuse/hoon)
             reboot
-          reload-all
+          =/  vanes=(list [=path *])  ~(tap by updates)
+          |-  ^+  ..park
+          ?~  vanes
+            ..park
+          ?.  ?=([%sys %vane * %hoon ~] path.i.vanes)
+            ~&  [%strange-sys-update path.i.vanes]
+            $(vanes t.vanes)
+          =.  ..park  (reload i.t.t.path.i.vanes)
+          $(vanes t.vanes)
       ::
       ++  reset
         |=  new-hoon=?
@@ -4038,7 +4048,7 @@
           ~[%ames %behn %clay %dill %eyre %ford %gall %iris %jael]
         |-  ^+  ..park
         ?~  vanes
-          (emit hen %slip %c %pork ~)
+          ..park
         =.  ..park  (reload i.vanes)
         $(vanes t.vanes)
       ::
