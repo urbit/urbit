@@ -29,8 +29,7 @@ export default class Store {
       associations: {},
       permissions: {},
       invites: {},
-      s3: {},
-      selectedGroups: []
+      s3: {}
     };
   }
 

@@ -47,7 +47,7 @@ const StatusBar = (props) => {
             color={'#000000'}
           />
       </a>
-      <GroupFilter invites={invites} associations={props.associations} />
+      <GroupFilter invites={invites} associations={props.associations} api={props.api} />
       <span className="dib f9 v-mid gray2 ml1 mr1 c-default inter">/</span>
         {
           location.pathname === '/'

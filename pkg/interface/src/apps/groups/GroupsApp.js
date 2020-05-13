@@ -45,7 +45,7 @@ export default class GroupsApp extends Component {
   }
 
   render() {
-    const { state } = this;
+    const { state, props } = this;
 
     const contacts = state.contacts ? state.contacts : {};
     const defaultContacts =
@@ -57,7 +57,7 @@ export default class GroupsApp extends Component {
       (Boolean(state.invites) && '/contacts' in state.invites) ?
         state.invites['/contacts'] : {};
     const associations = state.associations ? state.associations : {};
-    const selectedGroups = state.selectedGroups ? state.selectedGroups : [];
+    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
     const s3 = state.s3 ? state.s3 : {};
 
     return (

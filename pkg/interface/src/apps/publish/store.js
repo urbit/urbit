@@ -30,7 +30,6 @@ export default class Store {
       },
       permissions: {},
       invites: {},
-      selectedGroups: [],
       sidebarShown: true
     };
   }

@@ -52,7 +52,7 @@ export default class ChatApp extends React.Component {
   }
 
   render() {
-    const { state } = this;
+    const { state, props } = this;
 
     const messagePreviews = {};
     const unreads = {};
@@ -84,12 +84,14 @@ export default class ChatApp extends React.Component {
     const associations = state.associations ? state.associations : { chat: {}, contacts: {} };
     const s3 = state.s3 ? state.s3 : {};
 
+    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
+
     const renderChannelSidebar = (props, station) => (
       <Sidebar
         inbox={state.inbox}
         messagePreviews={messagePreviews}
         associations={associations}
-        selectedGroups={state.selectedGroups}
+        selectedGroups={selectedGroups}
         contacts={contacts}
         invites={invites['/chat'] || {}}
         unreads={unreads}
