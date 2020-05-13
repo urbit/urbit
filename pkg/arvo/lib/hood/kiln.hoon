@@ -206,8 +206,6 @@
     %kiln-track              =;(f (f !<(_+<.f vase)) poke-track)
     %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
     %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
-    %kiln-wipe-ford          =;(f (f !<(_+<.f vase)) poke-wipe-ford)
-    %kiln-keep-ford          =;(f (f !<(_+<.f vase)) poke-keep-ford)
     %kiln-autoload           =;(f (f !<(_+<.f vase)) poke-autoload)
     %kiln-overload           =;(f (f !<(_+<.f vase)) poke-overload)
     %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
@@ -300,14 +298,6 @@
   |=  [recur=@dr start=@da]
   ?>  (gte start now)
   abet:(emit %pass /kiln/overload/(scot %dr recur) %arvo %b [%wait start])
-::
-++  poke-wipe-ford
-  |=(percent=@ud abet:(emit %pass /kiln %arvo %f [%wipe percent]))
-::
-++  poke-keep-ford
-  |=  [compiler-cache-size=@ud build-cache-size=@ud]
-  =<  abet
-  (emit %pass /kiln %arvo %f [%keep compiler-cache-size build-cache-size])
 ::
 ++  poke-goad-gall
   |=  [force=? agent=(unit dude:gall)]

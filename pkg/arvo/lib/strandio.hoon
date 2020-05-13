@@ -386,31 +386,6 @@
   ;<  ~  bind:m  (send-request (hiss-to-request:html hiss))
   take-maybe-sigh
 ::
-::  Run ford build
-::
-++  ford-build
-  |=  =schematic:ford
-  =/  m  (strand ,build-result:ford)
-  ^-  form:m
-  ;<  ~  bind:m  (send-raw-card %pass /ford-build %arvo %f %build | schematic)
-  ;<  =made-result:ford   bind:m  (take-made-result /ford-build)
-  ?:  ?=(%incomplete -.made-result)
-    (strand-fail %ford-incomplete tang.made-result)
-  (pure:m build-result.made-result)
-::  Take ford build result
-::
-++  take-made-result
-  |=  =wire
-  =/  m  (strand ,made-result:ford)
-  ^-  form:m
-  |=  tin=strand-input:strand
-  ?+  in.tin  `[%skip ~]
-      ~  `[%wait ~]
-      [~ %sign * %f %made *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done result.sign-arvo.u.in.tin]
-  ==
 ::  +build-fail: build the source file at the specified $beam
 ::
 ++  build-file
@@ -450,90 +425,6 @@
     (strand-fail %build-cast >arg< ~)
   ?>  =(%tube p.r.u.riot)
   (pure:m !<(tube:clay q.r.u.riot))
-::  Run several taggged ford builds
-::
-++  build-map
-  |=  builds=(map path schematic:ford)
-  =/  m  (strand ,(map path build-result:ford))
-  ^-  form:m
-  =/  schematics=(list schematic:ford)
-    %+  turn  ~(tap by builds)
-    |=  [=path =schematic:ford]
-    [[%$ %noun !>(path)] schematic]
-  ::
-  ;<  =build-result:ford  bind:m  (ford-build %list schematics)
-  ?:  ?=(%error -.build-result)
-    (strand-fail %ford-error message.build-result)
-  ?>  ?=(%list -.+.build-result)
-  ::
-  =|  produce=(map path build-result:ford)
-  |-  ^-  form:m
-  =*  loop  $
-  ?^  results.build-result
-    ?>  ?=([[%success %$ %noun *] *] +.i.results.build-result)
-    =.  produce
-      %+  ~(put by produce)
-        !<(path q.cage.head.i.results.build-result)
-      tail.i.results.build-result
-    loop(results.build-result t.results.build-result)
-  (pure:m produce)
-::
-::  Run several taggged ford builds
-::
-++  build-cages
-  |=  builds=(map path schematic:ford)
-  =/  m  (strand ,(map path cage))
-  ^-  form:m
-  ;<  result-map=(map path build-result:ford)  bind:m  (build-map builds)
-  =/  results=(list [=path =build-result:ford])  ~(tap by result-map)
-  =|  produce=(map path cage)
-  |-  ^-  form:m
-  =*  loop  $
-  ?^  results
-    ?:  ?=(%error -.build-result.i.results)
-      (strand-fail %ford-error message.build-result.i.results)
-    =.  produce
-      %+  ~(put by produce)  path.i.results
-      (result-to-cage:ford build-result.i.results)
-    loop(results t.results)
-  (pure:m produce)
-::
-::  Run ford %core build
-::
-++  build-core
-  |=  =rail:ford
-  =/  m  (strand ,vase)
-  ^-  form:m
-  ;<  =build-result:ford  bind:m  (ford-build %core rail)
-  ?:  ?=(%error -.build-result)
-    (strand-fail %ford-error message.build-result)
-  ?>  ?=(%core -.+.build-result)
-  (pure:m vase.build-result)
-::
-::  Run ford %core builds
-::
-++  build-cores
-  |=  rails=(map path rail:ford)
-  =/  m  (strand ,(map path vase))
-  ^-  form:m
-  =/  builds
-    %-  ~(run by rails)
-    |=  =rail:ford
-    [%core rail]
-  ::
-  ;<  result-map=(map path build-result:ford)  bind:m  (build-map builds)
-  =/  results=(list [=path =build-result:ford])  ~(tap by result-map)
-  =|  produce=(map path vase)
-  |-  ^-  form:m
-  =*  loop  $
-  ?^  results
-    ?:  ?=(%error -.build-result.i.results)
-      (strand-fail %ford-error message.build-result.i.results)
-    ?>  ?=(%core -.+.build-result.i.results)
-    =.  produce
-      (~(put by produce) path.i.results vase.build-result.i.results)
-    loop(results t.results)
-  (pure:m produce)
 ::
 ::  Read from Clay
 ::
