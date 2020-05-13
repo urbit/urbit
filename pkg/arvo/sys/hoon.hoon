@@ -4256,41 +4256,94 @@
   (flit (sane a))
 ::
 ++  sane                                                ::  atom sanity
-  |=  a/@ta
-  |=  b/@  ^-  ?
-  ?.  =(%t (end 3 1 a))
-    ::  XX more and better sanity
+  |=  a=@ta
+  |=  b=@
+  ^-  ?
+  ::  XX aura .a isn't technically @ta, support @taura or @t-aura
+  ::  XX parse aura to validate
+  ::
+  =/  lit=(list @ta)  (rip 3 a)
+  |^  ?&  wid
+          ::
+          ::  XX more and better sanity: @da, @r, &c
+          ::
+          ?~  lit  &
+          ?+  i.lit  &
+            %c  (levy (rip 5 b) |=(a=@ (lte a 0x10.ffff)))  :: XX stricter
+            %f  ?=(?(%0 %1) b)
+            %i  ipa(lit t.lit)
+            %n  ?=(%0 b)
+            %t  tex(lit t.lit)
+      ==  ==
+  ::
+  ::  validate optional bloq-width aura suffix
+  ::
+  ++  wid
+    ^-  ?
+    ?~  lit
+      &
+    =/  lat=@t  |-(?~(t.lit i.lit $(lit t.lit)))
+    ?.  &((gte lat 'A') (lte lat 'Z'))
+      &
+    ?=(?(%0 %1) (met (sub lat 'A') b))
+  ::
+  ::  validate ipv4/6 address
+  ::
+  ++  ipa
+    ^-  ?
+    ?+  lit  &
+      [%f *]  (lth a ^~((bex 32)))
+      [%s *]  (lth a ^~((bex 128)))
+    ==
+  ::
+  ::  validate text
+  ::
+  ++  tex
+    ^-  ?
+    =/  len  (met 3 b)
+    ?-  lit
     ::
-    &
-  =+  [inx=0 len=(met 3 b)]
-  ?:  =(%tas a)
-    |-  ^-  ?
-    ?:  =(inx len)  &
-    =+  cur=(cut 3 [inx 1] b)
-    ?&  ?|  &((gte cur 'a') (lte cur 'z'))
-            &(=('-' cur) !=(0 inx) !=(len inx))
-            &(&((gte cur '0') (lte cur '9')) !=(0 inx))
-        ==
-        $(inx +(inx))
+    ::  @tas: ascii with symbol constraint
+    ::
+        [%a %s *]
+      =|  inx=@ud
+      |-  ^-  ?
+      ?:  =(inx len)  &
+      =/  cur  (cut 3 [inx 1] b)
+      ?&  ?|  &((gte cur 'a') (lte cur 'z'))
+              &(=('-' cur) !=(0 inx) !=(len inx))
+              &(&((gte cur '0') (lte cur '9')) !=(0 inx))
+          ==
+          $(inx +(inx))
+      ==
+    ::
+    ::  @ta: lowercase ascii subset (url-safe)
+    ::
+        [%a *]
+      =|  inx=@ud
+      |-  ^-  ?
+      ?:  =(inx len)  &
+      =/  cur  (cut 3 [inx 1] b)
+      ?&  ?|  &((gte cur 'a') (lte cur 'z'))
+              &((gte cur '0') (lte cur '9'))
+              |(=('-' cur) =('~' cur) =('_' cur) =('.' cur))
+          ==
+          $(inx +(inx))
+      ==
+    ::
+    ::  @t: utf-8
+    ::
+        *
+      |-  ^-  ?
+      ?:  =(0 b)  &
+      =/  cur  (end 3 1 b)
+      ?:  &((lth cur 32) !=(10 cur))  |
+      =/  len  (teff cur)
+      ?&  |(=(1 len) =+(i=1 |-(|(=(i len) &((gte (cut 3 [i 1] b) 128) $(i +(i)))))))
+          $(b (rsh 3 len b))
+      ==
     ==
-  ?:  =(%ta a)
-    |-  ^-  ?
-    ?:  =(inx len)  &
-    =+  cur=(cut 3 [inx 1] b)
-    ?&  ?|  &((gte cur 'a') (lte cur 'z'))
-            &((gte cur '0') (lte cur '9'))
-            |(=('-' cur) =('~' cur) =('_' cur) =('.' cur))
-        ==
-        $(inx +(inx))
-    ==
-  |-  ^-  ?
-  ?:  =(0 b)  &
-  =+  cur=(end 3 1 b)
-  ?:  &((lth cur 32) !=(10 cur))  |
-  =+  len=(teff cur)
-  ?&  |(=(1 len) =+(i=1 |-(|(=(i len) &((gte (cut 3 [i 1] b) 128) $(i +(i)))))))
-      $(b (rsh 3 len b))
-  ==
+  --
 ::
 ++  ruth                                                ::  biblical sanity
   |=  {a/@ta b/*}
