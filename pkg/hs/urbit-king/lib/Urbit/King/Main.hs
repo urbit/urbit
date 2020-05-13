@@ -362,57 +362,57 @@ replayPartEvs top last = do
 -}
 testPill :: HasLogFunc e => FilePath -> Bool -> Bool -> RIO e ()
 testPill pax showPil showSeq = do
-  putStrLn "Reading pill file."
+  logTrace "Reading pill file."
   pillBytes <- readFile pax
 
-  putStrLn "Cueing pill file."
+  logTrace "Cueing pill file."
   pillNoun <- io $ cueBS pillBytes & either throwIO pure
 
-  putStrLn "Parsing pill file."
+  logTrace "Parsing pill file."
   pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
-  putStrLn "Using pill to generate boot sequence."
+  logTrace "Using pill to generate boot sequence."
   bootSeq <- generateBootSeq zod pill False (Fake $ Ship 0)
 
-  putStrLn "Validate jam/cue and toNoun/fromNoun on pill value"
+  logTrace "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
 
-  putStrLn "Checking if round-trip matches input file:"
+  logTrace "Checking if round-trip matches input file:"
   unless (reJam == pillBytes) $ do
-    putStrLn "    Our jam does not match the file...\n"
-    putStrLn "    This is surprising, but it is probably okay."
+    logTrace "    Our jam does not match the file...\n"
+    logTrace "    This is surprising, but it is probably okay."
 
   when showPil $ do
-      putStrLn "\n\n== Pill ==\n"
+      logTrace "\n\n== Pill ==\n"
       io $ pPrint pill
 
   when showSeq $ do
-      putStrLn "\n\n== Boot Sequence ==\n"
+      logTrace "\n\n== Boot Sequence ==\n"
       io $ pPrint bootSeq
 
 validateNounVal :: (HasLogFunc e, Eq a, ToNoun a, FromNoun a)
                 => a -> RIO e ByteString
 validateNounVal inpVal = do
-    putStrLn "  jam"
+    logTrace "  jam"
     inpByt <- evaluate $ jamBS $ toNoun inpVal
 
-    putStrLn "  cue"
+    logTrace "  cue"
     outNon <- cueBS inpByt & either throwIO pure
 
-    putStrLn "  fromNoun"
+    logTrace "  fromNoun"
     outVal <- fromNounErr outNon & either (throwIO . uncurry ParseErr) pure
 
-    putStrLn "  toNoun"
+    logTrace "  toNoun"
     outNon <- evaluate (toNoun outVal)
 
-    putStrLn "  jam"
+    logTrace "  jam"
     outByt <- evaluate $ jamBS outNon
 
-    putStrLn "Checking if: x == cue (jam x)"
+    logTrace "Checking if: x == cue (jam x)"
     unless (inpVal == outVal) $
         error "Value fails test: x == cue (jam x)"
 
-    putStrLn "Checking if: jam x == jam (cue (jam x))"
+    logTrace "Checking if: jam x == jam (cue (jam x))"
     unless (inpByt == outByt) $
         error "Value fails test: jam x == jam (cue (jam x))"
 
@@ -420,22 +420,22 @@ validateNounVal inpVal = do
 
 --------------------------------------------------------------------------------
 
-pillFrom :: CLI.PillSource -> RIO e Pill
+pillFrom :: CLI.PillSource -> RIO App Pill
+pillFrom = \case
+  CLI.PillSourceFile pillPath -> do
+    logTrace $ display $ "boot: reading pill from " ++ (pack pillPath :: Text)
+    io (loadFile pillPath >>= either throwIO pure)
 
-pillFrom (CLI.PillSourceFile pillPath) = do
-  putStrLn $ "boot: reading pill from " ++ pack pillPath
-  io (loadFile pillPath >>= either throwIO pure)
+  CLI.PillSourceURL url -> do
+    logTrace $ display $ "boot: retrieving pill from " ++ (pack url :: Text)
+    -- Get the jamfile with the list of stars accepting comets right now.
+    manager <- io $ C.newManager tlsManagerSettings
+    request <- io $ C.parseRequest url
+    response <- io $ C.httpLbs (C.setRequestCheckStatus request) manager
+    let body = toStrict $ C.responseBody response
 
-pillFrom (CLI.PillSourceURL url) = do
-  putStrLn $ "boot: retrieving pill from " ++ pack url
-  -- Get the jamfile with the list of stars accepting comets right now.
-  manager <- io $ C.newManager tlsManagerSettings
-  request <- io $ C.parseRequest url
-  response <- io $ C.httpLbs (C.setRequestCheckStatus request) manager
-  let body = toStrict $ C.responseBody response
-
-  noun <- cueBS body & either throwIO pure
-  fromNounErr noun & either (throwIO . uncurry ParseErr) pure
+    noun <- cueBS body & either throwIO pure
+    fromNounErr noun & either (throwIO . uncurry ParseErr) pure
 
 newShip :: CLI.New -> CLI.Opts -> RIO App ()
 newShip CLI.New{..} opts = do
@@ -645,14 +645,15 @@ runShipRestarting waitForKillRequ r o multi = do
   atomically (onShipExit <|> onKillRequ) >>= \case
     Left exit -> do
       case exit of
-        Left  err -> putStrLn (tshow err <> ": " <> pier)
-        Right ()  -> putStrLn ("Ship exited on it's own. Why? " <> pier)
+        Left err -> logError $ display (tshow err <> ": " <> pier)
+        Right () ->
+          logError $ display ("Ship exited on it's own. Why? " <> pier)
       threadDelay 250_000
       loop
     Right () -> do
-      putStrLn ("King Shutdown requested. Killing: " <> pier)
+      logTrace $ display ("King Shutdown requested. Killing: " <> pier)
       cancel tid
-      putStrLn ("Ship terminated: " <> pier)
+      logTrace $ display ("Ship terminated: " <> pier)
 
 
 runShips :: CLI.KingOpts -> [(CLI.Run, CLI.Opts, Bool)] -> RIO App ()
@@ -703,7 +704,7 @@ runMultipleShips ships multi = do
   -}
   let spin = forever (threadDelay maxBound)
   finally spin $ do
-    putStrLn "KING IS GOING DOWN"
+    logTrace "KING IS GOING DOWN"
     atomically (putTMVar killSignal ())
     for_ shipThreads waitCatch
 
