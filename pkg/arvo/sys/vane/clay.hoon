@@ -211,7 +211,6 @@
               fod/(map duct @ud)                        ::  current requests
               haw/(map mood (unit cage))                ::  simple cache
               pud/update-qeu                            ::  active updates
-              pur/request-map                           ::  active requests
           ==                                            ::
 ::
 ::  Result of a subscription
@@ -234,11 +233,6 @@
   $:  waiting=(qeu [inx=@ud rut=(unit rand)])
       eval-data=(unit [inx=@ud rut=(unit rand) =eval-form:eval:update-clad])
   ==
-::
-::  The clad monad for foreign simple requests
-::
-++  request-clad  (clad ,cage)
-++  request-map   ,(map inx=@ud [=rand =eval-form:eval:request-clad])
 ::
 ::  Domestic ship.
 ::
@@ -630,58 +624,6 @@
   %+  turn  ~(tap by cult)
   |=  [=wove ducts=(set duct)]
   [ducts (print-wove wove)]
-::
-::  A simple foreign request.
-::
-++  foreign-request
-  |=  $:  our=ship
-          her=ship
-          syd=desk
-          wen=@da
-      ==
-  |^
-  |=  [=rave =rand]
-  =/  m  request-clad
-  ^-  form:m
-  ?-    p.p.rand
-      $a  ~|  %no-big-ford-builds-across-network-for-now  !!
-      $b  ~|  %i-guess-you-ought-to-build-your-own-marks  !!
-      $c  ~|  %casts-should-be-compiled-on-your-own-ship  !!
-      $d  ~|  %totally-temporary-error-please-replace-me  !!
-      $p  ~|  %requesting-foreign-permissions-is-invalid  !!
-      $s  ~|  %please-dont-get-your-takos-over-a-network  !!
-      $t  ~|  %requesting-foreign-directory-is-vaporware  !!
-      $u  ~|  %prolly-poor-idea-to-get-rang-over-network  !!
-      $v  ~|  %weird-shouldnt-get-v-request-from-network  !!
-      $z  ~|  %its-prolly-not-reasonable-to-request-ankh  !!
-      $x  (validate-x [p.p q.p q r]:rand)
-      $y  (pure:m [p.r.rand !>(;;(arch q.r.rand))])
-  ::
-      $w
-    %-  pure:m
-    :-  p.r.rand
-    ?+  p.r.rand  ~|  %strange-w-over-nextwork  !!
-      $cass  !>(;;(cass q.r.rand))
-      $null  [[%atom %n ~] ~]
-      $nako  !>(~|([%molding [&1 &2 &3]:q.r.rand] ;;(nako q.r.rand)))
-    ==
-  ==
-  ::
-  ::  Make sure that incoming data is of the mark it claims to be.
-  ::
-  ++  validate-x
-    |=  [car=care cas=case pax=path peg=page]
-    =/  m  (clad ,cage)
-    ;<  ~  bind:m
-      %+  just-do  /foreign-x
-      [%f %build live=%.n %pin wen (vale-page:util [our %home] peg)]
-    ;<  res=made-result:ford  bind:m  expect-ford
-    ^-  form:m
-    ?.  ?=([%complete %success *] res)
-      =/  message  (made-result-as-error:ford res)
-      (clad-fail %validate-foreign-x-failed message)
-    (pure:m (result-to-cage:ford build-result.res))
-  --
 ::
 ::  A full foreign update.  Validate and apply to our local cache of
 ::  their state.
@@ -2877,58 +2819,6 @@
       ..start-request
     (duce for u.new-sub)
   ::
-  ::  Continue foreign request
-  ::
-  ++  take-foreign-request
-    |=  [inx=@ud =sign]
-    ^+  +>
-    =/  m  request-clad
-    ?>  ?=(^ ref)
-    ?~  request=(~(get by pur.u.ref) inx)
-      ~|(%no-active-foreign-request !!)
-    =^  r=[moves=(list move) =eval-result:eval:m]  eval-form.u.request
-      %-  take:eval:m
-      :*  eval-form.u.request
-          hen
-          /foreign-request/(scot %p her)/[syd]/(scot %ud inx)
-          now
-          ran
-          sign
-      ==
-    =>  .(+>.$ (emil moves.r))  :: TMI
-    ?-  -.eval-result.r
-      %next  +>.$
-      %fail  (fail-foreign-request inx rand.u.request err.eval-result.r)
-      %done  (done-foreign-request inx rand.u.request value.eval-result.r)
-    ==
-  ::
-  ::  Fail foreign request
-  ::
-  ++  fail-foreign-request
-    |=  [inx=@ud =rand err=(pair term tang)]
-    ^+  +>
-    %-  (slog leaf+"foreign request failed" leaf+(trip p.err) q.err)
-    ?>  ?=(^ ref)
-    =/  =mood  [p.p q.p q]:rand
-    =:  haw.u.ref  (~(put by haw.u.ref) mood ~)
-        bom.u.ref  (~(del by bom.u.ref) inx)
-        fod.u.ref  (~(del by fod.u.ref) hen)
-      ==
-    wake
-  ::
-  ::  Finish foreign request
-  ::
-  ++  done-foreign-request
-    |=  [inx=@ud =rand =cage]
-    ^+  +>
-    ?>  ?=(^ ref)
-    =/  =mood  [p.p q.p q]:rand
-    =:  haw.u.ref  (~(put by haw.u.ref) mood `cage)
-        bom.u.ref  (~(del by bom.u.ref) inx)
-        fod.u.ref  (~(del by fod.u.ref) hen)
-      ==
-    wake
-  ::
   ::  Called when a foreign ship answers one of our requests.
   ::
   ::  If it's a `%many` request, start a `+foreign-update`.  Else start
@@ -2961,15 +2851,63 @@
         ?.  ?=($sing -.rav)  haw.u.ref
         (~(put by haw.u.ref) mood.rav ~)
       ==
-    ::  something here, so kick off a validator
+    |^
+    =/  result=(unit cage)  (validate u.rut)
+    =/  =mood  [p.p q.p q]:u.rut
+    =:  haw.u.ref  (~(put by haw.u.ref) mood result)
+        bom.u.ref  (~(del by bom.u.ref) inx)
+        fod.u.ref  (~(del by fod.u.ref) hen)
+      ==
+    wake
+    ::  something here, so validate
     ::
-    =.  pur.u.ref
-      %+  ~(put by pur.u.ref)
-        inx
-      :-  u.rut
-      %-  from-form:eval:request-clad
-      ((foreign-request our her syd now) rav u.rut)
-    (take-foreign-request inx clad-init-sign)
+    ++  validate
+      |=  =rand
+      ^-  (unit cage)
+      ?-    p.p.rand
+          $a  ~|  %no-big-ford-builds-across-network-for-now  !!
+          $b  ~|  %i-guess-you-ought-to-build-your-own-marks  !!
+          $c  ~|  %casts-should-be-compiled-on-your-own-ship  !!
+          $d  ~|  %totally-temporary-error-please-replace-me  !!
+          $p  ~|  %requesting-foreign-permissions-is-invalid  !!
+          $s  ~|  %please-dont-get-your-takos-over-a-network  !!
+          $t  ~|  %requesting-foreign-directory-is-vaporware  !!
+          $u  ~|  %prolly-poor-idea-to-get-rang-over-network  !!
+          $v  ~|  %weird-shouldnt-get-v-request-from-network  !!
+          $z  ~|  %its-prolly-not-reasonable-to-request-ankh  !!
+          $w  `(validate-w r.rand)
+          $x  (validate-x [p.p q.p q r]:rand)
+          $y  `[p.r.rand !>(;;(arch q.r.rand))]
+      ==
+    ::
+    ::  Make sure the incoming data is a %w response
+    ::
+    ++  validate-w
+      |=  =page
+      ^-  cage
+      :-  p.page
+      ?+  p.page  ~|  %strange-w-over-nextwork  !!
+        $cass  !>(;;(cass q.page))
+        $null  [[%atom %n ~] ~]
+        $nako  !>(~|([%molding [&1 &2 &3]:q.page] ;;(nako q.page)))
+      ==
+    ::
+    ::  Make sure that incoming data is of the mark it claims to be.
+    ::
+    ++  validate-x
+      |=  [car=care cas=case pax=path peg=page]
+      ^-  (unit cage)
+      =/  =args:ford:fusion
+        [ank.dom ~ ~ lat.ran fod.dom]
+      =/  vale-result
+        %-  mule  |.
+        %-  wrap:fusion
+        (page-to-cage:(ford:fusion args) peg)
+      ?:  ?=(%| -.vale-result)
+        %-  (slog >%validate-x-failed< p.vale-result)
+        ~
+      `-.p.vale-result
+    --
   ::
   ::  Continue foreign update
   ::
@@ -4289,15 +4227,6 @@
     ?>  ?=(%writ +<.q.hin)
     :_  ..^$
     [hen %give %boon `(unit rand)`(bind `riot`p.q.hin rant-to-rand)]~
-  ::
-  ?:  ?=([%foreign-request @ @ @ *] tea)
-    =/  her  (slav %p i.t.tea)
-    =/  syd  (slav %tas i.t.t.tea)
-    =/  inx  (slav %ud i.t.t.t.tea)
-    =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) her syd)
-      abet:(take-foreign-request:den inx q.hin)
-    [mos ..^$]
   ::
   ?:  ?=([%foreign-update @ @ *] tea)
     =/  her  (slav %p i.t.tea)
