@@ -10,11 +10,12 @@ where
 import Urbit.Prelude hiding (Builder)
 
 import Urbit.Arvo                hiding (ServerId, reqUrl, secure)
+import Urbit.King.App            (HasKingId(..))
 import Urbit.King.Config
+import Urbit.Vere.Eyre.Multi
 import Urbit.Vere.Eyre.PortsFile
 import Urbit.Vere.Eyre.Serv
 import Urbit.Vere.Eyre.Service
-import Urbit.Vere.Eyre.Multi
 import Urbit.Vere.Eyre.Wai
 import Urbit.Vere.Pier.Types
 
@@ -270,15 +271,17 @@ startServ multi who isFake conf plan = do
 
 eyre
   :: forall e
-   . HasShipEnv e
-  => KingId
+   . (HasShipEnv e, HasKingId e)
+  => e
   -> MultiEyreApi
   -> Ship
   -> QueueEv
   -> Bool
   -> ([Ev], RAcquire e (EffCb e HttpServerEf))
-eyre king multi who plan isFake = (initialEvents, runHttpServer)
+eyre env multi who plan isFake = (initialEvents, runHttpServer)
  where
+  king = fromIntegral (env ^. kingIdL)
+
   initialEvents :: [Ev]
   initialEvents = [bornEv king]
 

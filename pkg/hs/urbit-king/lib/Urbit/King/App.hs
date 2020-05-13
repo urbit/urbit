@@ -2,117 +2,148 @@
     Code for setting up the RIO environment.
 -}
 module Urbit.King.App
-    ( App
-    , runAppStderr
-    , runAppLogFile
-    , runAppNoLog
-    , runPierApp
-    , HasConfigDir(..)
-    , HasStderrLogFunc(..)
-    ) where
+  ( KingEnv
+  , runKingEnvStderr
+  , runKingEnvLogFile
+  , runKingEnvNoLog
+  , PierEnv
+  , runPierEnv
+  , HasConfigDir(..)
+  , HasStderrLogFunc(..)
+  , HasKingId(..)
+  , HasProcId(..)
+  )
+where
 
 import Urbit.King.Config
 import Urbit.Prelude
 
-import System.Directory (createDirectoryIfMissing, getHomeDirectory)
+import System.Directory       (createDirectoryIfMissing, getHomeDirectory)
+import System.Posix.Internals (c_getpid)
+import System.Posix.Types     (CPid(..))
+import System.Random          (randomIO)
 
---------------------------------------------------------------------------------
+
+-- Constraints -----------------------------------------------------------------
 
 class HasConfigDir a where
-    configDirL ∷ Lens' a FilePath
+  configDirL ∷ Lens' a FilePath
 
 class HasStderrLogFunc a where
-    stderrLogFuncL :: Lens' a LogFunc
+  stderrLogFuncL :: Lens' a LogFunc
 
---------------------------------------------------------------------------------
+class HasProcId a where
+  procIdL :: Lens' a Int32
 
-data App = App
-    { _appLogFunc       :: !LogFunc
-    , _appStderrLogFunc :: !LogFunc
-    }
+class HasKingId a where
+  kingIdL :: Lens' a Word16
 
-makeLenses ''App
 
-instance HasLogFunc App where
-    logFuncL = appLogFunc
+-- KingEnv ---------------------------------------------------------------------
 
-instance HasStderrLogFunc App where
-    stderrLogFuncL = appStderrLogFunc
+data KingEnv = KingEnv
+  { _kingEnvLogFunc       :: !LogFunc
+  , _kingEnvStderrLogFunc :: !LogFunc
+  , _kingEnvKingId        :: !Word16
+  , _kingEnvProcId        :: !Int32
+  }
 
-runAppStderr :: RIO App a -> IO a
-runAppStderr inner = do
-    logOptions <- logOptionsHandle stderr True
-        <&> setLogUseTime True
-        <&> setLogUseLoc False
+makeLenses ''KingEnv
 
-    withLogFunc logOptions $ \logFunc ->
-        runRIO (App logFunc logFunc) inner
+instance HasLogFunc KingEnv where
+  logFuncL = kingEnvLogFunc
 
-runAppLogFile :: RIO App a -> IO a
-runAppLogFile inner =
-    withLogFileHandle $ \h -> do
-      logOptions <- logOptionsHandle h True
-          <&> setLogUseTime True
-          <&> setLogUseLoc False
-      stderrLogOptions <- logOptionsHandle stderr True
-          <&> setLogUseTime False
-          <&> setLogUseLoc False
+instance HasStderrLogFunc KingEnv where
+  stderrLogFuncL = kingEnvStderrLogFunc
 
-      withLogFunc stderrLogOptions $ \stderrLogFunc ->
-        withLogFunc logOptions $ \logFunc ->
-          runRIO (App logFunc stderrLogFunc) inner
+instance HasProcId KingEnv where
+  procIdL = kingEnvProcId
+
+instance HasKingId KingEnv where
+  kingIdL = kingEnvKingId
+
+
+-- Running KingEnvs ------------------------------------------------------------
+
+runKingEnvStderr :: RIO KingEnv a -> IO a
+runKingEnvStderr inner = do
+  logOptions <-
+    logOptionsHandle stderr True <&> setLogUseTime True <&> setLogUseLoc False
+
+  withLogFunc logOptions $ \logFunc -> runKingEnv logFunc logFunc inner
+
+runKingEnvLogFile :: RIO KingEnv a -> IO a
+runKingEnvLogFile inner = withLogFileHandle $ \h -> do
+  logOptions <-
+    logOptionsHandle h True <&> setLogUseTime True <&> setLogUseLoc False
+  stderrLogOptions <-
+    logOptionsHandle stderr True <&> setLogUseTime False <&> setLogUseLoc False
+
+  withLogFunc stderrLogOptions $ \stderrLogFunc -> withLogFunc logOptions
+    $ \logFunc -> runKingEnv logFunc stderrLogFunc inner
 
 withLogFileHandle :: (Handle -> IO a) -> IO a
 withLogFileHandle act = do
-    home <- getHomeDirectory
-    let logDir = home </> ".urbit"
-    createDirectoryIfMissing True logDir
-    withFile (logDir </> "king.log") AppendMode $ \handle -> do
-        hSetBuffering handle LineBuffering
-        act handle
+  home <- getHomeDirectory
+  let logDir = home </> ".urbit"
+  createDirectoryIfMissing True logDir
+  withFile (logDir </> "king.log") AppendMode $ \handle -> do
+    hSetBuffering handle LineBuffering
+    act handle
 
-runAppNoLog :: RIO App a -> IO a
-runAppNoLog act =
-    withFile "/dev/null" AppendMode $ \handle -> do
-      logOptions <- logOptionsHandle handle True
-      withLogFunc logOptions $ \logFunc ->
-        runRIO (App logFunc logFunc) act
+runKingEnvNoLog :: RIO KingEnv a -> IO a
+runKingEnvNoLog act = withFile "/dev/null" AppendMode $ \handle -> do
+  logOptions <- logOptionsHandle handle True
+  withLogFunc logOptions $ \logFunc -> runKingEnv logFunc logFunc act
 
---------------------------------------------------------------------------------
+runKingEnv :: LogFunc -> LogFunc -> RIO KingEnv a -> IO a
+runKingEnv logFunc stderr action = do
+  kid      <- randomIO
+  CPid pid <- c_getpid
+  runRIO (KingEnv logFunc stderr kid pid) action
 
--- | A PierApp is like an App, except that it also provides a PierConfig
-data PierApp = PierApp
-    { _pierAppLogFunc       :: !LogFunc
-    , _pierAppStderrLogFunc :: !LogFunc
-    , _pierAppPierConfig    :: !PierConfig
-    , _pierAppNetworkConfig :: !NetworkConfig
-    }
 
-makeLenses ''PierApp
+-- PierEnv ---------------------------------------------------------------------
 
-instance HasStderrLogFunc PierApp where
-    stderrLogFuncL = pierAppStderrLogFunc
+data PierEnv = PierEnv
+  { _pierEnvKingEnv       :: !KingEnv
+  , _pierEnvPierConfig    :: !PierConfig
+  , _pierEnvNetworkConfig :: !NetworkConfig
+  }
 
-instance HasLogFunc PierApp where
-    logFuncL = pierAppLogFunc
+makeLenses ''PierEnv
 
-instance HasPierConfig PierApp where
-    pierConfigL = pierAppPierConfig
+instance HasStderrLogFunc PierEnv where
+  stderrLogFuncL = pierEnvKingEnv . stderrLogFuncL
 
-instance HasNetworkConfig PierApp where
-    networkConfigL = pierAppNetworkConfig
+instance HasLogFunc PierEnv where
+  logFuncL = pierEnvKingEnv . logFuncL
 
-instance HasConfigDir PierApp where
-    configDirL = pierAppPierConfig . pcPierPath
+instance HasPierConfig PierEnv where
+  pierConfigL = pierEnvPierConfig
 
-runPierApp :: PierConfig -> NetworkConfig -> RIO PierApp a -> RIO App a
-runPierApp pierConfig networkConfig action = do
+instance HasNetworkConfig PierEnv where
+  networkConfigL = pierEnvNetworkConfig
+
+instance HasConfigDir PierEnv where
+  configDirL = pierEnvPierConfig . pcPierPath
+
+instance HasProcId PierEnv where
+  procIdL = pierEnvKingEnv . kingEnvProcId
+
+instance HasKingId PierEnv where
+  kingIdL = pierEnvKingEnv . kingEnvKingId
+
+
+-- Running Pier Envs -----------------------------------------------------------
+
+runPierEnv :: PierConfig -> NetworkConfig -> RIO PierEnv a -> RIO KingEnv a
+runPierEnv pierConfig networkConfig action = do
   app <- ask
 
-  let pierApp = PierApp { _pierAppLogFunc       = app ^. logFuncL
-                        , _pierAppStderrLogFunc = app ^. stderrLogFuncL
-                        , _pierAppPierConfig    = pierConfig
-                        , _pierAppNetworkConfig = networkConfig
+  let pierEnv = PierEnv { _pierEnvKingEnv       = app
+                        , _pierEnvPierConfig    = pierConfig
+                        , _pierEnvNetworkConfig = networkConfig
                         }
 
-  io (runRIO pierApp action)
+  io (runRIO pierEnv action)

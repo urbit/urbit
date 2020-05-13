@@ -10,16 +10,16 @@ module Urbit.Vere.Pier
 
 import Urbit.Prelude
 
+import Control.Monad.Trans.Maybe
 import RIO.Directory
-import System.Random
 import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
-import Control.Monad.Trans.Maybe
 
 import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
-import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
+import Urbit.King.App         (HasConfigDir(..), HasKingId(..),
+                               HasStderrLogFunc(..))
 import Urbit.Vere.Ames        (ames)
 import Urbit.Vere.Behn        (behn)
 import Urbit.Vere.Clay        (clay)
@@ -171,11 +171,18 @@ getSnapshot top last = do
 acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
-pier :: ∀e. (HasConfigDir e, HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
-     => (Serf e, EventLog, SerfState)
-     -> MVar ()
-     -> MultiEyreApi
-     -> RAcquire e ()
+pier
+  :: forall e
+   . ( HasConfigDir e
+     , HasLogFunc e
+     , HasNetworkConfig e
+     , HasPierConfig e
+     , HasKingId e
+     )
+  => (Serf e, EventLog, SerfState)
+  -> MVar ()
+  -> MultiEyreApi
+  -> RAcquire e ()
 pier (serf, log, ss) mStart multi = do
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
@@ -191,8 +198,6 @@ pier (serf, log, ss) mStart multi = do
         pure q
 
     let shutdownEvent = putTMVar shutdownM ()
-
-    inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
     -- (sz, local) <- Term.localClient
 
@@ -223,8 +228,11 @@ pier (serf, log, ss) mStart multi = do
     -- the c serf code. Logging output from our haskell process must manually
     -- add them.
     let showErr = atomically . Term.trace muxed . (flip append "\r\n")
+
+    env <- ask
+
     let (bootEvents, startDrivers) =
-            drivers inst multi ship (isFake logId)
+            drivers env multi ship (isFake logId)
                 (writeTQueue computeQ)
                 shutdownEvent
                 (Term.TSize{tsWide=80, tsTall=24}, muxed)
@@ -286,8 +294,8 @@ data Drivers e = Drivers
     }
 
 drivers
-  :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
-  => KingId
+  :: (HasLogFunc e, HasKingId e, HasNetworkConfig e, HasPierConfig e)
+  => e
   -> MultiEyreApi
   -> Ship
   -> Bool
@@ -296,15 +304,15 @@ drivers
   -> (Term.TSize, Term.Client)
   -> (Text -> RIO e ())
   -> ([Ev], RAcquire e (Drivers e))
-drivers inst multi who isFake plan shutdownSTM termSys stderr =
+drivers env multi who isFake plan shutdownSTM termSys stderr =
     (initialEvents, runDrivers)
   where
-    (behnBorn, runBehn) = behn inst plan
-    (amesBorn, runAmes) = ames inst who isFake plan stderr
-    (httpBorn, runHttp) = eyre inst multi who plan isFake
-    (clayBorn, runClay) = clay inst plan
-    (irisBorn, runIris) = client inst plan
-    (termBorn, runTerm) = Term.term termSys shutdownSTM inst plan
+    (behnBorn, runBehn) = behn env plan
+    (amesBorn, runAmes) = ames env who isFake plan stderr
+    (httpBorn, runHttp) = eyre env multi who plan isFake
+    (clayBorn, runClay) = clay env plan
+    (irisBorn, runIris) = client env plan
+    (termBorn, runTerm) = Term.term env termSys shutdownSTM plan
     initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
                                    termBorn, irisBorn]
     runDrivers          = do

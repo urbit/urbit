@@ -8,8 +8,9 @@ import Urbit.Arvo            hiding (Behn)
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
 
-import Urbit.Time  (Wen)
-import Urbit.Timer (Timer)
+import Urbit.King.App (HasKingId(..))
+import Urbit.Time     (Wen)
+import Urbit.Timer    (Timer)
 
 import qualified Urbit.Time  as Time
 import qualified Urbit.Timer as Timer
@@ -25,10 +26,12 @@ wakeEv = EvBlip $ BlipEvBehn $ BehnEvWake () ()
 
 sysTime = view Time.systemTime
 
-behn :: KingId -> QueueEv -> ([Ev], Acquire (EffCb e BehnEf))
-behn king enqueueEv =
+behn :: HasKingId e => e -> QueueEv -> ([Ev], Acquire (EffCb e BehnEf))
+behn env enqueueEv =
     (initialEvents, runBehn)
   where
+    king = fromIntegral (env ^. kingIdL)
+
     initialEvents = [bornEv king]
 
     runBehn :: Acquire (EffCb e BehnEf)

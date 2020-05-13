@@ -26,7 +26,7 @@ import Urbit.Vere.Pier.Types
 import Data.List           ((!!))
 import RIO.Directory       (createDirectoryIfMissing)
 import Urbit.King.API      (readPortsFile)
-import Urbit.King.App      (HasConfigDir(..))
+import Urbit.King.App      (HasKingId(..), HasConfigDir(..))
 import Urbit.Vere.Term.API (Client(Client))
 
 import qualified Data.ByteString.Internal as BS
@@ -494,13 +494,13 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 {-|
     Terminal Driver
 -}
-term :: forall e. (HasPierConfig e, HasLogFunc e)
-     => (T.TSize, Client)
+term :: forall e. (HasPierConfig e, HasLogFunc e, HasKingId e)
+     => e
+     -> (T.TSize, Client)
      -> (STM ())
-     -> KingId
      -> QueueEv
      -> ([Ev], RAcquire e (EffCb e TermEf))
-term (tsize, Client{..}) shutdownSTM king enqueueEv =
+term env (tsize, Client{..}) shutdownSTM enqueueEv =
     (initialEvents, runTerm)
   where
     T.TSize wi hi = tsize

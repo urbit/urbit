@@ -91,9 +91,9 @@ import Control.Exception      (AsyncException(UserInterrupt))
 import Control.Lens           ((&))
 import System.Process         (system)
 import Text.Show.Pretty       (pPrint)
-import Urbit.King.App         (App)
-import Urbit.King.App         (runAppLogFile, runAppStderr, runPierApp)
-import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
+import Urbit.King.App         (KingEnv, PierEnv)
+import Urbit.King.App         (runKingEnvLogFile, runKingEnvStderr, runPierEnv)
+import Urbit.King.App         (HasStderrLogFunc(..))
 import Urbit.Noun.Conversions (cordToUW)
 import Urbit.Time             (Wen)
 import Urbit.Vere.LockFile    (lockFile)
@@ -169,13 +169,15 @@ toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
   _ncNoHttp    = oNoHttp
   _ncNoHttps   = oNoHttps
 
-tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
-                   , HasConfigDir e, HasStderrLogFunc e
-                   )
-                => Bool -> Pill -> Bool -> Serf.Flags -> Ship
-                -> LegacyBootEvent
-                -> MultiEyreApi
-                -> RIO e ()
+tryBootFromPill
+  :: Bool
+  -> Pill
+  -> Bool
+  -> Serf.Flags
+  -> Ship
+  -> LegacyBootEvent
+  -> MultiEyreApi
+  -> RIO PierEnv ()
 tryBootFromPill oExit pill lite flags ship boot multi = do
     mStart <- newEmptyMVar
     runOrExitImmediately bootedPier oExit mStart multi
@@ -188,12 +190,11 @@ tryBootFromPill oExit pill lite flags ship boot multi = do
         pure sls
 
 runOrExitImmediately
-  :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e, HasConfigDir e)
-  => RAcquire e (Serf e, Log.EventLog, SerfState)
+  :: RAcquire PierEnv (Serf PierEnv, Log.EventLog, SerfState)
   -> Bool
   -> MVar ()
   -> MultiEyreApi
-  -> RIO e ()
+  -> RIO PierEnv ()
 runOrExitImmediately getPier oExit mStart multi =
     rwith getPier $ if oExit then shutdownImmediately else runPier
   where
@@ -212,19 +213,13 @@ runOrExitImmediately getPier oExit mStart multi =
         runRAcquire $ Pier.pier sls mStart multi
 
 tryPlayShip
-  :: ( HasStderrLogFunc e
-     , HasLogFunc e
-     , HasNetworkConfig e
-     , HasPierConfig e
-     , HasConfigDir e
-     )
-  => Bool
+  :: Bool
   -> Bool
   -> Maybe Word64
   -> Serf.Flags
   -> MVar ()
   -> MultiEyreApi
-  -> RIO e ()
+  -> RIO PierEnv ()
 tryPlayShip exitImmediately fullReplay playFrom flags mStart multi = do
     when fullReplay wipeSnapshot
     runOrExitImmediately resumeShip exitImmediately mStart multi
@@ -240,6 +235,7 @@ tryPlayShip exitImmediately fullReplay playFrom flags mStart multi = do
     north shipPath = shipPath <> "/.urb/chk/north.bin"
     south shipPath = shipPath <> "/.urb/chk/south.bin"
 
+    resumeShip :: RAcquire PierEnv (Serf PierEnv, Log.EventLog, SerfState)
     resumeShip = do
         view pierPathL >>= lockFile
         rio $ logTrace "RESUMING SHIP"
@@ -420,7 +416,7 @@ validateNounVal inpVal = do
 
 --------------------------------------------------------------------------------
 
-pillFrom :: CLI.PillSource -> RIO App Pill
+pillFrom :: CLI.PillSource -> RIO KingEnv Pill
 pillFrom = \case
   CLI.PillSourceFile pillPath -> do
     logTrace $ display $ "boot: reading pill from " ++ (pack pillPath :: Text)
@@ -437,7 +433,7 @@ pillFrom = \case
     noun <- cueBS body & either throwIO pure
     fromNounErr noun & either (throwIO . uncurry ParseErr) pure
 
-newShip :: CLI.New -> CLI.Opts -> RIO App ()
+newShip :: CLI.New -> CLI.Opts -> RIO KingEnv ()
 newShip CLI.New{..} opts = do
   {-
     TODO XXX HACK
@@ -485,7 +481,7 @@ newShip CLI.New{..} opts = do
       bootFromSeed multi pill seed
 
   where
-    shipFrom :: Text -> RIO App Ship
+    shipFrom :: Text -> RIO KingEnv Ship
     shipFrom name = case Ob.parsePatp name of
       Left x  -> error "Invalid ship name"
       Right p -> pure $ Ship $ fromIntegral $ Ob.fromPatp p
@@ -495,7 +491,7 @@ newShip CLI.New{..} opts = do
       Just x  -> x
       Nothing -> "./" <> unpack name
 
-    nameFromShip :: Ship -> RIO App Text
+    nameFromShip :: Ship -> RIO KingEnv Text
     nameFromShip s = name
       where
         nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral s
@@ -503,7 +499,7 @@ newShip CLI.New{..} opts = do
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> pure x
 
-    bootFromSeed :: MultiEyreApi -> Pill -> Seed -> RIO App ()
+    bootFromSeed :: MultiEyreApi -> Pill -> Seed -> RIO KingEnv ()
     bootFromSeed multi pill seed = do
       ethReturn <- dawnVent seed
 
@@ -521,11 +517,11 @@ newShip CLI.New{..} opts = do
     runTryBootFromPill multi pill name ship bootEvent = do
       let pierConfig = toPierConfig (pierPath name) opts
       let networkConfig = toNetworkConfig opts
-      runPierApp pierConfig networkConfig $
+      runPierEnv pierConfig networkConfig $
         tryBootFromPill True pill nLite flags ship bootEvent multi
 ------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
-runShip :: CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> RIO App ()
+runShip :: CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> RIO KingEnv ()
 runShip (CLI.Run pierPath) opts daemon multi = do
     tid <- io myThreadId
     let onTermExit = throwTo tid UserInterrupt
@@ -539,7 +535,7 @@ runShip (CLI.Run pierPath) opts daemon multi = do
       finally (runPier mStart) (cancel connectionThread)
   where
     runPier mStart =
-          runPierApp pierConfig networkConfig $
+          runPierEnv pierConfig networkConfig $
             tryPlayShip
               (CLI.oExit opts)
               (CLI.oFullReplay opts)
@@ -593,7 +589,7 @@ main = do
   hSetBuffering stdout NoBuffering
   setupSignalHandlers
 
-  runApp args $ case args of
+  runKingEnv args $ case args of
     CLI.CmdRun ko ships                       -> runShips ko ships
     CLI.CmdNew n  o                           -> newShip n o
     CLI.CmdBug (CLI.CollectAllFX pax        ) -> collectAllFx pax
@@ -607,8 +603,8 @@ main = do
     CLI.CmdCon pier                           -> connTerm pier
 
  where
-  runApp args | willRunTerminal args = runAppLogFile
-  runApp args | otherwise            = runAppStderr
+  runKingEnv args | willRunTerminal args = runKingEnvLogFile
+  runKingEnv args | otherwise            = runKingEnvStderr
 
   setupSignalHandlers = do
     mainTid <- myThreadId
@@ -632,7 +628,8 @@ main = do
 
   TODO Use logging system instead of printing.
 -}
-runShipRestarting :: STM () -> CLI.Run -> CLI.Opts -> MultiEyreApi -> RIO App ()
+runShipRestarting
+  :: STM () -> CLI.Run -> CLI.Opts -> MultiEyreApi -> RIO KingEnv ()
 runShipRestarting waitForKillRequ r o multi = do
   let pier = pack (CLI.rPierPath r)
       loop = runShipRestarting waitForKillRequ r o multi
@@ -656,7 +653,7 @@ runShipRestarting waitForKillRequ r o multi = do
       logTrace $ display ("Ship terminated: " <> pier)
 
 
-runShips :: CLI.KingOpts -> [(CLI.Run, CLI.Opts, Bool)] -> RIO App ()
+runShips :: CLI.KingOpts -> [(CLI.Run, CLI.Opts, Bool)] -> RIO KingEnv ()
 runShips CLI.KingOpts {..} ships = do
   let meConf = MultiEyreConf
         { mecHttpPort      = fromIntegral <$> koSharedHttpPort
@@ -683,7 +680,7 @@ runShips CLI.KingOpts {..} ships = do
     [(r, o, d)] -> runShip r o d me
     ships       -> runMultipleShips (ships <&> \(r, o, _) -> (r, o)) me
 
-runMultipleShips :: [(CLI.Run, CLI.Opts)] -> MultiEyreApi -> RIO App ()
+runMultipleShips :: [(CLI.Run, CLI.Opts)] -> MultiEyreApi -> RIO KingEnv ()
 runMultipleShips ships multi = do
   killSignal <- newEmptyTMVarIO
 

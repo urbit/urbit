@@ -5,6 +5,7 @@
 module Urbit.Vere.Clay (clay) where
 
 import Urbit.Arvo            hiding (Term)
+import Urbit.King.App        (HasKingId(..))
 import Urbit.King.Config
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
@@ -112,11 +113,13 @@ buildActionListFromDifferences fp snapshot = do
 
 --------------------------------------------------------------------------------
 
-clay :: forall e. (HasPierConfig e, HasLogFunc e)
-     => KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e SyncEf))
-clay king enqueueEv =
+clay :: forall e. (HasPierConfig e, HasLogFunc e, HasKingId e)
+     => e -> QueueEv -> ([Ev], RAcquire e (EffCb e SyncEf))
+clay env enqueueEv =
     (initialEvents, runSync)
   where
+    king = fromIntegral (env ^. kingIdL)
+
     initialEvents = [
       EvBlip $ BlipEvBoat $ BoatEvBoat () ()
       -- TODO: In the case of -A, we need to read all the data from the

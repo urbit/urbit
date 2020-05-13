@@ -11,6 +11,7 @@ import Urbit.Arvo            hiding (Fake)
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
 
+import Urbit.King.App      (HasKingId(..))
 import Urbit.Vere.Ames.DNS (NetworkMode(..), ResolvServ(..))
 import Urbit.Vere.Ames.DNS (galaxyPort, resolvServ)
 import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
@@ -107,17 +108,19 @@ udpServ isFake who = do
 -}
 ames
   :: forall e
-   . (HasLogFunc e, HasNetworkConfig e)
-  => KingId
+   . (HasLogFunc e, HasNetworkConfig e, HasKingId e)
+  => e
   -> Ship
   -> Bool
   -> QueueEv
   -> (Text -> RIO e ())
   -> ([Ev], RAcquire e (EffCb e NewtEf))
-ames inst who isFake enqueueEv stderr = (initialEvents, runAmes)
+ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
  where
+  king = fromIntegral (env ^. kingIdL)
+
   initialEvents :: [Ev]
-  initialEvents = [bornEv inst]
+  initialEvents = [bornEv king]
 
   runAmes :: RAcquire e (EffCb e NewtEf)
   runAmes = do
