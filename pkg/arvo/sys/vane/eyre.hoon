@@ -921,7 +921,9 @@
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  (flop path.generator.action) 
       =/  ski       (scry [%141 %noun] ~ %ca bek sup)
-      =/  gat=vase  !<(vase q:(need (need ski)))
+      =/  cag=cage  (need (need ski))
+      ?>  =(%vase p.cag)
+      =/  gat=vase  !<(vase q.cag)
       =/  res=(each vase tang)
         %-  mule  |.
         %+  slam
@@ -2186,20 +2188,6 @@
       %disconnect
     =.  server-state.ax  (remove-binding:server binding.task)
     [~ http-server-gate]
-  ::
-      %wegh
-    :_  http-server-gate
-    :~  :*  duct
-            %give
-            %mass
-            ^-  mass
-            :+  %eyre  %|
-            :~  bindings+&+bindings.server-state.ax
-                auth+&+authentication-state.server-state.ax
-                connections+&+connections.server-state.ax
-                channels+&+channel-state.server-state.ax
-                axle+&+ax
-    ==  ==  ==
   ==
 ::
 ++  take
@@ -2404,6 +2392,15 @@
   =*  who  p.why
   ?.  ?=(%$ ren)
     [~ ~]
+  ?:  =(tyl /whey)
+    =/  maz=(list mass)
+      :~  bindings+&+bindings.server-state.ax
+          auth+&+authentication-state.server-state.ax
+          connections+&+connections.server-state.ax
+          channels+&+channel-state.server-state.ax
+          axle+&+ax
+      ==
+    ``mass+!>(maz)
   ?.  ?=(%$ -.lot)
     [~ ~]
   ?.  ?=(%host syd)

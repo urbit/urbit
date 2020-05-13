@@ -135,16 +135,6 @@
     ::
     =<  set-unix-wake
     (emit-vane-wake(timers.state t.timers.state) duct.i.timers.state ~)
-  ::  +wegh: produce memory usage report for |mass
-  ::
-  ++  wegh
-    ^+  [moves state]
-    :_  state  :_  ~
-    :^  duct  %give  %mass
-    :+  %behn  %|
-    :~  timers+&+timers.state
-        dot+&+state
-    ==
   ::  %utilities
   ::
   ::+|
@@ -277,7 +267,6 @@
       %vega  vega:event-core
       %wait  (wait:event-core date=p.task)
       %wake  (wake:event-core error=~)
-      %wegh  wegh:event-core
     ==
   [moves behn-gate]
 ::  +load: migrate an old state to a new behn version
@@ -298,6 +287,11 @@
   ::
   ?.  ?=(%& -.why)
     ~
+  ?:  &(=(ren %$) =(tyl /whey))
+    =/  maz=(list mass)
+      :~  timers+&+timers.state
+      ==
+    ``mass+!>(maz)
   [~ ~ %tank !>(>timers<)]
 ::
 ++  stay  state

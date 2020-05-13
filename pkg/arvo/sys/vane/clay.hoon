@@ -263,8 +263,7 @@
           $>(%plea task:able:ames)                      ::
       ==                                                ::
       $:  %b                                            ::  to %behn
-          $>  $?  %drip                                 ::
-                  %rest                                 ::
+          $>  $?  %rest                                 ::
                   %wait                                 ::
               ==                                        ::
           task:able:behn                                ::
@@ -1051,10 +1050,7 @@
         %-  wrap:fusion
         (page-to-cage:(ford:fusion args) page)
       [cage ford-cache.args]
-    %-  emit
-    :*  hen  %slip  %b  %drip
-        !>([%writ ~ [care.mun case.mun syd] path.mun cage])
-    ==
+    (emit hen %give %writ ~ [care.mun case.mun syd] path.mun cage)
   ::
   ++  case-to-date
     |=  =case
@@ -1106,7 +1102,7 @@
     ::  translate the case to a date
     ::
     =/  cas  [%da (case-to-date case.n.das)]
-    =-  (emit hen %slip %b %drip !>([%wris cas -]))
+    =-  (emit hen %give %wris cas -)
     (~(run in `(set mood)`das) |=(m/mood [care.m path.m]))
   ::
   ::  Give next step in a subscription.
@@ -1124,7 +1120,7 @@
   ::
   ++  blub
     |=  hen/duct
-    (emit hen %slip %b %drip !>([%writ ~]))
+    (emit hen %give %writ ~)
   ::
   ::  Lifts a function so that a single result can be fanned out over a set of
   ::  subscriber ducts.
@@ -1331,12 +1327,12 @@
         %&  q.p.yoki
         %|  (~(run by q.p.yoki) |=(=lobe |+lobe))
       ==
+    =/  old-lobes=(map path lobe)
+      ?:  =(0 let.dom)
+        ~
+      q:(aeon-to-yaki:ze let.dom)
     =/  [deletes=(set path) changes=(map path (each page lobe))]
-      =/  previous-yaki
-        ?:  =(0 let.dom)
-          *yaki
-        (aeon-to-yaki:ze let.dom)
-      (get-changes q.previous-yaki new-data)
+      (get-changes old-lobes new-data)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
     ::
     ::  promote ford cache
@@ -1345,13 +1341,23 @@
     ::
     =.  fod.dom
       (promote-ford fod.dom deletes ~(key by changes))
+    ::
+    =/  sys-changes  (need-sys-update changes)
+    ?:  &(!updated !=(~ sys-changes))
+      =/  =args:ford:fusion
+        [ank.dom deletes changes lat.ran fod.dom]
+      (sys-update args yoki changes)
+    =.  ..park  (emil (print deletes ~(key by changes)))
+    ::  clear caches if zuse reloaded
+    ::
+    =/  is-zuse-new=?  &(updated (was-zuse-updated sys-changes))
+    =?  fod.dom  is-zuse-new  *ford-cache
+    =?  ank.dom  is-zuse-new  *ankh
+    =?  changes  is-zuse-new
+      (changes-for-upgrade old-lobes deletes changes)
     =/  =args:ford:fusion
       [ank.dom deletes changes lat.ran fod.dom]
     ::
-    ::  ?:  &(!updated !=(~ (need-sys-update changes)))
-    ::    (sys-update args yuki changes)
-    ::
-    =.  ..park  (emil (print deletes ~(key by changes)))
     =^  change-cages  ford-cache.args
       (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -1396,6 +1402,7 @@
     ::
     ++  get-changes
       |=  [old=(map path lobe) new=(map path (each page lobe))]
+      ^-  [deletes=(set path) changes=(map path (each page lobe))]
       =/  old=(map path (each page lobe))
         (~(run by old) |=(=lobe |+lobe))
       :*  %-  silt  ^-  (list path)
@@ -1418,6 +1425,20 @@
             ~
           `[path u.a]
       ==
+    ::  Find all files for full desk rebuild
+    ::
+    ++  changes-for-upgrade
+      |=  $:  old=(map path lobe)
+              deletes=(set path)
+              changes=(map path (each page lobe))
+          ==
+      ^+  changes
+      =.  old
+        %+  roll  ~(tap in deletes)
+        |=  [pax=path old=_old]
+        (~(del by old) pax)
+      =/  pre=_changes  (~(run by old) |=(lob=lobe |+lob))
+      (~(uni by pre) changes)
     ::
     ::  Keep any parts of the ford cache whose dependencies didn't change
     ::
@@ -1470,6 +1491,7 @@
       ?~  cans
         [~ ford-cache.ford-args]
       =^  cage  ford-cache.ford-args
+        ~>  %slog.[0 leaf+"clay: validating {(spud path.i.cans)}"]
         %-  wrap:fusion
         (get-value:(ford:fusion ford-args) path.i.cans)
       =/  =lobe
@@ -1664,12 +1686,14 @@
         test-ankh  (~(got by dir.test-ankh) ta)
       ==
     ::
-    ::  Find /sys changes
+    ::  Find /sys changes; does not reload on first commit
     ::
     ++  need-sys-update
       |=  changes=(map path (each page lobe))
       ^-  (map path (each page lobe))
       ~+
+      ?:  =(0 let.dom)
+        ~
       %-  malt
       %+  skim  ~(tap by changes)
       |=  [=path *]
@@ -1677,6 +1701,17 @@
           =(/sys/arvo/hoon path)
           =(/sys/zuse/hoon path)
           =(/sys/vane (scag 2 path))
+      ==
+    ::
+    ::  Did the standard library reload?
+    ::
+    ++  was-zuse-updated
+      |=  changes=(map path (each page lobe))
+      ^-  ?
+      ~+
+      ?|  (~(has by changes) /sys/hoon/hoon)
+          (~(has by changes) /sys/arvo/hoon)
+          (~(has by changes) /sys/zuse/hoon)
       ==
     ::
     ::  Delay current update until sys update is complete
@@ -1692,25 +1727,47 @@
         (checkout-changes ford-args updates)
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
-      |^  ?:  (~(has by updates) /sys/hoon/hoon)
-            reset
+      |^  %.  [hen %slip %c %pork ~]
+          =<  emit
+          ?:  (~(has by updates) /sys/hoon/hoon)
+            (reset &)
           ?:  (~(has by updates) /sys/arvo/hoon)
-            reset
+            (reset |)
           ?:  (~(has by updates) /sys/zuse/hoon)
             reboot
-          reload-all
+          =/  vanes=(list [=path *])  ~(tap by updates)
+          |-  ^+  ..park
+          ?~  vanes
+            ..park
+          ?.  ?=([%sys %vane * %hoon ~] path.i.vanes)
+            ~&  [%strange-sys-update path.i.vanes]
+            $(vanes t.vanes)
+          =.  ..park  (reload i.t.t.path.i.vanes)
+          $(vanes t.vanes)
       ::
       ++  reset
-        =^  hoon=cage  ford-cache.ford-args
-          %-  wrap:fusion
-          (get-value:(ford:fusion ford-args) /sys/hoon/hoon)
-        =^  arvo=cage  ford-cache.ford-args
-          %-  wrap:fusion
-          (get-value:(ford:fusion ford-args) /sys/arvo/hoon)
-        =.  ..park
-          %-  emit
-          [hen %pass /reset %d %flog %lyra !<(@t q.hoon) !<(@t q.arvo)]
+        |=  new-hoon=?
+        ^+  ..park
+        ?.  new-hoon
+          =^  arvo=@t  ford-cache.ford-args  (load-sys %arvo)
+          =.  ..park  (pass-lyra hoon=~ arvo)
+          reboot
+        =^  hoon=@t  ford-cache.ford-args  (load-sys %hoon)
+        =^  arvo=@t  ford-cache.ford-args  (load-sys %arvo)
+        =.  ..park  (pass-lyra `hoon arvo)
         reboot
+      ::
+      ++  load-sys
+        |=  fil=@tas
+        ^-  [@t ford-cache]
+        =-  [!<(@t q.-<) ->]
+        %-  wrap:fusion
+        (get-value:(ford:fusion ford-args) /sys/[fil]/hoon)
+      ::
+      ++  pass-lyra
+        |=  [hoon=(unit @t) arvo=@t]
+        ^+  ..park
+        (emit hen %pass /reset %d %flog %lyra hoon arvo)
       ::
       ++  reboot
         =^  zuse=cage  ford-cache.ford-args
@@ -1726,7 +1783,7 @@
           ~[%ames %behn %clay %dill %eyre %ford %gall %iris %jael]
         |-  ^+  ..park
         ?~  vanes
-          (emit hen %slip %c %pork ~)
+          ..park
         =.  ..park  (reload i.vanes)
         $(vanes t.vanes)
       ::
@@ -3697,27 +3754,6 @@
           [%foreign-warp (scot %p her) t.pax]
         [hen %pass wire %c %werp her our ryf]
     ==
-  ::
-      %wegh
-    :_  ..^$  :_  ~
-    :^  hen  %give  %mass
-    :+  %clay  %|
-    =/  domestic
-      %+  turn  (sort ~(tap by dos.rom.ruf) aor)
-      |=  [=desk =dojo]
-      :+  desk  %|
-      :~  ankh+&+ank.dom.dojo
-          mime+&+mim.dom.dojo
-          ford+&+fod.dom.dojo
-      ==
-    :~  domestic+|+domestic
-        foreign+&+hoy.ruf
-        :+  %object-store  %|
-        :~  commits+&+hut.ran.ruf
-            blobs+&+lat.ran.ruf
-        ==
-        dot+&+ruf
-    ==
   ==
 ::
 ++  load
@@ -3730,6 +3766,8 @@
   ^-  (unit (unit cage))
   ?.  ?=(%& -.why)  ~
   =*  his  p.why
+  ?:  &(=(ren %$) =(tyl /whey))
+    ``mass+!>(whey)
   ::  ~&  scry+[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
   ::  =-  ~&  %scry-done  -
   =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
@@ -3834,8 +3872,7 @@
       ~(tap in ducts)
     =/  cancel-moves=(list move)
       %+  turn  cancel-ducts
-      |=  =duct
-      [duct %slip %b %drip !>([%writ ~])]
+      |=(=duct [duct %give %writ ~])
     ::  delete local state of foreign desk
     ::
     =.  hoy.ruf  (~(del by hoy.ruf) who)
@@ -3892,4 +3929,23 @@
   |=  rant
   ^-  rand
   [p q [p q.q]:r]
+::  +whey: produce memory usage report
+::
+++  whey
+  ^-  (list mass)
+  =/  domestic
+    %+  turn  (sort ~(tap by dos.rom.ruf) aor)
+    |=  [=desk =dojo]
+    :+  desk  %|
+    :~  ankh+&+ank.dom.dojo
+        mime+&+mim.dom.dojo
+        ford+&+fod.dom.dojo
+    ==
+  :~  domestic+|+domestic
+      foreign+&+hoy.ruf
+      :+  %object-store  %|
+      :~  commits+&+hut.ran.ruf
+          blobs+&+lat.ran.ruf
+      ==
+  ==
 --

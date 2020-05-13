@@ -6206,17 +6206,6 @@
     =.  state.ax  (wipe:this-event percent-to-remove.task)
     ::
     [~ ford-gate]
-  ::
-      %wegh
-    :_  ford-gate
-    :_  ~
-    :^  duct  %give  %mass
-    ^-  mass
-    :+  %ford  %|
-    :~  builds+&+builds.state.ax
-        compiler-cache+&+compiler-cache.state.ax
-        dot+&+ax
-    ==
   ==
 ::  +take: receive a response from another vane
 ::
@@ -6361,6 +6350,11 @@
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  *
-  [~ ~]
+  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
+  ^-  (unit (unit cage))
+  ?.  ?=(%& -.why)  ~
+  =*  his  p.why
+  ?:  &(=(ren %$) =(tyl /whey))
+    ``mass+!>([state+&+ax]~)
+  ~
 --
