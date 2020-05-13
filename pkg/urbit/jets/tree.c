@@ -1373,6 +1373,10 @@ static c3_c* _141_two_turn_ha[] = {
   "cd4a292788acd440d6ace689f82fa999b342bb749585bc0e173098529bb75fb8",
   0
 };
+
+static u3j_harm _141_two_welp_a[] = {{".2", u3wb_welp, c3y}, {}};
+static u3j_harm _141_two_zing_a[] = {{".2", u3wb_zing, c3y}, {}};
+
 static u3j_harm _141_two_weld_a[] = {{".2", u3wb_weld, c3y}, {}};
 static c3_c* _141_two_weld_ha[] = {
   "d855628821d57392f575c5da000c7326eaaa19e08cda967a4772859269669df2",
@@ -1735,6 +1739,8 @@ static u3j_core _141_two_d[] =
   { "sort", 7, _141_two_sort_a, 0, _141_two_sort_ha },
   { "turn", 7, _141_two_turn_a, 0, _141_two_turn_ha },
   { "weld", 7, _141_two_weld_a, 0, _141_two_weld_ha },
+  { "welp", 7, _141_two_welp_a },
+  { "zing", 7, _141_two_zing_a },
 
   { "bex", 7, _141_two_bex_a, 0, _141_two_bex_ha },
   { "cat", 7, _141_two_cat_a, 0, _141_two_cat_ha },

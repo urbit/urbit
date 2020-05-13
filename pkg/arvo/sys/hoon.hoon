@@ -778,6 +778,7 @@
   (weld (scag b a) [c (slag b a)])
 ::
 ++  welp                                                ::  faceless weld
+  ~/  %welp
   =|  {* *}
   |@
   ++  $
@@ -787,6 +788,7 @@
   --
 ::
 ++  zing                                                ::  promote
+  ~/  %zing
   =|  *
   |@
   ++  $
