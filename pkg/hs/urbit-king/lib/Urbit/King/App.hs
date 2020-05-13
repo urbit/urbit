@@ -3,7 +3,7 @@
 -}
 module Urbit.King.App
     ( App
-    , runApp
+    , runAppStderr
     , runAppLogFile
     , runAppNoLog
     , runPierApp
@@ -39,8 +39,8 @@ instance HasLogFunc App where
 instance HasStderrLogFunc App where
     stderrLogFuncL = appStderrLogFunc
 
-runApp :: RIO App a -> IO a
-runApp inner = do
+runAppStderr :: RIO App a -> IO a
+runAppStderr inner = do
     logOptions <- logOptionsHandle stderr True
         <&> setLogUseTime True
         <&> setLogUseLoc False
@@ -105,36 +105,14 @@ instance HasNetworkConfig PierApp where
 instance HasConfigDir PierApp where
     configDirL = pierAppPierConfig . pcPierPath
 
-runPierApp :: PierConfig -> NetworkConfig -> Bool -> RIO PierApp a -> IO a
-runPierApp pierConfig networkConfig daemon inner =
-    if daemon
-    then execStderr
-    else withLogFileHandle execFile
-  where
-    execStderr = do
-        logOptions <- logOptionsHandle stderr True
-            <&> setLogUseTime True
-            <&> setLogUseLoc False
+runPierApp :: PierConfig -> NetworkConfig -> RIO PierApp a -> RIO App a
+runPierApp pierConfig networkConfig action = do
+  app <- ask
 
-        withLogFunc logOptions $ \logFunc ->
-            go $ PierApp { _pierAppLogFunc = logFunc
-                         , _pierAppStderrLogFunc = logFunc
-                         , _pierAppPierConfig = pierConfig
-                         , _pierAppNetworkConfig = networkConfig
-                         }
+  let pierApp = PierApp { _pierAppLogFunc       = app ^. logFuncL
+                        , _pierAppStderrLogFunc = app ^. stderrLogFuncL
+                        , _pierAppPierConfig    = pierConfig
+                        , _pierAppNetworkConfig = networkConfig
+                        }
 
-    execFile logHandle = do
-        logOptions <- logOptionsHandle logHandle True
-            <&> setLogUseTime True
-            <&> setLogUseLoc False
-        logStderrOptions <- logOptionsHandle stderr True
-            <&> setLogUseTime False
-            <&> setLogUseLoc False
-        withLogFunc logStderrOptions $ \logStderr ->
-          withLogFunc logOptions $ \logFunc ->
-              go $ PierApp { _pierAppLogFunc = logFunc
-                           , _pierAppStderrLogFunc = logStderr
-                           , _pierAppPierConfig = pierConfig
-                           , _pierAppNetworkConfig = networkConfig
-                           }
-    go app = runRIO app inner
+  io (runRIO pierApp action)

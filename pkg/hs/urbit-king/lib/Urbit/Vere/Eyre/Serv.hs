@@ -149,11 +149,12 @@ openFreePort hos = do
 retry :: HasLogFunc e => RIO e (Either IOError a) -> RIO e a
 retry act = act >>= \case
   Right res -> pure res
-  Left exn  -> do
-    logError (displayShow ("EYRE", "Failed to open ports.", exn))
-    logError (displayShow ("EYRE", "Waiting 250ms then trying again."))
-    threadDelay 250_000
+  Left  exn -> do
+    logTr ctx ("Failed to open ports. Waiting 5s, then trying again.", exn)
+    threadDelay 5_000_000
     retry act
+ where
+  ctx = ["EYRE", "SERV", "retry"]
 
 tryOpenChoices
   :: HasLogFunc e
@@ -176,11 +177,18 @@ tryOpenChoices hos = go
 tryOpenAny
   :: HasLogFunc e => String -> RIO e (Either IOError (W.Port, Net.Socket))
 tryOpenAny hos = do
-  logTrace (displayShow ("EYRE", "Asking the OS for any free port."))
+  let ctx = ["EYRE", "SERV", "tryOpenAny"]
+  logTr ctx "Asking the OS for any free port."
   io (openFreePort hos) >>= \case
-    Left exn -> pure (Left exn)
-    Right (p,s) -> do
-      pure (Right (p,s))
+    Left  exn    -> pure (Left exn)
+    Right (p, s) -> do
+      pure (Right (p, s))
+
+logTr :: (HasLogFunc e, Show a) => [Text] -> a -> RIO e ()
+logTr ctx msg = logTrace (prefix <> suffix)
+ where
+  prefix = display (concat $ fmap (<> ": ") ctx)
+  suffix = displayShow msg
 
 forceOpenSocket
   :: forall e
@@ -193,11 +201,12 @@ forceOpenSocket hos por = mkRAcquire opn kil
   kil = io . Net.close . snd
 
   opn = do
-    logTrace (displayShow ("EYRE", "SERV", "forceOpenSocket", hos, por))
+    let ctx = ["EYRE", "SERV", "forceOpenSocket"]
+    logTr ctx (hos, por)
     (p, s) <- retry $ case por of
       SPAnyPort    -> tryOpenAny bind
       SPChoices ps -> tryOpenChoices bind ps
-    rio $ logTrace $ displayShow ("EYRE", "Opened port.", p)
+    logTr ctx ("Opened port.", p)
     pure (p, s)
 
   bind = case hos of
@@ -221,14 +230,15 @@ onSniHdr
   :: HasLogFunc e => e -> MultiTlsConfig -> Maybe String -> IO Credentials
 onSniHdr env (MTC mtls) mHos = do
   tabl <- atomically (readTVar mtls)
-  runRIO env $ logTrace $ displayShow $ ("EYRE", "HTTPS", "SNI", tabl, mHos)
+  runRIO env $ logTr ctx (tabl, mHos)
   ship <- hostShip (encodeUtf8 . pack <$> mHos)
-  runRIO env $ logTrace $ displayShow $ ("EYRE", "HTTPS", "SNI", ship)
+  runRIO env $ logTr ctx ship
   tcfg <- lookup ship tabl & maybe (notRunning ship) (pure . snd)
-  runRIO env $ logTrace $ displayShow $ ("EYRE", "HTTPS", "SNI", tcfg)
+  runRIO env $ logTr ctx tcfg
   pure (Credentials [tcfg])
  where
   notRunning ship = error ("Ship not running: ~" <> show ship)
+  ctx = ["EYRE", "HTTPS", "SNI"]
 
 startServer
   :: HasLogFunc e
@@ -276,15 +286,19 @@ startServer typ hos por sok red vLive = do
 
       let sni = def { onServerNameIndication = onSniHdr envir mtls }
 
-      let tls = (W.tlsSettingsChainMemory tcCerti tcChain tcPrKey) { W.tlsServerHooks = sni }
+      let tlsSing = (W.tlsSettingsChainMemory tcCerti tcChain tcPrKey)
+      let tlsMany = tlsSing { W.tlsServerHooks = sni }
 
-      let app = \req resp -> do
-            runRIO envir $ logTrace $ displayShow ("EYRE", "HTTPS", "REQ")
-            who <- reqShip req
-            runRIO envir $ logTrace $ displayShow ("EYRE", "HTTPS", "REQ", who)
-            runAppl who (rcReq api who) (rcKil api who) req resp
+      let ctx = ["EYRE", "HTTPS", "REQ"]
 
-      io (W.runTLSSocket tls opts sok app)
+      let
+        app = \req resp -> do
+          runRIO envir $ logTr ctx "Got request"
+          who <- reqShip req
+          runRIO envir $ logTr ctx ("Parsed HOST", who)
+          runAppl who (rcReq api who) (rcKil api who) req resp
+
+      io (W.runTLSSocket tlsMany opts sok app)
 
 
 --------------------------------------------------------------------------------
