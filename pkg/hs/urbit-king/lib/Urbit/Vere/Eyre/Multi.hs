@@ -74,7 +74,7 @@ multiEyre :: HasLogFunc e => MultiEyreConf -> RIO e MultiEyreApi
 multiEyre conf@MultiEyreConf {..} = do
   logTrace (displayShow ("EYRE", "MULTI", conf))
 
-  vLive <- newTVarIO emptyLiveReqs
+  vLive <- io emptyLiveReqs >>= newTVarIO
   vPlan <- newTVarIO mempty
   vCanc <- newTVarIO (mempty :: Map Ship (Ship -> Word64 -> STM ()))
   vTlsC <- newTVarIO mempty

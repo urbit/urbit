@@ -30,6 +30,7 @@ import Data.Binary.Builder (Builder, fromByteString)
 import Data.Bits           (shiftL, (.|.))
 import Data.Conduit        (ConduitT, Flush(Chunk, Flush), yield)
 import Network.Socket      (SockAddr(..))
+import System.Random       (newStdGen, randoms)
 import Urbit.Arvo          (Address(..), Ipv4(..), Ipv6(..), Method)
 
 import qualified Network.HTTP.Types  as H
@@ -52,7 +53,7 @@ data RespApi = RespApi
   }
 
 data LiveReqs = LiveReqs
-  { nextReqId  :: Word64
+  { reqIdSuply :: [Word64]
   , activeReqs :: Map Word64 (Ship, RespApi)
   }
 
@@ -67,8 +68,10 @@ data ReqInfo = ReqInfo
 
 -- Live Requests Table -- All Requests Still Waiting for Responses -------------
 
-emptyLiveReqs :: LiveReqs
-emptyLiveReqs = LiveReqs 1 mempty
+emptyLiveReqs :: IO LiveReqs
+emptyLiveReqs = io $ do
+  gen <- newStdGen
+  pure (LiveReqs (randoms gen) mempty)
 
 routeRespAct :: Ship -> TVar LiveReqs -> Word64 -> RespAct -> STM Bool
 routeRespAct who vLiv reqId act =
@@ -83,14 +86,28 @@ rmLiveReq :: TVar LiveReqs -> Word64 -> STM ()
 rmLiveReq var reqId = modifyTVar' var
   $ \liv -> liv { activeReqs = deleteMap reqId (activeReqs liv) }
 
+allocateReqId :: TVar LiveReqs -> STM Word64
+allocateReqId var = do
+  LiveReqs supply tbl <- readTVar var
+
+  let loop :: [Word64] -> (Word64, [Word64])
+      loop []     = error "impossible"
+      loop (x:xs) | member x tbl = loop xs
+      loop (x:xs) | otherwise    = (x, xs)
+
+  let (fresh, supply') = loop supply
+  writeTVar var (LiveReqs supply' tbl)
+  pure fresh
+
 newLiveReq :: Ship -> TVar LiveReqs -> STM (Word64, STM RespAct)
 newLiveReq who var = do
-  liv <- readTVar var
   tmv <- newTQueue
   kil <- newEmptyTMVar
+  nex <- allocateReqId var
 
-  let waitAct    = (<|>) (readTMVar kil $> RADone) (readTQueue tmv)
-      (nex, act) = (nextReqId liv, activeReqs liv)
+  LiveReqs sup tbl <- readTVar var
+
+  let waitAct = (<|>) (readTMVar kil $> RADone) (readTQueue tmv)
       respApi    = RespApi
         { raKil = putTMVar kil ()
         , raAct = \act -> tryReadTMVar kil >>= \case
@@ -99,7 +116,7 @@ newLiveReq who var = do
         }
 
 
-  writeTVar var (LiveReqs (nex + 1) (insertMap nex (who, respApi) act))
+  writeTVar var (LiveReqs sup (insertMap nex (who, respApi) tbl))
 
   pure (nex, waitAct)
 
