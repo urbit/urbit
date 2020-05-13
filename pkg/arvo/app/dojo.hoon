@@ -724,7 +724,6 @@
           (dy-vase p.u.val)
         %+  slap
           (with-faces gat+gat rep+(with-faces soz) ~)
-        %-  (slog >%try< (sell (slot 27 gat)) ~)
         :+  %cncb  ~[%gat]
         ^-  (list [wing hoon])
         %+  turn  soz
