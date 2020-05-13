@@ -33,7 +33,6 @@ export default class Store {
         chat: {},
         contacts: {}
       },
-      selectedGroups: [],
       sidebarShown: true,
       pendingMessages: new Map([]),
       chatInitialized: false,

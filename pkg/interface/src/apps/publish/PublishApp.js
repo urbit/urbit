@@ -51,11 +51,11 @@ export default class PublishApp extends React.Component {
   }
 
   render() {
-    const { state } = this;
+    const { state, props } = this;
 
     const contacts = state.contacts ? state.contacts : {};
     const associations = state.associations ? state.associations : { contacts: {} };
-    const selectedGroups = state.selectedGroups ? state.selectedGroups : [];
+    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
     const unreadTotal = _.chain(state.notebooks)
       .values()

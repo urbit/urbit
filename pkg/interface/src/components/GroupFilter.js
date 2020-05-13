@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import api from '../lib/api';
 
 export default class GroupFilter extends Component {
   constructor(props) {
@@ -25,7 +24,7 @@ export default class GroupFilter extends Component {
     const selected = localStorage.getItem('urbit-selectedGroups');
     if (selected) {
       this.setState({ selected: JSON.parse(selected) }, (() => {
-        api.setSelected(this.state.selected);
+        this.props.api.setSelected(this.state.selected);
       }));
     }
   }
@@ -94,7 +93,7 @@ export default class GroupFilter extends Component {
       selected: selected,
       results: []
     }, (() => {
-        window.api.setSelected(this.state.selected);
+        this.props.api.setSelected(this.state.selected);
         localStorage.setItem('urbit-selectedGroups', JSON.stringify(this.state.selected));
     }));
   }
@@ -105,7 +104,7 @@ export default class GroupFilter extends Component {
       return e !== group;
     });
     this.setState({ selected: selected }, (() => {
-      window.api.setSelected(this.state.selected);
+      this.props.api.setSelected(this.state.selected);
       localStorage.setItem('urbit-selectedGroups', JSON.stringify(this.state.selected));
     }));
   }

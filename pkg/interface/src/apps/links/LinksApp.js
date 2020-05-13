@@ -50,7 +50,7 @@ export class LinksApp extends Component {
   }
 
   render() {
-    const { state } = this;
+    const { state, props } = this;
 
     const contacts = state.contacts ? state.contacts : {};
     const groups = state.groups ? state.groups : {};
@@ -75,7 +75,7 @@ export class LinksApp extends Component {
     const invites = state.invites ?
       state.invites : {};
 
-    const selectedGroups = state.selectedGroups ? state.selectedGroups : [];
+    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
     return (
       <Switch>
