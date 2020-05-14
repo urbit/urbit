@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Spinner } from '../components/lib/icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { msToDa, renderDuct } from '../lib/util';
 import urbitOb from 'urbit-ob';

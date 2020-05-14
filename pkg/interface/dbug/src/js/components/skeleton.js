@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 import classnames from 'classnames';
-import { HeaderBar } from './lib/header-bar';
-import { ChannelsSidebar } from './lib/channel-sidebar';
 import { makeRoutePath } from '../lib/util';
 
 class SidebarItem extends Component {
