@@ -7,7 +7,7 @@ import { api } from '/api';
 import { subscription } from '/subscription';
 import { store } from '/store';
 import { Skeleton } from '/components/skeleton';
-import { MessageScreen } from '/components/lib/message-screen';
+import { MessageScreen } from '/components/message-screen';
 import { Apps } from '/views/apps';
 import { Spider } from '/views/spider';
 import { Ames } from '/views/ames';
