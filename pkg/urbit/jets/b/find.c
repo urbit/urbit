@@ -9,7 +9,7 @@
 u3_noun
 u3qb_find(u3_noun nedl, u3_noun hstk)
 {
-  c3_w i = 0;
+  u3_atom i = 0;
 
   while ( 1 ) {
     if ( u3_nul == nedl) {
