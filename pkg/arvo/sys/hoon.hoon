@@ -6373,11 +6373,11 @@
           [%6 test=* yes=* no=*]
         =/  result  $(formula test.formula)
         ?.  ?=(%0 -.result)  result
-        ?:  =(& product.result)
-          $(formula yes.formula)
-        ?:  =(| product.result)
-          $(formula no.formula)
-        [%2 trace]
+        ?+  product.result
+              [%2 trace]
+          %&  $(formula yes.formula)
+          %|  $(formula no.formula)
+        ==
       ::
           [%7 subject=* next=*]
         =/  subject  $(formula subject.formula)
