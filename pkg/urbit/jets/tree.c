@@ -607,6 +607,19 @@ static c3_c* _141_qua_trip_ha[] = {
   0
 };
 
+static u3j_harm _141_qua_slaw_a[] = {{".2", u3we_slaw}, {}};
+static c3_c* _141_qua_slaw_ha[] = {
+  0
+};
+static u3j_harm _141_qua_scot_a[] = {{".2", u3we_scot}, {}};
+static c3_c* _141_qua_scot_ha[] = {
+  0
+};
+static u3j_harm _141_qua_scow_a[] = {{".2", u3we_scow}, {}};
+static c3_c* _141_qua_scow_ha[] = {
+  0
+};
+
 static u3j_harm _141_qua__po_ind_a[] = {{".2", u3wcp_ind}, {}};
 static c3_c* _141_qua__po_ind_ha[] = {
   "95bbe9867dbbd1b9ce12671d64cf7b1dee8d987c6770955a83c73291c4537a61",
@@ -883,6 +896,10 @@ static u3j_core _141_qua_d[] =
 
   { "mink", 7, _141_qua_mink_a, 0, _141_qua_mink_ha },
   { "mule", 7, _141_qua_mule_a, 0, _141_qua_mule_ha },
+
+  { "scot", 7, _141_qua_scot_a, 0, _141_qua_scot_ha },
+  { "scow", 7, _141_qua_scow_a, 0, _141_qua_scow_ha },
+  { "slaw", 7, _141_qua_slaw_a, 0, _141_qua_slaw_ha },
   {}
 };
 static c3_c* _141_qua_ha[] = {
