@@ -6,13 +6,15 @@
 =,  gall
 =>
 |%
-::  +move: Arvo-level move
++|  %main
+::
+::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  +state-5: overall gall state, versioned
+::  $state-6: overall gall state, versioned
 ::
-+$  state-5  [%5 state]
-::  +state: overall gall state
++$  state-6  [%6 state]
+::  $state: overall gall state
 ::
 ::    system-duct: TODO document
 ::    outstanding: outstanding request queue
@@ -27,19 +29,19 @@
       yokes=(map term yoke)
       blocked=(map term (qeu blocked-move))
   ==
-::  +watches: subscribers and publications
+::  $watches: subscribers and publications
 ::
 ::    TODO: rename this, to $ties?
 ::    TODO: rename $boat and $bitt and document
 ::
 +$  watches  [inbound=bitt outbound=boat]
-::  +routes: new cuff; TODO: document
+::  $routes: new cuff; TODO: document
 ::
 +$  routes
   $:  disclosing=(unit (set ship))
       attributing=ship
   ==
-::  +yoke: agent runner state
+::  $yoke: agent runner state
 ::
 ::    control-duct: TODO document
 ::    live: is this agent running? TODO document better
@@ -58,17 +60,17 @@
       =beak
       marks=(map duct mark)
   ==
-:: +blocked-move: enqueued move to an agent
+::  $blocked-move: enqueued move to an agent
 ::
 +$  blocked-move  [=duct =routes =deal]
-:: +stats: statistics
+::  $stats: statistics
 ::
-::   change: how many moves this agent has processed
-::   eny: entropy
-::   time: date of current event processing
+::    change: how many moves this agent has processed
+::    eny: entropy
+::    time: date of current event processing
 ::
 +$  stats  [change=@ud eny=@uvJ time=@da]
-::  +ames-response: network response message (%boon)
+::  $ames-response: network response message (%boon)
 ::
 ::    %d: fact
 ::    %x: quit
@@ -77,7 +79,7 @@
   $%  [%d =mark noun=*]
       [%x ~]
   ==
-::  +ames-request: network request (%plea)
+::  $ames-request: network request (%plea)
 ::
 ::    %m: poke
 ::    %l: watch-as
@@ -90,7 +92,7 @@
       [%s =path]
       [%u ~]
   ==
-::  +remote-request: kinds of agent actions that can cross the network
+::  $remote-request: kinds of agent actions that can cross the network
 ::
 ::    Used in wires to identify the kind of remote request we made.
 ::    Bijective with the tags of $ames-request.
@@ -102,14 +104,570 @@
       %leave
       %missing
   ==
+::  |migrate: data structures for upgrades
+::
++|  %migrate
+::
+::  $chrysalis: pupal gall state, until agents have reloaded
+::
++$  chrysalis
+  $:  queue=(qeu bolus)
+      =spore
+  ==
+::  $bolus: incoming move to a pupa, enqueued in a $chrysalis
+::
++$  bolus
+  $%  [%call =duct =task:able]
+      [%take =wire =duct sign=sign-arvo]
+  ==
+::  $spore: structures for update, produced by +stay
+::
++$  spore
+  $:  %6
+      system-duct=duct
+      outstanding=(map [wire duct] (qeu remote-request))
+      contacts=(set ship)
+      eggs=(map term egg)
+      blocked=(map term (qeu blocked-move))
+  ==
+::  $egg: migratory agent state
+::
++$  egg
+  $:  control-duct=duct
+      live=?
+      =stats
+      =watches
+      old-state=vase
+      =beak
+      marks=(map duct mark)
+  ==
 --
-=|  state=state-5
+::  pupal gall core, on upgrade
+::
+=<  =*  adult-gate  .
+    =|  sac=chrysalis
+    |=  [our=ship now=@da eny=@uvJ ski=sley]
+    =*  pupal-gate  .
+    =*  adult-core  (adult-gate +<)
+    |%
+    ++  call
+      |=  [=duct dud=(unit goof) type=* wrapped-task=(hobo task:able)]
+      ?^  dud
+        (mean >mote.u.dud< tang.u.dud)
+      ::
+      =/  task  ((harden task:able:gall) wrapped-task)
+      ~>  %slog.[0 leaf+"gall: pupa call {<-.task>}"]
+      =.  queue.sac  (~(put to queue.sac) [%call duct task])
+      [*(list move) pupal-gate]
+    ++  scry  scry:adult-core
+    ++  stay  ~|(%stay-pupa !!)
+    ++  take
+      |=  [=wire =duct dud=(unit goof) type=* sign=sign-arvo]
+      ?^  dud
+        ~>  %slog.[0 leaf+"gall: pupa take dud"]
+        (mean >mote.u.dud< tang.u.dud)
+      ?.  =(/sys/lyv wire)
+        ~>  %slog.[0 leaf+"gall: pupa take {(spud wire)} {<[- +<]:sign>}"]
+        =.  queue.sac  (~(put to queue.sac) [%take wire duct sign])
+        [*(list move) pupal-gate]
+      ~>  %slog.[0 leaf+"gall: pupa exiting chrysalis"]
+      =/  adult  adult-core
+      =.  state.adult
+        [%6 system-duct outstanding contacts yokes=~ blocked]:spore.sac
+      =/  mo-core  (mo-abed:mo:adult duct)
+      =.  mo-core
+        =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore.sac)
+        |-  ^+  mo-core
+        ?~  apps  mo-core
+        ~>  %slog.[0 leaf+"gall: pupa upgrading {<dap.i.apps>}"]
+        =/  ap-core  (ap-abut:ap:mo-core i.apps)
+        =^  tan  ap-core  (ap-install:ap-core `old-state.egg.i.apps)
+        ?^  tan
+          (mean u.tan)
+        $(apps t.apps, mo-core ap-abet:ap-core)
+      =.  mo-core  (mo-subscribe-to-agent-builds:mo-core now)
+      =^  moves  adult-gate  mo-abet:mo-core
+      =.  moves
+        %+  weld  moves
+        %+  turn  ~(tap to queue.sac)
+        |=  mov=bolus
+        ^-  move
+        ~&  gall-dequeue+-.mov
+        ?-  -.mov
+          %call  [duct.mov %slip %g task.mov]
+          %take  [duct.mov %pass wire.mov %b %huck !>(sign.mov)]
+        ==
+      ~>  %slog.[0 leaf+"gall: metamorphosis"]
+      [moves adult-gate]
+    ::
+    ++  load
+      |^
+      |=  old=all-state
+      =.  spore.sac  (upgrade old)
+      ?.  =(~ eggs.spore.sac)
+        pupal-gate
+      adult-gate(state spore.sac(eggs *(map term yoke)))
+      ::
+      ++  upgrade
+        |=  =all-state
+        ^-  spore
+        ::
+        =?  all-state  ?=(%0 -.all-state)
+          (state-0-to-1 all-state)
+        ::
+        =?  all-state  ?=(%1 -.all-state)
+          (state-1-to-2 all-state)
+        ::
+        =?  all-state  ?=(%2 -.all-state)
+          (state-2-to-3 all-state)
+        ::
+        =?  all-state  ?=(%3 -.all-state)
+          (state-3-to-4 all-state)
+        ::
+        =?  all-state  ?=(%4 -.all-state)
+          (state-4-to-5 all-state)
+        ::
+        =?  all-state  ?=(%5 -.all-state)
+          (state-5-to-spore-6 all-state)
+        ::
+        ?>  ?=(%6 -.all-state)
+        all-state
+      ::  +all-state: upgrade path
+      ::
+      ++  all-state  $%(state-0 state-1 state-2 state-3 state-4 state-5 spore)
+      ::
+      ++  state-5-to-spore-6
+        |=  =state-5
+        ^-  spore
+        =;  eggs=(map term egg)  state-5(- %6, yokes.agents-5 eggs)
+        %-  ~(run by yokes.agents-5.state-5)
+        |=(=yoke `egg`yoke(agent on-save:agent.yoke))
+      ::
+      ++  state-5
+        $:  %5
+            =agents-5
+        ==
+      ::
+      ++  agents-5
+        $:  system-duct=duct
+            outstanding=(map [wire duct] (qeu remote-request))
+            contacts=(set ship)
+            yokes=(map term yoke-5)
+            blocked=(map term (qeu blocked-move))
+        ==
+      ::
+      ++  yoke-5
+        $:  control-duct=duct
+            live=?
+            =stats
+            =watches
+            =agent
+            =beak
+            marks=(map duct mark)
+        ==
+      ::
+      ++  state-4-to-5
+        |=  =state-4
+        ^-  state-5
+        %=    state-4
+            -  %5
+            running.agents-4
+          (~(run by running.agents-4.state-4) |=(yoke-3 +<+))
+        ==
+      ::
+      ++  state-4
+        $:  %4
+            agents-4=agents-3  ::  agents-3 is unchanged in state-4
+        ==
+      ::
+      ++  state-3-to-4
+        |=  =state-3
+        ^-  state-4
+        %=    state-3
+            -  %4
+            outstanding.agents-3  ~
+        ==
+      ::
+      ++  state-3
+        $:  %3
+            =agents-3
+        ==
+      ::
+      ++  agents-3
+        $:  system-duct=duct
+            outstanding=(map [wire duct] (qeu remote-request))
+            contacts=(set ship)
+            running=(map term yoke-3)
+            blocked=(map term (qeu blocked-move))
+        ==
+      ::
+      ++  yoke-3
+        $:  cache=worm
+            control-duct=duct
+            live=?
+            =stats
+            =watches
+            =agent
+            =beak
+            marks=(map duct mark)
+        ==
+      ::
+      ++  state-2-to-3
+        |=  =state-2
+        ^-  state-3
+        %=    state-2
+            -  %3
+            running.agents-2
+          %-  ~(run by running.agents-2.state-2)
+          |=  =yoke-2
+          ^-  yoke-3
+          %=  yoke-2
+            agent-2  (agent-2-to-3 agent-2.yoke-2)
+          ==
+        ==
+      ::
+      ++  agent-2-to-3
+        |=  =agent-2
+        ^-  agent
+        =>  |%
+            ++  cards-2-to-3
+              |=  cards=(list card:^agent-2)
+              ^-  (list card:agent)
+              %+  turn  cards
+              |=  =card:^agent-2
+              ^-  card:agent
+              ?.  ?=([%give ?(%fact %kick) *] card)  card
+              %=(card path.p (drop path.p.card))
+            --
+        |_  =bowl:gall
+        +*  this  .
+            pass  ~(. agent-2 bowl)
+        ++  on-init
+          =^  cards  agent-2  on-init:pass
+          [(cards-2-to-3 cards) this]
+        ::
+        ++  on-save
+          on-save:pass
+        ::
+        ++  on-load
+          |=  old-state=vase
+          =^  cards  agent-2  (on-load:pass old-state)
+          [(cards-2-to-3 cards) this]
+        ::
+        ++  on-poke
+          |=  [=mark =vase]
+          =^  cards  agent-2  (on-poke:pass mark vase)
+          [(cards-2-to-3 cards) this]
+        ::
+        ++  on-watch
+          |=  =path
+          =^  cards  agent-2  (on-watch:pass path)
+          [(cards-2-to-3 cards) this]
+        ::
+        ++  on-leave
+          |=  =path
+          =^  cards  agent-2  (on-leave:pass path)
+          [(cards-2-to-3 cards) this]
+        ::
+        ++  on-peek
+          |=  =path
+          (on-peek:pass path)
+        ::
+        ++  on-agent
+          |=  [=wire =sign:agent:gall]
+          =^  cards  agent-2  (on-agent:pass wire sign)
+          [(cards-2-to-3 cards) this]
+        ::
+        ++  on-arvo
+          |=  [=wire =sign-arvo]
+          =^  cards  agent-2  (on-arvo:pass wire sign-arvo)
+          [(cards-2-to-3 cards) this]
+        ::
+        ++  on-fail
+          |=  [=term =tang]
+          =^  cards  agent-2  (on-fail:pass term tang)
+          [(cards-2-to-3 cards) this]
+        --
+      ::
+      ++  state-2
+        $:  %2
+            =agents-2
+        ==
+      ::
+      ++  agents-2
+        $:  system-duct=duct
+            outstanding=(map [wire duct] (qeu remote-request))
+            contacts=(set ship)
+            running=(map term yoke-2)
+            blocked=(map term (qeu blocked-move))
+        ==
+      ::
+      ++  yoke-2
+        $:  cache=worm
+            control-duct=duct
+            live=?
+            =stats
+            =watches
+            =agent-2
+            =beak
+            marks=(map duct mark)
+        ==
+      ::
+      ++  agent-2
+        =<  form
+        |%
+        +$  step  (quip card form)
+        +$  card  (wind note gift)
+        +$  note  note:agent
+        +$  task  task:agent
+        +$  sign  sign:agent
+        +$  gift
+          $%  [%fact path=(unit path) =cage]
+              [%kick path=(unit path) ship=(unit ship)]
+              [%watch-ack p=(unit tang)]
+              [%poke-ack p=(unit tang)]
+          ==
+        ++  form
+          $_  ^|
+          |_  bowl
+          ++  on-init
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-save
+            *vase
+          ::
+          ++  on-load
+            |~  old-state=vase
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-poke
+            |~  [mark vase]
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-watch
+            |~  path
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-leave
+            |~  path
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-peek
+            |~  path
+            *(unit (unit cage))
+          ::
+          ++  on-agent
+            |~  [wire sign]
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-arvo
+            |~  [wire sign-arvo]
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-fail
+            |~  [term tang]
+            *(quip card _^|(..on-init))
+          --
+        --
+      ::
+      ++  state-1-to-2
+        |=  =state-1
+        ^-  state-2
+        %=    state-1
+            -           %2
+            +.agents-1  [~ +.agents-1.state-1]
+        ==
+      ::
+      ++  state-1
+        $:  %1
+            =agents-1
+        ==
+      ::
+      ++  agents-1
+        $:  system-duct=duct
+            contacts=(set ship)
+            running=(map term yoke-2)
+            blocked=(map term (qeu blocked-move))
+        ==
+      ::
+      ++  state-0-to-1
+        |=  =state-0
+        ^-  state-1
+        %=    state-0
+            -  %1
+            running.agents-0
+          %-  ~(run by running.agents-0.state-0)
+          |=  =yoke-0
+          ^-  yoke-2
+          %=  yoke-0
+            agent-0  (agent-0-to-1 agent-0.yoke-0)
+          ==
+        ==
+      ::
+      ++  agent-0-to-1
+        |=  =agent-0
+        ^-  agent-2
+        |_  =bowl:gall
+        +*  this  .
+            pass  ~(. agent-0 bowl)
+        ++  on-init
+          =^  cards  agent-0  on-init:pass
+          [cards this]
+        ::
+        ++  on-save
+          on-save:pass
+        ::
+        ++  on-load
+          |=  old-state=vase
+          =^  cards  agent-0  (on-load:pass old-state)
+          [cards this]
+        ::
+        ++  on-poke
+          |=  [=mark =vase]
+          =^  cards  agent-0  (on-poke:pass mark vase)
+          [cards this]
+        ::
+        ++  on-watch
+          |=  =path
+          =^  cards  agent-0  (on-watch:pass path)
+          [cards this]
+        ::
+        ++  on-leave
+          |=  =path
+          =^  cards  agent-0  (on-leave:pass path)
+          [cards this]
+        ::
+        ++  on-peek
+          |=  =path
+          (on-peek:pass path)
+        ::
+        ++  on-agent
+          |=  [=wire =sign:agent:gall]
+          =^  cards  agent-0  (on-agent:pass wire sign)
+          [cards this]
+        ::
+        ++  on-arvo
+          |=  [=wire =sign-arvo]
+          ?<  ?=([%d %pack *] sign-arvo)
+          =^  cards  agent-0  (on-arvo:pass wire `sign-arvo-0`sign-arvo)
+          [cards this]
+        ::
+        ++  on-fail
+          |=  [=term =tang]
+          =^  cards  agent-0  (on-fail:pass term tang)
+          [cards this]
+        --
+      ::
+      ++  state-0
+        $:  %0
+            =agents-0
+        ==
+      ::
+      ++  agents-0
+        $:  system-duct=duct
+            contacts=(set ship)
+            running=(map term yoke-0)
+            blocked=(map term (qeu blocked-move))
+        ==
+      ::
+      ++  yoke-0
+        $:  cache=worm
+            control-duct=duct
+            live=?
+            =stats
+            =watches
+            =agent-0
+            =beak
+            marks=(map duct mark)
+        ==
+      ::
+      ++  agent-0
+        =<  form
+        |%
+        +$  step  (quip card form)
+        +$  card  (wind note gift)
+        +$  note  note:agent
+        +$  task  task:agent
+        +$  gift  gift:agent-2
+        +$  sign  sign:agent
+        ++  form
+          $_  ^|
+          |_  bowl
+          ++  on-init
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-save
+            *vase
+          ::
+          ++  on-load
+            |~  old-state=vase
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-poke
+            |~  [mark vase]
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-watch
+            |~  path
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-leave
+            |~  path
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-peek
+            |~  path
+            *(unit (unit cage))
+          ::
+          ++  on-agent
+            |~  [wire sign]
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-arvo
+            |~  [wire sign-arvo-0]
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-fail
+            |~  [term tang]
+            *(quip card _^|(..on-init))
+          --
+        --
+      ::
+      ++  sign-arvo-0
+        $%  {$a gift:able:ames}
+            $:  $b
+                $%  gift:able:behn
+                    $>(%wris gift:able:clay)
+                    $>(%writ gift:able:clay)
+                    $>(%mere gift:able:clay)
+                    $>(%unto gift:able:gall)
+                ==
+            ==
+            {$c gift:able:clay}
+            {$d $<(%pack gift:able:dill)}
+            {$f gift:able:ford}
+            [%e gift:able:eyre]
+            {$g gift:able:gall}
+            [%i gift:able:iris]
+            {$j gift:able:jael}
+        ==
+      --
+    --
+::  adult gall vane interface, for type compatibility with pupa
+::
+=|  state=state-6
 |=  [our=ship now=@da eny=@uvJ ski=sley]
+=*  gall-payload  .
+=<  ~%  %gall-wrap  ..mo  ~
+    |%
+    ++  call  ^call
+    ++  load  ^load
+    ++  scry  ^scry
+    ++  stay  ^stay
+    ++  take  ^take
+    --
 ~%  %gall-top  ..is  ~
 |%
-::  +gall-payload:  gall payload
-::
-++  gall-payload  +
 ::  +mo: Arvo-level move handling
 ::
 ::    An outer core responsible for routing moves to and from Arvo; it calls
@@ -170,20 +728,12 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [dap=term bek=beak =cage]
+    |=  [dap=term bek=beak =agent]
     ^+  mo-core
     ::
     =/  existing  (~(get by yokes.state) dap)
     =/  re  ?~(existing "" "re")
     ~>  %slog.[0 leaf+"gall: {re}loading {<dap>}"]
-    ?.  =(%vase p.cage)
-      (mo-give %onto |+[leaf+"gall: bad mark {<p.cage>} for agent {<dap>}"]~)
-    ::
-    =/  maybe-new-agent  (mule |.(!<(agent !<(vase q.cage))))
-    ?:  ?=(%| -.maybe-new-agent)
-      =/  err  [[%leaf "{<dap>}: not valid agent"] p.maybe-new-agent]
-      (mo-give %onto %.n err)
-    =/  =agent  p.maybe-new-agent
     ::
     ?^  existing
       =.  yokes.state
@@ -216,20 +766,41 @@
     (mo-give %onto [%.y suss])
   ::  +mo-subscribe-to-agent-builds: request agent update notices
   ::
+  ::    Also subscribe to our own source path, in case we get reloaded
+  ::    but none of the agents do.  This way, Clay will still notify us,
+  ::    and we'll be able to exit the chrysalis.
+  ::
   ++  mo-subscribe-to-agent-builds
     |=  date=@da
     ^+  mo-core
     =.  mo-core  (mo-abed system-duct.state)
-    =/  =wire  /sys/lyv  ::  TODO: add $aeon to wire as sanity check
+    =/  =wire  /sys/lyv
     =.  mo-core  (mo-pass /sys/lyv %c %warp our %home ~)
     =/  =mool:clay
       :-  da+date
       %-  ~(gas in *(set [care:clay path]))
+      :-  [%z /sys/vane/gall/hoon]
       %+  turn  ~(tap in ~(key by yokes.state))
       |=  dap=term
       ^-  [care:clay path]
       [%a /app/[dap]/hoon]
     (mo-pass wire %c %warp our %home ~ %mult mool)
+  ::  +mo-scry-agent-cage: read $agent core from clay
+  ::
+  ++  mo-scry-agent-cage
+    |=  [dap=term =case:clay]
+    ^-  (each agent tang)
+    =/  bek=beak  [our %home case]
+    =/  sky  (ski [%141 %noun] ~ %ca bek /hoon/[dap]/app)
+    ?~  sky  |+[leaf+"gall: {<dap>} scry blocked"]~
+    ?~  u.sky  |+[leaf+"gall: {<dap>} scry failed"]~
+    =/  =cage  u.u.sky
+    ?.  =(%vase p.cage)
+      |+[leaf+"gall: bad mark {<p.cage>} for agent {<dap>}"]~
+    =/  res  (mule |.(!<(agent !<(vase q.cage))))
+    ?:  ?=(%& -.res)
+      &+p.res
+    |+[[leaf+"gall: {<dap>} not valid agent"] p.res]
   ::  +mo-send-foreign-request: handle local request to .ship
   ::
   ++  mo-send-foreign-request
@@ -354,7 +925,13 @@
     =/  =beak  [(slav %p her) desk da+tim]
     ?>  ?=([?(%b %c) %writ *] sign-arvo)
     ?^  p.sign-arvo
-      =.  mo-core  (mo-receive-core dap beak r.u.p.sign-arvo)
+      =/  cag=cage  r.u.p.sign-arvo
+      ?.  =(%vase p.cag)
+        (mo-give %onto |+[leaf+"gall: invalid %writ {<p.cag>} for {<dap>}"]~)
+      =/  res  (mule |.(!<(agent !<(vase q.cag))))
+      ?:  ?=(%| -.res)
+        (mo-give %onto |+[leaf+"gall: {<dap>}" p.res])
+      =.  mo-core  (mo-receive-core dap beak p.res)
       (mo-subscribe-to-agent-builds tim)
     (mo-give %onto |+[leaf+"gall: failed to build agent {<dap>}"]~)
   ::  +mo-handle-sys-lyv: handle notice that agents have been rebuilt
@@ -374,8 +951,10 @@
     ^+  cor
     ?>  =(%a care)
     =/  dap  dap:;;([%app dap=@tas %hoon ~] path)
-    =/  cage  (need (need (ski [%141 %noun] ~ %ca bek (flop path))))
-    (mo-receive-core:cor dap bek cage)
+    =/  rag  (mo-scry-agent-cage dap p.sign-arvo)
+    ?:  ?=(%| -.rag)
+      (mean p.rag)
+    (mo-receive-core:cor dap bek p.rag)
   ::  +mo-handle-sys-lag: handle an ames %clog notification
   ::
   ++  mo-handle-sys-lag
@@ -747,17 +1326,28 @@
       ~/  %ap-abed
       |=  [dap=term =routes]
       ^+  ap-core
-      ::
-      =/  =yoke
-        =/  running  (~(got by yokes.state) dap)
-        =/  =stats
-          :+  +(change.stats.running)
-            (shaz (mix (add dap change.stats.running) eny))
-          now
-        running(stats stats)
-      ::
+      (ap-yoke dap (~(got by yokes.state) dap))
+    ::  +ap-hatch: initialize agent state from $egg, after upgrade
+    ::
+    ++  ap-abut
+      |=  [dap=term =egg]
+      ^+  ap-core
+      =/  res  (mo-scry-agent-cage dap da+now)
+      ?:  ?=(%| -.res)
+        (mean p.res)
+      =/  =yoke  egg(old-state `agent`p.res)
+      (ap-yoke dap yoke)
+    ::  +ap-yoke: initialize agent state, starting from a $yoke
+    ::
+    ++  ap-yoke
+      |=  [dap=term =yoke]
+      ^+  ap-core
+      =.  stats.yoke
+        :+  +(change.stats.yoke)
+          (shaz (mix (add dap change.stats.yoke) eny))
+        now
       =.  agent-name  dap
-      =.  agent-routes  routes
+      =.  agent-routes  [disclosing=~ attributing=our]
       =.  current-agent  yoke
       =.  agent-duct  hen
       ap-core
@@ -1388,421 +1978,9 @@
       %trim  [~ gall-payload]
       %vega  [~ gall-payload]
   ==
-::  +load: recreate vane
+::  +load: recreate vane; note, only valid if called from pupa
 ::
-++  load
-  |^
-  |=  =all-state
-  ^+  gall-payload
-  ::
-  =?  all-state  ?=(%0 -.all-state)
-    (state-0-to-1 all-state)
-  ::
-  =?  all-state  ?=(%1 -.all-state)
-    (state-1-to-2 all-state)
-  ::
-  =?  all-state  ?=(%2 -.all-state)
-    (state-2-to-3 all-state)
-  ::
-  =?  all-state  ?=(%3 -.all-state)
-    (state-3-to-4 all-state)
-  ::
-  =?  all-state  ?=(%4 -.all-state)
-    (state-4-to-5 all-state)
-  ::
-  ?>  ?=(%5 -.all-state)
-  gall-payload(state all-state)
-  ::
-  ::  +all-state: upgrade path
-  ::
-  ++  all-state  $%(state-0 state-1 state-2 state-3 state-4 state-5)
-  ::
-  ++  state-4-to-5
-    |=  =state-4
-    ^-  state-5
-    %=    state-4
-        -  %5
-        running.agents-4
-      (~(run by running.agents-4.state-4) |=(yoke-3 +<+))
-    ==
-  ::
-  ++  state-4
-    $:  %4
-        agents-4=agents-3  ::  agents-3 is unchanged in state-4
-    ==
-  ::
-  ++  state-3-to-4
-    |=  =state-3
-    ^-  state-4
-    %=    state-3
-        -  %4
-        outstanding.agents-3  ~
-    ==
-  ::
-  ++  state-3
-    $:  %3
-        =agents-3
-    ==
-  ::
-  ++  agents-3
-    $:  system-duct=duct
-        outstanding=(map [wire duct] (qeu remote-request))
-        contacts=(set ship)
-        running=(map term yoke-3)
-        blocked=(map term (qeu blocked-move))
-    ==
-  ::
-  ++  yoke-3
-    $:  cache=worm
-        control-duct=duct
-        live=?
-        =stats
-        =watches
-        =agent
-        =beak
-        marks=(map duct mark)
-    ==
-  ::
-  ++  state-2-to-3
-    |=  =state-2
-    ^-  state-3
-    %=    state-2
-        -  %3
-        running.agents-2
-      %-  ~(run by running.agents-2.state-2)
-      |=  =yoke-2
-      ^-  yoke-3
-      %=  yoke-2
-        agent-2  (agent-2-to-3 agent-2.yoke-2)
-      ==
-    ==
-  ::
-  ++  agent-2-to-3
-    |=  =agent-2
-    ^-  agent
-    =>  |%
-        ++  cards-2-to-3
-          |=  cards=(list card:^agent-2)
-          ^-  (list card:agent)
-          %+  turn  cards
-          |=  =card:^agent-2
-          ^-  card:agent
-          ?.  ?=([%give ?(%fact %kick) *] card)  card
-          %=(card path.p (drop path.p.card))
-        --
-    |_  =bowl:gall
-    +*  this  .
-        pass  ~(. agent-2 bowl)
-    ++  on-init
-      =^  cards  agent-2  on-init:pass
-      [(cards-2-to-3 cards) this]
-    ::
-    ++  on-save
-      on-save:pass
-    ::
-    ++  on-load
-      |=  old-state=vase
-      =^  cards  agent-2  (on-load:pass old-state)
-      [(cards-2-to-3 cards) this]
-    ::
-    ++  on-poke
-      |=  [=mark =vase]
-      =^  cards  agent-2  (on-poke:pass mark vase)
-      [(cards-2-to-3 cards) this]
-    ::
-    ++  on-watch
-      |=  =path
-      =^  cards  agent-2  (on-watch:pass path)
-      [(cards-2-to-3 cards) this]
-    ::
-    ++  on-leave
-      |=  =path
-      =^  cards  agent-2  (on-leave:pass path)
-      [(cards-2-to-3 cards) this]
-    ::
-    ++  on-peek
-      |=  =path
-      (on-peek:pass path)
-    ::
-    ++  on-agent
-      |=  [=wire =sign:agent:gall]
-      =^  cards  agent-2  (on-agent:pass wire sign)
-      [(cards-2-to-3 cards) this]
-    ::
-    ++  on-arvo
-      |=  [=wire =sign-arvo]
-      =^  cards  agent-2  (on-arvo:pass wire sign-arvo)
-      [(cards-2-to-3 cards) this]
-    ::
-    ++  on-fail
-      |=  [=term =tang]
-      =^  cards  agent-2  (on-fail:pass term tang)
-      [(cards-2-to-3 cards) this]
-    --
-  ::
-  ++  state-2
-    $:  %2
-        =agents-2
-    ==
-  ::
-  ++  agents-2
-    $:  system-duct=duct
-        outstanding=(map [wire duct] (qeu remote-request))
-        contacts=(set ship)
-        running=(map term yoke-2)
-        blocked=(map term (qeu blocked-move))
-    ==
-  ::
-  ++  yoke-2
-    $:  cache=worm
-        control-duct=duct
-        live=?
-        =stats
-        =watches
-        =agent-2
-        =beak
-        marks=(map duct mark)
-    ==
-  ::
-  ++  agent-2
-    =<  form
-    |%
-    +$  step  (quip card form)
-    +$  card  (wind note gift)
-    +$  note  note:agent
-    +$  task  task:agent
-    +$  sign  sign:agent
-    +$  gift
-      $%  [%fact path=(unit path) =cage]
-          [%kick path=(unit path) ship=(unit ship)]
-          [%watch-ack p=(unit tang)]
-          [%poke-ack p=(unit tang)]
-      ==
-    ++  form
-      $_  ^|
-      |_  bowl
-      ++  on-init
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-save
-        *vase
-      ::
-      ++  on-load
-        |~  old-state=vase
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-poke
-        |~  [mark vase]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-watch
-        |~  path
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-leave
-        |~  path
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-peek
-        |~  path
-        *(unit (unit cage))
-      ::
-      ++  on-agent
-        |~  [wire sign]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-arvo
-        |~  [wire sign-arvo]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-fail
-        |~  [term tang]
-        *(quip card _^|(..on-init))
-      --
-    --
-  ::
-  ++  state-1-to-2
-    |=  =state-1
-    ^-  state-2
-    %=    state-1
-        -           %2
-        +.agents-1  [~ +.agents-1.state-1]
-    ==
-  ::
-  ++  state-1
-    $:  %1
-        =agents-1
-    ==
-  ::
-  ++  agents-1
-    $:  system-duct=duct
-        contacts=(set ship)
-        running=(map term yoke-2)
-        blocked=(map term (qeu blocked-move))
-    ==
-  ::
-  ++  state-0-to-1
-    |=  =state-0
-    ^-  state-1
-    %=    state-0
-        -  %1
-        running.agents-0
-      %-  ~(run by running.agents-0.state-0)
-      |=  =yoke-0
-      ^-  yoke-2
-      %=  yoke-0
-        agent-0  (agent-0-to-1 agent-0.yoke-0)
-      ==
-    ==
-  ::
-  ++  agent-0-to-1
-    |=  =agent-0
-    ^-  agent-2
-    |_  =bowl:gall
-    +*  this  .
-        pass  ~(. agent-0 bowl)
-    ++  on-init
-      =^  cards  agent-0  on-init:pass
-      [cards this]
-    ::
-    ++  on-save
-      on-save:pass
-    ::
-    ++  on-load
-      |=  old-state=vase
-      =^  cards  agent-0  (on-load:pass old-state)
-      [cards this]
-    ::
-    ++  on-poke
-      |=  [=mark =vase]
-      =^  cards  agent-0  (on-poke:pass mark vase)
-      [cards this]
-    ::
-    ++  on-watch
-      |=  =path
-      =^  cards  agent-0  (on-watch:pass path)
-      [cards this]
-    ::
-    ++  on-leave
-      |=  =path
-      =^  cards  agent-0  (on-leave:pass path)
-      [cards this]
-    ::
-    ++  on-peek
-      |=  =path
-      (on-peek:pass path)
-    ::
-    ++  on-agent
-      |=  [=wire =sign:agent:gall]
-      =^  cards  agent-0  (on-agent:pass wire sign)
-      [cards this]
-    ::
-    ++  on-arvo
-      |=  [=wire =sign-arvo]
-      ?<  ?=([%d %pack *] sign-arvo)
-      =^  cards  agent-0  (on-arvo:pass wire `sign-arvo-0`sign-arvo)
-      [cards this]
-    ::
-    ++  on-fail
-      |=  [=term =tang]
-      =^  cards  agent-0  (on-fail:pass term tang)
-      [cards this]
-    --
-  ::
-  ++  state-0
-    $:  %0
-        =agents-0
-    ==
-  ::
-  ++  agents-0
-    $:  system-duct=duct
-        contacts=(set ship)
-        running=(map term yoke-0)
-        blocked=(map term (qeu blocked-move))
-    ==
-  ::
-  ++  yoke-0
-    $:  cache=worm
-        control-duct=duct
-        live=?
-        =stats
-        =watches
-        =agent-0
-        =beak
-        marks=(map duct mark)
-    ==
-  ::
-  ++  agent-0
-    =<  form
-    |%
-    +$  step  (quip card form)
-    +$  card  (wind note gift)
-    +$  note  note:agent
-    +$  task  task:agent
-    +$  gift  gift:agent-2
-    +$  sign  sign:agent
-    ++  form
-      $_  ^|
-      |_  bowl
-      ++  on-init
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-save
-        *vase
-      ::
-      ++  on-load
-        |~  old-state=vase
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-poke
-        |~  [mark vase]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-watch
-        |~  path
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-leave
-        |~  path
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-peek
-        |~  path
-        *(unit (unit cage))
-      ::
-      ++  on-agent
-        |~  [wire sign]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-arvo
-        |~  [wire sign-arvo-0]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-fail
-        |~  [term tang]
-        *(quip card _^|(..on-init))
-      --
-    --
-  ::
-  ++  sign-arvo-0
-    $%  {$a gift:able:ames}
-        $:  $b
-            $%  gift:able:behn
-                $>(%wris gift:able:clay)
-                $>(%writ gift:able:clay)
-                $>(%mere gift:able:clay)
-                $>(%unto gift:able:gall)
-            ==
-        ==
-        {$c gift:able:clay}
-        {$d $<(%pack gift:able:dill)}
-        {$f gift:able:ford}
-        [%e gift:able:eyre]
-        {$g gift:able:gall}
-        [%i gift:able:iris]
-        {$j gift:able:jael}
-    ==
-  --
+++  load  !!
 ::  +scry: standard scry
 ::
 ++  scry
@@ -1847,7 +2025,11 @@
   (mo-peek:mo dap routes care path)
 ::  +stay: save without cache
 ::
-++  stay  state
+++  stay
+  ^-  spore
+  =;  eggs=(map term egg)  state(yokes eggs)
+  %-  ~(run by yokes.state)
+  |=(=yoke `egg`yoke(agent on-save:agent.yoke))
 ::  +take: response
 ::
 ++  take
