@@ -338,8 +338,6 @@
     ?+  +<.sign-arvo  ~|([%kiln-bad-take-card +<.sign-arvo] !!)
       %done  %+  done  wire
              ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
-      %made  %+  take-made  wire
-             ?>(?=(%made +<.sign-arvo) +>.sign-arvo)
       %mere  %+  take-mere  wire
              ?>(?=(%mere +<.sign-arvo) +>.sign-arvo)
     ==
@@ -348,18 +346,6 @@
 ++  take-mere                                         ::
   |=  {way/wire are/(each (set path) (pair term tang))}
   abet:abet:(mere:(take way) are)
-::
-++  take-made
-  |=  [way=wire date=@da result=made-result:ford]
-  ::  hack for |overload
-  ::
-  ::    We might have gotten an ignorable response back for our cache priming
-  ::    ford call. If it matches our magic wire, ignore it.
-  ::
-  ?:  =(/prime/cache way)
-    ~&  %cache-primed
-    abet
-  abet:abet:(made:(take way) date result)
 ::
 ++  take-coup-fancy                                   ::
   |=  {way/wire saw/(unit tang)}
@@ -603,10 +589,7 @@
   ++  coup-fancy
     |=  saw/(unit tang)
     ?~  saw
-      =>  (spam leaf+"%melding %{(trip sud)} into scratch space" ~)
-      %-  blab  :_  ~
-      =/  note  [%merg (cat 3 syd '-scratch') her sud cas gem]
-      [%pass /kiln/[syd] %arvo %c note]
+      +>
     =+  :-  "failed to set up conflict resolution scratch space"
         "I'm out of ideas"
     lose:(spam leaf+-< leaf+-> u.saw)
@@ -620,35 +603,60 @@
           =+  "merged with strategy {<gem>}"
           win:(spam leaf+- ?~(p.are ~ [>`(set path)`p.are< ~]))
         :: ~?  >  =(~ p.are)  [%mere-no-conflict syd]
-        =+  "mashing conflicts"
-        =>  .(+>.$ (spam leaf+- ~))
+        =>  .(+>.$ (spam leaf+"mashing conflicts" ~))
         =+  tic=(cat 3 syd '-scratch')
-        %-  blab  :_  ~
-        =,  ford
-        :*  %pass  /kiln/[syd]  %arvo  %f
-        :*  %build  live=%.n
-            ^-  schematic
-            :-  %list
-            ^-  (list schematic)
-            :: ~&  >  kiln-mashing+[p.are syd=syd +<.abet]
-            %+  turn  ~(tap in p.are)
-            |=  pax/path
-            ^-  [schematic schematic]
-            :-  [%$ %path -:!>(*path) pax]
-            =/  base=schematic  [%scry %c %x `rail`[[our tic] (flop pax)]]
-            ?>  ?=([%da @] cas)
-            =/  alis=schematic
-              [%pin p.cas `schematic`[%scry %c %x [[our syd] (flop pax)]]]
-            =/  bobs=schematic
-              [%scry %c %x [[our syd] (flop pax)]]
-            =/  dali=schematic  [%diff [our syd] base alis]
-            =/  dbob=schematic  [%diff [our syd] base bobs]
-            =/  for=mark
-                =+  (slag (dec (lent pax)) pax)
-                ?~(- %$ i.-)
-            ^-  schematic
-            [%mash [our tic] for [[her sud] for dali] [[our syd] for dbob]]
-        ==  ==
+        =/  notations=(list [path (unit [mark vase])])
+          %+  turn  ~(tap in p.are)
+          |=  =path
+          =/  =mark    -:(flop path)
+          =/  =dais    .^(dais %cb /(scot %p our)/[syd]/(scot cas)/[mark])
+          =/  base     .^(vase %cr (weld /(scot %p our)/[tic]/(scot cas) path))
+          =/  ali      .^(vase %cr (weld /(scot %p her)/[sud]/(scot cas) path))
+          =/  bob      .^(vase %cr (weld /(scot %p our)/[syd]/(scot cas) path))
+          =/  ali-dif  (~(diff dais base) ali)
+          =/  bob-dif  (~(diff dais base) bob)
+          =/  mash     (~(mash dais base) [her sud ali-dif] [our syd bob-dif])
+          :-  path
+          ?~  mash
+            ~
+          `[mark (~(pact dais base) u.mash)]
+        =/  [annotated=(list [path *]) unnotated=(list [path *])]
+          (skid notations |=([* v=*] ?=(^ v)))
+        =/  tic=desk  (cat 3 syd '-scratch')
+        =/  tan=(list tank)
+          %-  zing
+          ^-  (list (list tank))
+          :~  %-  tape-to-tanks
+              """
+              done setting up scratch space in {<[tic]>}
+              please resolve the following conflicts and run
+              |merge {<syd>} our {<[tic]>}
+              """
+              %^  tanks-if-any
+                "annotated conflicts in:"  (turn annotated head)
+              ""
+              %^  tanks-if-any
+                "unannotated conflicts in:"  (turn unnotated head)
+              """
+              some conflicts could not be annotated.
+              for these, the scratch space contains
+              the most recent common ancestor of the
+              conflicting content.
+              """
+          ==
+        =<  win
+        %-  blab:(spam tan)
+        :_  ~
+        :*  %pass  /kiln/[syd]  %arvo  %c
+            %info
+            tic  %&
+            %+  murn  notations
+            |=  [=path dif=(unit [=mark =vase])]
+            ^-  (unit [^path miso])
+            ?~  dif
+              ~
+            `[path %mut mark.u.dif vase.u.dif]
+        ==
       =+  "failed to merge with strategy meld"
       lose:(spam leaf+- >p.p.are< q.p.are)
     ?:  ?=(%& -.are)
@@ -688,7 +696,11 @@
       =>  =+  :-  "%mate merge failed with conflicts,"
               "setting up scratch space at %{(trip tic)}"
           [tic=tic (spam leaf+-< leaf+-> q.p.are)]
-      (fancy-merge tic our syd %init)
+      =.  ..mere  (fancy-merge tic our syd %init)
+      =>  (spam leaf+"%melding %{(trip sud)} into scratch space" ~)
+      %-  blab  :_  ~
+      =/  note  [%merg (cat 3 syd '-scratch') her sud cas gem]
+      [%pass /kiln/[syd] %arvo %c note]
     ==
   ::
   ++  tape-to-tanks
@@ -699,68 +711,5 @@
     |=  {a/tape b/(list path) c/tape}  ^-  (list tank)
     ?:  =(~ b)  ~
     (welp (tape-to-tanks "\0a{c}{a}") >b< ~)
-  ::
-  ++  made
-    |=  [date=@da result=made-result:ford]
-    ::  |=  {dep/@uvH reg/gage:ford}
-    ^+  +>
-    ::
-    ?:  ?=([%incomplete *] result)
-      =+  "failed to mash"
-      lose:(spam leaf+- tang.result)
-    ?:  ?=([%complete %error *] result)
-      =+  "failed to mash"
-      lose:(spam leaf+- message.build-result.result)
-    ?>  ?=([%complete %success %list *] result)
-    =/  can=(list (pair path (unit miso)))
-        %+  turn  results.build-result.result
-        |=  res=build-result:ford
-        ^-  (pair path (unit miso))
-        ?>  ?=([%success ^ *] res)
-        ~!  res
-        =+  pax=(result-to-cage:ford head.res)
-        =+  dif=(result-to-cage:ford tail.res)
-        ::
-        ?.  ?=($path p.pax)
-          ~|  "strange path mark: {<p.pax>}"
-          !!
-        [;;(path q.q.pax) ?:(?=($null p.dif) ~ `[%dif dif])]
-    :: ~&  >  kiln-made+[(turn can head) syd=syd +<.abet]
-    =+  notated=(skid can |=({path a/(unit miso)} ?=(^ a)))
-    =+  annotated=(turn `(list (pair path *))`-.notated head)
-    =+  unnotated=(turn `(list (pair path *))`+.notated head)
-    =+  `desk`(cat 3 syd '-scratch')
-    =/  tan=(list tank)
-        %-  zing
-        ^-  (list (list tank))
-        :~  %-  tape-to-tanks
-            """
-            done setting up scratch space in {<[-]>}
-            please resolve the following conflicts and run
-            |merge {<syd>} our {<[-]>}
-            """
-            %^  tanks-if-any
-              "annotated conflicts in:"  annotated
-            ""
-            %^  tanks-if-any
-              "unannotated conflicts in:"  unnotated
-            """
-            some conflicts could not be annotated.
-            for these, the scratch space contains
-            the most recent common ancestor of the
-            conflicting content.
-
-            """
-        ==
-    =<  win
-    %-  blab:(spam tan)
-    :_  ~
-    :*  %pass  /kiln/[syd]  %arvo  %c
-    :*  %info
-        (cat 3 syd '-scratch')  %&
-        %+  murn  can
-        |=  {p/path q/(unit miso)}
-        `(unit (pair path miso))`?~(q ~ `[p u.q])
-    ==  ==
   --
 --

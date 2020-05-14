@@ -1491,7 +1491,7 @@
       ?~  cans
         [~ ford-cache.ford-args]
       =^  cage  ford-cache.ford-args
-        ~>  %slog.[0 leaf+"clay: validating {(spud path.i.cans)}"]
+        ::  ~>  %slog.[0 leaf+"clay: validating {(spud path.i.cans)}"]
         %-  wrap:fusion
         (get-value:(ford:fusion ford-args) path.i.cans)
       =/  =lobe
@@ -1693,6 +1693,8 @@
       ^-  (map path (each page lobe))
       ~+
       ?:  =(0 let.dom)
+        ~
+      ?.  =(%home syd)
         ~
       %-  malt
       %+  skim  ~(tap by changes)
@@ -2486,6 +2488,7 @@
           $c  ~|  %casts-should-be-compiled-on-your-own-ship  !!
           $d  ~|  %totally-temporary-error-please-replace-me  !!
           $p  ~|  %requesting-foreign-permissions-is-invalid  !!
+          $r  ~|  %no-cages-please-they-are-just-way-too-big  !!
           $s  ~|  %please-dont-get-your-takos-over-a-network  !!
           $t  ~|  %requesting-foreign-directory-is-vaporware  !!
           $u  ~|  %prolly-poor-idea-to-get-rang-over-network  !!
@@ -3242,13 +3245,8 @@
       |=  [=yaki pax=path]
       ^-  @uvI
       =+  len=(lent pax)
-      :: ~&  read-z+[yon=yon qyt=~(wyt by q.yaki) pax=pax]
       =/  descendants/(list (pair path lobe))
-          ::  ~&  %turning
-          ::  =-  ~&  %turned  -
           %+  turn
-            ::  ~&  %skimming
-            ::  =-  ~&  %skimmed  -
             %+  skim  ~(tap by (~(del by q.yaki) pax))
             |=  {paf/path lob/lobe}
             =(pax (scag len paf))
@@ -3261,6 +3259,16 @@
         ^-  (list (pair path lobe))
         [[~ ?~(us *lobe u.us)] descendants]
       |=({{path lobe} @uvI} (shax (jam +<)))
+    ::  +read-r: %x wrapped in a vase
+    ::
+    ++  read-r
+      |=  [yon=aeon pax=path]
+      ^-  (unit (unit cage))
+      =/  x  (read-x yon pax)
+      ?~  x    ~
+      ?~  u.x  [~ ~]
+      ?>  ?=(%& -.u.u.x)
+      ``[p.p.u.u.x !>(q.p.u.u.x)]
     ::  +read-s: produce yaki or blob for given tako or lobe
     ::
     ++  read-s
@@ -3496,6 +3504,7 @@
         %b  (read-b yon path.mun)
         %c  (read-c yon path.mun)
         %p  :_(fod (read-p path.mun))
+        %r  :_(fod (bind (read-r yon path.mun) (lift |=(a=cage [%& a]))))
         %s  :_(fod (bind (read-s yon path.mun) (lift |=(a=cage [%& a]))))
         %t  :_(fod (bind (read-t yon path.mun) (lift |=(a=cage [%& a]))))
         %u  :_(fod (read-u yon path.mun))
