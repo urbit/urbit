@@ -31,7 +31,6 @@
         [%c /vane/clay]  ::  revision control
         [%d /vane/dill]  ::  console
         [%e /vane/eyre]  ::  http server
-        [%f /vane/ford]  ::  build
         [%g /vane/gall]  ::  applications
         [%i /vane/iris]  ::  http client
         [%j /vane/jael]  ::  identity and security
