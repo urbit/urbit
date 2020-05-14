@@ -2147,7 +2147,12 @@
   ::    3f: scrambling                                  ::
   ::    3g: molds and mold builders                     ::
   ::                                                    ::
-~%  %tri  +  ~
+~%  %tri  +
+  ==
+    %year  year
+    %yore  yore
+    %ob    ob
+  ==
 |%
 ::
 ::::  3a: signed and modular ints                       ::
@@ -3824,13 +3829,20 @@
   --
 ::
 ++  ob
+  ~%  %ob  ..ob
+    ==
+      %fein  fein
+      %fynd  fynd
+    ==
   |%
+  ::
   ::  +fein: conceal structure, v3.
   ::
   ::    +fein conceals planet-sized atoms.  The idea is that it should not be
   ::    trivial to tell which planet a star has spawned under.
   ::
   ++  fein
+    ~/  %fein
     |=  pyn/@  ^-  @
     ?:  &((gte pyn 0x1.0000) (lte pyn 0xffff.ffff))
       (add 0x1.0000 (feis (sub pyn 0x1.0000)))
@@ -3846,6 +3858,7 @@
   ::    Restores obfuscated values that have been enciphered with +fein.
   ::
   ++  fynd
+    ~/  %fynd
     |=  cry/@  ^-  @
     ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
       (add 0x1.0000 (tail (sub cry 0x1.0000)))
@@ -3855,7 +3868,6 @@
       %+  con  hi
       $(cry lo)
     cry
-  ::
   ::  +feis: a four-round generalised Feistel cipher over the domain
   ::         [0, 2^32 - 2^16 - 1].
   ::

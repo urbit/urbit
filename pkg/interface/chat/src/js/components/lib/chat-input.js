@@ -151,8 +151,8 @@ export class ChatInput extends Component {
   }
 
   getLetterType(letter) {
-    if (letter.startsWith('/me')) {
-      letter = letter.slice(3);
+    if (letter.startsWith('/me ')) {
+      letter = letter.slice(4);
       // remove insignificant leading whitespace.
       // aces might be relevant to style.
       while (letter[0] === '\n') {
@@ -193,6 +193,8 @@ export class ChatInput extends Component {
     if (editorMessage === '') {
       return;
     }
+
+    props.onEnter();
 
     if(state.code) {
       props.api.chat.message(props.station, `~${window.ship}`, Date.now(), {
@@ -319,8 +321,12 @@ export class ChatInput extends Component {
       extraKeys: {
         Tab: cm =>
           this.patpAutocomplete(cm.getValue(), true),
-        'Enter': cm =>
-            this.messageSubmit(),
+        'Enter': () => {
+          this.messageSubmit();
+          if (this.state.code) {
+            this.toggleCode();
+          }
+        },
         'Shift-3': cm =>
           cm.getValue().length === 0
             ? this.toggleCode()
@@ -382,7 +388,7 @@ export class ChatInput extends Component {
             style={{ filter: state.code && 'invert(100%)', height: '100%', width: '100%' }}
             onClick={this.toggleCode}
             src="/~chat/img/CodeEval.png"
-            className="contrast-10-d bg-white bg-none-d"
+            className="contrast-10-d bg-white bg-none-d ba b--gray1-d br1"
           />
         </div>
       </div>

@@ -360,7 +360,7 @@
   =/  hig=(unit (unit server))
     (~(get by fur) q.wel)
   ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))
-    this
+    $(servers t.servers)
   =.  fur
     (~(put by fur) q.wel ~)
   =.  this
