@@ -71,7 +71,7 @@ h2 {
 }
 
 .clamp-attachment {
-  overflow: scroll;
+  overflow: auto;
   max-height: 10em;
   max-width: 100%;
 }
@@ -168,6 +168,15 @@ h2 {
   left: 14px;
   border-radius: 100%;
 }
+
+.shadow-6 {
+  box-shadow: 2px 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.brt2 {
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+
 
 .green3 {
   color: #7ea899;
@@ -362,6 +371,9 @@ pre.CodeMirror-placeholder.CodeMirror-line-like { color: var(--gray); }
   }
   .b--white-d {
     border-color: #fff;
+  }
+  .b--green2-d {
+    border-color: #2aa779;
   }
   .bb-d {
     border-bottom-width: 1px;

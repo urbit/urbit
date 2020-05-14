@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Sigil } from '/components/lib/icons/sigil';
+import { ProfileOverlay } from '/components/lib/profile-overlay';
+import { OverlaySigil } from '/components/lib/overlay-sigil';
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom'
 import { uxToHex, cite, writeText } from '/lib/util';
@@ -53,6 +55,7 @@ export class Message extends Component {
     iframe.setAttribute('src', iframe.getAttribute('data-src'));
   }
 
+
   renderContent() {
     const { props } = this;
     let letter = props.msg.letter;
@@ -62,21 +65,21 @@ export class Message extends Component {
         (!!letter.code.output &&
          letter.code.output.length && letter.code.output.length > 0) ?
         (
-          <pre className="f7 clamp-attachment pa1 mt0 mb0">
+          <pre className="f7 clamp-attachment pa1 mt0 mb0 b--gray4 b--gray1-d bl br bb">
             {letter.code.output[0].join('\n')}
           </pre>
         ) : null;
       return (
-        <span>
-          <pre className="f7 clamp-attachment pa1 mt0 mb0 bg-light-gray">
+        <div className="mv2">
+          <pre className="f7 clamp-attachment pa1 mt0 mb0 bg-light-gray b--gray4 b--gray1-d ba">
             {letter.code.expression}
           </pre>
           {outputElement}
-        </span>
+        </div>
       );
     } else if ('url' in letter) {
       let imgMatch =
-        /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM)$/
+        /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM|svg|SVG)$/
         .exec(letter.url);
       let youTubeRegex = new RegExp(''
       + /(?:https?:\/\/(?:[a-z]+.)?)/.source // protocol
@@ -190,20 +193,20 @@ export class Message extends Component {
 
       return (
         <div
+          ref={this.containerRef}
           className={
             "w-100 f7 pl3 pt4 pr3 cf flex lh-copy " + " " + pending
           }
           style={{
             minHeight: "min-content"
           }}>
-          <div className="fl mr3 v-top bg-white bg-gray0-d">
-            <Sigil
-              ship={props.msg.author}
-              size={24}
-              color={color}
-              classes={sigilClass}
-              />
-          </div>
+         <OverlaySigil
+           ship={props.msg.author}
+           contact={contact}
+           color={color}
+           sigilClass={sigilClass}
+           group={props.group}
+           className="fl pr3 v-top bg-white bg-gray0-d" />
           <div
             className="fr clamp-message white-d"
             style={{ flexGrow: 1, marginTop: -8 }}>

@@ -133,6 +133,10 @@ export class PrimaryReducer {
       state.notebooks[host][book]["num-notes"] = json[host][book]["num-notes"];
       state.notebooks[host][book]["num-unread"] = json[host][book]["num-unread"];
       state.notebooks[host][book]["title"] = json[host][book]["title"];
+      state.notebooks[host][book]["writers-group-path"] =
+        json[host][book]["writers-group-path"];
+      state.notebooks[host][book]["subscribers-group-path"] =
+        json[host][book]["subscribers-group-path"];
     }
   }
 

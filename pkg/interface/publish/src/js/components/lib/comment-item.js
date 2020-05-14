@@ -3,10 +3,9 @@ import moment from 'moment';
 import { Sigil } from './icons/sigil';
 import { CommentInput } from './comment-input';
 import { uxToHex, cite } from '../../lib/util';
-import { Spinner } from './icons/icon-spinner';
 
 export class CommentItem extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -20,7 +19,7 @@ export class CommentItem extends Component {
         past: function(input) {
           return input === 'just now'
             ? input
-            : input + ' ago'
+            : input + ' ago';
         },
         s : 'just now',
         future : 'in %s',
@@ -33,15 +32,14 @@ export class CommentItem extends Component {
         M  : '1 month',
         MM : '%d months',
         y  : '1 year',
-        yy : '%d years',
+        yy : '%d years'
       }
     });
   }
 
-
   commentEdit() {
-    let commentPath = Object.keys(this.props.comment)[0];
-    let commentBody = this.props.comment[commentPath].content;
+    const commentPath = Object.keys(this.props.comment)[0];
+    const commentBody = this.props.comment[commentPath].content;
     this.setState({ commentBody });
     this.props.onEdit();
   }
@@ -53,7 +51,7 @@ export class CommentItem extends Component {
   commentChange(e) {
     this.setState({
       commentBody: e.target.value
-    })
+    });
   }
 
   onUpdate() {
@@ -61,27 +59,38 @@ export class CommentItem extends Component {
   }
 
   render() {
-    let pending = !!this.props.pending ? "o-60" : "";
-    let commentData = this.props.comment[Object.keys(this.props.comment)[0]];
-    let content = commentData.content.split("\n").map((line, i)=> {
+    const pending = this.props.pending ? 'o-60' : '';
+    const commentData = this.props.comment[Object.keys(this.props.comment)[0]];
+    const content = commentData.content.split('\n').map((line, i) => {
       return (
         <p className="mb2" key={i}>{line}</p>
-      )
+      );
     });
-    let date = moment(commentData["date-created"]).fromNow();
+    const date = moment(commentData['date-created']).fromNow();
 
-    let contact = !!(commentData.author.substr(1) in this.props.contacts)
+    const contact = commentData.author.substr(1) in this.props.contacts
       ? this.props.contacts[commentData.author.substr(1)] : false;
 
     let name = commentData.author;
-    let color = "#000000";
-    let classes = "mix-blend-diff";
+    let color = '#000000';
+    let classes = 'mix-blend-diff';
+    let avatar = null;
     if (contact) {
       name = (contact.nickname.length > 0)
         ? contact.nickname : commentData.author;
       color = `#${uxToHex(contact.color)}`;
-      classes = "";
+      classes = '';
+      avatar = contact.avatar;
     }
+
+    const img = (avatar !== null)
+      ? <img src={avatar} height={24} width={24} className="dib" />
+      : <Sigil
+        ship={commentData.author}
+        size={24}
+        color={color}
+        classes={classes}
+        />;
 
     if (name === commentData.author) {
       name = cite(commentData.author);
@@ -93,17 +102,13 @@ export class CommentItem extends Component {
           ||  window.ship !== commentData.author.slice(1);
 
     return (
-      <div className={"mb8 " + pending}>
+      <div className={'mb8 ' + pending}>
         <div className="flex mv3 bg-white bg-gray0-d">
-        <Sigil
-          ship={commentData.author}
-          size={24}
-          color={color}
-          classes={classes}
-        />
-          <div className={"f9 mh2 pt1 " +
-            (contact.nickname ? null : "mono")}
-            title={commentData.author}>
+        {img}
+          <div className={'f9 mh2 pt1 ' +
+            (contact.nickname ? null : 'mono')}
+            title={commentData.author}
+          >
             {name}
           </div>
           <div className="f9 gray3 pt1">{date}</div>
@@ -121,11 +126,14 @@ export class CommentItem extends Component {
         <div className="f8 lh-solid mb2">
           { !editing && content }
           { editing && (
-            <CommentInput style={{resize:'vertical'}}
-              ref={(el) => {this.focusTextArea(el)}}
+            <CommentInput style={{ resize:'vertical' }}
+              ref={(el) => {
+              this.focusTextArea(el);
+              }}
               onChange={this.commentChange}
               value={this.state.commentBody}
-              onSubmit={this.onUpdate.bind(this)}>
+              onSubmit={this.onUpdate.bind(this)}
+            >
             </CommentInput>
           )}
         </div>
@@ -139,10 +147,9 @@ export class CommentItem extends Component {
             </div>
           </div>
         )}
-
       </div>
-    )
+    );
   }
 }
 
-export default CommentItem
+export default CommentItem;

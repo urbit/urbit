@@ -13,6 +13,7 @@ import { MemberScreen } from '/components/member';
 import { SettingsScreen } from '/components/settings';
 import { NewScreen } from '/components/new';
 import { JoinScreen } from '/components/join';
+import { NewDmScreen } from '/components/new-dm';
 
 
 export class Root extends Component {
@@ -20,6 +21,7 @@ export class Root extends Component {
     super(props);
 
     this.state = store.state;
+    this.totalUnreads = 0;
     store.setStateHandler(this.setState.bind(this));
   }
 
@@ -33,6 +35,7 @@ export class Root extends Component {
 
     let messagePreviews = {};
     let unreads = {};
+    let totalUnreads = 0;
     Object.keys(state.inbox).forEach((stat) => {
       let envelopes = state.inbox[stat].envelopes;
 
@@ -42,14 +45,22 @@ export class Root extends Component {
         messagePreviews[stat] = envelopes[0];
       }
 
-      unreads[stat] =
-        state.inbox[stat].config.length > state.inbox[stat].config.read;
+      const unread = Math.max(state.inbox[stat].config.length - state.inbox[stat].config.read, 0)
+      unreads[stat] = !!unread;
+      if(unread) {
+        totalUnreads += unread;
+      }
     });
+    if(totalUnreads !== this.totalUnreads) {
+      document.title = totalUnreads > 0 ? `Chat - (${totalUnreads})` : 'Chat';
+      this.totalUnreads = totalUnreads;
+    }
 
     let invites = !!state.invites ? state.invites : {'/chat': {}, '/contacts': {}};
 
     let contacts = !!state.contacts ? state.contacts : {};
     let associations = !!state.associations ? state.associations : {chat: {}, contacts: {}};
+    let s3 = !!state.s3 ? state.s3 : {};
 
     const renderChannelSidebar = (props, station) => (
       <Sidebar
@@ -88,6 +99,34 @@ export class Root extends Component {
                       </p>
                     </div>
                   </div>
+                </Skeleton>
+              );
+            }}
+          />
+          <Route
+            exact
+            path="/~chat/new/dm/:ship"
+            render={props => {
+              const ship = props.match.params.ship;
+
+              return (
+                <Skeleton
+                  associations={associations}
+                  invites={invites}
+                  sidebarHideOnMobile={true}
+                  sidebar={renderChannelSidebar(props)}
+                  sidebarShown={state.sidebarShown}
+                >
+                  <NewDmScreen
+                    api={api}
+                    inbox={state.inbox || {}}
+                    permissions={state.permissions || {}}
+                    contacts={state.contacts || {}}
+                    associations={associations.contacts}
+                    chatSynced={state.chatSynced || {}}
+                    autoCreate={ship}
+                    {...props}
+                  />
                 </Skeleton>
               );
             }}
@@ -206,6 +245,7 @@ export class Root extends Component {
                     inbox={state.inbox}
                     contacts={roomContacts}
                     permission={permission}
+                    s3={s3}
                     pendingMessages={state.pendingMessages}
                     popout={popout}
                     sidebarShown={state.sidebarShown}

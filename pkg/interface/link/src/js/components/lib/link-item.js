@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import moment from 'moment';
 
 import { Sigil } from '/components/lib/icons/sigil';
@@ -16,7 +16,7 @@ export class LinkItem extends Component {
 
   componentDidMount() {
     this.updateTimeSinceNewestMessageInterval = setInterval( () => {
-      this.setState({timeSinceLinkPost: this.getTimeSinceLinkPost()});
+      this.setState({ timeSinceLinkPost: this.getTimeSinceLinkPost() });
     }, 60000);
   }
 
@@ -28,7 +28,7 @@ export class LinkItem extends Component {
   }
 
   getTimeSinceLinkPost() {
-    return !!this.props.timestamp ?
+    return this.props.timestamp ?
       moment.unix(this.props.timestamp / 1000).from(moment.utc())
       : '';
   }
@@ -38,61 +38,68 @@ export class LinkItem extends Component {
   }
 
   render() {
+    const props = this.props;
 
-    let props = this.props;
+    const mono = (props.nickname) ? 'inter white-d' : 'mono white-d';
 
-    let mono = (props.nickname) ? "inter white-d" : "mono white-d";
-
-    let URLparser = new RegExp(/((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/);
+    const URLparser = new RegExp(/((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/);
 
     let hostname = URLparser.exec(props.url);
 
     const seenState = props.seen
-      ? "gray2"
-      : "green2 pointer";
+      ? 'gray2'
+      : 'green2 pointer';
     const seenAction = props.seen
-      ? ()=>{}
-      : this.markPostAsSeen
+      ? () => {}
+      : this.markPostAsSeen;
 
     if (hostname) {
       hostname = hostname[4];
     }
 
-    let comments = props.comments + " comment" + ((props.comments === 1) ? "" : "s");
+    const comments = props.comments + ' comment' + ((props.comments === 1) ? '' : 's');
 
-    let member = this.props.member || false;
+    const member = this.props.member || false;
+
+    const img = (this.props.avatar)
+      ? <img src={this.props.avatar} height={38} width={38} className="dib" />
+      : <Sigil
+        ship={'~' + props.ship}
+        size={38}
+        color={'#' + props.color}
+        classes={(member ? 'mix-blend-diff' : '')}
+        />;
     return (
       <div className="w-100 pv3 flex bg-white bg-gray0-d">
-        <Sigil
-          ship={"~" + props.ship}
-          size={38}
-          color={"#" + props.color}
-          classes={(member ? "mix-blend-diff" : "")}
-            />
+      {img}
         <div className="flex flex-column ml2 flex-auto">
           <a href={props.url}
           className="w-100 flex"
           target="_blank"
-          onClick={this.markPostAsSeen}>
+          onClick={this.markPostAsSeen}
+          >
             <p className="f8 truncate">{props.title}
             </p>
             <span className="gray2 dib v-btm ml2 f8 flex-shrink-0">{hostname} ↗</span>
           </a>
           <div className="w-100 pt1">
-            <span className={"f9 pr2 dib " + mono}
-            title={props.ship}>
+            <span className={'f9 pr2 dib ' + mono}
+            title={props.ship}
+            >
             {(props.nickname)
               ? props.nickname
               : cite(props.ship)}
             </span>
           <span
-            className={seenState + " f9 inter pr3 dib"}
-            onClick={this.markPostAsSeen}>
+            className={seenState + ' f9 inter pr3 dib'}
+            onClick={this.markPostAsSeen}
+          >
             {this.state.timeSinceLinkPost}
           </span>
           <Link to=
             {makeRoutePath(props.resourcePath, props.popout, props.page, props.url, props.linkIndex)}
-          onClick={this.markPostAsSeen}>
+          onClick={this.markPostAsSeen}
+          >
             <span className="f9 inter gray2 dib">
                 {comments}
               </span>
@@ -100,8 +107,8 @@ export class LinkItem extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default LinkItem
+export default LinkItem;

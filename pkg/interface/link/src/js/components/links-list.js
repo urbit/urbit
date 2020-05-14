@@ -1,16 +1,15 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { LoadingScreen } from './loading';
 import { MessageScreen } from '/components/lib/message-screen';
 import { LinksTabBar } from './lib/links-tabbar';
 import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
-import { Route, Link } from "react-router-dom";
+import { Route, Link } from 'react-router-dom';
 import { LinkItem } from '/components/lib/link-item.js';
 import { LinkSubmit } from '/components/lib/link-submit.js';
 import { Pagination } from '/components/lib/pagination.js';
 
 import { makeRoutePath, getContactDetails } from '../lib/util';
 
-//TODO Avatar support once it's in
 export class Links extends Component {
   constructor(props) {
     super(props);
@@ -38,44 +37,44 @@ export class Links extends Component {
   }
 
   render() {
-    let props = this.props;
+    const props = this.props;
 
     if (!props.resource.metadata.title) {
-      return <LoadingScreen/>;
+      return <LoadingScreen />;
     }
 
-    let linkPage = props.page;
+    const linkPage = props.page;
 
-    let links = !!props.links[linkPage]
+    const links = props.links[linkPage]
     ? props.links[linkPage]
     : {};
 
-    let currentPage = !!props.page
+    const currentPage = props.page
     ? Number(props.page)
     : 0;
 
-    let totalPages = !!props.links
+    const totalPages = props.links
     ? Number(props.links.totalPages)
     : 1;
 
-    let LinkList = (<LoadingScreen/>);
+    let LinkList = (<LoadingScreen />);
     if (props.links && props.links.totalItems === 0) {
       LinkList = (
-        <MessageScreen text="Start by posting a link to this collection."/>
+        <MessageScreen text="Start by posting a link to this collection." />
       );
     } else if (Object.keys(links).length > 0) {
       LinkList = Object.keys(links)
       .map((linkIndex) => {
-        let linksObj = props.links[linkPage];
-        let { title, url, time, ship } = linksObj[linkIndex];
+        const linksObj = props.links[linkPage];
+        const { title, url, time, ship } = linksObj[linkIndex];
         const seen = props.seen[url];
-        let members = {};
+        const members = {};
 
         const commentCount = props.comments[url]
           ? props.comments[url].totalItems
           : linksObj[linkIndex].commentCount || 0;
 
-        const {nickname, color, member} = getContactDetails(props.contacts[ship]);
+        const { nickname, color, member, avatar } = getContactDetails(props.contacts[ship]);
 
         return (
           <LinkItem
@@ -89,33 +88,38 @@ export class Links extends Component {
           nickname={nickname}
           ship={ship}
           color={color}
+          avatar={avatar}
           member={member}
           comments={commentCount}
           resourcePath={props.resourcePath}
           popout={props.popout}
           />
-        )
+        );
       });
     }
 
     return (
       <div
-      className="h-100 w-100 overflow-hidden flex flex-column">
+      className="h-100 w-100 overflow-hidden flex flex-column"
+      >
         <div
           className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
-          style={{ height: "1rem" }}>
-         <Link to="/~link">{"⟵ All Channels"}</Link>
+          style={{ height: '1rem' }}
+        >
+         <Link to="/~link">{'⟵ All Channels'}</Link>
        </div>
        <div
          className={`pl4 pt2 flex relative overflow-x-scroll
          overflow-x-auto-l overflow-x-auto-xl flex-shrink-0
          bb b--gray4 b--gray1-d bg-gray0-d`}
-         style={{ height: 48 }}>
+         style={{ height: 48 }}
+       >
           <SidebarSwitcher
            sidebarShown={props.sidebarShown}
-           popout={props.popout}/>
+           popout={props.popout}
+          />
          <Link to={makeRoutePath(props.resourcePath, props.popout, props.page)} className="pt2">
-           <h2 className={`dib f9 fw4 lh-solid v-top`}>
+           <h2 className={'dib f9 fw4 lh-solid v-top'}>
              {props.resource.metadata.title}
            </h2>
          </Link>
@@ -123,12 +127,13 @@ export class Links extends Component {
           {...props}
           popout={props.popout}
           page={props.page}
-          resourcePath={props.resourcePath}/>
+          resourcePath={props.resourcePath}
+          />
         </div>
         <div className="w-100 mt6 flex justify-center overflow-y-scroll ph4 pb4">
           <div className="w-100 mw7">
             <div className="flex">
-              <LinkSubmit resourcePath={props.resourcePath}/>
+              <LinkSubmit resourcePath={props.resourcePath} />
             </div>
             <div className="pb4">
             {LinkList}
@@ -144,7 +149,7 @@ export class Links extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
