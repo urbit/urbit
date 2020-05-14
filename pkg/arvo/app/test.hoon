@@ -10,7 +10,6 @@
       mar-ok=?
   ==
 --
-=,  ford
 =,  format
 ^-  agent:gall
 =|  =state

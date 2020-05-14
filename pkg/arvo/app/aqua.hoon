@@ -382,7 +382,6 @@
           %c  %clay
           %d  %dill
           %e  %eyre
-          %f  %ford
           %g  %gall
           %j  %jael
           %g  %gall

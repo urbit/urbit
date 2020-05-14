@@ -155,7 +155,6 @@
       ~(wyt by u.inv)
     :_  this(state [%2 new-state])
     ;:  weld
-      kill-builds
       kick-cards
       init-cards
       (move-files old-subs)
@@ -175,20 +174,6 @@
       ?~  paths
         [~ subs]
       [[%give %kick paths ~]~ subs]
-    ::
-    ++  kill-builds
-      ^-  (list card)
-      %-  zing
-      %+  turn  ~(tap by pubs.zero)
-      |=  [col-name=@tas col-data=collection-zero]
-      ^-  (list card)
-      :-  [%pass /collection/[col-name] %arvo %f %kill ~]
-      %-  zing
-      %+  turn  ~(tap by pos.col-data)
-      |=  [pos-name=@tas *]
-      :~  [%pass /post/[col-name]/[pos-name] %arvo %f %kill ~]
-          [%pass /comments/[col-name]/[pos-name] %arvo %f %kill ~]
-      ==
     ::
     ++  send-invites
       |=  [book=@tas subscribers=(set @p)]

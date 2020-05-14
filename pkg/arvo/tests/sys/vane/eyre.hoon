@@ -1,4 +1,4 @@
-/+  *test, *test-ford-external
+/+  *test
 /=  eyre-raw  /sys/vane/eyre
 ::
 !:

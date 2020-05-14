@@ -22,10 +22,10 @@
           poy/(unit dojo-project)                       ::  working
           $:  ::  sur: structure imports
               ::
-              sur=(list cable:ford)
+              sur=(list cable:clay)
               ::  lib: library imports
               ::
-              lib=(list cable:ford)
+              lib=(list cable:clay)
           ==
           var/(map term cage)                           ::  variable state
           old/(set term)                                ::  used TLVs
@@ -88,7 +88,7 @@
       $:  mad/dojo-command                              ::  operation
           num/@ud                                       ::  number of tasks
           cud/(unit dojo-source)                        ::  now solving
-          pux/(unit path)                               ::  ford working
+          pux/(unit path)                               ::  working
           pro/(unit vase)                               ::  prompting loop
           per/(unit sole-edit)                          ::  pending reverse
           job/(map @ud dojo-build)                      ::  problems
@@ -187,13 +187,13 @@
   ::
   ++  parse-cables
     %+  cook
-      |=  cables=(list cable:ford)
+      |=  cables=(list cable:clay)
       :+  0  %ex
       ^-  hoon
       ::
       :-  %clsg
       %+  turn  cables
-      |=  cable=cable:ford
+      |=  cable=cable:clay
       ^-  hoon
       ::
       :+  %clhp
@@ -204,7 +204,7 @@
     (most ;~(plug com gaw) parse-cable)
   ::
   ++  parse-cable
-    %+  cook  |=(a=cable:ford a)
+    %+  cook  |=(a=cable:clay a)
     ;~  pose
       (stag ~ ;~(pfix tar sym))
       (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
@@ -322,9 +322,7 @@
       dir
     dir(r [%da now.hid])
   ::
-  ++  he-disc    `disc:ford`[p q]:he-beam
   ++  he-beak    `beak`[p q r]:he-beam
-  ++  he-rail    `rail:ford`[[p q] s]:he-beam
   ++  he-parser  (parser-at our.hid he-beam)
   ::
   ++  dy                                                ::  project work
@@ -359,7 +357,8 @@
         ::  really shoud stop the thread as well
         ::
         [%pass u.pux %agent [our.hid %spider] %leave ~]
-      [%pass u.pux %arvo %f %kill ~]
+      =/  [=ship =desk =case:clay]  he-beak
+      [%pass u.pux %arvo %c %warp ship desk ~]
     ::
     ++  dy-errd                                         ::  reject change, abet
       |=  {rev/(unit sole-edit) err/@u}
@@ -526,13 +525,13 @@
             $lib
           %_    .
               lib
-            ((dy-cast (list cable:ford) !>(*(list cable:ford))) q.cay)
+            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
           ==
         ::
             $sur
           %_    .
               sur
-            ((dy-cast (list cable:ford) !>(*(list cable:ford))) q.cay)
+            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
           ==
         ::
             $dir  =+  ^=  pax  ^-  path

@@ -1796,12 +1796,231 @@
         ==
         {$c gift:able:clay}
         {$d $<(%pack gift:able:dill)}
-        {$f gift:able:ford}
+        {$f gift:ford}
         [%e gift:able:eyre]
         {$g gift:able:gall}
         [%i gift:able:iris]
         {$j gift:able:jael}
     ==
+  ::
+  ++  ford
+    |%
+    +=  gift
+      $%  ::  %made: build result; response to %build +task
+          ::
+          $:  %made
+              ::  date: formal date of the build
+              ::
+              date=@da
+              ::  result: result of the build; either complete build, or error
+              ::
+              result=made-result
+      ==  ==
+    +=  made-result
+      $%  ::  %complete: contains the result of the completed build
+          ::
+          [%complete =build-result]
+          ::  %incomplete: couldn't finish build; contains error message
+          ::
+          [%incomplete =tang]
+      ==
+    +=  build-result
+      $%  ::  %error: the build produced an error whose description is :message
+          ::
+          [%error message=tang]
+          ::  %success: result of successful +build, tagged by +schematic sub-type
+          ::
+          $:  %success
+              $^  [head=build-result tail=build-result]
+              $%  [%$ =cage]
+                  [%alts =build-result]
+                  [%bake =cage]
+                  [%bunt =cage]
+                  [%call =vase]
+                  [%cast =cage]
+                  [%core =vase]
+                  [%diff =cage]
+                  [%hood =scaffold]
+                  [%join =cage]
+                  [%list results=(list build-result)]
+                  [%mash =cage]
+                  [%mute =cage]
+                  [%pact =cage]
+                  [%path =rail]
+                  [%plan =vase]
+                  [%reef =vase]
+                  [%ride =vase]
+                  [%scry =cage]
+                  [%slim [=type =nock]]
+                  [%slit =type]
+                  [%vale =cage]
+                  [%volt =cage]
+                  [%walk results=(list mark-action)]
+      ==  ==  ==
+    +=  scaffold
+      $:  ::  source-rail: the file this scaffold was parsed from
+          ::
+          source-rail=rail
+          ::  zuse-version: the kelvin version of the standard library
+          ::
+          zuse-version=@ud
+          ::  structures: files from %/sur which are included
+          ::
+          structures=(list cable)
+          ::  libraries: files from %/lib which are included
+          ::
+          libraries=(list cable)
+          ::  cranes: a list of resources to transform and include
+          ::
+          cranes=(list crane)
+          ::  sources: hoon sources, either parsed or on the filesystem
+          ::
+          sources=(list hoon)
+      ==
+    +=  mark-action  [type=?(%grow %grab) source=term target=term]
+    +=  rail  [=disc =spur]
+    +$  cable
+      $:  face=(unit term)
+          file-path=term
+      ==
+    +=  crane
+      $%  $:  ::  %fssg: `/~` hoon literal
+              ::
+              ::    `/~ <hoon>` produces a crane that evaluates arbitrary hoon.
+              ::
+              %fssg
+              =hoon
+          ==
+          $:  ::  %fsbc: `/$` process query string
+              ::
+              ::    `/$` will call a gate with the query string supplied to this
+              ::    build. If no query string, this errors.
+              ::
+              %fsbc
+              =hoon
+          ==
+          $:  ::  %fsbr: `/|` first of many options that succeeds
+              ::
+              ::    `/|` takes a series of cranes and produces the first one
+              ::    (left-to-right) that succeeds. If none succeed, it produces
+              ::    stack traces from all of its arguments.
+              ::
+              %fsbr
+              ::  choices: cranes to try
+              ::
+              choices=(list crane)
+          ==
+          $:  ::  %fsts: `/=` wrap a face around a crane
+              ::
+              ::    /= runs a crane (usually produced by another ford rune), takes
+              ::    the result of that crane, and wraps a face around it.
+              ::
+              %fsts
+              ::  face: face to apply
+              ::
+              face=term
+              ::  crane: internal build step
+              ::
+              =crane
+          ==
+          $:  ::  %fsdt: `/.` null-terminated list
+              ::
+              ::    Produce a null-terminated list from a sequence of cranes,
+              ::    terminated by a `==`.
+              ::
+              %fsdt
+              ::  items: cranes to evaluate
+              ::
+              items=(list crane)
+          ==
+          $:  ::  %fscm: `/,` switch by path
+              ::
+              ::    `/,` is a switch statement, which picks a branch to evaluate
+              ::    based on whether the current path matches the path in the
+              ::    switch statement. Takes a sequence of pairs of (path, crane)
+              ::    terminated by a `==`.
+              ::
+              %fscm
+              ::  cases: produces evaluated crane of first +spur match
+              ::
+              cases=(list (pair spur crane))
+          ==
+          $:  ::  %fspm: `/&` pass through a series of marks
+              ::
+              ::    `/&` passes a crane through multiple marks, right-to-left.
+              ::
+              %fspm
+              ::  marks: marks to apply to :crane, in reverse order
+              ::
+              marks=(list mark)
+              =crane
+          ==
+          $:  ::  %fscb: `/_` run a crane on each file in the current directory
+              ::
+              ::    `/_` takes a crane as an argument. It produces a new crane
+              ::    representing the result of mapping the supplied crane over the
+              ::    list of files in the current directory. The keys in the
+              ::    resulting map are the basenames of the files in the directory,
+              ::    and each value is the result of running that crane on the
+              ::    contents of the file.
+              ::
+              %fscb
+              =crane
+          ==
+          $:  ::  %fssm: `/;` operate on
+              ::
+              ::    `/;` takes a hoon and a crane. The hoon should evaluate to a
+              ::    gate, which is then called with the result of the crane as its
+              ::    sample.
+              ::
+              %fssm
+              =hoon
+              =crane
+          ==
+          $:  ::  %fscl: `/:` evaluate at path
+              ::
+              ::    `/:` takes a path and a +crane, and evaluates the crane with
+              ::    the current path set to the supplied path.
+              ::
+              %fscl
+              ::  path: late bound path to be resolved relative to current beak
+              ::
+              ::    This becomes current path of :crane
+              ::
+              path=truss
+              =crane
+          ==
+          $:  ::  %fskt: `/^` cast
+              ::
+              ::    `/^` takes a +mold and a +crane, and casts the result of the
+              ::    crane to the mold.
+              ::
+              %fskt
+              ::  mold: evaluates to a mold to be applied to :crane
+              ::
+              =spec
+              =crane
+          ==
+          $:  ::  %fstr: `/*` run :crane on all files with current path as prefix
+              ::
+              %fstr
+              =crane
+          ==
+          $:  ::  %fszp: `/!mark/` evaluate as hoon, then pass through mark
+              ::
+              %fszp
+              =mark
+          ==
+          $:  ::  %fszy: `/mark/` passes current path through :mark
+              ::
+              %fszy
+              =mark
+      ==  ==
+    +=  truss
+      $:  pre=(unit tyke)
+          pof=(unit [p=@ud q=tyke])
+      ==
+    --
   --
 ::  +scry: standard scry
 ::

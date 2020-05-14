@@ -190,8 +190,6 @@
   =/  =rite  [%r ~ ?:(pub %black %white) ~]
   [%pass /kiln/permission %arvo %c [%perm syd pax rite]]
 ::
-++  poke-autoload  |=(lod/(unit ?) abet:(poke:autoload lod))
-++  poke-start-autoload  |=(~ abet:start:autoload)
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
@@ -206,98 +204,13 @@
     %kiln-track              =;(f (f !<(_+<.f vase)) poke-track)
     %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
     %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
-    %kiln-autoload           =;(f (f !<(_+<.f vase)) poke-autoload)
-    %kiln-overload           =;(f (f !<(_+<.f vase)) poke-overload)
     %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
     %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
-    %kiln-start-autoload     =;(f (f !<(_+<.f vase)) poke-start-autoload)
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
   ==
-::
-++  autoload
-  |%
-  ++  emit
-    |=  a/card:agent:gall
-    +>(..autoload (^emit a))
-  ::
-  ++  tracked-vanes
-    ^-  (list @tas)
-    ~[%ames %behn %clay %dill %eyre %ford %gall %iris %jael]
-  ::
-  ++  our-home  /(scot %p our)/home/(scot %da now)
-  ++  sys-hash  |=(pax/path .^(@uvI %cz :(welp our-home /sys pax)))
-  ++  hash-vane
-    |=  syd/@tas  ^-  (pair term @uvI)
-    [syd (sys-hash /vane/[syd]/hoon)]
-  ::
-  ++  rehash-vanes
-    ^+  cur-vanes
-    (malt (turn tracked-vanes hash-vane))
-  ::
-  ::
-  ++  poke
-    |=  lod/(unit ?)
-    ?^  lod
-      ..autoload(autoload-on u.lod)
-    =.  autoload-on  !autoload-on
-    (spam leaf+"turned autoload {?:(autoload-on "on" "off")}" ~)
-  ::
-  ++  start
-    =.  cur-hoon  (sys-hash /hoon/hoon)
-    =.  cur-arvo  (sys-hash /arvo/hoon)
-    =.  cur-zuse  (sys-hash /zuse/hoon)
-    =.  cur-vanes  rehash-vanes
-    subscribe-next
-  ::
-  ++  subscribe-next
-    %-  emit
-    [%pass /kiln/autoload %arvo %c [%warp our %home `[%next %z da+now /sys]]]
-  ::
-  ++  writ  =>(check-new subscribe-next)
-  ++  check-new
-    ?.  autoload-on
-      ..check-new
-    =/  new-hoon  (sys-hash /hoon/hoon)
-    =/  new-arvo  (sys-hash /arvo/hoon)
-    ?:  |(!=(new-hoon cur-hoon) !=(new-arvo cur-arvo))
-      =.  cur-hoon  new-hoon
-      =.  cur-arvo  new-arvo
-      =.  cur-vanes  rehash-vanes
-      (emit %pass /kiln/reload/hoon %agent [our %hood] %poke %helm-reset !>(~))
-      ::  XX  updates cur-vanes?
-    =/  new-zuse  (sys-hash /zuse/hoon)
-    ?:  !=(new-zuse cur-zuse)
-      =.  cur-zuse  new-zuse
-      =.  cur-vanes  rehash-vanes
-      =/  =cage  [%helm-reload !>([%zuse tracked-vanes])]
-      (emit [%pass /kiln/reload/zuse %agent [our %hood] %poke cage])
-    (roll tracked-vanes load-vane)
-  ::
-  ++  load-vane
-    =<  %_(. con ..load-vane)
-    |:  $:{syd/@tas con/_.}
-    =.  +>.$  con
-    =/  new-vane  q:(hash-vane syd)
-    ?:  =(`new-vane (~(get by cur-vanes) syd))
-      +>.$
-    =.  cur-vanes  (~(put by cur-vanes) syd new-vane)
-    =/  =cage  [%helm-reload !>(~[syd])]
-    (emit %pass /kiln/reload/[syd] %agent [our %hood] %poke cage)
-  ::
-  ++  coup-reload
-    |=  {way/wire saw/(unit tang)}
-    ~?  ?=(^ saw)  [%kiln-reload-lame u.saw]
-    +>.$
-  --
-::
-++  poke-overload
-  ::  +poke-overload: wipes ford cache at {start}, and then every {recur}.
-  |=  [recur=@dr start=@da]
-  ?>  (gte start now)
-  abet:(emit %pass /kiln/overload/(scot %dr recur) %arvo %b [%wait start])
 ::
 ++  poke-goad-gall
   |=  [force=? agent=(unit dude:gall)]
@@ -313,8 +226,6 @@
   ?+  wire  ~|([%kiln-bad-take-agent wire -.sign] !!)
     [%kiln %fancy *]   ?>  ?=(%poke-ack -.sign)
                        (take-coup-fancy t.t.wire p.sign)
-    [%kiln %reload *]  ?>  ?=(%poke-ack -.sign)
-                       (take-coup-reload t.t.wire p.sign)
     [%kiln %spam *]    ?>  ?=(%poke-ack -.sign)
                        (take-coup-spam t.t.wire p.sign)
   ==
@@ -324,14 +235,10 @@
   ?-  wire
       [%sync %merg *]   %+  take-mere-sync  t.t.wire
                         ?>(?=(%mere +<.sign-arvo) +>.sign-arvo)
-      [%autoload *]     %+  take-writ-autoload  t.wire
-                        ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
       [%find-ship *]    %+  take-writ-find-ship  t.wire
                         ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
       [%sync *]         %+  take-writ-sync  t.wire
                         ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
-      [%overload *]     %+  take-wake-overload  t.wire
-                        ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
       [%autocommit *]   %+  take-wake-autocommit  t.wire
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
       *
@@ -350,10 +257,6 @@
 ++  take-coup-fancy                                   ::
   |=  {way/wire saw/(unit tang)}
   abet:abet:(coup-fancy:(take way) saw)
-::
-++  take-coup-reload                                  ::
-  |=  {way/wire saw/(unit tang)}
-  abet:(coup-reload:autoload way saw)
 ::
 ++  take-coup-spam                                    ::
   |=  {way/wire saw/(unit tang)}
@@ -389,23 +292,6 @@
           sud=(slav %tas i.t.t.way)
       ==
   abet:abet:(writ:(auto hos) rot)
-::
-++  take-writ-autoload
-  |=  {way/wire rot/riot}
-  ?>  ?=(~ way)
-  ?>  ?=(^ rot)
-  abet:writ:autoload
-::
-++  take-wake-overload
-  |=  {way/wire error=(unit tang)}
-  ?^  error
-    %-  (slog u.error)
-    ~&  %kiln-take-wake-overload-fail
-    abet
-  ?>  ?=({@ ~} way)
-  =+  tym=(slav %dr i.way)
-  ~&  %wake-overload-deprecated
-  abet
 ::
 ++  take-wake-autocommit
   |=  [way=wire error=(unit tang)]
@@ -552,15 +438,6 @@
     ^+  .
     ~|  %kiln-work-fail
     .
-  ::
-  ++  ford-fail
-    |=(tan/tang ~|(%ford-fail (mean tan)))
-  ::
-  ++  unwrap-tang
-    |*  res/(each * tang)
-    ?:  ?=(%& -.res)
-      p.res
-    (ford-fail p.res)
   ::
   ++  perform                                         ::
     ^+  .

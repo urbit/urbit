@@ -192,13 +192,10 @@
   ^-  (quip card _state)
   ~&  >  %lsp-shutdown
   :_  *state-zero
-  %-  zing
   %+  turn
     ~(tap in ~(key by builds))
   |=  uri=@t
-  :+  [%pass /ford/[uri] %arvo %f %kill ~]
-  [%pass /ford/[uri]/deps %arvo %f %kill ~]
-  ~
+  [%pass /ford/[uri] %arvo %c %warp our.bow %home ~]
 ::
 ++  handle-did-close
   |=  [uri=@t version=(unit @)]
@@ -210,10 +207,7 @@
   =.  builds
     (~(del by builds) uri)
   :_  state
-  :~
-    [%pass /ford/[uri] %arvo %f %kill ~]
-    [%pass /ford/[uri]/deps %arvo %f %kill ~]
-  ==
+  [%pass /ford/[uri] %arvo %c %warp our.bow %home ~]~
 ::
 ++  handle-did-save
   |=  [uri=@t version=(unit @)]
