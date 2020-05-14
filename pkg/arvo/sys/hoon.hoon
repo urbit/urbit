@@ -6449,7 +6449,7 @@
         ?~  result
           [%1 product.path]
         ?~  u.result
-          [%2 [%hunk product.path] trace]
+          [%2 [%hunk product.ref product.path] trace]
         [%0 u.u.result]
       ==
   ::
@@ -6510,7 +6510,8 @@
   =+  rep=$(trace.ton t.trace.ton)
   =*  dat  +.i.trace.ton
   ?+    -.i.trace.ton  rep
-      $hunk  =/  sof=(unit path)  ((soft path) dat)
+      $hunk  ?@  dat  rep
+             =/  sof=(unit path)  ((soft path) +.dat)
              ?~  sof  rep
              [(smyt u.sof) rep]
       $lose  ?^  dat  rep
