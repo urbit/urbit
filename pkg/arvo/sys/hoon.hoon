@@ -6449,26 +6449,9 @@
         ?~  result
           [%1 product.path]
         ?~  u.result
-          [%2 [%hunk (mush product.path)] trace]
+          [%2 [%hunk product.path] trace]
         [%0 u.u.result]
       ==
-  ::
-  ++  mush
-    |=  path=*
-    ^-  tank
-    :+  %rose  ["/" "/" ""]
-    =|  out=(list tank)
-    |-  ^+  out
-    ?@  path
-      ?:  =(0 path)
-        (flop out)
-      ~
-    ?^  -.path   ~
-    %=  $
-      path  +.path
-      out   :_  out
-            leaf+(trip -.path)
-    ==
   ::
   ++  frag
     |=  [axis=@ noun=*]
@@ -6527,9 +6510,9 @@
   =+  rep=$(trace.ton t.trace.ton)
   =*  dat  +.i.trace.ton
   ?+    -.i.trace.ton  rep
-      $hunk  =/  sof=(unit tank)  ((soft tank) dat)
+      $hunk  =/  sof=(unit path)  ((soft path) dat)
              ?~  sof  rep
-             [u.sof rep]
+             [(smyt u.sof) rep]
       $lose  ?^  dat  rep
              :_  rep
              leaf+(rip 3 dat)
