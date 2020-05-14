@@ -1923,7 +1923,7 @@
           =/  bob-diffs=cane  (diff-base bob-yaki ali-yaki merge-point)
           =/  bof=(map path (unit cage))
             (merge-conflicts can.ali-diffs can.bob-diffs)
-          &+`(build ali-yaki bob-yaki merge-point ali-diffs bob-diffs bof)
+          (build ali-yaki bob-yaki merge-point ali-diffs bob-diffs bof)
         =/  ali-diffs=cane  (calc-diffs ali-yaki merge-point)
         =/  bob-diffs=cane  (calc-diffs bob-yaki merge-point)
         =/  both-diffs=(map path *)
@@ -2169,7 +2169,7 @@
                 dob=cane
                 bof=(map path (unit cage))
             ==
-        ^-  merge-result
+        ^-  (each (unit merge-result) [term tang])
         =/  both-patched=(map path cage)
           %-  malt
           %+  murn  ~(tap by bof)
@@ -2219,6 +2219,8 @@
           %+  skip  ~(tap by (~(int by new.dal) new.dob))
           |=  [pax=path *]
           =((~(got by new.dal) pax) (~(got by new.dob) pax))
+        ?:  &(?=(%mate germ) ?=(^ con))
+          [%| %mate-conflict ~]
         =/  old=(map path lobe)                         ::  oldies but goodies
           %+  roll  ~(tap by (~(uni by old.dal) old.dob))
           =<  .(old q.bas)
@@ -2243,7 +2245,8 @@
         =/  del=(map path ?)
             (~(run by (~(uni by old.dal) old.dob)) |=(~ %|))
         =/  new  &+[[r.bob r.ali ~] (~(run by hat) |=(=lobe |+lobe))]
-        :*  (silt (turn ~(tap by con) head))
+        :*  %&  ~
+            (silt (turn ~(tap by con) head))
             new
             lat
         ==
