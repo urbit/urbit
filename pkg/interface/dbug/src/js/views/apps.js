@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
 import { makeRoutePath } from '../lib/util';
 import urbitOb from 'urbit-ob';
+import { Subscriptions } from '../components/subscriptions';
 import { SearchableList } from '../components/searchable-list';
 import { Summary } from '../components/summary';
 
