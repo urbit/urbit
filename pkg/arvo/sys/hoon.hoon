@@ -778,6 +778,7 @@
   (weld (scag b a) [c (slag b a)])
 ::
 ++  welp                                                ::  faceless weld
+  ~/  %welp
   =|  {* *}
   |@
   ++  $
@@ -787,6 +788,7 @@
   --
 ::
 ++  zing                                                ::  promote
+  ~/  %zing
   =|  *
   |@
   ++  $
@@ -1196,8 +1198,10 @@
     ?|((b n.a) $(a l.a) $(a r.a))
   ::
   ++  apt                                               ::  check correctness
+    =<  $
+    ~/  %apt
     =|  {l/(unit) r/(unit)}
-    |-  ^-  ?
+    |.  ^-  ?
     ?~  a   &
     ?&  ?~(l & (gor n.a u.l))
         ?~(r & (gor u.r n.a))
@@ -1346,6 +1350,7 @@
     c(l a(r l.c))
   ::
   ++  rep                                               ::  reduce to product
+    ~/  %rep
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
@@ -1490,8 +1495,10 @@
     $(a r.a, c (peg c 7))
   ::
   ++  apt                                               ::  check correctness
+    =<  $
+    ~/  %apt
     =|  {l/(unit) r/(unit)}
-    |-  ^-  ?
+    |.  ^-  ?
     ?~  a   &
     ?&  ?~(l & &((gor p.n.a u.l) !=(p.n.a u.l)))
         ?~(r & &((gor u.r p.n.a) !=(u.r p.n.a)))
@@ -1603,6 +1610,7 @@
     d(l a(r l.d))
   ::
   ++  rep                                               ::  reduce to product
+    ~/  %rep
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
@@ -1619,6 +1627,7 @@
     [-.f a(l +.e, r +.f)]
   ::
   ++  run                                               ::  apply gate to values
+    ~/  %run
     |*  b/gate
     |-
     ?~  a  a
@@ -1685,18 +1694,23 @@
   ::
   ::
   ++  urn                                               ::  apply gate to nodes
+    ~/  %urn
     |*  b/$-({* *} *)
     |-
     ?~  a  ~
     a(n n.a(q (b p.n.a q.n.a)), l $(a l.a), r $(a r.a))
   ::
   ++  wyt                                               ::  depth of map
-    |-  ^-  @
+    =<  $
+    ~%  %wyt  +  ~
+    |.  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   ::
   ++  key                                               ::  set of keys
+    =<  $
+    ~/  %key
     =+  b=`(set _?>(?=(^ a) p.n.a))`~
-    |-  ^+  b
+    |.  ^+  b
     ?~  a   b
     $(a r.a, b $(a l.a, b (~(put in b) p.n.a)))
   ::
