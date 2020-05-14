@@ -6426,19 +6426,15 @@
           [%11 [tag=@ clue=*] next=*]
         =/  clue  $(formula clue.formula)
         ?.  ?=(%0 -.clue)  clue
-        =;  next
-          ?.  ?=(%0 -.next)  next
-          :-  %0
-          .*  subject
-          [11 [tag.formula 1 product.clue] 1 product.next]
-        %=  $
-          formula  next.formula
-          trace    ?.  ?=  ?(%hunk %hand %lose %mean %spot)
-                           tag.formula
-                     trace
-                   :_  trace
-                   [tag.formula product.clue]
-        ==
+        =/  next
+          =?    trace
+              ?=(?(%hunk %hand %lose %mean %spot) tag.formula)
+            [[tag.formula product.clue] trace]
+          $(formula next.formula)
+        ?.  ?=(%0 -.next)  next
+        :-  %0
+        .*  subject
+        [11 [tag.formula 1 product.clue] 1 product.next]
       ::
           [%12 ref=* path=*]
         =/  ref  $(formula ref.formula)
