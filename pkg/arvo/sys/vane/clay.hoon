@@ -396,23 +396,6 @@
 ++  fusion
   =>
   |%
-  ::  $pile: preprocessed hoon source file
-  ::
-  ::    /-  sur-file            ::  surface imports from /sur
-  ::    /+  lib-file            ::  library imports from /lib
-  ::    /=  face  /path         ::  imports built hoon file at path
-  ::    /*  face  %mark  /path  ::  unbuilt file imports, as mark
-  ::
-  +$  pile
-    $:  sur=(list taut)
-        lib=(list taut)
-        raw=(list [face=term =path])
-        bar=(list [face=term =mark =path])
-        =hoon
-    ==
-  ::  $taut: file import from /lib or /sur
-  ::
-  +$  taut  [face=(unit term) pax=term]
   ::  +an: $ankh interface door
   ::
   ++  an
@@ -725,6 +708,17 @@
       =^  syd=dais  nub  (get-mark p.diff)
       :_(nub [p.old (~(pact dys (vale:dys q.old)) (vale:syd q.diff))])
     ::
+    ++  prelude
+      |=  =path
+      ^-  vase
+      =^  cag=cage  nub  (get-value path)
+      ?>  =(%hoon p.cag)
+      =/  tex=tape  (trip !<(@t q.cag))
+      =/  =pile  (parse-pile path tex)
+      =.  hoon.pile  !,(*hoon .)
+      =^  res=vase  nub  (run-pile pile)
+      res
+    ::
     ++  build-file
       |=  =path
       ^-  [vase state]
@@ -741,14 +735,19 @@
       ?>  =(%hoon p.cag)
       =/  tex=tape  (trip !<(@t q.cag))
       =/  =pile  (parse-pile path tex)
+      =^  res=vase  nub  (run-pile pile)
+      =^  top  stack.nub  pop-stack
+      =.  vases.cache.nub  (~(put by vases.cache.nub) path [res top])
+      [res nub]
+    ::
+    ++  run-pile
+      |=  =pile
       =^  sut=vase  nub  run-reef
       =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
       =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
       =^  sut=vase  nub  (run-raw sut raw.pile)
       =^  sut=vase  nub  (run-bar sut bar.pile)
       =/  res=vase  (slap sut hoon.pile)
-      =^  top  stack.nub  pop-stack
-      =.  vases.cache.nub  (~(put by vases.cache.nub) path [res top])
       [res nub]
     ::
     ++  parse-pile
@@ -1782,7 +1781,7 @@
       ::
       ++  reload-all
         =/  vanes=(list term)
-          ~[%ames %behn %clay %dill %eyre %ford %gall %iris %jael]
+          ~[%ames %behn %clay %dill %eyre %gall %iris %jael]
         |-  ^+  ..park
         ?~  vanes
           ..park
@@ -3274,7 +3273,7 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      ?.  ?=([?(%yaki %blob %hash %cage) * ~] pax)
+      ?.  ?=([?(%yaki %blob %hash %cage %open) * ~] pax)
         `~
       ?-    i.pax
           %yaki
@@ -3306,6 +3305,9 @@
           %-  wrap:fusion
           (page-to-cage:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) page)
         ``cage+[-:!>(*^cage) cage]
+      ::
+          %open
+        ``open+!>(prelude:(ford:fusion ank.dom ~ ~ lat.ran fod.dom))
       ==
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::

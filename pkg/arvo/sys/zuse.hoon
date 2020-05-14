@@ -639,6 +639,7 @@
     $%  {%& p/suba}                                     ::  delta
         {%| p/@tas}                                     ::  label
     ==                                                  ::
+  ++  open  $-(path vase)                               ::  get prelude
   ++  page  (cask *)                                    ::  untyped cage
   ++  plop  blob                                        ::  unvalidated blob
   ++  rang                                              ::  repository
@@ -707,6 +708,23 @@
         %^  cat  7  (sham [%yaki (roll p add) q t])
         (sham [%tako (roll p add) q t])
     [p q has t]
+  ::  $pile: preprocessed hoon source file
+  ::
+  ::    /-  sur-file            ::  surface imports from /sur
+  ::    /+  lib-file            ::  library imports from /lib
+  ::    /=  face  /path         ::  imports built hoon file at path
+  ::    /*  face  %mark  /path  ::  unbuilt file imports, as mark
+  ::
+  +$  pile
+    $:  sur=(list taut)
+        lib=(list taut)
+        raw=(list [face=term =path])
+        bar=(list [face=term =mark =path])
+        =hoon
+    ==
+  ::  $taut: file import from /lib or /sur
+  ::
+  +$  taut  [face=(unit term) pax=term]
   ::  $mars: mark conversion request
   ::  $tube: mark conversion gate
   ::

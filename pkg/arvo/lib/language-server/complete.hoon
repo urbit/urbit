@@ -338,11 +338,11 @@
   ~?  >  debug  %start-magick
   =/  magicked  txt:(insert-magic pos code)
   ~?  >  debug  %start-parsing
-  =/  res  (lily magicked (language-server-parser *beam))
+  =/  res  (lily magicked (language-server-parser *path))
   ?:  ?=(%| -.res)
     ~?  >  debug  [%parsing-error p.res]
     [%| p.res]
   :-  %&
   ~?  >  debug  %parsed-good
-  ((cury tab-list-hoon sut) tssg+sources.p.res)
+  ((cury tab-list-hoon sut) hoon.p.res)
 --
