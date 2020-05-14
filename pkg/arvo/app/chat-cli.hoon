@@ -1452,8 +1452,13 @@
         ~(glyph tr source)
       =/  lis=(list tape)
         %+  simple-wrap
-          ~|  [%weird-text `@`+.letter]
-          `tape``(list @)`(tuba (trip +.letter))
+          =/  result=(each tape tang)
+            %-  mule  |.
+            `(list @)`(tuba (trip +.letter))
+          ?-  -.result
+            %&  p.result
+            %|  "[[msg rendering error]]"
+          ==
         (sub wyd (min (div wyd 2) (lent pef)))
       =+  lef=(lent pef)
       =+  ?:((gth (lent lis) 0) (snag 0 lis) "")
