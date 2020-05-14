@@ -39,7 +39,7 @@
     :_  this(invite-created %.y)
     :~  (invite-poke:cc [%create /contacts])
         [%pass /inv %agent [our.bol %invite-store] %watch /invitatory/contacts]
-        [%pass /group %agent [our.bol %group-store] %watch /updates]
+        [%pass /group %agent [our.bol %group-store] %watch /groups]
     ==
   ++  on-save   !>(state)
   ++  on-load

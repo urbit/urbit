@@ -1,10 +1,10 @@
-::  group-store|add: add members to a group
+::  group-store|allow-ships: remove ships from banlist
 ::
 /-  *group, *group-store
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=ship =term ships=(list ship) ~] ~]
     ==
-:-  %group-action
+:-  %group-update
 ^-  action
-[%add-members [ship term] (sy ships) ~]
+[%change-policy [ship term] %allow-ships (sy ships)]

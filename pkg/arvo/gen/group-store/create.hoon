@@ -3,8 +3,8 @@
 /-  *group-store
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[=path ~] ~]
+        [[=term ~] ~]
     ==
-:-  %group-action
-^-  group-action
-[%bundle path]
+:-  %group-update
+^-  action
+[%add-group [p.beak term] (sy p.beak ~) ~ %open ~ ~]
