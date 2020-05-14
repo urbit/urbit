@@ -6489,51 +6489,83 @@
 ++  mock
   |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
   (mook (mink [sub fol] gul))
+::  +mook: convert $tone to %toon, rendering stack frames if present
 ::
 ++  mook
-  |=  ton/tone
+  |=  ton=tone
   ^-  toon
-  ?.  ?=({$2 *} ton)  ton
-  :-  %2
-  =+  yel=(lent trace.ton)
-  =.  trace.ton
+  ?.  ?=([%2 *] ton)
+    ton
+  |^  [%2 (turn skip rend)]
+  ::
+  ++  skip
+    ^+  trace.ton
+    =/  yel  (lent trace.ton)
     ?.  (gth yel 1.024)  trace.ton
     %+  weld
       (scag 512 trace.ton)
-    ^-  (list {@ta *})
+    ^+  trace.ton
     :_  (slag (sub yel 512) trace.ton)
     :-  %lose
-    %+  rap  3
-    "[skipped {(scow %ud (sub yel 1.024))} frames]"
-  |-  ^-  (list tank)
-  ?~  trace.ton  ~
-  =+  rep=$(trace.ton t.trace.ton)
-  =*  dat  +.i.trace.ton
-  ?+    -.i.trace.ton  rep
-      $hunk  ?@  dat  rep
-             =/  sof=(unit path)  ((soft path) +.dat)
-             ?~  sof  rep
-             [(smyt u.sof) rep]
-      $lose  ?^  dat  rep
-             :_  rep
-             leaf+(rip 3 dat)
-      $hand  :_  rep
-             leaf+(scow %p (mug dat))
-      $mean  ?@  dat  [leaf+(rip 3 dat) rep]
-             =/  mac  (mack dat -.dat)
-             ?~  mac  [leaf+"####" rep]
-             =/  sof  ((soft tank) u.mac)
-             ?~  sof  rep
-             [u.sof rep]
-      $spot  =/  sof=(unit spot)  ((soft spot) dat)
-             ?~  sof  rep
-             :_  rep
-             :+  %rose  [":" ~ ~]
-             =*  sot  u.sof
-             :~  (smyt p.sot)
-                 =>  [ud=|=(a/@u (scow %ud a)) q.sot]
-                 leaf+"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
-  ==         ==
+    (crip "[skipped {(scow %ud (sub yel 1.024))} frames]")
+  ::
+  ::  +rend: raw stack frame to tank
+  ::
+  ::    supported frame types:
+  ::
+  ::    $%  ::  %hunk: failed scry ([~ ~])
+  ::        ::  %lose: skipped frames
+  ::        ::  %hand: mug any
+  ::        ::  %mean: ~_
+  ::        ::  %spot: source location
+  ::        ::
+  ::        [%hunk ref=* path]
+  ::        [%lose cord]
+  ::        [%hand *]
+  ::        [%mean $@(cord (trap tank))]
+  ::        [%spot spot]
+  ::    ==
+  ::
+  ++  rend
+    |=  [tag=@ta dat=*]
+    ^-  tank
+    ?+    tag
+    ::
+      leaf+"mook.{(rip 3 tag)}"
+    ::
+        %hunk
+      ?@  dat  leaf+"mook.hunk"
+      =/  sof=(unit path)  ((soft path) +.dat)
+      ?~  sof  leaf+"mook.hunk"
+      (smyt u.sof)
+    ::
+        %lose
+      ?^  dat  leaf+"mook.lose"
+      leaf+(rip 3 dat)
+    ::
+        %hand
+      leaf+(scow %p (mug dat))
+    ::
+        %mean
+      ?@  dat  leaf+(rip 3 dat)
+      =/  mac  (mack dat -.dat)
+      ?~  mac  leaf+"####"
+      =/  sof  ((soft tank) u.mac)
+      ?~  sof  leaf+"mook.mean"
+      u.sof
+    ::
+        %spot
+      =/  sof=(unit spot)  ((soft spot) dat)
+      ?~  sof  leaf+"mook.spot"
+      :+  %rose  [":" ~ ~]
+      :~  (smyt p.u.sof)
+          =*  l   p.q.u.sof
+          =*  r   q.q.u.sof
+          =/  ud  |=(a=@u (scow %ud a))
+          leaf+"<[{(ud p.l)} {(ud q.l)}].[{(ud p.r)} {(ud q.r)}]>"
+      ==
+    ==
+  --
 ::
 ++  mong
   |=  {{gat/* sam/*} gul/$-({* *} (unit (unit)))}
