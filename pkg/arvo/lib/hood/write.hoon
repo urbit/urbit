@@ -89,18 +89,14 @@
 ++  poke--data
   |=  {{ext/(unit @t) pax/path} dat/data}  ^+  abet
   ?~  ext  $(ext [~ -.dat])
-  =+  cay=?-(-.dat $json [-.dat !>(+.dat)], $mime [-.dat !>(+.dat)])
-  ?:  =(u.ext -.dat)
-    (made pax now [%complete %success %$ cay])
-  =<  abet
-  %-  emit  :*
-    %pass  write+pax  %arvo  %f
-    %build
-      live=%.n                ::  XX defer %nice
-      ^-  schematic:ford   ::  SYNTAX ERROR AT START OF LINE?
-      =/  =beak  beak-now
-      [%cast [p q]:beak u.ext [%$ cay]]
-  ==
+  =/  cay=cage  ?-(-.dat $json [-.dat !>(+.dat)], $mime [-.dat !>(+.dat)])
+  =/  =cage
+    ?:  =(u.ext -.dat)
+      cay
+    =+  .^(=tube:clay %cc /(scot %p our)/home/(scot %da now)/[p.cay]/[u.ext])
+    [u.ext (tube q.cay)]
+  =-  abet:(emit %pass /write %arvo %c %info -)
+  (foal :(welp (en-beam beak-now ~) pax /[-.cage]) cage)
 ::
 ++  poke
   |=  [=mark =vase]
@@ -111,31 +107,9 @@
     %write-wipe      =;(f (f !<(_+<.f vase)) poke-wipe)
   ==
 ::
-++  made
-  |=  [pax=wire date=@da result=made-result:ford]
-  ^+  abet
-  ::  |=  {pax/wire @ res/gage:ford}  ^+  abet
-  :: ?.  =(our src)
-  ::   ~|(foreign-write/[our=our src=src] !!)
-  ?:  ?=(%incomplete -.result)
-    (mean tang.result)
-  ::
-  =/  build-result  build-result.result
-  ::
-  ?:  ?=([%error *] build-result)
-    (mean message.build-result)
-  ::
-  =/  =cage  (result-to-cage:ford build-result)
-  ::
-  =-  abet:(emit %pass /write %arvo %c %info -)
-  ::
-  (foal :(welp (en-beam beak-now ~) pax /[-.cage]) cage)
-::
-++  take                                              ::
+++  take
   |=  [=wire =sign-arvo]
-  %+  made  wire
-  ?>  ?=(%made +<.sign-arvo)
-  +>.sign-arvo
+  !!
 ::
 ++  take-agent
   |=  [=wire =sign:agent:gall]
