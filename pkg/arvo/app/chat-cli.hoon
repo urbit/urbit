@@ -770,7 +770,7 @@
     ::
     ++  text
       %+  cook  crip
-      (plus ;~(less (jest '•') next))
+      (plus next)
     ::  +expr: parse expression into [cord hoon]
     ::
     ++  expr
