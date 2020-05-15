@@ -6314,11 +6314,14 @@
 ::
 ::::  4n: virtualization
   ::
+::  +mack: untyped, scry-less, unitary virtualization
+::
 ++  mack
-  |=  {sub/* fol/*}
+  |=  [sub=* fol=*]
   ^-  (unit)
-  =+  ton=(mink [sub fol] |=({* *} ~))
-  ?.(?=({$0 *} ton) ~ [~ product.ton])
+  =/  ton  (mink [sub fol] |~(^ ~))
+  ?.(?=(%0 -.ton) ~ `product.ton)
+::  +mink: raw virtual nock
 ::
 ++  mink  !.
   ~/  %mink
@@ -6480,9 +6483,10 @@
       %3  `[-.target u.mutant]
     ==
   --
+::  +mock: virtual nock
 ::
 ++  mock
-  |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
+  |=  [[sub=* fol=*] gul=$-(^ (unit (unit)))]
   (mook (mink [sub fol] gul))
 ::  +mook: convert $tone to %toon, rendering stack frames if present
 ::
@@ -6569,24 +6573,23 @@
   ^-  (unit _$:tap)
   =/  mur  (mure tap)
   ?~(mur ~ `$:tap)
+::  +mong: virtual slam
 ::
 ++  mong
-  |=  {{gat/* sam/*} gul/$-({* *} (unit (unit)))}
+  |=  [[gat=* sam=*] gul=$-(^ (unit (unit)))]
   ^-  toon
-  ?.  &(?=(^ gat) ?=(^ +.gat))
-    [%2 ~]
+  ?.  ?=([* ^] gat)  [%2 ~]
   (mock [gat(+< sam) %9 2 %0 1] gul)
+::  +mule: typed virtual
 ::
-++  mule                                                ::  typed virtual
+++  mule
   ~/  %mule
-  =+  taq=|.(**)
-  |@  ++  $
-        =+  mud=(mute taq)
-        ?-  -.mud
-          %&  [%& p=$:taq]
-          %|  [%| p=p.mud]
-        ==
-  --
+  |*  tap=(trap)
+  =/  mud  (mute tap)
+  ?-  -.mud
+    %&  [%& p=$:tap]
+    %|  [%| p=p.mud]
+  ==
 ::  +mure: untyped unitary virtual
 ::
 ++  mure
@@ -6594,15 +6597,19 @@
   ^-  (unit)
   =/  ton  (mink [tap %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
   ?.(?=(%0 -.ton) ~ `product.ton)
+::  +mute: untyped virtual
 ::
-++  mute                                                ::  untyped virtual
-  |=  taq/_=>(~ ^?(|.(**)))
+++  mute
+  |=  tap=(trap)
   ^-  (each * (list tank))
-  =/  ton  (mock [taq %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
+  =/  ton  (mock [tap %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
   ?-  -.ton
-    $0  [%& p.ton]
-    $1  [%| (smyt (path p.ton)) ~]
-    $2  [%| p.ton]
+    %0  [%& p.ton]
+  ::
+    %1  =/  sof=(unit path)  ((soft path) p.ton)
+        [%| ?~(sof leaf+"mute.hunk" (smyt u.sof)) ~]
+  ::
+    %2  [%| p.ton]
   ==
 ::  +slum: slam a gate on a sample using raw nock, untyped
 ::
