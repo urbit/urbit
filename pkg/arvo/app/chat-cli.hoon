@@ -457,11 +457,12 @@
 ::  +sh-in: handle user input
 ::
 ++  sh-in
-  |=  act=sole-action:sole-sur
+  =,  sole-sur
+  |=  act=sole-action
   ^-  (quip card _state)
   =*  sole-id=@ta  id.act
-  =/  cli-state=sole-share:sole-sur
-    (~(gut by soles) sole-id *sole-share:sole-sur)
+  =/  cli-state=sole-share
+    (~(gut by soles) sole-id *sole-share)
   |^  =^  [=_cli-state cards=(list card)]  state
         ?-  -.dat.act
           %det  (edit +.dat.act)
@@ -524,7 +525,7 @@
     =|  moves=(list card)
     =?  moves  ?=(^ options)
       [(tab:sh-out options) moves]
-    =|  fxs=(list sole-effect:sole-sur)
+    =|  fxs=(list sole-effect)
     |-  ^-  outward
     ?~  to-send
       [[cli-state (flop moves)] state]
@@ -541,7 +542,7 @@
   ::    applies the change and does sanitizing.
   ::
   ++  edit
-    |=  cal=sole-change:sole-sur
+    |=  cal=sole-change
     ^-  outward
     =^  inv  cli-state  (~(transceive sole-lib cli-state) cal)
     =+  fix=(sanity inv buf.cli-state)
@@ -560,20 +561,20 @@
   ::    if invalid, produces error correction description, for use with +slug.
   ::
   ++  sanity
-    |=  [inv=sole-edit:sole-sur buf=(list @c)]
-    ^-  [lit=(list sole-edit:sole-sur) err=(unit @u)]
+    |=  [inv=sole-edit buf=(list @c)]
+    ^-  [lit=(list sole-edit) err=(unit @u)]
     =+  res=(rose (tufa buf) read)
     ?:  ?=(%& -.res)  [~ ~]
     [[inv]~ `p.res]
   ::  +slug: apply error correction to prompt input
   ::
   ++  slug
-    |=  [lit=(list sole-edit:sole-sur) err=(unit @u)]
+    |=  [lit=(list sole-edit) err=(unit @u)]
     ^-  outward
     ?~  lit  [[cli-state ~] state]
     =^  lic  cli-state
       %-  ~(transmit sole-lib cli-state)
-      ^-  sole-edit:sole-sur
+      ^-  sole-edit
       ?~(t.lit i.lit [%mor lit])
     :_  state
     :-  cli-state
@@ -1353,13 +1354,14 @@
 ::  +mr: render messages
 ::
 ++  mr
+  =,  sole-sur
   |_  $:  source=target
           envelope
       ==
   ::  +activate: produce sole-effect for printing message details
   ::
   ++  render-activate
-    ^-  sole-effect:sole-sur
+    ^-  sole-effect
     ~[%mor [%tan meta] body]
   ::  +meta: render message metadata (serial, timestamp, author, target)
   ::
@@ -1372,7 +1374,7 @@
   ::  +body: long-form render of message contents
   ::
   ++  body
-    |-  ^-  sole-effect:sole-sur
+    |-  ^-  sole-effect
     ?-  -.letter
         ?(%text %me)
       =/  pre=tape  ?:(?=(%me -.letter) "@ " "")
@@ -1384,7 +1386,7 @@
         %code
       =/  texp=tape  ['>' ' ' (trip expression.letter)]
       :-  %mor
-      |-  ^-  (list sole-effect:sole-sur)
+      |-  ^-  (list sole-effect)
       ?:  =("" texp)  [tan+output.letter ~]
       =/  newl  (find "\0a" texp)
       ?~  newl  [txt+texp $(texp "")]
