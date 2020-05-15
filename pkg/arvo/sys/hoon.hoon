@@ -6451,35 +6451,33 @@
   ::
   ++  frag
     |=  [axis=@ noun=*]
-    ^-  (unit *)
+    ^-  (unit)
     ?:  =(0 axis)  ~
-    |-
-    ?:  =(1 axis)
-      `noun
+    |-  ^-  (unit)
+    ?:  =(1 axis)  `noun
     ?@  noun  ~
+    =/  pick  (cap axis)
     %=  $
       axis  (mas axis)
-      noun  ?:  =(2 (cap axis))
-              -.noun
-            +.noun
+      noun  ?-(pick %2 -.noun, %3 +.noun)
     ==
   ::
   ++  edit
     |=  [axis=@ target=* value=*]
-    ^-  (unit *)
+    ^-  (unit)
     ?:  =(1 axis)  `value
     ?@  target  ~
-    =/  left=?  =(2 (cap axis))
+    =/  pick  (cap axis)
     =/  mutant
       %=  $
         axis    (mas axis)
-        target  ?:(left -.target +.target)
+        target  ?-(pick %2 -.target, %3 +.target)
       ==
     ?~  mutant  ~
-    :-  ~
-    ?:  left
-      [u.mutant +.target]
-    [-.target u.mutant]
+    ?-  pick
+      %2  `[u.mutant +.target]
+      %3  `[-.target u.mutant]
+    ==
   --
 ::
 ++  mock
