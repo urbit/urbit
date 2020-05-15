@@ -4046,6 +4046,7 @@
 ~%    %qua
     +
   ==
+    %mure  mure
     %mute  mute
     %show  show
   ==
@@ -6560,6 +6561,14 @@
       ==
     ==
   --
+::  +mole: typed unitary virtual
+::
+++  mole
+  ~/  %mole
+  |*  tap=(trap)
+  ^-  (unit _$:tap)
+  =/  mur  (mure tap)
+  ?~(mur ~ `$:tap)
 ::
 ++  mong
   |=  {{gat/* sam/*} gul/$-({* *} (unit (unit)))}
@@ -6578,6 +6587,13 @@
           %|  [%| p=p.mud]
         ==
   --
+::  +mure: untyped unitary virtual
+::
+++  mure
+  |=  tap=(trap)
+  ^-  (unit)
+  =/  ton  (mink [tap %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
+  ?.(?=(%0 -.ton) ~ `product.ton)
 ::
 ++  mute                                                ::  untyped virtual
   |=  taq/_=>(~ ^?(|.(**)))
