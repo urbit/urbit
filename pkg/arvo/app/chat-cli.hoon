@@ -1538,6 +1538,8 @@
   ^-  (list tape)
   ?~  txt  ~
   =/  [end=@ud nex=?]
+    =+  ret=(find "\0a" (scag +(wid) `tape`txt))
+    ?^  ret  [u.ret &]
     ?:  (lte (lent txt) wid)  [(lent txt) &]
     =+  ace=(find " " (flop (scag +(wid) `tape`txt)))
     ?~  ace  [wid |]
