@@ -531,7 +531,7 @@
     =^  char  cli-state
       (~(transmit sole-lib cli-state) [%ins send-pos `@c`i.to-send])
     %_  $
-      moves  [(effect:sh-out %det char) moves]
+      moves  [(effect-to:sh-out sole-id %det char) moves]
       send-pos  +(send-pos)
       to-send  t.to-send
     ==
@@ -805,7 +805,8 @@
       ?.  =(`0 (find ";" buf))  ~
       [(note:sh-out (tufa `(list @)`buf)) ~]
     :_  cards
-    %+  effect:sh-out  %mor
+    %+  effect-to:sh-out  sole-id
+    :-  %mor
     :~  [%nex ~]
         [%det cal]
     ==
@@ -1164,13 +1165,17 @@
 ::
 ++  sh-out
   |%
+  ::  +effect-to: console effect card to a single listener
+  ::
+  ++  effect-to
+    |=  [sole-id=@ta fec=sole-effect:sole-sur]
+    ^-  card
+    [%give %fact [/sole/[sole-id]]~ %sole-effect !>(fec)]
   ::  +effect: console effect card for all listeners
   ::
   ++  effect
     |=  fec=sole-effect:sole-sur
-    =/  =path  /sole/(cat 3 'drum_' (scot %p our.bowl))
     ^-  card
-    ::TODO  don't hard-code session id 'drum' here
     =-  [%give %fact - %sole-effect !>(fec)]
     %+  turn  ~(tap in ~(key by soles))
     |=  sole-id=@ta
