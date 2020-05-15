@@ -289,16 +289,18 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     c3_assert( u3R == &(u3H->rod_u) );
     fprintf(fil_u, "\r\n");
 
-    tot_w += u3a_maid(fil_u, "total userspace", _worker_prof(fil_u, 0, sac));
-    tot_w += u3m_mark(fil_u);
-    tot_w += u3a_maid(fil_u, "space profile", u3a_mark_noun(sac));
-    tot_w += u3a_maid(fil_u, "event", u3a_mark_noun(ovo));
-    tot_w += u3a_maid(fil_u, "lifecycle events", u3a_mark_noun(u3V.roe));
-    tot_w += u3a_maid(fil_u, "effects", u3a_mark_noun(vir));
+    fprintf(stderr, "work: measuring memory: no-op\r\n");
 
-    u3a_print_memory(fil_u, "total marked", tot_w);
-    u3a_print_memory(fil_u, "free lists", u3a_idle(u3R));
-    u3a_print_memory(fil_u, "sweep", u3a_sweep());
+    // tot_w += u3a_maid(fil_u, "total userspace", _worker_prof(fil_u, 0, sac));
+    // tot_w += u3m_mark(fil_u);
+    // tot_w += u3a_maid(fil_u, "space profile", u3a_mark_noun(sac));
+    // tot_w += u3a_maid(fil_u, "event", u3a_mark_noun(ovo));
+    // tot_w += u3a_maid(fil_u, "lifecycle events", u3a_mark_noun(u3V.roe));
+    // tot_w += u3a_maid(fil_u, "effects", u3a_mark_noun(vir));
+
+    // u3a_print_memory(fil_u, "total marked", tot_w);
+    // u3a_print_memory(fil_u, "free lists", u3a_idle(u3R));
+    // u3a_print_memory(fil_u, "sweep", u3a_sweep());
 
     fflush(fil_u);
 
@@ -317,12 +319,14 @@ _worker_static_grab(void)
 {
   c3_assert( u3R == &(u3H->rod_u) );
 
-  fprintf(stderr, "work: measuring memory:\r\n");
-  u3a_print_memory(stderr, "total marked", u3m_mark(stderr));
-  u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
-  u3a_print_memory(stderr, "sweep", u3a_sweep());
-  fprintf(stderr, "\r\n");
-  fflush(stderr);
+  fprintf(stderr, "work: measuring memory: no-op\r\n");
+
+  // fprintf(stderr, "work: measuring memory:\r\n");
+  // u3a_print_memory(stderr, "total marked", u3m_mark(stderr));
+  // u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
+  // u3a_print_memory(stderr, "sweep", u3a_sweep());
+  // fprintf(stderr, "\r\n");
+  // fflush(stderr);
 }
 
 /* _worker_pack(): deduplicate and compact memory
