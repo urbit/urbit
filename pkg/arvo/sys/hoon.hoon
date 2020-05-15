@@ -6618,15 +6618,11 @@
   |=  [gat=* sam=*]
   ^-  *
   .*(gat [%9 2 %10 [6 %1 sam] %0 1])
+::  +soft: virtual clam
 ::
-++  soft                                                ::  maybe remold
-  |*  han/$-(* *)
-  |=  fud/*  ^-  (unit han)
-  =+  result=(mule |.((han fud)))
-  ?-  -.result
-    %|  ~
-    %&  [~ p.result]
-  ==
+++  soft
+  |*  han=$-(* *)
+  |=(fud=* (mole |.((han fud))))
 ::
 ::::  4o: molds and mold builders
   ::
