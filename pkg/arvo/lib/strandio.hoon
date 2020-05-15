@@ -580,6 +580,12 @@
   ;<  ~  bind:m  (flog-text i.wall)
   loop(wall t.wall)
 ::
+++  trace
+  |=  =tang
+  =/  m  (strand ,~)
+  ^-  form:m
+  (pure:m ((slog tang) ~))
+::
 ++  app-message
   |=  [app=term =cord =tang]
   =/  m  (strand ,~)
