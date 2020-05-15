@@ -76,6 +76,30 @@ static c3_c* _141_hex_aes_cbcc_de_ha[] = {
   "b9d521b4d5e1d9387b34bbf5ca38f4d52ba86952ea54490dad7e2670183c572b",
   0
 };
+static u3j_harm _141_hex_aes_siva_en_a[] = {{".2", u3wea_siva_en}, {}};
+static c3_c* _141_hex_aes_siva_en_ha[] = {
+  0
+};
+/* static u3j_harm _141_hex_aes_siva_de_a[] = {{".2", u3wea_siva_de}, {}}; */
+/* static c3_c* _141_hex_aes_siva_de_ha[] = { */
+/*   0 */
+/* }; */
+static u3j_harm _141_hex_aes_sivb_en_a[] = {{".2", u3wea_sivb_en}, {}};
+static c3_c* _141_hex_aes_sivb_en_ha[] = {
+  0
+};
+/* static u3j_harm _141_hex_aes_sivb_de_a[] = {{".2", u3wea_sivb_de}, {}}; */
+/* static c3_c* _141_hex_aes_sivb_de_ha[] = { */
+/*   0 */
+/* }; */
+static u3j_harm _141_hex_aes_sivc_en_a[] = {{".2", u3wea_sivc_en}, {}};
+static c3_c* _141_hex_aes_sivc_en_ha[] = {
+  0
+};
+/* static u3j_harm _141_hex_aes_sivc_de_a[] = {{".2", u3wea_sivc_de}, {}}; */
+/* static c3_c* _141_hex_aes_sivc_de_ha[] = { */
+/*   0 */
+/* }; */
 
 static u3j_core _141_hex_aes_ecba_d[] =
   { { "en", 7, _141_hex_aes_ecba_en_a, 0, _141_hex_aes_ecba_en_ha },
@@ -137,6 +161,31 @@ static c3_c* _141_hex_aes_cbcc_ha[] = {
   0
 };
 
+static u3j_core _141_hex_aes_siva_d[] =
+  { { "en", 7, _141_hex_aes_siva_en_a, 0, _141_hex_aes_siva_en_ha },
+    /* { "de", 7, _141_hex_aes_siva_de_a, 0, _141_hex_aes_siva_de_ha }, */
+    {}
+  };
+static c3_c* _141_hex_aes_siva_ha[] = {
+  0
+};
+static u3j_core _141_hex_aes_sivb_d[] =
+  { { "en", 7, _141_hex_aes_sivb_en_a, 0, _141_hex_aes_sivb_en_ha },
+    /* { "de", 7, _141_hex_aes_sivb_de_a, 0, _141_hex_aes_sivb_de_ha }, */
+    {}
+  };
+static c3_c* _141_hex_aes_sivb_ha[] = {
+  0
+};
+static u3j_core _141_hex_aes_sivc_d[] =
+  { { "en", 7, _141_hex_aes_sivc_en_a, 0, _141_hex_aes_sivc_en_ha },
+    /* { "de", 7, _141_hex_aes_sivc_de_a, 0, _141_hex_aes_sivc_de_ha }, */
+    {}
+  };
+static c3_c* _141_hex_aes_sivc_ha[] = {
+  0
+};
+
 static u3j_core _141_hex_aes_d[] =
   { { "ecba", 7, 0, _141_hex_aes_ecba_d, _141_hex_aes_ecba_ha },
     { "ecbb", 7, 0, _141_hex_aes_ecbb_d, _141_hex_aes_ecbb_ha },
@@ -144,6 +193,9 @@ static u3j_core _141_hex_aes_d[] =
     { "cbca", 7, 0, _141_hex_aes_cbca_d, _141_hex_aes_cbca_ha },
     { "cbcb", 7, 0, _141_hex_aes_cbcb_d, _141_hex_aes_cbcb_ha },
     { "cbcc", 7, 0, _141_hex_aes_cbcc_d, _141_hex_aes_cbcc_ha },
+    { "siva", 7, 0, _141_hex_aes_siva_d, _141_hex_aes_siva_ha },
+    { "sivb", 7, 0, _141_hex_aes_sivb_d, _141_hex_aes_sivb_ha },
+    { "sivc", 7, 0, _141_hex_aes_sivc_d, _141_hex_aes_sivc_ha },
     {}
   };
 static c3_c* _141_hex_aes_ha[] = {
