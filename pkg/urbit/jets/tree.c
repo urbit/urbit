@@ -80,26 +80,26 @@ static u3j_harm _141_hex_aes_siva_en_a[] = {{".2", u3wea_siva_en}, {}};
 static c3_c* _141_hex_aes_siva_en_ha[] = {
   0
 };
-/* static u3j_harm _141_hex_aes_siva_de_a[] = {{".2", u3wea_siva_de}, {}}; */
-/* static c3_c* _141_hex_aes_siva_de_ha[] = { */
-/*   0 */
-/* }; */
+static u3j_harm _141_hex_aes_siva_de_a[] = {{".2", u3wea_siva_de}, {}};
+static c3_c* _141_hex_aes_siva_de_ha[] = {
+  0
+};
 static u3j_harm _141_hex_aes_sivb_en_a[] = {{".2", u3wea_sivb_en}, {}};
 static c3_c* _141_hex_aes_sivb_en_ha[] = {
   0
 };
-/* static u3j_harm _141_hex_aes_sivb_de_a[] = {{".2", u3wea_sivb_de}, {}}; */
-/* static c3_c* _141_hex_aes_sivb_de_ha[] = { */
-/*   0 */
-/* }; */
+static u3j_harm _141_hex_aes_sivb_de_a[] = {{".2", u3wea_sivb_de}, {}};
+static c3_c* _141_hex_aes_sivb_de_ha[] = {
+  0
+};
 static u3j_harm _141_hex_aes_sivc_en_a[] = {{".2", u3wea_sivc_en}, {}};
 static c3_c* _141_hex_aes_sivc_en_ha[] = {
   0
 };
-/* static u3j_harm _141_hex_aes_sivc_de_a[] = {{".2", u3wea_sivc_de}, {}}; */
-/* static c3_c* _141_hex_aes_sivc_de_ha[] = { */
-/*   0 */
-/* }; */
+static u3j_harm _141_hex_aes_sivc_de_a[] = {{".2", u3wea_sivc_de}, {}};
+static c3_c* _141_hex_aes_sivc_de_ha[] = {
+  0
+};
 
 static u3j_core _141_hex_aes_ecba_d[] =
   { { "en", 7, _141_hex_aes_ecba_en_a, 0, _141_hex_aes_ecba_en_ha },
@@ -163,7 +163,7 @@ static c3_c* _141_hex_aes_cbcc_ha[] = {
 
 static u3j_core _141_hex_aes_siva_d[] =
   { { "en", 7, _141_hex_aes_siva_en_a, 0, _141_hex_aes_siva_en_ha },
-    /* { "de", 7, _141_hex_aes_siva_de_a, 0, _141_hex_aes_siva_de_ha }, */
+    { "de", 7, _141_hex_aes_siva_de_a, 0, _141_hex_aes_siva_de_ha },
     {}
   };
 static c3_c* _141_hex_aes_siva_ha[] = {
@@ -171,7 +171,7 @@ static c3_c* _141_hex_aes_siva_ha[] = {
 };
 static u3j_core _141_hex_aes_sivb_d[] =
   { { "en", 7, _141_hex_aes_sivb_en_a, 0, _141_hex_aes_sivb_en_ha },
-    /* { "de", 7, _141_hex_aes_sivb_de_a, 0, _141_hex_aes_sivb_de_ha }, */
+    { "de", 7, _141_hex_aes_sivb_de_a, 0, _141_hex_aes_sivb_de_ha },
     {}
   };
 static c3_c* _141_hex_aes_sivb_ha[] = {
@@ -179,7 +179,7 @@ static c3_c* _141_hex_aes_sivb_ha[] = {
 };
 static u3j_core _141_hex_aes_sivc_d[] =
   { { "en", 7, _141_hex_aes_sivc_en_a, 0, _141_hex_aes_sivc_en_ha },
-    /* { "de", 7, _141_hex_aes_sivc_de_a, 0, _141_hex_aes_sivc_de_ha }, */
+    { "de", 7, _141_hex_aes_sivc_de_a, 0, _141_hex_aes_sivc_de_ha },
     {}
   };
 static c3_c* _141_hex_aes_sivc_ha[] = {
