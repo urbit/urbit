@@ -254,7 +254,6 @@
     ==
   ::
   ?>  ?=(%2 -.u.old)
-  =.  width.u.old  (max 40 width.u.old)
   u.old
 ::  +catch-up: process all chat-store state
 ::
@@ -1081,7 +1080,7 @@
     ::
     ++  set-width
       |=  w=@ud
-      [~ state(width w)]
+      [~ state(width (max 40 w))]
     ::  +set-timezone: configure timestamp printing adjustment
     ::
     ++  set-timezone
