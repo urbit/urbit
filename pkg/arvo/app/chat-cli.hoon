@@ -280,7 +280,8 @@
   ^-  card
   [%pass /invites %agent [our.bowl %invite-store] %watch /invitatory/chat]
 ::
-++  our-self  (name:title our.bowl)
+::TODO  better moon support. (name:title our.bowl)
+++  our-self  our.bowl
 ::  +target-to-path: prepend ship to the path
 ::
 ++  target-to-path
