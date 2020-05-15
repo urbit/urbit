@@ -36,7 +36,6 @@
       width=@ud                                     ::  display width
       timez=(pair ? @ud)                            ::  timezone adjustment
       soles=(map @ta sole-share:sole-sur)           ::  console state
-      eny=@uvJ
   ==
 ::
 +$  state-1
@@ -117,7 +116,7 @@
   |_  =bowl:gall
   +*  this       .
       talk-core  +>
-      tc         ~(. talk-core(eny eny.bowl) bowl)
+      tc         ~(. talk-core bowl)
       def        ~(. (default-agent this %|) bowl)
   ::
   ++  on-init
@@ -252,8 +251,6 @@
       %+  ~(put by *(map @t sole-share:sole-sur))
         (cat 3 'drum_' (scot %p our.bowl))
       state.cli.u.old
-    ::
-      eny
     ==
   ::
   ?>  ?=(%2 -.u.old)
@@ -1005,7 +1002,7 @@
       ^-  (quip card _state)
       ~!  bowl
       =/  =serial  (shaf %msg-uid eny.bowl)
-      :_  state(eny (shax eny.bowl))
+      :_  state
       ^-  (list card)
       %+  turn  ~(tap in audience)
       |=  =target
