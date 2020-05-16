@@ -3810,7 +3810,30 @@
   ?:  ?=(%& -.u.u.p.result)  ``p.u.u.p.result
   ~
 ::
-++  stay  [ver ruf]
+::  We clear the ford cache by replacing it with its bunt as a literal.
+::  This nests within +ford-cache without reference to +type, +hoon, or
+::  anything else in the sample of cache objects.  Otherwise we would be
+::  contravariant in the those types, which makes them harder to change.
+::
+++  stay
+  :-  ver
+  %=    ruf
+      dos.rom
+    %-  ~(run by dos.rom.ruf)
+    |=  =dojo
+    dojo(fod.dom [~ ~ ~])
+  ::
+      hoy
+    %-  ~(run by hoy.ruf)
+    |=  =rung
+    %=    rung
+        rus
+      %-  ~(run by rus.rung)
+      |=  =rede
+      rede(fod.dom [~ ~ ~])
+    ==
+  ==
+::
 ++  take                                              ::  accept response
   |=  [tea=wire hen=duct dud=(unit goof) hin=(hypo sign)]
   ^+  [*(list move) ..^$]
