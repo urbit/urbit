@@ -362,30 +362,35 @@ _cttp_mcut_pork(c3_c* buf_c, c3_w len_w, u3_noun pok)
 /* _cttp_mcut_quay(): measure/cut query.
 */
 static c3_w
-_cttp_mcut_quay(c3_c* buf_c, c3_w len_w, u3_noun quy, int amp)
+_cttp_mcut_quay(c3_c* buf_c, c3_w len_w, u3_noun quy)
 {
-  if ( u3_nul == quy ) {
-    return len_w;
-  }
-  else {
-    u3_noun i_quy = u3h(quy);
-    u3_noun pi_quy = u3h(i_quy);
-    u3_noun qi_quy = u3t(i_quy);
-    u3_noun t_quy = u3t(quy);
-    
-    c3_w len_w;
+  u3_noun yuq = quy;
+  c3_o  fir_o = c3y;
 
-    if (1 == amp) {
+  while ( u3_nul != quy ) {
+    if ( c3y == fir_o ) {
+      len_w = _cttp_mcut_char(buf_c, len_w, '?');
+      fir_o = c3n;
+    }
+    else {
       len_w = _cttp_mcut_char(buf_c, len_w, '&');
     }
 
-    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(pi_quy));
-    len_w = _cttp_mcut_char(buf_c, len_w, '=');
-    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(qi_quy));
+    {
+      u3_noun i_quy, t_quy;
+      u3_noun pi_quy, qi_quy;
+      u3x_cell(quy, &i_quy, &t_quy);
+      u3x_cell(i_quy, &pi_quy, &qi_quy);
 
-    len_w = _cttp_mcut_quay(buf_c, len_w, u3k(t_quy), 1);
+      len_w = _cttp_mcut_cord(buf_c, len_w, u3k(pi_quy));
+      len_w = _cttp_mcut_char(buf_c, len_w, '=');
+      len_w = _cttp_mcut_cord(buf_c, len_w, u3k(qi_quy));
+
+      quy = t_quy;
+    }
   }
-  u3z(quy);
+
+  u3z(yuq);
   return len_w;
 }
 
@@ -401,8 +406,7 @@ _cttp_mcut_url(c3_c* buf_c, c3_w len_w, u3_noun pul)
   len_w = _cttp_mcut_pork(buf_c, len_w, u3k(q_pul));
 
   if ( u3_nul != r_pul ) {
-    len_w = _cttp_mcut_char(buf_c, len_w, '?');
-    len_w = _cttp_mcut_quay(buf_c, len_w, u3k(r_pul), 0);
+    len_w = _cttp_mcut_quay(buf_c, len_w, u3k(r_pul));
   }
   u3z(pul);
   return len_w;
