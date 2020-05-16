@@ -614,7 +614,11 @@
     [~ state]
   =/  book-name      i.t.t.t.pax
   =/  note-name      i.t.t.t.t.pax
-  =/  new-comment    !<(comment q.r.u.rot)
+  =/  com-2-3    !<(?(comment-2 comment-3) q.r.u.rot)
+  =/  new-comment=comment-3
+    ?:  ?=(comment-2 com-2-3)
+      [author.com-2-3 date-created.com-2-3 content.com-2-3 %.n]
+    com-2-3
   =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
   =/  delta=notebook-delta
     [%edit-comment our.bol book-name note-name u.comment-date new-comment]
@@ -749,7 +753,11 @@
     =/  comment-name  (slaw %da i.t.t.t.t.t.pax)
     ?~  comment-name
       [~ sty]
-    =/  new-com  .^(comment %cx (welp our-beak pax))
+    =/  com-2-3  .^(?(comment-2 comment-3) %cx (welp our-beak pax))
+    =/  new-com=comment-3
+      ?:  ?=(comment-2 com-2-3)
+        [author.com-2-3 date-created.com-2-3 content.com-2-3 %.n]
+      com-2-3
     =/  rif=riff:clay  [q.byk.bol `[%next %x [%da now.bol] pax]]
     ::
     =/  delta=notebook-delta
