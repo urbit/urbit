@@ -1009,11 +1009,15 @@
     =/  =mool:clay
       :-  da+date
       %-  ~(gas in *(set [care:clay path]))
-      :-  [%z /sys/vane/gall/hoon]
-      %+  turn  ~(tap in ~(key by yokes.state))
-      |=  dap=term
-      ^-  [care:clay path]
-      [%a /app/[dap]/hoon]
+      :*  [%z /sys/hoon/hoon]
+          [%z /sys/arvo/hoon]
+          [%z /sys/zuse/hoon]
+          [%z /sys/vane/gall/hoon]
+          %+  turn  ~(tap in ~(key by yokes.state))
+          |=  dap=term
+          ^-  [care:clay path]
+          [%a /app/[dap]/hoon]
+      ==
     (mo-pass wire %c %warp our %home ~ %mult mool)
   ::  +mo-scry-agent-cage: read $agent core from clay
   ::
