@@ -1112,10 +1112,18 @@
   ::  Print warning and no-op.
   ::
       %warn
-    ?:  =(%& -:(mule |.(((slog ;;(tank q.q.ovo) ~) ~))))
-      [~ arvo]
-    ~>  %slog.[0 leaf+"arvo: %warn print-fail"]
-    [~ arvo]
+    :_  arvo
+    ?.  ?=(^ +.q.ovo)
+      ~
+    =/  msg=tape
+      :(weld "(for %" (trip (symp +<.q.ovo)) ") failed")
+    ~>  %slog.[0 leaf+(weld "arvo: replacement event " msg)]
+    ?:  lac
+      ~
+    =/  rep
+      %-  mule  |.
+      ((slog (tang +>.q.ovo)) ~)
+    ~
   ::  Process these events just as if they had come from a vane
   ::
       ?(%lyra %veer %verb %wack %whey)  (feck now ovo *debt:le:part)
