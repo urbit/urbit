@@ -19,8 +19,23 @@
 +$  card  card:agent:gall
 ::
 +$  versioned-state
-  $%  state-1
+  $%  state-2
+      state-1
       state-0
+  ==
+::
++$  state-2
+  $:  %2
+      grams=(list mail)                             ::  all messages
+      known=(set [target serial])                   ::  known message lookup
+      count=@ud                                     ::  (lent grams)
+      bound=(map target glyph)                      ::  bound circle glyphs
+      binds=(jug glyph target)                      ::  circle glyph lookup
+      audience=(set target)                         ::  active targets
+      settings=(set term)                           ::  frontend flags
+      width=@ud                                     ::  display width
+      timez=(pair ? @ud)                            ::  timezone adjustment
+      soles=(map @ta sole-share:sole-sur)           ::  console state
   ==
 ::
 +$  state-1
@@ -91,7 +106,7 @@
   ==                                                ::
 ::
 --
-=|  state-1
+=|  state-2
 =*  state  -
 ::
 %-  agent:dbug
@@ -101,7 +116,7 @@
   |_  =bowl:gall
   +*  this       .
       talk-core  +>
-      tc         ~(. talk-core(eny eny.bowl) bowl)
+      tc         ~(. talk-core bowl)
       def        ~(. (default-agent this %|) bowl)
   ::
   ++  on-init
@@ -124,7 +139,7 @@
     =^  cards  state
       ?+  mark        (on-poke:def mark vase)
         %noun         (poke-noun:tc !<(* vase))
-        %sole-action  (poke-sole-action:tc !<(sole-action:sole-sur vase))
+        %sole-action  (sh-in:tc !<(sole-action:sole-sur vase))
       ==
     [cards this]
   ::
@@ -134,7 +149,14 @@
     =^  cards  state  (peer:tc path)
     [cards this]
   ::
-  ++  on-leave  on-leave:def
+  ++  on-leave
+    |=  =path
+    ^-  (quip card _this)
+    :-  ~
+    ?.  ?=([%sole @ ~] path)
+      this
+    this(soles (~(del by soles) i.t.path))
+  ::
   ++  on-peek   on-peek:def
   ++  on-agent
     |=  [=wire =sign:agent:gall]
@@ -183,13 +205,9 @@
       ?:  (~(has by wex.bowl) [/chat-store our-self %chat-store])  ~
       ~[connect]
   ::
-  ^-  state-1
-  ?-  -.u.old
-      %1
-    =?  width.u.old  =(0 width.u.old)  80
-    u.old(bound (~(gas by *(map target glyph)) ~(tap by bound.u.old)))
-  ::
-      ?(~ ^)
+  ^-  state-2
+  =?  u.old  ?=(?(~ ^) -.u.old)
+    ^-  state-1
     :-  %1
     %=  u.old
       grams  ~  ::NOTE  this only impacts historic message lookup in chat-cli
@@ -221,7 +239,22 @@
       |=  t=[ship path]
       `target`[| t]
     ==
-  ==
+  ::
+  =?  u.old  ?=(%1 -.u.old)
+    ^-  state-2
+    =,  u.old
+    :*  %2
+      grams  known  count
+      bound  binds  audience
+      settings  width  timez
+    ::
+      %+  ~(put by *(map @t sole-share:sole-sur))
+        (cat 3 'drum_' (scot %p our.bowl))
+      state.cli.u.old
+    ==
+  ::
+  ?>  ?=(%2 -.u.old)
+  u.old
 ::  +catch-up: process all chat-store state
 ::
 ++  catch-up
@@ -247,7 +280,8 @@
   ^-  card
   [%pass /invites %agent [our.bowl %invite-store] %watch /invitatory/chat]
 ::
-++  our-self  (name:title our.bowl)
+::TODO  better moon support. (name:title our.bowl)
+++  our-self  our.bowl
 ::  +target-to-path: prepend ship to the path
 ::
 ++  target-to-path
@@ -282,13 +316,6 @@
   ?:  ?=(%catch-up a)
     catch-up
   [~ state]
-::  +poke-sole-action: handle cli input
-::
-++  poke-sole-action
-  ::TODO  use id.act to support multiple separate sessions
-  |=  [act=sole-action:sole-sur]
-  ^-  (quip card _state)
-  (sole:sh-in act)
 ::  +peer: accept only cli subscriptions from ourselves
 ::
 ++  peer
@@ -297,13 +324,17 @@
   ?.  (team:title our-self src.bowl)
     ~|  [%peer-talk-stranger src.bowl]
     !!
-  ?.  ?=([%sole *] path)
+  ?.  ?=([%sole @ ~] path)
     ~|  [%peer-talk-strange path]
     !!
-  ::  display a fresh prompt
-  :-  [prompt:sh-out ~]
+  =*  sole-id=@ta  i.t.path
   ::  start with fresh sole state
-  state(state.cli *sole-share:sole-sur)
+  =.  soles
+    (~(put by soles) sole-id *sole-share:sole-sur)
+  ::  display a fresh prompt
+  ::NOTE  this means we send it to all, but all should already have the right
+  ::      prompt anyway, so in effect it's a no-op for them.
+  [[prompt:sh-out]~ state]
 ::  +handle-invite-update: get new invites
 ::
 ++  handle-invite-update
@@ -426,20 +457,25 @@
 ::  +sh-in: handle user input
 ::
 ++  sh-in
-  ::NOTE  interestingly, adding =,  sh-out breaks compliation
-  |%
-  ::  +sole: apply sole action
+  =,  sole-sur
+  |=  act=sole-action
+  ^-  (quip card _state)
+  =*  sole-id=@ta  id.act
+  =/  cli-state=sole-share
+    (~(gut by soles) sole-id *sole-share)
+  |^  =^  [=_cli-state cards=(list card)]  state
+        ?-  -.dat.act
+          %det  (edit +.dat.act)
+          %clr  [[cli-state ~] state]
+          %ret  obey
+          %tab  (tab +.dat.act)
+        ==
+      :-  cards
+      state(soles (~(put by soles) sole-id cli-state))
   ::
-  ++  sole
-    |=  act=sole-action:sole-sur
-    ^-  (quip card _state)
-    ?-  -.dat.act
-      %det  (edit +.dat.act)
-      %clr  [~ state]
-      %ret  obey
-      %tab  (tab +.dat.act)
-    ==
+  +$  outward  [[=_cli-state cards=(list card)] _state]
   ::  +tab-list: static list of autocomplete entries
+  ::
   ++  tab-list
     ^-  (list (option:auto tank))
     :~
@@ -464,18 +500,20 @@
     ==
   ++  tab
     |=  pos=@ud
-    ^-  (quip card _state)
-    ?:  ?|  =(~ buf.state.cli)
-            !=(';' -.buf.state.cli)
+    ^-  outward
+    ?:  ?|  =(~ buf.cli-state)
+            !=(';' -.buf.cli-state)
         ==
       :_  state
+      :-  cli-state
       [(effect:sh-out [%bel ~]) ~]
     ::
-    =+  (get-id:auto pos (tufa buf.state.cli))
+    =+  (get-id:auto pos (tufa buf.cli-state))
     =/  needle=term
       (fall id '')
+    ::  autocomplete empty command iff user at start of command
     ?:  &(!=(pos 1) =(0 (met 3 needle)))
-      [~ state]  :: autocomplete empty command iff user at start of command
+      [[cli-state ~] state]
     =/  options=(list (option:auto tank))
       (search-prefix:auto needle tab-list)
     =/  advance=term
@@ -487,14 +525,14 @@
     =|  moves=(list card)
     =?  moves  ?=(^ options)
       [(tab:sh-out options) moves]
-    =|  fxs=(list sole-effect:sole-sur)
-    |-  ^-  (quip card _state)
+    =|  fxs=(list sole-effect)
+    |-  ^-  outward
     ?~  to-send
-      [(flop moves) state]
-    =^  char  state.cli
-      (~(transmit sole-lib state.cli) [%ins send-pos `@c`i.to-send])
+      [[cli-state (flop moves)] state]
+    =^  char  cli-state
+      (~(transmit sole-lib cli-state) [%ins send-pos `@c`i.to-send])
     %_  $
-      moves  [(effect:sh-out %det char) moves]
+      moves  [(effect-to:sh-out sole-id %det char) moves]
       send-pos  +(send-pos)
       to-send  t.to-send
     ==
@@ -504,18 +542,18 @@
   ::    applies the change and does sanitizing.
   ::
   ++  edit
-    |=  cal=sole-change:sole-sur
-    ^-  (quip card _state)
-    =^  inv  state.cli  (~(transceive sole-lib state.cli) cal)
-    =+  fix=(sanity inv buf.state.cli)
+    |=  cal=sole-change
+    ^-  outward
+    =^  inv  cli-state  (~(transceive sole-lib cli-state) cal)
+    =+  fix=(sanity inv buf.cli-state)
     ?~  lit.fix
-      [~ state]
+      [[cli-state ~] state]
     ::  just capital correction
     ?~  err.fix
       (slug fix)
     ::  allow interior edits and deletes
-    ?.  &(?=($del -.inv) =(+(p.inv) (lent buf.state.cli)))
-      [~ state]
+    ?.  &(?=($del -.inv) =(+(p.inv) (lent buf.cli-state)))
+      [[cli-state ~] state]
     (slug fix)
   ::  +sanity: check input sanity
   ::
@@ -523,22 +561,23 @@
   ::    if invalid, produces error correction description, for use with +slug.
   ::
   ++  sanity
-    |=  [inv=sole-edit:sole-sur buf=(list @c)]
-    ^-  [lit=(list sole-edit:sole-sur) err=(unit @u)]
+    |=  [inv=sole-edit buf=(list @c)]
+    ^-  [lit=(list sole-edit) err=(unit @u)]
     =+  res=(rose (tufa buf) read)
     ?:  ?=(%& -.res)  [~ ~]
     [[inv]~ `p.res]
   ::  +slug: apply error correction to prompt input
   ::
   ++  slug
-    |=  [lit=(list sole-edit:sole-sur) err=(unit @u)]
-    ^-  (quip card _state)
-    ?~  lit  [~ state]
-    =^  lic  state.cli
-      %-  ~(transmit sole-lib state.cli)
-      ^-  sole-edit:sole-sur
+    |=  [lit=(list sole-edit) err=(unit @u)]
+    ^-  outward
+    ?~  lit  [[cli-state ~] state]
+    =^  lic  cli-state
+      %-  ~(transmit sole-lib cli-state)
+      ^-  sole-edit
       ?~(t.lit i.lit [%mor lit])
     :_  state
+    :-  cli-state
     :_  ~
     %+  effect:sh-out  %mor
     :-  [%det lic]
@@ -731,7 +770,7 @@
     ::
     ++  text
       %+  cook  crip
-      (plus ;~(less (jest '•') next))
+      (plus next)
     ::  +expr: parse expression into [cord hoon]
     ::
     ++  expr
@@ -748,23 +787,27 @@
   ::    the command (if any) gets echoed to the user.
   ::
   ++  obey
-    ^-  (quip card _state)
-    =+  buf=buf.state.cli
+    ^-  outward
+    =+  buf=buf.cli-state
     =+  fix=(sanity [%nop ~] buf)
     ?^  lit.fix
       (slug fix)
     =+  jub=(rust (tufa buf) read)
-    ?~  jub  [[(effect:sh-out %bel ~) ~] state]
-    =^  cal  state.cli  (~(transmit sole-lib state.cli) [%set ~])
+    ?~  jub
+      :_  state
+      [cli-state [(effect:sh-out %bel ~)]~]
+    =^  cal  cli-state  (~(transmit sole-lib cli-state) [%set ~])
     =^  cards  state  (work u.jub)
     :_  state
+    :-  cli-state
     %+  weld
       ^-  (list card)
       ::  echo commands into scrollback
       ?.  =(`0 (find ";" buf))  ~
       [(note:sh-out (tufa `(list @)`buf)) ~]
     :_  cards
-    %+  effect:sh-out  %mor
+    %+  effect-to:sh-out  sole-id
+    :-  %mor
     :~  [%nex ~]
         [%det cal]
     ==
@@ -961,7 +1004,7 @@
       ^-  (quip card _state)
       ~!  bowl
       =/  =serial  (shaf %msg-uid eny.bowl)
-      :_  state(eny (shax eny.bowl))
+      :_  state
       ^-  (list card)
       %+  turn  ~(tap in audience)
       |=  =target
@@ -1039,7 +1082,7 @@
     ::
     ++  set-width
       |=  w=@ud
-      [~ state(width w)]
+      [~ state(width (max 40 w))]
     ::  +set-timezone: configure timestamp printing adjustment
     ::
     ++  set-timezone
@@ -1119,17 +1162,25 @@
     --
   --
 ::
-::  +sh-out: output to the cli
+::  +sh-out: ouput to session
 ::
 ++  sh-out
   |%
-  ::  +effect: console effect card
+  ::  +effect-to: console effect card to a single listener
+  ::
+  ++  effect-to
+    |=  [sole-id=@ta fec=sole-effect:sole-sur]
+    ^-  card
+    [%give %fact [/sole/[sole-id]]~ %sole-effect !>(fec)]
+  ::  +effect: console effect card for all listeners
   ::
   ++  effect
     |=  fec=sole-effect:sole-sur
-    =/  =path  /sole/(cat 3 'drum_' (scot %p our.bowl))
     ^-  card
-    [%give %fact ~[path] %sole-effect !>(fec)]
+    =-  [%give %fact - %sole-effect !>(fec)]
+    %+  turn  ~(tap in ~(key by soles))
+    |=  sole-id=@ta
+    /sole/[sole-id]
   ::  +tab: print tab-complete list
   ::
   ++  tab
@@ -1308,13 +1359,14 @@
 ::  +mr: render messages
 ::
 ++  mr
+  =,  sole-sur
   |_  $:  source=target
           envelope
       ==
   ::  +activate: produce sole-effect for printing message details
   ::
   ++  render-activate
-    ^-  sole-effect:sole-sur
+    ^-  sole-effect
     ~[%mor [%tan meta] body]
   ::  +meta: render message metadata (serial, timestamp, author, target)
   ::
@@ -1327,7 +1379,7 @@
   ::  +body: long-form render of message contents
   ::
   ++  body
-    |-  ^-  sole-effect:sole-sur
+    |-  ^-  sole-effect
     ?-  -.letter
         ?(%text %me)
       =/  pre=tape  ?:(?=(%me -.letter) "@ " "")
@@ -1339,7 +1391,7 @@
         %code
       =/  texp=tape  ['>' ' ' (trip expression.letter)]
       :-  %mor
-      |-  ^-  (list sole-effect:sole-sur)
+      |-  ^-  (list sole-effect)
       ?:  =("" texp)  [tan+output.letter ~]
       =/  newl  (find "\0a" texp)
       ?~  newl  [txt+texp $(texp "")]
@@ -1452,8 +1504,13 @@
         ~(glyph tr source)
       =/  lis=(list tape)
         %+  simple-wrap
-          ~|  [%weird-text `@`+.letter]
-          `tape``(list @)`(tuba (trip +.letter))
+          =/  result=(each tape tang)
+            %-  mule  |.
+            `(list @)`(tuba (trip +.letter))
+          ?-  -.result
+            %&  p.result
+            %|  "[[msg rendering error]]"
+          ==
         (sub wyd (min (div wyd 2) (lent pef)))
       =+  lef=(lent pef)
       =+  ?:((gth (lent lis) 0) (snag 0 lis) "")
@@ -1485,6 +1542,8 @@
   ^-  (list tape)
   ?~  txt  ~
   =/  [end=@ud nex=?]
+    =+  ret=(find "\0a" (scag +(wid) `tape`txt))
+    ?^  ret  [u.ret &]
     ?:  (lte (lent txt) wid)  [(lent txt) &]
     =+  ace=(find " " (flop (scag +(wid) `tape`txt)))
     ?~  ace  [wid |]
