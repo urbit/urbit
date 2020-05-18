@@ -44,11 +44,20 @@
     ^-  (quip card _this)
     ?:  ?=(%noun mark)
       ?>  (team:title [our src]:bowl)
-      [~ this(passcode !<((unit @t) vase))]
+      =/  code  !<((unit @t) vase)
+      =/  msg=tape
+        ?~  code
+          "Removing passcode access for debug interface."
+        """
+        Enabling passcode access for debug interface. Anyone with this code can
+         view your applications' state, the people you've talked to, etc. Only
+         share with people you trust. To disable, run :dbug ~
+        """
+      %-  (slog leaf+msg ~)
+      [~ this(passcode code)]
     ?.  ?=(%handle-http-request mark)
       (on-poke:def mark vase)
     =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
-    :: !!
     :_  this
     %+  give-simple-payload:app:server  eyre-id
     %+  authorize-http-request:do  inbound-request
@@ -390,7 +399,7 @@
           'heeds'^(set-array heeds from-duct)
       ==
     ::
-    ::  json for known peer is structures to closely match the peer-state type.
+    ::  json for known peer is structured to closely match the peer-state type.
     ::  where an index is specified, the array is generally sorted by those.
     ::
     ::  { life: 123,
