@@ -231,6 +231,7 @@ export default class GroupsApp extends Component {
                     {...props}
                   />
                   <ContactCard
+                    api={this.api}
                     history={props.history}
                     contact={contact}
                     path={groupPath}
@@ -283,6 +284,7 @@ export default class GroupsApp extends Component {
                     {...props}
                   />
                   <ContactCard
+                    api={this.api}
                     history={props.history}
                     contact={contact}
                     path={groupPath}
@@ -311,6 +313,7 @@ export default class GroupsApp extends Component {
                   associations={associations}
                 >
                   <ContactCard
+                    api={this.api}
                     history={props.history}
                     path="/~/default"
                     contact={me}
