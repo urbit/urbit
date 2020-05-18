@@ -472,17 +472,17 @@
         ::
           :-  'snd'
           :-  %a
-          %+  turn  (sort ~(tap by snd) aor)  ::  sort by bone
+          %+  turn  (sort ~(tap by snd) vor)  ::  sort by bone
           (cury snd-with-bone ossuary)
         ::
           :-  'rcv'
           :-  %a
-          %+  turn  (sort ~(tap by rcv) aor)  ::  sort by bone
+          %+  turn  (sort ~(tap by rcv) vor)  ::  sort by bone
           (cury rcv-with-bone ossuary)
         ::
           :-  'nax'
           :-  %a
-          %+  turn  (sort ~(tap in nax) aor)  ::  sort by bone
+          %+  turn  (sort ~(tap in nax) vor)  ::  sort by bone
           |=  [=bone =message-num]
           %-  pairs
           :*  'message-num'^(numb message-num)
@@ -506,7 +506,7 @@
         ::
           :-  'queued-message-acks'
           :-  %a
-          %+  turn  (sort ~(tap by queued-message-acks) aor)  ::  sort by msg nr
+          %+  turn  (sort ~(tap by queued-message-acks) vor)  ::  sort by msg nr
           |=  [=message-num =ack]
           %-  pairs
           :~  'message-num'^(numb message-num)
@@ -520,7 +520,7 @@
             ::
               :-  'live'
               :-  %a
-              %+  turn  (sort ~(tap in live) aor)  ::  sort by msg nr & frg nr
+              %+  turn  (sort ~(tap in live) vor)  ::  sort by msg nr & frg nr
               |=  [live-packet-key live-packet-val]
               %-  pairs
               :~  'message-num'^(numb message-num)
@@ -556,11 +556,11 @@
         ::
           :-  'pending-vane-ack'
           =-  a+(turn - numb)
-          (sort (turn ~(tap in pending-vane-ack) head) aor)  ::  sort by msg #
+          (sort (turn ~(tap in pending-vane-ack) head) vor)  ::  sort by msg #
         ::
           :-  'live-messages'
           :-  %a
-          %+  turn  (sort ~(tap by live-messages) aor)  ::  sort by msg #
+          %+  turn  (sort ~(tap by live-messages) vor)  ::  sort by msg #
           |=  [=message-num partial-rcv-message]
           %-  pairs
           :~  'message-num'^(numb message-num)
@@ -704,6 +704,22 @@
   --
 ::
 ::  helpers
+::
+::  +vor: value order
+::
+::    Orders atoms before cells, and atoms in ascending order.
+::
+++  vor
+  |=  [a=* b=*]
+  ^-  ?
+  ?:  =(a b)  &
+  ?.  ?=(@ a)
+    ?:  ?=(@ b)  |
+    ?:  =(-.a -.b)
+      $(a +.a, b +.b)
+    $(a -.a, b -.b)
+  ?.  ?=(@ b)  &
+  (lth a b)
 ::
 ++  poke
   |=  [=wire app=term =mark =vase]
