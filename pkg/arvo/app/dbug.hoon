@@ -569,7 +569,7 @@
               'fragments'^(set-array ~(key by fragments) numb)
           ==
         ::
-          'nax'^(set-array nax numb)
+          'nax'^a+(turn (sort ~(tap in nax) vor) numb)
         ::
           (bone-to-pairs bone ossuary)
       ==
