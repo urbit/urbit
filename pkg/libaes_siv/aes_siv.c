@@ -247,12 +247,12 @@ void AES_SIV_CTX_free(AES_SIV_CTX *ctx) {
                         CMAC_CTX_free(ctx->cmac_ctx);
                 }
 		OPENSSL_cleanse(&ctx->d, sizeof ctx->d);
-                free(ctx);
+                OPENSSL_free(ctx);
         }
 }
 
 AES_SIV_CTX *AES_SIV_CTX_new(void) {
-        AES_SIV_CTX *ctx = malloc(sizeof(struct AES_SIV_CTX_st));
+        AES_SIV_CTX *ctx = OPENSSL_malloc(sizeof(struct AES_SIV_CTX_st));
         if (UNLIKELY(ctx == NULL)) {
                 return NULL;
         }

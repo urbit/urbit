@@ -7,7 +7,6 @@
 
 #include "aes_siv.h"
 
-
 /* functions
  */
 static void u3r_bytes_reverse(c3_w    a_w,
@@ -33,9 +32,13 @@ static u3_noun _siv_en(c3_y* key_y,
                        u3_atom txt)
 {
   AES_SIV_CTX* ctx = AES_SIV_CTX_new();
+  if ( 0 == ctx ) {
+    return u3_none;
+  }
+
   if ( 0 == AES_SIV_Init(ctx, key_y, keysize) ) {
     AES_SIV_CTX_free(ctx);
-    return u3m_bail(c3__exit);
+    return u3_none;
   }
 
   while (u3_nul != ads) {
@@ -48,7 +51,7 @@ static u3_noun _siv_en(c3_y* key_y,
 
     if ( 0 == ret ) {
       AES_SIV_CTX_free(ctx);
-      return u3m_bail(c3__exit);
+      return u3_none;
     }
 
     ads = u3t(ads);
@@ -67,7 +70,7 @@ static u3_noun _siv_en(c3_y* key_y,
     u3a_free(out_y);
     u3a_free(txt_y);
     AES_SIV_CTX_free(ctx);
-    return u3m_bail(c3__exit);
+    return u3_none;
   }
 
   u3a_free(txt_y);
@@ -97,9 +100,13 @@ static u3_noun _siv_de(c3_y* key_y,
                        u3_atom txt)
 {
   AES_SIV_CTX* ctx = AES_SIV_CTX_new();
+  if ( 0 == ctx ) {
+    return u3_none;
+  }
+
   if ( 0 == AES_SIV_Init(ctx, key_y, keysize) ) {
     AES_SIV_CTX_free(ctx);
-    return u3m_bail(c3__exit);
+    return u3_none;
   }
 
   while (u3_nul != ads) {
@@ -112,7 +119,7 @@ static u3_noun _siv_de(c3_y* key_y,
 
     if ( 0 == ret ) {
       AES_SIV_CTX_free(ctx);
-      return u3m_bail(c3__exit);
+      return u3_none;
     }
 
     ads = u3t(ads);
@@ -133,8 +140,10 @@ static u3_noun _siv_de(c3_y* key_y,
     u3a_free(txt_y);
     AES_SIV_CTX_free(ctx);
 
-    // Dcryption failed or signature bad.
-    return 0;
+    // Either decryption failed or signature bad or there was a memory
+    // error. Some of these are deterministic and some are not. return u3_none
+    // to fallback to the Nock implementation.
+    return u3_none;
   }
 
   u3a_free(txt_y);
