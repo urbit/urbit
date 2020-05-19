@@ -491,17 +491,17 @@
         ::
           :-  'snd'
           :-  %a
-          %+  turn  (sort ~(tap by snd) vor)  ::  sort by bone
+          %+  turn  (sort ~(tap by snd) dor)  ::  sort by bone
           (cury snd-with-bone ossuary)
         ::
           :-  'rcv'
           :-  %a
-          %+  turn  (sort ~(tap by rcv) vor)  ::  sort by bone
+          %+  turn  (sort ~(tap by rcv) dor)  ::  sort by bone
           (cury rcv-with-bone ossuary)
         ::
           :-  'nax'
           :-  %a
-          %+  turn  (sort ~(tap in nax) vor)  ::  sort by bone
+          %+  turn  (sort ~(tap in nax) dor)  ::  sort by bone
           |=  [=bone =message-num]
           %-  pairs
           :*  'message-num'^(numb message-num)
@@ -525,7 +525,7 @@
         ::
           :-  'queued-message-acks'
           :-  %a
-          %+  turn  (sort ~(tap by queued-message-acks) vor)  ::  sort by msg nr
+          %+  turn  (sort ~(tap by queued-message-acks) dor)  ::  sort by msg nr
           |=  [=message-num =ack]
           %-  pairs
           :~  'message-num'^(numb message-num)
@@ -539,7 +539,7 @@
             ::
               :-  'live'
               :-  %a
-              %+  turn  (sort ~(tap in live) vor)  ::  sort by msg nr & frg nr
+              %+  turn  (sort ~(tap in live) dor)  ::  sort by msg nr & frg nr
               |=  [live-packet-key live-packet-val]
               %-  pairs
               :~  'message-num'^(numb message-num)
@@ -575,11 +575,11 @@
         ::
           :-  'pending-vane-ack'
           =-  a+(turn - numb)
-          (sort (turn ~(tap in pending-vane-ack) head) vor)  ::  sort by msg #
+          (sort (turn ~(tap in pending-vane-ack) head) dor)  ::  sort by msg #
         ::
           :-  'live-messages'
           :-  %a
-          %+  turn  (sort ~(tap by live-messages) vor)  ::  sort by msg #
+          %+  turn  (sort ~(tap by live-messages) dor)  ::  sort by msg #
           |=  [=message-num partial-rcv-message]
           %-  pairs
           :~  'message-num'^(numb message-num)
@@ -588,7 +588,7 @@
               'fragments'^(set-array ~(key by fragments) numb)
           ==
         ::
-          'nax'^a+(turn (sort ~(tap in nax) vor) numb)
+          'nax'^a+(turn (sort ~(tap in nax) dor) numb)
         ::
           (bone-to-pairs bone ossuary)
       ==
@@ -723,22 +723,6 @@
   --
 ::
 ::  helpers
-::
-::  +vor: value order
-::
-::    Orders atoms before cells, and atoms in ascending order.
-::
-++  vor
-  |=  [a=* b=*]
-  ^-  ?
-  ?:  =(a b)  &
-  ?.  ?=(@ a)
-    ?:  ?=(@ b)  |
-    ?:  =(-.a -.b)
-      $(a +.a, b +.b)
-    $(a -.a, b -.b)
-  ?.  ?=(@ b)  &
-  (lth a b)
 ::
 ++  poke
   |=  [=wire app=term =mark =vase]
