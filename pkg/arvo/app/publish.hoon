@@ -953,7 +953,11 @@
   ^-  [(list card) write=path read=path]
   ?>  ?=(^ group-path.group)
   =/  scry-path
-    ;:(weld /=group-store/(scot %da now.bol) group-path.group /noun)
+    ;:  weld
+      /(scot %p our.bowl)/group-store/(scot %da now.bol)
+      group-path.group
+      /noun
+    ==
   =/  grp  .^((unit ^group) %gx scry-path)
   ?:  use-preexisting.group
     ?~  grp  !!

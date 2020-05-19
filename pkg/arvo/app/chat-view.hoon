@@ -114,7 +114,10 @@
     ::
     ++  truncated-inbox-scry
       ^-  inbox
-      =/  =inbox  .^(inbox %gx /=chat-store/(scot %da now.bol)/all/noun)
+      =/  =inbox
+        =/  our  (scot %p our.bowl)
+        =/  now  (scot %da now.bowl)
+        .^(inbox %gx /[our]/chat-store/[now]/all/noun)
       %-  ~(run by inbox)
       |=  =mailbox
       ^-  ^mailbox
@@ -424,7 +427,12 @@
   ++  chat-scry
     |=  pax=path
     ^-  (unit mailbox)
-    =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
+    =.  pax
+      ;:  weld
+        /(scot %p our.bowl)/chat-store/(scot %da now.bol)/mailbox
+        pax
+        /noun
+      ==
     .^((unit mailbox) %gx pax)
   ::
   ++  maybe-group-from-chat

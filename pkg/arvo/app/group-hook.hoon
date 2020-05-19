@@ -57,7 +57,7 @@
     ?.  (~(has by synced.state) t.path)
       (on-watch:def path)
     =/  scry-path=^path
-      :(welp /=group-store/(scot %da now.bowl) t.path /noun)
+      :(welp /(scot %p our.bowl)/group-store/(scot %da now.bowl) t.path /noun)
     =/  grp=(unit group)
       .^((unit group) %gx scry-path)
     ?~  grp
@@ -209,8 +209,13 @@
 ::
 ++  group-scry
   |=  pax=path
-  ^-  (unit group)
-  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
+  .^  (unit group)
+    %gx
+    (scot %p our.bowl)
+    %group-store
+    (scot %da now.bowl)
+    (weld pax /noun)
+  ==
 ::
 ++  update-subscribers
   |=  [pax=path diff=group-update]

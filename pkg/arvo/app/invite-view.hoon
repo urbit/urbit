@@ -44,7 +44,9 @@
     (on-watch:def path)
   :_  this
   =/  =invites
-    .^(invites %gx /=invite-store/(scot %da now.bowl)/all/noun)
+    .^  invites  %gx
+      /(scot %p our.bowl)/invite-store/(scot %da now.bowl)/all/noun
+    ==
   [%give %fact ~ %json !>((invites-to-json invites))]~
 ::
 ++  on-agent

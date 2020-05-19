@@ -201,7 +201,8 @@
 ++  group-scry
   |=  pax=path
   ^-  (unit group)
-  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bowl) pax /noun))
+  =/  bek=path  /(scot %p our.bowl)/group-store/(scot %da now.bowl)
+  .^((unit group) %gx :(weld bek pax /noun))
 ::
 ++  add-members
   |=  [pax=path mem=(set ship) perms=(set path)]

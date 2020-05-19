@@ -1,4 +1,4 @@
-::  metadata-hook: allow syncing foreign metadata
+:  metadata-hook: allow syncing foreign metadata
 ::
 ::  watch paths:
 ::  /group/%group-path                      all updates related to this group
@@ -45,7 +45,7 @@
     ::
         %metadata-action
       [(poke-action:hc !<(metadata-action vase)) this]
-    == 
+    ==
   ::
   ++  on-watch
     |=  =path
@@ -160,7 +160,12 @@
   ++  metadata-scry
     |=  pax=^path
     ^-  associations
-    =.  pax  ;:(weld /=metadata-store/(scot %da now.bowl)/group pax /noun)
+    =.  pax
+      ;:  weld
+        /(scot %p our.bowl)/metadata-store/(scot %da now.bowl)/group
+        pax
+        /noun
+      ==
     .^(associations %gx pax)
   --
 ::
@@ -238,7 +243,7 @@
   ^-  ?
   =.  pax
     ;:  weld
-        /=permission-store/(scot %da now.bowl)/permitted
+        /(scot %p our.bowl)/permission-store/(scot %da now.bowl)/permitted
         [(scot %p ship) pax]
         /noun
     ==
