@@ -37,7 +37,7 @@ export class SearchableList extends Component {
     if (items.length === 0) {
       items = 'none';
     } else {
-      items = items.map(item => (<div style={{marginTop: '4px'}}>{item.jsx}</div>));
+      items = items.map(item => (<div key={item.key} style={{marginTop: '4px'}}>{item.jsx}</div>));
     }
 
     return (<div style={{border: '1px solid grey', padding: '4px'}}>
