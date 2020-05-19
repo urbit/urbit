@@ -50,8 +50,12 @@ export class Spider extends Component {
   }
 
   render() {
-    if (Object.keys(this.props.threads).length === 0)
-      return 'no running threads';
-    return this.renderThreads(this.props.threads);
+    return (<>
+      <button onClick={this.loadThreads}>refresh</button><br/>
+      { Object.keys(this.props.threads).length === 0
+        ? 'no running threads'
+        : this.renderThreads(this.props.threads)
+      }
+    </>);
   }
 }

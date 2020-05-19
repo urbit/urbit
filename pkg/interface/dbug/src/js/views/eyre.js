@@ -47,7 +47,9 @@ export class Eyre extends Component {
 
     return (
       <table><tbody>
-      <SearchableList placeholder="binding" items={items} />
+        <SearchableList placeholder="binding" items={items}>
+          <button onClick={this.loadBindings}>refresh</button>
+        </SearchableList>
       </tbody></table>
     );
   }

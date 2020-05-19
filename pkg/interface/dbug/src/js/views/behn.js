@@ -47,7 +47,9 @@ export class Behn extends Component {
 
     return (
       <table><tbody>
-      <SearchableList placeholder="duct" items={items} />
+        <SearchableList placeholder="duct" items={items}>
+          <button onClick={this.loadTimers}>refresh</button>
+        </SearchableList>
       </tbody></table>
     );
   }

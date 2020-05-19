@@ -40,7 +40,8 @@ export class SearchableList extends Component {
       items = items.map(item => (<div key={item.key} style={{marginTop: '4px'}}>{item.jsx}</div>));
     }
 
-    return (<div style={{border: '1px solid grey', padding: '4px'}}>
+    return (<div style={{position: 'relative', border: '1px solid grey', padding: '4px'}}>
+      {props.children}
       <div>{searchBar}</div>
       <div>{items}</div>
     </div>);

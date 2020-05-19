@@ -65,6 +65,12 @@ export class Apps extends Component {
           </>)};
         })
         deets = (<>
+          <button
+            style={{position: 'absolute', top: 0, right: 0}}
+            onClick={()=>{this.loadAppDetails(app)}}
+          >
+            refresh
+          </button>
           <div style={{maxHeight: '500px', overflow: 'scroll'}}>
             <pre>{data.state.join('\n')}</pre>
           </div>
@@ -93,10 +99,9 @@ export class Apps extends Component {
           "h-100 w-100 pa3 pt4 overflow-x-hidden " +
           "bg-gray0-d white-d flex flex-column"
         }>
-        <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
-          refresh?
-        </div>
-        <SearchableList placeholder="app name" items={apps} />
+        <SearchableList placeholder="app name" items={apps}>
+          <button onClick={this.loadApps}>refresh</button>
+        </SearchableList>
       </div>
     );
   }

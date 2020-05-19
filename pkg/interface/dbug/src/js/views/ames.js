@@ -256,6 +256,12 @@ export class Ames extends Component {
         </>);
 
         return (<>
+          <button
+            style={{position: 'absolute', top: 0, right: 0}}
+            onClick={()=>{this.loadPeerDetails(who)}}
+          >
+            refresh
+          </button>
           {status}
           {snd}
           {rcv}
@@ -289,7 +295,9 @@ export class Ames extends Component {
     const items = [...knownItems, ...alienItems];
 
     return (
-      <SearchableList placeholder="ship name" items={items} />
+      <SearchableList placeholder="ship name" items={items}>
+        <button onClick={this.loadTimers}>refresh</button>
+      </SearchableList>
     );
   }
 }

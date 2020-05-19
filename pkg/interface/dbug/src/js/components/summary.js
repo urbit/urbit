@@ -26,7 +26,7 @@ export class Summary extends Component {
     const { props } = this;
 
     return (
-      <details onToggle={this.onToggle} {...props} style={{border: '1px solid black', padding: '4px', ...props.style}}>
+      <details onToggle={this.onToggle} {...props} style={{border: '1px solid black', padding: '4px', position: 'relative', ...props.style}}>
         <summary>
           {props.summary}
         </summary>

@@ -37,7 +37,11 @@ export class LocalReducer {
   apps(obj, state) {
     const data = _.get(obj, 'apps', false);
     if (data) {
-      state.apps = data;
+      Object.keys(data).map(app => {
+        if (!state.apps[app]) {
+          state.apps[app] = data[app];
+        }
+      });
     }
   }
 
