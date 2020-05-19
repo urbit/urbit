@@ -470,7 +470,17 @@
           |=  [direct=? =lane]
           %-  pairs
           :~  'direct'^b+direct
-              'lane'^?-(-.lane %& (ship p.lane), %| s+(scot %x p.lane))
+            ::
+              :-  'lane'
+              ?-  -.lane
+                %&  (ship p.lane)
+              ::
+                  %|
+                ?~  l=((soft ,[=@tas =@if =@ud]) (cue p.lane))
+                  s+(scot %x p.lane)
+                =,  u.l
+                (tape "%{(trip tas)}, {(scow %if if)}, {(scow %ud ud)}")
+              ==
           ==
         ::
           :-  'qos'
