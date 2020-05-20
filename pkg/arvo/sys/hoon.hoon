@@ -6488,7 +6488,7 @@
 ++  mock
   |=  [[sub=* fol=*] gul=$-(^ (unit (unit)))]
   (mook (mink [sub fol] gul))
-::  +mook: convert $tone to %toon, rendering stack frames if present
+::  +mook: convert $tone to $toon, rendering stack frames
 ::
 ++  mook
   |=  ton=tone
@@ -6510,19 +6510,11 @@
   ::
   ::  +rend: raw stack frame to tank
   ::
-  ::    supported frame types:
-  ::
-  ::    $%  ::  %hunk: failed scry ([~ ~])
-  ::        ::  %lose: skipped frames
-  ::        ::  %hand: mug any
-  ::        ::  %mean: ~_
-  ::        ::  %spot: source location
-  ::        ::
-  ::        [%hunk ref=* path]
-  ::        [%lose cord]
-  ::        [%hand *]
-  ::        [%mean $@(cord (trap tank))]
-  ::        [%spot spot]
+  ::    $%  [%hunk ref=* path]            ::  failed scry ([~ ~])
+  ::        [%lose cord]                  ::  skipped frames
+  ::        [%hand *]                     ::  mug any
+  ::        [%mean $@(cord (trap tank))]  ::  ~_ et al
+  ::        [%spot spot]                  ::  source location
   ::    ==
   ::
   ++  rend
