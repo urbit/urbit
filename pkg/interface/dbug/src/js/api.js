@@ -147,11 +147,15 @@ class UrbitApi {
   // spider
 
   getThreads() {
-    console.log('getting threads');
     this.getJson('/spider/threads',
       this.wrapLocal('threads'),
       this.showStatus('error fetching threads')
     );
+  }
+
+  killThread(tid) {
+    return this.action("spider", "spider-stop", {tid, nice: false})
+           .then(this.getThreads.bind(this));
   }
 
   // ames
