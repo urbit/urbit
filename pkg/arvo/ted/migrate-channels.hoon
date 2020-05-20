@@ -7,32 +7,28 @@
 ^-  form:m
 =/  [og-path=path ng-path=path ~]  !<([path path ~] arg)
 ;<  bol=bowl:spider  bind:m  get-bowl:strandio
+|^
 ::
-=/  gs-path  /(scot %p our.bol)/group-store/(scot %da now.bol)
-=/  ms-path  /(scot %p our.bol)/metadata-store/(scot %da now.bol)
-=/  p-path   /(scot %p our.bol)/publish/(scot %da now.bol)
-::
-=/  og=(unit (set ship))
-  .^((unit (set ship)) %gx :(weld gs-path og-path /noun))
+=/  og=(unit (set ship))  (scry-for (unit (set ship)) %group-store og-path)
 ?~  og
   (pure:m !>("no such group: {<og-path>}"))
-=/  ng=(unit (set ship))
-  .^((unit (set ship)) %gx :(weld gs-path ng-path /noun))
+=/  ng=(unit (set ship))  (scry-for (unit (set ship)) %group-store ng-path)
 ?~  ng
   (pure:m !>("no such group: {<ng-path>}"))
 ::
-=/  ass=associations  .^(associations %gx :(weld ms-path /group og-path /noun))
-=/  ass-list=(list [[group-path resource] metadata])  ~(tap by ass)
+=/  assoc=associations  (scry-for associations %metadata-store [%group og-path])
+=/  assoc-list=(list [[group-path resource] metadata])  ~(tap by assoc)
 ::
 |-
 =*  loop  $
-?~  ass-list
+?~  assoc-list
+  ;<  ~  bind:m
+    (poke-our:strandio %group-store %group-action !>([%unbundle og-path]))
   (pure:m !>("done"))
-=/  [[g-path=group-path res=resource] meta=metadata]  i.ass-list
+=/  [[g-path=group-path res=resource] meta=metadata]  i.assoc-list
 ?.  =(our.bol creator.meta)
-  loop(ass-list t.ass-list)
-?.  =(g-path og-path)
-  loop(ass-list t.ass-list)
+  loop(assoc-list t.assoc-list)
+?>  =(g-path og-path)
 =/  output=(list card:agent:gall)
   ?+  app-name.res  ~
   ::
@@ -51,7 +47,7 @@
     ==
       %publish
     %-  (slog leaf+"migrating {<app-name.res>} : {<app-path.res>}" ~)
-    =/  book  .^(notebook %gx :(weld p-path /book app-path.res /noun))
+    =/  book  (scry-for notebook %publish [%book app-path.res])
     ?>  ?=([@tas @tas ~] app-path.res)
     :~  :*  %pass  /poke  %agent
             [our.bol %publish]
@@ -74,6 +70,15 @@
   ==
 ::
 ;<  ~  bind:m  (send-raw-cards:strandio output)
-;<  ~  bind:m
-  (poke-our:strandio %group-store %group-action !>([%unbundle og-path]))
-loop(ass-list t.ass-list)
+loop(assoc-list t.assoc-list)
+::
+++  scry-for
+  |*  [mol=mold app=term pax=path]
+  .^  mol
+    %gx
+    (scot %p our.bol)
+    app
+    (scot %da now.bol)
+    (snoc `path`pax %noun)
+  ==
+--
