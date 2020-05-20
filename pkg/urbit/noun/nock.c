@@ -7,41 +7,6 @@
 // along with some other debugging info
 #        undef VERBOSE_BYTECODE
 
-/* _n_mush_in(): see _n_mush().
-*/
-static u3_noun
-_n_mush_in(u3_noun val)
-{
-  if ( c3n == u3du(val) ) {
-    return u3_nul;
-  }
-  else {
-    u3_noun h_val = u3h(val);
-    u3_noun ite;
-
-    if ( c3n == u3ud(h_val) ) {
-      ite = u3nc(c3__leaf, u3_nul);
-    } else {
-      ite = u3nc(c3__leaf, u3qe_trip(h_val));
-    }
-    return u3nc(ite, _n_mush_in(u3t(val)));
-  }
-}
-
-/* _n_mush(): tank from failed path request.
-*/
-static u3_noun
-_n_mush(u3_noun val)
-{
-  u3_noun pro;
-
-  pro = u3nt(c3__rose,
-             u3nt(u3nc('/', u3_nul), u3nc('/', u3_nul), u3_nul),
-             _n_mush_in(val));
-  u3z(val);
-  return pro;
-}
-
 #if 0
 // Retained for debugging purposes.
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
@@ -386,7 +351,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         u3_noun val;
 
         u3t_off(noc_o);
-        val = u3m_soft_esc(ref, u3k(gof));
+        val = u3m_soft_esc(u3k(ref), u3k(gof));
         u3t_on(noc_o);
 
         if ( !_(u3du(val)) ) {
@@ -396,12 +361,13 @@ _n_nock_on(u3_noun bus, u3_noun fol)
           //
           //  replace with proper error stack push
           //
-          u3t_push(u3nc(c3__hunk, _n_mush(gof)));
+          u3t_push(u3nt(c3__hunk, ref, gof));
           return u3m_bail(c3__exit);
         }
         else {
           u3_noun pro;
 
+          u3z(ref);
           u3z(gof);
           u3z(fol);
           pro = u3k(u3t(u3t(val)));
@@ -2166,7 +2132,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       top = _n_swap(mov, off); // [ref bus]
     wish_in:
       u3t_off(noc_o);
-      x   = u3m_soft_esc(*top, u3k(o));
+      x   = u3m_soft_esc(u3k(*top), u3k(o));
       u3t_on(noc_o);
 
       if ( c3n == u3du(x) ) {
@@ -2174,13 +2140,13 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
         return u3_none;
       }
       else if ( c3n == u3du(u3t(x)) ) {
-        //  replace with proper error stack push
-        u3t_push(u3nc(c3__hunk, _n_mush(o)));
+        u3t_push(u3nt(c3__hunk, *top, o));
         u3m_bail(c3__exit);
         return u3_none;
       }
       else {
         u3z(o);
+        u3z(*top);
         *top = u3k(u3t(u3t(x)));
         u3z(x);
         BURN();

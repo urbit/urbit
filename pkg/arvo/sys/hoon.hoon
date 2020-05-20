@@ -4046,6 +4046,7 @@
 ~%    %qua
     +
   ==
+    %mure  mure
     %mute  mute
     %show  show
   ==
@@ -6313,11 +6314,14 @@
 ::
 ::::  4n: virtualization
   ::
+::  +mack: untyped, scry-less, unitary virtualization
+::
 ++  mack
-  |=  {sub/* fol/*}
+  |=  [sub=* fol=*]
   ^-  (unit)
-  =+  ton=(mink [sub fol] |=({* *} ~))
-  ?.(?=({$0 *} ton) ~ [~ product.ton])
+  =/  ton  (mink [sub fol] |~(^ ~))
+  ?.(?=(%0 -.ton) ~ `product.ton)
+::  +mink: raw virtual nock
 ::
 ++  mink  !.
   ~/  %mink
@@ -6373,11 +6377,11 @@
           [%6 test=* yes=* no=*]
         =/  result  $(formula test.formula)
         ?.  ?=(%0 -.result)  result
-        ?:  =(& product.result)
-          $(formula yes.formula)
-        ?:  =(| product.result)
-          $(formula no.formula)
-        [%2 trace]
+        ?+  product.result
+              [%2 trace]
+          %&  $(formula yes.formula)
+          %|  $(formula no.formula)
+        ==
       ::
           [%7 subject=* next=*]
         =/  subject  $(formula subject.formula)
@@ -6426,19 +6430,15 @@
           [%11 [tag=@ clue=*] next=*]
         =/  clue  $(formula clue.formula)
         ?.  ?=(%0 -.clue)  clue
-        =;  next
-          ?.  ?=(%0 -.next)  next
-          :-  %0
-          .*  subject
-          [11 [tag.formula 1 product.clue] 1 product.next]
-        %=  $
-          formula  next.formula
-          trace    ?.  ?=  ?(%hunk %hand %lose %mean %spot)
-                           tag.formula
-                     trace
-                   :_  trace
-                   [tag.formula product.clue]
-        ==
+        =/  next
+          =?    trace
+              ?=(?(%hunk %hand %lose %mean %spot) tag.formula)
+            [[tag.formula product.clue] trace]
+          $(formula next.formula)
+        ?.  ?=(%0 -.next)  next
+        :-  %0
+        .*  subject
+        [11 [tag.formula 1 product.clue] 1 product.next]
       ::
           [%12 ref=* path=*]
         =/  ref  $(formula ref.formula)
@@ -6449,134 +6449,159 @@
         ?~  result
           [%1 product.path]
         ?~  u.result
-          [%2 [%hunk (mush product.path)] trace]
+          [%2 [%hunk product.ref product.path] trace]
         [%0 u.u.result]
       ==
   ::
-  ++  mush
-    |=  path=*
-    ^-  tank
-    :+  %rose  ["/" "/" ""]
-    =|  out=(list tank)
-    |-  ^+  out
-    ?@  path
-      ?:  =(0 path)
-        (flop out)
-      ~
-    ?^  -.path   ~
-    %=  $
-      path  +.path
-      out   :_  out
-            leaf+(trip -.path)
-    ==
-  ::
   ++  frag
     |=  [axis=@ noun=*]
-    ^-  (unit *)
+    ^-  (unit)
     ?:  =(0 axis)  ~
-    |-
-    ?:  =(1 axis)
-      `noun
+    |-  ^-  (unit)
+    ?:  =(1 axis)  `noun
     ?@  noun  ~
+    =/  pick  (cap axis)
     %=  $
       axis  (mas axis)
-      noun  ?:  =(2 (cap axis))
-              -.noun
-            +.noun
+      noun  ?-(pick %2 -.noun, %3 +.noun)
     ==
   ::
   ++  edit
     |=  [axis=@ target=* value=*]
-    ^-  (unit *)
+    ^-  (unit)
     ?:  =(1 axis)  `value
     ?@  target  ~
-    =/  left=?  =(2 (cap axis))
+    =/  pick  (cap axis)
     =/  mutant
       %=  $
         axis    (mas axis)
-        target  ?:(left -.target +.target)
+        target  ?-(pick %2 -.target, %3 +.target)
       ==
     ?~  mutant  ~
-    :-  ~
-    ?:  left
-      [u.mutant +.target]
-    [-.target u.mutant]
+    ?-  pick
+      %2  `[u.mutant +.target]
+      %3  `[-.target u.mutant]
+    ==
   --
+::  +mock: virtual nock
 ::
 ++  mock
-  |=  {{sub/* fol/*} gul/$-({* *} (unit (unit)))}
+  |=  [[sub=* fol=*] gul=$-(^ (unit (unit)))]
   (mook (mink [sub fol] gul))
+::  +mook: convert $tone to $toon, rendering stack frames
 ::
 ++  mook
-  |=  ton/tone
+  |=  ton=tone
   ^-  toon
-  ?.  ?=({$2 *} ton)  ton
-  :-  %2
-  =+  yel=(lent trace.ton)
-  =.  trace.ton
+  ?.  ?=([%2 *] ton)
+    ton
+  |^  [%2 (turn skip rend)]
+  ::
+  ++  skip
+    ^+  trace.ton
+    =/  yel  (lent trace.ton)
     ?.  (gth yel 1.024)  trace.ton
     %+  weld
       (scag 512 trace.ton)
-    ^-  (list {@ta *})
+    ^+  trace.ton
     :_  (slag (sub yel 512) trace.ton)
     :-  %lose
-    %+  rap  3
-    "[skipped {(scow %ud (sub yel 1.024))} frames]"
-  |-  ^-  (list tank)
-  ?~  trace.ton  ~
-  =+  rep=$(trace.ton t.trace.ton)
-  =*  dat  +.i.trace.ton
-  ?+    -.i.trace.ton  rep
-      $hunk  =/  sof=(unit tank)  ((soft tank) dat)
-             ?~  sof  rep
-             [u.sof rep]
-      $lose  ?^  dat  rep
-             :_  rep
-             leaf+(rip 3 dat)
-      $hand  :_  rep
-             leaf+(scow %p (mug dat))
-      $mean  ?@  dat  [leaf+(rip 3 dat) rep]
-             =/  mac  (mack dat -.dat)
-             ?~  mac  [leaf+"####" rep]
-             =/  sof  ((soft tank) u.mac)
-             ?~  sof  rep
-             [u.sof rep]
-      $spot  =/  sof=(unit spot)  ((soft spot) dat)
-             ?~  sof  rep
-             :_  rep
-             :+  %rose  [":" ~ ~]
-             =*  sot  u.sof
-             :~  (smyt p.sot)
-                 =>  [ud=|=(a/@u (scow %ud a)) q.sot]
-                 leaf+"<[{(ud p.p)} {(ud q.p)}].[{(ud p.q)} {(ud q.q)}]>"
-  ==         ==
+    (crip "[skipped {(scow %ud (sub yel 1.024))} frames]")
+  ::
+  ::  +rend: raw stack frame to tank
+  ::
+  ::    $%  [%hunk ref=* path]            ::  failed scry ([~ ~])
+  ::        [%lose cord]                  ::  skipped frames
+  ::        [%hand *]                     ::  mug any
+  ::        [%mean $@(cord (trap tank))]  ::  ~_ et al
+  ::        [%spot spot]                  ::  source location
+  ::    ==
+  ::
+  ++  rend
+    |=  [tag=@ta dat=*]
+    ^-  tank
+    ?+    tag
+    ::
+      leaf+"mook.{(rip 3 tag)}"
+    ::
+        %hunk
+      ?@  dat  leaf+"mook.hunk"
+      =/  sof=(unit path)  ((soft path) +.dat)
+      ?~  sof  leaf+"mook.hunk"
+      (smyt u.sof)
+    ::
+        %lose
+      ?^  dat  leaf+"mook.lose"
+      leaf+(rip 3 dat)
+    ::
+        %hand
+      leaf+(scow %p (mug dat))
+    ::
+        %mean
+      ?@  dat  leaf+(rip 3 dat)
+      =/  mac  (mack dat -.dat)
+      ?~  mac  leaf+"####"
+      =/  sof  ((soft tank) u.mac)
+      ?~  sof  leaf+"mook.mean"
+      u.sof
+    ::
+        %spot
+      =/  sof=(unit spot)  ((soft spot) dat)
+      ?~  sof  leaf+"mook.spot"
+      :+  %rose  [":" ~ ~]
+      :~  (smyt p.u.sof)
+          =*  l   p.q.u.sof
+          =*  r   q.q.u.sof
+          =/  ud  |=(a=@u (scow %ud a))
+          leaf+"<[{(ud p.l)} {(ud q.l)}].[{(ud p.r)} {(ud q.r)}]>"
+      ==
+    ==
+  --
+::  +mole: typed unitary virtual
+::
+++  mole
+  ~/  %mole
+  |*  tap=(trap)
+  ^-  (unit _$:tap)
+  =/  mur  (mure tap)
+  ?~(mur ~ `$:tap)
+::  +mong: virtual slam
 ::
 ++  mong
-  |=  {{gat/* sam/*} gul/$-({* *} (unit (unit)))}
+  |=  [[gat=* sam=*] gul=$-(^ (unit (unit)))]
   ^-  toon
-  ?.  &(?=(^ gat) ?=(^ +.gat))
-    [%2 ~]
+  ?.  ?=([* ^] gat)  [%2 ~]
   (mock [gat(+< sam) %9 2 %0 1] gul)
+::  +mule: typed virtual
 ::
-++  mule                                                ::  typed virtual
+++  mule
   ~/  %mule
-  =+  taq=|.(**)
-  |@  ++  $
-        =+  mud=(mute taq)
-        ?-  -.mud
-          %&  [%& p=$:taq]
-          %|  [%| p=p.mud]
-        ==
-  --
+  |*  tap=(trap)
+  =/  mud  (mute tap)
+  ?-  -.mud
+    %&  [%& p=$:tap]
+    %|  [%| p=p.mud]
+  ==
+::  +mure: untyped unitary virtual
 ::
-++  mute                                                ::  untyped virtual
-  |=  taq/_=>(~ ^?(|.(**)))
+++  mure
+  |=  tap=(trap)
+  ^-  (unit)
+  =/  ton  (mink [tap %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
+  ?.(?=(%0 -.ton) ~ `product.ton)
+::  +mute: untyped virtual
+::
+++  mute
+  |=  tap=(trap)
   ^-  (each * (list tank))
-  =/  ton  (mock [taq %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
+  =/  ton  (mock [tap %9 2 %0 1] |=((pair) ``.*(~ [%12 1+p 1+q])))
   ?-  -.ton
-    $0  [%& p.ton]
-    $1  [%| (smyt (path p.ton)) ~]
-    $2  [%| p.ton]
+    %0  [%& p.ton]
+  ::
+    %1  =/  sof=(unit path)  ((soft path) p.ton)
+        [%| ?~(sof leaf+"mute.hunk" (smyt u.sof)) ~]
+  ::
+    %2  [%| p.ton]
   ==
 ::  +slum: slam a gate on a sample using raw nock, untyped
 ::
@@ -6585,15 +6610,11 @@
   |=  [gat=* sam=*]
   ^-  *
   .*(gat [%9 2 %10 [6 %1 sam] %0 1])
+::  +soft: virtual clam
 ::
-++  soft                                                ::  maybe remold
-  |*  han/$-(* *)
-  |=  fud/*  ^-  (unit han)
-  =+  result=(mule |.((han fud)))
-  ?-  -.result
-    %|  ~
-    %&  [~ p.result]
-  ==
+++  soft
+  |*  han=$-(* *)
+  |=(fud=* (mole |.((han fud))))
 ::
 ::::  4o: molds and mold builders
   ::
