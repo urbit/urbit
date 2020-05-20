@@ -335,7 +335,10 @@
   ++  create-group
     |=  [=path app-path=path sec=rw-security ships=(set ship) title=@t desc=@t]
     ^-  (list card)
-    ?^  (group-scry path)  ~
+    ?^  (group-scry path)
+      :~  (create-security path %village)
+          (permission-hook-poke [%add-owned path path])
+      ==
     ::  do not create a managed group if this is a sig path or a blacklist
     ::
     ?:  =(sec %channel)
