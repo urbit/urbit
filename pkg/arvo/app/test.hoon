@@ -2,12 +2,14 @@
 !:
 |%
 +$  card  card:agent:gall
-+$  test  ?(%agents %marks)
++$  test  ?(%agents %marks %generators)
 +$  state
   $:  app=(set path)
       app-ok=?
       mar=(set path)
       mar-ok=?
+      gen=(set path)
+      gen-ok=?
   ==
 --
 =,  format
@@ -28,6 +30,7 @@
   ?-  test
     %marks   test-marks
     %agents  test-agents
+    %generators  test-generators
   ==
   ::
   ++  test-marks
@@ -76,6 +79,26 @@
       app.state  (~(put in app.state) /app/[i.daz])
     ==
   ::
+  ++  test-generators
+    =|  fex=(list card)
+    ^+  [fex this]
+    ?>  =(~ gen.state)
+    =.  gen-ok.state  %.y
+    =+  .^(paz=(list path) ct+(en-beam now-beak /gen))
+    |-  ^+  [fex this]
+    ?~  paz  [fex this]
+    =/  xap=path  (flop i.paz)
+    ?.  ?=([%hoon *] xap)
+      $(paz t.paz)
+    =/  sing=card
+      :+  %pass  build+i.paz
+      [%arvo %c %warp our.bowl %home ~ %sing %a da+now.bowl i.paz]
+    %_  $
+      paz        t.paz
+      fex        [sing fex]
+      gen.state  (~(put in gen.state) i.paz)
+    ==
+  ::
   ++  now-beak  %_(byk.bowl r [%da now.bowl])
   --
 ++  on-watch  on-watch:def
@@ -92,7 +115,9 @@
   =/  =path  t.wire
   ?+    path  ~|(path+path !!)
       [%app *]
-    =/  ok  ?=(^ p.sign-arvo)
+    =/  ok
+      ?~  p.sign-arvo  |
+      (~(nest ut -:!>(*agent:gall)) | -:!<(vase q.r.u.p.sign-arvo))
     ~&  ?:  ok
           agent-built+path
         agent-failed+path
@@ -115,6 +140,19 @@
       ?:  mar-ok.state
         %all-marks-built
       %some-marks-failed
+    [~ this]
+  ::
+      [%gen *]
+    =/  ok  ?=(^ p.sign-arvo)
+    ~&  ?:  ok
+          generator-built+path
+        generator-failed+path
+    =?  gen-ok.state  !ok  %.n
+    =.  gen.state  (~(del in gen.state) path)
+    ~?  =(~ gen.state)
+      ?:  gen-ok.state
+        %all-generators-built
+      %some-generators-failed
     [~ this]
   ==
 ++  on-fail   on-fail:def
