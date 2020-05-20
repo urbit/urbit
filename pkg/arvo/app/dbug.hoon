@@ -445,53 +445,52 @@
     ::  { life: 123,
     ::    route: { direct: true, lane: 'something' },
     ::    qos: { kind: 'status', last-contact: 123456 },  // ms timestamp
-    ::    snd: [
-    ::      { bone: 123,  // index
-    ::        duct: ['/paths', ...]
-    ::        current: 123,
-    ::        next: 123,
-    ::        unsent-messages: [123, ...],  // size in bytes
-    ::        queued-message-acks: [{
-    ::          message-num: 123,  // index
-    ::          ack: 'ok'
-    ::        }, ...],
-    ::        packet-pump-state: {
-    ::          next-wake: 123456,  // ms timestamp
-    ::          live: [{
+    ::    flows: { forward: [snd, rcv, ...], backward: [snd, rcv, ...] }
+    ::    ->  snd:
+    ::        { bone: 123,  // index
+    ::          duct: ['/paths', ...]
+    ::          current: 123,
+    ::          next: 123,
+    ::          unsent-messages: [123, ...],  // size in bytes
+    ::          queued-message-acks: [{
     ::            message-num: 123,  // index
-    ::            fragment-num: 123,  // index
-    ::            num-fragments: 123,
-    ::            last-sent: 123456,  //  ms timestamp
-    ::            retries: 123,
-    ::            skips: 123
+    ::            ack: 'ok'
     ::          }, ...],
-    ::          metrics: {
-    ::            rto: 123,  // seconds
-    ::            rtt: 123,  // seconds
-    ::            rttvar: 123,
-    ::            ssthresh: 123,
-    ::            num-live: 123,
-    ::            cwnd: 123,
-    ::            counter: 123
+    ::          packet-pump-state: {
+    ::            next-wake: 123456,  // ms timestamp
+    ::            live: [{
+    ::              message-num: 123,  // index
+    ::              fragment-num: 123,  // index
+    ::              num-fragments: 123,
+    ::              last-sent: 123456,  //  ms timestamp
+    ::              retries: 123,
+    ::              skips: 123
+    ::            }, ...],
+    ::            metrics: {
+    ::              rto: 123,  // seconds
+    ::              rtt: 123,  // seconds
+    ::              rttvar: 123,
+    ::              ssthresh: 123,
+    ::              num-live: 123,
+    ::              cwnd: 123,
+    ::              counter: 123
+    ::            }
     ::          }
     ::        }
-    ::      },
-    ::    ...],
-    ::    rcv: [
-    ::      { bone: 123,  // index
-    ::        duct: ['/paths', ...]  // index
-    ::        last-acked: 123,
-    ::        last-heard: 123,
-    ::        pending-vane-ack: [123, ...],
-    ::        live-messages: [{
-    ::          message-num: 123,  // index
-    ::          num-received: 122,
-    ::          num-fragments: 123,
-    ::          fragments: [123, ...]
-    ::        }, ...],
-    ::        nax: [123, ...]
-    ::      },
-    ::    ...],
+    ::    ->  rcv:
+    ::        { bone: 123,  // index
+    ::          duct: ['/paths', ...]  // index
+    ::          last-acked: 123,
+    ::          last-heard: 123,
+    ::          pending-vane-ack: [123, ...],
+    ::          live-messages: [{
+    ::            message-num: 123,  // index
+    ::            num-received: 122,
+    ::            num-fragments: 123,
+    ::            fragments: [123, ...]
+    ::          }, ...],
+    ::          nax: [123, ...]
+    ::        }
     ::    nax: [{
     ::      bone: 123,  // index
     ::      duct: ['/paths', ...],
@@ -529,15 +528,44 @@
               'last-contact'^(time last-contact.qos)
           ==
         ::
-          :-  'snd'
-          :-  %a
-          %+  turn  (sort ~(tap by snd) dor)  ::  sort by bone
-          (cury snd-with-bone ossuary)
-        ::
-          :-  'rcv'
-          :-  %a
-          %+  turn  (sort ~(tap by rcv) dor)  ::  sort by bone
-          (cury rcv-with-bone ossuary)
+          :-  'flows'
+          |^  =/  mix=(list flow)
+                =-  (sort - dor)
+                %+  welp
+                  (turn ~(tap by snd) (tack %snd))
+                (turn ~(tap by rcv) (tack %rcv))
+              =/  [forward=(list flow) backward=(list flow)]
+                %+  skid  mix
+                |=  [=bone *]
+                =(0 (mod bone 2))
+              %-  pairs
+              :~  ['forward' a+(turn forward build)]
+                  ['backward' a+(turn backward build)]
+              ==
+          ::
+          +$  flow
+            $:  =bone
+              ::
+                $=  state
+                $%  [%snd message-pump-state]
+                    [%rcv message-sink-state]
+                ==
+            ==
+          ::
+          ++  tack
+            |*  =term
+            |*  [=bone =noun]
+            [bone [term noun]]
+          ::
+          ++  build
+            |=  flow
+            ^-  json
+            %+  frond  -.state
+            ?-  -.state
+              %snd  (snd-with-bone ossuary bone +.state)
+              %rcv  (rcv-with-bone ossuary bone +.state)
+            ==
+          --
         ::
           :-  'nax'
           :-  %a
@@ -636,8 +664,13 @@
     ++  bone-to-pairs
       |=  [=bone ossuary]
       ^-  (list [@t json])
+      =/  fallback-duct=duct
+        ::  if backward flow, fall back to "original" duct
+        ::
+        ?:  =(0 (mod bone 2))  ~
+        (~(gut by by-bone) (dec bone) ~)
       :~  'bone'^(numb bone)
-          'duct'^(from-duct (~(gut by by-bone) bone ~))
+          'duct'^(from-duct (~(gut by by-bone) bone fallback-duct))
       ==
     ::
     ++  maybe
