@@ -1083,6 +1083,7 @@
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::
   =^  moves  ames-state
+    ?:  =(%trim -.task)  [~ ames-state]
     =<  abet
     ?-  -.task
       %born  on-born:event-core
