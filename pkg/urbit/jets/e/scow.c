@@ -190,7 +190,7 @@ _print_p(u3_atom cor, u3_atom p)
   u3_atom sxz = u3n_slam_on(hok, u3k(p));
 
   // Simple galaxy case
-  if (c3y == u3qa_lte(sxz, 256)) {
+  if (c3y == u3qa_lth(sxz, 256)) {
     c3_y a, b, c;
     u3_po_to_suffix(sxz, &a, &b, &c);
     u3z(sxz);
