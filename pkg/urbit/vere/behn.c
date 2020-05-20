@@ -59,12 +59,12 @@ _behn_time_cb(uv_timer_t* tim_u)
 
   // send timer event
   //
-  {
-    u3_pier_work
-      (pir_u,
-       u3nt(u3_blip, c3__behn, u3_nul),
-       u3nc(c3__wake, u3_nul));
-  }
+//  {
+//    u3_pier_work
+//      (pir_u,
+//       u3nt(u3_blip, c3__behn, u3_nul),
+//       u3nc(c3__wake, u3_nul));
+//  }
 }
 
 /* u3_behn_ef_doze(): set or cancel timer
