@@ -330,40 +330,41 @@ _worker_static_grab(void)
 static void
 _worker_pack(void)
 {
-  _worker_static_grab();
-  u3l_log("work: compacting loom\r\n");
-
-  if ( c3n == u3m_rock_stay(u3V.dir_c, u3V.dun_d) ) {
-    u3l_log("work: unable to jam state\r\n");
-    return;
-  }
-
-  if ( c3n == u3e_hold() ) {
-    u3l_log("work: unable to backup checkpoint\r\n");
-    return;
-  }
-
-  u3m_wipe();
-
-  if ( c3n == u3m_rock_load(u3V.dir_c, u3V.dun_d) ) {
-    u3l_log("work: compaction failed, restoring checkpoint\r\n");
-
-    if ( c3n == u3e_fall() ) {
-      fprintf(stderr, "work: unable to restore checkpoint\r\n");
-      c3_assert(0);
-    }
-  }
-
-  if ( c3n == u3e_drop() ) {
-    u3l_log("work: warning: orphaned backup checkpoint file\r\n");
-  }
-
-  if ( c3n == u3m_rock_drop(u3V.dir_c, u3V.dun_d) ) {
-    u3l_log("work: warning: orphaned state file\r\n");
-  }
-
-  u3l_log("work: compacted loom\r\n");
-  _worker_static_grab();
+  u3l_log("work: ignoring request to compact loom\r\n");
+//  _worker_static_grab();
+//  u3l_log("work: compacting loom\r\n");
+//
+//  if ( c3n == u3m_rock_stay(u3V.dir_c, u3V.dun_d) ) {
+//    u3l_log("work: unable to jam state\r\n");
+//    return;
+//  }
+//
+//  if ( c3n == u3e_hold() ) {
+//    u3l_log("work: unable to backup checkpoint\r\n");
+//    return;
+//  }
+//
+//  u3m_wipe();
+//
+//  if ( c3n == u3m_rock_load(u3V.dir_c, u3V.dun_d) ) {
+//    u3l_log("work: compaction failed, restoring checkpoint\r\n");
+//
+//    if ( c3n == u3e_fall() ) {
+//      fprintf(stderr, "work: unable to restore checkpoint\r\n");
+//      c3_assert(0);
+//    }
+//  }
+//
+//  if ( c3n == u3e_drop() ) {
+//    u3l_log("work: warning: orphaned backup checkpoint file\r\n");
+//  }
+//
+//  if ( c3n == u3m_rock_drop(u3V.dir_c, u3V.dun_d) ) {
+//    u3l_log("work: warning: orphaned state file\r\n");
+//  }
+//
+//  u3l_log("work: compacted loom\r\n");
+//  _worker_static_grab();
 }
 
 /* _worker_fail(): failure stub.
