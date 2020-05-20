@@ -51,7 +51,6 @@
   ++  require-authorization-simple
     |=  [=inbound-request:eyre =simple-payload:http]
     ^-  simple-payload:http
-    ~&  %require-auth-simple
     ::
     ?:  authenticated.inbound-request
       ~!  this

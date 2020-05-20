@@ -9,7 +9,7 @@
 +$  state-zero
   $:  %0
       =configuration
-      serving=(map url-base=path clay-base=path)
+      serving=(map url-base=path [clay-base=path public=?])
   ==
 +$  configuration
   $:  url-prefix=(unit @t)
@@ -26,15 +26,8 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  :_  this
-  :~  [%pass /chat-bind %arvo %e %connect [~ /'~chat'] %landscape]
-      [%pass /group-bind %arvo %e %connect [~ /'~groups'] %landscape]
-      [%pass /link-bind %arvo %e %connect [~ /'~link'] %landscape]
-      [%pass /dojo-bind %arvo %e %connect [~ /'~dojo'] %landscape]
-      [%pass /publish-bind %arvo %e %connect [~ /'~publish'] %landscape]
-      [%pass /landscape-bind %arvo %e %connect [~ /'~landscape'] %landscape]
-      [%pass /index-bind %arvo %e %connect [~ /] %landscape]
-  ==
+  :_  this(serving (~(put by serving) /'~landscape' [/app/landscape %.n]))
+  [%pass /index-bind %arvo %e %connect [~ /] %landscape]~
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -62,11 +55,20 @@
     ^-  (quip card _this)
     ?-  -.act
         %serve-dir
+      ?:  (~(has by serving) url-base.act)
+        ~|("url already bound to {<(~(got by serving) url-base.act)>}" !!)
       :-  ~
-      this(serving (~(put by serving) url-base.act clay-base.act))
+      this(serving (~(put by serving) url-base.act [clay-base.act public.act]))
+    ::
         %unserve-dir
+      [~ this(serving (~(del by serving) url-base.act))]
+    ::
+        %toggle-permission
+      ?.  (~(has by serving) url-base.act)
+        ~|("url is not bound" !!)
+      =/  [clay-base=path public=?]  (~(got by serving) url-base.act)
       :-  ~
-      this(serving (~(del by serving) url-base.act))
+      this(serving (~(put by serving) url-base.act [clay-base !public]))
     ==
   ::
   ++  handle-http-request
@@ -87,56 +89,29 @@
             =(url-prefix ~)
         ==
       not-found:gen
-    ?+  site.req-line  (get-custom req-line)
     ::
-        [%'' %'index' ~]
-      %+  require-authorization-simple:app
-        inbound-request
-      (get-file-at /app/landscape [t.site u.ext]:req-line)
-    ::
-        [%'~link' *]
-      %+  require-authorization-simple:app
-        inbound-request
-      (get-file-at /app/landscape [t.site u.ext]:req-line)
-    ::
-        [%'~chat' *]
-      %+  require-authorization-simple:app
-        inbound-request
-      (get-file-at /app/landscape [t.site u.ext]:req-line)
-    ::
-        [%'~dojo' *]
-      %+  require-authorization-simple:app
-        inbound-request
-      (get-file-at /app/landscape [t.site u.ext]:req-line)
-    ::
-        [%'~groups' *]
-      %+  require-authorization-simple:app
-        inbound-request
-      (get-file-at /app/landscape [t.site u.ext]:req-line)
-    ::
-        [%'~landscape' %js %session ~]
+    ?:  ?=([%'~landscape' %js %session ~] site.req-line)
       %+  require-authorization-simple:app
         inbound-request
       %-  js-response:gen
       (as-octt:mimes:html "window.ship = '{+:(scow %p our.bowl)}';")
     ::
-        [%'~landscape' *]
-      %+  require-authorization-simple:app
-        inbound-request
-      (get-file-at /app/landscape [t.site u.ext]:req-line)
-    ==
+    =/  [payload=simple-payload:http public=?]  (get-file req-line)
+    ?:  public
+      payload
+    (require-authorization-simple:app inbound-request payload)
   ::
   ::
-  ++  get-full-clay-path
+  ++  get-clay-path
     |=  pax=path
-    ^-  (unit path)
+    ^-  (unit [path ?])
     %-  ~(rep by serving)
-    |=  [[url-base=path clay-base=path] out=(unit path)]
+    |=  [[url-base=path clay-base=path public=?] out=(unit [path ?])]
     ?^  out
       out
     =/  suf  (get-suffix url-base pax)
     ?~  suf  ~
-    `(weld clay-base u.suf)
+    `[(weld clay-base u.suf) public]
   ::
   ++  get-suffix
     |=  [a=path b=path]
@@ -155,22 +130,23 @@
       b  t.b
     ==
   ::
-  ++  get-custom
+  ++  get-file
     |=  req-line=request-line
-    ^-  simple-payload:http
-    =/  =path  (snoc site.req-line (need ext.req-line))
-    =/  clay-path  (get-full-clay-path path)
+    ^-  [simple-payload:http ?]
+    =/  pax=path  (snoc site.req-line (need ext.req-line))
+    =/  clay-path=(unit [path ?])  (get-clay-path pax)
     ?~  clay-path
-      not-found:gen
+      [not-found:gen %.n]
     =/  scry-path
       :*  (scot %p our.bowl)
           q.byk.bowl
           (scot %da now.bowl)
-          u.clay-path
+          -.u.clay-path
       ==
     ?.  .^(? %cu scry-path)
-      not-found:gen
+      [not-found:gen %.n]
     =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
+    :_  +.u.clay-path
     ?+  ext.req-line  not-found:gen
         [~ %html]  (html-response:gen file)
         [~ %js]    (js-response:gen file)
@@ -178,24 +154,6 @@
         [~ %png]   (png-response:gen file)
     ==
   ::
-  ++  get-file-at
-    |=  [base=path file=path ext=@ta]
-    ^-  simple-payload:http
-    =/  =path
-      :*  (scot %p our.bowl)
-          q.byk.bowl
-          (scot %da now.bowl)
-          (snoc (weld base file) ext)
-      ==
-    ?.  .^(? %cu path)
-      not-found:gen
-    =/  file  (as-octs:mimes:html .^(@ %cx path))
-    ?+  ext  not-found:gen
-        %html  (html-response:gen file)
-        %js    (js-response:gen file)
-        %css   (css-response:gen file)
-        %png   (png-response:gen file)
-    ==
   --
 ::
 ++  on-watch
