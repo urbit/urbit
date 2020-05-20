@@ -74,7 +74,7 @@
 ::
 ++  render
   |=  {mez/tape sud/desk who/ship syd/desk}
-  :^  %palm  [" " ~ ~ ~]  leaf+mez
+  :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
 ::
 ++  poke-commit
