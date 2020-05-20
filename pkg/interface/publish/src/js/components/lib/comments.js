@@ -1,112 +1,196 @@
-import React, { Component } from 'react';
-import classnames from 'classnames';
-import { Comment } from '/components/lib/comment';
-import { CommentBox } from '/components/lib/comment-box';
+import React, { Component } from 'react'
+import { CommentItem } from './comment-item';
+import { CommentInput } from './comment-input';
+import { dateToDa } from '/lib/util';
+import { Spinner } from './icons/icon-spinner';
 
 export class Comments extends Component {
   constructor(props){
     super(props);
-
     this.state = {
-      show: false,
       commentBody: '',
-      awaiting: false,
+      pending: new Set(),
+      awaiting: null,
+      editing: null,
+    }
+    this.commentSubmit = this.commentSubmit.bind(this);
+    this.commentChange = this.commentChange.bind(this);
+
+  }
+
+  componentDidUpdate(prevProps) {
+    let previousComments = prevProps.comments[0] || {};
+    let currentComments = this.props.comments[0] || {};
+    let previous = Object.keys(previousComments) || [];
+    let current = Object.keys(currentComments) || [];
+    if ((prevProps.comments && this.props.comments) &&
+      (previous !== current)) {
+        let pendingSet = this.state.pending;
+        Object.keys(currentComments).map((com) => {
+          let obj = currentComments[com];
+          for (let each of pendingSet.values()) {
+            if (obj.content === each["new-comment"].body) {
+              pendingSet.delete(each);
+              this.setState({ pending: pendingSet });
+            }
+          }
+        })
+      }
     }
 
-    this.toggleDisplay = this.toggleDisplay.bind(this);
-    this.commentChange = this.commentChange.bind(this);
-    this.postComment   = this.postComment.bind(this);
+  commentSubmit(evt){
+   let comment = {
+     "new-comment": {
+       who: this.props.ship.slice(1),
+       book: this.props.book,
+       note: this.props.note,
+       body: this.state.commentBody
+     }
+   };
+
+   let pendingState = this.state.pending;
+   pendingState.add(comment);
+   this.setState({pending: pendingState});
+
+   this.textArea.value = '';
+   this.setState({commentBody: "", awaiting: 'new'});
+   let submit = window.api.action("publish", "publish-action", comment);
+   submit.then(() => {
+     this.setState({ awaiting: null });
+    })
+   }
+
+  commentChange(evt){
+    this.setState({
+      commentBody: evt.target.value,
+    })
   }
 
-  commentChange(evt) {
-    this.setState({commentBody: evt.target.value});
+  commentEdit(idx) {
+    this.setState({ editing: idx });
   }
 
-  toggleDisplay() {
-    this.setState({show: !this.state.show});
+  commentEditCancel() {
+    this.setState({ editing: null });
   }
 
-  postComment() {
-    this.props.setSpinner(true);
+
+  commentUpdate(idx, body) {
+
+    let path = Object.keys(this.props.comments[idx])[0];
     let comment = {
-      "new-comment": {
-        who: this.props.ship,
-        coll: this.props.blogId,
-        name: this.props.postId,
-        content: this.state.commentBody,
+      "edit-comment": {
+        who: this.props.ship.slice(1),
+        book: this.props.book,
+        note: this.props.note,
+        body: body,
+        comment: path
       }
     };
 
-    this.setState({
-      awaiting: {
-        ship: this.props.ship,
-        blogId: this.props.blogId,
-        postId: this.props.postId,
+    this.setState({ awaiting: 'edit' })
+
+    window.api
+      .action('publish', 'publish-action', comment)
+      .then(() => { this.setState({ awaiting: null, editing: null }) })
+  }
+
+  commentDelete(idx) {
+    let path = Object.keys(this.props.comments[idx])[0];
+    let comment = {
+      "del-comment": {
+        who: this.props.ship.slice(1),
+        book: this.props.book,
+        note: this.props.note,
+        comment: path
       }
-    }, () => {
-      this.props.api.action("publish", "publish-action", comment)
+    };
+
+    this.setState({ awaiting: { kind: 'del', what: idx }})
+    window.api
+      .action('publish', 'publish-action', comment)
+      .then(() => { this.setState({ awaiting: null }) })
+
+  }
+
+  render() {
+    if (!this.props.enabled) {
+      return null;
+    }
+
+    const { editing } = this.state;
+
+    let pendingArray = Array.from(this.state.pending).map((com, i) => {
+      let da = dateToDa(new Date);
+      let comment = {
+        [da]: {
+          author: `~${window.ship}`,
+          content: com["new-comment"].body,
+          "date-created": Math.round(new Date().getTime())
+        }
+      }
+      return (
+        <CommentItem
+          comment={comment}
+          key={i}
+          contacts={this.props.contacts}
+          pending={true}
+        />
+      )
     });
 
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.awaiting) {
-      if (prevProps.comments != this.props.comments) {
-        this.props.setSpinner(false);
-        this.setState({awaiting: false, commentBody: ''});
-      }
-    }
-  }
-
-  render(){
-    if (this.state.show) {
-      let our = `~${window.ship}`;
-      let comments = this.props.comments.map((comment, i) => {
-        let commentProps = {
-          ship: comment.info.creator,
-          date: comment.info["date-created"],
-          body: comment.body,
-        };
-        return (<Comment {...commentProps} key={i} />);
-      });
+    let commentArray = this.props.comments.map((com, i) => {
       return (
-        <div className="cb mt3 mb4">
-          <p className="gray-50 body-large b">
-            <span>{this.props.comments.length} </span>
-            <span className="black">
-              Comments
-            </span>
-          </p>
-          <p className="cl body-regular pointer" onClick={this.toggleDisplay}>
-            - Hide Comments
-          </p>
+        <CommentItem
+          comment={com}
+          key={i}
+          contacts={this.props.contacts}
+          onUpdate={u => this.commentUpdate(i, u)}
+          onDelete={() => this.commentDelete(i)}
+          onEdit={() => this.commentEdit(i)}
+          onEditCancel={this.commentEditCancel.bind(this)}
+          editing={i === editing}
+          disabled={!!this.state.awaiting || editing}
+          />
+      );
+    })
 
-          <CommentBox our={our}
-            action={this.commentChange}
-            enabled={!(Boolean(this.state.awaiting))}
-            content={this.state.commentBody}
-            post={this.postComment}/>
+    let disableComment = ((this.state.commentBody === '') || (!!this.state.awaiting));
+    let commentClass = (disableComment)
+      ?  "bg-transparent f9 pa2 br1 ba b--gray2 gray2"
+      :  "bg-transparent f9 pa2 br1 ba b--gray2 black white-d pointer";
 
+    let spinnerText =
+        this.state.awaiting === 'new'
+        ? 'Posting commment...'
+        : this.state.awaiting  === 'edit'
+        ? 'Updating comment...'
+        : 'Deleting comment...';
 
-          <div className="flex-col" style={{marginTop: 32}}>
-            {comments}
+    return (
+      <div>
+        <div className="mv8 relative">
+          <div>
+            <CommentInput style={{resize:'vertical'}}
+              ref={(el) => {this.textArea = el}}
+              onChange={this.commentChange}
+              value={this.state.commentBody}
+              disabled={!!this.state.editing}
+              onSubmit={this.commentSubmit}>
+            </CommentInput>
           </div>
+          <button disabled={disableComment}
+            onClick={this.commentSubmit}
+            className={commentClass}>
+            Add comment
+          </button>
+          <Spinner text={spinnerText} awaiting={this.state.awaiting} classes="absolute bottom-0 right-0 pb2"/>
         </div>
-      );
-    } else {
-      return (
-        <div className="cb mt3 mb4">
-          <p className="gray-50 body-large b">
-            <span>{this.props.comments.length} </span>
-            <span className="black">
-              Comments
-            </span>
-          </p>
-          <p className="cl body-regular pointer" onClick={this.toggleDisplay}>
-            + Show Comments
-          </p>
-        </div>
-      );
-    }
+        {pendingArray}
+        {commentArray}
+      </div>
+    )
   }
 }
+
+export default Comments

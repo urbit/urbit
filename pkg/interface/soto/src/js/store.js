@@ -19,9 +19,11 @@ export class Store {
         // recursive handler
         if (data.data) {
             var dojoReply = data.data;
-        } else {
+        }
+        else {
             var dojoReply = data;
         }
+
         // %mor sole-effects are nested, so throw back to handler
         if (dojoReply.map) {
             return dojoReply.map(reply => this.handleEvent(reply));

@@ -329,6 +329,7 @@ _mutate_cat(u3_noun big, c3_l axe_l, u3_noun som)
         *tar = _edit_or_mutate_cat(*tar, u3x_mas(axe_l), som);
       }
     }
+    cel_u->mug_w = 0;
   }
 }
 
@@ -348,6 +349,7 @@ _mutate(u3_noun big, u3_noun axe, u3_noun som)
                  ? &(cel_u->hed)
                  : &(cel_u->tel);
     *tar = _edit_or_mutate(*tar, mor, som);
+    cel_u->mug_w = 0;
     u3z(mor);
   }
 }

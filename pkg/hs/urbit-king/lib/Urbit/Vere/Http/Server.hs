@@ -33,6 +33,7 @@ import Urbit.Vere.Pier.Types
 
 import Data.Binary.Builder (Builder, fromByteString)
 import Data.Bits           (shiftL, (.|.))
+import Data.PEM            (pemParseBS, pemWriteBS)
 import Network.Socket      (SockAddr(..))
 import System.Directory    (doesFileExist, removeFile)
 import System.Random       (randomIO)
@@ -47,6 +48,8 @@ import qualified Network.Wai.Handler.WarpTLS as W
 
 
 -- Internal Types --------------------------------------------------------------
+
+type HasShipEnv e = (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
 
 type ReqId = UD
 type SeqId = UD -- Unused, always 1
@@ -213,6 +216,9 @@ writePortsFile f = writeFile f . encodeUtf8 . portsFileText
 
 cordBytes :: Cord -> ByteString
 cordBytes = encodeUtf8 . unCord
+
+wainBytes :: Wain -> ByteString
+wainBytes = encodeUtf8 . unWain
 
 pass :: Monad m => m ()
 pass = pure ()
@@ -387,6 +393,24 @@ app env sId liv plan which req respond =
 
 -- Top-Level Driver Interface --------------------------------------------------
 
+data CantOpenPort = CantOpenPort W.Port
+  deriving (Eq, Ord, Show, Exception)
+
+data WhichPort
+  = WPSpecific W.Port
+  | WPChoices [W.Port]
+
+data SockOpts = SockOpts
+  { soLocalhost :: Bool
+  , soWhich     :: WhichPort
+  }
+
+data PortsToTry = PortsToTry
+  { pttSec :: SockOpts
+  , pttIns :: SockOpts
+  , pttLop :: SockOpts
+  }
+
 {-|
     Opens a socket on some port, accepting connections from `127.0.0.1`
     if fake and `0.0.0.0` if real.
@@ -396,58 +420,114 @@ app env sId liv plan which req respond =
     us an open socket on *any* open port. If that fails, it will throw
     an exception.
 -}
-openPort :: HasLogFunc e => Bool -> [W.Port] -> RIO e (W.Port, Net.Socket)
-openPort isFake = go
-  where
-    go = \case
-        []   -> io W.openFreePort
-        x:xs -> io (tryOpen x) >>= \case
-                    Left (err∷IOError) -> do
-                        logWarn (display ("Failed to open port " <> tshow x))
-                        logWarn (display (tshow err))
-                        go xs
-                    Right ps -> do
-                        logTrace (display ("Opening port " <> tshow (fst ps)))
-                        pure ps
+openPort :: forall e . HasLogFunc e => SockOpts -> RIO e (W.Port, Net.Socket)
+openPort SockOpts {..} = case soWhich of
+  WPSpecific x  -> insist (fromIntegral x)
+  WPChoices  xs -> loop (fromIntegral <$> xs)
 
-    bindTo = if isFake then "127.0.0.1" else "0.0.0.0"
+ where
+  loop :: [W.Port] -> RIO e (W.Port, Net.Socket)
+  loop = \case
+    [] -> do
+      logTrace "Fallback: asking the OS to give us some free port."
+      ps <- io W.openFreePort
+      logTrace (display ("Opened port " <> tshow (fst ps)))
+      pure ps
+    x : xs -> do
+      logTrace (display ("Trying to open port " <> tshow x))
+      io (tryOpen x) >>= \case
+        Left (err :: IOError) -> do
+          logWarn (display ("Failed to open port " <> tshow x))
+          logWarn (display (tshow err))
+          loop xs
+        Right ps -> do
+          logTrace (display ("Opened port " <> tshow (fst ps)))
+          pure ps
 
-    bindListenPort ∷ W.Port → Net.Socket → IO Net.PortNumber
-    bindListenPort por sok = do
-        bindAddr <- Net.getAddrInfo Nothing (Just bindTo) Nothing >>= \case
-                        []  -> error "this should never happen."
-                        x:_ -> pure (Net.addrAddress x)
+  insist :: W.Port -> RIO e (W.Port, Net.Socket)
+  insist p = do
+    logTrace (display ("Opening configured port " <> tshow p))
+    io (tryOpen p) >>= \case
+      Left (err :: IOError) -> do
+        logWarn (display ("Failed to open port " <> tshow p))
+        logWarn (display (tshow err))
+        throwIO (CantOpenPort p)
+      Right ps -> do
+        logTrace (display ("Opened port " <> tshow (fst ps)))
+        pure ps
 
-        Net.bind sok bindAddr
-        Net.listen sok 1
-        Net.socketPort sok
+  bindTo = if soLocalhost then "127.0.0.1" else "0.0.0.0"
 
-    --  `inet_addr`, `bind`, and `listen` all throw `IOError` if they fail.
-    tryOpen ∷ W.Port → IO (Either IOError (W.Port, Net.Socket))
-    tryOpen por = do
-        sok <- Net.socket Net.AF_INET Net.Stream Net.defaultProtocol
-        try (bindListenPort por sok) >>= \case
-            Left exn  -> Net.close sok $> Left exn
-            Right por -> pure (Right (fromIntegral por, sok))
+  getBindAddr :: W.Port -> IO SockAddr
+  getBindAddr por =
+    Net.getAddrInfo Nothing (Just bindTo) (Just (show por)) >>= \case
+      []    -> error "this should never happen."
+      x : _ -> pure (Net.addrAddress x)
 
-startServ :: (HasPierConfig e, HasLogFunc e)
+  bindListenPort :: W.Port -> Net.Socket -> IO Net.PortNumber
+  bindListenPort por sok = do
+    Net.bind sok =<< getBindAddr por
+    Net.listen sok 1
+    Net.socketPort sok
+
+  --  `inet_addr`, `bind`, and `listen` all throw `IOError` if they fail.
+  tryOpen :: W.Port -> IO (Either IOError (W.Port, Net.Socket))
+  tryOpen por = do
+    sok <- Net.socket Net.AF_INET Net.Stream Net.defaultProtocol
+    try (bindListenPort por sok) >>= \case
+      Left  exn -> Net.close sok $> Left exn
+      Right por -> pure (Right (fromIntegral por, sok))
+
+httpServerPorts :: HasShipEnv e => Bool -> RIO e PortsToTry
+httpServerPorts fak = do
+  ins       <- view (networkConfigL . ncHttpPort . to (fmap fromIntegral))
+  sec       <- view (networkConfigL . ncHttpsPort . to (fmap fromIntegral))
+  lop       <- view (networkConfigL . ncLocalPort . to (fmap fromIntegral))
+  localMode <- view (networkConfigL . ncNetMode . to (== NMLocalhost))
+
+  let local = localMode || fak
+
+  let pttSec = case (sec, fak) of
+        (Just p , _    ) -> SockOpts local (WPSpecific p)
+        (Nothing, False) -> SockOpts local (WPChoices (443 : [8443 .. 8448]))
+        (Nothing, True ) -> SockOpts local (WPChoices ([8443 .. 8448]))
+
+  let pttIns = case (ins, fak) of
+        (Just p , _    ) -> SockOpts local (WPSpecific p)
+        (Nothing, False) -> SockOpts local (WPChoices (80 : [8080 .. 8085]))
+        (Nothing, True ) -> SockOpts local (WPChoices [8080 .. 8085])
+
+  let pttLop = case (lop, fak) of
+        (Just p , _) -> SockOpts local (WPSpecific p)
+        (Nothing, _) -> SockOpts local (WPChoices [12321 .. 12326])
+
+  pure (PortsToTry { .. })
+
+parseCerts :: ByteString -> Maybe (ByteString, [ByteString])
+parseCerts bs = do
+  pems <- pemParseBS bs & either (const Nothing) Just
+  case pems of
+    [] -> Nothing
+    p:ps -> pure (pemWriteBS p, pemWriteBS <$> ps)
+
+startServ :: (HasPierConfig e, HasLogFunc e, HasNetworkConfig e)
           => Bool -> HttpServerConf -> (Ev -> STM ())
           -> RIO e Serv
 startServ isFake conf plan = do
   logDebug "startServ"
 
-  let tls = hscSecure conf <&> \(PEM key, PEM cert) ->
-              (W.tlsSettingsMemory (cordBytes cert) (cordBytes key))
+  let tls = do (PEM key, PEM certs) <- hscSecure conf
+               (cert, chain)        <- parseCerts (wainBytes certs)
+               pure $ W.tlsSettingsChainMemory cert chain $ wainBytes key
 
   sId <- io $ ServId . UV . fromIntegral <$> (randomIO :: IO Word32)
   liv <- newTVarIO emptyLiveReqs
 
-  let insPor = if isFake then [8080..8085] else (80  : [8080..8085])
-      secPor = if isFake then [8443..8448] else (443 : [8443..8448])
+  ptt <- httpServerPorts isFake
 
-  (httpPortInt,  httpSock)  <- openPort isFake insPor
-  (httpsPortInt, httpsSock) <- openPort isFake secPor
-  (loopPortInt,  loopSock)  <- openPort isFake [12321..12326]
+  (httpPortInt,  httpSock)  <- openPort (pttIns ptt)
+  (httpsPortInt, httpsSock) <- openPort (pttSec ptt)
+  (loopPortInt,  loopSock)  <- openPort (pttLop ptt)
 
   let httpPort  = Port (fromIntegral httpPortInt)
       httpsPort = Port (fromIntegral httpsPortInt)
@@ -517,7 +597,7 @@ respond (Drv v) reqId ev = do
                       for_ (reorgHttpEvent ev) $
                         atomically . respondToLiveReq (sLiveReqs sv) reqId
 
-serv :: ∀e. (HasPierConfig e, HasLogFunc e)
+serv :: ∀e. HasShipEnv e
      => KingId -> QueueEv -> Bool
      -> ([Ev], RAcquire e (EffCb e HttpServerEf))
 serv king plan isFake =

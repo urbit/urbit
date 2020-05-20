@@ -18,8 +18,9 @@ king=$(bash $(nix-build --no-link -A fullBuildScript))
 
 popd
 
+mkdir -p release
+
 out="release/king-linux64-static-$ver"
 
 cp "$king"/bin/urbit-king "$out"
 
-ldd "$out"

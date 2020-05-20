@@ -8,7 +8,7 @@ module Urbit.Noun.Conversions
   , Bytes(..), Octs(..), File(..)
   , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
   , BigTape(..), BigCord(..)
-  , Wall, Each(..)
+  , Wain(..), Wall, Each(..)
   , UD(..), UV(..), UW(..), cordToUW
   , Mug(..), Path(..), EvilPath(..), Ship(..)
   , Lenient(..), pathToFilePath, filePathToPath
@@ -440,6 +440,20 @@ instance FromNoun Tape where
     T.decodeUtf8' (pack as) & \case
         Left err -> fail (show err)
         Right tx -> pure (Tape tx)
+
+
+-- Wain -- List of Lines -------------------------------------------------------
+
+newtype Wain = Wain { unWain :: Text }
+  deriving newtype (Eq, Ord, Show, IsString, NFData)
+
+instance ToNoun Wain where
+  toNoun (Wain t) = toNoun (Cord <$> lines t)
+
+instance FromNoun Wain where
+  parseNoun n = named "Wain" $ do
+    tx :: [Cord] <- parseNoun n
+    pure $ Wain $ unlines (unCord <$> tx)
 
 
 -- Wall -- Text Lines ----------------------------------------------------------

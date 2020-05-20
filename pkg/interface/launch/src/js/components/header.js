@@ -1,51 +1,30 @@
 import React, { Component } from 'react';
-import { subscription } from '/subscription';
-import { api } from '/lib/api';
-import classnames from 'classnames';
-import moment from 'moment';
-
-import Dropdown from '/components/dropdown';
+import { Sigil } from './sigil';
+import { GroupFilter } from './group-filter';
+import _ from 'lodash';
 
 export default class Header extends Component {
-
-  constructor(props) {
-    super(props);
-    this.interval = null;
-    this.timeout = null;
-
-    this.state = {
-      moment: moment()
-    };
-  }
-
-  componentDidMount() {
-    let sec = parseInt(moment().format("s"), 10);
-
-    this.timeout = setTimeout(() => {
-      this.setState({
-        moment: moment()
-      });
-      this.interval = setInterval(() => {
-        this.setState({
-          moment: moment()
-        });
-      }, 60000);
-    }, (60 - sec) * 1000);
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.timeout);
-    clearInterval(this.interval);
-  }
-
   render() {
+
+    let invites = (this.props.invites && this.props.invites["/contacts"])
+      ? this.props.invites["/contacts"] : {};
+
     return (
-      <header className="w-100 h2 cf">
-        <div className="fl h2 bg-black">
-        </div>
-        <div className="fr h2 bg-black">
-          <p className="white v-mid h2 sans-serif dtc pr2">{this.state.moment.format("MMM DD")}</p>
-          <p className="white v-mid h2 sans-serif dtc pr2">{this.state.moment.format("hh:mm a")}</p>
+      <header
+        className={"bg-white bg-gray0-d w-100 justify-between relative " +
+        "tl pt3"}
+        style={{ height: 37 }}>
+        <div className="fl lh-copy absolute left-1" style={{top: 9}}>
+          <a href="/~groups/me"><Sigil
+            ship={"~" + window.ship}
+            size={16} color={"#000000"}
+            classes="mix-blend-diff v-mid" />
+          </a>
+          <GroupFilter invites={invites} associations={this.props.associations}/>
+        <span
+          className="f9 white-d inter dib ml1 c-default">
+          <span className="inter gray2 f9 dib mr2">/</span> Home
+        </span>
         </div>
       </header>
     );

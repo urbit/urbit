@@ -1002,6 +1002,7 @@ _me_gain_use(u3_noun dog)
   u3a_box* box_u = u3a_botox(dog_w);
 
   if ( 0x7fffffff == box_u->use_w ) {
+    u3l_log("fail in _me_gain_use");
     u3m_bail(c3__fail);
   }
   else {
@@ -2017,7 +2018,7 @@ u3a_slab(c3_w len_w)
   return pug_u->buf_w;
 }
 
-/* u3a_slaq(): u3a_slaq() with a defined blocksize.
+/* u3a_slaq(): u3a_slab() with a defined blocksize.
 */
 c3_w*
 u3a_slaq(c3_g met_g, c3_w len_w)
@@ -2319,4 +2320,17 @@ u3a_walk_fore_unsafe(u3_noun    a,
 
     a = *top;
   }
+}
+
+/* u3a_string(): `a` as an on-loom c-string.
+*/
+c3_c*
+u3a_string(u3_atom a)
+{
+  c3_w  met_w = u3r_met(3, a);
+  c3_c* str_c = u3a_malloc(met_w + 1);
+
+  u3r_bytes(0, met_w, (c3_y*)str_c, a);
+  str_c[met_w] = 0;
+  return str_c;
 }

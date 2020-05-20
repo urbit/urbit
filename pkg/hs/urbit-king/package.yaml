@@ -1,13 +1,7 @@
 name: urbit-king
-version: 0.10.1
+version: 0.10.4
 license: MIT
 license-file: LICENSE
-
-flags:
-  Release:
-    description: "Produce statically-linked executables"
-    default: false
-    manual: true
 
 library:
   source-dirs: lib
@@ -30,6 +24,7 @@ tests:
 
 dependencies:
   - aeson
+  - ansi-terminal
   - async
   - base
   - base-unicode-symbols
@@ -72,6 +67,7 @@ dependencies:
   - network
   - optparse-applicative
   - para
+  - pem
   - pretty-show
   - primitive
   - process
@@ -93,7 +89,6 @@ dependencies:
   - template-haskell
   - terminal-progress-bar
   - terminal-size
-  - terminfo
   - text
   - these
   - time
@@ -119,6 +114,7 @@ default-extensions:
   - ApplicativeDo
   - BangPatterns
   - BlockArguments
+  - ConstraintKinds
   - DataKinds
   - DefaultSignatures
   - DeriveAnyClass
@@ -165,12 +161,6 @@ executables:
     source-dirs: app
     dependencies:
       - urbit-king
-    when:
-      - condition: flag(Release)
-        then:
-          cc-options: -static
-          ld-options: -static -pthread
-        else: {}
     ghc-options:
       - -threaded
       - -rtsopts

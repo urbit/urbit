@@ -1,4 +1,4 @@
-|=  scripts=marl
+|=  [startup=json scripts=marl]
 ;html
   ;head
     ;title: Home
@@ -11,9 +11,10 @@
   ==
   ;body
     ;div#root;
-    ;script@"/~/channel/channel.js";
+    ;script@"/~channel/channel.js";
     ;script@"/~modulo/session.js";
     ;*  scripts
     ;script@"/~launch/js/index.js";
+    ;script: window.startupMessage = {(en-json:html startup)}
   ==
 ==

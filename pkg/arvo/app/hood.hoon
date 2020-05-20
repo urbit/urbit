@@ -43,9 +43,9 @@
 !:
 =>  |%                                                  ::
     ++  hood-old                                        ::  unified old-state
-      {?($1 $2) lac/(map @tas hood-part-old)}           ::
+      {?($1 $2 $3 $4) lac/(map @tas hood-part-old)}        ::
     ++  hood-1                                          ::  unified state
-      {$2 lac/(map @tas hood-part)}                     ::
+      {$4 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::  extract specific
       =+  hed=$:hood-head
       |@  ++  $
@@ -140,16 +140,19 @@
   `..on-init
 ::
 ++  on-save
-  !>([%2 lac])
+  !>([%4 lac])
 ::
 ++  on-load
   |=  =old-state=vase
   =/  old-state  !<(hood-old old-state-vase)
   =^  cards  lac
     =.  lac  lac.old-state
-    ?.  ?=(%1 -.old-state)
-      `lac
-    ((wrap on-load):from-drum:(help hid) %1)
+    ?-  -.old-state
+      %1  ((wrap on-load):from-drum:(help hid) %1)
+      %2  ((wrap on-load):from-drum:(help hid) %2)
+      %3  ((wrap on-load):from-drum:(help hid) %3)
+      %4  `lac
+    ==
   [cards ..on-init]
 ::
 ++  on-poke

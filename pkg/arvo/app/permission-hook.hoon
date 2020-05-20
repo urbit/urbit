@@ -7,6 +7,7 @@
 /-  *permission-hook
 /+  *permission-json, default-agent, verb, dbug
 ::
+~%  %permission-hook-top  ..is  ~
 |%
 +$  state
   $%  [%0 state-0]
@@ -195,7 +196,15 @@
       %delete
     ?.  (~(has by synced) path.diff)
       [~ state]
-    :_  state(synced (~(del by synced) path.diff))
+    =/  control=(unit path)
+      =+  (~(got by synced) path.diff)
+      ?.  =(our.bowl ship)  ~
+      `access-control
+    :_  %_  state
+          synced          (~(del by synced) path.diff)
+          access-control  ?~  control  access-control
+                          (~(del ju access-control) u.control path.diff)
+        ==
     :_  ~
     :*  %pass
         [%permission path.diff]

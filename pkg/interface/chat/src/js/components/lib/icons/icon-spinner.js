@@ -1,9 +1,25 @@
 import React, { Component } from 'react';
 
-export class IconSpinner extends Component {
+export class Spinner extends Component {
   render() {
-    return (
-      <div className="spinner-pending"></div>
-    );
+
+    let classes = !!this.props.classes ? this.props.classes : "";
+    let text = !!this.props.text ? this.props.text : "";
+    let awaiting = !!this.props.awaiting ? this.props.awaiting : false;
+
+    if (awaiting) {
+      return (
+        <div className={classes + " z-2 bg-white bg-gray0-d white-d"}>
+          <img className="invert-d spin-active v-mid"
+            src="/~chat/img/Spinner.png"
+            width={16}
+            height={16} />
+          <p className="dib f9 ml2 v-mid inter">{text}</p>
+        </div>
+      );
+    }
+    else {
+      return null;
+    }
   }
 }

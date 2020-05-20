@@ -778,6 +778,7 @@
   (weld (scag b a) [c (slag b a)])
 ::
 ++  welp                                                ::  faceless weld
+  ~/  %welp
   =|  {* *}
   |@
   ++  $
@@ -787,6 +788,7 @@
   --
 ::
 ++  zing                                                ::  promote
+  ~/  %zing
   =|  *
   |@
   ++  $
@@ -866,6 +868,14 @@
   |-
   ?~  b  0
   (add (lsh a c (end a 1 i.b)) $(c +(c), b t.b))
+::
+++  repn
+  ~/  %repn
+  |=  [bits=@ud x=(list @)]
+  =|  c=@ud
+  |-  ^-  @
+  ?~  x  0
+  (add (lsh 0 (mul bits c) (end 0 bits i.x)) $(c +(c), x t.x))
 ::
 ++  rev
   ::  reverses block order, accounting for leading zeroes
@@ -1188,8 +1198,10 @@
     ?|((b n.a) $(a l.a) $(a r.a))
   ::
   ++  apt                                               ::  check correctness
+    =<  $
+    ~/  %apt
     =|  {l/(unit) r/(unit)}
-    |-  ^-  ?
+    |.  ^-  ?
     ?~  a   &
     ?&  ?~(l & (gor n.a u.l))
         ?~(r & (gor u.r n.a))
@@ -1337,7 +1349,8 @@
       a(r c)
     c(l a(r l.c))
   ::
-  ++  rep                                               ::  replace by product
+  ++  rep                                               ::  reduce to product
+    ~/  %rep
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
@@ -1482,13 +1495,17 @@
     $(a r.a, c (peg c 7))
   ::
   ++  apt                                               ::  check correctness
+    =<  $
+    ~/  %apt
     =|  {l/(unit) r/(unit)}
-    |-  ^-  ?
+    |.  ^-  ?
     ?~  a   &
-    ?&  ?~(l & (gor p.n.a u.l))
-        ?~(r & (gor u.r p.n.a))
-        ?~(l.a & ?&((mor p.n.a p.n.l.a) $(a l.a, l `p.n.a)))
-        ?~(r.a & ?&((mor p.n.a p.n.r.a) $(a r.a, r `p.n.a)))
+    ?&  ?~(l & &((gor p.n.a u.l) !=(p.n.a u.l)))
+        ?~(r & &((gor u.r p.n.a) !=(u.r p.n.a)))
+        ?~  l.a   &
+        &((mor p.n.a p.n.l.a) !=(p.n.a p.n.l.a) $(a l.a, l `p.n.a))
+        ?~  r.a   &
+        &((mor p.n.a p.n.r.a) !=(p.n.a p.n.r.a) $(a r.a, r `p.n.a))
     ==
   ::
   ++  gas                                               ::  concatenate
@@ -1592,7 +1609,8 @@
       a(r d)
     d(l a(r l.d))
   ::
-  ++  rep                                               ::  replace by product
+  ++  rep                                               ::  reduce to product
+    ~/  %rep
     |*  b/_=>(~ |=({* *} +<+))
     |-
     ?~  a  +<+.b
@@ -1609,6 +1627,7 @@
     [-.f a(l +.e, r +.f)]
   ::
   ++  run                                               ::  apply gate to values
+    ~/  %run
     |*  b/gate
     |-
     ?~  a  a
@@ -1675,18 +1694,23 @@
   ::
   ::
   ++  urn                                               ::  apply gate to nodes
+    ~/  %urn
     |*  b/$-({* *} *)
     |-
     ?~  a  ~
     a(n n.a(q (b p.n.a q.n.a)), l $(a l.a), r $(a r.a))
   ::
   ++  wyt                                               ::  depth of map
-    |-  ^-  @
+    =<  $
+    ~%  %wyt  +  ~
+    |.  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
   ::
   ++  key                                               ::  set of keys
+    =<  $
+    ~/  %key
     =+  b=`(set _?>(?=(^ a) p.n.a))`~
-    |-  ^+  b
+    |.  ^+  b
     ?~  a   b
     $(a r.a, b $(a l.a, b (~(put in b) p.n.a)))
   ::
@@ -2123,7 +2147,12 @@
   ::    3f: scrambling                                  ::
   ::    3g: molds and mold builders                     ::
   ::                                                    ::
-~%  %tri  +  ~
+~%  %tri  +
+  ==
+    %year  year
+    %yore  yore
+    %ob    ob
+  ==
 |%
 ::
 ::::  3a: signed and modular ints                       ::
@@ -3800,13 +3829,20 @@
   --
 ::
 ++  ob
+  ~%  %ob  ..ob
+    ==
+      %fein  fein
+      %fynd  fynd
+    ==
   |%
+  ::
   ::  +fein: conceal structure, v3.
   ::
   ::    +fein conceals planet-sized atoms.  The idea is that it should not be
   ::    trivial to tell which planet a star has spawned under.
   ::
   ++  fein
+    ~/  %fein
     |=  pyn/@  ^-  @
     ?:  &((gte pyn 0x1.0000) (lte pyn 0xffff.ffff))
       (add 0x1.0000 (feis (sub pyn 0x1.0000)))
@@ -3822,6 +3858,7 @@
   ::    Restores obfuscated values that have been enciphered with +fein.
   ::
   ++  fynd
+    ~/  %fynd
     |=  cry/@  ^-  @
     ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
       (add 0x1.0000 (tail (sub cry 0x1.0000)))
@@ -3831,7 +3868,6 @@
       %+  con  hi
       $(cry lo)
     cry
-  ::
   ::  +feis: a four-round generalised Feistel cipher over the domain
   ::         [0, 2^32 - 2^16 - 1].
   ::
@@ -9950,6 +9986,8 @@
                   next
                 ?~  u.tyr
                   $(sut q.sut, lon [~ lon], p.heg +(p.heg))
+                ?.  =(0 p.heg)
+                  next(p.heg (dec p.heg))
                 =+  tor=(fund way u.u.tyr)
                 ?-  -.tor
                   %&  [%& (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
@@ -12156,6 +12194,7 @@
   ^-  (list term)
   ?+    typ  ~
       {$hold *}  $(typ ~(repo ut typ))
+      {$hint *}  $(typ ~(repo ut typ))
       {$core *}
     %-  zing
     %+  turn  ~(tap by q.r.q.typ)

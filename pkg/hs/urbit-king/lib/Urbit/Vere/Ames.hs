@@ -23,7 +23,7 @@ import qualified Urbit.Time      as Time
 data AmesDrv = AmesDrv
   { aTurfs         :: TVar (Maybe [Turf])
   , aGalaxies      :: IORef (M.Map Galaxy (Async (), TQueue ByteString))
-  , aSocket        :: Maybe Socket
+  , aSocket        :: TVar (Maybe Socket)
   , aListener      :: Async ()
   , aSendingQueue  :: TQueue (SockAddr, ByteString)
   , aSendingThread :: Async ()
@@ -88,8 +88,6 @@ renderGalaxy = Ob.renderPatp . Ob.patp . fromIntegral . unPatp
     enqueueEv -- Queue-event action.
     mPort     -- Explicit port override from command line arguments.
 
-    TODO Handle socket exceptions in waitPacket
-
     4096 is a reasonable number for recvFrom. Packets of that size are
     not possible on the internet.
 
@@ -114,7 +112,8 @@ ames inst who isFake enqueueEv stderr =
     start = do
         aTurfs         <- newTVarIO Nothing
         aGalaxies      <- newIORef mempty
-        aSocket        <- bindSock
+        aSocket        <- newTVarIO Nothing
+        bindSock aSocket
         aListener      <- async (waitPacket aSocket)
         aSendingQueue  <- newTQueueIO
         aSendingThread <- async (sendingThread aSendingQueue aSocket)
@@ -124,10 +123,10 @@ ames inst who isFake enqueueEv stderr =
     netMode = do
       if isFake
       then pure Fake
-      else getNetworkingType >>= \case
-        NetworkNormal -> pure Real
-        NetworkLocalhost -> pure Localhost
-        NetworkNone -> pure NoNetwork
+      else view (networkConfigL . ncNetMode) >>= \case
+        NMNormal -> pure Real
+        NMLocalhost -> pure Localhost
+        NMNone -> pure NoNetwork
 
     stop :: AmesDrv -> RIO e ()
     stop AmesDrv{..} = do
@@ -135,11 +134,11 @@ ames inst who isFake enqueueEv stderr =
 
         cancel aSendingThread
         cancel aListener
-        io $ maybeM (pure ()) (close') (pure aSocket)
-        -- io $ close' aSocket
+        socket <- atomically $ readTVar aSocket
+        io $ maybeM (pure ()) (close') (pure socket)
 
-    bindSock :: RIO e (Maybe Socket)
-    bindSock = getBindAddr >>= doBindSocket
+    bindSock :: TVar (Maybe Socket) -> RIO e ()
+    bindSock socketVar = getBindAddr >>= doBindSocket
         where
            getBindAddr = netMode >>= \case
               Fake      -> pure $ Just localhost
@@ -147,11 +146,11 @@ ames inst who isFake enqueueEv stderr =
               Real      -> pure $ Just inaddrAny
               NoNetwork -> pure Nothing
 
-           doBindSocket :: Maybe HostAddress -> RIO e (Maybe Socket)
-           doBindSocket Nothing = pure Nothing
+           doBindSocket :: Maybe HostAddress -> RIO e ()
+           doBindSocket Nothing = atomically $ writeTVar socketVar Nothing
            doBindSocket (Just bindAddr) = do
              mode <- netMode
-             mPort <- getAmesPort
+             mPort <- view (networkConfigL . ncAmesPort)
              let ourPort = maybe (listenPort mode who) fromIntegral mPort
              s  <- io $ socket AF_INET Datagram defaultProtocol
 
@@ -159,16 +158,28 @@ ames inst who isFake enqueueEv stderr =
              let addr = SockAddrInet ourPort bindAddr
              () <- io $ bind s addr
 
-             pure $ Just s
+             atomically $ writeTVar socketVar (Just s)
 
-    waitPacket :: Maybe Socket -> RIO e ()
-    waitPacket Nothing = pure ()
-    waitPacket (Just s) = forever $ do
-        (bs, addr) <- io $ recvFrom s 4096
-        logTrace $ displayShow ("(ames) Received packet from ", addr)
-        case addr of
-            SockAddrInet p a -> atomically (enqueueEv $ hearEv p a bs)
-            _                -> pure ()
+    waitPacket :: TVar (Maybe Socket) -> RIO e ()
+    waitPacket socketVar = do
+        (atomically $ readTVar socketVar) >>= \case
+          Nothing -> pure ()
+          Just s -> do
+            res <- io $ tryIOError $ recvFrom s 4096
+            case res of
+              Left exn -> do
+                -- When we have a socket exception, we need to rebuild the
+                -- socket.
+                logTrace $ displayShow ("(ames) Socket exception. Rebinding.")
+                bindSock socketVar
+              Right (bs, addr) -> do
+                logTrace $ displayShow ("(ames) Received packet from ", addr)
+                case addr of
+                    SockAddrInet p a -> atomically (enqueueEv $ hearEv p a bs)
+                    _                -> pure ()
+
+            waitPacket socketVar
+
 
     handleEffect :: AmesDrv -> NewtEf -> RIO e ()
     handleEffect drv@AmesDrv{..} = \case
@@ -216,18 +227,23 @@ ames inst who isFake enqueueEv stderr =
 
     -- An outbound queue of messages. We can only write to a socket from one
     -- thread, so coalesce those writes here.
-    sendingThread :: TQueue (SockAddr, ByteString) -> Maybe Socket -> RIO e ()
-    sendingThread queue Nothing = pure ()
-    sendingThread queue (Just socket) = forever $
+    sendingThread :: TQueue (SockAddr, ByteString)
+                  -> TVar (Maybe Socket)
+                  -> RIO e ()
+    sendingThread queue socketVar = forever $
       do
         (dest, bs) <- atomically $ readTQueue queue
-        logTrace $ displayShow ("(ames) Sending packet to ", socket, dest)
+        logTrace $ displayShow ("(ames) Sending packet to ", dest)
         sendAll bs dest
       where
         sendAll bs dest = do
-          bytesSent <- io $ sendTo socket bs dest
-          when (bytesSent /= BS.length bs) $ do
-            sendAll (drop bytesSent bs) dest
+          mybSocket <- atomically $ readTVar socketVar
+          case mybSocket of
+            Nothing -> pure ()
+            Just socket -> do
+              bytesSent <- io $ sendTo socket bs dest
+              when (bytesSent /= BS.length bs) $ do
+                sendAll (drop bytesSent bs) dest
 
     -- Asynchronous thread per galaxy which handles domain resolution, and can
     -- block its own queue of ByteStrings to send.

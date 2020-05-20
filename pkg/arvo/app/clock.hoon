@@ -1,4 +1,4 @@
-/+  *server, default-agent, verb
+/+  *server, default-agent, verb, dbug
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
@@ -8,7 +8,18 @@
   ==
 =,  format
 ::
+|%
+::
++$  card  card:agent:gall
++$  versioned-state
+  $%  state-zero
+  ==
++$  state-zero  [%0 data=json]
+--
 %+  verb  |
+%-  agent:dbug
+=|  state-zero
+=*  state  -
 ^-  agent:gall
 |_  =bowl:gall
 +*  this  .
@@ -17,20 +28,28 @@
 ++  on-init
   ^-  (quip card:agent:gall _this)
   =/  launcha
-    [%launch-action !>([%clock /tile '/~clock/js/tile.js'])]
+    [%launch-action !>([%add %clock /clocktile '/~clock/js/tile.js'])]
   :_  this
   :~  [%pass / %arvo %e %connect [~ /'~clock'] %clock]
       [%pass /clock %agent [our.bowl %launch] %poke launcha]
   ==
 ::  bootstrapping to get %goad started OTA
 ::
-++  on-save   !>(%2)
+++  on-save   !>(%3)
 ++  on-load
   |=  old-state=vase
-  =/  old  !<(?(~ %1 %2) old-state)
+  ^-  (quip card _this)
+  =/  old  !<(?(~ %1 %2 %3) old-state)
   =^  cards  this
-    ?:  ?=(%2 old)
+    ?:  ?=(%3 old)
       `this
+    ?:  ?=(%2 old)
+      ::  ensure launch is set up to listen to us correctly
+      ::
+      =/  launcha
+        [%launch-action !>([%add %clock /clocktile '/~clock/js/tile.js'])]
+      :_  this
+      [%pass /clock %agent [our.bowl %launch] %poke launcha]~
     :_  this  :_  ~
     [%pass /behn %arvo %b %wait +(now.bowl)]
   ::
@@ -39,6 +58,9 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _this)
+  |^
+  ?:  ?=(%json mark)
+    (poke-json !<(json vase))
   ?.  ?=(%handle-http-request mark)
     (on-poke:def mark vase)
   =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -59,15 +81,23 @@
   ?:  =(name 'tile')
     (js-response:gen tile-js)
   not-found:gen
+  ::
+  ++  poke-json
+    |=  jon=json
+    ^-  (quip card:agent:gall _this)
+    =.  data.state  jon
+    :_  this
+    [%give %fact ~[/clocktile] %json !>(jon)]~
+  --
 ::
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:gall _this)
   ?:  ?=([%http-response *] path)
     `this
-  ?.  =(/tile path)
+  ?.  =(/clocktile path)
     (on-watch:def path)
-  [[%give %fact ~ %json !>(*json)]~ this]
+  [[%give %fact ~ %json !>(data.state)]~ this]
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def

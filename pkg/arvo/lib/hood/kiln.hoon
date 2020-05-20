@@ -86,6 +86,17 @@
   =/  recur  ~s1
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
+    (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
+::
+++  poke-autocommit
+  |=  [mon/kiln-commit auto=?]
+  =<  abet
+  =.  +>.$  (emit %pass /commit %arvo %c [%dirk mon])
+  ?.  auto
+    +>.$
+  =/  recur  ~s1
+  =.  commit-timer
+    [/kiln/autocommit (add now recur) recur mon]
   (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
 ::
 ++  poke-cancel-autocommit
@@ -143,8 +154,8 @@
   abet:abet:(merge:(work syd) ali sud cas gim)
 ::
 ++  poke-cancel
-  |=  ~
-  abet:(emit %pass /cancel %arvo %c [%drop %foo])
+  |=  a=@tas
+  abet:(emit %pass /cancel %arvo %c [%drop a])
 ::
 ++  poke-info
   |=  {mez/tape tor/(unit toro)}
@@ -185,6 +196,7 @@
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
     %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
+    %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
     %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
     %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
@@ -198,7 +210,8 @@
     %kiln-keep-ford          =;(f (f !<(_+<.f vase)) poke-keep-ford)
     %kiln-autoload           =;(f (f !<(_+<.f vase)) poke-autoload)
     %kiln-overload           =;(f (f !<(_+<.f vase)) poke-overload)
-    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-overload)
+    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
+    %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
     %kiln-wash-gall          =;(f (f !<(_+<.f vase)) poke-wash-gall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
@@ -301,6 +314,10 @@
 ++  poke-goad-gall
   |=  [force=? agent=(unit dude:gall)]
   abet:(emit %pass /kiln %arvo %g %goad force agent)
+::
+++  poke-gall-sear
+  |=  =ship
+  abet:(emit %pass /kiln %arvo %g %sear ship)
 ::
 ++  poke-wash-gall  |=(* abet:(emit %pass /kiln %arvo %g [%wash ~]))
 ::

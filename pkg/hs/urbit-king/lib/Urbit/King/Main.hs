@@ -79,7 +79,6 @@ import Urbit.Vere.LockFile    (lockFile)
 import qualified Data.Set                as Set
 import qualified Data.Text               as T
 import qualified Network.HTTP.Client     as C
-import qualified System.Environment      as Sys
 import qualified System.Posix.Signals    as Sys
 import qualified System.ProgressBar      as PB
 import qualified System.Random           as Sys
@@ -122,19 +121,28 @@ toSerfFlags CLI.Opts{..} = catMaybes m
 
 
 toPierConfig :: FilePath -> CLI.Opts -> PierConfig
-toPierConfig pierPath CLI.Opts{..} = PierConfig
-    { _pcPierPath = pierPath
-    , _pcDryRun   = (oDryRun || isJust oDryFrom)
-    }
+toPierConfig pierPath CLI.Opts {..} = PierConfig { .. }
+ where
+  _pcPierPath = pierPath
+  _pcDryRun   = oDryRun || isJust oDryFrom
 
 toNetworkConfig :: CLI.Opts -> NetworkConfig
-toNetworkConfig CLI.Opts{..} = NetworkConfig
-    { ncNetworking = if (oDryRun || isJust oDryFrom) then NetworkNone
-                     else if oOffline then NetworkNone
-                     else if oLocalhost then NetworkLocalhost
-                     else NetworkNormal
-    , ncAmesPort = oAmesPort
-    }
+toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
+ where
+  dryRun     = oDryRun || isJust oDryFrom
+  offline    = dryRun || oOffline
+
+  mode = case (dryRun, offline, oLocalhost) of
+    (True, _   , _   ) -> NMNone
+    (_   , True, _   ) -> NMNone
+    (_   , _   , True) -> NMLocalhost
+    (_   , _   , _   ) -> NMNormal
+
+  _ncNetMode   = mode
+  _ncAmesPort  = oAmesPort
+  _ncHttpPort  = oHttpPort
+  _ncHttpsPort = oHttpsPort
+  _ncLocalPort = oLoopbackPort
 
 tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
                    , HasConfigDir e, HasStderrLogFunc e
@@ -530,31 +538,15 @@ checkComet = do
   let s = mineComet (Set.fromList starList) eny
   print s
 
-{-|
-    The release executable links against a terminfo library that tries
-    to find the terminfo database in `/nix/store/...`. Hack around this
-    by setting `TERMINFO_DIRS` to the standard locations, but don't
-    overwrite it if it's already been set by the user.
--}
-terminfoHack ∷ IO ()
-terminfoHack =
-    Sys.lookupEnv var >>= maybe (Sys.setEnv var dirs) (const $ pure ())
-  where
-    var = "TERMINFO_DIRS"
-    dirs = intercalate ":"
-      [ "/usr/share/terminfo"
-      , "/lib/terminfo"
-      ]
-
 main :: IO ()
 main = do
     mainTid <- myThreadId
 
+    hSetBuffering stdout NoBuffering
+
     let onTermSig = throwTo mainTid UserInterrupt
 
     Sys.installHandler Sys.sigTERM (Sys.Catch onTermSig) Nothing
-
-    terminfoHack
 
     CLI.parseArgs >>= \case
         CLI.CmdRun r o d                        -> runShip r o d

@@ -4,12 +4,11 @@
 ::    stores if permission conditions are met.
 ::    the patterns herein should one day be generalized into a proxy-hook lib.
 ::
-::    this adopts a very primitive view of groups-store as containing only
-::    groups of interesting (rather than uninteresting) ships. it sets the
-::    permission condition to be that ship must be in group matching the path
-::    it's subscribing to.
-::    we check this on-watch, but also subscribe to groups so that we can kick
-::    subscriptions if needed (eg ship removed from group).
+::    this uses metadata-store to discover resources and their associated
+::    groups. it sets the permission condition to be that a ship must be in a
+::    group associated with the resource it's subscribing to.
+::    we check this on-watch, but also subscribe to metadata & groups so that
+::    we can kick subscriptions if needed (eg ship removed from group).
 ::
 ::    we deduplicate incoming subscriptions on the same path, ensuring we have
 ::    exactly one local subscription per unique incoming subscription path.
@@ -17,8 +16,12 @@
 ::    whatever's returned by the scry at that path, but perhaps that should
 ::    become part of the stores standard anyway.
 ::
-/-  *link, group-store
-/+  default-agent, verb
+::    when adding support for new paths, the only things you'll likely want
+::    to touch are +permitted, +initial-response, & +kick-proxies.
+::
+/-  group-store, *metadata-store
+/+  *link, metadata, default-agent, verb, dbug
+~%  %link-proxy-hook-top  ..is  ~
 |%
 +$  state-0
   $:  %0
@@ -33,6 +36,7 @@
 =|  state-0
 =*  state  -
 ::
+%-  agent:dbug
 %+  verb  |
 ^-  agent:gall
 =<
@@ -44,7 +48,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
-    [watch-groups:do]~
+    ~[watch-groups:do watch-metadata:do]
   ::
   ++  on-save  !>(state)
   ++  on-load
@@ -92,23 +96,91 @@
   --
 ::
 |_  =bowl:gall
++*  md  ~(. metadata bowl)
+::
+::  permissions
+::
 ++  permitted
   |=  [who=ship =path]
   ^-  ?
-  ::  we only expose /local-pages, and only to ships in the relevant group
+  ::  we only expose /local-pages and /annotations,
+  ::  to ships in the groups associated with the resource.
+  ::  (no url-specific annotations subscriptions, either.)
   ::
-  ?.  ?=([%local-pages ^] path)  |
-  =;  group
-    ?&  ?=(^ group)
-        (~(has in u.group) who)
-    ==
-  .^  (unit group:group-store)
-      %gx
-      (scot %p our.bowl)
-      %group-store
-      (scot %da now.bowl)
-      (snoc t.path %noun)
+  =/  target=(unit ^path)
+    ?:  ?=([%local-pages ^] path)
+      `t.path
+    ?:  ?=([%annotations ~ ^] path)
+      `t.t.path
+    ~
+  ?~  target  |
+  %+  lien  (groups-from-resource:md %link u.target)
+  |=  =group-path
+  ^-  ?
+  =-  (~(has in (fall - *group:group-store)) who)
+  %^  scry-for  (unit group:group-store)
+    %group-store
+  group-path
+::
+++  kick-revoked-permissions
+  |=  [=path who=(list ship)]
+  ^-  (list card)
+  %+  murn  who
+  |=  =ship
+  ^-  (unit card)
+  ::  no need to remove to ourselves
+  ::
+  ?:  =(our.bowl ship)  ~
+  ?:  (permitted ship path)  ~
+  `(kick-proxies ship path)
+::
+::  metadata subscription
+::
+++  watch-metadata
+  ^-  card
+  [%pass /metadata %agent [our.bowl %metadata-store] %watch /app-name/link]
+::
+++  take-metadata-sign
+  |=  =sign:agent:gall
+  ^-  (quip card _state)
+  ?-  -.sign
+    %poke-ack     ~|([dap.bowl %unexpected-poke-ack /metadata] !!)
+    %kick         [[watch-metadata]~ state]
+  ::
+      %watch-ack
+    ?~  p.sign  [~ state]
+    =/  =tank
+      :-  %leaf
+      "{(trip dap.bowl)} failed subscribe to metadata store. very wrong!"
+    %-  (slog tank u.p.sign)
+    [~ state]
+  ::
+      %fact
+    =*  mark  p.cage.sign
+    =*  vase  q.cage.sign
+    ?.  ?=(%metadata-update mark)
+      ~|  [dap.bowl %unexpected-mark mark]
+      !!
+    %-  handle-metadata-update
+    !<(metadata-update vase)
   ==
+::
+++  handle-metadata-update
+  |=  upd=metadata-update
+  ^-  (quip card _state)
+  :_  state
+  ?.  ?=(%remove -.upd)  ~
+  ?>  =(%link app-name.resource.upd)
+  ::  if a group is no longer associated with a resource,
+  ::  we need to re-check permissions for everyone in that group.
+  ::
+  %+  kick-revoked-permissions
+    app-path.resource.upd
+  %~  tap  in
+  =-  (fall - *group:group-store)
+  %^  scry-for  (unit group:group-store)
+    %group-store
+  group-path.upd
 ::
 ::  groups subscription
 ::TODO  largely copied from link-listen-hook. maybe make a store-listener lib?
@@ -135,7 +207,6 @@
       %fact
     =*  mark  p.cage.sign
     =*  vase  q.cage.sign
-    ~&  [dap.bowl %fact mark]
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
       %group-initial  [~ state]
       %group-update   (handle-group-update !<(group-update:group-store vase))
@@ -147,33 +218,34 @@
   ^-  (quip card _state)
   :_  state
   ?.  ?=(%remove -.upd)  ~
-  =/  whos=(list ship)  ~(tap in members.upd)
-  |-  ^-  (list card)
-  ?~  whos  ~
-  ::  no need to remove to ourselves
+  ::  if someone was removed from a group, find all link resources associated
+  ::  with that group, then kick their subscriptions if they're no longer
   ::
-  ?:  =(our.bowl i.whos)
-    $(whos t.whos)
-  :_  $(whos t.whos)
-  ::NOTE  this depends kind of unfortunately on the fact that we only accept
-  ::      subscriptions to /local-pages/* paths. it'd be more correct if we
-  ::      "just" looked at all paths in the map, and found the matching ones.
-  (kick-proxy i.whos [%local-pages pax.upd])
+  %-  zing
+  %+  turn  (app-paths-from-group:md %link pax.upd)
+  |=  =app-path
+  ^-  (list card)
+  %+  kick-revoked-permissions
+    app-path
+  ~(tap in members.upd)
 ::
 ::  proxy subscriptions
 ::
-++  kick-proxy
+++  kick-proxies
   |=  [who=ship =path]
   ^-  card
-  [%give %kick ~[path] `who]
+  =-  [%give %kick - `who]
+  :~  [%local-pages path]
+      [%annotations %$ path]
+  ==
 ::
 ++  handle-proxy-sign
-  |=  [=path =sign:agent:gall]
+  |=  [=wire =sign:agent:gall]
   ^-  (quip card _state)
   ?-  -.sign
-    %poke-ack     ~|([dap.bowl %unexpected-poke-ack path] !!)
-    %fact         [[%give %fact ~[path] cage.sign]~ state]
-    %kick         [[(proxy-pass-link-store path %watch path)]~ state]
+    %poke-ack     ~|([dap.bowl %unexpected-poke-ack wire] !!)
+    %fact         [[%give %fact ~[wire] cage.sign]~ state]
+    %kick         [[(proxy-pass-link-store wire %watch wire)]~ state]
   ::
       %watch-ack
     ?~  p.sign  [~ state]
@@ -197,9 +269,15 @@
 ++  initial-response
   |=  =path
   ^-  card
-  =/  initial=update
-    [%local-pages path .^(pages %gx path)]
-  [%give %fact ~ %link-update !>(initial)]
+  =;  =initial
+    [%give %fact ~ %link-initial !>(initial)]
+  ?+  path  !!
+      [%local-pages ^]
+    [%local-pages (scry-for (map ^path pages) %link-store path)]
+  ::
+      [%annotations %$ ^]
+    [%annotations (scry-for (per-path-url notes) %link-store path)]
+  ==
 ::
 ++  start-proxy
   |=  [who=ship =path]
@@ -228,4 +306,16 @@
   ::  else, close the local subscription.
   ::
   [(proxy-pass-link-store path %leave ~)]~
+::
+::  helpers
+::
+++  scry-for
+  |*  [=mold =app-name =path]
+  .^  mold
+    %gx
+    (scot %p our.bowl)
+    app-name
+    (scot %da now.bowl)
+    (snoc `^path`path %noun)
+  ==
 --
