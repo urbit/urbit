@@ -415,6 +415,14 @@
         (~(get by comments.limbo) u.host book-name note-name u.comment-date)
       ?~  comment  ~
       ``noun+!>(u.comment)
+    ::
+        [%x %book @ @ ~]
+      =/  host=(unit @p)  (slaw %p i.t.t.pax)
+      =/  book-name       i.t.t.t.pax
+      ?~  host  [~ ~]
+      =/  book  (~(get by books) u.host book-name)
+      ?~  book  ~
+      ``noun+!>(u.book)
     ==
   ::
   ++  on-agent
