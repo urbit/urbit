@@ -1,4 +1,4 @@
-:  metadata-hook: allow syncing foreign metadata
+::  metadata-hook: allow syncing foreign metadata
 ::
 ::  watch paths:
 ::  /group/%group-path                      all updates related to this group
