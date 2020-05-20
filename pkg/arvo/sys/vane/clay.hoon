@@ -3494,6 +3494,11 @@
       =*  fod  fod.dom
       ?.  |(?=(~ for) (may-read u.for care.mun yon path.mun))
         [~ fod]
+      ::  virtualize to catch and produce deterministic failures
+      ::
+      =-  ?:(?=(%& -<) p.- ((slog p.-) [[~ ~] fod]))
+      %-  mule  |.
+      ::
       ?-  care.mun
           %d
         :_  fod
