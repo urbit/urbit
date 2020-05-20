@@ -211,9 +211,9 @@
   |=  pax=path
   .^  (unit group)
     %gx
-    (scot %p our.bowl)
+    (scot %p our.bol)
     %group-store
-    (scot %da now.bowl)
+    (scot %da now.bol)
     (weld pax /noun)
   ==
 ::

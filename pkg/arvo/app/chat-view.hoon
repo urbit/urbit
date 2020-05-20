@@ -115,8 +115,8 @@
     ++  truncated-inbox-scry
       ^-  inbox
       =/  =inbox
-        =/  our  (scot %p our.bowl)
-        =/  now  (scot %da now.bowl)
+        =/  our  (scot %p our.bol)
+        =/  now  (scot %da now.bol)
         .^(inbox %gx /[our]/chat-store/[now]/all/noun)
       %-  ~(run by inbox)
       |=  =mailbox
@@ -429,7 +429,7 @@
     ^-  (unit mailbox)
     =.  pax
       ;:  weld
-        /(scot %p our.bowl)/chat-store/(scot %da now.bol)/mailbox
+        /(scot %p our.bol)/chat-store/(scot %da now.bol)/mailbox
         pax
         /noun
       ==
