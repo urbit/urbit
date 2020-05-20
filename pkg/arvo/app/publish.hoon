@@ -954,7 +954,7 @@
   ?>  ?=(^ group-path.group)
   =/  scry-path
     ;:  weld
-      /(scot %p our.bowl)/group-store/(scot %da now.bol)
+      /(scot %p our.bol)/group-store/(scot %da now.bol)
       group-path.group
       /noun
     ==

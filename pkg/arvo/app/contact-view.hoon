@@ -270,14 +270,14 @@
 ::
 ++  all-scry
   ^-  rolodex
-  .^(rolodex %gx /(scot %p our.bowl)/contact-store/(scot %da now.bol)/all/noun)
+  .^(rolodex %gx /(scot %p our.bol)/contact-store/(scot %da now.bol)/all/noun)
 ::
 ++  contact-scry
   |=  pax=path
   ^-  (unit contact)
   =.  pax
     ;:  weld
-      /(scot %p our.bowl)/contact-store/(scot %da now.bol)/contact
+      /(scot %p our.bol)/contact-store/(scot %da now.bol)/contact
       pax
       /noun
     ==
