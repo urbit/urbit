@@ -1230,10 +1230,10 @@
       ::  lookup the session id by duct
       ::
       ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
-        ~&  [%canceling-nonexistant-channel duct]
+        ~>  %slog.[0 leaf+"eyre: no channel to cancel {<duct>}"]
         [~ state]
       ::
-      ~&  [%canceling-cancel duct]
+      ~>  %slog.[0 leaf+"eyre: canceling {<duct>}"]
       ::
       =/  maybe-session
         (~(get by session.channel-state.state) u.maybe-channel-id)
