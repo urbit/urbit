@@ -394,7 +394,6 @@
   [ducts (print-wove wove)]
 ::
 ++  fusion
-  |=  [her=@p syd=desk]
   =>
   |%
   ::  +an: $ankh interface door
@@ -833,7 +832,7 @@
           ==
         ::
           %+  cook  |=(huz=(list hoon) `hoon`tssg+huz)
-          (most gap tall:(vang & (scot %p her) syd '1' pax))
+          (most gap tall:(vang & pax))
         ==
       ==
     ::
@@ -984,8 +983,6 @@
       hun.rom  (need hun)
       dos.rom  (~(put by dos.rom.ruf) syd [qyx dom per pew]:red)
     ==
-  ::
-  ++  fusion  (^fusion her syd)
   ::
   ::  Handle `%sing` requests
   ::
