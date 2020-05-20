@@ -394,6 +394,7 @@
     ::    %init: vane boot
     ::    %sift: limit verbosity to .ships
     ::    %spew: set verbosity toggles
+    ::    %trim: release memory
     ::    %vega: kernel reload notification
     ::
     +$  task
@@ -408,6 +409,7 @@
           $>(%init vane-task)
           [%sift ships=(list ship)]
           [%spew veb=(list verb)]
+          $>(%trim vane-task)
           $>(%vega vane-task)
       ==
     ::  $gift: effect from ames
