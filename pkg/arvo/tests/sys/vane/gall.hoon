@@ -18,13 +18,13 @@
     =/  =task:able:gall  [%init ~nec]
     [duct type task]
   ::
-  =/  expected-moves  ~
+  =/  expected-moves=(list move:gall-gate)  ~
   ::
-  =^  results  gall-gate
+  =/  res
     (gall-call gall-gate time *sley call-args expected-moves)
   ::
-  results
-::  +test-conf: test %conf: TODO: fix
+  -.res
+::  +test-conf: test %conf; TODO: test clay response
 ::
 ++  test-conf
   ^-  tang
@@ -47,10 +47,10 @@
   ::
   =/  expected-moves=(list move:gall-gate)  ~[move]
   ::
-  =^  results  gall-gate
+  =/  res
     (gall-call gall-gate time *sley call-args expected-moves)
   ::
-  results
+  -.res
 ::  +gall-call: have %gall run a +task and assert it produces expected-moves
 ::
 ++  gall-call
@@ -60,16 +60,16 @@
           call-args=[=duct =type wrapped-task=(hobo task:able:gall)]
           expected-moves=(list move:gall-gate)
       ==
-  ^-  [tang _gall-gate]
-  ::
   =/  gall-core  (gall-gate our=~nec now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  gall-gate  (call:gall-core [duct ~ type wrapped-task]:call-args)
+  =/  res
+    =/  =type  -:!>(*task:able:gall)
+    (call:gall-core duct.call-args dud=~ type wrapped-task.call-args)
   ::
   =/  output=tang
     %+  expect-eq
       !>  expected-moves
-      !>  moves
+      !>  -.res
   ::
-  [output gall-gate]
+  [output +.res]
 --
