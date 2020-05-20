@@ -107,13 +107,6 @@
 ::  |migrate: data structures for upgrades
 ::
 +|  %migrate
-::
-::  $chrysalis: pupal gall state, until agents have reloaded
-::
-+$  chrysalis
-  $:  queue=(qeu bolus)
-      =spore
-  ==
 ::  $bolus: incoming move to a pupa, enqueued in a $chrysalis
 ::
 +$  bolus
@@ -145,51 +138,32 @@
 ::  pupal gall core, on upgrade
 ::
 =<  =*  adult-gate  .
-    =|  sac=chrysalis
+    =|  =spore
     |=  [our=ship now=@da eny=@uvJ ski=sley]
     =*  pupal-gate  .
     =*  adult-core  (adult-gate +<)
+    =<  |%
+        ++  call  ^call
+        ++  load  ^load
+        ++  scry  ^scry
+        ++  stay  ^stay
+        ++  take  ^take
+        --
     |%
-    ++  call
-      |=  [=duct dud=(unit goof) typ=type wrapped-task=(hobo task:able)]
-      =*  call-args  +<
-      ?:  =(~ eggs.spore.sac)
-        ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
-        =.  state.adult-gate  spore.sac(eggs *(map term yoke))
-        (call:adult-core call-args)
-      ?^  dud
-        (mean >mote.u.dud< tang.u.dud)
-      ::
-      =/  task  ((harden task:able:gall) wrapped-task)
-      ~>  %slog.[0 leaf+"gall: pupa call {<-.task>}"]
-      =.  queue.sac  (~(put to queue.sac) [%call duct task])
-      [*(list move) pupal-gate]
-    ++  scry  scry:adult-core
-    ++  stay  ~|(%gall-subinvolution !!)
-    ++  take
-      |=  [=wire =duct dud=(unit goof) typ=type sign=sign-arvo]
-      =*  take-args  +<
-      ?:  =(~ eggs.spore.sac)
-        ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
-        =.  state.adult-gate  spore.sac(eggs *(map term yoke))
-        (take:adult-core take-args)
-      ?^  dud
-        ~>  %slog.[0 leaf+"gall: pupa take dud"]
-        (mean >mote.u.dud< tang.u.dud)
-      ?.  =(/sys/lyv wire)
-        ~>  %slog.[0 leaf+"gall: pupa take {(spud wire)} {<[- +<]:sign>}"]
-        =.  queue.sac  (~(put to queue.sac) [%take wire duct sign])
-        [*(list move) pupal-gate]
-      ~>  %slog.[0 leaf+"gall: pupa exiting chrysalis"]
+    ++  molt
+      |=  [=duct fec=(unit move)]
+      ^-  [(list move) _adult-gate]
+      ~>  %slog.[0 leaf+"gall: molting"]
+      ~<  %slog.[0 leaf+"gall: molted"]
       =/  adult  adult-core
       =.  state.adult
-        [%6 system-duct outstanding contacts yokes=~ blocked]:spore.sac
+        [%6 system-duct outstanding contacts yokes=~ blocked]:spore
       =/  mo-core  (mo-abed:mo:adult duct)
       =.  mo-core
-        =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore.sac)
+        =/  apps=(list [dap=term =egg])  ~(tap by eggs.spore)
         |-  ^+  mo-core
         ?~  apps  mo-core
-        ~>  %slog.[0 leaf+"gall: pupa upgrading {<dap.i.apps>}"]
+        ~>  %slog.[0 leaf+"gall: upgrading {<dap.i.apps>}"]
         =/  ap-core  (ap-abut:ap:mo-core i.apps)
         =^  tan  ap-core  (ap-install:ap-core `old-state.egg.i.apps)
         ?^  tan
@@ -197,31 +171,52 @@
         $(apps t.apps, mo-core ap-abet:ap-core)
       =.  mo-core  (mo-subscribe-to-agent-builds:mo-core now)
       =^  moves  adult-gate  mo-abet:mo-core
-      =.  moves
-        %+  weld  moves
-        %+  turn  ~(tap to queue.sac)
-        |=  mov=bolus
-        ^-  move
-        ~&  gall-dequeue+-.mov
-        ?-  -.mov
-          %call  [duct.mov %slip %g task.mov]
-          %take  [duct.mov %pass wire.mov %b %huck !>(sign.mov)]
-        ==
-      ~>  %slog.[0 leaf+"gall: metamorphosis"]
+      =?  moves  ?=(^ fec)  (weld moves [u.fec]~)
       [moves adult-gate]
+    ::
+    ++  call
+      |=  [=duct dud=(unit goof) typ=type wrapped-task=(hobo task:able)]
+      =*  call-args  +<
+      ?:  =(~ eggs.spore)
+        ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
+        =.  state.adult-gate  spore(eggs *(map term yoke))
+        (call:adult-core call-args)
+      ?^  dud
+        ~>  %slog.[0 leaf+"gall: pupa call dud"]
+        (mean >mote.u.dud< tang.u.dud)
+      =/  task  ((harden task:able:gall) wrapped-task)
+      (molt duct `[duct %slip %g task])
+    ::
+    ++  scry  scry:adult-core
+    ++  stay  ~|(%gall-subinvolution !!)
+    ++  take
+      |=  [=wire =duct dud=(unit goof) typ=type sign=sign-arvo]
+      =*  take-args  +<
+      ?:  =(~ eggs.spore)
+        ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
+        =.  state.adult-gate  spore(eggs *(map term yoke))
+        (take:adult-core take-args)
+      ?^  dud
+        ~>  %slog.[0 leaf+"gall: pupa take dud"]
+        (mean >mote.u.dud< tang.u.dud)
+      ?:  =(/sys/lyv wire)
+        (molt duct ~)
+      ::  TODO: test this or remove and assert /sys/lyv
+      ::
+      (molt duct `[duct %pass wire %b %huck !>(sign)])
     ::
     ++  load
       |^
       |=  old=all-state
-      =.  spore.sac  (upgrade old)
-      ?.  =(~ eggs.spore.sac)
+      =.  spore  (upgrade old)
+      ?.  =(~ eggs.spore)
         pupal-gate
       ~>  %slog.[0 leaf+"gall: direct morphogenesis"]
-      adult-gate(state spore.sac(eggs *(map term yoke)))
+      adult-gate(state spore(eggs *(map term yoke)))
       ::
       ++  upgrade
         |=  =all-state
-        ^-  spore
+        ^-  ^spore
         ::
         =?  all-state  ?=(%0 -.all-state)
           (state-0-to-1 all-state)
@@ -245,11 +240,11 @@
         all-state
       ::  +all-state: upgrade path
       ::
-      ++  all-state  $%(state-0 state-1 state-2 state-3 state-4 state-5 spore)
+      +$  all-state  $%(state-0 state-1 state-2 state-3 state-4 state-5 ^spore)
       ::
       ++  state-5-to-spore-6
         |=  =state-5
-        ^-  spore
+        ^-  ^spore
         =;  eggs=(map term egg)  state-5(- %6, yokes.agents-5 eggs)
         %-  ~(run by yokes.agents-5.state-5)
         |=(=yoke `egg`yoke(agent on-save:agent.yoke))
