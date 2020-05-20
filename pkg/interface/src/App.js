@@ -5,6 +5,7 @@ import './css/indigo-static.css';
 import './css/fonts.css';
 import { light } from '@tlon/indigo-react';
 
+import LaunchApp from './apps/launch/LaunchApp';
 import ChatApp from './apps/chat/ChatApp';
 import DojoApp from './apps/dojo/DojoApp';
 import StatusBar from './components/StatusBar';
@@ -80,27 +81,48 @@ export default class App extends React.Component {
             api={this.api}
             />
             <div>
-              <Route exact path="/" component={Home} />
-              <Route path="/~chat" render={
-                p => <ChatApp ship={this.ship} channel={channel} {...p} selectedGroups={selectedGroups} />
-              }
-              />
-              <Route path="/~dojo" render={
-                p => <DojoApp ship={this.ship} channel={channel} {...p} selectedGroups={selectedGroups} />
-              }
-              />
-              <Route path="/~groups" render={
-                p => <GroupsApp ship={this.ship} channel={channel} {...p} selectedGroups={selectedGroups} />
-              }
-              />
-              <Route path="/~link" render={
-                p => <LinksApp ship={this.ship} channel={channel} {...p} selectedGroups={selectedGroups} />
-              }
-              />
-              <Route path="/~publish" render={
-                p => <PublishApp ship={this.ship} channel={channel} {...p} selectedGroups={selectedGroups} />
-              }
-              />
+              <Route exact path="/" render={ p => (
+                <LaunchApp
+                  ship={this.ship}
+                  channel={channel}
+                  selectedGroups={selectedGroups}
+                  {...p} />
+              )} />
+              <Route path="/~chat" render={ p => (
+                <ChatApp
+                  ship={this.ship}
+                  channel={channel}
+                  selectedGroups={selectedGroups}
+                  {...p} />
+              )} />
+              <Route path="/~dojo" render={ p => (
+                <DojoApp
+                  ship={this.ship}
+                  channel={channel}
+                  selectedGroups={selectedGroups}
+                  {...p} />
+              )} />
+              <Route path="/~groups" render={ p => (
+                <GroupsApp
+                  ship={this.ship}
+                  channel={channel}
+                  selectedGroups={selectedGroups}
+                  {...p} />
+              )} />
+              <Route path="/~link" render={ p => (
+                <LinksApp
+                  ship={this.ship}
+                  channel={channel}
+                  selectedGroups={selectedGroups}
+                  {...p} />
+              )} />
+              <Route path="/~publish" render={ p => (
+                <PublishApp
+                  ship={this.ship}
+                  channel={channel}
+                  selectedGroups={selectedGroups}
+                  {...p} />
+              )} />
             </div>
           </Router>
         </Root>

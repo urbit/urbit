@@ -1,26 +1,26 @@
-export default class Subscription {
+export default class BaseSubscription {
   constructor(store, api, channel) {
     this.store = store;
     this.api = api;
     this.channel = channel;
-
     this.channel.setOnChannelError(this.onChannelError.bind(this));
   }
 
-  start() {
-    this.subscribe('/primary', 'invite-view');
-    this.subscribe('/app-name/contacts', 'metadata-store');
+  delete() {
+    this.channel.delete();
   }
 
   onChannelError(err) {
-    console.error('event source err: ', err);
+    console.error('event source error: ', err);
     console.log('initiating new channel');
-
-    this.start();
+    setTimeout(2000, () => {
+      this.store.clear();
+      this.start();
+    });
   }
 
   subscribe(path, app) {
-    this.api.bind(path, 'PUT', this.api.ship, app,
+    this.api.subscribe(path, 'PUT', this.api.ship, app,
       this.handleEvent.bind(this),
       (err) => {
         console.log(err);
@@ -31,7 +31,13 @@ export default class Subscription {
       });
   }
 
+  start() {
+    // extend
+  }
+
   handleEvent(diff) {
+    // extend
     this.store.handleEvent(diff);
   }
 }
+
