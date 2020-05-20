@@ -16,11 +16,12 @@
   $%  [%add name=term =tile]
       [%remove name=term]
       [%change-order =tile-ordering]
+      [%change-first-time first-time=?]
       [%change-is-shown name=term is-shown=?]
   ==
 ::
 +$  update
-  $%  [%initial =tiles =tile-ordering]
+  $%  [%initial =tiles =tile-ordering first-time=?]
       [%keys keys=(set term)]
       action
   ==

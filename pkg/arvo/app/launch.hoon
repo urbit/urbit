@@ -1,5 +1,4 @@
-/-  launch
-/+  default-agent, dbug
+/+  store=launch-store, default-agent, dbug
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -11,8 +10,9 @@
   ==
 ::
 +$  state-zero
-  $:  =tiles:launch
-      =tile-ordering:launch
+  $:  =tiles:store
+      =tile-ordering:store
+      first-time=?
   ==
 --
 ::
@@ -30,11 +30,11 @@
   =.  new-state
     %_  new-state
         tiles
-      %-  ~(gas by *tiles:launch)
+      %-  ~(gas by *tiles:store)
       %+  turn  `(list term)`[%chat %publish %link %dojo %weather %clock ~]
       |=  =term
       :-  term
-      ^-  tile:launch
+      ^-  tile:store
       ?+  term      [[%custom ~] %.y]
           %chat     [[%basic 'Chat' '/~landscape/img/Chat.png' '/~chat'] %.y]
           %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~link'] %.y]
@@ -56,11 +56,11 @@
   =.  new-state
     %_  new-state
         tiles
-      %-  ~(gas by *tiles:launch)
+      %-  ~(gas by *tiles:store)
       %+  turn  `(list term)`[%chat %publish %link %dojo %weather %clock ~]
       |=  =term
       :-  term
-      ^-  tile:launch
+      ^-  tile:store
       ?+  term      [[%custom ~] %.y]
           %chat     [[%basic 'Chat' '/~landscape/img/Chat.png' '/~chat'] %.y]
           %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~link'] %.y]
@@ -82,12 +82,12 @@
   |^
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
-        %launch-action  (poke-action !<(action:launch vase))
+        %launch-action  (poke-action !<(action:store vase))
     ==
   [cards this]
   ::
   ++  poke-action
-    |=  =action:launch
+    |=  =action:store
     ^-  (quip card _state)
     ~&  action
     ?-  -.action
@@ -114,15 +114,19 @@
       state(tile-ordering tile-ordering.action)
     ::
         %change-is-shown
-      =/  =tile:launch  (~(got by tiles) name.action)
+      =/  =tile:store  (~(got by tiles) name.action)
       ?.  =(is-shown.tile is-shown.action)  [~ state]
       =.  is-shown.tile  is-shown.action
       :-  (give [/all]~ action)
       state(tiles (~(put by tiles) name.action tile))
+    ::
+        %change-first-time
+      :-  (give [/all]~ action)
+      state(first-time first-time.action)
     ==
   ::
   ++  give
-    |=  [paths=(list path) =update:launch]
+    |=  [paths=(list path) =update:store]
     ^-  (list card)
     [%give %fact paths [%launch-update !>(update)]]~
   --
@@ -133,19 +137,24 @@
   |^
   ?>  (team:title our.bowl src.bowl)
   =/  cards=(list card)
-    ?+  path  (on-watch:def path)
-        [%all ~]   (give [%initial tiles tile-ordering])
+    ?+  path       (on-watch:def path)
+        [%all ~]   (give [%initial tiles tile-ordering first-time])
         [%keys ~]  (give [%keys ~(key by tiles)])
     ==
   [cards this]
   ::
   ++  give
-    |=  =update:launch
+    |=  =update:store
     ^-  (list card)
     [%give %fact ~ [%launch-update !>(update)]]~
   --
 ::
-++  on-peek   on-peek:def
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  (on-peek:def path)
+      [%x %keys ~]  ``noun+!>(~(key by tiles))
+  ==
 ::
 ++  on-arvo
   |=  [wir=wire sin=sign-arvo]

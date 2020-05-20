@@ -1,9 +1,10 @@
-/-  launch
+/+  *launch-store
 ::
-|_  act=action:launch
+|_  act=action
 ::
 ++  grab
   |%
-  ++  noun  action:launch
+  ++  noun  action
+  ++  json  dejs:action
   --
 --
