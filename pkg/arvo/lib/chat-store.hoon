@@ -10,6 +10,13 @@
   ++  letter
     |=  =^letter
     ^-  json
+    =;  result=(each json tang)
+      ?-  -.result
+        %&  p.result
+        %|  (frond %text s+'[[json rendering error]]')
+      ==
+    %-  mule
+    |.
     ?-  -.letter
         %text
       (frond %text s+text.letter)
