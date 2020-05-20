@@ -1477,14 +1477,15 @@
 ::  +call: request
 ::
 ++  call
+  =/  gask  $%([%sear *] task:able)
   ~%  %gall-call  +>   ~
-  |=  [=duct dud=(unit goof) hic=(hypo (hobo task:able))]
+  |=  [=duct dud=(unit goof) hic=(hypo (hobo gask))]
   ^-  [(list move) _gall-payload]
   ?^  dud
     ~|(%gall-call-dud (mean tang.u.dud))
   ::
   ~|  [%gall-call-failed duct q.hic]
-  =/  =task:able  ((harden task:able) q.hic)
+  =/  task=gask  ((harden gask) q.hic)
   ::
   =/  initialised  (mo-abed:mo duct)
   ?-    -.task
@@ -1511,7 +1512,9 @@
     mo-abet
   ::
       %goad
-    mo-abet:(mo-goad:initialised force.task agent.task)
+    [~ gall-payload]
+      %sear  [~ gall-payload]
+    ::mo-abet:(mo-goad:initialised force.task agent.task)
   ::
       %init
     =/  payload  gall-payload(system-duct.agents.state duct)
