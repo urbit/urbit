@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import { store } from '/store';
 import moment from 'moment';
+import { stringToTa } from './lib/util';
 
 
 class UrbitApi {
@@ -113,9 +114,7 @@ class UrbitApi {
   // apps
 
   getApps() {
-    //TODO onfail render "failed to fetch apps"
-    //TODO generic "fail" local event that prints to status bar?
-    this.getJson('/app',
+    this.getJson('/apps',
       this.wrapLocal('apps'),
       this.showStatus('error fetching apps')
     );
@@ -130,6 +129,19 @@ class UrbitApi {
         store.handleEvent({data: { local: { 'appFailed': app } }});
       }
     );
+  }
+
+  getAppState(app, state = '') {
+    if (state !== '') {
+      state = '/' + stringToTa(state)
+    }
+    this.getJson('/app/'+app+'/state'+state, (data) => {
+      data.app = app;
+      return this.wrapLocal('appState')(data);
+    },
+    () => {  // on fail
+      store.handleEvent({data: { local: { 'appFailed': app } }});
+    });
   }
 
   // spider

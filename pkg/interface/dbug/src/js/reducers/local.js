@@ -8,6 +8,7 @@ export class LocalReducer {
     //
       this.apps(data, state);
       this.app(data, state);
+      this.appState(data, state);
       this.appFailed(data, state);
       this.verbResult(data, state);
       this.verbStatus(data, state);
@@ -48,7 +49,15 @@ export class LocalReducer {
   app(obj, state) {
     const data = _.get(obj, 'app', false);
     if (data) {
+      if (state.apps[data.app]) data.state = state.apps[data.app].state;
       state.apps[data.app] = data;
+    }
+  }
+
+  appState(obj, state) {
+    const data = _.get(obj, 'appState', false);
+    if (data) {
+      state.apps[data.app].state = data.state;
     }
   }
 

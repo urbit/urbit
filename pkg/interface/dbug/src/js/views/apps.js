@@ -10,8 +10,11 @@ export class Apps extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      stateQuery: {}
+    };
 
+    this.changeStateQuery = this.changeStateQuery.bind(this);
     this.loadApps = this.loadApps.bind(this);
     this.loadAppDetails = this.loadAppDetails.bind(this);
   }
@@ -27,6 +30,11 @@ export class Apps extends Component {
     //
   }
 
+  changeStateQuery(app, event) {
+    this.state.stateQuery[app] = event.target.value;
+    this.setState({ stateQuery: this.state.stateQuery });
+  }
+
   loadApps() {
     api.getApps();
   }
@@ -35,11 +43,14 @@ export class Apps extends Component {
     api.getAppDetails(app);
   }
 
+  loadAppState(app) {
+    api.getAppState(app, this.state.stateQuery[app]);
+  }
+
   //TODO use classes for styling?
   render() {
     const { props, state } = this;
 
-    console.log('render', props.apps, Object.keys(props.apps));
     const apps = Object.keys(props.apps).sort().map(app => {
       const appData = props.apps[app];
       const haveDeets = (typeof appData === 'object');
@@ -71,8 +82,16 @@ export class Apps extends Component {
           >
             refresh
           </button>
+          <button onClick={()=>{this.loadAppState(app)}}>query state</button>
+          <textarea
+            class="mono"
+            onChange={(e) => this.changeStateQuery(app, e)}
+            value={state.stateQuery[app]}
+            placeholder="-.-"
+            spellCheck="false"
+          />
           <div style={{maxHeight: '500px', overflow: 'scroll'}}>
-            <pre>{data.state.join('\n')}</pre>
+            <pre>{(data.state || data.simpleState).join('\n')}</pre>
           </div>
           <div>
             <Subscriptions {...data.subscriptions} />

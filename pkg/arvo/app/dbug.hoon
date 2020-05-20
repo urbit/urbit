@@ -153,57 +153,81 @@
     (as-octt:mimes (en-json u.json))
   =,  enjs:format
   ?+  site  ~
-    ::  /app.json: {appname: running, ...}
+    ::  /apps.json: {appname: running?}
     ::
-      [%app ~]
+      [%apps ~]
     %-  some
     %-  pairs
     %+  turn  all:apps
     |=  app=term
     [app b+(running:apps app)]
   ::
-    ::  /app/[appname].json: {state: }
+    ::  /app/[appname]...
     ::
-      [%app @ ~]
+      [%app @ *]
     =*  app  i.t.site
     ::TODO  ?.  (dbugable:apps app)  ~
-    %-  some
-    %-  pairs
-    :~  :-  'state'
-        (tank (sell (state:apps app)))
+    =/  rest=^path  t.t.site
+    ?+  rest  ~
+      ::  /app/[appname].json: {state: }
       ::
-        :-  'subscriptions'
-        %-  pairs
-        =+  (subscriptions:apps app)
-        |^  ~['in'^(incoming in) 'out'^(outgoing out)]
+        ~
+      %-  some
+      %-  pairs
+      :~  :-  'simpleState'
+          %-  tank
+          =;  head=(unit ^tank)
+            (fall head leaf+"unversioned")
+          ::  try to print the state version
+          ::
+          =/  version=(unit vase)
+            (slew 2 (state:apps app))
+          ?~  version  ~
+          ?.  ?=(%atom -.p.u.version)  ~
+          `(sell u.version)
         ::
-        ++  incoming
-          |=  =bitt:gall
-          ^-  json
-          :-  %a
-          %+  turn  ~(tap by bitt)
-          |=  [d=duct [s=^ship p=^path]]
+          :-  'subscriptions'
           %-  pairs
-          ~!  (ship s)
-          :~  'duct'^a+(turn d path)
-              'ship'^(ship s)
-              'path'^(path p)
-          ==
-        ::
-        ++  outgoing
-          |=  =boat:gall
-          ^-  json
-          :-  %a
-          %+  turn  ~(tap by boat)
-          |=  [[w=wire s=^ship t=term] [a=? p=^path]]
-          %-  pairs
-          :~  'wire'^(path w)
-              'ship'^(ship s)
-              'app'^s+t
-              'acked'^b+a
-              'path'^(path p)
-          ==
-        --
+          =+  (subscriptions:apps app)
+          |^  ~['in'^(incoming in) 'out'^(outgoing out)]
+          ::
+          ++  incoming
+            |=  =bitt:gall
+            ^-  json
+            :-  %a
+            %+  turn  ~(tap by bitt)
+            |=  [d=duct [s=^ship p=^path]]
+            %-  pairs
+            :~  'duct'^a+(turn d path)
+                'ship'^(ship s)
+                'path'^(path p)
+            ==
+          ::
+          ++  outgoing
+            |=  =boat:gall
+            ^-  json
+            :-  %a
+            %+  turn  ~(tap by boat)
+            |=  [[w=wire s=^ship t=term] [a=? p=^path]]
+            %-  pairs
+            :~  'wire'^(path w)
+                'ship'^(ship s)
+                'app'^s+t
+                'acked'^b+a
+                'path'^(path p)
+            ==
+          --
+      ==
+    ::
+      ::  /app/[appname]/state.json
+      ::  /app/[appname]/state/[query].json
+      ::
+        [%state ?(~ [@ ~])]
+      %-  some
+      =-  (pairs 'state'^(tank -) ~)
+      %+  state-at:apps  app
+      ?~  t.rest  ~
+      (slaw %t i.t.rest)
     ==
   ::
     ::  /spider.json
@@ -335,17 +359,33 @@
   ::
   ++  state
     |=  app=term
-    (scry-dbug vase app /dbug/state)
+    ^-  vase
+    (scry-dbug vase app /state)
+  ::
+  ++  state-at
+    |=  [app=term what=(unit @t)]
+    ^-  tank
+    =/  state=vase  (state app)
+    ?~  what  (sell state)
+    =/  result=(each vase tang)
+      %-  mule  |.
+      %+  slap
+        (slop state !>([bowl=bowl ..zuse]))
+      (ream u.what)
+    ?-  -.result
+      %&  (sell p.result)
+      %|  (head p.result)
+    ==
   ::
   ++  subscriptions
     =,  gall
     |=  app=term
     ^-  [out=boat in=bitt]
-    (scry-dbug ,[boat bitt] app /dbug/subscriptions)
+    (scry-dbug ,[boat bitt] app /subscriptions)
   ::
   ++  scry-dbug
     |*  [=mold app=term =path]
-    (scry mold %gx app (snoc `^path`path %noun))
+    (scry mold %gx app (snoc `^path`[%dbug path] %noun))
   ::
   ::TODO  but why? we can't tell if it's on or not
   ++  poke-verb-toggle
