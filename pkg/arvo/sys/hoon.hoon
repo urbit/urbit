@@ -12015,7 +12015,8 @@
 ::
 ++  slab                                                ::  test if contains
   |=  {cog/@tas typ/type}
-  =(& -:(~(find ut typ) %free [cog ~]))
+  ?=  [%| *]
+  (~(find ut typ) %read ~[cog])
 ::
 ++  slap
   |=  {vax/vase gen/hoon}  ^-  vase                     ::  untyped vase .*
