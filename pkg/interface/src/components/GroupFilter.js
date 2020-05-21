@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 export default class GroupFilter extends Component {
   constructor(props) {
@@ -219,9 +220,9 @@ onClick={() => this.addGroup(group)}
 }}
         >
           <p className="tc bb b--gray3 b--gray1-d gray3 pv4 f9">Group Select and Filter</p>
-          <a href="/~groups" className="ma4 bg-gray5 bg-gray1-d f9 tl pa1 br1 db no-underline" style={{ paddingLeft: '6.5px', paddingRight: '6.5px' }}>Manage all Groups
+          <Link to="/~groups" className="ma4 bg-gray5 bg-gray1-d f9 tl pa1 br1 db no-underline" style={{ paddingLeft: '6.5px', paddingRight: '6.5px' }}>Manage all Groups
           {inviteCount}
-          </a>
+          </Link>
           <p className="pt4 gray3 f9 tl mh4">Filter Groups</p>
           <div className="relative w-100 ph4 pt2 pb4">
             <input className="ba b--gray3 white-d bg-gray0-d inter w-100 f9 pa2"

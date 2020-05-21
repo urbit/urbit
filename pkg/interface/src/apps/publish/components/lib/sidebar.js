@@ -118,9 +118,9 @@ export class Sidebar extends Component {
           (hiddenClasses ? 'flex-basis-100-s flex-basis-250-ns' : 'dn')
         }
       >
-        <a className="db dn-m dn-l dn-xl f9 pb3 pl3" href="/">
+        <Link className="db dn-m dn-l dn-xl f9 pb3 pl3" to="/">
           ⟵ Landscape
-        </a>
+        </Link>
         <div className="w-100 f9">
           <Link to="/~publish/new" className="green2 pa4 f9 dib">
             New Notebook

@@ -87,12 +87,12 @@ export class ProfileOverlay extends Component {
             </Link>
           )}
           {isOwn && (
-            <a
-              href={identityHref}
+            <Link
+              to={identityHref}
               className="b--black b--white-d ba black white-d mt3 tc pa2 pointer db"
             >
               Edit Group Identity
-            </a>
+            </Link>
           )}
         </div>
       </div>

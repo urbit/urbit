@@ -117,9 +117,9 @@ export class GroupDetail extends Component {
             <p className="f9 inter ml2 w-100">{title}</p>
             <p className="f9 inter ml2 w-100">
               <span className="f9 di mr2 inter">{app}</span>
-              <a className="f9 di green2" href={link}>
+              <Link className="f9 di green2" to={link}>
                 Open
-              </a>
+              </Link>
             </p>
           </div>
         </li>
