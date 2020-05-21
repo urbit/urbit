@@ -26,10 +26,10 @@
           %change-order       [%'changeOrder' (terms tile-ordering.upd)]
           %change-first-time  [%'changeFirstTime' b+first-time.upd]
           %change-is-shown
-        :-  %change-is-shown
+        :-  %'changeIsShown'
         %-  pairs
         :~  [%name s+name.upd]
-            [%is-shown b+is-shown.upd]
+            [%'isShown' b+is-shown.upd]
         ==
       ::
           %initial
