@@ -1842,7 +1842,7 @@
   ++  on-wegh
     ^+  event-core
     ::
-    =+  [known alien]=(skid ~(tap by peers.ames-state) |=(^ =(%known +<-)))
+    =+  [known alien]=(skid ~(val by peers.ames-state) |=(^ =(%known +<-)))
     ::
     %-  emit
     :^  duct  %give  %mass
