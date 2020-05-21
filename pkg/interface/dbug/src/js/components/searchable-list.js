@@ -32,7 +32,9 @@ export class SearchableList extends Component {
     );
 
     let items = props.items.filter(item => {
-      return (state.query === '') || item.key.includes(state.query);
+      return state.query.split(' ').reduce((match, query) => {
+        return match && item.key.includes(query);
+      }, true);
     })
     if (items.length === 0) {
       items = 'none';
