@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { Link } from 'react-router-dom';
 
 export class Skeleton extends Component {
   render() {
@@ -48,9 +49,9 @@ export class Skeleton extends Component {
           >
             {/* mobile-specific navigation */}
             <div className={mobileNavClasses}>
-              <a className="pl3 pb6" href="/">
+              <Link className="pl3 pb6" to="/">
                 {'⟵ Landscape'}
-              </a>
+              </Link>
               <div className="bb b--gray4 b--gray1-d white-d inter f8 pl3 pt6 pb3">
                 All Chats
               </div>

@@ -115,7 +115,7 @@ export class ChannelsSidebar extends Component {
         ? 'flex-basis-100-s flex-basis-30-ns'
         : 'dn')}
       >
-        <a className="db dn-m dn-l dn-xl f8 pb3 pl3" href="/">⟵ Landscape</a>
+        <Link className="db dn-m dn-l dn-xl f8 pb3 pl3" to="/">⟵ Landscape</Link>
         <div className="overflow-y-scroll h-100">
           <div className="w-100 bg-transparent">
             <Link

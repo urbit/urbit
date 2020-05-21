@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 import classnames from 'classnames';
 
 import { Popout } from './components/lib/icons/popout';
@@ -68,9 +68,9 @@ export default class DojoApp extends Component {
                   className="db dn-m dn-l dn-xl inter bg-white bg-gray0-d dt w-100"
                   style={{ height: 40 }}
                 >
-                  <a className="f8 pl3 black white-d dtc h-100 v-mid" href="/">
+                  <Link className="f8 pl3 black white-d dtc h-100 v-mid" to="/">
                     ⟵ Landscape
-                  </a>
+                  </Link>
                 </div>
                 <div
                   className={
