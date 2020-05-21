@@ -11,9 +11,6 @@ export class Ames extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      opened: new Set()
-    };
 
     this.loadPeers = this.loadPeers.bind(this);
     this.loadPeerDetails = this.loadPeerDetails.bind(this);
@@ -110,6 +107,7 @@ export class Ames extends Component {
     );
 
     const summary = (<>
+      <b>snd</b><br/>
       {renderDuct(snd.duct)}
       <table><tbody>
         <tr class="inter">
@@ -137,7 +135,11 @@ export class Ames extends Component {
       {queuedAcks}
       {live}
     </>);
-    return {key: 'snd ' + snd.bone + ', ' + renderDuct(snd.duct), jsx: (
+    const active = ( snd['unsent-messages'].length > 0 ||
+                     snd['packet-pump-state'].live.length > 0 )
+      ? 'active, '
+      : '';
+    return {key: 'snd ' + active + snd.bone + ', ' + renderDuct(snd.duct), jsx: (
       <Summary summary={summary} details={details} />
     )};
   }
@@ -163,6 +165,7 @@ export class Ames extends Component {
     </>);
 
     const summary = (<>
+      <b>rcv</b><br/>
       {renderDuct(rcv.duct)}
       <table><tbody>
         <tr>
