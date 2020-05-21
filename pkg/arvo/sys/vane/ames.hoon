@@ -1094,6 +1094,7 @@
       %jilt  (on-jilt:event-core ship.task)
       %sift  (on-sift:event-core ships.task)
       %spew  (on-spew:event-core veb.task)
+      %trim  on-trim:event-core
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
       %plea  (on-plea:event-core [ship plea]:task)
@@ -1863,8 +1864,10 @@
       (scry-gate [%141 %noun] ~ %j `beam`[[our %turf %da now] /])
     ::
     (emit unix-duct.ames-state %give %turf turfs)
+  ::  +on-trim: handle request to free memory
   ::  +on-vega: handle kernel reload
   ::
+  ++  on-trim  event-core
   ++  on-vega  event-core
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
