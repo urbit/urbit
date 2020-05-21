@@ -36,7 +36,6 @@ export class Spider extends Component {
   }
 
   renderThreads(threads) {
-    console.log('rendering threads', threads);
     return Object.keys(threads).map(thread => {
       const kids = this.renderThreads(threads[thread]);
       return (<>

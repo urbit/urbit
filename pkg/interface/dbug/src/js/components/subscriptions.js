@@ -56,7 +56,6 @@ export class Subscriptions extends Component {
       )};
     });
 
-    console.log('render subs', props.in, props.out);
     return (<div>
       <h4>Incoming</h4>
       <SearchableList placeholder="ship / path" items={incoming} />

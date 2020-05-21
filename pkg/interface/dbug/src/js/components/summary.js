@@ -14,7 +14,6 @@ export class Summary extends Component {
   }
 
   onToggle(event) {
-    console.log('toggle for', this.props.id);
     if (event.target.open) {
       if (this.props.onOpen) this.props.onOpen(this.props.id);
     } else {

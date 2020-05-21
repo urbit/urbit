@@ -22,7 +22,6 @@ export class Root extends Component {
 
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
-    console.log('built root');
   }
 
   componentDidMount() {

@@ -5,8 +5,6 @@ import urbitOb from 'urbit-ob';
 import { Summary } from '../components/summary';
 import { SearchableList } from '../components/searchable-list';
 
-//TODO  bone collection
-
 export class Ames extends Component {
 
   constructor(props) {
@@ -145,7 +143,6 @@ export class Ames extends Component {
   }
 
   renderRcv(rcv) {
-    console.log('rcv', rcv);
     const pendingVaneAcks = rcv['pending-vane-ack'].reduce((a, b) => {
       return a + b + ', ';
     }, 'pending vane acks: ');

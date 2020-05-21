@@ -54,7 +54,6 @@ class UrbitApi {
   bindToVerb(app) {
     return this.bind('/verb/events', 'PUT', this.authTokens.ship, app,
       (result) => {
-        console.log('verb result', result);
         result.data.app = app;
         store.handleEvent({data: { local: { verbResult: result.data }}});
       },
@@ -97,7 +96,6 @@ class UrbitApi {
 
   wrapLocal(name) {
     return (data) => {
-      console.log('got data', data);
       let e = {};
       e[name] = data;
       e['status'] = null; // clear previous status
