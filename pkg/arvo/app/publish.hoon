@@ -98,11 +98,9 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =/  lac  [%add %publish /publishtile '/~publish/tile.js']
     =/  rav  [%sing %t [%da now.bol] /app/publish/notebooks]
     :_  this
     :~  [%pass /bind %arvo %e %connect [~ /'~publish'] %publish]
-        [%pass /tile %agent [our.bol %launch] %poke %launch-action !>(lac)]
         [%pass /read/paths %arvo %c %warp our.bol q.byk.bol `rav]
         [%pass /permissions %agent [our.bol %permission-store] %watch /updates]
         (invite-poke:main [%create /publish])

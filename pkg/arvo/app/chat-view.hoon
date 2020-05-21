@@ -93,7 +93,7 @@
     ~/  %chat-view-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
-    ?+    -.sign  (on-agent:def wire sign)
+    ?+  -.sign  (on-agent:def wire sign)
         %kick
       :_  this
       [%pass / %agent [our.bol %chat-store] %watch /updates]~
@@ -110,9 +110,8 @@
     ~/  %chat-view-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
-    ?.  ?=(%bound +<.sign-arvo)
-      (on-arvo:def wire sign-arvo)
-    [~ this]
+    ?:  ?=(%bound +<.sign-arvo)  [~ this]
+    (on-arvo:def wire sign-arvo)
   ::
   ++  on-save  on-save:def
   ++  on-load  
