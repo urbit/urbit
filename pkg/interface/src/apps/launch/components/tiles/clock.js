@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import classnames from 'classnames';
-import moment from 'moment'
-import SunCalc from 'suncalc'
+import moment from 'moment';
+import SunCalc from 'suncalc';
+
+import Tile from './tile';
 
 const outerSize = 124; //tile size
 const innerSize = 124; //clock size
@@ -95,7 +97,7 @@ const degArc = (ctx, x, y, r, from, to, fill) => {
   ctx.stroke();
 }
 
-class Clock extends Component {
+class Clock extends React.Component {
 
   constructor(props) {
     super(props);
@@ -396,19 +398,16 @@ class Clock extends Component {
   }
 }
 
-export default class ClockTile extends Component {
+export default class ClockTile extends React.Component {
   constructor(props) {
     super(props);
   }
 
   renderWrapper(child) {
     return (
-      <div className="bg-white bg-gray0-d" style={{
-        width: outerSize,
-        height: outerSize,
-      }}>
+      <Tile>
         {child}
-      </div>
+      </Tile>
     );
   }
 
@@ -452,4 +451,3 @@ const initCanvas = (canvas, size, ratio) => {
   return canvas;
 }
 
-window.clockTile = ClockTile;

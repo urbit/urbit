@@ -14,15 +14,15 @@ class PrivateHelper extends BaseApi {
   }
 
   launchChangeOrder(orderedTiles = []) {
-    this.launchAction({ changeOrder: orderedTiles });
+    this.launchAction({ 'change-order': orderedTiles });
   }
 
   launchChangeFirstTime(firstTime = true) {
-    this.launchAction({ changeFirstTime: firstTime });
+    this.launchAction({ 'change-first-time': firstTime });
   }
 
-  launchChangeIsShown(isShown = true) {
-    this.launchAction({ isShown });
+  launchChangeIsShown(name, isShown = true) {
+    this.launchAction({ 'change-is-shown': { name, isShown }});
   }
 }
 
