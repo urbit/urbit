@@ -12014,9 +12014,9 @@
   [p.gun (slum q.gat q.sam)]
 ::
 ++  slab                                                ::  test if contains
-  |=  {cog/@tas typ/type}
+  |=  {cog/@tas way/?(%read %rite %both) typ/type}
   ?=  [%| *]
-  (~(find ut typ) %read ~[cog])
+  (~(find ut typ) way ~[cog])
 ::
 ++  slap
   |=  {vax/vase gen/hoon}  ^-  vase                     ::  untyped vase .*
