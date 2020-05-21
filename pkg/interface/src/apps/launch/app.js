@@ -6,6 +6,9 @@ import LaunchSubscription from '../../subscription/launch';
 
 import './css/custom.css';
 
+import Tiles from './components/tiles';
+import Welcome from './components/welcome';
+
 
 export default class LaunchApp extends React.Component {
   constructor(props) {
@@ -33,6 +36,7 @@ export default class LaunchApp extends React.Component {
 
     this.subscription = new LaunchSubscription(this.store, this.api, channel);
     this.subscription.start();
+    window.api = this.api;
   }
 
   componentWillUnmount() {
@@ -42,8 +46,17 @@ export default class LaunchApp extends React.Component {
   }
 
   render() {
+    const { state } = this;
+
     return (
-      <div></div>
+      <div style={{ height: 'calc(100vh - 45px)'}}
+           className='h-100 w-100 bg-gray0-d'>
+        <Welcome firstTime={state.launch.firstTime} api={this.api} />
+        <Tiles
+          tiles={state.launch.tiles}
+          tileOrdering={state.launch.tileOrdering}
+          api={this.api} />
+      </div>
     );
   }
 }

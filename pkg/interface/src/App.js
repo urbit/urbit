@@ -5,7 +5,7 @@ import './css/indigo-static.css';
 import './css/fonts.css';
 import { light } from '@tlon/indigo-react';
 
-import LaunchApp from './apps/launch/LaunchApp';
+import LaunchApp from './apps/launch/app';
 import ChatApp from './apps/chat/ChatApp';
 import DojoApp from './apps/dojo/DojoApp';
 import StatusBar from './components/StatusBar';

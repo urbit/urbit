@@ -7,6 +7,16 @@ export default class LaunchStore extends BaseStore {
     this.launchReducer = new LaunchReducer();
   }
 
+  initialState() {
+    return {
+      launch: {
+        firstTime: false,
+        tileOrdering: [],
+        tiles: {}
+      }
+    };
+  }
+
   reduce(data, state) {
     this.launchReducer.reduce(data, state);
   }

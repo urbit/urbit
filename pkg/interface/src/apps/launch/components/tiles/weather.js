@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import moment from 'moment';
 
-export default class WeatherTile extends Component {
+import Tile from './tile';
+
+export default class WeatherTile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -10,7 +12,8 @@ export default class WeatherTile extends Component {
       manualEntry: false,
       error: false
     };
-    let api = window.api;
+
+    let api = props.api;
   }
   // geolocation and manual input functions
   locationSubmit() {
@@ -115,6 +118,7 @@ export default class WeatherTile extends Component {
     weatherStyle = { gradient1: "white", gradient2: "white", text: "black" }
     ) {
     return (
+      <Tile>
       <div
         className={"relative " + weatherStyle.text}
         style={{
@@ -126,6 +130,7 @@ export default class WeatherTile extends Component {
         }}>
         {child}
       </div>
+      </Tile>
     );
   }
 
