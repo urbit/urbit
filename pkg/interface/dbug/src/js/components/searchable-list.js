@@ -36,16 +36,14 @@ export class SearchableList extends Component {
         return match && item.key.includes(query);
       }, true);
     })
-    if (items.length === 0) {
-      items = 'none';
-    } else {
-      items = items.map(item => (<div key={item.key} style={{marginTop: '4px'}}>{item.jsx}</div>));
-    }
+    items = items.map(item =>
+      (<div key={item.key} style={{marginTop: '4px'}}>{item.jsx}</div>)
+    );
 
     return (<div style={{position: 'relative', border: '1px solid grey', padding: '4px'}}>
       {props.children}
-      <div>{searchBar}</div>
-      <div>{items}</div>
+      <div>{searchBar} ({items.length})</div>
+      <div>{items.length === 0 ? 'none' : items}</div>
     </div>);
   }
 }
