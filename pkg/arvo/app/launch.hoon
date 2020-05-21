@@ -31,17 +31,18 @@
     %_  new-state
         tiles
       %-  ~(gas by *tiles:store)
-      %+  turn  `(list term)`[%chat %publish %link %dojo %weather %clock ~]
+      %+  turn  `(list term)`[%chat %publish %links %weather %clock %dojo ~]
       |=  =term
       :-  term
       ^-  tile:store
       ?+  term      [[%custom ~] %.y]
           %chat     [[%basic 'Chat' '/~landscape/img/Chat.png' '/~chat'] %.y]
-          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~link'] %.y]
+          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~links'] %.y]
           %dojo     [[%basic 'Dojo' '/~landscape/img/Dojo.png' '/~dojo'] %.y]
           %publish
         [[%basic 'Publish' '/~landscape/img/Publish.png' '/~publish'] %.y]
       ==
+        tile-ordering  [%chat %publish %links %weather %clock %dojo ~]
     ==
   [~ this(state [%4 new-state])]
 ::
@@ -57,17 +58,18 @@
     %_  new-state
         tiles
       %-  ~(gas by *tiles:store)
-      %+  turn  `(list term)`[%chat %publish %link %dojo %weather %clock ~]
+      %+  turn  `(list term)`[%chat %publish %links %weather %clock %dojo ~]
       |=  =term
       :-  term
       ^-  tile:store
       ?+  term      [[%custom ~] %.y]
           %chat     [[%basic 'Chat' '/~landscape/img/Chat.png' '/~chat'] %.y]
-          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~link'] %.y]
+          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~links'] %.y]
           %dojo     [[%basic 'Dojo' '/~landscape/img/Dojo.png' '/~dojo'] %.y]
           %publish
         [[%basic 'Publish' '/~landscape/img/Publish.png' '/~publish'] %.y]
       ==
+        tile-ordering  [%chat %publish %links %weather %clock %dojo ~]
     ==
   :_  this(state [%4 new-state])
   :-  [%pass / %arvo %e %disconnect [~ /]]
