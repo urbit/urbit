@@ -2161,7 +2161,7 @@
         =/  =dais  (get-dais mark)
         =/  res=(unit (unit vase))  (~(join dais bunt:dais) q.cal q.cob)
         ?~  res
-          ~
+          `[form:dais q.cob]
         ?~  u.res
           ~
         `[form:dais u.u.res]

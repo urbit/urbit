@@ -380,7 +380,7 @@
         .^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now))
       ?:  =(0 ud.cass)
         %init
-      ?:((gth 3 ud.cass) %that %mate)
+      ?:((gth 2 ud.cass) %that %mate)
     =<  %-  spam
         ?:  =(our her)  ~
         [(render "beginning sync" sud her syd) ~]
