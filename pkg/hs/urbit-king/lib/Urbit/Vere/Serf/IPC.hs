@@ -40,11 +40,17 @@ import Data.Conduit
 import Urbit.Arvo
 import Urbit.Vere.Pier.Types hiding (Work)
 
-import System.Process (ProcessHandle)
-import Urbit.Time     (Wen)
+import Foreign.Marshal.Alloc (alloca)
+import Foreign.Ptr           (castPtr)
+import Foreign.Storable      (peek, poke)
+import System.Process        (ProcessHandle)
+import Urbit.Time            (Wen)
+
+import qualified Data.ByteString        as BS
+import qualified Data.ByteString.Unsafe as BS
 
 
--- Types -----------------------------------------------------------------------
+-- IPC Types -------------------------------------------------------------------
 
 type Gang = Maybe (HoonSet Ship)
 
@@ -54,43 +60,52 @@ data Live
   = LExit Atom
   | LSave EventId
   | LPack EventId
+ deriving (Show)
 
 type PlayBail = (EventId, Mug, Goof)
 
 data Play
   = PDone Mug
   | PBail PlayBail
+ deriving (Show)
 
 data Work
   = WDone EventId Mug [Ef]
   | WSwap EventId Mug (Wen, Noun) [Ef]
   | WBail [Goof]
+ deriving (Show)
 
 data Writ
   = WLive Live
   | WPeek Wen Gang Path
   | WPlay EventId [Noun]
   | WWork Wen Ev
+ deriving (Show)
 
 data RipeInfo = RipeInfo
   { riProt :: Atom
   , riHoon :: Atom
   , riNock :: Atom
   }
+ deriving (Show)
 
 data SerfInfo = SerfInfo
   { siRipe :: RipeInfo
   , siEvId :: EventId
   , siHash :: Mug
   }
+ deriving (Show)
+
+type Slog = (Atom, Tank)
 
 data Plea
   = PLive ()
   | PRipe SerfInfo
-  | PSlog Atom Tank
+  | PSlog Slog
   | PPeek (Maybe (Term, Noun))
   | PPlay Play
   | PWork Work
+ deriving (Show)
 
 deriveNoun ''Live
 deriveNoun ''Play
@@ -100,40 +115,15 @@ deriveNoun ''RipeInfo
 deriveNoun ''SerfInfo
 deriveNoun ''Plea
 
-{-
-  startup:
-    wait for `PRipe`
-
-  replay:
-    send WPlay
-    wait for PPlay
-      crash on PRipe or PWork
-    (maybe send LSave, LPack, LExit)
-    (print slogs)
-
-  running:
-    Send WLive or WWork
-    wait for PWork
-      crash on PRipe or PPlay
-    (maybe send LSave, LPack, LExit)
-    (print slogs)
-    crash on
--}
-
 data Serf = Serf
-  { sendHandle :: Handle
-  , recvHandle :: Handle
-  , process    :: ProcessHandle
+  { serfSend :: Handle
+  , serfRecv :: Handle
+  , serfProc :: ProcessHandle
+  , serfSlog :: Slog -> IO ()
   }
 
-{-
-data Lord = Lord
-  { serf    :: Serf
-  , foo     :: TVar (EventId, Mug)
-  , sent    :: TVar (Seq Writ)
-  , pending :: TVar (Seq Writ)
-  }
--}
+
+-- API Types -------------------------------------------------------------------
 
 data SerfConfig = SerfConfig -- binary, directory, &c
 
@@ -150,56 +140,127 @@ data RunInput
 data RunOutput = RunOutput EventId Mug Wen (Either Noun Ev) [Ef]
 
 
+-- Exceptions ------------------------------------------------------------------
+
+data SerfExn
+--  = BadComputeId EventId WorkResult
+--  | BadReplacementId EventId ReplacementEv
+--  | UnexpectedPlay EventId (EventId, Mug)
+    = UnexpectedPlea Plea Text
+    | BadPleaAtom Atom
+    | BadPleaNoun Noun [Text] Text
+--  | ReplacedEventDuringReplay EventId ReplacementEv
+--  | ReplacedEventDuringBoot   EventId ReplacementEv
+--  | EffectsDuringBoot         EventId FX
+    | SerfConnectionClosed
+--  | UnexpectedPleaOnNewShip Plea
+--  | InvalidInitialPlea Plea
+  deriving (Show, Exception)
+
+
 -- Low Level IPC Functions -----------------------------------------------------
 
-send :: Serf -> Writ -> IO ()
-send = error "TODO"
+fromRightExn :: (Exception e, MonadIO m) => Either a b -> (a -> e) -> m b
+fromRightExn (Left m)  exn = throwIO (exn m)
+fromRightExn (Right x) _   = pure x
 
-recv :: Serf -> IO Plea
-recv = error "TODO"
+withWord64AsByteString :: Word64 -> (ByteString -> IO a) -> IO a
+withWord64AsByteString w k = alloca $ \wp -> do
+  poke wp w
+  bs <- BS.unsafePackCStringLen (castPtr wp, 8)
+  k bs
+
+sendLen :: Serf -> Int -> IO ()
+sendLen s i = do
+  w <- evaluate (fromIntegral i :: Word64)
+  withWord64AsByteString (fromIntegral i) (hPut (serfSend s))
+
+sendBytes :: Serf -> ByteString -> IO ()
+sendBytes s bs = handle onIOError $ do
+  sendLen s (length bs)
+  hPut (serfSend s) bs
+  hFlush (serfSend s)
+ where
+  onIOError :: IOError -> IO ()
+  onIOError = const (throwIO SerfConnectionClosed)
+
+recvBytes :: Serf -> Word64 -> IO ByteString
+recvBytes serf = io . BS.hGet (serfRecv serf) . fromIntegral
+
+recvLen :: Serf -> IO Word64
+recvLen w = do
+  bs <- BS.hGet (serfRecv w) 8
+  case length bs of
+    8 -> BS.unsafeUseAsCString bs (peek . castPtr)
+    _ -> throwIO SerfConnectionClosed
+
+recvAtom :: Serf -> IO Atom
+recvAtom w = do
+  len <- recvLen w
+  bytesAtom <$> recvBytes w len
+
+
+-- Send Writ / Recv Plea -------------------------------------------------------
+
+sendWrit :: Serf -> Writ -> IO ()
+sendWrit s w = do
+  sendBytes s $ jamBS $ toNoun w
+
+recvPlea :: Serf -> IO Plea
+recvPlea w = do
+  a <- recvAtom w
+  n <- fromRightExn (cue a) (const $ BadPleaAtom a)
+  p <- fromRightExn (fromNounErr n) (\(p, m) -> BadPleaNoun n p m)
+  pure p
+
+recvPleaHandlingSlog :: Serf -> IO Plea
+recvPleaHandlingSlog serf = loop
+ where
+  loop = recvPlea serf >>= \case
+    PSlog info -> serfSlog serf info >> loop
+    other      -> pure other
+
+
+-- Higher-Level IPC Functions --------------------------------------------------
 
 recvPlay :: Serf -> IO Play
-recvPlay serf = recv serf >>= \case
-  PLive ()   -> error "unexpected %live plea."
-  PRipe si   -> error "TODO: crash"
-  PPeek _    -> error "TODO: crash"
-  PWork _    -> error "TODO: crash"
+recvPlay serf = recvPleaHandlingSlog serf >>= \case
   PPlay play -> pure play
-  PSlog a t  -> do
-    io $ print (a, t) -- TODO
-    recvPlay serf
+  plea       -> throwIO (UnexpectedPlea plea "expecting %play")
 
 recvLive :: Serf -> IO ()
-recvLive serf = recv serf >>= \case
-  PLive ()   -> pure ()
-  PRipe si   -> error "TODO: crash"
-  PPeek _    -> error "TODO: crash"
-  PWork _    -> error "TODO: crash"
-  PPlay play -> error "TODO: crash"
-  PSlog a t  -> do
-    io $ print (a, t) -- TODO
-    recvLive serf
+recvLive serf = recvPleaHandlingSlog serf >>= \case
+  PLive () -> pure ()
+  plea     -> throwIO (UnexpectedPlea plea "expecting %live")
 
--- TODO Should eid just be a mutable var in the serf?
+recvWork :: Serf -> IO Work
+recvWork serf = do
+  recvPleaHandlingSlog serf >>= \case
+    PWork work -> pure work
+    plea       -> throwIO (UnexpectedPlea plea "expecting %work")
+
+recvPeek :: Serf -> IO (Maybe (Term, Noun))
+recvPeek serf = do
+  recvPleaHandlingSlog serf >>= \case
+    PPeek peek -> pure peek
+    plea       -> throwIO (UnexpectedPlea plea "expecting %peek")
+
+
+-- Request-Response Points -----------------------------------------------------
+
 snapshot :: Serf -> EventId -> IO ()
 snapshot serf eve = do
-  send serf (WLive $ LSave eve)
+  sendWrit serf (WLive $ LSave eve)
   recvLive serf
 
 compact :: Serf -> EventId -> IO ()
 compact serf eve = do
-  send serf (WLive $ LPack eve)
+  sendWrit serf (WLive $ LPack eve)
   recvLive serf
-
-recvWork :: Serf -> IO Work
-recvWork = error "TODO"
-
-recvPeek :: Serf -> IO (Maybe (Term, Noun))
-recvPeek = error "TODO"
 
 scry :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
 scry serf w g p = do
-  send serf (WPeek w g p)
+  sendWrit serf (WPeek w g p)
   recvPeek serf
 
 
@@ -214,7 +275,7 @@ start = error "TODO"
 -}
 shutdown :: Serf -> Atom -> IO ()
 shutdown serf exitCode = do
-  send serf (WLive $ LExit exitCode)
+  sendWrit serf (WLive $ LExit exitCode)
   pure ()
 
 {-
@@ -229,7 +290,7 @@ replay serf info = go (siHash info) (siEvId info)
   go mug eid = await >>= \case
     Nothing -> pure (Right (mug, eid))
     Just no -> do
-      io $ send serf (WPlay eid [no])
+      io $ sendWrit serf (WPlay eid [no])
       io (recvPlay serf) >>= \case
         PBail bail -> pure (Left bail)
         PDone hash -> go hash (eid + 1)
@@ -254,7 +315,7 @@ running serf info = go (siHash info) (siEvId info)
       io (act res)
       go mug eve
     Just (RunWork wen evn err) -> do
-      io (send serf (WWork wen evn))
+      io (sendWrit serf (WWork wen evn))
       io (recvWork serf) >>= \case
         WDone eid hash fx -> do
           yield (RunOutput eid hash wen (Right evn) fx)

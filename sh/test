@@ -2,6 +2,8 @@
 
 set -e
 
+export STACK_YAML="`pwd`/pkg/hs/stack.yaml"
+
 stack test urbit-king --fast
 
 pkg=$(nix-build nix/ops -A test --no-out-link "$@")
