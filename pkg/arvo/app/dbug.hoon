@@ -664,13 +664,8 @@
     ++  bone-to-pairs
       |=  [=bone ossuary]
       ^-  (list [@t json])
-      =/  fallback-duct=duct
-        ::  if backward flow, fall back to "original" duct
-        ::
-        ?:  =(0 (mod bone 2))  ~
-        (~(gut by by-bone) (dec bone) ~)
       :~  'bone'^(numb bone)
-          'duct'^(from-duct (~(gut by by-bone) bone fallback-duct))
+          'duct'^(from-duct (~(gut by by-bone) bone ~))
       ==
     ::
     ++  maybe
