@@ -263,7 +263,8 @@
           $>(%plea task:able:ames)                      ::
       ==                                                ::
       $:  %b                                            ::  to %behn
-          $>  $?  %rest                                 ::
+          $>  $?  %drip                                 ::
+                  %rest                                 ::
                   %wait                                 ::
               ==                                        ::
           task:able:behn                                ::
@@ -1049,7 +1050,10 @@
         %-  wrap:fusion
         (page-to-cage:(ford:fusion args) page)
       [cage ford-cache.args]
-    (emit hen %give %writ ~ [care.mun case.mun syd] path.mun cage)
+    =/  gift  [%writ ~ [care.mun case.mun syd] path.mun cage]
+    ?:  ?=(^ ref)
+      (emit hen %slip %b %drip !>(gift))
+    (emit hen %give gift)
   ::
   ++  case-to-date
     |=  =case
@@ -1101,8 +1105,12 @@
     ::  translate the case to a date
     ::
     =/  cas  [%da (case-to-date case.n.das)]
-    =-  (emit hen %give %wris cas -)
-    (~(run in `(set mood)`das) |=(m/mood [care.m path.m]))
+    =/  res
+      (~(run in `(set mood)`das) |=(m/mood [care.m path.m]))
+    =/  gift  [%wris cas res]
+    ?:  ?=(^ ref)
+      (emit hen %slip %b %drip !>(gift))
+    (emit hen %give gift)
   ::
   ::  Give next step in a subscription.
   ::
@@ -1119,6 +1127,8 @@
   ::
   ++  blub
     |=  hen/duct
+    ?:  ?=(^ ref)
+      (emit hen %slip %b %drip !>([%writ ~]))
     (emit hen %give %writ ~)
   ::
   ::  Lifts a function so that a single result can be fanned out over a set of
@@ -3914,7 +3924,7 @@
       ~(tap in ducts)
     =/  cancel-moves=(list move)
       %+  turn  cancel-ducts
-      |=(=duct [duct %give %writ ~])
+      |=(=duct [duct %slip %b %drip !>([%writ ~])])
     ::  delete local state of foreign desk
     ::
     =.  hoy.ruf  (~(del by hoy.ruf) who)
