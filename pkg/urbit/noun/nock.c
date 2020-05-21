@@ -1290,14 +1290,14 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
         yep_w = _n_comp(&yep, mid, los_o, tel_o);
       }
       else {
-        ++yep_w; _n_emit(&yep, BAIL);
+        yep_w = 1; _n_emit(&yep, BAIL);
       }
 
       if ( nop_t ) {
-        nop_w  = _n_comp(&nop, tel, los_o, tel_o);
+        nop_w = _n_comp(&nop, tel, los_o, tel_o);
       }
       else {
-        ++nop_w; _n_emit(&nop, BAIL);
+        nop_w = 1; _n_emit(&nop, BAIL);
       }
 
       // SBIP and SBIN get sized during assembly
