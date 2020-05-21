@@ -5,6 +5,7 @@
 ::    permissions and invites inside this store for simplicity reasons, although
 ::    these should be prised apart in a future revision of group store.
 ::
+::
 ::    ## Scry paths
 ::
 ::    /y/groups:
@@ -13,11 +14,8 @@
 ::      A listing of the tag queries for a group
 ::    /x/groups/[group-id]:
 ::      The group itself
-::    /x/groups/[group-id]/tag-queries/[tag]:
-::      The subset with tag
-::    /x/groups/[group-id]/permitted/[ship]:
-::      A flag indicated if the ship is permitted
-::
+::    /x/groups/[group-id]/join/[ship]:
+::      A flag indicated if the ship is permitted to join
 ::
 ::    ## Subscription paths
 ::
@@ -71,9 +69,7 @@
       gc          ~(. group-core bowl)
       def         ~(. (default-agent this %|) bowl)
   ::
-  ++  on-init
-    :_  this
-    [%pass / %arvo %d %flog %text "{(trip dap.bowl)} started"]~
+  ++  on-init  on-init:def
   ++  on-save   !>(state)
   ++  on-load
     |=  =old=vase
@@ -87,7 +83,7 @@
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
-      ?:  ?=(%group-update mark)
+      ?:  ?=(?(%group-update %group-action) mark)
         (poke-group-update:gc !<(update:store vase))
       (on-poke:def mark vase)
     [cards this]
@@ -98,7 +94,7 @@
     ?>  (team:title our.bowl src.bowl)
     ?>  ?=([%groups ~] path)
     :_  this
-    [%give %fact ~ %group-initial !>(groups)]~
+    [%give %fact ~ %group-update !>([%initial groups])]~
   ::
   ++  on-leave  on-leave:def
   ::
@@ -106,13 +102,26 @@
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
-      [%x %groups @ @ ~]  ``noun+!>((peek-group t.t.path))
+        [%x %groups @ @ ~]
+      =/  group-id
+        (group-id:de-path:store t.t.path)
+      ?~  group-id  ~
+      ``noun+!>((peek-group u.group-id))
+       [%x %groups @ @ %join @ ~]
+      =/  group-id
+        (group-id:de-path:store t.t.path)
+      =/  =ship
+        (slav %p i.t.t.t.t.t.path)
+      ?~  group-id  ~
+      ``noun+!>((peek-group-join u.group-id ship))
     ::
-        [%x %groups @ @ %permitted @ ~]
-      ``noun+!>((peek-group-permitted t.t.path (slav %p i.t.t.t.t.t.path)))
-    ::
-        [%x %groups @ @ %permission-role @ ~]
-      ``noun+!>((peek-group-permitted t.t.path (slav %p i.t.t.t.t.t.path)))
+       [%x %groups @ @ %role @ ~]
+      =/  group-id
+        (group-id:de-path:store t.t.path)
+      ?~  group-id  ~
+      =/  =ship
+        (slav %p i.t.t.t.t.t.path)
+      ``noun+!>((peek-group-role u.group-id ship))
     ==
   ::
   ++  on-agent  on-agent:def
@@ -133,14 +142,15 @@
   ?:  (lte size 8)
     %2
   %3
-++  peek-group-permitted
-  |=  [=path =ship]
-  ^-  ?
-  =/  maybe-group
-    (peek-group path)
-  ?~  maybe-group
-    %.n
-  =*  group  u.maybe-group
+++  peek-group
+  |=  =group-id
+  ^-  (unit group)
+  (~(get by groups) group-id)
+
+++  peek-group-join
+  |=  [=group-id =ship]
+  =/  =group
+    (~(gut by groups) group-id *group)
   =*  policy  policy.group
   ?-  -.policy
       %invite
@@ -148,15 +158,25 @@
       %open
     &(!(~(has in banned.policy) ship) (~(has in ranks.policy) (ship-rank ship)))
   ==
-::
-++  peek-group
-  |=  =path
-  ^-  (unit group)
-  =/  m-group-id
-    (group-id:de-path:store path)
-  ?~  m-group-id  ~
-  =*  group-id  u.m-group-id
-  (~(get by groups) group-id)
+++  peek-group-role
+  |=  [=group-id =ship]
+  =/  =group
+    (~(got by groups) group-id)
+  =*  policy  policy.group
+  =*  tag-queries  tag-queries.group
+  =/  admins=(set ^ship)
+    (~(gut by tag-queries) %admin ~)
+  ?:  (~(has in admins) ship)
+    `%admin
+  =/  mods
+    (~(gut by tag-queries) %moderator ~)
+  ?:  (~(has in mods) ship)
+    `%moderator
+  =/  janitors
+    (~(gut by tag-queries) %janitor ~)
+  ?.  (~(has in janitors) ship)
+    ~
+  `%janitor
 ::
 ++  poke-group-update
   |=  =update:store
@@ -176,17 +196,21 @@
   ==
   ::  +add-group: add group to store
   ::
-  ::    no-op if group-already exists
+  ::    always include ship in own groups, no-op if group already exists
   ::
   ++  add-group
-    |=  [=group-id =group]
+    |=  [=group-id =policy]
     ^-  (quip card _state)
     ?:  (~(has by groups) group-id)
       [~ state]
+    =|  =group
+    =.  members.group
+      (~(put in members.group) our.bol)
+    =.  policy.group   policy
     =.  groups
       (~(put by groups) group-id group)
     :_  state
-    (send-diff %add-group group-id group)
+    (send-diff %add-group group-id policy)
   ::  +add-members: add members to group
   ::
   ::    no-op if group does not exist
@@ -200,6 +224,13 @@
     =.  members.group  (~(uni in members.group) new-ships)
     =.  tag-queries.group
       (merge-tags tag-queries.group new-ships tags)
+    =*  policy  policy.group
+    =.  policy
+      ?.  ?=(%invite -.policy)
+        policy
+      =.  pending.policy
+        (~(dif in pending.policy) new-ships)
+      policy
     =.  groups
       (~(put by groups) group-id group)
     :_  state
@@ -207,7 +238,7 @@
   ::  +remove-members: remove members from group
   ::
   ::    no-op if group does not exist
-  ::    TODO: remove tags as well
+  ::
   ::
   ++  remove-members
     |=  [=group-id ships=(set ship)]
@@ -218,6 +249,8 @@
       (~(got by groups) group-id)
     =.  members.group
       (~(dif in members.group) ships)
+    =.  tag-queries.group
+      (remove-tags group ships)
     =.  groups
       (~(put by groups) group-id group)
     :_   state
@@ -275,7 +308,8 @@
     (send-diff %initial-group group-id group)
   ::  +change-policy: modify group access control
   ::
-  ::
+  ::    If the change will kick members, then send a separate
+  ::    %remove-members diff after the %change-policy diff
   ++  change-policy
     |=  [=group-id =diff:policy]
     ^-  (quip card _state)
@@ -283,54 +317,80 @@
       [~ state]
     =/  =group
       (~(got by groups) group-id)
-    =*  policy  policy.group
     |^
-    =.  policy
-      =-  ~&  -  -
-      ?+  -.diff  !!
-        %allow-ranks  (allow-ranks +.diff)
-        %ban-ranks  (ban-ranks +.diff)
-        %allow-ships  (allow-ships +.diff)
-        %ban-ships  (ban-ships +.diff)
+    =^  cards  group
+      ?-  -.diff
+        %allow-ranks     (allow-ranks +.diff)
+        %ban-ranks       (ban-ranks +.diff)
+        %allow-ships     (allow-ships +.diff)
+        %ban-ships       (ban-ships +.diff)
+        %add-invites     (add-invites +.diff)
+        %remove-invites  (remove-invites +.diff)
+        %replace         (replace +.diff)
       ==
     =.  groups
       (~(put by groups) group-id group)
     :_  state
-    (send-diff %change-policy group-id diff)
+    %+  weld
+      (send-diff %change-policy group-id diff)
+    cards
     ::
     ++  allow-ranks
       |=  ranks=(set rank)
-      ^-  ^policy
-      ?>  ?=(%open -.policy)
-      =.  ranks.policy
-        (~(uni in ranks.policy) ranks)
-      policy
+      ^-  (quip card _group)
+      ?>  ?=(%open -.policy.group)
+      =.  ranks.policy.group
+        (~(uni in ranks.policy.group) ranks)
+      `group
     ::
     ++  ban-ranks
       |=  ranks=(set rank)
-      ^-  ^policy
-      ?>  ?=(%open -.policy)
-      =.  ranks.policy
-        (~(dif in ranks.policy) ranks)
-      policy
+      ^-  (quip card _group)
+      ?>  ?=(%open -.policy.group)
+      =.  ranks.policy.group
+        (~(dif in ranks.policy.group) ranks)
+      `group
     ::
     ++  allow-ships
       |=  ships=(set ship)
-      ^-  ^policy
-      ?>  ?=(%open -.policy)
-      =.  banned.policy
-        (~(dif in banned.policy) ships)
-      policy
+      ^-  (quip card _group)
+      ?>  ?=(%open -.policy.group)
+      =.  banned.policy.group
+        (~(dif in banned.policy.group) ships)
+      `group
     ::
     ++  ban-ships
       |=  ships=(set ship)
-      ^-  ^policy
-      ?>  ?=(%open -.policy)
-      =.  banned.policy
-        (~(uni in banned.policy) ships)
-      =.  members.group
-        (~(dif in members.group) banned.policy)
-      policy
+      ^-  (quip card _group)
+      ?>  ?=(%open -.policy.group)
+      =.  banned.policy.group
+        (~(uni in banned.policy.group) ships)
+      =/  to-remove=(set ship)
+        (~(int in members.group) banned.policy.group)
+      :-  ~[(poke-us %remove-members group-id to-remove)]
+      group
+    ::
+    ++  add-invites
+      |=  ships=(set ship)
+      ^-  (quip card _group)
+      ?>  ?=(%invite -.policy.group)
+      =.  pending.policy.group
+        (~(uni in pending.policy.group) ships)
+      `group
+    ::
+    ++  remove-invites
+      |=  ships=(set ship)
+      ^-  (quip card _group)
+      ?>  ?=(%invite -.policy.group)
+      =.  pending.policy.group
+        (~(uni in pending.policy.group) ships)
+      `group
+    ++  replace
+      |=  =policy
+      ^-  (quip card _group)
+      =.  policy.group
+        policy
+      `group
     --
   ::  +remove-group: remove group from store
   ::
@@ -346,25 +406,21 @@
     (send-diff %remove-group group-id ~)
   ::
   --
-::  +merge-tags: merge tags
-++  merge-tags
-  |=  [=tag-queries ships=(set ship) tags=(set tag)]
-  ^+  tag-queries
-  =/  tags  ~(tap in tags)
-  |-
-  ?~  tags
-    tag-queries
-  =*  tag  i.tags
-  =/  current-query=(set ship)
-    (~(gut by tag-queries) tag ~)
-  %=    $
-    tags  t.tags
-  ::
-      tag-queries
-    %+  ~(put by tag-queries)
-      tag
-    (~(uni in current-query) ships)
-  ==
+++  remove-tags
+  |=  [=group ships=(set ship)]
+  ^-  tag-quries
+  %-   malt
+  %+  spin
+      ~(tap by tag-queries.group)
+    tag-queries.group
+  |=  [=tag tagged=(set ship)]
+  :-  tag
+  (~(dif in tagged) ships)
+::
+++  poke-us
+  |=  =action:store
+  ^-  card
+  [%pass / %agent [our.bol %group-store] %poke %group-action !>(action)]
 ::  +send-diff: update subscribers of new state
 ::
 ::    We only allow subscriptions on /groups

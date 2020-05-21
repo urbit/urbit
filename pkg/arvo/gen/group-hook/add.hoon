@@ -1,10 +1,10 @@
-::  group-store|join: initialize a group
+::  group-listen-hook|add: add a group
 ::
-/-  *group-store
+/-  *group, *group-hook
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=ship =term ~] ~]
     ==
-:-  %group-action
+:-  %group-hook-action
 ^-  action
 [%add ship term]

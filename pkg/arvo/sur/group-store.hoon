@@ -13,11 +13,11 @@
 ::    %remove-group: remove a group from the store
 ::
 +$  action
-  $%  [%add-group =group-id ships=(set ship) =tag-queries =policy]
+  $%  [%add-group =group-id =policy]
       [%add-members =group-id ships=(set ship) tags=(set term)]
       [%remove-members =group-id ships=(set ship)]
-      [%add-tag =group-id =term ships=(set ship)]
-      [%remove-tag =group-id =term ships=(set ship)]
+      [%add-tag =group-id =tag ships=(set ship)]
+      [%remove-tag =group-id =tag ships=(set ship)]
       [%change-policy =group-id =diff:policy]
       [%remove-group =group-id ~]
   ==

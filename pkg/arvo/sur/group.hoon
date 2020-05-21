@@ -1,3 +1,4 @@
+^?
 |%
 ::  $group-id: unique identifier for a group
 ::
@@ -14,15 +15,17 @@
 ::   %admin - denotes that member can add and remove members
 ::
 +$  tag  term
-::  $permission-tag: a kind of $tag that identifies a privileged user
+::  $role-tag: a kind of $tag that identifies a privileged user
 ::
 ::    These roles are
 ::    %admin: Administrator, can do everything except delete the group
 ::    %moderator: Moderator, can add/remove/ban users
 ::    %janitor: Has no special meaning inside group-store,
 ::    but may be given additional privileges in other apps.
-+$  permission-tag
-  ?(%admin %moderator %janitor)
+::    %member: Ordinary member, this tag is implied if the user is not in any
+::    of the other roles
++$  role-tag
+  ?(%admin %moderator %janitor %members)
 ::  $tag-queries: a mapping from a $tag to the members it identifies
 ::
 +$  tag-queries  (jug tag ship)
