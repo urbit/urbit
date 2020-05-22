@@ -7,41 +7,6 @@
 // along with some other debugging info
 #        undef VERBOSE_BYTECODE
 
-/* _n_mush_in(): see _n_mush().
-*/
-static u3_noun
-_n_mush_in(u3_noun val)
-{
-  if ( c3n == u3du(val) ) {
-    return u3_nul;
-  }
-  else {
-    u3_noun h_val = u3h(val);
-    u3_noun ite;
-
-    if ( c3n == u3ud(h_val) ) {
-      ite = u3nc(c3__leaf, u3_nul);
-    } else {
-      ite = u3nc(c3__leaf, u3qe_trip(h_val));
-    }
-    return u3nc(ite, _n_mush_in(u3t(val)));
-  }
-}
-
-/* _n_mush(): tank from failed path request.
-*/
-static u3_noun
-_n_mush(u3_noun val)
-{
-  u3_noun pro;
-
-  pro = u3nt(c3__rose,
-             u3nt(u3nc('/', u3_nul), u3nc('/', u3_nul), u3_nul),
-             _n_mush_in(val));
-  u3z(val);
-  return pro;
-}
-
 #if 0
 // Retained for debugging purposes.
 static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
@@ -386,7 +351,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         u3_noun val;
 
         u3t_off(noc_o);
-        val = u3m_soft_esc(ref, u3k(gof));
+        val = u3m_soft_esc(u3k(ref), u3k(gof));
         u3t_on(noc_o);
 
         if ( !_(u3du(val)) ) {
@@ -396,12 +361,13 @@ _n_nock_on(u3_noun bus, u3_noun fol)
           //
           //  replace with proper error stack push
           //
-          u3t_push(u3nc(c3__hunk, _n_mush(gof)));
+          u3t_push(u3nt(c3__hunk, ref, gof));
           return u3m_bail(c3__exit);
         }
         else {
           u3_noun pro;
 
+          u3z(ref);
           u3z(gof);
           u3z(fol);
           pro = u3k(u3t(u3t(val)));
@@ -1100,6 +1066,68 @@ _n_bint(u3_noun* ops, u3_noun hif, u3_noun nef, c3_o los_o, c3_o tel_o)
   }
 }
 
+static c3_t
+_n_formulaic(u3_noun fol)
+{
+  u3_noun op, ar, a, b, c;
+  if ( c3n == u3r_cell(fol, &op, &ar) ) {
+    return 0;
+  }
+  if ( c3y == u3du(op) ) {
+    return _n_formulaic(op) && _n_formulaic(ar);
+  }
+  else switch ( op ) {
+    case 0:
+      return ( c3y == u3ud(ar) );
+    case 1:
+      return 1;
+    case 3:
+    case 4:
+      return _n_formulaic(ar);
+    case 2:
+    case 5:
+    case 7:
+    case 8:
+    case 12:
+      return (c3y == u3r_cell(ar, &a, &b))
+        && _n_formulaic(a) && _n_formulaic(b);
+    case 6:
+      return ( c3y == u3r_trel(ar, &a, &b, &c) )
+        && _n_formulaic(a) &&
+        (_n_formulaic(b) || _n_formulaic(c));
+    case 9:
+      return (c3y == u3r_cell(ar, &a, &b))
+        && (c3y == u3ud(a))
+        && _n_formulaic(b);
+    case 10:
+      if ( c3n == u3r_cell(ar, &a, &b) ) {
+        return 0;
+      }
+      if ( c3n == u3du(a) ) {
+        return 0;
+      }
+      if ( c3n == u3ud(u3h(a)) ) {
+        return 0;
+      }
+      return _n_formulaic(u3t(a)) && _n_formulaic(b);
+    case 11:
+      if ( c3n == u3r_cell(ar, &a, &b) ) {
+        return 0;
+      }
+      if ( !_n_formulaic(b) ) {
+        return 0;
+      }
+      if ( c3y == u3ud(a) ) {
+        return 1;
+      }
+      else {
+        return ( c3y == u3ud(u3h(a)) ) && _n_formulaic(u3t(a));
+      }
+    default:
+      return 0;
+  }
+}
+
 /* _n_comp(): compile nock formula to reversed opcode list
  *            ops is a pointer to a list (to be emitted to)
  *            fol is the nock formula to compile. RETAIN.
@@ -1246,10 +1274,32 @@ _n_comp(u3_noun* ops, u3_noun fol, c3_o los_o, c3_o tel_o)
               yep = u3_nul,
               nop = u3_nul;
       c3_w    yep_w, nop_w;
+      c3_t    yep_t, nop_t;
       u3x_trel(arg, &hed, &mid, &tel);
+
       tot_w += _n_comp(ops, hed, c3n, c3n);
-      yep_w  = _n_comp(&yep, mid, los_o, tel_o);
-      nop_w  = _n_comp(&nop, tel, los_o, tel_o);
+      yep_t = _n_formulaic(mid);
+      nop_t = _n_formulaic(tel);
+
+      if ( !yep_t && !nop_t ) {
+        u3m_bail(c3__exit);
+        break;
+      }
+
+      if ( yep_t ) {
+        yep_w = _n_comp(&yep, mid, los_o, tel_o);
+      }
+      else {
+        yep_w = 1; _n_emit(&yep, BAIL);
+      }
+
+      if ( nop_t ) {
+        nop_w = _n_comp(&nop, tel, los_o, tel_o);
+      }
+      else {
+        nop_w = 1; _n_emit(&nop, BAIL);
+      }
+
       // SBIP and SBIN get sized during assembly
       ++yep_w; _n_emit(&yep, u3nc(SBIP, nop_w));
       ++tot_w; _n_emit(ops, u3nc(SBIN, yep_w));
@@ -2082,21 +2132,21 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       top = _n_swap(mov, off); // [ref bus]
     wish_in:
       u3t_off(noc_o);
-      x   = u3m_soft_esc(*top, u3k(o));
+      x   = u3m_soft_esc(u3k(*top), u3k(o));
       u3t_on(noc_o);
 
       if ( c3n == u3du(x) ) {
-        u3m_bail(u3nt(1, o, 0));
+        u3m_bail(u3nc(1, o));
         return u3_none;
       }
       else if ( c3n == u3du(u3t(x)) ) {
-        //  replace with proper error stack push
-        u3t_push(u3nc(c3__hunk, _n_mush(o)));
+        u3t_push(u3nt(c3__hunk, *top, o));
         u3m_bail(c3__exit);
         return u3_none;
       }
       else {
         u3z(o);
+        u3z(*top);
         *top = u3k(u3t(u3t(x)));
         u3z(x);
         BURN();
