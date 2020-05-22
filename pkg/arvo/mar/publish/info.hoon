@@ -42,7 +42,7 @@
       ;~  (glue gaq)
         (key-val %title (cook crip (star prn)))
         (key-val %description (cook crip (star prn)))
-        (key-val %comments (fuss %on %off)))
+        (key-val %comments (fuss %on %off))
         (key-val %writers fel:stab)
         (key-val %subscribers fel:stab)
       ==
