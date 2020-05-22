@@ -45,7 +45,7 @@ export default class ChatTile extends Component {
           <p className="black white-d absolute f9" style={{left: 8, top: 8}}>Messaging</p>
            <img
              className="absolute invert-d"
-             style={{ left: 39, top: 39 }}
+             style={{ left: 38, top: 38 }}
              src="/~chat/img/Tile.png"
              width={48}
              height={48} />
