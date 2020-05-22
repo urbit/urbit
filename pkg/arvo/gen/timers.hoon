@@ -1,4 +1,4 @@
 :-  %say
-|=  *
+|=  [[now=@da eny=@uvJ bec=beak] ~ ~]
 :-  %tang
-[.^(tank %b %) ~]
+[.^(tank %b (en-beam:format bec /)) ~]
