@@ -32,7 +32,7 @@ export default class LinkTile extends Component {
           </p>
           <img
             className="absolute invert-d"
-            style={{ left: 39, top: 39 }}
+            style={{ left: 38, top: 38 }}
             src="/~link/img/Tile.png"
             width={48}
             height={48}

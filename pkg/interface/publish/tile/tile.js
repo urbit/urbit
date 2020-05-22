@@ -32,7 +32,7 @@ export default class PublishTile extends Component {
           </p>
           <img
             className="absolute invert-d"
-            style={{ left: 39, top: 39 }}
+            style={{ left: 38, top: 38 }}
             src="/~publish/tile.png"
             width={48}
             height={48}
