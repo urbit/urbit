@@ -20,11 +20,19 @@
       ==
     ::
     +$  behn-state
-      $:  timers=(list timer)
+      $:  %1
+          timers=(tree [timer ~])
           unix-duct=duct
           next-wake=(unit @da)
           drips=drip-manager
       ==
+    ::
+    ::  use lth instead of lte so that if same date, goes after
+    ::
+    ++  timer-map
+      %-  (ordered-map ,timer ,~)
+      |=  [a=timer b=timer]
+      (lth date.a date.b)
     ::
     +$  drip-manager
       $:  count=@ud
@@ -119,22 +127,25 @@
     ^+  [moves state]
     ::  no-op on spurious but innocuous unix wakeups
     ::
-    ?~  timers.state
+    ?:  =(~ timers.state)
       ~?  ?=(^ error)  %behn-wake-no-timer^u.error
       [moves state]
     ::  if we errored, pop the timer and notify the client vane of the error
     ::
     ?^  error
       =<  set-unix-wake
-      (emit-vane-wake(timers.state t.timers.state) duct.i.timers.state error)
+      =^  [=timer ~]  timers.state  (pop:timer-map timers.state)
+      (emit-vane-wake duct.timer error)
     ::  if unix woke us too early, retry by resetting the unix wakeup timer
     ::
-    ?:  (gth date.i.timers.state now)
+    =/  [[=timer ~] timers-tail=(tree [timer ~])]
+      (pop:timer-map timers.state)
+    ?:  (gth date.timer now)
       set-unix-wake(next-wake.state ~)
     ::  pop first timer, tell vane it has elapsed, and adjust next unix wakeup
     ::
     =<  set-unix-wake
-    (emit-vane-wake(timers.state t.timers.state) duct.i.timers.state ~)
+    (emit-vane-wake(timers.state timers-tail) duct.timer ~)
   ::  +wegh: produce memory usage report for |mass
   ::
   ++  wegh
@@ -184,58 +195,40 @@
   ::
   ++  set-unix-wake
     =<  [moves state]
+    ~%  %set-unix-wake  ..is  ~  |-
     ^+  event-core
     ::
     =*  next-wake  next-wake.state
     =*  timers     timers.state
     ::  if no timers, cancel existing wakeup timer or no-op
     ::
-    ?~  timers
+    =/  timer=(unit [timer ~])  (peek:timer-map timers.state)
+    ?~  timer
       ?~  next-wake
         event-core
       (emit-doze ~)
     ::  if :next-wake is in the past or not soon enough, reset it
     ::
     ?^  next-wake
-      ?:  &((gte date.i.timers u.next-wake) (lte now u.next-wake))
+      ?:  &((gte date.u.timer u.next-wake) (lte now u.next-wake))
         event-core
-      (emit-doze `date.i.timers)
+      (emit-doze `date.u.timer)
     ::  there was no unix wakeup timer; set one
     ::
-    (emit-doze `date.i.timers)
+    (emit-doze `date.u.timer)
   ::  +set-timer: set a timer, maintaining the sort order of the :timers list
   ::
   ++  set-timer
-    =*  timers  timers.state
+    ~%  %set-timer  ..is  ~
     |=  t=timer
-    ^+  timers
-    ::
-    ?~  timers
-      ~[t]
-    ::  ignore duplicates
-    ::
-    ?:  =(t i.timers)
-      timers
-    ::  timers at the same date form a fifo queue
-    ::
-    ?:  (lth date.t date.i.timers)
-      [t timers]
-    ::
-    [i.timers $(timers t.timers)]
+    ^+  timers.state
+    (put:timer-map timers.state t ~)
   ::  +unset-timer: cancel a timer; if it already expired, no-op
   ::
   ++  unset-timer
-    =*  timers  timers.state
     |=  t=timer
-    ^+  timers
-    ::  if we don't have this timer, no-op
-    ::
-    ?~  timers
-      ~
-    ?:  =(i.timers t)
-      t.timers
-    ::
-    [i.timers $(timers t.timers)]
+    ^+  timers.state
+    +:(del:timer-map timers.state t)
   --
 --
 ::
@@ -248,6 +241,7 @@
 ::  +call: handle a +task:able:behn request
 ::
 ++  call
+  ~%  %behn-call  ..is  ~
   |=  $:  hen=duct
           dud=(unit goof)
           type=*
@@ -283,10 +277,51 @@
 ::  +load: migrate an old state to a new behn version
 ::
 ++  load
-  |=  old=behn-state
+  |^
+  |=  old=state
   ^+  behn-gate
-  ::
+  =?  old  ?=(^ -.old)
+    (ket-to-1 old)
+  =?  old  ?=(~ -.old)
+    (load-0-to-1 old)
+  ?>  ?=(%1 -.old)
   behn-gate(state old)
+  ::
+  ++  state
+    $^  behn-state-ket
+    $%  behn-state-0
+        behn-state
+    ==
+  ::
+  +$  behn-state-0
+    $:  ~
+        unix-duct=duct
+        next-wake=(unit @da)
+        drips=drip-manager
+    ==
+  ::
+  +$  behn-state-ket
+    $:  timers=(list timer)
+        unix-duct=duct
+        next-wake=(unit @da)
+        drips=drip-manager
+    ==
+  ::
+  ++  ket-to-1
+    |=  old=behn-state-ket
+    ^-  behn-state
+    :-  %1
+    %=    old
+        timers
+      %+  gas:timer-map  *(tree [timer ~])
+      (turn timers.old |=(=timer [timer ~]))
+    ==
+  ::
+  ++  load-0-to-1
+    |=  old=behn-state-0
+    ^-  behn-state
+    [%1 old]
+  --
 ::  +scry: view timer state
 ::
 ::    TODO: not referentially transparent w.r.t. elapsed timers,
@@ -300,7 +335,7 @@
     ~
   ?.  ?=(%timers syd)
     [~ ~]
-  [~ ~ %noun !>(timers)]
+  [~ ~ %noun !>((turn (tap:timer-map timers) head))]
 ::
 ++  stay  state
 ++  take
@@ -315,4 +350,3 @@
     (take-drip:event-core (slav %ud i.t.tea) error.q.hin)
   [moves behn-gate]
 --
-
