@@ -24,36 +24,27 @@
   |%
   ++  mime
     |=  [mite:eyre p=octs:eyre]
-    |^  (rash q.p both-parser)
+    |^  (rash q.p ;~(sfix both-parser (punt gaq)))
     ++  key-val
-      |*  [key=rule val=rule]
-      ;~(sfix ;~(pfix key val) gaq)
+      |*  [key=@tas val=rule]
+      ;~(pfix (jest key) col ace val)
     ++  old-parser
-      ;~  plug
-        (key-val (jest 'owner: ~') fed:ag)
-        (key-val (jest 'title: ') (cook crip (star prn)))
-        (key-val (jest 'filename: ') sym)
-        %+  key-val  (jest 'comments: ')
-          ;~(pose (jest %open) (jest %closed) (jest %none))
-        %+  key-val  (jest 'allow-edit: ')
-          ;~(pose (jest %post) (jest %comment) (jest %all) (jest %none))
-        (key-val (jest 'date-created: ~') (cook year when:so))
-        ;~  pose
-          (key-val (jest 'last-modified: ~') (cook year when:so))
-          ;~(pfix (jest 'last-modified: ~') (cook year when:so))
-        ==
+      ;~  (glue gaq)
+        (key-val %owner ;~(pfix sig fed:ag))
+        (key-val %title (cook crip (star prn)))
+        (key-val %filename sym)
+        (key-val %comments (perk %open %closed %none ~))
+        (key-val %allow-edit (perk %post %comment %all %none ~))
+        (key-val %date-created ;~(pfix sig (cook year when:so)))
+        (key-val %last-modified ;~(pfix sig (cook year when:so)))
       ==
     ++  new-parser
-      ;~  plug
-        (key-val (jest 'title: ') (cook crip (star prn)))
-        (key-val (jest 'description: ') (cook crip (star prn)))
-        %+  key-val  (jest 'comments: ')
-          (cook |=(a=@ =(%on a)) ;~(pose (jest %on) (jest %off)))
-        (key-val (jest 'writers: ') ;~(pfix net (more net urs:ab)))
-        ;~  pose
-          (key-val (jest 'subscribers: ') ;~(pfix net (more net urs:ab)))
-          ;~(pfix (jest 'subscribers: ') ;~(pfix net (more net urs:ab)))
-        ==
+      ;~  (glue gaq)
+        (key-val %title (cook crip (star prn)))
+        (key-val %description (cook crip (star prn)))
+        (key-val %comments (fuss %on %off)))
+        (key-val %writers fel:stab)
+        (key-val %subscribers fel:stab)
       ==
     ++  both-parser
       ;~  pose
