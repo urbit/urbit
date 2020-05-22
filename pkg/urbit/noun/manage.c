@@ -1742,7 +1742,7 @@ u3m_rock_load(c3_c* dir_c, c3_d evt_d)
       //  XX u3m_file bails, but we'd prefer to return errors
       //
       u3_noun fil = u3m_file(nam_c);
-      u3a_print_memory(stderr, "rock: load", u3r_met(3, fil));
+      u3a_print_memory(stderr, "rock: load", u3r_met(5, fil));
 
       u3_noun pro = u3m_soft(0, u3ke_cue, fil);
 
