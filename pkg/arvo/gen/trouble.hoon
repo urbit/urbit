@@ -7,7 +7,7 @@
 :-  %noun
 =<
 :~
-  [%base-hash .^(@uv %cz (pathify ~.base ~))]
+  [%kids-hash .^(@uv %cz (pathify ~.kids ~))]
   [%home-hash .^(@uv %cz (pathify ~.home ~))]
   ::
   (info %our our)

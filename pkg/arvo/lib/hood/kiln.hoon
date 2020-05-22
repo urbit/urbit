@@ -11,14 +11,10 @@
 |%                                                      ::  ::
 ++  part  {$kiln $0 pith}                               ::  kiln state
 ++  pith                                                ::  ::
-    $:  rem/(map desk per-desk)                         ::
-        syn/(map kiln-sync let/@ud)                     ::
-        autoload-on/?                                   ::
-        cur-hoon/@uvI                                   ::
-        cur-arvo/@uvI                                   ::
-        cur-zuse/@uvI                                   ::
-        cur-vanes/(map @tas @uvI)                       ::
-        commit-timer/{way/wire nex/@da tim/@dr mon=term}
+    $:  rem=(map desk per-desk)                         ::
+        syn=(map kiln-sync let/@ud)                     ::
+        ota=(unit [=ship =desk =aeon])                  ::
+        commit-timer=[way=wire nex=@da tim=@dr mon=term]
     ==                                                  ::
 ++  per-desk                                            ::  per-desk state
     $:  auto/?                                          ::  escalate on failure
@@ -127,6 +123,168 @@
     abet:(spam (render "already tracking" [sud her syd]:hos) ~)
   abet:abet:start-track:(auto hos)
 ::
+++  update
+  |%
+  ++  make-wire
+    |=  =path
+    ?>  ?=(^ ota)
+    %-  welp
+    :_  path
+    /kiln/ota/(scot %p ship.u.ota)/[desk.u.ota]/(scot %ud aeon.u.ota)
+  ::
+  ++  check-ota
+    |=  =wire
+    ?~  ota
+      |
+    ~!  ota=ota
+    ?&  ?=([@ @ @ *] wire)
+        =(i.wire (scot %p ship.u.ota))
+        =(i.t.wire desk.u.ota)
+        =(i.t.t.wire (scot %ud aeon.u.ota))
+    ==
+  ::
+  ++  render
+    |=  [mez=tape error=(unit (pair term tang))]
+    %+  spam
+      ?~  ota
+        leaf+mez
+      :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
+      ~[leaf+"from {<desk.u.ota>}" leaf+"on {<ship.u.ota>}"]
+    ?~  error
+      ~
+    [>p.u.error< q.u.error]
+  ::
+  ++  render-ket
+    |=  [mez=tape error=(unit (pair term tang))]
+    ?>  ?=(^ ota)
+    =<  ?>(?=(^ ota) .)
+    %+  spam
+      :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
+      ~[leaf+"from {<desk.u.ota>}" leaf+"on {<ship.u.ota>}"]
+    ?~  error
+      ~
+    [>p.u.error< q.u.error]
+  ::
+  ++  poke
+    |=  arg=(unit [=ship =desk])
+    abet:(poke-internal arg)
+  ::
+  ++  poke-internal
+    |=  arg=(unit [=ship =desk])
+    ^+  ..abet
+    =?  ..abet  =(arg (bind ota |=([=ship =desk =aeon] [ship desk])))
+      (render "restarting OTA sync" ~)
+    =?  ..abet  ?=(^ ota)
+      =.  ..abet  (render-ket "cancelling OTA sync" ~)
+      ..abet(ota ~)
+    ?~  arg
+      ..abet
+    =.  ota  `[ship.u.arg desk.u.arg *aeon]
+    =.  ..abet  (render "starting OTA sync" ~)
+    %:  emit
+      %pass  (make-wire /find)  %arvo  %c
+      %warp  ship.u.arg  desk.u.arg  `[%sing %y ud+1 /]
+    ==
+  ::
+  ++  take
+    |=  [=wire =sign-arvo]
+    ^+  ..abet
+    ?>  ?=(^ ota)
+    ?.  (check-ota wire)
+      ..abet
+    ?.  ?=([@ @ @ @ *] wire)
+      ..abet
+    ?+  i.t.t.t.wire  ~&([%strange-ota-take t.t.t.wire] ..abet)
+      %find        (take-find sign-arvo)
+      %sync        (take-sync sign-arvo)
+      %merge-home  (take-merge-home sign-arvo)
+      %merge-kids  (take-merge-kids sign-arvo)
+    ==
+  ::
+  ++  take-find
+    |=  =sign-arvo
+    ?>  ?=(%writ +<.sign-arvo)
+    ?>  ?=(^ ota)
+    =.  ..abet  (render-ket "activated OTA" ~)
+    %:  emit
+      %pass  (make-wire /sync)  %arvo  %c
+      %warp  ship.u.ota  desk.u.ota  `[%sing %w da+now /]
+    ==
+  ::
+  ++  take-sync
+    |=  =sign-arvo
+    ^+  ..abet
+    ?>  ?=(%writ +<.sign-arvo)
+    ?>  ?=(^ ota)
+    ?~  p.sign-arvo
+      =.  ..abet  (render-ket "OTA cancelled, retrying" ~)
+      (poke-internal `[ship desk]:u.ota)
+    =?  aeon.u.ota  ?=($w p.p.u.p.sign-arvo)
+      ud:;;(cass:clay q.q.r.u.p.sign-arvo)
+    =/  =germ
+      =+  .^(=cass:clay %cw /(scot %p our)/home/(scot %da now))
+      ?:  =(0 ud.cass)
+        %init
+      ?:((gth 2 ud.cass) %that %mate)
+    =.  ..abet  (render-ket "beginning OTA to %home" ~)
+    %:  emit
+      %pass  (make-wire /merge-home)  %arvo  %c
+      %merg  %home  ship.u.ota  desk.u.ota  ud+aeon.u.ota  germ
+    ==
+  ::
+  ++  take-merge-home
+    |=  =sign-arvo
+    ?>  ?=(%mere +<.sign-arvo)
+    ?>  ?=(^ ota)
+    ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
+      =.  ..abet
+        =/  =tape  "OTA to %home failed, maybe because sunk; restarting"
+        (render-ket tape `p.p.sign-arvo)
+      (poke-internal `[ship desk]:u.ota)
+    ::
+    ?:  ?=(%| -.p.sign-arvo)
+      =.  ..abet
+        =/  =tape  "OTA to %home failed, waiting for next revision"
+        (render-ket tape `p.p.sign-arvo)
+      =.  aeon.u.ota  +(aeon.u.ota)
+      %:  emit
+        %pass  (make-wire /sync)  %arvo  %c
+        %warp  ship.u.ota  desk.u.ota  `[%sing %y ud+aeon.u.ota /]
+      ==
+    =.  ..abet  (render-ket "OTA to %home succeeded" ~)
+    =.  ..abet  (render-ket "beginning OTA to %kids" ~)
+    =/  =germ
+      =+  .^(=cass:clay %cw /(scot %p our)/kids/(scot %da now))
+      ?:  =(0 ud.cass)
+        %init
+      ?:((gth 2 ud.cass) %that %mate)
+    %:  emit
+      %pass  (make-wire /merge-kids)  %arvo  %c
+      %merg  %kids  ship.u.ota  desk.u.ota  ud+aeon.u.ota  germ
+    ==
+  ::
+  ++  take-merge-kids
+    |=  =sign-arvo
+    ?>  ?=(%mere +<.sign-arvo)
+    ?>  ?=(^ ota)
+    ?:  ?=([%| %ali-unavailable *] p.sign-arvo)
+      =.  ..abet
+        =/  =tape  "OTA to %kids failed, maybe because sunk; restarting"
+        (render-ket tape `p.p.sign-arvo)
+      (poke-internal `[ship desk]:u.ota)
+    ::
+    =.  ..abet
+      ?-  -.p.sign-arvo
+        %&  (render-ket "OTA to %kids succeeded" ~)
+        %|  (render-ket "OTA to %kids failed" `p.p.sign-arvo)
+      ==
+    =.  aeon.u.ota  +(aeon.u.ota)
+    %:  emit
+      %pass  (make-wire /sync)  %arvo  %c
+      %warp  ship.u.ota  desk.u.ota  `[%sing %y ud+aeon.u.ota /]
+    ==
+  --
+::
 ++  poke-sync                                         ::
   |=  hos/kiln-sync
   ?:  (~(has by syn) hos)
@@ -136,6 +294,7 @@
 ++  poke-syncs                                        ::  print sync config
   |=  ~
   =<  abet  %-  spam
+  :-  [%leaf "OTAs from {<ota>}"]
   ?:  =(0 ~(wyt by syn))
     [%leaf "no syncs configured"]~
   %+  turn  ~(tap in ~(key by syn))
@@ -203,6 +362,7 @@
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
     %kiln-track              =;(f (f !<(_+<.f vase)) poke-track)
     %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
+    %kiln-ota                =;(f (f !<(_+<.f vase)) poke:update)
     %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
     %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
@@ -241,6 +401,7 @@
                         ?>(?=(%writ +<.sign-arvo) +>.sign-arvo)
       [%autocommit *]   %+  take-wake-autocommit  t.wire
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+      [%ota *]          abet:(take:update t.wire sign-arvo)
       *
     ?+  +<.sign-arvo  ~|([%kiln-bad-take-card +<.sign-arvo] !!)
       %done  %+  done  wire
@@ -388,7 +549,7 @@
   ::
   ++  mere
     |=  mes=(each (set path) (pair term tang))
-    ?:  ?=([%| %bad-fetch-ali *] mes)
+    ?:  ?=([%| %ali-unavailable *] mes)
       =.  +>.$
         %^    spam
             leaf+"merge cancelled, maybe because sunk; restarting"

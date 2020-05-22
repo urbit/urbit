@@ -260,7 +260,7 @@
         [[151 %noun] %j our %sein da+now /(scot %p who)]
       ::
       ++  init                                          ::  initialize
-        (pass /merg/home [%c %merg %home our %base da+now %init])
+        (pass /merg/home [%c %merg %kids our %home da+now %init])
       ::
       ++  mere                                          ::  continue init
         ^+  .
@@ -268,13 +268,11 @@
         =/  can  (clan:title our)
         =.  tem  ~
         =.  +>  (pass / %g %conf ram)
-        =.  +>  (sync %home our %base)
         =?  +>  ?=(?($earl $duke $king) can)
-          (sync %base (sein our) %kids)
-        =?  +>  ?=(?($duke $king $czar) can)
-          ::  make kids desk publicly readable, so syncs work.
-          ::
-          (show %kids):(sync %kids our %base)
+          (ota (sein our) %kids)
+        ::  make kids desk publicly readable, so syncs work.
+        ::
+        =.  +>  (show %kids)
         =.  +>  hood-set-boot-apps
         =.  +>  peer
         |-  ^+  +>+
@@ -284,7 +282,7 @@
       ++  into                                          ::  preinitialize
         |=  gyl/(list gill)
         =.  tem  `(turn gyl |=(a/gill [%yow a]))
-        (pass / [%c %warp our %base `[%sing %y [%ud 1] /]])
+        (pass / [%c %warp our %home `[%sing %y [%ud 1] /]])
       ::
       ++  send                                          ::  send action
         |=  bet/dill-belt
@@ -303,9 +301,9 @@
         |=  des/desk
         (pass /show [%c %perm des / r+`[%black ~]])
       ::
-      ++  sync
-        |=  syn/{desk ship desk}
-        (deal /sync [%poke %hood-sync -:!>(syn) syn])
+      ++  ota
+        |=  syn=[ship desk]
+        (deal /sync %poke %kiln-ota !>(`syn))
       ::
       ++  take                                          ::  receive
         |=  {tea/wire sih/sign}

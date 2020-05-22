@@ -3671,7 +3671,7 @@
     =/  bem/beam
         ?^  bem
           u.bem
-        [[our %base %ud 1] ~]
+        [[our %home %ud 1] ~]
     =/  dos  (~(get by dos.rom.ruf) q.bem)
     ?~  dos
       !!  ::  fire next in queue

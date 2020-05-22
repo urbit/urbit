@@ -228,8 +228,6 @@
   ;<  ~        bind:m  (mount her desk)
   ;<  our=@p   bind:m  get-our
   ;<  now=@da  bind:m  get-time
-  =/  host-pax
-    (weld /(scot %p our)/home/(scot %da now) pax)
   =/  aqua-pax
     ;:  weld
         /i/(scot %p her)/cx/(scot %p her)/[desk]/(scot %da now)
@@ -240,7 +238,7 @@
     %^  cat  3  '=>  .  '
     %^  cat  3  extra
     (need (scry-aqua:util (unit @) our now aqua-pax))
-  ;<  ~  bind:m  (send-events (insert-file:util her desk host-pax warped))
+  ;<  ~  bind:m  (send-events (insert-files:util her desk [pax warped] ~))
   (pure:m warped)
 ::
 ::  Check /sur/aquarium/hoon on the given has the given contents.
