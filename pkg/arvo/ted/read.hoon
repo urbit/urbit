@@ -7,14 +7,12 @@
 ^-  form:m
 ::  Parse arguments as ship, desk, and path
 ::
-=+  !<([=target=path ~] arg)
+=+  !<([=care:clay =ship =desk =case =target=path ~] arg)
 ::  Read the file, possibly asyncrhonously
 ::
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ;<  =riot:clay  bind:m
-  (warp:strandio our.bowl %home ~ %sing %a [%da now.bowl] target-path)
+  (warp:strandio ship desk ~ %sing care case target-path)
 ?~  riot
-  ~&  %nothing
   (pure:m !>("nothing"))
-%-  (slog leaf+"got writ" (sell !<(vase q.r.u.riot)) ~)
-(pure:m !<(vase q.r.u.riot))
+(pure:m q.r.u.riot)

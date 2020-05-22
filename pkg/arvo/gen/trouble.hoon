@@ -7,8 +7,9 @@
 :-  %noun
 =<
 :~
-  [%kids-hash .^(@uv %cz (pathify ~.kids ~))]
+  [%base-hash base-hash]
   [%home-hash .^(@uv %cz (pathify ~.home ~))]
+  [%kids-hash .^(@uv %cz (pathify ~.kids ~))]
   ::
   (info %our our)
   (info %sponsor sponsor)
@@ -40,4 +41,9 @@
       life=lyfe
       rift=ryft
   ==
+::
+++  base-hash
+  =/  parent  (scot %p (sein:title our now our))
+  =+  .^(=cass:clay %cs /[parent]/kids/1/late/foo)
+  .^(@uv %cz /[parent]/kids/(scot %ud ud.cass))
 --

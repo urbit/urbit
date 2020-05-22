@@ -165,6 +165,19 @@
       ~
     [>p.u.error< q.u.error]
   ::
+  ::  If destination desk doesn't exist, need a %init merge.  If this is
+  ::  its first revision, it probably doesn't have a mergebase yet, so
+  ::  use %that.
+  ::
+  ++  get-germ
+    |=  =desk
+    =+  .^(=cass:clay %cw /(scot %p our)/home/(scot %da now))
+    ?-  ud.cass
+      %0  %init
+      %1  %that
+      *   %mate
+    ==
+  ::
   ++  poke
     |=  arg=(unit [=ship =desk])
     abet:(poke-internal arg)
@@ -221,11 +234,7 @@
       (poke-internal `[ship desk]:u.ota)
     =?  aeon.u.ota  ?=($w p.p.u.p.sign-arvo)
       ud:;;(cass:clay q.q.r.u.p.sign-arvo)
-    =/  =germ
-      =+  .^(=cass:clay %cw /(scot %p our)/home/(scot %da now))
-      ?:  =(0 ud.cass)
-        %init
-      ?:((gth 2 ud.cass) %that %mate)
+    =/  =germ  (get-germ %home)
     =.  ..abet  (render-ket "beginning OTA to %home" ~)
     %:  emit
       %pass  (make-wire /merge-home)  %arvo  %c
@@ -249,15 +258,11 @@
       =.  aeon.u.ota  +(aeon.u.ota)
       %:  emit
         %pass  (make-wire /sync)  %arvo  %c
-        %warp  ship.u.ota  desk.u.ota  `[%sing %y ud+aeon.u.ota /]
+        %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
       ==
     =.  ..abet  (render-ket "OTA to %home succeeded" ~)
     =.  ..abet  (render-ket "beginning OTA to %kids" ~)
-    =/  =germ
-      =+  .^(=cass:clay %cw /(scot %p our)/kids/(scot %da now))
-      ?:  =(0 ud.cass)
-        %init
-      ?:((gth 2 ud.cass) %that %mate)
+    =/  =germ  (get-germ %kids)
     %:  emit
       %pass  (make-wire /merge-kids)  %arvo  %c
       %merg  %kids  ship.u.ota  desk.u.ota  ud+aeon.u.ota  germ
@@ -281,7 +286,7 @@
     =.  aeon.u.ota  +(aeon.u.ota)
     %:  emit
       %pass  (make-wire /sync)  %arvo  %c
-      %warp  ship.u.ota  desk.u.ota  `[%sing %y ud+aeon.u.ota /]
+      %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
     ==
   --
 ::

@@ -2502,7 +2502,7 @@
           $t  ~|  %requesting-foreign-directory-is-vaporware  !!
           $u  ~|  %prolly-poor-idea-to-get-rang-over-network  !!
           $v  ~|  %weird-shouldnt-get-v-request-from-network  !!
-          $z  ~|  %its-prolly-not-reasonable-to-request-ankh  !!
+          $z  `(validate-z r.rand)
           $w  `(validate-w r.rand)
           $x  (validate-x [p.p q.p q r]:rand)
           $y  `[p.r.rand !>(;;(arch q.r.rand))]
@@ -2535,6 +2535,15 @@
         %-  (slog >%validate-x-failed< p.vale-result)
         ~
       `-.p.vale-result
+    ::
+    ::  Make sure the incoming data is a %z response
+    ::
+    ++  validate-z
+      |=  =page
+      ^-  cage
+      ?>  ?=(%uvi p.page)
+      :-  p.page
+      !>(;;(@uvI q.page))
     --
   ::
   ::  A full foreign update.  Validate and apply to our local cache of
@@ -3283,7 +3292,7 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      ?.  ?=([?(%yaki %blob %hash %cage %open) * ~] pax)
+      ?.  ?=([?(%yaki %blob %hash %cage %open %late) * ~] pax)
         `~
       ?-    i.pax
           %yaki
@@ -3318,6 +3327,12 @@
       ::
           %open
         ``open+!>(prelude:(ford:fusion ank.dom ~ ~ lat.ran fod.dom))
+      ::
+          %late
+        :^  ~  ~  %cass
+        ?~  let.dom
+          !>([0 *@da])
+        !>([let.dom t:(~(got by hut.ran) (~(got by hit.dom) let.dom))])
       ==
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::
