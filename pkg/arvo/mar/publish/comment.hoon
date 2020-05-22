@@ -26,34 +26,37 @@
   |%
   ++  mime
     |=  [mite:eyre p=octs:eyre]
-    |^  (rash q.p both-parser)
+    |^  (rash q.p ;~(sfix both-parser (punt gaq)))
     ++  key-val
-      |*  [key=rule val=rule]
-      ;~(sfix ;~(pfix key val) gaq)
+      |*  [key=@tas val=rule]
+      ;~(pfix (jest key) col ace val)
     ++  old-parser
-      ;~  plug
-        (key-val (jest 'creator: ~') fed:ag)
-        (key-val (jest 'collection: ') sym)
-        (key-val (jest 'post: ') sym)
-        (key-val (jest 'date-created: ~') (cook year when:so))
-        (key-val (jest 'last-modified: ~') (cook year when:so))
-        ;~(pfix (jest (cat 3 '-----' 10)) (cook crip (star next)))
+      ;~  (glue gaq)
+        (key-val %creator ;~(pfix sig fed:ag))
+        (key-val %collection sym)
+        (key-val %post sym)
+        (key-val %title (cook crip (star prn)))
+        (key-val %date-created ;~(pfix sig (cook year when:so)))
+        (key-val %last-modified ;~(pfix sig (cook year when:so))
+        (cold ~ (jest '-----'))
+        (cook crip (star next)))
       ==
     ++  new-parser
-      ;~  plug
-        (key-val (jest 'author: ~') fed:ag)
-        (key-val (jest 'date-created: ~') (cook year when:so))
-        ;~(pfix (jest (cat 3 '-----' 10)) (cook crip (star next)))
+      ;~  (glue gaq)
+        (key-val %author ;~(pfix sig fed:ag))
+        (key-val %date-created ;~(pfix sig (cook year when:so)))
+        (cold ~ (jest '-----'))
+        (cook crip (star next)))
       ==
     ++  both-parser
       ;~  pose
         %+  cook
-          |=  [author=@ date-created=@da content=@t]
+          |=  [author=@ date-created=@da ~ content=@t]
           ^-  comment
           [author date-created content %.n]
         new-parser
         %+  cook
-          |=  [author=@ @ @ date-created=@da @ content=@t]
+          |=  [author=@ @ @ date-created=@da @ ~ content=@t]
           ^-  comment
           [author date-created content %.n]
         old-parser
