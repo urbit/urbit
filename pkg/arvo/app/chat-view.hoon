@@ -73,17 +73,14 @@
       ::  create inbox with 20 messages max per mailbox and send that along
       ::  then quit the subscription
       :_  this
-      [%give %fact ~ %json !>((inbox:enjs:store truncated-inbox-scry))]~
-    ?:  =(/configs path)
-      [[%give %fact ~ %json !>(*json)]~ this]
+      [%give %fact ~ %json !>((update-to-json [%initial truncated-inbox]))]~
     (on-watch:def path)
     ::
     ++  message-limit  20
     ::
-    ++  truncated-inbox-scry
-      ^-  inbox:store
-      =/  =inbox:store
-        .^(inbox:store %gx /=chat-store/(scot %da now.bol)/all/noun)
+    ++  truncated-inbox
+      ^-  inbox
+      =/  =inbox  .^(inbox %gx /=chat-store/(scot %da now.bol)/all/noun)
       %-  ~(run by inbox)
       |=  =mailbox:store
       ^-  mailbox:store
@@ -442,11 +439,7 @@
 ++  diff-chat-update
   |=  upd=update:store
   ^-  (list card)
-  =/  updates-json  (update:enjs:store upd)
-  =/  configs-json  (configs:enjs:store configs-scry)
-  :~  [%give %fact ~[/primary] %json !>(updates-json)]
-      [%give %fact ~[/configs] %json !>(configs-json)]
-  ==
+  [%give %fact ~[/primary] %json !>((update-to-json upd))]~
 ::
 ::  +utilities
 ::
@@ -488,10 +481,6 @@
   |=  pax=path
   ^-  (list envelope:store)
   (scry-for (list envelope:store) %chat-store [%envelopes pax])
-::
-++  configs-scry
-  ^-  configs:store
-  (scry-for configs:store %chat-store /configs)
 ::
 ++  group-scry
   |=  pax=path

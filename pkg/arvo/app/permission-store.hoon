@@ -51,8 +51,8 @@
     |^
     =/  cards=(list card)
       ?+  path  (on-watch:def path)
-          [%all ~]            (give %permission-initial !>(permissions))
-          [%updates ~]        ~
+          [%all ~]      (give %permission-update !>([%initial permissions]))
+          [%updates ~]  ~
           [%permission @ *]
         =/  =vase  !>([%create t.path (~(got by permissions) t.path)])
         (give %permission-update vase)

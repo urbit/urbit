@@ -29,9 +29,13 @@
 ::
 +$  inbox  (map path mailbox)
 ::
+<<<<<<< HEAD
 +$  configs  (map path config)
 ::
 +$  diff
+=======
++$  chat-base
+>>>>>>> 51f0e5eb3... apps: updated apps to use consistent %initial update
   $%  [%create =path]               ::  %create: create a mailbox at path
       [%delete =path]               ::  %delete: delete a mailbox at path
       [%message =path =envelope]    ::  %message: append a message to mailbox
@@ -45,9 +49,15 @@
       diff
   ==
 ::
+<<<<<<< HEAD
 +$  update
   $%  [%keys keys=(set path)]
       [%config =path =config]
+=======
++$  chat-update
+  $%  [%initial =inbox]
+      [%keys keys=(set path)]
+>>>>>>> 51f0e5eb3... apps: updated apps to use consistent %initial update
       [%messages =path start=@ud end=@ud envelopes=(list envelope)]
       diff
   ==
