@@ -691,7 +691,7 @@
       ::    - optional keyword arguments, as name-value pairs
       ::
       ::    The generator is a pair of a result mark and a gate.
-      ::    TODO: handle %ask generators
+      ::    TODO: test %ask generators
       ::
       =/  wat  (mule |.(!<(?(%ask %say) (slot 2 q.cay))))
       ?:  ?=(%| -.wat)
@@ -704,32 +704,30 @@
             %say  (dy-made-gent %noun p.res)
           ==
       |.  ^-  vase
-      =/  gat
-        %+  slap
-          %-  with-faces  :~
-            gat+(slot 3 q.cay)
-            ven+!>([now=now.hid eny=eny.hid bec=he-beak])
-            sor+(dy-sore p.cig)
-          ==
-        ^~((ream 'gat(+<- ven, +<+< sor)'))
-      =?  gat  !=(~ q.cig)
-        =/  soz=(list [var=term vax=vase])
-          %+  turn  ~(tap by q.cig)
-          |=  [var=term val=(unit dojo-source)]
-          ^-  [term vase]
-          :-  var
-          ?~  val
-            !>([~ ~])
-          (dy-vase p.u.val)
-        %+  slap
-          (with-faces gat+gat rep+(with-faces soz) ~)
-        :+  %cncb  ~[%gat]
-        ^-  (list [wing hoon])
-        %+  turn  soz
-        |=  [var=term vax=vase]
-        ^-  [wing hoon]
-        [~[var &+27] [%wing var %rep ~]]
-      (slap gat ^~((ream '(.)')))
+      =/  gat=vase  (slot 3 q.cay)
+      %+  slam  gat
+      %+  slop  !>([now=now.hid eny=eny.hid bec=he-beak])
+      %+  slop  (dy-sore p.cig)
+      ^-  vase
+      =/  sam  (slew 27 gat)  ::  |2.+<
+      ?:  =(~ q.cig)
+        (fall sam !>(~))
+      =/  soz=(list [var=term vax=vase])
+        %+  turn  ~(tap by q.cig)
+        |=  [var=term val=(unit dojo-source)]
+        ^-  [term vase]
+        :-  var
+        ?~  val
+          !>([~ ~])
+        (dy-vase p.u.val)
+      ~|  keyword-arg-failure+~(key by q.cig)
+      %+  slap
+        (with-faces sam+(need sam) rep+(with-faces soz) ~)
+      :+  %cncb  [%sam]~
+      %+  turn  soz
+      |=  [var=term *]
+      ^-  [wing hoon]
+      [[var]~ [%wing var %rep ~]]
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag/cage
