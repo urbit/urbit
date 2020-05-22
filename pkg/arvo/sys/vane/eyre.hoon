@@ -124,112 +124,6 @@
       ::
       outgoing-duct=duct
   ==
-::  +outstanding-connection: open http connections not fully complete:
-::
-::    This refers to outstanding connections where the connection to
-::    outside is opened and we are currently waiting on ford or an app to
-::    produce the results.
-::
-+$  outstanding-connection
-  $:  ::  action: the action that had matched
-      ::
-      =action
-      ::  inbound-request: the original request which caused this connection
-      ::
-      =inbound-request
-      ::  response-header: set when we get our first %start
-      ::
-      response-header=(unit response-header:http)
-      ::  bytes-sent: the total bytes sent in response
-      ::
-      bytes-sent=@ud
-  ==
-::  +authentication-state: state used in the login system
-::
-+$  authentication-state
-  $:  ::  sessions: a mapping of session cookies to session information
-      ::
-      sessions=(map @uv session)
-  ==
-::  +session: server side data about a session
-::
-+$  session
-  $:  ::  expiry-time: when this session expires
-      ::
-      ::    We check this server side, too, so we aren't relying on the browser
-      ::    to properly handle cookie expiration as a security mechanism.
-      ::
-      expiry-time=@da
-      ::
-      ::  TODO: We should add a system for individual capabilities; we should
-      ::  mint some sort of long lived cookie for mobile apps which only has
-      ::  access to a single application path.
-  ==
-::  channel-state: state used in the channel system
-::
-+$  channel-state
-  $:  ::  session: mapping between an arbitrary key to a channel
-      ::
-      session=(map @t channel)
-      ::  by-duct: mapping from ducts to session key
-      ::
-      duct-to-key=(map duct @t)
-  ==
-::  +timer: a reference to a timer so we can cancel or update it.
-::
-+$  timer
-  $:  ::  date: time when the timer will fire
-      ::
-      date=@da
-      ::  duct: duct that set the timer so we can cancel
-      ::
-      =duct
-  ==
-::  channel: connection to the browser
-::
-::    Channels are the main method where a webpage communicates with Gall
-::    apps. Subscriptions and pokes are issues with PUT requests on a path,
-::    while GET requests on that same path open a persistent EventSource
-::    channel.
-::
-::    The EventSource API is a sequence number based API that browser provide
-::    which allow the server to push individual events to the browser over a
-::    connection held open. In case of reconnection, the browser will send a
-::    'Last-Event-Id: ' header to the server; the server then resends all
-::    events since then.
-::
-+$  channel
-  $:  ::  channel-state: expiration time or the duct currently listening
-      ::
-      ::    For each channel, there is at most one open EventSource
-      ::    connection. A 400 is issues on duplicate attempts to connect to the
-      ::    same channel. When an EventSource isn't connected, we set a timer
-      ::    to reap the subscriptions. This timer shouldn't be too short
-      ::    because the
-      ::
-      state=(each timer duct)
-      ::  next-id: next sequence number to use
-      ::
-      next-id=@ud
-      ::  events: unacknowledged events
-      ::
-      ::    We keep track of all events where we haven't received a
-      ::    'Last-Event-Id: ' response from the client or a per-poke {'ack':
-      ::    ...} call. When there's an active EventSource connection on this
-      ::    channel, we send the event but we still add it to events because we
-      ::    can't assume it got received until we get an acknowledgment.
-      ::
-      events=(qeu [id=@ud lines=wall])
-      ::  subscriptions: gall subscriptions
-      ::
-      ::    We maintain a list of subscriptions so if a channel times out, we
-      ::    can cancel all the subscriptions we've made.
-      ::
-      subscriptions=(map wire [ship=@p app=term =path duc=duct])
-      ::  heartbeat: sse heartbeat timer
-      ::
-      heartbeat=(unit timer)
-  ==
 ::  channel-request: an action requested on a channel
 ::
 +$  channel-request
@@ -2443,34 +2337,38 @@
     [~ ~]
   ?.  ?=(%$ -.lot)
     [~ ~]
-  ?:  ?=(%bindings syd)
-    ``noun+!>(bindings.server-state.ax)
-  ?.  ?=(%host syd)
-    [~ ~]
-  %-  (lift (lift |=(a=hart:eyre [%hart !>(a)])))
-  ^-  (unit (unit hart:eyre))
   ?.  =(our who)
     ?.  =([%da now] p.lot)
       [~ ~]
     ~&  [%r %scry-foreign-host who]
     ~
-  =.  p.lot  ?.(=([%da now] p.lot) p.lot [%tas %real])
-  ?+  p.lot
-    [~ ~]
+  ?+  syd  [~ ~]
+    %bindings              ``noun+!>(bindings.server-state.ax)
+    %connections           ``noun+!>(connections.server-state.ax)
+    %authentication-state  ``noun+!>(authentication-state.server-state.ax)
+    %channel-state         ``noun+!>(channel-state.server-state.ax)
   ::
-      [%tas %fake]
-    ``[& [~ 8.443] %& /localhost]
-  ::
-      [%tas %real]
-    =*  domains  domains.server-state.ax
-    =*  ports  ports.server-state.ax
-    =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
-    =/  secure=?  &(?=(^ secure.ports) !?=(hoke:eyre host))
-    =/  port=(unit @ud)
-      ?.  secure
-        ?:(=(80 insecure.ports) ~ `insecure.ports)
-      ?>  ?=(^ secure.ports)
-      ?:(=(443 u.secure.ports) ~ secure.ports)
-    ``[secure port host]
+      %host
+    %-  (lift (lift |=(a=hart:eyre [%hart !>(a)])))
+    ^-  (unit (unit hart:eyre))
+    =.  p.lot  ?.(=([%da now] p.lot) p.lot [%tas %real])
+    ?+  p.lot
+      [~ ~]
+    ::
+        [%tas %fake]
+      ``[& [~ 8.443] %& /localhost]
+    ::
+        [%tas %real]
+      =*  domains  domains.server-state.ax
+      =*  ports  ports.server-state.ax
+      =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
+      =/  secure=?  &(?=(^ secure.ports) !?=(hoke:eyre host))
+      =/  port=(unit @ud)
+        ?.  secure
+          ?:(=(80 insecure.ports) ~ `insecure.ports)
+        ?>  ?=(^ secure.ports)
+        ?:(=(443 u.secure.ports) ~ secure.ports)
+      ``[secure port host]
+    ==
   ==
 --
