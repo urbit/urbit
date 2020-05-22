@@ -14,7 +14,7 @@ export default class CustomTile extends React.PureComponent {
                         "b--black b--gray1-d"}>
           <img
             className="absolute invert-d"
-            style={{ left: 39, top: 39 }}
+            style={{ left: 38, top: 38 }}
             src={'/~launch/img/UnknownCustomTile.png'}
             width={48}
             height={48} />

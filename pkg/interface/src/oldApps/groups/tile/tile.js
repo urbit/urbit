@@ -42,7 +42,7 @@ export default class ContactTile extends Component {
           </p>
           <img
             className="absolute invert-d"
-            style={{ left: 39, top: 39 }}
+            style={{ left: 38, top: 38 }}
             src="/~groups/img/Tile.png"
             width={48}
             height={48}

@@ -206,7 +206,7 @@ export default class WeatherTile extends React.Component {
             Weather
           </p>
         <p className="absolute w-100 flex-col f9"
-        style={{verticalAlign: "bottom", bottom: 8, left: 8, cursor: "pointer"}}>
+        style={{bottom: 8, left: 8, cursor: "pointer"}}>
         -> Set location
         </p>
       </div>
