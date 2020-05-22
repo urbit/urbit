@@ -2,4 +2,4 @@
 :-  %say
 |=  *
 :-  %tang
-[.^(tank %b %) ~]
+[.^(tank %b /=timers=) ~]
