@@ -19,7 +19,7 @@ export default class BasicTile extends React.PureComponent {
                style={{left: 8, top: 8}}>{props.title}</p>
              <img
                className="absolute invert-d"
-               style={{ left: 39, top: 39 }}
+               style={{ left: 38, top: 38 }}
                src={props.iconUrl}
                width={48}
                height={48} />
