@@ -145,6 +145,7 @@
   |=  diff=group-update
   ^-  (quip card _state)
   ?-  -.diff
+    %initial  [~ state]
     %keys     [~ state]
     %bundle   [~ state]
   ::

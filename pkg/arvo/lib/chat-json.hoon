@@ -84,30 +84,10 @@
       [%read (numb read.config)]
   ==
 ::
-++  inbox-to-configs
-  |=  =inbox
-  ^-  chat-configs
-  %-  ~(run by inbox)
-  |=  =mailbox
-  ^-  config
-  config.mailbox
-::
-++  configs-to-json
-  |=  cfg=chat-configs
-  =,  enjs:format
-  ^-  json
-  %+  frond  %chat-configs
-  %-  pairs
-  %+  turn  ~(tap by cfg)
-  |=  [pax=^path =config]
-  ^-  [cord json]
-  [(spat pax) (conf config)]
-::
 ++  inbox-to-json
   |=  box=inbox
   =,  enjs:format
   ^-  json
-  %+  frond  %chat-initial
   %-  pairs
   %+  turn  ~(tap by box)
   |=  [pax=^path =mailbox]
@@ -136,6 +116,8 @@
   %+  frond  %chat-update
   %-  pairs
   :~
+    ?:  ?=(%initial -.upd)
+      [%initial (inbox-to-json inbox.upd)]
     ?:  ?=(%message -.upd)
       :-  %message
       %-  pairs
@@ -156,12 +138,6 @@
       [%create (pairs [%path (path path.upd)]~)]
     ?:  ?=(%delete -.upd)
       [%delete (pairs [%path (path path.upd)]~)]
-    ?:  ?=(%config -.upd)
-      :-  %config
-      %-  pairs
-      :~  [%path (path path.upd)]
-          [%config (conf config.upd)]
-      ==
     [*@t *^json]
   ==
 ::

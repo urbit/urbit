@@ -12,6 +12,10 @@
     %+  frond  %group-update
     %-  pairs
     :~
+      ?:  =(%initial -.upd)
+        ?>  ?=(%initial -.upd)
+        :-  %initial
+        (groups-to-json grp)
       ::
       ::  %add
       ?:  =(%add -.upd)

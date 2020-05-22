@@ -338,7 +338,6 @@
     =*  mark  p.cage.sign
     =*  vase  q.cage.sign
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
-      %group-initial  [~ state]  ::NOTE  initial handled using metadata
       %group-update   (handle-group-update !<(group-update:group-store vase))
     ==
   ==
@@ -346,6 +345,7 @@
 ++  handle-group-update
   |=  upd=group-update:group-store
   ^-  (quip card _state)
+  ::  NOTE  initial handled using metadata
   ?.  ?=(?(%path %add %remove) -.upd)
     [~ state]
   =/  socs=(list app-path)

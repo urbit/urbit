@@ -13,12 +13,6 @@
 +$  state-zero  [%0 =inbox]
 +$  state-one   [%1 =inbox]
 +$  state-two   [%2 =inbox]
-::
-+$  diff
-  $%  [%chat-initial inbox]
-      [%chat-configs chat-configs]
-      [%chat-update chat-update]
-  ==
 --
 ::
 =|  state-two
@@ -70,8 +64,7 @@
     =/  cards=(list card)
       ?+    path  (on-watch:def path)
           [%keys ~]     (give %chat-update !>([%keys ~(key by inbox)]))
-          [%all ~]      (give %chat-initial !>(inbox))
-          [%configs ~]  (give %chat-configs !>((inbox-to-configs inbox)))
+          [%all ~]      (give %chat-update !>([%initial inbox]))
           [%updates ~]  ~
           [%mailbox @ *]
         ?>  (~(has by inbox) t.path)
@@ -92,7 +85,6 @@
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
         [%x %all ~]        ``noun+!>(inbox)
-        [%x %configs ~]    ``noun+!>((inbox-to-configs inbox))
         [%x %keys ~]       ``noun+!>(~(key by inbox))
         [%x %envelopes *]  (peek-x-envelopes:cc t.t.path)
         [%x %mailbox *]
@@ -271,7 +263,6 @@
       (update-subscribers [%mailbox pax] upd)
       ?.  |(|(=(%read -.upd) =(%message -.upd)) =(%messages -.upd))
         ~
-      (update-subscribers /configs upd)
       ?.  |(=(%create -.upd) =(%delete -.upd))
         ~
       (update-subscribers /keys upd)
