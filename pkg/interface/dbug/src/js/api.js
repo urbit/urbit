@@ -201,6 +201,27 @@ class UrbitApi {
     );
   }
 
+  getConnections() {
+    this.getJson('/eyre/connections',
+      this.wrapLocal('eyreConnections'),
+      this.showStatus('error fetching eyre connections')
+    );
+  }
+
+  getAuthenticationState() {
+    this.getJson('/eyre/authentication',
+      this.wrapLocal('eyreAuthentication'),
+      this.showStatus('error fetching eyre authentication state')
+    );
+  }
+
+  getChannels() {
+    this.getJson('/eyre/channels',
+      this.wrapLocal('eyreChannels'),
+      this.showStatus('error fetching eyre channels')
+    );
+  }
+
   // local
 
   sidebarToggle() {

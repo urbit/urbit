@@ -23,6 +23,9 @@ export class LocalReducer {
       this.clayCommits(data, state);
     //
       this.eyreBindings(data, state);
+      this.eyreConnections(data, state);
+      this.eyreAuthentication(data, state);
+      this.eyreChannels(data, state);
     }
   }
 
@@ -150,6 +153,27 @@ export class LocalReducer {
     const data = _.get(obj, 'eyreBindings', false);
     if (data) {
       state.bindings = data;
+    }
+  }
+
+  eyreConnections(obj, state) {
+    const data = _.get(obj, 'eyreConnections', false);
+    if (data) {
+      state.connections = data;
+    }
+  }
+
+  eyreAuthentication(obj, state) {
+    const data = _.get(obj, 'eyreAuthentication', false);
+    if (data) {
+      state.authentication = data;
+    }
+  }
+
+  eyreChannels(obj, state) {
+    const data = _.get(obj, 'eyreChannels', false);
+    if (data) {
+      state.channels = data;
     }
   }
 }

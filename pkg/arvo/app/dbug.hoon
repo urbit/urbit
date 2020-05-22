@@ -309,12 +309,89 @@
     |=  [binding =duct =action]
     %-  pairs
     :~  'location'^s+(cat 3 (fall site '*') (spat path))
+        'action'^(render-action:v-eyre action)
+    ==
+  ::
+    ::  /eyre/connections.json
+    ::
+      [%eyre %connections ~]
+    %-  some
+    :-  %a
+    %+  turn  ~(tap by connections:v-eyre)
+    |=  [=duct outstanding-connection:eyre]
+    %-  pairs
+    :~  'duct'^a+(turn duct path)
+        'action'^(render-action:v-eyre action)
       ::
-        :-  'action'
-        :-  %s
-        ?+  -.action  -.action
-          %gen  :((cury cat 3) '+' (spat [desk path]:generator.action))
-          %app  (cat 3 ':' app.action)
+        :-  'request'
+        %-  pairs
+        =,  inbound-request
+        :~  'authenticated'^b+authenticated
+            'secure'^b+secure
+            'source'^s+(scot %if +.address)
+            :: ?-  -.address
+            ::   %ipv4  %if
+            ::   %ipv6  %is
+            :: ==
+        ==
+      ::
+        :-  'response'
+        %-  pairs
+        :~  'sent'^(numb bytes-sent)
+          ::
+            :-  'header'
+            ?~  response-header  ~
+            =,  u.response-header
+            %-  pairs
+            :~  'status-code'^(numb status-code)
+              ::
+                :-  'headers'
+                :-  %a
+                %+  turn  headers
+                |=([k=@t v=@t] s+:((cury cat 3) k ': ' v))
+            ==
+        ==
+    ==
+  ::
+    ::  /eyre/authentication.json
+    ::
+      [%eyre %authentication ~]
+    %-  some
+    :-  %a
+    %+  turn
+      %+  sort  ~(tap by sessions:auth-state:v-eyre)
+      |=  [[@uv a=@da] [@uv b=@da]]
+      (gth a b)
+    |=  [cookie=@uv session:eyre]
+    %-  pairs
+    :~  'cookie'^s+(end 3 4 (rsh 3 2 (scot %x (shax cookie))))
+        'expiry'^(time expiry-time)
+    ==
+  ::
+    ::  /eyre/channels.json
+    ::
+      [%eyre %channels ~]
+    %-  some
+    :-  %a
+    =+  channel-state:v-eyre
+    %+  turn  ~(tap by session)
+    |=  [key=@t channel:eyre]
+    %-  pairs
+    :~  'session'^s+key
+        'connected'^b+!-.state
+        'expiry'^?-(-.state %& (time date.p.state), %| ~)
+        'next-id'^(numb next-id)
+        'unacked'^a+(turn (sort (turn ~(tap in events) head) dor) numb)
+      ::
+        :-  'subscriptions'
+        :-  %a
+        %+  turn  ~(tap by subscriptions)
+        |=  [=wire [=^ship app=term =^path *]]
+        %-  pairs
+        :~  'wire'^(^path wire)
+            'ship'^(^ship ship)
+            'app'^s+app
+            'path'^(^path path)
         ==
     ==
   ==
@@ -784,10 +861,28 @@
 ::  eyre
 ::
 ++  v-eyre
+  =,  eyre
   |%
   ++  bindings
-    =,  eyre
     (scry ,(list [=binding =duct =action]) %e %bindings ~)
+  ::
+  ++  connections
+    (scry ,(map duct outstanding-connection) %e %connections ~)
+  ::
+  ++  auth-state
+    (scry authentication-state %e %authentication-state ~)
+  ::
+  ++  channel-state
+    (scry ^channel-state %e %channel-state ~)
+  ::
+  ++  render-action
+    |=  =action
+    ^-  json
+    :-  %s
+    ?+  -.action  -.action
+      %gen  :((cury cat 3) '+' (spat [desk path]:generator.action))
+      %app  (cat 3 ':' app.action)
+    ==
   --
 ::
 ::  helpers

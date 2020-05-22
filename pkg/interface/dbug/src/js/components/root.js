@@ -98,7 +98,13 @@ export class Root extends Component {
           render={(props) => {
             return (
               <Skeleton status={state.status} selected="eyre">
-                <Eyre bindings={state.bindings} {...props}/>
+                <Eyre
+                  bindings={state.bindings}
+                  connections={state.connections}
+                  authentication={state.authentication}
+                  channels={state.channels}
+                  {...props}
+                />
               </Skeleton>
             );
           }}

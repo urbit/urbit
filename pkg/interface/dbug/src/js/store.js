@@ -11,6 +11,9 @@ class Store {
       timers: [],
       commits: [],
       bindings: [],
+      connections: [],
+      authentication: [],
+      channels: [],
       sidebarShown: true
     };
 

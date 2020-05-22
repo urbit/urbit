@@ -3,6 +3,7 @@ import { Route, Link } from 'react-router-dom';
 import { msToDa, renderDuct } from '../lib/util';
 import urbitOb from 'urbit-ob';
 import { SearchableList } from '../components/searchable-list';
+import { Summary } from '../components/summary';
 
 export class Eyre extends Component {
 
@@ -11,13 +12,17 @@ export class Eyre extends Component {
     this.state = {};
 
     this.loadBindings = this.loadBindings.bind(this);
+    this.loadConnections = this.loadConnections.bind(this);
+    this.loadAuthenticationState = this.loadAuthenticationState.bind(this);
+    this.loadChannels = this.loadChannels.bind(this);
   }
 
   componentDidMount() {
-    const { bindings } = this.props;
-    if (bindings.length === 0) {
-      this.loadBindings();
-    }
+    const { props } = this;
+    if (props.bindings.length === 0)      this.loadBindings();
+    if (props.connections.length == 0)    this.loadConnections();
+    if (props.authentication.length == 0) this.loadAuthenticationState();
+    if (props.channels.length == 0)       this.loadChannels();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -29,12 +34,23 @@ export class Eyre extends Component {
     api.getBindings();
   }
 
+  loadConnections() {
+    api.getConnections();
+  }
+
+  loadAuthenticationState() {
+    api.getAuthenticationState();
+  }
+
+  loadChannels() {
+    api.getChannels();
+  }
+
   //TODO use classes for styling?
   render() {
     const { props, state } = this;
 
-    const items = props.bindings.map(binding => {
-
+    const bindingItems = props.bindings.map(binding => {
       return {key: binding.location + ' ' + binding.action, jsx: (<div class="flex">
         <div class="flex-auto" style={{maxWidth: '50%'}}>
           {binding.location}
@@ -45,12 +61,114 @@ export class Eyre extends Component {
       </div>)};
     });
 
-    return (
-      <table><tbody>
-        <SearchableList placeholder="binding" items={items}>
-          <button onClick={this.loadBindings}>refresh</button>
-        </SearchableList>
-      </tbody></table>
-    );
+    const connectionItems = props.connections.map(c => {
+      return {key: c.duct + ' ' + c.action, jsx: (
+        <table style={{borderBottom: '1px solid black'}}><tbody>
+          <tr>
+            <td class="inter">duct</td>
+            <td>{c.duct}</td>
+          </tr>
+          <tr>
+            <td class="inter">binding</td>
+            <td>{c.action}</td>
+          </tr>
+          <tr>
+            <td class="inter">request</td>
+            <td>
+              from {c.request.source},
+              {c.request.authenticated ? ' ' : ' un'}authenticated and
+              {c.request.secure ? ' ' : ' in'}secure
+            </td>
+          </tr>
+          <tr>
+            <td class="inter">response</td>
+            <td>
+              sent {c.response.sent} bytes.<br/>
+              {!c.response.header ? null : <>
+                status {c.response.header['status-code']}<br/>
+                {c.response.header.headers.reduce((a, b) => a + b + ', ', '')}
+              </>}
+            </td>
+          </tr>
+        </tbody></table>
+      )};
+    });
+
+    const channelItems = props.channels.map(c => {
+      const summary = (<>
+        {c.session}
+        <table style={{borderBottom: '1px solid black'}}><tbody>
+          <tr>
+            <td class="inter">connected?</td>
+            <td>{c.connected
+              ? 'connected'
+              : 'disconnected, expires ' + msToDa(c.expiry)
+            }</td>
+          </tr>
+          <tr>
+            <td class="inter">next-id</td>
+            <td>{c['next-id']}</td>
+          </tr>
+          <tr>
+            <td class="inter">unacked</td>
+            <td>{c.unacked.reduce((a, b) => a + b + ', ', '')}</td>
+          </tr>
+        </tbody></table>
+      </>);
+      const subscriptionItems = c.subscriptions.map(s => {
+        //NOTE jsx sorta copied from /components/subscriptions
+        return {key: `${s.wire} ${s.app} ${s.ship} ${s.path}`, jsx: (
+          <div class="flex">
+            <div class="flex-auto" style={{maxWidth: '35%'}}>
+              {s.wire}
+            </div>
+            <div class="flex-auto" style={{maxWidth: '15%'}}>
+              ~{s.ship}
+            </div>
+            <div class="flex-auto" style={{maxWidth: '15%'}}>
+              {s.app}
+            </div>
+            <div class="flex-auto" style={{maxWidth: '35%'}}>
+              {s.path}
+            </div>
+          </div>
+        )};
+      });
+      return {key: c.session, jsx: (
+        <Summary summary={summary} details={(
+          <SearchableList
+            placeholder="wire, app, ship, path"
+            items={subscriptionItems}
+          />
+        )} />
+      )};
+    });
+
+    const sessionItems = props.authentication.map(s => {
+      return (<div>
+        {`${s.cookie} expires ${msToDa(s.expiry)}`}
+      </div>);
+    });
+
+    return (<>
+      <h4>Bindings</h4>
+      <SearchableList placeholder="binding" items={bindingItems}>
+        <button onClick={this.loadBindings}>refresh</button>
+      </SearchableList>
+
+      <h4>Connections</h4>
+      <SearchableList placeholder="duct, binding" items={connectionItems}>
+        <button onClick={this.loadConnections}>refresh</button>
+      </SearchableList>
+
+      <h4>Channels</h4>
+      <SearchableList placeholder="session id" items={channelItems}>
+        <button onClick={this.loadChannels}>refresh</button>
+      </SearchableList>
+
+      <h4>Cookies</h4>
+      <button onClick={this.loadAuthenticationState}>refresh</button>
+      {sessionItems}
+    </>);
   }
 }
