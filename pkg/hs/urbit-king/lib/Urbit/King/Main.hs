@@ -93,7 +93,6 @@ import System.Process         (system)
 import Text.Show.Pretty       (pPrint)
 import Urbit.King.App         (KingEnv, PierEnv)
 import Urbit.King.App         (runKingEnvLogFile, runKingEnvStderr, runPierEnv)
-import Urbit.King.App         (HasStderrLogFunc(..))
 import Urbit.Noun.Conversions (cordToUW)
 import Urbit.Time             (Wen)
 import Urbit.Vere.LockFile    (lockFile)
@@ -190,7 +189,7 @@ tryBootFromPill oExit pill lite flags ship boot multi = do
         pure sls
 
 runOrExitImmediately
-  :: RAcquire PierEnv (Serf PierEnv, Log.EventLog, SerfState)
+  :: RAcquire PierEnv (Serf, Log.EventLog, SerfState)
   -> Bool
   -> MVar ()
   -> MultiEyreApi
@@ -221,27 +220,27 @@ tryPlayShip
   -> MultiEyreApi
   -> RIO PierEnv ()
 tryPlayShip exitImmediately fullReplay playFrom flags mStart multi = do
-    when fullReplay wipeSnapshot
-    runOrExitImmediately resumeShip exitImmediately mStart multi
-  where
-    wipeSnapshot = do
-        shipPath <- view pierPathL
-        logTrace "wipeSnapshot"
-        logDebug $ display $ pack @Text ("Wiping " <> north shipPath)
-        logDebug $ display $ pack @Text ("Wiping " <> south shipPath)
-        removeFileIfExists (north shipPath)
-        removeFileIfExists (south shipPath)
+  when fullReplay wipeSnapshot
+  runOrExitImmediately resumeShip exitImmediately mStart multi
+ where
+  wipeSnapshot = do
+    shipPath <- view pierPathL
+    logTrace "wipeSnapshot"
+    logDebug $ display $ pack @Text ("Wiping " <> north shipPath)
+    logDebug $ display $ pack @Text ("Wiping " <> south shipPath)
+    removeFileIfExists (north shipPath)
+    removeFileIfExists (south shipPath)
 
-    north shipPath = shipPath <> "/.urb/chk/north.bin"
-    south shipPath = shipPath <> "/.urb/chk/south.bin"
+  north shipPath = shipPath <> "/.urb/chk/north.bin"
+  south shipPath = shipPath <> "/.urb/chk/south.bin"
 
-    resumeShip :: RAcquire PierEnv (Serf PierEnv, Log.EventLog, SerfState)
-    resumeShip = do
-        view pierPathL >>= lockFile
-        rio $ logTrace "RESUMING SHIP"
-        sls <- Pier.resumed playFrom flags
-        rio $ logTrace "SHIP RESUMED"
-        pure sls
+  resumeShip :: RAcquire PierEnv (Serf, Log.EventLog, SerfState)
+  resumeShip = do
+    view pierPathL >>= lockFile
+    rio $ logTrace "RESUMING SHIP"
+    sls <- Pier.resumed playFrom flags
+    rio $ logTrace "SHIP RESUMED"
+    pure sls
 
 runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
@@ -249,45 +248,51 @@ runRAcquire act = rwith act pure
 
 --------------------------------------------------------------------------------
 
-checkEvs :: forall e. HasLogFunc e => FilePath -> Word64 -> Word64 -> RIO e ()
+checkEvs :: FilePath -> Word64 -> Word64 -> RIO KingEnv ()
 checkEvs pierPath first last = do
-    rwith (Log.existing logPath) $ \log -> do
-        let ident = Log.identity log
-        let pbSty = PB.defStyle { PB.stylePostfix = PB.exact }
-        logTrace (displayShow ident)
+  rwith (Log.existing logPath) $ \log -> do
+    let ident = Log.identity log
+    let pbSty = PB.defStyle { PB.stylePostfix = PB.exact }
+    logTrace (displayShow ident)
 
-        last <- Log.lastEv log <&> \lastReal -> min last lastReal
+    last <- Log.lastEv log <&> \lastReal -> min last lastReal
 
-        let evCount = fromIntegral (last - first)
+    let evCount = fromIntegral (last - first)
 
-        pb <- PB.newProgressBar pbSty 10 (PB.Progress 1 evCount ())
+    pb <- PB.newProgressBar pbSty 10 (PB.Progress 1 evCount ())
 
-        runConduit $ Log.streamEvents log first
-                  .| showEvents pb first (fromIntegral $ lifecycleLen ident)
-  where
-    logPath :: FilePath
-    logPath = pierPath <> "/.urb/log"
+    runConduit $ Log.streamEvents log first .| showEvents
+      pb
+      first
+      (fromIntegral $ lifecycleLen ident)
+ where
+  logPath :: FilePath
+  logPath = pierPath <> "/.urb/log"
 
-    showEvents :: PB.ProgressBar () -> EventId -> EventId
-               -> ConduitT ByteString Void (RIO e) ()
-    showEvents pb eId _ | eId > last = pure ()
-    showEvents pb eId cycle          = await >>= \case
-        Nothing -> do
-            lift $ PB.killProgressBar pb
-            lift $ logTrace "Everything checks out."
-        Just bs -> do
-            lift $ PB.incProgress pb 1
-            lift $ do
-                n <- io $ cueBSExn bs
-                when (eId > cycle) $ do
-                    (mug, wen, evNoun) <- unpackJob n
-                    fromNounErr evNoun & \case
-                        Left err       -> logError (displayShow (eId, err))
-                        Right (_ ∷ Ev) -> pure ()
-            showEvents pb (succ eId) cycle
+  showEvents
+    :: PB.ProgressBar ()
+    -> EventId
+    -> EventId
+    -> ConduitT ByteString Void (RIO KingEnv) ()
+  showEvents pb eId _ | eId > last = pure ()
+  showEvents pb eId cycle          = await >>= \case
+    Nothing -> do
+      lift $ PB.killProgressBar pb
+      lift $ logTrace "Everything checks out."
+    Just bs -> do
+      lift $ PB.incProgress pb 1
+      lift $ do
+        n <- io $ cueBSExn bs
+        when (eId > cycle) $ do
+          (mug, wen, evNoun) <- unpackJob n
+          fromNounErr evNoun & \case
+            Left  err       -> logError (displayShow (eId, err))
+            Right (_ :: Ev) -> pure ()
+      showEvents pb (succ eId) cycle
 
-    unpackJob :: Noun -> RIO e (Mug, Wen, Noun)
-    unpackJob = io . fromNounExn
+  unpackJob :: Noun -> RIO KingEnv (Mug, Wen, Noun)
+  unpackJob = io . fromNounExn
+
 
 --------------------------------------------------------------------------------
 
@@ -296,7 +301,7 @@ checkEvs pierPath first last = do
     so this should never actually be created. We just do this to avoid
     letting the serf use an existing snapshot.
 -}
-collectAllFx :: ∀e. HasLogFunc e => FilePath -> RIO e ()
+collectAllFx :: FilePath -> RIO KingEnv ()
 collectAllFx top = do
     logTrace $ display $ pack @Text top
     rwith collectedFX $ \() ->
@@ -305,7 +310,7 @@ collectAllFx top = do
     tmpDir :: FilePath
     tmpDir = top </> ".tmpdir"
 
-    collectedFX :: RAcquire e ()
+    collectedFX :: RAcquire KingEnv ()
     collectedFX = do
         lockFile top
         log  <- Log.existing (top <> "/.urb/log")
@@ -317,15 +322,14 @@ collectAllFx top = do
 
 --------------------------------------------------------------------------------
 
-replayPartEvs :: ∀e. (HasStderrLogFunc e, HasLogFunc e)
-              => FilePath -> Word64 -> RIO e ()
+replayPartEvs :: FilePath -> Word64 -> RIO KingEnv ()
 replayPartEvs top last = do
     logTrace $ display $ pack @Text top
     fetchSnapshot
     rwith replayedEvs $ \() ->
         logTrace "Done replaying events!"
   where
-    fetchSnapshot :: RIO e ()
+    fetchSnapshot :: RIO KingEnv ()
     fetchSnapshot = do
       snap <- Pier.getSnapshot top last
       case snap of
@@ -337,7 +341,7 @@ replayPartEvs top last = do
     tmpDir :: FilePath
     tmpDir = top </> ".partial-replay" </> show last
 
-    replayedEvs :: RAcquire e ()
+    replayedEvs :: RAcquire KingEnv ()
     replayedEvs = do
         lockFile top
         log  <- Log.existing (top <> "/.urb/log")

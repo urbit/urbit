@@ -26,7 +26,7 @@ import Foreign.Marshal.Alloc  (alloca)
 import Foreign.Ptr            (castPtr)
 import Foreign.Storable       (peek, poke)
 import System.Exit            (ExitCode)
-import Urbit.King.App         (HasStderrLogFunc(..))
+import Urbit.King.App         (HasStderrLogFunc(..), HasKingEnv(..))
 
 import qualified Data.ByteString.Unsafe   as BS
 import qualified Data.Conduit.Combinators as CC
@@ -75,11 +75,11 @@ data SerfState = SerfState
 ssLastEv :: SerfState -> EventId
 ssLastEv = pred . ssNextEv
 
-data Serf e = Serf
+data Serf = Serf
   { sendHandle :: Handle
   , recvHandle :: Handle
   , process    :: ProcessHandle
-  , sStderr    :: MVar (Text -> RIO e ())
+  , sStderr    :: MVar (Text -> IO ())
   }
 
 data ShipId = ShipId Ship Bool
@@ -123,7 +123,7 @@ deriveNoun ''Plea
 -- Utils -----------------------------------------------------------------------
 
 printTank :: HasLogFunc e
-          => MVar (Text -> RIO e ()) -> Word32 -> Tank
+          => MVar (Text -> IO ()) -> Word32 -> Tank
           -> RIO e ()
 printTank log _pri = printErr log . unlines . fmap unTape . wash (WashCfg 0 80)
 
@@ -134,18 +134,18 @@ fromRightExn :: (Exception e, MonadIO m) => Either a b -> (a -> e) -> m b
 fromRightExn (Left m)  exn = throwIO (exn m)
 fromRightExn (Right x) _   = pure x
 
-printErr :: MVar (Text -> RIO e ()) -> Text -> RIO e ()
+printErr :: MVar (Text -> IO ()) -> Text -> RIO e ()
 printErr m txt = do
   f <- readMVar m
-  f txt
+  io (f txt)
 
 
 -- Process Management ----------------------------------------------------------
 
-run :: HasLogFunc e => Config -> RAcquire e (Serf e)
+run :: HasKingEnv e => Config -> RAcquire e Serf
 run config = mkRAcquire (startUp config) tearDown
 
-startUp :: HasLogFunc e => Config -> RIO e (Serf e)
+startUp :: HasKingEnv e => Config -> RIO e Serf
 startUp conf@(Config pierPath flags) = do
     logTrace "STARTING SERF"
     logTrace (displayShow conf)
@@ -154,7 +154,8 @@ startUp conf@(Config pierPath flags) = do
         (Just i, Just o, Just e, p) <- createProcess pSpec
         pure (i, o, e, p)
 
-    stderr <- newMVar serf
+    env <- ask
+    stderr <- newMVar (\t -> runRIO env (serf t))
     async (readStdErr e stderr)
     pure (Serf i o p stderr)
   where
@@ -167,7 +168,7 @@ startUp conf@(Config pierPath flags) = do
                 , std_err = CreatePipe
                 }
 
-readStdErr :: ∀e. HasLogFunc e => Handle -> MVar (Text -> RIO e ()) -> RIO e ()
+readStdErr :: ∀e. HasKingEnv e => Handle -> MVar (Text -> IO ()) -> RIO e ()
 readStdErr h print =
     untilEOFExn $ do
         raw <- io $ IO.hGetLine h
@@ -189,7 +190,7 @@ readStdErr h print =
                 Left exn                     -> io (IO.ioError exn)
                 Right ()                     -> loop
 
-tearDown :: HasLogFunc e => Serf e -> RIO e ()
+tearDown :: HasKingEnv e => Serf -> RIO e ()
 tearDown serf = do
     io $ terminateProcess (process serf)
     void $ waitForExit serf
@@ -204,13 +205,13 @@ tearDown serf = do
         -- debug killedMsg
         -- terminateProcess (process serf)
 
-waitForExit :: HasLogFunc e => Serf e -> RIO e ExitCode
+waitForExit :: HasKingEnv e => Serf -> RIO e ExitCode
 waitForExit = io . waitForProcess . process
 
-kill :: HasLogFunc e => Serf e -> RIO e ExitCode
+kill :: HasKingEnv e => Serf -> RIO e ExitCode
 kill serf = io (terminateProcess $ process serf) >> waitForExit serf
 
-_shutdownAndWait :: HasLogFunc e => Serf e -> Word8 -> RIO e ExitCode
+_shutdownAndWait :: HasKingEnv e => Serf -> Word8 -> RIO e ExitCode
 _shutdownAndWait serf code = do
     shutdown serf code
     waitForExit serf
@@ -226,18 +227,18 @@ withWord64AsByteString w k = do
         bs <- BS.unsafePackCStringLen (castPtr wp, 8)
         runRIO env (k bs)
 
-sendLen :: HasLogFunc e => Serf e -> Int -> RIO e ()
+sendLen :: HasLogFunc e => Serf -> Int -> RIO e ()
 sendLen s i = do
   w <- evaluate (fromIntegral i :: Word64)
   withWord64AsByteString (fromIntegral i) (hPut (sendHandle s))
 
-sendOrder :: HasLogFunc e => Serf e -> Order -> RIO e ()
+sendOrder :: HasLogFunc e => Serf -> Order -> RIO e ()
 sendOrder w o = do
   -- logDebug $ display ("(sendOrder) " <> tshow o)
   sendBytes w $ jamBS $ toNoun o
   -- logDebug "(sendOrder) Done"
 
-sendBytes :: HasLogFunc e => Serf e -> ByteString -> RIO e ()
+sendBytes :: HasLogFunc e => Serf -> ByteString -> RIO e ()
 sendBytes s bs = handle ioErr $ do
     sendLen s (length bs)
     hPut (sendHandle s) bs
@@ -247,18 +248,18 @@ sendBytes s bs = handle ioErr $ do
     ioErr :: IOError -> RIO e ()
     ioErr _ = throwIO SerfConnectionClosed
 
-recvLen :: (MonadIO m, HasLogFunc e) => Serf e -> m Word64
-recvLen w = io $ do
+recvLen ::  Serf -> IO Word64
+recvLen w = do
   bs <- hGet (recvHandle w) 8
   case length bs of
     8 -> unsafeUseAsCString bs (peek . castPtr)
     _ -> throwIO SerfConnectionClosed
 
-recvBytes :: HasLogFunc e => Serf e -> Word64 -> RIO e ByteString
+recvBytes :: Serf -> Word64 -> IO ByteString
 recvBytes serf =
-  io . hGet (recvHandle serf) . fromIntegral
+  hGet (recvHandle serf) . fromIntegral
 
-recvAtom :: HasLogFunc e => Serf e -> RIO e Atom
+recvAtom :: Serf -> IO Atom
 recvAtom w = do
     len <- recvLen w
     bytesAtom <$> recvBytes w len
@@ -269,21 +270,21 @@ cordText = T.strip . unCord
 
 --------------------------------------------------------------------------------
 
-snapshot :: HasLogFunc e => Serf e -> SerfState -> RIO e ()
+snapshot :: HasLogFunc e => Serf -> SerfState -> RIO e ()
 snapshot serf ss = do
     logTrace $ display ("Taking snapshot at event " <> tshow (ssLastEv ss))
     sendOrder serf $ OSave $ ssLastEv ss
 
-shutdown :: HasLogFunc e => Serf e -> Word8 -> RIO e ()
+shutdown :: HasLogFunc e => Serf -> Word8 -> RIO e ()
 shutdown serf code = sendOrder serf (OExit code)
 
 {-|
     TODO Find a cleaner way to handle `PStdr` Pleas.
 -}
-recvPlea :: HasLogFunc e => Serf e -> RIO e Plea
+recvPlea :: HasLogFunc e => Serf -> RIO e Plea
 recvPlea w = do
   logDebug "(recvPlea) Waiting"
-  a <- recvAtom w
+  a <- io (recvAtom w)
   logDebug "(recvPlea) Got atom"
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun n p m)
@@ -298,7 +299,7 @@ recvPlea w = do
 {-|
     Waits for initial plea, and then sends boot IPC if necessary.
 -}
-handshake :: HasLogFunc e => Serf e -> LogIdentity -> RIO e SerfState
+handshake :: HasLogFunc e => Serf -> LogIdentity -> RIO e SerfState
 handshake serf ident = do
     logTrace "Serf Handshake"
 
@@ -317,7 +318,7 @@ handshake serf ident = do
 
     pure ss
 
-sendWork :: ∀e. HasLogFunc e => Serf e -> Job -> RIO e SerfResp
+sendWork :: ∀e. HasKingEnv e => Serf -> Job -> RIO e SerfResp
 sendWork w job =
   do
     sendOrder w (OWork job)
@@ -348,19 +349,19 @@ sendWork w job =
 
 --------------------------------------------------------------------------------
 
-doJob :: HasLogFunc e => Serf e -> Job -> RIO e (Job, SerfState, FX)
+doJob :: HasKingEnv e => Serf -> Job -> RIO e (Job, SerfState, FX)
 doJob serf job = do
     sendWork serf job >>= \case
         Left replaced  -> doJob serf replaced
         Right (ss, fx) -> pure (job, ss, fx)
 
-bootJob :: HasLogFunc e => Serf e -> Job -> RIO e (Job, SerfState)
+bootJob :: HasKingEnv e => Serf -> Job -> RIO e (Job, SerfState)
 bootJob serf job = do
     doJob serf job >>= \case
         (job, ss, _) -> pure (job, ss)
 --        (job, ss, fx) -> throwIO (EffectsDuringBoot (jobId job) fx)
 
-replayJob :: HasLogFunc e => Serf e -> Job -> RIO e SerfState
+replayJob :: HasKingEnv e => Serf -> Job -> RIO e SerfState
 replayJob serf job = do
     sendWork serf job >>= \case
         Left replace  -> throwIO (ReplacedEventDuringReplay (jobId job) replace)
@@ -368,7 +369,7 @@ replayJob serf job = do
 
 --------------------------------------------------------------------------------
 
-updateProgressBar :: HasLogFunc e
+updateProgressBar :: HasKingEnv e
                   => Int -> Text -> Maybe (ProgressBar ())
                   -> RIO e (Maybe (ProgressBar ()))
 updateProgressBar count startMsg = \case
@@ -391,49 +392,63 @@ data BootExn = ShipAlreadyBooted
   deriving stock    (Eq, Ord, Show)
   deriving anyclass (Exception)
 
-logStderr :: HasStderrLogFunc e => RIO LogFunc a -> RIO e a
+logStderr :: (HasLogFunc e, HasStderrLogFunc e) => RIO e a -> RIO e a
 logStderr action = do
-  logFunc <- view stderrLogFuncL
-  runRIO logFunc action
+  env <- ask
+  let env' = env & set logFuncL (env ^. stderrLogFuncL)
+  runRIO env' action
 
-bootFromSeq :: ∀e. (HasStderrLogFunc e, HasLogFunc e)
-            => Serf e -> BootSeq -> RIO e ([Job], SerfState)
+bootFromSeq
+  :: forall e
+   . HasKingEnv e
+  => Serf
+  -> BootSeq
+  -> RIO e ([Job], SerfState)
 bootFromSeq serf (BootSeq ident nocks ovums) = do
-    handshake serf ident >>= \case
-        ss@(SerfState 1 (Mug 0)) -> loop [] ss Nothing bootSeqFns
-        _                        -> throwIO ShipAlreadyBooted
+  handshake serf ident >>= \case
+    ss@(SerfState 1 (Mug 0)) -> loop [] ss Nothing bootSeqFns
+    _                        -> throwIO ShipAlreadyBooted
+ where
+  loop
+    :: [Job]
+    -> SerfState
+    -> Maybe (ProgressBar ())
+    -> [BootSeqFn]
+    -> RIO e ([Job], SerfState)
+  loop acc ss pb = \case
+    [] -> do
+      pb <- logStderr (updateProgressBar 0 bootMsg pb)
+      pure (reverse acc, ss)
+    x : xs -> do
+      wen       <- io Time.now
+      job       <- pure $ x (ssNextEv ss) (ssLastMug ss) wen
+      pb        <- logStderr (updateProgressBar (1 + length xs) bootMsg pb)
+      (job, ss) <- bootJob serf job
+      loop (job : acc) ss pb xs
 
-  where
-    loop :: [Job] -> SerfState -> Maybe (ProgressBar ()) -> [BootSeqFn]
-         -> RIO e ([Job], SerfState)
-    loop acc ss pb = \case
-        []   -> do
-          pb        <- logStderr (updateProgressBar 0 bootMsg pb)
-          pure (reverse acc, ss)
-        x:xs -> do
-          wen       <- io Time.now
-          job       <- pure $ x (ssNextEv ss) (ssLastMug ss) wen
-          pb        <- logStderr (updateProgressBar (1 + length xs) bootMsg pb)
-          (job, ss) <- bootJob serf job
-          loop (job:acc) ss pb xs
+  bootSeqFns :: [BootSeqFn]
+  bootSeqFns = fmap muckNock nocks <> fmap muckOvum ovums
+   where
+    muckNock nok eId mug _ = RunNok $ LifeCyc eId mug nok
+    muckOvum ov eId mug wen = DoWork $ Work eId mug wen ov
 
-    bootSeqFns :: [BootSeqFn]
-    bootSeqFns = fmap muckNock nocks <> fmap muckOvum ovums
-      where
-        muckNock nok eId mug _   = RunNok $ LifeCyc eId mug nok
-        muckOvum ov  eId mug wen = DoWork $ Work eId mug wen ov
-
-    bootMsg = "Booting " ++ (fakeStr (isFake ident)) ++
-              (Ob.renderPatp (Ob.patp (fromIntegral (who ident))))
-    fakeStr True  = "fake "
-    fakeStr False = ""
+  bootMsg =
+    "Booting "
+      ++ (fakeStr (isFake ident))
+      ++ (Ob.renderPatp (Ob.patp (fromIntegral (who ident))))
+  fakeStr True  = "fake "
+  fakeStr False = ""
 
 {-|
     The ship is booted, but it is behind. shove events to the worker
     until it is caught up.
 -}
-replayJobs :: (HasStderrLogFunc e, HasLogFunc e)
-           => Serf e -> Int -> SerfState -> ConduitT Job Void (RIO e) SerfState
+replayJobs
+  :: HasKingEnv e
+  => Serf
+  -> Int
+  -> SerfState
+  -> ConduitT Job Void (RIO e) SerfState
 replayJobs serf lastEv = go Nothing
   where
     go pb ss = do
@@ -452,8 +467,8 @@ replayJobs serf lastEv = go Nothing
         updateProgressBar start msg
 
 
-replay :: (HasStderrLogFunc e, HasLogFunc e)
-          => Serf e -> Log.EventLog -> Maybe Word64 -> RIO e SerfState
+replay
+  :: HasKingEnv e => Serf -> Log.EventLog -> Maybe Word64 -> RIO e SerfState
 replay serf log last = do
     logTrace "Beginning event log replay"
 
@@ -507,7 +522,7 @@ toJobs ident eId =
 
 -- Collect Effects for Parsing -------------------------------------------------
 
-collectFX :: HasLogFunc e => Serf e -> Log.EventLog -> RIO e ()
+collectFX :: HasKingEnv e => Serf -> Log.EventLog -> RIO e ()
 collectFX serf log = do
     ss <- handshake serf (Log.identity log)
 
@@ -525,8 +540,8 @@ persistFX log = loop
             lift $ Log.writeEffectsRow log eId (jamBS $ toNoun fx)
             loop
 
-doCollectFX :: ∀e. HasLogFunc e
-            => Serf e -> SerfState -> ConduitT Job (EventId, FX) (RIO e) ()
+doCollectFX :: ∀e. HasKingEnv e
+            => Serf -> SerfState -> ConduitT Job (EventId, FX) (RIO e) ()
 doCollectFX serf = go
   where
     go :: SerfState -> ConduitT Job (EventId, FX) (RIO e) ()

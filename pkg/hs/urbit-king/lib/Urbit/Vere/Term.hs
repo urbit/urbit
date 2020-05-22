@@ -26,7 +26,7 @@ import Urbit.Vere.Pier.Types
 import Data.List           ((!!))
 import RIO.Directory       (createDirectoryIfMissing)
 import Urbit.King.API      (readPortsFile)
-import Urbit.King.App      (HasKingId(..), HasConfigDir(..))
+import Urbit.King.App      (HasKingId(..), HasPierPath(..))
 import Urbit.Vere.Term.API (Client(Client))
 
 import qualified Data.ByteString.Internal as BS
@@ -138,7 +138,7 @@ connectToRemote port local = mkRAcquire start stop
 
 data HackConfigDir = HCD { _hcdPax :: FilePath }
 makeLenses ''HackConfigDir
-instance HasConfigDir HackConfigDir where configDirL = hcdPax
+instance HasPierPath HackConfigDir where pierPathL = hcdPax
 
 runTerminalClient :: ∀e. HasLogFunc e => FilePath -> RIO e ()
 runTerminalClient pier = runRAcquire $ do

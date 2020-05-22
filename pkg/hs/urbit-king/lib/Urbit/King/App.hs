@@ -8,10 +8,12 @@ module Urbit.King.App
   , runKingEnvNoLog
   , PierEnv
   , runPierEnv
-  , HasConfigDir(..)
   , HasStderrLogFunc(..)
   , HasKingId(..)
   , HasProcId(..)
+  , HasKingEnv(..)
+  , HasPierEnv(..)
+  , module Urbit.King.Config
   )
 where
 
@@ -23,23 +25,25 @@ import System.Posix.Internals (c_getpid)
 import System.Posix.Types     (CPid(..))
 import System.Random          (randomIO)
 
-
 -- Constraints -----------------------------------------------------------------
 
-class HasConfigDir a where
-  configDirL ∷ Lens' a FilePath
+
+
+-- KingEnv ---------------------------------------------------------------------
 
 class HasStderrLogFunc a where
   stderrLogFuncL :: Lens' a LogFunc
 
-class HasProcId a where
-  procIdL :: Lens' a Int32
-
 class HasKingId a where
   kingIdL :: Lens' a Word16
 
+class HasProcId a where
+  procIdL :: Lens' a Int32
 
--- KingEnv ---------------------------------------------------------------------
+class (HasLogFunc a, HasStderrLogFunc a, HasKingId a, HasProcId a)
+   => HasKingEnv a
+ where
+  kingEnvL :: Lens' a KingEnv
 
 data KingEnv = KingEnv
   { _kingEnvLogFunc       :: !LogFunc
@@ -49,6 +53,9 @@ data KingEnv = KingEnv
   }
 
 makeLenses ''KingEnv
+
+instance HasKingEnv KingEnv where
+  kingEnvL = id
 
 instance HasLogFunc KingEnv where
   logFuncL = kingEnvLogFunc
@@ -105,6 +112,9 @@ runKingEnv logFunc stderr action = do
 
 -- PierEnv ---------------------------------------------------------------------
 
+class (HasKingEnv a, HasPierConfig a, HasNetworkConfig a) => HasPierEnv a where
+  pierEnvL :: Lens' a PierEnv
+
 data PierEnv = PierEnv
   { _pierEnvKingEnv       :: !KingEnv
   , _pierEnvPierConfig    :: !PierConfig
@@ -113,11 +123,26 @@ data PierEnv = PierEnv
 
 makeLenses ''PierEnv
 
+instance HasKingEnv PierEnv where
+  kingEnvL = pierEnvKingEnv
+
+instance HasPierEnv PierEnv where
+  pierEnvL = id
+
+instance HasKingId PierEnv where
+  kingIdL = kingEnvL . kingEnvKingId
+
 instance HasStderrLogFunc PierEnv where
-  stderrLogFuncL = pierEnvKingEnv . stderrLogFuncL
+  stderrLogFuncL = kingEnvL . stderrLogFuncL
 
 instance HasLogFunc PierEnv where
-  logFuncL = pierEnvKingEnv . logFuncL
+  logFuncL = kingEnvL . logFuncL
+
+instance HasPierPath PierEnv where
+  pierPathL = pierEnvPierConfig . pierPathL
+
+instance HasDryRun PierEnv where
+  dryRunL = pierEnvPierConfig . dryRunL
 
 instance HasPierConfig PierEnv where
   pierConfigL = pierEnvPierConfig
@@ -125,14 +150,8 @@ instance HasPierConfig PierEnv where
 instance HasNetworkConfig PierEnv where
   networkConfigL = pierEnvNetworkConfig
 
-instance HasConfigDir PierEnv where
-  configDirL = pierEnvPierConfig . pcPierPath
-
 instance HasProcId PierEnv where
-  procIdL = pierEnvKingEnv . kingEnvProcId
-
-instance HasKingId PierEnv where
-  kingIdL = pierEnvKingEnv . kingEnvKingId
+  procIdL = kingEnvL . kingEnvProcId
 
 
 -- Running Pier Envs -----------------------------------------------------------
