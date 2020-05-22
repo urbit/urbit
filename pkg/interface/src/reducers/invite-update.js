@@ -1,14 +1,22 @@
 import _ from 'lodash';
 
-export default class InviteUpdateReducer {
+export default class InviteReducer {
   reduce(json, state) {
     const data = _.get(json, 'invite-update', false);
     if (data) {
+      this.initial(data, state);
       this.create(data, state);
       this.delete(data, state);
       this.invite(data, state);
       this.accepted(data, state);
       this.decline(data, state);
+    }
+  }
+
+  initial(json, state) {
+    const data = _.get(json, 'initial', false);
+    if (data) {
+      state.invites = data;
     }
   }
 

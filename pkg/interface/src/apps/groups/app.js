@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom';
 
 import Api from './api';
 import Subscription from './subscription';
-import Store from './store';
+import GroupsStore from '../../store/groups';
 
 import './css/custom.css';
 
@@ -17,7 +17,7 @@ import GroupDetail from './components/lib/group-detail';
 export default class GroupsApp extends Component {
   constructor(props) {
     super(props);
-    this.store = new Store();
+    this.store = new GroupsStore();
     this.store.setStateHandler(this.setState.bind(this));
 
     this.state = this.store.state;

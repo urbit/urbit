@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export default class S3Reducer {
+export default class S3Reducer{
   reduce(json, state) {
     const data = _.get(json, 's3-update', false);
     if (data) {

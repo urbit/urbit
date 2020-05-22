@@ -4,8 +4,8 @@ import _ from 'lodash';
 
 import './css/custom.css';
 
-import Api from './api';
-import Store from './store';
+import PublishApi from '../../api/publish';
+import PublishStore from '../../store/publish';
 import Subscription from './subscription';
 
 import { Skeleton } from './components/skeleton';
@@ -37,7 +37,7 @@ export default class PublishApp extends React.Component {
 
     this.store.clear();
     const channel = new this.props.channel();
-    this.api = new Api(this.props.ship, channel, this.store);
+    this.api = new PublishApi(this.props.ship, channel, this.store);
 
     this.subscription = new Subscription(this.store, this.api, channel);
     this.subscription.start();

@@ -1,4 +1,3 @@
-import InitialReducer from './reducers/initial';
 import InviteUpdateReducer from './reducers/invite-update';
 import MetadataReducer from './reducers/metadata-update';
 import LocalReducer from './reducers/local';
@@ -27,7 +26,6 @@ export default class Store {
   handleEvent(data) {
     let json = data.data;
 
-    this.initialReducer.reduce(json, this.state);
     this.inviteUpdateReducer.reduce(json, this.state);
     this.metadataReducer.reduce(json, this.state);
     this.localReducer.reduce(json, this.state);

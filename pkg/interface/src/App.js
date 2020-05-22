@@ -6,12 +6,12 @@ import './css/fonts.css';
 import { light } from '@tlon/indigo-react';
 
 import LaunchApp from './apps/launch/app';
-import ChatApp from './apps/chat/ChatApp';
-import DojoApp from './apps/dojo/DojoApp';
+import ChatApp from './apps/chat/app';
+import DojoApp from './apps/dojo/app';
 import StatusBar from './components/StatusBar';
-import GroupsApp from './apps/groups/GroupsApp';
-import LinksApp from './apps/links/LinksApp';
-import PublishApp from './apps/publish/PublishApp';
+import GroupsApp from './apps/groups/app';
+import LinksApp from './apps/links/app';
+import PublishApp from './apps/publish/app';
 
 import Store from './store';
 import Subscription from './subscription';

@@ -1,26 +1,24 @@
 import _ from 'lodash';
 
-export class ResponseReducer {
+export default class PublishResponseReducer {
   reduce(json, state) {
-    switch(json.type) {
+    const data = _.get(json, 'publish-response', false);
+    if (!data) { return; }
+    switch(data.type) {
       case "notebooks":
-        this.handleNotebooks(json, state);
+        this.handleNotebooks(data, state);
         break;
       case "notebook":
-        this.handleNotebook(json, state);
+        this.handleNotebook(data, state);
         break;
       case "note":
-        this.handleNote(json, state);
+        this.handleNote(data, state);
         break;
       case "notes-page":
-        this.handleNotesPage(json, state);
+        this.handleNotesPage(data, state);
         break;
       case "comments-page":
-        this.handleCommentsPage(json, state);
-        break;
-      case "local":
-        this.sidebarToggle(json, state);
-        this.setSelected(json, state);
+        this.handleCommentsPage(data, state);
         break;
       default:
         break;
@@ -201,13 +199,6 @@ export class ResponseReducer {
     let data = _.has(json.data, 'sidebarToggle', false);
     if (data) {
         state.sidebarShown = json.data.sidebarToggle;
-    }
-  }
-
-  setSelected(json, state) {
-    let data = _.has(json.data, 'selected', false);
-    if (data) {
-      state.selectedGroups = json.data.selected;
     }
   }
 

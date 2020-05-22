@@ -2,7 +2,7 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 
 import Api from './api';
-import Store from './store';
+import ChatStore from '../../store/chat';
 import Subscription from './subscription';
 
 import './css/custom.css';

@@ -1,57 +1,9 @@
-import _ from 'lodash';
+import BaseApi from './base';
 
-export default class Api {
-  constructor(ship, channel, store) {
-    this.ship = ship;
-    this.channel = channel;
-    this.store = store;
-    this.bindPaths = [];
-  }
 
-  bind(path, method, ship = this.ship, appl = 'publish', success, fail) {
-    this.bindPaths = _.uniq([...this.bindPaths, path]);
-
-   this.channel.subscribe(ship, appl, path,
-      (err) => {
-        fail(err);
-      },
-      (event) => {
-        success({
-          data: event,
-          from: {
-            ship,
-            path
-          }
-        });
-      },
-      (err) => {
-        fail(err);
-      }
-    );
-  }
-
-  action(appl, mark, data) {
-    return new Promise((resolve, reject) => {
-      this.channel.poke(this.ship, appl, mark, data,
-        (json) => {
-          resolve(json);
-        },
-        (err) => {
-          reject(err);
-        });
-    });
-  }
-
-  // TODO add error handling
-
-  handleErrors(response) {
-    if (!response.ok)
-throw Error(response.status);
-    return response;
-  }
-
+export default class PublishApi extends BaseApi {
   fetchNotebooks() {
-    fetch('/~publish/notebooks.json')
+    fetch('/publish-view/notebooks.json')
     .then(response => response.json())
     .then((json) => {
       this.store.handleEvent({
@@ -62,7 +14,7 @@ throw Error(response.status);
   }
 
   fetchNotebook(host, book) {
-    fetch(`/~publish/${host}/${book}.json`)
+    fetch(`/publish-view/${host}/${book}.json`)
     .then(response => response.json())
     .then((json) => {
       this.store.handleEvent({
@@ -75,7 +27,7 @@ throw Error(response.status);
   }
 
   fetchNote(host, book, note) {
-    fetch(`/~publish/${host}/${book}/${note}.json`)
+    fetch(`/publish-view/${host}/${book}/${note}.json`)
     .then(response => response.json())
     .then((json) => {
       this.store.handleEvent({
@@ -89,7 +41,7 @@ throw Error(response.status);
   }
 
   fetchNotesPage(host, book, start, length) {
-    fetch(`/~publish/notes/${host}/${book}/${start}/${length}.json`)
+    fetch(`/publish-view/notes/${host}/${book}/${start}/${length}.json`)
     .then(response => response.json())
     .then((json) => {
       this.store.handleEvent({
@@ -104,7 +56,7 @@ throw Error(response.status);
   }
 
   fetchCommentsPage(host, book, note, start, length) {
-    fetch(`/~publish/comments/${host}/${book}/${note}/${start}/${length}.json`)
+    fetch(`/publish-view/comments/${host}/${book}/${note}/${start}/${length}.json`)
     .then(response => response.json())
     .then((json) => {
       this.store.handleEvent({
@@ -131,13 +83,5 @@ throw Error(response.status);
       }
     });
   }
-
-  setSelected(selected) {
-    this.store.handleEvent({
-      type: 'local',
-      data: {
-        selected: selected
-      }
-    });
-  }
 }
+
