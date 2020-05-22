@@ -4,7 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 import _ from 'lodash';
 
 import Api from './api';
-import Store from './store';
+import LinksStore from '../../store/links';
 import Subscription from './subscription';
 
 import './css/custom.css';
@@ -21,7 +21,7 @@ import { makeRoutePath, amOwnerOfGroup, base64urlDecode } from '../../lib/util';
 export class LinksApp extends Component {
   constructor(props) {
     super(props);
-    this.store = new Store();
+    this.store = new LinksStore();
     this.store.setStateHandler(this.setState.bind(this));
 
     this.state = this.store.state;
