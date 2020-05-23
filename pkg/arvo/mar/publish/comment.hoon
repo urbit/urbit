@@ -35,7 +35,6 @@
         (key-val %creator ;~(pfix sig fed:ag))
         (key-val %collection sym)
         (key-val %post sym)
-        (key-val %title (cook crip (star prn)))
         (key-val %date-created ;~(pfix sig (cook year when:so)))
         (key-val %last-modified ;~(pfix sig (cook year when:so)))
         (cold ~ (jest '-----'))
