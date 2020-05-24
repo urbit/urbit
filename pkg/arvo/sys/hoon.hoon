@@ -5564,46 +5564,58 @@
 ::::  4h: parsing (ascii glyphs)
   ::
 ++  ace  (just ' ')
-++  ban  (just '>')
 ++  bar  (just '|')
-++  bas  (just '\\')  ::  XX deprecated
-++  bat  (just '\\')
-++  buc  (just '$')   ::  XX deprecated
-++  bus  (just '$')
+++  bas  (just '\\')
+++  buc  (just '$')
 ++  cab  (just '_')
 ++  cen  (just '%')
 ++  col  (just ':')
 ++  com  (just ',')
+++  doq  (just '"')
 ++  dot  (just '.')
-++  fas  (just '/')  ::  XX deprecated?
-++  gal  (just '<')   ::  XX deprecated
-++  gar  (just '>')   ::  XX deprecated
-++  vat  (just '@')   ::  pronounced "at"
+++  fas  (just '/')
+++  gal  (just '<')
+++  gar  (just '>')
 ++  hax  (just '#')
 ++  hep  (just '-')   ::  pronounced "ep"
+++  kel  (just '{')
+++  ker  (just '}')
 ++  ket  (just '^')
-++  leb  (just '{')
-++  led  (just '<')
-++  lob  (just '{')
-++  lit  (just '(')
-++  lac  (just '[')
 ++  lus  (just '+')
 ++  mic  (just ';')   ::  pronounced "mick"
-++  net  (just '/')
-++  pad  (just '&')
-++  rac  (just ']')
-++  reb  (just '}')
-++  rob  (just '}')
-++  rit  (just ')')
-++  say  (just '\'')
+++  pal  (just '(')
+++  pam  (just '&')
+++  par  (just ')')
+++  pat  (just '@')
+++  sel  (just '[')
+++  ser  (just ']')
 ++  sig  (just '~')
+++  soq  (just '\'')
 ++  tar  (just '*')
-++  tec  (just '`')
+++  tic  (just '`')
 ++  tis  (just '=')   ::  pronounced "is"
-++  toc  (just '"')   ::  XX deprecated
-++  yel  (just '"')
 ++  wut  (just '?')
 ++  zap  (just '!')
+::
+++  ban  (just '>')   ::  XX deprecated, use gar
+++  bat  (just '\\')  ::  XX deprecated, use bas
+++  bus  (just '$')   ::  XX deprecated, use buc
+++  lac  (just '[')   ::  XX deprecated, use sel
+++  leb  (just '{')   ::  XX deprecated, use kel
+++  led  (just '<')   ::  XX deprecated, use gal
+++  lit  (just '(')   ::  XX deprecated, use pal
+++  lob  (just '{')   ::  XX deprecated, use kel
+++  net  (just '/')   ::  XX deprecated, use fas
+++  pad  (just '&')   ::  XX deprecated, use pam
+++  rac  (just ']')   ::  XX deprecated, use ser
+++  reb  (just '}')   ::  XX deprecated, use ker
+++  rit  (just ')')   ::  XX deprecated, use par
+++  rob  (just '}')   ::  XX deprecated, use ker
+++  say  (just '\'')  ::  XX deprecated, use soq
+++  tec  (just '`')   ::  XX deprecated, use tic
+++  toc  (just '"')   ::  XX deprecated, use doq
+++  vat  (just '@')   ::  XX deprecated, use pat   ::  pronounced "at"
+++  yel  (just '"')   ::  XX deprecated, use doq
 ::
 ::::  4i: parsing (useful idioms)
   ::
