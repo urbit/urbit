@@ -406,13 +406,31 @@
     (send-diff %remove-group group-id ~)
   ::
   --
+
+++  merge-tags
+  |=  [=tag-queries ships=(set ship) tags=(set tag)]
+  ^+  tag-queries
+  =/  tags  ~(tap in tags)
+  |-
+  ?~  tags
+    tag-queries
+  =*  tag  i.tags
+  =/  current-query=(set ship)
+    (~(gut by tag-queries) tag ~)
+  %=    $
+    tags  t.tags
+  ::
+      tag-queries
+    %+  ~(put by tag-queries)
+      tag
+    (~(uni in current-query) ships)
+ ==
 ++  remove-tags
   |=  [=group ships=(set ship)]
-  ^-  tag-quries
+  ^-  tag-queries
   %-   malt
-  %+  spin
-      ~(tap by tag-queries.group)
-    tag-queries.group
+  %+  turn
+    ~(tap by tag-queries.group)
   |=  [=tag tagged=(set ship)]
   :-  tag
   (~(dif in tagged) ships)

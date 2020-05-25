@@ -1,12 +1,12 @@
 ::  contact-hook:
 ::
-/-  *group-store,
-    *group-hook,
+/-  group-hook,
     *contact-hook,
     *invite-store,
     *metadata-hook,
-    *metadata-store
-/+  *contact-json, default-agent, dbug
+    *metadata-store,
+    *group
+/+  *contact-json, default-agent, dbug, group-store, verb
 ~%  %contact-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -26,6 +26,7 @@
 =|  state-one
 =*  state  -
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -99,7 +100,7 @@
       ::
           %group-update
         =^  cards  state
-          (fact-group-update:cc wire !<(group-update q.cage.sign))
+          (fact-group-update:cc wire !<(update:group-store q.cage.sign))
         [cards this]
       ::
           %invite-update
@@ -146,7 +147,7 @@
   ?.  |(=(shp our.bol) =(src.bol ship))  ~
   ::  scry group to check if ship is a member
   =/  =group  (need (group-scry path))
-  ?.  (~(has in group) shp)  ~
+  ?.  (~(has in members.group) shp)  ~
   [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]~
 ::
 ++  poke-hook-action
@@ -206,7 +207,7 @@
   ?>  (~(has by synced) pax)
   ::  scry groups to check if ship is a member
   =/  =group  (need (group-scry pax))
-  ?>  (~(has in group) src.bol)
+  ?>  (~(has in members.group) src.bol)
   =/  contacts  (need (contacts-scry pax))
   [%give %fact ~ %contact-update !>([%contacts pax contacts])]~
 ::
@@ -268,17 +269,9 @@
       :_  state
       (give-fact path.fact [%edit path.fact ship.fact edit-field.fact])
     ::
-        %remove
-      :_  state
-      ~[(group-poke [%remove [ship.fact ~ ~] path.fact])]
-    ::
         %delete
       =.  synced  (~(del by synced) path.fact)
-      :_  state
-      :~  (group-poke [%unbundle path.fact])
-          (metadata-hook-poke [%remove path.fact]) 
-          (metadata-poke [%remove path.fact [%contacts path.fact]])
-      ==
+      `state
     ==
   ::
   ++  foreign
@@ -331,12 +324,7 @@
       =/  owner  (~(get by synced) path.fact)
       ?~  owner  ~
       ?>  |(=(u.owner src.bol) =(src.bol ship.fact))
-      %+  welp
-        :~  (group-poke [%remove [ship.fact ~ ~] path.fact])
-            (contact-poke [%remove path.fact ship.fact])
-        ==
-      ?.  =(ship.fact our.bol)  ~
-      ~[(group-poke [%unbundle path.fact])]
+      ~[(contact-poke [%remove path.fact ship.fact])]
     ::
         %edit
       =/  owner  (~(got by synced) path.fact)
@@ -346,17 +334,20 @@
   --
 ::
 ++  fact-group-update
-  |=  [wir=wire fact=group-update]
+  |=  [wir=wire fact=update:group-store]
   ^-  (quip card _state)
   |^
   ?+  -.fact     [~ state]
-      %add       (add +.fact)
-      %remove    (remove +.fact)
-      %unbundle  (unbundle +.fact)
+      %add-members     (add-members +.fact)
+      %initial-group   (initial-group +.fact)
+      %remove-members    (remove +.fact)
+      %remove-group  (unbundle +.fact)
   ==
-  ++  add
-    |=  [ships=(set ship) =path]
+  ++  add-members
+    |=  [=group-id ships=(set ship) tags=(set term)]
     ^-  (quip card _state)
+    =/  =path
+      (group-id:en-path:group-store group-id)
     =/  owner  (~(get by synced) path)
     ?~  owner  [~ state]
     ?.  =(u.owner our.bol)  [~ state]
@@ -365,9 +356,20 @@
     |=  =ship
     (send-invite-poke path ship)
   ::
-  ++  unbundle
-    |=  =path
+  ++  initial-group
+    |=  [=group-id =group]
     ^-  (quip card _state)
+    =/  =path
+      (group-id:en-path:group-store group-id)
+    ?:  (~(has by synced) path)
+      [~ state]
+    (poke-hook-action %add-synced ship.group-id path)
+  ::
+  ++  unbundle
+    |=  [=group-id ~]
+    ^-  (quip card _state)
+    =/  =path
+      (group-id:en-path:group-store group-id)
     ?.  (~(has by synced) path)
       :_  state
       [(contact-poke [%delete path])]~
@@ -377,18 +379,20 @@
     ==
   ::
   ++  remove
-    |=  [members=group =path]
+    |=  [=group-id ships=(set ship)]
     ^-  (quip card _state)
     ::  if pax is synced, remove member from contacts and kick their sub
+    =/  =path
+      (group-id:en-path:group-store group-id)
     =/  owner=(unit ship)  (~(get by synced) path)
     ?~  owner
       :_  state
-      %+  turn  ~(tap in members)
+      %+  turn  ~(tap in ships)
       |=  =ship
       (contact-poke [%remove path ship])
     :_  state
     %-  zing
-    %+  turn  ~(tap in members)
+    %+  turn  ~(tap in ships)
     |=  =ship
     :~  [%give %kick ~[[%contacts path]] `ship]
         ?:  =(ship our.bol)
@@ -414,9 +418,11 @@
       %accepted
     =/  changes
       (poke-hook-action [%add-synced ship.invite.fact path.invite.fact])
+    =/  =group-id
+      (need (group-id:de-path:group-store path.invite.fact))
     :-  
     %+  welp
-      :~  (group-hook-poke [%add ship.invite.fact path.invite.fact])
+      :~  (group-hook-poke %add group-id)
           (metadata-hook-poke [%add-synced ship.invite.fact path.invite.fact]) 
       ==
     -.changes
@@ -424,9 +430,9 @@
   ==
 ::
 ++  group-hook-poke
-  |=  act=group-hook-action
+  |=  =action:group-hook
   ^-  card
-  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
+  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(action)]
 ::
 ++  invite-poke
   |=  act=invite-action
@@ -439,7 +445,7 @@
   [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]
 ::
 ++  group-poke
-  |=  act=group-action
+  |=  act=action:group-store
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
 ::
@@ -469,7 +475,7 @@
 ++  group-scry
   |=  pax=path
   ^-  (unit group)
-  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
+  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) `path`[%groups pax] /noun))
 ::
 ++  pull-wire
   |=  pax=path

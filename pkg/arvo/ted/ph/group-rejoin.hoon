@@ -8,7 +8,7 @@
   ^-  form:m
   =*  loop  $
   ;<  [her=^ship =unix-effect]  bind:m  take-unix-effect
-  ?:  (is-dojo-output:util ship her unix-effect "{(trip agent)} started")
+  ?:  (is-dojo-output:util ship her unix-effect "activated app home/{(trip agent)}")
     (pure:m ~)
   loop
 ::
@@ -36,8 +36,7 @@
   =/  m  (strand:spider ,~)
   ^-  form:m
   ;<  ~  bind:m  (start-agent ship %group-store)
-  ;<  ~  bind:m  (start-agent ship %group-listen-hook)
-  ;<  ~  bind:m  (start-agent ship %group-proxy-hook)
+  ;<  ~  bind:m  (start-agent ship %group-hook)
   (pure:m ~)
 --
 =,  strand=strand:spider
@@ -47,17 +46,27 @@
 ;<  az=tid:spider
   bind:m  start-azimuth
 ;<  ~  bind:m  (spawn az ~bud)
+;<  ~  bind:m  (spawn az ~marbud)
 ;<  ~  bind:m  (spawn az ~zod)
+;<  ~  bind:m  (spawn az ~marzod)
 ;<  ~  bind:m  (real-ship az ~bud)
-;<  ~  bind:m  (wait-for-goad ~bud)
+;<  ~  bind:m  (real-ship az ~marbud)
+;<  ~  bind:m  (wait-for-goad ~marbud)
 ;<  ~  bind:m  (real-ship az ~zod)
-;<  ~  bind:m  (wait-for-goad ~zod)
-;<  ~  bind:m  (start-group-agents ~bud)
-;<  ~  bind:m  (start-group-agents ~zod)
-;<  ~  bind:m  (dojo ~bud ":group-store|create 'test-group'")
-;<  ~  bind:m  (wait-for-output ~bud ">=")
-;<  ~  bind:m  (dojo ~zod ":group-store|add ~bud 'test-group'")
-;<  ~  bind:m  (wait-for-output ~zod ">=")
-;<  ~  bind:m  (dojo ~zod ":group-listen-hook|add ~bud 'test-group'")
-;<  ~  bind:m  (wait-for-output ~zod ">=")
+;<  ~  bind:m  (real-ship az ~marzod)
+;<  ~  bind:m  (wait-for-goad ~marzod)
+;<  ~  bind:m  (start-group-agents ~marbud)
+;<  ~  bind:m  (start-group-agents ~marzod)
+;<  ~  bind:m  (dojo ~marbud ":group-store|create 'test-group'")
+;<  ~  bind:m  (wait-for-output ~marbud ">=")
+;<  ~  bind:m  (dojo ~marzod ":group-hook|add ~marbud 'test-group'")
+;<  ~  bind:m  (wait-for-output ~marzod ">=")
+;<  ~  bind:m  (sleep ~s1)
+;<  ~  bind:m  (breach-and-hear az ~marzod ~marbud)
+;<  ~  bind:m  (real-ship az ~marzod)
+;<  ~  bind:m  (wait-for-goad ~marzod)
+;<  ~  bind:m  (start-group-agents ~marzod)
+;<  ~  bind:m  (dojo ~marzod ":group-hook|add ~marbud 'test-group'")
+;<  ~  bind:m  (sleep ~s3)
+;<  ~  bind:m  end-azimuth
 (pure:m *vase)

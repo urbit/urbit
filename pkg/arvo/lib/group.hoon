@@ -20,7 +20,12 @@
 ++  scry-group
   |=  =group-id
   %-  scry-group-path
-  (group-id:en-path group-id)
+  (group-id:en-path:store group-id)
+::
+++  members
+  |=  =group-id
+  %-  members-from-path
+  (group-id:en-path:store group-id)
 ::
 ++  members-from-path
   |=  =group-path
@@ -58,12 +63,36 @@
   ?:  (~(has in members.group) ship)
     `%member
   ~
-++  can-join
+++  can-join-from-path
   |=  [=path =ship]
   %+  scry-for
     ?
   %+  welp
     [%groups path]
   /join/[(scot %p ship)]
+::
+++  can-join
+  |=  [=group-id =ship]
+  =-  ~&  -  -
+  %+  can-join-from-path
+    (group-id:en-path:store group-id)
+  ship
+++  is-managed-path
+  |=  =path
+  =/  contact
+    .^  (unit *)
+      %gx
+      (scot %p our.bowl)
+      %contact-store
+      (scot %da now.bowl)
+      (snoc `^path`[%contacts path] %noun)
+    ==
+  ?~  contact
+    %.n
+  %.y
+++  is-managed
+  |=  =group-id
+  %-  is-managed-path
+  (group-id:en-path:store group-id)
 
 --

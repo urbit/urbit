@@ -25,7 +25,7 @@
 ::    %member: Ordinary member, this tag is implied if the user is not in any
 ::    of the other roles
 +$  role-tag
-  ?(%admin %moderator %janitor %members)
+  ?(%admin %moderator %janitor %member)
 ::  $tag-queries: a mapping from a $tag to the members it identifies
 ::
 +$  tag-queries  (jug tag ship)

@@ -1,9 +1,15 @@
-/-  *contact-store
+/-  *contact-store, *group
 |%
 +$  contact-view-action
   $%  ::  %create: create in both groups and contacts
       ::
-      [%create =path ships=(set ship) title=@t description=@t]
+      [%create name=term =policy title=@t description=@t]
+      ::  %join: join open group in both groups and contacts
+      ::
+      [%join =group-id]
+      ::  %invite: invite to invite-only group and contacts
+      ::
+      [%invite =group-id =ship text=cord]
       ::  %remove: remove from both groups and contacts
       ::
       [%remove =path =ship]

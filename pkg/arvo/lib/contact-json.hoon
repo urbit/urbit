@@ -1,5 +1,5 @@
 /-  *contact-view, *contact-hook
-/+  base64
+/+  base64, group-store
 |%
 ++  nu                                              ::  parse number as hex
   |=  jon/json
@@ -128,16 +128,25 @@
     %-  of
     :~  [%create create]
         [%delete delete]
+        [%join group-id:dejs:group-store]
+        [%invite invite]
         [%remove remove]
         [%share share]
     ==
   ::
   ++  create
     %-  ot
-    :~  [%path pa]
-        [%ships (as (su ;~(pfix sig fed:ag)))]
+    :~  [%name so]
+        [%policy policy:dejs:group-store]
         [%title so]
         [%description so]
+    ==
+  ::
+  ++  invite
+    %-  ot
+    :~  [%group-id group-id:dejs:group-store]
+        [%ship (su ;~(pfix sig fed:ag))]
+        [%text so]
     ==
   ::
   ++  delete  (ot [%path pa]~)

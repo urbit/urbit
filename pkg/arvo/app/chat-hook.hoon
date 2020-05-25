@@ -6,7 +6,7 @@
     *permission-hook, *group-store, *permission-group-hook,  ::TMP  for upgrade
     hook=chat-hook,
     view=chat-view
-/+  default-agent, verb, dbug, store=chat-store
+/+  default-agent, verb, dbug, store=chat-store, group-store, grpl=group
 ~%  %chat-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -170,8 +170,8 @@
       ?:  =(our.bol host)
         %^  make-poke  %group-store
           %group-action
-        !>  ^-  group-action
-        [%unbundle group]
+        !>  ^-  action:group-store
+        [%remove-group (need (group-id:de-path:group-store group)) ~]
       ::  else, just delete the sync in the hook
       ::
       %^  make-poke  %permission-hook
@@ -182,15 +182,17 @@
     ++  create-group
       |=  [group=path who=(set ship)]
       ^-  (list card)
+      =/  =group-id
+        (need (group-id:de-path:group-store group))
       :~  %^  make-poke  %group-store
             %group-action
-          !>  ^-  group-action
-          [%bundle group]
+          !>  ^-  action:group-store
+          [%add-group group-id *invite:policy]
         ::
           %^  make-poke  %group-store
             %group-action
-          !>  ^-  group-action
-          [%add who group]
+          !>  ^-  action:group-store
+          [%add-members group-id who ~]
       ==
     ::
     ++  hookup-group
@@ -281,9 +283,9 @@
           (fact-invite-update:cc wire !<(invite-update q.cage.sign))
         [cards this]
       ::
-          %permission-update
+          %group-update
         =^  cards  state
-          (fact-permission-update:cc wire !<(permission-update q.cage.sign))
+          (fact-group-update:cc wire !<(update:group-store q.cage.sign))
         [cards this]
       ==
     ==
@@ -297,6 +299,7 @@
 ::
 ~%  %chat-hook-library  ..card  ~
 |_  bol=bowl:gall
+++  grp  ~(. grpl bol)
 ::
 ++  poke-json
   |=  jon=json
@@ -324,7 +327,7 @@
   ?~  ship  ~
   ?.  =(u.ship our.bol)  ~
   ::  check if write is permitted
-  ?.  (is-permitted src.bol path.act)  ~
+  ?.  (is-permitted:grp src.bol path.act)  ~
   =:  author.envelope.act  src.bol
       when.envelope.act  now.bol
   ==
@@ -398,7 +401,7 @@
   ?>  ?=(^ pax)
   ?>  (~(has by synced) pax)
   ::  check if read is permitted
-  ?>  (is-permitted src.bol pax)
+  ?>  (is-permitted:grp src.bol pax)
   =/  box  (chat-scry pax)
   ?~  box  !!
   [%give %fact ~ %chat-update !>([%create pax])]~
@@ -412,7 +415,7 @@
   =/  pas  `path`(oust [last 1] `(list @ta)`pax)
   ?>  ?=([* ^] pas)
   ?>  (~(has by synced) pas)
-  ?>  (is-permitted src.bol pas)
+  ?>  (is-permitted:grp src.bol pas)
   =/  envs  envelopes:(need (chat-scry pas))
   =/  length  (lent envs)
   =/  latest
@@ -440,14 +443,18 @@
     ~[(chat-view-poke [%join shp app-path ask-history])]
 ==
 ::
-++  fact-permission-update
-  |=  [wir=wire fact=permission-update]
+++  fact-group-update
+  |=  [wir=wire =update:group-store]
   ^-  (quip card _state)
   |^
   :_  state
-  ?+  -.fact   ~
-      %add     (handle-permissions [%add path.fact who.fact])
-      %remove  (handle-permissions [%remove path.fact who.fact])
+  ?.  ?=(?(%add-members %remove-members) -.update)
+    ~
+  =/  =path
+    (group-id:en-path:group-store group-id.update)
+  ?-  -.update
+      %add-members      (handle-permissions [%add path ships.update])
+      %remove-members   (handle-permissions [%remove path ships.update])
   ==
   ::
   ++  handle-permissions
@@ -464,8 +471,8 @@
     %-  zing
     %+  turn  ~(tap in who)
     |=  =ship
-    ?:  (is-permitted ship chat)
-      ?:  ?|(=(kind %remove) =(ship our.bol) (is-managed pax))  ~
+    ?:  (is-permitted:grp ship chat)
+      ?:  ?|(=(kind %remove) =(ship our.bol) (is-managed-path:grp pax))  ~
       ::  if ship has just been added to the permitted group,
       ::  send them an invite
       ~[(send-invite chat ship)]
@@ -479,11 +486,6 @@
     =/  act=invite-action  [%invite /chat (shaf %msg-uid eny.bol) invite]
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   ::
-  ++  is-managed
-    |=  =path
-    ^-  ?
-    ?>  ?=(^ path)
-    !=(i.path '~')
   --
 ::
 ++  fact-chat-update
@@ -698,16 +700,6 @@
     (scot %da now.bol)
     /resource-indices
   ==
-::
-::NOTE  this assumes permission paths match group paths
-++  is-permitted
-  |=  [who=ship chat=path]
-  ^-  ?
-  %+  lien  (groups-of-chat chat)
-  |=  =group-path
-  %^  scry  ?
-    %permission-store
-  [%permitted (scot %p who) group-path]
 ::
 ++  scry
   |*  [=mold app=term =path]

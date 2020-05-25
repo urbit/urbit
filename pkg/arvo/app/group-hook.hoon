@@ -85,7 +85,7 @@
     ?>  ?=([%groups *] path)
     =/  =group-id
       (need (group-id:de-path:store t.path))
-    ?>  (permitted:gc src.bowl group-id)
+    ?>  (can-join:grp:gc group-id src.bowl)
     =^  cards  state
       (start-proxy:gc src.bowl group-id)
     [cards this]
@@ -105,7 +105,7 @@
   --
 |_  bol=bowl:gall
 ++  def  ~(. (default-agent state %|) bol)
-++  grp  ~(.  grpl bol)
+++  grp  ~(. grpl bol)
 ::  +|  %pokes
 ::
 ::  +poke-group-update: Proxy poke to %group-store
@@ -121,7 +121,7 @@
   =/  =path
     (group-id:en-path:store group-id.update)
   ?>  (should-proxy-poke update)
-  ?>  (is-permitted:grp src.bol path)
+  ?>  (can-join:grp group-id.update src.bol)
   :_  state
   [%pass [%store path] %agent [our.bol %group-store] %poke %group-update !>(update)]~
 ::  +poke-hook-action: Start/stop syncing a foreign group
@@ -310,17 +310,21 @@
 ++  should-proxy-poke
   |=  =update:store
   ^-  ?
+  =-  ~&  -  -
   ?:  ?=(%initial -.update)
     %.n
   |^
   =/  role=(unit role-tag)
     (role-for-ship:grp group-id.update src.bol)
+  ~&  role
+  ~&  update
   ?~  role
-    member
+    non-member
   ?-  u.role
     %admin      admin
     %moderator  moderator
     %janitor    member
+    %member     member
   ==
   ++  member
     ?:  ?=(%add-members -.update)
@@ -334,6 +338,10 @@
     ?=  $?  %add-members  %remove-members
             %add-tag      %remove-tag   ==
     -.update
+  ++  non-member
+    ?&  =-  ~&  -  -  ?=(%add-members -.update)
+        (can-join:grp group-id.update src.bol)
+    ==
   --
 ::
 ::  +handle-revocations: Handle revoked permissions from a update:store

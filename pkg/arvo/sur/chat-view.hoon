@@ -1,4 +1,4 @@
-/-  *rw-security
+/-  *group
 ^?
 |%
 +$  action
@@ -14,7 +14,7 @@
           description=@t
           app-path=path
           group-path=path
-          security=rw-security
+          =policy
           members=(set ship)
           allow-history=?
       ==

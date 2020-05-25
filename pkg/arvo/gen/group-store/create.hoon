@@ -1,10 +1,10 @@
 ::  group-store|create: initialize a group
 ::
-/-  *group-store
+/-  *group-store, *group
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=term ~] ~]
     ==
 :-  %group-update
 ^-  action
-[%add-group [p.beak term] (sy p.beak ~) ~ %open ~ ~]
+[%add-group [p.beak term] %open (sy %0 %1 ~) ~]
