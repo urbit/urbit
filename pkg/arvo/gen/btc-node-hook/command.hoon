@@ -1,5 +1,7 @@
 ::  Sends a command to the BTC hook app
 ::
+::  Commands:
+::  [%credentials 'http://127.0.0.1:18443/' 'user' 'password']
 ::
 /-  *btc-node-hook
 ::

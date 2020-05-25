@@ -43,6 +43,8 @@
           pay-tx-fee=@t
           hd-seed-id=(unit @ux)
           private-keys-enabled=?
+          avoid-reuse=?
+          scanning=?(? [duration=@t progress=@t])
       ==
     ::
     +$  wallet

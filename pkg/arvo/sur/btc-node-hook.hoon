@@ -169,13 +169,14 @@
           addr-bind=@t
           addr-local=(unit @t)
           services=@t
+          services-names=(list @t)
           relay-txes=?
           last-send=@da
           last-recv=@da
           bytes-sent=@ud
           bytes-recv=@ud
           conn-time=@da
-          time-offset=@ud
+          time-offset=@t
           ping-time=@rd
           min-ping=@rd
           ping-wait=(unit @ud)
@@ -211,10 +212,16 @@
           %valid-fork
           %active
       ==
+    ::  $soft-fork-types:
+    ::
+    ::    Used in:
+    ::      - %get-blockchain-info/$softforks
+    ::
+    +$  soft-fork-types  ?(%buried %bip9)
     ::  $soft-fork-status:
     ::
     ::    Used in:
-    ::      - %get-blockchain-info/$bip9-softforks
+    ::      - %get-blockchain-info/$softforks
     ::
     +$  soft-fork-status  ?(%defined %started %'locked_in' %active %failed)
     ::  $purpose:
@@ -504,7 +511,9 @@
     ::      - %get-mempool-entry
     ::
     +$  mem-pool
-      $:  size=@ud
+      $:  size=(unit @ud)
+          vsize=@ud
+          weight=@ud
           fee=@t
           modified-fee=@t
           time=@ud
@@ -547,6 +556,17 @@
           ::
           [id=@ux =mem-pool]
       ::
+    ::  $descriptor
+    ::
+    ::    Used in:
+    ::      - %utxo-update-psbt
+    ::
+    +$  descriptor
+      $?  @t
+        ::
+          $:  desc=@t
+              range=(unit range)
+      ==  ==
     --
 |%
 ::
@@ -573,6 +593,9 @@
         ::  %get-block-count: Returns number of blocks in the longest blockchain
         ::
         [%get-block-count ~]
+        ::  %get-block-filter: Retrieve a BIP 157 content filter for a block.
+        ::
+        [%get-block-filter block-hash=@ux filter-type=(unit @t)]
         ::  %get-block-hash: Returns hash of block in best-block-chain at height
         ::
         [%get-block-hash height=@ud]
@@ -657,7 +680,7 @@
         ::  in a block, returning the transaction it commits to
         :: and throwing an RPC error if the block is not in our best chain
         ::
-        [%verify-tx-out-proof proof=@ux]
+        [%verify-tx-out-proof proof=@t]
     ::  Control
     ::
         :: %getmemoryinfo: Returns an object containing information about memory
@@ -851,7 +874,7 @@
         ::  %send-raw-transaction: Submits raw transaction
         ::  (serialized, hex-encoded) to local node and network.
         ::
-        [%send-raw-transaction hex-string=@ux allow-high-fees=?]
+        [%send-raw-transaction hex-string=@ux max-fee-rate=(unit @t)]
         ::  %sign-raw-transaction-with-key: Sign inputs for raw transaction
         ::  (serialized, hex-encoded).
         ::
@@ -865,11 +888,14 @@
         ::  indicating if raw transaction (serialized, hex-encoded) would be
         ::  accepted by mempool.
         ::
-        [%test-mempool-accept raw-txs=(list @ux) allow-high-fees=?]
+        [%test-mempool-accept raw-txs=(list @ux) max-fee-rate=(unit @t)]
         ::  %utxo-update-psbt: Updates a PSBT with witness UTXOs retrieved from
         ::  the UTXO set or the mempool.
         ::
-        [%utxo-update-psbt psbt=@t]
+        $:  %utxo-update-psbt
+            psbt=@t
+            descriptors=(unit (list descriptor))
+        ==
     ::  Util
     ::
         ::  %create-multi-sig: Creates a multi-signature address with n
@@ -936,6 +962,7 @@
             %-  unit
             $:  conf-target=(unit @ud)
                 total-fee=(unit @t)
+                fee-rate=(unit @t)
                 replaceable=(unit ?)
                 mode=(unit estimate-mode)
         ==  ==
@@ -948,7 +975,13 @@
         ::      A blank wallet has no keys or HD seed.
         ::      One can be set using sethdseed.
         ::
-        [%create-wallet name=@t disable-private-keys=(unit ?) blank=(unit ?)]
+        $:  %create-wallet
+            name=@t
+            disable-private-keys=(unit ?)
+            blank=(unit ?)
+            passphrase=(unit @t)
+            avoid-reuse=(unit ?)
+        ==
         ::  %dump-privkey: Reveals the private key corresponding to 'address'.
         ::
         [%dump-privkey =address]
@@ -974,7 +1007,11 @@
             $:  dummy=(unit %'*')
                 minconf=(unit @ud)
                 include-watch-only=(unit ?)
+                avoid-reuse=(unit ?)
         ==  ==
+        ::  %get-balances: Returns an object with all balances in BTC.
+        ::
+        [%get-balances ~]
         ::  %get-new-address: Returns a new Bitcoin address for receiving
         ::  payments.
         ::
@@ -995,7 +1032,11 @@
         ::  %get-transaction:  Get detailed information about in-wallet
         ::  transaction <txid>
         ::
-        [%get-transaction txid=@ux include-watch-only=(unit ?)]
+        $:  %get-transaction
+            txid=@ux
+            include-watch-only=(unit ?)
+            verbose=(unit ?)
+        ==
         ::  %get-unconfirmed-balance:  Returns the server's total unconfirmed
         ::  balance
         ::
@@ -1032,7 +1073,7 @@
         [%import-privkey privkey=@t label=(unit @t) rescan=(unit ?)]
         ::  %import-pruned-funds:  Imports funds without rescan.
         ::
-        [%import-pruned-funds raw-transaction=@ux tx-out-proof=@ux]
+        [%import-pruned-funds raw-transaction=@ux tx-out-proof=@t]
         ::  %import-pubkey:  Adds a public key (in hex) that can be watched as
         ::  if it were in your wallet but cannot be used to spend.
         ::
@@ -1159,6 +1200,7 @@
             replaceable=(unit ?)
             conf-target=(unit @ud)
             mode=(unit estimate-mode)
+            avoid-reuse=(unit ?)
         ==
         ::  %set-hd-seed: Set or generate a new HD wallet seed.
         ::  Non-HD wallets will not be upgraded to being a HD wallet.
@@ -1170,6 +1212,9 @@
         ::  %set-tx-fee: Set the transaction fee per kB for this wallet.
         ::
         [%set-tx-fee amount=@t]
+        ::  %set-wallet-flag: Change the state of the given wallet flag for a wallet.
+        ::
+        [%set-wallet-flag flag=@t value=(unit ?)]
         ::  %sign-message:   Sign a message with the private key of an address
         ::
         [%sign-message =address message=@t]
@@ -1294,7 +1339,7 @@
             best-block-hash=@ux
             difficulty=@t
             median-time=@ud
-            verification-progress=@ud
+            verification-progress=@t
             initial-block-download=?
             chain-work=@ux
             size-on-disk=@ud
@@ -1302,10 +1347,13 @@
             pruneheight=(unit @ud)
             automatic-pruning=(unit ?)
             prune-target-size=(unit @ud)
-            soft-forks=(list [id=@t version=@t reject-status=?])
           ::
-            $=  bip9-softforks  %+  map
-                name=@t
+            $=  softforks
+            %+  map  name=@t
+            $:  type=soft-fork-types
+              ::
+                $=  bip9
+                %-  unit
                 $:  status=(unit soft-fork-status)
                     bit=(unit @ud)
                     start-time=?(%'-1' @ud)
@@ -1320,11 +1368,13 @@
                         count=@ud
                         possible=?
                 ==  ==
-          ::
-            warnings=@t
-        ==
+              ::
+                height=(unit @ud)
+                active=?
+        ==  ==
       ::
         [%get-block-count count=@ud]
+        [%get-block-filter filter=@ux header=@ux]
         [%get-block-hash hash=@ux]
       ::
         $:  %get-block-header
@@ -1387,8 +1437,8 @@
             total-weight=@t
             total-fee=@t
             txs=@ud
-            utxo-increase=@ud
-            utxo-size-inc=@ud
+            utxo-increase=@t
+            utxo-size-inc=@t
         ==
       ::
         $:  %get-chain-tips
@@ -1403,6 +1453,7 @@
             time=@ud
             tx-count=@ud
             window-final-block-hash=@ux
+            window-final-block-height=@ud
             window-block-count=@ud
             window-tx-count=(unit @ud)
             window-interval=(unit @ud)
@@ -1434,15 +1485,15 @@
                 $=  script-pubkey
                 $:  asm=@t
                     hex=@ux
-                    req-sigs=@ud
+                    req-sigs=(unit @ud)
                     type=@t
-                    addresses=(list address)
+                    addresses=(unit (list address))
                 ==
               ::
                 coinbase=?
         ==  ==
       ::
-        [%get-tx-out-proof data=@ux]
+        [%get-tx-out-proof data=@t]
       ::
         $:  %get-tx-outset-info
             height=@ud
@@ -1560,8 +1611,9 @@
             subversion=@t
             protocol-version=@ud
             local-services=@t
+            local-services-names=(list @t)
             local-relay=?
-            time-offset=@ud
+            time-offset=@t
             connections=@ud
             network-active=?
             networks=(list network-info)
@@ -1668,7 +1720,7 @@
             segwit=(unit segwit-script)
         ==
       ::
-        [%finalize-psbt psbt=@t hex=(unit @ux) complete=?]
+        [%finalize-psbt psbt=(unit @t) hex=(unit @ux) complete=?]
         [%fund-raw-transaction hex=@ux fee=@t change-pos=?(@ud %'-1')]
         [%get-raw-transaction data=?(@ux raw-transaction-rpc-out)]
         [%join-psbts psbt=@t]
@@ -1701,6 +1753,7 @@
       ::
         $:  %get-descriptor-info
             descriptor=@t
+            checksum=@t
             is-range=?
             is-solvable=?
             has-private-keys=?
@@ -1710,10 +1763,10 @@
       ::
         $:  %validate-address
             is-valid=?
-            =address
-            script-pubkey=@ux
-            is-script=?
-            is-witness=?
+            address=(unit address)
+            script-pubkey=(unit @ux)
+            is-script=(unit ?)
+            is-witness=(unit ?)
             witness-version=(unit @t)
             witness-program=(unit @ux)
         ==
@@ -1789,6 +1842,22 @@
         ==
       ::
         [%get-balance amount=@t]
+      ::
+        $:  %get-balances
+            $=  mine
+            $:  trusted=(unit @t)
+                untrusted-pending=@t
+                immature=@t
+                used=(unit @t)
+            ==
+          ::
+            $=  watchonly
+            %-  unit
+            $:  trusted=@t
+                untrusted-pending=@t
+                immature=@t
+        ==  ==
+      ::
         [%get-new-address =address]
         [%get-raw-change-address =address]
         [%get-received-by-address amount=@t]
@@ -1818,6 +1887,7 @@
             ==
           ::
             hex=@ux
+            decoded=(unit raw-transaction-rpc-out)
         ==
       ::
         [%get-unconfirmed-balance amount=@t]
@@ -1836,6 +1906,8 @@
             pay-tx-fee=@t
             hd-seed-id=(unit @ux)
             private-keys-enabled=?
+            avoid-reuse=?
+            scanning=?(? [duration=@t progress=@t])
         ==
       ::
         [%import-address ~]
@@ -1906,6 +1978,7 @@
                 witness-script=(unit @ux)
                 spendable=?
                 solvable=?
+                reused=(unit ?)
                 desc=(unit @t)
                 safe=?
         ==  ==
@@ -1921,6 +1994,7 @@
         [%set-hd-seed ~]
         [%set-label ~]
         [%set-tx-fee ?]
+        [%set-wallet-flag flag-name=@t flag-state=? warnings=@t]
         [%sign-message signature=@t]
       ::
         $:  %sign-raw-transaction-with-wallet

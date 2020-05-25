@@ -237,7 +237,7 @@
   ::
       %list-wallets
     ^-  (list card)
-    :~  (btc-node-store-poke /list [%list-wallets ~])
+    :~  (btc-node-store-poke /list-wallets [%list-wallets ~])
         :*  %pass  /  %arvo  %d  %flog
             %text  "remote-wallets={<`wain`wallets.btc-resp>}"
     ==  ==
@@ -264,11 +264,14 @@
   ==
 ::
 ++  btc-node-store-poke
-  |=  [pax=path act=btc-node-store-action]
+  |=  [=wire act=btc-node-store-action]
   ^-  card
-  :*  %pass   pax
-      %agent  [our.bowl %btc-node-store]
-      %poke   [%btc-node-store-action !>(act)]
+  :*  %pass
+      wire
+      %agent
+      [our.bowl %btc-node-store]
+      %poke
+      [%btc-node-store-action !>(act)]
   ==
 ::
 ++  default-wallet
@@ -302,6 +305,7 @@
           ?=(%encrypt-wallet -.act)
           ?=(%fund-raw-transaction -.act)
           ?=(%get-balance -.act)
+          ?=(%get-balances -.act)
           ?=(%get-addresses-by-label -.act)
           ?=(%get-address-info -.act)
           ?=(%get-new-address -.act)
