@@ -203,7 +203,11 @@
     |=  =json
     ^-  ^rank
     ?>  ?=(%n -.json)
-    %0
+    ?:  =('0' p.json)  %0
+    ?:  =('1' p.json)  %1
+    ?:  =('2' p.json)  %2
+    ?:  =('3' p.json)  %3
+    !!
   ::  move to zuse also
   ++  oj
     |*  =fist

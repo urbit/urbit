@@ -11,11 +11,11 @@
 ::    /json/seen                                      mark-as-read updates
 ::
 /-  *link-view,
-    *invite-store, group-store,
+    *invite-store, *group,
     link-listen-hook,
     group-hook, permission-hook, permission-group-hook,
     metadata-hook, contact-view
-/+  *link, metadata, *server, default-agent, verb, dbug
+/+  *link, metadata, *server, default-agent, verb, dbug, group-store
 ~%  %link-view-top  ..is  ~
 ::
 |%
@@ -205,19 +205,37 @@
   ^-  (list card)
   ?.  ?=(%accepted -.upd)  ~
   ?.  =(/link path.upd)    ~
-  :~  ::  sync the group
+  =/  =group-id
+    (need (group-id:de-path:group-store path.invite.upd))
+  :~
+      ::  add self
+      :*  %pass
+          [%group-add path.invite.upd]
+          %agent  [ship.group-id %group-hook]
+          %poke  %group-action
+          !>  ^-  action:group-store
+          [%add-members group-id (sy our.bowl ~) ~]
+      ==
+      ::  sync the group
       ::
       %^  do-poke  %group-hook
         %group-hook-action
-      !>  ^-  group-hook-action:group-hook
-      [%add ship path]:invite.upd
-    ::
+      !>  ^-  action:group-hook
+      [%add group-id]
+      ::
       ::  sync the metadata
       ::
       %^  do-poke  %metadata-hook
         %metadata-hook-action
       !>  ^-  metadata-hook-action:metadata-hook
       [%add-synced ship path]:invite.upd
+      ::
+      ::  sync the collection
+      ::
+      %^  do-poke  %link-listen-hook
+        %link-listen-action
+      !>  ^-  action:link-listen-hook
+      [%watch /[term.group-id]]
   ==
 ::
 ++  handle-action
@@ -242,8 +260,6 @@
       %group  path.members
     ::
         %ships
-      %+  weld
-        ?:(real-group ~ [~.~]~)
       [(scot %p our.bowl) path]
     ==
   =;  group-setup=(list card)
@@ -278,50 +294,40 @@
     ==
   ?:  ?=(%group -.members)  ~
   ::  if the group is "real", make contact-view do the heavy lifting
-  ::
+  ::  TODO: verify
+  =/  =group-id
+    (need (group-id:de-path:group-store group-path))
+  =/  =policy
+    [%invite ships.members]
   ?:  real-group
-    :_  ~
-    %^  do-poke  %contact-view
-      %contact-view-action
-    !>  ^-  contact-view-action:contact-view
-    [%create group-path ships.members title description]
+    :-  %^  do-poke  %contact-view
+          %contact-view-action
+        !>  ^-  contact-view-action:contact-view
+        [%create term.group-id policy title description]
+    %+  turn  ~(tap in ships.members)
+    |=  =ship
+    ^-  card
+    %^  do-poke  %invite-hook
+      %invite-action
+    !>  ^-  invite-action
+    :^  %invite  /link
+      (sham group-path eny.bowl)
+    :*  our.bowl
+        %group-hook
+        group-path
+        ship
+        title
+    ==
   ::  for "unmanaged" groups, do it ourselves
   ::
+
   :*  ::  create the new group
       ::
       %^  do-poke  %group-store
         %group-action
-      !>  ^-  group-action:group-store
-      [%bundle group-path]
-    ::
-      ::  fill the new group
+      !>  ^-  action:group-store
+      [%add-group group-id policy]
       ::
-      %^  do-poke  %group-store
-        %group-action
-      !>  ^-  group-action:group-store
-      [%add (~(put in ships.members) our.bowl) group-path]
-    ::
-      ::  make group available
-      ::
-      %^  do-poke  %group-hook
-        %group-hook-action
-      !>  ^-  group-hook-action:group-hook
-      [%add our.bowl group-path]
-    ::
-      ::  mirror group into a permission
-      ::
-      %^  do-poke  %permission-group-hook
-        %permission-group-hook-action
-      !>  ^-  permission-group-hook-action:permission-group-hook
-      [%associate group-path [group-path^%white ~ ~]]
-    ::
-      ::  expose the permission
-      ::
-      %^  do-poke  %permission-hook
-        %permission-hook-action
-      !>  ^-  permission-hook-action:permission-hook
-      [%add-owned group-path group-path]
-    ::
       ::  send invites
       ::
       %+  turn  ~(tap in ships.members)
@@ -348,6 +354,8 @@
   %-  zing
   %+  turn  groups
   |=  =group=^path
+  =/  =group-id
+    (need (group-id:de-path:group-store group-path))
   %+  snoc
     ^-  (list card)
     ::  if it's a real group, we can't/shouldn't unsync it. this leaves us with
@@ -359,8 +367,8 @@
     ::
     :~  %^  do-poke  %group-hook
           %group-hook-action
-        !>  ^-  group-hook-action:group-hook
-        [%remove group-path]
+        !>  ^-  action:group-hook
+        [%remove group-id]
       ::
         %^  do-poke  %metadata-hook
           %metadata-hook-action
@@ -369,8 +377,8 @@
       ::
         %^  do-poke  %group-store
           %group-action
-        !>  ^-  group-action:group-store
-        [%unbundle group-path]
+        !>  ^-  action:group-store
+        [%remove-group group-id ~]
     ==
   ::  remove collection from metadata-store
   ::
@@ -388,8 +396,8 @@
   ^-  (list card)
   :-  %^  do-poke  %group-store
         %group-action
-      !>  ^-  group-action:group-store
-      [%add ships group-path]
+      !>  ~ :: ^-  action:group-store
+      ::  [%add ships group-path]
   ::  for managed groups, rely purely on group logic for invites
   ::
   ?.  ?=([%'~' ^] group-path)

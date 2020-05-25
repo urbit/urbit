@@ -14,8 +14,9 @@
 ::    to expede this process, we prod other potential listeners when we add
 ::    them to our metadata+groups definition.
 ::
-/-  link-listen-hook, *metadata-store, *link, group-store
-/+  mdl=metadata, default-agent, verb, dbug
+::
+/-  link-listen-hook, *metadata-store, *group, *link
+/+  mdl=metadata, default-agent, verb, dbug, group-store, grpl=group
 ::
 ~%  %link-listen-hook-top  ..is  ~
 |%
@@ -110,13 +111,12 @@
       |-
       ?~  resources  [cards this]
       =,  i.resources
-      =/  =group:group-store
-        =-  (fall - *group:group-store)
-        (scry-for:do (unit group:group-store) %group-store group-path)
+      =/  members=(set ship)
+        (members-from-path:grp:do group-path)
       ::  if we're the only group member, this got incorrectly ignored
       ::  during 0's upgrade logic. watch it now.
       ::
-      ?.  &(=(1 ~(wyt in group)) (~(has in group) our.bowl))
+      ?.  &(=(1 ~(wyt in members)) (~(has in members) our.bowl))
         $(resources t.resources)
       =^  more-cards  state
         (handle-listen-action:do %watch app-path)
@@ -214,6 +214,7 @@
 ::
 |_  =bowl:gall
 +*  md  ~(. mdl bowl)
+++  grp   ~(. grpl bowl)
 ::
 ::  user actions & updates
 ::
@@ -317,7 +318,7 @@
 ::
 ++  watch-groups
   ^-  card
-  [%pass /groups %agent [our.bowl %group-store] %watch /all]
+  [%pass /groups %agent [our.bowl %group-store] %watch /groups]
 ::
 ++  take-groups-sign
   |=  =sign:agent:gall
@@ -338,20 +339,26 @@
     =*  mark  p.cage.sign
     =*  vase  q.cage.sign
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
-      %group-update   (handle-group-update !<(group-update:group-store vase))
+      %group-initial  [~ state]  ::NOTE  initial handled using metadata
+      %group-update   (handle-group-update !<(update:group-store vase))
     ==
   ==
 ::
 ++  handle-group-update
-  |=  upd=group-update:group-store
+  |=  upd=update:group-store
   ^-  (quip card _state)
-  ::  NOTE  initial handled using metadata
-  ?.  ?=(?(%path %add %remove) -.upd)
+  ?.  ?=(?(%add-members %initial-group %remove-members) -.upd)
     [~ state]
+  =/  =path
+    (group-id:en-path:group-store group-id.upd)
   =/  socs=(list app-path)
-    (app-paths-from-group:md %link pax.upd)
+    (app-paths-from-group:md %link path)
   =/  whos=(list ship)
-    ~(tap in members.upd)
+    ?-  -.upd
+      %add-members     ~(tap in ships.upd)
+      %remove-members  ~(tap in ships.upd)
+      %initial-group   ~(tap in members.group.upd)
+    ==
   =|  cards=(list card)
   |-
   =*  loop-socs  $
@@ -362,11 +369,11 @@
   =*  loop-whos  $
   ?~  whos  loop-socs(socs t.socs)
   =^  caz  state
-    ?.  ?=(%remove -.upd)
-      (listen-to-peer i.socs pax.upd i.whos)
+    ?.  ?=(%remove-members -.upd)
+      (listen-to-peer i.socs path i.whos)
     ?:  =(our.bowl i.whos)
       (handle-listen-action %leave i.socs)
-    (leave-from-peer i.socs pax.upd i.whos)
+    (leave-from-peer i.socs path i.whos)
   loop-whos(whos t.whos, cards (weld cards caz))
 ::
 ::  link subscriptions
@@ -377,10 +384,7 @@
   =/  peers=(list ship)
     ~|  group-path
     %~  tap  in
-    =-  (fall - *group:group-store)
-    %^  scry-for  (unit group:group-store)
-      %group-store
-    group-path
+    (members-from-path:grp group-path)
   =|  cards=(list card)
   |-
   ?~  peers  [cards state]
@@ -393,10 +397,7 @@
   ^-  (quip card _state)
   =/  peers=(list ship)
     %~  tap  in
-    =-  (fall - *group:group-store)
-    %^  scry-for  (unit group:group-store)
-      %group-store
-    group-path
+    (members-from-path:grp group-path)
   =|  cards=(list card)
   |-
   ?~  peers  [cards state]
@@ -540,10 +541,9 @@
   %+  lien  (groups-from-resource:md %link where.target)
   |=  =group-path
   ^-  ?
-  =-  (~(has in (fall - *group:group-store)) who.target)
-  %^  scry-for  (unit group:group-store)
-    %group-store
-  group-path
+  %.  who.target
+  ~(has in (members-from-path:grp group-path))
+
 ::
 ++  do-link-action
   |=  [=wire =action]

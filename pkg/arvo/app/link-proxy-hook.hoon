@@ -19,8 +19,8 @@
 ::    when adding support for new paths, the only things you'll likely want
 ::    to touch are +permitted, +initial-response, & +kick-proxies.
 ::
-/-  group-store, *metadata-store
-/+  *link, metadata, default-agent, verb, dbug
+/-  *metadata-store, *group
+/+  *link, metadata, default-agent, verb, dbug, group-store, grpl=group
 ~%  %link-proxy-hook-top  ..is  ~
 |%
 +$  state-0
@@ -97,6 +97,7 @@
 ::
 |_  =bowl:gall
 +*  md  ~(. metadata bowl)
+   grp   ~(. grpl bowl)
 ::
 ::  permissions
 ::
@@ -117,10 +118,7 @@
   %+  lien  (groups-from-resource:md %link u.target)
   |=  =group-path
   ^-  ?
-  =-  (~(has in (fall - *group:group-store)) who)
-  %^  scry-for  (unit group:group-store)
-    %group-store
-  group-path
+  (~(has in (members-from-path:grp group-path)) who)
 ::
 ++  kick-revoked-permissions
   |=  [=path who=(list ship)]
@@ -177,17 +175,14 @@
   %+  kick-revoked-permissions
     app-path.resource.upd
   %~  tap  in
-  =-  (fall - *group:group-store)
-  %^  scry-for  (unit group:group-store)
-    %group-store
-  group-path.upd
+  (members-from-path:grp group-path.upd)
 ::
 ::  groups subscription
 ::TODO  largely copied from link-listen-hook. maybe make a store-listener lib?
 ::
 ++  watch-groups
   ^-  card
-  [%pass /groups %agent [our.bowl %group-store] %watch /all]
+  [%pass /groups %agent [our.bowl %group-store] %watch /groups]
 ::
 ++  take-groups-sign
   |=  =sign:agent:gall
@@ -209,25 +204,25 @@
     =*  vase  q.cage.sign
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
       %group-initial  [~ state]
-      %group-update   (handle-group-update !<(group-update:group-store vase))
+      %group-update   (handle-group-update !<(update:group-store vase))
     ==
   ==
 ::
 ++  handle-group-update
-  |=  upd=group-update:group-store
+  |=  upd=update:group-store
   ^-  (quip card _state)
   :_  state
-  ?.  ?=(%remove -.upd)  ~
+  ?.  ?=(%remove-members -.upd)  ~
   ::  if someone was removed from a group, find all link resources associated
   ::  with that group, then kick their subscriptions if they're no longer
   ::
   %-  zing
-  %+  turn  (app-paths-from-group:md %link pax.upd)
+  %+  turn  (app-paths-from-group:md %link (group-id:en-path:group-store group-id.upd))
   |=  =app-path
   ^-  (list card)
   %+  kick-revoked-permissions
     app-path
-  ~(tap in members.upd)
+  ~(tap in ships.upd)
 ::
 ::  proxy subscriptions
 ::
