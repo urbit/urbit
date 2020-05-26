@@ -2,4 +2,4 @@
 :-  %say
 |=  *
 :-  %tang
-[.^(tank %b /=timers=) ~]
+[>.^((list [date=@da =duct]) %b /=timers=)< ~]

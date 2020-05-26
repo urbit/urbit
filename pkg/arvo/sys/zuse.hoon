@@ -491,6 +491,259 @@
   ::    payload: semantic message contents
   ::
   +$  plea  [vane=@tas =path payload=*]
+  ::
+  :: +|  %atomics
+  ::
+  +$  bone           @udbone
+  +$  fragment       @uwfragment
+  +$  fragment-num   @udfragmentnum
+  +$  message-blob   @udmessageblob
+  +$  message-num    @udmessagenum
+  +$  public-key     @uwpublickey
+  +$  symmetric-key  @uwsymmetrickey
+  ::
+  :: +|  %kinetics
+  ::  $ack: positive ack, nack packet, or nack trace
+  ::
+  +$  ack
+    $%  [%ok ~]
+        [%nack ~]
+        [%naxplanation =error]
+    ==
+  ::
+  :: +|  %statics
+  ::  $ship-state: all we know about a peer
+  ::
+  ::    %alien: no PKI data, so enqueue actions to perform once we learn it
+  ::    %known: we know their life and public keys, so we have a channel
+  ::
+  +$  ship-state
+    $%  [%alien alien-agenda]
+        [%known peer-state]
+    ==
+  ::  $alien-agenda: what to do when we learn a peer's life and keys
+  ::
+  ::    messages: pleas local vanes have asked us to send
+  ::    packets: packets we've tried to send
+  ::    heeds: local tracking requests; passed through into $peer-state
+  ::
+  +$  alien-agenda
+    $:  messages=(list [=duct =plea])
+        packets=(set =blob)
+        heeds=(set duct)
+    ==
+  ::  $peer-state: state for a peer with known life and keys
+  ::
+  ::    route: transport-layer destination for packets to peer
+  ::    qos: quality of service; connection status to peer
+  ::    ossuary: bone<->duct mapper
+  ::    snd: per-bone message pumps to send messages as fragments
+  ::    rcv: per-bone message sinks to assemble messages from fragments
+  ::    nax: unprocessed nacks (negative acknowledgments)
+  ::         Each value is ~ when we've received the ack packet but not a
+  ::         nack-trace, or an error when we've received a nack-trace but
+  ::         not the ack packet.
+  ::
+  ::         When we hear a nack packet or an explanation, if there's no
+  ::         entry in .nax, we make a new entry. Otherwise, if this new
+  ::         information completes the packet+nack-trace, we remove the
+  ::         entry and emit a nack to the local vane that asked us to send
+  ::         the message.
+  ::    heeds: listeners for %clog notifications
+  ::
+  +$  peer-state
+    $:  $:  =symmetric-key
+            =life
+            =public-key
+            sponsor=ship
+        ==
+        route=(unit [direct=? =lane])
+        =qos
+        =ossuary
+        snd=(map bone message-pump-state)
+        rcv=(map bone message-sink-state)
+        nax=(set [=bone =message-num])
+        heeds=(set duct)
+    ==
+  ::  $qos: quality of service; how is our connection to a peer doing?
+  ::
+  ::    .last-contact: last time we heard from peer, or if %unborn, when
+  ::    we first started tracking time
+  ::
+  +$  qos
+    $~  [%unborn *@da]
+    [?(%live %dead %unborn) last-contact=@da]
+  ::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
+  ::
+  ::    The first bone is 0. They increment by 4, since each flow includes
+  ::    a bit for each message determining forward vs. backward and a
+  ::    second bit for whether the message is on the normal flow or the
+  ::    associated diagnostic flow (for naxplanations).
+  ::
+  ::    The least significant bit of a $bone is:
+  ::    1 if "forward", i.e. we send %plea's on this flow, or
+  ::    0 if "backward", i.e. we receive %plea's on this flow.
+  ::
+  ::    The second-least significant bit is 1 if the bone is a
+  ::    naxplanation bone, and 0 otherwise.  Only naxplanation
+  ::    messages can be sent on a naxplanation bone, as %boon's.
+  ::
+  +$  ossuary
+    $:  =next=bone
+        by-duct=(map duct bone)
+        by-bone=(map bone duct)
+    ==
+  ::  $message-pump-state: persistent state for |message-pump
+  ::
+  ::    Messages queue up in |message-pump's .unsent-messages until they
+  ::    can be packetized and fed into |packet-pump for sending.  When we
+  ::    pop a message off .unsent-messages, we push as many fragments as
+  ::    we can into |packet-pump, which sends every packet it eats.
+  ::    Packets rejected by |packet-pump are placed in .unsent-fragments.
+  ::
+  ::    When we hear a packet ack, we send it to |packet-pump to be
+  ::    removed from its queue of unacked packets.
+  ::
+  ::    When we hear a message ack (positive or negative), we treat that
+  ::    as though all fragments have been acked.  If this message is not
+  ::    .current, then this ack is for a future message and .current has
+  ::    not yet been acked, so we place the ack in .queued-message-acks.
+  ::
+  ::    If we hear a message ack before we've sent all the fragments for
+  ::    that message, clear .unsent-fragments and have |packet-pump delete
+  ::    all sent fragments from the message. If this early message ack was
+  ::    positive, print it out because it indicates the peer is not
+  ::    behaving properly.
+  ::
+  ::    If the ack is for the current message, have |packet-pump delete
+  ::    all packets from the message, give the message ack back
+  ::    to the client vane, increment .current, and check if this next
+  ::    message is in .queued-message-acks.  If it is, emit the message
+  ::    (n)ack, increment .current, and check the next message.  Repeat
+  ::    until .current is not fully acked.
+  ::
+  ::    The following equation is always true:
+  ::    .next - .current == number of messages in flight
+  ::
+  ::    At the end of a task, |message-pump sends a %halt task to
+  ::    |packet-pump, which can trigger a timer to be set or cleared based
+  ::    on congestion control calculations. When the timer fires, it will
+  ::    generally cause a packet to be re-sent.
+  ::
+  ::    Message sequence numbers start at 1 so that the first message will
+  ::    be greater than .last-acked.message-sink-state on the receiver.
+  ::
+  ::    current: sequence number of earliest message sent or being sent
+  ::    next: sequence number of next message to send
+  ::    unsent-messages: messages to be sent after current message
+  ::    unsent-fragments: fragments of current message waiting for sending
+  ::    queued-message-acks: future message acks to be applied after current
+  ::    packet-pump-state: state of corresponding |packet-pump
+  ::
+  +$  message-pump-state
+    $:  current=_`message-num`1
+        next=_`message-num`1
+        unsent-messages=(qeu message-blob)
+        unsent-fragments=(list static-fragment)
+        queued-message-acks=(map message-num ack)
+        =packet-pump-state
+    ==
+  +$  static-fragment
+    $:  =message-num
+        num-fragments=fragment-num
+        =fragment-num
+        =fragment
+    ==
+  ::  $packet-pump-state: persistent state for |packet-pump
+  ::
+  ::    next-wake: last timer we've set, or null
+  ::    live: packets in flight; sent but not yet acked
+  ::    metrics: congestion control information
+  ::
+  +$  packet-pump-state
+    $:  next-wake=(unit @da)
+        live=(tree [live-packet-key live-packet-val])
+        metrics=pump-metrics
+    ==
+  ::  $pump-metrics: congestion control state for a |packet-pump
+  ::
+  ::    This is an Ames adaptation of TCP's Reno congestion control
+  ::    algorithm.  The information signals and their responses are
+  ::    identical to those of the "NewReno" variant of Reno; the
+  ::    implementation differs because Ames acknowledgments differ from
+  ::    TCP's, because this code uses functional data structures, and
+  ::    because TCP's sequence numbers reset when a peer becomes
+  ::    unresponsive, whereas Ames sequence numbers only change when a
+  ::    ship breaches.
+  ::
+  ::    A deviation from Reno is +fast-resend-after-ack, which re-sends
+  ::    timed-out packets when a peer starts responding again after a
+  ::    period of unresponsiveness.
+  ::
+  ::    If .skips reaches 3, we perform a fast retransmit and fast
+  ::    recovery.  This corresponds to Reno's handling of "three duplicate
+  ::    acks".
+  ::
+  ::    rto: retransmission timeout
+  ::    rtt: roundtrip time estimate, low-passed using EWMA
+  ::    rttvar: mean deviation of .rtt, also low-passed with EWMA
+  ::    num-live: how many packets sent, awaiting ack
+  ::    ssthresh: slow-start threshold
+  ::    cwnd: congestion window; max unacked packets
+  ::
+  +$  pump-metrics
+    $:  rto=_~s1
+        rtt=_~s1
+        rttvar=_~s1
+        ssthresh=_10.000
+        cwnd=_1
+        num-live=@ud
+        counter=@ud
+    ==
+  +$  live-packet
+    $:  key=live-packet-key
+        val=live-packet-val
+    ==
+  +$  live-packet-key
+    $:  =message-num
+        =fragment-num
+    ==
+  +$  live-packet-val
+    $:  packet-state
+        num-fragments=fragment-num
+        =fragment
+    ==
+  +$  packet-state
+    $:  last-sent=@da
+        retries=@ud
+        skips=@ud
+    ==
+  ::  $message-sink-state: state of |message-sink to assemble messages
+  ::
+  ::    last-acked: highest $message-num we've fully acknowledged
+  ::    last-heard: highest $message-num we've heard all fragments on
+  ::    pending-vane-ack: heard but not processed by local vane
+  ::    live-messages: partially received messages
+  ::
+  +$  message-sink-state
+    $:  last-acked=message-num
+        last-heard=message-num
+        pending-vane-ack=(qeu [=message-num message=*])
+        live-messages=(map message-num partial-rcv-message)
+        nax=(set message-num)
+    ==
+  ::  $partial-rcv-message: message for which we've received some fragments
+  ::
+  ::    num-fragments: total number of fragments in this message
+  ::    num-received: how many fragments we've received so far
+  ::    fragments: fragments we've received, eventually producing a $message
+  ::
+  +$  partial-rcv-message
+    $:  num-fragments=fragment-num
+        num-received=fragment-num
+        fragments=(map fragment-num fragment)
+    ==
+  ::
   --  ::ames
 ::                                                      ::::
 ::::                    ++behn                            ::  (1b) timekeeping
@@ -885,6 +1138,112 @@
       ==
     ::
     --
+  ::  +outstanding-connection: open http connections not fully complete:
+  ::
+  ::    This refers to outstanding connections where the connection to
+  ::    outside is opened and we are currently waiting on ford or an app to
+  ::    produce the results.
+  ::
+  +$  outstanding-connection
+    $:  ::  action: the action that had matched
+        ::
+        =action
+        ::  inbound-request: the original request which caused this connection
+        ::
+        =inbound-request
+        ::  response-header: set when we get our first %start
+        ::
+        response-header=(unit response-header:http)
+        ::  bytes-sent: the total bytes sent in response
+        ::
+        bytes-sent=@ud
+    ==
+  ::  +authentication-state: state used in the login system
+  ::
+  +$  authentication-state
+    $:  ::  sessions: a mapping of session cookies to session information
+        ::
+        sessions=(map @uv session)
+    ==
+  ::  +session: server side data about a session
+  ::
+  +$  session
+    $:  ::  expiry-time: when this session expires
+        ::
+        ::    We check this server side, too, so we aren't relying on the browser
+        ::    to properly handle cookie expiration as a security mechanism.
+        ::
+        expiry-time=@da
+        ::
+        ::  TODO: We should add a system for individual capabilities; we should
+        ::  mint some sort of long lived cookie for mobile apps which only has
+        ::  access to a single application path.
+    ==
+  ::  channel-state: state used in the channel system
+  ::
+  +$  channel-state
+    $:  ::  session: mapping between an arbitrary key to a channel
+        ::
+        session=(map @t channel)
+        ::  by-duct: mapping from ducts to session key
+        ::
+        duct-to-key=(map duct @t)
+    ==
+  ::  +timer: a reference to a timer so we can cancel or update it.
+  ::
+  +$  timer
+    $:  ::  date: time when the timer will fire
+        ::
+        date=@da
+        ::  duct: duct that set the timer so we can cancel
+        ::
+        =duct
+    ==
+  ::  channel: connection to the browser
+  ::
+  ::    Channels are the main method where a webpage communicates with Gall
+  ::    apps. Subscriptions and pokes are issues with PUT requests on a path,
+  ::    while GET requests on that same path open a persistent EventSource
+  ::    channel.
+  ::
+  ::    The EventSource API is a sequence number based API that browser provide
+  ::    which allow the server to push individual events to the browser over a
+  ::    connection held open. In case of reconnection, the browser will send a
+  ::    'Last-Event-Id: ' header to the server; the server then resends all
+  ::    events since then.
+  ::
+  +$  channel
+    $:  ::  channel-state: expiration time or the duct currently listening
+        ::
+        ::    For each channel, there is at most one open EventSource
+        ::    connection. A 400 is issues on duplicate attempts to connect to the
+        ::    same channel. When an EventSource isn't connected, we set a timer
+        ::    to reap the subscriptions. This timer shouldn't be too short
+        ::    because the
+        ::
+        state=(each timer duct)
+        ::  next-id: next sequence number to use
+        ::
+        next-id=@ud
+        ::  events: unacknowledged events
+        ::
+        ::    We keep track of all events where we haven't received a
+        ::    'Last-Event-Id: ' response from the client or a per-poke {'ack':
+        ::    ...} call. When there's an active EventSource connection on this
+        ::    channel, we send the event but we still add it to events because we
+        ::    can't assume it got received until we get an acknowledgment.
+        ::
+        events=(qeu [id=@ud lines=wall])
+        ::  subscriptions: gall subscriptions
+        ::
+        ::    We maintain a list of subscriptions so if a channel times out, we
+        ::    can cancel all the subscriptions we've made.
+        ::
+        subscriptions=(map wire [ship=@p app=term =path duc=duct])
+        ::  heartbeat: sse heartbeat timer
+        ::
+        heartbeat=(unit timer)
+    ==
   ::  +binding: A rule to match a path.
   ::
   ::    A +binding is a system unique mapping for a path to match. A +binding
@@ -903,6 +1262,25 @@
         ::    /~myapp will match /~myapp or /~myapp/longer/path
         ::
         path=(list @t)
+    ==
+  ::  +action: the action to take when a binding matches an incoming request
+  ::
+  +$  action
+    $%  ::  dispatch to a generator
+        ::
+        [%gen =generator]
+        ::  dispatch to an application
+        ::
+        [%app app=term]
+        ::  internal authentication page
+        ::
+        [%authentication ~]
+        ::  gall channel system
+        ::
+        [%channel ~]
+        ::  respond with the default file not found page
+        ::
+        [%four-oh-four ~]
     ==
   ::  +generator: a generator on the local ship that handles requests
   ::

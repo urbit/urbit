@@ -335,7 +335,7 @@
     ~
   ?.  ?=(%timers syd)
     [~ ~]
-  [~ ~ %noun !>(>(turn (tap:timer-map timers) head)<)]
+  [~ ~ %noun !>((turn (tap:timer-map timers) head))]
 ::
 ++  stay  state
 ++  take
