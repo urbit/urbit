@@ -1,5 +1,8 @@
 ::  shoe: example usage of /lib/shoe
 ::
+::    the app supports one command: "demo".
+::    running this command renders some text on all sole clients.
+::
 /+  shoe, verb, dbug, default-agent
 |%
 +$  state-0  [%0 ~]
@@ -49,8 +52,11 @@
 ++  on-command
   |=  [sole-id=@ta =command]
   ^-  (quip card _this)
-  :_  this
-  [%shoe ~ %sole %txt "{(scow %p src.bowl)} ran the command"]~
+  =-  [[%shoe ~ %sole -]~ this]
+  =/  =tape  "{(scow %p src.bowl)} ran the command"
+  ?.  =(src our):bowl
+    [%txt tape]
+  [%klr [[`%br ~ `%g] [(crip tape)]~]~]
 ::
 ++  can-connect
   |=  sole-id=@ta
