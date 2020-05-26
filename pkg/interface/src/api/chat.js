@@ -1,85 +1,45 @@
-import _ from 'lodash';
-import { uuid } from '../../lib/util';
+import BaseApi from './base';
 
-export default class Api {
+export default class ChatApi {
   constructor(ship, channel, store) {
+    const helper = new PrivateHelper(ship, channel, store);
+
     this.ship = ship;
-    this.channel = channel;
-    this.store = store;
-    this.bindPaths = [];
+    this.subscribe = helper.subscribe.bind(helper);
 
     this.groups = {
-      add: this.groupAdd.bind(this),
-      remove: this.groupRemove.bind(this)
+      add: helper.groupAdd.bind(helper),
+      remove: helper.groupRemove.bind(helper)
     };
 
     this.chat = {
-      message: this.chatMessage.bind(this),
-      read: this.chatRead.bind(this)
+      message: helper.chatMessage.bind(helper),
+      read: helper.chatRead.bind(helper)
     };
 
     this.chatView = {
-      create: this.chatViewCreate.bind(this),
-      delete: this.chatViewDelete.bind(this),
-      join: this.chatViewJoin.bind(this),
-      groupify: this.chatViewGroupify.bind(this)
+      create: helper.chatViewCreate.bind(helper),
+      delete: helper.chatViewDelete.bind(helper),
+      join: helper.chatViewJoin.bind(helper),
+      groupify: helper.chatViewGroupify.bind(helper)
     };
 
     this.chatHook = {
-      addSynced: this.chatHookAddSynced.bind(this)
+      addSynced: helper.chatHookAddSynced.bind(helper)
     };
 
     this.invite = {
-      accept: this.inviteAccept.bind(this),
-      decline: this.inviteDecline.bind(this)
+      accept: helper.inviteAccept.bind(helper),
+      decline: helper.inviteDecline.bind(helper)
+    };
+
+    this.metadata = {
+      add: helper.metadataAdd.bind(helper)
     };
   }
+}
 
-  bind(path, method, ship = this.ship, app, success, fail, quit) {
-    this.bindPaths = _.uniq([...this.bindPaths, path]);
-
-    window.subscriptionId = this.channel.subscribe(ship, app, path,
-      (err) => {
-        fail(err);
-      },
-      (event) => {
-        success({
-          data: event,
-          from: {
-            ship,
-            path
-          }
-        });
-      },
-      (qui) => {
-        quit(qui);
-      });
-  }
-
-  action(appl, mark, data) {
-    return new Promise((resolve, reject) => {
-      this.channel.poke(window.ship, appl, mark, data,
-        (json) => {
-          resolve(json);
-        },
-        (err) => {
-          reject(err);
-        });
-    });
-  }
-
-  addPendingMessage(msg) {
-    if (this.store.state.pendingMessages.has(msg.path)) {
-      this.store.state.pendingMessages.get(msg.path).push(msg.envelope);
-    } else {
-      this.store.state.pendingMessages.set(msg.path, [msg.envelope]);
-    }
-
-    this.store.setState({
-      pendingMessages: this.store.state.pendingMessages
-    });
-  }
-
+class PrivateHelper extends BaseApi {
   groupsAction(data) {
     return this.action('group-store', 'group-action', data);
   }
@@ -102,6 +62,18 @@ export default class Api {
 
   chatAction(data) {
     this.action('chat-store', 'json', data);
+  }
+
+  addPendingMessage(msg) {
+    if (this.store.state.pendingMessages.has(msg.path)) {
+      this.store.state.pendingMessages.get(msg.path).push(msg.envelope);
+    } else {
+      this.store.state.pendingMessages.set(msg.path, [msg.envelope]);
+    }
+
+    this.store.setState({
+      pendingMessages: this.store.state.pendingMessages
+    });
   }
 
   chatMessage(path, author, when, letter) {
@@ -231,28 +203,5 @@ export default class Api {
     });
   }
 
-  sidebarToggle() {
-    let sidebarBoolean = true;
-    if (this.store.state.sidebarShown === true) {
-      sidebarBoolean = false;
-    }
-    this.store.handleEvent({
-      data: {
-        local: {
-          'sidebarToggle': sidebarBoolean
-        }
-      }
-    });
-  }
-
-  setSelected(selected) {
-    this.store.handleEvent({
-      data: {
-        local: {
-          selected: selected
-        }
-      }
-    });
-  }
 }
 

@@ -6,7 +6,7 @@ import './css/custom.css';
 
 import PublishApi from '../../api/publish';
 import PublishStore from '../../store/publish';
-import Subscription from './subscription';
+import PublishSubscription from '../../subscription/publish';
 
 import { Skeleton } from './components/skeleton';
 import { NewScreen } from './components/lib/new';
@@ -19,7 +19,7 @@ import { EditPost } from './components/lib/edit-post';
 export default class PublishApp extends React.Component {
   constructor(props) {
     super(props);
-    this.store = new Store();
+    this.store = new PublishStore();
     this.store.setStateHandler(this.setState.bind(this));
 
     this.state = this.store.state;
@@ -39,7 +39,7 @@ export default class PublishApp extends React.Component {
     const channel = new this.props.channel();
     this.api = new PublishApi(this.props.ship, channel, this.store);
 
-    this.subscription = new Subscription(this.store, this.api, channel);
+    this.subscription = new PublishSubscription(this.store, this.api, channel);
     this.subscription.start();
     this.api.fetchNotebooks();
   }

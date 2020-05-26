@@ -39,14 +39,15 @@ const StatusBar = (props) => {
       style={{ height: 45 }}
     >
       <div className="fl lh-copy absolute left-0 pl4" style={{ top: 8 }}>
-      <a href="/~groups/me" className="dib v-top" style={{ lineHeight: 0, paddingTop: 6 }}>
+      <Link to="/~groups/me"
+          className="dib v-top" style={{ lineHeight: 0, paddingTop: 6 }}>
           <Sigil
             ship={'~' + window.ship}
             classes="v-mid mix-blend-diff"
             size={16}
             color={'#000000'}
           />
-      </a>
+      </Link>
       <GroupFilter invites={invites} associations={props.associations} api={props.api} />
       <span className="dib f9 v-mid gray2 ml1 mr1 c-default inter">/</span>
         {

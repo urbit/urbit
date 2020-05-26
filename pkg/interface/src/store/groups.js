@@ -33,13 +33,13 @@ export default class GroupsStore extends BaseStore {
   }
 
   reduce(data, state) {
-    this.groupReducer.reduce(json, this.state);
-    this.permissionReducer.reduce(json, this.state);
-    this.contactReducer.reduce(json, this.state);
-    this.inviteReducer.reduce(json, this.state);
-    this.metadataReducer.reduce(json, this.state);
-    this.s3Reducer.reduce(json, this.state);
-    this.localReducer.reduce(json, this.state);
+    this.groupReducer.reduce(data, this.state);
+    this.permissionReducer.reduce(data, this.state);
+    this.contactReducer.reduce(data, this.state);
+    this.inviteReducer.reduce(data, this.state);
+    this.metadataReducer.reduce(data, this.state);
+    this.s3Reducer.reduce(data, this.state);
+    this.localReducer.reduce(data, this.state);
   }
 }
 

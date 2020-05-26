@@ -3,9 +3,9 @@ import { Switch, Route } from 'react-router-dom';
 
 import _ from 'lodash';
 
-import Api from './api';
+import LinksApi from '../../api/links';
 import LinksStore from '../../store/links';
-import Subscription from './subscription';
+import LinksSubscription from '../../subscription/links';
 
 import './css/custom.css';
 
@@ -17,6 +17,7 @@ import { MessageScreen } from './components/lib/message-screen';
 import { Links } from './components/links-list';
 import { LinkDetail } from './components/link';
 import { makeRoutePath, amOwnerOfGroup, base64urlDecode } from '../../lib/util';
+
 
 export class LinksApp extends Component {
   constructor(props) {
@@ -30,11 +31,10 @@ export class LinksApp extends Component {
   }
 
   componentDidMount() {
-    this.store.clear();
     const channel = new this.props.channel();
-    this.api = new Api(this.props.ship, channel, this.store);
+    this.api = new LinksApi(this.props.ship, channel, this.store);
 
-    this.subscription = new Subscription(this.store, this.api, channel);
+    this.subscription = new LinksSubscription(this.store, this.api, channel);
     this.subscription.start();
   }
 

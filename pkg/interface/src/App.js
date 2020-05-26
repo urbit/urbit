@@ -13,9 +13,9 @@ import GroupsApp from './apps/groups/app';
 import LinksApp from './apps/links/app';
 import PublishApp from './apps/publish/app';
 
-import Store from './store';
-import Subscription from './subscription';
-import Api from './api';
+import GlobalStore from './store/global';
+import GlobalSubscription from './subscription/global';
+import GlobalApi from './api/global';
 
 // const Style = createGlobalStyle`
 //   ${cssReset}
@@ -41,7 +41,7 @@ const Home = () => (
     <Link className="db" to='/~chat'>Chat</Link>
     <Link className="db" to='/~dojo'>Dojo</Link>
     <Link className="db" to='/~groups'>Groups</Link>
-    <Link className="db" to='/~link'>Links</Link>
+    <Link className="db" to='/~links'>Links</Link>
     <Link className="db" to='~publish'>Publish</Link>
   </div>
 );
@@ -52,16 +52,17 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.ship = window.ship;
-    this.store = new Store();
+    this.store = new GlobalStore();
     this.store.setStateHandler(this.setState.bind(this));
     this.state = this.store.state;
 
     this.appChannel = new window.channel();
-    this.api = new Api(this.ship, this.appChannel, this.store);
+    this.api = new GlobalApi(this.ship, this.appChannel, this.store);
   }
 
   componentDidMount() {
-    this.subscription = new Subscription(this.store, this.api, this.appChannel);
+    this.subscription =
+      new GlobalSubscription(this.store, this.api, this.appChannel);
     this.subscription.start();
   }
 
@@ -109,7 +110,7 @@ export default class App extends React.Component {
                   selectedGroups={selectedGroups}
                   {...p} />
               )} />
-              <Route path="/~link" render={ p => (
+              <Route path="/~links" render={ p => (
                 <LinksApp
                   ship={this.ship}
                   channel={channel}
@@ -130,3 +131,4 @@ export default class App extends React.Component {
     );
   }
 }
+
