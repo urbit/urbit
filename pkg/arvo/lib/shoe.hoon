@@ -165,7 +165,7 @@
     =^  cards  shoe  on-init:og
     [(deal cards) this]
   ::
-  ++  on-save   !>([shoe-inner=on-save:og shoe-self=state])
+  ++  on-save   !>([%shoe-app on-save:og state])
   ::
   ++  on-load
     |=  old-state=vase
@@ -173,22 +173,14 @@
     ::  we could be upgrading from a shoe-less app, in which case the vase
     ::  contains inner application state instead of our +on-save.
     ::  to distinguish between the two, we check for the presence of our own
-    ::  +on-save faces in the vase.
+    ::  +on-save tag in the vase.
     ::
-    |^  ?.  worn
-          =^  cards  shoe  (on-load:og old-state)
-          [(deal cards) this]
-        =^  old-inner  state  !<([vase state-0] old-state)
-        =^  cards      shoe   (on-load:og old-inner)
-        [(deal cards) this]
-    ::
-    ++  worn
-      &((have %shoe-inner) (have %shoe-self))
-    ::
-    ++  have
-      |=  =term
-      (head (mule |.((slab term -:old-state))))
-    --
+    ?.  ?=([%shoe-app ^] q.old-state)
+      =^  cards  shoe  (on-load:og old-state)
+      [(deal cards) this]
+    =^  old-inner  state  +:!<([%shoe-app vase state-0] old-state)
+    =^  cards      shoe   (on-load:og old-inner)
+    [(deal cards) this]
   ::
   ++  on-poke
     |=  [=mark =vase]
