@@ -117,9 +117,7 @@
   ::
   ++  can-connect
     |=  sole-id=@ta
-    ?|  =(~zod src.bowl)
-        (team:title [our src]:bowl)
-    ==
+    (team:title [our src]:bowl)
   ::
   ++  on-connect
     |=  sole-id=@ta
