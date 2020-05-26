@@ -15,7 +15,6 @@ export default class ChatSubscription extends BaseSubscription {
 
 
   fetchMessages(start, end, path) {
-    console.log(start, end, path);
     fetch(`/chat-view/paginate/${start}/${end}${path}`)
       .then(response => response.json())
       .then((json) => {

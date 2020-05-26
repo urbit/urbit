@@ -35,17 +35,6 @@ const Root = styled.div`
   min-height: 100vh;
 `;
 
-const Home = () => (
-  <div>
-    Home
-    <Link className="db" to='/~chat'>Chat</Link>
-    <Link className="db" to='/~dojo'>Dojo</Link>
-    <Link className="db" to='/~groups'>Groups</Link>
-    <Link className="db" to='/~links'>Links</Link>
-    <Link className="db" to='~publish'>Publish</Link>
-  </div>
-);
-
 const StatusBarWithRouter = withRouter(StatusBar);
 
 export default class App extends React.Component {
@@ -110,7 +99,7 @@ export default class App extends React.Component {
                   selectedGroups={selectedGroups}
                   {...p} />
               )} />
-              <Route path="/~links" render={ p => (
+              <Route path="/~link" render={ p => (
                 <LinksApp
                   ship={this.ship}
                   channel={channel}

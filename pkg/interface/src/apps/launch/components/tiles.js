@@ -10,8 +10,7 @@ import WeatherTile from './tiles/weather';
 export default class Tiles extends React.PureComponent {
   render() {
     const { props } = this;
-    console.log('render');
-    
+
     let tiles = props.tileOrdering.filter((key) => {
       return props.tiles[key].isShown;
     }).map((key) => {

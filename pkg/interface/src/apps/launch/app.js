@@ -14,8 +14,6 @@ export default class LaunchApp extends React.Component {
   constructor(props) {
     super(props);
     this.store = new LaunchStore();
-    this.store.setStateHandler(this.setState.bind(this));
-
     this.state = this.store.state;
     this.resetControllers();
   }
@@ -28,9 +26,9 @@ export default class LaunchApp extends React.Component {
   componentDidMount() {
     window.title = 'OS1 - Home';
     // preload spinner asset
-    new Image().src = '/~chat/img/Spinner.png';
+    new Image().src = '/~landscape/img/Spinner.png';
 
-    this.store.clear();
+    this.store.setStateHandler(this.setState.bind(this));
     const channel = new this.props.channel();
     this.api = new LaunchApi(this.props.ship, channel, this.store);
 
@@ -42,6 +40,7 @@ export default class LaunchApp extends React.Component {
   componentWillUnmount() {
     this.subscription.delete();
     this.store.clear();
+    this.store.setStateHandler(() => {});
     this.resetControllers();
   }
 

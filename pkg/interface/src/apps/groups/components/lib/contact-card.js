@@ -141,7 +141,6 @@ export class ContactCard extends Component {
               type: 'Saving to group'
             },
             () => {
-              console.log(state.avatarToSet);
               props.api
                 .contactEdit(props.path, ship, {
                   avatar: {
