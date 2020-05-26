@@ -12013,8 +12013,11 @@
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun (slum q.gat q.sam)]
 ::
+::  +slab states whether you can access an arm in a type
+::  for reading, writing, or reading-and-writing.
+::
 ++  slab                                                ::  test if contains
-  |=  {cog/@tas way/?(%read %rite %both) typ/type}
+  |=  [way=?(%read %rite %both) cog=@tas typ=type]
   ?=  [%| *]
   (~(find ut typ) way ~[cog])
 ::
