@@ -11,12 +11,11 @@
 ::
 /-  view=chat-view, hook=chat-hook,
     *permission-store, *group-store, *invite-store,
-    *rw-security, sole-sur=sole
-/+  sole-lib=sole, default-agent, verb, dbug, store=chat-store,
-    auto=language-server-complete
+    *rw-security, sole
+/+  shoe, default-agent, verb, dbug, store=chat-store
 ::
 |%
-+$  card  card:agent:gall
++$  card  card:shoe
 ::
 +$  versioned-state
   $%  state-2
@@ -35,7 +34,6 @@
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
       timez=(pair ? @ud)                            ::  timezone adjustment
-      soles=(map @ta sole-share:sole-sur)           ::  console state
   ==
 ::
 +$  state-1
@@ -49,7 +47,7 @@
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
       timez=(pair ? @ud)                            ::  timezone adjustment
-      cli=state=sole-share:sole-sur                 ::  console state
+      cli=state=sole-share:sole                     ::  console state
       eny=@uvJ                                      ::  entropy
   ==
 ::
@@ -63,7 +61,7 @@
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
       timez=(pair ? @ud)                            ::  timezone adjustment
-      cli=state=sole-share:sole-sur                 ::  console state
+      cli=state=sole-share:sole                     ::  console state
       eny=@uvJ                                      ::  entropy
   ==
 ::
@@ -111,13 +109,15 @@
 ::
 %-  agent:dbug
 %+  verb  |
-^-  agent:gall
+%-  (agent:shoe command)
+^-  (shoe:shoe command)
 =<
   |_  =bowl:gall
   +*  this       .
       talk-core  +>
       tc         ~(. talk-core bowl)
       def        ~(. (default-agent this %|) bowl)
+      des        ~(. (default:shoe this command) bowl)
   ::
   ++  on-init
     ^-  (quip card _this)
@@ -139,25 +139,9 @@
     =^  cards  state
       ?+  mark        (on-poke:def mark vase)
         %noun         (poke-noun:tc !<(* vase))
-        %sole-action  (sh-in:tc !<(sole-action:sole-sur vase))
       ==
     [cards this]
   ::
-  ++  on-watch
-    |=  =path
-    ^-  (quip card _this)
-    =^  cards  state  (peer:tc path)
-    [cards this]
-  ::
-  ++  on-leave
-    |=  =path
-    ^-  (quip card _this)
-    :-  ~
-    ?.  ?=([%sole @ ~] path)
-      this
-    this(soles (~(del by soles) i.t.path))
-  ::
-  ++  on-peek   on-peek:def
   ++  on-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
@@ -181,8 +165,33 @@
       ==
     [cards this]
   ::
+  ++  on-watch  on-watch:def
+  ++  on-leave  on-leave:def
+  ++  on-peek   on-peek:def
   ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
+  ::
+  ++  command-parser
+    |=  sole-id=@ta
+    parser:sh:tc
+  ::
+  ++  tab-list
+    |=  sole-id=@ta
+    tab-list:sh:tc
+  ::
+  ++  on-command
+    |=  [sole-id=@ta =command]
+    =^  cards  state
+      (work:sh:tc command)
+    [cards this]
+  ::
+  ++  on-connect
+    |=  sole-id=@ta
+    ^-  (quip card _this)
+    [[prompt:sh-out:tc ~] this]
+  ::
+  ++  can-connect     can-connect:des
+  ++  on-disconnect   on-disconnect:des
   --
 ::
 |_  =bowl:gall
@@ -247,10 +256,6 @@
       grams  known  count
       bound  binds  audience
       settings  width  timez
-    ::
-      %+  ~(put by *(map @t sole-share:sole-sur))
-        (cat 3 'drum_' (scot %p our.bowl))
-      state.cli.u.old
     ==
   ::
   ?>  ?=(%2 -.u.old)
@@ -316,25 +321,6 @@
   ?:  ?=(%catch-up a)
     catch-up
   [~ state]
-::  +peer: accept only cli subscriptions from ourselves
-::
-++  peer
-  |=  =path
-  ^-  (quip card _state)
-  ?.  (team:title our-self src.bowl)
-    ~|  [%peer-talk-stranger src.bowl]
-    !!
-  ?.  ?=([%sole @ ~] path)
-    ~|  [%peer-talk-strange path]
-    !!
-  =*  sole-id=@ta  i.t.path
-  ::  start with fresh sole state
-  =.  soles
-    (~(put by soles) sole-id *sole-share:sole-sur)
-  ::  display a fresh prompt
-  ::NOTE  this means we send it to all, but all should already have the right
-  ::      prompt anyway, so in effect it's a no-op for them.
-  [[prompt:sh-out]~ state]
 ::  +handle-invite-update: get new invites
 ::
 ++  handle-invite-update
@@ -454,140 +440,16 @@
     count  +(count)
   ==
 ::
-::  +sh-in: handle user input
+::  +sh: shoe handling
 ::
-++  sh-in
-  =,  sole-sur
-  |=  act=sole-action
-  ^-  (quip card _state)
-  =*  sole-id=@ta  id.act
-  =/  cli-state=sole-share
-    (~(gut by soles) sole-id *sole-share)
-  |^  =^  [=_cli-state cards=(list card)]  state
-        ?-  -.dat.act
-          %det  (edit +.dat.act)
-          %clr  [[cli-state ~] state]
-          %ret  obey
-          %tab  (tab +.dat.act)
-        ==
-      :-  cards
-      state(soles (~(put by soles) sole-id cli-state))
-  ::
-  +$  outward  [[=_cli-state cards=(list card)] _state]
-  ::  +tab-list: static list of autocomplete entries
-  ::
-  ++  tab-list
-    ^-  (list (option:auto tank))
-    :~
-      [%join leaf+";join ~ship/chat-name (glyph)"]
-      [%leave leaf+";leave ~ship/chat-name"]
-      ::
-      [%create leaf+";create [type] /chat-name (glyph)"]
-      [%delete leaf+";delete /chat-name"]
-      [%invite leaf+";invite /chat-name ~ships"]
-      [%banish leaf+";banish /chat-name ~ships"]
-    ::
-      [%bind leaf+";bind [glyph] ~ship/chat-name"]
-      [%unbind leaf+";unbind [glyph]"]
-      [%what leaf+";what (~ship/chat-name) (glyph)"]
-    ::
-      [%settings leaf+";settings"]
-      [%set leaf+";set key (value)"]
-      [%unset leaf+";unset key"]
-    ::
-      [%chats leaf+";chats"]
-      [%help leaf+";help"]
-    ==
-  ++  tab
-    |=  pos=@ud
-    ^-  outward
-    ?:  ?|  =(~ buf.cli-state)
-            !=(';' -.buf.cli-state)
-        ==
-      :_  state
-      :-  cli-state
-      [(effect:sh-out [%bel ~]) ~]
-    ::
-    =+  (get-id:auto pos (tufa buf.cli-state))
-    =/  needle=term
-      (fall id '')
-    ::  autocomplete empty command iff user at start of command
-    ?:  &(!=(pos 1) =(0 (met 3 needle)))
-      [[cli-state ~] state]
-    =/  options=(list (option:auto tank))
-      (search-prefix:auto needle tab-list)
-    =/  advance=term
-      (longest-match:auto options)
-    =/  to-send=tape
-      (trip (rsh 3 (met 3 needle) advance))
-    =/  send-pos
-      (add pos (met 3 (fall forward '')))
-    =|  moves=(list card)
-    =?  moves  ?=(^ options)
-      [(tab:sh-out options) moves]
-    =|  fxs=(list sole-effect)
-    |-  ^-  outward
-    ?~  to-send
-      [[cli-state (flop moves)] state]
-    =^  char  cli-state
-      (~(transmit sole-lib cli-state) [%ins send-pos `@c`i.to-send])
-    %_  $
-      moves  [(effect-to:sh-out sole-id %det char) moves]
-      send-pos  +(send-pos)
-      to-send  t.to-send
-    ==
-  ::  +edit: apply sole edit
-  ::
-  ::    called when typing into the cli prompt.
-  ::    applies the change and does sanitizing.
-  ::
-  ++  edit
-    |=  cal=sole-change
-    ^-  outward
-    =^  inv  cli-state  (~(transceive sole-lib cli-state) cal)
-    =+  fix=(sanity inv buf.cli-state)
-    ?~  lit.fix
-      [[cli-state ~] state]
-    ::  just capital correction
-    ?~  err.fix
-      (slug fix)
-    ::  allow interior edits and deletes
-    ?.  &(?=($del -.inv) =(+(p.inv) (lent buf.cli-state)))
-      [[cli-state ~] state]
-    (slug fix)
-  ::  +sanity: check input sanity
-  ::
-  ::    parses cli prompt using +read.
-  ::    if invalid, produces error correction description, for use with +slug.
-  ::
-  ++  sanity
-    |=  [inv=sole-edit buf=(list @c)]
-    ^-  [lit=(list sole-edit) err=(unit @u)]
-    =+  res=(rose (tufa buf) read)
-    ?:  ?=(%& -.res)  [~ ~]
-    [[inv]~ `p.res]
-  ::  +slug: apply error correction to prompt input
-  ::
-  ++  slug
-    |=  [lit=(list sole-edit) err=(unit @u)]
-    ^-  outward
-    ?~  lit  [[cli-state ~] state]
-    =^  lic  cli-state
-      %-  ~(transmit sole-lib cli-state)
-      ^-  sole-edit
-      ?~(t.lit i.lit [%mor lit])
-    :_  state
-    :-  cli-state
-    :_  ~
-    %+  effect:sh-out  %mor
-    :-  [%det lic]
-    ?~(err ~ [%err u.err]~)
+++  sh
+  |%
   ::  +read: command parser
   ::
   ::    parses the command line buffer.
   ::    produces commands which can be executed by +work.
   ::
-  ++  read
+  ++  parser
     |^
       %+  knee  *command  |.  ~+
       =-  ;~(pose ;~(pfix mic -) message)
@@ -779,37 +641,29 @@
       %+  stag  (crip q.tub)
       wide:(vang & [&1:% &2:% (scot %da now.bowl) |3:%])
     --
-  ::  +obey: apply result
+  ::  +tab-list: command descriptions
   ::
-  ::    called upon hitting return in the prompt.
-  ::    if input is invalid, +slug is called.
-  ::    otherwise, the appropriate work is done and
-  ::    the command (if any) gets echoed to the user.
-  ::
-  ++  obey
-    ^-  outward
-    =+  buf=buf.cli-state
-    =+  fix=(sanity [%nop ~] buf)
-    ?^  lit.fix
-      (slug fix)
-    =+  jub=(rust (tufa buf) read)
-    ?~  jub
-      :_  state
-      [cli-state [(effect:sh-out %bel ~)]~]
-    =^  cal  cli-state  (~(transmit sole-lib cli-state) [%set ~])
-    =^  cards  state  (work u.jub)
-    :_  state
-    :-  cli-state
-    %+  weld
-      ^-  (list card)
-      ::  echo commands into scrollback
-      ?.  =(`0 (find ";" buf))  ~
-      [(note:sh-out (tufa `(list @)`buf)) ~]
-    :_  cards
-    %+  effect-to:sh-out  sole-id
-    :-  %mor
-    :~  [%nex ~]
-        [%det cal]
+  ++  tab-list
+    ^-  (list [@t tank])
+    :~
+      [%join leaf+";join ~ship/chat-name (glyph)"]
+      [%leave leaf+";leave ~ship/chat-name"]
+      ::
+      [%create leaf+";create [type] /chat-name (glyph)"]
+      [%delete leaf+";delete /chat-name"]
+      [%invite leaf+";invite /chat-name ~ships"]
+      [%banish leaf+";banish /chat-name ~ships"]
+    ::
+      [%bind leaf+";bind [glyph] ~ship/chat-name"]
+      [%unbind leaf+";unbind [glyph]"]
+      [%what leaf+";what (~ship/chat-name) (glyph)"]
+    ::
+      [%settings leaf+";settings"]
+      [%set leaf+";set key (value)"]
+      [%unset leaf+";unset key"]
+    ::
+      [%chats leaf+";chats"]
+      [%help leaf+";help"]
     ==
   ::  +work: run user command
   ::
@@ -1166,27 +1020,12 @@
 ::
 ++  sh-out
   |%
-  ::  +effect-to: console effect card to a single listener
-  ::
-  ++  effect-to
-    |=  [sole-id=@ta fec=sole-effect:sole-sur]
-    ^-  card
-    [%give %fact [/sole/[sole-id]]~ %sole-effect !>(fec)]
   ::  +effect: console effect card for all listeners
   ::
   ++  effect
-    |=  fec=sole-effect:sole-sur
+    |=  effect=sole-effect:sole
     ^-  card
-    =-  [%give %fact - %sole-effect !>(fec)]
-    %+  turn  ~(tap in ~(key by soles))
-    |=  sole-id=@ta
-    /sole/[sole-id]
-  ::  +tab: print tab-complete list
-  ::
-  ++  tab
-    |=  options=(list [cord tank])
-    ^-  card
-    (effect %tab options)
+    [%shoe ~ %sole effect]
   ::  +print: puts some text into the cli as-is
   ::
   ++  print
@@ -1359,7 +1198,7 @@
 ::  +mr: render messages
 ::
 ++  mr
-  =,  sole-sur
+  =,  sole
   |_  $:  source=target
           envelope:store
       ==
