@@ -612,7 +612,14 @@ _boothack_key(u3_noun kef)
 
     //  +seed:able:jael: private key file
     //
-    seed = u3ke_cue(u3k(u3t(des)));
+    u3_noun pro = u3m_soft(0, u3ke_cue, u3k(u3t(des)));
+    if ( u3_blip != u3h(pro) ) {
+      u3l_log("dawn: unable to cue private key\r\n");
+      exit(1);
+    }
+    seed = u3k(u3t(pro));
+    u3z(pro);
+
     //  local reference, not counted
     //
     ship = u3h(seed);
