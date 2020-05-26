@@ -1,4 +1,5 @@
 /-  *rw-security
+^?
 |%
 ::
 +$  group-info

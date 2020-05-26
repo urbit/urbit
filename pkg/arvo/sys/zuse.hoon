@@ -5916,9 +5916,9 @@
         ==
         ;~  pose
           ;~  pfix
-            (just 'e')
+            (mask "eE")
             ;~  plug
-              ;~(pose (cold | hep) (easy &))
+              ;~(pose (cold | hep) (cold & lus) (easy &))
               ;~  pose
                 ;~(pfix (plus (just '0')) dim:ag)
                 dim:ag
