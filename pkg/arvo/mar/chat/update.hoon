@@ -1,13 +1,13 @@
-/+  *chat-json
-|_  upd=chat-update
+/+  *chat-store
+|_  upd=update
 ++  grow
   |%
-  ++  json  (update-to-json upd)
+  ++  json  (update:enjs upd)
   --
 ::
 ++  grab
   |%
-  ++  noun  chat-update
+  ++  noun  update
   --
 ::
 --
