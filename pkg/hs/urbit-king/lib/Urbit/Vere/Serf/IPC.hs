@@ -39,15 +39,19 @@ import Urbit.Prelude hiding ((<|))
 import Data.Conduit
 import Urbit.Arvo
 import Urbit.Vere.Pier.Types hiding (Work)
+import System.Process
+import Data.Bits
 
 import Foreign.Marshal.Alloc (alloca)
 import Foreign.Ptr           (castPtr)
 import Foreign.Storable      (peek, poke)
-import System.Process        (ProcessHandle)
+import RIO.Prelude           (decodeUtf8Lenient)
 import Urbit.Time            (Wen)
 
 import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Unsafe as BS
+import qualified System.IO.Error        as IO
+import qualified Urbit.Time             as Time
 
 
 -- IPC Types -------------------------------------------------------------------
@@ -89,10 +93,15 @@ data RipeInfo = RipeInfo
   }
  deriving (Show)
 
+data SerfState = SerfState
+  { ssLast :: EventId
+  , ssHash :: Mug
+  }
+ deriving (Show)
+
 data SerfInfo = SerfInfo
   { siRipe :: RipeInfo
-  , siEvId :: EventId
-  , siHash :: Mug
+  , siStat :: SerfState
   }
  deriving (Show)
 
@@ -112,6 +121,7 @@ deriveNoun ''Play
 deriveNoun ''Work
 deriveNoun ''Writ
 deriveNoun ''RipeInfo
+deriveNoun ''SerfState
 deriveNoun ''SerfInfo
 deriveNoun ''Plea
 
@@ -120,12 +130,32 @@ data Serf = Serf
   , serfRecv :: Handle
   , serfProc :: ProcessHandle
   , serfSlog :: Slog -> IO ()
+  , serfLock :: MVar SerfState
   }
 
 
 -- API Types -------------------------------------------------------------------
 
-data SerfConfig = SerfConfig -- binary, directory, &c
+data Flag
+  = DebugRam
+  | DebugCpu
+  | CheckCorrupt
+  | CheckFatal
+  | Verbose
+  | DryRun
+  | Quiet
+  | Hashless
+  | Trace
+ deriving (Eq, Ord, Show, Enum, Bounded)
+
+data Config = Config -- binary, directory, &c
+  { scSerf :: FilePath
+  , scPier :: FilePath
+  , scFlag :: [Flag]
+  , scSlog :: Slog -> IO ()
+  , scStdr :: Text -> IO ()
+  , scDead :: IO ()
+  }
 
 data RunError
   = RunBail [Goof]
@@ -135,7 +165,7 @@ data RunInput
   = RunSnap
   | RunPack
   | RunPeek Wen Gang Path (Maybe (Term, Noun) -> IO ())
-  | RunWork Wen Ev (RunError -> IO ())
+  | RunWork Ev (RunError -> IO ())
 
 data RunOutput = RunOutput EventId Mug Wen (Either Noun Ev) [Ef]
 
@@ -157,6 +187,11 @@ data SerfExn
 --  | InvalidInitialPlea Plea
   deriving (Show, Exception)
 
+
+-- Access Current Serf State ---------------------------------------------------
+
+serfCurrentStateBlocking :: Serf -> IO SerfState
+serfCurrentStateBlocking Serf{serfLock} = readMVar serfLock
 
 -- Low Level IPC Functions -----------------------------------------------------
 
@@ -223,6 +258,11 @@ recvPleaHandlingSlog serf = loop
 
 -- Higher-Level IPC Functions --------------------------------------------------
 
+recvRipe :: Serf -> IO SerfInfo
+recvRipe serf = recvPleaHandlingSlog serf >>= \case
+  PRipe ripe -> pure ripe
+  plea       -> throwIO (UnexpectedPlea plea "expecting %play")
+
 recvPlay :: Serf -> IO Play
 recvPlay serf = recvPleaHandlingSlog serf >>= \case
   PPlay play -> pure play
@@ -248,8 +288,8 @@ recvPeek serf = do
 
 -- Request-Response Points -----------------------------------------------------
 
-snapshot :: Serf -> EventId -> IO ()
-snapshot serf eve = do
+sendSnapshotRequest :: Serf -> EventId -> IO ()
+sendSnapshotRequest serf eve = do
   sendWrit serf (WLive $ LSave eve)
   recvLive serf
 
@@ -266,8 +306,34 @@ scry serf w g p = do
 
 -- Serf Usage Flows ------------------------------------------------------------
 
-start :: SerfConfig -> IO (Serf, SerfInfo)
-start = error "TODO"
+compileFlags :: [Flag] -> Word
+compileFlags = foldl' (\acc flag -> setBit acc (fromEnum flag)) 0
+
+readStdErr :: Handle -> (Text -> IO ()) -> IO () -> IO ()
+readStdErr h onLine onClose = loop
+ where
+  loop = do
+    IO.tryIOError (BS.hGetLine h >>= onLine . decodeUtf8Lenient) >>= \case
+      Left exn -> onClose
+      Right () -> loop
+
+start :: Config -> IO (Serf, SerfInfo)
+start (Config exePax pierPath flags onSlog onStdr onDead) = do
+  (Just i, Just o, Just e, p) <- createProcess pSpec
+  async (readStdErr e onStdr onDead)
+  vLock <- newEmptyMVar
+  let serf = Serf i o p onSlog vLock
+  info <- recvRipe serf -- Gross: recvRipe doesn't care about lock so this is fine.
+  putMVar vLock (siStat info)
+  pure (serf, info)
+ where
+  diskKey = ""
+  config  = show (compileFlags flags)
+  args    = [pierPath, diskKey, config]
+  pSpec   = (proc exePax args) { std_in  = CreatePipe
+                               , std_out = CreatePipe
+                               , std_err = CreatePipe
+                               }
 
 {-
   TODO wait for process exit?
@@ -278,52 +344,100 @@ shutdown serf exitCode = do
   sendWrit serf (WLive $ LExit exitCode)
   pure ()
 
+bootSeq :: Serf -> [Noun] -> IO (Maybe PlayBail)
+bootSeq serf@Serf{..} seq = do
+  oldInfo <- takeMVar serfLock
+  sendWrit serf (WPlay 1 seq)
+  (res, newInfo) <- recvPlay serf >>= \case
+    PBail bail   -> pure (Just bail, oldInfo)
+    PDone newMug -> pure (Nothing, SerfState (fromIntegral $ length seq) newMug)
+  putMVar serfLock newInfo
+  pure res
+
 {-
+  If this throws an exception, the serf will be in an unusable state. Kill
+  the process.
+
   TODO Take advantage of IPC support for batching.
   TODO Maybe take snapshots
 -}
 replay
-  :: Serf -> SerfInfo -> ConduitT Noun Void IO (Either PlayBail (Mug, EventId))
-replay serf info = go (siHash info) (siEvId info)
+  :: forall m
+   . MonadIO m
+  => Serf
+  -> ConduitT Noun Void m (Maybe PlayBail)
+replay serf = do
+  initState <- takeMVar (serfLock serf)
+  (mErr, newState) <- loop initState
+  putMVar (serfLock serf) newState
+  pure mErr
  where
-  go :: Mug -> EventId -> ConduitT Noun Void IO (Either PlayBail (Mug, EventId))
-  go mug eid = await >>= \case
-    Nothing -> pure (Right (mug, eid))
-    Just no -> do
-      io $ sendWrit serf (WPlay eid [no])
-      io (recvPlay serf) >>= \case
-        PBail bail -> pure (Left bail)
-        PDone hash -> go hash (eid + 1)
+  loop :: SerfState -> ConduitT Noun Void m (Maybe PlayBail, SerfState)
+  loop (SerfState lastEve lastMug) = do
+   await >>= \case
+    Nothing -> pure (Nothing, SerfState lastEve lastMug)
+    Just ev -> do
+      let newEve = lastEve + 1
+      io $ sendWrit serf (WPlay newEve [ev])
+      res <- io (recvPlay serf) >>= \case
+        PBail bail   -> pure (Just bail, SerfState lastEve lastMug)
+        PDone newMug -> loop (SerfState newEve newMug)
+      pure res
+
+whenJust :: Monad m => Maybe a -> (a -> m ()) -> m ()
+whenJust Nothing _    = pure ()
+whenJust (Just a) act = act a
 
 {-
+  If this throws an exception, the serf will be in an unusable state. Kill
+  the process.
+
   TODO callbacks on snapshot and compaction?
   TODO Take advantage of async IPC to fill pipe with more than one thing.
 -}
-running :: Serf -> SerfInfo -> ConduitT RunInput RunOutput IO (Mug, EventId)
-running serf info = go (siHash info) (siEvId info)
+running
+  :: forall m
+   . MonadIO m
+  => Serf
+  -> (Maybe RunInput -> IO ())
+  -> ConduitT RunInput RunOutput m ()
+running serf notice = do
+  SerfState {..} <- takeMVar (serfLock serf)
+  newState       <- loop ssHash ssLast
+  putMVar (serfLock serf) newState
+  pure ()
  where
-  go mug eve = await >>= \case
-    Nothing      -> pure (mug, eve)
-    Just RunSnap -> do
-      io (snapshot serf eve)
-      go mug eve
-    Just RunPack -> do
-      io (compact serf eve)
-      go mug eve
-    Just (RunPeek wen gang pax act) -> do
-      res <- io (scry serf wen gang pax)
-      io (act res)
-      go mug eve
-    Just (RunWork wen evn err) -> do
-      io (sendWrit serf (WWork wen evn))
-      io (recvWork serf) >>= \case
-        WDone eid hash fx -> do
-          yield (RunOutput eid hash wen (Right evn) fx)
-          go hash eid
-        WSwap eid hash (wen, noun) fx -> do
-          io $ err (RunSwap eid hash wen noun fx)
-          yield (RunOutput eid hash wen (Left noun) fx)
-          go hash eid
-        WBail goofs -> do
-          io $ err (RunBail goofs)
-          go mug eve
+  loop :: Mug -> EventId -> ConduitT RunInput RunOutput m SerfState
+  loop mug eve = do
+    print "Serf.running.loop"
+    io (notice Nothing)
+    nex <- await
+    print ("Serf.running.loop: Got something")
+    io (notice nex)
+    nex & \case
+      Nothing -> do
+        pure $ SerfState eve mug
+      Just RunSnap -> do
+        io (sendSnapshotRequest serf eve)
+        loop mug eve
+      Just RunPack -> do
+        io (compact serf eve)
+        loop mug eve
+      Just (RunPeek wen gang pax act) -> do
+        res <- io (scry serf wen gang pax)
+        io (act res)
+        loop mug eve
+      Just (RunWork evn err) -> do
+        wen <- io Time.now
+        io (sendWrit serf (WWork wen evn))
+        io (recvWork serf) >>= \case
+          WDone eid hash fx -> do
+            yield (RunOutput eid hash wen (Right evn) fx)
+            loop hash eid
+          WSwap eid hash (wen, noun) fx -> do
+            io $ err (RunSwap eid hash wen noun fx)
+            yield (RunOutput eid hash wen (Left noun) fx)
+            loop hash eid
+          WBail goofs -> do
+            io $ err (RunBail goofs)
+            loop mug eve

@@ -105,7 +105,7 @@ removeFileIfExists pax = do
 
 --------------------------------------------------------------------------------
 
-toSerfFlags :: CLI.Opts -> Serf.Flags
+toSerfFlags :: CLI.Opts -> [Serf.Flag]
 toSerfFlags CLI.Opts{..} = catMaybes m
   where
     -- TODO: This is not all the flags.
@@ -147,7 +147,7 @@ toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
 tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
                    , HasConfigDir e, HasStderrLogFunc e
                    )
-                => Bool -> Pill -> Bool -> Serf.Flags -> Ship
+                => Bool -> Pill -> Bool -> [Serf.Flag] -> Ship
                 -> LegacyBootEvent
                 -> RIO e ()
 tryBootFromPill oExit pill lite flags ship boot = do
@@ -161,34 +161,32 @@ tryBootFromPill oExit pill lite flags ship boot = do
         rio $ logTrace "Completed boot"
         pure sls
 
-runOrExitImmediately :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
-                        , HasConfigDir e
-                        )
-                     => RAcquire e (Serf e, Log.EventLog, SerfState)
-                     -> Bool
-                     -> MVar ()
-                     -> RIO e ()
-runOrExitImmediately getPier oExit mStart =
-    rwith getPier $ if oExit then shutdownImmediately else runPier
-  where
-    shutdownImmediately (serf, log, ss) = do
-        logTrace "Sending shutdown signal"
-        logTrace $ displayShow ss
+runOrExitImmediately
+  :: forall e
+   . (HasLogFunc e, HasNetworkConfig e, HasPierConfig e, HasConfigDir e)
+  => RAcquire e (Serf, Log.EventLog)
+  -> Bool
+  -> MVar ()
+  -> RIO e ()
+runOrExitImmediately getPier oExit mStart = do
+  rwith getPier (if oExit then shutdownImmediately else runPier)
+ where
+  shutdownImmediately :: (Serf, Log.EventLog) -> RIO e ()
+  shutdownImmediately (serf, log) = do
+    logTrace "Sending shutdown signal"
+    Serf.execShutdown serf
+    logTrace "Shutdown!"
 
-        -- Why is this here? Do I need to force a snapshot to happen?
-        io $ threadDelay 500000
-
-        ss <- shutdown serf 0
-        logTrace $ displayShow ss
-        logTrace "Shutdown!"
-
-    runPier sls = do
-        runRAcquire $ Pier.pier sls mStart
+  runPier :: (Serf, Log.EventLog) -> RIO e ()
+  runPier serfLog = do
+    let defaultStderr txt = putStrLn "txt" -- TODO XX What did we do before?
+    vStderr <- newTVarIO defaultStderr
+    runRAcquire (Pier.pier serfLog vStderr mStart)
 
 tryPlayShip :: ( HasStderrLogFunc e, HasLogFunc e, HasNetworkConfig e
                , HasPierConfig e, HasConfigDir e
                )
-            => Bool -> Bool -> Maybe Word64 -> Serf.Flags -> MVar () -> RIO e ()
+            => Bool -> Bool -> Maybe Word64 -> [Serf.Flag] -> MVar () -> RIO e ()
 tryPlayShip exitImmediately fullReplay playFrom flags mStart = do
     when fullReplay wipeSnapshot
     runOrExitImmediately resumeShip exitImmediately mStart
@@ -277,10 +275,10 @@ collectAllFx top = do
     collectedFX = do
         lockFile top
         log  <- Log.existing (top <> "/.urb/log")
-        serf <- Serf.run (Serf.Config tmpDir serfFlags)
-        rio $ Serf.collectFX serf log
+        serf <- Pier.runSerf tmpDir serfFlags
+        rio $ error "Serf.collectFX" serf log
 
-    serfFlags :: Serf.Flags
+    serfFlags :: [Serf.Flag]
     serfFlags = [Serf.Hashless, Serf.DryRun]
 
 --------------------------------------------------------------------------------
@@ -309,14 +307,21 @@ replayPartEvs top last = do
     replayedEvs = do
         lockFile top
         log  <- Log.existing (top <> "/.urb/log")
-        serf <- Serf.run (Serf.Config tmpDir serfFlags)
+        let onSlog = print
+        let onStdr = print
+        let onDead = error "DIED"
+        let config = Serf.Config "urbit-worker" tmpDir serfFlags onSlog onStdr onDead
+        (serf, info) <- io (Serf.start config)
         rio $ do
-          ss <- Serf.replay serf log $ Just last
-          Serf.snapshot serf ss
+          eSs <- Serf.execReplay serf log (Just last)
+          case eSs of
+            Just bail -> error (show bail)
+            Nothing   -> pure ()
+          rio (Serf.execSnapshot serf)
           io $ threadDelay 500000 -- Copied from runOrExitImmediately
           pure ()
 
-    serfFlags :: Serf.Flags
+    serfFlags :: [Serf.Flag]
     serfFlags = [Serf.Hashless]
 
 --------------------------------------------------------------------------------

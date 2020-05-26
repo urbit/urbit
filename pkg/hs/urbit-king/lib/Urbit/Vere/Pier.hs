@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wwarn #-}
+
 {-|
     Top-Level Pier Management
 
@@ -5,8 +7,16 @@
     communication between the serf, the log, and the IO drivers.
 -}
 module Urbit.Vere.Pier
-  ( booted, resumed, getSnapshot, pier, runPersist, runCompute, generateBootSeq
-  ) where
+  ( booted
+  , runSerf
+  , resumed
+  , getSnapshot
+  , pier
+  , runPersist
+  , runCompute
+  , generateBootSeq
+  )
+where
 
 import Urbit.Prelude
 
@@ -26,7 +36,8 @@ import Urbit.Vere.Clay        (clay)
 import Urbit.Vere.Http.Client (client)
 import Urbit.Vere.Http.Server (serv)
 import Urbit.Vere.Log         (EventLog)
-import Urbit.Vere.Serf        (Serf, SerfState(..), doJob, sStderr)
+import Urbit.Vere.Serf        (Serf, SerfState(..))
+import Data.Conduit
 
 import qualified System.Entropy         as Ent
 import qualified Urbit.King.API         as King
@@ -37,11 +48,10 @@ import qualified Urbit.Vere.Term        as Term
 import qualified Urbit.Vere.Term.API    as Term
 import qualified Urbit.Vere.Term.Demux  as Term
 import qualified Urbit.Vere.Term.Render as Term
+import qualified Data.Conduit.Combinators as CC
 
 
 --------------------------------------------------------------------------------
-
-_ioDrivers = [] :: [IODriver]
 
 setupPierDirectory :: FilePath -> RIO e ()
 setupPierDirectory shipPath = do
@@ -93,62 +103,105 @@ writeJobs log !jobs = do
 
 -- Boot a new ship. ------------------------------------------------------------
 
-booted :: (HasPierConfig e, HasStderrLogFunc e, HasLogFunc e)
-       => Pill -> Bool -> Serf.Flags -> Ship -> LegacyBootEvent
-       -> RAcquire e (Serf e, EventLog, SerfState)
-booted pill lite flags ship boot = do
-  seq@(BootSeq ident x y) <- rio $ generateBootSeq ship pill lite boot
+runSerf :: HasLogFunc e => FilePath -> [Serf.Flag] -> RAcquire e Serf
+runSerf pax fax = fst <$> Serf.withSerf config
+ where
+  config = Serf.Config
+    { scSerf = "urbit-worker"
+    , scPier = pax
+    , scFlag = fax
+    , scSlog = \slog -> print ("slog", slog) -- TODO error "TODO: slog"
+    , scStdr = \stdr -> print ("stdr", stdr) -- TODO error "TODO: stdr"
+    , scDead = pure () -- error "TODO: dead"
+    }
 
-  rio $ logTrace "BootSeq Computed"
+bootSeqJobs :: Time.Wen -> BootSeq -> [Job]
+bootSeqJobs now (BootSeq ident nocks ovums) = zipWith ($) bootSeqFns [1 ..]
+ where
+  wen :: EventId -> Time.Wen
+  wen off = Time.addGap now ((fromIntegral off - 1) ^. from Time.microSecs)
+
+  bootSeqFns :: [EventId -> Job]
+  bootSeqFns = fmap muckNock nocks <> fmap muckOvum ovums
+   where
+    muckNock nok eId = RunNok $ LifeCyc eId 0 nok
+    muckOvum ov eId = DoWork $ Work eId 0 (wen eId) ov
+
+{-
+    loop :: [Job] -> SerfState -> Maybe (ProgressBar ()) -> [BootSeqFn]
+         -> RIO e ([Job], SerfState)
+    loop acc ss pb = \case
+        []   -> do
+          pb        <- logStderr (updateProgressBar 0 bootMsg pb)
+          pure (reverse acc, ss)
+        x:xs -> do
+          wen       <- io Time.now
+          job       <- pure $ x (ssNextEv ss) (ssLastMug ss) wen
+          pb        <- logStderr (updateProgressBar (1 + length xs) bootMsg pb)
+          (job, ss) <- bootJob serf job
+          loop (job:acc) ss pb xs
+-}
+
+bootNewShip
+  :: (HasPierConfig e, HasStderrLogFunc e, HasLogFunc e)
+  => Pill
+  -> Bool
+  -> [Serf.Flag]
+  -> Ship
+  -> LegacyBootEvent
+  -> RIO e ()
+bootNewShip pill lite flags ship bootEv = do
+  seq@(BootSeq ident x y) <- generateBootSeq ship pill lite bootEv
+  logTrace "BootSeq Computed"
 
   pierPath <- view pierPathL
 
   liftRIO (setupPierDirectory pierPath)
+  logTrace "Directory setup."
 
-  rio $ logTrace "Directory Setup"
+  rwith (Log.new (pierPath <> "/.urb/log") ident) $ \log -> do
+    logTrace "Event log initialized."
+    jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
+    writeJobs log (fromList jobs)
 
-  log  <- Log.new (pierPath <> "/.urb/log") ident
+  logTrace "Finsihed populating event log with boot sequence"
 
-  rio $ logTrace "Event Log Initialized"
-
-  serf <- Serf.run (Serf.Config pierPath flags)
-
-  rio $ logTrace "Serf Started"
-
-  rio $ do
-      (events, serfSt) <- Serf.bootFromSeq serf seq
-      logTrace "Boot Sequence completed"
-      Serf.snapshot serf serfSt
-      logTrace "Snapshot taken"
-      writeJobs log (fromList events)
-      logTrace "Events written"
-      pure (serf, log, serfSt)
+booted :: (HasPierConfig e, HasStderrLogFunc e, HasLogFunc e)
+       => Pill -> Bool -> [Serf.Flag] -> Ship -> LegacyBootEvent
+       -> RAcquire e (Serf, EventLog)
+booted pill lite flags ship boot = do
+  rio $ bootNewShip pill lite flags ship boot
+  resumed Nothing flags
 
 
 -- Resume an existing ship. ----------------------------------------------------
 
-resumed :: (HasStderrLogFunc e, HasPierConfig e, HasLogFunc e)
-        => Maybe Word64 -> Serf.Flags
-        -> RAcquire e (Serf e, EventLog, SerfState)
-resumed event flags = do
-    rio $ logTrace "Resuming ship"
-    top    <- view pierPathL
-    tap    <- fmap (fromMaybe top) $ rio $ runMaybeT $ do
-                ev <- MaybeT (pure event)
-                MaybeT (getSnapshot top ev)
+resumed
+  :: (HasStderrLogFunc e, HasPierConfig e, HasLogFunc e)
+  => Maybe Word64
+  -> [Serf.Flag]
+  -> RAcquire e (Serf, EventLog)
+resumed replayUntil flags = do
+  rio $ logTrace "Resuming ship"
+  top <- view pierPathL
+  tap <- fmap (fromMaybe top) $ rio $ runMaybeT $ do
+    ev <- MaybeT (pure replayUntil)
+    MaybeT (getSnapshot top ev)
 
-    rio $ logTrace $ display @Text ("pier: " <> pack top)
-    rio $ logTrace $ display @Text ("running serf in: " <> pack tap)
+  rio $ logTrace $ display @Text ("pier: " <> pack top)
+  rio $ logTrace $ display @Text ("running serf in: " <> pack tap)
 
-    log    <- Log.existing (top <> "/.urb/log")
+  log    <- Log.existing (top <> "/.urb/log")
+  serf   <- runSerf tap flags
 
-    serf   <- Serf.run (Serf.Config tap flags)
+  rio $ do
+    logTrace "Replaying events"
+    Serf.execReplay serf log replayUntil
+    logTrace "Taking snapshot"
+    Serf.execSnapshot serf
+    logTrace "Shuting down the serf"
 
-    serfSt <- rio $ Serf.replay serf log event
-
-    rio $ Serf.snapshot serf serfSt
-
-    pure (serf, log, serfSt)
+  pure (serf, log)
 
 getSnapshot :: forall e. FilePath -> Word64 -> RIO e (Maybe FilePath)
 getSnapshot top last = do
@@ -171,10 +224,11 @@ acquireWorker :: RIO e () -> RAcquire e (Async ())
 acquireWorker act = mkRAcquire (async act) cancel
 
 pier :: ∀e. (HasConfigDir e, HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
-     => (Serf e, EventLog, SerfState)
+     => (Serf, EventLog)
+     -> TVar (Text -> IO ())
      -> MVar ()
      -> RAcquire e ()
-pier (serf, log, ss) mStart = do
+pier (serf, log) vStderr mStart = do
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
@@ -211,7 +265,7 @@ pier (serf, log, ss) mStart = do
                 Term.addDemux ext demux
             logTrace "TERMSERV External terminal connected."
 
-    swapMVar (sStderr serf) (atomically . Term.trace muxed)
+    atomically $ writeTVar vStderr (atomically . Term.trace muxed)
 
     let logId = Log.identity log
     let ship = who logId
@@ -230,10 +284,12 @@ pier (serf, log, ss) mStart = do
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
+    let stubErrCallback = \_ -> pure ()
+
     tExe  <- startDrivers >>= router (readTQueue executeQ)
     tDisk <- runPersist log persistQ (writeTQueue executeQ)
-    tCpu  <- runCompute serf ss
-               (readTQueue computeQ)
+    tCpu  <- runCompute serf
+               ((,stubErrCallback) <$> readTQueue computeQ)
                (takeTMVar saveM)
                (takeTMVar shutdownM)
                (Term.spin muxed)
@@ -270,6 +326,7 @@ saveSignalThread tm = mkRAcquire start cancel
     start = async $ forever $ do
       threadDelay (120 * 1000000) -- 120 seconds
       atomically $ putTMVar tm ()
+
 
 -- Start All Drivers -----------------------------------------------------------
 
@@ -340,12 +397,6 @@ router waitFx Drivers{..} =
 
 -- Compute Thread --------------------------------------------------------------
 
-data ComputeRequest
-    = CREvent Ev
-    | CRSave ()
-    | CRShutdown ()
-  deriving (Eq, Show)
-
 logEvent :: HasLogFunc e => Ev -> RIO e ()
 logEvent ev =
     logDebug $ display $ "[EVENT]\n" <> pretty
@@ -362,49 +413,130 @@ logEffect ef =
        GoodParse e -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow e
        FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
 
-runCompute :: ∀e. HasLogFunc e
-           => Serf e
-           -> SerfState
-           -> STM Ev
-           -> STM ()
-           -> STM ()
-           -> (Maybe Text -> STM ())
-           -> STM ()
-           -> ((Job, FX) -> STM ())
-           -> RAcquire e (Async ())
-runCompute serf ss getEvent getSaveSignal getShutdownSignal
-           showSpinner hideSpinner putResult =
-    mkRAcquire (async (go ss)) cancel
-  where
-    go :: SerfState -> RIO e ()
-    go ss = do
-        cr  <- atomically $
-          CRShutdown <$> getShutdownSignal <|>
-          CRSave     <$> getSaveSignal     <|>
-          CREvent    <$> getEvent
-        case cr of
-          CREvent ev -> do
-            logEvent ev
-            wen <- io Time.now
-            eId <- pure (ssNextEv ss)
-            mug <- pure (ssLastMug ss)
+data ComputeRequest
+    = CREvent (Ev, Serf.RunError -> IO ())
+    | CRSave ()
+    | CRShutdown ()
 
-            atomically $ showSpinner (getSpinnerNameForEvent ev)
-            (job', ss', fx) <- doJob serf $ DoWork $ Work eId mug wen ev
-            atomically $ hideSpinner
-            atomically (putResult (job', fx))
-            go ss'
-          CRSave () -> do
-            logDebug $ "Taking periodic snapshot"
-            Serf.snapshot serf ss
-            go ss
-          CRShutdown () -> do
-            -- When shutting down, we first request a snapshot, and then we
-            -- just exit this recursive processing, which will cause the serf
-            -- to exit from its RAcquire.
-            logDebug $ "Shutting down compute system..."
-            Serf.snapshot serf ss
-            pure ()
+runCompute
+  :: forall e
+   . HasLogFunc e
+  => Serf
+  -> STM (Ev, Serf.RunError -> IO ())
+  -> STM ()
+  -> STM ()
+  -> (Maybe Text -> STM ())
+  -> STM ()
+  -> ((Job, FX) -> STM ())
+  -> RAcquire e (Async ())
+runCompute serf getEvent getSaveSignal getShutdownSignal showSpinner hideSpinner putResult = do
+  mkRAcquire (async $ newRunCompute serf config) cancel
+ where
+  config = ComputeConfig
+    { ccOnWork = getEvent
+    , ccOnKill = getShutdownSignal
+    , ccOnSave = getSaveSignal
+    , ccPutResult = putResult
+    , ccShowSpinner = showSpinner
+    , ccHideSpinner = hideSpinner
+    }
+
+-- data RunOutput = RunOutput EventId Mug Wen (Either Noun Ev) [Ef]
+-- data Work = Work EventId Mug Wen Ev
+
+{-
+data ComputeRequest
+    = CREvent Ev (Serf.RunError -> IO ())
+    | CRSave ()
+    | CRShutdown ()
+  deriving (Eq, Show)
+-}
+
+{-
+  TODO Pack and Peek
+-}
+ipcSource
+  :: forall e
+   . HasLogFunc e
+  => STM (Ev, Serf.RunError -> IO ())
+  -> STM ()
+  -> STM ()
+  -> ConduitT () Serf.RunInput (RIO e) ()
+ipcSource onEvent onSave onKill = loop
+ where
+  loop :: ConduitT () Serf.RunInput (RIO e) ()
+  loop = do
+    lift $ logTrace "ipcSource waiting for work request."
+    let down = CRShutdown <$> onKill
+    let save = CRSave <$> onSave
+    let work = CREvent <$> onEvent
+    atomically (down <|> save <|> work) >>= \case
+      CRShutdown () -> do
+        pure ()
+      CRSave () -> do
+        lift $ logTrace "ipcSource: requesting snapshot"
+        yield Serf.RunSnap
+        loop
+      CREvent (ev, cb) -> do
+        lift $ logTrace "ipcSource: requesting work"
+        yield (Serf.RunWork ev cb)
+        loop
+
+fromRightErr :: Either a b -> IO b
+fromRightErr (Left l) = error "unexpected Left value"
+fromRightErr (Right r) = pure r
+
+data ComputeConfig = ComputeConfig
+  { ccOnWork :: STM (Ev, Serf.RunError -> IO ())
+  , ccOnKill :: STM ()
+  , ccOnSave :: STM ()
+  , ccPutResult :: (Job, FX) -> STM ()
+  , ccShowSpinner :: Maybe Text -> STM ()
+  , ccHideSpinner :: STM ()
+  }
+
+newRunCompute
+  :: forall e . HasLogFunc e => Serf.Serf -> ComputeConfig -> RIO e ()
+newRunCompute serf ComputeConfig {..} = do
+  logTrace "newRunCompute"
+  runConduit
+    $  ipcSource ccOnWork ccOnSave ccOnKill
+    .| Serf.running serf (atomically . onStatusChange)
+    .| sendResults
+ where
+  sendResults :: ConduitT Serf.RunOutput Void (RIO e) ()
+  sendResults = await >>= \case
+    Nothing                               -> pure ()
+    Just (Serf.RunOutput e m w nounEv fx) -> do
+      lift $ logTrace "newRunCompute: Got play result"
+      ev <- io $ fromRightErr nounEv -- TODO
+      let job :: Job = DoWork $ Work e m w ev
+      atomically (ccPutResult ((job, GoodParse <$> fx))) -- TODO GoodParse
+      sendResults
+
+  onStatusChange :: Maybe Serf.RunInput -> STM ()
+  onStatusChange = \case
+    Nothing                  -> ccHideSpinner
+    Just (Serf.RunWork ev _) -> ccShowSpinner (getSpinnerNameForEvent ev)
+    _                        -> pure ()
+
+
+{-
+  FIND ME
+
+  send event
+    push event
+  start spinner
+    hook for when event starts running
+    hook for when no event is running
+  send another event
+  first event is done
+    push to persistQ
+  update spinner to event #2
+  second event is done
+    push to executeQ
+  remove spinner
+-}
 
 
 -- Persist Thread --------------------------------------------------------------
