@@ -362,7 +362,7 @@
     ?+    pax  (on-watch:def pax)
         [%http-response *]  [~ this]
     ::
-        [%notebook @ ~]
+        [%notebook @ *]
       =^  cards  state
         (watch-notebook:main pax)
       [cards this]
@@ -458,8 +458,13 @@
           [%subscribe @ @ ~]
         =/  who=@p     (slav %p i.t.wir)
         =/  book=@tas  i.t.t.wir
+        =/  wen=(unit @da)  (get-last-update:main who book)
+        =/  pax=path
+          ?~  wen
+            /notebook/[book]
+          /notebook/[book]/(scot %da u.wen)
         :_  this
-        [%pass wir %agent [who %publish] %watch /notebook/[book]]~
+        [%pass wir %agent [who %publish] %watch pax]~
       ::
           [%permissions ~]
         :_  this
@@ -541,6 +546,63 @@
   --
 ::
 |_  bol=bowl:gall
+::
+++  get-last-update
+  |=  [host=@p book-name=@tas]
+  ^-  (unit @da)
+  =/  book  (~(get by books) host book-name)
+  ?~  book  ~
+  =/  wen  date-created.u.book
+  %-  some
+  %-  ~(rep by notes.u.book)
+  |=  [[@tas =note] out=_wen]
+  ^-  @da
+  =?  out  (gth last-edit.note wen)
+    last-edit.note
+  =.  out
+    %-  ~(rep by comments.note)
+    |=  [[@da =comment] out=_out]
+    ?:  (gth date-created.comment out)
+      date-created.comment
+    out
+  out
+::
+++  get-notebook-from-date
+  |=  [host=@p book-name=@tas wen=@da]
+  ^-  notebook
+  =/  book  (~(got by books) host book-name)
+  %=  book
+      notes
+    %-  ~(rep by notes.book)
+    |=  [[nom=@tas not=note] out=(map @tas note)]
+    ^-  (map @tas note)
+    ?:  (gth last-edit.not wen)
+      (~(put by out) nom not)
+    =.  comments.not
+      %-  ~(rep by comments.not)
+      |=  [[nam=@da com=comment] out=(map @da comment)]
+      ?:  (gth date-created.com wen)
+        (~(put by out) nam com)
+      out
+    ?~  comments.not
+      out
+    (~(put by out) nom not)
+  ==
+::
+++  merge-notebooks
+  |=  [base=notebook diff=notebook]
+  ^-  notebook
+  %=  base
+      notes
+    %-  ~(rep by notes.diff)
+    |=  [[nom=@tas not=note] out=_notes.base]
+    =/  base-note=(unit note)  (~(get by out) nom)
+    ?~  base-note
+      (~(put by out) nom not)
+    =.  comments.u.base-note
+      (~(uni by comments.u.base-note) comments.not)
+    (~(put by out) nom u.base-note)
+  ==
 ::
 ++  read-paths
   |=  ran=rant:clay
@@ -881,6 +943,19 @@
       %.n
   ==
 ::
+++  get-subscriber-paths
+  |=  [book-name=@tas who=@p]
+  ^-  (list path)
+  %+  roll  ~(val by sup.bol)
+  |=  [[whom=@p pax=path] out=(list path)]
+  ?.  =(who whom)
+    out
+  ?.  ?=([%notebook @ *] pax)
+    out
+  ?.  =(i.t.pax book-name)
+    out
+  [pax out]
+::
 ++  handle-permission-update
   |=  upd=permission-update
   ^-  (quip card _state)
@@ -901,7 +976,7 @@
   %+  turn  ~(tap in who.upd)
   |=  who=@p
   ?.  (allowed who %read u.book)
-    [%give %kick [/notebook/[u.book]]~ `who]~
+    [%give %kick (get-subscriber-paths u.book who) `who]~
   ?:  ?|(?=(%remove -.upd) (is-managed path.upd))
     ~
   =/  uid  (sham %publish who u.book eny.bol)
@@ -957,11 +1032,15 @@
 ::
 ++  watch-notebook
   |=  pax=path
-  ?>  ?=([%notebook @ ~] pax)
+  ?>  ?=([%notebook @ *] pax)
   =/  book-name  i.t.pax
   ?.  (allowed src.bol %read book-name)
     ~|("not permitted" !!)
-  =/  book  (~(got by books) our.bol book-name)
+  =/  book
+    ?:  ?=([%notebook @ @ ~] pax)
+      =/  wen=@da  (slav %da i.t.t.pax)
+      (get-notebook-from-date our.bol book-name wen)
+    (~(got by books) our.bol book-name)
   =/  delta=notebook-delta
     [%add-book our.bol book-name book]
   :_  state
@@ -1814,7 +1893,7 @@
     %+  turn  ~(tap in dif-peeps)
     |=  who=@p
     ^-  card
-    [%give %kick [/notebook/[book.act]]~ `who]
+    [%give %kick (get-subscriber-paths book.act who) `who]
   ==
 ::
 ++  get-subscribers
@@ -1963,7 +2042,11 @@
               date-created.data.del
           ==
       ==
+    =/  book  (~(get by books) host.del book.del)
     =^  cards  state
+      ?~  book
+        (emit-updates-and-state host.del book.del data.del del sty)
+      =.  data.del  (merge-notebooks u.book data.del)
       (emit-updates-and-state host.del book.del data.del del sty)
     :_  state
     :*  (group-hook-poke [%add host.del writers.data.del])
