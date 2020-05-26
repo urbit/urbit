@@ -104,6 +104,7 @@
             :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
                 /invitatory/publish
             ==
+            [%pass / %arvo %e %disconnect [~ /'~publish']]
         ==
       =+  ^-  [kick-cards=(list card) old-subs=(jug @tas @p)]  kick-subs
       =/  inv-scry-pax

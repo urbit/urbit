@@ -95,6 +95,7 @@
   ^-  (quip card _state)
   ?>  (team:title our.bol src.bol)
   ?-  -.action
+      %initial  [~ state]
       %add     (handle-add action)
       %remove  (handle-remove action)
       %create  (handle-create action)

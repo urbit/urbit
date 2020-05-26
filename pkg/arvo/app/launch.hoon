@@ -37,7 +37,7 @@
       ^-  tile:store
       ?+  term      [[%custom ~] %.y]
           %chat     [[%basic 'Chat' '/~landscape/img/Chat.png' '/~chat'] %.y]
-          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~links'] %.y]
+          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~link'] %.y]
           %dojo     [[%basic 'Dojo' '/~landscape/img/Dojo.png' '/~dojo'] %.y]
           %publish
         [[%basic 'Publish' '/~landscape/img/Publish.png' '/~publish'] %.y]
@@ -64,7 +64,7 @@
       ^-  tile:store
       ?+  term      [[%custom ~] %.y]
           %chat     [[%basic 'Chat' '/~landscape/img/Chat.png' '/~chat'] %.y]
-          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~links'] %.y]
+          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~link'] %.y]
           %dojo     [[%basic 'Dojo' '/~landscape/img/Dojo.png' '/~dojo'] %.y]
           %publish
         [[%basic 'Publish' '/~landscape/img/Publish.png' '/~publish'] %.y]
@@ -91,7 +91,6 @@
   ++  poke-action
     |=  =action:store
     ^-  (quip card _state)
-    ~&  action
     ?-  -.action
         %add
       ?<  (~(has by tiles) name.action)
