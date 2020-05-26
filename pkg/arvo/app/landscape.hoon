@@ -26,6 +26,7 @@
       [%pass /group-bind %arvo %e %connect [~ /'~groups'] %landscape]
       [%pass /link-bind %arvo %e %connect [~ /'~link'] %landscape]
       [%pass /dojo-bind %arvo %e %connect [~ /'~dojo'] %landscape]
+      [%pass /publish-bind %arvo %e %connect [~ /'~publish'] %landscape]
       [%pass /landscape-bind %arvo %e %connect [~ /'~landscape'] %landscape]
       [%pass /index-bind %arvo %e %connect [~ /] %landscape]
   ==
@@ -73,10 +74,11 @@
     =/  file=(unit octs)
       ?+  site.req-line  ~
           [%'' %'index' ~]  (get-file-at /app/landscape [t.site u.ext]:req-line)
-          [%'~link' *]      (get-file-at /app/landscape [t.site u.ext]:req-line)
+          [%'~link' *]     (get-file-at /app/landscape [t.site u.ext]:req-line)
           [%'~chat' *]      (get-file-at /app/landscape [t.site u.ext]:req-line)
           [%'~dojo' *]      (get-file-at /app/landscape [t.site u.ext]:req-line)
           [%'~groups' *]    (get-file-at /app/landscape [t.site u.ext]:req-line)
+          [%'~publish' *]   (get-file-at /app/landscape [t.site u.ext]:req-line)
           [%'~landscape' %js %session ~]
         (some (as-octt:mimes:html "window.ship = '{+:(scow %p our.bowl)}';"))
       ::

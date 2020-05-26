@@ -15,7 +15,7 @@
       ?:  =(%initial -.upd)
         ?>  ?=(%initial -.upd)
         :-  %initial
-        (groups-to-json grp)
+        (groups-to-json groups.upd)
       ::
       ::  %add
       ?:  =(%add -.upd)
