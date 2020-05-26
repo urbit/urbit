@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 
-import Api from './api';
-import Subscription from './subscription';
+import GroupsApi from '../../api/groups';
+import GroupsSubscription from '../../subscription/groups';
 import GroupsStore from '../../store/groups';
 
 import './css/custom.css';
@@ -18,24 +18,27 @@ export default class GroupsApp extends Component {
   constructor(props) {
     super(props);
     this.store = new GroupsStore();
-    this.store.setStateHandler(this.setState.bind(this));
-
     this.state = this.store.state;
     this.resetControllers();
   }
 
   componentDidMount() {
-    this.store.clear();
-    const channel = new this.props.channel();
-    this.api = new Api(this.props.ship, channel, this.store);
+    window.title = 'OS1 - Groups';
+    // preload spinner asset
+    new Image().src = '/~landscape/img/Spinner.png';
 
-    this.subscription = new Subscription(this.store, this.api, channel);
+    this.store.setStateHandler(this.setState.bind(this));
+    const channel = new this.props.channel();
+    this.api = new GroupsApi(this.props.ship, channel, this.store);
+
+    this.subscription = new GroupsSubscription(this.store, this.api, channel);
     this.subscription.start();
   }
 
   componentWillUnmount() {
     this.subscription.delete();
     this.store.clear();
+    this.store.setStateHandler(() => {});
     this.resetControllers();
   }
 

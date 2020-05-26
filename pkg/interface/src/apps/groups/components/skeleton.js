@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import api from '../api';
 import { GroupSidebar } from './lib/group-sidebar';
 
 export class Skeleton extends Component {
@@ -19,7 +18,7 @@ export class Skeleton extends Component {
             selected={props.selected}
             selectedGroups={props.selectedGroups}
             history={props.history}
-            api={api}
+            api={props.api}
             associations={props.associations}
           />
           <div

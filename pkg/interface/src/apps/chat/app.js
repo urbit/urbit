@@ -5,6 +5,7 @@ import ChatApi from '../../api/chat';
 import ChatStore from '../../store/chat';
 import ChatSubscription from '../../subscription/chat';
 
+
 import './css/custom.css';
 
 import { Skeleton } from './components/skeleton';
@@ -20,8 +21,6 @@ export default class ChatApp extends React.Component {
   constructor(props) {
     super(props);
     this.store = new ChatStore();
-    this.store.setStateHandler(this.setState.bind(this));
-
     this.state = this.store.state;
     this.totalUnreads = 0;
     this.resetControllers();
@@ -37,7 +36,7 @@ export default class ChatApp extends React.Component {
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
-    this.store.clear();
+    this.store.setStateHandler(this.setState.bind(this));
     const channel = new this.props.channel();
     this.api = new ChatApi(this.props.ship, channel, this.store);
 
@@ -48,6 +47,7 @@ export default class ChatApp extends React.Component {
   componentWillUnmount() {
     this.subscription.delete();
     this.store.clear();
+    this.store.setStateHandler(() => {});
     this.resetControllers();
   }
 

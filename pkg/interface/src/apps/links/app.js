@@ -23,14 +23,18 @@ export class LinksApp extends Component {
   constructor(props) {
     super(props);
     this.store = new LinksStore();
-    this.store.setStateHandler(this.setState.bind(this));
-
     this.state = this.store.state;
     this.totalUnseen = 0;
     this.resetControllers();
   }
 
   componentDidMount() {
+    window.title = 'OS1 - Groups';
+    // preload spinner asset
+    new Image().src = '/~landscape/img/Spinner.png';
+
+    this.store.setStateHandler(this.setState.bind(this));
+
     const channel = new this.props.channel();
     this.api = new LinksApi(this.props.ship, channel, this.store);
 
@@ -41,6 +45,7 @@ export class LinksApp extends Component {
   componentWillUnmount() {
     this.subscription.delete();
     this.store.clear();
+    this.store.setStateHandler(() => {});
     this.resetControllers();
   }
 

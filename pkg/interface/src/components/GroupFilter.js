@@ -55,7 +55,6 @@ export default class GroupFilter extends Component {
   groupIndex() {
     const { props } = this;
     let index = [];
-    console.log(props);
     const associations =
       (props.associations && 'contacts' in props.associations) ?
       props.associations.contacts : {};

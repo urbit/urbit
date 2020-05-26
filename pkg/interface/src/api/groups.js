@@ -1,67 +1,37 @@
-import _ from 'lodash';
+import BaseApi from './base';
 
-export default class Api {
+
+export default class GroupsApi {
   constructor(ship, channel, store) {
+    const helper = new PrivateHelper(ship, channel, store);
+
     this.ship = ship;
-    this.bindPaths = [];
-    this.channel = channel;
-    this.store = store;
+    this.subscribe = helper.subscribe.bind(helper);
 
     this.contactHook = {
-      edit: this.contactEdit.bind(this)
+      edit: helper.contactEdit.bind(helper)
     };
 
     this.contactView = {
-      create: this.contactCreate.bind(this),
-      delete: this.contactDelete.bind(this),
-      remove: this.contactRemove.bind(this),
-      share: this.contactShare.bind(this)
+      create: helper.contactCreate.bind(helper),
+      delete: helper.contactDelete.bind(helper),
+      remove: helper.contactRemove.bind(helper),
+      share: helper.contactShare.bind(helper)
     };
 
     this.group = {
-      add: this.groupAdd.bind(this),
-      delete: this.groupRemove.bind(this)
+      add: helper.groupAdd.bind(helper),
+      delete: helper.groupRemove.bind(helper)
     };
 
     this.invite = {
-      accept: this.inviteAccept.bind(this),
-      decline: this.inviteDecline.bind(this)
+      accept: helper.inviteAccept.bind(helper),
+      decline: helper.inviteDecline.bind(helper)
     };
   }
+}
 
-  bind(path, method, ship = this.ship, app, success, fail, quit) {
-    this.bindPaths = _.uniq([...this.bindPaths, path]);
-
-    window.subscriptionId = this.channel.subscribe(ship, app, path,
-      (err) => {
-        fail(err);
-      },
-      (event) => {
-        success({
-          data: event,
-          from: {
-            ship,
-            path
-          }
-        });
-      },
-      (qui) => {
-        quit(qui);
-      });
-  }
-
-  action(appl, mark, data) {
-    return new Promise((resolve, reject) => {
-      this.channel.poke(window.ship, appl, mark, data,
-        (json) => {
-          resolve(json);
-        },
-        (err) => {
-          reject(err);
-        });
-    });
-  }
-
+class PrivateHelper extends BaseApi {
   contactViewAction(data) {
     return this.action('contact-view', 'json', data);
   }
@@ -150,7 +120,6 @@ export default class Api {
   }
 
   metadataAction(data) {
-    console.log(data);
     return this.action('metadata-hook', 'metadata-action', data);
   }
 
@@ -184,3 +153,4 @@ export default class Api {
     });
   }
 }
+

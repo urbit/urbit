@@ -4,17 +4,12 @@ export default class LaunchReducer {
   reduce(json, state) {
     const data = _.get(json, 'launch-update', false);
     if (data) {
-      this.log(data, state);
       this.initial(data, state);
       this.changeFirstTime(data, state);
       this.changeOrder(data, state);
       this.changeFirstTime(data, state);
       this.changeIsShown(data, state);
     }
-  }
-
-  log(json, state) {
-    console.log(json);
   }
 
   initial(json, state) {

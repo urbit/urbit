@@ -20,8 +20,6 @@ export default class PublishApp extends React.Component {
   constructor(props) {
     super(props);
     this.store = new PublishStore();
-    this.store.setStateHandler(this.setState.bind(this));
-
     this.state = this.store.state;
     this.unreadTotal = 0;
     this.resetControllers();
@@ -33,9 +31,12 @@ export default class PublishApp extends React.Component {
   }
 
   componentDidMount() {
-    window.title = 'OS1 - Publish';
+    window.title = 'OS1 - Groups';
+    // preload spinner asset
+    new Image().src = '/~landscape/img/Spinner.png';
 
-    this.store.clear();
+    this.store.setStateHandler(this.setState.bind(this));
+
     const channel = new this.props.channel();
     this.api = new PublishApi(this.props.ship, channel, this.store);
 
@@ -47,6 +48,7 @@ export default class PublishApp extends React.Component {
   componentWillUnmount() {
     this.subscription.delete();
     this.store.clear();
+    this.store.setStateHandler(() => {});
     this.resetControllers();
   }
 

@@ -75,7 +75,7 @@ function hexToDec(hex) {
   return hex.reverse().reduce((acc, digit, idx) => {
     const dec = alphabet.findIndex(a => a === digit.toUpperCase());
     if(dec < 0) {
-      console.log(hex);
+      console.error(hex);
       throw new Error('Incorrect hex formatting');
     }
     return acc + dec * (16 ** idx);
