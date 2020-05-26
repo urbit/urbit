@@ -1857,7 +1857,6 @@
   ^-  (quip card _state)
   ?-    -.del
       %add-book
-    ::=.  tile-num    (add tile-num (get-unread data.del))
     ?:  =(our.bol host.del)
       =^  cards  state
         (emit-updates-and-state host.del book.del data.del del sty)
@@ -1890,8 +1889,6 @@
     ?~  book
       [~ sty]
     =.  read.data.del  =(our.bol author.data.del)
-    ::=?  tile-num.sty  !read.data.del
-    ::  +(tile-num.sty)
     =.  notes.u.book  (~(put by notes.u.book) note.del data.del)
     (emit-updates-and-state host.del book.del u.book del sty)
   ::
@@ -2009,8 +2006,6 @@
     =/  not=(unit note)  (~(get by notes.u.book) note.del)
     ?~  not
       [~ sty]
-    ::=?  tile-num  &(!read.u.not (gth tile-num 0))
-    ::  (dec tile-num)
     =.  notes.u.book  (~(del by notes.u.book) note.del)
     (emit-updates-and-state host.del book.del u.book del sty)
   ::
