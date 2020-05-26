@@ -1,12 +1,13 @@
 import _ from 'lodash';
-import { stringToTa } from '../../lib/util';
+import { stringToTa } from '../lib/util';
 
-export default class Api {
+import BaseApi from './base';
+
+
+export default class LinksApi extends BaseApi {
   constructor(ship, channel, store) {
+    super(ship, channel, store);
     this.ship = ship;
-    this.bindPaths = [];
-    this.channel = channel;
-    this.store = store;
 
     this.invite = {
       accept: this.inviteAccept.bind(this),
@@ -17,37 +18,11 @@ export default class Api {
       remove: this.groupRemove.bind(this)
     };
 
-    this.bind = this.bind.bind(this);
-    this.bindLinkView = this.bindLinkView.bind(this);
+    this.fetchLink = this.fetchLink.bind(this);
   }
 
-  bind(path, method, ship = this.authTokens.ship, app, success, fail, quit) {
-    this.bindPaths = _.uniq([...this.bindPaths, path]);
-
-    window.subscriptionId = this.channel.subscribe(
-      ship,
-      app,
-      path,
-      (err) => {
-        fail(err);
-      },
-      (event) => {
-        success({
-          data: event,
-          from: {
-            ship,
-            path
-          }
-        });
-      },
-      (qui) => {
-        quit(qui);
-      }
-    );
-  }
-
-  bindLinkView(path, result, fail, quit) {
-    this.bind.bind(this)(
+  fetchLink(path, result, fail, quit) {
+    this.subscribe.bind(this)(
       path,
       'PUT',
       this.ship,
@@ -56,23 +31,6 @@ export default class Api {
       fail,
       quit
     );
-  }
-
-  action(appl, mark, data) {
-    return new Promise((resolve, reject) => {
-      this.channel.poke(
-        window.ship,
-        appl,
-        mark,
-        data,
-        (json) => {
-          resolve(json);
-        },
-        (err) => {
-          reject(err);
-        }
-      );
-    });
   }
 
   groupsAction(data) {
@@ -113,7 +71,7 @@ export default class Api {
   getCommentsPage(path, url, page) {
     const strictUrl = stringToTa(url);
     const endpoint = '/json/' + page + '/discussions/' + strictUrl + path;
-    this.bindLinkView(
+    this.fetchLink(
       endpoint,
       (res) => {
         if (res.data['initial-discussions']) {
@@ -131,7 +89,7 @@ export default class Api {
 
   getPage(path, page) {
     const endpoint = '/json/' + page + '/submissions' + path;
-    this.bindLinkView(
+    this.fetchLink(
       endpoint,
       (dat) => {
         this.store.handleEvent(dat);
@@ -144,7 +102,7 @@ export default class Api {
   getSubmission(path, url, callback) {
     const strictUrl = stringToTa(url);
     const endpoint = '/json/0/submission/' + strictUrl + path;
-    this.bindLinkView(
+    this.fetchLink(
       endpoint,
       (res) => {
         if (res.data.submission) {

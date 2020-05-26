@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
+
 export default class GroupFilter extends Component {
   constructor(props) {
     super(props);
@@ -54,7 +55,10 @@ export default class GroupFilter extends Component {
   groupIndex() {
     const { props } = this;
     let index = [];
-    const associations = props.associations ? props.associations.contacts : {};
+    console.log(props);
+    const associations =
+      (props.associations && 'contacts' in props.associations) ?
+      props.associations.contacts : {};
     index = Object.keys(associations).map((each) => {
       const eachGroup = [];
       eachGroup.push(each);

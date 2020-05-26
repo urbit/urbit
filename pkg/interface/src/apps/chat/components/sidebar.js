@@ -37,7 +37,9 @@ export class Sidebar extends Component {
 
     const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
-    const associations = alphabetiseAssociations(props.associations.contacts);
+    const associations =
+      (props.associations && 'contacts' in props.associations)
+      ? alphabetiseAssociations(props.associations.contacts) : {};
 
     const groupedChannels = {};
     Object.keys(props.inbox).map((box) => {

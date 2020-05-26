@@ -29,7 +29,9 @@ export class Sidebar extends Component {
               />
             );
         });
-    const associations = props.associations ? alphabetiseAssociations(props.associations.contacts) : {};
+    const associations =
+      (props.associations && 'contacts' in props.associations)
+      ? alphabetiseAssociations(props.associations.contacts) : {};
 
     const notebooks = {};
     Object.keys(props.notebooks).map((host) => {

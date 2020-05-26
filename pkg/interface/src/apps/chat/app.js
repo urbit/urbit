@@ -1,9 +1,9 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 
-import Api from './api';
+import ChatApi from '../../api/chat';
 import ChatStore from '../../store/chat';
-import Subscription from './subscription';
+import ChatSubscription from '../../subscription/chat';
 
 import './css/custom.css';
 
@@ -19,7 +19,7 @@ import { NewDmScreen } from './components/new-dm';
 export default class ChatApp extends React.Component {
   constructor(props) {
     super(props);
-    this.store = new Store();
+    this.store = new ChatStore();
     this.store.setStateHandler(this.setState.bind(this));
 
     this.state = this.store.state;
@@ -35,13 +35,13 @@ export default class ChatApp extends React.Component {
   componentDidMount() {
     window.title = 'OS1 - Chat';
     // preload spinner asset
-    new Image().src = '/~chat/img/Spinner.png';
+    new Image().src = '/~landscape/img/Spinner.png';
 
     this.store.clear();
     const channel = new this.props.channel();
-    this.api = new Api(this.props.ship, channel, this.store);
+    this.api = new ChatApi(this.props.ship, channel, this.store);
 
-    this.subscription = new Subscription(this.store, this.api, channel);
+    this.subscription = new ChatSubscription(this.store, this.api, channel);
     this.subscription.start();
   }
 

@@ -28,7 +28,7 @@ export default class ChatReducer {
   }
 
   hook(json, state) {
-    state.chatSynced = data;
+    state.chatSynced = json;
   }
 
   message(json, state) {
