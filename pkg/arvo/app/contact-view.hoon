@@ -10,6 +10,7 @@
     *permission-group-hook,
     *permission-hook
 /+  *server, *contact-json, default-agent, dbug, verb,
+    grpl=group, mdl=metadata,
    group-store
 |%
 +$  versioned-state
@@ -116,6 +117,8 @@
   --
 ::
 |_  bol=bowl:gall
+++  grp  ~(. grpl bol)
+++  md  ~(. mdl bol)
 ++  poke-json
   |=  jon=json
   ^-  (list card)
@@ -177,6 +180,15 @@
     ::  determine whether to send to our contact-hook or foreign
     ::  send contact-action to contact-hook with %add action
     [(share-poke recipient.act [%add path.act ship.act contact.act])]~
+  ::
+      %groupify
+    =/  =path
+      (group-id:en-path:group-store group-id.act)
+    %+  weld
+      :~  (contact-poke [%create path])
+          (contact-hook-poke [%add-owned path])
+      ==
+    (create-metadata path title.act description.act)
   ==
 ++  poke-handle-http-request
   |=  =inbound-request:eyre
@@ -223,7 +235,7 @@
   =/  =cage
     :-  %invite-action
     !>  ^-  invite-action
-    [%invite /groups (shaf %invite-uid eny.bol) invite]
+    [%invite /contacts (shaf %invite-uid eny.bol) invite]
   [%pass / %agent [recipient.invite %invite-hook] %poke cage]
 ++  contact-poke
   |=  act=contact-action

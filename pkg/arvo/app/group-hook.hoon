@@ -41,8 +41,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
-    :-  [%pass /invites %agent [our.bowl %invite-store] %poke %invite-action !>([%create /groups])]
-    ~[watch-invites:gc watch-store:gc]
+    ~[watch-store:gc]
   ++  on-save  !>(state)
   ++  on-load
     |=  =vase
@@ -210,13 +209,25 @@
     (need (group-id:de-path:store +.wire))
   |^
   ?+  -.sign  (on-agent:def wire sign)
-    %kick       [~[(listen-group group-id)] state]
+    %kick  kick
   ::
       %fact
     ?.  ?=(%group-update p.cage.sign)
       [~ state]
     (fact !<(update:store q.cage.sign))
   ==
+  ::  +kick: Handle kick
+  ::
+  ::    Only rejoin if user is still in group
+  ++  kick
+    =/  group=(unit group)
+      (scry-initial group-id)
+    ?~  group
+      [~ state]
+    ?.  (~(has in members.u.group) our.bol)
+      [~ state]
+    :_  state
+    ~[(listen-group group-id)]
   ::
   ::  +fact: Handle new update from %group-hook
   ::
@@ -246,7 +257,7 @@
       %group-update  (fact !<(update:store q.cage.sign))
     ==
   ==
-  ::  +take-store-update: Handle new %fact from %group-store
+  ::  +fact: Handle new %fact from %group-store
   ::
   ::    We forward the update onto the correct path, and recalculate permissions,
   ::    kicking any subscriptions whose permissions have been revoked.

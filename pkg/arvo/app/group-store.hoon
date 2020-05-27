@@ -207,6 +207,8 @@
     =.  members.group
       (~(put in members.group) our.bol)
     =.  policy.group   policy
+    =.  tag-queries.group
+      (~(put ju tag-queries.group) %admin our.bol)
     =.  groups
       (~(put by groups) group-id group)
     :_  state
@@ -263,7 +265,7 @@
   ++  add-tag
     |=  [=group-id =tag ships=(set ship)]
     ^-  (quip card _state)
-    ?:  (~(has by groups) group-id)
+    ?.  (~(has by groups) group-id)
       [~ state]
     =/  =group
       (~(got by groups) group-id)

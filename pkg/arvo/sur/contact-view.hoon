@@ -1,4 +1,5 @@
 /-  *contact-store, *group
+::
 |%
 +$  contact-view-action
   $%  ::  %create: create in both groups and contacts
@@ -19,5 +20,8 @@
       ::  %share: send %add contact-action to to recipient's contact-hook
       ::
       [%share recipient=ship =path =ship =contact]
+      ::  %groupify: create contacts object for a preexisting group
+      ::
+      [%groupify =group-id title=@t description=@t]
   ==
 --

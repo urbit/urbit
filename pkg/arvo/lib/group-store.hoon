@@ -78,7 +78,16 @@
     %-  pairs
     :~  members+(set ship members.group)
         policy+(policy policy.group)
+        tag-queries+(tag-queries tag-queries.group)
     ==
+  ++  tag-queries
+    |=  =^tag-queries
+    ^-  json
+    :-  %o
+    ^-  (map @t json)
+    %-  ~(run by tag-queries)
+    |=  ships=(^set ^ship)
+    (set ship ships)
   ::
   ++  set
     |*  [item=$-(* json) sit=(^set)]
