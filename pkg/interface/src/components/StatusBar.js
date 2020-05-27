@@ -25,7 +25,7 @@ const StatusBar = (props) => {
     : getLocationName(basePath);
 
   const popout = window.location.href.includes('popout/')
-    ? 'dn' : 'dn db-m db-l db-xl';
+    ? 'dn' : 'db';
 
   const invites = (props.invites && props.invites['/contacts'])
     ? props.invites['/contacts']

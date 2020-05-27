@@ -68,9 +68,6 @@ export default class DojoApp extends Component {
                   className="db dn-m dn-l dn-xl inter bg-white bg-gray0-d dt w-100"
                   style={{ height: 40 }}
                 >
-                  <Link className="f8 pl3 black white-d dtc h-100 v-mid" to="/">
-                    ⟵ Landscape
-                  </Link>
                 </div>
                 <div
                   className={
