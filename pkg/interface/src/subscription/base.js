@@ -12,7 +12,6 @@ export default class BaseSubscription {
 
   onChannelError(err) {
     console.error('event source error: ', err);
-    console.log('initiating new channel');
     setTimeout(2000, () => {
       this.store.clear();
       this.start();

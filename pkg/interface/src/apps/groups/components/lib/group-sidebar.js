@@ -6,7 +6,6 @@ import { Sigil } from '../../../../lib/sigil';
 import { SidebarInvite } from './sidebar-invite';
 import { Welcome } from './welcome';
 
-import api from '../../api';
 import { cite } from '../../../../lib/util';
 
 export class GroupSidebar extends Component {
@@ -48,7 +47,7 @@ export class GroupSidebar extends Component {
         return (
           <SidebarInvite
             key={uid}
-            api={api}
+            api={props.api}
             invite={invite}
             uid={uid}
             history={props.history}

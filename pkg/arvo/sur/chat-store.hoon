@@ -28,8 +28,6 @@
 ::
 +$  inbox  (map path mailbox)
 ::
-+$  chat-configs  (map path config)
-::
 +$  chat-base
   $%  [%create =path]               ::  %create: create a mailbox at path
       [%delete =path]               ::  %delete: delete a mailbox at path
@@ -45,8 +43,8 @@
   ==
 ::
 +$  chat-update
-  $%  [%keys keys=(set path)]
-      [%config =path =config]
+  $%  [%initial =inbox]
+      [%keys keys=(set path)]
       [%messages =path start=@ud end=@ud envelopes=(list envelope)]
       chat-base
   ==

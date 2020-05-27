@@ -1,9 +1,10 @@
 import _ from 'lodash';
 
-export default class ChatUpdateReducer {
+export default class ChatReducer {
   reduce(json, state) {
-    const data = _.get(json, 'chat-update', false);
+    let data = _.get(json, 'chat-update', false);
     if (data) {
+      this.initial(data, state);
       this.pending(data, state);
       this.message(data, state);
       this.messages(data, state);
@@ -11,6 +12,23 @@ export default class ChatUpdateReducer {
       this.create(data, state);
       this.delete(data, state);
     }
+
+    data = _.get(json, 'chat-hook-update', false);
+    if (data) {
+      this.hook(data, state);
+    }
+  }
+
+  initial(json, state) {
+    const data = _.get(json, 'initial', false);
+    if (data) {
+      state.inbox = data;
+      state.chatInitialized = true;
+    }
+  }
+
+  hook(json, state) {
+    state.chatSynced = json;
   }
 
   message(json, state) {

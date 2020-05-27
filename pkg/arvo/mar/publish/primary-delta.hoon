@@ -13,6 +13,7 @@
 ++  grow
   |%
   ++  json
+    %+  frond:enjs:format  %publish-update
     %+  frond:enjs:format  -.del
     ?-  -.del
         %add-book

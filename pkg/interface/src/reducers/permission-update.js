@@ -1,13 +1,26 @@
 import _ from 'lodash';
 
-export default class PermissionUpdateReducer {
+export default class PermissionReducer {
   reduce(json, state) {
     const data = _.get(json, 'permission-update', false);
     if (data) {
+      this.initial(data, state);
       this.create(data, state);
       this.delete(data, state);
       this.add(data, state);
       this.remove(data, state);
+    }
+  }
+
+  initial(json, state) {
+    const data = _.get(json, 'initial', false);
+    if (data) {
+      for (const perm in data) {
+        state.permissions[perm] = {
+          who: new Set(data[perm].who),
+          kind: data[perm].kind
+        };
+      }
     }
   }
 

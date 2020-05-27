@@ -1,14 +1,22 @@
 import _ from 'lodash';
 
-export default class ContactUpdateReducer {
+export default class ContactReducer {
   reduce(json, state) {
     const data = _.get(json, 'contact-update', false);
     if (data) {
+      this.initial(data, state);
       this.create(data, state);
       this.delete(data, state);
       this.add(data, state);
       this.remove(data, state);
       this.edit(data, state);
+    }
+  }
+
+  initial(json, state) {
+    const data = _.get(json, 'initial', false);
+    if (data) {
+      state.contacts = data;
     }
   }
 

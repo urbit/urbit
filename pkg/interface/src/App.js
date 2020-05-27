@@ -6,16 +6,16 @@ import './css/fonts.css';
 import { light } from '@tlon/indigo-react';
 
 import LaunchApp from './apps/launch/app';
-import ChatApp from './apps/chat/ChatApp';
-import DojoApp from './apps/dojo/DojoApp';
+import ChatApp from './apps/chat/app';
+import DojoApp from './apps/dojo/app';
 import StatusBar from './components/StatusBar';
-import GroupsApp from './apps/groups/GroupsApp';
-import LinksApp from './apps/links/LinksApp';
-import PublishApp from './apps/publish/PublishApp';
+import GroupsApp from './apps/groups/app';
+import LinksApp from './apps/links/app';
+import PublishApp from './apps/publish/app';
 
-import Store from './store';
-import Subscription from './subscription';
-import Api from './api';
+import GlobalStore from './store/global';
+import GlobalSubscription from './subscription/global';
+import GlobalApi from './api/global';
 
 // const Style = createGlobalStyle`
 //   ${cssReset}
@@ -35,33 +35,23 @@ const Root = styled.div`
   min-height: 100vh;
 `;
 
-const Home = () => (
-  <div>
-    Home
-    <Link className="db" to='/~chat'>Chat</Link>
-    <Link className="db" to='/~dojo'>Dojo</Link>
-    <Link className="db" to='/~groups'>Groups</Link>
-    <Link className="db" to='/~link'>Links</Link>
-    <Link className="db" to='~publish'>Publish</Link>
-  </div>
-);
-
 const StatusBarWithRouter = withRouter(StatusBar);
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.ship = window.ship;
-    this.store = new Store();
+    this.store = new GlobalStore();
     this.store.setStateHandler(this.setState.bind(this));
     this.state = this.store.state;
 
     this.appChannel = new window.channel();
-    this.api = new Api(this.ship, this.appChannel, this.store);
+    this.api = new GlobalApi(this.ship, this.appChannel, this.store);
   }
 
   componentDidMount() {
-    this.subscription = new Subscription(this.store, this.api, this.appChannel);
+    this.subscription =
+      new GlobalSubscription(this.store, this.api, this.appChannel);
     this.subscription.start();
   }
 
@@ -130,3 +120,4 @@ export default class App extends React.Component {
     );
   }
 }
+
