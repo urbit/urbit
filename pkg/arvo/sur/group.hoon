@@ -9,10 +9,7 @@
 ::  $tag: an identifier used to identify a subset of members
 ::
 ::   Tags may be used and recognised differently across apps.
-::   TODO: document 'blessed' tags
-::   example tags:
-::   %pending - denotes that member has been invited but not joined yet
-::   %admin - denotes that member can add and remove members
+::   for example, you could use tags like `%author`, `%bot`, `%flagged`...
 ::
 +$  tag  term
 ::  $role-tag: a kind of $tag that identifies a privileged user
@@ -40,13 +37,6 @@
       =tag-queries
       =policy
   ==
-::  $rank: ship class by length
-::
-::    0: galaxy or star -- 2  bytes
-::    1: planet         -- 4  bytes
-::    2: moon           -- 8  bytes
-::    3: comet          -- 16 bytes
-+$  rank  ?(%0 %1 %2 %3)
 ::  $policy: access control for a group
 ::
 ++  policy
@@ -84,12 +74,12 @@
     |%
     ::
     +$  open-policy
-      [%open ranks=(set rank) banned=(set ship)]
+      [%open ban-ranks=(set rank:title) banned=(set ship)]
     :: $diff: ban or allow ranks and ships
     ::
     +$  diff
-      $%  [%allow-ranks ranks=(set rank)]
-          [%ban-ranks ranks=(set rank)]
+      $%  [%allow-ranks ranks=(set rank:title)]
+          [%ban-ranks ranks=(set rank:title)]
           [%ban-ships ships=(set ship)]
           [%allow-ships ships=(set ship)]
       ==

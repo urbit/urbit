@@ -80,6 +80,10 @@
         policy+(policy policy.group)
         tag-queries+(tag-queries tag-queries.group)
     ==
+  ++  rank
+    |=  =rank:title
+    ^-  json
+    [%s rank]
   ++  tag-queries
     |=  =^tag-queries
     ^-  json
@@ -107,7 +111,7 @@
       ==
          %open
       :~  banned+(set ship banned.policy)
-          ranks+(set numb ranks.policy)
+          ban-ranks+(set rank ban-ranks.policy)
       ==
     ==
   ++  policy-diff
@@ -117,8 +121,8 @@
     ?+  -.diff  !!
       %add-invites  [invitees+(set ship invitees.diff) ~]
       %remove-invites  [invitees+(set ship invitees.diff) ~]
-      %allow-ranks  [ranks+(set numb ranks.diff) ~]
-      %ban-ranks  [ranks+(set numb ranks.diff) ~]
+      %allow-ranks  [ranks+(set rank ranks.diff) ~]
+      %ban-ranks  [ranks+(set rank ranks.diff) ~]
       %allow-ships  [ranks+(set ship ships.diff) ~]
       %ban-ships  [ranks+(set ship ships.diff) ~]
     ==
@@ -210,12 +214,13 @@
     ==
   ++  rank
     |=  =json
-    ^-  ^rank
-    ?>  ?=(%n -.json)
-    ?:  =('0' p.json)  %0
-    ?:  =('1' p.json)  %1
-    ?:  =('2' p.json)  %2
-    ?:  =('3' p.json)  %3
+    ^-  rank:title
+    ?>  ?=(%s -.json)
+    ?:  =('czar' p.json)  %czar
+    ?:  =('king' p.json)  %king
+    ?:  =('duke' p.json)  %duke
+    ?:  =('earl' p.json)  %earl
+    ?:  =('pawn' p.json)  %pawn
     !!
   ::  move to zuse also
   ++  oj
@@ -240,7 +245,7 @@
     ==
   ++  open-policy
     %-  ot
-    :~  ranks+(as rank)
+    :~  ban-ranks+(as rank)
         banned+(as ship)
     ==
   ++  policy-diff

@@ -130,18 +130,6 @@
   --
 ::
 |_  bol=bowl:gall
-++  ship-rank
-  |=  =ship
-  ^-  rank
-  =/  size
-    (met 3 ship)
-  ?:  (lte size 2)
-    %0
-  ?:  (lte size 4)
-    %1
-  ?:  (lte size 8)
-    %2
-  %3
 ++  peek-group
   |=  =group-id
   ^-  (unit group)
@@ -156,7 +144,7 @@
       %invite
     |((~(has in pending.policy) ship) (~(has in members.group) ship))
       %open
-    &(!(~(has in banned.policy) ship) (~(has in ranks.policy) (ship-rank ship)))
+    !|((~(has in banned.policy) ship) (~(has in ban-ranks.policy) (clan:title ship)))
   ==
 ++  peek-group-role
   |=  [=group-id =ship]
@@ -338,19 +326,19 @@
     cards
     ::
     ++  allow-ranks
-      |=  ranks=(set rank)
+      |=  ranks=(set rank:title)
       ^-  (quip card _group)
       ?>  ?=(%open -.policy.group)
-      =.  ranks.policy.group
-        (~(uni in ranks.policy.group) ranks)
+      =.  ban-ranks.policy.group
+        (~(dif in ban-ranks.policy.group) ranks)
       `group
     ::
     ++  ban-ranks
-      |=  ranks=(set rank)
+      |=  ranks=(set rank:title)
       ^-  (quip card _group)
       ?>  ?=(%open -.policy.group)
-      =.  ranks.policy.group
-        (~(dif in ranks.policy.group) ranks)
+      =.  ban-ranks.policy.group
+        (~(uni in ban-ranks.policy.group) ranks)
       `group
     ::
     ++  allow-ships

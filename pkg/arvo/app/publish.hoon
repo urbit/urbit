@@ -1105,7 +1105,7 @@
     `[group-path.group group-path.group]
   ::
   =/  =policy
-    [%open (sy ~[%0 %1 %2 %3]) ~]
+    *open:policy
   ?:  make-managed.group
     ?^  grp  [~ group-path.group group-path.group]
     ?.  (is-managed group-path.group)  !!
