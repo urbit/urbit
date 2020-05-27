@@ -119,7 +119,7 @@
       %metadata-store
       %metadata-hook
       %s3-store
-      %landscape
+      %http-server-store
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -242,12 +242,12 @@
       =<  (se-born %home %link-proxy-hook)
       =<  (se-born %home %link-listen-hook)
       =<  (se-born %home %link-view)
+      =<  (se-born %home %http-server-store)
       (se-born %home %s3-store)
     .
   ?>  ?=(%4 ver)
   =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
   (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
-=======
 ::
 ++  reap-phat                                         ::  ack connect
   |=  {way/wire saw/(unit tang)}

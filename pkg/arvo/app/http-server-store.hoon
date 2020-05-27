@@ -1,4 +1,4 @@
-/-  *landscape
+/-  *http-server-store
 /+  *server, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
@@ -12,9 +12,6 @@
       =configuration
       =serving
   ==
-+$  configuration
-  $:  url-prefix=(unit @t)
-  ==
 --
 %+  verb  |
 %-  agent:dbug
@@ -27,6 +24,7 @@
 ::
 ++  on-init
   ^-  (quip card _this)
+  |^
   :_  %_  this
           serving
         %-  ~(gas by *^serving)
@@ -35,14 +33,20 @@
           [/ /'~landscape' /'~chat' /'~link' /'~dojo' /'~groups' /'~publish' ~]
         |=(pax=path [pax [/app/landscape %.n]])
       ==
-  :~  [%pass / %arvo %e %connect [~ /] %landscape]
-      [%pass /'~landscape' %arvo %e %connect [~ /'~landscape'] %landscape]
-      [%pass /'~chat' %arvo %e %connect [~ /'~chat'] %landscape]
-      [%pass /'~link' %arvo %e %connect [~ /'~link'] %landscape]
-      [%pass /'~dojo' %arvo %e %connect [~ /'~dojo'] %landscape]
-      [%pass /'~groups' %arvo %e %connect [~ /'~groups'] %landscape]
-      [%pass /'~publish' %arvo %e %connect [~ /'~publish'] %landscape]
+  :~  (connect /)
+      (connect /'~landscape')
+      (connect /'~chat')
+      (connect /'~link')
+      (connect /'~dojo')
+      (connect /'~groups')
+      (connect /'~publish')
   ==
+  ::
+  ++  connect
+    |=  =path
+    ^-  card
+    [%pass path %arvo %e %connect [~ path] %http-server-store]
+  --
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -55,7 +59,7 @@
   ^-  (quip card _this)
   |^
   ?+  mark  (on-poke:def mark vase)
-      %landscape-action  (landscape-action !<(action vase))
+      %http-server-action  (landscape-action !<(action vase))
       %handle-http-request
     =+  !<([id=@ta req=inbound-request:eyre] vase)
     :_  this
@@ -66,16 +70,18 @@
   ++  landscape-action
     |=  act=action
     ^-  (quip card _this)
+    |^
     ?-  -.act
         %serve-dir
       =*  url-base  url-base.act
       ?:  (~(has by serving) url-base)
         ~|("url already bound to {<(~(got by serving) url-base.act)>}" !!)
-      :-  [%pass url-base %arvo %e %connect [~ url-base] %landscape]~
+      :-  [%pass url-base %arvo %e %connect [~ url-base] %http-server-store]~
       this(serving (~(put by serving) url-base [clay-base.act public.act]))
     ::
         %unserve-dir
-      [~ this(serving (~(del by serving) url-base.act))]
+      :-  [%pass url-base.act %arvo %e %disconnect [~ url-base.act]]~
+      this(serving (~(del by serving) url-base.act))
     ::
         %toggle-permission
       ?.  (~(has by serving) url-base.act)
@@ -83,7 +89,18 @@
       =/  [clay-base=path public=?]  (~(got by serving) url-base.act)
       :-  ~
       this(serving (~(put by serving) url-base.act [clay-base !public]))
+    ::
+        %set-landscape-homepage-prefix
+      =.  landscape-homepage-prefix.configuration  prefix.act
+      :_  this
+      (give [%configuration configuration])
     ==
+    ::
+    ++  give
+      |=  =update
+      ^-  (list card)
+      [%give %fact [/all]~ [%http-server-update !>(update)]]~
+    --
   ::
   ++  handle-http-request
     |=  =inbound-request:eyre
@@ -98,7 +115,7 @@
     ?>  ?=(^ ext.req-line)
     ?~  site.req-line
       not-found:gen
-    =*  url-prefix  url-prefix.configuration
+    =*  url-prefix  landscape-homepage-prefix.configuration
     ?.  ?|  ?&(?=(^ url-prefix) =((need url-prefix) i.site.req-line))
             =(url-prefix ~)
         ==
@@ -173,20 +190,25 @@
 ++  on-watch
   |=  =path
   ^-  (quip card _this)
+  |^
   ?+  path  (on-watch:def path)
       [%http-response *]  [~ this]
+      [%all ~]            [(give [%configuration configuration]) this]
   ==
+  ::
+   ++  give
+    |=  =update
+    ^-  (list card)
+    [%give %fact ~ [%http-server-update !>(update)]]~
+  --
 ::
 ++  on-arvo
   |=  [=wire sign=sign-arvo]
   ^-  (quip card _this)
-  ~&  [%hep -.sign]
-  ~&  [%lus +.sign]
   ?+  +<.sign  (on-arvo:def wire sign)
       %bound
-    ~&  sign
-    ::  TODO: upon nack, unbind and remove serving from state
-    [~ this]
+    ?:  accepted.sign  [~ this]
+    [~ this(serving (~(del by serving) path.binding.sign))]
   ==
 ::
 ++  on-leave  on-leave:def
