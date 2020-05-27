@@ -51,17 +51,17 @@
   ?~  grp  ~
   =*  group   u.grp
   =*  policy  policy.group
-  =*  tag-queries  tag-queries.group
+  =*  tags    tags.group
   =/  admins=(set ^ship)
-    (~(gut by tag-queries) %admin ~)
+    (~(gut by tags) %admin ~)
   ?:  (~(has in admins) ship)
     ``%admin
   =/  mods
-    (~(gut by tag-queries) %moderator ~)
+    (~(gut by tags) %moderator ~)
   ?:  (~(has in mods) ship)
     ``%moderator
   =/  janitors
-    (~(gut by tag-queries) %janitor ~)
+    (~(gut by tags) %janitor ~)
   ?:  (~(has in janitors) ship)
     ``%janitor
   ?:  (~(has in members.group) ship)

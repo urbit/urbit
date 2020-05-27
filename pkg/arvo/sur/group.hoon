@@ -6,13 +6,19 @@
 ::  $groups: a mapping from group-ids to groups
 ::
 +$  groups  (map group-id group)
+::  $group-tag: an identifier used by groups
+::
+::    These tags should have precise semantics, as they are shared across all
+::    apps.
+::
++$  group-tag  ?(role-tag)
 ::  $tag: an identifier used to identify a subset of members
 ::
 ::   Tags may be used and recognised differently across apps.
 ::   for example, you could use tags like `%author`, `%bot`, `%flagged`...
 ::
-+$  tag  term
-::  $role-tag: a kind of $tag that identifies a privileged user
++$  tag  $@(group-tag [app=term tag=term])
+::  $role-tag: a kind of $group-tag that identifies a privileged user
 ::
 ::    These roles are
 ::    %admin: Administrator, can do everything except delete the group
@@ -22,9 +28,9 @@
 ::
 +$  role-tag
   ?(%admin %moderator %janitor)
-::  $tag-queries: a mapping from a $tag to the members it identifies
+::  $tags: a mapping from a $tag to the members it identifies
 ::
-+$  tag-queries  (jug tag ship)
++$  tags  (jug tag ship)
 ::  $group: description of a group of users
 ::
 ::    .members: members of the group
@@ -33,7 +39,7 @@
 ::    .hidden: is group unmanaged
 +$  group
   $:  members=(set ship)
-      =tag-queries
+      =tags
       =policy
       hidden=_&
   ==

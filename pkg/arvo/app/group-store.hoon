@@ -194,8 +194,8 @@
       (~(put in members.group) our.bol)
     =.  policy.group   policy
     =.  hidden.group   hidden
-    =.  tag-queries.group
-      (~(put ju tag-queries.group) %admin our.bol)
+    =.  tags.group
+      (~(put ju tags.group) %admin our.bol)
     =.  groups
       (~(put by groups) group-id group)
     :_  state
@@ -211,8 +211,8 @@
       [~ state]
     =/  =group  (~(got by groups) group-id)
     =.  members.group  (~(uni in members.group) new-ships)
-    =.  tag-queries.group
-      (merge-tags tag-queries.group new-ships tags)
+    =.  tags.group
+      (merge-tags tags.group new-ships tags)
     =*  policy  policy.group
     =.  policy
       ?.  ?=(%invite -.policy)
@@ -238,7 +238,7 @@
       (~(got by groups) group-id)
     =.  members.group
       (~(dif in members.group) ships)
-    =.  tag-queries.group
+    =.  tags.group
       (remove-tags group ships)
     =.  groups
       (~(put by groups) group-id group)
@@ -247,7 +247,7 @@
   ::  +add-tag: add tag to ships
   ::
   ::    no-op if group does not exist
-  ::    crash if ships are not in group (is this right?)
+  ::    crash if ships are not in group
   ::
   ++  add-tag
     |=  [=group-id =tag ships=(set ship)]
@@ -257,8 +257,8 @@
     =/  =group
       (~(got by groups) group-id)
     ?>  ?=(~ (~(dif in ships) members.group))
-    =.  tag-queries.group
-      (merge-tags tag-queries.group ships (sy tag ~))
+    =.  tags.group
+      (merge-tags tags.group ships (sy tag ~))
     =.  groups
       (~(put by groups) group-id group)
     :_  state
@@ -276,14 +276,14 @@
     =/  =group
       (~(got by groups) group-id)
     ?>  ?&  ?=(~ (~(dif in ships) members.group))
-            (~(has by tag-queries.group) tag)
+            (~(has by tags.group) tag)
         ==
-    =/  tag-query
-      (~(got by tag-queries.group) tag)
-    =.  tag-query
-      (~(dif in tag-query) ships)
-    =.  tag-queries.group
-      (~(put by tag-queries.group) tag tag-query)
+    =/  tag-ships
+      (~(got by tags.group) tag)
+    =.  tag-ships
+      (~(dif in tag-ships) ships)
+    =.  tags.group
+      (~(put by tags.group) tag tag-ships)
     :_  state
     (send-diff %remove-tag group-id tag ships)
   ::  initial-group: initialize foreign group
@@ -397,29 +397,27 @@
   --
 
 ++  merge-tags
-  |=  [=tag-queries ships=(set ship) tags=(set tag)]
-  ^+  tag-queries
-  =/  tags  ~(tap in tags)
+  |=  [=tags ships=(set ship) tags=(set tag)]
+  ^+  tags
+  =/  tags-list  ~(tap in tags)
   |-
-  ?~  tags
-    tag-queries
-  =*  tag  i.tags
-  =/  current-query=(set ship)
-    (~(gut by tag-queries) tag ~)
+  ?~  tags-list
+    tags
+  =*  tag  i.tags-list
   %=    $
-    tags  t.tags
+    tags-list  t.tags-list
   ::
-      tag-queries
-    %+  ~(put by tag-queries)
-      tag
-    (~(uni in current-query) ships)
+      tags
+    %+  ~(put by tags)
+      p.tag
+    (~(uni in q.tag) ships)
  ==
 ++  remove-tags
   |=  [=group ships=(set ship)]
-  ^-  tag-queries
-  %-   malt
+  ^-  tags
+  %-  malt
   %+  turn
-    ~(tap by tag-queries.group)
+    ~(tap by tags.group)
   |=  [=tag tagged=(set ship)]
   :-  tag
   (~(dif in tagged) ships)

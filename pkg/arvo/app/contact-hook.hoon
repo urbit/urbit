@@ -344,7 +344,7 @@
       %remove-group  (unbundle +.fact)
   ==
   ++  add-members
-    |=  [=group-id ships=(set ship) tags=(set term)]
+    |=  [=group-id ships=(set ship) tags=(set tag)]
     ^-  (quip card _state)
     =/  =path
       (group-id:en-path:group-store group-id)

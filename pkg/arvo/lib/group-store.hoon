@@ -79,20 +79,47 @@
     %-  pairs
     :~  members+(set ship members.group)
         policy+(policy policy.group)
-        tag-queries+(tag-queries tag-queries.group)
+        tags+(tags tags.group)
     ==
   ++  rank
     |=  =rank:title
     ^-  json
     [%s rank]
-  ++  tag-queries
-    |=  =^tag-queries
+  ++  tags
+    |=  =^tags
     ^-  json
+    |^
     :-  %o
-    ^-  (map @t json)
-    %-  ~(run by tag-queries)
-    |=  ships=(^set ^ship)
-    (set ship ships)
+    (~(uni by app) group)
+    ++  group
+      ^-  (map @t json)
+      %-  malt
+      %+  murn
+        ~(tap by tags)
+      |=  [=^tag ships=(^set ^ship)]
+      ^-  (unit [@t json])
+      ?^  tag
+        ~
+      `[tag (set ship ships)]
+    ++  app
+      ^-  (map @t json)
+      =|  app-tags=(map @t json)
+      =/  tags  ~(tap by tags)
+      |-
+      ?~  tags
+        app-tags
+      =*  tag  i.tags
+      ?@  p.tag
+        $(tags t.tags)
+      =/  app=json
+        (~(gut by app-tags) app.p.tag [%o ~])
+      ?>  ?=(%o -.app)
+      =.  p.app
+        (~(put by p.app) tag.p.tag (set ship q.tag))
+      =.  app-tags
+        (~(put by app-tags) app.p.tag app)
+      $(tags t.tags)
+    --
   ::
   ++  set
     |*  [item=$-(* json) sit=(^set)]
@@ -101,6 +128,15 @@
     %+  turn
       ~(tap in sit)
     item
+  ++  tag
+    |=  =^tag
+    ^-  json
+    ?@  tag
+      (frond %tag s+tag)
+    %-  pairs
+    :~  tag+s+tag.tag
+        app+s+app.tag
+    ==
   ::
   ++  policy
     |=  =^policy
@@ -181,7 +217,7 @@
     ?>  ?=(%add-tag -.action)
     %-  pairs
     :~  group-id+(group-id group-id.action)
-        tag+s+tag.action
+        tag+(tag tag.action)
         ships+(set ship ships.action)
     ==
   ::
@@ -191,7 +227,7 @@
     ?>  ?=(%remove-tag -.action)
     %-  pairs
     :~  group-id+(group-id group-id.action)
-        tag+s+tag.action
+        tag+(tag tag.action)
         ships+(set ship ships.action)
     ==
   ::
@@ -231,14 +267,32 @@
     ?:  =('earl' p.json)  %earl
     ?:  =('pawn' p.json)  %pawn
     !!
+  ++  tag
+    |=  =json
+    ^-  ^tag
+    ?>  ?=(%o -.json)
+    ?.  (~(has by p.json) 'app')
+      =/  tag-json
+        (~(got by p.json) 'tag')
+      ?>  ?=(%s -.tag-json)
+      ?:  =('admin' p.json)  %admin
+      ?:  =('moderator' p.json)  %moderator
+      ?:  =('janitor' p.json)  %janitor
+      !!
+    %.  json
+    %-  ot
+    :~  tag+so
+        app+so
+    ==
+
   ::  move to zuse also
   ++  oj
     |*  =fist
     ^-  $-(json (jug cord _(fist *json)))
     (om (as fist))
-  ++  tag-queries
-    ^-  $-(json ^tag-queries)
-    (oj ship)
+  ++  tags
+    ^-  $-(json ^tags)
+    *$-(json ^tags)
   :: TODO: move to zuse
   ++  ship
     (su ;~(pfix sig fed:ag))
@@ -299,7 +353,7 @@
     %-  ot
     :~  group-id+group-id
         ships+(as ship)
-        tags+(as so)
+        tags+(as tag)
     ==
   ++  remove-members
     ^-  $-(json [^group-id (set ^ship)])
@@ -310,13 +364,13 @@
   ++  add-tag
     %-  ot
     :~  group-id+group-id
-        tag+so
+        tag+tag
         ships+(as ship)
     ==
   ++  remove-tag
     %-  ot
     :~  group-id+group-id
-        tag+so
+        tag+tag
         ships+(as ship)
     ==
   ++  change-policy

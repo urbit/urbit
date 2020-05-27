@@ -15,7 +15,7 @@
 ::
 +$  action
   $%  [%add-group =group-id =policy hidden=?]
-      [%add-members =group-id ships=(set ship) tags=(set term)]
+      [%add-members =group-id ships=(set ship) tags=(set tag)]
       [%remove-members =group-id ships=(set ship)]
       [%add-tag =group-id =tag ships=(set ship)]
       [%remove-tag =group-id =tag ships=(set ship)]

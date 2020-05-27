@@ -1,9 +1,9 @@
-::  group-store|allow-ranks: allow ranks for group
+::  group-store|ban-ranks: ban ranks for group
 ::
 /-  *group, *group-store
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[=ship =term ranks=(list rank) ~] ~]
+        [[=ship =term ranks=(list rank:title) ~] ~]
     ==
 :-  %group-update
 ^-  action
