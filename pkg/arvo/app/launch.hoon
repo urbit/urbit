@@ -82,6 +82,7 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
+  ?>  (team:title our.bowl src.bowl)
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
         %launch-action  (poke-action !<(action:store vase))
