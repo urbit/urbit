@@ -326,7 +326,7 @@
       %^  do-poke  %group-store
         %group-action
       !>  ^-  action:group-store
-      [%add-group group-id policy]
+      [%add-group group-id policy %.n]
       ::
       ::  send invites
       ::

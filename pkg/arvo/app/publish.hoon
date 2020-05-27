@@ -958,13 +958,13 @@
   =/  book=notebook  (~(got by books) our.bol book)
   =/  =group-id
     (need (group-id:de-path:group-store writers.book))
-  =/  role=(unit role-tag)
+  =/  role=(unit (unit role-tag))
     (role-for-ship:grup group-id who)
   ?~  role
     %.n
   ?.  ?=(%write mod)
     %.y
-  !=(%member u.role)
+  ?=(^ u.role)
 ::
 ++  write-file
   |=  [pax=path cay=cage]
@@ -1118,7 +1118,7 @@
   ?^  grp  ~
   =/  =group-id
     (need (group-id:de-path:group-store group-path))
-  :-  (group-poke %add-group group-id policy)
+  :-  (group-poke %add-group group-id policy %.n)
   (generate-invites book (~(del in invitees.group) our.bol))
 ::
 ++  handle-poke-fail

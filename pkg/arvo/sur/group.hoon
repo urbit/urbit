@@ -19,23 +19,23 @@
 ::    %moderator: Moderator, can add/remove/ban users
 ::    %janitor: Has no special meaning inside group-store,
 ::    but may be given additional privileges in other apps.
-::    %member: Ordinary member, this tag is implied if the user is not in any
-::    of the other roles
+::
 +$  role-tag
-  ?(%admin %moderator %janitor %member)
+  ?(%admin %moderator %janitor)
 ::  $tag-queries: a mapping from a $tag to the members it identifies
 ::
 +$  tag-queries  (jug tag ship)
 ::  $group: description of a group of users
 ::
-::    members: members of the group
-::    tag-queries: a map of subsets
-::    policy: permissions for the group
-::
+::    .members: members of the group
+::    .tag-queries: a map of subsets
+::    .policy: permissions for the group
+::    .hidden: is group unmanaged
 +$  group
   $:  members=(set ship)
       =tag-queries
       =policy
+      hidden=_&
   ==
 ::  $policy: access control for a group
 ::

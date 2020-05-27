@@ -38,10 +38,14 @@
   ^-  ?
   =-  (~(has in -) ship)
   (members-from-path group-path)
+::  +role-for-ship: get role for user
 ::
+::    Returns ~ if no such group exists or user is not
+::    a member of the group. Returns [~ ~] if the user
+::    is a member with no additional role.
 ++  role-for-ship
   |=  [=group-id =ship]
-  ^-  (unit role-tag)
+  ^-  (unit (unit role-tag))
   =/  grp=(unit group)
     (scry-group group-id)
   ?~  grp  ~
@@ -51,17 +55,17 @@
   =/  admins=(set ^ship)
     (~(gut by tag-queries) %admin ~)
   ?:  (~(has in admins) ship)
-    `%admin
+    ``%admin
   =/  mods
     (~(gut by tag-queries) %moderator ~)
   ?:  (~(has in mods) ship)
-    `%moderator
+    ``%moderator
   =/  janitors
     (~(gut by tag-queries) %janitor ~)
   ?:  (~(has in janitors) ship)
-    `%janitor
+    ``%janitor
   ?:  (~(has in members.group) ship)
-    `%member
+    [~ ~]
   ~
 ++  can-join-from-path
   |=  [=path =ship]
@@ -73,26 +77,20 @@
 ::
 ++  can-join
   |=  [=group-id =ship]
-  =-  ~&  -  -
   %+  can-join-from-path
     (group-id:en-path:store group-id)
   ship
 ++  is-managed-path
   |=  =path
-  =/  contact
-    .^  (unit *)
-      %gx
-      (scot %p our.bowl)
-      %contact-store
-      (scot %da now.bowl)
-      (snoc `^path`[%contacts path] %noun)
-    ==
-  ?~  contact
-    %.n
-  %.y
+  ^-  ?
+  =/  group=(unit group)
+    (scry-group-path path)
+  ?~  group  %.n
+  !hidden.u.group
+::
 ++  is-managed
   |=  =group-id
   %-  is-managed-path
   (group-id:en-path:store group-id)
-
+::
 --

@@ -11,15 +11,17 @@
 ::      from the group.
 ::    %change-policy: change a group's policy
 ::    %remove-group: remove a group from the store
+::    %groupify: unset .hidden flag
 ::
 +$  action
-  $%  [%add-group =group-id =policy]
+  $%  [%add-group =group-id =policy hidden=?]
       [%add-members =group-id ships=(set ship) tags=(set term)]
       [%remove-members =group-id ships=(set ship)]
       [%add-tag =group-id =tag ships=(set ship)]
       [%remove-tag =group-id =tag ships=(set ship)]
       [%change-policy =group-id =diff:policy]
       [%remove-group =group-id ~]
+      [%groupify =group-id ~]
   ==
 ::  $update: a description of a processed state change
 ::

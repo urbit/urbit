@@ -189,7 +189,7 @@
       :~  %^  make-poke  %group-store
             %group-action
           !>  ^-  action:group-store
-          [%add-group group-id *invite:policy]
+          [%add-group group-id *invite:policy %.n]
         ::
           %^  make-poke  %group-store
             %group-action

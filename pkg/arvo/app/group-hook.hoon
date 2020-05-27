@@ -325,17 +325,16 @@
   ?:  ?=(%initial -.update)
     %.n
   |^
-  =/  role=(unit role-tag)
+  =/  role=(unit (unit role-tag))
     (role-for-ship:grp group-id.update src.bol)
-  ~&  role
-  ~&  update
   ?~  role
-    non-member
-  ?-  u.role
+    %.n
+  ?~  u.role
+    member
+  ?-  u.u.role
     %admin      admin
     %moderator  moderator
     %janitor    member
-    %member     member
   ==
   ++  member
     ?:  ?=(%add-members -.update)
@@ -350,7 +349,7 @@
             %add-tag      %remove-tag   ==
     -.update
   ++  non-member
-    ?&  =-  ~&  -  -  ?=(%add-members -.update)
+    ?&  ?=(%add-members -.update)
         (can-join:grp group-id.update src.bol)
     ==
   --

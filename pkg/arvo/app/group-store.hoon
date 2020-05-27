@@ -10,8 +10,6 @@
 ::
 ::    /y/groups:
 ::      A listing of the current groups
-::    /y/groups/[group-id]/tag-queries:
-::      A listing of the tag queries for a group
 ::    /x/groups/[group-id]:
 ::      The group itself
 ::    /x/groups/[group-id]/join/[ship]:
@@ -102,11 +100,25 @@
     |=  =path
     ^-  (unit (unit cage))
     ?+  path  (on-peek:def path)
+        [%y %groups ~]
+      =/  =arch
+        :-  ~
+        %-  malt
+        %+  turn
+          ~(tap by groups)
+        |=  [=group-id *]
+        ^-  [@ta ~]
+        =/  group=^path
+          (group-id:en-path:store group-id)
+        [(spat group) ~]
+      ``noun+!>(arch)
+    ::
         [%x %groups @ @ ~]
       =/  group-id
         (group-id:de-path:store t.t.path)
       ?~  group-id  ~
       ``noun+!>((peek-group u.group-id))
+    ::
        [%x %groups @ @ %join @ ~]
       =/  group-id
         (group-id:de-path:store t.t.path)
@@ -114,14 +126,6 @@
         (slav %p i.t.t.t.t.t.path)
       ?~  group-id  ~
       ``noun+!>((peek-group-join u.group-id ship))
-    ::
-       [%x %groups @ @ %role @ ~]
-      =/  group-id
-        (group-id:de-path:store t.t.path)
-      ?~  group-id  ~
-      =/  =ship
-        (slav %p i.t.t.t.t.t.path)
-      ``noun+!>((peek-group-role u.group-id ship))
     ==
   ::
   ++  on-agent  on-agent:def
@@ -146,25 +150,6 @@
       %open
     !|((~(has in banned.policy) ship) (~(has in ban-ranks.policy) (clan:title ship)))
   ==
-++  peek-group-role
-  |=  [=group-id =ship]
-  =/  =group
-    (~(got by groups) group-id)
-  =*  policy  policy.group
-  =*  tag-queries  tag-queries.group
-  =/  admins=(set ^ship)
-    (~(gut by tag-queries) %admin ~)
-  ?:  (~(has in admins) ship)
-    `%admin
-  =/  mods
-    (~(gut by tag-queries) %moderator ~)
-  ?:  (~(has in mods) ship)
-    `%moderator
-  =/  janitors
-    (~(gut by tag-queries) %janitor ~)
-  ?.  (~(has in janitors) ship)
-    ~
-  `%janitor
 ::
 ++  poke-group-update
   |=  =update:store
@@ -179,15 +164,28 @@
       %remove-tag      (remove-tag +.update)
       %change-policy   (change-policy +.update)
       %remove-group    (remove-group +.update)
+      %groupify        (groupify +.update)
       %initial-group   (initial-group +.update)
       %initial         [~ state]
   ==
+  ::  +groupify: unset .hidden flag
+  ::
+  ++  groupify
+    |=  [=group-id ~]
+    ^-  (quip card _state)
+    =/  =group
+      (~(got by groups) group-id)
+    =.  hidden.group  %.n
+    =.  groups
+      (~(put by groups) group-id group)
+    :_  state
+    (send-diff %groupify group-id ~)
   ::  +add-group: add group to store
   ::
   ::    always include ship in own groups, no-op if group already exists
   ::
   ++  add-group
-    |=  [=group-id =policy]
+    |=  [=group-id =policy hidden=?]
     ^-  (quip card _state)
     ?:  (~(has by groups) group-id)
       [~ state]
@@ -195,12 +193,13 @@
     =.  members.group
       (~(put in members.group) our.bol)
     =.  policy.group   policy
+    =.  hidden.group   hidden
     =.  tag-queries.group
       (~(put ju tag-queries.group) %admin our.bol)
     =.  groups
       (~(put by groups) group-id group)
     :_  state
-    (send-diff %add-group group-id policy)
+    (send-diff %add-group group-id policy hidden)
   ::  +add-members: add members to group
   ::
   ::    no-op if group does not exist

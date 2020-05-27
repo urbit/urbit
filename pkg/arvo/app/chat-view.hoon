@@ -298,7 +298,7 @@
     ::
     :-
       ?:  =(path app-path)
-        (group-poke %add-group group-id policy)
+        (group-poke %add-group group-id policy %.n)
       (contact-view-poke %create term.group-id policy title desc)
     %+  murn  ~(tap in ships)
     |=  =ship

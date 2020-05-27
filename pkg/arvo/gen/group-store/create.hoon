@@ -7,4 +7,4 @@
     ==
 :-  %group-update
 ^-  action
-[%add-group [p.beak term] %open (sy %0 %1 ~) ~]
+[%add-group [p.beak term] *open:policy %.n]

@@ -47,6 +47,7 @@
       %initial-group   (initial-group update)
       %remove-group    (remove-group update)
       %change-policy   (change-policy update)
+      %groupify        (groupify update)
     ==
   ++  group-id-path
     |=  =^group-id
@@ -127,6 +128,12 @@
       %ban-ships  [ranks+(set ship ships.diff) ~]
     ==
   ::
+  ++  groupify
+    |=  =^update
+    ^-  json
+    ?>  ?=(%groupify -.update)
+    (frond %group-id (group-id group-id.update))
+  ::
   ++  remove-group
     |=  =^update
     ^-  json
@@ -147,6 +154,7 @@
     %-  pairs
     :~  group-id+(group-id group-id.action)
         policy+(policy policy.action)
+        hidden+b+hidden.action
     ==
   ::
   ++  add-members
@@ -211,6 +219,7 @@
       remove-tag+remove-tag
       change-policy+change-policy
       remove-group+remove-group
+      groupify+groupify
     ==
   ++  rank
     |=  =json
@@ -268,14 +277,23 @@
   ++  remove-group
     |=  =json
     ?>  ?=(%o -.json)
-    =/  =group-id
+    =/  id=^group-id
       (group-id (~(got by p.json) 'group-id'))
-    [group-id ~]
-
+    [id ~]
+  ::
+  ++  groupify
+    |=  =json
+    ^-  [^group-id ~]
+    ?>  ?=(%o -.json)
+    =/  id=^group-id
+      (group-id (~(got by p.json) 'group-id'))
+    [id ~]
+  ::
   ++  add-group
     %-  ot
     :~  group-id+group-id
         policy+policy
+        hidden+bo
     ==
   ++  add-members
     %-  ot

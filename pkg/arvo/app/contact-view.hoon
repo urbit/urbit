@@ -136,7 +136,7 @@
     =/  =path
       (group-id:en-path:group-store group-id)
     %+  weld
-      :~  (group-poke [%add-group group-id policy.act])
+      :~  (group-poke [%add-group group-id policy.act %.y])
           (contact-poke [%create path])
           (contact-hook-poke [%add-owned path])
       ==
@@ -185,7 +185,8 @@
     =/  =path
       (group-id:en-path:group-store group-id.act)
     %+  weld
-      :~  (contact-poke [%create path])
+      :~  (group-poke %groupify group-id.act ~)
+          (contact-poke [%create path])
           (contact-hook-poke [%add-owned path])
       ==
     (create-metadata path title.act description.act)
