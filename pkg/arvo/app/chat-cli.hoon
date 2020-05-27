@@ -9,9 +9,9 @@
 ::    we concat the ship onto the head of the path,
 ::    and trust it to take care of the rest.
 ::
-/-  *chat-store, *chat-view, *chat-hook,
+/-  *chat-store, *chat-view, pull-hook=chat-pull-hook,
     *permission-store, *group-store, *invite-store,
-    sole-sur=sole
+    *rw-security, sole
 /+  sole-lib=sole, chat-eval, default-agent, verb, dbug,
     auto=language-server-complete
 ::
@@ -831,7 +831,7 @@
           :^  %invite  /chat
             (shax (jam [our-self where] who))
           ^-  invite
-          [our-self %chat-hook where who '']
+          [our-self %chat-pull-hook where who '']
       ==
     ::  +set-target: set audience, update prompt
     ::
@@ -952,9 +952,9 @@
       ?:  =(our-self ship.target)
         %-  print:sh-out
         "can't ;leave local chats, maybe use ;delete instead"
-      %^  act  %do-leave  %chat-hook
-      :-  %chat-hook-action
-      !>  ^-  chat-hook-action
+      %^  act  %do-leave  %chat-pull-hook
+      :-  %chat-pull-hook-action
+      !>  ^-  action:pull-hook
       [%remove (target-to-path target)]
     ::  +say: send messages
     ::
@@ -967,11 +967,22 @@
       ^-  (list card)
       %+  turn  ~(tap in audience)
       |=  =target
-      %^  act  %out-message  %chat-hook
-      :-  %chat-action
-      !>  ^-  chat-action
-      :+  %message  (target-to-path target)
-      [serial *@ our-self now.bowl letter]
+      =/  pax  (target-to-path target)
+      =/  shp  (need (ship-from-path:chat pax))
+      =/  app
+        ?:  =(our.bowl shp)
+          %chat-store
+        %chat-push-hook
+      :*  %pass
+          /cli-command/out-message
+          %agent
+          [shp app]
+          %poke
+          %chat-action
+          !>  ^-  action:store
+          :+  %message  pax
+          [serial *@ our-self now.bowl letter]
+      ==
     ::  +eval: run hoon, send code and result as message
     ::
     ::    this double-virtualizes and clams to disable .^ for security reasons

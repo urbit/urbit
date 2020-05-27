@@ -105,7 +105,8 @@
       %invite-hook
       %invite-view
       %chat-store
-      %chat-hook
+      %chat-pull-hook
+      %chat-push-hook
       %chat-view
       %chat-cli
       %soto
