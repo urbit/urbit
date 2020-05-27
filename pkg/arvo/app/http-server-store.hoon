@@ -58,6 +58,7 @@
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
+  ?>  (team:title our.bowl src.bowl)
   ?+  mark  (on-poke:def mark vase)
       %http-server-action  (landscape-action !<(action vase))
       %handle-http-request
@@ -191,6 +192,7 @@
   |=  =path
   ^-  (quip card _this)
   |^
+  ?>  (team:title our.bowl src.bowl)
   ?+  path  (on-watch:def path)
       [%http-response *]  [~ this]
       [%all ~]            [(give [%configuration configuration]) this]
