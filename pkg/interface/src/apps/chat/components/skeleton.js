@@ -49,9 +49,6 @@ export class Skeleton extends Component {
           >
             {/* mobile-specific navigation */}
             <div className={mobileNavClasses}>
-              <Link className="pl3 pb6" to="/">
-                {'⟵ Landscape'}
-              </Link>
               <div className="bb b--gray4 b--gray1-d white-d inter f8 pl3 pt6 pb3">
                 All Chats
               </div>

@@ -134,7 +134,6 @@ export class GroupSidebar extends Component {
        'flex-basis-30-ns flex-shrink-0 mw5-m mw5-l mw5-xl flex-basis-100-s ' +
         'relative overflow-hidden pt3 pt0-m pt0-l pt0-xl ' + activeClasses}
       >
-        <Link className="db dn-m dn-l dn-xl f8 pb6 pl3" to="/">⟵ Landscape</Link>
         <div className="overflow-auto pb8 h-100">
           <Link to="/~groups/new" className="dib">
             <p className="f9 pt4 pl4 green2 bn">Create Group</p>
