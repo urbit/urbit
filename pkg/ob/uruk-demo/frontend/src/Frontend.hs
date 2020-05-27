@@ -752,62 +752,85 @@ frontend = Frontend
         [ "(add one (add one two))"
         ]
 
-
-    ---------------------------------------------------------------------------
-
-    urdocSection "Compiling Hoonish Expressions" "hoon-expressions" $ do
-      paragraph [
-        "Building a new high performance functional VM is nice, but we also ",
-        "want it to be a compile target for something like Hoon. So, as a ",
-        "feasibility proof, lets produce a non-typed variant of Hoon and make ",
-        "sure we can compile it to Uruk."
-        ]
-
-      paragraph [
-        "For now, we'll skip other jetted data types we can skip and just use ",
-        "jetted natural numbers for now. Let's declare a gate which always ",
-        "returns the same number:"
-        ]
-
-      compileDemo [] [
-        "|=(a 43)"
-        ]
-
-      paragraph [
-        "For any given input, \"K 43\" will return 43, since (K x y) is x. We ",
-        "can verify this by calling the gate with a different number:"
-        ]
-
-      compileDemo [] [
-        "=/  gate  |=(a 43)",
-        "(gate 81)"
-        ]
-
-      -- TODO: This could be a lot better of a tutorial if I wasn't a talentless
-      -- hack.
-      el "h4" $ (text "<dog>I have no idea what I'm doing.</dog>")
-
     ---------------------------------------------------------------------------
 
     urdocSection "Storage and Snapshot Strategy" "storage" $ do
       paragraph [
-        "So we've gone over the low level details of the reduction rules, and ",
-        "shown how we can compile a hoon-like language to Uruk. But Urbit as ",
-        "a complete system implies you have one giant function which contains ",
-        "everything in your system. The move to Uruk doesn't change the fact ",
-        "that the value of your Urbit is an arvo-like function which takes an ",
-        "event and returns a pair of effects and a new arvo function."
+        "So we've gone over how Uruk's jetting strategy makes things ",
+        "performant and how we can store jetted data instead of raw ",
+        "representations in S and K. But what about larger scale data?"
         ]
 
       paragraph [
-        "How do you make that fast?"
+        "Uruk is intended to be a substrate for Urbit, which is a complete ",
+        "system as a single value. Your Urbit is one closure which takes a ",
+        "command and returns a pair of effects and a new closure. Everything ",
+        "lives in this one closure: all system code, all user code, all data."
         ]
 
       paragraph [
-        "Vere maps a 2 gigabyte loom directly to disk, which is fast but ",
-        "limits the size of the image. Jaque serializes the entire arvo state ",
-        "on each save, but this is slow and costly. Can we do better?"
+        "How do you handle all of a user's data as one value?"
         ]
+
+      paragraph [
+        "In the current Urbit system, Vere maps a 2 gigabyte memory image ",
+        "directly to disk, which is fast but limits the size of the image. ",
+        "The alternative Jaque interpreter serializes the entire system state ",
+        "on each save, but this is slow and costly. Neither of these ",
+        "solutions scale."
+        ]
+
+      paragraph [
+        "We want to be able to page parts of your system value from disk on ",
+        "use, but we don't want to hash-cons each Uruk letter. We only want ",
+        "to break the value up into parts at specific boundaries. We want to ",
+        "specify from inside an Uruk program that a value should be ",
+        "serialized separately. So we define two functions which put a value ",
+        "in a box and take a value out of a box:"
+        ]
+
+      el "pre" $ el "code" $
+        paragraph [
+          "++  (box x)    (J %box (K x))",
+          "++  (unbox x)  (x uni)"
+          ]
+
+      paragraph [
+        "All we are doing is declaring a function which returns a jetted ",
+        "function with a tag of %box which returns the value when called with ",
+        "any argument. The ",
+        "corresponding unbox function just calls the function with an unused ",
+        "argument. Using the same data jet matching infrastructure from the ",
+        "last section, we can data jet the value stored in this operation ",
+        "separately."
+        ]
+
+      paragraph [
+        "To illustrate how this works, let's make something analogous to our ",
+        "current Arvo operating system: a function which takes a command, and ",
+        "returns a pair of effects and a new function. To keep things simple, ",
+        "let's implement a persistent, stateful Fibonacci sequence generator. ",
+        "A function with type:"
+        ]
+
+      el "pre" $ el "code" $
+        paragraph [
+          "type Fun = Int -> (Int, Fun)"
+          ]
+
+
+
+      -- TODO: Continue here, and I would have preferred to work on this
+      -- instead of what I eventually did work on.
+      paragraph [
+        ""
+        ]
+
+
+
+
+
+
 
       paragraph [
         "Nock 4K+ has unifying equality on all nouns, meaning there wasn't a ",
@@ -917,6 +940,40 @@ frontend = Frontend
           "across interpreters."
           ]
 
+
+    ---------------------------------------------------------------------------
+
+    urdocSection "Compiling Hoonish Expressions" "hoon-expressions" $ do
+      paragraph [
+        "Building a new high performance functional VM is nice, but we also ",
+        "want it to be a compile target for something like Hoon. So, as a ",
+        "feasibility proof, lets produce a non-typed variant of Hoon and make ",
+        "sure we can compile it to Uruk."
+        ]
+
+      paragraph [
+        "For now, we'll skip other jetted data types we can skip and just use ",
+        "jetted natural numbers for now. Let's declare a gate which always ",
+        "returns the same number:"
+        ]
+
+      compileDemo [] [
+        "|=(a 43)"
+        ]
+
+      paragraph [
+        "For any given input, \"K 43\" will return 43, since (K x y) is x. We ",
+        "can verify this by calling the gate with a different number:"
+        ]
+
+      compileDemo [] [
+        "=/  gate  |=(a 43)",
+        "(gate 81)"
+        ]
+
+      -- TODO: This could be a lot better of a tutorial if I wasn't a talentless
+      -- hack.
+      el "h4" $ (text "<dog>I have no idea what I'm doing.</dog>")
 
 
     urdocSection "The Old Demo" "the-old-demo" $ do
