@@ -10,12 +10,13 @@
     *permission-group-hook,
     *chat-hook,
     *metadata-hook,
-    *rw-security,
-    hook=chat-hook
+    hook=chat-hook,
+    contact-view
 /+  *server, default-agent, verb, dbug,
     store=chat-store,
     view=chat-view,
-    group-store
+    group-store,
+    grpl=group
 ::
 ~%  %chat-view-top  ..is  ~
 |%
@@ -156,6 +157,7 @@
 ::
 ~%  %chat-view-library  ..card  ~
 |_  bol=bowl:gall
+++  grp  ~(. grpl bol)
 ::
 ++  poke-handle-http-request
   |=  =inbound-request:eyre
@@ -244,8 +246,38 @@
     ==
   ::
       %groupify
-    ::  TODO
-    ~
+    =*  app-path  app-path.act
+    =/  scry-pax=path
+      /metadata/[(scot %t (spat app-path))]/chat/[(scot %t (spat app-path))]
+    =/  =metadata
+      (need (scry-for (unit metadata) %metadata-store scry-pax))
+    =/  old-group-id=group-id
+      (need (group-id:de-path:group-store app-path))
+    ?<  (is-managed:grp old-group-id)
+    ?~  existing.act
+      ::  just create contacts object for group
+      ~[(contact-view-poke %groupify old-group-id title.metadata description.metadata)]
+    ::  change associations
+    =*  group-path  group-path.u.existing.act
+    =/  =group-id
+      (need (group-id:de-path:group-store group-path))
+    =/  old-group=group
+      (need (scry-group:grp old-group-id))
+    =/  =group
+      (need (scry-group:grp group-id))
+    =/  ships=(set ship)
+      (~(dif in members.old-group) members.group)
+    :*  (metadata-store-poke %remove app-path %chat app-path)
+        (metadata-store-poke %add group-path [%chat app-path] metadata)
+        (group-poke %remove-group old-group-id ~)
+        ?.  inclusive.u.existing.act
+          ~
+        :-  (group-poke %add-members group-id ships ~)
+        %+  turn
+          ~(tap in ships)
+        |=  =ship
+        (send-invite group-path app-path ship)
+    ==
   ==
   ::
   ++  create-chat
@@ -267,7 +299,7 @@
     :-
       ?:  =(path app-path)
         (group-poke %add-group group-id policy)
-      (contact-view-poke %create path ships title desc)
+      (contact-view-poke %create term.group-id policy title desc)
     %+  murn  ~(tap in ships)
     |=  =ship
     ^-  (unit card)
@@ -292,7 +324,7 @@
     ==
   ::
   ++  contact-view-poke
-    |=  act=[%create =path ships=(set ship) title=@t description=@t]
+    |=  act=contact-view-action:contact-view
     ^-  card
     [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
   ::
@@ -322,11 +354,11 @@
       !=(app-path group-path)
     =/  =invite
       :*  our.bol
-          ?:(managed %group-hook %chat-hook)
+          ?:(managed %contact-hook %chat-hook)
           ?:(managed group-path app-path)
           ship  ''
       ==
-    =/  act=invite-action  [%invite ?:(managed /groups /chat) (shaf %msg-uid eny.bol) invite]
+    =/  act=invite-action  [%invite ?:(managed /contacts /chat) (shaf %msg-uid eny.bol) invite]
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   ::
   ++  chat-scry

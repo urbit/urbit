@@ -59,6 +59,8 @@
     :~  (invite-poke:cc [%create /chat])
         [%pass /invites %agent [our.bol %invite-store] %watch /invitatory/chat]
         [%pass /permissions %agent [our.bol %permission-store] %watch /updates]
+        ::  TODO: move to on-load
+        watch-groups:cc
     ==
   ++  on-save   !>(state)
   ++  on-load
@@ -565,6 +567,8 @@
     [%pass /permissions %agent [our.bol %permission-store] %watch /updates]~
   ::
   ?+  wir  !!
+    [%groups ~]  [~[watch-groups] state]
+  ::
       [%store @ *]
     ~&  store-kick+wir
     ?.  (~(has by synced) t.wir)  [~ state]
@@ -730,4 +734,7 @@
   ?:  =(ship our.bol)
     [%pass wire %agent [our.bol %chat-store] %leave ~]
   [%pass wire %agent [ship %chat-hook] %leave ~]
+++  watch-groups
+  ^-  card
+  [%pass /groups %agent [our.bol %group-store] %watch /groups]
 --
