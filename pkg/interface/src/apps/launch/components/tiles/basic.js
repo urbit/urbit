@@ -4,22 +4,28 @@ import { Link } from 'react-router-dom';
 
 import Tile from './tile';
 
-
 export default class BasicTile extends React.PureComponent {
-
   render() {
     const { props } = this;
 
     const children = (
       <span>
-        <p className="black white-d absolute f9"
-           style={{left: 8, top: 8}}>{props.title}</p>
+        <p className={
+           classnames('absolute f9',
+           { 'black white-d': props.title !== 'Dojo',
+             'white': props.title === 'Dojo' })}
+           style={{ left: 8, top: 8 }}
+        >
+          {props.title}
+        </p>
          <img
-           className="absolute invert-d"
+           className={classnames('absolute',
+           { 'invert-d': props.title !== 'Dojo' })}
            style={{ left: 38, top: 38 }}
            src={props.iconUrl}
            width={48}
-           height={48} />
+           height={48}
+         />
       </span>
     );
 
@@ -37,10 +43,11 @@ export default class BasicTile extends React.PureComponent {
 
     return (
       <Tile>
-        <div className={"w-100 h-100 relative bg-white bg-gray0-d ba " +
-                        "b--black b--gray1-d"}>{tile}</div>
+        <div className={classnames('w-100 h-100 relative ba b--black b--gray1-d bg-gray0-d',
+        { 'bg-white': props.title !== 'Dojo',
+          'bg-black': props.title === 'Dojo' })}
+        >{tile}</div>
       </Tile>
     );
   }
-
 }
