@@ -38,7 +38,7 @@ import Urbit.Vere.Clay        (clay)
 import Urbit.Vere.Http.Client (client)
 import Urbit.Vere.Http.Server (serv)
 import Urbit.Vere.Log         (EventLog)
-import Urbit.Vere.Serf        (Serf, SerfState(..))
+import Urbit.Vere.Serf        (Serf)
 
 import qualified System.Entropy         as Ent
 import qualified Urbit.King.API         as King
@@ -105,7 +105,7 @@ writeJobs log !jobs = do
 -- Boot a new ship. ------------------------------------------------------------
 
 runSerf :: HasLogFunc e => FilePath -> [Serf.Flag] -> RAcquire e Serf
-runSerf pax fax = fst <$> Serf.withSerf config
+runSerf pax fax = Serf.withSerf config
  where
   config = Serf.Config
     { scSerf = "urbit-worker"
@@ -184,7 +184,7 @@ resumed replayUntil flags = do
     logTrace "Replaying events"
     Serf.execReplay serf log replayUntil
     logTrace "Taking snapshot"
-    Serf.execSnapshot serf
+    Serf.snapshot serf
     logTrace "Shuting down the serf"
 
   pure (serf, log)

@@ -2,6 +2,7 @@
 |%
 ::  +writ: from king to serf
 ::
++$  gang  (unit (set ship))
 +$  writ
   $%  $:  %live
           $%  [%exit cod=@]
@@ -29,23 +30,39 @@
               [%bail lud=(list goof)]
       ==  ==
   ==
---
 -}
 
-module Urbit.Vere.Serf.IPC where
+module Urbit.Vere.Serf.IPC
+  ( Serf
+  , Config(..)
+  , PlayBail(..)
+  , Flag(..)
+  , RunError(..)
+  , RunInput(..)
+  , RunOutput(..)
+  , start
+  , serfLastEventBlocking
+  , shutdown
+  , snapshot
+  , bootSeq
+  , replay
+  , running
+  )
+where
 
 import Urbit.Prelude hiding ((<|))
 
+import Data.Bits
 import Data.Conduit
+import System.Process
 import Urbit.Arvo
 import Urbit.Vere.Pier.Types hiding (Work)
-import System.Process
-import Data.Bits
 
 import Foreign.Marshal.Alloc (alloca)
 import Foreign.Ptr           (castPtr)
 import Foreign.Storable      (peek, poke)
 import RIO.Prelude           (decodeUtf8Lenient)
+import System.Posix.Signals  (sigKILL, signalProcess)
 import Urbit.Time            (Wen)
 
 import qualified Data.ByteString        as BS
@@ -61,7 +78,7 @@ type Gang = Maybe (HoonSet Ship)
 type Goof = (Term, [Tank])
 
 data Live
-  = LExit Atom
+  = LExit Atom -- exit status code
   | LSave EventId
   | LPack EventId
  deriving (Show)
@@ -125,6 +142,9 @@ deriveNoun ''SerfState
 deriveNoun ''SerfInfo
 deriveNoun ''Plea
 
+
+-- Serf API Types --------------------------------------------------------------
+
 data Serf = Serf
   { serfSend :: Handle
   , serfRecv :: Handle
@@ -132,9 +152,6 @@ data Serf = Serf
   , serfSlog :: Slog -> IO ()
   , serfLock :: MVar SerfState
   }
-
-
--- API Types -------------------------------------------------------------------
 
 data Flag
   = DebugRam
@@ -148,13 +165,13 @@ data Flag
   | Trace
  deriving (Eq, Ord, Show, Enum, Bounded)
 
-data Config = Config -- binary, directory, &c
-  { scSerf :: FilePath
-  , scPier :: FilePath
-  , scFlag :: [Flag]
-  , scSlog :: Slog -> IO ()
-  , scStdr :: Text -> IO ()
-  , scDead :: IO ()
+data Config = Config
+  { scSerf :: FilePath       --  Where is the urbit-worker executable?
+  , scPier :: FilePath       --  Where is the pier directory?
+  , scFlag :: [Flag]         --  Serf execution flags.
+  , scSlog :: Slog -> IO ()  --  What to do with slogs?
+  , scStdr :: Text -> IO ()  --  What to do with lines from stderr?
+  , scDead :: IO ()          --  What to do when the serf process goes down?
   }
 
 data RunError
@@ -190,8 +207,9 @@ data SerfExn
 
 -- Access Current Serf State ---------------------------------------------------
 
-serfCurrentStateBlocking :: Serf -> IO SerfState
-serfCurrentStateBlocking Serf{serfLock} = readMVar serfLock
+serfLastEventBlocking :: Serf -> IO EventId
+serfLastEventBlocking Serf{serfLock} = ssLast <$> readMVar serfLock
+
 
 -- Low Level IPC Functions -----------------------------------------------------
 
@@ -199,16 +217,17 @@ fromRightExn :: (Exception e, MonadIO m) => Either a b -> (a -> e) -> m b
 fromRightExn (Left m)  exn = throwIO (exn m)
 fromRightExn (Right x) _   = pure x
 
-withWord64AsByteString :: Word64 -> (ByteString -> IO a) -> IO a
-withWord64AsByteString w k = alloca $ \wp -> do
-  poke wp w
-  bs <- BS.unsafePackCStringLen (castPtr wp, 8)
-  k bs
-
+-- TODO Support Big Endian
 sendLen :: Serf -> Int -> IO ()
 sendLen s i = do
   w <- evaluate (fromIntegral i :: Word64)
-  withWord64AsByteString (fromIntegral i) (hPut (serfSend s))
+  withWord64AsByteString w (hPut (serfSend s))
+ where
+  withWord64AsByteString :: Word64 -> (ByteString -> IO a) -> IO a
+  withWord64AsByteString w k = alloca $ \wp -> do
+    poke wp w
+    bs <- BS.unsafePackCStringLen (castPtr wp, 8)
+    k bs
 
 sendBytes :: Serf -> ByteString -> IO ()
 sendBytes s bs = handle onIOError $ do
@@ -217,35 +236,34 @@ sendBytes s bs = handle onIOError $ do
   hFlush (serfSend s)
  where
   onIOError :: IOError -> IO ()
-  onIOError = const (throwIO SerfConnectionClosed)
+  onIOError = const (throwIO SerfConnectionClosed)  --  TODO call death callback?
 
 recvBytes :: Serf -> Word64 -> IO ByteString
-recvBytes serf = io . BS.hGet (serfRecv serf) . fromIntegral
+recvBytes serf = BS.hGet (serfRecv serf) . fromIntegral
 
 recvLen :: Serf -> IO Word64
 recvLen w = do
   bs <- BS.hGet (serfRecv w) 8
   case length bs of
-    8 -> BS.unsafeUseAsCString bs (peek . castPtr)
-    _ -> throwIO SerfConnectionClosed
+    8 -> BS.unsafeUseAsCString bs (peek @Word64 . castPtr)
+    _ -> throwIO SerfConnectionClosed  -- TODO kill worker process and call the death callback.
 
-recvAtom :: Serf -> IO Atom
-recvAtom w = do
-  len <- recvLen w
-  bytesAtom <$> recvBytes w len
+recvResp :: Serf -> IO ByteString
+recvResp serf = do
+  len <- recvLen serf
+  recvBytes serf len
 
 
 -- Send Writ / Recv Plea -------------------------------------------------------
 
 sendWrit :: Serf -> Writ -> IO ()
-sendWrit s w = do
-  sendBytes s $ jamBS $ toNoun w
+sendWrit s = sendBytes s . jamBS . toNoun
 
 recvPlea :: Serf -> IO Plea
 recvPlea w = do
-  a <- recvAtom w
-  n <- fromRightExn (cue a) (const $ BadPleaAtom a)
-  p <- fromRightExn (fromNounErr n) (\(p, m) -> BadPleaNoun n p m)
+  b <- recvResp w
+  n <- fromRightExn (cueBS b) (const $ BadPleaAtom $ bytesAtom b)
+  p <- fromRightExn (fromNounErr @Plea n) (\(p, m) -> BadPleaNoun n p m)
   pure p
 
 recvPleaHandlingSlog :: Serf -> IO Plea
@@ -286,22 +304,27 @@ recvPeek serf = do
     plea       -> throwIO (UnexpectedPlea plea "expecting %peek")
 
 
--- Request-Response Points -----------------------------------------------------
+-- Request-Response Points -- These don't touch the lock -----------------------
 
 sendSnapshotRequest :: Serf -> EventId -> IO ()
 sendSnapshotRequest serf eve = do
   sendWrit serf (WLive $ LSave eve)
   recvLive serf
 
-compact :: Serf -> EventId -> IO ()
-compact serf eve = do
+sendCompactRequest :: Serf -> EventId -> IO ()
+sendCompactRequest serf eve = do
   sendWrit serf (WLive $ LPack eve)
   recvLive serf
 
-scry :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
-scry serf w g p = do
+sendScryRequest :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
+sendScryRequest serf w g p = do
   sendWrit serf (WPeek w g p)
   recvPeek serf
+
+sendShutdownRequest :: Serf -> Atom -> IO ()
+sendShutdownRequest serf exitCode = do
+  sendWrit serf (WLive $ LExit exitCode)
+  pure ()
 
 
 -- Serf Usage Flows ------------------------------------------------------------
@@ -320,10 +343,10 @@ readStdErr h onLine onClose = loop
 start :: Config -> IO (Serf, SerfInfo)
 start (Config exePax pierPath flags onSlog onStdr onDead) = do
   (Just i, Just o, Just e, p) <- createProcess pSpec
-  async (readStdErr e onStdr onDead)
+  void $ async (readStdErr e onStdr onDead)
   vLock <- newEmptyMVar
   let serf = Serf i o p onSlog vLock
-  info <- recvRipe serf -- Gross: recvRipe doesn't care about lock so this is fine.
+  info <- recvRipe serf
   putMVar vLock (siStat info)
   pure (serf, info)
  where
@@ -335,16 +358,38 @@ start (Config exePax pierPath flags onSlog onStdr onDead) = do
                                , std_err = CreatePipe
                                }
 
-{-
-  TODO wait for process exit?
-  TODO force shutdown after time period? Not our job?
--}
-shutdown :: Serf -> Atom -> IO ()
-shutdown serf exitCode = do
-  sendWrit serf (WLive $ LExit exitCode)
-  pure ()
+snapshot :: HasLogFunc e => Serf -> RIO e ()
+snapshot serf = do
+  logTrace "execSnapshot: taking lock"
+  serfState <- takeMVar (serfLock serf)
+  io (sendSnapshotRequest serf (ssLast serfState))
+  logTrace "execSnapshot: releasing lock"
+  putMVar (serfLock serf) serfState
 
-bootSeq :: Serf -> [Noun] -> IO (Maybe PlayBail)
+shutdown :: HasLogFunc e => Serf -> RIO e ()
+shutdown serf = do
+  race_ (wait2sec >> forceKill) $ do
+    logTrace "Getting current serf state (taking lock, might block if in use)."
+    finalState <- takeMVar (serfLock serf)
+    logTrace "Got serf state (and took lock). Requesting shutdown."
+    io (sendShutdownRequest serf 0)
+    logTrace "Sent shutdown request. Waiting for process to die."
+    io $ waitForProcess (serfProc serf)
+    logTrace "RIP Serf process."
+ where
+  wait2sec = threadDelay 2_000_000
+  forceKill = do
+    logTrace "Serf taking too long to go down, kill with fire (SIGTERM)."
+    io (getPid $ serfProc serf) >>= \case
+      Nothing  -> do
+        logTrace "Serf process already dead."
+      Just pid -> do
+        io $ signalProcess sigKILL pid
+        io $ waitForProcess (serfProc serf)
+        logTrace "Finished killing serf process with fire."
+
+
+bootSeq :: Serf -> [Noun] -> IO (Maybe PlayBail)  --  TODO should this be an exception?
 bootSeq serf@Serf{..} seq = do
   oldInfo <- takeMVar serfLock
   sendWrit serf (WPlay 1 seq)
@@ -358,40 +403,32 @@ bootSeq serf@Serf{..} seq = do
   If this throws an exception, the serf will be in an unusable state. Kill
   the process.
 
+  TODO *we* should probably kill the serf on exception?
   TODO Take advantage of IPC support for batching.
   TODO Maybe take snapshots
 -}
-replay
-  :: forall m
-   . MonadIO m
-  => Serf
-  -> ConduitT Noun Void m (Maybe PlayBail)
+replay :: forall m . MonadIO m => Serf -> ConduitT Noun Void m (Maybe PlayBail)
 replay serf = do
-  initState <- takeMVar (serfLock serf)
+  initState        <- takeMVar (serfLock serf)
   (mErr, newState) <- loop initState
   putMVar (serfLock serf) newState
   pure mErr
  where
   loop :: SerfState -> ConduitT Noun Void m (Maybe PlayBail, SerfState)
-  loop (SerfState lastEve lastMug) = do
-   await >>= \case
+  loop (SerfState lastEve lastMug) = await >>= \case
     Nothing -> pure (Nothing, SerfState lastEve lastMug)
     Just ev -> do
       let newEve = lastEve + 1
       io $ sendWrit serf (WPlay newEve [ev])
-      res <- io (recvPlay serf) >>= \case
+      io (recvPlay serf) >>= \case
         PBail bail   -> pure (Just bail, SerfState lastEve lastMug)
         PDone newMug -> loop (SerfState newEve newMug)
-      pure res
-
-whenJust :: Monad m => Maybe a -> (a -> m ()) -> m ()
-whenJust Nothing _    = pure ()
-whenJust (Just a) act = act a
 
 {-
   If this throws an exception, the serf will be in an unusable state. Kill
   the process.
 
+  TODO *we* should probably kill the serf on exception?
   TODO callbacks on snapshot and compaction?
   TODO Take advantage of async IPC to fill pipe with more than one thing.
 -}
@@ -409,10 +446,8 @@ running serf notice = do
  where
   loop :: Mug -> EventId -> ConduitT RunInput RunOutput m SerfState
   loop mug eve = do
-    print "Serf.running.loop"
     io (notice Nothing)
     nex <- await
-    print ("Serf.running.loop: Got something")
     io (notice nex)
     nex & \case
       Nothing -> do
@@ -421,11 +456,10 @@ running serf notice = do
         io (sendSnapshotRequest serf eve)
         loop mug eve
       Just RunPack -> do
-        io (compact serf eve)
+        io (sendCompactRequest serf eve)
         loop mug eve
       Just (RunPeek wen gang pax act) -> do
-        res <- io (scry serf wen gang pax)
-        io (act res)
+        io (sendScryRequest serf wen gang pax >>= act)
         loop mug eve
       Just (RunWork evn err) -> do
         wen <- io Time.now

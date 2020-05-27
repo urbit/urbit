@@ -10,8 +10,8 @@ module Urbit.Vere.Serf
   ( module Urbit.Vere.Serf.IPC
   , withSerf
   , execReplay
-  , execSnapshot
-  , execShutdown
+  , shutdown
+  , snapshot
   )
 where
 
@@ -62,45 +62,11 @@ bytesNouns = await >>= \case
     yield bod
     bytesNouns
 
-withSerf :: HasLogFunc e => Config -> RAcquire e (Serf, SerfInfo)
-withSerf config = mkRAcquire (io $ start config) kill
+withSerf :: HasLogFunc e => Config -> RAcquire e Serf
+withSerf config = mkRAcquire (io $ fmap fst $ start config) kill
  where
-  kill (serf, _) = do
-    void $ rio $ execShutdown serf
-
-{-
-  TODO This needs to be thought through carfully once the callsites
-  have stabilized.
--}
-execShutdown :: HasLogFunc e => Serf -> RIO e ()
-execShutdown serf = do
-  race_ (wait2sec >> forceKill) $ do
-    logTrace "Getting current serf state (taking lock, might block if in use)."
-    finalState <- takeMVar (serfLock serf)
-    logTrace "Got serf state (and took lock). Requesting shutdown."
-    io (shutdown serf 0)
-    logTrace "Sent shutdown request. Waiting for process to die."
-    io $ waitForProcess (serfProc serf)
-    logTrace "RIP Serf process."
- where
-  wait2sec = threadDelay 5_000_000 
-  forceKill = do
-    logTrace "Serf taking too long to go down, kill with fire (SIGTERM)."
-    io (getPid $ serfProc serf) >>= \case
-      Nothing  -> do
-        logTrace "Serf process already dead."
-      Just pid -> do
-        io $ signalProcess sigKILL pid
-        io $ waitForProcess (serfProc serf)
-        logTrace "Finished killing serf process with fire."
-    
-execSnapshot :: forall e . HasLogFunc e => Serf -> RIO e ()
-execSnapshot serf = do
-  logTrace "execSnapshot: taking lock"
-  serfState <- takeMVar (serfLock serf)
-  io (sendSnapshotRequest serf (ssLast serfState))
-  logTrace "execSnapshot: releasing lock"
-  putMVar (serfLock serf) serfState
+  kill serf = do
+    void $ rio $ shutdown serf
 
 execReplay
   :: forall e
@@ -110,11 +76,13 @@ execReplay
   -> Maybe Word64
   -> RIO e (Maybe PlayBail)
 execReplay serf log last = do
-  lastEventInSnap <- io (ssLast <$> serfCurrentStateBlocking serf)
+  lastEventInSnap <- io (serfLastEventBlocking serf)
   if lastEventInSnap == 0 then doBoot else doReplay
  where
   doBoot :: RIO e (Maybe PlayBail)
   doBoot = do
+    logTrace "Beginning boot sequence"
+
     let bootSeqLen = lifecycleLen (Log.identity log)
 
     evs <- runConduit $ Log.streamEvents log 1
@@ -123,10 +91,9 @@ execReplay serf log last = do
                      .| CC.sinkList
 
     let numEvs = fromIntegral (length evs)
-    let bootLn = bootSeqLen
 
-    when (numEvs /= bootLn) $ do
-      throwIO (MissingBootEventsInEventLog numEvs bootLn)
+    when (numEvs /= bootSeqLen) $ do
+      throwIO (MissingBootEventsInEventLog numEvs bootSeqLen)
 
     io (bootSeq serf evs) >>= \case
       Just err -> pure (Just err)
@@ -136,7 +103,7 @@ execReplay serf log last = do
   doReplay = do
     logTrace "Beginning event log replay"
 
-    lastEventInSnap <- io (ssLast <$> serfCurrentStateBlocking serf)
+    lastEventInSnap <- io (serfLastEventBlocking serf)
 
     last & \case
         Nothing -> pure ()

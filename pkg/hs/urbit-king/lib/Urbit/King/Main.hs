@@ -174,7 +174,7 @@ runOrExitImmediately getPier oExit mStart = do
   shutdownImmediately :: (Serf, Log.EventLog) -> RIO e ()
   shutdownImmediately (serf, log) = do
     logTrace "Sending shutdown signal"
-    Serf.execShutdown serf
+    Serf.shutdown serf
     logTrace "Shutdown!"
 
   runPier :: (Serf, Log.EventLog) -> RIO e ()
@@ -317,7 +317,7 @@ replayPartEvs top last = do
           case eSs of
             Just bail -> error (show bail)
             Nothing   -> pure ()
-          rio (Serf.execSnapshot serf)
+          rio (Serf.snapshot serf)
           io $ threadDelay 500000 -- Copied from runOrExitImmediately
           pure ()
 
