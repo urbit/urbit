@@ -167,7 +167,7 @@ data RunInput
   | RunPeek Wen Gang Path (Maybe (Term, Noun) -> IO ())
   | RunWork Ev (RunError -> IO ())
 
-data RunOutput = RunOutput EventId Mug Wen (Either Noun Ev) [Ef]
+data RunOutput = RunOutput EventId Mug Wen Noun [Ef]
 
 
 -- Exceptions ------------------------------------------------------------------
@@ -432,11 +432,11 @@ running serf notice = do
         io (sendWrit serf (WWork wen evn))
         io (recvWork serf) >>= \case
           WDone eid hash fx -> do
-            yield (RunOutput eid hash wen (Right evn) fx)
+            yield (RunOutput eid hash wen (toNoun evn) fx)
             loop hash eid
           WSwap eid hash (wen, noun) fx -> do
             io $ err (RunSwap eid hash wen noun fx)
-            yield (RunOutput eid hash wen (Left noun) fx)
+            yield (RunOutput eid hash wen noun fx)
             loop hash eid
           WBail goofs -> do
             io $ err (RunBail goofs)
