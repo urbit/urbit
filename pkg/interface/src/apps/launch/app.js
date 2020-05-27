@@ -9,7 +9,6 @@ import './css/custom.css';
 import Tiles from './components/tiles';
 import Welcome from './components/welcome';
 
-
 export default class LaunchApp extends React.Component {
   constructor(props) {
     super(props);
@@ -48,13 +47,13 @@ export default class LaunchApp extends React.Component {
     const { state } = this;
 
     return (
-      <div style={{ height: 'calc(100vh - 45px)'}}
-           className='h-100 w-100 bg-gray0-d'>
+      <div className='v-mid ph2 dtc-m dtc-l dtc-xl flex justify-between flex-wrap' style={{ maxWidth: '40rem' }}>
         <Welcome firstTime={state.launch.firstTime} api={this.api} />
         <Tiles
           tiles={state.launch.tiles}
           tileOrdering={state.launch.tileOrdering}
-          api={this.api} />
+          api={this.api}
+        />
       </div>
     );
   }
