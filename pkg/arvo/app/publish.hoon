@@ -557,15 +557,11 @@
   %-  ~(rep by notes.u.book)
   |=  [[@tas =note] out=_wen]
   ^-  @da
-  =?  out  (gth last-edit.note wen)
-    last-edit.note
-  =.  out
-    %-  ~(rep by comments.note)
-    |=  [[@da =comment] out=_out]
-    ?:  (gth date-created.comment out)
-      date-created.comment
-    out
-  out
+  %+  max  out
+  %+  max  last-edit.note
+  %-  ~(rep by comments.note)
+  |=  [[@da =comment] out=_out]
+  (max date-created.comment out)
 ::
 ++  get-notebook-from-date
   |=  [host=@p book-name=@tas wen=@da]
@@ -592,7 +588,7 @@
 ++  merge-notebooks
   |=  [base=notebook diff=notebook]
   ^-  notebook
-  %=  base
+  %=  diff
       notes
     %-  ~(rep by notes.diff)
     |=  [[nom=@tas not=note] out=_notes.base]
@@ -2042,11 +2038,9 @@
               date-created.data.del
           ==
       ==
-    =/  book  (~(get by books) host.del book.del)
+    =?  data.del  (~(has by books) host.del book.del)
+      (merge-notebooks (~(got by books) host.del book.del) data.del)
     =^  cards  state
-      ?~  book
-        (emit-updates-and-state host.del book.del data.del del sty)
-      =.  data.del  (merge-notebooks u.book data.del)
       (emit-updates-and-state host.del book.del data.del del sty)
     :_  state
     :*  (group-hook-poke [%add host.del writers.data.del])
