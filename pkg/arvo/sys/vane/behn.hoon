@@ -218,7 +218,7 @@
     =^  dut  dux  ~(get to dux)
     :-  [date dut]
     ?:  =(~ dux)
-      +:(del:timer-map timers.state date)
+      timers.state
     (put:timer-map timers.state date dux)
   ::  +set-timer: set a timer, maintaining order
   ::
