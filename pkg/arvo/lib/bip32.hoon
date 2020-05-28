@@ -85,7 +85,7 @@
   ;~  pose
     %+  cook
       |=(i=@ (add i (bex 31)))
-    ;~(sfix dem say)
+    ;~(sfix dem soq)
   ::
     dem
   ==  ==

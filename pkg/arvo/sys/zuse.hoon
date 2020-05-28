@@ -6696,7 +6696,7 @@
           =*  wow  `(map @t @)`(malt lip)
           (sear ~(get by wow) low)
         =*  tuf  ;~(pfix (just 'u') (cook tuft qix:ab))
-        ;~(pose yel net say bas loo tuf)
+        ;~(pose yel net soq bas loo tuf)
       ==
     ::                                                  ::  ++expo:de-json:html
     ++  expo                                            ::  exponent
@@ -6854,9 +6854,9 @@
           (star ;~(less yel escp))
         ::
           %+  ifix
-            :_  say
-            ;~(plug (ifix [. .]:(star whit) tis) say)
-          (star ;~(less say escp))
+            :_  soq
+            ;~(plug (ifix [. .]:(star whit) tis) soq)
+          (star ;~(less soq escp))
         ::
           (easy ~)
         ==
@@ -7101,13 +7101,13 @@
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
-        zap  buc  pam  say  lit  rit
+        zap  buc  pam  soq  lit  rit
         tar  lus  com  mic  tis
       ==
     ::                                                  ::  ++ptok:de-purl:html
     ++  ptok                                            ::  2616 token
       ;~  pose
-        aln  zap  hax  buc  cen  pam  say  tar  lus
+        aln  zap  hax  buc  cen  pam  soq  tar  lus
         hep  dot  ket  cab  tic  bar  sig
       ==
     ::                                                  ::  ++scem:de-purl:html

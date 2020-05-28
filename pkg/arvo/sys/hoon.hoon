@@ -5683,13 +5683,13 @@
              ;~(less ;~(plug (just `@`10) soz) (just `@`10))
          ==
 ++  qit  ;~  pose                                       ::  chars in a cord
-             ;~(less bat say prn)
-             ;~(pfix bat ;~(pose bat say mes))          ::  escape chars
+             ;~(less bat soq prn)
+             ;~(pfix bat ;~(pose bat soq mes))          ::  escape chars
          ==
-++  qut  ;~  simu  say                                  ::  cord
+++  qut  ;~  simu  soq                                  ::  cord
            ;~  pose
              ;~  less  soz
-               (ifix [say say] (boss 256 (more gon qit)))
+               (ifix [soq soq] (boss 256 (more gon qit)))
              ==
              =+  hed=;~(pose ;~(plug (plus ace) vul) (just '\0a'))
              %-  iny  %+  ifix
@@ -5698,7 +5698,7 @@
              (boss 256 (star qat))
            ==
          ==
-++  soz  ;~(plug say say say)                           ::  delimiting '''
+++  soz  ;~(plug soq soq soq)                           ::  delimiting '''
 ++  sym                                                 ::  symbol
   %+  cook
     |=(a/tape (rap 3 ^-((list @) a)))
@@ -5799,7 +5799,7 @@
              (cook tuft (ifix [sig dot] hex))
              ;~(pfix sig ;~(pose sig dot))
            ==
-  ++  voy  ;~(pfix bat ;~(pose bat say bix))
+  ++  voy  ;~(pfix bat ;~(pose bat soq bix))
   --
 ++  ag
   |%
