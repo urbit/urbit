@@ -12484,7 +12484,7 @@
       ;~  pose
         ;~(pfix bas ;~(pose (mask "-+*%;\{") bas yel bix:ab))
         inline-embed
-        ;~(less bas lob ?:(in-tall-form fail toc) prn)
+        ;~(less bas lob ?:(in-tall-form fail doq) prn)
         ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
       ==
     ::
