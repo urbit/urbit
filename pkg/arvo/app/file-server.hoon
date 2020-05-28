@@ -30,16 +30,11 @@
         %-  ~(gas by *^serving)
         %+  turn
           ^-  (list path)
-          [/ /'~landscape' /'~chat' /'~link' /'~dojo' /'~groups' /'~publish' ~]
+          [/ /'~landscape' ~]
         |=(pax=path [pax [/app/landscape %.n]])
       ==
   :~  (connect /)
       (connect /'~landscape')
-      (connect /'~chat')
-      (connect /'~link')
-      (connect /'~dojo')
-      (connect /'~groups')
-      (connect /'~publish')
   ==
   ::
   ++  connect
@@ -75,8 +70,12 @@
     ?-  -.act
         %serve-dir
       =*  url-base  url-base.act
-      ?:  (~(has by serving) url-base)
-        ~|("url already bound to {<(~(got by serving) url-base.act)>}" !!)
+      =/  served  (~(get by serving) url-base)
+      ?^  served
+        ?.  =(clay-base.act clay-base.u.served)
+          ~|("url already bound to {<(~(got by serving) url-base.act)>}" !!)
+        :-  [%pass url-base %arvo %e %connect [~ url-base] %file-server]~
+        this(serving (~(put by serving) url-base [clay-base.act public.act]))
       :-  [%pass url-base %arvo %e %connect [~ url-base] %file-server]~
       this(serving (~(put by serving) url-base [clay-base.act public.act]))
     ::
