@@ -12484,12 +12484,12 @@
       ;~  pose
         ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
         inline-embed
-        ;~(less bas lob ?:(in-tall-form fail doq) prn)
+        ;~(less bas kel ?:(in-tall-form fail doq) prn)
         ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
       ==
     ::
     ++  bracketed-elem                                  ::  bracketed element
-      %+  ifix  [lob rob]
+      %+  ifix  [kel ker]
       ;~(plug tag-head wide-elems)
     ::
     ++  wrapped-elems                                   ::  wrapped tuna
@@ -13385,7 +13385,7 @@
       :-  '{'
         ::  XX deprecated
         ::
-        (stag %bscl (ifix [lob rob] (most ace wyde)))
+        (stag %bscl (ifix [kel ker] (most ace wyde)))
       :-  '['
         (stag %bscl (ifix [sel ser] (most ace wyde)))
       :-  '*'
@@ -13485,7 +13485,7 @@
       :-  '('
         (stag %cncl (ifix [pal par] (most ace wide)))
       :-  '{'
-        (stag %ktcl (stag %bscl (ifix [lob rob] (most ace wyde))))
+        (stag %ktcl (stag %bscl (ifix [kel ker] (most ace wyde))))
       :-  '*'
         ;~  pose
           (stag %kttr ;~(pfix tar wyde))
@@ -13622,8 +13622,8 @@
         %+  ifix  [doq doq]
         %-  star
         ;~  pose
-          ;~(pfix bas ;~(pose bas doq lob bix:ab))
-          ;~(less doq bas lob prn)
+          ;~(pfix bas ;~(pose bas doq kel bix:ab))
+          ;~(less doq bas kel prn)
           (stag ~ sump)
         ==
       ==
@@ -13632,13 +13632,13 @@
         [(jest '"""\0a') (jest '\0a"""')]
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose bas lob bix:ab))
-        ;~(less bas lob prn)
+        ;~(pfix bas ;~(pose bas kel bix:ab))
+        ;~(less bas kel prn)
         ;~(less (jest '\0a"""') (just `@`10))
         (stag ~ sump)
       ==
     ==
-  ++  sump  (ifix [lob rob] (stag %cltr (most ace wide)))
+  ++  sump  (ifix [kel ker] (stag %cltr (most ace wide)))
   ++  norm                                              ::  rune regular form
     |=  tol/?
     |%
