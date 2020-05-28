@@ -2,7 +2,8 @@ Stubbed out:
 
 - [x] Handle replacement events (stubbed out now b/c interface can't
   handle unparsed nouns)
-- [ ] Handle IPC errors by killing serf process. 
+- [x] Handle IPC errors by killing serf process.
+- [ ] PlayBail should be an exception.
 - [ ] Write haddock docs for `Urbit.Vere.Serf.IPC`.
 - [ ] Unstub slog/stder/dead callbacks on serf config.
 - [ ] GoodParse hack in newRunCompute.
