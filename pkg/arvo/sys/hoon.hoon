@@ -12146,7 +12146,7 @@
   ++  hasp  ;~  pose                                    ::  path element
               (ifix [lac rac] wide)
               (stag %cncl (ifix [lit rit] (most ace wide)))
-              (stag %sand (stag %tas (cold %$ bus)))
+              (stag %sand (stag %tas (cold %$ buc)))
               (stag %sand (stag %t qut))
               %+  cook
                 |=(a/coin [%sand ?:(?=({~ $tas *} a) %tas %ta) ~(rent co a)])
@@ -13152,7 +13152,7 @@
         ::
           %+  stag  %code
           ;~  plug
-            lus  ;~(pose lus hep bus tar)
+            lus  ;~(pose lus hep buc tar)
             low  (star ;~(pose nud low hep col))
           ==
         ::
@@ -13198,7 +13198,7 @@
               tash:so
               ;~(pfix dot perd:so)
               ;~(pfix sig ;~(pose twid:so (easy [%$ %n 0])))
-              ;~(pfix cen ;~(pose sym bus pad bar qut nuck:so))
+              ;~(pfix cen ;~(pose sym buc pad bar qut nuck:so))
             ==
           ::
             ;~(simu whit (easy ~))
@@ -13351,11 +13351,11 @@
         ;~(pfix com (stag %bsmc wide))
       :-  '$'
         ;~  pose
-          ;~  pfix  bus
+          ;~  pfix  buc
             ;~  pose
             ::  XX all three deprecated
             ::
-              (stag %leaf (stag %tas (cold %$ bus)))
+              (stag %leaf (stag %tas (cold %$ buc)))
               (stag %leaf (stag %t qut))
               (stag %leaf (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
             ==
@@ -13366,7 +13366,7 @@
         ;~  pose
           ;~  pfix  cen
             ;~  pose
-              (stag %leaf (stag %tas (cold %$ bus)))
+              (stag %leaf (stag %tas (cold %$ buc)))
               (stag %leaf (stag %f (cold & pad)))
               (stag %leaf (stag %f (cold | bar)))
               (stag %leaf (stag %t qut))
@@ -13391,7 +13391,7 @@
       :-  '*'
         (cold [%base %noun] tar)
       :-  '/'
-        ;~(pfix net (stag %loop ;~(pose (cold %$ bus) sym)))
+        ;~(pfix net (stag %loop ;~(pose (cold %$ buc) sym)))
       :-  '@'
         ;~(pfix vat (stag %base (stag %atom mota)))
       :-  '?'
@@ -13450,11 +13450,11 @@
         ;~(pfix cab (stag %ktcl (stag %bscb wide)))
       :-  '$'
         ;~  pose
-          ;~  pfix  bus
+          ;~  pfix  buc
             ;~  pose
               ::  XX: these are all obsolete in hoon 142
               ::
-              (stag %leaf (stag %tas (cold %$ bus)))
+              (stag %leaf (stag %tas (cold %$ buc)))
               (stag %leaf (stag %t qut))
               (stag %leaf (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
             ==
@@ -13465,7 +13465,7 @@
         ;~  pfix  cen
           ;~  pose
             (stag %clsg (sear |~({a/@ud b/tyke} (posh ~ ~ a b)) porc))
-            (stag %rock (stag %tas (cold %$ bus)))
+            (stag %rock (stag %tas (cold %$ buc)))
             (stag %rock (stag %f (cold & pad)))
             (stag %rock (stag %f (cold | bar)))
             (stag %rock (stag %t qut))
@@ -13646,7 +13646,7 @@
       %-  stew
       ^.  stet  ^.  limo
       :~  :-  '$'
-            ;~  pfix  bus
+            ;~  pfix  buc
               %-  stew
               ^.  stet  ^.  limo
               :~  [':' (rune col %bscl exqs)]
@@ -13713,11 +13713,11 @@
                   ['*' (rune tar %brtr exqc)]
                   ['=' (rune tis %brts exqc)]
                   ['?' (rune wut %brwt expa)]
-                  ['$' (rune bus %brbs exqe)]
+                  ['$' (rune buc %brbs exqe)]
               ==
             ==
           :-  '$'
-            ;~  pfix  bus
+            ;~  pfix  buc
               %-  stew
               ^.  stet  ^.  limo
               :~  ['@' (stag %ktcl (rune vat %bsvt exqb))]
@@ -13797,7 +13797,7 @@
               %-  stew
               ^.  stet  ^.  limo
               :~  ['|' (rune bar %sgbr expb)]
-                  ['$' (rune bus %sgbs expf)]
+                  ['$' (rune buc %sgbs expf)]
                   ['_' (rune cab %sgcb expb)]
                   ['%' (rune cen %sgcn hind)]
                   ['/' (rune net %sgnt hine)]
@@ -13886,7 +13886,7 @@
                     (jest '+-')   ::  XX deprecated
                   ==
           ;~  plug
-            ;~(pfix gap ;~(pose (cold %$ bus) sym))
+            ;~(pfix gap ;~(pose (cold %$ buc) sym))
             ;~(pfix gap loaf)
           ==
         ==
@@ -14255,7 +14255,7 @@
       (cold [%| 0 ~] com)
       %+  cook
         |=({a/(list) b/term} ?~(a b [%| (lent a) `b]))
-      ;~(plug (star ket) ;~(pose sym (cold %$ bus)))
+      ;~(plug (star ket) ;~(pose sym (cold %$ buc)))
     ::
       %+  cook
         |=(a/axis [%& a])

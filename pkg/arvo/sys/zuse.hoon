@@ -7101,13 +7101,13 @@
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
-        zap  bus  pad  say  lit  rit
+        zap  buc  pad  say  lit  rit
         tar  lus  com  mic  tis
       ==
     ::                                                  ::  ++ptok:de-purl:html
     ++  ptok                                            ::  2616 token
       ;~  pose
-        aln  zap  hax  bus  cen  pad  say  tar  lus
+        aln  zap  hax  buc  cen  pad  say  tar  lus
         hep  dot  ket  cab  tec  bar  sig
       ==
     ::                                                  ::  ++scem:de-purl:html

@@ -942,7 +942,7 @@
           (stag %fssg ;~(pfix sig hoon))
           ::  `/$`  process query string
           ::
-          (stag %fsbc ;~(pfix bus hoon))
+          (stag %fsbc ;~(pfix buc hoon))
           ::  `/|`  first of many options that succeeds
           ::
           (stag %fsbr ;~(pfix bar parse-alts))
