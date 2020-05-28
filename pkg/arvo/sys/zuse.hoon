@@ -6727,7 +6727,7 @@
       ==
     ::                                                  ::  ++obje:de-json:html
     ++  obje                                            ::  object list
-      %+  ifix  [(wish leb) (wish reb)]
+      %+  ifix  [(wish kel) (wish ker)]
       (more (wish com) pear)
     ::                                                  ::  ++obox:de-json:html
     ++  obox                                            ::  object
