@@ -275,7 +275,7 @@
     ;~  pose
       (stag %sa ;~(pfix tar pam sym))
       (stag %ex parse-hoon)
-      (stag %tu (ifix [lac rac] (most ace parse-source)))
+      (stag %tu (ifix [sel ser] (most ace parse-source)))
     ==
   ::
   ++  parse-config

@@ -182,7 +182,7 @@
     ::
     ++  hoon
       %+  wide-or-tall
-        (ifix [lac rac] (stag %cltr (most ace wide:hoon-parser)))
+        (ifix [sel ser] (stag %cltr (most ace wide:hoon-parser)))
       ;~(pfix gap tall:hoon-parser)
     --
   ::  +static-path: parses a path

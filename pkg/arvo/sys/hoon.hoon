@@ -12144,7 +12144,7 @@
             ==
   ++  glam  ~+((glue ace))
   ++  hasp  ;~  pose                                    ::  path element
-              (ifix [lac rac] wide)
+              (ifix [sel ser] wide)
               (stag %cncl (ifix [pal par] (most ace wide)))
               (stag %sand (stag %tas (cold %$ buc)))
               (stag %sand (stag %t qut))
@@ -13160,7 +13160,7 @@
         ::
           %+  stag  %link
           ;~  (glue (punt whit))
-            (ifix [lac rac] (cool (cash rac) werk))
+            (ifix [sel ser] (cool (cash ser) werk))
             (ifix [pal par] (cash par))
           ==
         ::
@@ -13169,7 +13169,7 @@
           %+  stag  %mage
           ;~  pfix  zap
             ;~  (glue (punt whit))
-              (ifix [lac rac] (cash rac))
+              (ifix [sel ser] (cash ser))
               (ifix [pal par] (cash par))
             ==
           ==
@@ -13387,7 +13387,7 @@
         ::
         (stag %bscl (ifix [lob rob] (most ace wyde)))
       :-  '['
-        (stag %bscl (ifix [lac rac] (most ace wyde)))
+        (stag %bscl (ifix [sel ser] (most ace wyde)))
       :-  '*'
         (cold [%base %noun] tar)
       :-  '/'
@@ -13596,7 +13596,7 @@
         ::
           ;~  pfix  sig
             ;~  pose
-              (stag %clsg (ifix [lac rac] (most ace wide)))
+              (stag %clsg (ifix [sel ser] (most ace wide)))
             ::
               %+  stag  %cnsg
               %+  ifix
@@ -13920,14 +13920,14 @@
         ;~  pfix  (jest '+*')
           ;~  plug
             ;~(pfix gap sym)
-            ;~(pfix gap (ifix [lac rac] (most ace sym)))
+            ;~(pfix gap (ifix [sel ser] (most ace sym)))
             ;~(pfix gap loan)
           ==
         ==
       ==
    ::  parses a or [a b c] or a  b  c  ==
    ++  lynx
-      =/  wid  (ifix [lac rac] (most ace sym))
+      =/  wid  (ifix [sel ser] (most ace sym))
       =/  tal
         ;~  sfix
           (most gap sym)
@@ -14179,7 +14179,7 @@
         ;~  gunk
           ;~  pose
             dem
-            (ifix [lac rac] ;~(plug dem ;~(pfix ace dem)))
+            (ifix [sel ser] ;~(plug dem ;~(pfix ace dem)))
           ==
           loaf
         ==
@@ -14242,7 +14242,7 @@
     %+  cook  |=(hoon +<)
     %+  stag  %cltr
     %+  ifix
-      [;~(plug lac gap) ;~(plug gap rac)]
+      [;~(plug sel gap) ;~(plug gap ser)]
     (most gap tall)
   ::
   ++  ropa  (most col rope)

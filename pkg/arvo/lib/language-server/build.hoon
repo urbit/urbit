@@ -7,7 +7,7 @@
   =/  parse-pair
     %+  cook
       |=([row=@ud col=@ud] [(dec row) col])
-    (ifix [lac rac] ;~((glue ace) dem dem))
+    (ifix [sel ser] ;~((glue ace) dem dem))
   =/  parse-path
     %+  cook
       |=(p=path (slag 3 p))

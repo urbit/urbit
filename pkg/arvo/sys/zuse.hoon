@@ -6664,7 +6664,7 @@
     ::                                                  ::  ++abox:de-json:html
     ++  abox                                            ::  array
       %+  stag  %a
-      (ifix [lac (wish rac)] (more (wish com) apex))
+      (ifix [sel (wish ser)] (more (wish com) apex))
     ::                                                  ::  ++apex:de-json:html
     ++  apex                                            ::  any value
       %+  knee  *json  |.  ~+
