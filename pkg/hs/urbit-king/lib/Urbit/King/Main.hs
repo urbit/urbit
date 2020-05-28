@@ -144,6 +144,11 @@ toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
   _ncHttpsPort = oHttpsPort
   _ncLocalPort = oLoopbackPort
 
+logSlogs :: HasLogFunc e => RIO e (TVar (Text -> IO ()))
+logSlogs = do
+  env <- ask
+  newTVarIO (runRIO env . logTrace . ("SLOG: " <>) . display)
+
 tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
                    , HasConfigDir e, HasStderrLogFunc e
                    )
@@ -152,23 +157,25 @@ tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
                 -> RIO e ()
 tryBootFromPill oExit pill lite flags ship boot = do
     mStart <- newEmptyMVar
-    runOrExitImmediately bootedPier oExit mStart
+    vSlog  <- logSlogs
+    runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart
   where
-    bootedPier = do
+    bootedPier vSlog = do
         view pierPathL >>= lockFile
         rio $ logTrace "Starting boot"
-        sls <- Pier.booted pill lite flags ship boot
+        sls <- Pier.booted vSlog pill lite flags ship boot
         rio $ logTrace "Completed boot"
         pure sls
 
 runOrExitImmediately
   :: forall e
    . (HasLogFunc e, HasNetworkConfig e, HasPierConfig e, HasConfigDir e)
-  => RAcquire e (Serf, Log.EventLog)
+  => TVar (Text -> IO ())
+  -> RAcquire e (Serf, Log.EventLog)
   -> Bool
   -> MVar ()
   -> RIO e ()
-runOrExitImmediately getPier oExit mStart = do
+runOrExitImmediately vSlog getPier oExit mStart = do
   rwith getPier (if oExit then shutdownImmediately else runPier)
  where
   shutdownImmediately :: (Serf, Log.EventLog) -> RIO e ()
@@ -179,9 +186,7 @@ runOrExitImmediately getPier oExit mStart = do
 
   runPier :: (Serf, Log.EventLog) -> RIO e ()
   runPier serfLog = do
-    let defaultStderr txt = putStrLn "txt" -- TODO XX What did we do before?
-    vStderr <- newTVarIO defaultStderr
-    runRAcquire (Pier.pier serfLog vStderr mStart)
+    runRAcquire (Pier.pier serfLog vSlog mStart)
 
 tryPlayShip :: ( HasStderrLogFunc e, HasLogFunc e, HasNetworkConfig e
                , HasPierConfig e, HasConfigDir e
@@ -189,7 +194,8 @@ tryPlayShip :: ( HasStderrLogFunc e, HasLogFunc e, HasNetworkConfig e
             => Bool -> Bool -> Maybe Word64 -> [Serf.Flag] -> MVar () -> RIO e ()
 tryPlayShip exitImmediately fullReplay playFrom flags mStart = do
     when fullReplay wipeSnapshot
-    runOrExitImmediately resumeShip exitImmediately mStart
+    vSlog <- logSlogs
+    runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart
   where
     wipeSnapshot = do
         shipPath <- view pierPathL
@@ -202,10 +208,10 @@ tryPlayShip exitImmediately fullReplay playFrom flags mStart = do
     north shipPath = shipPath <> "/.urb/chk/north.bin"
     south shipPath = shipPath <> "/.urb/chk/south.bin"
 
-    resumeShip = do
+    resumeShip vSlog = do
         view pierPathL >>= lockFile
         rio $ logTrace "RESUMING SHIP"
-        sls <- Pier.resumed playFrom flags
+        sls <- Pier.resumed vSlog playFrom flags
         rio $ logTrace "SHIP RESUMED"
         pure sls
 
@@ -265,17 +271,18 @@ checkEvs pierPath first last = do
 collectAllFx :: ∀e. HasLogFunc e => FilePath -> RIO e ()
 collectAllFx top = do
     logTrace $ display $ pack @Text top
-    rwith collectedFX $ \() ->
+    vSlog <- logSlogs
+    rwith (collectedFX vSlog) $ \() ->
         logTrace "Done collecting effects!"
   where
     tmpDir :: FilePath
     tmpDir = top </> ".tmpdir"
 
-    collectedFX :: RAcquire e ()
-    collectedFX = do
+    collectedFX :: TVar (Text -> IO ()) -> RAcquire e ()
+    collectedFX vSlog = do
         lockFile top
         log  <- Log.existing (top <> "/.urb/log")
-        serf <- Pier.runSerf tmpDir serfFlags
+        serf <- Pier.runSerf vSlog tmpDir serfFlags
         rio $ error "Serf.collectFX" serf log
 
     serfFlags :: [Serf.Flag]

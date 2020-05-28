@@ -104,16 +104,27 @@ writeJobs log !jobs = do
 
 -- Boot a new ship. ------------------------------------------------------------
 
-runSerf :: HasLogFunc e => FilePath -> [Serf.Flag] -> RAcquire e Serf
-runSerf pax fax = Serf.withSerf config
+printTank :: (Text -> IO ()) -> Atom -> Tank -> IO ()
+printTank f _ = io . f . unlines . fmap unTape . wash (WashCfg 0 80)
+
+runSerf
+  :: HasLogFunc e
+  => TVar (Text -> IO ())
+  -> FilePath
+  -> [Serf.Flag]
+  -> RAcquire e Serf
+runSerf vSlog pax fax = do
+  env <- ask
+  Serf.withSerf (config env)
  where
-  config = Serf.Config
-    { scSerf = "urbit-worker"
+  slog txt = join $ atomically (readTVar vSlog >>= pure . ($ txt))
+  config env = Serf.Config
+    { scSerf = "urbit-worker" -- TODO Find the executable in some proper way.
     , scPier = pax
     , scFlag = fax
-    , scSlog = \slog -> print ("slog", slog) -- TODO error "TODO: slog"
-    , scStdr = \stdr -> print ("stdr", stdr) -- TODO error "TODO: stdr"
-    , scDead = pure () -- error "TODO: dead"
+    , scSlog = \(pri, tank) -> printTank slog pri tank
+    , scStdr = \line -> runRIO env $ logTrace (display ("SERF: " <> line))
+    , scDead = pure () -- TODO: What can be done?
     }
 
 bootSeqJobs :: Time.Wen -> BootSeq -> [Job]
@@ -152,22 +163,29 @@ bootNewShip pill lite flags ship bootEv = do
 
   logTrace "Finsihed populating event log with boot sequence"
 
-booted :: (HasPierConfig e, HasStderrLogFunc e, HasLogFunc e)
-       => Pill -> Bool -> [Serf.Flag] -> Ship -> LegacyBootEvent
-       -> RAcquire e (Serf, EventLog)
-booted pill lite flags ship boot = do
+booted
+  :: (HasPierConfig e, HasStderrLogFunc e, HasLogFunc e)
+  => TVar (Text -> IO ())
+  -> Pill
+  -> Bool
+  -> [Serf.Flag]
+  -> Ship
+  -> LegacyBootEvent
+  -> RAcquire e (Serf, EventLog)
+booted vSlog pill lite flags ship boot = do
   rio $ bootNewShip pill lite flags ship boot
-  resumed Nothing flags
+  resumed vSlog Nothing flags
 
 
 -- Resume an existing ship. ----------------------------------------------------
 
 resumed
   :: (HasStderrLogFunc e, HasPierConfig e, HasLogFunc e)
-  => Maybe Word64
+  => TVar (Text -> IO ())
+  -> Maybe Word64
   -> [Serf.Flag]
   -> RAcquire e (Serf, EventLog)
-resumed replayUntil flags = do
+resumed vSlog replayUntil flags = do
   rio $ logTrace "Resuming ship"
   top <- view pierPathL
   tap <- fmap (fromMaybe top) $ rio $ runMaybeT $ do
@@ -177,8 +195,8 @@ resumed replayUntil flags = do
   rio $ logTrace $ display @Text ("pier: " <> pack top)
   rio $ logTrace $ display @Text ("running serf in: " <> pack tap)
 
-  log    <- Log.existing (top <> "/.urb/log")
-  serf   <- runSerf tap flags
+  log  <- Log.existing (top <> "/.urb/log")
+  serf <- runSerf vSlog tap flags
 
   rio $ do
     logTrace "Replaying events"
@@ -217,7 +235,7 @@ pier :: ∀e. (HasConfigDir e, HasLogFunc e, HasNetworkConfig e, HasPierConfig e
      -> TVar (Text -> IO ())
      -> MVar ()
      -> RAcquire e ()
-pier (serf, log) vStderr mStart = do
+pier (serf, log) vSlog mStart = do
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
@@ -248,13 +266,18 @@ pier (serf, log) vStderr mStart = do
         -- "TERMSERV Terminal Server running on port: " <> tshow termServPort
 
     acquireWorker $ forever $ do
-            logTrace "TERMSERV Waiting for external terminal."
-            atomically $ do
-                ext <- Term.connClient <$> readTQueue termApiQ
-                Term.addDemux ext demux
-            logTrace "TERMSERV External terminal connected."
+      logTrace "TERMSERV Waiting for external terminal."
+      atomically $ do
+        ext <- Term.connClient <$> readTQueue termApiQ
+        Term.addDemux ext demux
+      logTrace "TERMSERV External terminal connected."
 
-    atomically $ writeTVar vStderr (atomically . Term.trace muxed)
+    --  Slogs go to both stderr and to the terminal.
+    atomically $ do
+      oldSlog <- readTVar vSlog
+      writeTVar vSlog $ \txt -> do
+        atomically $ Term.trace muxed txt
+        oldSlog txt
 
     let logId = Log.identity log
     let ship = who logId
@@ -385,25 +408,23 @@ router waitFx Drivers {..} = forever $ do
 -- Compute Thread --------------------------------------------------------------
 
 logEvent :: HasLogFunc e => Ev -> RIO e ()
-logEvent ev =
-    logDebug $ display $ "[EVENT]\n" <> pretty
-  where
-    pretty :: Text
-    pretty = pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow ev
+logEvent ev = logDebug $ display $ "[EVENT]\n" <> pretty
+ where
+  pretty :: Text
+  pretty = pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow ev
 
 logEffect :: HasLogFunc e => Lenient Ef -> RIO e ()
-logEffect ef =
-    logDebug $ display $ "[EFFECT]\n" <> pretty ef
-  where
-    pretty :: Lenient Ef -> Text
-    pretty = \case
-       GoodParse e -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow e
-       FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
+logEffect ef = logDebug $ display $ "[EFFECT]\n" <> pretty ef
+ where
+  pretty :: Lenient Ef -> Text
+  pretty = \case
+    GoodParse e -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow e
+    FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
 
 data ComputeRequest
-    = CREvent (Ev, Serf.RunError -> IO ())
-    | CRSave ()
-    | CRShutdown ()
+  = CREvent (Ev, Serf.RunError -> IO ())
+  | CRSave ()
+  | CRShutdown ()
 
 {-
   TODO Pack and Peek
@@ -444,8 +465,7 @@ data ComputeConfig = ComputeConfig
   , ccHideSpinner :: STM ()
   }
 
-runCompute
-  :: forall e . HasLogFunc e => Serf.Serf -> ComputeConfig -> RIO e ()
+runCompute :: forall e . HasLogFunc e => Serf.Serf -> ComputeConfig -> RIO e ()
 runCompute serf ComputeConfig {..} = do
   logTrace "runCompute"
   runConduit
