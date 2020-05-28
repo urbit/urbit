@@ -664,7 +664,8 @@
   ::
   ++  public-keys-give
     |=  [yen=(set duct) =public-keys-result]
-    =+  yez=~(tap in yen)
+    |^
+    =+  yez=(sort ~(tap in yen) sorter)
     |-  ^+  this-su
     ?~  yez  this-su
     =*  d  i.yez
@@ -675,6 +676,18 @@
       %-  emit
       [d %give %boon %public-keys-result public-keys-result]
     $(yez t.yez)
+    ::
+    ::  We want to notify Ames, then Clay, then Gall.  This happens to
+    ::  be alphabetical, but this is mostly a coincidence.
+    ::
+    ++  sorter
+      |=  [a=duct b=duct]
+      ?.  ?=([[@ *] *] a)
+        |
+      ?.  ?=([[@ *] *] b)
+        &
+      (lth i.i.a i.i.b)
+    --
   ::
   ++  get-source
     |=  who=@p
