@@ -12145,7 +12145,7 @@
   ++  glam  ~+((glue ace))
   ++  hasp  ;~  pose                                    ::  path element
               (ifix [lac rac] wide)
-              (stag %cncl (ifix [lit rit] (most ace wide)))
+              (stag %cncl (ifix [pal par] (most ace wide)))
               (stag %sand (stag %tas (cold %$ buc)))
               (stag %sand (stag %t qut))
               %+  cook
@@ -12433,7 +12433,7 @@
     ++  wide-attrs                                      ::  wide attributes
       %+  cook  |=(a/(unit mart:hoot) (fall a ~))
       %-  punt
-      %+  ifix  [lit rit]
+      %+  ifix  [pal par]
       %+  more  (jest ', ')
       ;~((glue ace) a-mane hopefully-quote)
     ::
@@ -12449,7 +12449,7 @@
     ++  wide-paren-elems                                ::  wide flow
       %+  cook  |=(a/marl:hoot a)
       %+  cook  join-tops
-      (ifix [lit rit] (more ace wide-inner-top))
+      (ifix [pal par] (more ace wide-inner-top))
     ::
     ::+|
     ::
@@ -13161,7 +13161,7 @@
           %+  stag  %link
           ;~  (glue (punt whit))
             (ifix [lac rac] (cool (cash rac) werk))
-            (ifix [lit rit] (cash rit))
+            (ifix [pal par] (cash par))
           ==
         ::
         ::  ![alt text](url)
@@ -13170,7 +13170,7 @@
           ;~  pfix  zap
             ;~  (glue (punt whit))
               (ifix [lac rac] (cash rac))
-              (ifix [lit rit] (cash rit))
+              (ifix [pal par] (cash par))
             ==
           ==
         ::
@@ -13377,7 +13377,7 @@
       :-  '('
         %+  cook  |=(spec +<)
         %+  stag  %make
-        %+  ifix  [lit rit]
+        %+  ifix  [pal par]
         ;~  plug
           wide
           ;~(pose ;~(pfix ace (most ace wyde)) (easy ~))
@@ -13397,7 +13397,7 @@
       :-  '?'
         ;~  pose
           %+  stag  %bswt
-          ;~(pfix wut (ifix [lit rit] (most ace wyde)))
+          ;~(pfix wut (ifix [pal par] (most ace wyde)))
         ::
           (cold [%base %flag] wut)
         ==
@@ -13476,14 +13476,14 @@
       :-  '&'
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
-          (stag %wtpd ;~(pfix pam (ifix [lit rit] (most ace wide))))
+          (stag %wtpd ;~(pfix pam (ifix [pal par] (most ace wide))))
           ;~(plug (stag %rock (stag %f (cold & pam))) wede)
           (stag %sand (stag %f (cold & pam)))
         ==
       :-  '\''
         (stag %sand (stag %t qut))
       :-  '('
-        (stag %cncl (ifix [lit rit] (most ace wide)))
+        (stag %cncl (ifix [pal par] (most ace wide)))
       :-  '{'
         (stag %ktcl (stag %bscl (ifix [lob rob] (most ace wyde))))
       :-  '*'
@@ -13495,7 +13495,7 @@
         ;~(pfix pat (stag %base (stag %atom mota)))
       :-  '+'
         ;~  pose
-          (stag %dtls ;~(pfix lus (ifix [lit rit] wide)))
+          (stag %dtls ;~(pfix lus (ifix [pal par] wide)))
         ::
           %+  cook
             |=  a/(list (list woof))
@@ -13529,14 +13529,14 @@
       :-  ':'
         ;~  pfix  col
           ;~  pose
-            (stag %mccl (ifix [lit rit] (most ace wide)))
+            (stag %mccl (ifix [pal par] (most ace wide)))
             ;~(pfix net (stag %mcnt wide))
           ==
         ==
       :-  '='
         ;~  pfix  tis
           ;~  pose
-            (stag %dtts (ifix [lit rit] ;~(glam wide wide)))
+            (stag %dtts (ifix [pal par] ;~(glam wide wide)))
           ::
             %+  sear
               ::  mainly used for +skin formation
@@ -13551,7 +13551,7 @@
       :-  '?'
         ;~  pose
           %+  stag  %ktcl
-          (stag %bswt ;~(pfix wut (ifix [lit rit] (most ace wyde))))
+          (stag %bswt ;~(pfix wut (ifix [pal par] (most ace wyde))))
         ::
           (cold [%base %flag] wut)
         ==
@@ -13586,7 +13586,7 @@
       :-  '|'
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
-          (stag %wtbr ;~(pfix bar (ifix [lit rit] (most ace wide))))
+          (stag %wtbr ;~(pfix bar (ifix [pal par] (most ace wide))))
           ;~(plug (stag %rock (stag %f (cold | bar))) wede)
           (stag %sand (stag %f (cold | bar)))
         ==
@@ -13600,7 +13600,7 @@
             ::
               %+  stag  %cnsg
               %+  ifix
-                [lit rit]
+                [pal par]
               ;~(glam rope wide (most ace wide))
             ::
               (cook (jock |) twid:so)
@@ -14007,7 +14007,7 @@
     ++  toad                                            ::  untrap parser exp
       =+  har=expa
       |@  ++  $
-            =+  dur=(ifix [lit rit] $:har(tol |))
+            =+  dur=(ifix [pal par] $:har(tol |))
             ?:(tol ;~(pose ;~(pfix gap $:har(tol &)) dur) dur)
       --
     ::
@@ -14192,7 +14192,7 @@
       ;~  pose
         (cold ~ sig)
         %+  ifix
-          ?:(tol [;~(plug duz gap) ;~(plug gap duz)] [lit rit])
+          ?:(tol [;~(plug duz gap) ;~(plug gap duz)] [pal par])
         (more mash ;~(gunk ;~(pfix cen sym) loaf))
       ==
     --
@@ -14230,7 +14230,7 @@
         ;~(plug (cold %ket ket) wide)
         ;~  plug
           (easy %lit)
-          (ifix [lit rit] lobo)
+          (ifix [pal par] lobo)
         ==
       ==
     ==

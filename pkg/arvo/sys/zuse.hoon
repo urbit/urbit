@@ -7101,7 +7101,7 @@
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
-        zap  buc  pam  soq  lit  rit
+        zap  buc  pam  soq  pal  par
         tar  lus  com  mic  tis
       ==
     ::                                                  ::  ++ptok:de-purl:html
@@ -8590,7 +8590,7 @@
     ::
     ++  function
       |*  [tag=@tas fun=@t rul=rule]
-      ;~(plug (cold tag (jest fun)) (ifix [lit rit] rul))
+      ;~(plug (cold tag (jest fun)) (ifix [pal par] rul))
     ::
     ++  shipname
       ;~(pfix sig fed:ag)

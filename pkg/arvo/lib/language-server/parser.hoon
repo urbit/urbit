@@ -120,7 +120,7 @@
     ::
     ++  parse-alts
       %+  wide-or-tall
-        (ifix [lit rit] (most ace subcrane))
+        (ifix [pal par] (most ace subcrane))
       ;~(sfix (star subcrane) gap duz)
     ::  +parse-face: parse a face around a subcrane
     ::
