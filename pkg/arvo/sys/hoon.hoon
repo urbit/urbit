@@ -5563,47 +5563,59 @@
 ::
 ::::  4h: parsing (ascii glyphs)
   ::
-++  ace  (just ' ')
-++  ban  (just '>')
-++  bar  (just '|')
-++  bas  (just '\\')  ::  XX deprecated
-++  bat  (just '\\')
-++  buc  (just '$')   ::  XX deprecated
-++  bus  (just '$')
-++  cab  (just '_')
-++  cen  (just '%')
-++  col  (just ':')
-++  com  (just ',')
-++  dot  (just '.')
-++  fas  (just '/')  ::  XX deprecated?
-++  gal  (just '<')   ::  XX deprecated
-++  gar  (just '>')   ::  XX deprecated
-++  vat  (just '@')   ::  pronounced "at"
-++  hax  (just '#')
-++  hep  (just '-')   ::  pronounced "ep"
-++  ket  (just '^')
-++  leb  (just '{')
-++  led  (just '<')
-++  lob  (just '{')
-++  lit  (just '(')
-++  lac  (just '[')
-++  lus  (just '+')
-++  mic  (just ';')   ::  pronounced "mick"
-++  net  (just '/')
-++  pad  (just '&')
-++  rac  (just ']')
-++  reb  (just '}')
-++  rob  (just '}')
-++  rit  (just ')')
-++  say  (just '\'')
-++  sig  (just '~')
-++  tar  (just '*')
-++  tec  (just '`')
-++  tis  (just '=')   ::  pronounced "is"
-++  toc  (just '"')   ::  XX deprecated
-++  yel  (just '"')
-++  wut  (just '?')
-++  zap  (just '!')
+++  ace  (just ' ')                                     ::  spACE
+++  bar  (just '|')                                     ::  vertical BAR
+++  bas  (just '\\')                                    ::  Back Slash (escaped)
+++  buc  (just '$')                                     ::  dollars BUCks
+++  cab  (just '_')                                     ::  CABoose
+++  cen  (just '%')                                     ::  perCENt
+++  col  (just ':')                                     ::  COLon
+++  com  (just ',')                                     ::  COMma
+++  doq  (just '"')                                     ::  Double Quote
+++  dot  (just '.')                                     ::  dot dot dot ...
+++  fas  (just '/')                                     ::  Forward Slash
+++  gal  (just '<')                                     ::  Greater Left
+++  gar  (just '>')                                     ::  Greater Right
+++  hax  (just '#')                                     ::  Hash
+++  hep  (just '-')                                     ::  HyPhen
+++  kel  (just '{')                                     ::  Curly Left
+++  ker  (just '}')                                     ::  Curly Right
+++  ket  (just '^')                                     ::  CareT
+++  lus  (just '+')                                     ::  pLUS
+++  mic  (just ';')                                     ::  seMIColon
+++  pal  (just '(')                                     ::  Paren Left
+++  pam  (just '&')                                     ::  AMPersand pampersand
+++  par  (just ')')                                     ::  Paren Right
+++  pat  (just '@')                                     ::  AT pat
+++  sel  (just '[')                                     ::  Square Left
+++  ser  (just ']')                                     ::  Square Right
+++  sig  (just '~')                                     ::  SIGnature squiggle
+++  soq  (just '\'')                                    ::  Single Quote
+++  tar  (just '*')                                     ::  sTAR
+++  tic  (just '`')                                     ::  backTiCk
+++  tis  (just '=')                                     ::  'tis tis, it is
+++  wut  (just '?')                                     ::  wut, what?
+++  zap  (just '!')                                     ::  zap! bang! crash!!
+::
+++  ban  (just '>')   ::  XX deprecated, use gar
+++  bat  (just '\\')  ::  XX deprecated, use bas
+++  bus  (just '$')   ::  XX deprecated, use buc
+++  lac  (just '[')   ::  XX deprecated, use sel
+++  leb  (just '{')   ::  XX deprecated, use kel
+++  led  (just '<')   ::  XX deprecated, use gal
+++  lit  (just '(')   ::  XX deprecated, use pal
+++  lob  (just '{')   ::  XX deprecated, use kel
+++  net  (just '/')   ::  XX deprecated, use fas
+++  pad  (just '&')   ::  XX deprecated, use pam
+++  rac  (just ']')   ::  XX deprecated, use ser
+++  reb  (just '}')   ::  XX deprecated, use ker
+++  rit  (just ')')   ::  XX deprecated, use par
+++  rob  (just '}')   ::  XX deprecated, use ker
+++  say  (just '\'')  ::  XX deprecated, use soq
+++  tec  (just '`')   ::  XX deprecated, use tic
+++  toc  (just '"')   ::  XX deprecated, use doq
+++  vat  (just '@')   ::  XX deprecated, use pat
+++  yel  (just '"')   ::  XX deprecated, use doq
 ::
 ::::  4i: parsing (useful idioms)
   ::
