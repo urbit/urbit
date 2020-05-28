@@ -5643,7 +5643,7 @@
 ++  gaw  (cold ~ (star ;~(pose vul gah)))               ::  classic white
 ++  gay  ;~(pose gap (easy ~))                          ::
 ++  gon  ;~(pose ;~(plug bat gay net) (easy ~))         ::  long numbers \ /
-++  gul  ;~(pose (cold 2 led) (cold 3 ban))             ::  axis syntax < >
+++  gul  ;~(pose (cold 2 gal) (cold 3 gar))             ::  axis syntax < >
 ++  hex  (bass 16 (most gon hit))                       ::  hex to atom
 ++  hig  (shim 'A' 'Z')                                 ::  uppercase
 ++  hit  ;~  pose                                       ::  hex digits
@@ -12212,7 +12212,7 @@
     ++  body
       ;~  pose
         ;~  plug                                        :: can duplicate ::
-          (into ;~(pfix (punt ;~(plug null col ban step)) line))
+          (into ;~(pfix (punt ;~(plug null col gar step)) line))
           (easy ~)
         ==
         ;~  plug
@@ -12244,11 +12244,11 @@
     ::
     ++  indo
       |*  bod/rule
-      ;~(pfix col ban ;~(sfix bod (just `@`10) (punt gap)))
+      ;~(pfix col gar ;~(sfix bod (just `@`10) (punt gap)))
     ::
     ++  exit
       |*  bod/rule
-      ;~(pfix (star ace) col led step bod)
+      ;~(pfix (star ace) col gal step bod)
     ::
     ::  fill: full definition
     ::
@@ -12559,7 +12559,7 @@
         (stag %& tall-elem)
         (stag %| wide-quote)
         (stag %| ;~(pfix tis tall-tail))
-        (stag %& ;~(pfix ban gap (stag [%div ~] cram)))
+        (stag %& ;~(pfix gar gap (stag [%div ~] cram)))
         (stag %| ;~(plug ;~((glue gap) tuna-mode tall) (easy ~)))
         (easy %| [;/("\0a")]~)
       ==
@@ -13028,7 +13028,7 @@
             (cold [%new %head] ;~(plug (star hax) ace)) ::  # heading
             (cold [%new %lint] ;~(plug hep ace))        ::  - line item
             (cold [%new %lite] ;~(plug lus ace))        ::  + line item
-            (cold [%new %bloc] ;~(plug ban ace))        ::  > block-quote
+            (cold [%new %bloc] ;~(plug gar ace))        ::  > block-quote
           ::
             (easy [%old %text])                         ::  anything else
           ==
@@ -13612,9 +13612,9 @@
       :-  '/'
         rood
       :-  '<'
-        (ifix [led ban] (stag %tell (most ace wide)))
+        (ifix [gal gar] (stag %tell (most ace wide)))
       :-  '>'
-        (ifix [ban led] (stag %yell (most ace wide)))
+        (ifix [gar gal] (stag %yell (most ace wide)))
     ==
   ++  soil
     ;~  pose
@@ -13651,8 +13651,8 @@
               ^.  stet  ^.  limo
               :~  [':' (rune col %bscl exqs)]
                   ['%' (rune cen %bscn exqs)]
-                  ['<' (rune led %bsld exqb)]
-                  ['>' (rune ban %bsbn exqb)]
+                  ['<' (rune gal %bsld exqb)]
+                  ['>' (rune gar %bsbn exqb)]
                   ['^' (rune ket %bskt exqb)]
                   ['~' (rune sig %bssg exqd)]
                   ['|' (rune bar %bsbr exqc)]
@@ -13724,8 +13724,8 @@
                   ['_' (stag %ktcl (rune cab %bscb expa))]
                   [':' (stag %ktcl (rune col %bscl exqs))]
                   ['%' (stag %ktcl (rune cen %bscn exqs))]
-                  ['<' (stag %ktcl (rune led %bsld exqb))]
-                  ['>' (stag %ktcl (rune ban %bsbn exqb))]
+                  ['<' (stag %ktcl (rune gal %bsld exqb))]
+                  ['>' (stag %ktcl (rune gar %bsbn exqb))]
                   ['|' (stag %ktcl (rune bar %bsbr exqc))]
                   ['&' (stag %ktcl (rune pam %bspd exqc))]
                   ['^' (stag %ktcl (rune ket %bskt exqb))]
@@ -13801,8 +13801,8 @@
                   ['_' (rune cab %sgcb expb)]
                   ['%' (rune cen %sgcn hind)]
                   ['/' (rune net %sgnt hine)]
-                  ['<' (rune led %sgld hinb)]
-                  ['>' (rune ban %sgbn hinb)]
+                  ['<' (rune gal %sgld hinb)]
+                  ['>' (rune gar %sgbn hinb)]
                   ['+' (rune lus %sgls hinc)]
                   ['&' (rune pam %sgpd hinf)]
                   ['?' (rune wut %sgwt hing)]
@@ -13832,8 +13832,8 @@
                   [':' (rune col %tscl expp)]
                   ['/' (rune net %tsnt expo)]
                   [';' (rune mic %tsmc expo)]
-                  ['<' (rune led %tsld expb)]
-                  ['>' (rune ban %tsbn expb)]
+                  ['<' (rune gal %tsld expb)]
+                  ['>' (rune gar %tsbn expb)]
                   ['-' (rune hep %tshp expb)]
                   ['*' (rune tar %tstr expg)]
                   [',' (rune com %tscm expb)]
@@ -13848,8 +13848,8 @@
               :~  ['|' (rune bar %wtbr exps)]
                   [':' (rune col %wtcl expc)]
                   ['.' (rune dot %wtdt expc)]
-                  ['<' (rune led %wtld expb)]
-                  ['>' (rune ban %wtbn expb)]
+                  ['<' (rune gal %wtld expb)]
+                  ['>' (rune gar %wtbn expb)]
                   ['-' ;~(pfix hep (toad txhp))]
                   ['^' ;~(pfix ket (toad tkkt))]
                   ['=' ;~(pfix tis (toad txts))]
@@ -13869,8 +13869,8 @@
                   ['.' ;~(pfix dot (toad |.(loaf(bug |))))]
                   [',' (rune com %zpcm expb)]
                   [';' (rune mic %zpmc expb)]
-                  ['>' (rune ban %zpbn expa)]
-                  ['<' (rune led %zpld exqc)]
+                  ['>' (rune gar %zpbn expa)]
+                  ['<' (rune gal %zpld exqc)]
                   ['@' (rune pat %zpvt expy)]
                   ['=' (rune tis %zpts expa)]
                   ['?' (rune wut %zpwt hinh)]
@@ -14158,12 +14158,12 @@
     ++  hine  |.(;~(gunk bonk loaf))                    ::  jet-hint and hoon
     ++  hinf  |.                                        ::  0-3 >s, two hoons
       ;~  pose
-        ;~(gunk (cook lent (stun [1 3] ban)) loaf loaf)
+        ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf)
         (stag 0 ;~(gunk loaf loaf))
       ==
     ++  hing  |.                                        ::  0-3 >s, three hoons
       ;~  pose
-        ;~(gunk (cook lent (stun [1 3] ban)) loaf loaf loaf)
+        ;~(gunk (cook lent (stun [1 3] gar)) loaf loaf loaf)
         (stag 0 ;~(gunk loaf loaf loaf))
       ==
     ++  bonk                                            ::  jet signature

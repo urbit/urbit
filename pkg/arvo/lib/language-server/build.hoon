@@ -13,7 +13,7 @@
       |=(p=path (slag 3 p))
     (ifix [net (jest '::')] (more net urs:ab))
   =/  parse-full
-    ;~(plug parse-path ;~(sfix ;~((glue dot) parse-pair parse-pair) ban))
+    ;~(plug parse-path ;~(sfix ;~((glue dot) parse-pair parse-pair) gar))
   (rust tape parse-full)
 ::
 ++  get-errors-from-tang
