@@ -7108,7 +7108,7 @@
     ++  ptok                                            ::  2616 token
       ;~  pose
         aln  zap  hax  buc  cen  pad  say  tar  lus
-        hep  dot  ket  cab  tec  bar  sig
+        hep  dot  ket  cab  tic  bar  sig
       ==
     ::                                                  ::  ++scem:de-purl:html
     ++  scem                                            ::  2396 scheme

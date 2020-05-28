@@ -13022,7 +13022,7 @@
             (cold [%end %stet] duz)                     ::  == end of markdown
           ::
             (cold [%one %rule] ;~(plug hep hep hep))    ::  --- horizontal ruler
-            (cold [%one %fens] ;~(plug tec tec tec))    ::  ``` code fence
+            (cold [%one %fens] ;~(plug tic tic tic))    ::  ``` code fence
             (cold [%one %expr] mic)                     ::  ;sail expression
           ::
             (cold [%new %head] ;~(plug (star hax) ace)) ::  # heading
@@ -13035,7 +13035,7 @@
         ==
       ::
       ::
-      ++  calf                                          ::  cash but for tec tec
+      ++  calf                                          ::  cash but for tic tic
         |*  tem=rule
         %-  star
         ;~  pose
@@ -13146,7 +13146,7 @@
         ::
         ::  `classic markdown quote`
         ::
-          (stag %code (ifix [tec tec] (calf tec)))
+          (stag %code (ifix [tic tic] (calf tic)))
         ::
         ::  ++arm, +-arm, +$arm, +*arm, ++arm:core, ...
         ::
@@ -13268,22 +13268,22 @@
         %+  cold  [[%hr ~] ~]~
         ;~(plug (star ace) hep hep hep (star hep) (just '\0a'))
       ::
-      ++  tecs
-        ;~(plug tec tec tec (just '\0a'))
+      ++  tics
+        ;~(plug tic tic tic (just '\0a'))
       ::
       ++  fens
         |=  col/@u  ~+
         =/  ind  (stun [(dec col) (dec col)] ace)
-        =/  ind-tecs  ;~(plug ind tecs)
+        =/  ind-tics  ;~(plug ind tics)
         %+  cook  |=(txt/tape `tarp`[[%pre ~] ;/(txt) ~]~)
         ::
         ::  leading outdent is ok since container may
         ::  have already been parsed and consumed
-        %+  ifix  [;~(plug (star ace) tecs) ind-tecs]
+        %+  ifix  [;~(plug (star ace) tics) ind-tics]
         %^  stir  ""  |=({a/tape b/tape} "{a}\0a{b}")
         ;~  pose
           %+  ifix  [ind (just '\0a')]
-          ;~(less tecs (star prn))
+          ;~(less tics (star prn))
         ::
           (cold "" ;~(plug (star ace) (just '\0a')))
         ==
@@ -13563,16 +13563,16 @@
           (cold [%base %cell] ket)
         ==
       :-  '`'
-        ;~  pfix  tec
+        ;~  pfix  tic
           ;~  pose
             %+  cook
               |=({a/@ta b/hoon} [%ktls [%sand a 0] [%ktls [%sand %$ 0] b]])
-            ;~(pfix vat ;~(plug mota ;~(pfix tec wide)))
+            ;~(pfix vat ;~(plug mota ;~(pfix tic wide)))
             ;~  pfix  tar
-              (stag %kthp (stag [%base %noun] ;~(pfix tec wide)))
+              (stag %kthp (stag [%base %noun] ;~(pfix tic wide)))
             ==
-            (stag %kthp ;~(plug wyde ;~(pfix tec wide)))
-            (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tec wide))))
+            (stag %kthp ;~(plug wyde ;~(pfix tic wide)))
+            (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tic wide))))
             (cook |=(a/hoon [[%rock %n ~] a]) wide)
           ==
         ==
