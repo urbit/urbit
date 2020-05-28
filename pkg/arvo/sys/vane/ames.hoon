@@ -1669,6 +1669,11 @@
           peer-core
         ?~  next-wake.packet-pump-state.u.message-pump-state
           peer-core
+        ::  If we crashed because we woke up too early, assume another
+        ::  timer is already set.
+        ::
+        ?:  (lth now.channel u.next-wake.packet-pump-state.u.message-pump-state)
+          peer-core
         ::
         =/  =wire  (make-pump-timer-wire her.channel bone)
         (emit duct %pass wire %b %wait (add now.channel ~s30))
