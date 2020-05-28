@@ -818,14 +818,52 @@ frontend = Frontend
           "type Fun = Int -> (Int, Fun)"
           ]
 
-
-
       -- TODO: Continue here, and I would have preferred to work on this
       -- instead of what I eventually did work on.
       paragraph [
-        ""
+        "For this exercise, we're going to write a small program in \"moon\", ",
+        "a language superficially like hoon, except that it is untyped and ",
+        "compiles to Uruk. (We aren't proposing this language as a replacement ",
+        "for hoon; there's a separate effort working on repairing the lack of ",
+        "rigor in hoon %141.)"
         ]
 
+      let fibLines = [
+            "=/  fib",
+            "  ~/  2  fib",
+            "  ..  $",
+            "  |=  (cache n)",
+            "  ?:  (zer n)    [1 cache]",
+            "  ?:  (eql n 1)  [1 cache]",
+            "  ::",
+            "  ?-    (find-assoc eql cache n)",
+            "      val",
+            "    [(unbox val) cache]",
+            "  ::",
+            "      nothing",
+            "    =/  n-fec-fec  ($ cache (fec (fec n)))",
+            "    =/  n-fec      ($ (cdr n-fec-fec) (fec n))",
+            "    =/  total      (add (car n-fec-fec) (car n-fec))",
+            "    ::",
+            "    [total (add-assoc lth eql (cdr n-fec) n (box total))]",
+            "  ==",
+            "",
+            "=/  arvo",
+            "  ~/  2  arvo",
+            "  ..  $",
+            "  |=  (cache n)",
+            "  =/  val  (fib cache n)",
+            "  [(car val) ($ (cdr val))]",
+            "",
+            "(arvo lnil)"
+            ]
+
+      el "pre" $ el "code" $
+        paragraph fibLines
+
+      paragraph [
+        "This defines a function named fib that has a fixed, and a . "
+        ]
 
 
 
