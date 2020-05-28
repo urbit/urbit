@@ -6125,7 +6125,7 @@
       [(rash a fel) b]
     ::                                                  ::  ++pa:dejs:format
     ++  pa                                              ::  string as path
-      (su ;~(pfix net (more net urs:ab)))
+      (su ;~(pfix fas (more fas urs:ab)))
     ::                                                  ::  ++pe:dejs:format
     ++  pe                                              ::  prefix
       |*  {pre/* wit/fist}
@@ -6696,7 +6696,7 @@
           =*  wow  `(map @t @)`(malt lip)
           (sear ~(get by wow) low)
         =*  tuf  ;~(pfix (just 'u') (cook tuft qix:ab))
-        ;~(pose doq net soq bas loo tuf)
+        ;~(pose doq fas soq bas loo tuf)
       ==
     ::                                                  ::  ++expo:de-json:html
     ++  expo                                            ::  exponent
@@ -7032,7 +7032,7 @@
     ::                                                  ::  ++apat:de-purl:html
     ++  apat                                            ::  2396 abs_path
       %+  cook  deft
-      ;~(pfix net (more net smeg))
+      ;~(pfix fas (more fas smeg))
     ::                                                  ::  ++aurf:de-purl:html
     ++  aurf                                            ::  2396 with fragment
       %+  cook  |~(a/purf a)
@@ -7059,7 +7059,7 @@
     ::                                                  ::  ++htts:de-purl:html
     ++  htts                                            ::  scheme
       %+  sear  ~(get by (malt `(list (pair term ?))`[http+| https+& ~]))
-      ;~(sfix scem ;~(plug col net net))
+      ;~(sfix scem ;~(plug col fas fas))
     ::                                                  ::  ++cock:de-purl:html
     ++  cock                                            ::  cookie
       %+  most  ;~(plug mic ace)
@@ -7091,10 +7091,10 @@
       (cold ' ' (just '+'))
     ::                                                  ::  ++pque:de-purl:html
     ++  pque                                            ::  3986 query char
-      ;~(pose pcar net wut)
+      ;~(pose pcar fas wut)
     ::                                                  ::  ++pquo:de-purl:html
     ++  pquo                                            ::  normal query char
-      ;~(pose pure pesc pold net wut col com)
+      ;~(pose pure pesc pold fas wut col com)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
       ;~(pose aln hep dot cab sig)

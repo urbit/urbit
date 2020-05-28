@@ -11,7 +11,7 @@
   =/  parse-path
     %+  cook
       |=(p=path (slag 3 p))
-    (ifix [net (jest '::')] (more net urs:ab))
+    (ifix [fas (jest '::')] (more fas urs:ab))
   =/  parse-full
     ;~(plug parse-path ;~(sfix ;~((glue dot) parse-pair parse-pair) gar))
   (rust tape parse-full)

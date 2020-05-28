@@ -882,19 +882,19 @@
       ::  parses the zuse version, eg "/?  309"
       ::
         ;~  pose
-          (ifix [;~(plug net wut gap) gap] dem)
+          (ifix [;~(plug fas wut gap) gap] dem)
           (easy zuse)
         ==
       ::  pareses the structures, eg "/-  types"
       ::
         ;~  pose
-          (ifix [;~(plug net hep gap) gap] (most ;~(plug com gaw) cable))
+          (ifix [;~(plug fas hep gap) gap] (most ;~(plug com gaw) cable))
           (easy ~)
         ==
       ::  parses the libraries, eg "/+  lib1, lib2"
       ::
         ;~  pose
-          (ifix [;~(plug net lus gap) gap] (most ;~(plug com gaw) cable))
+          (ifix [;~(plug fas lus gap) gap] (most ;~(plug com gaw) cable))
           (easy ~)
         ==
       ::
@@ -907,7 +907,7 @@
   ++  beam
     %+  sear  de-beam
     ;~  pfix
-      net
+      fas
       (sear plex (stag %clsg poor)):hoon-parser
     ==
   ::  +cable: parses a +^cable, a reference to something on the filesystem
@@ -935,7 +935,7 @@
     |%
     ++  apex
       %+  knee  *^crane  |.  ~+
-      ;~  pfix  net
+      ;~  pfix  fas
         ;~  pose
           ::  `/~`  hoon literal
           ::
@@ -975,10 +975,10 @@
           (stag %fstr ;~(pfix tar subcrane))
           ::  `/!mark/ evaluate as hoon, then pass through mark
           ::
-          (stag %fszp ;~(pfix zap ;~(sfix sym net)))
+          (stag %fszp ;~(pfix zap ;~(sfix sym fas)))
           ::  `/mark/` passes current path through :mark
           ::
-          (stag %fszy ;~(sfix sym net))
+          (stag %fszy ;~(sfix sym fas))
         ==
       ==
     ::  +parse-alts: parse a set of alternatives
@@ -1005,7 +1005,7 @@
       %+  wide-or-tall
         fail
       =-  ;~(sfix (star -) gap duz)
-      ;~(pfix gap net ;~(plug static-path subcrane))
+      ;~(pfix gap fas ;~(plug static-path subcrane))
     ::  +parse-pipe: parses a pipe of mark conversions
     ::
     ++  parse-pipe
@@ -1053,11 +1053,11 @@
   ::  +static-path: parses a path
   ::
   ++  static-path
-    (sear plex (stag %clsg (more net hasp))):hoon-parser
+    (sear plex (stag %clsg (more fas hasp))):hoon-parser
   ::  +late-bound-path: a path whose time varies
   ::
   ++  late-bound-path
-    ;~  pfix  net
+    ;~  pfix  fas
       %+  cook  |=(a=truss a)
       =>  hoon-parser
       ;~  plug

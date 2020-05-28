@@ -5642,7 +5642,7 @@
          ==
 ++  gaw  (cold ~ (star ;~(pose vul gah)))               ::  classic white
 ++  gay  ;~(pose gap (easy ~))                          ::
-++  gon  ;~(pose ;~(plug bat gay net) (easy ~))         ::  long numbers \ /
+++  gon  ;~(pose ;~(plug bas gay fas) (easy ~))         ::  long numbers \ /
 ++  gul  ;~(pose (cold 2 gal) (cold 3 gar))             ::  axis syntax < >
 ++  hex  (bass 16 (most gon hit))                       ::  hex to atom
 ++  hig  (shim 'A' 'Z')                                 ::  uppercase
@@ -5683,8 +5683,8 @@
              ;~(less ;~(plug (just `@`10) soz) (just `@`10))
          ==
 ++  qit  ;~  pose                                       ::  chars in a cord
-             ;~(less bat soq prn)
-             ;~(pfix bat ;~(pose bat soq mes))          ::  escape chars
+             ;~(less bas soq prn)
+             ;~(pfix bas ;~(pose bas soq mes))          ::  escape chars
          ==
 ++  qut  ;~  simu  soq                                  ::  cord
            ;~  pose
@@ -5799,7 +5799,7 @@
              (cook tuft (ifix [sig dot] hex))
              ;~(pfix sig ;~(pose sig dot))
            ==
-  ++  voy  ;~(pfix bat ;~(pose bat soq bix))
+  ++  voy  ;~(pfix bas ;~(pose bas soq bix))
   --
 ++  ag
   |%
@@ -6330,7 +6330,7 @@
 ++  spat  |=(pax/path (crip (spud pax)))                ::  render path to cord
 ++  spud  |=(pax/path ~(ram re (smyt pax)))             ::  render path to tape
 ++  stab                                                ::  parse cord to path
-  =+  fel=;~(pfix net (more net urs:ab))
+  =+  fel=;~(pfix fas (more fas urs:ab))
   |=(zep/@t `path`(rash zep fel))
 ::
 ::::  4n: virtualization
@@ -12131,7 +12131,7 @@
   ++  gash  %+  cook                                    ::  parse path
               |=  a/(list tyke)  ^-  tyke
               ?~(a ~ (weld i.a $(a t.a)))
-            (more net limp)
+            (more fas limp)
   ++  gasp  ;~  pose                                    ::  parse =path= etc.
               %+  cook
                 |=({a/tyke b/tyke c/tyke} :(weld a b c))
@@ -12156,7 +12156,7 @@
               |=  {a/(list) b/tyke}
               ?~  a  b
               $(a t.a, b [`[%sand %tas %$] b])
-            ;~(plug (star net) gasp)
+            ;~(plug (star fas) gasp)
   ++  mota  %+  cook
               |=({a/tape b/tape} (rap 3 (weld a b)))
             ;~(plug (star low) (star hig))
@@ -12334,7 +12334,7 @@
   ++  porc
     ;~  plug
       (cook |=(a/(list) (lent a)) (star cen))
-      ;~(pfix net gash)
+      ;~(pfix fas gash)
     ==
   ::
   ++  rump
@@ -12344,7 +12344,7 @@
     ;~(plug rope ;~(pose (stag ~ wede) (easy ~)))
   ::
   ++  rood
-    ;~  pfix  net
+    ;~  pfix  fas
       (stag %clsg poor)
     ==
   ::
@@ -12542,7 +12542,7 @@
         ;~  plug
           (punt ;~(plug (cold %id hax) (cook trip sym)))
           (cook en-class (star ;~(plug (cold %class dot) sym)))
-          (punt ;~(plug ;~(pose (cold %href net) (cold %src pat)) soil))
+          (punt ;~(plug ;~(pose (cold %href fas) (cold %src pat)) soil))
           (easy ~)
         ==
       ::
@@ -13391,7 +13391,7 @@
       :-  '*'
         (cold [%base %noun] tar)
       :-  '/'
-        ;~(pfix net (stag %loop ;~(pose (cold %$ buc) sym)))
+        ;~(pfix fas (stag %loop ;~(pose (cold %$ buc) sym)))
       :-  '@'
         ;~(pfix pat (stag %base (stag %atom mota)))
       :-  '?'
@@ -13426,7 +13426,7 @@
         ==
       :-  ['a' 'z']
         ;~  pose
-          (stag %bsts ;~(plug sym ;~(pfix ;~(pose net tis) wyde)))
+          (stag %bsts ;~(plug sym ;~(pfix ;~(pose fas tis) wyde)))
           (stag %like (most col rope))
         ==
     ==
@@ -13530,7 +13530,7 @@
         ;~  pfix  col
           ;~  pose
             (stag %mccl (ifix [pal par] (most ace wide)))
-            ;~(pfix net (stag %mcnt wide))
+            ;~(pfix fas (stag %mcnt wide))
           ==
         ==
       :-  '='
@@ -13800,7 +13800,7 @@
                   ['$' (rune buc %sgbs expf)]
                   ['_' (rune cab %sgcb expb)]
                   ['%' (rune cen %sgcn hind)]
-                  ['/' (rune net %sgnt hine)]
+                  ['/' (rune fas %sgnt hine)]
                   ['<' (rune gal %sgld hinb)]
                   ['>' (rune gar %sgbn hinb)]
                   ['+' (rune lus %sgls hinc)]
@@ -13815,7 +13815,7 @@
               %-  stew
               ^.  stet  ^.  limo
               :~  [':' (rune col %mccl expi)]
-                  ['/' (rune net %mcnt expa)]
+                  ['/' (rune fas %mcnt expa)]
                   ['<' (rune gal %mcgl exp1)]
                   ['~' (rune sig %mcsg expi)]
                   [';' (rune mic %mcmc exqc)]
@@ -13830,7 +13830,7 @@
                   ['?' (rune wut %tswt expw)]
                   ['^' (rune ket %tskt expt)]
                   [':' (rune col %tscl expp)]
-                  ['/' (rune net %tsnt expo)]
+                  ['/' (rune fas %tsnt expo)]
                   [';' (rune mic %tsmc expo)]
                   ['<' (rune gal %tsld expb)]
                   ['>' (rune gar %tsbn expb)]
@@ -14287,9 +14287,7 @@
           term
         [%name term %spec u.unit %base %noun]
       ;~  plug  sym
-        ::  XX: net deprecated
-        ::
-        (punt ;~(pfix ;~(pose net tis) wyde))
+        (punt ;~(pfix ;~(pose fas tis) wyde))
       ==
     ::
       %+  cook
@@ -14307,7 +14305,7 @@
   ++  wede                                              ::  wide bulb
     ::  XX: lus deprecated
     ::
-    ;~(pfix ;~(pose lus net) wide)
+    ;~(pfix ;~(pose lus fas) wide)
   ++  wide                                              ::  full wide form
     %+  knee  *hoon
     |.(~+((wart ;~(pose expression:(norm |) long apex:(sail |)))))

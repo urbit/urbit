@@ -24,8 +24,8 @@
   =/  parsed=(unit (list coin))
   %+  rust  link
   ;~  pose
-    ;~(pfix net (more net nuck:so))
-    (more net nuck:so)
+    ;~(pfix fas (more fas nuck:so))
+    (more fas nuck:so)
   ==
   ?~  parsed
     link
