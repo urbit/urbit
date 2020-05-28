@@ -87,7 +87,8 @@
           ^-  (list (list card))
           %+  turn  ~(tap in keys)  generate-cards
         ==
-    [loaded-cards.upgraded-state this(state upgraded-state)]
+    :_  this(state upgraded-state)
+    loaded-cards.upgraded-state
     ::
     ++  generate-cards
       |=  old-chat=path

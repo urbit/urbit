@@ -24,7 +24,12 @@
 ++  on-load
   |=  old=vase
   :_  this(state !<(state-zero old))
-  [%pass /bind/soto %arvo %e %disconnect [~ /'~dojo']]~
+  :~  [%pass /bind/soto %arvo %e %disconnect [~ /'~dojo']]
+      :*  %pass  /srv  %agent  [our.bol %file-server]
+          %poke  %file-server-action
+          !>([%serve-dir /'~dojo' /app/landscape %.n])
+      ==
+  ==
 ::
 ++  on-poke  on-poke:def
 ++  on-watch

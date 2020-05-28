@@ -118,6 +118,10 @@
     :_  this
     :~  [%pass / %arvo %e %disconnect [~ /'~chat']]
         [%pass / %arvo %e %connect [~ /'chat-view'] %chat-view]
+        :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~chat' /app/landscape %.n])
+        ==
     ==
   ::
   ++  on-leave  on-leave:def

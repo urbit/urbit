@@ -81,6 +81,10 @@
         :*  %pass  /  %agent  [our.bol %invite-store]  %poke  %invite-action
             !>([%create /publish])
         ==
+        :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~publish' /app/landscape %.n])
+        ==
     ==
   ::
   ++  on-save  !>(state)
@@ -105,6 +109,10 @@
                 /invitatory/publish
             ==
             [%pass / %arvo %e %disconnect [~ /'~publish']]
+            :*  %pass  /srv  %agent  [our.bol %file-server]
+                %poke  %file-server-action
+                !>([%serve-dir /'~publish' /app/landscape %.n])
+            ==
         ==
       =+  ^-  [kick-cards=(list card) old-subs=(jug @tas @p)]  kick-subs
       =/  inv-scry-pax

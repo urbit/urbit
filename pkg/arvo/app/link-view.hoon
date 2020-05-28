@@ -59,7 +59,12 @@
     |=  old=vase
     ^-  (quip card _this)
     :_  this(state !<(state-0 old))
-    [%pass /connect %arvo %e %disconnect [~ /'~link']]~
+    %+  welp
+      [%pass /connect %arvo %e %disconnect [~ /'~link']]~
+    :~  :*  %pass  /srv  %agent  [our.bowl %file-server]
+        %poke  %file-server-action
+        !>([%serve-dir /'~link' /app/landscape %.n])
+    ==  ==
   ::
   ++  on-poke
     |=  [=mark =vase]
