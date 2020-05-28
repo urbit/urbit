@@ -1,0 +1,58 @@
+name: urbit-skew-reference
+version: 0.1.0
+license: MIT
+license-file: LICENSE
+
+library:
+  source-dirs: lib
+  ghc-options:
+    - -static
+    - -O2
+    - -fwarn-incomplete-patterns
+
+dependencies:
+  - base
+  - containers
+
+default-extensions:
+  - LambdaCase
+  - ViewPatterns
+  # ApplicativeDo
+  # BangPatterns
+  # BlockArguments
+  # DataKinds
+  # DefaultSignatures
+  # DeriveAnyClass
+  # DeriveDataTypeable
+  # DeriveFoldable
+  # DeriveGeneric
+  # DeriveTraversable
+  # DerivingStrategies
+  # EmptyCase
+  # EmptyDataDecls
+  # FlexibleContexts
+  # FlexibleInstances
+  # FunctionalDependencies
+  # GADTs
+  # GeneralizedNewtypeDeriving
+  # MagicHash
+  # MultiParamTypeClasses
+  # NamedFieldPuns
+  # NumericUnderscores
+  # OverloadedStrings
+  # PackageImports
+  # PartialTypeSignatures
+  # PatternSynonyms
+  # QuasiQuotes
+  # Rank2Types
+  # RankNTypes
+  # RecordWildCards
+  # ScopedTypeVariables
+  # StandaloneDeriving
+  # TemplateHaskell
+  # TupleSections
+  # TypeApplications
+  # TypeFamilies
+  # TypeOperators
+  # UnboxedTuples
+  # UnicodeSyntax
