@@ -116,8 +116,8 @@
     ?~  site.req-line
       not-found:gen
     =*  url-prefix  landscape-homepage-prefix.configuration
-    ?.  ?|  ?&(?=(^ url-prefix) =((need url-prefix) i.site.req-line))
-            =(url-prefix ~)
+    ?.  ?|  ?=(~ url-prefix)
+            =(u.url-prefix i.site.req-line)
         ==
       not-found:gen
     ::
