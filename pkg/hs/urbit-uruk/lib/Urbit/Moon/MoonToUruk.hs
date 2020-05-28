@@ -76,7 +76,7 @@ compileAST
   -> Either Text (CompileTrace p)
 compileAST lkup strict comp =
   compileExp lkup strict comp . AST.bind
-  
+
 
 -- Compile Expression ----------------------------------------------------------
 
@@ -202,9 +202,9 @@ getGlobal :: Uruk p => Text -> Either Text p
 getGlobal = \case
   "S"     -> Right uEss
   "K"     -> Right uKay
-  "J"     -> Right (uJay 1)
+  "E"     -> Right (uJay 1)
   "const" -> Right uKay
-  "D"     -> Right uDee
+  "W"     -> Right uDub
   "I"     -> Right (uEye 1)
   "id"    -> Right (uEye 1)
   "B"     -> Right (uBee 1)

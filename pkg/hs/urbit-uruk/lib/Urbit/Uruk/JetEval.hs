@@ -39,8 +39,8 @@ instance Show Match where
 data Ur
   = S
   | K
-  | J !Pos
-  | D
+  | E !Pos
+  | W
   | M Match !Natural ![Val]
  deriving (Eq, Ord, Generic)
  deriving anyclass NFData
@@ -49,15 +49,15 @@ instance Show Ur where
   show = \case
     S        -> "S"
     K        -> "K"
-    J n      -> replicate (fromIntegral n) 'J'
-    D        -> "D"
+    E n      -> replicate (fromIntegral n) 'E'
+    W        -> "W"
     M m n [] -> show m
     M m n xs -> "(" <> intercalate " " (show m : fmap show xs) <> ")"
 
 pattern NS = N S
 pattern NK = N K
-pattern NJ n = N (J n)
-pattern ND = N D
+pattern NE n = N (E n)
+pattern NW = N W
 pattern NM x y z = N (M x y z)
 
 pattern Nat n = N (M (MD (NAT n)) 2 [])
@@ -128,8 +128,8 @@ instance Uruk Exp where
 
   uEss = NS
   uKay = NK
-  uJay p = NJ (fromIntegral p)
-  uDee = ND
+  uJay p = NE (fromIntegral p)
+  uDub = NW
 
   uBee p = N $ M (MD $ Bn $ fromIntegral p) (fromIntegral $ p+2) []
   uSen p = N $ M (MD $ Sn $ fromIntegral p) (fromIntegral $ p+2) []
@@ -179,10 +179,10 @@ instance Uruk Exp where
   uGlobal "weld" = Just Weld
   uGlobal _     = Nothing
 
-  uArity (N (J n))     = pure $ AriJay n
+  uArity (N (E n))     = pure $ AriJay n
   uArity (N K)         = pure $ AriKay
   uArity (N S)         = pure $ AriEss
-  uArity (N D)         = pure $ AriDee
+  uArity (N W)         = pure $ AriDub
   uArity (N (M _ n _)) = pure $ AriOth (fromIntegral n)
   uArity (x :& y)      = join $ appArity <$> uArity x <*> uArity y
 
@@ -201,9 +201,16 @@ reduce = \case
     (reduce → Just xv) :& y → Just $ xv :& y
     x :& (reduce → Just yv) → Just $ x :& yv
     NS :& x :& y :& z       → Just $ x :& z :& (y :& z)
-    ND :& x                 → Just $ dump x
-    NJ n :& NJ 1            → Just $ NJ (succ n)
-    NJ n :& t :& b          → Just $ NM (match n t b) (fromIntegral n) []
+    NW :& a :& s :& k :& e :& w :& (x :& y) -> Just (a :& x :& y)
+    NW :& a :& s :& k :& e :& w :& NS      -> Just s
+    NW :& a :& s :& k :& e :& w :& NK      -> Just k
+    -- TODO: What do you do about the collapsed jet representation? (E E E ...)
+    -- is (NE 3) here and I don't understand if that gets automatically
+    -- unrolled for :& above.
+    NW :& a :& s :& k :& e :& w :& NE _    -> Just e
+    NW :& a :& s :& k :& e :& w :& NW      -> Just w
+    NE n :& NE 1            → Just $ NE (succ n)
+    NE n :& t :& b          → Just $ NM (match n t b) (fromIntegral n) []
     NM m 0 xs               → Just $ fromMaybe (jetFallback m xs) (runJet m xs)
     NM m n xs :& x          → Just $ NM m (pred n) (xs <> [x])
     _                       → Nothing
@@ -218,8 +225,8 @@ urDash :: Ur -> Dash.Val
 urDash = \case
   S                 -> Jets.NS
   K                 -> Jets.NK
-  J n               -> Jets.NJ
-  D                 -> Jets.ND
+  E n               -> Jets.NE
+  W                 -> Jets.NW
   M (MD dj   ) _ xs -> go (N (Dash.DataJet dj)) xs
   M (MS sj   ) _ xs -> go (N (Dash.SingJet sj)) xs
   M (MU n t b) _ xs -> go (Jets.jn n :& valDash t :& valDash b) xs
@@ -237,8 +244,8 @@ dashUr :: Dash.Ur -> Exp
 dashUr = \case
   Dash.S -> NS
   Dash.K -> NK
-  Dash.J -> NJ 1
-  Dash.D -> ND
+  Dash.E -> NE 1
+  Dash.W -> NW
   Dash.DataJet dj -> N $ M (MD dj) (fromIntegral $ Jets.djArity dj) []
   Dash.SingJet sj -> N $ M (MS sj) (fromIntegral $ Jets.sjArity sj) []
 
@@ -246,24 +253,6 @@ dashVal :: Dash.Val -> Exp
 dashVal = \case
   N n    -> dashUr n
   x :& y -> dashVal x :& dashVal y
-
-dump :: Val -> Val
-dump = Nat . snd . go . valDash
- where
-  go :: Dash.Val -> (Int, Natural)
-  go = \case
-    N Dash.S            -> (3, 0)
-    N Dash.K            -> (3, 2)
-    N Dash.J            -> (3, 4)
-    N Dash.D            -> (3, 6)
-    N (Dash.DataJet dj) -> go (Jets.djUnMatch dj)
-    N (Dash.SingJet sj) -> go (Jets.sjUnMatch sj)
-    x :& y              -> (rBits, rNum)
-     where
-      (xBits, xNum) = go x
-      (yBits, yNum) = go y
-      rBits         = 1 + xBits + yBits
-      rNum          = 1 .|. shiftL xNum 1 .|. shiftL yNum (1 + xBits)
 
 jetFallback :: Match -> [Val] -> Exp
 jetFallback (MU n t b) xs = foldl' (:&) b xs

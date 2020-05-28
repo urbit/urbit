@@ -1,4 +1,4 @@
-{-- OPTIONS_GHC -Wall -Werror #-}
+-- OPTIONS_GHC -Wall -Werror #-}
 
 module Urbit.Uruk.Dash.Parser where
 
@@ -149,7 +149,7 @@ rune = choice
 jet :: Natural -> Text -> AST -> AST
 jet arity name expr = go j arity :@ Tag name :@ expr
  where
-  j = Var "J"
+  j = Var "E"
 
   go :: AST -> Natural -> AST
   go _   0 = error "jet: go: bad-arity: 0"
@@ -291,7 +291,9 @@ reduce = go
     (go -> Just xv) :& y      -> Just (xv :& y)
     x :& (go -> Just yv)      -> Just (x :& yv)
     N S :& x :& y :& z        -> Just (x :& z :& (y :& z))
-    N D :& _                  -> Nothing
+    -- TODO: We may need to process this case so we can use W in the jets?
+    -- Providing +mock would be good.
+    N W :& _                  -> Nothing
     (jetRule -> Just (b,xs))  -> Just (foldl' (:&) b xs)
     _                         -> Nothing
 
@@ -305,9 +307,9 @@ jetRule x = do
   Just (unTree b, unTree <$> xs)
 
 jetHead :: Tree Ur -> Maybe (Natural, [Tree Ur])
-jetHead = \(Node n xs) -> guard (n == J) $> go 1 xs
+jetHead = \(Node n xs) -> guard (n == W) $> go 1 xs
  where
-  go n (Node J [] : xs) = go (succ n) xs
+  go n (Node E [] : xs) = go (succ n) xs
   go n xs               = (n, xs)
 
 jetExp :: Text -> Val -> Maybe (SingJet, (Pos, Val, Val))
@@ -326,7 +328,7 @@ resolv :: [Dec] -> Either Text (Env, Reg)
 resolv = go (initialEnv, mempty)
  where
   initialEnv :: Env
-  initialEnv = mapFromList [("S", N S), ("K", N K), ("J", N J), ("D", N D)]
+  initialEnv = mapFromList [("S", N S), ("K", N K), ("E", N E), ("W", N W)]
 
   go :: (Env, Reg) -> [Dec] -> Either Text (Env, Reg)
   go er         []            = pure er
@@ -376,11 +378,11 @@ jetTagVal :: Text -> B.Exp Val v a
 jetTagVal = B.Pri . N . DataJet . NAT . Atom.utf8Atom
 
 jetArityVal :: Natural -> Val
-jetArityVal = go (N J)
+jetArityVal = go (N E)
  where
   go _   0 = error "jetArity: go: bad arity: 0"
   go acc 1 = acc
-  go acc n = go (acc :& N J) (n-1)
+  go acc n = go (acc :& N E) (n-1)
 
 seqJet :: Exp
 seqJet = N $ SingJet SEQ
@@ -407,8 +409,8 @@ expArity reg = go
 urArity :: Reg -> Ur -> Arity
 urArity _ S = AriEss
 urArity _ K = AriKay
-urArity _ J = AriJay 1
-urArity _ D = AriDee
+urArity _ E = AriJay 1
+urArity _ W = AriDub
 urArity _ (DataJet (NAT _)) = AriOth 2
 urArity _ (DataJet (Sn  n)) = AriOth (2 + n)
 urArity _ (DataJet (In  n)) = AriOth n
@@ -469,8 +471,8 @@ urExp :: Ur -> TH.Exp
 urExp = \case
   S          -> TH.ConE 'S
   K          -> TH.ConE 'K
-  J          -> TH.ConE 'J
-  D          -> TH.ConE 'D
+  E          -> TH.ConE 'E
+  W          -> TH.ConE 'W
   SingJet sj -> TH.ConE 'SingJet `TH.AppE` sjExp sj
   DataJet dj -> TH.ConE 'DataJet `TH.AppE` djExp dj
 
@@ -501,8 +503,8 @@ urPat :: Ur -> TH.Pat
 urPat = \case
   S          -> TH.ConP 'S []
   K          -> TH.ConP 'K []
-  J          -> TH.ConP 'J []
-  D          -> TH.ConP 'D []
+  E          -> TH.ConP 'E []
+  W          -> TH.ConP 'W []
   SingJet sj -> TH.ConP 'SingJet [sjPat sj]
   DataJet dj -> TH.ConP 'DataJet [djPat dj]
 

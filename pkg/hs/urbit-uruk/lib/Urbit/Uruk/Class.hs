@@ -5,9 +5,9 @@ module Urbit.Uruk.Class where
 import ClassyPrelude
 
 import Numeric.Natural  (Natural)
-import Urbit.Pos        (Pos)
 import Urbit.Atom       (utf8Atom)
 import Urbit.Moon.Arity (Arity)
+import Urbit.Pos        (Pos)
 
 --------------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ class Show p => Uruk p where
   uEss :: p
   uKay :: p
   uJay :: Pos -> p
-  uDee :: p
+  uDub :: p
 
   uSen :: Pos -> p
   uBee :: Pos -> p
@@ -52,7 +52,7 @@ instance Uruk p => Uruk (Either Text p) where
   uEss   = pure uEss
   uKay   = pure uKay
   uJay p = pure (uJay p)
-  uDee   = pure uDee
+  uDub   = pure uDub
 
   uSen p = pure (uSen p)
   uBee p = pure (uBee p)

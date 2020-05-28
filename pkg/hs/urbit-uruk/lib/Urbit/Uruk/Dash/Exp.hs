@@ -91,8 +91,8 @@ data ExpTree n
 data Ur
   = S
   | K
-  | J
-  | D
+  | E
+  | W
   | DataJet DataJet
   | SingJet SingJet
  deriving (Eq, Ord, Generic)
@@ -122,8 +122,8 @@ instance Show Ur where
   show = \case
     S          -> "S"
     K          -> "K"
-    J          -> "J"
-    D          -> "D"
+    E          -> "E"
+    W          -> "W"
     DataJet dj -> show dj
     SingJet sj -> show sj
 

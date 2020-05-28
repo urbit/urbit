@@ -1,12 +1,12 @@
 module Urbit.Uruk.Reference (Exp(..), Ur(..), reduce, eval) where
 
 import ClassyPrelude
-import GHC.Natural
 import Data.Bits
 import Data.Tree
+import GHC.Natural
 
 infixl 5 :@;
-data Ur = J | K | S | D deriving (Eq, Ord, Enum, Show)
+data Ur = S | K | E | W deriving (Eq, Ord, Enum, Show)
 data Exp = N Ur | Exp :@ Exp deriving (Eq, Ord)
 
 tree ∷ Exp → Tree Ur
@@ -30,7 +30,11 @@ reduce = \case
   (reduce→Just xv) :@ y → Just (xv :@ y)
   x :@ (reduce→Just yv) → Just (x :@ yv)
   N S :@ x :@ y :@ z    → Just (x :@ z :@ (y :@ z))
-  N D :@ x              → Just (jam x)
+  N W :@ a :@ s :@ k :@ e :@ w :@ (x :@ y) -> Just (a :@ x :@ y)
+  N W :@ a :@ s :@ k :@ e :@ w :@ N S      -> Just s
+  N W :@ a :@ s :@ k :@ e :@ w :@ N K      -> Just k
+  N W :@ a :@ s :@ k :@ e :@ w :@ N E      -> Just e
+  N W :@ a :@ s :@ k :@ e :@ w :@ N W      -> Just w
   (jetRule→Just(b,xs))  → Just (foldl' (:@) b xs)
   _                     → Nothing
 
@@ -42,19 +46,6 @@ jetRule x = do
   Just (unTree b, unTree <$> xs)
 
 jetHead ∷ Tree Ur → Maybe (Natural, [Tree Ur])
-jetHead (Node n xs) = guard (n == J) $> go 1 xs
- where go n (Node J [] : xs) = go (succ n) xs
-       go n xs             = (n, xs)
-
-jam ∷ Exp → Exp
-jam = (N J :@ N J :@ N K :@) . enc . snd . go
- where
-  enc 0 = N S :@ N K
-  enc n = N S :@ (N S :@ (N K :@ N S) :@ N K) :@ enc (pred n)
-
-  go (N n)    = (3, fromIntegral (fromEnum n*2))
-  go (x :@ y) = (rBits ∷ Int, rNum ∷ Natural)
-   where
-    ((xBits, xNum), (yBits, yNum)) = (go x, go y)
-    rBits = 1 + xBits + yBits
-    rNum  = 1 .|. shiftL xNum 1 .|. shiftL yNum (1 + xBits)
+jetHead (Node n xs) = guard (n == E) $> go 1 xs
+ where go n (Node E [] : xs) = go (succ n) xs
+       go n xs               = (n, xs)

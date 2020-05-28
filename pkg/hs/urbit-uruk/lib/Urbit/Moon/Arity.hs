@@ -19,13 +19,13 @@ data Arity
   | AriKay       --  K
   | AriJay !Pos  --  Jⁿ
   | AriHdr !Pos  --  Jⁿt
-  | AriDee       --  D
+  | AriDub       --  W
   | AriOth !Pos  --  Anything else
  deriving (Show)
 
 appArity :: Arity -> Arity -> Maybe Arity
 appArity (AriOth 1) _          = Nothing
-appArity AriDee     _          = Nothing
+appArity AriDub     _          = Just $ AriOth 6
 appArity (AriOth n) _          = Just $ AriOth $ pred n
 appArity (AriJay n) (AriJay 1) = Just $ AriJay $ succ n
 appArity (AriJay n) _          = Just $ AriHdr n
@@ -39,7 +39,7 @@ arityPos = \case
   AriKay   -> 3
   AriJay p -> p+2
   AriHdr p -> p+1
-  AriDee   -> 1
+  AriDub   -> 7
   AriOth p -> p
 
 arityInt :: Arity -> Int

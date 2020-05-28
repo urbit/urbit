@@ -34,13 +34,12 @@ where
 
 import ClassyPrelude hiding (exp, init, last, many, some, try)
 
+import Codec.Serialise          (Serialise)
 import Control.Monad.State.Lazy
+import Data.Tree
 import Text.Megaparsec
 import Text.Megaparsec.Char
-import Data.Tree
-import Codec.Serialise (Serialise)
 
-import Data.Bits       (shiftL, (.|.))
 import Data.Function   ((&))
 import Data.Void       (Void)
 import Numeric.Natural (Natural)
@@ -50,7 +49,7 @@ import Numeric.Natural (Natural)
 
 infixl 5 :@;
 
-data Ur = J | K | S | D | V Text deriving (Eq, Ord)
+data Ur = S | K | E | W | V Text deriving (Eq, Ord)
   deriving (Generic)
   deriving anyclass (NFData, Serialise)
 
@@ -69,7 +68,7 @@ type Env = Map Text Exp
 -- Instances -------------------------------------------------------------------
 
 instance Show Ur where
-  show = \case { J→"J"; K→"K"; S→"S"; D→"D"; V v→unpack v }
+  show = \case { S→"S"; K→"K"; E→"E"; W→"W"; V v→unpack v }
 
 tree ∷ Exp → Tree Ur
 tree = go [] where go a = \case { N n → Node n a; x :@ y → go (tree y:a) x }
@@ -101,8 +100,12 @@ reduce env = go
     (go→Just xv) :@ y     → Just (xv :@ y)
     x :@ (go→Just yv)     → Just (x :@ yv)
     N S :@ x :@ y :@ z    → Just (x :@ z :@ (y :@ z))
-    N D :@ x              → Just (jam x)
     (jetRule→Just(b,xs))  → Just (foldl' (:@) b xs)
+    N W :@ a :@ _ :@ _ :@ _ :@ _ :@ (x :@ y) -> Just (a :@ x :@ y)
+    N W :@ _ :@ s :@ _ :@ _ :@ _ :@ N S      -> Just s
+    N W :@ _ :@ _ :@ k :@ _ :@ _ :@ N K      -> Just k
+    N W :@ _ :@ _ :@ _ :@ e :@ _ :@ N E      -> Just e
+    N W :@ _ :@ _ :@ _ :@ _ :@ w :@ N W      -> Just w
     _                     → Nothing
 
 reduceVars ∷ (Text → Maybe Exp) → Exp → Maybe Exp
@@ -114,8 +117,12 @@ reduceVars env = go
     (go→Just xv) :@ y     → Just (xv :@ y)
     x :@ (go→Just yv)     → Just (x :@ yv)
     N S :@ x :@ y :@ z    → Just (x :@ z :@ (y :@ z))
-    N D :@ x              → Just (jam x)
     (jetRule→Just(b,xs))  → Just (foldl' (:@) b xs)
+    N W :@ a :@ _ :@ _ :@ _ :@ _ :@ (x :@ y) -> Just (a :@ x :@ y)
+    N W :@ _ :@ s :@ _ :@ _ :@ _ :@ N S      -> Just s
+    N W :@ _ :@ _ :@ k :@ _ :@ _ :@ N K      -> Just k
+    N W :@ _ :@ _ :@ _ :@ e :@ _ :@ N E      -> Just e
+    N W :@ _ :@ _ :@ _ :@ _ :@ w :@ N W      -> Just w
     _                     → Nothing
 
 jetRule ∷ Exp → Maybe (Exp, [Exp])
@@ -126,30 +133,10 @@ jetRule x = do
   Just (unTree b, unTree <$> xs)
 
 jetHead :: Tree Ur -> Maybe (Natural, [Tree Ur])
-jetHead = \(Node n xs) -> guard (n == J) $> go 1 xs
+jetHead = \(Node n xs) -> guard (n == E) $> go 1 xs
  where
-  go n (Node J [] : xs) = go (succ n) xs
+  go n (Node E [] : xs) = go (succ n) xs
   go n xs               = (n, xs)
-
-jam ∷ Exp → Exp
-jam = (N J :@ N J :@ N K :@) . enc . snd . go
- where
-  enc 0 = N S :@ N K
-  enc n = N S :@ (N S :@ (N K :@ N S) :@ N K) :@ enc (pred n)
-
-  urEnum :: Ur -> Natural
-  urEnum J     = 0
-  urEnum K     = 1
-  urEnum S     = 2
-  urEnum D     = 3
-  urEnum (V v) = error ("undefined variable" <> unpack v)
-
-  go (N n)    = (3, urEnum n*2)
-  go (x :@ y) = (rBits ∷ Int, rNum ∷ Natural)
-   where
-    ((xBits, xNum), (yBits, yNum)) = (go x, go y)
-    rBits = 1 + xBits + yBits
-    rNum  = 1 .|. shiftL xNum 1 .|. shiftL yNum (1 + xBits)
 
 
 -- Parsing Types ---------------------------------------------------------------
@@ -214,8 +201,8 @@ ur :: Parser Ur
 ur = choice
   [ S <$ char 'S'
   , K <$ char 'K'
-  , J <$ char 'J'
-  , D <$ char 'D'
+  , E <$ char 'E'
+  , W <$ char 'W'
   , V <$> sym
   ]
 
