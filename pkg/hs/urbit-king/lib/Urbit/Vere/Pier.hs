@@ -31,7 +31,7 @@ import Data.Conduit
 import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
-import Urbit.Time             (Wen)
+-- ort Urbit.Time             (Wen)
 import Urbit.Vere.Ames        (ames)
 import Urbit.Vere.Behn        (behn)
 import Urbit.Vere.Clay        (clay)
@@ -49,7 +49,7 @@ import qualified Urbit.Vere.Term        as Term
 import qualified Urbit.Vere.Term.API    as Term
 import qualified Urbit.Vere.Term.Demux  as Term
 import qualified Urbit.Vere.Term.Render as Term
-import qualified Data.Conduit.Combinators as CC
+-- ort qualified Data.Conduit.Combinators as CC
 
 
 --------------------------------------------------------------------------------
@@ -275,15 +275,18 @@ pier (serf, log) vStderr mStart = do
 
     let stubErrCallback = \_ -> pure ()
 
-    tExe  <- startDrivers >>= router (readTQueue executeQ)
-    tDisk <- runPersist log persistQ (writeTQueue executeQ)
-    tCpu  <- runCompute serf
-               ((,stubErrCallback) <$> readTQueue computeQ)
-               (takeTMVar saveM)
-               (takeTMVar shutdownM)
-               (Term.spin muxed)
-               (Term.stopSpin muxed)
-               (writeTQueue persistQ)
+    let computeConfig = ComputeConfig
+          { ccOnWork = (,stubErrCallback) <$> readTQueue computeQ
+          , ccOnKill = takeTMVar shutdownM
+          , ccOnSave = takeTMVar saveM
+          , ccPutResult = writeTQueue persistQ
+          , ccShowSpinner = Term.spin muxed
+          , ccHideSpinner = Term.stopSpin muxed
+          }
+
+    tExe  <- startDrivers >>= acquireWorker . router (readTQueue executeQ)
+    tDisk <- acquireWorkerBound (runPersist log persistQ (writeTQueue executeQ))
+    tCpu  <- acquireWorker (runCompute serf computeConfig)
 
     tSaveSignal <- saveSignalThread saveM
 
@@ -359,29 +362,24 @@ drivers inst who isFake plan shutdownSTM termSys stderr =
 
 -- Route Effects to Drivers ----------------------------------------------------
 
-router :: HasLogFunc e => STM FX -> Drivers e -> RAcquire e (Async ())
-router waitFx Drivers{..} =
-    mkRAcquire start cancel
-  where
-    start = async $ forever $ do
-        fx <- atomically waitFx
-        for_ fx $ \ef -> do
-            logEffect ef
-            case ef of
-              GoodParse (EfVega _ _)               -> error "TODO"
-              GoodParse (EfExit _ _)               -> error "TODO"
-              GoodParse (EfVane (VEAmes ef))       -> dAmes ef
-              GoodParse (EfVane (VEBehn ef))       -> dBehn ef
-              GoodParse (EfVane (VEBoat ef))       -> dSync ef
-              GoodParse (EfVane (VEClay ef))       -> dSync ef
-              GoodParse (EfVane (VEHttpClient ef)) -> dHttpClient ef
-              GoodParse (EfVane (VEHttpServer ef)) -> dHttpServer ef
-              GoodParse (EfVane (VENewt ef))       -> dNewt ef
-              GoodParse (EfVane (VESync ef))       -> dSync ef
-              GoodParse (EfVane (VETerm ef))       -> dTerm ef
-              FailParse n                          -> logError
-                                                    $ display
-                                                    $ pack @Text (ppShow n)
+router :: HasLogFunc e => STM FX -> Drivers e -> RIO e ()
+router waitFx Drivers {..} = forever $ do
+  fx <- atomically waitFx
+  for_ fx $ \ef -> do
+    logEffect ef
+    case ef of
+      GoodParse (EfVega _ _              ) -> error "TODO"
+      GoodParse (EfExit _ _              ) -> error "TODO"
+      GoodParse (EfVane (VEAmes       ef)) -> dAmes ef
+      GoodParse (EfVane (VEBehn       ef)) -> dBehn ef
+      GoodParse (EfVane (VEBoat       ef)) -> dSync ef
+      GoodParse (EfVane (VEClay       ef)) -> dSync ef
+      GoodParse (EfVane (VEHttpClient ef)) -> dHttpClient ef
+      GoodParse (EfVane (VEHttpServer ef)) -> dHttpServer ef
+      GoodParse (EfVane (VENewt       ef)) -> dNewt ef
+      GoodParse (EfVane (VESync       ef)) -> dSync ef
+      GoodParse (EfVane (VETerm       ef)) -> dTerm ef
+      FailParse n -> logError $ display $ pack @Text (ppShow n)
 
 
 -- Compute Thread --------------------------------------------------------------
@@ -406,29 +404,6 @@ data ComputeRequest
     = CREvent (Ev, Serf.RunError -> IO ())
     | CRSave ()
     | CRShutdown ()
-
-runCompute
-  :: forall e
-   . HasLogFunc e
-  => Serf
-  -> STM (Ev, Serf.RunError -> IO ())
-  -> STM ()
-  -> STM ()
-  -> (Maybe Text -> STM ())
-  -> STM ()
-  -> ((Fact, FX) -> STM ())
-  -> RAcquire e (Async ())
-runCompute serf getEvent getSaveSignal getShutdownSignal showSpinner hideSpinner putResult = do
-  acquireWorker (newRunCompute serf config)
- where
-  config = ComputeConfig
-    { ccOnWork = getEvent
-    , ccOnKill = getShutdownSignal
-    , ccOnSave = getSaveSignal
-    , ccPutResult = putResult
-    , ccShowSpinner = showSpinner
-    , ccHideSpinner = hideSpinner
-    }
 
 {-
   TODO Pack and Peek
@@ -460,17 +435,6 @@ ipcSource onEvent onSave onKill = loop
         yield (Serf.RunWork ev cb)
         loop
 
-fromRightErr :: Either a b -> IO b
-fromRightErr (Left l) = error "unexpected Left value"
-fromRightErr (Right r) = pure r
-
-data Fact = Fact
-  { factEve :: EventId
-  , factMug :: Mug
-  , factWen :: Wen
-  , factNon :: Noun
-  }
-
 data ComputeConfig = ComputeConfig
   { ccOnWork :: STM (Ev, Serf.RunError -> IO ())
   , ccOnKill :: STM ()
@@ -480,10 +444,10 @@ data ComputeConfig = ComputeConfig
   , ccHideSpinner :: STM ()
   }
 
-newRunCompute
+runCompute
   :: forall e . HasLogFunc e => Serf.Serf -> ComputeConfig -> RIO e ()
-newRunCompute serf ComputeConfig {..} = do
-  logTrace "newRunCompute"
+runCompute serf ComputeConfig {..} = do
+  logTrace "runCompute"
   runConduit
     $  ipcSource ccOnWork ccOnSave ccOnKill
     .| Serf.running serf (atomically . onStatusChange)
@@ -493,7 +457,7 @@ newRunCompute serf ComputeConfig {..} = do
   sendResults = await >>= \case
     Nothing                               -> pure ()
     Just (Serf.RunOutput e m w nounEv fx) -> do
-      lift $ logTrace "newRunCompute: Got play result"
+      lift $ logTrace "runCompute: Got play result"
       atomically $ ccPutResult (Fact e m w nounEv, GoodParse <$> fx) -- TODO GoodParse
       sendResults
 
@@ -521,19 +485,17 @@ runPersist
   => EventLog
   -> TQueue (Fact, FX)
   -> (FX -> STM ())
-  -> RAcquire e (Async ())
-runPersist log inpQ out = mkRAcquire runThread cancel
- where
-  runThread :: RIO e (Async ())
-  runThread = asyncBound $ do
-    dryRun <- view dryRunL
-    forever $ do
-      writs  <- atomically getBatchFromQueue
-      events <- validateFactsAndGetBytes (fst <$> toNullable writs)
-      unless dryRun (Log.appendEvents log events)
-      atomically $ for_ writs $ \(_, fx) -> do
-        out fx
+  -> RIO e ()
+runPersist log inpQ out = do
+  dryRun <- view dryRunL
+  forever $ do
+    writs  <- atomically getBatchFromQueue
+    events <- validateFactsAndGetBytes (fst <$> toNullable writs)
+    unless dryRun (Log.appendEvents log events)
+    atomically $ for_ writs $ \(_, fx) -> do
+      out fx
 
+ where
   validateFactsAndGetBytes :: [Fact] -> RIO e (Vector ByteString)
   validateFactsAndGetBytes facts = do
     expect <- Log.nextEv log

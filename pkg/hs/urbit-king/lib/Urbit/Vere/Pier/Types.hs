@@ -95,6 +95,13 @@ data IODriver = IODriver
     , startDriver :: (Ev -> STM ()) -> IO (Async (), Perform)
     }
 
+data Fact = Fact
+  { factEve :: EventId
+  , factMug :: Mug
+  , factWen :: Wen
+  , factNon :: Noun
+  }
+
 
 -- Instances -------------------------------------------------------------------
 

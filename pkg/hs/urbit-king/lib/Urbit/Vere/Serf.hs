@@ -1,46 +1,27 @@
-{-# OPTIONS_GHC -Wwarn #-}
-
 {-|
-    Serf Interface
-
-    TODO: `recvLen` is not big-endian safe.
+  High-Level Serf Interface
 -}
 
 module Urbit.Vere.Serf
   ( module Urbit.Vere.Serf.IPC
   , withSerf
   , execReplay
-  , shutdown
-  , snapshot
   )
 where
 
 import Urbit.Prelude
 
 import Data.Conduit
-import System.Process
-import System.ProgressBar
-import Urbit.Arvo
+-- ort System.ProgressBar
+-- ort Urbit.Arvo
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Serf.IPC
-import System.Posix.Signals
 
-import Data.Bits              (setBit)
-import Data.ByteString        (hGet)
-import Data.ByteString.Unsafe (unsafeUseAsCString)
-import Foreign.Marshal.Alloc  (alloca)
-import Foreign.Ptr            (castPtr)
-import Foreign.Storable       (peek, poke)
-import System.Exit            (ExitCode)
-import Urbit.King.App         (HasStderrLogFunc(..))
+-- ort Urbit.King.App         (HasStderrLogFunc(..))
 
-import qualified Data.ByteString.Unsafe   as BS
 import qualified Data.Conduit.Combinators as CC
-import qualified Data.Text                as T
-import qualified System.IO                as IO
-import qualified System.IO.Error          as IO
-import qualified Urbit.Ob                 as Ob
-import qualified Urbit.Time               as Time
+-- ort qualified Urbit.Ob                 as Ob
+-- ort qualified Urbit.Time               as Time
 import qualified Urbit.Vere.Log           as Log
 
 
