@@ -119,7 +119,7 @@
       %metadata-store
       %metadata-hook
       %s3-store
-      %http-server-store
+      %file-server
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -242,7 +242,7 @@
       =<  (se-born %home %link-proxy-hook)
       =<  (se-born %home %link-listen-hook)
       =<  (se-born %home %link-view)
-      =<  (se-born %home %http-server-store)
+      =<  (se-born %home %file-server)
       (se-born %home %s3-store)
     .
   ?>  ?=(%4 ver)

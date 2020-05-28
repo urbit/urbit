@@ -1,4 +1,4 @@
-/-  sur=http-server-store
+/-  sur=file-server
 ^?
 =<  [sur .]
 =,  sur
@@ -9,7 +9,7 @@
   ++  update
     |=  upd=^update
     ^-  json
-    |^  (frond %http-server-update (pairs ~[(encode upd)]))
+    |^  (frond %file-server (pairs ~[(encode upd)]))
     ::
     ++  encode
       |=  upd=^update

@@ -1,4 +1,4 @@
-/-  *http-server
+/-  *file-server
 |_  act=action
 ++  grab
   |%

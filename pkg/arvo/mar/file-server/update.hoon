@@ -1,4 +1,4 @@
-/+  *http-server-store
+/+  *file-server
 |_  upd=update
 ++  grow
   |%
