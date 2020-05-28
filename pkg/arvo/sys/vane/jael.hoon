@@ -866,7 +866,8 @@
       ::  if changing rift upward, then signal a breach
       ::
       =?    ..feel
-          ?&  ?=(%rift -.a-diff)
+          ?&  ?=(^ maybe-point)
+              ?=(%rift -.a-diff)
               (gth to.a-diff rift.point)
           ==
         %+  public-keys-give
