@@ -599,6 +599,7 @@
       %jilt  (on-jilt:event-core ship.task)
       %sift  (on-sift:event-core ships.task)
       %spew  (on-spew:event-core veb.task)
+      %stir  (on-stir:event-core arg.task)
       %trim  on-trim:event-core
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
@@ -819,6 +820,52 @@
         %rot  acc(rot %.y)
       ==
     event-core
+  ::  +on-stir: start timers for any flow that lack them
+  ::
+  ::    .arg is unused, meant to ease future debug commands
+  ::
+  ++  on-stir
+    |=  arg=@t
+    =/  states=(list [ship peer-state])
+      %+  murn  ~(tap by peers.ames-state)
+      |=  [=ship =ship-state]
+      ^-  (unit [^ship peer-state])
+      ~&  checking=ship
+      ?.  ?=(%known -.ship-state)
+        ~
+      `[ship +.ship-state]
+    =/  snds=(list (list [ship bone message-pump-state]))
+      %+  turn  states
+      |=  [=ship peer-state]
+      %+  turn  ~(tap by snd)
+      |=  [=bone =message-pump-state]
+      [ship bone message-pump-state]
+    =/  next-wakes
+      %+  turn  `(list [ship bone message-pump-state])`(zing snds)
+      |=  [=ship =bone message-pump-state]
+      [ship bone next-wake.packet-pump-state]
+    =/  next-real-wakes=(list [=ship =bone =@da])
+      %+  murn  next-wakes
+      |=  [=ship =bone tym=(unit @da)]
+      ^-  (unit [^ship ^bone @da])
+      ?~(tym ~ `[ship bone u.tym])
+    =/  timers
+      %-  silt
+      ;;  (list [@da ^duct])
+      =<  q.q  %-  need  %-  need
+      %-  scry-gate
+      [[%141 %noun] ~ %b [[our %timers da+now] /]]
+    =/  to-stir
+      %+  skip  next-real-wakes
+      |=  [=ship =bone =@da]
+      (~(has in timers) [da `^duct`~[a+(make-pump-timer-wire ship bone) /ames]])
+    ~&  [%stirring to-stir]
+    |-  ^+  event-core
+    ?~  to-stir
+      event-core
+    =/  =wire  (make-pump-timer-wire [ship bone]:i.to-stir)
+    =.  event-core  (emit duct %pass wire %b %wait da.i.to-stir)
+    $(to-stir t.to-stir)
   ::  +on-crud: handle event failure; print to dill
   ::
   ++  on-crud

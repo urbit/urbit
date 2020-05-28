@@ -410,6 +410,7 @@
           $>(%init vane-task)
           [%sift ships=(list ship)]
           [%spew veb=(list verb)]
+          [%stir arg=@t]
           $>(%trim vane-task)
           $>(%vega vane-task)
           $>(%wegh vane-task)
