@@ -168,7 +168,7 @@
   ++  parse-sink
     ;~  pose
       ;~(plug (cold %file tar) parse-beam)
-      ;~(plug (cold %flat vat) (most net sym))
+      ;~(plug (cold %flat pat) (most net sym))
       ;~(plug (cold %pill dot) (most net sym))
       ;~(plug (cold %http lus) (stag %post parse-url))
       ;~(plug (cold %http hep) (stag %put parse-url))

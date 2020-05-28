@@ -12542,7 +12542,7 @@
         ;~  plug
           (punt ;~(plug (cold %id hax) (cook trip sym)))
           (cook en-class (star ;~(plug (cold %class dot) sym)))
-          (punt ;~(plug ;~(pose (cold %href net) (cold %src vat)) soil))
+          (punt ;~(plug ;~(pose (cold %href net) (cold %src pat)) soil))
           (easy ~)
         ==
       ::
@@ -13393,7 +13393,7 @@
       :-  '/'
         ;~(pfix net (stag %loop ;~(pose (cold %$ buc) sym)))
       :-  '@'
-        ;~(pfix vat (stag %base (stag %atom mota)))
+        ;~(pfix pat (stag %base (stag %atom mota)))
       :-  '?'
         ;~  pose
           %+  stag  %bswt
@@ -13492,7 +13492,7 @@
           (cold [%base %noun] tar)
         ==
       :-  '@'
-        ;~(pfix vat (stag %base (stag %atom mota)))
+        ;~(pfix pat (stag %base (stag %atom mota)))
       :-  '+'
         ;~  pose
           (stag %dtls ;~(pfix lus (ifix [lit rit] wide)))
@@ -13567,7 +13567,7 @@
           ;~  pose
             %+  cook
               |=({a/@ta b/hoon} [%ktls [%sand a 0] [%ktls [%sand %$ 0] b]])
-            ;~(pfix vat ;~(plug mota ;~(pfix tic wide)))
+            ;~(pfix pat ;~(plug mota ;~(pfix tic wide)))
             ;~  pfix  tar
               (stag %kthp (stag [%base %noun] ;~(pfix tic wide)))
             ==
@@ -13657,7 +13657,7 @@
                   ['~' (rune sig %bssg exqd)]
                   ['|' (rune bar %bsbr exqc)]
                   ['&' (rune pam %bspd exqc)]
-                  ['@' (rune vat %bsvt exqb)]
+                  ['@' (rune pat %bsvt exqb)]
                   ['_' (rune cab %bscb expa)]
                   ['-' (rune hep %bshp exqb)]
                   ['=' (rune tis %bsts exqg)]
@@ -13704,7 +13704,7 @@
               ^.  stet  ^.  limo
               :~  ['_' (rune cab %brcb exqr)]
                   ['%' (runo cen %brcn ~ expe)]
-                  ['@' (runo vat %brvt ~ expe)]
+                  ['@' (runo pat %brvt ~ expe)]
                   [':' (rune col %brcl expb)]
                   ['.' (rune dot %brdt expa)]
                   ['-' (rune hep %brhp expa)]
@@ -13720,7 +13720,7 @@
             ;~  pfix  buc
               %-  stew
               ^.  stet  ^.  limo
-              :~  ['@' (stag %ktcl (rune vat %bsvt exqb))]
+              :~  ['@' (stag %ktcl (rune pat %bsvt exqb))]
                   ['_' (stag %ktcl (rune cab %bscb expa))]
                   [':' (stag %ktcl (rune col %bscl exqs))]
                   ['%' (stag %ktcl (rune cen %bscn exqs))]
@@ -13856,7 +13856,7 @@
                   ['#' ;~(pfix hax (toad txhx))]
                   ['+' ;~(pfix lus (toad txls))]
                   ['&' (rune pam %wtpd exps)]
-                  ['@' ;~(pfix vat (toad tkvt))]
+                  ['@' ;~(pfix pat (toad tkvt))]
                   ['~' ;~(pfix sig (toad tksg))]
                   ['!' (rune zap %wtzp expa)]
               ==
@@ -13871,7 +13871,7 @@
                   [';' (rune mic %zpmc expb)]
                   ['>' (rune ban %zpbn expa)]
                   ['<' (rune led %zpld exqc)]
-                  ['@' (rune vat %zpvt expy)]
+                  ['@' (rune pat %zpvt expy)]
                   ['=' (rune tis %zpts expa)]
                   ['?' (rune wut %zpwt hinh)]
               ==

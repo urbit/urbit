@@ -618,7 +618,7 @@
     ++  letter
       ;~  pose
         (stag %url turl)
-        (stag %me ;~(pfix vat text))
+        (stag %me ;~(pfix pat text))
         (stag %text ;~(less mic hax text))
       ==
     ::  +turl: url parser
