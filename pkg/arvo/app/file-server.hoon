@@ -1,4 +1,4 @@
-/-  *http-server-store
+/-  *file-server
 /+  *server, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
@@ -45,7 +45,7 @@
   ++  connect
     |=  =path
     ^-  card
-    [%pass path %arvo %e %connect [~ path] %http-server-store]
+    [%pass path %arvo %e %connect [~ path] %file-server]
   --
 ::
 ++  on-save  !>(state)
@@ -60,7 +60,7 @@
   |^
   ?>  (team:title our.bowl src.bowl)
   ?+  mark  (on-poke:def mark vase)
-      %http-server-action  (landscape-action !<(action vase))
+      %file-server-action  (file-server-action !<(action vase))
       %handle-http-request
     =+  !<([id=@ta req=inbound-request:eyre] vase)
     :_  this
@@ -68,7 +68,7 @@
     (handle-http-request req)
   ==
   ::
-  ++  landscape-action
+  ++  file-server-action
     |=  act=action
     ^-  (quip card _this)
     |^
@@ -77,7 +77,7 @@
       =*  url-base  url-base.act
       ?:  (~(has by serving) url-base)
         ~|("url already bound to {<(~(got by serving) url-base.act)>}" !!)
-      :-  [%pass url-base %arvo %e %connect [~ url-base] %http-server-store]~
+      :-  [%pass url-base %arvo %e %connect [~ url-base] %file-server]~
       this(serving (~(put by serving) url-base [clay-base.act public.act]))
     ::
         %unserve-dir
@@ -100,7 +100,7 @@
     ++  give
       |=  =update
       ^-  (list card)
-      [%give %fact [/all]~ [%http-server-update !>(update)]]~
+      [%give %fact [/all]~ [%file-server-update !>(update)]]~
     --
   ::
   ++  handle-http-request
@@ -201,7 +201,7 @@
    ++  give
     |=  =update
     ^-  (list card)
-    [%give %fact ~ [%http-server-update !>(update)]]~
+    [%give %fact ~ [%file-server-update !>(update)]]~
   --
 ::
 ++  on-arvo

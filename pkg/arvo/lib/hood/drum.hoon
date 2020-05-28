@@ -119,7 +119,7 @@
       %metadata-store
       %metadata-hook
       %s3-store
-      %http-server-store
+      %file-server
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -255,7 +255,7 @@
     =<  (se-born %home %link-listen-hook)
     =<  (se-born %home %link-view)
     =<  (se-born %home %s3-store)
-    (se-born %home %http-server-store)
+    (se-born %home %file-server)
   ::
       %3
     =<  se-abet  =<  se-view
@@ -269,7 +269,7 @@
     =<  (se-born %home %link-listen-hook)
     =<  (se-born %home %link-view)
     =<  (se-born %home %s3-store)
-    (se-born %home %http-server-store)
+    (se-born %home %file-server)
   ::
       %4
     =<  se-abet  =<  se-view
@@ -283,7 +283,7 @@
     =<  (se-born %home %link-listen-hook)
     =<  (se-born %home %link-view)
     =<  (se-born %home %s3-store)
-    (se-born %home %http-server-store)
+    (se-born %home %file-server)
   ==
 ::
 ++  reap-phat                                         ::  ack connect
