@@ -12470,7 +12470,7 @@
       %+  cook  |=(a/marl:hoot a)
       ;~  pose
         ;~  less  (jest '"""')
-          (ifix [yel yel] (cook collapse-chars quote-innards))
+          (ifix [doq doq] (cook collapse-chars quote-innards))
         ==
       ::
         %-  inde
@@ -12482,7 +12482,7 @@
       %+  cook  |=(a/(list $@(@ tuna:hoot)) a)
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose (mask "-+*%;\{") bas yel bix:ab))
+        ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
         inline-embed
         ;~(less bas lob ?:(in-tall-form fail doq) prn)
         ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
@@ -13142,7 +13142,7 @@
         ::
         ::  "quoted text"
         ::
-          (stag %quod (ifix [yel yel] (cool (cash yel) werk)))
+          (stag %quod (ifix [doq doq] (cool (cash doq) werk)))
         ::
         ::  `classic markdown quote`
         ::
@@ -13619,11 +13619,11 @@
   ++  soil
     ;~  pose
       ;~  less  (jest '"""')
-        %+  ifix  [yel yel]
+        %+  ifix  [doq doq]
         %-  star
         ;~  pose
-          ;~(pfix bas ;~(pose bas yel lob bix:ab))
-          ;~(less yel bas lob prn)
+          ;~(pfix bas ;~(pose bas doq lob bix:ab))
+          ;~(less doq bas lob prn)
           (stag ~ sump)
         ==
       ==
