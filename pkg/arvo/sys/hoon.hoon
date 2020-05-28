@@ -13198,7 +13198,7 @@
               tash:so
               ;~(pfix dot perd:so)
               ;~(pfix sig ;~(pose twid:so (easy [%$ %n 0])))
-              ;~(pfix cen ;~(pose sym buc pad bar qut nuck:so))
+              ;~(pfix cen ;~(pose sym buc pam bar qut nuck:so))
             ==
           ::
             ;~(simu whit (easy ~))
@@ -13367,7 +13367,7 @@
           ;~  pfix  cen
             ;~  pose
               (stag %leaf (stag %tas (cold %$ buc)))
-              (stag %leaf (stag %f (cold & pad)))
+              (stag %leaf (stag %f (cold & pam)))
               (stag %leaf (stag %f (cold | bar)))
               (stag %leaf (stag %t qut))
               (stag %leaf (sear |=(a/coin ?:(?=($$ -.a) (some +.a) ~)) nuck:so))
@@ -13466,7 +13466,7 @@
           ;~  pose
             (stag %clsg (sear |~({a/@ud b/tyke} (posh ~ ~ a b)) porc))
             (stag %rock (stag %tas (cold %$ buc)))
-            (stag %rock (stag %f (cold & pad)))
+            (stag %rock (stag %f (cold & pam)))
             (stag %rock (stag %f (cold | bar)))
             (stag %rock (stag %t qut))
             (cook (jock &) nuck:so)
@@ -13476,9 +13476,9 @@
       :-  '&'
         ;~  pose
           (cook |=(a/wing [%cnts a ~]) rope)
-          (stag %wtpd ;~(pfix pad (ifix [lit rit] (most ace wide))))
-          ;~(plug (stag %rock (stag %f (cold & pad))) wede)
-          (stag %sand (stag %f (cold & pad)))
+          (stag %wtpd ;~(pfix pam (ifix [lit rit] (most ace wide))))
+          ;~(plug (stag %rock (stag %f (cold & pam))) wede)
+          (stag %sand (stag %f (cold & pam)))
         ==
       :-  '\''
         (stag %sand (stag %t qut))
@@ -13656,7 +13656,7 @@
                   ['^' (rune ket %bskt exqb)]
                   ['~' (rune sig %bssg exqd)]
                   ['|' (rune bar %bsbr exqc)]
-                  ['&' (rune pad %bspd exqc)]
+                  ['&' (rune pam %bspd exqc)]
                   ['@' (rune vat %bsvt exqb)]
                   ['_' (rune cab %bscb expa)]
                   ['-' (rune hep %bshp exqb)]
@@ -13727,7 +13727,7 @@
                   ['<' (stag %ktcl (rune led %bsld exqb))]
                   ['>' (stag %ktcl (rune ban %bsbn exqb))]
                   ['|' (stag %ktcl (rune bar %bsbr exqc))]
-                  ['&' (stag %ktcl (rune pad %bspd exqc))]
+                  ['&' (stag %ktcl (rune pam %bspd exqc))]
                   ['^' (stag %ktcl (rune ket %bskt exqb))]
                   ['~' (stag %ktcl (rune sig %bssg exqd))]
                   ['-' (stag %ktcl (rune hep %bshp exqb))]
@@ -13783,7 +13783,7 @@
                   ['.' (rune dot %ktdt expb)]
                   ['-' (rune hep %kthp exqc)]
                   ['+' (rune lus %ktls expb)]
-                  ['&' (rune pad %ktpd expa)]
+                  ['&' (rune pam %ktpd expa)]
                   ['~' (rune sig %ktsg expa)]
                   ['=' (rune tis %ktts expj)]
                   ['?' (rune wut %ktwt expa)]
@@ -13804,7 +13804,7 @@
                   ['<' (rune led %sgld hinb)]
                   ['>' (rune ban %sgbn hinb)]
                   ['+' (rune lus %sgls hinc)]
-                  ['&' (rune pad %sgpd hinf)]
+                  ['&' (rune pam %sgpd hinf)]
                   ['?' (rune wut %sgwt hing)]
                   ['=' (rune tis %sgts expb)]
                   ['!' (rune zap %sgzp expb)]
@@ -13855,7 +13855,7 @@
                   ['=' ;~(pfix tis (toad txts))]
                   ['#' ;~(pfix hax (toad txhx))]
                   ['+' ;~(pfix lus (toad txls))]
-                  ['&' (rune pad %wtpd exps)]
+                  ['&' (rune pam %wtpd exps)]
                   ['@' ;~(pfix vat (toad tkvt))]
                   ['~' ;~(pfix sig (toad tksg))]
                   ['!' (rune zap %wtzp expa)]
@@ -14261,7 +14261,7 @@
         |=(a/axis [%& a])
       ;~  pose
         ;~(pfix lus dim:ag)
-        ;~(pfix pad (cook |=(a/@ ?:(=(0 a) 0 (mul 2 +($(a (dec a)))))) dim:ag))
+        ;~(pfix pam (cook |=(a/@ ?:(=(0 a) 0 (mul 2 +($(a (dec a)))))) dim:ag))
         ;~(pfix bar (cook |=(a/@ ?:(=(0 a) 1 +((mul 2 $(a (dec a)))))) dim:ag))
         ven
         (cold 1 dot)

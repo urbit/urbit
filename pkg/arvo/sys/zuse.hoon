@@ -6883,10 +6883,10 @@
       ==
     ::                                                  ::  ++escp:de-xml:html
     ++  escp                                            ::
-      ;~(pose ;~(less led ban pad prn) enty)
+      ;~(pose ;~(less led ban pam prn) enty)
     ::                                                  ::  ++enty:de-xml:html
     ++  enty                                            ::  entity
-      %+  ifix  pad^mic
+      %+  ifix  pam^mic
       ;~  pose
         =+  def=^+(ent (my:nl [%gt '>'] [%lt '<'] [%amp '&'] [%quot '"'] ~))
         %+  sear  ~(get by (~(uni by def) ent))
@@ -7101,13 +7101,13 @@
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
-        zap  buc  pad  say  lit  rit
+        zap  buc  pam  say  lit  rit
         tar  lus  com  mic  tis
       ==
     ::                                                  ::  ++ptok:de-purl:html
     ++  ptok                                            ::  2616 token
       ;~  pose
-        aln  zap  hax  buc  cen  pad  say  tar  lus
+        aln  zap  hax  buc  cen  pam  say  tar  lus
         hep  dot  ket  cab  tic  bar  sig
       ==
     ::                                                  ::  ++scem:de-purl:html
@@ -7164,7 +7164,7 @@
         ::  proper query
         ::
         %+  more
-          ;~(pose pad mic)
+          ;~(pose pam mic)
         ;~(plug fque ;~(pose ;~(pfix tis fquu) (easy '')))
         ::
         ::  funky query

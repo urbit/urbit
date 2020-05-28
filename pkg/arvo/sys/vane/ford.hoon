@@ -957,7 +957,7 @@
           (stag %fscm ;~(pfix com parse-switch))
           ::  `/&`  pass through a series of mark
           ::
-          (stag %fspm ;~(pfix pad parse-pipe))
+          (stag %fspm ;~(pfix pam parse-pipe))
           ::  `/_`  run a crane on each file in the current directory
           ::
           (stag %fscb ;~(pfix cab subcrane))
@@ -1010,7 +1010,7 @@
     ::
     ++  parse-pipe
       %+  wide-or-tall
-        ;~(plug (plus ;~(sfix sym pad)) subcrane)
+        ;~(plug (plus ;~(sfix sym pam)) subcrane)
       =+  (cook |=(a=term [a ~]) sym)
       ;~(pfix gap ;~(plug - subcrane))
     ::  +parse-gate: parses a gate applied to a crane
