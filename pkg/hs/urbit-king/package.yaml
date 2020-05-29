@@ -92,6 +92,7 @@ dependencies:
   - text
   - these
   - time
+  - tls
   - transformers
   - unix
   - unliftio
