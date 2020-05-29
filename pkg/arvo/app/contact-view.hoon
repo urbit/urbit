@@ -17,7 +17,7 @@
 ::
 +$  state-0
   $:  %0
-      dir-served=_|
+      ~
   ==
 ::
 +$  card  card:agent:gall
@@ -54,7 +54,7 @@
     ^-  (quip card _this)
     =/  old  ((soft state-0) q.old-vase)
     ?^  old  [~ this]
-    :_  this(dir-served %.y)
+    :_  this(state [%0 ~])
     :~  [%pass / %arvo %e %disconnect [~ /'~groups']]
         [%pass / %arvo %e %connect [~ /'contact-view'] %contact-view]
         :*  %pass  /srv  %agent  [our.bol %file-server]
