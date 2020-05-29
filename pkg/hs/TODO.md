@@ -3,7 +3,7 @@ Stubbed out:
 - [x] Handle replacement events (stubbed out now b/c interface can't
   handle unparsed nouns)
 - [x] Handle IPC errors by killing serf process.
-- [ ] PlayBail should be an exception.
+- [ ] PlayBail should be an exception for now.
 - [ ] Write haddock docs for `Urbit.Vere.Serf.IPC`.
 - [x] Unstub slog/stder/dead callbacks on serf config.
 - [ ] GoodParse hack in newRunCompute.
@@ -29,7 +29,9 @@ Polish:
 - [x] Think through how to shutdown the serf on exception.
 - [ ] Better exceptions in Serf error cases.
 
-Other bugs:
+Unrelated bugs:
 
-- [ ] Handle ^c in connected terminals.
-- [ ] Fix spinner in terminal driver.
+- [ ] Handle ^C in connected terminals.
+- [ ] terminal driver seems to have a race condition when spinner changed
+      too quickly.
+- [ ] King should shutdown promptly on ^C. Always takes 2s in practice./

@@ -618,18 +618,14 @@ processWork serf q onResp spin = do
 
             len <- length <$> atomically (readTVar vWork)
             when (len == 0) $ do
-              print "SPIN"
-              atomically (spin (Just ev))
+              atomically $ spin (Just ev)
 
             sendWrit serf (WWork now ev)
             let callback work = do
                   len <- length <$> atomically (readTVar vWork)
-                  print ("ASDFASDF workqueue size", len)
-                  print "DO NOT SPIN"
-                  atomically (spin Nothing)
                   atomically (readTVar vWork) >>= \case
-                    (ev, _) :<| _ -> print "SPIN" >> atomically (spin (Just ev))
-                    _             -> pure ()
+                    (ev, _) :<| _ -> atomically $ spin (Just ev)
+                    _             -> atomically $ spin Nothing
                   onResp now evErr work
 
             atomically $ modifyTVar' vWork (:|> (ev, callback))
