@@ -134,8 +134,8 @@
     ?@  tag
       (frond %tag s+tag)
     %-  pairs
-    :~  tag+s+tag.tag
-        app+s+app.tag
+    :~  app+s+app.tag
+        tag+s+tag.tag
     ==
   ::
   ++  policy
@@ -281,8 +281,8 @@
       !!
     %.  json
     %-  ot
-    :~  tag+so
-        app+so
+    :~  app+so
+        tag+so
     ==
 
   ::  move to zuse also

@@ -93,6 +93,14 @@
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     ?+  -.sign  (on-agent:def wire sign)
+       %poke-ack
+      ?.  ?=([%join-group @ @ ~] wire)
+        (on-agent:def wire sign)
+      ?^  p.sign
+        (on-agent:def wire sign)
+      :_  this
+      (joined-group:cc t.wire)
+    ::
         %kick
       [[%pass / %agent [our.bol %contact-store] %watch /updates]~ this]
     ::
@@ -135,27 +143,36 @@
       [our.bol name.act]
     =/  =path
       (group-id:en-path:group-store group-id)
-    %+  weld
+    ;:  weld
       :~  (group-poke [%add-group group-id policy.act %.y])
           (contact-poke [%create path])
           (contact-hook-poke [%add-owned path])
       ==
-    (create-metadata path title.act description.act)
+      (create-metadata path title.act description.act)
+      ?.  ?=(%invite -.policy.act)
+        ~
+      %+  turn
+        ~(tap in pending.policy.act)
+      |=  =ship
+      (send-invite our.bol %contacts path ship '')
+    ==
   ::
       %join
     =/  =path
       (group-id:en-path:group-store group-id.act)
-    :~  (group-listen-hook-poke [%add group-id.act])
-        (group-proxy-poke %add-members group-id.act (sy our.bol ~) ~)
-        (contact-hook-poke [%add-synced ship.group-id.act path])
-        (sync-metadata ship.group-id.act path)
-    ==
+    =/  =cage
+      :-  %group-action
+      !>  ^-  action:group-store
+      [%add-members group-id.act (sy our.bol ~) ~]
+    =/  =wire
+      [%join-group path]
+    [%pass wire %agent [ship.group-id.act %group-hook] %poke cage]~
   ::
       %invite
     =*  group-id  group-id.act
     =/  =path
       (group-id:en-path:group-store group-id)
-    :~  (send-invite ship.group-id %groups path ship.act text.act)
+    :~  (send-invite ship.group-id %contacts path ship.act text.act)
         (add-pending group-id ship.act)
     ==
   ::
@@ -214,6 +231,16 @@
       =/  content-type  ['content-type' content-type.u.avatar.u.contact]
       [[200 [content-type max-3-days ~]] `octs.u.avatar.u.contact]
     ==
+  ==
+::
+++  joined-group
+  |=  =path
+  ^-  (list card)
+  =/  =group-id
+    (need (group-id:de-path:group-store path))
+  :~  (group-listen-hook-poke [%add group-id])
+      (contact-hook-poke [%add-synced ship.group-id path])
+      (sync-metadata ship.group-id path)
   ==
 ::
 ::  +utilities

@@ -397,20 +397,22 @@
   --
 
 ++  merge-tags
-  |=  [=tags ships=(set ship) tags=(set tag)]
+  |=  [=tags ships=(set ship) new-tags=(set tag)]
   ^+  tags
-  =/  tags-list  ~(tap in tags)
+  =/  tags-list  ~(tap in new-tags)
   |-
   ?~  tags-list
     tags
   =*  tag  i.tags-list
+  =/  old-ships=(set ship)
+    (~(gut by tags) tag ~)
   %=    $
     tags-list  t.tags-list
   ::
       tags
     %+  ~(put by tags)
-      p.tag
-    (~(uni in q.tag) ships)
+      tag
+    (~(uni in old-ships) ships)
  ==
 ++  remove-tags
   |=  [=group ships=(set ship)]

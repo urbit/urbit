@@ -1,6 +1,7 @@
-/-  *group, *metadata-store
+/-  *group, *metadata-store, hook=group-hook
 /+  store=group-store
 |_  =bowl:gall
++$  card  card:agent:gall
 ++  scry-for
   |*  [=mold =path]
   .^  mold
@@ -10,6 +11,14 @@
     (scot %da now.bowl)
     (snoc `^path`path %noun)
   ==
+++  scry-tag
+  |=  [=group-id =tag]
+  ^-  (unit (set ship))
+  =/  group
+    (scry-group group-id)
+  ?~  group
+    ~
+  `(~(gut by tags.u.group) tag ~)
 ::
 ++  scry-group-path
   |=  =path
@@ -80,6 +89,7 @@
   %+  can-join-from-path
     (group-id:en-path:store group-id)
   ship
+::
 ++  is-managed-path
   |=  =path
   ^-  ?

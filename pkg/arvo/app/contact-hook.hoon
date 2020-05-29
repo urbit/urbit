@@ -2,6 +2,7 @@
 ::
 /-  group-hook,
     *contact-hook,
+    *contact-view,
     *invite-store,
     *metadata-hook,
     *metadata-store,
@@ -338,23 +339,10 @@
   ^-  (quip card _state)
   |^
   ?+  -.fact     [~ state]
-      %add-members     (add-members +.fact)
       %initial-group   (initial-group +.fact)
       %remove-members    (remove +.fact)
       %remove-group  (unbundle +.fact)
   ==
-  ++  add-members
-    |=  [=group-id ships=(set ship) tags=(set tag)]
-    ^-  (quip card _state)
-    =/  =path
-      (group-id:en-path:group-store group-id)
-    =/  owner  (~(get by synced) path)
-    ?~  owner  [~ state]
-    ?.  =(u.owner our.bol)  [~ state]
-    :_  state
-    %+  turn  ~(tap in (~(del in ships) our.bol))
-    |=  =ship
-    (send-invite-poke path ship)
   ::
   ++  initial-group
     |=  [=group-id =group]
@@ -416,17 +404,10 @@
   ^-  (quip card _state)
   ?+  -.fact  [~ state]
       %accepted
-    =/  changes
-      (poke-hook-action [%add-synced ship.invite.fact path.invite.fact])
     =/  =group-id
       (need (group-id:de-path:group-store path.invite.fact))
-    :-  
-    %+  welp
-      :~  (group-hook-poke %add group-id)
-          (metadata-hook-poke [%add-synced ship.invite.fact path.invite.fact]) 
-      ==
-    -.changes
-    +.changes
+    :_  state
+    ~[(contact-view-poke %join group-id)]
   ==
 ::
 ++  group-hook-poke
@@ -443,6 +424,11 @@
   |=  act=contact-action
   ^-  card
   [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]
+::
+++  contact-view-poke
+  |=  act=contact-view-action
+  ^-  card
+  [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
 ::
 ++  group-poke
   |=  act=action:group-store

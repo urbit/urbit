@@ -71,7 +71,6 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+  -.wire  (on-agent:def:gc wire sign)
-        %invites  (take-invite-sign:gc wire sign)
         %store    (take-store-sign:gc wire sign)
         %proxy    (take-proxy-sign:gc wire sign)
       ==
@@ -141,9 +140,7 @@
     =.  listening
       (~(put in listening) group-id)
     :_  state
-    :~  (listen-group group-id)
-        (add-self group-id)
-    ==
+    ~[(listen-group group-id)]
   ++  remove
     |=  =group-id
     ^-  (quip card _state)
@@ -157,48 +154,7 @@
 ::  |signs: signs from agents
 ::
 ::  +|  %signs
-++  take-invite-sign
-  |=  [=wire =sign:agent:gall]
-  ^-  (quip card _state)
-  |^
-  ?+  -.sign  (on-agent:def wire sign)
-    %kick   [~[watch-invites] state]
-  ::
-      %fact
-    ?.  =(%invite-update p.cage.sign)
-      [~ state]
-    (fact !<(invite-update q.cage.sign))
-  ==
-  ++  fact
-    |=  update=invite-update
-    ^-  (quip card _state)
-    ?+  -.update  [~ state]
-        %invite
-      =*  invite  invite.update
-      ?.  =(our.bol ship.invite)
-        [~ state]
-      =/  =group-id
-        (need (group-id:de-path:store path.invite))
-      =/  =cage
-        :-  %group-update
-        !>  ^-  update:store
-        [%change-policy group-id [%add-invites (sy recipient.invite ~)]]
-      :_  state
-      [%pass [%store path.invite] %agent [our.bol %group-store] %poke cage]~
-        %accepted
-      =*  invite  invite.update
-      ?.  =(our.bol ship.invite)
-        [~ state]
-      =/  =group-id
-        (need (group-id:de-path:store path.update))
-      =/  =cage
-        :-  %group-update
-        !>  ^-  update:store
-        [%add-members group-id (sy recipient.invite ~) ~]
-      :_  state
-      [%pass [%store path.invite] %agent [our.bol %group-store] %poke cage]~
-    ==
-  --
+::
 ::  +take-proxy-sign: take sign from foreign %group-hook
 ::
 ++  take-proxy-sign
@@ -279,56 +235,39 @@
   --
 ::  +listen-group: Start a new subscription to the proxied .group-id
 ::
+::    Wire is required to prevent a race condition, see +join-group in
+::    lib/group
 ++  listen-group
   |=  =group-id
   ^-  card
-  =/   pax=path
+  =/  pax=path
     (group-id:en-path:store group-id)
-  [%pass [%proxy pax] %agent [ship.group-id %group-hook] %watch [%groups pax]]
-::  +add-self: Add self to group
-++  add-self
-  |=  =group-id
-  ^-  card
-  =/   pax=path
-    (group-id:en-path:store group-id)
-  =/  =cage
-    :-  %group-action
-    !>  ^-  action:store
-    [%add-members group-id (sy our.bol ~) ~]
-  [%pass [%proxy pax] %agent [ship.group-id %group-hook] %poke cage]
-::  +leave-group: Leave a foreign group
+  =/  =wire
+    [%proxy pax]
+  [%pass wire %agent [ship.group-id %group-hook] %watch [%groups pax]]
+::  +leave-group: Stop subscribing to a foreign group
 :: 
 ++  leave-group
   |=  =group-id
   ^-  (list card)
   =/  pax=path
     (group-id:en-path:store group-id)
-  :~  [%pass [%proxy pax] %agent [ship.group-id %group-hook] %leave ~]
-      [%pass [%store pax] %agent [our.bol %group-store] %poke %group-update !>([%remove-group group-id ~])]
-      [%pass [%proxy pax] %agent [ship.group-id %group-hook] %poke %group-action !>([%remove-members group-id (sy our.bol ~)])]
-  ==
-::  +store-leave-group: Remove a foreign group from our group-store
-::
-++  store-leave-group
-  |=  =group-id
-  ^-  card
-  =/  pax=path
-    (group-id:en-path:store group-id)
-  [%pass [%store pax] %agent [our.bol %group-store] %poke %group-update !>([%remove-group group-id ~])]
+  =/  =wire
+    [%proxy pax]
+  [%pass wire %agent [ship.group-id %group-hook] %leave ~]~
 ::  +should-proxy-poke: Check if poke should be proxied
 ::
 ::    We only allow users to add and remove themselves.
 ++  should-proxy-poke
   |=  =update:store
   ^-  ?
-  =-  ~&  -  -
   ?:  ?=(%initial -.update)
     %.n
   |^
   =/  role=(unit (unit role-tag))
     (role-for-ship:grp group-id.update src.bol)
   ?~  role
-    %.n
+    non-member
   ?~  u.role
     member
   ?-  u.u.role
@@ -435,6 +374,7 @@
     !>  ^-  update:store
     [%initial-group group-id group]
   [%give %fact ~ cage]~
+::
 ++  scry-initial
   |=  =group-id
   ^-  (unit group)
