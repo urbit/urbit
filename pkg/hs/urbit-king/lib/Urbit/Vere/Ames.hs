@@ -81,7 +81,7 @@ netMode isFake = do
     (_   , _   , NMNormal   ) -> Real
     (_   , _   , NMLocalhost) -> Localhost
 
-udpPort :: Bool -> Ship -> HasNetworkConfig e => RIO e PortNumber
+udpPort :: HasNetworkConfig e => Bool -> Ship -> RIO e PortNumber
 udpPort isFake who = do
   mode <- netMode isFake
   mPort <- view (networkConfigL . ncAmesPort)
