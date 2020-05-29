@@ -250,12 +250,11 @@
       =/  dux  (find-ducts date.t)
       |-  ^-  [found=? dux=(qeu ^duct)]
       ?~  dux  |+~
-      =/  [top=^duct lef=(qeu ^duct) rih=(qeu ^duct)]  dux
-      =>  .(dux `(qeu ^duct)`dux)  ::  TMI
-      ?:  =(duct.t top)  &+~(nip to dux)
-      =^  found-left=?  dux  $(dux lef)
+      ?:  =(duct.t n.dux)  &+~(nip to `(qeu ^duct)`dux)
+      =^  found-left=?  l.dux  $(dux l.dux)
       ?:  found-left  &+dux
-      $(dux rih)
+      =^  found-rite=?  r.dux  $(dux r.dux)
+      [found-rite dux]
     ?.  found  timers.state
     ?:  =(~ dux)
       +:(del:timer-map timers.state date.t)
