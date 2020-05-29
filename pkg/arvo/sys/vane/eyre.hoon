@@ -2326,51 +2326,21 @@
 ::
 ++  load
   =>  |%
-    +$  channel-old
-      $:  state=(each timer duct)
-          next-id=@ud
-          events=(qeu [id=@ud lines=wall])
-          subscriptions=(map wire [ship=@p app=term =path duc=duct])
-      ==
-    +$  channel-state-old
-      $:  session=(map @t channel-old)
-          duct-to-key=(map duct @t)
-      ==
-    ++  axle-2019-1-7
-      %+  cork
-        axle
-      |=  =axle
-      axle(date %~2019.1.7, channel-state.server-state (channel-state-old))
-    ::
-    +$  axle-2019-10-6
-      [date=%~2019.10.6 =server-state]
-  --
-  |=  old=$%(axle axle-2019-10-6 axle-2019-1-7)
+      +$  axle-2019-10-6
+        [date=%~2019.10.6 =server-state]
+      --
+  |=  old=$%(axle axle-2019-10-6)
   ^+  ..^$
   ::
   ~!  %loading
   ?-  -.old
-    %~2019.1.7
-      =/  add-heartbeat
-      %-  ~(run by session.channel-state.server-state.old)
-      |=  [c=channel-old]
-      ^-  channel
-      [state.c next-id.c events.c subscriptions.c ~]
-      ::
-      =/  new
-      %=  old
-        date  %~2019.10.6
-        session.channel-state.server-state  add-heartbeat
-      ==
-      $(old new)
-    ::
-    %~2019.10.6
-      %_  $
-        date.old  %~2020.5.29
-        sessions.authentication-state.server-state.old  ~
-      ==
-    ::
     %~2020.5.29  ..^$(ax old)
+  ::
+      %~2019.10.6
+    %_  $
+      date.old  %~2020.5.29
+      sessions.authentication-state.server-state.old  ~
+    ==
   ==
 
 ::  +stay: produce current state
