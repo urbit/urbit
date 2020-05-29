@@ -830,7 +830,6 @@
       %+  murn  ~(tap by peers.ames-state)
       |=  [=ship =ship-state]
       ^-  (unit [^ship peer-state])
-      ~&  checking=ship
       ?.  ?=(%known -.ship-state)
         ~
       `[ship +.ship-state]
