@@ -3,6 +3,7 @@ Stubbed out:
 - [x] Handle replacement events (stubbed out now b/c interface can't
   handle unparsed nouns)
 - [x] Handle IPC errors by killing serf process.
+- [ ] Handle `peek` and `pack` in `swimming` flow.
 - [ ] PlayBail should be an exception for now.
 - [ ] Write haddock docs for `Urbit.Vere.Serf.IPC`.
 - [x] Unstub slog/stder/dead callbacks on serf config.
@@ -21,7 +22,7 @@ Performance:
 
 Polish:
 
-- [ ] Cleanup batching flow.
+- [x] Cleanup batching flow.
 - [ ] Logging for new IPC flow.
 - [ ] Logging for boot sequence.
 - [ ] Bring back progress bars.

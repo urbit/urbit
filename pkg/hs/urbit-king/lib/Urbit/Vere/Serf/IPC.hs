@@ -455,7 +455,6 @@ replay batchSize serf = do
       evs -> do
         let nexEve = lastEve + 1
         let newEve = lastEve + fromIntegral (length evs)
-        print (ss, nexEve, newEve, length evs)
         io $ sendWrit serf (WPlay nexEve evs)
         io (recvPlay serf) >>= \case
           PBail bail   -> pure (Just bail, SerfState lastEve lastMug)
@@ -538,56 +537,48 @@ swimming
   -> (RunOutput -> STM ())
   -> (SpinState -> STM ())
   -> IO ()
-swimming serf onInput sendOn spin = loop
+swimming serf onInput sendOn spin = topLoop
  where
-  loop :: IO ()
-  loop = atomically onInput >>= \case
+  topLoop :: IO ()
+  topLoop = atomically onInput >>= \case
     CRWork workErr -> doWork workErr
     CRSave ()      -> doSnap
     CRKill ()      -> pure ()
 
-  doSnap = snapshot serf >> loop
+  doSnap :: IO ()
+  doSnap = snapshot serf >> topLoop
 
+  doWork :: EvErr -> IO ()
   doWork firstWorkErr = do
-    -- TODO Rethink this TBMQueue. Just use (TMVar (Maybe EvErr))?
-    q :: TBMQueue EvErr <- newTBMQueueIO 1
-    atomically (writeTBMQueue q firstWorkErr)
+    que   <- newTBMQueueIO 1
+    ()    <- atomically (writeTBMQueue que firstWorkErr)
+    tWork <- async (processWork serf que onWorkResp spin)
+    nexSt <- workLoop que
+    wait tWork
+    nexSt
 
-    after <- withSerfLock try serf \ss -> do
+  workLoop :: TBMQueue EvErr -> IO (IO ())
+  workLoop que = atomically onInput >>= \case
+    CRKill ()      -> atomically (closeTBMQueue que) >> pure (pure ())
+    CRSave ()      -> atomically (closeTBMQueue que) >> pure doSnap
+    CRWork workErr -> atomically (writeTBMQueue que workErr) >> workLoop que
 
-      vState <- newIORef ss
+  onWorkResp :: Wen -> EvErr -> Work -> IO ()
+  onWorkResp wen (EvErr evn err) = \case
+    WDone eid hash fx -> do
+      atomically $ sendOn (RunOutput eid hash wen (toNoun evn) fx)
+    WSwap eid hash (wen, noun) fx -> do
+      io $ err (RunSwap eid hash wen noun fx)
+      atomically $ sendOn (RunOutput eid hash wen noun fx)
+    WBail goofs -> do
+      io $ err (RunBail goofs)
 
-      let cb :: Wen -> EvErr -> Work -> IO ()
-          cb wen (EvErr evn err) = \case
-            WDone eid hash fx -> do
-              atomically $ sendOn (RunOutput eid hash wen (toNoun evn) fx)
-              writeIORef vState (SerfState eid hash)
-            WSwap eid hash (wen, noun) fx -> do
-              io $ err (RunSwap eid hash wen noun fx)
-              atomically $ sendOn (RunOutput eid hash wen noun fx)
-              writeIORef vState (SerfState eid hash)
-            WBail goofs -> do
-              io $ err (RunBail goofs)
-
-      tWork <- async (processWork serf q cb spin)
-
-      let workLoop :: IO (IO ())
-          workLoop = atomically onInput >>= \case
-            CRWork workErr -> do
-              atomically (writeTBMQueue q workErr)
-              workLoop
-            CRSave ()  -> do
-              atomically (closeTBMQueue q)
-              wait tWork
-              pure doSnap
-            CRKill ()  -> do
-              pure (pure ())
-
-      after <- workLoop
-
-      (, after) <$> readIORef vState
-
-    after
+pullFromQueueBounded :: TVar (Seq a) -> TBMQueue b -> STM (Maybe b)
+pullFromQueueBounded vInFlight queue = do
+  inFlight <- length <$> readTVar vInFlight
+  if inFlight >= workQueueSize
+    then retry
+    else readTBMQueue queue
 
 -- TODO Handle scry and peek.
 processWork
@@ -597,61 +588,53 @@ processWork
   -> (SpinState -> STM ())
   -> IO ()
 processWork serf q onResp spin = do
-  vDone <- newTVarIO False
-  vWork <- newTVarIO empty
-  tRecv <- async (recvLoop serf vDone vWork)
+  vDoneFlag      <- newTVarIO False
+  vInFlightQueue <- newTVarIO empty
+  recvThread     <- async (recvLoop serf vDoneFlag vInFlightQueue)
+  loop vInFlightQueue vDoneFlag
+  wait recvThread
+ where
+  loop :: TVar (Seq (Ev, Work -> IO ())) -> TVar Bool -> IO ()
+  loop vInFlight vDone = do
+    atomically (pullFromQueueBounded vInFlight q) >>= \case
+      Nothing -> do
+        atomically (writeTVar vDone True)
+      Just evErr@(EvErr ev _) -> do
+        now <- Time.now
+        let cb = onRecv (currentEv vInFlight) now evErr
+        atomically $ do
+          modifyTVar' vInFlight (:|> (ev, cb))
+          currentEv vInFlight >>= spin
+        sendWrit serf (WWork now ev)
+        loop vInFlight vDone
 
-  let pullFromQueue :: STM (Maybe EvErr)
-      pullFromQueue = do
-        inFlight <- length <$> readTVar vWork
-        if inFlight >= workQueueSize
-          then retry
-          else readTBMQueue q
+  onRecv :: STM (Maybe Ev) -> Wen -> EvErr -> Work -> IO ()
+  onRecv getCurrentEv now evErr work = do
+    atomically (getCurrentEv >>= spin)
+    onResp now evErr work
 
-  let loop = do
-        atomically pullFromQueue >>= \case
-          Nothing -> do
-            atomically (writeTVar vDone True)
-            wait tRecv
-          Just evErr@(EvErr ev _) -> do
-            now <- Time.now
-
-            len <- length <$> atomically (readTVar vWork)
-            when (len == 0) $ do
-              atomically $ spin (Just ev)
-
-            sendWrit serf (WWork now ev)
-            let callback work = do
-                  len <- length <$> atomically (readTVar vWork)
-                  atomically (readTVar vWork) >>= \case
-                    (ev, _) :<| _ -> atomically $ spin (Just ev)
-                    _             -> atomically $ spin Nothing
-                  onResp now evErr work
-
-            atomically $ modifyTVar' vWork (:|> (ev, callback))
-
-            loop
-
-  loop
+  currentEv :: TVar (Seq (Ev, a)) -> STM (Maybe Ev)
+  currentEv vInFlight = readTVar vInFlight >>= \case
+    (ev, _) :<| _ -> pure (Just ev)
+    _             -> pure Nothing
 
 recvLoop :: Serf -> TVar Bool -> TVar (Seq (Ev, Work -> IO ())) -> IO ()
-recvLoop serf vDone vWork = loop
+recvLoop serf vDone vWork = do
+  withSerfLock try serf \SerfState{..} -> do
+    loop ssLast ssHash
  where
-  loop = atomically getCallback >>= \case
-    Nothing -> pure ()
-    Just cb -> do
-      work <- recvWork serf
-      cb work
-      loop
+  loop eve mug = do
+    atomically takeCallback >>= \case
+      Nothing -> pure (SerfState eve mug, ())
+      Just cb -> recvWork serf >>= \case
+        work@(WDone eid hash _)   -> cb work >> loop eid hash
+        work@(WSwap eid hash _ _) -> cb work >> loop eid hash
+        work@(WBail _)            -> cb work >> loop eve mug
 
-  getCallback :: STM (Maybe (Work -> IO ()))
-  getCallback = do
-    pending <- readTVar vWork
-    done    <- readTVar vDone
-    case (done, pending) of
-      (False, Empty) -> retry
-      (True,  Empty) -> pure Nothing
-      (_,     (_, x) :<| xs) -> do
-        writeTVar vWork xs
-        pure (Just x)
-      (_,     _) -> error "impossible"
+  takeCallback :: STM (Maybe (Work -> IO ()))
+  takeCallback = do
+    ((,) <$> readTVar vDone <*> readTVar vWork) >>= \case
+      (False, Empty        ) -> retry
+      (True , Empty        ) -> pure Nothing
+      (_    , (_, x) :<| xs) -> writeTVar vWork xs $> Just x
+      (_    , _            ) -> error "impossible"
