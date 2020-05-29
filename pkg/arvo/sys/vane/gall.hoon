@@ -55,7 +55,7 @@
 ++  state
   $:  :: state version
       ::
-      %4
+      %5
       :: agents by ship
       ::
       =agents
@@ -423,6 +423,12 @@
     =.  mo-core  (mo-untrack-ship ship)
     =.  mo-core  (mo-filter-queue ship)
     =/  agents=(list [name=term =running-agent])  ~(tap by running.agents.state)
+    =.  outstanding.agents.state
+      %-  malt
+      %+  skip  ~(tap by outstanding.agents.state)
+      |=  [[=wire duct] (qeu remote-request)]
+      =(/sys/way/(scot %p ship) (scag 3 wire))
+    ::
     |-  ^+  mo-core
     ?~  agents
       mo-core
@@ -1110,31 +1116,30 @@
     ++  ap-ducts-from-paths
       |=  [target-paths=(list path) target-ship=(unit ship)]
       ^-  (list duct)
-      ?:  &(?=(~ target-paths) ?=(~ target-ship))
-        ~[agent-duct]
-      %-  zing
-      %+  turn  target-paths
-      |=  =path
-      (ap-ducts-from-path `path target-ship)
-    ::  +ap-ducts-from-path: get ducts subscribed to path
-    ::
-    ++  ap-ducts-from-path
-      |=  [target-path=(unit path) target-ship=(unit ship)]
-      ^-  (list duct)
-      ?:  &(?=(~ target-path) ?=(~ target-ship))
-        ~[agent-duct]
-      %+  murn  ~(tap by incoming.subscribers.current-agent)
-      |=  [=duct =ship =path]
-      ^-  (unit ^duct)
-      ?~  target-ship
-        ?:  =(target-path `path)
-          `duct
-        ~
-      ?~  target-path
+      ?~  target-paths
+        ?~  target-ship
+          ~[agent-duct]
+        %+  murn  ~(tap by incoming.subscribers.current-agent)
+        |=  [=duct =ship =path]
+        ^-  (unit ^duct)
         ?:  =(target-ship `ship)
           `duct
         ~
-      ?:  &(=(target-path `path) =(target-ship `ship))
+      %-  zing
+      %+  turn  target-paths
+      |=  =path
+      (ap-ducts-from-path path target-ship)
+    ::  +ap-ducts-from-path: get ducts subscribed to path
+    ::
+    ++  ap-ducts-from-path
+      |=  [target-path=path target-ship=(unit ship)]
+      ^-  (list duct)
+      %+  murn  ~(tap by incoming.subscribers.current-agent)
+      |=  [=duct =ship =path]
+      ^-  (unit ^duct)
+      ?:  ?&  =(target-path path)
+              |(=(target-ship ~) =(target-ship `ship))
+          ==
         `duct
       ~
     ::  +ap-apply: apply effect.
@@ -1555,7 +1560,9 @@
         =.  ap-core
           =/  =tang
             ~[leaf+"subscribe wire not unique" >agent-name< >short-wire< >dock<]
-          %-  (slog >out=outgoing.subscribers.current-agent< tang)
+          =/  have
+            (~(got by outgoing.subscribers.current-agent) short-wire dock)
+          %-  (slog >out=have< tang)
           (ap-error %watch-not-unique tang)
         $(moves t.moves)
       =.  outgoing.subscribers.current-agent
@@ -1679,16 +1686,32 @@
   =?  all-state  ?=(%3 -.all-state)
     (state-3-to-4 all-state)
   ::
-  ?>  ?=(%4 -.all-state)
+  =?  all-state  ?=(%4 -.all-state)
+    (state-4-to-5 all-state)
+  ::
+  ?>  ?=(%5 -.all-state)
   gall-payload(state all-state)
   ::
   ::  +all-state: upgrade path
   ::
-  ++  all-state  $%(state-0 state-1 state-2 state-3 ^state)
+  ++  all-state  $%(state-0 state-1 state-2 state-3 state-4 ^state)
+  ::
+  ++  state-4-to-5
+    |=  =state-4
+    ^-  ^state
+    %=    state-4
+        -  %5
+        outstanding.agents  ~
+    ==
+  ::
+  ++  state-4
+    $:  %4
+        =agents
+    ==
   ::
   ++  state-3-to-4
     |=  =state-3
-    ^-  ^state
+    ^-  state-4
     %=    state-3
         -  %4
         outstanding.agents  ~
