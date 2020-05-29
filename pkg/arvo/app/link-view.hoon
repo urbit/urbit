@@ -19,15 +19,24 @@
 ~%  %link-view-top  ..is  ~
 ::
 |%
++$  versioned-state
+  $%  state-0
+      state-1
+  ==
 +$  state-0
   $:  %0
+      ~
+  ==
+::
++$  state-1
+  $:  %1
       ~
   ==
 ::
 +$  card  card:agent:gall
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 %+  verb  |
@@ -51,15 +60,27 @@
       ::
         =+  /invitatory/link
         [%pass - %agent [our.bowl %invite-store] %watch -]
+        :*  %pass  /srv  %agent  [our.bowl %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~link' /app/landscape %.n])
+        ==
     ==
   ::
   ++  on-save  !>(state)
-  ::
   ++  on-load
-    |=  old=vase
+    |=  old-vase=vase
     ^-  (quip card _this)
-    :_  this(state !<(state-0 old))
-    [%pass /connect %arvo %e %disconnect [~ /'~link']]~
+    =/  old  !<(versioned-state old-vase)
+    ?-  -.old
+        %1  [~ this]
+        %0
+      :_  this(state [%1 ~])
+      :-  [%pass /connect %arvo %e %disconnect [~ /'~link']]
+      :~  :*  %pass  /srv  %agent  [our.bowl %file-server]
+          %poke  %file-server-action
+          !>([%serve-dir /'~link' /app/landscape %.n])
+      ==  ==
+    ==
   ::
   ++  on-poke
     |=  [=mark =vase]

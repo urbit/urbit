@@ -126,6 +126,9 @@ class Channel {
       id,
       action: "delete"
     }]));
+    if (this.eventSource) {
+      this.eventSource.close();
+    }
   }
 
   //  unsubscribe to a specific subscription

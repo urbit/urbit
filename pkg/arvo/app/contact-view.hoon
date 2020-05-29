@@ -11,8 +11,18 @@
     *permission-hook
 /+  *server, *contact-json, default-agent, dbug
 |%
++$  versioned-state
+  $%  state-0
+  ==
+::
++$  state-0
+  $:  %0
+      ~
+  ==
+::
 +$  card  card:agent:gall
 --
+=|  state-0
 =*  state  -
 ::
 %-  agent:dbug
@@ -28,20 +38,29 @@
     ^-  (quip card _this)
     :_  this
     :~  [%pass /updates %agent [our.bowl %contact-store] %watch /updates]
-        
         (contact-poke:cc [%create /~/default])
         (group-poke:cc [%bundle /~/default])
         (contact-poke:cc [%add /~/default our.bowl *contact])
         (group-poke:cc [%add [our.bowl ~ ~] /~/default])
+        :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~groups' /app/landscape %.n])
+        ==
     ==
   ::
-  ++  on-save   on-save:def
+  ++  on-save   !>(state)
   ++  on-load
-    |=  old=*
+    |=  old-vase=vase
     ^-  (quip card _this)
-    :_  this
+    =/  old  ((soft state-0) q.old-vase)
+    ?^  old  [~ this]
+    :_  this(state [%0 ~])
     :~  [%pass / %arvo %e %disconnect [~ /'~groups']]
         [%pass / %arvo %e %connect [~ /'contact-view'] %contact-view]
+        :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~groups' /app/landscape %.n])
+        ==
     ==
   ::
   ++  on-poke
