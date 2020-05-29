@@ -84,7 +84,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2019.10.6
+      date=%~2020.5.29
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -146,6 +146,9 @@
 ::  channel-timeout: the delay before a channel should be reaped
 ::
 ++  channel-timeout  ~h12
+::  session-timeout: the delay before a session expires
+::
+++  session-timeout  ~d7
 --
 ::  utilities
 ::
@@ -956,14 +959,24 @@
         $(eny (shas %try-again candidate))
       ::  record cookie and record expiry time
       ::
-      =/  expires-in=@dr  ~d7
+      =/  first-session=?  =(~ sessions.authentication-state.state)
+      =/  expires-at=@da   (add now session-timeout)
       =.  sessions.authentication-state.state
-        (~(put by sessions.authentication-state.state) session (add now expires-in))
+        (~(put by sessions.authentication-state.state) session expires-at)
       ::
-      =/  max-age=tape  (format-ud-as-integer `@ud`(div (msec:milly expires-in) 1.000))
+      =/  max-age=tape
+        %-  format-ud-as-integer
+        (div (msec:milly session-timeout) 1.000)
       =/  cookie-line
         %-  crip
         "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+      ::
+      =;  out=[moves=(list move) server-state]
+        ::  if we didn't have any cookies previously, start the expiry timer
+        ::
+        ?.  first-session  out
+        =-  out(moves [- moves.out])
+        [duct %pass /sessions/expire %b %wait expires-at]
       ::
       ?~  redirect=(get-header:http 'redirect' u.parsed)
         %-  handle-response
@@ -2150,6 +2163,7 @@
          %run-app-request  run-app-request
          %watch-response   watch-response
          %run-build        run-build
+         %sessions         sessions
          %channel          channel
          %acme             acme-ack
       ==
@@ -2266,6 +2280,34 @@
       [moves http-server-gate]
     ==
   ::
+  ++  sessions
+    ::
+    ?>  ?=([%b %wake *] sign)
+    ::
+    ?^  error.sign
+      [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
+    ::  remove cookies that have expired
+    ::
+    =*  sessions  sessions.authentication-state.server-state.ax
+    =.  sessions.authentication-state.server-state.ax
+      %-  ~(gas by *(map @uv session))
+      %+  murn  ~(tap in sessions)
+      |=  [cookie=@uv session]
+      ^-  (unit [@uv session])
+      ?:  (lth expiry-time now)  ~
+      `[cookie expiry-time]
+    ::  if there's any cookies left, set a timer for the next expected expiry
+    ::
+    ^-  [(list move) _http-server-gate]
+    :_  http-server-gate
+    ?:  =(~ sessions)  ~
+    =;  next-expiry=@da
+      [duct %pass /sessions/expire %b %wait next-expiry]~
+    %+  roll  ~(tap by sessions)
+    |=  [[@uv session] next=@da]
+    ?:  =(*@da next)  expiry-time
+    (min next expiry-time)
+  ::
   ++  acme-ack
     ?>  ?=([%g %unto *] sign)
     ::
@@ -2294,13 +2336,16 @@
       $:  session=(map @t channel-old)
           duct-to-key=(map duct @t)
       ==
-    ++  axle-old
+    ++  axle-2019-1-7
       %+  cork
         axle
       |=  =axle
       axle(date %~2019.1.7, channel-state.server-state (channel-state-old))
+    ::
+    +$  axle-2019-10-6
+      [date=%~2019.10.6 =server-state]
   --
-  |=  old=$%(axle axle-old)
+  |=  old=$%(axle axle-2019-10-6 axle-2019-1-7)
   ^+  ..^$
   ::
   ~!  %loading
@@ -2319,7 +2364,13 @@
       ==
       $(old new)
     ::
-    %~2019.10.6  ..^$(ax old)
+    %~2019.10.6
+      %_  $
+        date.old  %~2020.5.29
+        sessions.authentication-state.server-state.old  ~
+      ==
+    ::
+    %~2020.5.29  ..^$(ax old)
   ==
 
 ::  +stay: produce current state
