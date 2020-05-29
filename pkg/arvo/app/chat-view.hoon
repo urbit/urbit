@@ -13,6 +13,15 @@
 ::
 ~%  %chat-view-top  ..is  ~
 |%
++$  versioned-state
+  $%  state-0
+  ==
+::
++$  state-0
+  $:  %0
+      ~
+  ==
+::
 +$  card  card:agent:gall
 ::
 +$  poke
@@ -23,6 +32,10 @@
       [%permission-group-hook-action permission-group-hook-action]
   ==
 --
+::
+=|  state-0
+=*  state  -
+::
 %+  verb  |
 %-  agent:dbug
 ^-  agent:gall
@@ -37,6 +50,10 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
+    :-  :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~chat' /app/landscape %.n])
+        ==
     [%pass /updates %agent [our.bol %chat-store] %watch /updates]~
   ::
   ++  on-poke
@@ -111,11 +128,13 @@
     ?:  ?=(%bound +<.sign-arvo)  [~ this]
     (on-arvo:def wire sign-arvo)
   ::
-  ++  on-save  on-save:def
+  ++  on-save  !>(state)
   ++  on-load  
-    |=  old=*
+    |=  old-vase=vase
     ^-  (quip card _this)
-    :_  this
+    =/  old  ((soft state-0) q.old-vase)
+    ?^  old  [~ this]
+    :_  this(state [%0 ~])
     :~  [%pass / %arvo %e %disconnect [~ /'~chat']]
         [%pass / %arvo %e %connect [~ /'chat-view'] %chat-view]
         :*  %pass  /srv  %agent  [our.bol %file-server]

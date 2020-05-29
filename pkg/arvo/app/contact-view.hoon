@@ -11,6 +11,10 @@
     *permission-hook
 /+  *server, *contact-json, default-agent, dbug
 |%
++$  versioned-state
+  $%  state-0
+  ==
+::
 +$  state-0
   $:  %0
       dir-served=_|
@@ -46,8 +50,10 @@
   ::
   ++  on-save   !>(state)
   ++  on-load
-    |=  old=*
+    |=  old-vase=vase
     ^-  (quip card _this)
+    =/  old  ((soft state-0) q.old-vase)
+    ?^  old  [~ this]
     :_  this(dir-served %.y)
     :~  [%pass / %arvo %e %disconnect [~ /'~groups']]
         [%pass / %arvo %e %connect [~ /'contact-view'] %contact-view]
