@@ -26,7 +26,6 @@ import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
 import Control.Monad.Trans.Maybe
-import Data.Conduit
 
 import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
@@ -38,7 +37,7 @@ import Urbit.Vere.Clay        (clay)
 import Urbit.Vere.Http.Client (client)
 import Urbit.Vere.Http.Server (serv)
 import Urbit.Vere.Log         (EventLog)
-import Urbit.Vere.Serf        (Serf)
+import Urbit.Vere.Serf        (Serf, ComputeRequest(..), SpinState, EvErr(..))
 
 import qualified System.Entropy         as Ent
 import qualified Urbit.King.API         as King
@@ -49,7 +48,6 @@ import qualified Urbit.Vere.Term        as Term
 import qualified Urbit.Vere.Term.API    as Term
 import qualified Urbit.Vere.Term.Demux  as Term
 import qualified Urbit.Vere.Term.Render as Term
--- ort qualified Data.Conduit.Combinators as CC
 
 
 --------------------------------------------------------------------------------
@@ -202,7 +200,7 @@ resumed vSlog replayUntil flags = do
     logTrace "Replaying events"
     Serf.execReplay serf log replayUntil
     logTrace "Taking snapshot"
-    Serf.snapshot serf
+    io (Serf.snapshot serf)
     logTrace "Shuting down the serf"
 
   pure (serf, log)
@@ -299,7 +297,7 @@ pier (serf, log) vSlog mStart = do
     let stubErrCallback = \_ -> pure ()
 
     let computeConfig = ComputeConfig
-          { ccOnWork = (,stubErrCallback) <$> readTQueue computeQ
+          { ccOnWork = (\x -> EvErr x stubErrCallback) <$> readTQueue computeQ
           , ccOnKill = takeTMVar shutdownM
           , ccOnSave = takeTMVar saveM
           , ccPutResult = writeTQueue persistQ
@@ -421,43 +419,8 @@ logEffect ef = logDebug $ display $ "[EFFECT]\n" <> pretty ef
     GoodParse e -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow e
     FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
 
-data ComputeRequest
-  = CREvent (Ev, Serf.RunError -> IO ())
-  | CRSave ()
-  | CRShutdown ()
-
-{-
-  TODO Pack and Peek
--}
-ipcSource
-  :: forall e
-   . HasLogFunc e
-  => STM (Ev, Serf.RunError -> IO ())
-  -> STM ()
-  -> STM ()
-  -> ConduitT () Serf.RunInput (RIO e) ()
-ipcSource onEvent onSave onKill = loop
- where
-  loop :: ConduitT () Serf.RunInput (RIO e) ()
-  loop = do
-    lift $ logTrace "ipcSource waiting for work request."
-    let down = CRShutdown <$> onKill
-    let save = CRSave <$> onSave
-    let work = CREvent <$> onEvent
-    atomically (down <|> save <|> work) >>= \case
-      CRShutdown () -> do
-        pure ()
-      CRSave () -> do
-        lift $ logTrace "ipcSource: requesting snapshot"
-        yield Serf.RunSnap
-        loop
-      CREvent (ev, cb) -> do
-        lift $ logTrace "ipcSource: requesting work"
-        yield (Serf.RunWork ev cb)
-        loop
-
 data ComputeConfig = ComputeConfig
-  { ccOnWork :: STM (Ev, Serf.RunError -> IO ())
+  { ccOnWork :: STM EvErr
   , ccOnKill :: STM ()
   , ccOnSave :: STM ()
   , ccPutResult :: (Fact, FX) -> STM ()
@@ -468,24 +431,21 @@ data ComputeConfig = ComputeConfig
 runCompute :: forall e . HasLogFunc e => Serf.Serf -> ComputeConfig -> RIO e ()
 runCompute serf ComputeConfig {..} = do
   logTrace "runCompute"
-  runConduit
-    $  ipcSource ccOnWork ccOnSave ccOnKill
-    .| Serf.running serf (atomically . onStatusChange)
-    .| sendResults
- where
-  sendResults :: ConduitT Serf.RunOutput Void (RIO e) ()
-  sendResults = await >>= \case
-    Nothing                               -> pure ()
-    Just (Serf.RunOutput e m w nounEv fx) -> do
-      lift $ logTrace "runCompute: Got play result"
-      atomically $ ccPutResult (Fact e m w nounEv, GoodParse <$> fx) -- TODO GoodParse
-      sendResults
 
-  onStatusChange :: Maybe Serf.RunInput -> STM ()
-  onStatusChange = \case
-    Nothing                  -> ccHideSpinner
-    Just (Serf.RunWork ev _) -> ccShowSpinner (getSpinnerNameForEvent ev)
-    _                        -> pure ()
+  let onCR = asum [ CRKill <$> ccOnKill
+                  , CRSave <$> ccOnSave
+                  , CRWork <$> ccOnWork
+                  ]
+
+  let onOutput :: Serf.RunOutput -> STM ()
+      onOutput (Serf.RunOutput e m w nounEv fx) = do
+        ccPutResult (Fact e m w nounEv, GoodParse <$> fx) -- TODO GoodParse
+
+  let onSpin :: SpinState -> STM ()
+      onSpin Nothing   = ccHideSpinner
+      onSpin (Just ev) = ccShowSpinner (getSpinnerNameForEvent ev)
+
+  io (Serf.swimming serf onCR onOutput onSpin)
 
 
 -- Persist Thread --------------------------------------------------------------

@@ -324,7 +324,7 @@ replayPartEvs top last = do
           case eSs of
             Just bail -> error (show bail)
             Nothing   -> pure ()
-          rio (Serf.snapshot serf)
+          io (Serf.snapshot serf)
           io $ threadDelay 500000 -- Copied from runOrExitImmediately
           pure ()
 

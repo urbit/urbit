@@ -44,8 +44,12 @@ bytesNouns = await >>= \case
     bytesNouns
 
 withSerf :: HasLogFunc e => Config -> RAcquire e Serf
-withSerf config = mkRAcquire (io $ fmap fst $ start config) kill
+withSerf config = mkRAcquire startup kill
  where
+  startup = do
+    (serf, st) <- io $ start config
+    logTrace (displayShow st)
+    pure serf
   kill serf = do
     void $ rio $ shutdown serf
 
@@ -108,4 +112,4 @@ execReplay serf log last = do
     runConduit $ Log.streamEvents log (lastEventInSnap + 1)
               .| CC.take (fromIntegral numEvs)
               .| bytesNouns
-              .| replay serf
+              .| replay 10 serf

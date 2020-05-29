@@ -16,13 +16,20 @@ King-Haskell specific features:
 
 Performance:
 
-- [ ] Batching during replay and normal operation.
+- [x] Batching during replay.
+- [x] Batching during normal operation.
 
 Polish:
 
+- [ ] Cleanup batching flow.
 - [ ] Logging for new IPC flow.
 - [ ] Logging for boot sequence.
 - [ ] Bring back progress bars.
 - [ ] Hook up error callbacks to IO Drivers.
 - [x] Think through how to shutdown the serf on exception.
 - [ ] Better exceptions in Serf error cases.
+
+Other bugs:
+
+- [ ] Handle ^c in connected terminals.
+- [ ] Fix spinner in terminal driver.
