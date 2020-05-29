@@ -46,6 +46,7 @@ export default class ChatStore extends BaseStore {
     this.metadataReducer.reduce(data, this.state);
     this.localReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data, this.state);
+    console.log(this.state);
   }
 }
 

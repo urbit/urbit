@@ -310,7 +310,7 @@ export default class ChatApp extends React.Component {
               >
                 <MemberScreen
                   {...props}
-                  api={api}
+                  api={this.api}
                   station={station}
                   association={association}
                   permission={permission}
@@ -361,7 +361,7 @@ export default class ChatApp extends React.Component {
                   permissions={state.permissions || {}}
                   contacts={state.contacts || {}}
                   associations={associations.contacts}
-                  api={api}
+                  api={this.api}
                   inbox={state.inbox}
                   popout={popout}
                   sidebarShown={state.sidebarShown}
