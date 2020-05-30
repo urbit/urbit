@@ -14,7 +14,7 @@ import Urbit.Vere.Pier.Types
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
-import Urbit.King.App     (KingEnv, runKingEnvStderr)
+import Urbit.King.App     (KingEnv, runKingEnvNoLog)
 
 import qualified Urbit.Vere.Log as Log
 
@@ -58,7 +58,8 @@ withDb dir (Db dId dEvs dFx) act = do
 
 --------------------------------------------------------------------------------
 
-runApp = runKingEnvStderr
+runApp :: RIO KingEnv a -> IO a
+runApp = runKingEnvNoLog
 
 tryReadIdentity :: Property
 tryReadIdentity = forAll arbitrary (ioProperty . runApp . runTest)

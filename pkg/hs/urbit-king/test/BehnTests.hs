@@ -20,7 +20,7 @@ import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
 import Network.Socket     (tupleToHostAddress)
-import Urbit.King.App     (runKingEnvStderr, HasKingId(..))
+import Urbit.King.App     (runKingEnvNoLog, HasKingId(..))
 
 import qualified Urbit.Time     as Time
 import qualified Urbit.Vere.Log as Log
@@ -30,7 +30,7 @@ import qualified Urbit.Vere.Log as Log
 
 -- TODO Timers always fire immediatly. Something is wrong!
 timerFires :: Property
-timerFires = forAll arbitrary (ioProperty . runKingEnvStderr . runTest)
+timerFires = forAll arbitrary (ioProperty . runKingEnvNoLog . runTest)
   where
     runTest :: HasKingId e => () -> RIO e Bool
     runTest () = do
