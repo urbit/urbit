@@ -146,7 +146,7 @@
 ::  channel-timeout: the delay before a channel should be reaped
 ::
 ++  channel-timeout  ~h12
-::  session-timeout: the delay before a session expires
+::  session-timeout: the delay before an idle session expires
 ::
 ++  session-timeout  ~d7
 --
@@ -964,12 +964,8 @@
       =.  sessions.authentication-state.state
         (~(put by sessions.authentication-state.state) session expires-at)
       ::
-      =/  max-age=tape
-        %-  format-ud-as-integer
-        (div (msec:milly session-timeout) 1.000)
-      =/  cookie-line
-        %-  crip
-        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+      =/  cookie-line=@t
+        (session-cookie-string session)
       ::
       =;  out=[moves=(list move) server-state]
         ::  if we didn't have any cookies previously, start the expiry timer
@@ -1000,6 +996,29 @@
           data=~
           complete=%.y
       ==
+    ::  +session-id-from-request: attempt to find a session cookie
+    ::
+    ++  session-id-from-request
+      |=  =request:http
+      ^-  (unit @uv)
+      ::  are there cookies passed with this request?
+      ::
+      ::    TODO: In HTTP2, the client is allowed to put multiple 'Cookie'
+      ::    headers.
+      ::
+      ?~  cookie-header=(get-header:http 'cookie' header-list.request)
+        ~
+      ::  is the cookie line is valid?
+      ::
+      ?~  cookies=(rush u.cookie-header cock:de-purl:html)
+        ~
+      ::  is there an urbauth cookie?
+      ::
+      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
+        ~
+      ::  if it's formatted like a valid session cookie, produce it
+      ::
+      `(unit @)`(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
     ::  +request-is-logged-in: checks to see if the request is authenticated
     ::
     ::    We are considered logged in if this request has an urbauth
@@ -1008,24 +1027,9 @@
     ++  request-is-logged-in
       |=  =request:http
       ^-  ?
-      ::  are there cookies passed with this request?
+      ::  does the request pass a session cookie?
       ::
-      ::    TODO: In HTTP2, the client is allowed to put multiple 'Cookie'
-      ::    headers.
-      ::
-      ?~  cookie-header=(get-header:http 'cookie' header-list.request)
-        %.n
-      ::  is the cookie line is valid?
-      ::
-      ?~  cookies=(rush u.cookie-header cock:de-purl:html)
-        %.n
-      ::  is there an urbauth cookie?
-      ::
-      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
-        %.n
-      ::  is this formatted like a valid session cookie?
-      ::
-      ?~  session-id=(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
+      ?~  session-id=(session-id-from-request request)
         %.n
       ::  is this a session that we know about?
       ::
@@ -1043,6 +1047,16 @@
       =+  res=((sloy scry) [151 %noun] %j pax)
       ::
       (rsh 3 1 (scot %p (@ (need (need res)))))
+    ::  +session-cookie-string: compose newly-timestamped session cookie
+    ::
+    ++  session-cookie-string
+      |=  session=@uv
+      ^-  @t
+      %-  crip
+      =;  max-age=tape
+        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+      %-  format-ud-as-integer
+      (div (msec:milly session-timeout) 1.000)
     --
   ::  +channel: per-event handling of requests to the channel system
   ::
@@ -1750,12 +1764,38 @@
           ?^  response-header.u.connection-state
             ~&  [%http-multiple-start duct]
             error-connection
+          ::  if request was authenticated, extend the session & cookie's life
           ::
+          =^  response-header  sessions.authentication-state.state
+            =,  authentication
+            =*  sessions  sessions.authentication-state.state
+            =*  inbound   inbound-request.u.connection-state
+            =*  no-op     [response-header.http-event sessions]
+            ::
+            ?.  authenticated.inbound
+              no-op
+            ?~  session-id=(session-id-from-request request.inbound)
+              ::  cookies are the only auth method, so this is unexpected
+              ::
+              ~&  [%e %authenticated-without-cookie]
+              no-op
+            ?.  (~(has by sessions) u.session-id)
+              ::  if the session has expired since the request was opened,
+              ::  tough luck, we don't create/revive sessions here
+              ::
+              no-op
+            :_  (~(put by sessions) u.session-id (add now session-timeout))
+            =-  response-header.http-event(headers -)
+            %^  set-header:http  'set-cookie'
+              (session-cookie-string u.session-id)
+            headers.response-header.http-event
+          ::
+          =.  response-header.http-event  response-header
           =.  connections.state
             %+  ~(jab by connections.state)  duct
             |=  connection=outstanding-connection
             %_  connection
-              response-header  `response-header.http-event
+              response-header  `response-header
               bytes-sent  ?~(data.http-event 0 p.u.data.http-event)
             ==
           ::
