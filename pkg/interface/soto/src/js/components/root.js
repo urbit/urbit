@@ -16,11 +16,16 @@ export class Root extends Component {
     store.setStateHandler(this.setState.bind(this));
   }
 
+  componentDidMount() {
+    //preload spinner asset
+    new Image().src = "/~dojo/img/Spinner.png";
+  }
+
   render() {
     return (
       <BrowserRouter>
         <div className="w-100 h-100 bg-white bg-gray1-d">
-        <HeaderBar spinner={this.state.spinner}/>
+        <HeaderBar/>
           <Route
             exact path="/~dojo/:popout?"
             render={(props) => {

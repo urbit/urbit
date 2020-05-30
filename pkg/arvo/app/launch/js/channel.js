@@ -1,5 +1,17 @@
 class Channel {
   constructor() {
+    this.init();
+    this.deleteOnUnload();
+
+    //  a way to handle channel errors
+    //
+    //
+    this.onChannelError = (err) => {
+      console.error('event source error: ', err);
+    };
+  }
+
+  init() {
     //  unique identifier: current time and random number
     //
     this.uid =
@@ -40,8 +52,10 @@ class Channel {
     //    disconnect function may be called exactly once.
     //
     this.outstandingSubscriptions = new Map();
+  }
 
-    this.deleteOnUnload();
+  setOnChannelError(onError = (err) => {}) {
+    this.onChannelError = onError;
   }
 
   deleteOnUnload() {
@@ -164,8 +178,11 @@ class Channel {
       this.lastEventId = e.lastEventId;
 
       let obj = JSON.parse(e.data);
-      if (obj.response == "poke") {
-        let funcs = this.outstandingPokes.get(obj.id);
+      let pokeFuncs = this.outstandingPokes.get(obj.id);
+      let subFuncs = this.outstandingSubscriptions.get(obj.id);
+
+      if (obj.response == "poke" && !!pokeFuncs) {
+        let funcs = pokeFuncs;
         if (obj.hasOwnProperty("ok")) {
           funcs["success"]();
         } else if (obj.hasOwnProperty("err")) {
@@ -175,19 +192,20 @@ class Channel {
         }
         this.outstandingPokes.delete(obj.id);
 
-      } else if (obj.response == "subscribe") {
+      } else if (obj.response == "subscribe" ||
+                (obj.response == "poke" && !!subFuncs)) {
+        let funcs = subFuncs;
         //  on a response to a subscribe, we only notify the caller on err
         //
-        let funcs = this.outstandingSubscriptions.get(obj.id);
         if (obj.hasOwnProperty("err")) {
           funcs["err"](obj.err);
           this.outstandingSubscriptions.delete(obj.id);
         }
       } else if (obj.response == "diff") {
-        let funcs = this.outstandingSubscriptions.get(obj.id);
+        let funcs = subFuncs;
         funcs["event"](obj.json);
       } else if (obj.response == "quit") {
-        let funcs = this.outstandingSubscriptions.get(obj.id);
+        let funcs = subFuncs;
         funcs["quit"](obj);
         this.outstandingSubscriptions.delete(obj.id);
       } else {
@@ -196,8 +214,9 @@ class Channel {
     }
 
     this.eventSource.onerror = e => {
-      console.error("eventSource error:", e);
       this.delete();
+      this.init();
+      this.onChannelError(e);
     }
   }
 

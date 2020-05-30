@@ -2,6 +2,7 @@
 ::
 /-  *group-store, *group-hook
 /+  default-agent, verb, dbug
+~%  %group-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
 ::
@@ -37,18 +38,12 @@
     ^-  (quip card _this)
     =/  old  !<(state-zero vase)
     :_  this(state old)
-    %+  murn
-      ~(tap by synced.old)
+    %+  murn  ~(tap by synced.old)
     |=  [=path =ship]
     ^-  (unit card)
-    =/  =wire
-      [(scot %p ship) %group path]
-    =/  =term
-      ?:  =(our.bowl ship)
-        %group-store
-      %group-hook
-    ?:  (~(has by wex.bowl) [wire ship term])
-      ~
+    =/  =wire  [(scot %p ship) %group path]
+    =/  =term  ?:(=(our.bowl ship) %group-store %group-hook)
+    ?:  (~(has by wex.bowl) [wire ship term])  ~
     `[%pass wire %agent [ship term] %watch [%group path]]
   ::
   ++  on-leave  on-leave:def
@@ -172,10 +167,9 @@
       %remove  [(update-subscribers [%group pax.diff] diff) state]
   ::
       %unbundle
-    :_  state(synced (~(del by synced.state) pax.diff))
-    %+  snoc
-      (update-subscribers [%group pax.diff] diff)
-    [%give %kick [%group pax.diff]~ ~]
+    =/  ship  (~(get by synced.state) pax.diff)
+    ?~  ship  [~ state]
+    (poke-group-hook-action [%remove pax.diff])
   ==
 ::
 ++  handle-foreign
@@ -184,7 +178,6 @@
   ?-  -.diff
       %keys    [~ state]
       %bundle  [~ state]
-  ::
       %path
     :_  state
     ?~  pax.diff  ~
@@ -218,23 +211,26 @@
     [(group-poke pax.diff diff)]~
   ::
       %remove
-    :_  state
-    ?~  pax.diff  ~
+    ?~  pax.diff  [~ state]
     =/  ship  (~(get by synced.state) pax.diff)
-    ?~  ship  ~
-    ?.  =(src.bol u.ship)  ~
-    [(group-poke pax.diff diff)]~
+    ?~  ship  [~ state]
+    ?.  =(src.bol u.ship)  [~ state]
+    ?.  (~(has in members.diff) our.bol)
+      :_  state
+      [(group-poke pax.diff diff)]~
+    =/  changes  (poke-group-hook-action [%remove pax.diff])
+    :_  +.changes
+    %+  welp  -.changes
+    :~  (group-poke pax.diff diff)
+        (group-poke pax.diff [%unbundle pax.diff])
+    ==
   ::
       %unbundle
-    ?~  pax.diff
-      [~ state]
+    ?~  pax.diff  [~ state]
     =/  ship  (~(get by synced.state) pax.diff)
-    ?~  ship
-      [~ state]
-    ?.  =(src.bol u.ship)
-      [~ state]
-    :_  state(synced (~(del by synced.state) pax.diff))
-    [(group-poke pax.diff diff)]~
+    ?~  ship  [~ state]
+    ?.  =(src.bol u.ship)  [~ state]
+    (poke-group-hook-action [%remove pax.diff])
   ==
 ::
 ++  group-poke
@@ -261,5 +257,4 @@
   ?:  =(u.shp our.bol)
     [%pass wir %agent [our.bol %group-store] %leave ~]~
   [%pass wir %agent [u.shp %group-hook] %leave ~]~
-::
 --

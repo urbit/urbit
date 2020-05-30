@@ -1,101 +1,37 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
-import Mousetrap from 'mousetrap';
-import cn from 'classnames';
+import { UnControlled as CodeEditor } from 'react-codemirror2';
+import CodeMirror from 'codemirror';
+
+import 'codemirror/mode/markdown/markdown';
+import 'codemirror/addon/display/placeholder';
 
 import { Sigil } from '/components/lib/icons/sigil';
+import { ShipSearch } from '/components/lib/ship-search';
+import { S3Upload } from '/components/lib/s3-upload';
 
-import { uuid, uxToHex, hexToRgba } from '/lib/util';
+import { uxToHex } from '/lib/util';
 
-const DEFAULT_INPUT_HEIGHT = 28;
-
-
-function getAdvance(a, b) {
-  let res = '';
-  if(!a) {
-    return b;
+const MARKDOWN_CONFIG = {
+  name: 'markdown',
+  tokenTypeOverrides: {
+    header: 'presentation',
+    quote: 'presentation',
+    list1: 'presentation',
+    list2: 'presentation',
+    list3: 'presentation',
+    hr: 'presentation',
+    image: 'presentation',
+    imageAltText: 'presentation',
+    imageMarker: 'presentation',
+    formatting: 'presentation',
+    linkInline: 'presentation',
+    linkEmail: 'presentation',
+    linkText: 'presentation',
+    linkHref: 'presentation'
   }
-  for (let i = 0; i < Math.min(a.length, b.length); i++) {
-    if (a[i] !== b[i]) {
-      return res;
-    }
-    res = res.concat(a[i]);
-  }
-  return res;
-}
-
-function ChatInputSuggestion({ ship, contacts, selected, onSelect }) {
-  let contact = contacts[ship];
-  let color = "#000000";
-  let sigilClass = "v-mid mix-blend-diff"
-  let nickname;
-  let nameStyle = {};
-  const isSelected = ship === selected;
-  if (contact) {
-    const hex = uxToHex(contact.color);
-    color = `#${hex}`;
-    nameStyle.color = hexToRgba(hex, .7);
-    nameStyle.textShadow = '0px 0px 0px #000';
-    nameStyle.filter = 'contrast(1.3) saturate(1.5)';
-    sigilClass = "v-mid";
-    nickname = contact.nickname;
-  }
-
-  return (
-    <div
-      onClick={() => onSelect(ship)}
-      className={cn(
-        'f8 pv1 ph3 pointer hover-bg-gray1-d hover-bg-gray4 relative flex items-center',
-        {
-          'white-d bg-gray0-d bg-white': !isSelected,
-          'black-d bg-gray1-d bg-gray4': isSelected,
-        }
-      )}
-      key={ship}
-    >
-      <Sigil
-        ship={'~' + ship}
-        size={24}
-        color={color}
-        classes={sigilClass}
-      />
-      { nickname && (
-        <p style={nameStyle} className="dib ml4 b" >{nickname}</p>)
-      }
-      <div className="mono gray2 ml4">
-        {'~' + ship}
-      </div>
-      <p className="nowrap ml4">
-        {status}
-      </p>
-    </div>
-  );
-
-}
-
-function ChatInputSuggestions({ suggestions, onSelect, selected, contacts }) {
-  return (
-    <div
-      style={{
-        bottom: '90%',
-        left: '48px'
-      }}
-      className={
-        'absolute black white-d bg-white bg-gray0-d ' +
-        'w7 pv3 z-1 mt1 ba b--gray1-d b--gray4'
-      }>
-      {suggestions.map(ship =>
-        (<ChatInputSuggestion
-           onSelect={onSelect}
-           key={ship}
-           selected={selected}
-           contacts={contacts}
-           ship={ship} />)
-      )}
-    </div>
-  );
-}
+};
 
 export class ChatInput extends Component {
   constructor(props) {
@@ -103,9 +39,7 @@ export class ChatInput extends Component {
 
     this.state = {
       message: '',
-      textareaHeight: DEFAULT_INPUT_HEIGHT,
-      patpSuggestions: [],
-      selectedSuggestion: null
+      patpSearch: null
     };
 
     this.textareaRef = React.createRef();
@@ -113,19 +47,16 @@ export class ChatInput extends Component {
     this.messageSubmit = this.messageSubmit.bind(this);
     this.messageChange = this.messageChange.bind(this);
 
-    this.onEnter = this.onEnter.bind(this);
-
     this.patpAutocomplete = this.patpAutocomplete.bind(this);
-    this.nextAutocompleteSuggestion = this.nextAutocompleteSuggestion.bind(this);
     this.completePatp = this.completePatp.bind(this);
+    this.clearSearch = this.clearSearch.bind(this);
 
-    this.clearSuggestions = this.clearSuggestions.bind(this);
+    this.toggleCode = this.toggleCode.bind(this);
 
-    // Call once per frame @ 60hz
-    this.textareaInput = _.debounce(this.textareaInput.bind(this), 16);
+    this.editor = null;
 
     // perf testing:
-    /*let closure = () => {
+    /* let closure = () => {
       let x = 0;
       for (var i = 0; i < 30; i++) {
         x++;
@@ -147,27 +78,23 @@ export class ChatInput extends Component {
             past: function(input) {
               return input === 'just now'
                 ? input
-                : input + ' ago'
+                : input + ' ago';
             },
             s  : 'just now',
-            future: "in %s",
+            future: 'in %s',
             ss : '%d sec',
-            m:  "a minute",
-            mm: "%d min",
-            h:  "an hr",
-            hh: "%d hrs",
-            d:  "a day",
-            dd: "%d days",
-            M:  "a month",
-            MM: "%d months",
-            y:  "a year",
-            yy: "%d years"
+            m:  'a minute',
+            mm: '%d min',
+            h:  'an hr',
+            hh: '%d hrs',
+            d:  'a day',
+            dd: '%d days',
+            M:  'a month',
+            MM: '%d months',
+            y:  'a year',
+            yy: '%d years'
         }
     });
-  }
-
-  componentDidMount() {
-    this.bindShortcuts();
   }
 
   nextAutocompleteSuggestion(backward = false) {
@@ -183,158 +110,49 @@ export class ChatInput extends Component {
     this.setState({ selectedSuggestion: patpSuggestions[idx] });
   }
 
-
-  patpAutocomplete(message, fresh = false) {
+  patpAutocomplete(message) {
     const match = /~([a-zA-Z\-]*)$/.exec(message);
 
     if (!match ) {
-      this.setState({ patpSuggestions: [] })
+      this.setState({ patpSearch: null });
       return;
     }
-
-
-    const needle = match[1].toLowerCase();
-
-    const matchString = hay => {
-      hay = hay.toLowerCase();
-
-      return hay.startsWith(needle)
-        || _.some(_.words(hay), s => s.startsWith(needle));
-    };
-
-
-    const contacts = _.chain(this.props.contacts)
-      .defaultTo({})
-      .map((details, ship) => ({...details, ship }))
-      .filter(({ nickname, ship }) => matchString(nickname) || matchString(ship))
-      .map('ship')
-      .value()
-
-    const suggestions = _.chain(this.props.envelopes)
-      .defaultTo([])
-      .map("author")
-      .uniq()
-      .reverse()
-      .filter(matchString)
-      .union(contacts)
-      .filter(s => s.length < 28) // exclude comets
-      .take(5)
-      .value();
-
-    let newState = {
-      patpSuggestions: suggestions,
-      selectedSuggestion: suggestions[0]
-    };
-
-    this.setState(newState);
+    this.setState({ patpSearch: match[1].toLowerCase() });
   }
 
-  clearSuggestions() {
+  clearSearch() {
     this.setState({
-      patpSuggestions: []
-    })
+      patpSearch: null
+    });
   }
 
   completePatp(suggestion) {
-    this.setState({
-      message: this.state.message.replace(
+    if(!this.editor) {
+      return;
+    }
+    const newMessage = this.editor.getValue().replace(
         /[a-zA-Z\-]*$/,
         suggestion
-      ),
-      patpSuggestions: []
-    });
-  }
-
-  onEnter(e) {
-    if (this.state.patpSuggestions.length !== 0) {
-      this.completePatp(this.state.selectedSuggestion);
-    } else {
-      this.messageSubmit(e);
-    }
-  }
-
-  bindShortcuts() {
-    let mousetrap = Mousetrap(this.textareaRef.current);
-    mousetrap.bind('enter', e => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      this.onEnter(e);
-    });
-
-
-    mousetrap.bind('tab', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      if(this.state.patpSuggestions.length === 0) {
-        this.patpAutocomplete(this.state.message, true);
-      } else {
-        this.nextAutocompleteSuggestion(false);
-      }
-    });
-    mousetrap.bind(['up', 'shift+tab'], e => {
-      if(this.state.patpSuggestions.length !== 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.nextAutocompleteSuggestion(true)
-      }
-
-    });
-    mousetrap.bind('down', e => {
-      if(this.state.patpSuggestions.length !== 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.nextAutocompleteSuggestion(false)
-      }
-    });
-    mousetrap.bind('esc', e => {
-      if(this.state.patpSuggestions.length !== 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.clearSuggestions();
-      }})
-  }
-
-  messageChange(event) {
-    const message = event.target.value;
+      );
+    this.editor.setValue(newMessage);
+    const lastRow = this.editor.lastLine();
+    const lastCol = this.editor.getLineHandle(lastRow).text.length;
+    this.editor.setCursor(lastRow, lastCol);
     this.setState({
-      message
+      patpSearch: null
     });
-
-    const { patpSuggestions } = this.state;
-    if(patpSuggestions.length !== 0) {
-      this.patpAutocomplete(message, false);
-    }
-
   }
 
-  textareaInput() {
-    const newHeight = this.textareaRef.current.scrollHeight < DEFAULT_INPUT_HEIGHT * 8
-      ? `${this.textareaRef.current.scrollHeight}px`
-      : `${DEFAULT_INPUT_HEIGHT * 8}px`
-
-    this.setState({
-      textareaHeight: newHeight
-    });
+  messageChange(editor, data, value) {
+    const { patpSearch } = this.state;
+    if(patpSearch !== null) {
+      this.patpAutocomplete(value, false);
+    }
   }
 
   getLetterType(letter) {
-    if (letter[0] === '#') {
-      letter = letter.slice(1);
-      // remove insignificant leading whitespace.
-      // aces might be relevant to style.
-      while (letter[0] === '\n') {
-        letter = letter.slice(1);
-      }
-
-      return {
-        code: {
-          expression: letter,
-          output: undefined
-        }
-      }
-    } else if (letter[0] === '@') {
-      letter = letter.slice(1);
+    if (letter.startsWith('/me ')) {
+      letter = letter.slice(4);
       // remove insignificant leading whitespace.
       // aces might be relevant to style.
       while (letter[0] === '\n') {
@@ -343,22 +161,21 @@ export class ChatInput extends Component {
 
       return {
         me: letter
-      }
+      };
     } else if (this.isUrl(letter)) {
        return {
         url: letter
-      }
+      };
     } else {
       return {
         text: letter
-      }
+      };
     }
   }
 
   isUrl(string) {
     try {
-      let websiteTest = new RegExp(''
-      + /((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source
+      const websiteTest = new RegExp(String(/^((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source)
       );
       return websiteTest.test(string);
     } catch (e) {
@@ -367,17 +184,33 @@ export class ChatInput extends Component {
   }
 
   messageSubmit() {
+    if(!this.editor) {
+      return;
+    }
     const { props, state } = this;
+    const editorMessage = this.editor.getValue();
 
-    if (state.message === '') {
+    if (editorMessage === '') {
       return;
     }
 
+    props.onEnter();
+
+    if(state.code) {
+      props.api.chat.message(props.station, `~${window.ship}`, Date.now(), {
+        code: {
+          expression: editorMessage,
+          output: undefined
+        }
+      });
+      this.editor.setValue('');
+      return;
+    }
     let message = [];
-    state.message.split(" ").map((each) => {
+    editorMessage.split(' ').map((each) => {
       if (this.isUrl(each)) {
         if (message.length > 0) {
-          message = message.join(" ");
+          message = message.join(' ');
           message = this.getLetterType(message);
           props.api.chat.message(
             props.station,
@@ -387,22 +220,20 @@ export class ChatInput extends Component {
           );
           message = [];
         }
-        let URL = this.getLetterType(each);
+        const URL = this.getLetterType(each);
         props.api.chat.message(
           props.station,
           `~${window.ship}`,
           Date.now(),
           URL
         );
-      }
-      else {
+      } else {
         return message.push(each);
       }
-    })
-
+    });
 
     if (message.length > 0) {
-      message = message.join(" ");
+      message = message.join(' ');
       message = this.getLetterType(message);
       props.api.chat.message(
         props.station,
@@ -413,64 +244,151 @@ export class ChatInput extends Component {
       message = [];
     }
 
-    // perf: 
-    //setTimeout(this.closure, 2000);
+    // perf:
+    // setTimeout(this.closure, 2000);
 
-    this.setState({
-      message: '',
-      textareaHeight: DEFAULT_INPUT_HEIGHT
-    });
+    this.editor.setValue('');
+  }
+
+  toggleCode() {
+    if(this.state.code) {
+      this.setState({ code: false });
+      this.editor.setOption('mode', MARKDOWN_CONFIG);
+      this.editor.setOption('placeholder', this.props.placeholder);
+    } else {
+      this.setState({ code: true });
+      this.editor.setOption('mode', null);
+      this.editor.setOption('placeholder', 'Code...');
+    }
+    const value = this.editor.getValue();
+
+    // Force redraw of placeholder
+    if(value.length === 0) {
+      this.editor.setValue(' ');
+      this.editor.setValue('');
+    }
+  }
+
+  uploadSuccess(url) {
+    const { props } = this;
+    props.api.chat.message(
+      props.station,
+      `~${window.ship}`,
+      Date.now(),
+      { url }
+    );
+  }
+
+  uploadError(error) {
+    //  no-op for now
   }
 
   render() {
     const { props, state } = this;
 
-    let color = !!props.ownerContact
+    const color = props.ownerContact
       ? uxToHex(props.ownerContact.color) : '000000';
 
-    let sigilClass = !!props.ownerContact
-      ? "" : "mix-blend-diff";
+    const sigilClass = props.ownerContact
+      ? '' : 'mix-blend-diff';
+
+    const img = (props.ownerContact && (props.ownerContact.avatar !== null))
+      ? <img src={props.ownerContact.avatar} height={24} width={24} className="dib" />
+      : <Sigil
+        ship={window.ship}
+        size={24}
+        color={`#${color}`}
+        classes={sigilClass}
+        />;
+
+    const candidates = _.chain(this.props.envelopes)
+      .defaultTo([])
+      .map('author')
+      .uniq()
+      .reverse()
+      .value();
+
+    const codeTheme = state.code ? ' code' : '';
+
+    const options = {
+      mode: MARKDOWN_CONFIG,
+      theme: 'tlon' + codeTheme,
+      lineNumbers: false,
+      lineWrapping: true,
+      scrollbarStyle: 'native',
+      cursorHeight: 0.85,
+      placeholder: state.code ? 'Code...' : props.placeholder,
+      extraKeys: {
+        Tab: cm =>
+          this.patpAutocomplete(cm.getValue(), true),
+        'Enter': () => {
+          this.messageSubmit();
+          if (this.state.code) {
+            this.toggleCode();
+          }
+        },
+        'Shift-3': cm =>
+          cm.getValue().length === 0
+            ? this.toggleCode()
+            : CodeMirror.Pass
+      }
+    };
 
     return (
       <div className="pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white bg-gray0-d relative"
-      style={{ flexGrow: 1 }}>
-        {state.patpSuggestions.length !== 0 && (
-          <ChatInputSuggestions
-            onSelect={this.completePatp}
-            suggestions={state.patpSuggestions}
-            selected={state.selectedSuggestion}
-            contacts={props.contacts}
-          />
-        )}
-
+      style={{ flexGrow: 1 }}
+      >
+        <ShipSearch
+          popover
+          onSelect={this.completePatp}
+          onClear={this.clearSearch}
+          contacts={props.contacts}
+          candidates={candidates}
+          searchTerm={this.state.patpSearch}
+          cm={this.editor}
+        />
         <div
           className="fl"
           style={{
-            marginTop: 4,
+            marginTop: 6,
             flexBasis: 24,
             height: 24
-          }}>
-          <Sigil
-            ship={window.ship}
-            size={24}
-            color={`#${color}`}
-            classes={sigilClass}
-            />
+          }}
+        >
+        {img}
         </div>
-        <div className="fr h-100 flex bg-gray0-d" style={{ flexGrow: 1 }}>
-          <textarea
-            className={"pl3 bn bg-gray0-d white-d"}
-            style={{ flexGrow: 1, height: state.textareaHeight, paddingTop: 6, resize: "none" }}
-            autoCapitalize="none"
-            autoFocus={(
-              /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
-              navigator.userAgent
-            )) ? false : true}
-            ref={this.textareaRef}
-            placeholder={props.placeholder}
-            value={state.message}
-            onChange={this.messageChange}
-            onInput={this.textareaInput}
+        <div
+          className="fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center"
+          style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}
+        >
+          <CodeEditor
+            options={options}
+            editorDidMount={(editor) => {
+            this.editor = editor;
+            if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
+                navigator.userAgent
+              )) {
+              editor.focus();
+              }
+            }}
+            onChange={(e, d, v) => this.messageChange(e, d, v)}
+          />
+        </div>
+        <div className="ml2 mr2"
+          style={{ height: '16px', width: '16px', flexBasis: 16, marginTop: 10 }}>
+          <S3Upload
+            configuration={props.s3.configuration}
+            credentials={props.s3.credentials}
+            uploadSuccess={this.uploadSuccess.bind(this)}
+            uploadError={this.uploadError.bind(this)}
+          />
+        </div>
+        <div style={{ height: '16px', width: '16px', flexBasis: 16, marginTop: 10 }}>
+          <img
+            style={{ filter: state.code && 'invert(100%)', height: '100%', width: '100%' }}
+            onClick={this.toggleCode}
+            src="/~chat/img/CodeEval.png"
+            className="contrast-10-d bg-white bg-none-d ba b--gray1-d br1"
           />
         </div>
       </div>

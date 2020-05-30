@@ -23,8 +23,10 @@ export class EditElement extends Component {
       ? { resize: "vertical", height: 40, paddingTop: 10 }
       : { resize: "none", height: 40, paddingTop: 10 }
 
+    let classes = !!props.className ? "pb4 " + props.className : "pb4";
+
     return (
-      <div className="pb4">
+      <div className={classes}>
         <p className="f9 gray2">{props.title}</p>
           <div className="w-100 flex">
             <textarea

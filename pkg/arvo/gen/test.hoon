@@ -1,3 +1,4 @@
+::  Run tests
 /+  test-runner
 /=  all-tests
   /^  (map path (list test-arm:test-runner))

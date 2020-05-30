@@ -20,7 +20,7 @@ import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
 import Network.Socket     (tupleToHostAddress)
-import Urbit.King.App     (runApp)
+import Urbit.King.App     (runKingEnvStderr, HasKingId(..))
 
 import qualified Urbit.Time     as Time
 import qualified Urbit.Vere.Log as Log
@@ -28,17 +28,16 @@ import qualified Urbit.Vere.Log as Log
 
 --------------------------------------------------------------------------------
 
-king :: KingId
-king = KingId 0
-
 -- TODO Timers always fire immediatly. Something is wrong!
 timerFires :: Property
-timerFires = forAll arbitrary (ioProperty . runApp . runTest)
+timerFires = forAll arbitrary (ioProperty . runKingEnvStderr . runTest)
   where
-    runTest :: () -> RIO e Bool
+    runTest :: HasKingId e => () -> RIO e Bool
     runTest () = do
+      envr <- ask
+      king <- fromIntegral <$> view kingIdL
       q <- newTQueueIO
-      rwith (liftAcquire $ snd $ behn king (writeTQueue q)) $ \cb -> do
+      rwith (liftAcquire $ snd $ behn envr (writeTQueue q)) $ \cb -> do
         cb (BehnEfDoze (king, ()) (Just (2^20)))
         t <- atomically $ readTQueue q
         pure True

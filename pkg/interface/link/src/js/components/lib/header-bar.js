@@ -7,17 +7,8 @@ export class HeaderBar extends Component {
     let popout = window.location.href.includes("popout/")
       ? "dn" : "dn db-m db-l db-xl";
 
-    // let spinner = !!this.props.spinner
-    //   ? this.props.spinner : false;
-
-    // let spinnerClasses = "";
-
-    // if (spinner === true) {
-    //   spinnerClasses = "spin-active";
-    // }
-
-    let invites = (this.props.invites && this.props.invites.contacts)
-      ? this.props.invites.contacts
+    let invites = (this.props.invites && this.props.invites["/contacts"])
+      ? this.props.invites["/contacts"]
       : {};
 
     return (

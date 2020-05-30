@@ -1,8 +1,7 @@
 ::  link-listen-hook: get your friends' bookmarks
 ::
-::    keeps track of a listening=(set app-path). automatically adds to that
-::    whenever new %link resources get added in the metadata-store. users
-::    can manually remove from and add back to this set.
+::    keeps track of a listening=(set app-path). users can manually add to and
+::    remove from this set.
 ::
 ::    for all ships in groups associated with those resources, we subscribe to
 ::    their link's local-pages and annotations at the resource path (through
@@ -18,6 +17,7 @@
 /-  link-listen-hook, *metadata-store, *link, group-store
 /+  mdl=metadata, default-agent, verb, dbug
 ::
+~%  %link-listen-hook-top  ..is  ~
 |%
 +$  versioned-state
   $%  [%0 state-0]
@@ -289,21 +289,11 @@
   |=  upd=metadata-update
   ^-  (quip card _state)
   ?+  -.upd  [~ state]
-      %associations
-    =/  socs=(list [=group-path resource])
-      ~(tap in ~(key by associations.upd))
-    =|  cards=(list card)
-    |-  ::TODO  try for +roll maybe?
-    ?~  socs  [cards state]
-    =^  more-cards  state
-      =,  i.socs
-      ?.  =(%link app-name)  [~ state]
-      %-  handle-metadata-update
-      [%add group-path [%link app-path] *metadata]
-    $(socs t.socs, cards (weld cards more-cards))
-  ::
       %add
     ?>  =(%link app-name.resource.upd)
+    ::  auto-listen to collections in unmanaged groups only
+    ::
+    ?.  ?=([%'~' ^] group-path.upd)  [~ state]
     =,  resource.upd
     =^  update  listening
       ^-  (quip card _listening)
@@ -372,9 +362,11 @@
   =*  loop-whos  $
   ?~  whos  loop-socs(socs t.socs)
   =^  caz  state
-    ?:  ?=(%remove -.upd)
-      (leave-from-peer i.socs pax.upd i.whos)
-    (listen-to-peer i.socs pax.upd i.whos)
+    ?.  ?=(%remove -.upd)
+      (listen-to-peer i.socs pax.upd i.whos)
+    ?:  =(our.bowl i.whos)
+      (handle-listen-action %leave i.socs)
+    (leave-from-peer i.socs pax.upd i.whos)
   loop-whos(whos t.whos, cards (weld cards caz))
 ::
 ::  link subscriptions

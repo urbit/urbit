@@ -10,6 +10,7 @@
 ::      all in subs matching the parameters
 ::      direction: %incoming or %outgoing
 ::      specifics:
+::        ~              all subscriptions
 ::        [%ship ~ship]  subscriptions to/from this ship
 ::        [%path /path]  subscriptions on path containing /path
 ::        [%wire /wire]  subscriptions on wire containing /wire

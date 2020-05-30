@@ -7,18 +7,21 @@
 
 module Urbit.Vere.Http.Client where
 
-import Urbit.Arvo            (BlipEv(..), Ev(..), HttpClientEf(..),
-                              HttpClientEv(..), HttpClientReq(..),
-                              HttpEvent(..), KingId, ResponseHeader(..))
-import Urbit.Prelude         hiding (Builder)
-import Urbit.Vere.Pier.Types
+import Urbit.Prelude hiding (Builder)
 
 import Urbit.Vere.Http
+import Urbit.Vere.Pier.Types
+
+import Urbit.Arvo (BlipEv(..), Ev(..), HttpClientEf(..), HttpClientEv(..),
+                   HttpClientReq(..), HttpEvent(..), KingId, ResponseHeader(..))
+
+import Urbit.King.App (HasKingId(..))
 
 import qualified Data.Map                as M
 import qualified Network.HTTP.Client     as H
 import qualified Network.HTTP.Client.TLS as TLS
 import qualified Network.HTTP.Types      as HT
+
 
 -- Types -----------------------------------------------------------------------
 
@@ -54,10 +57,16 @@ bornEv king =
 
 --------------------------------------------------------------------------------
 
-client :: forall e. HasLogFunc e
-       => KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e HttpClientEf))
-client kingId enqueueEv = (initialEvents, runHttpClient)
+client
+  :: forall e
+   . (HasLogFunc e, HasKingId e)
+  => e
+  -> QueueEv
+  -> ([Ev], RAcquire e (EffCb e HttpClientEf))
+client env enqueueEv = (initialEvents, runHttpClient)
   where
+    kingId = view (kingIdL . to fromIntegral) env
+
     initialEvents :: [Ev]
     initialEvents = [bornEv kingId]
 

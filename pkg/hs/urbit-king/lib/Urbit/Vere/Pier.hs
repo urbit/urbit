@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -Wwarn #-}
 
 {-|
-    Top-Level Pier Management
+  Top-Level Pier Management
 
-    This is the code that starts the IO drivers and deals with
-    communication between the serf, the log, and the IO drivers.
+  This is the code that starts the IO drivers and deals with
+  communication between the serf, the log, and the IO drivers.
 -}
 module Urbit.Vere.Pier
   ( booted
@@ -20,22 +20,23 @@ where
 
 import Urbit.Prelude
 
+import Control.Monad.Trans.Maybe
 import RIO.Directory
-import System.Random
 import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
-import Control.Monad.Trans.Maybe
 
 import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
-import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
+import Urbit.King.App         (HasPierEnv(..))
 -- ort Urbit.Time             (Wen)
+import Urbit.King.App         (HasKingEnv, HasPierEnv, PierEnv)
 import Urbit.Vere.Ames        (ames)
 import Urbit.Vere.Behn        (behn)
 import Urbit.Vere.Clay        (clay)
+import Urbit.Vere.Eyre        (eyre)
+import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
 import Urbit.Vere.Http.Client (client)
-import Urbit.Vere.Http.Server (serv)
 import Urbit.Vere.Log         (EventLog)
 import Urbit.Vere.Serf        (Serf, ComputeRequest(..), SpinState, EvErr(..))
 
@@ -54,10 +55,10 @@ import qualified Urbit.Vere.Term.Render as Term
 
 setupPierDirectory :: FilePath -> RIO e ()
 setupPierDirectory shipPath = do
-   for_ ["put", "get", "log", "chk"] $ \seg -> do
-       let pax = shipPath <> "/.urb/" <> seg
-       createDirectoryIfMissing True pax
-       io $ setFileMode pax ownerModes
+  for_ ["put", "get", "log", "chk"] $ \seg -> do
+    let pax = shipPath <> "/.urb/" <> seg
+    createDirectoryIfMissing True pax
+    io $ setFileMode pax ownerModes
 
 
 -- Load pill into boot sequence. -----------------------------------------------
@@ -66,38 +67,39 @@ genEntropy :: RIO e Word512
 genEntropy = fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
 
 generateBootSeq :: Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
-generateBootSeq ship Pill{..} lite boot = do
-    ent <- genEntropy
-    let ovums = preKern ent <> pKernelOvums <> postKern <> pUserspaceOvums
-    pure $ BootSeq ident pBootFormulas ovums
-  where
-    ident       = LogIdentity ship isFake (fromIntegral $ length pBootFormulas)
-    preKern ent = [ EvBlip $ BlipEvArvo $ ArvoEvWhom ()     ship
-                  , EvBlip $ BlipEvArvo $ ArvoEvWack ()     ent
-                  ]
-    postKern = [ EvBlip $ BlipEvTerm $ TermEvBoot (1,()) lite boot ]
-    isFake = case boot of
-      Fake _ -> True
-      _      -> False
+generateBootSeq ship Pill {..} lite boot = do
+  ent <- genEntropy
+  let ovums = preKern ent <> pKernelOvums <> postKern <> pUserspaceOvums
+  pure $ BootSeq ident pBootFormulas ovums
+ where
+  ident = LogIdentity ship isFake (fromIntegral $ length pBootFormulas)
+  preKern ent =
+    [ EvBlip $ BlipEvArvo $ ArvoEvWhom () ship
+    , EvBlip $ BlipEvArvo $ ArvoEvWack () ent
+    ]
+  postKern = [EvBlip $ BlipEvTerm $ TermEvBoot (1, ()) lite boot]
+  isFake   = case boot of
+    Fake _ -> True
+    _      -> False
 
 
 -- Write a batch of jobs into the event log ------------------------------------
 
 writeJobs :: EventLog -> Vector Job -> RIO e ()
 writeJobs log !jobs = do
-    expect <- Log.nextEv log
-    events <- fmap fromList $ traverse fromJob (zip [expect..] $ toList jobs)
-    Log.appendEvents log events
-  where
-    fromJob :: (EventId, Job) -> RIO e ByteString
-    fromJob (expectedId, job) = do
-        unless (expectedId == jobId job) $
-            error $ show ("bad job id!", expectedId, jobId job)
-        pure $ jamBS $ jobPayload job
+  expect <- Log.nextEv log
+  events <- fmap fromList $ traverse fromJob (zip [expect ..] $ toList jobs)
+  Log.appendEvents log events
+ where
+  fromJob :: (EventId, Job) -> RIO e ByteString
+  fromJob (expectedId, job) = do
+    unless (expectedId == jobId job) $ error $ show
+      ("bad job id!", expectedId, jobId job)
+    pure $ jamBS $ jobPayload job
 
-    jobPayload :: Job -> Noun
-    jobPayload (RunNok (LifeCyc _ m n)) = toNoun (m, n)
-    jobPayload (DoWork (Work _ m d o))  = toNoun (m, d, o)
+  jobPayload :: Job -> Noun
+  jobPayload (RunNok (LifeCyc _ m n)) = toNoun (m, n)
+  jobPayload (DoWork (Work _ m d o )) = toNoun (m, d, o)
 
 
 -- Boot a new ship. ------------------------------------------------------------
@@ -125,6 +127,18 @@ runSerf vSlog pax fax = do
     , scDead = pure () -- TODO: What can be done?
     }
 
+booted
+  :: TVar (Text -> IO ())
+  -> Pill
+  -> Bool
+  -> [Serf.Flag]
+  -> Ship
+  -> LegacyBootEvent
+  -> RAcquire PierEnv (Serf, EventLog)
+booted vSlog pill lite flags ship boot = do
+  rio $ bootNewShip pill lite flags ship boot
+  resumed vSlog Nothing flags
+
 bootSeqJobs :: Time.Wen -> BootSeq -> [Job]
 bootSeqJobs now (BootSeq ident nocks ovums) = zipWith ($) bootSeqFns [1 ..]
  where
@@ -138,7 +152,7 @@ bootSeqJobs now (BootSeq ident nocks ovums) = zipWith ($) bootSeqFns [1 ..]
     muckOvum ov eId = DoWork $ Work eId 0 (wen eId) ov
 
 bootNewShip
-  :: (HasPierConfig e, HasStderrLogFunc e, HasLogFunc e)
+  :: HasPierEnv e
   => Pill
   -> Bool
   -> [Serf.Flag]
@@ -161,28 +175,14 @@ bootNewShip pill lite flags ship bootEv = do
 
   logTrace "Finsihed populating event log with boot sequence"
 
-booted
-  :: (HasPierConfig e, HasStderrLogFunc e, HasLogFunc e)
-  => TVar (Text -> IO ())
-  -> Pill
-  -> Bool
-  -> [Serf.Flag]
-  -> Ship
-  -> LegacyBootEvent
-  -> RAcquire e (Serf, EventLog)
-booted vSlog pill lite flags ship boot = do
-  rio $ bootNewShip pill lite flags ship boot
-  resumed vSlog Nothing flags
-
 
 -- Resume an existing ship. ----------------------------------------------------
 
 resumed
-  :: (HasStderrLogFunc e, HasPierConfig e, HasLogFunc e)
-  => TVar (Text -> IO ())
+  :: TVar (Text -> IO ())
   -> Maybe Word64
   -> [Serf.Flag]
-  -> RAcquire e (Serf, EventLog)
+  -> RAcquire PierEnv (Serf, EventLog)
 resumed vSlog replayUntil flags = do
   rio $ logTrace "Resuming ship"
   top <- view pierPathL
@@ -228,12 +228,13 @@ acquireWorker act = mkRAcquire (async act) cancel
 acquireWorkerBound :: RIO e () -> RAcquire e (Async ())
 acquireWorkerBound act = mkRAcquire (asyncBound act) cancel
 
-pier :: ∀e. (HasConfigDir e, HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
-     => (Serf, EventLog)
-     -> TVar (Text -> IO ())
-     -> MVar ()
-     -> RAcquire e ()
-pier (serf, log) vSlog mStart = do
+pier
+  :: (Serf, EventLog)
+  -> TVar (Text -> IO ())
+  -> MVar ()
+  -> MultiEyreApi
+  -> RAcquire PierEnv ()
+pier (serf, log) vSlog mStart multi = do
     computeQ  <- newTQueueIO
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
@@ -248,8 +249,6 @@ pier (serf, log) vSlog mStart = do
         pure q
 
     let shutdownEvent = putTMVar shutdownM ()
-
-    inst <- io (KingId . UV . fromIntegral <$> randomIO @Word16)
 
     -- (sz, local) <- Term.localClient
 
@@ -285,8 +284,11 @@ pier (serf, log) vSlog mStart = do
     -- the c serf code. Logging output from our haskell process must manually
     -- add them.
     let showErr = atomically . Term.trace muxed . (flip append "\r\n")
+
+    env <- ask
+
     let (bootEvents, startDrivers) =
-            drivers inst ship (isFake logId)
+            drivers env multi ship (isFake logId)
                 (writeTQueue computeQ)
                 shutdownEvent
                 (Term.TSize{tsWide=80, tsTall=24}, muxed)
@@ -322,7 +324,7 @@ pier (serf, log) vSlog mStart = do
 
     atomically ded >>= \case
       Left (txt, exn) -> logError $ displayShow ("Somthing died", txt, exn)
-      Right tag       -> logError $ displayShow ("something simply exited", tag)
+      Right tag       -> logError $ displayShow ("Something simply exited", tag)
 
     atomically $ (Term.spin muxed) (Just "shutdown")
 
@@ -353,21 +355,26 @@ data Drivers e = Drivers
     , dTerm       :: EffCb e TermEf
     }
 
-drivers :: (HasLogFunc e, HasNetworkConfig e, HasPierConfig e)
-        => KingId -> Ship -> Bool -> (Ev -> STM ())
-        -> STM()
-        -> (Term.TSize, Term.Client)
-        -> (Text -> RIO e ())
-        -> ([Ev], RAcquire e (Drivers e))
-drivers inst who isFake plan shutdownSTM termSys stderr =
+drivers
+  :: HasPierEnv e
+  => e
+  -> MultiEyreApi
+  -> Ship
+  -> Bool
+  -> (Ev -> STM ())
+  -> STM ()
+  -> (Term.TSize, Term.Client)
+  -> (Text -> RIO e ())
+  -> ([Ev], RAcquire e (Drivers e))
+drivers env multi who isFake plan shutdownSTM termSys stderr =
     (initialEvents, runDrivers)
   where
-    (behnBorn, runBehn) = behn inst plan
-    (amesBorn, runAmes) = ames inst who isFake plan stderr
-    (httpBorn, runHttp) = serv inst plan isFake
-    (clayBorn, runClay) = clay inst plan
-    (irisBorn, runIris) = client inst plan
-    (termBorn, runTerm) = Term.term termSys shutdownSTM inst plan
+    (behnBorn, runBehn) = behn env plan
+    (amesBorn, runAmes) = ames env who isFake plan stderr
+    (httpBorn, runHttp) = eyre env multi who plan isFake
+    (clayBorn, runClay) = clay env plan
+    (irisBorn, runIris) = client env plan
+    (termBorn, runTerm) = Term.term env termSys shutdownSTM plan
     initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
                                    termBorn, irisBorn]
     runDrivers          = do
@@ -428,7 +435,7 @@ data ComputeConfig = ComputeConfig
   , ccHideSpinner :: STM ()
   }
 
-runCompute :: forall e . HasLogFunc e => Serf.Serf -> ComputeConfig -> RIO e ()
+runCompute :: forall e . HasKingEnv e => Serf.Serf -> ComputeConfig -> RIO e ()
 runCompute serf ComputeConfig {..} = do
   logTrace "runCompute"
 
@@ -461,7 +468,7 @@ instance Exception PersistExn where
 
 runPersist
   :: forall e
-   . (HasPierConfig e, HasLogFunc e)
+   . HasPierEnv e
   => EventLog
   -> TQueue (Fact, FX)
   -> (FX -> STM ())

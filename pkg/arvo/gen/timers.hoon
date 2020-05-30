@@ -1,4 +1,5 @@
+::  Find list of currently running Behn timers
 :-  %say
 |=  *
 :-  %tang
-[.^(tank %b %) ~]
+[>.^((list [date=@da =duct]) %b /=timers=)< ~]

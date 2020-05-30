@@ -21,6 +21,7 @@
 ::
 /-  group-store, *metadata-store
 /+  *link, metadata, default-agent, verb, dbug
+~%  %link-proxy-hook-top  ..is  ~
 |%
 +$  state-0
   $:  %0
@@ -113,8 +114,6 @@
       `t.t.path
     ~
   ?~  target  |
-  ~?  !.^(? %gu (scot %p our.bowl) %metadata-store (scot %da now.bowl) ~)
-    %woah-md-s-not-booted  ::TODO  fallback if needed
   %+  lien  (groups-from-resource:md %link u.target)
   |=  =group-path
   ^-  ?

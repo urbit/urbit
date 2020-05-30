@@ -6,8 +6,8 @@ import _ from 'lodash';
 export default class Header extends Component {
   render() {
 
-    let invites = (this.props.invites && this.props.invites.contacts)
-      ? this.props.invites.contacts : {};
+    let invites = (this.props.invites && this.props.invites["/contacts"])
+      ? this.props.invites["/contacts"] : {};
 
     return (
       <header

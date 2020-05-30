@@ -24,6 +24,7 @@ type Life = Word -- Number of Azimoth key revs.
 type Bloq = Atom -- TODO
 type Oath = Atom -- Signature
 
+
 -- Parsed URLs -----------------------------------------------------------------
 
 type Host = Each Turf Ipv4
@@ -169,7 +170,7 @@ data HttpServerReq = HttpServerReq
 data HttpClientEv
     = HttpClientEvReceive (KingId, ()) ServerId HttpEvent
     | HttpClientEvBorn    (KingId, ()) ()
-    | HttpClientEvCrud    Path       Cord Tang
+    | HttpClientEvCrud    Path         Noun
   deriving (Eq, Ord, Show)
 
 data HttpServerEv
@@ -178,7 +179,7 @@ data HttpServerEv
     | HttpServerEvRequestLocal  (ServId, UD, UD, ()) HttpServerReq
     | HttpServerEvLive          (ServId, ())         Port (Maybe Port)
     | HttpServerEvBorn          (KingId, ())         ()
-    | HttpServerEvCrud          Path                 Cord Tang
+    | HttpServerEvCrud          Path                 Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Address
@@ -193,7 +194,7 @@ deriveNoun ''HttpServerReq
 data AmesEv
     = AmesEvHear ()   AmesDest Bytes
     | AmesEvHole ()   AmesDest Bytes
-    | AmesEvCrud Path Cord Tang
+    | AmesEvCrud Path Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''AmesEv
@@ -202,10 +203,10 @@ deriveNoun ''AmesEv
 -- Arvo Events -----------------------------------------------------------------
 
 data ArvoEv
-    = ArvoEvWhom () Ship
-    | ArvoEvWack () Word512
+    = ArvoEvWhom ()   Ship
+    | ArvoEvWack ()   Word512
     | ArvoEvWarn Path Noun
-    | ArvoEvCrud Path Cord Tang
+    | ArvoEvCrud Path Noun
     | ArvoEvVeer Atom Noun
   deriving (Eq, Ord, Show)
 
@@ -216,7 +217,7 @@ deriveNoun ''ArvoEv
 
 data BoatEv
     = BoatEvBoat ()   ()
-    | BoatEvCrud Path Cord Tang
+    | BoatEvCrud Path Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''BoatEv
@@ -227,7 +228,7 @@ deriveNoun ''BoatEv
 data BehnEv
     = BehnEvWake ()           ()
     | BehnEvBorn (KingId, ()) ()
-    | BehnEvCrud Path         Cord Tang
+    | BehnEvCrud Path         Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''BehnEv
@@ -237,7 +238,7 @@ deriveNoun ''BehnEv
 
 data NewtEv
     = NewtEvBorn (KingId, ()) ()
-    | NewtEvCrud Path         Cord Tang
+    | NewtEvCrud Path         Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''NewtEv
@@ -247,7 +248,7 @@ deriveNoun ''NewtEv
 
 data SyncEv
     = SyncEvInto (Nullable (KingId, ())) Desk Bool [(Path, Maybe Mime)]
-    | SyncEvCrud Path                    Cord Tang
+    | SyncEvCrud Path                    Noun
   deriving (Eq, Ord, Show)
 
 deriveNoun ''SyncEv
@@ -278,7 +279,7 @@ data TermEv
     | TermEvBlew (UD, ()) Word Word
     | TermEvBoot (UD, ()) Bool LegacyBootEvent
     | TermEvHail (UD, ()) ()
-    | TermEvCrud Path       Cord Tang
+    | TermEvCrud Path     Noun
   deriving (Eq, Show)
 
 deriveNoun ''LegacyBootEvent

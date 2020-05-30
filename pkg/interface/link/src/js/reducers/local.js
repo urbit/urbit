@@ -5,7 +5,6 @@ export class LocalReducer {
         let data = _.get(json, 'local', false);
         if (data) {
             this.sidebarToggle(data, state);
-            this.setSpinner(data, state);
             this.setSelected(data, state);
         }
     }
@@ -17,12 +16,6 @@ export class LocalReducer {
         }
     }
 
-    setSpinner(obj, state) {
-      let data = _.has(obj, 'spinner', false);
-      if (data) {
-        state.spinner = obj.spinner;
-      }
-    }
     setSelected(obj, state) {
       let data = _.has(obj, 'selected', false);
       if (data) {

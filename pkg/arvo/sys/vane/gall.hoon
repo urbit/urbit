@@ -55,7 +55,7 @@
 ++  state
   $:  :: state version
       ::
-      %4
+      %5
       :: agents by ship
       ::
       =agents
@@ -421,7 +421,14 @@
     |=  =ship
     ^+  mo-core
     =.  mo-core  (mo-untrack-ship ship)
+    =.  mo-core  (mo-filter-queue ship)
     =/  agents=(list [name=term =running-agent])  ~(tap by running.agents.state)
+    =.  outstanding.agents.state
+      %-  malt
+      %+  skip  ~(tap by outstanding.agents.state)
+      |=  [[=wire duct] (qeu remote-request)]
+      =(/sys/way/(scot %p ship) (scag 3 wire))
+    ::
     |-  ^+  mo-core
     ?~  agents
       mo-core
@@ -724,6 +731,28 @@
       =/  card  [%slip %g %deal sock term deal]
       [duct card]
     $(moves [move moves])
+  ::  +mo-filter-queue: remove all blocked tasks from ship.
+  ::
+  ++  mo-filter-queue
+    |=  =ship
+    =/  agents=(list [name=term =blocked])  ~(tap by blocked.agents.state)
+    =|  new-agents=(map term blocked)
+    |-  ^+  mo-core
+    ?~  agents
+      mo-core(blocked.agents.state new-agents)
+    =|  new-blocked=blocked
+    |-  ^+  mo-core
+    ?:  =(~ blocked.i.agents)
+      ?~  new-blocked
+        ^$(agents t.agents)
+      %=  ^$
+        agents      t.agents
+        new-agents  (~(put by new-agents) name.i.agents new-blocked)
+      ==
+    =^  mov  blocked.i.agents  ~(get to blocked.i.agents)
+    =?  new-blocked  !=(ship attributing.q.p.mov)
+      (~(put to new-blocked) mov)
+    $
   ::  +mo-beak: assemble a beak for the specified agent.
   ::
   ++  mo-beak
@@ -750,6 +779,60 @@
   ++  mo-apply
     |=  [agent=term =routes =deal]
     ^+  mo-core
+    ::  TODO: Remove this horrific hack when ford pinto comes!
+    =>  |%
+        +$  serial  @uvH
+        ::
+        +$  letter
+          $%  [%text text=cord]
+              [%url url=cord]
+              [%code expression=cord output=(list tank)]
+              [%me narrative=cord]
+          ==
+        ::
+        +$  envelope
+          $:  uid=serial
+              number=@
+              author=ship
+              when=time
+              =letter
+          ==
+        ::
+        +$  config
+          $:  length=@
+              read=@
+          ==
+        ::
+        +$  mailbox
+          $:  =config
+              envelopes=(list envelope)
+          ==
+        ::
+        +$  inbox  (map path mailbox)
+        ::
+        +$  chat-configs  (map path config)
+        ::
+        +$  chat-base
+          $%  [%create =path]
+              [%delete =path]
+              [%message =path =envelope]
+              [%read =path]
+          ==
+        ::
+        +$  chat-action
+          $%  ::  %messages: append a list of messages to mailbox
+              ::
+              [%messages =path envelopes=(list envelope)]
+              chat-base
+          ==
+        ::
+        +$  chat-update
+          $%  [%keys keys=(set path)]
+              [%config =path =config]
+              [%messages =path start=@ud end=@ud envelopes=(list envelope)]
+              chat-base
+          ==
+        --
     ::
     =/  =path
       =/  ship  (scot %p attributing.routes)
@@ -760,9 +843,23 @@
       [p q]:beak
     ::
     ?:  ?=(%raw-poke -.deal)
-      =/  =schematic:ford  [%vale ship-desk +.deal]
-      =/  =note-arvo  [%f %build live=%.n schematic]
-      (mo-pass path note-arvo)
+      ::  TODO: Remove this horrific hack when ford pinto comes!
+      ?+  mark.deal
+        =/  =schematic:ford  [%vale ship-desk +.deal]
+        =/  =note-arvo  [%f %build live=%.n schematic]
+        (mo-pass path note-arvo)
+      ::
+          %chat-action
+        =/  chat-act=(unit chat-action)  ((soft chat-action) noun.deal)
+        ?~  chat-act
+          ~&  gall-raw-chat-poke-failed+[agent attributing.routes]
+          mo-core
+        =/  =cage  [%chat-action !>(u.chat-act)]
+        =/  new-deal=^deal  [%poke cage]
+        =/  app  (ap-abed:ap agent routes)
+        =.  app  (ap-apply:app new-deal)
+        ap-abet:app
+      ==
     ::
     ?:  ?=(%poke-as -.deal)
       =/  =schematic:ford  [%cast ship-desk mark.deal [%$ cage.deal]]
@@ -822,7 +919,6 @@
   ++  mo-handle-ames-response
     |=  =ames-response
     ^+  mo-core
-    ::
     ?-    -.ames-response
         ::  %d: diff; ask ford to validate .noun as .mark
         ::
@@ -833,7 +929,6 @@
       =/  =note-arvo
         =/  =disc:ford  [our %home]
         [%f %build live=%.n %vale disc [mark noun]:ames-response]
-      ::
       (mo-pass wire note-arvo)
     ::
         ::  %x: kick; tell agent the publisher canceled the subscription
@@ -1021,31 +1116,30 @@
     ++  ap-ducts-from-paths
       |=  [target-paths=(list path) target-ship=(unit ship)]
       ^-  (list duct)
-      ?:  &(?=(~ target-paths) ?=(~ target-ship))
-        ~[agent-duct]
-      %-  zing
-      %+  turn  target-paths
-      |=  =path
-      (ap-ducts-from-path `path target-ship)
-    ::  +ap-ducts-from-path: get ducts subscribed to path
-    ::
-    ++  ap-ducts-from-path
-      |=  [target-path=(unit path) target-ship=(unit ship)]
-      ^-  (list duct)
-      ?:  &(?=(~ target-path) ?=(~ target-ship))
-        ~[agent-duct]
-      %+  murn  ~(tap by incoming.subscribers.current-agent)
-      |=  [=duct =ship =path]
-      ^-  (unit ^duct)
-      ?~  target-ship
-        ?:  =(target-path `path)
-          `duct
-        ~
-      ?~  target-path
+      ?~  target-paths
+        ?~  target-ship
+          ~[agent-duct]
+        %+  murn  ~(tap by incoming.subscribers.current-agent)
+        |=  [=duct =ship =path]
+        ^-  (unit ^duct)
         ?:  =(target-ship `ship)
           `duct
         ~
-      ?:  &(=(target-path `path) =(target-ship `ship))
+      %-  zing
+      %+  turn  target-paths
+      |=  =path
+      (ap-ducts-from-path path target-ship)
+    ::  +ap-ducts-from-path: get ducts subscribed to path
+    ::
+    ++  ap-ducts-from-path
+      |=  [target-path=path target-ship=(unit ship)]
+      ^-  (list duct)
+      %+  murn  ~(tap by incoming.subscribers.current-agent)
+      |=  [=duct =ship =path]
+      ^-  (unit ^duct)
+      ?:  ?&  =(target-path path)
+              |(=(target-ship ~) =(target-ship `ship))
+          ==
         `duct
       ~
     ::  +ap-apply: apply effect.
@@ -1466,7 +1560,9 @@
         =.  ap-core
           =/  =tang
             ~[leaf+"subscribe wire not unique" >agent-name< >short-wire< >dock<]
-          %-  (slog >out=outgoing.subscribers.current-agent< tang)
+          =/  have
+            (~(got by outgoing.subscribers.current-agent) short-wire dock)
+          %-  (slog >out=have< tang)
           (ap-error %watch-not-unique tang)
         $(moves t.moves)
       =.  outgoing.subscribers.current-agent
@@ -1512,6 +1608,9 @@
   ::
       %goad
     mo-abet:(mo-goad:initialised force.task agent.task)
+  ::
+      %sear
+    mo-abet:(mo-filter-queue:initialised ship.task)
   ::
       %init
     =/  payload  gall-payload(system-duct.agents.state duct)
@@ -1587,16 +1686,32 @@
   =?  all-state  ?=(%3 -.all-state)
     (state-3-to-4 all-state)
   ::
-  ?>  ?=(%4 -.all-state)
+  =?  all-state  ?=(%4 -.all-state)
+    (state-4-to-5 all-state)
+  ::
+  ?>  ?=(%5 -.all-state)
   gall-payload(state all-state)
   ::
   ::  +all-state: upgrade path
   ::
-  ++  all-state  $%(state-0 state-1 state-2 state-3 ^state)
+  ++  all-state  $%(state-0 state-1 state-2 state-3 state-4 ^state)
+  ::
+  ++  state-4-to-5
+    |=  =state-4
+    ^-  ^state
+    %=    state-4
+        -  %5
+        outstanding.agents  ~
+    ==
+  ::
+  ++  state-4
+    $:  %4
+        =agents
+    ==
   ::
   ++  state-3-to-4
     |=  =state-3
-    ^-  ^state
+    ^-  state-4
     %=    state-3
         -  %4
         outstanding.agents  ~

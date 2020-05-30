@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { InviteSearch } from './invite-search';
+import { Spinner } from './icons/icon-spinner';
 
 
 export class InviteElement extends Component {
@@ -9,7 +10,8 @@ export class InviteElement extends Component {
     this.state = {
       members: [],
       error: false,
-      success: false
+      success: false,
+      awaiting: false
     };
     this.setInvite = this.setInvite.bind(this);
   }
@@ -27,15 +29,15 @@ export class InviteElement extends Component {
       return;
     }
 
-    props.api.setSpinner(true);
 
     this.setState({
       error: false,
       success: true,
-      members: []
+      members: [],
+      awaiting: true
     }, () => {
       props.api.groups.add(aud, props.path).then(() => {
-        props.api.setSpinner(false);
+        this.setState({awaiting: false});
       });
     });
   }
@@ -77,6 +79,7 @@ export class InviteElement extends Component {
           className={modifyButtonClasses}>
           {buttonText}
         </button>
+        <Spinner awaiting={this.state.awaiting} classes="mt4" text="Inviting to chat..." />
       </div>
     );
   }

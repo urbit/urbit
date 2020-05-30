@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { deSig, uxToHex, writeText } from '/lib/util';
 import { Route, Link } from "react-router-dom";
 
-
+import { Spinner } from './lib/icons/icon-spinner';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 import { InviteSearch } from '/components/lib/invite-search';
 import SidebarSwitcher from './lib/icons/icon-sidebar-switch';
@@ -20,7 +20,9 @@ export class SettingsScreen extends Component {
       color: "",
       // groupify settings
       targetGroup: null,
-      inclusive: false
+      inclusive: false,
+      awaiting: false,
+      type: "Editing chat..."
     };
 
     this.renderDelete = this.renderDelete.bind(this);
@@ -49,7 +51,6 @@ export class SettingsScreen extends Component {
       this.setState({
         isLoading: false
       }, () => {
-        props.api.setSpinner(false);
         props.history.push('/~chat');
       });
     }
@@ -108,17 +109,19 @@ export class SettingsScreen extends Component {
           ? props.association : {};
 
       if (chatOwner) {
-        props.api.setSpinner(true);
-        props.api.metadataAdd(
-          association['app-path'],
-          association['group-path'],
-          association.metadata.title,
-          association.metadata.description,
-          association.metadata['date-created'],
-          color
-        ).then(() => {
-          props.api.setSpinner(false);
-        })
+        this.setState({awaiting: true, type: "Editing chat..."}, (() => {
+          props.api.metadataAdd(
+            association['app-path'],
+            association['group-path'],
+            association.metadata.title,
+            association.metadata.description,
+            association.metadata['date-created'],
+            color
+          ).then(() => {
+            this.setState({awaiting: false});
+          })
+        }))
+
       }
     }
   }
@@ -126,29 +129,29 @@ export class SettingsScreen extends Component {
   deleteChat() {
     const { props, state } = this;
 
-    props.api.chatView.delete(props.station);
-    props.api.setSpinner(true);
-
     this.setState({
       isLoading: true,
-      loadingText: (deSig(props.match.params.ship) === window.ship)
-        ? 'Deleting...'
-        : 'Leaving...'
-    });
+      awaiting: true,
+      type: (deSig(props.match.params.ship) === window.ship)
+        ? 'Deleting chat...'
+        : 'Leaving chat...'
+    }, (() => {
+        props.api.chatView.delete(props.station);
+    }));
   }
 
   groupifyChat() {
     const { props, state } = this;
 
-    props.api.chatView.groupify(
-      props.station, state.targetGroup, state.inclusive
-    );
-    props.api.setSpinner(true);
-
     this.setState({
       isLoading: true,
-      loadingText: 'Converting...'
-    });
+      awaiting: true,
+      type: 'Converting chat...'
+    }, (() => {
+      props.api.chatView.groupify(
+        props.station, state.targetGroup, state.inclusive
+      ).then(() => this.setState({awaiting: false}));
+    }));
   }
 
   renderDelete() {
@@ -273,17 +276,18 @@ export class SettingsScreen extends Component {
             onChange={this.changeTitle}
             onBlur={() => {
               if (chatOwner) {
-                props.api.setSpinner(true);
-                props.api.metadataAdd(
-                  association['app-path'],
-                  association['group-path'],
-                  this.state.title,
-                  association.metadata.description,
-                  association.metadata['date-created'],
-                  uxToHex(association.metadata.color)
-                ).then(() => {
-                  props.api.setSpinner(false);
-                })
+                this.setState({awaiting: true, type: "Editing chat..."}, (() => {
+                  props.api.metadataAdd(
+                    association['app-path'],
+                    association['group-path'],
+                    this.state.title,
+                    association.metadata.description,
+                    association.metadata['date-created'],
+                    uxToHex(association.metadata.color)
+                  ).then(() => {
+                    this.setState({awaiting: false});
+                  })
+                }))
               }
             }}
           />
@@ -300,17 +304,18 @@ export class SettingsScreen extends Component {
               onChange={this.changeDescription}
               onBlur={() => {
                 if (chatOwner) {
-                  props.api.setSpinner(true);
-                  props.api.metadataAdd(
-                    association['app-path'],
-                    association['group-path'],
-                    association.metadata.title,
-                    this.state.description,
-                    association.metadata['date-created'],
-                    uxToHex(association.metadata.color)
-                  ).then(() => {
-                    props.api.setSpinner(false);
-                  })
+                  this.setState({awaiting: true, type: "Editing chat..."}, (() => {
+                    props.api.metadataAdd(
+                      association['app-path'],
+                      association['group-path'],
+                      association.metadata.title,
+                      this.state.description,
+                      association.metadata['date-created'],
+                      uxToHex(association.metadata.color)
+                    ).then(() => {
+                      this.setState({awaiting: false});
+                    })
+                  }))
                 }
               }}
             />
@@ -348,7 +353,6 @@ export class SettingsScreen extends Component {
     let permission = Array.from(props.permission.who.values());
 
     if (!!state.isLoading) {
-      let text = state.loadingText || 'Working...';
 
       let title = props.station.substr(1);
 
@@ -389,7 +393,7 @@ export class SettingsScreen extends Component {
             />
           </div>
           <div className="w-100 pl3 mt4 cf">
-            <h2 className="f8 pb2">{text}</h2>
+            <Spinner awaiting={this.state.awaiting} classes="absolute right-2 bottom-2 ba pa2 b--gray1-d" text={this.state.type} />
           </div>
         </div>
       );
@@ -459,6 +463,7 @@ export class SettingsScreen extends Component {
           {this.renderGroupify()}
           {this.renderDelete()}
           {this.renderMetadataSettings()}
+          <Spinner awaiting={this.state.awaiting} classes="absolute right-2 bottom-2 ba pa2 b--gray1-d" text={this.state.type}/>
         </div>
       </div>
     );

@@ -151,7 +151,7 @@
     ?+  site.request-line
       not-found:gen
     ::
-        ~
+        [~ ~]
       =/  hym=manx
         %+  index
           [%b first-time]
