@@ -357,6 +357,45 @@
       t.header-list
     ::
     [i.header-list $(header-list t.header-list)]
+  ::  +unpack-header: parse header field values
+  ::
+  ++  unpack-header
+    |^  |=  value=@t
+        ^-  (unit (list (map @t @t)))
+        (rust (cass (trip value)) values)
+    ::
+    ++  values
+      %+  more
+        (ifix [. .]:(star ;~(pose ace (just '\09'))) com)
+      pairs
+    ::
+    ++  pairs
+      %+  cook
+        ~(gas by *(map @t @t))
+      %+  more  (ifix [. .]:(star ace) mic)
+      ;~(plug token ;~(pose ;~(pfix tis value) (easy '')))
+    ::
+    ++  value
+      ;~(pose token quoted-string)
+    ::
+    ++  token                                         ::  7230 token
+      %+  cook  crip
+      ::NOTE  this is ptok:de-purl:html, but can't access that here
+      %-  plus
+      ;~  pose
+        aln  zap  hax  bus  cen  pad  say  tar  lus
+        hep  dot  ket  cab  tec  bar  sig
+      ==
+    ::
+    ++  quoted-string                                 ::  7230 quoted string
+      %+  cook  crip
+      %+  ifix  [. .]:;~(less (jest '\\"') yel)
+      %-  star
+      ;~  pose
+        ;~(pfix bat ;~(pose (just '\09') ace prn))
+        ;~(pose (just '\09') ;~(less (mask "\22\5c\7f") (shim 0x20 0xff)))
+      ==
+    --
   ::  +simple-payload: a simple, one event response used for generators
   ::
   +$  simple-payload
