@@ -794,6 +794,10 @@
   ++  request
     |=  [secure=? =address =request:http]
     ^-  [(list move) server-state]
+    ::  for requests from localhost, respect the "forwarded" header
+    ::
+    =?  address  =([%ipv4 .127.0.0.1] address)
+      (fall (forwarded-for header-list.request) address)
     ::
     =/  host  (get-header:http 'host' header-list.request)
     =/  action  (get-action-for-binding host url.request)
@@ -1912,6 +1916,29 @@
     $(bindings t.bindings)
   --
 ::
+++  forwarded-for
+  |=  =header-list:http
+  ^-  (unit address)
+  =/  forwarded=(unit @t)
+    (get-header:http 'forwarded' header-list)
+  ?~  forwarded  ~
+  |^  =/  forwards=(unit (list (map @t @t)))
+        (unpack-header:http u.forwarded)
+      ?.  ?=([~ ^] forwards)  ~
+      =*  forward  i.u.forwards
+      ?~  for=(~(get by forward) 'for')  ~
+      ::NOTE  per rfc7239, non-ip values are also valid. they're not useful
+      ::      for the general case, so we ignore them here. if needed,
+      ::      request handlers are free to inspect the headers themselves.
+      ::
+      (rush u.for ip-address)
+  ::
+  ++  ip-address
+    ;~  sfix
+      ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [lac rac] ip6)))
+      ;~(pose ;~(pfix col dim:ag) (easy ~))
+    ==
+  --
 ::
 ++  parse-request-line
   |=  url=@t
