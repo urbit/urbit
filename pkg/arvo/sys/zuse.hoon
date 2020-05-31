@@ -1470,6 +1470,53 @@
         ::
         (gte i.b 224)
     ==
+  ::  +ipa: parse ip address
+  ::
+  ++  ipa
+    ;~(pose (stag %ipv4 ip4) (stag %ipv6 ip6))
+  ::  +ip4: parse ipv4 address
+  ::
+  ++  ip4
+    =+  byt=(ape:ag ted:ab)
+    (bass 256 ;~(plug byt (stun [3 3] ;~(pfix dot byt))))
+  ::  +ip6: parse ipv6 address
+  ::
+  ++  ip6
+    %+  bass  0x1.0000
+    %+  sear
+      |=  hexts=(list $@(@ [~ %zeros]))
+      ^-  (unit (list @))
+      ::  not every list of hextets is an ipv6 address
+      ::
+      =/  legit=?
+        =+  l=(lent hexts)
+        =+  c=|=(a=* ?=([~ %zeros] a))
+        ?|  &((lth l 8) ?=([* ~] (skim hexts c)))
+            &(=(8 l) !(lien hexts c))
+        ==
+      ?.  legit  ~
+      %-  some
+      ::  expand zeros
+      ::
+      %-  zing
+      %+  turn  hexts
+      |=  hext=$@(@ [~ %zeros])
+      ?@  hext  [hext]~
+      (reap (sub 9 (lent hexts)) 0)
+    ::  parse hextets, producing cell for shorthand zeroes
+    ::
+    |^  %+  cook
+          |=  [a=(list @) b=(list [~ %zeros]) c=(list @)]
+          :(welp a b c)
+        ;~  plug
+          (more col het)
+          (stun [0 1] cel)
+          (more col het)
+        ==
+    ++  cel  (cold `%zeros ;~(plug col col))
+    ++  het  (bass 16 (stun [1 4] six:ab))
+    --
+  ::
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
   ++  user  knot                                        ::  username
   --  ::eyre
