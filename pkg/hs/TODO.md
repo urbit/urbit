@@ -3,13 +3,13 @@ Stubbed out:
 - [x] Handle replacement events (stubbed out now b/c interface can't
   handle unparsed nouns)
 - [x] Handle IPC errors by killing serf process.
-- [ ] Handle `peek` and `pack` in `swimming` flow.
+- [x] Handle `peek` and `pack` in `swimming` flow.
 - [ ] PlayBail should be an exception for now.
-- [ ] Write haddock docs for `Urbit.Vere.Serf.IPC`.
+- [ ] Documentation for `Urbit.Vere.Serf.IPC`.
 - [x] Unstub slog/stder/dead callbacks on serf config.
 - [x] Remove GoodParse hack in newRunCompute.
 - [ ] Bring back tank printing.
-- [ ] Bring back code for handling serf stderr messages.
+- [x] Handle serf stderr message correctly.
 
 King-Haskell specific features:
 

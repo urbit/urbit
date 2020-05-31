@@ -442,15 +442,13 @@ runCompute serf ComputeConfig {..} = do
                   , CRWork <$> ccOnWork
                   ]
 
-  let onOutput :: Serf.RunOutput -> STM ()
-      onOutput (Serf.RunOutput e m w nounEv fx) = do
-        ccPutResult (Fact e m w nounEv, fx)
-
   let onSpin :: SpinState -> STM ()
       onSpin Nothing   = ccHideSpinner
       onSpin (Just ev) = ccShowSpinner (getSpinnerNameForEvent ev)
 
-  io (Serf.swimming serf onCR onOutput onSpin)
+  let maxBatchSize = 10
+
+  io (Serf.running serf maxBatchSize onCR ccPutResult onSpin)
 
 
 -- Persist Thread --------------------------------------------------------------

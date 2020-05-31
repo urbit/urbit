@@ -37,9 +37,7 @@ module Urbit.Vere.Serf.IPC
   , Config(..)
   , PlayBail(..)
   , Flag(..)
-  , RunError(..)
-  , RunInput(..)
-  , RunOutput(..)
+  , WorkError(..)
   , start
   , serfLastEventBlocking
   , shutdown
@@ -47,7 +45,6 @@ module Urbit.Vere.Serf.IPC
   , bootSeq
   , replay
   , running
-  , swimming
   , EvErr(..)
   , ComputeRequest(..)
   , SpinState
@@ -180,31 +177,26 @@ data Config = Config
   , scDead :: IO ()          --  What to do when the serf process goes down?
   }
 
-data RunError
+data WorkError
   = RunBail [Goof]
   | RunSwap EventId Mug Wen Noun FX
 
-data RunInput
-  = RunSnap (EventId -> STM ())
-  | RunPack (EventId -> STM ())
-  | RunPeek Wen Gang Path (Maybe (Term, Noun) -> IO ())
-  | RunWork Ev (RunError -> IO ())
-
-data RunOutput = RunOutput EventId Mug Wen Noun FX
-
-data EvErr = EvErr Ev (RunError -> IO ())
+data EvErr = EvErr Ev (WorkError -> IO ())
 
 data ComputeRequest
   = CRWork EvErr
   | CRSave ()
   | CRKill ()
+  | CRPack ()
+  | CRScry Wen Gang Path (Maybe (Term, Noun) -> IO ())
 
 type SpinState = Maybe Ev
+
 
 -- Exceptions ------------------------------------------------------------------
 
 data SerfExn
---  = BadComputeId EventId WorkResult
+--  = BadComputeId EventId (Fact, FX)
 --  | BadReplacementId EventId ReplacementEv
 --  | UnexpectedPlay EventId (EventId, Mug)
     = UnexpectedPlea Plea Text
@@ -252,7 +244,7 @@ sendBytes s bs = handle onIOError $ do
   hFlush (serfSend s)
  where
   onIOError :: IOError -> IO ()
-  onIOError = const (throwIO SerfConnectionClosed)  --  TODO call death callback?
+  onIOError = const (throwIO SerfConnectionClosed)
 
 recvBytes :: Serf -> Word64 -> IO ByteString
 recvBytes serf = BS.hGet (serfRecv serf) . fromIntegral
@@ -262,7 +254,7 @@ recvLen w = do
   bs <- BS.hGet (serfRecv w) 8
   case length bs of
     8 -> BS.unsafeUseAsCString bs (peek @Word64 . castPtr)
-    _ -> throwIO SerfConnectionClosed  -- TODO kill worker process and call the death callback.
+    _ -> throwIO SerfConnectionClosed
 
 recvResp :: Serf -> IO ByteString
 recvResp serf = do
@@ -327,8 +319,8 @@ sendSnapshotRequest serf eve = do
   sendWrit serf (WLive $ LSave eve)
   recvLive serf
 
-sendCompactRequest :: Serf -> EventId -> IO ()
-sendCompactRequest serf eve = do
+sendCompactionRequest :: Serf -> EventId -> IO ()
+sendCompactionRequest serf eve = do
   sendWrit serf (WLive $ LPack eve)
   recvLive serf
 
@@ -343,7 +335,7 @@ sendShutdownRequest serf exitCode = do
   pure ()
 
 
--- Serf Usage Flows ------------------------------------------------------------
+-- Starting the Serf -----------------------------------------------------------
 
 compileFlags :: [Flag] -> Word
 compileFlags = foldl' (\acc flag -> setBit acc (fromEnum flag)) 0
@@ -374,6 +366,9 @@ start (Config exePax pierPath flags onSlog onStdr onDead) = do
                                , std_err = CreatePipe
                                }
 
+
+-- Taking the SerfState Lock ---------------------------------------------------
+
 withSerfLock
   :: MonadIO m
   => (m (SerfState, a) -> m (Either SomeException (SerfState, a)))
@@ -396,11 +391,23 @@ withSerfLock tryGen s f = do
       Left exn -> putMVar (serfLock s) (Left exn) >> throwIO exn
       Right ss -> pure ss
 
+
+-- Flows for Interacting with the Serf -----------------------------------------
+
 snapshot :: Serf -> IO ()
-snapshot serf =
-  withSerfLock try serf \ss -> do
-    sendSnapshotRequest serf (ssLast ss)
-    pure (ss, ())
+snapshot serf = withSerfLock try serf $ \ss -> do
+  sendSnapshotRequest serf (ssLast ss)
+  pure (ss, ())
+
+compact :: Serf -> IO ()
+compact serf = withSerfLock try serf $ \ss -> do
+  sendCompactionRequest serf (ssLast ss)
+  pure (ss, ())
+
+scry :: Serf -> Wen -> Gang -> Path -> (Maybe (Term, Noun) -> IO ()) -> IO ()
+scry serf w g p k = withSerfLock try serf $ \ss -> do
+  sendScryRequest serf w g p >>= k
+  pure (ss, ())
 
 shutdown :: HasLogFunc e => Serf -> RIO e ()
 shutdown serf = do
@@ -413,7 +420,7 @@ shutdown serf = do
     io $ waitForProcess (serfProc serf)
     logTrace "RIP Serf process."
  where
-  wait2sec = threadDelay 2_000_000
+  wait2sec  = threadDelay 2_000_000
   forceKill = do
     logTrace "Serf taking too long to go down, kill with fire (SIGTERM)."
     io (forceKillSerf serf)
@@ -427,16 +434,13 @@ forceKillSerf serf = do
       io $ signalProcess sigKILL pid
       io $ void $ waitForProcess (serfProc serf)
 
-bootSeq :: Serf -> [Noun] -> IO (Maybe PlayBail)  --  TODO should this be an exception?
-bootSeq serf@Serf{..} seq = do
-  withSerfLock try serf \ss -> do
+bootSeq :: Serf -> [Noun] -> IO (Maybe PlayBail)
+bootSeq serf@Serf {..} seq = do
+  withSerfLock try serf $ \ss -> do
     recvPlay serf >>= \case
-      PBail bail   -> pure (ss, Just bail)
-      PDone newMug -> pure (SerfState (fromIntegral $ length seq) newMug, Nothing)
+      PBail bail -> pure (ss, Just bail)
+      PDone mug  -> pure (SerfState (fromIntegral $ length seq) mug, Nothing)
 
-{-
-  TODO Take advantage of IPC support for batching.
--}
 replay
   :: forall m
    . (MonadUnliftIO m, MonadIO m)
@@ -444,14 +448,14 @@ replay
   -> Serf
   -> ConduitT Noun Void m (Maybe PlayBail)
 replay batchSize serf = do
-  withSerfLock tryC serf \ss -> do
+  withSerfLock tryC serf $ \ss -> do
     (r, ss') <- loop ss
     pure (ss', r)
  where
   loop :: SerfState -> ConduitT Noun Void m (Maybe PlayBail, SerfState)
   loop ss@(SerfState lastEve lastMug) = do
     awaitBatch batchSize >>= \case
-      [] -> pure (Nothing, SerfState lastEve lastMug)
+      []  -> pure (Nothing, SerfState lastEve lastMug)
       evs -> do
         let nexEve = lastEve + 1
         let newEve = lastEve + fromIntegral (length evs)
@@ -461,7 +465,7 @@ replay batchSize serf = do
           PDone newMug -> loop (SerfState newEve newMug)
 
 {-
-  TODO Use a mutable vector instead of reversing a list.
+  TODO If this is slow, use a mutable vector instead of reversing a list.
 -}
 awaitBatch :: Monad m => Int -> ConduitT i o m [i]
 awaitBatch = go []
@@ -472,87 +476,39 @@ awaitBatch = go []
     Just x  -> go (x:acc) (n-1)
 
 {-
-  TODO *we* should probably kill the serf on exception?
-  TODO callbacks on snapshot and compaction?
-  TODO Take advantage of async IPC to fill pipe with more than one thing.
-
-  TODO Think this through: the caller *really* should not request
-       snapshots until all of the events leading up to a certain state
-       have been commited to disk in the event log.
+  TODO Don't take snapshot until event log has processed current event.
 -}
 running
-  :: forall m
-   . (MonadIO m, MonadUnliftIO m)
-  => Serf
-  -> (Maybe RunInput -> IO ())
-  -> ConduitT RunInput RunOutput m ()
-running serf notice = do
-  withSerfLock tryC serf $ \SerfState{..} -> do
-    newState <- loop ssHash ssLast
-    pure (newState, ())
- where
-  loop :: Mug -> EventId -> ConduitT RunInput RunOutput m SerfState
-  loop mug eve = do
-    io (notice Nothing)
-    nex <- await
-    io (notice nex)
-    nex & \case
-      Nothing -> do
-        pure $ SerfState eve mug
-      Just (RunSnap blk) -> do
-        atomically (blk eve)
-        io (sendSnapshotRequest serf eve)
-        loop mug eve
-      Just (RunPack blk) -> do
-        atomically (blk eve)
-        io (sendCompactRequest serf eve)
-        loop mug eve
-      Just (RunPeek wen gang pax act) -> do
-        io (sendScryRequest serf wen gang pax >>= act)
-        loop mug eve
-      Just (RunWork evn err) -> do
-        wen <- io Time.now
-        io (sendWrit serf (WWork wen evn))
-        io (recvWork serf) >>= \case
-          WDone eid hash fx -> do
-            yield (RunOutput eid hash wen (toNoun evn) fx)
-            loop hash eid
-          WSwap eid hash (wen, noun) fx -> do
-            io $ err (RunSwap eid hash wen noun fx)
-            yield (RunOutput eid hash wen noun fx)
-            loop hash eid
-          WBail goofs -> do
-            io $ err (RunBail goofs)
-            loop mug eve
-
-workQueueSize :: Int
-workQueueSize = 10
-
-{-
-  TODO don't take snapshot until event log has processed current event.
--}
-swimming
   :: Serf
+  -> Int
   -> STM ComputeRequest
-  -> (RunOutput -> STM ())
+  -> ((Fact, FX) -> STM ())
   -> (SpinState -> STM ())
   -> IO ()
-swimming serf onInput sendOn spin = topLoop
+running serf maxBatchSize onInput sendOn spin = topLoop
  where
   topLoop :: IO ()
   topLoop = atomically onInput >>= \case
     CRWork workErr -> doWork workErr
-    CRSave ()      -> doSnap
+    CRSave ()      -> doSave
     CRKill ()      -> pure ()
+    CRPack ()      -> doPack
+    CRScry w g p k -> doScry w g p k
 
-  doSnap :: IO ()
-  doSnap = snapshot serf >> topLoop
+  doPack :: IO ()
+  doPack = compact serf >> topLoop
+
+  doSave :: IO ()
+  doSave = snapshot serf >> topLoop
+
+  doScry :: Wen -> Gang -> Path -> (Maybe (Term, Noun) -> IO ()) -> IO ()
+  doScry w g p k = scry serf w g p k >> topLoop
 
   doWork :: EvErr -> IO ()
   doWork firstWorkErr = do
     que   <- newTBMQueueIO 1
     ()    <- atomically (writeTBMQueue que firstWorkErr)
-    tWork <- async (processWork serf que onWorkResp spin)
+    tWork <- async (processWork serf maxBatchSize que onWorkResp spin)
     nexSt <- workLoop que
     wait tWork
     nexSt
@@ -560,34 +516,65 @@ swimming serf onInput sendOn spin = topLoop
   workLoop :: TBMQueue EvErr -> IO (IO ())
   workLoop que = atomically onInput >>= \case
     CRKill ()      -> atomically (closeTBMQueue que) >> pure (pure ())
-    CRSave ()      -> atomically (closeTBMQueue que) >> pure doSnap
+    CRSave ()      -> atomically (closeTBMQueue que) >> pure doSave
+    CRPack ()      -> atomically (closeTBMQueue que) >> pure doPack
+    CRScry w g p k -> atomically (closeTBMQueue que) >> pure (doScry w g p k)
     CRWork workErr -> atomically (writeTBMQueue que workErr) >> workLoop que
 
   onWorkResp :: Wen -> EvErr -> Work -> IO ()
   onWorkResp wen (EvErr evn err) = \case
     WDone eid hash fx -> do
-      atomically $ sendOn (RunOutput eid hash wen (toNoun evn) fx)
+      atomically $ sendOn ((Fact eid hash wen (toNoun evn)), fx)
     WSwap eid hash (wen, noun) fx -> do
       io $ err (RunSwap eid hash wen noun fx)
-      atomically $ sendOn (RunOutput eid hash wen noun fx)
+      atomically $ sendOn (Fact eid hash wen noun, fx)
     WBail goofs -> do
       io $ err (RunBail goofs)
 
-pullFromQueueBounded :: TVar (Seq a) -> TBMQueue b -> STM (Maybe b)
-pullFromQueueBounded vInFlight queue = do
+{-
+  Given:
+
+  - A stream of incoming requests
+  - A sequence of in-flight requests that haven't been responded to
+  - A maximum number of in-flight requests.
+
+  Wait until the number of in-fligh requests is smaller than the maximum,
+  and then take the next item from the stream of requests.
+-}
+pullFromQueueBounded :: Int -> TVar (Seq a) -> TBMQueue b -> STM (Maybe b)
+pullFromQueueBounded maxSize vInFlight queue = do
   inFlight <- length <$> readTVar vInFlight
-  if inFlight >= workQueueSize
+  if inFlight >= maxSize
     then retry
     else readTBMQueue queue
 
--- TODO Handle scry and peek.
+{-
+  Given
+
+  - `maxSize`: The maximum number of jobs to send to the serf before
+    getting a response.
+  - `q`: A bounded queue (which can be closed)
+  - `onResp`: a callback to call for each response from the serf.
+  - `spin`: a callback to tell the terminal driver which event is
+    currently being processed.
+
+  Pull jobs from the queue and send them to the serf (eagerly, up to
+  `maxSize`) and call the callback with each response from the serf.
+
+  When the queue is closed, wait for the serf to respond to all pending
+  work, and then return.
+
+  Whenever the serf is idle, call `spin Nothing` and whenever the serf
+  is working on an event, call `spin (Just ev)`.
+-}
 processWork
   :: Serf
+  -> Int
   -> TBMQueue EvErr
   -> (Wen -> EvErr -> Work -> IO ())
   -> (SpinState -> STM ())
   -> IO ()
-processWork serf q onResp spin = do
+processWork serf maxSize q onResp spin = do
   vDoneFlag      <- newTVarIO False
   vInFlightQueue <- newTVarIO empty
   recvThread     <- async (recvLoop serf vDoneFlag vInFlightQueue)
@@ -596,7 +583,7 @@ processWork serf q onResp spin = do
  where
   loop :: TVar (Seq (Ev, Work -> IO ())) -> TVar Bool -> IO ()
   loop vInFlight vDone = do
-    atomically (pullFromQueueBounded vInFlight q) >>= \case
+    atomically (pullFromQueueBounded maxSize vInFlight q) >>= \case
       Nothing -> do
         atomically (writeTVar vDone True)
       Just evErr@(EvErr ev _) -> do
@@ -618,9 +605,27 @@ processWork serf q onResp spin = do
     (ev, _) :<| _ -> pure (Just ev)
     _             -> pure Nothing
 
+{-|
+  Given:
+
+  - `vDone`: A flag that no more work will be sent to the serf.
+
+  - `vWork`: A list of work requests that have been sent to the serf,
+     haven't been responded to yet.
+
+  If the serf has responded to all work requests, and no more work is
+  going to be sent to the serf, then return.
+
+  If we are going to send more work to the serf, but the queue is empty,
+  then wait.
+
+  If work requests have been sent to the serf, take the first one,
+  wait for a response from the serf, call the associated callback,
+  and repeat the whole process.
+-}
 recvLoop :: Serf -> TVar Bool -> TVar (Seq (Ev, Work -> IO ())) -> IO ()
 recvLoop serf vDone vWork = do
-  withSerfLock try serf \SerfState{..} -> do
+  withSerfLock try serf \SerfState {..} -> do
     loop ssLast ssHash
  where
   loop eve mug = do
