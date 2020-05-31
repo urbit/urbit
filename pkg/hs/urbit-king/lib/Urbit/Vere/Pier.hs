@@ -28,9 +28,7 @@ import Urbit.Vere.Pier.Types
 
 import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
-import Urbit.King.App         (HasPierEnv(..))
--- ort Urbit.Time             (Wen)
-import Urbit.King.App         (HasKingEnv, HasPierEnv, PierEnv)
+import Urbit.King.App         (HasKingEnv, HasPierEnv(..), PierEnv)
 import Urbit.Vere.Ames        (ames)
 import Urbit.Vere.Behn        (behn)
 import Urbit.Vere.Clay        (clay)
@@ -38,7 +36,7 @@ import Urbit.Vere.Eyre        (eyre)
 import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
 import Urbit.Vere.Http.Client (client)
 import Urbit.Vere.Log         (EventLog)
-import Urbit.Vere.Serf        (Serf, ComputeRequest(..), SpinState, EvErr(..))
+import Urbit.Vere.Serf        (ComputeRequest(..), EvErr(..), Serf, SpinState)
 
 import qualified System.Entropy         as Ent
 import qualified Urbit.King.API         as King
@@ -446,7 +444,7 @@ runCompute serf ComputeConfig {..} = do
 
   let onOutput :: Serf.RunOutput -> STM ()
       onOutput (Serf.RunOutput e m w nounEv fx) = do
-        ccPutResult (Fact e m w nounEv, GoodParse <$> fx) -- TODO GoodParse
+        ccPutResult (Fact e m w nounEv, fx)
 
   let onSpin :: SpinState -> STM ()
       onSpin Nothing   = ccHideSpinner

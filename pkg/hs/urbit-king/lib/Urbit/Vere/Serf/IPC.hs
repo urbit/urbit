@@ -97,8 +97,8 @@ data Play
  deriving (Show)
 
 data Work
-  = WDone EventId Mug [Ef]
-  | WSwap EventId Mug (Wen, Noun) [Ef]
+  = WDone EventId Mug FX
+  | WSwap EventId Mug (Wen, Noun) FX
   | WBail [Goof]
  deriving (Show)
 
@@ -182,7 +182,7 @@ data Config = Config
 
 data RunError
   = RunBail [Goof]
-  | RunSwap EventId Mug Wen Noun [Ef]
+  | RunSwap EventId Mug Wen Noun FX
 
 data RunInput
   = RunSnap (EventId -> STM ())
@@ -190,7 +190,7 @@ data RunInput
   | RunPeek Wen Gang Path (Maybe (Term, Noun) -> IO ())
   | RunWork Ev (RunError -> IO ())
 
-data RunOutput = RunOutput EventId Mug Wen Noun [Ef]
+data RunOutput = RunOutput EventId Mug Wen Noun FX
 
 data EvErr = EvErr Ev (RunError -> IO ())
 

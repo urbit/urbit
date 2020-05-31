@@ -7,7 +7,7 @@ Stubbed out:
 - [ ] PlayBail should be an exception for now.
 - [ ] Write haddock docs for `Urbit.Vere.Serf.IPC`.
 - [x] Unstub slog/stder/dead callbacks on serf config.
-- [ ] GoodParse hack in newRunCompute.
+- [x] Remove GoodParse hack in newRunCompute.
 - [ ] Bring back tank printing.
 - [ ] Bring back code for handling serf stderr messages.
 
