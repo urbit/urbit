@@ -2125,7 +2125,7 @@
     %-  json-response:gen
     %-  json-to-octs
     %+  frond:enjs:format  %publish-response
-    (notebooks-map-json our.bol books)
+    (notebooks-map our.bol books)
   ::
   ::  notes pagination
       [[[~ %json] [%'publish-view' %notes @ @ @ @ ~]] ~]
