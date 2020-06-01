@@ -8,8 +8,12 @@
     *metadata-store,
     *permission-group-hook,
     *chat-hook,
-    *metadata-hook
-/+  *server, *chat-json, default-agent, verb, dbug
+    *metadata-hook,
+    *rw-security,
+    hook=chat-hook
+/+  *server, default-agent, verb, dbug,
+    store=chat-store,
+    view=chat-view
 ::
 ~%  %chat-view-top  ..is  ~
 |%
@@ -23,14 +27,6 @@
   ==
 ::
 +$  card  card:agent:gall
-::
-+$  poke
-  $%  [%chat-action chat-action]
-      [%group-action group-action]
-      [%chat-hook-action action:hook]
-      [%permission-hook-action permission-hook-action]
-      [%permission-group-hook-action permission-group-hook-action]
-  ==
 --
 ::
 =|  state-0
@@ -90,14 +86,15 @@
       ::  create inbox with 20 messages max per mailbox and send that along
       ::  then quit the subscription
       :_  this
-      [%give %fact ~ %json !>((update-to-json [%initial truncated-inbox]))]~
+      [%give %fact ~ %json !>((update:enjs:store [%initial truncated-inbox]))]~
     (on-watch:def path)
     ::
     ++  message-limit  20
     ::
     ++  truncated-inbox
-      ^-  inbox
-      =/  =inbox  .^(inbox %gx /=chat-store/(scot %da now.bol)/all/noun)
+      ^-  inbox:store
+      =/  =inbox:store
+        .^(inbox:store %gx /=chat-store/(scot %da now.bol)/all/noun)
       %-  ~(run by inbox)
       |=  =mailbox:store
       ^-  mailbox:store
@@ -462,7 +459,7 @@
 ++  diff-chat-update
   |=  upd=update:store
   ^-  (list card)
-  [%give %fact ~[/primary] %json !>((update-to-json upd))]~
+  [%give %fact ~[/primary] %json !>((update:enjs:store upd))]~
 ::
 ::  +utilities
 ::
