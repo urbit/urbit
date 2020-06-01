@@ -51,7 +51,7 @@ withSerf config = mkRAcquire startup kill
     logTrace (displayShow st)
     pure serf
   kill serf = do
-    void $ rio $ shutdown serf
+    void $ rio $ stop serf
 
 execReplay
   :: forall e
@@ -80,7 +80,7 @@ execReplay serf log last = do
     when (numEvs /= bootSeqLen) $ do
       throwIO (MissingBootEventsInEventLog numEvs bootSeqLen)
 
-    io (bootSeq serf evs) >>= \case
+    io (boot serf evs) >>= \case
       Just err -> pure (Just err)
       Nothing  -> doReplay
 

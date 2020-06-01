@@ -207,7 +207,7 @@ runOrExitImmediately vSlog getPier oExit mStart multi = do
   shutdownImmediately :: (Serf, Log.EventLog) -> RIO PierEnv ()
   shutdownImmediately (serf, log) = do
     logTrace "Sending shutdown signal"
-    Serf.shutdown serf
+    Serf.stop serf
     logTrace "Shutdown!"
 
   runPier :: (Serf, Log.EventLog) -> RIO PierEnv ()

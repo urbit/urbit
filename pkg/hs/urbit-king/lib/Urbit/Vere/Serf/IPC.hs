@@ -1,35 +1,50 @@
-{-
-|%
-::  +writ: from king to serf
-::
-+$  gang  (unit (set ship))
-+$  writ
-  $%  $:  %live
-          $%  [%exit cod=@]
-              [%save eve=@]
-              [%pack eve=@]
-      ==  ==
-      [%peek now=date lyc=gang pat=path]
-      [%play eve=@ lit=(list ?((pair date ovum) *))]
-      [%work job=(pair date ovum)]
-  ==
-::  +plea: from serf to king
-::
-+$  plea
-  $%  [%live ~]
-      [%ripe [pro=@ hon=@ nok=@] eve=@ mug=@]
-      [%slog pri=@ ?(cord tank)]
-      [%peek dat=(unit (cask))]
-      $:  %play
-          $%  [%done mug=@]
-              [%bail eve=@ mug=@ dud=goof]
-      ==  ==
-      $:  %work
-          $%  [%done eve=@ mug=@ fec=(list ovum)]
-              [%swap eve=@ mug=@ job=(pair date ovum) fec=(list ovum)]
-              [%bail lud=(list goof)]
-      ==  ==
-  ==
+{-|
+  Low-Level IPC flows for interacting with the serf process.
+
+  - Serf process can be started and shutdown with `start` and `stop`.
+  - You can ask the serf what it's last event was with
+    `serfLastEventBlocking`.
+  - A running serf can be asked to compact it's heap or take a snapshot.
+  - You can scry into a running serf.
+  - A running serf can be asked to execute a boot sequence, replay from
+    existing events, and run a ship with `boot`, `replay`, and `run`.
+
+  The running and replay flows will do batching of events to keep the
+  IPC pipe full.
+
+  ```
+  |%
+  ::  +writ: from king to serf
+  ::
+  +$  gang  (unit (set ship))
+  +$  writ
+    $%  $:  %live
+            $%  [%exit cod=@]
+                [%save eve=@]
+                [%pack eve=@]
+        ==  ==
+        [%peek now=date lyc=gang pat=path]
+        [%play eve=@ lit=(list ?((pair date ovum) *))]
+        [%work job=(pair date ovum)]
+    ==
+  ::  +plea: from serf to king
+  ::
+  +$  plea
+    $%  [%live ~]
+        [%ripe [pro=@ hon=@ nok=@] eve=@ mug=@]
+        [%slog pri=@ ?(cord tank)]
+        [%peek dat=(unit (cask))]
+        $:  %play
+            $%  [%done mug=@]
+                [%bail eve=@ mug=@ dud=goof]
+        ==  ==
+        $:  %work
+            $%  [%done eve=@ mug=@ fec=(list ovum)]
+                [%swap eve=@ mug=@ job=(pair date ovum) fec=(list ovum)]
+                [%bail lud=(list goof)]
+        ==  ==
+    ==
+  ```
 -}
 
 module Urbit.Vere.Serf.IPC
@@ -38,16 +53,17 @@ module Urbit.Vere.Serf.IPC
   , PlayBail(..)
   , Flag(..)
   , WorkError(..)
-  , start
-  , serfLastEventBlocking
-  , shutdown
-  , snapshot
-  , bootSeq
-  , replay
-  , running
   , EvErr(..)
-  , ComputeRequest(..)
-  , SpinState
+  , RunReq(..)
+  , start
+  , stop
+  , serfLastEventBlocking
+  , snapshot
+  , compact
+  , scry
+  , boot
+  , replay
+  , run
   )
 where
 
@@ -177,39 +193,16 @@ data Config = Config
   , scDead :: IO ()          --  What to do when the serf process goes down?
   }
 
-data WorkError
-  = RunBail [Goof]
-  | RunSwap EventId Mug Wen Noun FX
-
-data EvErr = EvErr Ev (WorkError -> IO ())
-
-data ComputeRequest
-  = CRWork EvErr
-  | CRSave ()
-  | CRKill ()
-  | CRPack ()
-  | CRScry Wen Gang Path (Maybe (Term, Noun) -> IO ())
-
-type SpinState = Maybe Ev
-
 
 -- Exceptions ------------------------------------------------------------------
 
 data SerfExn
---  = BadComputeId EventId (Fact, FX)
---  | BadReplacementId EventId ReplacementEv
---  | UnexpectedPlay EventId (EventId, Mug)
-    = UnexpectedPlea Plea Text
-    | BadPleaAtom Atom
-    | BadPleaNoun Noun [Text] Text
---  | ReplacedEventDuringReplay EventId ReplacementEv
---  | ReplacedEventDuringBoot   EventId ReplacementEv
---  | EffectsDuringBoot         EventId FX
-    | SerfConnectionClosed
---  | UnexpectedPleaOnNewShip Plea
---  | InvalidInitialPlea Plea
-  deriving (Show, Exception)
-
+  = UnexpectedPlea Plea Text
+  | BadPleaAtom Atom
+  | BadPleaNoun Noun [Text] Text
+  | SerfConnectionClosed
+  | SerfHasShutdown
+ deriving (Show, Exception)
 
 -- Access Current Serf State ---------------------------------------------------
 
@@ -379,7 +372,7 @@ withSerfLock tryGen s f = do
   ss <- takeLock
   tryGen (f ss) >>= \case
     Left e -> do
-      io (forceKillSerf s)
+      io (forcefullyKillSerf s)
       putMVar (serfLock s) (Left e)
       throwIO e
     Right (ss', x) -> do
@@ -394,53 +387,90 @@ withSerfLock tryGen s f = do
 
 -- Flows for Interacting with the Serf -----------------------------------------
 
+{-|
+  Ask the serf to write a snapshot to disk.
+-}
 snapshot :: Serf -> IO ()
 snapshot serf = withSerfLock try serf $ \ss -> do
   sendSnapshotRequest serf (ssLast ss)
   pure (ss, ())
 
+{-|
+  Ask the serf to de-duplicate and de-fragment it's heap.
+-}
 compact :: Serf -> IO ()
 compact serf = withSerfLock try serf $ \ss -> do
   sendCompactionRequest serf (ssLast ss)
   pure (ss, ())
 
-scry :: Serf -> Wen -> Gang -> Path -> (Maybe (Term, Noun) -> IO ()) -> IO ()
-scry serf w g p k = withSerfLock try serf $ \ss -> do
-  sendScryRequest serf w g p >>= k
-  pure (ss, ())
+{-|
+  Peek into the serf state.
+-}
+scry :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
+scry serf w g p = withSerfLock try serf $ \ss -> do
+  (ss,) <$> sendScryRequest serf w g p
 
-shutdown :: HasLogFunc e => Serf -> RIO e ()
-shutdown serf = do
-  race_ (wait2sec >> forceKill) $ do
-    logTrace "Getting current serf state (taking lock, might block if in use)."
-    finalState <- takeMVar (serfLock serf)
-    logTrace "Got serf state (and took lock). Requesting shutdown."
-    io (sendShutdownRequest serf 0)
-    logTrace "Sent shutdown request. Waiting for process to die."
-    io $ waitForProcess (serfProc serf)
-    logTrace "RIP Serf process."
+{-|
+  Ask the serf to shutdown. If it takes more than 2s, kill it with
+  SIGKILL.
+-}
+stop :: HasLogFunc e => Serf -> RIO e ()
+stop serf = do
+  race_ niceKill (wait2sec >> forceKill)
  where
-  wait2sec  = threadDelay 2_000_000
+  wait2sec = threadDelay 2_000_000
+
+  niceKill = do
+    logTrace "Asking serf to shut down"
+    io (gracefullyKillSerf serf)
+    logTrace "Serf went down when asked."
+
   forceKill = do
     logTrace "Serf taking too long to go down, kill with fire (SIGTERM)."
-    io (forceKillSerf serf)
+    io (forcefullyKillSerf serf)
     logTrace "Serf process killed with SIGTERM."
 
-forceKillSerf :: Serf -> IO ()
-forceKillSerf serf = do
+{-|
+  Kill the serf by taking the lock, then asking for it to exit.
+-}
+gracefullyKillSerf :: Serf -> IO ()
+gracefullyKillSerf serf@Serf{..} = do
+  finalState <- takeMVar serfLock
+  sendShutdownRequest serf 0
+  waitForProcess serfProc
+  pure ()
+
+{-|
+  Kill the serf by sending it a SIGKILL.
+-}
+forcefullyKillSerf :: Serf -> IO ()
+forcefullyKillSerf serf = do
   getPid (serfProc serf) >>= \case
     Nothing  -> pure ()
     Just pid -> do
       io $ signalProcess sigKILL pid
       io $ void $ waitForProcess (serfProc serf)
 
-bootSeq :: Serf -> [Noun] -> IO (Maybe PlayBail)
-bootSeq serf@Serf {..} seq = do
+{-|
+  Given a list of boot events, send them to to the serf in a single
+  %play message. They must all be sent in a single %play event so that
+  the serf can determine the length of the boot sequence.
+-}
+boot :: Serf -> [Noun] -> IO (Maybe PlayBail)
+boot serf@Serf {..} seq = do
   withSerfLock try serf $ \ss -> do
     recvPlay serf >>= \case
       PBail bail -> pure (ss, Just bail)
       PDone mug  -> pure (SerfState (fromIntegral $ length seq) mug, Nothing)
 
+{-|
+  Given a stream of nouns (from the event log), feed them into the serf
+  in batches of size `batchSize`.
+
+  - On `%bail` response, return early.
+  - On IPC errors, kill the serf and rethrow.
+  - On success, return `Nothing`.
+-}
 replay
   :: forall m
    . (MonadUnliftIO m, MonadIO m)
@@ -464,7 +494,7 @@ replay batchSize serf = do
           PBail bail   -> pure (Just bail, SerfState lastEve lastMug)
           PDone newMug -> loop (SerfState newEve newMug)
 
-{-
+{-|
   TODO If this is slow, use a mutable vector instead of reversing a list.
 -}
 awaitBatch :: Monad m => Int -> ConduitT i o m [i]
@@ -475,25 +505,58 @@ awaitBatch = go []
     Nothing -> pure (reverse acc)
     Just x  -> go (x:acc) (n-1)
 
+
+-- Running Ship Flow -----------------------------------------------------------
+
+{-|
+  Two types of serf failures.
+
+  - `RunSwap`: Event processing failed, but the serf replaced it with
+    another event which succeeded.
+
+  - `RunBail`: Event processing failed and all attempt to replace it
+    with a failure-notice event also caused crashes. We are really fucked.
+-}
+data WorkError
+  = RunSwap EventId Mug Wen Noun FX
+  | RunBail [Goof]
+
 {-
+  An event and a callback to inform the IO Driver about failures.
+-}
+data EvErr = EvErr Ev (WorkError -> IO ())
+
+{-
+  - RRWork: Ask the serf to do work, will output (Fact, FX) if work
+    succeeded and call callback on failure.
+  - RRSave: Wait for the serf to finish all pending work
+-}
+data RunReq
+  = RRWork EvErr
+  | RRSave ()
+  | RRKill ()
+  | RRPack ()
+  | RRScry Wen Gang Path (Maybe (Term, Noun) -> IO ())
+
+{-|
   TODO Don't take snapshot until event log has processed current event.
 -}
-running
+run
   :: Serf
   -> Int
-  -> STM ComputeRequest
+  -> STM RunReq
   -> ((Fact, FX) -> STM ())
-  -> (SpinState -> STM ())
+  -> (Maybe Ev -> STM ())
   -> IO ()
-running serf maxBatchSize onInput sendOn spin = topLoop
+run serf maxBatchSize onInput sendOn spin = topLoop
  where
   topLoop :: IO ()
   topLoop = atomically onInput >>= \case
-    CRWork workErr -> doWork workErr
-    CRSave ()      -> doSave
-    CRKill ()      -> pure ()
-    CRPack ()      -> doPack
-    CRScry w g p k -> doScry w g p k
+    RRWork workErr -> doWork workErr
+    RRSave ()      -> doSave
+    RRKill ()      -> pure ()
+    RRPack ()      -> doPack
+    RRScry w g p k -> doScry w g p k
 
   doPack :: IO ()
   doPack = compact serf >> topLoop
@@ -502,7 +565,7 @@ running serf maxBatchSize onInput sendOn spin = topLoop
   doSave = snapshot serf >> topLoop
 
   doScry :: Wen -> Gang -> Path -> (Maybe (Term, Noun) -> IO ()) -> IO ()
-  doScry w g p k = scry serf w g p k >> topLoop
+  doScry w g p k = (scry serf w g p >>= k) >> topLoop
 
   doWork :: EvErr -> IO ()
   doWork firstWorkErr = do
@@ -515,11 +578,11 @@ running serf maxBatchSize onInput sendOn spin = topLoop
 
   workLoop :: TBMQueue EvErr -> IO (IO ())
   workLoop que = atomically onInput >>= \case
-    CRKill ()      -> atomically (closeTBMQueue que) >> pure (pure ())
-    CRSave ()      -> atomically (closeTBMQueue que) >> pure doSave
-    CRPack ()      -> atomically (closeTBMQueue que) >> pure doPack
-    CRScry w g p k -> atomically (closeTBMQueue que) >> pure (doScry w g p k)
-    CRWork workErr -> atomically (writeTBMQueue que workErr) >> workLoop que
+    RRKill ()      -> atomically (closeTBMQueue que) >> pure (pure ())
+    RRSave ()      -> atomically (closeTBMQueue que) >> pure doSave
+    RRPack ()      -> atomically (closeTBMQueue que) >> pure doPack
+    RRScry w g p k -> atomically (closeTBMQueue que) >> pure (doScry w g p k)
+    RRWork workErr -> atomically (writeTBMQueue que workErr) >> workLoop que
 
   onWorkResp :: Wen -> EvErr -> Work -> IO ()
   onWorkResp wen (EvErr evn err) = \case
@@ -531,7 +594,7 @@ running serf maxBatchSize onInput sendOn spin = topLoop
     WBail goofs -> do
       io $ err (RunBail goofs)
 
-{-
+{-|
   Given:
 
   - A stream of incoming requests
@@ -548,7 +611,7 @@ pullFromQueueBounded maxSize vInFlight queue = do
     then retry
     else readTBMQueue queue
 
-{-
+{-|
   Given
 
   - `maxSize`: The maximum number of jobs to send to the serf before
@@ -572,7 +635,7 @@ processWork
   -> Int
   -> TBMQueue EvErr
   -> (Wen -> EvErr -> Work -> IO ())
-  -> (SpinState -> STM ())
+  -> (Maybe Ev -> STM ())
   -> IO ()
 processWork serf maxSize q onResp spin = do
   vDoneFlag      <- newTVarIO False

@@ -36,7 +36,7 @@ import Urbit.Vere.Eyre        (eyre)
 import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
 import Urbit.Vere.Http.Client (client)
 import Urbit.Vere.Log         (EventLog)
-import Urbit.Vere.Serf        (ComputeRequest(..), EvErr(..), Serf, SpinState)
+import Urbit.Vere.Serf        (Serf)
 
 import qualified System.Entropy         as Ent
 import qualified Urbit.King.API         as King
@@ -297,7 +297,7 @@ pier (serf, log) vSlog mStart multi = do
     let stubErrCallback = \_ -> pure ()
 
     let computeConfig = ComputeConfig
-          { ccOnWork = (\x -> EvErr x stubErrCallback) <$> readTQueue computeQ
+          { ccOnWork = (`Serf.EvErr` stubErrCallback) <$> readTQueue computeQ
           , ccOnKill = takeTMVar shutdownM
           , ccOnSave = takeTMVar saveM
           , ccPutResult = writeTQueue persistQ
@@ -425,7 +425,7 @@ logEffect ef = logDebug $ display $ "[EFFECT]\n" <> pretty ef
     FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
 
 data ComputeConfig = ComputeConfig
-  { ccOnWork :: STM EvErr
+  { ccOnWork :: STM Serf.EvErr
   , ccOnKill :: STM ()
   , ccOnSave :: STM ()
   , ccPutResult :: (Fact, FX) -> STM ()
@@ -437,18 +437,17 @@ runCompute :: forall e . HasKingEnv e => Serf.Serf -> ComputeConfig -> RIO e ()
 runCompute serf ComputeConfig {..} = do
   logTrace "runCompute"
 
-  let onCR = asum [ CRKill <$> ccOnKill
-                  , CRSave <$> ccOnSave
-                  , CRWork <$> ccOnWork
+  let onCR = asum [ Serf.RRKill <$> ccOnKill
+                  , Serf.RRSave <$> ccOnSave
+                  , Serf.RRWork <$> ccOnWork
                   ]
 
-  let onSpin :: SpinState -> STM ()
-      onSpin Nothing   = ccHideSpinner
-      onSpin (Just ev) = ccShowSpinner (getSpinnerNameForEvent ev)
+  let onSpin :: Maybe Ev -> STM ()
+      onSpin = maybe ccHideSpinner (ccShowSpinner . getSpinnerNameForEvent)
 
   let maxBatchSize = 10
 
-  io (Serf.running serf maxBatchSize onCR ccPutResult onSpin)
+  io (Serf.run serf maxBatchSize onCR ccPutResult onSpin)
 
 
 -- Persist Thread --------------------------------------------------------------

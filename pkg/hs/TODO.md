@@ -4,12 +4,12 @@ Stubbed out:
   handle unparsed nouns)
 - [x] Handle IPC errors by killing serf process.
 - [x] Handle `peek` and `pack` in `swimming` flow.
-- [ ] PlayBail should be an exception for now.
-- [ ] Documentation for `Urbit.Vere.Serf.IPC`.
+- [x] Documentation for `Urbit.Vere.Serf.IPC`.
 - [x] Unstub slog/stder/dead callbacks on serf config.
 - [x] Remove GoodParse hack in newRunCompute.
 - [ ] Bring back tank printing.
 - [x] Handle serf stderr message correctly.
+- [ ] Snapshots should block until that event is commited to disk.
 
 King-Haskell specific features:
 
