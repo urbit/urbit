@@ -1,4 +1,4 @@
-/-  *file-server
+/-  srv=file-server
 /+  *server, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
@@ -9,12 +9,14 @@
 +$  serving  (map url-base=path [clay-base=path public=?])
 +$  state-zero
   $:  %0
-      =configuration
+      =configuration:srv
       =serving
   ==
 --
+::
 %+  verb  |
 %-  agent:dbug
+::
 =|  state-zero
 =*  state  -
 ^-  agent:gall
@@ -55,7 +57,7 @@
   |^
   ?>  (team:title our.bowl src.bowl)
   ?+  mark  (on-poke:def mark vase)
-      %file-server-action  (file-server-action !<(action vase))
+      %file-server-action  (file-server-action !<(action:srv vase))
       %handle-http-request
     =+  !<([id=@ta req=inbound-request:eyre] vase)
     :_  this
@@ -64,7 +66,7 @@
   ==
   ::
   ++  file-server-action
-    |=  act=action
+    |=  act=action:srv
     ^-  (quip card _this)
     |^
     ?-  -.act
@@ -93,7 +95,7 @@
     ==
     ::
     ++  give
-      |=  =update
+      |=  =update:srv
       ^-  (list card)
       [%give %fact [/all]~ [%file-server-update !>(update)]]~
     --
@@ -194,7 +196,7 @@
   ==
   ::
    ++  give
-    |=  =update
+    |=  =update:srv
     ^-  (list card)
     [%give %fact ~ [%file-server-update !>(update)]]~
   --
