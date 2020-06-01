@@ -643,7 +643,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~landscape/inner-path'
-            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' cookie-value]~
             ~
         ==
       ^=  comparator
@@ -683,7 +683,7 @@
                     [%ipv4 .192.168.1.1]
                     :*  %'GET'
                         '/~landscape/inner-path'
-                        ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+                        ['cookie' cookie-value]~
                         ~
                   ==  ==
               ==
@@ -1037,7 +1037,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' cookie-value]~
             ~
         ==
       ^=  expected-moves
@@ -1055,6 +1055,7 @@
                 :~  ['content-type' 'text/event-stream']
                     ['cache-control' 'no-cache']
                     ['connection' 'keep-alive']
+                    ['set-cookie' cookie-string]
                 ==
               ::
                 :-  ~
@@ -1135,7 +1136,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' cookie-value]~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1164,7 +1165,7 @@
             card.i.moves
         ::
           %+  expect-eq
-            !>  [~[/http-put-request] %give %response %start [200 ~] ~ %.y]
+            !>  put-200-response
             !>  i.t.moves
         ::
           %+  expect-eq
@@ -1235,7 +1236,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' cookie-value]~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1263,7 +1264,7 @@
             card.i.moves
         ::
           %+  expect-eq
-            !>  [~[/http-put-request] %give %response %start [200 ~] ~ %.y]
+            !>  put-200-response
             !>  i.t.moves
         ::
           %+  expect-eq
@@ -1336,7 +1337,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' cookie-value]~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1365,7 +1366,7 @@
             card.i.moves
         ::
           %+  expect-eq
-            !>  [~[/http-put-request] %give %response %start [200 ~] ~ %.y]
+            !>  put-200-response
             !>  i.t.moves
         ::
           %+  expect-eq
@@ -1426,7 +1427,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' cookie-value]~
             ~
         ==
       ^=  expected-moves
@@ -1444,6 +1445,7 @@
                 :~  ['content-type' 'text/event-stream']
                     ['cache-control' 'no-cache']
                     ['connection' 'keep-alive']
+                    ['set-cookie' cookie-string]
                 ==
               ::
                 :-  ~
@@ -1486,7 +1488,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' cookie-value]~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1512,7 +1514,7 @@
             card.i.moves
         ::
           %+  expect-eq
-            !>  [~[/http-put-request] %give %response %start [200 ~] ~ %.y]
+            !>  put-200-response
             !>  i.t.moves
     ==  ==
   ::  gall responds on the second subscription.
@@ -1624,7 +1626,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' cookie-value]~
             ~
         ==
       ^=  expected-moves
@@ -1642,6 +1644,7 @@
                 :~  ['content-type' 'text/event-stream']
                     ['cache-control' 'no-cache']
                     ['connection' 'keep-alive']
+                    ['set-cookie' cookie-string]
                 ==
               ::
                 :-  ~
@@ -1709,7 +1712,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' cookie-value]~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -1727,7 +1730,7 @@
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         %+  expect-eq
-          !>  [~[/http-put-request] %give %response %start [200 ~] ~ %.y]
+          !>  put-200-response
           !>  i.moves
     ==
   ::  the client connection is detected to be broken
@@ -1784,7 +1787,7 @@
             [%ipv4 .192.168.1.1]
             %'GET'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' cookie-value]~
             ~
         ==
       ^=  expected-moves
@@ -1802,6 +1805,7 @@
                 :~  ['content-type' 'text/event-stream']
                     ['cache-control' 'no-cache']
                     ['connection' 'keep-alive']
+                    ['set-cookie' cookie-string]
                 ==
               ::
                 :-  ~
@@ -2148,14 +2152,17 @@
         ==
       ^=  expected-moves
         ^-  (list move:http-server-gate)
-        :~  :*  duct=~[/http-blah]
+        :~  ::NOTE  this ~d7 is tied to the eyre-internal +session-timeout...
+            :-  duct=~[/http-blah]
+            [%pass p=/sessions/expire q=[%b [%wait p=(add start-now ~d7.m1)]]]
+          ::
+            :*  duct=~[/http-blah]
                 %give
                 %response
                 %start
                 :-  307
                 :~  ['location' '/~landscape']
-                    :-  'set-cookie'
-                    'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea; Path=/; Max-Age=604800'
+                    ['set-cookie' cookie-string]
                 ==
                 ~
                 complete=%.y
@@ -2202,7 +2209,7 @@
             [%ipv4 .192.168.1.1]
             %'PUT'
             '/~/channel/0123456789abcdef'
-            ['cookie' 'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ['cookie' cookie-value]~
         ::
             :-  ~
             %-  as-octs:mimes:html
@@ -2244,7 +2251,7 @@
             card.i.t.moves
         ::
           %+  expect-eq
-            !>  [~[/http-put-request] %give %response %start [200 ~] ~ %.y]
+            !>  put-200-response
             !>  i.t.t.moves
         ::
           %+  expect-eq
@@ -2278,4 +2285,22 @@
   ?~  data  headers
   %+  weld  headers
   ['content-length' (crip ((d-co:co 1) p.u.data))]~
+::  produce the 200 response to a put request
+::
+++  put-200-response
+  :*  ~[/http-put-request]
+      %give
+      %response
+      %start
+      [200 ['set-cookie' cookie-string]~]
+      ~
+      %.y
+  ==
+::
+++  cookie-value
+  'urbauth-~nul=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea'
+::
+++  cookie-string
+  %^  cat  3  cookie-value
+  '; Path=/; Max-Age=604800'
 --
