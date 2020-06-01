@@ -10,9 +10,9 @@
       state-two
   ==
 ::
-+$  state-zero  [%0 =inbox]
-+$  state-one   [%1 =inbox]
-+$  state-two   [%2 =inbox]
++$  state-zero  [%0 =inbox:store]
++$  state-one   [%1 =inbox:store]
++$  state-two   [%2 =inbox:store]
 --
 ::
 =|  state-two

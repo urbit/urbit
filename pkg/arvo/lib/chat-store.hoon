@@ -1,3 +1,4 @@
+
 /-  sur=chat-store
 ^?
 =<  [sur .]
@@ -55,16 +56,6 @@
         [%read (numb read.config)]
     ==
   ::
-  ++  configs
-    |=  cfg=^configs
-    ^-  json
-    %+  frond  %chat-configs
-    %-  pairs
-    %+  turn  ~(tap by cfg)
-    |=  [pax=^path =^config]
-    ^-  [cord json]
-    [(spat pax) (^config config)]
-  ::
   ++  inbox
     |=  box=^inbox
     ^-  json
@@ -105,12 +96,6 @@
         [%create (pairs [%path (path path.upd)]~)]
     ?:  ?=(%delete -.upd)
         [%delete (pairs [%path (path path.upd)]~)]
-    ?:  ?=(%config -.upd)
-        :-  %config
-        %-  pairs
-        :~  [%path (path path.upd)]
-            [%config (config config.upd)]
-        ==
     [*@t *json]
     ==
   --
@@ -207,14 +192,6 @@
     ::
     --
   --
-::
-++  inbox-to-configs
-  |=  =inbox
-  ^-  configs
-  %-  ~(run by inbox)
-  |=  =mailbox
-  ^-  config
-  config.mailbox
 ::
 ++  eval
   |=  [=bowl:gall =hoon]

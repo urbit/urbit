@@ -29,7 +29,7 @@
 ::
 +$  inbox  (map path mailbox)
 ::
-+$  chat-base
++$  diff
   $%  [%create =path]               ::  %create: create a mailbox at path
       [%delete =path]               ::  %delete: delete a mailbox at path
       [%message =path =envelope]    ::  %message: append a message to mailbox
@@ -43,7 +43,7 @@
       diff
   ==
 ::
-+$  chat-update
++$  update
   $%  [%initial =inbox]
       [%keys keys=(set path)]
       [%messages =path start=@ud end=@ud envelopes=(list envelope)]
