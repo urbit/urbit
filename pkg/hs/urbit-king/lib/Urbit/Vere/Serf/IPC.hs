@@ -64,6 +64,7 @@ module Urbit.Vere.Serf.IPC
   , boot
   , replay
   , run
+  , swim
   )
 where
 
@@ -202,6 +203,8 @@ data SerfExn
   | BadPleaNoun Noun [Text] Text
   | SerfConnectionClosed
   | SerfHasShutdown
+  | BailDuringReplay EventId [Goof]
+  | SwapDuringReplay EventId Mug (Wen, Noun) FX
  deriving (Show, Exception)
 
 -- Access Current Serf State ---------------------------------------------------
@@ -504,6 +507,41 @@ awaitBatch = go []
   go acc n = await >>= \case
     Nothing -> pure (reverse acc)
     Just x  -> go (x:acc) (n-1)
+
+
+-- Special Replay for Collecting FX --------------------------------------------
+
+{-|
+  This does event-log replay using the running IPC flow so that we
+  can collect effects.
+
+  We don't tolerate replacement events or bails since we are actually
+  replaying the log, so we just throw exceptions in those cases.
+-}
+swim
+  :: forall m
+   . (MonadIO m, MonadUnliftIO m)
+  => Serf
+  -> ConduitT (Wen, Ev) (EventId, FX) m ()
+swim serf = do
+  withSerfLock tryC serf $ \SerfState {..} -> do
+    (, ()) <$> loop ssHash ssLast
+ where
+  loop :: Mug -> EventId -> ConduitT (Wen, Ev) (EventId, FX) m SerfState
+  loop mug eve = await >>= \case
+    Nothing -> do
+      pure (SerfState eve mug)
+    Just (wen, evn) -> do
+      io (sendWrit serf (WWork wen evn))
+      io (recvWork serf) >>= \case
+        WBail goofs -> do
+          throwIO (BailDuringReplay eve goofs)
+        WSwap eid hash (wen, noun) fx -> do
+          throwIO (SwapDuringReplay eid hash (wen, noun) fx)
+        WDone eid hash fx -> do
+          yield (eid, fx)
+          loop hash eid
+
 
 
 -- Running Ship Flow -----------------------------------------------------------

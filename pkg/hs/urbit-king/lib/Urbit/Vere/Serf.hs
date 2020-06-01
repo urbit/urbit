@@ -3,26 +3,32 @@
 -}
 
 module Urbit.Vere.Serf
-  ( module Urbit.Vere.Serf.IPC
-  , withSerf
+  ( withSerf
   , execReplay
+  , collectFX
+  , module X
   )
 where
 
 import Urbit.Prelude
 
 import Data.Conduit
--- ort System.ProgressBar
--- ort Urbit.Arvo
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Serf.IPC
 
--- ort Urbit.King.App         (HasStderrLogFunc(..))
+import Urbit.Arvo (FX)
 
 import qualified Data.Conduit.Combinators as CC
+import qualified Urbit.Vere.Log           as Log
+
+import qualified Urbit.Vere.Serf.IPC as X (Config(..), EvErr(..), Flag(..),
+                                           RunReq(..), Serf, run, snapshot,
+                                           start, stop)
+
+-- ort System.ProgressBar
+-- ort Urbit.King.App         (HasStderrLogFunc(..))
 -- ort qualified Urbit.Ob                 as Ob
 -- ort qualified Urbit.Time               as Time
-import qualified Urbit.Vere.Log           as Log
 
 
 --------------------------------------------------------------------------------
@@ -34,14 +40,8 @@ data MissingBootEventsInEventLog = MissingBootEventsInEventLog Word Word
 
 --------------------------------------------------------------------------------
 
-bytesNouns :: MonadIO m => ConduitT ByteString Noun m ()
-bytesNouns = await >>= \case
-  Nothing -> pure ()
-  Just bs -> do
-    noun               <- cueBSExn bs
-    (mug :: Noun, bod) <- fromNounExn noun
-    yield bod
-    bytesNouns
+parseLogRow :: MonadIO m => ByteString -> m (Mug, Noun)
+parseLogRow = cueBSExn >=> fromNounExn
 
 withSerf :: HasLogFunc e => Config -> RAcquire e Serf
 withSerf config = mkRAcquire startup kill
@@ -72,7 +72,7 @@ execReplay serf log last = do
 
     evs <- runConduit $ Log.streamEvents log 1
                      .| CC.take (fromIntegral bootSeqLen)
-                     .| bytesNouns
+                     .| CC.mapM (fmap snd . parseLogRow)
                      .| CC.sinkList
 
     let numEvs = fromIntegral (length evs)
@@ -111,5 +111,21 @@ execReplay serf log last = do
 
     runConduit $ Log.streamEvents log (lastEventInSnap + 1)
               .| CC.take (fromIntegral numEvs)
-              .| bytesNouns
+              .| CC.mapM (fmap snd . parseLogRow)
               .| replay 10 serf
+
+
+-- Collect FX ------------------------------------------------------------------
+
+collectFX :: HasLogFunc e => Serf -> Log.EventLog -> RIO e ()
+collectFX serf log = do
+  lastEv <- io (serfLastEventBlocking serf)
+  runConduit
+    $  Log.streamEvents log (lastEv + 1)
+    .| CC.mapM (parseLogRow >=> fromNounExn . snd)
+    .| swim serf
+    .| persistFX
+ where
+  persistFX :: ConduitT (EventId, FX) Void (RIO e) ()
+  persistFX = CC.mapM_ $ \(eId, fx) -> do
+    Log.writeEffectsRow log eId $ jamBS $ toNoun fx

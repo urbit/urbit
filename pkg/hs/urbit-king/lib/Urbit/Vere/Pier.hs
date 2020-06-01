@@ -1,10 +1,8 @@
-{-# OPTIONS_GHC -Wwarn #-}
-
 {-|
   Top-Level Pier Management
 
-  This is the code that starts the IO drivers and deals with
-  communication between the serf, the log, and the IO drivers.
+  This is the code that starts the IO drivers and deals with communication
+  between the serf, the event log, and the IO drivers.
 -}
 module Urbit.Vere.Pier
   ( booted
@@ -425,10 +423,10 @@ logEffect ef = logDebug $ display $ "[EFFECT]\n" <> pretty ef
     FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
 
 data ComputeConfig = ComputeConfig
-  { ccOnWork :: STM Serf.EvErr
-  , ccOnKill :: STM ()
-  , ccOnSave :: STM ()
-  , ccPutResult :: (Fact, FX) -> STM ()
+  { ccOnWork      :: STM Serf.EvErr
+  , ccOnKill      :: STM ()
+  , ccOnSave      :: STM ()
+  , ccPutResult   :: (Fact, FX) -> STM ()
   , ccShowSpinner :: Maybe Text -> STM ()
   , ccHideSpinner :: STM ()
   }
@@ -442,8 +440,15 @@ runCompute serf ComputeConfig {..} = do
                   , Serf.RRWork <$> ccOnWork
                   ]
 
+  vEvProcessing :: TMVar Ev <- newEmptyTMVarIO
+
+  void $ async $ forever (atomically (takeTMVar vEvProcessing) >>= logEvent)
+
   let onSpin :: Maybe Ev -> STM ()
-      onSpin = maybe ccHideSpinner (ccShowSpinner . getSpinnerNameForEvent)
+      onSpin Nothing = ccHideSpinner
+      onSpin (Just ev) = do
+          ccShowSpinner (getSpinnerNameForEvent ev)
+          putTMVar vEvProcessing ev
 
   let maxBatchSize = 10
 
