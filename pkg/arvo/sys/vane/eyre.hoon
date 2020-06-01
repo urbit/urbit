@@ -84,7 +84,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2019.10.6
+      date=%~2020.5.29
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -146,6 +146,9 @@
 ::  channel-timeout: the delay before a channel should be reaped
 ::
 ++  channel-timeout  ~h12
+::  session-timeout: the delay before an idle session expires
+::
+++  session-timeout  ~d7
 --
 ::  utilities
 ::
@@ -960,14 +963,20 @@
         $(eny (shas %try-again candidate))
       ::  record cookie and record expiry time
       ::
-      =/  expires-in=@dr  ~d7
+      =/  first-session=?  =(~ sessions.authentication-state.state)
+      =/  expires-at=@da   (add now session-timeout)
       =.  sessions.authentication-state.state
-        (~(put by sessions.authentication-state.state) session (add now expires-in))
+        (~(put by sessions.authentication-state.state) session expires-at)
       ::
-      =/  max-age=tape  (format-ud-as-integer `@ud`(div (msec:milly expires-in) 1.000))
-      =/  cookie-line
-        %-  crip
-        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+      =/  cookie-line=@t
+        (session-cookie-string session)
+      ::
+      =;  out=[moves=(list move) server-state]
+        ::  if we didn't have any cookies previously, start the expiry timer
+        ::
+        ?.  first-session  out
+        =-  out(moves [- moves.out])
+        [duct %pass /sessions/expire %b %wait expires-at]
       ::
       ?~  redirect=(get-header:http 'redirect' u.parsed)
         %-  handle-response
@@ -991,6 +1000,29 @@
           data=~
           complete=%.y
       ==
+    ::  +session-id-from-request: attempt to find a session cookie
+    ::
+    ++  session-id-from-request
+      |=  =request:http
+      ^-  (unit @uv)
+      ::  are there cookies passed with this request?
+      ::
+      ::    TODO: In HTTP2, the client is allowed to put multiple 'Cookie'
+      ::    headers.
+      ::
+      ?~  cookie-header=(get-header:http 'cookie' header-list.request)
+        ~
+      ::  is the cookie line is valid?
+      ::
+      ?~  cookies=(rush u.cookie-header cock:de-purl:html)
+        ~
+      ::  is there an urbauth cookie?
+      ::
+      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
+        ~
+      ::  if it's formatted like a valid session cookie, produce it
+      ::
+      `(unit @)`(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
     ::  +request-is-logged-in: checks to see if the request is authenticated
     ::
     ::    We are considered logged in if this request has an urbauth
@@ -999,24 +1031,9 @@
     ++  request-is-logged-in
       |=  =request:http
       ^-  ?
-      ::  are there cookies passed with this request?
+      ::  does the request pass a session cookie?
       ::
-      ::    TODO: In HTTP2, the client is allowed to put multiple 'Cookie'
-      ::    headers.
-      ::
-      ?~  cookie-header=(get-header:http 'cookie' header-list.request)
-        %.n
-      ::  is the cookie line is valid?
-      ::
-      ?~  cookies=(rush u.cookie-header cock:de-purl:html)
-        %.n
-      ::  is there an urbauth cookie?
-      ::
-      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
-        %.n
-      ::  is this formatted like a valid session cookie?
-      ::
-      ?~  session-id=(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
+      ?~  session-id=(session-id-from-request request)
         %.n
       ::  is this a session that we know about?
       ::
@@ -1034,6 +1051,16 @@
       =+  res=((sloy scry) [151 %noun] %j pax)
       ::
       (rsh 3 1 (scot %p (@ (need (need res)))))
+    ::  +session-cookie-string: compose newly-timestamped session cookie
+    ::
+    ++  session-cookie-string
+      |=  session=@uv
+      ^-  @t
+      %-  crip
+      =;  max-age=tape
+        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+      %-  format-ud-as-integer
+      (div (msec:milly session-timeout) 1.000)
     --
   ::  +channel: per-event handling of requests to the channel system
   ::
@@ -1741,12 +1768,38 @@
           ?^  response-header.u.connection-state
             ~&  [%http-multiple-start duct]
             error-connection
+          ::  if request was authenticated, extend the session & cookie's life
           ::
+          =^  response-header  sessions.authentication-state.state
+            =,  authentication
+            =*  sessions  sessions.authentication-state.state
+            =*  inbound   inbound-request.u.connection-state
+            =*  no-op     [response-header.http-event sessions]
+            ::
+            ?.  authenticated.inbound
+              no-op
+            ?~  session-id=(session-id-from-request request.inbound)
+              ::  cookies are the only auth method, so this is unexpected
+              ::
+              ~&  [%e %authenticated-without-cookie]
+              no-op
+            ?.  (~(has by sessions) u.session-id)
+              ::  if the session has expired since the request was opened,
+              ::  tough luck, we don't create/revive sessions here
+              ::
+              no-op
+            :_  (~(put by sessions) u.session-id (add now session-timeout))
+            =-  response-header.http-event(headers -)
+            %^  set-header:http  'set-cookie'
+              (session-cookie-string u.session-id)
+            headers.response-header.http-event
+          ::
+          =.  response-header.http-event  response-header
           =.  connections.state
             %+  ~(jab by connections.state)  duct
             |=  connection=outstanding-connection
             %_  connection
-              response-header  `response-header.http-event
+              response-header  `response-header
               bytes-sent  ?~(data.http-event 0 p.u.data.http-event)
             ==
           ::
@@ -2177,6 +2230,7 @@
          %run-app-request  run-app-request
          %watch-response   watch-response
          %run-build        run-build
+         %sessions         sessions
          %channel          channel
          %acme             acme-ack
       ==
@@ -2293,6 +2347,34 @@
       [moves http-server-gate]
     ==
   ::
+  ++  sessions
+    ::
+    ?>  ?=([%b %wake *] sign)
+    ::
+    ?^  error.sign
+      [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
+    ::  remove cookies that have expired
+    ::
+    =*  sessions  sessions.authentication-state.server-state.ax
+    =.  sessions.authentication-state.server-state.ax
+      %-  ~(gas by *(map @uv session))
+      %+  murn  ~(tap in sessions)
+      |=  [cookie=@uv session]
+      ^-  (unit [@uv session])
+      ?:  (lth expiry-time now)  ~
+      `[cookie expiry-time]
+    ::  if there's any cookies left, set a timer for the next expected expiry
+    ::
+    ^-  [(list move) _http-server-gate]
+    :_  http-server-gate
+    ?:  =(~ sessions)  ~
+    =;  next-expiry=@da
+      [duct %pass /sessions/expire %b %wait next-expiry]~
+    %+  roll  ~(tap by sessions)
+    |=  [[@uv session] next=@da]
+    ?:  =(*@da next)  expiry-time
+    (min next expiry-time)
+  ::
   ++  acme-ack
     ?>  ?=([%g %unto *] sign)
     ::
@@ -2311,42 +2393,21 @@
 ::
 ++  load
   =>  |%
-    +$  channel-old
-      $:  state=(each timer duct)
-          next-id=@ud
-          events=(qeu [id=@ud lines=wall])
-          subscriptions=(map wire [ship=@p app=term =path duc=duct])
-      ==
-    +$  channel-state-old
-      $:  session=(map @t channel-old)
-          duct-to-key=(map duct @t)
-      ==
-    ++  axle-old
-      %+  cork
-        axle
-      |=  =axle
-      axle(date %~2019.1.7, channel-state.server-state (channel-state-old))
-  --
-  |=  old=$%(axle axle-old)
+      +$  axle-2019-10-6
+        [date=%~2019.10.6 =server-state]
+      --
+  |=  old=$%(axle axle-2019-10-6)
   ^+  ..^$
   ::
   ~!  %loading
   ?-  -.old
-    %~2019.1.7
-      =/  add-heartbeat
-      %-  ~(run by session.channel-state.server-state.old)
-      |=  [c=channel-old]
-      ^-  channel
-      [state.c next-id.c events.c subscriptions.c ~]
-      ::
-      =/  new
-      %=  old
-        date  %~2019.10.6
-        session.channel-state.server-state  add-heartbeat
-      ==
-      $(old new)
-    ::
-    %~2019.10.6  ..^$(ax old)
+    %~2020.5.29  ..^$(ax old)
+  ::
+      %~2019.10.6
+    %_  $
+      date.old  %~2020.5.29
+      sessions.authentication-state.server-state.old  ~
+    ==
   ==
 
 ::  +stay: produce current state
