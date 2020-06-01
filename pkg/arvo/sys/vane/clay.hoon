@@ -114,6 +114,14 @@
   $:  vases=(map path [res=vase dez=(set path)])
       marks=(map mark [res=dais dez=(set path)])
       casts=(map mars [res=tube dez=(set path)])
+      reef=reef-cache
+  ==
+::  $reef-cache: built system files
+::
++$  reef-cache
+  $:  hoon=(unit vase)
+      arvo=(unit vase)
+      zuse=(unit vase)
   ==
 ::
 ::  Hash of a blob, for lookup in the object store (lat.ran)
@@ -870,8 +878,36 @@
       $(sut (slop q.cage sut), bar t.bar)
     ::
     ++  run-reef
-      ^-  [vase state]
-      [!>(..zuse) nub]  ::  TODO implement
+      |-  ^-  [vase state]
+      ?^  zuse.reef.cache.nub
+        [u.zuse.reef.cache.nub state]
+      =^  zus  nub  (get-value /sys/zuse/hoon)
+      ?^  arvo.reef.cache.nub
+        =/  gen
+          ~>  %mean.%zuse-parse-fail
+          (rain /sys/zuse/hoon `@t`q.q.zus)
+        =/  vax
+          ~>  %mean.%zuse-compile-fail
+          (slap (slap u.arvo.reef.cache.nub (ream '..is')) gen)
+        $(zuse.reef.cache.nub `vax)
+      =^  rav  nub  (get-value /sys/arvo/hoon)
+      ?^  hoon.reef.cache.nub
+        =/  gen
+          ~>  %mean.%arvo-parse-fail
+          (rain /sys/arvo/hoon `@t`q.q.rav)
+        =/  vax
+          ~>  %mean.%arvo-compile-fail
+          (slap (slot 7 u.hoon.reef.cache.nub) gen)
+        $(arvo.reef.cache.nub `vax)
+      ~&  %clay-should-never-build-hoon
+      =^  hun  nub  (get-value /sys/hoon/hoon)
+      =/  gen
+        ~>  %mean.%hoon-parse-fail
+        (rain /sys/hoon/hoon `@t`q.q.hun)
+      =/  vax
+        ~>  %mean.%hoon-compile-fail
+        (slap !>(0) gen)
+      $(hoon.reef.cache.nub `vax)
     ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
     ::
     ++  build-fit
@@ -1478,6 +1514,7 @@
       :*  ((invalidate path vase) vases.ford-cache invalid)
           ((invalidate mark dais) marks.ford-cache invalid)
           ((invalidate mars tube) casts.ford-cache invalid)
+          (promote-reef reef.ford-cache invalid)
       ==
     ::
     ++  invalidate
@@ -1490,6 +1527,14 @@
       ?:  ?=(^ (~(int in dez.i.builds) invalid))
         $(builds t.builds)
       (~(put by $(builds t.builds)) i.builds)
+    ::
+    ++  promote-reef
+      |=  [reef=reef-cache invalid=(set path)]
+      ^-  reef-cache
+      ?:  (~(has in invalid) /sys/hoon/hoon)  [~ ~ ~]
+      ?:  (~(has in invalid) /sys/arvo/hoon)  [hoon.reef ~ ~]
+      ?:  (~(has in invalid) /sys/zuse/hoon)  [hoon.reef arvo.reef ~]
+      reef
     ::
     ::  Updated q.yaki
     ::
