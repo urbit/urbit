@@ -73,7 +73,7 @@ runNetworkApp = runRIO NetworkTestApp
   }
 
 runGala
-  :: forall e . HasAmes e => Word8 -> RAcquire e (TQueue Ev, EffCb e NewtEf)
+  :: forall e . HasAmes e => Word8 -> RAcquire e (TQueue EvErr, EffCb e NewtEf)
 runGala point = do
     env <- ask
     que <- newTQueueIO
@@ -85,14 +85,14 @@ runGala point = do
   where
     noStderr _ = pure ()
 
-waitForPacket :: TQueue Ev -> Bytes -> IO Bool
+waitForPacket :: TQueue EvErr -> Bytes -> IO Bool
 waitForPacket q val = go
   where
     go =
       atomically (readTQueue q) >>= \case
-        EvBlip (BlipEvNewt (NewtEvBorn (_, ()) ())) -> go
-        EvBlip (BlipEvAmes (AmesEvHear () _ bs))    -> pure (bs == val)
-        _                                           -> pure False
+        EvErr (EvBlip (BlipEvNewt (NewtEvBorn (_, ()) ()))) _ -> go
+        EvErr (EvBlip (BlipEvAmes (AmesEvHear () _ bs))) _    -> pure (bs == val)
+        _                                                     -> pure False
 
 runRAcquire :: RAcquire e a -> RIO e a
 runRAcquire acq = rwith acq pure

@@ -113,18 +113,26 @@ buildActionListFromDifferences fp snapshot = do
 
 --------------------------------------------------------------------------------
 
-clay :: forall e. (HasPierConfig e, HasLogFunc e, HasKingId e)
-     => e -> QueueEv -> ([Ev], RAcquire e (EffCb e SyncEf))
-clay env enqueueEv =
+boatFailed :: e -> WorkError -> IO ()
+boatFailed env _ = runRIO env $ do
+  pure () -- TODO What can we do?
+
+clay
+  :: forall e
+   . (HasPierConfig e, HasLogFunc e, HasKingId e)
+  => e
+  -> (EvErr -> STM ())
+  -> ([EvErr], RAcquire e (EffCb e SyncEf))
+clay env plan =
     (initialEvents, runSync)
   where
     king = fromIntegral (env ^. kingIdL)
 
-    initialEvents = [
-      EvBlip $ BlipEvBoat $ BoatEvBoat () ()
-      -- TODO: In the case of -A, we need to read all the data from the
-      -- specified directory and shove it into an %into event.
-      ]
+    boatEv = EvBlip $ BlipEvBoat $ BoatEvBoat () ()
+
+    -- TODO: In the case of -A, we need to read all the data from the
+    -- specified directory and shove it into an %into event.
+    initialEvents = [EvErr boatEv (boatFailed env)]
 
     runSync :: RAcquire e (EffCb e SyncEf)
     runSync = handleEffect <$> mkRAcquire start stop
@@ -154,8 +162,15 @@ clay env enqueueEv =
         logDebug $ displayShow ("(clay) dirk actions: ", actions)
 
         let !intoList = map (actionsToInto dir) actions
-        atomically $ enqueueEv $ EvBlip $ BlipEvSync $
-            SyncEvInto (Some (king, ())) desk False intoList
+
+        let syncEv = EvBlip
+                   $ BlipEvSync
+                   $ SyncEvInto (Some (king, ())) desk False intoList
+
+        let syncFailed _ = pure ()
+
+        atomically $ plan (EvErr syncEv syncFailed)
+
 
         atomically $ modifyTVar
             (cdMountPoints cd)

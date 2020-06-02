@@ -26,13 +26,21 @@ wakeEv = EvBlip $ BlipEvBehn $ BehnEvWake () ()
 
 sysTime = view Time.systemTime
 
-behn :: HasKingId e => e -> QueueEv -> ([Ev], Acquire (EffCb e BehnEf))
+bornFailed :: e -> WorkError -> IO ()
+bornFailed env _ = runRIO env $ do
+  pure () -- TODO Ship is fucked. Kill it?
+
+wakeErr :: WorkError -> IO ()
+wakeErr _ = pure ()
+
+behn
+  :: HasKingId e => e -> (EvErr -> STM ()) -> ([EvErr], Acquire (EffCb e BehnEf))
 behn env enqueueEv =
     (initialEvents, runBehn)
   where
     king = fromIntegral (env ^. kingIdL)
 
-    initialEvents = [bornEv king]
+    initialEvents = [EvErr (bornEv king) (bornFailed env)]
 
     runBehn :: Acquire (EffCb e BehnEf)
     runBehn = do
@@ -48,4 +56,4 @@ behn env enqueueEv =
     doze :: Timer -> Maybe Wen -> IO ()
     doze tim = \case
         Nothing -> Timer.stop tim
-        Just t  -> Timer.start tim (sysTime t) $ atomically (enqueueEv wakeEv)
+        Just t  -> Timer.start tim (sysTime t) $ atomically (enqueueEv (EvErr wakeEv wakeErr))

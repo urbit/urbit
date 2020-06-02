@@ -57,18 +57,22 @@ bornEv king =
 
 --------------------------------------------------------------------------------
 
+bornFailed :: e -> WorkError -> IO ()
+bornFailed env _ = runRIO env $ do
+  pure () -- TODO What to do in this case?
+
 client
   :: forall e
    . (HasLogFunc e, HasKingId e)
   => e
-  -> QueueEv
-  -> ([Ev], RAcquire e (EffCb e HttpClientEf))
-client env enqueueEv = (initialEvents, runHttpClient)
+  -> (EvErr -> STM ())
+  -> ([EvErr], RAcquire e (EffCb e HttpClientEf))
+client env plan = (initialEvents, runHttpClient)
   where
     kingId = view (kingIdL . to fromIntegral) env
 
-    initialEvents :: [Ev]
-    initialEvents = [bornEv kingId]
+    initialEvents :: [EvErr]
+    initialEvents = [EvErr (bornEv kingId) (bornFailed env)]
 
     runHttpClient :: RAcquire e (EffCb e HttpClientEf)
     runHttpClient = handleEffect <$> mkRAcquire start stop
@@ -133,8 +137,14 @@ client env enqueueEv = (initialEvents, runHttpClient)
     planEvent :: ReqId -> HttpEvent -> RIO e ()
     planEvent id ev = do
       logDebug $ displayShow ("(http client response)", id, (describe ev))
-      atomically $ enqueueEv $ EvBlip $ BlipEvHttpClient $
-        HttpClientEvReceive (kingId, ()) (fromIntegral id) ev
+
+      let recvEv = EvBlip
+                 $ BlipEvHttpClient
+                 $ HttpClientEvReceive (kingId, ()) (fromIntegral id) ev
+
+      let recvFailed _ = pure ()
+
+      atomically $ plan (EvErr recvEv recvFailed)
 
     -- show an HttpEvent with byte count instead of raw data
     describe :: HttpEvent -> String

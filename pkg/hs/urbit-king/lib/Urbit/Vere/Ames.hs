@@ -95,6 +95,10 @@ udpServ isFake who = do
     Nothing   -> fakeUdpServ
     Just host -> realUdpServ port host
 
+bornFailed :: e -> WorkError -> IO ()
+bornFailed env _ = runRIO env $ do
+  pure () -- TODO What can we do?
+
 {-|
     inst      -- Process instance number.
     who       -- Which ship are we?
@@ -112,15 +116,15 @@ ames
   => e
   -> Ship
   -> Bool
-  -> QueueEv
+  -> (EvErr -> STM ())
   -> (Text -> RIO e ())
-  -> ([Ev], RAcquire e (EffCb e NewtEf))
+  -> ([EvErr], RAcquire e (EffCb e NewtEf))
 ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
  where
   king = fromIntegral (env ^. kingIdL)
 
-  initialEvents :: [Ev]
-  initialEvents = [bornEv king]
+  initialEvents :: [EvErr]
+  initialEvents = [EvErr (bornEv king) (bornFailed env)]
 
   runAmes :: RAcquire e (EffCb e NewtEf)
   runAmes = do
@@ -136,10 +140,12 @@ ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
     aResolvr <- resolvServ aTurfs (usSend aUdpServ) stderr
     pure (AmesDrv { .. })
 
+  hearFailed _ = pure ()
+
   queuePacketsThread :: UdpServ -> RIO e (Async ())
   queuePacketsThread UdpServ {..} = async $ forever $ atomically $ do
     (p, a, b) <- usRecv
-    enqueueEv (hearEv p a b)
+    enqueueEv (EvErr (hearEv p a b) hearFailed)
 
   stop :: AmesDrv -> RIO e ()
   stop AmesDrv {..} = io $ do

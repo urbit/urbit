@@ -70,8 +70,12 @@ bornEv king = servEv $ HttpServerEvBorn (king, ()) ()
 liveEv :: ServId -> Ports -> Ev
 liveEv sId Ports {..} = servEv $ HttpServerEvLive (sId, ()) pHttp pHttps
 
-cancelEv :: ServId -> ReqId -> Ev
-cancelEv sId reqId = servEv $ HttpServerEvCancelRequest (sId, reqId, 1, ()) ()
+cancelEv :: ServId -> ReqId -> EvErr
+cancelEv sId reqId =
+  EvErr (servEv (HttpServerEvCancelRequest (sId, reqId, 1, ()) ())) cancelFailed
+
+cancelFailed :: WorkError -> IO ()
+cancelFailed _ = pure ()
 
 reqEv :: ServId -> ReqId -> WhichServer -> Address -> HttpRequest -> Ev
 reqEv sId reqId which addr req = case which of
@@ -170,7 +174,7 @@ startServ
   -> Ship
   -> Bool
   -> HttpServerConf
-  -> (Ev -> STM ())
+  -> (EvErr -> STM ())
   -> RIO e Serv
 startServ multi who isFake conf plan = do
   logTrace (displayShow ("EYRE", "startServ"))
@@ -205,9 +209,11 @@ startServ multi who isFake conf plan = do
   noHttp  <- view (networkConfigL . ncNoHttp)
   noHttps <- view (networkConfigL . ncNoHttps)
 
+  let reqEvFailed _ = pure ()
+
   let onReq :: WhichServer -> Ship -> Word64 -> ReqInfo -> STM ()
       onReq which _ship reqId reqInfo =
-        plan (requestEvent srvId which reqId reqInfo)
+        plan $ EvErr (requestEvent srvId which reqId reqInfo) reqEvFailed
 
   let onKilReq :: Ship -> Word64 -> STM ()
       onKilReq _ship = plan . cancelEv srvId . fromIntegral
@@ -269,21 +275,25 @@ startServ multi who isFake conf plan = do
 
 -- Eyre Driver -----------------------------------------------------------------
 
+bornFailed :: e -> WorkError -> IO ()
+bornFailed env _ = runRIO env $ do
+  pure () -- TODO What should this do?
+
 eyre
   :: forall e
    . (HasShipEnv e, HasKingId e)
   => e
   -> MultiEyreApi
   -> Ship
-  -> QueueEv
+  -> (EvErr -> STM ())
   -> Bool
-  -> ([Ev], RAcquire e (EffCb e HttpServerEf))
+  -> ([EvErr], RAcquire e (EffCb e HttpServerEf))
 eyre env multi who plan isFake = (initialEvents, runHttpServer)
  where
   king = fromIntegral (env ^. kingIdL)
 
-  initialEvents :: [Ev]
-  initialEvents = [bornEv king]
+  initialEvents :: [EvErr]
+  initialEvents = [EvErr (bornEv king) (bornFailed env)]
 
   runHttpServer :: RAcquire e (EffCb e HttpServerEf)
   runHttpServer = handleEf <$> mkRAcquire
@@ -306,13 +316,15 @@ eyre env multi who plan isFake = (initialEvents, runHttpServer)
     logDebug "Done restating http server"
     pure res
 
+  liveFailed _ = pure ()
+
   handleEf :: Drv -> HttpServerEf -> RIO e ()
   handleEf drv = \case
     HSESetConfig (i, ()) conf -> do
       logDebug (displayShow ("EYRE", "%set-config"))
       Serv {..} <- restart drv conf
       logDebug (displayShow ("EYRE", "%set-config", "Sending %live"))
-      atomically $ plan (liveEv sServId sPorts)
+      atomically $ plan (EvErr (liveEv sServId sPorts) liveFailed)
       logDebug "Write ports file"
       io (writePortsFile sPortsFile sPorts)
     HSEResponse (i, req, _seq, ()) ev -> do

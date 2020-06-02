@@ -93,10 +93,6 @@ import qualified Urbit.Time             as Time
 
 -- IPC Types -------------------------------------------------------------------
 
-type Gang = Maybe (HoonSet Ship)
-
-type Goof = (Term, [Tank])
-
 data Live
   = LExit Atom -- exit status code
   | LSave EventId
@@ -545,24 +541,6 @@ swim serf = do
 
 
 -- Running Ship Flow -----------------------------------------------------------
-
-{-|
-  Two types of serf failures.
-
-  - `RunSwap`: Event processing failed, but the serf replaced it with
-    another event which succeeded.
-
-  - `RunBail`: Event processing failed and all attempt to replace it
-    with a failure-notice event also caused crashes. We are really fucked.
--}
-data WorkError
-  = RunSwap EventId Mug Wen Noun FX
-  | RunBail [Goof]
-
-{-
-  An event and a callback to inform the IO Driver about failures.
--}
-data EvErr = EvErr Ev (WorkError -> IO ())
 
 {-
   - RRWork: Ask the serf to do work, will output (Fact, FX) if work

@@ -491,6 +491,14 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
 --------------------------------------------------------------------------------
 
+initialBlewFailed :: e -> WorkError -> IO ()
+initialBlewFailed env _ = runRIO env $ do
+  pure () -- TODO What do?
+
+initialHailFailed :: e -> WorkError -> IO ()
+initialHailFailed env _ = runRIO env $ do
+  pure () -- TODO What do?
+
 {-|
     Terminal Driver
 -}
@@ -498,14 +506,17 @@ term :: forall e. (HasPierConfig e, HasLogFunc e, HasKingId e)
      => e
      -> (T.TSize, Client)
      -> (STM ())
-     -> QueueEv
-     -> ([Ev], RAcquire e (EffCb e TermEf))
-term env (tsize, Client{..}) shutdownSTM enqueueEv =
+     -> (EvErr -> STM ())
+     -> ([EvErr], RAcquire e (EffCb e TermEf))
+term env (tsize, Client{..}) shutdownSTM plan =
     (initialEvents, runTerm)
   where
     T.TSize wi hi = tsize
 
-    initialEvents = [(initialBlew wi hi), initialHail]
+    initialEvents =
+      [ EvErr (initialBlew wi hi) (initialBlewFailed env)
+      , EvErr initialHail (initialHailFailed env)
+      ]
 
     runTerm :: RAcquire e (EffCb e TermEf)
     runTerm = do
@@ -521,8 +532,9 @@ term env (tsize, Client{..}) shutdownSTM enqueueEv =
         atomically take >>= \case
             Nothing -> pure ()
             Just b  -> do
-                let blip = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
-                atomically $ enqueueEv $ blip
+                let beltEv       = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
+                let beltFailed _ = pure ()
+                atomically $ plan (EvErr beltEv beltFailed)
 
     handleEffect :: TermEf -> RIO e ()
     handleEffect = \case

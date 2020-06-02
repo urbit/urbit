@@ -231,7 +231,7 @@ pier
   -> MultiEyreApi
   -> RAcquire PierEnv ()
 pier (serf, log) vSlog mStart multi = do
-    computeQ  <- newTQueueIO
+    computeQ  <- newTQueueIO @_ @Serf.EvErr
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
     saveM     <- newEmptyTMVarIO
@@ -292,10 +292,8 @@ pier (serf, log) vSlog mStart multi = do
 
     io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
-    let stubErrCallback = \_ -> pure ()
-
     let computeConfig = ComputeConfig
-          { ccOnWork = (`Serf.EvErr` stubErrCallback) <$> readTQueue computeQ
+          { ccOnWork = readTQueue computeQ
           , ccOnKill = takeTMVar shutdownM
           , ccOnSave = takeTMVar saveM
           , ccPutResult = writeTQueue persistQ
@@ -357,13 +355,13 @@ drivers
   -> MultiEyreApi
   -> Ship
   -> Bool
-  -> (Ev -> STM ())
+  -> (EvErr -> STM ())
   -> STM ()
   -> (Term.TSize, Term.Client)
   -> (Text -> RIO e ())
-  -> ([Ev], RAcquire e (Drivers e))
+  -> ([EvErr], RAcquire e (Drivers e))
 drivers env multi who isFake plan shutdownSTM termSys stderr =
-    (initialEvents, runDrivers)
+    (initialEvents, runDrivers) -- TODO
   where
     (behnBorn, runBehn) = behn env plan
     (amesBorn, runAmes) = ames env who isFake plan stderr

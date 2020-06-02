@@ -7,6 +7,7 @@ module Urbit.Vere.Pier.Types where
 
 import Urbit.Prelude hiding (Term)
 
+import Urbit.Noun (Term)
 import Urbit.Arvo
 import Urbit.Time
 
@@ -25,6 +26,28 @@ instance Eq Nock where
 
 instance Show Nock where
   show _ = "Nock"
+
+
+-- Events With Error Callbacks -------------------------------------------------
+
+type Gang = Maybe (HoonSet Ship)
+
+type Goof = (Term, [Tank])
+
+{-|
+  Two types of serf failures.
+
+  - `RunSwap`: Event processing failed, but the serf replaced it with
+    another event which succeeded.
+
+  - `RunBail`: Event processing failed and all attempt to replace it
+    with a failure-notice event also caused crashes. We are really fucked.
+-}
+data WorkError
+  = RunSwap EventId Mug Wen Noun FX
+  | RunBail [Goof]
+
+data EvErr = EvErr Ev (WorkError -> IO ())
 
 
 --------------------------------------------------------------------------------
@@ -83,8 +106,6 @@ data Order
   deriving (Eq, Show)
 
 deriveToNoun ''Order
-
-type QueueEv = Ev -> STM ()
 
 type EffCb e a = a -> RIO e ()
 

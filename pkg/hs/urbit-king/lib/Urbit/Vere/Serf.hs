@@ -22,8 +22,8 @@ import qualified Data.Conduit.Combinators as CC
 import qualified Urbit.Vere.Log           as Log
 
 import qualified Urbit.Vere.Serf.IPC as X (Config(..), EvErr(..), Flag(..),
-                                           RunReq(..), Serf, run, snapshot,
-                                           start, stop)
+                                           RunReq(..), Serf, WorkError(..), run,
+                                           snapshot, start, stop)
 
 -- ort System.ProgressBar
 -- ort Urbit.King.App         (HasStderrLogFunc(..))
