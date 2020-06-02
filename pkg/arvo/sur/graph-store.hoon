@@ -1,23 +1,35 @@
 /-  *post
 |%
+++  mop
+  |*  [key=mold value=mold]
+  |=  ord=$-([key key] ?)
+  |=  a=*
+  =/  b  ;;((tree [key=key val=value]) a)
+  ?>  (check-balance:((ordered-map key value) ord) b)
+  b
+::
 +$  network
   $:  graphs=(map resource graph)
       tags=(set term)
       tag-queries=(map term resources)
   ==
 ::
-+$  internal-graph  (tree [key=time val=node])
-+$  graph
-  $~  [%empty ~]
-  $%  [%graph u=internal-graph]
-      [%empty ~]
++$  graph  ((mop atom node) lte)
++$  internal-graph
+  $~  [%not-loaded ~]
+  $%  ::
+      ::  a graph and timestamp of when it was last modified
+      [%graph p=graph q=time]
+      [%empty-when-fetched p=time]
+      [%not-loaded ~]
   ==
-+$  node   [=post replies=graph]
+::
++$  node   [=post children=internal-graph]
 +$  action
   $%  [%add-graph =resource =graph]
       [%remove-graph =resource]
     ::
-      [%add-nodes uids=(set [=uid =node])]
+      [%add-nodes nodes=(map uid node)]
       [%remove-nodes uids=(set uid)]
     ::
       [%add-signatures =uid =signatures]
