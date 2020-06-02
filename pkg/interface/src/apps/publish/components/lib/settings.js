@@ -162,11 +162,9 @@ export class Settings extends Component {
       return (
         <div>
           <div className={'w-100 fl mt3 mb3'} style={{ maxWidth: '29rem' }}>
-            <p className="f8 mt3 lh-copy db">Convert Notebook</p>
-            <p className="f9 gray2 db mb4">
-              Convert this notebook into a group with associated chat, or select a
-              group to add this notebook to.
-            </p>
+            {this.renderHeader(
+              'Convert Notebook',
+              'Convert this notebook into a group with associated chat, or select a group to add this notebook to.')}
             <InviteSearch
               groups={props.groups}
               contacts={props.contacts}
@@ -185,12 +183,21 @@ export class Settings extends Component {
                className={'dib f9 black gray4-d bg-gray0-d ba pa2 mt4 b--black b--gray1-d pointer'}
                disabled={this.state.disabled}
             >
-              Convert to group
+              {state.targetGroup ? 'Add to group' : 'Convert to group'}
             </button>
           </div>
         </div>
       );
     }
+  }
+
+  renderHeader(title, subtitle) {
+    return (
+      <>
+        <p className="f9 mt6 lh-copy">{title}</p>
+        <p className="f9 gray2 db mb4">{subtitle}</p>
+      </>
+    );
   }
 
   render() {
@@ -199,8 +206,7 @@ export class Settings extends Component {
       : 'relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0';
 
     const copyShortcode = <div>
-      <p className="f9 mt3 lh-copy">Share</p>
-      <p className="f9 gray2 mb4">Share a shortcode to join this notebook</p>
+      {this.renderHeader('Share', 'Share a shortcode to join this notebook')}
       <div className="relative w-100 flex" style={{ maxWidth: '29rem' }}>
         <input
           className={'f8 mono ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
@@ -226,19 +232,16 @@ export class Settings extends Component {
         <div className="flex-column">
           {copyShortcode}
           {this.renderGroupify()}
-          <p className="f9 mt6 lh-copy db">Delete Notebook</p>
-          <p className="f9 gray2 db mb4">
-            Permanently delete this notebook. (All current members will no
-            longer see this notebook)
-          </p>
+          {this.renderHeader(
+            'Delete Notebook',
+            'Permanently delete this notebook. (All current members will no longer see this notebook)')}
           <button
             className="bg-transparent b--red2 red2 pointer dib f9 ba pa2"
             onClick={this.deleteNotebook}
           >
             Delete this notebook
           </button>
-          <p className="f9 mt6 lh-copy">Rename</p>
-          <p className="f9 gray2 db mb4">Change the name of this notebook</p>
+          {this.renderHeader('Rename', 'Change the name of this notebook')}
           <div className="relative w-100 flex" style={{ maxWidth: '29rem' }}>
             <input
               className={
@@ -266,8 +269,7 @@ export class Settings extends Component {
               }}
             />
           </div>
-          <p className="f9 mt6 lh-copy">Change description</p>
-          <p className="f9 gray2 db mb4">Change the description of this notebook</p>
+          {this.renderHeader("Change description", "Change the description of this notebook")}
           <div className="relative w-100 flex" style={{ maxWidth: '29rem' }}>
             <input
               className={
