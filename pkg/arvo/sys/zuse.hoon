@@ -1314,6 +1314,9 @@
         ::  internal authentication page
         ::
         [%authentication ~]
+        ::  internal logout page
+        ::
+        [%logout ~]
         ::  gall channel system
         ::
         [%channel ~]

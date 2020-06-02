@@ -835,6 +835,9 @@
         %authentication
       (handle-request:authentication secure address request)
     ::
+        %logout
+      (handle-logout:authentication authenticated request)
+    ::
         %channel
       (handle-request:by-channel secure authenticated address request)
     ::
@@ -884,7 +887,7 @@
           %leave  ~
       ==
     ::
-        %authentication
+        ?(%authentication %logout)
       [~ state]
     ::
         %channel
@@ -919,7 +922,7 @@
   ::
   ++  authentication
     |%
-    ::  +handle-request: handles an http request for the
+    ::  +handle-request: handles an http request for the login page
     ::
     ++  handle-request
       |=  [secure=? =address =request:http]
@@ -969,7 +972,7 @@
         (~(put by sessions.authentication-state.state) session expires-at)
       ::
       =/  cookie-line=@t
-        (session-cookie-string session)
+        (session-cookie-string session &)
       ::
       =;  out=[moves=(list move) server-state]
         ::  if we didn't have any cookies previously, start the expiry timer
@@ -1000,6 +1003,38 @@
           data=~
           complete=%.y
       ==
+    ::  +handle-logout: handles an http request for logging out
+    ::
+    ++  handle-logout
+      |=  [authenticated=? =request:http]
+      ^-  [(list move) server-state]
+      ::  whatever we end up doing, we always redirect to the login page
+      ::
+      =/  response=$>(%start http-event:http)
+        :*  %start
+            response-header=[307 ['location' '/~/login']~]
+            data=~
+            complete=%.y
+        ==
+      ::
+      =/  session-id=(unit @uv)
+        (session-id-from-request request)
+      =?  headers.response-header.response  ?=(^ session-id)
+        :_  headers.response-header.response
+        ['set-cookie' (session-cookie-string u.session-id |)]
+      ?.  &(authenticated ?=(^ session-id))
+        (handle-response response)
+      ::  delete the requesting session, or all sessions if so specified
+      ::
+      =.  sessions.authentication-state.state
+        =;  all=?
+          ?:  all  ~
+          (~(del by sessions.authentication-state.state) u.session-id)
+        ?~  body.request  |
+        =-  ?=(^ -)
+        %+  get-header:http  'all'
+        (fall (rush q.u.body.request yquy:de-purl:html) ~)
+      (handle-response response)
     ::  +session-id-from-request: attempt to find a session cookie
     ::
     ++  session-id-from-request
@@ -1051,15 +1086,16 @@
       =+  res=((sloy scry) [151 %noun] %j pax)
       ::
       (rsh 3 1 (scot %p (@ (need (need res)))))
-    ::  +session-cookie-string: compose newly-timestamped session cookie
+    ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
-      |=  session=@uv
+      |=  [session=@uv extend=?]
       ^-  @t
       %-  crip
       =;  max-age=tape
         "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
       %-  format-ud-as-integer
+      ?.  extend  0
       (div (msec:milly session-timeout) 1.000)
     --
   ::  +channel: per-event handling of requests to the channel system
@@ -1791,7 +1827,7 @@
             :_  (~(put by sessions) u.session-id (add now session-timeout))
             =-  response-header.http-event(headers -)
             %^  set-header:http  'set-cookie'
-              (session-cookie-string u.session-id)
+              (session-cookie-string u.session-id &)
             headers.response-header.http-event
           ::
           =.  response-header.http-event  response-header
@@ -1869,31 +1905,11 @@
   ::
   ++  add-binding
     |=  [=binding =action]
-    ::
-    =/  to-search  bindings.state
-    |-
     ^-  [(list move) server-state]
-    ?~  to-search
-      :-  [duct %give %bound %.y binding]~
-      =.  bindings.state
-        ::  store in reverse alphabetical order so that longer paths are first
-        ::
-        %-  flop
-        %+  sort  [[binding duct action] bindings.state]
-        |=  [[a=^binding *] [b=^binding *]]
-        ::
-        ?:  =(site.a site.b)
-          (aor path.a path.b)
-        ::  alphabetize based on site
-        ::
-        (aor ?~(site.a '' u.site.a) ?~(site.b '' u.site.b))
-      state
-    ::
-    ?:  =(binding binding.i.to-search)
-      :-  [duct %give %bound %.n binding]~
-      state
-    ::
-    $(to-search t.to-search)
+    =^  success  bindings.state
+      (insert-binding [binding duct action] bindings.state)
+    :_  state
+    [duct %give %bound success binding]~
   ::  +remove-binding: removes a binding if it exists and is owned by this duct
   ::
   ++  remove-binding
@@ -1997,6 +2013,28 @@
   |=  url=@t
   ^-  [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
   (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
+::
+++  insert-binding
+  |=  [[=binding =duct =action] bindings=(list [=binding =duct =action])]
+  =/  to-search  bindings
+  |-  ^-  [? _bindings]
+  ?^  to-search
+    ?:  =(binding binding.i.to-search)
+      [| bindings]
+    ::
+    $(to-search t.to-search)
+  :-  &
+  ::  store in reverse alphabetical order so that longer paths are first
+  ::
+  %-  flop
+  %+  sort  [[binding duct action] bindings]
+  |=  [[a=^binding *] [b=^binding *]]
+  ::
+  ?:  =(site.a site.b)
+    (aor path.a path.b)
+  ::  alphabetize based on site
+  ::
+  (aor ?~(site.a '' u.site.a) ?~(site.b '' u.site.b))
 --
 ::  end the =~
 ::
@@ -2037,6 +2075,7 @@
     ::
     =.  bindings.server-state.ax
       :~  [[~ /~/login] duct [%authentication ~]]
+          [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
       ==
     [~ http-server-gate]
@@ -2404,12 +2443,16 @@
     %~2020.5.29  ..^$(ax old)
   ::
       %~2019.10.6
+    =^  success  bindings.server-state.old
+      %+  insert-binding
+        [[~ /~/logout] ~ [%logout ~]]
+      bindings.server-state.old
+    ~?  !success  [%e %failed-to-setup-logout-endpoint]
     %_  $
       date.old  %~2020.5.29
       sessions.authentication-state.server-state.old  ~
     ==
   ==
-
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
