@@ -83,7 +83,7 @@ generateBootSeq ship Pill {..} lite boot = do
 
 writeJobs :: EventLog -> Vector Job -> RIO e ()
 writeJobs log !jobs = do
-  expect <- Log.nextEv log
+  expect <- atomically (Log.nextEv log)
   events <- fmap fromList $ traverse fromJob (zip [expect ..] $ toList jobs)
   Log.appendEvents log events
  where
@@ -299,6 +299,7 @@ pier (serf, log) vSlog mStart multi = do
           , ccPutResult = writeTQueue persistQ
           , ccShowSpinner = Term.spin muxed
           , ccHideSpinner = Term.stopSpin muxed
+          , ccLastEvInLog = Log.lastEv log
           }
 
     tExe  <- startDrivers >>= acquireWorker . router (readTQueue executeQ)
@@ -427,6 +428,7 @@ data ComputeConfig = ComputeConfig
   , ccPutResult   :: (Fact, FX) -> STM ()
   , ccShowSpinner :: Maybe Text -> STM ()
   , ccHideSpinner :: STM ()
+  , ccLastEvInLog :: STM EventId
   }
 
 runCompute :: forall e . HasKingEnv e => Serf.Serf -> ComputeConfig -> RIO e ()
@@ -450,7 +452,7 @@ runCompute serf ComputeConfig {..} = do
 
   let maxBatchSize = 10
 
-  io (Serf.run serf maxBatchSize onCR ccPutResult onSpin)
+  io (Serf.run serf maxBatchSize ccLastEvInLog onCR ccPutResult onSpin)
 
 
 -- Persist Thread --------------------------------------------------------------
@@ -483,7 +485,7 @@ runPersist log inpQ out = do
  where
   validateFactsAndGetBytes :: [Fact] -> RIO e (Vector ByteString)
   validateFactsAndGetBytes facts = do
-    expect <- Log.nextEv log
+    expect <- atomically (Log.nextEv log)
     lis <- for (zip [expect ..] facts) $ \(expectedId, Fact eve mug wen non) ->
       do
         unless (expectedId == eve) $ do

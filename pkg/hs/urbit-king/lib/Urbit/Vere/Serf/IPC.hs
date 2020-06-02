@@ -560,11 +560,12 @@ data RunReq
 run
   :: Serf
   -> Int
+  -> STM EventId
   -> STM RunReq
   -> ((Fact, FX) -> STM ())
   -> (Maybe Ev -> STM ())
   -> IO ()
-run serf maxBatchSize onInput sendOn spin = topLoop
+run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
  where
   topLoop :: IO ()
   topLoop = atomically onInput >>= \case
@@ -577,8 +578,15 @@ run serf maxBatchSize onInput sendOn spin = topLoop
   doPack :: IO ()
   doPack = compact serf >> topLoop
 
+  waitForLog :: IO ()
+  waitForLog = do
+    serfLast <- serfLastEventBlocking serf
+    atomically $ do
+      logLast <- getLastEvInLog
+      when (logLast < serfLast) retry
+
   doSave :: IO ()
-  doSave = snapshot serf >> topLoop
+  doSave = waitForLog >> snapshot serf >> topLoop
 
   doScry :: Wen -> Gang -> Path -> (Maybe (Term, Noun) -> IO ()) -> IO ()
   doScry w g p k = (scry serf w g p >>= k) >> topLoop

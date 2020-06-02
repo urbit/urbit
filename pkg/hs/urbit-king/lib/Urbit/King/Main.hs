@@ -113,11 +113,6 @@ import qualified Urbit.Vere.Term         as Term
 
 --------------------------------------------------------------------------------
 
-zod :: Ship
-zod = 0
-
---------------------------------------------------------------------------------
-
 removeFileIfExists :: HasLogFunc env => FilePath -> RIO env ()
 removeFileIfExists pax = do
   exists <- doesFileExist pax
@@ -222,7 +217,6 @@ tryPlayShip
   -> MVar ()
   -> MultiEyreApi
   -> RIO PierEnv ()
-
 tryPlayShip exitImmediately fullReplay playFrom flags mStart multi = do
   when fullReplay wipeSnapshot
   vSlog <- logSlogs
@@ -260,7 +254,7 @@ checkEvs pierPath first last = do
     let pbSty = PB.defStyle { PB.stylePostfix = PB.exact }
     logTrace (displayShow ident)
 
-    last <- Log.lastEv log <&> \lastReal -> min last lastReal
+    last <- atomically $ Log.lastEv log <&> \lastReal -> min last lastReal
 
     let evCount = fromIntegral (last - first)
 
@@ -326,6 +320,7 @@ collectAllFx top = do
     serfFlags :: [Serf.Flag]
     serfFlags = [Serf.Hashless, Serf.DryRun]
 
+
 --------------------------------------------------------------------------------
 
 replayPartEvs :: FilePath -> Word64 -> RIO KingEnv ()
@@ -368,6 +363,7 @@ replayPartEvs top last = do
     serfFlags :: [Serf.Flag]
     serfFlags = [Serf.Hashless]
 
+
 --------------------------------------------------------------------------------
 
 {-|
@@ -385,7 +381,7 @@ testPill pax showPil showSeq = do
   pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
   logTrace "Using pill to generate boot sequence."
-  bootSeq <- generateBootSeq zod pill False (Fake $ Ship 0)
+  bootSeq <- generateBootSeq (Ship 0) pill False (Fake $ Ship 0)
 
   logTrace "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
@@ -430,6 +426,7 @@ validateNounVal inpVal = do
         error "Value fails test: jam x == jam (cue (jam x))"
 
     pure outByt
+
 
 --------------------------------------------------------------------------------
 
@@ -678,6 +675,7 @@ runShips CLI.KingOpts {..} ships = do
         , mecLocalhostOnly = False -- TODO Localhost-only needs to be
                                    -- a king-wide option.
         }
+
 
   {-
     TODO Need to rework RIO environment to fix this. Should have a

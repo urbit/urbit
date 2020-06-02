@@ -39,14 +39,14 @@ data EventLog = EventLog
     , eventsTbl  :: Dbi
     , effectsTbl :: Dbi
     , identity   :: LogIdentity
-    , numEvents  :: IORef EventId
+    , numEvents  :: TVar EventId
     }
 
-nextEv :: EventLog -> RIO e EventId
-nextEv = fmap succ . readIORef . numEvents
+nextEv :: EventLog -> STM EventId
+nextEv = fmap (+1) . lastEv
 
-lastEv :: EventLog -> RIO e EventId
-lastEv = readIORef . numEvents
+lastEv :: EventLog -> STM EventId
+lastEv = readTVar . numEvents
 
 data EventLogExn
     = NoLogIdentity
@@ -82,7 +82,7 @@ create dir id = do
     (m, e, f) <- createTables env
     clearEvents env e
     writeIdent env m id
-    EventLog env m e f id <$> newIORef 0
+    EventLog env m e f id <$> newTVarIO 0
   where
     createTables env =
       rwith (writeTxn env) $ \txn -> io $
@@ -98,7 +98,7 @@ open dir = do
     id        <- getIdent env m
     logDebug $ display (pack @Text $ "Log Identity: " <> show id)
     numEvs    <- getNumEvents env e
-    EventLog env m e f id <$> newIORef numEvs
+    EventLog env m e f id <$> newTVarIO numEvs
   where
     openTables env =
       rwith (writeTxn env) $ \txn -> io $
@@ -227,10 +227,10 @@ clearEvents env eventsTbl =
 
 appendEvents :: EventLog -> Vector ByteString -> RIO e ()
 appendEvents log !events = do
-    numEvs <- readIORef (numEvents log)
+    numEvs <- atomically $ readTVar (numEvents log)
     next   <- pure (numEvs + 1)
     doAppend $ zip [next..] $ toList events
-    writeIORef (numEvents log) (numEvs + word (length events))
+    atomically $ writeTVar (numEvents log) (numEvs + word (length events))
   where
     flags    = compileWriteFlags [MDB_NOOVERWRITE]
     doAppend = \kvs ->
@@ -254,7 +254,7 @@ writeEffectsRow log k v = do
 
 trimEvents :: HasLogFunc e => EventLog -> Word64 -> RIO e ()
 trimEvents log start = do
-    last <- lastEv log
+    last <- atomically (lastEv log)
     rwith (writeTxn $ env log) $ \txn ->
         for_ [start..last] $ \eId ->
         withWordPtr eId $ \pKey -> do
@@ -262,7 +262,7 @@ trimEvents log start = do
             found <- io $ mdb_del txn (eventsTbl log) key Nothing
             unless found $
                 throwIO (MissingEvent eId)
-    writeIORef (numEvents log) (pred start)
+    atomically $ writeTVar (numEvents log) (pred start)
 
 streamEvents :: HasLogFunc e
              => EventLog -> Word64
@@ -294,7 +294,7 @@ readBatch :: EventLog -> Word64 -> RIO e (V.Vector ByteString)
 readBatch log first = start
   where
     start = do
-        last <- lastEv log
+        last <- atomically (lastEv log)
         if (first > last)
             then pure mempty
             else readRows $ fromIntegral $ min 1000 $ ((last+1) - first)

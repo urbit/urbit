@@ -95,7 +95,7 @@ execReplay serf log last = do
         Just lt -> logTrace $ display $
                      "User requested to replay up to event #" <> tshow lt
 
-    logLastEv :: Word64 <- fromIntegral <$> Log.lastEv log
+    logLastEv :: Word64 <- atomically $ fromIntegral <$> Log.lastEv log
 
     logTrace $ display $ "Last event in event log is #" <> tshow logLastEv
 

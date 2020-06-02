@@ -39,7 +39,7 @@ run log = do
     hSetEcho stdin False
     logInfo $ displayShow (Log.identity log)
     let cycle = fromIntegral $ lifecycleLen $ Log.identity log
-    las <- Log.lastEv log
+    las <- atomically (Log.lastEv log)
     loop cycle las las
   where
     failRead cur =
