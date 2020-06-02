@@ -13,7 +13,7 @@
     *permission-store, *group-store, *invite-store,
     *rw-security, sole
 /+  sole-lib=sole, chat-eval, default-agent, verb, dbug,
-    auto=language-server-complete
+    auto=language-server-complete, *userspace
 ::
 |%
 +$  card  card:agent:gall
@@ -967,20 +967,20 @@
       ^-  (list card)
       %+  turn  ~(tap in audience)
       |=  =target
-      =/  pax  (target-to-path target)
-      =/  shp  (need (ship-from-path:chat pax))
+      =/  path  (target-to-path target)
+      =/  ship  ship:(path-to-rid path)
       =/  app
-        ?:  =(our.bowl shp)
+        ?:  =(our.bowl ship)
           %chat-store
         %chat-push-hook
       :*  %pass
           /cli-command/out-message
           %agent
-          [shp app]
+          [ship app]
           %poke
           %chat-action
           !>  ^-  action:store
-          :+  %message  pax
+          :+  %message  path
           [serial *@ our-self now.bowl letter]
       ==
     ::  +eval: run hoon, send code and result as message

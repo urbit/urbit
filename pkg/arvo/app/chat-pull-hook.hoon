@@ -1,12 +1,12 @@
 /-  *invite-store, hook=chat-pull-hook
-/+  default-agent, verb, dbug, store=chat-store, lib=chat-hooks
+/+  default-agent, verb, dbug, store=chat-store, *userspace
 |%
 +$  card  card:agent:gall
 +$  versioned-state
   $%  [%0 state-0]
   ==
 +$  state-0
-  $:  tracking=(map path ship)
+  $:  tracking=(map rid ship)
   ==
 --
 ::
@@ -17,22 +17,22 @@
 %+  verb  |
 ::
 ^-  agent:gall
-|_  bol=bowl:gall
+|_  =bowl:gall
 +*  this  .
-    def  ~(. (default-agent this %|) bol)
+    def  ~(. (default-agent this %|) bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
   :_  this
-  =/  inv  [our.bol %invite-store]
+  =/  inv  [our.bowl %invite-store]
   :~  [%pass / %agent inv %poke %invite-action !>([%create /chat])]
       [%pass /invites %agent inv %watch /invitatory/chat]
   ==
 ::
 ++  on-save  !>(state)
 ++  on-load
-  |=  vax=vase
-  =/  old  !<(versioned-state vax)
+  |=  =vase
+  =/  old  !<(versioned-state vase)
   ?-  -.old
     %0  [~ this(state old)]
   ==
@@ -42,17 +42,18 @@
   ^-  (quip card _this)
   ?.  ?=(%chat-pull-hook-action mark)
     (on-poke:def mark vase)
+  ?>  (team:title our.bowl src.bowl)
   =/  act  !<(action:hook vase)
   ?-  -.act
       %add
-    ?>  (team:title our.bol src.bol)
-    ?:  (~(has by tracking) path.act)  [~ this]
-    =.  tracking  (~(put by tracking) path.act ship.act)
+    =/  =rid  (path-to-rid path.act)
+    ?:  (~(has by tracking) rid)  [~ this]
+    =.  tracking  (~(put by tracking) rid ship.act)
     ?.  ask-history.act
       =/  chat-path  [%mailbox path.act]
       :_  this
       [%pass chat-path %agent [ship.act %chat-push-hook] %watch chat-path]~
-    =/  mailbox=(unit mailbox:store)  (chat-scry:lib bol path.act)
+    =/  mailbox=(unit mailbox:store)  (chat-scry:store bowl path.act)
     =/  backlog=path
       :-  %backlog
       %+  weld  path.act
@@ -67,19 +68,16 @@
     ==  ==
   ::
       %remove
-    ::  XX chat-hook had a path for reading the ship out of the path if not
-    ::  present in the tracking map. Why is this helpful or necessary?
-    ::  If it's not in the map, what's the effect of removing it?
-    ::  Canceling subscriptions that shouldn't exist?
     ^-  (quip card _this)
     |^
-    =/  ship  (~(get by tracking) path.act)
+    =/  =rid  (path-to-rid path.act)
+    =/  ship  (~(get by tracking) rid)
     ?~  ship
-      ~&  [dap.bol %unknown-host-cannot-leave path.act]
+      ~&  [dap.bowl %unknown-host-cannot-leave path.act]
       [~ this]
-    ?:  &(!=(u.ship src.bol) !(team:title our.bol src.bol))
+    ?:  &(!=(u.ship src.bowl) !(team:title our.bowl src.bowl))
       [~ this]
-    =.  tracking  (~(del by tracking) path.act)
+    =.  tracking  (~(del by tracking) rid)
     :_  this
     :*  [%pass [%mailbox path.act] %agent [u.ship %chat-push-hook] %leave ~]
         :*  %give
@@ -94,7 +92,7 @@
     ++  pull-backlog-subscriptions
       |=  [target=ship chat=path]
       ^-  (list card)
-      %+  murn  ~(tap by wex.bol)
+      %+  murn  ~(tap by wex.bowl)
       |=  [[=wire =ship =term] [acked=? =path]]
       ^-  (unit card)
       ?.  ?&  =(ship target)
@@ -107,26 +105,26 @@
   ==
 ::
 ++  on-watch
-  |=  pax=path
+  |=  =path
   ^-  (quip card _this)
-  ?.  =(/tracking pax)  (on-watch:def pax)
-  ?>  (team:title our.bol src.bol)
+  ?.  =(/tracking path)  (on-watch:def path)
+  ?>  (team:title our.bowl src.bowl)
   :_  this
   [%give %fact ~ %chat-pull-hook-update !>([%tracking tracking])]~
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
-  |^
   ?+  -.sign  (on-agent:def wire sign)
       %kick
     ?+  wire  !!
         [%mailbox @ *]
       ~&  mailbox-kick+wire
-      ?.  (~(has by tracking) t.wire)  [~ this]
+      =/  =rid  (path-to-rid t.wire)
+      ?.  (~(has by tracking) rid)  [~ this]
       ~&  %chat-pull-hook-resubscribe
-      =/  =ship  (~(got by tracking) t.wire)
-      =/  mailbox=(unit mailbox:store)  (chat-scry:lib bol t.wire)
+      =/  =ship  (~(got by tracking) rid)
+      =/  mailbox=(unit mailbox:store)  (chat-scry:store bowl t.wire)
       =/  chat-history
         %+  welp  backlog+t.wire
         ?~(mailbox /0 /(scot %ud (lent envelopes.u.mailbox)))
@@ -135,16 +133,12 @@
     ::
         [%backlog @ @ *]
       =/  chat=path  (oust [(dec (lent t.wire)) 1] `(list @ta)`t.wire)
-      ?.  (~(has by tracking) chat)  [~ this]
-      =/  =ship
-        ?:  =('~' i.t.wire)
-          (slav %p i.t.t.wire)
-        (slav %p i.t.wire)
-      =/  =path  ?~((chat-scry:lib bol chat) wire [%mailbox chat])
+      =/  =rid  (path-to-rid chat)
+      ?.  (~(has by tracking) rid)  [~ this]
+      =/  =path  ?~((chat-scry:store bowl chat) wire [%mailbox chat])
       :_  this
-      [%pass path %agent [ship %chat-push-hook] %watch path]~
+      [%pass path %agent [ship.rid %chat-push-hook] %watch path]~
     ==
-
   ::
       %watch-ack
     =/  tnk  p.sign
@@ -155,7 +149,7 @@
     %.  :~  :*  %pass
                 /
                 %agent
-                [our.bol %chat-view]
+                [our.bowl %chat-view]
                 %poke
                 %chat-view-action
                 !>([%delete chat])
@@ -179,25 +173,25 @@
       |^
       ?+  -.update   [~ this]
           %create
+        =/  =rid  (path-to-rid path.update)
         :_  this
-        ?>  ?=([* ^] path.update)
-        =/  shp  (~(get by tracking) path.update)
-        ?~  shp  ~
-        ?.  =(src.bol u.shp)  ~
+        =/  ship  (~(get by tracking) rid)
+        ?~  ship  ~
+        ?.  =(src.bowl u.ship)  ~
         [(chat-poke [%create path.update])]~
       ::
           %delete
-        ?>  ?=([* ^] path.update)
-        =/  shp  (~(get by tracking) path.update)
-        ?~  shp  [~ this]
-        ?.  =(u.shp src.bol)  [~ this]
-        =.  tracking  (~(del by tracking) path.update)
+        =/  =rid  (path-to-rid path.update)
+        =/  ship  (~(get by tracking) rid)
+        ?~  ship  [~ this]
+        ?.  =(u.ship src.bowl)  [~ this]
+        =.  tracking  (~(del by tracking) rid)
         :_  this
         :~  (chat-poke [%delete path.update])
             :*  %pass
                 [%mailbox path.update]
                 %agent
-                [src.bol %chat-push-hook]
+                [src.bowl %chat-push-hook]
                 %leave
                 ~
             ==
@@ -209,49 +203,48 @@
         ==  ==
       ::
           %message
+        =/  =rid  (path-to-rid path.update)
         :_  this
-        ?>  ?=([* ^] path.update)
-        =/  shp  (~(get by tracking) path.update)
-        ?~  shp  ~
-        ?.  =(src.bol u.shp)  ~
+        =/  ship  (~(get by tracking) rid)
+        ?~  ship  ~
+        ?.  =(src.bowl u.ship)  ~
         [(chat-poke [%message path.update envelope.update])]~
       ::
           %messages
         :_  this
-        ?>  ?=([* ^] path.update)
-        =/  shp  (~(get by tracking) path.update)
-        ?~  shp  ~
-        ?.  =(src.bol u.shp)  ~
+        =/  =rid  (path-to-rid path.update)
+        =/  ship  (~(get by tracking) rid)
+        ?~  ship  ~
+        ?.  =(src.bowl u.ship)  ~
         [(chat-poke [%messages path.update envelopes.update])]~
       ==
       ::
       ++  chat-poke
         |=  act=action:store
         ^-  card
-        [%pass / %agent [our.bol %chat-store] %poke %chat-action !>(act)]
+        [%pass / %agent [our.bowl %chat-store] %poke %chat-action !>(act)]
       --
+    ::
     ++  fact-invite-update
       |=  fact=invite-update
       ^-  (quip card _this)
       :_  this
       ?+  -.fact  ~
           %accepted
-        =/  ask-history  ?~((chat-scry:lib bol path.invite.fact) %.y %.n)
-        =*  shp       ship.invite.fact
+        =/  ask-history  ?~((chat-scry:store bowl path.invite.fact) %.y %.n)
+        =*  ship       ship.invite.fact
         =*  app-path  path.invite.fact
         :~  :*  %pass
                 /
                 %agent
-                [our.bol %chat-view]
+                [our.bowl %chat-view]
                 %poke
                 %chat-view-action
-                !>([%join shp app-path ask-history])
+                !>([%join ship app-path ask-history])
         ==  ==
       ==
     --
   ==
-  ::
-  --
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def

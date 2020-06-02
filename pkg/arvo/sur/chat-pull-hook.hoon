@@ -1,3 +1,4 @@
+/+  *userspace
 ^?
 |%
 +$  action
@@ -13,6 +14,6 @@
 +$  update
   $%  ::  %tracking: the foreign chats we are subscribed to are...
       ::
-      [%tracking tracking=(map path ship)]
+      [%tracking tracking=(map rid ship)]
   ==
 --
