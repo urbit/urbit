@@ -596,11 +596,9 @@
     %+  turn  notes.update
     |=  =^note
     ^-  card
-    ~!  who
-    ~!  note
     %+  do-link-action
-      `wire`[%forward %annotation (scot %p who) where]
-    `action:store`[%read where url.update `comment`[who note]]
+      [%forward %annotation (scot %p who) where]
+    [%read where url.update `comment`[who note]]
   ==
 ::
 ++  take-forward-sign

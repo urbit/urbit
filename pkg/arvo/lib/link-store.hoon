@@ -97,6 +97,7 @@
 ::
 ++  enjs
   =,  enjs:format
+  ^?
   |%
   ++  update
     |=  upd=^update
@@ -171,6 +172,7 @@
 ::
 ++  dejs
   =,  dejs:format
+  ^?
   |%
   ::  +action: json into action
   ::
