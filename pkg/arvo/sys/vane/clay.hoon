@@ -89,6 +89,7 @@
       lab/(map @tas aeon)                               ::  labels
       mim/(map path mime)                               ::  mime cache
       fod/ford-cache                                    ::  ford cache
+      fer/(unit reef-cache)                             ::  reef cache
   ==                                                    ::
 ::
 ::  Commit state.
@@ -114,14 +115,13 @@
   $:  vases=(map path [res=vase dez=(set path)])
       marks=(map mark [res=dais dez=(set path)])
       casts=(map mars [res=tube dez=(set path)])
-      reef=reef-cache
   ==
 ::  $reef-cache: built system files
 ::
 +$  reef-cache
-  $:  hoon=(unit vase)
-      arvo=(unit vase)
-      zuse=(unit vase)
+  $:  hoon=vase
+      arvo=vase
+      zuse=vase
   ==
 ::
 ::  Hash of a blob, for lookup in the object store (lat.ran)
@@ -454,7 +454,8 @@
               cycle=(set build)
           ==
         +$  args
-          $:  =ankh
+          $:  bud=vase
+              =ankh
               deletes=(set path)
               changes=(map path (each page lobe))
               file-store=(map lobe blob)
@@ -751,8 +752,7 @@
     ::
     ++  run-pile
       |=  =pile
-      =^  sut=vase  nub  run-reef
-      =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
+      =^  sut=vase  nub  (run-tauts bud %sur sur.pile)
       =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
       =^  sut=vase  nub  (run-raw sut raw.pile)
       =^  sut=vase  nub  (run-bar sut bar.pile)
@@ -877,37 +877,6 @@
       =.  p.q.cage  [%face face.i.bar p.q.cage]
       $(sut (slop q.cage sut), bar t.bar)
     ::
-    ++  run-reef
-      |-  ^-  [vase state]
-      ?^  zuse.reef.cache.nub
-        [u.zuse.reef.cache.nub state]
-      =^  zus  nub  (get-value /sys/zuse/hoon)
-      ?^  arvo.reef.cache.nub
-        =/  gen
-          ~>  %mean.%zuse-parse-fail
-          (rain /sys/zuse/hoon `@t`q.q.zus)
-        =/  vax
-          ~>  %mean.%zuse-compile-fail
-          (slap (slap u.arvo.reef.cache.nub (ream '..is')) gen)
-        $(zuse.reef.cache.nub `vax)
-      =^  rav  nub  (get-value /sys/arvo/hoon)
-      ?^  hoon.reef.cache.nub
-        =/  gen
-          ~>  %mean.%arvo-parse-fail
-          (rain /sys/arvo/hoon `@t`q.q.rav)
-        =/  vax
-          ~>  %mean.%arvo-compile-fail
-          (slap (slot 7 u.hoon.reef.cache.nub) gen)
-        $(arvo.reef.cache.nub `vax)
-      ~&  %clay-should-never-build-hoon
-      =^  hun  nub  (get-value /sys/hoon/hoon)
-      =/  gen
-        ~>  %mean.%hoon-parse-fail
-        (rain /sys/hoon/hoon `@t`q.q.hun)
-      =/  vax
-        ~>  %mean.%hoon-compile-fail
-        (slap !>(0) gen)
-      $(hoon.reef.cache.nub `vax)
     ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
     ::
     ++  build-fit
@@ -1077,15 +1046,13 @@
     =^  =cage  fod.dom
       ?:  ?=(%& -.dat)
         [p.dat fod.dom]
-      =/  =args:ford:fusion
-        [ank.dom ~ ~ lat.ran fod.dom]
-      =^  =page  ford-cache.args
+      =^  =page  fod.dom
         %-  wrap:fusion
-        (lobe-to-page:(ford:fusion args) p.dat)
-      =^  =cage  ford-cache.args
+        (lobe-to-page:(ford:fusion static-ford-args) p.dat)
+      =^  =cage  fod.dom
         %-  wrap:fusion
-        (page-to-cage:(ford:fusion args) page)
-      [cage ford-cache.args]
+        (page-to-cage:(ford:fusion static-ford-args) page)
+      [cage fod.dom]
     =/  gift  [%writ ~ [care.mun case.mun syd] path.mun cage]
     ?:  ?=(^ ref)
       (emit hen %slip %b %drip !>(gift))
@@ -1187,6 +1154,9 @@
   ++  blas-all  (duct-lift blas)
   ++  balk-all  (duct-lift balk)
   ++  bleb-all  (duct-lift bleb)
+  ::
+  ++  static-ford-args
+    [zuse:(need fer.dom) ank.dom ~ ~ lat.ran fod.dom]
   ::
   ::  Transfer a request to another ship's clay.
   ::
@@ -1384,24 +1354,27 @@
     ::  promote and fill in ankh
     ::  promote and fill in mime cache
     ::
-    =.  fod.dom
-      (promote-ford fod.dom deletes ~(key by changes))
-    ::
     =/  sys-changes  (need-sys-update changes)
-    ?:  &(!updated !=(~ sys-changes))
-      =/  =args:ford:fusion
-        [ank.dom deletes changes lat.ran fod.dom]
-      (sys-update args yoki changes)
+    ?:  ?&  =(%home syd)
+            !updated
+            |(!=(~ sys-changes) !=(~ (need-vane-update changes)))
+        ==
+      (sys-update yoki new-data changes)
     =.  ..park  (emil (print deletes ~(key by changes)))
     ::  clear caches if zuse reloaded
     ::
-    =/  is-zuse-new=?  &(updated (was-zuse-updated sys-changes))
-    =?  fod.dom  is-zuse-new  *ford-cache
+    =/  is-zuse-new=?  !=(~ sys-changes)
+    =.  fod.dom
+      ?:  is-zuse-new
+        *ford-cache
+      (promote-ford fod.dom deletes ~(key by changes))
+    =.  fer.dom  `(build-reef fer.dom ~(key by changes) new-data)
     =?  ank.dom  is-zuse-new  *ankh
     =?  changes  is-zuse-new
       (changes-for-upgrade old-lobes deletes changes)
+    ::
     =/  =args:ford:fusion
-      [ank.dom deletes changes lat.ran fod.dom]
+      [zuse:(need fer.dom) ank.dom deletes changes lat.ran fod.dom]
     ::
     =^  change-cages  ford-cache.args
       (checkout-changes args changes)
@@ -1514,7 +1487,6 @@
       :*  ((invalidate path vase) vases.ford-cache invalid)
           ((invalidate mark dais) marks.ford-cache invalid)
           ((invalidate mars tube) casts.ford-cache invalid)
-          (promote-reef reef.ford-cache invalid)
       ==
     ::
     ++  invalidate
@@ -1528,13 +1500,125 @@
         $(builds t.builds)
       (~(put by $(builds t.builds)) i.builds)
     ::
-    ++  promote-reef
-      |=  [reef=reef-cache invalid=(set path)]
+    ++  build-reef
+      |=  $:  fer=(unit reef-cache)
+              invalid=(set path)
+              data=(map path (each page lobe))
+          ==
       ^-  reef-cache
-      ?:  (~(has in invalid) /sys/hoon/hoon)  [~ ~ ~]
-      ?:  (~(has in invalid) /sys/arvo/hoon)  [hoon.reef ~ ~]
-      ?:  (~(has in invalid) /sys/zuse/hoon)  [hoon.reef arvo.reef ~]
-      reef
+      ?:  =(%home syd)
+        [!>(..ride) !>(..is) !>(..zuse)]
+      |^
+      ?:  |(?=(~ fer) (~(has in invalid) /sys/hoon/hoon))
+        =/  [home=? hoon=vase]
+          ?:  (same-as-home /sys/hoon/hoon)
+            &+!>(..ride)
+          |+build-hoon
+        :-  hoon
+        =/  [home=? arvo=vase]
+          ?:  &(home (same-as-home /sys/arvo/hoon))
+            &+!>(..is)
+          |+(build-arvo hoon)
+        :-  arvo
+        ?:  &(home (same-as-home /sys/zuse/hoon))
+          !>(..zuse)
+        (build-zuse arvo)
+      :-  hoon.u.fer
+      ?:  (~(has in invalid) /sys/arvo/hoon)
+        =/  [home=? arvo=vase]
+          ?:  &((same-as-home /sys/hoon/hoon) (same-as-home /sys/arvo/hoon))
+            &+!>(..is)
+          |+(build-arvo hoon.u.fer)
+        :-  arvo
+        ?:  &(home (same-as-home /sys/zuse/hoon))
+          !>(..zuse)
+        (build-zuse arvo)
+      :-  arvo.u.fer
+      ?:  (~(has in invalid) /sys/zuse/hoon)
+        ?:  ?&  (same-as-home /sys/hoon/hoon)
+                (same-as-home /sys/arvo/hoon)
+                (same-as-home /sys/zuse/hoon)
+            ==
+          !>(..zuse)
+        (build-zuse arvo.u.fer)
+      zuse.u.fer
+      ::
+      ++  build-hoon
+        ~>  %slog.0^leaf+"clay: building hoon on {<syd>}"
+        =/  gen
+          ~>  %mean.%hoon-parse-fail
+          (path-to-hoon data /sys/hoon/hoon)
+        ~>  %mean.%hoon-compile-fail
+        (slot 7 (slap !>(0) gen))
+      ::
+      ++  build-arvo
+        |=  hoon=vase
+        ~>  %slog.0^leaf+"clay: building arvo on {<syd>}"
+        =/  gen
+          ~>  %mean.%arvo-parse-fail
+          (path-to-hoon data /sys/arvo/hoon)
+        ~>  %mean.%arvo-compile-fail
+        (slap (slap hoon gen) (ream '..is'))
+      ::
+      ++  build-zuse
+        |=  arvo=vase
+        ~>  %slog.0^leaf+"clay: building zuse on {<syd>}"
+        =/  gen
+          ~>  %mean.%zuse-parse-fail
+          (path-to-hoon data /sys/zuse/hoon)
+        ~>  %mean.%zuse-compile-fail
+        (slap arvo gen)
+      ::
+      ++  same-as-home
+        |=  =path
+        ^-  ?
+        =/  our=lobe
+          =/  datum  (~(got by data) path)
+          ?-  -.datum
+            %&  (page-to-lobe %hoon (page-to-cord p.datum))
+            %|  p.datum
+          ==
+        =/  =dome  dom:(~(got by dos.rom) %home)
+        =/  =yaki  (~(got by hut.ran) (~(got by hit.dome) let.dome))
+        =(`our (~(get by q.yaki) path))
+      --
+    ::
+    ++  page-to-cord
+      |=  =page
+      ^-  @t
+      ?+  p.page  ~|([%sys-bad-mark p.page] !!)
+        %hoon  ;;(@t q.page)
+        %mime  q.q:;;(mime q.page)
+      ==
+    ::
+    ++  path-to-hoon
+      |=  [data=(map path (each page lobe)) =path]
+      (rain path (path-to-cord data path))
+    ::
+    ++  path-to-cord
+      |=  [data=(map path (each page lobe)) =path]
+      ^-  @t
+      =/  datum  (~(got by data) path)
+      ?-  -.datum
+        %&  (page-to-cord p.datum)
+        %|  (lobe-to-cord data p.datum)
+      ==
+    ::
+    ++  lobe-to-cord
+      |=  [data=(map path (each page lobe)) =lobe]
+      ^-  @t
+      =-  ?:(?=(%& -<) p.- (of-wain:format p.-))
+      |-  ^-  (each @t wain)
+      =/  =blob  (~(got by lat.ran) lobe)
+      ?-    -.blob
+          %direct  [%& ;;(@t q.q.blob)]
+          %delta
+        :-  %|
+        %+  lurk:differ
+          =-  ?:(?=(%| -<) p.- (to-wain:format p.-))
+          $(lobe q.q.blob)
+        ;;((urge:clay cord) r.blob)
+      ==
     ::
     ::  Updated q.yaki
     ::
@@ -1675,7 +1759,7 @@
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
       =/  =args:ford:fusion
-        [*ankh ~ all-changes lat.ran *ford-cache]
+        [zuse:(need fer.dom) *ankh ~ all-changes lat.ran *ford-cache]
       =^  all-change-cages  ford-cache.args
         (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
@@ -1748,39 +1832,36 @@
       ~+
       ?:  =(0 let.dom)
         ~
-      ?.  =(%home syd)
-        ~
       %-  malt
       %+  skim  ~(tap by changes)
       |=  [=path *]
       ?|  =(/sys/hoon/hoon path)
           =(/sys/arvo/hoon path)
           =(/sys/zuse/hoon path)
-          =(/sys/vane (scag 2 path))
       ==
     ::
-    ::  Did the standard library reload?
-    ::
-    ++  was-zuse-updated
+    ++  need-vane-update
       |=  changes=(map path (each page lobe))
-      ^-  ?
+      ^-  (map path (each page lobe))
       ~+
-      ?|  (~(has by changes) /sys/hoon/hoon)
-          (~(has by changes) /sys/arvo/hoon)
-          (~(has by changes) /sys/zuse/hoon)
-      ==
+      ?:  =(0 let.dom)
+        ~
+      %-  malt
+      %+  skim  ~(tap by changes)
+      |=  [=path *]
+      =(/sys/vane (scag 2 path))
     ::
     ::  Delay current update until sys update is complete
     ::
     ++  sys-update
-      |=  [=ford=args:ford:fusion =yoki changes=(map path (each page lobe))]
+      |=  $:  =yoki
+              data=(map path (each page lobe))
+              changes=(map path (each page lobe))
+          ==
       ^+  ..park
-      =/  updates  (need-sys-update changes)
-      ::  Don't save ford cache so it gets properly handled when we
-      ::  restart the commit
-      ::
-      =^  updates-cages=(map path [lobe cage])  ford-cache.ford-args
-        (checkout-changes ford-args updates)
+      =/  updates
+        %-  ~(uni by (need-sys-update changes))
+        (need-vane-update changes)
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
       |^  %.  [hen %slip %c %pork ~]
@@ -1805,20 +1886,13 @@
         |=  new-hoon=?
         ^+  ..park
         ?.  new-hoon
-          =^  arvo=@t  ford-cache.ford-args  (load-sys %arvo)
+          =/  arvo=@t  (path-to-cord data /sys/arvo/hoon)
           =.  ..park  (pass-lyra hoon=~ arvo)
           reboot
-        =^  hoon=@t  ford-cache.ford-args  (load-sys %hoon)
-        =^  arvo=@t  ford-cache.ford-args  (load-sys %arvo)
+        =/  hoon=@t  (path-to-cord data /sys/hoon/hoon)
+        =/  arvo=@t  (path-to-cord data /sys/arvo/hoon)
         =.  ..park  (pass-lyra `hoon arvo)
         reboot
-      ::
-      ++  load-sys
-        |=  fil=@tas
-        ^-  [@t ford-cache]
-        =-  [!<(@t q.-<) ->]
-        %-  wrap:fusion
-        (get-value:(ford:fusion ford-args) /sys/[fil]/hoon)
       ::
       ++  pass-lyra
         |=  [hoon=(unit @t) arvo=@t]
@@ -1826,12 +1900,10 @@
         (emit hen %pass /reset %d %flog %lyra hoon arvo)
       ::
       ++  reboot
-        =^  zuse=cage  ford-cache.ford-args
-          %-  wrap:fusion
-          (get-value:(ford:fusion ford-args) /sys/zuse/hoon)
+        =/  zuse=@t  (path-to-cord data /sys/zuse/hoon)
         =.  ..park
           %-  emit
-          [hen %pass /reboot %d %flog %veer %$ /sys/zuse/hoon !<(@t q.zuse)]
+          [hen %pass /reboot %d %flog %veer %$ /sys/zuse/hoon zuse]
         reload-all
       ::
       ++  reload-all
@@ -1845,13 +1917,11 @@
       ::
       ++  reload
         |=  =term
-        =^  vane=cage  ford-cache.ford-args
-          %-  wrap:fusion
-          (get-value:(ford:fusion ford-args) /sys/vane/[term]/hoon)
+        =/  vane=@t  (path-to-cord data /sys/vane/[term]/hoon)
         %-  emit
         =/  tip  (end 3 1 term)
         =/  =path  /sys/vane/[term]/hoon
-        [hen %pass /reload %d %flog %veer tip path !<(@t q.vane)]
+        [hen %pass /reload %d %flog %veer tip path vane]
       --
     --
   ::
@@ -2165,10 +2235,10 @@
         ^-  cage
         =^  =page  fod.dom
           %-  wrap:fusion
-          (lobe-to-page:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) lobe)
+          (lobe-to-page:(ford:fusion static-ford-args) lobe)
         =^  =cage  fod.dom
           %-  wrap:fusion
-          (page-to-cage:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) page)
+          (page-to-cage:(ford:fusion static-ford-args) page)
         cage
       ::
       ++  get-dais
@@ -2176,7 +2246,7 @@
         ^-  dais
         =^  =dais  fod.dom
           %-  wrap:fusion
-          (get-mark:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) mark)
+          (get-mark:(ford:fusion static-ford-args) mark)
         dais
       ::
       ::  Diff two files on bob-desk
@@ -2389,7 +2459,7 @@
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) let.dom))
     =/  changes  (~(run by q.yaki) |=(=lobe |+lobe))
     =/  =args:ford:fusion
-      [ank.dom ~ changes lat.ran fod.dom]
+      [zuse:(need fer.dom) ank.dom ~ changes lat.ran fod.dom]
     =^  mim  ford-cache.args
       (checkout-mime args ~ ~(key by changes))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
@@ -2570,12 +2640,10 @@
     ++  validate-x
       |=  [car=care cas=case pax=path peg=page]
       ^-  (unit cage)
-      =/  =args:ford:fusion
-        [ank.dom ~ ~ lat.ran fod.dom]
       =/  vale-result
         %-  mule  |.
         %-  wrap:fusion
-        (page-to-cage:(ford:fusion args) peg)
+        (page-to-cage:(ford:fusion static-ford-args) peg)
       ?:  ?=(%| -.vale-result)
         %-  (slog >%validate-x-failed< p.vale-result)
         ~
@@ -3198,7 +3266,7 @@
         [~ fod.dom]
       =^  =vase  fod.dom
         %-  wrap:fusion
-        (build-file:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) path)
+        (build-file:(ford:fusion static-ford-args) path)
       :_(fod.dom [~ ~ %& %vase !>(vase)])
     ::
     ++  read-b
@@ -3213,7 +3281,7 @@
         :_(fod.dom [~ ~ %& %dais !>(dais.u.cached)])
       =^  =dais  fod.dom
         %-  wrap:fusion
-        (get-mark:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) i.path)
+        (get-mark:(ford:fusion static-ford-args) i.path)
       :_(fod.dom [~ ~ %& %dais !>(dais)])
     ::
     ++  read-c
@@ -3228,7 +3296,7 @@
         :_(fod.dom [~ ~ %& %tube !>(tube.u.cached)])
       =^  =tube  fod.dom
         %-  wrap:fusion
-        (get-cast:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) [i i.t]:path)
+        (get-cast:(ford:fusion static-ford-args) [i i.t]:path)
       :_(fod.dom [~ ~ %& %tube !>(tube)])
     ::
     ::  Gets the permissions that apply to a particular node.
@@ -3364,14 +3432,14 @@
         =/  =lobe  (slav %uv i.t.pax)
         =^  =page  fod.dom
           %-  wrap:fusion
-          (lobe-to-page:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) lobe)
+          (lobe-to-page:(ford:fusion static-ford-args) lobe)
         =^  =cage  fod.dom
           %-  wrap:fusion
-          (page-to-cage:(ford:fusion ank.dom ~ ~ lat.ran fod.dom) page)
+          (page-to-cage:(ford:fusion static-ford-args) page)
         ``cage+[-:!>(*^cage) cage]
       ::
           %open
-        ``open+!>(prelude:(ford:fusion ank.dom ~ ~ lat.ran fod.dom))
+        ``open+!>(prelude:(ford:fusion static-ford-args))
       ::
           %late
         :^  ~  ~  %cass
