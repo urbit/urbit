@@ -1,46 +1,36 @@
-/-  sur=chat-hook
+/-  *chat-pull-hook
+/+  *userspace
 ^?
-=<  [sur .]
-=,  sur
 |%
-::
 ++  enjs
   |%
   ++  update
     |=  upd=^update
     =,  enjs:format
     ^-  json
-    %+  frond  %chat-hook-update
+    %+  frond  %chat-pull-hook-update
     %-  pairs
-    %+  turn  ~(tap by synced.upd)
-    |=  [pax=^path shp=^ship]
+    %+  turn  ~(tap by tracking.upd)
+    |=  [=rid ship=^ship]
     ^-  [cord json]
-    [(spat pax) s+(scot %p shp)]
+    [(spat (rid-to-path rid)) s+(scot %p ship)]
   --
+::
 ++  dejs
   |%
-  ::
   ++  action
     |=  jon=json
     ^-  ^action
     =,  dejs:format
     =<  (parse-json jon)
     |%
-    ::
     ++  parse-json
       %-  of
-      :~  [%add-owned add-owned]
-          [%add-synced add-synced]
+      :~  [%add add]
           [%remove pa]
       ==
     ::
-    ++  add-owned
-      %-  ot
-      :~  [%path pa]
-          [%allow-history bo]
-      ==
-    ::
-    ++  add-synced
+    ++  add
       %-  ot
       :~  [%ship (su ;~(pfix sig fed:ag))]
           [%path pa]

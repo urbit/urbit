@@ -7,11 +7,11 @@
     *invite-store,
     *metadata-store,
     *permission-group-hook,
-    *chat-hook,
     *metadata-hook,
     *rw-security,
-    hook=chat-hook
-/+  *server, default-agent, verb, dbug,
+    push-hook=chat-push-hook,
+    pull-hook=chat-pull-hook
+/+  *server, default-agent, verb, dbug, *userspace,
     store=chat-store,
     view=chat-view
 /=  index
@@ -54,7 +54,8 @@
   $%  [%launch-action [@tas path @t]]
       [%chat-action action:store]
       [%group-action group-action]
-      [%chat-hook-action action:hook]
+      [%chat-push-hook-action action:pull-hook]
+      [%chat-pull-hook-action action:pull-hook]
       [%permission-hook-action permission-hook-action]
       [%permission-group-hook-action permission-group-hook-action]
   ==
@@ -229,7 +230,9 @@
     ?>  ?=(^ app-path.act)
     ::  always just delete the chat from chat-store
     ::
-    :+  (chat-hook-poke [%remove app-path.act])
+    :+  ?:  (team:title our.bol ship:(path-to-rid app-path.act))
+          (chat-push-hook-poke [%remove app-path.act])
+        (chat-pull-hook-poke [%remove app-path.act])
       (chat-poke [%delete app-path.act])
     ::  if we still have metadata for the chat, remove it, and the associated
     ::  group if it's unmanaged
@@ -256,7 +259,7 @@
     =/  group-path
       ?.  (is-managed app-path.act)  app-path.act
       (group-from-chat app-path.act)
-    :~  (chat-hook-poke [%add-synced ship.act app-path.act ask-history.act])
+    :~  (chat-pull-hook-poke [%add ship.act app-path.act ask-history.act])
         (permission-hook-poke [%add-synced ship.act group-path])
         (metadata-hook-poke [%add-synced ship.act group-path])
     ==
@@ -334,7 +337,7 @@
     |=  [=path history=?]
     ^-  (list card)
     :~  (chat-poke [%create path])
-        (chat-hook-poke [%add-owned path history])
+        (chat-push-hook-poke [%add path history])
     ==
   ::
   ++  create-group
@@ -421,7 +424,7 @@
     |=  [=path =ship]
     ^-  card
     =/  =invite
-      :*  our.bol  %chat-hook
+      :*  our.bol  %chat-pull-hook
           path  ship  ''
       ==
     =/  act=invite-action  [%invite /chat (shaf %msg-uid eny.bol) invite]
@@ -511,10 +514,15 @@
   ^-  card
   [%pass / %agent [our.bol %permission-store] %poke %permission-action !>(act)]
 ::
-++  chat-hook-poke
-  |=  act=action:hook
+++  chat-push-hook-poke
+  |=  act=action:push-hook
   ^-  card
-  [%pass / %agent [our.bol %chat-hook] %poke %chat-hook-action !>(act)]
+  [%pass / %agent [our.bol %chat-push-hook] %poke %chat-push-hook-action !>(act)]
+::
+++  chat-pull-hook-poke
+  |=  act=action:pull-hook
+  ^-  card
+  [%pass / %agent [our.bol %chat-pull-hook] %poke %chat-pull-hook-action !>(act)]
 ::
 ++  permission-hook-poke
   |=  act=permission-hook-action

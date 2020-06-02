@@ -1,4 +1,4 @@
-/+  *chat-push-hook
+/-  *chat-push-hook
 |_  act=action
 ++  grab
   |%
