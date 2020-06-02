@@ -27,10 +27,11 @@
 +$  state-0
   $:  %0
       ~
+  ==
 +$  poke
-  $%  [%chat-action chat-action]
+  $%  [%chat-action action:store]
       [%group-action action:group-store]
-      [%chat-hook-action chat-hook-action]
+      [%chat-hook-action action:hook]
       [%permission-hook-action permission-hook-action]
       [%permission-group-hook-action permission-group-hook-action]
   ==

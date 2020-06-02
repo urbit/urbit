@@ -46,15 +46,36 @@
   ++  on-load
     |=  =vase
     ^-  (quip card _this)
-    =/  old  !<(state-one vase)
-    `this(state old)
-    ::  %+  murn  ~(tap by synced.old)
-    ::  |=  [=path =ship]
-    ::  ^-  (unit card)
-    ::  =/  =wire  [(scot %p ship) %group path]
-    ::  =/  =term  ?:(=(our.bowl ship) %group-store %group-hook)
-    ::  ?:  (~(has by wex.bowl) [wire ship term])  ~
-    ::  `[%pass wire %agent [ship term] %watch [%group path]]
+    =/  old  !<(versioned-state vase)
+    ?-  -.old
+        %1  [~ this(state old)]
+        %0
+      ::  kick all subscriptions and migrate state
+      ::  wait for the kick to resubscribe on
+      ::  correct path
+      =/  kick=card
+        =;  kick-on=(list path)
+          [%give %kick kick-on ~]
+        =-  ~(tap in -)
+        %+  roll  ~(val by sup.bowl)
+        |=  [[=ship pax=path] paths=(set path)]
+        (~(put in paths) pax)
+      :-  ~[kick]
+      this
+    ==
+      ::
+      ::  =/  watches=(list card)
+      ::    %+  murn  ~(tap by synced.old)
+      ::    |=  [=path =ship]
+      ::    ?:  =(our.bowl ship)
+      ::      ~
+      ::    `
+
+
+      ::  =/  =wire  [(scot %p ship) %group path]
+      ::  =/  =term  ?:(=(our.bowl ship) %group-store %group-hook)
+      ::  ?:  (~(has by wex.bowl) [wire ship term])  ~
+      ::  `[%pass wire %agent [ship term] %watch [%group path]]
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -235,8 +256,6 @@
   --
 ::  +listen-group: Start a new subscription to the proxied .group-id
 ::
-::    Wire is required to prevent a race condition, see +join-group in
-::    lib/group
 ++  listen-group
   |=  =group-id
   ^-  card

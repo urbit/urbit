@@ -16,7 +16,6 @@
     verb,
     grpl=group,
     group-store
->>>>>>> bc47d0620... publish: update to new groups
 ::
 ~%  %publish  ..is  ~
 |%
@@ -2229,7 +2228,7 @@
       (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
     =.  p.notebook-json
       (~(put by p.notebook-json) %writers (get-writers-json u.host book-name))
-    =/  jon=json  (pairs notebook+notebook-json ~)
+    =/  jon=json
       (frond:enjs:format %publish-response (pairs notebook+notebook-json ~))
     (json-response:gen (json-to-octs jon))
   ::
