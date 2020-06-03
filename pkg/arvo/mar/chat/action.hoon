@@ -1,6 +1,5 @@
-/+  *chat-json
-=,  dejs:format
-|_  act=chat-action
+/+  *chat-store
+|_  act=action
 ++  grad  %noun
 ++  grow
   |%
@@ -8,9 +7,7 @@
   --
 ++  grab
   |%
-  ++  noun  chat-action
-  ++  json
-    |=  jon=^json
-    (json-to-action jon)
+  ++  noun  action
+  ++  json  action:dejs
   --
 --

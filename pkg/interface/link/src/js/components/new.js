@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { InviteSearch } from './lib/invite-search';
+import { Spinner } from './lib/icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { makeRoutePath, isPatTa, deSig } from '/lib/util';
 import urbitOb from 'urbit-ob';
@@ -16,7 +17,8 @@ export class NewScreen extends Component {
       ships: [],
       idError: false,
       inviteError: false,
-      createGroup: false
+      createGroup: false,
+      disabled: false
     };
 
     this.titleChange = this.titleChange.bind(this);
@@ -115,9 +117,9 @@ export class NewScreen extends Component {
       error: false,
       success: true,
       group: [],
-      ships: []
+      ships: [],
+      disabled: true
     }, () => {
-      api.setSpinner(true);
       let submit = api.createCollection(
         appPath,
         state.title,
@@ -126,7 +128,7 @@ export class NewScreen extends Component {
         state.createGroup
       );
       submit.then(() => {
-        api.setSpinner(false);
+        this.setState({disabled: false})
         props.history.push(makeRoutePath(appPath));
       })
     });
@@ -231,9 +233,11 @@ export class NewScreen extends Component {
           {createGroupToggle}
           <button
             onClick={this.onClickCreate.bind(this)}
-            className={createClasses}>
+            className={createClasses}
+            disabled={this.state.disabled}>
             Create Collection
           </button>
+          <Spinner awaiting={this.state.disabled} classes="mt3" text="Creating collection..." />
         </div>
       </div>
     );

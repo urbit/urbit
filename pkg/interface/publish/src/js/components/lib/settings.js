@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { writeText } from '../../lib/util';
+import { Spinner } from './icons/icon-spinner';
+import { InviteSearch } from '/components/lib/invite-search';
 
 export class Settings extends Component {
   constructor(props){
@@ -8,12 +10,17 @@ export class Settings extends Component {
       title: "",
       description: "",
       comments: false,
-      disabled: false
+      disabled: false,
+      type: "Editing",
+      targetGroup: null,
+      inclusive: false,
     }
     this.deleteNotebook = this.deleteNotebook.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
     this.changeDescription = this.changeDescription.bind(this);
     this.changeComments = this.changeComments.bind(this);
+    this.changeTargetGroup = this.changeTargetGroup.bind(this);
+    this.changeInclusive = this.changeInclusive.bind(this);
   }
 
   componentDidMount() {
@@ -29,13 +36,19 @@ export class Settings extends Component {
 
   componentDidUpdate(prevProps) {
     const { props } = this;
-    if (prevProps !== this.props) {
+    if (prevProps !== props) {
       if (props.notebook) {
-        this.setState({
-          title: props.notebook.title,
-          description: props.notebook.about,
-          comments: props.notebook.comments
-        })
+        if (prevProps.notebook && prevProps.notebook !== props.notebook) {
+          if (prevProps.notebook.title !== props.notebook.title) {
+            this.setState({title: props.notebook.title});
+          }
+          if (prevProps.notebook.about !== props.notebook.about) {
+            this.setState({description: props.notebook.about});
+          }
+          if (prevProps.notebook.comments !== props.notebook.comments) {
+            this.setState({comments: props.notebook.comments})
+          }
+        }
       }
     }
   }
@@ -49,8 +62,7 @@ export class Settings extends Component {
   }
 
   changeComments() {
-    this.setState({comments: !this.state.comments}, (() => {
-      window.api.setSpinner(true);
+    this.setState({comments: !this.state.comments, disabled: true}, (() => {
       window.api.action("publish", "publish-action", {
         "edit-book": {
           book: this.props.book,
@@ -60,7 +72,7 @@ export class Settings extends Component {
           group: null
         }
       }).then(() => {
-        window.api.setSpinner(false);
+        this.setState({disabled: false});
       })
     }));
   }
@@ -71,12 +83,116 @@ export class Settings extends Component {
         book: this.props.book
       }
     }
-    window.api.setSpinner(true);
+    this.setState({ disabled: true, type: "Deleting" });
     window.api.action("publish", "publish-action", action).then(() => {
-      window.api.setSpinner(false);
       this.props.history.push("/~publish");
     });
   }
+
+  changeTargetGroup(target) {
+    if (target.groups.length === 1) {
+      this.setState({ targetGroup: target.groups[0] });
+    } else {
+      this.setState({ targetGroup: null });
+    }
+  }
+
+  changeInclusive(event) {
+    this.setState({ inclusive: !!event.target.checked });
+  }
+
+  groupifyNotebook() {
+    const { props, state } = this;
+
+    this.setState({
+      disabled: true,
+      type: 'Converting'
+    }, (() => {
+      window.api.action("publish", "publish-action", {
+        groupify: {
+          book: props.book,
+          target: state.targetGroup,
+          inclusive: state.inclusive,
+        }
+      }).then(() => this.setState({disabled: false}));
+    }));
+  }
+
+  renderGroupify() {
+    const { props, state } = this;
+
+    const owner = (props.host.slice(1) === window.ship);
+
+    const ownedUnmanaged =
+      owner &&
+      props.notebook['writers-group-path'].slice(0, 3) === '/~/';
+
+    if (!ownedUnmanaged) {
+      return null;
+    } else {
+      // don't give the option to make inclusive if we don't own the target
+      // group
+      let targetOwned = (state.targetGroup)
+        ? state.targetGroup.slice(0, window.ship.length+3) === `/~${window.ship}/`
+        : false;
+      let inclusiveToggle = <div/>
+      if (targetOwned) {
+        //TODO toggle component into /lib
+        let inclusiveClasses = state.inclusive
+          ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
+          : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
+        inclusiveToggle = (
+          <div className="mt4">
+            <input
+              type="checkbox"
+              style={{ WebkitAppearance: "none", width: 28 }}
+              className={inclusiveClasses}
+              onChange={this.changeInclusive}
+            />
+            <span className="dib f9 white-d inter ml3">
+              Add all members to group
+            </span>
+            <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
+              Add notebook members to the group if they aren't in it yet
+            </p>
+          </div>
+        );
+      }
+
+      return (
+        <div>
+          <div className={"w-100 fl mt3 mb3"} style={{maxWidth: "29rem"}}>
+            <p className="f8 mt3 lh-copy db">Convert Notebook</p>
+            <p className="f9 gray2 db mb4">
+              Convert this notebook into a group with associated chat, or select a
+              group to add this notebook to.
+            </p>
+            <InviteSearch
+              groups={props.groups}
+              contacts={props.contacts}
+              associations={props.associations}
+              groupResults={true}
+              shipResults={false}
+              invites={{
+                groups: state.targetGroup ? [state.targetGroup] : [],
+                ships: []
+              }}
+              setInvite={this.changeTargetGroup}
+            />
+            {inclusiveToggle}
+            <button
+               onClick={this.groupifyNotebook.bind(this)}
+               className={"dib f9 black gray4-d bg-gray0-d ba pa2 mt4 b--black b--gray1-d pointer"}
+               disabled={this.state.disabled}>
+              Convert to group
+            </button>
+          </div>
+        </div>
+      );
+    }
+  }
+
+
 
   render() {
     let commentsSwitchClasses = (this.state.comments)
@@ -109,6 +225,7 @@ export class Settings extends Component {
       return (
         <div className="flex-column">
           {copyShortcode}
+          {this.renderGroupify()}
           <p className="f9 mt6 lh-copy db">Delete Notebook</p>
           <p className="f9 gray2 db mb4">
             Permanently delete this notebook. (All current members will no
@@ -132,7 +249,6 @@ export class Settings extends Component {
               disabled={this.state.disabled}
               onBlur={() => {
                 this.setState({ disabled: true });
-                window.api.setSpinner(true);
                 window.api
                   .action("publish", "publish-action", {
                     "edit-book": {
@@ -145,7 +261,6 @@ export class Settings extends Component {
                   })
                   .then(() => {
                     this.setState({ disabled: false })
-                    window.api.setSpinner(false);
                   });
               }}
             />
@@ -162,7 +277,6 @@ export class Settings extends Component {
               onChange={this.changeDescription}
               onBlur={() => {
                 this.setState({ disabled: true });
-                window.api.setSpinner(true);
                 window.api
                   .action("publish", "publish-action", {
                     "edit-book": {
@@ -175,7 +289,6 @@ export class Settings extends Component {
                   })
                   .then(() => {
                     this.setState({ disabled: false });
-                    window.api.setSpinner(false);
                   });
               }}
             />
@@ -192,6 +305,11 @@ export class Settings extends Component {
             Subscribers may comment when enabled
             </p>
           </div>
+          <Spinner
+            awaiting={this.state.disabled}
+            classes="absolute right-1 bottom-1 pa2 ba b--black b--gray0-d white-d"
+            text={`${this.state.type} notebook...`}
+          />
         </div>
       );
     } else {

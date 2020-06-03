@@ -1,11 +1,11 @@
-/+  *chat-json
+/+  *chat-store
 |_  box=inbox
 ::
 ++  grad  %noun
 ++  grow
   |%
   ++  noun  box
-  ++  json  (inbox-to-json box)
+  ++  json  (inbox:enjs box)
   --
 ::
 ++  grab

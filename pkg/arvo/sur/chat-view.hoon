@@ -1,6 +1,7 @@
 /-  *rw-security
+^?
 |%
-+$  chat-view-action
++$  action
   $%  ::  %create: create a new chat
       ::
       ::    if :app-path and :group-path are different, :members must be empty,

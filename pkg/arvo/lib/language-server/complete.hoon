@@ -345,4 +345,32 @@
   :-  %&
   ~?  >  debug  %parsed-good
   ((cury tab-list-hoon sut) hoon.p.res)
+::
+:: Generators
+++  tab-generators
+  |=  [pfix=path app=(unit term) gens=(list term)]
+  ^-  (list (option tank))
+  %+  turn  gens
+  |=  gen=term
+  ^-  (option tank)
+  =/  pax=path
+    (weld pfix ~[gen %hoon])
+  =/  file
+    .^(@t %cx pax)
+  :_  (render-help file)
+  ?~  app
+    (cat 3 '+' gen)
+  ?:  =(%hood u.app)
+    (cat 3 '|' gen)
+  :((cury cat 3) ':' u.app '|' gen)
+::  Stolen from +help
+++  render-help
+  |=  a=@t
+  ^-  tank
+  :-  %leaf
+  =/  c  (to-wain:format a)
+  ?~  c  "~"
+  ?.  =('::  ' (end 3 4 i.c))
+    "<undocumented>"
+  (trip i.c)
 --

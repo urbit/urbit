@@ -3574,6 +3574,8 @@
       =+  dif=;;((urge cord) q.r.bol)
       =,  format
       =+  pac=(of-wain (lurk:differ (to-wain (cat 3 txt '\0a')) dif))
+      ?~  pac
+        ''
       (end 3 (dec (met 3 pac)) pac)
     ::
     ::  Gets an arch (directory listing) at a node.

@@ -1,4 +1,4 @@
-/+  *server, default-agent, verb
+/+  *server, default-agent, verb, dbug
 /*  tile  %js  /app/clock/js/tile/js
 =/  as-octs  as-octs:mimes:html
 =/  tile-js   (as-octs tile)
@@ -13,6 +13,7 @@
 +$  state-zero  [%0 data=json]
 --
 %+  verb  |
+%-  agent:dbug
 =|  state-zero
 =*  state  -
 ^-  agent:gall
@@ -23,20 +24,28 @@
 ++  on-init
   ^-  (quip card:agent:gall _this)
   =/  launcha
-    [%launch-action !>([%clock /clocktile '/~clock/js/tile.js'])]
+    [%launch-action !>([%add %clock /clocktile '/~clock/js/tile.js'])]
   :_  this
   :~  [%pass / %arvo %e %connect [~ /'~clock'] %clock]
       [%pass /clock %agent [our.bowl %launch] %poke launcha]
   ==
 ::  bootstrapping to get %goad started OTA
 ::
-++  on-save   !>(%2)
+++  on-save   !>(%3)
 ++  on-load
   |=  old-state=vase
-  =/  old  !<(?(~ %1 %2) old-state)
+  ^-  (quip card _this)
+  =/  old  !<(?(~ %1 %2 %3) old-state)
   =^  cards  this
-    ?:  ?=(%2 old)
+    ?:  ?=(%3 old)
       `this
+    ?:  ?=(%2 old)
+      ::  ensure launch is set up to listen to us correctly
+      ::
+      =/  launcha
+        [%launch-action !>([%add %clock /clocktile '/~clock/js/tile.js'])]
+      :_  this
+      [%pass /clock %agent [our.bowl %launch] %poke launcha]~
     :_  this  :_  ~
     [%pass /behn %arvo %b %wait +(now.bowl)]
   ::

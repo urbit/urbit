@@ -7,6 +7,7 @@
 /-  *permission-hook
 /+  *permission-json, default-agent, verb, dbug
 ::
+~%  %permission-hook-top  ..is  ~
 |%
 +$  state
   $%  [%0 state-0]

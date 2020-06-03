@@ -1,15 +1,15 @@
-/+  *chat-json
-|_  upd=chat-hook-update
+/+  *chat-hook
+|_  upd=update
 ++  grad  %noun
 ++  grow
   |%
   ++  noun  upd
-  ++  json  (hook-update-to-json upd)
+  ++  json  (update:enjs upd)
   --
 ::
 ++  grab
   |%
-  ++  noun  chat-hook-update
+  ++  noun  update
   --
 ::
 --

@@ -9,8 +9,12 @@
 /-  *permission-group-hook
 /-  *chat-hook
 /-  *metadata-hook
+/-  *rw-security,
+/-  hook=chat-hook
 ::
-/+  *server, *chat-json, default-agent, verb, dbug
+/+  *server, default-agent, verb, dbug
+    store=chat-store
+    view=chat-view
 ::
 /*  index-html   %html  /app/chat/index/html
 /*  index-js     %js    /app/chat/js/index/js
@@ -19,7 +23,7 @@
 ::
 /*  chatswitcherclosed-png   %png  /app/chat/img/chatswitcherclosed/png
 /*  chatswitcherlink-png     %png  /app/chat/img/chatswitcherlink/png
-/*  home-png                 %png  /app/chat/img/home/png
+/*  spinner-png              %png  /app/chat/img/spinner/png
 /*  icon-home-png            %png  /app/chat/img/icon-home/png
 /*  popout-png               %png  /app/chat/img/popout/png
 /*  search-png               %png  /app/chat/img/search/png
@@ -38,21 +42,23 @@
   %-  ~(gas by *(map @t @))
   :~  [%'ChatSwitcherClosed' chatswitcherclosed-png]
       [%'ChatSwitcherLink' chatswitcherlink-png]
-      [%'Home' home-png]
+      [%'Spinner' spinner-png]
       [%'Tile' tile-png]
       [%'Send' send-png]
       [%'touch_icon' touch-icon-png]
       popout+popout-png
       search+search-png
   ==
+::
+~%  %chat-view-top  ..is  ~
 |%
 +$  card  card:agent:gall
 ::
 +$  poke
   $%  [%launch-action [@tas path @t]]
-      [%chat-action chat-action]
+      [%chat-action action:store]
       [%group-action group-action]
-      [%chat-hook-action chat-hook-action]
+      [%chat-hook-action action:hook]
       [%permission-hook-action permission-hook-action]
       [%permission-group-hook-action permission-group-hook-action]
   ==
@@ -61,6 +67,7 @@
 %-  agent:dbug
 ^-  agent:gall
 =<
+  ~%  %chat-view-agent-core  ..poke-handle-http-request  ~
   |_  bol=bowl:gall
   +*  this       .
       chat-core  +>
@@ -69,13 +76,14 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =/  launcha  [%launch-action !>([%chat-view /configs '/~chat/js/tile.js'])]
+    =/  launcha  [%launch-action !>([%add %chat-view /configs '/~chat/js/tile.js'])]
     :_  this
     :~  [%pass /updates %agent [our.bol %chat-store] %watch /updates]
         [%pass / %arvo %e %connect [~ /'~chat'] %chat-view]
         [%pass /chat-view %agent [our.bol %launch] %poke launcha]
     ==
   ++  on-poke
+    ~/  %chat-view-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?>  (team:title our.bol src.bol)
@@ -89,14 +97,15 @@
     ::
         %json
       :_  this
-      (poke-chat-view-action:cc (json-to-view-action !<(json vase)))
+      (poke-chat-view-action:cc (action:dejs:view !<(json vase)))
     ::
         %chat-view-action
       :_  this
-      (poke-chat-view-action:cc !<(chat-view-action vase))
+      (poke-chat-view-action:cc !<(action:view vase))
     ==
   ::
   ++  on-watch
+    ~/  %chat-view-watch
     |=  =path
     ^-  (quip card _this)
     ?>  (team:title our.bol src.bol)
@@ -104,35 +113,39 @@
     ?:  ?=([%http-response *] path)
       [~ this]
     ?:  =(/primary path)
-      ::  create inbox with 100 messages max per mailbox and send that along
+      ::  create inbox with 20 messages max per mailbox and send that along
       ::  then quit the subscription
       :_  this
-      [%give %fact ~ %json !>((inbox-to-json truncated-inbox-scry))]~
+      [%give %fact ~ %json !>((inbox:enjs:store truncated-inbox-scry))]~
     ?:  =(/configs path)
       [[%give %fact ~ %json !>(*json)]~ this]
     (on-watch:def path)
     ::
+    ++  message-limit  20
+    ::
     ++  truncated-inbox-scry
+<<<<<<< HEAD
       ^-  inbox
       =/  =inbox
         =/  our  (scot %p our.bol)
         =/  now  (scot %da now.bol)
         .^(inbox %gx /[our]/chat-store/[now]/all/noun)
+||||||| merged common ancestors
+      ^-  inbox
+      =/  =inbox  .^(inbox %gx /=chat-store/(scot %da now.bol)/all/noun)
+=======
+      ^-  inbox:store
+      =/  =inbox:store
+        .^(inbox:store %gx /=chat-store/(scot %da now.bol)/all/noun)
+>>>>>>> origin/master
       %-  ~(run by inbox)
-      |=  =mailbox
-      ^-  ^mailbox
-      [config.mailbox (truncate-envelopes envelopes.mailbox)]
-    ::
-    ++  truncate-envelopes
-      |=  envelopes=(list envelope)
-      ^-  (list envelope)
-      =/  length  (lent envelopes)
-      ?:  (lth length 100)
-        envelopes
-      (swag [(sub length 100) 100] envelopes)
+      |=  =mailbox:store
+      ^-  mailbox:store
+      [config.mailbox (scag message-limit envelopes.mailbox)]
     --
   ::
   ++  on-agent
+    ~/  %chat-view-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     ?+    -.sign  (on-agent:def wire sign)
@@ -144,11 +157,12 @@
       ?+  p.cage.sign  (on-agent:def wire sign)
           %chat-update
         :_  this
-        (diff-chat-update:cc !<(chat-update q.cage.sign))
+        (diff-chat-update:cc !<(update:store q.cage.sign))
       ==
     ==
   ::
   ++  on-arvo
+    ~/  %chat-view-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
     ?.  ?=(%bound +<.sign-arvo)
@@ -163,6 +177,7 @@
   --
 ::
 ::
+~%  %chat-view-library  ..card  ~
 |_  bol=bowl:gall
 ::
 ++  poke-handle-http-request
@@ -188,7 +203,7 @@
     =/  envelopes  (envelope-scry [(scot %ud start) (scot %ud end) pax])
     %-  json-response:gen
     %-  json-to-octs
-    %-  update-to-json
+    %-  update:enjs:store
     [%messages pax start end envelopes]
   ::
       [%'~chat' *]  (html-response:gen index)
@@ -198,10 +213,10 @@
   |=  jon=json
   ^-  (list card)
   ?>  (team:title our.bol src.bol)
-  (poke-chat-view-action (json-to-view-action jon))
+  (poke-chat-view-action (action:dejs:view jon))
 ::
 ++  poke-chat-view-action
-  |=  act=chat-view-action
+  |=  act=action:view
   ^-  (list card)
   |^
   ?>  (team:title our.bol src.bol)
@@ -265,8 +280,8 @@
     ?>  ?=([%'~' ^] app-path.act)
     ::  retrieve old data
     ::
-    =/  data=(unit mailbox)
-      (scry-for (unit mailbox) %chat-store [%mailbox app-path.act])
+    =/  data=(unit mailbox:store)
+      (scry-for (unit mailbox:store) %chat-store [%mailbox app-path.act])
     ?~  data
       ~&  [%cannot-groupify-nonexistent app-path.act]
       ~
@@ -340,7 +355,10 @@
   ++  create-group
     |=  [=path app-path=path sec=rw-security ships=(set ship) title=@t desc=@t]
     ^-  (list card)
-    ?^  (group-scry path)  ~
+    ?^  (group-scry path)
+      :~  (create-security path %village)
+          (permission-hook-poke [%add-owned path path])
+      ==
     ::  do not create a managed group if this is a sig path or a blacklist
     ::
     ?:  =(sec %channel)
@@ -426,6 +444,7 @@
   ::
   ++  chat-scry
     |=  pax=path
+<<<<<<< HEAD
     ^-  (unit mailbox)
     =.  pax
       ;:  weld
@@ -434,6 +453,15 @@
         /noun
       ==
     .^((unit mailbox) %gx pax)
+||||||| merged common ancestors
+    ^-  (unit mailbox)
+    =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
+    .^((unit mailbox) %gx pax)
+=======
+    ^-  (unit mailbox:store)
+    =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
+    .^((unit mailbox:store) %gx pax)
+>>>>>>> origin/master
   ::
   ++  maybe-group-from-chat
     |=  app-path=path
@@ -488,10 +516,10 @@
   --
 ::
 ++  diff-chat-update
-  |=  upd=chat-update
+  |=  upd=update:store
   ^-  (list card)
-  =/  updates-json  (update-to-json upd)
-  =/  configs-json  (configs-to-json configs-scry)
+  =/  updates-json  (update:enjs:store upd)
+  =/  configs-json  (configs:enjs:store configs-scry)
   :~  [%give %fact ~[/primary] %json !>(updates-json)]
       [%give %fact ~[/configs] %json !>(configs-json)]
   ==
@@ -499,7 +527,7 @@
 ::  +utilities
 ::
 ++  chat-poke
-  |=  act=chat-action
+  |=  act=action:store
   ^-  card
   [%pass / %agent [our.bol %chat-store] %poke %chat-action !>(act)]
 ::
@@ -514,7 +542,7 @@
   [%pass / %agent [our.bol %permission-store] %poke %permission-action !>(act)]
 ::
 ++  chat-hook-poke
-  |=  act=chat-hook-action
+  |=  act=action:hook
   ^-  card
   [%pass / %agent [our.bol %chat-hook] %poke %chat-hook-action !>(act)]
 ::
@@ -534,12 +562,12 @@
 ::
 ++  envelope-scry
   |=  pax=path
-  ^-  (list envelope)
-  (scry-for (list envelope) %chat-store [%envelopes pax])
+  ^-  (list envelope:store)
+  (scry-for (list envelope:store) %chat-store [%envelopes pax])
 ::
 ++  configs-scry
-  ^-  chat-configs
-  (scry-for chat-configs %chat-store /configs)
+  ^-  configs:store
+  (scry-for configs:store %chat-store /configs)
 ::
 ++  group-scry
   |=  pax=path

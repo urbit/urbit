@@ -71,7 +71,10 @@ export class NotebookPosts extends Component {
             </div>
             <p className="mb1"
             style={{overflowWrap: "break-word"}}>
-              {note.snippet}
+              <ReactMarkdown
+                unwrapDisallowed
+                allowedTypes={['text', 'root', 'break', 'paragraph']}
+                source={note.snippet} />
             </p>
             <div className="flex">
               <div className={(contact.nickname ? null : "mono") +

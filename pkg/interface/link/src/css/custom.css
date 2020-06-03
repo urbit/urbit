@@ -64,6 +64,10 @@ a {
   line-height: 2.2;
 }
 
+.bg-welcome-green {
+  background-color: #ECF6F2;
+}
+
 .c-default {
   cursor: default;
 }
@@ -209,5 +213,8 @@ a {
   }
   a {
     color: #fff;
+  }
+  .hover-bg-gray1-d:hover {
+    background-color: #4d4d4d;
   }
 }

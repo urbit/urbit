@@ -1,4 +1,4 @@
-::  ::  %gall, agent execution
+!:  ::  %gall, agent execution
 !?  163
 ::
 ::::
@@ -245,31 +245,16 @@
       ++  state-5-to-spore-6
         |=  =state-5
         ^-  ^spore
-        =;  eggs=(map term egg)  state-5(- %6, yokes.agents-5 eggs)
-        %-  ~(run by yokes.agents-5.state-5)
-        |=(=yoke `egg`yoke(agent on-save:agent.yoke))
+        %=    state-5
+            -  %6
+            running.agents-5
+          %-  ~(run by running.agents-5.state-5)
+          |=(=yoke-3 `egg`+:yoke-3(agent on-save:agent.yoke-3))
+        ==
       ::
       ++  state-5
         $:  %5
-            =agents-5
-        ==
-      ::
-      ++  agents-5
-        $:  system-duct=duct
-            outstanding=(map [wire duct] (qeu remote-request))
-            contacts=(set ship)
-            yokes=(map term yoke-5)
-            blocked=(map term (qeu blocked-move))
-        ==
-      ::
-      ++  yoke-5
-        $:  control-duct=duct
-            live=?
-            =stats
-            =watches
-            =agent
-            =beak
-            marks=(map duct mark)
+            agents-5=agents-3
         ==
       ::
       ++  state-4-to-5
@@ -277,13 +262,12 @@
         ^-  state-5
         %=    state-4
             -  %5
-            running.agents-4
-          (~(run by running.agents-4.state-4) |=(yoke-3 +<+))
+            outstanding.agents-4  ~
         ==
       ::
       ++  state-4
         $:  %4
-            agents-4=agents-3  ::  agents-3 is unchanged in state-4
+            agents-4=agents-3
         ==
       ::
       ++  state-3-to-4
@@ -1107,6 +1091,12 @@
     =.  mo-core  (mo-untrack-ship ship)
     =.  mo-core  (mo-filter-queue ship)
     =/  agents=(list [name=term =yoke])  ~(tap by yokes.state)
+    =.  outstanding.state
+      %-  malt
+      %+  skip  ~(tap by outstanding.state)
+      |=  [[=wire duct] (qeu remote-request)]
+      =(/sys/way/(scot %p ship) (scag 3 wire))
+    ::
     |-  ^+  mo-core
     ?~  agents
       mo-core
@@ -1730,31 +1720,30 @@
     ++  ap-ducts-from-paths
       |=  [target-paths=(list path) target-ship=(unit ship)]
       ^-  (list duct)
-      ?:  &(?=(~ target-paths) ?=(~ target-ship))
-        ~[agent-duct]
-      %-  zing
-      %+  turn  target-paths
-      |=  =path
-      (ap-ducts-from-path `path target-ship)
-    ::  +ap-ducts-from-path: get ducts subscribed to path
-    ::
-    ++  ap-ducts-from-path
-      |=  [target-path=(unit path) target-ship=(unit ship)]
-      ^-  (list duct)
-      ?:  &(?=(~ target-path) ?=(~ target-ship))
-        ~[agent-duct]
-      %+  murn  ~(tap by inbound.watches.current-agent)
-      |=  [=duct =ship =path]
-      ^-  (unit ^duct)
-      ?~  target-ship
-        ?:  =(target-path `path)
-          `duct
-        ~
-      ?~  target-path
+      ?~  target-paths
+        ?~  target-ship
+          ~[agent-duct]
+        %+  murn  ~(tap by inbound.watches.current-agent)
+        |=  [=duct =ship =path]
+        ^-  (unit ^duct)
         ?:  =(target-ship `ship)
           `duct
         ~
-      ?:  &(=(target-path `path) =(target-ship `ship))
+      %-  zing
+      %+  turn  target-paths
+      |=  =path
+      (ap-ducts-from-path path target-ship)
+    ::  +ap-ducts-from-path: get ducts subscribed to path
+    ::
+    ++  ap-ducts-from-path
+      |=  [target-path=path target-ship=(unit ship)]
+      ^-  (list duct)
+      %+  murn  ~(tap by inbound.watches.current-agent)
+      |=  [=duct =ship =path]
+      ^-  (unit ^duct)
+      ?:  ?&  =(target-path path)
+              |(=(target-ship ~) =(target-ship `ship))
+          ==
         `duct
       ~
     ::  +ap-apply: apply effect.
@@ -2158,7 +2147,9 @@
         =.  ap-core
           =/  =tang
             ~[leaf+"subscribe wire not unique" >agent-name< >short-wire< >dock<]
-          %-  (slog >out=outbound.watches.current-agent< tang)
+          =/  have
+            (~(got by outbound.watches.current-agent) short-wire dock)
+          %-  (slog >out=have< tang)
           (ap-error %watch-not-unique tang)  ::  reentrant, maybe bad?
         $(moves t.moves)
       =.  outbound.watches.current-agent

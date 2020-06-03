@@ -1,3 +1,4 @@
+::  Produce a metal pill
 ::
 ::::  /hoon/metal/gen
   ::

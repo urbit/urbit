@@ -34,6 +34,7 @@
             subscribe+subscribe
             unsubscribe+unsubscribe
             read+read
+            groupify+groupify
         ==
     ::
     ++  new-book
@@ -85,7 +86,7 @@
       :~  who+(su fed:ag)
           book+so
           note+so
-          comment+(su ;~(pfix sig (cook year when:^so)))
+          comment+so
           body+so
       ==
     ::
@@ -98,7 +99,7 @@
       :~  who+(su fed:ag)
           book+so
           note+so
-          comment+(su ;~(pfix sig (cook year when:^so)))
+          comment+so
       ==
     ++  subscribe
       %-  ot
@@ -115,6 +116,12 @@
       :~  who+(su fed:ag)
           book+so
           note+so
+      ==
+    ++  groupify
+      %-  ot
+      :~  book+so
+          target+(mu pa)
+          inclusive+bo
       ==
     ++  group-info
       %-  ot

@@ -1,5 +1,117 @@
 # Maintainers' Guide
 
+## Branch organization
+
+The essence of this branching scheme is that you create "release branches" of
+independently releasable units of work.  These can then be released by their
+maintainers when ready.
+
+### Master branch
+
+Master is what's released on the network.  Deployment instructions are in the
+next section, but tagged releases should always come from this branch.
+
+### Feature branches
+
+Anyone can create feature branches.  For those with commit access to
+urbit/urbit, you're welcome to create them in this repo; otherwise, fork the
+repo and create them there.
+
+Usually, new development should start from master, but if your work depends on
+work in another feature branch or release branch, start from there.
+
+If, after starting your work, you need changes that are in master, merge it into
+your branch.  If you need changes that are in a release branch or feature
+branch, merge it into your branch, but understand that your work now depends on
+that release branch, which means it won't be released until that one is
+released.
+
+### Release branches
+
+Release branches are code that is ready to release.  All release branch names
+should start with `release/`.
+
+All code must be reviewed before being pushed to a release branch.  Thus,
+feature branches should be PR'd against a release branch, not master.
+
+Create new release branches as needed.  You don't need a new one for every PR,
+since many changes are relatively small and can be merged together with little
+risk.  However, once you merge two branches, they're now coupled and will only
+be released together -- unless one of the underlying commits is separately put
+on a release branch.
+
+Here's a worked example.  The rule is to make however many branches are useful,
+and no more.  This example is not prescriptive, the developers making the
+changes may add, remove, or rename branches in this flow at will.
+
+Suppose you (plural, the dev community at large) complete some work in a
+userspace app, and you put it in `release/next-userspace`.  Separately, you make
+a small JS change.  If you PR it to `release/next-userspace`, then it will only
+be released at the same time as the app changes.  Maybe this is fine, or maybe
+you want this change to go out quickly, and the change in
+`release/next-userspace` is relatively risky, so you don't want to push it out
+on Friday afternoon.  In this case, put the change in another release branch,
+say `release/next-js`.  Now either can be released independently.
+
+Suppose you do further work that you want to PR to `release/next-userspace`, but
+it depends on your fixes in `release/next-js`.  Simply merge `release/next-js`
+into either your feature branch or `release/next-userspace` and PR your finished
+work to `release/next-userspace`.  Now there is a one-way coupling:
+`release/next-userspace` contains `release/next-js`, so releasing it will
+implicitly release `release/next-js`.  However, you can still release
+`release/next-js` independently.
+
+This scheme extends to other branches, like `release/next-kernel` or
+`release/os1.1` or `release/ford-fusion`.  Some branches may be long-lived and
+represent simply the "next" release of something, while others will have a
+definite lifetime that corresponds to development of a particular feature or
+numbered release.
+
+Since they are "done", release branches should be considered "public", in the
+sense that others may depend on them at will.  Thus, never rebase a release
+branch.
+
+When cutting a new release, you can filter branches with `git branch --list
+'release/*'` or by typing "release/" in the branch filter on Github.  This will
+give you the list of branches which have passed review and may be merged to
+master and released.  When choosing which branches to release, make sure you
+understand the risks of releasing them immediately.  If merging these produces
+nontrivial conflicts, consider asking the developers on those branches to merge
+between themselves.  In many cases a developer can do this directly, but if it's
+sufficiently nontrivial, this may be a reviewed PR of one release branch into
+another.
+
+### Non-OTAable release branches
+
+In some cases, work is completed which cannot be OTA'd as written.  For example,
+the code may lack state adapters, or it may not properly handle outstanding
+subscriptions.  It could also be code which is planned to be released only upon
+a breach (network-wide or rolling).
+
+In this case, the code may be PR'd to a `na-release/` branch.  All rules are the
+same as for release branches, except that the code does not need to apply
+cleanly to an existing ship.  If you later write state adapter or otherwise make
+it OTAable, then you may PR it to a release branch.
+
+### Other cases
+
+Outside contributors can generally target their PRs against master unless
+specifically instructed.  Maintainers should retarget those branches as
+appropriate.
+
+If a commit is not something that goes into a release (eg changes to README or
+CI), it may be committed straight to master.
+
+If a hotfix is urgent, it may be PR'd straight to master.  This should only be
+done if you reasonably expect that it will be released soon and before anything
+else is released.
+
+If a series of commits that you want to release is on a release branch, but you
+really don't want to release the whole branch, you must cherry-pick them onto
+another release branch.  Cherry-picking isn't ideal because those commits will
+be duplicated in the history, but it won't have any serious side effects.
+
+
 ## Hotfixes
 
 Here lies an informal guide for making hotfix releases and deploying them to
@@ -119,6 +231,9 @@ this:
 ```
 urbit-vx.y.z
 
+Note that this Vere release will by default boot fresh ships using an Urbit OS
+va.b.c pill.
+
 Release binaries:
 
 (linux64)
@@ -138,9 +253,11 @@ Contributions:
 
 The same schpeel re: release candidates applies here.
 
-Do not include implicit Urbit OS changes in Vere releases.  This used to be
-done, historically, but shouldn't be any longer.  If there are Urbit OS and
-Vere changes to be released, make two releases.
+Note that the release notes indicate which version of Urbit OS the Vere release
+will use by default when booting fresh ships.  Do not include implicit Urbit OS
+changes in Vere releases; this used to be done, historically, but shouldn't be
+any longer.  If there are Urbit OS and Vere changes to be released, make two
+separate releases.
 
 ### Deploy the update
 
@@ -170,4 +287,3 @@ Post an announcement to urbit-dev.  The tag annotation, basically, is fine here
 -- I usually add the %base hash (for Urbit OS releases) and the release binary
 URLs (for Vere releases).  Check the urbit-dev archives for examples of these
 announcements.
-

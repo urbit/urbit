@@ -1,10 +1,11 @@
 /-  *identity
 |%
-+$  rolodex  (map path contacts)
-::
-+$  contacts  (map ship contact)
-::
-+$  avatar  [content-type=@t octs=[p=@ud q=@t]]
++$  rolodex    (map path contacts)
++$  contacts    (map ship contact)
++$  avatar
+  $%  [%octt content-type=@t octs=[p=@ud q=@t]]
+      [%url url=@t]
+  ==
 ::
 +$  contact
   $:  nickname=@t

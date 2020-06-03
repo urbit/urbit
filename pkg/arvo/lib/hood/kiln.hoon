@@ -318,8 +318,8 @@
   abet:abet:(merge:(work syd) ali sud cas gim)
 ::
 ++  poke-cancel
-  |=  ~
-  abet:(emit %pass /cancel %arvo %c [%drop %foo])
+  |=  a=@tas
+  abet:(emit %pass /cancel %arvo %c [%drop a])
 ::
 ++  poke-info
   |=  {mez/tape tor/(unit toro)}
@@ -370,6 +370,7 @@
     %kiln-ota                =;(f (f !<(_+<.f vase)) poke:update)
     %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
     %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
+    %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
@@ -380,6 +381,10 @@
 ++  poke-goad-gall
   |=  [force=? agent=(unit dude:gall)]
   abet:(emit %pass /kiln %arvo %g %goad force agent)
+::
+++  poke-gall-sear
+  |=  =ship
+  abet:(emit %pass /kiln %arvo %g %sear ship)
 ::
 ++  done
   |=  {way/wire saw/(unit error:ames)}

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
 import { SidebarSwitcher } from './icons/icon-sidebar-switch';
+import { Spinner } from './icons/icon-spinner';
 import { Comments } from './comments';
 import { NoteNavigation } from './note-navigation';
 import moment from 'moment';
@@ -8,8 +9,11 @@ import ReactMarkdown from 'react-markdown';
 import { cite } from '../../lib/util';
 
 export class Note extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
+    this.state = {
+      deleting: false
+    }
     moment.updateLocale('en', {
       relativeTime: {
         past: function(input) {
@@ -33,6 +37,7 @@ export class Note extends Component {
     });
     this.scrollElement = React.createRef();
     this.onScroll = this.onScroll.bind(this);
+    this.deletePost = this.deletePost.bind(this);
   }
 
   componentWillMount() {
@@ -45,6 +50,16 @@ export class Note extends Component {
     }
     window.api.action("publish", "publish-action", readAction);
     window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
+  }
+
+  componentDidMount() {
+    if (!(this.props.notebooks[this.props.ship]) ||
+      !(this.props.notebooks[this.props.ship][this.props.book]) ||
+      !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note]) ||
+      !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note].file)) {
+      window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
+    }
+    this.onScroll();
   }
 
   componentDidUpdate(prevProps) {
@@ -97,15 +112,22 @@ export class Note extends Component {
     }
   }
 
-  componentDidMount() {
-    if (!(this.props.notebooks[this.props.ship]) ||
-        !(this.props.notebooks[this.props.ship][this.props.book]) ||
-        !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note]) ||
-        !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note].file))
-    {
-      window.api.fetchNote(this.props.ship, this.props.book, this.props.note);
+  deletePost() {
+    const { props } = this;
+    let deleteAction = {
+      "del-note": {
+        who: this.props.ship.slice(1),
+        book: this.props.book,
+        note: this.props.note,
+      }
     }
-    this.onScroll();
+    let popout = (props.popout) ? "popout/" : "";
+    let baseUrl = `/~publish/${popout}notebook/${props.ship}/${props.book}`;
+    this.setState({deleting: true});
+    window.api.action("publish", "publish-action", deleteAction)
+    .then(() => {
+      props.history.push(baseUrl);
+    });
   }
 
   render() {
@@ -156,8 +178,11 @@ export class Note extends Component {
     let editPost = null;
     let editUrl = props.location.pathname + "/edit";
     if (`~${window.ship}` === author) {
-        editPost =
+        editPost = <div className="dib">
         <Link className="green2 f9" to={editUrl}>Edit</Link>
+        <p className="dib f9 red2 ml2 pointer"
+          onClick={(() => this.deletePost())}>Delete</p>
+        </div>
     }
 
     let popout = (props.popout) ? "popout/" : "";
@@ -176,7 +201,7 @@ export class Note extends Component {
         ref={el => {
           this.scrollElement = el;
         }}>
-        <div className="h-100 flex flex-column items-center mt4 ph4 pb4">
+        <div className="h-100 flex flex-column items-center pa4">
           <div className="w-100 flex justify-center pb6">
             <SidebarSwitcher
               popout={props.popout}
@@ -213,7 +238,7 @@ export class Note extends Component {
             </div>
             <div className="md"
             style={{overflowWrap: "break-word"}}>
-              <ReactMarkdown source={newfile} />
+              <ReactMarkdown source={newfile} linkTarget={"_blank"} />
             </div>
             <NoteNavigation
               popout={props.popout}
@@ -229,6 +254,7 @@ export class Note extends Component {
               comments={comments}
               contacts={props.contacts}
             />
+            <Spinner text="Deleting post..." awaiting={this.state.deleting} classes="absolute bottom-1 right-1 ba b--gray1-d pa2" />
           </div>
         </div>
       </div>

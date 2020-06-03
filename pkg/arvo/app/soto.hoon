@@ -10,9 +10,9 @@
 /*  tile-js-raw  %js    /app/soto/js/tile/js
 /*  index-css    %css   /app/soto/css/index/css
 ::
-/*  home-png    %png  /app/soto/img/home/png
-/*  popout-png  %png  /app/soto/img/popout/png
-/*  tile-png    %png  /app/soto/img/tile/png
+/*  popout-png   %png  /app/soto/img/popout/png
+/*  spinner-png  %png  /app/soto/img/spinner/png
+/*  tile-png     %png  /app/soto/img/tile/png
 ::
 =/  as-octs  as-octs:mimes:html
 =/  index    (as-octs index-html)
@@ -23,9 +23,9 @@
 =/  soto-png=(map @t octs)
   =-  (~(run by -) as-octs:mimes:html)
   %-  ~(gas by *(map @t @))
-  :~  [%'Home' home-png]
-      popout+popout-png
+  :~  popout+popout-png
       [%'Tile' tile-png]
+      [%'Spinner' spinner-png]
   ==
 ::
 |%
@@ -46,7 +46,7 @@
   :_  this
   :~  [%pass /bind/soto %arvo %e %connect [~ /'~dojo'] %soto]
       :*  %pass  /launch/soto  %agent  [our.bol %launch]  %poke
-          %launch-action  !>([%soto /sototile '/~dojo/js/tile.js'])
+          %launch-action  !>([%add %soto /sototile '/~dojo/js/tile.js'])
       ==
   ==
 ++  on-save  !>(state)

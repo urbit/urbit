@@ -16,11 +16,13 @@ export class Skeleton extends Component {
       ? "" : "h-100-m-40-ns ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl"
 
     let popoutBorder = (popout)
-      ? "": "ba-m ba-l ba-xl b--gray2 br1"
+      ? "": "ba-m ba-l ba-xl b--gray4 b--gray1-d br1"
 
     return (
       <div className={"absolute h-100 w-100 " + popoutWindow}>
-      <HeaderBar spinner={this.props.spinner} />
+      <HeaderBar
+        invites={props.invites}
+        associations={props.associations} />
         <div className={`cf w-100 h-100 flex ` + popoutBorder}>
           <Sidebar
             popout={popout}
@@ -30,8 +32,10 @@ export class Skeleton extends Component {
             contacts={props.contacts}
             path={props.path}
             invites={props.invites}
+            associations={props.associations}
+            selectedGroups={props.selectedGroups}
             />
-          <div className={"h-100 w-100 relative white-d " + rightPanelHide} style={{
+          <div className={"h-100 w-100 relative white-d flex-auto " + rightPanelHide} style={{
             flexGrow: 1,
           }}>
             {props.children}

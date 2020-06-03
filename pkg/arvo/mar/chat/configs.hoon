@@ -1,16 +1,16 @@
-/+  *chat-json
-|_  cfg=(map path config)
+/+  *chat-store
+|_  cfg=configs
 ::
 ++  grad  %noun
 ++  grow
   |%
   ++  noun  cfg
-  ++  json  (configs-to-json cfg)
+  ++  json  (configs:dejs cfg)
   --
 ::
 ++  grab
   |%
-  ++  noun  chat-configs
+  ++  noun  configs
   --
 ::
 --
