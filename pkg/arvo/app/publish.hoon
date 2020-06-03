@@ -1,12 +1,12 @@
-/-  *publish,
-/-  *group-store,
-/-  *group-hook,
-/-  *permission-hook,
-/-  *permission-group-hook,
-/-  *permission-store,
-/-  *invite-store,
-/-  *metadata-store,
-/-  *metadata-hook,
+/-  *publish
+/-  *group-store
+/-  *group-hook
+/-  *permission-hook
+/-  *permission-group-hook
+/-  *permission-store
+/-  *invite-store
+/-  *metadata-store
+/-  *metadata-hook
 /-  *rw-security
 /+  *server, *publish, cram, default-agent, dbug
 ::
