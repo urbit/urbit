@@ -13,7 +13,7 @@
     *permission-store, *group-store, *invite-store,
     sole
 /+  shoe, default-agent, verb, dbug, store=chat-store,
-    group-store
+    group-store, grpl=group
 ::
 |%
 +$  card  card:shoe
@@ -196,6 +196,7 @@
   --
 ::
 |_  =bowl:gall
+++  grp  ~(. grpl bowl)
 ::  +prep: setup & state adapter
 ::
 ++  prep
@@ -798,11 +799,7 @@
         ::  if they weren't permitted before, some hook will send an invite.
         ::  but if they already were, we want to send an invite ourselves.
         ::
-        ?.  %^  scry-for  ?
-              %group-store
-            %+  welp
-              real-path
-            /permitted/[(scot %p ship)]
+        ?.  (is-permitted:grp ship real-path)
           ~
         `(invite-card real-path ship)
       ::  whitelist: empty if no matching permission, else true if whitelist
@@ -824,7 +821,7 @@
       :-  %group-action
       !>   ^-  action:group-store
       ?:  =(u.whitelist allow)
-        [%add-members group-id ships ~]
+        [%add-members group-id ships]
       [%remove-members group-id ships]
     ::  +join: sync with remote mailbox
     ::

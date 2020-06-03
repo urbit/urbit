@@ -878,11 +878,7 @@
   ^-  (quip card _state)
   ?.  ?=(?(%remove-members %add-members) -.update)
     [~ state]
-  =/  ships=(set ship)
-    ?-  -.update  :: axes vary
-      %remove-members  ships.update
-      %add-members     ships.update
-    ==
+  =*  ships  ships.update
   =/  =path
     (group-id:en-path:group-store group-id.update)
   =/  book=(unit @tas)
@@ -940,7 +936,7 @@
     =/  =cage
       :-  %group-action
       !>  ^-  action:group-store
-      [%add-members group-id (sy our.bol ~) ~]
+      [%add-members group-id (sy our.bol ~)]
     :_  state
     [%pass join-wire %agent [ship.group-id %group-hook] %poke cage]~
   ==
@@ -1694,7 +1690,7 @@
     =/  =cage
       :-  %group-action
       !>  ^-  action:group-store
-      [%add-members group-id (sy our.bol ~) ~]
+      [%add-members group-id (sy our.bol ~)]
     :_  state
     [%pass join-wire %agent [who.act %group-hook] %poke cage]~
   ::  %unsubscribe
@@ -1766,7 +1762,7 @@
         (group-poke %remove-group old-group-id ~)
         ?.  inclusive.act
           ~
-        :-  (group-poke %add-members group-id ships ~)
+        :-  (group-poke %add-members group-id ships)
         %+  turn
           ~(tap in ships)
         |=  =ship

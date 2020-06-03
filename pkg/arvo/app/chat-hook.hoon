@@ -194,7 +194,7 @@
           %^  make-poke  %group-store
             %group-action
           !>  ^-  action:group-store
-          [%add-members group-id who ~]
+          [%add-members group-id who]
       ==
     ::
     ++  hookup-group
@@ -606,8 +606,13 @@
   |=  [wir=wire saw=(unit tang)]
   ^-  (quip card _state)
   ?~  saw  [~ state]
+  |^
   ?+  wir  [~ state]
+      [%mailbox @ @ @ ~]  (migrate t.wir)
+  ::
       [%store @ *]
+    ?:  ?=([@ @ @ ~] t.wir)
+      (migrate t.wir)
     (poke-chat-hook-action %remove t.wir)
   ::
       [%backlog @ @ @ *]
@@ -620,6 +625,19 @@
         u.saw
     ==
   ==
+  ++  migrate
+    |=  pax=path
+    ^-  (quip card _state)
+    ?>  ?=([@ @ @ ~] pax)
+    =/  =ship
+      (slav %p i.t.pax)
+    =^  cards  state
+      (poke-chat-hook-action %remove pax)
+    :_  state
+    %+  snoc
+      cards
+    (chat-view-poke %join ship t.pax %.y)
+  --
 ::
 ++  chat-poke
   |=  act=action:store

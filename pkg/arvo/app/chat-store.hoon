@@ -1,6 +1,6 @@
 :: chat-store: data store that holds linear sequences of chat messages
 ::
-/+  store=chat-store, default-agent, verb, dbug
+/+  store=chat-store, default-agent, verb, dbug, group-store
 ~%  %chat-store-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -8,14 +8,16 @@
   $%  state-zero
       state-one
       state-two
+      state-three
   ==
 ::
-+$  state-zero  [%0 =inbox:store]
-+$  state-one   [%1 =inbox:store]
-+$  state-two   [%2 =inbox:store]
++$  state-zero   [%0 =inbox:store]
++$  state-one    [%1 =inbox:store]
++$  state-two    [%2 =inbox:store]
++$  state-three  [%3 =inbox:store]
 --
 ::
-=|  state-two
+=|  state-three
 =*  state  -
 ::
 %-  agent:dbug
@@ -34,14 +36,11 @@
   ++  on-load
     |=  old-vase=vase
     =/  old  !<(versioned-state old-vase)
-    ?:  ?=(%2 -.old)
+    ?:  ?=(%3 -.old)
       [~ this(state old)]
-    =/  reversed-inbox=inbox:store
-      %-  ~(run by inbox.old)
-      |=  =mailbox:store
-      ^-  mailbox:store
-      [config.mailbox (flop envelopes.mailbox)]
-    [~ this(state [%2 reversed-inbox])]
+    =/  =inbox:store
+      (migrate-path-map:group-store inbox.old)
+    `this(state [%3 inbox])
   ::
   ++  on-poke
     ~/  %chat-store-poke

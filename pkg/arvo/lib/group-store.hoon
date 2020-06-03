@@ -3,6 +3,19 @@
 =<  [. sur]
 =,  sur
 |%
+++  migrate-path-map
+  |*  map=(map path *)
+  =/  keys=(list path)
+    (skim ~(tap in ~(key by map)) |=(=path =('~' (snag 0 path))))
+  |-
+  ?~  keys
+    map
+  =*  key  i.keys
+  ?>  ?=(^ key)
+  =/  value
+    (~(got by map) key)
+  $(keys t.keys, map (~(put by map) t.key value))
+
 ::  +en-path: transform into path
 ::
 ++  en-path
@@ -66,6 +79,7 @@
     |=  =^initial
     ?>  ?=(%initial -.initial)
     %-  pairs
+    ^-  (list [@t json])
     %+  turn
       ~(tap by groups.initial)
     |=  [=^group-id grp=^group]
@@ -154,15 +168,31 @@
   ++  policy-diff
     |=  =diff:^policy
     %+  frond  -.diff
-    %-  pairs
-    ?+  -.diff  !!
-      %add-invites  [invitees+(set ship invitees.diff) ~]
-      %remove-invites  [invitees+(set ship invitees.diff) ~]
-      %allow-ranks  [ranks+(set rank ranks.diff) ~]
-      %ban-ranks  [ranks+(set rank ranks.diff) ~]
-      %allow-ships  [ranks+(set ship ships.diff) ~]
-      %ban-ships  [ranks+(set ship ships.diff) ~]
+    |^
+    ?-  -.diff
+      %invite   (invite +.diff)
+      %open     (open +.diff)
+      %replace  (policy +.diff)
     ==
+    ++  open
+      |=  =diff:open:^policy
+      %+  frond  -.diff
+      %-  pairs
+      ?-  -.diff
+        %allow-ranks  ~[ranks+(set rank ranks.diff)]
+        %ban-ranks  ~[ranks+(set rank ranks.diff)]
+        %allow-ships  ~[ranks+(set ship ships.diff)]
+        %ban-ships  ~[ranks+(set ship ships.diff)]
+      ==
+    ++  invite
+      |=  =diff:invite:^policy
+      %+  frond  -.diff
+      %-  pairs
+      ?-  -.diff
+        %add-invites  ~[invitees+(set ship invitees.diff)]
+        %remove-invites  ~[invitees+(set ship invitees.diff)]
+      ==
+    --
   ::
   ++  groupify
     |=  =^update
@@ -311,17 +341,26 @@
     :~  ban-ranks+(as rank)
         banned+(as ship)
     ==
-  ++  policy-diff
-    ^-  $-(json diff:^policy)
+  ++  open-policy-diff
     %-  of
-    :~  add-invites+(as ship)
-        remove-invites+(as ship)
-        allow-ranks+(as rank)
+    :~  allow-ranks+(as rank)
         allow-ships+(as ship)
         ban-ranks+(as rank)
         ban-ships+(as ship)
+    ==
+  ++  invite-policy-diff
+    %-  of
+    :~  add-invites+(as ship)
+        remove-invites+(as ship)
+    ==
+  ++  policy-diff
+    ^-  $-(json diff:^policy)
+    %-  of
+    :~  invite+invite-policy-diff
+        open+open-policy-diff
         replace+policy
     ==
+  ::
   ++  group-id
     %-  ot
     :~  ship+ship
@@ -353,7 +392,6 @@
     %-  ot
     :~  group-id+group-id
         ships+(as ship)
-        tags+(as tag)
     ==
   ++  remove-members
     ^-  $-(json [^group-id (set ^ship)])

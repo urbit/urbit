@@ -10,6 +10,7 @@
 ::    /json/[n]/submission/[wood-url]/[collection]    nth matching submission
 ::    /json/seen                                      mark-as-read updates
 ::
+::
 /-  *link-view,
     *invite-store, *group,
     link-listen-hook,
@@ -214,7 +215,7 @@
           %agent  [ship.group-id %group-hook]
           %poke  %group-action
           !>  ^-  action:group-store
-          [%add-members group-id (sy our.bowl ~) ~]
+          [%add-members group-id (sy our.bowl ~)]
       ==
       ::  sync the group
       ::
@@ -235,7 +236,7 @@
       %^  do-poke  %link-listen-hook
         %link-listen-action
       !>  ^-  action:link-listen-hook
-      [%watch /[term.group-id]]
+      [%watch ~[term.group-id]]
   ==
 ::
 ++  handle-action
@@ -294,16 +295,13 @@
     ==
   ?:  ?=(%group -.members)  ~
   ::  if the group is "real", make contact-view do the heavy lifting
-  ::  TODO: verify
   =/  =group-id
     (need (group-id:de-path:group-store group-path))
-  =/  =policy
-    [%invite ships.members]
   ?:  real-group
     :-  %^  do-poke  %contact-view
           %contact-view-action
         !>  ^-  contact-view-action:contact-view
-        [%create term.group-id policy title description]
+        [%groupify group-id title description]
     %+  turn  ~(tap in ships.members)
     |=  =ship
     ^-  card
@@ -320,7 +318,8 @@
     ==
   ::  for "unmanaged" groups, do it ourselves
   ::
-
+  =/  =policy
+    [%invite ships.members]
   :*  ::  create the new group
       ::
       %^  do-poke  %group-store
@@ -394,10 +393,12 @@
   %+  turn  (groups-from-resource:md %link path)
   |=  =group=^path
   ^-  (list card)
+  =/  =group-id
+    (need (group-id:de-path:group-store group-path))
   :-  %^  do-poke  %group-store
         %group-action
-      !>  ~ :: ^-  action:group-store
-      ::  [%add ships group-path]
+      !>  ^-  action:group-store
+      [%add-members group-id ships]
   ::  for managed groups, rely purely on group logic for invites
   ::
   ?.  ?=([%'~' ^] group-path)

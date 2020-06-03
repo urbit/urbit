@@ -34,7 +34,7 @@
 ::  $group: description of a group of users
 ::
 ::    .members: members of the group
-::    .tag-queries: a map of subsets
+::    .tag-queries: a map of tags to subsets of members
 ::    .policy: permissions for the group
 ::    .hidden: is group unmanaged
 +$  group
@@ -55,8 +55,8 @@
     ==
   ::  $diff: change group policy
   +$  diff
-    $%  diff:invite
-        diff:open
+    $%  [%invite diff:invite]
+        [%open diff:open]
         [%replace =policy]
     ==
   ::  $invite: allow only invited ships

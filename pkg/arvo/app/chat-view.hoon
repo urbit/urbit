@@ -259,7 +259,7 @@
     =/  =cage
       :-  %group-action
       !>  ^-  action:group-store
-      [%add-members group-id (sy our.bol ~) ~]
+      [%add-members group-id (sy our.bol ~)]
     ::  we need this info in the wire to continue the flow after the
     ::  poke ack
     =/  =wire
@@ -294,7 +294,7 @@
         (group-poke %remove-group old-group-id ~)
         ?.  inclusive.u.existing.act
           ~
-        :-  (group-poke %add-members group-id ships ~)
+        :-  (group-poke %add-members group-id ships)
         %+  turn
           ~(tap in ships)
         |=  =ship

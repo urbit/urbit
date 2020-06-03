@@ -163,7 +163,7 @@
     =/  =cage
       :-  %group-action
       !>  ^-  action:group-store
-      [%add-members group-id.act (sy our.bol ~) ~]
+      [%add-members group-id.act (sy our.bol ~)]
     =/  =wire
       [%join-group path]
     [%pass wire %agent [ship.group-id.act %group-hook] %poke cage]~
@@ -255,7 +255,7 @@
   =/  =cage
     :-  %group-action
     !>  ^-  action:group-store
-    [%change-policy group-id %add-invites (sy ship ~)]
+    [%change-policy group-id %invite %add-invites (sy ship ~)]
   [%pass / %agent [ship.group-id app] %poke cage]
 ++  send-invite
   |=  =invite
