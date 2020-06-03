@@ -1,4 +1,4 @@
-# New IPC
+# New IPC Protocol
 
 Stubbed out:
 
@@ -19,7 +19,7 @@ Stubbed out:
 King-Haskell specific features:
 
 - [x] Re-implement `collectFX` flow in Serf/Pier.
-- [ ] Hook up `collectFX` to CLI.
+- [x] Hook up `collectFX` to CLI.
 - [ ] Test new `collectFX` flow
 
 Performance:
@@ -31,18 +31,19 @@ Polish:
 
 - [x] Cleanup batching flow.
 - [x] Think through how to shutdown the serf on exception.
+- [ ] King should shutdown promptly on ^C. Always takes 2s in practice.
 - [ ] Logging for new IPC flow.
 - [ ] Logging for boot sequence.
 - [ ] Bring back progress bars.
 
 # Misc Bugs
 
+- [ ] `king run --collect-fx` flag does nothing. Remove or implement.
 - [ ] Handle ^C in connected terminals. It should interrupt current
       event (send SIGINT to serf, which will cause the current event to
       fail promptly).
 - [ ] The terminal driver seems to have a race condition when spinner
       changed too quickly.
-- [ ] King should shutdown promptly on ^C. Always takes 2s in practice.
 
 # Cleanup
 
