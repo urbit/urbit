@@ -4,6 +4,7 @@ export default class MetadataReducer {
   reduce(json, state) {
     let data = _.get(json, 'metadata-update', false);
     if (data) {
+      console.log(data);
       this.associations(data, state);
       this.add(data, state);
       this.update(data, state);
@@ -14,14 +15,18 @@ export default class MetadataReducer {
   associations(json, state) {
     let data = _.get(json, 'associations', false);
     if (data) {
-      let metadata = {};
+      let metadata = state.associations;
       Object.keys(data).forEach((key) => {
         let val = data[key];
+        let appName = val['app-name'];
         let groupPath = val['group-path'];
-        if (!(groupPath in metadata)) {
-          metadata[groupPath] = {};
+        if (!(appName in metadata)) {
+          metadata[appName] = {};
         }
-        metadata[groupPath][key] = val;
+        if (!(groupPath in metadata[appName])) {
+          metadata[appName][groupPath] = {};
+        }
+        metadata[appName][groupPath] = val;
       });
       state.associations = metadata;
     }
@@ -31,11 +36,13 @@ export default class MetadataReducer {
     let data = _.get(json, 'add', false);
     if (data) {
       let metadata = state.associations;
-      if (!(data['group-path'] in metadata)) {
-        metadata[data['group-path']] = {};
+      if (!(data['app-name'] in metadata)) {
+        metadata[data['app-name']] = {};
       }
-      metadata[data['group-path']]
-        [`${data["group-path"]}/${data["app-name"]}${data["app-path"]}`] = data;
+      if (!(data['group-path'] in metadata[data['app-name']])) {
+        metadata[data['app-name']][data['group-path']] = {};
+      }
+      metadata[data['app-name']][data['group-path']] = data;
 
       state.associations = metadata;
     }
@@ -45,12 +52,13 @@ export default class MetadataReducer {
     let data = _.get(json, 'update-metadata', false);
     if (data) {
       let metadata = state.associations;
-      if (!(data["group-path"] in metadata)) {
-        metadata[data["group-path"]] = {};
+      if (!(data['app-name'] in metadata)) {
+        metadata[data['app-name']] = {};
       }
-      metadata[data["group-path"]][
-        `${data["group-path"]}/${data["app-name"]}${data["app-path"]}`
-      ] = data;
+      if (!(data['group-path'] in metadata[data['app-name']])) {
+        metadata[data['app-name']][data['group-path']] = {};
+      }
+      metadata[data['app-name']][data['group-path']] = data;
 
       state.associations = metadata;
     }

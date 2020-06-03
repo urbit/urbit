@@ -1,4 +1,5 @@
 import BaseApi from './base';
+import { uuid } from '../lib/util';
 
 export default class ChatApi {
   constructor(ship, channel, store) {

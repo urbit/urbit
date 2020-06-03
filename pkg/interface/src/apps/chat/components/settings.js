@@ -108,7 +108,7 @@ export class SettingsScreen extends Component {
 
       if (chatOwner) {
         this.setState({ awaiting: true, type: 'Editing chat...' }, (() => {
-          props.api.metadataAdd(
+          props.api.metadata.add(
             association['app-path'],
             association['group-path'],
             association.metadata.title,
@@ -272,16 +272,16 @@ export class SettingsScreen extends Component {
           <input
             className={'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
             'focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3'}
-            value={this.state.title}
+            value={state.title}
             disabled={!chatOwner}
             onChange={this.changeTitle}
             onBlur={() => {
               if (chatOwner) {
                 this.setState({ awaiting: true, type: 'Editing chat...' }, (() => {
-                  props.api.metadataAdd(
+                  props.api.metadata.add(
                     association['app-path'],
                     association['group-path'],
-                    this.state.title,
+                    state.title,
                     association.metadata.description,
                     association.metadata['date-created'],
                     uxToHex(association.metadata.color)
@@ -301,17 +301,17 @@ export class SettingsScreen extends Component {
             <input
               className={'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
                 'focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3'}
-              value={this.state.description}
+              value={state.description}
               disabled={!chatOwner}
               onChange={this.changeDescription}
               onBlur={() => {
                 if (chatOwner) {
                   this.setState({ awaiting: true, type: 'Editing chat...' }, (() => {
-                    props.api.metadataAdd(
+                    props.api.metadata.add(
                       association['app-path'],
                       association['group-path'],
                       association.metadata.title,
-                      this.state.description,
+                      state.description,
                       association.metadata['date-created'],
                       uxToHex(association.metadata.color)
                     ).then(() => {
@@ -339,7 +339,7 @@ export class SettingsScreen extends Component {
             <input
               className={'pl7 f8 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
                 'focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3'}
-              value={this.state.color}
+              value={state.color}
               disabled={!chatOwner}
               onChange={this.changeColor}
               onBlur={this.submitColor}
@@ -400,7 +400,9 @@ export class SettingsScreen extends Component {
             />
           </div>
           <div className="w-100 pl3 mt4 cf">
-            <Spinner awaiting={this.state.awaiting} classes="absolute right-2 bottom-2 ba pa2 b--gray1-d" text={this.state.type} />
+            <Spinner awaiting={state.awaiting}
+                     classes="absolute right-2 bottom-2 ba pa2 b--gray1-d"
+                     text={state.type} />
           </div>
         </div>
       );
@@ -477,7 +479,9 @@ export class SettingsScreen extends Component {
           {this.renderGroupify()}
           {this.renderDelete()}
           {this.renderMetadataSettings()}
-          <Spinner awaiting={this.state.awaiting} classes="absolute right-2 bottom-2 ba pa2 b--gray1-d" text={this.state.type} />
+          <Spinner awaiting={state.awaiting}
+                   classes="absolute right-2 bottom-2 ba pa2 b--gray1-d"
+                   text={state.type} />
         </div>
       </div>
     );
