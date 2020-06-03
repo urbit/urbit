@@ -31,7 +31,7 @@
       u3a_free(dat_y);
       EVP_MD_CTX_destroy(con_u);
       u3l_log("\rripe jet: crypto library fail 1\n");
-      return u3m_bail(c3__exit);
+      return u3m_bail(c3__fail);
     }
 
     ret_w = EVP_DigestUpdate(con_u, (void*)dat_y, wid);
@@ -39,14 +39,14 @@
     if (1 != ret_w) {
       EVP_MD_CTX_destroy(con_u);
       u3l_log("\rripe jet: crypto library fail 2\n");
-      return u3m_bail(c3__exit);
+      return u3m_bail(c3__fail);
     }
 
     ret_w = EVP_DigestFinal_ex(con_u, sib_y, &sil_w);
     if ( 1 != ret_w ) {
       EVP_MD_CTX_destroy(con_u);
       u3l_log("\rripe jet: crypto library fail 3\n");
-      return u3m_bail(c3__exit);
+      return u3m_bail(c3__fail);
     }
 
     EVP_MD_CTX_destroy(con_u);
