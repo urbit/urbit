@@ -2445,7 +2445,7 @@
       %~2019.10.6
     =^  success  bindings.server-state.old
       %+  insert-binding
-        [[~ /~/logout] ~ [%logout ~]]
+        [[~ /~/logout] [/e/load/logout]~ [%logout ~]]
       bindings.server-state.old
     ~?  !success  [%e %failed-to-setup-logout-endpoint]
     %_  $
