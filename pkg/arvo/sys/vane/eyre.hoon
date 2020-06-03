@@ -1012,7 +1012,7 @@
       ::
       =/  response=$>(%start http-event:http)
         :*  %start
-            response-header=[307 ['location' '/~/login']~]
+            response-header=[303 ['location' '/~/login']~]
             data=~
             complete=%.y
         ==
