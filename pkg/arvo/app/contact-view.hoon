@@ -16,7 +16,6 @@
 /*  index-js      %js    /app/contacts/js/index/js
 /*  tile-js       %js    /app/contacts/js/tile/js
 /*  index-css     %css   /app/contacts/css/index/css
-/*  home-png      %png   /app/contacts/img/home/png
 /*  tile-png      %png   /app/contacts/img/tile/png
 /*  search-png    %png   /app/contacts/img/search/png
 /*  spinner-png   %png   /app/contacts/img/spinner/png
@@ -30,10 +29,9 @@
 =/  contact-png=(map @t octs)
   =-  (~(run by -) as-octs:mimes:html)
   %-  ~(gas by *(map @t @))
-  :~  [%'Home' home-png]
-      [%'Tile' tile-png]
+  :~  [%'Tile' tile-png]
       search+search-png
-      [%'Spinner' +spinner-png]
+      [%'Spinner' spinner-png]
   ==
 |%
 +$  card  card:agent:gall

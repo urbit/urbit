@@ -9,12 +9,12 @@
 /-  *permission-group-hook
 /-  *chat-hook
 /-  *metadata-hook
-/-  *rw-security,
+/-  *rw-security
 /-  hook=chat-hook
 ::
 /+  *server, default-agent, verb, dbug
-    store=chat-store
-    view=chat-view
+/+  store=chat-store
+/+  view=chat-view
 ::
 /*  index-html   %html  /app/chat/index/html
 /*  index-js     %js    /app/chat/js/index/js
@@ -124,20 +124,11 @@
     ++  message-limit  20
     ::
     ++  truncated-inbox-scry
-<<<<<<< HEAD
-      ^-  inbox
-      =/  =inbox
-        =/  our  (scot %p our.bol)
-        =/  now  (scot %da now.bol)
-        .^(inbox %gx /[our]/chat-store/[now]/all/noun)
-||||||| merged common ancestors
-      ^-  inbox
-      =/  =inbox  .^(inbox %gx /=chat-store/(scot %da now.bol)/all/noun)
-=======
       ^-  inbox:store
       =/  =inbox:store
-        .^(inbox:store %gx /=chat-store/(scot %da now.bol)/all/noun)
->>>>>>> origin/master
+        =/  our  (scot %p our.bol)
+        =/  now  (scot %da now.bol)
+        .^(inbox:store %gx /[our]/chat-store/[now]/all/noun)
       %-  ~(run by inbox)
       |=  =mailbox:store
       ^-  mailbox:store
@@ -444,24 +435,14 @@
   ::
   ++  chat-scry
     |=  pax=path
-<<<<<<< HEAD
-    ^-  (unit mailbox)
+    ^-  (unit mailbox:store)
     =.  pax
       ;:  weld
         /(scot %p our.bol)/chat-store/(scot %da now.bol)/mailbox
         pax
         /noun
       ==
-    .^((unit mailbox) %gx pax)
-||||||| merged common ancestors
-    ^-  (unit mailbox)
-    =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
-    .^((unit mailbox) %gx pax)
-=======
-    ^-  (unit mailbox:store)
-    =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
     .^((unit mailbox:store) %gx pax)
->>>>>>> origin/master
   ::
   ++  maybe-group-from-chat
     |=  app-path=path

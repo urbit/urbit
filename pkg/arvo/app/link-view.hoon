@@ -12,7 +12,7 @@
 ::
 /-  *link-view
 /-  *invite-store, group-store
-/-  link-listen-hook,
+/-  link-listen-hook
 /-  group-hook, permission-hook, permission-group-hook
 /-  metadata-hook, contact-view
 /+  *link, metadata, *server, default-agent, verb, dbug
