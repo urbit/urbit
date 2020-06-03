@@ -100,9 +100,9 @@ import qualified Data.Store.TH             as Store
 import qualified System.IO                 as Sys
 import qualified Urbit.Atom                as Atom
 import qualified Urbit.UrukRTS.Inline      as Opt
-import qualified Urbit.UrukRTS.RegOpt      as Opt
 import qualified Urbit.UrukRTS.JetOptimize as Opt
 import qualified Urbit.UrukRTS.OptToFast   as Opt
+import qualified Urbit.UrukRTS.RegOpt      as Opt
 
 
 -- Profiling Events ------------------------------------------------------------
@@ -125,7 +125,7 @@ instance Uruk Val where
   uEss = mkNode 3 Ess
   uKay = mkNode 2 Kay
   uJay = \n -> mkNode 2 $ Jay $ fromIntegral n
-  uDee = mkNode 1 Dee
+  uDub = mkNode 6 Dub
 
   uEye n = mkNode (fromIntegral $ n) (Eye $ fromIntegral n)
   uBee n = mkNode (fromIntegral $ 2 + n) (Bee $ fromIntegral n)
@@ -208,7 +208,7 @@ type Bol = Bool
 
 -- Raw Uruk (Basically just used for D (jam)) ----------------------------------
 
-data Pri = J | K | S | D
+data Pri = S | K | E | W
   deriving stock    (Eq, Ord, Show, Generic)
 #if defined(__GHCJS__)
   deriving anyclass (NFData)
@@ -246,18 +246,18 @@ toRaw = valFun >>> \case
 
 nodeRaw :: Node -> Raw
 nodeRaw = \case
-  Jay 1 -> Raw J []
-  Kay   -> Raw K []
   Ess   -> Raw S []
-  Dee   -> Raw D []
+  Kay   -> Raw K []
+  Jay 1 -> Raw E []
+  Dub   -> Raw W []
   n     -> error ("TODO: nodeRaw." <> show n)
 
 priFun :: Pri -> (Int, Node)
 priFun = \case
   S -> (3, Ess)
   K -> (2, Kay)
-  J -> (1, Jay 1)
-  D -> (1, Dee)
+  E -> (1, Jay 1)
+  W -> (6, Dub)
 
 rawVal :: Raw -> Val
 {-# INLINE rawVal #-}
@@ -269,6 +269,17 @@ rawVal (Raw p xs) = VFun $ Fun (args - sizeofSmallArray vals) node vals
 jam :: Val -> Val
 {-# INLINE jam #-}
 jam = jamRaw . toRaw
+
+-- Raw SKEW (Basically just used for W (jam)) ----------------------------------
+
+data ASKEW = S | K | E | W | A !Val !Val
+  deriving stock    (Eq, Ord, Show, Generic)
+
+
+
+toASKEW :: Val -> ASKEW
+toASKEW = valFun
+
 
 
 --------------------------------------------------------------------------------
@@ -322,7 +333,7 @@ reduce !no !xs = do
       VFun (Fun 2 (Jay 1) _) -> pure (VFun (Fun 1 (Jay (n + 1)) (mkClo1 y)))
       _                      -> jetRegister n x y
 
-    Dee       -> pure $ jam x
+    Dub       -> dub (v 0) (v 1) (v 2) (v 3) (v 4) (v 5)
 
     Add       -> add x y
     Mul       -> mul x y
@@ -668,7 +679,7 @@ dLis (x:xs) n c = kVVV c x (VLis xs)
 dInt :: Integer -> Val -> IO Val
 {-# INLINE dInt #-}
 dInt i f | i >= 0 = kVVV f (VBol True) (VNat (fromIntegral i))
-dInt i f          = kVVV f (VBol False) (VNat (fromIntegral $ negate i))
+dInt i f = kVVV f (VBol False) (VNat (fromIntegral $ negate i))
 
 dLCon :: Val -> Val -> IO Val
 {-# INLINE dLCon #-}
@@ -729,6 +740,11 @@ fec :: Val -> IO Val
 fec (VNat 0) = pure (VNat 0)
 fec (VNat n) = pure (VNat (n - 1))
 fec n        = throwIO (TypeError ("fec-not-nat: " <> tshow n))
+
+dub :: Val -> Val -> Val -> Val -> Val -> Val -> IO Val
+{-# INLINE dub #-}
+-- TODO: How do I implement apply here? The stack has been resolved entirely
+dub a s k e w val = throwIO (TypeError "can't check dubs yet")
 
 add :: Val -> Val -> IO Val
 {-# INLINE add #-}

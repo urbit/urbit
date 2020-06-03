@@ -114,7 +114,7 @@ data Node
   = Jay Int -- Always >= 1
   | Kay
   | Ess
-  | Dee
+  | Dub
   | Jut Jet
   | Eye Int
   | Bee Int --  Always >=  1
@@ -185,7 +185,7 @@ instance Show Node where
     Jay n       -> replicate (fromIntegral n) 'J'
     Kay         -> "K"
     Ess         -> "S"
-    Dee         -> "D"
+    Dub         -> "W"
     Jut j       -> show j
     Eye 1       -> "I"
     Bee 1       -> "B"
@@ -309,7 +309,7 @@ instance Show Val where
 
 showInt :: Integer -> String
 showInt x | x >= 0 = "+" <> show x
-showInt x          = "-" <> show (abs x)
+showInt x = "-" <> show (abs x)
 
 showNat :: Nat -> String
 showNat at@(Atom.atomUtf8 -> Right nm) =
@@ -444,7 +444,7 @@ nodeArity = \case
   Jay _ -> 2
   Kay   -> 2
   Ess   -> 3
-  Dee   -> 1
+  Dub   -> 6
   Jut j -> jArgs j
   Eye n -> 0+n
   Bee n -> 2+n
