@@ -3695,7 +3695,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%2                                        ::  vane version
+    $:  ver=%3                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
@@ -3917,8 +3917,121 @@
 ::
 ++  load
   !:
-  |=  [%2 =raft]
-  ..^$(ruf raft)
+  |^
+  |=  old=any-state
+  ~!  [old=old new=*state-3]
+  =?  old  ?=(%2 -.old)  (load-2-to-3 old)
+  ?>  ?=(%3 -.old)
+  ..^^$(ruf +.old)
+  ::
+  ++  load-2-to-3
+    |=  =state-2
+    ^-  state-3
+    =-  state-2(- %3, rom rom.-, hoy hoy.-, |7 pud.-)
+    :+  ^-  pud=(unit [=desk =yoki])
+        ~?  ?=(^ act.state-2)  clay-canceling-write+hen.u.act.state-2
+        ~
+      ^-  rom=room
+      :-  hun.rom.state-2
+      %-  ~(run by dos.rom.state-2)
+      |=  =dojo-2
+      ^-  dojo
+      =-  dojo-2(dom -)
+      ^-  dome
+      [ank let hit lab mim fod=*ford-cache fer=~]:[dom.dojo-2 .]
+    ^-  hoy=(map ship rung)
+    %-  ~(run by hoy.state-2)
+    |=  =rung-2
+    ^-  rung
+    %-  ~(run by rus.rung-2)
+    |=  =rede-2
+    ^-  rede
+    =-  rede-2(ref ref.-, dom dom.-)
+    :-  ^-  dom=dome
+        [ank let hit lab mim fod=*ford-cache fer=~]:[dom.rede-2 .]
+    ^-  ref=(unit rind)
+    ?~  ref.rede-2
+      ~
+    ::  TODO: somehow call +wake later to notify subscribers
+    :-  ~
+    ^-  rind
+    =/  rin=rind  [nix bom fod haw]:u.ref.rede-2
+    =.  rin
+      =/  pur=(list [inx=@ud =rand *])  ~(tap by pur.u.ref.rede-2)
+      |-  ^+  rin
+      ?~  pur  rin
+      =/  =mood  [p.p q.p q]:rand.i.pur
+      =:  haw.rin  (~(put by haw.rin) mood ~)
+          bom.rin  (~(del by bom.rin) inx.i.pur)
+          fod.rin  ?~  got=(~(get by bom.rin) inx.i.pur)
+                     fod.rin
+                   (~(del by fod.rin) p.u.got)
+        ==
+      $(pur t.pur)
+    =/  pud  ~(tap to waiting.pud.u.ref.rede-2)
+    |-  ^+  rin
+    ?~  pud  rin
+    =:  bom.rin  (~(del by bom.rin) inx.i.pud)
+        fod.rin  ?~  got=(~(get by bom.rin) inx.i.pud)
+                   fod.rin
+                 (~(del by fod.rin) p.u.got)
+      ==
+    $(pud t.pud)
+  ::
+  +$  any-state  $%(state-3 state-2)
+  +$  state-3  [%3 raft]
+  +$  state-2
+    $:  %2
+        rom=room-2                                      ::  domestic
+        hoy=(map ship rung-2)                           ::  foreign
+        ran=rang                                        ::  hashes
+        mon=(map term beam)                             ::  mount points
+        hez=(unit duct)                                 ::  sync duct
+        cez=(map @ta crew)                              ::  permission groups
+        cue=(qeu [=duct task=*])                        ::  queued requests
+        act=active-write-2                              ::  active write
+    ==                                                  ::
+  +$  room-2
+    $:  hun/duct                                        ::  terminal duct
+        dos/(map desk dojo-2)                           ::  native desk
+    ==                                                  ::
+  +$  dojo-2
+    $:  qyx/cult                                        ::  subscribers
+        dom/dome-2                                      ::  desk state
+        per/regs                                        ::  read perms per path
+        pew/regs                                        ::  write perms per path
+    ==
+  +$  dome-2
+    $:  ank/ankh                                        ::  state
+        let/aeon                                        ::  top id
+        hit/(map aeon tako)                             ::  versions by id
+        lab/(map @tas aeon)                             ::  labels
+        mim/(map path mime)                             ::  mime cache
+    ==                                                  ::
+  +$  rung-2  rus=(map desk rede-2)
+  +$  rede-2
+    $:  lim/@da                                         ::  complete to
+        ref/(unit rind-2)                               ::  outgoing requests
+        qyx/cult                                        ::  subscribers
+        dom/dome-2                                      ::  revision state
+        per/regs                                        ::  read perms per path
+        pew/regs                                        ::  write perms per path
+    ==                                                  ::
+  +$  rind-2
+    $:  nix/@ud                                         ::  request index
+        bom/(map @ud {p/duct q/rave})                   ::  outstanding
+        fod/(map duct @ud)                              ::  current requests
+        haw/(map mood (unit cage))                      ::  simple cache
+        pud/update-qeu-2                                ::  active updates
+        pur/request-map-2                               ::  active requests
+    ==                                                  ::
+  +$  request-map-2  (map inx=@ud [=rand eval-form=*])
+  +$  update-qeu-2
+    $:  waiting=(qeu [inx=@ud rut=(unit rand)])
+        eval-data=(unit [inx=@ud rut=(unit rand) eval-form=*])
+    ==
+  +$  active-write-2  (unit [hen=duct *])
+  --
 ::
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
