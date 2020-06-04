@@ -56,26 +56,23 @@
         [%read (numb read.config)]
     ==
   ::
-  ++  inbox
-    |=  box=^inbox
-    ^-  json
-    %+  frond  %chat-initial
-    %-  pairs
-    %+  turn  ~(tap by box)
-    |=  [pax=^path =mailbox]
-    ^-  [cord json]
-    :-  (spat pax)
-    %-  pairs
-    :~  [%envelopes [%a (turn envelopes.mailbox envelope)]]
-        [%config (config config.mailbox)]
-    ==
-  ::
   ++  update
     |=  upd=^update
     ^-  json
     %+  frond  %chat-update
     %-  pairs
     :~
+    ?:  ?=(%initial -.upd)
+      :-  %initial
+      %-  pairs
+      %+  turn  ~(tap by inbox.upd)
+      |=  [pax=^path =mailbox]
+      ^-  [cord json]
+      :-  (spat pax)
+      %-  pairs
+      :~  [%envelopes [%a (turn envelopes.mailbox envelope)]]
+          [%config (config config.mailbox)]
+      ==
     ?:  ?=(%message -.upd)
         :-  %message
         %-  pairs
