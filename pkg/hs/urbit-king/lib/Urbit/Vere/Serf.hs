@@ -110,12 +110,14 @@ execReplay serf log last = do
     logTrace $ display $ "Replaying up to event #" <> tshow replayUpTo
     logTrace $ display $ "Will replay " <> tshow numEvs <> " in total."
 
+    let onProgress n = print ("Serf is at event# " <> tshow n)
+
     runResourceT
       $  runConduit
       $  Log.streamEvents log (lastEventInSnap + 1)
       .| CC.take (fromIntegral numEvs)
       .| CC.mapM (fmap snd . parseLogRow)
-      .| replay 10 serf
+      .| replay 10 onProgress serf
 
 
 -- Collect FX ------------------------------------------------------------------

@@ -713,6 +713,7 @@ instance (FromNoun a, FromNoun b) => FromNoun (Each a b) where
             1 -> named "|" (EachNo <$> parseNoun v)
             n -> fail ("Each has invalid head-atom: " <> show n)
 
+
 -- Tuple Conversions -----------------------------------------------------------
 
 instance ToNoun () where

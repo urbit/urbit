@@ -481,15 +481,17 @@ replay
   :: forall m
    . (MonadResource m, MonadUnliftIO m, MonadIO m)
   => Int
+  -> (EventId -> IO ())
   -> Serf
   -> ConduitT Noun Void m (Maybe PlayBail)
-replay batchSize serf = do
+replay batchSize cb serf = do
   withSerfLock serf $ \ss -> do
     (r, ss') <- loop ss
     pure (ss', r)
  where
   loop :: SerfState -> ConduitT Noun Void m (Maybe PlayBail, SerfState)
   loop ss@(SerfState lastEve lastMug) = do
+    io (cb lastEve)
     awaitBatch batchSize >>= \case
       []  -> pure (Nothing, SerfState lastEve lastMug)
       evs -> do

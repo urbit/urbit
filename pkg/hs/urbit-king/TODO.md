@@ -15,12 +15,13 @@ Stubbed out:
 - [x] Snapshots should block until that event is commited to disk.
 - [x] Hook up error callbacks to IO Drivers.
 - [x] Do something useful with error callbacks from IO Drivers.
+- [ ] Make sure replay progress bars go to stderr.
 
 King-Haskell specific features:
 
 - [x] Re-implement `collectFX` flow in Serf/Pier.
 - [x] Hook up `collectFX` to CLI.
-- [ ] Test new `collectFX` flow
+- [ ] Get `collect-all-fx` flow working again.
 
 Performance:
 
