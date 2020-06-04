@@ -7070,6 +7070,15 @@
       $(pops [oldest pops])
     --
   --
+::
+++  mop
+  |*  [key=mold value=mold]
+  |=  ord=$-([key key] ?)
+  |=  a=*
+  =/  b  ;;((tree [key=key val=value]) a)
+  ?>  (check-balance:((ordered-map key value) ord) b)
+  b
+::
 ::  $mk-item: constructor for +ordered-map item type
 ::
 ++  mk-item  |$  [key val]  [key=key val=val]
