@@ -7317,6 +7317,60 @@
     ?:  (compare key.n.a key.n.b)
       $(l.b $(b l.b, r.a ~), a r.a)
     $(r.b $(b r.b, l.a ~), a l.a)
+  ::
+  ::  +subset: take a range excluding start and/or end and all elements
+  ::  outside the range
+  ::
+  ++  subset
+    |=  $:  tre=(tree item)
+            start=(unit key)
+            end=(unit key)
+        ==
+    ^-  (tree item)
+    |^
+    ?:  ?&(?=(~ start) ?=(~ end))
+      tre
+    ?~  start
+      (del-span tre %end end)
+    ?~  end
+      (del-span tre %start start)
+    ?>  (lth u.start u.end)
+    =.  tre  (del-span tre %start start)
+    (del-span tre %end end)
+    ::
+    ++  del-span
+      |=  [a=(tree item) b=?(%start %end) c=(unit key)]
+      ^-  (tree item)
+      ?~  a  a
+      ?~  c  a
+      ?-  b
+          %start
+        ::  found key
+        ?:  =(key.n.a u.c)
+          (nip a(l ~))
+        ::  traverse to find key
+        ?:  (compare key.n.a u.c)
+          ::  found key to the left of start
+          (del-span (nip a(l ~)) b c)
+        ::  found key to the right of start
+        =/  lef  $(a l.a)
+        =.  l.a  lef
+        a
+      ::
+          %end
+        ::  found key
+        ?:  =(u.c key.n.a)
+          (nip a(r ~))
+        ::  traverse to find key
+        ?:  (compare key.n.a u.c)
+          :: found key to the left of end
+          =/  rig  $(a r.a)
+          =.  r.a  rig
+          a
+        :: found key to the right of end
+        (del-span (nip a(r ~)) b c)
+      ==
+    --
   --
 ::                                                      ::
 ::::                      ++userlib                     ::  (2u) non-vane utils
