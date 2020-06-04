@@ -54,7 +54,7 @@ const StatusBar = (props) => {
           location.pathname === '/'
             ? null
             : <Link
-                className="dib f9 v-mid inter ml2 no-underline"
+                className="dib f9 v-mid inter ml2 no-underline white-d"
                 to="/"
                 style={{ top: 14 }}
               >
