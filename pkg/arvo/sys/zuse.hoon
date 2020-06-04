@@ -7360,11 +7360,9 @@
         ::  traverse to find key
         ?:  (compare key.n.a u.c)
           ::  found key to the left of start
-          (del-span (nip a(l ~)) b c)
+          $(a (nip a(l ~)))
         ::  found key to the right of start
-        =/  lef  $(a l.a)
-        =.  l.a  lef
-        a
+        a(l $(a l.a))
       ::
           %end
         ::  found key
@@ -7373,11 +7371,9 @@
         ::  traverse to find key
         ?:  (compare key.n.a u.c)
           :: found key to the left of end
-          =/  rig  $(a r.a)
-          =.  r.a  rig
-          a
+          a(r $(a r.a))
         :: found key to the right of end
-        (del-span (nip a(r ~)) b c)
+        $(a (nip a(r ~)))
       ==
     --
   --
