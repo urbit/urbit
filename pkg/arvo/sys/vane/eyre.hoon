@@ -1486,50 +1486,10 @@
         $(requests t.requests)
       ::
           %delete
-        =/  unitsession
-          (~(get by session.channel-state.state) channel-id)
-        ::
-        ?~  unitsession
-          $(requests t.requests)
-        ::
-        =/  session  u.unitsession
-        =.  session.channel-state.state
-          (~(del by session.channel-state.state) channel-id)
-        ::
+        =^  moves  state
+          (discard-channel channel-id |)
         =.  gall-moves
-          %+  weld  gall-moves
-            ::
-            ::  produce a list of moves which cancels every gall subscription
-            ::
-            %+  turn  ~(tap by subscriptions.session)
-            |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
-            ^-  move
-            ::
-            [duc %pass channel-wire [%g %deal [our ship] app %leave ~]]
-        ::
-        ?:  ?=([%& *] state.session)
-          =.  gall-moves
-            :_  gall-moves
-            ::
-            ^-  move
-            ?>  ?=([%& *] state.session)
-            :^  duct.p.state.session  %pass  /channel/timeout/[channel-id]
-            [%b %rest date.p.state.session]
-          ::
-          $(requests t.requests)
-          ::
-        ?>  ?=([%| *] state.session)
-        =.  duct-to-key.channel-state.state
-          (~(del by duct-to-key.channel-state.state) p.state.session)
-        ::
-        ?~  heartbeat.session  $(requests t.requests)
-        =.  gall-moves
-          %+  snoc  gall-moves
-          %^    cancel-heartbeat-move
-              channel-id
-            date.u.heartbeat.session
-          duct.u.heartbeat.session
-        ::
+          (weld gall-moves moves)
         $(requests t.requests)
       ::
       ==
@@ -1671,10 +1631,12 @@
             channel(heartbeat (some [heartbeat-time duct]))
           ==
       (snoc http-moves (set-heartbeat-move channel-id heartbeat-time))
-    :: +on-channel-timeout: we received a wake to clear an old session
+    ::  +discard-channel: remove a channel from state
     ::
-    ++  on-channel-timeout
-      |=  channel-id=@t
+    ::    cleans up state, timers, and gall subscriptions of the channel
+    ::
+    ++  discard-channel
+      |=  [channel-id=@t expired=?]
       ^-  [(list move) server-state]
       ::
       =/  usession=(unit channel)
@@ -1686,6 +1648,10 @@
       :_  %_    state
               session.channel-state
             (~(del by session.channel-state.state) channel-id)
+          ::
+              duct-to-key.channel-state
+            ?.  ?=(%| -.state.session)  duct-to-key.channel-state.state
+            (~(del by duct-to-key.channel-state.state) p.state.session)
           ==
       =/  heartbeat-cancel=(list move)
         ?~  heartbeat.session  ~
@@ -1694,7 +1660,13 @@
             date.u.heartbeat.session
           duct.u.heartbeat.session
         ==
+      =/  expire-cancel=(list move)
+        ?:  expired  ~
+        ?.  ?=(%& -.state.session)  ~
+        =,  p.state.session
+        [(cancel-timeout-move channel-id date duct)]~
       %+  weld  heartbeat-cancel
+      %+  weld  expire-cancel
       ::  produce a list of moves which cancels every gall subscription
       ::
       %+  turn  ~(tap by subscriptions.session)
@@ -2108,13 +2080,7 @@
       [(zing (flop moves)) http-server-gate]
     ::  discard channel state, and cancel any active gall subscriptions
     ::
-    =^  mov  server-state.ax  (on-channel-timeout:by-channel channel-id)
-    ::  cancel channel timer
-    ::
-    =/  channel  (~(got by session.channel-state) channel-id)
-    =?  mov  ?=([%& *] state.channel)
-      :_  mov
-      (cancel-timeout-move:by-channel channel-id p.state.channel)
+    =^  mov  server-state.ax  (discard-channel:by-channel channel-id |)
     $(moves [mov moves], inactive t.inactive)
   ::
   ::  %vega: notifies us of a completed kernel upgrade
@@ -2362,10 +2328,10 @@
       ?>  ?=([%b %wake *] sign)
       ?^  error.sign
         [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
-      =/  on-channel-timeout
-        on-channel-timeout:by-channel:(per-server-event event-args)
+      =/  discard-channel
+        discard-channel:by-channel:(per-server-event event-args)
       =^  moves  server-state.ax
-        (on-channel-timeout i.t.t.wire)
+        (discard-channel i.t.t.wire &)
       [moves http-server-gate]
     ::
         %heartbeat
