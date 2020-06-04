@@ -76,14 +76,15 @@ import System.Process
 import Urbit.Arvo
 import Urbit.Vere.Pier.Types hiding (Work)
 
-import Control.Monad.STM     (retry)
-import Data.Sequence         (Seq((:<|), (:|>)))
-import Foreign.Marshal.Alloc (alloca)
-import Foreign.Ptr           (castPtr)
-import Foreign.Storable      (peek, poke)
-import RIO.Prelude           (decodeUtf8Lenient)
-import System.Posix.Signals  (sigKILL, signalProcess)
-import Urbit.Time            (Wen)
+import Control.Monad.STM            (retry)
+import Control.Monad.Trans.Resource (MonadResource, allocate, runResourceT)
+import Data.Sequence                (Seq((:<|), (:|>)))
+import Foreign.Marshal.Alloc        (alloca)
+import Foreign.Ptr                  (castPtr)
+import Foreign.Storable             (peek, poke)
+import RIO.Prelude                  (decodeUtf8Lenient)
+import System.Posix.Signals         (sigKILL, signalProcess)
+import Urbit.Time                   (Wen)
 
 import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Unsafe as BS
@@ -130,7 +131,7 @@ data SerfState = SerfState
   { ssLast :: EventId
   , ssHash :: Mug
   }
- deriving (Show)
+ deriving (Show, Eq)
 
 data SerfInfo = SerfInfo
   { siRipe :: RipeInfo
@@ -166,7 +167,7 @@ data Serf = Serf
   , serfRecv :: Handle
   , serfProc :: ProcessHandle
   , serfSlog :: Slog -> IO ()
-  , serfLock :: MVar (Either SomeException SerfState)
+  , serfLock :: MVar (Maybe SerfState)
   }
 
 data Flag
@@ -201,14 +202,15 @@ data SerfExn
   | SerfHasShutdown
   | BailDuringReplay EventId [Goof]
   | SwapDuringReplay EventId Mug (Wen, Noun) FX
+  | SerfNotRunning
  deriving (Show, Exception)
 
 -- Access Current Serf State ---------------------------------------------------
 
 serfLastEventBlocking :: Serf -> IO EventId
 serfLastEventBlocking Serf{serfLock} = readMVar serfLock >>= \case
-  Left err -> throwIO err
-  Right ss -> pure (ssLast ss)
+  Nothing -> throwIO SerfNotRunning
+  Just ss -> pure (ssLast ss)
 
 
 -- Low Level IPC Functions -----------------------------------------------------
@@ -347,7 +349,7 @@ start (Config exePax pierPath flags onSlog onStdr onDead) = do
   vLock <- newEmptyMVar
   let serf = Serf i o p onSlog vLock
   info <- recvRipe serf
-  putMVar vLock (Right $ siStat info)
+  putMVar vLock (Just $ siStat info)
   pure (serf, info)
  where
   diskKey = ""
@@ -361,27 +363,32 @@ start (Config exePax pierPath flags onSlog onStdr onDead) = do
 
 -- Taking the SerfState Lock ---------------------------------------------------
 
-withSerfLock
-  :: MonadIO m
-  => (m (SerfState, a) -> m (Either SomeException (SerfState, a)))
-  -> Serf
-  -> (SerfState -> m (SerfState, a))
-  -> m a
-withSerfLock tryGen s f = do
-  ss <- takeLock
-  tryGen (f ss) >>= \case
-    Left e -> do
-      io (forcefullyKillSerf s)
-      putMVar (serfLock s) (Left e)
-      throwIO e
-    Right (ss', x) -> do
-      putMVar (serfLock s) (Right ss')
-      pure x
+takeLock :: MonadIO m => Serf -> m SerfState
+takeLock serf = io $ do
+  takeMVar (serfLock serf) >>= \case
+    Nothing -> putMVar (serfLock serf) Nothing >> throwIO SerfNotRunning
+    Just ss -> pure ss
+
+serfLockTaken
+  :: MonadResource m => Serf -> m (IORef (Maybe SerfState), SerfState)
+serfLockTaken serf = snd <$> allocate take release
  where
-  takeLock = do
-    takeMVar (serfLock s) >>= \case
-      Left exn -> putMVar (serfLock s) (Left exn) >> throwIO exn
-      Right ss -> pure ss
+  take = (,) <$> newIORef Nothing <*> takeLock serf
+  release (rv, _) = do
+    mRes <- readIORef rv
+    when (mRes == Nothing) (forcefullyKillSerf serf)
+    putMVar (serfLock serf) mRes
+
+withSerfLock
+  :: MonadResource m => Serf -> (SerfState -> m (SerfState, a)) -> m a
+withSerfLock serf act = do
+  (vState  , initialState) <- serfLockTaken serf
+  (newState, result      ) <- act initialState
+  writeIORef vState (Just newState)
+  pure result
+
+withSerfLockIO :: Serf -> (SerfState -> IO (SerfState, a)) -> IO a
+withSerfLockIO s a = runResourceT (withSerfLock s (io . a))
 
 
 -- Flows for Interacting with the Serf -----------------------------------------
@@ -390,7 +397,7 @@ withSerfLock tryGen s f = do
   Ask the serf to write a snapshot to disk.
 -}
 snapshot :: Serf -> IO ()
-snapshot serf = withSerfLock try serf $ \ss -> do
+snapshot serf = withSerfLockIO serf $ \ss -> do
   sendSnapshotRequest serf (ssLast ss)
   pure (ss, ())
 
@@ -398,7 +405,7 @@ snapshot serf = withSerfLock try serf $ \ss -> do
   Ask the serf to de-duplicate and de-fragment it's heap.
 -}
 compact :: Serf -> IO ()
-compact serf = withSerfLock try serf $ \ss -> do
+compact serf = withSerfLockIO serf $ \ss -> do
   sendCompactionRequest serf (ssLast ss)
   pure (ss, ())
 
@@ -406,7 +413,7 @@ compact serf = withSerfLock try serf $ \ss -> do
   Peek into the serf state.
 -}
 scry :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
-scry serf w g p = withSerfLock try serf $ \ss -> do
+scry serf w g p = withSerfLockIO serf $ \ss -> do
   (ss,) <$> sendScryRequest serf w g p
 
 {-|
@@ -457,7 +464,7 @@ forcefullyKillSerf serf = do
 -}
 boot :: Serf -> [Noun] -> IO (Maybe PlayBail)
 boot serf@Serf {..} seq = do
-  withSerfLock try serf $ \ss -> do
+  withSerfLockIO serf $ \ss -> do
     recvPlay serf >>= \case
       PBail bail -> pure (ss, Just bail)
       PDone mug  -> pure (SerfState (fromIntegral $ length seq) mug, Nothing)
@@ -472,12 +479,12 @@ boot serf@Serf {..} seq = do
 -}
 replay
   :: forall m
-   . (MonadUnliftIO m, MonadIO m)
+   . (MonadResource m, MonadUnliftIO m, MonadIO m)
   => Int
   -> Serf
   -> ConduitT Noun Void m (Maybe PlayBail)
 replay batchSize serf = do
-  withSerfLock tryC serf $ \ss -> do
+  withSerfLock serf $ \ss -> do
     (r, ss') <- loop ss
     pure (ss', r)
  where
@@ -516,14 +523,17 @@ awaitBatch = go []
 -}
 swim
   :: forall m
-   . (MonadIO m, MonadUnliftIO m)
+   . (MonadIO m, MonadUnliftIO m, MonadResource m)
   => Serf
   -> ConduitT (Wen, Ev) (EventId, FX) m ()
 swim serf = do
-  withSerfLock tryC serf $ \SerfState {..} -> do
+  withSerfLock serf $ \SerfState {..} -> do
     (, ()) <$> loop ssHash ssLast
  where
-  loop :: Mug -> EventId -> ConduitT (Wen, Ev) (EventId, FX) m SerfState
+  loop
+    :: Mug
+    -> EventId
+    -> ConduitT (Wen, Ev) (EventId, FX) m SerfState
   loop mug eve = await >>= \case
     Nothing -> do
       pure (SerfState eve mug)
@@ -596,9 +606,10 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
     que   <- newTBMQueueIO 1
     ()    <- atomically (writeTBMQueue que firstWorkErr)
     tWork <- async (processWork serf maxBatchSize que onWorkResp spin)
-    nexSt <- workLoop que
-    wait tWork
-    nexSt
+    flip onException (print "KILLING: run" >> cancel tWork) $ do
+      nexSt <- workLoop que
+      wait tWork
+      nexSt
 
   workLoop :: TBMQueue EvErr -> IO (IO ())
   workLoop que = atomically onInput >>= \case
@@ -665,8 +676,9 @@ processWork serf maxSize q onResp spin = do
   vDoneFlag      <- newTVarIO False
   vInFlightQueue <- newTVarIO empty
   recvThread     <- async (recvLoop serf vDoneFlag vInFlightQueue)
-  loop vInFlightQueue vDoneFlag
-  wait recvThread
+  flip onException (print "KILLING: processWork" >> cancel recvThread) $ do
+    loop vInFlightQueue vDoneFlag
+    wait recvThread
  where
   loop :: TVar (Seq (Ev, Work -> IO ())) -> TVar Bool -> IO ()
   loop vInFlight vDone = do
@@ -712,7 +724,7 @@ processWork serf maxSize q onResp spin = do
 -}
 recvLoop :: Serf -> TVar Bool -> TVar (Seq (Ev, Work -> IO ())) -> IO ()
 recvLoop serf vDone vWork = do
-  withSerfLock try serf \SerfState {..} -> do
+  withSerfLockIO serf \SerfState {..} -> do
     loop ssLast ssHash
  where
   loop eve mug = do

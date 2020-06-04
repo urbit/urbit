@@ -31,7 +31,7 @@ Polish:
 
 - [x] Cleanup batching flow.
 - [x] Think through how to shutdown the serf on exception.
-- [ ] King should shutdown promptly on ^C. Always takes 2s in practice.
+- [x] King should shutdown promptly on ^C. Always takes 2s in practice.
 - [ ] Logging for new IPC flow.
 - [ ] Logging for boot sequence.
 - [ ] Bring back progress bars.

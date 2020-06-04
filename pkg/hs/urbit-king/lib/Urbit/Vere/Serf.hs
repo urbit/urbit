@@ -16,7 +16,8 @@ import Data.Conduit
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Serf.IPC
 
-import Urbit.Arvo (FX)
+import Control.Monad.Trans.Resource (runResourceT)
+import Urbit.Arvo                   (FX)
 
 import qualified Data.Conduit.Combinators as CC
 import qualified Urbit.Vere.Log           as Log
@@ -109,10 +110,12 @@ execReplay serf log last = do
     logTrace $ display $ "Replaying up to event #" <> tshow replayUpTo
     logTrace $ display $ "Will replay " <> tshow numEvs <> " in total."
 
-    runConduit $ Log.streamEvents log (lastEventInSnap + 1)
-              .| CC.take (fromIntegral numEvs)
-              .| CC.mapM (fmap snd . parseLogRow)
-              .| replay 10 serf
+    runResourceT
+      $  runConduit
+      $  Log.streamEvents log (lastEventInSnap + 1)
+      .| CC.take (fromIntegral numEvs)
+      .| CC.mapM (fmap snd . parseLogRow)
+      .| replay 10 serf
 
 
 -- Collect FX ------------------------------------------------------------------
@@ -120,12 +123,13 @@ execReplay serf log last = do
 collectFX :: HasLogFunc e => Serf -> Log.EventLog -> RIO e ()
 collectFX serf log = do
   lastEv <- io (serfLastEventBlocking serf)
-  runConduit
+  runResourceT
+    $  runConduit
     $  Log.streamEvents log (lastEv + 1)
     .| CC.mapM (parseLogRow >=> fromNounExn . snd)
     .| swim serf
-    .| persistFX
- where
-  persistFX :: ConduitT (EventId, FX) Void (RIO e) ()
-  persistFX = CC.mapM_ $ \(eId, fx) -> do
-    Log.writeEffectsRow log eId $ jamBS $ toNoun fx
+    .| persistFX log
+
+persistFX :: MonadIO m => Log.EventLog -> ConduitT (EventId, FX) Void m ()
+persistFX log = CC.mapM_ $ \(eId, fx) -> do
+  Log.writeEffectsRow log eId $ jamBS $ toNoun fx

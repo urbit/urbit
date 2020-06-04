@@ -240,14 +240,13 @@ appendEvents log !events = do
                 True  -> pure ()
                 False -> throwIO (BadWriteEvent k)
 
-writeEffectsRow :: EventLog -> EventId -> ByteString -> RIO e ()
-writeEffectsRow log k v = do
-    rwith (writeTxn $ env log) $ \txn ->
-        putBytes flags txn (effectsTbl log) k v >>= \case
-            True  -> pure ()
-            False -> throwIO (BadWriteEffect k)
-  where
-    flags = compileWriteFlags []
+writeEffectsRow :: MonadIO m => EventLog -> EventId -> ByteString -> m ()
+writeEffectsRow log k v = io $ runRIO () $ do
+  let flags = compileWriteFlags []
+  rwith (writeTxn $ env log) $ \txn ->
+    putBytes flags txn (effectsTbl log) k v >>= \case
+      True  -> pure ()
+      False -> throwIO (BadWriteEffect k)
 
 
 -- Read Events -----------------------------------------------------------------
@@ -264,14 +263,12 @@ trimEvents log start = do
                 throwIO (MissingEvent eId)
     atomically $ writeTVar (numEvents log) (pred start)
 
-streamEvents :: HasLogFunc e
-             => EventLog -> Word64
-             -> ConduitT () ByteString (RIO e) ()
+streamEvents :: MonadIO m => EventLog -> Word64 -> ConduitT () ByteString m ()
 streamEvents log first = do
-    batch <- lift $ readBatch log first
-    unless (null batch) $ do
-        for_ batch yield
-        streamEvents log (first + word (length batch))
+  batch <- io $ runRIO () $ readBatch log first
+  unless (null batch) $ do
+    for_ batch yield
+    streamEvents log (first + word (length batch))
 
 streamEffectsRows :: ∀e. HasLogFunc e
                   => EventLog -> EventId

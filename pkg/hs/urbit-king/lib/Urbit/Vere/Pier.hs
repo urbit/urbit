@@ -218,24 +218,34 @@ getSnapshot top last = do
 
 -- Run Pier --------------------------------------------------------------------
 
-acquireWorker :: RIO e () -> RAcquire e (Async ())
-acquireWorker act = mkRAcquire (async act) cancel
+acquireWorker :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
+acquireWorker nam act = mkRAcquire (async act) kill
+ where
+  kill tid = do
+    logTrace ("Killing worker thread: " <> display nam)
+    cancel tid
+    logTrace ("Killed worker thread: " <> display nam)
 
-acquireWorkerBound :: RIO e () -> RAcquire e (Async ())
-acquireWorkerBound act = mkRAcquire (asyncBound act) cancel
+acquireWorkerBound :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
+acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
+ where
+  kill tid = do
+    logTrace ("Killing worker thread: " <> display nam)
+    cancel tid
+    logTrace ("Killed worker thread: " <> display nam)
 
 pier
   :: (Serf, EventLog)
   -> TVar (Text -> IO ())
   -> MVar ()
+  -> TMVar ()
   -> MultiEyreApi
   -> RAcquire PierEnv ()
-pier (serf, log) vSlog mStart multi = do
+pier (serf, log) vSlog mStart vKilled multi = do
     computeQ  <- newTQueueIO @_ @Serf.EvErr
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
     saveM     <- newEmptyTMVarIO
-    shutdownM <- newEmptyTMVarIO
 
     kapi <- King.kingAPI
 
@@ -244,7 +254,7 @@ pier (serf, log) vSlog mStart multi = do
         writeTVar (King.kTermConn kapi) (Just $ writeTQueue q)
         pure q
 
-    let shutdownEvent = putTMVar shutdownM ()
+    let shutdownEvent = void (tryPutTMVar vKilled ())
 
     -- (sz, local) <- Term.localClient
 
@@ -258,7 +268,7 @@ pier (serf, log) vSlog mStart multi = do
     -- rio $ logInfo $ display $
         -- "TERMSERV Terminal Server running on port: " <> tshow termServPort
 
-    acquireWorker $ forever $ do
+    acquireWorker "TERMINAL" $ forever $ do
       logTrace "TERMSERV Waiting for external terminal."
       atomically $ do
         ext <- Term.connClient <$> readTQueue termApiQ
@@ -294,7 +304,7 @@ pier (serf, log) vSlog mStart multi = do
 
     let computeConfig = ComputeConfig
           { ccOnWork = readTQueue computeQ
-          , ccOnKill = takeTMVar shutdownM
+          , ccOnKill = readTMVar vKilled
           , ccOnSave = takeTMVar saveM
           , ccPutResult = writeTQueue persistQ
           , ccShowSpinner = Term.spin muxed
@@ -302,9 +312,12 @@ pier (serf, log) vSlog mStart multi = do
           , ccLastEvInLog = Log.lastEv log
           }
 
-    tExe  <- startDrivers >>= acquireWorker . router (readTQueue executeQ)
-    tDisk <- acquireWorkerBound (runPersist log persistQ (writeTQueue executeQ))
-    tCpu  <- acquireWorker (runCompute serf computeConfig)
+    let plan = writeTQueue executeQ
+
+    drivz <- startDrivers
+    tExec <- acquireWorker "Effects" (router (readTQueue executeQ) drivz)
+    tDisk <- acquireWorkerBound "Persist" (runPersist log persistQ plan)
+    tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
 
     tSaveSignal <- saveSignalThread saveM
 
@@ -312,9 +325,9 @@ pier (serf, log) vSlog mStart multi = do
 
     -- Wait for something to die.
 
-    let ded = asum [ death "effect thread" tExe
+    let ded = asum [ death "effects thread" tExec
                    , death "persist thread" tDisk
-                   , death "compute thread" tCpu
+                   , death "compute thread" tSerf
                    ]
 
     atomically ded >>= \case
