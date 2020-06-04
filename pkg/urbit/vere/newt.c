@@ -87,9 +87,9 @@ _newt_gain_mess(u3_moat* mot_u)
   //  very likely to be a bad write, we can't jam anything this big
   //
   if ( 0xFFFFFFFFULL < nel_d ) {
-    u3l_log("newt: %d warn: large read %" PRIu64 "\r\n",
-            getpid(),
-            nel_d);
+    fprintf(stderr, "newt: %d warn: large read %" PRIu64 "\r\n",
+                    getpid(),
+                    nel_d);
   }
 
   mot_u->len_d -= 8ULL;
@@ -316,7 +316,7 @@ _newt_write_cb(uv_write_t* wri_u, c3_i sas_i)
   c3_free(req_u);
 
   if ( 0 != sas_i ) {
-    u3l_log("newt: bad write %d\r\n", sas_i);
+    fprintf(stderr, "newt: bad write %d\r\n", sas_i);
     moj_u->bal_f(vod_p, uv_strerror(sas_i));
   }
 }
