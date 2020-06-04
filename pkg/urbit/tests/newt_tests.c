@@ -10,9 +10,6 @@ _setup(void)
   u3m_pave(c3y, c3n);
 }
 
-static c3_w pok_w;
-static c3_w bal_w;
-
 /* _newt_encode(): synchronous serialization into a single buffer, for test purposes
 */
 static c3_y*
@@ -38,17 +35,18 @@ _newt_encode(u3_atom mat, c3_w* len_w)
   return buf_y;
 }
 
-static void
-_moat_poke_cb(void* vod_p, u3_atom a)
+static c3_w
+_moat_length(u3_moat* mot_u)
 {
-  pok_w++;
-  u3z(a);
-}
+  u3_meat* met_u = mot_u->ext_u;
+  c3_w     len_w = 0;
 
-static void
-_moat_bail_cb(void* vod_p, const c3_c* err_c)
-{
-  bal_w++;
+  while ( met_u ) {
+    met_u = met_u->nex_u;
+    len_w++;
+  }
+
+  return len_w;
 }
 
 /* _test_newt_smol(): various scenarios with small messages
@@ -64,19 +62,16 @@ _test_newt_smol(void)
   c3_y*   buf_y;
 
   memset(&mot_u, 0, sizeof(u3_moat));
-  mot_u.pok_f = _moat_poke_cb;
-  mot_u.bal_f = _moat_bail_cb;
 
   //  one message one buffer
   //
   {
-    pok_w = 0;
-    bal_w = 0;
+    mot_u.ent_u = mot_u.ext_u = 0;
 
     buf_y = _newt_encode(u3k(a), &len_w);
     u3_newt_decode(&mot_u, buf_y, len_w);
 
-    if ( 1 != pok_w ) {
+    if ( 1 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt smol fail (a)\n");
       exit(1);
     }
@@ -85,8 +80,7 @@ _test_newt_smol(void)
   //  two messages one buffer
   //
   {
-    pok_w = 0;
-    bal_w = 0;
+    mot_u.ent_u = mot_u.ext_u = 0;
 
     buf_y = _newt_encode(u3k(a), &len_w);
 
@@ -96,7 +90,7 @@ _test_newt_smol(void)
 
     u3_newt_decode(&mot_u, buf_y, len_w);
 
-    if ( 2 != pok_w ) {
+    if ( 2 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt smol fail (b)\n");
       exit(1);
     }
@@ -106,8 +100,8 @@ _test_newt_smol(void)
   //
   {
     c3_y* end_y;
-    pok_w = 0;
-    bal_w = 0;
+
+    mot_u.ent_u = mot_u.ext_u = 0;
 
     buf_y = _newt_encode(u3k(a), &len_w);
 
@@ -116,14 +110,14 @@ _test_newt_smol(void)
 
     u3_newt_decode(&mot_u, buf_y, len_w - 1);
 
-    if ( 0 != pok_w ) {
+    if ( 0 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt smol fail (c)\n");
       exit(1);
     }
 
     u3_newt_decode(&mot_u, end_y, 1);
 
-    if ( 1 != pok_w ) {
+    if ( 1 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt smol fail (d)\n");
       exit(1);
     }
@@ -135,8 +129,7 @@ _test_newt_smol(void)
     c3_y* haf_y;
     c3_w  haf_w, dub_w;
 
-    pok_w = 0;
-    bal_w = 0;
+    mot_u.ent_u = mot_u.ext_u = 0;
 
     buf_y = _newt_encode(u3k(a), &len_w);
 
@@ -155,14 +148,14 @@ _test_newt_smol(void)
 
     u3_newt_decode(&mot_u, buf_y, dub_w - haf_w);
 
-    if ( 1 != pok_w ) {
+    if ( 1 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt smol fail (e)\n");
       exit(1);
     }
 
     u3_newt_decode(&mot_u, haf_y, haf_w);
 
-    if ( 2 != pok_w ) {
+    if ( 2 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt smol fail (f)\n");
       exit(1);
     }
@@ -184,19 +177,16 @@ _test_newt_vast(void)
   c3_y*   buf_y;
 
   memset(&mot_u, 0, sizeof(u3_moat));
-  mot_u.pok_f = _moat_poke_cb;
-  mot_u.bal_f = _moat_bail_cb;
 
   //  one message one buffer
   //
   {
-    pok_w = 0;
-    bal_w = 0;
+    mot_u.ent_u = mot_u.ext_u = 0;
 
     buf_y = _newt_encode(u3k(a), &len_w);
     u3_newt_decode(&mot_u, buf_y, len_w);
 
-    if ( 1 != pok_w ) {
+    if ( 1 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt vast fail (a)\n");
       exit(1);
     }
@@ -205,8 +195,7 @@ _test_newt_vast(void)
   //  two messages one buffer
   //
   {
-    pok_w = 0;
-    bal_w = 0;
+    mot_u.ent_u = mot_u.ext_u = 0;
 
     buf_y = _newt_encode(u3k(a), &len_w);
 
@@ -216,7 +205,7 @@ _test_newt_vast(void)
 
     u3_newt_decode(&mot_u, buf_y, len_w);
 
-    if ( 2 != pok_w ) {
+    if ( 2 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt vast fail (b)\n");
       exit(1);
     }
@@ -225,8 +214,7 @@ _test_newt_vast(void)
   //  one message many buffers
   //
   {
-    pok_w = 0;
-    bal_w = 0;
+    mot_u.ent_u = mot_u.ext_u = 0;
 
     buf_y = _newt_encode(u3k(a), &len_w);
 
@@ -241,7 +229,7 @@ _test_newt_vast(void)
         c3_y* end_y = c3_malloc(1);
         end_y[0] = cop_y[haf_w];
 
-        if ( 0 != pok_w ) {
+        if ( 0 != _moat_length(&mot_u) ) {
           fprintf(stderr, "newt vast fail (c) %u\n", haf_w);
           exit(1);
         }
@@ -253,7 +241,7 @@ _test_newt_vast(void)
       c3_free(cop_y);
     }
 
-    if ( 1 != pok_w ) {
+    if ( 1 != _moat_length(&mot_u) ) {
       fprintf(stderr, "newt vast fail (d)\n");
       exit(1);
     }
@@ -265,8 +253,7 @@ _test_newt_vast(void)
     c3_y* haf_y;
     c3_w  haf_w, dub_w;
 
-    pok_w = 0;
-    bal_w = 0;
+    mot_u.ent_u = mot_u.ext_u = 0;
 
     buf_y = _newt_encode(u3k(a), &len_w);
 
@@ -285,14 +272,14 @@ _test_newt_vast(void)
 
     u3_newt_decode(&mot_u, buf_y, dub_w - haf_w);
 
-    if ( 1 != pok_w ) {
+    if ( 1 !=  _moat_length(&mot_u) ) {
       fprintf(stderr, "newt vast fail (e)\n");
       exit(1);
     }
 
     u3_newt_decode(&mot_u, haf_y, haf_w);
 
-    if ( 2 != pok_w ) {
+    if ( 2 !=  _moat_length(&mot_u) ) {
       fprintf(stderr, "newt vast fail (f)\n");
       exit(1);
     }
@@ -303,8 +290,7 @@ _test_newt_vast(void)
   {
     c3_w dub_w;
 
-    pok_w = 0;
-    bal_w = 0;
+    mot_u.ent_u = mot_u.ext_u = 0;
 
     buf_y = _newt_encode(u3k(a), &len_w);
 
@@ -326,7 +312,7 @@ _test_newt_vast(void)
         c3_y* end_y = c3_malloc(1);
         end_y[0] = cop_y[haf_w];
 
-        if ( 1 != pok_w ) {
+        if ( 1 !=  _moat_length(&mot_u) ) {
           fprintf(stderr, "newt vast fail (g) %u\n", haf_w);
           exit(1);
         }
@@ -338,7 +324,7 @@ _test_newt_vast(void)
       c3_free(cop_y);
     }
 
-    if ( 2 != pok_w ) {
+    if ( 2 !=  _moat_length(&mot_u) ) {
       fprintf(stderr, "newt vast fail (h)\n");
       exit(1);
     }

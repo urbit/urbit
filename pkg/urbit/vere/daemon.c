@@ -425,6 +425,7 @@ _daemon_socket_connect(uv_stream_t *sock, int status)
     mor_u->nex_u = 0;
   }
 
+  uv_timer_init(u3L, &mor_u->tim_u);
   uv_pipe_init(u3L, &mor_u->pyp_u, 0);
   mor_u->pok_f = _daemon_fate;
   mor_u->bal_f = _daemon_bail;
@@ -866,6 +867,7 @@ _daemon_loop_init()
     u3_moor*      mor_u = c3_malloc(sizeof(u3_moor));
     uv_connect_t* con_u = c3_malloc(sizeof(uv_connect_t));
     con_u->data = mor_u;
+    uv_timer_init(u3L, &mor_u->tim_u);
     uv_pipe_init(u3L, &mor_u->pyp_u, 0);
     uv_pipe_connect(con_u, &mor_u->pyp_u, u3K.soc_c, _boothack_cb);
   }

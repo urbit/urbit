@@ -144,6 +144,8 @@ main(c3_i argc, c3_c* argv[])
   {
     c3_i err_i;
 
+    err_i = uv_timer_init(lup_u, &inn_u.tim_u);
+    c3_assert(!err_i);
     err_i = uv_pipe_init(lup_u, &inn_u.pyp_u, 0);
     c3_assert(!err_i);
     uv_pipe_open(&inn_u.pyp_u, inn_i);

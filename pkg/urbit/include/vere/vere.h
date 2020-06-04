@@ -46,15 +46,6 @@
     */
       typedef void (*u3_moor_bail)(void*, const c3_c* err_c);
 
-    /* u3_mess: blob message in process.
-    */
-      typedef struct _u3_mess {
-        c3_d             len_d;             //  blob length in bytes
-        c3_d             has_d;             //  currently held
-        struct _u3_meat* meq_u;             //  exit of message queue
-        struct _u3_meat* qem_u;             //  entry of message queue
-      } u3_mess;
-
     /* u3_meat: blob message block.
     */
       typedef struct _u3_meat {
@@ -63,6 +54,29 @@
         c3_y             hun_y[0];
       } u3_meat;
 
+    /* u3_mess_type: in-process message type.
+    */
+      typedef enum {
+        u3_mess_head = 0,                   //  awaiting header
+        u3_mess_tail = 1                    //  awaiting body
+      } u3_mess_type;
+
+    /* u3_mess: blob message in process.
+    */
+      typedef struct _u3_mess {
+        u3_mess_type     sat_e;             //  msg type
+        union {                             //
+          struct {                          //  awaiting header:
+            c3_y         len_y[8];          //    header bytes
+            c3_y         has_y;             //    length
+          } hed_u;                          //
+          struct {                          //  awaiting body
+            u3_meat*     met_u;             //    partial message
+            c3_d         has_d;             //    length
+          } tal_u;                          //
+        };
+      } u3_mess;
+
     /* u3_moat: inbound message stream.
     */
       typedef struct _u3_moat {
@@ -70,9 +84,10 @@
         u3_moor_bail     bal_f;             //  error response function
         void*            ptr_v;             //  callback pointer
         u3_moor_poke     pok_f;             //  action function
-        struct _u3_mess* mes_u;             //  message in progress
-        c3_d             len_d;             //  length of stray bytes
-        c3_y*            rag_y;             //  stray bytes
+        u3_mess          mes_u;             //  message in progress
+        uv_timer_t       tim_u;             //  queue timer
+        u3_meat*         ent_u;             //  entry of message queue
+        u3_meat*         ext_u;             //  exit of message queue
       } u3_moat;
 
     /* u3_mojo: outbound message stream.
@@ -85,14 +100,15 @@
 
     /* u3_moor: two-way message stream, linked list */
       typedef struct _u3_moor {
-        uv_pipe_t        pyp_u;
-        u3_moor_bail     bal_f;
-        void*            ptr_v;
-        u3_moor_poke     pok_f;
-        struct _u3_mess* mes_u;
-        c3_d             len_d;
-        c3_y*            rag_y;
-        struct _u3_moor* nex_u;
+        uv_pipe_t        pyp_u;             //  duplex stream
+        u3_moor_bail     bal_f;             //  error response function
+        void*            ptr_v;             //  callback pointer
+        u3_moor_poke     pok_f;             //  action function
+        u3_mess          mes_u;             //  message in progress
+        uv_timer_t       tim_u;             //  queue timer
+        u3_meat*         ent_u;             //  entry of message queue
+        u3_meat*         ext_u;             //  exit of message queue
+        struct _u3_moor* nex_u;             //  next in list
       } u3_moor;
 
     /* u3_dent: directory entry.
@@ -1061,7 +1077,7 @@
       /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
       */
         void
-        u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_w len_w);
+        u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d);
 
       /* u3_newt_write(): write atom to stream; free atom.
       */
