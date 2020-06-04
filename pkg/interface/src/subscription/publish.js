@@ -5,7 +5,7 @@ export default class PublishSubscription extends BaseSubscription {
     this.subscribe('/primary', 'publish');
     this.subscribe('/all', 'group-store');
     this.subscribe('/primary', 'contact-view');
-    this.subscribe('/primary', 'invite-view');
+    this.subscribe('/all', 'invite-store');
     this.subscribe('/all', 'permission-store');
     this.subscribe('/app-name/contacts', 'metadata-store');
   }

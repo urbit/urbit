@@ -6,7 +6,7 @@ export default class GroupsSubscription extends BaseSubscription {
     this.subscribe('/all', 'group-store');
     this.subscribe('/all', 'metadata-store');
     this.subscribe('/synced', 'contact-hook');
-    this.subscribe('/primary', 'invite-view');
+    this.subscribe('/all', 'invite-store');
     this.subscribe('/all', 's3-store');
   }
 }

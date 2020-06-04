@@ -5,7 +5,7 @@ export default class ChatSubscription extends BaseSubscription {
     this.subscribe('/primary', 'chat-view');
     setTimeout(() => {
       this.subscribe('/synced', 'chat-hook');
-      this.subscribe('/primary', 'invite-view');
+      this.subscribe('/all', 'invite-store');
       this.subscribe('/all', 'permission-store');
       this.subscribe('/primary', 'contact-view');
       this.subscribe('/app-name/chat', 'metadata-store');
