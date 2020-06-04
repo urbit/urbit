@@ -969,7 +969,7 @@
       =/  first-session=?  =(~ sessions.authentication-state.state)
       =/  expires-at=@da   (add now session-timeout)
       =.  sessions.authentication-state.state
-        (~(put by sessions.authentication-state.state) session expires-at)
+        (~(put by sessions.authentication-state.state) session [expires-at ~])
       ::
       =/  cookie-line=@t
         (session-cookie-string session &)
@@ -1026,15 +1026,33 @@
         (handle-response response)
       ::  delete the requesting session, or all sessions if so specified
       ::
-      =.  sessions.authentication-state.state
-        =;  all=?
-          ?:  all  ~
-          (~(del by sessions.authentication-state.state) u.session-id)
-        ?~  body.request  |
-        =-  ?=(^ -)
-        %+  get-header:http  'all'
-        (fall (rush q.u.body.request yquy:de-purl:html) ~)
-      (handle-response response)
+      =^  channels=(list @t)  sessions.authentication-state.state
+        =*  sessions  sessions.authentication-state.state
+        =/  all=?
+          ?~  body.request  |
+          =-  ?=(^ -)
+          %+  get-header:http  'all'
+          (fall (rush q.u.body.request yquy:de-purl:html) ~)
+        ?.  all
+          :_  (~(del by sessions) u.session-id)
+          %~  tap  in
+          channels:(~(gut by sessions) u.session-id *session)
+        :_  ~
+        %~  tap  in
+        %+  roll  ~(val by sessions)
+        |=  [session all=(set @t)]
+        (~(uni in all) channels)
+      ::  close all affected channels, then send the response
+      ::
+      =|  moves=(list move)
+      |-  ^-  (quip move server-state)
+      ?~  channels
+        =^  moz  state
+          (handle-response response)
+        [(weld moves moz) state]
+      =^  moz  state
+        (discard-channel:by-channel i.channels |)
+      $(moves (weld moves moz), channels t.channels)
     ::  +session-id-from-request: attempt to find a session cookie
     ::
     ++  session-id-from-request
@@ -1325,6 +1343,16 @@
       ::
       =.  duct-to-key.channel-state.state
         (~(put by duct-to-key.channel-state.state) duct channel-id)
+      ::  associate this channel with the session cookie
+      ::
+      =.  sessions.authentication-state.state
+        =/  session-id=(unit @uv)
+          (session-id-from-request:authentication request)
+        ?~  session-id  sessions.authentication-state.state
+        %+  ~(jab by sessions.authentication-state.state)
+          u.session-id
+        |=  =session
+        session(channels (~(put in channels.session) channel-id))
       ::  initialize sse heartbeat
       ::
       =/  heartbeat-time=@da  (add now ~s20)
@@ -1796,7 +1824,9 @@
               ::  tough luck, we don't create/revive sessions here
               ::
               no-op
-            :_  (~(put by sessions) u.session-id (add now session-timeout))
+            :_  %+  ~(jab by sessions)  u.session-id
+                |=  =session
+                session(expiry-time (add now session-timeout))
             =-  response-header.http-event(headers -)
             %^  set-header:http  'set-cookie'
               (session-cookie-string u.session-id &)
@@ -2363,11 +2393,9 @@
     =*  sessions  sessions.authentication-state.server-state.ax
     =.  sessions.authentication-state.server-state.ax
       %-  ~(gas by *(map @uv session))
-      %+  murn  ~(tap in sessions)
+      %+  skip  ~(tap in sessions)
       |=  [cookie=@uv session]
-      ^-  (unit [@uv session])
-      ?:  (lth expiry-time now)  ~
-      `[cookie expiry-time]
+      (lth expiry-time now)
     ::  if there's any cookies left, set a timer for the next expected expiry
     ::
     ^-  [(list move) _http-server-gate]
@@ -2399,7 +2427,18 @@
 ++  load
   =>  |%
       +$  axle-2019-10-6
-        [date=%~2019.10.6 =server-state]
+        [date=%~2019.10.6 server-state=server-state-2019-10-6]
+      ::
+      +$  server-state-2019-10-6
+        $:  bindings=(list [=binding =duct =action])
+            connections=(map duct outstanding-connection)
+            authentication-state=sessions=(map @uv @da)
+            =channel-state
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+        ==
       --
   |=  old=$%(axle axle-2019-10-6)
   ^+  ..^$

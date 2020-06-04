@@ -1213,6 +1213,9 @@
         ::    to properly handle cookie expiration as a security mechanism.
         ::
         expiry-time=@da
+        ::  channels: channels opened by this session
+        ::
+        channels=(set @t)
         ::
         ::  TODO: We should add a system for individual capabilities; we should
         ::  mint some sort of long lived cookie for mobile apps which only has
