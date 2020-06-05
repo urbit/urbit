@@ -101,7 +101,7 @@ export class GroupDetail extends Component {
             }}
             >
               <img
-                src={`/~groups/img/${each.app.toLowerCase()}.png`}
+                src={`/~landscape/img/${each.app}.png`}
                 className="dib invert-d pa1 v-mid"
                 style={{ height: 26, width: 26 }}
               />
