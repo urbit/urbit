@@ -140,7 +140,7 @@
   `..on-init
 ::
 ++  on-save
-  !>([%4 lac])
+  !>([%5 lac])
 ::
 ++  on-load
   |=  =old-state=vase
