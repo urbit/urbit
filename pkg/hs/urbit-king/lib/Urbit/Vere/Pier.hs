@@ -24,11 +24,7 @@ import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
 
-import Data.Bits              (shiftR)
 import Data.Text              (append)
-import Data.Time.Clock        (DiffTime)
-import Data.Time.Clock.System (systemToUTCTime)
-import Data.Time.LocalTime    (TimeOfDay(..), timeToTimeOfDay)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.King.App         (HasKingEnv, HasPierEnv(..), PierEnv)
 import Urbit.Time             (Wen)
@@ -42,7 +38,6 @@ import Urbit.Vere.Log         (EventLog)
 import Urbit.Vere.Serf        (Serf)
 
 import qualified System.Entropy         as Ent
-import qualified Urbit.Atom.Fast        as Atom
 import qualified Urbit.King.API         as King
 import qualified Urbit.Time             as Time
 import qualified Urbit.Vere.Log         as Log
@@ -334,9 +329,10 @@ pier (serf, log) vSlog mStart vKilled multi = do
     void $ acquireWorker "bullshit scry tester" $ forever $ do
       threadDelay 1_000_000
       wen <- io Time.now
-      let cb mTermNoun = print ("scry result: ", mTermNoun)
-      let pax = Path ["j", "~zod", "life", MkKnot $ pack $ showDate wen, "~zod"]
-      atomically $ putTMVar scryM (wen, Nothing, pax, cb)
+      let kal = \mTermNoun -> print ("scry result: ", mTermNoun)
+      let nkt = MkKnot $ tshow $ Time.MkDate wen
+      let pax = Path ["j", "~zod", "life", nkt, "~zod"]
+      atomically $ putTMVar scryM (wen, Nothing, pax, kal)
 
     putMVar mStart ()
 
@@ -531,29 +527,3 @@ runPersist log inpQ out = do
     go acc = tryReadTQueue inpQ >>= \case
       Nothing   -> pure (reverse acc)
       Just item -> go (item <| acc)
-
--- "~YYYY.MM.DD..HH.MM.SS..FRACTO"
-showDate :: Wen -> String
-showDate w = do
-  if fs == 0
-  then printf "~%i.%u.%u..%02u.%02u.%02u" y m d h min s
-  else printf "~%i.%u.%u..%02u.%02u.%02u..%s" y m d h min s (showGap fs)
- where
-  (y, m, d)   = toGregorian (utctDay utc)
-  (h, min, s) = diffTimeSplit (utctDayTime utc)
-  fs          = fromIntegral (Time._fractoSecs (Time._sinceUrbitEpoch w)) :: Word
-  utc         = w ^. Time.systemTime . to systemToUTCTime
-
-showGap :: Word -> String
-showGap gap = intercalate "." (printf "%04x" <$> bs)
- where
-  bs = reverse $ dropWhile (== 0) [b4, b3, b2, b1]
-  b4 = Atom.takeBitsWord 16 gap
-  b3 = Atom.takeBitsWord 16 (shiftR gap 16)
-  b2 = Atom.takeBitsWord 16 (shiftR gap 32)
-  b1 = Atom.takeBitsWord 16 (shiftR gap 48)
-
-diffTimeSplit :: DiffTime -> (Int, Int, Int)
-diffTimeSplit dt = (hours, mins, floor secs)
- where
-  TimeOfDay hours mins secs = timeToTimeOfDay dt

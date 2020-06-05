@@ -17,6 +17,10 @@ Stubbed out:
 - [x] Do something useful with error callbacks from IO Drivers.
 - [ ] Make sure replay progress bars go to stderr.
 
+Bugs:
+
+- [ ] In non-daemon-mode, ^D doesn't bring down Urbit properly.
+
 King-Haskell specific features:
 
 - [x] Re-implement `collectFX` flow in Serf/Pier.
@@ -73,6 +77,7 @@ Polish:
   - Next, same thing for ames.
   - Next, same thing for eyre.
 
+
 # Better IO Driver Startup Flow Separation
 
 Should have a io-driver-boot stage.
@@ -81,3 +86,20 @@ Should have a io-driver-boot stage.
 - When they're done, they signal that they're running.
 - No semantically important communication without outside world can
   happen until all drivers are up.
+
+Something like:
+
+```
+data DriverConfig = DriverConfig
+  { onAllDriversUp :: STM ()
+  }
+
+data DriverApi = DriverApi
+  { eventQueue   :: STM (Maybe RunReq)
+  , effectSink   :: Effect -> STM ()
+  , blockUntilUp :: STM ()
+  , killDriver   :: STM ()
+  }
+
+type Driver = DriverConfig -> RIO e DriverApi
+```
