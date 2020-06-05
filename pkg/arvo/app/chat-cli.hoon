@@ -34,7 +34,7 @@
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
       timez=(pair ? @ud)                            ::  timezone adjustment
-      cli=state=sole-share:sole-sur                 ::  console state
+      cli=state=sole-share:sole                     ::  console state
       eny=@uvJ                                      ::  entropy
   ==
 ::
@@ -48,7 +48,7 @@
       settings=(set term)                           ::  frontend flags
       width=@ud                                     ::  display width
       timez=(pair ? @ud)                            ::  timezone adjustment
-      cli=state=sole-share:sole-sur                 ::  console state
+      cli=state=sole-share:sole                     ::  console state
       eny=@uvJ                                      ::  entropy
   ==
 ::
@@ -124,7 +124,7 @@
     =^  cards  state
       ?+  mark        (on-poke:def mark vase)
         %noun         (poke-noun:tc !<(* vase))
-        %sole-action  (poke-sole-action:tc !<(sole-action:sole-sur vase))
+        %sole-action  (poke-sole-action:tc !<(sole-action:sole vase))
       ==
     [cards this]
   ::
@@ -288,7 +288,7 @@
 ::
 ++  poke-sole-action
   ::TODO  use id.act to support multiple separate sessions
-  |=  [act=sole-action:sole-sur]
+  |=  [act=sole-action:sole]
   ^-  (quip card _state)
   (sole:sh-in act)
 ::  +peer: accept only cli subscriptions from ourselves
@@ -305,7 +305,7 @@
   ::  display a fresh prompt
   :-  [prompt:sh-out ~]
   ::  start with fresh sole state
-  state(state.cli *sole-share:sole-sur)
+  state(state.cli *sole-share:sole)
 ::  +handle-invite-update: get new invites
 ::
 ++  handle-invite-update
@@ -433,7 +433,7 @@
   ::  +sole: apply sole action
   ::
   ++  sole
-    |=  act=sole-action:sole-sur
+    |=  act=sole-action:sole
     ^-  (quip card _state)
     ?-  -.dat.act
       %det  (edit +.dat.act)
@@ -489,7 +489,7 @@
     =|  moves=(list card)
     =?  moves  ?=(^ options)
       [(tab:sh-out options) moves]
-    =|  fxs=(list sole-effect:sole-sur)
+    =|  fxs=(list sole-effect:sole)
     |-  ^-  (quip card _state)
     ?~  to-send
       [(flop moves) state]
@@ -506,7 +506,7 @@
   ::    applies the change and does sanitizing.
   ::
   ++  edit
-    |=  cal=sole-change:sole-sur
+    |=  cal=sole-change:sole
     ^-  (quip card _state)
     =^  inv  state.cli  (~(transceive sole-lib state.cli) cal)
     =+  fix=(sanity inv buf.state.cli)
@@ -525,20 +525,20 @@
   ::    if invalid, produces error correction description, for use with +slug.
   ::
   ++  sanity
-    |=  [inv=sole-edit:sole-sur buf=(list @c)]
-    ^-  [lit=(list sole-edit:sole-sur) err=(unit @u)]
+    |=  [inv=sole-edit:sole buf=(list @c)]
+    ^-  [lit=(list sole-edit:sole) err=(unit @u)]
     =+  res=(rose (tufa buf) read)
     ?:  ?=(%& -.res)  [~ ~]
     [[inv]~ `p.res]
   ::  +slug: apply error correction to prompt input
   ::
   ++  slug
-    |=  [lit=(list sole-edit:sole-sur) err=(unit @u)]
+    |=  [lit=(list sole-edit:sole) err=(unit @u)]
     ^-  (quip card _state)
     ?~  lit  [~ state]
     =^  lic  state.cli
       %-  ~(transmit sole-lib state.cli)
-      ^-  sole-edit:sole-sur
+      ^-  sole-edit:sole
       ?~(t.lit i.lit [%mor lit])
     :_  state
     :_  ~
@@ -1139,7 +1139,7 @@
   ::  +effect: console effect card
   ::
   ++  effect
-    |=  fec=sole-effect:sole-sur
+    |=  fec=sole-effect:sole
     ^-  card
     ::TODO  don't hard-code session id 'drum' here
     [%give %fact ~[/sole/drum] %sole-effect !>(fec)]
@@ -1327,7 +1327,7 @@
   ::  +activate: produce sole-effect for printing message details
   ::
   ++  render-activate
-    ^-  sole-effect:sole-sur
+    ^-  sole-effect:sole
     ~[%mor [%tan meta] body]
   ::  +meta: render message metadata (serial, timestamp, author, target)
   ::
@@ -1340,7 +1340,7 @@
   ::  +body: long-form render of message contents
   ::
   ++  body
-    |-  ^-  sole-effect:sole-sur
+    |-  ^-  sole-effect:sole
     ?-  -.letter
         ?(%text %me)
       =/  pre=tape  ?:(?=(%me -.letter) "@ " "")
@@ -1352,7 +1352,7 @@
         %code
       =/  texp=tape  ['>' ' ' (trip expression.letter)]
       :-  %mor
-      |-  ^-  (list sole-effect:sole-sur)
+      |-  ^-  (list sole-effect:sole)
       ?:  =("" texp)  [tan+output.letter ~]
       =/  newl  (find "\0a" texp)
       ?~  newl  [txt+texp $(texp "")]

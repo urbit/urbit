@@ -1,7 +1,4 @@
-/-  sur=chat-store
 ^?
-=<  [sur .]
-=,  sur
 |%
 ++  chat-scry
   |=  [bol=bowl:gall pax=path]

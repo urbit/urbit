@@ -1,4 +1,4 @@
-/-  *invite-store, hook=chat-pull-hook
+/-  *invite-store, *chat-store, hook=chat-pull-hook
 /+  default-agent, verb, dbug, store=chat-store, *userspace
 |%
 +$  card  card:agent:gall
@@ -53,7 +53,7 @@
       =/  chat-path  [%mailbox path.act]
       :_  this
       [%pass chat-path %agent [ship.act %chat-push-hook] %watch chat-path]~
-    =/  mailbox=(unit mailbox:store)  (chat-scry:store bowl path.act)
+    =/  mailbox=(unit mailbox)  (chat-scry:store bowl path.act)
     =/  backlog=path
       :-  %backlog
       %+  weld  path.act
@@ -124,7 +124,7 @@
       ?.  (~(has by tracking) rid)  [~ this]
       ~&  %chat-pull-hook-resubscribe
       =/  =ship  (~(got by tracking) rid)
-      =/  mailbox=(unit mailbox:store)  (chat-scry:store bowl t.wire)
+      =/  mailbox=(unit mailbox)  (chat-scry:store bowl t.wire)
       =/  chat-history
         %+  welp  backlog+t.wire
         ?~(mailbox /0 /(scot %ud (lent envelopes.u.mailbox)))
@@ -163,12 +163,12 @@
       %fact
     |^
     ?+  p.cage.sign  (on-agent:def wire sign)
-        %chat-update    (fact-chat-update !<(update:store q.cage.sign))
+        %chat-update    (fact-chat-update !<(chat-update q.cage.sign))
         %invite-update  (fact-invite-update !<(invite-update q.cage.sign))
     ==
     ::
     ++  fact-chat-update
-      |=  =update:store
+      |=  =chat-update
       ^-  (quip card _this)
       |^
       ?+  -.update   [~ this]
@@ -220,7 +220,7 @@
       ==
       ::
       ++  chat-poke
-        |=  act=action:store
+        |=  act=chat-action
         ^-  card
         [%pass / %agent [our.bowl %chat-store] %poke %chat-action !>(act)]
       --

@@ -54,12 +54,8 @@
   $%  [%launch-action [@tas path @t]]
       [%chat-action chat-action]
       [%group-action group-action]
-<<<<<<< HEAD
-      [%chat-hook-action chat-hook-action]
-=======
       [%chat-push-hook-action action:pull-hook]
       [%chat-pull-hook-action action:pull-hook]
->>>>>>> chat: incorporate feedback on pr
       [%permission-hook-action permission-hook-action]
       [%permission-group-hook-action permission-group-hook-action]
   ==

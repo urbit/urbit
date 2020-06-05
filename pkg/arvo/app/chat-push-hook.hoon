@@ -1,5 +1,6 @@
-/-  *permission-store, *invite-store, hook=chat-push-hook
+/-  *permission-store, *invite-store, *chat-store hook=chat-push-hook
 /+  default-agent, verb, dbug, store=chat-store, metadata, chat-eval, *userspace
+/+  chjs=chat-json
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -42,14 +43,14 @@
   |^
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
-        %json  (chat-action (action:dejs:store !<(json vase)))
-        %chat-action  (chat-action !<(action:store vase))
+        %json  (chat-action (json-to-action:chjs !<(json vase)))
+        %chat-action  (chat-action !<(chat-action vase))
         %chat-push-hook-action  (chat-push-hook-action !<(action:hook vase))
     ==
   [cards this]
   ::
   ++  chat-action
-    |=  act=action:store
+    |=  act=chat-action
     ^-  (quip card _state)
     ?>  ?=(%message -.act)
     :_  state
@@ -162,7 +163,7 @@
       ==
       %watch-ack              (watch-ack wire p.sign)
       %fact  ?+  p.cage.sign  (on-agent:def wire sign)
-          %chat-update        (fact-chat-update !<(update:store q.cage.sign))
+          %chat-update        (fact-chat-update !<(chat-update q.cage.sign))
           %permission-update  (fact-perm-update !<(permission-update q.cage.sign))
   ==  ==
   ::
@@ -175,7 +176,7 @@
     ~&  store-kick+wire
     ?.  (~(has in sharing) (path-to-rid t.wire))  [~ this]
     ~&  %chat-store-resubscribe
-    =/  mailbox=(unit mailbox:store)
+    =/  mailbox=(unit mailbox)
       (chat-scry:store bowl t.wire)
     :_  this
     [%pass wire %agent [our.bowl %chat-store] %watch [%mailbox t.wire]]~
@@ -190,7 +191,7 @@
     [%pass / %agent [our.bowl %chat-push-hook] pok]~
   ::
   ++  fact-chat-update
-    |=  =update:store
+    |=  =chat-update
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
     ?+  -.update     [~ this]
