@@ -67,7 +67,7 @@ export class LinkItem extends Component {
         classes={(member ? 'mix-blend-diff' : '')}
         />;
     return (
-      <div className="w-100 pv3 flex bg-white bg-gray0-d">
+      <div className="w-100 pv3 flex bg-white bg-gray0-d lh-solid">
       {img}
         <div className="flex flex-column ml2 flex-auto">
           <a href={props.url}
@@ -80,7 +80,7 @@ export class LinkItem extends Component {
             </p>
             <span className="gray2 dib v-btm ml2 f8 flex-shrink-0">{hostname} ↗</span>
           </a>
-          <div className="w-100 pt1">
+          <div className="w-100">
             <span className={'f9 pr2 dib ' + mono}
             title={props.ship}
             >
