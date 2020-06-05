@@ -1,10 +1,12 @@
-/+  store=graph-store, default-agent, dbug
+/+  store=graph-store, *or-map, default-agent, dbug
 |%
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
   ==
 +$  state-0  [%0 network:store]
+::
+++  orm  ((or-map atom:store node:store) lth)
 --
 ::
 =|  state-0
@@ -73,10 +75,10 @@
         :_  state
         (give [/all]~ [%add-nodes nodes])
       =*  resource       -.i.resource-list
-      =*  indexed-nodes  +.i.resource-list
-      =/  graph=(unit graph)  (~(get by graphs) resource)
+      =/  indexed-nodes=(map index:store node:store)  +.i.resource-list
+      =/  graph=(unit graph:store)  (~(get by graphs) resource)
       ?~  graph
-        ~|  "graph {<resource>} does not exist to add a node to!"
+        ~&  "graph {<resource>} does not exist to add a node to!"
         $(resource-list t.resource-list)
       %_  $
           resource-list  t.resource-list
@@ -107,36 +109,38 @@
         ?~  index  graph
         =*  atom   i.index
         ::  last index in list
+        ::
         ?~  t.index  (put:orm graph atom node)
         ::  multiple indices left in list
-        ::  TODO: replace normal map function with ordered-map version
-        ::  of get. look at find-ducts in behn
-        =/  parent=(unit node)  (~(get by graph) atom)
+        ::
+        =/  parent=(unit node:store)  (get:orm graph atom)
         ?~  parent
-          ~|  "{<atom>} does not exist to add a node to!"
+          ~&  "index does not exist to add a node to!"
           graph
-        ?+  -.children.u.parent
+        =/  par=node:store  (need parent)
+        ?+  -.children.par
           ::  replace empty graph with graph containing one child
+          ::
           %^  put:orm
               graph
             atom
-          %_  u.parent
+          %=  par
               children
+            ^-  internal-graph:store
             [%graph $(graph (gas:orm ~ ~), index t.index) now.bowl]
           ==
         ::
             %graph
           :: recurse into children
+          ::
           %^  put:orm
               graph
             atom
-          %_  u.parent
-              p.children  $(graph p.children.u.parent, index t.index)
+          %_  par
+              p.children  $(graph p.children.par, index t.index)
               q.children  now.bowl
           ==
         ==
-      ::
-      ++  orm  ((ordered-map atom:store node:store) lth)
       --
     ::
     ++  remove-nodes

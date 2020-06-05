@@ -16,12 +16,12 @@
 ::
 +$  graph  ((mop atom node) lth)
 +$  internal-graph
-  $~  [%not-loaded ~]
+  $~  [%empty ~]
   $%  ::
       ::  a graph and timestamp of when it was last modified
       [%graph p=graph q=time]
-      [%empty-when-fetched p=time]
-      [%not-loaded ~]
+      [%empty ~]
+      [%empty-at-time p=time]
   ==
 ::
 +$  node   [=post children=internal-graph]
