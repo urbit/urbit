@@ -41,7 +41,7 @@ export class Notebook extends Component {
 
   componentDidUpdate(prevProps) {
     const { props } = this;
-    if (prevProps && prevProps.api !== props.api) {
+    if ((prevProps && (prevProps.api !== props.api)) || props.api) {
       const notebook = props.notebooks?.[props.ship]?.[props.book];
       if (!notebook?.subscribers) {
         props.api.fetchNotebook(props.ship, props.book);
@@ -50,6 +50,7 @@ export class Notebook extends Component {
   }
 
   componentDidMount() {
+    this.componentDidUpdate();
     const notebook = this.props.notebooks?.[this.props.ship]?.[this.props.book];
     if (notebook?.notes) {
       this.onScroll();
