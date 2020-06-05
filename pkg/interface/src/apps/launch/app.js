@@ -23,7 +23,7 @@ export default class LaunchApp extends React.Component {
   }
 
   componentDidMount() {
-    window.title = 'OS1 - Home';
+    document.title = 'OS1 - Home';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 

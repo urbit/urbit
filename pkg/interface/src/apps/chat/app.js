@@ -32,7 +32,7 @@ export default class ChatApp extends React.Component {
   }
 
   componentDidMount() {
-    window.title = 'OS1 - Chat';
+    document.title = 'OS1 - Chat';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
@@ -74,7 +74,7 @@ export default class ChatApp extends React.Component {
     });
 
     if (totalUnreads !== this.totalUnreads) {
-      document.title = totalUnreads > 0 ? `Chat - (${totalUnreads})` : 'Chat';
+      document.title = totalUnreads > 0 ? `OS1 - Chat (${totalUnreads})` : 'OS1 - Chat';
       this.totalUnreads = totalUnreads;
     }
 

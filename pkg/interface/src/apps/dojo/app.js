@@ -28,7 +28,7 @@ export default class DojoApp extends Component {
   }
 
   componentDidMount() {
-    window.title = 'OS1 - Dojo';
+    document.title = 'OS1 - Dojo';
 
     const channel = new this.props.channel();
     this.api = new Api(this.props.ship, channel);

@@ -29,7 +29,7 @@ export class LinksApp extends Component {
   }
 
   componentDidMount() {
-    window.title = 'OS1 - Groups';
+    document.title = 'OS1 - Links';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
@@ -73,7 +73,7 @@ export class LinksApp extends Component {
     );
 
     if(totalUnseen !== this.totalUnseen) {
-      document.title = totalUnseen !== 0 ? `Links - (${totalUnseen})` : 'Links';
+      document.title = totalUnseen !== 0 ? `OS1 - Links (${totalUnseen})` : 'OS1 - Links';
       this.totalUnseen = totalUnseen;
     }
 

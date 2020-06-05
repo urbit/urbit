@@ -31,7 +31,7 @@ export default class PublishApp extends React.Component {
   }
 
   componentDidMount() {
-    window.title = 'OS1 - Groups';
+    document.title = 'OS1 - Publish';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
@@ -70,7 +70,7 @@ export default class PublishApp extends React.Component {
       .value();
 
     if (this.unreadTotal !== unreadTotal) {
-      window.title = unreadTotal > 0 ? `Publish - (${unreadTotal})` : 'Publish';
+      document.title = unreadTotal > 0 ? `OS1 - Publish (${unreadTotal})` : 'OS1 - Publish';
       this.unreadTotal = unreadTotal;
     }
 

@@ -23,7 +23,7 @@ export default class GroupsApp extends Component {
   }
 
   componentDidMount() {
-    window.title = 'OS1 - Groups';
+    document.title = 'OS1 - Groups';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
