@@ -4,7 +4,11 @@
 +$  index       (list atom)
 +$  uid         [=resource =index]
 ::
-+$  hash        @ux
++$  hash
+  $%  [%sha256 p=@ux]
+      [%murmur3 p=@ux]
+  ==
+::
 +$  signature   @ux
 +$  signatures  (set signature)
 +$  post

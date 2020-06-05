@@ -14,7 +14,7 @@
       tag-queries=(map term resources)
   ==
 ::
-+$  graph  ((mop atom node) lte)
++$  graph  ((mop atom node) lth)
 +$  internal-graph
   $~  [%not-loaded ~]
   $%  ::
@@ -29,7 +29,7 @@
   $%  [%add-graph =resource =graph]
       [%remove-graph =resource]
     ::
-      [%add-nodes nodes=(map uid node)]
+      [%add-nodes nodes=(map resource (map index node))]
       [%remove-nodes uids=(set uid)]
     ::
       [%add-signatures =uid =signatures]

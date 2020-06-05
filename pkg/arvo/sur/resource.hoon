@@ -4,7 +4,8 @@
 ::
 +$  entity
   $@  ship
-  $%  [%ships ships=(set ship)]
+  $%  [%empty ~]
+      ::  [%ships ships=(set ship)]
       ::  [%ring ...]
   ==
 --
