@@ -38,6 +38,7 @@ data SingJet
   | PAK
   | ZER
   | EQL
+  | LET
   | LTH
   | ADD
   | INC

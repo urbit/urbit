@@ -89,6 +89,7 @@ pattern Eql = N (M (MS EQL) 2 [])
 pattern Zer = N (M (MS ZER) 1 [])
 pattern Pak = N (M (MS PAK) 1 [])
 pattern Seq = N (M (MS SEQ) 2 [])
+pattern Let = N (M (MS LET) 2 [])
 pattern Iff = N (M (MS IFF) 3 [])
 
 pattern Fix = N (M (MS FIX) 2 [])
@@ -134,7 +135,6 @@ instance Uruk Exp where
   uSen p = N $ M (MD $ Sn $ fromIntegral p) (fromIntegral $ p+2) []
   uSea p = N $ M (MD $ Cn $ fromIntegral p) (fromIntegral $ p+2) []
   uEye p = N $ M (MD $ In $ fromIntegral p) (fromIntegral $ p) []
-
   uNat n = N $ M (MD $ NAT n) 2 []
 
   uBol True  = Yes
@@ -143,6 +143,7 @@ instance Uruk Exp where
   uUni = Uni
   uCon = ConC
   uSeq = Seq
+  uLet = Let
   uCas = Cas
   uFix = Fix
   uIff = Iff
@@ -279,6 +280,7 @@ runJet = curry \case
   (MD (In  n), [f]      ) -> Just f
   (MD (In  n), f:xs     ) -> Just (foldl' (:&) f xs)
   (MS SEQ    , [x, y]   ) -> Just y
+  (MS LET    , [x, f]   ) -> Just (f :& x)
   (MS FIX    , [f,x]    ) -> Just (f :& (Fix :& f) :& x)
   (MS IFF    , [c,t,e]  ) -> goIff c t e
   (MS PAK    , [_]      ) -> Nothing
@@ -316,6 +318,7 @@ runJet = curry \case
   (MD (Sn  _), _        ) -> badArgs
   (MD (In  _), _        ) -> badArgs
   (MS SEQ    , _        ) -> badArgs
+  (MS LET    , _        ) -> badArgs
   (MS FIX    , _        ) -> badArgs
   (MS IFF    , _        ) -> badArgs
   (MS PAK    , _        ) -> badArgs

@@ -27,6 +27,8 @@ jetSpec = [r|
 ++  1  (J J K (sksucc skzero))
 ++  2  (J J K (sksucc (sksucc skzero)))
 
+++  (let x y)  (y x)
+
 ++  zee
   |=  f
   %-  <x (f <v (x x v)>)>
