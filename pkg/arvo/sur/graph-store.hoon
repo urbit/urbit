@@ -30,7 +30,7 @@
       [%remove-graph =resource]
     ::
       [%add-nodes nodes=(map resource (map index node))]
-      [%remove-nodes uids=(set uid)]
+      [%remove-nodes nodes=(jug resource index)]
     ::
       [%add-signatures =uid =signatures]
       [%remove-signatures =uid =signatures]

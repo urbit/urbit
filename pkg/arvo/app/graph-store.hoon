@@ -144,9 +144,71 @@
       --
     ::
     ++  remove-nodes
-      |=  uids=(set uid:store)
+      |=  nodes=(jug resource:store index:store)
       ^-  (quip card _state)
-      [~ state]
+      =/  resource-list=(list [resource:store (set index:store)])
+        ~(tap by nodes)
+      |^
+      ?~  resource-list
+        :_  state
+        (give [/all]~ [%remove-nodes nodes])
+      =*  resource       -.i.resource-list
+      =/  graph=(unit graph:store)  (~(get by graphs) resource)
+      ?~  graph
+        ~&  "graph {<resource>} does not exist to add a node to!"
+        $(resource-list t.resource-list)
+      %_  $
+          resource-list  t.resource-list
+          graphs
+        %+  ~(put by graphs)
+          resource
+        (remove-indices resource u.graph ~(tap in +.i.resource-list))
+      ==
+      ::
+      ++  remove-indices
+        |=  [=resource:store =graph:store indices=(list index:store)]
+        ^-  graph:store
+        |-
+        ?~  indices  graph
+        %_  $
+            indices  t.indices
+            graph    (remove-index graph i.indices)
+        ==
+      ::
+      ++  remove-index
+        |=  [=graph:store =index:store]
+        ^-  graph:store
+        ?~  index  graph
+        =*  atom   i.index
+        ::  last index in list
+        ::
+        ?~  t.index
+          =/  node-and-graph=[(unit node:store) graph:store]
+            (del:orm graph atom)
+          +.node-and-graph
+        ::  multiple indices left in list
+        ::
+        =/  parent=(unit node:store)  (get:orm graph atom)
+        ?~  parent
+          ~&  "index does not exist to remove a node from!"
+          graph
+        =/  par=node:store  (need parent)
+        ?+  -.children.par
+          ~&  "child index does not exist to remove a node from!"
+          graph
+        ::
+            %graph
+          :: recurse into children
+          ::
+          %^  put:orm
+              graph
+            atom
+          %_  par
+              p.children  $(graph p.children.par, index t.index)
+              q.children  now.bowl
+          ==
+        ==
+      --
     ::
     ++  add-signatures
       |=  [=uid:store =signatures:store]
