@@ -69,33 +69,23 @@ export class GroupSidebar extends Component {
           return true;
         }
         const selectedPaths = selectedGroups.map(((e) => {
- return e[0];
-}));
+        return e[0];
+      }));
         return (selectedPaths.includes(path));
       })
       .sort((a, b) => {
         let aName = a.substr(1);
         let bName = b.substr(1);
-        const aChannel = `${a}/contacts${a}`;
-        const bChannel = `${b}/contacts${b}`;
-        if (
-          props.associations[a] &&
-          props.associations[a][aChannel] &&
-          props.associations[a][aChannel].metadata
-        ) {
+        if (props.associations.contacts?.[a]?.metadata) {
           aName =
-            props.associations[a][aChannel].metadata.title !== ''
-              ? props.associations[a][aChannel].metadata.title
+            props.associations.contacts[a].metadata.title !== ''
+              ? props.associations.contacts[a].metadata.title
               : a.substr(1);
         }
-        if (
-          props.associations[b] &&
-          props.associations[b][bChannel] &&
-          props.associations[b][bChannel].metadata
-        ) {
+        if (props.associations.contacts?.[b]?.metadata) {
           bName =
-            props.associations[b][bChannel].metadata.title !== ''
-              ? props.associations[b][bChannel].metadata.title
+            props.associations.contacts[b].metadata.title !== ''
+              ? props.associations.contacts[b].metadata.title
               : b.substr(1);
         }
 
@@ -104,15 +94,10 @@ export class GroupSidebar extends Component {
       .map((path) => {
         let name = path.substr(1);
         const selected = props.selected === path;
-        const groupChannel = `${path}/contacts${path}`;
-        if (
-          props.associations[path] &&
-          props.associations[path][groupChannel] &&
-          props.associations[path][groupChannel].metadata
-        ) {
+        if (props.associations.contacts?.[path]?.metadata) {
           name =
-            props.associations[path][groupChannel].metadata.title !== ''
-              ? props.associations[path][groupChannel].metadata.title
+            props.associations.contacts[path].metadata.title !== ''
+              ? props.associations.contacts[path].metadata.title
               : path.substr(1);
         }
         return (

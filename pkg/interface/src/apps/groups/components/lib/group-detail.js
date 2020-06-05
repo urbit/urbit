@@ -18,11 +18,10 @@ export class GroupDetail extends Component {
 
   componentDidMount() {
     const { props } = this;
-    const channelPath = `${props.path}/contacts${props.path}`;
-    if ((props.association) && (props.association[channelPath])) {
+    if (props.association.metadata) {
       this.setState({
-        title: props.association[channelPath].metadata.title,
-        description: props.association[channelPath].metadata.description
+        title: props.association.metadata.title,
+        description: props.association.metadata.description
       });
     }
   }
@@ -30,11 +29,10 @@ export class GroupDetail extends Component {
   componentDidUpdate(prevProps) {
     const { props } = this;
     if (prevProps !== this.props) {
-      const channelPath = `${props.path}/contacts${props.path}`;
-      if ((props.association) && (props.association[channelPath])) {
+      if (props.association.metadata) {
         this.setState({
-          title: props.association[channelPath].metadata.title,
-          description: props.association[channelPath].metadata.description
+          title: props.association.metadata.title,
+          description: props.association.metadata.description
         });
       }
     }
@@ -54,77 +52,73 @@ export class GroupDetail extends Component {
     const responsiveClass =
       props.activeDrawer === 'detail' ? 'db ' : 'dn db-ns ';
 
-    const isEmpty = (Object.keys(props.association).length === 0) ||
-      ((Object.keys(props.association).length === 1) &&
-        (Object.keys(props.association)[0].includes('contacts')));
+    let channelList = [];
 
-    let channelList = (<div />);
+    Object.keys(props.associations).filter((app) => {
+      return app !== 'contacts';
+    }).map((app) => {
+      Object.keys(props.associations[app]).filter((channel) => {
+        return props.associations[app][channel]['group-path'] === props.association['group-path'];
+      })
+      .map((channel) => {
+        const channelObj = props.associations[app][channel];
+        const title =
+        channelObj.metadata?.title || channelObj['app-path'] || '';
 
-    channelList = Object.keys(props.association).sort((a, b) => {
-      const aChannel = props.association[a];
-      const bChannel = props.association[b];
-
-      const aTitle = aChannel.metadata.title || a;
-      const bTitle = bChannel.metadata.title || b;
-
-      return aTitle.toLowerCase().localeCompare(bTitle.toLowerCase());
-    }).map((key) => {
-      const channel = props.association[key];
-      if (!('metadata' in channel)) {
-        return <div key={channel} />;
-      }
-
-      if (channel['app-name'] === 'contacts') {
-        return <div key={channel} />;
-      }
-
-      const title = channel.metadata.title || channel['app-path'] || '';
-      const color = uxToHex(channel.metadata.color) || '000000';
-      let app = channel['app-name'] || 'Unknown';
-      const channelPath = channel['app-path'];
-      const link = `/~${app}/join${channelPath}`;
-      app = app.charAt(0).toUpperCase() + app.slice(1);
-
-      const overlay = {
-        r: parseInt(color.slice(0, 2), 16),
-        g: parseInt(color.slice(2, 4), 16),
-        b: parseInt(color.slice(4, 6), 16)
-      };
-
-      const tile = (app === 'Unknown')
-        ? <div className="dib ba pa1" style={{
-        backgroundColor: `#${color}`,
-        borderColor: `#${color}`,
-        height: 24,
-        width: 24 }}
-          />
-        : <div className="ba" style={{
-          borderColor: `#${color}`,
-          backgroundColor: `rgba(${overlay.r}, ${overlay.g}, ${overlay.b}, 0.25)`
-          }}
-          >
-            <img
-            src={`/~groups/img/${app}.png`}
-            className="dib invert-d pa1 v-mid"
-            style={{ height: 26, width: 26 }}
-            />
-        </div>;
-
-      return (
-        <li key={channelPath} className="f9 list flex pv1 w-100">
-          {tile}
-          <div className="flex flex-column flex-auto">
-            <p className="f9 inter ml2 w-100">{title}</p>
-            <p className="f9 inter ml2 w-100">
-              <span className="f9 di mr2 inter">{app}</span>
-              <Link className="f9 di green2" to={link}>
-                Open
-              </Link>
-            </p>
-          </div>
-        </li>
-      );
+        const color = uxToHex(channelObj.metadata?.color) || '000000';
+        const channelPath = channelObj['app-path'];
+        const link = `/~${app}/join${channelPath}`;
+        return(
+          channelList.push({
+            title: title,
+            color: color,
+            app: app.charAt(0).toUpperCase() + app.slice(1),
+            link: link
+          })
+        );
+      });
     });
+
+    const isEmpty = (Boolean(channelList.length === 0));
+
+    if (channelList.length === 0) {
+      channelList = <div />;
+    } else {
+      channelList = channelList.sort((a, b) => {
+        return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+      }).map((each) => {
+        const overlay = {
+          r: parseInt(each.color.slice(0, 2), 16),
+          g: parseInt(each.color.slice(2, 4), 16),
+          b: parseInt(each.color.slice(4, 6), 16)
+        };
+
+        return (
+          <li key={each.link} className="f9 list flex pv1 w-100">
+            <div className="ba" style={{
+              borderColor: `#${each.color}`,
+              backgroundColor: `rgba(${overlay.r}, ${overlay.g}, ${overlay.b}, 0.25)`
+            }}
+            >
+              <img
+                src={`/~groups/img/${each.app.toLowerCase()}.png`}
+                className="dib invert-d pa1 v-mid"
+                style={{ height: 26, width: 26 }}
+              />
+            </div>
+              <div className="flex flex-column flex-auto">
+                <p className="f9 inter ml2 w-100">{each.title}</p>
+                <p className="f9 inter ml2 w-100">
+                  <span className="f9 di mr2 inter">{each.app}</span>
+                  <Link className="f9 di green2" to={each.link}>
+                    Open
+              </Link>
+                </p>
+              </div>
+            </li>
+        );
+      });
+    }
 
     let backLink = props.location.pathname;
     backLink = backLink.slice(0, props.location.pathname.indexOf('/detail'));
@@ -139,13 +133,12 @@ export class GroupDetail extends Component {
 
     let title = props.path.substr(1);
     let description = '';
-    const channel = `${props.path}/contacts${props.path}`;
-    if ((props.association) && (props.association[channel])) {
-      title = (props.association[channel].metadata.title !== '')
-        ? props.association[channel].metadata.title
+    if (props.association?.metadata) {
+      title = (props.association.metadata.title !== '')
+        ? props.association.metadata.title
         : props.path.substr(1);
-      description = (props.association[channel].metadata.description !== '')
-        ? props.association[channel].metadata.description
+      description = (props.association.metadata.description !== '')
+        ? props.association.metadata.description
         : '';
     }
 
@@ -181,10 +174,7 @@ export class GroupDetail extends Component {
 
     const groupOwner = (deSig(props.match.params.ship) === window.ship);
 
-    const channelPath = `${props.path}/contacts${props.path}`;
-
-    const association = ((props.association) && (props.association[channelPath]))
-      ? props.association[channelPath] : {};
+    const association = props.association;
 
     const deleteButtonClasses = (groupOwner) ? 'b--red2 red2 pointer bg-gray0-d' : 'b--gray3 gray3 bg-gray0-d c-default';
 
@@ -208,7 +198,7 @@ export class GroupDetail extends Component {
               onBlur={() => {
                 if (groupOwner) {
                   this.setState({ awaiting: true }, (() => {
-                    props.api.metadataAdd(
+                    props.api.metadata.add(
                       association['app-path'],
                       association['group-path'],
                       this.state.title,
@@ -237,7 +227,7 @@ export class GroupDetail extends Component {
               onBlur={() => {
                 if (groupOwner) {
                   this.setState({ awaiting: true }, (() => {
-                    props.api.metadataAdd(
+                    props.api.metadata.add(
                       association['app-path'],
                       association['group-path'],
                       association.metadata.title,

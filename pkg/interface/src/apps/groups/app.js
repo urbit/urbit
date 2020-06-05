@@ -121,8 +121,8 @@ export default class GroupsApp extends Component {
               const detail = Boolean(props.match.url.includes('/detail'));
               const settings = Boolean(props.match.url.includes('/settings'));
 
-              const association = (associations[groupPath])
-                ? associations[groupPath]
+              const association = (associations.contacts?.[groupPath])
+                ? associations.contacts[groupPath]
                 : {};
 
               return (
@@ -152,6 +152,7 @@ export default class GroupsApp extends Component {
                     group={group}
                     activeDrawer={(detail || settings) ? 'detail' : 'contacts'}
                     settings={settings}
+                    associations={associations}
                     api={this.api}
                     {...props}
                   />

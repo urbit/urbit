@@ -24,6 +24,10 @@ export default class GroupsApi {
       remove: helper.groupRemove.bind(helper)
     };
 
+    this.metadata = {
+      add: helper.metadataAdd.bind(helper)
+    };
+
     this.invite = {
       accept: helper.inviteAccept.bind(helper),
       decline: helper.inviteDecline.bind(helper)
