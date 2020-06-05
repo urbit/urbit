@@ -620,12 +620,14 @@
         ?~  t.t.t.wire
           =/  full-wire  sys+wire
           =/  stand
-            %+  ~(gut by outstanding.agents.state)  [full-wire hen]
-            ::  default is do nothing; should only hit if cleared queue
-            ::  in +load 3-to-4
-            ::
+            (~(gut by outstanding.agents.state) [full-wire hen] ~)
+          ::
+          ::  default is to send both ack types; should only hit if
+          ::  cleared queue in +load 3-to-4 or +load-4-to-5
+          ::
+          =?  stand  ?=(~ stand)
             (~(put to *(qeu remote-request)) %missing)
-          ~|  [full-wire=full-wire hen=hen stand=stand outs=outstanding.agents.state]
+          ~|  [full-wire=full-wire hen=hen stand=stand]
           =^  rr  stand  ~(get to stand)
           [rr (~(put by outstanding.agents.state) [full-wire hen] stand)]
         ::  non-null case of wire is old, remove on next breach after
