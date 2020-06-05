@@ -20,18 +20,21 @@ export class EditPost extends Component {
   }
 
   componentDidMount() {
-    const { props } = this;
-    if (!(props.notebooks[props.ship]) ||
-      !(props.notebooks[props.ship][props.book]) ||
-      !(props.notebooks[props.ship][props.book].notes[props.note]) ||
-      !(props.notebooks[props.ship][props.book].notes[props.note].file)) {
-      this.props.api.fetchNote(props.ship, props.book, props.note);
-    } else {
-      const notebook = props.notebooks[props.ship][props.book];
-      const note = notebook.notes[props.note];
-      const file = note.file;
-      const body = file.slice(file.indexOf(';>') + 3);
-      this.setState({ body: body });
+    this.componentDidUpdate();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { props, state } = this;
+    if (prevProps && prevProps.api !== props.api) {
+      if (!(props.notebooks[props.ship]?.[props.book]?.notes?.[props.note]?.file)) {
+        props.api?.fetchNote(props.ship, props.book, props.note);
+      } else if (state.body === '') {
+        const notebook = props.notebooks[props.ship][props.book];
+        const note = notebook.notes[props.note];
+        const file = note.file;
+        const body = file.slice(file.indexOf(';>') + 3);
+        this.setState({ body: body });
+      }
     }
   }
 
@@ -50,7 +53,7 @@ export class EditPost extends Component {
       }
     };
     this.setState({ awaiting: true });
-    this.props.api.action('publish', 'publish-action', editNote).then(() => {
+    this.props.api.publishAction(editNote).then(() => {
       const editIndex = props.location.pathname.indexOf('/edit');
       const noteHref = props.location.pathname.slice(0, editIndex);
       this.setState({ awaiting: false });
@@ -112,7 +115,7 @@ export class EditPost extends Component {
           to={popoutHref}
           target="_blank"
         >
-          <img src="/~publish/popout.png"
+          <img src="/~landscape/img/popout.png"
             height={16}
             width={16}
           />

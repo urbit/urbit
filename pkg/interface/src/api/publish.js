@@ -1,10 +1,8 @@
 import BaseApi from './base';
 
-
 export default class PublishApi extends BaseApi {
-
   handleEvent(data) {
-    this.store.handleEvent({ data: { 'publish-response' : data }});
+    this.store.handleEvent({ data: { 'publish-response' : data } });
   }
 
   fetchNotebooks() {
@@ -74,6 +72,10 @@ export default class PublishApi extends BaseApi {
         length: length
       });
     });
+  }
+
+  publishAction(act) {
+    return this.action('publish', 'publish-action', act);
   }
 
   sidebarToggle() {

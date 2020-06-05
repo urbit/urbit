@@ -24,13 +24,13 @@ export class Notebook extends Component {
     if (scrollHeight - scrollTop - clientHeight < 40) {
       atBottom = true;
     }
-    if (!notebook.notes) {
+    if (!notebook.notes && this.props.api) {
       this.props.api.fetchNotebook(this.props.ship, this.props.book);
       return;
     }
 
-    const loadedNotes = Object.keys(notebook.notes).length;
-    const allNotes = notebook['notes-by-date'].length;
+    const loadedNotes = Object.keys(notebook?.notes).length || 0;
+    const allNotes = notebook?.['notes-by-date'].length || 0;
 
     const fullyLoaded = (loadedNotes === allNotes);
 
@@ -39,20 +39,19 @@ export class Notebook extends Component {
     }
   }
 
-  componentWillMount() {
-    this.props.api.fetchNotebook(this.props.ship, this.props.book);
-  }
-
   componentDidUpdate(prevProps) {
-    const notebook = this.props.notebooks[this.props.ship][this.props.book];
-    if (!notebook.subscribers) {
-      this.props.api.fetchNotebook(this.props.ship, this.props.book);
+    const { props } = this;
+    if (prevProps && prevProps.api !== props.api) {
+      const notebook = props.notebooks?.[props.ship]?.[props.book];
+      if (!notebook?.subscribers) {
+        props.api.fetchNotebook(props.ship, props.book);
+      }
     }
   }
 
   componentDidMount() {
-    const notebook = this.props.notebooks[this.props.ship][this.props.book];
-    if (notebook.notes) {
+    const notebook = this.props.notebooks?.[this.props.ship]?.[this.props.book];
+    if (notebook?.notes) {
       this.onScroll();
     }
   }
@@ -78,7 +77,7 @@ export class Notebook extends Component {
 
     const hiddenOnPopout = props.popout ? '' : 'dib-m dib-l dib-xl';
 
-    const notebook = props.notebooks[props.ship][props.book];
+    const notebook = props.notebooks?.[props.ship]?.[props.book];
 
     const tabStyles = {
       posts: 'bb b--gray4 b--gray2-d gray2 pv4 ph2',
@@ -91,8 +90,8 @@ export class Notebook extends Component {
     let inner = null;
     switch (props.view) {
       case 'posts': {
-        const notesList = notebook['notes-by-date'] || [];
-        const notes = notebook.notes || null;
+        const notesList = notebook?.['notes-by-date'] || [];
+        const notes = notebook?.notes || null;
         inner = <NotebookPosts notes={notes}
                   popout={props.popout}
                   list={notesList}
@@ -103,7 +102,7 @@ export class Notebook extends Component {
         break;
       }
       case 'about':
-        inner = <p className="f8 lh-solid">{notebook.about}</p>;
+        inner = <p className="f8 lh-solid">{notebook?.about}</p>;
         break;
       case 'subscribers':
         inner = <Subscribers
@@ -150,9 +149,9 @@ export class Notebook extends Component {
     const newUrl = base + '/new';
 
     let newPost = null;
-    if (notebook['writers-group-path'] in props.groups) {
-      const writers = notebook['writers-group-path'];
-      if (props.groups[writers].has(window.ship)) {
+    if (notebook?.['writers-group-path'] in props.groups) {
+      const writers = notebook?.['writers-group-path'];
+      if (props.groups?.[writers].has(window.ship)) {
         newPost = (
           <Link
             to={newUrl}
@@ -213,12 +212,12 @@ export class Notebook extends Component {
             to={popoutHref}
             target='_blank'
           >
-            <img src='/~publish/popout.png' height={16} width={16} />
+            <img src='/~landscape/img/popout.png' height={16} width={16} />
           </Link>
           <div className='h-100 pt0 pt8-m pt8-l pt8-xl no-scrollbar'>
             <div className='flex justify-between' style={{ marginBottom: 32 }}>
               <div className='flex-col'>
-                <div className='mb1'>{notebook.title}</div>
+                <div className='mb1'>{notebook?.title}</div>
                 <span>
                   <span className='gray3 mr1'>by</span>
                   <span

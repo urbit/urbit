@@ -40,54 +40,40 @@ export class Note extends Component {
     this.deletePost = this.deletePost.bind(this);
   }
 
-  componentWillMount() {
-    const readAction = {
-      read: {
-        who: this.props.ship.slice(1),
-        book: this.props.book,
-        note: this.props.note
-      }
-    };
-    this.props.api.action('publish', 'publish-action', readAction);
-    this.props.api.fetchNote(this.props.ship, this.props.book, this.props.note);
-  }
-
   componentDidMount() {
-    if (!(this.props.notebooks[this.props.ship]) ||
-      !(this.props.notebooks[this.props.ship][this.props.book]) ||
-      !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note]) ||
-      !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note].file)) {
-      this.props.api.fetchNote(this.props.ship, this.props.book, this.props.note);
-    }
+    this.componentDidUpdate();
     this.onScroll();
   }
 
   componentDidUpdate(prevProps) {
-    if (!(this.props.notebooks[this.props.ship]) ||
-        !(this.props.notebooks[this.props.ship][this.props.book]) ||
-        !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note]) ||
-        !(this.props.notebooks[this.props.ship][this.props.book].notes[this.props.note].file)) {
-      this.props.api.fetchNote(this.props.ship, this.props.book, this.props.note);
-    }
-    if ((prevProps.book !== this.props.book) ||
-        (prevProps.note !== this.props.note) ||
-        (prevProps.ship !== this.props.ship)) {
-      const readAction = {
-        read: {
-          who: this.props.ship.slice(1),
-          book: this.props.book,
-          note: this.props.note
+    const { props } = this;
+    if ((prevProps && prevProps.api !== props.api) || props.api) {
+      if (!(props.notebooks[props.ship]?.[props.book]?.notes?.[props.note]?.file)) {
+        props.api.fetchNote(props.ship, props.book, props.note);
+      }
+
+      if (prevProps) {
+        if ((prevProps.book !== props.book) ||
+          (prevProps.note !== props.note) ||
+          (prevProps.ship !== props.ship)) {
+          const readAction = {
+            read: {
+              who: props.ship.slice(1),
+              book: props.book,
+              note: props.note
+            }
+          };
+          props.api.publishAction(readAction);
         }
-      };
-      this.props.api.action('publish', 'publish-action', readAction);
+      }
     }
   }
 
   onScroll() {
-    const notebook = this.props.notebooks[this.props.ship][this.props.book];
-    const note = notebook.notes[this.props.note];
+    const notebook = this.props.notebooks?.[this.props.ship]?.[this.props.book];
+    const note = notebook?.notes?.[this.props.note];
 
-    if (!note.comments) {
+    if (!note?.comments) {
       return;
     }
 
@@ -123,7 +109,7 @@ export class Note extends Component {
     const popout = (props.popout) ? 'popout/' : '';
     const baseUrl = `/~publish/${popout}notebook/${props.ship}/${props.book}`;
     this.setState({ deleting: true });
-    this.props.api.action('publish', 'publish-action', deleteAction)
+    this.props.api.publishAction(deleteAction)
     .then(() => {
       props.history.push(baseUrl);
     });
@@ -131,12 +117,12 @@ export class Note extends Component {
 
   render() {
     const { props } = this;
-    const notebook = props.notebooks[props.ship][props.book] || {};
-    const comments = notebook.notes[props.note].comments || false;
-    const title = notebook.notes[props.note].title || '';
-    const author = notebook.notes[props.note].author || '';
-    const file = notebook.notes[props.note].file || '';
-    const date = moment(notebook.notes[props.note]['date-created']).fromNow() || 0;
+    const notebook = props.notebooks?.[props.ship]?.[props.book] || {};
+    const comments = notebook?.notes?.[props.note]?.comments || false;
+    const title = notebook?.notes?.[props.note]?.title || '';
+    const author = notebook?.notes?.[props.note]?.author || '';
+    const file = notebook?.notes?.[props.note]?.file || '';
+    const date = moment(notebook.notes?.[props.note]?.['date-created']).fromNow() || 0;
 
     const contact = author.substr(1) in props.contacts
       ? props.contacts[author.substr(1)] : false;
@@ -156,22 +142,24 @@ export class Note extends Component {
     }
 
     const newfile = file.slice(file.indexOf(';>')+2);
-    const prevId = notebook.notes[props.note]['prev-note'] || null;
-    const nextId = notebook.notes[props.note]['next-note'] || null;
+    const prevId = notebook?.notes?.[props.note]?.['prev-note'] || null;
+    const nextId = notebook?.notes?.[props.note]?.['next-note'] || null;
+    const prevDate = moment(notebook?.notes?.[prevId]?.['date-created']).fromNow() || 0;
+    const nextDate = moment(notebook?.notes?.[nextId]?.['date-created']).fromNow() || 0;
 
     const prev = (prevId === null)
       ?  null
       :  {
         id: prevId,
-        title: notebook.notes[prevId].title,
-        date: moment(notebook.notes[prevId]['date-created']).fromNow()
+        title: notebook?.notes?.[prevId]?.title,
+        date: prevDate
       };
       const next = (nextId === null)
         ?  null
         :  {
           id: nextId,
-          title: notebook.notes[nextId].title,
-          date: moment(notebook.notes[nextId]['date-created']).fromNow()
+          title: notebook?.notes?.[nextId]?.title,
+          date: nextDate
         };
 
     let editPost = null;
@@ -218,7 +206,7 @@ export class Note extends Component {
               className={'dn absolute right-1 top-1 ' + hiddenOnPopout}
               target='_blank'
             >
-              <img src='/~publish/popout.png' height={16} width={16} />
+              <img src='/~landscape/img/popout.png' height={16} width={16} />
             </Link>
           </div>
           <div className='w-100 mw6'>
