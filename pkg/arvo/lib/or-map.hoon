@@ -248,6 +248,18 @@
       $(l.b $(b l.b, r.a ~), a r.a)
     $(r.b $(b r.b, l.a ~), a l.a)
   ::
+  ::  +get: get val at key or return ~
+  ::
+  ++  get
+    |=  [a=(tree item) b=key]
+    ^-  (unit val)
+    ?~  a  ~
+    ?:  =(b key.n.a)
+      `val.n.a
+    ?:  (ord b key.n.a)
+      $(a l.a)
+    $(a r.a)
+  ::
   ::  +subset: take a range excluding start and/or end and all elements
   ::  outside the range
   ::

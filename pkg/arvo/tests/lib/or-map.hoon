@@ -1,5 +1,5 @@
 /+  or-map, *test
-
+::
 =/  items-from-keys
   |=  keys=(list @ud)
   %+  turn  keys
@@ -27,6 +27,22 @@
   %+  expect-eq
     !>  test-items
     !>  (tap:atom-map a)
+::
+++  test-ordered-map-get  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  %+  expect-eq
+    !>  [~ [0^%a]]
+    !>  (get:atom-map a 0)
+::
+++  test-ordered-map-sig-get  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  %+  expect-eq
+    !>  ~
+    !>  (get:atom-map a 7)
 ::
 ++  test-ordered-map-pop  ^-  tang
   ::
