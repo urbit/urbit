@@ -256,7 +256,7 @@
     ?~  a  ~
     ?:  =(b key.n.a)
       `val.n.a
-    ?:  (ord b key.n.a)
+    ?:  (compare b key.n.a)
       $(a l.a)
     $(a r.a)
   ::

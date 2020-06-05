@@ -33,8 +33,8 @@
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
   %+  expect-eq
-    !>  [~ [0^%a]]
-    !>  (get:atom-map a 0)
+    !>  [~ %d]
+    !>  (get:atom-map a 3)
 ::
 ++  test-ordered-map-sig-get  ^-  tang
   ::
