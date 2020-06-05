@@ -613,12 +613,12 @@
             ^-  (hypo sign:http-server-gate)  :-  *type
             :*  %g  %unto  %fact
                 %http-response-header
-                !>([307 ['location' '/~/login?redirect=/~landscape/inner-path']~])
+                !>([303 ['location' '/~/login?redirect=/~landscape/inner-path']~])
             ==
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response
-                [%start [307 ['location' '/~/login?redirect=/~landscape/inner-path']~] ~ %.n]
+                [%start [303 ['location' '/~/login?redirect=/~landscape/inner-path']~] ~ %.n]
     ==  ==  ==
   ::  the browser then fetches the login page
   ::
@@ -2160,7 +2160,7 @@
                 %give
                 %response
                 %start
-                :-  307
+                :-  303
                 :~  ['location' '/~landscape']
                     ['set-cookie' cookie-string]
                 ==
