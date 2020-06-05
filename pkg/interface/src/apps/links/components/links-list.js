@@ -26,14 +26,16 @@ export class Links extends Component {
     // and don't have links for it yet,
     // or the links we have might not be complete,
     // request the links for that page.
-    if ( (!prevProps ||
-          linkPage !== prevProps.page ||
-          this.props.resourcePath !== prevProps.resourcePath
-         ) &&
-         !this.props.links[linkPage] ||
-         this.props.links.local[linkPage]
+    if ( ((!prevProps || // first load?
+          linkPage !== prevProps.page || // already waiting on response?
+          this.props.resourcePath !== prevProps.resourcePath // new page?
+         ) ||
+         (prevProps.api !== this.props.api)) // api prop instantiated?
+         &&
+         !this.props.links[linkPage] || // don't have info?
+         this.props.links.local[linkPage] // waiting on post confirmation?
     ) {
-      this.props.api.getPage(this.props.resourcePath, this.props.page);
+      this.props.api?.getPage(this.props.resourcePath, this.props.page);
     }
   }
 
