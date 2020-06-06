@@ -56,7 +56,9 @@ u3_atom
 u3i_chubs(c3_w        a_w,
             const c3_d* b_d)
 {
-  c3_w *b_w = c3_malloc(a_w * 8);
+  //  XX efficiency
+  //
+  c3_w *b_w = u3a_malloc(a_w * 8);
   c3_w i_w;
   u3_atom p;
 
@@ -65,7 +67,7 @@ u3i_chubs(c3_w        a_w,
     b_w[(2 * i_w) + 1] = b_d[i_w] >> 32ULL;
   }
   p = u3i_words((a_w * 2), b_w);
-  c3_free(b_w);
+  u3a_free(b_w);
   return p;
 }
 
