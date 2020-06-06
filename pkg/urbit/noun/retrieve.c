@@ -1405,14 +1405,30 @@ u3r_mug_string(const c3_c *a_c)
 c3_w
 u3r_mug_words(const c3_w* key_w, c3_w len_w)
 {
-  c3_w byt_w = 0;
-  c3_w wor_w;
+  c3_w byt_w;
 
-  while ( 0 < len_w ) {
-    wor_w  = key_w[--len_w];
-    byt_w += _(u3a_is_cat(wor_w)) ? u3r_met(3, wor_w) : 4;
+  //  ignore trailing zeros
+  //
+  while ( len_w && !key_w[len_w - 1] ) {
+    len_w--;
   }
 
+  //  calculate byte-width a la u3r_met(3, ...)
+  //
+  if ( !len_w ) {
+    byt_w = 0;
+  }
+  else {
+    c3_w gal_w = len_w - 1;
+    c3_w daz_w = key_w[gal_w];
+
+    byt_w = (gal_w << 2)
+            + ((daz_w >> 24) ? 4 : (daz_w >> 16) ? 3 : (daz_w >> 8) ? 2 : 1);
+
+  }
+
+  //  XX: assumes little-endian
+  //
   return u3r_mug_bytes((c3_y*)key_w, byt_w);
 }
 
