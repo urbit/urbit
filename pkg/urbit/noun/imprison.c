@@ -117,19 +117,64 @@ u3_atom
 u3i_chubs(c3_w        a_w,
           const c3_d* b_d)
 {
-  //  XX efficiency
+  //  Strip trailing zeroes.
   //
-  c3_w *b_w = u3a_malloc(a_w * 8);
-  c3_w i_w;
-  u3_atom p;
-
-  for ( i_w = 0; i_w < a_w; i_w++ ) {
-    b_w[(2 * i_w)] = b_d[i_w] & 0xffffffffULL;
-    b_w[(2 * i_w) + 1] = b_d[i_w] >> 32ULL;
+  while ( a_w && !b_d[a_w - 1] ) {
+    a_w--;
   }
-  p = u3i_words((a_w * 2), b_w);
-  u3a_free(b_w);
-  return p;
+
+  //  Check for cat.
+  //
+  if ( !a_w ) {
+    return 0;
+  }
+  else if ( (1 == a_w) && !(b_d[0] >> 31) ) {
+    return (c3_w)b_d[0];
+  }
+
+  //  Allocate, fill, return.
+  //
+  {
+    c3_w len_w = 2 * a_w;
+
+    if ( !(b_d[a_w - 1] >> 32) ) {
+      len_w--;
+    }
+
+    c3_w*     nov_w = u3a_walloc(len_w + c3_wiseof(u3a_atom));
+    u3a_atom* nov_u = (void*)nov_w;
+
+    nov_u->mug_w = 0;
+    nov_u->len_w = len_w;
+
+    //  Fill the words.
+    //
+    {
+      c3_w i_w, x_w, max_w = a_w - 1;
+      c3_d i_d;
+
+      for ( i_w = 0; i_w < max_w; i_w++ ) {
+        i_d = b_d[i_w];
+        x_w = 2 * i_w;
+        nov_u->buf_w[x_w] = i_d & 0xffffffffULL;
+        x_w++;
+        nov_u->buf_w[x_w] = i_d >> 32;
+      }
+
+      {
+        i_d = b_d[i_w];
+        x_w = 2 * i_w;
+        nov_u->buf_w[x_w] = i_d & 0xffffffffULL;
+        x_w++;
+      }
+
+      if ( x_w < len_w ) {
+        nov_u->buf_w[x_w] = i_d >> 32;
+      }
+    }
+
+    return u3a_to_pug(u3a_outa(nov_w));
+  }
 }
 
 /* u3i_mp(): Copy the GMP integer [a] into an atom, and clear it.
