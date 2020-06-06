@@ -19,7 +19,7 @@ Stubbed out:
 
 Bugs:
 
-- [ ] In non-daemon-mode, ^D doesn't bring down Urbit properly.
+- [x] In non-daemon-mode, ^D doesn't bring down Urbit properly.
 
 King-Haskell specific features:
 

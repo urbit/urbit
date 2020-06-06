@@ -25,9 +25,6 @@ import System.Posix.Internals (c_getpid)
 import System.Posix.Types     (CPid(..))
 import System.Random          (randomIO)
 
--- Constraints -----------------------------------------------------------------
-
-
 
 -- KingEnv ---------------------------------------------------------------------
 

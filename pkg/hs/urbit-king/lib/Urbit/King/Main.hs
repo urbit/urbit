@@ -540,20 +540,25 @@ newShip CLI.New{..} opts = do
 
 runShip :: CLI.Run -> CLI.Opts -> Bool -> TMVar () -> MultiEyreApi -> RIO KingEnv ()
 runShip (CLI.Run pierPath) opts daemon vKill multi = do
-    tid <- io myThreadId
-    let onTermExit = throwTo tid UserInterrupt
-    mStart <- newEmptyMVar
+    thisTid <- io myThreadId
+    mStart  <- newEmptyMVar
     if daemon
     then runPier mStart
     else do
+      -- Wait until the pier has started up, then connect a terminal. If
+      -- the terminal ever shuts down, ask the ship to go down.
       connectionThread <- async $ do
         readMVar mStart
-        finally (connTerm pierPath) onTermExit
-      finally (runPier mStart) (cancel connectionThread)
+        finally (connTerm pierPath) $ do
+          atomically (tryPutTMVar vKill ())
+
+      -- Run the pier until it finishes, and then kill the terminal.
+      finally (runPier mStart) $ do
+        cancel connectionThread
   where
-    runPier mStart =
-          runPierEnv pierConfig networkConfig $
-            tryPlayShip
+    runPier mStart = do
+      runPierEnv pierConfig networkConfig $
+        tryPlayShip
               (CLI.oExit opts)
               (CLI.oFullReplay opts)
               (CLI.oDryFrom opts)
@@ -736,20 +741,20 @@ runSingleShip (r, o, d) multi = do
   shipThread <- async (runShipNoRestart vKill r o d multi)
 
   {-
-    Since `spin` never returns, this will run until the main
-    thread is killed with an async exception.  The one we expect is
-    `UserInterrupt` which will be raised on this thread upon SIGKILL
-    or SIGTERM.
+    Wait for the ship to go down.
 
-    Once that happens, we write to `vKill` which will cause
-    all ships to be shut down, and then we `wait` for them to finish
-    before returning.
+    Since `waitCatch` will never throw an exception, the `onException`
+    block will only happen if this thread is killed with an async
+    exception.  The one we expect is `UserInterrupt` which will be raised
+    on this thread upon SIGKILL or SIGTERM.
+
+    If this thread is killed, we first ask the ship to go down, wait
+    for the ship to actually go down, and then go down ourselves.
   -}
-  let spin = forever (threadDelay maxBound)
-  finally spin $ do
+  onException (void $ waitCatch shipThread) $ do
     logTrace "KING IS GOING DOWN"
-    atomically (putTMVar vKill ())
-    waitCatch shipThread
+    void $ atomically $ tryPutTMVar vKill ()
+    void $ waitCatch shipThread
 
 
 runMultipleShips :: [(CLI.Run, CLI.Opts)] -> MultiEyreApi -> RIO KingEnv ()
@@ -768,6 +773,10 @@ runMultipleShips ships multi = do
     Once that happens, we write to `vKill` which will cause
     all ships to be shut down, and then we `wait` for them to finish
     before returning.
+
+    This is different than the single-ship flow, because ships never
+    go down on their own in this flow. If they go down, they just bring
+    themselves back up.
   -}
   let spin = forever (threadDelay maxBound)
   finally spin $ do

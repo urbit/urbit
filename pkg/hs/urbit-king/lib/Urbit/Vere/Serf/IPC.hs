@@ -608,7 +608,7 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
     que   <- newTBMQueueIO 1
     ()    <- atomically (writeTBMQueue que firstWorkErr)
     tWork <- async (processWork serf maxBatchSize que onWorkResp spin)
-    flip onException (print "KILLING: run" >> cancel tWork) $ do
+    flip onException (cancel tWork) $ do
       nexSt <- workLoop que
       wait tWork
       nexSt

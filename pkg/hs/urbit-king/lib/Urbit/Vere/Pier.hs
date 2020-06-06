@@ -327,9 +327,11 @@ pier (serf, log) vSlog mStart vKilled multi = do
 
     --  bullshit scry tester
     void $ acquireWorker "bullshit scry tester" $ forever $ do
+      env <- ask
       threadDelay 1_000_000
       wen <- io Time.now
-      let kal = \mTermNoun -> print ("scry result: ", mTermNoun)
+      let kal = \mTermNoun -> runRIO env $ do
+            logTrace $ displayShow ("scry result: ", mTermNoun)
       let nkt = MkKnot $ tshow $ Time.MkDate wen
       let pax = Path ["j", "~zod", "life", nkt, "~zod"]
       atomically $ putTMVar scryM (wen, Nothing, pax, kal)

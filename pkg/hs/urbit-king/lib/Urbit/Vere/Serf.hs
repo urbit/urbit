@@ -110,7 +110,10 @@ execReplay serf log last = do
     logTrace $ display $ "Replaying up to event #" <> tshow replayUpTo
     logTrace $ display $ "Will replay " <> tshow numEvs <> " in total."
 
-    let onProgress n = print ("Serf is at event# " <> tshow n)
+    env <- ask
+
+    let onProgress n = do
+          runRIO env $ logTrace $ display ("Serf is at event# " <> tshow n)
 
     runResourceT
       $  runConduit
