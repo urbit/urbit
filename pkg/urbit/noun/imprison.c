@@ -9,6 +9,9 @@ u3_noun
 u3i_bytes(c3_w        a_w,
           const c3_y* b_y)
 {
+  u3_noun pro;
+  u3t_on(mal_o);
+
   //  Strip trailing zeroes.
   //
   while ( a_w && !b_y[a_w - 1] ) {
@@ -64,8 +67,12 @@ u3i_bytes(c3_w        a_w,
         nov_u->buf_w[i_w >> 2] |= (b_y[i_w] << ((i_w & 3) * 8));
       }
     }
-    return u3a_to_pug(u3a_outa(nov_w));
+
+    pro = u3a_to_pug(u3a_outa(nov_w));
   }
+
+  u3t_off(mal_o);
+  return pro;
 }
 
 /* u3i_words(): Copy [a] words from [b] into an atom.
@@ -74,6 +81,9 @@ u3_noun
 u3i_words(c3_w        a_w,
           const c3_w* b_w)
 {
+  u3_noun pro;
+  u3t_on(mal_o);
+
   //  Strip trailing zeroes.
   //
   while ( a_w && !b_w[a_w - 1] ) {
@@ -107,8 +117,12 @@ u3i_words(c3_w        a_w,
         nov_u->buf_w[i_w] = b_w[i_w];
       }
     }
-    return u3a_to_pug(u3a_outa(nov_w));
+
+    pro = u3a_to_pug(u3a_outa(nov_w));
   }
+
+  u3t_off(mal_o);
+  return pro;
 }
 
 /* u3i_chubs(): Copy [a] chubs from [b] into an atom.
@@ -117,6 +131,9 @@ u3_atom
 u3i_chubs(c3_w        a_w,
           const c3_d* b_d)
 {
+  u3_noun pro;
+  u3t_on(mal_o);
+
   //  Strip trailing zeroes.
   //
   while ( a_w && !b_d[a_w - 1] ) {
@@ -173,8 +190,11 @@ u3i_chubs(c3_w        a_w,
       }
     }
 
-    return u3a_to_pug(u3a_outa(nov_w));
+    pro = u3a_to_pug(u3a_outa(nov_w));
   }
+
+  u3t_off(mal_o);
+  return pro;
 }
 
 /* u3i_mp(): Copy the GMP integer [a] into an atom, and clear it.
@@ -225,6 +245,7 @@ u3i_vint(u3_noun a)
 u3_noun
 u3i_cell(u3_noun a, u3_noun b)
 {
+  u3_noun pro;
   u3t_on(mal_o);
 
 #ifdef U3_CPU_DEBUG
@@ -234,17 +255,16 @@ u3i_cell(u3_noun a, u3_noun b)
   {
     c3_w*     nov_w = u3a_celloc();
     u3a_cell* nov_u = (void *)nov_w;
-    u3_noun     pro;
 
     nov_u->mug_w = 0;
     nov_u->hed = a;
     nov_u->tel = b;
 
     pro = u3a_to_pom(u3a_outa(nov_w));
-
-    u3t_off(mal_o);
-    return pro;
   }
+
+  u3t_off(mal_o);
+  return pro;
 }
 
 /* u3i_trel(): Produce the triple `[a b c]`.
