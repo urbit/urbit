@@ -413,14 +413,14 @@ _daemon_socket_connect(uv_stream_t *sock, int status)
   if ( u3K.cli_u == 0 ) {
     u3K.cli_u = c3_malloc(sizeof(u3_moor));
     mor_u = u3K.cli_u;
-    mor_u->vod_p = 0;
+    mor_u->ptr_v = 0;
     mor_u->nex_u = 0;
   }
   else {
     for (mor_u = u3K.cli_u; mor_u->nex_u; mor_u = mor_u->nex_u);
 
     mor_u->nex_u = c3_malloc(sizeof(u3_moor));
-    mor_u->nex_u->vod_p = mor_u;
+    mor_u->nex_u->ptr_v = mor_u;
     mor_u = mor_u->nex_u;
     mor_u->nex_u = 0;
   }
@@ -841,7 +841,7 @@ _boothack_cb(uv_connect_t* con_u, c3_i sas_i)
   else {
     u3_noun dom = u3nc(c3__doom, _boothack_doom());
     u3_atom mat = u3ke_jam(dom);
-    u3_newt_write(moj_u, mat, 0);
+    u3_newt_write(moj_u, mat);
 
     c3_free(con_u);
 

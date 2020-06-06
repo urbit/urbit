@@ -40,7 +40,7 @@ _newt_fail(void* vod_p, const c3_c* wut_c)
 static void
 _newt_send(u3_noun pel)
 {
-  u3_newt_write(&out_u, u3ke_jam(pel), 0);
+  u3_newt_write(&out_u, u3ke_jam(pel));
 }
 
 /* _newt_send_slog(): send hint output (hod is [priority tank]).
@@ -155,11 +155,12 @@ main(c3_i argc, c3_c* argv[])
 
   //  set up writing
   //
+  out_u.ptr_v = &u3V;
   out_u.bal_f = _newt_fail;
 
   //  set up reading
   //
-  inn_u.vod_p = &u3V;
+  inn_u.ptr_v = &u3V;
   inn_u.pok_f = _newt_writ;
   inn_u.bal_f = _newt_fail;
 

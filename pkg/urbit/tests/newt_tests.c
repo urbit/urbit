@@ -13,6 +13,31 @@ _setup(void)
 static c3_w pok_w;
 static c3_w bal_w;
 
+/* _newt_encode(): synchronous serialization into a single buffer, for test purposes
+*/
+static c3_y*
+_newt_encode(u3_atom mat, c3_w* len_w)
+{
+  c3_w  met_w = u3r_met(3, mat);
+  c3_y* buf_y;
+
+  *len_w = 8 + met_w;
+  buf_y  = c3_malloc(*len_w);
+
+  //  write header; c3_d is futureproofing
+  //
+  buf_y[0] = ((met_w >> 0) & 0xff);
+  buf_y[1] = ((met_w >> 8) & 0xff);
+  buf_y[2] = ((met_w >> 16) & 0xff);
+  buf_y[3] = ((met_w >> 24) & 0xff);
+  buf_y[4] = buf_y[5] = buf_y[6] = buf_y[7] = 0;
+
+  u3r_bytes(0, met_w, buf_y + 8, mat);
+  u3z(mat);
+
+  return buf_y;
+}
+
 static void
 _moat_poke_cb(void* vod_p, u3_atom a)
 {
@@ -48,7 +73,7 @@ _test_newt_smol(void)
     pok_w = 0;
     bal_w = 0;
 
-    buf_y = u3_newt_encode(u3k(a), &len_w);
+    buf_y = _newt_encode(u3k(a), &len_w);
     u3_newt_decode(&mot_u, buf_y, len_w);
 
     if ( 1 != pok_w ) {
@@ -63,7 +88,7 @@ _test_newt_smol(void)
     pok_w = 0;
     bal_w = 0;
 
-    buf_y = u3_newt_encode(u3k(a), &len_w);
+    buf_y = _newt_encode(u3k(a), &len_w);
 
     buf_y = c3_realloc(buf_y, 2 * len_w);
     memcpy(buf_y + len_w, buf_y, len_w);
@@ -84,7 +109,7 @@ _test_newt_smol(void)
     pok_w = 0;
     bal_w = 0;
 
-    buf_y = u3_newt_encode(u3k(a), &len_w);
+    buf_y = _newt_encode(u3k(a), &len_w);
 
     end_y = c3_malloc(1);
     end_y[0] = buf_y[len_w - 1];
@@ -113,7 +138,7 @@ _test_newt_smol(void)
     pok_w = 0;
     bal_w = 0;
 
-    buf_y = u3_newt_encode(u3k(a), &len_w);
+    buf_y = _newt_encode(u3k(a), &len_w);
 
     dub_w = 2 * len_w;
     haf_w = len_w / 2;
@@ -168,7 +193,7 @@ _test_newt_vast(void)
     pok_w = 0;
     bal_w = 0;
 
-    buf_y = u3_newt_encode(u3k(a), &len_w);
+    buf_y = _newt_encode(u3k(a), &len_w);
     u3_newt_decode(&mot_u, buf_y, len_w);
 
     if ( 1 != pok_w ) {
@@ -183,7 +208,7 @@ _test_newt_vast(void)
     pok_w = 0;
     bal_w = 0;
 
-    buf_y = u3_newt_encode(u3k(a), &len_w);
+    buf_y = _newt_encode(u3k(a), &len_w);
 
     buf_y = c3_realloc(buf_y, 2 * len_w);
     memcpy(buf_y + len_w, buf_y, len_w);
@@ -203,7 +228,7 @@ _test_newt_vast(void)
     pok_w = 0;
     bal_w = 0;
 
-    buf_y = u3_newt_encode(u3k(a), &len_w);
+    buf_y = _newt_encode(u3k(a), &len_w);
 
     {
       c3_y* cop_y = c3_malloc(len_w);
@@ -243,7 +268,7 @@ _test_newt_vast(void)
     pok_w = 0;
     bal_w = 0;
 
-    buf_y = u3_newt_encode(u3k(a), &len_w);
+    buf_y = _newt_encode(u3k(a), &len_w);
 
     dub_w = 2 * len_w;
     haf_w = len_w / 2;
@@ -281,7 +306,7 @@ _test_newt_vast(void)
     pok_w = 0;
     bal_w = 0;
 
-    buf_y = u3_newt_encode(u3k(a), &len_w);
+    buf_y = _newt_encode(u3k(a), &len_w);
 
     dub_w = 2 * len_w;
 

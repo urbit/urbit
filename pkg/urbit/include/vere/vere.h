@@ -68,7 +68,7 @@
       typedef struct _u3_moat {
         uv_pipe_t        pyp_u;             //  input stream
         u3_moor_bail     bal_f;             //  error response function
-        void*            vod_p;             //  callback pointer
+        void*            ptr_v;             //  callback pointer
         u3_moor_poke     pok_f;             //  action function
         struct _u3_mess* mes_u;             //  message in progress
         c3_d             len_d;             //  length of stray bytes
@@ -78,15 +78,16 @@
     /* u3_mojo: outbound message stream.
     */
       typedef struct _u3_mojo {
-        uv_pipe_t pyp_u;                    //  output stream
+        uv_pipe_t        pyp_u;             //  output stream
         u3_moor_bail     bal_f;             //  error response function
+        void*            ptr_v;             //  callback pointer
       } u3_mojo;
 
     /* u3_moor: two-way message stream, linked list */
       typedef struct _u3_moor {
         uv_pipe_t        pyp_u;
         u3_moor_bail     bal_f;
-        void*            vod_p;
+        void*            ptr_v;
         u3_moor_poke     pok_f;
         struct _u3_mess* mes_u;
         c3_d             len_d;
@@ -1057,11 +1058,6 @@
 
     /**  Stream messages.
     **/
-      /* u3_newt_encode(): encode an atom to a length-prefixed byte buffer
-      */
-        c3_y*
-        u3_newt_encode(u3_atom mat, c3_w* len_w);
-
       /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
       */
         void
@@ -1070,9 +1066,7 @@
       /* u3_newt_write(): write atom to stream; free atom.
       */
         void
-        u3_newt_write(u3_mojo* moj_u,
-                      u3_atom  mat,
-                      void*    vod_p);
+        u3_newt_write(u3_mojo* moj_u, u3_atom mat);
 
       /* u3_newt_read(): activate reading on input stream.
       */
