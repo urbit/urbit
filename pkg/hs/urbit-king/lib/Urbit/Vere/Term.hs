@@ -505,7 +505,7 @@ term :: forall e. (HasPierEnv e)
      => e
      -> (T.TSize, Client)
      -> (EvErr -> STM ())
-     -> ([EvErr], RAcquire e (EffCb e TermEf))
+     -> ([EvErr], RAcquire e (TermEf -> IO ()))
 term env (tsize, Client{..}) plan =
     (initialEvents, runTerm)
   where
@@ -516,10 +516,10 @@ term env (tsize, Client{..}) plan =
       , EvErr initialHail (initialHailFailed env)
       ]
 
-    runTerm :: RAcquire e (EffCb e TermEf)
+    runTerm :: RAcquire e (TermEf -> IO ())
     runTerm = do
       tim <- mkRAcquire (async readLoop) cancel
-      pure handleEffect
+      pure (runRIO env . handleEffect)
 
     {-
         Because our terminals are always `Demux`ed, we don't have to

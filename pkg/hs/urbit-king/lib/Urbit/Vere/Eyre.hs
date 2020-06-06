@@ -287,7 +287,7 @@ eyre
   -> Ship
   -> (EvErr -> STM ())
   -> Bool
-  -> ([EvErr], RAcquire e (EffCb e HttpServerEf))
+  -> ([EvErr], RAcquire e (HttpServerEf -> IO ()))
 eyre env multi who plan isFake = (initialEvents, runHttpServer)
  where
   king = fromIntegral (env ^. kingIdL)
@@ -295,7 +295,7 @@ eyre env multi who plan isFake = (initialEvents, runHttpServer)
   initialEvents :: [EvErr]
   initialEvents = [EvErr (bornEv king) (bornFailed env)]
 
-  runHttpServer :: RAcquire e (EffCb e HttpServerEf)
+  runHttpServer :: RAcquire e (HttpServerEf -> IO ())
   runHttpServer = handleEf <$> mkRAcquire
     (Drv <$> newMVar Nothing)
     (\(Drv v) -> stopService v kill >>= fromEither)
@@ -318,8 +318,8 @@ eyre env multi who plan isFake = (initialEvents, runHttpServer)
 
   liveFailed _ = pure ()
 
-  handleEf :: Drv -> HttpServerEf -> RIO e ()
-  handleEf drv = \case
+  handleEf :: Drv -> HttpServerEf -> IO ()
+  handleEf drv = runRIO env . \case
     HSESetConfig (i, ()) conf -> do
       logDebug (displayShow ("EYRE", "%set-config"))
       Serv {..} <- restart drv conf

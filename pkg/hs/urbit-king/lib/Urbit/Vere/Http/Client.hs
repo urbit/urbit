@@ -66,7 +66,7 @@ client
    . (HasLogFunc e, HasKingId e)
   => e
   -> (EvErr -> STM ())
-  -> ([EvErr], RAcquire e (EffCb e HttpClientEf))
+  -> ([EvErr], RAcquire e (HttpClientEf -> IO ()))
 client env plan = (initialEvents, runHttpClient)
   where
     kingId = view (kingIdL . to fromIntegral) env
@@ -74,7 +74,7 @@ client env plan = (initialEvents, runHttpClient)
     initialEvents :: [EvErr]
     initialEvents = [EvErr (bornEv kingId) (bornFailed env)]
 
-    runHttpClient :: RAcquire e (EffCb e HttpClientEf)
+    runHttpClient :: RAcquire e (HttpClientEf -> IO ())
     runHttpClient = handleEffect <$> mkRAcquire start stop
 
     start :: RIO e (HttpClientDrv)
@@ -88,10 +88,10 @@ client env plan = (initialEvents, runHttpClient)
       liveThreads <- atomically $ readTVar hcdLive
       mapM_ cancel liveThreads
 
-    handleEffect :: HttpClientDrv -> HttpClientEf -> RIO e ()
+    handleEffect :: HttpClientDrv -> HttpClientEf -> IO ()
     handleEffect drv = \case
-      HCERequest _ id req -> newReq drv id req
-      HCECancelRequest _ id -> cancelReq drv id
+      HCERequest _ id req -> runRIO env (newReq drv id req)
+      HCECancelRequest _ id -> runRIO env (cancelReq drv id)
 
     newReq :: HttpClientDrv -> ReqId -> HttpClientReq -> RIO e ()
     newReq drv id req = do

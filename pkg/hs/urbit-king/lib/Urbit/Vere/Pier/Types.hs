@@ -107,14 +107,10 @@ data Order
 
 deriveToNoun ''Order
 
-type EffCb e a = a -> RIO e ()
-
-type Perform = Ef -> IO ()
-
 data IODriver = IODriver
-    { bornEvent   :: IO Ev
-    , startDriver :: (Ev -> STM ()) -> IO (Async (), Perform)
-    }
+  { bornEvent   :: IO Ev
+  , startDriver :: (Ev -> STM ()) -> IO (Async (), Ef -> IO ())
+  }
 
 data Fact = Fact
   { factEve :: EventId

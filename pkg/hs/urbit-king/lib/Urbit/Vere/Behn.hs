@@ -34,7 +34,7 @@ wakeErr :: WorkError -> IO ()
 wakeErr _ = pure ()
 
 behn
-  :: HasKingId e => e -> (EvErr -> STM ()) -> ([EvErr], Acquire (EffCb e BehnEf))
+  :: HasKingId e => e -> (EvErr -> STM ()) -> ([EvErr], Acquire (BehnEf -> IO ()))
 behn env enqueueEv =
     (initialEvents, runBehn)
   where
@@ -42,10 +42,10 @@ behn env enqueueEv =
 
     initialEvents = [EvErr (bornEv king) (bornFailed env)]
 
-    runBehn :: Acquire (EffCb e BehnEf)
+    runBehn :: Acquire (BehnEf -> IO ())
     runBehn = do
         tim <- mkAcquire Timer.init Timer.stop
-        pure (handleEf tim)
+        pure (runRIO env . handleEf tim)
 
     handleEf :: Timer -> BehnEf -> RIO e ()
     handleEf b = io . \case

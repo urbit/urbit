@@ -118,7 +118,7 @@ ames
   -> Bool
   -> (EvErr -> STM ())
   -> (Text -> RIO e ())
-  -> ([EvErr], RAcquire e (EffCb e NewtEf))
+  -> ([EvErr], RAcquire e (NewtEf -> IO ()))
 ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
  where
   king = fromIntegral (env ^. kingIdL)
@@ -126,7 +126,7 @@ ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
   initialEvents :: [EvErr]
   initialEvents = [EvErr (bornEv king) (bornFailed env)]
 
-  runAmes :: RAcquire e (EffCb e NewtEf)
+  runAmes :: RAcquire e (NewtEf -> IO ())
   runAmes = do
     mode <- rio (netMode isFake)
     drv  <- mkRAcquire start stop
@@ -153,8 +153,8 @@ ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
     rsKill aResolvr
     cancel aRecvTid
 
-  handleEffect :: AmesDrv -> NetworkMode -> NewtEf -> RIO e ()
-  handleEffect drv@AmesDrv {..} mode = \case
+  handleEffect :: AmesDrv -> NetworkMode -> NewtEf -> IO ()
+  handleEffect drv@AmesDrv {..} mode = runRIO env . \case
     NewtEfTurf (_id, ()) turfs -> do
       atomically $ writeTVar aTurfs (Just turfs)
 

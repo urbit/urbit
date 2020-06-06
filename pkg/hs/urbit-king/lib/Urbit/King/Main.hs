@@ -383,7 +383,7 @@ testPill pax showPil showSeq = do
   pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
   logTrace "Using pill to generate boot sequence."
-  bootSeq <- generateBootSeq (Ship 0) pill False (Fake $ Ship 0)
+  bootSeq <- genBootSeq (Ship 0) pill False (Fake (Ship 0))
 
   logTrace "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill

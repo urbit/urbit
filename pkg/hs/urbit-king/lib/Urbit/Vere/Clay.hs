@@ -122,7 +122,7 @@ clay
    . (HasPierConfig e, HasLogFunc e, HasKingId e)
   => e
   -> (EvErr -> STM ())
-  -> ([EvErr], RAcquire e (EffCb e SyncEf))
+  -> ([EvErr], RAcquire e (SyncEf -> IO ()))
 clay env plan =
     (initialEvents, runSync)
   where
@@ -134,15 +134,15 @@ clay env plan =
     -- specified directory and shove it into an %into event.
     initialEvents = [EvErr boatEv (boatFailed env)]
 
-    runSync :: RAcquire e (EffCb e SyncEf)
+    runSync :: RAcquire e (SyncEf -> IO ())
     runSync = handleEffect <$> mkRAcquire start stop
 
     start :: RIO e ClayDrv
     start = ClayDrv <$> newTVarIO mempty
     stop c = pure ()
 
-    handleEffect :: ClayDrv -> SyncEf -> RIO e ()
-    handleEffect cd = \case
+    handleEffect :: ClayDrv -> SyncEf -> IO ()
+    handleEffect cd = runRIO env . \case
       SyncEfHill _ mountPoints -> do
         logDebug $ displayShow ("(clay) known mount points:", mountPoints)
         pierPath <- view pierPathL
