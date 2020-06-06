@@ -91,7 +91,9 @@ import Control.Exception      (AsyncException(UserInterrupt))
 import Control.Lens           ((&))
 import System.Process         (system)
 import Text.Show.Pretty       (pPrint)
-import Urbit.King.App         (KingEnv, PierEnv)
+import Urbit.King.App         (KingEnv, PierEnv, kingEnvKillSignal)
+import Urbit.King.App         (killKingActionL, onKillKingSigL)
+import Urbit.King.App         (killPierActionL)
 import Urbit.King.App         (runKingEnvLogFile, runKingEnvStderr, runPierEnv)
 import Urbit.Noun.Conversions (cordToUW)
 import Urbit.Time             (Wen)
@@ -178,27 +180,25 @@ tryBootFromPill
   -> MultiEyreApi
   -> RIO PierEnv ()
 tryBootFromPill oExit pill lite flags ship boot multi = do
-    mStart <- newEmptyMVar
-    vKill  <- newEmptyTMVarIO
-    vSlog  <- logSlogs
-    runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart vKill multi
-  where
-    bootedPier vSlog = do
-        view pierPathL >>= lockFile
-        rio $ logTrace "Starting boot"
-        sls <- Pier.booted vSlog pill lite flags ship boot
-        rio $ logTrace "Completed boot"
-        pure sls
+  mStart <- newEmptyMVar
+  vSlog  <- logSlogs
+  runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart multi
+ where
+  bootedPier vSlog = do
+    view pierPathL >>= lockFile
+    rio $ logTrace "Starting boot"
+    sls <- Pier.booted vSlog pill lite flags ship boot
+    rio $ logTrace "Completed boot"
+    pure sls
 
 runOrExitImmediately
   :: TVar (Text -> IO ())
   -> RAcquire PierEnv (Serf, Log.EventLog)
   -> Bool
   -> MVar ()
-  -> TMVar ()
   -> MultiEyreApi
   -> RIO PierEnv ()
-runOrExitImmediately vSlog getPier oExit mStart vKill multi = do
+runOrExitImmediately vSlog getPier oExit mStart multi = do
   rwith getPier (if oExit then shutdownImmediately else runPier)
  where
   shutdownImmediately :: (Serf, Log.EventLog) -> RIO PierEnv ()
@@ -209,7 +209,7 @@ runOrExitImmediately vSlog getPier oExit mStart vKill multi = do
 
   runPier :: (Serf, Log.EventLog) -> RIO PierEnv ()
   runPier serfLog = do
-    runRAcquire (Pier.pier serfLog vSlog mStart vKill multi)
+    runRAcquire (Pier.pier serfLog vSlog mStart multi)
 
 tryPlayShip
   :: Bool
@@ -217,13 +217,12 @@ tryPlayShip
   -> Maybe Word64
   -> [Serf.Flag]
   -> MVar ()
-  -> TMVar ()
   -> MultiEyreApi
   -> RIO PierEnv ()
-tryPlayShip exitImmediately fullReplay playFrom flags mStart vKill multi = do
+tryPlayShip exitImmediately fullReplay playFrom flags mStart multi = do
   when fullReplay wipeSnapshot
   vSlog <- logSlogs
-  runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart vKill multi
+  runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart multi
  where
   wipeSnapshot = do
     shipPath <- view pierPathL
@@ -532,15 +531,23 @@ newShip CLI.New{..} opts = do
     -- Now that we have all the information for running an application with a
     -- PierConfig, do so.
     runTryBootFromPill multi pill name ship bootEvent = do
+      vKill <- view kingEnvKillSignal
       let pierConfig = toPierConfig (pierPath name) opts
       let networkConfig = toNetworkConfig opts
-      runPierEnv pierConfig networkConfig $
+      runPierEnv pierConfig networkConfig vKill $
         tryBootFromPill True pill nLite flags ship bootEvent multi
 ------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
-runShip :: CLI.Run -> CLI.Opts -> Bool -> TMVar () -> MultiEyreApi -> RIO KingEnv ()
-runShip (CLI.Run pierPath) opts daemon vKill multi = do
-    thisTid <- io myThreadId
+runShipEnv :: CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a -> RIO KingEnv a
+runShipEnv (CLI.Run pierPath) opts vKill act = do
+  runPierEnv pierConfig netConfig vKill act
+ where
+  pierConfig = toPierConfig pierPath opts
+  netConfig = toNetworkConfig opts
+
+runShip
+  :: CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> RIO PierEnv ()
+runShip (CLI.Run pierPath) opts daemon multi = do
     mStart  <- newEmptyMVar
     if daemon
     then runPier mStart
@@ -550,24 +557,20 @@ runShip (CLI.Run pierPath) opts daemon vKill multi = do
       connectionThread <- async $ do
         readMVar mStart
         finally (connTerm pierPath) $ do
-          atomically (tryPutTMVar vKill ())
+          view killPierActionL >>= atomically
 
       -- Run the pier until it finishes, and then kill the terminal.
       finally (runPier mStart) $ do
         cancel connectionThread
   where
     runPier mStart = do
-      runPierEnv pierConfig networkConfig $
-        tryPlayShip
-              (CLI.oExit opts)
-              (CLI.oFullReplay opts)
-              (CLI.oDryFrom opts)
-              (toSerfFlags opts)
-              mStart
-              vKill
-              multi
-    pierConfig = toPierConfig pierPath opts
-    networkConfig = toNetworkConfig opts
+      tryPlayShip
+        (CLI.oExit opts)
+        (CLI.oFullReplay opts)
+        (CLI.oDryFrom opts)
+        (toSerfFlags opts)
+        mStart
+        multi
 
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
@@ -652,15 +655,18 @@ main = do
   TODO Use logging system instead of printing.
 -}
 runShipRestarting
-  :: TMVar () -> CLI.Run -> CLI.Opts -> MultiEyreApi -> RIO KingEnv ()
-runShipRestarting vKill r o multi = do
+  :: CLI.Run -> CLI.Opts -> MultiEyreApi -> RIO KingEnv ()
+runShipRestarting r o multi = do
   let pier = pack (CLI.rPierPath r)
-      loop = runShipRestarting vKill r o multi
+      loop = runShipRestarting r o multi
 
-  tid <- asyncBound (runShip r o True vKill multi)
+  onKill    <- view onKillKingSigL
+  vKillPier <- newEmptyTMVarIO
+
+  tid <- asyncBound $ runShipEnv r o vKillPier $ runShip r o True multi
 
   let onShipExit = Left <$> waitCatchSTM tid
-      onKillRequ = Right <$> readTMVar vKill
+      onKillRequ = Right <$> onKill
 
   atomically (onShipExit <|> onKillRequ) >>= \case
     Left exit -> do
@@ -681,14 +687,17 @@ runShipRestarting vKill r o multi = do
 {-
   TODO This is messy and shared a lot of logic with `runShipRestarting`.
 -}
-runShipNoRestart :: TMVar () -> CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> RIO KingEnv ()
-runShipNoRestart vKill r o d multi = do
-  tid <- asyncBound (runShip r o d vKill multi)
+runShipNoRestart
+  :: CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> RIO KingEnv ()
+runShipNoRestart r o d multi = do
+  vKill  <- view kingEnvKillSignal -- killing ship same as killing king
+  tid    <- asyncBound (runShipEnv r o vKill $ runShip r o d multi)
+  onKill <- view onKillKingSigL
 
   let pier = pack (CLI.rPierPath r)
 
   let onShipExit = Left <$> waitCatchSTM tid
-      onKillRequ = Right <$> readTMVar vKill
+      onKillRequ = Right <$> onKill
 
   atomically (onShipExit <|> onKillRequ) >>= \case
     Left (Left err) -> do
@@ -736,9 +745,7 @@ runShips CLI.KingOpts {..} ships = do
 -- TODO Duplicated logic.
 runSingleShip :: (CLI.Run, CLI.Opts, Bool) -> MultiEyreApi -> RIO KingEnv ()
 runSingleShip (r, o, d) multi = do
-  vKill <- newEmptyTMVarIO
-
-  shipThread <- async (runShipNoRestart vKill r o d multi)
+  shipThread <- async (runShipNoRestart r o d multi)
 
   {-
     Wait for the ship to go down.
@@ -753,16 +760,15 @@ runSingleShip (r, o, d) multi = do
   -}
   onException (void $ waitCatch shipThread) $ do
     logTrace "KING IS GOING DOWN"
-    void $ atomically $ tryPutTMVar vKill ()
-    void $ waitCatch shipThread
+    atomically =<< view killKingActionL
+    waitCatch shipThread
+    pure ()
 
 
 runMultipleShips :: [(CLI.Run, CLI.Opts)] -> MultiEyreApi -> RIO KingEnv ()
 runMultipleShips ships multi = do
-  vKill <- newEmptyTMVarIO
-
   shipThreads <- for ships $ \(r, o) -> do
-    async (runShipRestarting vKill r o multi)
+    async (runShipRestarting r o multi)
 
   {-
     Since `spin` never returns, this will run until the main
@@ -770,9 +776,9 @@ runMultipleShips ships multi = do
     `UserInterrupt` which will be raised on this thread upon SIGKILL
     or SIGTERM.
 
-    Once that happens, we write to `vKill` which will cause
-    all ships to be shut down, and then we `wait` for them to finish
-    before returning.
+    Once that happens, we send a shutdown signal which will cause all
+    ships to be shut down, and then we `wait` for them to finish before
+    returning.
 
     This is different than the single-ship flow, because ships never
     go down on their own in this flow. If they go down, they just bring
@@ -781,7 +787,7 @@ runMultipleShips ships multi = do
   let spin = forever (threadDelay maxBound)
   finally spin $ do
     logTrace "KING IS GOING DOWN"
-    atomically (putTMVar vKill ())
+    view killKingActionL >>= atomically
     for_ shipThreads waitCatch
 
 
@@ -789,6 +795,7 @@ runMultipleShips ships multi = do
 
 connTerm :: ∀e. HasLogFunc e => FilePath -> RIO e ()
 connTerm = Term.runTerminalClient
+
 
 --------------------------------------------------------------------------------
 

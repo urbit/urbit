@@ -6,8 +6,13 @@ module Urbit.King.App
   , runKingEnvStderr
   , runKingEnvLogFile
   , runKingEnvNoLog
+  , kingEnvKillSignal
+  , killKingActionL
+  , onKillKingSigL
   , PierEnv
   , runPierEnv
+  , killPierActionL
+  , onKillPierSigL
   , HasStderrLogFunc(..)
   , HasKingId(..)
   , HasProcId(..)
@@ -47,6 +52,7 @@ data KingEnv = KingEnv
   , _kingEnvStderrLogFunc :: !LogFunc
   , _kingEnvKingId        :: !Word16
   , _kingEnvProcId        :: !Int32
+  , _kingEnvKillSignal    :: !(TMVar ())
   }
 
 makeLenses ''KingEnv
@@ -104,7 +110,18 @@ runKingEnv :: LogFunc -> LogFunc -> RIO KingEnv a -> IO a
 runKingEnv logFunc stderr action = do
   kid      <- randomIO
   CPid pid <- c_getpid
-  runRIO (KingEnv logFunc stderr kid pid) action
+  kil      <- newEmptyTMVarIO
+  runRIO (KingEnv logFunc stderr kid pid kil) action
+
+
+-- KingEnv Utils ---------------------------------------------------------------
+
+onKillKingSigL :: HasKingEnv e => Getter e (STM ())
+onKillKingSigL = kingEnvL . kingEnvKillSignal . to readTMVar
+
+killKingActionL :: HasKingEnv e => Getter e (STM ())
+killKingActionL =
+  kingEnvL . kingEnvKillSignal . to (\kil -> void (tryPutTMVar kil ()))
 
 
 -- PierEnv ---------------------------------------------------------------------
@@ -116,6 +133,7 @@ data PierEnv = PierEnv
   { _pierEnvKingEnv       :: !KingEnv
   , _pierEnvPierConfig    :: !PierConfig
   , _pierEnvNetworkConfig :: !NetworkConfig
+  , _pierEnvKillSignal    :: !(TMVar ())
   }
 
 makeLenses ''PierEnv
@@ -151,15 +169,27 @@ instance HasProcId PierEnv where
   procIdL = kingEnvL . kingEnvProcId
 
 
+-- PierEnv Utils ---------------------------------------------------------------
+
+onKillPierSigL :: HasPierEnv e => Getter e (STM ())
+onKillPierSigL = pierEnvL . pierEnvKillSignal . to readTMVar
+
+killPierActionL :: HasPierEnv e => Getter e (STM ())
+killPierActionL =
+  pierEnvL . pierEnvKillSignal . to (\kil -> void (tryPutTMVar kil ()))
+
+
 -- Running Pier Envs -----------------------------------------------------------
 
-runPierEnv :: PierConfig -> NetworkConfig -> RIO PierEnv a -> RIO KingEnv a
-runPierEnv pierConfig networkConfig action = do
+runPierEnv
+  :: PierConfig -> NetworkConfig -> TMVar () -> RIO PierEnv a -> RIO KingEnv a
+runPierEnv pierConfig networkConfig vKill action = do
   app <- ask
 
   let pierEnv = PierEnv { _pierEnvKingEnv       = app
                         , _pierEnvPierConfig    = pierConfig
                         , _pierEnvNetworkConfig = networkConfig
+                        , _pierEnvKillSignal    = vKill
                         }
 
   io (runRIO pierEnv action)

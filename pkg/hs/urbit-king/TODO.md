@@ -52,8 +52,8 @@ Polish:
 
 # Cleanup
 
-- [ ] ShutdownSTM action that's passed to the terminal driver should
-      live in `PierEnv` and should be available to all drivers.
+- [x] ShutdownSTM action that's passed to the terminal driver should
+      live in `KingEnv` and should be available to all drivers.
 - [ ] Break most logic from `Main.hs` out into modules.
 - [ ] Simplify `Main.hs` flows.
 - [ ] Cleanup Terminal Driver code.

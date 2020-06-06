@@ -18,7 +18,6 @@ import RIO.FilePath
 import System.Posix.IO
 import System.Posix.Terminal
 import Urbit.Arvo            hiding (Term)
-import Urbit.King.Config
 import Urbit.Prelude         hiding (getCurrentTime)
 import Urbit.Time
 import Urbit.Vere.Pier.Types
@@ -26,7 +25,7 @@ import Urbit.Vere.Pier.Types
 import Data.List           ((!!))
 import RIO.Directory       (createDirectoryIfMissing)
 import Urbit.King.API      (readPortsFile)
-import Urbit.King.App      (HasKingId(..), HasPierPath(..))
+import Urbit.King.App      (HasPierPath(..), HasPierEnv, killPierActionL)
 import Urbit.Vere.Term.API (Client(Client))
 
 import qualified Data.ByteString.Internal as BS
@@ -502,13 +501,12 @@ initialHailFailed env _ = runRIO env $ do
 {-|
     Terminal Driver
 -}
-term :: forall e. (HasPierConfig e, HasLogFunc e, HasKingId e)
+term :: forall e. (HasPierEnv e)
      => e
      -> (T.TSize, Client)
-     -> (STM ())
      -> (EvErr -> STM ())
      -> ([EvErr], RAcquire e (EffCb e TermEf))
-term env (tsize, Client{..}) shutdownSTM plan =
+term env (tsize, Client{..}) plan =
     (initialEvents, runTerm)
   where
     T.TSize wi hi = tsize
@@ -540,7 +538,7 @@ term env (tsize, Client{..}) shutdownSTM plan =
     handleEffect = \case
         TermEfInit _ _     -> pure ()
         TermEfMass _ _     -> pure ()
-        TermEfLogo _ _     -> atomically shutdownSTM
+        TermEfLogo _ _     -> atomically =<< view killPierActionL
         TermEfBlit _ blits -> do
             let (termBlits, fsWrites) = partition isTerminalBlit blits
             atomically $ give [Term.Blits termBlits]

@@ -27,6 +27,7 @@ import Urbit.Vere.Pier.Types
 import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.King.App         (HasKingEnv, HasPierEnv(..), PierEnv)
+import Urbit.King.App         (onKillPierSigL)
 import Urbit.Time             (Wen)
 import Urbit.Vere.Ames        (ames)
 import Urbit.Vere.Behn        (behn)
@@ -239,10 +240,9 @@ pier
   :: (Serf, EventLog)
   -> TVar (Text -> IO ())
   -> MVar ()
-  -> TMVar ()
   -> MultiEyreApi
   -> RAcquire PierEnv ()
-pier (serf, log) vSlog mStart vKilled multi = do
+pier (serf, log) vSlog mStart multi = do
     computeQ  <- newTQueueIO @_ @Serf.EvErr
     persistQ  <- newTQueueIO
     executeQ  <- newTQueueIO
@@ -254,8 +254,6 @@ pier (serf, log) vSlog mStart vKilled multi = do
         q <- newTQueue
         writeTVar (King.kTermConn kapi) (Just $ writeTQueue q)
         pure q
-
-    let shutdownEvent = void (tryPutTMVar vKilled ())
 
     -- (sz, local) <- Term.localClient
 
@@ -297,7 +295,6 @@ pier (serf, log) vSlog mStart vKilled multi = do
     let (bootEvents, startDrivers) =
             drivers env multi ship (isFake logId)
                 (writeTQueue computeQ)
-                shutdownEvent
                 (Term.TSize{tsWide=80, tsTall=24}, muxed)
                 showErr
 
@@ -305,9 +302,11 @@ pier (serf, log) vSlog mStart vKilled multi = do
 
     scryM <- newEmptyTMVarIO
 
+    onKill <- view onKillPierSigL
+
     let computeConfig = ComputeConfig
           { ccOnWork = readTQueue computeQ
-          , ccOnKill = readTMVar vKilled
+          , ccOnKill = onKill
           , ccOnSave = takeTMVar saveM
           , ccOnScry = takeTMVar scryM
           , ccPutResult = writeTQueue persistQ
@@ -385,11 +384,10 @@ drivers
   -> Ship
   -> Bool
   -> (EvErr -> STM ())
-  -> STM ()
   -> (Term.TSize, Term.Client)
   -> (Text -> RIO e ())
   -> ([EvErr], RAcquire e (Drivers e))
-drivers env multi who isFake plan shutdownSTM termSys stderr =
+drivers env multi who isFake plan termSys stderr =
     (initialEvents, runDrivers) -- TODO
   where
     (behnBorn, runBehn) = behn env plan
@@ -397,7 +395,7 @@ drivers env multi who isFake plan shutdownSTM termSys stderr =
     (httpBorn, runHttp) = eyre env multi who plan isFake
     (clayBorn, runClay) = clay env plan
     (irisBorn, runIris) = client env plan
-    (termBorn, runTerm) = Term.term env termSys shutdownSTM plan
+    (termBorn, runTerm) = Term.term env termSys plan
     initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
                                    termBorn, irisBorn]
     runDrivers          = do
