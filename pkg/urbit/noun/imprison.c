@@ -301,13 +301,38 @@ u3i_tape(const c3_c* txt_c)
   } else return u3i_cell(*txt_c, u3i_tape(txt_c + 1));
 }
 
-/* u3i_list():
-**
-**   Generate a null-terminated list, with `u3_none` as terminator.
+/* u3i_list(): list from `u3_none`-terminated varargs.
 */
 u3_noun
-u3i_list(u3_weak one, ...);
+u3i_list(u3_weak som, ...)
+{
+  u3_noun lit = u3_nul;
+  va_list  ap;
 
+  if ( u3_none == som ) {
+    return lit;
+  }
+  else {
+    lit = u3nc(som, lit);
+  }
+
+  {
+    u3_noun tem;
+
+    va_start(ap, som);
+    while ( 1 ) {
+      if ( u3_none == (tem = va_arg(ap, u3_weak)) ) {
+        break;
+      }
+      else {
+        lit = u3nc(tem, lit);
+      }
+    }
+    va_end(ap);
+  }
+
+  return u3kb_flop(lit);
+}
 
 static u3_noun
 _edit_cat(u3_noun big, c3_l axe_l, u3_noun som)
