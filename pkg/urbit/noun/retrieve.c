@@ -1387,7 +1387,7 @@ u3r_mug_chub(c3_d num_d)
   c3_w buf_w[2];
 
   buf_w[0] = (c3_w)(num_d & 0xffffffffULL);
-  buf_w[1] = (c3_w)(num_d >> 32ULL);
+  buf_w[1] = (c3_w)(num_d >> 32);
 
   return u3r_mug_words(buf_w, 2);
 }
@@ -1438,8 +1438,7 @@ c3_w
 u3r_mug_both(c3_w lef_w, c3_w rit_w)
 {
   c3_w ham_w = lef_w ^ (0x7fffffff ^ rit_w);
-
-  return u3r_mug_words(&ham_w, (0 == ham_w) ? 0 : 1);
+  return u3r_mug_words(&ham_w, 1);
 }
 
 /* u3r_mug_cell(): Compute the mug of the cell `[hed tel]`.
@@ -1547,7 +1546,7 @@ u3r_mug(u3_noun veb)
     //  veb is a direct atom, mug is not memoized
     //
     if ( _(u3a_is_cat(veb)) ) {
-      mug_w = u3r_mug_bytes((c3_y*)&veb, u3r_met(3, veb));
+      mug_w = u3r_mug_words(&veb, 1);
       goto retreat;
     }
     //  veb is indirect, a pointer into the loom
@@ -1565,7 +1564,7 @@ u3r_mug(u3_noun veb)
       //
       else if ( _(u3a_is_atom(veb)) ) {
         u3a_atom* vat_u = (u3a_atom*)veb_u;
-        mug_w = u3r_mug_bytes((c3_y*)vat_u->buf_w, u3r_met(3, veb));
+        mug_w = u3r_mug_words(vat_u->buf_w, vat_u->len_w);
         vat_u->mug_w = mug_w;
         goto retreat;
       }
