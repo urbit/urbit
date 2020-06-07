@@ -67,9 +67,9 @@
   ?>  =(0 x)  ::  sanity check
   %.  [d i p]
   =<  set-metadata
-  =+  v=(scag 4 t)
-  ?:  =("xprv" v)  (from-private k c)
-  ?:  =("xpub" v)  (from-public k c)
+  =+  v=(swag [1 3] t)
+  ?:  =("prv" v)  (from-private k c)
+  ?:  =("pub" v)  (from-public k c)
   !!
 ::
 ++  set-metadata
@@ -169,11 +169,13 @@
 ++  fingerprint     (cut 3 [16 4] identity)
 ::
 ++  prv-extended
-  %+  en-b58c-bip32  0x488.ade4
+  |=  network=?(%main %regtest %testnet)
+  %+  en-b58c-bip32  (version-bytes network %prv %.y)
   (build-extended private-key)
 ::
 ++  pub-extended
-  %+  en-b58c-bip32  0x488.b21e
+  |=  network=?(%main %regtest %testnet)
+  %+  en-b58c-bip32  (version-bytes network %pub %.y)
   (build-extended public-key)
 ::
 ++  build-extended
@@ -188,6 +190,7 @@
 ::
 ++  en-b58c-bip32
   |=  [v=@ k=@]
+  %-  en-base58:mimes:html
   (en-base58check [4 v] [74 k])
 ::
 ::  base58check
@@ -196,7 +199,6 @@
   ::  v: version bytes
   ::  d: data
   |=  [v=byts d=byts]
-  %-  en-base58:mimes:html
   =+  p=[(add wid.v wid.d) (can 3 ~[d v])]
   =-  (can 3 ~[4^- p])
   %^  rsh  3  28
@@ -213,4 +215,19 @@
 ++  hash160
   |=  d=@
   (ripemd-160:ripemd:crypto 32 (sha-256:sha d))
+::
+++  version-bytes
+  |=  [network=?(%main %regtest %testnet) type=?(%pub %prv) bip32=?]
+  ^-  @ux
+  |^
+  ?-  type
+    %pub  ?:(bip32 xpub-key pay-to-pubkey)
+    %prv  ?:(bip32 xprv-key private-key)
+  ==
+  ::
+  ++  pay-to-pubkey  ?:(=(network %main) 0x0 0x6f)
+  ++  private-key    ?:(=(network %main) 0x80 0xef)
+  ++  xpub-key       ?:(=(network %main) 0x488.b21e 0x435.87cf)
+  ++  xprv-key       ?:(=(network %main) 0x488.ade4 0x435.8394)
+  --
 --
