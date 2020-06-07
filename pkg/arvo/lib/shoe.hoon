@@ -116,6 +116,7 @@
     (easy *[? command-type])
   ::
   ++  tab-list
+    |=  sole-id=@ta
     ~
   ::
   ++  on-command
