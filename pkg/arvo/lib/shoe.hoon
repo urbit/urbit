@@ -225,7 +225,8 @@
         %+  rose  (tufa buf.cli-state)
         (command-parser:og sole-id)
       ?:  ?=(%& -.res)
-        ?~  p.res  [[~ cli-state] shoe]
+        ?.  &(?=(^ p.res) run.u.p.res) 
+          [[~ cli-state] shoe]
         (run-command cmd.u.p.res)
       :_  shoe
       ::  parsing failed
