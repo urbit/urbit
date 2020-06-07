@@ -168,6 +168,16 @@
 ++  identity        (hash160 public-key)
 ++  fingerprint     (cut 3 [16 4] identity)
 ::
+++  address
+  |=  network=?(%main %regtest %testnet)
+  ^-  @uc
+  ::  removes checksum
+  ::
+  %^  rsh  3  4
+  %+  en-base58check
+    [4 (version-bytes network %pub %.n)]
+  [20 identity]
+::
 ++  prv-extended
   |=  network=?(%main %regtest %testnet)
   %+  en-b58c-bip32  (version-bytes network %prv %.y)
