@@ -29,17 +29,6 @@ import qualified Urbit.Vere.Serf.IPC as X (Config(..), EvErr(..), Flag(..),
                                            RunReq(..), Serf, WorkError(..), run,
                                            snapshot, start, stop)
 
--- ort System.ProgressBar
--- ort qualified Urbit.Ob                 as Ob
--- ort qualified Urbit.Time               as Time
-
-
---------------------------------------------------------------------------------
-
--- TODO XXX HACK FIXME
-data MissingBootEventsInEventLog = MissingBootEventsInEventLog Word Word
- deriving (Show, Exception)
-
 
 --------------------------------------------------------------------------------
 
@@ -83,9 +72,15 @@ execReplay serf log last = do
     when (numEvs /= bootSeqLen) $ do
       throwIO (MissingBootEventsInEventLog numEvs bootSeqLen)
 
+    logTrace $ display ("Sending " <> tshow numEvs <> " boot events to serf")
+
     io (boot serf evs) >>= \case
-      Just err -> pure (Just err)
-      Nothing  -> doReplay
+      Just err -> do
+        logTrace "Finished boot events, nothing more to replay."
+        pure (Just err)
+      Nothing  -> do
+        logTrace "Finished boot events, moving on to more events from log."
+        doReplay
 
   doReplay :: RIO e (Maybe PlayBail)
   doReplay = do
@@ -107,7 +102,7 @@ execReplay serf log last = do
     let numEvs :: Int = fromIntegral replayUpTo - fromIntegral lastEventInSnap
 
     when (numEvs < 0) $ do
-      error "impossible"
+      throwIO (SnapshotAheadOfLog logLastEv lastEventInSnap)
 
     incProgress <- logStderr (trackProgress (fromIntegral numEvs))
 

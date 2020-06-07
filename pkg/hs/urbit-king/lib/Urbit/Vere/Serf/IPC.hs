@@ -48,7 +48,8 @@
 -}
 
 module Urbit.Vere.Serf.IPC
-  ( Serf
+  ( SerfExn(..)
+  , Serf
   , Config(..)
   , PlayBail(..)
   , Flag(..)
@@ -203,6 +204,8 @@ data SerfExn
   | BailDuringReplay EventId [Goof]
   | SwapDuringReplay EventId Mug (Wen, Noun) FX
   | SerfNotRunning
+  | MissingBootEventsInEventLog Word Word
+  | SnapshotAheadOfLog EventId EventId
  deriving (Show, Exception)
 
 -- Access Current Serf State ---------------------------------------------------
@@ -465,6 +468,7 @@ forcefullyKillSerf serf = do
 boot :: Serf -> [Noun] -> IO (Maybe PlayBail)
 boot serf@Serf {..} seq = do
   withSerfLockIO serf $ \ss -> do
+    sendWrit serf (WPlay 1 seq)
     recvPlay serf >>= \case
       PBail bail -> pure (ss, Just bail)
       PDone mug  -> pure (SerfState (fromIntegral $ length seq) mug, Nothing)

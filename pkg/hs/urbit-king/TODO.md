@@ -18,6 +18,7 @@ Stubbed out:
 
 Bugs:
 
+- [x] `king new` should reject pier directories that already exist.
 - [x] In non-daemon-mode, ^D doesn't bring down Urbit properly.
 
 King-Haskell specific features:
@@ -104,3 +105,8 @@ data DriverApi = DriverApi
 
 type Driver = DriverConfig -> RIO e DriverApi
 ```
+
+# Finding the Serf Executable
+
+Right now, `urbit-worker` is found by looking it up in the PATH. This
+is wrong, but what is right?

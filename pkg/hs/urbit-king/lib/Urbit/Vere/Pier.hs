@@ -51,10 +51,17 @@ import qualified Urbit.Vere.Term.Render as Term
 
 -- Initialize pier directory. --------------------------------------------------
 
+data PierDirectoryAlreadyExists = PierDirectoryAlreadyExists
+ deriving (Show, Exception)
+
 setupPierDirectory :: FilePath -> RIO e ()
 setupPierDirectory shipPath = do
+  -- shipPath will already exist because we put a lock file there.
+  alreadyExists <- doesPathExist (shipPath </> ".urb")
+  when alreadyExists $ do
+    throwIO PierDirectoryAlreadyExists
   for_ ["put", "get", "log", "chk"] $ \seg -> do
-    let pax = shipPath <> "/.urb/" <> seg
+    let pax = shipPath </> ".urb" </> seg
     createDirectoryIfMissing True pax
     io $ setFileMode pax ownerModes
 
@@ -301,7 +308,6 @@ pier (serf, log) vSlog mStart multi = do
   io $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
   scryM  <- newEmptyTMVarIO
-
   onKill <- view onKillPierSigL
 
   let computeConfig = ComputeConfig { ccOnWork      = readTQueue computeQ
@@ -326,7 +332,7 @@ pier (serf, log) vSlog mStart multi = do
   --  TODO bullshit scry tester
   void $ acquireWorker "bullshit scry tester" $ forever $ do
     env <- ask
-    threadDelay 1_000_000
+    threadDelay 15_000_000
     wen <- io Time.now
     let kal = \mTermNoun -> runRIO env $ do
           logTrace $ displayShow ("scry result: ", mTermNoun)
