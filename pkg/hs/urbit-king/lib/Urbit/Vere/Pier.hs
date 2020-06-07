@@ -184,7 +184,7 @@ resumed
   -> Maybe Word64
   -> [Serf.Flag]
   -> RAcquire PierEnv (Serf, EventLog)
-resumed vSlog replayUntil flags = do
+resumed vSlog replayUntil flags  = do
   rio $ logTrace "Resuming ship"
   top <- view pierPathL
   tap <- fmap (fromMaybe top) $ rio $ runMaybeT $ do

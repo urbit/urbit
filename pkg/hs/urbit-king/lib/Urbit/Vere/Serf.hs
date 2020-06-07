@@ -20,14 +20,16 @@ import Control.Monad.Trans.Resource (runResourceT)
 import Urbit.Arvo                   (FX)
 
 import qualified Data.Conduit.Combinators as CC
+import qualified System.ProgressBar       as PB
 import qualified Urbit.Vere.Log           as Log
+
+import Urbit.King.App (HasStderrLogFunc(..))
 
 import qualified Urbit.Vere.Serf.IPC as X (Config(..), EvErr(..), Flag(..),
                                            RunReq(..), Serf, WorkError(..), run,
                                            snapshot, start, stop)
 
 -- ort System.ProgressBar
--- ort Urbit.King.App         (HasStderrLogFunc(..))
 -- ort qualified Urbit.Ob                 as Ob
 -- ort qualified Urbit.Time               as Time
 
@@ -56,7 +58,7 @@ withSerf config = mkRAcquire startup kill
 
 execReplay
   :: forall e
-   . HasLogFunc e
+   . (HasLogFunc e, HasStderrLogFunc e)
   => Serf
   -> Log.EventLog
   -> Maybe Word64
@@ -107,20 +109,41 @@ execReplay serf log last = do
     when (numEvs < 0) $ do
       error "impossible"
 
+    incProgress <- logStderr (trackProgress (fromIntegral numEvs))
+
     logTrace $ display $ "Replaying up to event #" <> tshow replayUpTo
     logTrace $ display $ "Will replay " <> tshow numEvs <> " in total."
 
     env <- ask
 
-    let onProgress n = do
-          runRIO env $ logTrace $ display ("Serf is at event# " <> tshow n)
-
-    runResourceT
+    res <- runResourceT
       $  runConduit
       $  Log.streamEvents log (lastEventInSnap + 1)
       .| CC.take (fromIntegral numEvs)
       .| CC.mapM (fmap snd . parseLogRow)
-      .| replay 10 onProgress serf
+      .| replay 5 incProgress serf
+
+    pure res
+
+logStderr :: HasStderrLogFunc e => RIO LogFunc a -> RIO e a
+logStderr action = do
+  logFunc <- view stderrLogFuncL
+  runRIO logFunc action
+
+trackProgress
+  :: HasLogFunc e
+  => Word64
+  -> RIO e (Int -> IO ())
+trackProgress = \case
+  0   -> pure $ const $ pure ()
+  num -> do
+    let style = PB.defStyle { PB.stylePostfix = PB.exact }
+    let refresh = 10
+    let init = PB.Progress 0 (fromIntegral num) ()
+    bar <- PB.newProgressBar style refresh init
+    env <- ask
+    let incr = PB.incProgress bar
+    pure (runRIO env . incr)
 
 
 -- Collect FX ------------------------------------------------------------------

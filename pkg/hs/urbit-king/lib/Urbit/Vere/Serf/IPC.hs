@@ -481,7 +481,7 @@ replay
   :: forall m
    . (MonadResource m, MonadUnliftIO m, MonadIO m)
   => Int
-  -> (EventId -> IO ())
+  -> (Int -> IO ())
   -> Serf
   -> ConduitT Noun Void m (Maybe PlayBail)
 replay batchSize cb serf = do
@@ -491,7 +491,6 @@ replay batchSize cb serf = do
  where
   loop :: SerfState -> ConduitT Noun Void m (Maybe PlayBail, SerfState)
   loop ss@(SerfState lastEve lastMug) = do
-    io (cb lastEve)
     awaitBatch batchSize >>= \case
       []  -> pure (Nothing, SerfState lastEve lastMug)
       evs -> do
@@ -500,7 +499,9 @@ replay batchSize cb serf = do
         io $ sendWrit serf (WPlay nexEve evs)
         io (recvPlay serf) >>= \case
           PBail bail   -> pure (Just bail, SerfState lastEve lastMug)
-          PDone newMug -> loop (SerfState newEve newMug)
+          PDone newMug -> do
+            io (cb $ length evs)
+            loop (SerfState newEve newMug)
 
 {-|
   TODO If this is slow, use a mutable vector instead of reversing a list.

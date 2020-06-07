@@ -15,7 +15,6 @@ Stubbed out:
 - [x] Snapshots should block until that event is commited to disk.
 - [x] Hook up error callbacks to IO Drivers.
 - [x] Do something useful with error callbacks from IO Drivers.
-- [ ] Make sure replay progress bars go to stderr.
 
 Bugs:
 
@@ -37,9 +36,11 @@ Polish:
 - [x] Cleanup batching flow.
 - [x] Think through how to shutdown the serf on exception.
 - [x] King should shutdown promptly on ^C. Always takes 2s in practice.
+- [x] Bring back progress bars.
+- [x] Make sure replay progress bars go to stderr.
 - [ ] Logging for new IPC flow.
 - [ ] Logging for boot sequence.
-- [ ] Bring back progress bars.
+- [ ] Take snapshots on clean shutdown.
 
 # Misc Bugs
 
