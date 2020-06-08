@@ -96,7 +96,7 @@ import Urbit.King.App         (killKingActionL, onKillKingSigL)
 import Urbit.King.App         (killPierActionL)
 import Urbit.King.App         (runKingEnvLogFile, runKingEnvStderr, runPierEnv)
 import Urbit.Noun.Conversions (cordToUW)
-import Urbit.Time             (Wen)
+import Urbit.Noun.Time        (Wen)
 import Urbit.Vere.LockFile    (lockFile)
 
 import qualified Data.Set                as Set

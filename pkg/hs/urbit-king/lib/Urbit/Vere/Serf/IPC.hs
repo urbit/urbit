@@ -79,12 +79,12 @@ import Foreign.Storable             (peek, poke)
 import RIO.Prelude                  (decodeUtf8Lenient)
 import System.Posix.Signals         (sigKILL, signalProcess)
 import Urbit.Arvo                   (Ev, FX)
-import Urbit.Time                   (Wen)
+import Urbit.Noun.Time              (Wen)
 
 import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Unsafe as BS
 import qualified System.IO.Error        as IO
-import qualified Urbit.Time             as Time
+import qualified Urbit.Noun.Time        as Time
 
 
 -- Serf API --------------------------------------------------------------------

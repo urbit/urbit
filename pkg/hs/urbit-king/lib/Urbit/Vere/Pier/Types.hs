@@ -20,7 +20,7 @@ where
 import Urbit.Prelude hiding (Term)
 
 import Urbit.Arvo
-import Urbit.Time
+import Urbit.Noun.Time
 
 import Urbit.Vere.Serf.Types
 

@@ -10,7 +10,7 @@ import Urbit.Prelude
 
 import Data.Conduit
 import Urbit.Arvo
-import Urbit.Time
+import Urbit.Noun.Time
 import Urbit.Vere.Pier.Types
 
 import Control.Monad.Trans.Maybe (MaybeT(..))

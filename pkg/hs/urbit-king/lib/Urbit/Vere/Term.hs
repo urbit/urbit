@@ -18,8 +18,8 @@ import RIO.FilePath
 import System.Posix.IO
 import System.Posix.Terminal
 import Urbit.Arvo            hiding (Term)
+import Urbit.Noun.Time
 import Urbit.Prelude         hiding (getCurrentTime)
-import Urbit.Time
 import Urbit.Vere.Pier.Types
 
 import Data.List           ((!!))

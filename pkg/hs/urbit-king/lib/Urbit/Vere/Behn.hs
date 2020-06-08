@@ -8,12 +8,12 @@ import Urbit.Arvo            hiding (Behn)
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
 
-import Urbit.King.App (HasPierEnv(..), HasKingId(..))
-import Urbit.Time     (Wen)
-import Urbit.Timer    (Timer)
+import Urbit.King.App  (HasKingId(..), HasPierEnv(..))
+import Urbit.Noun.Time (Wen)
+import Urbit.Timer     (Timer)
 
-import qualified Urbit.Time  as Time
-import qualified Urbit.Timer as Timer
+import qualified Urbit.Noun.Time as Time
+import qualified Urbit.Timer     as Timer
 
 
 -- Behn Stuff ------------------------------------------------------------------

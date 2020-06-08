@@ -60,7 +60,7 @@ Polish:
 - [ ] Simplify `Main.hs` flows.
 - [ ] Cleanup Terminal Driver code.
 - [ ] Spin off `RAcquire` into it's own package.
-- [ ] Spin off `Urbit.Noun` into it's own package.
+- [x] Spin off `urbit-noun-core` and `urbit-noun` packages.
 - [ ] Spin off `Urbit.Vere.Log` into it's own package.
 - [ ] Spin off `Urbit.Vere.Serf` into it's own package, and make it care
       less about the shape of events and effects.

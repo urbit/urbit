@@ -2,7 +2,7 @@
     TODO This is slow.
 -}
 
-module Urbit.Time where
+module Urbit.Noun.Time where
 
 import Control.Lens
 import Prelude

@@ -64,9 +64,9 @@ import Urbit.Prelude
 import Network.Socket        hiding (recvFrom, sendTo)
 import Urbit.Arvo            hiding (Fake)
 
-import qualified Data.Map   as M
-import qualified Urbit.Ob   as Ob
-import qualified Urbit.Time as Time
+import qualified Data.Map        as M
+import qualified Urbit.Noun.Time as Time
+import qualified Urbit.Ob        as Ob
 
 
 -- Types -----------------------------------------------------------------------

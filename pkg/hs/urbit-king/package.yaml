@@ -99,6 +99,8 @@ dependencies:
   - unliftio-core
   - unordered-containers
   - urbit-atom
+  - urbit-noun
+  - urbit-noun-core
   - urbit-azimuth
   - urbit-hob
   - utf8-string

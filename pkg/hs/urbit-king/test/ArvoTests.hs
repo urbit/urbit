@@ -10,8 +10,8 @@ import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 import Urbit.Arvo
+import Urbit.Noun.Time
 import Urbit.Prelude
-import Urbit.Time
 import Urbit.Vere.Log
 import Urbit.Vere.Pier.Types
 

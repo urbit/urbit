@@ -28,7 +28,7 @@ import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.King.App         (HasKingEnv, HasPierEnv(..), PierEnv)
 import Urbit.King.App         (onKillPierSigL)
-import Urbit.Time             (Wen)
+import Urbit.Noun.Time        (Wen)
 import Urbit.Vere.Ames        (ames)
 import Urbit.Vere.Behn        (behn)
 import Urbit.Vere.Clay        (clay)
@@ -40,7 +40,7 @@ import Urbit.Vere.Serf        (Serf)
 
 import qualified System.Entropy         as Ent
 import qualified Urbit.King.API         as King
-import qualified Urbit.Time             as Time
+import qualified Urbit.Noun.Time        as Time
 import qualified Urbit.Vere.Log         as Log
 import qualified Urbit.Vere.Serf        as Serf
 import qualified Urbit.Vere.Term        as Term

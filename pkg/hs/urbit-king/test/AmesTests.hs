@@ -10,8 +10,8 @@ import Test.Tasty.TH
 import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Noun
+import Urbit.Noun.Time
 import Urbit.Prelude
-import Urbit.Time
 import Urbit.Vere.Ames
 import Urbit.Vere.Log
 import Urbit.Vere.Pier.Types
@@ -73,36 +73,38 @@ runNetworkApp = runRIO NetworkTestApp
   }
 
 runGala
-  :: forall e . HasAmes e => Word8 -> RAcquire e (TQueue EvErr, EffCb e NewtEf)
+  :: forall e
+   . HasAmes e
+  => Word8
+  -> RAcquire e (TQueue EvErr, NewtEf -> IO ())
 runGala point = do
     env <- ask
     que <- newTQueueIO
     let (_, runAmes) =
           ames env (fromIntegral point) True (writeTQueue que) noStderr
     cb <- runAmes
-    rio $ cb turfEf
+    io (cb turfEf)
     pure (que, cb)
   where
     noStderr _ = pure ()
 
 waitForPacket :: TQueue EvErr -> Bytes -> IO Bool
 waitForPacket q val = go
-  where
-    go =
-      atomically (readTQueue q) >>= \case
-        EvErr (EvBlip (BlipEvNewt (NewtEvBorn (_, ()) ()))) _ -> go
-        EvErr (EvBlip (BlipEvAmes (AmesEvHear () _ bs))) _    -> pure (bs == val)
-        _                                                     -> pure False
+ where
+  go = atomically (readTQueue q) >>= \case
+    EvErr (EvBlip (BlipEvNewt (NewtEvBorn (_, ()) ()))) _ -> go
+    EvErr (EvBlip (BlipEvAmes (AmesEvHear () _ bs))) _ -> pure (bs == val)
+    _ -> pure False
 
 runRAcquire :: RAcquire e a -> RIO e a
 runRAcquire acq = rwith acq pure
 
-sendThread :: EffCb e NewtEf -> (Galaxy, Bytes) -> RAcquire e ()
+sendThread :: (NewtEf -> IO ()) -> (Galaxy, Bytes) -> RAcquire e ()
 sendThread cb (to, val) = void $ mkRAcquire start cancel
   where
     start = async $ forever $ do threadDelay 1_000
                                  wen <- io $ now
-                                 cb (sendEf to wen val)
+                                 io $ cb (sendEf to wen val)
                                  threadDelay 10_000
 
 zodSelfMsg :: Property

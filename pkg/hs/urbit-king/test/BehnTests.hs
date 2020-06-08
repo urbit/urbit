@@ -10,8 +10,8 @@ import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 import Urbit.Arvo
 import Urbit.Noun
+import Urbit.Noun.Time
 import Urbit.Prelude
-import Urbit.Time
 import Urbit.Vere.Behn
 import Urbit.Vere.Log
 import Urbit.Vere.Pier.Types
@@ -22,8 +22,8 @@ import GHC.Natural        (Natural)
 import Network.Socket     (tupleToHostAddress)
 import Urbit.King.App     (runKingEnvNoLog, HasKingId(..))
 
-import qualified Urbit.Time     as Time
-import qualified Urbit.Vere.Log as Log
+import qualified Urbit.Noun.Time as Time
+import qualified Urbit.Vere.Log  as Log
 
 
 --------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ timerFires = forAll arbitrary (ioProperty . runKingEnvNoLog . runTest)
       king <- fromIntegral <$> view kingIdL
       q <- newTQueueIO
       rwith (liftAcquire $ snd $ behn envr (writeTQueue q)) $ \cb -> do
-        cb (BehnEfDoze (king, ()) (Just (2^20)))
+        io $ cb (BehnEfDoze (king, ()) (Just (2^20)))
         t <- atomically $ readTQueue q
         pure True
 

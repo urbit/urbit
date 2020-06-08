@@ -2,8 +2,8 @@ module Urbit.Vere.Serf.Types where
 
 import Urbit.Prelude
 
-import Urbit.Arvo (Ev, FX)
-import Urbit.Time (Wen)
+import Urbit.Arvo      (Ev, FX)
+import Urbit.Noun.Time (Wen)
 
 
 -- Types -----------------------------------------------------------------------
