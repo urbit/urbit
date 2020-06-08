@@ -4,12 +4,10 @@
 +$  index       (list atom)
 +$  uid         [=resource =index]
 ::
-+$  hash
-  $%  [%sha256 p=@ux]
-      [%murmur3 p=@ux]
-  ==
+::  must be sha256 hash
++$  hash  @ux
 ::
-+$  signature   @ux
++$  signature   [p=@ux q=ship r=life]
 +$  signatures  (set signature)
 +$  post
   $:  author=ship

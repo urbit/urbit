@@ -1,12 +1,12 @@
-/+  store=graph-store, *or-map, default-agent, dbug
+/+  store=graph-store, sigs=signatures, *or-map, default-agent, dbug
 |%
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
   ==
 +$  state-0  [%0 network:store]
-::
-++  orm  ((or-map atom:store node:store) lth)
+++  orm      ((or-map atom:store node:store) lth)
+++  orm-log  ((or-map time action:store) lth)
 --
 ::
 =|  state-0
@@ -41,15 +41,16 @@
     |=  =action:store
     ^-  (quip card _state)
     |^
-    ?-  -.action
-        %add-graph          (add-graph +.action)
-        %remove-graph       (remove-graph +.action)
-        %add-nodes          (add-nodes +.action)
-        %remove-nodes       (remove-nodes +.action)
-        %add-signatures     (add-signatures +.action)
-        %remove-signatures  (remove-signatures +.action)
-        %add-tag            (add-tag +.action)
-        %remove-tag         (remove-tag +.action)
+    ?>  ?=(%0 -.action)
+    ?-  +<.action
+        %add-graph          (add-graph +>.action)
+        %remove-graph       (remove-graph +>.action)
+        %add-nodes          (add-nodes +>.action)
+        %remove-nodes       (remove-nodes +>.action)
+        %add-signatures     (add-signatures +>.action)
+        %remove-signatures  (remove-signatures +>.action)
+        %add-tag            (add-tag +>.action)
+        %remove-tag         (remove-tag +>.action)
     ==
     ::
     ++  add-graph
@@ -57,35 +58,37 @@
       ^-  (quip card _state)
       ?<  (~(has by graphs) resource)
       :-  (give [/all /keys ~] [%add-graph resource graph])
-      state(graphs (~(put by graphs) resource graph))
+      %=  state
+          graphs       (~(put by graphs) resource graph)
+          action-logs  (~(put by action-logs) resource (gas:orm-log ~ ~))
+      ==
     ::
     ++  remove-graph
       |=  =resource:store
       ^-  (quip card _state)
       ?>  (~(has by graphs) resource)
       :-  (give [/all /keys ~] [%remove-graph resource])
-      state(graphs (~(del by graphs) resource))
+      %=  state
+          graphs       (~(del by graphs) resource)
+          action-logs  (~(del by action-logs) resource)
+      ==
     ::
     ++  add-nodes
-      |=  nodes=(map resource:store (map index:store node:store))
+      |=  [=resource:store nodes=(map index:store node:store)]
       ^-  (quip card _state)
-      =/  resource-list  ~(tap by nodes)
       |^
-      ?~  resource-list
-        :_  state
-        (give [/all]~ [%add-nodes nodes])
-      =*  resource       -.i.resource-list
-      =/  indexed-nodes=(map index:store node:store)  +.i.resource-list
-      =/  graph=(unit graph:store)  (~(get by graphs) resource)
-      ?~  graph
-        ~&  "graph {<resource>} does not exist to add a node to!"
-        $(resource-list t.resource-list)
-      %_  $
-          resource-list  t.resource-list
+      =/  =graph:store       (~(got by graphs) resource)
+      =/  =action-log:store  (~(got by action-logs) resource)
+      =.  action-log
+        (put:orm-log action-log now.bowl [%0 [%add-nodes resource nodes]])
+      ::
+      :-  (give [/all]~ [%add-nodes resource nodes])
+      %_  state
+          action-logs  (~(put by action-logs) resource action-log)
           graphs
         %+  ~(put by graphs)
           resource
-        (add-node-list resource u.graph ~(tap by indexed-nodes))
+        (add-node-list resource graph ~(tap by nodes))
       ==
       ::
       ++  add-node-list
@@ -94,7 +97,6 @@
                 node-list=(list [index:store node:store])
             ==
         ^-  graph:store
-        |-
         ?~  node-list  graph
         =*  index  -.i.node-list
         =*  node   +.i.node-list
@@ -110,24 +112,25 @@
         =*  atom   i.index
         ::  last index in list
         ::
-        ?~  t.index  (put:orm graph atom node)
+        ?~  t.index
+          ::  TODO: validate that hash of node matches
+          (put:orm graph atom node)
         ::  multiple indices left in list
         ::
         =/  parent=(unit node:store)  (get:orm graph atom)
         ?~  parent
           ~&  "index does not exist to add a node to!"
           graph
-        =/  par=node:store  (need parent)
-        ?+  -.children.par
+        ?+  -.children.u.parent
           ::  replace empty graph with graph containing one child
           ::
           %^  put:orm
               graph
             atom
-          %=  par
+          %=  u.parent
               children
             ^-  internal-graph:store
-            [%graph $(graph (gas:orm ~ ~), index t.index) now.bowl]
+            [%graph $(graph (gas:orm ~ ~), index t.index)]
           ==
         ::
             %graph
@@ -136,39 +139,33 @@
           %^  put:orm
               graph
             atom
-          %_  par
-              p.children  $(graph p.children.par, index t.index)
-              q.children  now.bowl
+          %_  u.parent
+              p.children  $(graph p.children.u.parent, index t.index)
           ==
         ==
       --
     ::
     ++  remove-nodes
-      |=  nodes=(jug resource:store index:store)
+      |=  [=resource:store indices=(set index:store)]
       ^-  (quip card _state)
-      =/  resource-list=(list [resource:store (set index:store)])
-        ~(tap by nodes)
       |^
-      ?~  resource-list
-        :_  state
-        (give [/all]~ [%remove-nodes nodes])
-      =*  resource       -.i.resource-list
-      =/  graph=(unit graph:store)  (~(get by graphs) resource)
-      ?~  graph
-        ~&  "graph {<resource>} does not exist to add a node to!"
-        $(resource-list t.resource-list)
-      %_  $
-          resource-list  t.resource-list
+      =/  =graph:store        (~(got by graphs) resource)
+      =/  =action-log:store   (~(got by action-logs) resource)
+      =.  action-log
+        (put:orm-log action-log now.bowl [%0 [%remove-nodes resource indices]])
+      ::
+      :-  (give [/all]~ [%remove-nodes resource indices])
+      %_  state
+          action-logs  (~(put by action-logs) resource action-log)
           graphs
         %+  ~(put by graphs)
           resource
-        (remove-indices resource u.graph ~(tap in +.i.resource-list))
+        (remove-indices resource graph ~(tap in indices))
       ==
       ::
       ++  remove-indices
         |=  [=resource:store =graph:store indices=(list index:store)]
         ^-  graph:store
-        |-
         ?~  indices  graph
         %_  $
             indices  t.indices
@@ -183,17 +180,14 @@
         ::  last index in list
         ::
         ?~  t.index
-          =/  node-and-graph=[(unit node:store) graph:store]
-            (del:orm graph atom)
-          +.node-and-graph
+          +:`[* graph:store]`(del:orm graph atom)
         ::  multiple indices left in list
         ::
         =/  parent=(unit node:store)  (get:orm graph atom)
         ?~  parent
           ~&  "index does not exist to remove a node from!"
           graph
-        =/  par=node:store  (need parent)
-        ?+  -.children.par
+        ?+  -.children.u.parent
           ~&  "child index does not exist to remove a node from!"
           graph
         ::
@@ -203,9 +197,8 @@
           %^  put:orm
               graph
             atom
-          %_  par
-              p.children  $(graph p.children.par, index t.index)
-              q.children  now.bowl
+          %_  u.parent
+              p.children  $(graph p.children.u.parent, index t.index)
           ==
         ==
       --
@@ -213,7 +206,58 @@
     ++  add-signatures
       |=  [=uid:store =signatures:store]
       ^-  (quip card _state)
-      [~ state]
+      |^
+      =*  resource  resource.uid
+      =/  =graph:store       (~(got by graphs) resource)
+      =/  =action-log:store  (~(got by action-logs) resource)
+      =.  action-log
+        (put:orm-log action-log now.bowl [%0 [%add-signatures uid signatures]])
+      ::
+      :-  (give [/all]~ [%add-signatures uid signatures])
+      %_  state
+          action-logs  (~(put by action-logs) resource action-log)
+          graphs
+        (~(put by graphs) resource (add-at-index graph index.uid signatures))
+      ==
+      ::
+      ++  add-at-index
+        |=  [=graph:store =index:store =signatures:store]
+        ^-  graph:store
+        ?~  index  graph
+        =*  atom   i.index
+        =/  node=(unit node:store)  (get:orm graph atom)
+        ?~  node
+          ~|("node does not exist to add signatures to!" !!)
+        ::  last index in list
+        ::
+        ?~  t.index
+          ::  TODO: finish this
+          ?.  (are-signatures-valid:sigs signatures *hash:store now.bowl)
+            ~|("signatures did not match public keys!" !!)
+          =/  new-signatures  (~(uni in signatures) p.signatures.post.u.node)
+          %^  put:orm
+              graph
+            atom
+          %_  u.node
+              p.signatures.post  new-signatures
+              q.signatures.post  (sha256-mug:sigs new-signatures)
+          ==
+        ::  multiple indices left in list
+        ::
+        ?+  -.children.u.node
+          ~|("child graph does not exist to add signatures to!" !!)
+        ::
+            %graph
+          :: recurse into children
+          ::
+          %^  put:orm
+              graph
+            atom
+          %_  u.node
+              p.children  $(graph p.children.u.node, index t.index)
+          ==
+        ==
+      --
     ::
     ++  remove-signatures
       |=  [=uid:store =signatures:store]
@@ -221,20 +265,27 @@
       [~ state]
     ::
     ++  add-tag
-      |=  [=term =resources:store]
+      |=  [=term =resource:store]
       ^-  (quip card _state)
-      [~ state]
+      ?>  (~(has by graphs) resource)
+      :-  (give [/all]~ [%add-tag term resource])
+      %_  state
+          tag-queries  (~(put ju tag-queries) term resource)
+      ==
     ::
     ++  remove-tag
-      |=  [=term =resources:store]
+      |=  [=term =resource:store]
       ^-  (quip card _state)
-      [~ state]
-    ::
+      ?>  (~(has by graphs) resource)
+      :-  (give [/all]~ [%remove-tag term resource])
+      %_  state
+          tag-queries  (~(del ju tag-queries) term resource)
+      ==
     ::
     ++  give
-      |=  [paths=(list path) =update:store]
+      |=  [paths=(list path) update=update-0:store]
       ^-  (list card)
-      [%give %fact paths [%graph-update !>(update)]]~
+      [%give %fact paths [%graph-update !>([%0 update])]]~
     --
   --
 ::
@@ -245,15 +296,15 @@
   ?>  (team:title our.bowl src.bowl)
   =/  cards=(list card)
     ?+  path       (on-watch:def path)
-        [%all ~]   (give [%initial graphs tags tag-queries])
+        [%all ~]   (give [%initial graphs tag-queries])
         [%keys ~]  (give [%keys ~(key by graphs)])
     ==
   [cards this]
   ::
   ++  give
-    |=  =update:store
+    |=  update=update-0:store
     ^-  (list card)
-    [%give %fact ~ [%graph-update !>(update)]]~
+    [%give %fact ~ [%graph-update !>([%0 update])]]~
   --
 ::
 ++  on-peek

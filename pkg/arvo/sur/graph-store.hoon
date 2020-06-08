@@ -8,40 +8,51 @@
   ?>  (check-balance:((ordered-map key value) ord) b)
   b
 ::
++$  graphs       (map resource graph)
++$  tag-queries  (jug term resource)
++$  action-logs  (map resource action-log)
 +$  network
-  $:  graphs=(map resource graph)
-      tags=(set term)
-      tag-queries=(map term resources)
+  $:  =graphs
+      =tag-queries
+      =action-logs
   ==
+::
++$  action-log  ((mop time action) lth)
 ::
 +$  graph  ((mop atom node) lth)
 +$  internal-graph
   $~  [%empty ~]
-  $%  ::
-      ::  a graph and timestamp of when it was last modified
-      [%graph p=graph q=time]
+  $%  [%graph p=graph]
       [%empty ~]
-      [%empty-at-time p=time]
   ==
 ::
 +$  node   [=post children=internal-graph]
+::
 +$  action
+  $%  [%0 action-0]
+  ==
+::
++$  action-0
   $%  [%add-graph =resource =graph]
       [%remove-graph =resource]
     ::
-      [%add-nodes nodes=(map resource (map index node))]
-      [%remove-nodes nodes=(jug resource index)]
+      [%add-nodes =resource nodes=(map index node)]
+      [%remove-nodes =resource indices=(set index)]
     ::
       [%add-signatures =uid =signatures]
       [%remove-signatures =uid =signatures]
     ::
-      [%add-tag =term =resources]
-      [%remove-tag =term =resources]
+      [%add-tag =term =resource]
+      [%remove-tag =term =resource]
   ==
 ::
 +$  update
+  $%  [%0 update-0]
+  ==
+::
++$  update-0
   $%  [%keys =resources]
-      [%initial =network]
-      action
+      [%initial =graphs =tag-queries]
+      action-0
   ==
 --
