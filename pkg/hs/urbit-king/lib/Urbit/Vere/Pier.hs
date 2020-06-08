@@ -206,10 +206,14 @@ resumed vSlog replayUntil flags  = do
 
   rio $ do
     logTrace "Replaying events"
-    Serf.execReplay serf log replayUntil
-    logTrace "Taking snapshot"
-    io (Serf.snapshot serf)
-    logTrace "Shuting down the serf"
+    Serf.execReplay serf log replayUntil >>= \case
+      Left err -> error (show err)
+      Right 0  -> do
+        logTrace "No work during replay so no snapshot"
+        pure ()
+      Right _  -> do
+        logTrace "Taking snapshot"
+        io (Serf.snapshot serf)
 
   pure (serf, log)
 

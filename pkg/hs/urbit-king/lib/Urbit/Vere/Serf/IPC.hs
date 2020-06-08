@@ -512,7 +512,7 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
   topLoop = atomically onInput >>= \case
     RRWork workErr -> doWork workErr
     RRSave ()      -> doSave
-    RRKill ()      -> pure ()
+    RRKill ()      -> doKill
     RRPack ()      -> doPack
     RRScry w g p k -> doScry w g p k
 
@@ -529,6 +529,9 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
   doSave :: IO ()
   doSave = waitForLog >> snapshot serf >> topLoop
 
+  doKill :: IO ()
+  doKill = waitForLog >> snapshot serf >> pure ()
+
   doScry :: Wen -> Gang -> Path -> (Maybe (Term, Noun) -> IO ()) -> IO ()
   doScry w g p k = (scry serf w g p >>= k) >> topLoop
 
@@ -544,7 +547,7 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
 
   workLoop :: TBMQueue EvErr -> IO (IO ())
   workLoop que = atomically onInput >>= \case
-    RRKill ()      -> atomically (closeTBMQueue que) >> pure (pure ())
+    RRKill ()      -> atomically (closeTBMQueue que) >> pure doKill
     RRSave ()      -> atomically (closeTBMQueue que) >> pure doSave
     RRPack ()      -> atomically (closeTBMQueue que) >> pure doPack
     RRScry w g p k -> atomically (closeTBMQueue que) >> pure (doScry w g p k)

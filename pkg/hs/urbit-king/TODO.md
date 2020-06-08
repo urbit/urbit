@@ -39,9 +39,9 @@ Polish:
 - [x] King should shutdown promptly on ^C. Always takes 2s in practice.
 - [x] Bring back progress bars.
 - [x] Make sure replay progress bars go to stderr.
-- [ ] Logging for new IPC flow.
-- [ ] Logging for boot sequence.
-- [ ] Take snapshots on clean shutdown.
+- [x] Logging for new IPC flow.
+- [x] Logging for boot sequence.
+- [x] Take snapshots on clean shutdown.
 
 # Misc Bugs
 

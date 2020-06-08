@@ -356,9 +356,9 @@ replayPartEvs top last = do
         rio $ do
           eSs <- Serf.execReplay serf log (Just last)
           case eSs of
-            Just bail -> error (show bail)
-            Nothing   -> pure ()
-          io (Serf.snapshot serf)
+            Left bail -> error (show bail)
+            Right 0   -> io (Serf.snapshot serf)
+            Right num -> pure ()
           io $ threadDelay 500000 -- Copied from runOrExitImmediately
           pure ()
 

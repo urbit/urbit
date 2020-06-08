@@ -51,12 +51,12 @@ execReplay
   => Serf
   -> Log.EventLog
   -> Maybe Word64
-  -> RIO e (Maybe PlayBail)
+  -> RIO e (Either PlayBail Word)
 execReplay serf log last = do
   lastEventInSnap <- io (serfLastEventBlocking serf)
   if lastEventInSnap == 0 then doBoot else doReplay
  where
-  doBoot :: RIO e (Maybe PlayBail)
+  doBoot :: RIO e (Either PlayBail Word)
   doBoot = do
     logTrace "Beginning boot sequence"
 
@@ -76,13 +76,15 @@ execReplay serf log last = do
 
     io (boot serf evs) >>= \case
       Just err -> do
-        logTrace "Finished boot events, nothing more to replay."
-        pure (Just err)
+        logTrace "Error on replay, exiting"
+        pure (Left err)
       Nothing  -> do
         logTrace "Finished boot events, moving on to more events from log."
-        doReplay
+        doReplay <&> \case
+          Left err  -> Left err
+          Right num -> Right (num + numEvs)
 
-  doReplay :: RIO e (Maybe PlayBail)
+  doReplay :: RIO e (Either PlayBail Word)
   doReplay = do
     logTrace "Beginning event log replay"
 
@@ -118,7 +120,9 @@ execReplay serf log last = do
       .| CC.mapM (fmap snd . parseLogRow)
       .| replay 5 incProgress serf
 
-    pure res
+    res & \case
+      Nothing -> pure (Right $ fromIntegral numEvs)
+      Just er -> pure (Left er)
 
 logStderr :: HasStderrLogFunc e => RIO LogFunc a -> RIO e a
 logStderr action = do
