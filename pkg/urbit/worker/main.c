@@ -773,8 +773,8 @@ _worker_poke_work(c3_d    evt_d,              //  event number
   }
 
   if ( evt_d <= u3V.len_w ) {
-    c3_c lab_c[8];
-    snprintf(lab_c, 8, "boot: %" PRIu64 "", evt_d);
+    c3_c lab_c[18];
+    snprintf(lab_c, 18, "boot: %" PRIu64 "", evt_d);
 
     u3t_event_trace(lab_c, 'B');
     _worker_work_boot(evt_d, job);
@@ -786,11 +786,11 @@ _worker_poke_work(c3_d    evt_d,              //  event number
 
     //  XX these allocations should only be performed if tracing is enabled
     //
-    c3_c lab_c[2048];
+    c3_c lab_c[2056];
     {
       c3_c* cad_c = u3m_pretty(cad);
       c3_c* wir_c = u3m_pretty_path(wir);
-      snprintf(lab_c, 2048, "event %" PRIu64 ": [%s %s]",
+      snprintf(lab_c, 2056, "event %" PRIu64 ": [%s %s]",
                             evt_d, wir_c, cad_c);
       c3_free(cad_c);
       c3_free(wir_c);
@@ -822,8 +822,8 @@ _worker_poke_exit(c3_w cod_w)                 //  exit code
         mkdir(nam_c, 0700);
       }
 
-      c3_c man_c[2048];
-      snprintf(man_c, 2048, "%s/%s.txt", nam_c, wen_c);
+      c3_c man_c[2054];
+      snprintf(man_c, 2053, "%s/%s.txt", nam_c, wen_c);
 
       fil_u = fopen(man_c, "w");
 
