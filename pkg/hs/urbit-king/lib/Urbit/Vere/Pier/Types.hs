@@ -3,13 +3,26 @@
 
     TODO Most of these could probably find better homes.
 -}
-module Urbit.Vere.Pier.Types where
+module Urbit.Vere.Pier.Types
+  ( module Urbit.Vere.Serf.Types
+  , LogIdentity(..)
+  , Pill(..)
+  , Job(..)
+  , LifeCyc(..)
+  , BootSeq(..)
+  , Work(..)
+  , jobId
+  , jobMug
+  , DriverApi(..)
+  )
+where
 
 import Urbit.Prelude hiding (Term)
 
-import Urbit.Noun (Term)
 import Urbit.Arvo
 import Urbit.Time
+
+import Urbit.Vere.Serf.Types
 
 
 -- Avoid touching Nock values. -------------------------------------------------
@@ -28,31 +41,7 @@ instance Show Nock where
   show _ = "Nock"
 
 
--- Events With Error Callbacks -------------------------------------------------
-
-type Gang = Maybe (HoonSet Ship)
-
-type Goof = (Term, [Tank])
-
-{-|
-  Two types of serf failures.
-
-  - `RunSwap`: Event processing failed, but the serf replaced it with
-    another event which succeeded.
-
-  - `RunBail`: Event processing failed and all attempt to replace it
-    with a failure-notice event also caused crashes. We are really fucked.
--}
-data WorkError
-  = RunSwap EventId Mug Wen Noun FX
-  | RunBail [Goof]
-
-data EvErr = EvErr Ev (WorkError -> IO ())
-
-
 --------------------------------------------------------------------------------
-
-type EventId = Word64
 
 data Pill = Pill
     { pBootFormulas   :: [Nock]
@@ -96,27 +85,12 @@ jobMug (RunNok (LifeCyc _ mug _)) = mug
 jobMug (DoWork (Work _ mug _ _))  = mug
 
 
---------------------------------------------------------------------------------
+-- API To IO Drivers -----------------------------------------------------------
 
-data Order
-    = OBoot Word -- lifecycle length
-    | OExit Word8
-    | OSave EventId
-    | OWork Job
-  deriving (Eq, Show)
-
-deriveToNoun ''Order
-
-data IODriver = IODriver
-  { bornEvent   :: IO Ev
-  , startDriver :: (Ev -> STM ()) -> IO (Async (), Ef -> IO ())
-  }
-
-data Fact = Fact
-  { factEve :: EventId
-  , factMug :: Mug
-  , factWen :: Wen
-  , factNon :: Noun
+data DriverApi = DriverApi
+  { diEventSource    :: STM (Maybe RunReq)
+  , diOnEffect       :: BehnEf -> IO ()
+  , diBlockUntilBorn :: STM ()
   }
 
 

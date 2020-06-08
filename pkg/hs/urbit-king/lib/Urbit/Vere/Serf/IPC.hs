@@ -9,7 +9,7 @@
   - A running serf can be asked to execute a boot sequence, replay from
     existing events, and run a ship with `boot`, `replay`, and `run`.
 
-  The running and replay flows will do batching of events to keep the
+  The `run` and `replay` flows will do batching of events to keep the
   IPC pipe full.
 
   ```
@@ -48,14 +48,7 @@
 -}
 
 module Urbit.Vere.Serf.IPC
-  ( SerfExn(..)
-  , Serf
-  , Config(..)
-  , PlayBail(..)
-  , Flag(..)
-  , WorkError(..)
-  , EvErr(..)
-  , RunReq(..)
+  ( Serf
   , start
   , stop
   , serfLastEventBlocking
@@ -66,6 +59,7 @@ module Urbit.Vere.Serf.IPC
   , replay
   , run
   , swim
+  , module Urbit.Vere.Serf.Types
   )
 where
 
@@ -74,8 +68,7 @@ import Urbit.Prelude hiding ((<|))
 import Data.Bits
 import Data.Conduit
 import System.Process
-import Urbit.Arvo
-import Urbit.Vere.Pier.Types hiding (Work)
+import Urbit.Vere.Serf.Types
 
 import Control.Monad.STM            (retry)
 import Control.Monad.Trans.Resource (MonadResource, allocate, runResourceT)
@@ -85,6 +78,7 @@ import Foreign.Ptr                  (castPtr)
 import Foreign.Storable             (peek, poke)
 import RIO.Prelude                  (decodeUtf8Lenient)
 import System.Posix.Signals         (sigKILL, signalProcess)
+import Urbit.Arvo                   (Ev, FX)
 import Urbit.Time                   (Wen)
 
 import qualified Data.ByteString        as BS
@@ -93,15 +87,24 @@ import qualified System.IO.Error        as IO
 import qualified Urbit.Time             as Time
 
 
--- IPC Types -------------------------------------------------------------------
+-- Serf API --------------------------------------------------------------------
+
+data Serf = Serf
+  { serfSend :: Handle
+  , serfRecv :: Handle
+  , serfProc :: ProcessHandle
+  , serfSlog :: Slog -> IO ()
+  , serfLock :: MVar (Maybe SerfState)
+  }
+
+
+-- Internal Protocol Types -----------------------------------------------------
 
 data Live
   = LExit Atom -- exit status code
   | LSave EventId
   | LPack EventId
  deriving (Show)
-
-type PlayBail = (EventId, Mug, Goof)
 
 data Play
   = PDone Mug
@@ -121,27 +124,6 @@ data Writ
   | WWork Wen Ev
  deriving (Show)
 
-data RipeInfo = RipeInfo
-  { riProt :: Atom
-  , riHoon :: Atom
-  , riNock :: Atom
-  }
- deriving (Show)
-
-data SerfState = SerfState
-  { ssLast :: EventId
-  , ssHash :: Mug
-  }
- deriving (Show, Eq)
-
-data SerfInfo = SerfInfo
-  { siRipe :: RipeInfo
-  , siStat :: SerfState
-  }
- deriving (Show)
-
-type Slog = (Atom, Tank)
-
 data Plea
   = PLive ()
   | PRipe SerfInfo
@@ -155,58 +137,8 @@ deriveNoun ''Live
 deriveNoun ''Play
 deriveNoun ''Work
 deriveNoun ''Writ
-deriveNoun ''RipeInfo
-deriveNoun ''SerfState
-deriveNoun ''SerfInfo
 deriveNoun ''Plea
 
-
--- Serf API Types --------------------------------------------------------------
-
-data Serf = Serf
-  { serfSend :: Handle
-  , serfRecv :: Handle
-  , serfProc :: ProcessHandle
-  , serfSlog :: Slog -> IO ()
-  , serfLock :: MVar (Maybe SerfState)
-  }
-
-data Flag
-  = DebugRam
-  | DebugCpu
-  | CheckCorrupt
-  | CheckFatal
-  | Verbose
-  | DryRun
-  | Quiet
-  | Hashless
-  | Trace
- deriving (Eq, Ord, Show, Enum, Bounded)
-
-data Config = Config
-  { scSerf :: FilePath       --  Where is the urbit-worker executable?
-  , scPier :: FilePath       --  Where is the pier directory?
-  , scFlag :: [Flag]         --  Serf execution flags.
-  , scSlog :: Slog -> IO ()  --  What to do with slogs?
-  , scStdr :: Text -> IO ()  --  What to do with lines from stderr?
-  , scDead :: IO ()          --  What to do when the serf process goes down?
-  }
-
-
--- Exceptions ------------------------------------------------------------------
-
-data SerfExn
-  = UnexpectedPlea Plea Text
-  | BadPleaAtom Atom
-  | BadPleaNoun Noun [Text] Text
-  | SerfConnectionClosed
-  | SerfHasShutdown
-  | BailDuringReplay EventId [Goof]
-  | SwapDuringReplay EventId Mug (Wen, Noun) FX
-  | SerfNotRunning
-  | MissingBootEventsInEventLog Word Word
-  | SnapshotAheadOfLog EventId EventId
- deriving (Show, Exception)
 
 -- Access Current Serf State ---------------------------------------------------
 
@@ -284,29 +216,29 @@ recvPleaHandlingSlog serf = loop
 recvRipe :: Serf -> IO SerfInfo
 recvRipe serf = recvPleaHandlingSlog serf >>= \case
   PRipe ripe -> pure ripe
-  plea       -> throwIO (UnexpectedPlea plea "expecting %play")
+  plea       -> throwIO (UnexpectedPlea (toNoun plea) "expecting %play")
 
 recvPlay :: Serf -> IO Play
 recvPlay serf = recvPleaHandlingSlog serf >>= \case
   PPlay play -> pure play
-  plea       -> throwIO (UnexpectedPlea plea "expecting %play")
+  plea       -> throwIO (UnexpectedPlea (toNoun plea) "expecting %play")
 
 recvLive :: Serf -> IO ()
 recvLive serf = recvPleaHandlingSlog serf >>= \case
   PLive () -> pure ()
-  plea     -> throwIO (UnexpectedPlea plea "expecting %live")
+  plea     -> throwIO (UnexpectedPlea (toNoun plea) "expecting %live")
 
 recvWork :: Serf -> IO Work
 recvWork serf = do
   recvPleaHandlingSlog serf >>= \case
     PWork work -> pure work
-    plea       -> throwIO (UnexpectedPlea plea "expecting %work")
+    plea       -> throwIO (UnexpectedPlea (toNoun plea) "expecting %work")
 
 recvPeek :: Serf -> IO (Maybe (Term, Noun))
 recvPeek serf = do
   recvPleaHandlingSlog serf >>= \case
     PPeek peek -> pure peek
-    plea       -> throwIO (UnexpectedPlea plea "expecting %peek")
+    plea       -> throwIO (UnexpectedPlea (toNoun plea) "expecting %peek")
 
 
 -- Request-Response Points -- These don't touch the lock -----------------------
@@ -394,30 +326,7 @@ withSerfLockIO :: Serf -> (SerfState -> IO (SerfState, a)) -> IO a
 withSerfLockIO s a = runResourceT (withSerfLock s (io . a))
 
 
--- Flows for Interacting with the Serf -----------------------------------------
-
-{-|
-  Ask the serf to write a snapshot to disk.
--}
-snapshot :: Serf -> IO ()
-snapshot serf = withSerfLockIO serf $ \ss -> do
-  sendSnapshotRequest serf (ssLast ss)
-  pure (ss, ())
-
-{-|
-  Ask the serf to de-duplicate and de-fragment it's heap.
--}
-compact :: Serf -> IO ()
-compact serf = withSerfLockIO serf $ \ss -> do
-  sendCompactionRequest serf (ssLast ss)
-  pure (ss, ())
-
-{-|
-  Peek into the serf state.
--}
-scry :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
-scry serf w g p = withSerfLockIO serf $ \ss -> do
-  (ss,) <$> sendScryRequest serf w g p
+-- Killing the Serf ------------------------------------------------------------
 
 {-|
   Ask the serf to shutdown. If it takes more than 2s, kill it with
@@ -459,6 +368,33 @@ forcefullyKillSerf serf = do
     Just pid -> do
       io $ signalProcess sigKILL pid
       io $ void $ waitForProcess (serfProc serf)
+
+
+-- Flows for Interacting with the Serf -----------------------------------------
+
+{-|
+  Ask the serf to write a snapshot to disk.
+-}
+snapshot :: Serf -> IO ()
+snapshot serf = withSerfLockIO serf $ \ss -> do
+  sendSnapshotRequest serf (ssLast ss)
+  pure (ss, ())
+
+{-|
+  Ask the serf to de-duplicate and de-fragment it's heap.
+-}
+compact :: Serf -> IO ()
+compact serf = withSerfLockIO serf $ \ss -> do
+  sendCompactionRequest serf (ssLast ss)
+  pure (ss, ())
+
+{-|
+  Peek into the serf state.
+-}
+scry :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
+scry serf w g p = withSerfLockIO serf $ \ss -> do
+  (ss,) <$> sendScryRequest serf w g p
+
 
 {-|
   Given a list of boot events, send them to to the serf in a single
@@ -558,18 +494,6 @@ swim serf = do
 
 
 -- Running Ship Flow -----------------------------------------------------------
-
-{-
-  - RRWork: Ask the serf to do work, will output (Fact, FX) if work
-    succeeded and call callback on failure.
-  - RRSave: Wait for the serf to finish all pending work
--}
-data RunReq
-  = RRWork EvErr
-  | RRSave ()
-  | RRKill ()
-  | RRPack ()
-  | RRScry Wen Gang Path (Maybe (Term, Noun) -> IO ())
 
 {-|
   TODO Don't take snapshot until event log has processed current event.

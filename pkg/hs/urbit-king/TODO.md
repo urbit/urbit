@@ -89,22 +89,25 @@ Should have a io-driver-boot stage.
 - No semantically important communication without outside world can
   happen until all drivers are up.
 
-Something like:
+Current IO Driver interface is something like:
 
 ```
-data DriverConfig = DriverConfig
-  { onAllDriversUp :: STM ()
-  }
+behn :: KingId -> (EvErr -> STM ()) -> ([EvErr], Acquire (BehnEf -> IO ()))
+```
 
+New Interface should be something like:
+
+```
 data DriverApi = DriverApi
-  { eventQueue   :: STM (Maybe RunReq)
-  , effectSink   :: Effect -> STM ()
-  , blockUntilUp :: STM ()
-  , killDriver   :: STM ()
+  { eventQueue     :: STM (Maybe RunReq)
+  , effectSink     :: Effect -> STM ()
+  , blockUntilBorn :: STM ()
   }
 
-type Driver = DriverConfig -> RIO e DriverApi
+behn :: HasPierEnv e => RAcquire e DriverApi
 ```
+
+where `PierEnv` contains `blockUntilAllDriversBorn :: STM ()`.
 
 # Finding the Serf Executable
 
