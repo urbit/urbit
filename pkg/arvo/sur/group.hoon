@@ -1,11 +1,9 @@
+/-  *resource
 ^?
 |%
-::  $group-id: unique identifier for a group
-::
-+$  group-id  [=ship =term]
 ::  $groups: a mapping from group-ids to groups
 ::
-+$  groups  (map group-id group)
++$  groups  (map resource group)
 ::  $group-tag: an identifier used by groups
 ::
 ::    These tags should have precise semantics, as they are shared across all

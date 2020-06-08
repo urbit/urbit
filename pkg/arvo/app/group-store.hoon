@@ -10,9 +10,9 @@
 ::
 ::    /y/groups:
 ::      A listing of the current groups
-::    /x/groups/[group-id]:
+::    /x/groups/[resource]:
 ::      The group itself
-::    /x/groups/[group-id]/join/[ship]:
+::    /x/groups/[resource]/join/[ship]:
 ::      A flag indicated if the ship is permitted to join
 ::
 ::    ## Subscription paths
@@ -28,7 +28,7 @@
 ::
 ::
 /-  *group, permission-store
-/+  store=group-store, default-agent, verb, dbug
+/+  store=group-store, default-agent, verb, dbug, resource
 |%
 +$  card  card:agent:gall
 ::
@@ -88,13 +88,13 @@
       ^+  groups
       ?~  paths
         groups
-      =/  [=group-id =group]
+      =/  [rid=resource =group]
         (migrate-group i.paths)
       %=    $
           paths  t.paths
         ::
           groups
-        (~(put by groups) group-id group)
+        (~(put by groups) rid group)
       ==
     ::
     ++  all-unmanaged
@@ -102,13 +102,13 @@
       ^+  groups
       ?~  paths
         groups
-      =/  [=group-id =group]
+      =/  [=resource =group]
         (migrate-unmanaged i.paths)
       %=    $
           paths  t.paths
         ::
           groups
-        (~(put by groups) group-id group)
+        (~(put by groups) resource group)
       ==
     ++  kick-all
       ^-  card
@@ -121,16 +121,16 @@
     ::
     ++  migrate-unmanaged
       |=  pax=path
-      ^-  [group-id group]
+      ^-  [resource group]
       =/  [=policy members=(set ship)]
         (unmanaged-permissions pax)
       ?>  =('~' -.pax)
       =.  pax  +.pax
-      =/  =group-id
-        (need (group-id:de-path:store pax))
+      =/  rid=resource
+        (de-path:resource pax)
       =/  =tags
-        (~(put ju *tags) %admin ship.group-id)
-      [group-id members tags policy %.y]
+        (~(put ju *tags) %admin entity.rid)
+      [rid members tags policy %.y]
     ::
     ++  unmanaged-permissions
       |=  pax=path
@@ -149,11 +149,11 @@
         (~(got by groups.old) pax)
       =^  =policy  members
         (migrate-permissions pax members)
-      =/  =group-id
-        (need (group-id:de-path:store pax))
+      =/  rid=resource
+        (de-path:resource pax)
       =/  =tags
-        (~(put ju *tags) %admin ship.group-id)
-      [group-id members tags policy %.n]
+        (~(put ju *tags) %admin entity.rid)
+      [rid members tags policy %.n]
     ::
     ++  migrate-permissions
       |=  [pax=path ships=(set ship)]
@@ -221,26 +221,26 @@
         %-  malt
         %+  turn
           ~(tap by groups)
-        |=  [=group-id *]
+        |=  [rid=resource *]
         ^-  [@ta ~]
         =/  group=^path
-          (group-id:en-path:store group-id)
+          (en-path:resource rid)
         [(spat group) ~]
       ``noun+!>(arch)
     ::
-        [%x %groups @ @ ~]
-      =/  group-id
-        (group-id:de-path:store t.t.path)
-      ?~  group-id  ~
-      ``noun+!>((peek-group u.group-id))
+        [%x %groups %ship @ @ ~]
+      =/  rid=(unit resource)
+        (de-path-soft:resource t.t.path)
+      ?~  rid   ~
+      ``noun+!>((peek-group u.rid))
     ::
-       [%x %groups @ @ %join @ ~]
-      =/  group-id
-        (group-id:de-path:store t.t.path)
+       [%x %groups %ship @ @ %join @ ~]
+      =/  rid=(unit resource)
+        (de-path-soft:resource t.t.path)
       =/  =ship
         (slav %p i.t.t.t.t.t.path)
-      ?~  group-id  ~
-      ``noun+!>((peek-group-join u.group-id ship))
+      ?~  rid  ~
+      ``noun+!>((peek-group-join u.rid ship))
     ==
   ::
   ++  on-agent  on-agent:def
@@ -250,14 +250,14 @@
 ::
 |_  bol=bowl:gall
 ++  peek-group
-  |=  =group-id
+  |=  rid=resource
   ^-  (unit group)
-  (~(get by groups) group-id)
+  (~(get by groups) rid)
 
 ++  peek-group-join
-  |=  [=group-id =ship]
+  |=  [rid=resource =ship]
   =/  =group
-    (~(gut by groups) group-id *group)
+    (~(gut by groups) rid *group)
   =*  policy  policy.group
   ?-  -.policy
       %invite
@@ -286,23 +286,23 @@
   ::  +groupify: unset .hidden flag
   ::
   ++  groupify
-    |=  [=group-id ~]
+    |=  [rid=resource ~]
     ^-  (quip card _state)
     =/  =group
-      (~(got by groups) group-id)
+      (~(got by groups) rid)
     =.  hidden.group  %.n
     =.  groups
-      (~(put by groups) group-id group)
+      (~(put by groups) rid group)
     :_  state
-    (send-diff %groupify group-id ~)
+    (send-diff %groupify rid ~)
   ::  +add-group: add group to store
   ::
   ::    always include ship in own groups, no-op if group already exists
   ::
   ++  add-group
-    |=  [=group-id =policy hidden=?]
+    |=  [rid=resource =policy hidden=?]
     ^-  (quip card _state)
-    ?<  (~(has by groups) group-id)
+    ?<  (~(has by groups) rid)
     =|  =group
     =.  members.group
       (~(put in members.group) our.bol)
@@ -311,15 +311,15 @@
     =.  tags.group
       (~(put ju tags.group) %admin our.bol)
     =.  groups
-      (~(put by groups) group-id group)
+      (~(put by groups) rid group)
     :_  state
-    (send-diff %add-group group-id policy hidden)
+    (send-diff %add-group rid policy hidden)
   ::  +add-members: add members to group
   ::
   ++  add-members
-    |=  [=group-id new-ships=(set ship)]
+    |=  [rid=resource new-ships=(set ship)]
     ^-  (quip card _state)
-    =/  =group  (~(got by groups) group-id)
+    =/  =group  (~(got by groups) rid)
     =.  members.group  (~(uni in members.group) new-ships)
     =*  policy  policy.group
     =.  policy
@@ -329,52 +329,52 @@
         (~(dif in pending.policy) new-ships)
       policy
     =.  groups
-      (~(put by groups) group-id group)
+      (~(put by groups) rid group)
     :_  state
-    (send-diff %add-members group-id new-ships)
+    (send-diff %add-members rid new-ships)
   ::  +remove-members: remove members from group
   ::
   ::    no-op if group does not exist
   ::
   ::
   ++  remove-members
-    |=  [=group-id ships=(set ship)]
+    |=  [rid=resource ships=(set ship)]
     ^-  (quip card _state)
     =/  =group
-      (~(got by groups) group-id)
+      (~(got by groups) rid)
     =.  members.group
       (~(dif in members.group) ships)
     =.  tags.group
       (remove-tags group ships)
     =.  groups
-      (~(put by groups) group-id group)
+      (~(put by groups) rid group)
     :_   state
-    (send-diff %remove-members group-id ships)
+    (send-diff %remove-members rid ships)
   ::  +add-tag: add tag to ships
   ::
   ::    crash if ships are not in group
   ::
   ++  add-tag
-    |=  [=group-id =tag ships=(set ship)]
+    |=  [rid=resource =tag ships=(set ship)]
     ^-  (quip card _state)
     =/  =group
-      (~(got by groups) group-id)
+      (~(got by groups) rid)
     ?>  ?=(~ (~(dif in ships) members.group))
     =.  tags.group
       (merge-tags tags.group ships (sy tag ~))
     =.  groups
-      (~(put by groups) group-id group)
+      (~(put by groups) rid group)
     :_  state
-    (send-diff %add-tag group-id tag ships)
+    (send-diff %add-tag rid tag ships)
   ::  +remove-tag: remove tag from ships
   ::
   ::    crash if ships are not in group or tag does not exist
   ::
   ++  remove-tag
-    |=  [=group-id =tag ships=(set ship)]
+    |=  [rid=resource =tag ships=(set ship)]
     ^-  (quip card _state)
     =/  =group
-      (~(got by groups) group-id)
+      (~(got by groups) rid)
     ?>  ?&  ?=(~ (~(dif in ships) members.group))
             (~(has by tags.group) tag)
         ==
@@ -384,28 +384,30 @@
       (~(dif in tag-ships) ships)
     =.  tags.group
       (~(put by tags.group) tag tag-ships)
+    =.  groups
+      (~(put by groups) rid group)
     :_  state
-    (send-diff %remove-tag group-id tag ships)
+    (send-diff %remove-tag rid tag ships)
   ::  initial-group: initialize foreign group
   ::
   ++  initial-group
-    |=  [=group-id =group]
+    |=  [rid=resource =group]
     ^-  (quip card _state)
     =.  groups
-      (~(put by groups) group-id group)
+      (~(put by groups) rid group)
     :_  state
-    (send-diff %initial-group group-id group)
+    (send-diff %initial-group rid group)
   ::  +change-policy: modify group access control
   ::
   ::    If the change will kick members, then send a separate
   ::    %remove-members diff after the %change-policy diff
   ++  change-policy
-    |=  [=group-id =diff:policy]
+    |=  [rid=resource =diff:policy]
     ^-  (quip card _state)
-    ?.  (~(has by groups) group-id)
+    ?.  (~(has by groups) rid)
       [~ state]
     =/  =group
-      (~(got by groups) group-id)
+      (~(got by groups) rid)
     |^
     =^  cards  group
       ?-  -.diff
@@ -414,10 +416,10 @@
         %replace  (replace +.diff)
       ==
     =.  groups
-      (~(put by groups) group-id group)
+      (~(put by groups) rid group)
     :_  state
     %+  weld
-      (send-diff %change-policy group-id diff)
+      (send-diff %change-policy rid diff)
     cards
     ::
     ++  open
@@ -468,7 +470,7 @@
         (~(uni in banned.policy.group) ships)
       =/  to-remove=(set ship)
         (~(int in members.group) banned.policy.group)
-      :-  ~[(poke-us %remove-members group-id to-remove)]
+      :-  ~[(poke-us %remove-members rid to-remove)]
       group
     ::
     ++  add-invites
@@ -497,14 +499,14 @@
   ::
   ::    no-op if group does not exist
   ++  remove-group
-    |=  [=group-id ~]
+    |=  [rid=resource ~]
     ^-  (quip card _state)
-    ?.  (~(has by groups) group-id)
+    ?.  (~(has by groups) rid)
       `state
     =.  groups
-      (~(del by groups) group-id)
+      (~(del by groups) rid)
     :_  state
-    (send-diff %remove-group group-id ~)
+    (send-diff %remove-group rid ~)
   ::
   --
 

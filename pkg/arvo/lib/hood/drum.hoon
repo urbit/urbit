@@ -97,7 +97,8 @@
       %publish
       %weather
       %group-store
-      %group-hook
+      %group-pull-hook
+      %group-push-hook
       %permission-store
       %permission-hook
       %permission-group-hook

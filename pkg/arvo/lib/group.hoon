@@ -1,5 +1,5 @@
 /-  *group, *metadata-store, hook=group-hook
-/+  store=group-store
+/+  store=group-store, resource
 |_  =bowl:gall
 +$  card  card:agent:gall
 ++  scry-for
@@ -12,10 +12,10 @@
     (snoc `^path`path %noun)
   ==
 ++  scry-tag
-  |=  [=group-id =tag]
+  |=  [rid=resource =tag]
   ^-  (unit (set ship))
   =/  group
-    (scry-group group-id)
+    (scry-group rid)
   ?~  group
     ~
   `(~(gut by tags.u.group) tag ~)
@@ -27,14 +27,14 @@
   [%groups path]
 ::
 ++  scry-group
-  |=  =group-id
+  |=  rid=resource
   %-  scry-group-path
-  (group-id:en-path:store group-id)
+  (en-path:resource rid)
 ::
 ++  members
-  |=  =group-id
+  |=  rid=resource
   %-  members-from-path
-  (group-id:en-path:store group-id)
+  (en-path:resource rid)
 ::
 ++  members-from-path
   |=  =group-path
@@ -53,10 +53,10 @@
 ::    a member of the group. Returns [~ ~] if the user
 ::    is a member with no additional role.
 ++  role-for-ship
-  |=  [=group-id =ship]
+  |=  [rid=resource =ship]
   ^-  (unit (unit role-tag))
   =/  grp=(unit group)
-    (scry-group group-id)
+    (scry-group rid)
   ?~  grp  ~
   =*  group   u.grp
   =*  policy  policy.group
@@ -85,9 +85,9 @@
   /join/[(scot %p ship)]
 ::
 ++  can-join
-  |=  [=group-id =ship]
+  |=  [rid=resource =ship]
   %+  can-join-from-path
-    (group-id:en-path:store group-id)
+    (en-path:resource rid)
   ship
 ::
 ++  is-managed-path
@@ -99,8 +99,8 @@
   !hidden.u.group
 ::
 ++  is-managed
-  |=  =group-id
+  |=  rid=resource
   %-  is-managed-path
-  (group-id:en-path:store group-id)
+  (en-path:resource rid)
 ::
 --

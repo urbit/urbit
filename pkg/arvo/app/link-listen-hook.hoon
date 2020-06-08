@@ -16,7 +16,7 @@
 ::
 ::
 /-  link-listen-hook, *metadata-store, *group, *link
-/+  mdl=metadata, default-agent, verb, dbug, group-store, grpl=group
+/+  mdl=metadata, default-agent, verb, dbug, group-store, grpl=group, resource
 ::
 ~%  %link-listen-hook-top  ..is  ~
 |%
@@ -350,7 +350,7 @@
   ?.  ?=(?(%add-members %initial-group %remove-members) -.upd)
     [~ state]
   =/  =path
-    (group-id:en-path:group-store group-id.upd)
+    (en-path:resource resource.upd)
   =/  socs=(list app-path)
     (app-paths-from-group:md %link path)
   =/  whos=(list ship)

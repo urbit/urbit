@@ -5,8 +5,10 @@
 /-  *permission-store, *invite-store, *metadata-store,
     *permission-hook, *group-store, *permission-group-hook,  ::TMP  for upgrade
     hook=chat-hook,
-    view=chat-view
-/+  default-agent, verb, dbug, store=chat-store, group-store, grpl=group
+    view=chat-view,
+    *group
+/+  default-agent, verb, dbug, store=chat-store, group-store, grpl=group,
+    resource
 ~%  %chat-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -173,7 +175,7 @@
         %^  make-poke  %group-store
           %group-action
         !>  ^-  action:group-store
-        [%remove-group (need (group-id:de-path:group-store group)) ~]
+        [%remove-group (de-path:resource group) ~]
       ::  else, just delete the sync in the hook
       ::
       %^  make-poke  %permission-hook
@@ -184,17 +186,17 @@
     ++  create-group
       |=  [group=path who=(set ship)]
       ^-  (list card)
-      =/  =group-id
-        (need (group-id:de-path:group-store group))
+      =/  rid=resource
+        (de-path:resource group)
       :~  %^  make-poke  %group-store
             %group-action
           !>  ^-  action:group-store
-          [%add-group group-id *invite:policy %.n]
+          [%add-group rid *invite:policy %.n]
         ::
           %^  make-poke  %group-store
             %group-action
           !>  ^-  action:group-store
-          [%add-members group-id who]
+          [%add-members rid who]
       ==
     ::
     ++  hookup-group
@@ -453,7 +455,7 @@
   ?.  ?=(?(%add-members %remove-members) -.update)
     ~
   =/  =path
-    (group-id:en-path:group-store group-id.update)
+    (en-path:resource resource.update)
   ?-  -.update
       %add-members      (handle-permissions [%add path ships.update])
       %remove-members   (handle-permissions [%remove path ships.update])
@@ -683,20 +685,20 @@
   ::
   ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)  ~
   %+  murn
-    ^-  (list resource)
+    ^-  (list md-resource)
     =;  resources
       %~  tap  in
       %+  ~(gut by resources)
         group-path
-      *(set resource)
-    .^  (jug path resource)
+      *(set md-resource)
+    .^  (jug path md-resource)
       %gy
       (scot %p our.bol)
       %metadata-store
       (scot %da now.bol)
       /group-indices
     ==
-  |=  resource
+  |=  md-resource
   ^-  (unit path)
   ?.  =(%chat app-name)  ~
   `app-path
@@ -715,7 +717,7 @@
     %+  ~(gut by resources)
       [%chat chat]
     *(set group-path)
-  .^  (jug resource group-path)
+  .^  (jug md-resource group-path)
     %gy
     (scot %p our.bol)
     %metadata-store

@@ -16,7 +16,8 @@
     store=chat-store,
     view=chat-view,
     group-store,
-    grpl=group
+    grpl=group,
+    resource
 ::
 ~%  %chat-view-top  ..is  ~
 |%
@@ -125,10 +126,10 @@
         (slav %p i.t.wire)
       =/  ask-history=?
         =('y' i.t.t.wire)
-      =/  =group-id
-        (need (group-id:de-path:group-store t.t.t.wire))
+      =/  rid=resource
+        (de-path:resource t.t.t.wire)
       :_  this
-      (joined-group:cc group-id ship ask-history)
+      (joined-group:cc rid ship ask-history)
     ::
         %kick
       :_  this
@@ -235,14 +236,14 @@
     ::
     =/  group=path
       (group-from-chat app-path.act)
-    =/  =group-id
-      (need (group-id:de-path:group-store group))
+    =/  rid=resource
+      (de-path:resource group)
     %-  zing
     :~  ?.  (is-creator group %chat app-path.act)  ~
         [(metadata-poke [%remove group [%chat app-path.act]])]~
       ::
-        :~  (group-proxy-poke %remove-members group-id (sy our.bol ~))
-            (group-poke [%remove-group group-id ~])
+        :~  (group-proxy-poke %remove-members rid (sy our.bol ~))
+            (group-poke [%remove-group rid ~])
             (metadata-hook-poke [%remove group])
             (metadata-store-poke [%remove group [%chat app-path.act]])
         ==
@@ -254,18 +255,18 @@
       (maybe-group-from-chat app-path.act)
     ?^  group-path
       ~[(chat-hook-poke %add-synced ship.act app-path.act ask-history.act)]
-    =/  =group-id
-      (need (group-id:de-path:group-store app-path.act))
+    =/  rid=resource
+      (de-path:resource app-path.act)
     =/  =cage
       :-  %group-action
       !>  ^-  action:group-store
-      [%add-members group-id (sy our.bol ~)]
+      [%add-members rid (sy our.bol ~)]
     ::  we need this info in the wire to continue the flow after the
     ::  poke ack
     =/  =wire
       :-  %join-group
       [(scot %p ship.act) ?:(ask-history.act %y %n) app-path.act]
-    [%pass wire %agent [ship.group-id %group-hook] %poke cage]~
+    [%pass wire %agent [entity.rid %group-hook] %poke cage]~
   ::
       %groupify
     =*  app-path  app-path.act
@@ -273,28 +274,28 @@
       /metadata/[(scot %t (spat app-path))]/chat/[(scot %t (spat app-path))]
     =/  =metadata
       (need (scry-for (unit metadata) %metadata-store scry-pax))
-    =/  old-group-id=group-id
-      (need (group-id:de-path:group-store app-path))
-    ?<  (is-managed:grp old-group-id)
+    =/  old-rid=resource
+      (de-path:resource app-path)
+    ?<  (is-managed:grp old-rid)
     ?~  existing.act
       ::  just create contacts object for group
-      ~[(contact-view-poke %groupify old-group-id title.metadata description.metadata)]
+      ~[(contact-view-poke %groupify old-rid title.metadata description.metadata)]
     ::  change associations
     =*  group-path  group-path.u.existing.act
-    =/  =group-id
-      (need (group-id:de-path:group-store group-path))
+    =/  rid=resource
+      (de-path:resource group-path)
     =/  old-group=group
-      (need (scry-group:grp old-group-id))
+      (need (scry-group:grp old-rid))
     =/  =group
-      (need (scry-group:grp group-id))
+      (need (scry-group:grp rid))
     =/  ships=(set ship)
       (~(dif in members.old-group) members.group)
     :*  (metadata-store-poke %remove app-path %chat app-path)
         (metadata-store-poke %add group-path [%chat app-path] metadata)
-        (group-poke %remove-group old-group-id ~)
+        (group-poke %remove-group old-rid ~)
         ?.  inclusive.u.existing.act
           ~
-        :-  (group-poke %add-members group-id ships)
+        :-  (group-poke %add-members rid ships)
         %+  turn
           ~(tap in ships)
         |=  =ship
@@ -313,15 +314,15 @@
     |=  [=path app-path=path =policy ships=(set ship) title=@t desc=@t]
     ^-  (list card)
     ?^  (group-scry path)  ~
-    =/  =group-id
-      (need (group-id:de-path:group-store path))
-    ?>  =(our.bol ship.group-id)
+    =/  rid=resource
+      (de-path:resource path)
+    ?>  =(our.bol entity.rid)
     ::  do not create a contacts object if this is unmanaged
     ::
     :-
       ?:  =(path app-path)
-        (group-poke %add-group group-id policy %.y)
-      (contact-view-poke %create term.group-id policy title desc)
+        (group-poke %add-group rid policy %.y)
+      (contact-view-poke %create name.rid policy title desc)
     %+  murn  ~(tap in ships)
     |=  =ship
     ^-  (unit card)
@@ -390,7 +391,7 @@
       ~&  [%weird-chat app-path]
       !!
     =/  resource-indices
-      .^  (jug resource group-path)
+      .^  (jug md-resource group-path)
         %gy
         (scot %p our.bol)
         %metadata-store
@@ -434,11 +435,11 @@
 ::  +joined-group: Successfully joined unmanaged group, continue flow
 ::
 ++  joined-group
-  |=  [=group-id =ship ask-history=?]
+  |=  [rid=resource =ship ask-history=?]
   ^-  (list card)
   =/  =path
-    (group-id:en-path:group-store group-id)
-  :~  (group-hook-poke %add group-id)
+    (en-path:resource rid)
+  :~  (group-hook-poke %add rid)
       (chat-hook-poke %add-synced ship path ask-history)
       (metadata-hook-poke %add-synced ship path)
   ==
@@ -467,7 +468,7 @@
 ++  group-proxy-poke
   |=  act=action:group-store
   ^-  card
-  [%pass / %agent [ship.group-id.act %group-hook] %poke %group-action !>(act)]
+  [%pass / %agent [entity.resource.act %group-hook] %poke %group-action !>(act)]
 ::
 ++  permission-poke
   |=  act=permission-action

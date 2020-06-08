@@ -1,4 +1,5 @@
-/-  *group
+/-  *group, *resource
+^?
 |%
 ::
 ++  state-zero
@@ -32,14 +33,14 @@
 ::    %groupify: unset .hidden flag
 ::
 +$  action
-  $%  [%add-group =group-id =policy hidden=?]
-      [%add-members =group-id ships=(set ship)]
-      [%remove-members =group-id ships=(set ship)]
-      [%add-tag =group-id =tag ships=(set ship)]
-      [%remove-tag =group-id =tag ships=(set ship)]
-      [%change-policy =group-id =diff:policy]
-      [%remove-group =group-id ~]
-      [%groupify =group-id ~]
+  $%  [%add-group =resource =policy hidden=?]
+      [%add-members =resource ships=(set ship)]
+      [%remove-members =resource ships=(set ship)]
+      [%add-tag =resource =tag ships=(set ship)]
+      [%remove-tag =resource =tag ships=(set ship)]
+      [%change-policy =resource =diff:policy]
+      [%remove-group =resource ~]
+      [%groupify =resource ~]
   ==
 ::  $update: a description of a processed state change
 ::
@@ -50,7 +51,7 @@
       action
   ==
 +$  initial
-  $%  [%initial-group =group-id =group]
+  $%  [%initial-group =resource =group]
       [%initial =groups]
   ==
 --

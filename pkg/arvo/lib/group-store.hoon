@@ -1,4 +1,5 @@
 /-  *group, sur=group-store
+/+  resource
 ^?
 =<  [. sur]
 =,  sur
@@ -15,33 +16,7 @@
   =/  value
     (~(got by map) key)
   $(keys t.keys, map (~(put by map) t.key value))
-
-::  +en-path: transform into path
 ::
-++  en-path
-  |%
-  ::
-  ++  group-id
-    |=  ^group-id
-    ^-  path
-    /[(scot %p ship)]/[term]
-  --
-::  +de-path: transform from path
-::
-++  de-path
-  |%
-  ::
-  ++  group-id
-    |=  =path
-    ^-  (unit ^group-id)
-    ?.  ?=([@ @ *] path)
-      ~
-    =/  ship=(unit ship)
-      (slaw %p i.path)
-    ?~  ship  ~
-    =*  term   i.t.path
-    `[u.ship term]
-  --
 ++  enjs
   =,  enjs:format
   |%
@@ -62,16 +37,12 @@
       %change-policy   (change-policy update)
       %groupify        (groupify update)
     ==
-  ++  group-id-path
-    |=  =^group-id
-    %-  spat
-    %-  group-id:en-path
-    group-id
+  ::
   ++  initial-group
     |=  =^update
     ?>  ?=(%initial-group -.update)
     %-  pairs
-    :~  group-id+(group-id group-id.update)
+    :~  resource+(enjs:resource resource.update)
         group+(group group.update)
     ==
   ::
@@ -82,10 +53,10 @@
     ^-  (list [@t json])
     %+  turn
       ~(tap by groups.initial)
-    |=  [=^group-id grp=^group]
+    |=  [rid=resource grp=^group]
     ^-  [@t json]
     :_  (group grp)
-    (group-id-path group-id)
+    (enjs-path:resource rid)
   ::
   ++  group
     |=  =^group
@@ -198,27 +169,20 @@
     |=  =^update
     ^-  json
     ?>  ?=(%groupify -.update)
-    (frond %group-id (group-id group-id.update))
+    (frond %resource (enjs:resource resource.update))
   ::
   ++  remove-group
     |=  =^update
     ^-  json
     ?>  ?=(%remove-group -.update)
-    (frond %group-id (group-id group-id.update))
+    (frond %resource (enjs:resource resource.update))
   ::
-  ++  group-id
-    |=  =^group-id
-    ^-  json
-    %-  pairs
-    :~  name+s+term.group-id
-        ship+(ship ship.group-id)
-    ==
   ++  add-group
     |=  =action
     ^-  json
     ?>  ?=(%add-group -.action)
     %-  pairs
-    :~  group-id+(group-id group-id.action)
+    :~  resource+(enjs:resource resource.action)
         policy+(policy policy.action)
         hidden+b+hidden.action
     ==
@@ -228,7 +192,7 @@
     ^-  json
     ?>  ?=(%add-members -.action)
     %-  pairs
-    :~  group-id+(group-id group-id.action)
+    :~  resource+(enjs:resource resource.action)
         ships+(set ship ships.action)
     ==
   ::
@@ -237,7 +201,7 @@
     ^-  json
     ?>  ?=(%remove-members -.action)
     %-  pairs
-    :~  group-id+(group-id group-id.action)
+    :~  resource+(enjs:resource resource.action)
         ships+(set ship ships.action)
     ==
   ::
@@ -246,7 +210,7 @@
     ^-  json
     ?>  ?=(%add-tag -.action)
     %-  pairs
-    :~  group-id+(group-id group-id.action)
+    :~  resource+(enjs:resource resource.action)
         tag+(tag tag.action)
         ships+(set ship ships.action)
     ==
@@ -256,7 +220,7 @@
     ^-  json
     ?>  ?=(%remove-tag -.action)
     %-  pairs
-    :~  group-id+(group-id group-id.action)
+    :~  resource+(enjs:resource resource.action)
         tag+(tag tag.action)
         ships+(set ship ships.action)
     ==
@@ -265,9 +229,9 @@
     |=  =action
     ^-  json
     ?>  ?=(%change-policy -.action)
-    %-   pairs
-    :~   group-id+(group-id group-id.action)
-         diff+(policy-diff diff.action)
+    %-  pairs
+    :~  resource+(enjs:resource resource.action)
+        diff+(policy-diff diff.action)
     ==
   --
 ++  dejs
@@ -361,61 +325,54 @@
         replace+policy
     ==
   ::
-  ++  group-id
-    %-  ot
-    :~  ship+ship
-        name+so
-    ==
-  ::
   ++  remove-group
     |=  =json
     ?>  ?=(%o -.json)
-    =/  id=^group-id
-      (group-id (~(got by p.json) 'group-id'))
-    [id ~]
+    =/  rid=resource
+      (dejs:resource (~(got by p.json) 'resource'))
+    [rid ~]
   ::
   ++  groupify
     |=  =json
-    ^-  [^group-id ~]
+    ^-  [resource ~]
     ?>  ?=(%o -.json)
-    =/  id=^group-id
-      (group-id (~(got by p.json) 'group-id'))
-    [id ~]
+    =/  rid=resource
+      (dejs:resource (~(got by p.json) 'resource'))
+    [rid ~]
   ::
   ++  add-group
     %-  ot
-    :~  group-id+group-id
+    :~  resource+dejs:resource
         policy+policy
         hidden+bo
     ==
   ++  add-members
     %-  ot
-    :~  group-id+group-id
+    :~  resource+dejs:resource
         ships+(as ship)
     ==
   ++  remove-members
-    ^-  $-(json [^group-id (set ^ship)])
+    ^-  $-(json [resource (set ^ship)])
     %-  ot
-    :~  group-id+group-id
+    :~  resource+dejs:resource
         ships+(as ship)
     ==
   ++  add-tag
     %-  ot
-    :~  group-id+group-id
+    :~  resource+dejs:resource
         tag+tag
         ships+(as ship)
     ==
   ++  remove-tag
     %-  ot
-    :~  group-id+group-id
+    :~  resource+dejs:resource
         tag+tag
         ships+(as ship)
     ==
   ++  change-policy
-    %-   ot
-    :~   group-id+group-id
-         diff+policy-diff
+    %-  ot
+    :~  resource+dejs:resource
+        diff+policy-diff
     ==
   --
-
 --

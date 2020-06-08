@@ -20,7 +20,8 @@
 ::    to touch are +permitted, +initial-response, & +kick-proxies.
 ::
 /-  *metadata-store, *group
-/+  *link, metadata, default-agent, verb, dbug, group-store, grpl=group
+/+  *link, metadata, default-agent, verb, dbug, group-store, grpl=group,
+    resource
 ~%  %link-proxy-hook-top  ..is  ~
 |%
 +$  state-0
@@ -217,7 +218,7 @@
   ::  with that group, then kick their subscriptions if they're no longer
   ::
   %-  zing
-  %+  turn  (app-paths-from-group:md %link (group-id:en-path:group-store group-id.upd))
+  %+  turn  (app-paths-from-group:md %link (en-path:resource resource.upd))
   |=  =app-path
   ^-  (list card)
   %+  kick-revoked-permissions

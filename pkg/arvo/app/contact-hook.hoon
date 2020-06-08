@@ -7,7 +7,7 @@
     *metadata-hook,
     *metadata-store,
     *group
-/+  *contact-json, default-agent, dbug, group-store, verb
+/+  *contact-json, default-agent, dbug, group-store, verb, resource
 ~%  %contact-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -345,19 +345,19 @@
   ==
   ::
   ++  initial-group
-    |=  [=group-id =group]
+    |=  [rid=resource =group]
     ^-  (quip card _state)
     =/  =path
-      (group-id:en-path:group-store group-id)
+      (en-path:resource rid)
     ?:  (~(has by synced) path)
       [~ state]
-    (poke-hook-action %add-synced ship.group-id path)
+    (poke-hook-action %add-synced entity.rid path)
   ::
   ++  unbundle
-    |=  [=group-id ~]
+    |=  [rid=resource ~]
     ^-  (quip card _state)
     =/  =path
-      (group-id:en-path:group-store group-id)
+      (en-path:resource rid)
     ?.  (~(has by synced) path)
       :_  state
       [(contact-poke [%delete path])]~
@@ -367,11 +367,11 @@
     ==
   ::
   ++  remove
-    |=  [=group-id ships=(set ship)]
+    |=  [rid=resource ships=(set ship)]
     ^-  (quip card _state)
     ::  if pax is synced, remove member from contacts and kick their sub
     =/  =path
-      (group-id:en-path:group-store group-id)
+      (en-path:resource rid)
     =/  owner=(unit ship)  (~(get by synced) path)
     ?~  owner
       :_  state
@@ -404,10 +404,10 @@
   ^-  (quip card _state)
   ?+  -.fact  [~ state]
       %accepted
-    =/  =group-id
-      (need (group-id:de-path:group-store path.invite.fact))
+    =/  rid=resource
+      (de-path:resource path.invite.fact)
     :_  state
-    ~[(contact-view-poke %join group-id)]
+    ~[(contact-view-poke %join rid)]
   ==
 ::
 ++  group-hook-poke

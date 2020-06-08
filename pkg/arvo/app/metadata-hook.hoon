@@ -157,9 +157,9 @@
   ?>  =(our.bowl (~(got by synced) path))
   ?>  (is-permitted:grp src.bowl path)
   %+  turn  ~(tap by (metadata-scry path))
-  |=  [[=group-path =resource] =metadata]
+  |=  [[=group-path =md-resource] =metadata]
   ^-  card
-  [%give %fact ~ %metadata-update !>([%add group-path resource metadata])]
+  [%give %fact ~ %metadata-update !>([%add group-path md-resource metadata])]
   ::
   ++  metadata-scry
     |=  pax=^path

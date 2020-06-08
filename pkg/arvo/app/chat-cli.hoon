@@ -13,7 +13,7 @@
     *permission-store, *group-store, *invite-store,
     sole
 /+  shoe, default-agent, verb, dbug, store=chat-store,
-    group-store, grpl=group
+    group-store, grpl=group, resource
 ::
 |%
 +$  card  card:shoe
@@ -814,15 +814,15 @@
       ?~  whitelist
         ~&  [%weird-no-permission real-path]
         ~
-      =/  =group-id
-        (need (group-id:de-path:group-store real-path))
+      =/  rid=resource
+        (de-path:resource real-path)
       %-  some
       %^  act  %do-permission  %group-store
       :-  %group-action
       !>   ^-  action:group-store
       ?:  =(u.whitelist allow)
-        [%add-members group-id ships]
-      [%remove-members group-id ships]
+        [%add-members rid ships]
+      [%remove-members rid ships]
     ::  +join: sync with remote mailbox
     ::
     ++  join

@@ -1,4 +1,4 @@
-/-  *contact-store, *group
+/-  *contact-store, *group, *resource
 ::
 |%
 +$  contact-view-action
@@ -7,10 +7,10 @@
       [%create name=term =policy title=@t description=@t]
       ::  %join: join open group in both groups and contacts
       ::
-      [%join =group-id]
+      [%join =resource]
       ::  %invite: invite to invite-only group and contacts
       ::
-      [%invite =group-id =ship text=cord]
+      [%invite =resource =ship text=cord]
       ::  %remove: remove from both groups and contacts
       ::
       [%remove =path =ship]
@@ -22,6 +22,6 @@
       [%share recipient=ship =path =ship =contact]
       ::  %groupify: create contacts object for a preexisting group
       ::
-      [%groupify =group-id title=@t description=@t]
+      [%groupify =resource title=@t description=@t]
   ==
 --

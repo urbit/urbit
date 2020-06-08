@@ -15,7 +15,8 @@
     dbug,
     verb,
     grpl=group,
-    group-store
+    group-store,
+    resource
 ::
 ~%  %publish  ..is  ~
 |%
@@ -880,7 +881,7 @@
     [~ state]
   =*  ships  ships.update
   =/  =path
-    (group-id:en-path:group-store group-id.update)
+    (en-path:resource resource.update)
   =/  book=(unit @tas)
     %+  roll  ~(tap by books)
     |=  [[[who=@p nom=@tas] book=notebook] out=(unit @tas)]
@@ -925,8 +926,8 @@
       %accepted
     ?>  ?=([%notebook @ ~] path.invite.upd)
     =/  book  i.t.path.invite.upd
-    =/  =group-id
-      (need (group-id:de-path:group-store path.invite.upd))
+    =/  rid=resource
+      (de-path:resource path.invite.upd)
     =/  group
       (group-from-book path.invite.upd)
     ?^  group
@@ -936,9 +937,9 @@
     =/  =cage
       :-  %group-action
       !>  ^-  action:group-store
-      [%add-members group-id (sy our.bol ~)]
+      [%add-members rid (sy our.bol ~)]
     :_  state
-    [%pass join-wire %agent [ship.group-id %group-hook] %poke cage]~
+    [%pass join-wire %agent [entity.rid %group-hook] %poke cage]~
   ==
 ::
 ++  subscribe-notebook
@@ -972,21 +973,21 @@
   |=  [host=@p book=@tas]
   ^-  (set ship)
   =/  =notebook  (~(got by books) host book)
-  =/  =group-id
-    (need (group-id:de-path:group-store writers.notebook))
-  %-  ~(uni in (fall (scry-tag:grup group-id %admin) ~))
+  =/  rid=resource
+    (de-path:resource writers.notebook)
+  %-  ~(uni in (fall (scry-tag:grup rid %admin) ~))
   %+  fall
-    (scry-tag:grup group-id `tag`[%publish (cat 3 %writers- book)])
+    (scry-tag:grup rid `tag`[%publish (cat 3 %writers- book)])
   ~
 ::
 ++  allowed
   |=  [who=@p mod=?(%read %write) book=@tas]
   ^-  ?
   =/  =notebook  (~(got by books) our.bol book)
-  =/  =group-id
-    (need (group-id:de-path:group-store writers.notebook))
+  =/  rid=resource
+    (de-path:resource writers.notebook)
   ?:  ?=(%read mod)
-    (~(has in (members:grup group-id)) who)
+    (~(has in (members:grup rid)) who)
   (~(has in (book-writers our.bol book)) who)
 ::
 ++  write-file
@@ -1067,10 +1068,10 @@
 ::
 ++  contact-view-create
   |=  [=path ships=(set ship) =policy title=@t description=@t]
-  =/  =group-id
-    (need (group-id:de-path:group-store path))
+  =/  rid=resource
+    (de-path:resource path)
   =/  act=contact-view-action:contact-view
-    [%create term.group-id policy title description]
+    [%create name.rid policy title description]
   (contact-view-poke act)
 ::
 ++  perm-hook-poke
@@ -1139,9 +1140,9 @@
   =*  group-path  group-path.group
   :_  [group-path group-path]
   ?^  grp  ~
-  =/  =group-id
-    (need (group-id:de-path:group-store group-path))
-  :-  (group-poke %add-group group-id policy %.n)
+  =/  rid=resource
+    (de-path:resource group-path)
+  :-  (group-poke %add-group rid policy %.n)
   (generate-invites book (~(del in invitees.group) our.bol))
 ::
 ++  handle-poke-fail
@@ -1579,10 +1580,10 @@
     =/  cards=(list card)
       ~[(delete-dir pax)]
 
-    =/  =group-id
-      (need (group-id:de-path:group-store writers.u.book))
-    =?  cards  (is-managed:grup group-id)
-      [(group-poke %remove-group group-id ~) cards]
+    =/  rid=resource
+      (de-path:resource writers.u.book)
+    =?  cards  (is-managed:grup rid)
+      [(group-poke %remove-group rid ~) cards]
     [cards state]
   ::  %del-note:
   ::    If poke is from us, eagerly remove note from books, and place the
@@ -1685,12 +1686,12 @@
     ?>  (team:title our.bol src.bol)
     =/  join-wire=wire
       /join-group/[(scot %p who.act)]/[book.act]
-    =/  =group-id
+    =/  rid=resource
       [who.act book.act]
     =/  =cage
       :-  %group-action
       !>  ^-  action:group-store
-      [%add-members group-id (sy our.bol ~)]
+      [%add-members rid (sy our.bol ~)]
     :_  state
     [%pass join-wire %agent [who.act %group-hook] %poke cage]~
   ::  %unsubscribe
@@ -1733,21 +1734,21 @@
     =*  app-path  writers.u.book
     =/  =metadata
       (need (metadata-scry app-path app-path))
-    =/  old-group-id=group-id
-      `group-id`(need (group-id:de-path:group-store app-path))
-    ?<  (is-managed:grup old-group-id)
+    =/  old-rid=resource
+      (de-path:resource app-path)
+    ?<  (is-managed:grup old-rid)
     ?~  target.act
       ::  just create contacts object for group
       :_  state
-      ~[(contact-view-poke %groupify old-group-id title.metadata description.metadata)]
+      ~[(contact-view-poke %groupify old-rid title.metadata description.metadata)]
     ::  change associations
     =*  group-path  u.target.act
-    =/  =group-id
-      (need (group-id:de-path:group-store group-path))
+    =/  rid=resource
+      (de-path:resource group-path)
     =/  old-group=group
-      (need (scry-group:grup old-group-id))
+      (need (scry-group:grup old-rid))
     =/  =group
-      (need (scry-group:grup group-id))
+      (need (scry-group:grup rid))
     =/  ships=(set ship)
       (~(dif in members.old-group) members.group)
     =.  subscribers.u.book
@@ -1759,10 +1760,10 @@
     :_  state
     :*  (metadata-store-poke %remove app-path %publish app-path)
         (metadata-store-poke %add group-path [%publish app-path] metadata)
-        (group-poke %remove-group old-group-id ~)
+        (group-poke %remove-group old-rid ~)
         ?.  inclusive.act
           ~
-        :-  (group-poke %add-members group-id ships)
+        :-  (group-poke %add-members rid ships)
         %+  turn
           ~(tap in ships)
         |=  =ship
@@ -1874,7 +1875,7 @@
       `[%'~' app-path]
     ~&([%weird-publish app-path] ~)
   =/  resource-indices
-    .^  (jug resource group-path)
+    .^  (jug md-resource group-path)
       %gy
       (scot %p our.bol)
       %metadata-store
@@ -1921,10 +1922,10 @@
       ==
     =^  cards  state
       (emit-updates-and-state host.del book.del data.del del sty)
-    =/  =group-id
-      (need (group-id:de-path:group-store writers.data.del))
+    =/  rid=resource
+      (de-path:resource writers.data.del)
     :_  state
-    :*  (group-hook-poke [%add group-id])
+    :*  (group-hook-poke [%add rid])
         (metadata-hook-poke [%add-synced host.del writers.data.del])
         cards
     ==

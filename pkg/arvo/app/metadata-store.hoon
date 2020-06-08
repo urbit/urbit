@@ -32,9 +32,9 @@
 +$  state-zero
   $:  %0
       =associations
-      group-indices=(jug group-path resource)
+      group-indices=(jug group-path md-resource)
       app-indices=(jug app-name [group-path app-path])
-      resource-indices=(jug resource group-path)
+      resource-indices=(jug md-resource group-path)
   ==
 --
 ::
@@ -108,8 +108,8 @@
     ::
         [%x %metadata @ @ @ ~]
       =/  =group-path  (stab (slav %t i.t.t.path))
-      =/  =resource    [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
-      ``noun+!>((~(get by associations) [group-path resource]))
+      =/  =md-resource    [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
+      ``noun+!>((~(get by associations) [group-path md-resource]))
     ==
   ::
   ++  on-agent  on-agent:def
@@ -131,42 +131,42 @@
   ==
 ::
 ++  handle-add
-  |=  [=group-path =resource =metadata]
+  |=  [=group-path =md-resource =metadata]
   ^-  (quip card _state)
-  :-  %+  send-diff  app-name.resource
-      ?.  (~(has by resource-indices) resource)
-        [%add group-path resource metadata]
-      [%update-metadata group-path resource metadata]
+  :-  %+  send-diff  app-name.md-resource
+      ?.  (~(has by resource-indices) md-resource)
+        [%add group-path md-resource metadata]
+      [%update-metadata group-path md-resource metadata]
   %=  state
       associations
-    (~(put by associations) [group-path resource] metadata)
+    (~(put by associations) [group-path md-resource] metadata)
   ::
       group-indices
-    (~(put ju group-indices) group-path resource)
+    (~(put ju group-indices) group-path md-resource)
   ::
       app-indices
-    (~(put ju app-indices) app-name.resource [group-path app-path.resource])
+    (~(put ju app-indices) app-name.md-resource [group-path app-path.md-resource])
   ::
       resource-indices
-    (~(put ju resource-indices) resource group-path)
+    (~(put ju resource-indices) md-resource group-path)
   ==
 ::
 ++  handle-remove
-  |=  [=group-path =resource]
+  |=  [=group-path =md-resource]
   ^-  (quip card _state)
-  :-  (send-diff app-name.resource [%remove group-path resource])
+  :-  (send-diff app-name.md-resource [%remove group-path md-resource])
   %=  state
       associations
-    (~(del by associations) [group-path resource])
+    (~(del by associations) [group-path md-resource])
   ::
       group-indices
-    (~(del ju group-indices) group-path resource)
+    (~(del ju group-indices) group-path md-resource)
   ::
       app-indices
-    (~(del ju app-indices) app-name.resource [group-path app-path.resource])
+    (~(del ju app-indices) app-name.md-resource [group-path app-path.md-resource])
   ::
       resource-indices
-    (~(del ju resource-indices) resource group-path)
+    (~(del ju resource-indices) md-resource group-path)
   ==
 ::
 ++  metadata-for-app
@@ -183,9 +183,9 @@
   ^-  ^associations
   %-  ~(gas by *^associations)
   %+  turn  ~(tap in (~(gut by group-indices) group-path ~))
-  |=  =resource
-  :-  [group-path resource]
-  (~(got by associations) [group-path resource])
+  |=  =md-resource
+  :-  [group-path md-resource]
+  (~(got by associations) [group-path md-resource])
 ::
 ++  send-diff
   |=  [=app-name upd=metadata-update]

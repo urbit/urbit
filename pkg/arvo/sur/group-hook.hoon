@@ -1,4 +1,4 @@
-/-  *group, store=group-store
+/-  *group, store=group-store, *resource
 |%
 ::  $action: request to change group-hook state
 ::
@@ -10,17 +10,7 @@
 ::      group.
 ::
 +$  action
-  $%  [%add =group-id]
-      [%remove =group-id]
+  $%  [%add rid=resource]
+      [%remove rid=resource]
   ==
-::  $update: description of state change
-::
-::    %no-perms:
-::      Group is unavailable to sync
-::
-+$  update
-  $%  [%no-perms =group-id]
-      action
-  ==
-
 --
