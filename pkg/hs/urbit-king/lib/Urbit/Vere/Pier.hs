@@ -68,11 +68,11 @@ setupPierDirectory shipPath = do
 
 -- Load pill into boot sequence. -----------------------------------------------
 
-genEntropy :: RIO e Word512
+genEntropy :: MonadIO m => m Word512
 genEntropy = fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
 
-genBootSeq :: Ship -> Pill -> Bool -> LegacyBootEvent -> RIO e BootSeq
-genBootSeq ship Pill {..} lite boot = do
+genBootSeq :: MonadIO m => Ship -> Pill -> Bool -> LegacyBootEvent -> m BootSeq
+genBootSeq ship Pill {..} lite boot = io $ do
   ent <- genEntropy
   let ovums = preKern ent <> pKernelOvums <> postKern <> pUserspaceOvums
   pure $ BootSeq ident pBootFormulas ovums
@@ -289,14 +289,14 @@ pier (serf, log) vSlog mStart multi = do
       atomically $ Term.trace muxed txt
       oldSlog txt
 
-  let logId   = Log.identity log
-  let ship    = who logId
+  let logId = Log.identity log
+  let ship  = who logId
 
   -- Our call above to set the logging function which echos errors from the
   -- Serf doesn't have the appended \r\n because those \r\n s are added in
   -- the c serf code. Logging output from our haskell process must manually
   -- add them.
-  let showErr = atomically . Term.trace muxed . (flip append "\r\n")
+  let showErr = atomically . Term.trace muxed . flip append "\r\n"
 
   env <- ask
 
@@ -330,7 +330,6 @@ pier (serf, log) vSlog mStart multi = do
   tExec       <- acquireWorker "Effects" (router (readTQueue executeQ) drivz)
   tDisk       <- acquireWorkerBound "Persist" (runPersist log persistQ plan)
   tSerf       <- acquireWorker "Serf" (runCompute serf computeConfig)
-
   tSaveSignal <- saveSignalThread saveM
 
   --  TODO bullshit scry tester

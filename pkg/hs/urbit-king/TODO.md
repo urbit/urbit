@@ -59,7 +59,7 @@ Polish:
 - [ ] Break most logic from `Main.hs` out into modules.
 - [ ] Simplify `Main.hs` flows.
 - [ ] Cleanup Terminal Driver code.
-- [ ] Spin off `RAcquire` into it's own package.
+- [x] Spin off `racquire` into it's own package.
 - [x] Spin off `urbit-noun-core` and `urbit-noun` packages.
 - [ ] Spin off `Urbit.Vere.Log` into it's own package.
 - [ ] Spin off `Urbit.Vere.Serf` into it's own package, and make it care

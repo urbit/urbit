@@ -3,6 +3,7 @@ resolver: lts-14.21
 packages:
   - lmdb-static
   - proto
+  - racquire
   - terminal-progress-bar
   - urbit-atom
   - urbit-azimuth
