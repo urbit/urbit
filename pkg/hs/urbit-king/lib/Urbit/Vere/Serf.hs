@@ -18,12 +18,11 @@ import Urbit.Vere.Serf.IPC
 
 import Control.Monad.Trans.Resource (runResourceT)
 import Urbit.Arvo                   (FX)
+import Urbit.King.App               (HasStderrLogFunc(..))
 
 import qualified Data.Conduit.Combinators as CC
 import qualified System.ProgressBar       as PB
 import qualified Urbit.EventLog.LMDB      as Log
-
-import Urbit.King.App (HasStderrLogFunc(..))
 
 import qualified Urbit.Vere.Serf.IPC as X (Config(..), EvErr(..), Flag(..),
                                            RunReq(..), Serf, WorkError(..), run,

@@ -4,7 +4,14 @@
          ships. Do it or strip it out.
 -}
 
-module Urbit.King.API (King(..), kingAPI, readPortsFile) where
+module Urbit.King.API
+  ( King(..)
+  , TermConn
+  , TermConnAPI
+  , kingAPI
+  , readPortsFile
+  )
+where
 
 import RIO.Directory
 import Urbit.Prelude

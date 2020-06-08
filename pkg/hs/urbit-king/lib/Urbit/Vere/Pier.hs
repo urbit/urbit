@@ -26,6 +26,7 @@ import Urbit.Vere.Pier.Types
 
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
+import Urbit.King.API         (TermConn)
 import Urbit.King.App         (HasKingEnv, HasPierEnv(..), PierEnv)
 import Urbit.King.App         (onKillPierSigL)
 import Urbit.Noun.Time        (Wen)
@@ -168,19 +169,19 @@ bootNewShip
   -> RIO e ()
 bootNewShip pill lite flags ship bootEv = do
   seq@(BootSeq ident x y) <- genBootSeq ship pill lite bootEv
-  logTrace "BootSeq Computed"
+  logDebug "BootSeq Computed"
 
   pierPath <- view pierPathL
 
   liftRIO (setupPierDirectory pierPath)
-  logTrace "Directory setup."
+  logDebug "Directory setup."
 
   rwith (Log.new (pierPath <> "/.urb/log") ident) $ \log -> do
-    logTrace "Event log initialized."
+    logDebug "Event log initialized."
     jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
     writeJobs log (fromList jobs)
 
-  logTrace "Finsihed populating event log with boot sequence"
+  logDebug "Finsihed populating event log with boot sequence"
 
 
 -- Resume an existing ship. ----------------------------------------------------
@@ -204,14 +205,14 @@ resumed vSlog replayUntil flags  = do
   serf <- runSerf vSlog tap flags
 
   rio $ do
-    logTrace "Replaying events"
+    logDebug "Replaying events"
     Serf.execReplay serf log replayUntil >>= \case
       Left err -> error (show err)
       Right 0  -> do
-        logTrace "No work during replay so no snapshot"
+        logDebug "No work during replay so no snapshot"
         pure ()
       Right _  -> do
-        logTrace "Taking snapshot"
+        logDebug "Taking snapshot"
         io (Serf.snapshot serf)
 
   pure (serf, log)
@@ -237,14 +238,14 @@ acquireWorker :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
 acquireWorker nam act = mkRAcquire (async act) kill
  where
   kill tid = do
-    logTrace ("Killing worker thread: " <> display nam)
+    logDebug ("Killing worker thread: " <> display nam)
     cancel tid
 
 acquireWorkerBound :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
 acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
  where
   kill tid = do
-    logTrace ("Killing worker thread: " <> display nam)
+    logDebug ("Killing worker thread: " <> display nam)
     cancel tid
 
 
@@ -256,28 +257,31 @@ pier
   -> MVar ()
   -> MultiEyreApi
   -> RAcquire PierEnv ()
-pier (serf, log) vSlog mStart multi = do
-  computeQ <- newTQueueIO @_ @Serf.EvErr
-  persistQ <- newTQueueIO @_ @(Fact, FX)
-  executeQ <- newTQueueIO @_ @FX
-  saveM    <- newEmptyTMVarIO @_ @()
-  kingApi  <- King.kingAPI
+pier (serf, log) vSlog startedSig multi = do
+  let logId = Log.identity log :: LogIdentity
+  let ship  = who logId :: Ship
 
-  termApiQ <- atomically $ do
+  computeQ :: TQueue Serf.EvErr <- newTQueueIO
+  persistQ :: TQueue (Fact, FX) <- newTQueueIO
+  executeQ :: TQueue FX         <- newTQueueIO
+  saveSig :: TMVar ()           <- newEmptyTMVarIO
+  kingApi :: King.King          <- King.kingAPI
+
+  termApiQ :: TQueue TermConn <- atomically $ do
     q <- newTQueue
     writeTVar (King.kTermConn kingApi) (Just $ writeTQueue q)
     pure q
 
-  (demux, muxed) <- atomically $ do
+  (demux :: Term.Demux, muxed :: Term.Client) <- atomically $ do
     res <- Term.mkDemux
     pure (res, Term.useDemux res)
 
-  acquireWorker "TERMSERV" $ forever $ do
-    logTrace "TERMSERV Waiting for external terminal."
+  void $ acquireWorker "TERMSERV Listener" $ forever $ do
+    logDebug "TERMSERV Waiting for external terminal."
     atomically $ do
       ext <- Term.connClient <$> readTQueue termApiQ
       Term.addDemux ext demux
-    logTrace "TERMSERV External terminal connected."
+    logDebug "TERMSERV External terminal connected."
 
   --  Slogs go to both stderr and to the terminal.
   atomically $ do
@@ -286,48 +290,47 @@ pier (serf, log) vSlog mStart multi = do
       atomically $ Term.trace muxed txt
       oldSlog txt
 
-  let logId = Log.identity log :: LogIdentity
-  let ship  = who logId :: Ship
-
   -- Our call above to set the logging function which echos errors from the
   -- Serf doesn't have the appended \r\n because those \r\n s are added in
   -- the c serf code. Logging output from our haskell process must manually
   -- add them.
-  let showErr = atomically . Term.trace muxed . (<> "\r\n")
+  let compute = writeTQueue computeQ
+  let execute = writeTQueue executeQ
+  let persist = writeTQueue persistQ
 
-  env <- ask
+  (bootEvents, startDrivers) <- do
+    env <- ask
+    let err = atomically . Term.trace muxed . (<> "\r\n")
+    let siz = Term.TSize { tsWide = 80, tsTall = 24 }
+    let fak = isFake logId
+    pure $ drivers env multi ship fak compute (siz, muxed) err
 
-  let (bootEvents, startDrivers) = drivers
-        env
-        multi
-        ship
-        (isFake logId)
-        (writeTQueue computeQ)
-        (Term.TSize { tsWide = 80, tsTall = 24 }, muxed)
-        showErr
+  --  Fill event queue with initial events.
+  io $ atomically $ for_ bootEvents compute
 
-  io $ atomically $ for_ bootEvents (writeTQueue computeQ)
-
-  scryM  <- newEmptyTMVarIO
-  onKill <- view onKillPierSigL
+  scrySig <- newEmptyTMVarIO
+  onKill  <- view onKillPierSigL
 
   let computeConfig = ComputeConfig { ccOnWork      = readTQueue computeQ
                                     , ccOnKill      = onKill
-                                    , ccOnSave      = takeTMVar saveM
-                                    , ccOnScry      = takeTMVar scryM
-                                    , ccPutResult   = writeTQueue persistQ
+                                    , ccOnSave      = takeTMVar saveSig
+                                    , ccOnScry      = takeTMVar scrySig
+                                    , ccPutResult   = persist
                                     , ccShowSpinner = Term.spin muxed
                                     , ccHideSpinner = Term.stopSpin muxed
                                     , ccLastEvInLog = Log.lastEv log
                                     }
 
-  let plan = writeTQueue executeQ
+  drivz <- startDrivers
+  tExec <- acquireWorker "Effects" (router (readTQueue executeQ) drivz)
+  tDisk <- acquireWorkerBound "Persist" (runPersist log persistQ execute)
+  tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
 
-  drivz       <- startDrivers
-  tExec       <- acquireWorker "Effects" (router (readTQueue executeQ) drivz)
-  tDisk       <- acquireWorkerBound "Persist" (runPersist log persistQ plan)
-  tSerf       <- acquireWorker "Serf" (runCompute serf computeConfig)
-  tSaveSignal <- saveSignalThread saveM
+  let snapshotEverySecs = 120
+
+  void $ acquireWorker "Save" $ forever $ do
+    threadDelay (snapshotEverySecs * 1_000_000)
+    void $ atomically $ tryPutTMVar saveSig ()
 
   --  TODO bullshit scry tester
   void $ acquireWorker "bullshit scry tester" $ forever $ do
@@ -335,12 +338,12 @@ pier (serf, log) vSlog mStart multi = do
     threadDelay 15_000_000
     wen <- io Time.now
     let kal = \mTermNoun -> runRIO env $ do
-          logTrace $ displayShow ("scry result: ", mTermNoun)
+          logDebug $ displayShow ("scry result: ", mTermNoun)
     let nkt = MkKnot $ tshow $ Time.MkDate wen
     let pax = Path ["j", "~zod", "life", nkt, "~zod"]
-    atomically $ putTMVar scryM (wen, Nothing, pax, kal)
+    atomically $ putTMVar scrySig (wen, Nothing, pax, kal)
 
-  putMVar mStart ()
+  putMVar startedSig ()
 
   -- Wait for something to die.
 
@@ -356,19 +359,11 @@ pier (serf, log) vSlog mStart multi = do
 
   atomically $ (Term.spin muxed) (Just "shutdown")
 
-
 death :: Text -> Async () -> STM (Either (Text, SomeException) Text)
 death tag tid = do
   waitCatchSTM tid <&> \case
     Left  exn -> Left (tag, exn)
     Right ()  -> Right tag
-
-saveSignalThread :: TMVar () -> RAcquire e (Async ())
-saveSignalThread tm = mkRAcquire start cancel
- where
-  start = async $ forever $ do
-    threadDelay (120 * 1000000) -- 120 seconds
-    atomically $ putTMVar tm ()
 
 
 -- Start All Drivers -----------------------------------------------------------
@@ -467,7 +462,7 @@ data ComputeConfig = ComputeConfig
 
 runCompute :: forall e . HasKingEnv e => Serf.Serf -> ComputeConfig -> RIO e ()
 runCompute serf ComputeConfig {..} = do
-  logTrace "runCompute"
+  logDebug "runCompute"
 
   let onCR = asum [ ccOnKill <&> Serf.RRKill
                   , ccOnSave <&> Serf.RRSave
