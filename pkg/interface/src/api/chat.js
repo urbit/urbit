@@ -67,7 +67,7 @@ class PrivateHelper extends BaseApi {
 
   addPendingMessage(msg) {
     if (this.store.state.pendingMessages.has(msg.path)) {
-      this.store.state.pendingMessages.get(msg.path).push(msg.envelope);
+      this.store.state.pendingMessages.get(msg.path).unshift(msg.envelope);
     } else {
       this.store.state.pendingMessages.set(msg.path, [msg.envelope]);
     }
