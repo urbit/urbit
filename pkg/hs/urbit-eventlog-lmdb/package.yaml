@@ -1,36 +1,44 @@
-name: proto
-version: 0.1.0
+name: urbit-eventlog-lmdb
+version: 0.10.4
 license: MIT
 license-file: LICENSE
 
+library:
+  source-dirs: lib
+  ghc-options:
+    - -fwarn-incomplete-patterns
+    - -fwarn-unused-binds
+    - -fwarn-unused-imports
+    - -Werror
+    - -O2
+
 dependencies:
   - base
-  - bound
   - classy-prelude
-  - containers
-  - deriving-compat
-  - lens
-  - megaparsec
-  - mtl
-  - multimap
-  - para
-  - pretty-show
-  - text
-  - transformers
-  - transformers-compat
-  - unordered-containers
+  - stm
+  - rio
+  - vector
+  - bytestring
+  - lmdb-static
+  - conduit
+  - racquire
+  - urbit-noun-core
   - urbit-noun
 
 default-extensions:
   - ApplicativeDo
   - BangPatterns
   - BlockArguments
+  - ConstraintKinds
+  - DataKinds
+  - DefaultSignatures
   - DeriveAnyClass
   - DeriveDataTypeable
   - DeriveFoldable
   - DeriveGeneric
   - DeriveTraversable
   - DerivingStrategies
+  - EmptyCase
   - EmptyDataDecls
   - FlexibleContexts
   - FlexibleInstances
@@ -38,11 +46,13 @@ default-extensions:
   - GADTs
   - GeneralizedNewtypeDeriving
   - LambdaCase
+  - MagicHash
   - MultiParamTypeClasses
   - NamedFieldPuns
   - NoImplicitPrelude
   - NumericUnderscores
   - OverloadedStrings
+  - PackageImports
   - PartialTypeSignatures
   - PatternSynonyms
   - QuasiQuotes
@@ -55,37 +65,7 @@ default-extensions:
   - TupleSections
   - TypeApplications
   - TypeFamilies
+  - TypeOperators
+  - UnboxedTuples
   - UnicodeSyntax
   - ViewPatterns
-
-library:
-  source-dirs: lib
-  ghc-options:
-    - -fwarn-incomplete-patterns
-    - -fwarn-unused-binds
-    - -fwarn-unused-imports
-    - -O2
-
-executables:
-  proto:
-    main: Main.hs
-    source-dirs: app
-    dependencies:
-      - proto
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - -O2
-      - "-with-rtsopts=-N"
-      - -fwarn-incomplete-patterns
-
-tests:
-  proto-test:
-    main: Spec.hs
-    source-dirs: test
-    dependencies:
-      - proto
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - -with-rtsopts=-N

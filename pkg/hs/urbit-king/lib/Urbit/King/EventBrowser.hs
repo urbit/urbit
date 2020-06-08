@@ -14,10 +14,11 @@ import Urbit.Noun.Time
 import Urbit.Vere.Pier.Types
 
 import Control.Monad.Trans.Maybe (MaybeT(..))
-import Urbit.Vere.Log            (EventLog)
+import Urbit.EventLog.LMDB       (EventLog)
 
 import qualified Data.Conduit.Combinators as C
-import qualified Urbit.Vere.Log           as Log
+import qualified Urbit.EventLog.LMDB      as Log
+
 
 --------------------------------------------------------------------------------
 

@@ -25,6 +25,7 @@ import Urbit.King.Config
 import Urbit.Vere.Pier.Types
 
 import System.Posix.Files     (ownerModes, setFileMode)
+import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.King.App         (HasKingEnv, HasPierEnv(..), PierEnv)
 import Urbit.King.App         (onKillPierSigL)
 import Urbit.Noun.Time        (Wen)
@@ -34,13 +35,12 @@ import Urbit.Vere.Clay        (clay)
 import Urbit.Vere.Eyre        (eyre)
 import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
 import Urbit.Vere.Http.Client (client)
-import Urbit.Vere.Log         (EventLog)
 import Urbit.Vere.Serf        (Serf)
 
 import qualified System.Entropy         as Ent
+import qualified Urbit.EventLog.LMDB    as Log
 import qualified Urbit.King.API         as King
 import qualified Urbit.Noun.Time        as Time
-import qualified Urbit.Vere.Log         as Log
 import qualified Urbit.Vere.Serf        as Serf
 import qualified Urbit.Vere.Term        as Term
 import qualified Urbit.Vere.Term.API    as Term

@@ -21,8 +21,9 @@ import Urbit.Prelude hiding (Term)
 
 import Urbit.Arvo
 import Urbit.Noun.Time
-
 import Urbit.Vere.Serf.Types
+
+import Urbit.EventLog.LMDB (LogIdentity(..))
 
 
 -- Avoid touching Nock values. -------------------------------------------------
@@ -50,16 +51,9 @@ data Pill = Pill
     }
   deriving (Eq, Show)
 
-data LogIdentity = LogIdentity
-    { who          :: Ship
-    , isFake       :: Bool
-    , lifecycleLen :: Word
-    } deriving (Eq, Ord, Show)
-
 data BootSeq = BootSeq LogIdentity [Nock] [Ev]
   deriving (Eq, Show)
 
-deriveNoun ''LogIdentity
 deriveNoun ''Pill
 
 

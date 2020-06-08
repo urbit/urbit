@@ -101,6 +101,7 @@ dependencies:
   - unordered-containers
   - urbit-atom
   - urbit-azimuth
+  - urbit-eventlog-lmdb
   - urbit-hob
   - urbit-noun
   - urbit-noun-core

@@ -61,10 +61,11 @@ Polish:
 - [ ] Cleanup Terminal Driver code.
 - [x] Spin off `racquire` into it's own package.
 - [x] Spin off `urbit-noun-core` and `urbit-noun` packages.
-- [ ] Spin off `Urbit.Vere.Log` into it's own package.
-- [ ] Spin off `Urbit.Vere.Serf` into it's own package, and make it care
-      less about the shape of events and effects.
+- [x] Spin off `urbit-eventlog-lmdb` into it's own package.
+- [ ] Spin off `Urbit.Vere.Serf` into it's own package
+  - Make it care less about the shape of events and effects.
 - [ ] Spin off per-pier logic into it's own package.
+  - Probably `urbit-pier`
 
 # Event Prioritization
 

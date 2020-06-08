@@ -4,25 +4,49 @@
     TODO Effects storage logic is messy.
 -}
 
-module Urbit.Vere.Log ( EventLog, identity, nextEv, lastEv
-                      , new, existing
-                      , streamEvents, appendEvents, trimEvents
-                      , streamEffectsRows, writeEffectsRow
-                      ) where
+module Urbit.EventLog.LMDB
+  ( LogIdentity(..)
+  , EventLog
+  , identity
+  , nextEv
+  , lastEv
+  , new
+  , existing
+  , streamEvents
+  , appendEvents
+  , trimEvents
+  , streamEffectsRows
+  , writeEffectsRow
+  )
+where
 
-import Urbit.Prelude hiding (init)
+import ClassyPrelude
 
-import Data.Conduit
 import Data.RAcquire
 import Database.LMDB.Raw
-import Foreign.Marshal.Alloc
-import Foreign.Ptr
-import Urbit.Vere.Pier.Types
 
-import Foreign.Storable (peek, poke, sizeOf)
+import Data.Conduit          (ConduitT, yield)
+import Foreign.Marshal.Alloc (allocaBytes)
+import Foreign.Ptr           (Ptr, castPtr, nullPtr)
+import Foreign.Storable      (peek, poke, sizeOf)
+import RIO                   (HasLogFunc, RIO, display, logDebug, runRIO)
+import Urbit.Noun            (DecodeErr, Noun, Ship)
+import Urbit.Noun            (deriveNoun, fromNounExn, toNoun)
+import Urbit.Noun            (cueBS, jamBS)
 
 import qualified Data.ByteString.Unsafe as BU
 import qualified Data.Vector            as V
+
+
+-- Public Types ----------------------------------------------------------------
+
+data LogIdentity = LogIdentity
+  { who          :: Ship
+  , isFake       :: Bool
+  , lifecycleLen :: Word
+  } deriving (Eq, Ord, Show)
+
+deriveNoun ''LogIdentity
 
 
 -- Types -----------------------------------------------------------------------
@@ -39,29 +63,35 @@ data EventLog = EventLog
     , eventsTbl  :: Dbi
     , effectsTbl :: Dbi
     , identity   :: LogIdentity
-    , numEvents  :: TVar EventId
+    , numEvents  :: TVar Word64
     }
 
-nextEv :: EventLog -> STM EventId
+nextEv :: EventLog -> STM Word64
 nextEv = fmap (+1) . lastEv
 
-lastEv :: EventLog -> STM EventId
+lastEv :: EventLog -> STM Word64
 lastEv = readTVar . numEvents
 
 data EventLogExn
     = NoLogIdentity
-    | MissingEvent EventId
+    | MissingEvent Word64
     | BadNounInLogIdentity ByteString DecodeErr ByteString
     | BadKeyInEventLog
     | BadWriteLogIdentity LogIdentity
-    | BadWriteEvent EventId
-    | BadWriteEffect EventId
+    | BadWriteEvent Word64
+    | BadWriteEffect Word64
   deriving Show
 
 
 -- Instances -------------------------------------------------------------------
 
 instance Exception EventLogExn where
+
+
+-- Utils -----------------------------------------------------------------------
+
+io :: MonadIO m => IO a -> m a
+io = liftIO
 
 
 -- Open/Close an Event Log -----------------------------------------------------
@@ -240,7 +270,7 @@ appendEvents log !events = do
                 True  -> pure ()
                 False -> throwIO (BadWriteEvent k)
 
-writeEffectsRow :: MonadIO m => EventLog -> EventId -> ByteString -> m ()
+writeEffectsRow :: MonadIO m => EventLog -> Word64 -> ByteString -> m ()
 writeEffectsRow log k v = io $ runRIO () $ do
   let flags = compileWriteFlags []
   rwith (writeTxn $ env log) $ \txn ->
@@ -271,11 +301,11 @@ streamEvents log first = do
     streamEvents log (first + word (length batch))
 
 streamEffectsRows :: ∀e. HasLogFunc e
-                  => EventLog -> EventId
+                  => EventLog -> Word64
                   -> ConduitT () (Word64, ByteString) (RIO e) ()
 streamEffectsRows log = go
   where
-    go :: EventId -> ConduitT () (Word64, ByteString) (RIO e) ()
+    go :: Word64 -> ConduitT () (Word64, ByteString) (RIO e) ()
     go next = do
         batch <- lift $ readRowsBatch (env log) (effectsTbl log) next
         unless (null batch) $ do
@@ -296,7 +326,7 @@ readBatch log first = start
             then pure mempty
             else readRows $ fromIntegral $ min 1000 $ ((last+1) - first)
 
-    assertFound :: EventId -> Bool -> RIO e ()
+    assertFound :: Word64 -> Bool -> RIO e ()
     assertFound id found = do
         unless found $ throwIO $ MissingEvent id
 

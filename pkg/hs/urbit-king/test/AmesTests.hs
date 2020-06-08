@@ -8,12 +8,12 @@ import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 import Urbit.Arvo
+import Urbit.EventLog.LMDB
 import Urbit.King.Config
 import Urbit.Noun
 import Urbit.Noun.Time
 import Urbit.Prelude
 import Urbit.Vere.Ames
-import Urbit.Vere.Log
 import Urbit.Vere.Pier.Types
 
 import Control.Concurrent (runInBoundThread)
@@ -22,7 +22,7 @@ import GHC.Natural        (Natural)
 import Network.Socket     (tupleToHostAddress)
 import Urbit.King.App     (HasKingId(..))
 
-import qualified Urbit.Vere.Log as Log
+import qualified Urbit.EventLog.LMDB as Log
 
 
 --------------------------------------------------------------------------------

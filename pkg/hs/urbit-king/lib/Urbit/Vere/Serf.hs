@@ -21,7 +21,7 @@ import Urbit.Arvo                   (FX)
 
 import qualified Data.Conduit.Combinators as CC
 import qualified System.ProgressBar       as PB
-import qualified Urbit.Vere.Log           as Log
+import qualified Urbit.EventLog.LMDB      as Log
 
 import Urbit.King.App (HasStderrLogFunc(..))
 

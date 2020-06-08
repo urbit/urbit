@@ -105,13 +105,14 @@ import qualified Network.HTTP.Client     as C
 import qualified System.Posix.Signals    as Sys
 import qualified System.ProgressBar      as PB
 import qualified System.Random           as Sys
+import qualified Urbit.EventLog.LMDB     as Log
 import qualified Urbit.King.CLI          as CLI
 import qualified Urbit.King.EventBrowser as EventBrowser
 import qualified Urbit.Ob                as Ob
-import qualified Urbit.Vere.Log          as Log
 import qualified Urbit.Vere.Pier         as Pier
 import qualified Urbit.Vere.Serf         as Serf
 import qualified Urbit.Vere.Term         as Term
+
 
 --------------------------------------------------------------------------------
 
@@ -120,6 +121,7 @@ removeFileIfExists pax = do
   exists <- doesFileExist pax
   when exists $ do
       removeFile pax
+
 
 --------------------------------------------------------------------------------
 
