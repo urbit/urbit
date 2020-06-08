@@ -24,7 +24,6 @@ import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
 
-import Data.Text              (append)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.King.App         (HasKingEnv, HasPierEnv(..), PierEnv)
 import Urbit.King.App         (onKillPierSigL)
@@ -240,7 +239,6 @@ acquireWorker nam act = mkRAcquire (async act) kill
   kill tid = do
     logTrace ("Killing worker thread: " <> display nam)
     cancel tid
-    logTrace ("Killed worker thread: " <> display nam)
 
 acquireWorkerBound :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
 acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
@@ -248,7 +246,6 @@ acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
   kill tid = do
     logTrace ("Killing worker thread: " <> display nam)
     cancel tid
-    logTrace ("Killed worker thread: " <> display nam)
 
 
 -- Run Pier --------------------------------------------------------------------
@@ -261,9 +258,9 @@ pier
   -> RAcquire PierEnv ()
 pier (serf, log) vSlog mStart multi = do
   computeQ <- newTQueueIO @_ @Serf.EvErr
-  persistQ <- newTQueueIO
-  executeQ <- newTQueueIO
-  saveM    <- newEmptyTMVarIO
+  persistQ <- newTQueueIO @_ @(Fact, FX)
+  executeQ <- newTQueueIO @_ @FX
+  saveM    <- newEmptyTMVarIO @_ @()
   kingApi  <- King.kingAPI
 
   termApiQ <- atomically $ do
@@ -289,14 +286,14 @@ pier (serf, log) vSlog mStart multi = do
       atomically $ Term.trace muxed txt
       oldSlog txt
 
-  let logId = Log.identity log
-  let ship  = who logId
+  let logId = Log.identity log :: LogIdentity
+  let ship  = who logId :: Ship
 
   -- Our call above to set the logging function which echos errors from the
   -- Serf doesn't have the appended \r\n because those \r\n s are added in
   -- the c serf code. Logging output from our haskell process must manually
   -- add them.
-  let showErr = atomically . Term.trace muxed . flip append "\r\n"
+  let showErr = atomically . Term.trace muxed . (<> "\r\n")
 
   env <- ask
 
