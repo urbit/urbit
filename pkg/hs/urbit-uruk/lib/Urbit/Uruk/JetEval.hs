@@ -201,37 +201,24 @@ reduce = \case
     (reduce → Just xv) :& y → Just $ xv :& y
     x :& (reduce → Just yv) → Just $ x :& yv
     NS :& x :& y :& z       → Just $ x :& z :& (y :& z)
-
-    NW :& a :& s :& k :& e :& w :& (x :& y) ->
-      trace "Applicative"
-      Just (a :& x :& y)
-    NW :& a :& s :& k :& e :& w :& NS      -> Just s
-    NW :& a :& s :& k :& e :& w :& NK      -> Just k
-    -- TODO: What do you do about the collapsed jet representation? (E E E ...)
-    -- is (NE 3) here and I don't understand if that gets automatically
-    -- unrolled for :& above.
-    NW :& a :& s :& k :& e :& w :& NE 1    ->
-      trace "Dealing single E"
-      Just e
-    NW :& a :& s :& k :& e :& w :& NE n    ->
-      trace "Decrementing E"
-      reduce (NW :& a :& s :& k :& e :& w :& NE 1 :& NE (pred n))
-    NW :& a :& s :& k :& e :& w :& NW        -> Just w
-    NW :& a :& s :& k :& e :& w :& (NM m _ xs)  ->
-      trace ("Trying to decompose jet: " ++ (show m))
-      reduce (NW :& a :& s :& k :& e :& w :& (jetFallback m xs))
-    NW :& a :& s :& k :& e :& w :& NM m n xs :& x ->
-      trace "Trying to combine jet"
-      reduce (NW :& a :& s :& k :& e :& w :& NM m (pred n) (xs <> [x]))
-    NW :& a :& s :& k :& e :& w :& rest ->
-      trace ("Unhandled NW reduction: " ++ (show rest))
-      Nothing
-
+    NW :& a :& s :& k :& e :& w :& val -> (check a s k e w val)
     NE n :& NE 1            → Just $ NE (succ n)
     NE n :& t :& b          → Just $ NM (match n t b) (fromIntegral n) []
     NM m 0 xs               → Just $ fromMaybe (jetFallback m xs) (runJet m xs)
     NM m n xs :& x          → Just $ NM m (pred n) (xs <> [x])
     _                       → Nothing
+
+check :: Exp -> Exp -> Exp -> Exp -> Exp -> Exp -> Maybe Exp
+check a s k e w = \case
+  (x :& y) -> Just (a :& x :& y)
+  NK -> Just k
+  NS -> Just s
+  NE 1 -> Just e
+  NE n -> check a s k e w (NE 1 :& NE (pred n))
+  NW   -> Just w
+  (NM m n xs)  -> check a s k e w (jetValue m xs)
+  NM m n xs :& x -> check a s k e w (NM m (pred n) (xs <> [x]))
+  _ -> Nothing
 
 match :: Pos -> Val -> Val -> Match
 match n t b = Jets.jetMatch (n, valDash t, valDash b) & \case
@@ -276,6 +263,18 @@ jetFallback :: Match -> [Val] -> Exp
 jetFallback (MU n t b) xs = foldl' (:&) b xs
 jetFallback (MD dj)    xs = foldl' (:&) (dashVal $ Jets.djBody dj) xs
 jetFallback (MS sj)    xs = foldl' (:&) (dashVal $ Jets.sjBody sj) xs
+
+jetValue :: Match -> [Val] -> Exp
+jetValue (MU n t b) xs = foldl' (:&) b xs
+jetValue (MD dj)    xs =
+  foldl' (:&) (NE n :& (dashVal tag) :& (dashVal body)) xs
+  where
+    (n, tag, body) = Jets.djTuple dj
+jetValue (MS sj)    xs =
+  foldl' (:&) (NE n :& (dashVal tag) :& (dashVal body)) xs
+  where
+    (n, tag, body) = Jets.sjTuple sj
+
 
 runJet :: Match -> [Val] -> Maybe Exp
 runJet = curry \case

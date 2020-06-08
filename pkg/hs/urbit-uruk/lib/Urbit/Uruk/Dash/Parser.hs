@@ -307,7 +307,7 @@ jetRule x = do
   Just (unTree b, unTree <$> xs)
 
 jetHead :: Tree Ur -> Maybe (Natural, [Tree Ur])
-jetHead = \(Node n xs) -> guard (n == W) $> go 1 xs
+jetHead = \(Node n xs) -> guard (n == E) $> go 1 xs
  where
   go n (Node E [] : xs) = go (succ n) xs
   go n xs               = (n, xs)

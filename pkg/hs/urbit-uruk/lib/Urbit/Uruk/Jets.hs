@@ -21,7 +21,7 @@ import ClassyPrelude
 import Data.List               (iterate, (!!))
 import Numeric.Natural         (Natural)
 import Urbit.Pos               (Pos)
-import Urbit.Uruk.Dash.DataJet (djArity, djTag, djBody, djMatch, jn)
+import Urbit.Uruk.Dash.DataJet (djArity, djBody, djMatch, djTag, djTuple, jn)
 import Urbit.Uruk.Dash.Exp     (DataJet(..), SingJet(..))
 import Urbit.Uruk.Dash.Exp     (ExpTree(..), Ur(..), Val)
 
@@ -62,7 +62,7 @@ sjTuple :: SingJet -> (Pos, Val, Val)
 sjTuple sj = (sjArity sj, sjTag sj, sjBody sj)
 
 jetTuple :: Either DataJet SingJet -> (Pos, Val, Val)
-jetTuple jet = (jetArity jet, jetTag jet, jetBody jet)
+jetTuple = either djTuple sjTuple
 
 
 --------------------------------------------------------------------------------
