@@ -58,7 +58,7 @@
       ^-  (quip card _state)
       ?<  (~(has by graphs) resource)
       :-  (give [/all /keys ~] [%add-graph resource graph])
-      %=  state
+      %_  state
           graphs       (~(put by graphs) resource graph)
           action-logs  (~(put by action-logs) resource (gas:orm-log ~ ~))
       ==
@@ -68,7 +68,7 @@
       ^-  (quip card _state)
       ?>  (~(has by graphs) resource)
       :-  (give [/all /keys ~] [%remove-graph resource])
-      %=  state
+      %_  state
           graphs       (~(del by graphs) resource)
           action-logs  (~(del by action-logs) resource)
       ==
@@ -102,19 +102,47 @@
         =*  node   +.i.node-list
         %_  $
             node-list  t.node-list
-            graph  (add-node-at-index graph index node)
+            graph      (add-node-at-index graph index node ~)
         ==
       ::
       ++  add-node-at-index
-        |=  [=graph:store =index:store =node:store]
+        |=  $:  =graph:store
+                =index:store
+                =node:store
+                parent-hash=(unit hash:store)
+            ==
         ^-  graph:store
         ?~  index  graph
         =*  atom   i.index
         ::  last index in list
         ::
         ?~  t.index
-          ::  TODO: validate that hash of node matches
-          (put:orm graph atom node)
+          ::  verify hash if it exists, otherwise calculate
+          ::
+          =*  p  post.node
+          =/  =validated-portion:store
+            [parent-hash author.p index.p time-sent.p contents.p]
+          =/  calculated-hash  (mug validated-portion)
+          ?^  hash.p
+            ::  hash is present, validate it
+            ~|  "hash of post does not match calculated hash"
+            ?>  =(calculated-hash u.hash.p)
+            (put:orm graph atom node)
+          ::  no hash present
+          ::
+          %^  put:orm
+              graph
+            atom
+          %=  node
+              hash.post  `calculated-hash
+              signatures.post
+            ?.  =(our.bowl author.post.node)  ~
+            %-  ~(gas in *signatures:store)
+            :_  ~
+            :+  `@ux`(sign:as:crub:crypto calculated-hash)
+              our.bowl
+            .^(=life %j /=life/(scot %p our.bowl))
+          ==
         ::  multiple indices left in list
         ::
         =/  parent=(unit node:store)  (get:orm graph atom)
@@ -124,23 +152,27 @@
         ?+  -.children.u.parent
           ::  replace empty graph with graph containing one child
           ::
+          =*  p-hash  hash.post.u.parent
           %^  put:orm
               graph
             atom
           %=  u.parent
               children
             ^-  internal-graph:store
-            [%graph $(graph (gas:orm ~ ~), index t.index)]
+            :-  %graph
+            $(graph (gas:orm ~ ~), index t.index, parent-hash p-hash)
           ==
         ::
             %graph
           :: recurse into children
           ::
+          =*  p-hash  hash.post.u.parent
           %^  put:orm
               graph
             atom
           %_  u.parent
-              p.children  $(graph p.children.u.parent, index t.index)
+              p.children
+            $(graph p.children.u.parent, index t.index, parent-hash p-hash)
           ==
         ==
       --
@@ -234,14 +266,11 @@
           ::  TODO: finish this
           ?.  (are-signatures-valid:sigs signatures *hash:store now.bowl)
             ~|("signatures did not match public keys!" !!)
-          =/  new-signatures  (~(uni in signatures) p.signatures.post.u.node)
+          =/  new-signatures  (~(uni in signatures) signatures.post.u.node)
           %^  put:orm
               graph
             atom
-          %_  u.node
-              p.signatures.post  new-signatures
-              q.signatures.post  (sha256-mug:sigs new-signatures)
-          ==
+          u.node(signatures.post new-signatures)
         ::  multiple indices left in list
         ::
         ?+  -.children.u.node

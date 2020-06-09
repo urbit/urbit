@@ -4,18 +4,26 @@
 +$  index       (list atom)
 +$  uid         [=resource =index]
 ::
-::  must be sha256 hash
+::  mug hash of +validated-portion
 +$  hash  @ux
 ::
 +$  signature   [p=@ux q=ship r=life]
 +$  signatures  (set signature)
 +$  post
   $:  author=ship
-      =hash
       =index
-      contents=(list content)
-      signatures=[p=signatures q=hash]
       time-sent=time
+      contents=(list content)
+      hash=(unit hash)
+      =signatures
+  ==
+::
++$  validated-portion
+  $:  parent-hash=(unit hash)
+      author=ship
+      =index
+      time-sent=time
+      contents=(list content)
   ==
 ::
 +$  content
