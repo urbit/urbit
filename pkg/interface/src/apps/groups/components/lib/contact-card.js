@@ -519,9 +519,10 @@ export class ContactCard extends Component {
             key={'avatar' + currentColor}
           />
           <div
-            className="tl mt4 mb4 w-auto ml-auto mr-auto"
+            className="tc mt4 mb4 w-auto ml-auto mr-auto"
             style={{ width: 'fit-content' }}
           >
+          <div className="tl dib">
             <p className="f9 gray2 lh-copy">Sigil Color</p>
             <textarea
               className={
@@ -543,6 +544,7 @@ export class ContactCard extends Component {
                 width: 114
               }}
             ></textarea>
+            </div>
           </div>
           <div className="w-100 pt8 pb8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
