@@ -8,6 +8,7 @@
 =,  space:userlib
 |%
 +$  part  {$write $0 pith}           :: no state
++$  part-old  part
 +$  pith  ~
 --
 ::

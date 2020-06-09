@@ -8,7 +8,8 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  part  {$helm $0 pith}                               ::  helm state
++$  part  {$helm $0 pith}                               ::  helm state
++$  part-old  part                                      ::
 ++  pith                                                ::  helm content
   $:  hoc/(map bone session)                            ::  consoles
   ==                                                    ::

@@ -9,13 +9,31 @@
 =,  space:userlib
 =,  format
 |%                                                      ::  ::
-++  part  {$kiln $0 pith}                               ::  kiln state
-++  pith                                                ::  ::
++$  part  [%kiln %1 pith]                               ::  kiln state
++$  part-old                                            ::
+  $:  %kiln                                             ::
+  $%  [%0 pith-0]                                       ::
+      [%1 pith-1]                                       ::
+  ==  ==                                                ::
+++  pith  pith-1                                        ::  ::
+++  pith-0                                              ::
+    $:  rem=(map desk per-desk)                         ::
+        syn=(map kiln-sync let=@ud)                     ::
+        autoload-on=?                                   ::
+        cur-hoon=@uvI                                   ::
+        cur-arvo=@uvI                                   ::
+        cur-zuse=@uvI                                   ::
+        cur-vanes=(map @tas @uvI)                       ::
+        commit-timer=[way=wire nex=@da tim=@dr mon=term]
+    ==                                                  ::
+::                                                      ::
+++  pith-1                                              ::
     $:  rem=(map desk per-desk)                         ::
         syn=(map kiln-sync let/@ud)                     ::
         ota=(unit [=ship =desk =aeon])                  ::
         commit-timer=[way=wire nex=@da tim=@dr mon=term]
     ==                                                  ::
+::
 ++  per-desk                                            ::  per-desk state
     $:  auto/?                                          ::  escalate on failure
         gem/germ                                        ::  strategy
@@ -72,6 +90,39 @@
   |=  {mez/tape sud/desk who/ship syd/desk}
   :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
+::
+++  on-load
+  |=  =part-old
+  =<  abet
+  =?  .  ?=(%0 +<.part-old)
+    =/  recognized-ota=(unit [syd=desk her=ship sud=desk])
+      =/  syncs=(list [[syd=desk her=ship sud=desk] =aeon])
+        ~(tap by syn.part-old)
+      |-  ^-  (unit [syd=desk her=ship sud=desk])
+      ?~  syncs
+        ~
+      ?:  &(=(%base syd.i.syncs) !=(our her.i.syncs) =(%kids sud.i.syncs))
+        `[syd her sud]:i.syncs
+      $(syncs t.syncs)
+    ::
+    =.  +<+.$.abet
+      %=  part-old
+          +<   %1
+          syn
+        ?~  recognized-ota
+          syn
+        (~(del by syn) [syd her sud]:u.recognized-ota)
+      ::
+          |4  [~ commit-timer.part-old]
+      ==
+    ::
+    =?  ..abet  ?=(^ recognized-ota)
+      (poke-internal:update `[her sud]:u.recognized-ota)
+    +(part-old +<+.$.abet)
+  ::
+  ?>  ?=(%1 +<.part-old)
+  =.  +<+.$.abet  part-old
+  ..abet
 ::
 ++  poke-commit
   |=  [mon/kiln-commit auto=?]
@@ -136,7 +187,6 @@
     |=  =wire
     ?~  ota
       |
-    ~!  ota=ota
     ?&  ?=([@ @ @ *] wire)
         =(i.wire (scot %p ship.u.ota))
         =(i.t.wire desk.u.ota)

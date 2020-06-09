@@ -8,8 +8,12 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-++  part      {$drum $2 pith-2}                         ::
-++  part-old  {$drum $1 pith-1}                         ::
++$  part      [%drum %2 pith-2]                         ::
++$  part-old                                            ::
+  $:  %drum                                             ::
+  $%  [%1 pith-1]                                       ::
+      [%2 pith-2]                                       ::
+  ==  ==                                                ::
 ::                                                      ::
 ++  pith-1                                              ::       pre-style
   %+  cork  pith-2                                      ::

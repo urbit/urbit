@@ -43,9 +43,9 @@
 !:
 =>  |%                                                  ::
     ++  hood-old                                        ::  unified old-state
-      {?($1 $2 $3 $4 $5) lac/(map @tas hood-part-old)}
+      {?($1 $2 $3 $4 $5 $6) lac/(map @tas hood-part-old)}
     ++  hood-1                                          ::  unified state
-      {$5 lac/(map @tas hood-part)}                     ::
+      {$6 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::  extract specific
       =+  hed=$:hood-head
       |@  ++  $
@@ -68,7 +68,12 @@
               $write  *part:hood-write
             ==
       --
-    ++  hood-part-old  hood-part                        ::  old state for ++prep
+    ++  hood-part-old
+      $%  [%drum part-old:hood-drum]
+          [%helm part-old:hood-helm]
+          [%kiln part-old:hood-kiln]
+          [%write part-old:hood-write]
+      ==
     ++  hood-port                                       ::  state transition
       |:  paw=$:hood-part-old  ^-  hood-part            ::
       paw                                               ::
@@ -147,12 +152,19 @@
   =/  old-state  !<(hood-old old-state-vase)
   =^  cards  lac
     =.  lac  lac.old-state
-    ?-  -.old-state
-      %1  ((wrap on-load):from-drum:(help hid) %1)
-      %2  ((wrap on-load):from-drum:(help hid) %2)
-      %3  ((wrap on-load):from-drum:(help hid) %3)
-      %4  ((wrap on-load):from-drum:(help hid) %4)
-      %5  `lac
+    ?-    -.old-state
+        %1  ((wrap on-load):from-drum:(help hid) %1)
+        %2  ((wrap on-load):from-drum:(help hid) %2)
+        %3  ((wrap on-load):from-drum:(help hid) %3)
+        %4  ((wrap on-load):from-drum:(help hid) %4)
+        %5
+      =/  start  ..$:(from-kiln)
+      =/  old-kiln-part  (~(got by lac.old-state) %kiln)
+      ?>  ?=(%kiln -.old-kiln-part)
+      %-  ably
+      (on-load:(start hid *part:hood-kiln) old-kiln-part)
+    ::
+        %6  `lac
     ==
   [cards ..on-init]
 ::
