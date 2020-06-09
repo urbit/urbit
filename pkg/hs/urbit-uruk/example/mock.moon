@@ -26,49 +26,114 @@
     ['App' (recur x) (recur y)]
   (W apply ['Ess' ~] ['Kay' ~] ['Eee' ~] ['Dub' ~] code)
 
-::  mock: we want to take the data in a skew tree from skew-layer and interpret
-::  its reductions down to nothing. 
+::  match-k: (NK :& x :& y) -> Just $ x
+::
+=/  match-k
+  |=  top
+  %-  (trace ['match-k' top])  |=  ig
+  =/  ktop  (car top)
+  ?:  (eql 'App' ktop)
+    =/  vtop  (cdr top)
+    =/  l  (car vtop)
+    =/  r  (cdr vtop)
+    =/  kl  (car l)
+    %-  (trace ['match-k-kl' kl])  |=  ig
+    ?:  (eql 'App' kl)
+      =/  vl  (cdr l)
+      =/  l2  (car vl)
+      =/  r2  (cdr vl)
+      =/  kl2  (car l2)
+      %-  (trace ['match-k-kl2' kl2])  |=  ig
+      ?:  (eql 'Kay' kl2)
+        (rit r2)
+      (lef ~)
+    (lef ~)
+  (lef ~)
+
+::  match-left: (reduce → Just xv) :& y → Just $ xv :& y
+::
+=/  match-left
+  |=  (reduce top)
+  %-  (trace ['match-left' top])  |=  ig
+  =/  ktop  (car top)
+  ?:  (eql 'App' ktop)
+    =/  vtop  (cdr top)
+    =/  l-vtop  (car vtop)
+    ?-    (reduce l-vtop)
+        l
+      (lef l)
+        r
+      =/  r-vtop  (cdr vtop)
+      (rit (con 'App' (con r r-vtop)))
+    ==
+  (lef ~)
+
+::  match-right: x :& (reduce → Just yv) → Just $ x :& yv
+::
+=/  match-right
+  |=  (reduce top)
+  %-  (trace ['match-right' top])  |=  ig
+  =/  ktop  (car top)
+  ?:  (eql 'App' ktop)
+    =/  vtop  (cdr top)
+    =/  r-vtop  (cdr vtop)
+    ?-    (reduce r-vtop)
+        l
+      (lef l)
+    ::
+        r
+      =/  l-vtop  (car vtop)
+      (rit (con 'App' (con l-vtop r)))
+    ==
+  (lef ~)
+
+::  reduce: performs one step of reduction, returning rit if you can reduce and
+::  lef if you can't
 ::
 ::  TODO: we must get this working with the lazy data structure, but for
 ::  simplicity, the first implementation uses the skewdata instead of skew-layer
 ::  representation.
 ::
-=/  mock
+=/  reduce
   ..  $
-  ::  top: a cons cell of a 
+  ::  top: a cons cell of a
   |=  top
-  %-  (trace ['one' 'start mock'])  |=  ig
-  =/  ktop  (car top)
-  %-  (trace ['ktop' ktop])  |=  ig
-  ?:  (eql 'App' ktop)
-    =/  vtop  (cdr top)
-    %-  (trace ['vtop' vtop])  |=  ig
-    =/  l  (car vtop)
-    =/  r  (cdr vtop)
-    =/  kl  (car l)
-    =/  vl  (cdr l)
-    =/  ig  (trace ['kl' kl])
-    ::(lef 'udnef')
-    ?:  (eql 'App' kl)
-      =/  kl2  (car vl)
-      =/  kr2  (cdr vl)
-      ?:  (eql 'Kay' kl2)
-        (rit kr2)
-      (lef 'other')
-      :: =/  l2  ((car (cdr
-      :: ?:  (eql 'Kay' right)
-    (lef 'three')
-  (lef 'not an app tree')
+  %-  (trace ['reduce' top])  |=  ig
+  ?-    (match-k top)
+      l
+    %-  (trace ['not-match-k' top])  |=  ig
+    ?-    (match-left $ top)
+        l
+      ?-    (match-right $ top)
+          l
+        (lef 'no such match')
+          r
+        (rit r)
+      ==
+    ::
+        r
+      (rit r)
+    ==
+  ::
+      r
+    (rit r)
+  ==
 
-::             top  ktop  vtop l    kl    vl   l2    r2    
-::  (K K K) -> (CON 'App' (CON (CON 'App' (CON 'Kay' 'Kay')) 'Kay'))
+::  eval: perform step evaluation until no more are possible.
+::
+=/  eval
+  ..  $
+  |=  x
+  ?-    (reduce x)
+      l
+    x
+  ::
+      r
+    ($ r)
+  ==
 
-:: :: Ben had the great idea that we should move reduction rule format from 
+::  (K K K) -> (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~)))
+::(reduce (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~))))
 
-:: no, argument gets evaluated
-::(skewdata (K K K))
-(mock (con 'App' (con (con 'App' (con 'Kay' 'Kay')) 'Kay')))
-
-
-::(mock (skew-layer (K K K)))
-:: (mock (skew-layer seq))
+::  ((K K K) K K) -> (con 'App' (con (con 'App' (con (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~)))
+(eval (con 'App' (con (con 'App' (con (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))))
