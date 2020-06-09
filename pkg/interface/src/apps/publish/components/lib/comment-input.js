@@ -8,7 +8,7 @@ const CommentInput = React.forwardRef((props, ref) => (
     name="comment"
     placeholder="Leave a comment here"
     className={
-      'f9 db border-box w-100 ba b--gray3 pt3 ph3 br1 ' +
+      'f9 db border-box w-100 ba b--gray3 pt2 ph2 br1 ' +
       'b--gray2-d mb2 focus-b--black focus-b--white-d white-d bg-gray0-d'
     }
     aria-describedby="comment-desc"
