@@ -23,6 +23,26 @@ function getNumPending(props) {
 const ACTIVITY_TIMEOUT = 60000; // a minute
 const DEFAULT_BACKLOG_SIZE = 300;
 
+// percentage of scroll container to lock/unlock
+const LOCK_THRESHOLD_RATIO = 0.2;
+
+function scrollLock(container) {
+  const threshold = container.clientHeight * LOCK_THRESHOLD_RATIO;
+
+  if ((navigator.userAgent.includes('Safari') &&
+      navigator.userAgent.includes('Chrome')) ||
+      navigator.userAgent.includes('Firefox')
+  ) {
+    return container.scrollHeight - container.scrollTop - container.clientHeight <=
+        threshold;
+  } else if (navigator.userAgent.includes('Safari')) {
+    return -1 * container.scrollTop >=
+      threshold;
+  } else {
+    return false;
+  }
+}
+
 function scrollIsAtTop(container) {
   if ((navigator.userAgent.includes("Safari") &&
       navigator.userAgent.includes("Chrome")) ||
@@ -265,6 +285,16 @@ export class ChatScreen extends Component {
         numPages: 1,
         scrollLocked: false
       });
+    }
+
+    if(scrollLock(e.target)) {
+      if(!this.state.scrollLocked) {
+        this.setState({ scrollLocked: true });
+      }
+    } else {
+      if(this.state.scrollLocked) {
+        this.setState({ scrollLocked: false });
+      }
     }
   }
 
