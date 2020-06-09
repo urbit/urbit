@@ -91,10 +91,11 @@ export default class PublishApi extends BaseApi {
     if (this.store.state.sidebarShown === true) {
       sidebarBoolean = false;
     }
-    this.handleEvent({
-      type: 'local',
+    this.store.handleEvent({
       data: {
-        'sidebarToggle': sidebarBoolean
+        local: {
+          sidebarToggle: sidebarBoolean
+        }
       }
     });
   }

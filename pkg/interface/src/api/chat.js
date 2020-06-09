@@ -37,6 +37,7 @@ export default class ChatApi {
     this.metadata = {
       add: helper.metadataAdd.bind(helper)
     };
+    this.sidebarToggle = helper.sidebarToggle.bind(helper);
   }
 }
 
@@ -204,5 +205,18 @@ class PrivateHelper extends BaseApi {
     });
   }
 
+  sidebarToggle() {
+    let sidebarBoolean = true;
+    if (this.store.state.sidebarShown === true) {
+      sidebarBoolean = false;
+    }
+    this.store.handleEvent({
+      data: {
+        local: {
+          sidebarToggle: sidebarBoolean
+        }
+      }
+    });
+  }
 }
 

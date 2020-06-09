@@ -2,6 +2,7 @@ import BaseStore from './base';
 
 import ContactReducer from '../reducers/contact-update';
 import GroupReducer from '../reducers/group-update';
+import LocalReducer from '../reducers/local';
 import PublishReducer from '../reducers/publish-update';
 import InviteReducer from '../reducers/invite-update';
 import PublishResponseReducer from '../reducers/publish-response';
@@ -14,6 +15,7 @@ export default class PublishStore extends BaseStore {
 
     this.contactReducer = new ContactReducer();
     this.groupReducer = new GroupReducer();
+    this.localReducer = new LocalReducer();
     this.publishReducer = new PublishReducer();
     this.inviteReducer = new InviteReducer();
     this.responseReducer = new PublishResponseReducer();
@@ -38,6 +40,7 @@ export default class PublishStore extends BaseStore {
   reduce(data, state) {
     this.contactReducer.reduce(data, this.state);
     this.groupReducer.reduce(data, this.state);
+    this.localReducer.reduce(data, this.state);
     this.publishReducer.reduce(data, this.state);
     this.permissionReducer.reduce(data, this.state);
     this.metadataReducer.reduce(data, this.state);
