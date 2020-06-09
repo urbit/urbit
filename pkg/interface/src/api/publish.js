@@ -74,6 +74,14 @@ export default class PublishApi extends BaseApi {
     });
   }
 
+  groupAction(act) {
+    return this.action('group-store', 'group-action', act);
+  }
+
+  inviteAction(act) {
+    return this.action('invite-store', 'invite-action', act);
+  }
+
   publishAction(act) {
     return this.action('publish', 'publish-action', act);
   }

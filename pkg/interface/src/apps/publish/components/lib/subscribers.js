@@ -17,7 +17,7 @@ export class Subscribers extends Component {
         path: path
       }
     };
-    this.props.api.action('group-store', 'group-action', action);
+    this.props.api.groupAction(action);
   }
 
   removeUser(who, path) {
@@ -27,7 +27,7 @@ export class Subscribers extends Component {
         path: path
       }
     };
-    this.props.api.action('group-store', 'group-action', action);
+    this.props.api.groupAction(action);
   }
 
   redirect(url) {

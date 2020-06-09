@@ -63,7 +63,7 @@ export class Settings extends Component {
 
   changeComments() {
     this.setState({ comments: !this.state.comments, disabled: true }, (() => {
-      this.props.api.action('publish', 'publish-action', {
+      this.props.api.publishAction({
         'edit-book': {
           book: this.props.book,
           title: this.props.notebook.title,
@@ -84,7 +84,7 @@ export class Settings extends Component {
       }
     };
     this.setState({ disabled: true, type: 'Deleting' });
-    this.props.api.action('publish', 'publish-action', action).then(() => {
+    this.props.api.publishAction(action).then(() => {
       this.props.history.push('/~publish');
     });
   }
@@ -108,7 +108,7 @@ export class Settings extends Component {
       disabled: true,
       type: 'Converting'
     }, (() => {
-      this.props.api.action('publish', 'publish-action', {
+      this.props.api.publishAction({
         groupify: {
           book: props.book,
           target: state.targetGroup,
@@ -125,7 +125,7 @@ export class Settings extends Component {
 
     const ownedUnmanaged =
       owner &&
-      props.notebook['writers-group-path'].slice(0, 3) === '/~/';
+      props.notebook?.['writers-group-path'].slice(0, 3) === '/~/';
 
     if (!ownedUnmanaged) {
       return null;
@@ -254,7 +254,7 @@ export class Settings extends Component {
               onBlur={() => {
                 this.setState({ disabled: true });
                 this.props.api
-                  .action('publish', 'publish-action', {
+                  .publishAction({
                     'edit-book': {
                       book: this.props.book,
                       title: this.state.title,
@@ -281,7 +281,7 @@ export class Settings extends Component {
               onBlur={() => {
                 this.setState({ disabled: true });
                 this.props.api
-                  .action('publish', 'publish-action', {
+                  .publishAction({
                     'edit-book': {
                       book: this.props.book,
                       title: this.props.notebook.title,

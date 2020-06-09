@@ -8,7 +8,7 @@ export class SidebarInvite extends Component {
         uid: this.props.uid
       }
     };
-    window.api.action('invite-store', 'invite-action', action);
+    this.props.api.inviteAction(action);
   }
 
   onDecline() {
@@ -18,7 +18,7 @@ export class SidebarInvite extends Component {
         uid: this.props.uid
       }
     };
-    this.props.api.action('invite-store', 'invite-action', action);
+    this.props.api.inviteAction(action);
   }
 
   render() {

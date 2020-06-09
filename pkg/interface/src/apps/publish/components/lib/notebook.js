@@ -64,7 +64,7 @@ export class Notebook extends Component {
         book: this.props.book
       }
     };
-    this.props.api.action('publish', 'publish-action', action);
+    this.props.api.publishAction(action);
     this.props.history.push('/~publish');
   }
 
@@ -112,6 +112,7 @@ export class Notebook extends Component {
                   notebook={notebook}
                   permissions={this.props.permissions}
                   groups={this.props.groups}
+                  api={this.props.api}
                 />;
         break;
       case 'settings':
@@ -123,6 +124,7 @@ export class Notebook extends Component {
                   contacts={this.props.contacts}
                   associations={this.props.associations}
                   history={this.props.history}
+                  api={this.props.api}
                 />;
         break;
       default:

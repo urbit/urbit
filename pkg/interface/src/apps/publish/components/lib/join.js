@@ -93,7 +93,7 @@ export class JoinScreen extends Component {
 
     // TODO: askHistory setting
     this.setState({ disable: true });
-    this.props.api.action('publish','publish-action', actionData).catch((err) => {
+    this.props.api.publishAction(actionData).catch((err) => {
       console.log(err);
     }).then(() => {
       this.setState({ awaiting: text });
