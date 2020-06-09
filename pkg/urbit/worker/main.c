@@ -153,6 +153,8 @@ main(c3_i argc, c3_c* argv[])
     err_i = uv_pipe_init(lup_u, &out_u.pyp_u, 0);
     c3_assert(!err_i);
     uv_pipe_open(&out_u.pyp_u, out_i);
+
+    uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
   }
 
   //  set up writing
@@ -241,7 +243,7 @@ main(c3_i argc, c3_c* argv[])
 
   //  start reading
   //
-  u3_newt_read(&inn_u);
+  u3_newt_read_sync(&inn_u);
 
   //  enter loop
   //

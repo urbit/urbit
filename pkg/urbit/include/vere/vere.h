@@ -1084,7 +1084,12 @@
         void
         u3_newt_write(u3_mojo* moj_u, u3_atom mat);
 
-      /* u3_newt_read(): activate reading on input stream.
+      /* u3_newt_read_sync(): start reading; multiple msgs synchronous.
+      */
+        void
+        u3_newt_read_sync(u3_moat* mot_u);
+
+      /* u3_newt_read(): start reading; each msg asynchronous.
       */
         void
         u3_newt_read(u3_moat* mot_u);
