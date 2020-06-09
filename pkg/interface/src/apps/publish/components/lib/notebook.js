@@ -186,7 +186,7 @@ export class Notebook extends Component {
 
     return (
       <div
-        className='overflow-y-scroll'
+        className='overflow-y-scroll h-100'
         style={{ paddingLeft: 16, paddingRight: 16 }}
         onScroll={this.onScroll}
         ref={(el) => {
