@@ -99,7 +99,7 @@ export class ContactSidebar extends Component {
               style={{ paddingTop: 6 }}
               onClick={() => {
                 this.setState({ awaiting: true }, (() => {
-                  props.api.groupRemove(props.path, [`~${member}`])
+                  props.api.group.remove(props.path, [`~${member}`])
                     .then(() => {
                       this.setState({ awaiting: false });
                     });

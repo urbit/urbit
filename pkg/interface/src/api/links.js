@@ -1,8 +1,6 @@
-import _ from 'lodash';
 import { stringToTa } from '../lib/util';
 
 import BaseApi from './base';
-
 
 export default class LinksApi extends BaseApi {
   constructor(ship, channel, store) {

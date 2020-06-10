@@ -4,25 +4,32 @@ export default class MetadataReducer {
   reduce(json, state) {
     let data = _.get(json, 'metadata-update', false);
     if (data) {
+      console.log('data: ', data);
       this.associations(data, state);
       this.add(data, state);
       this.update(data, state);
       this.remove(data, state);
+      console.log('state: ', state);
     }
   }
 
   associations(json, state) {
     let data = _.get(json, 'associations', false);
     if (data) {
-      let metadata = {};
+      let metadata = state.associations;
       Object.keys(data).forEach((key) => {
         let val = data[key];
-        let groupPath = val['group-path'];
-        if (!(groupPath in metadata)) {
-          metadata[groupPath] = {};
+        let appName = val['app-name'];
+        let appPath = val['app-path'];
+        if (!(appName in metadata)) {
+          metadata[appName] = {};
         }
-        metadata[groupPath][key] = val;
+        if (!(appPath in metadata[appName])) {
+          metadata[appName][appPath] = {};
+        }
+        metadata[appName][appPath] = val;
       });
+
       state.associations = metadata;
     }
   }
@@ -31,11 +38,16 @@ export default class MetadataReducer {
     let data = _.get(json, 'add', false);
     if (data) {
       let metadata = state.associations;
-      if (!(data['group-path'] in metadata)) {
-        metadata[data['group-path']] = {};
+      let appName = data['app-name'];
+      let appPath = data['app-path'];
+
+      if (!(appName in metadata)) {
+        metadata[appName] = {};
       }
-      metadata[data['group-path']]
-        [`${data["group-path"]}/${data["app-name"]}${data["app-path"]}`] = data;
+      if (!(appPath in metadata[appName])) {
+        metadata[appName][appPath] = {};
+      }
+      metadata[appName][appPath] = data;
 
       state.associations = metadata;
     }
@@ -45,12 +57,16 @@ export default class MetadataReducer {
     let data = _.get(json, 'update-metadata', false);
     if (data) {
       let metadata = state.associations;
-      if (!(data["group-path"] in metadata)) {
-        metadata[data["group-path"]] = {};
+      let appName = data['app-name'];
+      let appPath = data['app-path'];
+
+      if (!(appName in metadata)) {
+        metadata[appName] = {};
       }
-      metadata[data["group-path"]][
-        `${data["group-path"]}/${data["app-name"]}${data["app-path"]}`
-      ] = data;
+      if (!(appPath in metadata[appName])) {
+        metadata[appName][appPath] = {};
+      }
+      metadata[appName][appPath] = data;
 
       state.associations = metadata;
     }
@@ -60,12 +76,13 @@ export default class MetadataReducer {
     let data = _.get(json, 'remove', false);
     if (data) {
       let metadata = state.associations;
-      if (data['group-path'] in metadata) {
-        let path =
-        `${data['group-path']}/${data['app-name']}${data['app-path']}`
-        delete metadata[data["group-path"]][path];
-        state.associations = metadata;
+      let appName = data['app-name'];
+      let appPath = data['app-path'];
+
+      if (appName in metadata && appPath in metadata[appName]) {
+        delete metadata[appName][appPath];
       }
+      state.associations = metadata;
     }
   }
 }

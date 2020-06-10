@@ -104,7 +104,6 @@
       %permission-group-hook
       %invite-store
       %invite-hook
-      %invite-view
       %chat-store
       %chat-hook
       %chat-view

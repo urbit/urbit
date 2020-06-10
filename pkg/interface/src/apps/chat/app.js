@@ -32,7 +32,7 @@ export default class ChatApp extends React.Component {
   }
 
   componentDidMount() {
-    window.title = 'OS1 - Chat';
+    document.title = 'OS1 - Chat';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
@@ -74,7 +74,7 @@ export default class ChatApp extends React.Component {
     });
 
     if (totalUnreads !== this.totalUnreads) {
-      document.title = totalUnreads > 0 ? `Chat - (${totalUnreads})` : 'Chat';
+      document.title = totalUnreads > 0 ? `OS1 - Chat (${totalUnreads})` : 'OS1 - Chat';
       this.totalUnreads = totalUnreads;
     }
 
@@ -310,7 +310,7 @@ export default class ChatApp extends React.Component {
               >
                 <MemberScreen
                   {...props}
-                  api={api}
+                  api={this.api}
                   station={station}
                   association={association}
                   permission={permission}
@@ -361,7 +361,7 @@ export default class ChatApp extends React.Component {
                   permissions={state.permissions || {}}
                   contacts={state.contacts || {}}
                   associations={associations.contacts}
-                  api={api}
+                  api={this.api}
                   inbox={state.inbox}
                   popout={popout}
                   sidebarShown={state.sidebarShown}

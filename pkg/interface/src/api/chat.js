@@ -1,4 +1,5 @@
 import BaseApi from './base';
+import { uuid } from '../lib/util';
 
 export default class ChatApi {
   constructor(ship, channel, store) {
@@ -36,6 +37,7 @@ export default class ChatApi {
     this.metadata = {
       add: helper.metadataAdd.bind(helper)
     };
+    this.sidebarToggle = helper.sidebarToggle.bind(helper);
   }
 }
 
@@ -66,7 +68,7 @@ class PrivateHelper extends BaseApi {
 
   addPendingMessage(msg) {
     if (this.store.state.pendingMessages.has(msg.path)) {
-      this.store.state.pendingMessages.get(msg.path).push(msg.envelope);
+      this.store.state.pendingMessages.get(msg.path).unshift(msg.envelope);
     } else {
       this.store.state.pendingMessages.set(msg.path, [msg.envelope]);
     }
@@ -203,5 +205,18 @@ class PrivateHelper extends BaseApi {
     });
   }
 
+  sidebarToggle() {
+    let sidebarBoolean = true;
+    if (this.store.state.sidebarShown === true) {
+      sidebarBoolean = false;
+    }
+    this.store.handleEvent({
+      data: {
+        local: {
+          sidebarToggle: sidebarBoolean
+        }
+      }
+    });
+  }
 }
 

@@ -21,7 +21,11 @@ export default class GroupsApi {
 
     this.group = {
       add: helper.groupAdd.bind(helper),
-      delete: helper.groupRemove.bind(helper)
+      remove: helper.groupRemove.bind(helper)
+    };
+
+    this.metadata = {
+      add: helper.metadataAdd.bind(helper)
     };
 
     this.invite = {

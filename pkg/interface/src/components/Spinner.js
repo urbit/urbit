@@ -10,7 +10,7 @@ export class Spinner extends Component {
       return (
         <div className={classes + ' z-2 bg-white bg-gray0-d white-d'}>
           <img className="invert-d spin-active v-mid"
-            src="/~chat/img/Spinner.png"
+            src="/~landscape/img/Spinner.png"
             width={16}
             height={16}
           />

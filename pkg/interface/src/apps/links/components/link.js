@@ -30,20 +30,22 @@ export class LinkDetail extends Component {
   }
 
   componentDidMount() {
-    // if we have no preloaded data, and we aren't expecting it, get it
-    if (!this.state.data.title) {
-      this.props.api.getSubmission(
-        this.props.resourcePath, this.props.url, this.updateData.bind(this)
-      );
-    }
+    this.componentDidUpdate();
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.url !== prevProps.url) {
-      this.updateData(this.props.data);
+    // if we have no preloaded data, and we aren't expecting it, get it
+    if ((!this.state.data.title) && (this.props.api)) {
+      this.props.api?.getSubmission(
+        this.props.resourcePath, this.props.url, this.updateData.bind(this)
+      );
     }
-    if (prevProps.comments && prevProps.comments['0'] &&
-      this.props.comments && this.props.comments['0']) {
+    if (prevProps) {
+      if (this.props.url !== prevProps.url) {
+        this.updateData(this.props.data);
+      }
+      if (prevProps.comments && prevProps.comments['0'] &&
+        this.props.comments && this.props.comments['0']) {
         const prevFirstComment = prevProps.comments['0'][0];
         const thisFirstComment = this.props.comments['0'][0];
         if ((prevFirstComment && prevFirstComment.udon) &&
@@ -56,6 +58,7 @@ export class LinkDetail extends Component {
             });
           }
         }
+      }
     }
   }
 

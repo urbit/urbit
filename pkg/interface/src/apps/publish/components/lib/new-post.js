@@ -37,14 +37,14 @@ export class NewPost extends Component {
       };
 
       this.setState({ disabled: true });
-      this.props.api.action('publish', 'publish-action', newNote).then(() => {
+      this.props.api.publishAction(newNote).then(() => {
         this.setState({ awaiting: newNote['new-note'].note });
       }).catch((err) => {
         if (err.includes('note already exists')) {
           const timestamp = Math.floor(Date.now() / 1000);
           newNote['new-note'].note += '-' + timestamp;
           this.setState({ awaiting: newNote['new-note'].note });
-          this.props.api.action('publish', 'publish-action', newNote);
+          this.props.api.publishAction(newNote);
         } else {
           this.setState({ disabled: false, awaiting: null });
         }
@@ -52,11 +52,15 @@ export class NewPost extends Component {
     }
   }
 
-  componentWillMount() {
-    this.props.api.fetchNotebook(this.props.ship, this.props.book);
+  componentDidMount() {
+    this.componentDidUpdate();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    if (prevProps && prevProps.api !== this.props.api) {
+      this.props.api.fetchNotebook(this.props.ship, this.props.book);
+    }
+
     const notebook = this.props.notebooks[this.props.ship][this.props.book];
     if (notebook.notes[this.state.awaiting]) {
       this.setState({ disabled: false, awaiting: null });
@@ -131,7 +135,7 @@ export class NewPost extends Component {
             to={popoutHref}
             target='_blank'
           >
-            <img src='/~publish/popout.png' height={16} width={16} />
+            <img src='/~landscape/img/popout.png' height={16} width={16} />
           </Link>
         </div>
         <div className='mw6 center'>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BrowserRouter as Router, Route, Link, withRouter } from 'react-router-dom';
+import { BrowserRouter as Router, Route, withRouter, Switch } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import './css/indigo-static.css';
 import './css/fonts.css';
@@ -8,10 +8,12 @@ import { light } from '@tlon/indigo-react';
 import LaunchApp from './apps/launch/app';
 import ChatApp from './apps/chat/app';
 import DojoApp from './apps/dojo/app';
-import StatusBar from './components/StatusBar';
 import GroupsApp from './apps/groups/app';
 import LinksApp from './apps/links/app';
 import PublishApp from './apps/publish/app';
+
+import StatusBar from './components/StatusBar';
+import NotFound from './components/404';
 
 import GlobalStore from './store/global';
 import GlobalSubscription from './subscription/global';
@@ -71,48 +73,64 @@ export default class App extends React.Component {
             api={this.api}
             />
             <div>
-              <Route exact path="/" render={ p => (
+            <Switch>
+              <Route exact path="/"
+              render={ p => (
                 <LaunchApp
                   ship={this.ship}
                   channel={channel}
                   selectedGroups={selectedGroups}
-                  {...p} />
-              )} />
+                  {...p}
+                />
+              )}
+              />
               <Route path="/~chat" render={ p => (
                 <ChatApp
                   ship={this.ship}
                   channel={channel}
                   selectedGroups={selectedGroups}
-                  {...p} />
-              )} />
+                  {...p}
+                />
+              )}
+              />
               <Route path="/~dojo" render={ p => (
                 <DojoApp
                   ship={this.ship}
                   channel={channel}
                   selectedGroups={selectedGroups}
-                  {...p} />
-              )} />
+                  {...p}
+                />
+              )}
+              />
               <Route path="/~groups" render={ p => (
                 <GroupsApp
                   ship={this.ship}
                   channel={channel}
                   selectedGroups={selectedGroups}
-                  {...p} />
-              )} />
+                  {...p}
+                />
+              )}
+              />
               <Route path="/~link" render={ p => (
                 <LinksApp
                   ship={this.ship}
                   channel={channel}
                   selectedGroups={selectedGroups}
-                  {...p} />
-              )} />
+                  {...p}
+                />
+              )}
+              />
               <Route path="/~publish" render={ p => (
                 <PublishApp
                   ship={this.ship}
                   channel={channel}
                   selectedGroups={selectedGroups}
-                  {...p} />
-              )} />
+                  {...p}
+                />
+              )}
+              />
+              <Route component={NotFound} />
+              </Switch>
             </div>
           </Router>
         </Root>

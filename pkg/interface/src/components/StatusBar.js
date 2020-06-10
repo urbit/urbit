@@ -7,14 +7,16 @@ import { Sigil } from '../lib/sigil';
 const getLocationName = (basePath) => {
   if (basePath === '~chat')
     return 'Chat';
-  if (basePath === '~dojo')
+  else if (basePath === '~dojo')
     return 'Dojo';
-  if (basePath === '~groups')
+  else if (basePath === '~groups')
     return 'Groups';
-  if (basePath === '~link')
+  else if (basePath === '~link')
     return 'Links';
-  if (basePath === '~publish')
+  else if (basePath === '~publish')
     return 'Publish';
+  else
+    return 'Unknown';
 };
 
 const StatusBar = (props) => {
@@ -24,8 +26,9 @@ const StatusBar = (props) => {
     ? 'Home'
     : getLocationName(basePath);
 
-  const popout = window.location.href.includes('popout/')
-    ? 'dn' : 'db';
+  const display = (!window.location.href.includes('popout/') &&
+    (locationName !== 'Unknown'))
+      ? 'db' : 'dn';
 
   const invites = (props.invites && props.invites['/contacts'])
     ? props.invites['/contacts']
@@ -34,7 +37,7 @@ const StatusBar = (props) => {
   return (
     <div
       className={
-        'bg-white bg-gray0-d w-100 justify-between relative tc pt3 ' + popout
+        'bg-white bg-gray0-d w-100 justify-between relative tc pt3 ' + display
       }
       style={{ height: 45 }}
     >
@@ -54,7 +57,7 @@ const StatusBar = (props) => {
           location.pathname === '/'
             ? null
             : <Link
-                className="dib f9 v-mid inter ml2 no-underline"
+                className="dib f9 v-mid inter ml2 no-underline white-d"
                 to="/"
                 style={{ top: 14 }}
               >

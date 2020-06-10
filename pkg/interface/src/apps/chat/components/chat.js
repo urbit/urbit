@@ -493,9 +493,9 @@ ref={(e) => {
           style={{ height: 48 }}
         >
           <SidebarSwitcher
-            sidebarShown={this.props.sidebarShown}
-            popout={this.props.popout}
-            api={this.props.api}
+            sidebarShown={props.sidebarShown}
+            popout={props.popout}
+            api={props.api}
           />
           <Link to={'/~chat/' + isinPopout + 'room' + props.station}
           className="pt2 white-d"
@@ -513,7 +513,7 @@ ref={(e) => {
             station={props.station}
             numPeers={group.length}
             isOwner={deSig(props.match.params.ship) === window.ship}
-            popout={this.props.popout}
+            popout={props.popout}
             api={props.api}
           />
         </div>

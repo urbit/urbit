@@ -12,7 +12,9 @@ export default class LaunchStore extends BaseStore {
       launch: {
         firstTime: false,
         tileOrdering: [],
-        tiles: {}
+        tiles: {},
+        weather: {},
+        clock: {}
       }
     };
   }

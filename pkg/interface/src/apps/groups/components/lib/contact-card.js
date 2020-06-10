@@ -141,12 +141,10 @@ export class ContactCard extends Component {
               type: 'Saving to group'
             },
             () => {
-              props.api
-                .contactEdit(props.path, ship, {
-                  avatar: {
-                    url: state.avatarToSet
-                  }
-                })
+              props.api.contactHook.edit(props.path, ship, {
+                avatar: {
+                  url: state.avatarToSet
+                }})
                 .then(() => {
                   this.setState({ awaiting: false });
                 });
@@ -163,8 +161,8 @@ export class ContactCard extends Component {
 
         if (hexTest && hexTest[1] !== currentColor && !props.share) {
           this.setState({ awaiting: true, type: 'Saving to group' }, () => {
-            props.api
-              .contactEdit(props.path, `~${props.ship}`, { color: hexTest[1] })
+            props.api.contactHook.edit(
+              props.path, `~${props.ship}`, { color: hexTest[1] })
               .then(() => {
                 this.setState({ awaiting: false });
               });
@@ -182,8 +180,8 @@ export class ContactCard extends Component {
         const emailTestResult = emailTest.exec(state.emailToSet);
         if (emailTestResult) {
           this.setState({ awaiting: true, type: 'Saving to group' }, () => {
-            props.api
-              .contactEdit(props.path, ship, { email: state.emailToSet })
+            props.api.contactHook.edit(
+              props.path, ship, { email: state.emailToSet })
               .then(() => {
                 this.setState({ awaiting: false });
               });
@@ -199,8 +197,8 @@ export class ContactCard extends Component {
           return false;
         }
         this.setState({ awaiting: true, type: 'Saving to group' }, () => {
-          props.api
-            .contactEdit(props.path, ship, { nickname: state.nickNameToSet })
+          props.api.contactHook.edit(
+            props.path, ship, { nickname: state.nickNameToSet })
             .then(() => {
               this.setState({ awaiting: false });
             });
@@ -216,8 +214,8 @@ export class ContactCard extends Component {
           return false;
         }
         this.setState({ awaiting: true, type: 'Saving to group' }, () => {
-          props.api
-            .contactEdit(props.path, ship, { notes: state.notesToSet })
+          props.api.contactHook.edit(
+            props.path, ship, { notes: state.notesToSet })
             .then(() => {
               this.setState({ awaiting: false });
             });
@@ -234,8 +232,8 @@ export class ContactCard extends Component {
         const phoneTestResult = phoneTest.exec(state.phoneToSet);
         if (phoneTestResult) {
           this.setState({ awaiting: true, type: 'Saving to group' }, () => {
-            props.api
-              .contactEdit(props.path, ship, { phone: state.phoneToSet })
+            props.api.contactHook.edit(
+              props.path, ship, { phone: state.phoneToSet })
               .then(() => {
                 this.setState({ awaiting: false });
               });
@@ -253,8 +251,8 @@ export class ContactCard extends Component {
         const websiteTestResult = websiteTest.exec(state.websiteToSet);
         if (websiteTestResult) {
           this.setState({ awaiting: true, type: 'Saving to group' }, () => {
-            props.api
-              .contactEdit(props.path, ship, { website: state.websiteToSet })
+            props.api.contactHook.edit(
+              props.path, ship, { website: state.websiteToSet })
               .then(() => {
                 this.setState({ awaiting: false });
               });
@@ -266,9 +264,10 @@ export class ContactCard extends Component {
         this.setState(
           { emailToSet: '', awaiting: true, type: 'Removing from group' },
           () => {
-            props.api.contactEdit(props.path, ship, { email: '' }).then(() => {
-              this.setState({ awaiting: false });
-            });
+            props.api.contactHook.edit(props.path, ship, { email: '' })
+              .then(() => {
+                this.setState({ awaiting: false });
+              });
           }
         );
         break;
@@ -277,9 +276,10 @@ export class ContactCard extends Component {
         this.setState(
           { nicknameToSet: '', awaiting: true, type: 'Removing from group' },
           () => {
-            props.api.contactEdit(props.path, ship, { nickname: '' }).then(() => {
-              this.setState({ awaiting: false });
-            });
+            props.api.contactHook.edit(props.path, ship, { nickname: '' })
+              .then(() => {
+                this.setState({ awaiting: false });
+              });
           }
         );
         break;
@@ -288,7 +288,7 @@ export class ContactCard extends Component {
         this.setState(
           { phoneToSet: '', awaiting: true, type: 'Removing from group' },
           () => {
-            props.api.contactEdit(props.path, ship, { phone: '' }).then(() => {
+            props.api.contactHook.edit(props.path, ship, { phone: '' }).then(() => {
               this.setState({ awaiting: false });
             });
           }
@@ -299,7 +299,7 @@ export class ContactCard extends Component {
         this.setState(
           { websiteToSet: '', awaiting: true, type: 'Removing from group' },
           () => {
-            props.api.contactEdit(props.path, ship, { website: '' }).then(() => {
+            props.api.contactHook.edit(props.path, ship, { website: '' }).then(() => {
               this.setState({ awaiting: false });
             });
           }
@@ -314,7 +314,7 @@ export class ContactCard extends Component {
             type: 'Removing from group'
           },
           () => {
-            props.api.contactEdit(props.path, ship, { avatar: null }).then(() => {
+            props.api.contactHook.edit(props.path, ship, { avatar: null }).then(() => {
               this.setState({ awaiting: false });
             });
           }
@@ -325,7 +325,7 @@ export class ContactCard extends Component {
         this.setState(
           { notesToSet: '', awaiting: true, type: 'Removing from group' },
           () => {
-            props.api.contactEdit(props.path, ship, { notes: '' }).then(() => {
+            props.api.contactHook.edit(props.path, ship, { notes: '' }).then(() => {
               this.setState({ awaiting: false });
             });
           }
@@ -519,9 +519,10 @@ export class ContactCard extends Component {
             key={'avatar' + currentColor}
           />
           <div
-            className="tl mt4 mb4 w-auto ml-auto mr-auto"
+            className="tc mt4 mb4 w-auto ml-auto mr-auto"
             style={{ width: 'fit-content' }}
           >
+          <div className="tl dib">
             <p className="f9 gray2 lh-copy">Sigil Color</p>
             <textarea
               className={
@@ -543,6 +544,7 @@ export class ContactCard extends Component {
                 width: 114
               }}
             ></textarea>
+            </div>
           </div>
           <div className="w-100 pt8 pb8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>

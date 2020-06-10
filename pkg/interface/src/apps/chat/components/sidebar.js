@@ -14,6 +14,7 @@ export class Sidebar extends Component {
       dmOverlay: false
     };
   }
+
   onClickNew() {
     this.props.history.push('/~chat/new');
   }
@@ -37,9 +38,13 @@ export class Sidebar extends Component {
 
     const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
-    const associations =
+    const contactAssoc =
       (props.associations && 'contacts' in props.associations)
       ? alphabetiseAssociations(props.associations.contacts) : {};
+
+    const chatAssoc =
+      (props.associations && 'chat' in props.associations)
+      ? alphabetiseAssociations(props.associations.chat) : {};
 
     const groupedChannels = {};
     Object.keys(props.inbox).map((box) => {
@@ -51,16 +56,18 @@ export class Sidebar extends Component {
         } else {
           groupedChannels['/~/'] = [box];
         }
-      }
-      const path = props.associations.chat[box]
-        ? props.associations.chat[box]['group-path'] : box;
-      if (path in associations) {
-        if (groupedChannels[path]) {
-          const array = groupedChannels[path];
-          array.push(box);
-          groupedChannels[path] = array;
-        } else {
-          groupedChannels[path] = [box];
+      } else {
+        const path = chatAssoc[box]
+          ? chatAssoc[box]['group-path'] : box;
+
+        if (path in contactAssoc) {
+          if (groupedChannels[path]) {
+            const array = groupedChannels[path];
+            array.push(box);
+            groupedChannels[path] = array;
+          } else {
+            groupedChannels[path] = [box];
+          }
         }
       }
     });
@@ -77,7 +84,7 @@ export class Sidebar extends Component {
         );
       });
 
-    const groupedItems = Object.keys(associations)
+    const groupedItems = Object.keys(contactAssoc)
       .filter(each => (groupedChannels[each] || []).length !== 0)
       .filter((each) => {
         if (selectedGroups.length === 0) {
@@ -94,8 +101,8 @@ export class Sidebar extends Component {
           <GroupItem
             key={i}
             index={i}
-            association={associations[each]}
-            chatMetadata={props.associations['chat']}
+            association={contactAssoc[each]}
+            chatMetadata={chatAssoc}
             channels={channels}
             inbox={props.inbox}
             station={props.station}
@@ -108,7 +115,7 @@ export class Sidebar extends Component {
         groupedItems.push(
           <GroupItem
             association={'/~/'}
-            chatMetadata={props.associations['chat']}
+            chatMetadata={chatAssoc}
             channels={groupedChannels['/~/']}
             inbox={props.inbox}
             station={props.station}

@@ -4,6 +4,7 @@ export default class InviteReducer {
   reduce(json, state) {
     const data = _.get(json, 'invite-update', false);
     if (data) {
+      console.log(data);
       this.initial(data, state);
       this.create(data, state);
       this.delete(data, state);

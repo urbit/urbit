@@ -28,7 +28,7 @@ export default class DojoApp extends Component {
   }
 
   componentDidMount() {
-    window.title = 'OS1 - Dojo';
+    document.title = 'OS1 - Dojo';
 
     const channel = new this.props.channel();
     this.api = new Api(this.props.ship, channel);
@@ -47,7 +47,7 @@ export default class DojoApp extends Component {
   render() {
     return (
       <div
-        className="bg-white bg-gray1-d"
+        className="bg-white bg-gray0-d"
         style={{ height: 'calc(100vh - 45px)' }}
       >
         <Route
@@ -72,7 +72,7 @@ export default class DojoApp extends Component {
                 <div
                   className={
                     'pa3 bg-white bg-gray0-d black white-d mono w-100 f8 relative' +
-                    ' h-100-m40-s b--gray2 br1 flex-auto ' +
+                    ' h-100-m40-s b--gray2 br1 flex-auto flex flex-column ' +
                     popoutClasses
                   }
                   style={{

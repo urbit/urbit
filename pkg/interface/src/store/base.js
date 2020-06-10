@@ -19,7 +19,11 @@ export default class BaseStore {
   }
 
   handleEvent(data) {
-    let json = data.data;
+    const json = data.data;
+
+    if (json === null) {
+      return;
+    }
 
     if ('clear' in json && json.clear) {
       this.setState(this.initialState());
