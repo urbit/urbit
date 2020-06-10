@@ -46,11 +46,13 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
-    :-  :*  %pass  /srv  %agent  [our.bol %file-server]
+    :~  :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
             !>([%serve-dir /'~chat' /app/landscape %.n])
         ==
-    [%pass /updates %agent [our.bol %chat-store] %watch /updates]~
+      [%pass / %arvo %e %connect [~ /'chat-view'] %chat-view]
+      [%pass /updates %agent [our.bol %chat-store] %watch /updates]
+    ==
   ::
   ++  on-poke
     ~/  %chat-view-poke
