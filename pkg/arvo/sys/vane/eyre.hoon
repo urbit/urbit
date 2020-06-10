@@ -69,7 +69,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2019.10.6
+      date=%~2020.5.29
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -131,6 +131,9 @@
 ::  channel-timeout: the delay before a channel should be reaped
 ::
 ++  channel-timeout  ~h12
+::  session-timeout: the delay before an idle session expires
+::
+++  session-timeout  ~d7
 --
 ::  utilities
 ::
@@ -779,6 +782,10 @@
   ++  request
     |=  [secure=? =address =request:http]
     ^-  [(list move) server-state]
+    ::  for requests from localhost, respect the "forwarded" header
+    ::
+    =?  address  =([%ipv4 .127.0.0.1] address)
+      (fall (forwarded-for header-list.request) address)
     ::
     =/  host  (get-header:http 'host' header-list.request)
     =/  action  (get-action-for-binding host url.request)
@@ -794,7 +801,7 @@
     ?-    -.action
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
-      =/  sup=spur  (flop path.generator.action) 
+      =/  sup=spur  (flop path.generator.action)
       =/  ski       (scry [%141 %noun] ~ %ca bek sup)
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
@@ -844,6 +851,9 @@
         %authentication
       (handle-request:authentication secure address request)
     ::
+        %logout
+      (handle-logout:authentication authenticated request)
+    ::
         %channel
       (handle-request:by-channel secure authenticated address request)
     ::
@@ -889,8 +899,12 @@
           %leave  ~
       ==
     ::
-        %authentication  [~ state]
-        %channel         on-cancel-request:by-channel
+        ?(%authentication %logout)
+      [~ state]
+    ::
+        %channel
+      on-cancel-request:by-channel
+    ::
         %four-oh-four
       ::  it should be impossible for a 404 page to be asynchronous
       ::
@@ -920,7 +934,7 @@
   ::
   ++  authentication
     |%
-    ::  +handle-request: handles an http request for the
+    ::  +handle-request: handles an http request for the login page
     ::
     ++  handle-request
       |=  [secure=? =address =request:http]
@@ -964,14 +978,20 @@
         $(eny (shas %try-again candidate))
       ::  record cookie and record expiry time
       ::
-      =/  expires-in=@dr  ~d7
+      =/  first-session=?  =(~ sessions.authentication-state.state)
+      =/  expires-at=@da   (add now session-timeout)
       =.  sessions.authentication-state.state
-        (~(put by sessions.authentication-state.state) session (add now expires-in))
+        (~(put by sessions.authentication-state.state) session expires-at)
       ::
-      =/  max-age=tape  (format-ud-as-integer `@ud`(div (msec:milly expires-in) 1.000))
-      =/  cookie-line
-        %-  crip
-        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+      =/  cookie-line=@t
+        (session-cookie-string session &)
+      ::
+      =;  out=[moves=(list move) server-state]
+        ::  if we didn't have any cookies previously, start the expiry timer
+        ::
+        ?.  first-session  out
+        =-  out(moves [- moves.out])
+        [duct %pass /sessions/expire %b %wait expires-at]
       ::
       ?~  redirect=(get-header:http 'redirect' u.parsed)
         %-  handle-response
@@ -987,7 +1007,7 @@
       =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
       %-  handle-response
       :*  %start
-          :-  status-code=307
+          :-  status-code=303
           ^=  headers
             :~  ['location' actual-redirect]
                 ['set-cookie' cookie-line]
@@ -995,6 +1015,61 @@
           data=~
           complete=%.y
       ==
+    ::  +handle-logout: handles an http request for logging out
+    ::
+    ++  handle-logout
+      |=  [authenticated=? =request:http]
+      ^-  [(list move) server-state]
+      ::  whatever we end up doing, we always redirect to the login page
+      ::
+      =/  response=$>(%start http-event:http)
+        :*  %start
+            response-header=[303 ['location' '/~/login']~]
+            data=~
+            complete=%.y
+        ==
+      ::
+      =/  session-id=(unit @uv)
+        (session-id-from-request request)
+      =?  headers.response-header.response  ?=(^ session-id)
+        :_  headers.response-header.response
+        ['set-cookie' (session-cookie-string u.session-id |)]
+      ?.  &(authenticated ?=(^ session-id))
+        (handle-response response)
+      ::  delete the requesting session, or all sessions if so specified
+      ::
+      =.  sessions.authentication-state.state
+        =;  all=?
+          ?:  all  ~
+          (~(del by sessions.authentication-state.state) u.session-id)
+        ?~  body.request  |
+        =-  ?=(^ -)
+        %+  get-header:http  'all'
+        (fall (rush q.u.body.request yquy:de-purl:html) ~)
+      (handle-response response)
+    ::  +session-id-from-request: attempt to find a session cookie
+    ::
+    ++  session-id-from-request
+      |=  =request:http
+      ^-  (unit @uv)
+      ::  are there cookies passed with this request?
+      ::
+      ::    TODO: In HTTP2, the client is allowed to put multiple 'Cookie'
+      ::    headers.
+      ::
+      ?~  cookie-header=(get-header:http 'cookie' header-list.request)
+        ~
+      ::  is the cookie line is valid?
+      ::
+      ?~  cookies=(rush u.cookie-header cock:de-purl:html)
+        ~
+      ::  is there an urbauth cookie?
+      ::
+      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
+        ~
+      ::  if it's formatted like a valid session cookie, produce it
+      ::
+      `(unit @)`(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
     ::  +request-is-logged-in: checks to see if the request is authenticated
     ::
     ::    We are considered logged in if this request has an urbauth
@@ -1003,24 +1078,9 @@
     ++  request-is-logged-in
       |=  =request:http
       ^-  ?
-      ::  are there cookies passed with this request?
+      ::  does the request pass a session cookie?
       ::
-      ::    TODO: In HTTP2, the client is allowed to put multiple 'Cookie'
-      ::    headers.
-      ::
-      ?~  cookie-header=(get-header:http 'cookie' header-list.request)
-        %.n
-      ::  is the cookie line is valid?
-      ::
-      ?~  cookies=(rush u.cookie-header cock:de-purl:html)
-        %.n
-      ::  is there an urbauth cookie?
-      ::
-      ?~  urbauth=(get-header:http (crip "urbauth-{<our>}") u.cookies)
-        %.n
-      ::  is this formatted like a valid session cookie?
-      ::
-      ?~  session-id=(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
+      ?~  session-id=(session-id-from-request request)
         %.n
       ::  is this a session that we know about?
       ::
@@ -1038,6 +1098,17 @@
       =+  res=((sloy scry) [151 %noun] %j pax)
       ::
       (rsh 3 1 (scot %p (@ (need (need res)))))
+    ::  +session-cookie-string: compose session cookie
+    ::
+    ++  session-cookie-string
+      |=  [session=@uv extend=?]
+      ^-  @t
+      %-  crip
+      =;  max-age=tape
+        "urbauth-{<our>}={<session>}; Path=/; Max-Age={max-age}"
+      %-  format-ud-as-integer
+      ?.  extend  0
+      (div (msec:milly session-timeout) 1.000)
     --
   ::  +channel: per-event handling of requests to the channel system
   ::
@@ -1693,12 +1764,38 @@
           ?^  response-header.u.connection-state
             ~&  [%http-multiple-start duct]
             error-connection
+          ::  if request was authenticated, extend the session & cookie's life
           ::
+          =^  response-header  sessions.authentication-state.state
+            =,  authentication
+            =*  sessions  sessions.authentication-state.state
+            =*  inbound   inbound-request.u.connection-state
+            =*  no-op     [response-header.http-event sessions]
+            ::
+            ?.  authenticated.inbound
+              no-op
+            ?~  session-id=(session-id-from-request request.inbound)
+              ::  cookies are the only auth method, so this is unexpected
+              ::
+              ~&  [%e %authenticated-without-cookie]
+              no-op
+            ?.  (~(has by sessions) u.session-id)
+              ::  if the session has expired since the request was opened,
+              ::  tough luck, we don't create/revive sessions here
+              ::
+              no-op
+            :_  (~(put by sessions) u.session-id (add now session-timeout))
+            =-  response-header.http-event(headers -)
+            %^  set-header:http  'set-cookie'
+              (session-cookie-string u.session-id &)
+            headers.response-header.http-event
+          ::
+          =.  response-header.http-event  response-header
           =.  connections.state
             %+  ~(jab by connections.state)  duct
             |=  connection=outstanding-connection
             %_  connection
-              response-header  `response-header.http-event
+              response-header  `response-header
               bytes-sent  ?~(data.http-event 0 p.u.data.http-event)
             ==
           ::
@@ -1768,31 +1865,11 @@
   ::
   ++  add-binding
     |=  [=binding =action]
-    ::
-    =/  to-search  bindings.state
-    |-
     ^-  [(list move) server-state]
-    ?~  to-search
-      :-  [duct %give %bound %.y binding]~
-      =.  bindings.state
-        ::  store in reverse alphabetical order so that longer paths are first
-        ::
-        %-  flop
-        %+  sort  [[binding duct action] bindings.state]
-        |=  [[a=^binding *] [b=^binding *]]
-        ::
-        ?:  =(site.a site.b)
-          (aor path.a path.b)
-        ::  alphabetize based on site
-        ::
-        (aor ?~(site.a '' u.site.a) ?~(site.b '' u.site.b))
-      state
-    ::
-    ?:  =(binding binding.i.to-search)
-      :-  [duct %give %bound %.n binding]~
-      state
-    ::
-    $(to-search t.to-search)
+    =^  success  bindings.state
+      (insert-binding [binding duct action] bindings.state)
+    :_  state
+    [duct %give %bound success binding]~
   ::  +remove-binding: removes a binding if it exists and is owned by this duct
   ::
   ++  remove-binding
@@ -1868,11 +1945,56 @@
     $(bindings t.bindings)
   --
 ::
+++  forwarded-for
+  |=  =header-list:http
+  ^-  (unit address)
+  =/  forwarded=(unit @t)
+    (get-header:http 'forwarded' header-list)
+  ?~  forwarded  ~
+  |^  =/  forwards=(unit (list (map @t @t)))
+        (unpack-header:http u.forwarded)
+      ?.  ?=([~ ^] forwards)  ~
+      =*  forward  i.u.forwards
+      ?~  for=(~(get by forward) 'for')  ~
+      ::NOTE  per rfc7239, non-ip values are also valid. they're not useful
+      ::      for the general case, so we ignore them here. if needed,
+      ::      request handlers are free to inspect the headers themselves.
+      ::
+      (rush u.for ip-address)
+  ::
+  ++  ip-address
+    ;~  sfix
+      ;~(pose (stag %ipv4 ip4) (stag %ipv6 (ifix [lac rac] ip6)))
+      ;~(pose ;~(pfix col dim:ag) (easy ~))
+    ==
+  --
 ::
 ++  parse-request-line
   |=  url=@t
   ^-  [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
   (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
+::
+++  insert-binding
+  |=  [[=binding =duct =action] bindings=(list [=binding =duct =action])]
+  =/  to-search  bindings
+  |-  ^-  [? _bindings]
+  ?^  to-search
+    ?:  =(binding binding.i.to-search)
+      [| bindings]
+    ::
+    $(to-search t.to-search)
+  :-  &
+  ::  store in reverse alphabetical order so that longer paths are first
+  ::
+  %-  flop
+  %+  sort  [[binding duct action] bindings]
+  |=  [[a=^binding *] [b=^binding *]]
+  ::
+  ?:  =(site.a site.b)
+    (aor path.a path.b)
+  ::  alphabetize based on site
+  ::
+  (aor ?~(site.a '' u.site.a) ?~(site.b '' u.site.b))
 --
 ::  end the =~
 ::
@@ -1913,6 +2035,7 @@
     ::
     =.  bindings.server-state.ax
       :~  [[~ /~/login] duct [%authentication ~]]
+          [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
       ==
     [~ http-server-gate]
@@ -2091,6 +2214,7 @@
       ::
          %run-app-request  run-app-request
          %watch-response   watch-response
+         %sessions         sessions
          %channel          channel
          %acme             acme-ack
       ==
@@ -2198,6 +2322,34 @@
       [moves http-server-gate]
     ==
   ::
+  ++  sessions
+    ::
+    ?>  ?=([%b %wake *] sign)
+    ::
+    ?^  error.sign
+      [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
+    ::  remove cookies that have expired
+    ::
+    =*  sessions  sessions.authentication-state.server-state.ax
+    =.  sessions.authentication-state.server-state.ax
+      %-  ~(gas by *(map @uv session))
+      %+  murn  ~(tap in sessions)
+      |=  [cookie=@uv session]
+      ^-  (unit [@uv session])
+      ?:  (lth expiry-time now)  ~
+      `[cookie expiry-time]
+    ::  if there's any cookies left, set a timer for the next expected expiry
+    ::
+    ^-  [(list move) _http-server-gate]
+    :_  http-server-gate
+    ?:  =(~ sessions)  ~
+    =;  next-expiry=@da
+      [duct %pass /sessions/expire %b %wait next-expiry]~
+    %+  roll  ~(tap by sessions)
+    |=  [[@uv session] next=@da]
+    ?:  =(*@da next)  expiry-time
+    (min next expiry-time)
+  ::
   ++  acme-ack
     ?>  ?=([%g %unto *] sign)
     ::
@@ -2216,44 +2368,27 @@
 ::
 ++  load
   =>  |%
-    +$  channel-old
-      $:  state=(each timer duct)
-          next-id=@ud
-          events=(qeu [id=@ud lines=wall])
-          subscriptions=(map wire [ship=@p app=term =path duc=duct])
-      ==
-    +$  channel-state-old
-      $:  session=(map @t channel-old)
-          duct-to-key=(map duct @t)
-      ==
-    ++  axle-old
-      %+  cork
-        axle
-      |=  =axle
-      axle(date %~2019.1.7, channel-state.server-state (channel-state-old))
-  --
-  |=  old=$%(axle axle-old)
+      +$  axle-2019-10-6
+        [date=%~2019.10.6 =server-state]
+      --
+  |=  old=$%(axle axle-2019-10-6)
   ^+  ..^$
   ::
   ~!  %loading
   ?-  -.old
-    %~2019.1.7
-      =/  add-heartbeat
-      %-  ~(run by session.channel-state.server-state.old)
-      |=  [c=channel-old]
-      ^-  channel
-      [state.c next-id.c events.c subscriptions.c ~]
-      ::
-      =/  new
-      %=  old
-        date  %~2019.10.6
-        session.channel-state.server-state  add-heartbeat
-      ==
-      $(old new)
-    ::
-    %~2019.10.6  ..^$(ax old)
+    %~2020.5.29  ..^$(ax old)
+  ::
+      %~2019.10.6
+    =^  success  bindings.server-state.old
+      %+  insert-binding
+        [[~ /~/logout] [/e/load/logout]~ [%logout ~]]
+      bindings.server-state.old
+    ~?  !success  [%e %failed-to-setup-logout-endpoint]
+    %_  $
+      date.old  %~2020.5.29
+      sessions.authentication-state.server-state.old  ~
+    ==
   ==
-
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax

@@ -356,6 +356,45 @@
       t.header-list
     ::
     [i.header-list $(header-list t.header-list)]
+  ::  +unpack-header: parse header field values
+  ::
+  ++  unpack-header
+    |^  |=  value=@t
+        ^-  (unit (list (map @t @t)))
+        (rust (cass (trip value)) values)
+    ::
+    ++  values
+      %+  more
+        (ifix [. .]:(star ;~(pose ace (just '\09'))) com)
+      pairs
+    ::
+    ++  pairs
+      %+  cook
+        ~(gas by *(map @t @t))
+      %+  more  (ifix [. .]:(star ace) mic)
+      ;~(plug token ;~(pose ;~(pfix tis value) (easy '')))
+    ::
+    ++  value
+      ;~(pose token quoted-string)
+    ::
+    ++  token                                         ::  7230 token
+      %+  cook  crip
+      ::NOTE  this is ptok:de-purl:html, but can't access that here
+      %-  plus
+      ;~  pose
+        aln  zap  hax  bus  cen  pad  say  tar  lus
+        hep  dot  ket  cab  tec  bar  sig
+      ==
+    ::
+    ++  quoted-string                                 ::  7230 quoted string
+      %+  cook  crip
+      %+  ifix  [. .]:;~(less (jest '\\"') yel)
+      %-  star
+      ;~  pose
+        ;~(pfix bat ;~(pose (just '\09') ace prn))
+        ;~(pose (just '\09') ;~(less (mask "\22\5c\7f") (shim 0x20 0xff)))
+      ==
+    --
   ::  +simple-payload: a simple, one event response used for generators
   ::
   +$  simple-payload
@@ -1368,6 +1407,9 @@
         ::  internal authentication page
         ::
         [%authentication ~]
+        ::  internal logout page
+        ::
+        [%logout ~]
         ::  gall channel system
         ::
         [%channel ~]
@@ -1563,6 +1605,53 @@
         ::
         (gte i.b 224)
     ==
+  ::  +ipa: parse ip address
+  ::
+  ++  ipa
+    ;~(pose (stag %ipv4 ip4) (stag %ipv6 ip6))
+  ::  +ip4: parse ipv4 address
+  ::
+  ++  ip4
+    =+  byt=(ape:ag ted:ab)
+    (bass 256 ;~(plug byt (stun [3 3] ;~(pfix dot byt))))
+  ::  +ip6: parse ipv6 address
+  ::
+  ++  ip6
+    %+  bass  0x1.0000
+    %+  sear
+      |=  hexts=(list $@(@ [~ %zeros]))
+      ^-  (unit (list @))
+      ::  not every list of hextets is an ipv6 address
+      ::
+      =/  legit=?
+        =+  l=(lent hexts)
+        =+  c=|=(a=* ?=([~ %zeros] a))
+        ?|  &((lth l 8) ?=([* ~] (skim hexts c)))
+            &(=(8 l) !(lien hexts c))
+        ==
+      ?.  legit  ~
+      %-  some
+      ::  expand zeros
+      ::
+      %-  zing
+      %+  turn  hexts
+      |=  hext=$@(@ [~ %zeros])
+      ?@  hext  [hext]~
+      (reap (sub 9 (lent hexts)) 0)
+    ::  parse hextets, producing cell for shorthand zeroes
+    ::
+    |^  %+  cook
+          |=  [a=(list @) b=(list [~ %zeros]) c=(list @)]
+          :(welp a b c)
+        ;~  plug
+          (more col het)
+          (stun [0 1] cel)
+          (more col het)
+        ==
+    ++  cel  (cold `%zeros ;~(plug col col))
+    ++  het  (bass 16 (stun [1 4] six:ab))
+    --
+  ::
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
   ++  user  knot                                        ::  username
   --  ::eyre
