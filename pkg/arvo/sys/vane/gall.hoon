@@ -249,7 +249,7 @@
             -  %6
             running.agents-5
           %-  ~(run by running.agents-5.state-5)
-          |=(=yoke-3 `egg`+:yoke-3(agent on-save:agent.yoke-3))
+          |=(=yoke-3 `egg`+:yoke-3(agent-3 on-save:agent-3.yoke-3))
         ==
       ::
       ++  state-5
@@ -297,10 +297,62 @@
             live=?
             =stats
             =watches
-            =agent
+            =agent-3
             =beak
             marks=(map duct mark)
         ==
+      ::
+      ++  agent-3
+        =<  form
+        |%
+        +$  step  (quip card form)
+        +$  card  (wind note gift)
+        +$  note  note-2
+        +$  task  task:agent
+        +$  sign  sign:agent
+        +$  gift  gift:agent
+        ++  form
+          $_  ^|
+          |_  bowl
+          ++  on-init
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-save
+            *vase
+          ::
+          ++  on-load
+            |~  old-state=vase
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-poke
+            |~  [mark vase]
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-watch
+            |~  path
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-leave
+            |~  path
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-peek
+            |~  path
+            *(unit (unit cage))
+          ::
+          ++  on-agent
+            |~  [wire sign]
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-arvo
+            |~  [wire sign-arvo-2]
+            *(quip card _^|(..on-init))
+          ::
+          ++  on-fail
+            |~  [term tang]
+            *(quip card _^|(..on-init))
+          --
+        --
       ::
       ++  state-2-to-3
         |=  =state-2
@@ -318,14 +370,14 @@
       ::
       ++  agent-2-to-3
         |=  =agent-2
-        ^-  agent
+        ^-  agent-3
         =>  |%
             ++  cards-2-to-3
               |=  cards=(list card:^agent-2)
-              ^-  (list card:agent)
+              ^-  (list card:agent-3)
               %+  turn  cards
               |=  =card:^agent-2
-              ^-  card:agent
+              ^-  card:agent-3
               ?.  ?=([%give ?(%fact %kick) *] card)  card
               %=(card path.p (drop path.p.card))
             --
@@ -369,8 +421,8 @@
           [(cards-2-to-3 cards) this]
         ::
         ++  on-arvo
-          |=  [=wire =sign-arvo]
-          =^  cards  agent-2  (on-arvo:pass wire sign-arvo)
+          |=  [=wire =sign-arvo-2]
+          =^  cards  agent-2  (on-arvo:pass wire sign-arvo-2)
           [(cards-2-to-3 cards) this]
         ::
         ++  on-fail
@@ -403,12 +455,56 @@
             marks=(map duct mark)
         ==
       ::
+      ++  care-2
+        |=  *
+        =+  ;;(c=care:clay +<)
+        ?<  ?=(?(%a %b %c %r %s) c)
+        c
+      ::
+      ++  sign-arvo-2
+        |=  *  ::  cannot clam
+        =|  s=sign-arvo
+        ?+    s  s
+            [?(%b %c) %writ *]
+          ?~  p.s  s
+          s(p.p.u.p ;;(care-2 p.p.u.p.s))
+        ::
+            [?(%b %c) %wris *]
+          %=    s
+              q
+            %-  ~(run in q.s)
+            |=  [c=care:clay =path]
+            [;;(care-2 c) path]
+          ==
+        ==
+      ::
+      ++  note-arvo-2
+        |=  *  ::  cannot clam
+        =|  $=  n
+            $%  note-arvo
+                [%g %conf dock dock]
+                [%f %build *]
+                [%f %keep *]
+                [%f %kill *]
+                [%f %trim *]
+                [%f %vega *]
+                [%f %wegh *]
+                [%f %wipe *]
+            ==
+        ?<  ?=([%g %conf @tas] n)
+        n
+      ::
+      +$  note-2
+        $%  [%arvo =note-arvo-2]
+            [%agent [=ship name=term] =task:agent]
+        ==
+      ::
       ++  agent-2
         =<  form
         |%
         +$  step  (quip card form)
         +$  card  (wind note gift)
-        +$  note  note:agent
+        +$  note  note-2
         +$  task  task:agent
         +$  sign  sign:agent
         +$  gift
@@ -451,7 +547,7 @@
             *(quip card _^|(..on-init))
           ::
           ++  on-arvo
-            |~  [wire sign-arvo]
+            |~  [wire sign-arvo-2]
             *(quip card _^|(..on-init))
           ::
           ++  on-fail
@@ -537,9 +633,9 @@
           [cards this]
         ::
         ++  on-arvo
-          |=  [=wire =sign-arvo]
-          ?<  ?=([%d %pack *] sign-arvo)
-          =^  cards  agent-0  (on-arvo:pass wire `sign-arvo-0`sign-arvo)
+          |=  [=wire =sign-arvo-2]
+          ?<  ?=([%d %pack *] sign-arvo-2)
+          =^  cards  agent-0  (on-arvo:pass wire `sign-arvo-0`sign-arvo-2)
           [cards this]
         ::
         ++  on-fail
@@ -576,7 +672,7 @@
         |%
         +$  step  (quip card form)
         +$  card  (wind note gift)
-        +$  note  note:agent
+        +$  note  note-2
         +$  task  task:agent
         +$  gift  gift:agent-2
         +$  sign  sign:agent
