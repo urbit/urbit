@@ -79,8 +79,8 @@ Polish:
 
 # Finding the Serf Executable
 
-Right now, `urbit-worker` is found by looking it up in the PATH. This
-is wrong, but what is right?
+- [ ] Right now, `urbit-worker` is found by looking it up in the PATH. This
+      is wrong, but what is right?
 
 # Further IO Driver Startup Flow Betterment
 

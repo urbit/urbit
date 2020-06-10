@@ -24,9 +24,10 @@ import qualified Data.Conduit.Combinators as CC
 import qualified System.ProgressBar       as PB
 import qualified Urbit.EventLog.LMDB      as Log
 
-import qualified Urbit.Vere.Serf.IPC as X (Config(..), EvErr(..), Flag(..),
-                                           RunReq(..), Serf, WorkError(..), run,
-                                           snapshot, start, stop)
+import qualified Urbit.Vere.Serf.IPC as X (Config (..), EvErr (..), Flag (..),
+                                           RunReq (..), Serf, WorkError (..),
+                                           run, sendSIGINT, snapshot, start,
+                                           stop)
 
 
 --------------------------------------------------------------------------------

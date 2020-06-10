@@ -59,6 +59,7 @@ module Urbit.Vere.Serf.IPC
   , replay
   , run
   , swim
+  , sendSIGINT
   , module Urbit.Vere.Serf.Types
   )
 where
@@ -77,7 +78,7 @@ import Foreign.Marshal.Alloc        (alloca)
 import Foreign.Ptr                  (castPtr)
 import Foreign.Storable             (peek, poke)
 import RIO.Prelude                  (decodeUtf8Lenient)
-import System.Posix.Signals         (sigKILL, signalProcess)
+import System.Posix.Signals         (sigINT, sigKILL, signalProcess)
 import Urbit.Arvo                   (Ev, FX)
 import Urbit.Noun.Time              (Wen)
 
@@ -326,7 +327,18 @@ withSerfLockIO :: Serf -> (SerfState -> IO (SerfState, a)) -> IO a
 withSerfLockIO s a = runResourceT (withSerfLock s (io . a))
 
 
+-- SIGINT ----------------------------------------------------------------------
+
+sendSIGINT :: Serf -> IO ()
+sendSIGINT serf = do
+  getPid (serfProc serf) >>= \case
+    Nothing  -> pure ()
+    Just pid -> do
+      io $ signalProcess sigINT pid
+
+
 -- Killing the Serf ------------------------------------------------------------
+
 
 {-|
   Ask the serf to shutdown. If it takes more than 2s, kill it with

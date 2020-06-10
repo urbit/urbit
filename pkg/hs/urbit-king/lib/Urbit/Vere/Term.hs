@@ -511,8 +511,9 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 term'
   :: HasPierEnv e
   => (T.TSize, Client)
+  -> IO ()
   -> RIO e ([Ev], RAcquire e (DriverApi TermEf))
-term' (tsize, client) = do
+term' (tsize, client) serfSIGINT = do
   let T.TSize wi hi = tsize
       initEv = [initialBlew wi hi, initialHail]
 
@@ -521,7 +522,7 @@ term' (tsize, client) = do
   runDriver = do
     env <- ask
     ventQ :: TQueue EvErr <- newTQueueIO
-    diOnEffect <- term env (tsize, client) (writeTQueue ventQ)
+    diOnEffect <- term env (tsize, client) (writeTQueue ventQ) serfSIGINT
 
     let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
 
@@ -534,8 +535,9 @@ term :: forall e. (HasPierEnv e)
      => e
      -> (T.TSize, Client)
      -> (EvErr -> STM ())
+     -> IO ()
      -> RAcquire e (TermEf -> IO ())
-term env (tsize, Client{..}) plan = runTerm
+term env (tsize, Client{..}) plan serfSIGINT = runTerm
   where
     runTerm :: RAcquire e (TermEf -> IO ())
     runTerm = do
@@ -551,6 +553,8 @@ term env (tsize, Client{..}) plan = runTerm
         atomically take >>= \case
             Nothing -> pure ()
             Just b  -> do
+                when (b == Ctl (Cord "c")) $ do
+                  io serfSIGINT
                 let beltEv       = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
                 let beltFailed _ = pure ()
                 atomically $ plan (EvErr beltEv beltFailed)

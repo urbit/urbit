@@ -309,13 +309,14 @@ pier (serf, log) vSlog startedSig multi = do
   let compute = putTMVar computeQ
   let execute = writeTQueue executeQ
   let persist = writeTQueue persistQ
+  let sigint  = Serf.sendSIGINT serf
 
   (bootEvents, startDrivers) <- do
     env <- ask
     let err = atomically . Term.trace muxed . (<> "\r\n")
     let siz = Term.TSize { tsWide = 80, tsTall = 24 }
     let fak = isFake logId
-    drivers env multi ship fak compute (siz, muxed) err
+    drivers env multi ship fak compute (siz, muxed) err sigint
 
   scrySig <- newEmptyTMVarIO
   onKill  <- view onKillPierSigL
@@ -415,10 +416,11 @@ drivers
   -> (RunReq -> STM ())
   -> (Term.TSize, Term.Client)
   -> (Text -> RIO e ())
+  -> IO ()
   -> RAcquire e ([Ev], RAcquire e Drivers)
-drivers env multi who isFake plan termSys stderr = do
+drivers env multi who isFake plan termSys stderr serfSIGINT = do
   (behnBorn, runBehn) <- rio behn'
-  (termBorn, runTerm) <- rio (Term.term' termSys)
+  (termBorn, runTerm) <- rio (Term.term' termSys serfSIGINT)
   (amesBorn, runAmes) <- rio (Ames.ames' who isFake stderr)
   (httpBorn, runEyre) <- rio (Eyre.eyre' multi who isFake)
   (clayBorn, runClay) <- rio Clay.clay'
