@@ -120,28 +120,32 @@ removeFileIfExists pax = do
       removeFile pax
 
 
---------------------------------------------------------------------------------
+-- Compile CLI Flags to Pier Configuration -------------------------------------
 
+{-
+  TODO: This is not all of the flags.
+  Urbit is basically useless with hashboard, so we ignore that flag.
+-}
 toSerfFlags :: CLI.Opts -> [Serf.Flag]
 toSerfFlags CLI.Opts{..} = catMaybes m
   where
-    -- TODO: This is not all the flags.
-    m = [ from oQuiet Serf.Quiet
-        , from oTrace Serf.Trace
-        , from oHashless Serf.Hashless
-        , from oQuiet Serf.Quiet
-        , from oVerbose Serf.Verbose
-        , from (oDryRun || isJust oDryFrom) Serf.DryRun
+    m = [ setFrom oQuiet Serf.Quiet
+        , setFrom oTrace Serf.Trace
+        , setFrom (oHashless || True) Serf.Hashless
+        , setFrom oQuiet Serf.Quiet
+        , setFrom oVerbose Serf.Verbose
+        , setFrom (oDryRun || isJust oDryFrom) Serf.DryRun
         ]
-    from True flag = Just flag
-    from False _   = Nothing
-
+    setFrom True flag = Just flag
+    setFrom False _   = Nothing
 
 toPierConfig :: FilePath -> CLI.Opts -> PierConfig
-toPierConfig pierPath CLI.Opts {..} = PierConfig { .. }
+toPierConfig pierPath o@(CLI.Opts{..}) = PierConfig { .. }
  where
-  _pcPierPath = pierPath
-  _pcDryRun   = oDryRun || isJust oDryFrom
+  _pcPierPath  = pierPath
+  _pcDryRun    = oDryRun || isJust oDryFrom
+  _pcSerfExe   = fromMaybe "urbit-worker" oSerfExe
+  _pcSerfFlags = toSerfFlags o
 
 toNetworkConfig :: CLI.Opts -> NetworkConfig
 toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
@@ -178,12 +182,11 @@ tryBootFromPill
   :: Bool
   -> Pill
   -> Bool
-  -> [Serf.Flag]
   -> Ship
   -> LegacyBootEvent
   -> MultiEyreApi
   -> RIO PierEnv ()
-tryBootFromPill oExit pill lite flags ship boot multi = do
+tryBootFromPill oExit pill lite ship boot multi = do
   mStart <- newEmptyMVar
   vSlog  <- logSlogs
   runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart multi
@@ -191,7 +194,7 @@ tryBootFromPill oExit pill lite flags ship boot multi = do
   bootedPier vSlog = do
     view pierPathL >>= lockFile
     rio $ logTrace "Starting boot"
-    sls <- Pier.booted vSlog pill lite flags ship boot
+    sls <- Pier.booted vSlog pill lite ship boot
     rio $ logTrace "Completed boot"
     pure sls
 
@@ -219,11 +222,10 @@ tryPlayShip
   :: Bool
   -> Bool
   -> Maybe Word64
-  -> [Serf.Flag]
   -> MVar ()
   -> MultiEyreApi
   -> RIO PierEnv ()
-tryPlayShip exitImmediately fullReplay playFrom flags mStart multi = do
+tryPlayShip exitImmediately fullReplay playFrom mStart multi = do
   when fullReplay wipeSnapshot
   vSlog <- logSlogs
   runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart multi
@@ -243,13 +245,14 @@ tryPlayShip exitImmediately fullReplay playFrom flags mStart multi = do
   resumeShip vSlog = do
     view pierPathL >>= lockFile
     rio $ logTrace "RESUMING SHIP"
-    sls <- Pier.resumed vSlog playFrom flags
+    sls <- Pier.resumed vSlog playFrom
     rio $ logTrace "SHIP RESUMED"
     pure sls
 
 runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
+
 
 --------------------------------------------------------------------------------
 
@@ -301,6 +304,10 @@ checkEvs pierPath first last = do
 
 --------------------------------------------------------------------------------
 
+collectAllFx :: FilePath -> RIO KingEnv ()
+collectAllFx = error "TODO"
+
+{-
 {-|
     This runs the serf at `$top/.tmpdir`, but we disable snapshots,
     so this should never actually be created. We just do this to avoid
@@ -325,6 +332,7 @@ collectAllFx top = do
 
     serfFlags :: [Serf.Flag]
     serfFlags = [Serf.Hashless, Serf.DryRun]
+-}
 
 
 --------------------------------------------------------------------------------
@@ -530,8 +538,6 @@ newShip CLI.New{..} opts = do
           name <- nameFromShip ship
           runTryBootFromPill multi pill name ship (Dawn dawn)
 
-    flags = toSerfFlags opts
-
     -- Now that we have all the information for running an application with a
     -- PierConfig, do so.
     runTryBootFromPill multi pill name ship bootEvent = do
@@ -539,7 +545,7 @@ newShip CLI.New{..} opts = do
       let pierConfig = toPierConfig (pierPath name) opts
       let networkConfig = toNetworkConfig opts
       runPierEnv pierConfig networkConfig vKill $
-        tryBootFromPill True pill nLite flags ship bootEvent multi
+        tryBootFromPill True pill nLite ship bootEvent multi
 ------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
 runShipEnv :: CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a -> RIO KingEnv a
@@ -567,12 +573,12 @@ runShip (CLI.Run pierPath) opts daemon multi = do
       finally (runPier mStart) $ do
         cancel connectionThread
   where
+    runPier :: MVar () -> RIO PierEnv ()
     runPier mStart = do
       tryPlayShip
         (CLI.oExit opts)
         (CLI.oFullReplay opts)
         (CLI.oDryFrom opts)
-        (toSerfFlags opts)
         mStart
         multi
 
@@ -616,6 +622,7 @@ checkComet = do
 main :: IO ()
 main = do
   args <- CLI.parseArgs
+
   hSetBuffering stdout NoBuffering
   setupSignalHandlers
 

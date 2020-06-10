@@ -69,6 +69,20 @@ Polish:
       is wrong, but what is right?
 
 
+# Take Advantage of New IPC Features
+
+- [ ] Hook up `scry` to drivers.
+  - Any immediate applications of this?
+
+- [ ] Allow scrys to go into the %work batching flow for better latency.
+
+- Handle event errors in other cases:
+  - [ ] Ames packet failures should print (but not too often).
+  - [ ] Incoming Http requests should produce 500 responses.
+  - [ ] Terminal event errors should be printed in connected terminals.
+  - [ ] Http client responses should be retried.
+
+
 # Further IO Driver Startup Flow Betterment
 
 Implement Pier-wide process start events
@@ -79,6 +93,9 @@ Implement Pier-wide process start events
 - [ ] Verbose flag: `-v` injects `[%verb ~]`
 - [ ] CLI event injection: `-I file-path`. The `file-path` is a jammed
   noun representing an event: `[wire card]`.
+  1. Just parse it as an `Ev` for now.
+  2. Make the serf IPC code not care about the shape of events and effects.
+  3. Support invalid events throughout the system (use `Lenient`?)
 
 
 # Cleanup

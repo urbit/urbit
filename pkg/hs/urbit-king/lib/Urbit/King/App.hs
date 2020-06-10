@@ -29,12 +29,10 @@ import System.Directory       (createDirectoryIfMissing, getHomeDirectory)
 import System.Posix.Internals (c_getpid)
 import System.Posix.Types     (CPid(..))
 import System.Random          (randomIO)
+import Urbit.King.App.Class   (HasStderrLogFunc(..))
 
 
 -- KingEnv ---------------------------------------------------------------------
-
-class HasStderrLogFunc a where
-  stderrLogFuncL :: Lens' a LogFunc
 
 class HasKingId a where
   kingIdL :: Lens' a Word16

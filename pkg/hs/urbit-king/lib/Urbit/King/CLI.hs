@@ -40,6 +40,7 @@ data Opts = Opts
     , oHttpPort     :: Maybe Word16
     , oHttpsPort    :: Maybe Word16
     , oLoopbackPort :: Maybe Word16
+    , oSerfExe      :: Maybe Text
     }
   deriving (Show)
 
@@ -272,13 +273,18 @@ opts = do
       <> help "Localhost-only HTTP port"
       <> hidden
 
-    -- Always disable hashboard. Right now, urbit is almost unusable with this
-    -- flag enabled and it is disabled in vere.
-    let oHashless = True
-    -- oHashless  <- switch $ short 'S'
-    --                     <> long "hashless"
-    --                     <> help "Disable battery hashing"
-    --                     <> hidden
+    oSerfExe <-
+      optional
+      $  option auto
+      $  metavar "PATH"
+      <> long "serf"
+      <> help "Path to Serf"
+      <> hidden
+
+    oHashless  <- switch $ short 'S'
+                        <> long "hashless"
+                        <> help "Disable battery hashing (Ignored for now)"
+                        <> hidden
 
     oQuiet     <- switch $ short 'q'
                         <> long "quiet"

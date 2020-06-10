@@ -117,20 +117,19 @@ printTank f _priority = f . unlines . fmap unTape . wash (WashCfg 0 80) . tankTr
   tankTree (Tank t) = t
 
 runSerf
-  :: HasLogFunc e
+  :: HasPierEnv e
   => TVar (Text -> IO ())
   -> FilePath
-  -> [Serf.Flag]
   -> RAcquire e Serf
-runSerf vSlog pax fax = do
+runSerf vSlog pax = do
   env <- ask
   Serf.withSerf (config env)
  where
   slog txt = atomically (readTVar vSlog) >>= (\f -> f txt)
   config env = Serf.Config
-    { scSerf = "urbit-worker" -- TODO Find the executable in some proper way.
+    { scSerf = env ^. pierConfigL . pcSerfExe . to unpack
     , scPier = pax
-    , scFlag = fax
+    , scFlag = env ^. pierConfigL . pcSerfFlags
     , scSlog = \(pri, tank) -> printTank slog pri tank
     , scStdr = \txt -> slog (txt <> "\r\n")
     , scDead = pure () -- TODO: What can be done?
@@ -143,13 +142,12 @@ booted
   :: TVar (Text -> IO ())
   -> Pill
   -> Bool
-  -> [Serf.Flag]
   -> Ship
   -> LegacyBootEvent
   -> RAcquire PierEnv (Serf, EventLog)
-booted vSlog pill lite flags ship boot = do
-  rio $ bootNewShip pill lite flags ship boot
-  resumed vSlog Nothing flags
+booted vSlog pill lite ship boot = do
+  rio $ bootNewShip pill lite ship boot
+  resumed vSlog Nothing
 
 bootSeqJobs :: Time.Wen -> BootSeq -> [Job]
 bootSeqJobs now (BootSeq ident nocks ovums) = zipWith ($) bootSeqFns [1 ..]
@@ -167,11 +165,10 @@ bootNewShip
   :: HasPierEnv e
   => Pill
   -> Bool
-  -> [Serf.Flag]
   -> Ship
   -> LegacyBootEvent
   -> RIO e ()
-bootNewShip pill lite flags ship bootEv = do
+bootNewShip pill lite ship bootEv = do
   seq@(BootSeq ident x y) <- genBootSeq ship pill lite bootEv
   logDebug "BootSeq Computed"
 
@@ -195,9 +192,8 @@ bootNewShip pill lite flags ship bootEv = do
 resumed
   :: TVar (Text -> IO ())
   -> Maybe Word64
-  -> [Serf.Flag]
   -> RAcquire PierEnv (Serf, EventLog)
-resumed vSlog replayUntil flags  = do
+resumed vSlog replayUntil = do
   rio $ logTrace "Resuming ship"
   top <- view pierPathL
   tap <- fmap (fromMaybe top) $ rio $ runMaybeT $ do
@@ -209,7 +205,7 @@ resumed vSlog replayUntil flags  = do
     logTrace $ display @Text ("running serf in: " <> pack tap)
 
   log  <- Log.existing (top </> ".urb/log")
-  serf <- runSerf vSlog tap flags
+  serf <- runSerf vSlog tap
 
   rio $ do
     logDebug "Replaying events"

@@ -5,13 +5,17 @@ module Urbit.King.Config where
 
 import Urbit.Prelude
 
+import qualified Urbit.Vere.Serf as Serf
+
 {-|
   All the configuration data revolving around a ship and the current
   execution options.
 -}
 data PierConfig = PierConfig
-  { _pcPierPath :: FilePath
-  , _pcDryRun   :: Bool
+  { _pcPierPath  :: FilePath
+  , _pcDryRun    :: Bool
+  , _pcSerfExe   :: Text
+  , _pcSerfFlags :: [Serf.Flag]
   } deriving (Show)
 
 makeLenses ''PierConfig

@@ -18,7 +18,7 @@ import Urbit.Vere.Serf.IPC
 
 import Control.Monad.Trans.Resource (runResourceT)
 import Urbit.Arvo                   (FX)
-import Urbit.King.App               (HasStderrLogFunc(..))
+import Urbit.King.App.Class         (HasStderrLogFunc(..))
 
 import qualified Data.Conduit.Combinators as CC
 import qualified System.ProgressBar       as PB
