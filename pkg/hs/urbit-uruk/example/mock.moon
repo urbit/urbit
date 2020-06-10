@@ -28,22 +28,22 @@
 
 ::  match-k: (NK :& x :& y) -> Just $ x
 ::
-=/  match-k
+=/  match-kay
   |=  top
-  %-  (trace ['match-k' top])  |=  ig
+  %-  (trace ['match-kay' top])  |=  ig
   =/  ktop  (car top)
   ?:  (eql 'App' ktop)
     =/  vtop  (cdr top)
     =/  l  (car vtop)
     =/  r  (cdr vtop)
     =/  kl  (car l)
-    %-  (trace ['match-k-kl' kl])  |=  ig
+    %-  (trace ['match-kay-kl' kl])  |=  ig
     ?:  (eql 'App' kl)
       =/  vl  (cdr l)
       =/  l2  (car vl)
       =/  r2  (cdr vl)
       =/  kl2  (car l2)
-      %-  (trace ['match-k-kl2' kl2])  |=  ig
+      %-  (trace ['match-kay-kl2' kl2])  |=  ig
       ?:  (eql 'Kay' kl2)
         (rit r2)
       (lef ~)
@@ -87,6 +87,41 @@
     ==
   (lef ~)
 
+::  match-ess: NS :& x :& y :& z       → Just $ x :& z :& (y :& z)
+::          (((       )    )    )
+=/  match-ess
+  |=  top
+  %-  (trace ['match-ess' top])  |=  ig
+  =/  ktop  (car top)
+  ?:  (eql 'App' ktop)
+    =/  vtop  (cdr top)
+    =/  l  (car vtop)
+    =/  z  (cdr vtop)
+    =/  kl  (car l)
+    %-  (trace ['match-ess-kl' kl])  |=  ig
+    ?:  (eql 'App' kl)
+      =/  vl  (cdr l)
+      =/  l2  (car vl)
+      =/  y  (cdr vl)
+      =/  kl2  (car l2)
+      %-  (trace ['match-ess-kl2' kl2])  |=  ig
+      ?:  (eql 'App' kl2)
+        =/  vvl  (cdr l2)
+        =/  l3  (car vvl)
+        =/  x  (cdr vvl)
+        %-  (trace ['match-ess-z' z])  |=  ig     :: r  is z
+        %-  (trace ['match-ess-y' y])  |=  ig   :: r2 is y
+        %-  (trace ['match-ess-x' x])  |=  ig   :: r3 is x
+        (rit (con 'App' (con (con 'App' (con x y)) (con 'App' (con y z)))))
+      (lef ~)
+    (lef ~)
+  (lef ~)
+
+
+:: ((((S K) K) K)
+:: (con 'App' (con (con 'App' (con (con 'App' (con (con 'Ess' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~)))
+
+
 ::  reduce: performs one step of reduction, returning rit if you can reduce and
 ::  lef if you can't
 ::
@@ -99,14 +134,20 @@
   ::  top: a cons cell of a
   |=  top
   %-  (trace ['reduce' top])  |=  ig
-  ?-    (match-k top)
+  ?-    (match-kay top)
       l
-    %-  (trace ['not-match-k' top])  |=  ig
     ?-    (match-left $ top)
         l
       ?-    (match-right $ top)
           l
-        (lef 'no such match')
+        ?-    (match-ess top)
+            l
+          (lef 'no such match')
+        ::
+            r
+          (rit r)
+        ==
+      ::
           r
         (rit r)
       ==
@@ -136,4 +177,9 @@
 ::(reduce (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~))))
 
 ::  ((K K K) K K) -> (con 'App' (con (con 'App' (con (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~)))
-(eval (con 'App' (con (con 'App' (con (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))))
+:: (eval (con 'App' (con (con 'App' (con (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))))
+
+
+:: (((S K) K) K)
+:: (con 'App' (con (con 'App' (con (con 'App' (con (con 'Ess' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~)))
+(eval (con 'App' (con (con 'App' (con (con 'App' (con (con 'Ess' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))))
