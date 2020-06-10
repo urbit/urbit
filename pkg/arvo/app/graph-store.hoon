@@ -23,7 +23,6 @@
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
-  ::[~ this]
   [~ this(state !<(state-0 old))]
 ::
 ++  on-poke

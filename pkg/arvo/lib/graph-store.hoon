@@ -30,4 +30,18 @@
     ^-  ^action
     !!
   --
+::
+++  create
+  |_  [our=ship now=time]
+  ++  post
+    |=  [=index contents=(list content)]
+    ^-  ^post
+    :*  our
+        index
+        now
+        contents
+        ~
+        *signatures
+    ==
+  --
 --
