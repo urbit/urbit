@@ -1,11 +1,14 @@
 /-  sur=graph-store, pos=post
-/+  res=resource
+/+  res=resource, *or-map
 =<  [sur .]
 =<  [pos .]
 =<  [res .]
 =,  sur
 =,  pos
 |%
+++  orm      ((or-map atom node) lth)
+++  orm-log  ((or-map time action) lth)
+::
 ++  enjs
   =,  enjs:format
   |%
@@ -78,32 +81,114 @@
     ++  graph
       |=  g=^graph
       ^-  json
-      *json
+      :-  %a
+      %+  turn  (tap:orm g)
+      |=  [a=atom n=^node]
+      ^-  json
+      %-  pairs
+      :~  [%key (numb a)]
+          [%node (node n)]
+      ==
     ::
     ++  index
       |=  i=^index
       ^-  json
-      *json
+      =/  j=^tape  ""
+      |-
+      ?~  i
+        [%s (crip j)]
+      =/  k=json  (numb i.i)
+      ?>  ?=(%n -.k)
+      %_  $
+          i  t.i
+          j  (weld j (weld "/" (trip +.k)))
+      ==
+    ::
+    ++  node
+      |=  n=^node
+      ^-  json
+      %-  pairs
+      :~  [%post (post post.n)]
+          :-  %children
+          ?-  -.children.n
+              %empty  ~
+              %graph  (graph +.children.n)
+          ==
+      ==
+    ::
+    ++  post
+      |=  p=^post
+      ^-  json
+      %-  pairs
+      :~  [%author (ship author.p)]
+          [%index (index index.p)]
+          [%time-sent (time time-sent.p)]
+          [%contents [%a (turn contents.p content)]]
+          [%hash ?~(hash.p ~ s+(scot %ux u.hash.p))]
+          [%signatures (signatures signatures.p)]
+      ==
+    ::
+    ++  content
+      |=  c=^content
+      ^-  json
+      ?-  -.c
+          %text       (frond %text s+text.c)
+          %url        (frond %url s+url.c)
+          %reference  (frond %reference (uid uid.c))
+          %code
+        %+  frond  %code
+        %-  pairs
+        :-  [%expression s+expression.c]
+        :_  ~
+        :-  %output
+        ::  virtualize output rendering, +tank:enjs:format might crash
+        ::
+        =/  result=(each (list json) tang)
+          (mule |.((turn output.c tank)))
+        ?-  -.result
+          %&  a+p.result
+          %|  a+[a+[%s '[[output rendering error]]']~]~
+        ==
+      ==
     ::
     ++  nodes
-      |=  n=(map ^index node)
+      |=  m=(map ^index ^node)
       ^-  json
-      *json
+      :-  %a
+      %+  turn  ~(tap by m)
+      |=  [n=^index o=^node]
+      ^-  json
+      %-  pairs
+      :~  [%index (index n)]
+          [%node (node o)]
+      ==
     ::
     ++  indices
       |=  i=(set ^index)
       ^-  json
-      *json
+      [%a (turn ~(tap in i) index)]
     ::
     ++  uid
       |=  u=^uid
       ^-  json
-      *json
+      %-  pairs
+      :~  [%resource (enjs:res resource.u)]
+          [%index (index index.u)]
+      ==
     ::
     ++  signatures
       |=  s=^signatures
       ^-  json
-      *json
+      [%a (turn ~(tap in s) signature)]
+    ::
+    ++  signature
+      |=  s=^signature
+      ^-  json
+      %-  pairs
+      :~  [%signature s+(scot %ux p.s)]
+          [%ship (ship q.s)]
+          [%life (numb r.s)]
+      ==
     --
   --
 ::

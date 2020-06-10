@@ -5,8 +5,8 @@
   $%  state-0
   ==
 +$  state-0  [%0 network:store]
-++  orm      ((or-map atom:store node:store) lth)
-++  orm-log  ((or-map time action:store) lth)
+++  orm      orm:store
+++  orm-log  orm-log:store
 --
 ::
 =|  state-0

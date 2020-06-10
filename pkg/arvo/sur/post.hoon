@@ -27,8 +27,8 @@
   ==
 ::
 +$  content
-  $%  [%text =cord]
-      [%url =cord]
+  $%  [%text text=cord]
+      [%url url=cord]
       [%code expression=cord output=(list tank)]
       [%reference =uid]
       ::  [%cage =cage]
