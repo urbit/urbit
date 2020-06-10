@@ -82,22 +82,6 @@ data SyncEf
 deriveNoun ''SyncEf
 
 
--- UDP Effects -----------------------------------------------------------------
-
-{-|
-    %init -- "I don't think that's something that can happen"
-    %west -- "Those also shouldn't happen"
-    %woot -- "Those also shouldn't happen"
--}
-data AmesEf
-    = AmesEfInit Path ()
-    | AmesEfWest Path Ship Path Noun
-    | AmesEfWoot Path Ship (Maybe (Maybe (Term, [Tank])))
-  deriving (Eq, Ord, Show)
-
-deriveNoun ''AmesEf
-
-
 -- Timer Effects ---------------------------------------------------------------
 
 {-|
@@ -171,7 +155,6 @@ data VaneEf
     | VEHttpClient HttpClientEf
     | VEHttpServer HttpServerEf
     | VEBehn       BehnEf
-    | VEAmes       AmesEf
     | VETerm       TermEf
     | VEClay       SyncEf
     | VESync       SyncEf

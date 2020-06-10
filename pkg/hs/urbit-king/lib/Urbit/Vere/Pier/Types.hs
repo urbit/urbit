@@ -81,10 +81,9 @@ jobMug (DoWork (Work _ mug _ _ )) = mug
 
 -- API To IO Drivers -----------------------------------------------------------
 
-data DriverApi = DriverApi
+data DriverApi ef = DriverApi
   { diEventSource    :: STM (Maybe RunReq)
-  , diOnEffect       :: BehnEf -> IO ()
-  , diBlockUntilBorn :: STM ()
+  , diOnEffect       :: ef -> IO ()
   }
 
 

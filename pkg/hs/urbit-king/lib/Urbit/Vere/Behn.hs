@@ -18,26 +18,16 @@ import qualified Urbit.Timer     as Timer
 
 -- Behn Stuff ------------------------------------------------------------------
 
-behn' :: HasPierEnv e => RAcquire e DriverApi
+behn' :: HasPierEnv e => RIO e ([Ev], RAcquire e (DriverApi BehnEf))
 behn' = do
-  ventQ <- newTQueueIO
-  bornM <- newEmptyTMVarIO
-  fectM <- newEmptyTMVarIO
-
   env <- ask
-  let (bootEvs, start) = behn env (writeTQueue ventQ)
-  for_ bootEvs (atomically . writeTQueue ventQ)
-
-  diOnEffect <- liftAcquire start
-
-  let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
-
-  let diBlockUntilBorn = readTMVar bornM
-
-  -- TODO Do this after successful born event.
-  atomically $ putTMVar bornM ()
-
-  pure (DriverApi {..})
+  pure ([bornEv (fromIntegral (env ^. kingIdL))], runDriver env)
+ where
+  runDriver env = do
+    ventQ :: TQueue EvErr <- newTQueueIO
+    diOnEffect <- liftAcquire (behn env (writeTQueue ventQ))
+    let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
+    pure (DriverApi {..})
 
 bornEv :: KingId -> Ev
 bornEv king = EvBlip $ BlipEvBehn $ BehnEvBorn (king, ()) ()
@@ -47,10 +37,6 @@ wakeEv = EvBlip $ BlipEvBehn $ BehnEvWake () ()
 
 sysTime = view Time.systemTime
 
-bornFailed :: e -> WorkError -> IO ()
-bornFailed env _ = runRIO env $ do
-  pure () -- TODO Ship is fucked. Kill it?
-
 wakeErr :: WorkError -> IO ()
 wakeErr _ = pure ()
 
@@ -58,13 +44,10 @@ behn
   :: HasKingId e
   => e
   -> (EvErr -> STM ())
-  -> ([EvErr], Acquire (BehnEf -> IO ()))
-behn env enqueueEv =
-    (initialEvents, runBehn)
+  -> Acquire (BehnEf -> IO ())
+behn env enqueueEv = runBehn
   where
     king = fromIntegral (env ^. kingIdL)
-
-    initialEvents = [EvErr (bornEv king) (bornFailed env)]
 
     runBehn :: Acquire (BehnEf -> IO ())
     runBehn = do

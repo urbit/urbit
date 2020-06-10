@@ -24,24 +24,25 @@ import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
 
+import Control.Monad.STM      (retry)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.King.API         (TermConn)
 import Urbit.King.App         (HasKingEnv, HasPierEnv(..), PierEnv)
 import Urbit.King.App         (onKillPierSigL)
 import Urbit.Noun.Time        (Wen)
-import Urbit.Vere.Ames        (ames)
-import Urbit.Vere.Behn        (behn)
-import Urbit.Vere.Clay        (clay)
-import Urbit.Vere.Eyre        (eyre)
+import Urbit.Vere.Behn        (behn')
 import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
-import Urbit.Vere.Http.Client (client)
 import Urbit.Vere.Serf        (Serf)
 
 import qualified System.Entropy         as Ent
 import qualified Urbit.EventLog.LMDB    as Log
 import qualified Urbit.King.API         as King
 import qualified Urbit.Noun.Time        as Time
+import qualified Urbit.Vere.Ames        as Ames
+import qualified Urbit.Vere.Clay        as Clay
+import qualified Urbit.Vere.Eyre        as Eyre
+import qualified Urbit.Vere.Http.Client as Iris
 import qualified Urbit.Vere.Serf        as Serf
 import qualified Urbit.Vere.Term        as Term
 import qualified Urbit.Vere.Term.API    as Term
@@ -88,8 +89,9 @@ genBootSeq ship Pill {..} lite boot = io $ do
     _      -> False
 
 
--- Write a batch of jobs into the event log ------------------------------------
+-- Write to the log. -----------------------------------------------------------
 
+-- | Write a batch of jobs to the event log.
 writeJobs :: EventLog -> Vector Job -> RIO e ()
 writeJobs log !jobs = do
   expect <- atomically (Log.nextEv log)
@@ -110,7 +112,7 @@ writeJobs log !jobs = do
 -- Acquire a running serf. -----------------------------------------------------
 
 printTank :: (Text -> IO ()) -> Atom -> Tank -> IO ()
-printTank f _ = io . f . unlines . fmap unTape . wash (WashCfg 0 80)
+printTank f _priority = f . unlines . fmap unTape . wash (WashCfg 0 80)
 
 runSerf
   :: HasLogFunc e
@@ -122,7 +124,7 @@ runSerf vSlog pax fax = do
   env <- ask
   Serf.withSerf (config env)
  where
-  slog txt = join $ atomically (readTVar vSlog >>= pure . ($ txt))
+  slog txt = atomically (readTVar vSlog) >>= (\f -> f txt)
   config env = Serf.Config
     { scSerf = "urbit-worker" -- TODO Find the executable in some proper way.
     , scPier = pax
@@ -154,10 +156,10 @@ bootSeqJobs now (BootSeq ident nocks ovums) = zipWith ($) bootSeqFns [1 ..]
   wen off = Time.addGap now ((fromIntegral off - 1) ^. from Time.microSecs)
 
   bootSeqFns :: [EventId -> Job]
-  bootSeqFns = fmap muckNock nocks <> fmap muckOvum ovums
+  bootSeqFns = fmap nockJob nocks <> fmap ovumJob ovums
    where
-    muckNock nok eId = RunNok $ LifeCyc eId 0 nok
-    muckOvum ov eId = DoWork $ Work eId 0 (wen eId) ov
+    nockJob nok eId = RunNok $ LifeCyc eId 0 nok
+    ovumJob ov eId = DoWork $ Work eId 0 (wen eId) ov
 
 bootNewShip
   :: HasPierEnv e
@@ -173,10 +175,12 @@ bootNewShip pill lite flags ship bootEv = do
 
   pierPath <- view pierPathL
 
-  liftRIO (setupPierDirectory pierPath)
+  rio (setupPierDirectory pierPath)
   logDebug "Directory setup."
 
-  rwith (Log.new (pierPath <> "/.urb/log") ident) $ \log -> do
+  let logPath = (pierPath </> ".urb/log")
+
+  rwith (Log.new logPath ident) $ \log -> do
     logDebug "Event log initialized."
     jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
     writeJobs log (fromList jobs)
@@ -198,10 +202,11 @@ resumed vSlog replayUntil flags  = do
     ev <- MaybeT (pure replayUntil)
     MaybeT (getSnapshot top ev)
 
-  rio $ logTrace $ display @Text ("pier: " <> pack top)
-  rio $ logTrace $ display @Text ("running serf in: " <> pack tap)
+  rio $ do
+    logTrace $ display @Text ("pier: " <> pack top)
+    logTrace $ display @Text ("running serf in: " <> pack tap)
 
-  log  <- Log.existing (top <> "/.urb/log")
+  log  <- Log.existing (top </> ".urb/log")
   serf <- runSerf vSlog tap flags
 
   rio $ do
@@ -217,6 +222,7 @@ resumed vSlog replayUntil flags  = do
 
   pure (serf, log)
 
+-- | Get a fake pier directory for partial snapshots.
 getSnapshot :: forall e . FilePath -> Word64 -> RIO e (Maybe FilePath)
 getSnapshot top last = do
   lastSnapshot <- lastMay <$> listReplays
@@ -261,7 +267,10 @@ pier (serf, log) vSlog startedSig multi = do
   let logId = Log.identity log :: LogIdentity
   let ship  = who logId :: Ship
 
-  computeQ :: TQueue Serf.EvErr <- newTQueueIO
+  -- TODO Instead of using a TMVar, pull directly from the IO driver
+  -- event sources.
+  computeQ :: TMVar RunReq      <- newEmptyTMVarIO
+
   persistQ :: TQueue (Fact, FX) <- newTQueueIO
   executeQ :: TQueue FX         <- newTQueueIO
   saveSig :: TMVar ()           <- newEmptyTMVarIO
@@ -294,7 +303,7 @@ pier (serf, log) vSlog startedSig multi = do
   -- Serf doesn't have the appended \r\n because those \r\n s are added in
   -- the c serf code. Logging output from our haskell process must manually
   -- add them.
-  let compute = writeTQueue computeQ
+  let compute = putTMVar computeQ
   let execute = writeTQueue executeQ
   let persist = writeTQueue persistQ
 
@@ -303,15 +312,12 @@ pier (serf, log) vSlog startedSig multi = do
     let err = atomically . Term.trace muxed . (<> "\r\n")
     let siz = Term.TSize { tsWide = 80, tsTall = 24 }
     let fak = isFake logId
-    pure $ drivers env multi ship fak compute (siz, muxed) err
-
-  --  Fill event queue with initial events.
-  io $ atomically $ for_ bootEvents compute
+    drivers env multi ship fak compute (siz, muxed) err
 
   scrySig <- newEmptyTMVarIO
   onKill  <- view onKillPierSigL
 
-  let computeConfig = ComputeConfig { ccOnWork      = readTQueue computeQ
+  let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ
                                     , ccOnKill      = onKill
                                     , ccOnSave      = takeTMVar saveSig
                                     , ccOnScry      = takeTMVar scrySig
@@ -321,10 +327,28 @@ pier (serf, log) vSlog startedSig multi = do
                                     , ccLastEvInLog = Log.lastEv log
                                     }
 
+  tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
+
+  -- Run all born events and retry them until they succeed.
+  rio $ for_ bootEvents $ \ev -> do
+    okaySig <- newEmptyMVar
+
+    let inject n = atomically $ compute $ RRWork $ EvErr ev $ cb n
+
+        --  TODO Make sure this dies cleanly.
+        cb :: Int -> WorkError -> IO ()
+        cb n | n >= 3 = error ("boot event failed: " <> show ev)
+        cb n          = \case
+          RunOkay _         -> putMVar okaySig ()
+          RunSwap _ _ _ _ _ -> putMVar okaySig ()
+          RunBail _         -> inject (n + 1)
+
+    logTrace ("Boot Event" <> displayShow ev)
+    io (inject 0)
+
   drivz <- startDrivers
   tExec <- acquireWorker "Effects" (router (readTQueue executeQ) drivz)
   tDisk <- acquireWorkerBound "Persist" (runPersist log persistQ execute)
-  tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
 
   let snapshotEverySecs = 120
 
@@ -333,15 +357,16 @@ pier (serf, log) vSlog startedSig multi = do
     void $ atomically $ tryPutTMVar saveSig ()
 
   --  TODO bullshit scry tester
-  void $ acquireWorker "bullshit scry tester" $ forever $ do
+  void $ acquireWorker "bullshit scry tester" $ do
     env <- ask
-    threadDelay 15_000_000
-    wen <- io Time.now
-    let kal = \mTermNoun -> runRIO env $ do
-          logDebug $ displayShow ("scry result: ", mTermNoun)
-    let nkt = MkKnot $ tshow $ Time.MkDate wen
-    let pax = Path ["j", "~zod", "life", nkt, "~zod"]
-    atomically $ putTMVar scrySig (wen, Nothing, pax, kal)
+    forever $ do
+      threadDelay 15_000_000
+      wen <- io Time.now
+      let kal = \mTermNoun -> runRIO env $ do
+            logDebug $ displayShow ("scry result: ", mTermNoun)
+      let nkt = MkKnot $ tshow $ Time.MkDate wen
+      let pax = Path ["j", "~zod", "life", nkt, "~zod"]
+      atomically $ putTMVar scrySig (wen, Nothing, pax, kal)
 
   putMVar startedSig ()
 
@@ -354,8 +379,9 @@ pier (serf, log) vSlog startedSig multi = do
         ]
 
   atomically ded >>= \case
-    Left  (txt, exn) -> logError $ displayShow ("Somthing died", txt, exn)
-    Right tag        -> logError $ displayShow ("Something simply exited", tag)
+    Left  (tag, exn)       -> logError $ displayShow (tag, "crashed", exn)
+    Right "compute thread" -> pure ()
+    Right tag              -> logError $ displayShow (tag, "exited unexpectly")
 
   atomically $ (Term.spin muxed) (Just "shutdown")
 
@@ -368,9 +394,8 @@ death tag tid = do
 
 -- Start All Drivers -----------------------------------------------------------
 
-data Drivers e = Drivers
-  { dAmes :: AmesEf -> IO ()
-  , dBehn :: BehnEf -> IO ()
+data Drivers = Drivers
+  { dBehn :: BehnEf -> IO ()
   , dIris :: HttpClientEf -> IO ()
   , dEyre :: HttpServerEf -> IO ()
   , dNewt :: NewtEf -> IO ()
@@ -384,36 +409,58 @@ drivers
   -> MultiEyreApi
   -> Ship
   -> Bool
-  -> (EvErr -> STM ())
+  -> (RunReq -> STM ())
   -> (Term.TSize, Term.Client)
   -> (Text -> RIO e ())
-  -> ([EvErr], RAcquire e (Drivers e))
-drivers env multi who isFake plan termSys stderr =
-  (initialEvents, runDrivers)
- where
-  (behnBorn, runBehn) = behn env plan
-  (amesBorn, runAmes) = ames env who isFake plan stderr
-  (httpBorn, runEyre) = eyre env multi who plan isFake
-  (clayBorn, runClay) = clay env plan
-  (irisBorn, runIris) = client env plan
-  (termBorn, runTerm) = Term.term env termSys plan
-  initialEvents       = mconcat [behnBorn, clayBorn, amesBorn, httpBorn,
-                                 termBorn, irisBorn]
+  -> RAcquire e ([Ev], RAcquire e Drivers)
+drivers env multi who isFake plan termSys stderr = do
+  (behnBorn, runBehn) <- rio behn'
+  (termBorn, runTerm) <- rio (Term.term' termSys)
+  (amesBorn, runAmes) <- rio (Ames.ames' who isFake stderr)
+  (httpBorn, runEyre) <- rio (Eyre.eyre' multi who isFake)
+  (clayBorn, runClay) <- rio Clay.clay'
+  (irisBorn, runIris) <- rio Iris.client'
 
-  runDrivers          = do
-    dNewt <- runAmes
-    dBehn <- liftAcquire $ runBehn
-    dAmes <- pure $ const $ pure ()
-    dIris <- runIris
-    dEyre <- runEyre
-    dSync <- runClay
-    dTerm <- runTerm
-    pure (Drivers{..})
+  let initialEvents = mconcat [behnBorn,clayBorn,amesBorn,httpBorn,irisBorn,termBorn]
+
+  let runDrivers = do
+        behn <- runBehn
+        term <- runTerm
+        ames <- runAmes
+        iris <- runIris
+        eyre <- runEyre
+        clay <- runClay
+
+        -- Sources lower in the list are starved until sources above them
+        -- have no events to offer.
+        acquireWorker "Event Prioritization" $ forever $ atomically $ do
+          let x = diEventSource
+          let eventSources = [x term, x clay, x behn, x iris, x eyre, x ames]
+          pullEvent eventSources >>= \case
+            Nothing -> retry
+            Just rr -> plan rr
+
+        pure $ Drivers
+          { dTerm = diOnEffect term
+          , dBehn = diOnEffect behn
+          , dNewt = diOnEffect ames
+          , dIris = diOnEffect iris
+          , dEyre = diOnEffect eyre
+          , dSync = diOnEffect clay
+          }
+
+  pure (initialEvents, runDrivers)
+ where
+  pullEvent :: [STM (Maybe a)] -> STM (Maybe a)
+  pullEvent []     = pure Nothing
+  pullEvent (d:ds) = d >>= \case
+    Just r  -> pure (Just r)
+    Nothing -> pullEvent ds
 
 
 -- Route Effects to Drivers ----------------------------------------------------
 
-router :: HasLogFunc e => STM FX -> Drivers e -> RIO e ()
+router :: HasLogFunc e => STM FX -> Drivers -> RIO e ()
 router waitFx Drivers {..} = forever $ do
   fx <- atomically waitFx
   for_ fx $ \ef -> do
@@ -421,7 +468,6 @@ router waitFx Drivers {..} = forever $ do
     case ef of
       GoodParse (EfVega _ _              ) -> error "TODO"
       GoodParse (EfExit _ _              ) -> error "TODO"
-      GoodParse (EfVane (VEAmes       ef)) -> io (dAmes ef)
       GoodParse (EfVane (VEBehn       ef)) -> io (dBehn ef)
       GoodParse (EfVane (VEBoat       ef)) -> io (dSync ef)
       GoodParse (EfVane (VEClay       ef)) -> io (dSync ef)
@@ -450,7 +496,7 @@ logEffect ef = logDebug $ display $ "[EFFECT]\n" <> pretty ef
     FailParse n -> pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow n
 
 data ComputeConfig = ComputeConfig
-  { ccOnWork      :: STM Serf.EvErr
+  { ccOnWork      :: STM RunReq
   , ccOnKill      :: STM ()
   , ccOnSave      :: STM ()
   , ccOnScry      :: STM (Wen, Gang, Path, Maybe (Term, Noun) -> IO ())
@@ -464,9 +510,9 @@ runCompute :: forall e . HasKingEnv e => Serf.Serf -> ComputeConfig -> RIO e ()
 runCompute serf ComputeConfig {..} = do
   logDebug "runCompute"
 
-  let onCR = asum [ ccOnKill <&> Serf.RRKill
+  let onRR = asum [ ccOnKill <&> Serf.RRKill
                   , ccOnSave <&> Serf.RRSave
-                  , ccOnWork <&> Serf.RRWork
+                  , ccOnWork
                   , ccOnScry <&> \(w,g,p,k) -> Serf.RRScry w g p k
                   ]
 
@@ -483,7 +529,7 @@ runCompute serf ComputeConfig {..} = do
 
   let maxBatchSize = 10
 
-  io (Serf.run serf maxBatchSize ccLastEvInLog onCR ccPutResult onSpin)
+  io (Serf.run serf maxBatchSize ccLastEvInLog onRR ccPutResult onSpin)
 
 
 -- Event-Log Persistence Thread ------------------------------------------------

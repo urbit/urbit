@@ -2,11 +2,14 @@
     UNIX Filesystem Driver
 -}
 
-module Urbit.Vere.Clay (clay) where
+module Urbit.Vere.Clay
+  ( clay
+  , clay'
+  )
+where
 
 import Urbit.Arvo            hiding (Term)
-import Urbit.King.App        (HasKingId(..))
-import Urbit.King.Config
+import Urbit.King.App
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
 
@@ -113,16 +116,32 @@ buildActionListFromDifferences fp snapshot = do
 
 --------------------------------------------------------------------------------
 
-boatFailed :: e -> WorkError -> IO ()
-boatFailed env _ = runRIO env $ do
+_boatFailed :: e -> WorkError -> IO ()
+_boatFailed env _ = runRIO env $ do
   pure () -- TODO What can we do?
+
+clay'
+  :: HasPierEnv e
+  => RIO e ([Ev], RAcquire e (DriverApi SyncEf))
+clay' = do
+  ventQ :: TQueue EvErr <- newTQueueIO
+  env <- ask
+
+  let (bornEvs, startDriver) = clay env (writeTQueue ventQ)
+
+  let runDriver = do
+        diOnEffect <- startDriver
+        let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
+        pure (DriverApi {..})
+
+  pure (bornEvs, runDriver)
 
 clay
   :: forall e
    . (HasPierConfig e, HasLogFunc e, HasKingId e)
   => e
   -> (EvErr -> STM ())
-  -> ([EvErr], RAcquire e (SyncEf -> IO ()))
+  -> ([Ev], RAcquire e (SyncEf -> IO ()))
 clay env plan =
     (initialEvents, runSync)
   where
@@ -132,7 +151,7 @@ clay env plan =
 
     -- TODO: In the case of -A, we need to read all the data from the
     -- specified directory and shove it into an %into event.
-    initialEvents = [EvErr boatEv (boatFailed env)]
+    initialEvents = [boatEv]
 
     runSync :: RAcquire e (SyncEf -> IO ())
     runSync = handleEffect <$> mkRAcquire start stop

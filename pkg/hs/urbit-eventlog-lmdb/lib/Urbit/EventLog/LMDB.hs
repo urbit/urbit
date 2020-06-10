@@ -58,13 +58,13 @@ type Dbi = MDB_dbi
 type Cur = MDB_cursor
 
 data EventLog = EventLog
-    { env        :: Env
-    , _metaTbl   :: Dbi
-    , eventsTbl  :: Dbi
-    , effectsTbl :: Dbi
-    , identity   :: LogIdentity
-    , numEvents  :: TVar Word64
-    }
+  { env        :: Env
+  , _metaTbl   :: Dbi
+  , eventsTbl  :: Dbi
+  , effectsTbl :: Dbi
+  , identity   :: LogIdentity
+  , numEvents  :: TVar Word64
+  }
 
 nextEv :: EventLog -> STM Word64
 nextEv = fmap (+1) . lastEv
@@ -73,14 +73,14 @@ lastEv :: EventLog -> STM Word64
 lastEv = readTVar . numEvents
 
 data EventLogExn
-    = NoLogIdentity
-    | MissingEvent Word64
-    | BadNounInLogIdentity ByteString DecodeErr ByteString
-    | BadKeyInEventLog
-    | BadWriteLogIdentity LogIdentity
-    | BadWriteEvent Word64
-    | BadWriteEffect Word64
-  deriving Show
+  = NoLogIdentity
+  | MissingEvent Word64
+  | BadNounInLogIdentity ByteString DecodeErr ByteString
+  | BadKeyInEventLog
+  | BadWriteLogIdentity LogIdentity
+  | BadWriteEvent Word64
+  | BadWriteEffect Word64
+ deriving Show
 
 
 -- Instances -------------------------------------------------------------------

@@ -79,9 +79,10 @@ data EvErr = EvErr Ev (WorkError -> IO ())
   - `RunBail`: Event processing failed and all attempt to replace it
     with a failure-notice event also caused crashes. We are really fucked.
 -}
-data WorkError
-  = RunSwap EventId Mug Wen Noun FX
+data WorkError -- TODO Rename type and constructors
+  = RunSwap EventId Mug Wen Noun FX -- TODO Maybe provide less info here?
   | RunBail [Goof]
+  | RunOkay EventId
 
 {-
   - RRWork: Ask the serf to do work, will output (Fact, FX) if work

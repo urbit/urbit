@@ -20,6 +20,8 @@ Bugs:
 
 - [x] `king new` should reject pier directories that already exist.
 - [x] In non-daemon-mode, ^D doesn't bring down Urbit properly.
+- [ ] Spinner updated multiple times with the same event, and this causes
+      logging of events to contain duplicates.
 
 King-Haskell specific features:
 
@@ -31,6 +33,10 @@ Performance:
 
 - [x] Batching during replay.
 - [x] Batching during normal operation.
+
+Optimization:
+
+- [x] IO Driver Event Prioritization
 
 Polish:
 
@@ -67,55 +73,14 @@ Polish:
 - [ ] Spin off per-pier logic into it's own package.
   - Probably `urbit-pier`
 
-# Event Prioritization
-
-- Instead of each IO driver being passed a TQueue EvErr, each IO driver
-  produces a (STM (Maybe RunReq)).
-
-  - Each driver has it's own event queue that feeds this action.
-
-  - Pier has a thread that pulls from these actions with prioritization.
-
-- Priority:
-  - If any terminal events are available, send it.
-    - If serf queue is full, abort transaction and retry.
-  - If no terminal events are available, do the same thing with sync driver.
-  - Next, same thing for behn.
-  - Next, same thing for iris.
-  - Next, same thing for ames.
-  - Next, same thing for eyre.
-
-
-# Better IO Driver Startup Flow Separation
-
-Should have a io-driver-boot stage.
-
-- IO drivers do their boot flows.
-- When they're done, they signal that they're running.
-- No semantically important communication without outside world can
-  happen until all drivers are up.
-
-Current IO Driver interface is something like:
-
-```
-behn :: KingId -> (EvErr -> STM ()) -> ([EvErr], Acquire (BehnEf -> IO ()))
-```
-
-New Interface should be something like:
-
-```
-data DriverApi = DriverApi
-  { eventQueue     :: STM (Maybe RunReq)
-  , effectSink     :: Effect -> STM ()
-  , blockUntilBorn :: STM ()
-  }
-
-behn :: HasPierEnv e => RAcquire e DriverApi
-```
-
-where `PierEnv` contains `blockUntilAllDriversBorn :: STM ()`.
-
 # Finding the Serf Executable
 
 Right now, `urbit-worker` is found by looking it up in the PATH. This
 is wrong, but what is right?
+
+# Further IO Driver Startup Flow Betterment
+
+- Implement Pier-wide process start events
+  - [ ] Entropy injection.
+  - [ ] Verbose flag.
+  - [ ] CLI event injection.

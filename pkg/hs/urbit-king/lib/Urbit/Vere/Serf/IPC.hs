@@ -556,6 +556,7 @@ run serf maxBatchSize getLastEvInLog onInput sendOn spin = topLoop
   onWorkResp :: Wen -> EvErr -> Work -> IO ()
   onWorkResp wen (EvErr evn err) = \case
     WDone eid hash fx -> do
+      io $ err (RunOkay eid)
       atomically $ sendOn ((Fact eid hash wen (toNoun evn)), fx)
     WSwap eid hash (wen, noun) fx -> do
       io $ err (RunSwap eid hash wen noun fx)

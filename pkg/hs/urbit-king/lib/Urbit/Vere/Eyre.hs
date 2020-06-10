@@ -4,13 +4,14 @@
 
 module Urbit.Vere.Eyre
   ( eyre
+  , eyre'
   )
 where
 
 import Urbit.Prelude hiding (Builder)
 
 import Urbit.Arvo                hiding (ServerId, reqUrl, secure)
-import Urbit.King.App            (HasKingId(..))
+import Urbit.King.App            (HasKingId(..), HasPierEnv(..))
 import Urbit.King.Config
 import Urbit.Vere.Eyre.Multi
 import Urbit.Vere.Eyre.PortsFile
@@ -275,25 +276,56 @@ startServ multi who isFake conf plan = do
 
 -- Eyre Driver -----------------------------------------------------------------
 
-bornFailed :: e -> WorkError -> IO ()
-bornFailed env _ = runRIO env $ do
+_bornFailed :: e -> WorkError -> IO ()
+_bornFailed env _ = runRIO env $ do
   pure () -- TODO What should this do?
 
+eyre'
+  :: HasPierEnv e
+  => MultiEyreApi
+  -> Ship
+  -> Bool
+  -> RIO e ([Ev], RAcquire e (DriverApi HttpServerEf))
+eyre' multi who isFake = do
+  ventQ :: TQueue EvErr <- newTQueueIO
+  env <- ask
+
+  let (bornEvs, startDriver) = eyre env multi who (writeTQueue ventQ) isFake
+
+  let runDriver = do
+        diOnEffect <- startDriver
+        let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
+        pure (DriverApi {..})
+
+  pure (bornEvs, runDriver)
+
+{-|
+  Eyre -- HTTP Server Driver
+
+  Inject born events.
+  Until born events succeeds, ignore effects.
+  Wait until born event callbacks invoked.
+    If success, signal success.
+    If failure, try again several times.
+      If still failure, bring down ship.
+   Once born event succeeds:
+     - Begin normal operation (start accepting requests)
+-}
 eyre
   :: forall e
-   . (HasShipEnv e, HasKingId e)
+   . (HasPierEnv e)
   => e
   -> MultiEyreApi
   -> Ship
   -> (EvErr -> STM ())
   -> Bool
-  -> ([EvErr], RAcquire e (HttpServerEf -> IO ()))
+  -> ([Ev], RAcquire e (HttpServerEf -> IO ()))
 eyre env multi who plan isFake = (initialEvents, runHttpServer)
  where
   king = fromIntegral (env ^. kingIdL)
 
-  initialEvents :: [EvErr]
-  initialEvents = [EvErr (bornEv king) (bornFailed env)]
+  initialEvents :: [Ev]
+  initialEvents = [bornEv king]
 
   runHttpServer :: RAcquire e (HttpServerEf -> IO ())
   runHttpServer = handleEf <$> mkRAcquire

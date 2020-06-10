@@ -2,7 +2,7 @@
   Ames IO Driver
 -}
 
-module Urbit.Vere.Ames (ames) where
+module Urbit.Vere.Ames (ames, ames') where
 
 import Urbit.Prelude
 
@@ -11,7 +11,7 @@ import Urbit.Arvo            hiding (Fake)
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
 
-import Urbit.King.App      (HasKingId(..))
+import Urbit.King.App      (HasKingId(..), HasPierEnv(..))
 import Urbit.Vere.Ames.DNS (NetworkMode(..), ResolvServ(..))
 import Urbit.Vere.Ames.DNS (galaxyPort, resolvServ)
 import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
@@ -31,7 +31,7 @@ data AmesDrv = AmesDrv
 
 listenPort :: NetworkMode -> Ship -> PortNumber
 listenPort m s | s < 256 = galaxyPort m (fromIntegral s)
-listenPort m _           = 0
+listenPort m _           = 0 -- I don't care, just give me any port.
 
 localhost :: HostAddress
 localhost = tupleToHostAddress (127, 0, 0, 1)
@@ -95,9 +95,28 @@ udpServ isFake who = do
     Nothing   -> fakeUdpServ
     Just host -> realUdpServ port host
 
-bornFailed :: e -> WorkError -> IO ()
-bornFailed env _ = runRIO env $ do
+_bornFailed :: e -> WorkError -> IO ()
+_bornFailed env _ = runRIO env $ do
   pure () -- TODO What can we do?
+
+ames'
+  :: HasPierEnv e
+  => Ship
+  -> Bool
+  -> (Text -> RIO e ())
+  -> RIO e ([Ev], RAcquire e (DriverApi NewtEf))
+ames' who isFake stderr = do
+  ventQ :: TQueue EvErr <- newTQueueIO
+  env <- ask
+  let (bornEvs, startDriver) = ames env who isFake (writeTQueue ventQ) stderr
+
+  let runDriver = do
+        diOnEffect <- startDriver
+        let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
+        pure (DriverApi {..})
+
+  pure (bornEvs, runDriver)
+
 
 {-|
     inst      -- Process instance number.
@@ -118,13 +137,13 @@ ames
   -> Bool
   -> (EvErr -> STM ())
   -> (Text -> RIO e ())
-  -> ([EvErr], RAcquire e (NewtEf -> IO ()))
+  -> ([Ev], RAcquire e (NewtEf -> IO ()))
 ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
  where
   king = fromIntegral (env ^. kingIdL)
 
-  initialEvents :: [EvErr]
-  initialEvents = [EvErr (bornEv king) (bornFailed env)]
+  initialEvents :: [Ev]
+  initialEvents = [bornEv king]
 
   runAmes :: RAcquire e (NewtEf -> IO ())
   runAmes = do
