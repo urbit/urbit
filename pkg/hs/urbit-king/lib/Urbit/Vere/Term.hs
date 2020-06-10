@@ -8,6 +8,7 @@ module Urbit.Vere.Term
     , runTerminalClient
     , connClient
     , term
+    , term'
     ) where
 
 import Data.Char
@@ -30,6 +31,7 @@ import Urbit.Vere.Term.API (Client(Client))
 
 import qualified Data.ByteString.Internal as BS
 import qualified Data.ByteString.UTF8     as BS
+import qualified System.Console.ANSI      as ANSI
 import qualified Urbit.Vere.NounServ      as Serv
 import qualified Urbit.Vere.Term.API      as Term
 import qualified Urbit.Vere.Term.Render   as T
@@ -72,20 +74,6 @@ initialHail = EvBlip $ BlipEvTerm $ TermEvHail (UD 1, ()) ()
 
 -- Version one of this is punting on the ops_u.dem flag: whether we're running
 -- in daemon mode.
-
-spinners :: [Text]
-spinners = ["|", "/", "-", "\\"]
-
-leftBracket :: Text
-leftBracket = "«"
-
-rightBracket :: Text
-rightBracket = "»"
-
-_spin_cool_us = 500000
-_spin_warm_us = 50000
-_spin_rate_us = 250000
-_spin_idle_us = 500000
 
 --------------------------------------------------------------------------------
 
@@ -152,6 +140,33 @@ runTerminalClient pier = runRAcquire $ do
     runRAcquire :: RAcquire e () -> RIO e ()
     runRAcquire act = rwith act $ const $ pure ()
 
+
+-- Spinner ---------------------------------------------------------------------
+
+-- Call an STM action after delay of `first` microseconds and then every
+-- `rest` microseconds after that.
+repeatedly :: Int -> Int -> STM () -> IO ()
+repeatedly first rest action = do
+  threadDelay first
+  forever $ do
+    atomically action
+    threadDelay rest
+
+spinners :: [Text]
+spinners = ["|", "/", "-", "\\"]
+
+leftBracket, rightBracket :: Text
+leftBracket = "«"
+rightBracket = "»"
+
+_spin_cool_us = 500000
+_spin_warm_us = 50000
+_spin_rate_us = 250000
+_spin_idle_us = 500000
+
+
+-- Client ----------------------------------------------------------------------
+
 {-|
     Initializes the generalized input/output parts of the terminal.
 -}
@@ -162,10 +177,9 @@ localClient doneSignal = fst <$> mkRAcquire start stop
   where
     start :: HasLogFunc e => RIO e ((T.TSize, Client), Private)
     start = do
-      tsWriteQueue  <- newTQueueIO
-      spinnerMVar   <- newEmptyTMVarIO
-      pWriterThread <-
-          asyncBound (writeTerminal tsWriteQueue spinnerMVar)
+      tsWriteQueue  <- newTQueueIO :: RIO e (TQueue [Term.Ev])
+      spinnerMVar   <- newEmptyTMVarIO :: RIO e (TMVar ())
+      pWriterThread <- asyncBound (writeTerminal tsWriteQueue spinnerMVar)
 
       pPreviousConfiguration <- io $ getTerminalAttributes stdInput
 
@@ -225,17 +239,6 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                     , ProcessOutput
                     ]
 
-    -- An async which will put into an mvar after a delay. Used to spin the
-    -- spinner in writeTerminal.
-    spinnerHeartBeat :: Int -> Int -> TMVar () -> RIO e ()
-    spinnerHeartBeat first rest mvar = do
-        threadDelay first
-        loop
-      where
-        loop = do
-          atomically $ putTMVar mvar ()
-          threadDelay rest
-          loop
 
     -- Writes data to the terminal. Both the terminal reading, normal logging,
     -- and effect handling can all emit bytes which go to the terminal.
@@ -245,9 +248,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
         loop (LineState "" 0 Nothing Nothing True 0 currentTime)
       where
         writeBlank :: LineState -> RIO e LineState
-        writeBlank ls = do
-            putStr "\r\n"
-            pure ls
+        writeBlank ls = putStr "\r\n" $> ls
 
         writeTrace :: LineState -> Text -> RIO e LineState
         writeTrace ls p = do
@@ -265,6 +266,8 @@ localClient doneSignal = fst <$> mkRAcquire start stop
         -}
         doSpin :: LineState -> Maybe Text -> RIO e LineState
         doSpin ls@LineState{..} mTxt = do
+            maybe (pure ()) cancel lsSpinTimer
+
             current <- io $ now
             delay   <- pure $ case mTxt of
                 Nothing -> 0
@@ -273,7 +276,10 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                   then _spin_warm_us
                   else _spin_cool_us
 
-            spinTimer <- async $ spinnerHeartBeat delay _spin_rate_us spinner
+            spinTimer <- io $ async
+                            $ repeatedly delay _spin_rate_us
+                            $ void
+                            $ tryPutTMVar spinner ()
 
             pure $ ls { lsSpinTimer       = Just spinTimer
                       , lsSpinCause       = mTxt
@@ -290,7 +296,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
               -- If we ever actually ran the spinner display callback, we need
               -- to force a redisplay of the command prompt.
-              ls <- if not lsSpinFirstRender
+              ls <- if not lsSpinFirstRender || True
                     then termRefreshLine ls
                     else pure ls
 
@@ -305,16 +311,16 @@ localClient doneSignal = fst <$> mkRAcquire start stop
             Term.Spinr (Just txt) -> doSpin ls (unCord <$> txt)
             Term.Spinr Nothing    -> unspin ls
 
+        --  TODO What does this do?
         spin :: LineState -> RIO e LineState
         spin ls@LineState{..} = do
             let spinner = (spinners !! lsSpinFrame) ++ case lsSpinCause of
                   Nothing  -> ""
                   Just str -> leftBracket ++ str ++ rightBracket
 
-            putStr spinner
-            termSpinnerMoveLeft (length spinner)
+            putStr (spinner <> pack (ANSI.cursorBackwardCode (length spinner)))
 
-            let newFrame = (lsSpinFrame + 1) `mod` (length spinners)
+            let newFrame = (lsSpinFrame + 1) `mod` length spinners
 
             pure $ ls { lsSpinFirstRender = False
                       , lsSpinFrame       = newFrame
@@ -355,8 +361,8 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
     -- Moves the cursor left without any mutation of the LineState. Used only
     -- in cursor spinning.
-    termSpinnerMoveLeft :: Int → RIO e ()
-    termSpinnerMoveLeft = T.cursorLeft
+    _termSpinnerMoveLeft :: Int → RIO e ()
+    _termSpinnerMoveLeft = T.cursorLeft
 
     -- Displays and sets the current line
     termShowLine :: LineState -> Text -> RIO e LineState
@@ -488,15 +494,38 @@ localClient doneSignal = fst <$> mkRAcquire start stop
           -- logDebug $ displayShow ("terminalBelt", b)
           atomically $ writeTQueue rq b
 
+
 --------------------------------------------------------------------------------
 
-initialBlewFailed :: e -> WorkError -> IO ()
-initialBlewFailed env _ = runRIO env $ do
-  pure () -- TODO What do?
+{-|
+  Terminal Driver
 
-initialHailFailed :: e -> WorkError -> IO ()
-initialHailFailed env _ = runRIO env $ do
-  pure () -- TODO What do?
+  Until blew/hail events succeeds, ignore effects.
+  Wait until blew/hail event callbacks invoked.
+    If success, signal success.
+    If failure, try again several times.
+      If still failure, bring down ship.
+   Don't wait for other drivers to boot
+   Begin normal operation (start accepting requests)
+-}
+term'
+  :: HasPierEnv e
+  => (T.TSize, Client)
+  -> RIO e ([Ev], RAcquire e (DriverApi TermEf))
+term' (tsize, client) = do
+  let T.TSize wi hi = tsize
+      initEv = [initialBlew wi hi, initialHail]
+
+  pure (initEv, runDriver)
+ where
+  runDriver = do
+    env <- ask
+    ventQ :: TQueue EvErr <- newTQueueIO
+    diOnEffect <- term env (tsize, client) (writeTQueue ventQ)
+
+    let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
+
+    pure (DriverApi {..})
 
 {-|
     Terminal Driver
@@ -505,17 +534,9 @@ term :: forall e. (HasPierEnv e)
      => e
      -> (T.TSize, Client)
      -> (EvErr -> STM ())
-     -> ([EvErr], RAcquire e (TermEf -> IO ()))
-term env (tsize, Client{..}) plan =
-    (initialEvents, runTerm)
+     -> RAcquire e (TermEf -> IO ())
+term env (tsize, Client{..}) plan = runTerm
   where
-    T.TSize wi hi = tsize
-
-    initialEvents =
-      [ EvErr (initialBlew wi hi) (initialBlewFailed env)
-      , EvErr initialHail (initialHailFailed env)
-      ]
-
     runTerm :: RAcquire e (TermEf -> IO ())
     runTerm = do
       tim <- mkRAcquire (async readLoop) cancel
