@@ -6,7 +6,7 @@
   =/  apply
     |=  (x y)
     ['App' ($ x) ($ y)]
-  (W apply 'Ess' 'Kay' 'Eee' 'Dub' code)
+  (W apply ['Ess' ~] ['Kay' ~] ['Eee' 1] ['Dub' ~] code)
 
 ::(skewdata 5)   :: ok
 ::(skewdata seq) :: ok
@@ -117,10 +117,28 @@
     (lef ~)
   (lef ~)
 
-
-:: ((((S K) K) K)
-:: (con 'App' (con (con 'App' (con (con 'App' (con (con 'Ess' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~)))
-
+::  match-two-enhances: NE n :& NE 1            → Just $ NE (succ n)
+::
+=/  match-two-enhances
+  |=  top
+  %-  (trace ['match-two-eee' top])  |=  ig
+  =/  ktop  (car top)
+  ?:  (eql 'App' ktop)
+    =/  vtop  (cdr top)
+    =/  l  (car vtop)
+    =/  r  (car vtop)
+    =/  kl  (car l)
+    ?:  (eql 'Eee' kl)
+      =/  kr  (car r)
+      ?:  (eql 'Eee' kr)
+        =/  vr  (cdr r)
+        ?:  (eql 1 vr)
+          =/  vl  (cdr l)
+          (rit (con 'Eee' (inc vl)))
+        (lef ~)
+      (lef ~)
+    (lef ~)
+  (lef ~)
 
 ::  reduce: performs one step of reduction, returning rit if you can reduce and
 ::  lef if you can't
@@ -142,7 +160,13 @@
           l
         ?-    (match-ess top)
             l
-          (lef 'no such match')
+          ?-    (match-two-enhances top)
+              l
+            (lef 'no such match')
+          ::
+              r
+            (rit r)
+          ==
         ::
             r
           (rit r)
@@ -182,4 +206,8 @@
 
 :: (((S K) K) K)
 :: (con 'App' (con (con 'App' (con (con 'App' (con (con 'Ess' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~)))
-(eval (con 'App' (con (con 'App' (con (con 'App' (con (con 'Ess' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))))
+::(eval (con 'App' (con (con 'App' (con (con 'App' (con (con 'Ess' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))))
+
+
+:: (E E)
+(eval (con 'App' (con (con 'Eee' 1) (con 'Eee' 1))))
