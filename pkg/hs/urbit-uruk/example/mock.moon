@@ -1,5 +1,8 @@
 :: This was a good first try, but to really work, we need this to be lazy.
 ::
+:: TODO: Try to pattern match natural numbers? Any real implementation of this
+:: needs to be jetted and matching church numerals becomes efficientish.
+::
 =/  skewdata
   ..  $
   |=  code
@@ -25,6 +28,18 @@
     |=  (x y)
     ['App' (recur x) (recur y)]
   (W apply ['Ess' ~] ['Kay' ~] ['Eee' ~] ['Dub' ~] code)
+
+
+::  foldl should really be in the stdlib.
+::
+=/  foldl
+  ~/  3  foldl
+  ..  $
+  |=  (fun base rest)
+  %+  (cas rest)
+    <p ($ fun (fun base (car p)) (cdr p))>
+  <u base>
+
 
 ::  match-k: (NK :& x :& y) -> Just $ x
 ::
@@ -140,6 +155,29 @@
     (lef ~)
   (lef ~)
 
+=/  con-app
+  |=  (l r)
+  (con 'App' (con l r))
+
+::  match-enhance: NE n :& t :& b          → Just $ NM (match n t b) (fromIntegral n) []
+::
+::  =/  match-enhance
+::    |=  top
+::    ::  ok, I don't entirely understand what's going on in the
+
+
+:: jet matching works on an arbitrarily deep tree:
+::
+:: (((E T) B) x)
+:: (((((E E) T) B) x) y)
+::
+:: The Reference.hs implementation matches in two steps: a) read downwards to
+:: collect Es into an arity count and a list of arguments; b) ignore the tag,
+:: grab the body and the rest, and if the length of the rest is the same as the
+:: count, proceed to instead reconstruct the list with foldl ((b x1) x2)...
+
+:: (foldl con-app base xs)
+
 ::  reduce: performs one step of reduction, returning rit if you can reduce and
 ::  lef if you can't
 ::
@@ -210,4 +248,7 @@
 
 
 :: (E E)
-(eval (con 'App' (con (con 'Eee' 1) (con 'Eee' 1))))
+::(eval (con 'App' (con (con 'Eee' 1) (con 'Eee' 1))))
+
+
+(foldl add 0 (lcon 1 (lcon 2 (lcon 3 lnil))))

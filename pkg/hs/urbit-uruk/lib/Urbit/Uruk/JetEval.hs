@@ -317,6 +317,8 @@ runJet = curry \case
   (MS DIV    , [x, y]   ) -> goDiv x y
   (MS MOD    , [x, y]   ) -> goMod x y
   (MS TRACE  , [x, y]   ) -> goTrace x y
+  (MS LCON   , _        ) -> Nothing
+  (MS LNIL   , _        ) -> Nothing
 
   (MD (NAT _), _        ) -> badArgs
   (MD (Bn  _), _        ) -> badArgs
