@@ -950,12 +950,13 @@
       ?~  parsed
         (return-static-data-on-duct 400 'text/html' (login-page ~ our))
       ::
+      =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
       ?~  password=(get-header:http 'password' u.parsed)
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
       ::  mint a unique session cookie
       ::
       =/  session=@uv
@@ -981,7 +982,7 @@
         =-  out(moves [- moves.out])
         [duct %pass /sessions/expire %b %wait expires-at]
       ::
-      ?~  redirect=(get-header:http 'redirect' u.parsed)
+      ?~  redirect
         %-  handle-response
         :*  %start
             :-  status-code=200
