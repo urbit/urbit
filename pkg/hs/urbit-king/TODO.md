@@ -62,6 +62,25 @@ Polish:
 - [x] The terminal driver seems to have a race condition when spinner
       changed too quickly.
 
+
+# Finding the Serf Executable
+
+- [ ] Right now, `urbit-worker` is found by looking it up in the PATH. This
+      is wrong, but what is right?
+
+
+# Further IO Driver Startup Flow Betterment
+
+Implement Pier-wide process start events
+
+- [x] Handle %vega and exit effects.
+- [x] Handle %trim effect
+- [x] Inject entropy event on pier start: ``[//arvo [%wack ENT]]`
+- [ ] Verbose flag: `-v` injects `[%verb ~]`
+- [ ] CLI event injection: `-I file-path`. The `file-path` is a jammed
+  noun representing an event: `[wire card]`.
+
+
 # Cleanup
 
 - [x] ShutdownSTM action that's passed to the terminal driver should
@@ -76,15 +95,3 @@ Polish:
   - Make it care less about the shape of events and effects.
 - [ ] Spin off per-pier logic into it's own package.
   - Probably `urbit-pier`
-
-# Finding the Serf Executable
-
-- [ ] Right now, `urbit-worker` is found by looking it up in the PATH. This
-      is wrong, but what is right?
-
-# Further IO Driver Startup Flow Betterment
-
-- Implement Pier-wide process start events
-  - [ ] Entropy injection.
-  - [ ] Verbose flag.
-  - [ ] CLI event injection.

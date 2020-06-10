@@ -202,9 +202,16 @@ deriveNoun ''AmesEv
 
 -- Arvo Events -----------------------------------------------------------------
 
+newtype Entropy = Entropy { entropyBits :: Word512 }
+ deriving newtype (Eq, Ord, FromNoun, ToNoun)
+
+instance Show Entropy where
+  show = const "\"ENTROPY (secret)\""
+
+
 data ArvoEv
     = ArvoEvWhom ()   Ship
-    | ArvoEvWack ()   Word512
+    | ArvoEvWack ()   Entropy
     | ArvoEvWarn Path Noun
     | ArvoEvCrud Path Noun
     | ArvoEvVeer Atom Noun

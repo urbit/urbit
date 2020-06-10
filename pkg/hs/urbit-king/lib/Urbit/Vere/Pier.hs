@@ -23,13 +23,12 @@ import RIO.Directory
 import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
+import Urbit.King.App
 
 import Control.Monad.STM      (retry)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.King.API         (TermConn)
-import Urbit.King.App         (HasKingEnv, HasPierEnv(..), PierEnv)
-import Urbit.King.App         (onKillPierSigL)
 import Urbit.Noun.Time        (Wen)
 import Urbit.Vere.Behn        (behn')
 import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
@@ -70,8 +69,8 @@ setupPierDirectory shipPath = do
 
 -- Load pill into boot sequence. -----------------------------------------------
 
-genEntropy :: MonadIO m => m Word512
-genEntropy = fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
+genEntropy :: MonadIO m => m Entropy
+genEntropy = Entropy . fromIntegral . bytesAtom <$> io (Ent.getEntropy 64)
 
 genBootSeq :: MonadIO m => Ship -> Pill -> Bool -> LegacyBootEvent -> m BootSeq
 genBootSeq ship Pill {..} lite boot = io $ do
@@ -184,7 +183,7 @@ bootNewShip pill lite flags ship bootEv = do
   let logPath = (pierPath </> ".urb/log")
 
   rwith (Log.new logPath ident) $ \log -> do
-    logDebug "Event log initialized."
+    logDebug "Event log onitialized."
     jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
     writeJobs log (fromList jobs)
 
@@ -334,7 +333,8 @@ pier (serf, log) vSlog startedSig multi = do
   tSerf <- acquireWorker "Serf" (runCompute serf computeConfig)
 
   -- Run all born events and retry them until they succeed.
-  rio $ for_ bootEvents $ \ev -> do
+  wackEv <- EvBlip . BlipEvArvo . ArvoEvWack () <$> genEntropy
+  rio $ for_ (wackEv : bootEvents) $ \ev -> do
     okaySig <- newEmptyMVar
 
     let inject n = atomically $ compute $ RRWork $ EvErr ev $ cb n
@@ -350,8 +350,13 @@ pier (serf, log) vSlog startedSig multi = do
     logTrace ("Boot Event" <> displayShow ev)
     io (inject 0)
 
+  let slog :: Text -> IO ()
+      slog txt = do
+        fn <- atomically (readTVar vSlog)
+        fn txt
+
   drivz <- startDrivers
-  tExec <- acquireWorker "Effects" (router (readTQueue executeQ) drivz)
+  tExec <- acquireWorker "Effects" (router slog (readTQueue executeQ) drivz)
   tDisk <- acquireWorkerBound "Persist" (runPersist log persistQ execute)
 
   let snapshotEverySecs = 120
@@ -465,23 +470,27 @@ drivers env multi who isFake plan termSys stderr serfSIGINT = do
 
 -- Route Effects to Drivers ----------------------------------------------------
 
-router :: HasLogFunc e => STM FX -> Drivers -> RIO e ()
-router waitFx Drivers {..} = forever $ do
-  fx <- atomically waitFx
-  for_ fx $ \ef -> do
-    logEffect ef
-    case ef of
-      GoodParse (EfVega _ _              ) -> error "TODO"
-      GoodParse (EfExit _ _              ) -> error "TODO"
-      GoodParse (EfVane (VEBehn       ef)) -> io (dBehn ef)
-      GoodParse (EfVane (VEBoat       ef)) -> io (dSync ef)
-      GoodParse (EfVane (VEClay       ef)) -> io (dSync ef)
-      GoodParse (EfVane (VEHttpClient ef)) -> io (dIris ef)
-      GoodParse (EfVane (VEHttpServer ef)) -> io (dEyre ef)
-      GoodParse (EfVane (VENewt       ef)) -> io (dNewt ef)
-      GoodParse (EfVane (VESync       ef)) -> io (dSync ef)
-      GoodParse (EfVane (VETerm       ef)) -> io (dTerm ef)
-      FailParse n -> logError $ display $ pack @Text (ppShow n)
+router :: HasPierEnv e => (Text -> IO ()) -> STM FX -> Drivers -> RIO e ()
+router slog waitFx Drivers {..} = do
+  kill <- view killPierActionL
+  let exit = io (slog "<<<shutdown>>>\r\n") >> atomically kill
+  let vega = io (slog "<<<reset>>>\r\n")
+  forever $ do
+    fx <- atomically waitFx
+    for_ fx $ \ef -> do
+      logEffect ef
+      case ef of
+        GoodParse (EfVega _ _              ) -> vega
+        GoodParse (EfExit _ _              ) -> exit
+        GoodParse (EfVane (VEBehn       ef)) -> io (dBehn ef)
+        GoodParse (EfVane (VEBoat       ef)) -> io (dSync ef)
+        GoodParse (EfVane (VEClay       ef)) -> io (dSync ef)
+        GoodParse (EfVane (VEHttpClient ef)) -> io (dIris ef)
+        GoodParse (EfVane (VEHttpServer ef)) -> io (dEyre ef)
+        GoodParse (EfVane (VENewt       ef)) -> io (dNewt ef)
+        GoodParse (EfVane (VESync       ef)) -> io (dSync ef)
+        GoodParse (EfVane (VETerm       ef)) -> io (dTerm ef)
+        FailParse n -> logError $ display $ pack @Text (ppShow n)
 
 
 -- Compute (Serf) Thread -------------------------------------------------------
