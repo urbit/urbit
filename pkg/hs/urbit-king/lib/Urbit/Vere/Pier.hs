@@ -112,7 +112,9 @@ writeJobs log !jobs = do
 -- Acquire a running serf. -----------------------------------------------------
 
 printTank :: (Text -> IO ()) -> Atom -> Tank -> IO ()
-printTank f _priority = f . unlines . fmap unTape . wash (WashCfg 0 80)
+printTank f _priority = f . unlines . fmap unTape . wash (WashCfg 0 80) . tankTree
+ where
+  tankTree (Tank t) = t
 
 runSerf
   :: HasLogFunc e
@@ -219,6 +221,7 @@ resumed vSlog replayUntil flags  = do
       Right _  -> do
         logDebug "Taking snapshot"
         io (Serf.snapshot serf)
+        logDebug "SNAPSHOT TAKEN"
 
   pure (serf, log)
 
