@@ -52,7 +52,6 @@
 ::
 +$  update-0
   $%  [%keys =resources]
-      [%initial =graphs =tag-queries]
       action-0
   ==
 --

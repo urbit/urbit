@@ -1,11 +1,9 @@
 |%
-+$  resource   [=entity =term]
++$  resource   [=entity name=term]
 +$  resources  (set resource)
 ::
 +$  entity
   $@  ship
-  $%  [%empty ~]
-      ::  [%ships ships=(set ship)]
-      ::  [%ring ...]
+  $%  !!
   ==
 --
