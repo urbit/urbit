@@ -20,7 +20,7 @@ Bugs:
 
 - [ ] In non-daemon mode, serf slogs/stderr output that happens *before*
       the terminal connects should still go to stderr.
-- [ ] Serf stderr should also be send (along with slogs) to all connected
+- [x] Serf stderr should also be send (along with slogs) to all connected
       terminals.
 - [x] `king new` should reject pier directories that already exist.
 - [x] In non-daemon-mode, ^D doesn't bring down Urbit properly.
@@ -56,7 +56,7 @@ Polish:
 # Misc Bugs
 
 - [ ] `king run --collect-fx` flag does nothing. Remove or implement.
-- [ ] Handle ^C in connected terminals. It should interrupt current
+- [x] Handle ^C in connected terminals. It should interrupt current
       event (send SIGINT to serf, which will cause the current event to
       fail promptly).
 - [x] The terminal driver seems to have a race condition when spinner

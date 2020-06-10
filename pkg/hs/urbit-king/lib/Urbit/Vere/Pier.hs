@@ -132,7 +132,7 @@ runSerf vSlog pax fax = do
     , scPier = pax
     , scFlag = fax
     , scSlog = \(pri, tank) -> printTank slog pri tank
-    , scStdr = \line -> runRIO env $ logTrace (display ("SERF: " <> line))
+    , scStdr = \txt -> slog (txt <> "\r\n")
     , scDead = pure () -- TODO: What can be done?
     }
 
