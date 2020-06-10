@@ -18,9 +18,13 @@ Stubbed out:
 
 Bugs:
 
+- [ ] In non-daemon mode, serf slogs/stderr output that happens *before*
+      the terminal connects should still go to stderr.
+- [ ] Serf stderr should also be send (along with slogs) to all connected
+      terminals.
 - [x] `king new` should reject pier directories that already exist.
 - [x] In non-daemon-mode, ^D doesn't bring down Urbit properly.
-- [ ] Spinner updated multiple times with the same event, and this causes
+- [x] Spinner updated multiple times with the same event, and this causes
       logging of events to contain duplicates.
 
 King-Haskell specific features:
@@ -55,7 +59,7 @@ Polish:
 - [ ] Handle ^C in connected terminals. It should interrupt current
       event (send SIGINT to serf, which will cause the current event to
       fail promptly).
-- [ ] The terminal driver seems to have a race condition when spinner
+- [x] The terminal driver seems to have a race condition when spinner
       changed too quickly.
 
 # Cleanup
