@@ -57,7 +57,7 @@
       |=  [=resource:store =graph:store]
       ^-  (quip card _state)
       ?<  (~(has by graphs) resource)
-      :-  (give [/all /keys ~] [%add-graph resource graph])
+      :-  (give [/updates /keys ~] [%add-graph resource graph])
       %_  state
           graphs       (~(put by graphs) resource graph)
           action-logs  (~(put by action-logs) resource (gas:orm-log ~ ~))
@@ -67,7 +67,7 @@
       |=  =resource:store
       ^-  (quip card _state)
       ?>  (~(has by graphs) resource)
-      :-  (give [/all /keys ~] [%remove-graph resource])
+      :-  (give [/updates /keys ~] [%remove-graph resource])
       %_  state
           graphs       (~(del by graphs) resource)
           action-logs  (~(del by action-logs) resource)
@@ -82,7 +82,7 @@
       =.  action-log
         (put:orm-log action-log now.bowl [%0 [%add-nodes resource nodes]])
       ::
-      :-  (give [/all]~ [%add-nodes resource nodes])
+      :-  (give [/updates]~ [%add-nodes resource nodes])
       %_  state
           action-logs  (~(put by action-logs) resource action-log)
           graphs
@@ -116,6 +116,9 @@
         =*  atom   i.index
         ::  last index in list
         ::
+        %^  put:orm
+            graph
+          atom
         ?~  t.index
           ::  verify hash if it exists, otherwise calculate
           ::
@@ -127,12 +130,9 @@
             ::  hash is present, validate it
             ~|  "hash of post does not match calculated hash"
             ?>  =(calculated-hash u.hash.p)
-            (put:orm graph atom node)
+            node
           ::  no hash present
           ::
-          %^  put:orm
-              graph
-            atom
           %=  node
               hash.post  `calculated-hash
               signatures.post
@@ -145,34 +145,23 @@
           ==
         ::  multiple indices left in list
         ::
-        =/  parent=(unit node:store)  (get:orm graph atom)
-        ?~  parent
-          ~&  "index does not exist to add a node to!"
-          graph
-        ?+  -.children.u.parent
-          ::  replace empty graph with graph containing one child
-          ::
-          =*  p-hash  hash.post.u.parent
-          %^  put:orm
+        ~|  "index does not exist to add a node to!"
+        =/  parent=node:store  (need (get:orm graph atom))
+        %_  parent
+            children
+          ^-  internal-graph:store
+          :-  %graph
+          %_  $
+              index        t.index
+              parent-hash  hash.post.parent
               graph
-            atom
-          %=  u.parent
-              children
-            ^-  internal-graph:store
-            :-  %graph
-            $(graph (gas:orm ~ ~), index t.index, parent-hash p-hash)
-          ==
-        ::
-            %graph
-          :: recurse into children
-          ::
-          =*  p-hash  hash.post.u.parent
-          %^  put:orm
-              graph
-            atom
-          %_  u.parent
-              p.children
-            $(graph p.children.u.parent, index t.index, parent-hash p-hash)
+            ?:  ?=(%graph -.children.parent)
+              :: recurse into children
+              ::
+              p.children.parent
+            ::  replace empty graph with graph containing one child
+            ::
+            (gas:orm ~ ~)
           ==
         ==
       --
@@ -186,7 +175,7 @@
       =.  action-log
         (put:orm-log action-log now.bowl [%0 [%remove-nodes resource indices]])
       ::
-      :-  (give [/all]~ [%remove-nodes resource indices])
+      :-  (give [/updates]~ [%remove-nodes resource indices])
       %_  state
           action-logs  (~(put by action-logs) resource action-log)
           graphs
@@ -215,24 +204,16 @@
           +:`[* graph:store]`(del:orm graph atom)
         ::  multiple indices left in list
         ::
-        =/  parent=(unit node:store)  (get:orm graph atom)
-        ?~  parent
-          ~&  "index does not exist to remove a node from!"
-          graph
-        ?+  -.children.u.parent
-          ~&  "child index does not exist to remove a node from!"
-          graph
+        ~|  "parent index does not exist to remove a node from!"
+        =/  =node:store  (need (get:orm graph atom))
+        ~|  "child index does not exist to remove a node from!"
+        ?>  ?=(%graph -.children.node)
+        :: recurse into children
         ::
-            %graph
-          :: recurse into children
-          ::
-          %^  put:orm
-              graph
-            atom
-          %_  u.parent
-              p.children  $(graph p.children.u.parent, index t.index)
-          ==
-        ==
+        %^  put:orm
+            graph
+          atom
+        node(p.children $(graph p.children.node, index t.index))
       --
     ::
     ++  add-signatures
@@ -245,7 +226,7 @@
       =.  action-log
         (put:orm-log action-log now.bowl [%0 [%add-signatures uid signatures]])
       ::
-      :-  (give [/all]~ [%add-signatures uid signatures])
+      :-  (give [/updates]~ [%add-signatures uid signatures])
       %_  state
           action-logs  (~(put by action-logs) resource action-log)
           graphs
@@ -257,47 +238,76 @@
         ^-  graph:store
         ?~  index  graph
         =*  atom   i.index
-        =/  node=(unit node:store)  (get:orm graph atom)
-        ?~  node
-          ~|("node does not exist to add signatures to!" !!)
+        ~|  "node does not exist to add signatures to!" 
+        =/  =node:store  (need (get:orm graph atom))
         ::  last index in list
         ::
+        %^  put:orm
+            graph
+          atom
         ?~  t.index
-          ::  TODO: finish this
-          ?.  (are-signatures-valid:sigs signatures *hash:store now.bowl)
-            ~|("signatures did not match public keys!" !!)
-          =/  new-signatures  (~(uni in signatures) signatures.post.u.node)
-          %^  put:orm
-              graph
-            atom
-          u.node(signatures.post new-signatures)
+          ~|  "cannot add signatures to a node missing a hash"
+          ?>  ?=(^ hash.post.node)
+          ~|  "signatures did not match public keys!"
+          ?>  (are-signatures-valid:sigs signatures u.hash.post.node now.bowl)
+          node(signatures.post (~(uni in signatures) signatures.post.node))
         ::  multiple indices left in list
         ::
-        ?+  -.children.u.node
-          ~|("child graph does not exist to add signatures to!" !!)
+        ~|  "child graph does not exist to add signatures to!"
+        ?>  ?=(%graph -.children.node)
+        :: recurse into children
         ::
-            %graph
-          :: recurse into children
-          ::
-          %^  put:orm
-              graph
-            atom
-          %_  u.node
-              p.children  $(graph p.children.u.node, index t.index)
-          ==
-        ==
+        node(p.children $(graph p.children.node, index t.index))
       --
     ::
     ++  remove-signatures
       |=  [=uid:store =signatures:store]
       ^-  (quip card _state)
-      [~ state]
+      |^
+      =*  resource  resource.uid
+      =/  =graph:store       (~(got by graphs) resource)
+      =/  =action-log:store  (~(got by action-logs) resource)
+      =.  action-log
+        %^  put:orm-log  action-log
+          now.bowl
+        [%0 [%remove-signatures uid signatures]]
+      ::
+      :-  (give [/updates]~ [%remove-signatures uid signatures])
+      %_  state
+          action-logs  (~(put by action-logs) resource action-log)
+          graphs
+        %+  ~(put by graphs)  resource
+        (remove-at-index graph index.uid signatures)
+      ==
+      ::
+      ++  remove-at-index
+        |=  [=graph:store =index:store =signatures:store]
+        ^-  graph:store
+        ?~  index  graph
+        =*  atom   i.index
+        ~|  "node does not exist to add signatures to!" 
+        =/  =node:store  (need (get:orm graph atom))
+        ::  last index in list
+        ::
+        %^  put:orm
+            graph
+          atom
+        ?~  t.index
+          node(signatures.post (~(dif in signatures) signatures.post.node))
+        ::  multiple indices left in list
+        ::
+        ~|  "child graph does not exist to add signatures to!"
+        ?>  ?=(%graph -.children.node)
+        :: recurse into children
+        ::
+        node(p.children $(graph p.children.node, index t.index))
+      --
     ::
     ++  add-tag
       |=  [=term =resource:store]
       ^-  (quip card _state)
       ?>  (~(has by graphs) resource)
-      :-  (give [/all]~ [%add-tag term resource])
+      :-  (give [/updates]~ [%add-tag term resource])
       %_  state
           tag-queries  (~(put ju tag-queries) term resource)
       ==
@@ -306,7 +316,7 @@
       |=  [=term =resource:store]
       ^-  (quip card _state)
       ?>  (~(has by graphs) resource)
-      :-  (give [/all]~ [%remove-tag term resource])
+      :-  (give [/updates]~ [%remove-tag term resource])
       %_  state
           tag-queries  (~(del ju tag-queries) term resource)
       ==
@@ -325,8 +335,8 @@
   ?>  (team:title our.bowl src.bowl)
   =/  cards=(list card)
     ?+  path       (on-watch:def path)
-        [%all ~]   (give [%initial graphs tag-queries])
-        [%keys ~]  (give [%keys ~(key by graphs)])
+        [%updates ~]   ~
+        [%keys ~]      (give [%keys ~(key by graphs)])
     ==
   [cards this]
   ::
