@@ -724,17 +724,17 @@
   ::  otherwise, do a straight comparison
   ::
   =(u.binding u.host)
-::  +path-matches: returns %.y if :prefix is a prefix of :full
+::  +find-suffix: returns [~ /tail] if :full is (weld :prefix /tail)
 ::
-++  path-matches
+++  find-suffix
   |=  [prefix=path full=path]
-  ^-  ?
+  ^-  (unit path)
   ?~  prefix
-    %.y
+    `full
   ?~  full
-    %.n
+    ~
   ?.  =(i.prefix i.full)
-    %.n
+    ~
   $(prefix t.prefix, full t.full)
 ::  +simplified-url-parser: returns [(each @if @t) (unit port=@ud)]
 ::
@@ -788,7 +788,8 @@
       (fall (forwarded-for header-list.request) address)
     ::
     =/  host  (get-header:http 'host' header-list.request)
-    =/  action  (get-action-for-binding host url.request)
+    =/  [=action suburl=@t]
+      (get-action-for-binding host url.request)
     ::
     =/  authenticated  (request-is-logged-in:authentication request)
     ::  record that we started an asynchronous response
@@ -1887,7 +1888,7 @@
   ::
   ++  get-action-for-binding
     |=  [raw-host=(unit @t) url=@t]
-    ^-  action
+    ^-  [=action suburl=@t]
     ::  process :raw-host
     ::
     ::    If we are missing a 'Host:' header, if that header is a raw IP
@@ -1935,14 +1936,21 @@
     |-
     ::
     ?~  bindings
-      [%four-oh-four ~]
+      [[%four-oh-four ~] url]
     ::
-    ?:  ?&  (host-matches site.binding.i.bindings raw-host)
-            (path-matches path.binding.i.bindings parsed-url)
-        ==
-      action.i.bindings
+    ?.  (host-matches site.binding.i.bindings raw-host)
+      $(bindings t.bindings)
+    ?~  suffix=(find-suffix path.binding.i.bindings parsed-url)
+      $(bindings t.bindings)
     ::
-    $(bindings t.bindings)
+    :-  action.i.bindings
+    %^  cat  3
+      %+  roll
+        ^-  (list @t)
+        (join '/' (flop ['' u.suffix]))
+      (cury cat 3)
+    ?~  ext.request-line  ''
+    (cat 3 '.' u.ext.request-line)
   --
 ::
 ++  forwarded-for
