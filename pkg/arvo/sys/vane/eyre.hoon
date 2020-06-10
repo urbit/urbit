@@ -858,10 +858,70 @@
         %channel
       (handle-request:by-channel secure authenticated address request)
     ::
+        %scry
+      (handle-scry authenticated address request(url suburl))
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
+  ::  +handle-scry: respond with scry result, 404 or 500
+  ::
+  ++  handle-scry
+    |=  [authenticated=? =address =request:http]
+    |^  ^-  (quip move server-state)
+    ::  make sure the path contains an app to scry into
+    ::
+    =+  req=(parse-request-line url.request)
+    ?.  ?=(^ site.req)
+      (error-response 404 "invalid scry target")
+    ::  attempt the scry that was asked for
+    ::
+    =/  res=(unit (unit cage))
+      (do-scry %gx i.site.req (snoc t.site.req %noun))
+    ?~  res    (error-response 500 "failed scry")
+    ?~  u.res  (error-response 404 "no scry result")
+    =*  mark   p.u.u.res
+    =*  vase   q.u.u.res
+    ::  attempt to find conversion gates to the requested mark, then to mime
+    ::
+    =/  tub=(unit tube:clay)
+      ?~  ext.req
+        (find-tube mark %mime)
+      ?~  to-mim=(find-tube u.ext.req %mime)  ~
+      ?:  =(mark u.ext.req)  to-mim
+      ?~  to-ext=(find-tube mark u.ext.req)   ~
+      `|=(=^vase (u.to-mim (u.to-ext vase)))
+    ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
+    ::  attempt conversion, then send results
+    ::
+    =/  mym=(each mime tang)
+      (mule |.(!<(mime (u.tub vase))))
+    ?-  -.mym
+      %|  (error-response 500 "failed tube from {(trip mark)} to mime")
+      %&  %+  return-static-data-on-duct  200
+          [(rsh 3 1 (spat p.p.mym)) q.p.mym]
+    ==
+    ::
+    ++  find-tube
+      |=  [from=mark to=mark]
+      ^-  (unit tube:clay)
+      =/  tub=(unit (unit cage))
+        (do-scry %cc %home /[from]/[to])
+      ?.  ?=([~ ~ %tube *] tub)  ~
+      `!<(tube:clay q.u.u.tub)
+    ::
+    ++  do-scry
+      |=  [care=term =desk =path]
+      ^-  (unit (unit cage))
+      (scry [%141 %noun] ~ care [our desk da+now] (flop path))
+    ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
+    --
   ::  +subscribe-to-app: subscribe to app and poke it with request data
   ::
   ++  subscribe-to-app
@@ -906,8 +966,8 @@
         %channel
       on-cancel-request:by-channel
     ::
-        %four-oh-four
-      ::  it should be impossible for a 404 page to be asynchronous
+        ?(%scry %four-oh-four)
+      ::  it should be impossible for a scry or 404 page to be asynchronous
       ::
       !!
     ==
@@ -2045,6 +2105,7 @@
       :~  [[~ /~/login] duct [%authentication ~]]
           [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
+          [[~ /~/scry] duct [%scry ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -2392,6 +2453,11 @@
         [[~ /~/logout] [/e/load/logout]~ [%logout ~]]
       bindings.server-state.old
     ~?  !success  [%e %failed-to-setup-logout-endpoint]
+    =^  success  bindings.server-state.old
+      %+  insert-binding
+        [[~ /~/scry] [/e/load/scry]~ [%scry ~]]
+      bindings.server-state.old
+    ~?  !success  [%e %failed-to-setup-scry-endpoint]
     %_  $
       date.old  %~2020.5.29
       sessions.authentication-state.server-state.old  ~
