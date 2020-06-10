@@ -143,7 +143,7 @@ export class ChatScreen extends Component {
       this.askForMessages(DEFAULT_BACKLOG_SIZE);
     }
 
-    if(props.read === props.length){
+    if(props.read === props.length) {
       this.scrolledToMarker = true;
       this.setState(
         {
@@ -487,9 +487,10 @@ ref={(e) => {
         >
           <Link to="/~chat/">{'⟵ All Chats'}</Link>
         </div>
+
         <div
-          className={'pl4 pt2 bb b--gray4 b--gray1-d bg-gray0-d flex relative' +
-          'overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0'}
+          className={'pl4 pt2 bb b--gray4 b--gray1-d bg-gray0-d flex relative ' +
+          'overflow-x-auto overflow-y-hidden flex-shrink-0 '}
           style={{ height: 48 }}
         >
           <SidebarSwitcher

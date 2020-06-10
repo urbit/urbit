@@ -21,7 +21,7 @@ export class Skeleton extends Component {
       ? props.invites['/link'] : {};
 
     return (
-      <div className={'absolute w-100 ' + popoutWindow} style={{ height: 'calc(100vh - 45px)' }}>
+      <div className={'absolute w-100 ' + popoutWindow}>
         <div className={'cf w-100 h-100 flex ' + popoutBorder}>
         <ChannelsSidebar
             active={props.active}
