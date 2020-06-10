@@ -85,16 +85,13 @@ import Urbit.Vere.Pier
 import Urbit.Vere.Eyre.Multi (multiEyre, MultiEyreApi, MultiEyreConf(..))
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Serf
+import Urbit.King.App
 
 import Control.Concurrent     (myThreadId)
 import Control.Exception      (AsyncException(UserInterrupt))
 import Control.Lens           ((&))
 import System.Process         (system)
 import Text.Show.Pretty       (pPrint)
-import Urbit.King.App         (KingEnv, PierEnv, kingEnvKillSignal)
-import Urbit.King.App         (killKingActionL, onKillKingSigL)
-import Urbit.King.App         (killPierActionL)
-import Urbit.King.App         (runKingEnvLogFile, runKingEnvStderr, runPierEnv)
 import Urbit.Noun.Conversions (cordToUW)
 import Urbit.Noun.Time        (Wen)
 import Urbit.Vere.LockFile    (lockFile)
@@ -167,10 +164,15 @@ toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
   _ncNoHttp    = oNoHttp
   _ncNoHttps   = oNoHttps
 
-logSlogs :: HasLogFunc e => RIO e (TVar (Text -> IO ()))
-logSlogs = do
+logStderr :: HasStderrLogFunc e => RIO LogFunc a -> RIO e a
+logStderr action = do
+  logFunc <- view stderrLogFuncL
+  runRIO logFunc action
+
+logSlogs :: HasStderrLogFunc e => RIO e (TVar (Text -> IO ()))
+logSlogs = logStderr $ do
   env <- ask
-  newTVarIO (runRIO env . logTrace . ("SLOG: " <>) . display)
+  newTVarIO (runRIO env . logOther "serf" . display . T.strip)
 
 tryBootFromPill
   :: Bool

@@ -18,7 +18,7 @@ Stubbed out:
 
 Bugs:
 
-- [ ] In non-daemon mode, serf slogs/stderr output that happens *before*
+- [x] In non-daemon mode, serf slogs/stderr output that happens *before*
       the terminal connects should still go to stderr.
 - [x] Serf stderr should also be send (along with slogs) to all connected
       terminals.

@@ -35,6 +35,7 @@ import Urbit.Vere.Behn        (behn')
 import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
 import Urbit.Vere.Serf        (Serf)
 
+import qualified Data.Text              as T
 import qualified System.Entropy         as Ent
 import qualified Urbit.EventLog.LMDB    as Log
 import qualified Urbit.King.API         as King
@@ -296,11 +297,10 @@ pier (serf, log) vSlog startedSig multi = do
     logDebug "TERMSERV External terminal connected."
 
   --  Slogs go to both stderr and to the terminal.
-  atomically $ do
-    oldSlog <- readTVar vSlog
-    writeTVar vSlog $ \txt -> do
+  env <- ask
+  atomically $ writeTVar vSlog $ \txt -> runRIO env $ do
       atomically $ Term.trace muxed txt
-      oldSlog txt
+      logOther "serf" (display $ T.strip txt)
 
   -- Our call above to set the logging function which echos errors from the
   -- Serf doesn't have the appended \r\n because those \r\n s are added in
