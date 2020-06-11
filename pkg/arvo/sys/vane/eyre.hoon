@@ -870,6 +870,10 @@
   ++  handle-scry
     |=  [authenticated=? =address =request:http]
     |^  ^-  (quip move server-state)
+    ?.  authenticated
+      (error-response 403 ~)
+    ?.  =(%'GET' method.request)
+      (error-response 405 "may only GET scries")
     ::  make sure the path contains an app to scry into
     ::
     =+  req=(parse-request-line url.request)
