@@ -91,3 +91,25 @@ export function cite(ship) {
   }
   return `~${patp}`;
 }
+
+export function alphabetiseAssociations(associations) {
+  let result = {};
+  Object.keys(associations).sort((a, b) => {
+    let aName = a.substr(1);
+    let bName = b.substr(1);
+    if (associations[a].metadata && associations[a].metadata.title) {
+      aName = associations[a].metadata.title !== ""
+        ? associations[a].metadata.title
+        : a.substr(1);
+    }
+    if (associations[b].metadata && associations[b].metadata.title) {
+      bName = associations[b].metadata.title !== ""
+        ? associations[b].metadata.title
+        : b.substr(1);
+    }
+    return aName.toLowerCase().localeCompare(bName.toLowerCase());
+  }).map((each) => {
+    result[each] = associations[each];
+  })
+  return result;
+}

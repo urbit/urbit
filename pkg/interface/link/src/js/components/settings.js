@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import { deSig, uxToHex } from '/lib/util';
 import { Route, Link } from "react-router-dom";
 
 import { LoadingScreen } from './loading';
+import { Spinner } from './lib/icons/icon-spinner';
 import { LinksTabBar } from '/components/lib/links-tabbar';
 import SidebarSwitcher from './lib/icons/icon-sidebar-switch';
 import { makeRoutePath } from '../lib/util';
@@ -16,7 +16,9 @@ export class SettingsScreen extends Component {
       isLoading: false,
       title: "",
       description: "",
-      color: ""
+      color: "",
+      disabled: false,
+      type: "Editing"
     };
 
     this.changeTitle = this.changeTitle.bind(this);
@@ -25,6 +27,7 @@ export class SettingsScreen extends Component {
     this.submitColor = this.submitColor.bind(this);
     this.renderDelete = this.renderDelete.bind(this);
     this.renderMetadataSettings = this.renderMetadataSettings.bind(this);
+    this.markAllAsSeen = this.markAllAsSeen.bind(this);
   }
 
   componentDidMount() {
@@ -44,7 +47,6 @@ export class SettingsScreen extends Component {
       this.setState({
         isLoading: false
       }, () => {
-        api.setSpinner(false);
         props.history.push('/~link');
       });
     }
@@ -92,7 +94,7 @@ export class SettingsScreen extends Component {
     }
     if (hexTest && (hexTest[1] !== currentColor)) {
       if (props.amOwner) {
-        api.setSpinner(true);
+        this.setState({disabled: true});
         api.metadataAdd(
           props.resourcePath,
           props.groupPath,
@@ -101,45 +103,84 @@ export class SettingsScreen extends Component {
           resource.metadata['date-created'],
           color
         ).then(() => {
-          api.setSpinner(false);
+          this.setState({disabled: false});
         });
       }
     }
   }
 
+  removeCollection() {
+    const { props, state } = this;
+
+    this.setState({
+      isLoading: true,
+      disabled: true,
+      type: "Removing"
+    });
+    api.removeCollection(props.resourcePath)
+    .then(() => {
+      this.setState({
+        isLoading: false
+      });
+    });
+  }
+
   deleteCollection() {
     const { props, state } = this;
 
-    api.deleteCollection(props.resourcePath);
-    api.setSpinner(true);
-
     this.setState({
-      isLoading: true
+      isLoading: true,
+      disabled: true,
+      type: "Deleting"
     });
+    api.deleteCollection(props.resourcePath)
+    .then(() => {
+      this.setState({
+        isLoading: false
+      });
+    });
+  }
+
+  markAllAsSeen() {
+    api.seenLink(this.props.resourcePath);
+  }
+
+  renderRemove() {
+    const { props, state } = this;
+
+    return (
+      <div className="w-100 fl mt3">
+        <p className="f8 mt3 lh-copy db">Remove Collection</p>
+        <p className="f9 gray2 db mb4">
+          Remove this collection from your collection list.
+        </p>
+        <a onClick={this.removeCollection.bind(this)}
+           className="dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer">
+          Remove collection
+        </a>
+      </div>
+    );
   }
 
   renderDelete() {
     const { props, state } = this;
 
-    const isManaged = ('/~/' !== props.groupPath.slice(0,3));
-
-    let deleteClasses = 'dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer';
-    let deleteText = 'Remove this collection from your collection list.';
-    let deleteAction = 'Remove';
-    if (props.amOwner && isManaged) {
-      deleteText = 'Delete this collection. (All group members will no longer see this chat.)';
-      deleteAction = 'Delete';
-      deleteClasses = 'dib f9 ba pa2 b--red2 red2 pointer bg-gray0-d';
+    if (!props.amOwner) {
+      return null;
+    } else {
+      return (
+        <div className="w-100 fl mt3">
+          <p className="f8 mt3 lh-copy db">Delete Collection</p>
+          <p className="f9 gray2 db mb4">
+            Delete this collection, for you and all group members.
+          </p>
+          <a onClick={this.deleteCollection.bind(this)}
+             className="dib f9 ba pa2 b--red2 red2 pointer bg-gray0-d">
+            Delete collection
+          </a>
+        </div>
+      );
     }
-
-    return (
-      <div className="w-100 fl mt3">
-        <p className="f8 mt3 lh-copy db">Delete Collection</p>
-        <p className="f9 gray2 db mb4">{deleteText}</p>
-        <a onClick={this.deleteCollection.bind(this)}
-           className={deleteClasses}>{deleteAction + ' collection'}</a>
-      </div>
-    );
   }
 
   renderMetadataSettings() {
@@ -161,11 +202,11 @@ export class SettingsScreen extends Component {
             className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
             "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
             value={this.state.title}
-            disabled={!props.amOwner}
+            disabled={!props.amOwner || this.state.disabled}
             onChange={this.changeTitle}
             onBlur={() => {
               if (props.amOwner) {
-                api.setSpinner(true);
+                this.setState({ disabled: true });
                 api.metadataAdd(
                   props.resourcePath,
                   props.groupPath,
@@ -174,7 +215,7 @@ export class SettingsScreen extends Component {
                   resource.metadata['date-created'],
                   uxToHex(resource.metadata.color)
                 ).then(() => {
-                  api.setSpinner(false);
+                  this.setState({ disabled: false });
                 });
               }
             }}
@@ -190,20 +231,20 @@ export class SettingsScreen extends Component {
               className={"f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
                 "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
               value={this.state.description}
-              disabled={!props.amOwner}
+              disabled={!props.amOwner || this.state.disabled}
               onChange={this.changeDescription}
               onBlur={() => {
                 if (props.amOwner) {
-                  api.setSpinner(true);
+                  this.setState({ disabled: true });
                   api.metadataAdd(
                     props.resourcePath,
                     props.groupPath,
                     resource.metadata.title,
                     state.description,
-                    resource['date-created'],
-                    uxToHex(resource.color)
+                    resource.metadata['date-created'],
+                    uxToHex(resource.metadata.color)
                   ).then(() => {
-                    api.setSpinner(false);
+                    this.setState({ disabled: false });
                   });
                 }
               }}
@@ -225,7 +266,7 @@ export class SettingsScreen extends Component {
               className={"pl7 f8 ba b--gray3 b--gray2-d bg-gray0-d white-d " +
                 "focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3"}
               value={this.state.color}
-              disabled={!props.amOwner}
+              disabled={!props.amOwner || this.state.disabled}
               onChange={this.changeColor}
               onBlur={this.submitColor}
             />
@@ -303,8 +344,20 @@ export class SettingsScreen extends Component {
         </div>
         <div className="w-100 pl3 mt4 cf">
           <h2 className="f8 pb2">Collection Settings</h2>
+          <p className="f8 mt3 lh-copy db">Mark all links as read</p>
+          <p className="f9 gray2 db mb4">Mark all links in this collection as read.</p>
+          <a className="dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer"
+            onClick={this.markAllAsSeen}>
+              Mark all as read
+            </a>
+          {this.renderRemove()}
           {this.renderDelete()}
           {this.renderMetadataSettings()}
+          <Spinner
+            awaiting={this.state.disabled}
+            classes="absolute right-1 bottom-1 pa2 ba b--black b--gray0-d white-d"
+            text={`${this.state.type} collection...`}
+          />
         </div>
       </div>
     );

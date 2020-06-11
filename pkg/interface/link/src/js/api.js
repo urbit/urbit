@@ -165,6 +165,18 @@ class UrbitApi {
     });
   }
 
+  linkListenAction(data) {
+    return this.action('link-listen-hook', 'link-listen-action', data);
+  }
+
+  joinCollection(path) {
+    return this.linkListenAction({ watch: path });
+  }
+
+  removeCollection(path) {
+    return this.linkListenAction({ leave: path });
+  }
+
   linkAction(data) {
     return this.action("link-store", "link-action", data);
   }
@@ -225,11 +237,11 @@ class UrbitApi {
     });
   }
 
-  setSpinner(boolean) {
+  setSelected(selected) {
     store.handleEvent({
       data: {
         local: {
-          spinner: boolean
+          selected: selected
         }
       }
     })

@@ -20,6 +20,7 @@
 #include <h2o.h>
 #include <curl/curl.h>
 #include <argon2.h>
+#include <lmdb.h>
 
 #define U3_GLOBAL
 #define C3_GLOBAL
@@ -96,7 +97,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:A:H:I:w:u:e:F:k:p:LljacdgqstvxPDRS")) )
+                 "G:J:B:K:A:H:I:w:u:e:F:k:n:p:r:LljacdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'J': {
@@ -155,6 +156,10 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.key_c = strdup(optarg);
         break;
       }
+      case 'n': {
+        u3_Host.ops_u.til_c = strdup(optarg);
+        break;
+      }
       case 'p': {
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
@@ -164,6 +169,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'R': {
         u3_Host.ops_u.rep = c3y;
         return c3y;
+      }
+      case 'r': {
+        u3_Host.ops_u.roc_c = strdup(optarg);
+        break;
       }
       case 'L': { u3_Host.ops_u.net = c3n; break; }
       case 'l': { u3_Host.ops_u.lit = c3y; break; }
@@ -477,9 +486,7 @@ _stop_signal(c3_i int_i)
 {
   //  if we have a pier, unmap the event log before dumping core
   //
-  if ( 0 != u3K.len_w ) {
-    u3_pier_db_shutdown(u3_pier_stub());
-  }
+  u3_pier_halt();
 }
 
 /*

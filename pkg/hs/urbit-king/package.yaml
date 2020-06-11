@@ -1,5 +1,5 @@
 name: urbit-king
-version: 0.10.1
+version: 0.10.4
 license: MIT
 license-file: LICENSE
 
@@ -67,10 +67,12 @@ dependencies:
   - network
   - optparse-applicative
   - para
+  - pem
   - pretty-show
   - primitive
   - process
   - QuickCheck
+  - racquire
   - random
   - regex-tdfa
   - regex-tdfa-text
@@ -91,6 +93,7 @@ dependencies:
   - text
   - these
   - time
+  - tls
   - transformers
   - unix
   - unliftio
@@ -98,7 +101,10 @@ dependencies:
   - unordered-containers
   - urbit-atom
   - urbit-azimuth
+  - urbit-eventlog-lmdb
   - urbit-hob
+  - urbit-noun
+  - urbit-noun-core
   - utf8-string
   - vector
   - wai

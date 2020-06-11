@@ -270,18 +270,6 @@ jam :: Val -> Val
 {-# INLINE jam #-}
 jam = jamRaw . toRaw
 
--- Raw SKEW (Basically just used for W (jam)) ----------------------------------
-
-data ASKEW = S | K | E | W | A !Val !Val
-  deriving stock    (Eq, Ord, Show, Generic)
-
-
-
-toASKEW :: Val -> ASKEW
-toASKEW = valFun
-
-
-
 --------------------------------------------------------------------------------
 
 arrayDrop :: Int -> Int -> CloN -> IO CloN

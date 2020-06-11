@@ -12,9 +12,10 @@
 =>  |%                                                  ::  external structures
     ++  id  @tasession                                  ::  session id
     ++  house                                           ::  all state
-      $:  $5
+      $:  $6
           egg/@u                                        ::  command count
           hoc/(map id session)                          ::  conversations
+          acl/(set ship)                                ::  remote access whitelist
       ==                                                ::
     ++  session                                         ::  per conversation
       $:  say/sole-share                                ::  command-line state
@@ -1115,7 +1116,7 @@
     =/  fore-pos-diff  (sub fore-pos pos)
     =+  vex=((full parse-command-line:he-parser) [1 1] txt)
     ?.  ?=([* ~ [* @ %ex *] *] vex)
-      res
+      (he-tab-not-hoon pos :(weld buf (tufa buf.say) "\0a"))
     =/  typ  p:(slop q:he-hoon-head !>(..dawn))
     =/  tl  (tab-list-hoon:auto typ p.q.q.p.u.q.vex)
     =/  advance  (advance-hoon:auto typ p.q.q.p.u.q.vex)
@@ -1168,6 +1169,140 @@
       *tank
     ~(duck easy-print type)
   ::
+  ::  Full tab complete for all Dojo sinks and sources is a madmans job.
+  ::  Instead, we try to parse limited but common forms we know we can
+  ::  autocomplete correctly
+  ++  he-tab-not-hoon
+    |=  [pos=@ud txt=tape]
+    ^+  +>
+    =*  res  +>
+    |^
+    =/  naked-poke=(unit term)
+      %+  rust  txt
+      (full (ifix [col (just `@`10)] ;~(pose sym (easy %$))))
+    ?^  naked-poke
+      (complete-naked-poke u.naked-poke)
+    =/  variable=(unit term)
+      %+  rust  txt
+      (full (ifix [tis (just `@`10)] ;~(pose sym (easy %$))))
+    ?^  variable
+      (complete-variable u.variable)
+    =/  gen-poke-to-app=(unit [term term])
+      %+  rust  txt
+      ;~  sfix
+        ;~  (glue bar)
+          ;~(pose ;~(pfix col sym) (easy %$))
+          ;~(pose sym (easy %$))
+        ==
+        (just `@`10)
+      ==
+    ?^  gen-poke-to-app
+      (complete-gen-poke-to-app u.gen-poke-to-app)
+    =/  naked-gen=(unit term)
+      %+  rust  txt
+      (full (ifix [lus (just `@`10)] ;~(pose sym (easy %$))))
+    ?~  naked-gen
+      res
+    (complete-naked-gen u.naked-gen)
+    ::
+    ++  complete-naked-poke
+      |=  app=term
+      =/  pax=path
+        /(scot %p our.hid)/[q.byk.hid]/(scot %da now.hid)/app
+      %+  complete  (cat 3 ':' app)
+      %+  murn  ~(tap by dir:.^(arch %cy pax))
+      |=  [=term ~]
+      ^-  (unit [^term tank])
+      ?.  =(app (end 3 (met 3 app) term))
+        ~
+      ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
+        ~
+      `[(cat 3 ':' term) *tank]
+    ::
+    ++  complete-variable
+      |=  variable=term
+      %+  complete  variable
+      %+  murn  ~(tap by var)
+      |=  [name=term =cage]
+      ^-  (unit [term tank])
+      ?.  =(variable (end 3 (met 3 variable) name))
+        ~
+      `[name (sell q.cage)]
+    ::
+    ++  complete-gen-poke-to-app
+      |=  [app=term gen=term]
+      =.  app
+        ?:(?=(%$ app) %hood app)
+      %+  complete
+        ?:  =(%hood app)
+          (cat 3 '|' gen)
+        :((cury cat 3) ':' app '|' gen)
+      =/  pfix=path
+        /(scot %p our.hid)/[q.byk.hid]/(scot %da now.hid)/gen/[app]
+      ::
+      %^  tab-generators:auto  pfix  `app
+      %+  murn
+        ~(tap by dir:.^(arch %cy pfix))
+      |=  [=term ~]
+      ?.  =(gen (end 3 (met 3 gen) term))
+        ~
+      ?~  =<(fil .^(arch %cy (weld pfix ~[term %hoon])))
+        ~
+      (some term)
+    ::
+    ++  complete-naked-gen
+      |=  gen=term
+      %+  complete  (cat 3 '+' gen)
+      =/  pax=path
+        /(scot %p our.hid)/[q.byk.hid]/(scot %da now.hid)/gen
+      %^  tab-generators:auto  pax  ~
+      %+  murn
+        ~(tap by dir:.^(arch %cy pax))
+      |=  [=term ~]
+      ?.  =(gen (end 3 (met 3 gen) term))
+        ~
+      ?~  =<(fil .^(arch %cy (weld pax ~[term %hoon])))
+        ~
+      (some term)
+    ::
+    ++  complete
+      |=  [completing=term options=(list [term tank])]
+      ?~  options
+        res
+      =/  advance
+        (longest-match:auto options)
+      =.  pos
+        (dec (lent txt))  :: lock cursor at end
+      =/  back-pos
+        (sub pos (met 3 completing))
+      =/  to-send
+        (trip (rsh 3 (sub pos back-pos) advance))
+      =|  fxs=(list sole-effect)
+      ::
+      :: Cursor is guaranteed to be at end so we don't worry about the
+      :: backwards case
+      ::
+      =.  res
+        |-  ^+  res
+        ?~  to-send
+          (he-diff %mor (flop fxs))
+        =^  lic  say  (~(transmit sole say) %ins pos `@c`i.to-send)
+        $(to-send t.to-send, fxs [`sole-effect`det+lic fxs], pos +(pos))
+      ::  If no options, ring the bell
+      ::
+      ?:  =(~ options)
+        (he-diff %bel ~)
+      ::  If only one option, don't print unless the option is already
+      ::  typed in.
+      ::
+      ?:  &(?=([* ~] options) !=((met 3 advance) (met 3 completing)))
+        res
+      ::  Else, print results
+      ::
+      %+  he-diff  %tab
+      options
+    --
+  ::
   ++  he-type                                           ::  apply input
     |=  act/sole-action
     ^+  +>
@@ -1215,9 +1350,12 @@
   !>(state)
 ::
 ++  on-load
-  |=  =old-state=vase
-  =/  old-state  !<(house old-state-vase)
-  `..on-init(state old-state)
+  |=  old=vase
+  ?:  ?=(%6 +<.old)
+    `..on-init(state !<(house old))
+  =/  old-5  !<([%5 egg=@u hoc=(map id session)] old)
+  =/  =house  [%6 egg.old-5 hoc.old-5 *(set ship)]
+  `..on-init(state house)
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -1225,6 +1363,7 @@
   =^  moves  state
     ^-  (quip card:agent:gall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
+    ::
         %sole-action
       =/  act  !<(sole-action vase)
       he-abet:(~(he-type he hid id.act ~ (~(got by hoc) id.act)) act)
@@ -1233,8 +1372,17 @@
       =+  !<([=id =command:lens] vase)
       he-abet:(~(he-lens he hid id ~ (~(got by hoc) id)) command)
     ::
-        %json
-      ~&  jon=!<(json vase)
+        %allow-remote-login
+      =/  who  !<(@p vase)
+      `state(acl (~(put in acl) who))
+    ::
+        %revoke-remote-login
+      =/  who  !<(@p vase)
+      :_  state(acl (~(del in acl) who))
+      [%give %kick ~ `who]~
+    ::
+        %list-remote-logins
+      ~&  acl
       `state
     ::
         %wipe
@@ -1256,8 +1404,9 @@
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:gall _..on-init)
-  ~?  !=(our.hid src.hid)  [%dojo-peer-stranger src.hid]
-  ?>  (team:title our.hid src.hid)
+  ?>  ?|  (team:title our.hid src.hid)
+          (~(has in acl) src.hid)
+      ==
   ?>  ?=([%sole @ ~] path)
   =/  id  i.t.path
   =?  hoc  (~(has by hoc) id)

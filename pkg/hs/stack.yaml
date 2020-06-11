@@ -2,13 +2,17 @@ resolver: lts-14.21
 
 packages:
   - lmdb-static
+  - racquire
   - terminal-progress-bar
   - urbit-atom
   - urbit-azimuth
+  - urbit-eventlog-lmdb
   - urbit-king
   - urbit-uruk
   - urbit-skew-reference
   - urbit-uruk-rts
+  - urbit-noun
+  - urbit-noun-core
 
 extra-deps:
   - flat-0.3.4@sha256:002a0e0ae656ea8cc02a772d0bcb6ea7dbd7f2e79070959cc748ad1e7138eb38

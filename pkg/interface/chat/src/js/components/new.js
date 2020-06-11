@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { InviteSearch } from './lib/invite-search';
+import { Spinner } from './lib/icons/icon-spinner';
 import { Route, Link } from 'react-router-dom';
 import { uuid, isPatTa, deSig } from '/lib/util';
 import urbitOb from 'urbit-ob';
@@ -15,16 +16,16 @@ export class NewScreen extends Component {
       idName: '',
       groups: [],
       ships: [],
-      security: 'village',
+      security: 'channel',
       idError: false,
       inviteError: false,
       allowHistory: true,
-      createGroup: false
+      createGroup: false,
+      awaiting: false
     };
 
     this.titleChange = this.titleChange.bind(this);
     this.descriptionChange = this.descriptionChange.bind(this);
-    this.securityChange = this.securityChange.bind(this);
     this.allowHistoryChange = this.allowHistoryChange.bind(this);
     this.setInvite = this.setInvite.bind(this);
     this.createGroupChange = this.createGroupChange.bind(this);
@@ -63,17 +64,6 @@ export class NewScreen extends Component {
     });
   }
 
-  securityChange(event) {
-    if (this.state.createGroup) {
-      return;
-    }
-    if (event.target.checked) {
-      this.setState({security: "village"});
-    } else if (!event.target.checked) {
-      this.setState({security: "channel"});
-    }
-  }
-
   createGroupChange(event) {
     if (event.target.checked) {
       this.setState({
@@ -83,6 +73,7 @@ export class NewScreen extends Component {
     } else {
       this.setState({
         createGroup: !!event.target.checked,
+        security: 'channel'
       });
     }
   }
@@ -93,6 +84,7 @@ export class NewScreen extends Component {
 
   onClickCreate() {
     const { props, state } = this;
+    let grouped = (this.state.createGroup || (this.state.groups.length > 0));
 
     if (!state.title) {
       this.setState({
@@ -102,7 +94,7 @@ export class NewScreen extends Component {
       return;
     }
 
-    let station = `/${state.idName}`;
+    let station = `/${state.idName}` + (grouped ? `-${Math.floor(Math.random() * 10000)}` : "");
 
     if (station in props.inbox) {
       this.setState({
@@ -121,6 +113,10 @@ export class NewScreen extends Component {
       }
     });
 
+    if(state.ships.length === 1 && state.security === 'village' && !state.createGroup) {
+      props.history.push(`/~chat/new/dm/${aud[0]}`);
+    }
+
     if (!isValid) {
       this.setState({
         inviteError: true,
@@ -138,9 +134,9 @@ export class NewScreen extends Component {
       error: false,
       success: true,
       group: [],
-      ships: []
+      ships: [],
+      awaiting: true
     }, () => {
-      props.api.setSpinner(true);
       // if we want a "proper group" that can be managed from the contacts UI,
       // we make a path of the form /~zod/cool-group
       // if not, we make a path of the form /~/~zod/free-chat
@@ -162,7 +158,7 @@ export class NewScreen extends Component {
         state.allowHistory
       );
       submit.then(() => {
-        props.api.setSpinner(false);
+        this.setState({awaiting: false});
         props.history.push(`/~chat/room${appPath}`);
       })
     });
@@ -216,6 +212,11 @@ export class NewScreen extends Component {
       );
     }
 
+    let groups = {};
+    Object.keys(props.permissions).forEach((pem) => {
+      groups[pem] = props.permissions[pem].who;
+    });
+
     return (
       <div
         className={
@@ -259,10 +260,11 @@ export class NewScreen extends Component {
             Selected groups or ships will be able to post to chat
           </p>
           <InviteSearch
-            groups={props.groups}
+            groups={groups}
             contacts={props.contacts}
             associations={props.associations}
             groupResults={true}
+            shipResults={true}
             invites={{
               groups: state.groups,
               ships: state.ships
@@ -270,23 +272,12 @@ export class NewScreen extends Component {
             setInvite={this.setInvite}
           />
           {createGroupToggle}
-          <div className="mv7">
-            <input
-              type="checkbox"
-              style={{ WebkitAppearance: "none", width: 28 }}
-              className={inviteSwitchClasses}
-              onChange={this.securityChange}
-            />
-            <span className="dib f9 white-d inter ml3">Invite Only Chat</span>
-            <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
-              Chat participants must be invited to see chat content
-            </p>
-          </div>
           <button
             onClick={this.onClickCreate.bind(this)}
             className={createClasses}>
             Start Chat
           </button>
+          <Spinner awaiting={this.state.awaiting} classes="mt4" text="Creating chat..." />
         </div>
       </div>
     );

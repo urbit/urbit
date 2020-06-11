@@ -3,9 +3,18 @@
 =,  able:jael
 |%
 +$  config
-  $:  url=@ta
+  $:  ::  url: ethereum node rpc endpoint
+      ::  eager: if true, give logs asap, send disavows in case of reorg
+      ::  refresh-rate: rate at which to check for updates
+      ::  timeout-time: time an update check is allowed to take
+      ::  from: oldest block number to look at
+      ::  contracts: contract addresses to look at
+      ::  topics: event descriptions to look for
+      ::
+      url=@ta
       eager=?
       refresh-rate=@dr
+      timeout-time=@dr
       from=number:block
       contracts=(list address:ethereum)
       =topics

@@ -1,3 +1,4 @@
+::  List azimuth sources
 :-  %say
 |=  [[now=@da *] *]
 :-  %noun

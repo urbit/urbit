@@ -1,4 +1,5 @@
 /-  *rw-security
+^?
 |%
 ::
 +$  group-info
@@ -25,15 +26,28 @@
       [%unsubscribe who=@p book=@tas]
   ::
       [%read who=@p book=@tas note=@tas]
+  ::
+      [%groupify book=@tas target=(unit path) inclusive=?]
   ==
 ::
-+$  comment
++$  comment  comment-3
+::
++$  comment-2
   $:  author=@p
       date-created=@da
       content=@t
   ==
 ::
-+$  note
++$  comment-3
+  $:  author=@p
+      date-created=@da
+      content=@t
+      pending=?
+  ==
+::
++$  note  note-3
+::
++$  note-2
   $:  author=@p
       title=@t
       filename=@tas
@@ -42,11 +56,37 @@
       read=?
       file=@t
       snippet=@t
-::      build=(each manx tang)
-      comments=(map @da comment)
+      comments=(map @da comment-2)
   ==
 ::
-+$  notebook
++$  note-3
+  $:  author=@p
+      title=@t
+      filename=@tas
+      date-created=@da
+      last-edit=@da
+      read=?
+      file=@t
+      snippet=@t
+      comments=(map @da comment)
+      pending=?
+  ==
+::
++$  notebook  notebook-3
+::
++$  notebook-2
+  $:  title=@t
+      description=@t
+      comments=?
+      writers=path
+      subscribers=path
+      date-created=@da
+      notes=(map @tas note-2)
+      order=(list @tas)
+      unread=(set @tas)
+  ==
+::
++$  notebook-3
   $:  title=@t
       description=@t
       comments=?

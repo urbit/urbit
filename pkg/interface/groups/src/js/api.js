@@ -11,18 +11,19 @@ class UrbitApi {
     this.bindPaths = [];
 
     this.contactHook = {
-      edit: this.contactEdit.bind(this),
-      remove: this.contactRemove.bind(this)
+      edit: this.contactEdit.bind(this)
     };
 
     this.contactView = {
       create: this.contactCreate.bind(this),
       delete: this.contactDelete.bind(this),
+      remove: this.contactRemove.bind(this),
       share: this.contactShare.bind(this)
     };
 
     this.group = {
-      add: this.groupAdd.bind(this)
+      add: this.groupAdd.bind(this),
+      delete: this.groupRemove.bind(this)
     };
 
     this.invite = {
@@ -85,6 +86,12 @@ class UrbitApi {
     });
   }
 
+  groupRemove(path, ships) {
+    return this.action("group-store", "group-action", {
+      remove: { members: ships, path }
+    })
+  }
+
   contactShare(recipient, path, ship, contact) {
     return this.contactViewAction({
       share: {
@@ -97,16 +104,12 @@ class UrbitApi {
     return this.contactViewAction({ delete: { path }});
   }
 
-  contactHookAction(data) {
-    return this.action("contact-hook", "contact-action", data);
+  contactRemove(path, ship) {
+    return this.contactViewAction({ remove: { path, ship } });
   }
 
-  contactRemove(path, ship) {
-    return this.contactHookAction({
-      remove: {
-        path, ship
-      }
-    });
+  contactHookAction(data) {
+    return this.action("contact-hook", "contact-action", data);
   }
 
   contactEdit(path, ship, editField) {
@@ -118,7 +121,7 @@ class UrbitApi {
     {notes: ''}
     {color: 'fff'}  // with no 0x prefix
     {avatar: null}
-    {avatar: {p: length, q: bytestream}}
+    {avatar: {url: ''}}
     */
     return this.contactHookAction({
       edit: {
@@ -174,11 +177,11 @@ class UrbitApi {
     })
   }
 
-  setSpinner(boolean) {
+  setSelected(selected) {
     store.handleEvent({
       data: {
         local: {
-          spinner: boolean
+          selected: selected
         }
       }
     })

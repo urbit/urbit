@@ -34,6 +34,7 @@ dependencies:
   - deriving-compat
   - directory
   - file-embed
+  - flat
   - ghc-prim
   - hashable
   - lens
@@ -51,16 +52,12 @@ dependencies:
   - template-haskell
   - text
   - time
-  - unagi-chan
+  - transformers
+  - transformers-compat
+  - unordered-containers
   - urbit-atom
+  - urbit-noun
   - urbit-uruk
-  - vector
-
-when:
-  - condition: "! impl(ghcjs)"
-    dependencies:
-    - flat
-    - haskeline
 
 default-extensions:
   - ApplicativeDo

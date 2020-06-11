@@ -87,8 +87,9 @@
   |=  [state=app-state our=ship dap=term]
   ^-  card:agent:gall
   =/  args=vase  !>
-    :*  %watch  /[dap]
-        url.state  =(%czar (clan:title our))  ~m5
+    :+  %watch  /[dap]
+    ^-  config:eth-watcher
+    :*  url.state  =(%czar (clan:title our))  ~m5  ~m30
         launch:contracts:azimuth
         ~[azimuth:contracts:azimuth]
         (topics whos.state)

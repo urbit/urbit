@@ -55,6 +55,10 @@ a {
   line-height: 16px;
 }
 
+.bg-welcome-green {
+  background-color: #ECF6F2;
+}
+
 .mono {
   font-family: "Source Code Pro", monospace;
 }
@@ -144,6 +148,9 @@ a {
   .b--gray0-d {
     border-color: #333;
   }
+  .b--gray1-d {
+    border-color: #4d4d4d;
+  }
   .b--gray2-d {
     border-color: #7f7f7f;
   }
@@ -163,6 +170,6 @@ a {
     border-color: #fff;
   }
   .hover-bg-gray1-d:hover {
-    color: #4d4d4d;
+    background-color: #4d4d4d;
   }
 }

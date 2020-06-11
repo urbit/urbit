@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { Sigil } from './icons/sigil';
 
 import { api } from '/api';
-import { Route, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { EditElement } from '/components/lib/edit-element';
+import { Spinner } from './icons/icon-spinner';
 import { uxToHex } from '/lib/util';
+import { S3Upload } from '/components/lib/s3-upload';
 
 export class ContactCard extends Component {
   constructor(props) {
@@ -16,7 +18,10 @@ export class ContactCard extends Component {
       emailToSet: null,
       phoneToSet: null,
       websiteToSet: null,
-      notesToSet: null
+      avatarToSet: null,
+      notesToSet: null,
+      awaiting: false,
+      type: 'Saving to group'
     };
     this.editToggle = this.editToggle.bind(this);
     this.sigilColorSet = this.sigilColorSet.bind(this);
@@ -24,10 +29,12 @@ export class ContactCard extends Component {
     this.emailToSet = this.emailToSet.bind(this);
     this.phoneToSet = this.phoneToSet.bind(this);
     this.websiteToSet = this.websiteToSet.bind(this);
+    this.avatarToSet = this.avatarToSet.bind(this);
     this.notesToSet = this.notesToSet.bind(this);
     this.setField = this.setField.bind(this);
     this.shareWithGroup = this.shareWithGroup.bind(this);
-    this.removeFromGroup = this.removeFromGroup.bind(this);
+    this.removeSelfFromGroup = this.removeSelfFromGroup.bind(this);
+    this.removeOtherFromGroup = this.removeOtherFromGroup.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -40,27 +47,17 @@ export class ContactCard extends Component {
         emailToSet: null,
         phoneToSet: null,
         websiteToSet: null,
+        avatarToSet: null,
         notesToSet: null
       });
       return;
     }
-    // sigil color updates are done by keystroke parsing on update
-    // other field edits are exclusively handled by setField()
-    let currentColor = (props.contact.color) ? props.contact.color : "000000";
-    currentColor = uxToHex(currentColor);
-    let hexExp = /([0-9A-Fa-f]{6})/
-    let hexTest = hexExp.exec(this.state.colorToSet);
-
-    if (hexTest && (hexTest[1] !== currentColor) && !props.share) {
-      api.contactEdit(props.path, `~${props.ship}`, {color: hexTest[1]});
-    }
   }
 
   editToggle() {
-    const { props } = this;
     let editSwitch = this.state.edit;
     editSwitch = !editSwitch;
-    this.setState({edit: editSwitch});
+    this.setState({ edit: editSwitch });
   }
 
   emailToSet(value) {
@@ -83,125 +80,213 @@ export class ContactCard extends Component {
     this.setState({ websiteToSet: value });
   }
 
+  avatarToSet(value) {
+    this.setState({ avatarToSet: value });
+  }
+
   sigilColorSet(event) {
     this.setState({ colorToSet: event.target.value });
   }
 
   shipParser(ship) {
     switch (ship.length) {
-      case 3: return "Galaxy";
-      case 6: return "Star";
-      case 13: return "Planet";
-      case 56: return "Comet";
-      default: return "Unknown";
+      case 3: return 'Galaxy';
+      case 6: return 'Star';
+      case 13: return 'Planet';
+      case 56: return 'Comet';
+      default: return 'Unknown';
     }
   }
 
   setField(field) {
     const { props, state } = this;
-    let ship = "~" + props.ship;
-    let emailTest = new RegExp(''
-      + /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*/.source
+    const ship = '~' + props.ship;
+    const emailTest = new RegExp(String(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*/.source)
       + /@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.source
     );
 
-    let phoneTest = new RegExp(''
-      + /^\s*(?:\+?(\d{1,3}))?/.source
+    const phoneTest = new RegExp(String(/^\s*(?:\+?(\d{1,3}))?/.source)
       + /([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/.source
     );
 
-    let websiteTest = new RegExp(''
-      + /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}/.source
+    const websiteTest = new RegExp(String(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}/.source)
       + /\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.source
     );
 
     switch (field) {
-      case "email": {
+      case 'avatar': {
         if (
-          (state.emailToSet === "") ||
+          (state.avatarToSet === '') ||
+          (
+            Boolean(props.contact.avatar) &&
+            state.avatarToSet === props.contact.avatar
+          )
+        ) {
+          return false;
+        }
+        const avatarTestResult = websiteTest.exec(state.avatarToSet);
+        if (avatarTestResult) {
+          this.setState({
+            awaiting: true,
+            type: 'Saving to group'
+          }, (() => {
+            console.log(state.avatarToSet);
+            api.contactEdit(props.path, ship, {
+              avatar: {
+                url: state.avatarToSet
+              }
+            }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }));
+        }
+        break;
+      }
+      case 'color': {
+        let currentColor = (props.contact.color) ? props.contact.color : '000000';
+        currentColor = uxToHex(currentColor);
+        const hexExp = /([0-9A-Fa-f]{6})/;
+        const hexTest = hexExp.exec(this.state.colorToSet);
+
+        if (hexTest && (hexTest[1] !== currentColor) && !props.share) {
+          this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
+            api.contactEdit(props.path, `~${props.ship}`, { color: hexTest[1] }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }));
+        }
+        break;
+      }
+      case 'email': {
+        if (
+          (state.emailToSet === '') ||
           (state.emailToSet === props.contact.email)
         ) {
           return false;
         }
-        let emailTestResult = emailTest.exec(state.emailToSet);
+        const emailTestResult = emailTest.exec(state.emailToSet);
         if (emailTestResult) {
-          api.contactEdit(props.path, ship, { email: state.emailToSet });
+          this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
+            api.contactEdit(props.path, ship, { email: state.emailToSet }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }));
         }
         break;
       }
-      case "nickname": {
+      case 'nickname': {
         if (
-          (state.nickNameToSet === "") ||
+          (state.nickNameToSet === '') ||
           (state.nickNameToSet === props.contact.nickname)
         ) {
           return false;
         }
-        api.contactEdit(props.path, ship, { nickname: state.nickNameToSet });
+        this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
+          api.contactEdit(props.path, ship, { nickname: state.nickNameToSet }).then(() => {
+            this.setState({ awaiting: false });
+          });
+        }));
+
         break;
       }
-      case "notes": {
+      case 'notes': {
         if (
-          (state.notesToSet === "") ||
+          (state.notesToSet === '') ||
           (state.notesToSet === props.contact.notes)
         ) {
           return false;
         }
-        api.contactEdit(props.path, ship, { notes: state.notesToSet });
+        this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
+          api.contactEdit(props.path, ship, { notes: state.notesToSet }).then(() => {
+            this.setState({ awaiting: false });
+          });
+        }));
         break;
       }
-      case "phone": {
+      case 'phone': {
         if (
-          (state.phoneToSet === "") ||
+          (state.phoneToSet === '') ||
           (state.phoneToSet === props.contact.phone)
         ) {
           return false;
         }
-        let phoneTestResult = phoneTest.exec(state.phoneToSet);
+        const phoneTestResult = phoneTest.exec(state.phoneToSet);
         if (phoneTestResult) {
-          api.contactEdit(props.path, ship, { phone: state.phoneToSet });
+          this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
+            api.contactEdit(props.path, ship, { phone: state.phoneToSet }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }));
         }
         break;
       }
-      case "website": {
+      case 'website': {
         if (
-          (state.websiteToSet === "") ||
+          (state.websiteToSet === '') ||
           (state.websiteToSet === props.contact.website)
         ) {
           return false;
         }
-        let websiteTestResult = websiteTest.exec(state.websiteToSet);
+        const websiteTestResult = websiteTest.exec(state.websiteToSet);
         if (websiteTestResult) {
-          api.contactEdit(props.path, ship, { website: state.websiteToSet });
+          this.setState({ awaiting: true, type: 'Saving to group' }, (() => {
+            api.contactEdit(props.path, ship, { website: state.websiteToSet }).then(() => {
+              this.setState({ awaiting: false });
+            });
+          }));
         }
         break;
       }
-      case "removeAvatar": {
-        api.contactEdit(props.path, ship, { avatar: null });
+      case 'removeEmail': {
+        this.setState({ emailToSet: '', awaiting: true, type: 'Removing from group' }, (() => {
+          api.contactEdit(props.path, ship, { email: '' }).then(() => {
+            this.setState({ awaiting: false });
+          });
+        }));
         break;
       }
-      case "removeEmail": {
-        this.setState({ emailToSet: "" });
-        api.contactEdit(props.path, ship, { email: "" });
+      case 'removeNickname': {
+        this.setState({ nicknameToSet: '', awaiting: true, type: 'Removing from group' }, (() => {
+          api.contactEdit(props.path, ship, { nickname: '' }).then(() => {
+            this.setState({ awaiting: false });
+          });
+        }));
         break;
       }
-      case "removeNickname": {
-        this.setState({ nicknameToSet: "" });
-        api.contactEdit(props.path, ship, { nickname: "" });
+      case 'removePhone': {
+        this.setState({ phoneToSet: '', awaiting: true, type: 'Removing from group' }, (() => {
+          api.contactEdit(props.path, ship, { phone: '' }).then(() => {
+            this.setState({ awaiting: false });
+          });
+        }));
         break;
       }
-      case "removePhone": {
-        this.setState({ phoneToSet: "" });
-        api.contactEdit(props.path, ship, { phone: "" });
+      case 'removeWebsite': {
+        this.setState({ websiteToSet: '', awaiting: true, type: 'Removing from group' }, (() => {
+          api.contactEdit(props.path, ship, { website: '' }).then(() => {
+            this.setState({ awaiting: false });
+          });
+        }));
         break;
       }
-      case "removeWebsite": {
-        this.setState({ websiteToSet: "" });
-        api.contactEdit(props.path, ship, { website: "" });
+      case 'removeAvatar': {
+        this.setState({
+          avatarToSet: null,
+          awaiting: true,
+          type: 'Removing from group'
+        }, (() => {
+          api.contactEdit(props.path, ship, { avatar: null }).then(() => {
+            this.setState({ awaiting: false });
+          });
+        }));
         break;
       }
-      case "removeNotes": {
-        this.setState({ notesToSet: "" });
-        api.contactEdit(props.path, ship, { notes: "" });
+      case 'removeNotes': {
+        this.setState({ notesToSet: '', awaiting: true, type: 'Removing from group' }, (() => {
+          api.contactEdit(props.path, ship, { notes: '' }).then(() => {
+            this.setState({ awaiting: false });
+          });
+        }));
         break;
       }
     }
@@ -216,11 +301,12 @@ export class ContactCard extends Component {
 
   shareWithGroup() {
     const { props, state } = this;
-    let defaultVal = props.share ? {
+    const defaultVal = props.share ? {
       nickname: props.rootIdentity.nickname,
       email: props.rootIdentity.email,
       phone: props.rootIdentity.phone,
       website: props.rootIdentity.website,
+      avatar: !!props.rootIdentity.avatar ? { url: props.rootIdentity.avatar } : null,
       notes: props.rootIdentity.notes,
       color: uxToHex(props.rootIdentity.color)
     } : {
@@ -228,39 +314,44 @@ export class ContactCard extends Component {
       email: props.contact.email,
       phone: props.contact.phone,
       website: props.contact.website,
+      avatar: !!props.contact.avatar ? { url: props.contact.avatar } : null,
       notes: props.contact.notes,
       color: props.contact.color
     };
-
-    let contact = {
+    
+    const contact = {
       nickname: this.pickFunction(state.nickNameToSet, defaultVal.nickname),
       email: this.pickFunction(state.emailToSet, defaultVal.email),
       phone: this.pickFunction(state.phoneToSet, defaultVal.phone),
       website: this.pickFunction(state.websiteToSet, defaultVal.website),
       notes: this.pickFunction(state.notesToSet, defaultVal.notes),
       color: this.pickFunction(state.colorToSet, defaultVal.color),
-      avatar: null
+      avatar: this.pickFunction(
+        !!state.avatarToSet ? { url: state.avatarToSet } : null,
+        defaultVal.avatar
+      )
     };
-    api.setSpinner(true);
-    api.contactView.share(
-      `~${props.ship}`, props.path, `~${window.ship}`, contact
-    ).then(() => {
-      api.setSpinner(false);
-      props.history.push(`/~groups/view${props.path}/${window.ship}`)
-    });
+
+    this.setState({ awaiting: true, type: 'Sharing with group' }, (() => {
+      api.contactView.share(
+        `~${props.ship}`, props.path, `~${window.ship}`, contact
+      ).then(() => {
+        props.history.push(`/~groups/view${props.path}/${window.ship}`);
+      });
+    }));
   }
 
-  removeFromGroup() {
+  removeSelfFromGroup() {
     const { props } = this;
     // share empty contact so that we can remove ourselves from group
     // if we haven't shared yet
-    let contact = {
-      nickname: "",
-      email: "",
-      phone: "",
-      website: "",
-      notes: "",
-      color: "000000",
+    const contact = {
+      nickname: '',
+      email: '',
+      phone: '',
+      website: '',
+      notes: '',
+      color: '000000',
       avatar: null
     };
 
@@ -268,23 +359,46 @@ export class ContactCard extends Component {
       `~${props.ship}`, props.path, `~${window.ship}`, contact
     );
 
-    api.setSpinner(true);
-    api.contactHook.remove(props.path, `~${props.ship}`).then(() => {
-      api.setSpinner(false);
-      let destination = (props.ship === window.ship)
-        ? "" : props.path;
-      props.history.push(`/~groups${destination}`);
+    this.setState({ awaiting: true, type: 'Removing from group' }, (() => {
+      api.contactView.delete(props.path).then(() => {
+        this.setState({ awaiting: false });
+        props.history.push(`/~groups`);
+      });
+    }));
+  }
+
+  removeOtherFromGroup() {
+    const { props } = this;
+
+    this.setState({ awaiting: true, type: 'Removing from group' }, (() => {
+      api.contactView.remove(props.path, `~${props.ship}`).then(() => {
+        this.setState({ awaiting: false });
+        props.history.push(`/~groups${props.path}`);
+      });
+    }));
+  }
+
+  uploadSuccess(url) {
+    this.setState({
+      avatarToSet: url
+    }, () => {
+      this.setField('avatar');
     });
+  }
+
+  uploadError(error) {
+    //  no-op for now
   }
 
   renderEditCard() {
     const { props, state } = this;
     // if this is our first edit in a new group, propagate from root identity
-    let defaultValue = props.share ? {
+    const defaultValue = props.share ? {
       nickname: props.rootIdentity.nickname,
       email: props.rootIdentity.email,
       phone: props.rootIdentity.phone,
       website: props.rootIdentity.website,
+      avatar: props.rootIdentity.avatar,
       notes: props.rootIdentity.notes,
       color: props.rootIdentity.color
     } : {
@@ -292,66 +406,83 @@ export class ContactCard extends Component {
       email: props.contact.email,
       phone: props.contact.phone,
       website: props.contact.website,
+      avatar: props.contact.avatar,
       notes: props.contact.notes,
       color: props.contact.color
     };
 
-    let shipType = this.shipParser(props.ship);
+    const shipType = this.shipParser(props.ship);
 
-    let defaultColor = !!defaultValue.color ? defaultValue.color : "000000";
+    let defaultColor = defaultValue.color ? defaultValue.color : '000000';
     defaultColor = uxToHex(defaultColor);
-    let currentColor = !!state.colorToSet ? state.colorToSet : defaultColor;
+    let currentColor = state.colorToSet ? state.colorToSet : defaultColor;
     currentColor = uxToHex(currentColor);
 
-    let sigilColor = "";
-    let hasAvatar =
-      'avatar' in props.contact && props.contact.avatar !== "TODO";
+    const avatar = ('avatar' in props.contact && props.contact.avatar !== null)
+      ? <img className="dib h-auto"
+           width={128}
+           src={props.contact.avatar}
+        />
+      : <span className="dn"></span>;
 
-    if (!hasAvatar) {
-      sigilColor = (
-        <div className="tl mt4 mb4 w-auto ml-auto mr-auto"
-          style={{ width: "fit-content" }}>
-          <p className="f9 gray2 lh-copy">Sigil Color</p>
-          <textarea
-            className={"b--gray4 b--gray2-d black white-d bg-gray0-d f7 ba db pl2 " +
-            "focus-b--black focus-b--white-d"}
-            onChange={this.sigilColorSet}
-            defaultValue={defaultColor}
-            key={"default" + defaultColor}
-            style={{
-              resize: "none",
-              height: 40,
-              paddingTop: 10,
-              width: 114
-            }}>
-          </textarea>
-        </div>
-      );
-    }
-
-    let removeImage = hasAvatar ? (
-        <div>
-          <button className="f9 black pointer db"
-            onClick={() => this.setField("removeAvatar")}>
-            Remove photo
-          </button>
-        </div>
-      ) : "";
-
-    let avatar = (hasAvatar)
-      ? <img className="dib h-auto" width={128} src={props.contact.avatar} />
-      : <Sigil
-          ship={props.ship}
-          size={128}
-          color={"#" + currentColor}
-          key={"avatar" + currentColor} />;
+    const imageSetter = (!props.share) ? (
+      <span className="db">
+        <p className="f9 gray2 db pb1">Avatar image url</p>
+        <span className="cf db">
+          <span className="w-20 fl pt1">
+            <S3Upload
+              className="fr pr3"
+              configuration={props.s3.configuration}
+              credentials={props.s3.credentials}
+              uploadSuccess={this.uploadSuccess.bind(this)}
+              uploadError={this.uploadError.bind(this)}
+            />
+          </span>
+          <EditElement
+            className="fr w-80"
+            defaultValue={defaultValue.avatar}
+            onChange={this.avatarToSet}
+            onDeleteClick={() => this.setField('removeAvatar')}
+            onSaveClick={() => this.setField('avatar')}
+            showButtons={!props.share}
+          />
+        </span>
+      </span>
+    ) : (<span className="dn"></span>);
 
     return (
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl pb8">
         <div className="w-100 mw6 tc">
           {avatar}
-          {sigilColor}
-          {removeImage}
+          {imageSetter}
+          <Sigil
+            ship={props.ship}
+            size={128}
+            color={'#' + currentColor}
+            key={'avatar' + currentColor}
+          />
+          <div className="tl mt4 mb4 w-auto ml-auto mr-auto"
+            style={{ width: 'fit-content' }}
+          >
+            <p className="f9 gray2 lh-copy">Sigil Color</p>
+            <textarea
+              className={'b--gray4 b--gray2-d black white-d bg-gray0-d f7 ba db pl2 ' +
+              'focus-b--black focus-b--white-d'}
+              onChange={this.sigilColorSet}
+              defaultValue={defaultColor}
+              key={'default' + defaultColor}
+              onKeyPress={ e => !e.key.match(/[0-9a-f]/i) ? e.preventDefault() : null}
+              onBlur={(() => this.setField('color'))}
+              maxLength={6}
+              style={{
+                resize: 'none',
+                height: 40,
+                paddingTop: 10,
+                width: 114
+              }}
+            >
+            </textarea>
+          </div>
           <div className="w-100 pt8 pb8 lh-copy tl">
             <p className="f9 gray2">Ship Name</p>
             <p className="f8 mono">~{props.ship}</p>
@@ -362,38 +493,43 @@ export class ContactCard extends Component {
               title="Nickname"
               defaultValue={defaultValue.nickname}
               onChange={this.nickNameToSet}
-              onDeleteClick={() => this.setField("removeNickname")}
-              onSaveClick={() => this.setField("nickname")}
-              showButtons={!props.share} />
+              onDeleteClick={() => this.setField('removeNickname')}
+              onSaveClick={() => this.setField('nickname')}
+              showButtons={!props.share}
+            />
             <EditElement
               title="Email"
               defaultValue={defaultValue.email}
               onChange={this.emailToSet}
-              onDeleteClick={() => this.setField("removeEmail")}
-              onSaveClick={() => this.setField("email")}
-              showButtons={!props.share} />
+              onDeleteClick={() => this.setField('removeEmail')}
+              onSaveClick={() => this.setField('email')}
+              showButtons={!props.share}
+            />
             <EditElement
               title="Phone"
               defaultValue={defaultValue.phone}
               onChange={this.phoneToSet}
-              onDeleteClick={() => this.setField("removePhone")}
-              onSaveClick={() => this.setField("phone")}
-              showButtons={!props.share} />
+              onDeleteClick={() => this.setField('removePhone')}
+              onSaveClick={() => this.setField('phone')}
+              showButtons={!props.share}
+            />
             <EditElement
               title="Website"
               defaultValue={defaultValue.website}
               onChange={this.websiteToSet}
-              onDeleteClick={() => this.setField("removeWebsite")}
-              onSaveClick={() => this.setField("website")}
-              showButtons={!props.share} />
+              onDeleteClick={() => this.setField('removeWebsite')}
+              onSaveClick={() => this.setField('website')}
+              showButtons={!props.share}
+            />
             <EditElement
               title="Notes"
               defaultValue={defaultValue.notes}
               onChange={this.notesToSet}
-              onDeleteClick={() => this.setField("removeNotes")}
-              onSaveClick={() => this.setField("notes")}
+              onDeleteClick={() => this.setField('removeNotes')}
+              onSaveClick={() => this.setField('notes')}
               resizable={true}
-              showButtons={!props.share} />
+              showButtons={!props.share}
+            />
           </div>
         </div>
       </div>
@@ -402,22 +538,23 @@ export class ContactCard extends Component {
 
   renderCard() {
     const { props } = this;
-    let shipType = this.shipParser(props.ship);
-    let currentColor = props.contact.color ? props.contact.color : "0x0";
-    let hexColor = uxToHex(currentColor);
+    const shipType = this.shipParser(props.ship);
+    const currentColor = props.contact.color ? props.contact.color : '0x0';
+    const hexColor = uxToHex(currentColor);
 
-    let avatar =
-      ('avatar' in props.contact && props.contact.avatar !== "TODO") ?
+    const avatar =
+      ('avatar' in props.contact && props.contact.avatar !== null) ?
       <img className="dib h-auto" width={128} src={props.contact.avatar} /> :
       <Sigil
         ship={props.ship}
         size={128}
-        color={"#" + hexColor}
-        key={hexColor} />;
+        color={'#' + hexColor}
+        key={hexColor}
+      />;
 
-    let websiteHref =
-      (props.contact.website && props.contact.website.includes("://")) ?
-      props.contact.website : "http://" + props.contact.website;
+    const websiteHref =
+      (props.contact.website && props.contact.website.includes('://')) ?
+      props.contact.website : 'http://' + props.contact.website;
 
     return (
       <div className="w-100 mt8 flex justify-center pa4 pt8 pt0-l pa0-xl pt4-xl">
@@ -430,39 +567,41 @@ export class ContactCard extends Component {
             <p className="f8">{shipType}</p>
             <hr className="mv8 gray4 b--gray4 bb-0 b--solid" />
             <div>
-              { !!props.contact.nickname ? (
+              { props.contact.nickname ? (
                   <div>
                     <p className="f9 gray2">Nickname</p>
                     <p className="f8">{props.contact.nickname}</p>
                   </div>
                 ) : null
               }
-              { !!props.contact.email ? (
+              { props.contact.email ? (
                   <div>
                     <p className="f9 mt6 gray2">Email</p>
                     <p className="f8">{props.contact.email}</p>
                   </div>
                 ) : null
               }
-              { !!props.contact.phone ? (
+              { props.contact.phone ? (
                   <div>
                     <p className="f9 mt6 gray2">Phone</p>
                     <p className="f8">{props.contact.phone}</p>
                   </div>
                 ) : null
               }
-              { !!props.contact.website ? (
+              { props.contact.website ? (
                   <div>
                     <p className="f9 mt6 gray2">website</p>
                     <a target="_blank"
+                       rel="noopener noreferrer"
                        className="bb b--black f8"
-                       href={websiteHref}>
+                       href={websiteHref}
+                    >
                       {props.contact.website}
                     </a>
                   </div>
                 ) : null
               }
-              { !!props.contact.notes ? (
+              { props.contact.notes ? (
                   <div>
                     <p className="f9 mt6 gray2">notes</p>
                     <p className="f8">{props.contact.notes}</p>
@@ -480,35 +619,33 @@ export class ContactCard extends Component {
     const { props, state } = this;
 
     let editInfoText =
-      state.edit ? "Finish" : "Edit";
+      state.edit ? 'Finish' : 'Edit';
     if (props.share && state.edit) {
-      editInfoText = "Share";
+      editInfoText = 'Share';
     }
 
-    let ourOpt = (props.ship === window.ship) ? "dib" : "dn";
-    let localOpt =
-      ((props.ship === window.ship) && (props.path === "/~/default"))
-      ? "dib" : "dn";
+    const ourOpt = (props.ship === window.ship) ? 'dib' : 'dn';
 
-    let adminOpt =
-      ( (props.path.includes(window.ship) || (props.ship === window.ship)) &&
-        !(props.path.includes('/~/default'))
-      ) ? "dib" : "dn";
+    const adminOpt =
+       ((props.path.includes(`~${window.ship}/`)) || ((props.ship === window.ship) &&
+        !(props.path.includes('/~/default'))))
+       ? 'dib' : 'dn';
 
-    let meLink = (props.path === "/~/default")
-      ? `/~groups` : `/~groups/detail${props.path}`;
+    const meLink = (props.path === '/~/default')
+      ? '/~groups' : `/~groups/detail${props.path}`;
 
-    let card = state.edit ? this.renderEditCard() : this.renderCard();
+    const card = state.edit ? this.renderEditCard() : this.renderCard();
     return (
       <div className="w-100 h-100 overflow-hidden">
         <div
           className={
-            "flex justify-between w-100 bg-white bg-gray0-d " +
-            "bb b--gray4 b--gray2-d "
-          }>
+            'flex justify-between w-100 bg-white bg-gray0-d ' +
+            'bb b--gray4 b--gray1-d '
+          }
+        >
           <div className="f9 mv4 mh3 pt1 dib w-100">
             <Link to={meLink}>
-              {"⟵"}
+              {'⟵'}
             </Link>
           </div>
           <div className="flex">
@@ -521,23 +658,26 @@ export class ContactCard extends Component {
                 }
               }}
               className={
-                `white-d bg-gray0-d mv4 mh3 f9 pa1 pointer flex-shrink-0 ` +
+                'white-d bg-gray0-d mv4 mh3 f9 pa1 pointer flex-shrink-0 ' +
                 ourOpt
-              }>
+              }
+            >
               {editInfoText}
             </button>
           </div>
           <button
             className={
-              `bg-gray0-d mv4 mh3 pa1 f9 red2 pointer flex-shrink-0 ` + adminOpt
+              'bg-gray0-d mv4 mh3 pa1 f9 red2 pointer flex-shrink-0 ' + adminOpt
             }
-            onClick={this.removeFromGroup}>
-            {props.ship === window.ship && props.path.includes(window.ship)
-              ? "Leave Group"
-              : "Remove from Group"}
+            onClick={props.ship === window.ship ? this.removeSelfFromGroup : this.removeOtherFromGroup}
+          >
+            {props.ship === window.ship
+              ? 'Leave Group'
+              : 'Remove from Group'}
           </button>
         </div>
         <div className="h-100 w-100 overflow-x-hidden pb8 white-d">{card}</div>
+        <Spinner awaiting={this.state.awaiting} text={`${this.state.type}...`} classes="absolute right-1 bottom-1 ba pa2 b--gray1-d" />
       </div>
     );
   }

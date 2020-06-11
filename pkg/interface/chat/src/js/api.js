@@ -72,7 +72,7 @@ class UrbitApi {
 
   addPendingMessage(msg) {
     if (store.state.pendingMessages.has(msg.path)) {
-      store.state.pendingMessages.get(msg.path).push(msg.envelope);
+      store.state.pendingMessages.get(msg.path).unshift(msg.envelope);
     } else {
       store.state.pendingMessages.set(msg.path, [msg.envelope]);
     }
@@ -120,7 +120,9 @@ class UrbitApi {
       }
     };
 
-    this.action("chat-hook", "json", data);
+    this.action("chat-hook", "json", data).then(() => {
+      this.chatRead(path);
+    })
     data.message.envelope.author = data.message.envelope.author.substr(1);
     this.addPendingMessage(data.message);
   }
@@ -175,8 +177,15 @@ class UrbitApi {
     });
   }
 
-  chatViewGroupify(path) {
-    return this.chatViewAction({ groupify: { 'app-path': path } });
+  chatViewGroupify(path, group = null, inclusive = false) {
+    let action = { groupify: { 'app-path': path, existing: null } };
+    if (group) {
+      action.groupify.existing = {
+        'group-path': group,
+        inclusive: inclusive
+      }
+    }
+    return this.chatViewAction(action);
   }
 
   inviteAction(data) {
@@ -239,11 +248,11 @@ class UrbitApi {
     });
   }
 
-  setSpinner(boolean) {
+  setSelected(selected) {
     store.handleEvent({
       data: {
         local: {
-          spinner: boolean
+          selected: selected
         }
       }
     })

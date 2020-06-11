@@ -1092,10 +1092,14 @@ u3r_mp(mpz_t   a_mp,
     u3a_atom* b_u = u3a_to_ptr(b);
     c3_w    len_w = b_u->len_w;
 
-    //  slight deficiency in the GMP API.
+    //  avoid reallocation on import, if possible
     //
-    c3_assert(!(len_w >> 27));
-    mpz_init2(a_mp, len_w << 5);
+    if ( (len_w >> 27) ) {
+      mpz_init(a_mp);
+    }
+    else {
+      mpz_init2(a_mp, len_w << 5);
+    }
 
     mpz_import(a_mp, len_w, -1, sizeof(c3_w), 0, 0, b_u->buf_w);
   }
@@ -1196,6 +1200,51 @@ u3r_chubs(c3_w    a_w,
   /* XX: assumes little-endian
   */
   u3r_words(a_w * 2, b_w * 2, (c3_w *)c_d, d);
+}
+
+/* u3r_safe_byte(): validate and retrieve byte.
+*/
+c3_o
+u3r_safe_byte(u3_noun dat, c3_y* out_y)
+{
+  if (  (c3n == u3a_is_atom(dat))
+     || (1 < u3r_met(3, dat)) )
+  {
+    return c3n;
+  }
+
+  *out_y = u3r_byte(0, dat);
+  return c3y;
+}
+
+/* u3r_safe_word(): validate and retrieve word.
+*/
+c3_o
+u3r_safe_word(u3_noun dat, c3_w* out_w)
+{
+  if (  (c3n == u3a_is_atom(dat))
+     || (1 < u3r_met(5, dat)) )
+  {
+    return c3n;
+  }
+
+  *out_w = u3r_word(0, dat);
+  return c3y;
+}
+
+/* u3r_safe_chub(): validate and retrieve chub.
+*/
+c3_o
+u3r_safe_chub(u3_noun dat, c3_d* out_d)
+{
+  if (  (c3n == u3a_is_atom(dat))
+     || (1 < u3r_met(6, dat)) )
+  {
+    return c3n;
+  }
+
+  *out_d = u3r_chub(0, dat);
+  return c3y;
 }
 
 /* u3r_chop():

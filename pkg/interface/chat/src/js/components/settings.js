@@ -3,8 +3,9 @@ import classnames from 'classnames';
 import { deSig, uxToHex, writeText } from '/lib/util';
 import { Route, Link } from "react-router-dom";
 
-
+import { Spinner } from './lib/icons/icon-spinner';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
+import { InviteSearch } from '/components/lib/invite-search';
 import SidebarSwitcher from './lib/icons/icon-sidebar-switch';
 
 
@@ -16,10 +17,17 @@ export class SettingsScreen extends Component {
       isLoading: false,
       title: "",
       description: "",
-      color: ""
+      color: "",
+      // groupify settings
+      targetGroup: null,
+      inclusive: false,
+      awaiting: false,
+      type: "Editing chat..."
     };
 
     this.renderDelete = this.renderDelete.bind(this);
+    this.changeTargetGroup = this.changeTargetGroup.bind(this);
+    this.changeInclusive = this.changeInclusive.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
     this.changeDescription = this.changeDescription.bind(this);
     this.changeColor = this.changeColor.bind(this);
@@ -43,7 +51,6 @@ export class SettingsScreen extends Component {
       this.setState({
         isLoading: false
       }, () => {
-        props.api.setSpinner(false);
         props.history.push('/~chat');
       });
     }
@@ -56,6 +63,18 @@ export class SettingsScreen extends Component {
           color: `#${uxToHex(props.association.metadata.color)}`
         });
     }
+  }
+
+  changeTargetGroup(target) {
+    if (target.groups.length === 1) {
+      this.setState({ targetGroup: target.groups[0] });
+    } else {
+      this.setState({ targetGroup: null });
+    }
+  }
+
+  changeInclusive(event) {
+    this.setState({ inclusive: !!event.target.checked });
   }
 
   changeTitle() {
@@ -90,17 +109,19 @@ export class SettingsScreen extends Component {
           ? props.association : {};
 
       if (chatOwner) {
-        props.api.setSpinner(true);
-        props.api.metadataAdd(
-          association['app-path'],
-          association['group-path'],
-          association.metadata.title,
-          association.metadata.description,
-          association.metadata['date-created'],
-          color
-        ).then(() => {
-          props.api.setSpinner(false);
-        })
+        this.setState({awaiting: true, type: "Editing chat..."}, (() => {
+          props.api.metadataAdd(
+            association['app-path'],
+            association['group-path'],
+            association.metadata.title,
+            association.metadata.description,
+            association.metadata['date-created'],
+            color
+          ).then(() => {
+            this.setState({awaiting: false});
+          })
+        }))
+
       }
     }
   }
@@ -108,27 +129,29 @@ export class SettingsScreen extends Component {
   deleteChat() {
     const { props, state } = this;
 
-    props.api.chatView.delete(props.station);
-    props.api.setSpinner(true);
-
     this.setState({
       isLoading: true,
-      loadingText: (deSig(props.match.params.ship) === window.ship)
-        ? 'Deleting...'
-        : 'Leaving...'
-    });
+      awaiting: true,
+      type: (deSig(props.match.params.ship) === window.ship)
+        ? 'Deleting chat...'
+        : 'Leaving chat...'
+    }, (() => {
+        props.api.chatView.delete(props.station);
+    }));
   }
 
   groupifyChat() {
     const { props, state } = this;
 
-    props.api.chatView.groupify(props.station);
-    props.api.setSpinner(true);
-
     this.setState({
       isLoading: true,
-      loadingText: 'Converting...'
-    });
+      awaiting: true,
+      type: 'Converting chat...'
+    }, (() => {
+      props.api.chatView.groupify(
+        props.station, state.targetGroup, state.inclusive
+      ).then(() => this.setState({awaiting: false}));
+    }));
   }
 
   renderDelete() {
@@ -161,7 +184,6 @@ export class SettingsScreen extends Component {
     const { props, state } = this;
 
     const chatOwner = (deSig(props.match.params.ship) === window.ship);
-    console.log(chatOwner, props.match.params.ship, window.ship);
 
     const ownedUnmanagedVillage =
       chatOwner &&
@@ -171,15 +193,60 @@ export class SettingsScreen extends Component {
     if (!ownedUnmanagedVillage) {
       return null;
     } else {
+      let inclusiveToggle = <div/>
+      if (state.targetGroup) {
+        //TODO toggle component into /lib
+        let inclusiveClasses = state.inclusive
+          ? "relative checked bg-green2 br3 h1 toggle v-mid z-0"
+          : "relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0";
+        inclusiveToggle = (
+          <div className="mt4">
+            <input
+              type="checkbox"
+              style={{ WebkitAppearance: "none", width: 28 }}
+              className={inclusiveClasses}
+              onChange={this.changeInclusive}
+            />
+            <span className="dib f9 white-d inter ml3">
+              Add all members to group
+            </span>
+            <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
+              Add chat members to the group if they aren't in it yet
+            </p>
+          </div>
+        );
+      }
+
+      let groups = {};
+      Object.keys(props.permissions).forEach((pem) => {
+        groups[pem] = props.permissions[pem].who;
+      });
+
       return (
         <div>
-          <div className={"w-100 fl mt3 "}>
+          <div className={"w-100 fl mt3"} style={{maxWidth: "29rem"}}>
             <p className="f8 mt3 lh-copy db">Convert Chat</p>
             <p className="f9 gray2 db mb4">
-              Convert this chat into a group with associated chat.
+              Convert this chat into a group with associated chat, or select a
+              group to add this chat to.
             </p>
+            <InviteSearch
+              groups={groups}
+              contacts={props.contacts}
+              associations={props.associations}
+              groupResults={true}
+              shipResults={false}
+              invites={{
+                groups: state.targetGroup ? [state.targetGroup] : [],
+                ships: []
+              }}
+              setInvite={this.changeTargetGroup}
+            />
+            {inclusiveToggle}
             <a onClick={this.groupifyChat.bind(this)}
-               className={"dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer"}>Convert to group</a>
+               className={"dib f9 black gray4-d bg-gray0-d ba pa2 mt4 b--black b--gray1-d pointer"}>
+              Convert to group
+            </a>
           </div>
         </div>
       );
@@ -209,17 +276,18 @@ export class SettingsScreen extends Component {
             onChange={this.changeTitle}
             onBlur={() => {
               if (chatOwner) {
-                props.api.setSpinner(true);
-                props.api.metadataAdd(
-                  association['app-path'],
-                  association['group-path'],
-                  this.state.title,
-                  association.metadata.description,
-                  association.metadata['date-created'],
-                  uxToHex(association.metadata.color)
-                ).then(() => {
-                  props.api.setSpinner(false);
-                })
+                this.setState({awaiting: true, type: "Editing chat..."}, (() => {
+                  props.api.metadataAdd(
+                    association['app-path'],
+                    association['group-path'],
+                    this.state.title,
+                    association.metadata.description,
+                    association.metadata['date-created'],
+                    uxToHex(association.metadata.color)
+                  ).then(() => {
+                    this.setState({awaiting: false});
+                  })
+                }))
               }
             }}
           />
@@ -236,17 +304,18 @@ export class SettingsScreen extends Component {
               onChange={this.changeDescription}
               onBlur={() => {
                 if (chatOwner) {
-                  props.api.setSpinner(true);
-                  props.api.metadataAdd(
-                    association['app-path'],
-                    association['group-path'],
-                    association.metadata.title,
-                    this.state.description,
-                    association.metadata['date-created'],
-                    uxToHex(association.metadata.color)
-                  ).then(() => {
-                    props.api.setSpinner(false);
-                  })
+                  this.setState({awaiting: true, type: "Editing chat..."}, (() => {
+                    props.api.metadataAdd(
+                      association['app-path'],
+                      association['group-path'],
+                      association.metadata.title,
+                      this.state.description,
+                      association.metadata['date-created'],
+                      uxToHex(association.metadata.color)
+                    ).then(() => {
+                      this.setState({awaiting: false});
+                    })
+                  }))
                 }
               }}
             />
@@ -281,10 +350,9 @@ export class SettingsScreen extends Component {
     const { props, state } = this;
     const isinPopout = this.props.popout ? "popout/" : "";
 
-    let writeGroup = Array.from(props.group.values());
+    let permission = Array.from(props.permission.who.values());
 
     if (!!state.isLoading) {
-      let text = state.loadingText || 'Working...';
 
       let title = props.station.substr(1);
 
@@ -319,13 +387,13 @@ export class SettingsScreen extends Component {
             <ChatTabBar
               {...props}
               station={props.station}
-              numPeers={writeGroup.length}
+              numPeers={permission.length}
               host={props.match.params.ship}
               api={props.api}
             />
           </div>
           <div className="w-100 pl3 mt4 cf">
-            <h2 className="f8 pb2">{text}</h2>
+            <Spinner awaiting={this.state.awaiting} classes="absolute right-2 bottom-2 ba pa2 b--gray1-d" text={this.state.type} />
           </div>
         </div>
       );
@@ -364,7 +432,7 @@ export class SettingsScreen extends Component {
           <ChatTabBar
             {...props}
             station={props.station}
-            numPeers={writeGroup.length}
+            numPeers={permission.length}
             isOwner={deSig(props.match.params.ship) === window.ship}
             popout={this.props.popout}
           />
@@ -395,6 +463,7 @@ export class SettingsScreen extends Component {
           {this.renderGroupify()}
           {this.renderDelete()}
           {this.renderMetadataSettings()}
+          <Spinner awaiting={this.state.awaiting} classes="absolute right-2 bottom-2 ba pa2 b--gray1-d" text={this.state.type}/>
         </div>
       </div>
     );

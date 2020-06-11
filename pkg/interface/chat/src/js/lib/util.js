@@ -72,6 +72,23 @@ export function uxToHex(ux) {
   return value;
 }
 
+function hexToDec(hex) {
+  const alphabet = '0123456789ABCDEF'.split('');
+  return hex.reverse().reduce((acc, digit, idx) => {
+    const dec = alphabet.findIndex(a => a === digit.toUpperCase());
+    if(dec < 0) {
+      console.log(hex);
+      throw new Error("Incorrect hex formatting");
+    }
+    return acc + dec * (16 ** idx);
+  }, 0);
+}
+
+export function hexToRgba(hex, a) {
+  const [r,g,b] = _.chunk(hex, 2).map(hexToDec);
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
+
 export function writeText(str) {
   return new Promise(function (resolve, reject) {
 
@@ -114,4 +131,26 @@ export function cite(ship) {
     return shortened;
   }
   return `~${patp}`;
+}
+
+export function alphabetiseAssociations(associations) {
+  let result = {};
+  Object.keys(associations).sort((a, b) => {
+    let aName = a.substr(1);
+    let bName = b.substr(1);
+    if (associations[a].metadata && associations[a].metadata.title) {
+      aName = associations[a].metadata.title !== ""
+        ? associations[a].metadata.title
+        : a.substr(1);
+    }
+    if (associations[b].metadata && associations[b].metadata.title) {
+      bName = associations[b].metadata.title !== ""
+        ? associations[b].metadata.title
+        : b.substr(1);
+    }
+    return aName.toLowerCase().localeCompare(bName.toLowerCase());
+  }).map((each) => {
+    result[each] = associations[each];
+  })
+  return result;
 }

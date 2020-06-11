@@ -26,14 +26,88 @@ typedef struct _u3_h2o_serv {
   h2o_handler_t*   han_u;             //  h2o request handler
 } u3_h2o_serv;
 
-static void _proxy_serv_free(u3_prox* lis_u);
-static void _proxy_serv_close(u3_prox* lis_u);
-static u3_prox* _proxy_serv_new(u3_http* htp_u, c3_s por_s, c3_o sec);
-static u3_prox* _proxy_serv_start(u3_prox* lis_u);
+/* u3_rsat: http request state.
+*/
+  typedef enum {
+    u3_rsat_init = 0,                   //  initialized
+    u3_rsat_plan = 1,                   //  planned
+    u3_rsat_ripe = 2                    //  responded
+  } u3_rsat;
+
+/* u3_hreq: incoming http request.
+*/
+  typedef struct _u3_hreq {
+    h2o_req_t*       rec_u;             //  h2o request
+    c3_w             seq_l;             //  sequence within connection
+    u3_rsat          sat_e;             //  request state
+    uv_timer_t*      tim_u;             //  timeout
+    void*            gen_u;             //  response generator
+    struct _u3_hcon* hon_u;             //  connection backlink
+    struct _u3_hreq* nex_u;             //  next in connection's list
+    struct _u3_hreq* pre_u;             //  next in connection's list
+  } u3_hreq;
+
+/* u3_hcon: incoming http connection.
+*/
+  typedef struct _u3_hcon {
+    uv_tcp_t         wax_u;             //  client stream handler
+    h2o_conn_t*      con_u;             //  h2o connection
+    h2o_socket_t*    sok_u;             //  h2o connection socket
+    c3_w             ipf_w;             //  client ipv4
+    c3_w             coq_l;             //  connection number
+    c3_w             seq_l;             //  next request number
+    struct _u3_http* htp_u;             //  server backlink
+    struct _u3_hreq* req_u;             //  request list
+    struct _u3_hcon* nex_u;             //  next in server's list
+    struct _u3_hcon* pre_u;             //  next in server's list
+  } u3_hcon;
+
+/* u3_http: http server.
+*/
+  typedef struct _u3_http {
+    uv_tcp_t         wax_u;             //  server stream handler
+    void*            h2o_u;             //  libh2o configuration
+    c3_w             sev_l;             //  server number
+    c3_w             coq_l;             //  next connection number
+    c3_s             por_s;             //  running port
+    c3_o             sec;               //  logically secure
+    c3_o             lop;               //  loopback-only
+    c3_o             liv;               //  c3n == shutdown
+    struct _u3_hcon* hon_u;             //  connection list
+    struct _u3_http* nex_u;             //  next in list
+    struct _u3_httd* htd_u;             //  device backpointer
+  } u3_http;
+
+/* u3_form: http config from %eyre
+*/
+  typedef struct _u3_form {
+    c3_o             pro;               //  proxy
+    c3_o             log;               //  keep access log
+    c3_o             red;               //  redirect to HTTPS
+    uv_buf_t         key_u;             //  PEM RSA private key
+    uv_buf_t         cer_u;             //  PEM certificate chain
+  } u3_form;
+
+/* u3_hfig: general http configuration
+*/
+  typedef struct _u3_hfig {
+    u3_form*         for_u;             //  config from %eyre
+    struct _u3_warc* cli_u;             //  rev proxy clients
+    struct _u3_pcon* con_u;             //  cli_u connections
+  } u3_hfig;
+
+/* u3_httd: general http device
+*/
+typedef struct _u3_httd {
+  u3_auto            car_u;             //  driver
+  u3_hfig            fig_u;             //  http configuration
+  u3_http*           htp_u;             //  http servers
+  SSL_CTX*           tls_u;             //  server SSL_CTX*
+} u3_httd;
 
 static void _http_serv_free(u3_http* htp_u);
-static void _http_serv_start_all(void);
-static void _http_form_free(void);
+static void _http_serv_start_all(u3_httd* htd_u);
+static void _http_form_free(u3_httd* htd_u);
 
 static const c3_i TCP_BACKLOG = 16;
 
@@ -298,10 +372,10 @@ _http_req_unlink(u3_hreq* req_u)
 static u3_noun
 _http_req_to_duct(u3_hreq* req_u)
 {
-  return u3nt(u3_blip, u3i_string("http-server"),
-              u3nq(u3dc("scot", c3_s2('u','v'), req_u->hon_u->htp_u->sev_l),
-                   u3dc("scot", c3_s2('u','d'), req_u->hon_u->coq_l),
-                   u3dc("scot", c3_s2('u','d'), req_u->seq_l),
+  return u3nc(u3i_string("http-server"),
+              u3nq(u3dc("scot", c3__uv, req_u->hon_u->htp_u->sev_l),
+                   u3dc("scot", c3__ud, req_u->hon_u->coq_l),
+                   u3dc("scot", c3__ud, req_u->seq_l),
                    u3_nul));
 }
 
@@ -310,10 +384,11 @@ _http_req_to_duct(u3_hreq* req_u)
 static void
 _http_req_kill(u3_hreq* req_u)
 {
-  u3_noun pox = _http_req_to_duct(req_u);
+  u3_httd* htd_u = req_u->hon_u->htp_u->htd_u;
+  u3_noun wir    = _http_req_to_duct(req_u);
+  u3_noun cad    = u3nc(u3i_string("cancel-request"), u3_nul);
 
-  u3_pier_plan(pox, u3nc(u3i_string("cancel-request"),
-                         u3_nul));
+  u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
 }
 
 typedef struct _u3_hgen {
@@ -389,24 +464,24 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
   c3_assert(u3_rsat_init == req_u->sat_e);
   req_u->sat_e = u3_rsat_plan;
 
-  u3_noun pox = _http_req_to_duct(req_u);
+  {
+    u3_http* htp_u = req_u->hon_u->htp_u;
+    u3_httd* htd_u = htp_u->htd_u;
+    u3_noun wir    = _http_req_to_duct(req_u);
+    u3_noun cad;
 
-  if ( c3y == req_u->hon_u->htp_u->lop ) {
-    u3_pier_plan(pox, u3nq(u3i_string("request-local"),
-                           //  XX automatically secure too?
-                           //
-                           req_u->hon_u->htp_u->sec,
-                           u3nc(c3__ipv4,
-                                u3i_words(1, &req_u->hon_u->ipf_w)),
-                           req));
+    {
+      u3_noun adr = u3nc(c3__ipv4, u3i_words(1, &req_u->hon_u->ipf_w));
+      //  XX loopback automatically secure too?
+     //
+      u3_noun dat = u3nt(htp_u->sec, adr, req);
 
-  }
-  else {
-    u3_pier_plan(pox, u3nq(u3i_string("request"),
-                           req_u->hon_u->htp_u->sec,
-                           u3nc(c3__ipv4,
-                                u3i_words(1, &req_u->hon_u->ipf_w)),
-                           req));
+      cad = ( c3y == req_u->hon_u->htp_u->lop )
+            ? u3nc(u3i_string("request-local"), dat)
+            : u3nc(u3i_string("request"), dat);
+    }
+
+    u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
   }
 }
 
@@ -827,9 +902,9 @@ _http_conn_new(u3_http* htp_u)
 /* _http_serv_find(): find http server by sequence.
 */
 static u3_http*
-_http_serv_find(c3_l sev_l)
+_http_serv_find(u3_httd* htd_u, c3_l sev_l)
 {
-  u3_http* htp_u = u3_Host.htp_u;
+  u3_http* htp_u = htd_u->htp_u;
 
   //  XX glories of linear search
   //
@@ -845,19 +920,22 @@ _http_serv_find(c3_l sev_l)
 /* _http_serv_link(): link http server to global state.
 */
 static void
-_http_serv_link(u3_http* htp_u)
+_http_serv_link(u3_httd* htd_u, u3_http* htp_u)
 {
   // XX link elsewhere initially, relink on start?
 
-  if ( 0 != u3_Host.htp_u ) {
-    htp_u->sev_l = 1 + u3_Host.htp_u->sev_l;
+  if ( 0 != htd_u->htp_u ) {
+    htp_u->sev_l = 1 + htd_u->htp_u->sev_l;
   }
   else {
+    //  XX load from elsewhere
+    //
     htp_u->sev_l = u3A->sev_l;
   }
 
-  htp_u->nex_u = u3_Host.htp_u;
-  u3_Host.htp_u = htp_u;
+  htp_u->nex_u = htd_u->htp_u;
+  htp_u->htd_u = htd_u;
+  htd_u->htp_u = htp_u;
 }
 
 /* _http_serv_unlink(): remove http server from global state.
@@ -869,13 +947,12 @@ _http_serv_unlink(u3_http* htp_u)
 #if 0
   u3l_log("http serv unlink %d\n", htp_u->sev_l);
 #endif
+  u3_http* pre_u = htp_u->htd_u->htp_u;
 
-  if ( u3_Host.htp_u == htp_u ) {
-    u3_Host.htp_u = htp_u->nex_u;
+  if ( pre_u == htp_u ) {
+    pre_u = htp_u->nex_u;
   }
   else {
-    u3_http* pre_u = u3_Host.htp_u;
-
     //  XX glories of linear search
     //
     while ( pre_u ) {
@@ -1026,6 +1103,7 @@ static void
 _http_serv_close_cb(uv_handle_t* han_u)
 {
   u3_http* htp_u = (u3_http*)han_u;
+  u3_httd* htd_u = htp_u->htd_u;
   htp_u->liv = c3n;
 
   // otherwise freed by the last linked connection
@@ -1035,7 +1113,7 @@ _http_serv_close_cb(uv_handle_t* han_u)
 
   // restart if all linked servers have been shutdown
   {
-    htp_u = u3_Host.htp_u;
+    htp_u = htd_u->htp_u;
     c3_o res = c3y;
 
     while ( 0 != htp_u ) {
@@ -1045,8 +1123,8 @@ _http_serv_close_cb(uv_handle_t* han_u)
       htp_u = htp_u->nex_u;
     }
 
-    if ( (c3y == res) && (0 != u3_Host.fig_u.for_u) ) {
-      _http_serv_start_all();
+    if ( (c3y == res) && (0 != htd_u->fig_u.for_u) ) {
+      _http_serv_start_all(htd_u);
     }
   }
 }
@@ -1064,18 +1142,12 @@ _http_serv_close(u3_http* htp_u)
 #endif
 
   uv_close((uv_handle_t*)&htp_u->wax_u, _http_serv_close_cb);
-
-  if ( 0 != htp_u->rox_u ) {
-    // XX close soft
-    _proxy_serv_close(htp_u->rox_u);
-    htp_u->rox_u = 0;
-  }
 }
 
 /* _http_serv_new(): create new http server.
 */
 static u3_http*
-_http_serv_new(c3_s por_s, c3_o sec, c3_o lop)
+_http_serv_new(u3_httd* htd_u, c3_s por_s, c3_o sec, c3_o lop)
 {
   u3_http* htp_u = c3_malloc(sizeof(*htp_u));
 
@@ -1085,11 +1157,10 @@ _http_serv_new(c3_s por_s, c3_o sec, c3_o lop)
   htp_u->lop = lop;
   htp_u->liv = c3y;
   htp_u->h2o_u = 0;
-  htp_u->rox_u = 0;
   htp_u->hon_u = 0;
   htp_u->nex_u = 0;
 
-  _http_serv_link(htp_u);
+  _http_serv_link(htd_u, htp_u);
 
   return htp_u;
 }
@@ -1247,31 +1318,14 @@ _http_serv_start(u3_http* htp_u)
 
       u3l_log("http: listen: %s\n", uv_strerror(sas_i));
 
-      if ( 0 != htp_u->rox_u ) {
-        _proxy_serv_free(htp_u->rox_u);
-      }
       _http_serv_free(htp_u);
       return;
     }
 
-    // XX this is weird
-    if ( 0 != htp_u->rox_u ) {
-      htp_u->rox_u = _proxy_serv_start(htp_u->rox_u);
-    }
-
-    if ( 0 != htp_u->rox_u ) {
-      u3l_log("http: live (%s, %s) on %d (proxied on %d)\n",
-              (c3y == htp_u->sec) ? "secure" : "insecure",
-              (c3y == htp_u->lop) ? "loopback" : "public",
-              htp_u->por_s,
-              htp_u->rox_u->por_s);
-    }
-    else {
-      u3l_log("http: live (%s, %s) on %d\n",
-              (c3y == htp_u->sec) ? "secure" : "insecure",
-              (c3y == htp_u->lop) ? "loopback" : "public",
-              htp_u->por_s);
-    }
+    u3l_log("http: live (%s, %s) on %d\n",
+            (c3y == htp_u->sec) ? "secure" : "insecure",
+            (c3y == htp_u->lop) ? "loopback" : "public",
+            htp_u->por_s);
 
     break;
   }
@@ -1417,7 +1471,7 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
 /* _http_write_ports_file(): update .http.ports
 */
 static void
-_http_write_ports_file(c3_c *pax_c)
+_http_write_ports_file(u3_httd* htd_u, c3_c *pax_c)
 {
   c3_c* nam_c = ".http.ports";
   c3_w len_w = 1 + strlen(pax_c) + 1 + strlen(nam_c);
@@ -1428,10 +1482,9 @@ _http_write_ports_file(c3_c *pax_c)
   c3_i por_i = open(paf_c, O_WRONLY | O_CREAT | O_TRUNC, 0666);
   c3_free(paf_c);
 
-  u3_http* htp_u = u3_Host.htp_u;
+  u3_http* htp_u = htd_u->htp_u;
 
   while ( 0 != htp_u ) {
-    // XX write proxy ports instead?
     if ( 0 < htp_u->por_s ) {
       dprintf(por_i, "%u %s %s\n", htp_u->por_s,
                      (c3y == htp_u->sec) ? "secure" : "insecure",
@@ -1460,28 +1513,18 @@ _http_release_ports_file(c3_c *pax_c)
   c3_free(paf_c);
 }
 
-/* u3_http_ef_bake(): notify %eyre that we're live
-*/
-void
-u3_http_ef_bake(void)
-{
-  u3_noun pax = u3nq(u3_blip, u3i_string("http-server"),
-                     u3k(u3A->sen), u3_nul);
-
-  u3_pier_plan(pax, u3nc(c3__born, u3_nul));
-}
-
 static u3_hreq*
-_http_search_req(c3_l    sev_l,
-                 c3_l    coq_l,
-                 c3_l    seq_l)
+_http_search_req(u3_httd* htd_u,
+                 c3_l     sev_l,
+                 c3_l     coq_l,
+                 c3_l     seq_l)
 {
   u3_http* htp_u;
   u3_hcon* hon_u;
   u3_hreq* req_u;
   c3_w bug_w = u3C.wag_w & u3o_verbose;
 
-  if ( !(htp_u = _http_serv_find(sev_l)) ) {
+  if ( !(htp_u = _http_serv_find(htd_u, sev_l)) ) {
     if ( bug_w ) {
       u3l_log("http: server not found: %x\r\n", sev_l);
     }
@@ -1504,68 +1547,10 @@ _http_search_req(c3_l    sev_l,
   return req_u;
 }
 
-/* u3_http_ef_http_server(): dispatch an %http-server effect from %light.
-*/
-void
-u3_http_ef_http_server(c3_l    sev_l,
-                       c3_l    coq_l,
-                       c3_l    seq_l,
-                       u3_noun cad)
-{
-  u3_hreq* req_u;
-
-  u3_noun tag, dat;
-  u3x_cell(cad, &tag, &dat);
-
-  //  sets server configuration
-  //
-  if ( c3y == u3r_sing_c("set-config", tag) ) {
-    u3_http_ef_form(u3k(dat));
-  }
-  //  responds to an open request
-  //
-  else if ( 0 != (req_u = _http_search_req(sev_l, coq_l, seq_l)) ) {
-    if ( c3y == u3r_sing_c("response", tag) ) {
-      u3_noun response = dat;
-
-      if ( c3y == u3r_sing_c("start", u3h(response)) ) {
-        //  Separate the %start message into its components.
-        //
-        u3_noun response_header, data, complete;
-        u3_noun status, headers;
-        u3x_trel(u3t(response), &response_header, &data, &complete);
-        u3x_cell(response_header, &status, &headers);
-
-        _http_start_respond(req_u, u3k(status), u3k(headers), u3k(data),
-                            u3k(complete));
-      }
-      else if ( c3y == u3r_sing_c("continue", u3h(response)) ) {
-        //  Separate the %continue message into its components.
-        //
-        u3_noun data, complete;
-        u3x_cell(u3t(response), &data, &complete);
-
-        _http_continue_respond(req_u, u3k(data), u3k(complete));
-      }
-      else if (c3y == u3r_sing_c("cancel", u3h(response))) {
-        u3l_log("http: %%cancel not handled yet\n");
-      }
-      else {
-        u3l_log("http: strange response\n");
-      }
-    }
-    else {
-      u3l_log("http: strange response\n");
-    }
-  }
-
-  u3z(cad);
-}
-
 /* _http_serv_start_all(): initialize and start servers based on saved config.
 */
 static void
-_http_serv_start_all(void)
+_http_serv_start_all(u3_httd* htd_u)
 {
   u3_http* htp_u;
   c3_s por_s;
@@ -1573,28 +1558,24 @@ _http_serv_start_all(void)
   u3_noun sec = u3_nul;
   u3_noun non = u3_none;
 
-  u3_form* for_u = u3_Host.fig_u.for_u;
+  u3_form* for_u = htd_u->fig_u.for_u;
 
   c3_assert( 0 != for_u );
 
   // if the SSL_CTX existed, it'll be freed with the servers
-  u3_Host.tls_u = 0;
+  htd_u->tls_u = 0;
 
   //  HTTPS server.
   if ( (0 != for_u->key_u.base) && (0 != for_u->cer_u.base) ) {
-    u3_Host.tls_u = _http_init_tls(for_u->key_u, for_u->cer_u);
+    htd_u->tls_u = _http_init_tls(for_u->key_u, for_u->cer_u);
 
     // Note: if tls_u is used for additional servers,
     // its reference count must be incremented with SSL_CTX_up_ref
 
-    if ( 0 != u3_Host.tls_u ) {
+    if ( 0 != htd_u->tls_u ) {
       por_s = ( c3y == for_u->pro ) ? 8443 : 443;
-      htp_u = _http_serv_new(por_s, c3y, c3n);
-      htp_u->h2o_u = _http_serv_init_h2o(u3_Host.tls_u, for_u->log, for_u->red);
-
-      if ( c3y == for_u->pro ) {
-        htp_u->rox_u = _proxy_serv_new(htp_u, 443, c3y);
-      }
+      htp_u = _http_serv_new(htd_u, por_s, c3y, c3n);
+      htp_u->h2o_u = _http_serv_init_h2o(htd_u->tls_u, for_u->log, for_u->red);
 
       _http_serv_start(htp_u);
       sec = u3nc(u3_nul, htp_u->por_s);
@@ -1604,12 +1585,8 @@ _http_serv_start_all(void)
   //  HTTP server.
   {
     por_s = ( c3y == for_u->pro ) ? 8080 : 80;
-    htp_u = _http_serv_new(por_s, c3n, c3n);
+    htp_u = _http_serv_new(htd_u, por_s, c3n, c3n);
     htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
-
-    if ( c3y == for_u->pro ) {
-      htp_u->rox_u = _proxy_serv_new(htp_u, 80, c3n);
-    }
 
     _http_serv_start(htp_u);
     non = htp_u->por_s;
@@ -1618,9 +1595,8 @@ _http_serv_start_all(void)
   //  Loopback server.
   {
     por_s = 12321;
-    htp_u = _http_serv_new(por_s, c3n, c3y);
+    htp_u = _http_serv_new(htd_u, por_s, c3n, c3y);
     htp_u->h2o_u = _http_serv_init_h2o(0, for_u->log, for_u->red);
-    // never proxied
 
     _http_serv_start(htp_u);
   }
@@ -1629,26 +1605,27 @@ _http_serv_start_all(void)
   {
     c3_assert( u3_none != non );
 
-    u3_noun pax = u3nq(u3_blip,
-                       u3i_string("http-server"),
-                       u3k(u3A->sen),
-                       u3_nul);
-    u3_pier_plan(pax, u3nt(c3__live, non, sec));
+    //  XX remove [sen]
+    //
+    u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
+    u3_noun cad = u3nt(c3__live, non, sec);
+
+    u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
   }
 
-  _http_write_ports_file(u3_Host.dir_c);
-  _http_form_free();
+  _http_write_ports_file(htd_u, u3_Host.dir_c);
+  _http_form_free(htd_u);
 }
 
 /* _http_serv_restart(): gracefully shutdown, then start servers.
 */
 static void
-_http_serv_restart(void)
+_http_serv_restart(u3_httd* htd_u)
 {
-  u3_http* htp_u = u3_Host.htp_u;
+  u3_http* htp_u = htd_u->htp_u;
 
   if ( 0 == htp_u ) {
-    _http_serv_start_all();
+    _http_serv_start_all(htd_u);
   }
   else {
     u3l_log("http: restarting servers to apply configuration\n");
@@ -1667,9 +1644,9 @@ _http_serv_restart(void)
 /* _http_form_free(): free and unlink saved config.
 */
 static void
-_http_form_free(void)
+_http_form_free(u3_httd* htd_u)
 {
-  u3_form* for_u = u3_Host.fig_u.for_u;
+  u3_form* for_u = htd_u->fig_u.for_u;
 
   if ( 0 == for_u ) {
     return;
@@ -1684,13 +1661,13 @@ _http_form_free(void)
   }
 
   c3_free(for_u);
-  u3_Host.fig_u.for_u = 0;
+  htd_u->fig_u.for_u = 0;
 }
 
 /* u3_http_ef_form(): apply configuration, restart servers.
 */
 void
-u3_http_ef_form(u3_noun fig)
+u3_http_ef_form(u3_httd* htd_u, u3_noun fig)
 {
   u3_noun sec, pro, log, red;
 
@@ -1726,1398 +1703,235 @@ u3_http_ef_form(u3_noun fig)
   }
 
   u3z(fig);
-  _http_form_free();
+  _http_form_free(htd_u);
 
-  u3_Host.fig_u.for_u = for_u;
+  htd_u->fig_u.for_u = for_u;
 
-  _http_serv_restart();
+  _http_serv_restart(htd_u);
 
-  //  The control server has now started.
+  htd_u->car_u.liv_o = c3y;
+}
+
+/* _http_io_talk(): start http I/O.
+*/
+static void
+_http_io_talk(u3_auto* car_u)
+{
+  //  XX remove u3A->sen
   //
-  //    If we're in daemon mode, we need to inform the parent process
-  //    that we've finished booting.
+  u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
+  u3_noun cad = u3nc(c3__born, u3_nul);
+
+  u3_auto_plan(car_u, 0, c3__e, wir, cad);
+
+  //  XX set liv_o on done/swap?
   //
-  //    XX using this effect is a terrible heuristic;
-  //    "fully booted" should be formalized.
+}
+
+/* _http_ef_http_server(): dispatch an %http-server effect from %light.
+*/
+void
+_http_ef_http_server(u3_httd* htd_u,
+                     c3_l     sev_l,
+                     c3_l     coq_l,
+                     c3_l     seq_l,
+                     u3_noun    tag,
+                     u3_noun    dat)
+{
+  u3_hreq* req_u;
+
+  //  sets server configuration
   //
-  if (u3_Host.bot_f) {
-    u3_Host.bot_f();
+  if ( c3y == u3r_sing_c("set-config", tag) ) {
+    u3_http_ef_form(htd_u, u3k(dat));
+  }
+  //  responds to an open request
+  //
+  else if ( 0 != (req_u = _http_search_req(htd_u, sev_l, coq_l, seq_l)) ) {
+    if ( c3y == u3r_sing_c("response", tag) ) {
+      u3_noun response = dat;
+
+      if ( c3y == u3r_sing_c("start", u3h(response)) ) {
+        //  Separate the %start message into its components.
+        //
+        u3_noun response_header, data, complete;
+        u3_noun status, headers;
+        u3x_trel(u3t(response), &response_header, &data, &complete);
+        u3x_cell(response_header, &status, &headers);
+
+        _http_start_respond(req_u, u3k(status), u3k(headers), u3k(data),
+                            u3k(complete));
+      }
+      else if ( c3y == u3r_sing_c("continue", u3h(response)) ) {
+        //  Separate the %continue message into its components.
+        //
+        u3_noun data, complete;
+        u3x_cell(u3t(response), &data, &complete);
+
+        _http_continue_respond(req_u, u3k(data), u3k(complete));
+      }
+      else if (c3y == u3r_sing_c("cancel", u3h(response))) {
+        u3l_log("http: %%cancel not handled yet\n");
+      }
+      else {
+        u3l_log("http: strange response\n");
+      }
+    }
+    else {
+      u3l_log("http: strange response\n");
+    }
+  }
+
+  u3z(tag);
+  u3z(dat);
+}
+
+/* _reck_mole(): parse simple atomic mole.
+*/
+static u3_noun
+_reck_mole(u3_noun  fot,
+           u3_noun  san,
+           c3_d*    ato_d)
+{
+  u3_noun uco = u3dc("slaw", fot, san);
+  u3_noun p_uco, q_uco;
+
+  if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
+       (u3_nul != p_uco) )
+  {
+    u3l_log("strange mole %s\n", u3r_string(san));
+
+    u3z(fot); u3z(uco); return c3n;
+  }
+  else {
+    *ato_d = u3r_chub(0, q_uco);
+
+    u3z(fot); u3z(uco); return c3y;
   }
 }
 
-/* u3_http_io_init(): initialize http I/O.
+/* _reck_lily(): parse little atom.
 */
-void
-u3_http_io_init(void)
+static u3_noun
+_reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
 {
+  c3_d ato_d;
+
+  if ( c3n == _reck_mole(fot, txt, &ato_d) ) {
+    return c3n;
+  } else {
+    if ( ato_d >= 0x80000000ULL ) {
+      return c3n;
+    } else {
+      *tid_l = (c3_l) ato_d;
+
+      return c3y;
+    }
+  }
 }
 
-/* u3_http_io_talk(): start http I/O.
+/* _http_io_kick(): apply effects.
 */
-void
-u3_http_io_talk(void)
+static c3_o
+_http_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
+  u3_httd* htd_u = (u3_httd*)car_u;
+
+  u3_noun tag, dat, i_wir, t_wir;
+
+  if (  (c3n == u3r_cell(wir, &i_wir, &t_wir))
+     || (c3n == u3r_cell(cad, &tag, &dat))
+     || (c3n == u3r_sing_c("http-server", i_wir)) )
+  {
+    u3z(wir); u3z(cad);
+    return c3n;
+  }
+
+  //  XX this needs to be rewritten, it defers (c3n) in cases it should not
+  //
+  {
+    u3_noun pud = t_wir;
+    u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
+    c3_l    sev_l, coq_l, seq_l;
+
+  
+    if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
+         (c3n == _reck_lily(c3__uv, u3k(p_pud), &sev_l)) )
+    {
+      u3z(wir); u3z(cad);
+      return c3n;
+    }
+
+    if ( u3_nul == t_pud ) {
+      coq_l = seq_l = 0;
+    }
+    else {
+      if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
+           (c3n == _reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
+      {
+        u3z(wir); u3z(cad);
+        return c3n;
+      }
+
+      if ( u3_nul == tt_pud ) {
+        seq_l = 0;
+      } else {
+        if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
+             (u3_nul != s_pud) ||
+             (c3n == _reck_lily(c3__ud, u3k(r_pud), &seq_l)) )
+        {
+          u3z(wir); u3z(cad);
+          return c3n;
+        }
+      }
+    }
+
+    _http_ef_http_server(htd_u, sev_l, coq_l, seq_l, u3k(tag), u3k(dat));
+    u3z(wir); u3z(cad);
+    return c3y;
+  }
 }
 
-/* u3_http_io_exit(): shut down http.
+/* _http_io_exit(): shut down http.
 */
-void
-u3_http_io_exit(void)
+static void
+_http_io_exit(u3_auto* car_u)
 {
+  u3_httd* htd_u = (u3_httd*)car_u;
+
   //  dispose of configuration to avoid restarts
   //
-  _http_form_free();
+  _http_form_free(htd_u);
 
   //  close all servers
   //
-  for ( u3_http* htp_u = u3_Host.htp_u; htp_u; htp_u = htp_u->nex_u ) {
-    _http_serv_close(htp_u);
-  }
+  //  XX broken
+  //
+  // for ( u3_http* htp_u = htd_u->htp_u; htp_u; htp_u = htp_u->nex_u ) {
+  //   _http_serv_close(htp_u);
+  // }
 
   // XX close u3_Host.fig_u.cli_u and con_u
 
   _http_release_ports_file(u3_Host.dir_c);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-typedef enum {
-  u3_pars_good = 0,                   //  success
-  u3_pars_fail = 1,                   //  failure
-  u3_pars_moar = 2                    //  incomplete
-} u3_proxy_pars;
-
-/* _proxy_alloc(): libuv buffer allocator
+/* u3_http_io_init(): initialize http I/O.
 */
-static void
-_proxy_alloc(uv_handle_t* had_u,
-             size_t len_i,
-             uv_buf_t* buf)
+u3_auto*
+u3_http_io_init(u3_pier* pir_u)
 {
-  // len_i is always 64k, so we're ignoring it
-  // using fixed size 4K buffer for
-  // XX consider h2o_buffer_t, a pool, or something XX
-  void* ptr_v = c3_malloc(4096);
-  *buf = uv_buf_init(ptr_v, 4096);
-}
-
-/* _proxy_warc_link(): link warc to global state.
-*/
-static void
-_proxy_warc_link(u3_warc* cli_u)
-{
-  cli_u->nex_u = u3_Host.fig_u.cli_u;
-
-  if ( 0 != cli_u->nex_u ) {
-    cli_u->nex_u->pre_u = cli_u;
-  }
-  u3_Host.fig_u.cli_u = cli_u;
-}
-
-/* _proxy_warc_unlink(): unlink warc from global state.
-*/
-static void
-_proxy_warc_unlink(u3_warc* cli_u)
-{
-  if ( 0 != cli_u->pre_u ) {
-    cli_u->pre_u->nex_u = cli_u->nex_u;
-
-    if ( 0 != cli_u->nex_u ) {
-      cli_u->nex_u->pre_u = cli_u->pre_u;
-    }
-  }
-  else {
-    u3_Host.fig_u.cli_u = cli_u->nex_u;
-
-    if ( 0 != cli_u->nex_u ) {
-      cli_u->nex_u->pre_u = 0;
-    }
-  }
-}
-
-/* _proxy_warc_free(): free ward client
-*/
-static void
-_proxy_warc_free(u3_warc* cli_u)
-{
-  _proxy_warc_unlink(cli_u);
-  c3_free(cli_u->non_u.base);
-  c3_free(cli_u->hot_c);
-  c3_free(cli_u);
-}
-
-/* _proxy_warc_new(): allocate ship-specific proxy client
-*/
-static u3_warc*
-_proxy_warc_new(u3_http* htp_u, u3_atom sip, u3_atom non, c3_s por_s, c3_o sec)
-{
-  u3_warc* cli_u = c3_calloc(sizeof(*cli_u));
-  cli_u->htp_u = htp_u;
-  cli_u->por_s = por_s;
-  cli_u->sec = sec;
-
-  u3r_chubs(0, 2, cli_u->who_d, sip);
-  _proxy_warc_link(cli_u);
-
-  {
-    c3_w len_w = u3r_met(3, non);
-
-    c3_assert( 256 > len_w );
-
-    c3_y* non_y = c3_malloc(1 + len_w);
-    non_y[0] = (c3_y)len_w;
-
-    u3r_bytes(0, len_w, non_y + 1, non);
-
-    cli_u->non_u = uv_buf_init((c3_c*)non_y, 1 + len_w);
-  }
-
-  u3z(non);
-  u3z(sip);
-
-  return cli_u;
-}
-
-/* _proxy_conn_link(): link con to listener or global state.
-*/
-static void
-_proxy_conn_link(u3_pcon* con_u)
-{
-  switch ( con_u->typ_e ) {
-    default: c3_assert(0);
-
-    case u3_ptyp_ward: {
-      con_u->nex_u = u3_Host.fig_u.con_u;
-
-      if ( 0 != con_u->nex_u ) {
-        con_u->nex_u->pre_u = con_u;
-      }
-      u3_Host.fig_u.con_u = con_u;
-      break;
-    }
-
-    case u3_ptyp_prox: {
-      u3_prox* lis_u = con_u->src_u.lis_u;
-      con_u->nex_u = lis_u->con_u;
-
-      if ( 0 != con_u->nex_u ) {
-        con_u->nex_u->pre_u = con_u;
-      }
-      lis_u->con_u = con_u;
-      break;
-    }
-  }
-}
-
-/* _proxy_conn_unlink(): unlink con from listener or global state.
-*/
-static void
-_proxy_conn_unlink(u3_pcon* con_u)
-{
-  if ( 0 != con_u->pre_u ) {
-    con_u->pre_u->nex_u = con_u->nex_u;
-
-    if ( 0 != con_u->nex_u ) {
-      con_u->nex_u->pre_u = con_u->pre_u;
-    }
-  }
-  else {
-    switch ( con_u->typ_e ) {
-      default: c3_assert(0);
-
-      case u3_ptyp_ward: {
-        u3_Host.fig_u.con_u = con_u->nex_u;
-
-        if ( 0 != con_u->nex_u ) {
-          con_u->nex_u->pre_u = 0;
-        }
-        break;
-      }
-
-      case u3_ptyp_prox: {
-        u3_prox* lis_u = con_u->src_u.lis_u;
-        lis_u->con_u = con_u->nex_u;
-
-        if ( 0 != con_u->nex_u ) {
-          con_u->nex_u->pre_u = 0;
-        }
-        break;
-      }
-    }
-  }
-}
-
-/* _proxy_conn_free(): free proxy connection
-*/
-static void
-_proxy_conn_free(uv_handle_t* han_u)
-{
-  u3_pcon* con_u = han_u->data;
-
-  if ( 0 != con_u->buf_u.base ) {
-    c3_free(con_u->buf_u.base);
-  }
-
-  if ( u3_ptyp_ward == con_u->typ_e ) {
-    _proxy_warc_free(con_u->src_u.cli_u);
-  }
-
-  _proxy_conn_unlink(con_u);
-
-  c3_free(con_u);
-}
-
-/* _proxy_conn_close(): close both sides of proxy connection
-*/
-static void
-_proxy_conn_close(u3_pcon* con_u)
-{
-  // XX revisit, this is called twice when con_u
-  // is a loopback connection and we're restarting
-  if ( uv_is_closing((uv_handle_t*)&con_u->don_u) ){
-    return;
-  }
-
-  if ( 0 != con_u->upt_u ) {
-    uv_close((uv_handle_t*)con_u->upt_u, _http_close_cb);
-  }
-
-  uv_close((uv_handle_t*)&con_u->don_u, _proxy_conn_free);
-}
-
-/* _proxy_conn_new(): allocate proxy connection
-*/
-static u3_pcon*
-_proxy_conn_new(u3_proxy_type typ_e, void* src_u)
-{
-  u3_pcon* con_u = c3_malloc(sizeof(*con_u));
-  con_u->upt_u = 0;
-  con_u->buf_u = uv_buf_init(0, 0);
-  con_u->nex_u = 0;
-  con_u->pre_u = 0;
-
-  switch ( typ_e ) {
-    default: c3_assert(0);
-
-    case u3_ptyp_prox: {
-      u3_prox* lis_u = (u3_prox*)src_u;
-      con_u->typ_e = typ_e;
-      con_u->src_u.lis_u = lis_u;
-      con_u->sec = lis_u->sec;
-      break;
-    }
-
-    case u3_ptyp_ward: {
-      u3_warc* cli_u = (u3_warc*)src_u;
-      con_u->typ_e = typ_e;
-      con_u->src_u.cli_u = cli_u;
-      con_u->sec = cli_u->sec;
-      break;
-    }
-  }
-
-  con_u->don_u.data = con_u;
-
-  _proxy_conn_link(con_u);
-
-  return con_u;
-}
-
-typedef struct _proxy_write_ctx {
-  u3_pcon*     con_u;
-  uv_stream_t* str_u;
-  c3_c*        buf_c;
-} proxy_write_ctx;
-
-/* _proxy_write_cb(): free uv_write_t and linked buffer.
-*/
-static void
-_proxy_write_cb(uv_write_t* wri_u, c3_i sas_i)
-{
-  if ( 0 != sas_i ) {
-    if ( 0 != wri_u->data ) {
-      proxy_write_ctx* ctx_u = wri_u->data;
-
-      if ( ctx_u->str_u == (uv_stream_t*)ctx_u->con_u->upt_u ) {
-        u3l_log("proxy: write upstream: %s\n", uv_strerror(sas_i));
-      }
-      else if ( ctx_u->str_u == (uv_stream_t*)&(ctx_u->con_u->don_u) ) {
-        u3l_log("proxy: write downstream: %s\n", uv_strerror(sas_i));
-      }
-      else {
-        u3l_log("proxy: write: %s\n", uv_strerror(sas_i));
-      }
-    }
-    else {
-      u3l_log("proxy: write: %s\n", uv_strerror(sas_i));
-    }
-  }
-
-  if ( 0 != wri_u->data ) {
-    proxy_write_ctx* ctx_u = wri_u->data;
-    c3_free(ctx_u->buf_c);
-    c3_free(ctx_u);
-  }
-
-  c3_free(wri_u);
-}
-
-/* _proxy_write(): write buffer to proxy stream
-*/
-static c3_i
-_proxy_write(u3_pcon* con_u, uv_stream_t* str_u, uv_buf_t buf_u)
-{
-  uv_write_t* wri_u = c3_malloc(sizeof(*wri_u));
-
-  proxy_write_ctx* ctx_u = c3_malloc(sizeof(*ctx_u));
-  ctx_u->con_u = con_u;
-  ctx_u->str_u = str_u;
-  ctx_u->buf_c = buf_u.base;
-  wri_u->data = ctx_u;
-
-  c3_i sas_i;
-  if ( 0 != (sas_i = uv_write(wri_u, str_u, &buf_u, 1, _proxy_write_cb)) ) {
-    _proxy_conn_close(con_u);
-    _proxy_write_cb(wri_u, sas_i);
-  }
-
-  return sas_i;
-}
-
-/* _proxy_read_downstream_cb(): read from downstream, write upstream.
-*/
-static void
-_proxy_read_downstream_cb(uv_stream_t* don_u,
-                          ssize_t      siz_w,
-                          const uv_buf_t* buf_u)
-{
-  u3_pcon* con_u = don_u->data;
-
-  if ( 0 > siz_w ) {
-    if ( UV_EOF != siz_w ) {
-      u3l_log("proxy: read downstream: %s\n", uv_strerror(siz_w));
-    }
-    _proxy_conn_close(con_u);
-  }
-  else {
-    _proxy_write(con_u, (uv_stream_t*)con_u->upt_u,
-                 uv_buf_init(buf_u->base, siz_w));
-  }
-}
-
-/* _proxy_read_upstream_cb(): read from upstream, write downstream.
-*/
-static void
-_proxy_read_upstream_cb(uv_stream_t* upt_u,
-                        ssize_t      siz_w,
-                        const uv_buf_t* buf_u)
-{
-  u3_pcon* con_u = upt_u->data;
-
-  if ( 0 > siz_w ) {
-    if ( UV_EOF != siz_w ) {
-      u3l_log("proxy: read upstream: %s\n", uv_strerror(siz_w));
-    }
-    _proxy_conn_close(con_u);
-  }
-  else {
-    _proxy_write(con_u, (uv_stream_t*)&(con_u->don_u),
-                 uv_buf_init(buf_u->base, siz_w));
-  }
-}
-
-/* _proxy_fire(): send pending buffer upstream, setup full duplex.
-*/
-static void
-_proxy_fire(u3_pcon* con_u)
-{
-  if ( 0 != con_u->buf_u.base ) {
-    uv_buf_t fub_u = con_u->buf_u;
-    con_u->buf_u = uv_buf_init(0, 0);
-
-    if ( 0 != _proxy_write(con_u, (uv_stream_t*)con_u->upt_u, fub_u) ) {
-      return;
-    }
-  }
-
-  // XX set cooldown timers to close these?
-
-  uv_read_start((uv_stream_t*)&con_u->don_u,
-                _proxy_alloc, _proxy_read_downstream_cb);
-
-  uv_read_start((uv_stream_t*)con_u->upt_u,
-                _proxy_alloc, _proxy_read_upstream_cb);
-}
-
-/* _proxy_loop_connect_cb(): callback for loopback proxy connect.
-*/
-static void
-_proxy_loop_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
-{
-  u3_pcon* con_u = upc_u->data;
-
-  if ( 0 != sas_i ) {
-    u3l_log("proxy: connect: %s\n", uv_strerror(sas_i));
-    _proxy_conn_close(con_u);
-  }
-  else {
-    _proxy_fire(con_u);
-  }
-
-  c3_free(upc_u);
-}
-
-/* _proxy_loop_connect(): connect to loopback.
-*/
-static void
-_proxy_loop_connect(u3_pcon* con_u)
-{
-  uv_tcp_t* upt_u = c3_malloc(sizeof(*upt_u));
-
-  con_u->upt_u = upt_u;
-  upt_u->data = con_u;
-
-  uv_tcp_init(u3L, upt_u);
-
-  struct sockaddr_in lop_u;
-
-  memset(&lop_u, 0, sizeof(lop_u));
-  lop_u.sin_family = AF_INET;
-  lop_u.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-
-  // get the loopback port from the linked server
-  {
-    u3_http* htp_u;
-
-    switch ( con_u->typ_e ) {
-      default: c3_assert(0);
-
-      case u3_ptyp_ward: {
-        htp_u = con_u->src_u.cli_u->htp_u;
-        break;
-      }
-
-      case u3_ptyp_prox: {
-        htp_u = con_u->src_u.lis_u->htp_u;
-        break;
-      }
-    }
-
-    // XX make unpossible?
-    c3_assert( (0 != htp_u) && (0 != htp_u->por_s) );
-
-    lop_u.sin_port = htons(htp_u->por_s);
-  }
-
-  uv_connect_t* upc_u = c3_malloc(sizeof(*upc_u));
-  upc_u->data = con_u;
-
-  c3_i sas_i;
-
-  if ( 0 != (sas_i = uv_tcp_connect(upc_u, upt_u,
-                                    (const struct sockaddr*)&lop_u,
-                                    _proxy_loop_connect_cb)) ) {
-    u3l_log("proxy: connect: %s\n", uv_strerror(sas_i));
-    c3_free(upc_u);
-    _proxy_conn_close(con_u);
-  }
-}
-
-/* _proxy_wcon_link(): link wcon to ward.
-*/
-static void
-_proxy_wcon_link(u3_wcon* won_u, u3_ward* rev_u)
-{
-  won_u->nex_u = rev_u->won_u;
-  rev_u->won_u = won_u;
-}
-
-/* _proxy_wcon_unlink(): unlink wcon from ward.
-*/
-static void
-_proxy_wcon_unlink(u3_wcon* won_u)
-{
-  u3_ward* rev_u = won_u->rev_u;
-
-  if ( rev_u->won_u == won_u ) {
-    rev_u->won_u = won_u->nex_u;
-  }
-  else {
-    u3_wcon* pre_u = rev_u->won_u;
-
-    //  XX glories of linear search
-    //
-    while ( 0 != pre_u ) {
-      if ( pre_u->nex_u == won_u ) {
-        pre_u->nex_u = won_u->nex_u;
-      }
-      else pre_u = pre_u->nex_u;
-    }
-  }
-}
-
-/* _proxy_wcon_free(): free ward upstream candidate.
-*/
-static void
-_proxy_wcon_free(uv_handle_t* han_u)
-{
-  u3_wcon* won_u = han_u->data;
-
-  // Note: not unlinked here, freed concurrent with u3_ward
-  c3_free(won_u);
-}
-
-/* _proxy_wcon_close(): close ward upstream candidate.
-*/
-static void
-_proxy_wcon_close(u3_wcon* won_u)
-{
-  uv_read_stop((uv_stream_t*)&won_u->upt_u);
-  uv_close((uv_handle_t*)&won_u->upt_u, _proxy_wcon_free);
-}
-
-/* _proxy_wcon_new(): allocate ward upstream candidate.
-*/
-static u3_wcon*
-_proxy_wcon_new(u3_ward* rev_u)
-{
-  u3_wcon* won_u = c3_malloc(sizeof(*won_u));
-  won_u->upt_u.data = won_u;
-  won_u->rev_u = rev_u;
-  won_u->nex_u = 0;
-
-  _proxy_wcon_link(won_u, rev_u);
-
-  return won_u;
-}
-
-/* _proxy_ward_link(): link ward to listener.
-*/
-static void
-_proxy_ward_link(u3_pcon* con_u, u3_ward* rev_u)
-{
-  // XX link also to con_u as upstream?
-  c3_assert( u3_ptyp_prox == con_u->typ_e );
-
-  u3_prox* lis_u = con_u->src_u.lis_u;
-
-  rev_u->nex_u = lis_u->rev_u;
-
-  if ( 0 != rev_u->nex_u ) {
-    rev_u->nex_u->pre_u = rev_u;
-  }
-  lis_u->rev_u = rev_u;
-}
-
-/* _proxy_ward_unlink(): unlink ward from listener.
-*/
-static void
-_proxy_ward_unlink(u3_ward* rev_u)
-{
-  if ( 0 != rev_u->pre_u ) {
-    rev_u->pre_u->nex_u = rev_u->nex_u;
-
-    if ( 0 != rev_u->nex_u ) {
-      rev_u->nex_u->pre_u = rev_u->pre_u;
-    }
-  }
-  else {
-    c3_assert( u3_ptyp_prox == rev_u->con_u->typ_e );
-
-    u3_prox* lis_u = rev_u->con_u->src_u.lis_u;
-    lis_u->rev_u = rev_u->nex_u;
-
-    if ( 0 != rev_u->nex_u ) {
-      rev_u->nex_u->pre_u = 0;
-    }
-  }
-}
-
-/* _proxy_ward_free(): free reverse proxy listener
-*/
-static void
-_proxy_ward_free(uv_handle_t* han_u)
-{
-  u3_ward* rev_u = han_u->data;
-
-  c3_free(rev_u->non_u.base);
-  c3_free(rev_u);
-}
-
-/* _proxy_ward_close_timer(): close ward timer
-*/
-static void
-_proxy_ward_close_timer(uv_handle_t* han_u)
-{
-  u3_ward* rev_u = han_u->data;
-
-  uv_close((uv_handle_t*)&rev_u->tim_u, _proxy_ward_free);
-}
-
-/* _proxy_ward_close(): close ward (ship-specific listener)
-*/
-static void
-_proxy_ward_close(u3_ward* rev_u)
-{
-  _proxy_ward_unlink(rev_u);
-
-  while ( 0 != rev_u->won_u ) {
-    _proxy_wcon_close(rev_u->won_u);
-    rev_u->won_u = rev_u->won_u->nex_u;
-  }
-
-  uv_close((uv_handle_t*)&rev_u->tcp_u, _proxy_ward_close_timer);
-}
-
-/* _proxy_ward_new(): allocate reverse proxy listener
-*/
-static u3_ward*
-_proxy_ward_new(u3_pcon* con_u, u3_atom sip)
-{
-  u3_ward* rev_u = c3_calloc(sizeof(*rev_u));
-  rev_u->tcp_u.data = rev_u;
-  rev_u->tim_u.data = rev_u;
-  rev_u->con_u = con_u;
-
-  u3r_chubs(0, 2, rev_u->who_d, sip);
-  _proxy_ward_link(con_u, rev_u);
-
-  u3z(sip);
-
-  return rev_u;
-}
-
-/* _proxy_wcon_peek_read_cb(): authenticate connection by checking nonce.
-*/
-static void
-_proxy_wcon_peek_read_cb(uv_stream_t* upt_u,
-                         ssize_t      siz_w,
-                         const uv_buf_t* buf_u)
-{
-  u3_wcon* won_u = upt_u->data;
-  u3_ward* rev_u = won_u->rev_u;
-
-  if ( 0 > siz_w ) {
-    if ( UV_EOF != siz_w ) {
-      u3l_log("proxy: ward peek: %s\n", uv_strerror(siz_w));
-    }
-    _proxy_wcon_close(won_u);
-  }
-  else {
-    uv_read_stop(upt_u);
-
-    c3_w len_w = rev_u->non_u.len;
-
-    if ( ((len_w + 1) != siz_w) ||
-         (len_w != buf_u->base[0]) ||
-         (0 != memcmp(rev_u->non_u.base, buf_u->base + 1, len_w)) ) {
-      // u3l_log("proxy: ward auth fail\n");
-      _proxy_wcon_unlink(won_u);
-      _proxy_wcon_close(won_u);
-    }
-    else {
-      _proxy_wcon_unlink(won_u);
-
-      u3_pcon* con_u = rev_u->con_u;
-      con_u->upt_u = (uv_tcp_t*)&won_u->upt_u;
-      con_u->upt_u->data = con_u;
-
-      _proxy_fire(con_u);
-      _proxy_ward_close(rev_u);
-    }
-  }
-}
-
-/* _proxy_wcon_peek(): peek at a new incoming connection
-*/
-static void
-_proxy_wcon_peek(u3_wcon* won_u)
-{
-  uv_read_start((uv_stream_t*)&won_u->upt_u,
-                _proxy_alloc, _proxy_wcon_peek_read_cb);
-}
-
-/* _proxy_ward_accept(): accept new connection on ward
-*/
-static void
-_proxy_ward_accept(u3_ward* rev_u)
-{
-  u3_wcon* won_u = _proxy_wcon_new(rev_u);
-
-  uv_tcp_init(u3L, &won_u->upt_u);
-
-  c3_i sas_i;
-
-  if ( 0 != (sas_i = uv_accept((uv_stream_t*)&rev_u->tcp_u,
-                               (uv_stream_t*)&won_u->upt_u)) ) {
-    u3l_log("proxy: accept: %s\n", uv_strerror(sas_i));
-    _proxy_wcon_close(won_u);
-  }
-  else {
-    _proxy_wcon_peek(won_u);
-  }
-}
-
-/* _proxy_ward_listen_cb(): listen callback for ward
-*/
-static void
-_proxy_ward_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
-{
-  u3_ward* rev_u = (u3_ward*)tcp_u;
-
-  if ( 0 != sas_i ) {
-    u3l_log("proxy: ward: %s\n", uv_strerror(sas_i));
-  }
-  else {
-    _proxy_ward_accept(rev_u);
-  }
-}
-
-/* _proxy_ward_timer_cb(): expiration timer for ward
-*/
-static void
-_proxy_ward_timer_cb(uv_timer_t* tim_u)
-{
-  u3_ward* rev_u = tim_u->data;
-
-  if ( 0 != rev_u ) {
-    u3l_log("proxy: ward expired: %d\n", rev_u->por_s);
-    _proxy_ward_close(rev_u);
-    _proxy_conn_close(rev_u->con_u);
-  }
-}
-
-/* _proxy_ward_plan(): notify ship of new ward
-*/
-static void
-_proxy_ward_plan(u3_ward* rev_u)
-{
-  u3_noun non, cad;
-
-  {
-    c3_w* non_w = c3_malloc(64);
-    c3_w  len_w;
-
-    c3_rand(non_w);
-
-    non = u3i_words(16, non_w);
-    len_w = u3r_met(3, non);
-
-    //  the nonce is saved to authenticate u3_wcon
-    //  and will be freed with u3_ward
-    //
-    rev_u->non_u = uv_buf_init((c3_c*)non_w, len_w);
-  }
-
-  {
-    u3_noun who = u3i_chubs(2, rev_u->who_d);
-    u3_noun cha = u3nq(c3__a, c3__give, c3__prox, u3_nul);
-    u3_noun dat = u3nc(c3__that, u3nt(rev_u->por_s,
-                                      u3k(rev_u->con_u->sec),
-                                      non));
-
-    cad = u3nq(c3__want, who, cha, dat);
-  }
-
-  //  XX s/b c3__ames?
+  u3_httd* htd_u = c3_calloc(sizeof(*htd_u));
+
+  u3_auto* car_u = &htd_u->car_u;
+  car_u->nam_m = c3__http;
+  car_u->liv_o = c3n;
+  car_u->io.talk_f = _http_io_talk;
+  car_u->io.kick_f = _http_io_kick;
+  car_u->io.exit_f = _http_io_exit;
+  //  XX retry up to N?
   //
-  u3_pier_plan(u3nt(u3_blip, c3__newt, u3_nul), cad);
-}
+  // car_u->ev.bail_f = ...;
 
-/* _proxy_ward_start(): start ward (ship-specific listener).
-*/
-static void
-_proxy_ward_start(u3_pcon* con_u, u3_noun sip)
-{
-  u3_ward* rev_u = _proxy_ward_new(con_u, u3k(sip));
-
-  uv_tcp_init(u3L, &rev_u->tcp_u);
-
-  struct sockaddr_in add_u;
-  c3_i add_i = sizeof(add_u);
-  memset(&add_u, 0, add_i);
-  add_u.sin_family = AF_INET;
-  add_u.sin_addr.s_addr = INADDR_ANY;
-  add_u.sin_port = 0;  // first available
-
-  c3_i sas_i;
-
-  if ( 0 != (sas_i = uv_tcp_bind(&rev_u->tcp_u,
-                                 (const struct sockaddr*)&add_u, 0)) ||
-       0 != (sas_i = uv_listen((uv_stream_t*)&rev_u->tcp_u,
-                               TCP_BACKLOG, _proxy_ward_listen_cb)) ||
-       0 != (sas_i = uv_tcp_getsockname(&rev_u->tcp_u,
-                                        (struct sockaddr*)&add_u, &add_i))) {
-    u3l_log("proxy: ward: %s\n", uv_strerror(sas_i));
-    _proxy_ward_close(rev_u);
-    _proxy_conn_close(con_u);
-  }
-  else {
-    rev_u->por_s = ntohs(add_u.sin_port);
-
-#if 0
-    {
-      u3_noun who = u3dc("scot", 'p', u3k(sip));
-      c3_c* who_c = u3r_string(who);
-      u3l_log("\r\nward for %s started on %u\r\n", who_c, rev_u->por_s);
-      c3_free(who_c);
-      u3z(who);
-    }
-#endif
-
-    _proxy_ward_plan(rev_u);
-
-    //  XX how long?
-    //
-    uv_timer_init(u3L, &rev_u->tim_u);
-    uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 600 * 1000, 0);
-  }
-
-  u3z(sip);
-}
-
-/* _proxy_ward_connect_cb(): ward connection callback
-*/
-static void
-_proxy_ward_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
-{
-  u3_pcon* con_u = upc_u->data;
-
-  if ( 0 != sas_i ) {
-    u3l_log("proxy: ward connect: %s\n", uv_strerror(sas_i));
-    _proxy_conn_close(con_u);
-  }
-  else {
-    // XX can con_u close before the loopback conn is established?
-    _proxy_loop_connect(con_u);
-
-    u3_warc* cli_u = con_u->src_u.cli_u;
-
-    // send %that nonce to ward for authentication
-    _proxy_write(con_u, (uv_stream_t*)&(con_u->don_u), cli_u->non_u);
-
-    cli_u->non_u = uv_buf_init(0, 0);
-  }
-
-  c3_free(upc_u);
-}
-
-/* _proxy_ward_connect(): connect to remote ward
-*/
-static void
-_proxy_ward_connect(u3_warc* cli_u)
-{
-  u3_pcon* con_u = _proxy_conn_new(u3_ptyp_ward, cli_u);
-
-  uv_tcp_init(u3L, &con_u->don_u);
-
-  struct sockaddr_in add_u;
-
-  memset(&add_u, 0, sizeof(add_u));
-  add_u.sin_family = AF_INET;
-  add_u.sin_addr.s_addr = htonl(cli_u->ipf_w);
-  add_u.sin_port = htons(cli_u->por_s);
-
-  uv_connect_t* upc_u = c3_malloc(sizeof(*upc_u));
-  upc_u->data = con_u;
-
-  c3_i sas_i;
-
-  if ( 0 != (sas_i = uv_tcp_connect(upc_u, &con_u->don_u,
-                                    (const struct sockaddr*)&add_u,
-                                    _proxy_ward_connect_cb)) ) {
-      u3l_log("proxy: ward connect: %s\n", uv_strerror(sas_i));
-      c3_free(upc_u);
-      _proxy_conn_close(con_u);
-  }
-}
-
-/* _proxy_ward_resolve_cb(): ward IP address resolution callback
-*/
-static void
-_proxy_ward_resolve_cb(uv_getaddrinfo_t* adr_u,
-                       c3_i              sas_i,
-                       struct addrinfo*  aif_u)
-{
-  u3_warc* cli_u = adr_u->data;
-
-  if ( 0 != sas_i ) {
-    u3l_log("proxy: ward: resolve: %s\n", uv_strerror(sas_i));
-    _proxy_warc_free(cli_u);
-  }
-  else {
-    // XX traverse struct a la _ames_czar_cb
-    cli_u->ipf_w = ntohl(((struct sockaddr_in *)aif_u->ai_addr)->sin_addr.s_addr);
-    _proxy_ward_connect(cli_u);
-  }
-
-  c3_free(adr_u);
-  uv_freeaddrinfo(aif_u);
-}
-
-/* _proxy_reverse_resolve(): resolve IP address of remote ward
-*/
-static void
-_proxy_ward_resolve(u3_warc* cli_u)
-{
-  uv_getaddrinfo_t* adr_u = c3_malloc(sizeof(*adr_u));
-  adr_u->data = cli_u;
-
-  struct addrinfo hin_u;
-  memset(&hin_u, 0, sizeof(struct addrinfo));
-
-  hin_u.ai_family = PF_INET;
-  hin_u.ai_socktype = SOCK_STREAM;
-  hin_u.ai_protocol = IPPROTO_TCP;
-
-  //  XX why the conditional?
-  //
-  if ( 0 == cli_u->hot_c ) {
-    u3_noun sip = u3dc("scot", 'p', u3i_chubs(2, cli_u->who_d));
-    c3_c* sip_c = u3r_string(sip);
-    c3_w len_w = 1 + strlen(sip_c) + strlen(PROXY_DOMAIN);
-    cli_u->hot_c = c3_malloc(len_w);
-    // incremented to skip '~'
-    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, PROXY_DOMAIN);
-
-    c3_free(sip_c);
-    u3z(sip);
-  }
-
-  c3_i sas_i;
-
-  if ( 0 != (sas_i = uv_getaddrinfo(u3L, adr_u, _proxy_ward_resolve_cb,
-                                         cli_u->hot_c, 0, &hin_u)) ) {
-    u3l_log("proxy: ward: resolve: %s\n", uv_strerror(sas_i));
-    _proxy_warc_free(cli_u);
-  }
-}
-
-/* _proxy_parse_host(): parse plaintext buffer for Host header
-*/
-static u3_proxy_pars
-_proxy_parse_host(const uv_buf_t* buf_u, c3_c** hot_c)
-{
-  struct phr_header hed_u[H2O_MAX_HEADERS];
-  size_t hed_t = H2O_MAX_HEADERS;
-
-  {
-    // unused
-    c3_i        ver_i;
-    const c3_c* met_c;
-    size_t      met_t;
-    const c3_c* pat_c;
-    size_t      pat_t;
-
-    size_t len_t = buf_u->len < H2O_MAX_REQLEN ? buf_u->len : H2O_MAX_REQLEN;
-    // XX slowloris?
-    c3_i las_i = 0;
-    c3_i sas_i;
-
-    sas_i = phr_parse_request(buf_u->base, len_t, &met_c, &met_t,
-                              &pat_c, &pat_t, &ver_i, hed_u, &hed_t, las_i);
-
-    switch ( sas_i ) {
-      case -1: return u3_pars_fail;
-      case -2: return u3_pars_moar;
-    }
-  }
-
-  const h2o_token_t* tok_t;
-  size_t i;
-
-  for ( i = 0; i < hed_t; i++ ) {
-    // XX in-place, copy first
-    h2o_strtolower((c3_c*)hed_u[i].name, hed_u[i].name_len);
-
-    if ( 0 != (tok_t = h2o_lookup_token(hed_u[i].name, hed_u[i].name_len)) ) {
-      if ( tok_t->is_init_header_special && H2O_TOKEN_HOST == tok_t ) {
-        c3_c* val_c;
-        c3_c* por_c;
-
-        val_c = c3_malloc(1 + hed_u[i].value_len);
-        val_c[hed_u[i].value_len] = 0;
-        memcpy(val_c, hed_u[i].value, hed_u[i].value_len);
-
-        // 'truncate' by replacing port separator ':' with 0
-        if ( 0 != (por_c = strchr(val_c, ':')) ) {
-          por_c[0] = 0;
-        }
-
-        *hot_c = val_c;
-        break;
-      }
-    }
-  }
-
-  return u3_pars_good;
-}
-
-/* _proxy_parse_sni(): parse clienthello buffer for SNI
-*/
-static u3_proxy_pars
-_proxy_parse_sni(const uv_buf_t* buf_u, c3_c** hot_c)
-{
-  c3_i sas_i = parse_tls_header((const uint8_t*)buf_u->base,
-                                buf_u->len, hot_c);
-
-  if ( 0 > sas_i ) {
-    switch ( sas_i ) {
-      case -1: return u3_pars_moar;
-      case -2: return u3_pars_good;  // SNI not present
-      default: return u3_pars_fail;
-    }
-  }
-
-  return u3_pars_good;
-}
-
-/* _proxy_parse_ship(): determine destination (unit ship) for proxied request
-*/
-static u3_noun
-_proxy_parse_ship(c3_c* hot_c)
-{
-  if ( 0 == hot_c ) {
-    return u3_nul;
-  }
-  else {
-    c3_c* dom_c = strchr(hot_c, '.');
-
-    if ( 0 == dom_c ) {
-      return u3_nul;
-    }
-    else {
-      //  length of the first subdomain
-      //
-      c3_w dif_w = dom_c - hot_c;
-      c3_w dns_w = strlen(PROXY_DOMAIN);
-
-      //  validate that everything after the first subdomain
-      //  matches the proxy domain
-      //  (skipped if networking is disabled)
-      //
-      if ( (c3y == u3_Host.ops_u.net) &&
-           ( (dns_w != strlen(hot_c) - (dif_w + 1)) ||
-             (0 != strncmp(dom_c + 1, PROXY_DOMAIN, dns_w)) ) )
-      {
-        return u3_nul;
-      }
-      else {
-        //  attempt to parse the first subdomain as a @p
-        //
-        u3_noun sip;
-        c3_c* sip_c = c3_malloc(2 + dif_w);
-
-        strncpy(sip_c + 1, hot_c, dif_w);
-        sip_c[0] = '~';
-        sip_c[1 + dif_w] = 0;
-
-        sip = u3dc("slaw", 'p', u3i_string(sip_c));
-        c3_free(sip_c);
-
-        return sip;
-      }
-    }
-  }
-}
-
-/* _proxy_dest(): proxy to destination
-*/
-static void
-_proxy_dest(u3_pcon* con_u, u3_noun sip)
-{
-  if ( u3_nul == sip ) {
-    _proxy_loop_connect(con_u);
-  }
-  else {
-    // XX revisit
-    u3_pier* pir_u = u3_pier_stub();
-    u3_noun our    = u3i_chubs(2, pir_u->who_d);
-    u3_noun hip    = u3t(sip);
-
-    if ( c3y == u3r_sing(our, hip) ) {
-      _proxy_loop_connect(con_u);
-    }
-    else {
-      //  XX we should u3v_peek %j /=sein= to confirm
-      //  that we're sponsoring this ship
-      //
-      _proxy_ward_start(con_u, u3k(hip));
-    }
-
-    u3z(our);
-  }
-
-  u3z(sip);
-}
-
-static void _proxy_peek_read(u3_pcon* con_u);
-
-/* _proxy_peek(): peek at proxied request for destination
-*/
-static void
-_proxy_peek(u3_pcon* con_u)
-{
-  c3_c* hot_c = 0;
-
-  u3_proxy_pars sat_e = ( c3y == con_u->sec ) ?
-                        _proxy_parse_sni(&con_u->buf_u, &hot_c) :
-                        _proxy_parse_host(&con_u->buf_u, &hot_c);
-
-  switch ( sat_e ) {
-    default: c3_assert(0);
-
-    case u3_pars_fail: {
-      u3l_log("proxy: peek fail\n");
-      _proxy_conn_close(con_u);
-      break;
-    }
-
-    case u3_pars_moar: {
-      u3l_log("proxy: peek moar\n");
-      // XX count retries, fail after some n
-      _proxy_peek_read(con_u);
-      break;
-    }
-
-    case u3_pars_good: {
-      u3_noun sip = _proxy_parse_ship(hot_c);
-      _proxy_dest(con_u, sip);
-      break;
-    }
-  }
-
-  if ( 0 != hot_c ) {
-    c3_free(hot_c);
-  }
-}
-
-/* _proxy_peek_read_cb(): read callback for peeking at proxied request
-*/
-static void
-_proxy_peek_read_cb(uv_stream_t* don_u,
-                    ssize_t      siz_w,
-                    const uv_buf_t* buf_u)
-{
-  u3_pcon* con_u = don_u->data;
-
-  if ( 0 > siz_w ) {
-    if ( UV_EOF != siz_w ) {
-      u3l_log("proxy: peek: %s\n", uv_strerror(siz_w));
-    }
-    _proxy_conn_close(con_u);
-  }
-  else {
-    uv_read_stop(don_u);
-
-    if ( 0 == con_u->buf_u.base ) {
-      con_u->buf_u = uv_buf_init(buf_u->base, siz_w);
-    }
-    else {
-      c3_w len_w = siz_w + con_u->buf_u.len;
-      void* ptr_v = c3_realloc(con_u->buf_u.base, len_w);
-
-      memcpy(ptr_v + con_u->buf_u.len, buf_u->base, siz_w);
-      con_u->buf_u = uv_buf_init(ptr_v, len_w);
-
-      c3_free(buf_u->base);
-    }
-
-    _proxy_peek(con_u);
-  }
-}
-
-/* _proxy_peek_read(): start read  to peek at proxied request
-*/
-static void
-_proxy_peek_read(u3_pcon* con_u)
-{
-  uv_read_start((uv_stream_t*)&con_u->don_u,
-                _proxy_alloc, _proxy_peek_read_cb);
-}
-
-/* _proxy_serv_free(): free proxy listener
-*/
-static void
-_proxy_serv_free(u3_prox* lis_u)
-{
-  u3_pcon* con_u = lis_u->con_u;
-
-  while ( con_u ) {
-    _proxy_conn_close(con_u);
-    con_u = con_u->nex_u;
-  }
-
-  u3_ward* rev_u = lis_u->rev_u;
-
-  while ( rev_u ) {
-    _proxy_ward_close(rev_u);
-    rev_u = rev_u->nex_u;
-  }
-
-  // not unlinked here, owned directly by htp_u
-
-  c3_free(lis_u);
-}
-
-/* _proxy_serv_close(): close proxy listener
-*/
-static void
-_proxy_serv_close(u3_prox* lis_u)
-{
-  uv_close((uv_handle_t*)&lis_u->sev_u, (uv_close_cb)_proxy_serv_free);
-}
-
-/* _proxy_serv_new(): allocate proxy listener
-*/
-static u3_prox*
-_proxy_serv_new(u3_http* htp_u, c3_s por_s, c3_o sec)
-{
-  u3_prox* lis_u = c3_malloc(sizeof(*lis_u));
-  lis_u->sev_u.data = lis_u;
-  lis_u->por_s = por_s;
-  lis_u->sec = sec;
-  lis_u->htp_u = htp_u;
-  lis_u->con_u = 0;
-  lis_u->rev_u = 0;
-
-  // not linked here, owned directly by htp_u
-
-  return lis_u;
-}
-
-/* _proxy_serv_accept(): accept new connection.
-*/
-static void
-_proxy_serv_accept(u3_prox* lis_u)
-{
-  u3_pcon* con_u = _proxy_conn_new(u3_ptyp_prox, lis_u);
-
-  uv_tcp_init(u3L, &con_u->don_u);
-
-  c3_i sas_i;
-  if ( 0 != (sas_i = uv_accept((uv_stream_t*)&lis_u->sev_u,
-                               (uv_stream_t*)&con_u->don_u)) ) {
-    u3l_log("proxy: accept: %s\n", uv_strerror(sas_i));
-    _proxy_conn_close(con_u);
-  }
-  else {
-    _proxy_peek_read(con_u);
-  }
-}
-
-/* _proxy_serv_listen_cb(): listen callback for proxy server.
-*/
-static void
-_proxy_serv_listen_cb(uv_stream_t* sev_u, c3_i sas_i)
-{
-  u3_prox* lis_u = (u3_prox*)sev_u;
-
-  if ( 0 != sas_i ) {
-    u3l_log("proxy: listen_cb: %s\n", uv_strerror(sas_i));
-  }
-  else {
-    _proxy_serv_accept(lis_u);
-  }
-}
-
-/* _proxy_serv_start(): start reverse TCP proxy server.
-*/
-static u3_prox*
-_proxy_serv_start(u3_prox* lis_u)
-{
-  uv_tcp_init(u3L, &lis_u->sev_u);
-
-  struct sockaddr_in add_u;
-
-  memset(&add_u, 0, sizeof(add_u));
-  add_u.sin_family = AF_INET;
-  add_u.sin_addr.s_addr = INADDR_ANY;
-
-  /*  Try ascending ports.
-  */
-  while ( 1 ) {
-    c3_i sas_i;
-
-    add_u.sin_port = htons(lis_u->por_s);
-
-    if ( 0 != (sas_i = uv_tcp_bind(&lis_u->sev_u,
-                                   (const struct sockaddr*)&add_u, 0)) ||
-         0 != (sas_i = uv_listen((uv_stream_t*)&lis_u->sev_u,
-                                 TCP_BACKLOG, _proxy_serv_listen_cb)) ) {
-      if ( (UV_EADDRINUSE == sas_i) || (UV_EACCES == sas_i) ) {
-        if ( (c3y == lis_u->sec) && (443 == lis_u->por_s) ) {
-          lis_u->por_s = 9443;
-        }
-        else if ( (c3n == lis_u->sec) && (80 == lis_u->por_s) ) {
-          lis_u->por_s = 9080;
-        }
-        else {
-          lis_u->por_s++;
-        }
-
-        continue;
-      }
-
-      u3l_log("proxy: listen: %s\n", uv_strerror(sas_i));
-      _proxy_serv_free(lis_u);
-      return 0;
-    }
-
-    return lis_u;
-  }
-}
-
-/* u3_http_ef_that(): reverse proxy requested connection notification.
-*/
-void
-u3_http_ef_that(u3_noun sip, u3_noun tat)
-{
-  u3_noun por, sec, non;
-
-  u3x_trel(tat, &por, &sec, &non);
-  c3_assert( c3y == u3a_is_cat(por) );
-  c3_assert( c3y == sec || c3n == sec );
-  c3_assert( c3y == u3ud(non) );
-
-  //  XX sip s/b validated -- could be *any* ship
-  //
-
-  {
-    u3_http* htp_u;
-    u3_warc* cli_u;
-
-    for ( htp_u = u3_Host.htp_u; (0 != htp_u); htp_u = htp_u->nex_u ) {
-      if ( c3n == htp_u->lop && sec == htp_u->sec ) {
-        break;
-      }
-    }
-
-    //  XX we should inform our sponsor if we aren't running a server
-    //  so this situation can be avoided
-    //
-    if ( 0 == htp_u ) {
-      u3l_log("http: that: no %s server\n",
-              (c3y == sec) ? "secure" : "insecure");
-    }
-    else {
-      cli_u = _proxy_warc_new(htp_u, (u3_atom)u3k(sip), (u3_atom)u3k(non),
-                                                    (c3_s)por, (c3_o)sec);
-
-      //  resolve to loopback if networking is disabled
-      //
-      if ( c3n == u3_Host.ops_u.net ) {
-        cli_u->ipf_w = INADDR_LOOPBACK;
-        _proxy_ward_connect(cli_u);
-      }
-      else {
-        _proxy_ward_resolve(cli_u);
-      }
-    }
-  }
-
-  u3z(sip);
-  u3z(tat);
+  return car_u;
 }

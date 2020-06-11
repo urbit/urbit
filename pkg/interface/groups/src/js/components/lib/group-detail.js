@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
+import { Spinner } from './icons/icon-spinner';
 import { deSig, uxToHex } from '/lib/util.js';
 
 export class GroupDetail extends Component {
@@ -8,6 +9,8 @@ export class GroupDetail extends Component {
     this.state = {
       title: "",
       description: "",
+      awaiting: false,
+      type: "Editing"
     }
     this.changeTitle = this.changeTitle.bind(this);
     this.changeDescription = this.changeDescription.bind(this);
@@ -57,7 +60,15 @@ export class GroupDetail extends Component {
 
     let channelList = (<div />);
 
-    channelList = Object.keys(props.association).map((key) => {
+    channelList = Object.keys(props.association).sort((a, b) => {
+      let aChannel = props.association[a];
+      let bChannel = props.association[b];
+
+      let aTitle = aChannel.metadata.title || a;
+      let bTitle = bChannel.metadata.title || b;
+
+      return aTitle.toLowerCase().localeCompare(bTitle.toLowerCase());
+    }).map((key) => {
       let channel = props.association[key];
       if (!('metadata' in channel)) {
         return <div key={channel} />;
@@ -72,23 +83,44 @@ export class GroupDetail extends Component {
       let app = channel["app-name"] || "Unknown";
       let channelPath = channel["app-path"];
       let link = `/~${app}/join${channelPath}`
-      app = app.charAt(0).toUpperCase() + app.slice(1)
+      app = app.charAt(0).toUpperCase() + app.slice(1);
+
+      let overlay = {
+        r: parseInt(color.slice(0, 2), 16),
+        g: parseInt(color.slice(2, 4), 16),
+        b: parseInt(color.slice(4, 6), 16)
+      };
+
+      let tile = (app === "Unknown")
+        ? <div className="dib ba pa1" style={{
+        backgroundColor: `#${color}`,
+        borderColor: `#${color}`,
+        height: 24,
+        width: 24}}/>
+        : <div className="ba" style={{
+          borderColor: `#${color}`,
+          backgroundColor: `rgba(${overlay.r}, ${overlay.g}, ${overlay.b}, 0.25)`
+          }}>
+            <img
+            src={`/~groups/img/${app}.png`}
+            className="dib invert-d pa1 v-mid"
+            style={{ height: 26, width: 26 }}/>
+        </div>
 
       return (
-        <li key={channelPath} className="f9 list flex pv2 w-100">
-          <div className="dib"
-            style={{ backgroundColor: `#${color}`, height: 32, width: 32 }}
-          ></div>
+        <li key={channelPath} className="f9 list flex pv1 w-100">
+          {tile}
           <div className="flex flex-column flex-auto">
             <p className="f9 inter ml2 w-100">{title}</p>
-            <p className="f9 inter ml2 w-100"
-              style={{ marginTop: "0.35rem" }}>
+            <p className="f9 inter ml2 w-100" style={{ marginTop: "0.35rem" }}>
               <span className="f9 di mr2 inter">{app}</span>
-              <a className="f9 di green2" href={link}>Open</a>
+              <a className="f9 di green2" href={link}>
+                Open
+              </a>
             </p>
           </div>
         </li>
-      )
+      );
     })
 
     let backLink = props.location.pathname;
@@ -149,6 +181,9 @@ export class GroupDetail extends Component {
     let association = ((props.association) && (props.association[channelPath]))
       ? props.association[channelPath] : {};
 
+    let deleteButtonClasses = (groupOwner) ? 'b--red2 red2 pointer bg-gray0-d' : 'b--gray3 gray3 bg-gray0-d c-default';
+
+
     return (
       <div className="pa4 w-100 h-100 white-d">
         <div className="f8 f9-m f9-l f9-xl w-100">
@@ -167,17 +202,18 @@ export class GroupDetail extends Component {
               onChange={this.changeTitle}
               onBlur={() => {
                 if (groupOwner) {
-                  props.api.setSpinner(true);
-                  props.api.metadataAdd(
-                    association['app-path'],
-                    association['group-path'],
-                    this.state.title,
-                    association.metadata.description,
-                    association.metadata['date-created'],
-                    uxToHex(association.metadata.color)
-                  ).then(() => {
-                    props.api.setSpinner(false);
-                  })
+                  this.setState({awaiting: true}, (() => {
+                    props.api.metadataAdd(
+                      association['app-path'],
+                      association['group-path'],
+                      this.state.title,
+                      association.metadata.description,
+                      association.metadata['date-created'],
+                      uxToHex(association.metadata.color)
+                    ).then(() => {
+                      this.setState({awaiting: false})
+                    })
+                  }))
                 }
               }}
             />
@@ -194,22 +230,38 @@ export class GroupDetail extends Component {
               onChange={this.changeDescription}
               onBlur={() => {
                 if (groupOwner) {
-                  props.api.setSpinner(true);
-                  props.api.metadataAdd(
-                    association['app-path'],
-                    association['group-path'],
-                    association.metadata.title,
-                    this.state.description,
-                    association.metadata['date-created'],
-                    uxToHex(association.metadata.color)
-                  ).then(() => {
-                    props.api.setSpinner(false);
-                  })
+                  this.setState({awaiting: true}, (() => {
+                    props.api.metadataAdd(
+                      association['app-path'],
+                      association['group-path'],
+                      association.metadata.title,
+                      this.state.description,
+                      association.metadata['date-created'],
+                      uxToHex(association.metadata.color)
+                    ).then(() => {
+                      this.setState({awaiting: false})
+                    })
+                  }))
                 }
               }}
             />
           </div>
+          <p className="f8 mt3 lh-copy">Delete Group</p>
+          <p className="f9 gray2 mb4">
+          Permanently delete this group. All current members will no longer see this group.
+          </p>
+          <a className={"dib f9 ba pa2 " + deleteButtonClasses}
+          onClick={() => {
+            if (groupOwner) {
+              this.setState({awaiting: true, type: "Deleting"}, (() => {
+                props.api.contactView.delete(props.path).then(() => {
+                  props.history.push("/~groups");
+                })
+              }))
+            }
+          }}>Delete this group</a>
         </div>
+        <Spinner awaiting={this.state.awaiting} text={`${this.state.type} group...`} classes="pa2 ba absolute right-1 bottom-1 b--gray1-d"/>
       </div>
     )
   }

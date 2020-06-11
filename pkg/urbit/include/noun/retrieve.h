@@ -404,6 +404,21 @@
                   c3_d*   c_d,
                   u3_atom d);
 
+      /* u3r_safe_byte(): validate and retrieve byte.
+      */
+        c3_o
+        u3r_safe_byte(u3_noun dat, c3_y* out_y);
+
+      /* u3r_safe_word(): validate and retrieve word.
+      */
+        c3_o
+        u3r_safe_word(u3_noun dat, c3_w* out_w);
+
+      /* u3r_safe_chub(): validate and retrieve chub.
+      */
+        c3_o
+        u3r_safe_chub(u3_noun dat, c3_d* out_d);
+
       /* u3r_string(): `a`, a text atom, as malloced C string.
       */
         c3_c*

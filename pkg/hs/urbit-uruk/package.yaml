@@ -35,7 +35,7 @@ dependencies:
   - template-haskell
   - text
   - urbit-atom
-  - urbit-king
+  - urbit-noun
   - vector
 
 when:
