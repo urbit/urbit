@@ -97,6 +97,11 @@ Implement Pier-wide process start events
   2. Make the serf IPC code not care about the shape of events and effects.
   3. Support invalid events throughout the system (use `Lenient`?)
 
+# Polish
+
+- [x] Goot logging output in non-verbose mode.
+- [ ] Command-Line flag to re-enable verbose output.
+
 
 # Cleanup
 

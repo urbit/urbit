@@ -40,7 +40,7 @@ withSerf config = mkRAcquire startup kill
  where
   startup = do
     (serf, st) <- io $ start config
-    logTrace (displayShow st)
+    logDebug (displayShow ("serf state", st))
     pure serf
   kill serf = do
     void $ rio $ stop serf
@@ -58,7 +58,7 @@ execReplay serf log last = do
  where
   doBoot :: RIO e (Either PlayBail Word)
   doBoot = do
-    logTrace "Beginning boot sequence"
+    logDebug "Beginning boot sequence"
 
     let bootSeqLen = lifecycleLen (Log.identity log)
 
@@ -72,14 +72,14 @@ execReplay serf log last = do
     when (numEvs /= bootSeqLen) $ do
       throwIO (MissingBootEventsInEventLog numEvs bootSeqLen)
 
-    logTrace $ display ("Sending " <> tshow numEvs <> " boot events to serf")
+    logDebug $ display ("Sending " <> tshow numEvs <> " boot events to serf")
 
     io (boot serf evs) >>= \case
       Just err -> do
-        logTrace "Error on replay, exiting"
+        logDebug "Error on replay, exiting"
         pure (Left err)
       Nothing  -> do
-        logTrace "Finished boot events, moving on to more events from log."
+        logDebug "Finished boot events, moving on to more events from log."
         doReplay <&> \case
           Left err  -> Left err
           Right num -> Right (num + numEvs)

@@ -343,7 +343,7 @@ pier (serf, log) vSlog startedSig multi = do
           RunSwap _ _ _ _ _ -> putMVar okaySig ()
           RunBail _         -> inject (n + 1)
 
-    logTrace ("Boot Event" <> displayShow ev)
+    -- logTrace ("[BOOT EVENT]: " <> display (summarizeEvent ev))
     io (inject 0)
 
   let slog :: Text -> IO ()
@@ -493,13 +493,17 @@ router slog waitFx Drivers {..} = do
 -- Compute (Serf) Thread -------------------------------------------------------
 
 logEvent :: HasLogFunc e => Ev -> RIO e ()
-logEvent ev = logDebug $ display $ "[EVENT]\n" <> pretty
+logEvent ev = do
+  logTrace $ "<- " <> display (summarizeEvent ev)
+  logDebug $ "[EVENT]\n" <> display pretty
  where
   pretty :: Text
   pretty = pack $ unlines $ fmap ("\t" <>) $ lines $ ppShow ev
 
 logEffect :: HasLogFunc e => Lenient Ef -> RIO e ()
-logEffect ef = logDebug $ display $ "[EFFECT]\n" <> pretty ef
+logEffect ef = do
+  logTrace $ "  -> " <> display (summarizeEffect ef)
+  logDebug $ display $ "[EFFECT]\n" <> pretty ef
  where
   pretty :: Lenient Ef -> Text
   pretty = \case

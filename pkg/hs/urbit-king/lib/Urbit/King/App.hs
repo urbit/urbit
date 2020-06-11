@@ -73,19 +73,19 @@ instance HasKingId KingEnv where
 
 -- Running KingEnvs ------------------------------------------------------------
 
-runKingEnvStderr :: RIO KingEnv a -> IO a
-runKingEnvStderr inner = do
+runKingEnvStderr :: Bool -> RIO KingEnv a -> IO a
+runKingEnvStderr verb inner = do
   logOptions <-
-    logOptionsHandle stderr True <&> setLogUseTime True <&> setLogUseLoc False
+    logOptionsHandle stderr verb <&> setLogUseTime True <&> setLogUseLoc False
 
   withLogFunc logOptions $ \logFunc -> runKingEnv logFunc logFunc inner
 
-runKingEnvLogFile :: RIO KingEnv a -> IO a
-runKingEnvLogFile inner = withLogFileHandle $ \h -> do
+runKingEnvLogFile :: Bool -> RIO KingEnv a -> IO a
+runKingEnvLogFile verb inner = withLogFileHandle $ \h -> do
   logOptions <-
-    logOptionsHandle h True <&> setLogUseTime True <&> setLogUseLoc False
+    logOptionsHandle h verb <&> setLogUseTime True <&> setLogUseLoc False
   stderrLogOptions <-
-    logOptionsHandle stderr True <&> setLogUseTime False <&> setLogUseLoc False
+    logOptionsHandle stderr verb <&> setLogUseTime False <&> setLogUseLoc False
 
   withLogFunc stderrLogOptions $ \stderrLogFunc -> withLogFunc logOptions
     $ \logFunc -> runKingEnv logFunc stderrLogFunc inner

@@ -165,7 +165,7 @@ execRespActs :: HasLogFunc e => Drv -> Ship -> Word64 -> HttpEvent -> RIO e ()
 execRespActs (Drv v) who reqId ev = readMVar v >>= \case
   Nothing -> logError "Got a response to a request that does not exist."
   Just sv -> do
-    logTrace $ displayShow ev
+    logDebug $ displayShow ev
     for_ (parseHttpEvent ev) $ \act -> do
       atomically (routeRespAct who (sLiveReqs sv) reqId act)
 
@@ -178,7 +178,7 @@ startServ
   -> (EvErr -> STM ())
   -> RIO e Serv
 startServ multi who isFake conf plan = do
-  logTrace (displayShow ("EYRE", "startServ"))
+  logDebug (displayShow ("EYRE", "startServ"))
 
   let vLive = meaLive multi
 
@@ -219,11 +219,11 @@ startServ multi who isFake conf plan = do
   let onKilReq :: Ship -> Word64 -> STM ()
       onKilReq _ship = plan . cancelEv srvId . fromIntegral
 
-  logTrace (displayShow ("EYRE", "joinMultiEyre", who, mTls, mCre))
+  logDebug (displayShow ("EYRE", "joinMultiEyre", who, mTls, mCre))
 
   atomically (joinMultiEyre multi who mCre onReq onKilReq)
 
-  logTrace $ displayShow ("EYRE", "Starting loopback server")
+  logDebug $ displayShow ("EYRE", "Starting loopback server")
   lop <- serv vLive $ ServConf
     { scHost = soHost (pttLop ptt)
     , scPort = soWhich (pttLop ptt)
@@ -235,7 +235,7 @@ startServ multi who isFake conf plan = do
         }
     }
 
-  logTrace $ displayShow ("EYRE", "Starting insecure server")
+  logDebug $ displayShow ("EYRE", "Starting insecure server")
   ins <- serv vLive $ ServConf
     { scHost = soHost (pttIns ptt)
     , scPort = soWhich (pttIns ptt)
@@ -248,7 +248,7 @@ startServ multi who isFake conf plan = do
     }
 
   mSec <- for mTls $ \tls -> do
-    logTrace "Starting secure server"
+    logDebug "Starting secure server"
     serv vLive $ ServConf
       { scHost = soHost (pttSec ptt)
       , scPort = soWhich (pttSec ptt)
@@ -269,7 +269,7 @@ startServ multi who isFake conf plan = do
   let por = Ports secPor insPor lopPor
       fil = pierPath <> "/.http.ports"
 
-  logTrace $ displayShow ("EYRE", "All Servers Started.", srvId, por, fil)
+  logDebug $ displayShow ("EYRE", "All Servers Started.", srvId, por, fil)
 
   pure (Serv srvId conf lop ins mSec por fil vLive)
 

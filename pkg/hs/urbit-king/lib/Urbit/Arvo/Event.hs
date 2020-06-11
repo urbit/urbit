@@ -382,3 +382,10 @@ getSpinnerNameForEvent = \case
   where
     isRet (TermEvBelt _ (Ret ())) = True
     isRet _                       = False
+
+summarizeEvent :: Ev -> Text
+summarizeEvent ev =
+  fromNoun (toNoun ev) & \case
+    Nothing -> "//invalid %event"
+    Just (pax :: [Cord], tag :: Cord, val :: Noun) ->
+      "/" <> intercalate "/" (unCord <$> pax) <> " %" <> unCord tag

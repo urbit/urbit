@@ -150,7 +150,7 @@ retry :: HasLogFunc e => RIO e (Either IOError a) -> RIO e a
 retry act = act >>= \case
   Right res -> pure res
   Left  exn -> do
-    logTr ctx ("Failed to open ports. Waiting 5s, then trying again.", exn)
+    logDbg ctx ("Failed to open ports. Waiting 5s, then trying again.", exn)
     threadDelay 5_000_000
     retry act
  where
@@ -164,7 +164,7 @@ tryOpenChoices
 tryOpenChoices hos = go
  where
   go (p :| ps) = do
-    logTrace (displayShow ("EYRE", "Trying to open port.", p))
+    logDebug (displayShow ("EYRE", "Trying to open port.", p))
     io (tryOpen hos p) >>= \case
       Left err -> do
         logError (displayShow ("EYRE", "Failed to open port.", p))
@@ -178,14 +178,14 @@ tryOpenAny
   :: HasLogFunc e => String -> RIO e (Either IOError (W.Port, Net.Socket))
 tryOpenAny hos = do
   let ctx = ["EYRE", "SERV", "tryOpenAny"]
-  logTr ctx "Asking the OS for any free port."
+  logDbg ctx "Asking the OS for any free port."
   io (openFreePort hos) >>= \case
     Left  exn    -> pure (Left exn)
     Right (p, s) -> do
       pure (Right (p, s))
 
-logTr :: (HasLogFunc e, Show a) => [Text] -> a -> RIO e ()
-logTr ctx msg = logTrace (prefix <> suffix)
+logDbg :: (HasLogFunc e, Show a) => [Text] -> a -> RIO e ()
+logDbg ctx msg = logDebug (prefix <> suffix)
  where
   prefix = display (concat $ fmap (<> ": ") ctx)
   suffix = displayShow msg
@@ -202,11 +202,11 @@ forceOpenSocket hos por = mkRAcquire opn kil
 
   opn = do
     let ctx = ["EYRE", "SERV", "forceOpenSocket"]
-    logTr ctx (hos, por)
+    logDbg ctx (hos, por)
     (p, s) <- retry $ case por of
       SPAnyPort    -> tryOpenAny bind
       SPChoices ps -> tryOpenChoices bind ps
-    logTr ctx ("Opened port.", p)
+    logDbg ctx ("Opened port.", p)
     pure (p, s)
 
   bind = case hos of
@@ -230,11 +230,11 @@ onSniHdr
   :: HasLogFunc e => e -> MultiTlsConfig -> Maybe String -> IO Credentials
 onSniHdr env (MTC mtls) mHos = do
   tabl <- atomically (readTVar mtls)
-  runRIO env $ logTr ctx (tabl, mHos)
+  runRIO env $ logDbg ctx (tabl, mHos)
   ship <- hostShip (encodeUtf8 . pack <$> mHos)
-  runRIO env $ logTr ctx ship
+  runRIO env $ logDbg ctx ship
   tcfg <- lookup ship tabl & maybe (notRunning ship) (pure . snd)
-  runRIO env $ logTr ctx tcfg
+  runRIO env $ logDbg ctx tcfg
   pure (Credentials [tcfg])
  where
   notRunning ship = error ("Ship not running: ~" <> show ship)
@@ -293,9 +293,9 @@ startServer typ hos por sok red vLive = do
 
       let
         app = \req resp -> do
-          runRIO envir $ logTr ctx "Got request"
+          runRIO envir $ logDbg ctx "Got request"
           who <- reqShip req
-          runRIO envir $ logTr ctx ("Parsed HOST", who)
+          runRIO envir $ logDbg ctx ("Parsed HOST", who)
           runAppl who (rcReq api who) (rcKil api who) req resp
 
       io (W.runTLSSocket tlsMany opts sok app)
@@ -312,7 +312,7 @@ configCreds TlsConfig {..} =
 fakeServ :: HasLogFunc e => ServConf -> RIO e ServApi
 fakeServ conf = do
   let por = fakePort (scPort conf)
-  logTrace (displayShow ("EYRE", "SERV", "Running Fake Server", por))
+  logDebug (displayShow ("EYRE", "SERV", "Running Fake Server", por))
   pure $ ServApi
     { saKil = pure ()
     , saPor = pure por
@@ -331,7 +331,7 @@ getFirstTlsConfig (MTC var) = do
 
 realServ :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
 realServ vLive conf@ServConf {..} = do
-  logTrace (displayShow ("EYRE", "SERV", "Running Real Server"))
+  logDebug (displayShow ("EYRE", "SERV", "Running Real Server"))
   kil <- newEmptyTMVarIO
   por <- newEmptyTMVarIO
 
@@ -344,7 +344,7 @@ realServ vLive conf@ServConf {..} = do
     }
  where
   runServ vPort = do
-    logTrace (displayShow ("EYRE", "SERV", "runServ"))
+    logDebug (displayShow ("EYRE", "SERV", "runServ"))
     rwith (forceOpenSocket scHost scPort) $ \(por, sok) -> do
       atomically (putTMVar vPort por)
       startServer scType scHost por sok scRedi vLive

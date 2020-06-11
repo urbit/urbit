@@ -79,14 +79,14 @@ forceBind :: HasLogFunc e => PortNumber -> HostAddress -> RIO e Socket
 forceBind por hos = go
  where
   go = do
-    logTrace (display ("AMES: UDP: Opening socket on port " <> tshow por))
+    logDebug (display ("AMES: UDP: Opening socket on port " <> tshow por))
     io (doBind por hos) >>= \case
       Right sk -> do
-        logTrace (display ("AMES: UDP: Opened socket on port " <> tshow por))
+        logDebug (display ("AMES: UDP: Opened socket on port " <> tshow por))
         pure sk
       Left err -> do
-        logTrace (display ("AMES: UDP: " <> tshow err))
-        logTrace ("AMES: UDP: Failed to open UDP socket. Waiting")
+        logDebug (display ("AMES: UDP: " <> tshow err))
+        logDebug ("AMES: UDP: Failed to open UDP socket. Waiting")
         threadDelay 250_000
         go
 
@@ -97,14 +97,14 @@ forceBind por hos = go
 -}
 sendPacket :: HasLogFunc e => ByteString -> SockAddr -> Socket -> RIO e Bool
 sendPacket fullBytes adr sok = do
-  logTrace $ displayShow ("AMES", "UDP", "Sending packet.")
+  logDebug $ displayShow ("AMES", "UDP", "Sending packet.")
   res <- io $ tryIOError $ go fullBytes
   case res of
     Left err -> do
       logError $ displayShow ("AMES", "UDP", "Failed to send packet", err)
       pure False
     Right () -> do
-      logTrace $ displayShow ("AMES", "UDP", "Packet sent.")
+      logDebug $ displayShow ("AMES", "UDP", "Packet sent.")
       pure True
  where
   go byt = do
@@ -137,7 +137,7 @@ recvPacket sok = do
 -}
 fakeUdpServ :: HasLogFunc e => RIO e UdpServ
 fakeUdpServ = do
-  logTrace $ displayShow ("AMES", "UDP", "\"Starting\" fake UDP server.")
+  logDebug $ displayShow ("AMES", "UDP", "\"Starting\" fake UDP server.")
   pure UdpServ { .. }
  where
   usSend = \_ _ -> pure ()
@@ -153,7 +153,7 @@ fakeUdpServ = do
 realUdpServ
   :: forall e . HasLogFunc e => PortNumber -> HostAddress -> RIO e UdpServ
 realUdpServ por hos = do
-  logTrace $ displayShow ("AMES", "UDP", "Starting real UDP server.")
+  logDebug $ displayShow ("AMES", "UDP", "Starting real UDP server.")
 
   env <- ask
 
@@ -173,7 +173,7 @@ realUdpServ por hos = do
   -}
   let signalBrokenSocket :: Socket -> RIO e ()
       signalBrokenSocket sock = do
-        logTrace $ displayShow ("AMES", "UDP"
+        logDebug $ displayShow ("AMES", "UDP"
                                , "Socket broken. Requesting new socket"
                                )
         atomically $ do
@@ -200,7 +200,7 @@ realUdpServ por hos = do
     sk <- forceBind por hos
     atomically (writeTVar vSock (Just sk))
     broken <- atomically (takeTMVar vFail)
-    logTrace "AMES: UDP: Closing broken socket."
+    logWarn "AMES: UDP: Closing broken socket."
     io (close broken)
 
   tSend <- async $ forever $ join $ atomically $ do
@@ -223,15 +223,15 @@ realUdpServ por hos = do
             logError "AMES: UDP: Dropping non-ipv4 packet"
             pure ()
           Right (Just (b, p, a)) -> do
-            logTrace "AMES: UDP: Received packet."
+            logDebug "AMES: UDP: Received packet."
             enqueueRecvPacket p a b
 
   let shutdown = do
-        logTrace "AMES: UDP: Shutting down. (killing threads)"
+        logDebug "AMES: UDP: Shutting down. (killing threads)"
         cancel tOpen
         cancel tSend
         cancel tRecv
-        logTrace "AMES: UDP: Shutting down. (closing socket)"
+        logDebug "AMES: UDP: Shutting down. (closing socket)"
         io $ join $ atomically $ do
           res <- readTVar vSock <&> maybe (pure ()) close
           writeTVar vSock Nothing

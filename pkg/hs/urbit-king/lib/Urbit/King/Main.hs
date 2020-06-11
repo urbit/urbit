@@ -193,9 +193,9 @@ tryBootFromPill oExit pill lite ship boot multi = do
  where
   bootedPier vSlog = do
     view pierPathL >>= lockFile
-    rio $ logTrace "Starting boot"
+    rio $ logDebug "Starting boot"
     sls <- Pier.booted vSlog pill lite ship boot
-    rio $ logTrace "Completed boot"
+    rio $ logDebug "Completed boot"
     pure sls
 
 runOrExitImmediately
@@ -210,9 +210,9 @@ runOrExitImmediately vSlog getPier oExit mStart multi = do
  where
   shutdownImmediately :: (Serf, Log.EventLog) -> RIO PierEnv ()
   shutdownImmediately (serf, log) = do
-    logTrace "Sending shutdown signal"
+    logDebug "Sending shutdown signal"
     Serf.stop serf
-    logTrace "Shutdown!"
+    logDebug "Shutdown!"
 
   runPier :: (Serf, Log.EventLog) -> RIO PierEnv ()
   runPier serfLog = do
@@ -232,7 +232,7 @@ tryPlayShip exitImmediately fullReplay playFrom mStart multi = do
  where
   wipeSnapshot = do
     shipPath <- view pierPathL
-    logTrace "wipeSnapshot"
+    logDebug "wipeSnapshot"
     logDebug $ display $ pack @Text ("Wiping " <> north shipPath)
     logDebug $ display $ pack @Text ("Wiping " <> south shipPath)
     removeFileIfExists (north shipPath)
@@ -244,9 +244,9 @@ tryPlayShip exitImmediately fullReplay playFrom mStart multi = do
   resumeShip :: TVar (Text -> IO ()) -> RAcquire PierEnv (Serf, Log.EventLog)
   resumeShip vSlog = do
     view pierPathL >>= lockFile
-    rio $ logTrace "RESUMING SHIP"
+    rio $ logDebug "RESUMING SHIP"
     sls <- Pier.resumed vSlog playFrom
-    rio $ logTrace "SHIP RESUMED"
+    rio $ logDebug "SHIP RESUMED"
     pure sls
 
 runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
@@ -261,7 +261,7 @@ checkEvs pierPath first last = do
   rwith (Log.existing logPath) $ \log -> do
     let ident = Log.identity log
     let pbSty = PB.defStyle { PB.stylePostfix = PB.exact }
-    logTrace (displayShow ident)
+    logDebug (displayShow ident)
 
     last <- atomically $ Log.lastEv log <&> \lastReal -> min last lastReal
 
@@ -286,7 +286,7 @@ checkEvs pierPath first last = do
   showEvents pb eId cycle          = await >>= \case
     Nothing -> do
       lift $ PB.killProgressBar pb
-      lift $ logTrace "Everything checks out."
+      lift $ logDebug "Everything checks out."
     Just bs -> do
       lift $ PB.incProgress pb 1
       lift $ do
@@ -315,10 +315,10 @@ collectAllFx = error "TODO"
 -}
 collectAllFx :: FilePath -> RIO KingEnv ()
 collectAllFx top = do
-    logTrace $ display $ pack @Text top
+    logDebug $ display $ pack @Text top
     vSlog <- logSlogs
     rwith (collectedFX vSlog) $ \() ->
-        logTrace "Done collecting effects!"
+        logDebug "Done collecting effects!"
   where
     tmpDir :: FilePath
     tmpDir = top </> ".tmpdir"
@@ -339,10 +339,10 @@ collectAllFx top = do
 
 replayPartEvs :: FilePath -> Word64 -> RIO KingEnv ()
 replayPartEvs top last = do
-    logTrace $ display $ pack @Text top
+    logDebug $ display $ pack @Text top
     fetchSnapshot
     rwith replayedEvs $ \() ->
-        logTrace "Done replaying events!"
+        logDebug "Done replaying events!"
   where
     fetchSnapshot :: RIO KingEnv ()
     fetchSnapshot = do
@@ -385,57 +385,57 @@ replayPartEvs top last = do
 -}
 testPill :: HasLogFunc e => FilePath -> Bool -> Bool -> RIO e ()
 testPill pax showPil showSeq = do
-  logTrace "Reading pill file."
+  logDebug "Reading pill file."
   pillBytes <- readFile pax
 
-  logTrace "Cueing pill file."
+  logDebug "Cueing pill file."
   pillNoun <- io $ cueBS pillBytes & either throwIO pure
 
-  logTrace "Parsing pill file."
+  logDebug "Parsing pill file."
   pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
-  logTrace "Using pill to generate boot sequence."
+  logDebug "Using pill to generate boot sequence."
   bootSeq <- genBootSeq (Ship 0) pill False (Fake (Ship 0))
 
-  logTrace "Validate jam/cue and toNoun/fromNoun on pill value"
+  logDebug "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
 
-  logTrace "Checking if round-trip matches input file:"
+  logDebug "Checking if round-trip matches input file:"
   unless (reJam == pillBytes) $ do
-    logTrace "    Our jam does not match the file...\n"
-    logTrace "    This is surprising, but it is probably okay."
+    logDebug "    Our jam does not match the file...\n"
+    logDebug "    This is surprising, but it is probably okay."
 
   when showPil $ do
-      logTrace "\n\n== Pill ==\n"
+      logDebug "\n\n== Pill ==\n"
       io $ pPrint pill
 
   when showSeq $ do
-      logTrace "\n\n== Boot Sequence ==\n"
+      logDebug "\n\n== Boot Sequence ==\n"
       io $ pPrint bootSeq
 
 validateNounVal :: (HasLogFunc e, Eq a, ToNoun a, FromNoun a)
                 => a -> RIO e ByteString
 validateNounVal inpVal = do
-    logTrace "  jam"
+    logDebug "  jam"
     inpByt <- evaluate $ jamBS $ toNoun inpVal
 
-    logTrace "  cue"
+    logDebug "  cue"
     outNon <- cueBS inpByt & either throwIO pure
 
-    logTrace "  fromNoun"
+    logDebug "  fromNoun"
     outVal <- fromNounErr outNon & either (throwIO . uncurry ParseErr) pure
 
-    logTrace "  toNoun"
+    logDebug "  toNoun"
     outNon <- evaluate (toNoun outVal)
 
-    logTrace "  jam"
+    logDebug "  jam"
     outByt <- evaluate $ jamBS outNon
 
-    logTrace "Checking if: x == cue (jam x)"
+    logDebug "Checking if: x == cue (jam x)"
     unless (inpVal == outVal) $
         error "Value fails test: x == cue (jam x)"
 
-    logTrace "Checking if: jam x == jam (cue (jam x))"
+    logDebug "Checking if: jam x == jam (cue (jam x))"
     unless (inpByt == outByt) $
         error "Value fails test: jam x == jam (cue (jam x))"
 
@@ -447,11 +447,11 @@ validateNounVal inpVal = do
 pillFrom :: CLI.PillSource -> RIO KingEnv Pill
 pillFrom = \case
   CLI.PillSourceFile pillPath -> do
-    logTrace $ display $ "boot: reading pill from " ++ (pack pillPath :: Text)
+    logDebug $ display $ "boot: reading pill from " ++ (pack pillPath :: Text)
     io (loadFile pillPath >>= either throwIO pure)
 
   CLI.PillSourceURL url -> do
-    logTrace $ display $ "boot: retrieving pill from " ++ (pack url :: Text)
+    logDebug $ display $ "boot: retrieving pill from " ++ (pack url :: Text)
     -- Get the jamfile with the list of stars accepting comets right now.
     manager <- io $ C.newManager tlsManagerSettings
     request <- io $ C.parseRequest url
@@ -640,8 +640,10 @@ main = do
     CLI.CmdCon pier                           -> connTerm pier
 
  where
-  runKingEnv args | willRunTerminal args = runKingEnvLogFile
-  runKingEnv args | otherwise            = runKingEnvStderr
+  verboseLogging = False
+
+  runKingEnv args | willRunTerminal args = runKingEnvLogFile verboseLogging
+  runKingEnv args | otherwise            = runKingEnvStderr verboseLogging
 
   setupSignalHandlers = do
     mainTid <- myThreadId
@@ -691,7 +693,7 @@ runShipRestarting r o multi = do
       logTrace $ display (pier <> " shutdown requested")
       race_ (wait tid) $ do
         threadDelay 5_000_000
-        logTrace $ display (pier <> " not down after 5s, killing with fire.")
+        logDebug $ display (pier <> " not down after 5s, killing with fire.")
         cancel tid
       logTrace $ display ("Ship terminated: " <> pier)
 

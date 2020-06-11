@@ -186,3 +186,10 @@ instance FromNoun Ef where
     ReOrg "" s "vega" p _     -> fail "%vega effect expects nil value"
     ReOrg "" s tag    p val   -> EfVane <$> parseNoun (toNoun (s, tag, p, val))
     ReOrg _  _ _      _ _     -> fail "Non-empty first path-element"
+
+summarizeEffect :: Lenient Ef -> Text
+summarizeEffect ef =
+  fromNoun (toNoun ef) & \case
+    Nothing -> "//invalid %effect"
+    Just (pax :: [Cord], tag :: Cord, val :: Noun) ->
+      "/" <> intercalate "/" (unCord <$> pax) <> " %" <> unCord tag
