@@ -39,7 +39,7 @@ herb ./ship -d '~&  %finish-test-renders  ~'
 
 # Run the test generator
 herb ./ship -d '+test, =seed `@uvI`(shaz %reproducible)' |
-  tee test-generator-output
+  cat | tee test-generator-output | cat
 
 herb ./ship -p hood -d '+hood/mass'
 
