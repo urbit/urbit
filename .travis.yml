@@ -2,7 +2,7 @@ jobs:
   include:
   - os: linux
     language: nix
-    nix: 2.1.3
+    nix: 2.3.6
     env: STACK_YAML=pkg/hs/stack.yaml
     before_install:
       - git lfs pull
