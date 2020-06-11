@@ -8,12 +8,20 @@ fail () {
   fi
 }
 
+cache=1
+
 if [ -z "$CACHIX_SIGNING_KEY" ]
-then fail "The CACHIX_SIGNING_KEY environment variable needs to be set."
+then
+  echo "The CACHIX_SIGNING_KEY environment variable needs to be set."
+  echo "Disabling cachix uploads"
+  cache=0
 fi
 
 if [ -z "$CACHIX_AUTH_TOKEN" ]
-then fail "The CACHIX_AUTH_TOKEN environment variable needs to be set."
+then
+  echo "The CACHIX_AUTH_TOKEN environment variable needs to be set."
+  echo "Disabling cachix uploads"
+  cache=0
 fi
 
 cleanup () {
@@ -24,17 +32,20 @@ trap cleanup EXIT
 
 set -ex
 
-cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
-cachix use urbit2
+if [ $cache = 1 ]
+then cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
+fi
+
+cachix use urbit2 || true
 
 build () {
-  nix-build --no-out-link --max-jobs 3 "$@" >> .cache.list || True
+  nix-build --no-out-link --max-jobs 3 "$@" > .cache.list
+  if [ $cache = 1 ]
+  then cachix push urbit2 < .cache.list
+  fi
 }
 
-cleanup
 build nix/cachix/local.nix
 build nix/cachix/tests.nix -A fakebus
 build nix/cachix/tests.nix -A results
 build nix/cachix/release.nix
-
-cachix push urbit2 < .cache.list
