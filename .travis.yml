@@ -5,6 +5,8 @@ jobs:
     nix: 2.3.6
     env: STACK_YAML=pkg/hs/stack.yaml
     before_install:
+      - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
+
       - git lfs pull
       - sh/travis-install-stack
 
