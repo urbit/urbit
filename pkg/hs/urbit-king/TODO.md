@@ -100,7 +100,7 @@ Implement Pier-wide process start events
 # Polish
 
 - [x] Goot logging output in non-verbose mode.
-- [ ] Command-Line flag to re-enable verbose output.
+- [x] Command-Line flag to re-enable verbose output.
 
 
 # Cleanup

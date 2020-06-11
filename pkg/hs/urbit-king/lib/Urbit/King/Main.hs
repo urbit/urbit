@@ -640,16 +640,22 @@ main = do
     CLI.CmdCon pier                           -> connTerm pier
 
  where
-  verboseLogging = False
-
-  runKingEnv args | willRunTerminal args = runKingEnvLogFile verboseLogging
-  runKingEnv args | otherwise            = runKingEnvStderr verboseLogging
+  runKingEnv args =
+    let verb = verboseLogging args
+    in if willRunTerminal args
+       then runKingEnvLogFile verb
+       else runKingEnvStderr verb
 
   setupSignalHandlers = do
     mainTid <- myThreadId
     let onKillSig = throwTo mainTid UserInterrupt
     for_ [Sys.sigTERM, Sys.sigINT] $ \sig -> do
       Sys.installHandler sig (Sys.Catch onKillSig) Nothing
+
+  verboseLogging :: CLI.Cmd -> Bool
+  verboseLogging = \case
+    CLI.CmdRun ko ships -> any CLI.oVerbose (ships <&> \(_, o, _) -> o)
+    _                   -> False
 
   willRunTerminal :: CLI.Cmd -> Bool
   willRunTerminal = \case
