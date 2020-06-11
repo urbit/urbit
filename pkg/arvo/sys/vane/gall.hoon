@@ -303,55 +303,23 @@
         ==
       ::
       ++  agent-3
-        =<  form
-        |%
-        +$  step  (quip card form)
-        +$  card  (wind note gift)
-        +$  note  note-2
-        +$  task  task:agent
-        +$  sign  sign:agent
-        +$  gift  gift:agent
-        ++  form
-          $_  ^|
-          |_  bowl
-          ++  on-init
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-save
-            *vase
-          ::
-          ++  on-load
-            |~  old-state=vase
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-poke
-            |~  [mark vase]
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-watch
-            |~  path
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-leave
-            |~  path
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-peek
-            |~  path
-            *(unit (unit cage))
-          ::
-          ++  on-agent
-            |~  [wire sign]
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-arvo
-            |~  [wire sign-arvo-2]
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-fail
-            |~  [term tang]
-            *(quip card _^|(..on-init))
-          --
+        =/  void  _!!
+        =>  |%
+            +$  card  *
+            --
+        $_
+        ^|
+        |_  bowl
+        ++  on-init  **
+        ++  on-save  *vase
+        ++  on-load  |~(void [*(list card) ..^$])
+        ++  on-poke  |~(void **)
+        ++  on-watch  |~(void **)
+        ++  on-leave  |~(void **)
+        ++  on-peek  |~(void **)
+        ++  on-agent  |~(void **)
+        ++  on-arvo  |~(void **)
+        ++  on-fail  |~(void **)
         --
       ::
       ++  state-2-to-3
@@ -363,9 +331,7 @@
           %-  ~(run by running.agents-2.state-2)
           |=  =yoke-2
           ^-  yoke-3
-          %=  yoke-2
-            agent-2  (agent-2-to-3 agent-2.yoke-2)
-          ==
+          yoke-2(agent-2 `agent-3`agent-2.yoke-2)
         ==
       ::
       ++  agent-2-to-3
