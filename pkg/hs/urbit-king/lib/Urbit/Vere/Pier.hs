@@ -362,16 +362,17 @@ pier (serf, log) vSlog startedSig multi = do
     void $ atomically $ tryPutTMVar saveSig ()
 
   --  TODO bullshit scry tester
-  void $ acquireWorker "bullshit scry tester" $ do
-    env <- ask
-    forever $ do
-      threadDelay 15_000_000
-      wen <- io Time.now
-      let kal = \mTermNoun -> runRIO env $ do
-            logDebug $ displayShow ("scry result: ", mTermNoun)
-      let nkt = MkKnot $ tshow $ Time.MkDate wen
-      let pax = Path ["j", "~zod", "life", nkt, "~zod"]
-      atomically $ putTMVar scrySig (wen, Nothing, pax, kal)
+  when False $ do
+    void $ acquireWorker "bullshit scry tester" $ do
+      env <- ask
+      forever $ do
+        threadDelay 15_000_000
+        wen <- io Time.now
+        let kal = \mTermNoun -> runRIO env $ do
+              logDebug $ displayShow ("scry result: ", mTermNoun)
+        let nkt = MkKnot $ tshow $ Time.MkDate wen
+        let pax = Path ["j", "~zod", "life", nkt, "~zod"]
+        atomically $ putTMVar scrySig (wen, Nothing, pax, kal)
 
   putMVar startedSig ()
 
