@@ -37,7 +37,7 @@ timerFires = forAll arbitrary (ioProperty . runKingEnvNoLog . runTest)
       envr <- ask
       king <- fromIntegral <$> view kingIdL
       q <- newTQueueIO
-      rwith (liftAcquire $ snd $ behn envr (writeTQueue q)) $ \cb -> do
+      rwith (liftAcquire $ behn envr (writeTQueue q)) $ \cb -> do
         io $ cb (BehnEfDoze (king, ()) (Just (2^20)))
         t <- atomically $ readTQueue q
         pure True
