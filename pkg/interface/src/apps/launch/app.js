@@ -33,7 +33,6 @@ export default class LaunchApp extends React.Component {
 
     this.subscription = new LaunchSubscription(this.store, this.api, channel);
     this.subscription.start();
-    window.api = this.api;
   }
 
   componentWillUnmount() {
