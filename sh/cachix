@@ -27,11 +27,14 @@ set -ex
 cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
 cachix use urbit2
 
-nix-build --no-out-link          \
-          --max-jobs 2           \
-          nix/cachix/local.nix   \
-          nix/cachix/release.nix \
-          nix/cachix/tests.nix   \
-  > .cache.list
+build () {
+  nix-build --no-out-link --max-jobs 3 "$@" >> .cache.list || True
+}
+
+cleanup
+build nix/cachix/local.nix
+build nix/cachix/tests.nix -A fakebus
+build nix/cachix/tests.nix -A results
+build nix/cachix/release.nix
 
 cachix push urbit2 < .cache.list
