@@ -53,6 +53,8 @@ export default class LaunchApp extends React.Component {
           tiles={state.launch.tiles}
           tileOrdering={state.launch.tileOrdering}
           api={this.api}
+          location={state.location}
+          weather={state.weather}
         />
       </div>
     );

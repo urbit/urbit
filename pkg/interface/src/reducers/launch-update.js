@@ -10,6 +10,16 @@ export default class LaunchReducer {
       this.changeFirstTime(data, state);
       this.changeIsShown(data, state);
     }
+
+    const weatherData = _.get(json, 'weather', false);
+    if (weatherData) {
+      state.weather = weatherData;
+    }
+
+    const locationData = _.get(json, 'location', false);
+    if (locationData) {
+      state.location = locationData;
+    }
   }
 
   initial(json, state) {

@@ -400,7 +400,7 @@ export default class ClockTile extends React.Component {
   }
 
   render() {
-    const data = this.props.data ? this.props.data : {};
+    const data = this.props.location ? this.props.location : {};
     return this.renderWrapper((
       <Clock data={data} />
     ));
