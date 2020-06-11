@@ -175,54 +175,7 @@ main(c3_i argc, c3_c* argv[])
     u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
 
     if ( eve_d ) {
-      c3_o roc_o;
-      c3_c nam_c[8193];
-      snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", u3V.dir_c, eve_d);
-
-      struct stat buf_b;
-      c3_i        fid_i = open(nam_c, O_RDONLY, 0644);
-
-      if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
-        fprintf(stderr, "serf: rock: %s not found\r\n", nam_c);
-        roc_o = c3n;
-      }
-      else {
-        fprintf(stderr, "serf: rock: %s found\r\n", nam_c);
-        roc_o = c3y;
-      }
-
-      close(fid_i);
-
-
-      if ( c3y == roc_o ) {
-        if ( c3n == u3e_hold() ) {
-          fprintf(stderr, "serf: unable to backup checkpoint\r\n");
-        }
-        else {
-          u3m_wipe();
-
-          if ( c3n == u3m_rock_load(u3V.dir_c, eve_d) ) {
-            fprintf(stderr, "serf: compaction failed, restoring checkpoint\r\n");
-
-            if ( c3n == u3e_fall() ) {
-              fprintf(stderr, "serf: unable to restore checkpoint\r\n");
-              c3_assert(0);
-            }
-          }
-
-          if ( c3n == u3e_drop() ) {
-            fprintf(stderr, "serf: warning: orphaned backup checkpoint file\r\n");
-          }
-
-          fprintf(stderr, "serf (%" PRIu64 "): compacted loom\r\n", eve_d);
-
-          u3V.sen_d = u3V.dun_d = eve_d;
-
-          //  save now for flexibility
-          //
-          u3e_save();
-        }
-      }
+      u3_serf_unpack(&u3V, eve_d);
     }
   }
 

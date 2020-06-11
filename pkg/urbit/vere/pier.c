@@ -574,9 +574,6 @@ _pier_play_read(u3_play* pay_u)
   }
 }
 
-c3_o
-u3_pier_pack(u3_pier* pir_u);
-
 /* _pier_play(): send a batch of events to the worker for log replay.
 */
 static void

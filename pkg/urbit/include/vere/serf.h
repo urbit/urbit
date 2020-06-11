@@ -12,7 +12,7 @@
         c3_d             dun_d;             //  last event processed
         c3_l             mug_l;             //  hash of state
         c3_o             pac_o;             //  pack kernel
-        c3_o             rec_o;             //  reclaim cash
+        c3_o             rec_o;             //  reclaim cache
         c3_o             mut_o;             //  mutated kerne
         u3_noun          sac;               //  space measurementl
       } u3_serf;
@@ -23,6 +23,11 @@
     */
       u3_noun
       u3_serf_init(u3_serf* sef_u);
+
+    /* u3_serf_unpack(): initialize from rock at [eve_d].
+    */
+      void
+      u3_serf_unpack(u3_serf* sef_u, c3_d eve_d);
 
     /* u3_serf_writ(): apply writ [wit], producing plea [*pel] on c3y.
     */

@@ -1133,6 +1133,11 @@
         c3_o
         u3_pier_save(u3_pier* pir_u);
 
+      /* u3_pier_pack(): save a portable snapshot.
+      */
+        c3_o
+        u3_pier_pack(u3_pier* pir_u);
+
       /* u3_pier_stub(): get the One Pier for unreconstructed code.
       */
         u3_pier*
