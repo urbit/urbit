@@ -488,6 +488,24 @@ _serf_sure_core(u3_serf* sef_u, u3_noun cor)
   sef_u->mut_o = c3y;
 }
 
+/* _serf_sure(): event succeeded, save state and process effects.
+*/
+static u3_noun
+_serf_sure(u3_serf* sef_u, c3_w pre_w, u3_noun par)
+{
+  //  vir/(list ovum)  list of effects
+  //  cor/arvo         arvo core
+  //
+  u3_noun vir, cor;
+  u3x_cell(par, &vir, &cor);
+
+  _serf_sure_core(sef_u, u3k(cor));
+  vir = _serf_sure_feck(sef_u, pre_w, u3k(vir));
+
+  u3z(par);
+  return vir;
+}
+
 /* _serf_make_crud():
 */
 static u3_noun
@@ -572,11 +590,7 @@ static u3_noun
 _serf_work(u3_serf* sef_u, u3_noun job)
 {
   u3_noun gon;
-  c3_w pre_w = u3a_open(u3R);
-
-  //  %work must be performed against an extant kernel
-  //
-  c3_assert( 0 != sef_u->mug_l);
+  c3_w  pre_w = u3a_open(u3R);
 
   //  event numbers must be continuous
   //
@@ -588,18 +602,11 @@ _serf_work(u3_serf* sef_u, u3_noun job)
   //  event accepted
   //
   if ( u3_blip == u3h(gon) ) {
-    //  vir/(list ovum)  list of effects
-    //  cor/arvo         arvo core
-    //
-    u3_noun vir, cor;
-    u3x_trel(gon, 0, &vir, &cor);
-
-    _serf_sure_core(sef_u, u3k(cor));
-    vir = _serf_sure_feck(sef_u, pre_w, u3k(vir));
+    u3_noun vir = _serf_sure(sef_u, pre_w, u3k(u3t(gon)));
     
     u3z(gon); u3z(job);
     return u3nc(c3__done, u3nt(u3i_chubs(1, &sef_u->dun_d),
-                               u3i_words(1, &sef_u->mug_l),
+                               sef_u->mug_l,
                                vir));
   }
   //  event rejected
@@ -609,7 +616,7 @@ _serf_work(u3_serf* sef_u, u3_noun job)
     //
     u3_noun dud = u3k(gon);
 
-    // XX reclaim/pack on %meme first?
+    // XX reclaim on %meme first?
     //
 
     job = _serf_make_crud(job, dud);
@@ -618,18 +625,11 @@ _serf_work(u3_serf* sef_u, u3_noun job)
     //  error notification accepted
     //
     if ( u3_blip == u3h(gon) ) {
-      //  vir/(list ovum)  list of effects
-      //  cor/arvo         arvo core
-      //
-      u3_noun vir, cor;
-      u3x_trel(gon, 0, &vir, &cor);
-
-      _serf_sure_core(sef_u, u3k(cor));
-      vir = _serf_sure_feck(sef_u, pre_w, u3k(vir));
+      u3_noun vir = _serf_sure(sef_u, pre_w, u3k(u3t(gon)));
 
       u3z(gon); u3z(dud);
       return u3nc(c3__swap, u3nq(u3i_chubs(1, &sef_u->dun_d),
-                                 u3i_words(1, &sef_u->mug_l),
+                                 sef_u->mug_l,
                                  job,
                                  vir));
     }
@@ -638,7 +638,7 @@ _serf_work(u3_serf* sef_u, u3_noun job)
     else {
       sef_u->sen_d = sef_u->dun_d;
 
-      // XX reclaim/pack on %meme ?
+      // XX reclaim on %meme ?
       //
 
       u3z(job);
@@ -672,6 +672,10 @@ u3_serf_work(u3_serf* sef_u, u3_noun job)
 
     u3t_event_trace(lab_c, 'B');
   }
+
+  //  %work must be performed against an extant kernel
+  //
+  c3_assert( 0 != sef_u->mug_l);
 
   pro = u3nc(c3__work, _serf_work(sef_u, job));
 
@@ -810,13 +814,13 @@ _serf_play_list(u3_serf* sef_u, u3_noun eve)
       //
       u3z(vev);
       return u3nc(c3__bail, u3nt(u3i_chubs(1, &sef_u->dun_d),
-                                 u3i_words(1, &sef_u->mug_l),
+                                 sef_u->mug_l,
                                  dud));
     }
   }
 
   u3z(vev);
-  return u3nc(c3__done, u3i_words(1, &sef_u->mug_l));
+  return u3nc(c3__done, sef_u->mug_l);
 }
 
 /* u3_serf_play(): apply event list, producing status.
@@ -1092,8 +1096,7 @@ _serf_ripe(u3_serf* sef_u)
                  ? 0
                  : u3r_mug(u3A->roc);
 
-  return u3nc(u3i_chubs(1, &sef_u->dun_d),
-              u3i_words(1, &sef_u->mug_l));
+  return u3nc(u3i_chubs(1, &sef_u->dun_d), sef_u->mug_l);
 }
 
 /* u3_serf_init(): init or restore, producing status.
