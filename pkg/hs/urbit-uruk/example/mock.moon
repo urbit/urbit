@@ -9,7 +9,18 @@
   =/  apply
     |=  (x y)
     ['App' ($ x) ($ y)]
-  (W apply ['Ess' ~] ['Kay' ~] ['Eee' 1] ['Dub' ~] code)
+  (W apply ['Ess' ~] ['Kay' ~] ['Enh' 1] ['Dub' ~] code)
+
+
+=/  app
+  |=  (l r)
+  (con 'App' (con l r))
+
+=/  ess  ['Ess' ~]
+=/  kay  ['Kay' ~]
+=/  enh  ['Enh' ~]
+=/  dub  ['Dub' ~]
+
 
 ::(skewdata 5)   :: ok
 ::(skewdata seq) :: ok
@@ -27,7 +38,7 @@
   =/  apply
     |=  (x y)
     ['App' (recur x) (recur y)]
-  (W apply ['Ess' ~] ['Kay' ~] ['Eee' ~] ['Dub' ~] code)
+  (W apply ['Ess' ~] ['Kay' ~] ['Enh' ~] ['Dub' ~] code)
 
 
 ::  foldl should really be in the stdlib.
@@ -45,21 +56,19 @@
 ::
 =/  match-kay
   |=  top
-  %-  (trace ['match-kay' top])  |=  ig
   =/  ktop  (car top)
   ?:  (eql 'App' ktop)
     =/  vtop  (cdr top)
     =/  l  (car vtop)
     =/  r  (cdr vtop)
     =/  kl  (car l)
-    %-  (trace ['match-kay-kl' kl])  |=  ig
     ?:  (eql 'App' kl)
       =/  vl  (cdr l)
       =/  l2  (car vl)
       =/  r2  (cdr vl)
       =/  kl2  (car l2)
-      %-  (trace ['match-kay-kl2' kl2])  |=  ig
       ?:  (eql 'Kay' kl2)
+        %-  (trace ['match-kay' top])  |=  ig
         (rit r2)
       (lef ~)
     (lef ~)
@@ -69,7 +78,6 @@
 ::
 =/  match-left
   |=  (reduce top)
-  %-  (trace ['match-left' top])  |=  ig
   =/  ktop  (car top)
   ?:  (eql 'App' ktop)
     =/  vtop  (cdr top)
@@ -79,6 +87,7 @@
       (lef l)
         r
       =/  r-vtop  (cdr vtop)
+      %-  (trace ['match-left' top])  |=  ig
       (rit (con 'App' (con r r-vtop)))
     ==
   (lef ~)
@@ -87,7 +96,6 @@
 ::
 =/  match-right
   |=  (reduce top)
-  %-  (trace ['match-right' top])  |=  ig
   =/  ktop  (car top)
   ?:  (eql 'App' ktop)
     =/  vtop  (cdr top)
@@ -98,6 +106,7 @@
     ::
         r
       =/  l-vtop  (car vtop)
+      %-  (trace ['match-right' top])  |=  ig
       (rit (con 'App' (con l-vtop r)))
     ==
   (lef ~)
@@ -106,28 +115,26 @@
 ::          (((       )    )    )
 =/  match-ess
   |=  top
-  %-  (trace ['match-ess' top])  |=  ig
   =/  ktop  (car top)
   ?:  (eql 'App' ktop)
     =/  vtop  (cdr top)
     =/  l  (car vtop)
     =/  z  (cdr vtop)
     =/  kl  (car l)
-    %-  (trace ['match-ess-kl' kl])  |=  ig
     ?:  (eql 'App' kl)
       =/  vl  (cdr l)
       =/  l2  (car vl)
       =/  y  (cdr vl)
       =/  kl2  (car l2)
-      %-  (trace ['match-ess-kl2' kl2])  |=  ig
       ?:  (eql 'App' kl2)
         =/  vvl  (cdr l2)
         =/  l3  (car vvl)
         =/  x  (cdr vvl)
-        %-  (trace ['match-ess-z' z])  |=  ig     :: r  is z
-        %-  (trace ['match-ess-y' y])  |=  ig   :: r2 is y
-        %-  (trace ['match-ess-x' x])  |=  ig   :: r3 is x
-        (rit (con 'App' (con (con 'App' (con x y)) (con 'App' (con y z)))))
+        =/  kl3  (car l3)
+        ?:  (eql 'Ess' kl3)
+          %-  (trace ['match-ess' top])  |=  ig
+          (rit (con 'App' (con (con 'App' (con x y)) (con 'App' (con y z)))))
+        (lef ~)
       (lef ~)
     (lef ~)
   (lef ~)
@@ -136,28 +143,24 @@
 ::
 =/  match-two-enhances
   |=  top
-  %-  (trace ['match-two-eee' top])  |=  ig
   =/  ktop  (car top)
   ?:  (eql 'App' ktop)
     =/  vtop  (cdr top)
     =/  l  (car vtop)
     =/  r  (car vtop)
     =/  kl  (car l)
-    ?:  (eql 'Eee' kl)
+    ?:  (eql 'Enh' kl)
       =/  kr  (car r)
-      ?:  (eql 'Eee' kr)
+      ?:  (eql 'Enh' kr)
         =/  vr  (cdr r)
         ?:  (eql 1 vr)
           =/  vl  (cdr l)
-          (rit (con 'Eee' (inc vl)))
+          %-  (trace ['match-two-eee' top])  |=  ig
+          (rit (con 'Enh' (inc vl)))
         (lef ~)
       (lef ~)
     (lef ~)
   (lef ~)
-
-=/  con-app
-  |=  (l r)
-  (con 'App' (con l r))
 
 ::  match-enhance: NE n :& t :& b          → Just $ NM (match n t b) (fromIntegral n) []
 ::
@@ -176,7 +179,32 @@
 :: grab the body and the rest, and if the length of the rest is the same as the
 :: count, proceed to instead reconstruct the list with foldl ((b x1) x2)...
 
-:: (foldl con-app base xs)
+:: (foldl app base xs)
+
+
+::  given an 'App' tree form, turn things into a list, where the deepest node
+::  is the leftmost list item.
+::
+::  (((1 2) 3) 4) -> [1 2 3 4 ~]
+::
+=/  to-list-form
+  ..  $
+  |=  top
+  =/  ktop  (car top)
+  ?:  (eql 'App' ktop)
+    =/  vtop  (cdr top)
+    =/  l  (car vtop)
+    =/  r  (cdr vtop)
+    =/  left-recur  ($ l)
+    (weld left-recur (lcon r lnil))
+  (lcon top lnil)
+
+
+
+=/  match-enhance
+  |=  top
+  (lef ~)
+
 
 ::  reduce: performs one step of reduction, returning rit if you can reduce and
 ::  lef if you can't
@@ -198,7 +226,7 @@
           l
         ?-    (match-ess top)
             l
-          ?-    (match-two-enhances top)
+          ?-    (match-enhance top)
               l
             (lef 'no such match')
           ::
@@ -235,20 +263,24 @@
     ($ r)
   ==
 
-::  (K K K) -> (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~)))
-::(reduce (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~))))
+::  (K K K)
+=/  kkk  (app (app kay kay) kay)
+::(reduce kkk)
 
-::  ((K K K) K K) -> (con 'App' (con (con 'App' (con (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~)))
-:: (eval (con 'App' (con (con 'App' (con (con 'App' (con (con 'App' (con (con 'Kay' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))))
+::  ((K K K) K K)
+=/  kkk-kk  (app (app (app (app kay kay) kay) kay) kay)
+::(eval kkk-kk)
 
 
 :: (((S K) K) K)
-:: (con 'App' (con (con 'App' (con (con 'App' (con (con 'Ess' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~)))
-::(eval (con 'App' (con (con 'App' (con (con 'App' (con (con 'Ess' ~) (con 'Kay' ~))) (con 'Kay' ~))) (con 'Kay' ~))))
+=/  sk-k-k  (app (app (app ess kay) kay) kay)
+::(eval sk-k-k)
+::(to-list-form sk-k-k)
 
 
-:: (E E)
-::(eval (con 'App' (con (con 'Eee' 1) (con 'Eee' 1))))
+:: (((E E) K) (S K))
+=/  seq-false-tag  (app (app (app enh enh) kay) (app ess kay))
+(eval seq-false-tag)
 
 
-(foldl add 0 (lcon 1 (lcon 2 (lcon 3 lnil))))
+::(foldl add 0 (lcon 1 (lcon 2 (lcon 3 lnil))))

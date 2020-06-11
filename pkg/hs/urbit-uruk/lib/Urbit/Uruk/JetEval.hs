@@ -319,6 +319,9 @@ runJet = curry \case
   (MS TRACE  , [x, y]   ) -> goTrace x y
   (MS LCON   , _        ) -> Nothing
   (MS LNIL   , _        ) -> Nothing
+  (MS WELD   , _        ) -> Nothing
+  (MS TURN   , _        ) -> Nothing
+  (MS GULF   , _        ) -> Nothing
 
   (MD (NAT _), _        ) -> badArgs
   (MD (Bn  _), _        ) -> badArgs
