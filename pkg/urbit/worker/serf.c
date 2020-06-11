@@ -583,7 +583,7 @@ _serf_work(u3_serf* sef_u, u3_noun job)
   c3_assert( sef_u->sen_d == sef_u->dun_d);
   sef_u->sen_d++;
 
-  gon = _serf_poke(sef_u, "work", job);
+  gon = _serf_poke(sef_u, "work", job);  // retain
 
   //  event accepted
   //
@@ -613,7 +613,7 @@ _serf_work(u3_serf* sef_u, u3_noun job)
     //
 
     job = _serf_make_crud(job, dud);
-    gon = _serf_poke(sef_u, "crud", u3k(job));
+    gon = _serf_poke(sef_u, "crud", job);  // retain
 
     //  error notification accepted
     //
