@@ -31,6 +31,7 @@ nix-build --no-out-link          \
           --max-jobs 2           \
           nix/cachix/local.nix   \
           nix/cachix/release.nix \
+          nix/cachix/tests.nix   \
   > .cache.list
 
 cachix push urbit2 < .cache.list
