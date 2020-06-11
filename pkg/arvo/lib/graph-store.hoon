@@ -6,6 +6,11 @@
 =,  sur
 =,  pos
 |%
+++  nu                                              ::  parse number as hex
+  |=  jon/json
+  ?>  ?=({$s *} jon)
+  (rash p.jon hex)
+::
 ++  orm      ((or-map atom node) lth)
 ++  orm-log  ((or-map time action) lth)
 ::
@@ -198,7 +203,121 @@
   ++  action
     |=  =json
     ^-  ^action
-    !!
+    :-  %0
+    ^-  action-0
+    =<  (decode json)
+    |%
+    ++  decode
+      %-  of
+      :~  [%add-graph add-graph]
+          [%remove-graph remove-graph]
+          [%add-nodes add-nodes]
+          [%remove-nodes remove-nodes]
+          [%add-signatures add-signatures]
+          [%remove-signatures remove-signatures]
+          [%add-tags add-tags]
+          [%remove-tags remove-tags]
+      ==
+    ::
+    ++  add-graph
+      %-  ot
+      :~  [%resource dejs:res]
+          [%graph !!]
+      ==
+    ::
+    ::  TODO: convert between normal hoon map and mop
+    ::
+    ++  remove-graph
+      (ot [%resource dejs:res]~)
+    ::
+    ++  add-nodes
+      %-  ot
+      :~  [%resource dejs:res]
+          [%nodes nodes]
+      ==
+    ::
+    ++  nodes  (op index node)
+    ::
+    ++  node
+      %-  ot
+      :~  [%post post]
+          [%children (ot [%empty ul]~)]
+      ==
+    ::
+    ++  post
+      %-  ot
+      :~  [%author (su ;~(pfix sig fed:ag))]
+          [%index index] 
+          [%time-sent di]
+          [%contents (ar content)]
+          [%hash (mu nu)]
+          [%signatures (as signature)]
+      ==
+    ::
+    ++  content
+      %-  of
+      :~  [%text so]
+          [%url so]
+          [%code eval]
+      ==
+    ::
+    ++  eval
+      |=  a=^json
+      ^-  [cord (list tank)]
+      =,  ^?  dejs-soft:format
+      =+  exp=((ot expression+so ~) a)
+      %-  need
+      ?~  exp  [~ '' ~]
+      :+  ~  u.exp
+      ::  NOTE: when sending, if output is an empty list,
+      ::  graph-store will evaluate
+      (fall ((ot output+(ar dank) ~) a) ~)
+    ::
+    ++  remove-nodes
+      %-  ot
+      :~  [%resource dejs:res]
+          [%indices (as index)]
+      ==
+    ::
+    ++  add-signatures
+      %-  ot
+      :~  [%uid uid]
+          [%signatures (as signature)]
+      ==
+    ::
+    ++  remove-signatures
+      %-  ot
+      :~  [%uid uid]
+          [%signatures (as signature)]
+      ==
+    ::
+    ++  signature
+      %-  ot
+      :~  [%hash nu]
+          [%ship (su ;~(pfix sig fed:ag))]
+          [%life ni]
+      ==
+    ::
+    ++  uid
+      %-  ot
+      :~  [%resource dejs:res]
+          [%index index]          
+      ==
+    ::
+    ++  index  (su ;~(pfix net (more net dem)))
+    ::
+    ++  add-tags
+      %-  ot
+      :~  [%term (se %tas)]
+          [%resource dejs:res]
+      ==
+    ::
+    ++  remove-tags
+      %-  ot
+      :~  [%term (se %tas)]
+          [%resource dejs:res]
+      ==
+    --
   --
 ::
 ++  create
