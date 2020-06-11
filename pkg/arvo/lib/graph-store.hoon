@@ -2,14 +2,31 @@
 /+  res=resource, *or-map
 =<  [sur .]
 =<  [pos .]
-=<  [res .]
 =,  sur
 =,  pos
 |%
+::  NOTE: move these functions to zuse
 ++  nu                                              ::  parse number as hex
   |=  jon/json
   ?>  ?=({$s *} jon)
   (rash p.jon hex)
+::
+++  re                                                ::  recursive reparsers
+  |*  {gar/* sef/_|.(fist:dejs-soft:format)}
+  |=  jon/json
+  ^-  (unit _gar)
+  =-  ~!  gar  ~!  (need -)  -
+  ((sef) jon)
+::
+++  dank                                              ::  tank
+  ^-  $-(json (unit tank))
+  =,  ^?  dejs-soft:format
+  %+  re  *tank  |.  ~+
+  %-  of  :~
+    leaf+sa
+    palm+(ot style+(ot mid+sa cap+sa open+sa close+sa ~) lines+(ar dank) ~)
+    rose+(ot style+(ot mid+sa open+sa close+sa ~) lines+(ar dank) ~)
+  ==
 ::
 ++  orm      ((or-map atom node) lth)
 ++  orm-log  ((or-map time action) lth)
@@ -30,30 +47,30 @@
           %keys
         [%keys [%a (turn ~(tap in resources.upd) enjs:res)]]
       ::
-          %add-graph
-        :-  %add-graph
-        %-  pairs
-        :~  [%resource (enjs:res resource.upd)]
-            [%graph (graph graph.upd)]
-        ==
+::          %add-graph
+::        :-  %add-graph
+::        %-  pairs
+::        :~  [%resource (enjs:res resource.upd)]
+::            [%graph (graph graph.upd)]
+::        ==
       ::
           %remove-graph
         [%remove-graph (enjs:res resource.upd)]
       ::
-          %add-nodes
-        :-  %add-nodes
-        %-  pairs
-        :~  [%resource (enjs:res resource.upd)]
-            [%nodes (nodes nodes.upd)]
-        ==
+::          %add-nodes
+::        :-  %add-nodes
+::        %-  pairs
+::        :~  [%resource (enjs:res resource.upd)]
+::            [%nodes (nodes nodes.upd)]
+::        ==
       ::
-          %remove-nodes
-        :-  %remove-nodes
-        %-  pairs
-        :~  [%resource (enjs:res resource.upd)]
-            [%indices (indices indices.upd)]
-        ==
-      ::
+::          %remove-nodes
+::        :-  %remove-nodes
+::        %-  pairs
+::        :~  [%resource (enjs:res resource.upd)]
+::            [%indices (indices indices.upd)]
+::        ==
+::      ::
           %add-signatures
         :-  %add-signatures
         %-  pairs
@@ -201,84 +218,83 @@
   =,  dejs:format
   |%
   ++  action
-    |=  =json
+    |=  jon=json
     ^-  ^action
     :-  %0
     ^-  action-0
-    =<  (decode json)
+    =<  (decode jon)
     |%
     ++  decode
       %-  of
-      :~  [%add-graph add-graph]
+      :~  
+::          [%add-graph add-graph]
           [%remove-graph remove-graph]
-          [%add-nodes add-nodes]
-          [%remove-nodes remove-nodes]
-          [%add-signatures add-signatures]
+::          [%add-nodes add-nodes]
+::          [%remove-nodes remove-nodes]
+::          [%add-signatures add-signatures]
           [%remove-signatures remove-signatures]
-          [%add-tags add-tags]
-          [%remove-tags remove-tags]
+          [%add-tag add-tag]
+          [%remove-tag remove-tag]
       ==
     ::
-    ++  add-graph
-      %-  ot
-      :~  [%resource dejs:res]
-          [%graph !!]
-      ==
+::    ++  add-graph
+::      %-  ot
+::      :~  [%resource dejs:res]
+::          [%graph !!]
+::      ==
     ::
-    ::  TODO: convert between normal hoon map and mop
+    ++  remove-graph  (ot [%resource dejs:res]~)
     ::
-    ++  remove-graph
-      (ot [%resource dejs:res]~)
+::    ++  add-nodes
+::      %-  ot
+::      :~  [%resource dejs:res]
+::          [%nodes nodes]
+::      ==
     ::
-    ++  add-nodes
-      %-  ot
-      :~  [%resource dejs:res]
-          [%nodes nodes]
-      ==
+::    ++  nodes  (op index node)
     ::
-    ++  nodes  (op index node)
+::    ++  node
+::      %-  ot
+::      :~  [%post post]
+::          [%children (ot [%empty ul]~)]
+::      ==
+::    ::
+::    ++  post
+::      %-  ot
+::      :~  [%author (su ;~(pfix sig fed:ag))]
+::          [%index index] 
+::          [%time-sent di]
+::          [%contents (ar content)]
+::          [%hash (mu nu)]
+::          [%signatures (as signature)]
+::      ==
+::    ::
+::    ++  content
+::      %-  of
+::      :~  [%text so]
+::          [%url so]
+::          [%reference uid]
+::          [%code eval]
+::      ==
+::    ::
+::    ++  eval
+::      |=  a=^json
+::      ^-  [cord (list tank)]
+::      =,  ^?  dejs-soft:format
+::      =+  exp=((ot expression+so ~) a)
+::      %-  need
+::      ?~  exp  [~ '' ~]
+::      :+  ~  u.exp
+::      ::  NOTE: when sending, if output is an empty list,
+::      ::  graph-store will evaluate
+::      (fall ((ot output+(ar dank) ~) a) ~)
     ::
-    ++  node
-      %-  ot
-      :~  [%post post]
-          [%children (ot [%empty ul]~)]
-      ==
-    ::
-    ++  post
-      %-  ot
-      :~  [%author (su ;~(pfix sig fed:ag))]
-          [%index index] 
-          [%time-sent di]
-          [%contents (ar content)]
-          [%hash (mu nu)]
-          [%signatures (as signature)]
-      ==
-    ::
-    ++  content
-      %-  of
-      :~  [%text so]
-          [%url so]
-          [%code eval]
-      ==
-    ::
-    ++  eval
-      |=  a=^json
-      ^-  [cord (list tank)]
-      =,  ^?  dejs-soft:format
-      =+  exp=((ot expression+so ~) a)
-      %-  need
-      ?~  exp  [~ '' ~]
-      :+  ~  u.exp
-      ::  NOTE: when sending, if output is an empty list,
-      ::  graph-store will evaluate
-      (fall ((ot output+(ar dank) ~) a) ~)
-    ::
-    ++  remove-nodes
-      %-  ot
-      :~  [%resource dejs:res]
-          [%indices (as index)]
-      ==
-    ::
+::    ++  remove-nodes
+::      %-  ot
+::      :~  [%resource dejs:res]
+::          [%indices (as index)]
+::      ==
+::    ::
     ++  add-signatures
       %-  ot
       :~  [%uid uid]
@@ -306,31 +322,32 @@
     ::
     ++  index  (su ;~(pfix net (more net dem)))
     ::
-    ++  add-tags
+    ++  add-tag
       %-  ot
-      :~  [%term (se %tas)]
+      :~  [%term so]
           [%resource dejs:res]
       ==
     ::
-    ++  remove-tags
+    ++  remove-tag
       %-  ot
-      :~  [%term (se %tas)]
+      :~  [%term so]
           [%resource dejs:res]
       ==
     --
   --
 ::
-++  create
-  |_  [our=ship now=time]
-  ++  post
-    |=  [=index contents=(list content)]
-    ^-  ^post
-    :*  our
-        index
-        now
-        contents
-        ~
-        *signatures
-    ==
-  --
+::++  create
+::  |_  [our=ship now=time]
+::  ++  post
+::    |=  [=index contents=(list content)]
+::    ^-  ^post
+::    :*  our
+::        index
+::        now
+::        contents
+::        ~
+::        *signatures
+::    ==
+::  --
+::
 --

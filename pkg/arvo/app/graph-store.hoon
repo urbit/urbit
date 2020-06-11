@@ -1,4 +1,4 @@
-/+  store=graph-store, sigs=signatures, *or-map, default-agent, dbug
+/+  store=graph-store, sigs=signatures, default-agent, dbug
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -42,25 +42,25 @@
     |^
     ?>  ?=(%0 -.action)
     ?-  +<.action
-        %add-graph          (add-graph +>.action)
+        ::%add-graph          (add-graph +>.action)
         %remove-graph       (remove-graph +>.action)
-        %add-nodes          (add-nodes +>.action)
-        %remove-nodes       (remove-nodes +>.action)
+::        %add-nodes          (add-nodes +>.action)
+::        %remove-nodes       (remove-nodes +>.action)
         %add-signatures     (add-signatures +>.action)
         %remove-signatures  (remove-signatures +>.action)
         %add-tag            (add-tag +>.action)
         %remove-tag         (remove-tag +>.action)
     ==
     ::
-    ++  add-graph
-      |=  [=resource:store =graph:store]
-      ^-  (quip card _state)
-      ?<  (~(has by graphs) resource)
-      :-  (give [/updates /keys ~] [%add-graph resource graph])
-      %_  state
-          graphs       (~(put by graphs) resource graph)
-          action-logs  (~(put by action-logs) resource (gas:orm-log ~ ~))
-      ==
+::    ++  add-graph
+::      |=  [=resource:store =graph:store]
+::      ^-  (quip card _state)
+::      ?<  (~(has by graphs) resource)
+::      :-  (give [/updates /keys ~] [%add-graph resource graph])
+::      %_  state
+::          graphs       (~(put by graphs) resource graph)
+::          action-logs  (~(put by action-logs) resource (gas:orm-log ~ ~))
+::      ==
     ::
     ++  remove-graph
       |=  =resource:store
@@ -75,20 +75,20 @@
     ++  add-nodes
       |=  [=resource:store nodes=(map index:store node:store)]
       ^-  (quip card _state)
-      |^
-      =/  =graph:store       (~(got by graphs) resource)
-      =/  =action-log:store  (~(got by action-logs) resource)
-      =.  action-log
-        (put:orm-log action-log now.bowl [%0 [%add-nodes resource nodes]])
-      ::
-      :-  (give [/updates]~ [%add-nodes resource nodes])
-      %_  state
-          action-logs  (~(put by action-logs) resource action-log)
-          graphs
-        %+  ~(put by graphs)
-          resource
-        (add-node-list resource graph ~(tap by nodes))
-      ==
+      |^  [~ state]
+::      =/  =graph:store       (~(got by graphs) resource)
+::      =/  =action-log:store  (~(got by action-logs) resource)
+::      =.  action-log
+::        (put:orm-log action-log now.bowl [%0 [%add-nodes resource nodes]])
+::      ::
+::      :-  (give [/updates]~ [%add-nodes resource nodes])
+::      %_  state
+::          action-logs  (~(put by action-logs) resource action-log)
+::          graphs
+::        %+  ~(put by graphs)
+::          resource
+::        (add-node-list resource graph ~(tap by nodes))
+::      ==
       ::
       ++  add-node-list
         |=  $:  =resource:store
@@ -168,20 +168,20 @@
     ++  remove-nodes
       |=  [=resource:store indices=(set index:store)]
       ^-  (quip card _state)
-      |^
-      =/  =graph:store        (~(got by graphs) resource)
-      =/  =action-log:store   (~(got by action-logs) resource)
-      =.  action-log
-        (put:orm-log action-log now.bowl [%0 [%remove-nodes resource indices]])
-      ::
-      :-  (give [/updates]~ [%remove-nodes resource indices])
-      %_  state
-          action-logs  (~(put by action-logs) resource action-log)
-          graphs
-        %+  ~(put by graphs)
-          resource
-        (remove-indices resource graph ~(tap in indices))
-      ==
+      |^  [~ state]
+::      =/  =graph:store        (~(got by graphs) resource)
+::      =/  =action-log:store   (~(got by action-logs) resource)
+::      =.  action-log
+::        (put:orm-log action-log now.bowl [%0 [%remove-nodes resource indices]])
+::      ::
+::      :-  (give [/updates]~ [%remove-nodes resource indices])
+::      %_  state
+::          action-logs  (~(put by action-logs) resource action-log)
+::          graphs
+::        %+  ~(put by graphs)
+::          resource
+::        (remove-indices resource graph ~(tap in indices))
+::      ==
       ::
       ++  remove-indices
         |=  [=resource:store =graph:store indices=(list index:store)]
@@ -218,19 +218,19 @@
     ++  add-signatures
       |=  [=uid:store =signatures:store]
       ^-  (quip card _state)
-      |^
-      =*  resource  resource.uid
-      =/  =graph:store       (~(got by graphs) resource)
-      =/  =action-log:store  (~(got by action-logs) resource)
-      =.  action-log
-        (put:orm-log action-log now.bowl [%0 [%add-signatures uid signatures]])
-      ::
-      :-  (give [/updates]~ [%add-signatures uid signatures])
-      %_  state
-          action-logs  (~(put by action-logs) resource action-log)
-          graphs
-        (~(put by graphs) resource (add-at-index graph index.uid signatures))
-      ==
+      |^  [~ state]
+::      =*  resource  resource.uid
+::      =/  =graph:store       (~(got by graphs) resource)
+::      =/  =action-log:store  (~(got by action-logs) resource)
+::      =.  action-log
+::        (put:orm-log action-log now.bowl [%0 [%add-signatures uid signatures]])
+::      ::
+::      :-  (give [/updates]~ [%add-signatures uid signatures])
+::      %_  state
+::          action-logs  (~(put by action-logs) resource action-log)
+::          graphs
+::        (~(put by graphs) resource (add-at-index graph index.uid signatures))
+::      ==
       ::
       ++  add-at-index
         |=  [=graph:store =index:store =signatures:store]
@@ -262,22 +262,22 @@
     ++  remove-signatures
       |=  [=uid:store =signatures:store]
       ^-  (quip card _state)
-      |^
-      =*  resource  resource.uid
-      =/  =graph:store       (~(got by graphs) resource)
-      =/  =action-log:store  (~(got by action-logs) resource)
-      =.  action-log
-        %^  put:orm-log  action-log
-          now.bowl
-        [%0 [%remove-signatures uid signatures]]
-      ::
-      :-  (give [/updates]~ [%remove-signatures uid signatures])
-      %_  state
-          action-logs  (~(put by action-logs) resource action-log)
-          graphs
-        %+  ~(put by graphs)  resource
-        (remove-at-index graph index.uid signatures)
-      ==
+      |^  [~ state]
+::      =*  resource  resource.uid
+::      =/  =graph:store       (~(got by graphs) resource)
+::      =/  =action-log:store  (~(got by action-logs) resource)
+::      =.  action-log
+::        %^  put:orm-log  action-log
+::          now.bowl
+::        [%0 [%remove-signatures uid signatures]]
+::      ::
+::      :-  (give [/updates]~ [%remove-signatures uid signatures])
+::      %_  state
+::          action-logs  (~(put by action-logs) resource action-log)
+::          graphs
+::        %+  ~(put by graphs)  resource
+::        (remove-at-index graph index.uid signatures)
+::      ==
       ::
       ++  remove-at-index
         |=  [=graph:store =index:store =signatures:store]
