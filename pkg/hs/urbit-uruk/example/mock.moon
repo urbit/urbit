@@ -112,7 +112,6 @@
   (lef ~)
 
 ::  match-ess: NS :& x :& y :& z       → Just $ x :& z :& (y :& z)
-::          (((       )    )    )
 =/  match-ess
   |=  top
   =/  ktop  (car top)
@@ -138,35 +137,6 @@
       (lef ~)
     (lef ~)
   (lef ~)
-
-::  match-two-enhances: NE n :& NE 1            → Just $ NE (succ n)
-::
-=/  match-two-enhances
-  |=  top
-  =/  ktop  (car top)
-  ?:  (eql 'App' ktop)
-    =/  vtop  (cdr top)
-    =/  l  (car vtop)
-    =/  r  (car vtop)
-    =/  kl  (car l)
-    ?:  (eql 'Enh' kl)
-      =/  kr  (car r)
-      ?:  (eql 'Enh' kr)
-        =/  vr  (cdr r)
-        ?:  (eql 1 vr)
-          =/  vl  (cdr l)
-          %-  (trace ['match-two-eee' top])  |=  ig
-          (rit (con 'Enh' (inc vl)))
-        (lef ~)
-      (lef ~)
-    (lef ~)
-  (lef ~)
-
-::  match-enhance: NE n :& t :& b          → Just $ NM (match n t b) (fromIntegral n) []
-::
-::  =/  match-enhance
-::    |=  top
-::    ::  ok, I don't entirely understand what's going on in the
 
 
 :: jet matching works on an arbitrarily deep tree:
@@ -199,12 +169,80 @@
     (weld left-recur (lcon r lnil))
   (lcon top lnil)
 
+::  todo: this is defined in JetSpec, why does this not show up here?
+::
+=/  gte
+  |=  (x y)
+  (lth y x)
 
+::  todo: list length should be in the standard library
+::
+=/  lent
+  ..  $
+  |=  n
+  %+  (cas n)
+    <p (inc ($ (cdr p)))>
+  <u 0>
 
+::  given a list form, returns lef if this isn't a jet and (rit (con nat xs))
+::  if this is a jet argument count.
+::
+=/  m-e-count-arguments
+  ..  $
+  |=  (count l)
+  %+  (cas l)
+    |=  p
+    ?:  (eql 'Enh' (car (car p)))
+      ($ (inc count) (cdr p))
+    ?:  (gte count 1)
+      (rit (con count (lcon (car p) (cdr p))))
+    (lef ~)
+  ::
+  <u (lef ~)>
+
+::  unpack [tag body rest], returning (rit (con body rest)) if valid.
+::
+=/  m-e-get-jet
+  ..  $
+  |=  top
+  %+  (cas top)
+    |=  a
+    %+  (cas (cdr a))
+      |=  b
+      %+  (cas (cdr b))
+        |=  c
+        (rit (con (car b) (lcon (car c) (cdr c))))
+      <u (lef ~)>
+    <u (lef ~)>
+  <u (lef ~)>
+
+::  replaces a jet statement with a series of applications when the jet is
+::  saturated with arguments.
+::
 =/  match-enhance
   |=  top
-  (lef ~)
-
+  =/  as-list  (to-list-form top)
+  ?-    (m-e-count-arguments 0 as-list)
+      l
+    (lef ~)
+  ::
+      r
+    =/  n  (car r)
+    =/  rest  (cdr r)
+    ?-    (m-e-get-jet rest)
+        l
+      (lef ~)
+    ::
+        r
+      =/  jet-body  (car r)
+      =/  xs        (cdr r)
+      =/  xs-len    (lent xs)
+      ?:  (eql n xs-len)
+        %-  (trace ['match-enhance' top])  |=  ig
+        (rit (foldl app jet-body xs))
+      (lef ~)
+    ==
+  ==
 
 ::  reduce: performs one step of reduction, returning rit if you can reduce and
 ::  lef if you can't
@@ -217,7 +255,6 @@
   ..  $
   ::  top: a cons cell of a
   |=  top
-  %-  (trace ['reduce' top])  |=  ig
   ?-    (match-kay top)
       l
     ?-    (match-left $ top)
@@ -280,7 +317,7 @@
 
 :: (((E E) K) (S K))
 =/  seq-false-tag  (app (app (app enh enh) kay) (app ess kay))
-(eval seq-false-tag)
-
-
-::(foldl add 0 (lcon 1 (lcon 2 (lcon 3 lnil))))
+=/  seq-with-kk  (app (app seq-false-tag kay) kay)
+::(eval seq-false-tag)
+::(to-list-form seq-false-tag)
+(eval seq-with-kk)
