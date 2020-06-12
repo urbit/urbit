@@ -102,11 +102,13 @@
       %fact
     ?+  p.cage.sign  (on-agent:def wire sign)
         %graph-update
+      ~&  %graph-update
       :_  this
       %+  give
         %+  turn  ~(tap by connections)
         |=  [=atom:store *]
         ^-  path
+        ~&  connection+atom
         /updates/(scot %ud atom)
       cage.sign
     ==
