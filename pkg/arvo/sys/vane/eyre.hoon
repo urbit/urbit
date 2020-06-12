@@ -882,20 +882,15 @@
     ::  attempt the scry that was asked for
     ::
     =/  res=(unit (unit cage))
-      (do-scry %gx i.site.req (snoc t.site.req %noun))
+      (do-scry %gx i.site.req (snoc t.site.req (fall ext.req %mime)))
     ?~  res    (error-response 500 "failed scry")
     ?~  u.res  (error-response 404 "no scry result")
     =*  mark   p.u.u.res
     =*  vase   q.u.u.res
-    ::  attempt to find conversion gates to the requested mark, then to mime
+    ::  attempt to find conversion gate to mime
     ::
     =/  tub=(unit tube:clay)
-      ?~  ext.req
-        (find-tube mark %mime)
-      ?~  to-mim=(find-tube u.ext.req %mime)  ~
-      ?:  =(mark u.ext.req)  to-mim
-      ?~  to-ext=(find-tube mark u.ext.req)   ~
-      `|=(=^vase (u.to-mim (u.to-ext vase)))
+      (find-tube mark %mime)
     ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
     ::  attempt conversion, then send results
     ::
@@ -910,6 +905,7 @@
     ++  find-tube
       |=  [from=mark to=mark]
       ^-  (unit tube:clay)
+      ?:  =(from to)  `(bake same vase)
       =/  tub=(unit (unit cage))
         (do-scry %cc %home /[from]/[to])
       ?.  ?=([~ ~ %tube *] tub)  ~
