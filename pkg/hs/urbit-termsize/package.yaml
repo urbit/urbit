@@ -18,9 +18,8 @@ library:
   source-dirs: lib
 
 executables:
-  live-termsize:
+  urbit-test-termsize-updates:
     main: Main.hs
     source-dirs: app
     dependencies:
       - urbit-termsize
-    ghc-options: "-threaded -rtsopts -with-rtsopts=-N"
