@@ -119,6 +119,8 @@
       %metadata-hook
       %s3-store
       %file-server
+      %graph-store
+      %graph-view
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -242,7 +244,9 @@
       =<  (se-born %home %link-listen-hook)
       =<  (se-born %home %link-view)
       =<  (se-born %home %s3-store)
-      (se-born %home %file-server)
+      =<  (se-born %home %file-server)
+      =<  (se-born %home %graph-store)
+      (se-born %home %graph-view)
     .
   ?>  ?=(%5 ver)
   =>  (se-born %home %file-server)
