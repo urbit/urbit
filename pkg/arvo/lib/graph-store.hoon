@@ -108,7 +108,7 @@
       |=  [a=atom n=^node]
       ^-  json
       %-  pairs
-      :~  [%key (numb a)]
+      :~  [%index (numb a)]
           [%node (node n)]
       ==
     ::
