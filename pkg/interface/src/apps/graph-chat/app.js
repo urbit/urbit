@@ -17,7 +17,6 @@ import { NewScreen } from './components/new';
 export default class GraphChatApp extends React.Component {
   constructor(props) {
     super(props);
-    console.log('graph chat');
     this.store = new GraphStore();
     this.state = this.store.state;
     this.resetControllers();
@@ -117,7 +116,10 @@ export default class GraphChatApp extends React.Component {
                 sidebar={renderChannelSidebar(props, resource)}
               >
                 <ChatScreen
-                  resource={resource}
+                  resource={{
+                    ship: props.match.params.ship,
+                    name: props.match.params.name
+                  }}
                   api={this.api}
                   subscription={this.subscription}
                   graph={graph}

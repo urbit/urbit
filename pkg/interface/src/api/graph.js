@@ -6,11 +6,11 @@ class PrivateHelper extends BaseApi {
     this.action('graph-store', 'graph-action', data);
   }
 
-  addGraph(ship = '~zod', name = 'asdf', graph = {}) {
+  addGraph(ship = 'zod', name = 'asdf', graph = {}) {
     this.graphAction({
       'add-graph': {
         resource: {
-          ship,
+          ship: `~${ship}`,
           name
         },
         graph
@@ -18,27 +18,65 @@ class PrivateHelper extends BaseApi {
     });
   }
 
-  removeGraph(resource = { ship: '~zod', name: 'asdf' }) {
+  removeGraph(ship = 'zod', name = 'asdf') {
     this.graphAction({
       'remove-graph': {
-        resource
+        resource: {
+          ship: `~${ship}`,
+          name
+        }
       }
     });
   }
 
-  addNodes(resource = { ship : '~zod', name: 'asdf' }, nodes = {}) {
+  createPost(contents, parentIndex = '') {
+    return {
+      author: `~${window.ship}`,
+      index: parentIndex + '/' + Date.now(),
+      'time-sent': Date.now(),
+      contents,
+      hash: null,
+      signatures: []
+    };
+  }
+
+  addPost(ship = 'zod', name = 'asdf', post) {
+    let nodes = {};
+    nodes[post.index] = {
+      post,
+      children: { empty: null }
+    };
+
     this.graphAction({
       'add-nodes': {
-        resource,
+        resource: {
+          ship: `~${ship}`,
+          name
+        },
         nodes
       }
     });
   }
 
-  removeNodes(resource = { ship: '~zod', name: 'asdf' }, indices = []) {
+  addNodes(ship = 'zod', name ='asdf', nodes = {}) {
+    this.graphAction({
+      'add-nodes': {
+        resource: {
+          ship: `~${ship}`,
+          name
+        },
+        nodes
+      }
+    });
+  }
+
+  removeNodes(ship = 'zod', name = 'asdf', indices = []) {
     this.graphAction({
       'remove-nodes': {
-        resource,
+        resource: {
+          ship: `~${ship}`,
+          name
+        },
         indices
       }
     });
@@ -92,6 +130,10 @@ export default class GraphApi {
 
     //  view 
     this.fetch = helper.fetch.bind(helper);
+
+    // helpers
+    this.createPost = helper.createPost.bind(helper);
+    this.addPost = helper.addPost.bind(helper);
   }
 }
 

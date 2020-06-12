@@ -13,13 +13,12 @@ export class Sidebar extends Component {
   }
 
   renderKeys(keys) {
-    const rooms = keys.map((key) => {
-
+    const rooms = Array.from(keys).map((key) => {
       return (
-        <div>
+        <div key={key}>
           <Link
             className={'no-underline '}
-            to={'/~chat/' + key}>
+            to={'/~chat/room/' + key}>
             {key}
           </Link>
         </div>

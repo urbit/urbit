@@ -6,15 +6,16 @@ export default class GraphReducer {
     if (data) {
       this.keys(data, state);
       this.addGraph(data, state);
+      this.addNodes(data, state);
     }
   }
 
   keys(json, state) {
     const data = _.get(json, 'keys', false);
     if (data) {
-      state.keys = data.map((res) => {
+      state.keys = new Set(data.map((res) => {
         return res.ship + '/' + res.name;
-      });
+      }));
     }
   }
 
@@ -25,7 +26,8 @@ export default class GraphReducer {
         state.graphs = {};
       }
       let resource = data.resource.ship + '/' + data.resource.name;
-      state.graphs[resource] = data.graph;
+      state.graphs[resource] = new Map(data.graph);
+      state.keys.add(resource);
     }
   }
 
@@ -37,6 +39,22 @@ export default class GraphReducer {
       }
       let resource = data.resource.ship + '/' + data.resource.name;
       delete state.graphs[resource];
+    }
+  }
+
+  addNodes(json, state) {
+    const data = _.get(json, 'add-nodes', false);
+    if (data) {
+      if (!('graphs' in state)) { return; }
+      let resource = data.resource.ship + '/' + data.resource.name;
+      if (!(resource in state.graphs)) {
+        return;
+      }
+      let graph = state.graphs[resource];
+      for (let node in data.nodes) {
+        console.log(node);
+      }
+      state.graphs[resource] = graph;
     }
   }
 

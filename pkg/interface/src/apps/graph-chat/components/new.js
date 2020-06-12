@@ -10,6 +10,7 @@ export class NewScreen extends Component {
     super(props);
     this.state = {
       title: '',
+      idName: '',
       awaiting: false
     };
 
@@ -20,8 +21,8 @@ export class NewScreen extends Component {
     const { props, state } = this;
 
     if (prevProps !== props) {
-      const resource = `~${window.ship}/${state.idName}`;
-      if (resource in props.graphs) {
+      const resource = `${window.ship}/${state.idName}`;
+      if (!!props.keys && props.keys.has(resource)) {
         props.history.push('/~chat/room/' + resource);
       }
     }
@@ -42,7 +43,7 @@ export class NewScreen extends Component {
     this.setState({
       awaiting: true
     }, () => {
-      props.api.addGraph(`~${window.ship}`, state.title, {});
+      props.api.addGraph(window.ship, state.idName, {});
     });
   }
 

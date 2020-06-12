@@ -16,7 +16,6 @@ export default class GraphSubscription extends BaseSubscription {
   }
 
   handleEvent(diff) {
-    console.log(diff);
     if ('graph-view' in diff.data) {
       this.api.fetch(this.connectionNumber); 
     } else {

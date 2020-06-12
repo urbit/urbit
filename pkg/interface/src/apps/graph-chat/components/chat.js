@@ -13,9 +13,6 @@ export class ChatScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-    };
-
     moment.updateLocale('en', {
       calendar: {
         sameDay: '[Today]',
@@ -29,9 +26,10 @@ export class ChatScreen extends Component {
   }
 
   chatWindow() {
-    const { props, state } = this;
+    const { props } = this;
 
-    let messages = props.envelopes.slice(0);
+    //let messages = props.envelopes.slice(0);
+    let messages = [];
 
     const messageElements = messages.map((msg, i) => {
       // Render sigil if previous message is not by the same sender
@@ -60,26 +58,20 @@ export class ChatScreen extends Component {
       <div
         className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse relative"
         style={{ height: '100%', resize: 'vertical' }}
-        onScroll={this.onScroll}
       >
-        <div
-          ref={(el) => {
-            this.scrollElement = el;
-          }}
-        ></div>
         {messageElements}
       </div>
     );
   }
 
   render() {
-    const { props, state } = this;
+    const { props } = this;
 
-    let title = props.resource.substr(1);
+    let title = props.resource.name;
 
     return (
       <div
-        key={props.resource}
+        key={props.resource.name}
         className="h-100 w-100 overflow-hidden flex flex-column relative"
       >
         <div
@@ -93,12 +85,11 @@ export class ChatScreen extends Component {
           'overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0'}
           style={{ height: 48 }}
         >
-          <Link to={`/~chat/room/${props.resource}`}
+          <Link to={`/~chat/room/${props.resource.ship}/${props.resource.name}`}
           className="pt2 white-d"
           >
             <h2
-              className={'dib f9 fw4 lh-solid v-top ' +
-              ((title === props.resource.substr(1)) ? 'mono' : '')}
+              className={'dib f9 fw4 lh-solid v-top '}
               style={{ width: 'max-content' }}
             >
               {title}

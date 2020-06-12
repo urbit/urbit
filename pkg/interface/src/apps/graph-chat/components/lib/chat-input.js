@@ -44,10 +44,6 @@ export class ChatInput extends Component {
     this.textareaRef = React.createRef();
 
     this.messageSubmit = this.messageSubmit.bind(this);
-    this.messageChange = this.messageChange.bind(this);
-
-    this.completePatp = this.completePatp.bind(this);
-    this.clearSearch = this.clearSearch.bind(this);
 
     this.toggleCode = this.toggleCode.bind(this);
 
@@ -132,60 +128,35 @@ export class ChatInput extends Component {
     if(!this.editor) {
       return;
     }
+
+
     const { props, state } = this;
     const editorMessage = this.editor.getValue();
+
+    console.log(editorMessage);
 
     if (editorMessage === '') {
       return;
     }
 
     if(state.code) {
-      props.api.chat.message(props.resource, `~${window.ship}`, Date.now(), {
-        code: {
-          expression: editorMessage,
-          output: undefined
+      let post = props.api.createPost([
+        {
+          code: {
+            expression: editorMessage,
+            output: null
+          }
         }
-      });
+      ]);
+
+      props.api.addPost(props.resource.ship, props.resource.name, post);
       this.editor.setValue('');
       return;
     }
-    let message = [];
-    editorMessage.split(' ').map((each) => {
-      if (this.isUrl(each)) {
-        if (message.length > 0) {
-          message = message.join(' ');
-          message = this.getLetterType(message);
-          props.api.chat.message(
-            props.resource,
-            `~${window.ship}`,
-            Date.now(),
-            message
-          );
-          message = [];
-        }
-        const URL = this.getLetterType(each);
-        props.api.chat.message(
-          props.resource,
-          `~${window.ship}`,
-          Date.now(),
-          URL
-        );
-      } else {
-        return message.push(each);
-      }
-    });
 
-    if (message.length > 0) {
-      message = message.join(' ');
-      message = this.getLetterType(message);
-      props.api.chat.message(
-        props.resource,
-        `~${window.ship}`,
-        Date.now(),
-        message
-      );
-      message = [];
-    }
+    let message = this.getLetterType(editorMessage);
+    let post = props.api.createPost([message]);
+    props.api.addPost(props.resource.ship, props.resource.name, post);
 
     // perf:
     // setTimeout(this.closure, 2000);
@@ -255,8 +226,7 @@ export class ChatInput extends Component {
         <Sigil
           ship={window.ship}
           size={24}
-          color={`#${color}`}
-          classes={sigilClass}
+          color={`#000`}
           />
         </div>
         <div
@@ -273,7 +243,6 @@ export class ChatInput extends Component {
               editor.focus();
               }
             }}
-            onChange={(e, d, v) => this.messageChange(e, d, v)}
           />
         </div>
         <div className="ml2 mr2"
