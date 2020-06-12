@@ -114,52 +114,37 @@ u3_term_log_init(void)
       uv_pipe_open(&(uty_u->pop_u), uty_u->fid_i);
     }
 
-    //  Configure horrible stateful terminfo api.
-    //
-    {
-      if ( 0 != setupterm(0, 2, 0) ) {
-        c3_assert(!"init-setupterm");
-      }
-    }
-
     //  Load terminfo strings.
     //
     {
       c3_w len_w;
 
-#   define _utfo(way, nam) \
-      { \
-        uty_u->ufo_u.way.nam##_y = (const c3_y *) tigetstr(#nam); \
-        c3_assert(uty_u->ufo_u.way.nam##_y); \
-      }
-
       uty_u->ufo_u.inn.max_w = 0;
 
-      _utfo(inn, kcuu1);
-      _utfo(inn, kcud1);
-      _utfo(inn, kcub1);
-      _utfo(inn, kcuf1);
-
-      _utfo(out, clear);
-      _utfo(out, el);
-      // _utfo(out, el1);
-      _utfo(out, ed);
-      _utfo(out, bel);
-      _utfo(out, cub1);
-      _utfo(out, cuf1);
-      _utfo(out, cuu1);
-      _utfo(out, cud1);
-      // _utfo(out, cub);
-      // _utfo(out, cuf);
-
-      //  Terminfo chronically reports the wrong sequence for arrow
-      //  keys on xterms.  Drastic fix for ridiculous unacceptable bug.
-      //  Yes, we could fix this with smkx/rmkx, but this is retarded as well.
+      //  escape sequences we use
+      //  (as reported by the terminfo database we bundled)
+      //
       {
-        uty_u->ufo_u.inn.kcuu1_y = (const c3_y*)"\033[A";
-        uty_u->ufo_u.inn.kcud1_y = (const c3_y*)"\033[B";
-        uty_u->ufo_u.inn.kcuf1_y = (const c3_y*)"\033[C";
-        uty_u->ufo_u.inn.kcub1_y = (const c3_y*)"\033[D";
+        uty_u->ufo_u.out.clear_y = (const c3_y*)"\033[H\033[2J";
+        uty_u->ufo_u.out.el_y    = (const c3_y*)"\033[K";
+        // uty_u->ufo_u.out.el1_y   = (const c3_y*)"\033[1K";
+        uty_u->ufo_u.out.ed_y    = (const c3_y*)"\033[J";
+        uty_u->ufo_u.out.bel_y   = (const c3_y*)"\x7";
+        uty_u->ufo_u.out.cub1_y  = (const c3_y*)"\x8";
+        uty_u->ufo_u.out.cuf1_y  = (const c3_y*)"\033[C";
+        uty_u->ufo_u.out.cuu1_y  = (const c3_y*)"\033[A";
+        uty_u->ufo_u.out.cud1_y  = (const c3_y*)"\xa";
+        // uty_u->ufo_u.out.cub_y  = (const c3_y*)"\033[%p1%dD";
+        // uty_u->ufo_u.out.cuf_y  = (const c3_y*)"\033[%p1%dC";
+      }
+
+      //  NB: terminfo reports the wrong sequence for arrow keys on xterms.
+      //
+      {
+        uty_u->ufo_u.inn.kcuu1_y = (const c3_y*)"\033[A";  //  terminfo reports "\033OA"
+        uty_u->ufo_u.inn.kcud1_y = (const c3_y*)"\033[B";  //  terminfo reports "\033OB"
+        uty_u->ufo_u.inn.kcuf1_y = (const c3_y*)"\033[C";  //  terminfo reports "\033OC"
+        uty_u->ufo_u.inn.kcub1_y = (const c3_y*)"\033[D";  //  terminfo reports "\033OD"
       }
 
       uty_u->ufo_u.inn.max_w = 0;
