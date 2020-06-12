@@ -453,13 +453,13 @@
   ::
   =/  code-as-tape=tape  (format-ud-as-integer code)
   =/  message=tape
-    ?:  =(code 400)
-      "Bad Request"
-    ?:  =(code 403)
-      "Forbidden"
-    ?:  =(code 404)
-      "Not Found"
-    "Unknown Error"
+    ?+  code  "{<code>} Error"
+      %400  "Bad Request"
+      %403  "Forbidden"
+      %404  "Not Found"
+      %405  "Method Not Allowed"
+      %500  "Internal Server Error"
+    ==
   ::
   %-  as-octs:mimes:html
   %-  crip
@@ -878,7 +878,7 @@
     ::
     =+  req=(parse-request-line url.request)
     ?.  ?=(^ site.req)
-      (error-response 404 "invalid scry target")
+      (error-response 400 "scry path must start with app name")
     ::  attempt the scry that was asked for
     ::
     =/  res=(unit (unit cage))
