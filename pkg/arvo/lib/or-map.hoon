@@ -276,7 +276,7 @@
       (del-span tre %end end)
     ?~  end
       (del-span tre %start start)
-    ?>  (lth u.start u.end)
+    ?>  (compare u.start u.end)
     =.  tre  (del-span tre %start start)
     (del-span tre %end end)
     ::
