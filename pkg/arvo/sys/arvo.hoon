@@ -1059,7 +1059,13 @@
     ram
   ~|  ram+ram
   =|  nub=debt:le:part
-  [%345 nub(out ;;((list ovum) ram))]
+  =/  =plan:le:part
+    :-  [%$ ~]
+    %+  turn  ;;((list ovum) ram)
+    |=  ovo=ovum
+    ^-  move
+    [[p.ovo]~ %give %& %noun q.ovo]
+  [%345 nub(run [plan]~)]
 ::  $prim: old $pram
 ::  +drum: upgrade $prim to $pram, incompatible
 ::
