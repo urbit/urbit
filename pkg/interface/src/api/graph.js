@@ -5,7 +5,7 @@ class PrivateHelper extends BaseApi {
     this.action('graph-store', 'graph-action', data);
   }
 
-  addGraph(resource, graph) {
+  addGraph(resource = { ship: '~zod', name: 'asdf' }, graph = {}) {
     this.graphAction({
       'add-graph': {
         resource,
@@ -14,7 +14,7 @@ class PrivateHelper extends BaseApi {
     });
   }
 
-  removeGraph(resource) {
+  removeGraph(resource = { ship: '~zod', name: 'asdf' }) {
     this.graphAction({
       'remove-graph': {
         resource
@@ -22,7 +22,7 @@ class PrivateHelper extends BaseApi {
     });
   }
 
-  addNodes(resource, nodes) {
+  addNodes(resource = { ship : '~zod', name: 'asdf' }, nodes = {}) {
     this.graphAction({
       'add-nodes': {
         resource,
@@ -31,7 +31,7 @@ class PrivateHelper extends BaseApi {
     });
   }
 
-  removeNodes(resource, indices) {
+  removeNodes(resource = { ship: '~zod', name: 'asdf' }, indices = []) {
     this.graphAction({
       'remove-nodes': {
         resource,
@@ -55,6 +55,15 @@ class PrivateHelper extends BaseApi {
   removeTag() {
     this.graphAction();
   }
+
+  fetch(connection = 0) {
+    this.action('graph-view', 'graph-view-action', {
+      fetch: {
+        connection,
+        type: { all: null }
+      }
+    });
+  }
 }
 
 export default class GraphApi {
@@ -64,6 +73,7 @@ export default class GraphApi {
     this.ship = ship;
     this.subscribe = helper.subscribe.bind(helper);
 
+    //  store
     this.addGraph = helper.addGraph.bind(helper);
     this.removeGraph = helper.removeGraph.bind(helper);
 
@@ -75,6 +85,9 @@ export default class GraphApi {
    
     this.addTag = helper.addTag.bind(helper);
     this.removeTag = helper.removeTag.bind(helper);
+
+    //  view 
+    this.fetch = helper.fetch.bind(helper);
   }
 }
 
