@@ -87,7 +87,7 @@
   ?+  path  (on-watch:def path)
       [%updates @ ~]
     :-  [%give %fact ~ %json !>([(frond:enjs:format %graph-view s+'bound')])]~
-    this(connections (~(put by connections) i.t.path now.bowl))
+    this(connections (~(put by connections) (slav %ud i.t.path) now.bowl))
   ==
 ::
 ++  on-agent
@@ -102,13 +102,11 @@
       %fact
     ?+  p.cage.sign  (on-agent:def wire sign)
         %graph-update
-      ~&  %graph-update
       :_  this
       %+  give
         %+  turn  ~(tap by connections)
         |=  [=atom:store *]
         ^-  path
-        ~&  connection+atom
         /updates/(scot %ud atom)
       cage.sign
     ==

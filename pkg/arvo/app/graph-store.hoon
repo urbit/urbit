@@ -334,11 +334,8 @@
       [%x %keys ~]        ``noun+!>(~(key by graphs))
       [%x %tags ~]        ``noun+!>(~(key by tag-queries))
       [%x %graph @ @ ~]
-    ~&  path+path
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
-    ~&  resource+[ship term]
-    ~&  graphs+~(key by graphs)
     =/  graph=(unit graph:store)  (~(get by graphs) [ship term])
     ?~  graph
       ~
