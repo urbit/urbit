@@ -9,6 +9,7 @@ packages:
   - urbit-azimuth
   - urbit-eventlog-lmdb
   - urbit-king
+  - urbit-termsize
   - urbit-noun
   - urbit-noun-core
 

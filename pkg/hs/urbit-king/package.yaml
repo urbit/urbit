@@ -89,7 +89,6 @@ dependencies:
   - tasty-th
   - template-haskell
   - terminal-progress-bar
-  - terminal-size
   - text
   - these
   - time
@@ -105,6 +104,7 @@ dependencies:
   - urbit-hob
   - urbit-noun
   - urbit-noun-core
+  - urbit-termsize
   - utf8-string
   - vector
   - wai

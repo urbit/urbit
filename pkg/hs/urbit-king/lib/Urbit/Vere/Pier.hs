@@ -21,16 +21,15 @@ import Urbit.Prelude
 import Control.Monad.Trans.Maybe
 import RIO.Directory
 import Urbit.Arvo
-import Urbit.King.Config
-import Urbit.Vere.Pier.Types
 import Urbit.King.App
+import Urbit.Vere.Pier.Types
 
 import Control.Monad.STM      (retry)
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.King.API         (TermConn)
 import Urbit.Noun.Time        (Wen)
-import Urbit.Vere.Behn        (behn')
+import Urbit.TermSize         (TermSize(..))
 import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
 import Urbit.Vere.Serf        (Serf)
 
@@ -40,6 +39,7 @@ import qualified Urbit.EventLog.LMDB    as Log
 import qualified Urbit.King.API         as King
 import qualified Urbit.Noun.Time        as Time
 import qualified Urbit.Vere.Ames        as Ames
+import qualified Urbit.Vere.Behn        as Behn
 import qualified Urbit.Vere.Clay        as Clay
 import qualified Urbit.Vere.Eyre        as Eyre
 import qualified Urbit.Vere.Http.Client as Iris
@@ -47,7 +47,6 @@ import qualified Urbit.Vere.Serf        as Serf
 import qualified Urbit.Vere.Term        as Term
 import qualified Urbit.Vere.Term.API    as Term
 import qualified Urbit.Vere.Term.Demux  as Term
-import qualified Urbit.Vere.Term.Render as Term
 
 
 -- Initialize pier directory. --------------------------------------------------
@@ -254,6 +253,7 @@ acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
     cancel tid
 
 
+
 -- Run Pier --------------------------------------------------------------------
 
 pier
@@ -309,7 +309,7 @@ pier (serf, log) vSlog startedSig multi = do
   (bootEvents, startDrivers) <- do
     env <- ask
     let err = atomically . Term.trace muxed . (<> "\r\n")
-    let siz = Term.TSize { tsWide = 80, tsTall = 24 }
+    let siz = TermSize { tsWide = 80, tsTall = 24 }
     let fak = isFake logId
     drivers env multi ship fak compute (siz, muxed) err sigint
 
@@ -416,12 +416,12 @@ drivers
   -> Ship
   -> Bool
   -> (RunReq -> STM ())
-  -> (Term.TSize, Term.Client)
+  -> (TermSize, Term.Client)
   -> (Text -> RIO e ())
   -> IO ()
   -> RAcquire e ([Ev], RAcquire e Drivers)
 drivers env multi who isFake plan termSys stderr serfSIGINT = do
-  (behnBorn, runBehn) <- rio behn'
+  (behnBorn, runBehn) <- rio Behn.behn'
   (termBorn, runTerm) <- rio (Term.term' termSys serfSIGINT)
   (amesBorn, runAmes) <- rio (Ames.ames' who isFake stderr)
   (httpBorn, runEyre) <- rio (Eyre.eyre' multi who isFake)

@@ -19,6 +19,7 @@ import RIO.FilePath
 import System.Posix.IO
 import System.Posix.Terminal
 import Urbit.Arvo            hiding (Term)
+import Urbit.King.App
 import Urbit.Noun.Time
 import Urbit.Prelude         hiding (getCurrentTime)
 import Urbit.Vere.Pier.Types
@@ -26,12 +27,13 @@ import Urbit.Vere.Pier.Types
 import Data.List           ((!!))
 import RIO.Directory       (createDirectoryIfMissing)
 import Urbit.King.API      (readPortsFile)
-import Urbit.King.App      (HasPierPath(..), HasPierEnv, killPierActionL)
+import Urbit.TermSize      (TermSize(TermSize))
 import Urbit.Vere.Term.API (Client(Client))
 
 import qualified Data.ByteString.Internal as BS
 import qualified Data.ByteString.UTF8     as BS
 import qualified System.Console.ANSI      as ANSI
+import qualified Urbit.TermSize           as T
 import qualified Urbit.Vere.NounServ      as Serv
 import qualified Urbit.Vere.Term.API      as Term
 import qualified Urbit.Vere.Term.Render   as T
@@ -172,10 +174,10 @@ _spin_idle_us = 500000
 -}
 localClient :: ∀e. HasLogFunc e
             => STM ()
-            -> RAcquire e (T.TSize, Client)
+            -> RAcquire e (TermSize, Client)
 localClient doneSignal = fst <$> mkRAcquire start stop
   where
-    start :: HasLogFunc e => RIO e ((T.TSize, Client), Private)
+    start :: HasLogFunc e => RIO e ((TermSize, Client), Private)
     start = do
       tsWriteQueue  <- newTQueueIO :: RIO e (TQueue [Term.Ev])
       spinnerMVar   <- newEmptyTMVarIO :: RIO e (TMVar ())
@@ -200,12 +202,12 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                           , give = writeTQueue tsWriteQueue
                           }
 
-      tsize <- io $ T.tsize
+      tsize <- io $ T.termSize
 
       pure ((tsize, client), Private{..})
 
     stop :: HasLogFunc e
-         => ((T.TSize, Client), Private) -> RIO e ()
+         => ((TermSize, Client), Private) -> RIO e ()
     stop ((_, Client{..}), Private{..}) = do
       -- Note that we don't `cancel pReaderThread` here. This is a deliberate
       -- decision because fdRead calls into a native function which the runtime
@@ -510,11 +512,11 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 -}
 term'
   :: HasPierEnv e
-  => (T.TSize, Client)
+  => (TermSize, Client)
   -> IO ()
   -> RIO e ([Ev], RAcquire e (DriverApi TermEf))
 term' (tsize, client) serfSIGINT = do
-  let T.TSize wi hi = tsize
+  let TermSize wi hi = tsize
       initEv = [initialBlew wi hi, initialHail]
 
   pure (initEv, runDriver)
@@ -533,7 +535,7 @@ term' (tsize, client) serfSIGINT = do
 -}
 term :: forall e. (HasPierEnv e)
      => e
-     -> (T.TSize, Client)
+     -> (TermSize, Client)
      -> (EvErr -> STM ())
      -> IO ()
      -> RAcquire e (TermEf -> IO ())
