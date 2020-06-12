@@ -8,9 +8,7 @@
 #include <netinet/in.h>
 #include <uv.h>
 #include <errno.h>
-#include <ncurses/curses.h>
 #include <termios.h>
-#include <ncurses/term.h>
 
 #include "all.h"
 #include "vere/vere.h"
