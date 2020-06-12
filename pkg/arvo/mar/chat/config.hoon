@@ -1,9 +1,9 @@
-/+  *chat-json
+/+  *chat-store
 |_  cfg=config
 ::
 ++  grow
   |%
-  ++  json  (conf cfg)
+  ++  json  (config:enjs cfg)
   --
 ::
 ++  grab

@@ -4,6 +4,7 @@ import { Route, Link } from 'react-router-dom';
 import { GroupItem } from '/components/lib/group-item';
 import { Sigil } from '/components/lib/icons/sigil';
 import { SidebarInvite } from '/components/lib/sidebar-invite';
+import { Welcome } from '/components/lib/welcome';
 import { cite } from '/lib/util';
 
 export class GroupSidebar extends Component {
@@ -56,6 +57,42 @@ export class GroupSidebar extends Component {
           (path in props.groups)
         );
       })
+      .filter((path) => {
+        let selectedGroups = !!props.selectedGroups ? props.selectedGroups : [];
+        if (selectedGroups.length === 0) {
+          return true;
+        }
+        let selectedPaths = selectedGroups.map((e => {return e[0]}));
+        return (selectedPaths.includes(path));
+      })
+      .sort((a, b) => {
+        let aName = a.substr(1);
+        let bName = b.substr(1);
+        let aChannel = `${a}/contacts${a}`
+        let bChannel = `${b}/contacts${b}`
+        if (
+          props.associations[a] &&
+          props.associations[a][aChannel] &&
+          props.associations[a][aChannel].metadata
+        ) {
+          aName =
+            props.associations[a][aChannel].metadata.title !== ""
+              ? props.associations[a][aChannel].metadata.title
+              : a.substr(1);
+        }
+        if (
+          props.associations[b] &&
+          props.associations[b][bChannel] &&
+          props.associations[b][bChannel].metadata
+        ) {
+          bName =
+            props.associations[b][bChannel].metadata.title !== ""
+              ? props.associations[b][bChannel].metadata.title
+              : b.substr(1);
+        }
+
+        return aName.toLowerCase().localeCompare(bName.toLowerCase());
+      })
       .map((path) => {
         let name = path.substr(1);
         let selected = props.selected === path;
@@ -84,15 +121,15 @@ export class GroupSidebar extends Component {
     let activeClasses = (this.props.activeDrawer === "groups") ? "" : "dn-s";
 
     return (
-      <div className={"bn br-m br-l br-xl b--gray2 lh-copy h-100 flex-basis-100-s " +
-       "flex-basis-30-ns flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl " +
-        "relative overflow-hidden " + activeClasses}>
-        {/*TODO Add invite items */}
+      <div className={"bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 " +
+       "flex-basis-30-ns flex-shrink-0 mw5-m mw5-l mw5-xl flex-basis-100-s " +
+        "relative overflow-hidden pt3 pt0-m pt0-l pt0-xl " + activeClasses}>
         <a className="db dn-m dn-l dn-xl f8 pb6 pl3" href="/">⟵ Landscape</a>
         <div className="overflow-auto pb8 h-100">
           <Link to="/~groups/new" className="dib">
             <p className="f9 pt4 pl4 green2 bn">Create Group</p>
           </Link>
+          <Welcome contacts={props.contacts}/>
           <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Your Identity</h2>
           {rootIdentity}
           {inviteItems}

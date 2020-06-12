@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import classnames from 'classnames';
 import { Route, Link } from 'react-router-dom';
+import { Spinner } from './icons/icon-spinner';
 import urbitOb from 'urbit-ob';
 
 export class JoinScreen extends Component {
@@ -8,7 +9,7 @@ export class JoinScreen extends Component {
     super(props);
 
     this.state = {
-      book: '/',
+      book: '',
       error: false,
       awaiting: null,
       disable: false
@@ -36,6 +37,7 @@ export class JoinScreen extends Component {
         let notebook = book[1];
         if ((ship in this.props.notebooks) &&
         (notebook in this.props.notebooks[ship])) {
+          this.setState({disable: false, book: "/"});
           this.props.history.push(`/~publish/notebook/${ship}/${notebook}`)
         }
       }
@@ -91,13 +93,11 @@ export class JoinScreen extends Component {
     }
 
     // TODO: askHistory setting
-    window.api.setSpinner(true);
     this.setState({disable: true});
     window.api.action("publish","publish-action", actionData).catch((err) => {
       console.log(err)
     }).then(() => {
-      this.setState({awaiting: text, disable: false, book: ""})
-      window.api.setSpinner(false);
+      this.setState({awaiting: text})
     });
 
   }
@@ -152,7 +152,9 @@ export class JoinScreen extends Component {
             style={{
               resize: 'none',
             }}
-            onChange={this.bookChange} />
+            onChange={this.bookChange}
+            value={this.state.book}
+            />
           {errElem}
           <br />
           <button
@@ -160,10 +162,11 @@ export class JoinScreen extends Component {
             onClick={this.onClickJoin.bind(this)}
             className={joinClasses}
           >Join Notebook</button>
+          <Spinner awaiting={this.state.disable} classes="mt4" text="Joining notebook..." />
         </div>
       </div>
     );
   }
 }
 
-export default JoinScreen
+export default JoinScreen;

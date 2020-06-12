@@ -12,4 +12,7 @@
       ::
       [%remove =path]
   ==
+::
++$  synced  (map path ship)
++$  contact-hook-update  [%initial =synced]
 --

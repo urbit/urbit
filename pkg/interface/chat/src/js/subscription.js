@@ -5,63 +5,64 @@ import urbitOb from 'urbit-ob';
 
 
 export class Subscription {
+
+  constructor() {
+    this.firstRoundSubscriptionComplete = false;
+  }
+
   start() {
     if (api.authTokens) {
-      this.initializeChat();
+      this.firstRoundSubscription();
+      window.urb.setOnChannelError(this.onChannelError.bind(this));
     } else {
       console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
     }
   }
 
-  initializeChat() {
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat-view',
+  onChannelError(err) {
+    console.error('event source error: ', err);
+    console.log('initiating new channel');
+    this.firstRoundSubscriptionComplete = false;
+    setTimeout(2000, () => {
+      store.handleEvent({
+        data: { clear : true}
+      });
+      this.start();
+    });
+  }
+
+  subscribe(path, app) {
+    api.bind(path, 'PUT', api.authTokens.ship, app,
       this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/synced', 'PUT', api.authTokens.ship, 'chat-hook',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'invite-view',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/all', 'PUT', api.authTokens.ship, 'group-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/all', 'PUT', api.authTokens.ship, 'permission-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'contact-view',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/app-name/chat', 'PUT', api.authTokens.ship, 'metadata-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
-    api.bind('/app-name/contacts', 'PUT', api.authTokens.ship, 'metadata-store',
-      this.handleEvent.bind(this),
-      this.handleError.bind(this),
-      this.handleQuitAndResubscribe.bind(this));
+      (err) => {
+        console.log(err);
+        this.subscribe(path, app);
+      },
+      () => {
+        this.subscribe(path, app);
+      });
+  }
+
+  firstRoundSubscription() {
+    this.subscribe('/primary', 'chat-view');
+  }
+
+  secondRoundSubscriptions() {
+    this.subscribe('/synced', 'chat-hook');
+    this.subscribe('/primary', 'invite-view');
+    this.subscribe('/all', 'permission-store');
+    this.subscribe('/primary', 'contact-view');
+    this.subscribe('/app-name/chat', 'metadata-store');
+    this.subscribe('/app-name/contacts', 'metadata-store');
+    this.subscribe('/all', 's3-store');
   }
 
   handleEvent(diff) {
+    if (!this.firstRoundSubscriptionComplete) {
+      this.firstRoundSubscriptionComplete = true;
+      this.secondRoundSubscriptions();
+    }
     store.handleEvent(diff);
-  }
-
-  handleError(err) {
-    console.error(err);
-  }
-
-  handleQuitSilently(quit) {
-    // no-op
-  }
-
-  handleQuitAndResubscribe(quit) {
-    // TODO: resubscribe
   }
 
   fetchMessages(start, end, path) {

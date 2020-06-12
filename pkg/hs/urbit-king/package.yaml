@@ -1,5 +1,5 @@
 name: urbit-king
-version: 0.10.1
+version: 0.10.4
 license: MIT
 license-file: LICENSE
 
@@ -67,6 +67,7 @@ dependencies:
   - network
   - optparse-applicative
   - para
+  - pem
   - pretty-show
   - primitive
   - process

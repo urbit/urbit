@@ -1493,10 +1493,12 @@
     =|  {l/(unit) r/(unit)}
     |-  ^-  ?
     ?~  a   &
-    ?&  ?~(l & (gor p.n.a u.l))
-        ?~(r & (gor u.r p.n.a))
-        ?~(l.a & ?&((mor p.n.a p.n.l.a) $(a l.a, l `p.n.a)))
-        ?~(r.a & ?&((mor p.n.a p.n.r.a) $(a r.a, r `p.n.a)))
+    ?&  ?~(l & &((gor p.n.a u.l) !=(p.n.a u.l)))
+        ?~(r & &((gor u.r p.n.a) !=(u.r p.n.a)))
+        ?~  l.a   &
+        &((mor p.n.a p.n.l.a) !=(p.n.a p.n.l.a) $(a l.a, l `p.n.a))
+        ?~  r.a   &
+        &((mor p.n.a p.n.r.a) !=(p.n.a p.n.r.a) $(a r.a, r `p.n.a))
     ==
   ::
   ++  gas                                               ::  concatenate
@@ -12071,6 +12073,7 @@
   ^-  (list term)
   ?+    typ  ~
       {$hold *}  $(typ ~(repo ut typ))
+      {$hint *}  $(typ ~(repo ut typ))
       {$core *}
     %-  zing
     %+  turn  ~(tap by q.r.q.typ)

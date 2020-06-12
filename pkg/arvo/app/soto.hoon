@@ -54,7 +54,7 @@
   :_  this
   :~  [%pass /bind/soto %arvo %e %connect [~ /'~dojo'] %soto]
       :*  %pass  /launch/soto  %agent  [our.bol %launch]  %poke
-          %launch-action  !>([%soto /sototile '/~dojo/js/tile.js'])
+          %launch-action  !>([%add %soto /sototile '/~dojo/js/tile.js'])
       ==
   ==
 ++  on-save  !>(state)

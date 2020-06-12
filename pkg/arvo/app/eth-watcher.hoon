@@ -8,14 +8,14 @@
 =>  |%
     +$  card  card:agent:gall
     +$  app-state
-      $:  %3
+      $:  %4
           dogs=(map path watchdog)
       ==
     ::
     +$  context  [=path dog=watchdog]
     +$  watchdog
       $:  config
-          running=(unit =tid:spider)
+          running=(unit [since=@da =tid:spider])
           =number:block
           =pending-logs
           =history
@@ -98,7 +98,7 @@
   ::
   =?  old-state  ?=(%2 -.old-state)
     %-  (slog leaf+"upgrading eth-watcher from %2" ~)
-    ^-  app-state
+    ^-  app-state-3
     %=    old-state
         -  %3
         dogs
@@ -109,10 +109,52 @@
       ==
     ==
   ::
-  [cards-1 this(state ?>(?=(%3 -.old-state) old-state))]
+  =?  old-state  ?=(%3 -.old-state)
+    %-  (slog leaf+"upgrading eth-watcher from %3" ~)
+    ^-  app-state
+    %=    old-state
+        -  %4
+        dogs
+      %-  ~(run by dogs.old-state)
+      |=  dog=watchdog-3
+      %=  dog
+          -
+        =,  -.dog
+        [url eager refresh-rate (mul refresh-rate 6) from contracts topics]
+      ::
+          running
+        ?~  running.dog  ~
+        `[now.bowl u.running.dog]
+      ==
+    ==
+  ::
+  [cards-1 this(state ?>(?=(%4 -.old-state) old-state))]
   ::
   +$  app-states
-    $%(app-state-0 app-state-1 app-state-2 app-state)
+    $%(app-state-0 app-state-1 app-state-2 app-state-3 app-state)
+  ::
+  +$  app-state-3
+    $:  %3
+        dogs=(map path watchdog-3)
+    ==
+  ::
+  +$  watchdog-3
+    $:  config-3
+        running=(unit =tid:spider)
+        =number:block
+        =pending-logs
+        =history
+        blocks=(list block)
+    ==
+  ::
+  +$  config-3
+    $:  url=@ta
+        eager=?
+        refresh-rate=@dr
+        from=number:block
+        contracts=(list address:ethereum)
+        =topics
+    ==
   ::
   +$  app-state-2
     $:  %2
@@ -175,11 +217,11 @@
   ?-  -.poke
       %watch
     ::  fully restart the watchdog if it doesn't exist yet,
-    ::  or if the new config changes more than just the url or refresh rate.
+    ::  or if result-altering parts of the config changed.
     =/  restart=?
       ?|  !(~(has by dogs.state) path.poke)
-          ?!  .=  ->+:(~(got by dogs.state) path.poke)
-                   +>.config.poke
+          ?!  .=  ->+>+:(~(got by dogs.state) path.poke)
+                   +>+>.config.poke
       ==
     ::
     =/  already  (~(has by dogs.state) path.poke)
@@ -197,7 +239,7 @@
               ?=(^ running.u.dog)
           ==
         ~
-      =/  =cage  [%spider-stop !>([u.running.u.dog &])]
+      =/  =cage  [%spider-stop !>([tid.u.running.u.dog &])]
       :_  ~
       `card`[%pass [%starting path.poke] %agent [our.bowl %spider] %poke cage]
     =/  new-dog
@@ -385,25 +427,34 @@
       ::
       %-  (slog leaf+"eth-watcher failed; will retry" ~)
       [[(wait path now.bowl refresh-rate.dog)]~ this]
-    ::  start a new thread that checks for updates
+    ::  maybe kill a timed-out update thread, maybe start a new one
     ::
-    =^  cards-1=(list card)  dog
-      ::  if still running, kill it and restart
+    =^  stop-cards=(list card)  dog
+      ::  if still running beyond timeout time, kill it
       ::
-      ?~  running.dog
+      ?.  ?&  ?=(^ running.dog)
+            ::
+              %+  gth  now.bowl
+              (add since.u.running.dog timeout-time.dog)
+          ==
         `dog
       ::
-      %-  (slog leaf+"eth-watcher still running; will restart" ~)
-      =/  =cage  [%spider-stop !>([u.running.dog |])]
+      %-  (slog leaf+"eth-watcher {(spud path)} timed out; will restart" ~)
+      =/  =cage  [%spider-stop !>([tid.u.running.dog |])]
       :_  dog(running ~)
       :~  (leave-spider path our.bowl)
           [%pass [%starting path] %agent [our.bowl %spider] %poke cage]
       ==
     ::
-    =^  cards-2=(list card)  dog
+    =^  start-cards=(list card)  dog
+      ::  if not (or no longer) running, start a new thread
+      ::
+      ?^  running.dog
+        `dog
+      ::
       =/  new-tid=@ta
         (cat 3 'eth-watcher--' (scot %uv eny.bowl))
-      :_  dog(running `new-tid)
+      :_  dog(running `[now.bowl new-tid])
       =/  args
         :^  ~  `new-tid  %eth-watcher
         !>(`watchpup`[- number pending-logs blocks]:dog)
@@ -411,7 +462,7 @@
           (poke-spider path our.bowl %spider-start !>(args))
       ==
     ::
-    :-  [(wait path now.bowl refresh-rate.dog) (weld cards-1 cards-2)]
+    :-  [(wait path now.bowl refresh-rate.dog) (weld stop-cards start-cards)]
     this(dogs.state (~(put by dogs.state) path dog))
   ==
 ::

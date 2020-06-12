@@ -4,7 +4,8 @@
 ::  /group/%group-path                      all updates related to this group
 ::
 /-  *metadata-store, *metadata-hook
-/+  default-agent
+/+  default-agent, dbug
+~%  %metadata-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -18,6 +19,7 @@
 --
 =|  state-zero
 =*  state  -
+%-  agent:dbug
 ^-  agent:gall
 =<
   |_  =bowl:gall
