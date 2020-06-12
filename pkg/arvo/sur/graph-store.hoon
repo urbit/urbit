@@ -20,6 +20,7 @@
 +$  action-log  ((mop time action) lth)
 ::
 +$  graph  ((mop atom node) lth)
+::
 +$  internal-graph
   $~  [%empty ~]
   $%  [%graph p=graph]

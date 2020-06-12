@@ -331,7 +331,15 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
-      [%x %keys ~]  ``noun+!>(~(key by graphs))
+      [%x %keys ~]        ``noun+!>(~(key by graphs))
+      [%x %tags ~]        ``noun+!>(~(key by tag-queries))
+      [%x %graph @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.path
+    =/  graph=(unit graph:store)  (~(get by graphs) [ship term])
+    ?~  graph
+      ~
+    ``noun+!>(u.graph)
   ==
 ::
 ++  on-arvo  on-arvo:def
