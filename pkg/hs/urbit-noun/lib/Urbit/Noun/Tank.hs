@@ -7,17 +7,31 @@ module Urbit.Noun.Tank where
 import ClassyPrelude
 import Urbit.Noun.Conversions
 import Urbit.Noun.TH
+import Urbit.Noun.Convert
+import Urbit.Noun.Core
 
 --------------------------------------------------------------------------------
 
 type Tang = [Tank]
 
-data Tank
+data TankTree
     = Leaf Tape
     | Plum Plum
-    | Palm (Tape, Tape, Tape, Tape) [Tank]
-    | Rose (Tape, Tape, Tape) [Tank]
+    | Palm (Tape, Tape, Tape, Tape) [TankTree]
+    | Rose (Tape, Tape, Tape) [TankTree]
   deriving (Eq, Ord, Show)
+
+newtype Tank = Tank { tankTree :: TankTree }
+ deriving newtype (Eq, Ord, Show)
+
+instance ToNoun Tank where
+  toNoun (Tank t) = toNoun t
+
+instance FromNoun Tank where
+  parseNoun n@(Atom _) = do
+    Cord txt <- parseNoun n
+    pure $ Tank $ Leaf $ Tape txt
+  parseNoun n = Tank <$> parseNoun n
 
 data WideFmt = WideFmt { delimit :: Cord, enclose :: Maybe (Cord, Cord) }
   deriving (Eq, Ord, Show)
@@ -39,7 +53,7 @@ data PlumTree
 deriveNoun ''WideFmt
 deriveNoun ''TallFmt
 deriveNoun ''PlumFmt
-deriveNoun ''Tank
+deriveNoun ''TankTree
 deriveNoun ''PlumTree
 
 --------------------------------------------------------------------------------
@@ -51,7 +65,7 @@ data WashCfg = WashCfg
 
 --------------------------------------------------------------------------------
 
-wash :: WashCfg -> Tank -> Wall
+wash :: WashCfg -> TankTree -> Wall
 wash _cfg t = [ram t]
 
 -- win :: WashCfg -> Tank -> Wall
@@ -60,7 +74,7 @@ wash _cfg t = [ram t]
 flat :: Plum -> Tape
 flat = Tape . tshow
 
-ram :: Tank -> Tape
+ram :: TankTree -> Tape
 ram = \case
     Leaf tape           -> tape
     Plum plum           -> flat plum

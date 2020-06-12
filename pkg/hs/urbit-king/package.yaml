@@ -72,6 +72,7 @@ dependencies:
   - primitive
   - process
   - QuickCheck
+  - racquire
   - random
   - regex-tdfa
   - regex-tdfa-text
@@ -91,6 +92,7 @@ dependencies:
   - text
   - these
   - time
+  - tls
   - transformers
   - unix
   - unliftio
@@ -98,7 +100,10 @@ dependencies:
   - unordered-containers
   - urbit-atom
   - urbit-azimuth
+  - urbit-eventlog-lmdb
   - urbit-hob
+  - urbit-noun
+  - urbit-noun-core
   - urbit-termsize
   - utf8-string
   - vector

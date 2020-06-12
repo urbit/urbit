@@ -7,18 +7,21 @@
 
 module Urbit.Vere.Http.Client where
 
-import Urbit.Arvo            (BlipEv(..), Ev(..), HttpClientEf(..),
-                              HttpClientEv(..), HttpClientReq(..),
-                              HttpEvent(..), KingId, ResponseHeader(..))
-import Urbit.Prelude         hiding (Builder)
-import Urbit.Vere.Pier.Types
+import Urbit.Prelude hiding (Builder)
 
 import Urbit.Vere.Http
+import Urbit.Vere.Pier.Types
+import Urbit.King.App
+
+import Urbit.Arvo (BlipEv(..), Ev(..), HttpClientEf(..), HttpClientEv(..),
+                   HttpClientReq(..), HttpEvent(..), KingId, ResponseHeader(..))
+
 
 import qualified Data.Map                as M
 import qualified Network.HTTP.Client     as H
 import qualified Network.HTTP.Client.TLS as TLS
 import qualified Network.HTTP.Types      as HT
+
 
 -- Types -----------------------------------------------------------------------
 
@@ -54,14 +57,54 @@ bornEv king =
 
 --------------------------------------------------------------------------------
 
-client :: forall e. HasLogFunc e
-       => KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e HttpClientEf))
-client kingId enqueueEv = (initialEvents, runHttpClient)
+_bornFailed :: e -> WorkError -> IO ()
+_bornFailed env _ = runRIO env $ do
+  pure () -- TODO What to do in this case?
+
+client'
+  :: HasPierEnv e
+  => RIO e ([Ev], RAcquire e (DriverApi HttpClientEf))
+client' = do
+  ventQ :: TQueue EvErr <- newTQueueIO
+  env <- ask
+
+  let (bornEvs, startDriver) = client env (writeTQueue ventQ)
+
+  let runDriver = do
+        diOnEffect <- startDriver
+        let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
+        pure (DriverApi {..})
+
+  pure (bornEvs, runDriver)
+
+
+{-|
+  Iris -- HTTP Client Driver
+
+  Until born events succeeds, ignore effects.
+  Wait until born event callbacks invoked.
+    If success, signal success.
+    If failure, try again several times.
+      If still failure, bring down ship.
+   Once born event succeeds, hold on to effects.
+   Once all other drivers have booted:
+     - Execute stashed effects.
+     - Begin normal operation (start accepting requests)
+-}
+client
+  :: forall e
+   . (HasLogFunc e, HasKingId e)
+  => e
+  -> (EvErr -> STM ())
+  -> ([Ev], RAcquire e (HttpClientEf -> IO ()))
+client env plan = (initialEvents, runHttpClient)
   where
+    kingId = view (kingIdL . to fromIntegral) env
+
     initialEvents :: [Ev]
     initialEvents = [bornEv kingId]
 
-    runHttpClient :: RAcquire e (EffCb e HttpClientEf)
+    runHttpClient :: RAcquire e (HttpClientEf -> IO ())
     runHttpClient = handleEffect <$> mkRAcquire start stop
 
     start :: RIO e (HttpClientDrv)
@@ -75,10 +118,10 @@ client kingId enqueueEv = (initialEvents, runHttpClient)
       liveThreads <- atomically $ readTVar hcdLive
       mapM_ cancel liveThreads
 
-    handleEffect :: HttpClientDrv -> HttpClientEf -> RIO e ()
+    handleEffect :: HttpClientDrv -> HttpClientEf -> IO ()
     handleEffect drv = \case
-      HCERequest _ id req -> newReq drv id req
-      HCECancelRequest _ id -> cancelReq drv id
+      HCERequest _ id req -> runRIO env (newReq drv id req)
+      HCECancelRequest _ id -> runRIO env (cancelReq drv id)
 
     newReq :: HttpClientDrv -> ReqId -> HttpClientReq -> RIO e ()
     newReq drv id req = do
@@ -124,8 +167,14 @@ client kingId enqueueEv = (initialEvents, runHttpClient)
     planEvent :: ReqId -> HttpEvent -> RIO e ()
     planEvent id ev = do
       logDebug $ displayShow ("(http client response)", id, (describe ev))
-      atomically $ enqueueEv $ EvBlip $ BlipEvHttpClient $
-        HttpClientEvReceive (kingId, ()) (fromIntegral id) ev
+
+      let recvEv = EvBlip
+                 $ BlipEvHttpClient
+                 $ HttpClientEvReceive (kingId, ()) (fromIntegral id) ev
+
+      let recvFailed _ = pure ()
+
+      atomically $ plan (EvErr recvEv recvFailed)
 
     -- show an HttpEvent with byte count instead of raw data
     describe :: HttpEvent -> String

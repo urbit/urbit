@@ -3,8 +3,8 @@
 -}
 module Urbit.Arvo.Effect where
 
+import Urbit.Noun.Time
 import Urbit.Prelude
-import Urbit.Time
 
 import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)
@@ -82,22 +82,6 @@ data SyncEf
 deriveNoun ''SyncEf
 
 
--- UDP Effects -----------------------------------------------------------------
-
-{-|
-    %init -- "I don't think that's something that can happen"
-    %west -- "Those also shouldn't happen"
-    %woot -- "Those also shouldn't happen"
--}
-data AmesEf
-    = AmesEfInit Path ()
-    | AmesEfWest Path Ship Path Noun
-    | AmesEfWoot Path Ship (Maybe (Maybe (Term, [Tank])))
-  deriving (Eq, Ord, Show)
-
-deriveNoun ''AmesEf
-
-
 -- Timer Effects ---------------------------------------------------------------
 
 {-|
@@ -171,7 +155,6 @@ data VaneEf
     | VEHttpClient HttpClientEf
     | VEHttpServer HttpServerEf
     | VEBehn       BehnEf
-    | VEAmes       AmesEf
     | VETerm       TermEf
     | VEClay       SyncEf
     | VESync       SyncEf
@@ -203,3 +186,10 @@ instance FromNoun Ef where
     ReOrg "" s "vega" p _     -> fail "%vega effect expects nil value"
     ReOrg "" s tag    p val   -> EfVane <$> parseNoun (toNoun (s, tag, p, val))
     ReOrg _  _ _      _ _     -> fail "Non-empty first path-element"
+
+summarizeEffect :: Lenient Ef -> Text
+summarizeEffect ef =
+  fromNoun (toNoun ef) & \case
+    Nothing -> "//invalid %effect"
+    Just (pax :: [Cord], tag :: Cord, val :: Noun) ->
+      "/" <> intercalate "/" (unCord <$> pax) <> " %" <> unCord tag
