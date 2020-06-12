@@ -4,12 +4,10 @@ export default class MetadataReducer {
   reduce(json, state) {
     let data = _.get(json, 'metadata-update', false);
     if (data) {
-      console.log('data: ', data);
       this.associations(data, state);
       this.add(data, state);
       this.update(data, state);
       this.remove(data, state);
-      console.log('state: ', state);
     }
   }
 

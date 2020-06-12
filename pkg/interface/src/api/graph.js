@@ -2,13 +2,17 @@ import BaseApi from './base';
 
 class PrivateHelper extends BaseApi {
   graphAction(data) {
+    console.log(data);
     this.action('graph-store', 'graph-action', data);
   }
 
-  addGraph(resource = { ship: '~zod', name: 'asdf' }, graph = {}) {
+  addGraph(ship = '~zod', name = 'asdf', graph = {}) {
     this.graphAction({
       'add-graph': {
-        resource,
+        resource: {
+          ship,
+          name
+        },
         graph
       }
     });
