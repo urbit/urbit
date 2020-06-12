@@ -161,6 +161,7 @@
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
       pud=(unit [=desk =yoki])                          ::  pending update
+      pun=(list move)                                   ::  upgrade moves
   ==                                                    ::
 ::
 ::  Object store.
@@ -3878,7 +3879,26 @@
   ::
       %trim  [~ ..^$]
   ::
-      %vega  [~ ..^$]
+      %vega
+    ::  wake all desks, then send pending notifications
+    ::
+    =^  wake-moves  ..^$
+      =/  desks=(list [=ship =desk])
+        %+  welp
+          (turn ~(tap by dos.rom.ruf) |=([=desk *] [our desk]))
+        %-  zing
+        %+  turn  ~(tap by hoy.ruf)
+        |=  [=ship =rung]
+        %+  turn  ~(tap by rus.rung)
+        |=  [=desk *]
+        [ship desk]
+      |-  ^+  [*(list move) ..^^$]
+      ?~  desks
+        [~ ..^^$]
+      =^  moves-1  ..^^$  $(desks t.desks)
+      =^  moves-2  ruf  abet:wake:((de our now ski hen ruf) [ship desk]:i.desks)
+      [(weld moves-1 moves-2) ..^^$]
+    [(welp wake-moves pun.ruf) ..^$(pun.ruf ~)]
   ::
       ?(%warp %werp)
     ::  capture whether this read is on behalf of another ship
@@ -3927,10 +3947,31 @@
   ++  load-2-to-3
     |=  =state-2
     ^-  state-3
-    =-  state-2(- %3, rom rom.-, hoy hoy.-, |7 pud.-)
-    :+  ^-  pud=(unit [=desk =yoki])
-        ~?  ?=(^ act.state-2)  clay-canceling-write+hen.u.act.state-2
-        ~
+    =-  state-2(- %3, rom rom.-, hoy hoy.-, |7 [pud=~ pun.-])
+    :+  ^-  pun=(list move)
+        %+  welp
+          ?~  act.state-2
+            ~
+          ?.  =(%merge -.eval-data.u.act.state-2)
+            ~
+          =/  err
+            :-  %ford-fusion
+            [leaf+"active merge canceled due to upgrade to ford fusion" ~]
+          [hen.u.act.state-2 %slip %b %drip !>([%mere %| err])]~
+        ^-  (list move)
+        %+  murn  ~(tap to cue.state-2)
+        ::  use ^ so we don't have to track definition of +task
+        ::
+        |=  [=duct task=^]
+        ^-  (unit move)
+        ?.  =(%merg -.task)
+          ~&  "queued clay write canceled due to upgrade to ford fusion:"
+          ~&  [duct [- +<]:task]
+          ~
+        =/  err
+          :-  %ford-fusion
+          [leaf+"queued merge canceled due to upgrade to ford fusion" ~]
+        `[duct %slip %b %drip !>([%mere %| err])]
       ^-  rom=room
       :-  hun.rom.state-2
       %-  ~(run by dos.rom.state-2)
@@ -3988,7 +4029,7 @@
         mon=(map term beam)                             ::  mount points
         hez=(unit duct)                                 ::  sync duct
         cez=(map @ta crew)                              ::  permission groups
-        cue=(qeu [=duct task=*])                        ::  queued requests
+        cue=(qeu [=duct task=^])                        ::  queued requests
         act=active-write-2                              ::  active write
     ==                                                  ::
   +$  room-2
@@ -4030,7 +4071,7 @@
     $:  waiting=(qeu [inx=@ud rut=(unit rand)])
         eval-data=(unit [inx=@ud rut=(unit rand) eval-form=*])
     ==
-  +$  active-write-2  (unit [hen=duct *])
+  +$  active-write-2  (unit [hen=duct req=* eval-data=^])
   --
 ::
 ++  scry                                              ::  inspect
