@@ -86,7 +86,7 @@
   ?>  (team:title our.bowl src.bowl)
   ?+  path  (on-watch:def path)
       [%updates @ ~]
-    :-  ~
+    :-  [%give %fact ~ %json !>([(frond:enjs:format %graph-view s+'bound')])]~
     this(connections (~(put by connections) i.t.path now.bowl))
   ==
 ::
