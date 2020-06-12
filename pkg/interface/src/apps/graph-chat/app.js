@@ -106,8 +106,8 @@ export default class GraphChatApp extends React.Component {
           path="/~chat/room/:ship/:name"
           render={(props) => {
             let resource =
-              `/${props.match.params.ship}/${props.match.params.name}`;
-            const graph = state.graphs[resource] || {};
+              `${props.match.params.ship}/${props.match.params.name}`;
+            const graph = state.graphs[resource] || new Map();
 
             return (
               <Skeleton

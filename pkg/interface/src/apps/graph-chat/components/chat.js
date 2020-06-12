@@ -28,30 +28,30 @@ export class ChatScreen extends Component {
   chatWindow() {
     const { props } = this;
 
-    //let messages = props.envelopes.slice(0);
-    let messages = [];
+    let graph = props.graph;
+    let messages = Array.from(graph).reverse();
 
     const messageElements = messages.map((msg, i) => {
+      let index = msg[0];
+      let node = msg[1];
+      let post = node.post;
       // Render sigil if previous message is not by the same sender
       const aut = ['author'];
-      const renderSigil =
-        _.get(messages[i + 1], aut) !==
-        _.get(msg, aut, msg.author);
+      const renderSigil = (i + 1) in messages ?
+        messages[i + 1][1].post.author !== post.author : true;
       const paddingTop = renderSigil;
-      const paddingBot =
-        _.get(messages[i - 1], aut) !==
-        _.get(msg, aut, msg.author);
+      const paddingBot = (i - 1) in messages ?
+        messages[i - 1][1].post.author !== post.author : true;
 
       return (
         <Message
-          key={msg.uid}
-          msg={msg}
+          key={index}
+          msg={post}
           renderSigil={renderSigil}
           paddingTop={paddingTop}
           paddingBot={paddingBot}
         />
       );
-
     });
 
     return (
