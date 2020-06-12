@@ -120,11 +120,15 @@
   ?>  ?=(%o -.u.ujon)
   ?:  (gth 200 status-code.response-header.response)
     [~ state]
+  =/  error  (~(get by p.u.ujon) 'error')
+  ?^  error
+    ~&  "fetching weather failed: {<u.error>}"
+    [~ state]
   =/  jon=json
     %+  frond:enjs:format  %weather
-    %-  pairs:enjs:format  :~
-      currently+(~(got by p.u.ujon) 'currently')
-      daily+(~(got by p.u.ujon) 'daily')
+    %-  pairs:enjs:format
+    :~  [%currently (~(got by p.u.ujon) 'currently')]
+        [%daily (~(got by p.u.ujon) 'daily')]
     ==
   :-  [%give %fact ~[/all] %json !>(jon)]~
   %=  state
