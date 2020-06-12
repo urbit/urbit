@@ -3,43 +3,51 @@ jobs:
   - os: linux
     language: nix
     nix: 2.3.6
-    env: STACK_YAML=pkg/hs/stack.yaml
     before_install:
       - git lfs pull
-      - sh/travis-install-stack
-
     install:
       - nix-env -iA cachix -f https://cachix.org/api/v1/install
-      - stack --no-terminal --install-ghc build urbit-king --only-dependencies
-
     script:
       - cachix use urbit2
       - ./sh/cachix
       - make build
       - make release
-      - sh/release-king-linux64-dynamic
       - sh/ci-tests
+
+  - os: linux
+    language: generic
+    env: STACK_YAML=pkg/hs/stack.yaml
+    cache:
+      directories:
+      - $HOME/.ghc
+      - $HOME/.cabal
+      - $HOME/.stack
+      - $TRAVIS_BUILD_DIR/.stack-work
+    before_install:
+      - sh/travis-install-stack
+    install:
+      - stack --no-terminal --install-ghc build urbit-king --only-dependencies
+    script:
+      - stack test
+      - sh/release-king-linux64-dynamic
 
   - os: osx
     language: generic
     sudo: required
     env: STACK_YAML=pkg/hs/stack.yaml
-
+    cache:
+      directories:
+      - $HOME/.ghc
+      - $HOME/.cabal
+      - $HOME/.stack
+      - $TRAVIS_BUILD_DIR/.stack-work
     before_install:
       - sh/travis-install-stack
-
     install:
       - stack --no-terminal --install-ghc build urbit-king --only-dependencies
-
     script:
+      - stack test
       - sh/release-king-darwin-dynamic
-
-cache:
-  directories:
-  - $HOME/.ghc
-  - $HOME/.cabal
-  - $HOME/.stack
-  - $TRAVIS_BUILD_DIR/.stack-work
 
 deploy:
   - skip_cleanup: true

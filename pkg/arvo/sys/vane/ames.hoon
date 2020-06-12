@@ -830,7 +830,6 @@
       %+  murn  ~(tap by peers.ames-state)
       |=  [=ship =ship-state]
       ^-  (unit [^ship peer-state])
-      ~&  checking=ship
       ?.  ?=(%known -.ship-state)
         ~
       `[ship +.ship-state]
@@ -1432,6 +1431,9 @@
     ::
     ?:  already-pending
       event-core
+    ::  NB: we specifically look for this wire in +public-keys-give in
+    ::  Jael.  if you change it here, you must change it there.
+    ::
     (emit duct %pass /public-keys %j %public-keys [n=ship ~ ~])
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::

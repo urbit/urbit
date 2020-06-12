@@ -38,7 +38,7 @@ herb ./ship -p test -d ':-  %renders  /'
 herb ./ship -d '~&  %finish-test-renders  ~'
 
 # Run the test generator
-herb ./ship -d '+test, =seed `@uvI`(shaz %reproducible)' >test-generator-output
+herb ./ship -d '+test, =seed `@uvI`(shaz %reproducible)' > test-generator-output
 
 cat test-generator-output || true
 

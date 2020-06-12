@@ -19,12 +19,16 @@ let
   ge-additions = env:
     import ./pkgs/ge-additions/cross.nix env;
 
+  libaes_siv = env:
+    import ./pkgs/libaes_siv/cross.nix env;
+
   urbit = { env, debug }:
     import ./pkgs/urbit/release.nix env {
       inherit debug;
       name         = if debug then "urbit-debug" else "urbit";
       ent          = ent env;
       ge-additions = ge-additions env;
+      libaes_siv   = libaes_siv env;
     };
 
   builds-for-platform = plat:
@@ -33,6 +37,7 @@ let
       inherit (plat.env) cmake_toolchain;
       ent          = ent          plat;
       ge-additions = ge-additions plat;
+      libaes_siv   = libaes_siv   plat;
       urbit        = urbit { env = plat; debug = false; };
       urbit-debug  = urbit { env = plat; debug = true;  };
     };

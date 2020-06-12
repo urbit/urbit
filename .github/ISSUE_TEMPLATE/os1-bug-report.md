@@ -3,7 +3,7 @@ name: OS1 Bug report
 about: 'Use this template to file a bug for any OS1 app: Chat, Publish, Links, Groups,
   Weather or Clock'
 title: ''
-labels: OS1
+labels: landscape
 assignees: ''
 
 ---
