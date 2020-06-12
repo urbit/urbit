@@ -1401,6 +1401,9 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
         //
         case c3__pack: {
           ret_o = c3y;
+          //  XX would be
+          //
+          // u3_assure(u3_pier_pack(car_u->pir_u));
         } break;
       }
     }

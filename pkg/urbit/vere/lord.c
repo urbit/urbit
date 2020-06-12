@@ -657,9 +657,8 @@ _lord_writ_jam(u3_lord* god_u, u3_writ* wit_u)
 static void
 _lord_writ_send(u3_lord* god_u, u3_writ* wit_u)
 {
-
   _lord_writ_jam(god_u, wit_u);
-  u3_newt_write(&god_u->inn_u, wit_u->mat, 0);
+  u3_newt_write(&god_u->inn_u, wit_u->mat);
   wit_u->mat = 0;
 
   //  ignore subprocess error on shutdown
@@ -915,6 +914,7 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
     arg_c[5] = 0;
 
     uv_pipe_init(u3L, &god_u->inn_u.pyp_u, 0);
+    uv_timer_init(u3L, &god_u->out_u.tim_u);
     uv_pipe_init(u3L, &god_u->out_u.pyp_u, 0);
 
     god_u->cod_u[0].flags = UV_CREATE_PIPE | UV_READABLE_PIPE;
@@ -943,12 +943,13 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
   //  start reading from proc
   //
   {
-    god_u->out_u.vod_p = god_u;
+    god_u->out_u.ptr_v = god_u;
     god_u->out_u.pok_f = _lord_plea;
     god_u->out_u.bal_f = _lord_bail;
 
     //  XX distinguish from out_u.bal_f ?
     //
+    god_u->inn_u.ptr_v = god_u;
     god_u->inn_u.bal_f = _lord_bail;
 
     u3_newt_read(&god_u->out_u);
