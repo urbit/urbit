@@ -42,7 +42,7 @@
     |^
     ?>  ?=(%0 -.action)
     ?-  +<.action
-::        %add-graph          (add-graph +>.action)
+        %add-graph          (add-graph +>.action)
         %remove-graph       (remove-graph +>.action)
         %add-nodes          (add-nodes +>.action)
         %remove-nodes       (remove-nodes +>.action)
@@ -52,15 +52,15 @@
         %remove-tag         (remove-tag +>.action)
     ==
     ::
-::    ++  add-graph
-::      |=  [=resource:store =graph:store]
-::      ^-  (quip card _state)
-::      ?<  (~(has by graphs) resource)
-::      :-  (give [/updates /keys ~] [%add-graph resource graph])
-::      %_  state
-::          graphs       (~(put by graphs) resource graph)
-::          action-logs  (~(put by action-logs) resource (gas:orm-log ~ ~))
-::      ==
+    ++  add-graph
+      |=  [=resource:store =graph:store]
+      ^-  (quip card _state)
+      ?<  (~(has by graphs) resource)
+      :-  (give [/updates /keys ~] [%add-graph resource graph])
+      %_  state
+          graphs       (~(put by graphs) resource graph)
+          action-logs  (~(put by action-logs) resource (gas:orm-log ~ ~))
+      ==
     ::
     ++  remove-graph
       |=  =resource:store

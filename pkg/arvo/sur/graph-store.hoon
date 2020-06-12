@@ -33,7 +33,7 @@
   ==
 ::
 +$  action-0
-  $%  ::[%add-graph =resource =graph]
+  $%  [%add-graph =resource =graph]
       [%remove-graph =resource]
     ::
       [%add-nodes =resource nodes=(map index node)]
