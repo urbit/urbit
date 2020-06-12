@@ -57,20 +57,20 @@
           %remove-graph
         [%remove-graph (enjs:res resource.upd)]
       ::
-::          %add-nodes
-::        :-  %add-nodes
-::        %-  pairs
-::        :~  [%resource (enjs:res resource.upd)]
-::            [%nodes (nodes nodes.upd)]
-::        ==
+          %add-nodes
+        :-  %add-nodes
+        %-  pairs
+        :~  [%resource (enjs:res resource.upd)]
+            [%nodes (nodes nodes.upd)]
+        ==
       ::
-::          %remove-nodes
-::        :-  %remove-nodes
-::        %-  pairs
-::        :~  [%resource (enjs:res resource.upd)]
-::            [%indices (indices indices.upd)]
-::        ==
-::      ::
+          %remove-nodes
+        :-  %remove-nodes
+        %-  pairs
+        :~  [%resource (enjs:res resource.upd)]
+            [%indices (indices indices.upd)]
+        ==
+      ::
           %add-signatures
         :-  %add-signatures
         %-  pairs
@@ -117,8 +117,7 @@
       ^-  json
       =/  j=^tape  ""
       |-
-      ?~  i
-        [%s (crip j)]
+      ?~  i  [%s (crip j)]
       =/  k=json  (numb i.i)
       ?>  ?=(%n -.k)
       %_  $
@@ -217,6 +216,71 @@
 ++  dejs
   =,  dejs:format
   |%
+  ++  or                                        ::  parse keys of ordered map
+    |*  [fel=rule wit=fist]
+    =/  key=mold  _(wonk *fel)
+    =/  val=mold  _*wit
+    |=  ord=$-([key key] ?)
+    ^-  fist
+    =/  or-mp  ((or-map key val) ord)
+    |=  jan=json
+    =/  jom  ((om wit) jan)
+    %+  gas:or-mp  ~
+    %+  turn  ~(tap by jom)
+    |*  [a=cord b=*]
+    ^-  [key val]
+    =>  .(+< [a b]=+<)
+    [(rash a fel) b]
+  ::
+  ++  graph  (or dem node)
+  ::
+  ++  node
+    %-  ot
+    :~  [%post post]
+        ::  TODO: support adding nodes with children by supporting the
+        ::  graph key
+        [%children (of [%empty ul]~)]
+    ==
+  ::
+  ++  post
+    %-  ot
+    :~  [%author (su ;~(pfix sig fed:ag))]
+        [%index index] 
+        [%time-sent di]
+        [%contents (ar content)]
+        [%hash (mu nu)]
+        [%signatures (as signature)]
+    ==
+  ::
+  ++  content
+    %-  of
+    :~  [%text so]
+        [%url so]
+        [%reference uid]
+        [%code eval]
+    ==
+  ::
+  ++  eval
+    |=  a=^json
+    ^-  [cord (list tank)]
+    =,  ^?  dejs-soft:format
+    =+  exp=((ot expression+so ~) a)
+    %-  need
+    ?~  exp  [~ '' ~]
+    :+  ~  u.exp
+    ::  NOTE: when sending, if output is an empty list,
+    ::  graph-store will evaluate
+    (fall ((ot output+(ar dank) ~) a) ~)
+  ::
+  ++  signature
+    %-  ot
+    :~  [%hash nu]
+        [%ship (su ;~(pfix sig fed:ag))]
+        [%life ni]
+    ==
+  ::
+  ++  index  (su ;~(pfix net (more net dem)))
+  ::
   ++  action
     |=  jon=json
     ^-  ^action
@@ -226,12 +290,11 @@
     |%
     ++  decode
       %-  of
-      :~  
-::          [%add-graph add-graph]
+      :~  ::[%add-graph add-graph]
           [%remove-graph remove-graph]
-::          [%add-nodes add-nodes]
-::          [%remove-nodes remove-nodes]
-::          [%add-signatures add-signatures]
+          [%add-nodes add-nodes]
+          [%remove-nodes remove-nodes]
+          [%add-signatures add-signatures]
           [%remove-signatures remove-signatures]
           [%add-tag add-tag]
           [%remove-tag remove-tag]
@@ -240,61 +303,67 @@
 ::    ++  add-graph
 ::      %-  ot
 ::      :~  [%resource dejs:res]
-::          [%graph !!]
+::          [%graph graph]
 ::      ==
+    ::
+    ::
+    ++  graph  (or dem node)
+    ::
     ::
     ++  remove-graph  (ot [%resource dejs:res]~)
     ::
-::    ++  add-nodes
-::      %-  ot
-::      :~  [%resource dejs:res]
-::          [%nodes nodes]
-::      ==
+    ++  add-nodes
+      %-  ot
+      :~  [%resource dejs:res]
+          [%nodes nodes]
+      ==
     ::
-::    ++  nodes  (op index node)
+    ++  nodes  (op ;~(pfix net (more net dem)) node)
     ::
-::    ++  node
-::      %-  ot
-::      :~  [%post post]
-::          [%children (ot [%empty ul]~)]
-::      ==
-::    ::
-::    ++  post
-::      %-  ot
-::      :~  [%author (su ;~(pfix sig fed:ag))]
-::          [%index index] 
-::          [%time-sent di]
-::          [%contents (ar content)]
-::          [%hash (mu nu)]
-::          [%signatures (as signature)]
-::      ==
-::    ::
-::    ++  content
-::      %-  of
-::      :~  [%text so]
-::          [%url so]
-::          [%reference uid]
-::          [%code eval]
-::      ==
-::    ::
-::    ++  eval
-::      |=  a=^json
-::      ^-  [cord (list tank)]
-::      =,  ^?  dejs-soft:format
-::      =+  exp=((ot expression+so ~) a)
-::      %-  need
-::      ?~  exp  [~ '' ~]
-::      :+  ~  u.exp
-::      ::  NOTE: when sending, if output is an empty list,
-::      ::  graph-store will evaluate
-::      (fall ((ot output+(ar dank) ~) a) ~)
+    ++  node
+      %-  ot
+      :~  [%post post]
+          ::  TODO: support adding nodes with children by supporting the
+          ::  graph key
+          [%children (of [%empty ul]~)]
+      ==
     ::
-::    ++  remove-nodes
-::      %-  ot
-::      :~  [%resource dejs:res]
-::          [%indices (as index)]
-::      ==
-::    ::
+    ++  post
+      %-  ot
+      :~  [%author (su ;~(pfix sig fed:ag))]
+          [%index index] 
+          [%time-sent di]
+          [%contents (ar content)]
+          [%hash (mu nu)]
+          [%signatures (as signature)]
+      ==
+    ::
+    ++  content
+      %-  of
+      :~  [%text so]
+          [%url so]
+          [%reference uid]
+          [%code eval]
+      ==
+    ::
+    ++  eval
+      |=  a=^json
+      ^-  [cord (list tank)]
+      =,  ^?  dejs-soft:format
+      =+  exp=((ot expression+so ~) a)
+      %-  need
+      ?~  exp  [~ '' ~]
+      :+  ~  u.exp
+      ::  NOTE: when sending, if output is an empty list,
+      ::  graph-store will evaluate
+      (fall ((ot output+(ar dank) ~) a) ~)
+    ::
+    ++  remove-nodes
+      %-  ot
+      :~  [%resource dejs:res]
+          [%indices (as index)]
+      ==
+    ::
     ++  add-signatures
       %-  ot
       :~  [%uid uid]
