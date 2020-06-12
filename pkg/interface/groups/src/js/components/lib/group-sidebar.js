@@ -121,9 +121,9 @@ export class GroupSidebar extends Component {
     let activeClasses = (this.props.activeDrawer === "groups") ? "" : "dn-s";
 
     return (
-      <div className={"bn br-m br-l br-xl b--gray2 lh-copy h-100 flex-basis-100-s " +
-       "flex-basis-30-ns flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl " +
-        "relative overflow-hidden " + activeClasses}>
+      <div className={"bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 " +
+       "flex-basis-30-ns flex-shrink-0 mw5-m mw5-l mw5-xl flex-basis-100-s " +
+        "relative overflow-hidden pt3 pt0-m pt0-l pt0-xl " + activeClasses}>
         <a className="db dn-m dn-l dn-xl f8 pb6 pl3" href="/">⟵ Landscape</a>
         <div className="overflow-auto pb8 h-100">
           <Link to="/~groups/new" className="dib">

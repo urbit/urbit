@@ -129,18 +129,14 @@ export class LinkPreview extends Component {
             <span className="gray2 ml2 f8 dib v-btm flex-shrink-0">{hostname} ↗</span>
           </a>
           <div className="w-100 pt1">
-            <span className={"f9 pr2 white-d v-mid " + nameClass}
+            <span className={"f9 pr2 white-d dib " + nameClass}
             title={props.ship}>
               {props.nickname ? props.nickname : cite(props.ship)}
             </span>
-            <span className="f9 inter gray2 pr3 v-mid">
+            <span className="f9 inter gray2 pr3 dib">
               {this.state.timeSinceLinkPost}
             </span>
-            <Link
-              to={makeRoutePath(props.resourcePath, props.popout, props.page, props.url, props.linkIndex)}
-              className="v-top">
-              <span className="f9 inter gray2">{props.comments}</span>
-            </Link>
+              <span className="f9 inter gray2 dib">{props.comments}</span>
           </div>
         </div>
       </div>

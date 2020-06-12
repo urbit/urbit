@@ -21,6 +21,7 @@
 #include <vere/db/lmdb.h>
 
 struct _cd_read {
+  uv_timer_t       tim_u;
   c3_d             eve_d;
   c3_d             len_d;
   struct _u3_fact* ent_u;               //  queue entry
@@ -302,8 +303,7 @@ _disk_read_done_cb(uv_timer_t* tim_u)
   c3_assert( red_u->ext_u );
 
   log_u->cb_u.read_done_f(log_u->cb_u.vod_p, pay_u);
-  c3_free(red_u);
-  tim_u->data = 0;
+  uv_close((uv_handle_t*)tim_u, (uv_close_cb)free);
 }
 
 /* _disk_read_one_cb(): lmdb read callback, invoked for each event in order
@@ -361,7 +361,6 @@ _disk_read_start_cb(uv_timer_t* tim_u)
   struct _cd_read* red_u = tim_u->data;
   u3_disk* log_u = red_u->log_u;
 
-
   //  read events synchronously
   //
   if ( c3n == c3_lmdb_read(log_u->mdb_u,
@@ -380,7 +379,7 @@ _disk_read_start_cb(uv_timer_t* tim_u)
 
   //  finish the read asynchronously
   //
-  uv_timer_start(&log_u->tim_u, _disk_read_done_cb, 0, 0);
+  uv_timer_start(&red_u->tim_u, _disk_read_done_cb, 0, 0);
 }
 
 /* u3_disk_read(): read [len_d] events starting at [eve_d].
@@ -398,10 +397,12 @@ u3_disk_read(u3_disk* log_u, c3_d eve_d, c3_d len_d)
 
   //  perform the read asynchronously
   //
-  //    XX unsafe, queue reads
+  //    XX queue reads for cancelation
   //
-  log_u->tim_u.data = red_u;
-  uv_timer_start(&log_u->tim_u, _disk_read_start_cb, 0, 0);
+  uv_timer_init(u3L, &red_u->tim_u);
+
+  red_u->tim_u.data = red_u;
+  uv_timer_start(&red_u->tim_u, _disk_read_start_cb, 0, 0);
 }
 
 /* _disk_save_meta(): serialize atom, save as metadata at [key_c].
@@ -556,7 +557,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
   log_u->ted_o = c3n;
   log_u->cb_u  = cb_u;
 
-  uv_timer_init(u3L, &log_u->tim_u);
+  // uv_timer_init(u3L, &log_u->tim_u);
 
   //  create/load pier directory
   //

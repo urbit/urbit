@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { api } from "../../api";
+import { Spinner } from './icons/icon-spinner';
 
 export class LinkSubmit extends Component {
   constructor() {
@@ -20,10 +21,8 @@ export class LinkSubmit extends Component {
     let title = this.state.linkTitle
       ? this.state.linkTitle
       : this.state.linkValue;
-      api.setSpinner(true);
       this.setState({disabled: true})
     api.postLink(this.props.resourcePath, link, title).then(r => {
-      api.setSpinner(false);
       this.setState({
         disabled: false,
         linkValue: "",
@@ -126,6 +125,7 @@ export class LinkSubmit extends Component {
           }}>
           Post
         </button>
+        <Spinner awaiting={this.state.disabled} classes="mt3 absolute right-0" text="Posting to collection..." />
       </div>
     );
   }

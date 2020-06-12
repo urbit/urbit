@@ -51,6 +51,7 @@
     ::
     ++  node-url  'http://eth-mainnet.urbit.org:8545'
     ++  refresh-rate  ~h1
+    ++  timeout-time  ~h2
     --
 ::
 =|  state-0
@@ -207,6 +208,7 @@
   :*  node-url
       |
       refresh-rate
+      timeout-time
       public:mainnet-contracts
       ~[azimuth delegated-sending]:mainnet-contracts
       ~

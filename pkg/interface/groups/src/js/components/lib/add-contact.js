@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
 import { InviteSearch } from './invite-search';
+import { Spinner } from './icons/icon-spinner';
 
 
 export class AddScreen extends Component {
@@ -11,7 +12,8 @@ export class AddScreen extends Component {
       invites: {
         groups: [],
         ships: []
-      }
+      },
+      awaiting: false
     };
 
     this.invChange = this.invChange.bind(this);
@@ -38,12 +40,12 @@ export class AddScreen extends Component {
       invites: {
         groups: [],
         ships: []
-      }
+      },
+      awaiting: true
     }, () => {
-      props.api.setSpinner(true);
       let submit = props.api.group.add(props.path, aud);
       submit.then(() => {
-        props.api.setSpinner(false);
+        this.setState({awaiting: false});
         props.history.push("/~groups" + props.path);
       })
     });
@@ -51,14 +53,6 @@ export class AddScreen extends Component {
 
   render() {
     const { props } = this;
-    let invErrElem = (<span />);
-    if (this.state.inviteError) {
-      invErrElem = (
-        <span className="f9 inter red2 ml3 mb5 db">
-        Invites must be validly formatted ship names.
-        </span>
-      );
-    }
 
     return (
       <div className="h-100 w-100 flex flex-column overflow-y-scroll white-d">
@@ -86,6 +80,7 @@ export class AddScreen extends Component {
           <Link to="/~groups">
             <button className="f8 ml4 ba pa2 b--black pointer bg-transparent b--white-d white-d">Cancel</button>
           </Link>
+          <Spinner awaiting={this.state.awaiting} classes="mt4 pl4" text="Inviting to group..." />
         </div>
       </div>
     )

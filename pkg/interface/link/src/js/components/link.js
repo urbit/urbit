@@ -1,20 +1,24 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { LinksTabBar } from './lib/links-tabbar';
 import { LinkPreview } from './lib/link-detail-preview';
 import { SidebarSwitcher } from '/components/lib/icons/icon-sidebar-switch.js';
 import { api } from '../api';
-import { Route, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Comments } from './lib/comments';
+import { Spinner } from './lib/icons/icon-spinner';
 import { LoadingScreen } from './loading';
 import { makeRoutePath, getContactDetails } from '../lib/util';
+import CommentItem from './lib/comment-item';
 
 export class LinkDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      comment: "",
+      comment: '',
       data: props.data,
-      commentFocus: false
+      commentFocus: false,
+      pending: new Set(),
+      disabled: false
     };
 
     this.setComment = this.setComment.bind(this);
@@ -39,22 +43,37 @@ export class LinkDetail extends Component {
     if (this.props.url !== prevProps.url) {
       this.updateData(this.props.data);
     }
+    if (prevProps.comments && prevProps.comments['0'] &&
+      this.props.comments && this.props.comments['0']) {
+        const prevFirstComment = prevProps.comments['0'][0];
+        const thisFirstComment = this.props.comments['0'][0];
+        if ((prevFirstComment && prevFirstComment.udon) &&
+          (thisFirstComment && thisFirstComment.udon)) {
+          if (this.state.pending.has(thisFirstComment.udon)) {
+            const pending = this.state.pending;
+            pending.delete(thisFirstComment.udon);
+            this.setState({
+              pending: pending
+            });
+          }
+        }
+    }
   }
 
   onClickPost() {
-    let url = this.props.url || "";
+    const url = this.props.url || '';
 
-    api.setSpinner(true);
+    const pending = this.state.pending;
+    pending.add(this.state.comment);
+    this.setState({ pending: pending, disabled: true  });
 
     api.postComment(
       this.props.resourcePath,
       url,
       this.state.comment
     ).then(() => {
-      api.setSpinner(false);
-      this.setState({ comment: "" });
+      this.setState({ comment: '', disabled: false });
     });
-
   }
 
   setComment(event) {
@@ -62,48 +81,67 @@ export class LinkDetail extends Component {
   }
 
   render() {
-    let props = this.props;
+    const props = this.props;
 
     const data = this.state.data || props.data;
 
     if (!data.ship) {
-      return <LoadingScreen/>;
+      return <LoadingScreen />;
     }
 
-    let ship = data.ship || "zod";
-    let title = data.title || "";
-    let url = data.url || "";
+    const ship = data.ship || 'zod';
+    const title = data.title || '';
+    const url = data.url || '';
 
     const commentCount = props.comments
       ? props.comments.totalItems
       : data.commentCount || 0;
 
-    let comments = commentCount + " comment" + (commentCount === 1 ? "" : "s");
+    const comments = commentCount + ' comment' + (commentCount === 1 ? '' : 's');
 
     const { nickname } = getContactDetails(props.contacts[ship]);
 
-    let activeClasses = this.state.comment
-      ? "black white-d pointer"
-      : "gray2 b--gray2";
+    const activeClasses = this.state.comment
+      ? 'black white-d pointer'
+      : 'gray2 b--gray2';
 
-    let focus = (this.state.commentFocus)
-      ? "b--black b--white-d"
-      : "b--gray4 b--gray2-d"
+    const focus = (this.state.commentFocus)
+      ? 'b--black b--white-d'
+      : 'b--gray4 b--gray2-d';
+
+    const our = getContactDetails(props.contacts[window.ship]);
+
+    const pendingArray = Array.from(this.state.pending).map((com, i) => {
+      return(
+        <CommentItem
+          key={i}
+          color={our.color}
+          nickname={our.nickname}
+          ship={window.ship}
+          pending={true}
+          content={com}
+          member={our.member}
+          time={new Date().getTime()}
+        />
+      );
+    });
 
     return (
       <div className="h-100 w-100 overflow-hidden flex flex-column">
         <div
-          className={"pl4 pt2 flex relative overflow-x-scroll " +
-      "overflow-x-auto-l overflow-x-auto-xl flex-shrink-0 " +
-      "bb bn-m bn-l bn-xl b--gray4"}
-          style={{ height: 48 }}>
+          className={'pl4 pt2 flex relative overflow-x-scroll ' +
+      'overflow-x-auto-l overflow-x-auto-xl flex-shrink-0 ' +
+      'bb bn-m bn-l bn-xl b--gray4'}
+          style={{ height: 48 }}
+        >
           <SidebarSwitcher
             sidebarShown={props.sidebarShown}
             popout={props.popout}
           />
           <Link
             className="dib f9 fw4 pt2 gray2 lh-solid"
-            to={makeRoutePath(props.resourcePath, props.popout, props.page)}>
+            to={makeRoutePath(props.resourcePath, props.popout, props.page)}
+          >
             {`<- ${props.resource.metadata.title}`}
           </Link>
           <LinksTabBar {...props} popout={props.popout} resourcePath={props.resourcePath} />
@@ -121,37 +159,44 @@ export class LinkDetail extends Component {
               linkIndex={props.linkIndex}
               time={this.state.data.time}
             />
-            <div className={"relative ba br1 mt6 mb6 " + focus}>
-              <textarea
-                className="w-100 bg-gray0-d white-d f8 pa2 pr8"
-                style={{
-                  resize: "none",
-                  height: 75
-                }}
-                placeholder="Leave a comment on this link"
-                onChange={this.setComment}
-                onKeyPress={(e) => {
-                  if ((e.getModifierState("Control") || event.getModifierState("Meta"))
-                    && e.key === "Enter") {
-                    this.onClickPost();
+            <div className="relative">
+              <div className={'relative ba br1 mt6 mb6 ' + focus}>
+                <textarea
+                  className="w-100 bg-gray0-d white-d f8 pa2 pr8"
+                  style={{
+                    resize: 'none',
+                    height: 75
+                  }}
+                  placeholder="Leave a comment on this link"
+                  onChange={this.setComment}
+                  onKeyDown={(e) => {
+                    if (
+                      (e.getModifierState('Control') || e.metaKey) &&
+                      e.key === 'Enter'
+                    ) {
+                      this.onClickPost();
+                    }
+                  }}
+                  onFocus={() => this.setState({ commentFocus: true })}
+                  onBlur={() => this.setState({ commentFocus: false })}
+                  value={this.state.comment}
+                />
+                <button
+                  className={
+                    'f8 bg-gray0-d ml2 absolute ' + activeClasses
                   }
-                }}
-                onFocus={() => this.setState({commentFocus: true})}
-                onBlur={() => this.setState({commentFocus: false})}
-                value={this.state.comment}
-              />
-              <button
-                className={
-                  "f8 bg-gray0-d ml2 absolute " + activeClasses
-                }
-                disabled={!this.state.comment}
-                onClick={this.onClickPost.bind(this)}
-                style={{
-                  bottom: 12,
-                  right: 8
-                }}>
-                Post
-              </button>
+                  disabled={!this.state.comment || this.state.disabled}
+                  onClick={this.onClickPost.bind(this)}
+                  style={{
+                    bottom: 12,
+                    right: 8
+                  }}
+                >
+                  Post
+                </button>
+              </div>
+              <Spinner awaiting={this.state.disabled} classes="absolute pt5 right-0" text="Posting comment..." />
+              {pendingArray}
             </div>
             <Comments
               resourcePath={props.resourcePath}

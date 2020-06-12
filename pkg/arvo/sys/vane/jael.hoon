@@ -664,17 +664,30 @@
   ::
   ++  public-keys-give
     |=  [yen=(set duct) =public-keys-result]
-    =+  yez=~(tap in yen)
+    |^
+    =+  yez=(sort ~(tap in yen) sorter)
     |-  ^+  this-su
     ?~  yez  this-su
     =*  d  i.yez
     =.  this-su
-      ?.  &(?=([[%a @ @ *] *] d) !=(%pubs i.t.i.d))
+      ?.  &(?=([[%a @ @ *] *] d) !=(%public-keys i.t.i.d))
         %-  emit
         [d %give %public-keys public-keys-result]
       %-  emit
       [d %give %boon %public-keys-result public-keys-result]
     $(yez t.yez)
+    ::
+    ::  We want to notify Ames, then Clay, then Gall.  This happens to
+    ::  be alphabetical, but this is mostly a coincidence.
+    ::
+    ++  sorter
+      |=  [a=duct b=duct]
+      ?.  ?=([[@ *] *] a)
+        |
+      ?.  ?=([[@ *] *] b)
+        &
+      (lth i.i.a i.i.b)
+    --
   ::
   ++  get-source
     |=  who=@p
@@ -866,7 +879,8 @@
       ::  if changing rift upward, then signal a breach
       ::
       =?    ..feel
-          ?&  ?=(%rift -.a-diff)
+          ?&  ?=(^ maybe-point)
+              ?=(%rift -.a-diff)
               (gth to.a-diff rift.point)
           ==
         %+  public-keys-give

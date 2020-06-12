@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import { Route, Link } from 'react-router-dom';
 import { InviteSearch } from './lib/invite-search';
+import { Spinner } from './lib/icons/icon-spinner';
 import { deSig } from '/lib/util';
 import urbitOb from 'urbit-ob';
 
@@ -19,6 +20,7 @@ export class NewScreen extends Component {
       },
       // color: '',
       groupNameError: false,
+      awaiting: false
     };
 
     this.groupNameChange = this.groupNameChange.bind(this);
@@ -64,16 +66,16 @@ export class NewScreen extends Component {
     this.setState({
       error: false,
       success: true,
-      invites: ''
+      invites: '',
+      awaiting: true
     }, () => {
-      props.api.setSpinner(true);
       props.api.contactView.create(
         group,
         aud,
         this.state.title,
         this.state.description
         ).then(() => {
-        props.api.setSpinner(false);
+        this.setState({awaiting: false});
         props.history.push(`/~groups${group}`);
       })
     });
@@ -147,6 +149,7 @@ export class NewScreen extends Component {
           <Link to="/~groups">
             <button className="f9 ml3 ba pa2 b--black pointer bg-transparent b--white-d white-d">Cancel</button>
           </Link>
+          <Spinner awaiting={this.state.awaiting} classes="mt4" text="Creating group..." />
         </div>
       </div>
     );

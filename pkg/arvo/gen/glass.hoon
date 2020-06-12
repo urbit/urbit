@@ -1,3 +1,4 @@
+::  Produce a glass pill
 ::
 ::::  /hoon/glass/gen
   ::

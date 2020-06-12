@@ -9,9 +9,6 @@
 #include <netdb.h>
 #include <uv.h>
 #include <errno.h>
-#include <ncurses/curses.h>
-#include <termios.h>
-#include <ncurses/term.h>
 
 #include "all.h"
 #include "vere/vere.h"
@@ -460,10 +457,10 @@ _ames_io_start(u3_ames* sam_u)
   }
 
   if ( c3y == u3_Host.ops_u.net ) {
-    u3l_log("ames: live on %d\n", por_s);
+    u3l_log("ames: live on %d\n", sam_u->por_s);
   }
   else {
-    u3l_log("ames: live on %d (localhost only)\n", por_s);
+    u3l_log("ames: live on %d (localhost only)\n", sam_u->por_s);
   }
 
   uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);

@@ -2,10 +2,15 @@ import React, { Component } from 'react';
 import { store } from '../store';
 import { api } from '../api';
 import { cite } from '../lib/util';
+import { Spinner } from './lib/icons/icon-spinner';
 
 export class Input extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      awaiting: false,
+      type: "Sending to Dojo"
+    }
     this.keyPress = this.keyPress.bind(this);
     this.inputRef = React.createRef();
   }
@@ -32,8 +37,10 @@ export class Input extends Component {
 
   // submit on enter
   if (e.key === "Enter") {
-    store.setSpinner(true);
-    api.soto("ret");
+    this.setState({ awaiting: true, type: "Sending to Dojo"});
+    api.soto("ret").then(() => {
+      this.setState({awaiting: false});
+    });
   }
 
   else if ((e.key === "Backspace") && (this.props.cursor > 0)) {
@@ -61,8 +68,10 @@ export class Input extends Component {
 
   // tab completion
   else if (e.key === "Tab") {
-    store.setSpinner(true);
-    api.soto({tab: this.props.cursor});
+    this.setState({awaiting: true, type: "Getting suggestions"})
+    api.soto({tab: this.props.cursor}).then(() => {
+      this.setState({awaiting: false})
+    });
   }
 
   // capture and transmit most characters
@@ -74,7 +83,7 @@ export class Input extends Component {
 
 render() {
   return (
-    <div className="flex flex-row flex-grow-1">
+    <div className="flex flex-row flex-grow-1 relative">
       <div className="flex-shrink-0">{cite(this.props.ship)}:dojo
       </div>
       <span id="prompt">
@@ -100,6 +109,7 @@ render() {
         ref={this.inputRef}
         defaultValue={this.props.input}
       />
+      <Spinner awaiting={this.state.awaiting} text={`${this.state.type}...`} classes="absolute right-0 bottom-0 inter pa ba pa2 b--gray1-d"/>
     </div>
     )
   }

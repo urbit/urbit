@@ -6,15 +6,6 @@ export class HeaderBar extends Component {
     let popout = window.location.href.includes("popout/")
       ? "dn" : "dn db-m db-l db-xl";
 
-    // let spinner = !!this.props.spinner
-    //   ? this.props.spinner : false;
-
-    // let spinnerClasses = "";
-
-    // if (spinner === true) {
-    //   spinnerClasses = "spin-active";
-    // }
-
     let invites = (this.props.invites && this.props.invites.contacts)
       ? this.props.invites.contacts
       : {};
@@ -35,7 +26,7 @@ export class HeaderBar extends Component {
             />
           </a>
           <a
-            className="dib f9 v-mid inter ml2"
+            className="dib f9 v-mid inter ml2 black white-d"
             href="/"
             style={{ top: 14 }}>
             ⟵</a> <p className="dib f9 v-mid inter ml2 white-d">Dojo</p>

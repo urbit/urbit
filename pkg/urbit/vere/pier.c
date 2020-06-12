@@ -21,7 +21,7 @@
 #include "vere/vere.h"
 
 #define PIER_READ_BATCH 1000ULL
-#define PIER_PLAY_BATCH 100ULL
+#define PIER_PLAY_BATCH 500ULL
 #define PIER_WORK_BATCH 10ULL
 
 #undef VERBOSE_PIER
@@ -590,12 +590,17 @@ _pier_play(u3_play* pay_u)
     u3_term_stop_spinner();
 
     if ( pay_u->eve_d < log_u->dun_d ) {
-      u3l_log("pier: replay barrier reached, shutting down\r\n");
-      //  XX graceful shutdown
+      // u3l_log("pier: replay barrier reached, shutting down\r\n");
+      // //  XX graceful shutdown
+      // //
+      // u3_lord_save(pir_u->god_u);
+      // u3_pier_bail();
+      // exit(0);
+
+      //  XX temporary hack
       //
-      u3_lord_save(pir_u->god_u);
-      u3_pier_bail();
-      exit(0);
+      u3l_log("pier: replay barrier reached, packing\r\n");
+      u3_pier_pack(pir_u);
     }
     else if ( pay_u->eve_d == log_u->dun_d ) {
       _pier_work_init(pir_u);
@@ -619,9 +624,7 @@ _pier_on_lord_play_done(void* vod_p, u3_info fon_u, c3_l mug_l)
 
   c3_assert( u3_psat_play == pir_u->sat_e );
 
-#ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): play: done\r\n", tac_u->eve_d);
-#endif
+  u3l_log("pier: (%" PRIu64 "): play: done\r\n", tac_u->eve_d);
 
   //  XX optional
   //
@@ -879,6 +882,14 @@ _pier_on_lord_pack(void* vod_p)
 #ifdef VERBOSE_PIER
   fprintf(stderr, "pier: (%" PRIu64 "): lord: pack\r\n", pir_u->god_u->eve_d);
 #endif
+
+  //  XX temporary hack
+  //
+  if ( u3_psat_play == pir_u->sat_e ) {
+    u3l_log("pier: pack complete, shutting down\r\n");
+    u3_pier_bail();
+    exit(0);
+  }
 
   // if ( u3_psat_done == pir_u->sat_e ) {
   //   fprintf(stderr, "snap cb exit\r\n");

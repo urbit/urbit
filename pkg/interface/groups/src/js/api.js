@@ -11,13 +11,13 @@ class UrbitApi {
     this.bindPaths = [];
 
     this.contactHook = {
-      edit: this.contactEdit.bind(this),
-      remove: this.contactRemove.bind(this)
+      edit: this.contactEdit.bind(this)
     };
 
     this.contactView = {
       create: this.contactCreate.bind(this),
       delete: this.contactDelete.bind(this),
+      remove: this.contactRemove.bind(this),
       share: this.contactShare.bind(this)
     };
 
@@ -104,16 +104,12 @@ class UrbitApi {
     return this.contactViewAction({ delete: { path }});
   }
 
-  contactHookAction(data) {
-    return this.action("contact-hook", "contact-action", data);
+  contactRemove(path, ship) {
+    return this.contactViewAction({ remove: { path, ship } });
   }
 
-  contactRemove(path, ship) {
-    return this.contactHookAction({
-      remove: {
-        path, ship
-      }
-    });
+  contactHookAction(data) {
+    return this.action("contact-hook", "contact-action", data);
   }
 
   contactEdit(path, ship, editField) {
@@ -125,7 +121,7 @@ class UrbitApi {
     {notes: ''}
     {color: 'fff'}  // with no 0x prefix
     {avatar: null}
-    {avatar: {p: length, q: bytestream}}
+    {avatar: {url: ''}}
     */
     return this.contactHookAction({
       edit: {
@@ -176,16 +172,6 @@ class UrbitApi {
           color,
           'date-created': dateCreated,
           creator
-        }
-      }
-    })
-  }
-
-  setSpinner(boolean) {
-    store.handleEvent({
-      data: {
-        local: {
-          spinner: boolean
         }
       }
     })

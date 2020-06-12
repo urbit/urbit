@@ -15,9 +15,6 @@
 #include <netinet/in.h>
 #include <uv.h>
 #include <errno.h>
-#include <ncurses/curses.h>
-#include <termios.h>
-#include <ncurses/term.h>
 
 #include "all.h"
 #include <vere/vere.h>
@@ -290,9 +287,7 @@ _serf_static_grab(void)
 static void
 _serf_pack(u3_serf* sef_u)
 {
-  //  skip for now
-  //
-  // _serf_static_grab();
+  _serf_static_grab();
 
   u3l_log("serf (%" PRIu64 "): compacting loom\r\n", sef_u->dun_d);
 
@@ -301,39 +296,11 @@ _serf_pack(u3_serf* sef_u)
     return;
   }
 
-  if ( c3n == u3e_hold() ) {
-    u3l_log("serf: unable to backup checkpoint\r\n");
-    return;
-  }
-
-  u3m_wipe();
-
-  if ( c3n == u3m_rock_load(sef_u->dir_c, sef_u->dun_d) ) {
-    u3l_log("serf: compaction failed, restoring checkpoint\r\n");
-
-    if ( c3n == u3e_fall() ) {
-      fprintf(stderr, "serf: unable to restore checkpoint\r\n");
-      c3_assert(0);
-    }
-  }
-
-  if ( c3n == u3e_drop() ) {
-    u3l_log("serf: warning: orphaned backup checkpoint file\r\n");
-  }
-
-  //  leave these for now
-  //
-  // if ( c3n == u3m_rock_drop(sef_u->dir_c, sef_u->dun_d) ) {
-  //   u3l_log("serf: warning: orphaned state file\r\n");
-  // }
+  u3_serf_unpack(sef_u, sef_u->dun_d);
 
   u3l_log("serf (%" PRIu64 "): compacted loom\r\n", sef_u->dun_d);
 
   _serf_static_grab();
-
-  //  save now for flexibility
-  //
-  u3e_save();
 }
 
 /* u3_serf_post(): update serf state post-writ.
@@ -346,7 +313,7 @@ u3_serf_post(u3_serf* sef_u)
     sef_u->rec_o = c3n;
   }
 
-  //  XX this runs on replay too
+  //  XX this runs on replay too, |mass s/b elsewhere
   //
   if ( c3y == sef_u->mut_o ) {
     sef_u->mut_o = c3n;
@@ -364,6 +331,9 @@ u3_serf_post(u3_serf* sef_u)
 static u3_noun
 _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
 {
+  c3_o rec_o = c3n;
+  c3_o pac_o = c3n;
+
   //  intercept |mass, observe |reset
   //
   {
@@ -394,13 +364,13 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
       //  reclaim memory from persistent caches on |reset
       //
       if ( c3__vega == u3h(fec) ) {
-        sef_u->rec_o = c3y;
+        rec_o = c3y;
       }
 
       //  pack memory on |pack
       //
       if ( c3__pack == u3h(fec) ) {
-        sef_u->pac_o = c3y;
+        pac_o = c3y;
       }
 
       riv = u3t(riv);
@@ -429,15 +399,12 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
 
     if ( (pre_w > low_w) && !(pos_w > low_w) ) {
       //  XX set flag(s) in u3V so we don't repeat endlessly?
-      //  XX pack here too?
       //
-      sef_u->pac_o = c3y;
-      sef_u->rec_o = c3y;
+      rec_o = c3y;
       pri   = 1;
     }
     else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
-      sef_u->pac_o = c3y;
-      sef_u->rec_o = c3y;
+      rec_o = c3y;
       pri   = 0;
     }
     //  reclaim memory from persistent caches periodically
@@ -446,8 +413,8 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
     //    - bytecode caches grow rapidly and can't be simply capped
     //    - we don't make very effective use of our free lists
     //
-    else {
-      sef_u->rec_o = c3o(sef_u->rec_o, _(0 == (sef_u->dun_d % 1000ULL)));
+    else if ( 0 == (sef_u->dun_d % 1000ULL) ) {
+      rec_o = c3y;
     }
 
     //  notify daemon of memory pressure via "fake" effect
@@ -458,6 +425,9 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
       vir = u3nc(cad, vir);
     }
   }
+
+  sef_u->rec_o = c3o(sef_u->rec_o, rec_o);
+  sef_u->pac_o = c3o(sef_u->pac_o, pac_o);
 
   return vir;
 }
@@ -474,6 +444,24 @@ _serf_sure_core(u3_serf* sef_u, u3_noun cor)
   u3A->ent_d   = sef_u->dun_d;
   sef_u->mug_l = u3r_mug(u3A->roc);
   sef_u->mut_o = c3y;
+}
+
+/* _serf_sure(): event succeeded, save state and process effects.
+*/
+static u3_noun
+_serf_sure(u3_serf* sef_u, c3_w pre_w, u3_noun par)
+{
+  //  vir/(list ovum)  list of effects
+  //  cor/arvo         arvo core
+  //
+  u3_noun vir, cor;
+  u3x_cell(par, &vir, &cor);
+
+  _serf_sure_core(sef_u, u3k(cor));
+  vir = _serf_sure_feck(sef_u, pre_w, u3k(vir));
+
+  u3z(par);
+  return vir;
 }
 
 /* _serf_make_crud():
@@ -560,34 +548,23 @@ static u3_noun
 _serf_work(u3_serf* sef_u, u3_noun job)
 {
   u3_noun gon;
-  c3_w pre_w = u3a_open(u3R);
-
-  //  %work must be performed against an extant kernel
-  //
-  c3_assert( 0 != sef_u->mug_l);
+  c3_w  pre_w = u3a_open(u3R);
 
   //  event numbers must be continuous
   //
   c3_assert( sef_u->sen_d == sef_u->dun_d);
   sef_u->sen_d++;
 
-  gon = _serf_poke(sef_u, "work", job);
+  gon = _serf_poke(sef_u, "work", job);  // retain
 
   //  event accepted
   //
   if ( u3_blip == u3h(gon) ) {
-    //  vir/(list ovum)  list of effects
-    //  cor/arvo         arvo core
-    //
-    u3_noun vir, cor;
-    u3x_trel(gon, 0, &vir, &cor);
-
-    _serf_sure_core(sef_u, u3k(cor));
-    vir = _serf_sure_feck(sef_u, pre_w, u3k(vir));
+    u3_noun vir = _serf_sure(sef_u, pre_w, u3k(u3t(gon)));
     
     u3z(gon); u3z(job);
     return u3nc(c3__done, u3nt(u3i_chubs(1, &sef_u->dun_d),
-                               u3i_words(1, &sef_u->mug_l),
+                               sef_u->mug_l,
                                vir));
   }
   //  event rejected
@@ -597,27 +574,20 @@ _serf_work(u3_serf* sef_u, u3_noun job)
     //
     u3_noun dud = u3k(gon);
 
-    // XX reclaim/pack on %meme first?
+    // XX reclaim on %meme first?
     //
 
     job = _serf_make_crud(job, dud);
-    gon = _serf_poke(sef_u, "crud", u3k(job));
+    gon = _serf_poke(sef_u, "crud", job);  // retain
 
     //  error notification accepted
     //
     if ( u3_blip == u3h(gon) ) {
-      //  vir/(list ovum)  list of effects
-      //  cor/arvo         arvo core
-      //
-      u3_noun vir, cor;
-      u3x_trel(gon, 0, &vir, &cor);
-
-      _serf_sure_core(sef_u, u3k(cor));
-      vir = _serf_sure_feck(sef_u, pre_w, u3k(vir));
+      u3_noun vir = _serf_sure(sef_u, pre_w, u3k(u3t(gon)));
 
       u3z(gon); u3z(dud);
       return u3nc(c3__swap, u3nq(u3i_chubs(1, &sef_u->dun_d),
-                                 u3i_words(1, &sef_u->mug_l),
+                                 sef_u->mug_l,
                                  job,
                                  vir));
     }
@@ -626,7 +596,7 @@ _serf_work(u3_serf* sef_u, u3_noun job)
     else {
       sef_u->sen_d = sef_u->dun_d;
 
-      // XX reclaim/pack on %meme ?
+      // XX reclaim on %meme ?
       //
 
       u3z(job);
@@ -660,6 +630,10 @@ u3_serf_work(u3_serf* sef_u, u3_noun job)
 
     u3t_event_trace(lab_c, 'B');
   }
+
+  //  %work must be performed against an extant kernel
+  //
+  c3_assert( 0 != sef_u->mug_l);
 
   pro = u3nc(c3__work, _serf_work(sef_u, job));
 
@@ -766,7 +740,7 @@ _serf_play_list(u3_serf* sef_u, u3_noun eve)
 
       _serf_sure_core(sef_u, u3k(cor));
 
-      //  process effects to set pack/reclaim flags
+      //  process effects to set u3_serf_post flags
       //
       u3z(_serf_sure_feck(sef_u, pre_w, u3k(vir)));
 
@@ -790,21 +764,20 @@ _serf_play_list(u3_serf* sef_u, u3_noun eve)
 
       u3z(gon);
 
-      //  XX reclaim/pack on meme
-      //  XX retry?
+      //  XX reclaim on meme ?
       //
 
       //  send failure notification
       //
       u3z(vev);
       return u3nc(c3__bail, u3nt(u3i_chubs(1, &sef_u->dun_d),
-                                 u3i_words(1, &sef_u->mug_l),
+                                 sef_u->mug_l,
                                  dud));
     }
   }
 
   u3z(vev);
-  return u3nc(c3__done, u3i_words(1, &sef_u->mug_l));
+  return u3nc(c3__done, sef_u->mug_l);
 }
 
 /* u3_serf_play(): apply event list, producing status.
@@ -948,6 +921,8 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
       return c3y;
     }
 
+    //  NB: the %pack $writ only saves the rock, it doesn't load it
+    //
     case c3__pack: {
       c3_d eve_d;
 
@@ -971,6 +946,8 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
         fprintf(stderr, "serf (%" PRIu64 "): unable to jam state\r\n", eve_d);
         return c3n;
       }
+
+      _serf_static_grab();
 
       *ret = u3nc(c3__live, u3_nul);
       return c3y;
@@ -1078,8 +1055,68 @@ _serf_ripe(u3_serf* sef_u)
                  ? 0
                  : u3r_mug(u3A->roc);
 
-  return u3nc(u3i_chubs(1, &sef_u->dun_d),
-              u3i_words(1, &sef_u->mug_l));
+  return u3nc(u3i_chubs(1, &sef_u->dun_d), sef_u->mug_l);
+}
+
+/* u3_serf_unpack(): initialize from rock at [eve_d].
+*/
+void
+u3_serf_unpack(u3_serf* sef_u, c3_d eve_d)
+{
+  c3_o roc_o;
+  c3_c nam_c[8193];
+  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", sef_u->dir_c, eve_d);
+
+  struct stat buf_b;
+  c3_i        fid_i = open(nam_c, O_RDONLY, 0644);
+
+  if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
+    fprintf(stderr, "serf: rock: %s not found\r\n", nam_c);
+    roc_o = c3n;
+  }
+  else {
+    fprintf(stderr, "serf: rock: %s found\r\n", nam_c);
+    roc_o = c3y;
+  }
+
+  close(fid_i);
+
+
+  if ( c3y == roc_o ) {
+    if ( c3n == u3e_hold() ) {
+      fprintf(stderr, "serf: unable to backup checkpoint\r\n");
+    }
+    else {
+      u3m_wipe();
+
+      if ( c3n == u3m_rock_load(sef_u->dir_c, eve_d) ) {
+        fprintf(stderr, "serf: compaction failed, restoring checkpoint\r\n");
+
+        if ( c3n == u3e_fall() ) {
+          fprintf(stderr, "serf: unable to restore checkpoint\r\n");
+          c3_assert(0);
+        }
+      }
+
+      if ( c3n == u3e_drop() ) {
+        fprintf(stderr, "serf: warning: orphaned backup checkpoint file\r\n");
+      }
+
+      //  leave rocks on disk
+      //
+      // if ( c3n == u3m_rock_drop(sef_u->dir_c, sef_u->dun_d) ) {
+      //   u3l_log("serf: warning: orphaned state file\r\n");
+      // }
+
+      fprintf(stderr, "serf (%" PRIu64 "): compacted loom\r\n", eve_d);
+
+      sef_u->sen_d = sef_u->dun_d = eve_d;
+
+      //  save now for flexibility
+      //
+      u3e_save();
+    }
+  }
 }
 
 /* u3_serf_init(): init or restore, producing status.

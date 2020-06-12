@@ -167,7 +167,7 @@ a {
 .cm-s-tlon span.cm-variable-3, .cm-s-tlon span.cm-type { color: black; }
 .cm-s-tlon span.cm-property { color: black; }
 .cm-s-tlon span.cm-operator { color: black; }
-.cm-s-tlon span.cm-comment { color: black; background-color: var(--light-gray); padding:2px; border-radius: 2px;}
+.cm-s-tlon span.cm-comment { color: black; background-color: var(--light-gray); display: inline-block; border-radius: 2px;}
 .cm-s-tlon span.cm-string { color: var(--dark-gray); }
 .cm-s-tlon span.cm-string-2 { color: var(--gray); }
 .cm-s-tlon span.cm-qualifier { color: #555; }
@@ -242,7 +242,7 @@ a {
   display: none;
 }
 
-.md h1, .md h2, .md h3, .md h4, .md h5, .md p, .md a, .md ul, .md blockquote,.md code,.md pre {
+.md h1, .md h2, .md h3, .md h4, .md h5, .md p, .md a, .md ul, .md ol, .md blockquote,.md code,.md pre {
   font-size: 14px;
   margin-bottom: 16px;
 }
@@ -265,7 +265,7 @@ a {
 .md code, .md pre {
   font-family: "Source Code Pro", mono;
 }
-.md ul>li {
+.md ul>li, .md ol>li {
   line-height: 1.5;
 }
 .md a {
@@ -362,10 +362,6 @@ md img {
     background: #333;
     color: #fff;
   }
-  .CodeMirror-selected {
-    background: #4d4d4d !important;
-    color: white;
-  }
 
   .cm-s-tlon span.cm-def {
     color: white;
@@ -392,12 +388,7 @@ md img {
     color: white;
   }
 
-  .cm-s-tlon span.cm-comment {
-    color: black;
-    background-color: var(--gray);
-    padding: 2px;
-    border-radius: 2px;
-  }
+
   .cm-s-tlon span.cm-string {
     color: var(--gray);
   }
@@ -416,5 +407,19 @@ md img {
 
   .cm-s-tlon span.cm-link {
     color: var(--gray);
+  }
+
+  /* set rules w/ both color & bg-color last to preserve legibility */
+  .CodeMirror-selected {
+    background: var(--medium-gray) !important;
+    color: white;
+  }
+
+  .cm-s-tlon span.cm-comment {
+    color: black;
+    display: inline-block;
+    padding: 0;
+    background-color: rgba(255,255,255, 0.3);
+    border-radius: 2px;
   }
 }
