@@ -136,11 +136,12 @@
               hash.post  `calculated-hash
               signatures.post
             ?.  =(our.bowl author.post.node)  ~
-            %-  ~(gas in *signatures:store)
-            :_  ~
-            :+  `@ux`(sign:as:crub:crypto calculated-hash)
-              our.bowl
-            .^(=life %j /=life/(scot %p our.bowl))
+            %-  ~(gas in *signatures:store)  ~
+            :::_  ~
+            ::  TODO: how to sign a message using our private key?
+            :::+  `@ux`(sign:as:crub:crypto calculated-hash)
+            ::  our.bowl
+            ::.^(=life %j /=life/(scot %p our.bowl))
           ==
         ~|  "index does not exist to add a node to!"
         =/  parent=node:store  (need (get:orm graph atom))
