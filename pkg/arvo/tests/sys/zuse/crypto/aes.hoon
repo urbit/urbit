@@ -567,7 +567,7 @@
   ^-  (list vector-siv)
   :~
   ::
-  ::  failed in the wild
+  ::  failed in the wild, see https://github.com/urbit/urbit/pull/3013
   ::
     :^    0xfdef.6253.d284.a940.1b5d.d1b7.fbcd.4489.
             3071.bf93.ace9.37da.7c5d.77d2.1f3e.cda4.
