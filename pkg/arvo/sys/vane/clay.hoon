@@ -1360,7 +1360,13 @@
             |(!=(~ sys-changes) !=(~ (need-vane-update changes)))
         ==
       (sys-update yoki new-data changes)
-    =.  ..park  (emil (print deletes ~(key by changes)))
+    =.  ..park
+      %-  emil
+      =/  changed=(set path)  ~(key by changes)
+      =/  existed=(set path)  ~(key by old-lobes)
+      %^  print  deletes
+        (~(int in changed) existed)
+      (~(dif in changed) existed)
     ::  clear caches if zuse reloaded
     ::
     =/  is-zuse-new=?  !=(~ sys-changes)
@@ -1702,20 +1708,24 @@
     ::  Print notification to console
     ::
     ++  print
-      |=  [deletes=(set path) changes=(set path)]
+      |=  [deletes=(set path) changes=(set path) additions=(set path)]
       ^-  (list move)
-      |^
       ?~  hun
         ~
       ?:  =(0 let.dom)
         ~
-      %+  weld
-        %+  turn  ~(tap in deletes)
+      |^
+      ;:  weld
+        (paths-to-notes '-' deletes)
+        (paths-to-notes ':' changes)
+        (paths-to-notes '+' additions)
+      ==
+      ::
+      ++  paths-to-notes
+        |=  [prefix=@tD paths=(set path)]
+        %+  turn  ~(tap in paths)
         |=  =path
-        [u.hun %give %note '-' (path-to-tank path)]
-      %+  turn  ~(tap in changes)
-      |=  =path
-      [u.hun %give %note '+' (path-to-tank path)]
+        [u.hun %give %note prefix (path-to-tank path)]
       ::
       ++  path-to-tank
         |=  =path
