@@ -561,6 +561,8 @@
             van=(map term vane)
         ==
     +*  this  .
+    ++  plot  run.nub
+    ++  then  |=(paz=(list plan) this(run (weld run paz)))
     ++  abed  |=(nib=debt this(nub nib))
     ::  +abet: finalize loop
     ::
@@ -1080,7 +1082,7 @@
   =/  fyn  (turn nyf |=([a=@tas b=vise] [a (slim b)]))
   =/  rum  (drum rim)
   (load who now yen rum (slim dub) fyn)
-::  +load: load compatible
+::  +load: load compatible, notifying vanes
 ::
 ++  load
   |=  [who=ship now=@da yen=@ ram=pram dub=vase nyf=pane]
@@ -1093,7 +1095,8 @@
     ==
   =.  ram  (dram ram)
   ?>  ?=([%345 *] ram)
-  (leap now (lead now `nub.ram))
+  =/  run  plot:(spam:(lead now ~) [//arvo %vega ~])
+  (leap now (then:(lead now `nub.ram) run))
 ::  +peek: external inspect
 ::
 ++  peek
