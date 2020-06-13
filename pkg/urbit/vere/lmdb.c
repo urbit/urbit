@@ -41,15 +41,12 @@ MDB_env* u3_lmdb_init(const char* log_path)
     return 0;
   }
 
-  // TODO: Start with forty gigabytes on macOS and sixty otherwise for the
-  // maximum event log size. We'll need to do something more sophisticated for
-  // real in the long term, though.
+  // Arbitrarily choosing 1TB as a "large enough" mapsize per the LMDB docs:
   //
-#ifdef U3_OS_osx
-  const size_t lmdb_mapsize = 42949672960;
-#else
-  const size_t lmdb_mapsize = 64424509440;;
-#endif
+  // "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
+  //
+  const size_t lmdb_mapsize = 1099511627776;
+
   ret_w = mdb_env_set_mapsize(env, lmdb_mapsize);
   if (ret_w != 0) {
     u3l_log("lmdb: failed to set database size: %s\n", mdb_strerror(ret_w));
