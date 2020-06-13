@@ -752,7 +752,7 @@
           %+  turn  von
           =/  bem=beam  [[our %home da+now] /whey]
           |=  [lal=@tas =vane]
-          =/  met  (need (need (peek ** ~ lal bem)))
+          =/  met  (need (need (peek ** ~ (rsh 3 5 lal) bem)))
           lal^|+;;((list mass) q.q.met)
       ::
           :+  %caches  %|
