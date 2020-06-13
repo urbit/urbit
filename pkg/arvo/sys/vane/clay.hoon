@@ -1575,7 +1575,7 @@
       ++  same-as-home
         |=  =path
         ^-  ?
-        =/  our=lobe
+        =/  our-lobe=lobe
           =/  datum  (~(got by data) path)
           ?-  -.datum
             %&  (page-to-lobe %hoon (page-to-cord p.datum))
@@ -1583,7 +1583,7 @@
           ==
         =/  =dome  dom:(~(got by dos.rom) %home)
         =/  =yaki  (~(got by hut.ran) (~(got by hit.dome) let.dome))
-        =(`our (~(get by q.yaki) path))
+        =(`our-lobe (~(get by q.yaki) path))
       --
     ::
     ++  page-to-cord
@@ -1604,11 +1604,11 @@
       =/  datum  (~(got by data) path)
       ?-  -.datum
         %&  (page-to-cord p.datum)
-        %|  (lobe-to-cord data p.datum)
+        %|  (lobe-to-cord p.datum)
       ==
     ::
     ++  lobe-to-cord
-      |=  [data=(map path (each page lobe)) =lobe]
+      |=  =lobe
       ^-  @t
       =-  ?:(?=(%& -<) p.- (of-wain:format p.-))
       |-  ^-  (each @t wain)
@@ -1620,7 +1620,7 @@
         %+  lurk:differ
           =-  ?:(?=(%| -<) p.- (to-wain:format p.-))
           $(lobe q.q.blob)
-        ;;((urge:clay cord) r.blob)
+        ;;((urge cord) q.r.blob)
       ==
     ::
     ::  Updated q.yaki
@@ -3949,6 +3949,7 @@
   ++  load-2-to-3
     |=  =state-2
     ^-  state-3
+    |^
     =-  state-2(- %3, rom rom.-, hoy hoy.-, |7 [pud=~ pun.-])
     :+  ^-  pun=(list move)
         %+  welp
@@ -3976,12 +3977,18 @@
         `[duct %slip %b %drip !>([%mere %| err])]
       ^-  rom=room
       :-  hun.rom.state-2
-      %-  ~(run by dos.rom.state-2)
-      |=  =dojo-2
+      %-  ~(urn by dos.rom.state-2)
+      |=  [=desk =dojo-2]
       ^-  dojo
       =-  dojo-2(dom -)
       ^-  dome
-      [ank let hit lab mim fod=*ford-cache fer=~]:[dom.dojo-2 .]
+      =/  fer=(unit reef-cache)
+        ?~  let.dom.dojo-2
+          ~
+        =/  =yaki
+          (~(got by hut.ran.state-2) (~(got by hit.dom.dojo-2) let.dom.dojo-2))
+        `(build-reef desk q.yaki)
+      [ank let hit lab mim fod=*ford-cache fer=fer]:[dom.dojo-2 .]
     ^-  hoy=(map ship rung)
     %-  ~(run by hoy.state-2)
     |=  =rung-2
@@ -4020,6 +4027,86 @@
                  (~(del by fod.rin) p.u.got)
       ==
     $(pud t.pud)
+    ::
+    ++  build-reef
+      |=  [=desk data=(map path lobe)]
+      ^-  reef-cache
+      ~>  %slog.0^leaf+"clay: building reef on {<desk>}"
+      ?:  !=(%homer desk)
+        [!>(..ride) !>(..is) !>(..zuse)]
+      |^
+      =/  [home=? hoon=vase]
+        ?:  (same-as-home /sys/hoon/hoon)
+          &+!>(..ride)
+        |+build-hoon
+      :-  hoon
+      =/  [home=? arvo=vase]
+        ?:  &(home (same-as-home /sys/arvo/hoon))
+          &+!>(..is)
+        |+(build-arvo hoon)
+      :-  arvo
+      ?:  &(home (same-as-home /sys/zuse/hoon))
+        !>(..zuse)
+      (build-zuse arvo)
+      ::
+      ++  build-hoon
+        %-  mure  |.
+        ~>  %slog.0^leaf+"clay: building hoon on {<desk>}"
+        =/  gen
+          ~>  %mean.%hoon-parse-fail
+          %+  rain  /sys/hoon/hoon
+          (lobe-to-cord (~(got by data) /sys/hoon/hoon))
+        ~>  %mean.%hoon-compile-fail
+        (slot 7 (slap !>(0) gen))
+      ::
+      ++  build-arvo
+        |=  hoon=vase
+        %-  mure  |.
+        ~>  %slog.0^leaf+"clay: building arvo on {<desk>}"
+        =/  gen
+          ~>  %mean.%arvo-parse-fail
+          %+  rain  /sys/arvo/hoon
+          (lobe-to-cord (~(got by data) /sys/arvo/hoon))
+        ~>  %mean.%arvo-compile-fail
+        (slap (slap hoon gen) (ream '..is'))
+      ::
+      ++  build-zuse
+        |=  arvo=vase
+        %-  mure  |.
+        ~>  %slog.0^leaf+"clay: building zuse on {<desk>}"
+        =/  gen
+          ~>  %mean.%zuse-parse-fail
+          %+  rain  /sys/zuse/hoon
+          (lobe-to-cord (~(got by data) /sys/zuse/hoon))
+        ~>  %mean.%zuse-compile-fail
+        (slap arvo gen)
+      ::
+      ++  same-as-home
+        |=  =path
+        ^-  ?
+        =/  our-lobe=lobe  (~(got by data) path)
+        =/  =dome-2  dom:(~(got by dos.rom.state-2) %home)
+        =/  =yaki  (~(got by hut.ran.state-2) (~(got by hit.dome-2) let.dome-2))
+        =(`our-lobe (~(get by q.yaki) path))
+      ::
+      ++  lobe-to-cord
+        |=  =lobe
+        ^-  @t
+        =-  ?:(?=(%& -<) p.- (of-wain:format p.-))
+        |-  ^-  (each @t wain)
+        =/  =blob  (~(got by lat.ran.state-2) lobe)
+        ?-    -.blob
+            %direct  [%& ;;(@t q.q.blob)]
+            %delta
+          :-  %|
+          %+  lurk:differ
+            =-  ?:(?=(%| -<) p.- (to-wain:format p.-))
+            $(lobe q.q.blob)
+          ~|  diff=r.blob
+          ;;((urge cord) q.r.blob)
+        ==
+      --
+    --
   ::
   +$  any-state  $%(state-3 state-2)
   +$  state-3  [%3 raft]
