@@ -584,16 +584,26 @@
     =/  tim  (slav da+dat)
     =/  =beak  [(slav %p her) desk da+tim]
     ?>  ?=([?(%b %c) %writ *] sign-arvo)
-    ?^  p.sign-arvo
-      =/  cag=cage  r.u.p.sign-arvo
-      ?.  =(%vase p.cag)
-        (mo-give %onto |+[leaf+"gall: invalid %writ {<p.cag>} for {<dap>}"]~)
-      =/  res  (mule |.(!<(agent !<(vase q.cag))))
-      ?:  ?=(%| -.res)
-        (mo-give %onto |+[leaf+"gall: {<dap>}" p.res])
-      =.  mo-core  (mo-receive-core dap beak p.res)
-      (mo-subscribe-to-agent-builds tim)
-    (mo-give %onto |+[leaf+"gall: failed to build agent {<dap>}"]~)
+    |^  ^+  mo-core
+    ?~  p.sign-arvo
+      (fail leaf+"gall: failed to build agent {<dap>}" ~)
+    =/  cag=cage  r.u.p.sign-arvo
+    ?.  =(%vase p.cag)
+      (fail leaf+"gall: bad %writ {<p.cag>} for {<dap>}" ~)
+    =/  res  (mule |.(!<(agent !<(vase q.cag))))
+    ?:  ?=(%| -.res)
+      (fail leaf+["gall: bad agent {<dap>}"] p.res)
+    =.  mo-core  (mo-receive-core dap beak p.res)
+    (mo-subscribe-to-agent-builds tim)
+    ::
+    ++  fail
+      |=  =tang
+      ^+  mo-core
+      =.  mo-core  (mo-give %onto |+tang)
+      =/  =case  [%da tim]
+      =/  =wire  /sys/cor/[dap]/[her]/[desk]/(scot case)
+      (mo-pass wire %c %warp p.beak desk ~ %next %a case /app/[dap]/hoon)
+    --
   ::  +mo-handle-sys-lyv: handle notice that agents have been rebuilt
   ::
   ++  mo-handle-sys-lyv
