@@ -379,7 +379,6 @@
     `[(weld pax pat) %mime !>(u.mim)]
   ::
   [deletes changes]
-::
 --  =>
 ~%  %clay  +  ~
 |%
@@ -757,7 +756,7 @@
       =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
       =^  sut=vase  nub  (run-raw sut raw.pile)
       =^  sut=vase  nub  (run-bar sut bar.pile)
-      =/  res=vase  (slap sut hoon.pile)
+      =/  res=vase  (mure |.((slap sut hoon.pile)))
       [res nub]
     ::
     ++  parse-pile
@@ -1545,6 +1544,7 @@
       zuse.u.fer
       ::
       ++  build-hoon
+        %-  mure  |.
         ~>  %slog.0^leaf+"clay: building hoon on {<syd>}"
         =/  gen
           ~>  %mean.%hoon-parse-fail
@@ -1554,6 +1554,7 @@
       ::
       ++  build-arvo
         |=  hoon=vase
+        %-  mure  |.
         ~>  %slog.0^leaf+"clay: building arvo on {<syd>}"
         =/  gen
           ~>  %mean.%arvo-parse-fail
@@ -1563,6 +1564,7 @@
       ::
       ++  build-zuse
         |=  arvo=vase
+        %-  mure  |.
         ~>  %slog.0^leaf+"clay: building zuse on {<syd>}"
         =/  gen
           ~>  %mean.%zuse-parse-fail

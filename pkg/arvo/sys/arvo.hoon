@@ -1263,7 +1263,7 @@
     ::
     =/  raw
       ~>  %slog.[0 leaf+"vega: compiling hoon"]
-      (ride %noun u.hun)
+      (mure |.((ride %noun u.hun)))
     ::  activate the new compiler gate, producing +ride
     ::
     =/  cop  .*(0 +.raw)
@@ -1274,12 +1274,14 @@
     ?>  |(=(nex hoon-version) =(+(nex) hoon-version))
     ::  if we're upgrading language versions, recompile the compiler
     ::
-    =>  ?:  =(nex hoon-version)
-          [hot=`*`raw .]
-        ~>  %slog.[0 leaf+"vega: recompiling hoon {<nex>}k"]
-        ~&  [%hoon-compile-upgrade nex]
-        =/  hot  (slum cop [%noun hun])
-        .(cop .*(0 +.hot))
+    =^  hot=*  cop
+      ?:  =(nex hoon-version)
+        [raw cop]
+      ~>  %slog.[0 leaf+"vega: recompiling hoon {<nex>}k"]
+      ~&  [%hoon-compile-upgrade nex]
+      %-  mure  |.
+      =/  hot  (slum cop [%noun hun])
+      [hot .*(0 +.hot)]
     ::  extract the hoon core from the outer gate (+ride)
     ::
     =/  hoc  .*(cop [%0 7])
@@ -1292,6 +1294,7 @@
   ::
   =/  rav
     ~>  %slog.[0 leaf+"vega: compiling kernel {(scow %p (mug hyp))}"]
+    %-  mure  |.
     (slum cop [hyp van])
   ::  activate arvo, and extract the arvo core from the outer gate
   ::
