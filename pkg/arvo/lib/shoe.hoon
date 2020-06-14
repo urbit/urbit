@@ -267,7 +267,6 @@
           [%det clear]
       ==
     ::
-    ::NOTE  cargo-culted
     ++  tab
       |=  pos=@ud
       ^-  (quip card _cli-state)
@@ -287,7 +286,9 @@
         %+  add  pos
         (met 3 (fall forward ''))
       =|  cards=(list card)
-      =?  cards  ?=(^ options)
+      ::  only render the option list if we couldn't complete anything
+      ::
+      =?  cards  &(?=(~ to-send) ?=(^ options))
         [(effect %tab options) cards]
       |-  ^-  (quip card _cli-state)
       ?~  to-send
