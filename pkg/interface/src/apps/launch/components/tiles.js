@@ -25,9 +25,18 @@ export default class Tiles extends React.PureComponent {
         );
       } else if ('custom' in tile.type) {
         if (key === 'weather') {
-          return (<WeatherTile key={key} api={props.api} />);
+          return (
+            <WeatherTile
+              key={key}
+              api={props.api}
+              weather={props.weather} 
+              location={props.location}
+            />
+          );
         } else if (key === 'clock') {
-          return (<ClockTile key={key} />);
+          return (
+            <ClockTile key={key} location={props.location} />
+          );
         }
       } else {
         return <CustomTile key={key} />;
@@ -35,9 +44,7 @@ export default class Tiles extends React.PureComponent {
     });
 
     return (
-      <React.Fragment>
-      {tiles}
-      </React.Fragment>
+      <React.Fragment>{tiles}</React.Fragment>
     );
   }
 }

@@ -13,9 +13,9 @@ export default class LaunchStore extends BaseStore {
         firstTime: false,
         tileOrdering: [],
         tiles: {},
-        weather: {},
-        clock: {}
-      }
+      },
+      location: '',
+      weather: {}
     };
   }
 

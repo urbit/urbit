@@ -7,13 +7,12 @@ export default class WeatherTile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      latlng: '',
+      latlong: '',
       manualEntry: false,
       error: false
     };
-
-    this.api = props.api;
   }
+
   // geolocation and manual input functions
   locationSubmit() {
     navigator.geolocation.getCurrentPosition((res) => {
@@ -23,8 +22,7 @@ export default class WeatherTile extends React.Component {
       }, (err) => {
         console.log(err);
       }, { maximumAge: Infinity, timeout: 10000 });
-      // this.api.clock.action(latlng);
-      this.api.weather.action(latlng);
+      this.props.api.weather(latlng);
       this.setState({ manualEntry: !this.state.manualEntry });
     });
   }
@@ -39,8 +37,7 @@ export default class WeatherTile extends React.Component {
       this.setState({ latlng }, (err) => {
       console.log(err);
       }, { maximumAge: Infinity, timeout: 10000 });
-      // this.api.clock.action(latlng);
-      this.api.weather.action(latlng);
+      this.props.api.weather(latlng);
       this.setState({ manualEntry: !this.state.manualEntry });
     } else {
       this.setState({ error: true });
@@ -145,11 +142,13 @@ export default class WeatherTile extends React.Component {
         </p>;
     }
     if (location.protocol === 'https:') {
-      secureCheck = <a
-        className="black white-d f9 absolute pointer"
-        style={{ right: 8, top: 8 }}
-        onClick={() => this.locationSubmit()}
-                    >Detect -></a>;
+      secureCheck = (
+        <a className="black white-d f9 absolute pointer"
+           style={{ right: 8, top: 8 }}
+           onClick={() => this.locationSubmit()}>
+          Detect ->
+        </a>
+      );
     }
     return this.renderWrapper(
       <div className={'pa2 w-100 h-100 bg-white bg-gray0-d black white-d ' +
@@ -189,9 +188,7 @@ export default class WeatherTile extends React.Component {
                   e.preventDefault();
                   this.manualLocationSubmit(e.target.value);
                 }
-}
-              }
-            />
+              }} />
             <input
               className={'bg-transparent black white-d bn pointer ' +
               'f9 flex-shrink-0 pr1'}
@@ -258,7 +255,7 @@ export default class WeatherTile extends React.Component {
   }
 
   render() {
-    const data = this.props.data ? this.props.data : {};
+    const data = this.props.weather ? this.props.weather : {};
 
     if (this.state.manualEntry === true) {
       return this.renderManualEntry();
@@ -269,8 +266,25 @@ export default class WeatherTile extends React.Component {
       return this.renderWithData(data, weatherStyle);
     }
 
+    if (this.props.location) {
+      return this.renderWrapper((
+        <div
+          className={'pa2 w-100 h-100 b--black b--gray1-d ba ' +
+          'bg-white bg-gray0-d black white-d'}>
+            <p className="f9 absolute"
+              style={{ left: 8, top: 8 }}
+            >
+              Weather
+            </p>
+          <p className="absolute w-100 flex-col f9"
+          style={{ bottom: 8, left: 8 }}
+          >
+          Loading, please check again later...
+          </p>
+        </div>
+      ));
+    }
     return this.renderNoData();
   }
 }
 
-window.weatherTile = WeatherTile;

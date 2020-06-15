@@ -167,8 +167,15 @@ class Clock extends React.Component {
     this.animate();
   }
 
+  componentWillUnmount() {
+    if (this.animationTimer) {
+      window.clearTimeout(this.animationTimer);
+    }
+  }
+
   animate() {
-    window.setTimeout(() => window.requestAnimationFrame(this.animate), 1000);
+    this.animationTimer = 
+      window.setTimeout(() => window.requestAnimationFrame(this.animate), 1000);
 
     const { state } = this;
     const time = new Date();
@@ -400,7 +407,7 @@ export default class ClockTile extends React.Component {
   }
 
   render() {
-    const data = this.props.data ? this.props.data : {};
+    const data = this.props.location ? this.props.location : {};
     return this.renderWrapper((
       <Clock data={data} />
     ));
