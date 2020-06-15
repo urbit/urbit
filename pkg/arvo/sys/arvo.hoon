@@ -1213,7 +1213,7 @@
   ::
   =/  raw
     ~&  [%hoon-compile `@p`(mug hun)]
-    (mure |.((ride %noun hun)))
+    (road |.((ride %noun hun)))
   ::  activate the new compiler gate, producing +ride
   ::
   =/  cop  .*(0 +.raw)
@@ -1230,7 +1230,7 @@
     ?:  =(nex hoon-version)
       [raw cop]
     ~&  [%hoon-compile-upgrade nex]
-    %-  mure  |.
+    %-  road  |.
     =/  hot  (slum cop [%noun hun])
     [hot .*(0 +.hot)]
   ::  extract the hoon core from the outer gate (+ride)
@@ -1243,7 +1243,7 @@
   ::
   =/  rav
     ~&  [%arvo-compile `@p`(mug hyp) `@p`(mug van)]
-    (mure |.((slum cop [hyp van])))
+    (road |.((slum cop [hyp van])))
   ::  activate arvo, and extract the arvo core from the outer gate
   ::
   =/  voc  .*(hoc [%7 +.rav %0 7])
