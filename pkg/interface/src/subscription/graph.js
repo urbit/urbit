@@ -8,7 +8,6 @@ export default class GraphSubscription extends BaseSubscription {
   constructor(store, api, channel) {
     super(store, api, channel);
     this.connectionNumber = getRandomInt(999);
-    console.log(this.connectionNumber);
   }
 
   start() {
