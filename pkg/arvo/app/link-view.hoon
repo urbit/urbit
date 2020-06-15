@@ -15,8 +15,9 @@
     *invite-store, *group,
     link-listen-hook,
     group-hook, permission-hook, permission-group-hook,
-    metadata-hook, contact-view
-/+  *link, metadata, *server, default-agent, verb, dbug, group-store, resource
+    metadata-hook, contact-view, pull-hook
+/+  *link, metadata, *server, default-agent, verb, dbug, group-store, resource,
+    grpl=group
 ~%  %link-view-top  ..is  ~
 ::
 |%
@@ -129,6 +130,18 @@
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     ?+  -.sign  (on-agent:def wire sign)
+        %poke-ack
+      ?.  ?=([%join-group @ @ @ @ ~] wire)
+        (on-agent:def wire sign)
+      ?^  p.sign
+        (on-agent:def wire sign)
+      =/  rid=resource
+        (de-path:resource t.t.wire)
+      =/  host=ship
+        (slav %p i.t.wire)
+      :_  this
+      (joined-group:do host rid)
+    ::
         %kick
       :_  this
       =/  app=term
@@ -169,6 +182,7 @@
 ~%  %link-view-logic  ..card  ~
 |_  =bowl:gall
 +*  md  ~(. metadata bowl)
+    grp  ~(. grpl bowl)
 ::
 ++  page-size  25
 ++  get-paginated
@@ -201,6 +215,34 @@
   ^-  card
   [%pass /create/[app]/[mark] %agent [our.bowl app] %poke mark vase]
 ::
+++  joined-group
+  |=  [host=ship rid=resource]
+  ^-  (list card)
+  =/  =path
+    (en-path:resource rid)
+  :~
+    ::  sync the group
+    ::
+    %^  do-poke  %group-pull-hook
+      %pull-hook-action
+    !>  ^-  action:pull-hook
+    [%add host rid]
+    ::
+    ::  sync the metadata
+    ::
+    %^  do-poke  %metadata-hook
+      %metadata-hook-action
+    !>  ^-  metadata-hook-action:metadata-hook
+    [%add-synced host path]
+    ::
+    ::  sync the collection
+    ::
+    %^  do-poke  %link-listen-hook
+      %link-listen-action
+    !>  ^-  action:link-listen-hook
+    [%watch ~[name.rid]]
+  ==
+::
 ++  handle-invite-update
   |=  upd=invite-update
   ^-  (list card)
@@ -208,36 +250,14 @@
   ?.  =(/link path.upd)    ~
   =/  rid=resource
     (de-path:resource path.invite.upd)
-  :~
-      ::  add self
+  :~   ::  add self
       :*  %pass
-          [%group-add path.invite.upd]
-          %agent  [entity.rid %group-hook]
-          %poke  %group-action
+          [%join-group (scot %p ship.invite.upd) path.invite.upd]
+          %agent  [entity.rid %group-push-hook]
+          %poke  %group-update
           !>  ^-  action:group-store
           [%add-members rid (sy our.bowl ~)]
-      ==
-      ::  sync the group
-      ::
-      %^  do-poke  %group-hook
-        %group-hook-action
-      !>  ^-  action:group-hook
-      [%add rid]
-      ::
-      ::  sync the metadata
-      ::
-      %^  do-poke  %metadata-hook
-        %metadata-hook-action
-      !>  ^-  metadata-hook-action:metadata-hook
-      [%add-synced ship path]:invite.upd
-      ::
-      ::  sync the collection
-      ::
-      %^  do-poke  %link-listen-hook
-        %link-listen-action
-      !>  ^-  action:link-listen-hook
-      [%watch ~[name.rid]]
-  ==
+  ==  ==
 ::
 ++  handle-action
   |=  =action
@@ -261,7 +281,7 @@
       %group  path.members
     ::
         %ships
-      [(scot %p our.bowl) path]
+      [%ship (scot %p our.bowl) path]
     ==
   =;  group-setup=(list card)
     %+  weld  group-setup
@@ -395,29 +415,32 @@
   ^-  (list card)
   =/  rid=resource
     (de-path:resource group-path)
-  :-  %^  do-poke  %group-store
-        %group-action
-      !>  ^-  action:group-store
-      [%add-members rid ships]
-  ::  for managed groups, rely purely on group logic for invites
+  =/  =group
+    (need (scry-group:grp rid))
+  %-  zing
+  :~
+    ?.  ?=(%invite -.policy.group)
+        ~
+    :~  %^  do-poke  %group-store
+            %group-action
+            !>  ^-  action:group-store
+            [%change-policy rid %invite %add-invites ships]
+    ==
   ::
-  ?.  ?=([%'~' ^] group-path)
-    ~
-  ::  for unmanaged groups, send invites manually
-  ::
-  %+  turn  ~(tap in ships)
-  |=  =ship
-  ^-  card
-  %^  do-poke  %invite-hook
-    %invite-action
-  !>  ^-  invite-action
-  :^  %invite  /link
-    (sham group-path eny.bowl)
-  :*  our.bowl
-      %group-hook
-      group-path
-      ship
-      (rsh 3 1 (spat path))
+    %+  turn  ~(tap in ships)
+    |=  =ship
+    ^-  card
+    %^  do-poke  %invite-hook
+      %invite-action
+    !>  ^-  invite-action
+    :^  %invite  /link
+      (sham group-path eny.bowl)
+    :*  our.bowl
+        %group-pull-hook
+        group-path
+        ship
+        (rsh 3 1 (spat path))
+    ==
   ==
 ::  +give-tile-data: total unread count as json object
 ::

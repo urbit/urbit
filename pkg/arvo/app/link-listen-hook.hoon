@@ -294,7 +294,12 @@
     ?>  =(%link app-name.resource.upd)
     ::  auto-listen to collections in unmanaged groups only
     ::
-    ?.  ?=([%'~' ^] group-path.upd)  [~ state]
+    =/  rid=resource
+      (de-path:resource group-path.upd)
+    =/  =group
+      (need (scry-group:grp rid))
+    ?.  hidden.group
+      [~ state]
     =,  resource.upd
     =^  update  listening
       ^-  (quip card _listening)
