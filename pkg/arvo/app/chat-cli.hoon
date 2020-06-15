@@ -770,6 +770,7 @@
           policy
           ~
           (fall allow-history %.y)
+          with-group
       ==
     ::  +delete: delete local chats
     ::

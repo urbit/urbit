@@ -18,6 +18,7 @@
           [%delete delete]
           [%join join]
           [%groupify groupify]
+          [%invite invite]
       ==
     ::
     ++  create
@@ -29,6 +30,7 @@
           [%policy policy:dejs:group-store]
           [%members (as (su ;~(pfix sig fed:ag)))]
           [%allow-history bo]
+          [%managed bo]
       ==
     ::
     ++  delete
@@ -44,6 +46,11 @@
     ++  groupify
       =-  (ot [%app-path pa] [%existing -] ~)
       (mu (ot [%group-path pa] [%inclusive bo] ~))
+    ++  invite
+      %-  ot
+      :~  app-path+pa
+          ships+(as (su ;~(pfix sig fed:ag)))
+      ==
     --
   --
 --

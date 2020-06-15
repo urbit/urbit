@@ -331,7 +331,7 @@
   ?~  ship  ~
   ?.  =(u.ship our.bol)  ~
   ::  check if write is permitted
-  ?.  (is-permitted:grp src.bol path.act)  ~
+  ?.  (is-permitted:grp src.bol (group-from-chat path.act))  ~
   =:  author.envelope.act  src.bol
       when.envelope.act  now.bol
   ==
@@ -405,7 +405,7 @@
   ?>  ?=(^ pax)
   ?>  (~(has by synced) pax)
   ::  check if read is permitted
-  ?>  (is-permitted:grp src.bol pax)
+  ?>  (is-permitted:grp src.bol (group-from-chat pax))
   =/  box  (chat-scry pax)
   ?~  box  !!
   [%give %fact ~ %chat-update !>([%create pax])]~
@@ -418,8 +418,7 @@
   =/  backlog-latest=(unit @ud)  (rush (snag last `(list @ta)`pax) dem:ag)
   =/  pas  `path`(oust [last 1] `(list @ta)`pax)
   ?>  ?=([* ^] pas)
-  ?>  (~(has by synced) pas)
-  ?>  (is-permitted:grp src.bol pas)
+  ?>  (is-permitted:grp src.bol (group-from-chat pas))
   =/  envs  envelopes:(need (chat-scry pas))
   =/  length  (lent envs)
   =/  latest
@@ -450,47 +449,27 @@
 ++  fact-group-update
   |=  [wir=wire =update:group-store]
   ^-  (quip card _state)
-  |^
   :_  state
-  ?.  ?=(?(%add-members %remove-members) -.update)
+  ?.  ?=(%remove-members -.update)
     ~
   =/  =path
     (en-path:resource resource.update)
-  ?-  -.update
-      %add-members      (handle-permissions [%add path ships.update])
-      %remove-members   (handle-permissions [%remove path ships.update])
-  ==
-  ::
-  ++  handle-permissions
-    |=  [kind=?(%add %remove) pax=path who=(set ship)]
-    ^-  (list card)
-    %-  zing
-    %+  turn
-      (chats-of-group pax)
-    |=  chat=path
-    ^-  (list card)
-    =/  owner  (~(get by synced) chat)
-    ?~  owner  ~
-    ?.  =(u.owner our.bol)  ~
-    %-  zing
-    %+  turn  ~(tap in who)
-    |=  =ship
-    ?:  (is-permitted:grp ship chat)
-      ?:  ?|(=(kind %remove) =(ship our.bol) (is-managed-path:grp pax))  ~
-      ::  if ship has just been added to the permitted group,
-      ::  send them an invite
-      ~[(send-invite chat ship)]
-    ::  if ship is not permitted, kick their subscription
-    [%give %kick [%mailbox chat]~ `ship]~
-  ::
-  ++  send-invite
-    |=  [=path =ship]
-    ^-  card
-    =/  =invite  [our.bol %chat-hook path ship '']
-    =/  act=invite-action  [%invite /chat (shaf %msg-uid eny.bol) invite]
-    [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
-  ::
-  --
+  =/  chats
+    (chats-of-group path)
+  %-  zing
+  %+  turn
+    chats
+  |=  chat=^path
+  ^-  (list card)
+  =/  owner
+    (~(get by synced) chat)
+  ?~  owner  ~
+  ?.  =(u.owner our.bol)
+    ~
+  %+  turn
+    ~(tap in ships.update)
+  |=  =ship
+  [%give %kick [%mailbox chat]~ `ship]
 ::
 ++  fact-chat-update
   |=  [wir=wire =update:store]
@@ -613,7 +592,7 @@
       [%mailbox @ @ @ ~]  (migrate t.wir)
   ::
       [%store @ *]
-    ?:  ?=([@ @ @ ~] t.wir)
+    ?:  ?=([%store @ @ @ ~] t.wir)
       (migrate t.wir)
     (poke-chat-hook-action %remove t.wir)
   ::
@@ -724,6 +703,14 @@
     (scot %da now.bol)
     /resource-indices
   ==
+::
+++  group-from-chat
+  |=  app-path=path
+  ^-  group-path
+  =/  groups=(list group-path)
+    (groups-of-chat app-path)
+  ?>  ?=(^ groups)
+  i.groups
 ::
 ++  scry
   |*  [=mold app=term =path]
