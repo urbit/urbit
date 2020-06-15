@@ -9,7 +9,7 @@
   =/  apply
     |=  (x y)
     ['App' ($ x) ($ y)]
-  (W apply ['Ess' ~] ['Kay' ~] ['Enh' 1] ['Dub' ~] code)
+  (W apply ['Ess' ~] ['Kay' ~] ['Enh' ~] ['Dub' ~] code)
 
 
 =/  app
@@ -244,6 +244,70 @@
     ==
   ==
 
+=/  match-switch
+  |=  top
+  =/  ktop  (car top)
+  ?:  (eql 'App' ktop)
+    =/  vtop  (cdr top)
+    =/  l  (car vtop)
+    =/  c  (cdr vtop)
+    =/  kl  (car l)
+    ?:  (eql 'App' kl)
+      =/  vl  (cdr l)
+      =/  l2  (car vl)
+      =/  w  (cdr vl)
+      =/  kl2  (car l2)
+      ?:  (eql 'App' kl2)
+        =/  vvl  (cdr l2)
+        =/  l3  (car vvl)
+        =/  e  (cdr vvl)
+        =/  kl3  (car l3)
+        ?:  (eql 'App' kl3)
+          =/  vvl  (cdr l3)
+          =/  l4  (car vvl)
+          =/  k  (cdr vvl)
+          =/  kl4  (car l4)
+          ?:  (eql 'App' kl4)
+            =/  vvl  (cdr l4)
+            =/  l5  (car vvl)
+            =/  s  (cdr vvl)
+            =/  kl5  (car l5)
+            ?:  (eql 'App' kl5)
+              =/  vvl  (cdr l5)
+              =/  l6  (car vvl)
+              =/  a  (cdr vvl)
+              =/  kl6  (car l6)
+              ?:  (eql 'Dub' kl6)
+                =/  kc  (car c)
+                ?:  (eql 'App' kc)
+                  %-  (trace ['match-dub-app' a])  |=  ig
+                  =/  vc  (cdr c)
+                  =/  x   (car vc)
+                  =/  y   (cdr vc)
+                  (rit (app (app a x) y))
+                ?:  (eql 'Ess' kc)
+                  %-  (trace ['match-dub-ess' s])  |=  ig
+                  (rit s)
+                ?:  (eql 'Kay' kc)
+                  %-  (trace ['match-dub-kay' k])  |=  ig
+                  (rit k)
+                ?:  (eql 'Enh' kc)
+                  %-  (trace ['match-dub-enh' e])  |=  ig
+                  (rit e)
+                ?:  (eql 'Dub' kc)
+                  %-  (trace ['match-dub-dub' w])  |=  ig
+                  (rit w)
+                (lef ~)
+::                (rit (con 'App' (con (con 'App' (con x y)) (con 'App' (con y z)))))
+              (lef ~)
+            (lef ~)
+          (lef ~)
+        (lef ~)
+      (lef ~)
+    (lef ~)
+  (lef ~)
+
+
 ::  reduce: performs one step of reduction, returning rit if you can reduce and
 ::  lef if you can't
 ::
@@ -265,7 +329,13 @@
             l
           ?-    (match-enhance top)
               l
-            (lef 'no such match')
+            ?-    (match-switch top)
+                l
+              (lef 'no such match')
+            ::
+                r
+              (rit r)
+            ==
           ::
               r
             (rit r)
@@ -320,4 +390,15 @@
 =/  seq-with-kk  (app (app seq-false-tag kay) kay)
 ::(eval seq-false-tag)
 ::(to-list-form seq-false-tag)
-(eval seq-with-kk)
+::(eval seq-with-kk)
+
+
+::  (W 0 1 2 3 4 K)
+=/  zero   (skewdata 0)
+=/  one    (skewdata 1)
+=/  two    (skewdata 2)
+=/  three  (skewdata 3)
+=/  four   (skewdata 4)
+=/  dub-check-k  (app (app (app (app (app (app dub zero) one) two) three) four) ess)
+(eval dub-check-k)
+
