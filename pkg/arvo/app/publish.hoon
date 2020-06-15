@@ -7,7 +7,9 @@
     *invite-store,
     *metadata-store,
     *metadata-hook,
-    contact-view
+    contact-view,
+    pull-hook,
+    push-hook
 /+  *server,
     *publish,
     cram,
@@ -407,6 +409,8 @@
     ?-    -.sin
         %poke-ack
       ?:  ?=([%join-group @ @ ~] wir)
+        ?^  p.sin
+          (on-agent:def wir sin)
         =/  =ship
           (slav %p i.t.wir)
         =^  cards  state
@@ -924,22 +928,22 @@
     [~ state]
   ::
       %accepted
-    ?>  ?=([%notebook @ ~] path.invite.upd)
+    ?>  ?=([@ @ *] path.invite.upd)
     =/  book  i.t.path.invite.upd
-    =/  rid=resource
-      (de-path:resource path.invite.upd)
     =/  group
-      (group-from-book path.invite.upd)
+      (group-from-book notebook+book^~)
     ?^  group
       (subscribe-notebook ship.invite.upd book)
+    =/  rid=resource
+      (de-path:resource ship+path.invite.upd)
     =/  join-wire=wire
       /join-group/[(scot %p ship.invite.upd)]/[book]
     =/  =cage
-      :-  %group-action
+      :-  %group-update
       !>  ^-  action:group-store
       [%add-members rid (sy our.bol ~)]
     :_  state
-    [%pass join-wire %agent [entity.rid %group-hook] %poke cage]~
+    [%pass join-wire %agent [entity.rid %group-push-hook] %poke cage]~
   ==
 ::
 ++  subscribe-notebook
@@ -1054,12 +1058,12 @@
 ++  group-proxy-poke
   |=  [who=ship act=action:group-store]
   ^-  card
-  [%pass / %agent [who %group-hook] %poke %group-action !>(act)]
+  [%pass / %agent [who %group-push-hook] %poke %group-update !>(act)]
 ::
-++  group-hook-poke
-  |=  act=action:group-hook
+++  group-pull-hook-poke
+  |=  act=action:pull-hook
   ^-  card
-  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
+  [%pass / %agent [our.bol %group-pull-hook] %poke %pull-hook-action !>(act)]
 ::
 ++  contact-view-poke
   |=  act=contact-view-action:contact-view
@@ -1110,7 +1114,7 @@
   |=  who=ship
   =/  uid  (sham %publish who book eny.bol)
   =/  inv=invite
-    :*  our.bol  %publish  /notebook/[book]  who
+    :*  our.bol  %publish  /(scot %p our.bol)/[book]  who
         (crip "invite for notebook {<our.bol>}/{(trip book)}")
     ==
   =/  act=invite-action  [%invite /publish uid inv]
@@ -1142,7 +1146,7 @@
   ?^  grp  ~
   =/  rid=resource
     (de-path:resource group-path)
-  :-  (group-poke %add-group rid policy %.n)
+  :-  (group-poke %add-group rid policy %.y)
   (generate-invites book (~(del in invitees.group) our.bol))
 ::
 ++  handle-poke-fail
@@ -1689,20 +1693,28 @@
     =/  rid=resource
       [who.act book.act]
     =/  =cage
-      :-  %group-action
+      :-  %group-update
       !>  ^-  action:group-store
       [%add-members rid (sy our.bol ~)]
     :_  state
-    [%pass join-wire %agent [who.act %group-hook] %poke cage]~
+    [%pass join-wire %agent [who.act %group-push-hook] %poke cage]~
   ::  %unsubscribe
   ::
       %unsubscribe
     ?>  (team:title our.bol src.bol)
     =/  wir=wire  /subscribe/(scot %p who.act)/[book.act]
     =/  del=primary-delta  [%del-book who.act book.act]
+    =/  book=notebook
+      (~(got by books) who.act book.act)
+    =/  rid=resource
+      (de-path:resource writers.book)
+    =/  =group
+      (need (scry-group:grup rid))
     :_  state(books (~(del by books) who.act book.act))
     :~  `card`[%pass wir %agent [who.act %publish] %leave ~]
         `card`[%give %fact [/primary]~ %publish-primary-delta !>(del)]
+        (group-proxy-poke who.act %remove-members rid (sy our.bol ~))
+        (group-poke %remove-group rid ~)
     ==
   ::  %read
   ::
@@ -1731,11 +1743,12 @@
     ?~  book
       ~|("nonexistent notebook: {<book.act>}" !!)
     ::
-    =*  app-path  writers.u.book
+    =*  old-group-path  writers.u.book
+    =/  app-path  /[(scot %p our.bol)]/[book.act]
     =/  =metadata
-      (need (metadata-scry app-path app-path))
+      (need (metadata-scry old-group-path app-path))
     =/  old-rid=resource
-      (de-path:resource app-path)
+      (de-path:resource old-group-path)
     ?<  (is-managed:grup old-rid)
     ?~  target.act
       ::  just create contacts object for group
@@ -1925,7 +1938,7 @@
     =/  rid=resource
       (de-path:resource writers.data.del)
     :_  state
-    :*  (group-hook-poke [%add rid])
+    :*  (group-pull-hook-poke [%add host.del rid])
         (metadata-hook-poke [%add-synced host.del writers.data.del])
         cards
     ==
