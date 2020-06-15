@@ -176,20 +176,29 @@
     =*  rid  resource.act
     =/  =path
       (en-path:resource rid)
-    :~  (send-invite entity.rid %contacts path ship.act text.act)
-        (add-pending rid ship.act)
-    ==
+    =/  =group
+      (need (scry-group:grp rid))
+    :-  (send-invite entity.rid %contacts path ship.act text.act)
+    ?.  ?=(%invite -.policy.group)  ~
+    ~[(add-pending rid ship.act)]
   ::
       %delete
     =/  rid=resource
       (de-path:resource path.act)
-    %+  weld
-    :~  (contact-hook-poke [%remove path.act])
-        (group-poke [%remove-group rid ~])
-        (group-push-poke %remove rid)
-        (contact-poke [%delete path.act])
+    =/  group-pokes=(list card)
+      ?:  =(our.bol entity.rid)
+        ~[(group-push-poke %remove rid)]
+      :~  (group-proxy-poke %remove-members rid (sy our.bol ~))
+          (group-pull-poke %remove rid)
+      ==
+    ;:  weld
+      group-pokes
+      :~  (contact-hook-poke [%remove path.act])
+          (group-poke [%remove-group rid ~])
+          (contact-poke [%delete path.act])
+      ==
+      (delete-metadata path.act)
     ==
-    (delete-metadata path.act)
   ::
       %remove
     =/  rid=resource
@@ -300,7 +309,7 @@
 ++  group-proxy-poke
   |=  act=action:group-store
   ^-  card
-  [%pass / %agent [entity.resource.act %group-push-hook] %poke %group-action !>(act)]
+  [%pass / %agent [entity.resource.act %group-push-hook] %poke %group-update !>(act)]
 ::
 ++  group-pull-poke
   |=  act=action:pull-hook

@@ -238,7 +238,7 @@
       =/  rid=(unit resource)
         (de-path-soft:resource t.t.path)
       =/  =ship
-        (slav %p i.t.t.t.t.t.path)
+        (slav %p i.t.t.t.t.t.t.path)
       ?~  rid  ~
       ``noun+!>((peek-group-join u.rid ship))
     ==
@@ -340,6 +340,7 @@
   ++  remove-members
     |=  [rid=resource ships=(set ship)]
     ^-  (quip card _state)
+    ?.  (~(has by groups) rid)  [~ state]
     =/  =group
       (~(got by groups) rid)
     =.  members.group

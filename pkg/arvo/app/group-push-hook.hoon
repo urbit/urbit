@@ -76,6 +76,7 @@
   ++  non-member
     ?&  ?=(%add-members -.update)
         (can-join:grp resource.update src.bowl)
+        =(~(tap in ships.update) ~[src.bowl])
     ==
   --
 ::

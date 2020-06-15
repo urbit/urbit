@@ -133,7 +133,6 @@
     ^-  (list card)
     =/  =ship
       %+  slav  %p
-      ?:  (is-managed group-path)  (snag 0 group-path)
       (snag 1 group-path)
     =/  app  ?:(=(ship our.bowl) %metadata-store %metadata-hook)
     (metadata-poke ship app)

@@ -269,9 +269,9 @@
       =/  tag-json
         (~(got by p.json) 'tag')
       ?>  ?=(%s -.tag-json)
-      ?:  =('admin' p.json)  %admin
-      ?:  =('moderator' p.json)  %moderator
-      ?:  =('janitor' p.json)  %janitor
+      ?:  =('admin' p.tag-json)  %admin
+      ?:  =('moderator' p.tag-json)  %moderator
+      ?:  =('janitor' p.tag-json)  %janitor
       !!
     %.  json
     %-  ot

@@ -39,7 +39,7 @@
   $:  members=(set ship)
       =tags
       =policy
-      hidden=_&
+      hidden=?
   ==
 ::  $policy: access control for a group
 ::

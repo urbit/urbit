@@ -7,7 +7,7 @@
     *metadata-hook,
     *metadata-store,
     *group
-/+  *contact-json, default-agent, dbug, group-store, verb, resource
+/+  *contact-json, default-agent, dbug, group-store, verb, resource, grpl=group
 ~%  %contact-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -41,7 +41,7 @@
     :_  this(invite-created %.y)
     :~  (invite-poke:cc [%create /contacts])
         [%pass /inv %agent [our.bol %invite-store] %watch /invitatory/contacts]
-        [%pass /group %agent [our.bol %group-store] %watch /groups]
+        [%pass /groups %agent [our.bol %group-store] %watch /groups]
     ==
   ++  on-save   !>(state)
   ++  on-load
@@ -118,6 +118,7 @@
   --
 ::
 |_  bol=bowl:gall
+++  grp  ~(. grpl bol)
 ::
 ++  poke-json
   |=  jon=json
@@ -233,8 +234,8 @@
       [%inv ~]
     [%pass /inv %agent [our.bol %invite-store] %watch /invitatory/contacts]~
   ::
-      [%group ~]
-    [%pass /group %agent [our.bol %group-store] %watch /updates]~
+      [%groups ~]
+    [%pass /groups %agent [our.bol %group-store] %watch /groups]~
   ::
       [%contacts @ *]
     ?.  (~(has by synced) t.wir)  ~
@@ -337,6 +338,9 @@
 ++  fact-group-update
   |=  [wir=wire fact=update:group-store]
   ^-  (quip card _state)
+  ?:  ?=(%initial -.fact)  [~ state]
+  =/  =group
+    (need (scry-group:grp resource.fact))
   |^
   ?+  -.fact     [~ state]
       %initial-group   (initial-group +.fact)
@@ -345,8 +349,9 @@
   ==
   ::
   ++  initial-group
-    |=  [rid=resource =group]
+    |=  [rid=resource =^group]
     ^-  (quip card _state)
+    ?:  hidden.group  [~ state]
     =/  =path
       (en-path:resource rid)
     ?:  (~(has by synced) path)
@@ -358,6 +363,7 @@
     ^-  (quip card _state)
     =/  =path
       (en-path:resource rid)
+    ?:  hidden.group  [~ state]
     ?.  (~(has by synced) path)
       :_  state
       [(contact-poke [%delete path])]~
@@ -370,6 +376,7 @@
     |=  [rid=resource ships=(set ship)]
     ^-  (quip card _state)
     ::  if pax is synced, remove member from contacts and kick their sub
+    ?:  hidden.group  [~ state]
     =/  =path
       (en-path:resource rid)
     =/  owner=(unit ship)  (~(get by synced) path)
