@@ -131,8 +131,16 @@ export class LinksApp extends Component {
         <Route exact path="/~link/join/:resource"
           render={ (props) => {
             const resourcePath = '/' + props.match.params.resource;
-            this.api.joinCollection(resourcePath);
-            props.history.push(makeRoutePath(resourcePath));
+
+            const autoJoin = () => {
+              try {
+                this.api.joinCollection(resourcePath);
+                props.history.push(makeRoutePath(resourcePath));
+              } catch(err) {
+                setTimeout(autoJoin, 2000);
+              }
+            };
+            autoJoin();
           }}
         />
         <Route exact path="/~link/(popout)?/:resource/members"
