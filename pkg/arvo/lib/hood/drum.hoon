@@ -8,8 +8,8 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
-+$  part      [%drum %2 pith-2]                         ::
-+$  part-old                                            ::
++$  state  [%3 pith-2]
++$  state-old                                           ::
   $:  %drum                                             ::
   $%  [%1 pith-1]                                       ::
       [%2 pith-2]                                       ::
@@ -131,17 +131,15 @@
   ^-  (list gill:gall)
   [[our %dojo] [our %chat-cli]~]
 ::
-++  make                                                ::  initial part
+++  initial-state
   |=  our/ship
-  ^-  part
-  :*  %drum
-      %2
+  ^-  state
+  :*  %3
       eel=(deft-fish our)
       ray=~
       fur=~
       bin=~
   ==
-::
 ::
 ++  en-gill                                           ::  gill to wire
   |=  gyl/gill:gall
@@ -152,10 +150,9 @@
   |=  way/wire  ^-  gill:gall
   ?>(?=({@ @ ~} way) [(slav %p i.way) i.t.way])
 --
+::  TODO: remove .ost
 ::
-::::
-  ::
-|=  {hid/bowl:gall part}                          ::  main drum work
+|:  [bowl=*bowl:gall state=initial-state]
 =/  ost  0
 =+  (~(gut by bin) ost *source)
 =*  dev  -
@@ -220,12 +217,14 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
-    %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
-    %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
-    %drum-unlink         =;(f (f !<(_+<.f vase)) poke-unlink)
+    %drum-dill-belt      =;(f (f !<(_+<.f vase)) poke-dill-belt)
+    %drum-dill-blit      =;(f (f !<(_+<.f vase)) poke-dill-blit)
     %drum-exit           =;(f (f !<(_+<.f vase)) poke-exit)
-    %drum-start          =;(f (f !<(_+<.f vase)) poke-start)
+    %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
+    %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
     %drum-set-boot-apps  =;(f (f !<(_+<.f vase)) poke-set-boot-apps)
+    %drum-start          =;(f (f !<(_+<.f vase)) poke-start)
+    %drum-unlink         =;(f (f !<(_+<.f vase)) poke-unlink)
   ==
 ::
 ++  on-load

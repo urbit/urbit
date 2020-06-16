@@ -407,25 +407,25 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
-    %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
     %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
+    %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
+    %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
+    %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
+    %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
+    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
     %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
-    %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
+    %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
+    %kiln-ota                =;(f (f !<(_+<.f vase)) poke:update)
+    %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
-    %kiln-track              =;(f (f !<(_+<.f vase)) poke-track)
     %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
-    %kiln-ota                =;(f (f !<(_+<.f vase)) poke:update)
     %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
-    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
-    %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
+    %kiln-track              =;(f (f !<(_+<.f vase)) poke-track)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
-    %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
-    %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
-    %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
   ==
 ::
 ++  poke-goad-gall
@@ -450,7 +450,7 @@
                        (take-coup-spam t.t.wire p.sign)
   ==
 ::
-++  take-general
+++  take-arvo
   |=  [=wire =sign-arvo]
   ?-  wire
       [%sync %merg *]   %+  take-mere-sync  t.t.wire

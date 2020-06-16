@@ -1,51 +1,22 @@
-::                                                      ::  ::
-::::  /hoon/hood/app                                    ::  ::
-  ::                                                    ::  ::
-/?    310                                               ::  zuse version
 /-  *sole
-/+  sole                                                ::  libraries
-    ::  XX these should really be separate apps, as
-    ::     none of them interact with each other in
-    ::     any fashion; however, to reduce boot-time
-    ::     complexity and work around the current
-    ::     non-functionality of end-to-end acknowledgments,
-    ::     they have been bundled into :hood
-    ::
-    ::  |command handlers
-/+  hood-helm, hood-kiln, hood-drum, hood-write
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
+/+  sole, default-agent
+/+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
+::
 |%
-++  hood-module
-  ::  each hood module follows this general shape
-  =>  |%
-      +$  part  [%module %0 pith]
-      +$  pith  ~
-      ++  take
-        |~  [wire sign-arvo]
-        *(quip card:agent:gall part)
-      ++  take-agent
-        |~  [wire gift:agent:gall]
-        *(quip card:agent:gall part)
-      ++  poke
-        |~  [mark vase]
-        *(quip card:agent:gall part)
-      --
-  |=  [bowl:gall own=part]
-  |_  moz=(list card:agent:gall)
-  ++  abet  [(flop moz) own]
-  --
++$  state
+  $:  %7
+      drum=state:drum
+      helm=state:helm
+      kiln=state:kiln
+  ==
 --
-::                                                      ::  ::
-::::                                                    ::  ::  state handling
-  ::                                                    ::  ::
-!:
-=>  |%                                                  ::
+::
+=>  |%
+    +$  any-state  $%(state hood-old)
     ++  hood-old                                        ::  unified old-state
       {?($1 $2 $3 $4 $5 $6) lac/(map @tas hood-part-old)}
     ++  hood-1                                          ::  unified state
-      {$6 lac/(map @tas hood-part)}                     ::
+      {$6 lac/(map @tas hood-part)}
     ++  hood-good                                       ::  extract specific
       =+  hed=$:hood-head
       |@  ++  $
@@ -57,183 +28,101 @@
               $write  ?>(?=($write -.paw) `part:hood-write`paw)
             ==
       --
-    ++  hood-head  _-:$:hood-part                       ::  initialize state
-    ++  hood-make                                       ::
-      =+  $:{our/@p hed/hood-head}                      ::
-      |@  ++  $
-            ?-  hed
-              $drum  (make:hood-drum our)
-              $helm  *part:hood-helm
-              $kiln  *part:hood-kiln
-              $write  *part:hood-write
-            ==
-      --
     ++  hood-part-old
-      $%  [%drum part-old:hood-drum]
-          [%helm part-old:hood-helm]
-          [%kiln part-old:hood-kiln]
-          [%write part-old:hood-write]
+      $%  [%drum part-old:drum]
+          [%helm part-old:helm]
+          [%kiln part-old:kiln]
+          [%write part-old:write]
       ==
-    ++  hood-port                                       ::  state transition
-      |:  paw=$:hood-part-old  ^-  hood-part            ::
-      paw                                               ::
-    ::                                                  ::
-    ++  hood-part                                       ::  current module state
-      $%  {$drum $2 pith-2:hood-drum}                   ::
-          {$helm $0 pith:hood-helm}                     ::
-          {$kiln $0 pith:hood-kiln}                     ::
-          {$write $0 pith:hood-write}                   ::
-      ==                                                ::
-    --                                                  ::
-::                                                      ::  ::
-::::                                                    ::  ::  app proper
-  ::                                                    ::  ::
-^-  agent:gall
-=|  hood-1                                              ::  module states
-=>  |%
-    ++  help
-    |=  hid/bowl:gall
-      |%
-      ++  able                                          ::  find+make part
-        =+  hed=$:hood-head
-        |@  ++  $
-              =+  rep=(~(get by lac) hed)
-              =+  par=?^(rep u.rep `hood-part`(hood-make our.hid hed))
-              ((hood-good hed) par)
-        --
-      ::
-      ++  ably                                          ::  save part
-        =+  $:{(list) hood-part}
-        |@  ++  $
-              [+<- (~(put by lac) +<+< +<+)]
-        --
-      ::                                                ::  ::
-      ::::                                              ::  ::  generic handling
-        ::                                              ::  ::
-      ++  prep
-        |=  old/(unit hood-old)  ^-  (quip _!! _+>)
-        :-  ~
-        ?~  old  +>
-        +>(lac (~(run by lac.u.old) hood-port))
-      ::
-      ++  poke-hood-load                                ::  recover lost brain
-        |=  dat/hood-part
-        ?>  =(our.hid src.hid)
-        ~&  loaded+-.dat
-        [~ (~(put by lac) -.dat dat)]
-      ::
-      ::
-      ++  from-module                                   ::  create wrapper
-        |*  _[identity=%module start=..$ finish=_abet]:(hood-module)
-        =-  [wrap=- *start]                 ::  usage (wrap handle-arm):from-foo
-        |*  handle/_finish
-        |=  a=_+<.handle
-        =.  +>.handle  (start hid (able identity))
-        ^-  (quip card:agent:gall _lac)
-        %-  ably
-        ^-  (quip card:agent:gall hood-part)
-        (handle a)
-      ::  per-module interface wrappers
-      ++  from-drum  (from-module %drum [..$ _se-abet]:(hood-drum))
-      ++  from-helm  (from-module %helm [..$ _abet]:(hood-helm))
-      ++  from-kiln  (from-module %kiln [..$ _abet]:(hood-kiln))
-      ++  from-write  (from-module %write [..$ _abet]:(hood-write))
-      --
+    ++  hood-part
+      $%  {$drum $2 pith-2:drum}
+          {$helm $0 pith:helm}
+          {$kiln $0 pith:kiln}
+          {$write $0 pith:write}
+      ==
     --
-|_  hid/bowl:gall                                       ::  gall environment
-++  on-init
-  `..on-init
 ::
-++  on-save
-  !>([%5 lac])
+^-  agent:gall
+=|  =state
+|_  =bowl:gall
++*  this  .
+    def   ~(. (default-agent this %|) bol)
+    drum-core  (drum bowl drum.state)
+    helm-core  (helm bowl helm.state)
+    kiln-core  (kiln bowl kiln.state)
 ::
+++  on-fail   on-fail:def
+++  on-init   on-init:def
+++  on-leave  on-leave:def
+++  on-peek   on-peek:def
+::
+++  on-save  !>(state)
 ++  on-load
   |=  =old-state=vase
-  =/  old-state  !<(hood-old old-state-vase)
-  =^  cards  lac
-    =.  lac  lac.old-state
-    ?-    -.old-state
-        %1  ((wrap on-load):from-drum:(help hid) %1)
-        %2  ((wrap on-load):from-drum:(help hid) %2)
-        %3  ((wrap on-load):from-drum:(help hid) %3)
-        %4  ((wrap on-load):from-drum:(help hid) %4)
-        %5
-      =/  start  ..$:(from-kiln)
-      =/  old-kiln-part  (~(got by lac.old-state) %kiln)
-      ?>  ?=(%kiln -.old-kiln-part)
-      %-  ably
-      (on-load:(start hid *part:hood-kiln) old-kiln-part)
-    ::
-        %6  `lac
-    ==
-  [cards ..on-init]
+  =/  old-state  !<(any-state old-state-vase)
+  ::  TODO rewrite
+  [~ this]
+::  =^  cards  lac
+::    =.  lac  lac.old-state
+::    ?-    -.old-state
+::        %1  ((wrap on-load):from-drum:(help hid) %1)
+::        %2  ((wrap on-load):from-drum:(help hid) %2)
+::        %3  ((wrap on-load):from-drum:(help hid) %3)
+::        %4  ((wrap on-load):from-drum:(help hid) %4)
+::        %5
+::      =/  start  ..$:(from-kiln)
+::      =/  old-kiln-part  (~(got by lac.old-state) %kiln)
+::      ?>  ?=(%kiln -.old-kiln-part)
+::      %-  ably
+::      (on-load:(start hid *part:hood-kiln) old-kiln-part)
+::    ::
+::        %6  `lac
+::    ==
+::  [cards ..on-init]
 ::
 ++  on-poke
+  |^
   |=  [=mark =vase]
-  ^-  (quip card:agent:gall agent:gall)
-  =/  h  (help hid)
-  =^  cards  lac
-    ?:  =(%helm (end 3 4 mark))
-      ((wrap poke):from-helm:h mark vase)
-    ?:  =(%drum (end 3 4 mark))
-      ((wrap poke):from-drum:h mark vase)
-    ?:  =(%kiln (end 3 4 mark))
-      ((wrap poke):from-kiln:h mark vase)
-    ?:  =(%write (end 3 5 mark))
-      ((wrap poke):from-write:h mark vase)
-    ::  XX should rename and move to libs
-    ::
-    ?+  mark  ~|([%poke-hood-bad-mark mark] !!)
-      %hood-load  (poke-hood-load:h !<(hood-part vase))
-      %atom       ((wrap poke-atom):from-helm:h !<(@ vase))
-      %dill-belt  ((wrap poke-dill-belt):from-drum:h !<(dill-belt:dill vase))
-      %dill-blit  ((wrap poke-dill-blit):from-drum:h !<(dill-blit:dill vase))
-      %hood-sync  ((wrap poke-sync):from-kiln:h !<([desk ship desk] vase))
-    ==
-  [cards ..on-init]
+  ^-  step:agent:gall
+  ::
+  =/  fin  (end 3 4 mark)
+  ?:  =(%drum fin)  (poke-drum mark vase)
+  ?:  =(%helm fin)  (poke-helm mark vase)
+  ?:  =(%kiln fin)  (poke-kiln mark vase)
+  ::
+  ?+  mark  (on-poke:def mark vase)
+    %atom       (poke-helm %helm-atom vase)
+    %dill-belt  (poke-drum %drum-dill-belt vase)
+    %dill-blit  (poke-drum %drum-dill-blit vase)
+    %hood-sync  (poke-kiln %kiln-sync vase)
+  ==
+  ++  poke-drum  |=([mark vase] =^(c drum.state (poke:drum-core +<) [c this]))
+  ++  poke-helm  |=([mark vase] =^(c helm.state (poke:helm-core +<) [c this]))
+  ++  poke-kiln  |=([mark vase] =^(c kiln.state (poke:kiln-core +<) [c this]))
+  --
 ::
 ++  on-watch
   |=  =path
-  =/  h  (help hid)
-  =^  cards  lac
-    ?+  path  ~|([%hood-bad-path wire] !!)
-      [%drum *]  ((wrap peer):from-drum:h t.path)
-    ==
-  [cards ..on-init]
-::
-++  on-leave
-  |=  path
-  `..on-init
-::
-++  on-peek
-  |=  path
-  *(unit (unit cage))
+  ^-  step:agent:gall
+  ?+  path  (on-watch:def +<)
+    [%drum *]  =^(c drum.state (peer:drum-core +<) [c this])
+  ==
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  =/  h  (help hid)
-  =^  cards  lac
-    ?+  wire  ~|([%hood-bad-wire wire] !!)
-      [%helm *]   ((wrap take-agent):from-helm:h wire sign)
-      [%kiln *]   ((wrap take-agent):from-kiln:h wire sign)
-      [%drum *]   ((wrap take-agent):from-drum:h wire sign)
-      [%write *]  ((wrap take-agent):from-write:h wire sign)
-    ==
-  [cards ..on-init]
+  ^-  step:agent:gall
+  ?+  wire  ~|([%hood-bad-wire wire] !!)
+    [%drum *]  =^(c drum.state (take-agent:drum-core +<) [c this]))
+    [%helm *]  =^(c helm.state (take-agent:helm-core +<) [c this]))
+    [%kiln *]  =^(c kiln.state (take-agent:kiln-core +<) [c this]))
+  ==
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
-  =/  h  (help hid)
-  =^  cards  lac
-    ?+  wire  ~|([%hood-bad-wire wire] !!)
-      [%helm *]   ((wrap take):from-helm:h t.wire sign-arvo)
-      [%drum *]   ((wrap take):from-drum:h t.wire sign-arvo)
-      [%kiln *]   ((wrap take-general):from-kiln:h t.wire sign-arvo)
-      [%write *]  ((wrap take):from-write:h t.wire sign-arvo)
-    ==
-  [cards ..on-init]
-::
-++  on-fail
-  |=  [term tang]
-  `..on-init
+  |=  [=wire sign=sign-arvo]
+  ^-  step:agent:gall
+  ?+  wire  ~|([%hood-bad-wire wire] !!)
+    [%drum *]  =^(c drum.state (take-arvo:drum-core +<) [c this]))
+    [%helm *]  =^(c helm.state (take-arvo:helm-core +<) [c this]))
+    [%kiln *]  =^(c kiln.state (take-arvo:kiln-core +<) [c this]))
+  ==
 --
