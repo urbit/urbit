@@ -394,6 +394,22 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     }
 
     u3_auto_plan(&sam_u->car_u, 0, c3__a, wir, cad);
+
+    //  cap ovum queue at 1k, dropping oldest packets
+    //
+    {
+      u3_ovum* egg_u = sam_u->car_u.ext_u;
+
+      while ( 1000 < sam_u->car_u.dep_w ) {
+        u3_ovum* nex_u = egg_u->nex_u;
+
+        if ( c3__hear == u3h(egg_u->cad) ) {
+          u3_auto_drop(&sam_u->car_u, egg_u);
+        }
+
+        egg_u = nex_u;
+      }
+    }
   }
 
   c3_free(buf_u->base);
