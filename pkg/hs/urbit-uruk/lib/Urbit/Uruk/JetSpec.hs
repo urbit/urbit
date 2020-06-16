@@ -106,6 +106,7 @@ jetSpec = [r|
     <u (ded %divide-by-zero)>
   <u (divlop divisor 0 dividend)>
 
+++  (rsh x n)  (div n (bex x))
 ++  (mod a b)  (fub a (mul b (div a b)))
 
 ++  (trace x y)  (y uni)
@@ -144,4 +145,45 @@ jetSpec = [r|
   %+  (gte b a)
     <p (lcon a ($ (inc a) b))>
   <u lnil>
+
+++  metlop
+  %-  (E E %metlop)
+  %-  fix
+  |=  ($ x count)
+  %-  %-  trace  (con 1 (con x count))  |=  ig
+  %+  (zer x)
+    %-  %-  trace  (con 1 (con x count))  |=  ig
+    <u count>
+  <u ($ (rsh 1 x) (inc count))>
+
+++  (met x)
+  (metlop x 0)
+
+++  (round-up to-round multiple)
+  %-  %-  trace  (con 2 (con to-round multiple))  |=  ig
+  %+  (zer multiple)
+    %-  %-  trace  (con 2 (con to-round multiple))  |=  ig
+    <u to-round>
+  |=  u
+  %+  (zer (mod to-round multiple))
+    %-  %-  trace  (con 2 (con to-round multiple))  |=  ig
+    <u to-round>
+  |=  u
+  %-  %-  trace  (con 2 (con to-round multiple))  |=  ig
+  (fub (add to-round multiple) (mod to-round multiple))
+
+++  (cat a b c)
+  %-  %-  trace  (con a (con b c))  |=  ig
+  (add (lsh (round-up (met b) a) c) b)
+
+++  rap
+  %-  (E E %rap)
+  %-  fix
+  |=  ($ a b)
+  %+  (cas b)
+    <l (cat a (car l) ($ a (cdr l)))>
+  <u 0>
 |]
+
+-- TODO: There is something wrong with the definition of +rap or one of its
+-- subcomponents, and it is a jet mismatch.

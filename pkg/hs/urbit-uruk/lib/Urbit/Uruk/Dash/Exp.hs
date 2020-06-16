@@ -70,6 +70,7 @@ data SingJet
   | TURN
   | SNAG
   | WELD
+  | RAP
  deriving (Eq, Ord, Read, Show, Enum, Bounded, Generic)
  deriving anyclass NFData
 

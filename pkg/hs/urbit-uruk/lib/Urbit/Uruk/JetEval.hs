@@ -12,6 +12,7 @@ import Urbit.Pos           (Pos)
 import Urbit.Uruk.Class    (Uruk(..))
 import Urbit.Uruk.Dash.Exp (DataJet(..), ExpTree(..), SingJet(..))
 
+import qualified Data.ByteString         as BS
 import qualified Debug.Trace             as Debug.Trace
 import qualified Urbit.Atom              as Atom
 import qualified Urbit.Uruk.Dash.DataJet as Jets
@@ -120,6 +121,8 @@ pattern Snag = N (M (MS SNAG) 2 [])
 pattern Turn = N (M (MS TURN) 2 [])
 pattern Weld = N (M (MS WELD) 2 [])
 
+pattern Rap  = N (M (MS RAP) 2 [])
+
 type Exp = Dash.ExpTree Ur
 type Val = Exp
 
@@ -177,6 +180,7 @@ instance Uruk Exp where
   uGlobal "snag" = Just Snag
   uGlobal "turn" = Just Turn
   uGlobal "weld" = Just Weld
+  uGlobal "rap"  = Just Rap
   uGlobal _     = Nothing
 
   uArity (N (E n))     = pure $ AriJay n
@@ -322,6 +326,7 @@ runJet = curry \case
   (MS WELD   , _        ) -> Nothing
   (MS TURN   , _        ) -> Nothing
   (MS GULF   , _        ) -> Nothing
+  (MS RAP    , [x, y]   ) -> goRap x y
 
   (MD (NAT _), _        ) -> badArgs
   (MD (Bn  _), _        ) -> badArgs
@@ -437,3 +442,32 @@ runJet = curry \case
   goNat n i z = i :& goNat (pred n) i z
 
   goTrace x y = Debug.Trace.trace ("Trace: " ++ (show x)) (Just (y :& Uni))
+
+  goRap (Nat 8) y = goCrip y
+  goRap _ _       = Nothing
+
+  toValList :: Val -> Maybe [Val]
+  toValList (N (M (MS LCON) _ [h, t])) = do
+    rest <- toValList t
+    pure (h:rest)
+  toValList (N (M (MS LNIL) _ [])) = Just []
+  toValList _ = Nothing
+
+  goCrip y = do
+    vals <- toValList y
+    tapes <- parseTape vals
+    pure $ Nat $ Atom.bytesAtom $ BS.pack tapes
+
+  parseTape :: [Val] -> Maybe [Word8]
+  parseTape []         = Just []
+  parseTape (x:xs)     = do
+    bx <- parseByte x
+    bxs <- parseTape xs
+    pure (bx:bxs)
+  parseTape _          = Nothing
+
+  parseByte :: Val -> Maybe Word8
+  parseByte (Nat h) | h >= 256 = Nothing
+  parseByte (Nat h) = Just $ fromIntegral h
+  parseByte _     = Nothing
+

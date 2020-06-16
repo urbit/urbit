@@ -13,6 +13,7 @@ library:
 dependencies:
   - base
   - bound
+  - bytestring
   - classy-prelude
   - containers
   - deriving-compat
