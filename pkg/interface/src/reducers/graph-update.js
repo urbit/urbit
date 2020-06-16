@@ -1,10 +1,11 @@
 import _ from 'lodash';
 
+
 const OrderedMap = (arr = []) => {
   let map = new Map(arr);
-  map[Symbol.iterator] = function* () {
-      yield* [...this.entries()].sort((a, b) => a[1] - b[1]);
-  };
+//  map[Symbol.iterator] = function* () {
+//      yield* [...this.entries()].sort((a, b) => a[1] - b[1]);
+//  };
   return map;
 };
 
@@ -40,11 +41,42 @@ export default class GraphReducer {
       }
 
       for (let i in data.graph) {
-        let node = data.graph[i];
-        state.graphs[resource].set(node.index, node.node);
+        let item = data.graph[i];
+        let index = item[0].split('/').slice(1).map((ind) => {
+          return parseInt(ind, 10);
+        });
+
+        if (index.length === 0) { break; }
+        
+        let node = this._processNode(item[1]);
+        state.graphs[resource].set(index[index.length - 1], node);
       }
       state.keys.add(resource);
     }
+  }
+
+  _processNode(node) {
+    //  is empty
+    if (!node.children) {
+      node.children = new OrderedMap();
+      return node;
+    }
+
+    //  is graph
+    let converted = new OrderedMap();
+    for (let i in node.children) {
+      let item = node.children[i];
+      let index = item[0].split('/').slice(1).map((ind) => {
+        return parseInt(ind, 10);
+      });
+
+      if (index.length === 0) { break; }
+      
+      let node = this._processNode(item[1]);
+      converted.set(index[index.length - 1], node);
+    }
+    node.children = converted;
+    return node;
   }
 
   removeGraph(json, state) {
@@ -67,10 +99,10 @@ export default class GraphReducer {
       if (!(resource in state.graphs)) { return; }
 
       for (let i in data.nodes) {
-        let node = data.nodes[i];
-        if (node.index.split('/').length === 0) { return; }
+        let item = data.nodes[i];
+        if (item[0].split('/').length === 0) { return; }
 
-        let index = node.index.split('/').slice(1).map((ind) => {
+        let index = item[0].split('/').slice(1).map((ind) => {
           return parseInt(ind, 10);
         });
 
@@ -79,7 +111,7 @@ export default class GraphReducer {
         state.graphs[resource] = this._addNode(
           state.graphs[resource],
           index,
-          node.node
+          item[1]
         );
       }
     }
@@ -87,6 +119,7 @@ export default class GraphReducer {
 
   //  TODO: recursive add node
   _addNode(graph, index, node) {
+    console.log(index, node);
     //  set child of graph
     if (index.length === 1) {
       graph.set(index[0], node);

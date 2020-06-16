@@ -107,9 +107,11 @@
       %+  turn  (tap:orm g)
       |=  [a=atom n=^node]
       ^-  json
-      %-  pairs
-      :~  [%index (numb a)]
-          [%node (node n)]
+      ::  experiment at making JSON structure more closely represent Map
+      ::  input
+      :-  %a
+      :~  (index [a]~)
+          (node n)
       ==
     ::
     ++  index
@@ -179,9 +181,10 @@
       %+  turn  ~(tap by m)
       |=  [n=^index o=^node]
       ^-  json
-      %-  pairs
-      :~  [%index (index n)]
-          [%node (node o)]
+      ::  experiment, more closely represent Map structure
+      :-  %a
+      :~  (index n)
+          (node o)
       ==
     ::
     ++  indices

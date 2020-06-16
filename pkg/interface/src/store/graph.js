@@ -19,6 +19,7 @@ export default class GraphStore extends BaseStore {
 
   reduce(data, state) {
     this.graphReducer.reduce(data, this.state);
+    console.log(data, state);
   }
 }
 
