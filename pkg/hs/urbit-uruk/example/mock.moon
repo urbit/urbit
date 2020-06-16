@@ -69,7 +69,6 @@
   =/  get
     ..  $
     |=  data
-    %-  (trace ['step' data])  |=  ig
     =/  ktop  (car data)
     ?:  (eql 'App' ktop)
       =/  vtop  (cdr data)
@@ -126,7 +125,7 @@
       =/  r2  (cdr vl)
       =/  kl2  (car l2)
       ?:  (eql 'Kay' kl2)
-        %-  (trace ['match-kay' top])  |=  ig
+        %-  (trace ['match-kay' (skewdata-to-string top)])  |=  ig
         (rit r2)
       (lef ~)
     (lef ~)
@@ -145,7 +144,7 @@
       (lef l)
         r
       =/  r-vtop  (cdr vtop)
-      %-  (trace ['match-left' top])  |=  ig
+      %-  (trace ['match-left' (skewdata-to-string top)])  |=  ig
       (rit (con 'App' (con r r-vtop)))
     ==
   (lef ~)
@@ -164,7 +163,7 @@
     ::
         r
       =/  l-vtop  (car vtop)
-      %-  (trace ['match-right' top])  |=  ig
+      %-  (trace ['match-right' (skewdata-to-string top)])  |=  ig
       (rit (con 'App' (con l-vtop r)))
     ==
   (lef ~)
@@ -189,8 +188,8 @@
         =/  x  (cdr vvl)
         =/  kl3  (car l3)
         ?:  (eql 'Ess' kl3)
-          %-  (trace ['match-ess' top])  |=  ig
-          (rit (con 'App' (con (con 'App' (con x y)) (con 'App' (con y z)))))
+          %-  (trace ['match-ess' (skewdata-to-string top)])  |=  ig
+          (rit (con 'App' (con (con 'App' (con x z)) (con 'App' (con y z)))))
         (lef ~)
       (lef ~)
     (lef ~)
@@ -312,7 +311,7 @@
       =/  xs        (cdr r)
       =/  xs-len    (lent xs)
       ?:  (eql n xs-len)
-        %-  (trace ['match-enhance' top])  |=  ig
+        %-  (trace ['match-enhance' (skewdata-to-string top)])  |=  ig
         (rit (foldl app jet-body xs))
       (lef ~)
     ==
@@ -448,27 +447,14 @@
 =/  mock
   ~/  2  mock
   |=  (fun args)
-  %-  (trace 'mock-a')  |=  ig
   =/  fun-data  (to-skewdata fun)
-  %-  (trace 'mock-b')  |=  ig
   =/  args-data  (turn args to-skewdata)
-  %-  (trace 'mock-c')  |=  ig
   ?-    (from-list-form (lcon fun-data args-data))
       l
     l
   ::
       expr
-    %-  (trace ['mock-d' expr])  |=  ig
-    ?-    (eval expr)
-        l
-      l
-    ::
-        r
-      ::  TODO: OK, eval is returning the wrong results here, what's up?
-      ::
-      %-  (trace ['mock-e' r])  |=  ig
-      (from-skewdata r)
-    ==
+    (from-skewdata (eval expr))
   ==
 
 
@@ -505,7 +491,8 @@
 =/  dub-check-k  (app (app (app (app (app (app dub zero) one) two) three) four) ess)
 ::(from-skewdata (eval dub-check-k))
 
-(skewdata-to-string four)
 
-::  =/  seq-false-tag-raw  (E E K (S K))
-::  (mock seq-false-tag-raw (lcon 1 (lcon 2 lnil)))
+:: +mock: returns (lef err) or (rit result) when passed fun and a list of args.
+::
+=/  seq-false-tag-raw  (E E K (S K))
+(mock seq-false-tag-raw (lcon 8 (lcon 2 lnil)))
