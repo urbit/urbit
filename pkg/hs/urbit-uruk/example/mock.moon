@@ -57,7 +57,40 @@
     (rit E)
   (lef ~)
 
+:: Tape to cord
+=/  crip
+  ~/  1  crip
+  (rap 8)
 
+::  renders a skewdata as a string of the Uruk for easier reading
+::
+::  =/  skewdata-to-string
+::    |=  top
+::    =/  get
+::      ..  $
+::      |=  data
+::      =/  ktop  (car data)
+::      ?:  (eql 'App' ktop)
+::        =/  vtop  (cdr data)
+::        =/  lval  (car vtop)
+::        =/  rval  (cdr vtop)
+::        %+  weld  (lcon '(' lnil)
+::        %+  weld  ($ lval)
+::        %+  weld  (lcon ' ' lnil)
+::        %+  weld  ($ rval)
+::        (lcon ')' lnil)
+::      ?:  (eql 'Ess' ktop)
+::        (lcon 'S' lnil)
+::      ?:  (eql 'Kay' ktop)
+::        (lcon 'K' lnil)
+::      ?:  (eql 'Enh' ktop)
+::        (lcon 'E' lnil)
+::      ?:  (eql 'Dub' ktop)
+::        (lcon 'W' lnil)
+::      lnil
+::    :: TODO: OK, +crip and +rap are hard coded and are not really implemented in
+::    :: JetEval. Beautiful.
+::    (crip (get top))
 
 ::  foldl should really be in the stdlib.
 ::
@@ -69,6 +102,14 @@
     <p ($ fun (fun base (car p)) (cdr p))>
   <u base>
 
+
+=/  foldr
+  ~/  3  foldr
+  ..  $
+  |=  (fun base rest)
+  %+  (cas rest)
+    <p (fun (car p) ($ fun base (cdr p)))>
+  <u base>
 
 ::  match-k: (NK :& x :& y) -> Just $ x
 ::
@@ -186,6 +227,22 @@
     =/  left-recur  ($ l)
     (weld left-recur (lcon r lnil))
   (lcon top lnil)
+
+
+=/  from-list-form
+  ..  $
+  |=  list
+  =/  append
+    |=  (fst snd)
+    ?-    fst
+        l
+      (rit snd)
+    ::
+        rfst
+      (rit (app rfst snd))
+    ==
+  (foldl append (lef ~) list)
+
 
 ::  todo: this is defined in JetSpec, why does this not show up here?
 ::
@@ -387,6 +444,36 @@
     ($ r)
   ==
 
+::  mock: given a function and a list of arguments, try evaluating it.
+::
+=/  mock
+  ~/  2  mock
+  |=  (fun args)
+  %-  (trace 'mock-a')  |=  ig
+  =/  fun-data  (to-skewdata fun)
+  %-  (trace 'mock-b')  |=  ig
+  =/  args-data  (turn args to-skewdata)
+  %-  (trace 'mock-c')  |=  ig
+  ?-    (from-list-form (lcon fun-data args-data))
+      l
+    l
+  ::
+      expr
+    %-  (trace ['mock-d' expr])  |=  ig
+    ?-    (eval expr)
+        l
+      l
+    ::
+        r
+      ::  TODO: OK, eval is returning the wrong results here, what's up?
+      ::
+      %-  (trace ['mock-e' r])  |=  ig
+      (from-skewdata r)
+    ==
+  ==
+
+
+
 ::  (K K K)
 =/  kkk  (app (app kay kay) kay)
 ::(reduce kkk)
@@ -419,3 +506,7 @@
 =/  dub-check-k  (app (app (app (app (app (app dub zero) one) two) three) four) ess)
 (from-skewdata (eval dub-check-k))
 
+:: (skewdata-to-string four)
+
+::  =/  seq-false-tag-raw  (E E K (S K))
+::  (mock seq-false-tag-raw (lcon 1 (lcon 2 lnil)))
