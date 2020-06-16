@@ -529,6 +529,7 @@
           c3_m             nam_m;
           c3_o             liv_o;
           u3_auto_cb          io;  // XX io_u;
+          c3_w             dep_w;
           struct _u3_ovum* ent_u;
           struct _u3_ovum* ext_u;
           struct _u3_auto* nex_u;

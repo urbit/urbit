@@ -49,6 +49,7 @@ u3_auto_plan(u3_auto* car_u,
 
     egg_u->pre_u = egg_u->nex_u = 0;
     car_u->ent_u = car_u->ext_u = egg_u;
+    car_u->dep_w = 1;
   }
   else {
     egg_u->nex_u = 0;
@@ -56,6 +57,7 @@ u3_auto_plan(u3_auto* car_u,
 
     car_u->ent_u->nex_u = egg_u;
     car_u->ent_u = egg_u;
+    car_u->dep_w++;
   }
 
   u3_pier_spin(car_u->pir_u);
@@ -165,6 +167,8 @@ u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u)
     egg_u->nex_u->pre_u = egg_u->pre_u;
   }
 
+  egg_u->car_u->dep_w--;
+
   //  notify driver if not self-caused
   //
   if ( egg_u->car_u && ( car_u != egg_u->car_u ) ) {
@@ -196,9 +200,11 @@ u3_auto_next(u3_auto* car_u, u3_noun* ovo)
       if ( egg_u->nex_u ) {
         egg_u->nex_u->pre_u = 0;
         car_u->ext_u = egg_u->nex_u;
+        car_u->dep_w--;
       }
       else {
         car_u->ent_u = car_u->ext_u = 0;
+        car_u->dep_w = 0;
       }
 
       egg_u->nex_u = 0;
