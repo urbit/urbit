@@ -1,44 +1,62 @@
-:: This was a good first try, but to really work, we need this to be lazy.
+::  Uruk +mock
 ::
-:: TODO: Try to pattern match natural numbers? Any real implementation of this
-:: needs to be jetted and matching church numerals becomes efficientish.
-::
-=/  skewdata
-  ..  $
-  |=  code
-  =/  apply
-    |=  (x y)
-    ['App' ($ x) ($ y)]
-  (W apply ['Ess' ~] ['Kay' ~] ['Enh' ~] ['Dub' ~] code)
 
-
+::  runtime base letter representations
 =/  app
   |=  (l r)
   (con 'App' (con l r))
-
 =/  ess  ['Ess' ~]
 =/  kay  ['Kay' ~]
 =/  enh  ['Enh' ~]
 =/  dub  ['Dub' ~]
 
-
-::(skewdata 5)   :: ok
-::(skewdata seq) :: ok
-::(skewdata (E 'tag' (K K))) :: not ok, 'tag' is huge
-::(skewdata skewdata)        :: not ok, don't understand why not.
-
-::  skewtree: we want a lazy recursive data structure here.
+::  Uses W to change a skew value into a tree representation.
 ::
-=/  skew-layer
+::  TODO: Make App return two closures so we can represent lazily evaluate the
+::  skew. This structure builds the entire tree strictly, including things like
+::  natural numbers and that makes it infeasible.
+::
+=/  to-skewdata
   ..  $
   |=  code
-  =/  recur
-    |=  (nucode u)
-    ($ nucode)
   =/  apply
     |=  (x y)
-    ['App' (recur x) (recur y)]
-  (W apply ['Ess' ~] ['Kay' ~] ['Enh' ~] ['Dub' ~] code)
+    (app ($ x) ($ y))
+  (W apply ess kay enh dub code)
+
+::  Converts a value from the data form back to raw skew
+::
+=/  from-skewdata
+  ..  $
+  |=  data
+  =/  ktop  (car data)
+  ?:  (eql 'App' ktop)
+    =/  vtop  (cdr data)
+    =/  lval  (car vtop)
+    =/  rval  (cdr vtop)
+    ?-    ($ lval)
+        err
+      (lef ~)
+    ::
+        lret
+      ?-    ($ rval)
+          err
+        (lef ~)
+      ::
+          rret
+        (rit (lret rret))
+      ==
+    ==
+  ?:  (eql 'Ess' ktop)
+    (rit S)
+  ?:  (eql 'Kay' ktop)
+    (rit K)
+  ?:  (eql 'Enh' ktop)
+    (rit E)
+  ?:  (eql 'Dub' ktop)
+    (rit E)
+  (lef ~)
+
 
 
 ::  foldl should really be in the stdlib.
@@ -298,7 +316,6 @@
                   %-  (trace ['match-dub-dub' w])  |=  ig
                   (rit w)
                 (lef ~)
-::                (rit (con 'App' (con (con 'App' (con x y)) (con 'App' (con y z)))))
               (lef ~)
             (lef ~)
           (lef ~)
@@ -394,11 +411,11 @@
 
 
 ::  (W 0 1 2 3 4 K)
-=/  zero   (skewdata 0)
-=/  one    (skewdata 1)
-=/  two    (skewdata 2)
-=/  three  (skewdata 3)
-=/  four   (skewdata 4)
+=/  zero   (to-skewdata 0)
+=/  one    (to-skewdata 1)
+=/  two    (to-skewdata 2)
+=/  three  (to-skewdata 3)
+=/  four   (to-skewdata 4)
 =/  dub-check-k  (app (app (app (app (app (app dub zero) one) two) three) four) ess)
-(eval dub-check-k)
+(from-skewdata (eval dub-check-k))
 
