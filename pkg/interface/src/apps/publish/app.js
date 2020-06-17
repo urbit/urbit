@@ -65,6 +65,12 @@ export default class PublishApp extends React.Component {
       .values()
       .map(_.values)
       .flatten() // flatten into array of notebooks
+      .filter((each) => {
+        return ((selectedGroups.map((e) => {
+          return e[0];
+        }).includes(each?.['writers-group-path'])) ||
+        (selectedGroups.length === 0));
+      })
       .map('num-unread')
       .reduce((acc, count) => acc + count, 0)
       .value();
