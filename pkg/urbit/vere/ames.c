@@ -400,7 +400,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     {
       u3_ovum* egg_u = sam_u->car_u.ext_u;
 
-      while ( 1000 < sam_u->car_u.dep_w ) {
+      while ( egg_u && (1000 < sam_u->car_u.dep_w) ) {
         u3_ovum* nex_u = egg_u->nex_u;
 
         if ( c3__hear == u3h(egg_u->cad) ) {
