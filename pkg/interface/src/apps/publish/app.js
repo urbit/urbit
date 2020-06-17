@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import _ from 'lodash';
 
 import './css/custom.css';
@@ -81,7 +81,7 @@ export default class PublishApp extends React.Component {
     }
 
     return (
-      <div>
+      <Switch>
         <Route exact path="/~publish"
           render={(props) => {
             return (
@@ -320,7 +320,7 @@ export default class PublishApp extends React.Component {
             }
           }}
         />
-      </div>
+      </Switch>
     );
   }
 }

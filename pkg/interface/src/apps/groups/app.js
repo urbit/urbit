@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import GroupsApi from '../../api/groups';
 import GroupsSubscription from '../../subscription/groups';
@@ -64,7 +64,7 @@ export default class GroupsApp extends Component {
     const s3 = state.s3 ? state.s3 : {};
 
     return (
-        <div>
+        <Switch>
           <Route exact path="/~groups"
             render={(props) => {
               return (
@@ -328,7 +328,7 @@ export default class GroupsApp extends Component {
               );
             }}
           />
-        </div>
+        </Switch>
     );
   }
 }

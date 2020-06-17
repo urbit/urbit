@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import ChatApi from '../../api/chat';
 import ChatStore from '../../store/chat';
@@ -107,7 +107,7 @@ export default class ChatApp extends React.Component {
     );
 
     return (
-      <div>
+      <Switch>
         <Route
           exact
           path="/~chat"
@@ -375,7 +375,7 @@ export default class ChatApp extends React.Component {
             );
           }}
         />
-      </div>
+      </Switch>
   );
   }
 }

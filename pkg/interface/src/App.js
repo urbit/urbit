@@ -33,8 +33,14 @@ import GlobalApi from './api/global';
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
   line-height: ${p => p.theme.lineHeights.regular};
-  max-height: 100vh;
-  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+`;
+
+const Content = styled.div`
+   height: calc(100% - 45px);
 `;
 
 const StatusBarWithRouter = withRouter(StatusBar);
@@ -72,7 +78,7 @@ export default class App extends React.Component {
             invites={this.state.invites}
             api={this.api}
             />
-            <div>
+            <Content>
             <Switch>
               <Route exact path="/"
               render={ p => (
@@ -131,7 +137,7 @@ export default class App extends React.Component {
               />
               <Route component={NotFound} />
               </Switch>
-            </div>
+            </Content>
           </Router>
         </Root>
       </ThemeProvider>

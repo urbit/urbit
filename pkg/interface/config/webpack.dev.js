@@ -18,7 +18,7 @@ class UrbitShipPlugin {
   }
 
   apply(compiler) {
-    compiler.hooks.afterCompile.tapPromise(
+    compiler.hooks.afterEmit.tapPromise(
       'UrbitShipPlugin',
       async (compilation) => {
         const src = path.resolve(compiler.options.output.path, 'index.js');

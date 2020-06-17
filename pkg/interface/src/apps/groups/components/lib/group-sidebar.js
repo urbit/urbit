@@ -117,7 +117,7 @@ export class GroupSidebar extends Component {
     return (
       <div className={'bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 ' +
        'flex-basis-30-ns flex-shrink-0 mw5-m mw5-l mw5-xl flex-basis-100-s ' +
-        'relative overflow-hidden pt3 pt0-m pt0-l pt0-xl ' + activeClasses}
+        'relative overflow-hidden ' + activeClasses}
       >
         <div className="overflow-auto pb8 h-100">
           <Link to="/~groups/new" className="dib">
