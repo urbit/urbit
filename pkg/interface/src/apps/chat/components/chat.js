@@ -22,6 +22,7 @@ function getNumPending(props) {
 
 const ACTIVITY_TIMEOUT = 60000; // a minute
 const DEFAULT_BACKLOG_SIZE = 300;
+const MAX_BACKLOG_SIZE = 1000;
 
 function scrollIsAtTop(container) {
   if ((navigator.userAgent.includes("Safari") &&
@@ -136,14 +137,15 @@ export class ChatScreen extends Component {
 
     const unread = props.length - props.read;
     const unreadUnloaded = unread - props.envelopes.length;
+    const excessUnread = unreadUnloaded > MAX_BACKLOG_SIZE;
 
-    if(unreadUnloaded + 20 > DEFAULT_BACKLOG_SIZE) {
+    if(!excessUnread && unreadUnloaded + 20 > DEFAULT_BACKLOG_SIZE) {
       this.askForMessages(unreadUnloaded + 20);
     } else {
       this.askForMessages(DEFAULT_BACKLOG_SIZE);
     }
 
-    if(props.read === props.length){
+    if(excessUnread || props.read === props.length){
       this.scrolledToMarker = true;
       this.setState(
         {
