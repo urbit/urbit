@@ -225,10 +225,10 @@
   ==
 ::
 ++  on-load
-  |=  ver=?(%1 %2 %3 %4)
+  |=  ver=?(%1 %2 %3 %4 %5)
   =<  se-abet  =<  se-view
-  =?  .  (lte ver %3)
-    =.  ver  %4
+  =?  .  (lte ver %4)
+    =.  ver  %5
     =.  ..on-load
       =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
       =<  (se-born %home %goad)
@@ -244,7 +244,7 @@
       =<  (se-born %home %file-server)
       (se-born %home %s3-store)
     .
-  ?>  ?=(%4 ver)
+  ?>  ?=(%5 ver)
   =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
   (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
 ::
