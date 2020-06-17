@@ -790,6 +790,13 @@ u3m_leap(c3_w pad_w)
 #endif
 }
 
+void
+_print_diff(c3_c* cap_c, c3_w a, c3_w b)
+{
+  c3_w diff = a<b ? b-a : a-b;
+  u3a_print_memory(stderr, cap_c, diff);
+}
+
 /* u3m_fall(): in u3R, return an inner road to its parent.
 */
 void
@@ -798,6 +805,9 @@ u3m_fall()
   c3_assert(0 != u3R->par_p);
 
 #if 0
+  /*  If you're printing a lot of these you need to change
+   *  u3a_print_memory from fprintf to u3l_log
+  */
   fprintf(stderr, "fall: from %s %p, to %s %p (cap 0x%x, was 0x%x)\r\n",
           _(u3a_is_north(u3R)) ? "north" : "south",
           u3R,
@@ -805,6 +815,9 @@ u3m_fall()
           u3to(u3_road, u3R->par_p),
           u3R->hat_p,
           u3R->rut_p);
+  _print_diff("unused free", u3R->hat_p, u3R->cap_p);
+  _print_diff("freeing", u3R->rut_p, u3R->hat_p);
+  _print_diff("stack", u3R->cap_p, u3R->mat_p);
 #endif
 
   u3to(u3_road, u3R->par_p)->pro.nox_d += u3R->pro.nox_d;

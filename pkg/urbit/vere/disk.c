@@ -617,16 +617,13 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
       return 0;
     }
 
+    //  Arbitrarily choosing 1TB as a "large enough" mapsize
+    //
+    //  per the LMDB docs:
+    //  "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
+    //
     {
-      // TODO: Start with forty gigabytes on macOS and sixty otherwise for the
-      // maximum event log size. We'll need to do something more sophisticated for
-      // real in the long term, though.
-      //
-#ifdef U3_OS_osx
-      const size_t siz_i = 42949672960;
-#else
-      const size_t siz_i = 64424509440;;
-#endif
+      const size_t siz_i = 1099511627776;
 
       if ( 0 == (log_u->mdb_u = c3_lmdb_init(log_c, siz_i)) ) {
         fprintf(stderr, "disk: failed to initialize database");
