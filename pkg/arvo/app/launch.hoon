@@ -52,7 +52,8 @@
   ^-  (quip card _this)
   =/  old-state  !<(versioned-state old)
   ?:  ?=(%4 -.old-state)
-    [~ this(state old-state)]
+    :-  [%pass / %arvo %e %disconnect [~ /]]~
+    this(state old-state)
   =/  new-state  *state-zero
   =.  new-state
     %_  new-state
@@ -72,7 +73,13 @@
         tile-ordering  [%chat %publish %links %weather %clock %dojo ~]
     ==
   :_  this(state [%4 new-state])
-  :-  [%pass / %arvo %e %disconnect [~ /]]
+  %+  welp
+    :~  [%pass / %arvo %e %disconnect [~ /]]
+        :*  %pass  /srv  %agent  [our.bowl %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir / /app/landscape %.n])
+        ==
+    ==
   %+  turn  ~(tap by wex.bowl)
   |=  [[=wire =ship =term] *]
   ^-  card
