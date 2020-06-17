@@ -71,7 +71,7 @@
     ^-  (quip card _this)
     =/  rav  [%sing %t [%da now.bol] /app/publish/notebooks]
     :_  this
-    :~  [%pass /bind %arvo %e %connect [~ /'publish-view'] %publish]
+    :~  [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
         [%pass /read/paths %arvo %c %warp our.bol q.byk.bol `rav]
         [%pass /permissions %agent [our.bol %permission-store] %watch /updates]
         (invite-poke:main [%create /publish])
@@ -108,7 +108,8 @@
             :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
                 /invitatory/publish
             ==
-            [%pass / %arvo %e %disconnect [~ /'~publish']]
+            [%pass /bind %arvo %e %disconnect [~ /'~publish']]
+            [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
             :*  %pass  /srv  %agent  [our.bol %file-server]
                 %poke  %file-server-action
                 !>([%serve-dir /'~publish' /app/landscape %.n])
@@ -174,7 +175,14 @@
       ==
     ::
         %3
-      [cards this(state p.old-state)]
+      :_  this(state p.old-state)
+      %+  welp  cards
+      :~  [%pass /bind %arvo %e %disconnect [~ /'~publish']]
+          [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
+          :*  %pass  /srving  %agent  [our.bol %file-server]
+              %poke  %file-server-action
+              !>([%serve-dir /'~publish' /app/landscape %.n])
+      ==  ==
     ==
     ::
     ++  convert-comment-2-3
@@ -499,6 +507,9 @@
       [cards this]
     ::
         [%bind ~]
+      [~ this]
+    ::
+        [%view-bind ~]
       [~ this]
     ==
   ::

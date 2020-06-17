@@ -241,10 +241,11 @@
       =<  (se-born %home %link-proxy-hook)
       =<  (se-born %home %link-listen-hook)
       =<  (se-born %home %link-view)
-      =<  (se-born %home %file-server)
-      (se-born %home %s3-store)
+      =<  (se-born %home %s3-store)
+      (se-born %home %file-server)
     .
   ?>  ?=(%5 ver)
+  =>  (se-born %home %file-server)
   =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
   (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
 ::
