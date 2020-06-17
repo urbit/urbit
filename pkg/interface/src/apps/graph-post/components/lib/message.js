@@ -51,20 +51,22 @@ export class Message extends Component {
 
   renderContent() {
     const { props } = this;
+    console.log(props.msg);
     const content = props.msg.contents[0];
+    const font = !!props.isParent ? "f6" : "f7";
 
     if ('code' in content) {
       const outputElement =
         (Boolean(content.code.output) &&
          content.code.output.length && content.code.output.length > 0) ?
         (
-          <pre className="f7 clamp-attachment pa1 mt0 mb0 b--gray4 b--gray1-d bl br bb">
+          <pre className={`${font} clamp-attachment pa1 mt0 mb0 b--gray4 b--gray1-d bl br bb`}>
             {content.code.output[0].join('\n')}
           </pre>
         ) : null;
       return (
         <div className="mv2">
-          <pre className="f7 clamp-attachment pa1 mt0 mb0 bg-light-gray b--gray4 b--gray1-d ba">
+          <pre className={`${font} clamp-attachment pa1 mt0 mb0 bg-light-gray b--gray4 b--gray1-d ba`}>
             {content.code.expression}
           </pre>
           {outputElement}
@@ -93,7 +95,7 @@ export class Message extends Component {
           ></img>
         );
         return (
-          <a className="f7 lh-copy v-top word-break-all"
+          <a className={`${font} lh-copy v-top word-break-all`}
             href={content.url}
             target="_blank"
             rel="noopener noreferrer"
@@ -120,7 +122,7 @@ export class Message extends Component {
         return (
           <div>
           <a href={content.url}
-          className="f7 lh-copy v-top bb b--white-d word-break-all"
+          className={`${font} lh-copy v-top bb b--white-d word-break-all`}
           href={content.url}
           target="_blank"
           rel="noopener noreferrer"
@@ -137,7 +139,7 @@ export class Message extends Component {
         );
       } else {
         return (
-          <a className="f7 lh-copy v-top bb b--white-d b--black word-break-all"
+          <a className={`${font} lh-copy v-top bb b--white-d b--black word-break-all`}
             href={content.url}
             target="_blank"
             rel="noopener noreferrer"
@@ -146,12 +148,6 @@ export class Message extends Component {
           </a>
         );
       }
-    } else if ('me' in content) {
-      return (
-        <p className='f7 i lh-copy v-top'>
-          {content.me}
-        </p>
-      );
     } else {
         return (
           <section>
@@ -169,67 +165,51 @@ export class Message extends Component {
 
     const paddingTop = { 'paddingTop': '6px' };
 
-    if (true) {
-      const timestamp = moment.unix(props.msg['time-sent'] / 1000).format('hh:mm a');
+    const timestamp = moment.unix(props.msg['time-sent'] / 1000).format('hh:mm a');
 
-      let name = `~${props.msg.author}`;
-      let color = '#000000';
-      let sigilClass = 'mix-blend-diff';
+    let name = `~${props.msg.author}`;
+    let color = '#000000';
+    let sigilClass = 'mix-blend-diff';
 
-      return (
+    const bodyFont = !!props.isParent ? "f6" : "f8";
+    const smallFont = !!props.isParent ? "f7" : "f9";
+
+    return (
+      <div
+        ref={this.containerRef}
+        className={
+          `w-100 ${bodyFont} pl3 pt4 pr3 cf flex lh-copy bt b--white pointer`
+        }
+        style={{
+          minHeight: 'min-content'
+        }}
+        onClick={() => {
+          props.history.push(`/~post/room/${props.resource}/${props.index}`);
+        }} 
+      >
+       <OverlaySigil
+         ship={props.msg.author}
+         color={'#000'}
+         sigilClass={sigilClass}
+         group={props.group}
+         className="fl pr3 v-top bg-white bg-gray0-d"
+       />
         <div
-          ref={this.containerRef}
-          className={
-            'w-100 f7 pl3 pt4 pr3 cf flex lh-copy bt b--white pointer'
-          }
-          style={{
-            minHeight: 'min-content'
-          }}
-          onClick={() => {
-            props.history.push(`/~post/room/${props.resource}/${props.index}`);
-          }} 
+          className="fr clamp-message white-d"
+          style={{ flexGrow: 1, marginTop: -8 }}
         >
-         <OverlaySigil
-           ship={props.msg.author}
-           color={'#000'}
-           sigilClass={sigilClass}
-           group={props.group}
-           className="fl pr3 v-top bg-white bg-gray0-d"
-         />
-          <div
-            className="fr clamp-message white-d"
-            style={{ flexGrow: 1, marginTop: -8 }}
-          >
-            <div className="hide-child" style={paddingTop}>
-              <p className="v-mid f9 gray2 dib mr3 c-default">
-                <span
-                  title={`~${props.msg.author}`}
-                >
-                </span>
-              </p>
-              <p className="v-mid mono f9 gray2 dib">{timestamp}</p>
-              <p className="v-mid mono f9 ml2 gray2 dib child dn-s">{datestamp}</p>
-            </div>
-            {this.renderContent()}
+          <div className="hide-child" style={paddingTop}>
+            <p className={`v-mid ${smallFont} gray2 dib mr3 c-default`}>
+              <span>{`~${props.msg.author}`}</span>
+            </p>
+            <p className={`v-mid mono ${smallFont} gray2 dib`}>{timestamp}</p>
+            <p className={`v-mid mono ${smallFont} ml2 gray2 dib child dn-s`}>
+              {datestamp}
+            </p>
           </div>
+          {this.renderContent()}
         </div>
-      );
-    } else {
-      const timestamp = moment.unix(props.msg['time-sent'] / 1000).format('hh:mm');
-
-      return (
-        <div
-          className={'w-100 pr3 cf hide-child flex'}
-          style={{
-            minHeight: 'min-content'
-          }}
-        >
-          <p className="child pt2 pl2 pr1 mono f9 gray2 dib">{timestamp}</p>
-          <div className="fr f7 clamp-message white-d pr3 lh-copy" style={{ flexGrow: 1 }}>
-           {this.renderContent()}
-          </div>
-        </div>
-      );
-    }
+      </div>
+    );
   }
 }

@@ -138,9 +138,14 @@ export default class GraphPostApp extends React.Component {
             let resource =
               `${props.match.params.ship}/${props.match.params.name}`;
             const graph = state.graphs[resource] || new Map();
-            const node = graph.get(parseInt(props.match.params.nodeId, 10));
-            console.log(graph);
-            console.log(node);
+            let index = props.match.params.nodeId
+              .split('-').map((ind) => {
+                return parseInt(ind, 10);
+              });
+            let node = null;
+            if (index.length > 0) {
+              node = graph.get(index[0]) || null;
+            }
 
             return (
               <Skeleton
@@ -157,6 +162,7 @@ export default class GraphPostApp extends React.Component {
                   subscription={this.subscription}
                   node={node}
                   sidebarShown={state.sidebarShown}
+                  parentIndex={'/' + props.match.params.nodeId.split('-').join('/')}
                   {...props}
                 />
               </Skeleton>

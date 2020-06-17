@@ -13,6 +13,8 @@ export class NodeTreeScreen extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {};
+
     console.log(props);
 
     moment.updateLocale('en', {
@@ -28,18 +30,30 @@ export class NodeTreeScreen extends Component {
   }
 
   parentPost() {
+    const { props } = this;
     console.log(props);
+
+    const node = props.node;
+    if (!node) { return (<div></div>); }
+    
     return (
-      <div></div>
+      <div>
+        <Message
+          isParent={true}
+          key={node.index}
+          msg={node.post}
+        />
+      </div>
     );
   }
 
   postWindow() {
     const { props } = this;
 
-    //let graph = props.graph;
-    let graph = new Map();
+    let graph = !!props.node && 'children' in props.node ?
+      props.node.children : new Map();
     let messages = Array.from(graph).reverse();
+    console.log(messages);
 
     const messageElements = messages.map((msg, i) => {
       let index = msg[0];
@@ -61,6 +75,22 @@ export class NodeTreeScreen extends Component {
         style={{ height: '100%', resize: 'vertical' }}
       >
         {messageElements}
+      </div>
+    );
+  }
+
+  replyModal() {
+    const { props, state } = this;
+
+    return (
+      <div>
+        <PostInput
+          api={props.api}
+          resource={props.resource}
+          owner={deSig(props.match.params.ship)}
+          placeholder="Message..."
+          parentIndex={props.parentIndex}
+        />
       </div>
     );
   }
@@ -102,13 +132,8 @@ export class NodeTreeScreen extends Component {
             api={props.api}
           />
         </div>
-        <PostInput
-          api={props.api}
-          resource={props.resource}
-          owner={deSig(props.match.params.ship)}
-          placeholder="Message..."
-        />
         {this.parentPost()}
+        {this.replyModal()}
         {this.postWindow()}
       </div>
     );

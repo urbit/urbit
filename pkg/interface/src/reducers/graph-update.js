@@ -65,6 +65,7 @@ export default class GraphReducer {
     //  is graph
     let converted = new OrderedMap();
     for (let i in node.children) {
+      console.log(i);
       let item = node.children[i];
       let index = item[0].split('/').slice(1).map((ind) => {
         return parseInt(ind, 10);
@@ -72,8 +73,10 @@ export default class GraphReducer {
 
       if (index.length === 0) { break; }
       
-      let node = this._processNode(item[1]);
-      converted.set(index[index.length - 1], node);
+      converted.set(
+        index[index.length - 1],
+        this._processNode(item[1])
+      );
     }
     node.children = converted;
     return node;
@@ -107,6 +110,9 @@ export default class GraphReducer {
         });
 
         if (index.length === 0) { return; }
+
+        //  TODO: support adding nodes with children
+        item[1].children = new Map();
         
         state.graphs[resource] = this._addNode(
           state.graphs[resource],

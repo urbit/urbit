@@ -147,7 +147,7 @@ export class PostInput extends Component {
             output: null
           }
         }
-      ]);
+      ], props.parentIndex);
 
       props.api.addPost(props.resource.ship, props.resource.name, post);
       this.editor.setValue('');
@@ -155,7 +155,7 @@ export class PostInput extends Component {
     }
 
     let message = this.getLetterType(editorMessage);
-    let post = props.api.createPost([message]);
+    let post = props.api.createPost([message], props.parentIndex);
     props.api.addPost(props.resource.ship, props.resource.name, post);
 
     // perf:
