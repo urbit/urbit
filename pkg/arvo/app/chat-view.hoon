@@ -54,7 +54,7 @@
   $%  [%launch-action [@tas path @t]]
       [%chat-action action:store]
       [%group-action group-action]
-      [%chat-push-hook-action action:pull-hook]
+      [%chat-push-hook-action action:push-hook]
       [%chat-pull-hook-action action:pull-hook]
       [%permission-hook-action permission-hook-action]
       [%permission-group-hook-action permission-group-hook-action]

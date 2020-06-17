@@ -1,4 +1,4 @@
-/-  *invite-store, hook=chat-pull-hook
+/-  *invite-store, pull=chat-pull-hook, push=chat-push-hook
 /+  default-agent, verb, dbug, store=chat-store, *userspace
 |%
 +$  card  card:agent:gall
@@ -43,7 +43,7 @@
   ?.  ?=(%chat-pull-hook-action mark)
     (on-poke:def mark vase)
   ?>  (team:title our.bowl src.bowl)
-  =/  act  !<(action:hook vase)
+  =/  act  !<(action:pull vase)
   ?-  -.act
       %add
     =/  =rid  (path-to-rid path.act)
@@ -146,7 +146,18 @@
     ?.  ?=([%backlog @ @ @ *] wire)  [~ this]
     =/  chat=path  (oust [(dec (lent t.wire)) 1] `(list @ta)`t.wire)
     :_  this
+    ::  If we happen to be a proxy, our push-hook should stop pretending
+    ::  to broadcast changes it won't get, so its subscribers can know
+    ::  something is wrong.
     %.  :~  :*  %pass
+                /
+                %agent
+                [our.bowl %chat-push-hook]
+                %poke
+                %chat-push-hook-action
+                !>([%remove chat])
+            ==
+            :*  %pass
                 /
                 %agent
                 [our.bowl %chat-view]
@@ -163,8 +174,9 @@
       %fact
     |^
     ?+  p.cage.sign  (on-agent:def wire sign)
-        %chat-update    (fact-chat-update !<(update:store q.cage.sign))
+        %chat-update  (fact-chat-update !<(update:store q.cage.sign))
         %invite-update  (fact-invite-update !<(invite-update q.cage.sign))
+        %chat-push-hook-update  (fact-push-update !<(update:push q.cage.sign))
     ==
     ::
     ++  fact-chat-update
@@ -243,6 +255,17 @@
                 !>([%join ship app-path ask-history])
         ==  ==
       ==
+      ::
+      ++  fact-push-update
+        |=  fact=update:push
+        ^-  (quip card _this)
+        =/  =rid  (path-to-rid path.fact)
+        ?.  (~(has by tracking) rid)  [~ this]
+        ~&  [%chat-redirect rid %from (~(get by tracking) rid) %to proxy.fact]
+        =.  tracking  (~(put by tracking) rid proxy.fact)
+        ::  Now when the kick comes along, we'll instead sub to the
+        ::  proxy.
+        [~ this]
     --
   ==
 ::

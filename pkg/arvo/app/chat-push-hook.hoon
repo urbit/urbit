@@ -6,7 +6,7 @@
   $%  [%0 state-0]
   ==
 +$  state-0
-  $:  sharing=(set rid)
+  $:  providers=(jug rid ship)
       allow-history=(map rid ?)
   ==
 --
@@ -31,6 +31,7 @@
 ++  on-save  !>(state)
 ++  on-load
   |=  =vase
+  ?:  !|  [~ this]
   =/  old  !<(versioned-state vase)
   ?-  -.old
     %0  [~ this(state old)]
@@ -53,7 +54,10 @@
     ^-  (quip card _state)
     ?>  ?=(%message -.act)
     :_  state
-    ?.  (~(has in sharing) (path-to-rid path.act))  ~
+    =/  =rid  (path-to-rid path.act)
+    ?.  (~(has by providers) rid)  ~
+    ::  If this is the push-hook of a proxy, prohibit writing
+    ?>  =(our.bowl ship.rid)
     ?.  (is-permitted bowl src.bowl path.act)  ~
     =*  letter  letter.envelope.act
     =?  letter
@@ -78,19 +82,24 @@
       =/  =rid  (path-to-rid path.act)
       =/  chat-path  [%mailbox path.act]
       =/  chat-wire  [%store path.act]
-      ?:  (~(has in sharing) rid)  [~ state]
-      =:  sharing  (~(put in sharing) rid)
+      ?:  (~(has by providers) rid)  [~ state]
+      =:  providers  (~(put ju providers) rid our.bowl)
           allow-history  (~(put by allow-history) rid allow-history.act)
       ==
       :_  state
       [%pass chat-wire %agent [our.bowl %chat-store] %watch chat-path]~
     ::
+        %set-proxies
+      =/  =rid  (path-to-rid path.act)
+      ?>  (~(has by providers) rid)
+      ?>  (~(all in proxies.act) |=(=ship (is-permitted bowl ship path.act)))
+      =.  providers  (~(put by providers) rid (~(put in proxies.act) our.bowl))
+      [~ state]
+    ::
         %remove
       =/  =rid  (path-to-rid path.act)
-      ?.  (~(has in sharing) rid)
-        ~&  [dap.bowl %already-not-sharing rid]
-        [~ state]
-      =.  sharing  (~(del in sharing) rid)
+      ?.  (~(has by providers) rid)  [~ state]
+      =.  providers  (~(del by providers) rid)
       =/  backlog-paths=(list path)
         %+  murn  ~(tap by sup.bowl)
         |=  [duct [@p =path]]
@@ -116,6 +125,23 @@
       [%mailbox *]  [(mailbox t.path) this]
   ==
   ::
+  ++  provider-for
+    |=  [=ship =rid]
+    ^-  ^ship
+    =/  candidates  ~(tap in (~(got by providers) rid))
+    =/  idx  (mod ship (lent `(list @p)`candidates))
+    (snag idx candidates)
+  ::
+  ++  redirect
+    |=  provider=ship
+    ^-  (list card)
+    ::  XX can it be guaranteed that the fact be sent before the kick?
+    :~  [%give %fact ~ %chat-push-hook-update !>([%redirect provider path])]
+        ::  XX what happens if I use ~ here instead of [path]~, or don't
+        ::  specify the ship?
+        [%give %kick ~[path] `src.bowl]
+    ==
+  ::
   ++  backlog
     |=  =^path
     ^-  (list card)
@@ -124,8 +150,14 @@
     =/  backlog-latest=(unit @ud)  (rush (snag last `(list @ta)`path) dem:ag)
     =/  pas  `^^path`(oust [last 1] `(list @ta)`path)
     =/  =rid  (path-to-rid pas)
-    ?>  (~(has in sharing) rid)
+    ?>  (~(has by providers) rid)
     ?>  (is-permitted bowl src.bowl pas)
+    ::  Check whether we should proxy
+    ?.  ?|  (~(has ju providers) rid src.bowl)
+            =(our.bowl (provider-for src.bowl rid))
+        ==
+      (redirect (provider-for src.bowl rid))
+    ::  Provide directly
     =/  envs  envelopes:(need (chat-scry:store bowl pas))
     =/  length  (lent envs)
     =/  latest
@@ -144,8 +176,15 @@
   ++  mailbox
     |=  =^path
     ^-  (list card)
-    ?>  (~(has in sharing) (path-to-rid path))
+    =/  =rid  (path-to-rid path)
+    ?>  (~(has by providers) rid)
     ?>  (is-permitted bowl src.bowl path)
+    ::  Check whether we should proxy
+    ?.  ?|  (~(has ju providers) rid src.bowl)
+            =(our.bowl (provider-for src.bowl rid))
+        ==
+      (redirect (provider-for src.bowl rid))
+    ::  Provide directly
     =/  box  (chat-scry:store bowl path)
     ?~  box  !!
     [%give %fact ~ %chat-update !>([%create path])]~
@@ -173,7 +212,7 @@
   ++  kick-store
     |=  wire=(lest @ta)
     ~&  store-kick+wire
-    ?.  (~(has in sharing) (path-to-rid t.wire))  [~ this]
+    ?.  (~(has by providers) (path-to-rid t.wire))  [~ this]
     ~&  %chat-store-resubscribe
     =/  mailbox=(unit mailbox:store)
       (chat-scry:store bowl t.wire)
@@ -196,8 +235,8 @@
     ?+  -.update     [~ this]
         %delete
       =/  =rid  (path-to-rid path.update)
-      ?.  (~(has in sharing) rid)  [~ this]
-      =.  sharing  (~(del in sharing) rid)
+      ?.  (~(has by providers) rid)  [~ this]
+      =.  providers  (~(del by providers) rid)
       :_  this
       [%pass [%mailbox path.update] %agent [our.bowl %chat-store] %leave ~]~
     ::
@@ -227,7 +266,7 @@
         (~(app-paths-from-group metadata bowl) %chat path)
       |=  chat=^path
       ^-  (list card)
-      ?.  (~(has in sharing) (path-to-rid chat))  ~
+      ?.  (~(has by providers) (path-to-rid chat))  ~
       %-  zing
       %+  turn  ~(tap in who)
       |=  =ship
