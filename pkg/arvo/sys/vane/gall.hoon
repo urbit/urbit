@@ -1,4 +1,4 @@
-!:  ::  %gall, agent execution
+::  ::  %gall, agent execution
 !?  163
 ::
 ::::
@@ -107,12 +107,7 @@
 ::  |migrate: data structures for upgrades
 ::
 +|  %migrate
-::  $bolus: incoming move to a pupa, enqueued in a $chrysalis
 ::
-+$  bolus
-  $%  [%call =duct =task:able]
-      [%take =wire =duct sign=sign-arvo]
-  ==
 ::  $spore: structures for update, produced by +stay
 ::
 +$  spore
@@ -243,622 +238,68 @@
       +$  all-state  $%(state-0 state-1 state-2 state-3 state-4 state-5 ^spore)
       ::
       ++  state-5-to-spore-6
-        |=  =state-5
+        |=  s=state-5
         ^-  ^spore
-        %=    state-5
+        %=    s
             -  %6
-            running.agents-5
-          %-  ~(run by running.agents-5.state-5)
-          |=(=yoke-3 `egg`+:yoke-3(agent on-save:agent.yoke-3))
+            outstanding  ~  ::  TODO: do we need to process these somehow?
+            running
+          (~(run by running.s) |=(y=yoke-0 +:y(agent on-save:agent.y)))
         ==
       ::
-      ++  state-5
-        $:  %5
-            agents-5=agents-3
-        ==
+      ++  state-4-to-5  |=(s=state-4 `state-5`s(- %5, outstanding ~))
+      ++  state-3-to-4  |=(s=state-3 `state-4`s(- %4, outstanding ~))
+      ++  state-2-to-3  |=(s=state-2 `state-3`s(- %3))
+      ++  state-1-to-2  |=(s=state-1 `state-2`s(- %2, +< +<.s, +> `+>.s))
+      ++  state-0-to-1  |=(s=state-0 `state-1`s(- %1))
       ::
-      ++  state-4-to-5
-        |=  =state-4
-        ^-  state-5
-        %=    state-4
-            -  %5
-            outstanding.agents-4  ~
-        ==
+      +$  state-5  [%5 agents-2]
+      +$  state-4  [%4 agents-2]
+      +$  state-3  [%3 agents-2]
+      +$  state-2  [%2 agents-2]
+      +$  state-1  [%1 agents-0]
+      +$  state-0  [%0 agents-0]
       ::
-      ++  state-4
-        $:  %4
-            agents-4=agents-3
-        ==
-      ::
-      ++  state-3-to-4
-        |=  =state-3
-        ^-  state-4
-        %=    state-3
-            -  %4
-            outstanding.agents-3  ~
-        ==
-      ::
-      ++  state-3
-        $:  %3
-            =agents-3
-        ==
-      ::
-      ++  agents-3
+      +$  agents-2
         $:  system-duct=duct
             outstanding=(map [wire duct] (qeu remote-request))
             contacts=(set ship)
-            running=(map term yoke-3)
+            running=(map term yoke-0)
             blocked=(map term (qeu blocked-move))
         ==
       ::
-      ++  yoke-3
-        $:  cache=worm
-            control-duct=duct
-            live=?
-            =stats
-            =watches
-            =agent
-            =beak
-            marks=(map duct mark)
-        ==
-      ::
-      ++  state-2-to-3
-        |=  =state-2
-        ^-  state-3
-        %=    state-2
-            -  %3
-            running.agents-2
-          %-  ~(run by running.agents-2.state-2)
-          |=  =yoke-2
-          ^-  yoke-3
-          %=  yoke-2
-            agent-2  (agent-2-to-3 agent-2.yoke-2)
-          ==
-        ==
-      ::
-      ++  agent-2-to-3
-        |=  =agent-2
-        ^-  agent
-        =>  |%
-            ++  cards-2-to-3
-              |=  cards=(list card:^agent-2)
-              ^-  (list card:agent)
-              %+  turn  cards
-              |=  =card:^agent-2
-              ^-  card:agent
-              ?.  ?=([%give ?(%fact %kick) *] card)  card
-              %=(card path.p (drop path.p.card))
-            --
-        |_  =bowl:gall
-        +*  this  .
-            pass  ~(. agent-2 bowl)
-        ++  on-init
-          =^  cards  agent-2  on-init:pass
-          [(cards-2-to-3 cards) this]
-        ::
-        ++  on-save
-          on-save:pass
-        ::
-        ++  on-load
-          |=  old-state=vase
-          =^  cards  agent-2  (on-load:pass old-state)
-          [(cards-2-to-3 cards) this]
-        ::
-        ++  on-poke
-          |=  [=mark =vase]
-          =^  cards  agent-2  (on-poke:pass mark vase)
-          [(cards-2-to-3 cards) this]
-        ::
-        ++  on-watch
-          |=  =path
-          =^  cards  agent-2  (on-watch:pass path)
-          [(cards-2-to-3 cards) this]
-        ::
-        ++  on-leave
-          |=  =path
-          =^  cards  agent-2  (on-leave:pass path)
-          [(cards-2-to-3 cards) this]
-        ::
-        ++  on-peek
-          |=  =path
-          (on-peek:pass path)
-        ::
-        ++  on-agent
-          |=  [=wire =sign:agent:gall]
-          =^  cards  agent-2  (on-agent:pass wire sign)
-          [(cards-2-to-3 cards) this]
-        ::
-        ++  on-arvo
-          |=  [=wire =sign-arvo]
-          =^  cards  agent-2  (on-arvo:pass wire sign-arvo)
-          [(cards-2-to-3 cards) this]
-        ::
-        ++  on-fail
-          |=  [=term =tang]
-          =^  cards  agent-2  (on-fail:pass term tang)
-          [(cards-2-to-3 cards) this]
-        --
-      ::
-      ++  state-2
-        $:  %2
-            =agents-2
-        ==
-      ::
-      ++  agents-2
-        $:  system-duct=duct
-            outstanding=(map [wire duct] (qeu remote-request))
-            contacts=(set ship)
-            running=(map term yoke-2)
-            blocked=(map term (qeu blocked-move))
-        ==
-      ::
-      ++  yoke-2
-        $:  cache=worm
-            control-duct=duct
-            live=?
-            =stats
-            =watches
-            =agent-2
-            =beak
-            marks=(map duct mark)
-        ==
-      ::
-      ++  agent-2
-        =<  form
-        |%
-        +$  step  (quip card form)
-        +$  card  (wind note gift)
-        +$  note  note:agent
-        +$  task  task:agent
-        +$  sign  sign:agent
-        +$  gift
-          $%  [%fact path=(unit path) =cage]
-              [%kick path=(unit path) ship=(unit ship)]
-              [%watch-ack p=(unit tang)]
-              [%poke-ack p=(unit tang)]
-          ==
-        ++  form
-          $_  ^|
-          |_  bowl
-          ++  on-init
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-save
-            *vase
-          ::
-          ++  on-load
-            |~  old-state=vase
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-poke
-            |~  [mark vase]
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-watch
-            |~  path
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-leave
-            |~  path
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-peek
-            |~  path
-            *(unit (unit cage))
-          ::
-          ++  on-agent
-            |~  [wire sign]
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-arvo
-            |~  [wire sign-arvo]
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-fail
-            |~  [term tang]
-            *(quip card _^|(..on-init))
-          --
-        --
-      ::
-      ++  state-1-to-2
-        |=  =state-1
-        ^-  state-2
-        %=    state-1
-            -           %2
-            +.agents-1  [~ +.agents-1.state-1]
-        ==
-      ::
-      ++  state-1
-        $:  %1
-            =agents-1
-        ==
-      ::
-      ++  agents-1
-        $:  system-duct=duct
-            contacts=(set ship)
-            running=(map term yoke-2)
-            blocked=(map term (qeu blocked-move))
-        ==
-      ::
-      ++  state-0-to-1
-        |=  =state-0
-        ^-  state-1
-        %=    state-0
-            -  %1
-            running.agents-0
-          %-  ~(run by running.agents-0.state-0)
-          |=  =yoke-0
-          ^-  yoke-2
-          %=  yoke-0
-            agent-0  (agent-0-to-1 agent-0.yoke-0)
-          ==
-        ==
-      ::
-      ++  agent-0-to-1
-        |=  =agent-0
-        ^-  agent-2
-        |_  =bowl:gall
-        +*  this  .
-            pass  ~(. agent-0 bowl)
-        ++  on-init
-          =^  cards  agent-0  on-init:pass
-          [cards this]
-        ::
-        ++  on-save
-          on-save:pass
-        ::
-        ++  on-load
-          |=  old-state=vase
-          =^  cards  agent-0  (on-load:pass old-state)
-          [cards this]
-        ::
-        ++  on-poke
-          |=  [=mark =vase]
-          =^  cards  agent-0  (on-poke:pass mark vase)
-          [cards this]
-        ::
-        ++  on-watch
-          |=  =path
-          =^  cards  agent-0  (on-watch:pass path)
-          [cards this]
-        ::
-        ++  on-leave
-          |=  =path
-          =^  cards  agent-0  (on-leave:pass path)
-          [cards this]
-        ::
-        ++  on-peek
-          |=  =path
-          (on-peek:pass path)
-        ::
-        ++  on-agent
-          |=  [=wire =sign:agent:gall]
-          =^  cards  agent-0  (on-agent:pass wire sign)
-          [cards this]
-        ::
-        ++  on-arvo
-          |=  [=wire =sign-arvo]
-          ?<  ?=([%d %pack *] sign-arvo)
-          =^  cards  agent-0  (on-arvo:pass wire `sign-arvo-0`sign-arvo)
-          [cards this]
-        ::
-        ++  on-fail
-          |=  [=term =tang]
-          =^  cards  agent-0  (on-fail:pass term tang)
-          [cards this]
-        --
-      ::
-      ++  state-0
-        $:  %0
-            =agents-0
-        ==
-      ::
-      ++  agents-0
+      +$  agents-0
         $:  system-duct=duct
             contacts=(set ship)
             running=(map term yoke-0)
             blocked=(map term (qeu blocked-move))
         ==
       ::
-      ++  yoke-0
+      +$  yoke-0
         $:  cache=worm
             control-duct=duct
             live=?
             =stats
             =watches
-            =agent-0
+            agent=any-agent
             =beak
             marks=(map duct mark)
         ==
       ::
-      ++  agent-0
-        =<  form
-        |%
-        +$  step  (quip card form)
-        +$  card  (wind note gift)
-        +$  note  note:agent
-        +$  task  task:agent
-        +$  gift  gift:agent-2
-        +$  sign  sign:agent
-        ++  form
-          $_  ^|
-          |_  bowl
-          ++  on-init
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-save
-            *vase
-          ::
-          ++  on-load
-            |~  old-state=vase
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-poke
-            |~  [mark vase]
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-watch
-            |~  path
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-leave
-            |~  path
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-peek
-            |~  path
-            *(unit (unit cage))
-          ::
-          ++  on-agent
-            |~  [wire sign]
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-arvo
-            |~  [wire sign-arvo-0]
-            *(quip card _^|(..on-init))
-          ::
-          ++  on-fail
-            |~  [term tang]
-            *(quip card _^|(..on-init))
-          --
-        --
-      ::
-      ++  sign-arvo-0
-        $%  {$a gift:able:ames}
-            $:  $b
-                $%  gift:able:behn
-                    $>(%wris gift:able:clay)
-                    $>(%writ gift:able:clay)
-                    $>(%mere gift:able:clay)
-                    $>(%unto gift:able:gall)
-                ==
-            ==
-            {$c gift:able:clay}
-            {$d $<(%pack gift:able:dill)}
-            {$f gift:ford}
-            [%e gift:able:eyre]
-            {$g gift:able:gall}
-            [%i gift:able:iris]
-            {$j gift:able:jael}
-        ==
-      ::
-      ++  ford
-        |%
-        +=  gift
-          $%  ::  %made: build result; response to %build +task
-              ::
-              $:  %made
-                  ::  date: formal date of the build
-                  ::
-                  date=@da
-                  ::  result: result of the build; either complete build, or error
-                  ::
-                  result=made-result
-          ==  ==
-        +=  made-result
-          $%  ::  %complete: contains the result of the completed build
-              ::
-              [%complete =build-result]
-              ::  %incomplete: couldn't finish build; contains error message
-              ::
-              [%incomplete =tang]
-          ==
-        +=  build-result
-          $%  ::  %error: the build produced an error whose description is :message
-              ::
-              [%error message=tang]
-              ::  %success: result of successful +build, tagged by +schematic sub-type
-              ::
-              $:  %success
-                  $^  [head=build-result tail=build-result]
-                  $%  [%$ =cage]
-                      [%alts =build-result]
-                      [%bake =cage]
-                      [%bunt =cage]
-                      [%call =vase]
-                      [%cast =cage]
-                      [%core =vase]
-                      [%diff =cage]
-                      [%hood =scaffold]
-                      [%join =cage]
-                      [%list results=(list build-result)]
-                      [%mash =cage]
-                      [%mute =cage]
-                      [%pact =cage]
-                      [%path =rail]
-                      [%plan =vase]
-                      [%reef =vase]
-                      [%ride =vase]
-                      [%scry =cage]
-                      [%slim [=type =nock]]
-                      [%slit =type]
-                      [%vale =cage]
-                      [%volt =cage]
-                      [%walk results=(list mark-action)]
-          ==  ==  ==
-        +=  scaffold
-          $:  ::  source-rail: the file this scaffold was parsed from
-              ::
-              source-rail=rail
-              ::  zuse-version: the kelvin version of the standard library
-              ::
-              zuse-version=@ud
-              ::  structures: files from %/sur which are included
-              ::
-              structures=(list cable)
-              ::  libraries: files from %/lib which are included
-              ::
-              libraries=(list cable)
-              ::  cranes: a list of resources to transform and include
-              ::
-              cranes=(list crane)
-              ::  sources: hoon sources, either parsed or on the filesystem
-              ::
-              sources=(list hoon)
-          ==
-        +=  mark-action  [type=?(%grow %grab) source=term target=term]
-        +=  rail  [=disc =spur]
-        +$  cable
-          $:  face=(unit term)
-              file-path=term
-          ==
-        +=  crane
-          $%  $:  ::  %fssg: `/~` hoon literal
-                  ::
-                  ::    `/~ <hoon>` produces a crane that evaluates arbitrary hoon.
-                  ::
-                  %fssg
-                  =hoon
-              ==
-              $:  ::  %fsbc: `/$` process query string
-                  ::
-                  ::    `/$` will call a gate with the query string supplied to this
-                  ::    build. If no query string, this errors.
-                  ::
-                  %fsbc
-                  =hoon
-              ==
-              $:  ::  %fsbr: `/|` first of many options that succeeds
-                  ::
-                  ::    `/|` takes a series of cranes and produces the first one
-                  ::    (left-to-right) that succeeds. If none succeed, it produces
-                  ::    stack traces from all of its arguments.
-                  ::
-                  %fsbr
-                  ::  choices: cranes to try
-                  ::
-                  choices=(list crane)
-              ==
-              $:  ::  %fsts: `/=` wrap a face around a crane
-                  ::
-                  ::    /= runs a crane (usually produced by another ford rune), takes
-                  ::    the result of that crane, and wraps a face around it.
-                  ::
-                  %fsts
-                  ::  face: face to apply
-                  ::
-                  face=term
-                  ::  crane: internal build step
-                  ::
-                  =crane
-              ==
-              $:  ::  %fsdt: `/.` null-terminated list
-                  ::
-                  ::    Produce a null-terminated list from a sequence of cranes,
-                  ::    terminated by a `==`.
-                  ::
-                  %fsdt
-                  ::  items: cranes to evaluate
-                  ::
-                  items=(list crane)
-              ==
-              $:  ::  %fscm: `/,` switch by path
-                  ::
-                  ::    `/,` is a switch statement, which picks a branch to evaluate
-                  ::    based on whether the current path matches the path in the
-                  ::    switch statement. Takes a sequence of pairs of (path, crane)
-                  ::    terminated by a `==`.
-                  ::
-                  %fscm
-                  ::  cases: produces evaluated crane of first +spur match
-                  ::
-                  cases=(list (pair spur crane))
-              ==
-              $:  ::  %fspm: `/&` pass through a series of marks
-                  ::
-                  ::    `/&` passes a crane through multiple marks, right-to-left.
-                  ::
-                  %fspm
-                  ::  marks: marks to apply to :crane, in reverse order
-                  ::
-                  marks=(list mark)
-                  =crane
-              ==
-              $:  ::  %fscb: `/_` run a crane on each file in the current directory
-                  ::
-                  ::    `/_` takes a crane as an argument. It produces a new crane
-                  ::    representing the result of mapping the supplied crane over the
-                  ::    list of files in the current directory. The keys in the
-                  ::    resulting map are the basenames of the files in the directory,
-                  ::    and each value is the result of running that crane on the
-                  ::    contents of the file.
-                  ::
-                  %fscb
-                  =crane
-              ==
-              $:  ::  %fssm: `/;` operate on
-                  ::
-                  ::    `/;` takes a hoon and a crane. The hoon should evaluate to a
-                  ::    gate, which is then called with the result of the crane as its
-                  ::    sample.
-                  ::
-                  %fssm
-                  =hoon
-                  =crane
-              ==
-              $:  ::  %fscl: `/:` evaluate at path
-                  ::
-                  ::    `/:` takes a path and a +crane, and evaluates the crane with
-                  ::    the current path set to the supplied path.
-                  ::
-                  %fscl
-                  ::  path: late bound path to be resolved relative to current beak
-                  ::
-                  ::    This becomes current path of :crane
-                  ::
-                  path=truss
-                  =crane
-              ==
-              $:  ::  %fskt: `/^` cast
-                  ::
-                  ::    `/^` takes a +mold and a +crane, and casts the result of the
-                  ::    crane to the mold.
-                  ::
-                  %fskt
-                  ::  mold: evaluates to a mold to be applied to :crane
-                  ::
-                  =spec
-                  =crane
-              ==
-              $:  ::  %fstr: `/*` run :crane on all files with current path as prefix
-                  ::
-                  %fstr
-                  =crane
-              ==
-              $:  ::  %fszp: `/!mark/` evaluate as hoon, then pass through mark
-                  ::
-                  %fszp
-                  =mark
-              ==
-              $:  ::  %fszy: `/mark/` passes current path through :mark
-                  ::
-                  %fszy
-                  =mark
-          ==  ==
-        +=  truss
-          $:  pre=(unit tyke)
-              pof=(unit [p=@ud q=tyke])
-          ==
+      ++  any-agent
+        $_
+        ^|
+        |_  bowl
+        ++  on-init   **
+        ++  on-save   *vase
+        ++  on-load   **
+        ++  on-poke   **
+        ++  on-watch  **
+        ++  on-leave  **
+        ++  on-peek   **
+        ++  on-agent  **
+        ++  on-arvo   **
+        ++  on-fail   **
         --
       --
     --
@@ -1143,16 +584,26 @@
     =/  tim  (slav da+dat)
     =/  =beak  [(slav %p her) desk da+tim]
     ?>  ?=([?(%b %c) %writ *] sign-arvo)
-    ?^  p.sign-arvo
-      =/  cag=cage  r.u.p.sign-arvo
-      ?.  =(%vase p.cag)
-        (mo-give %onto |+[leaf+"gall: invalid %writ {<p.cag>} for {<dap>}"]~)
-      =/  res  (mule |.(!<(agent !<(vase q.cag))))
-      ?:  ?=(%| -.res)
-        (mo-give %onto |+[leaf+"gall: {<dap>}" p.res])
-      =.  mo-core  (mo-receive-core dap beak p.res)
-      (mo-subscribe-to-agent-builds tim)
-    (mo-give %onto |+[leaf+"gall: failed to build agent {<dap>}"]~)
+    |^  ^+  mo-core
+    ?~  p.sign-arvo
+      (fail leaf+"gall: failed to build agent {<dap>}" ~)
+    =/  cag=cage  r.u.p.sign-arvo
+    ?.  =(%vase p.cag)
+      (fail leaf+"gall: bad %writ {<p.cag>} for {<dap>}" ~)
+    =/  res  (mule |.(!<(agent !<(vase q.cag))))
+    ?:  ?=(%| -.res)
+      (fail leaf+["gall: bad agent {<dap>}"] p.res)
+    =.  mo-core  (mo-receive-core dap beak p.res)
+    (mo-subscribe-to-agent-builds tim)
+    ::
+    ++  fail
+      |=  =tang
+      ^+  mo-core
+      =.  mo-core  (mo-give %onto |+tang)
+      =/  =case  [%da tim]
+      =/  =wire  /sys/cor/[dap]/[her]/[desk]/(scot case)
+      (mo-pass wire %c %warp p.beak desk ~ %next %a case /app/[dap]/hoon)
+    --
   ::  +mo-handle-sys-lyv: handle notice that agents have been rebuilt
   ::
   ++  mo-handle-sys-lyv

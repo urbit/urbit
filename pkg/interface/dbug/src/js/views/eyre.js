@@ -168,6 +168,12 @@ export class Eyre extends Component {
 
       <h4>Cookies</h4>
       <button onClick={this.loadAuthenticationState}>refresh</button>
+      <form method="post" action="/~/logout">
+        <button type="submit">logout</button>
+      </form>
+      <form method="post" action="/~/logout">
+        <button type="submit" name="all">logout all</button>
+      </form>
       {sessionItems}
     </>);
   }
