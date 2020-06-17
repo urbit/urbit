@@ -700,6 +700,18 @@ u3a_malloc(size_t len_i)
   return out_w;
 }
 
+/* u3a_malloc_ssl(): openssl-shaped malloc
+*/
+void*
+u3a_malloc_ssl(size_t len_i
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+               , const char* file, int line
+#endif
+               )
+{
+  return u3a_malloc(len_i);
+}
+
 /* u3a_cellblock(): allocate a block of cells on the hat.
 */
 static c3_o
@@ -883,6 +895,18 @@ u3a_realloc2(void* lag_v, size_t old_i, size_t new_i)
   return u3a_realloc(lag_v, new_i);
 }
 
+/* u3a_realloc_ssl(): openssl-shaped realloc.
+*/
+void*
+u3a_realloc_ssl(void* lag_v, size_t len_i
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+                , const char* file, int line
+#endif
+                )
+{
+  return u3a_realloc(lag_v, len_i);
+}
+
 /* u3a_free(): free for aligned malloc.
 */
 void
@@ -903,6 +927,18 @@ u3a_free(void* tox_v)
 */
 void
 u3a_free2(void* tox_v, size_t siz_i)
+{
+  return u3a_free(tox_v);
+}
+
+/* u3a_free_ssl(): openssl-shaped free.
+*/
+void
+u3a_free_ssl(void* tox_v
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+             , const char* file, int line
+#endif
+             )
 {
   return u3a_free(tox_v);
 }

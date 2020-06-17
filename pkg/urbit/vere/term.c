@@ -19,7 +19,7 @@ static u3_utty* _term_main();
 static void     _term_read_cb(uv_stream_t*    tcp_u,
                               ssize_t         siz_i,
                               const uv_buf_t* buf_u);
-static c3_i     _term_tcsetattr(int, int, const struct termios *);
+static c3_i     _term_tcsetattr(c3_i, c3_i, const struct termios*);
 
 /* _write(): wraps write(), asserting length
 */
@@ -292,13 +292,21 @@ u3_term_io_exit(void)
 /*  _term_tcsetattr(): tcsetattr w/retry on EINTR.
 */
 static c3_i
-_term_tcsetattr(int fildes, int optional_actions,
-  const struct termios *termios_p)
+_term_tcsetattr(c3_i fil_i, c3_i act_i, const struct termios* tms_u)
 {
   c3_i ret_i = 0;
+  c3_w len_w = 0;
+
   do {
-    ret_i = tcsetattr(fildes, optional_actions, termios_p);
-  } while (-1 == ret_i && errno == EINTR);
+    //  abort pathological retry loop
+    //
+    if ( 100 == ++len_w ) {
+      fprintf(stderr, "term: tcsetattr loop\r\n");
+      return -1;
+    }
+    ret_i = tcsetattr(fil_i, act_i, tms_u);
+  } while ( (-1 == ret_i) && (EINTR == errno) );
+
   return ret_i;
 }
 

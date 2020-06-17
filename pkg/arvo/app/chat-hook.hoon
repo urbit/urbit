@@ -382,6 +382,7 @@
     :*  [%give %kick ~[[%mailbox path.act]] ~]
         [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
         (pull-wire u.ship [%mailbox path.act])
+        (pull-wire u.ship [%store path.act])
         (pull-backlog-subscriptions u.ship path.act)
     ==
   ==
