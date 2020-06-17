@@ -162,9 +162,15 @@ u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u)
   if ( egg_u->pre_u ) {
     egg_u->pre_u->nex_u = egg_u->nex_u;
   }
+  else {
+    egg_u->car_u->ent_u = egg_u->nex_u;
+  }
 
   if ( egg_u->nex_u ) {
     egg_u->nex_u->pre_u = egg_u->pre_u;
+  }
+  else {
+    egg_u->car_u->ext_u = egg_u->pre_u;
   }
 
   egg_u->car_u->dep_w--;
