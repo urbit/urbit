@@ -27,7 +27,7 @@
 =|  =state
 |_  =bowl:gall
 +*  this  .
-    def   ~(. (default-agent this %|) bol)
+    def   ~(. (default-agent this %|) bowl)
     drum-core  (drum bowl drum.state)
     helm-core  (helm bowl helm.state)
     kiln-core  (kiln bowl kiln.state)
@@ -37,6 +37,7 @@
   ^-  step:agent:gall
   =^  d  drum.state  on-init:drum-core
   [d this]
+::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-save   !>(state)
@@ -52,11 +53,11 @@
           =-(?>(?=(%kiln -<) ->) (~(got by lac.old) %kiln))
       ==
     ==
-  =/  ver  -:*state
+  =/  ver  -.state
   =^  d  drum.state  (on-load:drum-core ver drum.tup)
   =^  h  helm.state  (on-load:helm-core ver helm.tup)
   =^  k  kiln.state  (on-load:kiln-core ver kiln.tup)
-  [(weld d h k) this]
+  [:(weld d h k) this]
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -74,9 +75,9 @@
     %hood-sync       poke-kiln(mark %kiln-sync)
     %write-sec-atom  poke-helm(mark %helm-write-sec-atom)
   ==
-  ++  poke-drum  =^(c drum.state (poke:drum-core mark vase) [c this]))
-  ++  poke-helm  =^(c helm.state (poke:helm-core mark vase) [c this]))
-  ++  poke-kiln  =^(c kiln.state (poke:kiln-core mark vase) [c this]))
+  ++  poke-drum  =^(c drum.state (poke:drum-core mark vase) [c this])
+  ++  poke-helm  =^(c helm.state (poke:helm-core mark vase) [c this])
+  ++  poke-kiln  =^(c kiln.state (poke:kiln-core mark vase) [c this])
   --
 ::
 ++  on-watch
@@ -90,17 +91,17 @@
   |=  [=wire =sign:agent:gall]
   ^-  step:agent:gall
   ?+  wire  ~|([%hood-bad-wire wire] !!)
-    [%drum *]  =^(c drum.state (take-agent:drum-core +<) [c this]))
-    [%helm *]  =^(c helm.state (take-agent:helm-core +<) [c this]))
-    [%kiln *]  =^(c kiln.state (take-agent:kiln-core +<) [c this]))
+    [%drum *]  =^(c drum.state (take-agent:drum-core +<) [c this])
+    [%helm *]  =^(c helm.state (take-agent:helm-core +<) [c this])
+    [%kiln *]  =^(c kiln.state (take-agent:kiln-core +<) [c this])
   ==
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  step:agent:gall
   ?+  wire  ~|([%hood-bad-wire wire] !!)
-    [%drum *]  =^(c drum.state (take-arvo:drum-core +<) [c this]))
-    [%helm *]  =^(c helm.state (take-arvo:helm-core +<) [c this]))
-    [%kiln *]  =^(c kiln.state (take-arvo:kiln-core +<) [c this]))
+    [%drum *]  =^(c drum.state (take-arvo:drum-core +<) [c this])
+    [%helm *]  =^(c helm.state (take-arvo:helm-core +<) [c this])
+    [%kiln *]  =^(c kiln.state (take-arvo:kiln-core +<) [c this])
   ==
 --

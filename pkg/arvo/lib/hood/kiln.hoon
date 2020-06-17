@@ -57,6 +57,8 @@
 |=  [bowl:gall state]
 ?>  =(src our)
 |_  moz=(list card:agent:gall)
++$  state      ^state      ::  proxy
++$  any-state  ^any-state  ::  proxy
 ++  abet                                                ::  resolve
   [(flop moz) `state`+<+.$]
 ::
@@ -75,7 +77,7 @@
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
 ::
 ++  on-load
-  |=  old=any-state
+  |=  [hood-version=?(%7) old=any-state]
   =<  abet
   =?  .  ?=(%0 -.old)
     =/  recognized-ota=(unit [syd=desk her=ship sud=desk])

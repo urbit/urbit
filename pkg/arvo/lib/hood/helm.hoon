@@ -1,14 +1,14 @@
 /+  pill
 =*  card  card:agent:gall
 |%
-+$  any-state  $%(state state-old)
++$  any-state  $%(state state-0)
 +$  state
   $:  %1
       mass-timer=[way=wire nex=@da tim=@dr]
   ==
-+$  state-old
-  $%  %0
-      say=*
++$  state-0  [%0 hoc=(map bone session-0)]
++$  session-0
+  $:  say=*
       mud=*
       mass-timer=[way=wire nex=@da tim=@dr]
   ==
@@ -16,13 +16,15 @@
 ++  state-0-to-1
   |=  s=state-0
   ^-  state
-  [%1 mass-timer.s]
+  [%1 mass-timer:(~(got by hoc.s) 0)]
 --
-|=  [=bowl:gall =state]
+|=  [=bowl:gall sat=state]
 =|  moz=(list card)
 |%
-+*  this  .
-++  abet  [(flop moz) state]
+++  this  .
++$  state      ^state      ::  proxy
++$  any-state  ^any-state  ::  proxy
+++  abet  [(flop moz) sat]
 ++  flog  |=(=flog:dill (emit %pass /di %arvo %d %flog flog))
 ++  emit  |=(card this(moz [+< moz]))
 ::  +emil: emit multiple cards
@@ -37,7 +39,7 @@
   =<  abet
   =?  old  ?=(%0 -.old)  (state-0-to-1 old)
   ?>  ?=(%1 -.old)
-  this(state old)
+  this(sat old)
 ::
 ++  poke-rekey                                        ::  rotate private keys
   |=  des=@t
@@ -49,7 +51,7 @@
   ?~  sed
     ~&  %invalid-private-key
     this
-  ?.  =(our who.u.sed)
+  ?.  =(our.bowl who.u.sed)
     ~&  [%wrong-private-key-ship who.u.sed]
     this
   (emit %pass / %arvo %j %rekey lyf.u.sed key.u.sed)
@@ -68,7 +70,7 @@
   =/  byk=path  (en-beam:format byk.bowl(r da+now.bowl) ~)
   =+  .^(=tube:clay cc+(welp byk /mime/atom))
   =/  =cage  atom+(tube !>([/ (as-octs:mimes:html dat)]))
-  (foal:space:userlib :(welp byk sec+p.hot /atom) cag)
+  (foal:space:userlib :(welp byk sec+p.hot /atom) cage)
 ::
 ++  poke-moon                                        ::  rotate moon keys
   |=  sed=(unit [=ship =udiff:point:able:jael])
@@ -83,13 +85,13 @@
 ::
 ++  poke-automass
   |=  recur=@dr
-  =.  mass-timer.state
-    [/helm/automass (add now recur) recur]
-  abet:(emit %pass way.mass-timer.state %arvo %b %wait nex.mass-timer.state)
+  =.  mass-timer.sat
+    [/helm/automass (add now.bowl recur) recur]
+  abet:(emit %pass way.mass-timer.sat %arvo %b %wait nex.mass-timer.sat)
 ::
 ++  poke-cancel-automass
   |=  ~
-  abet:(emit %pass way.mass-timer.state %arvo %b %rest nex.mass-timer.state)
+  abet:(emit %pass way.mass-timer.sat %arvo %b %rest nex.mass-timer.sat)
 ::
 ++  poke-pack
   |=  ~  =<  abet
@@ -101,11 +103,11 @@
     %-  (slog u.error)
     ~&  %helm-wake-automass-fail
     abet
-  =.  nex.mass-timer.state  (add now tim.mass-timer.state)
+  =.  nex.mass-timer.sat  (add now.bowl tim.mass-timer.sat)
   =<  abet
   %-  emil
   :~  [%pass /heft %arvo %d %flog %crud %hax-heft ~]
-      [%pass way.mass-timer.state %arvo %b %wait nex.mass-timer.state]
+      [%pass way.mass-timer.sat %arvo %b %wait nex.mass-timer.sat]
   ==
 ::
 ++  poke-send-hi
@@ -123,14 +125,14 @@
   ?:  =(%fail mes)
     ~&  %poke-hi-fail
     !!
-  abet:(flog %text "< {<src>}: {(trip mes)}")
+  abet:(flog %text "< {<src.bowl>}: {(trip mes)}")
 ::
 ++  poke-atom
   |=  ato/@
   =+  len=(scow %ud (met 3 ato))
   =+  gum=(scow %p (mug ato))
   =<  abet
-  (flog %text "< {<src>}: atom: {len} bytes, mug {gum}")
+  (flog %text "< {<src.bowl>}: atom: {len} bytes, mug {gum}")
 ::
 ++  coup-hi
   |=  {pax/path cop/(unit tang)}  =<  abet
@@ -142,7 +144,7 @@
   |:  $:{syd/desk all/(list term)}  =<  abet
   %-  emil
   %+  turn  all
-  =+  top=`path`/(scot %p our)/[syd]/(scot %da now)
+  =+  top=`path`/(scot %p our.bowl)/[syd]/(scot %da now.bowl)
   =/  van/(list {term ~})
     :-  zus=[%zuse ~]
     ~(tap by dir:.^(arch %cy (welp top /sys/vane)))
@@ -169,7 +171,7 @@
   =<  abet
   %-  emil
   ^-  (list card:agent:gall)
-  =/  top=path  /(scot %p our)/home/(scot %da now)/sys
+  =/  top=path  /(scot %p our.bowl)/home/(scot %da now.bowl)/sys
   =/  hun  .^(@t %cx (welp top /hoon/hoon))
   =/  arv  .^(@t %cx (welp top /arvo/hoon))
   ~!  *task:able:dill

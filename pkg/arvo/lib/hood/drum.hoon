@@ -63,7 +63,7 @@
   ::                                                    ::  ::
 |%
 ++  deft-apes                                           ::  default servers
-  |=  [our/ship lit/?]
+  |=  [our=ship lit=?]
   %-  ~(gas in *(set well:gall))
   ^-  (list well:gall)
   ::  boot all default apps off the home desk
@@ -130,11 +130,17 @@
 ::  TODO: remove .ost
 ::
 |=  [hid=bowl:gall state]
+=*  sat  +<+
 =/  ost  0
 =+  (~(gut by bin) ost *source)
 =*  dev  -
-|_  {moz/(list card:agent:gall) biz/(list dill-blit:dill)}
-++  on-init  se-abet:se-view:this(eel (deft-fish our.hid))
+=|  moz=(list card:agent:gall)
+=|  biz=(list dill-blit:dill)
+|%
+++  this  .
++$  state      ^state      ::  proxy
++$  any-state  ^any-state  ::  proxy
+++  on-init  se-abet:this(eel (deft-fish our.hid))
 ++  diff-sole-effect-phat                             ::  app event
   |=  {way/wire fec/sole-effect}
   =<  se-abet  =<  se-view
@@ -150,14 +156,15 @@
   (se-text "[{<src.hid>}, driving {<our.hid>}]")
 ::
 ++  poke-set-boot-apps                                ::
-  |=  lit/?
-  ^-  (quip card:agent:gall part)
+  |=  lit=?
+  ^-  (quip card:agent:gall ^state)
   ::  We do not run se-abet:se-view here because that starts the apps,
   ::  and some apps are not ready to start (eg Talk crashes because the
   ::  terminal has width 0).  It appears the first message to drum must
   ::  be the peer.
   ::
-  [~ +<+.^$(ray (deft-apes our.hid lit))]
+  =.  ray  (deft-apes our.hid lit)
+  [~ sat]
 ::
 ++  poke-dill-belt                                    ::  terminal event
   |=  bet/dill-belt:dill
@@ -234,7 +241,7 @@
   ::
   (se-drop & gyl)
 ::
-++  take                                              ::
+++  take-arvo
   |=  [=wire =sign-arvo]
   %+  take-onto  wire
   ?>  ?=(%onto +<.sign-arvo)
@@ -288,10 +295,9 @@
 ::::                                                  ::  ::
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
-  ^-  (quip card:agent:gall part)
-  =*  pith  +<+.$
+  ^-  (quip card:agent:gall state)
   =.  .  se-subze:se-adze:se-adit
-  :_  pith(bin (~(put by bin) ost dev))
+  :_  sat(bin (~(put by bin) ost dev))
   ^-  (list card:agent:gall)
   ?~  biz  (flop moz)
   :_  (flop moz)
