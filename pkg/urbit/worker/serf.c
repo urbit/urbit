@@ -1135,17 +1135,19 @@ u3_serf_init(u3_serf* sef_u)
     rip = u3nt(c3__ripe, ver, _serf_ripe(sef_u));
   }
 
+  //  XX move to u3_serf_post()
+  //
   //  measure/print static memory usage if < 1/2 of the loom is available
   //
-  {
-    c3_w pen_w = u3a_open(u3R);
+  // {
+  //   c3_w pen_w = u3a_open(u3R);
 
-    if ( !(pen_w > (1 << 28)) ) {
-      fprintf(stderr, "\r\n");
-      u3a_print_memory(stderr, "serf: contiguous free space", pen_w);
-      _serf_static_grab();
-    }
-  }
+  //   if ( !(pen_w > (1 << 28)) ) {
+  //     fprintf(stderr, "\r\n");
+  //     u3a_print_memory(stderr, "serf: contiguous free space", pen_w);
+  //     _serf_static_grab();
+  //   }
+  // }
 
   sef_u->pac_o = c3n;
   sef_u->rec_o = c3n;
