@@ -87,8 +87,8 @@ export class Message extends Component {
             className="o-80-d"
             src={letter.url}
             style={{
-              width: '50%',
-              maxWidth: '250px'
+              height: 'min(250px, 20vh)',
+              maxWidth: '80vw'
             }}
           ></img>
         );
