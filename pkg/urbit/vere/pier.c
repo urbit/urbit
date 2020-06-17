@@ -135,6 +135,7 @@ _pier_gift_kick(u3_work* wok_u)
 
     //  XX dispose properly
     //
+    u3z(gif_u->act);
     c3_free(gif_u);
   }
 }
