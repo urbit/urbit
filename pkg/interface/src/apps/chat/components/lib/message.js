@@ -154,7 +154,7 @@ export class Message extends Component {
       );
     } else {
         return (
-          <section>
+          <section className="chat-md-message">
             <MessageMarkdown
               source={letter.text}
             />
