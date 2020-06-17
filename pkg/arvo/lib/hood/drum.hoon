@@ -1,21 +1,10 @@
-::                                                      ::  ::
-::::  /hoon/drum/hood/lib                               ::  ::
-  ::                                                    ::  ::
-/?    310                                               ::  version
-/-    *sole
-/+    sole
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
-|%                                                      ::  ::
-+$  state  [%3 pith-2]
-+$  state-old                                           ::
-  $:  %drum                                             ::
-  $%  [%1 pith-1]                                       ::
-      [%2 pith-2]                                       ::
-  ==  ==                                                ::
-::                                                      ::
-++  pith-1                                              ::       pre-style
+/-  *sole
+/+  sole
+|%
++$  any-state  $%(state [%1 pith-1])
++$  state  [%2 pith-2]
+::
+++  pith-1
   %+  cork  pith-2                                      ::
   |:($:pith-2 +<(bin ((map bone source-1))))            ::
 ::                                                      ::
@@ -29,9 +18,7 @@
       fur/(map dude:gall (unit server))                 ::  servers
       bin/(map bone source)                             ::  terminals
   ==                                                    ::
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
+::                                                      ::
 ++  server                                              ::  running server
   $:  syd/desk                                          ::  app identity
       cas/case                                          ::  boot case
@@ -126,38 +113,28 @@
   ==
 ::
 ++  deft-fish                                           ::  default connects
-  |=  our/ship
+  |=  our=ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
   [[our %dojo] [our %chat-cli]~]
 ::
-++  initial-state
-  |=  our/ship
-  ^-  state
-  :*  %3
-      eel=(deft-fish our)
-      ray=~
-      fur=~
-      bin=~
-  ==
-::
 ++  en-gill                                           ::  gill to wire
-  |=  gyl/gill:gall
+  |=  gyl=gill:gall
   ^-  wire
   [%drum %phat (scot %p p.gyl) q.gyl ~]
 ::
 ++  de-gill                                           ::  gill from wire
-  |=  way/wire  ^-  gill:gall
-  ?>(?=({@ @ ~} way) [(slav %p i.way) i.t.way])
+  |=  way=wire  ^-  gill:gall
+  ?>(?=([@ @ ~] way) [(slav %p i.way) i.t.way])
 --
 ::  TODO: remove .ost
 ::
-|:  [bowl=*bowl:gall state=initial-state]
+|=  [hid=bowl:gall state]
 =/  ost  0
 =+  (~(gut by bin) ost *source)
 =*  dev  -
 |_  {moz/(list card:agent:gall) biz/(list dill-blit:dill)}
-+*  this  .
+++  on-init  se-abet:se-view:this(eel (deft-fish our.hid))
 ++  diff-sole-effect-phat                             ::  app event
   |=  {way/wire fec/sole-effect}
   =<  se-abet  =<  se-view
@@ -194,7 +171,7 @@
 ++  poke-start                                        ::  start app
   |=  wel/well:gall
   =<  se-abet  =<  se-view
-  (se-born wel)
+  (se-born & wel)
 ::
 ++  poke-link                                         ::  connect app
   |=  gyl/gill:gall
@@ -228,25 +205,21 @@
   ==
 ::
 ++  on-load
-  |=  ver=?(%1 %2 %3 %4)
+  |=  [hood-version=?(%7) old=any-state]
   =<  se-abet  =<  se-view
-  =?  .  (lte ver %3)
-    =.  ver  %4
-    =.  ..on-load
-      =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
-      =<  (se-born %home %goad)
-      =<  (se-born %home %metadata-store)
-      =<  (se-born %home %metadata-hook)
-      =<  (se-born %home %contact-store)
-      =<  (se-born %home %contact-hook)
-      =<  (se-born %home %contact-view)
-      =<  (se-born %home %link-store)
-      =<  (se-born %home %link-proxy-hook)
-      =<  (se-born %home %link-listen-hook)
-      =<  (se-born %home %link-view)
-      (se-born %home %s3-store)
-    .
-  ?>  ?=(%4 ver)
+  =.  ..on-load
+    =<  (se-born | %home %goad)
+    =<  (se-born | %home %metadata-store)
+    =<  (se-born | %home %metadata-hook)
+    =<  (se-born | %home %contact-store)
+    =<  (se-born | %home %contact-hook)
+    =<  (se-born | %home %contact-view)
+    =<  (se-born | %home %link-store)
+    =<  (se-born | %home %link-proxy-hook)
+    =<  (se-born | %home %link-listen-hook)
+    =<  (se-born | %home %link-view)
+    (se-born | %home %s3-store)
+  ::
   =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
   (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
 ::
@@ -466,9 +439,10 @@
   ta-abet:(ta-belt:(se-tame u.gul) bet)
 ::
 ++  se-born                                           ::  new server
-  |=  wel/well:gall
+  |=  [print-on-repeat=? wel=well:gall]
   ^+  +>
   ?:  (~(has in ray) wel)
+    ?.  print-on-repeat  +>
     (se-text "[already running {<p.wel>}/{<q.wel>}]")
   %=  +>
     ray  (~(put in ray) wel)

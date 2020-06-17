@@ -1,81 +1,64 @@
-::                                                      ::  ::
-::::  /hoon/kiln/hood/lib                               ::  ::
-  ::                                                    ::  ::
-/?  310                                                 ::  version
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
 =,  clay
 =,  space:userlib
 =,  format
-|%                                                      ::  ::
-+$  part  [%kiln %1 pith]                               ::  kiln state
-+$  part-old                                            ::
-  $:  %kiln                                             ::
-  $%  [%0 pith-0]                                       ::
-      [%1 pith-1]                                       ::
-  ==  ==                                                ::
-++  pith  pith-1                                        ::  ::
-++  pith-0                                              ::
-    $:  rem=(map desk per-desk)                         ::
-        syn=(map kiln-sync let=@ud)                     ::
-        autoload-on=?                                   ::
-        cur-hoon=@uvI                                   ::
-        cur-arvo=@uvI                                   ::
-        cur-zuse=@uvI                                   ::
-        cur-vanes=(map @tas @uvI)                       ::
-        commit-timer=[way=wire nex=@da tim=@dr mon=term]
-    ==                                                  ::
-::                                                      ::
-++  pith-1                                              ::
-    $:  rem=(map desk per-desk)                         ::
-        syn=(map kiln-sync let/@ud)                     ::
-        ota=(unit [=ship =desk =aeon])                  ::
-        commit-timer=[way=wire nex=@da tim=@dr mon=term]
-    ==                                                  ::
-::
-++  per-desk                                            ::  per-desk state
-    $:  auto/?                                          ::  escalate on failure
-        gem/germ                                        ::  strategy
-        her/@p                                          ::  from ship
-        sud/@tas                                        ::  from desk
-        cas/case                                        ::  at case
-    ==                                                  ::
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
-++  kiln-commit  term                                   ::
-++  kiln-mount                                          ::
-    $:  pax/path                                        ::
-        pot/term                                        ::
-    ==                                                  ::
-++  kiln-unmount  $@(term {knot path})                  ::
-++  kiln-sync                                           ::
-    $:  syd/desk                                        ::
-        her/ship                                        ::
-        sud/desk                                        ::
-    ==                                                  ::
-++  kiln-unsync                                         ::
-    $:  syd/desk                                        ::
-        her/ship                                        ::
-        sud/desk                                        ::
-    ==                                                  ::
-++  kiln-merge                                          ::
-    $:  syd/desk                                        ::
-        ali/ship                                        ::
-        sud/desk                                        ::
-        cas/case                                        ::
-        gim/?($auto germ)                               ::
-    ==                                                  ::
---                                                      ::
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
-|=  {bowl:gall part}                                    ::  main kiln work
+|%
++$  state  [%1 pith-1]
++$  any-state
+  $%  state
+      [%0 pith-0]
+  ==
++$  pith-1                                              ::
+  $:  rem=(map desk per-desk)                           ::
+      syn=(map kiln-sync let=@ud)                       ::
+      ota=(unit [=ship =desk =aeon])                    ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+  ==                                                    ::
++$  pith-0                                              ::
+  $:  rem=(map desk per-desk)                           ::
+      syn=(map kiln-sync let=@ud)                       ::
+      autoload-on=?                                     ::
+      cur-hoon=@uvI                                     ::
+      cur-arvo=@uvI                                     ::
+      cur-zuse=@uvI                                     ::
+      cur-vanes=(map @tas @uvI)                         ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+  ==
++$  per-desk                                            ::  per-desk state
+  $:  auto=?                                            ::  escalate on failure
+      gem=germ                                          ::  strategy
+      her=@p                                            ::  from ship
+      sud=@tas                                          ::  from desk
+      cas=case                                          ::  at case
+  ==
++$  kiln-commit  term                                   ::
++$  kiln-mount                                          ::
+  $:  pax=path                                          ::
+      pot=term                                          ::
+  ==
++$  kiln-unmount  $@(term [knot path])                  ::
++$  kiln-sync                                           ::
+  $:  syd=desk                                          ::
+      her=ship                                          ::
+      sud=desk                                          ::
+  ==
++$  kiln-unsync                                         ::
+  $:  syd=desk                                          ::
+      her=ship                                          ::
+      sud=desk                                          ::
+  ==
++$  kiln-merge                                          ::
+  $:  syd=desk                                          ::
+      ali=ship                                          ::
+      sud=desk                                          ::
+      cas=case                                          ::
+      gim=?($auto germ)                                 ::
+  ==
+--
+|=  [bowl:gall state]
 ?>  =(src our)
-|_  moz/(list card:agent:gall)
+|_  moz=(list card:agent:gall)
 ++  abet                                                ::  resolve
-  [(flop moz) `part`+<+.$]
+  [(flop moz) `state`+<+.$]
 ::
 ++  emit
   |=  card:agent:gall
@@ -92,12 +75,12 @@
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
 ::
 ++  on-load
-  |=  =part-old
+  |=  old=any-state
   =<  abet
-  =?  .  ?=(%0 +<.part-old)
+  =?  .  ?=(%0 -.old)
     =/  recognized-ota=(unit [syd=desk her=ship sud=desk])
       =/  syncs=(list [[syd=desk her=ship sud=desk] =aeon])
-        ~(tap by syn.part-old)
+        ~(tap by syn.old)
       |-  ^-  (unit [syd=desk her=ship sud=desk])
       ?~  syncs
         ~
@@ -106,22 +89,17 @@
       $(syncs t.syncs)
     ::
     =.  +<+.$.abet
-      %=  part-old
-          +<   %1
-          syn
-        ?~  recognized-ota
-          syn
-        (~(del by syn) [syd her sud]:u.recognized-ota)
-      ::
-          |4  [~ commit-timer.part-old]
-      ==
+      =-  old(- %1, |3 [ota=~ commit-timer.old], syn -)
+      ?~  recognized-ota
+        syn
+      (~(del by syn) [syd her sud]:u.recognized-ota)
     ::
     =?  ..abet  ?=(^ recognized-ota)
       (poke-internal:update `[her sud]:u.recognized-ota)
-    +(part-old +<+.$.abet)
+    +(old +<+.$.abet)
   ::
-  ?>  ?=(%1 +<.part-old)
-  =.  +<+.$.abet  part-old
+  ?>  ?=(%1 -.old)
+  =.  +<+.$.abet  old
   ..abet
 ::
 ++  poke-commit

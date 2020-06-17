@@ -1,16 +1,23 @@
-/-    sole
-/+    pill
+/+  pill
 =*  card  card:agent:gall
-::
 |%
++$  any-state  $%(state state-old)
 +$  state
-  $:  %3
-      say/sole-share:sole                               ::  console state
-      mud/(unit (sole-dialog:sole @ud))                 ::  console dialog
-      mass-timer/{way/wire nex/@da tim/@dr}
+  $:  %1
+      mass-timer=[way=wire nex=@da tim=@dr]
   ==
---
++$  state-old
+  $%  %0
+      say=*
+      mud=*
+      mass-timer=[way=wire nex=@da tim=@dr]
+  ==
 ::
+++  state-0-to-1
+  |=  s=state-0
+  ^-  state
+  [%1 mass-timer.s]
+--
 |=  [=bowl:gall =state]
 =|  moz=(list card)
 |%
@@ -24,6 +31,13 @@
   |=  caz=(list card)
   ^+  this
   ?~(caz this $(caz t.caz, this (emit i.caz)))
+::
+++  on-load
+  |=  [hood-version=?(%7) old=any-state]
+  =<  abet
+  =?  old  ?=(%0 -.old)  (state-0-to-1 old)
+  ?>  ?=(%1 -.old)
+  this(state old)
 ::
 ++  poke-rekey                                        ::  rotate private keys
   |=  des=@t
@@ -39,6 +53,22 @@
     ~&  [%wrong-private-key-ship who.u.sed]
     this
   (emit %pass / %arvo %j %rekey lyf.u.sed key.u.sed)
+::
+++  ames-secret
+  ^-  @t
+  =;  pax  (crip +:<.^(@p %j pax)>)
+  /(scot %p our.bowl)/code/(scot %da now.bowl)/(scot %p our.bowl)
+::
+++  poke-sec-atom
+  |=  [hot=host:eyre dat=@]
+  ?>  ?=(%& -.hot)
+  =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
+  =.  dat  (scot %uw (en:crub:crypto ames-secret dat))
+  =-  abet:(emit %pass /write %arvo %c %info -)
+  =/  byk=path  (en-beam:format byk.bowl(r da+now.bowl) ~)
+  =+  .^(=tube:clay cc+(welp byk /mime/atom))
+  =/  =cage  atom+(tube !>([/ (as-octs:mimes:html dat)]))
+  (foal:space:userlib :(welp byk sec+p.hot /atom) cag)
 ::
 ++  poke-moon                                        ::  rotate moon keys
   |=  sed=(unit [=ship =udiff:point:able:jael])
@@ -193,6 +223,7 @@
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
+    %helm-write-sec-atom   =;(f (f !<(_+<.f vase)) poke-sec-atom)
   ==
 ::
 ++  take-agent

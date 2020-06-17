@@ -1,7 +1,5 @@
-/-  *sole
-/+  sole, default-agent
+/+  default-agent
 /+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
-::
 |%
 +$  state
   $:  %7
@@ -9,39 +7,22 @@
       helm=state:helm
       kiln=state:kiln
   ==
++$  any-state
+  $%  state
+      [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
+  ==
++$  any-state-tuple
+  $:  drum=any-state:drum
+      helm=any-state:helm
+      kiln=any-state:kiln
+  ==
++$  fin-any-state
+  $%  [%drum any-state:drum]
+      [%helm any-state:helm]
+      [%kiln any-state:kiln]
+      [%write *]  ::  gets deleted
+  ==
 --
-::
-=>  |%
-    +$  any-state  $%(state hood-old)
-    ++  hood-old                                        ::  unified old-state
-      {?($1 $2 $3 $4 $5 $6) lac/(map @tas hood-part-old)}
-    ++  hood-1                                          ::  unified state
-      {$6 lac/(map @tas hood-part)}
-    ++  hood-good                                       ::  extract specific
-      =+  hed=$:hood-head
-      |@  ++  $
-            |:  paw=$:hood-part
-            ?-  hed
-              $drum  ?>(?=($drum -.paw) `part:hood-drum`paw)
-              $helm  ?>(?=($helm -.paw) `part:hood-helm`paw)
-              $kiln  ?>(?=($kiln -.paw) `part:hood-kiln`paw)
-              $write  ?>(?=($write -.paw) `part:hood-write`paw)
-            ==
-      --
-    ++  hood-part-old
-      $%  [%drum part-old:drum]
-          [%helm part-old:helm]
-          [%kiln part-old:kiln]
-          [%write part-old:write]
-      ==
-    ++  hood-part
-      $%  {$drum $2 pith-2:drum}
-          {$helm $0 pith:helm}
-          {$kiln $0 pith:kiln}
-          {$write $0 pith:write}
-      ==
-    --
-::
 ^-  agent:gall
 =|  =state
 |_  =bowl:gall
@@ -52,53 +33,50 @@
     kiln-core  (kiln bowl kiln.state)
 ::
 ++  on-fail   on-fail:def
-++  on-init   on-init:def
+++  on-init
+  ^-  step:agent:gall
+  =^  d  drum.state  on-init:drum-core
+  [d this]
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
-::
-++  on-save  !>(state)
+++  on-save   !>(state)
 ++  on-load
   |=  =old-state=vase
-  =/  old-state  !<(any-state old-state-vase)
-  ::  TODO rewrite
-  [~ this]
-::  =^  cards  lac
-::    =.  lac  lac.old-state
-::    ?-    -.old-state
-::        %1  ((wrap on-load):from-drum:(help hid) %1)
-::        %2  ((wrap on-load):from-drum:(help hid) %2)
-::        %3  ((wrap on-load):from-drum:(help hid) %3)
-::        %4  ((wrap on-load):from-drum:(help hid) %4)
-::        %5
-::      =/  start  ..$:(from-kiln)
-::      =/  old-kiln-part  (~(got by lac.old-state) %kiln)
-::      ?>  ?=(%kiln -.old-kiln-part)
-::      %-  ably
-::      (on-load:(start hid *part:hood-kiln) old-kiln-part)
-::    ::
-::        %6  `lac
-::    ==
-::  [cards ..on-init]
+  ^-  step:agent:gall
+  =+  !<(old=any-state old-state-vase)
+  =/  tup=any-state-tuple
+    ?+    -.old  +.old
+        ?(%1 %2 %3 %4 %5 %6)
+      :*  =-(?>(?=(%drum -<) ->) (~(got by lac.old) %drum))
+          =-(?>(?=(%helm -<) ->) (~(got by lac.old) %helm))
+          =-(?>(?=(%kiln -<) ->) (~(got by lac.old) %kiln))
+      ==
+    ==
+  =/  ver  -:*state
+  =^  d  drum.state  (on-load:drum-core ver drum.tup)
+  =^  h  helm.state  (on-load:helm-core ver helm.tup)
+  =^  k  kiln.state  (on-load:kiln-core ver kiln.tup)
+  [(weld d h k) this]
 ::
 ++  on-poke
-  |^
   |=  [=mark =vase]
   ^-  step:agent:gall
-  ::
+  |^
   =/  fin  (end 3 4 mark)
-  ?:  =(%drum fin)  (poke-drum mark vase)
-  ?:  =(%helm fin)  (poke-helm mark vase)
-  ?:  =(%kiln fin)  (poke-kiln mark vase)
+  ?:  =(%drum fin)  poke-drum
+  ?:  =(%helm fin)  poke-helm
+  ?:  =(%kiln fin)  poke-kiln
   ::
   ?+  mark  (on-poke:def mark vase)
-    %atom       (poke-helm %helm-atom vase)
-    %dill-belt  (poke-drum %drum-dill-belt vase)
-    %dill-blit  (poke-drum %drum-dill-blit vase)
-    %hood-sync  (poke-kiln %kiln-sync vase)
+    %atom            poke-helm(mark %helm-atom)
+    %dill-belt       poke-drum(mark %drum-dill-belt)
+    %dill-blit       poke-drum(mark %drum-dill-blit)
+    %hood-sync       poke-kiln(mark %kiln-sync)
+    %write-sec-atom  poke-helm(mark %helm-write-sec-atom)
   ==
-  ++  poke-drum  |=([mark vase] =^(c drum.state (poke:drum-core +<) [c this]))
-  ++  poke-helm  |=([mark vase] =^(c helm.state (poke:helm-core +<) [c this]))
-  ++  poke-kiln  |=([mark vase] =^(c kiln.state (poke:kiln-core +<) [c this]))
+  ++  poke-drum  =^(c drum.state (poke:drum-core mark vase) [c this]))
+  ++  poke-helm  =^(c helm.state (poke:helm-core mark vase) [c this]))
+  ++  poke-kiln  =^(c kiln.state (poke:kiln-core mark vase) [c this]))
   --
 ::
 ++  on-watch
@@ -118,7 +96,7 @@
   ==
 ::
 ++  on-arvo
-  |=  [=wire sign=sign-arvo]
+  |=  [=wire =sign-arvo]
   ^-  step:agent:gall
   ?+  wire  ~|([%hood-bad-wire wire] !!)
     [%drum *]  =^(c drum.state (take-arvo:drum-core +<) [c this]))
