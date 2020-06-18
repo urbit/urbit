@@ -409,17 +409,13 @@ _lord_work_done(u3_lord* god_u,
                 u3_noun    job,
                 u3_noun    act)
 {
-  u3_fact* tac_u = c3_malloc(sizeof(*tac_u));
-  tac_u->bug_l = god_u->mug_l;
-  tac_u->mug_l = god_u->mug_l = mug_l;
-  tac_u->eve_d = god_u->eve_d = eve_d;
-  tac_u->nex_u = 0;
-  tac_u->job   = job;
+  u3_fact* tac_u = u3_fact_init(eve_d, mug_l, job);
+  tac_u->bug_l   = god_u->mug_l; // XX
 
-  u3_gift* gif_u = c3_malloc(sizeof(*gif_u));
-  gif_u->eve_d = eve_d;
-  gif_u->nex_u = 0;
-  gif_u->act   = act;
+  god_u->mug_l = mug_l;
+  god_u->eve_d = eve_d;
+
+  u3_gift* gif_u = u3_gift_init(eve_d, act);
 
   _lord_work_spin(god_u);
 

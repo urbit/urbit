@@ -131,12 +131,9 @@ _pier_gift_kick(u3_work* wok_u)
 #ifdef VERBOSE_PIER
     fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", gif_u->eve_d);
 #endif
-    u3_auto_kick(wok_u->car_u, gif_u->act);
 
-    //  XX dispose properly
-    //
-    u3z(gif_u->act);
-    c3_free(gif_u);
+    u3_auto_kick(wok_u->car_u, gif_u->act);
+    u3_gift_free(gif_u);
   }
 }
 
@@ -644,8 +641,7 @@ _pier_on_lord_play_done(void* vod_p, u3_info fon_u, c3_l mug_l)
 
     while ( tac_u ) {
       nex_u = tac_u->nex_u;
-      u3z(tac_u->job);
-      c3_free(tac_u);
+      u3_fact_free(tac_u);
       tac_u = nex_u;
     }
   }
@@ -673,8 +669,7 @@ _pier_on_lord_play_bail(void* vod_p, u3_info fon_u,
     while ( tac_u->eve_d < eve_d ) {
       nex_u = tac_u->nex_u;
       las_l = tac_u->mug_l;
-      u3z(tac_u->job);
-      c3_free(tac_u);
+      u3_fact_free(tac_u);
       tac_u = nex_u;
     }
 

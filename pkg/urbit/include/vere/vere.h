@@ -683,6 +683,28 @@
         c3_d
         u3_time_gap_ms(u3_noun now, u3_noun wen);
 
+    /**  ward: common structure lifecycle
+    **/
+      /* u3_fact_init(): initialize completed event.
+      */
+        u3_fact*
+        u3_fact_init(c3_d eve_d, c3_l mug_l, u3_noun job);
+
+      /* u3_fact_free(): dispose completed event.
+      */
+        void
+        u3_fact_free(u3_fact *tac_u);
+
+      /* u3_gift_init(): initialize effect list.
+      */
+        u3_gift*
+        u3_gift_init(c3_d eve_d, u3_noun act);
+
+      /* u3_gift_free(): dispose effect list.
+      */
+        void
+        u3_gift_free(u3_gift* gif_u);
+
     /**  New vere
     **/
       /* u3_auto_init(): initialize all drivers.

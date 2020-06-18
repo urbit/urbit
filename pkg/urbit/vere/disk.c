@@ -99,11 +99,10 @@ _disk_commit_done(struct _cd_save* req_u)
 
   {
     u3_fact* tac_u = log_u->put_u.ext_u;
-    
+
     while ( tac_u && (tac_u->eve_d <= log_u->dun_d) ) {
       log_u->put_u.ext_u = tac_u->nex_u;
-      u3z(tac_u->job);
-      c3_free(tac_u);
+      u3_fact_free(tac_u);
       tac_u = log_u->put_u.ext_u;
     }
   }
@@ -257,21 +256,18 @@ u3_disk_plan(u3_disk* log_u, u3_fact* tac_u)
 void
 u3_disk_boot_plan(u3_disk* log_u, u3_noun job)
 {
-  u3_fact* tac_u = c3_malloc(sizeof(*tac_u));
-  tac_u->mug_l = 0; //u3r_mug(job); XX
-  tac_u->eve_d = ++log_u->sen_d;
-  tac_u->nex_u = 0;
-  tac_u->job   = job;
+  //  NB, boot mugs are 0
+  //
+  u3_fact* tac_u = u3_fact_init(++log_u->sen_d, 0, job);
+  tac_u->bug_l   = 0;  // XX
 
   if ( !log_u->put_u.ent_u ) {
     c3_assert( !log_u->put_u.ext_u );
     c3_assert( 1ULL == log_u->sen_d );
 
-    tac_u->bug_l = 0;  // XX
     log_u->put_u.ent_u = log_u->put_u.ext_u = tac_u;
   }
   else {
-    tac_u->bug_l = log_u->put_u.ent_u->mug_l;  // XX
     log_u->put_u.ent_u->nex_u = tac_u;
     log_u->put_u.ent_u = tac_u;
   }
@@ -313,26 +309,30 @@ _disk_read_one_cb(void* vod_p, c3_d eve_d, size_t val_i, void* val_p)
 {
   struct _cd_read* red_u = vod_p;
   u3_disk* log_u = red_u->log_u;
-  u3_fact* tac_u = c3_calloc(sizeof(*tac_u));
-  tac_u->eve_d = eve_d;
+  u3_fact* tac_u;
 
   {
     //  XX u3m_soft?
     //
     u3_noun dat = u3ke_cue(u3i_bytes(val_i, val_p));
     u3_noun mug, job;
+    c3_l  bug_l;
+
 
     if (  (c3n == u3r_cell(dat, &mug, &job))
-       || (c3n == u3r_safe_word(mug, &tac_u->bug_l)) ) // XX
+       || (c3n == u3r_safe_word(mug, &bug_l)) ) // XX
     {
       //  failure here triggers cleanup in _disk_read_start_cb()
       //
-      c3_free(tac_u);
       u3z(dat);
       return c3n;
     }
 
-    tac_u->job = u3k(job);
+    //  NB: mug is unknown due to log format
+    //
+    tac_u = u3_fact_init(eve_d, 0, u3k(job));
+    tac_u->bug_l = bug_l;
+
     u3z(dat);
   }
 
