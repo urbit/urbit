@@ -1,17 +1,9 @@
 /-  *sole
 /+  sole
 |%
-+$  any-state  $%(state [%1 pith-1])
++$  any-state  $%(state)
 +$  state  [%2 pith-2]
 ::
-++  pith-1
-  %+  cork  pith-2                                      ::
-  |:($:pith-2 +<(bin ((map bone source-1))))            ::
-::                                                      ::
-++  source-1                                            ::
-  %+  cork  source                                      ::
-  |:($:source +<(mir ((pair @ud (list @c)))))           ::  style-less mir
-::                                                      ::
 ++  pith-2                                              ::
   $:  eel/(set gill:gall)                               ::  connect to
       ray/(set well:gall)                               ::
@@ -212,9 +204,10 @@
   ==
 ::
 ++  on-load
-  |=  [hood-version=?(%7) old=any-state]
+  |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7) old=any-state]
   =<  se-abet  =<  se-view
-  =.  ..on-load
+  =.  sat  old
+  =?  ..on-load  (lte hood-version %4)
     =<  (se-born | %home %goad)
     =<  (se-born | %home %metadata-store)
     =<  (se-born | %home %metadata-hook)

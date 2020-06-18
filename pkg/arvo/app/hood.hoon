@@ -53,10 +53,9 @@
           =-(?>(?=(%kiln -<) ->) (~(got by lac.old) %kiln))
       ==
     ==
-  =/  ver  -.state
-  =^  d  drum.state  (on-load:drum-core ver drum.tup)
-  =^  h  helm.state  (on-load:helm-core ver helm.tup)
-  =^  k  kiln.state  (on-load:kiln-core ver kiln.tup)
+  =^  d  drum.state  (on-load:drum-core -.old drum.tup)
+  =^  h  helm.state  (on-load:helm-core -.old helm.tup)
+  =^  k  kiln.state  (on-load:kiln-core -.old kiln.tup)
   [:(weld d h k) this]
 ::
 ++  on-poke
@@ -95,13 +94,14 @@
     [%helm *]  =^(c helm.state (take-agent:helm-core +<) [c this])
     [%kiln *]  =^(c kiln.state (take-agent:kiln-core +<) [c this])
   ==
+::  TODO: symmetry between adding and stripping wire prefixes
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire syn=sign-arvo]
   ^-  step:agent:gall
   ?+  wire  ~|([%hood-bad-wire wire] !!)
-    [%drum *]  =^(c drum.state (take-arvo:drum-core +<) [c this])
-    [%helm *]  =^(c helm.state (take-arvo:helm-core +<) [c this])
-    [%kiln *]  =^(c kiln.state (take-arvo:kiln-core +<) [c this])
+    [%drum *]  =^(c drum.state (take-arvo:drum-core t.wire syn) [c this])
+    [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire syn) [c this])
+    [%kiln *]  =^(c kiln.state (take-arvo:kiln-core t.wire syn) [c this])
   ==
 --

@@ -150,6 +150,9 @@
       ^-  [(list move) _adult-gate]
       ~>  %slog.[0 leaf+"gall: molting"]
       ~<  %slog.[0 leaf+"gall: molted"]
+      ::  +molt should never notify its client about agent changes
+      ::
+      =-  [(skip -< |=(move ?=([* %give %onto *] +<))) ->]
       =/  adult  adult-core
       =.  state.adult
         [%6 system-duct outstanding contacts yokes=~ blocked]:spore
@@ -1277,7 +1280,7 @@
         (ap-install(agent.current-agent agent) `old-state)
       ?~  error
         ap-core
-      (ap-error %load-failed u.error)
+      (mean >%load-failed< u.error)
     ::  +ap-subscribe-as: apply %watch-as.
     ::
     ++  ap-subscribe-as
