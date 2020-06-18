@@ -17,7 +17,7 @@ import qualified GHC.Exts as GHC.Exts
 
 unlessRecur :: Jet -> Exp -> State Int Exp -> State Int Exp
 unlessRecur j fallback _ | jLoop j = pure fallback
-unlessRecur _ _ act                = act
+unlessRecur _ _ act      = act
 
 {-
   - Stack references become register references (nextReg + i)
@@ -99,7 +99,7 @@ staticJetOneArgLeft = \case
 
   nodeJut :: Node -> Maybe Jet
   nodeJut (Jut j) = pure j
-  nodeJut _         = Nothing
+  nodeJut _       = Nothing
 
 inlineTurn :: Exp -> Exp -> State Int Exp
 inlineTurn lis f = case staticJetOneArgLeft f of
@@ -176,6 +176,10 @@ inline j@Jet{..} =
     ZING x -> ZING <$> go x
     NTOT x -> NTOT <$> go x
 
+    ADD_ASSOC a b c d e ->
+      ADD_ASSOC <$> go a <*> go b <*> go c <*> go d <*> go e
+    FIND_ASSOC a b c -> FIND_ASSOC <$> go a <*> go b <*> go c
+
     INT_POSITIVE x -> INT_POSITIVE <$> go x
     INT_NEGATIVE x -> INT_NEGATIVE <$> go x
 
@@ -189,6 +193,9 @@ inline j@Jet{..} =
     INT_MUL x y -> INT_MUL <$> go x <*> go y
     INT_NEGATE x -> INT_NEGATE <$> go x
     INT_SUB x y -> INT_SUB <$> go x <*> go y
+
+    BOX x -> BOX <$> go x
+    UNBOX x -> UNBOX <$> go x
 
     SUB x y -> SUB <$> go x <*> go y
     ZER x -> ZER <$> go x
@@ -269,6 +276,9 @@ subst (refReg, regReg) = go
     ZING x -> ZING (go x)
     NTOT x -> NTOT (go x)
 
+    ADD_ASSOC a b c d e -> ADD_ASSOC (go a) (go b) (go c) (go d) (go e)
+    FIND_ASSOC a b c -> FIND_ASSOC (go a) (go b) (go c)
+
     INT_POSITIVE x -> INT_POSITIVE (go x)
     INT_NEGATIVE x -> INT_NEGATIVE (go x)
 
@@ -282,6 +292,9 @@ subst (refReg, regReg) = go
     INT_MUL x y -> INT_MUL (go x) (go y)
     INT_NEGATE x -> INT_NEGATE (go x)
     INT_SUB x y -> INT_SUB (go x) (go y)
+
+    BOX x -> BOX (go x)
+    UNBOX x -> UNBOX (go x)
 
     SUB x y -> SUB (go x) (go y)
     ZER x -> ZER (go x)

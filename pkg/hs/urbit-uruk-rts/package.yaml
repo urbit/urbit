@@ -25,18 +25,36 @@ executables:
       - "-with-rtsopts=-N"
       - -fwarn-incomplete-patterns
 
+  arvomoon:
+    main: Main.hs
+    source-dirs: app/arvomoon
+    dependencies:
+      - haskeline
+      - urbit-uruk
+      - urbit-uruk-rts
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -static
+      - -O2
+      - "-with-rtsopts=-N"
+      - -fwarn-incomplete-patterns
+
 dependencies:
   - base
   - bound
   - bytestring
   - classy-prelude
+  - cryptohash-sha256
   - containers
   - deriving-compat
   - directory
   - file-embed
   - flat
+  - filepath
   - ghc-prim
   - hashable
+  - hexstring
   - lens
   - megaparsec
   - mtl
@@ -46,7 +64,6 @@ dependencies:
   - pretty-show
   - primitive
   - raw-strings-qq
-  - safe
   - serialise
   - store
   - template-haskell

@@ -90,7 +90,6 @@ import Data.Time.Clock.POSIX (POSIXTime, getPOSIXTime)
 import GHC.Exts              (fromList, toList)
 import Numeric.Natural       (Natural)
 import Prelude               ((!!))
-import Safe                  (atMay)
 import Text.Show.Pretty      (pPrint, ppShow)
 
 import qualified Data.ByteString           as BS
@@ -190,12 +189,18 @@ instance Uruk Val where
   uGlobal "int-negate"   = Just $ mkNode 1 IntNegate
   uGlobal "int-sub"      = Just $ mkNode 2 IntSub
 
+  uGlobal "box"          = Just $ mkNode 1 MkBox
+  uGlobal "unbox"        = Just $ mkNode 2 Unbox
+
   uGlobal "lcon"         = Just $ mkNode 2 LCon      -- hack, actually 4
   uGlobal "lnil"         = Just $ mkNode 2 (Lis [])
   uGlobal "gulf"         = Just $ mkNode 2 Gulf
   uGlobal "snag"         = Just $ mkNode 2 Snag
   uGlobal "turn"         = Just $ mkNode 2 Turn
   uGlobal "weld"         = Just $ mkNode 2 Weld
+
+  uGlobal "add-assoc"    = Just $ mkNode 5 AddAssoc
+  uGlobal "find-assoc"   = Just $ mkNode 3 FindAssoc
 
   uGlobal _              = Nothing
 
@@ -355,6 +360,10 @@ reduce !no !xs = do
     IntNegate -> dIntNegate x
     IntSub -> dIntSub x y
 
+    MkBox     -> pure (VBox x)
+    Box x     -> pure x
+    Unbox     -> dUnbox x
+
     Inc       -> inc x
     Dec       -> dec x
     Fec       -> fec x
@@ -375,9 +384,12 @@ reduce !no !xs = do
     LCon      -> dLCon x y
     LNil      -> pure (VLis [])
     Gulf      -> dGulf x y
-    Snag      -> snag x y
+    Snag      -> dSnag x y
     Turn      -> dTurn x y
     Weld      -> dWeld x y
+
+    AddAssoc  -> dAddAssoc x y z (v 3) (v 4)
+    FindAssoc -> dFindAssoc x y z
 
     --  S₁fgx   = (fx)(gx)
     --  S₂fgxy  = (fxy)(gxy)
@@ -643,9 +655,39 @@ dCas (VRit x) l r = kVV r x
 dCas (VLis (x:xs)) l r = kVV l (VCon x (VLis xs))
 dCas (VLis [])     l r = kVV r VUni               -- technically could happen
 dCas (VFun (Fun 2 LNil mempty)) l r = kVV r VUni -- the main loop termination
+dCas (VFun (Fun 2 (Lis []) mempty)) l r = kVV r VUni -- the main loop termination
 dCas c        _ _ = do
   pPrint c
-  throwIO (TypeError "cas-not-sum")
+  throwIO (TypeError "cas-not-sum: ")
+
+dAddAssoc :: Val -> Val -> Val -> Val -> Val -> IO Val
+dAddAssoc lt eq (VLis ((VCon curKey curVal):xs)) k v =
+  kVVV eq curKey k >>= \case
+    VBol True -> pure $ VLis ((VCon k v):xs)
+    VBol False -> kVVV lt curKey k >>= \case
+      VBol True -> do
+        dAddAssoc lt eq (VLis xs) k v >>= \case
+          (VLis recursed) -> pure $ VLis ((VCon curKey curVal):recursed)
+          _ -> throw (TypeError ("impossible-in-dass-assoc"))
+      VBol False -> do
+        pure $ VLis ((VCon k v):(VCon curKey curVal):xs)
+      _ -> throwIO (TypeError ("add-assoc-lt-not-bool"))
+    _ -> throwIO (TypeError ("add-assoc-eq-not-bool"))
+dAddAssoc _ _ (VLis []) k v = pure $ VLis [VCon k v]
+dAddAssoc _ _ (VFun (Fun 2 LNil mempty)) k v = pure $ VLis [VCon k v]
+dAddAssoc _ _ (VFun (Fun 2 (Lis []) mempty)) k v = pure $ VLis [VCon k v]
+dAddAssoc _ _ _ _ _ = throwIO (TypeError ("dAddAssoc type error somewhere"))
+
+dFindAssoc :: Val -> Val -> Val -> IO Val
+dFindAssoc eq (VLis ((VCon curKey curVal):xs)) k =
+  kVVV eq curKey k >>= \case
+    VBol True -> pure $ VLef curVal
+    VBol False -> dFindAssoc eq (VLis xs) k
+    _ -> throw (TypeError "find-assoc-eq-not-bool")
+dFindAssoc _ (VLis []) _ = pure $ VRit VUni
+dFindAssoc _ (VFun (Fun 2 LNil mempty)) _ = pure $ VRit VUni
+dFindAssoc _ (VFun (Fun 2 (Lis []) mempty)) _ = pure $ VRit VUni
+dFindAssoc _ _ _ = throwIO (TypeError "dFindAssoc type error somewhere")
 
 seq :: Val -> Val -> IO Val
 {-# INLINE seq #-}
@@ -683,14 +725,14 @@ dGulf :: Val -> Val -> IO Val
 dGulf (VNat x) (VNat y) = pure $ VLis [VNat n | n <- [x..y]]
 dGulf _ _               = throwIO (TypeError "dGulf-not-nats")
 
-snag :: Val -> Val -> IO Val
-{-# INLINE snag #-}
-snag (VNat n) (VLis x) = case atMay x (fromIntegral n) of
-  Nothing -> throwIO (TypeError "snag-fail")  -- TODO: Should be "Crash"
-  Just y  -> pure y
-snag x y = do
-  print ("snag", x, y)
-  throwIO (TypeError "snag-bag-args")
+
+dSnag :: Val -> Val -> IO Val
+{-# INLINE dSnag #-}
+dSnag (VNat n) (VLis (x:xs)) | n > 0 = dSnag (VNat (n - 1)) (VLis xs)
+dSnag (VNat 0) (VLis (x:xs)) = pure x
+dSnag (VNat _) (VLis []) = throwIO (TypeError "snag-fail")  -- TODO: "Crash"
+dSnag idx lst            =
+  throwIO (TypeError ("snag-bag-args: " ++ (tshow idx) ++ ", " ++ (tshow lst)))
 
 dTurn :: Val -> Val -> IO Val
 {-# INLINE dTurn #-}
@@ -832,6 +874,14 @@ dIntSub :: Val -> Val -> IO Val
 dIntSub (VInt x) (VInt y) = pure $ VInt (x - y)
 dIntSub _        _        = throwIO $ TypeError "int-sub-not-int"
 
+dUnbox :: Val -> IO Val
+{-# INLINE dUnbox #-}
+dUnbox (VBox x) = pure x
+dUnbox (VFun (Fun 1 (Box x) _)) = pure $ x
+dUnbox x        = do
+  print x
+  throwIO $ TypeError "unbox-not-box"
+
 listToVal :: [Val] -> Val
 {-# INLINE listToVal #-}
 listToVal []    = VRit VUni
@@ -910,7 +960,10 @@ zer v        = throwIO (TypeError ("zer-not-nat: " <> tshow v))
 eql :: Val -> Val -> IO Val
 {-# INLINE eql #-}
 eql (VNat x) (VNat y) = pure (VBol (x == y))
-eql _        _        = throwIO (TypeError "eql-not-nat")
+eql x        y        = do
+  print x
+  print y
+  throwIO (TypeError "eql-not-nat")
 
 car :: Val -> IO Val
 {-# INLINE car #-}
@@ -1001,11 +1054,18 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     TRA  x          -> join (dTra <$> go x)
     MOD  x y        -> join (dMod <$> go x <*> go y)
     RAP  x y        -> join (dRap <$> go x <*> go y)
+    GULF x y        -> join (dGulf <$> go x <*> go y)
+    SNAG x y        -> join (dSnag <$> go x <*> go y)
     TURN x y        -> join (dTurn <$> go x <*> go y)
-    SNAG x y        -> join (snag <$> go x <*> go y)
+    WELD x y        -> join (dWeld <$> go x <*> go y)
     ZING x          -> join (dZing <$> go x)
     NTOT x          -> join (dNtot <$> go x)
-    WELD x y        -> join (dWeld <$> go x <*> go y)
+
+    -- TODO: It looks like we're going down the slow paths for these in reduce
+    -- even though we have definitions in OptToFast?
+    ADD_ASSOC x y z p q -> join (dAddAssoc <$> go x <*> go y <*> go z <*>
+                                 go p <*> go q)
+    FIND_ASSOC x y z -> join (dFindAssoc <$> go x <*> go y <*> go z)
 
     INT_POSITIVE x -> join (dIntPositive <$> go x)
     INT_NEGATIVE x -> join (dIntNegative <$> go x)
@@ -1020,6 +1080,9 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     INT_MUL x y -> join (dIntMul <$> go x <*> go y)
     INT_NEGATE x -> join (dIntNegate <$> go x)
     INT_SUB x y -> join (dIntSub <$> go x <*> go y)
+
+    BOX x           -> VBox <$> go x
+    UNBOX x         -> join (dUnbox <$> go x)
 
     SUB  x y        -> join (sub <$> go x <*> go y)
     ZER x           -> join (zer <$> go x)
@@ -1039,7 +1102,6 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     RIT x           -> VRit <$> go x
     CON x y         -> VCon <$> go x <*> go y
     LNIL            -> pure (VLis [])
-    GULF x y        -> join (dGulf <$> go x <*> go y)
     LCON x y        -> join (dLCon <$> go x <*> go y)
     IFF c t e       -> go c >>= \case
       VBol True  -> go t
@@ -1074,6 +1136,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
       VLis (x:xs) -> setReg i (VCon x (VLis xs)) >> go l
       VLis []     -> setReg i VUni >> go r
       VFun (Fun 2 LNil mempty) -> setReg i VUni >> go r
+      VFun (Fun 2 (Lis []) mempty) -> setReg i VUni >> go r
       _       -> throwIO (TypeError "cas-not-sum")
 
 -- Profiling -------------------------------------------------------------------
@@ -1143,6 +1206,7 @@ jetOkToTrace j = case jName j of
   VNat 2129405593459937866611                         -> False -- ssub-apos
   VNat 2551989185581783952010596030736099647343583587 -> False -- calculate-color-for
   VNat 29099049607852661                              -> False -- ur-snag
+  VNat 1734438515                                     -> False -- snag
   VNat 474181366643                                   -> False -- ssign
   VNat 482750590836                                   -> False -- to-fp
   VNat 7627107                                        -> False -- cat

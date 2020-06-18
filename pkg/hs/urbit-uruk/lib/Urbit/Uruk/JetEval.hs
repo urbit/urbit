@@ -123,6 +123,9 @@ pattern Weld = N (M (MS WELD) 2 [])
 
 pattern Rap  = N (M (MS RAP) 2 [])
 
+pattern AddAssoc = N (M (MS ADD_ASSOC) 5 [])
+pattern FindAssoc = N (M (MS FIND_ASSOC) 3 [])
+
 type Exp = Dash.ExpTree Ur
 type Val = Exp
 
@@ -181,6 +184,8 @@ instance Uruk Exp where
   uGlobal "turn" = Just Turn
   uGlobal "weld" = Just Weld
   uGlobal "rap"  = Just Rap
+  uGlobal "add-assoc" = Just AddAssoc
+  uGlobal "find-assoc" = Just FindAssoc
   uGlobal _     = Nothing
 
   uArity (N (E n))     = pure $ AriEnh n

@@ -172,12 +172,19 @@ data Node
   | IntNegate
   | IntSub
 
+  | MkBox
+  | Box Val
+  | Unbox
+
   | LCon
   | LNil
   | Gulf
   | Snag
   | Turn
   | Weld
+
+  | AddAssoc
+  | FindAssoc
  deriving (Eq, Ord, Generic, Hashable, NFData)
 
 instance Show Node where
@@ -247,12 +254,19 @@ instance Show Node where
     IntNegate   -> "INT_NEGATE"
     IntSub      -> "INT_SUB"
 
+    MkBox       -> "MKBOX"
+    Box v       -> "BOX(" <> show v <> ")"
+    Unbox       -> "UNBOX"
+
     LCon        -> "LCON"
     LNil        -> "LNIL"
     Gulf        -> "GULF"
     Snag        -> "SNAG"
     Turn        -> "TURN"
     Weld        -> "WELD"
+
+    AddAssoc    -> "ADD_ASSOC"
+    FindAssoc   -> "FIND_ASSOC"
 
 data Fun = Fun
   { fNeed :: !Int
@@ -276,6 +290,7 @@ data Val
   | VInt !Integer
   | VBol !Bool
   | VLis ![Val]
+  | VBox !Val
   | VFun !Fun
  deriving (Eq, Ord, Generic, Hashable)
 
@@ -289,6 +304,7 @@ instance NFData Val where
     VInt _   -> ()
     VBol _   -> ()
     VLis _   -> ()
+    VBox _   -> ()
     VFun _   -> ()
 
 instance Show Val where
@@ -302,6 +318,7 @@ instance Show Val where
     VBol True  -> "Y"
     VBol False -> "N"
     VLis vals  -> show vals
+    VBox x     -> "!" <> show x
     VFun f     -> show f
    where
     unrollCons acc (VCon x y) = unrollCons (x : acc) y
@@ -357,11 +374,15 @@ data Exp
   | TRA !Exp                      --  Print Log Message
   | MOD !Exp !Exp                 --  Atom Modulus
   | RAP !Exp !Exp                 --  (Generalized) tape to cord.
+  | GULF !Exp !Exp                --  Natural range to list
+  | SNAG !Exp !Exp                --  List lookup by index
   | TURN !Exp !Exp                --  Map over a list
-  | SNAG !Exp !Exp                --  Index into list
   | WELD !Exp !Exp                --  Concatenate two lists.
   | ZING !Exp                     --  Concatenate list of lists
   | NTOT !Exp                     --  Render atom as tape.
+
+  | ADD_ASSOC !Exp !Exp !Exp !Exp !Exp  -- Add to assoc list
+  | FIND_ASSOC !Exp !Exp !Exp     --  Find in assoc list
 
   | INT_POSITIVE !Exp
   | INT_NEGATIVE !Exp
@@ -377,6 +398,9 @@ data Exp
   | INT_NEGATE !Exp
   | INT_SUB !Exp !Exp
 
+  | BOX !Exp
+  | UNBOX !Exp
+
   | SUB !Exp !Exp                 --  Subtract
   | ZER !Exp                      --  Is Zero?
   | EQL !Exp !Exp                 --  Atom equality.
@@ -389,7 +413,6 @@ data Exp
 
   | LCON !Exp !Exp                --  List cons
   | LNIL                          --  List termination
-  | GULF !Exp !Exp                --  TODO: What does GULF do?
 
   | JET1 !Jet !Exp                --  Fully saturated jet call.
   | JET2 !Jet !Exp !Exp           --  Fully saturated jet call.
@@ -437,6 +460,7 @@ valFun = \case
   VInt i   -> Fun 1 (Int i) mempty
   VBol b   -> Fun 2 (Bol b) mempty
   VLis xs  -> Fun 2 (Lis xs) mempty
+  VBox x   -> Fun 1 (Box x) mempty
   VFun f   -> f
 
 nodeArity :: Node -> Int
@@ -509,3 +533,10 @@ nodeArity = \case
   IntMul -> 2
   IntNegate -> 1
   IntSub -> 2
+
+  MkBox -> 1
+  Box _ -> 1
+  Unbox -> 1
+
+  AddAssoc -> 5
+  FindAssoc -> 3

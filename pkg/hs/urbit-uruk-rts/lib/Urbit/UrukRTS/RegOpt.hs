@@ -116,6 +116,10 @@ reNumber topExp = runState (go (0, mempty) topExp) 0
     ZING x -> ZING <$> go a x
     NTOT x -> NTOT <$> go a x
 
+    ADD_ASSOC q r s t u ->
+      ADD_ASSOC <$> go a q <*> go a r <*> go a s <*> go a t <*> go a u
+    FIND_ASSOC x y z -> FIND_ASSOC <$> go a x <*> go a y <*> go a z
+
     INT_POSITIVE x -> INT_POSITIVE <$> go a x
     INT_NEGATIVE x -> INT_NEGATIVE <$> go a x
 
@@ -129,6 +133,9 @@ reNumber topExp = runState (go (0, mempty) topExp) 0
     INT_MUL x y -> INT_MUL <$> go a x <*> go a y
     INT_NEGATE x -> INT_NEGATE <$> go a x
     INT_SUB x y -> INT_SUB <$> go a x <*> go a y
+
+    BOX x -> BOX <$> go a x
+    UNBOX x -> UNBOX <$> go a x
 
     SUB x y -> SUB <$> go a x <*> go a y
     ZER x -> ZER <$> go a x
@@ -210,6 +217,9 @@ noUseless = go
     ZING x -> ZING (go x)
     NTOT x -> NTOT (go x)
 
+    ADD_ASSOC x y z p q -> ADD_ASSOC (go x) (go y) (go z) (go p) (go q)
+    FIND_ASSOC x y z -> FIND_ASSOC (go x) (go y) (go z)
+
     INT_POSITIVE x -> INT_POSITIVE (go x)
     INT_NEGATIVE x -> INT_NEGATIVE (go x)
 
@@ -223,6 +233,9 @@ noUseless = go
     INT_MUL x y -> INT_MUL (go x) (go y)
     INT_NEGATE x -> INT_NEGATE (go x)
     INT_SUB x y -> INT_SUB (go x) (go y)
+
+    BOX x -> BOX (go x)
+    UNBOX x -> UNBOX (go x)
 
     SUB x y -> SUB (go x) (go y)
     ZER x -> ZER (go x)
@@ -253,10 +266,10 @@ noUseless = go
     LET i x y ->
       let (x', y') = (go x, go y) in
         case regExp (i, x') y' of
-          (_ , 0) -> THE x' y'
-          (yr, 1) -> yr                -- Replace reference with expresssion.
+          (_ , 0)                -> THE x' y'
+          (yr, 1)                -> yr                -- Replace reference with expresssion.
           (yr, _) | isTrivial x' -> yr -- Replace reference with expresssion.
-          (_,  _) -> LET i x' y'
+          (_,  _)                -> LET i x' y'
 
 regExp :: (Int, Exp) -> Exp -> (Exp, Int)
 regExp (bound, toExpr) topExpr = runState (go topExpr) 0
@@ -321,6 +334,10 @@ regExp (bound, toExpr) topExpr = runState (go topExpr) 0
     ZING x -> ZING <$> go x
     NTOT x -> NTOT <$> go x
 
+    ADD_ASSOC x y z p q ->
+      ADD_ASSOC <$> go x <*> go y <*> go z <*> go p <*> go q
+    FIND_ASSOC x y z -> FIND_ASSOC <$> go x <*> go y <*> go z
+
     INT_POSITIVE x -> INT_POSITIVE <$> go x
     INT_NEGATIVE x -> INT_NEGATIVE <$> go x
 
@@ -334,6 +351,9 @@ regExp (bound, toExpr) topExpr = runState (go topExpr) 0
     INT_MUL x y -> INT_MUL <$> go x <*> go y
     INT_NEGATE x -> INT_NEGATE <$> go x
     INT_SUB x y -> INT_SUB <$> go x <*> go y
+
+    BOX x -> BOX <$> go x
+    UNBOX x -> UNBOX <$> go x
 
     SUB x y -> SUB <$> go x <*> go y
     ZER x -> ZER <$> go x
