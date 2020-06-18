@@ -118,11 +118,13 @@
       ^-  (unit hash:store)
       ?~  index    ~
       ?~  t.index  ~
+      =/  lngth=@  (dec (lent index))
+      =/  ind=index:store  `(list atom)`(scag lngth `(list atom)`index)
       =/  parent=node:store
         %+  scry-for  node:store
         %+  weld
           /node/(scot %p ship)/[term]
-        (index-to-path t.index)
+        (index-to-path ind)
       hash.post.parent
     ::
     ++  index-to-path
