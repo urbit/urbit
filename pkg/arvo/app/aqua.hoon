@@ -444,19 +444,22 @@
       =<  plow
       %-  push-events:apex:(pe who.ae)
       ^-  (list unix-event)
-      :~  [/ %wack 0]  ::  eny
-          [/ %whom who.ae]  ::  eny
-          [//newt/0v1n.2m9vh %born ~]
-          [//behn/0v1n.2m9vh %born ~]
-          :^  //term/1  %boot  &
-          ?~  keys.ae
-            [%fake who.ae]
-          [%dawn u.keys.ae]
-          -.userspace-ova.pil
-          [//http-client/0v1n.2m9vh %born ~]
-          [//http-server/0v1n.2m9vh %born ~]
-          [//http-server/0v1n.2m9vh %live 8.080 `8.445]
-      ==
+      %-  zing
+      :~  :~  [/ %wack 0]  ::  eny
+              [/ %whom who.ae]  ::  eny
+              [//newt/0v1n.2m9vh %born ~]
+              [//behn/0v1n.2m9vh %born ~]
+              :^  //term/1  %boot  &
+              ?~  keys.ae
+                [%fake who.ae]
+              [%dawn u.keys.ae]
+          ==
+          userspace-ova.pil
+          :~  [//http-client/0v1n.2m9vh %born ~]
+              [//http-server/0v1n.2m9vh %born ~]
+              [//http-server/0v1n.2m9vh %live 8.080 `8.445]
+          ==
+       ==
     =.  this  abet-pe:initted
     (pe who.ae)
   ::

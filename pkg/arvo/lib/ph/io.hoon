@@ -123,6 +123,34 @@
     (pure:m ~)
   loop
 ::
+++  backup-ship
+  |=  her=ship
+  =/  m  (strand ,unix-event)
+  ^-  form:m
+  ~&  >  "Backing up: {<her>}"
+  ;<  =bowl:spider  bind:m  get-bowl
+  =/  aqua-pax
+    :-  %i
+    /(scot %p her)/ga/(scot %p her)/a/(scot %da now.bowl)/a/noun
+  =/  =lore:gall
+    ;;(lore:gall +:(scry-aqua:util lore:gall our.bowl now.bowl aqua-pax))
+  ~&  (~(get by lore) %chat-store)
+  ?<  =(*lore:gall lore)
+  (pure:m [%$ %gall ~] [%book lore])
+::
+++  restore-ship
+  |=  [=tid:spider =ship backup=unix-event]
+  ~&  >  "Restoring: {<ship>}"
+  =/  m  (strand ,~)
+  =/  =vase  !>([tid %azimuth-command !>([%create-ship ship])])
+  ;<  =bowl:spider  bind:m  get-bowl
+  =/  old-pill=pill
+    .^(pill %gx /(scot %p our.bowl)/aqua/(scot %da now.bowl)/pill/pill)
+  =/  =pill
+    old-pill(userspace-ova (snoc userspace-ova.old-pill backup))
+  ;<  ~  bind:m  (poke-our %spider %spider-input vase)
+  (check-ship-booted ship)
+::
 ++  real-ship
   |=  [=tid:spider =ship]
   ~&  >  "booting real {<ship>}"
@@ -189,6 +217,7 @@
 ++  send-hi-not-responding
   |=  [from=@p to=@p]
   =/  m  (strand ,~)
+  ~&  >  "{<from>} says |hi to {<to>}"
   ;<  ~  bind:m  (dojo from "|hi {(scow %p to)}")
   (wait-for-output from "{(scow %p to)} not responding still trying")
 ::
@@ -260,4 +289,14 @@
   ?:  =(warped (need (scry-aqua:util (unit @) our now aqua-pax)))
     (pure:m ~)
   loop
+::
+++  wait-for-goad
+  |=  =ship
+  (wait-for-output ship "[p=%hood q=%bump")
+::
+++  boot-app
+  |=  [=ship app=term]
+  =/  m  (strand ,~)
+  ;<  ~  bind:m  (dojo ship "|start {<app>}")
+  (wait-for-output ship "activated app home/{(trip app)}")
 --
