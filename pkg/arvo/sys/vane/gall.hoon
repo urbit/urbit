@@ -696,12 +696,14 @@
         ?~  t.t.t.wire
           =/  full-wire  sys+wire
           =/  stand
-            %+  ~(gut by outstanding.state)  [full-wire hen]
-            ::  default is do nothing; should only hit if cleared queue
-            ::  in +load 3-to-4
-            ::
+            (~(gut by outstanding.state) [full-wire hen] ~)
+          ::
+          ::  default is to send both ack types; should only hit if
+          ::  cleared queue in +load 3-to-4 or +load-4-to-5
+          ::
+          =?  stand  ?=(~ stand)
             (~(put to *(qeu remote-request)) %missing)
-          ~|  [full-wire=full-wire hen=hen stand=stand outs=outstanding.state]
+          ~|  [full-wire=full-wire hen=hen stand=stand]
           =^  rr  stand  ~(get to stand)
           [rr (~(put by outstanding.state) [full-wire hen] stand)]
         ::  non-null case of wire is old, remove on next breach after
@@ -1219,15 +1221,42 @@
       ~/  %ap-peek
       |=  [care=term tyl=path]
       ^-  (unit (unit cage))
-      ::  strip trailing mark off path for %x scrys
+      ::  take trailing mark off path for %x scrys
       ::
-      =?  tyl  ?=(%x care)  (flop (tail (flop tyl)))
+      =^  want=mark  tyl
+        ?.  ?=(%x care)  [%$ tyl]
+        =.  tyl  (flop tyl)
+        [(head tyl) (flop (tail tyl))]
+      ::  call the app's +on-peek, producing [~ ~] if it crashes
+      ::
       =/  peek-result=(each (unit (unit cage)) tang)
         (ap-mule-peek |.((on-peek:ap-agent-core [care tyl])))
-      ?-  -.peek-result
-        %&  p.peek-result
-        %|  ((slog leaf+"peek bad result" p.peek-result) [~ ~])
-      ==
+      ?:  ?=(%| -.peek-result)
+        ((slog leaf+"peek bad result" p.peek-result) [~ ~])
+      ::  for non-%x scries, or failed %x scries, or %x results that already
+      ::  have the requested mark, produce the result as-is
+      ::
+      ?.  ?&  ?=(%x care)
+              ?=([~ ~ *] p.peek-result)
+              !=(mark p.u.u.p.peek-result)
+          ==
+        p.peek-result
+      ::  for %x scries, attempt to convert to the requested mark if needed
+      ::
+      =*  have  p.u.u.p.peek-result
+      =*  vase  q.u.u.p.peek-result
+      =/  tub=(unit tube:clay)
+        ?:  =(have want)  `(bake same ^vase)
+        =/  tuc=(unit (unit cage))
+          (ski [%141 %noun] ~ %cc [our %home da+now] (flop /[have]/[want]))
+        ?.  ?=([~ ~ *] tuc)  ~
+        `!<(tube:clay q.u.u.tuc)
+      ?~  tub
+        ((slog leaf+"peek no tube from {(trip have)} to {(trip want)}" ~) ~)
+      =/  res  (mule |.((u.tub vase)))
+      ?:  ?=(%& -.res)
+        ``want^p.res
+      ((slog leaf+"peek failed tube from {(trip have)} to {(trip want)}" ~) ~)
     ::  +ap-update-subscription: update subscription.
     ::
     ++  ap-update-subscription

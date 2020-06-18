@@ -1413,6 +1413,9 @@
         ::  gall channel system
         ::
         [%channel ~]
+        ::  gall scry endpoint
+        ::
+        [%scry ~]
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
