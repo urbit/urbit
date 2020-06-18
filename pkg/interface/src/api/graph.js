@@ -1,9 +1,10 @@
 import BaseApi from './base';
 
+
 class PrivateHelper extends BaseApi {
   graphAction(data) {
     console.log(data);
-    this.action('graph-store', 'graph-action', data);
+    this.action('graph-view', 'graph-action', data);
   }
 
   addGraph(ship = 'zod', name = 'asdf', graph = {}) {
