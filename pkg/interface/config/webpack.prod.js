@@ -18,14 +18,15 @@ module.exports = {
             presets: ['@babel/preset-env', '@babel/preset-react'],
             plugins: [
               '@babel/plugin-proposal-object-rest-spread',
-              '@babel/plugin-proposal-optional-chaining'
+              '@babel/plugin-proposal-optional-chaining',
+              '@babel/plugin-proposal-class-properties'
             ]
           }
         },
         exclude: /node_modules/
       },
       {
-        test: /\.s[ac]ss$/i,
+         test: /\.css$/i,
         use: [
           // Creates `style` nodes from JS strings
           'style-loader',
