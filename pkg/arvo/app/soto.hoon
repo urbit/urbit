@@ -6,8 +6,14 @@
 /+  *soto, default-agent
 |%
 +$  card  card:agent:gall
-+$  state-zero  ~
 ::
++$  versioned-state
+  $@  state-null
+  state-zero
+::
++$  state-null  ~
+::
++$  state-zero  [%0 ~]
 --
 =|  state-zero
 =*  state  -
@@ -18,12 +24,22 @@
     sc        ~(. soto-core bol)
     def       ~(. (default-agent this %|) bol)
 ::
-++  on-init  [~ this]
+++  on-init
+  :_  this
+  :_  ~
+  :*  %pass  /srv  %agent  [our.bol %file-server]
+      %poke  %file-server-action
+      !>([%serve-dir /'~dojo' /app/landscape %.n])
+  ==
 ++  on-save  !>(state)
 ::
 ++  on-load
-  |=  old=vase
-  :_  this(state !<(state-zero old))
+  |=  old-vase=vase
+  =/  old
+    !<(versioned-state old-vase)
+  ?^  old
+    [~ this(state old)]
+  :_  this(state [%0 ~])
   :~  [%pass /bind/soto %arvo %e %disconnect [~ /'~dojo']]
       :*  %pass  /srv  %agent  [our.bol %file-server]
           %poke  %file-server-action
