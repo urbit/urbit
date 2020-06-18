@@ -3,6 +3,14 @@
 =<  [post .]
 =,  post
 |%
+++  sign
+  |=  [our=ship now=time =hash]
+  ^-  signature
+  =/  =life  .^(life %j /=life/(scot %da now)/(scot %p our))
+  =/  =ring  .^(ring %j /=vein/(scot %da now)/(scot %ud life))
+  :+  `@ux`(sign:as:(nol:nu:crub:crypto ring) hash)
+    our
+  life
 ::
 ::  sha256 noun hash
 ::  

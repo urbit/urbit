@@ -113,36 +113,22 @@
         ^-  graph:store
         ?~  index  graph
         =*  atom   i.index
-        ::  last index in list
-        ::
         %^  put:orm
             graph
           atom
+        ::  add child
+        ::
         ?~  t.index
-          ::  verify hash if it exists, otherwise calculate
-          ::
           =*  p  post.node
           =/  =validated-portion:store
             [parent-hash author.p index.p time-sent.p contents.p]
-          =/  calculated-hash  (mug validated-portion)
-          ?^  hash.p
-            ::  hash is present, validate it
-            ~|  "hash of post does not match calculated hash"
-            ?>  =(calculated-hash u.hash.p)
-            node
-          ::  no hash present
-          ::
-          %=  node
-              hash.post  `calculated-hash
-              signatures.post
-            ?.  =(our.bowl author.post.node)  ~
-            %-  ~(gas in *signatures:store)  ~
-            :::_  ~
-            ::  TODO: how to sign a message using our private key?
-            :::+  `@ux`(sign:as:crub:crypto calculated-hash)
-            ::  our.bowl
-            ::.^(=life %j /=life/(scot %p our.bowl))
-          ==
+          =/  =hash:store  (mug validated-portion)
+          ?~  hash.p  node
+          ~|  "hash of post does not match calculated hash"
+          ?>  =(hash u.hash.p)
+          node
+        ::  recurse children
+        ::
         ~|  "index does not exist to add a node to!"
         =/  parent=node:store  (need (get:orm graph atom))
         %_  parent
@@ -338,9 +324,39 @@
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
     =/  graph=(unit graph:store)  (~(get by graphs) [ship term])
-    ?~  graph
-      ~
+    ?~  graph  ~
     ``noun+!>(u.graph)
+  ::
+::      [%x %graph-subset @ @ @ @ ~]
+::    =/  =ship   (slav %p i.t.t.path)
+::    =/  =term   i.t.t.t.path
+::    ::  TODO: parse out either '~' literal into null or parse out @ud
+::    =/  start=(unit @ud)
+::    =/  graph=(unit graph:store)  (~(get by graphs) [ship term])
+::    ?~  graph  ~
+::    ``noun+!>((subset:orm u.graph [~
+::    ``noun+!>(u.graph)
+  ::
+      [%x %node @ @ @ *]
+    =/  =ship         (slav %p i.t.t.path)
+    =/  =term         i.t.t.t.path
+    =/  =index:store  (turn t.t.t.t.path |=(=cord (slav %ud cord)))
+    =/  graph=(unit graph:store)  (~(get by graphs) [ship term])
+    ?~  graph  ~
+    =/  node=(unit node:store)  [~ *node:store]
+    |-
+    ?~  index
+      ?~  node  ~
+      ``noun+!>(u.node)
+    ?~  t.index
+      =.  node  (get:orm u.graph i.index)
+      ?~  node  ~
+      ``noun+!>(u.node)
+    ?~  node  ~
+    ?-  -.children.u.node
+        %empty  ~
+        %graph  $(node (get:orm p.children.u.node i.index))
+    ==
   ==
 ::
 ++  on-arvo  on-arvo:def

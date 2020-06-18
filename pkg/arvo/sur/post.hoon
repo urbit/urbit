@@ -1,6 +1,6 @@
 /-  *resource
 |%
-+$  atom        @
++$  atom        @u
 +$  index       (list atom)
 +$  uid         [=resource =index]
 ::

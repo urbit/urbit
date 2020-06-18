@@ -1,4 +1,4 @@
-/+  view=graph-view, store=graph-store, default-agent, verb, dbug
+/+  view=graph-view, store=graph-store, sigs=signatures, default-agent, dbug
 ::
 |%
 +$  versioned-state
@@ -16,7 +16,6 @@
 =|  state-0
 =*  state  -
 ::
-%+  verb  |
 %-  agent:dbug
 ^-  agent:gall
 |_  =bowl:gall
@@ -35,9 +34,115 @@
   ?>  (team:title our.bowl src.bowl)
   =^  cards  state
     ?+  mark                (on-poke:def mark vase)
+        %graph-action       (action !<(action:store vase))
         %graph-view-action  (view-action !<(action:view vase))
     ==
   [cards this]
+  ::
+  ++  action
+    |=  =action:store
+    ^-  (quip card _state)
+    |^
+    ::  TODO: decide who to send it to based on resource
+    ::
+    ?>  ?=(%0 -.action)
+    :_  state
+    ?+  +<.action           [(poke-store action) ~]
+        %add-nodes          (add-nodes +>.action)
+        %add-signatures     (add-signatures +>.action)
+    ==
+    ::
+    ++  add-nodes
+      |=  [=resource:store nodes=(map index:store node:store)]
+      ^-  (list card)
+      :_  ~
+      %-  poke-store
+      :-  %0
+      :+  %add-nodes
+        resource
+      (sign-nodes resource nodes)
+    ::
+    ++  add-signatures
+      |=  [=uid:store =signatures:store]
+      ^-  (list card)
+      :_  ~
+      %-  poke-store
+      :-  %0
+      :+  %add-signatures
+        uid
+      =*  resource  resource.uid
+      =*  index     index.uid
+      =*  ship      entity.resource.uid
+      =*  name      name.resource.uid
+      %-  ~(gas in *signatures:store)
+      :_  ~
+      -:(sign-node resource (scry-for-node ship name index))
+    ::
+    ++  sign-nodes
+      |=  [=resource:store nodes=(map index:store node:store)]
+      ^-  (map index:store node:store)
+      %-  ~(run by nodes)
+      |=  =node:store
+      ^-  node:store
+      +:(sign-node resource node)
+    ::
+    ++  sign-node
+      |=  [=resource:store =node:store]
+      ^-  [signature:store node:store]
+      =*  p  post.node
+      =*  ship  entity.resource
+      =*  name  name.resource
+      =/  parent-hash  (scry-for-parent-hash ship name index.p)
+      =/  =validated-portion:store
+        [parent-hash author.p index.p time-sent.p contents.p]
+      =/  =hash:store  (mug validated-portion)
+      =/  =signature:store  (sign:sigs our.bowl now.bowl hash)
+      :-  signature
+      %_  node
+          hash.post  `hash
+          signatures.post
+        %-  ~(uni in signatures.post.node)
+        (~(gas in *signatures:store) [signature]~)
+      ==  
+    ::
+    ++  scry-for-node
+      |=  [=ship =term =index:store]
+      ^-  node:store
+      %+  scry-for  node:store
+      %+  weld
+        /node/(scot %p ship)/[term]
+      (index-to-path index)
+    ::
+    ++  scry-for-parent-hash
+      |=  [=ship =term =index:store]
+      ^-  (unit hash:store)
+      ?~  index    ~
+      ?~  t.index  ~
+      =/  parent=node:store
+        %+  scry-for  node:store
+        %+  weld
+          /node/(scot %p ship)/[term]
+        (index-to-path t.index)
+      hash.post.parent
+    ::
+    ++  index-to-path
+      |=  =index:store
+      ^-  path
+      %+  turn  index
+      |=  i=atom:store
+      (scot %ud i)
+    ::
+    ++  poke-store
+      |=  =action:store
+      ^-  card
+      :*  %pass
+          /(scot %da now.bowl)
+          %agent
+          [our.bowl %graph-store]
+          %poke
+          [%graph-action !>(action)]
+      ==
+    --
   ::
   ++  view-action
     |=  =action:view
