@@ -25,6 +25,61 @@
 //    or allocated in one and freed in another
 //
 
+/* u3_dent_init(): initialize file record.
+*/
+u3_dent*
+u3_dent_init(const c3_c* nam_c)
+{
+  u3_dent *det_u = c3_malloc(sizeof(*det_u));
+  det_u->nex_u   = 0;
+  det_u->nam_c   = c3_malloc(1 + strlen(nam_c));
+  strcpy(det_u->nam_c, nam_c);
+
+  return det_u;
+}
+
+/* u3_dent_free(): dispose file record.
+*/
+void
+u3_dent_free(u3_dent *det_u)
+{
+  c3_free(det_u->nam_c);
+  c3_free(det_u);
+}
+
+/* u3_dire_init(): initialize directory record.
+*/
+u3_dire*
+u3_dire_init(const c3_c* pax_c)
+{
+  u3_dire *dir_u = c3_malloc(sizeof *dir_u);
+  dir_u->all_u = 0;
+  dir_u->pax_c = c3_malloc(1 + strlen(pax_c));
+  strcpy(dir_u->pax_c, pax_c);
+
+  return dir_u;
+}
+
+/* u3_dire_free(): dispose directory record.
+*/
+void
+u3_dire_free(u3_dire *dir_u)
+{
+  {
+    u3_dent *det_u = dir_u->all_u;
+    u3_dent *nex_u;
+
+    while ( det_u ) {
+      nex_u = det_u->nex_u;
+      u3_dent_free(det_u);
+      det_u = nex_u;
+    }
+  }
+
+  c3_free(dir_u->pax_c);
+  c3_free(dir_u);
+}
+
 /* u3_fact_init(): initialize completed event.
 */
 u3_fact*

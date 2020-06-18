@@ -459,6 +459,22 @@
           struct _u3_writ*     ext_u;           //  queue exit
         } u3_lord;
 
+      /* u3_read: event log read request
+      */
+        typedef struct _u3_read {
+          union {                               //  read timer/handle
+            uv_timer_t  tim_u;                  //
+            uv_handle_t had_u;                  //
+          };                                    //
+          c3_d             eve_d;               //  first event
+          c3_d             len_d;               //  read stride
+          struct _u3_fact* ent_u;               //  response entry
+          struct _u3_fact* ext_u;               //  response exit
+          struct _u3_read* nex_u;               //  next read
+          struct _u3_read* pre_u;               //  previous read
+          struct _u3_disk* log_u;               //  disk backpointer
+        } u3_read;
+
       /* u3_disk_cb: u3_disk callbacks
       */
         typedef struct _u3_disk_cb {
@@ -480,8 +496,11 @@
           c3_d             sen_d;               //  commit requested
           c3_d             dun_d;               //  committed
           u3_disk_cb        cb_u;               //  callbacks
-          uv_timer_t       tim_u;               //  read timer
-          uv_work_t        ted_u;               //  write thread
+          u3_read*         red_u;               //  read requests
+          union {                               //  write thread/request
+            uv_work_t      ted_u;               //
+            uv_req_t       req_u;               //
+          };                                    //
           c3_o             ted_o;               //  c3y == active
           u3_info          put_u;               //  write queue
         } u3_disk;
@@ -685,6 +704,26 @@
 
     /**  ward: common structure lifecycle
     **/
+      /* u3_dent_init(): initialize file record.
+      */
+        u3_dent*
+        u3_dent_init(const c3_c* nam_c);
+
+      /* u3_dent_free(): dispose file record.
+      */
+        void
+        u3_dent_free(u3_dent *det_u);
+
+      /* u3_dire_init(): initialize directory record.
+      */
+        u3_dire*
+        u3_dire_init(const c3_c* pax_c);
+
+      /* u3_dire_free(): dispose directory record.
+      */
+        void
+        u3_dire_free(u3_dire *dir_u);
+
       /* u3_fact_init(): initialize completed event.
       */
         u3_fact*
