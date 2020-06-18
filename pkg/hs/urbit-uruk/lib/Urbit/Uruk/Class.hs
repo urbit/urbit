@@ -16,7 +16,7 @@ class Show p => Uruk p where
 
   uEss :: p
   uKay :: p
-  uJay :: Pos -> p
+  uEnh :: Pos -> p
   uDub :: p
 
   uSen :: Pos -> p
@@ -51,7 +51,7 @@ instance Uruk p => Uruk (Either Text p) where
 
   uEss   = pure uEss
   uKay   = pure uKay
-  uJay p = pure (uJay p)
+  uEnh p = pure (uEnh p)
   uDub   = pure uDub
 
   uSen p = pure (uSen p)

@@ -124,7 +124,7 @@ instance Uruk Val where
 
   uEss = mkNode 3 Ess
   uKay = mkNode 2 Kay
-  uJay = \n -> mkNode 2 $ Jay $ fromIntegral n
+  uEnh = \n -> mkNode 2 $ Enh $ fromIntegral n
   uDub = mkNode 6 Dub
 
   uEye n = mkNode (fromIntegral $ n) (Eye $ fromIntegral n)
@@ -248,7 +248,7 @@ nodeRaw :: Node -> Raw
 nodeRaw = \case
   Ess   -> Raw S []
   Kay   -> Raw K []
-  Jay 1 -> Raw E []
+  Enh 1 -> Raw E []
   Dub   -> Raw W []
   n     -> error ("TODO: nodeRaw." <> show n)
 
@@ -256,7 +256,7 @@ priFun :: Pri -> (Int, Node)
 priFun = \case
   S -> (3, Ess)
   K -> (2, Kay)
-  E -> (1, Jay 1)
+  E -> (1, Enh 1)
   W -> (6, Dub)
 
 rawVal :: Raw -> Val
@@ -317,8 +317,8 @@ reduce !no !xs = do
   res <- no & \case
     Ess   -> kVVA x z (kVV y z)
     Kay   -> pure x
-    Jay n -> case x of
-      VFun (Fun 2 (Jay 1) _) -> pure (VFun (Fun 1 (Jay (n + 1)) (mkClo1 y)))
+    Enh n -> case x of
+      VFun (Fun 2 (Enh 1) _) -> pure (VFun (Fun 1 (Enh (n + 1)) (mkClo1 y)))
       _                      -> jetRegister n x y
 
     Dub       -> dub (v 0) (v 1) (v 2) (v 3) (v 4) (v 5)

@@ -394,7 +394,7 @@ fastVal = funVal . F.valFun
     x F.:@ y      -> goAcc (go y : acc) x
     F.S           -> ValKal F.Ess acc
     F.K           -> ValKal F.Kay acc
-    F.J n         -> ValKal (F.Jay 2) acc
+    F.J n         -> ValKal (F.Enh 2) acc
     F.D           -> ValKal F.Dee acc
     F.Fast _ j xs -> ValKal (jRaw j) (fmap go xs <> acc)
 

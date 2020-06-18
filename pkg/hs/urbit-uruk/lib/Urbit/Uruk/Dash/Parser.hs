@@ -409,7 +409,7 @@ expArity reg = go
 urArity :: Reg -> Ur -> Arity
 urArity _ S = AriEss
 urArity _ K = AriKay
-urArity _ E = AriJay 1
+urArity _ E = AriEnh 1
 urArity _ W = AriDub
 urArity _ (DataJet (NAT _)) = AriOth 2
 urArity _ (DataJet (Sn  n)) = AriOth (2 + n)

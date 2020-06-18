@@ -131,7 +131,7 @@ instance Uruk Exp where
 
   uEss = NS
   uKay = NK
-  uJay p = NE (fromIntegral p)
+  uEnh p = NE (fromIntegral p)
   uDub = NW
 
   uBee p = N $ M (MD $ Bn $ fromIntegral p) (fromIntegral $ p+2) []
@@ -183,7 +183,7 @@ instance Uruk Exp where
   uGlobal "rap"  = Just Rap
   uGlobal _     = Nothing
 
-  uArity (N (E n))     = pure $ AriJay n
+  uArity (N (E n))     = pure $ AriEnh n
   uArity (N K)         = pure $ AriKay
   uArity (N S)         = pure $ AriEss
   uArity (N W)         = pure $ AriDub

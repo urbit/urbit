@@ -101,9 +101,9 @@ instance Show Jet where
   show (Jet{..}) = muck $
     case jName of
       VNat (Atom.atomUtf8 -> Right nm) ->
-        "J" <> show jArgs <> "_" <> unpack nm <> "_" <> has
+        "E" <> show jArgs <> "_" <> unpack nm <> "_" <> has
       _ ->
-        "J" <> show jArgs <> "_" <> show jName <> "_" <> has
+        "E" <> show jArgs <> "_" <> show jName <> "_" <> has
    where
      has = (take 5 $ show $ abs $ hash jBody)
      muck = fmap $ \case
@@ -111,9 +111,9 @@ instance Show Jet where
        x   -> x
 
 data Node
-  = Jay Int -- Always >= 1
+  = Ess
   | Kay
-  | Ess
+  | Enh Int -- Always >= 1
   | Dub
   | Jut Jet
   | Eye Int
@@ -182,9 +182,9 @@ data Node
 
 instance Show Node where
   show = \case
-    Jay n       -> replicate (fromIntegral n) 'J'
-    Kay         -> "K"
     Ess         -> "S"
+    Kay         -> "K"
+    Enh n       -> replicate (fromIntegral n) 'E'
     Dub         -> "W"
     Jut j       -> show j
     Eye 1       -> "I"
@@ -441,7 +441,7 @@ valFun = \case
 
 nodeArity :: Node -> Int
 nodeArity = \case
-  Jay _ -> 2
+  Enh _ -> 2
   Kay   -> 2
   Ess   -> 3
   Dub   -> 6

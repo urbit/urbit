@@ -39,7 +39,7 @@ moonToLambda = go
     M.Jet n t b -> jay n :@ tag t :@ go b
 
   jay :: Natural -> B.Exp p () a
-  jay = B.Pri . uJay . fromIntegral
+  jay = B.Pri . uEnh . fromIntegral
 
   tag :: Text -> B.Exp p b a
   tag = B.Pri . uNat . Atom.utf8Atom

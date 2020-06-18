@@ -202,7 +202,7 @@ getGlobal :: Uruk p => Text -> Either Text p
 getGlobal = \case
   "S"     -> Right uEss
   "K"     -> Right uKay
-  "E"     -> Right (uJay 1)
+  "E"     -> Right (uEnh 1)
   "const" -> Right uKay
   "W"     -> Right uDub
   "I"     -> Right (uEye 1)
