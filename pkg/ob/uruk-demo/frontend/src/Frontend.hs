@@ -527,7 +527,7 @@ storageDemo inputLines = do
       $  textAreaElement
       $  (def & textAreaElementConfig_initialValue .~ input)
 
-    el "pre" $ text "TODO: Table of hash to serialized Uruk value"
+    el "pre" $ text "TODO: Table of hash to serialized SKEW value"
 
 
 
@@ -563,42 +563,74 @@ frontend = Frontend
   , _frontend_body = do
 
     el "h1" $ do
-      text "Uruk"
+      text "SKEW"
 
     paragraph [
-      "Uruk is an extension of the SK Calculus with the ideas developed for ",
-      "Nock. This demo is designed to teach you what Uruk is, why it should ",
-      "become the next Nock, why it's faster, and to allow you to play with ",
-      "it in your browser. In each section, the code in text boxes is live ",
-      "and you can edit it to play with it."
+      "SKEW is an extension of the SK Calculus with the ideas developed for ",
+      "Nock. This demo is designed to teach you what SKEW is, why it should ",
+      "become the successor to Nock 4K+, why it's faster, and to allow you ",
+      "to play with it in your browser. In each section, the code in text ",
+      "boxes is live and you can edit it to play with it."
       ]
+
+    el "p" $ do
+      text "The "
+
+      elAttr
+        "a"
+        ("href" =: "https://en.wikipedia.org/wiki/SKI_combinator_calculus")
+        (text "SK Calculus")
+
+      text $ unlines [
+        " is an encoding of the Lambda Calculus introduced by Schönfinkel ",
+        "and Curry in the 1920s. It is Turing complete, simple, and well ",
+        "understood. We believe it is the best foundation to build on due ",
+        "to how well researched it is."
+        ]
+
 
     urdocSection "The Basic Reduction Rules" "basic-reduction" $ do
       paragraph [
-        "What's the smallest practical combinator? Let's first list the ",
-        "features we need: we need to be able to perform any computation, ",
-        "we need to be able to virtualize computations, and we need to be ",
-        "able to recognize functions and values and replace them with jetted ",
-        "versions to make runtime practical."
+        "What's the smallest practical combinator? Let's first list our ",
+        "functional requirements:"
+        ]
+
+      el "ul" $ do
+        el "li" $ do
+          text "We need to be able to perform any computable computation."
+        el "li" $ do
+          text $ unlines [
+            "We need to be able to recognize functions and values and ",
+            "replace them with optimized versions to make runtime practical."
+            ]
+        el "li" $ do
+          text "We need to be able to virtualize computations."
+
+      paragraph [
+        "Let's go over proposed reduction rules one by one, and relate them ",
+        "to our requirements."
         ]
 
       elAttr "pre" ("class" =: "docs") $ do
         text $ unlines
           [ "Reduction Rules:"
-          , "    *(K x y)           -> x"
-          , "    *(x y)             -> (*x y)"
-          , "    *(x y)             -> (x *y)"
-          , "    *(S x y z)         -> (x z (y z))"
-          , "    *(D x)             -> JAM(x)"
-          , "    *(J^n t f x1 … xn) -> (f x1 … xn)"
+          , "    *(K x y)             -> x"
+          , "    *(x y)               -> (*x y)"
+          , "    *(x y)               -> (x *y)"
+          , "    *(S x y z)           -> (x z (y z))"
+          , "    *(E^n t f x1 … xn)   -> (f x1 … xn)"
+          , "    *(W a s k e w (x y)) -> (a x y)"
+          , "    *(W a s k e w S)     -> s"
+          , "    *(W a s k e w K)     -> k"
+          , "    *(W a s k e w E)     -> e"
+          , "    *(W a s k e w W)     -> w"
           ]
 
       paragraph [
-        "The first four rules give us the strict SK calculus with a well ",
-        "defined reduction ordering. ",
-        "Let's go over the rules one by one. The first reduction is the K ",
-        "combinator. The K combinator returns its first argument and discards ",
-        "its second:"
+        "The first four rules give us the SK calculus with a strict, well ",
+        "defined reduction ordering. The first reduction is the ",
+        "K combinator. The K combinator returns its first argument and ",
+        "discards its second. Mnemonic: Konstant."
         ]
 
       reduceDemo "(K K K)"
@@ -606,7 +638,7 @@ frontend = Frontend
       paragraph [
         "Simple enough. The next two reduction rules specify order of ",
         "operations: we reduce the left hand side before the right hand side. ",
-        "We must do this for short circuiting reasons. Uruk is strict instead ",
+        "We must do this for short circuiting reasons. SKEW is strict instead ",
         "of lazy and if we did not do this, both arguments to K would be ",
         "evaluated before the first is returned."
         ]
@@ -616,57 +648,39 @@ frontend = Frontend
       paragraph [
         "After that, we have the S combinator. The S combinator substitutes ",
         "its arguments, returning its first, third, and then calling its ",
-        "second with its third. This implements application."
+        "second with its third. Mnemonic: Substitution."
         ]
 
       reduceDemo "(S K (S K) (S K K))"
 
       paragraph [
-        "That's it for the core of the SK system we have in Uruk. With S and ",
+        "That's it for the core of the SK system we have in SKEW. With S and ",
         "K, we can encode the entire unenriched lambda calculus."
         ]
 
-      el "p" $ do
-        text $ unlines [
-          "Our next requirement is being able to virtualize computations: we ",
-          "must have a way of running a function which we don't know if it ",
-          "will error by infinite looping. We thus need to be able to declare ",
-          "a +mock function with the signature "
-          ]
-
-        el "code" (text "a -> Maybe a")
-
-        text $ unlines [
-          ". Nock 4K supports virtualization by being homiconic, but since ",
-          "Uruk isn't homoiconic, we support this by having a dedicated Dump ",
-          "combinator that dumps any Uruk expression as a Church-encoded ",
-          "natural number."
-          ]
-
-      reduceDemo "(D (S K K))"
-
       paragraph [
-        "The D combinator is never run in practice though. Nock's big idea ",
+        "Our next requirement is making functions in code legible to the ",
+        "interpreter. Nock's big idea ",
         "is the Jet: formally specify every function or piece of code in ",
         "your pure-functional system without any side-effects or FFI and ",
-        "signal to the interpreter that a piece of code can be replaced with ",
-        "an optimized implementation. In practice, D is only used inside of ",
-        "virtualization functions which need to read out an Uruk value."
+        "signal to the interpreter that a piece of set of raw combinator ",
+        "reductions can be replaced with a native, optimized implementation."
         ]
 
       paragraph [
-        "Our final requirement is making functions in code legible to the ",
-        "interpreter, so that they can be replaced with optimized native ",
-        "code, if available. ",
-        "The J combinator specifies a jet. The jet is a number of J letters ",
+        "The E combinator specifies a jet and specifies order of execution. ",
+        "The jet is a number of E letters ",
         "which specify the arity of the function, a tag which is only used ",
         "for matching, the function being jetted, and then the number of ",
         "arguments according to the stated arity. The arguments are ",
-        "evaluated first. Look at the order in which the arguments are ",
-        "reduced in this trace:"
+        "evaluated first. Mnemonic: Enhance"
         ]
 
-      reduceDemo "(J J K (S K) (S K K K) (S K K K))"
+      paragraph [
+        "Look at the order in which the arguments are reduced in this trace:"
+        ]
+
+      reduceDemo "(E E K (S K) (S K K K) (S K K K))"
 
       paragraph [
         "Since the raw function specified in the jet is supposed to be ",
@@ -680,17 +694,41 @@ frontend = Frontend
       paragraph [
         "In Nock 4K, the hint tag annotates the return value of an expression,",
         " so if an expression returns a function, the interpreter must ",
-        "remember an extra bit of matching information. In Uruk, there's no ",
+        "remember an extra bit of matching information. In SKEW, there's no ",
         "need to do that because the jet matching happens at reduction time, ",
         "allowing for both faster jet matching, and ahead of time ",
         "optimizations."
+        ]
+
+      el "p" $ do
+        text $ unlines [
+          "Our final requirement is being able to virtualize computations: we ",
+          "must have a way of running a function which we don't know if it ",
+          "will error by infinite looping in predictable ways. We thus need ",
+          "to be able to declare a +mock function with the signature "
+          ]
+
+        el "code" (text "a -> Either err a")
+
+        text $ unlines [
+          ". SKEW supports reflection with the W combinator, which is the ",
+          "final, five reduction rules. For (W a s k e w x), the W combinator ",
+          "will switch on x. Mnemonic: sWitch."
+          ]
+
+      reduceDemo "(W 0 1 2 3 4 K)"
+
+      paragraph [
+        "sWitch gives us generalized introspection on SKEW code, but we ",
+        "expect that the only practical use will be in the specification ",
+        "of virtualizing computation."
         ]
 
     ---------------------------------------------------------------------------
 
     urdocSection "Jet Matching Data Types" "jet-data" $ do
       paragraph [
-        "In Uruk, everything is made up of the unenriched lambda calculus, ",
+        "In SKEW, everything is made up of the unenriched lambda calculus, ",
         "including ",
         "numbers which are Church numerals, which are functions. ",
         "Traditionally, this has not been ",
@@ -702,31 +740,31 @@ frontend = Frontend
       paragraph [
         "But jets give us a way to recognize any function, including classes ",
         "of functions such as the functions for Church numerals, and this ",
-        "allows an Uruk interpreter to store a natural number in memory ",
+        "allows a SKEW interpreter to store a natural number in memory ",
         "instead of the raw series of S and Ks which represent a number."
         ]
 
       paragraph [
         "A Church numeral takes two functions as arguments, what to do in ",
         "the zero case and what to do in the non-zero case so you can see ",
-        "that numbers have to start with (J J ...).",
+        "that numbers have to start with (E E ...).",
         "For example, if (S K) is the encoding of 0 as a Church numeral, then ",
         "0 as a jet recognized natural number is:"
         ]
 
-      reduceDemo "(J J K (S K))"
+      reduceDemo "(E E K (S K))"
 
       paragraph [
         "And in turn, 1 is:"
         ]
 
-      reduceDemo "(J J K (S K K))"
+      reduceDemo "(E E K (S K K))"
 
       paragraph [
         "And so forth. But because they are jet recognized, the underlying ",
         "in-memory representation is the natural number 1, and since there ",
         "is a bijection between the natural numbers and the church numerals, ",
-        "we can recover the raw Uruk whenever we need it."
+        "we can recover the raw SKEW whenever we need it."
         ]
 
       paragraph [
@@ -745,9 +783,9 @@ frontend = Frontend
       compileDemo [
         "=/  skzero  (S K)",
         "=/  sksucc  (S (S (K S) K))",
-        "=/  zero    (J J K skzero)",
-        "=/  one     (J J K (sksucc skzero))",
-        "=/  two     (J J K (sksucc (sksucc skzero)))"
+        "=/  zero    (E E K skzero)",
+        "=/  one     (E E K (sksucc skzero))",
+        "=/  two     (E E K (sksucc (sksucc skzero)))"
         ]
         [ "(add one (add one two))"
         ]
@@ -756,13 +794,13 @@ frontend = Frontend
 
     urdocSection "Storage and Snapshot Strategy" "storage" $ do
       paragraph [
-        "So we've gone over how Uruk's jetting strategy makes things ",
+        "So we've gone over how SKEW's jetting strategy makes things ",
         "performant and how we can store jetted data instead of raw ",
         "representations in S and K. But what about larger scale data?"
         ]
 
       paragraph [
-        "Uruk is intended to be a substrate for Urbit, which is a complete ",
+        "SKEW is intended to be a substrate for Urbit, which is a complete ",
         "system as a single value. Your Urbit is one closure which takes a ",
         "command and returns a pair of effects and a new closure. Everything ",
         "lives in this one closure: all system code, all user code, all data."
@@ -782,9 +820,9 @@ frontend = Frontend
 
       paragraph [
         "We want to be able to page parts of your system value from disk on ",
-        "use, but we don't want to hash-cons each Uruk letter. We only want ",
+        "use, but we don't want to hash-cons each SKEW letter. We only want ",
         "to break the value up into parts at specific boundaries. We want to ",
-        "specify from inside an Uruk program that a value should be ",
+        "specify from inside an SKEW program that a value should be ",
         "serialized separately. So we define two functions which put a value ",
         "in a box and take a value out of a box:"
         ]
@@ -823,7 +861,7 @@ frontend = Frontend
       paragraph [
         "For this exercise, we're going to write a small program in \"moon\", ",
         "a language superficially like hoon, except that it is untyped and ",
-        "compiles to Uruk. (We aren't proposing this language as a replacement ",
+        "compiles to SKEW. (We aren't proposing this language as a replacement ",
         "for hoon; there's a separate effort working on repairing the lack of ",
         "rigor in hoon %141.)"
         ]
@@ -872,7 +910,7 @@ frontend = Frontend
 
       paragraph [
         "Nock 4K+ has unifying equality on all nouns, meaning there wasn't a ",
-        "principled place to break the noun tree up into units. The way Uruk ",
+        "principled place to break the noun tree up into units. The way SKEW ",
         "does jets gives us an easy way to break up the memory state: we ",
         "treat jet boundaries as points where we break the state up. We can ",
         "securely hash these values and form an entire Merkle tree."
@@ -986,7 +1024,7 @@ frontend = Frontend
         "Building a new high performance functional VM is nice, but we also ",
         "want it to be a compile target for something like Hoon. So, as a ",
         "feasibility proof, lets produce a non-typed variant of Hoon and make ",
-        "sure we can compile it to Uruk."
+        "sure we can compile it to SKEW."
         ]
 
       paragraph [
