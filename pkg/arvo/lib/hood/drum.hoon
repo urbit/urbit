@@ -207,19 +207,22 @@
   |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7) old=any-state]
   =<  se-abet  =<  se-view
   =.  sat  old
-  =?  ..on-load  (lte hood-version %4)
-    =<  (se-born | %home %goad)
-    =<  (se-born | %home %metadata-store)
-    =<  (se-born | %home %metadata-hook)
-    =<  (se-born | %home %contact-store)
-    =<  (se-born | %home %contact-hook)
-    =<  (se-born | %home %contact-view)
-    =<  (se-born | %home %link-store)
-    =<  (se-born | %home %link-proxy-hook)
-    =<  (se-born | %home %link-listen-hook)
-    =<  (se-born | %home %link-view)
-    (se-born | %home %s3-store)
-  ::
+  =.  dev  (~(gut by bin) ost *source)
+  ?:  (gth hood-version %4)
+    ..on-load
+  ~>  %slog.0^leaf+"drum: starting os1 agents"
+  =>  (se-born | %home %s3-store)
+  =>  (se-born | %home %link-view)
+  =>  (se-born | %home %link-listen-hook)
+  =>  (se-born | %home %link-store)
+  =>  (se-born | %home %link-proxy-hook)
+  =>  (se-born | %home %contact-view)
+  =>  (se-born | %home %contact-hook)
+  =>  (se-born | %home %contact-store)
+  =>  (se-born | %home %metadata-hook)
+  =>  (se-born | %home %metadata-store)
+  =>  (se-born | %home %goad)
+  ~>  %slog.0^leaf+"drum: resubscribing to %dojo and %chat-cli"
   =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
   (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
 ::
