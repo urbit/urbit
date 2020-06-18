@@ -137,7 +137,7 @@ static void
 _disk_commit_cb(uv_work_t* ted_u)
 {
   struct _cd_save* req_u = ted_u->data;
-  req_u->ret_o = c3_lmdb_save(req_u->log_u->mdb_u,
+  req_u->ret_o = u3_lmdb_save(req_u->log_u->mdb_u,
                               req_u->eve_d,
                               req_u->len_d,
                               (void**)req_u->byt_y, // XX safe?
@@ -363,7 +363,7 @@ _disk_read_start_cb(uv_timer_t* tim_u)
 
   //  read events synchronously
   //
-  if ( c3n == c3_lmdb_read(log_u->mdb_u,
+  if ( c3n == u3_lmdb_read(log_u->mdb_u,
                            red_u,
                            red_u->eve_d,
                            red_u->len_d,
@@ -417,7 +417,7 @@ _disk_save_meta(u3_disk* log_u, const c3_c* key_c, u3_atom dat)
 
   u3r_bytes(0, len_w, byt_y, mat);
 
-  ret_o = c3_lmdb_save_meta(log_u->mdb_u, key_c, len_w, byt_y);
+  ret_o = u3_lmdb_save_meta(log_u->mdb_u, key_c, len_w, byt_y);
 
   u3z(mat);
   c3_free(byt_y);
@@ -466,7 +466,7 @@ _disk_read_meta(u3_disk* log_u, const c3_c* key_c)
   u3_weak dat = u3_none;
   u3_noun pro;
 
-  c3_lmdb_read_meta(log_u->mdb_u, &mat, key_c, _disk_meta_read_cb);
+  u3_lmdb_read_meta(log_u->mdb_u, &mat, key_c, _disk_meta_read_cb);
 
   if ( u3_none != mat ) {
     pro = u3m_soft(0, u3ke_cue, mat);
@@ -542,7 +542,7 @@ u3_disk_read_meta(u3_disk* log_u,
 void
 u3_disk_exit(u3_disk* log_u)
 {
-  c3_lmdb_exit(log_u->mdb_u);
+  u3_lmdb_exit(log_u->mdb_u);
   //  XX dispose
   //
 }
@@ -625,7 +625,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     {
       const size_t siz_i = 1099511627776;
 
-      if ( 0 == (log_u->mdb_u = c3_lmdb_init(log_c, siz_i)) ) {
+      if ( 0 == (log_u->mdb_u = u3_lmdb_init(log_c, siz_i)) ) {
         fprintf(stderr, "disk: failed to initialize database");
         c3_free(log_c);
         c3_free(log_u);
@@ -642,7 +642,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     log_u->dun_d = 0;
     c3_d fir_d;
 
-    if ( c3n == c3_lmdb_gulf(log_u->mdb_u, &fir_d, &log_u->dun_d) ) {
+    if ( c3n == u3_lmdb_gulf(log_u->mdb_u, &fir_d, &log_u->dun_d) ) {
       fprintf(stderr, "disk: failed to load latest event from database");
       c3_free(log_u);
       return 0;

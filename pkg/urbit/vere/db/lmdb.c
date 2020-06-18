@@ -29,10 +29,10 @@
 //      - read/save ranges of events
 //
 
-/* c3_lmdb_init(): open lmdb at [pax_c], mmap up to [siz_i].
+/* u3_lmdb_init(): open lmdb at [pax_c], mmap up to [siz_i].
 */
 MDB_env*
-c3_lmdb_init(const c3_c* pax_c, size_t siz_i)
+u3_lmdb_init(const c3_c* pax_c, size_t siz_i)
 {
   MDB_env* env_u;
   c3_w     ret_w;
@@ -71,18 +71,18 @@ c3_lmdb_init(const c3_c* pax_c, size_t siz_i)
   return env_u;
 }
 
-/* c3_lmdb_exit(): close lmdb.
+/* u3_lmdb_exit(): close lmdb.
 */
 void
-c3_lmdb_exit(MDB_env* env_u)
+u3_lmdb_exit(MDB_env* env_u)
 {
   mdb_env_close(env_u);
 }
 
-/* c3_lmdb_gulf(): read first and last event numbers.
+/* u3_lmdb_gulf(): read first and last event numbers.
 */
 c3_o
-c3_lmdb_gulf(MDB_env* env_u, c3_d* low_d, c3_d* hig_d)
+u3_lmdb_gulf(MDB_env* env_u, c3_d* low_d, c3_d* hig_d)
 {
   MDB_txn* txn_u;
   MDB_dbi  mdb_u;
@@ -175,10 +175,10 @@ c3_lmdb_gulf(MDB_env* env_u, c3_d* low_d, c3_d* hig_d)
   }
 }
 
-/* c3_lmdb_read(): read [len_d] events starting at [eve_d].
+/* u3_lmdb_read(): read [len_d] events starting at [eve_d].
 */
 c3_o
-c3_lmdb_read(MDB_env* env_u,
+u3_lmdb_read(MDB_env* env_u,
              void*    vod_p,
              c3_d     eve_d,
              c3_d     len_d,
@@ -296,10 +296,10 @@ c3_lmdb_read(MDB_env* env_u,
   }
 }
 
-/* c3_lmdb_save(): save [len_d] events starting at [eve_d].
+/* u3_lmdb_save(): save [len_d] events starting at [eve_d].
 */
 c3_o
-c3_lmdb_save(MDB_env* env_u,
+u3_lmdb_save(MDB_env* env_u,
              c3_d     eve_d,               //  first event
              c3_d     len_d,               //  number of events
              void**   byt_p,               //  array of bytes
@@ -361,10 +361,10 @@ c3_lmdb_save(MDB_env* env_u,
   return c3y;
 }
 
-/* c3_lmdb_read_meta(): read by string from the META db.
+/* u3_lmdb_read_meta(): read by string from the META db.
 */
 void
-c3_lmdb_read_meta(MDB_env*    env_u,
+u3_lmdb_read_meta(MDB_env*    env_u,
                   void*       vod_p,
                   const c3_c* key_c,
                   void (*read_f)(void*, size_t, void*))
@@ -410,10 +410,10 @@ c3_lmdb_read_meta(MDB_env*    env_u,
   }
 }
 
-/* c3_lmdb_save_meta(): save by string into the META db.
+/* u3_lmdb_save_meta(): save by string into the META db.
 */
 c3_o
-c3_lmdb_save_meta(MDB_env*    env_u,
+u3_lmdb_save_meta(MDB_env*    env_u,
                   const c3_c* key_c,
                   size_t      val_i,
                   void*       val_p)
