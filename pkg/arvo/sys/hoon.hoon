@@ -12035,6 +12035,15 @@
   ?~  a  !!
   ~_(i.a $(a t.a))
 ::
+++  road
+  |*  =(trap *)
+  ^+  $:trap
+  =/  res  (mule trap)
+  ?-  -.res
+    %&  p.res
+    %|  (mean leaf+"road: new" p.res)
+  ==
+::
 ++  slew                                                ::  get axis in vase
   |=  {axe/@ vax/vase}  ^-  (unit vase)
   ?.  |-  ^-  ?

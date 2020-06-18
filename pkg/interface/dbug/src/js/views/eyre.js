@@ -146,7 +146,7 @@ export class Eyre extends Component {
 
     const sessionItems = props.authentication.map(s => {
       return (<div>
-        {`${s.cookie} expires ${msToDa(s.expiry)}`}
+        {`${s.cookie} expires ${msToDa(s.expiry)}, uses ${s.channels} channel(s)`}
       </div>);
     });
 
