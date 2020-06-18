@@ -4,7 +4,6 @@
   |=  grp=groups
   ^-  json
   =,  enjs:format
-  %+  frond  %group-initial
   %-  pairs
   %+  turn  ~(tap by grp)
   |=  [pax=^path =group]

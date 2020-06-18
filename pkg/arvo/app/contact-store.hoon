@@ -84,7 +84,7 @@
     |^
     =/  cards=(list card)
       ?+    path  (on-watch:def path)
-          [%all ~]      (give %contact-update !>([%rolodex rolodex]))
+          [%all ~]      (give %contact-update !>([%initial rolodex]))
           [%updates ~]  ~
           [%contacts @ *]
         %+  give  %contact-update

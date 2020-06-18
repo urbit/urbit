@@ -160,9 +160,10 @@
   |=  diff=group-update
   ^-  (quip card _state)
   ?-  -.diff
-      %keys    [~ state]
-      %path    [~ state]
-      %bundle  [~ state]
+      %initial  [~ state]
+      %keys     [~ state]
+      %path     [~ state]
+      %bundle   [~ state]
       %add     [(update-subscribers [%group pax.diff] diff) state]
       %remove  [(update-subscribers [%group pax.diff] diff) state]
   ::
@@ -176,8 +177,9 @@
   |=  diff=group-update
   ^-  (quip card _state)
   ?-  -.diff
-      %keys    [~ state]
-      %bundle  [~ state]
+      %initial  [~ state]
+      %keys     [~ state]
+      %bundle   [~ state]
       %path
     :_  state
     ?~  pax.diff  ~

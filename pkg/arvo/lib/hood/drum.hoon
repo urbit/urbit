@@ -103,7 +103,6 @@
       %permission-group-hook
       %invite-store
       %invite-hook
-      %invite-view
       %chat-store
       %chat-hook
       %chat-view
@@ -119,6 +118,7 @@
       %metadata-store
       %metadata-hook
       %s3-store
+      %file-server
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -225,10 +225,10 @@
   ==
 ::
 ++  on-load
-  |=  ver=?(%1 %2 %3 %4)
+  |=  ver=?(%1 %2 %3 %4 %5)
   =<  se-abet  =<  se-view
-  =?  .  (lte ver %3)
-    =.  ver  %4
+  =?  .  (lte ver %4)
+    =.  ver  %5
     =.  ..on-load
       =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
       =<  (se-born %home %goad)
@@ -241,9 +241,11 @@
       =<  (se-born %home %link-proxy-hook)
       =<  (se-born %home %link-listen-hook)
       =<  (se-born %home %link-view)
-      (se-born %home %s3-store)
+      =<  (se-born %home %s3-store)
+      (se-born %home %file-server)
     .
-  ?>  ?=(%4 ver)
+  ?>  ?=(%5 ver)
+  =>  (se-born %home %file-server)
   =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
   (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
 ::
@@ -360,7 +362,8 @@
           %metadata-store
       ==
       :: ensure chat-cli can sub to invites
-      (sy ~[%chat-hook])
+      :: and file server can receive pokes
+      (sy ~[%chat-hook %file-server])
     ==
   ++  sort-by-priorities
     =/  priorities  priorities

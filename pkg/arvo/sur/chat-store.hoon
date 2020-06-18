@@ -29,8 +29,6 @@
 ::
 +$  inbox  (map path mailbox)
 ::
-+$  configs  (map path config)
-::
 +$  diff
   $%  [%create =path]               ::  %create: create a mailbox at path
       [%delete =path]               ::  %delete: delete a mailbox at path
@@ -46,8 +44,8 @@
   ==
 ::
 +$  update
-  $%  [%keys keys=(set path)]
-      [%config =path =config]
+  $%  [%initial =inbox]
+      [%keys keys=(set path)]
       [%messages =path start=@ud end=@ud envelopes=(list envelope)]
       diff
   ==
