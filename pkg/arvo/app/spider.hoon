@@ -19,8 +19,27 @@
       tid=(map tid yarn)
   ==
 ::
++$  clean-slate-any
+  $^  clean-slate-ket
+  $%  clean-slate-sig
+      clean-slate
+  ==
+::
 +$  clean-slate
-  $:  starting=(map yarn [=trying =vase])
+  $:  %1
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+  ==
+::
++$  clean-slate-ket
+  $:  starting=(map yarn [trying=?(%build %find %none) =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+  ==
+::
++$  clean-slate-sig
+  $:  starting=~
       running=(list yarn)
       tid=(map tid yarn)
   ==
@@ -117,12 +136,17 @@
   ++  on-init   on-init:def
   ++  on-save   clean-state:sc
   ++  on-load
+    |^
     |=  old-state=vase
-    =+  !<(=clean-slate old-state)
-    =.  tid.state  tid.clean-slate
+    =+  !<(any=clean-slate-any old-state)
+    =?  any  ?=(^ -.any)  (old-to-1 any)
+    =?  any  ?=(~ -.any)  (old-to-1 any)
+    ?>  ?=(%1 -.any)
+    ::
+    =.  tid.state  tid.any
     =/  yarns=(list yarn)
-      %+  welp  running.clean-slate
-      ~(tap in ~(key by starting.clean-slate))
+      %+  welp  running.any
+      ~(tap in ~(key by starting.any))
     |-  ^-  (quip card _this)
     ?~  yarns
       `this
@@ -131,6 +155,12 @@
     =^  cards-2  this
       $(yarns t.yarns)
     [(weld cards-1 cards-2) this]
+    ::
+    ++  old-to-1
+      |=  old=clean-slate-ket
+      ^-  clean-slate
+      1+old(starting (~(run by starting.old) |=([* v=vase] none+v)))
+    --
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -350,9 +380,13 @@
 ::
 ++  thread-fail-not-running
   |=  [=tid =term =tang]
+  ^-  (quip card ^state)
   =/  =yarn  (~(got by tid.state) tid)
-  :-  (thread-say-fail tid term tang)
-  state(starting (~(del by starting.state) yarn))
+  :_  state(starting (~(del by starting.state) yarn))
+  =/  moz  (thread-say-fail tid term tang)
+  ?.  ?=([~ %build *] (~(get by starting.state) yarn))
+    moz
+  :_(moz [%pass /build/[tid] %arvo %c %warp our.bowl %home ~])
 ::
 ++  thread-say-fail
   |=  [=tid =term =tang]
@@ -440,5 +474,5 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  state(running (turn (tap-yarn running.state) head))
+  1+state(running (turn (tap-yarn running.state) head))
 --

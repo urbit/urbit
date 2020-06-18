@@ -1,33 +1,16 @@
-::                                                      ::  ::
-::::  /hoon/drum/hood/lib                               ::  ::
-  ::                                                    ::  ::
-/?    310                                               ::  version
-/-    *sole
-/+    sole
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
-|%                                                      ::  ::
-++  part      {$drum $2 pith-2}                         ::
-++  part-old  {$drum $1 pith-1}                         ::
-::                                                      ::
-++  pith-1                                              ::       pre-style
-  %+  cork  pith-2                                      ::
-  |:($:pith-2 +<(bin ((map bone source-1))))            ::
-::                                                      ::
-++  source-1                                            ::
-  %+  cork  source                                      ::
-  |:($:source +<(mir ((pair @ud (list @c)))))           ::  style-less mir
-::                                                      ::
+/-  *sole
+/+  sole
+|%
++$  any-state  $%(state)
++$  state  [%2 pith-2]
+::
 ++  pith-2                                              ::
   $:  eel/(set gill:gall)                               ::  connect to
       ray/(set well:gall)                               ::
       fur/(map dude:gall (unit server))                 ::  servers
       bin/(map bone source)                             ::  terminals
   ==                                                    ::
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
+::                                                      ::
 ++  server                                              ::  running server
   $:  syd/desk                                          ::  app identity
       cas/case                                          ::  boot case
@@ -72,7 +55,7 @@
   ::                                                    ::  ::
 |%
 ++  deft-apes                                           ::  default servers
-  |=  [our/ship lit/?]
+  |=  [our=ship lit=?]
   %-  ~(gas in *(set well:gall))
   ^-  (list well:gall)
   ::  boot all default apps off the home desk
@@ -122,41 +105,34 @@
   ==
 ::
 ++  deft-fish                                           ::  default connects
-  |=  our/ship
+  |=  our=ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
   [[our %dojo] [our %chat-cli]~]
 ::
-++  make                                                ::  initial part
-  |=  our/ship
-  ^-  part
-  :*  %drum
-      %2
-      eel=(deft-fish our)
-      ray=~
-      fur=~
-      bin=~
-  ==
-::
-::
 ++  en-gill                                           ::  gill to wire
-  |=  gyl/gill:gall
+  |=  gyl=gill:gall
   ^-  wire
   [%drum %phat (scot %p p.gyl) q.gyl ~]
 ::
 ++  de-gill                                           ::  gill from wire
-  |=  way/wire  ^-  gill:gall
-  ?>(?=({@ @ ~} way) [(slav %p i.way) i.t.way])
+  |=  way=wire  ^-  gill:gall
+  ?>(?=([@ @ ~] way) [(slav %p i.way) i.t.way])
 --
+::  TODO: remove .ost
 ::
-::::
-  ::
-|=  {hid/bowl:gall part}                          ::  main drum work
+|=  [hid=bowl:gall state]
+=*  sat  +<+
 =/  ost  0
 =+  (~(gut by bin) ost *source)
 =*  dev  -
-|_  {moz/(list card:agent:gall) biz/(list dill-blit:dill)}
-+*  this  .
+=|  moz=(list card:agent:gall)
+=|  biz=(list dill-blit:dill)
+|%
+++  this  .
++$  state      ^state      ::  proxy
++$  any-state  ^any-state  ::  proxy
+++  on-init  se-abet:this(eel (deft-fish our.hid))
 ++  diff-sole-effect-phat                             ::  app event
   |=  {way/wire fec/sole-effect}
   =<  se-abet  =<  se-view
@@ -172,14 +148,15 @@
   (se-text "[{<src.hid>}, driving {<our.hid>}]")
 ::
 ++  poke-set-boot-apps                                ::
-  |=  lit/?
-  ^-  (quip card:agent:gall part)
+  |=  lit=?
+  ^-  (quip card:agent:gall ^state)
   ::  We do not run se-abet:se-view here because that starts the apps,
   ::  and some apps are not ready to start (eg Talk crashes because the
   ::  terminal has width 0).  It appears the first message to drum must
   ::  be the peer.
   ::
-  [~ +<+.^$(ray (deft-apes our.hid lit))]
+  =.  ray  (deft-apes our.hid lit)
+  [~ sat]
 ::
 ++  poke-dill-belt                                    ::  terminal event
   |=  bet/dill-belt:dill
@@ -193,7 +170,7 @@
 ++  poke-start                                        ::  start app
   |=  wel/well:gall
   =<  se-abet  =<  se-view
-  (se-born wel)
+  (se-born & wel)
 ::
 ++  poke-link                                         ::  connect app
   |=  gyl/gill:gall
@@ -216,34 +193,36 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
-    %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
-    %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
-    %drum-unlink         =;(f (f !<(_+<.f vase)) poke-unlink)
+    %drum-dill-belt      =;(f (f !<(_+<.f vase)) poke-dill-belt)
+    %drum-dill-blit      =;(f (f !<(_+<.f vase)) poke-dill-blit)
     %drum-exit           =;(f (f !<(_+<.f vase)) poke-exit)
-    %drum-start          =;(f (f !<(_+<.f vase)) poke-start)
+    %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
+    %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
     %drum-set-boot-apps  =;(f (f !<(_+<.f vase)) poke-set-boot-apps)
+    %drum-start          =;(f (f !<(_+<.f vase)) poke-start)
+    %drum-unlink         =;(f (f !<(_+<.f vase)) poke-unlink)
   ==
 ::
 ++  on-load
-  |=  ver=?(%1 %2 %3 %4)
+  |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7) old=any-state]
   =<  se-abet  =<  se-view
-  =?  .  (lte ver %3)
-    =.  ver  %4
-    =.  ..on-load
-      =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
-      =<  (se-born %home %goad)
-      =<  (se-born %home %metadata-store)
-      =<  (se-born %home %metadata-hook)
-      =<  (se-born %home %contact-store)
-      =<  (se-born %home %contact-hook)
-      =<  (se-born %home %contact-view)
-      =<  (se-born %home %link-store)
-      =<  (se-born %home %link-proxy-hook)
-      =<  (se-born %home %link-listen-hook)
-      =<  (se-born %home %link-view)
-      (se-born %home %s3-store)
-    .
-  ?>  ?=(%4 ver)
+  =.  sat  old
+  =.  dev  (~(gut by bin) ost *source)
+  ?:  (gth hood-version %4)
+    ..on-load
+  ~>  %slog.0^leaf+"drum: starting os1 agents"
+  =>  (se-born | %home %s3-store)
+  =>  (se-born | %home %link-view)
+  =>  (se-born | %home %link-listen-hook)
+  =>  (se-born | %home %link-store)
+  =>  (se-born | %home %link-proxy-hook)
+  =>  (se-born | %home %contact-view)
+  =>  (se-born | %home %contact-hook)
+  =>  (se-born | %home %contact-store)
+  =>  (se-born | %home %metadata-hook)
+  =>  (se-born | %home %metadata-store)
+  =>  (se-born | %home %goad)
+  ~>  %slog.0^leaf+"drum: resubscribing to %dojo and %chat-cli"
   =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
   (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
 ::
@@ -258,7 +237,7 @@
   ::
   (se-drop & gyl)
 ::
-++  take                                              ::
+++  take-arvo
   |=  [=wire =sign-arvo]
   %+  take-onto  wire
   ?>  ?=(%onto +<.sign-arvo)
@@ -312,10 +291,9 @@
 ::::                                                  ::  ::
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
-  ^-  (quip card:agent:gall part)
-  =*  pith  +<+.$
+  ^-  (quip card:agent:gall state)
   =.  .  se-subze:se-adze:se-adit
-  :_  pith(bin (~(put by bin) ost dev))
+  :_  sat(bin (~(put by bin) ost dev))
   ^-  (list card:agent:gall)
   ?~  biz  (flop moz)
   :_  (flop moz)
@@ -463,9 +441,10 @@
   ta-abet:(ta-belt:(se-tame u.gul) bet)
 ::
 ++  se-born                                           ::  new server
-  |=  wel/well:gall
+  |=  [print-on-repeat=? wel=well:gall]
   ^+  +>
   ?:  (~(has in ray) wel)
+    ?.  print-on-repeat  +>
     (se-text "[already running {<p.wel>}/{<q.wel>}]")
   %=  +>
     ray  (~(put in ray) wel)

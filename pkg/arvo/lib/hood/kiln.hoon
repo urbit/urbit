@@ -1,63 +1,66 @@
-::                                                      ::  ::
-::::  /hoon/kiln/hood/lib                               ::  ::
-  ::                                                    ::  ::
-/?  310                                                 ::  version
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
 =,  clay
 =,  space:userlib
 =,  format
-|%                                                      ::  ::
-++  part  {$kiln $0 pith}                               ::  kiln state
-++  pith                                                ::  ::
-    $:  rem=(map desk per-desk)                         ::
-        syn=(map kiln-sync let/@ud)                     ::
-        ota=(unit [=ship =desk =aeon])                  ::
-        commit-timer=[way=wire nex=@da tim=@dr mon=term]
-    ==                                                  ::
-++  per-desk                                            ::  per-desk state
-    $:  auto/?                                          ::  escalate on failure
-        gem/germ                                        ::  strategy
-        her/@p                                          ::  from ship
-        sud/@tas                                        ::  from desk
-        cas/case                                        ::  at case
-    ==                                                  ::
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
-++  kiln-commit  term                                   ::
-++  kiln-mount                                          ::
-    $:  pax/path                                        ::
-        pot/term                                        ::
-    ==                                                  ::
-++  kiln-unmount  $@(term {knot path})                  ::
-++  kiln-sync                                           ::
-    $:  syd/desk                                        ::
-        her/ship                                        ::
-        sud/desk                                        ::
-    ==                                                  ::
-++  kiln-unsync                                         ::
-    $:  syd/desk                                        ::
-        her/ship                                        ::
-        sud/desk                                        ::
-    ==                                                  ::
-++  kiln-merge                                          ::
-    $:  syd/desk                                        ::
-        ali/ship                                        ::
-        sud/desk                                        ::
-        cas/case                                        ::
-        gim/?($auto germ)                               ::
-    ==                                                  ::
---                                                      ::
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
-|=  {bowl:gall part}                                    ::  main kiln work
+|%
++$  state  [%1 pith-1]
++$  any-state
+  $%  state
+      [%0 pith-0]
+  ==
++$  pith-1                                              ::
+  $:  rem=(map desk per-desk)                           ::
+      syn=(map kiln-sync let=@ud)                       ::
+      ota=(unit [=ship =desk =aeon])                    ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+  ==                                                    ::
++$  pith-0                                              ::
+  $:  rem=(map desk per-desk)                           ::
+      syn=(map kiln-sync let=@ud)                       ::
+      autoload-on=?                                     ::
+      cur-hoon=@uvI                                     ::
+      cur-arvo=@uvI                                     ::
+      cur-zuse=@uvI                                     ::
+      cur-vanes=(map @tas @uvI)                         ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
+  ==
++$  per-desk                                            ::  per-desk state
+  $:  auto=?                                            ::  escalate on failure
+      gem=germ                                          ::  strategy
+      her=@p                                            ::  from ship
+      sud=@tas                                          ::  from desk
+      cas=case                                          ::  at case
+  ==
++$  kiln-commit  term                                   ::
++$  kiln-mount                                          ::
+  $:  pax=path                                          ::
+      pot=term                                          ::
+  ==
++$  kiln-unmount  $@(term [knot path])                  ::
++$  kiln-sync                                           ::
+  $:  syd=desk                                          ::
+      her=ship                                          ::
+      sud=desk                                          ::
+  ==
++$  kiln-unsync                                         ::
+  $:  syd=desk                                          ::
+      her=ship                                          ::
+      sud=desk                                          ::
+  ==
++$  kiln-merge                                          ::
+  $:  syd=desk                                          ::
+      ali=ship                                          ::
+      sud=desk                                          ::
+      cas=case                                          ::
+      gim=?($auto germ)                                 ::
+  ==
+--
+|=  [bowl:gall state]
 ?>  =(src our)
-|_  moz/(list card:agent:gall)
+|_  moz=(list card:agent:gall)
++$  state      ^state      ::  proxy
++$  any-state  ^any-state  ::  proxy
 ++  abet                                                ::  resolve
-  [(flop moz) `part`+<+.$]
+  [(flop moz) `state`+<+.$]
 ::
 ++  emit
   |=  card:agent:gall
@@ -72,6 +75,34 @@
   |=  {mez/tape sud/desk who/ship syd/desk}
   :^  %palm  [" " ~ ~ ~]  leaf+(weld "kiln: " mez)
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
+::
+++  on-load
+  |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7) old=any-state]
+  =<  abet
+  =?  .  ?=(%0 -.old)
+    =/  recognized-ota=(unit [syd=desk her=ship sud=desk])
+      =/  syncs=(list [[syd=desk her=ship sud=desk] =aeon])
+        ~(tap by syn.old)
+      |-  ^-  (unit [syd=desk her=ship sud=desk])
+      ?~  syncs
+        ~
+      ?:  &(=(%base syd.i.syncs) !=(our her.i.syncs) =(%kids sud.i.syncs))
+        `[syd her sud]:i.syncs
+      $(syncs t.syncs)
+    ::
+    =.  +<+.$.abet
+      =-  old(- %1, |3 [ota=~ commit-timer.old], syn -)
+      ?~  recognized-ota
+        syn
+      (~(del by syn) [syd her sud]:u.recognized-ota)
+    ::
+    =?  ..abet  ?=(^ recognized-ota)
+      (poke-internal:update `[her sud]:u.recognized-ota)
+    +(old +<+.$.abet)
+  ::
+  ?>  ?=(%1 -.old)
+  =.  +<+.$.abet  old
+  ..abet
 ::
 ++  poke-commit
   |=  [mon/kiln-commit auto=?]
@@ -136,7 +167,6 @@
     |=  =wire
     ?~  ota
       |
-    ~!  ota=ota
     ?&  ?=([@ @ @ *] wire)
         =(i.wire (scot %p ship.u.ota))
         =(i.t.wire desk.u.ota)
@@ -357,25 +387,25 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
-    %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
     %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
+    %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
+    %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
+    %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
+    %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
+    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
     %kiln-info               =;(f (f !<(_+<.f vase)) poke-info)
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
-    %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
+    %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
+    %kiln-ota                =;(f (f !<(_+<.f vase)) poke:update)
+    %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
-    %kiln-track              =;(f (f !<(_+<.f vase)) poke-track)
     %kiln-sync               =;(f (f !<(_+<.f vase)) poke-sync)
-    %kiln-ota                =;(f (f !<(_+<.f vase)) poke:update)
     %kiln-syncs              =;(f (f !<(_+<.f vase)) poke-syncs)
-    %kiln-goad-gall          =;(f (f !<(_+<.f vase)) poke-goad-gall)
-    %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
+    %kiln-track              =;(f (f !<(_+<.f vase)) poke-track)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
-    %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
-    %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
-    %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
   ==
 ::
 ++  poke-goad-gall
@@ -400,7 +430,7 @@
                        (take-coup-spam t.t.wire p.sign)
   ==
 ::
-++  take-general
+++  take-arvo
   |=  [=wire =sign-arvo]
   ?-  wire
       [%sync %merg *]   %+  take-mere-sync  t.t.wire

@@ -561,6 +561,8 @@
             van=(map term vane)
         ==
     +*  this  .
+    ++  plot  run.nub
+    ++  then  |=(paz=(list plan) this(run (weld run paz)))
     ++  abed  |=(nib=debt this(nub nib))
     ::  +abet: finalize loop
     ::
@@ -752,7 +754,7 @@
           %+  turn  von
           =/  bem=beam  [[our %home da+now] /whey]
           |=  [lal=@tas =vane]
-          =/  met  (need (need (peek ** ~ lal bem)))
+          =/  met  (need (need (peek ** ~ (rsh 3 5 lal) bem)))
           lal^|+;;((list mass) q.q.met)
       ::
           :+  %caches  %|
@@ -1059,7 +1061,13 @@
     ram
   ~|  ram+ram
   =|  nub=debt:le:part
-  [%345 nub(out ;;((list ovum) ram))]
+  =/  =plan:le:part
+    :-  [%$ ~]
+    %+  turn  ;;((list ovum) ram)
+    |=  ovo=ovum
+    ^-  move
+    [[p.ovo]~ %give %& %noun q.ovo]
+  [%345 nub(run [plan]~)]
 ::  $prim: old $pram
 ::  +drum: upgrade $prim to $pram, incompatible
 ::
@@ -1074,7 +1082,7 @@
   =/  fyn  (turn nyf |=([a=@tas b=vise] [a (slim b)]))
   =/  rum  (drum rim)
   (load who now yen rum (slim dub) fyn)
-::  +load: load compatible
+::  +load: load compatible, notifying vanes
 ::
 ++  load
   |=  [who=ship now=@da yen=@ ram=pram dub=vase nyf=pane]
@@ -1087,7 +1095,8 @@
     ==
   =.  ram  (dram ram)
   ?>  ?=([%345 *] ram)
-  (leap now (lead now `nub.ram))
+  =/  run  plot:(spam:(lead now ~) [//arvo %vega ~])
+  (leap now (then:(lead now `nub.ram) run))
 ::  +peek: external inspect
 ::
 ++  peek
@@ -1257,7 +1266,7 @@
     ::
     =/  raw
       ~>  %slog.[0 leaf+"vega: compiling hoon"]
-      (ride %noun u.hun)
+      (mure |.((ride %noun u.hun)))
     ::  activate the new compiler gate, producing +ride
     ::
     =/  cop  .*(0 +.raw)
@@ -1268,12 +1277,14 @@
     ?>  |(=(nex hoon-version) =(+(nex) hoon-version))
     ::  if we're upgrading language versions, recompile the compiler
     ::
-    =>  ?:  =(nex hoon-version)
-          [hot=`*`raw .]
-        ~>  %slog.[0 leaf+"vega: recompiling hoon {<nex>}k"]
-        ~&  [%hoon-compile-upgrade nex]
-        =/  hot  (slum cop [%noun hun])
-        .(cop .*(0 +.hot))
+    =^  hot=*  cop
+      ?:  =(nex hoon-version)
+        [raw cop]
+      ~>  %slog.[0 leaf+"vega: recompiling hoon {<nex>}k"]
+      ~&  [%hoon-compile-upgrade nex]
+      %-  mure  |.
+      =/  hot  (slum cop [%noun hun])
+      [hot .*(0 +.hot)]
     ::  extract the hoon core from the outer gate (+ride)
     ::
     =/  hoc  .*(cop [%0 7])
@@ -1286,6 +1297,7 @@
   ::
   =/  rav
     ~>  %slog.[0 leaf+"vega: compiling kernel {(scow %p (mug hyp))}"]
+    %-  mure  |.
     (slum cop [hyp van])
   ::  activate arvo, and extract the arvo core from the outer gate
   ::
