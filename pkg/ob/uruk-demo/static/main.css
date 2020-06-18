@@ -1,29 +1,98 @@
+body {
+    max-width: 1000px;
+    margin: auto;
+    font-size: 1.2em;
+
+    font-family: "Inter", "Inter UI", -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
 p {
-  color: black;
+    color: black;
 }
 
 p.result {
   color: #6a65ff;
   font-weight: bold;
-  font-size: 14px;
 }
 
 p.noresult {
   color: #d64040;
   font-weight: bold;
-  font-size: 14px;
+  font-size: larger;
 }
 
 p.error {
   color: #d64040;
-  font-size: 10px;
+  font-size: smaller;
 }
 
 p.trace {
   color: #5a57a7;
-  font-size: 10px;
+  font-size: smaller;
 }
 
 pre.docs {
-  font-size: 10px;
+  font-size: larger;
+}
+
+/* Demo styling */
+.demo {
+  border-left: 1px solid black;
+  padding-left: 1rem;
+}
+
+/* Collapsible section */
+
+.wrap-collapsible {
+  margin-bottom: 10px;
+}
+
+input[type='checkbox'] {
+    display: none;
+}
+
+.label-toggle {
+  display: block;
+  transition: all 0.25s ease-out;
+
+  font-size: 1.3em;
+  font-weight: bolder;
+}
+
+.label-toggle::before {
+  content: ' ';
+  display: inline-block;
+
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid currentColor;
+
+  vertical-align: middle;
+  margin-right: .7rem;
+  transform: translateY(-2px);
+
+  transition: transform .2s ease-out;
+}
+
+.collapsible-content {
+  max-height: 0px;
+  overflow: hidden;
+
+  margin-left: 1rem;
+
+  transition: max-height .25s ease-in-out;
+}
+
+.toggle:checked + .label-toggle + .collapsible-content {
+  max-height: none;
+}
+
+.toggle:checked + .label-toggle::before {
+  transform: rotate(90deg) translateX(-3px);
+}
+
+.toggle:checked + .label-toggle {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
 }
