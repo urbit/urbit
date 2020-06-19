@@ -483,7 +483,7 @@ _stop_signal(c3_i int_i)
 {
   //  if we have a pier, unmap the event log before dumping core
   //
-  u3_pier_halt();
+  u3_king_halt();
 }
 
 /*
@@ -581,7 +581,7 @@ _fork_into_background_process()
 static void
 _stop_on_boot_completed_cb()
 {
-  u3_pier_exit(u3_pier_stub());
+  u3_king_exit();
 }
 
 c3_i

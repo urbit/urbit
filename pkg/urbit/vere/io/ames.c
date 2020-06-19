@@ -463,7 +463,7 @@ _ames_io_start(u3_ames* sam_u)
 
       //  XX revise
       //
-      u3_pier_exit(u3_pier_stub());
+      u3_pier_bail(u3_king_stub());
     }
 
     uv_udp_getsockname(&sam_u->wax_u, (struct sockaddr *)&add_u, &add_i);

@@ -53,6 +53,112 @@
 --
 */
 
+/* _lord_stop_cb(): finally all done.
+*/
+static void
+_lord_stop_cb(void*       ptr_v,
+              const c3_c* err_c)
+{
+  u3_lord* god_u = ptr_v;
+
+  void (*exit_f)(void*) = god_u->cb_u.exit_f;
+  void* exit_v = god_u->cb_u.vod_p;
+
+  c3_free(god_u);
+
+  if ( exit_f ) {
+    exit_f(exit_v);
+  }
+}
+
+/* _lord_writ_free(): dispose of pending writ.
+*/
+static void
+_lord_writ_free(u3_writ* wit_u)
+{
+  switch ( wit_u->typ_e ) {
+    default: c3_assert(0);
+
+    case u3_writ_work: {
+      //  XX confirm
+      //
+      u3_ovum* egg_u = wit_u->wok_u.egg_u;
+      u3_auto_drop(egg_u->car_u, egg_u);
+      u3z(wit_u->wok_u.job);
+    } break;
+
+    case u3_writ_peek: {
+      u3z(wit_u->pek_u->now);
+      u3z(wit_u->pek_u->gan);
+      u3z(wit_u->pek_u->ful);
+    } break;
+
+    case u3_writ_play: {
+      u3_fact* tac_u = wit_u->fon_u.ext_u;
+      u3_fact* nex_u;
+
+      while ( tac_u ) {
+        nex_u = tac_u->nex_u;
+        u3_fact_free(tac_u);
+        tac_u = nex_u;
+      }
+    } break;
+
+    case u3_writ_save:
+    case u3_writ_pack:
+    case u3_writ_exit: {
+    } break;
+  }
+
+  c3_free(wit_u);
+}
+
+/* _lord_bail_noop(): ignore subprocess error on shutdown
+*/
+static void
+_lord_bail_noop(void*       ptr_v,
+                const c3_c* err_c)
+{
+}
+
+/* _lord_stop(): close and dispose all resources.
+*/
+static void
+_lord_stop(u3_lord* god_u)
+{
+  //  dispose outstanding writs
+  //
+  {
+    u3_writ* wit_u = god_u->ext_u;
+    u3_writ* nex_u;
+
+    while ( wit_u ) {
+      nex_u = wit_u->nex_u;
+      _lord_writ_free(wit_u);
+      wit_u = nex_u;
+    }
+
+    god_u->ent_u = god_u->ext_u = 0;
+  }
+
+  u3_newt_moat_stop(&god_u->out_u, _lord_stop_cb);
+  u3_newt_mojo_stop(&god_u->inn_u, _lord_bail_noop);
+
+  uv_close((uv_handle_t*)&god_u->cub_u, 0);
+}
+
+/* _lord_bail(): serf/lord error.
+*/
+static void
+_lord_bail(u3_lord* god_u)
+{
+  void (*bail_f)(void*) = god_u->cb_u.bail_f;
+  void* bail_v = god_u->cb_u.vod_p;
+
+  u3_lord_halt(god_u);
+  bail_f(bail_v);
+}
+
 /* _lord_writ_pop(): pop the writ stack.
 */
 static u3_writ*
@@ -103,56 +209,11 @@ _lord_writ_need(u3_lord* god_u, u3_writ_type typ_e)
     fprintf(stderr, "lord: unexpected %%%s, expected %%%s\r\n",
                     _lord_writ_str(typ_e),
                     _lord_writ_str(wit_u->typ_e));
-    u3_pier_bail();
-    exit(1);
+    _lord_bail(god_u);
+    return 0;
   }
 
   return wit_u;
-}
-
-/* _lord_on_k(): handle subprocess exit.
-*/
-static void
-_lord_on_exit(uv_process_t* req_u,
-              c3_ds         sas_i,
-              c3_i          sig_i)
-{
-  u3_lord* god_u = (void*)req_u;
-
-  {
-    void (*exit_f)(void*, c3_o) = god_u->cb_u.exit_f;
-    void* vod_p = god_u->cb_u.vod_p;
-
-    //  XX correct comparison?
-    //
-    c3_o  ret_o = ( u3_writ_exit != god_u->ext_u->typ_e )
-                  ? c3n
-                  : ( god_u->ext_u->xit_w == sas_i )
-                    ? c3y : c3n;
-
-    //  XX dispose god_u
-    //
-    exit_f(vod_p, c3y);
-  }
-}
-
-/* _lord_bail_noop(): ignore subprocess error on shutdown
-*/
-static void
-_lord_bail_noop(void*       vod_p,
-                const c3_c* err_c)
-{
-}
-
-/* _lord_bail(): handle subprocess error.
-*/
-static void
-_lord_bail(void*       vod_p,
-           const c3_c* err_c)
-{
-  // XX exit?
-  //
-  fprintf(stderr, "\rpier: work error: %s\r\n", err_c);
 }
 
 /* _lord_plea_foul():
@@ -167,9 +228,11 @@ _lord_plea_foul(u3_lord* god_u, c3_m mot_m, u3_noun dat)
     fprintf(stderr, "lord: received invalid %%%.4s $plea\r\n", (c3_c*)&mot_m);
   }
 
-  u3m_p("plea", dat);
-  u3_pier_bail();
-  exit(1);
+  //  XX can't unconditionally print
+  //
+  // u3m_p("plea", dat);
+
+  _lord_bail(god_u);
 }
 
 /* _lord_plea_live(): hear serf %live ack
@@ -207,8 +270,8 @@ _lord_plea_ripe(u3_lord* god_u, u3_noun dat)
 {
   if ( c3y == god_u->liv_o ) {
     fprintf(stderr, "lord: received unexpected %%ripe\n");
-    u3_pier_bail();
-    exit(1);
+    _lord_bail(god_u);
+    return;
   }
 
   {
@@ -230,8 +293,8 @@ _lord_plea_ripe(u3_lord* god_u, u3_noun dat)
 
     if ( 1 != pro_y ) {
       fprintf(stderr, "pier: unsupported ipc protocol version %u\r\n", pro_y);
-      u3_pier_bail();
-      exit(1);
+      _lord_bail(god_u);
+      return;
     }
 
     god_u->eve_d = eve_d;
@@ -276,6 +339,7 @@ _lord_plea_peek(u3_lord* god_u, u3_noun dat)
   {
     u3_writ* wit_u = _lord_writ_need(god_u, u3_writ_peek);
     pek_u = wit_u->pek_u;
+    c3_free(wit_u);
   }
 
   //  XX cache [dat] (unless last)
@@ -533,12 +597,12 @@ _lord_plea_work(u3_lord* god_u, u3_noun dat)
   u3z(dat);
 }
 
-/* _lord_plea(): handle plea from serf.
+/* _lord_on_plea(): handle plea from serf.
 */
 static void
-_lord_plea(void* vod_p, u3_noun mat)
+_lord_on_plea(void* ptr_v, u3_noun mat)
 {
-  u3_lord* god_u = vod_p;
+  u3_lord* god_u = ptr_v;
   u3_noun    jar = u3ke_cue(mat);
   u3_noun    tag, dat;
 
@@ -634,9 +698,9 @@ _lord_writ_jam(u3_lord* god_u, u3_writ* wit_u)
       } break;
 
       case u3_writ_exit: {
-        //  XX u3_newt_close on send
+        //  requested exit code is always 0
         //
-        msg = u3nt(c3__live, c3__exit, u3i_words(1, &wit_u->xit_w));
+        msg = u3nt(c3__live, c3__exit, 0);
       } break;
     }
 
@@ -649,16 +713,16 @@ _lord_writ_jam(u3_lord* god_u, u3_writ* wit_u)
 static void
 _lord_writ_send(u3_lord* god_u, u3_writ* wit_u)
 {
-  _lord_writ_jam(god_u, wit_u);
-  u3_newt_write(&god_u->inn_u, wit_u->mat);
-  wit_u->mat = 0;
-
-  //  ignore subprocess error on shutdown
+  //  exit expected
   //
   if ( u3_writ_exit == wit_u->typ_e ) {
     god_u->out_u.bal_f = _lord_bail_noop;
     god_u->inn_u.bal_f = _lord_bail_noop;
   }
+
+  _lord_writ_jam(god_u, wit_u);
+  u3_newt_write(&god_u->inn_u, wit_u->mat);
+  wit_u->mat = 0;
 }
 
 /* _lord_writ_plan(): enqueue a writ and send.
@@ -848,12 +912,67 @@ u3_lord_pack(u3_lord* god_u)
 /* u3_lord_exit(): shutdown gracefully.
 */
 void
-u3_lord_exit(u3_lord* god_u, c3_w cod_w)
+u3_lord_exit(u3_lord* god_u)
 {
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_exit;
-  wit_u->xit_w = cod_w;
   _lord_writ_plan(god_u, wit_u);
+
+  //  XX set timer, then halt
+}
+
+/* u3_lord_stall(): send SIGINT
+*/
+void
+u3_lord_stall(u3_lord* god_u)
+{
+  uv_process_kill(&god_u->cub_u, SIGINT);
+}
+
+/* u3_lord_halt(): shutdown immediately
+*/
+void
+u3_lord_halt(u3_lord* god_u)
+{
+  //  no exit callback on halt
+  //
+  god_u->cb_u.exit_f = 0;
+
+  uv_process_kill(&god_u->cub_u, SIGKILL);
+  _lord_stop(god_u);
+}
+
+/* _lord_on_serf_exit(): handle subprocess exit.
+*/
+static void
+_lord_on_serf_exit(uv_process_t* req_u,
+                   c3_ds         sas_i,
+                   c3_i          sig_i)
+{
+
+  u3_lord* god_u = (void*)req_u;
+
+  if (  !god_u->ext_u
+     || !(u3_writ_exit == god_u->ext_u->typ_e) )
+  {
+    fprintf(stderr, "pier: work exit: status %" PRId64 ", signal %d\r\n",
+                  sas_i, sig_i);
+    _lord_bail(god_u);
+  }
+  else {
+    _lord_stop(god_u);
+  }
+}
+
+/* _lord_on_serf_bail(): handle subprocess error.
+*/
+static void
+_lord_on_serf_bail(void*       ptr_v,
+                   const c3_c* err_c)
+{
+  u3_lord* god_u = ptr_v;
+  u3l_log("pier: serf error: %s\r\n", err_c);
+  _lord_bail(god_u);
 }
 
 /* u3_lord_init(): instantiate child process.
@@ -921,7 +1040,7 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
     god_u->ops_u.stdio = god_u->cod_u;
     god_u->ops_u.stdio_count = 3;
 
-    god_u->ops_u.exit_cb = _lord_on_exit;
+    god_u->ops_u.exit_cb = _lord_on_serf_exit;
     god_u->ops_u.file = arg_c[0];
     god_u->ops_u.args = arg_c;
 
@@ -936,13 +1055,13 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
   //
   {
     god_u->out_u.ptr_v = god_u;
-    god_u->out_u.pok_f = _lord_plea;
-    god_u->out_u.bal_f = _lord_bail;
+    god_u->out_u.pok_f = _lord_on_plea;
+    god_u->out_u.bal_f = _lord_on_serf_bail;
 
     //  XX distinguish from out_u.bal_f ?
     //
     god_u->inn_u.ptr_v = god_u;
-    god_u->inn_u.bal_f = _lord_bail;
+    god_u->inn_u.bal_f = _lord_on_serf_bail;
 
     u3_newt_read(&god_u->out_u);
   }

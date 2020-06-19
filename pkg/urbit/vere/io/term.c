@@ -737,7 +737,10 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
       //  then corrupts the event log), so we force shutdown.
       //
       u3l_log("term: hangup (EOF)\r\n");
-      u3_pier_exit(u3_pier_stub());
+
+      //  XX revise
+      //
+      u3_pier_bail(u3_king_stub());
     }
     else if ( siz_i < 0 ) {
       u3l_log("term %d: read: %s\n", uty_u->tid_l, uv_strerror(siz_i));

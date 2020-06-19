@@ -168,7 +168,10 @@ _daemon_boot(u3_noun bul)
 void
 _daemon_fake(u3_noun ship, u3_noun pill, u3_noun path)
 {
-  u3_pier_boot(sag_w, ship, u3nc(c3__fake, u3k(ship)), pill, path);
+  //  XX link properly
+  //
+  u3_noun vent = u3nc(c3__fake, u3k(ship));
+  u3K.pir_u    = u3_pier_boot(sag_w, ship, vent, pill, path);
 }
 
 /* _daemon_come(): mine a comet under star (unit)
@@ -197,7 +200,10 @@ _daemon_dawn(u3_noun seed, u3_noun pill, u3_noun path)
   //
   u3C.slog_f = _daemon_slog;
 
-  u3_pier_boot(sag_w, u3k(u3h(seed)), u3_dawn_vent(seed), pill, path);
+  //  XX link properly
+  //
+  u3_noun vent = u3_dawn_vent(seed);
+  u3K.pir_u = u3_pier_boot(sag_w, u3k(u3h(seed)), vent, pill, path);
 
   // disable ivory slog printfs
   //
@@ -215,7 +221,7 @@ _daemon_pier(u3_noun pier)
     exit(1);
   }
 
-  u3_pier_stay(sag_w, u3k(u3t(pier)));
+  u3K.pir_u = u3_pier_stay(sag_w, u3k(u3t(pier)));
   u3z(pier);
 }
 
@@ -574,7 +580,7 @@ _daemon_sign_cb(uv_signal_t* sil_u, c3_i num_i)
     }
 
     case SIGTERM: {
-      u3_pier_exit(u3_pier_stub());
+      u3_king_exit();
       break;
     }
 
@@ -722,13 +728,104 @@ u3_king_commence()
   _daemon_loop_exit();
 }
 
+/* u3_king_stub(): get the One Pier for unreconstructed code.
+*/
+u3_pier*
+u3_king_stub(void)
+{
+  if ( !u3K.pir_u ) {
+    c3_assert(!"king: no pier");
+  }
+  else {
+    return u3K.pir_u;
+  }
+}
+
+/* _king_forall(): run on all piers
+*/
+static void
+_king_forall(void (*pir_f)(u3_pier*))
+{
+  u3_pier* pir_u = u3K.pir_u;
+
+  while ( pir_u ) {
+    pir_f(pir_u);
+    pir_u = pir_u->nex_u;
+  }
+}
+
+/* _king_forall_unlink(): run on all piers, unlinking from king.
+*/
+static void
+_king_forall_unlink(void (*pir_f)(u3_pier*))
+{
+  u3_pier* pir_u = u3K.pir_u;
+
+  while ( u3K.pir_u ) {
+    u3_pier* pir_u = u3K.pir_u;
+    u3K.pir_u = pir_u->nex_u;
+    pir_f(pir_u);
+  }
+}
+
+/* _king_done_cb():
+*/
+static void
+_king_done_cb(uv_handle_t* han_u)
+{
+  if( UV_EBUSY == uv_loop_close(u3L) ) {
+    //  XX uncomment to debug
+    //
+    // fprintf(stderr, "\r\nking: open libuv handles\r\n");
+    // uv_print_all_handles(u3L, stderr);
+    // fprintf(stderr, "\r\nking: force shutdown\r\n");
+
+    uv_stop(u3L);
+  }
+}
+
+/* u3_king_done(): all piers closed. s/b callback
+*/
+void
+u3_king_done(void)
+{
+  uv_handle_t* han_u = (uv_handle_t*)&u3K.tim_u;
+
+  //  XX hack, if pier's are still linked, we're not actually done
+  //
+  if ( !u3K.pir_u && !uv_is_closing(han_u) ) {
+    uv_close((uv_handle_t*)&u3K.tim_u, _king_done_cb);
+    _daemon_sign_close();
+
+    u3_term_log_exit();
+    fflush(stdout);
+  }
+}
+
+/* u3_king_exit(): shutdown gracefully
+*/
+void
+u3_king_exit(void)
+{
+  _king_forall(u3_pier_exit);
+}
+
+/* u3_king_halt(): emergency release
+*/
+void
+u3_king_halt(void)
+{
+  _king_forall_unlink(u3_pier_halt);
+}
+
 /* u3_king_bail(): immediately shutdown.
 */
 void
 u3_king_bail(void)
 {
+  _king_forall_unlink(u3_pier_bail);
   _daemon_loop_exit();
-  u3_pier_bail();
+  u3_king_done();
   exit(1);
 }
 
@@ -750,7 +847,7 @@ u3_king_grab(void* vod_p)
     c3_c* wen_c = u3r_string(wen);
 
     c3_c nam_c[2048];
-    snprintf(nam_c, 2048, "%s/.urb/put/mass", u3_pier_stub()->pax_c);
+    snprintf(nam_c, 2048, "%s/.urb/put/mass", u3_king_stub()->pax_c);
 
     struct stat st;
     if ( -1 == stat(nam_c, &st) ) {

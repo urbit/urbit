@@ -592,7 +592,7 @@ _pier_play(u3_play* pay_u)
       // //  XX graceful shutdown
       // //
       // u3_lord_save(pir_u->god_u);
-      // u3_pier_bail();
+      // u3_pier_bail(pir_u);
       // exit(0);
 
       //  XX temporary hack
@@ -631,7 +631,7 @@ _pier_on_lord_play_done(void* vod_p, u3_info fon_u, c3_l mug_l)
             tac_u->eve_d,
             tac_u->mug_l,
             mug_l);
-    // u3_pier_bail();
+    // u3_pier_bail(pir_u);
   }
 
   //  dispose successful
@@ -680,7 +680,7 @@ _pier_on_lord_play_bail(void* vod_p, u3_info fon_u,
              (c3_d)(eve_d - 1ULL),
              las_l,
              mug_l);
-      // u3_pier_bail();
+      // u3_pier_bail(pir_u);
     }
 
     //  XX enable to retry
@@ -716,7 +716,7 @@ _pier_on_lord_play_bail(void* vod_p, u3_info fon_u,
         u3_pier_punt_ovum("play", u3k(wir), u3k(tag));
       }
 
-      u3_pier_bail();
+      u3_pier_bail(pir_u);
       exit(1);
     }
 #endif
@@ -785,7 +785,7 @@ _pier_on_disk_read_bail(void* vod_p, c3_d eve_d)
   //  
   fprintf(stderr, "pier: disk read bail\r\n");
   u3_term_stop_spinner();
-  u3_pier_bail();
+  u3_pier_bail(pir_u);
 }
 
 /* _pier_on_disk_write_done(): event log write success.
@@ -833,7 +833,7 @@ _pier_on_disk_write_bail(void* vod_p, c3_d eve_d)
   // XX
   //
   fprintf(stderr, "pier: disk write bail\r\n");
-  u3_pier_bail();
+  u3_pier_bail(pir_u);
 }
 
 /* _pier_on_lord_slog(): debug printf from worker.
@@ -883,35 +883,56 @@ _pier_on_lord_pack(void* vod_p)
   //
   if ( u3_psat_play == pir_u->sat_e ) {
     u3l_log("pier: pack complete, shutting down\r\n");
-    u3_pier_bail();
+    u3_pier_bail(pir_u);
     exit(0);
   }
 
   // if ( u3_psat_done == pir_u->sat_e ) {
   //   fprintf(stderr, "snap cb exit\r\n");
-  //   u3_lord_exit(pir_u->god_u, 0);
+  //   u3_lord_exit(pir_u->god_u);
   // }
   // else {
     // _pier_next(pir_u);
   // }
 }
 
+static void
+_pier_done(u3_pier* pir_u);
+
 /* _pier_on_lord_exit(): worker shutdown.
 */
 static void
-_pier_on_lord_exit(void* vod_p, c3_o ret_o)
+_pier_on_lord_exit(void* vod_p)
 {
   u3_pier* pir_u = vod_p;
 
-  if ( u3_psat_done == pir_u->sat_e ) {
-    if ( c3n == ret_o ) {
-      u3l_log("pier: serf shutdown dirty\r\n");
-    }
-  }
-  else {
+  //  the lord has already gone
+  //
+  pir_u->god_u = 0;
+
+  if ( u3_psat_done != pir_u->sat_e ) {
     u3l_log("pier: serf shutdown unexpected\r\n");
-    u3_pier_bail();
+    u3_pier_bail(pir_u);
   }
+  //  if we made it all the way here, it's our jab to wrap up
+  //
+  else {
+    _pier_done(pir_u);
+  }
+}
+
+/* _pier_on_lord_bail(): worker error.
+*/
+static void
+_pier_on_lord_bail(void* vod_p)
+{
+  u3_pier* pir_u = vod_p;
+
+  //  the lord has already gone
+  //
+  pir_u->god_u = 0;
+
+  u3_pier_bail(pir_u);
 }
 
 /* _pier_on_lord_live(): worker is ready.
@@ -1031,6 +1052,7 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
       .work_bail_f = _pier_on_lord_work_bail,
       .save_f = _pier_on_lord_save,
       .pack_f = _pier_on_lord_pack,
+      .bail_f = _pier_on_lord_bail,
       .exit_f = _pier_on_lord_exit
     };
 
@@ -1042,26 +1064,12 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
     }
   }
 
-  //  install in the pier table
-  //
-  //    XX  u3_king_plan
-  //
-  if ( 0 == u3K.all_w ) {
-    u3K.all_w = 16;
-    u3K.tab_u = c3_malloc(16 * sizeof(u3_pier*));
-  }
-  if ( u3K.len_w == u3K.all_w ) {
-    u3K.all_w = 2 * u3K.all_w;
-    u3K.tab_u = c3_realloc(u3K.tab_u, u3K.all_w * sizeof(u3_pier*));
-  }
-  u3K.tab_u[u3K.len_w++] = pir_u;
-
   return pir_u;
 }
 
 /* u3_pier_stay(): restart an existing pier.
 */
-void
+u3_pier*
 u3_pier_stay(c3_w wag_w, u3_noun pax)
 {
   u3_pier* pir_u = _pier_init(wag_w, u3r_string(pax));
@@ -1072,11 +1080,13 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
     fprintf(stderr, "pier: disk read meta fail\r\n");
     //  XX dispose
     //
-    u3_pier_bail();
+    u3_pier_bail(pir_u);
     exit(1);
   }
 
   u3z(pax);
+
+  return pir_u;
 }
 
 /* _pier_pill_parse(): extract boot formulas and module/userspace ova from pill
@@ -1265,7 +1275,7 @@ _pier_boot_plan(u3_pier* pir_u, u3_noun who, u3_noun ven, u3_noun pil)
 
 /* u3_pier_boot(): start a new pier.
 */
-void
+u3_pier*
 u3_pier_boot(c3_w  wag_w,                   //  config flags
              u3_noun who,                   //  identity
              u3_noun ven,                   //  boot event
@@ -1278,11 +1288,13 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
     fprintf(stderr, "pier: boot plan fail\r\n");
     //  XX dispose
     //
-    u3_pier_bail();
+    u3_pier_bail(pir_u);
     exit(1);
   }
 
   u3z(pax);
+
+  return pir_u;
 }
 
 static void
@@ -1353,29 +1365,51 @@ u3_pier_pack(u3_pier* pir_u)
 }
 
 static void
-_pier_exit_work_cb(uv_handle_t* idl_u)
+_pier_work_close_cb(uv_handle_t* idl_u)
 {
   u3_work* wok_u = idl_u->data;
   c3_free(wok_u);
 }
 
-/* _pier_exit_cb(): synchronous shutdown.
+static void
+_pier_work_close(u3_work* wok_u)
+{
+  u3_auto_exit(wok_u->car_u);
+
+  //  free pending effects
+  //
+  {
+    u3_gift* gif_u = wok_u->fec_u.ext_u;
+    u3_gift* nex_u;
+
+    while ( gif_u ) {
+      nex_u = gif_u->nex_u;
+      u3_gift_free(gif_u);
+      gif_u = nex_u;
+    }
+  }
+
+  uv_close((uv_handle_t*)&wok_u->pep_u, _pier_work_close_cb);
+  uv_close((uv_handle_t*)&wok_u->cek_u, 0);
+  uv_close((uv_handle_t*)&wok_u->idl_u, 0);
+  wok_u->pep_u.data = wok_u;
+}
+
+static void
+_pier_done(u3_pier* pir_u)
+{
+  //  XX unlink properly
+  //
+  u3K.pir_u = 0;
+  u3_king_done();
+}
+
+/* _pier_exit(): synchronous shutdown.
 */
 static void
-_pier_exit_cb(void* vod_p, c3_d eve_d)
+_pier_exit(u3_pier* pir_u)
 {
-  u3_pier* pir_u = vod_p;
-
-  if ( pir_u->wok_u ) {
-    u3_work* wok_u = pir_u->wok_u;
-    u3_auto_exit(wok_u->car_u);
-    //  XX confirm, libuv close callback are fired with a stack discipline
-    //
-    uv_close((uv_handle_t*)&wok_u->pep_u, _pier_exit_work_cb);
-    uv_close((uv_handle_t*)&wok_u->cek_u, 0);
-    uv_close((uv_handle_t*)&wok_u->idl_u, 0);
-    pir_u->wok_u = 0;
-  }
+  c3_assert( u3_psat_done == pir_u->sat_e );
   
   if ( pir_u->log_u ) {
     u3_disk_exit(pir_u->log_u);
@@ -1383,17 +1417,46 @@ _pier_exit_cb(void* vod_p, c3_d eve_d)
   }
 
   if ( pir_u->god_u ) {
-    u3_lord_exit(pir_u->god_u, 0);
+    u3_lord_exit(pir_u->god_u);
     pir_u->god_u = 0;
   }
+  else {
+    //  otherwise called in _pier_on_lord_exit()
+    //
+    _pier_done(pir_u);
+  }
+}
 
-  u3_term_log_exit();
+/* _pier_work_exit(): commence graceful shutdown.
+*/
+static void
+_pier_work_exit_cb(void* vod_p, c3_d eve_d)
+{
+  u3_pier* pir_u = vod_p;
 
-  //  XX uninstall pier from u3K.tab_u, dispose
+  _pier_work_close(pir_u->wok_u);
+  pir_u->wok_u = 0;
 
-  //  XX no can do
+  _pier_exit(pir_u);
+}
+
+/* _pier_work_exit(): setup graceful shutdown callbacks.
+*/
+static void
+_pier_work_exit(u3_pier* pir_u)
+{
+  _pier_wall_plan(pir_u, 0, pir_u, _pier_save_cb);
+  _pier_wall_plan(pir_u, 0, pir_u, _pier_work_exit_cb);
+
+  //  XX moveme, XX bails if not started
   //
-  uv_stop(u3L);
+  {
+    c3_l cod_l = u3a_lush(c3__save);
+    u3_save_io_exit(pir_u);
+    u3a_lop(cod_l);
+  }
+
+  pir_u->sat_e = u3_psat_done;
 }
 
 /* u3_pier_exit(): graceful shutdown.
@@ -1401,60 +1464,21 @@ _pier_exit_cb(void* vod_p, c3_d eve_d)
 void
 u3_pier_exit(u3_pier* pir_u)
 {
-  // fprintf(stderr, "pier: exit\r\n");
-
   switch ( pir_u->sat_e ) {
-    //  XX specifically handle init/done?
-    //
     default: {
-      fprintf(stderr, "pier: unexpected exit: %u\r\n", pir_u->sat_e);
+      fprintf(stderr, "pier: unknown exit: %u\r\n", pir_u->sat_e);
       c3_assert(0);
     }
 
-    case u3_psat_boot: {
-      //  XX properly dispose boot
-      //
-      c3_free(pir_u->bot_u);
-      pir_u->bot_u = 0;
-      _pier_exit_cb(pir_u, 0);
-    } break;
+    case u3_psat_done: return;
 
-    case u3_psat_play: {
-      //  XX dispose play q
-      //
-      c3_free(pir_u->pay_u);
-      pir_u->pay_u = 0;
-      _pier_exit_cb(pir_u, 0);
-    } break;
+    case u3_psat_work: return _pier_work_exit(pir_u);
 
-    case u3_psat_work: {
-      _pier_wall_plan(pir_u, 0, pir_u, _pier_save_cb);
-      _pier_wall_plan(pir_u, 0, pir_u, _pier_exit_cb);
-
-      //  XX moveme
-      //
-      {
-        c3_l cod_l = u3a_lush(c3__save);
-        u3_save_io_exit(pir_u);
-        u3a_lop(cod_l);
-      }
-    } break;
-  }
-
-  u3K.len_w = 0;
-  pir_u->sat_e = u3_psat_done;
-}
-
-/* _pier_exit_done(): force synchronous shut down.
-*/
-static void
-_pier_exit_done(u3_pier* pir_u)
-{
-  switch ( pir_u->sat_e ) {
-    default: break;
+    case u3_psat_init: break;
 
     case u3_psat_boot: {
       //  XX properly dispose boot
+      //  XX also on actual boot
       //
       c3_free(pir_u->bot_u);
       pir_u->bot_u = 0;
@@ -1466,47 +1490,54 @@ _pier_exit_done(u3_pier* pir_u)
       c3_free(pir_u->pay_u);
       pir_u->pay_u = 0;
     } break;
-
-    case u3_psat_work: {
-      //  XX moveme
-      //
-      {
-        c3_l cod_l = u3a_lush(c3__save);
-        u3_save_io_exit(pir_u);
-        u3a_lop(cod_l);
-      }
-    } break;
   }
 
-  u3K.len_w = 0;
   pir_u->sat_e = u3_psat_done;
-  _pier_exit_cb(pir_u, 0);
+  _pier_exit(pir_u);
 }
 
-/* u3_pier_bail(): immediately shutdown.
+/* u3_pier_bail(): immediately shutdown due to error.
 */
 void
-u3_pier_bail(void)
+u3_pier_bail(u3_pier* pir_u)
 {
-  if ( 0 != u3K.len_w ) {
-    _pier_exit_done(u3_pier_stub());
+  pir_u->sat_e = u3_psat_done;
+
+  //
+  if ( pir_u->god_u ) {
+    u3_lord_halt(pir_u->god_u);
+    pir_u->god_u = 0;
   }
 
-  fflush(stdout);
-  exit(1);
+  //  exig i/o drivers
+  //
+  if ( pir_u->wok_u ) {
+    _pier_work_close(pir_u->wok_u);
+    pir_u->wok_u = 0;
+  }
+
+  //  close db
+  //
+  if ( pir_u->log_u ) {
+    u3_disk_exit(pir_u->log_u);
+    pir_u->log_u = 0;
+  }
+
+  _pier_done(pir_u);
 }
 
-/* u3_pier_halt(): emergency release.
+/* u3_pier_halt(): emergency resource release (ie, on SIGABRT).
 */
 void
-u3_pier_halt(void)
+u3_pier_halt(u3_pier* pir_u)
 {
-  if ( 0 != u3K.len_w ) {
-    u3_disk_exit(u3_pier_stub()->log_u);
-
-    //  we should only ever try this trick once
-    //
-    u3K.len_w = 0;
+  //  unmap disk if present
+  //
+  //    XX maybe skip close/cancel/free. and just unmap
+  //
+  if ( pir_u->log_u ) {
+    u3_disk_exit(pir_u->log_u);
+    pir_u->log_u = 0;
   }
 }
 
@@ -1519,7 +1550,7 @@ c3_rand(c3_w* rad_w)
     fprintf(stderr, "c3_rand getentropy: %s\n", strerror(errno));
     //  XX review
     //
-    u3_pier_bail();
+    u3_king_bail();
   }
 }
 
@@ -1689,19 +1720,6 @@ u3_pier_sway(c3_l tab_l, u3_noun tax)
 
   u3_pier_punt(tab_l, u3k(u3t(mok)));
   u3z(mok);
-}
-
-/* u3_pier_stub(): get the One Pier for unreconstructed code.
-*/
-u3_pier*
-u3_pier_stub(void)
-{
-  if ( 0 == u3K.len_w ) {
-    c3_assert(!"plan: no pier");
-  }
-  else {
-    return u3K.tab_u[0];
-  }
 }
 
 /* u3_pier_mark(): mark all Loom allocations in all u3_pier structs.

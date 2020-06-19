@@ -413,7 +413,6 @@
             u3_peek*       pek_u;               //  peek
             u3_info        fon_u;               //  recompute
             c3_d           eve_d;               //  save/pack at
-            c3_w           xit_w;               //  exit code
           };
         } u3_writ;
 
@@ -431,7 +430,8 @@
           void (*work_bail_f)(void*, u3_ovum*, u3_noun lud);
           void (*save_f)(void*);
           void (*pack_f)(void*);
-          void (*exit_f)(void*, c3_o);
+          void (*bail_f)(void*);
+          void (*exit_f)(void*);
         } u3_lord_cb;
 
       /* u3_lord: serf controller.
@@ -600,15 +600,14 @@
           // XX remove
           c3_s             por_s;               //  UDP port
           u3_save*         sav_u;               //  autosave
+          struct _u3_pier* nex_u;               //  next in list
         } u3_pier;
 
       /* u3_king: all executing piers.
       */
         typedef struct _u3_king {
           c3_c*          certs_c;               //  ssl certificate dump
-          c3_w             len_w;               //  number used
-          c3_w             all_w;               //  number allocated
-          u3_pier**        tab_u;               //  pier table
+          u3_pier*         pir_u;               //  pier list
           uv_timer_t       tim_u;               //  gc timer
         } u3_king;
 
@@ -885,7 +884,17 @@
       /* u3_lord_exit(): shutdown gracefully.
       */
         void
-        u3_lord_exit(u3_lord* god_u, c3_w cod_w);
+        u3_lord_exit(u3_lord* god_u);
+
+      /* u3_lord_stall(): send SIGINT
+      */
+        void
+        u3_lord_stall(u3_lord* god_u);
+
+      /* u3_lord_halt(): shutdown immediately
+      */
+        void
+        u3_lord_halt(u3_lord* god_u);
 
       /* u3_lord_save(): save a snapshot.
       */
@@ -1204,12 +1213,12 @@
       /* u3_pier_bail(): immediately shutdown..
       */
         void
-        u3_pier_bail(void);
+        u3_pier_bail(u3_pier* pir_u);
 
-      /* u3_pier_halt(): emergency release.
+      /* u3_pier_halt(): emergency resource release (ie, on SIGABRT).
       */
         void
-        u3_pier_halt(void);
+        u3_pier_halt(u3_pier* pir_u);
 
       /* u3_pier_save(): request checkpoint.
       */
@@ -1221,14 +1230,9 @@
         c3_o
         u3_pier_pack(u3_pier* pir_u);
 
-      /* u3_pier_stub(): get the One Pier for unreconstructed code.
-      */
-        u3_pier*
-        u3_pier_stub(void);
-
       /* u3_pier_boot(): start the new pier system.
       */
-        void
+        u3_pier*
         u3_pier_boot(c3_w    wag_w,                 //  config flags
                      u3_noun who,                   //  identity
                      u3_noun ven,                   //  boot event
@@ -1237,7 +1241,7 @@
 
       /* u3_pier_stay(): restart the new pier system.
       */
-        void
+        u3_pier*
         u3_pier_stay(c3_w wag_w, u3_noun pax);
 
       /* u3_pier_tank(): dump single tank.
@@ -1284,6 +1288,26 @@
       */
         void
         u3_king_commence();
+
+      /* u3_king_stub(): get the One Pier for unreconstructed code.
+      */
+        u3_pier*
+        u3_king_stub(void);
+
+      /* u3_king_done(): all piers closed
+      */
+        void
+        u3_king_done(void);
+
+      /* u3_king_exit(): shutdown gracefully
+      */
+        void
+        u3_king_exit(void);
+
+      /* u3_king_halt(): emergency release.
+      */
+        void
+        u3_king_halt(void);
 
       /* u3_king_bail(): immediately shutdown.
       */
