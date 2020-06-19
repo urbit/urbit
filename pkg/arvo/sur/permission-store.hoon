@@ -13,6 +13,7 @@
       [%delete =path]                          ::  delete perm at path
       [%add =path who=(set ship)]              ::  add ships to perm path
       [%remove =path who=(set ship)]           ::  remove ships from perm path
+      [%initial permissions=permission-map]
   ==
 ::
 +$  permission-action

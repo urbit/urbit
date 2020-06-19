@@ -24,7 +24,9 @@
 ++  app
   |%
   ::
-  ::  +require-authorization: redirect to the login page when unauthenticated
+  ::  +require-authorization:
+  ::      redirect to the login page when unauthenticated
+  ::      otherwise call handler on inbound request
   ::
   ++  require-authorization
     |=  $:  =inbound-request:eyre
@@ -36,6 +38,23 @@
       ~!  this
       ~!  +:*handler
       (handler inbound-request)
+    ::
+    =/  redirect=cord
+      %-  crip
+      "/~/login?redirect={(trip url.request.inbound-request)}"
+    [[307 ['location' redirect]~] ~]
+  ::
+  ::  +require-authorization-simple:
+  ::      redirect to the login page when unauthenticated
+  ::      otherwise pass through simple-paylod
+  ::
+  ++  require-authorization-simple
+    |=  [=inbound-request:eyre =simple-payload:http]
+    ^-  simple-payload:http
+    ::
+    ?:  authenticated.inbound-request
+      ~!  this
+      simple-payload
     ::
     =/  redirect=cord
       %-  crip
