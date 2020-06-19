@@ -1419,6 +1419,9 @@
         (~(get by lore.state) agent-name)
       ?~  old-state
         [init-cards agent.current-agent]
+      :: dill's dependency on hood means we skip it
+      ?:  =(%hood agent-name)
+         [init-cards agent.current-agent]
       =/  new-state=vase
         :-  p:on-save:ap-agent-core
         state.u.old-state
@@ -1427,11 +1430,10 @@
         (on-load:ap-agent-core new-state %.y)
       =^  leave-cards  agent.current-agent
         (leave-incoming ~(val by sup.u.old-state))
-      =^  [init-cards=(list card:agent) kick-cards=(list card:agent)]
-          agent.current-agent
-          ::
+      =^  kick-cards=(list card:agent)  agent.current-agent
         (kick-outgoing ~(tap by wex.u.old-state))
       :_  agent.current-agent
+      %-  dedupe-watches
       ;:  weld
         init-cards
         load-cards
@@ -1456,31 +1458,32 @@
         =/  =sign:agent
           [%kick ~]
         |=  subs=(list [[=wire =ship =term] acked=? =path])
-        ^-  [[(list card:agent) (list card:agent)] _agent.current-agent]
+        ^-  [(list card:agent) _agent.current-agent]
         ?~  subs
-          :_  agent.current-agent
-          :-  init-cards
-          cards
+          :-  cards
+          agent.current-agent
         =*  sub  i.subs
-        =.  init-cards
-          %+  skip
-            init-cards
-          |=  =card:agent
-          ^-  ?
-          ?.  ?=(%pass -.card)  %.n
-          ?.  =(p.card wire)  %.n
-          ?.  ?=(%agent -.q.card)  %.n
-          ?.  &(=(ship.q.card ship) =(name.q.card term))
-            %.n
-          ?:  ?=(%watch -.task.q.card)
-            =(path.sub path.task.q.card)
-          ?:  ?=(%watch-as -.task.q.card)
-            =(path.sub path.task.q.card)
-          %.n
-        ::
         =^  new-cards  agent.current-agent
           (on-agent:ap-agent-core wire.sub sign)
         $(cards (weld new-cards cards), subs t.subs)
+      ::
+      ++  dedupe-watches
+        =|  deduped=(list card:agent)
+        =|  watches=(set [wire ship term])
+        |=  cards=(list card:agent)
+        ?~  cards
+          deduped
+        ?.  ?=([%pass * %agent [@ @] %watch *] i.cards)
+          [i.cards deduped]
+        =/  watch=[wire ship term]
+          [p.i.cards [ship name]:q.i.cards]
+        ?:  (~(has in watches) watch)
+          $(cards t.cards)
+        =.  watches
+          (~(put in watches) watch)
+        =.  deduped
+          [i.cards deduped]
+        $(cards t.cards)
       --
     ::  +ap-silent-delete: silent delete.
     ::
