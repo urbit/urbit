@@ -3,35 +3,17 @@
 ::  Relays sole-effects to subscribers and forwards sole-action pokes
 ::
 /-  sole
-/+  *server, *soto, default-agent
-::
-/*  index-html   %html  /app/soto/index/html
-/*  index-js     %js    /app/soto/js/index/js
-/*  tile-js-raw  %js    /app/soto/js/tile/js
-/*  index-css    %css   /app/soto/css/index/css
-::
-/*  popout-png   %png  /app/soto/img/popout/png
-/*  spinner-png  %png  /app/soto/img/spinner/png
-/*  tile-png     %png  /app/soto/img/tile/png
-::
-=/  as-octs  as-octs:mimes:html
-=/  index    (as-octs index-html)
-=/  script   (as-octs index-js)
-=/  tile-js  (as-octs tile-js-raw)
-=/  style    (as-octs index-css)
-::
-=/  soto-png=(map @t octs)
-  =-  (~(run by -) as-octs:mimes:html)
-  %-  ~(gas by *(map @t @))
-  :~  popout+popout-png
-      [%'Tile' tile-png]
-      [%'Spinner' spinner-png]
-  ==
-::
+/+  *soto, default-agent
 |%
 +$  card  card:agent:gall
-+$  state-zero  ~
 ::
++$  versioned-state
+  $@  state-null
+  state-zero
+::
++$  state-null  ~
+::
++$  state-zero  [%0 ~]
 --
 =|  state-zero
 =*  state  -
@@ -44,65 +26,32 @@
 ::
 ++  on-init
   :_  this
-  :~  [%pass /bind/soto %arvo %e %connect [~ /'~dojo'] %soto]
-      :*  %pass  /launch/soto  %agent  [our.bol %launch]  %poke
-          %launch-action  !>([%add %soto /sototile '/~dojo/js/tile.js'])
-      ==
+  :_  ~
+  :*  %pass  /srv  %agent  [our.bol %file-server]
+      %poke  %file-server-action
+      !>([%serve-dir /'~dojo' /app/landscape %.n])
   ==
 ++  on-save  !>(state)
 ::
 ++  on-load
-  |=  old=vase
-  [~ this(state !<(state-zero old))]
-::
-++  on-poke
-  |=  [mar=mark vas=vase]
-  ^-  (quip card _this)
-  ?>  (team:title our.bol src.bol)
-  ?.  ?=(%handle-http-request mar)
-    (on-poke:def mar vas)
-  =+  !<([id=@ta req=inbound-request:eyre] vas)
-  :_  this
-  %+  give-simple-payload:app    id
-  %+  require-authorization:app  req
-  |=  =inbound-request:eyre
-  ^-  simple-payload:http
-  =/  request-line  (parse-request-line url.request.inbound-request)
-  ?+  request-line
-    not-found:gen
-  ::  main page
-  ::
-      [[~ [%'~dojo' *]] *]
-    (html-response:gen index)
-  ::  main js
-  ::
-      [[[~ %js] [%'~dojo' %js %index ~]] ~]
-    (js-response:gen script)
-  ::  tile js
-  ::
-      [[[~ %js] [%'~dojo' %js %tile ~]] ~]
-    (js-response:gen tile-js)
-  ::  styling
-  ::
-      [[[~ %css] [%'~dojo' %css %index ~]] ~]
-    (css-response:gen style)
-  ::  images
-  ::
-      [[[~ %png] [%'~dojo' %img @t ~]] ~]
-    =/  filename=@t  i.t.t.site.request-line
-    =/  img  (~(get by soto-png) filename)
-    ?~  img
-      not-found:gen
-    (png-response:gen u.img)
+  |=  old-vase=vase
+  =/  old
+    !<(versioned-state old-vase)
+  ?^  old
+    [~ this(state old)]
+  :_  this(state [%0 ~])
+  :~  [%pass /bind/soto %arvo %e %disconnect [~ /'~dojo']]
+      :*  %pass  /srv  %agent  [our.bol %file-server]
+          %poke  %file-server-action
+          !>([%serve-dir /'~dojo' /app/landscape %.n])
+      ==
   ==
 ::
+++  on-poke  on-poke:def
 ++  on-watch
   |=  pax=path
   ^-  (quip card _this)
-  ?+    pax  (on-watch:def pax)
-      [%http-response *]
-    [~ this]
-  ::
+  ?+  pax  (on-watch:def pax)
       [%sototile ~]
     :_  this
     [%give %fact ~ %json !>(~)]~

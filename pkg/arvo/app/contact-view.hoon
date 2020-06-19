@@ -11,31 +11,19 @@
 /-  *permission-hook
 ::
 /+  *server, *contact-json, default-agent, dbug
-::
-/*  index-html    %html  /app/contacts/index/html
-/*  index-js      %js    /app/contacts/js/index/js
-/*  tile-js       %js    /app/contacts/js/tile/js
-/*  index-css     %css   /app/contacts/css/index/css
-/*  tile-png      %png   /app/contacts/img/tile/png
-/*  search-png    %png   /app/contacts/img/search/png
-/*  spinner-png   %png   /app/contacts/img/spinner/png
-::
-=/  as-octs  as-octs:mimes:html
-=/  index    (as-octs index-html)
-=/  script   (as-octs index-js)
-=/  tile-js  (as-octs tile-js)
-=/  style    (as-octs index-css)
-::
-=/  contact-png=(map @t octs)
-  =-  (~(run by -) as-octs:mimes:html)
-  %-  ~(gas by *(map @t @))
-  :~  [%'Tile' tile-png]
-      search+search-png
-      [%'Spinner' spinner-png]
-  ==
 |%
++$  versioned-state
+  $%  state-0
+  ==
+::
++$  state-0
+  $:  %0
+      ~
+  ==
+::
 +$  card  card:agent:gall
 --
+=|  state-0
 =*  state  -
 ::
 %-  agent:dbug
@@ -51,15 +39,31 @@
     ^-  (quip card _this)
     :_  this
     :~  [%pass /updates %agent [our.bowl %contact-store] %watch /updates]
-        [%pass / %arvo %e %connect [~ /'~groups'] %contact-view]
         (contact-poke:cc [%create /~/default])
         (group-poke:cc [%bundle /~/default])
         (contact-poke:cc [%add /~/default our.bowl *contact])
         (group-poke:cc [%add [our.bowl ~ ~] /~/default])
+        :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~groups' /app/landscape %.n])
+        ==
     ==
   ::
-  ++  on-save   on-save:def
-  ++  on-load   on-load:def
+  ++  on-save   !>(state)
+  ++  on-load
+    |=  old-vase=vase
+    ^-  (quip card _this)
+    =/  old  ((soft state-0) q.old-vase)
+    ?^  old  [~ this]
+    :_  this(state [%0 ~])
+    :~  [%pass / %arvo %e %disconnect [~ /'~groups']]
+        [%pass / %arvo %e %connect [~ /'contact-view'] %contact-view]
+        :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~groups' /app/landscape %.n])
+        ==
+    ==
+  ::
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
@@ -83,7 +87,7 @@
     ?>  (team:title our.bowl src.bowl)
     ?:  ?=([%http-response *] path)  [~ this]
     ?.  =(/primary path)  (on-watch:def path)
-    [[%give %fact ~ %json !>((rolodex-to-json all-scry:cc))]~ this]
+    [[%give %fact ~ %json !>((update-to-json [%initial all-scry:cc]))]~ this]
   ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
@@ -164,15 +168,7 @@
       ''
     i.back-path
   ?+  site.url  not-found:gen
-      [%'~groups' %css %index ~]  (css-response:gen style)
-      [%'~groups' %js %index ~]   (js-response:gen script)
-      [%'~groups' %js %tile ~]    (js-response:gen tile-js)
-      [%'~groups' %img *]
-    (png-response:gen (~(got by contact-png) name))
-  ::
-  ::  avatar images
-  ::
-      [%'~groups' %avatar @ *]
+      [%'contact-view' @ *]
     =/  =path  (flop t.t.site.url)
     ?~  path  not-found:gen
     =/  contact  (contact-scry `^path`(snoc (flop t.path) name))
@@ -185,8 +181,6 @@
       =/  content-type  ['content-type' content-type.u.avatar.u.contact]
       [[200 [content-type max-3-days ~]] `octs.u.avatar.u.contact]
     ==
-  ::
-      [%'~groups' *]  (html-response:gen index)
   ==
 ::
 ::  +utilities

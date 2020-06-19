@@ -86,7 +86,6 @@
       %permission-group-hook
       %invite-store
       %invite-hook
-      %invite-view
       %chat-store
       %chat-hook
       %chat-view
@@ -102,6 +101,7 @@
       %metadata-store
       %metadata-hook
       %s3-store
+      %file-server
   ==
 ::
 ++  deft-fish                                           ::  default connects
@@ -208,23 +208,25 @@
   =<  se-abet  =<  se-view
   =.  sat  old
   =.  dev  (~(gut by bin) ost *source)
-  ?:  (gth hood-version %4)
-    ..on-load
-  ~>  %slog.0^leaf+"drum: starting os1 agents"
-  =>  (se-born | %home %s3-store)
-  =>  (se-born | %home %link-view)
-  =>  (se-born | %home %link-listen-hook)
-  =>  (se-born | %home %link-store)
-  =>  (se-born | %home %link-proxy-hook)
-  =>  (se-born | %home %contact-view)
-  =>  (se-born | %home %contact-hook)
-  =>  (se-born | %home %contact-store)
-  =>  (se-born | %home %metadata-hook)
-  =>  (se-born | %home %metadata-store)
-  =>  (se-born | %home %goad)
-  ~>  %slog.0^leaf+"drum: resubscribing to %dojo and %chat-cli"
-  =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
-  (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
+  =?  ..on-load  (lte hood-version %4)
+    ~>  %slog.0^leaf+"drum: starting os1 agents"
+    =>  (se-born | %home %s3-store)
+    =>  (se-born | %home %link-view)
+    =>  (se-born | %home %link-listen-hook)
+    =>  (se-born | %home %link-store)
+    =>  (se-born | %home %link-proxy-hook)
+    =>  (se-born | %home %contact-view)
+    =>  (se-born | %home %contact-hook)
+    =>  (se-born | %home %contact-store)
+    =>  (se-born | %home %metadata-hook)
+    =>  (se-born | %home %metadata-store)
+    =>  (se-born | %home %goad)
+    ~>  %slog.0^leaf+"drum: resubscribing to %dojo and %chat-cli"
+    =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
+    (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
+  =?  ..on-load  (lte hood-version %5)
+    (se-born | %home %file-server)
+  ..on-load
 ::
 ++  reap-phat                                         ::  ack connect
   |=  {way/wire saw/(unit tang)}
@@ -338,7 +340,8 @@
           %metadata-store
       ==
       :: ensure chat-cli can sub to invites
-      (sy ~[%chat-hook])
+      :: and file server can receive pokes
+      (sy ~[%chat-hook %file-server])
     ==
   ++  sort-by-priorities
     =/  priorities  priorities

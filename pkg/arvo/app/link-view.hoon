@@ -19,15 +19,24 @@
 ~%  %link-view-top  ..is  ~
 ::
 |%
++$  versioned-state
+  $%  state-0
+      state-1
+  ==
 +$  state-0
   $:  %0
+      ~
+  ==
+::
++$  state-1
+  $:  %1
       ~
   ==
 ::
 +$  card  card:agent:gall
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 %+  verb  |
@@ -42,27 +51,36 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
-    :~  [%pass /connect %arvo %e %connect [~ /'~link'] dap.bowl]
-        [%pass /submissions %agent [our.bowl %link-store] %watch /submissions]
+    :~  [%pass /submissions %agent [our.bowl %link-store] %watch /submissions]
         [%pass /discussions %agent [our.bowl %link-store] %watch /discussions]
         [%pass /seen %agent [our.bowl %link-store] %watch /seen]
-      ::
-        =+  [%add dap.bowl /tile '/~link/js/tile.js']
-        [%pass /launch %agent [our.bowl %launch] %poke %launch-action !>(-)]
       ::
         =+  [%invite-action !>([%create /link])]
         [%pass /invitatory/create %agent [our.bowl %invite-store] %poke -]
       ::
         =+  /invitatory/link
         [%pass - %agent [our.bowl %invite-store] %watch -]
+        :*  %pass  /srv  %agent  [our.bowl %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~link' /app/landscape %.n])
+        ==
     ==
   ::
   ++  on-save  !>(state)
-  ::
   ++  on-load
-    |=  old=vase
+    |=  old-vase=vase
     ^-  (quip card _this)
-    [~ this(state !<(state-0 old))]
+    =/  old  !<(versioned-state old-vase)
+    ?-  -.old
+        %1  [~ this]
+        %0
+      :_  this(state [%1 ~])
+      :-  [%pass /connect %arvo %e %disconnect [~ /'~link']]
+      :~  :*  %pass  /srv  %agent  [our.bowl %file-server]
+          %poke  %file-server-action
+          !>([%serve-dir /'~link' /app/landscape %.n])
+      ==  ==
+    ==
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -70,12 +88,6 @@
     ?>  (team:title our.bowl src.bowl)
     :_  this
     ?+  mark  (on-poke:def mark vase)
-        %handle-http-request
-      =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
-      %+  give-simple-payload:app  eyre-id
-      %+  require-authorization:app  inbound-request
-      handle-http-request:do
-    ::
         %link-action
       [(handle-action:do !<(action vase)) ~]
     ::
@@ -86,9 +98,7 @@
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?:  ?|  ?=([%http-response *] path)
-            ?=([%json %seen ~] path)
-        ==
+    ?:  ?=([%json %seen ~] path)
       [~ this]
     ?:  ?=([%tile ~] path)
       :_  this
@@ -185,69 +195,6 @@
       'pageNumber'^(numb page-number)
       'page'^a+(turn page item-to-json)
   ==
-::
-++  handle-http-request
-  |=  =inbound-request:eyre
-  ^-  simple-payload:http
-  ?.  =(src.bowl our.bowl)
-    [[403 ~] ~]
-  ::  request-line: parsed url + params
-  ::
-  =/  =request-line
-    %-  parse-request-line
-    url.request.inbound-request
-  =*  req-head  header-list.request.inbound-request
-  ?+  method.request.inbound-request  not-found:gen
-      %'GET'
-    (handle-get req-head request-line)
-  ==
-::
-++  handle-get
-  |=  [request-headers=header-list:http =request-line]
-  ^-  simple-payload:http
-  ::  try to load file from clay
-  ::
-  ?~  ext.request-line
-    ::  for extension-less requests, always just serve the index.html.
-    ::  that way the js can load and figure out how to deal with that route.
-    ::
-    $(request-line [[`%html ~[%'~link' 'index']] args.request-line])
-  =/  file=(unit octs)
-    ?.  ?=([%'~link' *] site.request-line)  ~
-    =/  fil=path
-      ?:  =(/img/'Tile' t.site.request-line)
-        /img/tile     ::  XX capitalization hack
-      ?:  =(/img/'Spinner' t.site.request-line)
-        /img/spinner  ::  XX capitalization hack
-      t.site.request-line
-    (get-file-at /app/link fil u.ext.request-line)
-  ?~  file  not-found:gen
-  ?+  u.ext.request-line  not-found:gen
-    %html  (html-response:gen u.file)
-    %js    (js-response:gen u.file)
-    %css   (css-response:gen u.file)
-    %png   (png-response:gen u.file)
-  ==
-::
-++  get-file-at
-  |=  [base=path file=path ext=@ta]
-  ^-  (unit octs)
-  ::  only expose html, css and js files for now
-  ::
-  ?.  ?=(?(%html %css %js %png) ext)
-    ~
-  =/  =path
-    :*  (scot %p our.bowl)
-        q.byk.bowl
-        (scot %da now.bowl)
-        (snoc (weld base file) ext)
-    ==
-  ?.  .^(? %cu path)
-    ~
-  %-  some
-  %-  as-octs:mimes:html
-  .^(@ %cx path)
-::
 ++  do-poke
   |=  [app=term =mark =vase]
   ^-  card

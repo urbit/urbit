@@ -1,7 +1,5 @@
-/-  launch
-::
-|_  act=action:launch
-::
+/+  *launch-store
+|_  act=action
 ++  grad  %noun
 ++  grow
   |%
@@ -9,6 +7,7 @@
   --
 ++  grab
   |%
-  ++  noun  action:launch
+  ++  noun  action
+  ++  json  action:dejs
   --
 --
