@@ -261,10 +261,7 @@ u3_term_log_init(void)
 void
 u3_term_log_exit(void)
 {
-  if ( c3y == u3_Host.ops_u.tem ) {
-    uv_close((uv_handle_t*)&u3_Host.uty_u->pop_u, 0);
-  }
-  else {
+  if ( c3n == u3_Host.ops_u.tem ) {
     u3_utty* uty_u;
 
     for ( uty_u = u3_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
@@ -276,12 +273,11 @@ u3_term_log_exit(void)
         c3_assert(!"exit-fcntl");
       }
       _write(uty_u->fid_i, "\r\n", 2);
-
-      uv_close((uv_handle_t*)&uty_u->tat_u.sun_u.tim_u, 0);
     }
   }
-}
 
+  uv_close((uv_handle_t*)&u3_Host.uty_u->pop_u, 0);
+}
 
 /*  _term_tcsetattr(): tcsetattr w/retry on EINTR.
 */
@@ -1402,17 +1398,33 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
   return ret_o;
 }
 
+static void
+_term_io_exit_cb(uv_handle_t* han_u)
+{
+  u3_auto* car_u = han_u->data;
+  c3_free(car_u);
+}
+
 /* _term_io_exit(): clean up terminal.
 */
 static void
 _term_io_exit(u3_auto* car_u)
 {
-  if ( c3n == u3_Host.ops_u.tem ) {
-    u3_utty* uty_u = _term_main();
-    uv_read_stop((uv_stream_t*)&(uty_u->pop_u));
-  }
+  u3_utty* uty_u = _term_main();
 
-  c3_free(car_u);
+  //  NB, closed in u3_term_log_exit()
+  //
+  uv_read_stop((uv_stream_t*)&(uty_u->pop_u));
+
+  if ( c3n == u3_Host.ops_u.tem ) {
+    uv_timer_t* han_u = &(uty_u->tat_u.sun_u.tim_u);
+    han_u->data       = car_u;
+
+    uv_close((uv_handle_t*)han_u, _term_io_exit_cb);
+  }
+  else {
+    c3_free(car_u);
+  }
 }
 
 /* u3_term_io_init(): initialize terminal

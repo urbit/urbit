@@ -58,6 +58,7 @@ _fore_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
 static void
 _fore_io_exit(u3_auto* car_u)
 {
+  c3_free(car_u);
 }
 
 /* u3_fore_io_init(): initialize fore
