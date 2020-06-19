@@ -12035,13 +12035,13 @@
   ?~  a  !!
   ~_(i.a $(a t.a))
 ::
-++  mure
+++  road
   |*  =(trap *)
   ^+  $:trap
   =/  res  (mule trap)
   ?-  -.res
     %&  p.res
-    %|  (mean leaf+"mure: road" p.res)
+    %|  (mean leaf+"road: new" p.res)
   ==
 ::
 ++  slew                                                ::  get axis in vase

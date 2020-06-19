@@ -756,7 +756,7 @@
       =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
       =^  sut=vase  nub  (run-raw sut raw.pile)
       =^  sut=vase  nub  (run-bar sut bar.pile)
-      =/  res=vase  (mure |.((slap sut hoon.pile)))
+      =/  res=vase  (road |.((slap sut hoon.pile)))
       [res nub]
     ::
     ++  parse-pile
@@ -1550,7 +1550,7 @@
       zuse.u.fer
       ::
       ++  build-hoon
-        %-  mure  |.
+        %-  road  |.
         ~>  %slog.0^leaf+"clay: building hoon on {<syd>}"
         =/  gen
           ~>  %mean.%hoon-parse-fail
@@ -1560,7 +1560,7 @@
       ::
       ++  build-arvo
         |=  hoon=vase
-        %-  mure  |.
+        %-  road  |.
         ~>  %slog.0^leaf+"clay: building arvo on {<syd>}"
         =/  gen
           ~>  %mean.%arvo-parse-fail
@@ -1570,7 +1570,7 @@
       ::
       ++  build-zuse
         |=  arvo=vase
-        %-  mure  |.
+        %-  road  |.
         ~>  %slog.0^leaf+"clay: building zuse on {<syd>}"
         =/  gen
           ~>  %mean.%zuse-parse-fail
@@ -4064,7 +4064,7 @@
       (build-zuse arvo)
       ::
       ++  build-hoon
-        %-  mure  |.
+        %-  road  |.
         ~>  %slog.0^leaf+"clay: building hoon on {<desk>}"
         =/  gen
           ~>  %mean.%hoon-parse-fail
@@ -4075,7 +4075,7 @@
       ::
       ++  build-arvo
         |=  hoon=vase
-        %-  mure  |.
+        %-  road  |.
         ~>  %slog.0^leaf+"clay: building arvo on {<desk>}"
         =/  gen
           ~>  %mean.%arvo-parse-fail
@@ -4086,7 +4086,7 @@
       ::
       ++  build-zuse
         |=  arvo=vase
-        %-  mure  |.
+        %-  road  |.
         ~>  %slog.0^leaf+"clay: building zuse on {<desk>}"
         =/  gen
           ~>  %mean.%zuse-parse-fail
