@@ -2515,13 +2515,17 @@
     ++  reachable-takos                                 ::  reachable
       |=  p/tako
       ^-  (set tako)
+      =|  s=(set tako)
+      |-  ^-  (set tako)
+      =.  s  (~(put in s) p)
       =+  y=(tako-to-yaki p)
-      %+  roll  p.y
-      =<  .(s (~(put in *(set tako)) p))
-      |=  {q/tako s/(set tako)}
-      ?:  (~(has in s) q)                               ::  already done
-        s                                               ::  hence skip
-      (~(uni in s) ^$(p q))                             ::  otherwise traverse
+      |-  ^-  (set tako)
+      ?~  p.y
+        s
+      ?:  (~(has in s) i.p.y)
+        $(p.y t.p.y)
+      =.  s  ^$(p i.p.y)
+      $(p.y t.p.y)
     ::
     ::  Get the data at a node.
     ::
