@@ -43,9 +43,9 @@
 !:
 =>  |%                                                  ::
     ++  hood-old                                        ::  unified old-state
-      {?($1 $2 $3 $4 $5) lac/(map @tas hood-part-old)}
+      {?($1 $2 $3 $4 $5 $6) lac/(map @tas hood-part-old)}
     ++  hood-1                                          ::  unified state
-      {$5 lac/(map @tas hood-part)}                     ::
+      {$6 lac/(map @tas hood-part)}                     ::
     ++  hood-good                                       ::  extract specific
       =+  hed=$:hood-head
       |@  ++  $
@@ -140,7 +140,7 @@
   `..on-init
 ::
 ++  on-save
-  !>([%5 lac])
+  !>([%6 lac])
 ::
 ++  on-load
   |=  =old-state=vase
@@ -152,7 +152,8 @@
       %2  ((wrap on-load):from-drum:(help hid) %2)
       %3  ((wrap on-load):from-drum:(help hid) %3)
       %4  ((wrap on-load):from-drum:(help hid) %4)
-      %5  `lac
+      %5  ((wrap on-load):from-drum:(help hid) %5)
+      %6  `lac
     ==
   [cards ..on-init]
 ::

@@ -141,7 +141,7 @@
     "wrap-iife": ["error", "inside"],
     "react/jsx-closing-bracket-location": 1,
     "react/jsx-tag-spacing": 1,
-    "react/jsx-max-props-per-line": ["error", { "maximum": 1, "when": "multiline" }],
+    "react/jsx-max-props-per-line": ["error", { "maximum": 2, "when": "multiline" }],
     "react/prop-types": 0
   }
 }
