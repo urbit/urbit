@@ -447,9 +447,8 @@ _lord_plea_work_swap(u3_lord* god_u, u3_ovum* egg_u, u3_noun dat)
      || (c3n == u3r_safe_word(mug, &mug_l))
      || (c3n == u3a_is_cell(job)) )
   {
-    //  XX dispose egg_u
-    //
     u3z(job);
+    u3_ovum_free(egg_u);
     fprintf(stderr, "lord: invalid %%work\r\n");
     return _lord_plea_foul(god_u, c3__swap, dat);
   }
@@ -476,9 +475,8 @@ _lord_plea_work_done(u3_lord* god_u,
      || (c3n == u3r_safe_chub(eve, &eve_d))
      || (c3n == u3r_safe_word(mug, &mug_l)) )
   {
-    //  XX dispose egg_u
-    //
     u3z(job);
+    u3_ovum_free(egg_u);
     fprintf(stderr, "lord: invalid %%work\r\n");
     return _lord_plea_foul(god_u, c3__done, dat);
   }
@@ -505,17 +503,15 @@ _lord_plea_work(u3_lord* god_u, u3_noun dat)
   }
 
   if ( c3n == u3a_is_cell(dat) ) {
-    //  XX dispose egg_u
-    //
     u3z(job);
+    u3_ovum_free(egg_u);
     return _lord_plea_foul(god_u, c3__work, dat);
   }
 
   switch ( u3h(dat) ) {
     default: {
-      //  XX dispose egg_u
-      //
       u3z(job);
+      u3_ovum_free(egg_u);
       return _lord_plea_foul(god_u, c3__work, dat);
     } break;
 

@@ -744,6 +744,20 @@
         void
         u3_gift_free(u3_gift* gif_u);
 
+      /* u3_ovum_init: initialize an unlinked potential event
+      */
+        u3_ovum*
+        u3_ovum_init(u3_auto* car_u,
+                     c3_l     msc_l,
+                     u3_noun    tar,
+                     u3_noun    wir,
+                     u3_noun    cad);
+
+      /* u3_ovum_free: dispose an unlinked potential event
+      */
+        void
+        u3_ovum_free(u3_ovum *egg_u);
+
     /**  New vere
     **/
       /* u3_auto_init(): initialize all drivers.

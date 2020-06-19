@@ -119,8 +119,51 @@ u3_gift_init(c3_d eve_d, u3_noun act)
 /* u3_gift_free(): dispose effect list.
 */
 void
-u3_gift_free(u3_gift* gif_u)
+u3_gift_free(u3_gift *gif_u)
 {
   u3z(gif_u->act);
   c3_free(gif_u);
+}
+
+/* u3_ovum_init: initialize an unlinked potential event
+*/
+u3_ovum*
+u3_ovum_init(u3_auto* car_u,
+             c3_l     msc_l,
+             u3_noun    tar,
+             u3_noun    wir,
+             u3_noun    cad)
+{
+  u3_ovum* egg_u = c3_malloc(sizeof(*egg_u));
+  egg_u->car_u = car_u;
+  egg_u->vod_p = 0;
+  egg_u->msc_l = msc_l;
+  egg_u->tar   = tar;
+  egg_u->wir   = wir;
+  egg_u->cad   = cad;
+
+  egg_u->pre_u = egg_u->nex_u = 0;
+
+  egg_u->cb_u.news_f = 0;
+  egg_u->cb_u.bail_f = 0;
+
+  //  spinner defaults
+  //
+  egg_u->pin_u.lab   = u3k(u3h(wir));
+  egg_u->pin_u.del_o = c3y;
+
+  return egg_u;
+}
+
+/* u3_ovum_free: dispose an unlinked potential event
+*/
+void
+u3_ovum_free(u3_ovum *egg_u)
+{
+  u3z(egg_u->pin_u.lab);
+  u3z(egg_u->tar);
+  u3z(egg_u->wir);
+  u3z(egg_u->cad);
+
+  c3_free(egg_u);
 }

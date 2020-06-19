@@ -28,21 +28,7 @@ u3_auto_plan(u3_auto* car_u,
              u3_noun    wir,
              u3_noun    cad)
 {
-  u3_ovum* egg_u = c3_malloc(sizeof(*egg_u));
-  egg_u->car_u = car_u;
-  egg_u->vod_p = 0;
-  egg_u->msc_l = msc_l;
-  egg_u->tar   = tar;
-  egg_u->wir   = wir;
-  egg_u->cad   = cad;
-
-  //  spinner defaults
-  //
-  egg_u->pin_u.lab   = u3k(u3h(wir));
-  egg_u->pin_u.del_o = c3y;
-
-  egg_u->cb_u.news_f = 0;
-  egg_u->cb_u.bail_f = 0;
+  u3_ovum *egg_u = u3_ovum_init(car_u, msc_l, tar, wir, cad);
 
   if ( !car_u->ent_u ) {
     c3_assert(!car_u->ext_u);
@@ -114,9 +100,7 @@ u3_auto_bail(u3_ovum* egg_u, u3_noun lud)
     u3_auto_bail_slog(egg_u, lud);
   }
 
-  //  XX confirm
-  //
-  u3_auto_drop(0, egg_u);
+  u3_ovum_free(egg_u);
 }
 
 /* _auto_news(): notify driver of ovum status
@@ -139,11 +123,7 @@ void
 u3_auto_done(u3_ovum* egg_u)
 {
   _auto_news(egg_u, u3_ovum_done);
-
-  //  XX confirm
-  //
-  u3_auto_drop(0, egg_u);
-  //
+  u3_ovum_free(egg_u);
 }
 
 /* u3_auto_work(): notify driver of [egg_u] commencement.
@@ -181,11 +161,7 @@ u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u)
     _auto_news(egg_u, u3_ovum_drop);
   }
 
-  u3z(egg_u->pin_u.lab);
-  u3z(egg_u->tar);
-  u3z(egg_u->wir);
-  u3z(egg_u->cad);
-  c3_free(egg_u);
+  u3_ovum_free(egg_u);
 }
 
 /* u3_auto_next(): select an ovum, dequeue and construct.
@@ -329,9 +305,16 @@ u3_auto_exit(u3_auto* car_u)
   while ( car_u ) {
     nex_u = car_u->nex_u;
 
-    // while ( car_u->ext_u ) {
-    //   u3_auto_drop(car_u, car_u->ext_u);
-    // }
+    {
+      u3_ovum *egg_u = car_u->ext_u;
+      u3_ovum *xen_u;
+
+      while ( egg_u ) {
+        xen_u = egg_u->nex_u;
+        u3_ovum_free(egg_u);
+        egg_u = xen_u;
+      }
+    }
 
     cod_l = u3a_lush(car_u->nam_m);
     car_u->io.exit_f(car_u);
