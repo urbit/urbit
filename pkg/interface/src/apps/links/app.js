@@ -55,8 +55,8 @@ export class LinksApp extends Component {
     const seen = props.linksSeen ? props.linksSeen : {};
 
     const totalUnseen = _.reduce(
-      seen,
-      (acc, links) => acc + _.reduce(links, (total, hasSeen) => total + (hasSeen ? 0 : 1), 0),
+      links,
+      (acc, collection) => acc + collection.unseenCount,
       0
     );
 
