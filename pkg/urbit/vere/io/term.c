@@ -1377,7 +1377,7 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
           //
           //    XX disabled due to known leaks; uncomment for dev
           //
-          // uv_timer_start(&u3K.tim_u, (uv_timer_cb)u3_daemon_grab, 0, 0);
+          // uv_timer_start(&u3K.tim_u, (uv_timer_cb)u3_king_grab, 0, 0);
         } break;
 
         //  ignore pack (processed in worker)

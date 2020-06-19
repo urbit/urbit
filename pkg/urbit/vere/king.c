@@ -15,38 +15,9 @@
 static c3_w sag_w;
 
 /*
-::  daemon to worker protocol
+::  skeleton client->king protocol
 ::
 |%
-::  +fate: worker to daemon
-::
-+$  fate
-  $%  ::  authenticate client
-      ::
-      [%auth p=(unit ship) q=@]
-      ::  ship action
-      ::
-      [%wyrd p=ship q=wyrd]
-      ::  daemon command
-      ::
-      [%doom p=doom]
-  ==
-::  +wyrd: ship action
-::
-::    Should require auth to a single relevant ship
-::
-+$  wyrd
-  $%  :: release this pier
-      ::
-      ::    XX not implemented
-      ::
-      [%susp ~]
-      ::  generate event
-      ::
-      ::    XX partially implemented
-      ::
-      [%vent p=ovum]
-  ==
 ::  +doom: daemon command
 ::
 ::    Should require auth to the daemon itself
@@ -114,41 +85,15 @@ static c3_w sag_w;
   ::  r: userspace ova
   ::
   [p=@ q=(list ovum) r=(list ovum)]
-::  +cede: daemon to client
-::
-::  XX not implemented
-::
-+$  cede
-  $%  ::  send cards
-      ::
-      ::    XX presumably the effects of %vent in +wyrd
-      ::
-      [%cede p=ship q=(list ovum)]
-      ::  accept command
-      ::
-      [%firm ~]
-      ::  reject command
-      ::
-      [%deny p=@t]
-  ==
 --
 */
-
-void _daemon_auth(u3_noun auth);
-
-void _daemon_wyrd(u3_noun ship_wyrd);
-  void _daemon_susp(u3_atom ship, u3_noun susp);
-  void _daemon_vent(u3_atom ship, u3_noun vent);
 
 void _daemon_doom(u3_noun doom);
   void _daemon_boot(u3_noun boot);
     void _daemon_come(u3_noun star, u3_noun pill, u3_noun path);
     void _daemon_dawn(u3_noun seed, u3_noun pill, u3_noun path);
     void _daemon_fake(u3_noun ship, u3_noun pill, u3_noun path);
-  void _daemon_exit(u3_noun exit);
   void _daemon_pier(u3_noun pier);
-  void _daemon_root(u3_noun root);
-
 
 /* _daemon_defy_fate(): invalid fate
 */
@@ -156,93 +101,6 @@ void
 _daemon_defy_fate()
 {
   exit(1);
-}
-
-/* _daemon_fate(): top-level fate parser
-*/
-void
-_daemon_fate(void *vod_p, u3_noun mat)
-{
-  u3_noun fate = u3ke_cue(mat);
-  u3_noun load;
-  void (*next)(u3_noun);
-
-  c3_assert(_(u3a_is_cell(fate)));
-  c3_assert(_(u3a_is_cat(u3h(fate))));
-
-  switch ( u3h(fate) ) {
-    case c3__auth:
-      next = _daemon_auth;
-      break;
-    case c3__wyrd:
-      next = _daemon_wyrd;
-      break;
-    case c3__doom:
-      next = _daemon_doom;
-      break;
-    default:
-      _daemon_defy_fate();
-  }
-
-  load = u3k(u3t(fate));
-  u3z(fate);
-  next(load);
-}
-
-/* _daemon_auth(): auth parser
-*/
-void
-_daemon_auth(u3_noun auth)
-{
-}
-
-/* _daemon_wyrd(): wyrd parser
-*/
-void
-_daemon_wyrd(u3_noun ship_wyrd)
-{
-  u3_atom ship;
-  u3_noun wyrd;
-  u3_noun load;
-  void (*next)(u3_atom, u3_noun);
-
-  c3_assert(_(u3a_is_cell(ship_wyrd)));
-  c3_assert(_(u3a_is_atom(u3h(ship_wyrd))));
-  ship = u3k(u3h(ship_wyrd));
-  wyrd = u3k(u3t(ship_wyrd));
-  u3z(ship_wyrd);
-
-  c3_assert(_(u3a_is_cell(wyrd)));
-  c3_assert(_(u3a_is_cat(u3h(wyrd))));
-
-  switch ( u3h(wyrd) ) {
-    case c3__susp:
-      next = _daemon_susp;
-      break;
-    case c3__vent:
-      next = _daemon_vent;
-      break;
-    default:
-      _daemon_defy_fate();
-  }
-
-  load = u3k(u3t(wyrd));
-  u3z(wyrd);
-  next(ship, load);
-}
-
-/* _daemon_susp(): susp parser
-*/
-void
-_daemon_susp(u3_atom ship, u3_noun susp)
-{
-}
-
-/* _daemon_vent(): vent parser
-*/
-void
-_daemon_vent(u3_atom ship, u3_noun vent)
-{
 }
 
 /* _daemon_doom(): doom parser
@@ -260,14 +118,8 @@ _daemon_doom(u3_noun doom)
     case c3__boot:
       next = _daemon_boot;
       break;
-    case c3__exit:
-      next = _daemon_exit;
-      break;
     case c3__pier:
       next = _daemon_pier;
-      break;
-    case c3__root:
-      next = _daemon_root;
       break;
     default:
       _daemon_defy_fate();
@@ -352,13 +204,6 @@ _daemon_dawn(u3_noun seed, u3_noun pill, u3_noun path)
   u3C.slog_f = 0;
 }
 
-/* _daemon_exit(): exit parser
-*/
-void
-_daemon_exit(u3_noun exit)
-{
-}
-
 /* _daemon_pier(): pier parser
 */
 void
@@ -372,66 +217,6 @@ _daemon_pier(u3_noun pier)
 
   u3_pier_stay(sag_w, u3k(u3t(pier)));
   u3z(pier);
-}
-
-/* _daemon_root(): root parser
-*/
-void
-_daemon_root(u3_noun root)
-{
-}
-
-/* _daemon_bail(): bail for command socket newt
-*/
-void
-_daemon_bail(void* vod_p, const c3_c *err_c)
-{
-  u3_moor* mor_p = vod_p;
-  u3_moor* fre_p;
-
-  u3l_log("_daemon_bail: %s\r\n", err_c);
-
-  if ( !mor_p ) {
-    fre_p = u3K.cli_u;
-    u3K.cli_u = u3K.cli_u->nex_u;
-  }
-  else {
-    fre_p = mor_p->nex_u;
-    mor_p->nex_u = fre_p->nex_u;
-  }
-
-  c3_free(fre_p);
-}
-
-/* _daemon_socket_connect(): callback for new connections
-*/
-void
-_daemon_socket_connect(uv_stream_t *sock, int status)
-{
-  u3_moor *mor_u;
-
-  if ( u3K.cli_u == 0 ) {
-    u3K.cli_u = c3_malloc(sizeof(u3_moor));
-    mor_u = u3K.cli_u;
-    mor_u->ptr_v = 0;
-    mor_u->nex_u = 0;
-  }
-  else {
-    for (mor_u = u3K.cli_u; mor_u->nex_u; mor_u = mor_u->nex_u);
-
-    mor_u->nex_u = c3_malloc(sizeof(u3_moor));
-    mor_u->nex_u->ptr_v = mor_u;
-    mor_u = mor_u->nex_u;
-    mor_u->nex_u = 0;
-  }
-
-  uv_timer_init(u3L, &mor_u->tim_u);
-  uv_pipe_init(u3L, &mor_u->pyp_u, 0);
-  mor_u->pok_f = _daemon_fate;
-  mor_u->bal_f = _daemon_bail;
-
-  uv_accept(sock, (uv_stream_t *)&mor_u->pyp_u);
-  u3_newt_read((u3_moat *)mor_u);
 }
 
 /* _daemon_curl_alloc(): allocate a response buffer for curl
@@ -654,7 +439,7 @@ _boothack_key(u3_noun kef)
   return seed;
 }
 
-/* _boothack_doom(): parse CLI arguments into c3__doom
+/* _boothack_doom(): parse CLI arguments into $doom
 */
 static u3_noun
 _boothack_doom(void)
@@ -834,30 +619,23 @@ _daemon_sign_hold(void)
   }
 }
 
-/* _boothack_cb(): callback for the boothack self-connection
-**  (as if we were a client process)
+/* _daemon_sign_close(): dispose daemon signal handlers
+*/
+static void
+_daemon_sign_close(void)
+{
+  u3_usig* sig_u;
+
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_close((uv_handle_t*)&sig_u->sil_u, (uv_close_cb)free);
+  }
+}
+/* _boothack_cb(): setup pier via message as if from client.
 */
 void
-_boothack_cb(uv_connect_t* con_u, c3_i sas_i)
+_boothack_cb(uv_timer_t* tim_u)
 {
-  u3_mojo *moj_u = con_u->data;
-
-  if ( 0 != sas_i ) {
-    u3l_log("boot: doom failed: %s\r\n", uv_strerror(sas_i));
-    u3_daemon_bail();
-  }
-  else {
-    u3_noun dom = u3nc(c3__doom, _boothack_doom());
-    u3_atom mat = u3ke_jam(dom);
-    u3_newt_write(moj_u, mat);
-
-    c3_free(con_u);
-
-    //  XX [moj_u] is leaked, newt.c doesn't give us a callback
-    //  after which we could close and free it ...
-    //
-    // uv_close((uv_handle_t*)&moj_u->pyp_u, (uv_close_cb)c3_free);
-  }
+  _daemon_doom(_boothack_doom());
 }
 
 /* _daemon_loop_init(): stuff that comes before the event loop
@@ -865,21 +643,18 @@ _boothack_cb(uv_connect_t* con_u, c3_i sas_i)
 void
 _daemon_loop_init()
 {
+  //  initialize terminal/logging
+  //
+  u3_term_log_init();
+
+  //  start signal handlers
+  //
   _daemon_sign_init();
   _daemon_sign_move();
 
-  //  boot hack: send pier %boot command via %doom cmd socket msg
-  //
-  {
-    u3_moor*      mor_u = c3_malloc(sizeof(u3_moor));
-    uv_connect_t* con_u = c3_malloc(sizeof(uv_connect_t));
-    con_u->data = mor_u;
-    uv_timer_init(u3L, &mor_u->tim_u);
-    uv_pipe_init(u3L, &mor_u->pyp_u, 0);
-    uv_pipe_connect(con_u, &mor_u->pyp_u, u3K.soc_c, _boothack_cb);
-  }
-
-  u3_term_log_init();
+  //  async "boothack"
+  // /
+  uv_timer_start(&u3K.tim_u, _boothack_cb, 0, 0);
 }
 
 /* _daemon_loop_exit(): cleanup after event loop
@@ -887,14 +662,13 @@ _daemon_loop_init()
 void
 _daemon_loop_exit()
 {
-  unlink(u3K.soc_c);
   unlink(u3K.certs_c);
 }
 
-/* u3_daemon_commence(): start the daemon
+/* u3_king_commence(): start the daemon
 */
 void
-u3_daemon_commence()
+u3_king_commence()
 {
   u3_Host.lup_u = uv_default_loop();
 
@@ -937,42 +711,31 @@ u3_daemon_commence()
     }
   }
 
-  //  listen on command socket
+  //  initialize top-level timer
   //
-  {
-    c3_c buf_c[256];
-
-    sprintf(buf_c, "/tmp/urbit-sock-%d", getpid());
-    u3K.soc_c = strdup(buf_c);
-  }
-
   uv_timer_init(u3L, &u3K.tim_u);
 
-  uv_pipe_init(u3L, &u3K.cmd_u, 0);
-  uv_pipe_bind(&u3K.cmd_u, u3K.soc_c);
-  uv_listen((uv_stream_t *)&u3K.cmd_u, 128, _daemon_socket_connect);
-
+  //  run the loop
+  //
   _daemon_loop_init();
-
   uv_run(u3L, UV_RUN_DEFAULT);
-
   _daemon_loop_exit();
 }
 
-/* u3_daemon_bail(): immediately shutdown.
+/* u3_king_bail(): immediately shutdown.
 */
 void
-u3_daemon_bail(void)
+u3_king_bail(void)
 {
   _daemon_loop_exit();
   u3_pier_bail();
   exit(1);
 }
 
-/* u3_daemon_grab(): gc the daemon
+/* u3_king_grab(): gc the daemon
 */
 void
-u3_daemon_grab(void* vod_p)
+u3_king_grab(void* vod_p)
 {
   c3_w tot_w = 0;
   FILE* fil_u;

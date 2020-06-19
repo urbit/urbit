@@ -604,16 +604,13 @@
 
       /* u3_king: all executing piers.
       */
-        typedef struct _u3_daemon {
-          c3_c*     soc_c;                      //  socket name
-          c3_c*     certs_c;                    //  ssl certificate dump
-          c3_w      len_w;                      //  number used
-          c3_w      all_w;                      //  number allocated
-          u3_pier** tab_u;                      //  pier table
-          uv_pipe_t cmd_u;                      //  command socket
-          u3_moor*  cli_u;                      //  connected clients
-          uv_timer_t tim_u;                     //  gc timer
-        } u3_daemon;
+        typedef struct _u3_king {
+          c3_c*          certs_c;               //  ssl certificate dump
+          c3_w             len_w;               //  number used
+          c3_w             all_w;               //  number allocated
+          u3_pier**        tab_u;               //  pier table
+          uv_timer_t       tim_u;               //  gc timer
+        } u3_king;
 
       /* u3_pier_spin(): (re-)activate idle handler
       */
@@ -622,13 +619,13 @@
 
 #     define u3L  u3_Host.lup_u             //  global event loop
 #     define u3Z  (&(u3_Raft))
-#     define u3K  u3_Daemon
+#     define u3K  u3_King
 
   /** Global variables.
   **/
     c3_global  u3_host   u3_Host;
     c3_global  c3_c*     u3_Local;
-    c3_global  u3_daemon u3_Daemon;
+    c3_global  u3_king   u3_King;
 
   /** Functions.
   **/
@@ -1273,20 +1270,20 @@
         u3_noun
         u3_dawn_vent(u3_noun seed);
 
-      /* u3_daemon_commence(): start the daemon
+      /* u3_king_commence(): start the daemon
       */
         void
-        u3_daemon_commence();
+        u3_king_commence();
 
-      /* u3_daemon_bail(): immediately shutdown.
+      /* u3_king_bail(): immediately shutdown.
       */
         void
-        u3_daemon_bail(void);
+        u3_king_bail(void);
 
-      /* u3_daemon_grab(): gc the daemon
+      /* u3_king_grab(): gc the daemon
       */
         void
-        u3_daemon_grab(void* vod_p);
+        u3_king_grab(void* vod_p);
 
 
         c3_w

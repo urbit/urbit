@@ -473,7 +473,7 @@ _stop_exit(c3_i int_i)
   //  explicit fprintf to avoid allocation in u3l_log
   //
   fprintf(stderr, "\r\n[received keyboard stop signal, exiting]\r\n");
-  u3_daemon_bail();
+  u3_king_bail();
 }
 
 /* _stop_signal(): handle termination signal.
@@ -759,7 +759,7 @@ main(c3_i   argc,
       exit(1);
     }
 
-    u3_daemon_commence();
+    u3_king_commence();
 
     //  uninitialize curl
     //
