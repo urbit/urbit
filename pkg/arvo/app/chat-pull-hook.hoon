@@ -119,7 +119,7 @@
       %kick
     ?+  wire  !!
         [%mailbox @ *]
-      ~&  mailbox-kick+wire
+      ~&  mailbox-kick+[src.bowl wire]
       =/  =rid  (path-to-rid t.wire)
       ?.  (~(has by tracking) rid)  [~ this]
       ~&  %chat-pull-hook-resubscribe
@@ -135,9 +135,10 @@
       =/  chat=path  (oust [(dec (lent t.wire)) 1] `(list @ta)`t.wire)
       =/  =rid  (path-to-rid chat)
       ?.  (~(has by tracking) rid)  [~ this]
+      =/  =ship  (~(got by tracking) rid)
       =/  =path  ?~((chat-scry:store bowl chat) wire [%mailbox chat])
       :_  this
-      [%pass path %agent [ship.rid %chat-push-hook] %watch path]~
+      [%pass path %agent [ship %chat-push-hook] %watch path]~
     ==
   ::
       %watch-ack

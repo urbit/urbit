@@ -1,7 +1,7 @@
 /-  *chat-push-hook
-|_  act=action
+|_  upd=update
 ++  grab
   |%
-  ++  noun  action
+  ++  noun  update
   --
 --

@@ -31,7 +31,6 @@
 ++  on-save  !>(state)
 ++  on-load
   |=  =vase
-  ?:  !|  [~ this]
   =/  old  !<(versioned-state vase)
   ?-  -.old
     %0  [~ this(state old)]
@@ -133,10 +132,11 @@
     (snag idx candidates)
   ::
   ++  redirect
-    |=  provider=ship
+    |=  [=rid provider=ship]
     ^-  (list card)
+    =/  chat  (rid-to-path rid)
     ::  XX can it be guaranteed that the fact be sent before the kick?
-    :~  [%give %fact ~ %chat-push-hook-update !>([%redirect provider path])]
+    :~  [%give %fact ~ %chat-push-hook-update !>([%redirect provider chat])]
         ::  XX what happens if I use ~ here instead of [path]~, or don't
         ::  specify the ship?
         [%give %kick ~[path] `src.bowl]
@@ -156,7 +156,8 @@
     ?.  ?|  (~(has ju providers) rid src.bowl)
             =(our.bowl (provider-for src.bowl rid))
         ==
-      (redirect (provider-for src.bowl rid))
+      ~&  [%redirect src.bowl %to (provider-for src.bowl rid)]
+      (redirect rid (provider-for src.bowl rid))
     ::  Provide directly
     =/  envs  envelopes:(need (chat-scry:store bowl pas))
     =/  length  (lent envs)
@@ -183,7 +184,8 @@
     ?.  ?|  (~(has ju providers) rid src.bowl)
             =(our.bowl (provider-for src.bowl rid))
         ==
-      (redirect (provider-for src.bowl rid))
+      ~&  [%redirect src.bowl %to (provider-for src.bowl rid)]
+      (redirect rid (provider-for src.bowl rid))
     ::  Provide directly
     =/  box  (chat-scry:store bowl path)
     ?~  box  !!
@@ -201,7 +203,7 @@
       ==
       %watch-ack              (watch-ack wire p.sign)
       %fact  ?+  p.cage.sign  (on-agent:def wire sign)
-          %chat-update        (fact-chat-update !<(update:store q.cage.sign))
+          %chat-update        (fact-chat-update !<(update:store q.cage.sign)
           %permission-update  (fact-perm-update !<(permission-update q.cage.sign))
   ==  ==
   ::
