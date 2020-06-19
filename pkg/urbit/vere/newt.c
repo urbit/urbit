@@ -212,7 +212,11 @@ _newt_read(u3_moat*        mot_u,
   if ( 0 > len_i ) {
     c3_free(buf_u->base);
     uv_read_stop((uv_stream_t*)&mot_u->pyp_u);
-    fprintf(stderr, "newt: read failed %s\r\n", uv_strerror(len_i));
+
+    if ( UV_EOF != len_i ) {
+      fprintf(stderr, "newt: read failed %s\r\n", uv_strerror(len_i));
+    }
+
     mot_u->bal_f(mot_u->ptr_v, uv_strerror(len_i));
     return c3n;
   }
@@ -278,8 +282,9 @@ _newt_read_init(u3_moat* mot_u, uv_read_cb read_cb_f)
   //
   mot_u->ent_u = mot_u->ext_u = 0;
 
-  //  store pointer for queue timer callback
+  //  store pointer for libuv handle callback
   //
+  mot_u->pyp_u.data = mot_u;
   mot_u->tim_u.data = mot_u;
 
   //  await next msg header
@@ -296,6 +301,51 @@ _newt_read_init(u3_moat* mot_u, uv_read_cb read_cb_f)
       fprintf(stderr, "newt: read failed %s\r\n", uv_strerror(sas_i));
       mot_u->bal_f(mot_u->ptr_v, uv_strerror(sas_i));
     }
+  }
+}
+
+/* _moat_stop_cb(): finalize stop/close input stream..
+*/
+static void
+_moat_stop_cb(uv_handle_t* han_u)
+{
+  u3_moat* mot_u = han_u->data;
+  mot_u->bal_f(mot_u->ptr_v, "");
+}
+
+/* u3_newt_moat_stop(); newt stop/close input stream.
+*/
+void
+u3_newt_moat_stop(u3_moat* mot_u, u3_moor_bail bal_f)
+{
+  mot_u->pyp_u.data = mot_u;
+
+  if ( bal_f ) {
+    mot_u->bal_f = bal_f;
+  }
+
+  uv_close((uv_handle_t*)&mot_u->pyp_u, _moat_stop_cb);
+  uv_close((uv_handle_t*)&mot_u->tim_u, 0);
+
+  //  dispose in-process message
+  //
+  if ( u3_mess_tail == mot_u->mes_u.sat_e ) {
+    c3_free(mot_u->mes_u.tal_u.met_u);
+    _newt_mess_head(&mot_u->mes_u);
+  }
+
+  //  dispose pending messages
+  {
+    u3_meat* met_u = mot_u->ext_u;
+    u3_meat* nex_u;
+
+    while ( met_u ) {
+      nex_u = met_u->nex_u;
+      c3_free(met_u);
+      met_u = nex_u;
+    }
+
+    mot_u->ent_u = mot_u->ext_u = 0;
   }
 }
 
@@ -334,9 +384,37 @@ _newt_write_cb(uv_write_t* wri_u, c3_i sas_i)
   c3_free(req_u);
 
   if ( 0 != sas_i ) {
-    fprintf(stderr, "newt: write failed %s\r\n", uv_strerror(sas_i));
-    moj_u->bal_f(moj_u->ptr_v, uv_strerror(sas_i));
+    if ( UV_ECANCELED == sas_i ) {
+      fprintf(stderr, "newt: write canceled\r\n");
+    }
+    else {
+      fprintf(stderr, "newt: write failed %s\r\n", uv_strerror(sas_i));
+      moj_u->bal_f(moj_u->ptr_v, uv_strerror(sas_i));
+    }
   }
+}
+
+/* _mojo_stop_cb(): finalize stop/close output stream..
+*/
+static void
+_mojo_stop_cb(uv_handle_t* han_u)
+{
+  u3_mojo* moj_u = han_u->data;
+  moj_u->bal_f(moj_u->ptr_v, "");
+}
+
+/* u3_newt_mojo_stop(); newt stop/close output stream.
+*/
+void
+u3_newt_mojo_stop(u3_mojo* moj_u, u3_moor_bail bal_f)
+{
+  moj_u->pyp_u.data = moj_u;
+
+  if ( bal_f ) {
+    moj_u->bal_f = bal_f;
+  }
+
+  uv_close((uv_handle_t*)&moj_u->pyp_u, _mojo_stop_cb);
 }
 
 /* u3_newt_write(): write atom to stream; free atom.

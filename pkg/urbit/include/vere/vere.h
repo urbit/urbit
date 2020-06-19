@@ -1167,6 +1167,16 @@
         void
         u3_newt_read(u3_moat* mot_u);
 
+      /* u3_newt_moat_stop(); newt stop/close input stream.
+      */
+        void
+        u3_newt_moat_stop(u3_moat* mot_u, u3_moor_bail bal_f);
+
+      /* u3_newt_mojo_stop(); newt stop/close output stream.
+      */
+        void
+        u3_newt_mojo_stop(u3_mojo* moj_u, u3_moor_bail bal_f);
+
     /** Pier control.
     **/
       /* u3_pier_db_shutdown(): close the log.
