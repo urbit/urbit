@@ -88,7 +88,8 @@ export class Message extends Component {
             src={letter.url}
             style={{
               height: 'min(250px, 20vh)',
-              maxWidth: '80vw'
+              maxWidth: 'calc(100% - 36px - 1.5rem)',
+              objectFit: 'contain'
             }}
           ></img>
         );
