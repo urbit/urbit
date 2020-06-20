@@ -12,7 +12,7 @@ let
 
   crossdeps =
     with env;
-    [ curl libgmp libsigsegv ncurses openssl zlib lmdb ];
+    [ curl libgmp libsigsegv openssl zlib lmdb ];
 
   vendor =
     with deps;
@@ -27,7 +27,6 @@ env.make_derivation {
   MEMORY_DEBUG     = debug;
   CPU_DEBUG        = debug;
   EVENT_TIME_DEBUG = false;
-  NCURSES          = env.ncurses;
 
   name              = "${name}-${env_name}";
   exename           = name;

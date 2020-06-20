@@ -16,8 +16,6 @@
 #include <dirent.h>
 #include <stdint.h>
 #include <uv.h>
-#include <termios.h>
-#include <ncurses/term.h>
 #include <errno.h>
 #include <libgen.h>
 #include <ftw.h>

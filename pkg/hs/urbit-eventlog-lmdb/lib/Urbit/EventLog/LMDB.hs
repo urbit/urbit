@@ -4,25 +4,49 @@
     TODO Effects storage logic is messy.
 -}
 
-module Urbit.Vere.Log ( EventLog, identity, nextEv, lastEv
-                      , new, existing
-                      , streamEvents, appendEvents, trimEvents
-                      , streamEffectsRows, writeEffectsRow
-                      ) where
+module Urbit.EventLog.LMDB
+  ( LogIdentity(..)
+  , EventLog
+  , identity
+  , nextEv
+  , lastEv
+  , new
+  , existing
+  , streamEvents
+  , appendEvents
+  , trimEvents
+  , streamEffectsRows
+  , writeEffectsRow
+  )
+where
 
-import Urbit.Prelude hiding (init)
+import ClassyPrelude
 
-import Data.Conduit
 import Data.RAcquire
 import Database.LMDB.Raw
-import Foreign.Marshal.Alloc
-import Foreign.Ptr
-import Urbit.Vere.Pier.Types
 
-import Foreign.Storable (peek, poke, sizeOf)
+import Data.Conduit          (ConduitT, yield)
+import Foreign.Marshal.Alloc (allocaBytes)
+import Foreign.Ptr           (Ptr, castPtr, nullPtr)
+import Foreign.Storable      (peek, poke, sizeOf)
+import RIO                   (HasLogFunc, RIO, display, logDebug, runRIO)
+import Urbit.Noun            (DecodeErr, Noun, Ship)
+import Urbit.Noun            (deriveNoun, fromNounExn, toNoun)
+import Urbit.Noun            (cueBS, jamBS)
 
 import qualified Data.ByteString.Unsafe as BU
 import qualified Data.Vector            as V
+
+
+-- Public Types ----------------------------------------------------------------
+
+data LogIdentity = LogIdentity
+  { who          :: Ship
+  , isFake       :: Bool
+  , lifecycleLen :: Word
+  } deriving (Eq, Ord, Show)
+
+deriveNoun ''LogIdentity
 
 
 -- Types -----------------------------------------------------------------------
@@ -34,34 +58,40 @@ type Dbi = MDB_dbi
 type Cur = MDB_cursor
 
 data EventLog = EventLog
-    { env        :: Env
-    , _metaTbl   :: Dbi
-    , eventsTbl  :: Dbi
-    , effectsTbl :: Dbi
-    , identity   :: LogIdentity
-    , numEvents  :: IORef EventId
-    }
+  { env        :: Env
+  , _metaTbl   :: Dbi
+  , eventsTbl  :: Dbi
+  , effectsTbl :: Dbi
+  , identity   :: LogIdentity
+  , numEvents  :: TVar Word64
+  }
 
-nextEv :: EventLog -> RIO e EventId
-nextEv = fmap succ . readIORef . numEvents
+nextEv :: EventLog -> STM Word64
+nextEv = fmap (+1) . lastEv
 
-lastEv :: EventLog -> RIO e EventId
-lastEv = readIORef . numEvents
+lastEv :: EventLog -> STM Word64
+lastEv = readTVar . numEvents
 
 data EventLogExn
-    = NoLogIdentity
-    | MissingEvent EventId
-    | BadNounInLogIdentity ByteString DecodeErr ByteString
-    | BadKeyInEventLog
-    | BadWriteLogIdentity LogIdentity
-    | BadWriteEvent EventId
-    | BadWriteEffect EventId
-  deriving Show
+  = NoLogIdentity
+  | MissingEvent Word64
+  | BadNounInLogIdentity ByteString DecodeErr ByteString
+  | BadKeyInEventLog
+  | BadWriteLogIdentity LogIdentity
+  | BadWriteEvent Word64
+  | BadWriteEffect Word64
+ deriving Show
 
 
 -- Instances -------------------------------------------------------------------
 
 instance Exception EventLogExn where
+
+
+-- Utils -----------------------------------------------------------------------
+
+io :: MonadIO m => IO a -> m a
+io = liftIO
 
 
 -- Open/Close an Event Log -----------------------------------------------------
@@ -82,7 +112,7 @@ create dir id = do
     (m, e, f) <- createTables env
     clearEvents env e
     writeIdent env m id
-    EventLog env m e f id <$> newIORef 0
+    EventLog env m e f id <$> newTVarIO 0
   where
     createTables env =
       rwith (writeTxn env) $ \txn -> io $
@@ -98,7 +128,7 @@ open dir = do
     id        <- getIdent env m
     logDebug $ display (pack @Text $ "Log Identity: " <> show id)
     numEvs    <- getNumEvents env e
-    EventLog env m e f id <$> newIORef numEvs
+    EventLog env m e f id <$> newTVarIO numEvs
   where
     openTables env =
       rwith (writeTxn env) $ \txn -> io $
@@ -227,10 +257,10 @@ clearEvents env eventsTbl =
 
 appendEvents :: EventLog -> Vector ByteString -> RIO e ()
 appendEvents log !events = do
-    numEvs <- readIORef (numEvents log)
+    numEvs <- atomically $ readTVar (numEvents log)
     next   <- pure (numEvs + 1)
     doAppend $ zip [next..] $ toList events
-    writeIORef (numEvents log) (numEvs + word (length events))
+    atomically $ writeTVar (numEvents log) (numEvs + word (length events))
   where
     flags    = compileWriteFlags [MDB_NOOVERWRITE]
     doAppend = \kvs ->
@@ -240,21 +270,20 @@ appendEvents log !events = do
                 True  -> pure ()
                 False -> throwIO (BadWriteEvent k)
 
-writeEffectsRow :: EventLog -> EventId -> ByteString -> RIO e ()
-writeEffectsRow log k v = do
-    rwith (writeTxn $ env log) $ \txn ->
-        putBytes flags txn (effectsTbl log) k v >>= \case
-            True  -> pure ()
-            False -> throwIO (BadWriteEffect k)
-  where
-    flags = compileWriteFlags []
+writeEffectsRow :: MonadIO m => EventLog -> Word64 -> ByteString -> m ()
+writeEffectsRow log k v = io $ runRIO () $ do
+  let flags = compileWriteFlags []
+  rwith (writeTxn $ env log) $ \txn ->
+    putBytes flags txn (effectsTbl log) k v >>= \case
+      True  -> pure ()
+      False -> throwIO (BadWriteEffect k)
 
 
 -- Read Events -----------------------------------------------------------------
 
 trimEvents :: HasLogFunc e => EventLog -> Word64 -> RIO e ()
 trimEvents log start = do
-    last <- lastEv log
+    last <- atomically (lastEv log)
     rwith (writeTxn $ env log) $ \txn ->
         for_ [start..last] $ \eId ->
         withWordPtr eId $ \pKey -> do
@@ -262,23 +291,21 @@ trimEvents log start = do
             found <- io $ mdb_del txn (eventsTbl log) key Nothing
             unless found $
                 throwIO (MissingEvent eId)
-    writeIORef (numEvents log) (pred start)
+    atomically $ writeTVar (numEvents log) (pred start)
 
-streamEvents :: HasLogFunc e
-             => EventLog -> Word64
-             -> ConduitT () ByteString (RIO e) ()
+streamEvents :: MonadIO m => EventLog -> Word64 -> ConduitT () ByteString m ()
 streamEvents log first = do
-    batch <- lift $ readBatch log first
-    unless (null batch) $ do
-        for_ batch yield
-        streamEvents log (first + word (length batch))
+  batch <- io $ runRIO () $ readBatch log first
+  unless (null batch) $ do
+    for_ batch yield
+    streamEvents log (first + word (length batch))
 
 streamEffectsRows :: ∀e. HasLogFunc e
-                  => EventLog -> EventId
+                  => EventLog -> Word64
                   -> ConduitT () (Word64, ByteString) (RIO e) ()
 streamEffectsRows log = go
   where
-    go :: EventId -> ConduitT () (Word64, ByteString) (RIO e) ()
+    go :: Word64 -> ConduitT () (Word64, ByteString) (RIO e) ()
     go next = do
         batch <- lift $ readRowsBatch (env log) (effectsTbl log) next
         unless (null batch) $ do
@@ -294,12 +321,12 @@ readBatch :: EventLog -> Word64 -> RIO e (V.Vector ByteString)
 readBatch log first = start
   where
     start = do
-        last <- lastEv log
+        last <- atomically (lastEv log)
         if (first > last)
             then pure mempty
             else readRows $ fromIntegral $ min 1000 $ ((last+1) - first)
 
-    assertFound :: EventId -> Bool -> RIO e ()
+    assertFound :: Word64 -> Bool -> RIO e ()
     assertFound id found = do
         unless found $ throwIO $ MissingEvent id
 

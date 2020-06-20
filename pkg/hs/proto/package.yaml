@@ -19,7 +19,7 @@ dependencies:
   - transformers
   - transformers-compat
   - unordered-containers
-  - urbit-king
+  - urbit-noun
 
 default-extensions:
   - ApplicativeDo
