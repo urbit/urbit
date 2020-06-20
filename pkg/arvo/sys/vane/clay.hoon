@@ -440,6 +440,7 @@
     [+<- +<+>-]  ::  cache.state
   ::
   ++  ford
+    !.
     =>  |%
         +$  build
           $%  [%file =path]
@@ -499,6 +500,7 @@
         =^  cage  nub  (validate-page path page)
         [cage nub]
       ?<  (~(has in deletes) path)
+      ~|  %file-not-found^path
       :_(nub (need (~(get an ankh) path)))
     ::  +get-mark: build a mark definition
     ::
@@ -3266,6 +3268,7 @@
     ::  ford
     ::
     ++  read-a
+      !.
       |=  [=aeon =path]
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
@@ -3287,6 +3290,7 @@
       :_(fod.dom [~ ~ %& %vase !>(vase)])
     ::
     ++  read-b
+      !.
       |=  [=aeon =path]
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
@@ -3302,6 +3306,7 @@
       :_(fod.dom [~ ~ %& %dais !>(dais)])
     ::
     ++  read-c
+      !.
       |=  [=aeon =path]
       ^-  [(unit (unit (each cage lobe))) ford-cache]
       ?.  =(aeon let.dom)
@@ -3650,9 +3655,9 @@
         [~ fod]
       ::  virtualize to catch and produce deterministic failures
       ::
+      !.
       =-  ?:(?=(%& -<) p.- ((slog p.-) [[~ ~] fod]))
       %-  mule  |.
-      ::
       ?-  care.mun
           %d
         :_  fod

@@ -673,6 +673,7 @@
       (slop (dy-vase p.i.src) $(src t.src))
     ::
     ++  dy-run-generator
+      !.
       |=  [cay=cage cig=dojo-config]
       ^+  +>+>
       ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
@@ -699,7 +700,7 @@
         (he-diff(poy ~) %tan p.wat)
       =-  =/  res  (mule -)
           ?:  ?=(%| -.res)
-            (he-diff(poy ~) %tan p.res)
+            (he-diff(poy ~) %tan leaf+"dojo: generator failure" p.res)
           ?-  p.wat
             %ask  (dy-made-dial %noun p.res)
             %say  (dy-made-gent %noun p.res)
@@ -844,6 +845,7 @@
       ^-  (each cage tang)
       ?^  val=(dy-hoon-var hoon)
         &+u.val
+      !.
       %-  mule  |.
       :-  %noun
       =/  vaz=(list [term vase])
