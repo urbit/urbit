@@ -341,21 +341,23 @@
     =/  =ship         (slav %p i.t.t.path)
     =/  =term         i.t.t.t.path
     =/  =index:store  (turn t.t.t.t.path |=(=cord (slav %ud cord)))
-    =/  graph=(unit graph:store)  (~(get by graphs) [ship term])
-    ?~  graph  ~
-    =/  node=(unit node:store)  [~ *node:store]
+    =/  parent-graph=(unit graph:store)  (~(get by graphs) [ship term])
+    ?~  parent-graph  ~
+    =/  node=(unit node:store)  ~
+    =/  =graph:store  u.parent-graph
     |-
     ?~  index
       ?~  node  ~
       ``noun+!>(u.node)
     ?~  t.index
-      =.  node  (get:orm u.graph i.index)
+      =.  node  (get:orm graph i.index)
       ?~  node  ~
       ``noun+!>(u.node)
+    =.  node  (get:orm graph i.index)
     ?~  node  ~
     ?-  -.children.u.node
         %empty  ~
-        %graph  $(node (get:orm p.children.u.node i.index))
+        %graph  $(graph p.children.u.node, index t.index)
     ==
   ==
 ::
