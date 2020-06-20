@@ -31,16 +31,29 @@ export class NodeTreeScreen extends Component {
 
   parentPost() {
     const { props } = this;
-    console.log(props);
 
     const node = props.node;
     if (!node) { return (<div></div>); }
+
+    let prevIndex = node.post.index.split('/');
+    prevIndex.pop();
+    prevIndex = prevIndex.join('/');
     
     return (
       <div>
+        <span className="dib f9 v-mid gray2 ml1 mr1 c-default inter">
+          <Link className="dib f9 v-mid inter ml2 no-underline white-d"
+             to={
+               "/~post/room/" +
+               `${props.resource.ship}/${props.resource.name}` +
+               `${prevIndex}`
+             }>
+            ⟵
+          </Link>
+        </span>
         <Message
           isParent={true}
-          key={node.index}
+          key={node.post.index}
           msg={node.post}
         />
       </div>
@@ -53,21 +66,23 @@ export class NodeTreeScreen extends Component {
     let graph = !!props.node && 'children' in props.node ?
       props.node.children : new Map();
     let messages = Array.from(graph).reverse();
-    console.log(messages);
 
     const messageElements = messages.map((msg, i) => {
       let index = msg[0];
       let node = msg[1];
       let post = node.post;
+      console.log(post);
 
       return (
         <Message
           key={index}
+          resource={props.resource}
+          index={post.index}
           msg={post}
+          history={props.history}
         />
       );
     });
-
 
     return (
       <div

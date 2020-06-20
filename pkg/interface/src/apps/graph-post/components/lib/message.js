@@ -184,7 +184,8 @@ export class Message extends Component {
           minHeight: 'min-content'
         }}
         onClick={() => {
-          props.history.push(`/~post/room/${props.resource}/${props.index}`);
+          props.history.push(`/~post/room/` +
+            `${props.resource.ship}/${props.resource.name}${props.index}`);
         }} 
       >
        <OverlaySigil

@@ -133,18 +133,26 @@ export default class GraphPostApp extends React.Component {
         />
         <Route
           exact
-          path="/~post/room/:ship/:name/:nodeId"
+          path="/~post/room/:ship/:name/:nodeId+"
           render={(props) => {
             let resource =
               `${props.match.params.ship}/${props.match.params.name}`;
-            const graph = state.graphs[resource] || new Map();
             let index = props.match.params.nodeId
-              .split('-').map((ind) => {
+              .split('/').map((ind) => {
                 return parseInt(ind, 10);
               });
-            let node = null;
-            if (index.length > 0) {
-              node = graph.get(index[0]) || null;
+            let graph = state.graphs[resource] || new Map();
+            let node = {};
+
+            while (index.length > 0) {
+              if (!node) {
+                return <div></div>;
+              }
+
+              node = graph.get(index[0]);
+              graph = (!!node && 'children' in node) ?
+                node.children : new Map();
+              index = index.slice(1);
             }
 
             return (
@@ -162,7 +170,7 @@ export default class GraphPostApp extends React.Component {
                   subscription={this.subscription}
                   node={node}
                   sidebarShown={state.sidebarShown}
-                  parentIndex={'/' + props.match.params.nodeId.split('-').join('/')}
+                  parentIndex={'/' + props.match.params.nodeId}
                   {...props}
                 />
               </Skeleton>
