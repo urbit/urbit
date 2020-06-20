@@ -1,6 +1,7 @@
 ::
 ::::    /sys/hoon                                       ::
   ::                                                    ::
+~#  %hoon
 =<  ride
 =>  %141  =>
 ::                                                      ::
@@ -14,6 +15,7 @@
 ::  #  %base
 ::
 ::    basic mathematical operations
+~#  %base
 |%
 ::  #  %math
 ::    unsigned arithmetic
@@ -419,6 +421,7 @@
   ::    2q: molds and mold builders                     ::
   ::
 ~%  %two  +  ~
+~#  %two
 |%
 ::                                                      ::
 ::::  2a: unit logic                                    ::
@@ -2134,6 +2137,7 @@
   ::    3g: molds and mold builders                     ::
   ::                                                    ::
 ~%  %tri  +  ~
+~#  %tri
 |%
 ::
 ::::  3a: signed and modular ints                       ::
@@ -4059,6 +4063,7 @@
     %mute  mute
     %show  show
   ==
+~#  %qua
 |%
 ::
 ::::  4a: exotic bases
@@ -6752,6 +6757,7 @@
     {$sgts p/hoon q/hoon}                               ::  ~=  don't duplicate
     {$sgwt p/@ud q/hoon r/hoon s/hoon}                  ::  ~?  tested printf
     {$sgzp p/hoon q/hoon}                               ::  ~!  type on trace
+    {$sghx p/term q/hoon}                               ::  ~#  print
   ::                                            ::::::  miscellaneous
     {$mcts p/marl:hoot}                                 ::  ;=  list templating
     {$mccl p/hoon q/(list hoon)}                        ::  ;:  binary to nary
@@ -6963,6 +6969,7 @@
     %ap    ap
     %ut    ut
   ==
+~#  %pen
 |%
 ::
 ::::  5aa: new partial nock interpreter
@@ -8995,6 +9002,7 @@
 ::::  5c: compiler backend and prettyprinter
   ::
 ++  ut
+  ~#  %ut
   ~%    %ut
       +>+
     ==
@@ -9312,6 +9320,7 @@
   ::
   ++  bran
     ~+
+
     =+  gil=*(set type)
     |-  ~+  ^-  seminoun:musk
     ?-    sut
@@ -10401,6 +10410,10 @@
       [(hint [sut p.gen] p.hum) q.hum]
     ::
         {$sgzp *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
+        {$sghx *}  =-  ~&  >  mint-out=[p.gen (jam 1.337 ..ut sut [fan rib vet fab] . ~)]
+                     -
+                   ~&  >  mint-in=[p.gen (jam 1.337 ..ut sut [fan rib vet fab] . ~)]
+                   $(gen q.gen)
         {$sgbn *}
       =+  hum=$(gen q.gen)
       :: ?:  &(huz !?=(%|(@ [?(%sgcn %sgls) ^]) p.gen))
@@ -10581,6 +10594,8 @@
     ::
         {$ktsg *}  $(gen p.gen)
         {$sgzp *}  ~_(duck(sut (play p.gen)) $(gen q.gen))
+        {$sghx *}  =-  ~&  >>  mull-out=p.gen  -  ~&  >>  mull-in=p.gen
+                   $(gen q.gen)
         {$sgbn *}  $(gen q.gen)
         {$tsbn *}
       =+  lem=$(gen p.gen, gol %noun)
@@ -10943,6 +10958,8 @@
       {$ktwt *}  (wrap(sut $(gen p.gen)) %lead)
       {$note *}  (hint [sut p.gen] $(gen q.gen))
       {$sgzp *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
+      {$sghx *}  =-  ~&  >>>  play-out=p.gen  -  ~&  >>>  play-in=p.gen
+                 $(gen q.gen)
       {$sgbn *}  $(gen q.gen)
       {$tsbn *}  $(gen q.gen, sut $(gen p.gen))
       {$tscm *}  $(gen q.gen, sut (busk p.gen))
@@ -12021,6 +12038,7 @@
 ::
 ++  slap
   |=  {vax/vase gen/hoon}  ^-  vase                     ::  untyped vase .*
+
   =+  gun=(~(mint ut p.vax) %noun gen)
   [p.gun .*(q.vax q.gun)]
 ::
@@ -12123,6 +12141,7 @@
   %*(. vast bug bug, wer wer)                           ::  wer: where we are
 ::
 ++  vast                                                ::  main parsing core
+  ~#  %vast
   =+  [bug=`?`| wer=*path]
   |%
   ++  gash  %+  cook                                    ::  parse path
@@ -13637,9 +13656,11 @@
     ==
   ++  sump  (ifix [lob rob] (stag %cltr (most ace wide)))
   ++  norm                                              ::  rune regular form
+    ~#  %norm
     |=  tol/?
     |%
     ++  structure
+      ~#  %structure
       %-  stew
       ^.  stet  ^.  limo
       :~  :-  '$'
@@ -13693,6 +13714,7 @@
           ==
       ==
     ++  expression
+      ~#  %expression
       %-  stew
       ^.  stet  ^.  limo
       :~  :-  '|'
@@ -13805,6 +13827,7 @@
                   ['?' (rune wut %sgwt hing)]
                   ['=' (rune tis %sgts expb)]
                   ['!' (rune zap %sgzp expb)]
+                  ['#' (rune hax %sghx expf)]
               ==
             ==
           :-  ';'

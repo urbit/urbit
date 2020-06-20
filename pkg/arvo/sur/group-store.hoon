@@ -1,3 +1,4 @@
+~#  %group-store
 |%
 +$  group  (set ship)
 ::

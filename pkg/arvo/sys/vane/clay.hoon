@@ -1,4 +1,5 @@
 ::  clay (4c), revision control
+~#  %clay
 !:
 ::  This is split in three top-level sections:  structure definitions, main
 ::  logic, and arvo interface.
@@ -11,7 +12,9 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |=  pit/vase
 =,  clay
-=>  |%
+=>
+~#  %types
+|%
 +$  aeon  @ud                                           ::  version number
 ::
 ::  Recursive structure of a desk's data.
@@ -327,6 +330,7 @@
 ~%  %clay-utilities  ..is  ~
 ::  %utilities
 ::
+~#  %utilities
 |%
 ::  +sort-by-head: sorts alphabetically using the head of each element
 ::
@@ -381,6 +385,7 @@
   [deletes changes]
 --  =>
 ~%  %clay  +  ~
+~#  %rest
 |%
 ::  Printable form of a wove; useful for debugging
 ::
@@ -404,6 +409,7 @@
 ::
 ++  fusion
   =>
+  ~#  %fusion
   |%
   ::  +an: $ankh interface door
   ::
@@ -949,6 +955,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  de                                                  ::  per desk
+  ~#  %de
   |=  [our=ship now=@da ski=sley hen=duct raft]
   |=  [her=ship syd=desk]
   ::  XX ruf=raft crashes in the compiler
@@ -3137,6 +3144,7 @@
   ::  Other utility functions
   ::
   ++  ze
+    ~#  %ze
     |%
     ::  These convert between aeon (version number), tako (commit hash), yaki
     ::  (commit data structure), lobe (content hash), and blob (content).
@@ -3711,6 +3719,7 @@
 ::  --  `hez` is the duct to the unix sync.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+~#  %interface
 =|                                                    ::  instrument state
     $:  ver=%3                                        ::  vane version
         ruf=raft                                      ::  revision tree
