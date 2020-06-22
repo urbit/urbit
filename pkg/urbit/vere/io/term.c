@@ -977,13 +977,16 @@ u3_term_get_blew(c3_l tid_l)
 void
 u3_term_ef_winc(void)
 {
-  u3_noun wir = u3nt(c3__term, '1', u3_nul);
-  u3_noun cad = u3nc(c3__blew, u3_term_get_blew(1));
+  //  XX groace, this should be a global handler sent to each pier
+  //
+  if ( u3_Host.uty_u->car_u ) {
+    u3_noun wir = u3nt(c3__term, '1', u3_nul);
+    u3_noun cad = u3nc(c3__blew, u3_term_get_blew(1));
 
-  c3_assert( 1 == u3_Host.uty_u->tid_l );
-  c3_assert( u3_Host.uty_u->car_u );
+    c3_assert( 1 == u3_Host.uty_u->tid_l );
 
-  _term_ovum_plan(u3_Host.uty_u->car_u, wir, cad);
+    _term_ovum_plan(u3_Host.uty_u->car_u, wir, cad);
+  }
 }
 
 /* u3_term_ef_ctlc(): send ^C on console.
