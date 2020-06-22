@@ -32,6 +32,7 @@
 ::
 +$  invite-update
   $%  invite-base
+      [%initial =invites]
       [%invitatory =invitatory]             ::  receive invitatory
       [%accepted =path uid=serial =invite]  ::  an invite has been accepted
   ==

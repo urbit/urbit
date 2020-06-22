@@ -10,7 +10,6 @@
 ++  invites-to-json
   |=  inv=invites
   ^-  json
-  %+  frond:enjs:format  %invite-initial
   %-  pairs:enjs:format
   %+  turn  ~(tap by inv)
   |=  [=path =invitatory]
@@ -46,6 +45,9 @@
   %+  frond  %invite-update
   %-  pairs
   :~
+    ?:  =(%initial -.upd)
+      ?>  ?=(%initial -.upd)
+      [%initial (invites-to-json invites.upd)]
     ?:  =(%create -.upd)
       ?>  ?=(%create -.upd)
       [%create (pairs [%path (path path.upd)]~)]

@@ -1092,10 +1092,14 @@ u3r_mp(mpz_t   a_mp,
     u3a_atom* b_u = u3a_to_ptr(b);
     c3_w    len_w = b_u->len_w;
 
-    //  slight deficiency in the GMP API.
+    //  avoid reallocation on import, if possible
     //
-    c3_assert(!(len_w >> 27));
-    mpz_init2(a_mp, len_w << 5);
+    if ( (len_w >> 27) ) {
+      mpz_init(a_mp);
+    }
+    else {
+      mpz_init2(a_mp, len_w << 5);
+    }
 
     mpz_import(a_mp, len_w, -1, sizeof(c3_w), 0, 0, b_u->buf_w);
   }

@@ -1,0 +1,6 @@
+module.exports = {
+  URBIT_PIERS: [
+    "/Users/user/ships/zod/home",
+  ],
+  herb: false
+};

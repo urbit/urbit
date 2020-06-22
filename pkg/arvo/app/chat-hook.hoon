@@ -87,7 +87,8 @@
           ^-  (list (list card))
           %+  turn  ~(tap in keys)  generate-cards
         ==
-    [loaded-cards.upgraded-state this(state upgraded-state)]
+    :_  this(state upgraded-state)
+    loaded-cards.upgraded-state
     ::
     ++  generate-cards
       |=  old-chat=path
@@ -381,6 +382,7 @@
     :*  [%give %kick ~[[%mailbox path.act]] ~]
         [%give %fact [/synced]~ %chat-hook-update !>([%initial synced])]
         (pull-wire u.ship [%mailbox path.act])
+        (pull-wire u.ship [%store path.act])
         (pull-backlog-subscriptions u.ship path.act)
     ==
   ==
