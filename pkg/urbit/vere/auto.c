@@ -28,8 +28,13 @@ u3_auto_plan(u3_auto* car_u,
              u3_noun    wir,
              u3_noun    cad)
 {
-  u3_ovum *egg_u = u3_ovum_init(car_u, msc_l, tar, wir, cad);
+  u3_ovum *egg_u = u3_ovum_init(msc_l, tar, wir, cad);
 
+  egg_u->car_u = car_u;
+
+  //  [pre_u] points towards [ext_u] (back in time)
+  //  [nex_u] points towards [ent_u] (forward in time)
+  //
   if ( !car_u->ent_u ) {
     c3_assert(!car_u->ext_u);
 
@@ -139,21 +144,31 @@ u3_auto_work(u3_ovum* egg_u)
 void
 u3_auto_drop(u3_auto* car_u, u3_ovum* egg_u)
 {
-  if ( egg_u->pre_u ) {
-    egg_u->pre_u->nex_u = egg_u->nex_u;
-  }
-  else {
-    egg_u->car_u->ent_u = egg_u->nex_u;
-  }
+  {
+    c3_assert( egg_u->car_u );
 
-  if ( egg_u->nex_u ) {
-    egg_u->nex_u->pre_u = egg_u->pre_u;
-  }
-  else {
-    egg_u->car_u->ext_u = egg_u->pre_u;
-  }
+    //  the previous ovum (or [ext_u]) will point to our next ovum
+    //
+    if ( !egg_u->pre_u ) {
+      egg_u->car_u->ext_u = egg_u->nex_u;
+    }
+    else {
+      egg_u->pre_u->nex_u = egg_u->nex_u;
+    }
 
-  egg_u->car_u->dep_w--;
+    //  the next ovum (or [ent_u]) will point to our previous ovum
+    //
+    if ( !egg_u->nex_u ) {
+      egg_u->car_u->ent_u = egg_u->pre_u;
+    }
+    else {
+      egg_u->nex_u->pre_u = egg_u->pre_u;
+    }
+
+    egg_u->car_u->dep_w--;
+
+    egg_u->nex_u = egg_u->pre_u = 0;
+  }
 
   //  notify driver if not self-caused
   //

@@ -743,8 +743,7 @@
       /* u3_ovum_init: initialize an unlinked potential event
       */
         u3_ovum*
-        u3_ovum_init(u3_auto* car_u,
-                     c3_l     msc_l,
+        u3_ovum_init(c3_l     msc_l,
                      u3_noun    tar,
                      u3_noun    wir,
                      u3_noun    cad);

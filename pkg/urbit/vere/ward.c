@@ -128,14 +128,13 @@ u3_gift_free(u3_gift *gif_u)
 /* u3_ovum_init: initialize an unlinked potential event
 */
 u3_ovum*
-u3_ovum_init(u3_auto* car_u,
-             c3_l     msc_l,
+u3_ovum_init(c3_l     msc_l,
              u3_noun    tar,
              u3_noun    wir,
              u3_noun    cad)
 {
   u3_ovum* egg_u = c3_malloc(sizeof(*egg_u));
-  egg_u->car_u = car_u;
+  egg_u->car_u = 0;
   egg_u->vod_p = 0;
   egg_u->msc_l = msc_l;
   egg_u->tar   = tar;
