@@ -453,6 +453,7 @@
       [%give %kick ~ ~]~
   =;  =json
     [%give %fact ~ %json !>(json)]
+  %+  frond:enjs:format  'link-update'
   %+  frond:enjs:format  'initial-submissions'
   %-  pairs:enjs:format
   %+  turn
@@ -514,6 +515,7 @@
   :_  [%give %kick ~ ~]~
   =;  =json
     [%give %fact ~ %json !>(json)]
+  %+  frond:enjs:format  'link-update'
   %+  frond:enjs:format  'submission'
   ^-  json
   =;  sub=(unit submission)
@@ -538,6 +540,7 @@
       [%give %kick ~ ~]~
   =;  =json
     [%give %fact ~ %json !>(json)]
+  %+  frond:enjs:format  'link-update'
   %+  frond:enjs:format  'initial-discussions'
   %^  page-to-json  p
     %+  get-paginated  `p
@@ -552,6 +555,7 @@
   ?+  -.update  ~|([dap.bowl %unexpected-update -.update] !!)
       %submissions
     %+  give-json
+      %+  frond:enjs:format  'link-update'
       (update:en-json update)
     :~  /json/0/submissions
         (weld /json/0/submissions path.update)
@@ -559,6 +563,7 @@
   ::
       %discussions
     %+  give-json
+      %+  frond:enjs:format  'link-update'
       (update:en-json update)
     :_  ~
     %+  weld  /json/0/discussions
@@ -566,6 +571,7 @@
   ::
       %observation
     %+  give-json
+      %+  frond:enjs:format  'link-update'
       (update:en-json update)
     ~[/json/seen]
   ==

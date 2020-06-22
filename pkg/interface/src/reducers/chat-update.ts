@@ -1,8 +1,14 @@
 import _ from 'lodash';
+import { StoreState } from '../store/type';
+import { Cage } from '../types/cage';
+import { ChatUpdate } from '../types/chat-update';
+import { ChatHookUpdate } from '../types/chat-hook-update';
 
-export default class ChatReducer {
-  reduce(json, state) {
-    let data = _.get(json, 'chat-update', false);
+type ChatState = Pick<StoreState, 'chatInitialized' | 'chatSynced' | 'inbox' | 'pendingMessages'>;
+
+export default class ChatReducer<S extends ChatState> {
+  reduce(json: Cage, state: S) {
+    const data = json['chat-update'];
     if (data) {
       this.initial(data, state);
       this.pending(data, state);
@@ -13,13 +19,13 @@ export default class ChatReducer {
       this.delete(data, state);
     }
 
-    data = _.get(json, 'chat-hook-update', false);
-    if (data) {
-      this.hook(data, state);
+    const hookUpdate = json['chat-hook-update'];
+    if (hookUpdate) {
+      this.hook(hookUpdate, state);
     }
   }
 
-  initial(json, state) {
+  initial(json: ChatUpdate, state: S) {
     const data = _.get(json, 'initial', false);
     if (data) {
       state.inbox = data;
@@ -27,11 +33,11 @@ export default class ChatReducer {
     }
   }
 
-  hook(json, state) {
+  hook(json: ChatHookUpdate, state: S) {
     state.chatSynced = json;
   }
 
-  message(json, state) {
+  message(json: ChatUpdate, state: S) {
     const data = _.get(json, 'message', false);
     if (data) {
       state.inbox[data.path].envelopes.unshift(data.envelope);
@@ -40,7 +46,7 @@ export default class ChatReducer {
     }
   }
 
-  messages(json, state) {
+  messages(json: ChatUpdate, state: S) {
     const data = _.get(json, 'messages', false);
     if (data) {
       state.inbox[data.path].envelopes =
@@ -48,7 +54,7 @@ export default class ChatReducer {
     }
   }
 
-  read(json, state) {
+  read(json: ChatUpdate, state: S) {
     const data = _.get(json, 'read', false);
     if (data) {
       state.inbox[data.path].config.read =
@@ -56,7 +62,7 @@ export default class ChatReducer {
     }
   }
 
-  create(json, state) {
+  create(json: ChatUpdate, state: S) {
     const data = _.get(json, 'create', false);
     if (data) {
       state.inbox[data.path] = {
@@ -69,25 +75,25 @@ export default class ChatReducer {
     }
   }
 
-  delete(json, state) {
+  delete(json: ChatUpdate, state: S) {
     const data = _.get(json, 'delete', false);
     if (data) {
       delete state.inbox[data.path];
     }
   }
 
-  pending(json, state) {
+  pending(json: ChatUpdate, state: S) {
     const msg = _.get(json, 'message', false);
     if (!msg || !state.pendingMessages.has(msg.path)) {
       return;
     }
 
-    const mailbox = state.pendingMessages.get(msg.path);
+    const mailbox = state.pendingMessages.get(msg.path) || [];
 
     for (const pendingMsg of mailbox) {
       if (msg.envelope.uid === pendingMsg.uid) {
         const index = mailbox.indexOf(pendingMsg);
-        state.pendingMessages.get(msg.path).splice(index, 1);
+        mailbox.splice(index, 1);
       }
     }
   }

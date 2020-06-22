@@ -1,8 +1,9 @@
-export default class BaseSubscription {
-  constructor(store, api, channel) {
-    this.store = store;
-    this.api = api;
-    this.channel = channel;
+import BaseStore from "../store/base";
+import BaseApi from "../api/base";
+import { Path } from "../types/noun";
+
+export default class BaseSubscription<S extends object> {
+  constructor(public store: BaseStore<S>, public api: BaseApi<S>, public channel: any) {
     this.channel.setOnChannelError(this.onChannelError.bind(this));
   }
 
@@ -12,14 +13,14 @@ export default class BaseSubscription {
 
   onChannelError(err) {
     console.error('event source error: ', err);
-    setTimeout(2000, () => {
+    setTimeout(() => {
       this.store.clear();
       this.start();
-    });
+    }, 2000);
   }
 
-  subscribe(path, app) {
-    this.api.subscribe(path, 'PUT', this.api.ship, app,
+  subscribe(path: Path, app: string) {
+    return this.api.subscribe(path, 'PUT', this.api.ship, app,
       this.handleEvent.bind(this),
       (err) => {
         console.log(err);
@@ -28,6 +29,10 @@ export default class BaseSubscription {
       () => {
         this.subscribe(path, app);
       });
+  }
+
+  unsubscribe(id: number) {
+    this.api.unsubscribe(id);
   }
 
   start() {

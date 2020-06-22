@@ -1,37 +1,19 @@
 import BaseApi from './base';
+import { StoreState } from '../store/type';
+import { Path, Patp } from '../types/noun';
 
 
-export default class GroupsApi {
-  constructor(ship, channel, store) {
-    const helper = new PrivateHelper(ship, channel, store);
+export default class GroupsApi extends BaseApi<StoreState> {
+  add(path: Path, ships: Patp[] = []) {
+    return this.action('group-store', 'group-action', {
+      add: { members: ships, path }
+    });
+  }
 
-    this.ship = ship;
-    this.subscribe = helper.subscribe.bind(helper);
-
-    this.contactHook = {
-      edit: helper.contactEdit.bind(helper)
-    };
-
-    this.contactView = {
-      create: helper.contactCreate.bind(helper),
-      delete: helper.contactDelete.bind(helper),
-      remove: helper.contactRemove.bind(helper),
-      share: helper.contactShare.bind(helper)
-    };
-
-    this.group = {
-      add: helper.groupAdd.bind(helper),
-      remove: helper.groupRemove.bind(helper)
-    };
-
-    this.metadata = {
-      add: helper.metadataAdd.bind(helper)
-    };
-
-    this.invite = {
-      accept: helper.inviteAccept.bind(helper),
-      decline: helper.inviteDecline.bind(helper)
-    };
+  remove(path: Path, ships: Patp[] = []) {
+    return this.action('group-store', 'group-action', {
+      remove: { members: ships, path }
+    });
   }
 }
 
@@ -51,17 +33,9 @@ class PrivateHelper extends BaseApi {
     });
   }
 
-  groupAdd(path, ships = []) {
-    return this.action('group-store', 'group-action', {
-      add: { members: ships, path }
-    });
-  }
 
-  groupRemove(path, ships) {
-    return this.action('group-store', 'group-action', {
-      remove: { members: ships, path }
-    });
-  }
+
+
 
   contactShare(recipient, path, ship, contact) {
     return this.contactViewAction({

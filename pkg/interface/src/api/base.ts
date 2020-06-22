@@ -1,19 +1,24 @@
-import _ from 'lodash';
-import { uuid } from '../lib/util';
+import _ from "lodash";
+import { uuid } from "../lib/util";
+import { Patp, Path } from "../types/noun";
+import BaseStore from '../store/base';
 
+export default class BaseApi<S extends object = {}> {
+  bindPaths: Path[] = [];
+  constructor(public ship: Patp, public channel: any, public store: BaseStore<S>) {}
 
-export default class BaseApi {
-  constructor(ship, channel, store) {
-    this.ship = ship;
-    this.channel = channel;
-    this.store = store;
-    this.bindPaths = [];
+  unsubscribe(id: number) {
+    this.channel.unsubscribe(id);
+
   }
 
-  subscribe(path, method, ship = this.ship, app, success, fail, quit) {
+  subscribe(path: Path, method, ship = this.ship, app: string, success, fail, quit) {
     this.bindPaths = _.uniq([...this.bindPaths, path]);
 
-    window.subscriptionId = this.channel.subscribe(ship, app, path,
+    return this.channel.subscribe(
+      this.ship,
+      app,
+      path,
       (err) => {
         fail(err);
       },
@@ -22,25 +27,30 @@ export default class BaseApi {
           data: event,
           from: {
             ship,
-            path
-          }
+            path,
+          },
         });
       },
       (qui) => {
         quit(qui);
-      });
+      }
+    );
   }
 
-  action(appl, mark, data) {
+  action(appl: string, mark: string, data: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.channel.poke(window.ship, appl, mark, data,
+      this.channel.poke(
+        (window as any).ship,
+        appl,
+        mark,
+        data,
         (json) => {
           resolve(json);
         },
         (err) => {
           reject(err);
-        });
+        }
+      );
     });
   }
 }
-

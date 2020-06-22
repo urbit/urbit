@@ -15,7 +15,7 @@ import PublishApp from './apps/publish/app';
 import StatusBar from './components/StatusBar';
 import NotFound from './components/404';
 
-import GlobalStore from './store/global';
+import GlobalStore from './store/store';
 import GlobalSubscription from './subscription/global';
 import GlobalApi from './api/global';
 
@@ -55,11 +55,11 @@ export default class App extends React.Component {
 
     this.appChannel = new window.channel();
     this.api = new GlobalApi(this.ship, this.appChannel, this.store);
+    this.subscription =
+      new GlobalSubscription(this.store, this.api, this.appChannel);
   }
 
   componentDidMount() {
-    this.subscription =
-      new GlobalSubscription(this.store, this.api, this.appChannel);
     this.subscription.start();
   }
 
@@ -68,6 +68,7 @@ export default class App extends React.Component {
 
     const associations = this.state.associations ? this.state.associations : { contacts: {} };
     const selectedGroups = this.state.selectedGroups ? this.state.selectedGroups : [];
+    const { state } = this;
 
     return (
       <ThemeProvider theme={light}>

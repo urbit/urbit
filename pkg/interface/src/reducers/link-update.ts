@@ -1,20 +1,28 @@
 import _ from 'lodash';
+import { StoreState } from '../store/type';
+import { LinkUpdate, Pagination } from '../types/link-update';
 
 // page size as expected from link-view.
 // must change in parallel with the +page-size in /app/link-view to
 // ensure sane behavior.
 const PAGE_SIZE = 25;
 
-export default class LinkUpdateReducer {
-  reduce(json, state) {
-    this.submissionsPage(json, state);
-    this.submissionsUpdate(json, state);
-    this.discussionsPage(json, state);
-    this.discussionsUpdate(json, state);
-    this.observationUpdate(json, state);
+type LinkState = Pick<StoreState, 'linksSeen' | 'links' | 'linkListening' | 'linkComments'>;
+
+export default class LinkUpdateReducer<S extends LinkState> {
+  reduce(json: any, state: S) {
+    const data = _.get(json, 'link-update', false);
+    if(data) {
+      this.submissionsPage(data, state);
+      this.submissionsUpdate(data, state);
+      this.discussionsPage(data, state);
+      this.discussionsUpdate(data, state);
+      this.observationUpdate(data, state);
+    }
+
   }
 
-  submissionsPage(json, state) {
+  submissionsPage(json: LinkUpdate, state: S) {
     const data = _.get(json, 'initial-submissions', false);
     if (data) {
       //  { "initial-submissions": {
@@ -32,7 +40,12 @@ export default class LinkUpdateReducer {
 
         // if we didn't have any state for this path yet, initialize.
         if (!state.links[path]) {
-          state.links[path] = { local: {} };
+          state.links[path] = {
+            local: {},
+            totalItems: here.totalItems,
+            totalPages: here.totalPages,
+            unseenCount: here.unseenCount
+          };
         }
 
         // since data contains an up-to-date full version of the page,
@@ -47,17 +60,17 @@ export default class LinkUpdateReducer {
 
         // write seen status to a separate structure,
         // for easier modification later.
-        if (!state.seen[path]) {
-          state.seen[path] = {};
+        if (!state.linksSeen[path]) {
+          state.linksSeen[path] = {};
         }
         (here.page || []).map((submission) => {
-          state.seen[path][submission.url] = submission.seen;
+          state.linksSeen[path][submission.url] = submission.seen;
         });
       }
     }
   }
 
-  submissionsUpdate(json, state) {
+  submissionsUpdate(json: LinkUpdate, state: S) {
     const data = _.get(json, 'submissions', false);
     if (data) {
       //  { "submissions": {
@@ -70,7 +83,7 @@ export default class LinkUpdateReducer {
       // stub in a comment count, which is more or less guaranteed to be 0
       data.pages = data.pages.map((submission) => {
         submission.commentCount = 0;
-        state.seen[path][submission.url] = false;
+        state.linksSeen[path][submission.url] = false;
         return submission;
       });
 
@@ -83,7 +96,7 @@ export default class LinkUpdateReducer {
     }
   }
 
-  discussionsPage(json, state) {
+  discussionsPage(json: LinkUpdate, state: S) {
     const data = _.get(json, 'initial-discussions', false);
     if (data) {
       //  { "initial-discussions": {
@@ -100,13 +113,17 @@ export default class LinkUpdateReducer {
       const page = data.pageNumber;
 
       // if we didn't have any state for this path yet, initialize.
-      if (!state.comments[path]) {
-        state.comments[path] = {};
+      if (!state.linkComments[path]) {
+        state.linkComments[path] = {};
       }
-      if (!state.comments[path][url]) {
-        state.comments[path][url] = { local: {} };
-      }
-      const here = state.comments[path][url];
+      let comments = {...{
+        local: {},
+        totalPages: data.totalPages,
+        totalItems: data.totalItems
+      }, ...state.linkComments[path][url] };
+
+      state.linkComments[path][url] = comments;
+      const here = state.linkComments[path][url];
 
       // since data contains an up-to-date full version of the page,
       // we can safely overwrite the one in state.
@@ -117,7 +134,7 @@ export default class LinkUpdateReducer {
     }
   }
 
-  discussionsUpdate(json, state) {
+  discussionsUpdate(json: LinkUpdate, state: S) {
     const data = _.get(json, 'discussions', false);
     if (data) {
       //  { "discussions": {
@@ -130,13 +147,13 @@ export default class LinkUpdateReducer {
       const url = data.url;
 
       // add new comments to state, update totals
-      state.comments[path][url] = this._addNewItems(
-        data.comments, state.comments[path][url]
+      state.linkComments[path][url] = this._addNewItems(
+        data.comments || [], state.linkComments[path][url]
       );
     }
   }
 
-  observationUpdate(json, state) {
+  observationUpdate(json: LinkUpdate, state: S) {
     const data = _.get(json, 'observation', false);
     if (data) {
       //  { "observation": {
@@ -145,10 +162,10 @@ export default class LinkUpdateReducer {
       //  } }
 
       const path = data.path;
-      if (!state.seen[path]) {
-        state.seen[path] = {};
+      if (!state.linksSeen[path]) {
+        state.linksSeen[path] = {};
       }
-      const seen = state.seen[path];
+      const seen = state.linksSeen[path];
 
       // mark urls as seen
       data.urls.map((url) => {
@@ -163,7 +180,7 @@ export default class LinkUpdateReducer {
 
 //
 
-  _addNewItems(items, pages, page = 0) {
+  _addNewItems<S extends { time: number }>(items: S[], pages: Pagination<S>, page = 0) {
     if (!pages) {
       pages = {
         local: {},

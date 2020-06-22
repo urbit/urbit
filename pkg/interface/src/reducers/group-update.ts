@@ -1,8 +1,13 @@
 import _ from 'lodash';
+import { StoreState } from '../store/type';
+import { Cage } from '../types/cage';
+import { GroupUpdate } from '../types/group-update';
 
-export default class GroupReducer {
+type GroupState = Pick<StoreState, 'groups' | 'groupKeys'>;
 
-  reduce(json, state) {
+export default class GroupReducer<S extends GroupState>  {
+
+  reduce(json: Cage, state: S) {
     const data = _.get(json, "group-update", false);
     if (data) {
       this.initial(data, state);
@@ -15,7 +20,7 @@ export default class GroupReducer {
     }
   }
 
-  initial(json, state) {
+  initial(json: GroupUpdate, state: S) {
     const data = _.get(json, 'initial', false);
     if (data) {
       for (let group in data) {
@@ -24,7 +29,7 @@ export default class GroupReducer {
     }
   }
 
-  add(json, state) {
+  add(json: GroupUpdate, state: S) {
     const data = _.get(json, 'add', false);
     if (data) {
       for (const member of data.members) {
@@ -33,7 +38,7 @@ export default class GroupReducer {
     }
   }
 
-  remove(json, state) {
+  remove(json: GroupUpdate, state: S) {
     const data = _.get(json, 'remove', false);
     if (data) {
       for (const member of data.members) {
@@ -42,21 +47,21 @@ export default class GroupReducer {
     }
   }
 
-  bundle(json, state) {
+  bundle(json: GroupUpdate, state: S) {
     const data = _.get(json, 'bundle', false);
     if (data) {
       state.groups[data.path] = new Set();
     }
   }
 
-  unbundle(json, state) {
+  unbundle(json: GroupUpdate, state: S) {
     const data = _.get(json, 'unbundle', false);
     if (data) {
       delete state.groups[data.path];
     }
   }
 
-  keys(json, state) {
+  keys(json: GroupUpdate, state: S) {
     const data = _.get(json, 'keys', false);
     if (data) {
       state.groupKeys = new Set(data.keys);

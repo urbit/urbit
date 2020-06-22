@@ -1,8 +1,15 @@
 import _ from 'lodash';
 
-export default class MetadataReducer {
-  reduce(json, state) {
-    let data = _.get(json, 'metadata-update', false);
+import { StoreState } from '../store/type';
+
+import { MetadataUpdate } from '../types/metadata-update';
+import { Cage } from '../types/cage';
+
+type MetadataState = Pick<StoreState, 'associations'>;
+
+export default class MetadataReducer<S extends MetadataState> {
+  reduce(json: Cage, state: S) {
+    let data = json['metadata-update']
     if (data) {
       console.log('data: ', data);
       this.associations(data, state);
@@ -13,7 +20,7 @@ export default class MetadataReducer {
     }
   }
 
-  associations(json, state) {
+  associations(json: MetadataUpdate, state: S) {
     let data = _.get(json, 'associations', false);
     if (data) {
       let metadata = state.associations;
@@ -34,7 +41,7 @@ export default class MetadataReducer {
     }
   }
 
-  add(json, state) {
+  add(json: MetadataUpdate, state: S) {
     let data = _.get(json, 'add', false);
     if (data) {
       let metadata = state.associations;
@@ -53,7 +60,7 @@ export default class MetadataReducer {
     }
   }
 
-  update(json, state) {
+  update(json: MetadataUpdate, state: S) {
     let data = _.get(json, 'update-metadata', false);
     if (data) {
       let metadata = state.associations;
@@ -72,7 +79,7 @@ export default class MetadataReducer {
     }
   }
 
-  remove(json, state) {
+  remove(json: MetadataUpdate, state: S) {
     let data = _.get(json, 'remove', false);
     if (data) {
       let metadata = state.associations;

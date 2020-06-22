@@ -1,7 +1,10 @@
 import BaseApi from './base';
+import { PublishResponse } from '../types/publish-response';
+import { PatpNoSig } from '../types/noun';
+import { BookId, NoteId } from '../types/publish-update';
 
 export default class PublishApi extends BaseApi {
-  handleEvent(data) {
+  handleEvent(data: PublishResponse) {
     this.store.handleEvent({ data: { 'publish-response' : data } });
   }
 
@@ -16,7 +19,7 @@ export default class PublishApi extends BaseApi {
     });
   }
 
-  fetchNotebook(host, book) {
+  fetchNotebook(host: PatpNoSig, book: BookId) {
     fetch(`/publish-view/${host}/${book}.json`)
     .then(response => response.json())
     .then((json) => {
@@ -29,7 +32,7 @@ export default class PublishApi extends BaseApi {
     });
   }
 
-  fetchNote(host, book, note) {
+  fetchNote(host: PatpNoSig, book: BookId, note: NoteId) {
     fetch(`/publish-view/${host}/${book}/${note}.json`)
     .then(response => response.json())
     .then((json) => {
@@ -43,7 +46,7 @@ export default class PublishApi extends BaseApi {
     });
   }
 
-  fetchNotesPage(host, book, start, length) {
+  fetchNotesPage(host: PatpNoSig, book: BookId, start: number, length: number) {
     fetch(`/publish-view/notes/${host}/${book}/${start}/${length}.json`)
     .then(response => response.json())
     .then((json) => {
@@ -58,7 +61,7 @@ export default class PublishApi extends BaseApi {
     });
   }
 
-  fetchCommentsPage(host, book, note, start, length) {
+  fetchCommentsPage(host: PatpNoSig, book: BookId, note: NoteId, start: number, length: number) {
     fetch(`/publish-view/comments/${host}/${book}/${note}/${start}/${length}.json`)
     .then(response => response.json())
     .then((json) => {
@@ -74,30 +77,8 @@ export default class PublishApi extends BaseApi {
     });
   }
 
-  groupAction(act) {
-    return this.action('group-store', 'group-action', act);
-  }
-
-  inviteAction(act) {
-    return this.action('invite-store', 'invite-action', act);
-  }
-
-  publishAction(act) {
+  publishAction(act: any) {
     return this.action('publish', 'publish-action', act);
-  }
-
-  sidebarToggle() {
-    let sidebarBoolean = true;
-    if (this.store.state.sidebarShown === true) {
-      sidebarBoolean = false;
-    }
-    this.store.handleEvent({
-      data: {
-        local: {
-          sidebarToggle: sidebarBoolean
-        }
-      }
-    });
   }
 }
 

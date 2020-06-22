@@ -1,7 +1,12 @@
 import _ from 'lodash';
+import { LaunchUpdate } from '../types/launch-update';
+import { Cage } from '../types/cage';
+import { StoreState } from '../store/type';
 
-export default class LaunchReducer {
-  reduce(json, state) {
+type LaunchState = Pick<StoreState, 'launch' | 'weather' | 'location'>;
+
+export default class LaunchReducer<S extends LaunchState> {
+  reduce(json: Cage, state: S) {
     const data = _.get(json, 'launch-update', false);
     if (data) {
       this.initial(data, state);
@@ -22,28 +27,28 @@ export default class LaunchReducer {
     }
   }
 
-  initial(json, state) {
+  initial(json: LaunchUpdate, state: S) {
     const data = _.get(json, 'initial', false);
     if (data) {
       state.launch = data;
     }
   }
 
-  changeFirstTime(json, state) {
+  changeFirstTime(json: LaunchUpdate, state: S) {
     const data = _.get(json, 'changeFirstTime', false);
     if (data) {
       state.launch.firstTime = data;
     }
   }
 
-  changeOrder(json, state) {
+  changeOrder(json: LaunchUpdate, state: S) {
     const data = _.get(json, 'changeOrder', false);
     if (data) {
       state.launch.tileOrdering = data;
     }
   }
 
-  changeIsShown(json, state) {
+  changeIsShown(json: LaunchUpdate, state: S) {
     const data = _.get(json, 'changeIsShown', false);
     console.log(json, data);
     if (data) {

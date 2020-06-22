@@ -1,9 +1,21 @@
 import _ from 'lodash';
 
-export default class PublishUpdateReducer {
-  reduce(preJson, state){
-    let json = _.get(preJson, "publish-update", false);
-    switch(Object.keys(json)[0]){
+import { PublishUpdate } from '../types/publish-update';
+import { Cage } from '../types/cage';
+import { StoreState } from '../store/type';
+import { getTagFromFrond } from '../types/noun';
+
+type PublishState = Pick<StoreState, 'notebooks'>;
+
+
+export default class PublishUpdateReducer<S extends PublishState> {
+  reduce(data: Cage, state: S){
+    let json = data["publish-update"];
+    if(!json) {
+      return;
+    }
+    const tag = getTagFromFrond(json);
+    switch(tag){
       case "add-book":
         this.addBook(json["add-book"], state);
         break;
@@ -39,7 +51,7 @@ export default class PublishUpdateReducer {
     }
   }
 
-  addBook(json, state) {
+  addBook(json, state: S) {
     let host = Object.keys(json)[0];
     let book = Object.keys(json[host])[0];
     if (state.notebooks[host]) {
@@ -49,7 +61,7 @@ export default class PublishUpdateReducer {
     }
   }
 
-  addNote(json, state) {
+  addNote(json, state: S) {
     let host   = Object.keys(json)[0];
     let book   = Object.keys(json[host])[0];
     let noteId = json[host][book]["note-id"];
@@ -77,13 +89,13 @@ export default class PublishUpdateReducer {
       let prevNoteId = state.notebooks[host][book]["notes-by-date"][1] || null;
       state.notebooks[host][book].notes[noteId]["prev-note"] = prevNoteId
       state.notebooks[host][book].notes[noteId]["next-note"] = null;
-      if (state.notebooks[host][book].notes[prevNoteId]) {
+      if (prevNoteId && state.notebooks[host][book].notes[prevNoteId]) {
         state.notebooks[host][book].notes[prevNoteId]["next-note"] = noteId;
       }
     }
   }
 
-  addComment(json, state) {
+  addComment(json, state: S) {
     let host    = json.host
     let book    = json.book
     let note    = json.note
@@ -97,7 +109,7 @@ export default class PublishUpdateReducer {
       if (state.notebooks[host][book].notes[note].comments) {
         let limboCommentIdx =
           _.findIndex(state.notebooks[host][book].notes[note].comments, (o) => {
-          let oldVal = o[Object.keys(o)[0]];
+          let oldVal = o[getTagFromFrond(o)];
           let newVal = comment[Object.keys(comment)[0]];
           return (oldVal.pending &&
             (oldVal.author ===  newVal.author) &&

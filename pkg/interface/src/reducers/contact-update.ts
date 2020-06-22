@@ -1,7 +1,12 @@
 import _ from 'lodash';
+import { StoreState } from '../store/type';
+import { Cage } from '../types/cage';
+import { ContactUpdate } from '../types/contact-update';
 
-export default class ContactReducer {
-  reduce(json, state) {
+type ContactState  = Pick<StoreState, 'contacts'>;
+
+export default class ContactReducer<S extends ContactState>  {
+  reduce(json: Cage, state: S) {
     const data = _.get(json, 'contact-update', false);
     if (data) {
       this.initial(data, state);
@@ -13,28 +18,28 @@ export default class ContactReducer {
     }
   }
 
-  initial(json, state) {
+  initial(json: ContactUpdate, state: S) {
     const data = _.get(json, 'initial', false);
     if (data) {
       state.contacts = data;
     }
   }
 
-  create(json, state) {
+  create(json: ContactUpdate, state: S) {
     const data = _.get(json, 'create', false);
     if (data) {
       state.contacts[data.path] = {};
     }
   }
 
-  delete(json, state) {
+  delete(json: ContactUpdate, state: S) {
     const data = _.get(json, 'delete', false);
     if (data) {
       delete state.contacts[data.path];
     }
   }
 
-  add(json, state) {
+  add(json: ContactUpdate, state: S) {
     const data = _.get(json, 'add', false);
     if (
       data &&
@@ -44,7 +49,7 @@ export default class ContactReducer {
     }
   }
 
-  remove(json, state) {
+  remove(json: ContactUpdate, state: S) {
     const data = _.get(json, 'remove', false);
     if (
       data &&
@@ -55,7 +60,7 @@ export default class ContactReducer {
     }
   }
 
-  edit(json, state) {
+  edit(json: ContactUpdate, state: S) {
     const data = _.get(json, 'edit', false);
     if (
       data &&

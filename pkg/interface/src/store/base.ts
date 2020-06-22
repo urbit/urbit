@@ -1,20 +1,21 @@
-export default class BaseStore {
+export default class BaseStore<S extends object> {
+  state: S;
+  setState: (s: Partial<S>) => void = (s) => {};
   constructor() {
     this.state = this.initialState();
-    this.setState = () => {};
   }
 
   initialState() {
-    return {};
+    return {} as S;
   }
 
-  setStateHandler(setState) {
+  setStateHandler(setState: (s: Partial<S>) => void) {
     this.setState = setState;
   }
 
   clear() {
     this.handleEvent({
-      data: { clear: true }
+      data: { clear: true },
     });
   }
 
@@ -25,7 +26,7 @@ export default class BaseStore {
       return;
     }
 
-    if ('clear' in json && json.clear) {
+    if ("clear" in json && json.clear) {
       this.setState(this.initialState());
       return;
     }
@@ -38,4 +39,3 @@ export default class BaseStore {
     // extend me!
   }
 }
-

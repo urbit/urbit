@@ -1,7 +1,11 @@
 import _ from 'lodash';
+import { StoreState } from '../store/type';
+import { Cage } from '../types/cage';
 
-export default class PublishResponseReducer {
-  reduce(json, state) {
+type PublishState = Pick<StoreState, 'notebooks'>;
+
+export default class PublishResponseReducer<S extends PublishState> {
+  reduce(json: Cage, state: S) {
     const data = _.get(json, 'publish-response', false);
     if (!data) { return; }
     switch(data.type) {
@@ -194,12 +198,4 @@ export default class PublishResponseReducer {
       throw Error("tried to fetch paginated comments, but we don't have the note");
     }
   }
-
-  sidebarToggle(json, state) {
-    let data = _.has(json.data, 'sidebarToggle', false);
-    if (data) {
-        state.sidebarShown = json.data.sidebarToggle;
-    }
-  }
-
 }

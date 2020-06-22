@@ -1,85 +1,31 @@
 import BaseApi from './base';
 import { uuid } from '../lib/util';
+import { Letter, ChatAction, Envelope } from '../types/chat-update';
+import { Patp, Path, PatpNoSig } from '../types/noun';
+import { StoreState } from '../store/type';
+import BaseStore from '../store/base';
 
-export default class ChatApi {
-  constructor(ship, channel, store) {
-    const helper = new PrivateHelper(ship, channel, store);
 
-    this.ship = ship;
-    this.subscribe = helper.subscribe.bind(helper);
+export default class ChatApi extends BaseApi<StoreState> {
 
-    this.groups = {
-      add: helper.groupAdd.bind(helper),
-      remove: helper.groupRemove.bind(helper)
-    };
-
-    this.chat = {
-      message: helper.chatMessage.bind(helper),
-      read: helper.chatRead.bind(helper)
-    };
-
-    this.chatView = {
-      create: helper.chatViewCreate.bind(helper),
-      delete: helper.chatViewDelete.bind(helper),
-      join: helper.chatViewJoin.bind(helper),
-      groupify: helper.chatViewGroupify.bind(helper)
-    };
-
-    this.chatHook = {
-      addSynced: helper.chatHookAddSynced.bind(helper)
-    };
-
-    this.invite = {
-      accept: helper.inviteAccept.bind(helper),
-      decline: helper.inviteDecline.bind(helper)
-    };
-
-    this.metadata = {
-      add: helper.metadataAdd.bind(helper)
-    };
-    this.sidebarToggle = helper.sidebarToggle.bind(helper);
-  }
-}
-
-class PrivateHelper extends BaseApi {
-  groupsAction(data) {
-    return this.action('group-store', 'group-action', data);
+  /**
+   * Fetch backlog
+   */
+  fetchMessages(start: number, end: number, path: Path) {
+    fetch(`/chat-view/paginate/${start}/${end}${path}`)
+      .then(response => response.json())
+      .then((json) => {
+        this.store.handleEvent({
+          data: json
+        });
+      });
   }
 
-  groupAdd(members, path) {
-    return this.groupsAction({
-      add: {
-        members, path
-      }
-    });
-  }
-
-  groupRemove(members, path) {
-    this.groupsAction({
-      remove: {
-        members, path
-      }
-    });
-  }
-
-  chatAction(data) {
-    this.action('chat-store', 'json', data);
-  }
-
-  addPendingMessage(msg) {
-    if (this.store.state.pendingMessages.has(msg.path)) {
-      this.store.state.pendingMessages.get(msg.path).unshift(msg.envelope);
-    } else {
-      this.store.state.pendingMessages.set(msg.path, [msg.envelope]);
-    }
-
-    this.store.setState({
-      pendingMessages: this.store.state.pendingMessages
-    });
-  }
-
-  chatMessage(path, author, when, letter) {
-    const data = {
+  /**
+   * Send a message to the chat at path
+   */
+  message(path: Path, author: Patp, when: string, letter: Letter): Promise<void> {
+    const data: ChatAction = {
       message: {
         path,
         envelope: {
@@ -92,36 +38,30 @@ class PrivateHelper extends BaseApi {
       }
     };
 
-    this.action('chat-hook', 'json', data).then(() => {
-      this.chatRead(path);
+    const promise = this.proxyHookAction(data).then(() => {
+      this.read(path);
     });
     data.message.envelope.author = data.message.envelope.author.substr(1);
-    this.addPendingMessage(data.message);
+    this.addPendingMessage(data.message.path, data.message.envelope);
+    return promise;
   }
 
-  chatRead(path, read) {
-    this.chatAction({ read: { path } });
+  /**
+   * Mark chat as read
+   */
+  read(path: Path): Promise<any> {
+    return this.storeAction({ read: { path } });
   }
 
-  chatHookAddSynced(ship, path, askHistory) {
-    return this.action('chat-hook', 'chat-hook-action', {
-      'add-synced': {
-        ship,
-        path,
-        'ask-history': askHistory
-      }
-    });
-  }
 
-  chatViewAction(data) {
-    return this.action('chat-view', 'json', data);
-  }
-
-  chatViewCreate(
-    title, description, appPath, groupPath,
-    security, members, allowHistory
-  ) {
-    return this.chatViewAction({
+  /**
+   * Create a chat and setup metadata
+   */
+  create(
+    title: string, description: string, appPath: string, groupPath: string,
+    security: any, members: PatpNoSig[], allowHistory: boolean
+  ): Promise<any> {
+    return this.viewAction({
       create: {
         title,
         description,
@@ -134,12 +74,20 @@ class PrivateHelper extends BaseApi {
     });
   }
 
-  chatViewDelete(path) {
-    this.chatViewAction({ delete: { 'app-path': path } });
+  /**
+   * Deletes a chat
+   *
+   * If we don't host the chat, then it just leaves
+   */
+  delete(path: Path) {
+    this.viewAction({ delete: { 'app-path': path } });
   }
 
-  chatViewJoin(ship, path, askHistory) {
-    this.chatViewAction({
+  /**
+   * Join a chat
+   */
+  join(ship: Patp, path: Path, askHistory: boolean): Promise<any> {
+    return this.viewAction({
       join: {
         ship,
         'app-path': path,
@@ -148,75 +96,64 @@ class PrivateHelper extends BaseApi {
     });
   }
 
-  chatViewGroupify(path, group = null, inclusive = false) {
-    const action = { groupify: { 'app-path': path, existing: null } };
+  /**
+   * Groupify a chat that we host
+   *
+   * Will delete the old chat, recreate it based on a proper group,
+   * and invite the current whitelist to that group.
+   *  existing messages get moved over.
+   *
+   *  :existing is provided, associates chat with that group instead
+   *  creating a new one. :inclusive indicates whether or not to add
+   *  chat members to the group, if they aren't there already.
+   */
+  groupify(path: Path, group: Path | null = null, inclusive = false) {
+    let action: any = { groupify: { 'app-path': path, existing: null } };
     if (group) {
       action.groupify.existing = {
         'group-path': group,
         inclusive: inclusive
       };
     }
-    return this.chatViewAction(action);
+    return this.viewAction(action);
   }
 
-  inviteAction(data) {
-    this.action('invite-store', 'json', data);
-  }
-
-  inviteAccept(uid) {
-    this.inviteAction({
-      accept: {
-        path: '/chat',
-        uid
+  /**
+   * Begin syncing a chat from the host
+   */
+  addSynced(ship: Patp, path: Path, askHistory: boolean): Promise<any> {
+    return this.action('chat-hook', 'chat-hook-action', {
+      'add-synced': {
+        ship,
+        path,
+        'ask-history': askHistory
       }
     });
   }
 
-  inviteDecline(uid) {
-    this.inviteAction({
-      decline: {
-        path: '/chat',
-        uid
-      }
-    });
+
+  private storeAction(action: ChatAction): Promise<any> {
+    return this.action('chat-store', 'json', action)
   }
 
-  metadataAction(data) {
-    return this.action('metadata-hook', 'metadata-action', data);
+  private proxyHookAction(action: ChatAction): Promise<any> {
+    return this.action('chat-hook', 'json', action);
   }
 
-  metadataAdd(appPath, groupPath, title, description, dateCreated, color) {
-    const creator = `~${window.ship}`;
-    return this.metadataAction({
-      add: {
-        'group-path': groupPath,
-        resource: {
-          'app-path': appPath,
-          'app-name': 'chat'
-        },
-        metadata: {
-          title,
-          description,
-          color,
-          'date-created': dateCreated,
-          creator
-        }
-      }
-    });
+  private viewAction(action: unknown): Promise<any> {
+    return this.action('chat-view', 'json', action);
   }
 
-  sidebarToggle() {
-    let sidebarBoolean = true;
-    if (this.store.state.sidebarShown === true) {
-      sidebarBoolean = false;
+  private addPendingMessage(path: Path, envelope: Envelope) {
+    const pending = this.store.state.pendingMessages.get(path);
+    if (pending) {
+      pending.unshift(envelope);
+    } else {
+      this.store.state.pendingMessages.set(path, [envelope]);
     }
-    this.store.handleEvent({
-      data: {
-        local: {
-          sidebarToggle: sidebarBoolean
-        }
-      }
+
+    this.store.setState({
+      pendingMessages: this.store.state.pendingMessages
     });
   }
 }
-

@@ -46,7 +46,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js?$/,
+        test: /\.(j|t)sx?$/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -74,7 +74,7 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.js']
+    extensions: ['.js', '.ts', '.tsx']
   },
   devtool: 'inline-source-map',
   // devServer: {

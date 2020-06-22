@@ -1,7 +1,12 @@
 import _ from 'lodash';
+import { StoreState } from '../store/type';
+import { Cage } from '../types/cage';
+import { PermissionUpdate } from '../types/permission-update';
 
-export default class PermissionReducer {
-  reduce(json, state) {
+type PermissionState = Pick<StoreState, "permissions">;
+
+export default class PermissionReducer<S extends PermissionState> {
+  reduce(json: Cage, state: S) {
     const data = _.get(json, 'permission-update', false);
     if (data) {
       this.initial(data, state);
@@ -12,7 +17,7 @@ export default class PermissionReducer {
     }
   }
 
-  initial(json, state) {
+  initial(json: PermissionUpdate, state: S) {
     const data = _.get(json, 'initial', false);
     if (data) {
       for (const perm in data) {
@@ -24,7 +29,7 @@ export default class PermissionReducer {
     }
   }
 
-  create(json, state) {
+  create(json: PermissionUpdate, state: S) {
     const data = _.get(json, 'create', false);
     if (data) {
       state.permissions[data.path] = {
@@ -34,14 +39,14 @@ export default class PermissionReducer {
     }
   }
 
-  delete(json, state) {
+  delete(json: PermissionUpdate, state: S) {
     const data = _.get(json, 'delete', false);
     if (data) {
       delete state.permissions[data.path];
     }
   }
 
-  add(json, state) {
+  add(json: PermissionUpdate, state: S) {
     const data = _.get(json, 'add', false);
     if (data) {
       for (const member of data.who) {
@@ -50,7 +55,7 @@ export default class PermissionReducer {
     }
   }
 
-  remove(json, state) {
+  remove(json: PermissionUpdate, state: S) {
     const data = _.get(json, 'remove', false);
     if (data) {
       for (const member of data.who) {
