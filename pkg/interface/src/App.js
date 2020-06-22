@@ -85,8 +85,8 @@ export default class App extends React.Component {
               render={ p => (
                 <LaunchApp
                   ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
+                  api={this.api}
+                  {...state}
                   {...p}
                 />
               )}
@@ -94,8 +94,9 @@ export default class App extends React.Component {
               <Route path="/~chat" render={ p => (
                 <ChatApp
                   ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
+                  api={this.api}
+                  subscription={this.subscription}
+                  {...state}
                   {...p}
                 />
               )}
@@ -105,6 +106,7 @@ export default class App extends React.Component {
                   ship={this.ship}
                   channel={channel}
                   selectedGroups={selectedGroups}
+                  subscription={this.subscription}
                   {...p}
                 />
               )}
@@ -112,8 +114,9 @@ export default class App extends React.Component {
               <Route path="/~groups" render={ p => (
                 <GroupsApp
                   ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
+                  api={this.api}
+                  subscription={this.subscription}
+                  {...state}
                   {...p}
                 />
               )}
@@ -132,8 +135,9 @@ export default class App extends React.Component {
               <Route path="/~publish" render={ p => (
                 <PublishApp
                   ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
+                  api={this.api}
+                  subscription={this.subscription}
+                  {...state}
                   {...p}
                 />
               )}

@@ -1,68 +1,62 @@
-import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import React from "react";
+import { Route, Switch } from "react-router-dom";
 
-import ChatApi from '../../api/chat';
-import ChatStore from '../../store/chat';
-import ChatSubscription from '../../subscription/chat';
+import "./css/custom.css";
 
+import { Skeleton } from "./components/skeleton";
+import { Sidebar } from "./components/sidebar";
+import { ChatScreen } from "./components/chat";
+import { MemberScreen } from "./components/member";
+import { SettingsScreen } from "./components/settings";
+import { NewScreen } from "./components/new";
+import { JoinScreen } from "./components/join";
+import { NewDmScreen } from "./components/new-dm";
+import { PatpNoSig } from "../../types/noun";
+import GlobalApi from "../../api/global";
+import { StoreState } from "../../store/type";
+import GlobalSubscription from "../../subscription/global";
 
-import './css/custom.css';
+type ChatAppProps = StoreState & {
+  ship: PatpNoSig;
+  api: GlobalApi;
+  subscription: GlobalSubscription;
+};
 
-import { Skeleton } from './components/skeleton';
-import { Sidebar } from './components/sidebar';
-import { ChatScreen } from './components/chat';
-import { MemberScreen } from './components/member';
-import { SettingsScreen } from './components/settings';
-import { NewScreen } from './components/new';
-import { JoinScreen } from './components/join';
-import { NewDmScreen } from './components/new-dm';
+export default class ChatApp extends React.Component<ChatAppProps, {}> {
+  totalUnreads = 0;
 
-export default class ChatApp extends React.Component {
   constructor(props) {
     super(props);
-    this.store = new ChatStore();
-    this.state = this.store.state;
-    this.totalUnreads = 0;
-    this.resetControllers();
-  }
-
-  resetControllers() {
-    this.api = null;
-    this.subscription = null;
   }
 
   componentDidMount() {
-    document.title = 'OS1 - Chat';
+    document.title = "OS1 - Chat";
     // preload spinner asset
-    new Image().src = '/~landscape/img/Spinner.png';
+    new Image().src = "/~landscape/img/Spinner.png";
 
-    this.store.setStateHandler(this.setState.bind(this));
-    const channel = new this.props.channel();
-    this.api = new ChatApi(this.props.ship, channel, this.store);
+    this.props.subscription.startApp('chat');
 
-    this.subscription = new ChatSubscription(this.store, this.api, channel);
-    this.subscription.start();
+
   }
 
   componentWillUnmount() {
-    this.subscription.delete();
-    this.store.clear();
-    this.store.setStateHandler(() => {});
-    this.resetControllers();
+    this.props.subscription.stopApp('chat');
   }
 
   render() {
-    const { state, props } = this;
+    const { props } = this;
 
     const messagePreviews = {};
     const unreads = {};
     let totalUnreads = 0;
 
     const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
-    const associations = state.associations ? state.associations : { chat: {}, contacts: {} };
+    const associations = props.associations
+      ? props.associations
+      : { chat: {}, contacts: {} };
 
-    Object.keys(state.inbox).forEach((stat) => {
-      const envelopes = state.inbox[stat].envelopes;
+    Object.keys(props.inbox).forEach((stat) => {
+      const envelopes = props.inbox[stat].envelopes;
 
       if (envelopes.length === 0) {
         messagePreviews[stat] = false;
@@ -70,41 +64,60 @@ export default class ChatApp extends React.Component {
         messagePreviews[stat] = envelopes[0];
       }
 
-      const unread = Math.max(state.inbox[stat].config.length - state.inbox[stat].config.read, 0);
+      const unread = Math.max(
+        props.inbox[stat].config.length - props.inbox[stat].config.read,
+        0
+      );
       unreads[stat] = Boolean(unread);
-      if (unread &&
-         (selectedGroups.length === 0 || selectedGroups.map(((e) => {
-           return e[0];
-          })).includes(associations.chat?.[stat]?.['group-path']) ||
-        associations.chat?.[stat]?.['group-path'].startsWith('/~/'))) {
-          totalUnreads += unread;
+      if (
+        unread &&
+        (selectedGroups.length === 0 ||
+          selectedGroups
+            .map((e) => {
+              return e[0];
+            })
+            .includes(associations.chat?.[stat]?.["group-path"]) ||
+          associations.chat?.[stat]?.["group-path"].startsWith("/~/"))
+      ) {
+        totalUnreads += unread;
       }
     });
 
     if (totalUnreads !== this.totalUnreads) {
-      document.title = totalUnreads > 0 ? `OS1 - Chat (${totalUnreads})` : 'OS1 - Chat';
+      document.title =
+        totalUnreads > 0 ? `OS1 - Chat (${totalUnreads})` : "OS1 - Chat";
       this.totalUnreads = totalUnreads;
     }
 
-    const invites = state.invites ? state.invites : { '/chat': {}, '/contacts': {} };
 
-    const contacts = state.contacts ? state.contacts : {};
-    const s3 = state.s3 ? state.s3 : {};
+    const {
+      invites,
+      s3,
+      sidebarShown,
+      inbox,
+      contacts,
+      permissions,
+      chatSynced,
+      api,
+      chatInitialized,
+      pendingMessages
+    } = props;
 
-    const renderChannelSidebar = (props, station) => (
+    const renderChannelSidebar = (props, station?) => (
       <Sidebar
-        inbox={state.inbox}
+        inbox={inbox}
         messagePreviews={messagePreviews}
         associations={associations}
         selectedGroups={selectedGroups}
         contacts={contacts}
-        invites={invites['/chat'] || {}}
+        invites={invites["/chat"] || {}}
         unreads={unreads}
-        api={this.api}
+        api={api}
         station={station}
         {...props}
       />
     );
+
 
     return (
       <Switch>
@@ -117,14 +130,14 @@ export default class ChatApp extends React.Component {
                 associations={associations}
                 invites={invites}
                 chatHideonMobile={true}
-                sidebarShown={state.sidebarShown}
+                sidebarShown={sidebarShown}
                 sidebar={renderChannelSidebar(props)}
               >
                 <div className="h-100 w-100 overflow-x-hidden flex flex-column bg-white bg-gray0-d">
                   <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
                     <p className="f8 pt3 gray2 w-100 h-100 dtc v-mid tc">
                       Select, create, or join a chat to begin.
-                      </p>
+                    </p>
                   </div>
                 </div>
               </Skeleton>
@@ -143,15 +156,15 @@ export default class ChatApp extends React.Component {
                 invites={invites}
                 sidebarHideOnMobile={true}
                 sidebar={renderChannelSidebar(props)}
-                sidebarShown={state.sidebarShown}
+                sidebarShown={sidebarShown}
               >
                 <NewDmScreen
-                  api={this.api}
-                  inbox={state.inbox || {}}
-                  permissions={state.permissions || {}}
-                  contacts={state.contacts || {}}
+                  api={api}
+                  inbox={inbox}
+                  permissions={permissions || {}}
+                  contacts={contacts || {}}
                   associations={associations.contacts}
-                  chatSynced={state.chatSynced || {}}
+                  chatSynced={chatSynced || {}}
                   autoCreate={ship}
                   {...props}
                 />
@@ -169,15 +182,15 @@ export default class ChatApp extends React.Component {
                 invites={invites}
                 sidebarHideOnMobile={true}
                 sidebar={renderChannelSidebar(props)}
-                sidebarShown={state.sidebarShown}
+                sidebarShown={sidebarShown}
               >
                 <NewScreen
-                  api={this.api}
-                  inbox={state.inbox || {}}
-                  permissions={state.permissions || {}}
-                  contacts={state.contacts || {}}
+                  api={api}
+                  inbox={inbox || {}}
+                  permissions={permissions || {}}
+                  contacts={contacts || {}}
                   associations={associations.contacts}
-                  chatSynced={state.chatSynced || {}}
+                  chatSynced={chatSynced || {}}
                   {...props}
                 />
               </Skeleton>
@@ -188,11 +201,10 @@ export default class ChatApp extends React.Component {
           exact
           path="/~chat/join/(~)?/:ship?/:station?"
           render={(props) => {
-            let station =
-              `/${props.match.params.ship}/${props.match.params.station}`;
-            const sig = props.match.url.includes('/~/');
+            let station = `/${props.match.params.ship}/${props.match.params.station}`;
+            const sig = props.match.url.includes("/~/");
             if (sig) {
-              station = '/~' + station;
+              station = "/~" + station;
             }
 
             return (
@@ -201,13 +213,13 @@ export default class ChatApp extends React.Component {
                 invites={invites}
                 sidebarHideOnMobile={true}
                 sidebar={renderChannelSidebar(props)}
-                sidebarShown={state.sidebarShown}
+                sidebarShown={sidebarShown}
               >
                 <JoinScreen
-                  api={this.api}
-                  inbox={state.inbox}
+                  api={api}
+                  inbox={inbox}
                   autoJoin={station}
-                  chatSynced={state.chatSynced || {}}
+                  chatSynced={chatSynced || {}}
                   {...props}
                 />
               </Skeleton>
@@ -218,40 +230,41 @@ export default class ChatApp extends React.Component {
           exact
           path="/~chat/(popout)?/room/(~)?/:ship/:station+"
           render={(props) => {
-            let station =
-              `/${props.match.params.ship}/${props.match.params.station}`;
-            const sig = props.match.url.includes('/~/');
+            let station = `/${props.match.params.ship}/${props.match.params.station}`;
+            const sig = props.match.url.includes("/~/");
             if (sig) {
-              station = '/~' + station;
+              station = "/~" + station;
             }
-            const mailbox = state.inbox[station] || {
+            const mailbox = inbox[station] || {
               config: {
                 read: 0,
-                length: 0
+                length: 0,
               },
-              envelopes: []
+              envelopes: [],
             };
 
             let roomContacts = {};
             const associatedGroup =
-              station in associations['chat'] &&
-                'group-path' in associations.chat[station]
-                ? associations.chat[station]['group-path']
-                : '';
+              station in associations["chat"] &&
+              "group-path" in associations.chat[station]
+                ? associations.chat[station]["group-path"]
+                : "";
 
-            if ((associations.chat[station]) && (associatedGroup in contacts)) {
+            if (associations.chat[station] && associatedGroup in contacts) {
               roomContacts = contacts[associatedGroup];
             }
 
             const association =
-              station in associations['chat'] ? associations.chat[station] : {};
+              station in associations["chat"] ? associations.chat[station] : {};
 
             const permission =
-              station in state.permissions ? state.permissions[station] : {
-                who: new Set([]),
-                kind: 'white'
-              };
-            const popout = props.match.url.includes('/popout/');
+              station in permissions
+                ? permissions[station]
+                : {
+                    who: new Set([]),
+                    kind: "white",
+                  };
+            const popout = props.match.url.includes("/popout/");
 
             return (
               <Skeleton
@@ -259,26 +272,25 @@ export default class ChatApp extends React.Component {
                 invites={invites}
                 sidebarHideOnMobile={true}
                 popout={popout}
-                sidebarShown={state.sidebarShown}
+                sidebarShown={sidebarShown}
                 sidebar={renderChannelSidebar(props, station)}
               >
                 <ChatScreen
-                  chatSynced={state.chatSynced}
+                  chatSynced={chatSynced || {}}
                   station={station}
                   association={association}
-                  api={this.api}
-                  subscription={this.subscription}
+                  api={api}
                   read={mailbox.config.read}
                   length={mailbox.config.length}
                   envelopes={mailbox.envelopes}
-                  inbox={state.inbox}
+                  inbox={inbox}
                   contacts={roomContacts}
                   permission={permission}
-                  pendingMessages={state.pendingMessages}
+                  pendingMessages={pendingMessages}
                   s3={s3}
                   popout={popout}
-                  sidebarShown={state.sidebarShown}
-                  chatInitialized={state.chatInitialized}
+                  sidebarShown={sidebarShown}
+                  chatInitialized={chatInitialized}
                   {...props}
                 />
               </Skeleton>
@@ -290,39 +302,39 @@ export default class ChatApp extends React.Component {
           path="/~chat/(popout)?/members/(~)?/:ship/:station+"
           render={(props) => {
             let station = `/${props.match.params.ship}/${props.match.params.station}`;
-            const sig = props.match.url.includes('/~/');
+            const sig = props.match.url.includes("/~/");
             if (sig) {
-              station = '/~' + station;
+              station = "/~" + station;
             }
 
-            const permission = state.permissions[station] || {
-              kind: '',
-              who: new Set([])
+            const permission = permissions[station] || {
+              kind: "",
+              who: new Set([]),
             };
-            const popout = props.match.url.includes('/popout/');
+            const popout = props.match.url.includes("/popout/");
 
             const association =
-              station in associations['chat'] ? associations.chat[station] : {};
+              station in associations["chat"] ? associations.chat[station] : {};
 
             return (
               <Skeleton
                 associations={associations}
                 invites={invites}
                 sidebarHideOnMobile={true}
-                sidebarShown={state.sidebarShown}
+                sidebarShown={sidebarShown}
                 popout={popout}
                 sidebar={renderChannelSidebar(props, station)}
               >
                 <MemberScreen
                   {...props}
-                  api={this.api}
+                  api={api}
                   station={station}
                   association={association}
                   permission={permission}
                   contacts={contacts}
-                  permissions={state.permissions}
+                  permissions={permissions}
                   popout={popout}
-                  sidebarShown={state.sidebarShown}
+                  sidebarShown={sidebarShown}
                 />
               </Skeleton>
             );
@@ -332,22 +344,21 @@ export default class ChatApp extends React.Component {
           exact
           path="/~chat/(popout)?/settings/(~)?/:ship/:station+"
           render={(props) => {
-            let station =
-              `/${props.match.params.ship}/${props.match.params.station}`;
-            const sig = props.match.url.includes('/~/');
+            let station = `/${props.match.params.ship}/${props.match.params.station}`;
+            const sig = props.match.url.includes("/~/");
             if (sig) {
-              station = '/~' + station;
+              station = "/~" + station;
             }
 
-            const popout = props.match.url.includes('/popout/');
+            const popout = props.match.url.includes("/popout/");
 
-            const permission = state.permissions[station] || {
-              kind: '',
-              who: new Set([])
+            const permission = permissions[station] || {
+              kind: "",
+              who: new Set([]),
             };
 
             const association =
-              station in associations['chat'] ? associations.chat[station] : {};
+              station in associations["chat"] ? associations.chat[station] : {};
 
             return (
               <Skeleton
@@ -355,7 +366,7 @@ export default class ChatApp extends React.Component {
                 invites={invites}
                 sidebarHideOnMobile={true}
                 popout={popout}
-                sidebarShown={state.sidebarShown}
+                sidebarShown={sidebarShown}
                 sidebar={renderChannelSidebar(props, station)}
               >
                 <SettingsScreen
@@ -363,19 +374,19 @@ export default class ChatApp extends React.Component {
                   station={station}
                   association={association}
                   permission={permission}
-                  permissions={state.permissions || {}}
-                  contacts={state.contacts || {}}
+                  permissions={permissions || {}}
+                  contacts={contacts || {}}
                   associations={associations.contacts}
-                  api={this.api}
-                  inbox={state.inbox}
+                  api={api}
+                  inbox={inbox}
                   popout={popout}
-                  sidebarShown={state.sidebarShown}
+                  sidebarShown={sidebarShown}
                 />
               </Skeleton>
             );
           }}
         />
       </Switch>
-  );
+    );
   }
 }
