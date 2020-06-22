@@ -832,6 +832,11 @@
         u3_disk*
         u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u);
 
+      /* u3_disk_halt(): emergency close.
+      */
+        void
+        u3_disk_halt(u3_disk* log_u);
+
       /* u3_disk_exit(): close [log_u] and dispose.
       */
         void

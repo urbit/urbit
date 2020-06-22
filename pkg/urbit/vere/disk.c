@@ -593,6 +593,17 @@ u3_disk_read_meta(u3_disk* log_u,
   return c3y;
 }
 
+/* u3_disk_halt(): emergency close.
+*/
+void
+u3_disk_halt(u3_disk* log_u)
+{
+  if ( log_u->mdb_u ) {
+    u3_lmdb_exit(log_u->mdb_u);
+    log_u->mdb_u = 0;
+  }
+}
+
 /* u3_disk_exit(): close the log.
 */
 void
@@ -616,7 +627,6 @@ u3_disk_exit(u3_disk* log_u)
 
     do {
       sas_i = uv_cancel(&log_u->req_u);
-      fprintf(stderr, "disk canceling\r\n");
     }
     while ( UV_EBUSY == sas_i );
   }

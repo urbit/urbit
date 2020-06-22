@@ -1536,7 +1536,7 @@ u3_pier_halt(u3_pier* pir_u)
   //    XX maybe skip close/cancel/free. and just unmap
   //
   if ( pir_u->log_u ) {
-    u3_disk_exit(pir_u->log_u);
+    u3_disk_halt(pir_u->log_u);
     pir_u->log_u = 0;
   }
 }
