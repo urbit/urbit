@@ -12,10 +12,10 @@ export default class BaseSubscription {
 
   onChannelError(err) {
     console.error('event source error: ', err);
-    setTimeout(2000, () => {
+    setTimeout(() => {
       this.store.clear();
       this.start();
-    });
+    }, 2000);
   }
 
   subscribe(path, app) {
