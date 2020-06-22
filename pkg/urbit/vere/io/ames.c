@@ -38,6 +38,7 @@
     c3_o          fak_o;                //  fake keys
     c3_s          por_s;                //  public IPv4 port
     c3_c*         dns_c;                //  domain XX multiple/fallback
+    c3_d          dop_d;                //  drop count (since last print)
     c3_w          imp_w[256];           //  imperial IPs
     time_t        imp_t[256];           //  imperial IP timestamps
     c3_o          imp_o[256];           //  imperial print status
@@ -405,9 +406,16 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 
         if ( c3__hear == u3h(egg_u->cad) ) {
           u3_auto_drop(&sam_u->car_u, egg_u);
+          sam_u->dop_d++;
         }
 
         egg_u = nex_u;
+      }
+    }
+
+    if ( 0 == (sam_u->dop_d % 1000) ) {
+      if ( (u3C.wag_w & u3o_verbose) ) {
+        u3l_log("ames: dropped 1.000 packets\r\n");
       }
     }
   }
@@ -703,6 +711,7 @@ u3_ames_io_init(u3_pier* pir_u)
   sam_u->who_d[1] = pir_u->who_d[1];
   sam_u->por_s    = pir_u->por_s;
   sam_u->fak_o    = pir_u->fak_o;
+  sam_u->dop_d    = 0;
 
   c3_assert( !uv_udp_init(u3L, &sam_u->wax_u) );
   sam_u->wax_u.data = sam_u;
