@@ -38,10 +38,10 @@ export class PostScreen extends Component {
 
       return (
         <Message
-          key={index}
+          key={post.index}
           msg={post}
-          resource={`${props.resource.ship}/${props.resource.name}`}
-          index={index}
+          resource={props.resource}
+          index={post.index}
           history={props.history}
         />
       );

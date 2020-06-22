@@ -15,8 +15,6 @@ export class NodeTreeScreen extends Component {
 
     this.state = {};
 
-    console.log(props);
-
     moment.updateLocale('en', {
       calendar: {
         sameDay: '[Today]',
@@ -71,11 +69,10 @@ export class NodeTreeScreen extends Component {
       let index = msg[0];
       let node = msg[1];
       let post = node.post;
-      console.log(post);
 
       return (
         <Message
-          key={index}
+          key={post.index}
           resource={props.resource}
           index={post.index}
           msg={post}
@@ -114,7 +111,6 @@ export class NodeTreeScreen extends Component {
     const { props } = this;
 
     let title = props.resource.name;
-    console.log(props.node);
 
     return (
       <div
