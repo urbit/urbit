@@ -24,17 +24,17 @@ export default class ContactsApi extends BaseApi<StoreState> {
     });
   }
 
-  contactDelete(path: Path) {
+  delete(path: Path) {
     return this.viewAction({ delete: { path } });
   }
 
-  contactRemove(path: Path, ship: Patp) {
+  remove(path: Path, ship: Patp) {
     return this.viewAction({ remove: { path, ship } });
   }
 
 
 
-  contactEdit(path: Path, ship: Patp, editField: ContactEdit) {
+  edit(path: Path, ship: Patp, editField: ContactEdit) {
     /* editField can be...
     {nickname: ''}
     {email: ''}

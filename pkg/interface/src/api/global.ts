@@ -10,6 +10,7 @@ import ContactsApi from './contacts';
 import GroupsApi from './groups';
 import LaunchApi from './launch';
 import LinksApi from './links';
+import PublishApi from './publish';
 
 export default class GlobalApi extends BaseApi<StoreState> {
   chat = new ChatApi(this.ship, this.channel, this.store);

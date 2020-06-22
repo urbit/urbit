@@ -45,8 +45,6 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
   };
   start() {
     this.subscribe('/all', 'invite-store');
-    this.subscribe('/app-name/contacts', 'metadata-store');
-    this.subscribe('/all', 'invite-store');
     this.subscribe('/all', 'permission-store');
     this.subscribe('/primary', 'contact-view');
     this.subscribe('/all', 'metadata-store');
