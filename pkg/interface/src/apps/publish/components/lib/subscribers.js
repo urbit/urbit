@@ -11,23 +11,11 @@ export class Subscribers extends Component {
   }
 
   addUser(who, path) {
-    const action = {
-      add: {
-        members: [who],
-        path: path
-      }
-    };
-    this.props.api.groupAction(action);
+    this.props.api.groups.add(path, [who]);
   }
 
   removeUser(who, path) {
-    const action = {
-      remove: {
-        members: [who],
-        path: path
-      }
-    };
-    this.props.api.groupAction(action);
+    this.props.api.groups.remove(path, [who]);
   }
 
   redirect(url) {

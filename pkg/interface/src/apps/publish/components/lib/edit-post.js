@@ -27,7 +27,7 @@ export class EditPost extends Component {
     const { props, state } = this;
     if (prevProps && prevProps.api !== props.api) {
       if (!(props.notebooks[props.ship]?.[props.book]?.notes?.[props.note]?.file)) {
-        props.api?.fetchNote(props.ship, props.book, props.note);
+        props.api?.publish.fetchNote(props.ship, props.book, props.note);
       } else if (state.body === '') {
         const notebook = props.notebooks[props.ship][props.book];
         const note = notebook.notes[props.note];
@@ -53,7 +53,7 @@ export class EditPost extends Component {
       }
     };
     this.setState({ awaiting: true });
-    this.props.api.publishAction(editNote).then(() => {
+    this.props.api.publish.publishAction(editNote).then(() => {
       const editIndex = props.location.pathname.indexOf('/edit');
       const noteHref = props.location.pathname.slice(0, editIndex);
       this.setState({ awaiting: false });

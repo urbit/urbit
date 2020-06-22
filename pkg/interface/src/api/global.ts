@@ -20,6 +20,7 @@ export default class GlobalApi extends BaseApi<StoreState> {
   groups = new GroupsApi(this.ship, this.channel, this.store);
   launch = new LaunchApi(this.ship, this.channel, this.store);
   links = new LinksApi(this.ship, this.channel, this.store);
+  publish = new PublishApi(this.ship, this.channel, this.store);
 
 
   constructor(public ship: Patp, public channel: any, public store: GlobalStore) {
