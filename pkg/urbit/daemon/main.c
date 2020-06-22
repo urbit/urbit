@@ -476,16 +476,6 @@ _stop_exit(c3_i int_i)
   u3_king_bail();
 }
 
-/* _stop_signal(): handle termination signal.
-*/
-static void
-_stop_signal(c3_i int_i)
-{
-  //  if we have a pier, unmap the event log before dumping core
-  //
-  u3_king_halt();
-}
-
 /*
   This is set to the the write-end of a pipe when Urbit is started in
   daemon mode. It's meant to be used as a signal to the parent process
@@ -641,10 +631,6 @@ main(c3_i   argc,
   //    Configured here using signal() so as to be immediately available.
   //
   signal(SIGTSTP, _stop_exit);
-
-  //  Cleanup on SIGABRT.
-  //
-  signal(SIGABRT, _stop_signal);
 
   printf("~\n");
   //  printf("welcome.\n");

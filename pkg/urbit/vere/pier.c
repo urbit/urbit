@@ -1526,21 +1526,6 @@ u3_pier_bail(u3_pier* pir_u)
   _pier_done(pir_u);
 }
 
-/* u3_pier_halt(): emergency resource release (ie, on SIGABRT).
-*/
-void
-u3_pier_halt(u3_pier* pir_u)
-{
-  //  unmap disk if present
-  //
-  //    XX maybe skip close/cancel/free. and just unmap
-  //
-  if ( pir_u->log_u ) {
-    u3_disk_halt(pir_u->log_u);
-    pir_u->log_u = 0;
-  }
-}
-
 /* c3_rand(): fill a 512-bit (16-word) buffer.
 */
 void

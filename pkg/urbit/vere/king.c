@@ -717,6 +717,20 @@ u3_king_commence()
     }
   }
 
+  //  disable core dumps (due to lmdb size)
+  //
+  {
+    struct rlimit rlm;
+
+    getrlimit(RLIMIT_CORE, &rlm);
+    rlm.rlim_cur = 0;
+
+    if ( 0 != setrlimit(RLIMIT_CORE, &rlm) ) {
+      u3l_log("king: unable to disable core dumps: %s\r\n", strerror(errno));
+      exit(1);
+    }
+  }
+
   //  initialize top-level timer
   //
   uv_timer_init(u3L, &u3K.tim_u);
@@ -808,14 +822,6 @@ void
 u3_king_exit(void)
 {
   _king_forall(u3_pier_exit);
-}
-
-/* u3_king_halt(): emergency release
-*/
-void
-u3_king_halt(void)
-{
-  _king_forall_unlink(u3_pier_halt);
 }
 
 /* u3_king_bail(): immediately shutdown.

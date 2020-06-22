@@ -832,11 +832,6 @@
         u3_disk*
         u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u);
 
-      /* u3_disk_halt(): emergency close.
-      */
-        void
-        u3_disk_halt(u3_disk* log_u);
-
       /* u3_disk_exit(): close [log_u] and dispose.
       */
         void
@@ -1220,11 +1215,6 @@
         void
         u3_pier_bail(u3_pier* pir_u);
 
-      /* u3_pier_halt(): emergency resource release (ie, on SIGABRT).
-      */
-        void
-        u3_pier_halt(u3_pier* pir_u);
-
       /* u3_pier_save(): request checkpoint.
       */
         c3_o
@@ -1308,11 +1298,6 @@
       */
         void
         u3_king_exit(void);
-
-      /* u3_king_halt(): emergency release.
-      */
-        void
-        u3_king_halt(void);
 
       /* u3_king_bail(): immediately shutdown.
       */
