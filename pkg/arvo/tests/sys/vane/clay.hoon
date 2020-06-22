@@ -8,8 +8,8 @@
 !:
 =,  format
 ::
-=/  test-pit=vase  !>(..zuse)
-=/  clay-gate  (clay-raw test-pit)
+=/  bud=vase  !>(..zuse)
+=/  clay-gate  (clay-raw bud)
 =/  fusion  fusion:clay-gate
 ::
 |%
@@ -76,6 +76,7 @@
   |.
   =/  ford
     %:  ford:fusion
+      bud
       ankh
       deletes=~
       changes=~
@@ -100,6 +101,7 @@
     ==  ==  ==
   =/  ford
     %:  ford:fusion
+      bud
       ankh
       deletes=~
       changes=(my [/gen/hello/hoon &+hoon+hello-gen]~)
@@ -141,6 +143,7 @@
     ==  ==  ==
   =/  ford
     %:  ford:fusion
+      bud
       ankh
       deletes=~
       changes=~
