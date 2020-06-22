@@ -12,7 +12,7 @@ tailproc=$!
 
 shutdown () {
   if [ -e ./ship/.vere.lock ]
-  then kill -9 $(< ./ship/.vere.lock) || true;
+  then kill $(< ./ship/.vere.lock) || true;
   fi
 
   kill "$tailproc" || true;
