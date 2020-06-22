@@ -121,8 +121,10 @@ export default class App extends React.Component {
               <Route path="/~link" render={ p => (
                 <LinksApp
                   ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
+                  ship={this.ship}
+                  api={this.api}
+                  subscription={this.subscription}
+                  {...state}
                   {...p}
                 />
               )}
