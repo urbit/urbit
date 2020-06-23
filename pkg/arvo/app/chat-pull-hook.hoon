@@ -1,4 +1,4 @@
-/-  *invite-store, pull=chat-pull-hook, push=chat-push-hook
+/-  *invite-store, pull=chat-pull-hook, push=chat-push-hook, old=chat-hook
 /+  default-agent, verb, dbug, store=chat-store, *userspace
 |%
 +$  card  card:agent:gall
@@ -25,9 +25,30 @@
   ^-  (quip card _this)
   :_  this
   =/  inv  [our.bowl %invite-store]
-  :~  [%pass / %agent inv %poke %invite-action !>([%create /chat])]
-      [%pass /invites %agent inv %watch /invitatory/chat]
-  ==
+  :+  [%pass / %agent inv %poke %invite-action !>([%create /chat])]
+    [%pass /invites %agent inv %watch /invitatory/chat]
+  ?.  .^(? %gu /(scot %p our.bowl)/chat-hook/(scot %da now.bowl))
+    ~
+  =/  contents
+    .^  contents:old
+        %gx
+        (scot %p our.bowl)
+        %chat-hook
+        (scot %da now.bowl)
+        %contents
+        %noun
+        ~
+    ==
+  %+  murn  ~(tap by synced.contents)
+  |=  [=path =ship]
+  ^-  (unit card)
+  ?:  =(our.bowl ship)
+    ~
+  =/  ask-history  &
+  =/  =action:pull  [%add ship path ask-history]
+  ~&  [%migrating-remote-chat ship path ask-history=ask-history]
+  =/  vas  !>(action)
+  `[%pass / %agent [our.bowl %chat-pull-hook] %poke %chat-pull-hook-action vas]
 ::
 ++  on-save  !>(state)
 ++  on-load

@@ -1,4 +1,4 @@
-/-  *permission-store, *invite-store, hook=chat-push-hook
+/-  *permission-store, *invite-store, hook=chat-push-hook, old=chat-hook
 /+  default-agent, verb, dbug, store=chat-store, metadata, *userspace
 |%
 +$  card  card:agent:gall
@@ -26,7 +26,29 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this
-  [%pass /permissions %agent [our.bowl %permission-store] %watch /updates]~
+  :-  [%pass /permissions %agent [our.bowl %permission-store] %watch /updates]
+  ?.  .^(? %gu /(scot %p our.bowl)/chat-hook/(scot %da now.bowl))
+    ~
+  =/  contents
+    .^  contents:old
+        %gx
+        (scot %p our.bowl)
+        %chat-hook
+        (scot %da now.bowl)
+        %contents
+        %noun
+        ~
+    ==
+  %+  murn  ~(tap by synced.contents)
+  |=  [=path =ship]
+  ^-  (unit card)
+  ?.  =(our.bowl ship)
+    ~
+  =/  allow-history  (fall (~(get by allow-history.contents) path) |)
+  =/  =action:hook  [%add path allow-history]
+  ~&  [%migrating-local-chat path allow-history=allow-history]
+  =/  vas  !>(action)
+  `[%pass / %agent [our.bowl %chat-push-hook] %poke %chat-push-hook-action vas]
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -203,7 +225,7 @@
       ==
       %watch-ack              (watch-ack wire p.sign)
       %fact  ?+  p.cage.sign  (on-agent:def wire sign)
-          %chat-update        (fact-chat-update !<(update:store q.cage.sign)
+          %chat-update        (fact-chat-update !<(update:store q.cage.sign))
           %permission-update  (fact-perm-update !<(permission-update q.cage.sign))
   ==  ==
   ::
