@@ -23,11 +23,11 @@ do
   sh/cross urbit "$plat"
 
   tmp=$(mktemp -d)
-  mkdir -p $tmp/$ver-$plat
-  traced cp -r cross/$plat/* $tmp/$ver-$plat
+  mkdir -p $tmp/vere-$ver-$plat
+  traced cp -r cross/$plat/* $tmp/vere-$ver-$plat
 
-  echo "packaging release/$ver-$plat.tgz"
-  (cd $tmp; tar cz $ver-$plat) > release/$ver-$plat.tgz
+  echo "packaging release/vere-$ver-$plat.tgz"
+  (cd $tmp; tar cz vere-$ver-$plat) > release/vere-$ver-$plat.tgz
 
   rm -rf $tmp
 done
