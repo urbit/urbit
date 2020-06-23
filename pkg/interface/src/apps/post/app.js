@@ -15,7 +15,7 @@ import { NodeTreeScreen } from './components/node-tree';
 import { NewScreen } from './components/new';
 
 
-export default class GraphPostApp extends React.Component {
+export default class PostApp extends React.Component {
   constructor(props) {
     super(props);
     this.store = new GraphStore();

@@ -6,8 +6,8 @@ import './css/fonts.css';
 import { light } from '@tlon/indigo-react';
 
 import LaunchApp from './apps/launch/app';
-import GraphChatApp from './apps/graph-chat/app';
-import GraphPostApp from './apps/graph-post/app';
+import ChatApp from './apps/chat/app';
+import PostApp from './apps/post/app';
 import DojoApp from './apps/dojo/app';
 import GroupsApp from './apps/groups/app';
 import LinksApp from './apps/links/app';
@@ -92,7 +92,7 @@ export default class App extends React.Component {
               )}
               />
               <Route path="/~chat" render={ p => (
-                <GraphChatApp
+                <ChatApp
                   ship={this.ship}
                   channel={channel}
                   selectedGroups={selectedGroups}
@@ -101,7 +101,7 @@ export default class App extends React.Component {
               )}
               />
               <Route path="/~post" render={ p => (
-                <GraphPostApp
+                <PostApp
                   ship={this.ship}
                   channel={channel}
                   selectedGroups={selectedGroups}
