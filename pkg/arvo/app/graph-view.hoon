@@ -1,6 +1,7 @@
 /+  view=graph-view, store=graph-store, sigs=signatures, default-agent, dbug
-::
+~%  %graph-view-top  ..is  ~
 |%
++$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
   ==
@@ -9,8 +10,6 @@
   $:  %0
       connections=(map atom:store time)
   ==
-::
-+$  card  card:agent:gall
 --
 ::
 =|  state-0
@@ -18,6 +17,7 @@
 ::
 %-  agent:dbug
 ^-  agent:gall
+~%  %graph-view-agent  ..card  ~
 |_  =bowl:gall
 +*  this       .
     def        ~(. (default-agent this %|) bowl)
@@ -28,6 +28,7 @@
   [%pass /updates %agent [our.bowl %graph-store] %watch /updates]~
 ::
 ++  on-poke
+  ~/  %graph-view-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
@@ -35,6 +36,7 @@
   =^  cards  state
     ?+  mark                (on-poke:def mark vase)
         %graph-action       (action !<(action:store vase))
+        %json               (action (action:dejs:store !<(json vase)))
         %graph-view-action  (view-action !<(action:view vase))
     ==
   [cards this]
@@ -188,6 +190,7 @@
   --
 ::
 ++  on-watch
+  ~/  %graph-view-watch
   |=  =path
   ^-  (quip card _this)
   ?>  (team:title our.bowl src.bowl)

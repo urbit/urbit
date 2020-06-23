@@ -5,6 +5,7 @@
 +$  versioned-state
   $%  state-0
   ==
+::
 +$  state-0  [%0 network:store]
 ++  orm      orm:store
 ++  orm-log  orm-log:store
@@ -36,7 +37,6 @@
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
         %graph-action  (graph-action !<(action:store vase))
-        %json          (graph-action (action:dejs:store !<(json vase)))
     ==
   [cards this]
   ::
