@@ -1395,12 +1395,29 @@ _pier_work_close(u3_work* wok_u)
   wok_u->pep_u.data = wok_u;
 }
 
+/* _pier_done(): dispose pier.
+*/
+static void
+_pier_free(u3_pier* pir_u)
+{
+  c3_free(pir_u->pax_c);
+
+  // XX remove
+  //
+  c3_free(pir_u->sav_u);
+
+  c3_free(pir_u);
+}
+
+/* _pier_done(): graceful shutdown complete, notify king.
+*/
 static void
 _pier_done(u3_pier* pir_u)
 {
   //  XX unlink properly
   //
   u3K.pir_u = 0;
+  _pier_free(pir_u);
   u3_king_done();
 }
 
