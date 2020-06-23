@@ -1,4 +1,5 @@
 /+  store=graph-store, sigs=signatures, default-agent, dbug
+~%  %graph-store-top  ..is  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -14,6 +15,7 @@
 ::
 %-  agent:dbug
 ^-  agent:gall
+~%  %graph-store-agent  ..card  ~
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
@@ -26,6 +28,7 @@
   [~ this(state !<(state-0 old))]
 ::
 ++  on-poke
+  ~/  %graph-store-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
@@ -33,6 +36,7 @@
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
         %graph-action  (graph-action !<(action:store vase))
+        %json          (graph-action (action:dejs:store !<(json vase)))
     ==
   [cards this]
   ::
@@ -297,6 +301,7 @@
   --
 ::
 ++  on-watch
+  ~/  %graph-store-watch
   |=  =path
   ^-  (quip card _this)
   |^
@@ -315,6 +320,7 @@
   --
 ::
 ++  on-peek
+  ~/  %graph-store-peek
   |=  =path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
