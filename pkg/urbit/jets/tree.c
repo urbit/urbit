@@ -477,11 +477,6 @@ static c3_c* _141_pen_loot_ha[] = {
     "d83e5e47f712870aba815d79943d287cbefdc00640409464b30bf755115d4a1a",
     0
   };
-  static u3j_harm _141_pen__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
-  static c3_c* _141_pen__ut_fond_ha[] = {
-    "0da0cc79c938eb06515a5cc24a17b82cd60a50c0f1a02e2c68e5d1cf71c96054",
-    0
-  };
   static u3j_harm _141_pen__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
   static c3_c* _141_pen__ut_fish_ha[] = {
     "2fd315436f48351002d9aa8c137649ca95b01fd57dba09db53d7235f84a284bf",
@@ -516,16 +511,6 @@ static c3_c* _141_pen_loot_ha[] = {
       { "nest-in", 7, 0, _141_pen__ut_nest_in_d, _141_pen__ut_nest_in_ha },
       {}
     };
-  static u3j_harm _141_pen__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
-  static c3_c* _141_pen__ut_peek_ha[] = {
-    "904ff7359e89d1886f884c4409f104269cdb8dfb4683f116ff00bc98a4720df7",
-    0
-  };
-  static u3j_harm _141_pen__ut_play_a[] = {{".2", u3wfu_play}, {}};
-  static c3_c* _141_pen__ut_play_ha[] = {
-    "bdc5c072632f7133b4c64c465b1b214d7465b0c1163842b121b7369aba1b9b03",
-    0
-  };
   static u3j_harm _141_pen__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
   static c3_c* _141_pen__ut_rest_ha[] = {
     "2e2d15f3efca0a4bf8ce08cca48c54d1d5a7204e2b0525137f59c3e7b037d2fd",
@@ -535,14 +520,11 @@ static c3_c* _141_pen_loot_ha[] = {
 static u3j_core _141_pen__ut_d[] =
   {
     { "crop", 7, _141_pen__ut_crop_a, 0, _141_pen__ut_crop_ha },
-    { "fond", 7, _141_pen__ut_fond_a, 0, _141_pen__ut_fond_ha },
     { "fish", 7, _141_pen__ut_fish_a, 0, _141_pen__ut_fish_ha },
     { "fuse", 7, _141_pen__ut_fuse_a, 0, _141_pen__ut_fuse_ha },
     { "mint", 7, _141_pen__ut_mint_a, 0, _141_pen__ut_mint_ha },
     { "mull", 7, _141_pen__ut_mull_a, 0, _141_pen__ut_mull_ha },
     { "nest", 7, 0, _141_pen__ut_nest_d, _141_pen__ut_nest_ha },
-    { "peek", 7, _141_pen__ut_peek_a, 0, _141_pen__ut_peek_ha },
-    { "play", 7, _141_pen__ut_play_a, 0, _141_pen__ut_play_ha },
     { "rest", 7, _141_pen__ut_rest_a, 0, _141_pen__ut_rest_ha },
     {}
   };
@@ -575,7 +557,6 @@ static u3j_hood _141_pen__ut_ho[] = {
   { "fine",   49086 },
   { "fire",       4 },
   { "fish",    6006 },
-  { "fond",   12283 },
   { "fund",    6014 },
   //  XX +funk is not part of +ut, and this hook appears to be unused
   //  remove from here and the +ut hint
@@ -591,8 +572,6 @@ static u3j_hood _141_pen__ut_ho[] = {
   { "mull",   24020 },
   { "nest",      92 },
   { "peel",    1526 },
-  { "play",    3006 },
-  { "peek",    1532 },
   { "repo",      22 },
   { "rest",    6102 },
   { "tack",    6007 },
