@@ -25,7 +25,17 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this
-  [%pass /updates %agent [our.bowl %graph-store] %watch /updates]~
+  :~  [%pass /updates %agent [our.bowl %graph-store] %watch /updates]
+      :*  %pass  /serve  %agent  [our.bowl %file-server]
+          %poke  %file-server-action
+          !>([%serve-dir /'~post' /app/landscape %.n])
+      ==
+      :*  %pass  /launch  %agent  [our.bowl %launch]
+          %poke  %launch-action
+          !>  :+  %add  %post
+          [[%basic 'Post' '/~landscape/img/Post.png' '/~post'] %.y]
+      ==
+  ==
 ::
 ++  on-poke
   ~/  %graph-view-poke
