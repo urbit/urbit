@@ -553,19 +553,6 @@ _daemon_sign_init(void)
     sig_u->nex_u = u3_Host.sig_u;
     u3_Host.sig_u = sig_u;
   }
-
-  //  handle SIGQUIT (turn it into SIGABRT)
-  //
-  {
-    u3_usig* sig_u;
-
-    sig_u = c3_malloc(sizeof(u3_usig));
-    uv_signal_init(u3L, &sig_u->sil_u);
-
-    sig_u->num_i = SIGQUIT;
-    sig_u->nex_u = u3_Host.sig_u;
-    u3_Host.sig_u = sig_u;
-  }
 }
 
 /* _daemon_sign_cb: signal callback.
@@ -593,10 +580,6 @@ _daemon_sign_cb(uv_signal_t* sil_u, c3_i num_i)
     case SIGWINCH: {
       u3_term_ef_winc();
       break;
-    }
-
-    case SIGQUIT: {
-      abort();
     }
   }
 }
