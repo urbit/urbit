@@ -1,6 +1,9 @@
 stages:
   - compile
-  - combine
+  # Don't run the combine stage in pull requests, because deploy is disabled there.
+  - name: combine
+    if: env(TRAVIS_PULL_REQUEST) = false
+
 jobs:
   include:
   - stage: compile
