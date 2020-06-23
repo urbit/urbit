@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "noUnusedLocals": false,
     "noImplicitAny": false,
+    "noEmit": true,
     "target": "es2015",
     "module": "es2015",
     "strict": true,

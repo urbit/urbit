@@ -3,7 +3,7 @@ import { LaunchUpdate } from '../types/launch-update';
 import { Cage } from '../types/cage';
 import { StoreState } from '../store/type';
 
-type LaunchState = Pick<StoreState, 'launch' | 'weather' | 'location'>;
+type LaunchState = Pick<StoreState, 'launch' | 'weather' | 'userLocation'>;
 
 export default class LaunchReducer<S extends LaunchState> {
   reduce(json: Cage, state: S) {
@@ -23,7 +23,7 @@ export default class LaunchReducer<S extends LaunchState> {
 
     const locationData = _.get(json, 'location', false);
     if (locationData) {
-      state.location = locationData;
+      state.userLocation = locationData;
     }
   }
 

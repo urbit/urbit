@@ -8,7 +8,7 @@ import { PublishUpdate } from './publish-update';
 import { PublishResponse } from "./publish-response";
 import { GroupUpdate } from "./group-update";
 import { PermissionUpdate } from "./permission-update";
-import { LaunchUpdate } from "./launch-update";
+import { LaunchUpdate, WeatherState } from "./launch-update";
 import { LinkListenUpdate } from './link-listen-update';
 
 interface MarksToTypes {
@@ -26,8 +26,8 @@ interface MarksToTypes {
   readonly "link-listen-update": LinkListenUpdate;
   // not really marks but w/e
   readonly 'local': LocalUpdate;
-  readonly 'weather': any;
-  readonly 'location': any;
+  readonly 'weather': WeatherState | {};
+  readonly 'location': string;
 }
 
 export type Cage = Partial<MarksToTypes>;

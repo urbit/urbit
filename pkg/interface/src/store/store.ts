@@ -53,7 +53,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
         tiles: {},
       },
       weather: {},
-      location: '',
+      userLocation: null,
       permissions: {},
       s3: {
         configuration: {

@@ -51,3 +51,33 @@ interface TileTypeBasic {
 interface TileTypeCustom {
   custom: null;
 }
+
+interface WeatherDay {
+  apparentTemperature: number;
+  cloudCover: number;
+  dewPoint: number;
+  humidity: number;
+  icon: string;
+  ozone: number;
+  precipIntensity: number;
+  precipProbability: number;
+  precipType: string;
+  pressure: number;
+  summary: string;
+  temperature: number;
+  time: number;
+  uvIndex: number;
+  visibility: number;
+  windBearing: number;
+  windGust: number;
+  windSpeed: number;
+}
+
+export interface WeatherState {
+  currently: WeatherDay;
+  daily: {
+    data: WeatherDay[];
+    icon: string;
+    summary: string;
+  }
+}

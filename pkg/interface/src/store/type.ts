@@ -9,7 +9,7 @@ import { Notebooks } from '../types/publish-update';
 import { Groups } from '../types/group-update';
 import { S3State } from '../types/s3-update';
 import { Permissions } from '../types/permission-update';
-import { LaunchState } from '../types/launch-update';
+import { LaunchState, WeatherState } from '../types/launch-update';
 import { LinkComments, LinkCollections, LinkSeen } from '../types/link-update';
 
 export interface StoreState {
@@ -30,11 +30,10 @@ export interface StoreState {
 
 
   // App specific states
-    //
   //  launch state
   launch: LaunchState;
-  weather: any;
-  location: any;
+  weather: WeatherState | {} | null;
+  userLocation: string | null;
 
   //  links state
   linksSeen: LinkSeen;
