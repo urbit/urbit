@@ -98,6 +98,12 @@
         :~  [%term s+term.upd]
             [%resource (enjs:res resource.upd)]
         ==
+      ::
+          %archive-graph
+        [%archive-graph (enjs:res resource.upd)]
+      ::
+          %unarchive-graph
+        [%unarchive-graph (enjs:res resource.upd)]
       ==
     ::
     ++  graph
@@ -107,8 +113,6 @@
       %+  turn  (tap:orm g)
       |=  [a=atom n=^node]
       ^-  json
-      ::  experiment at making JSON structure more closely represent Map
-      ::  input
       :-  %a
       :~  (index [a]~)
           (node n)
@@ -181,7 +185,6 @@
       %+  turn  ~(tap by m)
       |=  [n=^index o=^node]
       ^-  json
-      ::  experiment, more closely represent Map structure
       :-  %a
       :~  (index n)
           (node o)
@@ -236,6 +239,8 @@
           [%remove-signatures remove-signatures]
           [%add-tag add-tag]
           [%remove-tag remove-tag]
+          [%archive-graph archive-graph]
+          [%unarchive-graph unarchive-graph]
       ==
     ::
     ++  add-graph
@@ -256,6 +261,8 @@
       [(rash b dem) c]
     ::
     ++  remove-graph  (ot [%resource dejs:res]~)
+    ++  archive-graph  (ot [%resource dejs:res]~)
+    ++  unarchive-graph  (ot [%resource dejs:res]~)
     ::
     ++  add-nodes
       %-  ot

@@ -15,6 +15,7 @@
   $:  =graphs
       =tag-queries
       =action-logs
+      archive=graphs
   ==
 ::
 +$  action-log  ((mop time action) lth)
@@ -45,6 +46,9 @@
     ::
       [%add-tag =term =resource]
       [%remove-tag =term =resource]
+    ::
+      [%archive-graph =resource]
+      [%unarchive-graph =resource]
   ==
 ::
 +$  update

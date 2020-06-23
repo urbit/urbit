@@ -54,6 +54,8 @@
         %remove-signatures  (remove-signatures +>.action)
         %add-tag            (add-tag +>.action)
         %remove-tag         (remove-tag +>.action)
+        %archive-graph      (archive-graph +>.action)
+        %unarchive-graph    (unarchive-graph +>.action)
     ==
     ::
     ++  add-graph
@@ -291,6 +293,30 @@
       :-  (give [/updates]~ [%remove-tag term resource])
       %_  state
           tag-queries  (~(del ju tag-queries) term resource)
+      ==
+    ::
+    ++  archive-graph
+      |=  =resource:store
+      ^-  (quip card _state)
+      ?<  (~(has by archive) resource)
+      ?>  (~(has by graphs) resource)
+      :-  (give [/updates /keys ~] [%archive-graph resource])
+      %_  state
+          archive      (~(put by archive) resource (~(got by graphs) resource))
+          graphs       (~(del by graphs) resource)
+          action-logs  (~(del by action-logs) resource)
+      ==
+    ::
+    ++  unarchive-graph
+      |=  =resource:store
+      ^-  (quip card _state)
+      ?>  (~(has by archive) resource)
+      ?<  (~(has by graphs) resource)
+      :-  (give [/updates /keys ~] [%unarchive-graph resource])
+      %_  state
+          archive      (~(del by archive) resource)
+          graphs       (~(put by graphs) resource (~(got by archive) resource))
+          action-logs  (~(put by action-logs) resource (gas:orm-log ~ ~))
       ==
     ::
     ++  give
