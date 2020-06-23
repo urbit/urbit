@@ -33,7 +33,6 @@ export default class LaunchApp extends React.Component {
 
     this.subscription = new LaunchSubscription(this.store, this.api, channel);
     this.subscription.start();
-    window.api = this.api;
   }
 
   componentWillUnmount() {
@@ -53,6 +52,8 @@ export default class LaunchApp extends React.Component {
           tiles={state.launch.tiles}
           tileOrdering={state.launch.tileOrdering}
           api={this.api}
+          location={state.location}
+          weather={state.weather}
         />
       </div>
     );

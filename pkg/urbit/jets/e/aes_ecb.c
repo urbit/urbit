@@ -5,6 +5,8 @@
 
 #include <openssl/aes.h>
 
+#include "aes_siv.h"
+
 /* functions
 */
   u3_noun

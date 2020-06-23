@@ -82,7 +82,7 @@
     ^-  (quip card _this)
     =/  rav  [%sing %t [%da now.bol] /app/publish/notebooks]
     :_  this
-    :~  [%pass /bind %arvo %e %connect [~ /'publish-view'] %publish]
+    :~  [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
         [%pass /read/paths %arvo %c %warp our.bol q.byk.bol `rav]
         [%pass /permissions %agent [our.bol %permission-store] %watch /updates]
         (invite-poke:main [%create /publish])
@@ -121,7 +121,8 @@
             :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
                 /invitatory/publish
             ==
-            [%pass / %arvo %e %disconnect [~ /'~publish']]
+            [%pass /bind %arvo %e %disconnect [~ /'~publish']]
+            [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
             :*  %pass  /srv  %agent  [our.bol %file-server]
                 %poke  %file-server-action
                 !>([%serve-dir /'~publish' /app/landscape %.n])
@@ -139,7 +140,6 @@
       ::
           cards
         ;:  weld
-          (kill-builds pubs.zero)
           kick-cards
           init-cards
           (move-files old-subs)
@@ -187,7 +187,14 @@
       ==
     ::
         %3
-      [cards this(state p.old-state)]
+      :_  this(state p.old-state)
+      %+  welp  cards
+      :~  [%pass /bind %arvo %e %disconnect [~ /'~publish']]
+          [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
+          :*  %pass  /srving  %agent  [our.bol %file-server]
+              %poke  %file-server-action
+              !>([%serve-dir /'~publish' /app/landscape %.n])
+      ==  ==
     ==
     ::
     ++  convert-comment-2-3
@@ -229,21 +236,6 @@
       ?~  paths
         [~ subs]
       [[%give %kick paths ~]~ subs]
-    ::
-    ++  kill-builds
-      |=  pubs=(map @tas collection-zero)
-      ^-  (list card)
-      %-  zing
-      %+  turn  ~(tap by pubs)
-      |=  [col-name=@tas col-data=collection-zero]
-      ^-  (list card)
-      :-  [%pass /collection/[col-name] %arvo %f %kill ~]
-      %-  zing
-      %+  turn  ~(tap by pos.col-data)
-      |=  [pos-name=@tas *]
-      :~  [%pass /post/[col-name]/[pos-name] %arvo %f %kill ~]
-          [%pass /comments/[col-name]/[pos-name] %arvo %f %kill ~]
-      ==
     ::
     ++  send-invites
       |=  [book=@tas subscribers=(set @p)]
@@ -524,6 +516,9 @@
       [cards this]
     ::
         [%bind ~]
+      [~ this]
+    ::
+        [%view-bind ~]
       [~ this]
     ==
   ::

@@ -12035,6 +12035,15 @@
   ?~  a  !!
   ~_(i.a $(a t.a))
 ::
+++  road
+  |*  =(trap *)
+  ^+  $:trap
+  =/  res  (mule trap)
+  ?-  -.res
+    %&  p.res
+    %|  (mean leaf+"road: new" p.res)
+  ==
+::
 ++  slew                                                ::  get axis in vase
   |=  {axe/@ vax/vase}  ^-  (unit vase)
   ?.  |-  ^-  ?
@@ -14352,11 +14361,10 @@
 ++  ride                                                ::  end-to-end compiler
   |=  {typ/type txt/@}
   ^-  (pair type nock)
-  ~>  %slog.[0 leaf/"ride-parsing"]
+  ~>  %slog.[0 leaf/"ride: parsing"]
   =/  gen  (ream txt)
-  ~>  %slog.[0 leaf/"ride-compiling"]
-  =-  ~>  %slog.[0 leaf/"ride-compiled"]
-      -
+  ~>  %slog.[0 leaf/"ride: compiling"]
+  ~<  %slog.[0 leaf/"ride: compiled"]
   (~(mint ut typ) %noun gen)
 ::
 ::::  5e: caching compiler

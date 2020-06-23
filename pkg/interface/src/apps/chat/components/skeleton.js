@@ -30,10 +30,7 @@ export class Skeleton extends Component {
 
     return (
       // app outer skeleton
-      <div style={{
-        height: 'calc(100vh - 45px)'
-      }} className={'h-100 w-100 bg-gray0-d ' + popoutWindow}
-      >
+      <div className={'h-100 w-100 bg-gray0-d ' + popoutWindow}>
       {/* app window borders */}
         <div className={ 'cf w-100 flex h-100 ' + popoutBorder }>
           {/* sidebar skeleton, hidden on mobile when in chat panel */}
@@ -49,7 +46,7 @@ export class Skeleton extends Component {
           >
             {/* mobile-specific navigation */}
             <div className={mobileNavClasses}>
-              <div className="bb b--gray4 b--gray1-d white-d inter f8 pl3 pt6 pb3">
+              <div className="bb b--gray4 b--gray1-d white-d inter f8 pl3 pb3">
                 All Chats
               </div>
             </div>

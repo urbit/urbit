@@ -366,6 +366,15 @@
     (~(del ju proxied) group-id who)
   `state
 ::  +can-join: check if .ship can join .group-id
+++  group-scry
+  |=  pax=path
+  .^  (unit group)
+    %gx
+    (scot %p our.bol)
+    %group-store
+    (scot %da now.bol)
+    (weld pax /noun)
+  ==
 ::
 ++  can-join
   |=  [=ship =group-id]

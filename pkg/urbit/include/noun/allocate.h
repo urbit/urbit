@@ -351,6 +351,15 @@
           void*
           u3a_malloc(size_t len_i);
 
+        /* u3a_malloc_ssl(): openssl-shaped malloc
+        */
+          void*
+          u3a_malloc_ssl(size_t len_i
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+                          , const char* file, int line
+#endif
+                          );
+
         /* u3a_calloc(): aligned storage measured in bytes.
         */
           void*
@@ -366,6 +375,15 @@
           void*
           u3a_realloc2(void* lag_v, size_t old_i, size_t new_i);
 
+        /* u3a_realloc_ssl(): openssl-shaped realloc.
+        */
+          void*
+          u3a_realloc_ssl(void* lag_v, size_t len_i
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+                          , const char* file, int line
+#endif
+                          );
+
         /* u3a_free(): free for aligned malloc.
         */
           void
@@ -375,6 +393,15 @@
         */
           void
           u3a_free2(void* tox_v, size_t siz_i);
+
+        /* u3a_free_ssl(): openssl-shaped free.
+        */
+          void
+          u3a_free_ssl(void* tox_v
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+                          , const char* file, int line
+#endif
+                          );
 
       /* Reference and arena control.
       */

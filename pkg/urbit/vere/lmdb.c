@@ -96,7 +96,7 @@ c3_o _perform_put_on_database_raw(MDB_txn* transaction_u,
 
   c3_w ret_w = mdb_put(transaction_u, database_u, &key_val, &value_val, flags);
   if (ret_w != 0) {
-    u3l_log("lmdb: write failed: %s\n", mdb_strerror(ret_w));
+    fprintf(stderr, "lmdb: write failed: %s\n", mdb_strerror(ret_w));
     return c3n;
   }
 
@@ -118,7 +118,7 @@ c3_o _perform_get_on_database_raw(MDB_txn* transaction_u,
 
   c3_w ret_w = mdb_get(transaction_u, database_u, &key_val, value);
   if (ret_w != 0) {
-    u3l_log("lmdb: read failed: %s\n", mdb_strerror(ret_w));
+    fprintf(stderr, "lmdb: read failed: %s\n", mdb_strerror(ret_w));
     return c3n;
   }
 
@@ -277,7 +277,7 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
                              0, /* flags */
                              &transaction_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
+    fprintf(stderr, "lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
     return;
   }
 
@@ -289,7 +289,7 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
                        flags_w,
                        &database_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
+    fprintf(stderr, "lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
     return;
   }
 
@@ -307,7 +307,7 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
         request->malloced_event_data_size[i]);
 
     if (success == c3n) {
-      u3l_log("lmdb: failed to write event %" PRIu64 "\n", event_number);
+      fprintf(stderr, "lmdb: failed to write event %" PRIu64 "\n", event_number);
       mdb_txn_abort(transaction_u);
       data->success = c3n;
       return;
@@ -317,12 +317,12 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
   ret_w = mdb_txn_commit(transaction_u);
   if (0 != ret_w) {
     if ( request->event_count == 1 ) {
-      u3l_log("lmdb: failed to commit event %" PRIu64  ": %s\n",
+      fprintf(stderr, "lmdb: failed to commit event %" PRIu64  ": %s\n",
               request->first_event,
               mdb_strerror(ret_w));
     } else {
       c3_d through = request->first_event + request->event_count - 1ULL;
-      u3l_log("lmdb: failed to commit events %" PRIu64  " through %" PRIu64
+      fprintf(stderr, "lmdb: failed to commit events %" PRIu64  " through %" PRIu64
               ": %s\n",
               request->first_event,
               through,

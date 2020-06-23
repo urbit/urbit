@@ -25,12 +25,8 @@ class PrivateHelper extends BaseApi {
     this.launchAction({ 'change-is-shown': { name, isShown }});
   }
 
-  clockAction(latlng) {
-    return this.action('clock', 'json', latlng);
-  }
-
   weatherAction(latlng) {
-    return this.action('weather', 'json', latlng);
+    this.action('weather', 'json', latlng);
   }
 }
 
@@ -49,9 +45,7 @@ export default class LaunchApi {
       changeIsShown: helper.launchChangeIsShown.bind(helper)
     };
 
-    this.clock = { action: helper.clockAction.bind(helper) };
-
-    this.weather ={ action: helper.weatherAction.bind(helper) };
+    this.weather = helper.weatherAction.bind(helper);
   }
 }
 

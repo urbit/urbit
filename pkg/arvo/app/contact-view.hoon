@@ -15,6 +15,7 @@
     grpl=group, mdl=metadata, resource,
     group-store
 ::
+
 |%
 +$  versioned-state
   $%  state-0
@@ -368,11 +369,16 @@
 ::
 ++  all-scry
   ^-  rolodex
-  .^(rolodex %gx /=contact-store/(scot %da now.bol)/all/noun)
+  .^(rolodex %gx /(scot %p our.bol)/contact-store/(scot %da now.bol)/all/noun)
 ::
 ++  contact-scry
   |=  pax=path
   ^-  (unit contact)
-  =.  pax  ;:(weld /=contact-store/(scot %da now.bol)/contact pax /noun)
+  =.  pax
+    ;:  weld
+      /(scot %p our.bol)/contact-store/(scot %da now.bol)/contact
+      pax
+      /noun
+    ==
   .^((unit contact) %gx pax)
 --

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import ChatApi from '../../api/chat';
 import ChatStore from '../../store/chat';
@@ -57,6 +57,10 @@ export default class ChatApp extends React.Component {
     const messagePreviews = {};
     const unreads = {};
     let totalUnreads = 0;
+
+    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
+    const associations = state.associations ? state.associations : { chat: {}, contacts: {} };
+
     Object.keys(state.inbox).forEach((stat) => {
       const envelopes = state.inbox[stat].envelopes;
 
@@ -68,8 +72,12 @@ export default class ChatApp extends React.Component {
 
       const unread = Math.max(state.inbox[stat].config.length - state.inbox[stat].config.read, 0);
       unreads[stat] = Boolean(unread);
-      if (unread) {
-        totalUnreads += unread;
+      if (unread &&
+         (selectedGroups.length === 0 || selectedGroups.map(((e) => {
+           return e[0];
+          })).includes(associations.chat?.[stat]?.['group-path']) ||
+        associations.chat?.[stat]?.['group-path'].startsWith('/~/'))) {
+          totalUnreads += unread;
       }
     });
 
@@ -81,10 +89,7 @@ export default class ChatApp extends React.Component {
     const invites = state.invites ? state.invites : { '/chat': {}, '/contacts': {} };
 
     const contacts = state.contacts ? state.contacts : {};
-    const associations = state.associations ? state.associations : { chat: {}, contacts: {} };
     const s3 = state.s3 ? state.s3 : {};
-
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
     const renderChannelSidebar = (props, station) => (
       <Sidebar
@@ -102,7 +107,7 @@ export default class ChatApp extends React.Component {
     );
 
     return (
-      <div>
+      <Switch>
         <Route
           exact
           path="/~chat"
@@ -370,7 +375,7 @@ export default class ChatApp extends React.Component {
             );
           }}
         />
-      </div>
+      </Switch>
   );
   }
 }

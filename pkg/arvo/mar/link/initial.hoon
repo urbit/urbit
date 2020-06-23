@@ -2,6 +2,7 @@
 ::
 /-  *link
 |_  =initial
+++  grad  %noun
 ++  grow
   |%
   ++  noun  initial

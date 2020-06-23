@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import _ from 'lodash';
 
 import './css/custom.css';
@@ -65,6 +65,12 @@ export default class PublishApp extends React.Component {
       .values()
       .map(_.values)
       .flatten() // flatten into array of notebooks
+      .filter((each) => {
+        return ((selectedGroups.map((e) => {
+          return e[0];
+        }).includes(each?.['writers-group-path'])) ||
+        (selectedGroups.length === 0));
+      })
       .map('num-unread')
       .reduce((acc, count) => acc + count, 0)
       .value();
@@ -75,7 +81,7 @@ export default class PublishApp extends React.Component {
     }
 
     return (
-      <div>
+      <Switch>
         <Route exact path="/~publish"
           render={(props) => {
             return (
@@ -314,7 +320,7 @@ export default class PublishApp extends React.Component {
             }
           }}
         />
-      </div>
+      </Switch>
     );
   }
 }
