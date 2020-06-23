@@ -5,7 +5,6 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 
 import { Message } from './lib/message';
-import { ChatTabBar } from './lib/chat-tabbar';
 import { PostInput } from './lib/post-input';
 import { deSig } from '../../../lib/util';
 
@@ -138,10 +137,6 @@ export class NodeTreeScreen extends Component {
               {title}
             </h2>
           </Link>
-          <ChatTabBar
-            resource={props.resource}
-            api={props.api}
-          />
         </div>
         {this.parentPost()}
         {this.replyModal()}

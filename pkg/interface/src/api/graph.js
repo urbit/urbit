@@ -4,7 +4,7 @@ import BaseApi from './base';
 class PrivateHelper extends BaseApi {
   graphAction(data) {
     console.log(data);
-    this.action('graph-view', 'graph-action', data);
+    this.action('graph-view', 'json', data);
   }
 
   addGraph(ship = 'zod', name = 'asdf', graph = {}) {
