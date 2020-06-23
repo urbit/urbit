@@ -1,20 +1,20 @@
-import React from "react";
-import { Route, Switch } from "react-router-dom";
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 
-import "./css/custom.css";
+import './css/custom.css';
 
-import { Skeleton } from "./components/skeleton";
-import { Sidebar } from "./components/sidebar";
-import { ChatScreen } from "./components/chat";
-import { MemberScreen } from "./components/member";
-import { SettingsScreen } from "./components/settings";
-import { NewScreen } from "./components/new";
-import { JoinScreen } from "./components/join";
-import { NewDmScreen } from "./components/new-dm";
-import { PatpNoSig } from "../../types/noun";
-import GlobalApi from "../../api/global";
-import { StoreState } from "../../store/type";
-import GlobalSubscription from "../../subscription/global";
+import { Skeleton } from './components/skeleton';
+import { Sidebar } from './components/sidebar';
+import { ChatScreen } from './components/chat';
+import { MemberScreen } from './components/member';
+import { SettingsScreen } from './components/settings';
+import { NewScreen } from './components/new';
+import { JoinScreen } from './components/join';
+import { NewDmScreen } from './components/new-dm';
+import { PatpNoSig } from '../../types/noun';
+import GlobalApi from '../../api/global';
+import { StoreState } from '../../store/type';
+import GlobalSubscription from '../../subscription/global';
 
 type ChatAppProps = StoreState & {
   ship: PatpNoSig;
@@ -30,13 +30,15 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
   }
 
   componentDidMount() {
-    document.title = "OS1 - Chat";
+    document.title = 'OS1 - Chat';
     // preload spinner asset
-    new Image().src = "/~landscape/img/Spinner.png";
+    new Image().src = '/~landscape/img/Spinner.png';
 
     this.props.subscription.startApp('chat');
 
-
+    if (!this.props.sidebarShown) {
+      this.props.api.local.sidebarToggle();
+    }
   }
 
   componentWillUnmount() {
@@ -76,8 +78,8 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
             .map((e) => {
               return e[0];
             })
-            .includes(associations.chat?.[stat]?.["group-path"]) ||
-          associations.chat?.[stat]?.["group-path"].startsWith("/~/"))
+            .includes(associations.chat?.[stat]?.['group-path']) ||
+          associations.chat?.[stat]?.['group-path'].startsWith('/~/'))
       ) {
         totalUnreads += unread;
       }
@@ -85,10 +87,9 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
 
     if (totalUnreads !== this.totalUnreads) {
       document.title =
-        totalUnreads > 0 ? `OS1 - Chat (${totalUnreads})` : "OS1 - Chat";
+        totalUnreads > 0 ? `OS1 - Chat (${totalUnreads})` : 'OS1 - Chat';
       this.totalUnreads = totalUnreads;
     }
-
 
     const {
       invites,
@@ -110,14 +111,13 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
         associations={associations}
         selectedGroups={selectedGroups}
         contacts={contacts}
-        invites={invites["/chat"] || {}}
+        invites={invites['/chat'] || {}}
         unreads={unreads}
         api={api}
         station={station}
         {...props}
       />
     );
-
 
     return (
       <Switch>
@@ -202,9 +202,9 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
           path="/~chat/join/(~)?/:ship?/:station?"
           render={(props) => {
             let station = `/${props.match.params.ship}/${props.match.params.station}`;
-            const sig = props.match.url.includes("/~/");
+            const sig = props.match.url.includes('/~/');
             if (sig) {
-              station = "/~" + station;
+              station = '/~' + station;
             }
 
             return (
@@ -231,40 +231,40 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
           path="/~chat/(popout)?/room/(~)?/:ship/:station+"
           render={(props) => {
             let station = `/${props.match.params.ship}/${props.match.params.station}`;
-            const sig = props.match.url.includes("/~/");
+            const sig = props.match.url.includes('/~/');
             if (sig) {
-              station = "/~" + station;
+              station = '/~' + station;
             }
             const mailbox = inbox[station] || {
               config: {
                 read: 0,
-                length: 0,
+                length: 0
               },
-              envelopes: [],
+              envelopes: []
             };
 
             let roomContacts = {};
             const associatedGroup =
-              station in associations["chat"] &&
-              "group-path" in associations.chat[station]
-                ? associations.chat[station]["group-path"]
-                : "";
+              station in associations['chat'] &&
+              'group-path' in associations.chat[station]
+                ? associations.chat[station]['group-path']
+                : '';
 
             if (associations.chat[station] && associatedGroup in contacts) {
               roomContacts = contacts[associatedGroup];
             }
 
             const association =
-              station in associations["chat"] ? associations.chat[station] : {};
+              station in associations['chat'] ? associations.chat[station] : {};
 
             const permission =
               station in permissions
                 ? permissions[station]
                 : {
                     who: new Set([]),
-                    kind: "white",
+                    kind: 'white'
                   };
-            const popout = props.match.url.includes("/popout/");
+            const popout = props.match.url.includes('/popout/');
 
             return (
               <Skeleton
@@ -302,19 +302,19 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
           path="/~chat/(popout)?/members/(~)?/:ship/:station+"
           render={(props) => {
             let station = `/${props.match.params.ship}/${props.match.params.station}`;
-            const sig = props.match.url.includes("/~/");
+            const sig = props.match.url.includes('/~/');
             if (sig) {
-              station = "/~" + station;
+              station = '/~' + station;
             }
 
             const permission = permissions[station] || {
-              kind: "",
-              who: new Set([]),
+              kind: '',
+              who: new Set([])
             };
-            const popout = props.match.url.includes("/popout/");
+            const popout = props.match.url.includes('/popout/');
 
             const association =
-              station in associations["chat"] ? associations.chat[station] : {};
+              station in associations['chat'] ? associations.chat[station] : {};
 
             return (
               <Skeleton
@@ -345,20 +345,20 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
           path="/~chat/(popout)?/settings/(~)?/:ship/:station+"
           render={(props) => {
             let station = `/${props.match.params.ship}/${props.match.params.station}`;
-            const sig = props.match.url.includes("/~/");
+            const sig = props.match.url.includes('/~/');
             if (sig) {
-              station = "/~" + station;
+              station = '/~' + station;
             }
 
-            const popout = props.match.url.includes("/popout/");
+            const popout = props.match.url.includes('/popout/');
 
             const permission = permissions[station] || {
-              kind: "",
-              who: new Set([]),
+              kind: '',
+              who: new Set([])
             };
 
             const association =
-              station in associations["chat"] ? associations.chat[station] : {};
+              station in associations['chat'] ? associations.chat[station] : {};
 
             return (
               <Skeleton

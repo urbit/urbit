@@ -30,6 +30,11 @@ export default class PublishApp extends React.Component {
     this.props.subscription.startApp('publish');
 
     this.props.api.publish.fetchNotebooks();
+
+    if (!this.props.sidebarShown) {
+      this.props.api.local.sidebarToggle();
+    }
+
   }
 
   componentWillUnmount() {

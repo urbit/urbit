@@ -32,6 +32,9 @@ export class LinksApp extends Component {
 
     this.props.api.links.getPage('', 0);
     this.props.subscription.startApp('link');
+    if (!this.props.sidebarShown) {
+      this.props.api.local.sidebarToggle();
+    }
   }
 
   componentWillUnmount() {
