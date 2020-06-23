@@ -1001,7 +1001,7 @@
       ~/  %ap-abed
       |=  [dap=term =routes]
       ^+  ap-core
-      (ap-yoke dap (~(got by yokes.state) dap))
+      (ap-yoke dap routes (~(got by yokes.state) dap))
     ::  +ap-hatch: initialize agent state from $egg, after upgrade
     ::
     ++  ap-abut
@@ -1011,18 +1011,19 @@
       ?:  ?=(%| -.res)
         (mean p.res)
       =/  =yoke  egg(old-state `agent`p.res)
-      (ap-yoke dap yoke)
+      =/  =routes  [disclosing=~ attributing=our]
+      (ap-yoke dap routes yoke)
     ::  +ap-yoke: initialize agent state, starting from a $yoke
     ::
     ++  ap-yoke
-      |=  [dap=term =yoke]
+      |=  [dap=term =routes =yoke]
       ^+  ap-core
       =.  stats.yoke
         :+  +(change.stats.yoke)
           (shaz (mix (add dap change.stats.yoke) eny))
         now
       =.  agent-name  dap
-      =.  agent-routes  [disclosing=~ attributing=our]
+      =.  agent-routes  routes
       =.  current-agent  yoke
       =.  agent-duct  hen
       ap-core
