@@ -12,8 +12,6 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <h2o.h>
-#include <picohttpparser.h>
-#include <tls.h>
 
 #include "all.h"
 #include "vere/vere.h"
@@ -110,10 +108,6 @@ static void _http_serv_start_all(u3_httd* htd_u);
 static void _http_form_free(u3_httd* htd_u);
 
 static const c3_i TCP_BACKLOG = 16;
-
-//  XX temporary, add to u3_http_ef_form
-//
-#define PROXY_DOMAIN "arvo.network"
 
 /* _http_close_cb(): uv_close_cb that just free's handle
 */
