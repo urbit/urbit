@@ -114,6 +114,12 @@ jetSpec = [r|
 ++  (box x)  (E %box (K x))
 ++  (unbox x)  (x uni)
 
+++   4  (add 2 2)
+++   8  (mul 2 4)
+++  10  (add 2 8)
+++  48  (add 8 (mul 4 10))
+
+
 ++  snag
   %-  (E E %snag)
   %-  fix
@@ -148,6 +154,28 @@ jetSpec = [r|
   %+  (gte b a)
     <p (lcon a ($ (inc a) b))>
   <u lnil>
+
+++  zing
+  %-  (E %zing)
+  %-  fix
+  |=  ($ r)
+  %+  (cas r)
+    <p (weld (car p) ($ (cdr p)))>
+  <u lnil>
+
+++  ntotloop
+  %-  (E E %ntotloop)
+  %-  fix
+  |=  ($ num list)
+  %+  (iff (zer num))
+    <u list>
+  |=  ign
+  ($ (div num 10) (lcon (add (mod num 10) 48) list))
+
+++  (ntot num)
+  %+  (iff (zer num))
+    <u (lcon 48 lnil)>
+  <u (ntotloop num lnil)>
 
 ++  metlop
   %-  (E E %metlop)
@@ -190,3 +218,5 @@ jetSpec = [r|
 
 -- TODO: There is something wrong with the definition of +rap or one of its
 -- subcomponents, and it is a jet mismatch.
+
+-- 48 is '0'.

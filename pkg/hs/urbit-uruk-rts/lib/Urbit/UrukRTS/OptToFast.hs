@@ -99,12 +99,12 @@ compile arity numRegs = go
 
   kal F.Uni     []     = F.VAL F.VUni
 
-  kal F.Con     [x, y] = con (go x) (go y)
+  kal F.ConC    [x, y] = con (go x) (go y)
   kal F.Car     [x]    = F.CAR (go x)
   kal F.Cdr     [x]    = F.CDR (go x)
 
-  kal F.Lef     [x]    = lef (go x)
-  kal F.Rit     [x]    = rit (go x)
+  kal F.LefC    [x]    = lef (go x)
+  kal F.RitC    [x]    = rit (go x)
 
   kal (F.Nat n) []     = F.VAL (F.VNat n)
   kal (F.Int n) []     = F.VAL (F.VInt n)
@@ -116,6 +116,7 @@ compile arity numRegs = go
   kal F.Fec     [x]    = F.FEC (go x)
   kal F.Zer     [x]    = F.ZER (go x)
   kal F.Eql     [x, y] = F.EQL (go x) (go y)
+
   kal F.Add     [x, y] = F.ADD (go x) (go y)
 
   kal F.Lth     [x, y] = F.LTH (go x) (go y)
@@ -124,7 +125,7 @@ compile arity numRegs = go
   kal F.Not     [x]    = F.NOT (go x)
   kal F.Xor     [x,y]  = F.XOR (go x) (go y)
   kal F.Div     [x,y]  = F.DIV (go x) (go y)
-  kal F.Tra     [x]    = F.TRA (go x)
+  kal F.Trace   [x]    = F.TRA (go x)
   kal F.Mod     [x,y]  = F.MOD (go x) (go y)
   kal F.Rap     [x,y]  = F.RAP (go x) (go y)
   kal F.Gulf    [x,y]  = F.GULF (go x) (go y)
@@ -133,7 +134,7 @@ compile arity numRegs = go
   kal F.Weld    [x,y]  = F.WELD (go x) (go y)
   kal F.Zing    [x]    = F.ZING (go x)
   kal F.Ntot    [x]    = F.NTOT (go x)
-  kal F.LCon    [x,y]  =
+  kal F.LConC   [x,y]  =
     case (go x, go y) of
       (F.VAL xv, F.VAL (F.VLis lv)) ->
         F.VAL $ F.VLis (xv : lv)

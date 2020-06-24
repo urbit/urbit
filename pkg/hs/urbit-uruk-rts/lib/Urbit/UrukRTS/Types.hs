@@ -30,9 +30,9 @@ import Data.Function     ((&))
 import Numeric.Natural   (Natural)
 import Prelude           ((!!))
 
-import qualified GHC.Exts   as GHC.Exts
-import qualified Urbit.Atom as Atom
-
+import qualified GHC.Exts            as GHC.Exts
+import qualified Urbit.Atom          as Atom
+import qualified Urbit.Uruk.Dash.Exp as Exp
 
 -- Useful Types ----------------------------------------------------------------
 
@@ -110,82 +110,109 @@ instance Show Jet where
        '-' -> '_'
        x   -> x
 
+data Match
+  = MS !Exp.SingJet
+ deriving (Eq, Ord, Generic, Hashable, NFData)
+
+
 data Node
   = Ess
   | Kay
   | Enh Int -- Always >= 1
   | Dub
+
+  -- Jut is the current structure for a recognized set of jet calls represented
+  -- as a stack machine(?). This should be introspectable once I get a
+  -- `Val -> ASKEW` function.
   | Jut Jet
+
+  | M Match !Natural ![Node]
+
   | Eye Int
   | Bee Int --  Always >=  1
   | Sea Int --  Always >=  1
   | Sen Int --  Always >=  1
-  | Seq
-  | Fix
   | Nat Nat
   | Int Integer
   | Lis [Val]
   | Bol Bool
-  | Iff
-  | Pak
-  | Zer
-  | Eql
-  | Add
-  | Inc
-  | Dec
-  | Fec
-  | Mul
-  | Sub
-  | Ded
-  | Uni
-  | Lef
-  | Rit
-  | Cas
-  | Let
-  | Con
-  | Car
-  | Cdr
-
-  | Lsh
-  | Lth
-  | Fub
-  | Not
-  | Xor
-  | Div
-  | Tra
-  | Mod
-  | Rap
-  | Zing
-  | Ntot
-
-  | IntPositive
-  | IntNegative
-
-  | IntAbs
-  | IntAdd
-  | IntDiv
-  | IntIsZer
-  | IntIsNeg
-  | IntIsPos
-  | IntLth
-  | IntMul
-  | IntNegate
-  | IntSub
 
   | MkBox
   | Box Val
   | Unbox
-
-  | LCon
-  | LNil
-  | Gulf
-  | Snag
-  | Turn
-  | Weld
-
-  | AddAssoc
-  | FindAssoc
  deriving (Eq, Ord, Generic, Hashable, NFData)
+
+pattern Uni = M (MS Exp.UNI) 1 []
+
+pattern LefC = M (MS Exp.LEF) 3 []
+pattern RitC = M (MS Exp.RIT) 3 []
+
+pattern ConC = M (MS Exp.CON) 3 []
+
+pattern Car = M (MS Exp.CAR) 1 []
+pattern Cdr = M (MS Exp.CDR) 1 []
+
+pattern Ded = M (MS Exp.DED) 1 []
+pattern Add = M (MS Exp.ADD) 2 []
+pattern Mul = M (MS Exp.MUL) 2 []
+pattern Dec = M (MS Exp.DEC) 1 []
+pattern Fec = M (MS Exp.FEC) 1 []
+pattern Inc = M (MS Exp.INC) 1 []
+pattern Eql = M (MS Exp.EQL) 2 []
+pattern Zer = M (MS Exp.ZER) 1 []
+pattern Pak = M (MS Exp.PAK) 1 []
+pattern Seq = M (MS Exp.SEQ) 2 []
+pattern Let = M (MS Exp.LET) 2 []
+pattern Iff = M (MS Exp.IFF) 3 []
+
+pattern Fix = M (MS Exp.FIX) 2 []
+
+pattern Lth = M (MS Exp.LTH) 2 []
+
+pattern Sub = M (MS Exp.SUB) 2 []
+pattern Fub = M (MS Exp.FUB) 2 []
+
+pattern Div = M (MS Exp.DIV) 2 []
+pattern Mod = M (MS Exp.MOD) 2 []
+
+pattern Bex = M (MS Exp.BEX) 1 []
+pattern Lsh = M (MS Exp.LSH) 2 []
+pattern Not = M (MS Exp.NOT) 1 []
+pattern Xor = M (MS Exp.XOR) 2 []
+
+-- pattern Eye
+pattern Cas = M (MS Exp.CAS) 3 []
+
+pattern Trace = M (MS Exp.TRACE) 2 []
+
+pattern LConC = M (MS Exp.LCON) 4 []
+pattern LNil = M (MS Exp.LNIL) 2 []
+
+pattern Gulf = M (MS Exp.GULF) 2 []
+pattern Snag = M (MS Exp.SNAG) 2 []
+pattern Turn = M (MS Exp.TURN) 2 []
+pattern Weld = M (MS Exp.WELD) 2 []
+pattern Zing = M (MS Exp.ZING) 2 []
+
+pattern Rap  = M (MS Exp.RAP) 2 []
+pattern Ntot = M (MS Exp.NTOT) 1 []
+
+pattern AddAssoc = M (MS Exp.ADD_ASSOC) 5 []
+pattern FindAssoc = M (MS Exp.FIND_ASSOC) 3 []
+
+pattern IntPositive = M (MS Exp.INT_POSITIVE) 1 []
+pattern IntNegative = M (MS Exp.INT_NEGATIVE) 1 []
+
+pattern IntAbs = M (MS Exp.INT_ABS) 1 []
+pattern IntAdd = M (MS Exp.INT_ADD) 2 []
+pattern IntDiv = M (MS Exp.INT_DIV) 2 []
+pattern IntIsZer = M (MS Exp.INT_IS_ZER) 1 []
+pattern IntIsNeg = M (MS Exp.INT_IS_NEG) 1 []
+pattern IntIsPos = M (MS Exp.INT_IS_POS) 1 []
+pattern IntLth = M (MS Exp.INT_LTH) 2 []
+pattern IntMul = M (MS Exp.INT_MUL) 2 []
+pattern IntNegate = M (MS Exp.INT_NEGATE) 1 []
+pattern IntSub = M (MS Exp.INT_SUB) 2 []
 
 instance Show Node where
   show = \case
@@ -201,72 +228,18 @@ instance Show Node where
     Bee n       -> "B" <> show n
     Sea n       -> "C" <> show n
     Sen n       -> "S" <> show n
-    Seq         -> "SEQ"
-    Fix         -> "FIX"
     Nat n       -> show n
     Int i       -> show i
     Lis l       -> show l
     Bol True    -> "YES"
     Bol False   -> "NAH"
-    Iff         -> "IFF"
-    Pak         -> "PAK"
-    Zer         -> "ZER"
-    Eql         -> "EQL"
-    Add         -> "ADD"
-    Inc         -> "INC"
-    Dec         -> "DEC"
-    Fec         -> "FEC"
-    Mul         -> "MUL"
-    Sub         -> "SUB"
-    Ded         -> "DED"
-    Uni         -> "UNI"
-    Lef         -> "LEF"
-    Rit         -> "RIT"
-    Cas         -> "CAS"
-    Let         -> "LET"
-    Con         -> "CON"
-    Car         -> "CAR"
-    Cdr         -> "CDR"
-
-    Lsh         -> "LSH"
-    Lth         -> "LTH"
-    Fub         -> "FUB"
-    Not         -> "NOT"
-    Xor         -> "XOR"
-    Div         -> "DIV"
-    Tra         -> "TRA"
-    Mod         -> "MOD"
-    Rap         -> "RAP"
-    Zing        -> "ZING"
-    Ntot        -> "NTOT"
-
-    IntPositive -> "INT_POSITIVE"
-    IntNegative -> "INT_NEGATIVE"
-
-    IntAbs      -> "INT_ABS"
-    IntAdd      -> "INT_ADD"
-    IntDiv      -> "INT_DIV"
-    IntIsZer    -> "INT_IS_ZER"
-    IntIsNeg    -> "INT_IS_NEG"
-    IntIsPos    -> "INT_IS_POS"
-    IntLth      -> "INT_LTH"
-    IntMul      -> "INT_MUL"
-    IntNegate   -> "INT_NEGATE"
-    IntSub      -> "INT_SUB"
 
     MkBox       -> "MKBOX"
     Box v       -> "BOX(" <> show v <> ")"
     Unbox       -> "UNBOX"
 
-    LCon        -> "LCON"
-    LNil        -> "LNIL"
-    Gulf        -> "GULF"
-    Snag        -> "SNAG"
-    Turn        -> "TURN"
-    Weld        -> "WELD"
+    M (MS x) _ _ -> show x
 
-    AddAssoc    -> "ADD_ASSOC"
-    FindAssoc   -> "FIND_ASSOC"
 
 data Fun = Fun
   { fNeed :: !Int
@@ -453,9 +426,9 @@ valFun :: Val -> Fun
 {-# INLINE valFun #-}
 valFun = \case
   VUni     -> Fun 1 Uni mempty
-  VCon h t -> Fun 1 Con (fromList [h, t])
-  VLef l   -> Fun 2 Lef (fromList [l])
-  VRit r   -> Fun 2 Rit (fromList [r])
+  VCon h t -> Fun 1 ConC (fromList [h, t])
+  VLef l   -> Fun 2 LefC (fromList [l])
+  VRit r   -> Fun 2 RitC (fromList [r])
   VNat n   -> Fun 2 (Nat n) mempty
   VInt i   -> Fun 1 (Int i) mempty
   VBol b   -> Fun 2 (Bol b) mempty
@@ -465,78 +438,24 @@ valFun = \case
 
 nodeArity :: Node -> Int
 nodeArity = \case
-  Enh _ -> 2
-  Kay   -> 2
   Ess   -> 3
+  Kay   -> 2
+  Enh _ -> 2
   Dub   -> 6
   Jut j -> jArgs j
   Eye n -> 0+n
   Bee n -> 2+n
   Sea n -> 2+n
   Sen n -> 2+n
-  Seq   -> 2
-  Fix   -> 2
   Nat n -> 2
   Int n -> 1
   Bol b -> 2
-  Iff   -> 3
-  Pak   -> 1
-  Zer   -> 1
-  Eql   -> 2
-  Add   -> 2
-  Inc   -> 1
-  Dec   -> 1
-  Fec   -> 1
-  Mul   -> 2
-  Sub   -> 2
-  Ded   -> 1
-  Uni   -> 1
-  Lef   -> 1 -- Hack to convert to value after first arg, actually 3.
-  Rit   -> 1 -- Hack to convert to value after first arg, actually 3.
-  Cas   -> 3
-  Let   -> 2
-  Con   -> 2 -- Hack to convert to value after two args, actually 3.
-  Car   -> 1
-  Cdr   -> 1
 
-  Lsh   -> 2
-  Lth   -> 2
-  Fub   -> 2
-  Not   -> 1
-  Xor   -> 2
-  Div   -> 2
-  Tra   -> 1
-  Mod   -> 2
-  Rap   -> 2
-
-  Gulf  -> 2
-  LCon  -> 2 -- Hack to convert to value after first arg, actually 4.
-  LNil  -> 2
   Lis []    -> 2
   Lis (_:_) -> 2
-  Snag  -> 2
-  Turn  -> 2
-  Weld  -> 2
-  Zing  -> 1
-  Ntot  -> 1
-
-  IntPositive -> 1
-  IntNegative -> 1
-
-  IntAbs -> 1
-  IntAdd -> 2
-  IntDiv -> 2
-  IntIsZer -> 1
-  IntIsNeg -> 1
-  IntIsPos -> 1
-  IntLth -> 2
-  IntMul -> 2
-  IntNegate -> 1
-  IntSub -> 2
 
   MkBox -> 1
   Box _ -> 1
   Unbox -> 1
 
-  AddAssoc -> 5
-  FindAssoc -> 3
+  (M _ n _) -> fromIntegral n

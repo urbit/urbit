@@ -70,10 +70,24 @@ data SingJet
   | TURN
   | SNAG
   | WELD
+  | ZING
   | RAP
+  | NTOT
+  | INT_POSITIVE
+  | INT_NEGATIVE
+  | INT_ABS
+  | INT_ADD
+  | INT_DIV
+  | INT_IS_ZER
+  | INT_IS_NEG
+  | INT_IS_POS
+  | INT_LTH
+  | INT_MUL
+  | INT_NEGATE
+  | INT_SUB
   | ADD_ASSOC
   | FIND_ASSOC
- deriving (Eq, Ord, Read, Show, Enum, Bounded, Generic)
+ deriving (Eq, Ord, Read, Show, Enum, Hashable, Bounded, Generic)
  deriving anyclass NFData
 
 data DataJet

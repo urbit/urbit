@@ -1,5 +1,5 @@
 {-# LANGUAGE CPP #-}
-{-# OPTIONS_GHC -funbox-strict-fields -Werror #-}
+{-# OPTIONS_GHC -funbox-strict-fields #-}  -- -Werror #-}
 
 {-
     Note that On 64 bit machines, GHC will always use pointer tagging
@@ -135,7 +135,7 @@ instance Uruk Val where
   uBol   = \b -> VBol b
 
   uUni   = mkNode 1 Uni
-  uCon   = mkNode 2 Con -- hack, actually 3
+  uCon   = mkNode 2 ConC -- hack, actually 3
   uSeq   = mkNode 2 Seq
   uCas   = mkNode 3 Cas
   uLet   = mkNode 2 Let
@@ -147,8 +147,8 @@ instance Uruk Val where
   uArity = Just . AriOth . fromIntegral . fNeed . valFun
 
   uGlobal "add"          = Just $ mkNode 2 Add
-  uGlobal "lef"          = Just $ mkNode 1 Lef -- hack, actually 3
-  uGlobal "rit"          = Just $ mkNode 1 Rit -- hack, actually 3
+  uGlobal "lef"          = Just $ mkNode 1 LefC -- hack, actually 3
+  uGlobal "rit"          = Just $ mkNode 1 RitC -- hack, actually 3
   uGlobal "pak"          = Just $ mkNode 1 Pak
   uGlobal "zer"          = Just $ mkNode 1 Zer
   uGlobal "eql"          = Just $ mkNode 2 Eql
@@ -167,7 +167,7 @@ instance Uruk Val where
   uGlobal "not"          = Just $ mkNode 1 Not
   uGlobal "xor"          = Just $ mkNode 2 Xor
   uGlobal "div"          = Just $ mkNode 2 Div
-  uGlobal "trace"        = Just $ mkNode 1 Tra
+  uGlobal "trace"        = Just $ mkNode 1 Trace
   uGlobal "mod"          = Just $ mkNode 2 Mod
 
   uGlobal "let"          = Just $ mkNode 2 Let
@@ -178,7 +178,7 @@ instance Uruk Val where
   uGlobal "int-positive" = Just $ mkNode 1 IntPositive
   uGlobal "int-negative" = Just $ mkNode 1 IntNegative
 
-  uGlobal "int-abs"      = Just $ mkNode 2 IntAbs
+  uGlobal "int-abs"      = Just $ mkNode 1 IntAbs
   uGlobal "int-add"      = Just $ mkNode 2 IntAdd
   uGlobal "int-div"      = Just $ mkNode 2 IntDiv
   uGlobal "int-is-zer"   = Just $ mkNode 1 IntIsZer
@@ -192,7 +192,7 @@ instance Uruk Val where
   uGlobal "box"          = Just $ mkNode 1 MkBox
   uGlobal "unbox"        = Just $ mkNode 2 Unbox
 
-  uGlobal "lcon"         = Just $ mkNode 2 LCon      -- hack, actually 4
+  uGlobal "lcon"         = Just $ mkNode 2 LConC      -- hack, actually 4
   uGlobal "lnil"         = Just $ mkNode 2 (Lis [])
   uGlobal "gulf"         = Just $ mkNode 2 Gulf
   uGlobal "snag"         = Just $ mkNode 2 Snag
@@ -212,6 +212,8 @@ type Bol = Bool
 
 
 -- Raw Uruk (Basically just used for D (jam)) ----------------------------------
+
+{-
 
 data Pri = S | K | E | W
   deriving stock    (Eq, Ord, Show, Generic)
@@ -275,6 +277,37 @@ jam :: Val -> Val
 {-# INLINE jam #-}
 jam = jamRaw . toRaw
 
+-}
+
+--------------------------------------------------------------------------------
+
+{-
+
+  Step 1 for building a toASKEW is to actually change Node so that it is
+  separated into SingJets and DataJets like in the JetEval implementation, like
+  in 8f1e6545329cda4bb6230111b9f1fcf1dec230f1.
+
+-}
+
+data ASKEW = S | K | E | W | A ASKEW ASKEW
+  deriving stock    (Eq, Ord, Show, Generic)
+
+
+enhCountToASKEW :: Int -> ASKEW
+enhCountToASKEW 0 = error "0 arguments is impossible"
+enhCountToASKEW 1 = E
+enhCountToASKEW n = A (enhCountToASKEW (n - 1)) E
+
+toASKEW :: Node -> ASKEW
+toASKEW = \case
+  Ess -> S
+  Kay -> K
+  (Enh e) -> enhCountToASKEW e
+  Dub -> W
+  Jut Jet{..} -> error "TODO: Figure out `Val -> ASKEW`"  -- A (enhCountToASKEW jArgs) S
+  --
+  _ -> error "TODO: The rest."
+
 --------------------------------------------------------------------------------
 
 arrayDrop :: Int -> Int -> CloN -> IO CloN
@@ -308,7 +341,6 @@ jetRegister args name body = do
 
   pure (VFun (Fun args (Jut jet) mempty))
 
-
 {-
   TODO Need to handle TypeError exceptions here as well.
 -}
@@ -338,7 +370,7 @@ reduce !no !xs = do
     Not       -> dNot x
     Xor       -> dXor x y
     Div       -> dDiv x y
-    Tra       -> dTra x
+    Trace     -> dTra x
     Mod       -> dMod x y
     Rap       -> dRap x y
     Zing      -> dZing x
@@ -371,9 +403,9 @@ reduce !no !xs = do
     Bol True  -> pure x
     Bol False -> pure y
     Eql       -> eql x y
-    Lef       -> pure (VLef x)
-    Rit       -> pure (VRit x)
-    Con       -> pure (VCon x y)
+    LefC      -> pure (VLef x)
+    RitC      -> pure (VRit x)
+    ConC      -> pure (VCon x y)
     Car       -> car x
     Cdr       -> cdr x
     Cas       -> dCas x y z
@@ -381,7 +413,7 @@ reduce !no !xs = do
     Nat n     -> dNat n x y
     Int i     -> dInt i x
 
-    LCon      -> dLCon x y
+    LConC     -> dLCon x y
     LNil      -> pure (VLis [])
     Gulf      -> dGulf x y
     Snag      -> dSnag x y
@@ -423,6 +455,8 @@ reduce !no !xs = do
     Iff   -> dIff x y z
 
     Jut j -> execJetN j xs
+
+    (M _ _ _) -> error "todo: finish m"
 
   -- putStrLn ("  in: ")
   -- putStrLn (indent (pack (ppShow fun)))
@@ -1084,7 +1118,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     BOX x           -> VBox <$> go x
     UNBOX x         -> join (dUnbox <$> go x)
 
-    SUB  x y        -> join (sub <$> go x <*> go y)
+    SUB x y         -> join (sub <$> go x <*> go y)
     ZER x           -> join (zer <$> go x)
     EQL x y         -> join (eql <$> go x <*> go y)
     CAR x           -> join (car <$> go x)
