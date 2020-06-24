@@ -557,6 +557,7 @@ static u3j_hood _141_pen__ut_ho[] = {
   { "fine",   49086 },
   { "fire",       4 },
   { "fish",    6006 },
+  { "fond",   12283 },
   { "fund",    6014 },
   //  XX +funk is not part of +ut, and this hook appears to be unused
   //  remove from here and the +ut hint
@@ -572,6 +573,8 @@ static u3j_hood _141_pen__ut_ho[] = {
   { "mull",   24020 },
   { "nest",      92 },
   { "peel",    1526 },
+  { "play",    3006 },
+  { "peek",    1532 },
   { "repo",      22 },
   { "rest",    6102 },
   { "tack",    6007 },
