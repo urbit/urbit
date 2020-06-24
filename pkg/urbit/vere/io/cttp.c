@@ -62,6 +62,7 @@
   typedef struct _u3_cttp {
     u3_auto          car_u;             //  driver
     u3_creq*         ceq_u;             //  request list
+    uv_async_t       nop_u;             //  unused handle (async close)
     h2o_timeout_t    tim_u;             //  request timeout
     h2o_http1client_ctx_t               //
                      ctx_u;             //  h2o client ctx
@@ -1102,12 +1103,27 @@ _cttp_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
   return ret_o;
 }
 
+/* _cttp_io_exit_cb(): free cttp.
+*/
+static void
+_cttp_io_exit_cb(uv_handle_t* han_u)
+{
+  u3_cttp* ctp_u = han_u->data;
+
+  SSL_CTX_free(ctp_u->tls_u);
+  c3_free(ctp_u);
+}
+
 /* _cttp_io_exit(): shut down cttp.
 */
 static void
 _cttp_io_exit(u3_auto* car_u)
 {
   u3_cttp* ctp_u = (u3_cttp*)car_u;
+
+  //  close unused handle to free [ctp_u] after h2o is done
+  //
+  uv_close((uv_handle_t*)&ctp_u->nop_u, _cttp_io_exit_cb);
 
   //  cancel requests
   //
@@ -1121,8 +1137,6 @@ _cttp_io_exit(u3_auto* car_u)
   }
 
   h2o_timeout_dispose(u3L, &ctp_u->tim_u);
-  SSL_CTX_free(ctp_u->tls_u);
-  c3_free(ctp_u);
 }
 
 /* u3_cttp_io_init(): initialize http client I/O.
@@ -1135,6 +1149,11 @@ u3_cttp_io_init(u3_pier* pir_u)
   //  link to event loop
   //
   ctp_u->ctx_u.loop = u3L;
+
+  //  unused handle for async close
+  //
+  uv_async_init(u3L, &ctp_u->nop_u, 0);
+  ctp_u->nop_u.data = ctp_u;
 
   //  link to initialized request timeout
   //
