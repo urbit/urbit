@@ -64,8 +64,7 @@ _behn_ef_doze(u3_behn* teh_u, u3_noun wen)
     teh_u->alm = c3n;
   }
 
-  if ( (u3_nul != wen) &&
-       (c3y == u3du(wen)) &&
+  if ( (c3y == u3du(wen)) &&
        (c3y == u3ud(u3t(wen))) )
   {
     struct timeval tim_tv;
@@ -76,6 +75,8 @@ _behn_ef_doze(u3_behn* teh_u, u3_noun wen)
 
     teh_u->alm = c3y;
     uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
+  } else if (u3_nul != wen) {
+    u3m_p("behn: invalid doze", wen);
   }
 
   u3z(wen);
