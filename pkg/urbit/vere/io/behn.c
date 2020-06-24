@@ -16,7 +16,7 @@
   typedef struct _u3_behn {
     u3_auto    car_u;                   //  driver
     uv_timer_t tim_u;                   //  behn timer
-    c3_o       alm;                     //  alarm
+    c3_o       alm_o;                   //  alarm
   } u3_behn;
 
 /* _behn_time_cb(): timer callback.
@@ -25,7 +25,7 @@ static void
 _behn_time_cb(uv_timer_t* tim_u)
 {
   u3_behn* teh_u = tim_u->data;
-  teh_u->alm = c3n;
+  teh_u->alm_o = c3n;
 
   //  start another timer for 10 minutes
   //
@@ -36,7 +36,7 @@ _behn_time_cb(uv_timer_t* tim_u)
   //
   {
     c3_d gap_d = 10 * 60 * 1000;
-    teh_u->alm = c3y;
+    teh_u->alm_o = c3y;
     uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
   }
 
@@ -59,9 +59,9 @@ _behn_ef_doze(u3_behn* teh_u, u3_noun wen)
     teh_u->car_u.liv_o = c3y;
   }
 
-  if ( c3y == teh_u->alm ) {
+  if ( c3y == teh_u->alm_o ) {
     uv_timer_stop(&teh_u->tim_u);
-    teh_u->alm = c3n;
+    teh_u->alm_o = c3n;
   }
 
   if ( (u3_nul != wen) &&
@@ -74,7 +74,7 @@ _behn_ef_doze(u3_behn* teh_u, u3_noun wen)
     u3_noun now = u3_time_in_tv(&tim_tv);
     c3_d gap_d = u3_time_gap_ms(now, u3k(u3t(wen)));
 
-    teh_u->alm = c3y;
+    teh_u->alm_o = c3y;
     uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
   }
 
@@ -143,7 +143,7 @@ u3_auto*
 u3_behn_io_init(u3_pier* pir_u)
 {
   u3_behn* teh_u = c3_calloc(sizeof(*teh_u));
-  teh_u->alm = c3n;
+  teh_u->alm_o = c3n;
 
   uv_timer_init(u3L, &teh_u->tim_u);
   teh_u->tim_u.data = teh_u;
