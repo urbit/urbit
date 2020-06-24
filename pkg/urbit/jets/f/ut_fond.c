@@ -32,3 +32,15 @@ u3wfu_fond(u3_noun cor)
   }
 }
 
+#define tree uint32_t;
+
+struct atom {
+  uint32_t  len;
+  uint32_t  mug;
+  uint32_t* buf;
+}
+
+struct cell {
+  tree hed;
+  tree tal;
+}

@@ -15,6 +15,10 @@
 
 #include "vere/vere.h"
 
+//  fez_o: fresh? yes until %into has been delivered to arv
+//
+static c3_o fez_o = c3y;
+
 c3_w u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
 {
   errno = 0;
@@ -541,7 +545,7 @@ _unix_commit_mount_point(u3_pier *pir_u, u3_noun mon)
 {
   pir_u->unx_u->dyr = c3y;
   u3z(mon);
-  u3_unix_ef_look(pir_u, c3n);
+  u3_unix_ef_look(pir_u, fez_o);
   return;
 }
 
@@ -885,6 +889,7 @@ _unix_update_mount(u3_pier *pir_u, u3_umon* mon_u, u3_noun all)
       can = u3kb_weld(_unix_update_node(pir_u, nod_u), can);
     }
 
+    fez_o = c3n;
     u3_pier_work(pir_u,
              u3nq(u3_blip, c3__sync, u3k(u3A->sen), u3_nul),
              u3nq(c3__into, u3i_string(mon_u->nam_c), all, can));

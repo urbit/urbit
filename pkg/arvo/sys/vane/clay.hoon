@@ -333,52 +333,6 @@
 ++  sort-by-head
   |=([a=(pair path *) b=(pair path *)] (aor p.a p.b))
 ::
-::  By convention: paf == (weld pax pat)
-::
-++  mode-to-commit
-  |=  [hat=(map path lobe) pax=path all=? mod=mode]
-  ^-  [deletes=(set path) changes=(map path cage)]
-  =/  deletes
-    %-  silt
-    %+  turn
-      ^-  (list path)
-      %+  weld
-        ^-  (list path)
-        %+  murn  mod
-        |=  [pat=path mim=(unit mime)]
-        ^-  (unit path)
-        ?^  mim
-          ~
-        `pat
-      ^-  (list path)
-      ?.  all
-        ~
-      =+  mad=(malt mod)
-      =+  len=(lent pax)
-      =/  descendants=(list path)
-        %+  turn
-          %+  skim  ~(tap by hat)
-          |=  [paf=path lob=lobe]
-          =(pax (scag len paf))
-        |=  [paf=path lob=lobe]
-        (slag len paf)
-      %+  skim
-        descendants
-      |=  pat=path
-      (~(has by mad) pat)
-    |=  pat=path
-    (weld pax pat)
-  ::
-  =/  changes
-    %-  malt
-    %+  murn  mod
-    |=  [pat=path mim=(unit mime)]
-    ^-  (unit [path cage])
-    ?~  mim
-      ~
-    `[(weld pax pat) %mime !>(u.mim)]
-  ::
-  [deletes changes]
 --  =>
 ~%  %clay  +  ~
 |%
@@ -1305,23 +1259,52 @@
   ++  into
     |=  [pax=path all=? mod=(list [pax=path mim=(unit mime)])]
     ^+  ..park
-    ::  filter out unchanged, cached %mime values
-    ::
-    =.  mod
-      %+  skip  mod
-      |=  [pax=path mim=(unit mime)]
-      ?~  mim
-        |
-      ?~  mum=(~(get by mim.dom) pax)
-        |
-      ::  TODO: check mimetype
-      ::
-      =(q.u.mim q.u.mum)
     =/  =yaki
       ?:  =(0 let.dom)
         *yaki
       (~(got by hut.ran) (~(got by hit.dom) let.dom))
     (info (mode-to-commit q.yaki pax all mod))
+  ::
+  ::  By convention: paf == (weld pax pat)
+  ::
+  ++  mode-to-commit
+    |=  [hat=(map path lobe) pax=path all=? mod=mode]
+    |^  ^-  [deletes=(set path) changes=(map path cage)]
+    ::
+    =/  len=@  (lent pax)
+    ::
+    ?:  all
+      =/  deletes=(set path)  ~(key by hat)
+      =|  changes=(map path cage)
+      |-  ^+  [deletes changes]
+      ?~  mod  [deletes changes]
+      =/  [pux=path mim=(unit mime)]  i.mod
+      =/  sam=?  (cached-in-mime pux mim)
+      =/  [pix=path pox=path]  [(scag len pux) (slag len pux)]
+      %_  $
+        mod      t.mod
+        deletes  (~(del in deletes) pux)
+        changes  ?:(sam changes (~(put by changes) pux mime+!>((need mim))))
+      ==
+    ::
+    =|  deletes=(set path)
+    =|  changes=(map path cage)
+    |-  ^+  [deletes changes]
+    ?~  mod  [deletes changes]
+    =/  [pux=path mim=(unit mime)]  i.mod
+    ?:  (cached-in-mime pux mim)
+      $(mod t.mod)
+    ?~  mim
+      $(mod t.mod, deletes (~(put in deletes) pux))
+    $(mod t.mod, changes (~(put by changes) pux mime+!>((need mim))))
+    ::
+    ++  cached-in-mime
+      |=  [pux=path mim=(unit mime)]
+      ^-  ?
+      ?~  mim  |
+      ?~  mum=(~(get by mim.dom) pux)  |
+      =(q.u.mim q.u.mum)
+    --
   ::
   ::  Plumbing commit
   ::
