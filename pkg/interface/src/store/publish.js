@@ -21,6 +21,7 @@ export default class PublishStore extends BaseStore {
     this.responseReducer = new PublishResponseReducer();
     this.permissionReducer = new PermissionReducer();
     this.metadataReducer = new MetadataReducer();
+    //this.perf = performance.now();
   }
 
   initialState() {
@@ -46,6 +47,10 @@ export default class PublishStore extends BaseStore {
     this.metadataReducer.reduce(data, this.state);
     this.inviteReducer.reduce(data, this.state);
     this.responseReducer.reduce(data, this.state);
+
+    /*let perf = performance.now();
+    console.log(perf - this.perf);
+    this.perf = perf;*/
   }
 }
 
