@@ -383,6 +383,7 @@ export class ContactCard extends Component {
       props.api.contacts
         .share(`~${props.ship}`, props.path, `~${window.ship}`, contact)
         .then(() => {
+          this.setState({ awaiting: false });
           props.history.push(`/~groups/view${props.path}/${window.ship}`);
         });
     });
