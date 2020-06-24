@@ -49,24 +49,6 @@ export class PostInput extends Component {
 
     this.editor = null;
 
-    // perf testing:
-    /* let closure = () => {
-      let x = 0;
-      for (var i = 0; i < 30; i++) {
-        x++;
-        props.api.chat.message(
-          props.resource,
-          `~${window.ship}`,
-          Date.now(),
-          {
-            text: `${x}`
-          }
-        );
-      }
-      setTimeout(closure, 1000);
-    };
-    this.closure = closure.bind(this);*/
-
     moment.updateLocale('en', {
         relativeTime : {
             past: function(input) {
@@ -158,8 +140,22 @@ export class PostInput extends Component {
     let post = props.api.createPost([message], props.parentIndex);
     props.api.addPost(props.resource.ship, props.resource.name, post);
 
-    // perf:
-    // setTimeout(this.closure, 2000);
+    // perf testing:
+    /*let closure = () => {
+      let x = 0;
+      for (var i = 0; i < 30; i++) {
+        x++;
+        props.api.addPost(
+          props.resource.ship,
+          props.resource.name,
+          props.api.createPost([{
+            text: `${i} - ${Date.now()}`
+          }])
+        );
+      }
+      setTimeout(closure, 1000);
+    };
+    setTimeout(closure, 2000);*/
 
     this.editor.setValue('');
   }

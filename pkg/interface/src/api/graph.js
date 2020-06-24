@@ -3,7 +3,6 @@ import BaseApi from './base';
 
 class PrivateHelper extends BaseApi {
   graphAction(data) {
-    console.log(data);
     this.action('graph-view', 'json', data);
   }
 

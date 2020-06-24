@@ -51,7 +51,6 @@ export class Message extends Component {
 
   renderContent() {
     const { props } = this;
-    console.log(props.msg);
     const content = props.msg.contents[0];
     const font = !!props.isParent ? "f6" : "f7";
 
