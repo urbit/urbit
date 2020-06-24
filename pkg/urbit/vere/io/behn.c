@@ -17,6 +17,7 @@
     u3_auto    car_u;                   //  driver
     uv_timer_t tim_u;                   //  behn timer
     c3_o       alm_o;                   //  alarm
+    c3_o       see_o;                   //  can scry
   } u3_behn;
 
 static void _behn_scry_cb(void* vod_p, u3_noun nun);
@@ -36,11 +37,15 @@ _behn_time_cb(uv_timer_t* tim_u)
   //  to fail, we can't proceed with the timers, but if it was a
   //  transient error, this will get us past it.
   //
-  {
+  if (c3y == teh_u->see_o) {
     u3_noun pax = u3i_trel(u3i_string("timers"), u3i_string("next"), u3_nul);
     u3_lord_peek_last(teh_u->car_u.pir_u->god_u, u3_nul,
                       c3_s2('b', 'x'), u3_nul, pax,
                       teh_u, _behn_scry_cb);
+  }
+  else {
+    //  if scry is known to not work, short-circuit
+    _behn_scry_cb(teh_u, u3_nul);
   }
 
   // send timer event
@@ -97,8 +102,9 @@ _behn_scry_cb(void* vod_p, u3_noun nun)
     //  timer already set while we were scrying, no-op
   }
   else if (u3_none == tim) {
-    //  fall back to a timer for 10 minutes
+    //  remember scry doesn't work, fall back to a timer for 10 minutes
     //
+    teh_u->see_o = c3n;
     c3_d gap_d = 10 * 60 * 1000;
     teh_u->alm_o = c3y;
     uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
@@ -171,6 +177,7 @@ u3_behn_io_init(u3_pier* pir_u)
 {
   u3_behn* teh_u = c3_calloc(sizeof(*teh_u));
   teh_u->alm_o = c3n;
+  teh_u->see_o = c3y;
 
   uv_timer_init(u3L, &teh_u->tim_u);
   teh_u->tim_u.data = teh_u;
