@@ -782,7 +782,7 @@ _pier_on_disk_read_bail(void* vod_p, c3_d eve_d)
   c3_assert( u3_psat_play == pir_u->sat_e );
 
   //  XX s/b play_bail_cb
-  //  
+  //
   fprintf(stderr, "pier: disk read bail\r\n");
   u3_term_stop_spinner();
   u3_pier_bail(pir_u);
@@ -935,6 +935,47 @@ _pier_on_lord_bail(void* vod_p)
   u3_pier_bail(pir_u);
 }
 
+/* _pier_on_scry_done(): scry callback.
+*/
+static void
+_pier_on_scry_done(void* vod_p, u3_noun nun)
+{
+  u3_pier* pir_u = vod_p;
+  u3_weak res = u3r_at(7, nun);
+
+  if (u3_none == res) {
+    u3l_log("pier: scry failed\n");
+  }
+  else {
+    u3l_log("pier: scry succeeded\n");
+
+    u3_atom jam = u3qe_jam(res);
+    c3_w siz_w = u3r_met(3, jam);
+    c3_y* dat_y = c3_malloc(siz_w);
+    u3r_bytes(0, siz_w, dat_y, jam);
+
+    c3_c* nam_c = u3_Host.ops_u.puk_c;
+    if (!nam_c) {
+      nam_c = "scry";
+    }
+    c3_c fil_c[2048];
+    snprintf(fil_c, 2048, "%s/.urb/put/%s.jam", pir_u->pax_c, nam_c);
+    FILE* fil_u = fopen(fil_c, "w");
+    fwrite(dat_y, 1, siz_w, fil_u);
+
+    u3l_log("pier: scry in .urb/put/%s.jam\n", nam_c);
+    fclose(fil_u);
+    c3_free(dat_y);
+
+    u3z(jam);
+  }
+
+  u3l_log("pier: exit");
+  u3_pier_exit(pir_u);
+
+  u3z(nun);
+}
+
 /* _pier_on_lord_live(): worker is ready.
 */
 static void
@@ -965,7 +1006,26 @@ _pier_on_lord_live(void* vod_p)
     c3_assert( u3_psat_init == pir_u->sat_e );
     c3_assert( log_u->sen_d == log_u->dun_d );
 
-    if ( god_u->eve_d < log_u->dun_d ) {
+    if (u3_Host.ops_u.pek_c) {
+      u3_noun pex = u3do("stab", u3i_string(u3_Host.ops_u.pek_c));
+      u3_noun car;
+      u3_noun dek;
+      u3_noun pax;
+      if ( c3n == u3r_trel(pex, &car, &dek, &pax)
+        || c3n == u3a_is_cat(car) )
+      {
+        u3m_p("pier: invalid scry", pex);
+        _pier_on_scry_done(pir_u, c3__null);
+      } else {
+        //  run the requested scry, jam to disk, then exit
+        //
+        u3l_log("pier: scry\n");
+        u3_lord_peek_last(god_u, u3_nul, u3k(car), u3k(dek), u3k(pax),
+                          pir_u, _pier_on_scry_done);
+      }
+      u3z(pex);
+    }
+    else if ( god_u->eve_d < log_u->dun_d ) {
       c3_d eve_d;
 
       //  XX revisit
@@ -1190,7 +1250,7 @@ _pier_boot_make(u3_noun who, u3_noun ven, u3_noun pil)
 
     u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
     u3_noun cad = u3nt(c3__boot, u3_Host.ops_u.lit, ven); // transfer
-    
+
     bot_u.use = u3nc(u3nc(wir, cad), bot_u.use);
   }
 
@@ -1410,7 +1470,7 @@ static void
 _pier_exit(u3_pier* pir_u)
 {
   c3_assert( u3_psat_done == pir_u->sat_e );
-  
+
   if ( pir_u->log_u ) {
     u3_disk_exit(pir_u->log_u);
     pir_u->log_u = 0;
