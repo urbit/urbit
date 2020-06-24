@@ -55,7 +55,7 @@ export class EditPost extends Component {
       }
     };
     this.setState({ awaiting: true });
-    this.props.api.publishAction(editNote).then(() => {
+    this.props.api.publish.publishAction(editNote).then(() => {
       const editIndex = props.location.pathname.indexOf('/edit');
       const noteHref = props.location.pathname.slice(0, editIndex);
       this.setState({ awaiting: false });

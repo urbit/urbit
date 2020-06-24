@@ -15,7 +15,7 @@ export class SidebarSwitcher extends Component {
         <a
           className='pointer flex-shrink-0'
           onClick={() => {
-            this.props.api.sidebarToggle();
+            this.props.api.local.sidebarToggle();
           }}
         >
           <img

@@ -3,12 +3,12 @@ import React, { Component } from 'react';
 export class SidebarInvite extends Component {
   onAccept() {
     const { props } = this;
-    props.api.invite.accept(props.uid);
+    props.api.invite.accept('/contacts', props.uid);
     props.history.push(`/~groups${props.invite.path}`);
   }
 
   onDecline() {
-    this.props.api.invite.decline(this.props.uid);
+    this.props.api.invite.decline('/contacts', this.props.uid);
   }
 
   render() {
