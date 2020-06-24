@@ -19,6 +19,8 @@
     c3_o       alm;                     //  alarm
   } u3_behn;
 
+static void _behn_scry_cb(void* vod_p, u3_noun nun);
+
 /* _behn_time_cb(): timer callback.
 */
 static void
@@ -27,7 +29,7 @@ _behn_time_cb(uv_timer_t* tim_u)
   u3_behn* teh_u = tim_u->data;
   teh_u->alm = c3n;
 
-  //  start another timer for 10 minutes
+  //  take initiative to start the next timer, just in case
   //
   //  This is a backstop to deal with the case where a %doze is not
   //  properly sent, for example after a crash.  If the timer continues
@@ -35,9 +37,10 @@ _behn_time_cb(uv_timer_t* tim_u)
   //  transient error, this will get us past it.
   //
   {
-    c3_d gap_d = 10 * 60 * 1000;
-    teh_u->alm = c3y;
-    uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
+    u3_noun pax = u3i_trel(u3i_string("timers"), u3i_string("next"), u3_nul);
+    u3_lord_peek_last(teh_u->car_u.pir_u->god_u, u3_nul,
+                      c3_s2('b', 'x'), u3_nul, pax,
+                      teh_u, _behn_scry_cb);
   }
 
   // send timer event
@@ -80,6 +83,29 @@ _behn_ef_doze(u3_behn* teh_u, u3_noun wen)
   }
 
   u3z(wen);
+}
+
+/* _behn_scry_cb(): next timer scry result callback.
+*/
+static void
+_behn_scry_cb(void* vod_p, u3_noun nun)
+{
+  u3_behn* teh_u = vod_p;
+  u3_weak  tim   = u3r_at(7, nun);
+
+  if (c3y == teh_u->alm) {
+    //  timer already set while we were scrying, no-op
+  }
+  else if (u3_none == tim) {
+    //  fall back to a timer for 10 minutes
+    //
+    c3_d gap_d = 10 * 60 * 1000;
+    teh_u->alm = c3y;
+    uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
+  } else {
+    _behn_ef_doze(teh_u, u3k(tim));
+  }
+  u3z(nun);
 }
 
 /* _behn_io_talk(): notify %behn that we're live
