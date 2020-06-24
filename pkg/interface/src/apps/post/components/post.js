@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Link } from 'react-router-dom';
 
-import { Message } from './lib/message';
+import { Post } from './lib/post';
 import { PostInput } from './lib/post-input';
 import { PostList } from './lib/post-list';
 import { deSig } from '../../../lib/util';
@@ -38,7 +38,7 @@ export class PostScreen extends Component {
           api={props.api}
           resource={props.resource}
           owner={deSig(props.match.params.ship)}
-          placeholder="Message..."
+          placeholder="Post..."
         />
         <PostList
           api={props.api}

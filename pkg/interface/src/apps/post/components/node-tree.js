@@ -4,7 +4,8 @@ import moment from 'moment';
 
 import { Link } from 'react-router-dom';
 
-import { Message } from './lib/message';
+import { PostList } from './lib/post-list';
+import { Post } from './lib/post';
 import { PostInput } from './lib/post-input';
 import { deSig } from '../../../lib/util';
 
@@ -28,9 +29,7 @@ export class NodeTreeScreen extends Component {
 
   parentPost() {
     const { props } = this;
-
     const node = props.node;
-    if (!node) { return (<div></div>); }
 
     let prevIndex = node.post.index.split('/');
     prevIndex.pop();
@@ -48,44 +47,11 @@ export class NodeTreeScreen extends Component {
             ⟵
           </Link>
         </span>
-        <Message
+        <Post
           isParent={true}
           key={node.post.index}
           msg={node.post}
         />
-      </div>
-    );
-  }
-
-  postWindow() {
-    const { props } = this;
-
-    let graph = !!props.node && 'children' in props.node ?
-      props.node.children : new Map();
-    let messages = Array.from(graph).reverse();
-
-    const messageElements = messages.map((msg, i) => {
-      let index = msg[0];
-      let node = msg[1];
-      let post = node.post;
-
-      return (
-        <Message
-          key={post.index}
-          resource={props.resource}
-          index={post.index}
-          msg={post}
-          history={props.history}
-        />
-      );
-    });
-
-    return (
-      <div
-        className="overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex flex-column relative"
-        style={{ height: '100%', resize: 'vertical' }}
-      >
-        {messageElements}
       </div>
     );
   }
@@ -109,38 +75,36 @@ export class NodeTreeScreen extends Component {
   render() {
     const { props } = this;
 
-    let title = props.resource.name;
-
     return (
-      <div
-        key={props.resource.name}
-        className="h-100 w-100 overflow-hidden flex flex-column relative"
-      >
-        <div
-          className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
-          style={{ height: '1rem' }}
-        >
+      <div key={props.resource.name}
+           className="h-100 w-100 overflow-hidden flex flex-column relative">
+        <div className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
+             style={{ height: '1rem' }}>
           <Link to="/~post/">{'⟵ All Graphs'}</Link>
         </div>
         <div
-          className={'pl4 pt2 bb b--gray4 b--gray1-d bg-gray0-d flex relative' +
-          'overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0'}
-          style={{ height: 48 }}
-        >
+          className={
+            'pl4 pt2 bb b--gray4 b--gray1-d bg-gray0-d' +
+            'flex relative flex-shrink-0' +
+            'overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl' 
+          }
+          style={{ height: 48 }}>
           <Link to={`/~post/room/${props.resource.ship}/${props.resource.name}`}
-          className="pt2 white-d"
-          >
-            <h2
-              className={'dib f9 fw4 lh-solid v-top '}
-              style={{ width: 'max-content' }}
-            >
-              {title}
+                className="pt2 white-d">
+            <h2 className={'dib f9 fw4 lh-solid v-top '}
+                style={{ width: 'max-content' }}>
+              {props.resource.name}
             </h2>
           </Link>
         </div>
         {this.parentPost()}
         {this.replyModal()}
-        {this.postWindow()}
+        <PostList
+          api={props.api}
+          graph={props.node.children}
+          history={props.history}
+          resource={props.resource}
+        />
       </div>
     );
   }

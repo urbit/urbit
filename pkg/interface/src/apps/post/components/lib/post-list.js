@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Message } from './message';
+import { Post } from './post';
 
 
 const PAGE_SIZE = 50;
@@ -67,7 +67,7 @@ export class PostList extends Component {
             let post = node[1].post;
 
             return (
-              <Message
+              <Post
                 key={post.index}
                 msg={post}
                 resource={props.resource}
@@ -77,7 +77,7 @@ export class PostList extends Component {
             );
           })
         }
-        { ((state.page * PAGE_SIZE) < length) ?
+        { (PAGE_SIZE * (state.page + 1) < length) ?
           (
             <button onClick={this.nextPage.bind(this)}>
               Load Old

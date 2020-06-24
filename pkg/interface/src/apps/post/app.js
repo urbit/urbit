@@ -51,6 +51,10 @@ export default class PostApp extends React.Component {
   render() {
     const { state, props } = this;
 
+    if (!this.api || !this.subscription) {
+      return <div></div>;
+    }
+
     const renderChannelSidebar = (props, resource) => (
       <Sidebar
         keys={state.keys}
@@ -142,7 +146,10 @@ export default class PostApp extends React.Component {
                 return parseInt(ind, 10);
               });
             let graph = state.graphs[resource] || new Map();
-            let node = {};
+            let node = {
+              post: this.api.createPost([]),
+              children: new Map()
+            };
 
             while (index.length > 0) {
               if (!node) {
@@ -153,6 +160,13 @@ export default class PostApp extends React.Component {
               graph = (!!node && 'children' in node) ?
                 node.children : new Map();
               index = index.slice(1);
+            }
+
+            if (!node) {
+              node = {
+                post: this.api.createPost([]),
+                children: new Map()
+              };
             }
 
             return (
