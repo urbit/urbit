@@ -24,7 +24,9 @@
   $%  [%0 state-0]
       [%1 state-1]
       [%2 state-2]
+      [%3 state-2]
   ==
++$  state-3  state-1
 +$  state-2  state-1
 +$  state-1
   $:  listening=(set app-path)
@@ -62,7 +64,7 @@
 +$  card  card:agent:gall
 --
 ::
-=|  [%2 state-2]
+=|  [%3 state-3]
 =*  state  -
 ::
 %-  agent:dbug
@@ -87,7 +89,13 @@
       !<(versioned-state vase)
     |-
     ?-  -.old
-      %2  [~ this(state old)]
+      %3  [~ this(state old)]
+    ::
+        %2
+        :_  this(state [%3 +.old])
+        :~  [%pass /groups %agent [our.bowl %group-store] %leave ~]
+             watch-groups:do
+        ==
     ::
         %1
       ::  the upgrade from 0 left out local-only collections.

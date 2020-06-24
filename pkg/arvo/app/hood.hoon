@@ -2,7 +2,7 @@
 /+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
 |%
 +$  state
-  $:  %7
+  $:  %8
       drum=state:drum
       helm=state:helm
       kiln=state:kiln

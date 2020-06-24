@@ -284,10 +284,13 @@
     (send-invite group-path app-path.act ship)
   ::
       %join
-    ::  joining unmanaged chat if we don't have the group already
     =/  group-path
       (maybe-group-from-chat app-path.act)
-    ?^  group-path
+    =/  group
+      ?~  group-path
+        ~
+      (scry-group-path:grp u.group-path)
+    ?:  &(?=(^ group) =(hidden.u.group %.n))
       ~[(chat-hook-poke %add-synced ship.act app-path.act ask-history.act)]
     =/  rid=resource
       (de-path:resource ship+app-path.act)

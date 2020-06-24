@@ -1,4 +1,5 @@
 /-  *resource
+::
 ^?
 |%
 ::  $groups: a mapping from group-ids to groups

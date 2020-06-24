@@ -21,24 +21,36 @@
 ::  /app-name/%app-name                            associations for app
 ::  /group/%group-path                             associations for group
 ::
+/-  *metadata-store
 /+  *metadata-json, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
 ::
-+$  versioned-state
-  $%  state-zero
-  ==
 ::
-+$  state-zero
-  $:  %0
-      =associations
++$  state-base
+  $:  =associations
       group-indices=(jug group-path md-resource)
       app-indices=(jug app-name [group-path app-path])
       resource-indices=(jug md-resource group-path)
   ==
+::
++$  state-zero
+  $:  %0
+      state-base
+  ==
+::
++$  state-one
+  $:  %1
+      state-base
+  ==
+::
++$  versioned-state
+  $%  state-zero
+      state-one
+  ==
 --
 ::
-=|  state-zero
+=|  state-one
 =*  state  -
 %+  verb  |
 %-  agent:dbug
@@ -53,8 +65,88 @@
   ++  on-init  on-init:def
   ++  on-save  !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
+    |=  =vase
+    ^-  (quip card _this)
+    =/  old
+      !<(versioned-state vase)
+    ?:  ?=(%1 -.old)
+      `this(state old)
+    |^
+    =/  new-state=state-one
+      %*  .  *state-one
+        associations      (migrate-associations associations.old)
+        group-indices     (migrate-group-indices group-indices.old)
+        app-indices       (migrate-app-indices app-indices.old)
+        resource-indices  (migrate-resource-indices resource-indices.old)
+      ==
+    `this(state new-state)
+    ::
+    ++  new-group-path
+      |=  =group-path
+      ship+(new-app-path group-path)
+
+    ++  new-app-path
+      |=  =app-path
+      ^-  path
+      ?>  ?=(^ app-path)
+      ?:  =('~' i.app-path)
+        t.app-path
+      app-path
+    ::
+    ++  migrate-md-resource
+      |=  md-resource
+      ^-  md-resource
+      ?.  =(%chat app-name)
+        [app-name app-path]
+      [%chat (new-app-path app-path)]
+    ::
+    ++  migrate-resource-indices
+      |=  resource-indices=(jug md-resource group-path)
+      ^-  (jug md-resource group-path)
+      %-  malt
+      %+  turn
+        ~(tap by resource-indices)
+      |=  [=md-resource paths=(set group-path)]
+      :_  (~(run in paths) new-group-path)
+      (migrate-md-resource md-resource)
+    ::
+    ++  migrate-app-indices
+      |=  app-indices=(jug app-name [group-path app-path])
+      %-  malt
+      %+  turn
+        ~(tap by app-indices)
+      |=  [app=term indices=(set [=group-path =app-path])]
+      :-  app
+      %-  ~(run in indices)
+      |=  [=group-path =app-path]
+      :-  (new-group-path group-path)
+      ~&  app
+      ?.  =(%chat app)
+         app-path
+      (new-app-path app-path)
+    ::
+    ++  migrate-group-indices
+      |=  group-indices=(jug group-path md-resource)
+      %-  malt
+      %+  turn
+        ~(tap by group-indices)
+      |=  [=group-path resources=(set md-resource)]
+      :-  (new-group-path group-path)
+      %-  sy
+      %+  turn
+        ~(tap in resources)
+      migrate-md-resource
+    ::
+    ++  migrate-associations
+      |=  =^associations
+      %-  malt
+      %+  turn
+        ~(tap by associations)
+      |=  [[=group-path =md-resource] =metadata]
+      :_  metadata
+      :_  (migrate-md-resource md-resource)
+      (new-group-path group-path)
+    --
   ::
   ++  on-poke
     |=  [=mark =vase]

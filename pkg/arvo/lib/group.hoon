@@ -1,5 +1,6 @@
 /-  *group, *metadata-store, hook=group-hook
 /+  store=group-store, resource
+::
 |_  =bowl:gall
 +$  card  card:agent:gall
 ++  scry-for

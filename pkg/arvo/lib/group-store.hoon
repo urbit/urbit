@@ -8,13 +8,19 @@
   |*  map=(map path *)
   =/  keys=(list path)
     (skim ~(tap in ~(key by map)) |=(=path =('~' (snag 0 path))))
+  ~&  keys
   |-
+  ~&  map
   ?~  keys
     map
   =*  key  i.keys
   ?>  ?=(^ key)
   =/  value
     (~(got by map) key)
+  =.  map
+    (~(put by map) t.key value)
+  =.  map
+    (~(del by map) key)
   $(keys t.keys, map (~(put by map) t.key value))
 ::
 ++  enjs

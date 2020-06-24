@@ -79,6 +79,10 @@
     =*  paths  ~(key by groups.old)
     =/  [unmanaged=(list path) managed=(list path)]
       (skid ~(tap in paths) |=(=path =('~' (snag 0 path))))
+    ~&  "unmanaged"
+    ~&  unmanaged
+    ~&  "managed"
+    ~&  managed
     =.  groups  (all-unmanaged unmanaged)
     =.  groups  (all-managed managed)
     this
@@ -102,6 +106,8 @@
       ^+  groups
       ?~  paths
         groups
+      ?:  =(/~/default i.paths)
+        $(paths t.paths)
       =/  [=resource =group]
         (migrate-unmanaged i.paths)
       %=    $
@@ -122,25 +128,40 @@
     ++  migrate-unmanaged
       |=  pax=path
       ^-  [resource group]
+      =/  =group:state-zero:store
+        (~(got by groups.old) pax)
       =/  [=policy members=(set ship)]
         (unmanaged-permissions pax)
-      ?>  =('~' -.pax)
-      =.  pax  +.pax
+      =.  members
+        (~(uni in members) group)
+      ?>  ?=(^ pax)
       =/  rid=resource
-        (de-path:resource pax)
+        ~&  t.pax
+        (resource-from-old-path t.pax)
       =/  =tags
         (~(put ju *tags) %admin entity.rid)
       [rid members tags policy %.y]
+    ::
+    ++  resource-from-old-path
+      |=  pax=path
+      ^-  resource
+      ?>  ?=([@ @ *] pax)
+      =/  ship
+        (slav %p i.pax)
+      [ship i.t.pax]
     ::
     ++  unmanaged-permissions
       |=  pax=path
       ^-  [policy (set ship)]
       =/  perm
-        (need (scry-group-permissions pax))
-      ?:  ?=(%black kind.perm)
-        :-  [%open ~ who.perm]
+        ~|  pax
+        (scry-group-permissions pax)
+      ?~  perm
+        [*invite:policy ~]
+      ?:  ?=(%black kind.u.perm)
+        :-  [%open ~ who.u.perm]
         ~
-      :_  who.perm
+      :_  who.u.perm
       *invite:policy
     ::
     ++  migrate-group
@@ -150,7 +171,7 @@
       =^  =policy  members
         (migrate-permissions pax members)
       =/  rid=resource
-        (de-path:resource pax)
+        (resource-from-old-path pax)
       =/  =tags
         (~(put ju *tags) %admin entity.rid)
       [rid members tags policy %.n]

@@ -2,7 +2,7 @@
 +$  group-path    path
 +$  app-name      @tas
 +$  app-path      path
-+$  md-resource      [=app-name =app-path]
++$  md-resource   [=app-name =app-path]
 +$  associations  (map [group-path md-resource] metadata)
 ::
 +$  metadata

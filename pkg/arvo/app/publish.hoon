@@ -1,24 +1,24 @@
-/-  *publish,
-    *group,
-    group-hook,
-    *permission-hook,
-    *permission-group-hook,
-    *permission-store,
-    *invite-store,
-    *metadata-store,
-    *metadata-hook,
-    contact-view,
-    pull-hook,
-    push-hook
-/+  *server,
-    *publish,
-    cram,
-    default-agent,
-    dbug,
-    verb,
-    grpl=group,
-    group-store,
-    resource
+/-  *publish
+/-  *group
+/-  group-hook
+/-  *permission-hook
+/-  *permission-group-hook
+/-  *permission-store
+/-  *invite-store
+/-  *metadata-store
+/-  *metadata-hook
+/-  contact-view
+/-  pull-hook
+/-  push-hook
+/+  *server
+/+  *publish
+/+  cram
+/+  default-agent
+/+  dbug
+/+  verb
+/+  grpl=group
+/+  group-store
+/+  resource
 ::
 ~%  %publish  ..is  ~
 |%
@@ -52,6 +52,8 @@
   $%  [%1 state-two]
       [%2 state-two]
       [%3 state-three]
+      [%4 state-three]
+      [%5 state-three]
   ==
 ::
 +$  metadata-delta
@@ -67,7 +69,7 @@
   ==
 --
 ::
-=|  [%3 state-three]
+=|  [%5 state-three]
 =*  state  -
 %-  agent:dbug
 %+  verb  |
@@ -96,7 +98,6 @@
             %poke  %file-server-action
             !>([%serve-dir /'~publish' /app/landscape %.n])
         ==
-        ::  TODO: migrate to +on-load when state adapters finished
         [%pass /groups %agent [our.bol %group-store] %watch /groups]
     ==
   ::
@@ -187,15 +188,49 @@
       ==
     ::
         %3
-      :_  this(state p.old-state)
-      %+  welp  cards
-      :~  [%pass /bind %arvo %e %disconnect [~ /'~publish']]
-          [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
-          :*  %pass  /srving  %agent  [our.bol %file-server]
-              %poke  %file-server-action
-              !>([%serve-dir /'~publish' /app/landscape %.n])
-      ==  ==
+      %=  $
+          -.p.old-state  %4
+      ::
+          cards
+        %+  welp  cards
+        :~  [%pass /bind %arvo %e %disconnect [~ /'~publish']]
+            [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
+            :*  %pass  /srving  %agent  [our.bol %file-server]
+                %poke  %file-server-action
+                !>([%serve-dir /'~publish' /app/landscape %.n])
+        ==  ==
+      ==
+    ::
+        %4
+      %=  $
+          p.old-state
+        =/  new-books=(map [@p @tas] notebook)
+          %-  ~(run by books.p.old-state)
+          |=  old-notebook=notebook-3
+          ^-  notebook-3
+          (convert-notebook-3-4 old-notebook)
+        [%5 our-paths.p.old-state new-books tile-num.p.old-state [~ ~]]
+      ::
+          cards
+        %+  weld  cards
+        :~  [%pass /groups %agent [our.bol %group-store] %watch /groups]
+        ==
+      ==
+    ::
+        %5
+      [cards this(state p.old-state)]
     ==
+    ++  convert-notebook-3-4
+      |=  prev=notebook-3
+      ^-  notebook-3
+      %=    prev
+          writers
+        ?>  ?=(^ writers.prev)
+        :-  %ship
+        ?:  =('~' i.writers.prev)
+          t.writers.prev
+        writers.prev
+      ==
     ::
     ++  convert-comment-2-3
       |=  prev=comment-2

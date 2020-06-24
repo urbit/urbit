@@ -36,11 +36,38 @@
   ++  on-load
     |=  old-vase=vase
     =/  old  !<(versioned-state old-vase)
-    ?:  ?=(%3 -.old)
-      [~ this(state old)]
-    =/  =inbox:store
-      (migrate-path-map:group-store inbox.old)
-    `this(state [%3 inbox])
+    |-
+    ^-  (quip card _this)
+    ?-  -.old
+        %3  [~ this(state old)]
+        %2
+      =/  =inbox:store
+        (migrate-path-map:group-store inbox.old)
+      =/  kick-paths
+        %~  tap  in
+        %+  roll
+          ~(val by sup.bowl)
+        |=  [[=ship sub=path] subs=(set path)]
+        ^-  (set path)
+        ?.  ?=([@ @ *] sub)
+          subs
+        ?.  &(=(%mailbox i.sub) =('~' i.t.sub))
+          subs
+        (~(put in subs) sub)
+      :_  this(state [%3 inbox])
+      ?~  kick-paths  ~
+      [%give %kick kick-paths ~]~
+    ::
+        %1
+      =/  reversed-inbox=inbox:store
+        %-  ~(run by inbox.old)
+        |=  =mailbox:store
+        ^-  mailbox:store
+        [config.mailbox (flop envelopes.mailbox)]
+      $(old [%2 reversed-inbox])
+    ::
+      %0  $(old [%1 inbox.old])
+    ==
   ::
   ++  on-poke
     ~/  %chat-store-poke

@@ -30,11 +30,20 @@
       ::      but can't we use [wex sup]:bowl for that?
       active=(map path (set ship))
   ==
++$  state-1
+  $:  %1
+      active=(map path (set ship))
+  ==
+::
++$  versioned-state
+  $%  state-0
+      state-1
+  ==
 ::
 +$  card  card:agent:gall
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 %-  agent:dbug
@@ -53,9 +62,20 @@
   ::
   ++  on-save  !>(state)
   ++  on-load
-    |=  old=vase
+    |=  old-vase=vase
     ^-  (quip card _this)
-    [~ this(state !<(state-0 old))]
+    =/  old
+      !<(versioned-state old-vase)
+    ?-  -.old
+      %1  [~ this(state old)]
+    ::
+        %0
+      :_  this(state [%1 +.old])
+      :~  [%pass /groups %agent [our.bol %group-store] %leave ~]\
+          watch-groups:do
+      ==
+    ==
+
   ::
   ++  on-watch
     |=  =path

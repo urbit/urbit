@@ -17,13 +17,18 @@
   $%  state-0
       state-1
       state-2
+      state-3
+  ==
+::
++$  state-3
+  $:  %3
+      state-base
   ==
 ::
 +$  state-2
   $:  %2
       state-base
   ==
-::
 +$  state-1
   $:  %1
       loaded-cards=*
@@ -47,7 +52,7 @@
   $%  [%chat-update update:store]
   ==
 --
-=|  state-2
+=|  state-3
 =*  state  -
 ::
 %-  agent:dbug
@@ -66,8 +71,6 @@
     :_  this(invite-created %.y)
     :~  (invite-poke:cc [%create /chat])
         [%pass /invites %agent [our.bol %invite-store] %watch /invitatory/chat]
-        [%pass /permissions %agent [our.bol %permission-store] %watch /updates]
-        ::  TODO: move to on-load
         watch-groups:cc
     ==
   ++  on-save   !>(state)
@@ -76,30 +79,100 @@
     ^-  (quip card _this)
     |^
     =/  old  !<(versioned-state old-vase)
-    =^  moves  state
-      ^-  (quip card state-2)
-      ?:  ?=(%2 -.old)
-      ^-  (quip card state-2)
-        `old
-      ::
-      ?:  ?=(%1 -.old)
-      ^-  (quip card state-2)
-        :_  [%2 +>.old]
+    =|  cards=(list card)
+    |-
+    ?:  ?=(%3 -.old)
+       ~&  cards
+      [cards this(state old)]
+    ?:  ?=(%2 -.old)
+      =.  cards
+        %+  weld  cards
+        :~  watch-groups:cc
+            [%pass /permissions %agent [our.bol %permission-store] %leave ~]
+        ==
+      =^  new-cards=(list card)  old
+        =|  crds=(list card)
+        =/  syncs
+          ~(tap by synced.old)
+        |-
+        ?~  syncs
+          [crds old]
+        =/  [pax=path =ship]
+          i.syncs
+        =.  synced.old
+          (~(del by synced.old) pax)
+        =/  new-path=path
+          ?>  ?=(^ pax)
+          ?:(=('~' i.pax) t.pax pax)
+        ?.  =(ship our.bol)
+          =.  synced.old
+            (~(put by synced.old) new-path ship)
+          $(syncs t.syncs)
+        =/  history=?
+          (~(gut by allow-history.old) pax %.y)
+        =.  allow-history.old
+          (~(del by allow-history.old) pax)
+        =.  allow-history.old
+          (~(put by allow-history.old) new-path history)
+        =.  crds
+          %+  weld  crds
+          :-  (add-owned new-path history)
+          (kick-old-subs pax)
+        $(syncs t.syncs)
+      =.  cards
+        (weld cards new-cards)
+      $(-.old %3)
+    ::
+    ?:  ?=(%1 -.old)
+      =.  cards
+        %+  welp  cards
+        ^-  (list card)
         %+  murn  ~(tap by wex.bol)
         |=  [[=wire =ship =term] *]
         ^-  (unit card)
         ?.  &(?=([%mailbox *] wire) =(our.bol ship) =(%chat-store term))
           ~
         `[%pass wire %agent [our.bol %chat-store] %leave ~]
-      ^-  (quip card state-2)
-      ::  path structure ugprade logic
+      $(old [%2 +>.old])
+    ::  path structure ugprade logic
+    ::
+    =/  keys=(set path)  (scry:cc (set path) %chat-store /keys)
+    %=    $
+        -.old  %2
       ::
-      =/  keys=(set path)  (scry:cc (set path) %chat-store /keys)
-      :_  [%2 +.old]
+        cards
       %-  zing
       ^-  (list (list card))
       (turn ~(tap in keys) generate-cards)
-    [moves this]
+    ==
+    ++  kick-old-subs
+      |=  old-path=path
+      ^-  (list card)
+      ?>  ?=(^ old-path)
+      ?.  =('~' i.old-path)
+        ~
+      [%give %kick ~[mailbox+old-path] ~]~
+    ::
+    ++  add-members-group
+      |=  [=path ships=(set ship)]
+      ^-  card
+      ?>  ?=([@ @ ~] path)
+      =/  rid=resource
+        [(slav %p i.path) i.t.path]
+      =-  [%pass / %agent [our.bol %group-store] %poke %group-action -]
+      !>(`action:group-store`[%add-members rid ships])
+    ::
+    ++  add-synced
+      |=  [=ship =path]
+      ^-  card
+      =-  [%pass / %agent [our.bol %chat-hook] %poke %chat-hook-action -]
+      !>(`action:hook`[%add-synced ship path %.y])
+    ::
+    ++  add-owned
+      |=  [=path history=?]
+      ^-  card
+      =-  [%pass / %agent [our.bol %chat-hook] %poke %chat-hook-action -]
+      !>(`action:hook`[%add-owned path history])
     ::
     ++  generate-cards
       |=  old-chat=path
@@ -557,6 +630,8 @@
   ::
       [%store @ *]
     ~&  store-kick+wir
+    ?:  =('~' i.t.wir)
+      (migrate-store t.t.wir)
     ?.  (~(has by synced) t.wir)  [~ state]
     ~&  %chat-store-resubscribe
     =/  mailbox=(unit mailbox:store)
@@ -566,6 +641,8 @@
   ::
       [%mailbox @ *]
     ~&  mailbox-kick+wir
+    ?:  =('~' i.t.wir)
+      (migrate-listen t.t.wir)
     ?.  (~(has by synced) t.wir)  [~ state]
     ~&  %chat-hook-resubscribe
     =/  =ship  (~(got by synced) t.wir)
@@ -578,6 +655,9 @@
   ::
       [%backlog @ @ *]
     =/  chat=path  (oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    ?:  =('~' i.t.wir)
+      ?>  ?=(^ chat)
+      (migrate-listen t.chat)
     ?.  (~(has by synced) chat)  [~ state]
     =/  =ship
       ?:  =('~' i.t.wir)
@@ -587,22 +667,38 @@
     :_  state
     [%pass path %agent [ship %chat-hook] %watch path]~
   ==
+++  migrate-listen
+  |=  =wire
+  ^-  (quip card _state)
+  ~&  listen-migrate+wire
+  ?>  ?=([@ @ ~] wire)
+  =/  =ship
+    (slav %p i.wire)
+  :_  state
+  ~[(chat-view-poke %join ship wire %.y)]
+::
+++  migrate-store
+  |=  =wire
+  ^-  (quip card _state)
+  ~&  store-migrate+wire
+  (kick store+wire)
 ::
 ++  watch-ack
   |=  [wir=wire saw=(unit tang)]
   ^-  (quip card _state)
   ?~  saw  [~ state]
-  |^
   ?+  wir  [~ state]
-      [%mailbox @ @ @ ~]  (migrate t.wir)
   ::
       [%store @ *]
-    ?:  ?=([%store @ @ @ ~] t.wir)
-      (migrate t.wir)
+    ?:  =('~' i.t.wir)
+      (migrate-store t.t.wir)
     (poke-chat-hook-action %remove t.wir)
   ::
       [%backlog @ @ @ *]
     =/  chat=path  (oust [(dec (lent t.wir)) 1] `(list @ta)`t.wir)
+    ?:  =(i.t.wir '~')
+      ?>  ?=(^ chat)
+      (migrate-listen t.chat)
     :_  state
     %.  ~[(chat-view-poke %delete chat)]
     %-  slog
@@ -611,19 +707,6 @@
         u.saw
     ==
   ==
-  ++  migrate
-    |=  pax=path
-    ^-  (quip card _state)
-    ?>  ?=([@ @ @ ~] pax)
-    =/  =ship
-      (slav %p i.t.pax)
-    =^  cards  state
-      (poke-chat-hook-action %remove pax)
-    :_  state
-    %+  snoc
-      cards
-    (chat-view-poke %join ship t.pax %.y)
-  --
 ::
 ++  chat-poke
   |=  act=action:store
