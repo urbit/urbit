@@ -7,6 +7,7 @@ export default class GraphStore extends BaseStore {
   constructor() {
     super();
     this.graphReducer = new GraphReducer();
+    //this.perf = performance.now();
   }
 
   initialState() {
@@ -19,7 +20,10 @@ export default class GraphStore extends BaseStore {
 
   reduce(data, state) {
     this.graphReducer.reduce(data, this.state);
-    console.log(data, state);
+    //console.log(data, state);
+    /*let perf = performance.now();
+    console.log(perf - this.perf);
+    this.perf = perf;*/
   }
 }
 

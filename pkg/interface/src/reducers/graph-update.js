@@ -65,7 +65,6 @@ export default class GraphReducer {
     //  is graph
     let converted = new OrderedMap();
     for (let i in node.children) {
-      console.log(i);
       let item = node.children[i];
       let index = item[0].split('/').slice(1).map((ind) => {
         return parseInt(ind, 10);
@@ -124,7 +123,6 @@ export default class GraphReducer {
   }
 
   _addNode(graph, index, node) {
-    console.log(index, node);
     //  set child of graph
     if (index.length === 1) {
       graph.set(index[0], node);
