@@ -389,18 +389,53 @@
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
+  ::  only respond for the local identity, %$ desk, current timestamp
   ::
-  ?.  ?=(%& -.why)
+  ?.  ?&  =(&+our why)
+          =([%$ %da now] lot)
+          =(%$ syd)
+      ==
     ~
-  ?.  ?=(%timers syd)
-    [~ ~]
-  =/  tiz=(list [@da duct])
+  ::  /bx/debug/timers  (list [@da duct])  all timers and their ducts
+  ::  /bx/timers        (list @da)         all timer timestamps
+  ::  /bx/timers/next   (unit @da)         the very next timer to fire
+  ::  /bx/timers/[da]   (list @da)         all timers up to and including da
+  ::
+  ?.  ?=(%x ren)  ~
+  ?+  tyl  [~ ~]
+      [%debug %timers ~]
+    :^  ~  ~  %noun
+    !>  ^-  (list [@da duct])
     %-  zing
     %+  turn  (tap:timer-map timers)
     |=  [date=@da q=(qeu duct)]
     %+  turn  ~(tap to q)
     |=(d=duct [date d])
-  [~ ~ %noun !>(tiz)]
+  ::
+      [%timers ~]
+    :^  ~  ~  %noun
+    !>  ^-  (list @da)
+    %-  zing
+    %+  turn  (tap:timer-map timers)
+    |=  [date=@da q=(qeu duct)]
+    (reap ~(wyt in q) date)
+  ::
+      [%timers %next ~]
+    :^  ~  ~  %noun
+    !>  ^-  (unit @da)
+    (bind (peek:timer-map timers) head)
+  ::
+      [%timers @ ~]
+    ?~  til=(slaw %da i.t.tyl)
+      [~ ~]
+    :^  ~  ~  %noun
+    !>  ^-  (list @da)
+    %-  zing
+    %+  turn  (tap:timer-map timers)
+    |=  [date=@da q=(qeu duct)]
+    ?:  (gth date u.til)  ~
+    (reap ~(wyt in q) date)
+  ==
 ::
 ++  stay  state
 ++  take
