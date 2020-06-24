@@ -28,7 +28,7 @@
     rose+(ot style+(ot mid+sa open+sa close+sa ~) lines+(ar dank) ~)
   ==
 ::
-++  orm      ((or-map atom node) lth)
+++  orm      ((or-map atom node) gth)
 ++  orm-log  ((or-map time action) lth)
 ::
 ++  enjs
@@ -252,7 +252,7 @@
     ++  graph
       |=  a=json
       ^-  ^graph
-      =/  or-mp  ((or-map atom ^node) lth)
+      =/  or-mp  ((or-map atom ^node) gth)
       %+  gas:or-mp  ~
       %+  turn  ~(tap by ((om node) a))
       |*  [b=cord c=*]

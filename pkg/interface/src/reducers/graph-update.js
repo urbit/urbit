@@ -123,7 +123,6 @@ export default class GraphReducer {
     }
   }
 
-  //  TODO: recursive add node
   _addNode(graph, index, node) {
     console.log(index, node);
     //  set child of graph

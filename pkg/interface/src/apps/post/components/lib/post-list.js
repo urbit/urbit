@@ -34,7 +34,9 @@ export class PostList extends Component {
 
   paginatedNodes() {
     const { props, state } = this;
-    let nodes = Array.from(props.graph).reverse();
+    let nodes = Array.from(props.graph).sort((a,b) => {
+      return b[0] - a[0];
+    });
 
     return {
       nodes: nodes.slice(

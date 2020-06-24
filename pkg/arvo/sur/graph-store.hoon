@@ -20,7 +20,7 @@
 ::
 +$  action-log  ((mop time action) lth)
 ::
-+$  graph  ((mop atom node) lth)
++$  graph  ((mop atom node) gth)
 ::
 +$  internal-graph
   $~  [%empty ~]
