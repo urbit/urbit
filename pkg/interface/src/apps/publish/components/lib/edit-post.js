@@ -25,16 +25,18 @@ export class EditPost extends Component {
 
   componentDidUpdate(prevProps) {
     const { props, state } = this;
+    const contents = props.notebooks[props.ship]?.[props.book]?.notes?.[props.note]?.file;
     if (prevProps && prevProps.api !== props.api) {
-      if (!(props.notebooks[props.ship]?.[props.book]?.notes?.[props.note]?.file)) {
+      if (!contents) {
         props.api?.fetchNote(props.ship, props.book, props.note);
-      } else if (state.body === '') {
-        const notebook = props.notebooks[props.ship][props.book];
-        const note = notebook.notes[props.note];
-        const file = note.file;
-        const body = file.slice(file.indexOf(';>') + 3);
-        this.setState({ body: body });
       }
+    }
+    if (contents && state.body === '') {
+      const notebook = props.notebooks[props.ship][props.book];
+      const note = notebook.notes[props.note];
+      const file = note.file;
+      const body = file.slice(file.indexOf(';>') + 3);
+      this.setState({ body: body });
     }
   }
 
@@ -95,7 +97,7 @@ export class EditPost extends Component {
     };
 
     return (
-      <div className="f9 h-100 relative">
+      <div className="f9 h-100 relative publish">
         <div className="w-100 tl pv4 flex justify-center">
           <SidebarSwitcher
             sidebarShown={props.sidebarShown}
