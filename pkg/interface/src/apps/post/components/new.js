@@ -23,7 +23,7 @@ export class NewScreen extends Component {
     if (prevProps !== props) {
       const resource = `${window.ship}/${state.idName}`;
       if (!!props.keys && props.keys.has(resource)) {
-        props.history.push('/~chat/room/' + resource);
+        props.history.push('/~post/room/' + resource);
       }
     }
   }
