@@ -3533,7 +3533,7 @@
       |=  {yon/aeon pax/path}
       ^-  (unit (unit {$dome (hypo dome:clay)}))
       ?:  (lth yon let.dom)
-        :*  ~  ~  %dome  -:!>(%dome)
+        :*  ~  ~  %dome  -:!>(*dome:clay)
             ^-  dome:clay
             :*  ank=`[[%ank-in-old-v-not-implemented *ankh] ~ ~]
                 let=yon
