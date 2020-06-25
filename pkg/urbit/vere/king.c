@@ -699,6 +699,10 @@ u3_king_commence()
 {
   u3_Host.lup_u = uv_default_loop();
 
+  //  initialize top-level timer
+  //
+  uv_timer_init(u3L, &u3K.tim_u);
+
   //  start up a "fast-compile" arvo for internal use only
   //  (with hashboard always disabled)
   //
@@ -751,10 +755,6 @@ u3_king_commence()
       exit(1);
     }
   }
-
-  //  initialize top-level timer
-  //
-  uv_timer_init(u3L, &u3K.tim_u);
 
   //  run the loop
   //
