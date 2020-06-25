@@ -150,7 +150,7 @@
     |=  [=ship =rid]
     ^-  ^ship
     =/  candidates  ~(tap in (~(got by providers) rid))
-    =/  idx  (mod ship (lent `(list @p)`candidates))
+    =/  idx  (mod (mug ship) (lent `(list @p)`candidates))
     (snag idx candidates)
   ::
   ++  redirect
