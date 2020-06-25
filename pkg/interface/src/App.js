@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, withRouter, Switch } from 'react-router
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import './css/indigo-static.css';
 import './css/fonts.css';
-import { light } from '@tlon/indigo-react';
+import light from './themes/light';
 
 import LaunchApp from './apps/launch/app';
 import ChatApp from './apps/chat/app';
@@ -32,14 +32,13 @@ import GlobalApi from './api/global';
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
-  line-height: ${p => p.theme.lineHeights.regular};
   height: 100%;
   width: 100%;
   padding: 0;
   margin: 0;
 `;
 
-const Content = styled.div`
+const MainContext = styled.div`
    height: calc(100% - 45px);
 `;
 
@@ -75,11 +74,11 @@ export default class App extends React.Component {
         <Root>
           <Router>
             <StatusBarWithRouter props={this.props}
-            associations={associations}
-            invites={this.state.invites}
-            api={this.api}
+              associations={associations}
+              invites={this.state.invites}
+              api={this.api}
             />
-            <Content>
+            <MainContext>
             <Switch>
               <Route exact path="/"
               render={ p => (
@@ -144,7 +143,7 @@ export default class App extends React.Component {
               />
               <Route component={NotFound} />
               </Switch>
-            </Content>
+            </MainContext>
           </Router>
         </Root>
       </ThemeProvider>
