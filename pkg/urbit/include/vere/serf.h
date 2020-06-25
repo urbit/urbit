@@ -52,7 +52,7 @@
     /* u3_serf_work(): apply event, producing effects.
     */
       u3_noun
-      u3_serf_work(u3_serf* sef_u, u3_noun job);
+      u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job);
 
     /* u3_serf_post(): update serf state post-writ.
     */

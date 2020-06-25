@@ -331,7 +331,7 @@
       */
         typedef struct _u3_ovum {
           void*            vod_p;               //  context
-          c3_l             msc_l;               //  ms to timeout
+          c3_w             mil_w;               //  timeout ms
           u3_noun            tar;               //  target (in arvo)
           u3_noun            wir;               //  wire
           u3_noun            cad;               //  card
@@ -744,7 +744,7 @@
       /* u3_ovum_init: initialize an unlinked potential event
       */
         u3_ovum*
-        u3_ovum_init(c3_l     msc_l,
+        u3_ovum_init(c3_w     mil_w,
                      u3_noun    tar,
                      u3_noun    wir,
                      u3_noun    cad);
@@ -820,7 +820,7 @@
       */
         u3_ovum*
         u3_auto_plan(u3_auto* car_u,
-                     c3_l     msc_l,
+                     c3_w     mil_w,
                      u3_noun    tar,
                      u3_noun    wir,
                      u3_noun    cad);

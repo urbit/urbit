@@ -32,7 +32,7 @@
       ==  ==
       [%peek now=date lyc=gang pat=path]
       [%play eve=@ lit=(list ?((pair date ovum) *))]
-      [%work job=(pair date ovum)]
+      [%work mil=@ job=(pair date ovum)]
   ==
 ::  +plea: from serf to king
 ::
@@ -60,13 +60,7 @@ questions:
 - %play
   - expect lifecycle on [%ripe ... eve=0 mug=0]
   - eve identifies failed event on [%play @ %bail ...]
-- %pack
-  - could just be [%save %full ...] followed by a restart
-- %mass
-  - is technically a query of the serf directly
-- milliseconds
-  - in $writ for timeouts
-  - in $plea for measurement
+- %mass is technically a query of the serf directly
 - duct or vane stack for spinner
 */
 
@@ -481,7 +475,7 @@ _serf_make_crud(u3_noun job, u3_noun dud)
 /* _serf_poke(): RETAIN
 */
 static u3_noun
-_serf_poke(u3_serf* sef_u, c3_c* cap_c, u3_noun job)
+_serf_poke(u3_serf* sef_u, c3_c* cap_c, c3_w mil_w, u3_noun job)
 {
   u3_noun now, ovo, wen, gon;
   u3x_cell(job, &now, &ovo);
@@ -507,7 +501,7 @@ _serf_poke(u3_serf* sef_u, c3_c* cap_c, u3_noun job)
   }
 #endif
 
-  gon = u3m_soft(0, u3v_poke, u3k(ovo));
+  gon = u3m_soft(mil_w, u3v_poke, u3k(ovo));
 
 #ifdef U3_EVENT_TIME_DEBUG
   {
@@ -545,7 +539,7 @@ _serf_poke(u3_serf* sef_u, c3_c* cap_c, u3_noun job)
 /* _serf_work():  apply event, capture effects.
 */
 static u3_noun
-_serf_work(u3_serf* sef_u, u3_noun job)
+_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 {
   u3_noun gon;
   c3_w  pre_w = u3a_open(u3R);
@@ -555,7 +549,7 @@ _serf_work(u3_serf* sef_u, u3_noun job)
   c3_assert( sef_u->sen_d == sef_u->dun_d);
   sef_u->sen_d++;
 
-  gon = _serf_poke(sef_u, "work", job);  // retain
+  gon = _serf_poke(sef_u, "work", mil_w, job);  // retain
 
   //  event accepted
   //
@@ -578,7 +572,7 @@ _serf_work(u3_serf* sef_u, u3_noun job)
     //
 
     job = _serf_make_crud(job, dud);
-    gon = _serf_poke(sef_u, "crud", job);  // retain
+    gon = _serf_poke(sef_u, "crud", mil_w, job);  // retain
 
     //  error notification accepted
     //
@@ -608,7 +602,7 @@ _serf_work(u3_serf* sef_u, u3_noun job)
 /* u3_serf_work(): apply event, producing effects.
 */
 u3_noun
-u3_serf_work(u3_serf* sef_u, u3_noun job)
+u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 {
   c3_t  tac_t = ( 0 != u3_Host.tra_u.fil_u );
   c3_c  lab_c[2048];
@@ -635,7 +629,7 @@ u3_serf_work(u3_serf* sef_u, u3_noun job)
   //
   c3_assert( 0 != sef_u->mug_l);
 
-  pro = u3nc(c3__work, _serf_work(sef_u, job));
+  pro = u3nc(c3__work, _serf_work(sef_u, mil_w, job));
 
   if ( tac_t ) {
     u3t_event_trace(lab_c, 'E');
@@ -1034,8 +1028,18 @@ u3_serf_writ(u3_serf* sef_u, u3_noun wit, u3_noun* pel)
       } break;
 
       case c3__work: {
-        *pel = u3_serf_work(sef_u, u3k(com));
-        ret_o = c3y;
+        u3_noun job, tim;
+        c3_w  mil_w;
+
+        if ( (c3n == u3r_cell(com, &tim, &job)) ||
+             (c3n == u3r_safe_word(tim, &mil_w)) )
+        {
+          ret_o = c3n;
+        }
+        else {
+          *pel = u3_serf_work(sef_u, mil_w, u3k(job));
+          ret_o = c3y;
+        }
       } break;
     }
   }

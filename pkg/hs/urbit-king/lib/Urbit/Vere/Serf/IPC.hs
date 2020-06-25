@@ -25,7 +25,7 @@
         ==  ==
         [%peek now=date lyc=gang pat=path]
         [%play eve=@ lit=(list ?((pair date ovum) *))]
-        [%work job=(pair date ovum)]
+        [%work mil=@ job=(pair date ovum)]
     ==
   ::  +plea: from serf to king
   ::
@@ -122,7 +122,7 @@ data Writ
   = WLive Live
   | WPeek Wen Gang Path
   | WPlay EventId [Noun]
-  | WWork Wen Ev
+  | WWork Atom Wen Ev
  deriving (Show)
 
 data Plea
@@ -493,7 +493,7 @@ swim serf = do
     Nothing -> do
       pure (SerfState eve mug)
     Just (wen, evn) -> do
-      io (sendWrit serf (WWork wen evn))
+      io (sendWrit serf (WWork 0 wen evn))
       io (recvWork serf) >>= \case
         WBail goofs -> do
           throwIO (BailDuringReplay eve goofs)
@@ -636,7 +636,7 @@ processWork serf maxSize q onResp spin = do
         now <- Time.now
         let cb = onResp now evErr
         atomically $ modifyTVar' vInFlight (:|> (ev, cb))
-        sendWrit serf (WWork now ev)
+        sendWrit serf (WWork 0 now ev)
         loop vInFlight vDone
 
 {-|

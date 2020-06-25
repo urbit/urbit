@@ -31,7 +31,7 @@
       ==  ==
       [%peek now=date lyc=gang pat=path]
       [%play eve=@ lit=(list ?((pair date ovum) *))]
-      [%work job=(pair date ovum)]
+      [%work mil=@ job=(pair date ovum)]
   ==
 ::  +plea: from serf to king
 ::
@@ -666,7 +666,8 @@ _lord_writ_jam(u3_lord* god_u, u3_writ* wit_u)
       default: c3_assert(0);
 
       case u3_writ_work: {
-        msg = u3nc(c3__work, u3k(wit_u->wok_u.job));
+        u3_noun mil = u3i_words(1, &wit_u->wok_u.egg_u->mil_w);
+        msg = u3nt(c3__work, mil, u3k(wit_u->wok_u.job));
       } break;
 
       case u3_writ_peek: {

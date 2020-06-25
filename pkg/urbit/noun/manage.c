@@ -68,10 +68,10 @@
       /* u3m_soft_top(): top-level safety wrapper.
       */
         u3_noun
-        u3m_soft_top(c3_w    sec_w,                     //  timer seconds
+        u3m_soft_top(c3_w    mil_w,                     //  timer ms
                      c3_w    pad_w,                     //  base memory pad
                      u3_funk fun_f,
-                     u3_noun arg);
+                     u3_noun   arg);
 
 
 static sigjmp_buf u3_Signal;
@@ -323,10 +323,10 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
   }
 }
 
-/* _cm_signal_deep(): start deep processing; set timer for sec_w or 0.
+/* _cm_signal_deep(): start deep processing; set timer for [mil_w] or 0.
 */
 static void
-_cm_signal_deep(c3_w sec_w)
+_cm_signal_deep(c3_w mil_w)
 {
   //  disable outer system signal handling
   //
@@ -347,15 +347,19 @@ _cm_signal_deep(c3_w sec_w)
     u3H->rod_u.bug.mer = u3i_string("emergency buffer");
   }
 
-  if ( sec_w ) {
+  if ( mil_w ) {
     struct itimerval itm_u;
 
     timerclear(&itm_u.it_interval);
-    itm_u.it_value.tv_sec = sec_w;
-    itm_u.it_value.tv_usec = 0;
+    itm_u.it_value.tv_sec  = (mil_w / 1000);
+    itm_u.it_value.tv_usec = 1000 * (mil_w % 1000);
 
-    setitimer(ITIMER_VIRTUAL, &itm_u, 0);
-    signal(SIGVTALRM, _cm_signal_handle_alrm);
+    if ( setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
+      u3l_log("loom: set timer failed %s\r\n", strerror(errno));
+    }
+    else {
+      signal(SIGVTALRM, _cm_signal_handle_alrm);
+    }
   }
 
   u3t_boot();
@@ -379,7 +383,9 @@ _cm_signal_done()
     timerclear(&itm_u.it_interval);
     timerclear(&itm_u.it_value);
 
-    setitimer(ITIMER_VIRTUAL, &itm_u, 0);
+    if ( setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
+      u3l_log("loom: clear timer failed %s\r\n", strerror(errno));
+    }
   }
 
   //  restore outer system signal handling
@@ -927,17 +933,17 @@ u3m_water(c3_w* low_w, c3_w* hig_w)
 /* u3m_soft_top(): top-level safety wrapper.
 */
 u3_noun
-u3m_soft_top(c3_w    sec_w,                     //  timer seconds
+u3m_soft_top(c3_w    mil_w,                     //  timer ms
              c3_w    pad_w,                     //  base memory pad
              u3_funk fun_f,
-             u3_noun arg)
+             u3_noun   arg)
 {
   u3_noun why, pro;
   c3_l    sig_l;
 
   /* Enter internal signal regime.
   */
-  _cm_signal_deep(0);
+  _cm_signal_deep(mil_w);
 
   if ( 0 != (sig_l = sigsetjmp(u3_Signal, 1)) ) {
     //  reinitialize trace state
@@ -1210,13 +1216,13 @@ u3m_grab(u3_noun som, ...)   // terminate with u3_none
 ** Produces [0 product] or [%error (list tank)], top last.
 */
 u3_noun
-u3m_soft(c3_w    sec_w,
+u3m_soft(c3_w    mil_w,
          u3_funk fun_f,
-         u3_noun arg)
+         u3_noun   arg)
 {
   u3_noun why;
 
-  why = u3m_soft_top(sec_w, (1 << 20), fun_f, arg);   // 2MB pad
+  why = u3m_soft_top(mil_w, (1 << 20), fun_f, arg);   // 2MB pad
 
   if ( 0 == u3h(why) ) {
     return why;
