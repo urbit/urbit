@@ -701,6 +701,7 @@
           =(%$ syd)
       ==
     ~
+  ::  /ax/protocol/version         @
   ::  /ax/peers                    (map ship ?(%alien known))
   ::  /ax/peers/[ship]             ship-state
   ::  /ax/bones/[ship]             [snd=(set bone) rcv=(set bone)]
@@ -708,6 +709,9 @@
   ::
   ?.  ?=(%x ren)  ~
   ?+    tyl  [~ ~]
+      [%protocol %version ~]
+    ``noun+!>(protocol-version)
+  ::
       [%peers ~]
     :^  ~  ~  %noun
     !>  ^-  (map ship ?(%alien %known))
