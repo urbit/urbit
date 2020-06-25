@@ -754,6 +754,26 @@
         void
         u3_ovum_free(u3_ovum *egg_u);
 
+      /* u3_mcut_char(): measure/cut character.
+      */
+        c3_w
+        u3_mcut_char(c3_c* buf_c, c3_w len_w, c3_c chr_c);
+
+      /* u3_mcut_cord(): measure/cut cord.
+      */
+        c3_w
+        u3_mcut_cord(c3_c* buf_c, c3_w len_w, u3_noun san);
+
+      /* u3_mcut_path(): measure/cut cord list.
+      */
+        c3_w
+        u3_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax);
+
+      /* u3_mcut_host(): measure/cut host.
+      */
+        c3_w
+        u3_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot);
+
     /**  New vere
     **/
       /* u3_auto_init(): initialize all drivers.
