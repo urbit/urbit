@@ -652,6 +652,4 @@
 
 :: (build-ppm 1000 1000) takes just over a minute.
 :: (build-ppm 1000 1000)
-(build-ppm 60 60)
-
-::(add 5 5)
+(build-ppm 200 200)
