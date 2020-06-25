@@ -681,7 +681,7 @@
         ::
         ?.  &(?=({* ~} p.cig) ?=(~ q.cig))
           ~|(%one-argument !!)
-        =/  res  (mule |.((slop !>(%noun) (slam q.cay (dy-vase p.i.p.cig)))))
+        =/  res  (mule |.((slam q.cay (dy-vase p.i.p.cig))))
         ?:  ?=(%| -.res)
           (he-diff(poy ~) %tan p.res)  ::  TODO: or +dy-rash  ?
         (dy-hand %noun p.res)
