@@ -42,6 +42,8 @@
     c3_w          imp_w[256];           //  imperial IPs
     time_t        imp_t[256];           //  imperial IP timestamps
     c3_o          imp_o[256];           //  imperial print status
+    c3_o          fit_o;                //  filtering active
+    c3_y          ver_y;                //  protocol version
   } u3_ames;
 
 /* _ames_alloc(): libuv buffer allocator.
@@ -368,12 +370,11 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 {
   u3_ames* sam_u = wax_u->data;
 
-  //  data present, and protocol version in header matches 0
+  //  data present, and protocol version in header matches ours
   //
-  //    XX inflexible, scry version out of ames
-  //
-  if (  (0 < nrd_i)
-     && (0 == (0x7 & *((c3_w*)buf_u->base))) )
+  if ( (0 < nrd_i)
+    && ( (c3n == sam_u->fit_o)
+      || (sam_u->ver_y == (0x7 & *((c3_w*)buf_u->base))) ) )
   {
     u3_noun wir = u3nc(c3__ames, u3_nul);
     u3_noun cad;
@@ -701,6 +702,31 @@ _ames_io_exit(u3_auto* car_u)
   uv_close(&sam_u->had_u, _ames_exit_cb);
 }
 
+/* _ames_prot_scry_cb(): receive protocol version
+*/
+static void
+_ames_prot_scry_cb(void* vod_p, u3_noun nun)
+{
+  u3_ames* sam_u = vod_p;
+  u3_weak  ver   = u3r_at(7, nun);
+
+  if (u3_none == ver) {
+    //  assume protocol version 0
+    //
+    sam_u->ver_y = 0;
+  }
+  else if ( (c3n == u3a_is_cat(ver))
+         || (7 < ver) ) {
+    u3m_p("ames: strange protocol", ver);
+    sam_u->ver_y = 0;
+  }
+  else {
+    sam_u->ver_y = ver;
+  }
+
+  sam_u->fit_o = c3y;
+}
+
 /* u3_ames_io_init(): initialize ames I/O.
 */
 u3_auto*
@@ -712,6 +738,7 @@ u3_ames_io_init(u3_pier* pir_u)
   sam_u->por_s    = pir_u->por_s;
   sam_u->fak_o    = pir_u->fak_o;
   sam_u->dop_d    = 0;
+  sam_u->fit_o    = c3n;
 
   c3_assert( !uv_udp_init(u3L, &sam_u->wax_u) );
   sam_u->wax_u.data = sam_u;
@@ -722,6 +749,11 @@ u3_ames_io_init(u3_pier* pir_u)
     u3_Host.ops_u.net = c3n;
   }
 
+  //  scry the protocol version out of arvo
+  //
+  u3_lord_peek_last(pir_u->god_u, u3_nul, c3_s2('a', 'x'), u3_nul,
+                    u3nt(u3i_string("protocol"), u3i_string("version"), u3_nul),
+                    sam_u, _ames_prot_scry_cb);
 
   u3_auto* car_u = &sam_u->car_u;
   car_u->nam_m = c3__ames;
