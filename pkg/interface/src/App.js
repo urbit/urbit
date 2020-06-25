@@ -13,11 +13,13 @@ import LinksApp from './apps/links/app';
 import PublishApp from './apps/publish/app';
 
 import StatusBar from './components/StatusBar';
+import ModuleContext from './components/ModuleContext';
 import NotFound from './components/404';
 
 import GlobalStore from './store/store';
 import GlobalSubscription from './subscription/global';
 import GlobalApi from './api/global';
+
 
 // const Style = createGlobalStyle`
 //   ${cssReset}
@@ -38,9 +40,6 @@ const Root = styled.div`
   margin: 0;
 `;
 
-const MainContext = styled.div`
-   height: calc(100% - 45px);
-`;
 
 const StatusBarWithRouter = withRouter(StatusBar);
 
@@ -66,7 +65,9 @@ export default class App extends React.Component {
     const channel = window.channel;
 
     const associations = this.state.associations ? this.state.associations : { contacts: {} };
+
     const selectedGroups = this.state.selectedGroups ? this.state.selectedGroups : [];
+
     const { state } = this;
 
     return (
@@ -78,7 +79,7 @@ export default class App extends React.Component {
               invites={this.state.invites}
               api={this.api}
             />
-            <MainContext>
+            <ModuleContext>
             <Switch>
               <Route exact path="/"
               render={ p => (
@@ -143,7 +144,7 @@ export default class App extends React.Component {
               />
               <Route component={NotFound} />
               </Switch>
-            </MainContext>
+            </ModuleContext>
           </Router>
         </Root>
       </ThemeProvider>

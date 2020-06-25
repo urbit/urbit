@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { Link } from 'react-router-dom';
+import { Row } from '@tlon/indigo-react'
 
 export class Skeleton extends Component {
   render() {
@@ -21,18 +21,8 @@ export class Skeleton extends Component {
       'w-100 inter pt4 f8': !this.props.chatHideOnMobile
     });
 
-    // popout switches out window chrome and borders
-    const popoutWindow = this.props.popout
-      ? '' : 'ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl';
-
-    const popoutBorder = this.props.popout
-      ? '' : 'ba-m ba-l ba-xl b--gray4 b--gray1-d br1 ';
-
     return (
-      // app outer skeleton
-      <div className={'h-100 w-100 bg-gray0-d ' + popoutWindow}>
-      {/* app window borders */}
-        <div className={ 'cf w-100 flex h-100 ' + popoutBorder }>
+        <Row height='100%'>
           {/* sidebar skeleton, hidden on mobile when in chat panel */}
           <div
             className={
@@ -63,8 +53,7 @@ export class Skeleton extends Component {
           >
             {this.props.children}
           </div>
-        </div>
-      </div>
+        </Row>
     );
   }
 }
