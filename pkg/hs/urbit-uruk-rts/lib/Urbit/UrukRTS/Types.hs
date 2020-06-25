@@ -135,9 +135,7 @@ data Node
   | Lis [Val]
   | Bol Bool
 
-  | MkBox
   | Box Val
-  | Unbox
  deriving (Eq, Ord, Generic, Hashable, NFData)
 
 pattern Nat n = M (MD (Exp.NAT n)) 2 []
@@ -214,6 +212,9 @@ pattern IntMul = M (MS Exp.INT_MUL) 2 []
 pattern IntNegate = M (MS Exp.INT_NEGATE) 1 []
 pattern IntSub = M (MS Exp.INT_SUB) 2 []
 
+pattern MkBox = M (MS Exp.BOX) 1 []
+pattern Unbox = M (MS Exp.UNBOX) 1 []
+
 instance Show Node where
   show = \case
     Ess         -> "S"
@@ -231,9 +232,7 @@ instance Show Node where
     Bol True    -> "YES"
     Bol False   -> "NAH"
 
-    MkBox       -> "MKBOX"
     Box v       -> "BOX(" <> show v <> ")"
-    Unbox       -> "UNBOX"
 
     M (MD x) _ _ -> show x
     M (MS x) _ _ -> show x
@@ -463,8 +462,6 @@ nodeArity = \case
   Lis []    -> 2
   Lis (_:_) -> 2
 
-  MkBox -> 1
   Box _ -> 1
-  Unbox -> 1
 
   (M _ n _) -> fromIntegral n

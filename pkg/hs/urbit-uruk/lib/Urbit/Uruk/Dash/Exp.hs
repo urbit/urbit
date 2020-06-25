@@ -90,6 +90,9 @@ data SingJet
 
   | ADD_ASSOC
   | FIND_ASSOC
+
+  | BOX
+  | UNBOX
  deriving (Eq, Ord, Read, Show, Enum, Hashable, Bounded, Generic)
  deriving anyclass NFData
 

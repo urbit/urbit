@@ -50,14 +50,11 @@ data DumpNode
   | DNBee Int --  Always >=  1
   | DNSea Int --  Always >=  1
   | DNSen Int --  Always >=  1
-  | DNNat Natural
   | DNInt Integer
   | DNLis [DumpVal]
   | DNBol Bool
 
-  | DNMkBox
   | DNBox Hash
-  | DNUnbox
  deriving (Eq, Ord, Generic)
 
 instance Serialise DumpNode
@@ -144,14 +141,11 @@ toDumpNode (M match natural nodes) = do
 toDumpNode (Bee x)                 = pure $ DNBee x
 toDumpNode (Sea x)                 = pure $ DNSea x
 toDumpNode (Sen x)                 = pure $ DNSen x
-toDumpNode (Nat n)                 = pure $ DNNat n
 toDumpNode (Int i)                 = pure $ DNInt i
 toDumpNode (Lis v)                 = DNLis <$> mapM toDumpVal v
 toDumpNode (Bol b)                 = pure $ DNBol b
 
-toDumpNode MkBox                   = pure $ DNMkBox
 toDumpNode (Box v)                 = DNBox <$> writeVal v
-toDumpNode Unbox                   = pure $ DNUnbox
 
 -- Step one: we
 
@@ -238,14 +232,11 @@ fromDumpNode (DNJut h)     = Jut <$> readJet h
 fromDumpNode (DNBee x)     = pure $ Bee x
 fromDumpNode (DNSea x)     = pure $ Sea x
 fromDumpNode (DNSen x)     = pure $ Sen x
-fromDumpNode (DNNat n)     = pure $ Nat n
 fromDumpNode (DNInt i)     = pure $ Int i
 fromDumpNode (DNLis v)     = Lis <$> mapM fromDumpVal v
 fromDumpNode (DNBol b)     = pure $ Bol b
 
-fromDumpNode DNMkBox       = pure MkBox
 fromDumpNode (DNBox h)     = Box <$> readVal h
-fromDumpNode DNUnbox       = pure Unbox
 
 fromDumpNode (DNMatch m n nodes) = do
   decodedNodes <- mapM fromDumpNode nodes
