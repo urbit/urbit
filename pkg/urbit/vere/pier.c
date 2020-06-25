@@ -949,25 +949,26 @@ _pier_on_scry_done(void* vod_p, u3_noun nun)
   else {
     u3l_log("pier: scry succeeded\n");
 
-    u3_atom jam = u3qe_jam(res);
-    c3_w siz_w = u3r_met(3, jam);
-    c3_y* dat_y = c3_malloc(siz_w);
-    u3r_bytes(0, siz_w, dat_y, jam);
-
-    c3_c* nam_c = u3_Host.ops_u.puk_c;
-    if (!nam_c) {
-      nam_c = "scry";
+    c3_c* pac_c = u3_Host.ops_u.puk_c;
+    if (!pac_c) {
+      pac_c = u3_Host.ops_u.pek_c;
     }
+
+    u3_noun pad;
+    {
+      u3_noun pax = u3do("stab", u3i_string(pac_c));
+      c3_w len_w = u3kb_lent(u3k(pax));
+      pad = u3nt(c3_s4('.','u','r','b'),
+                 c3_s3('p','u','t'),
+                 u3qb_scag(len_w - 1, pax));
+      u3z(pax);
+    }
+
     c3_c fil_c[2048];
-    snprintf(fil_c, 2048, "%s/.urb/put/%s.jam", pir_u->pax_c, nam_c);
-    FILE* fil_u = fopen(fil_c, "w");
-    fwrite(dat_y, 1, siz_w, fil_u);
+    snprintf(fil_c, 2048, "%s/.urb/put/%s.jam", pir_u->pax_c, pac_c+1);
 
-    u3l_log("pier: scry in .urb/put/%s.jam\n", nam_c);
-    fclose(fil_u);
-    c3_free(dat_y);
-
-    u3z(jam);
+    u3_walk_save(fil_c, 0, u3qe_jam(res), pir_u->pax_c, pad);
+    u3l_log("pier: scry in %s\n", fil_c);
   }
 
   u3l_log("pier: exit");
