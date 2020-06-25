@@ -430,11 +430,14 @@
       [~ ~]
     :^  ~  ~  %noun
     !>  ^-  (list @da)
-    %-  zing
-    %+  turn  (tap:timer-map timers)
-    |=  [date=@da q=(qeu duct)]
-    ?:  (gth date u.til)  ~
-    (reap ~(wyt in q) date)
+    =/  tiz=(list [date=@da q=(qeu duct)])
+      (tap:timer-map timers)
+    |-  ^-  (list @da)
+    ?~  tiz  ~
+    ?:  (gth date.i.tiz u.til)  ~
+    %+  weld
+      (reap ~(wyt in q.i.tiz) date.i.tiz)
+    $(tiz t.tiz)
   ==
 ::
 ++  stay  state
