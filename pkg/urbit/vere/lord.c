@@ -975,6 +975,18 @@ _lord_on_serf_bail(void*       ptr_v,
   _lord_bail(god_u);
 }
 
+/* u3_lord_info(): print status info.
+*/
+void
+u3_lord_info(u3_lord* god_u)
+{
+  u3l_log("  lord: live=%s, event=%" PRIu64 ", mug=%x, queue=%u\n",
+          ( c3y == god_u->liv_o ) ? "&" : "|",
+          god_u->eve_d,
+          god_u->mug_l,
+          god_u->dep_w);
+}
+
 /* u3_lord_init(): instantiate child process.
 */
 u3_lord*

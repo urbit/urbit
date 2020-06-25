@@ -538,6 +538,7 @@
       */
         typedef struct _u3_auto_cb {
           void (*talk_f)(struct _u3_auto*);
+          void (*info_f)(struct _u3_auto*);
           c3_o (*kick_f)(struct _u3_auto*, u3_noun, u3_noun);
           void (*exit_f)(struct _u3_auto*);  // XX close_cb?
         } u3_auto_cb;
@@ -760,6 +761,11 @@
         u3_auto*
         u3_auto_init(u3_pier* pir_u);
 
+      /* u3_auto_info(): print status info.
+      */
+        void
+        u3_auto_info(u3_auto* car_u);
+
       /* u3_auto_exit(): close all drivers.
       */
         void
@@ -831,6 +837,11 @@
         u3_disk*
         u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u);
 
+      /* u3_disk_info(): print status info.
+      */
+        void
+        u3_disk_info(u3_disk* log_u);
+
       /* u3_disk_exit(): close [log_u] and dispose.
       */
         void
@@ -879,6 +890,11 @@
                      c3_w      wag_w,
                      c3_d      key_d[4],
                      u3_lord_cb cb_u);
+
+      /* u3_lord_info(): print status info.
+      */
+        void
+        u3_lord_info(u3_lord* god_u);
 
       /* u3_lord_exit(): shutdown gracefully.
       */
@@ -1224,6 +1240,11 @@
         c3_o
         u3_pier_pack(u3_pier* pir_u);
 
+      /* u3_pier_info(): print status info.
+      */
+        void
+        u3_pier_info(u3_pier* pir_u);
+
       /* u3_pier_boot(): start the new pier system.
       */
         u3_pier*
@@ -1287,6 +1308,11 @@
       */
         u3_pier*
         u3_king_stub(void);
+
+      /* u3_king_info(): print status info.
+      */
+        void
+        u3_king_info(void);
 
       /* u3_king_done(): all piers closed
       */

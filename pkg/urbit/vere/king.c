@@ -581,6 +581,12 @@ _daemon_sign_cb(uv_signal_t* sil_u, c3_i num_i)
       u3_term_ef_winc();
       break;
     }
+
+    case SIGUSR1:
+    case SIGINFO: {
+      u3_king_info();
+      break;
+    }
   }
 }
 
@@ -749,6 +755,14 @@ _king_forall(void (*pir_f)(u3_pier*))
     pir_f(pir_u);
     pir_u = pir_u->nex_u;
   }
+}
+
+/* u3_king_info(): print status info.
+*/
+void
+u3_king_info(void)
+{
+  _king_forall(u3_pier_info);
 }
 
 /* _king_forall_unlink(): run on all piers, unlinking from king.

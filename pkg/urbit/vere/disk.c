@@ -645,6 +645,37 @@ u3_disk_exit(u3_disk* log_u)
   c3_free(log_u);
 }
 
+/* u3_disk_info(): print status info.
+*/
+void
+u3_disk_info(u3_disk* log_u)
+{
+  u3l_log("  disk: live=%s, event=%" PRIu64 "\n",
+          ( c3y == log_u->liv_o ) ? "&" : "|",
+          log_u->dun_d);
+
+  {
+    u3_read* red_u = log_u->red_u;
+
+    while ( red_u ) {
+      u3l_log("    read: %" PRIu64 "-%" PRIu64 "\n",
+              red_u->eve_d,
+              (red_u->eve_d + red_u->len_d) - 1);
+    }
+  }
+
+  if ( log_u->put_u.ext_u ) {
+    if ( log_u->put_u.ext_u != log_u->put_u.ent_u ) {
+      u3l_log("    save: %" PRIu64 "-%" PRIu64 "\n",
+              log_u->put_u.ext_u->eve_d,
+              log_u->put_u.ent_u->eve_d);
+    }
+    else {
+      u3l_log("    save: %" PRIu64 "\n", log_u->put_u.ext_u->eve_d);
+    }
+  }
+}
+
 /* u3_disk_init(): load or create pier directories and event log.
 */
 u3_disk*

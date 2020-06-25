@@ -992,6 +992,81 @@ _pier_on_lord_live(void* vod_p)
   }
 }
 
+/* u3_pier_info(): print status info.
+*/
+void
+u3_pier_info(u3_pier* pir_u)
+{
+  switch ( pir_u->sat_e ) {
+    default: {
+      u3l_log("pier: unknown state: %u\r\n", pir_u->sat_e);
+    } break;
+
+    case u3_psat_init: {
+      u3l_log("pier: init\n");
+    } break;
+
+    case u3_psat_boot: {
+      u3l_log("pier: boot\n");
+    } break;
+
+    case u3_psat_play: {
+      u3l_log("pier: play\n");
+
+      {
+        u3_play* pay_u = pir_u->pay_u;
+
+        u3l_log("  target: %" PRIu64 "\n", pay_u->eve_d);
+        u3l_log("  sent: %" PRIu64 "\n", pay_u->sen_d);
+        u3l_log("  read: %" PRIu64 "\n", pay_u->req_d);
+      }
+    } break;
+
+    case u3_psat_work: {
+      u3l_log("pier: work\n");
+
+      {
+        u3_work* wok_u = pir_u->wok_u;
+
+        u3l_log("  effects:\n");
+        u3l_log("    released: %" PRIu64 "\n", wok_u->fec_u.rel_d);
+
+        if ( wok_u->fec_u.ext_u ) {
+          if ( wok_u->fec_u.ext_u != wok_u->fec_u.ent_u ) {
+            u3l_log("    pending %" PRIu64 "-%" PRIu64 "\n",
+                    wok_u->fec_u.ext_u->eve_d,
+                    wok_u->fec_u.ent_u->eve_d);
+
+          }
+          else {
+            u3l_log("    pending %" PRIu64 "\n", wok_u->fec_u.ext_u->eve_d);
+          }
+        }
+
+        if ( wok_u->wal_u ) {
+          u3l_log("wall: %" PRIu64 "\n", wok_u->wal_u->eve_d);
+        }
+
+        if ( wok_u->car_u ) {
+          u3_auto_info(wok_u->car_u);
+        }
+      }
+    } break;
+
+    case u3_psat_done: {
+      u3l_log("pier: done\n");
+    } break;
+  }
+
+  if ( pir_u->log_u ) {
+    u3_disk_info(pir_u->log_u);
+  }
+
+  if ( pir_u->god_u ) {
+    u3_lord_info(pir_u->god_u);
+  }
+}
+
 /* _pier_init(): create a pier, loading existing.
 */
 static u3_pier*
