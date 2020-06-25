@@ -443,7 +443,7 @@
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
       [%ota *]          abet:(take:update t.wire sign-arvo)
       *
-    ?+  +<.sign-arvo  ~|([%kiln-bad-take-card +<.sign-arvo] !!)
+    ?+  +<.sign-arvo  ~|([%kiln-bad-take-card +<.sign-arvo wire] !!)
       %done  %+  done  wire
              ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
       %mere  %+  take-mere  wire
