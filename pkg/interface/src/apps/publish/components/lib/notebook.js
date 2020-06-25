@@ -25,7 +25,7 @@ export class Notebook extends Component {
       atBottom = true;
     }
     if (!notebook.notes && this.props.api) {
-      this.props.api.fetchNotebook(this.props.ship, this.props.book);
+      this.props.api.publish.fetchNotebook(this.props.ship, this.props.book);
       return;
     }
 
@@ -35,7 +35,7 @@ export class Notebook extends Component {
     const fullyLoaded = (loadedNotes === allNotes);
 
     if (atBottom && !fullyLoaded) {
-      this.props.api.fetchNotesPage(this.props.ship, this.props.book, loadedNotes, 30);
+      this.props.api.publish.fetchNotesPage(this.props.ship, this.props.book, loadedNotes, 30);
     }
   }
 
@@ -44,7 +44,7 @@ export class Notebook extends Component {
     if ((prevProps && (prevProps.api !== props.api)) || props.api) {
       const notebook = props.notebooks?.[props.ship]?.[props.book];
       if (!notebook?.subscribers) {
-        props.api.fetchNotebook(props.ship, props.book);
+        props.api.publish.fetchNotebook(props.ship, props.book);
       }
     }
   }
@@ -64,7 +64,7 @@ export class Notebook extends Component {
         book: this.props.book
       }
     };
-    this.props.api.publishAction(action);
+    this.props.api.publish.publishAction(action);
     this.props.history.push('/~publish');
   }
 
