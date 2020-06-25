@@ -19,14 +19,36 @@ static void     _term_read_cb(uv_stream_t*    tcp_u,
                               const uv_buf_t* buf_u);
 static c3_i     _term_tcsetattr(c3_i, c3_i, const struct termios*);
 
-/* _write(): wraps write(), asserting length
+/* _write(): retry interrupts, continue partial writes, assert errors.
 */
 static void
-_write(c3_i fid_i, const void* buf_v, size_t len)
+_write(c3_i fid_i, const void* buf_v, size_t len_i)
 {
-  if ( len != write(fid_i, buf_v, len) ){
-    u3l_log("write failed\r\n");
-    c3_assert(0);
+  ssize_t ret_i;
+
+  while ( len_i > 0 ) {
+    //  retry interrupt/async errors
+    //
+    do {
+      ret_i = write(fid_i, buf_v, len_i);
+    }
+    while (  (ret_i < 0)
+          && (  (errno == EINTR)
+             || (errno == EAGAIN)
+             || (errno == EWOULDBLOCK) ));
+
+    //  assert on true errors
+    //
+    if ( ret_i < 0 ) {
+      u3l_log("term: write failed %s\r\n", strerror(errno));
+      c3_assert(0);
+    }
+    //  continue partial writes
+    //
+    else {
+      len_i -= ret_i;
+      buf_v += ret_i;
+    }
   }
 }
 
