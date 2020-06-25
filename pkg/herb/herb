@@ -13,7 +13,7 @@ import argparse
 import base64
 
 logging.basicConfig(
-  level=logging.WARNING,
+  level=logging.DEBUG,
   format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
   stream=sys.stderr,
 )
@@ -55,7 +55,8 @@ def preprocess_args(old_args):
             return ['--close'] + preprocess_args(old_args[1:])
     return [old_args[0]] + preprocess_args(old_args[1:])
 
-args = preprocess_args(sys.argv[1:])
+#args = preprocess_args(sys.argv[1:])
+args = sys.argv[1:]
 
 logging.debug(['preprocessed', args])
 
@@ -76,6 +77,7 @@ class sourceAction(argparse.Action):
     def __init__(self, option_strings, dest, **kwargs):
         self.which = kwargs['which']
         del kwargs['which']
+        logging.debug('args %s %s %s' % (option_strings, dest, kwargs))
         super(sourceAction, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, res, new_value, option_string):
@@ -104,6 +106,10 @@ class sourceAction(argparse.Action):
         logging.debug(res.source)
 
     def construct_value(self, new_value):
+        # hack to allow dojo commands like '-test' without them parsing
+        # as bash command-line arguments
+        if new_value[0:4] == '####':
+            return self.construct_value(new_value[4:])
         if new_value == '-':
             return self.construct_value(''.join(sys.stdin.readlines()))
         elif new_value[0:2] == '@@':
