@@ -15,6 +15,8 @@ import PublishUpdateReducer from '../reducers/publish-update';
 import PublishResponseReducer from '../reducers/publish-response';
 import LaunchReducer from '../reducers/launch-update';
 import LinkListenReducer from '../reducers/listen-update';
+import WalletInitialReducer from '../reducers/bitcoin-initial';
+import WalletAddressReducer from '../reducers/bitcoin-address';
 
 
 export default class GlobalStore extends BaseStore<StoreState> {
@@ -31,7 +33,8 @@ export default class GlobalStore extends BaseStore<StoreState> {
   publishUpdateReducer = new PublishUpdateReducer();
   publishResponseReducer = new PublishResponseReducer();
   launchReducer = new LaunchReducer();
-
+  walletInitialReducer = new WalletInitialReducer();
+  walletAddressReducer = new WalletAddressReducer();
 
   initialState(): StoreState {
     return {
@@ -71,6 +74,10 @@ export default class GlobalStore extends BaseStore<StoreState> {
       selectedGroups: [],
       inbox: {},
       chatSynced: null,
+      walletDB: {},
+      address: '',
+      hasXPub: false,
+      xpubkey: ''
     };
   }
 
@@ -88,5 +95,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.publishResponseReducer.reduce(data, this.state);
     this.launchReducer.reduce(data, this.state);
     this.linkListenReducer.reduce(data, this.state);
+    this.walletInitialReducer.reduce(data, this.state);
+    this.walletAddressReducer.reduce(data, this.state);
   }
 }
