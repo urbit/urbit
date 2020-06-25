@@ -33,7 +33,7 @@ export class SearchableList extends Component {
 
     let items = props.items.filter(item => {
       return state.query.split(' ').reduce((match, query) => {
-        return match && item.key.includes(query);
+        return match && ('' + item.key).includes(query);
       }, true);
     })
     items = items.map(item =>

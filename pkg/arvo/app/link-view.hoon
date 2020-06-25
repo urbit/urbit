@@ -10,12 +10,12 @@
 ::    /json/[n]/submission/[wood-url]/[collection]    nth matching submission
 ::    /json/seen                                      mark-as-read updates
 ::
-/-  *link-view,
+/-  *link, view=link-view,
     *invite-store, group-store,
-    link-listen-hook,
+    listen-hook=link-listen-hook,
     group-hook, permission-hook, permission-group-hook,
     metadata-hook, contact-view
-/+  *link, metadata, *server, default-agent, verb, dbug
+/+  store=link-store, metadata, *server, default-agent, verb, dbug
 ~%  %link-view-top  ..is  ~
 ::
 |%
@@ -89,10 +89,10 @@
     :_  this
     ?+  mark  (on-poke:def mark vase)
         %link-action
-      [(handle-action:do !<(action vase)) ~]
+      [(handle-action:do !<(action:store vase)) ~]
     ::
         %link-view-action
-      (handle-view-action:do !<(view-action vase))
+      (handle-view-action:do !<(action:view vase))
     ==
   ::
   ++  on-watch
@@ -117,11 +117,11 @@
     ::
         [%submission @ ^]
       :_  this
-      (give-specific-submission:do p (break-discussion-path t.t.t.path))
+      (give-specific-submission:do p (break-discussion-path:store t.t.t.path))
     ::
         [%discussions @ ^]
       :_  this
-      (give-initial-discussions:do p (break-discussion-path t.t.t.path))
+      (give-initial-discussions:do p (break-discussion-path:store t.t.t.path))
     ==
   ::
   ++  on-agent
@@ -145,7 +145,7 @@
       ::
           %link-update
         :_  this
-        :-  (send-update:do !<(update vase))
+        :-  (send-update:do !<(update:store vase))
         ?:  =(/discussions wire)  ~
         ~[give-tile-data:do]
       ==
@@ -221,12 +221,12 @@
   ==
 ::
 ++  handle-action
-  |=  =action
+  |=  =action:store
   ^-  card
   [%pass /action %agent [our.bowl %link-store] %poke %link-action !>(action)]
 ::
 ++  handle-view-action
-  |=  act=view-action
+  |=  act=action:view
   ^-  (list card)
   ?-  -.act
     %create  (handle-create +.act)
@@ -235,7 +235,7 @@
   ==
 ::
 ++  handle-create
-  |=  [=path title=@t description=@t members=create-members real-group=?]
+  |=  [=path title=@t description=@t members=create-members:view real-group=?]
   ^-  (list card)
   =/  group-path=^path
     ?-  -.members
@@ -273,7 +273,7 @@
         ::
         %^  do-poke  %link-listen-hook
           %link-listen-action
-        !>  ^-  action:link-listen-hook
+        !>  ^-  action:listen-hook
         [%watch path]
     ==
   ?:  ?=(%group -.members)  ~
@@ -486,7 +486,7 @@
     submissions
   |=  =submission
   ^-  json
-  =/  =json  (submission:en-json submission)
+  =/  =json  (submission:enjs:store submission)
   ?>  ?=([%o *] json)
   ::  add in seen status
   ::
@@ -494,7 +494,7 @@
     %+  ~(put by p.json)  'seen'
     :-  %b
     %+  scry-for  ?
-    [%seen (build-discussion-path path url.submission)]
+    [%seen (build-discussion-path:store path url.submission)]
   ::  add in comment count
   ::
   =;  comment-count=@ud
@@ -507,7 +507,7 @@
   =-  (~(got by (~(got by -) path)) url.submission)
   %+  scry-for  (per-path-url comments)
   :-  %discussions
-  (build-discussion-path path url.submission)
+  (build-discussion-path:store path url.submission)
 ::
 ++  give-specific-submission
   |=  [n=@ud =path =url]
@@ -518,7 +518,7 @@
   ^-  json
   =;  sub=(unit submission)
     ?~  sub  ~
-    (submission:en-json u.sub)
+    (submission:enjs:store u.sub)
   =/  =submissions
     =-  (~(got by -) path)
     %+  scry-for  (map ^path submissions)
@@ -543,30 +543,30 @@
     %+  get-paginated  `p
     =-  (~(got by (~(got by -) path)) url)
     %+  scry-for  (per-path-url comments)
-    [%discussions (build-discussion-path path url)]
-  comment:en-json
+    [%discussions (build-discussion-path:store path url)]
+  comment:enjs:store
 ::
 ++  send-update
-  |=  =update
+  |=  =update:store
   ^-  card
   ?+  -.update  ~|([dap.bowl %unexpected-update -.update] !!)
       %submissions
     %+  give-json
-      (update:en-json update)
+      (update:enjs:store update)
     :~  /json/0/submissions
         (weld /json/0/submissions path.update)
     ==
   ::
       %discussions
     %+  give-json
-      (update:en-json update)
+      (update:enjs:store update)
     :_  ~
     %+  weld  /json/0/discussions
-    (build-discussion-path [path url]:update)
+    (build-discussion-path:store [path url]:update)
   ::
       %observation
     %+  give-json
-      (update:en-json update)
+      (update:enjs:store update)
     ~[/json/seen]
   ==
 ::
