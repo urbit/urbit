@@ -13,7 +13,7 @@ import argparse
 import base64
 
 logging.basicConfig(
-  level=logging.DEBUG,
+  level=logging.WARNING,
   format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
   stream=sys.stderr,
 )
@@ -55,8 +55,7 @@ def preprocess_args(old_args):
             return ['--close'] + preprocess_args(old_args[1:])
     return [old_args[0]] + preprocess_args(old_args[1:])
 
-#args = preprocess_args(sys.argv[1:])
-args = sys.argv[1:]
+args = preprocess_args(sys.argv[1:])
 
 logging.debug(['preprocessed', args])
 
