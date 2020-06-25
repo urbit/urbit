@@ -67,9 +67,9 @@
   ?>  =(0 x)  ::  sanity check
   %.  [d i p]
   =<  set-metadata
-  =+  v=(scag 4 t)
-  ?:  =("xprv" v)  (from-private k c)
-  ?:  =("xpub" v)  (from-public k c)
+  =+  v=(swag [1 3] t)
+  ?:  =("prv" v)  (from-private k c)
+  ?:  =("pub" v)  (from-public k c)
   !!
 ::
 ++  set-metadata
@@ -149,8 +149,8 @@
     37^(can 3 ~[4^i 33^(ser-p pub)])
   ::  rare exception, invalid key, go to the next one
   ?:  (gte left n)  $(i +(i))  ::TODO  or child key is "point at infinity"
+  =.  pub  (jc-add.ecc (point left) pub)
   %_  +>.$
-    pub   (jc-add.ecc (point left) pub)
     cad   right
     dep   +(dep)
     ind   i
@@ -167,6 +167,19 @@
 ::
 ++  identity        (hash160 public-key)
 ++  fingerprint     (cut 3 [16 4] identity)
+::
+++  address
+  |=  network=?(%main %regtest %testnet)
+  ^-  @uc
+  ::  removes checksum
+  ::
+  %^  rsh  3  4
+  ::  +en-base58check returns a naked atom instead of a tape
+  ::  (i.e. en-base58:mimes:html is moved outside to +en-b58c-bip32)
+  ::
+  %+  en-base58check
+    [4 (version-bytes network %pub %.n)]
+  [20 identity]
 ::
 ++  prv-extended
   %+  en-b58c-bip32  0x488.ade4
@@ -188,6 +201,7 @@
 ::
 ++  en-b58c-bip32
   |=  [v=@ k=@]
+  %-  en-base58:mimes:html
   (en-base58check [4 v] [74 k])
 ::
 ::  base58check
@@ -196,7 +210,6 @@
   ::  v: version bytes
   ::  d: data
   |=  [v=byts d=byts]
-  %-  en-base58:mimes:html
   =+  p=[(add wid.v wid.d) (can 3 ~[d v])]
   =-  (can 3 ~[4^- p])
   %^  rsh  3  28
@@ -213,4 +226,27 @@
 ++  hash160
   |=  d=@
   (ripemd-160:ripemd:crypto 32 (sha-256:sha d))
+::
+::      tpub (testnet/regtest)         0x435.87cf
+::      tpriv (testnet/regtest)        0x435.8394
+::      xpub (main):                   0x488.b21e
+::      xpriv (main:                   0x488.ade4
+::      pubkey hash (testnet/regtest): 0x6f
+::      priv hash   (testnet/regtest): 0xef
+::
+++  version-bytes
+  |=  [network=?(%main %regtest %testnet) type=?(%pub %priv) bip32=?]
+  ^-  @ux
+  |^  ?+  [network type]  ~|(%not-supported-version-bytes !!)
+        [?(%regtest %testnet) %pub]   ?:(bip32 xpub-key pay-to-pubkey)
+        [?(%regtest %testnet) %priv]  ?:(bip32 xpriv-key private-key)
+        [%main %pub]                  ?:(bip32 xpub-key pay-to-pubkey)
+        [%main %priv]                 ?:(bip32 xpriv-key private-key)
+      ==
+  ::
+  ++  pay-to-pubkey  ?:(=(type %main) 0x0 0x6f)
+  ++  private-key    ?:(=(type %main) 0x80 0xef)
+  ++  xpub-key       ?:(=(type %main) 0x435.87cf 0x488.b21e)
+  ++  xpriv-key      ?:(=(type %main) 0x435.8394 0x488.ade4)
+  --
 --

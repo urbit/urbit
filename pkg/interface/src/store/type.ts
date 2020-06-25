@@ -49,4 +49,10 @@ export interface StoreState {
   chatSynced: ChatHookUpdate | null;
   inbox: Inbox;
   pendingMessages: Map<Path, Envelope[]>;
+
+  // wallet
+  walletDB: object;
+  hasXPub: boolean;
+  xpubkey: string;
+  address: string;
 }
