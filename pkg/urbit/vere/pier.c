@@ -1015,7 +1015,7 @@ _pier_on_lord_live(void* vod_p)
         || c3n == u3a_is_cat(car) )
       {
         u3m_p("pier: invalid scry", pex);
-        _pier_on_scry_done(pir_u, c3__null);
+        _pier_on_scry_done(pir_u, u3_nul);
       } else {
         //  run the requested scry, jam to disk, then exit
         //
