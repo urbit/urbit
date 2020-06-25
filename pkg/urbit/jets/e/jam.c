@@ -32,10 +32,7 @@ u3qe_jam(u3_atom a)
     u3a_print_memory(stderr, "memoization cache", mem_w);
     u3h_root* har_u = u3to(u3h_root, u3R->cax.har_p);
     u3l_log("memoization entries: %d\r\n", har_u->use_w);
-    c3_w diff = (u3R->hat_p < u3R->cap_p) ?
-                  (u3R->cap_p - u3R->hat_p) :
-                  (u3R->hat_p - u3R->cap_p);
-		u3a_print_memory(stderr, "unused free", diff);
+		u3a_print_memory(stderr, "unused free", u3a_open(u3R));
     return tot_w;
   }
 #endif
