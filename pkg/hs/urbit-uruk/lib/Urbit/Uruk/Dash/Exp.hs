@@ -73,6 +73,8 @@ data SingJet
   | ZING
   | RAP
   | NTOT
+
+  -- TODO: All of the integer jets appear to have no backing in JetSpec.hs.
   | INT_POSITIVE
   | INT_NEGATIVE
   | INT_ABS
@@ -85,6 +87,7 @@ data SingJet
   | INT_MUL
   | INT_NEGATE
   | INT_SUB
+
   | ADD_ASSOC
   | FIND_ASSOC
  deriving (Eq, Ord, Read, Show, Enum, Hashable, Bounded, Generic)
@@ -96,7 +99,7 @@ data DataJet
   | Cn !Pos
   | In !Pos
   | NAT !Nat
- deriving (Eq, Ord, Generic)
+ deriving (Eq, Ord, Hashable, Generic)
  deriving anyclass NFData
 
 data ExpTree n

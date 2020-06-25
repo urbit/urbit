@@ -98,6 +98,7 @@ import qualified Data.Store                as Store
 import qualified Data.Store.TH             as Store
 import qualified System.IO                 as Sys
 import qualified Urbit.Atom                as Atom
+import qualified Urbit.Uruk.Dash.Exp       as Exp
 import qualified Urbit.UrukRTS.Inline      as Opt
 import qualified Urbit.UrukRTS.JetOptimize as Opt
 import qualified Urbit.UrukRTS.OptToFast   as Opt
@@ -126,7 +127,9 @@ instance Uruk Val where
   uEnh = \n -> mkNode 2 $ Enh $ fromIntegral n
   uDub = mkNode 6 Dub
 
-  uEye n = mkNode (fromIntegral $ n) (Eye $ fromIntegral n)
+  uEye n = mkNode (fromIntegral $ n) $
+           M (MD $ Exp.In $ fromIntegral n) (fromIntegral $ n) []
+--  uEye n = mkNode (fromIntegral $ n) (Eye $ fromIntegral n)
   uBee n = mkNode (fromIntegral $ 2 + n) (Bee $ fromIntegral n)
   uSea n = mkNode (fromIntegral $ 2 + n) (Sea $ fromIntegral n)
   uSen n = mkNode (fromIntegral $ 2 + n) (Sen $ fromIntegral n)
@@ -207,7 +210,6 @@ instance Uruk Val where
 
 -- Useful Types ----------------------------------------------------------------
 
-type Nat = Natural
 type Bol = Bool
 
 
@@ -439,7 +441,8 @@ reduce !no !xs = do
     --  C₃fgxyz = (fxyz)g
     Sea n -> join (kVV <$> (kVVn x (drop 2 $ toList xs)) <*> pure y)
 
-    Eye _ -> toList xs & \case
+    (M (MD (Exp.In 1)) _ []) -> toList xs & \case
+--    Eye _ -> toList xs & \case
       []     -> error "impossible"
       [ v ]  -> pure v
       v : vs -> kVVn v vs

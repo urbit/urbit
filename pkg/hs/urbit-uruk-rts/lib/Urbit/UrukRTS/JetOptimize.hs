@@ -1,6 +1,6 @@
 module Urbit.UrukRTS.JetOptimize where
 
-import ClassyPrelude hiding (try, evaluate)
+import ClassyPrelude    hiding (evaluate, try)
 import System.IO.Unsafe
 
 import Control.Arrow    ((>>>))
@@ -10,6 +10,7 @@ import Numeric.Positive (Positive)
 import Prelude          ((!!))
 
 import qualified GHC.Exts            as GHC
+import qualified Urbit.Uruk.Dash.Exp as Exp
 import qualified Urbit.UrukRTS.Types as F
 
 --------------------------------------------------------------------------------
@@ -60,7 +61,7 @@ data Code = Code
 syms = singleton <$> "xyzpqrstuvwxyzabcdefghijklmnop"
 
 sym i | i >= length syms = "v" <> show i
-sym i                    = syms !! i
+sym i = syms !! i
 
 instance Show Code where
     show c@(Code n nm _ v lop) =
@@ -73,8 +74,8 @@ instance Show Code where
 
         header ∷ Int → String
         header 0 | lop = "..  $\n"
-        header 0       = ""
-        header n       = header (n-1) <> "|=  " <> sym (arity - n) <> "\n"
+        header 0 = ""
+        header n = header (n-1) <> "|=  " <> sym (arity - n) <> "\n"
 
 {- |
     There are three kinds of things
@@ -325,7 +326,7 @@ nodeRaw :: Nat -> Node -> F.Node
 nodeRaw arity = \case
   VS    -> F.Ess
   VK    -> F.Kay
-  VIn n -> F.Eye (fromIntegral n)
+  VIn n -> F.M (F.MD (Exp.In (fromIntegral n))) (fromIntegral n) []
   VBn n -> F.Bee (fromIntegral n)
   VCn n -> F.Sea (fromIntegral n)
   VSn n -> F.Sen (fromIntegral n)
@@ -449,7 +450,7 @@ valExp = go
   rawExp rn xs = rn & \case
     F.Kay   -> clo 2 VK
     F.Ess   -> clo 3 VS
-    F.Eye n -> clo (int n)     (VIn $ fromIntegral n)
+    F.M (F.MD (Exp.In n)) _ _ -> clo (int n)     (VIn $ fromIntegral n)
     F.Bee n -> clo (int n + 2) (VBn $ fromIntegral n)
     F.Sea n -> clo (int n + 2) (VCn $ fromIntegral n)
     F.Sen n -> clo (int n + 2) (VSn $ fromIntegral n)

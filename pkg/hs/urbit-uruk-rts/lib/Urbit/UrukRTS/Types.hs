@@ -36,7 +36,6 @@ import qualified Urbit.Uruk.Dash.Exp as Exp
 
 -- Useful Types ----------------------------------------------------------------
 
-type Nat = Natural
 type Bol = Bool
 
 
@@ -112,6 +111,7 @@ instance Show Jet where
 
 data Match
   = MS !Exp.SingJet
+  | MD !Exp.DataJet
  deriving (Eq, Ord, Generic, Hashable, NFData)
 
 
@@ -128,11 +128,9 @@ data Node
 
   | M Match !Natural ![Node]
 
-  | Eye Int
   | Bee Int --  Always >=  1
   | Sea Int --  Always >=  1
   | Sen Int --  Always >=  1
-  | Nat Nat
   | Int Integer
   | Lis [Val]
   | Bol Bool
@@ -141,6 +139,8 @@ data Node
   | Box Val
   | Unbox
  deriving (Eq, Ord, Generic, Hashable, NFData)
+
+pattern Nat n = M (MD (Exp.NAT n)) 2 []
 
 pattern Uni = M (MS Exp.UNI) 1 []
 
@@ -221,14 +221,11 @@ instance Show Node where
     Enh n       -> replicate (fromIntegral n) 'E'
     Dub         -> "W"
     Jut j       -> show j
-    Eye 1       -> "I"
     Bee 1       -> "B"
     Sea 1       -> "C"
-    Eye n       -> "I" <> show n
     Bee n       -> "B" <> show n
     Sea n       -> "C" <> show n
     Sen n       -> "S" <> show n
-    Nat n       -> show n
     Int i       -> show i
     Lis l       -> show l
     Bol True    -> "YES"
@@ -238,6 +235,7 @@ instance Show Node where
     Box v       -> "BOX(" <> show v <> ")"
     Unbox       -> "UNBOX"
 
+    M (MD x) _ _ -> show x
     M (MS x) _ _ -> show x
 
 
@@ -254,12 +252,25 @@ instance Show Fun where
     else mconcat
       ["(", show h <> " ", intercalate " " (show <$> GHC.Exts.toList args), ")"]
 
+
+newtype Hash = Hash { unHash :: ByteString }
+  deriving (Eq, Ord, Generic)
+  deriving newtype (Hashable)
+
+-- A Box refers to a value which can be (or has already been) written to disk
+-- separately. This allows for lazy loading of data from disk.
+data Box
+  = BSaved !Val Hash
+  | BUnsaved !Val
+  | BUnloaded Hash
+  deriving (Eq, Ord, Generic, Hashable)
+
 data Val
   = VUni
   | VCon !Val !Val
   | VLef !Val
   | VRit !Val
-  | VNat !Nat
+  | VNat !Natural
   | VInt !Integer
   | VBol !Bool
   | VLis ![Val]
@@ -301,7 +312,7 @@ showInt :: Integer -> String
 showInt x | x >= 0 = "+" <> show x
 showInt x = "-" <> show (abs x)
 
-showNat :: Nat -> String
+showNat :: Natural -> String
 showNat at@(Atom.atomUtf8 -> Right nm) =
   let okChar c = isPrint c || isSpace c
   in  if all okChar nm && length nm > 1
@@ -443,11 +454,9 @@ nodeArity = \case
   Enh _ -> 2
   Dub   -> 6
   Jut j -> jArgs j
-  Eye n -> 0+n
   Bee n -> 2+n
   Sea n -> 2+n
   Sen n -> 2+n
-  Nat n -> 2
   Int n -> 1
   Bol b -> 2
 

@@ -7,21 +7,19 @@ import Data.ByteString           hiding (putStrLn, unpack)
 import Data.Foldable
 import Data.HexString
 import Data.Primitive.SmallArray
+import Numeric.Natural           (Natural)
 import System.Directory
 import System.FilePath
 import Urbit.UrukRTS.Types
 
 import qualified Crypto.Hash.SHA256 as SHA256
 
+import qualified Urbit.Uruk.Dash.Exp       as Exp
 import qualified Urbit.UrukRTS.JetOptimize as Opt
 import qualified Urbit.UrukRTS.OptToFast   as Opt
 
 
 type PierIO = ReaderT FilePath IO
-
-
-newtype Hash = Hash { unHash :: ByteString }
-  deriving (Eq, Ord, Generic)
 
 instance Serialise Hash
 
@@ -40,7 +38,7 @@ data DumpNode
   | DNSen Int --  Always >=  1
   | DNSeq
   | DNFix
-  | DNNat Nat
+  | DNNat Natural
   | DNInt Integer
   | DNLis [DumpVal]
   | DNBol Bool
@@ -131,7 +129,7 @@ data DumpVal
   | DVCon DumpVal DumpVal
   | DVLef DumpVal
   | DVRit DumpVal
-  | DVNat Nat
+  | DVNat Natural
   | DVInt Integer
   | DVBol Bool
   | DVLis [DumpVal]
@@ -176,80 +174,83 @@ toDumpJet (Jet djArgs inName inBody _ _ _) = do
   pure $ DumpJet{..}
 
 toDumpNode :: Node -> PierIO DumpNode
-toDumpNode Ess         = pure $ DNEss
-toDumpNode Kay         = pure $ DNKay
-toDumpNode (Enh x)     = pure $ DNEnh x
-toDumpNode Dub         = pure $ DNDub
-toDumpNode (Jut jet)   = DNJut <$> writeJet jet
-toDumpNode (Eye x)     = pure $ DNEye x
-toDumpNode (Bee x)     = pure $ DNBee x
-toDumpNode (Sea x)     = pure $ DNSea x
-toDumpNode (Sen x)     = pure $ DNSen x
-toDumpNode Seq         = pure $ DNSeq
-toDumpNode Fix         = pure $ DNFix
-toDumpNode (Nat n)     = pure $ DNNat n
-toDumpNode (Int i)     = pure $ DNInt i
-toDumpNode (Lis v)     = DNLis <$> mapM toDumpVal v
-toDumpNode (Bol b)     = pure $ DNBol b
-toDumpNode Iff         = pure $ DNIff
-toDumpNode Pak         = pure $ DNPak
-toDumpNode Zer         = pure $ DNZer
-toDumpNode Eql         = pure $ DNEql
-toDumpNode Add         = pure $ DNAdd
-toDumpNode Inc         = pure $ DNInc
-toDumpNode Dec         = pure $ DNDec
-toDumpNode Fec         = pure $ DNFec
-toDumpNode Mul         = pure $ DNMul
-toDumpNode Sub         = pure $ DNSub
-toDumpNode Ded         = pure $ DNDed
-toDumpNode Uni         = pure $ DNUni
-toDumpNode LefC        = pure $ DNLef
-toDumpNode RitC        = pure $ DNRit
-toDumpNode Cas         = pure $ DNCas
-toDumpNode Let         = pure $ DNLet
-toDumpNode ConC        = pure $ DNCon
-toDumpNode Car         = pure $ DNCar
-toDumpNode Cdr         = pure $ DNCdr
+toDumpNode Ess                     = pure $ DNEss
+toDumpNode Kay                     = pure $ DNKay
+toDumpNode (Enh x)                 = pure $ DNEnh x
+toDumpNode Dub                     = pure $ DNDub
+toDumpNode (Jut jet)               = DNJut <$> writeJet jet
 
-toDumpNode Lsh         = pure $ DNLsh
-toDumpNode Lth         = pure $ DNLth
-toDumpNode Fub         = pure $ DNFub
-toDumpNode Not         = pure $ DNNot
-toDumpNode Xor         = pure $ DNXor
-toDumpNode Div         = pure $ DNDiv
-toDumpNode Trace       = pure $ DNTra
-toDumpNode Mod         = pure $ DNMod
-toDumpNode Rap         = pure $ DNRap
-toDumpNode Zing        = pure $ DNZing
-toDumpNode Ntot        = pure $ DNNtot
+toDumpNode (M (MD (Exp.In x)) _ _) = pure $ DNEye (fromIntegral (toInteger x))
+--toDumpNode (Eye x)     = pure $ DNEye x
 
-toDumpNode IntPositive = pure $ DNIntPositive
-toDumpNode IntNegative = pure $ DNIntNegative
+toDumpNode (Bee x)                 = pure $ DNBee x
+toDumpNode (Sea x)                 = pure $ DNSea x
+toDumpNode (Sen x)                 = pure $ DNSen x
+toDumpNode Seq                     = pure $ DNSeq
+toDumpNode Fix                     = pure $ DNFix
+toDumpNode (Nat n)                 = pure $ DNNat n
+toDumpNode (Int i)                 = pure $ DNInt i
+toDumpNode (Lis v)                 = DNLis <$> mapM toDumpVal v
+toDumpNode (Bol b)                 = pure $ DNBol b
+toDumpNode Iff                     = pure $ DNIff
+toDumpNode Pak                     = pure $ DNPak
+toDumpNode Zer                     = pure $ DNZer
+toDumpNode Eql                     = pure $ DNEql
+toDumpNode Add                     = pure $ DNAdd
+toDumpNode Inc                     = pure $ DNInc
+toDumpNode Dec                     = pure $ DNDec
+toDumpNode Fec                     = pure $ DNFec
+toDumpNode Mul                     = pure $ DNMul
+toDumpNode Sub                     = pure $ DNSub
+toDumpNode Ded                     = pure $ DNDed
+toDumpNode Uni                     = pure $ DNUni
+toDumpNode LefC                    = pure $ DNLef
+toDumpNode RitC                    = pure $ DNRit
+toDumpNode Cas                     = pure $ DNCas
+toDumpNode Let                     = pure $ DNLet
+toDumpNode ConC                    = pure $ DNCon
+toDumpNode Car                     = pure $ DNCar
+toDumpNode Cdr                     = pure $ DNCdr
 
-toDumpNode IntAbs      = pure $ DNIntAbs
-toDumpNode IntAdd      = pure $ DNIntAdd
-toDumpNode IntDiv      = pure $ DNIntDiv
-toDumpNode IntIsZer    = pure $ DNIntIsZer
-toDumpNode IntIsNeg    = pure $ DNIntIsNeg
-toDumpNode IntIsPos    = pure $ DNIntIsPos
-toDumpNode IntLth      = pure $ DNIntLth
-toDumpNode IntMul      = pure $ DNIntMul
-toDumpNode IntNegate   = pure $ DNIntNegate
-toDumpNode IntSub      = pure $ DNIntSub
+toDumpNode Lsh                     = pure $ DNLsh
+toDumpNode Lth                     = pure $ DNLth
+toDumpNode Fub                     = pure $ DNFub
+toDumpNode Not                     = pure $ DNNot
+toDumpNode Xor                     = pure $ DNXor
+toDumpNode Div                     = pure $ DNDiv
+toDumpNode Trace                   = pure $ DNTra
+toDumpNode Mod                     = pure $ DNMod
+toDumpNode Rap                     = pure $ DNRap
+toDumpNode Zing                    = pure $ DNZing
+toDumpNode Ntot                    = pure $ DNNtot
 
-toDumpNode MkBox       = pure $ DNMkBox
-toDumpNode (Box v)     = DNBox <$> writeVal v
-toDumpNode Unbox       = pure $ DNUnbox
+toDumpNode IntPositive             = pure $ DNIntPositive
+toDumpNode IntNegative             = pure $ DNIntNegative
 
-toDumpNode LConC       = pure $ DNLCon
-toDumpNode LNil        = pure $ DNLNil
-toDumpNode Gulf        = pure $ DNGulf
-toDumpNode Snag        = pure $ DNSnag
-toDumpNode Turn        = pure $ DNTurn
-toDumpNode Weld        = pure $ DNWeld
+toDumpNode IntAbs                  = pure $ DNIntAbs
+toDumpNode IntAdd                  = pure $ DNIntAdd
+toDumpNode IntDiv                  = pure $ DNIntDiv
+toDumpNode IntIsZer                = pure $ DNIntIsZer
+toDumpNode IntIsNeg                = pure $ DNIntIsNeg
+toDumpNode IntIsPos                = pure $ DNIntIsPos
+toDumpNode IntLth                  = pure $ DNIntLth
+toDumpNode IntMul                  = pure $ DNIntMul
+toDumpNode IntNegate               = pure $ DNIntNegate
+toDumpNode IntSub                  = pure $ DNIntSub
 
-toDumpNode AddAssoc    = pure $ DNAddAssoc
-toDumpNode FindAssoc   = pure $ DNFindAssoc
+toDumpNode MkBox                   = pure $ DNMkBox
+toDumpNode (Box v)                 = DNBox <$> writeVal v
+toDumpNode Unbox                   = pure $ DNUnbox
+
+toDumpNode LConC                   = pure $ DNLCon
+toDumpNode LNil                    = pure $ DNLNil
+toDumpNode Gulf                    = pure $ DNGulf
+toDumpNode Snag                    = pure $ DNSnag
+toDumpNode Turn                    = pure $ DNTurn
+toDumpNode Weld                    = pure $ DNWeld
+
+toDumpNode AddAssoc                = pure $ DNAddAssoc
+toDumpNode FindAssoc               = pure $ DNFindAssoc
 
 -- Step one: we
 
@@ -333,7 +334,7 @@ fromDumpNode DNKay         = pure $ Kay
 fromDumpNode (DNEnh x)     = pure $ Enh x
 fromDumpNode DNDub         = pure $ Dub
 fromDumpNode (DNJut h)     = Jut <$> readJet h
-fromDumpNode (DNEye x)     = pure $ Eye x
+fromDumpNode (DNEye x)     = pure $ (M (MD (Exp.In (fromIntegral x))) (fromIntegral x) [])
 fromDumpNode (DNBee x)     = pure $ Bee x
 fromDumpNode (DNSea x)     = pure $ Sea x
 fromDumpNode (DNSen x)     = pure $ Sen x
