@@ -27,9 +27,16 @@ _write(c3_i fid_i, const void* buf_v, size_t len_i)
   ssize_t ret_i;
 
   while ( len_i > 0 ) {
+    c3_w lop_w = 0;
     //  retry interrupt/async errors
     //
     do {
+      //  abort pathological retry loop
+    //
+    if ( 100 == ++lop_w ) {
+      fprintf(stderr, "term: write loop: %s\r\n", strerror(errno));
+      return;
+    }
       ret_i = write(fid_i, buf_v, len_i);
     }
     while (  (ret_i < 0)
@@ -315,7 +322,7 @@ _term_tcsetattr(c3_i fil_i, c3_i act_i, const struct termios* tms_u)
     //  abort pathological retry loop
     //
     if ( 100 == ++len_w ) {
-      fprintf(stderr, "term: tcsetattr loop\r\n");
+      fprintf(stderr, "term: tcsetattr loop: %s\r\n", strerror(errno));
       return -1;
     }
     ret_i = tcsetattr(fil_i, act_i, tms_u);
