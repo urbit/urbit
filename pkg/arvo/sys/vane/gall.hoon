@@ -1388,7 +1388,6 @@
               leaf+"{<agent-name>}: got ack for nonexistent subscription"
               leaf+"{<dock>}: {<agent-wire>}"
               >wire=wire<
-              >out=outbound.watches.current-agent<
               ~
             ==
         ap-core
