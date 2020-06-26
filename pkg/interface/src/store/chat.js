@@ -18,6 +18,7 @@ export default class ChatStore extends BaseStore {
     this.s3Reducer = new S3Reducer();
     this.metadataReducer = new MetadataReducer();
     this.localReducer = new LocalReducer();
+    //this.perf = performance.now();
   }
 
   initialState() {
@@ -46,6 +47,10 @@ export default class ChatStore extends BaseStore {
     this.metadataReducer.reduce(data, this.state);
     this.localReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data, this.state);
+
+    /*let perf = performance.now();
+    console.log(perf - this.perf);
+    this.perf = perf;*/
   }
 }
 
