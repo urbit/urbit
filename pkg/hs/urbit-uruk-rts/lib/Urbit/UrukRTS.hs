@@ -312,8 +312,11 @@ toASKEW = \case
 --------------------------------------------------------------------------------
 
 unpackBoxVal :: BoxVal -> IO Val
-unpackBoxVal (BSaved _ v) = pure v
-unpackBoxVal (BUnsaved v) = pure v
+unpackBoxVal (BSaved _ v)    = pure v
+unpackBoxVal (BUnsaved v)    = pure v
+unpackBoxVal (BUnloaded h action) = do
+  putStrLn ("Loading " ++ (tshow h))
+  action
 
 --------------------------------------------------------------------------------
 

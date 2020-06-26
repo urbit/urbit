@@ -1,6 +1,6 @@
 module Urbit.UrukRTS.JetOptimize where
 
-import ClassyPrelude hiding (try, evaluate)
+import ClassyPrelude    hiding (evaluate, try)
 import System.IO.Unsafe
 
 import Control.Arrow    ((>>>))
@@ -55,12 +55,12 @@ data Code = Code
     , cFast :: Val
     , cLoop :: Bool
     }
-  deriving stock (Eq, Ord, Generic)
+  deriving stock (Eq, Generic)
 
 syms = singleton <$> "xyzpqrstuvwxyzabcdefghijklmnop"
 
 sym i | i >= length syms = "v" <> show i
-sym i                    = syms !! i
+sym i = syms !! i
 
 instance Show Code where
     show c@(Code n nm _ v lop) =
@@ -73,8 +73,8 @@ instance Show Code where
 
         header ∷ Int → String
         header 0 | lop = "..  $\n"
-        header 0       = ""
-        header n       = header (n-1) <> "|=  " <> sym (arity - n) <> "\n"
+        header 0 = ""
+        header n = header (n-1) <> "|=  " <> sym (arity - n) <> "\n"
 
 {- |
     There are three kinds of things
@@ -105,7 +105,7 @@ data Exp
     | Cas Nat Exp Exp Exp [Exp]
     | Let Nat Exp Exp [Exp]
     | App Exp Exp
-  deriving stock (Eq, Ord, Generic)
+  deriving stock (Eq, Generic)
 
 {- |
     A `Val` is the same as an expression except that it contains no
@@ -126,7 +126,7 @@ data Val
     | ValIff Val Val Val [Val]
     | ValCas Nat Val Val Val [Val]
     | ValLet Nat Val Val [Val]
-  deriving stock (Eq, Ord, Generic)
+  deriving stock (Eq, Generic)
 
 instance Show Exp where
     show = \case

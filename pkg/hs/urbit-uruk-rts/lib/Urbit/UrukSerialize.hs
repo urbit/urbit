@@ -154,6 +154,7 @@ toDumpVal (VBol b)   = pure $ DVBol b
 toDumpVal (VLis xs)  = DVLis <$> mapM toDumpVal xs
 toDumpVal (VBox (BSaved h _)) = pure $ DVBox h
 toDumpVal (VBox (BUnsaved v)) = DVBox <$> writeVal v
+toDumpVal (VBox (BUnloaded h _)) = pure $ DVBox h
 
 toDumpVal (VFun f)   = do
   bs <- (toStrict . serialise) <$> toDumpFun f
@@ -173,81 +174,82 @@ toDumpJet (Jet djArgs inName inBody _ _ _) = do
   pure $ DumpJet{..}
 
 toDumpNode :: Node -> PierIO DumpNode
-toDumpNode Ess                = pure $ DNEss
-toDumpNode Kay                = pure $ DNKay
-toDumpNode (Enh x)            = pure $ DNEnh x
-toDumpNode Dub                = pure $ DNDub
-toDumpNode (Jut jet)          = DNJut <$> writeJet jet
-toDumpNode (Eye x)            = pure $ DNEye x
-toDumpNode (Bee x)            = pure $ DNBee x
-toDumpNode (Sea x)            = pure $ DNSea x
-toDumpNode (Sen x)            = pure $ DNSen x
-toDumpNode Seq                = pure $ DNSeq
-toDumpNode Fix                = pure $ DNFix
-toDumpNode (Nat n)            = pure $ DNNat n
-toDumpNode (Int i)            = pure $ DNInt i
-toDumpNode (Lis v)            = DNLis <$> mapM toDumpVal v
-toDumpNode (Bol b)            = pure $ DNBol b
-toDumpNode Iff                = pure $ DNIff
-toDumpNode Pak                = pure $ DNPak
-toDumpNode Zer                = pure $ DNZer
-toDumpNode Eql                = pure $ DNEql
-toDumpNode Add                = pure $ DNAdd
-toDumpNode Inc                = pure $ DNInc
-toDumpNode Dec                = pure $ DNDec
-toDumpNode Fec                = pure $ DNFec
-toDumpNode Mul                = pure $ DNMul
-toDumpNode Sub                = pure $ DNSub
-toDumpNode Ded                = pure $ DNDed
-toDumpNode Uni                = pure $ DNUni
-toDumpNode Lef                = pure $ DNLef
-toDumpNode Rit                = pure $ DNRit
-toDumpNode Cas                = pure $ DNCas
-toDumpNode Let                = pure $ DNLet
-toDumpNode Con                = pure $ DNCon
-toDumpNode Car                = pure $ DNCar
-toDumpNode Cdr                = pure $ DNCdr
+toDumpNode Ess                   = pure $ DNEss
+toDumpNode Kay                   = pure $ DNKay
+toDumpNode (Enh x)               = pure $ DNEnh x
+toDumpNode Dub                   = pure $ DNDub
+toDumpNode (Jut jet)             = DNJut <$> writeJet jet
+toDumpNode (Eye x)               = pure $ DNEye x
+toDumpNode (Bee x)               = pure $ DNBee x
+toDumpNode (Sea x)               = pure $ DNSea x
+toDumpNode (Sen x)               = pure $ DNSen x
+toDumpNode Seq                   = pure $ DNSeq
+toDumpNode Fix                   = pure $ DNFix
+toDumpNode (Nat n)               = pure $ DNNat n
+toDumpNode (Int i)               = pure $ DNInt i
+toDumpNode (Lis v)               = DNLis <$> mapM toDumpVal v
+toDumpNode (Bol b)               = pure $ DNBol b
+toDumpNode Iff                   = pure $ DNIff
+toDumpNode Pak                   = pure $ DNPak
+toDumpNode Zer                   = pure $ DNZer
+toDumpNode Eql                   = pure $ DNEql
+toDumpNode Add                   = pure $ DNAdd
+toDumpNode Inc                   = pure $ DNInc
+toDumpNode Dec                   = pure $ DNDec
+toDumpNode Fec                   = pure $ DNFec
+toDumpNode Mul                   = pure $ DNMul
+toDumpNode Sub                   = pure $ DNSub
+toDumpNode Ded                   = pure $ DNDed
+toDumpNode Uni                   = pure $ DNUni
+toDumpNode Lef                   = pure $ DNLef
+toDumpNode Rit                   = pure $ DNRit
+toDumpNode Cas                   = pure $ DNCas
+toDumpNode Let                   = pure $ DNLet
+toDumpNode Con                   = pure $ DNCon
+toDumpNode Car                   = pure $ DNCar
+toDumpNode Cdr                   = pure $ DNCdr
 
-toDumpNode Lsh                = pure $ DNLsh
-toDumpNode Lth                = pure $ DNLth
-toDumpNode Fub                = pure $ DNFub
-toDumpNode Not                = pure $ DNNot
-toDumpNode Xor                = pure $ DNXor
-toDumpNode Div                = pure $ DNDiv
-toDumpNode Tra                = pure $ DNTra
-toDumpNode Mod                = pure $ DNMod
-toDumpNode Rap                = pure $ DNRap
-toDumpNode Zing               = pure $ DNZing
-toDumpNode Ntot               = pure $ DNNtot
+toDumpNode Lsh                   = pure $ DNLsh
+toDumpNode Lth                   = pure $ DNLth
+toDumpNode Fub                   = pure $ DNFub
+toDumpNode Not                   = pure $ DNNot
+toDumpNode Xor                   = pure $ DNXor
+toDumpNode Div                   = pure $ DNDiv
+toDumpNode Tra                   = pure $ DNTra
+toDumpNode Mod                   = pure $ DNMod
+toDumpNode Rap                   = pure $ DNRap
+toDumpNode Zing                  = pure $ DNZing
+toDumpNode Ntot                  = pure $ DNNtot
 
-toDumpNode IntPositive        = pure $ DNIntPositive
-toDumpNode IntNegative        = pure $ DNIntNegative
+toDumpNode IntPositive           = pure $ DNIntPositive
+toDumpNode IntNegative           = pure $ DNIntNegative
 
-toDumpNode IntAbs             = pure $ DNIntAbs
-toDumpNode IntAdd             = pure $ DNIntAdd
-toDumpNode IntDiv             = pure $ DNIntDiv
-toDumpNode IntIsZer           = pure $ DNIntIsZer
-toDumpNode IntIsNeg           = pure $ DNIntIsNeg
-toDumpNode IntIsPos           = pure $ DNIntIsPos
-toDumpNode IntLth             = pure $ DNIntLth
-toDumpNode IntMul             = pure $ DNIntMul
-toDumpNode IntNegate          = pure $ DNIntNegate
-toDumpNode IntSub             = pure $ DNIntSub
+toDumpNode IntAbs                = pure $ DNIntAbs
+toDumpNode IntAdd                = pure $ DNIntAdd
+toDumpNode IntDiv                = pure $ DNIntDiv
+toDumpNode IntIsZer              = pure $ DNIntIsZer
+toDumpNode IntIsNeg              = pure $ DNIntIsNeg
+toDumpNode IntIsPos              = pure $ DNIntIsPos
+toDumpNode IntLth                = pure $ DNIntLth
+toDumpNode IntMul                = pure $ DNIntMul
+toDumpNode IntNegate             = pure $ DNIntNegate
+toDumpNode IntSub                = pure $ DNIntSub
 
-toDumpNode MkBox              = pure $ DNMkBox
-toDumpNode (Box (BSaved h _)) = pure $ DNBox h
-toDumpNode (Box (BUnsaved v)) = DNBox <$> writeVal v
-toDumpNode Unbox              = pure $ DNUnbox
+toDumpNode MkBox                 = pure $ DNMkBox
+toDumpNode (Box (BSaved h _))    = pure $ DNBox h
+toDumpNode (Box (BUnsaved v))    = DNBox <$> writeVal v
+toDumpNode (Box (BUnloaded h _)) = pure $ DNBox h
+toDumpNode Unbox                 = pure $ DNUnbox
 
-toDumpNode LCon               = pure $ DNLCon
-toDumpNode LNil               = pure $ DNLNil
-toDumpNode Gulf               = pure $ DNGulf
-toDumpNode Snag               = pure $ DNSnag
-toDumpNode Turn               = pure $ DNTurn
-toDumpNode Weld               = pure $ DNWeld
+toDumpNode LCon                  = pure $ DNLCon
+toDumpNode LNil                  = pure $ DNLNil
+toDumpNode Gulf                  = pure $ DNGulf
+toDumpNode Snag                  = pure $ DNSnag
+toDumpNode Turn                  = pure $ DNTurn
+toDumpNode Weld                  = pure $ DNWeld
 
-toDumpNode AddAssoc           = pure $ DNAddAssoc
-toDumpNode FindAssoc          = pure $ DNFindAssoc
+toDumpNode AddAssoc              = pure $ DNAddAssoc
+toDumpNode FindAssoc             = pure $ DNFindAssoc
 
 -- Step one: we
 
@@ -308,10 +310,11 @@ fromDumpVal (DVInt i)   = pure $ VInt i
 fromDumpVal (DVBol b)   = pure $ VBol b
 fromDumpVal (DVLis xs)  = VLis <$> mapM fromDumpVal xs
 
--- TODO: perform lazy loading by returning a BUnloaded once that works.
 fromDumpVal (DVBox h)   = do
-  val <- readVal h
-  pure $ VBox (BSaved h val)
+  -- Each value is actually lazy loaded.
+  pier <- ask
+  let action = runReaderT (readVal h) pier
+  pure $ VBox (BUnloaded h action)
 
 fromDumpVal (DVFun h)   = VFun <$> readFun h
 
@@ -394,8 +397,11 @@ fromDumpNode DNIntSub      = pure IntSub
 
 fromDumpNode DNMkBox       = pure MkBox
 fromDumpNode (DNBox h)     = do
-  val <- readVal h
-  pure $ Box $ BSaved h val
+  -- Each value is actually lazy loaded.
+  pier <- ask
+  let action = runReaderT (readVal h) pier
+  pure $ Box (BUnloaded h action)
+
 fromDumpNode DNUnbox       = pure Unbox
 
 fromDumpNode DNLCon        = pure LCon

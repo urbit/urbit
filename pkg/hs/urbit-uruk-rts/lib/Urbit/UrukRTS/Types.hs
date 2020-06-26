@@ -13,6 +13,7 @@ module Urbit.UrukRTS.Types where
 
 import ClassyPrelude             hiding (evaluate, fromList, seq, try)
 import Control.Monad.Primitive
+import Data.HexString
 import Data.Primitive.Array
 import Data.Primitive.SmallArray
 import GHC.Prim                  hiding (seq)
@@ -91,7 +92,7 @@ data Jet = Jet
   , jLoop :: Bool
   , jRegs :: !Int -- Number of registers needed.
   }
- deriving (Eq, Ord, Generic, NFData)
+ deriving (Eq, Generic, NFData)
 
 instance Hashable Jet where
   hashWithSalt i (Jet a n b _ _ _) =
@@ -110,13 +111,14 @@ instance Show Jet where
        '-' -> '_'
        x   -> x
 
-
+-- A Hash is a SHA256 hash of the serialized bytestring of a Val or Node. This
+-- is used as a reference to a
 newtype Hash = Hash { unHash :: ByteString }
   deriving (Eq, Ord, Generic)
   deriving newtype (Hashable, NFData)
 
 instance Show Hash where
-  show = show . unHash
+  show = show . toText . fromBytes . unHash
 
 -- A Box refers to a value which can be (or has already been) written to disk
 -- separately. This allows for lazy loading of data from disk.
@@ -124,9 +126,34 @@ data BoxVal
   = BSaved Hash !Val
   | BUnsaved !Val
   -- TODO: Needs to change the RTS from IO to a pier environment.
---  | BUnloaded Hash
-  deriving (Eq, Ord, Generic, Show, Hashable, NFData)
+  | BUnloaded Hash (IO Val)
+  deriving (Generic)
 
+-- We can't just not have an Eq instance because the type of
+-- MoonToUruk.strictOleg requires equality on the uruk representation type. But
+-- the following is incomplete and when writing the BUnsaved cases, might get
+-- really slow due to hashing.
+instance Eq BoxVal where
+  (BSaved h1 _) == (BSaved h2 _) = h1 == h2
+  (BUnsaved v1) == (BUnsaved v2) = v1 == v2
+  (BUnloaded h1 _) == (BUnloaded h2 _) = h1 == h2
+  _ == _ = False
+
+instance Show BoxVal where
+  show = \case
+    BSaved h v -> "Saved(" <> show v <> ")"
+    BUnsaved v -> "Unsaved(" <> show v <> ")"
+    BUnloaded h _ -> "Unloaded(" <> show h <> ")"
+
+instance NFData BoxVal where
+  rnf (BSaved h v)    = GHC.Exts.seq h (GHC.Exts.seq v ())
+  rnf (BUnsaved v)    = rnf v
+  rnf (BUnloaded h _) = rnf h
+
+instance Hashable BoxVal where
+  hashWithSalt s (BSaved h v)    = s `hashWithSalt` h
+  hashWithSalt s (BUnsaved v)    = s `hashWithSalt` (s `hashWithSalt` v)
+  hashWithSalt s (BUnloaded h _) = s `hashWithSalt` h
 
 data Node
   = Ess
@@ -203,7 +230,7 @@ data Node
 
   | AddAssoc
   | FindAssoc
- deriving (Eq, Ord, Generic, Hashable, NFData)
+ deriving (Eq, Generic, Hashable, NFData)
 
 instance Show Node where
   show = \case
@@ -291,7 +318,7 @@ data Fun = Fun
   , fHead :: !Node
   , fArgs :: CloN -- Lazy on purpose.
   }
- deriving (Eq, Ord, Generic, Hashable, NFData)
+ deriving (Eq, Generic, Hashable, NFData)
 
 instance Show Fun where
   show (Fun _ h args) = if sizeofSmallArray args == 0
@@ -310,7 +337,7 @@ data Val
   | VLis ![Val]
   | VBox !BoxVal
   | VFun !Fun
- deriving (Eq, Ord, Generic, Hashable)
+ deriving (Eq, Generic, Hashable)
 
 instance NFData Val where
   rnf = \case
@@ -447,7 +474,7 @@ data Exp
   | CLON !Fun !(SmallArray Exp)        --  Undersaturated call
 
   | CALN !Exp !(SmallArray Exp)   --  Call of unknown saturation
- deriving (Eq, Ord, Show, Generic, NFData)
+ deriving (Eq, Show, Generic, NFData)
 
 instance NFData a => NFData (SmallArray a) where
   rnf !_ = ()
@@ -456,13 +483,13 @@ instance NFData a => NFData (SmallArray a) where
 -- Exceptions ------------------------------------------------------------------
 
 data TypeError = TypeError Text
- deriving (Eq, Ord, Show, Exception)
+ deriving (Show, Exception)
 
 data Crash = Crash Val
- deriving (Eq, Ord, Show, Exception)
+ deriving (Show, Exception)
 
 data BadRef = BadRef Jet Int
- deriving (Eq, Ord, Show, Exception)
+ deriving (Show, Exception)
 
 
 --------------------------------------------------------------------------------
