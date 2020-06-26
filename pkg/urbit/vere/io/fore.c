@@ -11,6 +11,62 @@
 #include "all.h"
 #include "vere/vere.h"
 
+/* _fore_inject_bail(): handle failure on arbitrary injection.
+*/
+static void
+_fore_inject_bail(u3_ovum* egg_u, u3_noun lud)
+{
+  u3_auto_bail_slog(egg_u, lud);
+  u3l_log("pier: injected event failed\n");
+}
+
+/* _fore_inject(): inject an arbitrary ovum from a jammed file at [pax_c].
+*/
+static void
+_fore_inject(u3_auto* car_u, c3_c* pax_c)
+{
+  //  XX soft
+  //
+  u3_noun ovo = u3ke_cue(u3m_file(pax_c));
+  u3_noun riw, cad, tar, wir;
+
+  if ( c3n == u3r_cell(ovo, &riw, &cad) ) {
+    u3l_log("pier: invalid ovum in -I\n");
+  }
+  else if (  (c3n == u3a_is_cell(cad))
+          || (c3n == u3a_is_atom(u3h(cad))) )
+  {
+    u3l_log("pier: invalid card in -I ovum\n");
+  }
+  else if ( c3n == u3r_cell(riw, &tar, &wir) ) {
+    u3l_log("pier: invalid wire in -I ovum\n");
+  }
+  else if (  (c3n == u3a_is_atom(tar))
+          || (1 < u3r_met(3, tar)) )
+  {
+    u3l_log("pier: invalid target in -I wire\n");
+  }
+  else {
+    {
+      c3_c* tag_c = u3r_string(u3h(cad));
+      u3_noun ser = u3do("spat", u3k(riw));
+      c3_c* wir_c = u3r_string(ser);
+
+      u3l_log("pier: injecting %%%s event on %s\n", tag_c, wir_c);
+
+      c3_free(tag_c);
+      c3_free(wir_c);
+      u3z(ser);
+    }
+
+    u3_auto_peer(
+      u3_auto_plan(car_u, 0, u3k(tar), u3k(wir), u3k(cad)),
+      0, _fore_inject_bail);
+  }
+
+  u3z(ovo);
+}
+
 /* _fore_io_talk():
 */
 static void
@@ -41,6 +97,12 @@ _fore_io_talk(u3_auto* car_u)
     cad = u3nc(c3__verb, u3_nul);
 
     u3_auto_plan(car_u, 0, u3_blip, wir, cad);
+  }
+
+  //  inject arbitrary
+  //
+  if ( u3_Host.ops_u.jin_c ) {
+    _fore_inject(car_u, u3_Host.ops_u.jin_c);
   }
 }
 
