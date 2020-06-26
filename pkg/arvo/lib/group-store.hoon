@@ -4,6 +4,42 @@
 =<  [. sur]
 =,  sur
 |%
+::
+++  dekebab
+  |=  str=cord
+  ^-  cord
+  =-  (fall - str)
+  %+  rush  str
+  =/  name
+    %+  cook
+     |=  part=tape
+     ^-  tape
+     ?~  part  part
+     :-  (sub i.part 32)
+     t.part
+    (star low)
+  %+  cook
+    (cork (bake zing (list tape)) crip)
+  ;~(plug (star low) (more hep name))
+::
+++  enkebab
+  |=  str=cord
+  ^-  cord
+  ~|  str
+  =-  (fall - str)
+  %+  rush  str
+  =/  name
+    %+  cook
+      |=  part=tape
+      ^-  tape
+      ?~  part  part
+      :-  (add i.part 32)
+      t.part
+    ;~(plug hig (star low))
+  %+  cook
+    |=(a=(list tape) (crip (zing (join "-" a))))
+  ;~(plug (star low) (star name))
+
 ++  migrate-path-map
   |*  map=(map path *)
   =/  keys=(list path)
@@ -26,6 +62,18 @@
 ++  enjs
   =,  enjs:format
   |%
+  ++  frond
+    |=  [p=@t q=json]
+    ^-  json
+    (frond:enjs:format (dekebab p) q)
+  ++  pairs
+    |=  a=(list [p=@t q=json])
+    ^-  json
+    %-  pairs:enjs:format
+    %+  turn  a
+    |=  [p=@t q=json]
+    ^-  [@t json]
+    [(dekebab p) q]
   ::
   ++  update
     |=  =^update
@@ -216,6 +264,7 @@
     ^-  json
     ?>  ?=(%add-tag -.action)
     %-  pairs
+    ^-  (list [p=@t q=json])
     :~  resource+(enjs:resource resource.action)
         tag+(tag tag.action)
         ships+(set ship ships.action)
@@ -243,6 +292,28 @@
 ++  dejs
   =,  dejs:format
   |%
+  ::
+  ++  ruk
+    |*  [a=(map) b=gate]
+    ^+  a
+    =>  .(a (sy ~(tap by a)))
+    |- 
+    ^+  a
+    ?~  a  a
+    [n=[p=(b p.n.a) q=q.n.a] l=$(a l.a) r=$(a r.a)]
+  ::
+  ++  of
+    |*  wer=(pole [cord fist])
+    |=  jon=json
+    %-  (^of wer)
+    ?>  ?=(%o -.jon)
+    o+(ruk p.jon enkebab)
+  ++  ot
+    |*  wer=(pole [cord fist])
+    |=  jon=json
+    %-  (^ot wer)
+    ?>  ?=(%o -.jon)
+    o+(ruk p.jon enkebab)
   ::
   ++  action
     ^-  $-(json ^action)
