@@ -986,6 +986,7 @@ u3_lord_info(u3_lord* god_u)
           god_u->eve_d,
           god_u->mug_l,
           god_u->dep_w);
+  u3_newt_moat_info(&god_u->out_u);
 }
 
 /* u3_lord_init(): instantiate child process.
