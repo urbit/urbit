@@ -38,7 +38,8 @@
     c3_o          fak_o;                //  fake keys
     c3_s          por_s;                //  public IPv4 port
     c3_c*         dns_c;                //  domain XX multiple/fallback
-    c3_d          dop_d;                //  drop count (since last print)
+    c3_d          dop_d;                //  drop count
+    c3_d          fal_d;                //  crash count
     c3_w          imp_w[256];           //  imperial IPs
     time_t        imp_t[256];           //  imperial IP timestamps
     c3_o          imp_o[256];           //  imperial print status
@@ -357,6 +358,82 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
   u3z(lan); u3z(pac);
 }
 
+/* _ames_cap_queue(): cap ovum queue at 1k, dropping oldest packets.
+*/
+static void
+_ames_cap_queue(u3_ames* sam_u)
+{
+  u3_ovum* egg_u = sam_u->car_u.ext_u;
+
+  while ( egg_u && (1000 < sam_u->car_u.dep_w) ) {
+    u3_ovum* nex_u = egg_u->nex_u;
+
+    if ( c3__hear == u3h(egg_u->cad) ) {
+      u3_auto_drop(&sam_u->car_u, egg_u);
+      sam_u->dop_d++;
+
+      if ( u3C.wag_w & u3o_verbose ) {
+        u3l_log("ames: packet dropped (%" PRIu64 " total)\n", sam_u->dop_d);
+      }
+    }
+
+    egg_u = nex_u;
+  }
+
+  if (  (sam_u->dop_d && (0 == (sam_u->dop_d % 1000)))
+     && !(u3C.wag_w & u3o_verbose) )
+  {
+    u3l_log("ames: packet dropped (%" PRIu64 " total)\n", sam_u->dop_d);
+  }
+}
+
+/* _ames_punt_goof(): print %bail error report(s).
+*/
+static void
+_ames_punt_goof(u3_noun lud)
+{
+  u3_noun dul = lud;
+
+  if ( 2 == u3qb_lent(dul) ) {
+    u3_pier_punt_goof("hear", u3k(u3h(dul)));
+    u3_pier_punt_goof("crud", u3k(u3h(u3t(dul))));
+  }
+  else {
+    c3_w len_w = 1;
+
+    while ( u3_nul != dul ) {
+      u3l_log("ames: bail %u\r\n", len_w++);
+      u3_pier_punt_goof("ames", u3k(u3h(dul)));
+      dul = u3t(dul);
+    }
+  }
+
+  u3z(lud);
+}
+
+/* _ames_hear_bail(): handle packet failure.
+*/
+static void
+_ames_hear_bail(u3_ovum* egg_u, u3_noun lud)
+{
+  u3_ames* sam_u = (u3_ames*)egg_u->car_u;
+  sam_u->fal_d++;
+
+  if (  (u3C.wag_w & u3o_verbose)
+     || (0 == (sam_u->fal_d % 1000)) )
+  {
+    _ames_punt_goof(lud);
+    u3l_log("ames: packet failed (%" PRIu64 " total)\n\n", sam_u->fal_d);
+  }
+  else {
+    u3z(lud);
+
+    if (  0 == (sam_u->fal_d % 1000) )  {
+      u3l_log("ames: packet failed (%" PRIu64 " total)\n\n", sam_u->fal_d);
+    }
+  }
+}
+
 /* _ames_recv_cb(): receive callback.
 */
 static void
@@ -394,30 +471,11 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       cad = u3nt(c3__hear, u3nc(c3n, lan), msg);
     }
 
-    u3_auto_plan(&sam_u->car_u, 0, c3__a, wir, cad);
+    u3_auto_peer(
+      u3_auto_plan(&sam_u->car_u, 0, c3__a, wir, cad),
+      0, _ames_hear_bail);
 
-    //  cap ovum queue at 1k, dropping oldest packets
-    //
-    {
-      u3_ovum* egg_u = sam_u->car_u.ext_u;
-
-      while ( egg_u && (1000 < sam_u->car_u.dep_w) ) {
-        u3_ovum* nex_u = egg_u->nex_u;
-
-        if ( c3__hear == u3h(egg_u->cad) ) {
-          u3_auto_drop(&sam_u->car_u, egg_u);
-          sam_u->dop_d++;
-        }
-
-        egg_u = nex_u;
-      }
-    }
-
-    if ( 0 == (sam_u->dop_d % 1000) ) {
-      if ( (u3C.wag_w & u3o_verbose) ) {
-        u3l_log("ames: dropped 1.000 packets\r\n");
-      }
-    }
+    _ames_cap_queue(sam_u);
   }
 
   c3_free(buf_u->base);
@@ -652,6 +710,7 @@ _ames_io_info(u3_auto* car_u)
 {
   u3_ames* sam_u = (u3_ames*)car_u;
   u3l_log("      dropped: %" PRIu64 "\n", sam_u->dop_d);
+  u3l_log("      crashed: %" PRIu64 "\n", sam_u->fal_d);
 }
 
 /* u3_ames_io_init(): initialize ames I/O.
@@ -683,10 +742,6 @@ u3_ames_io_init(u3_pier* pir_u)
   car_u->io.info_f = _ames_io_info;
   car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;
-
-  //  XX track and print every N?
-  //
-  // car_u->ev.bail_f = ...;
 
   return car_u;
 }
