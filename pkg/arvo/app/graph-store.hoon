@@ -28,6 +28,26 @@
   ^-  (quip card _this)
   [~ this(state !<(state-0 old))]
 ::
+++  on-watch
+  ~/  %graph-store-watch
+  |=  =path
+  ^-  (quip card _this)
+  |^
+  ?>  (team:title our.bowl src.bowl)
+  =/  cards=(list card)
+    ?+  path       (on-watch:def path)
+        [%updates ~]   ~
+        [%keys ~]      (give [%keys ~(key by graphs)])
+        [%tags ~]      (give [%tags ~(key by tag-queries)])
+    ==
+  [cards this]
+  ::
+  ++  give
+    |=  update=update-0:store
+    ^-  (list card)
+    [%give %fact ~ [%graph-update !>([%0 update])]]~
+  --
+::
 ++  on-poke
   ~/  %graph-store-poke
   |=  [=mark =vase]
@@ -36,26 +56,32 @@
   ?>  (team:title our.bowl src.bowl)
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
-        %graph-action  (graph-action !<(action:store vase))
+        %graph-update  (graph-update !<(update:store vase))
     ==
   [cards this]
   ::
-  ++  graph-action
-    |=  =action:store
+  ++  graph-update
+    |=  =update:store
     ^-  (quip card _state)
     |^
-    ?>  ?=(%0 -.action)
-    ?-  +<.action
-        %add-graph          (add-graph +>.action)
-        %remove-graph       (remove-graph +>.action)
-        %add-nodes          (add-nodes +>.action)
-        %remove-nodes       (remove-nodes +>.action)
-        %add-signatures     (add-signatures +>.action)
-        %remove-signatures  (remove-signatures +>.action)
-        %add-tag            (add-tag +>.action)
-        %remove-tag         (remove-tag +>.action)
-        %archive-graph      (archive-graph +>.action)
-        %unarchive-graph    (unarchive-graph +>.action)
+    ?>  ?=(%0 -.update)
+    ?-  +<.update
+        %add-graph          (add-graph +>.update)
+        %remove-graph       (remove-graph +>.update)
+        %add-nodes          (add-nodes +>.update)
+        %remove-nodes       (remove-nodes +>.update)
+        %add-signatures     (add-signatures +>.update)
+        %remove-signatures  (remove-signatures +>.update)
+        %add-tag            (add-tag +>.update)
+        %remove-tag         (remove-tag +>.update)
+        %archive-graph      (archive-graph +>.update)
+        %unarchive-graph    (unarchive-graph +>.update)
+        ::
+        ::  NOTE: cannot send these updates as pokes
+        ::
+        %keys               !!
+        %tags               !!
+        %tag-queries        !!
     ==
     ::
     ++  add-graph
@@ -281,7 +307,7 @@
       |=  [=term =resource:store]
       ^-  (quip card _state)
       ?>  (~(has by graphs) resource)
-      :-  (give [/updates]~ [%add-tag term resource])
+      :-  (give [/updates /tags ~] [%add-tag term resource])
       %_  state
           tag-queries  (~(put ju tag-queries) term resource)
       ==
@@ -290,7 +316,7 @@
       |=  [=term =resource:store]
       ^-  (quip card _state)
       ?>  (~(has by graphs) resource)
-      :-  (give [/updates]~ [%remove-tag term resource])
+      :-  (give [/updates /tags ~] [%remove-tag term resource])
       %_  state
           tag-queries  (~(del ju tag-queries) term resource)
       ==
@@ -300,11 +326,15 @@
       ^-  (quip card _state)
       ?<  (~(has by archive) resource)
       ?>  (~(has by graphs) resource)
-      :-  (give [/updates /keys ~] [%archive-graph resource])
+      :-  (give [/updates /keys /tags ~] [%archive-graph resource])
       %_  state
           archive      (~(put by archive) resource (~(got by graphs) resource))
           graphs       (~(del by graphs) resource)
           action-logs  (~(del by action-logs) resource)
+          tag-queries
+        %-  ~(run by tag-queries)
+        |=  =resources:store
+        (~(del in resources) resource)
       ==
     ::
     ++  unarchive-graph
@@ -326,32 +356,16 @@
     --
   --
 ::
-++  on-watch
-  ~/  %graph-store-watch
-  |=  =path
-  ^-  (quip card _this)
-  |^
-  ?>  (team:title our.bowl src.bowl)
-  =/  cards=(list card)
-    ?+  path       (on-watch:def path)
-        [%updates ~]   ~
-        [%keys ~]      (give [%keys ~(key by graphs)])
-    ==
-  [cards this]
-  ::
-  ++  give
-    |=  update=update-0:store
-    ^-  (list card)
-    [%give %fact ~ [%graph-update !>([%0 update])]]~
-  --
-::
 ++  on-peek
   ~/  %graph-store-peek
   |=  =path
   ^-  (unit (unit cage))
+  |^
+  ?>  (team:title our.bowl src.bowl)
   ?+  path  (on-peek:def path)
-      [%x %keys ~]        ``noun+!>(~(key by graphs))
-      [%x %tags ~]        ``noun+!>(~(key by tag-queries))
+      [%x %keys ~]         ``noun+!>(~(key by graphs))
+      [%x %tags ~]         ``noun+!>(~(key by tag-queries))
+      [%x %tag-queries ~]  ``noun+!>(tag-queries)
       [%x %graph @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
@@ -359,39 +373,75 @@
     ?~  graph  ~
     ``noun+!>(u.graph)
   ::
-::      [%x %graph-subset @ @ @ @ ~]
-::    =/  =ship   (slav %p i.t.t.path)
-::    =/  =term   i.t.t.t.path
-::    ::  TODO: parse out either '~' literal into null or parse out @ud
-::    =/  start=(unit @ud)
-::    =/  graph=(unit graph:store)  (~(get by graphs) [ship term])
-::    ?~  graph  ~
-::    ``noun+!>((subset:orm u.graph [~
-::    ``noun+!>(u.graph)
+      [%x %graph-subset @ @ @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.t.path
+    =/  start=(unit atom:store)  (rush i.t.t.t.t.path dem:ag)
+    =/  end=(unit atom:store)    (rush i.t.t.t.t.t.path dem:ag)
+    =/  graph=(unit graph:store)  (~(get by graphs) [ship term])
+    ?~  graph  ~
+    ``noun+!>(`graph:store`(subset:orm u.graph start end))
   ::
       [%x %node @ @ @ *]
     =/  =ship         (slav %p i.t.t.path)
     =/  =term         i.t.t.t.path
     =/  =index:store  (turn t.t.t.t.path |=(=cord (slav %ud cord)))
+    =/  node=(unit node:store)  (get-node ship term index)
+    ?~  node  ~
+    ``noun+!>(u.node)
+  ::
+      [%x %post @ @ @ *]
+    =/  =ship         (slav %p i.t.t.path)
+    =/  =term         i.t.t.t.path
+    =/  =index:store  (turn t.t.t.t.path |=(=cord (slav %ud cord)))
+    =/  node=(unit node:store)  (get-node ship term index)
+    ?~  node  ~
+    ``noun+!>(post.u.node)
+  ::
+      [%x %node-children @ @ @ *]
+    =/  =ship         (slav %p i.t.t.path)
+    =/  =term         i.t.t.t.path
+    =/  =index:store  (turn t.t.t.t.path |=(=cord (slav %ud cord)))
+    =/  node=(unit node:store)  (get-node ship term index)
+    ?~  node  ~
+    ?-  -.children.u.node
+        %empty  ~
+        %graph  ``noun+!>(p.children.u.node)
+    ==
+  ::
+      [%x %node-children-subset @ @ @ @ @ *]
+    =/  =ship         (slav %p i.t.t.path)
+    =/  =term         i.t.t.t.path
+    =/  start=(unit atom:store)  (rush i.t.t.t.t.path dem:ag)
+    =/  end=(unit atom:store)    (rush i.t.t.t.t.t.path dem:ag)
+    =/  =index:store  (turn t.t.t.t.t.t.path |=(=cord (slav %ud cord)))
+    =/  node=(unit node:store)  (get-node ship term index)
+    ?~  node  ~
+    ?-  -.children.u.node
+        %empty  ~
+        %graph  ``noun+!>(`graph:store`(subset:orm p.children.u.node start end))
+    ==
+  ==
+  ::
+  ++  get-node
+    |=  [=ship =term =index:store]
+    ^-  (unit node:store)
     =/  parent-graph=(unit graph:store)  (~(get by graphs) [ship term])
     ?~  parent-graph  ~
     =/  node=(unit node:store)  ~
     =/  =graph:store  u.parent-graph
     |-
     ?~  index
-      ?~  node  ~
-      ``noun+!>(u.node)
+      node
     ?~  t.index
-      =.  node  (get:orm graph i.index)
-      ?~  node  ~
-      ``noun+!>(u.node)
+      (get:orm graph i.index)
     =.  node  (get:orm graph i.index)
     ?~  node  ~
     ?-  -.children.u.node
         %empty  ~
         %graph  $(graph p.children.u.node, index t.index)
     ==
-  ==
+  --
 ::
 ++  on-arvo  on-arvo:def
 ++  on-agent  on-agent:def

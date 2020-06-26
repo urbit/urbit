@@ -29,7 +29,7 @@
   ==
 ::
 ++  orm      ((or-map atom node) gth)
-++  orm-log  ((or-map time action) lth)
+++  orm-log  ((or-map time update) lth)
 ::
 ++  enjs
   =,  enjs:format
@@ -44,9 +44,6 @@
       |=  upd=update-0
       ^-  [cord json]
       ?-  -.upd
-          %keys
-        [%keys [%a (turn ~(tap in resources.upd) enjs:res)]]
-      ::
           %add-graph
         :-  %add-graph
         %-  pairs
@@ -104,6 +101,20 @@
       ::
           %unarchive-graph
         [%unarchive-graph (enjs:res resource.upd)]
+      ::
+          %keys
+        [%keys [%a (turn ~(tap in resources.upd) enjs:res)]]
+      ::
+          %tags
+        [%tags [%a (turn ~(tap in tags.upd) |=(=term s+term))]]
+      ::
+          %tag-queries
+        :-  %tag-queries
+        %-  pairs
+        %+  turn  ~(tap by tag-queries.upd)
+        |=  [=term =resources]
+        ^-  [cord json]
+        [term [%a (turn ~(tap in resources) enjs:res)]]
       ==
     ::
     ++  graph
@@ -222,11 +233,11 @@
 ++  dejs
   =,  dejs:format
   |%
-  ++  action
+  ++  update
     |=  jon=json
-    ^-  ^action
+    ^-  ^update
     :-  %0
-    ^-  action-0
+    ^-  update-0
     =<  (decode jon)
     |%
     ++  decode
@@ -241,6 +252,9 @@
           [%remove-tag remove-tag]
           [%archive-graph archive-graph]
           [%unarchive-graph unarchive-graph]
+          [%keys keys]
+          [%tags tags]
+          [%tag-queries tag-queries]
       ==
     ::
     ++  add-graph
@@ -354,6 +368,18 @@
       :~  [%term so]
           [%resource dejs:res]
       ==
+    ::
+    ++  keys
+      |=  =json
+      *resources
+    ::
+    ++  tags
+      |=  =json
+      *(set term)
+    ::
+    ++  tag-queries
+      |=  =json
+      *^tag-queries
     --
   --
 ::

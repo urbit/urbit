@@ -8,19 +8,12 @@
   ?>  (check-balance:((ordered-map key value) ord) b)
   b
 ::
++$  graph        ((mop atom node) gth)
++$  node         [=post children=internal-graph]
 +$  graphs       (map resource graph)
 +$  tag-queries  (jug term resource)
++$  action-log   ((mop time update) lth)
 +$  action-logs  (map resource action-log)
-+$  network
-  $:  =graphs
-      =tag-queries
-      =action-logs
-      archive=graphs
-  ==
-::
-+$  action-log  ((mop time action) lth)
-::
-+$  graph  ((mop atom node) gth)
 ::
 +$  internal-graph
   $~  [%empty ~]
@@ -28,13 +21,18 @@
       [%empty ~]
   ==
 ::
-+$  node   [=post children=internal-graph]
-::
-+$  action
-  $%  [%0 action-0]
++$  network
+  $:  =graphs
+      =tag-queries
+      =action-logs
+      archive=graphs
   ==
 ::
-+$  action-0
++$  update
+  $%  [%0 update-0]
+  ==
+::
++$  update-0
   $%  [%add-graph =resource =graph]
       [%remove-graph =resource]
     ::
@@ -49,14 +47,11 @@
     ::
       [%archive-graph =resource]
       [%unarchive-graph =resource]
-  ==
-::
-+$  update
-  $%  [%0 update-0]
-  ==
-::
-+$  update-0
-  $%  [%keys =resources]
-      action-0
+    ::
+    ::  NOTE: cannot be sent as pokes
+    ::
+      [%keys =resources]
+      [%tags tags=(set term)]
+      [%tag-queries =tag-queries]
   ==
 --

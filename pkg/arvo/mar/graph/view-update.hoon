@@ -1,4 +1,4 @@
-/+  *graph-store
+/+  *graph-view
 |_  upd=update
 ++  grow
   |%
@@ -8,6 +8,5 @@
 ++  grab
   |%
   ++  noun  update
-  ++  json  update:dejs
   --
 --

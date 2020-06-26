@@ -37,6 +37,45 @@
       ==
   ==
 ::
+++  on-watch
+  ~/  %graph-view-watch
+  |=  =path
+  ^-  (quip card _this)
+  ?>  (team:title our.bowl src.bowl)
+  ?+  path  (on-watch:def path)
+      [%updates @ ~]
+    :-  [%give %fact ~ %json !>([(frond:enjs:format %graph-view s+'bound')])]~
+    this(connections (~(put by connections) (slav %ud i.t.path) now.bowl))
+  ==
+::
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
+  |^
+  ?+  -.sign  (on-agent:def wire sign)
+      %kick
+    :_  this
+    [%pass /updates %agent [our.bowl %graph-store] %watch /updates]~
+  ::
+      %fact
+    ?+  p.cage.sign  (on-agent:def wire sign)
+        %graph-update
+      :_  this
+      %+  give
+        %+  turn  ~(tap by connections)
+        |=  [=atom:store *]
+        ^-  path
+        /updates/(scot %ud atom)
+      cage.sign
+    ==
+  ==
+  ::
+  ++  give
+    |=  [paths=(list path) =cage]
+    ^-  (list card)
+    [%give %fact paths cage]~
+  --
+::
 ++  on-poke
   ~/  %graph-view-poke
   |=  [=mark =vase]
@@ -45,23 +84,23 @@
   ?>  (team:title our.bowl src.bowl)
   =^  cards  state
     ?+  mark                (on-poke:def mark vase)
-        %graph-action       (action !<(action:store vase))
-        %json               (action (action:dejs:store !<(json vase)))
+        %graph-update       (update !<(update:store vase))
+        %json               (update (update:dejs:store !<(json vase)))
         %graph-view-action  (view-action !<(action:view vase))
     ==
   [cards this]
   ::
-  ++  action
-    |=  =action:store
+  ++  update
+    |=  =update:store
     ^-  (quip card _state)
     |^
     ::  TODO: decide who to send it to based on resource
     ::
-    ?>  ?=(%0 -.action)
+    ?>  ?=(%0 -.update)
     :_  state
-    ?+  +<.action           [(poke-store action) ~]
-        %add-nodes          (add-nodes +>.action)
-        %add-signatures     (add-signatures +>.action)
+    ?+  +<.update           [(poke-store update) ~]
+        %add-nodes          (add-nodes +>.update)
+        %add-signatures     (add-signatures +>.update)
     ==
     ::
     ++  add-nodes
@@ -147,14 +186,14 @@
       (scot %ud i)
     ::
     ++  poke-store
-      |=  =action:store
+      |=  =update:store
       ^-  card
       :*  %pass
           /(scot %da now.bowl)
           %agent
           [our.bowl %graph-store]
           %poke
-          [%graph-action !>(action)]
+          [%graph-update !>(update)]
       ==
     --
   ::
@@ -163,6 +202,149 @@
     ^-  (quip card _state)
     ?-  -.action
         %fetch  (fetch +.action)
+    ==
+  ::
+  ++  fetch
+    |=  [con=atom:store typ=query-type:view]
+    ^-  (quip card _state)
+    ?-  -.typ
+        %all
+      =/  keys  (scry-for resources:store /keys)
+      :_  state
+      :-  (give con [%graph-view-update !>([%0 [%keys keys]])])
+      %+  turn  ~(tap in keys)
+      |=  [=ship =term]
+      (give con [%graph-update !>((add-graph ship term))])
+    ::
+        %keys
+      :_  state
+      :_  ~
+      %+  give  con
+      :-  %graph-view-update
+      !>([%0 [%keys (scry-for resources:store /keys)]])
+    ::
+        %tags
+      :_  state
+      :_  ~
+      %+  give  con
+      :-  %graph-view-update
+      !>([%0 [%tags (scry-for (set term) /tags)]])
+    ::
+        %tag-queries
+      :_  state
+      :_  ~
+      %+  give  con
+      :-  %graph-view-update
+      !>([%0 [%tag-queries (scry-for tag-queries:store /tag-queries)]])
+    ::
+        %graph
+      :_  state
+      :_  ~
+      (give con [%graph-update !>((add-graph resource.typ))])
+    ::
+        %graph-subset
+      :_  state
+      :_  ~
+      %+  give  con
+      :-  %graph-view-update
+      !>((graph-subset resource.typ start.typ end.typ))
+    ::
+        %node
+      :_  state
+      :_  ~
+      %+  give  con
+      [%graph-view-update !>((node resource.typ index.typ))]
+    ::
+        %post
+      :_  state
+      :_  ~
+      %+  give  con
+      [%graph-view-update !>((post resource.typ index.typ))]
+    ::
+        %node-children
+      :_  state
+      :_  ~
+      %+  give  con
+      [%graph-view-update !>((node-children resource.typ index.typ))]
+    ::
+        %node-children-subset
+      :_  state
+      :_  ~
+      %+  give  con
+      :-  %graph-view-update
+      !>((node-children-subset resource.typ start.typ end.typ index.typ))
+    ==
+  ::
+  ++  add-graph
+    |=  [=ship =term]
+    ^-  update:store
+    :-  %0
+    :+  %add-graph
+      [ship term]
+    (scry-for graph:store /graph/(scot %p ship)/[term])
+  ::
+  ++  graph-subset
+    |=  [res=resource:store start=(unit atom:store) end=(unit atom:store)]
+    ^-  update:view
+    =/  st  ?~(start %'~' (scot %ud u.start))
+    =/  en  ?~(end %'~' (scot %ud u.end))
+    :-  %0
+    :*  %graph-subset
+        res
+        start
+        end
+        %+  scry-for  graph:store
+        /graph-subset/(scot %p entity.res)/[name.res]/[st]/[en]
+    ==
+  ::
+  ++  node
+    |=  [res=resource:store =index:store]
+    ^-  update:view
+    :-  %0
+    :*  %node
+        res
+        index
+        %+  scry-for  node:store
+        %+  weld  /node/(scot %p entity.res)/[name.res]
+        (turn index |=(=atom:store (scot %ud atom)))
+    ==
+  ::
+  ++  post
+    |=  [res=resource:store =index:store]
+    ^-  update:view
+    :-  %0
+    :*  %post
+        res
+        index
+        %+  scry-for  post:store
+        %+  weld  /post/(scot %p entity.res)/[name.res]
+        (turn index |=(=atom:store (scot %ud atom)))
+    ==
+  ::
+  ++  node-children
+    |=  [res=resource:store =index:store]
+    ^-  update:view
+    :-  %0
+    :*  %node-children
+        res
+        index
+        %+  scry-for  graph:store
+        %+  weld  /node-children/(scot %p entity.res)/[name.res]
+        (turn index |=(=atom:store (scot %ud atom)))
+    ==
+  ::
+  ++  node-children-subset
+    |=  [res=resource:store start=(unit atom) end=(unit atom) =index:store]
+    ^-  update:view
+    :-  %0
+    :*  %node-children-subset
+        res
+        start
+        end
+        index
+        %+  scry-for  graph:store
+        %+  weld  /node-children-subset/(scot %p entity.res)/[name.res]
+        (turn index |=(=atom:store (scot %ud atom)))
     ==
   ::
   ++  scry-for
@@ -175,67 +357,10 @@
       (snoc `^path`path %noun)
     ==
   ::
-  ++  fetch
-    |=  [conn=atom:store type=fetch-type:view]
-    ^-  (quip card _state)
-    =/  keys    (scry-for resources:store /keys)
-    :_  state
-    :-  (give conn [%graph-update !>([%0 [%keys keys]])])
-    %+  turn  ~(tap in keys)
-    |=  [=ship =term]
-    (give conn [%graph-update !>((add-graph ship term))])
-  ::
-  ++  add-graph
-    |=  [=ship =term]
-    ^-  update:store
-    :-  %0
-    :+  %add-graph
-      [ship term]
-    (scry-for graph:store /graph/(scot %p ship)/[term])
-  ::
   ++  give
       |=  [conn=atom:store =cage]
       ^-  card
       [%give %fact [/updates/(scot %ud conn)]~ cage]
-  --
-::
-++  on-watch
-  ~/  %graph-view-watch
-  |=  =path
-  ^-  (quip card _this)
-  ?>  (team:title our.bowl src.bowl)
-  ?+  path  (on-watch:def path)
-      [%updates @ ~]
-    :-  [%give %fact ~ %json !>([(frond:enjs:format %graph-view s+'bound')])]~
-    this(connections (~(put by connections) (slav %ud i.t.path) now.bowl))
-  ==
-::
-++  on-agent
-  |=  [=wire =sign:agent:gall]
-  ^-  (quip card _this)
-  |^
-  ?+  -.sign  (on-agent:def wire sign)
-      %kick
-    :_  this
-    [%pass /updates %agent [our.bowl %graph-store] %watch /updates]~
-  ::
-      %fact
-    ?+  p.cage.sign  (on-agent:def wire sign)
-        %graph-update
-      :_  this
-      %+  give
-        %+  turn  ~(tap by connections)
-        |=  [=atom:store *]
-        ^-  path
-        /updates/(scot %ud atom)
-      cage.sign
-    ==
-  ==
-  ::
-  ++  give
-    |=  [paths=(list path) =cage]
-    ^-  (list card)
-    [%give %fact paths cage]~
   --
 ::
 ++  on-save   !>(state)
