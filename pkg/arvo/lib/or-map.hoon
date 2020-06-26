@@ -81,6 +81,7 @@
     ?~  a    ~
     ?~  l.a  `n.a
     $(a l.a)
+  ::
   ::  +pop: produce .head (smallest item) and .rest or crash if empty
   ::
   ++  pop

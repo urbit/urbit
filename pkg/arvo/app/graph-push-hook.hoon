@@ -81,9 +81,16 @@
   |=  [=path =resource]
   ^-  vase
   ?>  (can-join:grp resource src.bowl)
-  =/  =graph:store  (get-graph:graph resource)
-  !>  ^-  update:store
-  [%add-graph resource graph]
+  ?~  path
+    ::  new subscribe
+    =/  =graph:store  (get-graph:graph resource)
+    !>  ^-  update:store
+    [%add-graph resource graph]
+  ::  resubscribe
+  ::
+  ::  TODO: use action-log
+  ::
+  !!
 ::
 ++  take-update
   |=  =vase

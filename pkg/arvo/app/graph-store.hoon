@@ -421,6 +421,23 @@
         %empty  ~
         %graph  ``noun+!>(`graph:store`(subset:orm p.children.u.node start end))
     ==
+  ::
+      [%x %action-log @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.t.path
+    =/  action-log=(unit action-log:store)  (~(get by action-logs) [ship term])
+    ?~  action-log  ~
+    ``noun+!>(u.action-log)
+  ::
+      [%x %peek-action-log @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.t.path
+    =/  action-log=(unit action-log:store)  (~(get by action-logs) [ship term])
+    ?~  action-log  ~
+    =/  result=(unit [time update:store])
+      (peek:orm-log:store u.action-log) 
+    ?~  result  ``noun+!>(~)
+    ``noun+!>([~ -.u.result])
   ==
   ::
   ++  get-node

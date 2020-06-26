@@ -12,7 +12,7 @@
 +$  node         [=post children=internal-graph]
 +$  graphs       (map resource graph)
 +$  tag-queries  (jug term resource)
-+$  action-log   ((mop time update) lth)
++$  action-log   ((mop time update) gth)
 +$  action-logs  (map resource action-log)
 ::
 +$  internal-graph

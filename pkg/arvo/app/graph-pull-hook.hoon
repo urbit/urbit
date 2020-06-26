@@ -1,5 +1,5 @@
 /-  *resource
-/+  store=graph-store, default-agent, verb, dbug, pull-hook
+/+  store=graph-store, graph, default-agent, verb, dbug, pull-hook
 ~%  %graph-pull-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -31,9 +31,14 @@
 ++  on-agent      on-agent:def
 ++  on-watch      on-watch:def
 ++  on-leave      on-leave:def
-++  on-pull-kick  |=(=resource `(unit path)`[~ /])
-++  on-pull-nack  on-pull-nack:dep
-  |=   [=resource =tang]
-  ^-  (quip card _this)
-  [~ this]
+++  on-pull-nack
+  ::  TODO: archive the graph
+  on-pull-nack:dep
+::
+++  on-pull-kick
+  |=  =resource
+  ^-  (unit path)
+  =/  maybe-time  (peek-log:graph resource)
+  ?~  maybe-time  `/
+  `/(scot %da u.maybe-time)
 --

@@ -13,4 +13,9 @@
   |=  res=resource
   ^-  graph:store
   (scry-for graph:store /graph/(scot %p entity.res)/[name.res])
+::
+++  peek-log
+  |=  res=resource
+  ^-  (unit time)
+  (scry-for (unit time) /peek-action-log/(scot %p entity.res)/[name.res])
 --
