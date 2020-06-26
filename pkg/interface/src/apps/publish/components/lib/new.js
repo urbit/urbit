@@ -93,7 +93,7 @@ export class NewScreen extends Component {
       }
     };
     this.setState({ awaiting: bookId, disabled: true }, () => {
-      props.api.publishAction(action).then(() => {
+      props.api.publish.publishAction(action).then(() => {
       });
     });
   }

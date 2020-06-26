@@ -1,6 +1,6 @@
 ::  link: initial subscription result
 ::
-/-  *link
+/-  *link-store
 |_  =initial
 ++  grad  %noun
 ++  grow

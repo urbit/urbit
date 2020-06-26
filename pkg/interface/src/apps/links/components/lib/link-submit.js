@@ -21,7 +21,7 @@ export class LinkSubmit extends Component {
       ? this.state.linkTitle
       : this.state.linkValue;
       this.setState({ disabled: true });
-    this.props.api.postLink(this.props.resourcePath, link, title).then((r) => {
+    this.props.api.links.postLink(this.props.resourcePath, link, title).then((r) => {
       this.setState({
         disabled: false,
         linkValue: '',

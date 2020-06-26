@@ -198,7 +198,8 @@ export class GroupDetail extends Component {
               onBlur={() => {
                 if (groupOwner) {
                   this.setState({ awaiting: true }, (() => {
-                    props.api.metadata.add(
+                    props.api.metadata.metadataAdd(
+                      'contacts',
                       association['app-path'],
                       association['group-path'],
                       this.state.title,
@@ -227,7 +228,8 @@ export class GroupDetail extends Component {
               onBlur={() => {
                 if (groupOwner) {
                   this.setState({ awaiting: true }, (() => {
-                    props.api.metadata.add(
+                    props.api.metadata.metadataAdd(
+                      'contacts',
                       association['app-path'],
                       association['group-path'],
                       association.metadata.title,
@@ -250,7 +252,7 @@ export class GroupDetail extends Component {
           onClick={() => {
             if (groupOwner) {
               this.setState({ awaiting: true, type: 'Deleting' }, (() => {
-                props.api.contactView.delete(props.path).then(() => {
+                props.api.contacts.delete(props.path).then(() => {
                   props.history.push('/~groups');
                 });
               }));
