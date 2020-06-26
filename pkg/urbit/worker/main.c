@@ -101,12 +101,10 @@ main(c3_i argc, c3_c* argv[])
   c3_c*      wag_c = argv[3];
   c3_d       eve_d = 0;
 
-  c3_assert( (4 == argc) || (5 == argc) );
+  c3_assert( 5 == argc );
 
-  if ( 5 == argc ) {
-    if ( 1 != sscanf(argv[4], "%" PRIu64 "", &eve_d) ) {
-      fprintf(stderr, "serf: rock: invalid number '%s'\r\n", argv[4]);
-    }
+  if ( 1 != sscanf(argv[4], "%" PRIu64 "", &eve_d) ) {
+    fprintf(stderr, "serf: rock: invalid number '%s'\r\n", argv[4]);
   }
 
   memset(&u3V, 0, sizeof(u3V));

@@ -290,7 +290,8 @@ start (Config exePax pierPath flags onSlog onStdr onDead) = do
  where
   diskKey = ""
   config  = show (compileFlags flags)
-  args    = [pierPath, diskKey, config]
+  rock    = "0"  -- XX support loading from rock
+  args    = [pierPath, diskKey, config, rock]
   pSpec   = (proc exePax args) { std_in  = CreatePipe
                                , std_out = CreatePipe
                                , std_err = CreatePipe
