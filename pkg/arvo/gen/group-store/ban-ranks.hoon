@@ -7,4 +7,4 @@
     ==
 :-  %group-update
 ^-  action
-[%change-policy [ship term] %ban-ranks (sy ranks)]
+[%change-policy [ship term] %open %ban-ranks (sy ranks)]

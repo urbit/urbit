@@ -212,7 +212,7 @@
         [%5 our-paths.p.old-state new-books tile-num.p.old-state [~ ~]]
       ::
           cards
-        %+  weld  cards
+        %+  welp  cards
         :~  [%pass /groups %agent [our.bol %group-store] %watch /groups]
         ==
       ==

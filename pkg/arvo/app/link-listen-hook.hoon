@@ -87,12 +87,15 @@
     ^-  (quip card _this)
     =/  old=versioned-state
       !<(versioned-state vase)
+    =|  cards=(list card)
     |-
+    =*  upgrade-loop  $
     ?-  -.old
-      %3  [~ this(state old)]
+      %3  [cards this(state old)]
     ::
         %2
         :_  this(state [%3 +.old])
+        %+  welp  cards
         :~  [%pass /groups %agent [our.bowl %group-store] %leave ~]
              watch-groups:do
         ==
@@ -101,8 +104,7 @@
       ::  the upgrade from 0 left out local-only collections.
       ::  here, we pull those back in.
       ::
-      =.  state  [%2 +.old]
-      =.  listening.state
+      =.  listening.old
         (~(run in ~(key by reasoning.old)) tail)
       =/  resources=(list [=group-path =app-path])
         %~  tap  in
@@ -115,9 +117,9 @@
           (scot %da now.bowl)
           /app-indices
         ==
-      =|  cards=(list card)
       |-
-      ?~  resources  [cards this]
+      ?~  resources  
+        upgrade-loop(old [%2 +.old])
       =,  i.resources
       =/  members=(set ship)
         (members-from-path:grp:do group-path)

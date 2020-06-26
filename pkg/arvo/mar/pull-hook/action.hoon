@@ -4,4 +4,9 @@
   |%
   ++  noun  action
   --
- --
+++  grow
+  |%
+  ++  noun  act
+  --
+++  grad  %noun
+--

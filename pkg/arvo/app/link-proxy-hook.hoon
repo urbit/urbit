@@ -71,7 +71,7 @@
     ::
         %0
       :_  this(state [%1 +.old])
-      :~  [%pass /groups %agent [our.bol %group-store] %leave ~]\
+      :~  [%pass /groups %agent [our.bowl %group-store] %leave ~]
           watch-groups:do
       ==
     ==
