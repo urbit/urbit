@@ -110,6 +110,24 @@ instance Show Jet where
        '-' -> '_'
        x   -> x
 
+
+newtype Hash = Hash { unHash :: ByteString }
+  deriving (Eq, Ord, Generic)
+  deriving newtype (Hashable, NFData)
+
+instance Show Hash where
+  show = show . unHash
+
+-- A Box refers to a value which can be (or has already been) written to disk
+-- separately. This allows for lazy loading of data from disk.
+data BoxVal
+  = BSaved Hash !Val
+  | BUnsaved !Val
+  -- TODO: Needs to change the RTS from IO to a pier environment.
+--  | BUnloaded Hash
+  deriving (Eq, Ord, Generic, Show, Hashable, NFData)
+
+
 data Node
   = Ess
   | Kay
@@ -173,7 +191,7 @@ data Node
   | IntSub
 
   | MkBox
-  | Box Val
+  | Box BoxVal
   | Unbox
 
   | LCon
@@ -290,7 +308,7 @@ data Val
   | VInt !Integer
   | VBol !Bool
   | VLis ![Val]
-  | VBox !Val
+  | VBox !BoxVal
   | VFun !Fun
  deriving (Eq, Ord, Generic, Hashable)
 

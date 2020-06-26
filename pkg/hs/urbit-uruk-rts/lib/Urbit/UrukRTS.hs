@@ -213,6 +213,8 @@ type Bol = Bool
 
 -- Raw Uruk (Basically just used for D (jam)) ----------------------------------
 
+{-
+
 data Pri = S | K | E | W
   deriving stock    (Eq, Ord, Show, Generic)
 #if defined(__GHCJS__)
@@ -274,6 +276,44 @@ rawVal (Raw p xs) = VFun $ Fun (args - sizeofSmallArray vals) node vals
 jam :: Val -> Val
 {-# INLINE jam #-}
 jam = jamRaw . toRaw
+
+-}
+
+--------------------------------------------------------------------------------
+
+{-
+
+  Step 1 for building a toASKEW is to actually change Node so that it is
+  separated into SingJets and DataJets like in the JetEval implementation, like
+  in 8f1e6545329cda4bb6230111b9f1fcf1dec230f1.
+
+-}
+
+data ASKEW = S | K | E | W | A ASKEW ASKEW
+  deriving stock    (Eq, Ord, Show, Generic)
+
+
+enhCountToASKEW :: Int -> ASKEW
+enhCountToASKEW 0 = error "0 arguments is impossible"
+enhCountToASKEW 1 = E
+enhCountToASKEW n = A (enhCountToASKEW (n - 1)) E
+
+toASKEW :: Node -> ASKEW
+toASKEW = \case
+  Ess -> S
+  Kay -> K
+  (Enh e) -> enhCountToASKEW e
+  Dub -> W
+  Jut Jet{..} -> error "TODO: Figure out `Val -> ASKEW`"  -- A (enhCountToASKEW jArgs) S
+  --
+  _ -> error "TODO: The rest."
+
+
+--------------------------------------------------------------------------------
+
+unpackBoxVal :: BoxVal -> IO Val
+unpackBoxVal (BSaved _ v) = pure v
+unpackBoxVal (BUnsaved v) = pure v
 
 --------------------------------------------------------------------------------
 
@@ -360,8 +400,8 @@ reduce !no !xs = do
     IntNegate -> dIntNegate x
     IntSub -> dIntSub x y
 
-    MkBox     -> pure (VBox x)
-    Box x     -> pure x
+    MkBox     -> pure (VBox (BUnsaved x))
+    Box x     -> unpackBoxVal x
     Unbox     -> dUnbox x
 
     Inc       -> inc x
@@ -876,8 +916,8 @@ dIntSub _        _        = throwIO $ TypeError "int-sub-not-int"
 
 dUnbox :: Val -> IO Val
 {-# INLINE dUnbox #-}
-dUnbox (VBox x) = pure x
-dUnbox (VFun (Fun 1 (Box x) _)) = pure $ x
+dUnbox (VBox x) = unpackBoxVal x
+dUnbox (VFun (Fun 1 (Box x) _)) = unpackBoxVal x
 dUnbox x        = do
   print x
   throwIO $ TypeError "unbox-not-box"
@@ -1081,7 +1121,7 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     INT_NEGATE x -> join (dIntNegate <$> go x)
     INT_SUB x y -> join (dIntSub <$> go x <*> go y)
 
-    BOX x           -> VBox <$> go x
+    BOX x           -> (VBox . BUnsaved) <$> go x
     UNBOX x         -> join (dUnbox <$> go x)
 
     SUB  x y        -> join (sub <$> go x <*> go y)
