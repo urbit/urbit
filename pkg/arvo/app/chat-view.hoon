@@ -14,51 +14,24 @@
 /+  *server, default-agent, verb, dbug,
     store=chat-store,
     view=chat-view
-/=  index
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/index
-  /|  /html/
-      /~  ~
-  ==
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/js/tile
-  /|  /js/
-      /~  ~
-  ==
-/=  script
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/js/index
-  /|  /js/
-      /~  ~
-  ==
-/=  style
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/chat/css/index
-  /|  /css/
-      /~  ~
-  ==
-/=  chat-png
-  /^  (map knot @)
-  /:  /===/app/chat/img  /_  /png/
 ::
 ~%  %chat-view-top  ..is  ~
 |%
-+$  card  card:agent:gall
-::
-+$  poke
-  $%  [%launch-action [@tas path @t]]
-      [%chat-action action:store]
-      [%group-action group-action]
-      [%chat-hook-action action:hook]
-      [%permission-hook-action permission-hook-action]
-      [%permission-group-hook-action permission-group-hook-action]
++$  versioned-state
+  $%  state-0
   ==
+::
++$  state-0
+  $:  %0
+      ~
+  ==
+::
++$  card  card:agent:gall
 --
+::
+=|  state-0
+=*  state  -
+::
 %+  verb  |
 %-  agent:dbug
 ^-  agent:gall
@@ -72,12 +45,15 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =/  launcha  [%launch-action !>([%add %chat-view /configs '/~chat/js/tile.js'])]
     :_  this
-    :~  [%pass /updates %agent [our.bol %chat-store] %watch /updates]
-        [%pass / %arvo %e %connect [~ /'~chat'] %chat-view]
-        [%pass /chat-view %agent [our.bol %launch] %poke launcha]
+    :~  :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~chat' /app/landscape %.n])
+        ==
+      [%pass / %arvo %e %connect [~ /'chat-view'] %chat-view]
+      [%pass /updates %agent [our.bol %chat-store] %watch /updates]
     ==
+  ::
   ++  on-poke
     ~/  %chat-view-poke
     |=  [=mark =vase]
@@ -112,14 +88,12 @@
       ::  create inbox with 20 messages max per mailbox and send that along
       ::  then quit the subscription
       :_  this
-      [%give %fact ~ %json !>((inbox:enjs:store truncated-inbox-scry))]~
-    ?:  =(/configs path)
-      [[%give %fact ~ %json !>(*json)]~ this]
+      [%give %fact ~ %json !>((update:enjs:store [%initial truncated-inbox]))]~
     (on-watch:def path)
     ::
     ++  message-limit  20
     ::
-    ++  truncated-inbox-scry
+    ++  truncated-inbox
       ^-  inbox:store
       =/  =inbox:store
         .^(inbox:store %gx /=chat-store/(scot %da now.bol)/all/noun)
@@ -133,7 +107,7 @@
     ~/  %chat-view-agent
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
-    ?+    -.sign  (on-agent:def wire sign)
+    ?+  -.sign  (on-agent:def wire sign)
         %kick
       :_  this
       [%pass / %agent [our.bol %chat-store] %watch /updates]~
@@ -150,12 +124,24 @@
     ~/  %chat-view-arvo
     |=  [=wire =sign-arvo]
     ^-  (quip card _this)
-    ?.  ?=(%bound +<.sign-arvo)
-      (on-arvo:def wire sign-arvo)
-    [~ this]
+    ?:  ?=(%bound +<.sign-arvo)  [~ this]
+    (on-arvo:def wire sign-arvo)
   ::
-  ++  on-save  on-save:def
-  ++  on-load  on-load:def
+  ++  on-save  !>(state)
+  ++  on-load  
+    |=  old-vase=vase
+    ^-  (quip card _this)
+    =/  old  ((soft state-0) q.old-vase)
+    ?^  old  [~ this]
+    :_  this(state [%0 ~])
+    :~  [%pass / %arvo %e %disconnect [~ /'~chat']]
+        [%pass / %arvo %e %connect [~ /'chat-view'] %chat-view]
+        :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~chat' /app/landscape %.n])
+        ==
+    ==
+  ::
   ++  on-leave  on-leave:def
   ++  on-peek   on-peek:def
   ++  on-fail   on-fail:def
@@ -170,18 +156,7 @@
   ^-  simple-payload:http
   =+  url=(parse-request-line url.request.inbound-request)
   ?+  site.url  not-found:gen
-      [%'~chat' %css %index ~]  (css-response:gen style)
-      [%'~chat' %js %tile ~]    (js-response:gen tile-js)
-      [%'~chat' %js %index ~]   (js-response:gen script)
-  ::
-      [%'~chat' %img @t *]
-    =/  name=@t  i.t.t.site.url
-    =/  img  (~(get by chat-png) name)
-    ?~  img
-      not-found:gen
-    (png-response:gen (as-octs:mimes:html u.img))
-  ::
-      [%'~chat' %paginate @t @t *]
+      [%'chat-view' %paginate @t @t *]
     =/  start  (need (rush i.t.t.site.url dem))
     =/  end  (need (rush i.t.t.t.site.url dem))
     =/  pax  t.t.t.t.site.url
@@ -190,8 +165,6 @@
     %-  json-to-octs
     %-  update:enjs:store
     [%messages pax start end envelopes]
-  ::
-      [%'~chat' *]  (html-response:gen index)
   ==
 ::
 ++  poke-json
@@ -488,11 +461,7 @@
 ++  diff-chat-update
   |=  upd=update:store
   ^-  (list card)
-  =/  updates-json  (update:enjs:store upd)
-  =/  configs-json  (configs:enjs:store configs-scry)
-  :~  [%give %fact ~[/primary] %json !>(updates-json)]
-      [%give %fact ~[/configs] %json !>(configs-json)]
-  ==
+  [%give %fact ~[/primary] %json !>((update:enjs:store upd))]~
 ::
 ::  +utilities
 ::
@@ -534,10 +503,6 @@
   |=  pax=path
   ^-  (list envelope:store)
   (scry-for (list envelope:store) %chat-store [%envelopes pax])
-::
-++  configs-scry
-  ^-  configs:store
-  (scry-for configs:store %chat-store /configs)
 ::
 ++  group-scry
   |=  pax=path

@@ -16,9 +16,14 @@ let
     exe   = ''${meta.bin} ${pkgs.lib.strings.concatStringsSep " " meta.flags}'';
   };
 
+  sigseg =
+    pkgs.libsigsegv.overrideAttrs (oldAttrs: rec {
+      patches = [ ./libsigsegv_fix.patch ];
+    });
+
   deps =
     with pkgs;
-    [ curl gmp libsigsegv openssl zlib lmdb ];
+    [ curl gmp sigseg openssl zlib lmdb ];
 
   vendor =
     [ argon2 softfloat3 ed25519 ent ge-additions libaes_siv h2o scrypt uv murmur3 secp256k1 ivory-header ca-header ];
