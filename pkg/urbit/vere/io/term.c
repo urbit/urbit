@@ -39,8 +39,10 @@ _write(c3_i fid_i, const void* buf_v, size_t len_i)
 
     //  assert on true errors
     //
+    //    NB: can't call u3l_log here or we would re-enter _write()
+    //
     if ( ret_i < 0 ) {
-      u3l_log("term: write failed %s\r\n", strerror(errno));
+      fprintf(stderr, "term: write failed %s\r\n", strerror(errno));
       c3_assert(0);
     }
     //  continue partial writes
