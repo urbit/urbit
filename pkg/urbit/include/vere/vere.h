@@ -1211,6 +1211,11 @@
         void
         u3_newt_read(u3_moat* mot_u);
 
+      /* u3_newt_moat_info(); print status info.
+      */
+        void
+        u3_newt_moat_info(u3_moat* mot_u);
+
       /* u3_newt_moat_stop(); newt stop/close input stream.
       */
         void

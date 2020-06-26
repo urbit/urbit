@@ -1028,8 +1028,7 @@ u3_pier_info(u3_pier* pir_u)
       {
         u3_work* wok_u = pir_u->wok_u;
 
-        u3l_log("  effects:\n");
-        u3l_log("    released: %" PRIu64 "\n", wok_u->fec_u.rel_d);
+        u3l_log("  effects: released=%" PRIu64 "\n", wok_u->fec_u.rel_d);
 
         if ( wok_u->fec_u.ext_u ) {
           if ( wok_u->fec_u.ext_u != wok_u->fec_u.ent_u ) {
@@ -1044,7 +1043,7 @@ u3_pier_info(u3_pier* pir_u)
         }
 
         if ( wok_u->wal_u ) {
-          u3l_log("wall: %" PRIu64 "\n", wok_u->wal_u->eve_d);
+          u3l_log("  wall: %" PRIu64 "\n", wok_u->wal_u->eve_d);
         }
 
         if ( wok_u->car_u ) {

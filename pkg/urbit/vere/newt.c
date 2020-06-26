@@ -365,6 +365,24 @@ u3_newt_read(u3_moat* mot_u)
   _newt_read_init(mot_u, _newt_read_cb);
 }
 
+/* u3_newt_moat_info(); print status info.
+*/
+void
+u3_newt_moat_info(u3_moat* mot_u)
+{
+  u3_meat* met_u = mot_u->ext_u;
+  c3_w     len_w = 0;
+
+    while ( met_u ) {
+      len_w++;
+      met_u = met_u->nex_u;
+    }
+
+  if ( len_w ) {
+    u3l_log("    newt: %u inbound ipc messages pending\n", len_w);
+  }
+}
+
 /* n_req: write request for newt
 */
 typedef struct _n_req {
