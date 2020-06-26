@@ -767,7 +767,7 @@
 ++  v-behn
   |%
   ++  timers
-    (scry ,(list [date=@da =duct]) %bx %$ /debug/timers)
+    (scry ,(list [date=@da =duct]) %b %timers ~)
   --
 ::
 ::  clay
