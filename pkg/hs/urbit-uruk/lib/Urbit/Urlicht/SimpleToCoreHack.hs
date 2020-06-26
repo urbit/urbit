@@ -1,11 +1,11 @@
-module Urbit.Urlicht.SimpleToCoreHack where
-
 -- |
 -- This is a translation from Simple to Core which bypasses the elaborator,
 -- erroring out if you use a construct which would require elaboration. The
 -- point of it is to provide some syntax for core, so that we can more easily
 -- test the machinery that manipulates cores without involving ourselves in
 -- what is of course the most complex user of such machinery.
+
+module Urbit.Urlicht.SimpleToCoreHack where
 
 import ClassyPrelude
 

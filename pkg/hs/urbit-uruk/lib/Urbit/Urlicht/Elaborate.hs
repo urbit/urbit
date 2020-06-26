@@ -1,7 +1,7 @@
-module Urbit.Urlicht.Elaborate where
-
 -- | Elaboration from Simple to Core using pattern unification and piggybacking
 -- on bidirectional typechecking. TODO more helpful comment.
+
+module Urbit.Urlicht.Elaborate where
 
 import ClassyPrelude
 

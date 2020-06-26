@@ -1,4 +1,4 @@
-{- |
+{-
   Compile lambda calculus to SK combinators using "bracket abstraction".
 -}
 module Urbit.Moon.Bracket
