@@ -22,9 +22,11 @@ main = do
   getArgs >>= \case
     ["boot", kernelFile, pierDir] ->
       loadKernel (unpack kernelFile) (unpack pierDir)
+    ["preload", pierDir, maxSize] -> preload (unpack pierDir) (unpack maxSize)
     ["run", pierDir] -> runPier (unpack pierDir)
     _            -> do
       putStrLn "usage: arvomoon boot <kernel file> <pier dir>"
+      putStrLn "       arvomoon preload <pier dir>"
       putStrLn "       arvomoon run <pier dir>"
 
 loadKernel :: FilePath -> FilePath -> IO ()
@@ -40,6 +42,29 @@ loadKernel fp pier = do
 
 toVNat :: Int -> RTS.Val
 toVNat = RTS.VNat . fromIntegral
+
+
+preload :: FilePath -> String -> IO ()
+preload pierDir maxSize =
+  do
+    kernel <- loadFromPier pierDir
+    case readMay maxSize :: Maybe Int of
+      Nothing  -> putStrLn "Bad max size"
+      Just max -> loop kernel [10..max]
+  where
+    loop kernel [] = pure ()
+    loop kernel (x:xs) = do
+      putStrLn $ "Calculating " ++ (tshow x) ++ " x " ++ (tshow x)
+      out <- kVVV kernel (toVNat x) (toVNat x)
+      case out of
+        (RTS.VCon ppm nuKernel) -> do
+          persistToPier pierDir nuKernel
+          loop nuKernel xs
+
+        _ -> do
+          putStrLn "kernel didn't return a pair"
+          pure ()
+
 
 runPier :: FilePath -> IO ()
 runPier pierDir =
