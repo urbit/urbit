@@ -17,6 +17,7 @@
     u3_auto    car_u;                   //  driver
     uv_timer_t tim_u;                   //  behn timer
     c3_o       alm_o;                   //  alarm
+    c3_w       bon_w;                   //  %born retry count
   } u3_behn;
 
 /* _behn_time_cb(): timer callback.
@@ -81,6 +82,56 @@ _behn_ef_doze(u3_behn* teh_u, u3_noun wen)
   u3z(wen);
 }
 
+/* _behn_born_news(): initialization complete on %born.
+*/
+static void
+_behn_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
+{
+  u3_auto* car_u = egg_u->car_u;
+
+  if ( u3_ovum_done == new_e ) {
+    car_u->liv_o = c3y;
+  }
+}
+
+static void
+_behn_io_talk(u3_auto* car_u);
+
+/* _behn_born_bail(): %born is essential, retry failures.
+*/
+static void
+_behn_born_bail(u3_ovum* egg_u, u3_noun lud)
+{
+  u3_auto* car_u = egg_u->car_u;
+  u3_behn* teh_u = (u3_behn*)car_u;
+
+  if ( teh_u->bon_w == 2 ) {
+    u3l_log("behn: initialization failed\n");
+
+    if ( 2 == u3qb_lent(lud) ) {
+      u3_pier_punt_goof("born", u3k(u3h(lud)));
+      u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
+    }
+    else {
+      u3_noun dul = lud;
+      c3_w len_w = 1;
+
+      while ( u3_nul != dul ) {
+        u3l_log("behn: bail %u\r\n", len_w++);
+        u3_pier_punt_goof("behn", u3k(u3h(dul)));
+        dul = u3t(dul);
+      }
+    }
+
+    u3_pier_bail(car_u->pir_u);
+  }
+  else {
+    _behn_io_talk(car_u);
+    teh_u->bon_w++;
+  }
+
+  u3z(lud);
+}
 /* _behn_io_talk(): notify %behn that we're live
 */
 static void
@@ -91,7 +142,10 @@ _behn_io_talk(u3_auto* car_u)
   u3_noun wir = u3nt(c3__behn, u3k(u3A->sen), u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
-  u3_auto_plan(car_u, 0, c3__b, wir, cad);
+  u3_auto_peer(
+    u3_auto_plan(car_u, 0, c3__b, wir, cad),
+    _behn_born_news,
+    _behn_born_bail);
 }
 
 /* _behn_io_kick(): apply effects.
@@ -151,15 +205,10 @@ u3_behn_io_init(u3_pier* pir_u)
   u3_auto* car_u = &teh_u->car_u;
   car_u->nam_m = c3__behn;
 
-  //  XX set in done_cb for %born
-  //
-  car_u->liv_o = c3y;
+  car_u->liv_o = c3n;
   car_u->io.talk_f = _behn_io_talk;
   car_u->io.kick_f = _behn_io_kick;
   car_u->io.exit_f = _behn_io_exit;
-  //  XX retry up to N?
-  //
-  // car_u->ev.bail_f = ...;
 
   return car_u;
 }
