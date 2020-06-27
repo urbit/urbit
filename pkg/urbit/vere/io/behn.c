@@ -19,6 +19,42 @@
     c3_o       alm_o;                   //  alarm
   } u3_behn;
 
+/* _behn_wake_bail(): %wake is essential, retry failures.
+*/
+static void
+_behn_wake_bail(u3_ovum* egg_u, u3_noun lud)
+{
+  u3_auto* car_u = egg_u->car_u;
+
+  if ( 2 == egg_u->try_w ) {
+    u3l_log("behn: timer failed\n");
+
+    if ( 2 == u3qb_lent(lud) ) {
+      u3_pier_punt_goof("wake", u3k(u3h(lud)));
+      u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
+    }
+    else {
+      u3_noun dul = lud;
+      c3_w len_w = 1;
+
+      while ( u3_nul != dul ) {
+        u3l_log("behn: bail %u\r\n", len_w++);
+        u3_pier_punt_goof("behn", u3k(u3h(dul)));
+        dul = u3t(dul);
+      }
+    }
+
+    u3_ovum_free(egg_u);
+    u3_pier_bail(car_u->pir_u);
+  }
+  else {
+    egg_u->try_w++;
+    u3_auto_plan(car_u, egg_u);
+  }
+
+  u3z(lud);
+}
+
 /* _behn_time_cb(): timer callback.
 */
 static void
@@ -46,7 +82,9 @@ _behn_time_cb(uv_timer_t* tim_u)
     u3_noun wir = u3nc(c3__behn, u3_nul);
     u3_noun cad = u3nc(c3__wake, u3_nul);
 
-    u3_auto_plan(&teh_u->car_u, u3_ovum_init(0, c3__b, wir, cad));
+    u3_auto_peer(
+      u3_auto_plan(&teh_u->car_u, u3_ovum_init(0, c3__b, wir, cad)),
+      0, 0, _behn_wake_bail);
   }
 }
 
