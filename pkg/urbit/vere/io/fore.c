@@ -60,7 +60,7 @@ _fore_inject(u3_auto* car_u, c3_c* pax_c)
     }
 
     u3_auto_peer(
-      u3_auto_plan(car_u, 0, u3k(tar), u3k(wir), u3k(cad)),
+      u3_auto_plan(car_u, u3_ovum_init(0, u3k(tar), u3k(wir), u3k(cad))),
       0, _fore_inject_bail);
   }
 
@@ -83,7 +83,7 @@ _fore_io_talk(u3_auto* car_u)
     wir = u3nc(c3__arvo, u3_nul);
     cad = u3nc(c3__wack, u3i_words(16, eny_w));
 
-    u3_auto_plan(car_u, 0, u3_blip, wir, cad);
+    u3_auto_plan(car_u, u3_ovum_init(0, u3_blip, wir, cad));
   }
 
   //  set verbose as per -v
@@ -96,7 +96,7 @@ _fore_io_talk(u3_auto* car_u)
     wir = u3nt(c3__term, '1', u3_nul);
     cad = u3nc(c3__verb, u3_nul);
 
-    u3_auto_plan(car_u, 0, u3_blip, wir, cad);
+    u3_auto_plan(car_u, u3_ovum_init(0, u3_blip, wir, cad));
   }
 
   //  inject arbitrary

@@ -721,7 +721,7 @@ _cttp_http_client_receive(u3_creq* ceq_u, c3_w sas_w, u3_noun mes, u3_noun uct)
                     ceq_u->num_l,
                     u3nq(u3i_string("start"), u3nc(sas_w, mes), uct, c3y));
 
-  u3_auto_plan(&ceq_u->ctp_u->car_u, 0, c3__i, wir, cad);
+  u3_auto_plan(&ceq_u->ctp_u->car_u, u3_ovum_init(0, c3__i, wir, cad));
 }
 
 /* _cttp_creq_fail(): dispatch error response
@@ -1020,7 +1020,7 @@ _cttp_io_talk(u3_auto* car_u)
   u3_noun wir = u3nt(u3i_string("http-client"), u3k(u3A->sen), u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
-  u3_auto_plan(car_u, 0, c3__i, wir, cad);
+  u3_auto_plan(car_u, u3_ovum_init(0, c3__i, wir, cad));
 }
 
 /* _cttp_io_kick(): apply effects

@@ -22,14 +22,8 @@
 /* u3_auto_plan(): create and enqueue an ovum.
 */
 u3_ovum*
-u3_auto_plan(u3_auto* car_u,
-             c3_w     mil_w,
-             u3_noun    tar,
-             u3_noun    wir,
-             u3_noun    cad)
+u3_auto_plan(u3_auto* car_u, u3_ovum *egg_u)
 {
-  u3_ovum *egg_u = u3_ovum_init(mil_w, tar, wir, cad);
-
   egg_u->car_u = car_u;
 
   //  [pre_u] points towards [ext_u] (back in time)

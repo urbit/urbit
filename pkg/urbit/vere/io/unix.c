@@ -959,7 +959,7 @@ _unix_update_mount(u3_unix* unx_u, u3_umon* mon_u, u3_noun all)
       u3_noun wir = u3nt(c3__sync, u3k(u3A->sen), u3_nul);
       u3_noun cad = u3nq(c3__into, u3i_string(mon_u->nam_c), all, can);
 
-      u3_auto_plan(&unx_u->car_u, 0, c3__c, wir, cad);
+      u3_auto_plan(&unx_u->car_u, u3_ovum_init(0, c3__c, wir, cad));
     }
   }
 }
@@ -1377,7 +1377,7 @@ _unix_io_talk(u3_auto* car_u)
   u3_noun wir = u3nc(c3__boat, u3_nul);
   u3_noun cad = u3nc(c3__boat, u3_nul);
 
-  u3_auto_plan(car_u, 0, c3__c, wir, cad);
+  u3_auto_plan(car_u, u3_ovum_init(0, c3__c, wir, cad));
 }
 
 /* _unix_io_kick(): apply effects.

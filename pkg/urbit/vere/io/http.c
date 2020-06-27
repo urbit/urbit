@@ -382,7 +382,7 @@ _http_req_kill(u3_hreq* req_u)
   u3_noun wir    = _http_req_to_duct(req_u);
   u3_noun cad    = u3nc(u3i_string("cancel-request"), u3_nul);
 
-  u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
+  u3_auto_plan(&htd_u->car_u, u3_ovum_init(0, c3__e, wir, cad));
 }
 
 typedef struct _u3_hgen {
@@ -475,7 +475,7 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
             : u3nc(u3i_string("request"), dat);
     }
 
-    u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
+    u3_auto_plan(&htd_u->car_u, u3_ovum_init(0, c3__e, wir, cad));
   }
 }
 
@@ -1556,7 +1556,7 @@ _http_serv_start_all(u3_httd* htd_u)
     u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
     u3_noun cad = u3nt(c3__live, non, sec);
 
-    u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
+    u3_auto_plan(&htd_u->car_u, u3_ovum_init(0, c3__e, wir, cad));
   }
 
   _http_write_ports_file(htd_u, u3_Host.dir_c);
@@ -1668,7 +1668,7 @@ _http_io_talk(u3_auto* car_u)
   u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
-  u3_auto_plan(car_u, 0, c3__e, wir, cad);
+  u3_auto_plan(car_u, u3_ovum_init(0, c3__e, wir, cad));
 
   //  XX set liv_o on done/swap?
   //

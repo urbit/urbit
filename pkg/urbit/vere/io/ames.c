@@ -471,7 +471,8 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     }
 
     u3_auto_peer(
-      u3_auto_plan(&sam_u->car_u, 0, c3__a, wir, cad),
+      u3_auto_plan(&sam_u->car_u,
+                   u3_ovum_init(0, c3__a, wir, cad)),
       0, _ames_hear_bail);
 
     _ames_cap_queue(sam_u);
@@ -596,7 +597,7 @@ _ames_io_talk(u3_auto* car_u)
     u3_noun wir = u3nt(c3__newt, u3k(u3A->sen), u3_nul);
     u3_noun cad = u3nc(c3__born, u3_nul);
 
-    u3_auto_plan(car_u, 0, c3__a, wir, cad);
+    u3_auto_plan(car_u, u3_ovum_init(0, c3__a, wir, cad));
   }
 }
 

@@ -607,7 +607,7 @@ _term_it_save(u3_noun pax, u3_noun pad)
 static u3_ovum*
 _term_ovum_plan(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
-  u3_ovum* egg_u = u3_auto_plan(car_u, 0, c3__d, wir, cad);
+  u3_ovum* egg_u = u3_auto_plan(car_u, u3_ovum_init(0, c3__d, wir, cad));
 
   //  term events have no spinner label
   //
