@@ -334,6 +334,7 @@
       */
         typedef struct _u3_ovum {
           void*            ptr_v;               //  context
+          c3_w             try_w;               //  retry count
           c3_w             mil_w;               //  timeout ms
           u3_noun            tar;               //  target (in arvo)
           u3_noun            wir;               //  wire
@@ -848,6 +849,7 @@
       */
         void
         u3_auto_peer(u3_ovum*      egg_u,
+                     void*         ptr_v,
                      u3_ovum_peer news_f,
                      u3_ovum_bail bail_f);
 

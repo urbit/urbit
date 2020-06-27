@@ -54,9 +54,11 @@ u3_auto_plan(u3_auto* car_u, u3_ovum *egg_u)
 */
 void
 u3_auto_peer(u3_ovum*      egg_u,
+             void*         ptr_v,
              u3_ovum_peer news_f,
              u3_ovum_bail bail_f)
 {
+  egg_u->ptr_v = ptr_v;
   egg_u->cb_u.news_f = news_f;
   egg_u->cb_u.bail_f = bail_f;
 }
@@ -97,9 +99,8 @@ u3_auto_bail(u3_ovum* egg_u, u3_noun lud)
   }
   else {
     u3_auto_bail_slog(egg_u, lud);
+    u3_ovum_free(egg_u);
   }
-
-  u3_ovum_free(egg_u);
 }
 
 /* _auto_news(): notify driver of ovum status

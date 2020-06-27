@@ -431,6 +431,8 @@ _ames_hear_bail(u3_ovum* egg_u, u3_noun lud)
       u3l_log("ames: packet failed (%" PRIu64 " total)\n\n", sam_u->fal_d);
     }
   }
+
+  u3_ovum_free(egg_u);
 }
 
 /* _ames_recv_cb(): receive callback.
@@ -473,7 +475,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     u3_auto_peer(
       u3_auto_plan(&sam_u->car_u,
                    u3_ovum_init(0, c3__a, wir, cad)),
-      0, _ames_hear_bail);
+      0, 0, _ames_hear_bail);
 
     _ames_cap_queue(sam_u);
   }

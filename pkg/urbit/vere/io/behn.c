@@ -17,7 +17,6 @@
     u3_auto    car_u;                   //  driver
     uv_timer_t tim_u;                   //  behn timer
     c3_o       alm_o;                   //  alarm
-    c3_w       bon_w;                   //  %born retry count
   } u3_behn;
 
 /* _behn_time_cb(): timer callback.
@@ -94,18 +93,14 @@ _behn_born_news(u3_ovum* egg_u, u3_ovum_news new_e)
   }
 }
 
-static void
-_behn_io_talk(u3_auto* car_u);
-
 /* _behn_born_bail(): %born is essential, retry failures.
 */
 static void
 _behn_born_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3_auto* car_u = egg_u->car_u;
-  u3_behn* teh_u = (u3_behn*)car_u;
 
-  if ( teh_u->bon_w == 2 ) {
+  if ( 2 == egg_u->try_w ) {
     u3l_log("behn: initialization failed\n");
 
     if ( 2 == u3qb_lent(lud) ) {
@@ -123,11 +118,12 @@ _behn_born_bail(u3_ovum* egg_u, u3_noun lud)
       }
     }
 
+    u3_ovum_free(egg_u);
     u3_pier_bail(car_u->pir_u);
   }
   else {
-    _behn_io_talk(car_u);
-    teh_u->bon_w++;
+    egg_u->try_w++;
+    u3_auto_plan(car_u, egg_u);
   }
 
   u3z(lud);
@@ -144,6 +140,7 @@ _behn_io_talk(u3_auto* car_u)
 
   u3_auto_peer(
     u3_auto_plan(car_u, u3_ovum_init(0, c3__b, wir, cad)),
+    0,
     _behn_born_news,
     _behn_born_bail);
 }
