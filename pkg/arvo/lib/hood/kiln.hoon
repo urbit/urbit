@@ -329,7 +329,10 @@
 ++  poke-syncs                                        ::  print sync config
   |=  ~
   =<  abet  %-  spam
-  :-  [%leaf "OTAs from {<ota>}"]
+  :-  :-  %leaf
+      ?~  ota
+        "OTAs disabled"
+      "OTAs from {<desk.u.ota>} on {<ship.u.ota>}"
   ?:  =(0 ~(wyt by syn))
     [%leaf "no syncs configured"]~
   %+  turn  ~(tap in ~(key by syn))
@@ -443,7 +446,8 @@
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
       [%ota *]          abet:(take:update t.wire sign-arvo)
       *
-    ?+  +<.sign-arvo  ~|([%kiln-bad-take-card +<.sign-arvo wire] !!)
+    ?+    +<.sign-arvo
+        ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
       %done  %+  done  wire
              ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
       %mere  %+  take-mere  wire
@@ -472,6 +476,8 @@
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
+  ?.  (~(has by syn) hos)
+    abet
   abet:abet:(mere:(auto hos) mes)
 ::
 ++  take-writ-find-ship                               ::
@@ -482,6 +488,8 @@
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
+  ?.  (~(has by syn) hos)
+    abet
   abet:abet:(take-find-ship:(auto hos) rot)
 ::
 ++  take-writ-sync                                    ::
@@ -492,6 +500,8 @@
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
+  ?.  (~(has by syn) hos)
+    abet
   abet:abet:(writ:(auto hos) rot)
 ::
 ++  take-wake-autocommit

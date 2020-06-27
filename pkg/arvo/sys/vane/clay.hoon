@@ -4365,7 +4365,9 @@
       ::
       %boon  !!
       %lost  !!
-      %writ  !!
+      %writ
+    %-  (slog leaf+"clay: strange writ (expected on upgrade to Fusion)" ~)
+    [~ ..^$]
   ::
       %done
     ?~  error=error.q.hin
