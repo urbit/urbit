@@ -42,7 +42,7 @@
     /* u3_serf_peek(): read namespace.
     */
       u3_noun
-      u3_serf_peek(u3_serf* sef_u, u3_noun sam);
+      u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam);
 
     /* u3_serf_play(): apply event list, producing status.
     */

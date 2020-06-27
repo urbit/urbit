@@ -29,24 +29,27 @@
               [%save eve=@]
               [%pack eve=@]
       ==  ==
-      [%peek now=date lyc=gang pat=path]
-      [%play eve=@ lit=(list ?((pair date ovum) *))]
-      [%work mil=@ job=(pair date ovum)]
+      [%peek mil=@ now=@da lyc=gang pat=path]
+      [%play eve=@ lit=(list ?((pair @da ovum) *))]
+      [%work mil=@ job=(pair @da ovum)]
   ==
 ::  +plea: from serf to king
 ::
 +$  plea
   $%  [%live ~]
-      [%ripe [pro=@ hon=@ nok=@] eve=@ mug=@]
+      [%ripe [pro=%1 hon=@ nok=@] eve=@ mug=@]
       [%slog pri=@ ?(cord tank)]
-      [%peek dat=(unit (cask))]
+      $:  %peek
+          $%  [%done dat=(unit (cask))]
+              [%bail dud=goof]
+      ==  ==
       $:  %play
           $%  [%done mug=@]
               [%bail eve=@ mug=@ dud=goof]
       ==  ==
       $:  %work
           $%  [%done eve=@ mug=@ fec=(list ovum)]
-              [%swap eve=@ mug=@ job=(pair date ovum) fec=(list ovum)]
+              [%swap eve=@ mug=@ job=(pair @da ovum) fec=(list ovum)]
               [%bail lud=(list goof)]
       ==  ==
   ==
@@ -330,6 +333,36 @@ _lord_plea_slog(u3_lord* god_u, u3_noun dat)
   u3z(dat);
 }
 
+/* _lord_plea_peek_bail(): hear serf %peek %bail
+*/
+static void
+_lord_plea_peek_bail(u3_lord* god_u, u3_peek* pek_u, u3_noun dud)
+{
+  u3_pier_punt_goof("peek", dud);
+
+  u3z(pek_u->now);
+  u3z(pek_u->gan);
+  u3z(pek_u->ful);
+  c3_free(pek_u);
+
+  _lord_bail(god_u);
+}
+
+/* _lord_plea_peek_done(): hear serf %peek %done
+*/
+static void
+_lord_plea_peek_done(u3_lord* god_u, u3_peek* pek_u, u3_noun rep)
+{
+  //  XX cache [dat] (unless last)
+  //
+  pek_u->fun_f(pek_u->vod_p, rep);
+
+  u3z(pek_u->now);
+  u3z(pek_u->gan);
+  u3z(pek_u->ful);
+  c3_free(pek_u);
+}
+
 /* _lord_plea_peek(): hear serf %peek response
 */
 static void
@@ -342,15 +375,25 @@ _lord_plea_peek(u3_lord* god_u, u3_noun dat)
     c3_free(wit_u);
   }
 
-  //  XX cache [dat] (unless last)
-  //
-  pek_u->fun_f(pek_u->vod_p, dat);
+  if ( c3n == u3a_is_cell(dat) ) {
+    return _lord_plea_foul(god_u, c3__peek, dat);
+  }
 
-  u3z(pek_u->now);
-  u3z(pek_u->gan);
-  u3z(pek_u->ful);
-  c3_free(pek_u);
-  // god_u->cb_u.peek_f(god_u->cb_u.vod_p, pek_u, dat);
+  switch ( u3h(dat) ) {
+    default: {
+      return _lord_plea_foul(god_u, c3__peek, dat);
+    }
+
+    case c3__done: {
+      _lord_plea_peek_done(god_u, pek_u, u3k(u3t(dat)));
+    } break;
+
+    case c3__bail: {
+      _lord_plea_peek_bail(god_u, pek_u, u3k(u3t(dat)));
+    } break;
+  }
+
+  u3z(dat);
 }
 
 /* _lord_plea_play_bail(): hear serf %play %bail
@@ -671,9 +714,10 @@ _lord_writ_jam(u3_lord* god_u, u3_writ* wit_u)
       } break;
 
       case u3_writ_peek: {
-        msg = u3nq(c3__peek, u3k(wit_u->pek_u->now),
-                             u3k(wit_u->pek_u->gan),
-                             u3k(wit_u->pek_u->ful));
+        msg = u3nc(c3__peek, u3nq(0,  //  XX support timeouts
+                                  u3k(wit_u->pek_u->now),
+                                  u3k(wit_u->pek_u->gan),
+                                  u3k(wit_u->pek_u->ful)));
       } break;
 
       case u3_writ_play: {

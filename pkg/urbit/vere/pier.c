@@ -956,6 +956,9 @@ _pier_on_scry_done(void* vod_p, u3_noun nun)
 
     u3_noun pad;
     {
+      //  XX crashes if [pac_c] is not a valid path
+      //  XX virtualize or fix
+      //
       u3_noun pax = u3do("stab", u3i_string(pac_c));
       c3_w len_w = u3kb_lent(u3k(pax));
       pad = u3nt(c3_s4('.','u','r','b'),

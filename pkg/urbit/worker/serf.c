@@ -24,44 +24,42 @@
 |%
 ::  +writ: from king to serf
 ::
+::    next steps:
+::    - %peek persistent dates (in arvo or serf)?
+::    - |mass should be a query of the serf directly
+::    - add duct or vane stack for spinner
+::
 +$  writ
   $%  $:  %live
           $%  [%exit cod=@]
               [%save eve=@]
               [%pack eve=@]
       ==  ==
-      [%peek now=date lyc=gang pat=path]
-      [%play eve=@ lit=(list ?((pair date ovum) *))]
-      [%work mil=@ job=(pair date ovum)]
+      [%peek mil=@ now=@da lyc=gang pat=path]
+      [%play eve=@ lit=(list ?((pair @da ovum) *))]
+      [%work mil=@ job=(pair @da ovum)]
   ==
 ::  +plea: from serf to king
 ::
 +$  plea
   $%  [%live ~]
-      [%ripe [pro=@ hon=@ nok=@] eve=@ mug=@]
+      [%ripe [pro=%1 hon=@ nok=@] eve=@ mug=@]
       [%slog pri=@ ?(cord tank)]
-      [%peek dat=(unit (cask))]
+      $:  %peek
+          $%  [%done dat=(unit (cask))]
+              [%bail dud=goof]
+      ==  ==
       $:  %play
           $%  [%done mug=@]
               [%bail eve=@ mug=@ dud=goof]
       ==  ==
       $:  %work
           $%  [%done eve=@ mug=@ fec=(list ovum)]
-              [%swap eve=@ mug=@ job=(pair date ovum) fec=(list ovum)]
+              [%swap eve=@ mug=@ job=(pair @da ovum) fec=(list ovum)]
               [%bail lud=(list goof)]
       ==  ==
   ==
 --
-
-questions:
-
-- %peek
-  - persistent dates? (in arvo or serf)
-- %play
-  - expect lifecycle on [%ripe ... eve=0 mug=0]
-  - eve identifies failed event on [%play @ %bail ...]
-- %mass is technically a query of the serf directly
-- duct or vane stack for spinner
 */
 
 /* _serf_space(): print n spaces.
@@ -791,31 +789,56 @@ u3_serf_play(u3_serf* sef_u, c3_d eve_d, u3_noun lit)
 /* u3_serf_peek(): dereference namespace.
 */
 u3_noun
-u3_serf_peek(u3_serf* sef_u, u3_noun sam)
+u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
 {
-  u3_noun now, lyc, pat, wen, gon, pro;
-  u3x_trel(sam, &now, &lyc, &pat);
+  u3_noun wen, pat, gon, pro;
 
-  wen      = u3A->now;
-  u3A->now = u3k(now);
-
-  //  XX pass lyc as well
+  //  stash the previous date and set current
   //
-  gon = u3v_peek(u3k(pat));
-
-  //  XX preserve mark in arvo
+  //    XX incomplete interface, arvo should track the date
   //
-  if ( u3_nul == gon ) {
-    pro = u3_nul;
+  wen = u3A->now;
+
+  {
+    u3_noun now, lyc;
+    u3x_trel(sam, &now, &lyc, &pat);
+    u3A->now = u3k(now);
   }
+
+  //  XX incomplete interface, should pass [lyc] as well
+  //
+  gon = u3m_soft(mil_w, u3v_peek, u3k(pat));
+
+  //  read succeeded, produce result
+  //
+  if ( u3_blip == u3h(gon) ) {
+    if ( u3_nul == gon ) {
+      pro = u3nc(c3__done, u3_nul);
+    }
+    else {
+      //  prepend the %noun mark
+      //
+      //    XX incomplete interface, should recv mark from arvo
+      //
+      pro = u3nq(c3__done, u3_nul, c3__noun, u3k(u3t(gon)));
+    }
+  }
+  //  read failed, produce trace
+  //
+  //    NB, reads should *not* fail deterministically
+  //
   else {
-    pro = u3nt(u3_nul, c3__noun, u3k(u3t(gon)));
-    u3z(gon);
+    pro = u3nc(c3__bail, u3k(gon));
   }
 
+  //  restore the previous date
+  //
+  //    XX incomplete interface, arvo should track the date
+  //
   u3z(u3A->now);
   u3A->now = wen;
 
+  u3z(gon);
   u3z(sam);
   return u3nc(c3__peek, pro);
 }
@@ -1007,8 +1030,18 @@ u3_serf_writ(u3_serf* sef_u, u3_noun wit, u3_noun* pel)
       } break;
 
       case c3__peek: {
-        *pel = u3_serf_peek(sef_u, u3k(com));
-        ret_o = c3y;
+        u3_noun tim, sam;
+        c3_w  mil_w;
+
+        if ( (c3n == u3r_cell(com, &tim, &sam)) ||
+             (c3n == u3r_safe_word(tim, &mil_w)) )
+        {
+          ret_o = c3n;
+        }
+        else {
+          *pel = u3_serf_peek(sef_u, mil_w, u3k(sam));
+          ret_o = c3y;
+        }
       } break;
 
       case c3__play: {
@@ -1028,7 +1061,7 @@ u3_serf_writ(u3_serf* sef_u, u3_noun wit, u3_noun* pel)
       } break;
 
       case c3__work: {
-        u3_noun job, tim;
+        u3_noun tim, job;
         c3_w  mil_w;
 
         if ( (c3n == u3r_cell(com, &tim, &job)) ||
