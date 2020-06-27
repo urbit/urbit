@@ -135,7 +135,7 @@ u3_ovum_init(c3_w     mil_w,
 {
   u3_ovum* egg_u = c3_malloc(sizeof(*egg_u));
   egg_u->car_u = 0;
-  egg_u->vod_p = 0;
+  egg_u->ptr_v = 0;
   egg_u->mil_w = mil_w;
   egg_u->tar   = tar;
   egg_u->wir   = wir;

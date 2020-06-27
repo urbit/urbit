@@ -333,7 +333,7 @@
       /* u3_ovum: potential event
       */
         typedef struct _u3_ovum {
-          void*            vod_p;               //  context
+          void*            ptr_v;               //  context
           c3_w             mil_w;               //  timeout ms
           u3_noun            tar;               //  target (in arvo)
           u3_noun            wir;               //  wire
@@ -383,7 +383,7 @@
       /* u3_peek: namespace read request
       */
         typedef struct _u3_peek {
-          void*            vod_p;               //  context
+          void*            ptr_v;               //  context
           u3_peek_cb       fun_f;               //  callback
           u3_noun            now;               //  XX
           u3_noun            gan;               //  leakset
@@ -422,7 +422,7 @@
       /* u3_lord_cb: u3_lord callbacks
       */
         typedef struct _u3_lord_cb {
-          void* vod_p;
+          void* ptr_v;
           void (*live_f)(void*);
           void (*slog_f)(void*, c3_w, u3_noun);
           void (*spin_f)(void*, u3_atom, c3_o);
@@ -481,7 +481,7 @@
       /* u3_disk_cb: u3_disk callbacks
       */
         typedef struct _u3_disk_cb {
-          void* vod_p;
+          void* ptr_v;
           void (*read_done_f)(void*, u3_info);
           void (*read_bail_f)(void*, c3_d eve_d);
           void (*write_done_f)(void*, c3_d eve_d);
@@ -562,7 +562,7 @@
       /* u3_wall: pier barrier
       */
         typedef struct _u3_wall {
-          void*            vod_p;
+          void*            ptr_v;
           c3_d             eve_d;
           void (*wal_f)(void*, c3_d);
           struct _u3_wall* nex_u;
@@ -956,7 +956,7 @@
         u3_lord_peek(u3_lord*   god_u,
                      u3_noun      gan,
                      u3_noun      ful,
-                     void*      vod_p,
+                     void*      ptr_v,
                      u3_peek_cb fun_f);
 
       /* u3_lord_peek_mine(): read namespace, injecting ship.
@@ -966,7 +966,7 @@
                           u3_noun      gan,
                           c3_m       car_m,
                           u3_noun      pax,
-                          void*      vod_p,
+                          void*      ptr_v,
                           u3_peek_cb fun_f);
 
       /* u3_lord_peek_last(): read namespace, injecting ship and case.
@@ -977,7 +977,7 @@
                           c3_m       car_m,
                           u3_atom      des,
                           u3_noun      pax,
-                          void*      vod_p,
+                          void*      ptr_v,
                           u3_peek_cb fun_f);
 
     /**  Filesystem (new api).
@@ -1356,7 +1356,7 @@
       /* u3_king_grab(): gc the daemon
       */
         void
-        u3_king_grab(void* vod_p);
+        u3_king_grab(void* ptr_v);
 
 
         c3_w

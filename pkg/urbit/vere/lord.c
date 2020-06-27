@@ -65,7 +65,7 @@ _lord_stop_cb(void*       ptr_v,
   u3_lord* god_u = ptr_v;
 
   void (*exit_f)(void*) = god_u->cb_u.exit_f;
-  void* exit_v = god_u->cb_u.vod_p;
+  void* exit_v = god_u->cb_u.ptr_v;
 
   c3_free(god_u);
 
@@ -156,7 +156,7 @@ static void
 _lord_bail(u3_lord* god_u)
 {
   void (*bail_f)(void*) = god_u->cb_u.bail_f;
-  void* bail_v = god_u->cb_u.vod_p;
+  void* bail_v = god_u->cb_u.ptr_v;
 
   u3_lord_halt(god_u);
   bail_f(bail_v);
@@ -255,11 +255,11 @@ _lord_plea_live(u3_lord* god_u, u3_noun dat)
     } break;
 
     case u3_writ_save: {
-      god_u->cb_u.save_f(god_u->cb_u.vod_p);
+      god_u->cb_u.save_f(god_u->cb_u.ptr_v);
     } break;
 
     case u3_writ_pack: {
-      god_u->cb_u.pack_f(god_u->cb_u.vod_p);
+      god_u->cb_u.pack_f(god_u->cb_u.ptr_v);
     } break;
   }
 
@@ -307,7 +307,7 @@ _lord_plea_ripe(u3_lord* god_u, u3_noun dat)
   }
 
   god_u->liv_o = c3y;
-  god_u->cb_u.live_f(god_u->cb_u.vod_p);
+  god_u->cb_u.live_f(god_u->cb_u.ptr_v);
 
   u3z(dat);
 }
@@ -329,7 +329,7 @@ _lord_plea_slog(u3_lord* god_u, u3_noun dat)
   //  XX per-writ slog_f?
   //
 
-  god_u->cb_u.slog_f(god_u->cb_u.vod_p, pri_w, u3k(tan));
+  god_u->cb_u.slog_f(god_u->cb_u.ptr_v, pri_w, u3k(tan));
   u3z(dat);
 }
 
@@ -355,7 +355,7 @@ _lord_plea_peek_done(u3_lord* god_u, u3_peek* pek_u, u3_noun rep)
 {
   //  XX cache [dat] (unless last)
   //
-  pek_u->fun_f(pek_u->vod_p, rep);
+  pek_u->fun_f(pek_u->ptr_v, rep);
 
   u3z(pek_u->now);
   u3z(pek_u->gan);
@@ -417,7 +417,7 @@ _lord_plea_play_bail(u3_lord* god_u, u3_info fon_u, u3_noun dat)
   god_u->eve_d = (eve_d - 1ULL);
   god_u->mug_l = mug_l;
 
-  god_u->cb_u.play_bail_f(god_u->cb_u.vod_p,
+  god_u->cb_u.play_bail_f(god_u->cb_u.ptr_v,
                           fon_u, mug_l, eve_d, u3k(dud));
 
   u3z(dat);
@@ -437,7 +437,7 @@ _lord_plea_play_done(u3_lord* god_u, u3_info fon_u, u3_noun dat)
   god_u->eve_d = fon_u.ent_u->eve_d;
   god_u->mug_l = mug_l;
 
-  god_u->cb_u.play_done_f(god_u->cb_u.vod_p, fon_u, mug_l);
+  god_u->cb_u.play_done_f(god_u->cb_u.ptr_v, fon_u, mug_l);
 
   u3z(dat);
 }
@@ -485,7 +485,7 @@ _lord_work_spin(u3_lord* god_u)
   //  complete spinner
   //
   c3_assert( c3y == god_u->pin_o );
-  god_u->cb_u.spun_f(god_u->cb_u.vod_p);
+  god_u->cb_u.spun_f(god_u->cb_u.ptr_v);
   god_u->pin_o = c3n;
 
   //  restart spinner if more work
@@ -497,7 +497,7 @@ _lord_work_spin(u3_lord* god_u)
     else {
       u3_ovum* egg_u = wit_u->wok_u.egg_u;
 
-      god_u->cb_u.spin_f(god_u->cb_u.vod_p,
+      god_u->cb_u.spin_f(god_u->cb_u.ptr_v,
                          egg_u->pin_u.lab,
                          egg_u->pin_u.del_o);
       god_u->pin_o = c3y;
@@ -526,7 +526,7 @@ _lord_work_done(u3_lord* god_u,
 
   _lord_work_spin(god_u);
 
-  god_u->cb_u.work_done_f(god_u->cb_u.vod_p, egg_u, tac_u, gif_u);
+  god_u->cb_u.work_done_f(god_u->cb_u.ptr_v, egg_u, tac_u, gif_u);
 }
 
 
@@ -537,7 +537,7 @@ _lord_plea_work_bail(u3_lord* god_u, u3_ovum* egg_u, u3_noun lud)
 {
   _lord_work_spin(god_u);
 
-  god_u->cb_u.work_bail_f(god_u->cb_u.vod_p, egg_u, lud);
+  god_u->cb_u.work_bail_f(god_u->cb_u.ptr_v, egg_u, lud);
 }
 
 /* _lord_plea_work_swap(): hear serf %work %swap
@@ -796,13 +796,13 @@ void
 u3_lord_peek(u3_lord*   god_u,
              u3_noun      gan,
              u3_noun      ful,
-             void*      vod_p,
+             void*      ptr_v,
              u3_peek_cb fun_f)
 {
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_peek;
   wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
-  wit_u->pek_u->vod_p = vod_p;
+  wit_u->pek_u->ptr_v = ptr_v;
   wit_u->pek_u->fun_f = fun_f;
   wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
   wit_u->pek_u->gan   = gan;
@@ -821,13 +821,13 @@ u3_lord_peek_mine(u3_lord*   god_u,
                   u3_noun      gan,
                   c3_m       car_m,
                   u3_noun      pax,
-                  void*      vod_p,
+                  void*      ptr_v,
                   u3_peek_cb fun_f)
 {
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_peek;
   wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
-  wit_u->pek_u->vod_p = vod_p;
+  wit_u->pek_u->ptr_v = ptr_v;
   wit_u->pek_u->fun_f = fun_f;
   wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
   wit_u->pek_u->gan   = gan;
@@ -835,7 +835,7 @@ u3_lord_peek_mine(u3_lord*   god_u,
   {
     //  XX cache
     //
-    u3_pier* pir_u = god_u->cb_u.vod_p;  //  XX do better
+    u3_pier* pir_u = god_u->cb_u.ptr_v;  //  XX do better
     u3_noun our = u3dc("scot", 'p', u3i_chubs(2, pir_u->who_d));
     wit_u->pek_u->ful = u3nt(car_m, our, pax);
   }
@@ -854,13 +854,13 @@ u3_lord_peek_last(u3_lord*   god_u,
                   c3_m       car_m,
                   u3_atom      des,
                   u3_noun      pax,
-                  void*      vod_p,
+                  void*      ptr_v,
                   u3_peek_cb fun_f)
 {
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_peek;
   wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
-  wit_u->pek_u->vod_p = vod_p;
+  wit_u->pek_u->ptr_v = ptr_v;
   wit_u->pek_u->fun_f = fun_f;
   wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
   wit_u->pek_u->gan   = gan;
@@ -868,7 +868,7 @@ u3_lord_peek_last(u3_lord*   god_u,
   {
     //  XX cache
     //
-    u3_pier* pir_u = god_u->cb_u.vod_p;  //  XX do better
+    u3_pier* pir_u = god_u->cb_u.ptr_v;  //  XX do better
     u3_noun our = u3dc("scot", 'p', u3i_chubs(2, pir_u->who_d));
     u3_noun cas = u3dc("scot", c3__da, u3k(wit_u->pek_u->now));
 
@@ -913,7 +913,7 @@ u3_lord_work(u3_lord* god_u, u3_ovum* egg_u, u3_noun ovo)
   //  if not spinning, start
   //
   if ( c3n == god_u->pin_o ) {
-    god_u->cb_u.spin_f(god_u->cb_u.vod_p,
+    god_u->cb_u.spin_f(god_u->cb_u.ptr_v,
                        egg_u->pin_u.lab,
                        egg_u->pin_u.del_o);
     god_u->pin_o = c3y;
