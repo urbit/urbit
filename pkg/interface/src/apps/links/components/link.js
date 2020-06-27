@@ -36,7 +36,7 @@ export class LinkDetail extends Component {
   componentDidUpdate(prevProps) {
     // if we have no preloaded data, and we aren't expecting it, get it
     if ((!this.state.data.title) && (this.props.api)) {
-      this.props.api?.getSubmission(
+      this.props.api?.links.getSubmission(
         this.props.resourcePath, this.props.url, this.updateData.bind(this)
       );
     }
@@ -69,7 +69,7 @@ export class LinkDetail extends Component {
     pending.add(this.state.comment);
     this.setState({ pending: pending, disabled: true  });
 
-    this.props.api.postComment(
+    this.props.api.links.postComment(
       this.props.resourcePath,
       url,
       this.state.comment

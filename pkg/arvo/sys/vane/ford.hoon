@@ -2,8 +2,8 @@
 |=  pit=vase
 |=  [our=ship now=@da eny=@uvJ ski=sley]
 |%
-++  call  |=(* ~&(%ford-call-gone `..^$))
-++  take  |=(* ~&(%ford-take-gone `..^$))
+++  call  |=(* ((slog leaf+"ford: gone (+call)" ~) `..^$))
+++  take  |=(* ((slog leaf+"ford: gone (+take)" ~) `..^$))
 ++  scry  |=(* ``mass+!>(*(list mass)))
 ++  stay  ~
 ++  load  |=(* ..^$)

@@ -248,15 +248,15 @@
 ::
 ++  get-id
   |=  [pos=@ud txt=tape]
-  ^-  [forward=(unit term) backward=(unit term) id=(unit term)]
-  =/  forward=(unit term)
-    %+  scan  `tape`(slag pos txt)
-    ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
-  =/  backward=(unit term)
+  ^-  [forward=(unit @t) backward=(unit @t) id=(unit @t)]
+  =/  seek
+    ;~(sfix (punt (cook crip (star prn))) (star ;~(pose prn (just `@`10))))
+  =/  forward=(unit @t)
+    (scan (slag pos txt) seek)
+  =/  backward=(unit @t)
     %-  (lift |=(t=@tas (swp 3 t)))
-    %+  scan  `tape`(flop (scag pos txt))
-    ;~(sfix (punt sym) (star ;~(pose prn (just `@`10))))
-  =/  id=(unit term)
+    (scan (flop (scag pos txt)) seek)
+  =/  id=(unit @t)
     ?~  forward
       ?~  backward
         ~

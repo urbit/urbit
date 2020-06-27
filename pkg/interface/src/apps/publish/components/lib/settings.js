@@ -63,7 +63,7 @@ export class Settings extends Component {
 
   changeComments() {
     this.setState({ comments: !this.state.comments, disabled: true }, (() => {
-      this.props.api.publishAction({
+      this.props.api.publish.publishAction({
         'edit-book': {
           book: this.props.book,
           title: this.props.notebook.title,
@@ -84,7 +84,7 @@ export class Settings extends Component {
       }
     };
     this.setState({ disabled: true, type: 'Deleting' });
-    this.props.api.publishAction(action).then(() => {
+    this.props.api.publish.publishAction(action).then(() => {
       this.props.history.push('/~publish');
     });
   }
@@ -108,7 +108,7 @@ export class Settings extends Component {
       disabled: true,
       type: 'Converting'
     }, (() => {
-      this.props.api.publishAction({
+      this.props.api.publish.publishAction({
         groupify: {
           book: props.book,
           target: state.targetGroup,
@@ -253,7 +253,7 @@ export class Settings extends Component {
               disabled={this.state.disabled}
               onBlur={() => {
                 this.setState({ disabled: true });
-                this.props.api
+                this.props.api.publish
                   .publishAction({
                     'edit-book': {
                       book: this.props.book,
@@ -280,7 +280,7 @@ export class Settings extends Component {
               onChange={this.changeDescription}
               onBlur={() => {
                 this.setState({ disabled: true });
-                this.props.api
+                this.props.api.publish
                   .publishAction({
                     'edit-book': {
                       book: this.props.book,

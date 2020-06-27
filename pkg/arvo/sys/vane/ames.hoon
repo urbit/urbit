@@ -3004,16 +3004,13 @@
   |=  [=symmetric-key plaintext=shut-packet]
   ^-  @
   ::
-  =.  meat.plaintext
-    ?.  ?&  ?=(%& -.meat.plaintext)
-            (gth (met 13 fragment.p.meat.plaintext) 1)
-        ==
-      meat.plaintext
-    %=    meat.plaintext
+  =?    meat.plaintext
+      ?&  ?=(%& -.meat.plaintext)
+          (gth (met 13 fragment.p.meat.plaintext) 1)
+      ==
+    %_    meat.plaintext
         fragment.p
-      %^  end  13  1
-      %^  rsh  13  fragment-num.p.meat.plaintext
-      fragment.p.meat.plaintext
+      (cut 13 [[fragment-num 1] fragment]:p.meat.plaintext)
     ==
   (en:crub:crypto symmetric-key (jam plaintext))
 ::  +decrypt: decrypt packet content to a $shut-packet or die

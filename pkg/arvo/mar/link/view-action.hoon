@@ -1,6 +1,6 @@
 /-  *link-view
 =,  dejs:format
-|_  act=view-action
+|_  act=action
 ++  grad  %noun
 ++  grow
   |%
@@ -8,7 +8,7 @@
   --
 ++  grab
   |%
-  ++  noun  view-action
+  ++  noun  action
   ++  json
     |^  %-  of
         :~  %create^create

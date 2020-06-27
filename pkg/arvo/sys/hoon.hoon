@@ -12015,9 +12015,17 @@
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun (slum q.gat q.sam)]
 ::
+::  +slab: states whether you can access an arm in a type.
+::
+::  -- way: the access type ($vial): read, write, or read-and-write.
+::  The fourth case of $vial, %free, is not permitted because it would
+::  allow you to discover "private" information about a type,
+::  information which you could not make use of in (law-abiding) hoon anyway.
+::
 ++  slab                                                ::  test if contains
-  |=  {cog/@tas typ/type}
-  =(& -:(~(find ut typ) %free [cog ~]))
+  |=  [way=?(%read %rite %both) cog=@tas typ=type]
+  ?=  [%| *]
+  (~(find ut typ) way ~[cog])
 ::
 ++  slap
   |=  {vax/vase gen/hoon}  ^-  vase                     ::  untyped vase .*

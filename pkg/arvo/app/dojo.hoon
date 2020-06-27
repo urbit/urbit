@@ -681,7 +681,7 @@
         ::
         ?.  &(?=({* ~} p.cig) ?=(~ q.cig))
           ~|(%one-argument !!)
-        =/  res  (mule |.((slop !>(%noun) (slam q.cay (dy-vase p.i.p.cig)))))
+        =/  res  (mule |.((slam q.cay (dy-vase p.i.p.cig))))
         ?:  ?=(%| -.res)
           (he-diff(poy ~) %tan p.res)  ::  TODO: or +dy-rash  ?
         (dy-hand %noun p.res)
@@ -705,31 +705,45 @@
             %ask  (dy-made-dial %noun p.res)
             %say  (dy-made-gent %noun p.res)
           ==
+      ::  gat: generator gate
+      ::  som: default gat sample
+      ::  ven: event arguments
+      ::  poz: positional arguments
+      ::  kev: key-value named arguments
+      ::  kuv: default keyword arguments
+      ::  sam: fully populated sample
+      ::  rog: default gat sample
+      ::
       |.  ^-  vase
       =/  gat=vase  (slot 3 q.cay)
-      %+  slam  gat
-      %+  slop  !>([now=now.hid eny=eny.hid bec=he-beak])
-      %+  slop  (dy-sore p.cig)
-      ^-  vase
-      =/  sam  (slew 27 gat)  ::  |2.+<
-      ?:  =(~ q.cig)
-        (fall sam !>(~))
-      =/  soz=(list [var=term vax=vase])
-        %+  turn  ~(tap by q.cig)
-        |=  [var=term val=(unit dojo-source)]
-        ^-  [term vase]
-        :-  var
-        ?~  val
-          !>([~ ~])
-        (dy-vase p.u.val)
-      ~|  keyword-arg-failure+~(key by q.cig)
-      %+  slap
-        (with-faces sam+(need sam) rep+(with-faces soz) ~)
-      :+  %cncb  [%sam]~
-      %+  turn  soz
-      |=  [var=term *]
-      ^-  [wing hoon]
-      [[var]~ [%wing var %rep ~]]
+      =/  som=vase  (slot 6 gat)
+      =/  ven=vase  !>([now=now.hid eny=eny.hid bec=he-beak])
+      =/  poz=vase  (dy-sore p.cig)
+      =/  kev=vase
+        =/  kuv=(unit vase)  (slew 7 som)
+        ?:  =(~ q.cig)
+          (fall kuv !>(~))
+        =/  soz=(list [var=term vax=vase])
+          %~  tap  by
+          %-  ~(run by q.cig)
+          |=(val=(unit dojo-source) ?~(val !>([~ ~]) (dy-vase p.u.val)))
+        ~|  keyword-arg-failure+~(key by q.cig)
+        %+  slap
+          (with-faces kuv+(need kuv) rep+(with-faces soz) ~)
+        :+  %cncb  [%kuv]~
+        %+  turn  soz
+        |=  [var=term *]
+        ^-  [wing hoon]
+        [[var]~ [%wing var %rep ~]]
+      ::
+      =/  sam=vase  :(slop ven poz kev)
+      ?.  (~(nest ut p.som) | p.sam)
+        ~>  %slog.1^leaf+"dojo: nest-need"
+        ~>  %slog.0^(skol p.som)
+        ~>  %slog.1^leaf+"dojo: nest-have"
+        ~>  %slog.0^(skol p.sam)
+        !!
+      (slam gat sam)
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag/cage

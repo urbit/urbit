@@ -19,9 +19,9 @@
 ::    when adding support for new paths, the only things you'll likely want
 ::    to touch are +permitted, +initial-response, & +kick-proxies.
 ::
-/-  *metadata-store, *group
-/+  *link, metadata, default-agent, verb, dbug, group-store, grpl=group,
-    resource
+/-  *link, *metadata-store, *group
+/+  metadata, default-agent, verb, dbug, group-store, grpl=group,
+    resource, store=link-store
 ~%  %link-proxy-hook-top  ..is  ~
 |%
 +$  state-0
@@ -285,7 +285,7 @@
 ++  initial-response
   |=  =path
   ^-  card
-  =;  =initial
+  =;  =initial:store
     [%give %fact ~ %link-initial !>(initial)]
   ?+  path  !!
       [%local-pages ^]

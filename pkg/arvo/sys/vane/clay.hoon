@@ -716,6 +716,11 @@
     ++  run-pact
       |=  [old=page diff=page]
       ^-  [cage state]
+      ?:  ?=(%hoon p.old)
+        =/  txt=wain  (to-wain:format ;;(@t q.old))
+        =+  ;;(dif=(urge cord) q.diff)
+        =/  new=@t  (of-wain:format (lurk:differ txt dif))
+        :_(nub [%hoon !>(new)])
       =^  dys=dais  nub  (get-mark p.old)
       =^  syd=dais  nub  (get-mark p.diff)
       :_(nub [p.old (~(pact dys (vale:dys q.old)) (vale:syd q.diff))])
@@ -3528,7 +3533,7 @@
       |=  {yon/aeon pax/path}
       ^-  (unit (unit {$dome (hypo dome:clay)}))
       ?:  (lth yon let.dom)
-        :*  ~  ~  %dome  -:!>(%dome)
+        :*  ~  ~  %dome  -:!>(*dome:clay)
             ^-  dome:clay
             :*  ank=`[[%ank-in-old-v-not-implemented *ankh] ~ ~]
                 let=yon

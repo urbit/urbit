@@ -15,8 +15,8 @@
 ::    them to our metadata+groups definition.
 ::
 ::
-/-  link-listen-hook, *metadata-store, *group, *link
-/+  mdl=metadata, default-agent, verb, dbug, group-store, grpl=group, resource
+/-  listen-hook=link-listen-hook, *metadata-store, *group, *link
+/+  mdl=metadata, default-agent, verb, dbug, group-store, grpl=group, resource, store=link-store
 ::
 ~%  %link-listen-hook-top  ..is  ~
 |%
@@ -24,7 +24,7 @@
   $%  [%0 state-0]
       [%1 state-1]
       [%2 state-2]
-      [%3 state-2]
+      [%3 state-3]
   ==
 +$  state-3  state-1
 +$  state-2  state-1
@@ -177,7 +177,7 @@
       ?>  (team:title [our src]:bowl)
       =^  cards  state
         ~|  p.vase
-        (handle-listen-action:do !<(action:link-listen-hook vase))
+        (handle-listen-action:do !<(action:listen-hook vase))
       [cards this]
     ==
   ::
@@ -229,7 +229,7 @@
 ::  user actions & updates
 ::
 ++  handle-listen-action
-  |=  =action:link-listen-hook
+  |=  =action:listen-hook
   ^-  (quip card _state)
   ::NOTE  no-opping where appropriate happens further down the call stack.
   ::      we *could* no-op here, as %watch when we're already listening should
@@ -261,7 +261,7 @@
   $(cards (weld cards more-cards), groups t.groups)
 ::
 ++  send-update
-  |=  =update:link-listen-hook
+  |=  =update:listen-hook
   ^-  card
   [%give %fact ~[/listening] %link-listen-update !>(update)]
 ::
@@ -516,11 +516,11 @@
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
         %link-initial
       %-  handle-link-initial
-      [who.target where.target !<(initial vase)]
+      [who.target where.target !<(initial:store vase)]
     ::
         %link-update
       %-  handle-link-update
-      [who.target where.target !<(update vase)]
+      [who.target where.target !<(update:store vase)]
     ==
   ==
 ::
@@ -561,7 +561,7 @@
 
 ::
 ++  do-link-action
-  |=  [=wire =action]
+  |=  [=wire =action:store]
   ^-  card
   :*  %pass
       wire
@@ -573,7 +573,7 @@
   ==
 ::
 ++  handle-link-initial
-  |=  [who=ship where=path =initial]
+  |=  [who=ship where=path =initial:store]
   ^-  (quip card _state)
   ?>  =(src.bowl who)
   ?+  -.initial  ~|([dap.bowl %unexpected-initial -.initial] !!)
@@ -595,7 +595,7 @@
   ==
 ::
 ++  handle-link-update
-  |=  [who=ship where=path =update]
+  |=  [who=ship where=path =update:store]
   ^-  (quip card _state)
   ?>  =(src.bowl who)
   :_  state
@@ -612,8 +612,8 @@
     |=  =note
     ^-  card
     %+  do-link-action
-      [%forward %annotation (scot %p who) where]
-    [%read where url.update who note]
+      `wire`[%forward %annotation (scot %p who) where]
+    `action:store`[%read where url.update `comment`[who note]]
   ==
 ::
 ++  take-forward-sign

@@ -9,15 +9,20 @@
       state-one
       state-two
       state-three
+      state-four
   ==
 ::
-+$  state-zero   [%0 =inbox:store]
-+$  state-one    [%1 =inbox:store]
-+$  state-two    [%2 =inbox:store]
-+$  state-three  [%3 =inbox:store]
++$  state-zero    [%0 =inbox:store]
++$  state-one     [%1 =inbox:store]
++$  state-two     [%2 =inbox:store]
++$  state-three   [%3 =inbox:store]
++$  state-four    [%4 =inbox:store]
++$  admin-action
+  $%  [%trim ~]
+  ==
 --
 ::
-=|  state-three
+=|  state-four
 =*  state  -
 ::
 %-  agent:dbug
@@ -36,11 +41,13 @@
   ++  on-load
     |=  old-vase=vase
     =/  old  !<(versioned-state old-vase)
+    =|  cards=(list card)
     |-
     ^-  (quip card _this)
     ?-  -.old
-        %3  [~ this(state old)]
-        %2
+        %4  [cards this(state old)]
+      ::
+        %3
       =/  =inbox:store
         (migrate-path-map:group-store inbox.old)
       =/  kick-paths
@@ -54,9 +61,16 @@
         ?.  &(=(%mailbox i.sub) =('~' i.t.sub))
           subs
         (~(put in subs) sub)
-      :_  this(state [%3 inbox])
-      ?~  kick-paths  ~
-      [%give %kick kick-paths ~]~
+      =?  cards  ?=(^ kick-paths)
+        :_  cards
+        [%give %kick kick-paths ~]
+      $(old [%4 inbox.old])
+    ::
+        %2
+      =.  cards
+        :_  cards
+        [%pass /trim %agent [our.bowl %chat-store] %poke %noun !>([%trim ~])]
+      $(old [%3 inbox.old])
     ::
         %1
       =/  reversed-inbox=inbox:store
@@ -78,6 +92,7 @@
       ?+  mark  (on-poke:def mark vase)
         %json         (poke-json:cc !<(json vase))
         %chat-action  (poke-chat-action:cc !<(action:store vase))
+        %noun         (poke-noun:cc !<(admin-action vase))
       ==
     [cards this]
   ::
@@ -174,6 +189,31 @@
     [~ ~ %noun !>((swag [start (sub end start)] envelopes))]
   ==
 ::
+++  poke-noun
+  |=  nou=admin-action
+  ^-  (quip card _state)
+  ~&  %trimming-chat-store
+  :-  ~
+  :-  %4
+  %-  ~(urn by inbox)
+  |=  [=path mailbox:store]
+  ^-  mailbox:store
+  =/  [a=* out=(list envelope:store)]
+    %+  roll  envelopes
+    |=  $:  =envelope:store
+            o=[[hav=(set serial:store) curr=@] out=(list envelope:store)]
+        ==
+    ?:  (~(has in hav.o) uid.envelope)
+      [[hav.o curr.o] out.o]
+    :-
+    ^-  [(set serial:store) @]
+    [(~(put in hav.o) uid.envelope) +(curr.o)]
+    ^-  (list envelope:store)
+    [envelope(number curr.o) out.o]
+  =/  len  (lent out)
+  ~&  [path [%old (lent envelopes)] [%new len]]
+  [[len len] (flop out)]
+::
 ++  poke-json
   |=  jon=json
   ^-  (quip card _state)
@@ -223,8 +263,11 @@
     [~ state]
   =.  letter.envelope.action  (evaluate-letter [author letter]:envelope.action)
   =^  envelope  u.mailbox  (prepend-envelope u.mailbox envelope.action)
-  :-  (send-diff path.action action(envelope envelope))
-  state(inbox (~(put by inbox) path.action u.mailbox))
+  :_  state(inbox (~(put by inbox) path.action u.mailbox))
+  ?:  =((mod number.envelope 5.000) 0)
+    :-  [%pass /trim %agent [our.bol %chat-store] %poke %noun !>([%trim ~])]
+    (send-diff path.action action(envelope envelope))
+  (send-diff path.action action(envelope envelope))
 ::
 ++  handle-messages
   |=  act=action:store
@@ -239,6 +282,7 @@
   |-  ^-  (quip card _state)
   ?~  envelopes.act
     :_  state(inbox (~(put by inbox) path.act u.mailbox))
+    :-  [%pass /trim %agent [our.bol %chat-store] %poke %noun !>([%trim ~])]
     %+  send-diff  path.act
     [%messages path.act 0 (lent evaluated-envelopes) evaluated-envelopes]
   =.  letter.i.envelopes.act  (evaluate-letter [author letter]:i.envelopes.act)
