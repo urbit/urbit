@@ -392,13 +392,12 @@ _ames_cap_queue(u3_ames* sam_u)
 static void
 _ames_punt_goof(u3_noun lud)
 {
-  u3_noun dul = lud;
-
-  if ( 2 == u3qb_lent(dul) ) {
-    u3_pier_punt_goof("hear", u3k(u3h(dul)));
-    u3_pier_punt_goof("crud", u3k(u3h(u3t(dul))));
+  if ( 2 == u3qb_lent(lud) ) {
+    u3_pier_punt_goof("hear", u3k(u3h(lud)));
+    u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
   }
   else {
+    u3_noun dul = lud;
     c3_w len_w = 1;
 
     while ( u3_nul != dul ) {
