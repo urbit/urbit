@@ -153,7 +153,7 @@
   =/  [res=vase nub=state:ford:fusion]  (build-file:ford /lib/strandio/hoon)
   ;:  weld
     %-  expect
-    !>((slab %get-our -.res))
+    !>((slab %read %get-our -.res))
   ::
     %+  expect-eq
       !>  %-  ~(gas in *(set path))
