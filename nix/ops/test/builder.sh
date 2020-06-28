@@ -24,7 +24,7 @@ herb ./ship -p hood -d '+hood/mass'
 
 # Run the unit tests and then print scrollback
 herb ./ship -d '~&  ~  ~&  %test-unit-start  ~'
-herb ./ship -d '####-test /'
+herb ./ship -d '####-test %/tests'
 herb ./ship -d '~&  ~  ~&  %test-unit-end  ~'
 
 # Start and run the test app
