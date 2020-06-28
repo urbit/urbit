@@ -999,11 +999,6 @@
         void
         u3_walk_save(c3_c* pas_c, u3_noun tim, u3_atom pad, c3_c* bas_c, u3_noun pax);
 
-      /* u3_sync_reck(): traverse filesystem for changes -> lamb
-      */
-        u3_noun
-        u3_sync_reck(void);
-
       /* u3_walk(): traverse `dir_c` to produce an arch, updating `old`.
       */
         u3_noun
@@ -1013,35 +1008,6 @@
       */
         c3_c*
         u3_path(c3_o    fyl, u3_noun pax);
-
-    /**  Filesystem (old api).
-    **/
-      /* u3_ve_file(): load internal file as atom from local or system.
-      */
-        u3_weak
-        u3_ve_file(c3_c* ext_c, u3_noun tah);
-
-      /* u3_ve_frep(): load [.~ %rep myp {now} tah].
-      **
-      **   File is either ~ or [nbytes mdate atom].
-      */
-        u3_noun
-        u3_ve_frep(u3_noun myp, u3_noun tah);
-
-      /* u3_ve_date(): date internal file.
-      */
-        c3_d
-        u3_ve_date(c3_c* ext_c, u3_noun tah);
-
-      /* u3_ve_save(): save internal file as atom.
-      */
-        c3_o
-        u3_ve_save(c3_c* ext_c, u3_noun tah, u3_noun dat);
-
-      /* u3_ve_zeus(): prayer to internal file path.  Return unit.
-      */
-        u3_noun
-        u3_ve_zeus(u3_noun hap);
 
     /**  Filesystem (async)
     **/
@@ -1229,23 +1195,6 @@
 
     /** Pier control.
     **/
-      /* u3_pier_db_shutdown(): close the log.
-      */
-        void
-        u3_pier_db_shutdown(u3_pier* pir_u);
-
-      /* u3_pier_interrupt(): interrupt running process.
-      */
-        void
-        u3_pier_interrupt(u3_pier* pir_u);
-
-      /* u3_pier_discover(): insert task into process controller.
-      */
-        void
-        u3_pier_discover(u3_pier* pir_u,
-                         c3_l     msc_l,
-                         u3_noun  job);
-
       /* u3_pier_exit(): trigger a gentle shutdown.
       */
         void
