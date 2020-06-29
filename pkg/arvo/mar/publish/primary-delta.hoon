@@ -5,12 +5,14 @@
 ::
 |_  del=primary-delta
 ::
+++  grad  %noun
 ++  grab
   |%
   ++  noun  primary-delta
   --
 ++  grow
   |%
+  ++  noun  del
   ++  json
     %+  frond:enjs:format  %publish-update
     %+  frond:enjs:format  -.del

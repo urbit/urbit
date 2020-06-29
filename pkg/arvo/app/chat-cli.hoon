@@ -451,6 +451,7 @@
   ::
   ++  parser
     |^
+      %+  stag  |
       %+  knee  *command  |.  ~+
       =-  ;~(pose ;~(pfix mic -) message)
       ;~  pose

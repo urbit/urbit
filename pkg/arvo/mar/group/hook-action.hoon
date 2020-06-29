@@ -1,6 +1,11 @@
 /-  *group-hook
 =,  dejs:format
 |_  act=group-hook-action
+++  grad  %noun
+++  grow
+  |%
+  ++  noun  act
+  --
 ++  grab
   |%
   ++  noun  group-hook-action

@@ -35,14 +35,20 @@
   |*  command-type=mold
   $_  ^|
   |_  bowl:gall
+  ::  +command-parser: input parser for a specific session
+  ::
+  ::    if the head of the result is true, instantly run the command
+  ::
   ++  command-parser
     |~  sole-id=@ta
-    |~(nail *(like command-type))
+    |~(nail *(like [? command-type]))
+  ::  +tab-list: autocomplete options for the session (to match +command-parser)
   ::
   ++  tab-list
     |~  sole-id=@ta
     ::  (list [@t tank])
     *(list (option:auto tank))
+  ::  +on-command: called when a valid command is run
   ::
   ++  on-command
     |~  [sole-id=@ta command=command-type]
@@ -106,9 +112,11 @@
   |*  [shoe=* command-type=mold]
   |_  =bowl:gall
   ++  command-parser
-    (easy *command-type)
+    |=  sole-id=@ta
+    (easy *[? command-type])
   ::
   ++  tab-list
+    |=  sole-id=@ta
     ~
   ::
   ++  on-command
@@ -193,9 +201,9 @@
       (~(gut by soles) sole-id *sole-share)
     |^  =^  [cards=(list card) =_cli-state]  shoe
           ?-  -.dat.act
-            %det  [(apply-edit +.dat.act) shoe]
+            %det  (apply-edit +.dat.act)
             %clr  [[~ cli-state] shoe]
-            %ret  run-command
+            %ret  try-command
             %tab  [(tab +.dat.act) shoe]
           ==
         :-  (deal cards)
@@ -208,15 +216,19 @@
     ::
     ++  apply-edit
       |=  =sole-change
-      ^-  (quip card _cli-state)
+      ^+  [[*(list card) cli-state] shoe]
       =^  inverse  cli-state
         (~(transceive sole cli-state) sole-change)
       ::  res: & for fully parsed, | for parsing failure at location
       ::
-      =/  res=(each (unit) @ud)
+      =/  res=(each (unit [run=? cmd=command-type]) @ud)
         %+  rose  (tufa buf.cli-state)
         (command-parser:og sole-id)
-      ?:  ?=(%& -.res)  [~ cli-state]
+      ?:  ?=(%& -.res)
+        ?.  &(?=(^ p.res) run.u.p.res) 
+          [[~ cli-state] shoe]
+        (run-command cmd.u.p.res)
+      :_  shoe
       ::  parsing failed
       ::
       ?.  &(?=(%del -.inverse) =(+(p.inverse) (lent buf.cli-state)))
@@ -234,14 +246,18 @@
           [%err p.res]  ::  cursor to error location
       ==
     ::
-    ++  run-command
+    ++  try-command
       ^+  [[*(list card) cli-state] shoe]
-      =/  cmd=(unit command-type)
+      =/  res=(unit [? cmd=command-type])
         %+  rust  (tufa buf.cli-state)
         (command-parser:og sole-id)
-      ?~  cmd
-        [[[(effect %bel ~)]~ cli-state] shoe]
-      =^  cards  shoe  (on-command:og sole-id u.cmd)
+      ?^  res  (run-command cmd.u.res)
+      [[[(effect %bel ~)]~ cli-state] shoe]
+    ::
+    ++  run-command
+      |=  cmd=command-type
+      ^+  [[*(list card) cli-state] shoe]
+      =^  cards  shoe  (on-command:og sole-id cmd)
       ::  clear buffer
       ::
       =^  clear  cli-state  (~(transmit sole cli-state) [%set ~])
@@ -251,7 +267,6 @@
           [%det clear]
       ==
     ::
-    ::NOTE  cargo-culted
     ++  tab
       |=  pos=@ud
       ^-  (quip card _cli-state)
@@ -271,7 +286,9 @@
         %+  add  pos
         (met 3 (fall forward ''))
       =|  cards=(list card)
-      =?  cards  ?=(^ options)
+      ::  only render the option list if we couldn't complete anything
+      ::
+      =?  cards  &(?=(~ to-send) ?=(^ options))
         [(effect %tab options) cards]
       |-  ^-  (quip card _cli-state)
       ?~  to-send

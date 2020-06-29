@@ -34,7 +34,7 @@ export class LinkItem extends Component {
   }
 
   markPostAsSeen() {
-    this.props.api.seenLink(this.props.resourcePath, this.props.url);
+    this.props.api.links.seenLink(this.props.resourcePath, this.props.url);
   }
 
   render() {
