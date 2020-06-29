@@ -4056,7 +4056,7 @@
       |=  [=desk data=(map path lobe)]
       ^-  reef-cache
       ~>  %slog.0^leaf+"clay: building reef on {<desk>}"
-      ?:  !=(%homer desk)
+      ?:  =(%home desk)
         [!>(..ride) !>(..is) !>(..zuse)]
       |^
       =/  [home=? hoon=vase]

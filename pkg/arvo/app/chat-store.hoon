@@ -184,7 +184,7 @@
       ^-  (list envelope:store)
       [envelope(number curr.o) out.o]
     =/  len  (lent out)
-    ~&  [path [%old (lent envelopes)] [%new len]]
+    ~?  !=(len (lent envelopes))  [path [%old (lent envelopes)] [%new len]]
     [[len len] (flop out)]
   ==
 ::
