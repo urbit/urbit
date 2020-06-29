@@ -508,7 +508,7 @@
       ^-  (quip card _group)
       ?>  ?=(%invite -.policy.group)
       =.  pending.policy.group
-        (~(uni in pending.policy.group) ships)
+        (~(dif in pending.policy.group) ships)
       `group
     ++  replace
       |=  =policy

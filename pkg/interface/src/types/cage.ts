@@ -20,7 +20,7 @@ interface MarksToTypes {
   readonly "metadata-update": MetadataUpdate;
   readonly 'publish-update': PublishUpdate;
   readonly "publish-response": PublishResponse;
-  readonly "group-update": GroupUpdate;
+  readonly groupUpdate: GroupUpdate;
   readonly "permission-update": PermissionUpdate;
   readonly "launch-update": LaunchUpdate;
   readonly "link-listen-update": LinkListenUpdate;

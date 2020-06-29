@@ -1217,7 +1217,7 @@
   ^-  [(list card) write=path read=path]
   ?>  ?=(^ group-path.group)
   =/  scry-path
-    ;:(welp /=group-store/(scot %da now.bol) [%groups group-path.group] /noun)
+    ;:(welp /(scot %p our.bol)/group-store/(scot %da now.bol) [%groups group-path.group] /noun)
   =/  grp  .^((unit ^group) %gx scry-path)
   ?:  use-preexisting.group
     ?~  grp  !!
@@ -1862,8 +1862,12 @@
       group-path
     =.  books
       (~(put by books) [our.bol book.act] u.book)
+    =/  del
+      [%edit-book our.bol book.act u.book]
     :_  state
-    :*  (metadata-store-poke %remove app-path %publish app-path)
+    :*  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
+        [%give %fact [/notebook/[book.act]]~ %publish-notebook-delta !>(del)]
+        (metadata-store-poke %remove app-path %publish app-path)
         (metadata-store-poke %add group-path [%publish app-path] metadata)
         (group-poke %remove-group old-rid ~)
         ?.  inclusive.act

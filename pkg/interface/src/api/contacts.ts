@@ -1,26 +1,34 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Patp, Path } from '../types/noun';
+import { Patp, Path, Enc } from '../types/noun';
 import { Contact, ContactEdit } from '../types/contact-update';
+import { GroupPolicy, Resource } from '../types/group-update';
 
 export default class ContactsApi extends BaseApi<StoreState> {
-
-  create(path: Path, ships: Patp[] = [], title: string, description: string) {
+  create(
+    name: string,
+    policy: Enc<GroupPolicy>,
+    title: string,
+    description: string
+  ) {
     return this.viewAction({
       create: {
-        path,
-        ships,
+        name,
+        policy,
         title,
-        description
-      }
+        description,
+      },
     });
   }
 
   share(recipient: Patp, path: Patp, ship: Patp, contact: Contact) {
     return this.viewAction({
       share: {
-        recipient, path, ship, contact
-      }
+        recipient,
+        path,
+        ship,
+        contact,
+      },
     });
   }
 
@@ -31,8 +39,6 @@ export default class ContactsApi extends BaseApi<StoreState> {
   remove(path: Path, ship: Patp) {
     return this.viewAction({ remove: { path, ship } });
   }
-
-
 
   edit(path: Path, ship: Patp, editField: ContactEdit) {
     /* editField can be...
@@ -47,8 +53,22 @@ export default class ContactsApi extends BaseApi<StoreState> {
     */
     return this.hookAction({
       edit: {
-        path, ship, 'edit-field': editField
-      }
+        path,
+        ship,
+        'edit-field': editField,
+      },
+    });
+  }
+
+  invite(resource: Resource, ship: Patp, text = '') {
+    return this.viewAction({
+      invite: { resource, ship, text },
+    });
+  }
+
+  join(resource: Resource) {
+    return this.viewAction({
+      join: resource,
     });
   }
 

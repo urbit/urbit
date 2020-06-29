@@ -11,5 +11,6 @@
 ++  grab
   |%
   ++  noun  update
+  ++  json  update:dejs
   --
 --

@@ -15,7 +15,6 @@ const chatSubscriptions: AppSubscription[] = [
 
 const publishSubscriptions: AppSubscription[] = [
   ['/primary', 'publish'],
-  ['/all', 'group-store']
 ];
 
 const linkSubscriptions: AppSubscription[] = [
@@ -24,7 +23,6 @@ const linkSubscriptions: AppSubscription[] = [
 ]
 
 const groupSubscriptions: AppSubscription[] = [
-  ['/all', 'group-store'],
   ['/synced', 'contact-hook']
 ];
 
@@ -45,7 +43,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
   };
   start() {
     this.subscribe('/all', 'invite-store');
-    this.subscribe('/all', 'permission-store');
+    this.subscribe('/groups', 'group-store');
     this.subscribe('/primary', 'contact-view');
     this.subscribe('/all', 'metadata-store');
     this.subscribe('/all', 's3-store');

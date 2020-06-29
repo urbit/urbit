@@ -119,7 +119,9 @@
     :~  members+(set ship members.group)
         policy+(policy policy.group)
         tags+(tags tags.group)
+        hidden+b+hidden.group
     ==
+  ::
   ++  rank
     |=  =rank:title
     ^-  json
@@ -202,20 +204,18 @@
     ++  open
       |=  =diff:open:^policy
       %+  frond  -.diff
-      %-  pairs
       ?-  -.diff
-        %allow-ranks  ~[ranks+(set rank ranks.diff)]
-        %ban-ranks  ~[ranks+(set rank ranks.diff)]
-        %allow-ships  ~[ranks+(set ship ships.diff)]
-        %ban-ships  ~[ranks+(set ship ships.diff)]
+        %allow-ranks  (set rank ranks.diff)
+        %ban-ranks    (set rank ranks.diff)
+        %allow-ships  (set ship ships.diff)
+        %ban-ships    (set ship ships.diff)
       ==
     ++  invite
       |=  =diff:invite:^policy
       %+  frond  -.diff
-      %-  pairs
       ?-  -.diff
-        %add-invites  ~[invitees+(set ship invitees.diff)]
-        %remove-invites  ~[invitees+(set ship invitees.diff)]
+        %add-invites      (set ship invitees.diff)
+        %remove-invites   (set ship invitees.diff)
       ==
     --
   ::
@@ -293,30 +293,46 @@
   =,  dejs:format
   |%
   ::
-  ++  ruk
-    |*  [a=(map) b=gate]
+  ++  ruk-jon
+    |=  [a=(map @t json) b=$-(@t @t)]
     ^+  a
-    =>  .(a (sy ~(tap by a)))
+    =-  (malt -)
     |- 
-    ^+  a
-    ?~  a  a
-    [n=[p=(b p.n.a) q=q.n.a] l=$(a l.a) r=$(a r.a)]
+    ^-  (list [@t json])
+    ?~  a  ~
+    :-  [(b p.n.a) q.n.a]
+    %+  weld
+      $(a l.a)
+    $(a r.a)
   ::
   ++  of
-    |*  wer=(pole [cord fist])
-    |=  jon=json
-    %-  (^of wer)
-    ?>  ?=(%o -.jon)
-    o+(ruk p.jon enkebab)
+      |*  wer/(pole {cord fist})
+      |=  jon/json
+      ?>  ?=({$o {@ *} $~ $~} jon)
+      |-
+      ?-    wer                                         
+          :: {{key/@t wit/*} t/*}
+          {{key/@t *} t/*}
+        =>  .(wer [[* wit] *]=wer)
+        ?:  =(key.wer (enkebab p.n.p.jon))
+          [key.wer ~|(val+q.n.p.jon (wit.wer q.n.p.jon))]
+        ?~  t.wer  ~|(bad-key+p.n.p.jon !!)
+        ((of t.wer) jon)
+      ==
   ++  ot
     |*  wer=(pole [cord fist])
     |=  jon=json
-    %-  (^ot wer)
+    ~|  jon
+    %-  (ot-raw:dejs:format wer)
     ?>  ?=(%o -.jon)
-    o+(ruk p.jon enkebab)
+    (ruk-jon p.jon enkebab)
   ::
-  ++  action
-    ^-  $-(json ^action)
+  ++  update
+    ^-  $-(json ^update)
+    |=  jon=json
+    ^-  ^update
+    =-  ~&  -  -
+    %.  jon
     %-  of
     :~
       add-group+add-group

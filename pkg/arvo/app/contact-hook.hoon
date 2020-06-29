@@ -338,9 +338,10 @@
 ++  fact-group-update
   |=  [wir=wire fact=update:group-store]
   ^-  (quip card _state)
-  ?:  ?=(%initial -.fact)  [~ state]
-  =/  =group
-    (need (scry-group:grp resource.fact))
+  ?:  ?=(%initial -.fact)
+    [~ state]
+  =/  group=(unit group)
+    (scry-group:grp resource.fact)
   |^
   ?+  -.fact     [~ state]
       %initial-group   (initial-group +.fact)
@@ -363,8 +364,9 @@
     ^-  (quip card _state)
     =/  =path
       (en-path:resource rid)
-    ?:  hidden.group  [~ state]
     ?.  (~(has by synced) path)
+      ?~  (contacts-scry path)
+        [~ state]
       :_  state
       [(contact-poke [%delete path])]~
     :_  state(synced (~(del by synced) path))
@@ -376,7 +378,9 @@
     |=  [rid=resource ships=(set ship)]
     ^-  (quip card _state)
     ::  if pax is synced, remove member from contacts and kick their sub
-    ?:  hidden.group  [~ state]
+    ?~  group
+      [~ state]
+    ?:  hidden.u.group  [~ state]
     =/  =path
       (en-path:resource rid)
     =/  owner=(unit ship)  (~(get by synced) path)
