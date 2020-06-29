@@ -465,6 +465,24 @@
           c3_w
           u3a_mark_road(FILE* fil_u);
 
+        /* u3a_count_noun(): count size of noun.
+        */
+          c3_w
+          u3a_count_noun(u3_noun som);
+
+        /* u3a_discount_noun(): clean up after counting a noun.
+        */
+          c3_w
+          u3a_discount_noun(u3_noun som);
+
+        /* u3a_count_ptr(): count a pointer for gc.  Produce size.  */
+          c3_w
+          u3a_count_ptr(void* ptr_v);
+
+        /* u3a_discount_ptr(): discount a pointer for gc.  Produce size.  */
+          c3_w
+          u3a_discount_ptr(void* ptr_v);
+
         /* u3a_idle(): measure free-lists in [rod_u]
         */
           c3_w

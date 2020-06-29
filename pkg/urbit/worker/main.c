@@ -1015,8 +1015,9 @@ main(c3_i argc, c3_c* argv[])
   c3_c*      dir_c = argv[1];
   c3_c*      key_c = argv[2];
   c3_c*      wag_c = argv[3];
+  c3_c*      hap_c = argv[4];
 
-  c3_assert(4 == argc);
+  c3_assert(5 == argc);
 
   memset(&u3V, 0, sizeof(u3V));
   memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
@@ -1035,6 +1036,7 @@ main(c3_i argc, c3_c* argv[])
   */
   {
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
+    sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
   }
 
   /* load pier directory
