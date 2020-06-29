@@ -19,6 +19,24 @@
     c3_o       alm_o;                   //  alarm
   } u3_behn;
 
+//  XX review, move
+//
+/* _behn_bail_dire(): c3y if fatal error. RETAIN
+*/
+static c3_o
+_behn_bail_dire(u3_noun lud)
+{
+  u3_noun mot = u3r_at(4, lud);
+
+  if (  (c3__meme == mot)
+     || (c3__intr == mot) )
+  {
+    return c3n;
+  }
+
+  return c3y;
+}
+
 /* _behn_wake_bail(): %wake is essential, retry failures.
 */
 static void
@@ -26,33 +44,22 @@ _behn_wake_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3_auto* car_u = egg_u->car_u;
 
-  if ( 2 == egg_u->try_w ) {
-    u3l_log("behn: timer failed\n");
-
-    if ( 2 == u3qb_lent(lud) ) {
-      u3_pier_punt_goof("wake", u3k(u3h(lud)));
-      u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
-    }
-    else {
-      u3_noun dul = lud;
-      c3_w len_w = 1;
-
-      while ( u3_nul != dul ) {
-        u3l_log("behn: bail %u\r\n", len_w++);
-        u3_pier_punt_goof("behn", u3k(u3h(dul)));
-        dul = u3t(dul);
-      }
-    }
-
-    u3_ovum_free(egg_u);
-    u3_pier_bail(car_u->pir_u);
+  if (  (2 > egg_u->try_w)
+     && (c3n == _behn_bail_dire(lud)) )
+  {
+    u3z(lud);
+    u3_auto_redo(car_u, egg_u);
   }
   else {
-    egg_u->try_w++;
-    u3_auto_plan(car_u, egg_u);
-  }
+    u3_auto_bail_slog(egg_u, lud);
+    u3_ovum_free(egg_u);
 
-  u3z(lud);
+    u3l_log("behn: timer failed; queue blocked\n");
+
+    //  XX review, add flag to continue?
+    //
+    u3_pier_bail(car_u->pir_u);
+  }
 }
 
 /* _behn_time_cb(): timer callback.
@@ -138,33 +145,22 @@ _behn_born_bail(u3_ovum* egg_u, u3_noun lud)
 {
   u3_auto* car_u = egg_u->car_u;
 
-  if ( 2 == egg_u->try_w ) {
-    u3l_log("behn: initialization failed\n");
-
-    if ( 2 == u3qb_lent(lud) ) {
-      u3_pier_punt_goof("born", u3k(u3h(lud)));
-      u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
-    }
-    else {
-      u3_noun dul = lud;
-      c3_w len_w = 1;
-
-      while ( u3_nul != dul ) {
-        u3l_log("behn: bail %u\r\n", len_w++);
-        u3_pier_punt_goof("behn", u3k(u3h(dul)));
-        dul = u3t(dul);
-      }
-    }
-
-    u3_ovum_free(egg_u);
-    u3_pier_bail(car_u->pir_u);
+  if (  (2 > egg_u->try_w)
+     && (c3n == _behn_bail_dire(lud)) )
+  {
+    u3z(lud);
+    u3_auto_redo(car_u, egg_u);
   }
   else {
-    egg_u->try_w++;
-    u3_auto_plan(car_u, egg_u);
-  }
+    u3_auto_bail_slog(egg_u, lud);
+    u3_ovum_free(egg_u);
 
-  u3z(lud);
+    u3l_log("behn: initialization failed\n");
+
+    //  XX review, add flag to continue?
+    //
+    u3_pier_bail(car_u->pir_u);
+  }
 }
 /* _behn_io_talk(): notify %behn that we're live
 */

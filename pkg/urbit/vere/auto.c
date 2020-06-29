@@ -19,16 +19,13 @@
 #include "all.h"
 #include "vere/vere.h"
 
-/* u3_auto_plan(): create and enqueue an ovum.
+/* u3_auto_plan(): enqueue an ovum.
 */
 u3_ovum*
 u3_auto_plan(u3_auto* car_u, u3_ovum *egg_u)
 {
   egg_u->car_u = car_u;
 
-  //  [pre_u] points towards [ext_u] (back in time)
-  //  [nex_u] points towards [ent_u] (forward in time)
-  //
   if ( !car_u->ent_u ) {
     c3_assert(!car_u->ext_u);
 
@@ -36,12 +33,49 @@ u3_auto_plan(u3_auto* car_u, u3_ovum *egg_u)
     car_u->ent_u = car_u->ext_u = egg_u;
     car_u->dep_w = 1;
   }
+  //  enqueue at driver entry (back of the line)
+  //
+  //    [pre_u] points towards [ext_u] (back in time)
+  //    [nex_u] points towards [ent_u] (forward in time)
+  //
   else {
     egg_u->nex_u = 0;
     egg_u->pre_u = car_u->ent_u;
 
     car_u->ent_u->nex_u = egg_u;
     car_u->ent_u = egg_u;
+    car_u->dep_w++;
+  }
+
+  u3_pier_spin(car_u->pir_u);
+
+  return egg_u;
+}
+
+/* u3_auto_redo(): retry an ovum.
+*/
+u3_ovum*
+u3_auto_redo(u3_auto* car_u, u3_ovum *egg_u)
+{
+  c3_assert( egg_u->car_u == car_u );
+
+  egg_u->try_w++;
+
+  if ( !car_u->ent_u ) {
+    c3_assert(!car_u->ext_u);
+
+    egg_u->pre_u = egg_u->nex_u = 0;
+    car_u->ent_u = car_u->ext_u = egg_u;
+    car_u->dep_w = 1;
+  }
+  //  enqueue at driver exit (front of the line)
+  //
+  else {
+    egg_u->nex_u = car_u->ext_u;
+    egg_u->pre_u = 0;
+
+    car_u->ext_u->pre_u = egg_u;
+    car_u->ext_u = egg_u;
     car_u->dep_w++;
   }
 

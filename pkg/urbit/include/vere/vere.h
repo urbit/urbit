@@ -840,10 +840,15 @@
         void
         u3_auto_bail_slog(u3_ovum* egg_u, u3_noun lud);
 
-      /* u3_auto_plan(): create and enqueue an ovum.
+      /* u3_auto_plan(): enqueue an ovum.
       */
         u3_ovum*
         u3_auto_plan(u3_auto* car_u, u3_ovum* egg_u);
+
+      /* u3_auto_redo(): retry an ovum.
+      */
+        u3_ovum*
+        u3_auto_redo(u3_auto* car_u, u3_ovum* egg_u);
 
       /* u3_auto_peer(): subscribe to updates.
       */
