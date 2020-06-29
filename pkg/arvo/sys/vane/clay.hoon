@@ -2733,7 +2733,7 @@
       ::  traverse updated state and sanity check
       ::
       =+  ~|  :*  %bad-foreign-update
-                  [gar=gar let=let.nako nut=(turn nut head) nat=(turn nat head)]
+                  [gar=gar.nako let=let.nako nut=(turn nut head) nat=(turn nat head)]
                   [hitdom=hit.dom letdom=let.dom]
               ==
         ?:  =(0 let.nako)
