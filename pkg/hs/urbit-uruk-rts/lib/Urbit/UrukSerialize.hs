@@ -152,13 +152,15 @@ toDumpVal (VNat nat) = pure $ DVNat nat
 toDumpVal (VInt i)   = pure $ DVInt i
 toDumpVal (VBol b)   = pure $ DVBol b
 toDumpVal (VLis xs)  = DVLis <$> mapM toDumpVal xs
-toDumpVal (VBox (BSaved h _)) = pure $ DVBox h
-toDumpVal (VBox (BUnsaved v)) = DVBox <$> writeVal v
-toDumpVal (VBox (BUnloaded h _)) = pure $ DVBox h
-
+toDumpVal (VBox (BoxVal ref)) = readIORef ref >>= \case
+  (BSaved h _)    -> pure $ DVBox h
+  (BUnsaved v)    -> DVBox <$> writeVal v
+  (BUnloaded h _) -> pure $ DVBox h
 toDumpVal (VFun f)   = do
   bs <- (toStrict . serialise) <$> toDumpFun f
   DVFun <$> writeHashFile bs
+
+
 
 toDumpFun :: Fun -> PierIO DumpFun
 toDumpFun Fun{..} = do
@@ -236,9 +238,10 @@ toDumpNode IntNegate             = pure $ DNIntNegate
 toDumpNode IntSub                = pure $ DNIntSub
 
 toDumpNode MkBox                 = pure $ DNMkBox
-toDumpNode (Box (BSaved h _))    = pure $ DNBox h
-toDumpNode (Box (BUnsaved v))    = DNBox <$> writeVal v
-toDumpNode (Box (BUnloaded h _)) = pure $ DNBox h
+toDumpNode (Box (BoxVal ref))    = readIORef ref >>= \case
+  (BSaved h _) -> pure $ DNBox h
+  (BUnsaved v) -> DNBox <$> writeVal v
+  (BUnloaded h _) -> pure $ DNBox h
 toDumpNode Unbox                 = pure $ DNUnbox
 
 toDumpNode LCon                  = pure $ DNLCon
@@ -314,7 +317,7 @@ fromDumpVal (DVBox h)   = do
   -- Each value is actually lazy loaded.
   pier <- ask
   let action = runReaderT (readVal h) pier
-  pure $ VBox (BUnloaded h action)
+  liftIO $ VBox <$> packBoxVal (BUnloaded h action)
 
 fromDumpVal (DVFun h)   = VFun <$> readFun h
 
@@ -400,7 +403,7 @@ fromDumpNode (DNBox h)     = do
   -- Each value is actually lazy loaded.
   pier <- ask
   let action = runReaderT (readVal h) pier
-  pure $ Box (BUnloaded h action)
+  liftIO $ Box <$> packBoxVal (BUnloaded h action)
 
 fromDumpNode DNUnbox       = pure Unbox
 

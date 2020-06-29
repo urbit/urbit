@@ -308,16 +308,6 @@ toASKEW = \case
   --
   _ -> error "TODO: The rest."
 
-
---------------------------------------------------------------------------------
-
-unpackBoxVal :: BoxVal -> IO Val
-unpackBoxVal (BSaved _ v)    = pure v
-unpackBoxVal (BUnsaved v)    = pure v
-unpackBoxVal (BUnloaded h action) = do
-  putStrLn ("Loading " ++ (tshow h))
-  action
-
 --------------------------------------------------------------------------------
 
 arrayDrop :: Int -> Int -> CloN -> IO CloN
@@ -403,7 +393,7 @@ reduce !no !xs = do
     IntNegate -> dIntNegate x
     IntSub -> dIntSub x y
 
-    MkBox     -> pure (VBox (BUnsaved x))
+    MkBox     -> VBox <$> packBoxVal (BUnsaved x)
     Box x     -> unpackBoxVal x
     Unbox     -> dUnbox x
 
@@ -1124,7 +1114,9 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     INT_NEGATE x -> join (dIntNegate <$> go x)
     INT_SUB x y -> join (dIntSub <$> go x <*> go y)
 
-    BOX x           -> (VBox . BUnsaved) <$> go x
+    BOX x           -> do
+      gx <- go x
+      VBox <$> packBoxVal (BUnsaved gx)
     UNBOX x         -> join (dUnbox <$> go x)
 
     SUB  x y        -> join (sub <$> go x <*> go y)

@@ -122,10 +122,22 @@ instance Show Hash where
 
 -- A Box refers to a value which can be (or has already been) written to disk
 -- separately. This allows for lazy loading of data from disk.
-data BoxVal
+data BoxVal = BoxVal (IORef BoxState)
+  deriving (Eq)
+
+instance Hashable BoxVal where
+  hashWithSalt s (BoxVal i) = s `hashWithSalt` (unsafePerformIO $ readIORef i)
+
+instance Show BoxVal where
+  show (BoxVal i) = show $ unsafePerformIO $ readIORef i
+
+instance NFData BoxVal where
+  -- todo: no.
+  rnf _ = ()
+
+data BoxState
   = BSaved Hash !Val
   | BUnsaved !Val
-  -- TODO: Needs to change the RTS from IO to a pier environment.
   | BUnloaded Hash (IO Val)
   deriving (Generic)
 
@@ -133,27 +145,43 @@ data BoxVal
 -- MoonToUruk.strictOleg requires equality on the uruk representation type. But
 -- the following is incomplete and when writing the BUnsaved cases, might get
 -- really slow due to hashing.
-instance Eq BoxVal where
+instance Eq BoxState where
   (BSaved h1 _) == (BSaved h2 _) = h1 == h2
   (BUnsaved v1) == (BUnsaved v2) = v1 == v2
   (BUnloaded h1 _) == (BUnloaded h2 _) = h1 == h2
   _ == _ = False
 
-instance Show BoxVal where
+instance Show BoxState where
   show = \case
     BSaved h v -> "Saved(" <> show v <> ")"
     BUnsaved v -> "Unsaved(" <> show v <> ")"
     BUnloaded h _ -> "Unloaded(" <> show h <> ")"
 
-instance NFData BoxVal where
+instance NFData BoxState where
   rnf (BSaved h v)    = GHC.Exts.seq h (GHC.Exts.seq v ())
   rnf (BUnsaved v)    = rnf v
   rnf (BUnloaded h _) = rnf h
 
-instance Hashable BoxVal where
+instance Hashable BoxState where
   hashWithSalt s (BSaved h v)    = s `hashWithSalt` h
   hashWithSalt s (BUnsaved v)    = s `hashWithSalt` (s `hashWithSalt` v)
   hashWithSalt s (BUnloaded h _) = s `hashWithSalt` h
+
+unpackBoxVal :: BoxVal -> IO Val
+unpackBoxVal (BoxVal ioref) = readIORef ioref >>= \case
+  (BSaved _ v)    -> pure v
+  (BUnsaved v)    ->  pure v
+  (BUnloaded h action) -> do
+    val <- action
+    modifyIORef ioref (\x -> (BSaved h val))
+    putStrLn ("Loading " ++ (tshow h))
+    pure val
+
+
+packBoxVal :: BoxState -> IO BoxVal
+packBoxVal s = BoxVal <$> newIORef s
+
+
 
 data Node
   = Ess
