@@ -78,9 +78,6 @@ setRegN :: RegN -> Int -> Val -> IO ()
 {-# INLINE setRegN #-}
 setRegN = writeSmallArray
 
-instance Hashable a => Hashable (SmallArray a) where
-  hashWithSalt i x = hashWithSalt i (GHC.Exts.toList x)
-
 
 -- Types -----------------------------------------------------------------------
 
@@ -94,19 +91,14 @@ data Jet = Jet
   }
  deriving (Eq, Generic, NFData)
 
-instance Hashable Jet where
-  hashWithSalt i (Jet a n b _ _ _) =
-    hashWithSalt i (a,n,b)
-
 instance Show Jet where
   show (Jet{..}) = muck $
     case jName of
       VNat (Atom.atomUtf8 -> Right nm) ->
-        "E" <> show jArgs <> "_" <> unpack nm <> "_" <> has
+        "E" <> show jArgs <> "_" <> unpack nm
       _ ->
-        "E" <> show jArgs <> "_" <> show jName <> "_" <> has
+        "E" <> show jArgs <> "_" <> show jName
    where
-     has = (take 5 $ show $ abs $ hash jBody)
      muck = fmap $ \case
        '-' -> '_'
        x   -> x
@@ -115,7 +107,7 @@ instance Show Jet where
 -- is used as a reference to a
 newtype Hash = Hash { unHash :: ByteString }
   deriving (Eq, Ord, Generic)
-  deriving newtype (Hashable, NFData)
+  deriving newtype (NFData)
 
 instance Show Hash where
   show = show . toText . fromBytes . unHash
@@ -124,9 +116,6 @@ instance Show Hash where
 -- separately. This allows for lazy loading of data from disk.
 data BoxVal = BoxVal (IORef BoxState)
   deriving (Eq)
-
-instance Hashable BoxVal where
-  hashWithSalt s (BoxVal i) = s `hashWithSalt` (unsafePerformIO $ readIORef i)
 
 instance Show BoxVal where
   show (BoxVal i) = show $ unsafePerformIO $ readIORef i
@@ -161,11 +150,6 @@ instance NFData BoxState where
   rnf (BSaved h v)    = GHC.Exts.seq h (GHC.Exts.seq v ())
   rnf (BUnsaved v)    = rnf v
   rnf (BUnloaded h _) = rnf h
-
-instance Hashable BoxState where
-  hashWithSalt s (BSaved h v)    = s `hashWithSalt` h
-  hashWithSalt s (BUnsaved v)    = s `hashWithSalt` (s `hashWithSalt` v)
-  hashWithSalt s (BUnloaded h _) = s `hashWithSalt` h
 
 unpackBoxVal :: BoxVal -> IO Val
 unpackBoxVal (BoxVal ioref) = readIORef ioref >>= \case
@@ -258,7 +242,7 @@ data Node
 
   | AddAssoc
   | FindAssoc
- deriving (Eq, Generic, Hashable, NFData)
+ deriving (Eq, Generic, NFData)
 
 instance Show Node where
   show = \case
@@ -346,7 +330,7 @@ data Fun = Fun
   , fHead :: !Node
   , fArgs :: CloN -- Lazy on purpose.
   }
- deriving (Eq, Generic, Hashable, NFData)
+ deriving (Eq, Generic, NFData)
 
 instance Show Fun where
   show (Fun _ h args) = if sizeofSmallArray args == 0
@@ -365,7 +349,7 @@ data Val
   | VLis ![Val]
   | VBox !BoxVal
   | VFun !Fun
- deriving (Eq, Generic, Hashable)
+ deriving (Eq, Generic)
 
 instance NFData Val where
   rnf = \case
