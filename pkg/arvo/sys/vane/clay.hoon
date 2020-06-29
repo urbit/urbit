@@ -771,7 +771,7 @@
       ^-  pile
       =/  [=hair res=(unit [=pile =nail])]  ((pile-rule pax) [1 1] tex)
       ?^  res  pile.u.res
-      %-  mean
+      %-  mean  %-  flop
       =/  lyn  p.hair
       =/  col  q.hair
       :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
