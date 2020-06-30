@@ -4,6 +4,9 @@ import { uxToHex, cite, writeText } from '../../../../lib/util';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
+import PropTypes from 'prop-types';
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -25,10 +28,31 @@ const DISABLED_INLINE_TOKENS = [
   'reference'
 ];
 
+class CodeBlock extends React.PureComponent {
+  static propTypes = {
+    value: PropTypes.string.isRequired,
+    language: PropTypes.string
+  };
+
+  static defaultProps = {
+    language: null
+  };
+
+  render() {
+    const { language, value } = this.props;
+    return (
+      <SyntaxHighlighter language={language} style={coy}>
+        {value}
+      </SyntaxHighlighter>
+    );
+  }
+}
+
 const MessageMarkdown = React.memo(
   props => (<ReactMarkdown
               {...props}
               plugins={[[RemarkDisableTokenizers, { block: DISABLED_BLOCK_TOKENS, inline: DISABLED_INLINE_TOKENS }]]}
+              renderers={{code: CodeBlock}}
             />));
 
 export class Message extends Component {
@@ -72,7 +96,7 @@ export class Message extends Component {
       );
     } else if ('url' in letter) {
       let imgMatch =
-        /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|svg|SVG)$/
+        /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM|svg|SVG)$/
         .exec(letter.url);
       const youTubeRegex = new RegExp(String(/(?:https?:\/\/(?:[a-z]+.)?)/.source) // protocol
       + /(?:youtu\.?be(?:\.com)?\/)(?:embed\/)?/.source // short and long-links
@@ -88,8 +112,7 @@ export class Message extends Component {
             src={letter.url}
             style={{
               height: 'min(250px, 20vh)',
-              maxWidth: 'calc(100% - 36px - 1.5rem)',
-              objectFit: 'contain'
+              maxWidth: '80vw'
             }}
           ></img>
         );
