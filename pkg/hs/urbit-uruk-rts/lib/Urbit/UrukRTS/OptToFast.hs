@@ -109,7 +109,9 @@ compile arity numRegs = go
   kal (F.Nat n) []     = F.VAL (F.VNat n)
   kal (F.Int n) []     = F.VAL (F.VInt n)
   kal (F.Lis n) []     = F.VAL (F.VLis n)
-  kal (F.Bol b) []     = F.VAL (F.VBol b)
+
+  kal F.Yes     []     = F.VAL (F.VBol True)
+  kal F.Nah     []     = F.VAL (F.VBol False)
 
   kal F.Inc     [x]    = F.INC (go x)
   kal F.Dec     [x]    = F.DEC (go x)
@@ -235,6 +237,5 @@ rawExp = \case
   F.Nat n -> F.VAL (F.VNat n)
   F.Int i -> F.VAL (F.VInt i)
   F.Lis l -> F.VAL (F.VLis l)
-  F.Bol b -> F.VAL (F.VBol b)
   F.Uni   -> F.VAL F.VUni
   n       -> F.VAL (F.VFun (nodeFun n))

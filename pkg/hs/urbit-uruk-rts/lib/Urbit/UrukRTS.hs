@@ -404,8 +404,8 @@ reduce !no !xs = do
     Dec       -> dec x
     Fec       -> fec x
     Seq       -> seq x y
-    Bol True  -> pure x
-    Bol False -> pure y
+    Yes       -> pure x
+    Nah       -> pure y
     Eql       -> eql x y
     LefC      -> pure (VLef x)
     RitC      -> pure (VRit x)

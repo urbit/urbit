@@ -130,12 +130,14 @@ data Node
 
   | Int Integer
   | Lis [Val]
-  | Bol Bool
 
   | Box Val
  deriving (Eq, Ord, Generic, Hashable, NFData)
 
 pattern Nat n = M (MD (Exp.NAT n)) 2 []
+
+pattern Yes = M (MS Exp.YES) 2 []
+pattern Nah = M (MS Exp.NAH) 2 []
 
 pattern Uni = M (MS Exp.UNI) 1 []
 
@@ -221,8 +223,6 @@ instance Show Node where
     Jut j       -> show j
     Int i       -> show i
     Lis l       -> show l
-    Bol True    -> "YES"
-    Bol False   -> "NAH"
 
     Box v       -> "BOX(" <> show v <> ")"
 
@@ -433,7 +433,8 @@ valFun = \case
   VRit r   -> Fun 2 RitC (fromList [r])
   VNat n   -> Fun 2 (Nat n) mempty
   VInt i   -> Fun 1 (Int i) mempty
-  VBol b   -> Fun 2 (Bol b) mempty
+  VBol True   -> Fun 2 Yes mempty
+  VBol False  -> Fun 2 Nah mempty
   VLis xs  -> Fun 2 (Lis xs) mempty
   VBox x   -> Fun 1 (Box x) mempty
   VFun f   -> f
@@ -446,7 +447,6 @@ nodeArity = \case
   Dub   -> 6
   Jut j -> jArgs j
   Int n -> 1
-  Bol b -> 2
 
   Lis []    -> 2
   Lis (_:_) -> 2

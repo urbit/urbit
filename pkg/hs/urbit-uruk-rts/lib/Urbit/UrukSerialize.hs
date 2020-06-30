@@ -49,7 +49,6 @@ data DumpNode
 
   | DNInt Integer
   | DNLis [DumpVal]
-  | DNBol Bool
 
   | DNBox Hash
  deriving (Eq, Ord, Generic)
@@ -137,7 +136,6 @@ toDumpNode (M match natural nodes) = do
 
 toDumpNode (Int i)                 = pure $ DNInt i
 toDumpNode (Lis v)                 = DNLis <$> mapM toDumpVal v
-toDumpNode (Bol b)                 = pure $ DNBol b
 
 toDumpNode (Box v)                 = DNBox <$> writeVal v
 
@@ -225,7 +223,6 @@ fromDumpNode DNDub         = pure $ Dub
 fromDumpNode (DNJut h)     = Jut <$> readJet h
 fromDumpNode (DNInt i)     = pure $ Int i
 fromDumpNode (DNLis v)     = Lis <$> mapM fromDumpVal v
-fromDumpNode (DNBol b)     = pure $ Bol b
 
 fromDumpNode (DNBox h)     = Box <$> readVal h
 
