@@ -129,10 +129,12 @@ instance Uruk Val where
 
   uEye n = mkNode (fromIntegral $ n) $
            M (MD $ Exp.In $ fromIntegral n) (fromIntegral $ n) []
---  uEye n = mkNode (fromIntegral $ n) (Eye $ fromIntegral n)
-  uBee n = mkNode (fromIntegral $ 2 + n) (Bee $ fromIntegral n)
-  uSea n = mkNode (fromIntegral $ 2 + n) (Sea $ fromIntegral n)
-  uSen n = mkNode (fromIntegral $ 2 + n) (Sen $ fromIntegral n)
+  uBee n = mkNode (fromIntegral $ 2 + n) $
+           M (MD $ Exp.Bn $ fromIntegral n) (fromIntegral $ n+2) []
+  uSea n = mkNode (fromIntegral $ 2 + n) $
+           M (MD $ Exp.Cn $ fromIntegral n) (fromIntegral $ n+2) []
+  uSen n = mkNode (fromIntegral $ 2 + n) $
+           M (MD $ Exp.Sn $ fromIntegral n) (fromIntegral $ n+2) []
 
   uNat   = \n -> VNat n
   uBol   = \b -> VBol b
@@ -428,18 +430,20 @@ reduce !no !xs = do
     --  S₁fgx   = (fx)(gx)
     --  S₂fgxy  = (fxy)(gxy)
     --  S₃fgxyz = (fxyz)(gxyz)
-    Sen n     -> join (kVA <$> kVVn x args <*> pure (kVVn y args))
-     where args = drop 2 $ toList xs
+    (M (MD (Exp.Sn n)) _ []) ->
+      join (kVA <$> kVVn x args <*> pure (kVVn y args))
+        where args = drop 2 $ toList xs
 
     --  B₁fgx   = f(gx)
     --  B₂fgxy  = f(gxy)
     --  B₃fgxyz = f(gxyz)
-    Bee n -> kVA x (kVVn y (drop 2 $ toList xs))
+    (M (MD (Exp.Bn n)) _ []) -> kVA x (kVVn y (drop 2 $ toList xs))
 
     --  C₁fgx   = (fx)g
     --  C₂fgxy  = (fxy)g
     --  C₃fgxyz = (fxyz)g
-    Sea n -> join (kVV <$> (kVVn x (drop 2 $ toList xs)) <*> pure y)
+    (M (MD (Exp.Cn n)) _ []) ->
+      join (kVV <$> (kVVn x (drop 2 $ toList xs)) <*> pure y)
 
     (M (MD (Exp.In 1)) _ []) -> toList xs & \case
 --    Eye _ -> toList xs & \case

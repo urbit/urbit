@@ -47,9 +47,6 @@ data DumpNode
   | DNJut Hash
   | DNMatch Match !Natural ![DumpNode]
 
-  | DNBee Int --  Always >=  1
-  | DNSea Int --  Always >=  1
-  | DNSen Int --  Always >=  1
   | DNInt Integer
   | DNLis [DumpVal]
   | DNBol Bool
@@ -138,9 +135,6 @@ toDumpNode (M match natural nodes) = do
   dumpedNodes <- mapM toDumpNode nodes
   pure $ DNMatch match natural dumpedNodes
 
-toDumpNode (Bee x)                 = pure $ DNBee x
-toDumpNode (Sea x)                 = pure $ DNSea x
-toDumpNode (Sen x)                 = pure $ DNSen x
 toDumpNode (Int i)                 = pure $ DNInt i
 toDumpNode (Lis v)                 = DNLis <$> mapM toDumpVal v
 toDumpNode (Bol b)                 = pure $ DNBol b
@@ -229,9 +223,6 @@ fromDumpNode DNKay         = pure $ Kay
 fromDumpNode (DNEnh x)     = pure $ Enh x
 fromDumpNode DNDub         = pure $ Dub
 fromDumpNode (DNJut h)     = Jut <$> readJet h
-fromDumpNode (DNBee x)     = pure $ Bee x
-fromDumpNode (DNSea x)     = pure $ Sea x
-fromDumpNode (DNSen x)     = pure $ Sen x
 fromDumpNode (DNInt i)     = pure $ Int i
 fromDumpNode (DNLis v)     = Lis <$> mapM fromDumpVal v
 fromDumpNode (DNBol b)     = pure $ Bol b

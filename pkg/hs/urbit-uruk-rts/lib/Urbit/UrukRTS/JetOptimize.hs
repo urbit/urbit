@@ -327,9 +327,9 @@ nodeRaw arity = \case
   VS    -> F.Ess
   VK    -> F.Kay
   VIn n -> F.M (F.MD (Exp.In (fromIntegral n))) (fromIntegral n) []
-  VBn n -> F.Bee (fromIntegral n)
-  VCn n -> F.Sea (fromIntegral n)
-  VSn n -> F.Sen (fromIntegral n)
+  VBn n -> F.M (F.MD (Exp.Bn (fromIntegral n))) (fromIntegral $ n+2) []
+  VCn n -> F.M (F.MD (Exp.Cn (fromIntegral n))) (fromIntegral $ n+2) []
+  VSn n -> F.M (F.MD (Exp.Sn (fromIntegral n))) (fromIntegral $ n+2) []
   VSeq  -> F.Seq
   VIff  -> F.Iff
   VCas  -> F.Cas
@@ -451,9 +451,9 @@ valExp = go
     F.Kay   -> clo 2 VK
     F.Ess   -> clo 3 VS
     F.M (F.MD (Exp.In n)) _ _ -> clo (int n)     (VIn $ fromIntegral n)
-    F.Bee n -> clo (int n + 2) (VBn $ fromIntegral n)
-    F.Sea n -> clo (int n + 2) (VCn $ fromIntegral n)
-    F.Sen n -> clo (int n + 2) (VSn $ fromIntegral n)
+    F.M (F.MD (Exp.Bn n)) _ _ -> clo (int n + 2) (VBn $ fromIntegral n)
+    F.M (F.MD (Exp.Cn n)) _ _ -> clo (int n + 2) (VCn $ fromIntegral n)
+    F.M (F.MD (Exp.Sn n)) _ _ -> clo (int n + 2) (VSn $ fromIntegral n)
     F.Seq   -> clo 2 VSeq
     F.Iff   -> clo 3 VIff
     F.Cas   -> clo 3 VCas

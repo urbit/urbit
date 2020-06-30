@@ -128,9 +128,6 @@ data Node
 
   | M Match !Natural ![Node]
 
-  | Bee Int --  Always >=  1
-  | Sea Int --  Always >=  1
-  | Sen Int --  Always >=  1
   | Int Integer
   | Lis [Val]
   | Bol Bool
@@ -222,11 +219,6 @@ instance Show Node where
     Enh n       -> replicate (fromIntegral n) 'E'
     Dub         -> "W"
     Jut j       -> show j
-    Bee 1       -> "B"
-    Sea 1       -> "C"
-    Bee n       -> "B" <> show n
-    Sea n       -> "C" <> show n
-    Sen n       -> "S" <> show n
     Int i       -> show i
     Lis l       -> show l
     Bol True    -> "YES"
@@ -453,9 +445,6 @@ nodeArity = \case
   Enh _ -> 2
   Dub   -> 6
   Jut j -> jArgs j
-  Bee n -> 2+n
-  Sea n -> 2+n
-  Sen n -> 2+n
   Int n -> 1
   Bol b -> 2
 
