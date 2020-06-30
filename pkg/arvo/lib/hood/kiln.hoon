@@ -104,6 +104,13 @@
   =.  +<+.$.abet  old
   ..abet
 ::
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?.  ?=([%x %kiln %ota ~] path)
+    [~ ~]
+  ``noun+!>(ota)
+::
 ++  poke-commit
   |=  [mon/kiln-commit auto=?]
   =<  abet
