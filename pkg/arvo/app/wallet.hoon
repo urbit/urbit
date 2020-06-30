@@ -11,109 +11,6 @@
 /-  *bitcoin
 /+  *server, default-agent, verb, bip32, *bitcoin
 ::
-/=  index
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/index
-  /|  /html/
-      /~  ~
-  ==
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/tile
-  /|  /js/
-      /~  ~
-  ==
-/=  script
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/index
-  /|  /js/
-      /~  ~
-  ==
-/=  bcoin
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/bcoin
-  /|  /js/
-      /~  ~
-  ==
-/=  proxy
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/proxy
-  /|  /js/
-      /~  ~
-  ==
-/=  logger
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/logger
-  /|  /js/
-      /~  ~
-  ==
-/=  worker
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/worker
-  /|  /js/
-      /~  ~
-  ==
-/=  bledger
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/bledger
-  /|  /js/
-      /~  ~
-  ==
-/=  bmanager
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/bmanager
-  /|  /js/
-      /~  ~
-  ==
-/=  bpath
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/bpath
-  /|  /js/
-      /~  ~
-  ==
-/=  binput
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/binput
-  /|  /js/
-      /~  ~
-  ==
-/=  bhelper
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/bhelper
-  /|  /js/
-      /~  ~
-  ==
-/=  bcommon
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/js/bcommon
-  /|  /js/
-      /~  ~
-  ==
-/=  style
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/bitcoin/css/index
-  /|  /css/
-      /~  ~
-  ==
-/=  bitcoin-png
-  /^  (map knot @)
-  /:  /===/app/bitcoin/img  /_  /png/
-::  State
-::
 =>  |%
     +$  card  card:agent:gall
     ::
@@ -155,21 +52,8 @@
               %poke
             ::
               :-  %file-server-action
-              !>([%serve-dir /'~bitcoin' /app/bitcoin %.n])
-          ==
-        ::
-          :*  %pass
-              /bitcoin
-              %agent
-              [our.bowl %launch]
-              %poke
-            ::
-              :-  %launch-action
-              !>
-              :*  %add
-                  %bitcoin
-                  [[%basic 'bitcoin' '/~bitcoin/img/Tile.png' '/~bitcoin'] %.y]
-      ==  ==  ==
+              !>([%serve-dir /'~wallet' /app/wallet %.n])
+      ==  ==
     ::
     ++  on-save
       !>(state)
@@ -187,12 +71,12 @@
           (handle-json:bc !<(json vase))
         [cards this]
       ::
-          %handle-http-request
-        =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
-        :_  this
-        %+  give-simple-payload:app  eyre-id
-        %+  require-authorization:app  inbound-request
-        poke-handle-http-request:bc
+        ::   %handle-http-request
+        :: =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
+        :: :_  this
+        :: %+  give-simple-payload:app  eyre-id
+        :: %+  require-authorization:app  inbound-request
+        :: poke-handle-http-request:bc
       ::
           %bitcoin-action
         ~&  !<(bitcoin-action vase)
@@ -242,17 +126,6 @@
 ::
 =,  bip32
 |_  =bowl:gall
-++  launch-poke
-  ^-  card
-  :*  %pass
-      /launch/bitcoin
-      %agent
-      [our.bowl %launch]
-      %poke
-      %launch-action
-      !>([%add %bitcoin /bitcointile '/~bitcoin/js/tile.js'])
-  ==
-::
 ++  derive-poke
   |=  act=bitcoin-action
   ?>  ?=(%derive -.act)
@@ -382,35 +255,6 @@
     :_  state
     [%give %fact ~[/primary] %json !>(message)]~
   --
-::
-++  poke-handle-http-request
-  |=  =inbound-request:eyre
-  ^-  simple-payload:http
-  =+  url=(parse-request-line url.request.inbound-request)
-  ?+  site.url  not-found:gen
-      [%'~bitcoin' %css %index ~]     (css-response:gen style)
-      [%'~bitcoin' %js %tile ~]       (js-response:gen tile-js)
-      [%'~bitcoin' %js %index ~]      (js-response:gen script)
-      [%'~bitcoin' %js %bcoin ~]      (js-response:gen bcoin)
-      [%'~bitcoin' %js %bpath ~]      (js-response:gen bpath)
-      [%'~bitcoin' %js %proxy ~]      (js-response:gen proxy)
-      [%'~bitcoin' %js %logger ~]     (js-response:gen logger)
-      [%'~bitcoin' %js %worker ~]     (js-response:gen worker)
-      [%'~bitcoin' %js %bledger ~]    (js-response:gen bledger)
-      [%'~bitcoin' %js %bmanager ~]   (js-response:gen bmanager)
-      [%'~bitcoin' %js %binput ~]     (js-response:gen binput)
-      [%'~bitcoin' %js %bhelper ~]    (js-response:gen bhelper)
-      [%'~bitcoin' %js %bcommon ~]    (js-response:gen bcommon)
-  ::
-      [%'~bitcoin' %img @t *]
-    =/  name=@t  i.t.t.site.url
-    =/  img  (~(get by bitcoin-png) name)
-    ?~  img
-      not-found:gen
-    (png-response:gen (as-octs:mimes:html u.img))
-  ::
-      [%'~bitcoin' *]  (html-response:gen index)
-  ==
 ::
 ++  base58-to-cord
   |=  b=@uc

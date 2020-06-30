@@ -11,7 +11,7 @@ export type PatpNoSig = string;
 export type Serial = string;
 
 // name of app
-export type AppName = 'chat' | 'link' | 'contacts' | 'publish';
+export type AppName = 'chat' | 'link' | 'contacts' | 'publish' | 'wallet';
 
 export function getTagFromFrond<O>(frond: O): keyof O {
   const tags = Object.keys(frond) as Array<keyof O>;

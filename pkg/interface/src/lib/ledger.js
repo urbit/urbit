@@ -1,16 +1,13 @@
+import regeneratorRuntime from 'regenerator-runtime';
 import { BufferMap } from 'buffer-map';
 
 const BCoin = window.BCoin;
 const BManager = window.BManager;
-const BInputData = window.BInputData.InputData;
-const createLedgerInputs = window.BHelper.createLedgerInputs;
-const applyOtherSignatures = window.BCommon.applyOtherSignatures;
 
 
 export default class Ledger {
 
   constructor(network) {
-
     this.network = network;
     this.manager = BManager.fromOptions({network: network, timeout: 20000});
 
@@ -28,7 +25,6 @@ export default class Ledger {
     this.manager.on('disconnect', (device) => {
       console.log('Disconnect:', device.vendor, device.key, device.handle);
     });
-
   }
 
   async connectLedger() {

@@ -28,17 +28,17 @@ const groupSubscriptions: AppSubscription[] = [
   ['/synced', 'contact-hook']
 ];
 
-const bitcoinSubscriptions: AppSubscription[] = [
-  ['/primary', 'bitcoin']
+const walletSubscriptions: AppSubscription[] = [
+  ['/primary', 'wallet']
 ]
 
-type AppName = 'publish' | 'chat' | 'link' | 'groups' | 'bitcoin';
+type AppName = 'publish' | 'chat' | 'link' | 'groups' | 'wallet';
 const appSubscriptions: Record<AppName, AppSubscription[]> = {
   chat: chatSubscriptions,
   publish: publishSubscriptions,
   link: linkSubscriptions,
   groups: groupSubscriptions,
-  bitcoin: bitcoinSubscriptions
+  wallet: walletSubscriptions
 };
 
 export default class GlobalSubscription extends BaseSubscription<StoreState> {
@@ -47,7 +47,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     publish: [],
     link: [],
     groups: [],
-    bitcoin: []
+    wallet: []
   };
   start() {
     this.subscribe('/all', 'invite-store');

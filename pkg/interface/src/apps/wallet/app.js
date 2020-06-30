@@ -1,33 +1,37 @@
-import React, { Component } from "react";
+import React from "react";
 import _ from 'lodash';
 import { BrowserRouter, Route } from "react-router-dom";
 
-import { store } from "/store";
-import { api } from "/api";
+// import { store } from "/store";
+// import { api } from "/api";
 
-import { HeaderBar } from "./lib/headerBar.js"
-import ProgressBar from "./lib/progressBar";
-import BitcoinTransaction from "./lib/bitcoinTransaction";
-import ConnectLedger from "./lib/connectLedger";
+import WalletApi from '../../api/wallet';
+import WalletStore from '../../store/wallet';
+import WalletSubscription from '../../subscription/wallet';
+
+import { HeaderBar } from "./components/lib/headerBar.js"
+import ProgressBar from "./components/lib/progressBar";
+import BitcoinTransaction from "./components/lib/bitcoinTransaction";
+import ConnectLedger from "./components/lib/connectLedger";
 
 const BCoin = window.BCoin;
 
-export class Root extends Component {
+export default class WalletApp extends React.Component {
   constructor(props) {
     super(props);
-    this.state = store.state;
-    // this.state.seed = 'benefit crew supreme gesture quantum web media hazard theory mercy wing kitten';
-    // this.state.progress = 0.0;
-    // this.state.peers = [];
-    // this.state.height = 0;
-    // this.state.hash = '';
-    this.state.proxySocket = 'ws://127.0.0.1:9090';
-    this.state.peerSeeds = ['127.0.0.1:48444'];
-    this.state.network = 'regtest';
-    this.state.account = 0;
-    this.state.sent = false;
-
-    store.setStateHandler(this.setState.bind(this));
+    this.state = props;
+    // // this.state.seed = 'benefit crew supreme gesture quantum web media hazard theory mercy wing kitten';
+    // // this.state.progress = 0.0;
+    // // this.state.peers = [];
+    // // this.state.height = 0;
+    // // this.state.hash = '';
+    // this.state.proxySocket = 'ws://127.0.0.1:9090';
+    // this.state.peerSeeds = ['127.0.0.1:48444'];
+    // this.state.network = 'regtest';
+    // this.state.account = 0;
+    // this.state.sent = false;
+    //
+    // store.setStateHandler(this.setstate.bind(this));
 
     this.loadMnemonic = this.loadMnemonic.bind(this);
     this.loadSocket = this.loadSocket.bind(this);
@@ -42,6 +46,14 @@ export class Root extends Component {
     this.loadNodePort = this.loadNodePort.bind(this);
     this.loadWalletPort = this.loadWalletPort.bind(this);
     this.handleSigning = this.handleSigning.bind(this);
+  }
+
+  componentDidMount() {
+    document.title = 'OS1 - Bitcoin Wallet';
+    // preload spinner asset
+    new Image().src = '/~landscape/img/Spinner.png';
+
+    this.props.subscription.startApp('wallet')
   }
 
   handleSigning(event) {
@@ -116,7 +128,7 @@ export class Root extends Component {
   }
 
   async startNode() {
-    const { state } = this;
+    const { state, props } = this;
     if (!(!!state.seed || !!state.xpubkey) || state.connected)
       return;
     const config = {
@@ -125,7 +137,7 @@ export class Root extends Component {
       memory: false,
       logConsole: true,
       workers: true,
-      workerFile: '/~bitcoin/js/worker.js',
+      workerFile: '/~wallet/js/worker.js',
       createSocket: (port, host) => {
         return window.ProxySocket.connect(this.state.proxySocket, port, host);
       },
@@ -167,9 +179,9 @@ export class Root extends Component {
       watchOnly: true
     });
 
-    if (!state.hasXPub || state.seed) {
+    if ((state.xpubkey !== "") || state.seed) {
       console.log("sending xpub");
-      api.add.xpubkey(xpub);
+      props.api.wallet.addXPubKey(xpub);
     }
 
     wallet.on('balance', balance => {
@@ -230,7 +242,7 @@ export class Root extends Component {
   }
 
   async connectClientNode() {
-    const { state } = this;
+    const { state, props } = this;
     if (!(!!state.nodePort && !!state.walletPort) || state.connected)
       return;
     const network = BCoin.Network.get(this.state.network);
@@ -327,7 +339,7 @@ export class Root extends Component {
         wallet = walletClient.wallet(ship);
         await walletClient.call('join', ship);
         console.log("sending xpub");
-        api.add.xpubkey(xpub);
+        props.api.wallet.addXPubKey(xpub);
       } else {
         // if (!this.state.hasXPub ) {
           console.log(`ERROR: a wallet [${ship}] does not exist`);
@@ -360,7 +372,8 @@ export class Root extends Component {
   }
 
   render() {
-    const { props, state } = this;
+    const { state, props } = this;
+
     let node = !!state.node ? state.node : {};
     let confirmed = !!state.confirmedBalance ? state.confirmedBalance : 0;
     let unconfirmed = !!state.unConfirmedBalance ? state.unConfirmedBalance : 0;
@@ -378,10 +391,10 @@ export class Root extends Component {
       <BrowserRouter>
         <div className="absolute h-100 w-100 bg-gray0-d ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl">
           <HeaderBar/>
-          <Route exact path="/~bitcoin" render={ () => {
+          <Route exact path="/~wallet" render={ () => {
             return (
               <div className="cf w-100 flex flex-column pa4 ba-m ba-l ba-xl b--gray2 br1 h-100 h-100-minus-40-m h-100-minus-40-l h-100-minus-40-xl f9 white-d">
-                <h1 className="mb3 f8">Bitcoin</h2>
+                <h1 className="mb3 f8">Bitcoin</h1>
                 <div>
                   <div className={"cf w-20 fl pa2 overflow-x-hidden " +
                                   "bg-gray0-d white-d flex flex-column"}>
@@ -600,7 +613,7 @@ export class Root extends Component {
                             <BitcoinTransaction
                               amount={state.amount}
                               point={state.point}
-                              api={api}
+                              api={props.api.wallet}
                               address={state.address}
                               network={state.network}
                               wallet={state.wallet}

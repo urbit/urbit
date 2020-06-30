@@ -11,6 +11,7 @@ import DojoApp from './apps/dojo/app';
 import GroupsApp from './apps/groups/app';
 import LinksApp from './apps/links/app';
 import PublishApp from './apps/publish/app';
+import WalletApp from './apps/wallet/app';
 
 import StatusBar from './components/StatusBar';
 import NotFound from './components/404';
@@ -142,6 +143,16 @@ export default class App extends React.Component {
                 />
               )}
               />
+              <Route path="/~wallet" render={ p => (
+                <WalletApp
+                  ship={this.ship}
+                  api={this.api}
+                  subscription={this.subscription}
+                  {...state}
+                  {...p}
+                />
+              )}
+              />
               <Route component={NotFound} />
               </Switch>
             </Content>
@@ -151,4 +162,3 @@ export default class App extends React.Component {
     );
   }
 }
-

@@ -6,6 +6,7 @@
   "dependencies": {
     "@reach/menu-button": "^0.10.1",
     "@tlon/indigo-react": "^1.1.10",
+    "buffer-map": "^0.0.7",
     "classnames": "^2.2.6",
     "codemirror": "^5.51.0",
     "css-loader": "^3.5.3",
@@ -19,6 +20,7 @@
     "react-dom": "^16.8.6",
     "react-markdown": "^4.3.1",
     "react-router-dom": "^5.0.0",
+    "regenerator-runtime": "^0.13.5",
     "remark-disable-tokenizers": "^1.0.24",
     "style-loader": "^1.2.1",
     "styled-components": "^5.1.0",
