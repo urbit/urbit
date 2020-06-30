@@ -12,8 +12,8 @@
 +$  node         [=post children=internal-graph]
 +$  graphs       (map resource graph)
 +$  tag-queries  (jug term resource)
-+$  action-log   ((mop time update) gth)
-+$  action-logs  (map resource action-log)
++$  update-log   ((mop time update) gth)
++$  update-logs  (map resource update-log)
 ::
 +$  internal-graph
   $~  [%empty ~]
@@ -24,12 +24,12 @@
 +$  network
   $:  =graphs
       =tag-queries
-      =action-logs
+      =update-logs
       archive=graphs
   ==
 ::
 +$  update
-  $%  [%0 update-0]
+  $%  [%0 p=time q=update-0]
   ==
 ::
 +$  update-0
@@ -47,6 +47,8 @@
     ::
       [%archive-graph =resource]
       [%unarchive-graph =resource]
+    ::
+      [%run-updates =resource =update-log]
     ::
     ::  NOTE: cannot be sent as pokes
     ::

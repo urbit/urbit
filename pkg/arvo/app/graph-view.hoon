@@ -98,9 +98,9 @@
     ::
     ?>  ?=(%0 -.update)
     :_  state
-    ?+  +<.update           [(poke-store update) ~]
-        %add-nodes          (add-nodes +>.update)
-        %add-signatures     (add-signatures +>.update)
+    ?+  -.q.update       [(poke-store q.update) ~]
+        %add-nodes       (add-nodes +.q.update)
+        %add-signatures  (add-signatures +.q.update)
     ==
     ::
     ++  add-nodes
@@ -108,7 +108,6 @@
       ^-  (list card)
       :_  ~
       %-  poke-store
-      :-  %0
       :+  %add-nodes
         resource
       (sign-nodes resource nodes)
@@ -118,7 +117,6 @@
       ^-  (list card)
       :_  ~
       %-  poke-store
-      :-  %0
       :+  %add-signatures
         uid
       =*  resource  resource.uid
@@ -186,14 +184,14 @@
       (scot %ud i)
     ::
     ++  poke-store
-      |=  =update:store
+      |=  =update-0:store
       ^-  card
       :*  %pass
           /(scot %da now.bowl)
           %agent
           [our.bowl %graph-store]
           %poke
-          [%graph-update !>(update)]
+          [%graph-update !>([%0 now.bowl update-0])]
       ==
     --
   ::
@@ -279,6 +277,7 @@
     |=  [=ship =term]
     ^-  update:store
     :-  %0
+    :-  now.bowl
     :+  %add-graph
       [ship term]
     (scry-for graph:store /graph/(scot %p ship)/[term])

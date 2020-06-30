@@ -38,7 +38,7 @@
     |=  upd=^update
     ^-  json
     ?>  ?=(%0 -.upd)
-    |^  (frond %graph-update (pairs ~[(encode +.upd)]))
+    |^  (frond %graph-update (pairs ~[(encode q.upd)]))
     ::
     ++  encode
       |=  upd=update-0
@@ -107,6 +107,9 @@
       ::
           %tags
         [%tags [%a (turn ~(tap in tags.upd) |=(=term s+term))]]
+      ::
+          %run-updates
+        [%run-updates ~]
       ::
           %tag-queries
         :-  %tag-queries
@@ -237,6 +240,7 @@
     |=  jon=json
     ^-  ^update
     :-  %0
+    :-  *time
     ^-  update-0
     =<  (decode jon)
     |%
@@ -255,6 +259,7 @@
           [%keys keys]
           [%tags tags]
           [%tag-queries tag-queries]
+          [%run-updates run-updates]
       ==
     ::
     ++  add-graph
@@ -380,6 +385,11 @@
     ++  tag-queries
       |=  =json
       *^tag-queries
+    ::
+    ++  run-updates
+      |=  a=json
+      ^-  [resource update-log]
+      [*resource *update-log]
     --
   --
 ::

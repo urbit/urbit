@@ -17,5 +17,5 @@
 ++  peek-log
   |=  res=resource
   ^-  (unit time)
-  (scry-for (unit time) /peek-action-log/(scot %p entity.res)/[name.res])
+  (scry-for (unit time) /peek-update-log/(scot %p entity.res)/[name.res])
 --

@@ -43,9 +43,9 @@
   [cards this]
   ::
   ++  give
-    |=  update=update-0:store
+    |=  =update-0:store
     ^-  (list card)
-    [%give %fact ~ [%graph-update !>([%0 update])]]~
+    [%give %fact ~ [%graph-update !>([%0 now.bowl update-0])]]~
   --
 ::
 ++  on-poke
@@ -65,17 +65,18 @@
     ^-  (quip card _state)
     |^
     ?>  ?=(%0 -.update)
-    ?-  +<.update
-        %add-graph          (add-graph +>.update)
-        %remove-graph       (remove-graph +>.update)
-        %add-nodes          (add-nodes +>.update)
-        %remove-nodes       (remove-nodes +>.update)
-        %add-signatures     (add-signatures +>.update)
-        %remove-signatures  (remove-signatures +>.update)
-        %add-tag            (add-tag +>.update)
-        %remove-tag         (remove-tag +>.update)
-        %archive-graph      (archive-graph +>.update)
-        %unarchive-graph    (unarchive-graph +>.update)
+    ?-  -.q.update
+        %add-graph          (add-graph +.q.update)
+        %remove-graph       (remove-graph +.q.update)
+        %add-nodes          (add-nodes p.update +.q.update)
+        %remove-nodes       (remove-nodes p.update +.q.update)
+        %add-signatures     (add-signatures p.update +.q.update)
+        %remove-signatures  (remove-signatures p.update +.q.update)
+        %add-tag            (add-tag +.q.update)
+        %remove-tag         (remove-tag +.q.update)
+        %archive-graph      (archive-graph +.q.update)
+        %unarchive-graph    (unarchive-graph +.q.update)
+        %run-updates        (run-updates +.q.update)
         ::
         ::  NOTE: cannot send these updates as pokes
         ::
@@ -87,35 +88,37 @@
     ++  add-graph
       |=  [=resource:store =graph:store]
       ^-  (quip card _state)
+      ?<  (~(has by archive) resource)
       ?<  (~(has by graphs) resource)
       :-  (give [/updates /keys ~] [%add-graph resource graph])
       %_  state
           graphs       (~(put by graphs) resource graph)
-          action-logs  (~(put by action-logs) resource (gas:orm-log ~ ~))
+          update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
       ==
     ::
     ++  remove-graph
       |=  =resource:store
       ^-  (quip card _state)
+      ?<  (~(has by archive) resource)
       ?>  (~(has by graphs) resource)
       :-  (give [/updates /keys ~] [%remove-graph resource])
       %_  state
           graphs       (~(del by graphs) resource)
-          action-logs  (~(del by action-logs) resource)
+          update-logs  (~(del by update-logs) resource)
       ==
     ::
     ++  add-nodes
-      |=  [=resource:store nodes=(map index:store node:store)]
+      |=  [=time =resource:store nodes=(map index:store node:store)]
       ^-  (quip card _state)
       |^
       =/  =graph:store       (~(got by graphs) resource)
-      =/  =action-log:store  (~(got by action-logs) resource)
-      =.  action-log
-        (put:orm-log action-log now.bowl [%0 [%add-nodes resource nodes]])
+      =/  =update-log:store  (~(got by update-logs) resource)
+      =.  update-log
+        (put:orm-log update-log time [%0 time [%add-nodes resource nodes]])
       ::
       :-  (give [/updates]~ [%add-nodes resource nodes])
       %_  state
-          action-logs  (~(put by action-logs) resource action-log)
+          update-logs  (~(put by update-logs) resource update-log)
           graphs
         %+  ~(put by graphs)
           resource
@@ -179,17 +182,17 @@
       --
     ::
     ++  remove-nodes
-      |=  [=resource:store indices=(set index:store)]
+      |=  [=time =resource:store indices=(set index:store)]
       ^-  (quip card _state)
       |^
       =/  =graph:store        (~(got by graphs) resource)
-      =/  =action-log:store   (~(got by action-logs) resource)
-      =.  action-log
-        (put:orm-log action-log now.bowl [%0 [%remove-nodes resource indices]])
+      =/  =update-log:store   (~(got by update-logs) resource)
+      =.  update-log
+        (put:orm-log update-log time [%0 time [%remove-nodes resource indices]])
       ::
       :-  (give [/updates]~ [%remove-nodes resource indices])
       %_  state
-          action-logs  (~(put by action-logs) resource action-log)
+          update-logs  (~(put by update-logs) resource update-log)
           graphs
         %+  ~(put by graphs)
           resource
@@ -225,18 +228,18 @@
       --
     ::
     ++  add-signatures
-      |=  [=uid:store =signatures:store]
+      |=  [=time =uid:store =signatures:store]
       ^-  (quip card _state)
       |^
       =*  resource  resource.uid
       =/  =graph:store       (~(got by graphs) resource)
-      =/  =action-log:store  (~(got by action-logs) resource)
-      =.  action-log
-        (put:orm-log action-log now.bowl [%0 [%add-signatures uid signatures]])
+      =/  =update-log:store  (~(got by update-logs) resource)
+      =.  update-log
+        (put:orm-log update-log time [%0 time [%add-signatures uid signatures]])
       ::
       :-  (give [/updates]~ [%add-signatures uid signatures])
       %_  state
-          action-logs  (~(put by action-logs) resource action-log)
+          update-logs  (~(put by update-logs) resource update-log)
           graphs
         (~(put by graphs) resource (add-at-index graph index.uid signatures))
       ==
@@ -265,20 +268,20 @@
       --
     ::
     ++  remove-signatures
-      |=  [=uid:store =signatures:store]
+      |=  [=time =uid:store =signatures:store]
       ^-  (quip card _state)
       |^
       =*  resource  resource.uid
       =/  =graph:store       (~(got by graphs) resource)
-      =/  =action-log:store  (~(got by action-logs) resource)
-      =.  action-log
-        %^  put:orm-log  action-log
-          now.bowl
-        [%0 [%remove-signatures uid signatures]]
+      =/  =update-log:store  (~(got by update-logs) resource)
+      =.  update-log
+        %^  put:orm-log  update-log
+          time
+        [%0 time [%remove-signatures uid signatures]]
       ::
       :-  (give [/updates]~ [%remove-signatures uid signatures])
       %_  state
-          action-logs  (~(put by action-logs) resource action-log)
+          update-logs  (~(put by update-logs) resource update-log)
           graphs
         %+  ~(put by graphs)  resource
         (remove-at-index graph index.uid signatures)
@@ -330,7 +333,7 @@
       %_  state
           archive      (~(put by archive) resource (~(got by graphs) resource))
           graphs       (~(del by graphs) resource)
-          action-logs  (~(del by action-logs) resource)
+          update-logs  (~(del by update-logs) resource)
           tag-queries
         %-  ~(run by tag-queries)
         |=  =resources:store
@@ -346,13 +349,30 @@
       %_  state
           archive      (~(del by archive) resource)
           graphs       (~(put by graphs) resource (~(got by archive) resource))
-          action-logs  (~(put by action-logs) resource (gas:orm-log ~ ~))
+          update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
+      ==
+    ::
+    ++  run-updates
+      |=  [=resource:store =update-log:store]
+      ^-  (quip card _state)
+      ?<  (~(has by archive) resource)
+      ?>  (~(has by graphs) resource)
+      :_  state
+      %+  turn  (tap:orm-log update-log)
+      |=  [=time =update:store]
+      ^-  card
+      :*  %pass
+          /run-updates/(scot %da time)
+          %agent
+          [our.bowl %graph-store]
+          %poke
+          [%graph-update !>(update)]
       ==
     ::
     ++  give
       |=  [paths=(list path) update=update-0:store]
       ^-  (list card)
-      [%give %fact paths [%graph-update !>([%0 update])]]~
+      [%give %fact paths [%graph-update !>([%0 now.bowl update])]]~
     --
   --
 ::
@@ -422,20 +442,20 @@
         %graph  ``noun+!>(`graph:store`(subset:orm p.children.u.node start end))
     ==
   ::
-      [%x %action-log @ @ ~]
+      [%x %update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
-    =/  action-log=(unit action-log:store)  (~(get by action-logs) [ship term])
-    ?~  action-log  ~
-    ``noun+!>(u.action-log)
+    =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
+    ?~  update-log  ~
+    ``noun+!>(u.update-log)
   ::
-      [%x %peek-action-log @ @ ~]
+      [%x %peek-update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
-    =/  action-log=(unit action-log:store)  (~(get by action-logs) [ship term])
-    ?~  action-log  ~
+    =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
+    ?~  update-log  ~
     =/  result=(unit [time update:store])
-      (peek:orm-log:store u.action-log) 
+      (peek:orm-log:store u.update-log) 
     ?~  result  ``noun+!>(~)
     ``noun+!>([~ -.u.result])
   ==
