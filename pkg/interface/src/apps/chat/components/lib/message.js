@@ -96,7 +96,7 @@ export class Message extends Component {
       );
     } else if ('url' in letter) {
       let imgMatch =
-        /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM|svg|SVG)$/
+        /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|svg|SVG)$/
         .exec(letter.url);
       const youTubeRegex = new RegExp(String(/(?:https?:\/\/(?:[a-z]+.)?)/.source) // protocol
       + /(?:youtu\.?be(?:\.com)?\/)(?:embed\/)?/.source // short and long-links
@@ -112,7 +112,8 @@ export class Message extends Component {
             src={letter.url}
             style={{
               height: 'min(250px, 20vh)',
-              maxWidth: '80vw'
+              maxWidth: 'calc(100% - 36px - 1.5rem)',
+              objectFit: 'contain'
             }}
           ></img>
         );
