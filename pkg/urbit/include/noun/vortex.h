@@ -103,3 +103,8 @@
     */
       c3_w
       u3v_mark(FILE* fil_u);
+
+    /* u3v_rewrite_compact(): rewrite arvo kernel for compaction.
+    */
+      void
+      u3v_rewrite_compact();

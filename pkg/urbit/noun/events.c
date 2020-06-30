@@ -148,7 +148,7 @@ u3e_fault(void* adr_v, c3_i ser_i)
     if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
       fprintf(stderr, "strange page: %d, at %p, off %x\r\n",
               pag_w, adr_w, off_w);
-      c3_assert(0);
+      // c3_assert(0);
       return 0;
     }
 

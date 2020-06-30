@@ -287,6 +287,21 @@
         c3_w
         u3j_mark(FILE* fil_u);
 
+      /* u3j_rite_rewrite(): rewrite u3j_rite for compaction.
+      */
+        void
+        u3j_rite_rewrite(u3j_rite* rit_u);
+
+      /* u3j_site_rewrite(): rewrite u3j_site for compaction.
+      */
+        void
+        u3j_site_rewrite(u3j_site* sit_u);
+
+      /* u3j_rewrite_compact(): rewrite jet state for compaction.
+      */
+        void
+        u3j_rewrite_compact();
+
       /* u3j_free_hank(): free an entry from the hank cache.
       */
         void

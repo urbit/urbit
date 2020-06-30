@@ -2339,6 +2339,104 @@ u3j_mark(FILE* fil_u)
   return u3a_maid(fil_u, "total jet stuff", tot_w);
 }
 
+/* _cj_fink_rewrite(): rewrite a u3j_fink for compaction.
+*/
+static void
+_cj_fink_rewrite(u3j_fink* fin_u)
+{
+  if ( c3n == u3a_rewrite_ptr(fin_u) ) return;
+  c3_w i_w;
+  u3a_rewrite_noun(fin_u->sat);
+  fin_u->sat = u3a_rewritten_noun(fin_u->sat);
+
+  for ( i_w = 0; i_w < fin_u->len_w; ++i_w ) {
+    u3j_fist* fis_u = &(fin_u->fis_u[i_w]);
+    u3a_rewrite_noun(fis_u->bat);
+    u3a_rewrite_noun(fis_u->pax);
+    fis_u->bat = u3a_rewritten_noun(fis_u->bat);
+    fis_u->pax = u3a_rewritten_noun(fis_u->pax);
+  }
+}
+
+/* u3j_rite_rewrite(): rewrite u3j_rite for compaction.
+*/
+void
+u3j_rite_rewrite(u3j_rite* rit_u)
+{
+  if ( (c3y == rit_u->own_o) && u3_none != rit_u->clu ) {
+    u3a_rewrite_noun(rit_u->clu);
+    _cj_fink_rewrite(u3to(u3j_fink, rit_u->fin_p));
+    rit_u->clu = u3a_rewritten_noun(rit_u->clu);
+    rit_u->fin_p = u3a_rewritten(rit_u->fin_p);
+  }
+}
+
+/* u3j_site_rewrite(): rewrite u3j_site for compaction.
+*/
+void
+u3j_site_rewrite(u3j_site* sit_u)
+{
+  u3a_rewrite_noun(sit_u->axe);
+  sit_u->axe = u3a_rewritten_noun(sit_u->axe);
+
+  if ( u3_none != sit_u->bat ) {
+    u3a_rewrite_noun(sit_u->bat);
+    sit_u->bat = u3a_rewritten_noun(sit_u->bat);
+  }
+  if ( u3_none != sit_u->bas ) {
+    u3a_rewrite_noun(sit_u->bas);
+    sit_u->bas = u3a_rewritten_noun(sit_u->bas);
+  }
+  if ( u3_none != sit_u->loc ) {
+    u3a_rewrite_noun(sit_u->loc);
+    u3a_rewrite_noun(sit_u->lab);
+    sit_u->loc = u3a_rewritten_noun(sit_u->loc);
+    sit_u->lab = u3a_rewritten_noun(sit_u->lab);
+    if ( c3y == sit_u->fon_o ) {
+      _cj_fink_rewrite(u3to(u3j_fink, sit_u->fin_p));
+      sit_u->fin_p = u3a_rewritten(sit_u->fin_p);
+    }
+  }
+}
+
+/* _cj_rewrite_hank(): rewrite hank cache for compaction.
+*/
+static void
+_cj_rewrite_hank(u3_noun kev)
+{
+  _cj_hank* han_u = u3to(_cj_hank, u3t(kev));
+  if ( c3n == u3a_rewrite_ptr(han_u) ) return;
+  if ( u3_none != han_u->hax ) {
+    u3a_rewrite_noun(han_u->hax);
+    u3j_site_rewrite(&(han_u->sit_u));
+
+    han_u->hax = u3a_rewritten_noun(han_u->hax);
+  }
+}
+
+/* u3j_rewrite_compact(): rewrite jet state for compaction.
+*/
+void
+u3j_rewrite_compact()
+{
+  u3h_walk(u3R->jed.han_p, _cj_rewrite_hank);
+
+  u3h_rewrite(u3R->jed.war_p);
+  u3h_rewrite(u3R->jed.cod_p);
+  u3h_rewrite(u3R->jed.han_p);
+  u3h_rewrite(u3R->jed.bas_p);
+
+  if ( u3R == &(u3H->rod_u) ) {
+    u3h_rewrite(u3R->jed.hot_p);
+    u3R->jed.hot_p = u3a_rewritten(u3R->jed.hot_p);
+  }
+
+  u3R->jed.war_p = u3a_rewritten(u3R->jed.war_p);
+  u3R->jed.cod_p = u3a_rewritten(u3R->jed.cod_p);
+  u3R->jed.han_p = u3a_rewritten(u3R->jed.han_p);
+  u3R->jed.bas_p = u3a_rewritten(u3R->jed.bas_p);
+}
+
 /* u3j_free_hank(): free an entry from the hank cache.
 */
 void

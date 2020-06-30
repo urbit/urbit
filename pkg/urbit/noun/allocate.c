@@ -1679,6 +1679,29 @@ u3a_mark_ptr(void* ptr_v)
   }
 }
 
+u3_post
+u3a_rewritten(u3_post ptr_v)
+{
+  u3a_box* box_u = u3a_botox(u3a_into(ptr_v));
+  c3_w* box_w = (c3_w*) box_u;
+  return (u3_post)box_w[box_u->siz_w - 1];
+}
+
+u3_noun
+u3a_rewritten_noun(u3_noun som)
+{
+  if ( c3y == u3a_is_cat(som) ) {
+    return som;
+  }
+  u3_post som_p = u3a_rewritten(u3a_to_off(som));
+  if ( c3y == u3a_is_pug(som) ) {
+    return u3a_to_pug(som_p);
+  }
+  else {
+    return u3a_to_pom(som_p);
+  }
+}
+
 /* u3a_mark_mptr(): mark a malloc-allocated ptr for gc.
 */
 c3_w
@@ -1926,6 +1949,28 @@ u3a_mark_road(FILE* fil_u)
   tot_w += u3a_maid(fil_u, "  new profile trace", u3a_mark_noun(u3R->pro.trace));
   tot_w += u3a_maid(fil_u, "  memoization cache", u3h_mark(u3R->cax.har_p));
   return   u3a_maid(fil_u, "total road stuff", tot_w);
+}
+
+/* u3a_rewrite_compact(): rewrite pointers in ad-hoc persistent road structures.
+*/
+void
+u3a_rewrite_compact()
+{
+  u3a_rewrite_noun(u3R->ski.gul);
+  u3a_rewrite_noun(u3R->bug.tax);
+  u3a_rewrite_noun(u3R->bug.mer);
+  u3a_rewrite_noun(u3R->pro.don);
+  u3a_rewrite_noun(u3R->pro.day);
+  u3a_rewrite_noun(u3R->pro.trace);
+  u3h_rewrite(u3R->cax.har_p);
+
+  u3R->ski.gul = u3a_rewritten_noun(u3R->ski.gul);
+  u3R->bug.tax = u3a_rewritten_noun(u3R->bug.tax);
+  u3R->bug.mer = u3a_rewritten_noun(u3R->bug.mer);
+  u3R->pro.don = u3a_rewritten_noun(u3R->pro.don);
+  u3R->pro.day = u3a_rewritten_noun(u3R->pro.day);
+  u3R->pro.trace = u3a_rewritten_noun(u3R->pro.trace);
+  u3R->cax.har_p = u3a_rewritten(u3R->cax.har_p);
 }
 
 /* _ca_print_box(): heuristically print the contents of an allocation box.
@@ -2178,6 +2223,162 @@ u3a_sweep(void)
   c3_assert( (0 == leq_w) && (0 == weq_w) );
 
   return neg_w;
+}
+
+
+/* u3a_compact(): compact road.
+*/
+void
+u3a_compact(void)
+{
+  sleep(10);
+  u3m_reclaim();
+  assert(c3y == u3a_is_north(u3R));
+  u3_post box_p = _(u3a_is_north(u3R)) ? u3R->rut_p : u3R->hat_p;
+  u3_post end_p = _(u3a_is_north(u3R)) ? u3R->hat_p : u3R->rut_p;
+
+  /* Sweep through arena, recording new address
+   *
+   * Don't trace to preserve memory locality
+  */
+  {
+    u3_post new_p = c3_wiseof(u3a_box) + 1;
+    c3_w*   box_w = u3a_into(box_p);
+    c3_w*   end_w = u3a_into(end_p);
+
+    while ( box_w < end_w ) {
+      u3a_box* box_u = (void *)box_w;
+
+      /* If not free, rewrite trailing size word to be new pointer.
+       *
+       * Another option would be to use the refcount and just
+       * regenerate it by tracing.
+      */
+      if ( box_u->use_w > 0 ) {
+        //fprintf(stderr, "compact: found size %d at box_u %p, setting to new_p %x\r\n", box_u->siz_w, box_u, new_p);
+        box_w[box_u->siz_w - 1] = new_p;
+        new_p += box_u->siz_w;
+        //fprintf(stderr, "compact: adding to new_p %x\r\n", new_p);
+      }
+
+      box_w += box_u->siz_w;
+    }
+  }
+
+  fprintf(stderr, "compact: sweep 1 complete\r\n");
+
+  /* Trace through arena, rewriting pointers
+   *
+   * Don't sweep because it's ad-hoc polymorphic
+  */
+  {
+    u3v_rewrite_compact();
+    u3j_rewrite_compact();
+    u3n_rewrite_compact();
+    u3a_rewrite_compact();
+  }
+
+  fprintf(stderr, "compact: trace complete\r\n");
+
+  c3_w* new_w = (void*)u3a_botox(u3a_into(c3_wiseof(u3a_box) + 1));
+
+  /* Sweep through arena, moving nouns
+   *
+   * Don't trace because you need to move in order
+  */
+  {
+    c3_w* box_w = u3a_into(box_p);
+    c3_w* end_w = u3a_into(end_p);
+
+    while ( box_w < end_w ) {
+      u3a_box* old_u = (void *)box_w;
+      c3_w siz_w = old_u->siz_w; // store because we're about to overwrite
+
+      /* Unmark if marked
+      */
+      old_u->use_w &= 0x7fffffff;
+
+      //fprintf(stderr, "compact: 364 == %d\r\n", *((c3_w*)0x200000364));
+      //fprintf(stderr, "compact: found size %d at old_u %p\r\n", old_u->siz_w, old_u);
+
+
+      /* If not free, move to new home
+      */
+      if ( old_u->use_w > 0 ) {
+        //fprintf(stderr, "compact: writing to %p from %p\r\n", u3a_botox(u3a_into(box_w[siz_w - 1])), box_w);
+        assert(new_w == (c3_w*)u3a_botox(u3a_into(box_w[siz_w - 1])));
+        new_w = (c3_w*)u3a_botox(u3a_into(box_w[siz_w - 1]));
+        c3_w i_w;
+        if ( new_w > box_w ) {
+          fprintf(stderr, "compact: whoa new_w %p, i_w %d\r\n", new_w, i_w);
+        }
+        for ( i_w = 0; i_w < siz_w - 1; i_w++ ) {
+          new_w[i_w] = box_w[i_w];
+        }
+        new_w[siz_w - 1] = siz_w;
+        new_w += siz_w;
+      }
+
+      box_w += siz_w;
+    }
+    fprintf(stderr, "compact: box_w %lx new_w %lx\r\n", u3a_outa(box_w), u3a_outa(new_w));
+  }
+
+  fprintf(stderr, "compact: sweep 2 complete\r\n");
+
+  /* Set new end of heap.
+  */
+  {
+    u3R->hat_p = u3a_outa(new_w);
+
+    c3_w i_w;
+    for ( i_w = 0; i_w < u3a_fbox_no; i_w++ ) {
+      u3R->all.fre_p[i_w] = 0;
+    }
+
+    u3R->all.cel_p = 0;
+    u3R->all.fre_w = 0;
+
+    u3n_ream();
+
+    u3m_mark(stderr);
+    fprintf(stderr, "compact: marked\r\n");
+    u3a_sweep();
+    fprintf(stderr, "compact: swept\r\n");
+  }
+}
+
+/* u3a_rewrite_ptr(): mark a pointer as already having been rewritten
+*/
+c3_o
+u3a_rewrite_ptr(void* ptr_v)
+{
+  u3a_box* box_u = u3a_botox(ptr_v);
+  if ( box_u->use_w & 0x80000000 ) {
+    /* Already rewritten.
+    */
+    return c3n;
+  }
+  box_u->use_w |= 0x80000000;
+  return c3y;
+}
+
+void
+u3a_rewrite_noun(u3_noun som)
+{
+  if ( c3n == u3a_is_cell(som) ) {
+    return;
+  }
+
+  if ( c3n == u3a_rewrite_ptr(u3a_to_ptr((som))) ) return;
+
+  u3a_cell* cel = u3a_to_ptr(som);
+
+  u3a_rewrite_noun(cel->hed);
+  u3a_rewrite_noun(cel->tel);
+
+  cel->hed = u3a_rewritten_noun(cel->hed);
+  cel->tel = u3a_rewritten_noun(cel->tel);
 }
 
 /* u3a_slab(): create a length-bounded proto-atom.
