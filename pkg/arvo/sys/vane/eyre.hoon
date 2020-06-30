@@ -19,7 +19,7 @@
       ::
       card=(wind note gift:able)
   ==
-::  +note: private request from http-server to another vane
+::  +note: private request from eyre to another vane
 ::
 +$  note
   $%  ::  %b: to behn
@@ -37,14 +37,6 @@
           ::
       $%  [%flog =flog:dill]
       ==  ==
-      ::  %f: to ford
-      ::
-      $:  %f
-          ::
-          ::
-          $%  [%build live=? schematic=schematic:ford]
-              [%kill ~]
-      ==  ==
       ::  %g: to gall
       ::
       $:  %g
@@ -52,7 +44,7 @@
           ::
           $>(%deal task:able:gall)
   ==  ==
-::  +sign: private response from another vane to ford
+::  +sign: private response from another vane to eyre
 ::
 +$  sign
   $%  ::  %b: from behn
@@ -61,13 +53,6 @@
           ::
           ::
           $%  [%wake error=(unit tang)]
-      ==  ==
-      ::  %f: from ford
-      ::
-      $:  %f
-          ::
-          ::
-          $%  [%made date=@da result=made-result:ford]
       ==  ==
       ::  %g: from gall
       ::
@@ -468,13 +453,13 @@
   ::
   =/  code-as-tape=tape  (format-ud-as-integer code)
   =/  message=tape
-    ?:  =(code 400)
-      "Bad Request"
-    ?:  =(code 403)
-      "Forbidden"
-    ?:  =(code 404)
-      "Not Found"
-    "Unknown Error"
+    ?+  code  "{<code>} Error"
+      %400  "Bad Request"
+      %403  "Forbidden"
+      %404  "Not Found"
+      %405  "Method Not Allowed"
+      %500  "Internal Server Error"
+    ==
   ::
   %-  as-octs:mimes:html
   %-  crip
@@ -739,17 +724,17 @@
   ::  otherwise, do a straight comparison
   ::
   =(u.binding u.host)
-::  +path-matches: returns %.y if :prefix is a prefix of :full
+::  +find-suffix: returns [~ /tail] if :full is (weld :prefix /tail)
 ::
-++  path-matches
+++  find-suffix
   |=  [prefix=path full=path]
-  ^-  ?
+  ^-  (unit path)
   ?~  prefix
-    %.y
+    `full
   ?~  full
-    %.n
+    ~
   ?.  =(i.prefix i.full)
-    %.n
+    ~
   $(prefix t.prefix, full t.full)
 ::  +simplified-url-parser: returns [(each @if @t) (unit port=@ud)]
 ::
@@ -803,7 +788,8 @@
       (fall (forwarded-for header-list.request) address)
     ::
     =/  host  (get-header:http 'host' header-list.request)
-    =/  action  (get-action-for-binding host url.request)
+    =/  [=action suburl=@t]
+      (get-action-for-binding host url.request)
     ::
     =/  authenticated  (request-is-logged-in:authentication request)
     ::  record that we started an asynchronous response
@@ -814,19 +800,50 @@
       (~(put by connections.state) duct connection)
     ::
     ?-    -.action
-    ::
         %gen
+      =/  bek=beak  [our desk.generator.action da+now]
+      =/  sup=spur  (flop path.generator.action)
+      =/  ski       (scry [%141 %noun] ~ %ca bek sup)
+      =/  cag=cage  (need (need ski))
+      ?>  =(%vase p.cag)
+      =/  gat=vase  !<(vase q.cag)
+      =/  res=(each vase tang)
+        %-  mule  |.
+        %+  slam
+          %+  slam  gat
+          !>([now=now eny=eny bek=bek])
+        !>([authenticated request])
+      ?:  ?=(%| -.res)
+        =+  connection=(~(got by connections.state) duct)
+        %^  return-static-data-on-duct  500  'text/html'
+        %:  internal-server-error
+            authenticated.inbound-request.connection
+            url.request.inbound-request.connection
+            p.res
+        ==
+      =/  result  !<(simple-payload:http p.res)
+      ::  ensure we have a valid content-length header
       ::
-      =-  [[duct %pass /run-build %f %build live=%.n schematic=-]~ state]
+      ::    We pass on the response and the headers the generator produces, but
+      ::    ensure that we have a single content-length header set correctly in
+      ::    the returned if this has a body, and has no content-length if there
+      ::    is no body returned to the client.
       ::
-      :+  %call
-        :+  %call
-          [%core [[our desk.generator.action] (flop path.generator.action)]]
-        ::  TODO: Figure out what goes in generators. We need to slop the
-        ::  prelude with the arguments passed in.
+      =.  headers.response-header.result
+        ?~  data.result
+          (delete-header:http 'content-length' headers.response-header.result)
         ::
-        [%$ %noun !>([[now=now eny=eny bek=[our desk.generator.action [%da now]]] ~ ~])]
-      [%$ %noun !>([authenticated request])]
+        %^  set-header:http  'content-length'
+          (crip (format-ud-as-integer p.u.data.result))
+        headers.response-header.result
+      ::
+      %-  handle-response
+      ^-  http-event:http
+      :*  %start
+          response-header.result
+          data.result
+          complete=%.y
+      ==
     ::
         %app
       :_  state
@@ -841,10 +858,70 @@
         %channel
       (handle-request:by-channel secure authenticated address request)
     ::
+        %scry
+      (handle-scry authenticated address request(url suburl))
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
+  ::  +handle-scry: respond with scry result, 404 or 500
+  ::
+  ++  handle-scry
+    |=  [authenticated=? =address =request:http]
+    |^  ^-  (quip move server-state)
+    ?.  authenticated
+      (error-response 403 ~)
+    ?.  =(%'GET' method.request)
+      (error-response 405 "may only GET scries")
+    ::  make sure the path contains an app to scry into
+    ::
+    =+  req=(parse-request-line url.request)
+    ?.  ?=(^ site.req)
+      (error-response 400 "scry path must start with app name")
+    ::  attempt the scry that was asked for
+    ::
+    =/  res=(unit (unit cage))
+      (do-scry %gx i.site.req (snoc t.site.req (fall ext.req %mime)))
+    ?~  res    (error-response 500 "failed scry")
+    ?~  u.res  (error-response 404 "no scry result")
+    =*  mark   p.u.u.res
+    =*  vase   q.u.u.res
+    ::  attempt to find conversion gate to mime
+    ::
+    =/  tub=(unit tube:clay)
+      (find-tube mark %mime)
+    ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
+    ::  attempt conversion, then send results
+    ::
+    =/  mym=(each mime tang)
+      (mule |.(!<(mime (u.tub vase))))
+    ?-  -.mym
+      %|  (error-response 500 "failed tube from {(trip mark)} to mime")
+      %&  %+  return-static-data-on-duct  200
+          [(rsh 3 1 (spat p.p.mym)) q.p.mym]
+    ==
+    ::
+    ++  find-tube
+      |=  [from=mark to=mark]
+      ^-  (unit tube:clay)
+      ?:  =(from to)  `(bake same vase)
+      =/  tub=(unit (unit cage))
+        (do-scry %cc %home /[from]/[to])
+      ?.  ?=([~ ~ %tube *] tub)  ~
+      `!<(tube:clay q.u.u.tub)
+    ::
+    ++  do-scry
+      |=  [care=term =desk =path]
+      ^-  (unit (unit cage))
+      (scry [%141 %noun] ~ care [our desk da+now] (flop path))
+    ::
+    ++  error-response
+      |=  [status=@ud =tape]
+      ^-  (quip move server-state)
+      %^  return-static-data-on-duct  status  'text/html'
+      (error-page status authenticated url.request tape)
+    --
   ::  +subscribe-to-app: subscribe to app and poke it with request data
   ::
   ++  subscribe-to-app
@@ -874,11 +951,7 @@
     =.   connections.state  (~(del by connections.state) duct)
     ::
     ?-    -.action.u.connection
-    ::
-        %gen
-      :_  state
-      [duct %pass /run-build %f %kill ~]~
-    ::
+        %gen  [~ state]
         %app
       :_  state
       :_  ~
@@ -893,8 +966,8 @@
         %channel
       on-cancel-request:by-channel
     ::
-        %four-oh-four
-      ::  it should be impossible for a 404 page to be asynchronous
+        ?(%scry %four-oh-four)
+      ::  it should be impossible for a scry or 404 page to be asynchronous
       ::
       !!
     ==
@@ -1183,10 +1256,10 @@
       ::  lookup the session id by duct
       ::
       ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
-        ~&  [%canceling-nonexistent-channel duct]
+        ~>  %slog.[0 leaf+"eyre: no channel to cancel {<duct>}"]
         [~ state]
       ::
-      ~&  [%canceling-cancel duct]
+      ~>  %slog.[0 leaf+"eyre: canceling {<duct>}"]
       ::
       =/  maybe-session
         (~(get by session.channel-state.state) u.maybe-channel-id)
@@ -1704,58 +1777,6 @@
       ::
       [duc %pass channel-wire [%g %deal [our ship] app %leave ~]]
     --
-  ::  +handle-ford-response: translates a ford response for the outside world
-  ::
-  ++  handle-ford-response
-    |=  made-result=made-result:ford
-    ^-  [(list move) server-state]
-    ::
-    =+  connection=(~(got by connections.state) duct)
-    ::
-    ?:  ?=(%incomplete -.made-result)
-      %^  return-static-data-on-duct  500  'text/html'
-      ::
-      %-  internal-server-error  :*
-          authenticated.inbound-request.connection
-          url.request.inbound-request.connection
-          tang.made-result
-      ==
-    ::
-    ?:  ?=(%error -.build-result.made-result)
-      %^  return-static-data-on-duct  500  'text/html'
-      ::
-      %-  internal-server-error  :*
-          authenticated.inbound-request.connection
-          url.request.inbound-request.connection
-          message.build-result.made-result
-      ==
-    ::
-    =/  =cage  (result-to-cage:ford build-result.made-result)
-    ::
-    =/  result=simple-payload:http  ;;(simple-payload:http q.q.cage)
-    ::  ensure we have a valid content-length header
-    ::
-    ::    We pass on the response and the headers the generator produces, but
-    ::    ensure that we have a single content-length header set correctly in
-    ::    the returned if this has a body, and has no content-length if there
-    ::    is no body returned to the client.
-    ::
-    =.  headers.response-header.result
-      ?~  data.result
-        (delete-header:http 'content-length' headers.response-header.result)
-      ::
-      %^  set-header:http  'content-length'
-        (crip (format-ud-as-integer p.u.data.result))
-      headers.response-header.result
-    ::
-    %-  handle-response
-    ::
-    ^-  http-event:http
-    :*  %start
-        response-header.result
-        data.result
-        complete=%.y
-    ==
   ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup
   ::
   ++  handle-gall-error
@@ -1930,7 +1951,7 @@
   ::
   ++  get-action-for-binding
     |=  [raw-host=(unit @t) url=@t]
-    ^-  action
+    ^-  [=action suburl=@t]
     ::  process :raw-host
     ::
     ::    If we are missing a 'Host:' header, if that header is a raw IP
@@ -1978,14 +1999,21 @@
     |-
     ::
     ?~  bindings
-      [%four-oh-four ~]
+      [[%four-oh-four ~] url]
     ::
-    ?:  ?&  (host-matches site.binding.i.bindings raw-host)
-            (path-matches path.binding.i.bindings parsed-url)
-        ==
-      action.i.bindings
+    ?.  (host-matches site.binding.i.bindings raw-host)
+      $(bindings t.bindings)
+    ?~  suffix=(find-suffix path.binding.i.bindings parsed-url)
+      $(bindings t.bindings)
     ::
-    $(bindings t.bindings)
+    :-  action.i.bindings
+    %^  cat  3
+      %+  roll
+        ^-  (list @t)
+        (join '/' (flop ['' u.suffix]))
+      (cury cat 3)
+    ?~  ext.request-line  ''
+    (cat 3 '.' u.ext.request-line)
   --
 ::
 ++  forwarded-for
@@ -2080,6 +2108,7 @@
       :~  [[~ /~/login] duct [%authentication ~]]
           [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
+          [[~ /~/scry] duct [%scry ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -2223,20 +2252,6 @@
       %disconnect
     =.  server-state.ax  (remove-binding:server binding.task)
     [~ http-server-gate]
-  ::
-      %wegh
-    :_  http-server-gate
-    :~  :*  duct
-            %give
-            %mass
-            ^-  mass
-            :+  %eyre  %|
-            :~  bindings+&+bindings.server-state.ax
-                auth+&+authentication-state.server-state.ax
-                connections+&+connections.server-state.ax
-                channels+&+channel-state.server-state.ax
-                axle+&+ax
-    ==  ==  ==
   ==
 ::
 ++  take
@@ -2265,7 +2280,6 @@
       ::
          %run-app-request  run-app-request
          %watch-response   watch-response
-         %run-build        run-build
          %sessions         sessions
          %channel          channel
          %acme             acme-ack
@@ -2334,15 +2348,6 @@
     =/  handle-response  handle-response:(per-server-event event-args)
     =^  moves  server-state.ax
       (handle-response http-event)
-    [moves http-server-gate]
-  ::
-  ++  run-build
-    ::
-    ?>  ?=([%f %made *] sign)
-    ::
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
-    =/  handle-ford-response  handle-ford-response:(per-server-event event-args)
-    =^  moves  server-state.ax  (handle-ford-response result.sign)
     [moves http-server-gate]
   ::
   ++  channel
@@ -2454,6 +2459,11 @@
         [[~ /~/logout] [/e/load/logout]~ [%logout ~]]
       bindings.server-state.old
     ~?  !success  [%e %failed-to-setup-logout-endpoint]
+    =^  success  bindings.server-state.old
+      %+  insert-binding
+        [[~ /~/scry] [/e/load/scry]~ [%scry ~]]
+      bindings.server-state.old
+    ~?  !success  [%e %failed-to-setup-scry-endpoint]
     %_  $
       date.old  %~2020.5.29
       sessions.authentication-state.server-state.old  ~
@@ -2472,6 +2482,15 @@
   =*  who  p.why
   ?.  ?=(%$ ren)
     [~ ~]
+  ?:  =(tyl /whey)
+    =/  maz=(list mass)
+      :~  bindings+&+bindings.server-state.ax
+          auth+&+authentication-state.server-state.ax
+          connections+&+connections.server-state.ax
+          channels+&+channel-state.server-state.ax
+          axle+&+ax
+      ==
+    ``mass+!>(maz)
   ?.  ?=(%$ -.lot)
     [~ ~]
   ?.  =(our who)

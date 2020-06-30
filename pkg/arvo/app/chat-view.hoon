@@ -1,19 +1,19 @@
 ::  chat-view: sets up chat JS client, paginates data, and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *permission-store,
-    *permission-hook,
-    *group-store,
-    *invite-store,
-    *metadata-store,
-    *permission-group-hook,
-    *chat-hook,
-    *metadata-hook,
-    *rw-security,
-    hook=chat-hook
-/+  *server, default-agent, verb, dbug,
-    store=chat-store,
-    view=chat-view
+/-  *permission-store
+/-  *permission-hook
+/-  *group-store
+/-  *invite-store
+/-  *metadata-store
+/-  *permission-group-hook
+/-  *chat-hook
+/-  *metadata-hook
+/-  *rw-security
+/-  hook=chat-hook
+/+  *server, default-agent, verb, dbug
+/+  store=chat-store
+/+  view=chat-view
 ::
 ~%  %chat-view-top  ..is  ~
 |%
@@ -96,7 +96,9 @@
     ++  truncated-inbox
       ^-  inbox:store
       =/  =inbox:store
-        .^(inbox:store %gx /=chat-store/(scot %da now.bol)/all/noun)
+        =/  our  (scot %p our.bol)
+        =/  now  (scot %da now.bol)
+        .^(inbox:store %gx /[our]/chat-store/[now]/all/noun)
       %-  ~(run by inbox)
       |=  =mailbox:store
       ^-  mailbox:store
@@ -403,7 +405,12 @@
   ++  chat-scry
     |=  pax=path
     ^-  (unit mailbox:store)
-    =.  pax  ;:(weld /=chat-store/(scot %da now.bol)/mailbox pax /noun)
+    =.  pax
+      ;:  weld
+        /(scot %p our.bol)/chat-store/(scot %da now.bol)/mailbox
+        pax
+        /noun
+      ==
     .^((unit mailbox:store) %gx pax)
   ::
   ++  maybe-group-from-chat

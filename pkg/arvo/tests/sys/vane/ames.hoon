@@ -1,6 +1,5 @@
 /+  *test
-/=  ames  /:  /===/sys/vane/ames
-          /!noun/
+/=  ames  /sys/vane/ames
 ::  construct some test fixtures
 ::
 =/  vane  (ames !>(..zuse))
