@@ -29,7 +29,7 @@ export default class BitcoinTransaction extends Component {
   buttonMessage(status, amount, point) {
     const label =
         status === STATE.INIT      ? `Send`
-      : status === STATE.POINT     ? `Request address`
+      : status === STATE.POINT     ? `@uc`
       : status === STATE.READY     ? 'Send'
       // : status === STATE.READY     ? `Send ${BCoin.Amount.btc(amount)}BTC to ${point}`
       : status === STATE.COMPLETED ? 'Transaction Completed'
@@ -54,63 +54,80 @@ export default class BitcoinTransaction extends Component {
   async sendBTCTransaction () {
     const { state, props } = this;
     const {
-      wallet, address, node, wdb, amount, keyring, coinType, account
+      wallet, address, node, wdb, amount, signMethod,
+      keyring, coinType, account, connectedTo
     } = props;
-    const type = wallet.network.keyPrefix.coinType;
-    let mtx = await wallet.createTX({
-      outputs: [{
-        value: BCoin.Amount.value(amount),
-        address: address.toString(node.network),
-      }],
-    });
-    const inputs = await wallet.getInputPaths(mtx);
-    if (keyring) {
-      const rings = [];
-      for (const input of inputs) {
-        const ring = new BCoin.wallet.WalletKey(
-          keyring.derive(input.branch).derive(input.index).privateKey);
-        if (ring)
-          rings.push(ring);
-      }
-      // Signing
-      mtx.sign(rings);
+    const outputs = [{
+      //  Safely convert a BTC string to satoshis.
+      //  TODO: add component to choose units.
+      //
+      value: BCoin.Amount.value(amount),
+      address: address.toString(node.network)
+    }];
+    if (connectedTo === "localNode") {
+      // value and rate are expressed in satoshis when using Javascript
+      const result = await wallet.send({
+        // TODO: add component to choose fees
+        // maxFee: maxFee,
+        account: "default",
+        outputs: outputs
+      });
     } else {
-      const inputData = [];
-      // From: https://github.com/bcoin-org/bsigner/blob/e8c9b80ee9559b3b32f16ff5c3d9f5d23b7b921c/test/utils/common.js#L83
-      for (const input of mtx.inputs) {
-          const data = {};
-          const prevhash = input.prevout.hash;
-          const txRecord = await wallet.getTX(prevhash);
-          const coin = mtx.view.getCoinFor(input);
-          const path = Path.fromList([44, coinType, account], true);
-          const base = path.clone();
-          const address = coin.getAddress();
-          const addressPath = await wallet.getPath(address.getHash());
-          data.coin = coin;
-          data.prevTX = BCoin.TX.fromOptions(txRecord.tx);
-          data.path = base.push(addressPath.branch).push(addressPath.index);
-          // This will fail with Nested addresses.
-          data.witness = input.type === BCoin.Address.types.WITNESS;
-          inputData.push(data);
+      // const type = wallet.network.keyPrefix.coinType;
+      let mtx = await wallet.createTX({
+        outputs: outputs,
+      });
+      const inputs = await wallet.getInputPaths(mtx);
+      if (keyring && signMethod === "seed") {
+        const rings = [];
+        for (const input of inputs) {
+          const ring = new BCoin.wallet.WalletKey(
+            keyring.derive(input.branch).derive(input.index).privateKey);
+          if (ring)
+            rings.push(ring);
+        }
+        // Signing
+        mtx.sign(rings);
+      } else if (signMethod === "ledger") {
+        const inputData = [];
+        // From: https://github.com/bcoin-org/bsigner/blob/e8c9b80ee9559b3b32f16ff5c3d9f5d23b7b921c/test/utils/common.js#L83
+        for (const input of mtx.inputs) {
+            const data = {};
+            const prevhash = input.prevout.hash;
+            const txRecord = await wallet.getTX(prevhash);
+            const coin = mtx.view.getCoinFor(input);
+            const path = Path.fromList([44, coinType, account], true);
+            const base = path.clone();
+            const address = coin.getAddress();
+            const addressPath = await wallet.getPath(address.getHash());
+            data.coin = coin;
+            data.prevTX = BCoin.TX.fromOptions(txRecord.tx);
+            data.path = base.push(addressPath.branch).push(addressPath.index);
+            // This will fail with Nested addresses.
+            data.witness = input.type === BCoin.Address.types.WITNESS;
+            inputData.push(data);
+        }
+        // Signing
+        mtx = await this.state.manager.signTransaction(mtx, inputData);
+      } else {
+        console.log("ERROR: A siginig method has not been selected", "TODO: missing Error component")
       }
-      // Signing
-      mtx = await this.state.manager.signTransaction(mtx, inputData);
-    }
-    // The transaction should now verify.
-    if (mtx.verify()) {
-      let tx = mtx.toTX();
-      if (!BCoin.TX.isTX(tx)) {
-        tx = BCoin.TX.fromOptions({
-          version: tx.version,
-          inputs: tx.inputs,
-          outputs: tx.outputs,
-          locktime: tx.locktime
-        });
+      // The transaction should now verify.
+      if (mtx.verify()) {
+        let tx = mtx.toTX();
+        if (!BCoin.TX.isTX(tx)) {
+          tx = BCoin.TX.fromOptions({
+            version: tx.version,
+            inputs: tx.inputs,
+            outputs: tx.outputs,
+            locktime: tx.locktime
+          });
+        }
+        const ans = await node.sendTX(tx);
+        await wdb.addTX(tx);
+      } else {
+        console.log("ERROR tx won't verify...", mtx, keyring);
       }
-      const ans = await node.sendTX(tx);
-      await wdb.addTX(tx);
-    } else {
-      console.log("ERROR tx won't verify...", mtx, keyring);
     }
   }
 
