@@ -12,7 +12,7 @@
 +$  node         [=post children=internal-graph]
 +$  graphs       (map resource graph)
 +$  tag-queries  (jug term resource)
-+$  update-log   ((mop time update) gth)
++$  update-log   ((mop time logged-update) gth)
 +$  update-logs  (map resource update-log)
 ::
 +$  internal-graph
@@ -32,22 +32,27 @@
   $%  [%0 p=time q=update-0]
   ==
 ::
-+$  update-0
-  $%  [%add-graph =resource =graph]
-      [%remove-graph =resource]
-    ::
-      [%add-nodes =resource nodes=(map index node)]
++$  logged-update
+  $%  [%0 p=time q=logged-update-0]
+  ==
+::
++$  logged-update-0
+  $%  [%add-nodes =resource nodes=(map index node)]
       [%remove-nodes =resource indices=(set index)]
-    ::
       [%add-signatures =uid =signatures]
       [%remove-signatures =uid =signatures]
+  ==
+::
++$  update-0
+  $%  logged-update-0
+      [%add-graph =resource =graph]
+      [%remove-graph =resource]
     ::
       [%add-tag =term =resource]
       [%remove-tag =term =resource]
     ::
       [%archive-graph =resource]
       [%unarchive-graph =resource]
-    ::
       [%run-updates =resource =update-log]
     ::
     ::  NOTE: cannot be sent as pokes

@@ -29,7 +29,7 @@
   ==
 ::
 ++  orm      ((or-map atom node) gth)
-++  orm-log  ((or-map time update) gth)
+++  orm-log  ((or-map time logged-update) gth)
 ::
 ++  enjs
   =,  enjs:format

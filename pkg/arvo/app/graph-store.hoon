@@ -359,14 +359,23 @@
       ?>  (~(has by graphs) resource)
       :_  state
       %+  turn  (tap:orm-log update-log)
-      |=  [=time =update:store]
+      |=  [=time update=logged-update:store]
       ^-  card
+      ?>  ?=(%0 -.update)
       :*  %pass
           /run-updates/(scot %da time)
           %agent
           [our.bowl %graph-store]
           %poke
-          [%graph-update !>(update)]
+          :-  %graph-update
+          !>
+          ^-  update:store
+          ?-  -.q.update
+              %add-nodes          update(resource.q resource)
+              %remove-nodes       update(resource.q resource)
+              %add-signatures     update(resource.uid.q resource)
+              %remove-signatures  update(resource.uid.q resource)
+          ==
       ==
     ::
     ++  give
