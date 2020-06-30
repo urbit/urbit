@@ -31,7 +31,7 @@ Urbit uses [Nix][nix] to manage builds.  On Linux and macOS you can install Nix
 via:
 
 ```
-curl https://nixos.org/nix/install | sh
+curl -L https://nixos.org/nix/install | sh
 ```
 
 The Makefile in the project's root directory contains useful phony targets for
