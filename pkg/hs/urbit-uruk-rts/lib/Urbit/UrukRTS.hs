@@ -89,7 +89,7 @@ import Data.Function         ((&))
 import Data.Time.Clock.POSIX (POSIXTime, getPOSIXTime)
 import GHC.Exts              (fromList, toList)
 import Numeric.Natural       (Natural)
-import Prelude               ((!!))
+import Prelude               (foldl, (!!))
 import Text.Show.Pretty      (pPrint, ppShow)
 
 import qualified Data.ByteString           as BS
@@ -98,7 +98,10 @@ import qualified Data.Store                as Store
 import qualified Data.Store.TH             as Store
 import qualified System.IO                 as Sys
 import qualified Urbit.Atom                as Atom
-import qualified Urbit.Uruk.Dash.Exp       as Exp
+import qualified Urbit.Uruk.Dash.DataJet   as Jets
+import qualified Urbit.Uruk.Dash.Exp       as Dash
+import qualified Urbit.Uruk.Dash.Parser    as Dash
+import qualified Urbit.Uruk.Jets           as Jets
 import qualified Urbit.UrukRTS.Inline      as Opt
 import qualified Urbit.UrukRTS.JetOptimize as Opt
 import qualified Urbit.UrukRTS.OptToFast   as Opt
@@ -128,13 +131,13 @@ instance Uruk Val where
   uDub = mkNode 6 Dub
 
   uEye n = mkNode (fromIntegral $ n) $
-           M (MD $ Exp.In $ fromIntegral n) (fromIntegral $ n) []
+           M (MD $ Dash.In $ fromIntegral n) (fromIntegral $ n) []
   uBee n = mkNode (fromIntegral $ 2 + n) $
-           M (MD $ Exp.Bn $ fromIntegral n) (fromIntegral $ n+2) []
+           M (MD $ Dash.Bn $ fromIntegral n) (fromIntegral $ n+2) []
   uSea n = mkNode (fromIntegral $ 2 + n) $
-           M (MD $ Exp.Cn $ fromIntegral n) (fromIntegral $ n+2) []
+           M (MD $ Dash.Cn $ fromIntegral n) (fromIntegral $ n+2) []
   uSen n = mkNode (fromIntegral $ 2 + n) $
-           M (MD $ Exp.Sn $ fromIntegral n) (fromIntegral $ n+2) []
+           M (MD $ Dash.Sn $ fromIntegral n) (fromIntegral $ n+2) []
 
   uNat   = \n -> VNat n
   uBol   = \b -> VBol b
@@ -215,102 +218,76 @@ instance Uruk Val where
 type Bol = Bool
 
 
--- Raw Uruk (Basically just used for D (jam)) ----------------------------------
-
-{-
-
-data Pri = S | K | E | W
-  deriving stock    (Eq, Ord, Show, Generic)
-#if defined(__GHCJS__)
-  deriving anyclass (NFData)
-#else
-  deriving anyclass (Flat, NFData)
-#endif
-
-data Raw = Raw !Pri ![Raw]
-  deriving stock    (Eq, Ord, Show, Generic)
-#if defined(__GHCJS__)
-  deriving anyclass (NFData)
-#else
-  deriving anyclass (Flat, NFData)
-#endif
-
-jamRaw :: Raw -> Val
-jamRaw =
-#if defined(__GHCJS__)
-  error "jamRaw depends on `flat`. Get it working in GHCJS."
-#else
-  VNat . Atom.bytesAtom . flat
-#endif
-
-{-
-    Note that it's safe for `app` to simply append arguments without
-    simplification because we take a `Val` as an argument, which is
-    guaranteed to already be in normal form.
--}
-toRaw :: Val -> Raw
-toRaw = valFun >>> \case
-  Fun _ f xs -> app (nodeRaw f) $ toList $ fmap toRaw xs
- where
-  app :: Raw -> [Raw] -> Raw
-  app (Raw f xs) mor = Raw f (xs <> mor)
-
-nodeRaw :: Node -> Raw
-nodeRaw = \case
-  Ess   -> Raw S []
-  Kay   -> Raw K []
-  Enh 1 -> Raw E []
-  Dub   -> Raw W []
-  n     -> error ("TODO: nodeRaw." <> show n)
-
-priFun :: Pri -> (Int, Node)
-priFun = \case
-  S -> (3, Ess)
-  K -> (2, Kay)
-  E -> (1, Enh 1)
-  W -> (6, Dub)
-
-rawVal :: Raw -> Val
-{-# INLINE rawVal #-}
-rawVal (Raw p xs) = VFun $ Fun (args - sizeofSmallArray vals) node vals
- where
-  (args, node) = priFun p
-  vals         = rawVal <$> fromList xs
-
-jam :: Val -> Val
-{-# INLINE jam #-}
-jam = jamRaw . toRaw
-
--}
-
---------------------------------------------------------------------------------
-
-{-
-
-  Step 1 for building a toASKEW is to actually change Node so that it is
-  separated into SingJets and DataJets like in the JetEval implementation, like
-  in 8f1e6545329cda4bb6230111b9f1fcf1dec230f1.
-
--}
+-- Raw SKEW (Used for W implementation) ----------------------------------------
 
 data ASKEW = S | K | E | W | A ASKEW ASKEW
   deriving stock    (Eq, Ord, Show, Generic)
 
 
-enhCountToASKEW :: Int -> ASKEW
-enhCountToASKEW 0 = error "0 arguments is impossible"
-enhCountToASKEW 1 = E
-enhCountToASKEW n = A (enhCountToASKEW (n - 1)) E
+enhCountToAskew :: Int -> ASKEW
+enhCountToAskew 0 = error "0 arguments is impossible"
+enhCountToAskew 1 = E
+enhCountToAskew n = A (enhCountToAskew (n - 1)) E
 
-toASKEW :: Node -> ASKEW
-toASKEW = \case
+nodeToAskew :: Node -> ASKEW
+nodeToAskew = \case
   Ess -> S
   Kay -> K
-  (Enh e) -> enhCountToASKEW e
+  (Enh e) -> enhCountToAskew e
   Dub -> W
-  Jut Jet{..} -> error "TODO: Figure out `Val -> ASKEW`"  -- A (enhCountToASKEW jArgs) S
-  --
-  _ -> error "TODO: The rest."
+  Jut Jet{..} ->
+    (A (A (enhCountToAskew jArgs) (valToAskew jName)) (valToAskew jBody))
+  (M m n xs) -> matchToAskew m (GHC.Exts.toList xs)
+  _ -> error "can only toASKEW base nodes so far"
+
+-- TODO: The rest of the Values
+valToAskew :: Val -> ASKEW
+valToAskew (VFun (Fun need node args)) =
+  foldl apply (nodeToAskew node) (GHC.Exts.toList args)
+  where
+    apply x y = A x (valToAskew y)
+valToAskew _ = error "can only check dubs on value functions so far"
+
+-- Looks up a
+matchToAskew :: Match -> [Node] -> ASKEW
+matchToAskew (MS sj) xs =
+  foldl A head (map nodeToAskew xs)
+  where
+    (n, tag, body) = Jets.sjTuple sj
+    head = (A (A (enhCountToAskew $ fromIntegral n) (dashValToAskew tag))
+              (dashValToAskew body))
+matchToAskew (MD dj) xs =
+  foldl A head (map nodeToAskew xs)
+  where
+    (n, tag, body) = Jets.djTuple dj
+    head = (A (A (enhCountToAskew $ fromIntegral n) (dashValToAskew tag))
+              (dashValToAskew body))
+
+askewToFun :: ASKEW -> Fun
+askewToFun (A x y) = Fun (need - 1) head (addCloN args (VFun $ askewToFun y))
+  where
+    (Fun need head args) = askewToFun x
+askewToFun S       = Fun 3 Ess mempty
+askewToFun K       = Fun 2 Kay mempty
+askewToFun E       = Fun 2 (Enh 1) mempty
+askewToFun W       = Fun 6 Dub mempty
+
+dashUrToAskew :: Dash.Ur -> ASKEW
+dashUrToAskew = \case
+  Dash.S -> S
+  Dash.K -> K
+  Dash.E -> E
+  Dash.W -> W
+  Dash.DataJet dj ->
+    nodeToAskew $ M (MD dj) (fromIntegral $ Jets.djArity dj) []
+  Dash.SingJet sj ->
+    nodeToAskew $ M (MS sj) (fromIntegral $ Jets.sjArity sj) []
+
+-- The jets are stored in Dash.Val format, translate these to ASKEW.
+dashValToAskew :: Dash.Val -> ASKEW
+dashValToAskew = \case
+  Dash.N n -> dashUrToAskew n
+  x Dash.:& y -> A (dashValToAskew x) (dashValToAskew y)
 
 --------------------------------------------------------------------------------
 
@@ -430,22 +407,22 @@ reduce !no !xs = do
     --  S₁fgx   = (fx)(gx)
     --  S₂fgxy  = (fxy)(gxy)
     --  S₃fgxyz = (fxyz)(gxyz)
-    (M (MD (Exp.Sn n)) _ []) ->
+    (M (MD (Dash.Sn n)) _ []) ->
       join (kVA <$> kVVn x args <*> pure (kVVn y args))
         where args = drop 2 $ toList xs
 
     --  B₁fgx   = f(gx)
     --  B₂fgxy  = f(gxy)
     --  B₃fgxyz = f(gxyz)
-    (M (MD (Exp.Bn n)) _ []) -> kVA x (kVVn y (drop 2 $ toList xs))
+    (M (MD (Dash.Bn n)) _ []) -> kVA x (kVVn y (drop 2 $ toList xs))
 
     --  C₁fgx   = (fx)g
     --  C₂fgxy  = (fxy)g
     --  C₃fgxyz = (fxyz)g
-    (M (MD (Exp.Cn n)) _ []) ->
+    (M (MD (Dash.Cn n)) _ []) ->
       join (kVV <$> (kVVn x (drop 2 $ toList xs)) <*> pure y)
 
-    (M (MD (Exp.In 1)) _ []) -> toList xs & \case
+    (M (MD (Dash.In 1)) _ []) -> toList xs & \case
 --    Eye _ -> toList xs & \case
       []     -> error "impossible"
       [ v ]  -> pure v
@@ -814,8 +791,12 @@ fec n        = throwIO (TypeError ("fec-not-nat: " <> tshow n))
 
 dub :: Val -> Val -> Val -> Val -> Val -> Val -> IO Val
 {-# INLINE dub #-}
--- TODO: How do I implement apply here? The stack has been resolved entirely
-dub a s k e w val = throwIO (TypeError "can't check dubs yet")
+dub a s k e w val = case (valToAskew val) of
+  A x y -> kVVV a (VFun $ askewToFun x) (VFun $ askewToFun y)
+  S     -> pure s
+  K     -> pure k
+  E     -> pure e
+  W     -> pure w
 
 add :: Val -> Val -> IO Val
 {-# INLINE add #-}
