@@ -54,9 +54,18 @@ export class LinksApp extends Component {
 
     const seen = props.linksSeen ? props.linksSeen : {};
 
+    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
+
+    const selGroupPaths = selectedGroups.map(g => g[0]);
     const totalUnseen = _.reduce(
-      seen,
-      (acc, links) => acc + _.reduce(links, (total, hasSeen) => total + (hasSeen ? 0 : 1), 0),
+      links,
+      (acc, collection, path) => {
+        if(selGroupPaths.length > 0
+           && !selGroupPaths.includes(associations.link?.[path]?.['group-path'])) {
+          return acc;
+        }
+        return acc + collection.unseenCount;
+      },
       0
     );
 
@@ -68,7 +77,6 @@ export class LinksApp extends Component {
     const invites = props.invites ?
       props.invites : {};
 
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
     const listening = props.linkListening;
 
