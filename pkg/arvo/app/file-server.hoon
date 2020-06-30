@@ -139,7 +139,7 @@
         :*  (scot %p our.bowl)
             q.byk.bowl
             (scot %da now.bowl)
-            -.u.clay-path
+            (lowercase -.u.clay-path)
         ==
       ?.  .^(? %cu scry-path)  [not-found:gen %.n]
       =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
@@ -150,6 +150,17 @@
           [~ %css]   (css-response:gen file)
           [~ %png]   (png-response:gen file)
       ==
+    ::
+    ++  lowercase
+      |=  upper=(list @t)
+      %+  turn  upper
+      |=  word=@t
+      %-  crip
+      %+  turn  (rip 3 word)
+      |=  char=@t
+      ?.  &((gte char 'A') (lte char 'Z'))
+        char
+      (add char ^~((sub 'a' 'A')))
     ::
     ++  get-clay-path
       |=  pax=path

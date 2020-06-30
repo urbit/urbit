@@ -163,7 +163,9 @@
       $
     =.  snap  +.p.poke-result
     =.  ..abet-pe  (publish-event tym ue)
-    =.  ..abet-pe  (handle-effects ((list ovum) -.p.poke-result))
+    =.  ..abet-pe
+      ~|  ova=-.p.poke-result
+      (handle-effects ;;((list ovum) -.p.poke-result))
     $
   ::
   ::  Peek
@@ -380,13 +382,12 @@
           %c  %clay
           %d  %dill
           %e  %eyre
-          %f  %ford
           %g  %gall
           %j  %jael
           %g  %gall
         ==
       =/  pax
-        /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/[vane]
+        /(scot %p our.hid)/work/(scot %da now.hid)/sys/vane/[vane]
       =/  txt  .^(@ %cx (weld pax /hoon))
       [/vane/[vane] [%veer v pax txt]]
     =>  .(this ^+(this this))
@@ -400,7 +401,7 @@
       :_  ~
       %-  unix-event
       %-  %*(. file-ovum:pill-lib directories slim-dirs)
-      /(scot %p our.hid)/home/(scot %da now.hid)
+      /(scot %p our.hid)/work/(scot %da now.hid)
     =^  ms  all-state  (poke-pill pil)
     (emit-cards ms)
   ::

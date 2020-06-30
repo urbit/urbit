@@ -4,6 +4,11 @@
 ::  processed only those blocks which are this number minus 30.
 ::
 :-  %say
-|=  [[now=@da *] *]
+|=  [[now=@da @ our=@p ^] *]
 :-  %tang
-[>.^(@ud %gx /=eth-watcher/(scot %da now)/block/azimuth-tracker/noun)< ~]
+=;  block=@ud
+  [leaf+(scow %ud block)]~
+.^  @ud
+  %gx
+  /(scot %p our)/eth-watcher/(scot %da now)/block/azimuth-tracker/noun
+==
