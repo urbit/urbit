@@ -2,7 +2,12 @@
 
 set -e
 
-URBIT_VERSION="0.10.7"
+if [ ! -z "$version" ]; then
+  URBIT_VERSION="$version"
+else
+  echo "'version' variable not set" >&2
+  exit 1
+fi
 
 deps="                                                                    \
   curl gmp sigsegv argon2 ed25519 ent h2o scrypt sni uv murmur3 secp256k1 \

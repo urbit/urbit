@@ -29,8 +29,11 @@ let
     [ argon2 softfloat3 ed25519 ent ge-additions libaes_siv h2o scrypt uv murmur3 secp256k1 sni ivory-header ca-header ];
 
   urbit = pkgs.stdenv.mkDerivation {
-    inherit name meta;
+    inherit meta;
+    pname   = name;
+    version = "0.10.7";
     exename = name;
+
     src     = ../../../pkg/urbit;
     nativeBuildInputs = deps ++ vendor;
 
