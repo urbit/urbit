@@ -3,6 +3,10 @@
 ::    data:            scry command:
 ::    ________         _________________________________________
 ::    xpub             .^(tape %gx /=bitcoin=/xpub/noun)
+::    depth            .^(@ud %gx /=bitcoin=/depth/noun)
+::    all payers       .^((list (set @p)) %gx /=bitcoin=/payers/noun)
+::    payers/address   .^((unit (set @p)) %gx /=bitcoin=/payers/<btc-@uc>/noun)
+::    addresses        .^((set @uc) %gx /=bitcoin=/addresses/noun)
 ::
 /-  *bitcoin
 /+  *server, default-agent, verb, bip32, *bitcoin
@@ -119,6 +123,9 @@
     ::
     +$  state-zero
       $:  =xpub
+          depth=@ud
+          max-look-ahead=@ud
+          payers=(map @uc (set @p))
       ==
     --
 ::
@@ -136,12 +143,33 @@
     ::
     ++  on-init
       ^-  (quip card _this)
-      :_  this(xpub ~)
-      =/  launcha  [%launch-action !>([%add %bitcoin [[%basic 'bitcoin' '/~bitcoin/img/Tile.png' '/~bitcoin'] %.y]])]
-      =/  filea  [%file-server-action !>([%serve-dir /'~bitcoin' /app/bitcoin %.n])]
-      :~  [%pass /srv %agent [our.bol %file-server] %poke filea]
-          [%pass /bitcoin %agent [our.bol %launch] %poke launcha]
+      ::  From bcoin: Account.MAX_LOOKAHEAD = 40;
+      ::  source:
+      ::  github.com/bcoin-org/bcoin/blob/master/lib/wallet/account.js#L966
+      ::
+      :_  this(xpub ~, max-look-ahead 40)
+      :~  :*  %pass
+              /srv
+              %agent
+              [our.bowl %file-server]
+              %poke
+            ::
+              :-  %file-server-action
+              !>([%serve-dir /'~bitcoin' /app/bitcoin %.n])
           ==
+        ::
+          :*  %pass
+              /bitcoin
+              %agent
+              [our.bowl %launch]
+              %poke
+            ::
+              :-  %launch-action
+              !>
+              :*  %add
+                  %bitcoin
+                  [[%basic 'bitcoin' '/~bitcoin/img/Tile.png' '/~bitcoin'] %.y]
+      ==  ==  ==
     ::
     ++  on-save
       !>(state)
@@ -178,9 +206,9 @@
       ^-  (quip card _this)
       :_  this
       ?+    path  ~|([%peer-bitcoin-strange path] !!)
-          [%bitcointile ~]    [%give %fact ~ %json !>(*json)]~
-          [%primary *]        [send-xpubkey]~
           [%http-response *]  ~
+          [%primary *]        [send-xpubkey]~
+          [%bitcointile ~]    [%give %fact ~ %json !>(*json)]~
       ==
     ::
     ++  on-agent  on-agent:def
@@ -199,11 +227,18 @@
       |=  =path
       ^-  (unit (unit cage))
       ?+  path  (on-peek:def path)
-          [%x %xpub ~]  ``noun+!>(xpub)
+          [%x %xpub ~]       ``noun+!>(xpub)
+          [%x %depth ~]      ``noun+!>(depth)
+        ::
+          [%x %payers @t ~]
+          ~&  i.t.t.path
+        ``noun+!>((~(get by payers) (parse-btc i.t.t.path)))
+        ::
+          [%x %payers ~]     ``noun+!>(~(val by payers))
+          [%x %addresses ~]  ``noun+!>(~(key by payers))
       ==
     ++  on-fail   on-fail:def
     --
-::
 ::
 =,  bip32
 |_  =bowl:gall
@@ -274,12 +309,19 @@
     [[(derive-poke [%derive [ship network]])]~ state]
   ::
   ++  handle-derive
-    |=  [account=@ net=network]
+    |=  [payer=@p net=network]
     ^-  (quip card _state)
-    ~&  [src.bowl account net]
     |^
-    =/  addr=@uc  (derive-address random-index net)
-    :_  state
+    =/  addr=@uc  (derive-address (mod depth max-look-ahead) net)
+    :_  %_    state
+            depth
+          +(depth)
+        ::
+            payers
+          ?.  (~(has by payers) addr)
+            (~(put by payers) [addr (~(put in *(set @p)) payer)])
+          (~(jab by payers) [addr |=(p=(set @p) (~(put in p) payer))])
+        ==
     ?:  (team:title our.bowl src.bowl)
       ::  Local derive
       ::
@@ -297,7 +339,7 @@
       ::
       =;  hd-path
         (~(address hd-path +<.hd-path) network)
-      =>   [(from-extended xpub) .]
+      =>  [(from-extended xpub) .]
       (derive-path "m/0/{((d-co:co 1) index)}")
     ::
     ++  type-from-network
@@ -309,10 +351,9 @@
         %testnet  "1"
       ==
     ::
-    ++  derivation-path
+    ++  full-derivation-path
       |=  [account=@ index=@ =network]
       ^-  tape
-      =-  ~&  -  -
       ::  With an extended public key, we can only derive *non-hardened* keys
       ::
       ::  Warning: (https://bitcoin.stackexchange.com/a/37489) [1]
@@ -380,6 +421,12 @@
 ::
 ++  random-index
   ^-  @ud
+  ::  This is problematic.
+  ::  See: https://github.com/bcoin-org/bcoin/issues/671#issuecomment-455669516
+  ::  tl;dr: a wallet won't pick up txs above the max lookahead unless
+  ::  a rescan is triggered, which is very ineficient, specially if the
+  ::  wallet is on a browser and uses a javascript-only implementation.
+  ::
   (~(rad og eny.bowl) (pow 2 31))
 ::
 ++  parse-btc
