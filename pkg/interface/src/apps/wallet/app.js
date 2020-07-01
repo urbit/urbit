@@ -19,7 +19,14 @@ import Logger from '../../lib/logger';
 export default class WalletApp extends React.Component {
   constructor(props) {
     super(props);
-    this.state = props;
+    this.state = {
+      proxySocket: 'ws://127.0.0.1:9090',
+      peerSeeds: ['127.0.0.1:48444'],
+      network: 'regtest',
+      account: 0,
+      sent: false,
+      hasXPub: false
+    }
 
     this.loadMnemonic = this.loadMnemonic.bind(this);
     this.loadSocket = this.loadSocket.bind(this);
@@ -40,8 +47,16 @@ export default class WalletApp extends React.Component {
     document.title = 'OS1 - Bitcoin Wallet';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
+    this.props.subscription.startApp('wallet');
+  }
 
-    this.props.subscription.startApp('wallet')
+  componentDidUpdate() {
+    if (this.props.xpubkey && !this.state.xpubkey) {
+      this.setState({ xpubkey: this.props.xpubkey, hasXPub: true });
+    }
+    if (this.props.address && !this.state.address) {
+      this.setState({ address: this.props.address });
+    }
   }
 
   handleSigning(event) {
@@ -77,10 +92,12 @@ export default class WalletApp extends React.Component {
   }
 
   setPoint(event) {
+    console.log("setPoint", event.target.value),
     this.setState({point: event.target.value});
   }
 
   setAmount(event) {
+    console.log("setAmount", event.target.value),
     this.setState({amount: BCoin.Amount.value(event.target.value)});
   }
 
@@ -167,8 +184,7 @@ export default class WalletApp extends React.Component {
       watchOnly: true
     });
 
-    if ((state.xpubkey !== "") || state.seed) {
-      console.log("sending xpub");
+    if ((state.xpubkey !== "" && !state.hasXPub) || state.seed) {
       props.api.wallet.addXPubKey(xpub);
     }
 
