@@ -2,11 +2,11 @@
 ::
 ::    data:            scry command:
 ::    ________         _________________________________________
-::    xpub             .^(tape %gx /=bitcoin=/xpub/noun)
-::    depth            .^(@ud %gx /=bitcoin=/depth/noun)
-::    all payers       .^((list (set @p)) %gx /=bitcoin=/payers/noun)
-::    payers/address   .^((unit (set @p)) %gx /=bitcoin=/payers/<btc-@uc>/noun)
-::    addresses        .^((set @uc) %gx /=bitcoin=/addresses/noun)
+::    xpub             .^(tape %gx /=wallet=/xpub/noun)
+::    depth            .^(@ud %gx /=wallet=/depth/noun)
+::    all payers       .^((list (set @p)) %gx /=wallet=/payers/noun)
+::    payers/address   .^((unit (set @p)) %gx /=wallet=/payers/<btc-@uc>/noun)
+::    addresses        .^((set @uc) %gx /=wallet=/addresses/noun)
 ::
 /-  *bitcoin
 /+  *server, default-agent, verb, bip32, *bitcoin
