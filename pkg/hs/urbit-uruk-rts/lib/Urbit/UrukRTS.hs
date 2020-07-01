@@ -229,6 +229,7 @@ enhCountToAskew 0 = error "0 arguments is impossible"
 enhCountToAskew 1 = E
 enhCountToAskew n = A (enhCountToAskew (n - 1)) E
 
+
 nodeToAskew :: Node -> ASKEW
 nodeToAskew = \case
   Ess -> S
@@ -240,15 +241,15 @@ nodeToAskew = \case
   (M m n xs) -> matchToAskew m (GHC.Exts.toList xs)
   _ -> error "can only toASKEW base nodes so far"
 
--- TODO: The rest of the Values
+
 valToAskew :: Val -> ASKEW
 valToAskew (VFun (Fun need node args)) =
   foldl apply (nodeToAskew node) (GHC.Exts.toList args)
   where
     apply x y = A x (valToAskew y)
-valToAskew _ = error "can only check dubs on value functions so far"
+valToAskew x = valToAskew $ VFun $ valFun x
 
--- Looks up a
+
 matchToAskew :: Match -> [Node] -> ASKEW
 matchToAskew (MS sj) xs =
   foldl A head (map nodeToAskew xs)
@@ -263,6 +264,7 @@ matchToAskew (MD dj) xs =
     head = (A (A (enhCountToAskew $ fromIntegral n) (dashValToAskew tag))
               (dashValToAskew body))
 
+
 askewToFun :: ASKEW -> Fun
 askewToFun (A x y) = Fun (need - 1) head (addCloN args (VFun $ askewToFun y))
   where
@@ -271,6 +273,7 @@ askewToFun S       = Fun 3 Ess mempty
 askewToFun K       = Fun 2 Kay mempty
 askewToFun E       = Fun 2 (Enh 1) mempty
 askewToFun W       = Fun 6 Dub mempty
+
 
 dashUrToAskew :: Dash.Ur -> ASKEW
 dashUrToAskew = \case
@@ -282,6 +285,7 @@ dashUrToAskew = \case
     nodeToAskew $ M (MD dj) (fromIntegral $ Jets.djArity dj) []
   Dash.SingJet sj ->
     nodeToAskew $ M (MS sj) (fromIntegral $ Jets.sjArity sj) []
+
 
 -- The jets are stored in Dash.Val format, translate these to ASKEW.
 dashValToAskew :: Dash.Val -> ASKEW
