@@ -264,11 +264,13 @@ matchToAskew (MD dj) xs =
     head = (A (A (enhCountToAskew $ fromIntegral n) (dashValToAskew tag))
               (dashValToAskew body))
 
-
 askewToFun :: ASKEW -> Fun
-askewToFun (A x y) = Fun (need - 1) head (addCloN args (VFun $ askewToFun y))
+askewToFun (A x y) = case (lhead, rhead) of
+  (Enh x, Enh y) -> Fun (2 + x + y) (Enh (x + y)) mempty
+  (_, _)         -> Fun (lneed - 1) lhead (addCloN largs (VFun r))
   where
-    (Fun need head args) = askewToFun x
+    (Fun lneed lhead largs) = askewToFun x
+    r@(Fun rneed rhead rargs) = askewToFun y
 askewToFun S       = Fun 3 Ess mempty
 askewToFun K       = Fun 2 Kay mempty
 askewToFun E       = Fun 2 (Enh 1) mempty
@@ -426,7 +428,7 @@ reduce !no !xs = do
     (M (MD (Dash.Cn n)) _ []) ->
       join (kVV <$> (kVVn x (drop 2 $ toList xs)) <*> pure y)
 
-    (M (MD (Dash.In 1)) _ []) -> toList xs & \case
+    (M (MD (Dash.In _)) _ []) -> toList xs & \case
 --    Eye _ -> toList xs & \case
       []     -> error "impossible"
       [ v ]  -> pure v
@@ -444,7 +446,7 @@ reduce !no !xs = do
 
     Jut j -> execJetN j xs
 
-    (M _ _ _) -> error "todo: finish m"
+    (M x _ _) -> error ("todo: finish M (" ++ show x ++ ")")
 
   -- putStrLn ("  in: ")
   -- putStrLn (indent (pack (ppShow fun)))

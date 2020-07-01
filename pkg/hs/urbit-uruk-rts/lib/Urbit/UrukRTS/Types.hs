@@ -112,7 +112,7 @@ instance Show Jet where
 data Match
   = MS !Exp.SingJet
   | MD !Exp.DataJet
- deriving (Eq, Ord, Generic, Hashable, NFData)
+ deriving (Show, Eq, Ord, Generic, Hashable, NFData)
 
 
 data Node
