@@ -209,7 +209,7 @@
         %all
       =/  keys  (scry-for resources:store /keys)
       :_  state
-      :-  (give con [%graph-view-update !>([%0 [%keys keys]])])
+      :-  (give con [%graph-update !>([%0 now.bowl [%keys keys]])])
       %+  turn  ~(tap in keys)
       |=  [=ship =term]
       (give con [%graph-update !>((add-graph ship term))])
@@ -218,22 +218,22 @@
       :_  state
       :_  ~
       %+  give  con
-      :-  %graph-view-update
-      !>([%0 [%keys (scry-for resources:store /keys)]])
+      :-  %graph-update
+      !>([%0 now.bowl [%keys (scry-for resources:store /keys)]])
     ::
         %tags
       :_  state
       :_  ~
       %+  give  con
-      :-  %graph-view-update
-      !>([%0 [%tags (scry-for (set term) /tags)]])
+      :-  %graph-update
+      !>([%0 now.bowl [%tags (scry-for (set term) /tags)]])
     ::
         %tag-queries
       :_  state
       :_  ~
       %+  give  con
-      :-  %graph-view-update
-      !>([%0 [%tag-queries (scry-for tag-queries:store /tag-queries)]])
+      :-  %graph-update
+      !>([%0 now.bowl [%tag-queries (scry-for tag-queries:store /tag-queries)]])
     ::
         %graph
       :_  state

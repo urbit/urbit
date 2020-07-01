@@ -80,6 +80,7 @@
         ::
         ::  NOTE: cannot send these updates as pokes
         ::
+        ::  TODO: add ~| error message
         %keys               !!
         %tags               !!
         %tag-queries        !!

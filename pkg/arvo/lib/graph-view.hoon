@@ -4,6 +4,37 @@
 =<  [sur .]
 =,  sur
 |%
+++  enjs
+  =,  enjs:format
+  |%
+  ++  update
+    |=  upd=^update
+    ^-  json
+    ?>  ?=(%0 -.upd)
+    |^  (frond %graph-view-update (pairs ~[(encode +.upd)]))
+    ::
+    ++  encode
+      |=  upd=update-0
+      ^-  [cord json]
+      ?-  -.upd
+          %graph-subset
+        [%graph-subset ~]
+      ::
+          %node
+        [%node ~]
+      ::
+          %post
+        [%post ~]
+      ::
+          %node-children
+        [%node-children ~]
+      ::
+          %node-children-subset
+        [%node-children-subset ~]
+      ==
+    --
+  --
+::
 ++  dejs
   =,  dejs:format
   |%

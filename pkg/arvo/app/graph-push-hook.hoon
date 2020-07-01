@@ -101,6 +101,7 @@
       %remove-graph
     :_  this
     [%give %kick ~[resource+(en-path:resource resource.update)] ~]~
+  ::
       %archive-graph
     :_  this
     [%give %kick ~[resource+(en-path:resource resource.update)] ~]~
