@@ -17,6 +17,7 @@
 ::  natural numbers and that makes it infeasible.
 ::
 =/  to-skewdata
+  ~/  1  to-skewdata
   ..  $
   |=  code
   =/  apply
@@ -27,6 +28,7 @@
 ::  Converts a value from the data form back to raw skew
 ::
 =/  from-skewdata
+  ~/  1  from-skewdata
   ..  $
   |=  data
   =/  ktop  (car data)
@@ -65,6 +67,7 @@
 ::  renders a skewdata as a string of the Uruk for easier reading
 ::
 =/  skewdata-to-string
+  ~/  1  skewdata-to-string
   |=  top
   =/  get
     ..  $
@@ -96,9 +99,14 @@
   ~/  3  foldl
   ..  $
   |=  (fun base rest)
+::  %-  (trace ['foldl start' rest])  |=  ig
   %+  (cas rest)
-    <p ($ fun (fun base (car p)) (cdr p))>
-  <u base>
+    |=  p
+::    %-  (trace 'foldl fun')  |=  ig
+    ($ fun (fun base (car p)) (cdr p))
+  |=  u
+::  %-  (trace 'foldl base')  |=  ig
+  base
 
 
 =/  foldr
@@ -125,7 +133,7 @@
       =/  r2  (cdr vl)
       =/  kl2  (car l2)
       ?:  (eql 'Kay' kl2)
-        %-  (trace ['match-kay' (skewdata-to-string top)])  |=  ig
+::        %-  (trace ['match-kay' (skewdata-to-string top)])  |=  ig
         (rit r2)
       (lef ~)
     (lef ~)
@@ -144,7 +152,7 @@
       (lef l)
         r
       =/  r-vtop  (cdr vtop)
-      %-  (trace ['match-left' (skewdata-to-string top)])  |=  ig
+::      %-  (trace ['match-left' (skewdata-to-string top)])  |=  ig
       (rit (con 'App' (con r r-vtop)))
     ==
   (lef ~)
@@ -163,7 +171,7 @@
     ::
         r
       =/  l-vtop  (car vtop)
-      %-  (trace ['match-right' (skewdata-to-string top)])  |=  ig
+::      %-  (trace ['match-right' (skewdata-to-string top)])  |=  ig
       (rit (con 'App' (con l-vtop r)))
     ==
   (lef ~)
@@ -188,7 +196,7 @@
         =/  x  (cdr vvl)
         =/  kl3  (car l3)
         ?:  (eql 'Ess' kl3)
-          %-  (trace ['match-ess' (skewdata-to-string top)])  |=  ig
+::          %-  (trace ['match-ess' (skewdata-to-string top)])  |=  ig
           (rit (con 'App' (con (con 'App' (con x z)) (con 'App' (con y z)))))
         (lef ~)
       (lef ~)
@@ -239,6 +247,7 @@
         rfst
       (rit (app rfst snd))
     ==
+::  %-  (trace 'from-list-form')  |=  ig    
   (foldl append (lef ~) list)
 
 
@@ -251,6 +260,7 @@
 ::  todo: list length should be in the standard library
 ::
 =/  lent
+  ~/  1  lent
   ..  $
   |=  n
   %+  (cas n)
@@ -261,6 +271,7 @@
 ::  if this is a jet argument count.
 ::
 =/  m-e-count-arguments
+  ~/  1  m-e-count-arguments
   ..  $
   |=  (count l)
   %+  (cas l)
@@ -276,6 +287,7 @@
 ::  unpack [tag body rest], returning (rit (con body rest)) if valid.
 ::
 =/  m-e-get-jet
+  ~/  1  m-e-get-jet
   ..  $
   |=  top
   %+  (cas top)
@@ -293,6 +305,7 @@
 ::  saturated with arguments.
 ::
 =/  match-enhance
+  ~/  1  match-enhance
   |=  top
   =/  as-list  (to-list-form top)
   ?-    (m-e-count-arguments 0 as-list)
@@ -311,13 +324,14 @@
       =/  xs        (cdr r)
       =/  xs-len    (lent xs)
       ?:  (eql n xs-len)
-        %-  (trace ['match-enhance' (skewdata-to-string top)])  |=  ig
+::        %-  (trace ['match-enhance' (skewdata-to-string top)])  |=  ig
         (rit (foldl app jet-body xs))
       (lef ~)
     ==
   ==
 
 =/  match-switch
+  ~/  1  match-switch
   |=  top
   =/  ktop  (car top)
   ?:  (eql 'App' ktop)
@@ -353,22 +367,22 @@
               ?:  (eql 'Dub' kl6)
                 =/  kc  (car c)
                 ?:  (eql 'App' kc)
-                  %-  (trace ['match-dub-app' a])  |=  ig
+::                  %-  (trace ['match-dub-app' a])  |=  ig
                   =/  vc  (cdr c)
                   =/  x   (car vc)
                   =/  y   (cdr vc)
                   (rit (app (app a x) y))
                 ?:  (eql 'Ess' kc)
-                  %-  (trace ['match-dub-ess' s])  |=  ig
+::                  %-  (trace ['match-dub-ess' s])  |=  ig
                   (rit s)
                 ?:  (eql 'Kay' kc)
-                  %-  (trace ['match-dub-kay' k])  |=  ig
+::                  %-  (trace ['match-dub-kay' k])  |=  ig
                   (rit k)
                 ?:  (eql 'Enh' kc)
-                  %-  (trace ['match-dub-enh' e])  |=  ig
+::                  %-  (trace ['match-dub-enh' e])  |=  ig
                   (rit e)
                 ?:  (eql 'Dub' kc)
-                  %-  (trace ['match-dub-dub' w])  |=  ig
+::                  %-  (trace ['match-dub-dub' w])  |=  ig
                   (rit w)
                 (lef ~)
               (lef ~)
@@ -388,6 +402,7 @@
 ::  representation.
 ::
 =/  reduce
+  ~/  1  reduce
   ..  $
   ::  top: a cons cell of a
   |=  top
@@ -432,6 +447,7 @@
 ::  eval: perform step evaluation until no more are possible.
 ::
 =/  eval
+  ~/  1  eval
   ..  $
   |=  x
   ?-    (reduce x)
@@ -489,10 +505,11 @@
 =/  three  (to-skewdata 3)
 =/  four   (to-skewdata 4)
 =/  dub-check-k  (app (app (app (app (app (app dub zero) one) two) three) four) ess)
-::(from-skewdata (eval dub-check-k))
+::  (eval dub-check-k)
+::  (from-skewdata (eval dub-check-k))
 
 
 :: +mock: returns (lef err) or (rit result) when passed fun and a list of args.
 ::
 =/  seq-false-tag-raw  (E E K (S K))
-(mock seq-false-tag-raw (lcon 8 (lcon 2 lnil)))
+(mock seq-false-tag-raw (lcon 8 (lcon 3 lnil)))

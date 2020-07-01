@@ -68,7 +68,8 @@
 
 module Urbit.UrukRTS where
 
-import ClassyPrelude           hiding (evaluate, fromList, seq, toList, try)
+import ClassyPrelude           hiding (evaluate, fromList, length, seq, toList,
+                                try)
 import Control.Monad.Primitive
 #if !defined(__GHCJS__)
 import Data.Flat
@@ -89,7 +90,7 @@ import Data.Function         ((&))
 import Data.Time.Clock.POSIX (POSIXTime, getPOSIXTime)
 import GHC.Exts              (fromList, toList)
 import Numeric.Natural       (Natural)
-import Prelude               (foldl, (!!))
+import Prelude               (foldl, length, (!!))
 import Text.Show.Pretty      (pPrint, ppShow)
 
 import qualified Data.ByteString           as BS
@@ -444,7 +445,7 @@ reduce !no !xs = do
 
     Iff   -> dIff x y z
 
-    Jut j -> execJetN j xs
+    Jut j -> trace ("Executing " ++ (show (jName j))) $ execJetN j xs
 
     (M x _ _) -> error ("todo: finish M (" ++ show x ++ ")")
 
@@ -457,6 +458,8 @@ reduce !no !xs = do
  where
   v         = indexSmallArray xs
   (x, y, z) = (v 0, v 1, v 2)
+
+
 
 kFV :: Fun -> Val -> IO Val
 {-# INLINE kFV #-}
@@ -672,12 +675,17 @@ dLet :: Val -> Val -> IO Val
 {-# INLINE dLet #-}
 dLet x k = kVV k x
 
+-- It is now a recurring issue where there's confusion between the Fun and the
+-- Val implementations, which makes the pattern matching harder. What do?
 dCas :: Val -> Val -> Val -> IO Val
 {-# INLINE dCas #-}
 dCas (VLef x) l r = kVV l x
 dCas (VRit x) l r = kVV r x
+dCas (VFun (Fun 2 LefC c)) l r | length c == 1 = kVV l (getCloN c 0)
+dCas (VFun (Fun 2 RitC c)) l r | length c == 1 = kVV r (getCloN c 0)
 dCas (VLis (x:xs)) l r = kVV l (VCon x (VLis xs))
 dCas (VLis [])     l r = kVV r VUni               -- technically could happen
+dCas (VFun (Fun 2 LConC c)) l r | length c == 2 = kVV l (VCon (getCloN c 0) (getCloN c 1))
 dCas (VFun (Fun 2 LNil mempty)) l r = kVV r VUni -- the main loop termination
 dCas (VFun (Fun 2 (Lis []) mempty)) l r = kVV r VUni -- the main loop termination
 dCas c        _ _ = do
@@ -766,12 +774,33 @@ dTurn y _          = throwIO (TypeError ("turn-not-list: " ++ (tshow y)))
 dWeld :: Val -> Val -> IO Val
 {-# INLINE dWeld #-}
 dWeld (VLis x             ) (VLis y             ) = pure $ VLis (x ++ y)
+-- TODO: Figure out why things haven't been reduced to data types by this point. The per
+dWeld (VFun (Fun 2 LConC l)) (VFun (Fun 2 LConC r)) =
+  pure $ VLis (lconToVLis l ++ lconToVLis r)
+dWeld (VFun (Fun 2 LConC l)) (VFun (Fun 2 LNil _)) =
+  pure $ VLis $ lconToVLis l
+dWeld (VFun (Fun 2 LNil _)) (VFun (Fun 2 LConC r)) =
+  pure $ VLis $ lconToVLis r
+dWeld (VLis a) (VFun (Fun 2 LConC r)) =
+  pure $ VLis $ a ++ lconToVLis r
+dWeld (VFun (Fun 2 LConC l)) (VLis b) =
+  pure $ VLis $ lconToVLis l ++ b
 -- TODO: Make the nil case handling not so ugly.
 dWeld (VFun (Fun 2 LNil _)) (VFun (Fun 2 LNil _)) = pure $ VLis []
 dWeld (VLis x             ) (VFun (Fun 2 LNil _)) = pure $ VLis x
 dWeld (VFun (Fun 2 LNil _)) (VLis y             ) = pure $ VLis y
 dWeld a                     b                     = throwIO
   (TypeError ("dWeld-not-lists: a=" ++ (tshow a) ++ ", b=" ++ (tshow b)))
+
+lconToVLis :: CloN -> [Val]
+lconToVLis clon = do
+  let v1 = getCloN clon 0
+  let v2 = getCloN clon 1
+  case v2 of
+    VUni                          -> [v1]
+    VCon x (VFun (Fun 2 LConC y)) -> [v1] ++ [x] ++ lconToVLis y
+    VLis y                        -> [v1] ++ y
+    y                             -> error ("Couldn't unpack raw lcon format" ++ show y)
 
 pak :: Val -> IO Val
 {-# INLINE pak #-}
@@ -799,10 +828,24 @@ dub :: Val -> Val -> Val -> Val -> Val -> Val -> IO Val
 {-# INLINE dub #-}
 dub a s k e w val = case (valToAskew val) of
   A x y -> kVVV a (VFun $ askewToFun x) (VFun $ askewToFun y)
+  -- A x y -> do
+  --   l <- reduceFun $ askewToFun x
+  --   r <- reduceFun $ askewToFun y
+  --   kVVV a l r
+  --   -- let l = askewToFun x
+  --   -- let r = askewToFun y
+  --   -- traceM $ "l: " ++ (show l)
+  --   -- traceM $ "r: " ++ (show r)
+  --   -- kVVV a (VFun $ l) (VFun $ r)
   S     -> pure s
   K     -> pure k
   E     -> pure e
   W     -> pure w
+  -- where
+  --   reduceFun f@Fun{..} = if fNeed == length fArgs
+  --                         then trace ("Reducing " <> show fHead) $ reduce fHead fArgs
+  --                         else trace ("Skipping " <> show fHead) $ pure (VFun f)
+
 
 add :: Val -> Val -> IO Val
 {-# INLINE add #-}
@@ -996,14 +1039,16 @@ eql x        y        = do
 car :: Val -> IO Val
 {-# INLINE car #-}
 car (VCon x _) = pure x
+car (VFun (Fun 1 ConC xs)) | length xs == 2 = pure (getCloN xs 0)
 car v          = do
   print v
   throwIO (TypeError "car-not-con")
 
 cdr :: Val -> IO Val
 {-# INLINE cdr #-}
-cdr (VCon _ y) = pure y
-cdr _          = throwIO (TypeError "cdr-not-con")
+cdr (VCon _ y)             = pure y
+cdr (VFun (Fun 1 ConC xs)) | length xs == 2 = pure (getCloN xs 1)
+cdr _                      = throwIO (TypeError "cdr-not-con")
 
 -- Interpreter -----------------------------------------------------------------
 
@@ -1160,12 +1205,16 @@ execJetBody !j !ref !reg !setReg = go (jFast j)
     CAS i x l r -> go x >>= \case
       VLef lv -> setReg i lv >> go l
       VRit rv -> setReg i rv >> go r
+      (VFun (Fun 2 LefC c)) | length c == 1 -> setReg i (getCloN c 0) >> go l
+      (VFun (Fun 2 RitC c)) | length c == 1 -> setReg i (getCloN c 0) >> go r
       -- TODO: Move from con cell construction to curry so |=((h t) ...) works?
       VLis (x:xs) -> setReg i (VCon x (VLis xs)) >> go l
       VLis []     -> setReg i VUni >> go r
+      VFun (Fun 2 LConC c) | length c == 2 ->
+        setReg i (VCon (getCloN c 0) (getCloN c 1)) >> go l
       VFun (Fun 2 LNil mempty) -> setReg i VUni >> go r
       VFun (Fun 2 (Lis []) mempty) -> setReg i VUni >> go r
-      _       -> throwIO (TypeError "cas-not-sum")
+      x       -> throwIO (TypeError $ "cas-not-sum: " ++ (tshow x))
 
 -- Profiling -------------------------------------------------------------------
 

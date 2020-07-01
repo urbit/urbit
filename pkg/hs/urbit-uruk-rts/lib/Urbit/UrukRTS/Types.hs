@@ -54,7 +54,6 @@ addCloN xs x = xs <> GHC.Exts.fromList [x] -- TODO Slow
 mkClo1 :: Val -> CloN
 mkClo1 x = GHC.Exts.fromList [x]
 
-
 -- Arguments -------------------------------------------------------------------
 
 type ArgN = SmallArray (IO Val)
@@ -226,8 +225,8 @@ instance Show Node where
 
     Box v       -> "BOX(" <> show v <> ")"
 
-    M (MD x) _ _ -> show x
-    M (MS x) _ _ -> show x
+    M (MD x) _ _ -> "MD(" <> show x <> ")"
+    M (MS x) _ _ -> "MS(" <> show x <> ")"
 
 
 data Fun = Fun
@@ -238,10 +237,10 @@ data Fun = Fun
  deriving (Eq, Ord, Generic, Hashable, NFData)
 
 instance Show Fun where
-  show (Fun _ h args) = if sizeofSmallArray args == 0
+  show (Fun c h args) = if sizeofSmallArray args == 0
     then show h
     else mconcat
-      ["(", show h <> " ", intercalate " " (show <$> GHC.Exts.toList args), ")"]
+      ["(", show c <> show h <> " ", intercalate " " (show <$> GHC.Exts.toList args), ")"]
 
 
 newtype Hash = Hash { unHash :: ByteString }
