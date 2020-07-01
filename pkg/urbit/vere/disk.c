@@ -68,7 +68,7 @@ _disk_commit_done(struct _cd_save* req_u)
   c3_o     ret_o = req_u->ret_o;
 
   if ( c3n == ret_o ) {
-    log_u->cb_u.write_bail_f(log_u->cb_u.vod_p, eve_d + (len_d - 1ULL));
+    log_u->cb_u.write_bail_f(log_u->cb_u.ptr_v, eve_d + (len_d - 1ULL));
 
 #ifdef VERBOSE_DISK
     if ( 1ULL == len_d ) {
@@ -83,7 +83,7 @@ _disk_commit_done(struct _cd_save* req_u)
   }
   else {
     log_u->dun_d = eve_d + (len_d - 1ULL);
-    log_u->cb_u.write_done_f(log_u->cb_u.vod_p, log_u->dun_d);
+    log_u->cb_u.write_done_f(log_u->cb_u.ptr_v, log_u->dun_d);
 
 #ifdef VERBOSE_DISK
     if ( 1ULL == len_d ) {
@@ -354,16 +354,16 @@ _disk_read_done_cb(uv_timer_t* tim_u)
   red_u->ent_u = 0;
   red_u->ext_u = 0;
 
-  log_u->cb_u.read_done_f(log_u->cb_u.vod_p, pay_u);
+  log_u->cb_u.read_done_f(log_u->cb_u.ptr_v, pay_u);
   _disk_read_close(red_u);
 }
 
 /* _disk_read_one_cb(): lmdb read callback, invoked for each event in order
 */
 static c3_o
-_disk_read_one_cb(void* vod_p, c3_d eve_d, size_t val_i, void* val_p)
+_disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
 {
-  u3_read* red_u = vod_p;
+  u3_read* red_u = ptr_v;
   u3_disk* log_u = red_u->log_u;
   u3_fact* tac_u;
 
@@ -425,7 +425,7 @@ _disk_read_start_cb(uv_timer_t* tim_u)
                            red_u->len_d,
                            _disk_read_one_cb) )
   {
-    log_u->cb_u.read_bail_f(log_u->cb_u.vod_p, red_u->eve_d);
+    log_u->cb_u.read_bail_f(log_u->cb_u.ptr_v, red_u->eve_d);
     _disk_read_close(red_u);
   }
   //  finish the read asynchronously
@@ -501,12 +501,12 @@ u3_disk_save_meta(u3_disk* log_u,
   return c3y;
 }
 
-/* _disk_meta_read_cb(): copy [val_p] to atom [vod_p] if present.
+/* _disk_meta_read_cb(): copy [val_p] to atom [ptr_v] if present.
 */
 static void
-_disk_meta_read_cb(void* vod_p, size_t val_i, void* val_p)
+_disk_meta_read_cb(void* ptr_v, size_t val_i, void* val_p)
 {
-  u3_weak* mat = vod_p;
+  u3_weak* mat = ptr_v;
 
   if ( val_p ) {
     *mat = u3i_bytes(val_i, val_p);
@@ -643,6 +643,37 @@ u3_disk_exit(u3_disk* log_u)
   u3_dire_free(log_u->com_u);
 
   c3_free(log_u);
+}
+
+/* u3_disk_info(): print status info.
+*/
+void
+u3_disk_info(u3_disk* log_u)
+{
+  u3l_log("  disk: live=%s, event=%" PRIu64 "\n",
+          ( c3y == log_u->liv_o ) ? "&" : "|",
+          log_u->dun_d);
+
+  {
+    u3_read* red_u = log_u->red_u;
+
+    while ( red_u ) {
+      u3l_log("    read: %" PRIu64 "-%" PRIu64 "\n",
+              red_u->eve_d,
+              (red_u->eve_d + red_u->len_d) - 1);
+    }
+  }
+
+  if ( log_u->put_u.ext_u ) {
+    if ( log_u->put_u.ext_u != log_u->put_u.ent_u ) {
+      u3l_log("    save: %" PRIu64 "-%" PRIu64 "\n",
+              log_u->put_u.ext_u->eve_d,
+              log_u->put_u.ent_u->eve_d);
+    }
+    else {
+      u3l_log("    save: %" PRIu64 "\n", log_u->put_u.ext_u->eve_d);
+    }
+  }
 }
 
 /* u3_disk_init(): load or create pier directories and event log.

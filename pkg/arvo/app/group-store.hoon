@@ -14,10 +14,7 @@
       =groups
   ==
 ::
-+$  diff
-  $%  [%group-update group-update]
-      [%group-initial groups]
-  ==
++$  diff  [%group-update group-update]
 --
 ::
 =|  state-zero
@@ -56,7 +53,7 @@
     |^
     =/  cards=(list card)
       ?+    path  (on-watch:def path)
-          [%all ~]   (give %group-initial !>(groups))
+          [%all ~]   (give %group-update !>([%initial groups]))
           [%updates ~]  ~
           [%keys ~]  (give %group-update !>([%keys ~(key by groups)]))
           [%group *]

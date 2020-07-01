@@ -189,6 +189,7 @@
   |=  diff=permission-update
   ^-  (quip card _state)
   ?-  -.diff
+      %initial  [~ state]
       %create  [~ state]
       %add     (change-local-permission %add [path who]:diff)
       %remove  (change-local-permission %remove [path who]:diff)
@@ -231,6 +232,7 @@
   |=  diff=permission-update
   ^-  (quip card _state)
   ?-  -.diff
+      %initial  [~ state]
       ?(%create %add %remove)
     (change-foreign-permission path.diff diff)
   ::

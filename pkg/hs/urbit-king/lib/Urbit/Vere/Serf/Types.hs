@@ -103,6 +103,7 @@ data SerfExn
   = UnexpectedPlea Noun Text
   | BadPleaAtom Atom
   | BadPleaNoun Noun [Text] Text
+  | PeekBail Goof
   | SerfConnectionClosed
   | SerfHasShutdown
   | BailDuringReplay EventId [Goof]

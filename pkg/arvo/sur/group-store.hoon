@@ -9,7 +9,8 @@
   ==
 ::
 +$  group-update
-  $%  [%keys keys=(set path)]                      :: keys have changed
+  $%  [%initial =groups]
+      [%keys keys=(set path)]                      :: keys have changed
       [%path members=group pax=path]
       group-action
   ==

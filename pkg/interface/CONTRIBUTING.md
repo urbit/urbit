@@ -17,23 +17,25 @@ when you want to make a change to it, `|commit %home`.
 
 ## Contributing to Landscape applications
 
-[nix](https://github.com/NixOS/nix) and `git-lfs` should be installed at
-this point, and have been used to `make build` the project.
+[nix](https://github.com/NixOS/nix) and `git-lfs` should be installed at this
+point, and have been used to `make build` the project.
 
-Designing interfaces within urbit/urbit additionally requires that the [instructions](https://urbit.org/using/develop/#creating-a-development-ship) for fake `~zod` initialization have been followed. 
+Designing interfaces within urbit/urbit additionally requires that the
+[instructions](https://urbit.org/using/develop/#creating-a-development-ship) for
+fake `~zod` initialization have been followed.
 
 Once your fake ship is running and you see
 ```
 ~zod:dojo>
 ```
-in your console, be sure to 'mount' your ship's working state (what we call 'desks') to your local machine via the 
-`|mount %` command. This will ensure that code you modify locally can be 
-committed to your ship and initialized.
+in your console, be sure to 'mount' your ship's working state (what we call
+'desks') to your local machine via the `|mount %` command. This will ensure that
+code you modify locally can be committed to your ship and initialized.
 
-To begin developing Urbit's frontend, you'll need to sync your 
-currently-running fake ship with the urbit/urbit repo's code. Find the 
-`urbitrc-sample` file found at `urbit/pkg/interface/urbitrc-sample` (in this folder). Open it 
-using your preferred code editor and you should see the following:
+To begin developing Urbit's frontend, you'll need to sync your currently-running
+fake ship with the urbit/urbit repo's code. Find the `urbitrc-sample` file found
+at `urbit/pkg/interface/config/urbitrc-sample`. Open it using your preferred
+code editor and you should see the following:
 
 ```
 module.exports = {
@@ -43,14 +45,15 @@ module.exports = {
 };
 ```
 
-Edit the path between quotes `/Users/user/ships/zod/home` with wherever your 
-fake ship is located on your machine. This zod location path *must* end in `../home` to correctly intitalize 
-any code you write. Any code edited within the `urbit/urbit`will now be able to be synced to your running 
-ship, and previewed in the browser.
+Edit the path between quotes `/Users/user/ships/zod/home` with wherever your
+fake ship is located on your machine. This zod location path *must* end in
+`../home` to correctly intitalize any code you write. Save the file as `urbitrc`
+inside that same folder. Any code edited within the `urbit/urbit` will now be
+able to be synced to your running ship, and previewed in the browser.
 
 To set up urbit's Javascript environment, you'll need node (ideally installed
-via [nvm](https://github.com/nvm-sh/nvm)) and gulp, which will be installed 
-via node.
+via [nvm](https://github.com/nvm-sh/nvm)) and webpack, which will be installed via
+node.
 
 Perform the following steps to get the above set up for urbit's apps:
 
@@ -58,42 +61,30 @@ Perform the following steps to get the above set up for urbit's apps:
 ## go to urbit's interface directory and install the required tooling
 cd urbit/pkg/interface
 npm install
-npm install -g gulp
 
-## assuming you are still in `urbit/pkg/interface`,
-## open a single app directory, and watch it for changes
-cd contacts/
-gulp watch
+## Start watching the entire directory for changes
+npm run build:dev
 ```
 
-Any changes made to any files within the `/contacts` directory will now 
-trigger a gulp rebuild when saved. To sync these changes to your running 
-ship, enter dojo and input the following:
+Any changes made to any files within the `/pkg/interface` directory will now trigger
+a gulp rebuild when saved. To sync these changes to your running ship, enter
+dojo and input the following:
 
 ```
 |commit %home
 ```
 
-Your urbit should take a moment to process the changes, and will emit a
-`>=`. Refreshing your browser will display the newly-rendered interface.
+Your urbit should take a moment to process the changes, and will emit a `>=`.
+Refreshing your browser will display the newly-rendered interface.
 
-Once you are done editing code, and wish to commit changes to git, stop
-`gulp watch` and run `gulp bundle-prod` to ensure you are only 
-committing 1 minified line of compiled js and not 3000+.
+Once you are done editing code, and wish to commit changes to git, stop your
+`build:dev` process. Do not commit compiled code, but submit the source code
+for review.
 
-An additional note:
+Please also ensure your pull request fits our standards for [Git
+hygiene][contributing].
 
-As compiled Javascript is not present in the urbit/urbit repository,
-you'll need to run `.sh/build-interface` in order to see changes that
-have been committed to any given branch you might be working on. It's
-always a good idea to run the above command before starting development
-to ensure you can see collaborators' changes.
-
-Please also ensure your pull request fits our standards for
-[Git hygiene][contributing].
-
-[contributing]: /CONTRIBUTING.md#git-practice
-[arvo]: /pkg/arvo
+[contributing]: /CONTRIBUTING.md#git-practice [arvo]: /pkg/arvo
 [interface]:/pkg/interface
 
 ## Linting
@@ -109,8 +100,8 @@ $ npm run lint
 To use the linter, run npm scripts
 ```bash
 $ npm run lint # lints all files in `interface`
-$ npm run lint-file ./chat/**/*.js # lints all .js files in `interface/chat`
-$ npm run lint-file ./chat/src/index.js # lints a single chosen file
+$ npm run lint-file ./src/apps/chat/**/*.js # lints all .js files in `interface/chat`
+$ npm run lint-file ./src/chat/app.js # lints a single chosen file
 ```
 
 ### Gall
@@ -128,8 +119,7 @@ documentation for its everyday use -- just create a repo [using its
 template][template], install and then start it, and you'll soon be up and
 running.
 
-[cla]: https://github.com/urbit/create-landscape-app
-[template]: https://github.com/urbit/create-landscape-app/generate
-[gall]: https://urbit.org/docs/learn/arvo/gall/
-[chat]: /pkg/arvo/app/chat.hoon
+[cla]: https://github.com/urbit/create-landscape-app [template]:
+https://github.com/urbit/create-landscape-app/generate [gall]:
+https://urbit.org/docs/learn/arvo/gall/ [chat]: /pkg/arvo/app/chat-view.hoon
 [publish]: /pkg/arvo/app/publish.hoon

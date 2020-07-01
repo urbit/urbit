@@ -23,24 +23,27 @@
                 [%save eve=@]
                 [%pack eve=@]
         ==  ==
-        [%peek now=date lyc=gang pat=path]
-        [%play eve=@ lit=(list ?((pair date ovum) *))]
-        [%work job=(pair date ovum)]
+        [%peek mil=@ now=@da lyc=gang pat=path]
+        [%play eve=@ lit=(list ?((pair @da ovum) *))]
+        [%work mil=@ job=(pair @da ovum)]
     ==
   ::  +plea: from serf to king
   ::
   +$  plea
     $%  [%live ~]
-        [%ripe [pro=@ hon=@ nok=@] eve=@ mug=@]
+        [%ripe [pro=%1 hon=@ nok=@] eve=@ mug=@]
         [%slog pri=@ ?(cord tank)]
-        [%peek dat=(unit (cask))]
+        $:  %peek
+            $%  [%done dat=(unit (cask))]
+                [%bail dud=goof]
+        ==  ==
         $:  %play
             $%  [%done mug=@]
                 [%bail eve=@ mug=@ dud=goof]
         ==  ==
         $:  %work
             $%  [%done eve=@ mug=@ fec=(list ovum)]
-                [%swap eve=@ mug=@ job=(pair date ovum) fec=(list ovum)]
+                [%swap eve=@ mug=@ job=(pair @da ovum) fec=(list ovum)]
                 [%bail lud=(list goof)]
         ==  ==
     ==
@@ -112,6 +115,11 @@ data Play
   | PBail PlayBail
  deriving (Show)
 
+data Scry
+  = SDone (Maybe (Term, Noun))
+  | SBail Goof
+ deriving (Show)
+
 data Work
   = WDone EventId Mug FX
   | WSwap EventId Mug (Wen, Noun) FX
@@ -120,22 +128,23 @@ data Work
 
 data Writ
   = WLive Live
-  | WPeek Wen Gang Path
+  | WPeek Atom Wen Gang Path
   | WPlay EventId [Noun]
-  | WWork Wen Ev
+  | WWork Atom Wen Ev
  deriving (Show)
 
 data Plea
   = PLive ()
   | PRipe SerfInfo
   | PSlog Slog
-  | PPeek (Maybe (Term, Noun))
+  | PPeek Scry
   | PPlay Play
   | PWork Work
  deriving (Show)
 
 deriveNoun ''Live
 deriveNoun ''Play
+deriveNoun ''Scry
 deriveNoun ''Work
 deriveNoun ''Writ
 deriveNoun ''Plea
@@ -238,8 +247,10 @@ recvWork serf = do
 recvPeek :: Serf -> IO (Maybe (Term, Noun))
 recvPeek serf = do
   recvPleaHandlingSlog serf >>= \case
-    PPeek peek -> pure peek
-    plea       -> throwIO (UnexpectedPlea (toNoun plea) "expecting %peek")
+    PPeek (SDone peek) -> pure peek
+    -- XX produce error
+    PPeek (SBail dud)  -> throwIO (PeekBail dud)
+    plea               -> throwIO (UnexpectedPlea (toNoun plea) "expecting %peek")
 
 
 -- Request-Response Points -- These don't touch the lock -----------------------
@@ -256,7 +267,7 @@ sendCompactionRequest serf eve = do
 
 sendScryRequest :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
 sendScryRequest serf w g p = do
-  sendWrit serf (WPeek w g p)
+  sendWrit serf (WPeek 0 w g p)
   recvPeek serf
 
 sendShutdownRequest :: Serf -> Atom -> IO ()
@@ -290,7 +301,9 @@ start (Config exePax pierPath flags onSlog onStdr onDead) = do
  where
   diskKey = ""
   config  = show (compileFlags flags)
-  args    = [pierPath, diskKey, config]
+  rock    = "0"      -- XX support loading from rock
+  cache   = "50000"  -- XX support memo-cache size
+  args    = [pierPath, diskKey, config, cache, rock]
   pSpec   = (proc exePax args) { std_in  = CreatePipe
                                , std_out = CreatePipe
                                , std_err = CreatePipe
@@ -493,7 +506,7 @@ swim serf = do
     Nothing -> do
       pure (SerfState eve mug)
     Just (wen, evn) -> do
-      io (sendWrit serf (WWork wen evn))
+      io (sendWrit serf (WWork 0 wen evn))
       io (recvWork serf) >>= \case
         WBail goofs -> do
           throwIO (BailDuringReplay eve goofs)
@@ -636,7 +649,7 @@ processWork serf maxSize q onResp spin = do
         now <- Time.now
         let cb = onResp now evErr
         atomically $ modifyTVar' vInFlight (:|> (ev, cb))
-        sendWrit serf (WWork now ev)
+        sendWrit serf (WWork 0 now ev)
         loop vInFlight vDone
 
 {-|

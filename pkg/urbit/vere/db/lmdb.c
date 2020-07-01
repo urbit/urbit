@@ -179,7 +179,7 @@ u3_lmdb_gulf(MDB_env* env_u, c3_d* low_d, c3_d* hig_d)
 */
 c3_o
 u3_lmdb_read(MDB_env* env_u,
-             void*    vod_p,
+             void*    ptr_v,
              c3_d     eve_d,
              c3_d     len_d,
              c3_o   (*read_f)(void*, c3_d, size_t, void*))
@@ -268,7 +268,7 @@ u3_lmdb_read(MDB_env* env_u,
 
         //  invoke read callback with [val_u]
         //
-        if ( c3n == read_f(vod_p, cur_d, val_u.mv_size, val_u.mv_data) ) {
+        if ( c3n == read_f(ptr_v, cur_d, val_u.mv_size, val_u.mv_data) ) {
           ret_o = c3n;
           break;
         }
@@ -365,7 +365,7 @@ u3_lmdb_save(MDB_env* env_u,
 */
 void
 u3_lmdb_read_meta(MDB_env*    env_u,
-                  void*       vod_p,
+                  void*       ptr_v,
                   const c3_c* key_c,
                   void (*read_f)(void*, size_t, void*))
 {
@@ -378,7 +378,7 @@ u3_lmdb_read_meta(MDB_env*    env_u,
   if ( (ret_w = mdb_txn_begin(env_u, 0, MDB_RDONLY, &txn_u)) ) {
     fprintf(stderr, "lmdb: meta read: txn_begin fail: %s\n",
                     mdb_strerror(ret_w));
-    return read_f(vod_p, 0, 0);
+    return read_f(ptr_v, 0, 0);
   }
 
   //  open the database in the transaction
@@ -387,7 +387,7 @@ u3_lmdb_read_meta(MDB_env*    env_u,
     fprintf(stderr, "lmdb: meta read: dbi_open fail: %s\n",
                     mdb_strerror(ret_w));
     mdb_txn_abort(txn_u);
-    return read_f(vod_p, 0, 0);
+    return read_f(ptr_v, 0, 0);
   }
 
   //  read by string key, invoking callback with result
@@ -398,10 +398,10 @@ u3_lmdb_read_meta(MDB_env*    env_u,
     if ( (ret_w = mdb_get(txn_u, mdb_u, &key_u, &val_u)) ) {
       fprintf(stderr, "lmdb: read failed: %s\n", mdb_strerror(ret_w));
       mdb_txn_abort(txn_u);
-      return read_f(vod_p, 0, 0);
+      return read_f(ptr_v, 0, 0);
     }
     else {
-      read_f(vod_p, val_u.mv_size, val_u.mv_data);
+      read_f(ptr_v, val_u.mv_size, val_u.mv_data);
 
       //  read-only transactions are aborted when complete
       //
