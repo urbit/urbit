@@ -128,15 +128,16 @@ u3_gift_free(u3_gift *gif_u)
 /* u3_ovum_init: initialize an unlinked potential event
 */
 u3_ovum*
-u3_ovum_init(c3_l     msc_l,
+u3_ovum_init(c3_w     mil_w,
              u3_noun    tar,
              u3_noun    wir,
              u3_noun    cad)
 {
   u3_ovum* egg_u = c3_malloc(sizeof(*egg_u));
   egg_u->car_u = 0;
-  egg_u->vod_p = 0;
-  egg_u->msc_l = msc_l;
+  egg_u->try_w = 0;
+  egg_u->ptr_v = 0;
+  egg_u->mil_w = mil_w;
   egg_u->tar   = tar;
   egg_u->wir   = wir;
   egg_u->cad   = cad;
@@ -165,4 +166,60 @@ u3_ovum_free(u3_ovum *egg_u)
   u3z(egg_u->cad);
 
   c3_free(egg_u);
+}
+
+/* u3_mcut_char(): measure/cut character.
+*/
+c3_w
+u3_mcut_char(c3_c* buf_c, c3_w len_w, c3_c chr_c)
+{
+  if ( buf_c ) {
+    buf_c[len_w] = chr_c;
+  }
+  return len_w + 1;
+}
+
+/* u3_mcut_cord(): measure/cut cord.
+*/
+c3_w
+u3_mcut_cord(c3_c* buf_c, c3_w len_w, u3_noun san)
+{
+  c3_w ten_w = u3r_met(3, san);
+
+  if ( buf_c ) {
+    u3r_bytes(0, ten_w, (c3_y *)(buf_c + len_w), san);
+  }
+  u3z(san);
+  return (len_w + ten_w);
+}
+
+/* u3_mcut_path(): measure/cut cord list.
+*/
+c3_w
+u3_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax)
+{
+  u3_noun axp = pax;
+
+  while ( u3_nul != axp ) {
+    u3_noun h_axp = u3h(axp);
+
+    len_w = u3_mcut_cord(buf_c, len_w, u3k(h_axp));
+    axp = u3t(axp);
+
+    if ( u3_nul != axp ) {
+      len_w = u3_mcut_char(buf_c, len_w, sep_c);
+    }
+  }
+  u3z(pax);
+  return len_w;
+}
+
+/* u3_mcut_host(): measure/cut host.
+*/
+c3_w
+u3_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot)
+{
+  len_w = u3_mcut_path(buf_c, len_w, '.', u3kb_flop(u3k(hot)));
+  u3z(hot);
+  return len_w;
 }

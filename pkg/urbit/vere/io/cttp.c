@@ -62,6 +62,7 @@
   typedef struct _u3_cttp {
     u3_auto          car_u;             //  driver
     u3_creq*         ceq_u;             //  request list
+    uv_async_t       nop_u;             //  unused handle (async close)
     h2o_timeout_t    tim_u;             //  request timeout
     h2o_http1client_ctx_t               //
                      ctx_u;             //  h2o client ctx
@@ -339,62 +340,6 @@ _cttp_cres_fire_body(u3_cres* res_u, u3_hbod* bod_u)
   }
 }
 
-/* _cttp_mcut_char(): measure/cut character.
-*/
-static c3_w
-_cttp_mcut_char(c3_c* buf_c, c3_w len_w, c3_c chr_c)
-{
-  if ( buf_c ) {
-    buf_c[len_w] = chr_c;
-  }
-  return len_w + 1;
-}
-
-/* _cttp_mcut_cord(): measure/cut cord.
-*/
-static c3_w
-_cttp_mcut_cord(c3_c* buf_c, c3_w len_w, u3_noun san)
-{
-  c3_w ten_w = u3r_met(3, san);
-
-  if ( buf_c ) {
-    u3r_bytes(0, ten_w, (c3_y *)(buf_c + len_w), san);
-  }
-  u3z(san);
-  return (len_w + ten_w);
-}
-
-/* _cttp_mcut_path(): measure/cut cord list.
-*/
-static c3_w
-_cttp_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax)
-{
-  u3_noun axp = pax;
-
-  while ( u3_nul != axp ) {
-    u3_noun h_axp = u3h(axp);
-
-    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(h_axp));
-    axp = u3t(axp);
-
-    if ( u3_nul != axp ) {
-      len_w = _cttp_mcut_char(buf_c, len_w, sep_c);
-    }
-  }
-  u3z(pax);
-  return len_w;
-}
-
-/* _cttp_mcut_host(): measure/cut host.
-*/
-static c3_w
-_cttp_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot)
-{
-  len_w = _cttp_mcut_path(buf_c, len_w, '.', u3kb_flop(u3k(hot)));
-  u3z(hot);
-  return len_w;
-}
-
 /* _cttp_mcut_pork(): measure/cut path/extension.
 */
 static c3_w
@@ -403,10 +348,10 @@ _cttp_mcut_pork(c3_c* buf_c, c3_w len_w, u3_noun pok)
   u3_noun h_pok = u3h(pok);
   u3_noun t_pok = u3t(pok);
 
-  len_w = _cttp_mcut_path(buf_c, len_w, '/', u3k(t_pok));
+  len_w = u3_mcut_path(buf_c, len_w, '/', u3k(t_pok));
   if ( u3_nul != h_pok ) {
-    len_w = _cttp_mcut_char(buf_c, len_w, '.');
-    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(u3t(h_pok)));
+    len_w = u3_mcut_char(buf_c, len_w, '.');
+    len_w = u3_mcut_cord(buf_c, len_w, u3k(u3t(h_pok)));
   }
   u3z(pok);
   return len_w;
@@ -422,11 +367,11 @@ _cttp_mcut_quay(c3_c* buf_c, c3_w len_w, u3_noun quy)
 
   while ( u3_nul != quy ) {
     if ( c3y == fir_o ) {
-      len_w = _cttp_mcut_char(buf_c, len_w, '?');
+      len_w = u3_mcut_char(buf_c, len_w, '?');
       fir_o = c3n;
     }
     else {
-      len_w = _cttp_mcut_char(buf_c, len_w, '&');
+      len_w = u3_mcut_char(buf_c, len_w, '&');
     }
 
     {
@@ -435,9 +380,9 @@ _cttp_mcut_quay(c3_c* buf_c, c3_w len_w, u3_noun quy)
       u3x_cell(quy, &i_quy, &t_quy);
       u3x_cell(i_quy, &pi_quy, &qi_quy);
 
-      len_w = _cttp_mcut_cord(buf_c, len_w, u3k(pi_quy));
-      len_w = _cttp_mcut_char(buf_c, len_w, '=');
-      len_w = _cttp_mcut_cord(buf_c, len_w, u3k(qi_quy));
+      len_w = u3_mcut_cord(buf_c, len_w, u3k(pi_quy));
+      len_w = u3_mcut_char(buf_c, len_w, '=');
+      len_w = u3_mcut_cord(buf_c, len_w, u3k(qi_quy));
 
       quy = t_quy;
     }
@@ -455,7 +400,7 @@ _cttp_mcut_url(c3_c* buf_c, c3_w len_w, u3_noun pul)
   u3_noun q_pul = u3h(u3t(pul));
   u3_noun r_pul = u3t(u3t(pul));
 
-  len_w = _cttp_mcut_char(buf_c, len_w, '/');
+  len_w = u3_mcut_char(buf_c, len_w, '/');
   len_w = _cttp_mcut_pork(buf_c, len_w, u3k(q_pul));
 
   if ( u3_nul != r_pul ) {
@@ -494,10 +439,10 @@ _cttp_creq_url(u3_noun pul)
 static c3_c*
 _cttp_creq_host(u3_noun hot)
 {
-  c3_w  len_w = _cttp_mcut_host(0, 0, u3k(hot));
+  c3_w  len_w = u3_mcut_host(0, 0, u3k(hot));
   c3_c* hot_c = c3_malloc(1 + len_w);
 
-  _cttp_mcut_host(hot_c, 0, hot);
+  u3_mcut_host(hot_c, 0, hot);
   hot_c[len_w] = 0;
 
   return hot_c;
@@ -776,7 +721,7 @@ _cttp_http_client_receive(u3_creq* ceq_u, c3_w sas_w, u3_noun mes, u3_noun uct)
                     ceq_u->num_l,
                     u3nq(u3i_string("start"), u3nc(sas_w, mes), uct, c3y));
 
-  u3_auto_plan(&ceq_u->ctp_u->car_u, 0, c3__i, wir, cad);
+  u3_auto_plan(&ceq_u->ctp_u->car_u, u3_ovum_init(0, c3__i, wir, cad));
 }
 
 /* _cttp_creq_fail(): dispatch error response
@@ -1075,7 +1020,7 @@ _cttp_io_talk(u3_auto* car_u)
   u3_noun wir = u3nt(u3i_string("http-client"), u3k(u3A->sen), u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
-  u3_auto_plan(car_u, 0, c3__i, wir, cad);
+  u3_auto_plan(car_u, u3_ovum_init(0, c3__i, wir, cad));
 }
 
 /* _cttp_io_kick(): apply effects
@@ -1102,12 +1047,27 @@ _cttp_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
   return ret_o;
 }
 
+/* _cttp_io_exit_cb(): free cttp.
+*/
+static void
+_cttp_io_exit_cb(uv_handle_t* han_u)
+{
+  u3_cttp* ctp_u = han_u->data;
+
+  SSL_CTX_free(ctp_u->tls_u);
+  c3_free(ctp_u);
+}
+
 /* _cttp_io_exit(): shut down cttp.
 */
 static void
 _cttp_io_exit(u3_auto* car_u)
 {
   u3_cttp* ctp_u = (u3_cttp*)car_u;
+
+  //  close unused handle to free [ctp_u] after h2o is done
+  //
+  uv_close((uv_handle_t*)&ctp_u->nop_u, _cttp_io_exit_cb);
 
   //  cancel requests
   //
@@ -1121,8 +1081,6 @@ _cttp_io_exit(u3_auto* car_u)
   }
 
   h2o_timeout_dispose(u3L, &ctp_u->tim_u);
-  SSL_CTX_free(ctp_u->tls_u);
-  c3_free(ctp_u);
 }
 
 /* u3_cttp_io_init(): initialize http client I/O.
@@ -1135,6 +1093,11 @@ u3_cttp_io_init(u3_pier* pir_u)
   //  link to event loop
   //
   ctp_u->ctx_u.loop = u3L;
+
+  //  unused handle for async close
+  //
+  uv_async_init(u3L, &ctp_u->nop_u, 0);
+  ctp_u->nop_u.data = ctp_u;
 
   //  link to initialized request timeout
   //

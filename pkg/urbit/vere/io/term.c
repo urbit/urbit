@@ -19,14 +19,45 @@ static void     _term_read_cb(uv_stream_t*    tcp_u,
                               const uv_buf_t* buf_u);
 static c3_i     _term_tcsetattr(c3_i, c3_i, const struct termios*);
 
-/* _write(): wraps write(), asserting length
+/* _write(): retry interrupts, continue partial writes, assert errors.
 */
 static void
-_write(c3_i fid_i, const void* buf_v, size_t len)
+_write(c3_i fid_i, const void* buf_v, size_t len_i)
 {
-  if ( len != write(fid_i, buf_v, len) ){
-    u3l_log("write failed\r\n");
-    c3_assert(0);
+  ssize_t ret_i;
+
+  while ( len_i > 0 ) {
+    c3_w lop_w = 0;
+    //  retry interrupt/async errors
+    //
+    do {
+      //  abort pathological retry loop
+    //
+    if ( 100 == ++lop_w ) {
+      fprintf(stderr, "term: write loop: %s\r\n", strerror(errno));
+      return;
+    }
+      ret_i = write(fid_i, buf_v, len_i);
+    }
+    while (  (ret_i < 0)
+          && (  (errno == EINTR)
+             || (errno == EAGAIN)
+             || (errno == EWOULDBLOCK) ));
+
+    //  assert on true errors
+    //
+    //    NB: can't call u3l_log here or we would re-enter _write()
+    //
+    if ( ret_i < 0 ) {
+      fprintf(stderr, "term: write failed %s\r\n", strerror(errno));
+      c3_assert(0);
+    }
+    //  continue partial writes
+    //
+    else {
+      len_i -= ret_i;
+      buf_v += ret_i;
+    }
   }
 }
 
@@ -291,7 +322,7 @@ _term_tcsetattr(c3_i fil_i, c3_i act_i, const struct termios* tms_u)
     //  abort pathological retry loop
     //
     if ( 100 == ++len_w ) {
-      fprintf(stderr, "term: tcsetattr loop\r\n");
+      fprintf(stderr, "term: tcsetattr loop: %s\r\n", strerror(errno));
       return -1;
     }
     ret_i = tcsetattr(fil_i, act_i, tms_u);
@@ -576,7 +607,7 @@ _term_it_save(u3_noun pax, u3_noun pad)
 static u3_ovum*
 _term_ovum_plan(u3_auto* car_u, u3_noun wir, u3_noun cad)
 {
-  u3_ovum* egg_u = u3_auto_plan(car_u, 0, c3__d, wir, cad);
+  u3_ovum* egg_u = u3_auto_plan(car_u, u3_ovum_init(0, c3__d, wir, cad));
 
   //  term events have no spinner label
   //

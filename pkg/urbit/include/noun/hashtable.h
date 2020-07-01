@@ -139,6 +139,16 @@
         c3_w
         u3h_mark(u3p(u3h_root) har_p);
 
+      /* u3h_count(): count hashtable for gc.
+      */
+        c3_w
+        u3h_count(u3p(u3h_root) har_p);
+
+      /* u3h_discount(): discount hashtable for gc.
+      */
+        c3_w
+        u3h_discount(u3p(u3h_root) har_p);
+
       /* u3h_walk_with(): traverse hashtable with key, value fn and data
        *                  argument; RETAINS.
       */

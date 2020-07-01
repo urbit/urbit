@@ -1,4 +1,3 @@
-::
 /-  *publish,
     *group-store,
     *group-hook,
@@ -10,35 +9,6 @@
     *metadata-hook,
     *rw-security
 /+  *server, *publish, cram, default-agent, dbug
-::
-/=  index
-  /^  $-(json manx)
-  /:  /===/app/publish/index  /!noun/
-::
-/=  js
-  /^  octs
-  /;  as-octs:mimes:html
-  /|  /:  /===/app/publish/js/index  /js/
-      /~  ~
-  ==
-::
-/=  css
-  /^  octs
-  /;  as-octs:mimes:html
-  /|  /:  /===/app/publish/css/index  /css/
-      /~  ~
-  ==
-::
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /|  /:  /===/app/publish/js/tile  /js/
-      /~  ~
-  ==
-::
-/=  images
-  /^  (map knot @)
-  /:  /===/app/publish/img  /_  /png/
 ::
 ~%  %publish  ..is  ~
 |%
@@ -99,11 +69,9 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =/  lac  [%add %publish /publishtile '/~publish/tile.js']
     =/  rav  [%sing %t [%da now.bol] /app/publish/notebooks]
     :_  this
-    :~  [%pass /bind %arvo %e %connect [~ /'~publish'] %publish]
-        [%pass /tile %agent [our.bol %launch] %poke %launch-action !>(lac)]
+    :~  [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
         [%pass /read/paths %arvo %c %warp our.bol q.byk.bol `rav]
         [%pass /permissions %agent [our.bol %permission-store] %watch /updates]
         (invite-poke:main [%create /publish])
@@ -112,6 +80,10 @@
         ==
         :*  %pass  /  %agent  [our.bol %invite-store]  %poke  %invite-action
             !>([%create /publish])
+        ==
+        :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~publish' /app/landscape %.n])
         ==
     ==
   ::
@@ -127,8 +99,6 @@
     ?:  ?=(%| -.old-state)
       =/  zero  !<(state-zero old)
       =/  rav  [%next %t [%da now.bol] /app/publish/notebooks]
-      =/  tile-json
-        (frond:enjs:format %notifications (numb:enjs:format 0))
       =/  init-cards=(list card)
         :~  [%pass /read/paths %arvo %c %warp our.bol q.byk.bol `rav]
             :*  %pass  /permissions  %agent  [our.bol %permission-store]  %watch
@@ -138,7 +108,12 @@
             :*  %pass  /invites  %agent  [our.bol %invite-store]  %watch
                 /invitatory/publish
             ==
-            [%give %fact [/publishtile]~ %json !>(tile-json)]
+            [%pass /bind %arvo %e %disconnect [~ /'~publish']]
+            [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
+            :*  %pass  /srv  %agent  [our.bol %file-server]
+                %poke  %file-server-action
+                !>([%serve-dir /'~publish' /app/landscape %.n])
+            ==
         ==
       =+  ^-  [kick-cards=(list card) old-subs=(jug @tas @p)]  kick-subs
       =/  inv-scry-pax
@@ -200,7 +175,14 @@
       ==
     ::
         %3
-      [cards this(state p.old-state)]
+      :_  this(state p.old-state)
+      %+  welp  cards
+      :~  [%pass /bind %arvo %e %disconnect [~ /'~publish']]
+          [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
+          :*  %pass  /srving  %agent  [our.bol %file-server]
+              %poke  %file-server-action
+              !>([%serve-dir /'~publish' /app/landscape %.n])
+      ==  ==
     ==
     ::
     ++  convert-comment-2-3
@@ -361,19 +343,11 @@
     ^-  (quip card _this)
     ?+    pax  (on-watch:def pax)
         [%http-response *]  [~ this]
-    ::
+        [%primary ~]        [~ this]
         [%notebook @ ~]
       =^  cards  state
         (watch-notebook:main pax)
       [cards this]
-    ::
-        [%primary ~]  [~ this]
-    ::
-        [%publishtile ~]
-      =/  jon=json
-        (frond:enjs:format %notifications (numb:enjs:format tile-num))
-      :_  this
-      [%give %fact ~ %json !>(jon)]~
     ==
   ::
   ++  on-leave  on-leave:def
@@ -381,7 +355,6 @@
     |=  pax=path
     ^-  (unit (unit cage))
     ?+  pax  (on-peek:def pax)
-    ::
         [%t %limbo ~]
       :^  ~  ~  %noun
       !>  ^-  (list path)
@@ -534,6 +507,9 @@
       [cards this]
     ::
         [%bind ~]
+      [~ this]
+    ::
+        [%view-bind ~]
       [~ this]
     ==
   ::
@@ -919,40 +895,20 @@
     [~ state]
   ::
       %delete
-    =/  scry-pax
-      /(scot %p our.bol)/invite-store/(scot %da now.bol)/invitatory/publish/noun
-    =/  inv=(unit invitatory)  .^((unit invitatory) %gx scry-pax)
-    ?~  inv
-      [~ state]
-    =.  tile-num  (sub tile-num ~(wyt by u.inv))
-    =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
-    :_  state
-    [%give %fact [/publishtile]~ %json !>(jon)]~
+    [~ state]
   ::
       %invite
-    =.  tile-num  +(tile-num)
-    =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
-    :_  state
-    [%give %fact [/publishtile]~ %json !>(jon)]~
+    [~ state]
   ::
       %decline
-    =?  tile-num  (gth tile-num 0)
-      (dec tile-num)
-    =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
-    :_  state
-    [%give %fact [/publishtile]~ %json !>(jon)]~
+    [~ state]
   ::
       %accepted
     ?>  ?=([%notebook @ ~] path.invite.upd)
     =/  book  i.t.path.invite.upd
     =/  wir=wire  /subscribe/(scot %p ship.invite.upd)/[book]
-    =?  tile-num  (gth tile-num 0)
-      (dec tile-num)
-    =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
     :_  state
-    :~  [%pass wir %agent [ship.invite.upd %publish] %watch path.invite.upd]
-        [%give %fact [/publishtile]~ %json !>(jon)]
-    ==
+    [%pass wir %agent [ship.invite.upd %publish] %watch path.invite.upd]~
   ==
 ::
 ++  watch-notebook
@@ -1720,12 +1676,8 @@
     =.  read.u.not  %.y
     =.  notes.u.book  (~(put by notes.u.book) note.act u.not)
     =.  books  (~(put by books) [who.act book.act] u.book)
-    =/  jon=json
-      (frond:enjs:format %notifications (numb:enjs:format tile-num))
     :_  state
-    :~  [%give %fact [/primary]~ %publish-primary-delta !>(act)]
-        [%give %fact [/publishtile]~ %json !>(jon)]
-    ==
+    [%give %fact [/primary]~ %publish-primary-delta !>(act)]~
   ::  %groupify
   ::
       %groupify
@@ -1849,11 +1801,7 @@
     :~  [%give %fact [/notebook/[book-name]]~ %publish-notebook-delta !>(del)]
         [%give %fact [/primary]~ %publish-primary-delta !>(del)]
     ==
-  =/  jon=json
-    (frond:enjs:format %notifications (numb:enjs:format tile-num))
-  :~  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
-      [%give %fact [/publishtile]~ %json !>(jon)]
-  ==
+  [%give %fact [/primary]~ %publish-primary-delta !>(del)]~
 ::
 ++  metadata-poke
   |=  act=metadata-action
@@ -1945,7 +1893,6 @@
   ^-  (quip card _state)
   ?-    -.del
       %add-book
-    =.  tile-num    (add tile-num (get-unread data.del))
     ?:  =(our.bol host.del)
       =^  cards  state
         (emit-updates-and-state host.del book.del data.del del sty)
@@ -1978,8 +1925,6 @@
     ?~  book
       [~ sty]
     =.  read.data.del  =(our.bol author.data.del)
-    =?  tile-num.sty  !read.data.del
-      +(tile-num.sty)
     =.  notes.u.book  (~(put by notes.u.book) note.del data.del)
     (emit-updates-and-state host.del book.del u.book del sty)
   ::
@@ -2075,15 +2020,8 @@
     ?~  book  [~ sty]
     :_  sty(books (~(del by books.sty) host.del book.del))
     ?.  =(our.bol host.del)
-      =.  tile-num
-        %+  sub  tile-num
-        (get-unread (~(got by books) host.del book.del))
-      =/  jon=json
-        (frond:enjs:format %notifications (numb:enjs:format tile-num.sty))
       %+  welp
-        :~  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
-            [%give %fact [/publishtile]~ %json !>(jon)]
-        ==
+        [%give %fact [/primary]~ %publish-primary-delta !>(del)]~
       ?:  (is-managed writers.u.book)  ~
       [(metadata-hook-poke [%remove writers.u.book])]~
     %-  zing
@@ -2104,8 +2042,6 @@
     =/  not=(unit note)  (~(get by notes.u.book) note.del)
     ?~  not
       [~ sty]
-    =?  tile-num  &(!read.u.not (gth tile-num 0))
-      (dec tile-num)
     =.  notes.u.book  (~(del by notes.u.book) note.del)
     (emit-updates-and-state host.del book.del u.book del sty)
   ::
@@ -2191,35 +2127,18 @@
   |=  req=inbound-request:eyre
   ^-  simple-payload:http
   =/  url  (parse-request-line url.request.req)
-  ?+    url
-      not-found:gen
-  ::
-      [[[~ %png] [%'~publish' @t ~]] ~]
-    =/  filename=@t  i.t.site.url
-    =/  img=(unit @t)  (~(get by images) filename)
-    ?~  img
-      not-found:gen
-    (png-response:gen (as-octs:mimes:html u.img))
-  ::
-      [[[~ %css] [%'~publish' %index ~]] ~]
-    (css-response:gen css)
-  ::
-      [[[~ %js] [%'~publish' %index ~]] ~]
-    (js-response:gen js)
-  ::
-      [[[~ %js] [%'~publish' %tile ~]] ~]
-    (js-response:gen tile-js)
+  ?+  url  not-found:gen
   ::
   ::  pagination endpoints
   ::
   ::  all notebooks, short form
-      [[[~ %json] [%'~publish' %notebooks ~]] ~]
+      [[[~ %json] [%'publish-view' %notebooks ~]] ~]
     %-  json-response:gen
     %-  json-to-octs
     (notebooks-map:enjs our.bol books)
   ::
   ::  notes pagination
-      [[[~ %json] [%'~publish' %notes @ @ @ @ ~]] ~]
+      [[[~ %json] [%'publish-view' %notes @ @ @ @ ~]] ~]
     =/  host=(unit @p)  (slaw %p i.t.t.site.url)
     ?~  host
       not-found:gen
@@ -2239,7 +2158,7 @@
     (notes-page:enjs notes.u.book u.start u.length)
   ::
   ::  comments pagination
-      [[[~ %json] [%'~publish' %comments @ @ @ @ @ ~]] ~]
+      [[[~ %json] [%'publish-view' %comments @ @ @ @ @ ~]] ~]
     =/  host=(unit @p)  (slaw %p i.t.t.site.url)
     ?~  host
       not-found:gen
@@ -2262,94 +2181,35 @@
     (comments-page:enjs comments.u.note u.start u.length)
   ::
   ::  single notebook with initial 50 notes in short form, as json
-      [[[~ %json] [%'~publish' @ @ ~]] ~]
+      [[[~ %json] [%'publish-view' @ @ ~]] ~]
     =,  enjs:format
     =/  host=(unit @p)  (slaw %p i.t.site.url)
-    ?~  host
-      not-found:gen
+    ?~  host  not-found:gen
     =/  book-name  i.t.t.site.url
     =/  book=(unit notebook)  (~(get by books) u.host book-name)
-    ?~  book
-      not-found:gen
+    ?~  book  not-found:gen
     =/  notebook-json  (notebook-full:enjs u.host book-name u.book)
     ?>  ?=(%o -.notebook-json)
     =.  p.notebook-json
       (~(uni by p.notebook-json) (notes-page:enjs notes.u.book 0 50))
     =.  p.notebook-json
       (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
-    =/  jon=json  (pairs notebook+notebook-json ~)
-    (json-response:gen (json-to-octs jon))
+    (json-response:gen (json-to-octs (pairs notebook+notebook-json ~)))
   ::
   ::  single note, with initial 50 comments, as json
-      [[[~ %json] [%'~publish' @ @ @ ~]] ~]
+      [[[~ %json] [%'publish-view' @ @ @ ~]] ~]
     =,  enjs:format
     =/  host=(unit @p)  (slaw %p i.t.site.url)
-    ?~  host
-      not-found:gen
+    ?~  host  not-found:gen
     =/  book-name  i.t.t.site.url
     =/  book=(unit notebook)  (~(get by books) u.host book-name)
-    ?~  book
-      not-found:gen
+    ?~  book  not-found:gen
     =/  note-name  i.t.t.t.site.url
     =/  note=(unit note)  (~(get by notes.u.book) note-name)
-    ?~  note
-      not-found:gen
-    =/  jon=json  o+(note-presentation:enjs u.book note-name u.note)
+    ?~  note  not-found:gen
+    =/  jon=json
+      o+(note-presentation:enjs u.book note-name u.note)
     (json-response:gen (json-to-octs jon))
-  ::
-  ::  presentation endpoints
-  ::
-  ::  all notebooks, short form, wrapped in html
-      [[~ [%'~publish' ?(~ [%join *] [%new ~])]] ~]
-    =,  enjs:format
-    =/  jon=json  (pairs notebooks+(notebooks-map:enjs our.bol books) ~)
-    (manx-response:gen (index jon))
-  ::
-  ::  single notebook, with initial 50 notes in short form, wrapped in html
-      [[~ [%'~publish' %notebook @ @ *]] ~]
-    =/  host=(unit @p)  (slaw %p i.t.t.site.url)
-    ?~  host
-      not-found:gen
-    =/  book-name  i.t.t.t.site.url
-    =/  book-json=(unit json)  (get-notebook-json u.host book-name)
-    ?~  book-json
-      not-found:gen
-    (manx-response:gen (index u.book-json))
-  ::
-  ::  single notebook, with initial 50 notes in short form, wrapped in html
-      [[~ [%'~publish' %popout %notebook @ @ *]] ~]
-    =/  host=(unit @p)  (slaw %p i.t.t.t.site.url)
-    ?~  host
-      not-found:gen
-    =/  book-name  i.t.t.t.t.site.url
-    =/  book-json=(unit json)  (get-notebook-json u.host book-name)
-    ?~  book-json
-      not-found:gen
-    (manx-response:gen (index u.book-json))
-  ::
-  ::  single note, with initial 50 comments, wrapped in html
-      [[~ [%'~publish' %note @ @ @ *]] ~]
-    =/  host=(unit @p)  (slaw %p i.t.t.site.url)
-    ?~  host
-      not-found:gen
-    =/  book-name  i.t.t.t.site.url
-    =/  note-name  i.t.t.t.t.site.url
-    =/  note-json=(unit json)  (get-note-json u.host book-name note-name)
-    ?~  note-json
-      not-found:gen
-    (manx-response:gen (index u.note-json))
-  ::
-  ::  single note, with initial 50 comments, wrapped in html
-      [[~ [%'~publish' %popout %note @ @ @ *]] ~]
-    =/  host=(unit @p)  (slaw %p i.t.t.t.site.url)
-    ?~  host
-      not-found:gen
-    =/  book-name  i.t.t.t.t.site.url
-    =/  note-name  i.t.t.t.t.t.site.url
-    =/  note-json=(unit json)  (get-note-json u.host book-name note-name)
-    ?~  note-json
-      not-found:gen
-    (manx-response:gen (index u.note-json))
   ==
 ::
 --

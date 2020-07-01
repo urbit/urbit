@@ -137,7 +137,7 @@
   ^-  (list card)
   ::  local
   ?:  (team:title our.bol src.bol)
-    ?.  (~(has by synced) path)  ~
+    ?.  |(=(path /~/default) (~(has by synced) path))  ~
     =/  shp  ?:(=(path /~/default) our.bol (~(got by synced) path))
     =/  appl  ?:(=(shp our.bol) %contact-store %contact-hook)
     [%pass / %agent [shp appl] %poke %contact-action !>(act)]~

@@ -29,7 +29,7 @@
 /* u3_ames: ames networking.
 */
   typedef struct _u3_ames {             //  packet network state
-    u3_auto    car_u;                   //  driver
+    u3_auto       car_u;                //  driver
     union {                             //
       uv_udp_t    wax_u;                //
       uv_handle_t had_u;                //
@@ -38,7 +38,8 @@
     c3_o          fak_o;                //  fake keys
     c3_s          por_s;                //  public IPv4 port
     c3_c*         dns_c;                //  domain XX multiple/fallback
-    c3_d          dop_d;                //  drop count (since last print)
+    c3_d          dop_d;                //  drop count
+    c3_d          fal_d;                //  crash count
     c3_w          imp_w[256];           //  imperial IPs
     time_t        imp_t[256];           //  imperial IP timestamps
     c3_o          imp_o[256];           //  imperial print status
@@ -359,6 +360,83 @@ _ames_ef_send(u3_ames* sam_u, u3_noun lan, u3_noun pac)
   u3z(lan); u3z(pac);
 }
 
+/* _ames_cap_queue(): cap ovum queue at 1k, dropping oldest packets.
+*/
+static void
+_ames_cap_queue(u3_ames* sam_u)
+{
+  u3_ovum* egg_u = sam_u->car_u.ext_u;
+
+  while ( egg_u && (1000 < sam_u->car_u.dep_w) ) {
+    u3_ovum* nex_u = egg_u->nex_u;
+
+    if ( c3__hear == u3h(egg_u->cad) ) {
+      u3_auto_drop(&sam_u->car_u, egg_u);
+      sam_u->dop_d++;
+
+      if ( u3C.wag_w & u3o_verbose ) {
+        u3l_log("ames: packet dropped (%" PRIu64 " total)\n", sam_u->dop_d);
+      }
+    }
+
+    egg_u = nex_u;
+  }
+
+  if (  (sam_u->dop_d && (0 == (sam_u->dop_d % 1000)))
+     && !(u3C.wag_w & u3o_verbose) )
+  {
+    u3l_log("ames: packet dropped (%" PRIu64 " total)\n", sam_u->dop_d);
+  }
+}
+
+/* _ames_punt_goof(): print %bail error report(s).
+*/
+static void
+_ames_punt_goof(u3_noun lud)
+{
+  if ( 2 == u3qb_lent(lud) ) {
+    u3_pier_punt_goof("hear", u3k(u3h(lud)));
+    u3_pier_punt_goof("crud", u3k(u3h(u3t(lud))));
+  }
+  else {
+    u3_noun dul = lud;
+    c3_w len_w = 1;
+
+    while ( u3_nul != dul ) {
+      u3l_log("ames: bail %u\r\n", len_w++);
+      u3_pier_punt_goof("ames", u3k(u3h(dul)));
+      dul = u3t(dul);
+    }
+  }
+
+  u3z(lud);
+}
+
+/* _ames_hear_bail(): handle packet failure.
+*/
+static void
+_ames_hear_bail(u3_ovum* egg_u, u3_noun lud)
+{
+  u3_ames* sam_u = (u3_ames*)egg_u->car_u;
+  sam_u->fal_d++;
+
+  if (  (u3C.wag_w & u3o_verbose)
+     || (0 == (sam_u->fal_d % 1000)) )
+  {
+    _ames_punt_goof(lud);
+    u3l_log("ames: packet failed (%" PRIu64 " total)\n\n", sam_u->fal_d);
+  }
+  else {
+    u3z(lud);
+
+    if (  0 == (sam_u->fal_d % 1000) )  {
+      u3l_log("ames: packet failed (%" PRIu64 " total)\n\n", sam_u->fal_d);
+    }
+  }
+
+  u3_ovum_free(egg_u);
+}
+
 /* _ames_recv_cb(): receive callback.
 */
 static void
@@ -395,30 +473,12 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       cad = u3nt(c3__hear, u3nc(c3n, lan), msg);
     }
 
-    u3_auto_plan(&sam_u->car_u, 0, c3__a, wir, cad);
+    u3_auto_peer(
+      u3_auto_plan(&sam_u->car_u,
+                   u3_ovum_init(0, c3__a, wir, cad)),
+      0, 0, _ames_hear_bail);
 
-    //  cap ovum queue at 1k, dropping oldest packets
-    //
-    {
-      u3_ovum* egg_u = sam_u->car_u.ext_u;
-
-      while ( egg_u && (1000 < sam_u->car_u.dep_w) ) {
-        u3_ovum* nex_u = egg_u->nex_u;
-
-        if ( c3__hear == u3h(egg_u->cad) ) {
-          u3_auto_drop(&sam_u->car_u, egg_u);
-          sam_u->dop_d++;
-        }
-
-        egg_u = nex_u;
-      }
-    }
-
-    if ( 0 == (sam_u->dop_d % 1000) ) {
-      if ( (u3C.wag_w & u3o_verbose) ) {
-        u3l_log("ames: dropped 1.000 packets\r\n");
-      }
-    }
+    _ames_cap_queue(sam_u);
   }
 
   c3_free(buf_u->base);
@@ -495,62 +555,6 @@ _ames_io_start(u3_ames* sam_u)
   u3z(who);
 }
 
-/* _cttp_mcut_char(): measure/cut character.
-*/
-static c3_w
-_cttp_mcut_char(c3_c* buf_c, c3_w len_w, c3_c chr_c)
-{
-  if ( buf_c ) {
-    buf_c[len_w] = chr_c;
-  }
-  return len_w + 1;
-}
-
-/* _cttp_mcut_cord(): measure/cut cord.
-*/
-static c3_w
-_cttp_mcut_cord(c3_c* buf_c, c3_w len_w, u3_noun san)
-{
-  c3_w ten_w = u3r_met(3, san);
-
-  if ( buf_c ) {
-    u3r_bytes(0, ten_w, (c3_y *)(buf_c + len_w), san);
-  }
-  u3z(san);
-  return (len_w + ten_w);
-}
-
-/* _cttp_mcut_path(): measure/cut cord list.
-*/
-static c3_w
-_cttp_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax)
-{
-  u3_noun axp = pax;
-
-  while ( u3_nul != axp ) {
-    u3_noun h_axp = u3h(axp);
-
-    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(h_axp));
-    axp = u3t(axp);
-
-    if ( u3_nul != axp ) {
-      len_w = _cttp_mcut_char(buf_c, len_w, sep_c);
-    }
-  }
-  u3z(pax);
-  return len_w;
-}
-
-/* _cttp_mcut_host(): measure/cut host.
-*/
-static c3_w
-_cttp_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot)
-{
-  len_w = _cttp_mcut_path(buf_c, len_w, '.', u3kb_flop(u3k(hot)));
-  u3z(hot);
-  return len_w;
-}
-
 /* _ames_ef_turf(): initialize ames I/O on domain(s).
 */
 static void
@@ -560,10 +564,10 @@ _ames_ef_turf(u3_ames* sam_u, u3_noun tuf)
     //  XX save all for fallback, not just first
     //
     u3_noun hot = u3k(u3h(tuf));
-    c3_w  len_w = _cttp_mcut_host(0, 0, u3k(hot));
+    c3_w  len_w = u3_mcut_host(0, 0, u3k(hot));
 
     sam_u->dns_c = c3_malloc(1 + len_w);
-    _cttp_mcut_host(sam_u->dns_c, 0, hot);
+    u3_mcut_host(sam_u->dns_c, 0, hot);
     sam_u->dns_c[len_w] = 0;
 
     //  XX invalidate sam_u->imp_w &c ?
@@ -596,7 +600,7 @@ _ames_io_talk(u3_auto* car_u)
     u3_noun wir = u3nt(c3__newt, u3k(u3A->sen), u3_nul);
     u3_noun cad = u3nc(c3__born, u3_nul);
 
-    u3_auto_plan(car_u, 0, c3__a, wir, cad);
+    u3_auto_plan(car_u, u3_ovum_init(0, c3__a, wir, cad));
   }
 }
 
@@ -727,6 +731,16 @@ _ames_prot_scry_cb(void* vod_p, u3_noun nun)
   sam_u->fit_o = c3y;
 }
 
+/* _ames_io_info(): print status info.
+*/
+static void
+_ames_io_info(u3_auto* car_u)
+{
+  u3_ames* sam_u = (u3_ames*)car_u;
+  u3l_log("      dropped: %" PRIu64 "\n", sam_u->dop_d);
+  u3l_log("      crashed: %" PRIu64 "\n", sam_u->fal_d);
+}
+
 /* u3_ames_io_init(): initialize ames I/O.
 */
 u3_auto*
@@ -759,13 +773,9 @@ u3_ames_io_init(u3_pier* pir_u)
   car_u->nam_m = c3__ames;
   car_u->liv_o = c3n;
   car_u->io.talk_f = _ames_io_talk;
+  car_u->io.info_f = _ames_io_info;
   car_u->io.kick_f = _ames_io_kick;
   car_u->io.exit_f = _ames_io_exit;
 
-  //  XX track and print every N?
-  //
-  // car_u->ev.bail_f = ...;
-
   return car_u;
-
 }

@@ -95,18 +95,17 @@ main(c3_i argc, c3_c* argv[])
   dup2(2, 1);
   close(nul_i);
 
+  c3_assert( 6 == argc );
+
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[1];
   c3_c*      key_c = argv[2];
   c3_c*      wag_c = argv[3];
+  c3_c*      hap_c = argv[4];
   c3_d       eve_d = 0;
 
-  c3_assert( (4 == argc) || (5 == argc) );
-
-  if ( 5 == argc ) {
-    if ( 1 != sscanf(argv[4], "%" PRIu64 "", &eve_d) ) {
-      fprintf(stderr, "serf: rock: invalid number '%s'\r\n", argv[4]);
-    }
+  if ( 1 != sscanf(argv[5], "%" PRIu64 "", &eve_d) ) {
+    fprintf(stderr, "serf: rock: invalid number '%s'\r\n", argv[4]);
   }
 
   memset(&u3V, 0, sizeof(u3V));
@@ -128,6 +127,7 @@ main(c3_i argc, c3_c* argv[])
   //
   {
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
+    sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
   }
 
   //  Ignore SIGPIPE signals.

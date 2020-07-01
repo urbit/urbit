@@ -25,7 +25,7 @@
     */
       c3_o
       u3_lmdb_read(MDB_env* env_u,
-                   void*    vod_p,
+                   void*    ptr_v,
                    c3_d     eve_d,
                    c3_d     len_d,
                    c3_o  (*read_f)(void*, c3_d, size_t  , void*));
@@ -43,7 +43,7 @@
     */
       void
       u3_lmdb_read_meta(MDB_env*    env_u,
-                        void*       vod_p,
+                        void*       ptr_v,
                         const c3_c* key_c,
                         void     (*read_f)(void*, size_t, void*));
 

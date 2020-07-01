@@ -19,22 +19,13 @@
 #include "all.h"
 #include "vere/vere.h"
 
-/* u3_auto_plan(): create and enqueue an ovum.
+/* u3_auto_plan(): enqueue an ovum.
 */
 u3_ovum*
-u3_auto_plan(u3_auto* car_u,
-             c3_l     msc_l,
-             u3_noun    tar,
-             u3_noun    wir,
-             u3_noun    cad)
+u3_auto_plan(u3_auto* car_u, u3_ovum *egg_u)
 {
-  u3_ovum *egg_u = u3_ovum_init(msc_l, tar, wir, cad);
-
   egg_u->car_u = car_u;
 
-  //  [pre_u] points towards [ext_u] (back in time)
-  //  [nex_u] points towards [ent_u] (forward in time)
-  //
   if ( !car_u->ent_u ) {
     c3_assert(!car_u->ext_u);
 
@@ -42,6 +33,11 @@ u3_auto_plan(u3_auto* car_u,
     car_u->ent_u = car_u->ext_u = egg_u;
     car_u->dep_w = 1;
   }
+  //  enqueue at driver entry (back of the line)
+  //
+  //    [pre_u] points towards [ext_u] (back in time)
+  //    [nex_u] points towards [ent_u] (forward in time)
+  //
   else {
     egg_u->nex_u = 0;
     egg_u->pre_u = car_u->ent_u;
@@ -56,13 +52,47 @@ u3_auto_plan(u3_auto* car_u,
   return egg_u;
 }
 
+/* u3_auto_redo(): retry an ovum.
+*/
+u3_ovum*
+u3_auto_redo(u3_auto* car_u, u3_ovum *egg_u)
+{
+  c3_assert( egg_u->car_u == car_u );
+
+  egg_u->try_w++;
+
+  if ( !car_u->ent_u ) {
+    c3_assert(!car_u->ext_u);
+
+    egg_u->pre_u = egg_u->nex_u = 0;
+    car_u->ent_u = car_u->ext_u = egg_u;
+    car_u->dep_w = 1;
+  }
+  //  enqueue at driver exit (front of the line)
+  //
+  else {
+    egg_u->nex_u = car_u->ext_u;
+    egg_u->pre_u = 0;
+
+    car_u->ext_u->pre_u = egg_u;
+    car_u->ext_u = egg_u;
+    car_u->dep_w++;
+  }
+
+  u3_pier_spin(car_u->pir_u);
+
+  return egg_u;
+}
+
 /* u3_auto_peer(): subscribe to updates.
 */
 void
 u3_auto_peer(u3_ovum*      egg_u,
+             void*         ptr_v,
              u3_ovum_peer news_f,
              u3_ovum_bail bail_f)
 {
+  egg_u->ptr_v = ptr_v;
   egg_u->cb_u.news_f = news_f;
   egg_u->cb_u.bail_f = bail_f;
 }
@@ -103,9 +133,8 @@ u3_auto_bail(u3_ovum* egg_u, u3_noun lud)
   }
   else {
     u3_auto_bail_slog(egg_u, lud);
+    u3_ovum_free(egg_u);
   }
-
-  u3_ovum_free(egg_u);
 }
 
 /* _auto_news(): notify driver of ovum status
@@ -339,12 +368,42 @@ u3_auto_exit(u3_auto* car_u)
   }
 }
 
+/* u3_auto_info(): print status info.
+*/
+void
+u3_auto_info(u3_auto* car_u)
+{
+  u3_auto* nex_u;
+
+  u3l_log("  drivers:\n");
+
+  while ( car_u ) {
+    nex_u = car_u->nex_u;
+
+    u3l_log("    %.*s: live=%s, queue=%u\n",
+            u3r_met(3, car_u->nam_m),
+            (c3_c*)&car_u->nam_m,
+            ( c3y == car_u->liv_o ) ? "&" : "|",
+            car_u->dep_w);
+
+    //  XX details
+    //
+    if ( car_u->io.info_f ) {
+      c3_l cod_l = u3a_lush(car_u->nam_m);
+      car_u->io.info_f(car_u);
+      u3a_lop(cod_l);
+    }
+
+    car_u = nex_u;
+  }
+}
+
 /* _auto_link(): validate and link initalized [car_u]
 */
 static u3_auto*
 _auto_link(u3_auto* car_u, u3_pier* pir_u, u3_auto* nex_u)
 {
-  //  assert that io callbacks are present
+  //  assert that io callbacks are present (info_f is optional)
   //
   c3_assert( car_u->io.talk_f );
   c3_assert( car_u->io.kick_f );

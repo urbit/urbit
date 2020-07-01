@@ -92,12 +92,21 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.tex = c3n;
   u3_Host.ops_u.tra = c3n;
   u3_Host.ops_u.veb = c3n;
+  u3_Host.ops_u.hap_w = 50000;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:A:H:I:w:u:e:F:k:n:p:r:LljacdgqstvxPDRS")) )
+                 "X:Y:G:J:B:K:A:H:I:C:w:u:e:F:k:n:p:r:LljacdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
+      case 'X': {
+        u3_Host.ops_u.pek_c = strdup(optarg);
+        break;
+      }
+      case 'Y': {
+        u3_Host.ops_u.puk_c = strdup(optarg);
+        break;
+      }
       case 'J': {
         u3_Host.ops_u.lit_c = strdup(optarg);
         break;
@@ -120,6 +129,12 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
       case 'I': {
         u3_Host.ops_u.jin_c = strdup(optarg);
+        break;
+      }
+      case 'C': {
+        if ( c3n == _main_readw(optarg, 1000000000, &u3_Host.ops_u.hap_w) ) {
+          return c3n;
+        }
         break;
       }
       case 'e': {
@@ -374,9 +389,9 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "where ship_name is a @p phonetic representation of an urbit address\n",
     "without the leading '~', and options is some subset of the following:\n",
     "\n",
-    // XX find a way to re-enable
-    // "-A dir        Use dir for initial galaxy sync\n",
+    "-A dir        Use dir for initial clay sync\n",
     "-B pill       Bootstrap from this pill\n",
+    "-C limit      Set memo cache max size; 0 means uncapped\n",
     "-c pier       Create a new urbit in pier/\n",
     "-D            Recompute from events\n",
     "-d            Daemon mode; implies -t\n",
@@ -398,7 +413,9 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-u url        URL from which to download pill\n",
     "-v            Verbose\n",
     "-w name       Boot as ~name\n",
+    "-X path       Scry, jam to file, then exit\n"
     "-x            Exit immediately\n",
+    "-Y file       Optional name of jamfile (for -X)\n"
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",

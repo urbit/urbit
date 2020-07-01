@@ -275,7 +275,7 @@ opts = do
 
     oSerfExe <-
       optional
-      $  option auto
+      $  strOption
       $  metavar "PATH"
       <> long "serf"
       <> help "Path to Serf"

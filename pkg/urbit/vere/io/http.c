@@ -12,8 +12,6 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <h2o.h>
-#include <picohttpparser.h>
-#include <tls.h>
 
 #include "all.h"
 #include "vere/vere.h"
@@ -110,10 +108,6 @@ static void _http_serv_start_all(u3_httd* htd_u);
 static void _http_form_free(u3_httd* htd_u);
 
 static const c3_i TCP_BACKLOG = 16;
-
-//  XX temporary, add to u3_http_ef_form
-//
-#define PROXY_DOMAIN "arvo.network"
 
 /* _http_close_cb(): uv_close_cb that just free's handle
 */
@@ -388,7 +382,7 @@ _http_req_kill(u3_hreq* req_u)
   u3_noun wir    = _http_req_to_duct(req_u);
   u3_noun cad    = u3nc(u3i_string("cancel-request"), u3_nul);
 
-  u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
+  u3_auto_plan(&htd_u->car_u, u3_ovum_init(0, c3__e, wir, cad));
 }
 
 typedef struct _u3_hgen {
@@ -481,7 +475,7 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
             : u3nc(u3i_string("request"), dat);
     }
 
-    u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
+    u3_auto_plan(&htd_u->car_u, u3_ovum_init(0, c3__e, wir, cad));
   }
 }
 
@@ -1331,61 +1325,13 @@ _http_serv_start(u3_http* htp_u)
   }
 }
 
-//XX deduplicate these with cttp
-
-/* _cttp_mcut_char(): measure/cut character.
-*/
-static c3_w
-_cttp_mcut_char(c3_c* buf_c, c3_w len_w, c3_c chr_c)
-{
-  if ( buf_c ) {
-    buf_c[len_w] = chr_c;
-  }
-  return len_w + 1;
-}
-
-/* _cttp_mcut_cord(): measure/cut cord.
-*/
-static c3_w
-_cttp_mcut_cord(c3_c* buf_c, c3_w len_w, u3_noun san)
-{
-  c3_w ten_w = u3r_met(3, san);
-
-  if ( buf_c ) {
-    u3r_bytes(0, ten_w, (c3_y *)(buf_c + len_w), san);
-  }
-  u3z(san);
-  return (len_w + ten_w);
-}
-
-/* _cttp_mcut_path(): measure/cut cord list.
-*/
-static c3_w
-_cttp_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax)
-{
-  u3_noun axp = pax;
-
-  while ( u3_nul != axp ) {
-    u3_noun h_axp = u3h(axp);
-
-    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(h_axp));
-    axp = u3t(axp);
-
-    if ( u3_nul != axp ) {
-      len_w = _cttp_mcut_char(buf_c, len_w, sep_c);
-    }
-  }
-  u3z(pax);
-  return len_w;
-}
-
 static uv_buf_t
 _http_wain_to_buf(u3_noun wan)
 {
-  c3_w len_w = _cttp_mcut_path(0, 0, (c3_c)10, u3k(wan));
+  c3_w len_w = u3_mcut_path(0, 0, (c3_c)10, u3k(wan));
   c3_c* buf_c = c3_malloc(1 + len_w);
 
-  _cttp_mcut_path(buf_c, 0, (c3_c)10, wan);
+  u3_mcut_path(buf_c, 0, (c3_c)10, wan);
   buf_c[len_w] = 0;
 
   return uv_buf_init(buf_c, len_w);
@@ -1610,7 +1556,7 @@ _http_serv_start_all(u3_httd* htd_u)
     u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
     u3_noun cad = u3nt(c3__live, non, sec);
 
-    u3_auto_plan(&htd_u->car_u, 0, c3__e, wir, cad);
+    u3_auto_plan(&htd_u->car_u, u3_ovum_init(0, c3__e, wir, cad));
   }
 
   _http_write_ports_file(htd_u, u3_Host.dir_c);
@@ -1722,7 +1668,7 @@ _http_io_talk(u3_auto* car_u)
   u3_noun wir = u3nt(u3i_string("http-server"), u3k(u3A->sen), u3_nul);
   u3_noun cad = u3nc(c3__born, u3_nul);
 
-  u3_auto_plan(car_u, 0, c3__e, wir, cad);
+  u3_auto_plan(car_u, u3_ovum_init(0, c3__e, wir, cad));
 
   //  XX set liv_o on done/swap?
   //
