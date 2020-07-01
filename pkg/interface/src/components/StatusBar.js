@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 
 import GroupFilter from './GroupFilter';
 import { Sigil } from '../lib/sigil';
+import { sigil, stringRenderer } from 'urbit-sigil-js';
 
 const getLocationName = (basePath) => {
   if (basePath === '~chat')
@@ -20,6 +21,15 @@ const getLocationName = (basePath) => {
 };
 
 const StatusBar = (props) => {
+  const icon = document.querySelector('link[rel=icon]');
+  icon.href = 'data:image/svg+xml;base64,' + window.btoa(sigil({
+    patp: '~' + window.ship,
+    renderer: stringRenderer,
+    size: 16,
+    colors: ['#000000', '#ffffff']
+  }));
+  icon.type = 'image/svg+xml';
+
   const location = useLocation();
   const basePath = location.pathname.split('/')[1];
   const locationName = location.pathname === '/'
