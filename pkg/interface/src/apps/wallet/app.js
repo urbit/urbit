@@ -2,9 +2,6 @@ import React from "react";
 import _ from 'lodash';
 import { BrowserRouter, Route } from "react-router-dom";
 
-// import { store } from "/store";
-// import { api } from "/api";
-
 import WalletApi from '../../api/wallet';
 import WalletStore from '../../store/wallet';
 import WalletSubscription from '../../subscription/wallet';
@@ -14,24 +11,15 @@ import ProgressBar from "./components/lib/progressBar";
 import BitcoinTransaction from "./components/lib/bitcoinTransaction";
 import ConnectLedger from "./components/lib/connectLedger";
 
-const BCoin = window.BCoin;
+import BCoin from '../../lib/bcoin';
+import ProxySocket from '../../lib/proxy';
+import Logger from '../../lib/logger';
+
 
 export default class WalletApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = props;
-    // // this.state.seed = 'benefit crew supreme gesture quantum web media hazard theory mercy wing kitten';
-    // // this.state.progress = 0.0;
-    // // this.state.peers = [];
-    // // this.state.height = 0;
-    // // this.state.hash = '';
-    // this.state.proxySocket = 'ws://127.0.0.1:9090';
-    // this.state.peerSeeds = ['127.0.0.1:48444'];
-    // this.state.network = 'regtest';
-    // this.state.account = 0;
-    // this.state.sent = false;
-    //
-    // store.setStateHandler(this.setstate.bind(this));
 
     this.loadMnemonic = this.loadMnemonic.bind(this);
     this.loadSocket = this.loadSocket.bind(this);
@@ -139,9 +127,9 @@ export default class WalletApp extends React.Component {
       workers: true,
       workerFile: '/~wallet/js/worker.js',
       createSocket: (port, host) => {
-        return window.ProxySocket.connect(this.state.proxySocket, port, host);
+        return ProxySocket.connect(this.state.proxySocket, port, host);
       },
-      logger: new window.Logger({
+      logger: new Logger({
         level: 'info',
         console: true,
       }),

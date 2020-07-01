@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 
-const BCoin = window.BCoin;
-const usb = navigator.usb;
+import BCoin from '../../../../lib/bcoin';
 import Ledger from '../../../../lib/ledger';
+
+const usb = navigator.usb;
+
 
 export default class ConnectLedger extends Component {
 

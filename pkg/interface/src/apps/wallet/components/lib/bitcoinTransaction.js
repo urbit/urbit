@@ -3,8 +3,9 @@ import urbitOb from "urbit-ob";
 
 import Ledger from '../../../../lib/ledger';
 
-const BCoin = window.BCoin;
-const Path = window.BPath.Path;
+import BCoin from '../../../../lib/bcoin';
+import { Path } from '../../../../lib/bpath';
+
 
 const STATE = {
   INIT: 'INIT',
