@@ -22,7 +22,7 @@ class UrbitShipPlugin {
       'UrbitShipPlugin',
       async (compilation) => {
         const src = path.resolve(compiler.options.output.path, 'index.js');
-        return Promise.all(this.piers.map(pier => {
+        return Promise.all(this.piers.map((pier) => {
           const dst = path.resolve(pier, 'app/landscape/js/index.js');
           copyFile(src, dst).then(() => {
             if(!this.herb) {
@@ -34,7 +34,7 @@ class UrbitShipPlugin {
           });
         }));
       }
-    )
+    );
   }
 }
 
@@ -50,7 +50,11 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/typescript', '@babel/preset-react'],
+            presets: [
+              '@babel/preset-env',
+              '@babel/typescript',
+              '@babel/preset-react'
+            ],
             plugins: [
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
@@ -58,7 +62,7 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules/
+        exclude: [/bcoin/,/bmanager/,/bpath/,/logger/,/proxy/,/worker/, /node_modules/]
       },
       {
         test: /\.css$/i,

@@ -29,7 +29,7 @@ export default class BasicTile extends React.PureComponent {
       </span>
     );
 
-    const routeList = ['/~chat', '/~publish', '/~link', '/~groups', '/~dojo'];
+    const routeList = ['/~chat', '/~publish', '/~link', '/~groups', '/~dojo', '/~wallet'];
 
     const tile =  ( routeList.indexOf(props.linkedUrl) !== -1 ) ? (
       <Link className="w-100 h-100 db pa2 no-underline" to={props.linkedUrl}>

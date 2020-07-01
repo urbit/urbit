@@ -23,7 +23,7 @@ module.exports = {
             ]
           }
         },
-        exclude: /node_modules/
+        exclude: [/bcoin/,/bmanager/,/bpath/,/logger/,/proxy/,/worker/, /node_modules/]
       },
       {
          test: /\.css$/i,

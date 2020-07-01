@@ -15,6 +15,8 @@ const getLocationName = (basePath) => {
     return 'Links';
   else if (basePath === '~publish')
     return 'Publish';
+  else if (basePath === '~wallet')
+    return 'Wallet';
   else
     return 'Unknown';
 };

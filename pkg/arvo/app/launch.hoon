@@ -50,7 +50,7 @@
         [[%basic 'Publish' '/~landscape/img/Publish.png' '/~publish'] %.y]
       ::
           %wallet
-        [[%basic 'Bitcoin wallet' '/~landscape/img/Wallet.png' '/~wallet'] %.y]
+        [[%basic 'Wallet' '/~landscape/img/Wallet.png' '/~wallet'] %.y]
       ==
         tile-ordering  [%chat %publish %links %weather %clock %dojo %wallet ~]
     ==
@@ -88,7 +88,7 @@
         [[%basic 'Publish' '/~landscape/img/Publish.png' '/~publish'] %.y]
       ::
           %wallet
-        [[%basic 'Bitcoin wallet' '/~landscape/img/Wallet.png' '/~wallet'] %.y]
+        [[%basic 'Wallet' '/~landscape/img/Wallet.png' '/~wallet'] %.y]
       ==
         tile-ordering  [%chat %publish %links %weather %clock %dojo %wallet ~]
     ==
