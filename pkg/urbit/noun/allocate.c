@@ -1721,6 +1721,156 @@ u3a_mark_noun(u3_noun som)
   }
 }
 
+/* u3a_count_noun(): count size of pointer.
+*/
+c3_w
+u3a_count_ptr(void* ptr_v)
+{
+  if ( _(u3a_is_north(u3R)) ) {
+    if ( !((ptr_v >= u3a_into(u3R->rut_p)) &&
+           (ptr_v < u3a_into(u3R->hat_p))) )
+    {
+      return 0;
+    }
+  }
+  else {
+    if ( !((ptr_v >= u3a_into(u3R->hat_p)) &&
+           (ptr_v < u3a_into(u3R->rut_p))) )
+    {
+      return 0;
+    }
+  }
+  {
+    u3a_box* box_u  = u3a_botox(ptr_v);
+    c3_w     siz_w;
+
+    c3_ws use_ws = (c3_ws)box_u->use_w;
+
+    if ( use_ws == 0 ) {
+      fprintf(stderr, "%p is bogus\r\n", ptr_v);
+      siz_w = 0;
+    }
+    else {
+      c3_assert(use_ws != 0);
+
+      if ( use_ws < 0 ) {
+        siz_w = 0;
+      }
+      else {
+        use_ws = -use_ws;
+        siz_w = box_u->siz_w;
+      }
+      box_u->use_w = (c3_w)use_ws;
+    }
+    return siz_w;
+  }
+}
+
+/* u3a_count_noun(): count size of noun.
+*/
+c3_w
+u3a_count_noun(u3_noun som)
+{
+  c3_w siz_w = 0;
+
+  while ( 1 ) {
+    if ( _(u3a_is_senior(u3R, som)) ) {
+      return siz_w;
+    }
+    else {
+      c3_w* dog_w = u3a_to_ptr(som);
+      c3_w  new_w = u3a_count_ptr(dog_w);
+
+      if ( 0 == new_w ) {
+        return siz_w;
+      }
+      else {
+        siz_w += new_w;
+        if ( _(u3du(som)) ) {
+          siz_w += u3a_count_noun(u3h(som));
+          som = u3t(som);
+        }
+        else return siz_w;
+      }
+    }
+  }
+}
+
+/* u3a_discount_ptr(): clean up after counting a pointer.
+*/
+c3_w
+u3a_discount_ptr(void* ptr_v)
+{
+  if ( _(u3a_is_north(u3R)) ) {
+    if ( !((ptr_v >= u3a_into(u3R->rut_p)) &&
+           (ptr_v < u3a_into(u3R->hat_p))) )
+    {
+      return 0;
+    }
+  }
+  else {
+    if ( !((ptr_v >= u3a_into(u3R->hat_p)) &&
+           (ptr_v < u3a_into(u3R->rut_p))) )
+    {
+      return 0;
+    }
+  }
+  u3a_box* box_u  = u3a_botox(ptr_v);
+  c3_w     siz_w;
+
+  c3_ws use_ws = (c3_ws)box_u->use_w;
+
+  if ( use_ws == 0 ) {
+    fprintf(stderr, "%p is bogus\r\n", ptr_v);
+    siz_w = 0;
+  }
+  else {
+    c3_assert(use_ws != 0);
+
+    if ( use_ws < 0 ) {
+      use_ws = -use_ws;
+      siz_w = box_u->siz_w;
+    }
+    else {
+      siz_w = 0;
+    }
+    box_u->use_w = (c3_w)use_ws;
+  }
+
+  return siz_w;
+}
+
+/* u3a_discount_noun(): clean up after counting a noun.
+*/
+c3_w
+u3a_discount_noun(u3_noun som)
+{
+  c3_w siz_w = 0;
+
+  while ( 1 ) {
+    if ( _(u3a_is_senior(u3R, som)) ) {
+      return siz_w;
+    }
+    else {
+      c3_w* dog_w = u3a_to_ptr(som);
+      c3_w  new_w = u3a_discount_ptr(dog_w);
+
+      if ( 0 == new_w ) {
+        return siz_w;
+      }
+      else {
+        siz_w += new_w;
+        if ( _(u3du(som)) ) {
+          siz_w += u3a_discount_noun(u3h(som));
+          som = u3t(som);
+        }
+        else return siz_w;
+      }
+    }
+  }
+}
+
+
 /* u3a_print_memory: print memory amount.
 */
 void

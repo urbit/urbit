@@ -1,17 +1,23 @@
 /+  *group-json
 |_  upd=group-update
+++  grad  %noun
 ++  grab
   |%
   ++  noun  group-update
   --
 ++  grow
   |%
+  ++  noun  upd
   ++  json
     =,  enjs:format
     ^-  ^json
     %+  frond  %group-update
     %-  pairs
     :~
+      ?:  =(%initial -.upd)
+        ?>  ?=(%initial -.upd)
+        :-  %initial
+        (groups-to-json groups.upd)
       ::
       ::  %add
       ?:  =(%add -.upd)

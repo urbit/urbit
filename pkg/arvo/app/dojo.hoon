@@ -23,10 +23,10 @@
           poy/(unit dojo-project)                       ::  working
           $:  ::  sur: structure imports
               ::
-              sur=(list cable:ford)
+              sur=(list cable:clay)
               ::  lib: library imports
               ::
-              lib=(list cable:ford)
+              lib=(list cable:clay)
           ==
           var/(map term cage)                           ::  variable state
           old/(set term)                                ::  used TLVs
@@ -89,7 +89,7 @@
       $:  mad/dojo-command                              ::  operation
           num/@ud                                       ::  number of tasks
           cud/(unit dojo-source)                        ::  now solving
-          pux/(unit path)                               ::  ford working
+          pux/(unit path)                               ::  working
           pro/(unit vase)                               ::  prompting loop
           per/(unit sole-edit)                          ::  pending reverse
           job/(map @ud dojo-build)                      ::  problems
@@ -100,6 +100,17 @@
     --
 =>
 |%
+::  TODO: move to zuse? copied from clay
+::
+++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
+++  with-faces
+  =|  res=(unit vase)
+  |=  vaz=(list [face=@tas =vase])
+  ^-  vase
+  ?~  vaz  (need res)
+  =/  faz  (with-face i.vaz)
+  =.  res  `?~(res faz (slop faz u.res))
+  $(vaz t.vaz)
 ::  |parser-at: parsers for dojo expressions using :dir as working directory
 ::
 ++  parser-at
@@ -177,13 +188,13 @@
   ::
   ++  parse-cables
     %+  cook
-      |=  cables=(list cable:ford)
+      |=  cables=(list cable:clay)
       :+  0  %ex
       ^-  hoon
       ::
       :-  %clsg
       %+  turn  cables
-      |=  cable=cable:ford
+      |=  cable=cable:clay
       ^-  hoon
       ::
       :+  %clhp
@@ -194,7 +205,7 @@
     (most ;~(plug com gaw) parse-cable)
   ::
   ++  parse-cable
-    %+  cook  |=(a=cable:ford a)
+    %+  cook  |=(a=cable:clay a)
     ;~  pose
       (stag ~ ;~(pfix tar sym))
       (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
@@ -312,23 +323,22 @@
       dir
     dir(r [%da now.hid])
   ::
-  ++  he-disc    `disc:ford`[p q]:he-beam
   ++  he-beak    `beak`[p q r]:he-beam
-  ++  he-rail    `rail:ford`[[p q] s]:he-beam
   ++  he-parser  (parser-at our.hid he-beam)
   ::
   ++  dy                                                ::  project work
     |_  dojo-project                                    ::
     ++  dy-abet  +>(poy `+<)                            ::  resolve
     ++  dy-amok  +>(poy ~)                              ::  terminate
-    ++  dy-ford                                         ::  send work to ford
-      |=  [way=wire schematic=schematic:ford]
+    ::  +dy-sing: make a clay read request
+    ::
+    ++  dy-sing
+      |=  [way=wire =care:clay =path]
       ^+  +>+>
-      ?>  ?=($~ pux)
-      ::  pin all builds to :now.hid so they don't get cached forever
-      ::
+      ?>  ?=(~ pux)
       %-  he-card(poy `+>+<(pux `way))
-      [%pass way %arvo %f %build live=%.n schematic]
+      =/  [=ship =desk =case:clay]  he-beak
+      [%pass way %arvo %c %warp ship desk ~ %sing care case path]
     ::
     ++  dy-request
       |=  [way=wire =request:http]
@@ -348,12 +358,8 @@
         ::  really shoud stop the thread as well
         ::
         [%pass u.pux %agent [our.hid %spider] %leave ~]
-      [%pass u.pux %arvo %f %kill ~]
-    ::
-    ++  dy-slam                                         ::  call by ford
-      |=  {way/wire gat/vase sam/vase}
-      ^+  +>+>
-      (dy-ford way `schematic:ford`[%call [%$ %noun gat] [%$ %noun sam]])
+      =/  [=ship =desk =case:clay]  he-beak
+      [%pass u.pux %arvo %c %warp ship desk ~]
     ::
     ++  dy-errd                                         ::  reject change, abet
       |=  {rev/(unit sole-edit) err/@u}
@@ -479,7 +485,11 @@
       ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
         ~&  %dy-no-prompt
         (dy-diff %bel ~)
-      (dy-slam /dial u.pro !>(txt))
+      =/  res  (mule |.((slam u.pro !>(txt))))
+      ?:  ?=(%| -.res)
+        %-  (slog >%dy-done< p.res)
+        (dy-rash %bel ~)  ::  TODO: or +dy-abet(per ~)  ?
+      (dy-made-dial %noun p.res)
     ::
     ++  dy-cast
       |*  {typ/_* bun/vase}
@@ -516,13 +526,13 @@
             $lib
           %_    .
               lib
-            ((dy-cast (list cable:ford) !>(*(list cable:ford))) q.cay)
+            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
           ==
         ::
             $sur
           %_    .
               sur
-            ((dy-cast (list cable:ford) !>(*(list cable:ford))) q.cay)
+            ((dy-cast (list cable:clay) !>(*(list cable:clay))) q.cay)
           ==
         ::
             $dir  =+  ^=  pax  ^-  path
@@ -637,7 +647,12 @@
         ~&  %dy-edit-busy
         =^  lic  say  (~(transmit sole say) dat)
         (dy-diff %mor [%det lic] [%bel ~] ~)
-      (dy-slam(per `dat) /edit u.pro !>((tufa buf.say)))
+      =>  .(per `dat)
+      =/  res  (mule |.((slam u.pro !>((tufa buf.say)))))
+      ?:  ?=(%| -.res)
+        %-  (slog >%dy-edit< p.res)
+        (dy-rash %bel ~)  ::  TODO: or +dy-abet(per ~)  ?
+      (dy-made-edit %noun p.res)
     ::
     ++  dy-type                                         ::  sole action
       |=  act/sole-action
@@ -657,43 +672,78 @@
         !>(~)
       (slop (dy-vase p.i.src) $(src t.src))
     ::
-    ++  dy-silk-vase  |=(vax/vase [%$ %noun vax])       ::  vase to silk
-    ++  dy-silk-sources                                 ::  arglist to silk
-      |=  src/(list dojo-source)
-      ^-  schematic:ford
-      [%$ %noun (dy-sore src)]
-    ::
-    ++  dy-silk-config                                  ::  configure
-      |=  {cay/cage cig/dojo-config}
-      ^-  [wire schematic:ford]
+    ++  dy-run-generator
+      !.
+      |=  [cay=cage cig=dojo-config]
+      ^+  +>+>
       ?.  (~(nest ut [%cell [%atom %$ ~] %noun]) | p.q.cay)
-        ::
-        ::  naked gate
+        ::  naked generator; takes one argument
         ::
         ?.  &(?=({* ~} p.cig) ?=(~ q.cig))
           ~|(%one-argument !!)
-        :-  /noun
-        :+  %call  [%$ %noun q.cay]
-        [%$ %noun (dy-vase p.i.p.cig)]
-      ::
+        =/  res  (mule |.((slam q.cay (dy-vase p.i.p.cig))))
+        ?:  ?=(%| -.res)
+          (he-diff(poy ~) %tan p.res)  ::  TODO: or +dy-rash  ?
+        (dy-hand %noun p.res)
       ::  normal generator
       ::
-      :-  ?+  -.q.q.cay  ~|(%bad-gen ~_((sell (slot 2 q.cay)) !!))
-            $say  /gent
-            $ask  /dial
+      ::    A normal generator takes as arguments:
+      ::    - event args: date, entropy, beak (network location)
+      ::    - positional arguments, as a list
+      ::    - optional keyword arguments, as name-value pairs
+      ::
+      ::    The generator is a pair of a result mark and a gate.
+      ::    TODO: test %ask generators
+      ::
+      =/  wat  (mule |.(!<(?(%ask %say) (slot 2 q.cay))))
+      ?:  ?=(%| -.wat)
+        (he-diff(poy ~) %tan p.wat)
+      =-  =/  res  (mule -)
+          ?:  ?=(%| -.res)
+            (he-diff(poy ~) %tan leaf+"dojo: generator failure" p.res)
+          ?-  p.wat
+            %ask  (dy-made-dial %noun p.res)
+            %say  (dy-made-gent %noun p.res)
           ==
-      =+  gat=(slot 3 q.cay)
-      :+  %call  [%$ %noun gat]
-      :+  [%$ %noun !>([now=now.hid eny=eny.hid bec=he-beak])]
-        (dy-silk-sources p.cig)
-      :+  %mute  [%$ %noun (fall (slew 27 gat) !>(~))]
-      ^-  (list [wing schematic:ford])
-      %+  turn  ~(tap by q.cig)
-      |=  {a/term b/(unit dojo-source)}
-      ^-  [wing schematic:ford]
-      :-  [a ~]
-      :+  %$  %noun
-      ?~(b !>([~ ~]) (dy-vase p.u.b))
+      ::  gat: generator gate
+      ::  som: default gat sample
+      ::  ven: event arguments
+      ::  poz: positional arguments
+      ::  kev: key-value named arguments
+      ::  kuv: default keyword arguments
+      ::  sam: fully populated sample
+      ::  rog: default gat sample
+      ::
+      |.  ^-  vase
+      =/  gat=vase  (slot 3 q.cay)
+      =/  som=vase  (slot 6 gat)
+      =/  ven=vase  !>([now=now.hid eny=eny.hid bec=he-beak])
+      =/  poz=vase  (dy-sore p.cig)
+      =/  kev=vase
+        =/  kuv=(unit vase)  (slew 7 som)
+        ?:  =(~ q.cig)
+          (fall kuv !>(~))
+        =/  soz=(list [var=term vax=vase])
+          %~  tap  by
+          %-  ~(run by q.cig)
+          |=(val=(unit dojo-source) ?~(val !>([~ ~]) (dy-vase p.u.val)))
+        ~|  keyword-arg-failure+~(key by q.cig)
+        %+  slap
+          (with-faces kuv+(need kuv) rep+(with-faces soz) ~)
+        :+  %cncb  [%kuv]~
+        %+  turn  soz
+        |=  [var=term *]
+        ^-  [wing hoon]
+        [[var]~ [%wing var %rep ~]]
+      ::
+      =/  sam=vase  :(slop ven poz kev)
+      ?.  (~(nest ut p.som) | p.sam)
+        ~>  %slog.1^leaf+"dojo: nest-need"
+        ~>  %slog.0^(skol p.som)
+        ~>  %slog.1^leaf+"dojo: nest-have"
+        ~>  %slog.0^(skol p.sam)
+        !!
+      (slam gat sam)
     ::
     ++  dy-made-dial                                    ::  dialog product
       |=  cag/cage
@@ -742,51 +792,81 @@
     ++  dy-make                                         ::  build step
       ^+  +>
       ?>  ?=(^ cud)
-      =+  bil=q.u.cud                 ::  XX =*
-      ?:  ?=($ur -.bil)
-        (dy-request /hand `request:http`[%'GET' p.bil ~ ~])
-      ?:  ?=($te -.bil)
-        (dy-wool-poke p.bil q.bil)
-      %-  dy-ford
-      ^-  [path schematic:ford]
-      ?-  -.bil
-        $ge  (dy-silk-config (dy-cage p.p.p.bil) q.p.bil)
-        $dv  [/hand [%core [he-disc (weld /hoon (flop p.bil))]]]
-        $ex  [/hand (dy-mare p.bil)]
-        $sa  [/hand [%bunt he-disc p.bil]]
-        $as  [/hand [%cast he-disc p.bil [%$ (dy-cage p.q.bil)]]]
-        $do  [/hand [%call (dy-mare p.bil) [%$ (dy-cage p.q.bil)]]]
-        $tu  :-  /hand
-             :+  %$  %noun
-             |-  ^-  vase
-             ?~  p.bil  !!
-             =+  hed=(dy-vase p.i.p.bil)
-             ?~  t.p.bil  hed
-             (slop hed $(p.bil t.p.bil))
+      =/  bil  q.u.cud
+      ?-    -.bil
+          %ur  (dy-request /hand `request:http`[%'GET' p.bil ~ ~])
+          %te  (dy-wool-poke p.bil q.bil)
+          %ex  (dy-mere p.bil)
+          %dv  (dy-sing hand+p.bil %a (snoc p.bil %hoon))
+          %ge  (dy-run-generator (dy-cage p.p.p.bil) q.p.bil)
+          %sa
+        =+  .^(=dais:clay cb+(en-beam:format he-beak /[p.bil]))
+        (dy-hand p.bil bunt:dais)
+      ::
+          %as
+        =/  cag=cage  (dy-cage p.q.bil)
+        =+  .^(=tube:clay cc+(en-beam:format he-beak /[p.bil]/[p.cag]))
+        (dy-hand p.bil (tube q.cag))
+      ::
+          %do
+        =/  gat  (dy-eval p.bil)
+        ?:  ?=(%| -.gat)
+          (he-diff(poy ~) %tan p.gat)
+        =/  res  (mule |.((slam q.p.gat (dy-vase p.q.bil))))
+        ?:  ?=(%| -.res)
+          (he-diff(poy ~) %tan p.res)
+        (dy-hand %noun p.res)
+      ::
+          %tu
+        %+  dy-hand  %noun
+        |-  ^-  vase
+        ?~  p.bil  !!
+        =/  hed  (dy-vase p.i.p.bil)
+        ?~  t.p.bil  hed
+        (slop hed $(p.bil t.p.bil))
       ==
+    ::  +dy-hoon-var: if input is a dojo variable lookup, perform it
     ::
-    ++  dy-hoon-mark                                    ::  XX architect
+    ::    If the expression is a bare reference to a Dojo variable,
+    ::    produce that variable's value; otherwise, produce ~.
+    ::
+    ++  dy-hoon-var
       =+  ^=  ope
           |=  gen/hoon  ^-  hoon
           ?:  ?=(?($sgld $sgbn) -.gen)
             $(gen q.gen)
           =+  ~(open ap gen)
           ?.(=(gen -) $(gen -) gen)
-      |=  gen/hoon  ^-  (unit mark)
+      |=  gen/hoon  ^-  (unit cage)
       =.  gen  (ope gen)
       ?:  ?=({$cnts {@ ~} ~} gen)
-        (bind (~(get by var) i.p.gen) head)
+        (~(get by var) i.p.gen)
       ~
+    ::  +dy-mere: execute hoon and complete construction step
     ::
-    ++  dy-mare                                         ::  build expression
-      |=  gen/hoon
-      ^-  schematic:ford
-      =+  too=(dy-hoon-mark gen)
-      =-  ?~(too - [%cast he-disc u.too -])
-      :+  %ride  gen
-      :-  [%$ he-hoon-head]
-      :^  %plan  he-rail  `coin`blob+**
-      `scaffold:ford`[he-rail zuse sur lib ~ ~]
+    ++  dy-mere
+      |=  =hoon
+      =/  res  (dy-eval hoon)
+      ?:  ?=(%| -.res)
+        (he-diff(poy ~) %tan p.res)
+      (dy-hand p.res)
+    ::  +dy-eval: run hoon source against the dojo subject
+    ::
+    ::    TODO: use /lib and /sur imports to construct subject
+    ::
+    ++  dy-eval
+      |=  =hoon
+      ^-  (each cage tang)
+      ?^  val=(dy-hoon-var hoon)
+        &+u.val
+      !.
+      %-  mule  |.
+      :-  %noun
+      =/  vaz=(list [term vase])
+        (turn ~(tap by var) |=([lal=term cag=cage] [lal q.cag]))
+      =/  sut  (slop !>([our=our now=now eny=eny]:hid) !>(..zuse))
+      =?  sut  ?=(^ vaz)  (slop (with-faces vaz) sut)
+      (slap sut hoon)
     ::
     ++  dy-step                                         ::  advance project
       |=  nex/@ud
@@ -875,38 +955,17 @@
     :-  %pro
     [& %$ (weld he-prow ?~(buf "> " "< "))]
   ::
-  ++  he-made                                           ::  result from ford
-    |=  $:  way=wire
-            date=@da
-            $=  result
-            $%  [%complete build-result=build-result:ford]
-                [%incomplete =tang]
-        ==  ==
+  ++  he-writ
+    |=  [way=wire =riot:clay]
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
-    ?-    -.result
-        %incomplete
-      (he-diff(poy ~) %tan tang.result)
-    ::
-        %complete
-      ?-    -.build-result.result
-          ::
-          %success
-        ::
-        %.  (result-to-cage:ford build-result.result)
-        =+  dye=~(. dy u.poy(pux ~))
-        ?+  way  !!
-          {$hand ~}  dy-hand:dye
-          {$dial ~}  dy-made-dial:dye
-          {$gent ~}  dy-made-gent:dye
-          {$noun ~}  dy-made-noun:dye
-          {$edit ~}  dy-made-edit:dye
-        ==
-      ::
-          %error
-        (he-diff(poy ~) %tan message.build-result.result)
-    ==  ==
+    ?+    way  !!
+        [%hand *]
+      ?~  riot
+        (he-diff(poy ~) %tan >%generator-build-fail< >(snoc t.way %hoon)< ~)
+      (~(dy-hand dy u.poy(pux ~)) noun+!<(vase q.r.u.riot))
+    ==
   ::
   ++  he-unto                                           ::  result from agent
     |=  {way/wire cit/sign:agent:gall}
@@ -1449,7 +1508,7 @@
   =^  moves  state
     =<  he-abet
     ?+    +<.sign-arvo  ~|([%dojo-bad-take +<.sign-arvo] !!)
-        %made           (he-made:he-full t.wire +>.sign-arvo)
+        %writ           (he-writ:he-full t.wire +>.sign-arvo)
         %http-response  (he-http-response:he-full t.wire +>.sign-arvo)
     ==
   [moves ..on-init]

@@ -68,7 +68,7 @@
     ?.  (~(has by synced.state) t.path)
       (on-watch:def path)
     =/  scry-path=^path
-      :(welp /=group-store/(scot %da now.bowl) t.path /noun)
+      :(welp /(scot %p our.bowl)/group-store/(scot %da now.bowl) t.path /noun)
     =/  grp=(unit group)
       .^((unit group) %gx scry-path)
     ?~  grp
@@ -160,9 +160,10 @@
   |=  diff=group-update
   ^-  (quip card _state)
   ?-  -.diff
-      %keys    [~ state]
-      %path    [~ state]
-      %bundle  [~ state]
+      %initial  [~ state]
+      %keys     [~ state]
+      %path     [~ state]
+      %bundle   [~ state]
       %add     [(update-subscribers [%group pax.diff] diff) state]
       %remove  [(update-subscribers [%group pax.diff] diff) state]
   ::
@@ -176,8 +177,9 @@
   |=  diff=group-update
   ^-  (quip card _state)
   ?-  -.diff
-      %keys    [~ state]
-      %bundle  [~ state]
+      %initial  [~ state]
+      %keys     [~ state]
+      %bundle   [~ state]
       %path
     :_  state
     ?~  pax.diff  ~
@@ -240,8 +242,13 @@
 ::
 ++  group-scry
   |=  pax=path
-  ^-  (unit group)
-  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
+  .^  (unit group)
+    %gx
+    (scot %p our.bol)
+    %group-store
+    (scot %da now.bol)
+    (weld pax /noun)
+  ==
 ::
 ++  update-subscribers
   |=  [pax=path diff=group-update]

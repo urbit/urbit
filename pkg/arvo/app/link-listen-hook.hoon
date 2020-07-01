@@ -14,8 +14,8 @@
 ::    to expede this process, we prod other potential listeners when we add
 ::    them to our metadata+groups definition.
 ::
-/-  link-listen-hook, *metadata-store, *link, group-store
-/+  mdl=metadata, default-agent, verb, dbug
+/-  *link, listen-hook=link-listen-hook, *metadata-store, group-store
+/+  mdl=metadata, default-agent, verb, dbug, store=link-store
 ::
 ~%  %link-listen-hook-top  ..is  ~
 |%
@@ -167,7 +167,7 @@
       ?>  (team:title [our src]:bowl)
       =^  cards  state
         ~|  p.vase
-        (handle-listen-action:do !<(action:link-listen-hook vase))
+        (handle-listen-action:do !<(action:listen-hook vase))
       [cards this]
     ==
   ::
@@ -218,7 +218,7 @@
 ::  user actions & updates
 ::
 ++  handle-listen-action
-  |=  =action:link-listen-hook
+  |=  =action:listen-hook
   ^-  (quip card _state)
   ::NOTE  no-opping where appropriate happens further down the call stack.
   ::      we *could* no-op here, as %watch when we're already listening should
@@ -250,7 +250,7 @@
   $(cards (weld cards more-cards), groups t.groups)
 ::
 ++  send-update
-  |=  =update:link-listen-hook
+  |=  =update:listen-hook
   ^-  card
   [%give %fact ~[/listening] %link-listen-update !>(update)]
 ::
@@ -338,7 +338,6 @@
     =*  mark  p.cage.sign
     =*  vase  q.cage.sign
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
-      %group-initial  [~ state]  ::NOTE  initial handled using metadata
       %group-update   (handle-group-update !<(group-update:group-store vase))
     ==
   ==
@@ -346,6 +345,7 @@
 ++  handle-group-update
   |=  upd=group-update:group-store
   ^-  (quip card _state)
+  ::  NOTE  initial handled using metadata
   ?.  ?=(?(%path %add %remove) -.upd)
     [~ state]
   =/  socs=(list app-path)
@@ -500,11 +500,11 @@
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
         %link-initial
       %-  handle-link-initial
-      [who.target where.target !<(initial vase)]
+      [who.target where.target !<(initial:store vase)]
     ::
         %link-update
       %-  handle-link-update
-      [who.target where.target !<(update vase)]
+      [who.target where.target !<(update:store vase)]
     ==
   ==
 ::
@@ -546,7 +546,7 @@
   group-path
 ::
 ++  do-link-action
-  |=  [=wire =action]
+  |=  [=wire =action:store]
   ^-  card
   :*  %pass
       wire
@@ -558,7 +558,7 @@
   ==
 ::
 ++  handle-link-initial
-  |=  [who=ship where=path =initial]
+  |=  [who=ship where=path =initial:store]
   ^-  (quip card _state)
   ?>  =(src.bowl who)
   ?+  -.initial  ~|([dap.bowl %unexpected-initial -.initial] !!)
@@ -580,7 +580,7 @@
   ==
 ::
 ++  handle-link-update
-  |=  [who=ship where=path =update]
+  |=  [who=ship where=path =update:store]
   ^-  (quip card _state)
   ?>  =(src.bowl who)
   :_  state
@@ -594,11 +594,11 @@
   ::
       %annotations
     %+  turn  notes.update
-    |=  =note
+    |=  =^note
     ^-  card
     %+  do-link-action
       [%forward %annotation (scot %p who) where]
-    [%read where url.update who note]
+    [%read where url.update `comment`[who note]]
   ==
 ::
 ++  take-forward-sign

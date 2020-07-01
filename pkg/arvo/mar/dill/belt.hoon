@@ -9,6 +9,11 @@
 =,  sole
 |_  dill-belt:dill
 ::
+++  grad  %noun
+++  grow
+  |%
+  ++  noun  +<.grow
+  --
 ++  grab                                                ::  convert from
   |%
   ++  json

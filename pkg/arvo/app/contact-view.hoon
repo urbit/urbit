@@ -1,50 +1,29 @@
 ::  contact-view: sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *group-store,
-    *group-hook,
-    *invite-store,
-    *contact-hook,
-    *metadata-store,
-    *metadata-hook,
-    *permission-group-hook,
-    *permission-hook
-/+  *server, *contact-json, default-agent, dbug
-/=  index
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/index
-  /|  /html/
-      /~  ~
-  ==
-/=  tile-js
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/js/tile
-  /|  /js/
-      /~  ~
-  ==
-/=  script
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/js/index
-  /|  /js/
-      /~  ~
-  ==
-/=  style
-  /^  octs
-  /;  as-octs:mimes:html
-  /:  /===/app/contacts/css/index
-  /|  /css/
-      /~  ~
-  ==
-/=  contact-png
-  /^  (map knot @)
-  /:  /===/app/contacts/img  /_  /png/
+/-  *group-store
+/-  *group-hook
+/-  *invite-store
+/-  *contact-hook
+/-  *metadata-store
+/-  *metadata-hook
+/-  *permission-group-hook
+/-  *permission-hook
 ::
+/+  *server, *contact-json, default-agent, dbug
 |%
++$  versioned-state
+  $%  state-0
+  ==
+::
++$  state-0
+  $:  %0
+      ~
+  ==
+::
 +$  card  card:agent:gall
 --
+=|  state-0
 =*  state  -
 ::
 %-  agent:dbug
@@ -60,15 +39,31 @@
     ^-  (quip card _this)
     :_  this
     :~  [%pass /updates %agent [our.bowl %contact-store] %watch /updates]
-        [%pass / %arvo %e %connect [~ /'~groups'] %contact-view]
         (contact-poke:cc [%create /~/default])
         (group-poke:cc [%bundle /~/default])
         (contact-poke:cc [%add /~/default our.bowl *contact])
         (group-poke:cc [%add [our.bowl ~ ~] /~/default])
+        :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~groups' /app/landscape %.n])
+        ==
     ==
   ::
-  ++  on-save   on-save:def
-  ++  on-load   on-load:def
+  ++  on-save   !>(state)
+  ++  on-load
+    |=  old-vase=vase
+    ^-  (quip card _this)
+    =/  old  ((soft state-0) q.old-vase)
+    ?^  old  [~ this]
+    :_  this(state [%0 ~])
+    :~  [%pass / %arvo %e %disconnect [~ /'~groups']]
+        [%pass / %arvo %e %connect [~ /'contact-view'] %contact-view]
+        :*  %pass  /srv  %agent  [our.bol %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~groups' /app/landscape %.n])
+        ==
+    ==
+  ::
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
@@ -92,7 +87,7 @@
     ?>  (team:title our.bowl src.bowl)
     ?:  ?=([%http-response *] path)  [~ this]
     ?.  =(/primary path)  (on-watch:def path)
-    [[%give %fact ~ %json !>((rolodex-to-json all-scry:cc))]~ this]
+    [[%give %fact ~ %json !>((update-to-json [%initial all-scry:cc]))]~ this]
   ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
@@ -173,15 +168,7 @@
       ''
     i.back-path
   ?+  site.url  not-found:gen
-      [%'~groups' %css %index ~]  (css-response:gen style)
-      [%'~groups' %js %index ~]   (js-response:gen script)
-      [%'~groups' %js %tile ~]    (js-response:gen tile-js)
-      [%'~groups' %img *]
-    (png-response:gen (as-octs:mimes:html (~(got by contact-png) `@ta`name)))
-  ::
-  ::  avatar images
-  ::
-      [%'~groups' %avatar @ *]
+      [%'contact-view' @ *]
     =/  =path  (flop t.t.site.url)
     ?~  path  not-found:gen
     =/  contact  (contact-scry `^path`(snoc (flop t.path) name))
@@ -194,8 +181,6 @@
       =/  content-type  ['content-type' content-type.u.avatar.u.contact]
       [[200 [content-type max-3-days ~]] `octs.u.avatar.u.contact]
     ==
-  ::
-      [%'~groups' *]  (html-response:gen index)
   ==
 ::
 ::  +utilities
@@ -272,11 +257,16 @@
 ::
 ++  all-scry
   ^-  rolodex
-  .^(rolodex %gx /=contact-store/(scot %da now.bol)/all/noun)
+  .^(rolodex %gx /(scot %p our.bol)/contact-store/(scot %da now.bol)/all/noun)
 ::
 ++  contact-scry
   |=  pax=path
   ^-  (unit contact)
-  =.  pax  ;:(weld /=contact-store/(scot %da now.bol)/contact pax /noun)
+  =.  pax
+    ;:  weld
+      /(scot %p our.bol)/contact-store/(scot %da now.bol)/contact
+      pax
+      /noun
+    ==
   .^((unit contact) %gx pax)
 --

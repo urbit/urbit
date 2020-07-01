@@ -13,11 +13,17 @@
 +$  versioned-state
   $%  state-0
       state-1
+      state-2
+  ==
+::
++$  state-2
+  $:  %2
+      state-base
   ==
 ::
 +$  state-1
   $:  %1
-      loaded-cards=(list card)
+      loaded-cards=*
       state-base
   ==
 +$  state-0  [%0 state-base]
@@ -27,7 +33,7 @@
       allow-history=(map path ?)
   ==
 --
-=|  state-1
+=|  state-2
 =*  state  -
 ::
 %-  agent:dbug
@@ -43,10 +49,13 @@
   |=  old-vase=vase
   ^-  (quip card _this)
   =/  old  !<(versioned-state old-vase)
-  :_  ?.  ?=(%1 -.old)
+  :_  ^-  _this  ?-  -.old
+          %2  this(state old)
+          %1  this(state [%2 +>.old])
+          %0
         ~&  'very old chat-hook state; cannot migrate your chats'
         this
-      this(state old)
+      ==
   :*  :*  %pass
           /
           %agent

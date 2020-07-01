@@ -10,24 +10,33 @@
 ::    /json/[n]/submission/[wood-url]/[collection]    nth matching submission
 ::    /json/seen                                      mark-as-read updates
 ::
-/-  *link-view,
-    *invite-store, group-store,
-    link-listen-hook,
-    group-hook, permission-hook, permission-group-hook,
-    metadata-hook, contact-view
-/+  *link, metadata, *server, default-agent, verb, dbug
+/-  *link, view=link-view
+/-  *invite-store, group-store
+/-  listen-hook=link-listen-hook
+/-  group-hook, permission-hook, permission-group-hook
+/-  metadata-hook, contact-view
+/+  store=link-store, metadata, *server, default-agent, verb, dbug
 ~%  %link-view-top  ..is  ~
 ::
 |%
++$  versioned-state
+  $%  state-0
+      state-1
+  ==
 +$  state-0
   $:  %0
+      ~
+  ==
+::
++$  state-1
+  $:  %1
       ~
   ==
 ::
 +$  card  card:agent:gall
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 %+  verb  |
@@ -42,27 +51,36 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
-    :~  [%pass /connect %arvo %e %connect [~ /'~link'] dap.bowl]
-        [%pass /submissions %agent [our.bowl %link-store] %watch /submissions]
+    :~  [%pass /submissions %agent [our.bowl %link-store] %watch /submissions]
         [%pass /discussions %agent [our.bowl %link-store] %watch /discussions]
         [%pass /seen %agent [our.bowl %link-store] %watch /seen]
-      ::
-        =+  [%add dap.bowl /tile '/~link/js/tile.js']
-        [%pass /launch %agent [our.bowl %launch] %poke %launch-action !>(-)]
       ::
         =+  [%invite-action !>([%create /link])]
         [%pass /invitatory/create %agent [our.bowl %invite-store] %poke -]
       ::
         =+  /invitatory/link
         [%pass - %agent [our.bowl %invite-store] %watch -]
+        :*  %pass  /srv  %agent  [our.bowl %file-server]
+            %poke  %file-server-action
+            !>([%serve-dir /'~link' /app/landscape %.n])
+        ==
     ==
   ::
   ++  on-save  !>(state)
-  ::
   ++  on-load
-    |=  old=vase
+    |=  old-vase=vase
     ^-  (quip card _this)
-    [~ this(state !<(state-0 old))]
+    =/  old  !<(versioned-state old-vase)
+    ?-  -.old
+        %1  [~ this]
+        %0
+      :_  this(state [%1 ~])
+      :-  [%pass /connect %arvo %e %disconnect [~ /'~link']]
+      :~  :*  %pass  /srv  %agent  [our.bowl %file-server]
+          %poke  %file-server-action
+          !>([%serve-dir /'~link' /app/landscape %.n])
+      ==  ==
+    ==
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -70,25 +88,17 @@
     ?>  (team:title our.bowl src.bowl)
     :_  this
     ?+  mark  (on-poke:def mark vase)
-        %handle-http-request
-      =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
-      %+  give-simple-payload:app  eyre-id
-      %+  require-authorization:app  inbound-request
-      handle-http-request:do
-    ::
         %link-action
-      [(handle-action:do !<(action vase)) ~]
+      [(handle-action:do !<(action:store vase)) ~]
     ::
         %link-view-action
-      (handle-view-action:do !<(view-action vase))
+      (handle-view-action:do !<(action:view vase))
     ==
   ::
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?:  ?|  ?=([%http-response *] path)
-            ?=([%json %seen ~] path)
-        ==
+    ?:  ?=([%json %seen ~] path)
       [~ this]
     ?:  ?=([%tile ~] path)
       :_  this
@@ -107,11 +117,11 @@
     ::
         [%submission @ ^]
       :_  this
-      (give-specific-submission:do p (break-discussion-path t.t.t.path))
+      (give-specific-submission:do p (break-discussion-path:store t.t.t.path))
     ::
         [%discussions @ ^]
       :_  this
-      (give-initial-discussions:do p (break-discussion-path t.t.t.path))
+      (give-initial-discussions:do p (break-discussion-path:store t.t.t.path))
     ==
   ::
   ++  on-agent
@@ -135,7 +145,7 @@
       ::
           %link-update
         :_  this
-        :-  (send-update:do !<(update vase))
+        :-  (send-update:do !<(update:store vase))
         ?:  =(/discussions wire)  ~
         ~[give-tile-data:do]
       ==
@@ -185,63 +195,6 @@
       'pageNumber'^(numb page-number)
       'page'^a+(turn page item-to-json)
   ==
-::
-++  handle-http-request
-  |=  =inbound-request:eyre
-  ^-  simple-payload:http
-  ?.  =(src.bowl our.bowl)
-    [[403 ~] ~]
-  ::  request-line: parsed url + params
-  ::
-  =/  =request-line
-    %-  parse-request-line
-    url.request.inbound-request
-  =*  req-head  header-list.request.inbound-request
-  ?+  method.request.inbound-request  not-found:gen
-      %'GET'
-    (handle-get req-head request-line)
-  ==
-::
-++  handle-get
-  |=  [request-headers=header-list:http =request-line]
-  ^-  simple-payload:http
-  ::  try to load file from clay
-  ::
-  ?~  ext.request-line
-    ::  for extension-less requests, always just serve the index.html.
-    ::  that way the js can load and figure out how to deal with that route.
-    ::
-    $(request-line [[`%html ~[%'~link' 'index']] args.request-line])
-  =/  file=(unit octs)
-    ?.  ?=([%'~link' *] site.request-line)  ~
-    (get-file-at /app/link [t.site u.ext]:request-line)
-  ?~  file  not-found:gen
-  ?+  u.ext.request-line  not-found:gen
-    %html  (html-response:gen u.file)
-    %js    (js-response:gen u.file)
-    %css   (css-response:gen u.file)
-    %png   (png-response:gen u.file)
-  ==
-::
-++  get-file-at
-  |=  [base=path file=path ext=@ta]
-  ^-  (unit octs)
-  ::  only expose html, css and js files for now
-  ::
-  ?.  ?=(?(%html %css %js %png) ext)
-    ~
-  =/  =path
-    :*  (scot %p our.bowl)
-        q.byk.bowl
-        (scot %da now.bowl)
-        (snoc (weld base file) ext)
-    ==
-  ?.  .^(? %cu path)
-    ~
-  %-  some
-  %-  as-octs:mimes:html
-  .^(@ %cx path)
-::
 ++  do-poke
   |=  [app=term =mark =vase]
   ^-  card
@@ -268,12 +221,12 @@
   ==
 ::
 ++  handle-action
-  |=  =action
+  |=  =action:store
   ^-  card
   [%pass /action %agent [our.bowl %link-store] %poke %link-action !>(action)]
 ::
 ++  handle-view-action
-  |=  act=view-action
+  |=  act=action:view
   ^-  (list card)
   ?-  -.act
     %create  (handle-create +.act)
@@ -282,7 +235,7 @@
   ==
 ::
 ++  handle-create
-  |=  [=path title=@t description=@t members=create-members real-group=?]
+  |=  [=path title=@t description=@t members=create-members:view real-group=?]
   ^-  (list card)
   =/  group-path=^path
     ?-  -.members
@@ -320,7 +273,7 @@
         ::
         %^  do-poke  %link-listen-hook
           %link-listen-action
-        !>  ^-  action:link-listen-hook
+        !>  ^-  action:listen-hook
         [%watch path]
     ==
   ?:  ?=(%group -.members)  ~
@@ -500,6 +453,7 @@
       [%give %kick ~ ~]~
   =;  =json
     [%give %fact ~ %json !>(json)]
+  %+  frond:enjs:format  'link-update'
   %+  frond:enjs:format  'initial-submissions'
   %-  pairs:enjs:format
   %+  turn
@@ -533,7 +487,7 @@
     submissions
   |=  =submission
   ^-  json
-  =/  =json  (submission:en-json submission)
+  =/  =json  (submission:enjs:store submission)
   ?>  ?=([%o *] json)
   ::  add in seen status
   ::
@@ -541,7 +495,7 @@
     %+  ~(put by p.json)  'seen'
     :-  %b
     %+  scry-for  ?
-    [%seen (build-discussion-path path url.submission)]
+    [%seen (build-discussion-path:store path url.submission)]
   ::  add in comment count
   ::
   =;  comment-count=@ud
@@ -554,18 +508,19 @@
   =-  (~(got by (~(got by -) path)) url.submission)
   %+  scry-for  (per-path-url comments)
   :-  %discussions
-  (build-discussion-path path url.submission)
+  (build-discussion-path:store path url.submission)
 ::
 ++  give-specific-submission
   |=  [n=@ud =path =url]
   :_  [%give %kick ~ ~]~
   =;  =json
     [%give %fact ~ %json !>(json)]
+  %+  frond:enjs:format  'link-update'
   %+  frond:enjs:format  'submission'
   ^-  json
   =;  sub=(unit submission)
     ?~  sub  ~
-    (submission:en-json u.sub)
+    (submission:enjs:store u.sub)
   =/  =submissions
     =-  (~(got by -) path)
     %+  scry-for  (map ^path submissions)
@@ -585,35 +540,39 @@
       [%give %kick ~ ~]~
   =;  =json
     [%give %fact ~ %json !>(json)]
+  %+  frond:enjs:format  'link-update'
   %+  frond:enjs:format  'initial-discussions'
   %^  page-to-json  p
     %+  get-paginated  `p
     =-  (~(got by (~(got by -) path)) url)
     %+  scry-for  (per-path-url comments)
-    [%discussions (build-discussion-path path url)]
-  comment:en-json
+    [%discussions (build-discussion-path:store path url)]
+  comment:enjs:store
 ::
 ++  send-update
-  |=  =update
+  |=  =update:store
   ^-  card
   ?+  -.update  ~|([dap.bowl %unexpected-update -.update] !!)
       %submissions
     %+  give-json
-      (update:en-json update)
+      %+  frond:enjs:format  'link-update'
+      (update:enjs:store update)
     :~  /json/0/submissions
         (weld /json/0/submissions path.update)
     ==
   ::
       %discussions
     %+  give-json
-      (update:en-json update)
+      %+  frond:enjs:format  'link-update'
+      (update:enjs:store update)
     :_  ~
     %+  weld  /json/0/discussions
-    (build-discussion-path [path url]:update)
+    (build-discussion-path:store [path url]:update)
   ::
       %observation
     %+  give-json
-      (update:en-json update)
+      %+  frond:enjs:format  'link-update'
+      (update:enjs:store update)
     ~[/json/seen]
   ==
 ::
