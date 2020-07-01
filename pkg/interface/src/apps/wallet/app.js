@@ -125,7 +125,7 @@ export default class WalletApp extends React.Component {
       memory: false,
       logConsole: true,
       workers: true,
-      workerFile: '/~wallet/js/worker.js',
+      workerFile: '/~landscape/js/worker.js',
       createSocket: (port, host) => {
         return ProxySocket.connect(this.state.proxySocket, port, host);
       },

@@ -1,9 +1,8 @@
 import regeneratorRuntime from 'regenerator-runtime';
 import { BufferMap } from 'buffer-map';
 
-const BCoin = window.BCoin;
-const BManager = window.BManager;
-
+import BCoin from './bcoin';
+import BManager from './bmanager';
 
 export default class Ledger {
 

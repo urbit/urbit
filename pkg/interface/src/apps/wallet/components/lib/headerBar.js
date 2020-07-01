@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { cite } from '../../../../lib/util';
-import { IconHome } from "./icons/icon-home";
 import { Sigil } from "./icons/sigil";
 
 export class HeaderBar extends Component {
@@ -18,7 +17,6 @@ export class HeaderBar extends Component {
           className="dib gray2 f9 inter absolute left-0"
           href="/"
           style={{ top: 14 }}>
-          <IconHome/>
           <span
             className="ml2 white-d v-top lh-title"
             style={{ paddingTop: 3 }}>
