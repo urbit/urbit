@@ -149,8 +149,8 @@
     37^(can 3 ~[4^i 33^(ser-p pub)])
   ::  rare exception, invalid key, go to the next one
   ?:  (gte left n)  $(i +(i))  ::TODO  or child key is "point at infinity"
-  =.  pub  (jc-add.ecc (point left) pub)
   %_  +>.$
+    pub   (jc-add.ecc (point left) pub)
     cad   right
     dep   +(dep)
     ind   i
@@ -174,19 +174,18 @@
   ::  removes checksum
   ::
   %^  rsh  3  4
-  ::  +en-base58check returns a naked atom instead of a tape
-  ::  (i.e. en-base58:mimes:html is moved outside to +en-b58c-bip32)
-  ::
   %+  en-base58check
     [4 (version-bytes network %pub %.n)]
   [20 identity]
 ::
 ++  prv-extended
-  %+  en-b58c-bip32  0x488.ade4
+  |=  network=?(%main %regtest %testnet)
+  %+  en-b58c-bip32  (version-bytes network %prv %.y)
   (build-extended private-key)
 ::
 ++  pub-extended
-  %+  en-b58c-bip32  0x488.b21e
+  |=  network=?(%main %regtest %testnet)
+  %+  en-b58c-bip32  (version-bytes network %pub %.y)
   (build-extended public-key)
 ::
 ++  build-extended
@@ -227,26 +226,18 @@
   |=  d=@
   (ripemd-160:ripemd:crypto 32 (sha-256:sha d))
 ::
-::      tpub (testnet/regtest)         0x435.87cf
-::      tpriv (testnet/regtest)        0x435.8394
-::      xpub (main):                   0x488.b21e
-::      xpriv (main:                   0x488.ade4
-::      pubkey hash (testnet/regtest): 0x6f
-::      priv hash   (testnet/regtest): 0xef
-::
 ++  version-bytes
-  |=  [network=?(%main %regtest %testnet) type=?(%pub %priv) bip32=?]
+  |=  [network=?(%main %regtest %testnet) type=?(%pub %prv) bip32=?]
   ^-  @ux
-  |^  ?+  [network type]  ~|(%not-supported-version-bytes !!)
-        [?(%regtest %testnet) %pub]   ?:(bip32 xpub-key pay-to-pubkey)
-        [?(%regtest %testnet) %priv]  ?:(bip32 xpriv-key private-key)
-        [%main %pub]                  ?:(bip32 xpub-key pay-to-pubkey)
-        [%main %priv]                 ?:(bip32 xpriv-key private-key)
-      ==
+  |^
+  ?-  type
+    %pub  ?:(bip32 xpub-key pay-to-pubkey)
+    %prv  ?:(bip32 xprv-key private-key)
+  ==
   ::
-  ++  pay-to-pubkey  ?:(=(type %main) 0x0 0x6f)
-  ++  private-key    ?:(=(type %main) 0x80 0xef)
-  ++  xpub-key       ?:(=(type %main) 0x435.87cf 0x488.b21e)
-  ++  xpriv-key      ?:(=(type %main) 0x435.8394 0x488.ade4)
+  ++  pay-to-pubkey  ?:(=(network %main) 0x0 0x6f)
+  ++  private-key    ?:(=(network %main) 0x80 0xef)
+  ++  xpub-key       ?:(=(network %main) 0x488.b21e 0x435.87cf)
+  ++  xprv-key       ?:(=(network %main) 0x488.ade4 0x435.8394)
   --
 --

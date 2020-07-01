@@ -17,11 +17,10 @@ export default class WalletApi extends BaseApi<StoreState> {
     })
   }
 
-    addXPubKey(xpubkey: any) {
+  addXPubKey(xpubkey: any) {
     // console.log(config, badges);
     return this.action("bitcoin", "bitcoin-action", {
       add: xpubkey
     });
-
   }
 }

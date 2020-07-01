@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import urbitOb from "urbit-ob";
 
-import Ledger from '../../lib/ledger';
+import Ledger from '../../../../lib/ledger';
 
-const BCoin = window.BCoin;
-const Path = window.BPath.Path;
+import BCoin from '../../../../lib/bcoin';
+import { Path } from '../../../../lib/bpath';
+
 
 const STATE = {
   INIT: 'INIT',
@@ -42,7 +43,7 @@ export default class BitcoinTransaction extends Component {
         error: false,
         awaitingAddres: true
       }, () => {
-        api.request.address(
+        api.requestAddress(
           this.props.point.replace("~", ""),
           this.props.network
         ).then(() => {

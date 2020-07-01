@@ -4221,14 +4221,17 @@
         ~/  %decompress-point
         |=  dat=@
         ^-  pont
-        =+  x=(end 3 w a)
-        =+  y=:(add (pow x 3) (mul a x) b)
+        =+  x=(end 3 w dat)
+        ?>  =(3 (mod ^p 4))
+        =+  y=(exp.p (div +(^p) 4) :(sum.p (exp.p 3 x) (pro.p a x) b))
         =+  s=(rsh 3 32 dat)
-        :-  x
-        ?:  =(0x2 s)  y
-        ?:  =(0x3 s)  y
         ~|  [`@ux`s `@ux`dat]
-        !!
+        ?>  |(=(2 s) =(3 s))
+        ::  check parity
+        ::
+        =?  y  !=((sub s 2) (mod y 2))
+          (sub ^p y)
+        [x y]
       ::
       ++  priv-to-pub                                   ::  get pub from priv
         ~/  %priv-to-pub

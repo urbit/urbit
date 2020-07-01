@@ -74,10 +74,15 @@ export default class GlobalStore extends BaseStore<StoreState> {
       selectedGroups: [],
       inbox: {},
       chatSynced: null,
+      // Bitcoin wallet
       walletDB: {},
       address: '',
-      hasXPub: false,
-      xpubkey: ''
+      xpubkey: '',
+      proxySocket: 'ws://127.0.0.1:9090',
+      peerSeeds: ['127.0.0.1:48444'],
+      network: 'regtest',
+      account: 0,
+      sent: false
     };
   }
 
