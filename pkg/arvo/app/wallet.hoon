@@ -71,13 +71,6 @@
           (handle-json:bc !<(json vase))
         [cards this]
       ::
-        ::   %handle-http-request
-        :: =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
-        :: :_  this
-        :: %+  give-simple-payload:app  eyre-id
-        :: %+  require-authorization:app  inbound-request
-        :: poke-handle-http-request:bc
-      ::
           %bitcoin-action
         ~&  !<(bitcoin-action vase)
         =^  cards  state
@@ -89,10 +82,9 @@
       |=  =path
       ^-  (quip card _this)
       :_  this
-      ?+    path  ~|([%peer-bitcoin-strange path] !!)
-          [%http-response *]  ~
+      ?+    path  ~|([%peer-wallet-strange path] !!)
           [%primary *]        [send-xpubkey]~
-          [%bitcointile ~]    [%give %fact ~ %json !>(*json)]~
+          [%http-response *]  ~
       ==
     ::
     ++  on-agent  on-agent:def
@@ -130,12 +122,12 @@
   |=  act=bitcoin-action
   ?>  ?=(%derive -.act)
   ^-  card
-  [%pass /derive-poke %agent [ship.act %bitcoin] %poke %bitcoin-action !>(act)]
+  [%pass /derive-poke %agent [ship.act %wallet] %poke %bitcoin-action !>(act)]
 ::
 ++  receive-poke
   |=  [=ship act=bitcoin-action]
   ^-  card
-  [%pass /receive-poke %agent [ship %bitcoin] %poke %bitcoin-action !>(act)]
+  [%pass /receive-poke %agent [ship %wallet] %poke %bitcoin-action !>(act)]
 ::
 ++  send-xpubkey
   ^-  card
@@ -143,7 +135,7 @@
       %fact
       ~
       %json
-      !>((frond:enjs:format [%initial s+(crip xpub)]))
+      !>((frond:enjs:format [%xpubkey s+(crip xpub)]))
   ==
 ::
 ++  handle-json

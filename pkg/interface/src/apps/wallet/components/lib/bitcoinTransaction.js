@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import urbitOb from "urbit-ob";
 
 import Ledger from '../../../../lib/ledger';
-
 import BCoin from '../../../../lib/bcoin';
 import { Path } from '../../../../lib/bpath';
 
@@ -29,7 +28,7 @@ export default class BitcoinTransaction extends Component {
 
   buttonMessage(status, amount, point) {
     const label =
-        status === STATE.INIT      ? `Send`
+        status === STATE.INIT      ? `?`
       : status === STATE.POINT     ? `@uc`
       : status === STATE.READY     ? 'Send'
       // : status === STATE.READY     ? `Send ${BCoin.Amount.btc(amount)}BTC to ${point}`
@@ -43,7 +42,7 @@ export default class BitcoinTransaction extends Component {
         error: false,
         awaitingAddres: true
       }, () => {
-        api.requestAddress(
+        this.props.api.requestAddress(
           this.props.point.replace("~", ""),
           this.props.network
         ).then(() => {
