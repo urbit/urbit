@@ -712,7 +712,7 @@ static void
 _ames_prot_scry_cb(void* vod_p, u3_noun nun)
 {
   u3_ames* sam_u = vod_p;
-  u3_weak  ver   = u3r_at(7, nun);
+  u3_weak  ver   = u3r_at(15, nun);  //TODO  nun is [~ %noun ~ x] now?
 
   if (u3_none == ver) {
     //  assume protocol version 0
@@ -721,7 +721,7 @@ _ames_prot_scry_cb(void* vod_p, u3_noun nun)
   }
   else if ( (c3n == u3a_is_cat(ver))
          || (7 < ver) ) {
-    u3m_p("ames: strange protocol", ver);
+    u3m_p("ames: strange protocol", nun);
     sam_u->ver_y = 0;
   }
   else {
