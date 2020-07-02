@@ -811,7 +811,7 @@
         %-  mule  |.
         %+  slam
           %+  slam  gat
-          !>([now=now eny=eny bek=bek])
+          !>([[now=now eny=eny bek=bek] ~ ~])
         !>([authenticated request])
       ?:  ?=(%| -.res)
         =+  connection=(~(got by connections.state) duct)
