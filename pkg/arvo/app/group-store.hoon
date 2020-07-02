@@ -79,10 +79,6 @@
     =*  paths  ~(key by groups.old)
     =/  [unmanaged=(list path) managed=(list path)]
       (skid ~(tap in paths) |=(=path =('~' (snag 0 path))))
-    ~&  "unmanaged"
-    ~&  unmanaged
-    ~&  "managed"
-    ~&  managed
     =.  groups  (all-unmanaged unmanaged)
     =.  groups  (all-managed managed)
     this
@@ -282,9 +278,14 @@
   =*  policy  policy.group
   ?-  -.policy
       %invite
-    |((~(has in pending.policy) ship) (~(has in members.group) ship))
+    ?|  (~(has in pending.policy) ship)
+        (~(has in members.group) ship)
+    ==
       %open
-    !|((~(has in banned.policy) ship) (~(has in ban-ranks.policy) (clan:title ship)))
+    ?!  ?|  
+      (~(has in banned.policy) ship)
+      (~(has in ban-ranks.policy) (clan:title ship))
+    ==
   ==
 ::
 ++  poke-group-update
@@ -300,13 +301,13 @@
       %remove-tag      (remove-tag +.update)
       %change-policy   (change-policy +.update)
       %remove-group    (remove-group +.update)
-      %groupify        (groupify +.update)
+      %expose          (expose +.update)
       %initial-group   (initial-group +.update)
       %initial         [~ state]
   ==
-  ::  +groupify: unset .hidden flag
+  ::  +expose: unset .hidden flag
   ::
-  ++  groupify
+  ++  expose
     |=  [rid=resource ~]
     ^-  (quip card _state)
     =/  =group
@@ -315,18 +316,16 @@
     =.  groups
       (~(put by groups) rid group)
     :_  state
-    (send-diff %groupify rid ~)
+    (send-diff %expose rid ~)
   ::  +add-group: add group to store
   ::
-  ::    always include ship in own groups, no-op if group already exists
+  ::    no-op if group already exists
   ::
   ++  add-group
     |=  [rid=resource =policy hidden=?]
     ^-  (quip card _state)
     ?<  (~(has by groups) rid)
     =|  =group
-    =.  members.group
-      (~(put in members.group) our.bol)
     =.  policy.group   policy
     =.  hidden.group   hidden
     =.  tags.group
@@ -340,17 +339,17 @@
   ++  add-members
     |=  [rid=resource new-ships=(set ship)]
     ^-  (quip card _state)
-    =/  =group  (~(got by groups) rid)
-    =.  members.group  (~(uni in members.group) new-ships)
-    =*  policy  policy.group
-    =.  policy
-      ?.  ?=(%invite -.policy)
-        policy
-      =.  pending.policy
-        (~(dif in pending.policy) new-ships)
-      policy
     =.  groups
-      (~(put by groups) rid group)
+      %+  ~(jab by groups)  rid
+      |=  group
+      %=  +<
+        members  (~(uni in members) new-ships)
+      ::
+          policy
+        ?.  ?=(%invite -.policy)
+          policy
+        policy(pending (~(dif in pending.policy) new-ships))
+      ==
     :_  state
     (send-diff %add-members rid new-ships)
   ::  +remove-members: remove members from group
@@ -362,14 +361,13 @@
     |=  [rid=resource ships=(set ship)]
     ^-  (quip card _state)
     ?.  (~(has by groups) rid)  [~ state]
-    =/  =group
-      (~(got by groups) rid)
-    =.  members.group
-      (~(dif in members.group) ships)
-    =.  tags.group
-      (remove-tags group ships)
     =.  groups
-      (~(put by groups) rid group)
+      %+  ~(jab by groups)  rid
+      |=  group
+      %=  +<
+        members  (~(dif in members) ships)
+        tags  (remove-tags +< ships)
+      ==
     :_   state
     (send-diff %remove-members rid ships)
   ::  +add-tag: add tag to ships
@@ -379,13 +377,11 @@
   ++  add-tag
     |=  [rid=resource =tag ships=(set ship)]
     ^-  (quip card _state)
-    =/  =group
-      (~(got by groups) rid)
-    ?>  ?=(~ (~(dif in ships) members.group))
-    =.  tags.group
-      (merge-tags tags.group ships (sy tag ~))
     =.  groups
-      (~(put by groups) rid group)
+      %+  ~(jab by groups)  rid
+      |=  group
+      ?>  ?=(~ (~(dif in ships) members))
+      +<(tags (merge-tags tags ships (sy tag ~)))
     :_  state
     (send-diff %add-tag rid tag ships)
   ::  +remove-tag: remove tag from ships
@@ -395,19 +391,18 @@
   ++  remove-tag
     |=  [rid=resource =tag ships=(set ship)]
     ^-  (quip card _state)
-    =/  =group
-      (~(got by groups) rid)
-    ?>  ?&  ?=(~ (~(dif in ships) members.group))
-            (~(has by tags.group) tag)
-        ==
-    =/  tag-ships
-      (~(got by tags.group) tag)
-    =.  tag-ships
-      (~(dif in tag-ships) ships)
-    =.  tags.group
-      (~(put by tags.group) tag tag-ships)
     =.  groups
-      (~(put by groups) rid group)
+      %+  ~(jab by groups)  rid
+      |=  group
+      ?>  ?&  ?=(~ (~(dif in ships) members))
+              (~(has by tags) tag)
+          ==
+      %=    +<
+        ::
+          tags
+        %+  ~(jab by tags)  tag
+        |=((set ship) (~(dif in +<) ships))
+      ==
     :_  state
     (send-diff %remove-tag rid tag ships)
   ::  initial-group: initialize foreign group

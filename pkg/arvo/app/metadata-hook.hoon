@@ -122,7 +122,7 @@
         %add     (send group-path.act)
         %remove  (send group-path.act)
     ==
-  ?>  (is-permitted:grp src.bowl group-path.act)
+  ?>  (is-member:grp src.bowl group-path.act)
   ?-  -.act
       %add     (metadata-poke our.bowl %metadata-store)
       %remove  (metadata-poke our.bowl %metadata-store)
@@ -154,7 +154,7 @@
   ^-  (list card)
   |^
   ?>  =(our.bowl (~(got by synced) path))
-  ?>  (is-permitted:grp src.bowl path)
+  ?>  (is-member:grp src.bowl path)
   %+  turn  ~(tap by (metadata-scry path))
   |=  [[=group-path =md-resource] =metadata]
   ^-  card

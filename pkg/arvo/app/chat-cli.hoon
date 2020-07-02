@@ -801,7 +801,7 @@
         ::  if they weren't permitted before, some hook will send an invite.
         ::  but if they already were, we want to send an invite ourselves.
         ::
-        ?.  (is-permitted:grp ship real-path)
+        ?.  (is-member:grp ship real-path)
           ~
         `(invite-card real-path ship)
       ::  whitelist: empty if no matching permission, else true if whitelist

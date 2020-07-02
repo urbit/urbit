@@ -43,7 +43,7 @@
   =-  members:(fall - *group)
   (scry-group-path group-path)
 ::
-++  is-permitted
+++  is-member
   |=  [=ship =group-path]
   ^-  ?
   =-  (~(has in -) ship)

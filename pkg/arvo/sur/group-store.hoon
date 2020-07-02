@@ -30,7 +30,7 @@
 ::    %remove-tag: remove a tag from a set of ships
 ::    %change-policy: change a group's policy
 ::    %remove-group: remove a group from the store
-::    %groupify: unset .hidden flag
+::    %expose: unset .hidden flag
 ::
 +$  action
   $%  [%add-group =resource =policy hidden=?]
@@ -40,7 +40,7 @@
       [%remove-tag =resource =tag ships=(set ship)]
       [%change-policy =resource =diff:policy]
       [%remove-group =resource ~]
-      [%groupify =resource ~]
+      [%expose =resource ~]
   ==
 ::  $update: a description of a processed state change
 ::

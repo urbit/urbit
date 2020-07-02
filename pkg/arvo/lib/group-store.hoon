@@ -89,7 +89,7 @@
       %initial-group   (initial-group update)
       %remove-group    (remove-group update)
       %change-policy   (change-policy update)
-      %groupify        (groupify update)
+      %expose        (expose update)
     ==
   ::
   ++  initial-group
@@ -219,10 +219,10 @@
       ==
     --
   ::
-  ++  groupify
+  ++  expose
     |=  =^update
     ^-  json
-    ?>  ?=(%groupify -.update)
+    ?>  ?=(%expose -.update)
     (frond %resource (enjs:resource resource.update))
   ::
   ++  remove-group
@@ -342,7 +342,7 @@
       remove-tag+remove-tag
       change-policy+change-policy
       remove-group+remove-group
-      groupify+groupify
+      expose+expose
     ==
   ++  rank
     |=  =json
@@ -425,7 +425,7 @@
       (dejs:resource (~(got by p.json) 'resource'))
     [rid ~]
   ::
-  ++  groupify
+  ++  expose
     |=  =json
     ^-  [resource ~]
     ?>  ?=(%o -.json)

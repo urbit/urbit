@@ -408,7 +408,7 @@
   ?~  ship  ~
   ?.  =(u.ship our.bol)  ~
   ::  check if write is permitted
-  ?.  (is-permitted:grp src.bol (group-from-chat path.act))  ~
+  ?.  (is-member:grp src.bol (group-from-chat path.act))  ~
   =:  author.envelope.act  src.bol
       when.envelope.act  now.bol
   ==
@@ -483,7 +483,7 @@
   ?>  ?=(^ pax)
   ?>  (~(has by synced) pax)
   ::  check if read is permitted
-  ?>  (is-permitted:grp src.bol (group-from-chat pax))
+  ?>  (is-member:grp src.bol (group-from-chat pax))
   =/  box  (chat-scry pax)
   ?~  box  !!
   [%give %fact ~ %chat-update !>([%create pax])]~
@@ -496,7 +496,7 @@
   =/  backlog-latest=(unit @ud)  (rush (snag last `(list @ta)`pax) dem:ag)
   =/  pas  `path`(oust [last 1] `(list @ta)`pax)
   ?>  ?=([* ^] pas)
-  ?>  (is-permitted:grp src.bol (group-from-chat pas))
+  ?>  (is-member:grp src.bol (group-from-chat pas))
   =/  envs  envelopes:(need (chat-scry pas))
   =/  length  (lent envs)
   =/  latest

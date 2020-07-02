@@ -15,7 +15,6 @@
     grpl=group, mdl=metadata, resource,
     group-store
 ::
-
 |%
 +$  versioned-state
   $%  state-0
@@ -217,7 +216,7 @@
     =/  =path
       (en-path:resource resource.act)
     %+  weld
-      :~  (group-poke %groupify resource.act ~)
+      :~  (group-poke %expose resource.act ~)
           (contact-poke [%create path])
           (contact-hook-poke [%add-owned path])
       ==
