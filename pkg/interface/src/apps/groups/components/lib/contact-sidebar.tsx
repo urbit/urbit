@@ -5,8 +5,29 @@ import { ShareSheet } from './share-sheet';
 import { Sigil } from '../../../../lib/sigil';
 import { Spinner } from '../../../../components/Spinner';
 import { cite } from '../../../../lib/util';
+import { roleForShip, resourceFromPath } from '../../../../lib/group';
+import { Path, PatpNoSig } from '../../../../types/noun';
+import { Rolodex, Contacts, Contact } from '../../../../types/contact-update';
+import { Groups, Group } from '../../../../types/group-update';
+import GlobalApi from '../../../../api/global';
 
-export class ContactSidebar extends Component {
+interface ContactSidebarProps {
+	activeDrawer: 'contacts' | 'detail' | 'rightPanel';
+	groups: Groups;
+	group: Group
+	contacts: Contacts;
+	path: Path;
+	api: GlobalApi;
+	defaultContacts: Contacts;
+	selectedContact?: PatpNoSig;
+}
+interface ContactSidebarState {
+	awaiting: boolean;
+}
+
+
+
+export class ContactSidebar extends Component<ContactSidebarProps, ContactSidebarState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,9 +37,13 @@ export class ContactSidebar extends Component {
   render() {
     const { props } = this;
 
-    const group = new Set(Array.from(props.group));
     const responsiveClasses =
       props.activeDrawer === 'contacts' ? 'db' : 'dn db-ns';
+
+
+    const group = props.groups[props.path];
+
+   const members = new Set(group.members || []);
 
     const me = (window.ship in props.contacts)
         ?  props.contacts[window.ship]
@@ -49,13 +74,13 @@ export class ContactSidebar extends Component {
           />
         </>
       );
-    group.delete(window.ship);
+    members.delete(window.ship);
 
     const contactItems =
       Object.keys(props.contacts)
       .filter(c => c !== window.ship)
       .map((contact) => {
-        group.delete(contact);
+        members.delete(contact);
         const path = props.path + '/' + contact;
         const obj = props.contacts[contact];
         return (
@@ -72,11 +97,16 @@ export class ContactSidebar extends Component {
         );
       });
 
-    const adminOpt = (props.path.includes(`~${window.ship}/`))
-      ? 'dib' : 'dn';
+    const role = roleForShip(group, window.ship);
 
+	  const resource = resourceFromPath(props.path);
     const groupItems =
-      Array.from(group).map((member) => {
+      Array.from(members).map((member) => {
+        const memberRole = roleForShip(group, member);
+        const adminOpt = (role === 'admin' && memberRole !== 'admin')
+              || (role === 'moderator' &&
+                  (memberRole !== 'admin' && memberRole !== 'moderator'))
+          ? 'dib' : 'dn';
         return (
           <div
           key={member}
@@ -99,7 +129,7 @@ export class ContactSidebar extends Component {
               style={{ paddingTop: 6 }}
               onClick={() => {
                 this.setState({ awaiting: true }, (() => {
-                  props.api.groups.remove(props.path, [`~${member}`])
+                  props.api.groups.remove(resource, [`~${member}`])
                     .then(() => {
                       this.setState({ awaiting: false });
                     });

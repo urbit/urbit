@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import GroupsApi from '../../api/groups';
-import GroupsSubscription from '../../subscription/groups';
-import GroupsStore from '../../store/groups';
-
 import './css/custom.css';
 
 import { Skeleton } from './components/skeleton';
@@ -54,7 +50,9 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
         props.invites['/contacts'] : {};
     const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
     const s3 = props.s3 ? props.s3 : {};
-    const { api, associations, groups } = props;
+    const groups = props.groups || {};
+    const associations = props.associations || {};
+    const { api } = props;
 
 
     return (

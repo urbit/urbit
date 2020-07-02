@@ -8,7 +8,7 @@ export class GroupItem extends Component {
 
     const selectedClass = (props.selected) ? 'bg-gray4 bg-gray1-d' : '';
     const memberCount = Math.max(
-      props.group.size,
+      props.group.members.size,
       Object.keys(props.contacts).length
     );
 

@@ -172,3 +172,8 @@ export type GroupUpdate =
   | GroupUpdateInitialGroup;
 
 export type GroupAction = Omit<GroupUpdate, 'initialGroup' | 'initial'>;
+
+export const groupBunts = {
+  group: (): Group => ({ members: new Set(), tags: { role: {} }, hidden: false, policy: groupBunts.policy() }),
+  policy: (): GroupPolicy => ({ open: { banned: new Set(), banRanks: new Set() } })
+};
