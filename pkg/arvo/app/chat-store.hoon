@@ -43,8 +43,7 @@
       (old-to-2 inbox.old) 
     =?  old  ?=(%1 -.old) 
       (old-to-2 inbox.old) 
-    :_  this(state [%2 inbox.old])
-    [%pass /trim %agent [our.bowl %chat-store] %poke %noun !>([%trim ~])]~
+    [~ this(state [%2 inbox.old])]
     ::
     ++  old-to-2
       |=  =inbox:store
@@ -238,9 +237,6 @@
   =.  letter.envelope.action  (evaluate-letter [author letter]:envelope.action)
   =^  envelope  u.mailbox  (prepend-envelope u.mailbox envelope.action)
   :_  state(inbox (~(put by inbox) path.action u.mailbox))
-  ?:  =((mod number.envelope 5.000) 0)
-    :-  [%pass /trim %agent [our.bol %chat-store] %poke %noun !>([%trim ~])]
-    (send-diff path.action action(envelope envelope))
   (send-diff path.action action(envelope envelope))
 ::
 ++  handle-messages
