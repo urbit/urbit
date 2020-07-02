@@ -1,9 +1,5 @@
 import React from 'react';
 
-import LaunchApi from '../../api/launch';
-import LaunchStore from '../../store/launch';
-import LaunchSubscription from '../../subscription/launch';
-
 import './css/custom.css';
 
 import Tiles from './components/tiles';

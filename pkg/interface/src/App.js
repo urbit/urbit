@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Route, withRouter, Switch } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
+ 
 import './css/indigo-static.css';
 import './css/fonts.css';
 import { light } from '@tlon/indigo-react';

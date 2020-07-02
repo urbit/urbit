@@ -31,15 +31,7 @@ export class ChannelsSidebar extends Component {
       const groupPath = props.associations.link[path] ?
         props.associations.link[path]['group-path'] : '';
 
-      if (groupPath.startsWith('/~/')) {
-        if (groupedChannels['/~/']) {
-          const array = groupedChannels['/~/'];
-          array.push(path);
-          groupedChannels['/~/'] = array;
-        } else {
-          groupedChannels['/~/'] = [path];
-        };
-      }
+
       if (groupPath in associations) {
         if (groupedChannels[groupPath]) {
           const array = groupedChannels[groupPath];
@@ -48,6 +40,14 @@ export class ChannelsSidebar extends Component {
         } else {
           groupedChannels[groupPath] = [path];
         }
+      } else {
+        if (groupedChannels['/~/']) {
+          const array = groupedChannels['/~/'];
+          array.push(path);
+          groupedChannels['/~/'] = array;
+        } else {
+          groupedChannels['/~/'] = [path];
+        };
       }
     });
 
