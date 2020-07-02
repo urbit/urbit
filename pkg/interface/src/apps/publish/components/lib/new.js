@@ -69,14 +69,14 @@ export class NewScreen extends Component {
       };
     } else if  (this.state.createGroup) {
       groupInfo = {
-        'group-path': `/~${window.ship}/${bookId}`,
+        'group-path': `/ship/~${window.ship}/${bookId}`,
         'invitees': state.invites.ships,
         'use-preexisting': false,
         'make-managed': true
       };
     } else {
       groupInfo = {
-        'group-path': `/~/~${window.ship}/${bookId}`,
+        'group-path': `/ship/~${window.ship}/${bookId}`,
         'invitees': state.invites.ships,
         'use-preexisting': false,
         'make-managed': false

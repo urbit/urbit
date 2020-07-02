@@ -125,7 +125,7 @@ export class Settings extends Component {
 
     const ownedUnmanaged =
       owner &&
-      props.notebook?.['writers-group-path'].slice(0, 3) === '/~/';
+      !props.contacts[props.notebook?.['writers-group-path']];
 
     if (!ownedUnmanaged) {
       return null;

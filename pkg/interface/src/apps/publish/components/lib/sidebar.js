@@ -43,15 +43,6 @@ export class Sidebar extends Component {
 
     const groupedNotebooks = {};
     Object.keys(notebooks).map((book) => {
-      if (notebooks[book]['subscribers-group-path'].startsWith('/~/')) {
-        if (groupedNotebooks['/~/']) {
-          const array = groupedNotebooks['/~/'];
-          array.push(book);
-          groupedNotebooks['/~/'] = array;
-        } else {
-          groupedNotebooks['/~/'] = [book];
-        };
-      };
       const path = notebooks[book]['subscribers-group-path']
         ? notebooks[book]['subscribers-group-path'] : book;
       if (path in associations) {
@@ -62,6 +53,14 @@ export class Sidebar extends Component {
         } else {
           groupedNotebooks[path] = [book];
         }
+      } else {
+        if (groupedNotebooks['/~/']) {
+          const array = groupedNotebooks['/~/'];
+          array.push(book);
+          groupedNotebooks['/~/'] = array;
+        } else {
+          groupedNotebooks['/~/'] = [book];
+        };
       }
     });
 
