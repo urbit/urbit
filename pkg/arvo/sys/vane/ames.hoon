@@ -757,24 +757,50 @@
           =(%$ syd)
       ==
     ~
-  ::  /ax/peers                    (map ship ?(%alien known))
-  ::  /ax/peers/[ship]             ship-state
-  ::  /ax/bones/[ship]             [snd=(set bone) rcv=(set bone)]
-  ::  /ax/snd-bones/[ship]/[bone]  vase
+  ::  /ax/protocol/version           @
+  ::  /ax/peers                      (map ship ?(%alien %known))
+  ::  /ax/peers/[ship]               ship-state
+  ::  /ax/peers/[ship]/forward-lane  (list lane)
+  ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
+  ::  /ax/snd-bones/[ship]/[bone]    vase
   ::
   ?.  ?=(%x ren)  ~
-  ?+    tyl  [~ ~]
+  ?+    tyl  ~
+      [%protocol %version ~]
+    ``noun+!>(protocol-version)
+  ::
       [%peers ~]
     :^  ~  ~  %noun
     !>  ^-  (map ship ?(%alien %known))
     (~(run by peers.ames-state) head)
   ::
-      [%peers @ ~]
+      [%peers @ *]
     =/  who  (slaw %p i.t.tyl)
     ?~  who  [~ ~]
     ?~  peer=(~(get by peers.ames-state) u.who)
       [~ ~]
-    ``noun+!>(u.peer)
+    ?+  t.t.tyl  [~ ~]
+      ~  ``noun+!>(u.peer)
+    ::
+        [%forward-lane ~]
+      ::  find lane for u.who, or their galaxy
+      ::
+      :^  ~  ~  %noun
+      !>  ^-  (list lane)
+      =/  ship-state  (~(get by peers.ames-state) u.who)
+      ?.  ?=([~ %known *] ship-state)
+        ~
+      =/  peer-state  +.u.ship-state
+      ?.  =(~ route.peer-state)  ::NOTE  avoid tmi
+        [lane:(need route.peer-state)]~
+      |-  ^-  (list lane)
+      ?:  ?=(%czar (clan:title sponsor.peer-state))
+        [%& sponsor.peer-state]~
+      =/  next  (~(get by peers.ames-state) sponsor.peer-state)
+      ?.  ?=([~ %known *] next)
+        ~
+      $(peer-state +.u.next)
+    ==
   ::
       [%bones @ ~]
     =/  who  (slaw %p i.t.tyl)
