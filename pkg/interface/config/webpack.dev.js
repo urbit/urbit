@@ -62,7 +62,7 @@ module.exports = {
             ]
           }
         },
-        exclude: [/bcoin/,/bmanager/,/bpath/,/logger/,/proxy/,/worker/, /node_modules/]
+        exclude: [/bcoin/,/bmanager/,/bpath/,/logger/,/proxy/,/node_modules/]
       },
       {
         test: /\.css$/i,

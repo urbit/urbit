@@ -37,7 +37,7 @@ export default class WalletApp extends React.Component {
   }
 
   componentDidMount() {
-    document.title = 'OS1 - Bitcoin Wallet';
+    document.title = 'OS1 - Wallet';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
     this.props.subscription.startApp('wallet');
