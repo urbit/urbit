@@ -3,7 +3,8 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 import ProgressBar from './components/lib/progressBar';
 import BitcoinTransaction from './components/lib/bitcoinTransaction';
-import ConnectLedger from './components/lib/connectLedger';
+
+import AddWallet from './components/addwallet';
 
 import BCoin from '../../lib/bcoin';
 import ProxySocket from '../../lib/proxy';
@@ -399,10 +400,9 @@ export default class WalletApp extends React.Component {
       <BrowserRouter>
         <div className="absolute h-100 w-100 bg-gray0-d ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl" style={{ height: 'calc(100% - 45px)' }}>
           <Route exact path="/~wallet"
-render={ () => {
+            render={ () => {
             return (
               <div className="cf w-100 flex flex-column pa4 ba-m ba-l ba-xl b--gray2 br1 h-100 h-100-minus-40-m h-100-minus-40-l h-100-minus-40-xl f9 white-d">
-                <h1 className="mb3 f8">Bitcoin</h1>
                 <div>
                   <div className={'cf w-20 fl pa2 overflow-x-hidden ' +
                                   'bg-gray0-d white-d flex flex-column'}
@@ -445,41 +445,6 @@ render={ () => {
                                   'bg-gray0-d white-d flex flex-column'}
                   >
                     <div className="w-100">
-                      <p className="f8 mt3 lh-copy db">Mnemonic seed</p>
-                      <textarea
-                        className={
-                          'f9 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 mt2 ' +
-                          'focus-b--black focus-b--white-d'
-                        }
-                        rows={1}
-                        placeholder="benefit crew supreme gesture quantum web media hazard theory mercy wing kitten"
-                        style={{
-                          resize: 'none',
-                          height: 48,
-                          paddingTop: 14
-                        }}
-                        onChange={this.loadMnemonic}
-                      />
-                      <p className="f8 mt3 lh-copy db">Extended Public Key</p>
-                          <div className="mono wrap">
-                            <textarea
-                              className={
-                                'f9 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 mt2 ' +
-                                'focus-b--black focus-b--white-d'
-                              }
-                              rows={1}
-                              placeholder={state.xpubkey}
-                              style={{
-                                resize: 'none',
-                                height: 48,
-                                paddingTop: 14
-                              }}
-                            />
-                          </div>
-                      <ConnectLedger
-                        loadXPubKey={this.loadFromLedger}
-                        network={state.network}
-                      />
                     </div>
                   </div>
 
@@ -685,14 +650,14 @@ render={ () => {
                           <p className="f8 mt3 lh-copy db">Signing</p>
                           <div className="w-100 fl pr2 pa3">
                             <input type="radio" id="seed"
-name="sign"
-                                   value="seed" onChange={this.handleSigning}
+                            name="sign"
+                            value="seed" onChange={this.handleSigning}
                             />
                             <label className="pl2 f8" htmlFor="seed">Seed</label><br />
                             <input defaultChecked type="radio"
-id="ledger"
-                                   name="sign" value="ledger"
-onChange={this.handleSigning}
+                              id="ledger"
+                              name="sign" value="ledger"
+                              onChange={this.handleSigning}
                             />
                             <label className="pl2 f8" htmlFor="ledger">Ledger</label><br />
                           </div>
@@ -705,6 +670,13 @@ onChange={this.handleSigning}
             </div>
             );
           }}
+          />
+          <Route exact path="/~wallet/add"
+            render={ () => {
+              return(
+                <AddWallet loadMnemonic={this.loadMnemonic} xpubkey={state.xpubkey} loadFromLedger={this.loadFromLedger} network={state.network} />
+              );
+            }}
           />
         </div>
       </BrowserRouter>
