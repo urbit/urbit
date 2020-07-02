@@ -27,6 +27,10 @@ textarea, select, input, button { outline: none; }
   mix-blend-mode: difference;
 }
 
+.bg-wallet-orange {
+  background-color: #F9CCA3;
+}
+
 /* dark */
 @media all and (prefers-color-scheme: dark) {
   body {

@@ -44,8 +44,9 @@ export default class BasicTile extends React.PureComponent {
     return (
       <Tile>
         <div className={classnames('w-100 h-100 relative ba b--black b--gray1-d bg-gray0-d',
-        { 'bg-white': props.title !== 'Dojo',
-          'bg-black': props.title === 'Dojo' })}
+        { 'bg-white': (!['Dojo','Wallet'].includes(props.title)),
+          'bg-black': props.title === 'Dojo',
+          'bg-wallet-orange': props.title === 'Wallet' })}
         >{tile}</div>
       </Tile>
     );
