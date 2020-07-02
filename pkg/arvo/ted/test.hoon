@@ -73,43 +73,42 @@
   =((end 3 5 a) 'test-')
 ::
 ++  find-test-files
-  =|  fiz=(set [=spur test=(unit term)])
+  =|  fiz=(set [=beam test=(unit term)])
   =/  m  (strand ,_fiz)
-  |=  [bek=beak paz=(list path)]
+  |=  bez=(list beam)
   ^-  form:m
   =*  loop  $
-  ?~  paz
+  ?~  bez
     (pure:m fiz)
-  =/  xap=path  (flop i.paz)
-  ;<  hav=?  bind:m  (check-for-file:strandio bek hoon+xap)
+  ;<  hav=?  bind:m  (check-for-file:strandio -.i.bez hoon+s.i.bez)
   ?:  hav
-    loop(paz t.paz, fiz (~(put in fiz) [hoon+xap ~]))
-  ;<  fez=(list path)  bind:m  (list-tree:strandio bek xap)
+    loop(bez t.bez, fiz (~(put in fiz) [i.bez(s hoon+s.i.bez) ~]))
+  ;<  fez=(list path)  bind:m  (list-tree:strandio i.bez)
   ?.  =(~ fez)
-    =/  foz  (turn fez |=(path [(flop +<) ~]))
-    loop(paz t.paz, fiz (~(gas in fiz) foz))
-  ~|  bad-test-path+i.paz
-  =/  tex=term  =-(?>(((sane %tas) -) -) (head xap))
-  =/  xup=path  (tail xap)
-  ;<  hov=?  bind:m  (check-for-file:strandio bek hoon+xup)
+    =/  foz  (turn fez |=(path [[-.i.bez (flop +<)] ~]))
+    loop(bez t.bez, fiz (~(gas in fiz) foz))
+  ~|  bad-test-beam+i.bez
+  =/  tex=term  =-(?>(((sane %tas) -) -) (head s.i.bez))
+  =/  xup=path  (tail s.i.bez)
+  ;<  hov=?  bind:m  (check-for-file:strandio i.bez(s hoon+xup))
   ?.  hov
-    ~|(no-tests-at-path+paz !!)
-  loop(paz t.paz, fiz (~(put in fiz) [hoon+xup `tex]))
+    ~|(no-tests-at-path+i.bez !!)
+  loop(bez t.bez, fiz (~(put in fiz) [[-.i.bez hoon+xup] `tex]))
 --
 ^-  thread:spider
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=/  paz=(list path)  (turn !<((list path) arg) |=(path [%tests +<]))
-;<  bek=beak  bind:m  get-beak:strandio
-;<  fiz=(set [=spur test=(unit term)])  bind:m  (find-test-files bek paz)
-=>  .(fiz ~(tap in fiz))
+=/  bez=(list beam)
+  (turn !<((list path) arg) |=(p=path (need (de-beam:format p))))
+;<  fiz=(set [=beam test=(unit term)])  bind:m  (find-test-files bez)
+=>  .(fiz (sort ~(tap in fiz) aor))
 =|  test-arms=(map path (list test-arm))
 |-  ^-  form:m
 =*  gather-tests  $
 ?^  fiz
-  ~>  %slog.0^leaf+"test: building {(spud (flop spur.i.fiz))}"
-  ;<  cor=vase  bind:m  (build-file:strandio bek spur.i.fiz)
+  ~>  %slog.0^leaf+"test: building {(spud (flop s.beam.i.fiz))}"
+  ;<  cor=vase  bind:m  (build-file:strandio beam.i.fiz)
   =/  arms=(list test-arm)  (get-test-arms cor)
   =?  arms  ?=(^ test.i.fiz)
     |-  ^+  arms
@@ -117,7 +116,7 @@
     ?:  =(name.i.arms u.test.i.fiz)
       [i.arms]~
     $(arms t.arms)
-  =.  test-arms  (~(put by test-arms) (flop (tail spur.i.fiz)) arms)
+  =.  test-arms  (~(put by test-arms) (flop (tail s.beam.i.fiz)) arms)
   gather-tests(fiz t.fiz)
 %-  pure:m  !>  ^=  ok
 %+  roll  (resolve-test-paths test-arms)

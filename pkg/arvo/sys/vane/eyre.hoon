@@ -1023,12 +1023,13 @@
       ?~  parsed
         (return-static-data-on-duct 400 'text/html' (login-page ~ our))
       ::
+      =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
       ?~  password=(get-header:http 'password' u.parsed)
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
-        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
+        (return-static-data-on-duct 400 'text/html' (login-page redirect our))
       ::  mint a unique session cookie
       ::
       =/  session=@uv
@@ -1042,7 +1043,7 @@
       =/  first-session=?  =(~ sessions.authentication-state.state)
       =/  expires-at=@da   (add now session-timeout)
       =.  sessions.authentication-state.state
-        (~(put by sessions.authentication-state.state) session expires-at)
+        (~(put by sessions.authentication-state.state) session [expires-at ~])
       ::
       =/  cookie-line=@t
         (session-cookie-string session &)
@@ -1054,7 +1055,7 @@
         =-  out(moves [- moves.out])
         [duct %pass /sessions/expire %b %wait expires-at]
       ::
-      ?~  redirect=(get-header:http 'redirect' u.parsed)
+      ?~  redirect
         %-  handle-response
         :*  %start
             :-  status-code=200
@@ -1099,15 +1100,33 @@
         (handle-response response)
       ::  delete the requesting session, or all sessions if so specified
       ::
-      =.  sessions.authentication-state.state
-        =;  all=?
-          ?:  all  ~
-          (~(del by sessions.authentication-state.state) u.session-id)
-        ?~  body.request  |
-        =-  ?=(^ -)
-        %+  get-header:http  'all'
-        (fall (rush q.u.body.request yquy:de-purl:html) ~)
-      (handle-response response)
+      =^  channels=(list @t)  sessions.authentication-state.state
+        =*  sessions  sessions.authentication-state.state
+        =/  all=?
+          ?~  body.request  |
+          =-  ?=(^ -)
+          %+  get-header:http  'all'
+          (fall (rush q.u.body.request yquy:de-purl:html) ~)
+        ?.  all
+          :_  (~(del by sessions) u.session-id)
+          %~  tap  in
+          channels:(~(gut by sessions) u.session-id *session)
+        :_  ~
+        %~  tap  in
+        %+  roll  ~(val by sessions)
+        |=  [session all=(set @t)]
+        (~(uni in all) channels)
+      ::  close all affected channels, then send the response
+      ::
+      =|  moves=(list move)
+      |-  ^-  (quip move server-state)
+      ?~  channels
+        =^  moz  state
+          (handle-response response)
+        [(weld moves moz) state]
+      =^  moz  state
+        (discard-channel:by-channel i.channels |)
+      $(moves (weld moves moz), channels t.channels)
     ::  +session-id-from-request: attempt to find a session cookie
     ::
     ++  session-id-from-request
@@ -1398,6 +1417,16 @@
       ::
       =.  duct-to-key.channel-state.state
         (~(put by duct-to-key.channel-state.state) duct channel-id)
+      ::  associate this channel with the session cookie
+      ::
+      =.  sessions.authentication-state.state
+        =/  session-id=(unit @uv)
+          (session-id-from-request:authentication request)
+        ?~  session-id  sessions.authentication-state.state
+        %+  ~(jab by sessions.authentication-state.state)
+          u.session-id
+        |=  =session
+        session(channels (~(put in channels.session) channel-id))
       ::  initialize sse heartbeat
       ::
       =/  heartbeat-time=@da  (add now ~s20)
@@ -1559,50 +1588,10 @@
         $(requests t.requests)
       ::
           %delete
-        =/  unitsession
-          (~(get by session.channel-state.state) channel-id)
-        ::
-        ?~  unitsession
-          $(requests t.requests)
-        ::
-        =/  session  u.unitsession
-        =.  session.channel-state.state
-          (~(del by session.channel-state.state) channel-id)
-        ::
+        =^  moves  state
+          (discard-channel channel-id |)
         =.  gall-moves
-          %+  weld  gall-moves
-            ::
-            ::  produce a list of moves which cancels every gall subscription
-            ::
-            %+  turn  ~(tap by subscriptions.session)
-            |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
-            ^-  move
-            ::
-            [duc %pass channel-wire [%g %deal [our ship] app %leave ~]]
-        ::
-        ?:  ?=([%& *] state.session)
-          =.  gall-moves
-            :_  gall-moves
-            ::
-            ^-  move
-            ?>  ?=([%& *] state.session)
-            :^  duct.p.state.session  %pass  /channel/timeout/[channel-id]
-            [%b %rest date.p.state.session]
-          ::
-          $(requests t.requests)
-          ::
-        ?>  ?=([%| *] state.session)
-        =.  duct-to-key.channel-state.state
-          (~(del by duct-to-key.channel-state.state) p.state.session)
-        ::
-        ?~  heartbeat.session  $(requests t.requests)
-        =.  gall-moves
-          %+  snoc  gall-moves
-          %^    cancel-heartbeat-move
-              channel-id
-            date.u.heartbeat.session
-          duct.u.heartbeat.session
-        ::
+          (weld gall-moves moves)
         $(requests t.requests)
       ::
       ==
@@ -1744,10 +1733,12 @@
             channel(heartbeat (some [heartbeat-time duct]))
           ==
       (snoc http-moves (set-heartbeat-move channel-id heartbeat-time))
-    :: +on-channel-timeout: we received a wake to clear an old session
+    ::  +discard-channel: remove a channel from state
     ::
-    ++  on-channel-timeout
-      |=  channel-id=@t
+    ::    cleans up state, timers, and gall subscriptions of the channel
+    ::
+    ++  discard-channel
+      |=  [channel-id=@t expired=?]
       ^-  [(list move) server-state]
       ::
       =/  usession=(unit channel)
@@ -1759,6 +1750,10 @@
       :_  %_    state
               session.channel-state
             (~(del by session.channel-state.state) channel-id)
+          ::
+              duct-to-key.channel-state
+            ?.  ?=(%| -.state.session)  duct-to-key.channel-state.state
+            (~(del by duct-to-key.channel-state.state) p.state.session)
           ==
       =/  heartbeat-cancel=(list move)
         ?~  heartbeat.session  ~
@@ -1767,7 +1762,13 @@
             date.u.heartbeat.session
           duct.u.heartbeat.session
         ==
+      =/  expire-cancel=(list move)
+        ?:  expired  ~
+        ?.  ?=(%& -.state.session)  ~
+        =,  p.state.session
+        [(cancel-timeout-move channel-id date duct)]~
       %+  weld  heartbeat-cancel
+      %+  weld  expire-cancel
       ::  produce a list of moves which cancels every gall subscription
       ::
       %+  turn  ~(tap by subscriptions.session)
@@ -1845,7 +1846,9 @@
               ::  tough luck, we don't create/revive sessions here
               ::
               no-op
-            :_  (~(put by sessions) u.session-id (add now session-timeout))
+            :_  %+  ~(jab by sessions)  u.session-id
+                |=  =session
+                session(expiry-time (add now session-timeout))
             =-  response-header.http-event(headers -)
             %^  set-header:http  'set-cookie'
               (session-cookie-string u.session-id &)
@@ -2137,13 +2140,7 @@
       [(zing (flop moves)) http-server-gate]
     ::  discard channel state, and cancel any active gall subscriptions
     ::
-    =^  mov  server-state.ax  (on-channel-timeout:by-channel channel-id)
-    ::  cancel channel timer
-    ::
-    =/  channel  (~(got by session.channel-state) channel-id)
-    =?  mov  ?=([%& *] state.channel)
-      :_  mov
-      (cancel-timeout-move:by-channel channel-id p.state.channel)
+    =^  mov  server-state.ax  (discard-channel:by-channel channel-id |)
     $(moves [mov moves], inactive t.inactive)
   ::
   ::  %vega: notifies us of a completed kernel upgrade
@@ -2367,10 +2364,10 @@
       ?>  ?=([%b %wake *] sign)
       ?^  error.sign
         [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
-      =/  on-channel-timeout
-        on-channel-timeout:by-channel:(per-server-event event-args)
+      =/  discard-channel
+        discard-channel:by-channel:(per-server-event event-args)
       =^  moves  server-state.ax
-        (on-channel-timeout i.t.t.wire)
+        (discard-channel i.t.t.wire &)
       [moves http-server-gate]
     ::
         %heartbeat
@@ -2402,11 +2399,9 @@
     =*  sessions  sessions.authentication-state.server-state.ax
     =.  sessions.authentication-state.server-state.ax
       %-  ~(gas by *(map @uv session))
-      %+  murn  ~(tap in sessions)
+      %+  skip  ~(tap in sessions)
       |=  [cookie=@uv session]
-      ^-  (unit [@uv session])
-      ?:  (lth expiry-time now)  ~
-      `[cookie expiry-time]
+      (lth expiry-time now)
     ::  if there's any cookies left, set a timer for the next expected expiry
     ::
     ^-  [(list move) _http-server-gate]
@@ -2438,7 +2433,18 @@
 ++  load
   =>  |%
       +$  axle-2019-10-6
-        [date=%~2019.10.6 =server-state]
+        [date=%~2019.10.6 server-state=server-state-2019-10-6]
+      ::
+      +$  server-state-2019-10-6
+        $:  bindings=(list [=binding =duct =action])
+            connections=(map duct outstanding-connection)
+            authentication-state=sessions=(map @uv @da)
+            =channel-state
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+        ==
       --
   |=  old=$%(axle axle-2019-10-6)
   ^+  ..^$

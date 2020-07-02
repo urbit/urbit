@@ -1050,14 +1050,14 @@
 ::  +dram: upgrade $pram, compatible
 ::
 +$  pram
-  $~  [%345 nub=*debt:le:part]
-  $%  [%345 nub=debt:le:part]
+  $~  [%~2020.6.28 nub=*debt:le:part]
+  $%  [%~2020.6.28 nub=debt:le:part]
       (list ovum)
   ==
 ++  dram
   |=  ram=pram
   ^-  pram
-  ?:  ?=([%345 *] ram)
+  ?:  ?=([%~2020.6.28 *] ram)
     ram
   ~|  ram+ram
   =|  nub=debt:le:part
@@ -1067,7 +1067,7 @@
     |=  ovo=ovum
     ^-  move
     [[p.ovo]~ %give %& %noun q.ovo]
-  [%345 nub(run [plan]~)]
+  [%~2020.6.28 nub(run [plan]~)]
 ::  $prim: old $pram
 ::  +drum: upgrade $prim to $pram, incompatible
 ::
@@ -1094,7 +1094,7 @@
       vanes  (turn nyf |=({a/@tas b/vise} [a [b *worm]]))
     ==
   =.  ram  (dram ram)
-  ?>  ?=([%345 *] ram)
+  ?>  ?=([%~2020.6.28 *] ram)
   =/  run  plot:(spam:(lead now ~) [//arvo %vega ~])
   (leap now (then:(lead now `nub.ram) run))
 ::  +peek: external inspect
@@ -1323,7 +1323,7 @@
     :*  our
         now
         eny
-        345+nub
+        [%~2020.6.28 nub]
         bud
         (turn vanes |=([label=@tas =vane] [label vase.vane]))
     ==

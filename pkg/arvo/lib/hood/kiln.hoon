@@ -240,6 +240,7 @@
     ?+  i.t.t.t.wire  ~&([%strange-ota-take t.t.t.wire] ..abet)
       %find        (take-find sign-arvo)
       %sync        (take-sync sign-arvo)
+      %download    (take-download sign-arvo)
       %merge-home  (take-merge-home sign-arvo)
       %merge-kids  (take-merge-kids sign-arvo)
     ==
@@ -256,19 +257,38 @@
   ::
   ++  take-sync
     |=  =sign-arvo
+    ?>  ?=(%writ +<.sign-arvo)
+    ?>  ?=(^ ota)
+    ?~  p.sign-arvo
+      =.  ..abet  (render-ket "OTA cancelled (1), retrying" ~)
+      (poke-internal `[ship desk]:u.ota)
+    =.  ..abet  (render-ket "downloading OTA update" ~)
+    =?  aeon.u.ota  ?=($w p.p.u.p.sign-arvo)
+      ud:;;(cass:clay q.q.r.u.p.sign-arvo)
+    %:  emit
+      %pass  (make-wire /download)  %arvo  %c
+      %warp  ship.u.ota  desk.u.ota  `[%sing %v ud+aeon.u.ota /]
+    ==
+  ::
+  ++  take-download
+    |=  =sign-arvo
     ^+  ..abet
     ?>  ?=(%writ +<.sign-arvo)
     ?>  ?=(^ ota)
     ?~  p.sign-arvo
-      =.  ..abet  (render-ket "OTA cancelled, retrying" ~)
+      =.  ..abet  (render-ket "OTA cancelled (2), retrying" ~)
       (poke-internal `[ship desk]:u.ota)
-    =?  aeon.u.ota  ?=($w p.p.u.p.sign-arvo)
-      ud:;;(cass:clay q.q.r.u.p.sign-arvo)
+    =.  ..abet  (render-ket "finished downloading OTA" ~)
+    =.  aeon.u.ota  +(aeon.u.ota)
     =/  =germ  (get-germ %home)
-    =.  ..abet  (render-ket "beginning OTA to %home" ~)
-    %:  emit
-      %pass  (make-wire /merge-home)  %arvo  %c
-      %merg  %home  ship.u.ota  desk.u.ota  ud+aeon.u.ota  germ
+    =.  ..abet  (render-ket "applying OTA to %home" ~)
+    %-  emil
+    :~  :*  %pass  (make-wire /merge-home)  %arvo  %c
+            %merg  %home  ship.u.ota  desk.u.ota  ud+(dec aeon.u.ota)  germ
+        ==
+        :*  %pass  (make-wire /sync)  %arvo  %c
+            %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
+        ==
     ==
   ::
   ++  take-merge-home
@@ -282,20 +302,14 @@
       (poke-internal `[ship desk]:u.ota)
     ::
     ?:  ?=(%| -.p.sign-arvo)
-      =.  ..abet
-        =/  =tape  "OTA to %home failed, waiting for next revision"
-        (render-ket tape `p.p.sign-arvo)
-      =.  aeon.u.ota  +(aeon.u.ota)
-      %:  emit
-        %pass  (make-wire /sync)  %arvo  %c
-        %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
-      ==
+      =/  =tape  "OTA to %home failed, waiting for next revision"
+      (render-ket tape `p.p.sign-arvo)
     =.  ..abet  (render-ket "OTA to %home succeeded" ~)
-    =.  ..abet  (render-ket "beginning OTA to %kids" ~)
+    =.  ..abet  (render-ket "applying OTA to %kids" ~)
     =/  =germ  (get-germ %kids)
     %:  emit
       %pass  (make-wire /merge-kids)  %arvo  %c
-      %merg  %kids  ship.u.ota  desk.u.ota  ud+aeon.u.ota  germ
+      %merg  %kids  ship.u.ota  desk.u.ota  ud+(dec aeon.u.ota)  germ
     ==
   ::
   ++  take-merge-kids
@@ -308,15 +322,9 @@
         (render-ket tape `p.p.sign-arvo)
       (poke-internal `[ship desk]:u.ota)
     ::
-    =.  ..abet
-      ?-  -.p.sign-arvo
-        %&  (render-ket "OTA to %kids succeeded" ~)
-        %|  (render-ket "OTA to %kids failed" `p.p.sign-arvo)
-      ==
-    =.  aeon.u.ota  +(aeon.u.ota)
-    %:  emit
-      %pass  (make-wire /sync)  %arvo  %c
-      %warp  ship.u.ota  desk.u.ota  `[%sing %z ud+aeon.u.ota /]
+    ?-  -.p.sign-arvo
+      %&  (render-ket "OTA to %kids succeeded" ~)
+      %|  (render-ket "OTA to %kids failed" `p.p.sign-arvo)
     ==
   --
 ::
@@ -329,7 +337,10 @@
 ++  poke-syncs                                        ::  print sync config
   |=  ~
   =<  abet  %-  spam
-  :-  [%leaf "OTAs from {<ota>}"]
+  :-  :-  %leaf
+      ?~  ota
+        "OTAs disabled"
+      "OTAs from {<desk.u.ota>} on {<ship.u.ota>}"
   ?:  =(0 ~(wyt by syn))
     [%leaf "no syncs configured"]~
   %+  turn  ~(tap in ~(key by syn))
@@ -443,7 +454,8 @@
                         ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
       [%ota *]          abet:(take:update t.wire sign-arvo)
       *
-    ?+  +<.sign-arvo  ~|([%kiln-bad-take-card +<.sign-arvo wire] !!)
+    ?+    +<.sign-arvo
+        ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
       %done  %+  done  wire
              ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
       %mere  %+  take-mere  wire
@@ -472,6 +484,8 @@
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
+  ?.  (~(has by syn) hos)
+    abet
   abet:abet:(mere:(auto hos) mes)
 ::
 ++  take-writ-find-ship                               ::
@@ -482,6 +496,8 @@
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
+  ?.  (~(has by syn) hos)
+    abet
   abet:abet:(take-find-ship:(auto hos) rot)
 ::
 ++  take-writ-sync                                    ::
@@ -492,6 +508,8 @@
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
+  ?.  (~(has by syn) hos)
+    abet
   abet:abet:(writ:(auto hos) rot)
 ::
 ++  take-wake-autocommit

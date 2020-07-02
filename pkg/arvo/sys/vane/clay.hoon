@@ -771,7 +771,7 @@
       ^-  pile
       =/  [=hair res=(unit [=pile =nail])]  ((pile-rule pax) [1 1] tex)
       ?^  res  pile.u.res
-      %-  mean
+      %-  mean  %-  flop
       =/  lyn  p.hair
       =/  col  q.hair
       :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
@@ -2733,7 +2733,7 @@
       ::  traverse updated state and sanity check
       ::
       =+  ~|  :*  %bad-foreign-update
-                  [gar=gar let=let.nako nut=(turn nut head) nat=(turn nat head)]
+                  [gar=gar.nako let=let.nako nut=(turn nut head) nat=(turn nat head)]
                   [hitdom=hit.dom letdom=let.dom]
               ==
         ?:  =(0 let.nako)
@@ -4056,7 +4056,7 @@
       |=  [=desk data=(map path lobe)]
       ^-  reef-cache
       ~>  %slog.0^leaf+"clay: building reef on {<desk>}"
-      ?:  !=(%homer desk)
+      ?:  =(%home desk)
         [!>(..ride) !>(..is) !>(..zuse)]
       |^
       =/  [home=? hoon=vase]
@@ -4365,7 +4365,9 @@
       ::
       %boon  !!
       %lost  !!
-      %writ  !!
+      %writ
+    %-  (slog leaf+"clay: strange writ (expected on upgrade to Fusion)" ~)
+    [~ ..^$]
   ::
       %done
     ?~  error=error.q.hin

@@ -24,6 +24,7 @@
   |=  [wir=wire sin=sign-arvo]
   ?+  wir  (on-arvo:def wir sin)
     [%clay ~]  `this
+    [%behn ~]  `this  ::  backcompat
   ==
 ::
 ++  on-agent  on-agent:def

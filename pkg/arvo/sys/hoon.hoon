@@ -12024,8 +12024,8 @@
 ::
 ++  slab                                                ::  test if contains
   |=  [way=?(%read %rite %both) cog=@tas typ=type]
-  ?=  [%| *]
-  (~(find ut typ) way ~[cog])
+  ?=  [%& *]
+  (~(fond ut typ) way ~[cog])
 ::
 ++  slap
   |=  {vax/vase gen/hoon}  ^-  vase                     ::  untyped vase .*
