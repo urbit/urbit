@@ -30,7 +30,7 @@ interface InviteSearchState {
   contacts: Map<PatpNoSig, string[]>;
   searchValue: string;
   searchResults: Invites;
-  selected: PatpNoSig | string[] | null;
+  selected: PatpNoSig | Path | null;
   inviteError: boolean;
 }
 
@@ -235,7 +235,7 @@ export class InviteSearch extends Component<
     let shipIdx = ships.findIndex((ship) => ship === selected);
     if (groupIdx >= 0) {
       backward ? groupIdx-- : groupIdx++;
-      let selected = _.get(groups, [groupIdx], '[0]');
+      let selected = _.get(groups, [groupIdx, 0]);
       if (groupIdx === groups.length) {
         selected = ships.length === 0 ? groups[0][0] : ships[0];
       }

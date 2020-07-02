@@ -221,11 +221,6 @@ export class NewScreen extends Component {
       );
     }
 
-    const groups = {};
-    Object.keys(props.groups).forEach((pem) => {
-      groups[pem] = props.groups[pem].members;
-    });
-
     return (
       <div
         className={
@@ -270,7 +265,7 @@ export class NewScreen extends Component {
             Selected groups or ships will be able to post to chat
           </p>
           <InviteSearch
-            groups={groups}
+            groups={props.groups}
             contacts={props.contacts}
             associations={props.associations}
             groupResults={true}

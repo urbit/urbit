@@ -92,6 +92,7 @@ export class GroupView extends Component<
         ships: [],
         groups: [],
       },
+      awaiting: false
     };
   }
 
