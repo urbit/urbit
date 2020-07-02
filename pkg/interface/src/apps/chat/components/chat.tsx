@@ -19,6 +19,7 @@ import { Contacts } from "../../../types/contact-update";
 import { Path, Patp } from "../../../types/noun";
 import GlobalApi from "../../../api/global";
 import { Association } from "../../../types/metadata-update";
+import {Group} from "../../../types/group-update";
 
 function getNumPending(props: any) {
   const result = props.pendingMessages.has(props.station)
@@ -79,7 +80,7 @@ type ChatScreenProps = RouteComponentProps<{
   length: number;
   inbox: Inbox;
   contacts: Contacts;
-  permission: any;
+  group: Group;
   pendingMessages: Map<Path, Envelope[]>;
   s3: any;
   popout: boolean;
@@ -503,7 +504,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
 
     const lastMsgNum = messages.length > 0 ? messages.length : 0;
 
-    const group = Array.from(props.permission.who.values());
+    const group = Array.from(props.group.members);
 
     const isinPopout = props.popout ? "popout/" : "";
 

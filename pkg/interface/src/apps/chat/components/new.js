@@ -14,7 +14,7 @@ export class NewScreen extends Component {
       idName: '',
       groups: [],
       ships: [],
-      security: 'channel',
+      privacy: 'open',
       idError: false,
       inviteError: false,
       allowHistory: true,
@@ -27,6 +27,7 @@ export class NewScreen extends Component {
     this.allowHistoryChange = this.allowHistoryChange.bind(this);
     this.setInvite = this.setInvite.bind(this);
     this.createGroupChange = this.createGroupChange.bind(this);
+    this.privacyChange = this.privacyChange.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -65,13 +66,23 @@ export class NewScreen extends Component {
   createGroupChange(event) {
     if (event.target.checked) {
       this.setState({
-        createGroup: Boolean(event.target.checked),
-        security: 'village'
+        createGroup: Boolean(event.target.checked)
       });
     } else {
       this.setState({
-        createGroup: Boolean(event.target.checked),
-        security: 'channel'
+        createGroup: Boolean(event.target.checked)
+      });
+    }
+  }
+
+  privacyChange(event) {
+    if (event.target.checked) {
+      this.setState({
+        privacy: 'open'
+      });
+    } else {
+      this.setState({
+        privacy: 'invite'
       });
     }
   }
@@ -111,7 +122,7 @@ export class NewScreen extends Component {
       }
     });
 
-    if(state.ships.length === 1 && state.security === 'village' && !state.createGroup) {
+    if(state.ships.length === 1 && state.privacy === 'invite' && !state.createGroup) {
       props.history.push(`/~chat/new/dm/${aud[0]}`);
     }
 
@@ -128,6 +139,8 @@ export class NewScreen extends Component {
       this.textarea.value = '';
     }
 
+    const policy = state.privacy === 'invite' ? { invite: { pending: aud } } : { open: { banRanks: [], banned: [] } };
+
     this.setState({
       error: false,
       success: true,
@@ -139,10 +152,10 @@ export class NewScreen extends Component {
       // we make a path of the form /~zod/cool-group
       // if not, we make a path of the form /~/~zod/free-chat
       let appPath = `/~${window.ship}${station}`;
-      if (!state.createGroup && state.groups.length === 0) {
-        appPath = `/~${appPath}`;
-      }
-      let groupPath = appPath;
+      // if (!state.createGroup && state.groups.length === 0) {
+      //   appPath = `/~${appPath}`;
+      // }
+      let groupPath = `/ship${appPath}`;
       if (state.groups.length > 0) {
         groupPath = state.groups[0];
       }
@@ -151,9 +164,10 @@ export class NewScreen extends Component {
         state.description,
         appPath,
         groupPath,
-        state.security,
+        policy,
         aud,
-        state.allowHistory
+        state.allowHistory,
+        state.createGroup
       );
       submit.then(() => {
         this.setState({ awaiting: false });
@@ -164,12 +178,9 @@ export class NewScreen extends Component {
 
   render() {
     const { props, state } = this;
-    let inviteSwitchClasses = (state.security === 'village')
+    let privacySwitchClasses = (state.privacy === 'invite')
       ? 'relative checked bg-green2 br3 h1 toggle v-mid z-0'
       : 'relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0';
-    if (state.createGroup) {
-      inviteSwitchClasses = inviteSwitchClasses + ' o-50';
-    }
 
     const createGroupClasses = state.createGroup
       ? 'relative checked bg-green2 br3 h1 toggle v-mid z-0'
@@ -211,8 +222,8 @@ export class NewScreen extends Component {
     }
 
     const groups = {};
-    Object.keys(props.permissions).forEach((pem) => {
-      groups[pem] = props.permissions[pem].who;
+    Object.keys(props.groups).forEach((pem) => {
+      groups[pem] = props.groups[pem].members;
     });
 
     return (
@@ -271,6 +282,18 @@ export class NewScreen extends Component {
             setInvite={this.setInvite}
           />
           {createGroupToggle}
+          <div className="mv7">
+            <input
+              type="checkbox"
+              style={{ WebkitAppearance: 'none', width: 28 }}
+              className={privacySwitchClasses}
+              onChange={this.privacyChange}
+            />
+            <span className="dib f9 white-d inter ml3">Private</span>
+            <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
+              Users will have to be invited to join
+            </p>
+          </div>
           <button
             onClick={this.onClickCreate.bind(this)}
             className={createClasses}

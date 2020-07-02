@@ -48,26 +48,24 @@ export class Sidebar extends Component {
 
     const groupedChannels = {};
     Object.keys(props.inbox).map((box) => {
-      if (box.startsWith('/~/')) {
+      const path = chatAssoc[box]
+        ? chatAssoc[box]['group-path'] : box;
+
+      if (path in contactAssoc) {
+        if (groupedChannels[path]) {
+          const array = groupedChannels[path];
+          array.push(box);
+          groupedChannels[path] = array;
+        } else {
+          groupedChannels[path] = [box];
+        }
+      } else {
         if (groupedChannels['/~/']) {
           const array = groupedChannels['/~/'];
           array.push(box);
           groupedChannels['/~/'] = array;
         } else {
           groupedChannels['/~/'] = [box];
-        }
-      } else {
-        const path = chatAssoc[box]
-          ? chatAssoc[box]['group-path'] : box;
-
-        if (path in contactAssoc) {
-          if (groupedChannels[path]) {
-            const array = groupedChannels[path];
-            array.push(box);
-            groupedChannels[path] = array;
-          } else {
-            groupedChannels[path] = [box];
-          }
         }
       }
     });

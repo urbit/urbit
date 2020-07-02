@@ -185,10 +185,10 @@ export class SettingsScreen extends Component {
 
     const chatOwner = (deSig(props.match.params.ship) === window.ship);
 
+    const groupPath =  props.association['group-path'];
     const ownedUnmanagedVillage =
       chatOwner &&
-      props.station.slice(0, 3) === '/~/' &&
-      props.permission.kind === 'white';
+      !props.contacts[groupPath];
 
     if (!ownedUnmanagedVillage) {
       return null;
