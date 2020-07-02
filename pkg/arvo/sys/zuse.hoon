@@ -7160,6 +7160,7 @@
     ?~  a    ~
     ?~  l.a  `n.a
     $(a l.a)
+  ::
   ::  +pop: produce .head (smallest item) and .rest or crash if empty
   ::
   ++  pop
@@ -7327,6 +7328,18 @@
       $(l.b $(b l.b, r.a ~), a r.a)
     $(r.b $(b r.b, l.a ~), a l.a)
   ::
+  ::  +get: get val at key or return ~
+  ::
+  ++  get
+    |=  [a=(tree item) b=key]
+    ^-  (unit val)
+    ?~  a  ~
+    ?:  =(b key.n.a)
+      `val.n.a
+    ?:  (compare b key.n.a)
+      $(a l.a)
+    $(a r.a)
+  ::
   ::  +subset: take a range excluding start and/or end and all elements
   ::  outside the range
   ::
@@ -7343,7 +7356,7 @@
       (del-span tre %end end)
     ?~  end
       (del-span tre %start start)
-    ?>  (lth u.start u.end)
+    ?>  (compare u.start u.end)
     =.  tre  (del-span tre %start start)
     (del-span tre %end end)
     ::
