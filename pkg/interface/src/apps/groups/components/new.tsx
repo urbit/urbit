@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { InviteSearch, Invites } from '../../../components/InviteSearch';
 import { Spinner } from '../../../components/Spinner';
 import { RouteComponentProps } from 'react-router-dom';
-import { Groups, GroupPolicy } from '../../../types/group-update';
+import { Groups, GroupPolicy, Resource } from '../../../types/group-update';
 import { Contacts, Rolodex } from '../../../types/contact-update';
 import GlobalApi from '../../../api/global';
 import { Patp, PatpNoSig, Enc } from '../../../types/noun';
@@ -102,6 +102,7 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
         };
 
     const { groupName } = this.state;
+    const resource: Resource = { ship: `~${window.ship}`, name: groupName };
     this.setState(
       {
         invites: { ships: [], groups: [] },
@@ -110,6 +111,7 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
       () => {
         props.api.contacts
           .create(groupName, policy, this.state.title, this.state.description)
+          .then(() => props.api.groups.add(resource, [`~${window.ship}`]))
           .then(() => {
             this.setState({ awaiting: false });
             props.history.push(

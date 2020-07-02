@@ -146,8 +146,8 @@ interface GroupUpdateRemoveGroup {
   };
 }
 
-interface GroupUpdateGroupify {
-  groupify: {
+interface GroupUpdateExpose {
+  expose: {
     resource: Resource;
   };
 }
@@ -168,7 +168,7 @@ export type GroupUpdate =
   | GroupUpdateRemoveTag
   | GroupUpdateChangePolicy
   | GroupUpdateRemoveGroup
-  | GroupUpdateGroupify
+  | GroupUpdateExpose
   | GroupUpdateInitialGroup;
 
 export type GroupAction = Omit<GroupUpdate, 'initialGroup' | 'initial'>;

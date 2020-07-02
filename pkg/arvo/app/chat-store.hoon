@@ -67,9 +67,9 @@
       =.  cards
         :_  cards
         [%pass /trim %agent [our.bowl %chat-store] %poke %noun !>([%trim ~])]
-      $(old [%4 inbox.old])
+      $(old [%3 inbox.old])
     ::
-      ?(%0 %1)  $(old [%2 (old-to-2 inbox.old)])
+      ?(%0 %1)  $(old (old-to-2 inbox.old))
     ::
     ==
     ::

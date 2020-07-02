@@ -162,11 +162,11 @@
         ?.  ?=(%& -.val)
           (on-poke:def mark vase)
         =/  group=path  +.p.val
-        =/  res=(set resource)  (~(get ju group-indices) group)
+        =/  res=(set md-resource)  (~(get ju group-indices) group)
         =.  group-indices  (~(del by group-indices) group)
         :-  ~
         %+  roll  ~(tap in res)
-        |=  [r=resource out=_state]
+        |=  [r=md-resource out=_state]
         =.  resource-indices.out  (~(del by resource-indices.out) r)
         =.  app-indices.out
           %-  ~(del ju app-indices.out)
