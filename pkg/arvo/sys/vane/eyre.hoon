@@ -807,21 +807,33 @@
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
-      =/  res=(each vase tang)
-        %-  mule  |.
+      =/  res=toon
+        %-  mock  :_  (sloy scry)
+        :_  [%9 2 %0 1]  |.
         %+  slam
           %+  slam  gat
           !>([[now=now eny=eny bek=bek] ~ ~])
         !>([authenticated request])
-      ?:  ?=(%| -.res)
+      ?:  ?=(%2 -.res)
         =+  connection=(~(got by connections.state) duct)
         %^  return-static-data-on-duct  500  'text/html'
         %:  internal-server-error
             authenticated.inbound-request.connection
             url.request.inbound-request.connection
+            leaf+"generator crashed"
             p.res
         ==
-      =/  result  !<(simple-payload:http p.res)
+      ?:  ?=(%1 -.res)
+        =+  connection=(~(got by connections.state) duct)
+        %^  return-static-data-on-duct  500  'text/html'
+        %:  internal-server-error
+            authenticated.inbound-request.connection
+            url.request.inbound-request.connection
+            leaf+"scry blocked on"
+            >p.res<
+            ~
+        ==
+      =/  result  ;;(simple-payload:http +.p.res)
       ::  ensure we have a valid content-length header
       ::
       ::    We pass on the response and the headers the generator produces, but
