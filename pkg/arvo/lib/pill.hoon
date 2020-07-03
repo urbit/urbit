@@ -2,12 +2,12 @@
 ::
 ^?
 |%
-::  +module-ova: vane load operations.
-::
-::    sys: full path to /sys directory
 ::
 +$  pill
-  [boot-ova=* kernel-ova=(list unix-event) userspace-ova=(list unix-event)]
+  $:  boot-ova=*
+      kernel-ova=(list unix-event)
+      userspace-ova=(list unix-event)
+  ==
 ::
 +$  unix-event
   %+  pair  wire
@@ -16,42 +16,24 @@
       [%boot ? $%($>(%fake task:able:jael) $>(%dawn task:able:jael))]
       unix-task
   ==
+::  +module-ova: vane load operations
+::
+::    sys: full path to /sys directory
 ::
 ++  module-ova
   |=  sys=path
   ^-  (list [wire [%veer term path cord]])
   %+  turn
     ^-  (list (pair term path))
-    :~  ::  sys/zuse: standard library
-        ::
-        [%$ /zuse]
-        ::  sys/vane/ames: network
-        ::
-        [%a /vane/ames]
-        ::  sys/vane/behn: timer
-        ::
-        [%b /vane/behn]
-        ::  sys/vane/clay: revision control
-        ::
-        [%c /vane/clay]
-        ::  sys/vane/dill: console
-        ::
-        [%d /vane/dill]
-        ::  sys/vane/eyre: http server
-        ::
-        [%e /vane/eyre]
-        ::  sys/vane/ford: build
-        ::
-        [%f /vane/ford]
-        ::  sys/vane/gall: applications
-        ::
-        [%g /vane/gall]
-        ::  sys/vane/iris: http client
-        ::
-        [%i /vane/iris]
-        ::  sys/vane/kale: security
-        ::
-        [%j /vane/jael]
+    :~  [%$ /zuse]       ::  standard library
+        [%a /vane/ames]  ::  network
+        [%b /vane/behn]  ::  timer
+        [%c /vane/clay]  ::  revision control
+        [%d /vane/dill]  ::  console
+        [%e /vane/eyre]  ::  http server
+        [%g /vane/gall]  ::  applications
+        [%i /vane/iris]  ::  http client
+        [%j /vane/jael]  ::  identity and security
     ==
   |=  [=term =path]
   =/  pax  (weld sys path)
@@ -59,25 +41,22 @@
   [[%vane path] [%veer term pax txt]]
 ::  +file-ovum: userspace filesystem load
 ::
-::     bas: full path to / directory
+::    bas: full path to / directory
 ::
 ++  file-ovum
-  =/  directories
-    `(list path)`~[/app /ted /gen /lib /mar /ren /sec /sur /sys /tests /web]
+  =/  directories=(list path)
+    :~  /app    ::  %gall applications
+        /gen    ::  :dojo generators
+        /lib    ::  libraries
+        /mar    ::  mark definitions
+        /sur    ::  structures
+        /sys    ::  system files
+        /ted    ::  :spider strands
+        /tests  ::  unit tests
+        /web    ::  %eyre web content
+    ==
   |=  bas=path
   ^-  unix-event
-  ::
-  ::    /app    %gall applications
-  ::    /gen    :dojo generators
-  ::    /lib    %ford libraries
-  ::    /mar    %ford marks
-  ::    /ren    %ford renderers
-  ::    /sec    %eyre security drivers
-  ::    /sur    %ford structures
-  ::    /sys    system files
-  ::    /tests  unit tests
-  ::    /web    %eyre web content
-  ::
   %.  directories
   |=  ::  sal: all spurs to load from
       ::

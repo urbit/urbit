@@ -40,8 +40,8 @@
 ::
 ++  command-parser
   |=  sole-id=@ta
-  ^+  |~(nail *(like command))
-  (cold ~ (jest 'demo'))
+  ^+  |~(nail *(like [? command]))
+  (cold [& ~] (jest 'demo'))
 ::
 ++  tab-list
   |=  sole-id=@ta

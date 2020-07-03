@@ -6,6 +6,7 @@
 =,  sole
 =,  enjs:format
 |_  dib/dill-blit:dill
+++  grad  %noun
 ::
 ++  grab                                                   ::  convert from
   |%
@@ -13,6 +14,7 @@
   --
 ++  grow
   |%
+  ++  noun  dib
   ++  json
     ^-  ^json
     ?+  -.dib  ~|(unsupported-blit+-.dib !!)

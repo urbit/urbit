@@ -146,7 +146,7 @@ export class Eyre extends Component {
 
     const sessionItems = props.authentication.map(s => {
       return (<div>
-        {`${s.cookie} expires ${msToDa(s.expiry)}`}
+        {`${s.cookie} expires ${msToDa(s.expiry)}, uses ${s.channels} channel(s)`}
       </div>);
     });
 
@@ -168,6 +168,12 @@ export class Eyre extends Component {
 
       <h4>Cookies</h4>
       <button onClick={this.loadAuthenticationState}>refresh</button>
+      <form method="post" action="/~/logout">
+        <button type="submit">logout</button>
+      </form>
+      <form method="post" action="/~/logout">
+        <button type="submit" name="all">logout all</button>
+      </form>
       {sessionItems}
     </>);
   }

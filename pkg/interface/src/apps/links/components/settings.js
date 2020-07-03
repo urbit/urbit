@@ -96,6 +96,7 @@ export class SettingsScreen extends Component {
       if (props.amOwner) {
         this.setState({ disabled: true });
         props.api.metadataAdd(
+          'link',
           props.resourcePath,
           props.groupPath,
           resource.metadata.title,
@@ -117,7 +118,7 @@ export class SettingsScreen extends Component {
       disabled: true,
       type: 'Removing'
     });
-    props.api.removeCollection(props.resourcePath)
+    props.api.links.removeCollection(props.resourcePath)
     .then(() => {
       this.setState({
         isLoading: false
@@ -133,7 +134,7 @@ export class SettingsScreen extends Component {
       disabled: true,
       type: 'Deleting'
     });
-    props.api.deleteCollection(props.resourcePath)
+    props.api.links.deleteCollection(props.resourcePath)
     .then(() => {
       this.setState({
         isLoading: false
@@ -142,7 +143,7 @@ export class SettingsScreen extends Component {
   }
 
   markAllAsSeen() {
-    this.props.api.seenLink(this.props.resourcePath);
+    this.props.api.links.seenLink(this.props.resourcePath);
   }
 
   renderRemove() {
@@ -208,7 +209,8 @@ export class SettingsScreen extends Component {
             onBlur={() => {
               if (props.amOwner) {
                 this.setState({ disabled: true });
-                props.api.metadataAdd(
+                props.api.metadata.metadataAdd(
+                  'link',
                   props.resourcePath,
                   props.groupPath,
                   state.title,
@@ -238,7 +240,8 @@ export class SettingsScreen extends Component {
               onBlur={() => {
                 if (props.amOwner) {
                   this.setState({ disabled: true });
-                  props.api.metadataAdd(
+                  props.api.metadata.metadataAdd(
+                    'link',
                     props.resourcePath,
                     props.groupPath,
                     resource.metadata.title,
