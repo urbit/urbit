@@ -252,7 +252,6 @@
   |-  ^-  (quip card _state)
   ?~  envelopes.act
     :_  state(inbox (~(put by inbox) path.act u.mailbox))
-    :-  [%pass /trim %agent [our.bol %chat-store] %poke %noun !>([%trim ~])]
     %+  send-diff  path.act
     [%messages path.act 0 (lent evaluated-envelopes) evaluated-envelopes]
   =.  letter.i.envelopes.act  (evaluate-letter [author letter]:i.envelopes.act)
