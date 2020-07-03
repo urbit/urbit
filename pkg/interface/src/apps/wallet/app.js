@@ -1,10 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 
-import ProgressBar from './components/lib/progressBar';
-import BitcoinTransaction from './components/lib/bitcoinTransaction';
-
 import AddWallet from './components/addwallet';
+import WalletList from './components/walletList';
 
 import BCoin from '../../lib/bcoin';
 import ProxySocket from '../../lib/proxy';
@@ -39,14 +37,16 @@ export default class WalletApp extends React.Component {
 
   componentDidMount() {
     document.title = 'OS1 - Wallet';
-    // preload spinner asset
-    new Image().src = '/~landscape/img/Spinner.png';
+
     this.props.subscription.startApp('wallet');
   }
 
   componentDidUpdate() {
     if (this.props.xpubkey && !this.state.xpubkey) {
-      this.setState({ xpubkey: this.props.xpubkey, hasXPub: true });
+      this.setState({ xpubkey: this.props.xpubkey, hasXPub: true }, () => {
+        // sync transactions if we know the key
+        this.startNode();
+      });
     }
     if (this.props.address && !this.state.address) {
       this.setState({ address: this.props.address });
@@ -383,301 +383,58 @@ export default class WalletApp extends React.Component {
   render() {
     const { state, props } = this;
 
-    const node = state.node ? state.node : {};
-    const confirmed = state.confirmedBalance ? state.confirmedBalance : 0;
-    const unconfirmed = state.unConfirmedBalance ? state.unConfirmedBalance : 0;
-    const peers = (state.peers)? state.peers: [];
-
-    const connectSPVClasses = (Boolean(state.seed) || state.xpubkey)
-      ? 'pointer db f9 mt1 green2 bg-gray0-d ba pv1 ph1 b--green2'
-      : 'pointer db f9 mt1 gray2 ba bg-gray0-d pa1 pv1 ph1 b--gray3';
-
-    const connectLocalClasses = (Boolean(state.walletPort) && Boolean(state.nodePort))
-      ? 'pointer db f9 mt1 green2 bg-gray0-d ba pv1 ph1 b--green2'
-      : 'pointer db f9 mt1 gray2 ba bg-gray0-d pa1 pv1 ph1 b--gray3';
-
     return (
       <BrowserRouter>
         <div className="absolute h-100 w-100 bg-gray0-d ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl" style={{ height: 'calc(100% - 45px)' }}>
+          <div className="cf w-100 pa4 ba-m ba-l ba-xl b--gray2 br1 h-100 h-100-minus-40-m h-100-minus-40-l h-100-minus-40-xl f9 white-d">
           <Route exact path="/~wallet"
             render={ () => {
             return (
-              <div className="cf w-100 flex flex-column pa4 ba-m ba-l ba-xl b--gray2 br1 h-100 h-100-minus-40-m h-100-minus-40-l h-100-minus-40-xl f9 white-d">
-                <div>
-                  <div className={'cf w-20 fl pa2 overflow-x-hidden ' +
-                                  'bg-gray0-d white-d flex flex-column'}
-                  >
-                    <button
-                      onClick={this.startNode}
-                      className={connectSPVClasses}
-                    >
-                      Sync Browser SPV Node
-                    </button>
-                    <button
-                      onClick={this.connectClientNode}
-                      className={connectLocalClasses}
-                    >
-                      Connect to Bcoin Node
-                    </button>
-                  </div>
-                  <div className={'cf w-60 fl pa2 pt4 overflow-x-hidden ' +
-                                  'bg-gray0-d white-d flex flex-column'}
-                  >
-                    <div className="mono wrap">
-                      Current Height: {(state.height) ? state.height: 0}
-                    </div>
-                    <div className="mono wrap">
-                      Current Hash: {(state.hash) ? state.hash: '' }
-                    </div>
-                    { ProgressBar(( (state.progress) ? state.progress : 0) )}
-                  </div>
-                  <div className="cf w-20 fl pa2 pt4 overflow-x-hidden bg-gray0-d white-d flex flex-column">
-                    <div className="f6 mono wrap">
-                      Balance: {confirmed}
-                    </div>
-                    <div className="f6 mono wrap">
-                      Pending: {Math.abs(confirmed - unconfirmed)}
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div className={'cf w-50 fl pa2 pt4 overflow-x-hidden ' +
-                                  'bg-gray0-d white-d flex flex-column'}
-                  >
-                    <div className="w-100">
-                    </div>
-                  </div>
-
-                  <div className={'w-50 fl pa2 pt4 overflow-x-hidden ' +
-                                  'bg-gray0-d white-d flex flex-column'}
-                  >
-                    <div>
-                      <div className={'w-third fl overflow-x-hidden ' +
-                                      'bg-gray0-d white-d flex flex-column'}
-                      >
-                        <p className="f8 mt3 lh-copy db">Proxy Socket URL</p>
-                        <textarea
-                          className={
-                            'f9 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 mt2 ' +
-                            'focus-b--black focus-b--white-d'
-                          }
-                          rows={1}
-                          placeholder="ws://127.0.0.1:9090"
-                          style={{
-                            resize: 'none',
-                            height: 48,
-                            paddingTop: 14
-                          }}
-                          onChange={this.loadSocket}
-                        />
-                      </div>
-                        <div className={'w-third fl overflow-x-hidden ' +
-                                        'bg-gray0-d white-d flex flex-column'}
-                        >
-                        <p className="f8 mt3 lh-copy db">Local BCoin Node</p>
-                        <textarea
-                          className={
-                            'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 mt2 ' +
-                            'focus-b--black focus-b--white-d'
-                          }
-                          rows={1}
-                          placeholder="48334"
-                          style={{
-                            resize: 'none',
-                            height: 48,
-                            paddingTop: 14
-                          }}
-                          onChange={this.loadNodePort}
-                        />
-                      </div>
-                        <div className={'w-third fl overflow-x-hidden ' +
-                                        'bg-gray0-d white-d flex flex-column'}
-                        >
-                        <p className="f8 mt3 lh-copy db">Local BCoin Wallet</p>
-                        <textarea
-                          className={
-                            'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 mt2 ' +
-                            'focus-b--black focus-b--white-d'
-                          }
-                          rows={1}
-                          placeholder="48335"
-                          style={{
-                            resize: 'none',
-                            height: 48,
-                            paddingTop: 14
-                          }}
-                          onChange={this.loadWalletPort}
-                        />
-                      </div>
-                    </div>
-
-                    <p className="f8 mt3 lh-copy db">Trusted Peer Nodes</p>
-                    <textarea
-                      className={
-                        'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 mt2 ' +
-                        'focus-b--black focus-b--white-d'
-                      }
-                      rows={1}
-                      placeholder="No peers by default"
-                      style={{
-                        resize: 'none',
-                        height: 48,
-                        paddingTop: 14
-                      }}
-                      onChange={this.loadTrustedPeers}
-                    />
-                    <p className="f8 mt3 lh-copy db">Network</p>
-                    <textarea
-                      className={
-                        'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 mt2 ' +
-                        'focus-b--black focus-b--white-d'
-                      }
-                      rows={1}
-                      placeholder="main, testnet or regtest"
-                      style={{
-                        resize: 'none',
-                        height: 48,
-                        paddingTop: 14
-                      }}
-                      onChange={this.selectNetwork}
-                    />
-                  </div>
-
-                  <div className={'w-50 fl pa2 overflow-x-hidden ' +
-                                  'bg-gray0-d white-d flex flex-column'}
-                  >
-
-                    <p className="f8 mt3 lh-copy db">Peer Nodes</p>
-                    <div className={
-                        'f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa1 db w-100 mt2 ' +
-                        'focus-b--black focus-b--white-d'
-                      }
-                    >
-                      <div className="dt dt--fixed f8 lh-copy db fw4">
-                        <div className="fl w-third bb b--gray4 b--gray2-d gray2 tc">
-                          Host
-                        </div>
-                        <div className="fl w-third bb b--gray4 b--gray2-d gray2 tc">
-                          Agent
-                        </div>
-                        <div className="fl w-third bb b--gray4 b--gray2-d gray2 tc">
-                          Bytes (↑↓)
-                        </div>
-                      </div>
-                      {peers.map((peer, index) => {
-                        const addr = peer.addr;
-                        const subver = peer.subver;
-                        const bytes = `${peer.bytessent}/${peer.bytesrecv}`;
-                        return (
-                          <div key={index} className="f9 dt dt--fixed">
-                            <div className="fl w-third tc mono wrap">
-                              {addr}
-                            </div>
-                            <div className="fl w-third tc mono wrap">
-                              {subver}
-                            </div>
-                            <div className="fl w-third tc mono wrap">
-                              {bytes}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className={'w-50 fl pa2 overflow-x-hidden ' +
-                                  'bg-gray0-d white-d flex flex-column'}
-                  >
-                    <div>
-                      <div className="w-70 fl pr2">
-                        <p className="f8 mt3 lh-copy db">
-                          Payments
-                        </p>
-                        <div className="w-100">
-                          <div className="fl">
-                            <BitcoinTransaction
-                              amount={state.amount}
-                              point={state.point}
-                              api={props.api.wallet}
-                              address={state.address}
-                              network={state.network}
-                              wallet={state.wallet}
-                              node={node}
-                              wdb={state.wdb}
-                              keyring={state.keyring}
-                              account={state.account}
-                              coinType={state.coinType}
-                              connectedTo={state.connectedTo}
-                              signMethod={state.signMethod}
-                            />
-                          </div>
-                          <div className="w-40 fl pr2">
-                            <textarea
-                              className={
-                                'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 mt2 ' +
-                                'focus-b--black focus-b--white-d'
-                              }
-                              rows={1}
-                              placeholder="~marzod"
-                              style={{
-                                resize: 'none',
-                                height: 48,
-                                paddingTop: 14
-                              }}
-                              onChange={this.setPoint}
-                            />
-                          </div>
-                          <div className="w-30 fl pr2">
-                            <textarea
-                              className={
-                                'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 mt2 ' +
-                                'focus-b--black focus-b--white-d'
-                              }
-                              rows={1}
-                              placeholder="0 BTC"
-                              style={{
-                                resize: 'none',
-                                height: 48,
-                                paddingTop: 14
-                              }}
-                              onChange={this.setAmount}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      { (state.connectedTo === 'spvNode') ?
-                        <div className="w-30 fl pr2">
-                          <p className="f8 mt3 lh-copy db">Signing</p>
-                          <div className="w-100 fl pr2 pa3">
-                            <input type="radio" id="seed"
-                            name="sign"
-                            value="seed" onChange={this.handleSigning}
-                            />
-                            <label className="pl2 f8" htmlFor="seed">Seed</label><br />
-                            <input defaultChecked type="radio"
-                              id="ledger"
-                              name="sign" value="ledger"
-                              onChange={this.handleSigning}
-                            />
-                            <label className="pl2 f8" htmlFor="ledger">Ledger</label><br />
-                          </div>
-                        </div>
-                        : null
-                      }
-                    </div>
-                  </div>
-                </div>
-            </div>
+              <WalletList
+                height={state.height}
+                hash={state.hash}
+                progress={state.progress}
+                confirmedBalance={state.confirmedBalance}
+                unConfirmedBalance={state.unConfirmedBalance}
+                loadSocket={this.loadSocket}
+                loadNodePort={this.loadNodePort}
+                loadWalletPort={this.loadWalletPort}
+                loadTrustedPeers={this.loadTrustedPeers}
+                selectNetwork={this.selectNetwork}
+                peers={state.peers || []}
+                amount={state.amount}
+                point={state.point}
+                api={props.api}
+                address={state.address}
+                network={state.network}
+                wallet={state.wallet}
+                node={state.node || {}}
+                wdb={state.wdb}
+                keyring={state.keyring}
+                account={state.account}
+                coinType={state.coinType}
+                connectedTo={state.connectedTo}
+                signMethod={state.signMethod}
+                setPoint={this.setPoint}
+                setAmount={this.setAmount}
+                handleSigning={this.handleSigning}
+              />
             );
           }}
           />
           <Route exact path="/~wallet/add"
             render={ () => {
-              return(
-                <AddWallet loadMnemonic={this.loadMnemonic} xpubkey={state.xpubkey} loadFromLedger={this.loadFromLedger} network={state.network} />
+              return (
+                <AddWallet
+                  loadMnemonic={this.loadMnemonic}
+                  xpubkey={state.xpubkey}
+                  loadFromLedger={this.loadFromLedger}
+                  network={state.network}
+                />
               );
             }}
           />
+        </div>
         </div>
       </BrowserRouter>
     );
