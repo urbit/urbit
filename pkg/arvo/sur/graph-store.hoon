@@ -8,9 +8,10 @@
   ?>  (check-balance:((ordered-map key value) ord) b)
   b
 ::
++$  mark         term
 +$  graph        ((mop atom node) gth)
 +$  node         [=post children=internal-graph]
-+$  graphs       (map resource graph)
++$  graphs       (map resource [p=graph q=(unit mark)])
 +$  tag-queries  (jug term resource)
 +$  update-log   ((mop time logged-update) gth)
 +$  update-logs  (map resource update-log)
@@ -45,7 +46,7 @@
 ::
 +$  update-0
   $%  logged-update-0
-      [%add-graph =resource =graph]
+      [%add-graph =resource =graph mark=(unit mark)]
       [%remove-graph =resource]
     ::
       [%add-tag =term =resource]

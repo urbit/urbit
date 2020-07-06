@@ -1,5 +1,10 @@
-/-  *resource
-/+  store=graph-store, graph, group, default-agent, dbug, push-hook
+/+  store=graph-store
+/+  res=resource
+/+  graph
+/+  group
+/+  default-agent
+/+  dbug
+/+  push-hook
 ~%  %graph-push-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -39,8 +44,7 @@
   |=  =vase
   ^-  ?
   =/  =update:store  !<(update:store vase)
-  ?.  ?=(%0  -.update)    %.n
-  ?-  +<.update
+  ?-  -.q.update
       %add-graph          %.y
       %remove-graph       %.y
       %add-nodes          %.y
@@ -54,38 +58,39 @@
       %keys               %.n
       %tags               %.n
       %tag-queries        %.n
+      %run-updates        %.y
   ==
 ::
 ++  resource-for-update
   |=  =vase
-  ^-  (unit resource)
+  ^-  (unit resource:res)
   =/  =update:store  !<(update:store vase)
-  ?.  ?=(%0  -.update)    ~
-  ?-  +<.update
-      %add-graph          `resource.update
-      %remove-graph       `resource.update
-      %add-nodes          `resource.update
-      %remove-nodes       `resource.update
-      %add-signatures     `resource.uid.update
-      %remove-signatures  `resource.uid.update
-      %archive-graph      `resource.update
+  ?-  -.q.update
+      %add-graph          `resource.q.update
+      %remove-graph       `resource.q.update
+      %add-nodes          `resource.q.update
+      %remove-nodes       `resource.q.update
+      %add-signatures     `resource.uid.q.update
+      %remove-signatures  `resource.uid.q.update
+      %archive-graph      `resource.q.update
       %unarchive-graph    ~
       %add-tag            ~
       %remove-tag         ~
+      %run-updates        `resource.q.update
       %keys               ~
       %tags               ~
       %tag-queries        ~
   ==
 ::
 ++  initial-watch
-  |=  [=path =resource]
+  |=  [=path =resource:res]
   ^-  vase
   ?>  (can-join:grp resource src.bowl)
   ?~  path
     ::  new subscribe
     =/  =graph:store  (get-graph:graph resource)
     !>  ^-  update:store
-    [%add-graph resource graph]
+    [%0 now.bowl [%add-graph resource graph ~]]
   ::  resubscribe
   ::
   ::  TODO: use action-log
@@ -96,14 +101,13 @@
   |=  =vase
   ^-  [(list card) agent]
   =/  =update:store  !<(update:store vase)
-  ?.  ?=(%0  -.update)  [~ this]
-  ?+  +<.update         [~ this]
+  ?+  -.q.update       [~ this]
       %remove-graph
     :_  this
-    [%give %kick ~[resource+(en-path:resource resource.update)] ~]~
+    [%give %kick ~[resource+(en-path:res resource.q.update)] ~]~
   ::
       %archive-graph
     :_  this
-    [%give %kick ~[resource+(en-path:resource resource.update)] ~]~
+    [%give %kick ~[resource+(en-path:res resource.q.update)] ~]~
   ==
 --

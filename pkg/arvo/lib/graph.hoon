@@ -1,4 +1,6 @@
-|%
+/-  *resource
+/+  store=graph-store
+|_  =bowl:gall
 ++  scry-for
   |*  [=mold =path]
   .^  mold

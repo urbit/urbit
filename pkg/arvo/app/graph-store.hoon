@@ -1,4 +1,4 @@
-/+  store=graph-store, sigs=signatures, default-agent, dbug
+/+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug
 ~%  %graph-store-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -80,21 +80,28 @@
         ::
         ::  NOTE: cannot send these updates as pokes
         ::
-        ::  TODO: add ~| error message
-        %keys               !!
-        %tags               !!
-        %tag-queries        !!
+        %keys               ~|('cannot send %keys as poke' !!)
+        %tags               ~|('cannot send %tags as poke' !!)
+        %tag-queries        ~|('cannot send %tag-queries as poke' !!)
     ==
     ::
     ++  add-graph
-      |=  [=resource:store =graph:store]
+      |=  [=resource:store =graph:store mark=(unit mark:store)]
       ^-  (quip card _state)
       ?<  (~(has by archive) resource)
       ?<  (~(has by graphs) resource)
-      :-  (give [/updates /keys ~] [%add-graph resource graph])
-      %_  state
-          graphs       (~(put by graphs) resource graph)
-          update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
+      ?>  (validate-graph graph mark)
+      :_  %_  state
+              graphs       (~(put by graphs) resource [graph mark])
+              update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
+          ==
+      ^-  (list card)
+      %-  zing
+      :~  (give [/updates /keys ~] [%add-graph resource graph mark])
+          ?~  mark  ~
+          =/  wire  (weld /graph (en-path:res resource))
+          =/  =rave:clay  [%sing %b [%da now.bowl] /[u.mark]]
+          [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
       ==
     ::
     ++  remove-graph
@@ -109,10 +116,14 @@
       ==
     ::
     ++  add-nodes
-      |=  [=time =resource:store nodes=(map index:store node:store)]
+      |=  $:  =time
+              =resource:store
+              nodes=(map index:store node:store)
+          ==
       ^-  (quip card _state)
       |^
-      =/  =graph:store       (~(got by graphs) resource)
+      =/  [=graph:store mark=(unit mark:store)]
+        (~(got by graphs) resource)
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [%0 time [%add-nodes resource nodes]])
@@ -123,12 +134,13 @@
           graphs
         %+  ~(put by graphs)
           resource
-        (add-node-list resource graph ~(tap by nodes))
+        [(add-node-list resource graph mark ~(tap by nodes)) mark]
       ==
       ::
       ++  add-node-list
         |=  $:  =resource:store
                 =graph:store
+                mark=(unit mark:store)
                 node-list=(list [index:store node:store])
             ==
         ^-  graph:store
@@ -137,7 +149,7 @@
         =*  node   +.i.node-list
         %_  $
             node-list  t.node-list
-            graph      (add-node-at-index graph index node ~)
+            graph      (add-node-at-index graph index node ~ mark)
         ==
       ::
       ++  add-node-at-index
@@ -145,9 +157,11 @@
                 =index:store
                 =node:store
                 parent-hash=(unit hash:store)
+                mark=(unit mark:store)
             ==
         ^-  graph:store
         ?~  index  graph
+        ?>  (validate-graph (gas:orm ~ [i.index node]~) mark)
         =*  atom   i.index
         %^  put:orm
             graph
@@ -186,8 +200,9 @@
       |=  [=time =resource:store indices=(set index:store)]
       ^-  (quip card _state)
       |^
-      =/  =graph:store        (~(got by graphs) resource)
-      =/  =update-log:store   (~(got by update-logs) resource)
+      =/  [=graph:store mark=(unit mark:store)]
+        (~(got by graphs) resource)
+      =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [%0 time [%remove-nodes resource indices]])
       ::
@@ -197,7 +212,7 @@
           graphs
         %+  ~(put by graphs)
           resource
-        (remove-indices resource graph ~(tap in indices))
+        [(remove-indices resource graph ~(tap in indices)) mark]
       ==
       ::
       ++  remove-indices
@@ -233,7 +248,8 @@
       ^-  (quip card _state)
       |^
       =*  resource  resource.uid
-      =/  =graph:store       (~(got by graphs) resource)
+      =/  [=graph:store mark=(unit mark:store)]
+        (~(got by graphs) resource)
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         (put:orm-log update-log time [%0 time [%add-signatures uid signatures]])
@@ -242,7 +258,8 @@
       %_  state
           update-logs  (~(put by update-logs) resource update-log)
           graphs
-        (~(put by graphs) resource (add-at-index graph index.uid signatures))
+        %+  ~(put by graphs)  resource
+        [(add-at-index graph index.uid signatures) mark]
       ==
       ::
       ++  add-at-index
@@ -273,7 +290,8 @@
       ^-  (quip card _state)
       |^
       =*  resource  resource.uid
-      =/  =graph:store       (~(got by graphs) resource)
+      =/  [=graph:store mark=(unit mark:store)]
+        (~(got by graphs) resource)
       =/  =update-log:store  (~(got by update-logs) resource)
       =.  update-log
         %^  put:orm-log  update-log
@@ -285,7 +303,7 @@
           update-logs  (~(put by update-logs) resource update-log)
           graphs
         %+  ~(put by graphs)  resource
-        (remove-at-index graph index.uid signatures)
+        [(remove-at-index graph index.uid signatures) mark]
       ==
       ::
       ++  remove-at-index
@@ -379,6 +397,26 @@
           ==
       ==
     ::
+    ++  validate-graph
+      |=  [=graph:store mark=(unit mark:store)]
+      ^-  ?
+      ?~  mark   %.y
+      ?~  graph  %.y
+      =/  =dais:clay
+        .^  =dais:clay
+            %cb
+            /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[u.mark]
+        ==
+      %+  roll  (tap:orm graph)
+      |=  [[=atom:store =node:store] out=?]
+      ?&  out
+          =(%& (mule |.((vale:dais [atom post.node]))))
+          ?-  -.children.node
+              %empty  %.y
+              %graph  ^$(graph p.children.node)
+          ==
+      ==
+    ::
     ++  give
       |=  [paths=(list path) update=update-0:store]
       ^-  (list card)
@@ -399,18 +437,18 @@
       [%x %graph @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
-    =/  graph=(unit graph:store)  (~(get by graphs) [ship term])
+    =/  graph=(unit [graph:store *])  (~(get by graphs) [ship term])
     ?~  graph  ~
-    ``noun+!>(u.graph)
+    ``noun+!>(-.u.graph)
   ::
       [%x %graph-subset @ @ @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
     =/  start=(unit atom:store)  (rush i.t.t.t.t.path dem:ag)
     =/  end=(unit atom:store)    (rush i.t.t.t.t.t.path dem:ag)
-    =/  graph=(unit graph:store)  (~(get by graphs) [ship term])
+    =/  graph=(unit [graph:store *])  (~(get by graphs) [ship term])
     ?~  graph  ~
-    ``noun+!>(`graph:store`(subset:orm u.graph start end))
+    ``noun+!>(`graph:store`(subset:orm -.u.graph start end))
   ::
       [%x %node @ @ @ *]
     =/  =ship         (slav %p i.t.t.path)
@@ -473,10 +511,10 @@
   ++  get-node
     |=  [=ship =term =index:store]
     ^-  (unit node:store)
-    =/  parent-graph=(unit graph:store)  (~(get by graphs) [ship term])
+    =/  parent-graph=(unit [graph:store *])  (~(get by graphs) [ship term])
     ?~  parent-graph  ~
     =/  node=(unit node:store)  ~
-    =/  =graph:store  u.parent-graph
+    =/  =graph:store  -.u.parent-graph
     |-
     ?~  index
       node
@@ -490,7 +528,13 @@
     ==
   --
 ::
-++  on-arvo  on-arvo:def
+++  on-arvo
+  |=  [=wire =sign-arvo]
+  ^-  (quip card _this)
+  ?+  -.sign-arvo  (on-arvo:def wire sign-arvo)
+      %c           [~ this]
+  ==
+::
 ++  on-agent  on-agent:def
 ++  on-leave  on-leave:def
 ++  on-fail   on-fail:def

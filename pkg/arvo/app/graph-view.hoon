@@ -1,4 +1,9 @@
-/+  view=graph-view, store=graph-store, sigs=signatures, default-agent, dbug
+/+  view=graph-view
+/+  store=graph-store
+/+  sigs=signatures
+/+  grph=graph
+/+  default-agent
+/+  dbug
 ~%  %graph-view-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -21,6 +26,7 @@
 |_  =bowl:gall
 +*  this       .
     def        ~(. (default-agent this %|) bowl)
+    gra        ~(. grph bowl)      
 ::
 ++  on-init
   ^-  (quip card _this)
@@ -157,7 +163,7 @@
     ++  scry-for-node
       |=  [=ship =term =index:store]
       ^-  node:store
-      %+  scry-for  node:store
+      %+  scry-for:gra  node:store
       %+  weld
         /node/(scot %p ship)/[term]
       (index-to-path index)
@@ -170,7 +176,7 @@
       =/  lngth=@  (dec (lent index))
       =/  ind=index:store  `(list atom)`(scag lngth `(list atom)`index)
       =/  parent=node:store
-        %+  scry-for  node:store
+        %+  scry-for:gra  node:store
         %+  weld
           /node/(scot %p ship)/[term]
         (index-to-path ind)
@@ -207,7 +213,7 @@
     ^-  (quip card _state)
     ?-  -.typ
         %all
-      =/  keys  (scry-for resources:store /keys)
+      =/  keys  (scry-for:gra resources:store /keys)
       :_  state
       :-  (give con [%graph-update !>([%0 now.bowl [%keys keys]])])
       %+  turn  ~(tap in keys)
@@ -219,21 +225,22 @@
       :_  ~
       %+  give  con
       :-  %graph-update
-      !>([%0 now.bowl [%keys (scry-for resources:store /keys)]])
+      !>([%0 now.bowl [%keys (scry-for:gra resources:store /keys)]])
     ::
         %tags
       :_  state
       :_  ~
       %+  give  con
       :-  %graph-update
-      !>([%0 now.bowl [%tags (scry-for (set term) /tags)]])
+      !>([%0 now.bowl [%tags (scry-for:gra (set term) /tags)]])
     ::
         %tag-queries
       :_  state
       :_  ~
       %+  give  con
       :-  %graph-update
-      !>([%0 now.bowl [%tag-queries (scry-for tag-queries:store /tag-queries)]])
+      !>
+      [%0 now.bowl [%tag-queries (scry-for:gra tag-queries:store /tag-queries)]]
     ::
         %graph
       :_  state
@@ -280,7 +287,7 @@
     :-  now.bowl
     :+  %add-graph
       [ship term]
-    (scry-for graph:store /graph/(scot %p ship)/[term])
+    [(scry-for:gra graph:store /graph/(scot %p ship)/[term]) ~]
   ::
   ++  graph-subset
     |=  [res=resource:store start=(unit atom:store) end=(unit atom:store)]
@@ -292,7 +299,7 @@
         res
         start
         end
-        %+  scry-for  graph:store
+        %+  scry-for:gra  graph:store
         /graph-subset/(scot %p entity.res)/[name.res]/[st]/[en]
     ==
   ::
@@ -303,7 +310,7 @@
     :*  %node
         res
         index
-        %+  scry-for  node:store
+        %+  scry-for:gra  node:store
         %+  weld  /node/(scot %p entity.res)/[name.res]
         (turn index |=(=atom:store (scot %ud atom)))
     ==
@@ -315,7 +322,7 @@
     :*  %post
         res
         index
-        %+  scry-for  post:store
+        %+  scry-for:gra  post:store
         %+  weld  /post/(scot %p entity.res)/[name.res]
         (turn index |=(=atom:store (scot %ud atom)))
     ==
@@ -327,7 +334,7 @@
     :*  %node-children
         res
         index
-        %+  scry-for  graph:store
+        %+  scry-for:gra  graph:store
         %+  weld  /node-children/(scot %p entity.res)/[name.res]
         (turn index |=(=atom:store (scot %ud atom)))
     ==
@@ -341,19 +348,9 @@
         start
         end
         index
-        %+  scry-for  graph:store
+        %+  scry-for:gra  graph:store
         %+  weld  /node-children-subset/(scot %p entity.res)/[name.res]
         (turn index |=(=atom:store (scot %ud atom)))
-    ==
-  ::
-  ++  scry-for
-    |*  [=mold =path]
-    .^  mold
-      %gx
-      (scot %p our.bowl)
-      %graph-store
-      (scot %da now.bowl)
-      (snoc `^path`path %noun)
     ==
   ::
   ++  give

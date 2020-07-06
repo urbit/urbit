@@ -105,6 +105,8 @@
       %file-server
       %graph-store
       %graph-view
+      %graph-push-hook
+      %graph-pull-hook
   ==
 ::
 ++  deft-fish                                           ::  default connects

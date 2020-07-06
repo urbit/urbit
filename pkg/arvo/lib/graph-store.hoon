@@ -49,6 +49,7 @@
         %-  pairs
         :~  [%resource (enjs:res resource.upd)]
             [%graph (graph graph.upd)]
+            [%mark ?~(mark.upd ~ s+u.mark.upd)]
         ==
       ::
           %remove-graph
@@ -266,6 +267,7 @@
       %-  ot
       :~  [%resource dejs:res]
           [%graph graph]
+          [%mark (mu so)]
       ==
     ::
     ++  graph
