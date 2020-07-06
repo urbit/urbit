@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Route, withRouter, Switch } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
+ 
 import './css/indigo-static.css';
 import './css/fonts.css';
 import { light } from '@tlon/indigo-react';
@@ -16,7 +17,7 @@ import PublishApp from './apps/publish/app';
 import StatusBar from './components/StatusBar';
 import NotFound from './components/404';
 
-import GlobalStore from './store/global';
+import GlobalStore from './store/store';
 import GlobalSubscription from './subscription/global';
 import GlobalApi from './api/global';
 
@@ -56,11 +57,11 @@ export default class App extends React.Component {
 
     this.appChannel = new window.channel();
     this.api = new GlobalApi(this.ship, this.appChannel, this.store);
+    this.subscription =
+      new GlobalSubscription(this.store, this.api, this.appChannel);
   }
 
   componentDidMount() {
-    this.subscription =
-      new GlobalSubscription(this.store, this.api, this.appChannel);
     this.subscription.start();
   }
 
@@ -69,6 +70,7 @@ export default class App extends React.Component {
 
     const associations = this.state.associations ? this.state.associations : { contacts: {} };
     const selectedGroups = this.state.selectedGroups ? this.state.selectedGroups : [];
+    const { state } = this;
 
     return (
       <ThemeProvider theme={light}>
@@ -85,8 +87,8 @@ export default class App extends React.Component {
               render={ p => (
                 <LaunchApp
                   ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
+                  api={this.api}
+                  {...state}
                   {...p}
                 />
               )}
@@ -94,8 +96,9 @@ export default class App extends React.Component {
               <Route path="/~chat" render={ p => (
                 <ChatApp
                   ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
+                  api={this.api}
+                  subscription={this.subscription}
+                  {...state}
                   {...p}
                 />
               )}
@@ -114,6 +117,7 @@ export default class App extends React.Component {
                   ship={this.ship}
                   channel={channel}
                   selectedGroups={selectedGroups}
+                  subscription={this.subscription}
                   {...p}
                 />
               )}
@@ -121,8 +125,9 @@ export default class App extends React.Component {
               <Route path="/~groups" render={ p => (
                 <GroupsApp
                   ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
+                  api={this.api}
+                  subscription={this.subscription}
+                  {...state}
                   {...p}
                 />
               )}
@@ -130,8 +135,10 @@ export default class App extends React.Component {
               <Route path="/~link" render={ p => (
                 <LinksApp
                   ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
+                  ship={this.ship}
+                  api={this.api}
+                  subscription={this.subscription}
+                  {...state}
                   {...p}
                 />
               )}
@@ -139,8 +146,9 @@ export default class App extends React.Component {
               <Route path="/~publish" render={ p => (
                 <PublishApp
                   ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
+                  api={this.api}
+                  subscription={this.subscription}
+                  {...state}
                   {...p}
                 />
               )}

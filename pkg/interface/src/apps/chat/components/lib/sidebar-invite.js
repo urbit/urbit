@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 
 export class SidebarInvite extends Component {
   onAccept() {
-    this.props.api.invite.accept(this.props.uid);
+    this.props.api.invite.accept('/chat', this.props.uid);
   }
 
   onDecline() {
-    this.props.api.invite.decline(this.props.uid);
+    this.props.api.invite.decline('/chat', this.props.uid);
   }
 
   render() {

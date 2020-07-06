@@ -130,7 +130,6 @@
         [cards this]
       ::
       ?:  =(mark update-mark.config)
-        ?<  (team:title our.bowl src.bowl)
         =^  cards  state
           (poke-update:hc vase)
         [cards this]

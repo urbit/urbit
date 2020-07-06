@@ -1,3 +1,4 @@
+^?
 |%
 +$  resource   [=entity name=term]
 +$  resources  (set resource)

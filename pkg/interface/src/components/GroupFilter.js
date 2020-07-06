@@ -26,7 +26,7 @@ export default class GroupFilter extends Component {
     const selected = localStorage.getItem('urbit-selectedGroups');
     if (selected) {
       this.setState({ selected: JSON.parse(selected) }, (() => {
-        this.props.api.setSelected(this.state.selected);
+        this.props.api.local.setSelected(this.state.selected);
       }));
     }
   }

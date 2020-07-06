@@ -39,6 +39,10 @@
 ::
 ++  dejs
   =,  dejs:format
+  ^-  $-(json resource)
+  |=  jon=json
+  ~|  dejs+%resource
+  %.  jon
   %-  ot
   :~  ship+(su ;~(pfix sig fed:ag))
       name+so

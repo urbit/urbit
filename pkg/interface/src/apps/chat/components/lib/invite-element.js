@@ -33,7 +33,7 @@ export class InviteElement extends Component {
       members: [],
       awaiting: true
     }, () => {
-      props.api.groups.add(aud, props.path).then(() => {
+      props.api.chatView.invite(props.path, aud).then(() => {
         this.setState({ awaiting: false });
       });
     });

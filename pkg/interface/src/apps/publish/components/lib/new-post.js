@@ -60,14 +60,14 @@ export class NewPost extends Component {
       };
 
       this.setState({ disabled: true });
-      this.props.api.publishAction(newNote).then(() => {
+      this.props.api.publish.publishAction(newNote).then(() => {
         this.setState({ awaiting: newNote['new-note'].note });
       }).catch((err) => {
         if (err.includes('note already exists')) {
           const timestamp = Math.floor(Date.now() / 1000);
           newNote['new-note'].note += '-' + timestamp;
           this.setState({ awaiting: newNote['new-note'].note });
-          this.props.api.publishAction(newNote);
+          this.props.api.publish.publishAction(newNote);
         } else {
           this.setState({ disabled: false, awaiting: null });
         }
@@ -81,7 +81,7 @@ export class NewPost extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps && prevProps.api !== this.props.api) {
-      this.props.api.fetchNotebook(this.props.ship, this.props.book);
+      this.props.api.publish.fetchNotebook(this.props.ship, this.props.book);
     }
 
     const notebook = this.props.notebooks[this.props.ship][this.props.book];

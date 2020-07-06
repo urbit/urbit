@@ -108,7 +108,8 @@ export class SettingsScreen extends Component {
 
       if (chatOwner) {
         this.setState({ awaiting: true, type: 'Editing chat...' }, (() => {
-          props.api.metadata.add(
+          props.api.metadata.metadataAdd(
+            'chat',
             association['app-path'],
             association['group-path'],
             association.metadata.title,
@@ -133,7 +134,7 @@ export class SettingsScreen extends Component {
         ? 'Deleting chat...'
         : 'Leaving chat...'
     }, (() => {
-        props.api.chatView.delete(props.station);
+        props.api.chat.delete(props.station);
     }));
   }
 
@@ -145,7 +146,7 @@ export class SettingsScreen extends Component {
       awaiting: true,
       type: 'Converting chat...'
     }, (() => {
-      props.api.chatView.groupify(
+      props.api.chat.groupify(
         props.station, state.targetGroup, state.inclusive
       ).then(() => this.setState({ awaiting: false }));
     }));
@@ -184,10 +185,10 @@ export class SettingsScreen extends Component {
 
     const chatOwner = (deSig(props.match.params.ship) === window.ship);
 
+    const groupPath =  props.association['group-path'];
     const ownedUnmanagedVillage =
       chatOwner &&
-      props.station.slice(0, 3) === '/~/' &&
-      props.permission.kind === 'white';
+      !props.contacts[groupPath];
 
     if (!ownedUnmanagedVillage) {
       return null;
@@ -278,7 +279,8 @@ export class SettingsScreen extends Component {
             onBlur={() => {
               if (chatOwner) {
                 this.setState({ awaiting: true, type: 'Editing chat...' }, (() => {
-                  props.api.metadata.add(
+                  props.api.metadata.metadataAdd(
+                    'chat',
                     association['app-path'],
                     association['group-path'],
                     state.title,
@@ -307,7 +309,8 @@ export class SettingsScreen extends Component {
               onBlur={() => {
                 if (chatOwner) {
                   this.setState({ awaiting: true, type: 'Editing chat...' }, (() => {
-                    props.api.metadata.add(
+                    props.api.metadata.metadataAdd(
+                      'chat',
                       association['app-path'],
                       association['group-path'],
                       association.metadata.title,
