@@ -35,9 +35,6 @@
       uv_udp_t    wax_u;                //
       uv_handle_t had_u;                //
     };                                  //
-    c3_d          who_d[2];             //  identity
-    c3_o          fak_o;                //  fake keys
-    c3_s          por_s;                //  public IPv4 port
     c3_c*         dns_c;                //  domain XX multiple/fallback
     c3_d          dop_d;                //  drop count
     c3_d          fal_d;                //  crash count
@@ -703,8 +700,8 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 
       //  if we are not the recipient, attempt to forward statelessly
       //
-      if ( (rec_d[0] != sam_u->who_d[0])
-        || (rec_d[1] != sam_u->who_d[1]) )
+      if ( (rec_d[0] != sam_u->pir_u->who_d[0])
+        || (rec_d[1] != sam_u->pir_u->who_d[1]) )
       {
         pas_o = c3n;
         //TODO  counter?
@@ -757,13 +754,13 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 static void
 _ames_io_start(u3_ames* sam_u)
 {
-  c3_s     por_s = sam_u->por_s;
-  u3_noun    who = u3i_chubs(2, sam_u->who_d);
+  c3_s     por_s = sam_u->pir_u->por_s;
+  u3_noun    who = u3i_chubs(2, sam_u->pir_u->who_d);
   u3_noun    rac = u3do("clan:title", u3k(who));
   c3_i     ret_i;
 
   if ( c3__czar == rac ) {
-    c3_y num_y = (c3_y)sam_u->who_d[0];
+    c3_y num_y = (c3_y)sam_u->pir_u->who_d[0];
     c3_s zar_s = _ames_czar_port(num_y);
 
     if ( 0 == por_s ) {
@@ -806,14 +803,14 @@ _ames_io_start(u3_ames* sam_u)
     uv_udp_getsockname(&sam_u->wax_u, (struct sockaddr *)&add_u, &add_i);
     c3_assert(add_u.sin_port);
 
-    sam_u->por_s = ntohs(add_u.sin_port);
+    sam_u->pir_u->por_s = ntohs(add_u.sin_port);
   }
 
   if ( c3y == u3_Host.ops_u.net ) {
-    u3l_log("ames: live on %d\n", sam_u->por_s);
+    u3l_log("ames: live on %d\n", sam_u->pir_u->por_s);
   }
   else {
-    u3l_log("ames: live on %d (localhost only)\n", sam_u->por_s);
+    u3l_log("ames: live on %d (localhost only)\n", sam_u->pir_u->por_s);
   }
 
   uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
@@ -843,7 +840,7 @@ _ames_ef_turf(u3_ames* sam_u, u3_noun tuf)
 
     u3z(tuf);
   }
-  else if ( (c3n == sam_u->fak_o) && (0 == sam_u->dns_c) ) {
+  else if ( (c3n == sam_u->pir_u->fak_o) && (0 == sam_u->dns_c) ) {
     u3l_log("ames: turf: no domains\n");
   }
 
@@ -1015,11 +1012,7 @@ u3_auto*
 u3_ames_io_init(u3_pier* pir_u)
 {
   u3_ames* sam_u  = c3_calloc(sizeof(*sam_u));
-  sam_u->pir_u    = pir_u;  //TODO  de-dupe the below using this?
-  sam_u->who_d[0] = pir_u->who_d[0];
-  sam_u->who_d[1] = pir_u->who_d[1];
-  sam_u->por_s    = pir_u->por_s;
-  sam_u->fak_o    = pir_u->fak_o;
+  sam_u->pir_u    = pir_u;
   sam_u->dop_d    = 0;
   sam_u->see_o    = c3y;
   sam_u->fit_o    = c3n;
@@ -1029,7 +1022,7 @@ u3_ames_io_init(u3_pier* pir_u)
 
   //  Disable networking for fake ships
   //
-  if ( c3y == sam_u->fak_o ) {
+  if ( c3y == sam_u->pir_u->fak_o ) {
     u3_Host.ops_u.net = c3n;
   }
 
