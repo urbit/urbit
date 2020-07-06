@@ -1267,9 +1267,9 @@ _http_serv_start(u3_http* htp_u)
               htp_u->rox_u->por_s);
     }
     else {
-      u3l_log("http: live (%s, %s) on %d\n",
-              (c3y == htp_u->sec) ? "secure" : "insecure",
-              (c3y == htp_u->lop) ? "loopback" : "public",
+      u3l_log("http: %s live on %s://localhost:%d\n",
+              (c3y == htp_u->lop) ? "loopback" : "web interface",
+              (c3y == htp_u->sec) ? "https" : "http",
               htp_u->por_s);
     }
 
