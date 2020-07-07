@@ -548,7 +548,7 @@ _ames_put_packet(u3_ames* sam_u,
   _ames_cap_queue(sam_u);
 }
 
-/*  _ames_forward(): forward pac_u onto lan
+/*  _ames_forward(): forward pac_u onto lan, then free pac_u
 */
 static void
 _ames_forward(u3_panc* pac_u, u3_noun lan)
@@ -601,6 +601,7 @@ _ames_forward(u3_panc* pac_u, u3_noun lan)
 
   pac_u->sam_u->foq_d--;
   _ames_ef_send(pac_u->sam_u, lan, _ames_serialize_packet(pac_u));
+  _ames_panc_free(pac_u);
 }
 
 /*  _ames_lane_scry_cb(): learn lane to forward packet on
@@ -618,6 +619,7 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
     u3l_log("ames: giving up scry\n");
     pac_u->sam_u->see_o = c3n;
     _ames_put_packet(pac_u->sam_u, _ames_serialize_packet(pac_u), pac_u->ore);
+    _ames_panc_free(pac_u);
   }
   //  if there is a lane, forward the packet on it
   //
@@ -626,7 +628,6 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
   }
   //  if there is no lane, drop the packet
 
-  _ames_panc_free(pac_u);
   u3z(nun);
 }
 
