@@ -188,6 +188,12 @@ main(c3_i argc, c3_c* argv[])
     u3C.slog_f = _newt_send_slog;
   }
 
+  if (u3_Host.ops_u.hap_w == 1337) {
+    u3a_compact();
+    u3e_save();
+    return 0;
+  }
+
   //  start serf
   //
   {

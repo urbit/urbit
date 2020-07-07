@@ -2597,46 +2597,22 @@ u3n_mark(FILE* fil_u)
   return  u3a_maid(fil_u, "total nock stuff", bam_w + har_w);
 }
 
-/* _n_prog_rewrite(): rewrite program for compaction.
-*/
-static void
-_n_prog_rewrite(u3n_prog* pog_u)
-{
-  c3_w i_w;
-
-  for ( i_w = 0; i_w < pog_u->lit_u.len_w; ++i_w ) {
-    u3a_rewrite_noun(pog_u->lit_u.non[i_w]);
-  }
-
-  for ( i_w = 0; i_w < pog_u->mem_u.len_w; ++i_w ) {
-    u3a_rewrite_noun(pog_u->mem_u.sot_u[i_w].key);
-  }
-
-  for ( i_w = 0; i_w < pog_u->cal_u.len_w; ++i_w ) {
-    u3j_site_rewrite(&(pog_u->cal_u.sit_u[i_w]));
-  }
-
-  for ( i_w = 0; i_w < pog_u->reg_u.len_w; ++i_w ) {
-    u3j_rite_rewrite(&(pog_u->reg_u.rit_u[i_w]));
-  }
-}
-
-/* _n_rewrite(): u3h_walk_with helper for u3n_rewrite_compact
- */
-static void
-_n_rewrite(u3_noun kev)
-{
-  u3n_prog* pog = u3to(u3n_prog, u3t(kev));
-  _n_prog_rewrite(pog);
-}
-
 /* u3n_rewrite_compact(): rewrite the bytecode cache for compaction.
+ *
+ * NB: u3R->byc.har_p *must* be cleared (currently via u3m_reclaim,
+ * which calls u3n_free) since it contains things that look like nouns
+ * but aren't.  Specifically, it contains "cells" where the tail is a
+ * pointer to a u3a_malloc'ed block that contains loom pointers.
+ *
+ * You should be able to walk this with u3h_walk and rewrite the
+ * pointers, but you need to be careful to handle that u3a_malloc
+ * pointers can't be turned into a box by stepping back two words. You
+ * must step back one word to get the padding, step then step back that
+ * many more words (plus one?).
  */
 void
 u3n_rewrite_compact()
 {
-  u3h_walk(u3R->byc.har_p, _n_rewrite);
-
   u3h_rewrite(u3R->byc.har_p);
   u3R->byc.har_p = u3a_rewritten(u3R->byc.har_p);
 }

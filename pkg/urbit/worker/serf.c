@@ -256,10 +256,6 @@ _serf_grab(u3_serf* sef_u)
 
     u3z(sef_u->sac);
     sef_u->sac = u3_nul;
-
-    {
-      u3a_compact();
-    }
   }
 }
 

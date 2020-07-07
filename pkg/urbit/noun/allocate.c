@@ -2231,11 +2231,19 @@ u3a_sweep(void)
 void
 u3a_compact(void)
 {
-  sleep(10);
+  // sleep(10);  // in case you need to attach a debugger
+
+  /* Note if u3m_reclaim changes to not reclaim something, or if other
+   * things are added to the loom, they will need to be added to the
+   * tracing step
+  */
   u3m_reclaim();
+
   assert(c3y == u3a_is_north(u3R));
   u3_post box_p = _(u3a_is_north(u3R)) ? u3R->rut_p : u3R->hat_p;
   u3_post end_p = _(u3a_is_north(u3R)) ? u3R->hat_p : u3R->rut_p;
+
+  fprintf(stderr, "compact: sweep 1 beginning\r\n");
 
   /* Sweep through arena, recording new address
    *
@@ -2311,6 +2319,7 @@ u3a_compact(void)
         c3_w i_w;
         if ( new_w > box_w ) {
           fprintf(stderr, "compact: whoa new_w %p, i_w %d\r\n", new_w, i_w);
+          c3_assert(0);
         }
         for ( i_w = 0; i_w < siz_w - 1; i_w++ ) {
           new_w[i_w] = box_w[i_w];
@@ -2321,7 +2330,6 @@ u3a_compact(void)
 
       box_w += siz_w;
     }
-    fprintf(stderr, "compact: box_w %lx new_w %lx\r\n", u3a_outa(box_w), u3a_outa(new_w));
   }
 
   fprintf(stderr, "compact: sweep 2 complete\r\n");
@@ -2341,10 +2349,20 @@ u3a_compact(void)
 
     u3n_ream();
 
+    fprintf(stderr, "compact: running |mass to verify correct compaction\r\n");
     u3m_mark(stderr);
     fprintf(stderr, "compact: marked\r\n");
     u3a_sweep();
     fprintf(stderr, "compact: swept\r\n");
+    c3_w lid_w = u3a_idle(u3R);
+    if ( 0 == lid_w ) {
+      fprintf(stderr, "free lists: B/0\r\n");
+    }
+    else {
+      u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
+    }
+
+    fprintf(stderr, "compact: done\r\n");
   }
 }
 

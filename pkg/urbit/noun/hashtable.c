@@ -913,7 +913,35 @@ _ch_mark_node(u3h_node* han_u, c3_w lef_w)
   return tot_w;
 }
 
-// XXX reorg
+/* u3h_mark(): mark hashtable for gc.
+*/
+c3_w
+u3h_mark(u3p(u3h_root) har_p)
+{
+  c3_w tot_w = 0;
+  u3h_root* har_u = u3to(u3h_root, har_p);
+  c3_w        i_w;
+
+  for ( i_w = 0; i_w < 64; i_w++ ) {
+    c3_w sot_w = har_u->sot_w[i_w];
+
+    if ( _(u3h_slot_is_noun(sot_w)) ) {
+      u3_noun kev = u3h_slot_to_noun(sot_w);
+
+      tot_w += u3a_mark_noun(kev);
+    }
+    else if ( _(u3h_slot_is_node(sot_w)) ) {
+      u3h_node* han_u = u3h_slot_to_node(sot_w);
+
+      tot_w += _ch_mark_node(han_u, 25);
+    }
+  }
+
+  tot_w += u3a_mark_ptr(har_u);
+
+  return tot_w;
+}
+
 /* _ch_rewrite_buck(): rewrite buck for compaction.
 */
 void
@@ -962,36 +990,6 @@ _ch_rewrite_node(u3h_node* han_u, c3_w lef_w)
       }
     }
   }
-}
-
-
-/* u3h_mark(): mark hashtable for gc.
-*/
-c3_w
-u3h_mark(u3p(u3h_root) har_p)
-{
-  c3_w tot_w = 0;
-  u3h_root* har_u = u3to(u3h_root, har_p);
-  c3_w        i_w;
-
-  for ( i_w = 0; i_w < 64; i_w++ ) {
-    c3_w sot_w = har_u->sot_w[i_w];
-
-    if ( _(u3h_slot_is_noun(sot_w)) ) {
-      u3_noun kev = u3h_slot_to_noun(sot_w);
-
-      tot_w += u3a_mark_noun(kev);
-    }
-    else if ( _(u3h_slot_is_node(sot_w)) ) {
-      u3h_node* han_u = u3h_slot_to_node(sot_w);
-
-      tot_w += _ch_mark_node(han_u, 25);
-    }
-  }
-
-  tot_w += u3a_mark_ptr(har_u);
-
-  return tot_w;
 }
 
 /* u3h_rewrite(): rewrite pointers during compaction.
