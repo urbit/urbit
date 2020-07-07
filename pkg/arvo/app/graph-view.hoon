@@ -1,7 +1,7 @@
 /+  view=graph-view
 /+  store=graph-store
 /+  sigs=signatures
-/+  grph=graph
+/+  graph
 /+  default-agent
 /+  dbug
 ~%  %graph-view-top  ..is  ~
@@ -26,7 +26,7 @@
 |_  =bowl:gall
 +*  this       .
     def        ~(. (default-agent this %|) bowl)
-    gra        ~(. grph bowl)      
+    gra        ~(. graph bowl)
 ::
 ++  on-init
   ^-  (quip card _this)

@@ -8,13 +8,17 @@
   ?>  (check-balance:((ordered-map key value) ord) b)
   b
 ::
-+$  mark         term
-+$  graph        ((mop atom node) gth)
-+$  node         [=post children=internal-graph]
-+$  graphs       (map resource [p=graph q=(unit mark)])
-+$  tag-queries  (jug term resource)
-+$  update-log   ((mop time logged-update) gth)
-+$  update-logs  (map resource update-log)
++$  mark          term
++$  graph         ((mop atom node) gth)
++$  marked-graph  [p=graph q=(unit mark)]
+::
++$  node          [=post children=internal-graph]
++$  graphs        (map resource marked-graph)
+::
++$  tag-queries   (jug term resource)
+::
++$  update-log    ((mop time logged-update) gth)
++$  update-logs   (map resource update-log)
 ::
 +$  internal-graph
   $~  [%empty ~]

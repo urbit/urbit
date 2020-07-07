@@ -77,9 +77,6 @@
         %archive-graph      (archive-graph +.q.update)
         %unarchive-graph    (unarchive-graph +.q.update)
         %run-updates        (run-updates +.q.update)
-        ::
-        ::  NOTE: cannot send these updates as pokes
-        ::
         %keys               ~|('cannot send %keys as poke' !!)
         %tags               ~|('cannot send %tags as poke' !!)
         %tag-queries        ~|('cannot send %tag-queries as poke' !!)
@@ -95,7 +92,6 @@
               graphs       (~(put by graphs) resource [graph mark])
               update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
           ==
-      ^-  (list card)
       %-  zing
       :~  (give [/updates /keys ~] [%add-graph resource graph mark])
           ?~  mark  ~
@@ -437,23 +433,26 @@
       [%x %graph @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
-    =/  graph=(unit [graph:store *])  (~(get by graphs) [ship term])
-    ?~  graph  ~
-    ``noun+!>(-.u.graph)
+    =/  result=(unit marked-graph:store)
+      (~(get by graphs) [ship term])
+    ?~  result  ~
+    ``noun+!>(u.result)
   ::
       [%x %graph-subset @ @ @ @ ~]
-    =/  =ship   (slav %p i.t.t.path)
-    =/  =term   i.t.t.t.path
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
     =/  start=(unit atom:store)  (rush i.t.t.t.t.path dem:ag)
     =/  end=(unit atom:store)    (rush i.t.t.t.t.t.path dem:ag)
-    =/  graph=(unit [graph:store *])  (~(get by graphs) [ship term])
+    =/  graph=(unit marked-graph:store)
+      (~(get by graphs) [ship term])
     ?~  graph  ~
-    ``noun+!>(`graph:store`(subset:orm -.u.graph start end))
+    ``noun+!>(`graph:store`(subset:orm p.u.graph start end))
   ::
       [%x %node @ @ @ *]
-    =/  =ship         (slav %p i.t.t.path)
-    =/  =term         i.t.t.t.path
-    =/  =index:store  (turn t.t.t.t.path |=(=cord (slav %ud cord)))
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  =index:store
+      (turn t.t.t.t.path |=(=cord (slav %ud cord)))
     =/  node=(unit node:store)  (get-node ship term index)
     ?~  node  ~
     ``noun+!>(u.node)
@@ -461,15 +460,17 @@
       [%x %post @ @ @ *]
     =/  =ship         (slav %p i.t.t.path)
     =/  =term         i.t.t.t.path
-    =/  =index:store  (turn t.t.t.t.path |=(=cord (slav %ud cord)))
+    =/  =index:store
+      (turn t.t.t.t.path |=(=cord (slav %ud cord)))
     =/  node=(unit node:store)  (get-node ship term index)
     ?~  node  ~
     ``noun+!>(post.u.node)
   ::
       [%x %node-children @ @ @ *]
-    =/  =ship         (slav %p i.t.t.path)
-    =/  =term         i.t.t.t.path
-    =/  =index:store  (turn t.t.t.t.path |=(=cord (slav %ud cord)))
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  =index:store
+      (turn t.t.t.t.path |=(=cord (slav %ud cord)))
     =/  node=(unit node:store)  (get-node ship term index)
     ?~  node  ~
     ?-  -.children.u.node
@@ -478,11 +479,12 @@
     ==
   ::
       [%x %node-children-subset @ @ @ @ @ *]
-    =/  =ship         (slav %p i.t.t.path)
-    =/  =term         i.t.t.t.path
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
     =/  start=(unit atom:store)  (rush i.t.t.t.t.path dem:ag)
     =/  end=(unit atom:store)    (rush i.t.t.t.t.t.path dem:ag)
-    =/  =index:store  (turn t.t.t.t.t.t.path |=(=cord (slav %ud cord)))
+    =/  =index:store
+      (turn t.t.t.t.t.t.path |=(=cord (slav %ud cord)))
     =/  node=(unit node:store)  (get-node ship term index)
     ?~  node  ~
     ?-  -.children.u.node
@@ -511,10 +513,11 @@
   ++  get-node
     |=  [=ship =term =index:store]
     ^-  (unit node:store)
-    =/  parent-graph=(unit [graph:store *])  (~(get by graphs) [ship term])
+    =/  parent-graph=(unit marked-graph:store)
+      (~(get by graphs) [ship term])
     ?~  parent-graph  ~
     =/  node=(unit node:store)  ~
-    =/  =graph:store  -.u.parent-graph
+    =/  =graph:store  p.u.parent-graph
     |-
     ?~  index
       node

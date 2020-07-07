@@ -28,6 +28,7 @@
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
     grp   ~(. group bowl)
+    gra   ~(. graph bowl)
 ::
 ++  on-init   on-init:def
 ++  on-save   !>(~)
@@ -88,9 +89,10 @@
   ?>  (can-join:grp resource src.bowl)
   ?~  path
     ::  new subscribe
-    =/  =graph:store  (get-graph:graph resource)
+    =/  [=graph:store mark=(unit mark:store)]
+      (get-graph:gra resource)
     !>  ^-  update:store
-    [%0 now.bowl [%add-graph resource graph ~]]
+    [%0 now.bowl [%add-graph resource graph mark]]
   ::  resubscribe
   ::
   ::  TODO: use action-log
