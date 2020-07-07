@@ -44,6 +44,7 @@
     c3_o          see_o;                //  can scry
     c3_o          fit_o;                //  filtering active
     c3_y          ver_y;                //  protocol version
+    c3_d          foq_d;                //  forward queue size
   } u3_ames;
 
 /* u3_head: ames packet header
@@ -73,8 +74,7 @@
     u3_body  bod_u;                     //  body
   } u3_panc;
 
-//TODO  cap forwarding queue, maintain a counter.
-//      keep linked list in u3_ames for garbage collection, cancelling on-exit
+//TODO  keep linked list in u3_ames for garbage collection, cancelling on-exit
 
 /* _ames_alloc(): libuv buffer allocator.
 */
@@ -599,7 +599,7 @@ _ames_forward(u3_panc* pac_u, u3_noun lan)
     u3z(bod);
   }
 
-  u3l_log("ames: forwarding!\n");
+  pac_u->sam_u->foq_d--;
   _ames_ef_send(pac_u->sam_u, lan, _ames_serialize_packet(pac_u));
 }
 
@@ -614,6 +614,7 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
   //  if scry fails, remember we can't scry, and just inject the packet
   //
   if (u3_none == lan) {
+    pac_u->sam_u->foq_d--;
     u3l_log("ames: giving up scry\n");
     pac_u->sam_u->see_o = c3n;
     _ames_put_packet(pac_u->sam_u, _ames_serialize_packet(pac_u), pac_u->ore);
@@ -704,35 +705,53 @@ _ames_recv_cb(uv_udp_t*        wax_u,
         || (rec_d[1] != sam_u->pir_u->who_d[1]) )
       {
         pas_o = c3n;
-        //TODO  counter?
 
-        //  store the packet details for later processing
+        //  if the queue is full, and we can't forward synchronously,
+        //  just drop the packet
         //
-        u3_noun  con = u3i_bytes(nrd_i - 4 - sen_y - rec_y,
-                                 bod_y + sen_y + rec_y);
-        u3_panc* pac_u = c3_calloc(sizeof(*pac_u));
-        pac_u->sam_u = sam_u;
-        pac_u->hed_u = hed_u;
-        pac_u->bod_u.sen = sen;
-        pac_u->bod_u.rec = rec;
-        pac_u->bod_u.con = con;
-        pac_u->ore = _ames_lane_from_sockaddr((struct sockaddr_in *)adr_u);
-
-        //  if the recipient is a galaxy, their lane is always &+~gax
+        //TODO  drop oldest item in forward queue in favor of this one.
+        //      ames.c doesn't/shouldn't know about the shape of scry events,
+        //      so can't pluck these out of the event queue like it does in
+        //      _ames_cap_queue. as such, blocked on u3_lord_peek_cancel or w/e.
         //
-        if ( (c3y == u3a_is_cat(rec))
-          && (256 > rec) ) {
-          _ames_forward(pac_u, u3nc(c3y, u3k(rec)));
+        if ( (1000 < sam_u->foq_d)
+          && !((c3y == u3a_is_cat(rec)) && (256 > rec)) )
+        {
+          u3z(sen); u3z(rec);
         }
-        //  otherwise, scry the lane out of ames
+        //  otherwise, proceed with forwarding
         //
         else {
-          u3_noun pax = u3nq(u3i_string("peers"),
-                             u3dc("scot", 'p', u3k(rec)),
-                             u3i_string("forward-lane"),
-                             u3_nul);
-          u3_lord_peek_last(sam_u->pir_u->god_u, u3_nul, c3_s2('a', 'x'), u3_nul,
-                            pax, pac_u, _ames_lane_scry_cb);
+          sam_u->foq_d++;
+
+          //  store the packet details for later processing
+          //
+          u3_noun  con = u3i_bytes(nrd_i - 4 - sen_y - rec_y,
+                                   bod_y + sen_y + rec_y);
+          u3_panc* pac_u = c3_calloc(sizeof(*pac_u));
+          pac_u->sam_u = sam_u;
+          pac_u->hed_u = hed_u;
+          pac_u->bod_u.sen = sen;
+          pac_u->bod_u.rec = rec;
+          pac_u->bod_u.con = con;
+          pac_u->ore = _ames_lane_from_sockaddr((struct sockaddr_in *)adr_u);
+
+          //  if the recipient is a galaxy, their lane is always &+~gax
+          //
+          if ( (c3y == u3a_is_cat(rec))
+            && (256 > rec) ) {
+            _ames_forward(pac_u, u3nc(c3y, u3k(rec)));
+          }
+          //  otherwise, if there's space in the queue, scry the lane out of ames
+          //
+          else {
+            u3_noun pax = u3nq(u3i_string("peers"),
+                               u3dc("scot", 'p', u3k(rec)),
+                               u3i_string("forward-lane"),
+                               u3_nul);
+            u3_lord_peek_last(sam_u->pir_u->god_u, u3_nul, c3_s2('a', 'x'),
+                              u3_nul, pax, pac_u, _ames_lane_scry_cb);
+          }
         }
       }
     }
@@ -1016,6 +1035,7 @@ u3_ames_io_init(u3_pier* pir_u)
   sam_u->dop_d    = 0;
   sam_u->see_o    = c3y;
   sam_u->fit_o    = c3n;
+  sam_u->foq_d    = 0;
 
   c3_assert( !uv_udp_init(u3L, &sam_u->wax_u) );
   sam_u->wax_u.data = sam_u;
