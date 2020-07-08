@@ -268,9 +268,6 @@
                position: absolute;
                bottom: 0;
              }
-             footer span {
-               font-size: 0.875rem;
-             }
              .mono {
                font-family: "Source Code Pro", monospace;
              }
@@ -368,10 +365,6 @@
         ==
         ;footer.absolute.w-100
           ;div.relative.w-100.tr.tc-ns
-            ;span(class "absolute", style "left: 8px; bottom: 8px;")
-            ; OS 1
-            ;span(class "gray2", style "margin-left: 4px;"): v0.0.1
-            ==
             ;p.pr2.pr0-ns.pb2
               ;a(href "https://bridge.urbit.org", target "_blank")
                 ;span.dn.dib-ns.pr1:"Open"
