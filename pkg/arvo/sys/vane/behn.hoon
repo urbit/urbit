@@ -75,9 +75,9 @@
   ::    Useful if you want to continue working after other moves finish.
   ::
   ++  huck
-    |=  mov=vase
+    |=  syn=sign-arvo
     =<  [moves state]
-    event-core(moves [duct %give %meta mov]~)
+    event-core(moves [duct %give %heck syn]~)
   ::  +drip:  XX
   ::
   ++  drip
@@ -286,7 +286,7 @@
       %crud  (crud:event-core [p q]:task)
       %rest  (rest:event-core date=p.task)
       %drip  (drip:event-core move=p.task)
-      %huck  (huck:event-core move=p.task)
+      %huck  (huck:event-core syn.task)
       %trim  trim:event-core
       %vega  vega:event-core
       %wait  (wait:event-core date=p.task)

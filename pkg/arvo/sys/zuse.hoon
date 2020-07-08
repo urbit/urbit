@@ -795,6 +795,7 @@
       $%  [%doze p=(unit @da)]                          ::  next alarm
           [%wake error=(unit tang)]                     ::  wakeup or failed
           [%meta p=vase]
+          [%heck syn=sign-arvo]                         ::  response to %huck
       ==
     ++  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
@@ -802,7 +803,7 @@
           $>(%crud vane-task)                           ::  error with trace
           [%rest p=@da]                                 ::  cancel alarm
           [%drip p=vase]                                ::  give in next event
-          [%huck p=vase]                                ::  give back
+          [%huck syn=sign-arvo]                         ::  give back
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           [%wait p=@da]                                 ::  set alarm
