@@ -13,6 +13,9 @@
 #include "all.h"
 #include "vere/vere.h"
 
+struct _u3_panc;
+typedef struct _u3_panc u3_panc;
+
 /* u3_pact: ames packet, coming or going.
 */
   typedef struct _u3_pact {
@@ -46,6 +49,7 @@
     c3_y          ver_y;                //  protocol version
     c3_d          vet_d;                //  version mismatches filtered
     c3_d          mut_d;                //  invalid mugs filtered
+    u3_panc*      pac_u;                //  packets pending forwards
     c3_d          foq_d;                //  forward queue size
     c3_d          fow_d;                //  forwarded count
     c3_d          fod_d;                //  forwards dropped count
@@ -71,12 +75,14 @@
 
 /* u3_panc: deconstructed incoming packet
 */
-  typedef struct _u3_panc {
+  struct _u3_panc {
     u3_ames* sam_u;                     //  ames backpointer
+    u3_panc* pre_u;                     //  previous packet
+    u3_panc* nex_u;                     //  next packet
     u3_noun  ore;                       //  origin lane
     u3_head  hed_u;                     //  header
     u3_body  bod_u;                     //  body
-  } u3_panc;
+  };
 
 //TODO  keep linked list in u3_ames for garbage collection, cancelling on-exit
 
@@ -105,10 +111,20 @@ _ames_pact_free(u3_pact* pac_u)
   c3_free(pac_u);
 }
 
-/* _ames_panc_free(): lose refcounts and free struct
+/* _ames_panc_free(): remove references, lose refcounts and free struct
 */
 static void
 _ames_panc_free(u3_panc* pac_u) {
+  if (0 != pac_u->nex_u) {
+    pac_u->nex_u->pre_u = pac_u->pre_u;
+  }
+  if (0 != pac_u->pre_u) {
+    pac_u->pre_u->nex_u = pac_u->nex_u;
+  } else {
+    c3_assert(pac_u == pac_u->sam_u->pac_u);
+    pac_u->sam_u->pac_u = pac_u->nex_u;
+  }
+
   u3z(pac_u->ore);
   u3z(pac_u->bod_u.sen);
   u3z(pac_u->bod_u.rec);
@@ -758,6 +774,12 @@ _ames_recv_cb(uv_udp_t*        wax_u,
           pac_u->bod_u.con = con;
           pac_u->ore = _ames_lane_from_sockaddr((struct sockaddr_in *)adr_u);
 
+          if (0 != sam_u->pac_u) {
+            pac_u->nex_u = sam_u->pac_u;
+            sam_u->pac_u->pre_u = pac_u;
+          }
+          sam_u->pac_u = pac_u;
+
           //  if the recipient is a galaxy, their lane is always &+~gax
           //
           if ( (c3y == u3a_is_cat(rec))
@@ -1000,6 +1022,14 @@ static void
 _ames_exit_cb(uv_handle_t* had_u)
 {
   u3_ames* sam_u = had_u->data;
+
+  u3_panc* pac_u = sam_u->pac_u;
+  while (0 != pac_u) {
+    u3_panc* nex_u = pac_u->nex_u;
+    _ames_panc_free(pac_u);
+    pac_u = nex_u;
+  }
+
   c3_free(sam_u);
 }
 
