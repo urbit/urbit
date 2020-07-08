@@ -163,7 +163,6 @@
       ?.  ?=(%store i.t.t.wire)
         (on-agent:def wire sign)
       ?+   -.sign  (on-agent:def wire sign)
-        %watch-ack  ~&  sign  [~ this]
         %kick  [~[watch-store:hc] this]
       ::
           %fact

@@ -148,6 +148,7 @@
       (en-path:resource rid)
     ;:  weld
       :~  (group-poke [%add-group rid policy.act %.n])
+          (group-poke [%add-members rid (sy our.bol ~)])
           (group-push-poke %add rid)
           (contact-poke [%create path])
           (contact-hook-poke [%add-owned path])

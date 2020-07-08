@@ -34,7 +34,7 @@ export class ProfileOverlay extends Component {
   }
 
   render() {
-    const { contact, ship, color, topSpace, bottomSpace, group } = this.props;
+    const { contact, ship, color, topSpace, bottomSpace, group, association } = this.props;
 
     let top, bottom;
     if (topSpace < OVERLAY_HEIGHT / 2) {
@@ -50,9 +50,9 @@ export class ProfileOverlay extends Component {
 
     const isOwn = window.ship === ship;
 
-    const identityHref = group['group-path'].startsWith('/~/')
+    const identityHref = group.hidden
       ? '/~groups/me'
-      : `/~groups/view${group['group-path']}/${window.ship}`;
+      : `/~groups/view${association['group-path']}/${window.ship}`;
 
     const img = (contact && (contact.avatar !== null))
       ? <img src={contact.avatar} height={160} width={160} className="brt2 dib" />

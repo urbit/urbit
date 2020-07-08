@@ -102,7 +102,6 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
         };
 
     const { groupName } = this.state;
-    const resource: Resource = { ship: `~${window.ship}`, name: groupName };
     this.setState(
       {
         invites: { ships: [], groups: [] },
@@ -111,7 +110,6 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
       () => {
         props.api.contacts
           .create(groupName, policy, this.state.title, this.state.description)
-          .then(() => props.api.groups.add(resource, [`~${window.ship}`]))
           .then(() => {
             this.setState({ awaiting: false });
             props.history.push(

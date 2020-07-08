@@ -95,7 +95,7 @@ export class JoinScreen extends Component {
             } }
             className={'f7 mono ba bg-gray0-d white-d pa3 mb2 db ' +
             'focus-b--black focus-b--white-d b--gray3 b--gray2-d nowrap '}
-            placeholder="~zod/dream-journal"
+            placeholder="~zod/group-name"
             spellCheck="false"
             rows={1}
             onKeyPress={(e) => {

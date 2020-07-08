@@ -120,7 +120,6 @@
       %-  ~(run in indices)
       |=  [=group-path =app-path]
       :-  (new-group-path group-path)
-      ~&  app
       ?.  =(%chat app)
          app-path
       (new-app-path app-path)

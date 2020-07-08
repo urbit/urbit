@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { LoadingScreen } from './loading';
 import { LinksTabBar } from './lib/links-tabbar';
 import { MemberElement } from './lib/member-element';
-import { InviteElement } from './lib/invite-element';
 import { SidebarSwitcher } from '../../../components/SidebarSwitch';
 import { makeRoutePath } from '../../../lib/util';
 import { GroupView } from '../../../components/Group';
@@ -17,25 +16,6 @@ export class MemberScreen extends Component {
     if (!props.groupPath) {
       return <LoadingScreen />;
     }
-
-    const isManaged = '/~/' !== props.groupPath.slice(0, 3);
-
-    const members = Array.from(props.group).map((mem) => {
-      const contact =
-        mem in props.contactDetails ? props.contactDetails[mem] : false;
-
-      return (
-        <MemberElement
-          key={mem}
-          amOwner={props.amOwner}
-          contact={contact}
-          ship={mem}
-          groupPath={props.groupPath}
-          resourcePath={props.resourcePath}
-          api={props.api}
-        />
-      );
-    });
 
     return (
       <div className='h-100 w-100 overflow-x-hidden flex flex-column white-d'>

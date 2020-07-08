@@ -80,7 +80,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
               return e[0];
             })
             .includes(associations.chat?.[stat]?.['group-path']) ||
-          associations.chat?.[stat]?.['group-path'].startsWith('/~/'))
+          props.groups[associations.chat?.[stat]?.['group-path']]?.hidden)
       ) {
         totalUnreads += unread;
       }
@@ -203,7 +203,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
           path="/~chat/join/:ship?/:station?"
           render={(props) => {
             let station = `/${props.match.params.ship}/${props.match.params.station}`;
-            const sig = props.match.url.includes('/~/');
 
             return (
               <Skeleton
@@ -229,10 +228,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
           path="/~chat/(popout)?/room/(~)?/:ship/:station+"
           render={(props) => {
             let station = `/${props.match.params.ship}/${props.match.params.station}`;
-            const sig = props.match.url.includes('/~/');
-            if (sig) {
-              station = '/~' + station;
-            }
             const mailbox = inbox[station] || {
               config: {
                 read: 0,
@@ -333,11 +328,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
           path="/~chat/(popout)?/settings/(~)?/:ship/:station+"
           render={(props) => {
             let station = `/${props.match.params.ship}/${props.match.params.station}`;
-            const sig = props.match.url.includes('/~/');
-            if (sig) {
-              station = '/~' + station;
-            }
-
             const popout = props.match.url.includes('/popout/');
 
             const association =
