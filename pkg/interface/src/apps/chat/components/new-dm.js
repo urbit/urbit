@@ -43,9 +43,9 @@ export class NewDmScreen extends Component {
   onClickCreate() {
     const { props, state } = this;
 
-    const station = `/ship/~${window.ship}/dm--${state.ship}`;
+    const station = `/~${window.ship}/dm--${state.ship}`;
 
-    const theirStation = `/ship/~${state.ship}/dm--${window.ship}`;
+    const theirStation = `/~${state.ship}/dm--${window.ship}`;
 
     if (station in props.inbox) {
       props.history.push(`/~chat/room${station}`);
@@ -64,7 +64,7 @@ export class NewDmScreen extends Component {
         station
       },
       () => {
-        const groupPath = station;
+        const groupPath = `/ship${station}`;
         props.api.chat.create(
           `~${window.ship} <-> ~${state.ship}`,
           "",

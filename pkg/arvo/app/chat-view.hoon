@@ -212,7 +212,9 @@
   ?-  -.act
       %create
     ?>  ?=(^ app-path.act)
-    ?>  |(=(group-path.act app-path.act) =(~(tap in members.act) ~))
+    ?>  ?|  =(+:group-path.act app-path.act) 
+            =(~(tap in members.act) ~) 
+        ==
     ?^  (chat-scry app-path.act)
       ~&  %chat-already-exists
       ~
