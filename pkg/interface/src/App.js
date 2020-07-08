@@ -8,7 +8,6 @@ import { light } from '@tlon/indigo-react';
 
 import LaunchApp from './apps/launch/app';
 import ChatApp from './apps/chat/app';
-import PostApp from './apps/post/app';
 import DojoApp from './apps/dojo/app';
 import GroupsApp from './apps/groups/app';
 import LinksApp from './apps/links/app';
@@ -99,15 +98,6 @@ export default class App extends React.Component {
                   api={this.api}
                   subscription={this.subscription}
                   {...state}
-                  {...p}
-                />
-              )}
-              />
-              <Route path="/~post" render={ p => (
-                <PostApp
-                  ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
                   {...p}
                 />
               )}
