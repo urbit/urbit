@@ -82,7 +82,6 @@
     =|  cards=(list card)
     |-
     ?:  ?=(%3 -.old)
-       ~&  cards
       [cards this(state old)]
     ?:  ?=(%2 -.old)
       =.  cards

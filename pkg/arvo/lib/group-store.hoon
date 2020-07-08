@@ -44,9 +44,7 @@
   |*  map=(map path *)
   =/  keys=(list path)
     (skim ~(tap in ~(key by map)) |=(=path =('~' (snag 0 path))))
-  ~&  keys
   |-
-  ~&  map
   ?~  keys
     map
   =*  key  i.keys
@@ -331,7 +329,6 @@
     ^-  $-(json ^update)
     |=  jon=json
     ^-  ^update
-    =-  ~&  -  -
     %.  jon
     %-  of
     :~

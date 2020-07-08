@@ -132,7 +132,6 @@
         (~(uni in members) group)
       ?>  ?=(^ pax)
       =/  rid=resource
-        ~&  t.pax
         (resource-from-old-path t.pax)
       =/  =tags
         (~(put ju *tags) %admin entity.rid)
