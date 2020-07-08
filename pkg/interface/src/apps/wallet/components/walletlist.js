@@ -49,12 +49,6 @@ export class WalletList extends Component {
           {ProgressBar(((props.progress) ? props.progress : 0))}
         </div>
         <div className="cf w-20 fl pa2 pt4 overflow-x-hidden bg-gray0-d white-d flex flex-column">
-          <div className="f6 mono wrap">
-            Balance: {confirmed}
-          </div>
-          <div className="f6 mono wrap">
-            Pending: {Math.abs(confirmed - unconfirmed)}
-          </div>
         </div>
       </div>
       <div>
@@ -285,9 +279,26 @@ export class WalletList extends Component {
         </div>
       </div> */
 
+      // https://blockchain.info/ticker
+
+    const unconfirmedSpan = (unconfirmed > 0) ? <span className="db gray2">({parseInt(unconfirmed * 100000000)} pending)</span> : null;
     return (
       <div className="w-100 flex justify-center">
       <div className="w-100 mw6">
+      <div className="dt w-100 pa7 bg-wallet-orange bg-gray1-d white-d br2 ba b--transparent flex flex-column">
+        <div className="dtc h-100 v-mid pt8 pb2">
+          <div className="flex justify-start">
+            <p className="dib mr-auto">Balance</p>
+            <p className="dib absolute" style={{ left: '50%', transform: 'translateX(-50%)' }}>
+              {confirmed * 100000000} satoshi {unconfirmedSpan}
+            </p>
+          </div>
+      </div>
+      <div className="tc w-100 pt9">
+        <button className="bg-transparent ph6 pv2 ba fw6 white-d">Send BTC</button>
+        <button className="bg-transparent ph6 pv2 bt br bb fw6 white-d">Receive BTC</button>
+      </div>
+      </div>
       </div>
       </div>
     );
