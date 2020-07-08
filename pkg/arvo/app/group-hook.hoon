@@ -50,11 +50,15 @@
       %0
     :_  this(state *state-one)
     |^
-    %+  turn
+    %+  murn
       ~(tap by synced.old)
     |=  [=path host=ship]
-    ^-  card
+    ^-  (unit card)
     ?>  ?=([@ @ *] path)
+    :: ignore duplicate publish groups
+    ?:  =(4 (lent path))
+      ~&  "ignoring: {<path>}"
+      ~ 
     =/  pax=^path
       ?:  =('~' i.path)
         t.path
@@ -65,8 +69,8 @@
         (slav %p i.pax)
       [ship i.t.pax]
     ?:  =(our.bowl host)
-      (add-push rid)
-    (add-pull rid host)
+      `(add-push rid)
+    `(add-pull rid host)
     ::
     ++  poke-our
       |=  [app=term =cage]

@@ -224,6 +224,7 @@
     ==
     ++  add
       |=  [=ship =resource]
+      ~|  resource
       ?<  (~(has by tracking) resource)
       =.  tracking
         (~(put by tracking) resource ship)
