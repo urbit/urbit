@@ -1,5 +1,5 @@
 /-  sur=graph-store, pos=post
-/+  res=resource, *or-map
+/+  res=resource
 =<  [sur .]
 =<  [pos .]
 =,  sur
@@ -28,8 +28,8 @@
     rose+(ot style+(ot mid+sa open+sa close+sa ~) lines+(ar dank) ~)
   ==
 ::
-++  orm      ((or-map atom node) gth)
-++  orm-log  ((or-map time logged-update) gth)
+++  orm      ((ordered-map atom node) gth)
+++  orm-log  ((ordered-map time logged-update) gth)
 ::
 ++  enjs
   =,  enjs:format
@@ -273,7 +273,7 @@
     ++  graph
       |=  a=json
       ^-  ^graph
-      =/  or-mp  ((or-map atom ^node) gth)
+      =/  or-mp  ((ordered-map atom ^node) gth)
       %+  gas:or-mp  ~
       %+  turn  ~(tap by ((om node) a))
       |*  [b=cord c=*]

@@ -8,19 +8,17 @@
   $%  state-0
       state-1
       state-2
-      state-3
   ==
 ::
 +$  state-0  [%0 =inbox:store]
 +$  state-1  [%1 =inbox:store]
 +$  state-2  [%2 =inbox:store]
-+$  state-3  [%3 =inbox:store]
 +$  admin-action
   $%  [%trim ~]
   ==
 --
 ::
-=|  state-3
+=|  state-2
 =*  state  -
 ::
 %-  agent:dbug
