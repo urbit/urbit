@@ -104,7 +104,6 @@
       %s3-store
       %file-server
       %graph-store
-      %graph-view
       %graph-push-hook
       %graph-pull-hook
   ==
