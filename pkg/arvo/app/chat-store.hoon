@@ -41,37 +41,11 @@
     ^-  (quip card _this)
     |^
     =/  old  !<(versioned-state old-vase)
-    =|  cards=(list card)
-    |-
-    ^-  (quip card _this)
-    ?-  -.old
-        %3  [cards this(state old)]
-      ::
-        %2
-      =/  =inbox:store
-        (migrate-path-map:group-store inbox.old)
-      =/  kick-paths
-        %~  tap  in
-        %+  roll
-          ~(val by sup.bowl)
-        |=  [[=ship sub=path] subs=(set path)]
-        ^-  (set path)
-        ?.  ?=([@ @ *] sub)
-          subs
-        ?.  &(=(%mailbox i.sub) =('~' i.t.sub))
-          subs
-        (~(put in subs) sub)
-      =?  cards  ?=(^ kick-paths)
-        :_  cards
-        [%give %kick kick-paths ~]
-      =.  cards
-        :_  cards
-        [%pass /trim %agent [our.bowl %chat-store] %poke %noun !>([%trim ~])]
-      $(old [%3 inbox.old])
-    ::
-      ?(%0 %1)  $(old (old-to-2 inbox.old))
-    ::
-    ==
+    =?  old  ?=(%0 -.old) 
+      (old-to-2 inbox.old) 
+    =?  old  ?=(%1 -.old) 
+      (old-to-2 inbox.old) 
+    [~ this(state [%2 inbox.old])]
     ::
     ++  old-to-2
       |=  =inbox:store
@@ -265,9 +239,6 @@
   =.  letter.envelope.action  (evaluate-letter [author letter]:envelope.action)
   =^  envelope  u.mailbox  (prepend-envelope u.mailbox envelope.action)
   :_  state(inbox (~(put by inbox) path.action u.mailbox))
-  ?:  =((mod number.envelope 5.000) 0)
-    :-  [%pass /trim %agent [our.bol %chat-store] %poke %noun !>([%trim ~])]
-    (send-diff path.action action(envelope envelope))
   (send-diff path.action action(envelope envelope))
 ::
 ++  handle-messages
@@ -283,7 +254,6 @@
   |-  ^-  (quip card _state)
   ?~  envelopes.act
     :_  state(inbox (~(put by inbox) path.act u.mailbox))
-    :-  [%pass /trim %agent [our.bol %chat-store] %poke %noun !>([%trim ~])]
     %+  send-diff  path.act
     [%messages path.act 0 (lent evaluated-envelopes) evaluated-envelopes]
   =.  letter.i.envelopes.act  (evaluate-letter [author letter]:i.envelopes.act)

@@ -43,7 +43,12 @@
   ==
 ::
 ++  base-hash
-  =/  parent  (scot %p (sein:title our now our))
-  =+  .^(=cass:clay %cs /[parent]/kids/1/late/foo)
-  .^(@uv %cz /[parent]/kids/(scot %ud ud.cass))
+  =+  .^  ota=(unit [=ship =desk =aeon:clay])
+          %gx  /(scot %p our)/hood/(scot %da now)/kiln/ota/noun
+      ==
+  ?~  ota
+    *@uv
+  =/  parent  (scot %p ship.u.ota)
+  =+  .^(=cass:clay %cs /[parent]/[desk.u.ota]/1/late/foo)
+  .^(@uv %cz /[parent]/[desk.u.ota]/(scot %ud ud.cass))
 --

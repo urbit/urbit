@@ -19,29 +19,24 @@ export class OverlaySigil extends Component {
 
     this.profileShow = this.profileShow.bind(this);
     this.profileHide = this.profileHide.bind(this);
+    this.updateContainerInterval = null;
+  }
+
+  profileShow() {
+    this.updateContainerOffset();
+    this.setState({ profileClicked: true });
     this.updateContainerInterval = setInterval(
       this.updateContainerOffset.bind(this),
       1000
     );
   }
 
-  componentDidMount() {
-    this.updateContainerOffset();
-  }
-
-  componentWillUnmount() {
-    if (this.updateContainerInterval) {
+  profileHide() {
+    this.setState({ profileClicked: false });
+    if(this.updateContainerInterval) {
       clearInterval(this.updateContainerInterval);
       this.updateContainerInterval = null;
     }
-  }
-
-  profileShow() {
-    this.setState({ profileClicked: true });
-  }
-
-  profileHide() {
-    this.setState({ profileClicked: false });
   }
 
   updateContainerOffset() {
