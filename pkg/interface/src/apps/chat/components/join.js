@@ -112,7 +112,7 @@ export class JoinScreen extends Component {
         </div>
         <h2 className="mb3 f8">Join Existing Chat</h2>
         <div className="w-100">
-          <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/chat-name</span> or <span className="mono">~/~ship/chat-name</span></p>
+          <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/chat-name</span></p>
           <p className="f9 gray2 mb4">Chat names use lowercase, hyphens, and slashes.</p>
           <textarea
             ref={ (e) => {

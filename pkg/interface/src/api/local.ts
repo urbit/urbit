@@ -25,4 +25,14 @@ export default class LocalApi extends BaseApi<StoreState> {
     })
   }
 
+  setDark(isDark: boolean) {
+    this.store.handleEvent({
+      data: {
+        local: {
+          setDark: isDark
+        }
+      }
+    });
+  }
+
 }
