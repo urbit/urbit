@@ -385,7 +385,8 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           paddingTop={paddingTop}
           paddingBot={paddingBot}
           pending={Boolean(msg.pending)}
-          group={props.association}
+          group={props.group}
+          association={props.association}
         />
       );
       if (unread > 0 && i === unread - 1) {
