@@ -64,9 +64,6 @@
       =?  cards  ?=(^ kick-paths)
         :_  cards
         [%give %kick kick-paths ~]
-      =.  cards
-        :_  cards
-        [%pass /trim %agent [our.bowl %chat-store] %poke %noun !>([%trim ~])]
       $(old [%3 inbox.old])
     ::
       ?(%0 %1)  $(old (old-to-2 inbox.old))
@@ -265,9 +262,6 @@
   =.  letter.envelope.action  (evaluate-letter [author letter]:envelope.action)
   =^  envelope  u.mailbox  (prepend-envelope u.mailbox envelope.action)
   :_  state(inbox (~(put by inbox) path.action u.mailbox))
-  ?:  =((mod number.envelope 5.000) 0)
-    :-  [%pass /trim %agent [our.bol %chat-store] %poke %noun !>([%trim ~])]
-    (send-diff path.action action(envelope envelope))
   (send-diff path.action action(envelope envelope))
 ::
 ++  handle-messages
@@ -283,7 +277,6 @@
   |-  ^-  (quip card _state)
   ?~  envelopes.act
     :_  state(inbox (~(put by inbox) path.act u.mailbox))
-    :-  [%pass /trim %agent [our.bol %chat-store] %poke %noun !>([%trim ~])]
     %+  send-diff  path.act
     [%messages path.act 0 (lent evaluated-envelopes) evaluated-envelopes]
   =.  letter.i.envelopes.act  (evaluate-letter [author letter]:i.envelopes.act)

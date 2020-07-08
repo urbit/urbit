@@ -2366,7 +2366,8 @@
           |=  [pax=path *]
           =((~(got by new.dal) pax) (~(got by new.dob) pax))
         ?:  &(?=(%mate germ) ?=(^ con))
-          [%| %mate-conflict ~]
+          =+  (turn ~(tap by `(map path *)`con) |=([path *] >[+<-]<))
+          [%| %mate-conflict -]
         =/  old=(map path lobe)                         ::  oldies but goodies
           %+  roll  ~(tap by (~(uni by old.dal) old.dob))
           =<  .(old q.bas)
