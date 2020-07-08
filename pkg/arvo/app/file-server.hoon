@@ -218,6 +218,7 @@
   ?+  +<.sign  (on-arvo:def wire sign)
       %bound
     ?:  accepted.sign  [~ this]
+    ~&  [dap.bowl %failed-to-bind path.binding.sign]
     [~ this(serving (~(del by serving) path.binding.sign))]
   ==
 ::
