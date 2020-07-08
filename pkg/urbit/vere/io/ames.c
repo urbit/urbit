@@ -44,6 +44,8 @@
     c3_o          see_o;                //  can scry
     c3_o          fit_o;                //  filtering active
     c3_y          ver_y;                //  protocol version
+    c3_d          vet_d;                //  version mismatches filtered
+    c3_d          mut_d;                //  invalid mugs filtered
     c3_d          foq_d;                //  forward queue size
     c3_d          fow_d;                //  forwarded count
     c3_d          fod_d;                //  forwards dropped count
@@ -664,9 +666,13 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     && (sam_u->ver_y != (0x7 & *((c3_w*)buf_u->base))) )
   {
     pas_o = c3n;
-    //TODO  counter
     //TODO  unless sender is our sponsee (transitively?)
     //TODO  how does this interact with forwards?
+
+    sam_u->vet_d++;
+    if ( 0 == (sam_u->vet_d % 100) ) {
+      u3l_log("ames: %" PRIu64 " dropped for version mismatch\n", sam_u->vet_d);
+    }
   }
 
   if (c3y == pas_o) {
@@ -693,7 +699,10 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     //
     if ( hed_u.mug_l != _ca_mug_body(nrd_i - 4, bod_y) ) {
       pas_o = c3n;
-      //TODO  counter?
+      sam_u->mut_d++;
+      if ( 0 == (sam_u->mut_d % 100) ) {
+        u3l_log("ames: %" PRIu64 " dropped for invalid mug\n", sam_u->mut_d);
+      }
     }
     //  if we can scry, we might want to forward statelessly
     //
