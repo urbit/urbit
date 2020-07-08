@@ -45,6 +45,8 @@
     c3_o          fit_o;                //  filtering active
     c3_y          ver_y;                //  protocol version
     c3_d          foq_d;                //  forward queue size
+    c3_d          fow_d;                //  forwarded count
+    c3_d          fod_d;                //  forwards dropped count
   } u3_ames;
 
 /* u3_head: ames packet header
@@ -599,6 +601,11 @@ _ames_forward(u3_panc* pac_u, u3_noun lan)
     u3z(bod);
   }
 
+  pac_u->sam_u->fow_d++;
+  if ( 0 == (pac_u->sam_u->fow_d % 1000) ) {
+    u3l_log("ames: forwarded %" PRIu64 " total\n", pac_u->sam_u->fow_d);
+  }
+
   pac_u->sam_u->foq_d--;
   _ames_ef_send(pac_u->sam_u, lan, _ames_serialize_packet(pac_u));
   _ames_panc_free(pac_u);
@@ -718,6 +725,11 @@ _ames_recv_cb(uv_udp_t*        wax_u,
         if ( (1000 < sam_u->foq_d)
           && !((c3y == u3a_is_cat(rec)) && (256 > rec)) )
         {
+          sam_u->fod_d++;
+          if ( 0 == (sam_u->fod_d % 1000) ) {
+            u3l_log("ames: dropped %" PRIu64 " forwards total\n", sam_u->fod_d);
+          }
+
           u3z(sen); u3z(rec);
         }
         //  otherwise, proceed with forwarding
