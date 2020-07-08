@@ -683,7 +683,8 @@
           ~|(%one-argument !!)
         =/  res  (mule |.((slam q.cay (dy-vase p.i.p.cig))))
         ?:  ?=(%| -.res)
-          (he-diff(poy ~) %tan p.res)  ::  TODO: or +dy-rash  ?
+          ::  TODO: or +dy-rash  ?
+          (he-diff(poy ~) %tan leaf+"dojo: naked generator failure" p.res)
         (dy-hand %noun p.res)
       ::  normal generator
       ::
@@ -697,7 +698,7 @@
       ::
       =/  wat  (mule |.(!<(?(%ask %say) (slot 2 q.cay))))
       ?:  ?=(%| -.wat)
-        (he-diff(poy ~) %tan p.wat)
+        (he-diff(poy ~) %tan leaf+"dojo: generator neither %ask nor %say" p.wat)
       =-  =/  res  (mule -)
           ?:  ?=(%| -.res)
             (he-diff(poy ~) %tan leaf+"dojo: generator failure" p.res)
@@ -811,10 +812,10 @@
           %do
         =/  gat  (dy-eval p.bil)
         ?:  ?=(%| -.gat)
-          (he-diff(poy ~) %tan p.gat)
+          (he-diff(poy ~) %tan leaf+"dojo: %do create gate failed" p.gat)
         =/  res  (mule |.((slam q.p.gat (dy-vase p.q.bil))))
         ?:  ?=(%| -.res)
-          (he-diff(poy ~) %tan p.res)
+          (he-diff(poy ~) %tan leaf+"dojo: %do execute failed" p.res)
         (dy-hand %noun p.res)
       ::
           %tu
@@ -848,7 +849,7 @@
       |=  =hoon
       =/  res  (dy-eval hoon)
       ?:  ?=(%| -.res)
-        (he-diff(poy ~) %tan p.res)
+        (he-diff(poy ~) %tan leaf+"dojo: hoon expression failed" p.res)
       (dy-hand p.res)
     ::  +dy-eval: run hoon source against the dojo subject
     ::
@@ -975,7 +976,7 @@
       +>
     ?~  p.cit
       (he-diff %txt ">=")
-    (he-diff %tan u.p.cit)
+    (he-diff %tan leaf+"dojo: app poke failed" u.p.cit)
   ::
   ++  he-wool
     |=  [way=wire =sign:agent:gall]
@@ -984,13 +985,13 @@
         %poke-ack
       ?~  p.sign
         +>.$
-      =.  +>.$  (he-diff(poy ~) %tan u.p.sign)
+      =.  +>.$  (he-diff(poy ~) %tan leaf+"dojo: thread poke failed" u.p.sign)
       (he-card %pass /wool %agent [our.hid %spider] %leave ~)
     ::
         %watch-ack
       ?~  p.sign
         +>.$
-      (he-diff(poy ~) %tan u.p.sign)
+      (he-diff(poy ~) %tan leaf+"dojo: thread watch failed" u.p.sign)
     ::
         %fact
       ?+    p.cage.sign  ~|([%dojo-thread-bad-mark-result p.cage.sign] !!)
