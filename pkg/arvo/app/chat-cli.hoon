@@ -177,7 +177,9 @@
   ::
   ++  tab-list
     |=  sole-id=@ta
-    tab-list:sh:tc
+    %+  turn  tab-list:sh:tc
+    |=  [term=cord detail=tank]
+    [(cat 3 ';' term) detail]
   ::
   ++  on-command
     |=  [sole-id=@ta =command]
