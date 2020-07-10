@@ -45,7 +45,7 @@
   ?:  =(our.bowl ship)
     ~
   =/  ask-history  &
-  =/  =action:pull  [%add ship path ask-history]
+  =/  =action:pull  [%add ship (path-to-rid path) ask-history]
   ~&  [%migrating-remote-chat ship path ask-history=ask-history]
   =/  vas  !>(action)
   `[%pass / %agent [our.bowl %chat-pull-hook] %poke %chat-pull-hook-action vas]
@@ -67,17 +67,17 @@
   =/  act  !<(action:pull vase)
   ?-  -.act
       %add
-    =/  =rid  (path-to-rid path.act)
-    ?:  (~(has by tracking) rid)  [~ this]
-    =.  tracking  (~(put by tracking) rid ship.act)
+    ?:  (~(has by tracking) rid.act)  [~ this]
+    =.  tracking  (~(put by tracking) rid.act ship.act)
+    =/  path  (rid-to-path rid.act)
     ?.  ask-history.act
-      =/  chat-path  [%mailbox path.act]
+      =/  chat-path  [%mailbox path]
       :_  this
       [%pass chat-path %agent [ship.act %chat-push-hook] %watch chat-path]~
-    =/  mailbox=(unit mailbox:store)  (chat-scry:store bowl path.act)
-    =/  backlog=path
+    =/  mailbox=(unit mailbox:store)  (chat-scry:store bowl path)
+    =/  backlog=^path
       :-  %backlog
-      %+  weld  path.act
+      %+  weld  path
       ?~(mailbox /0 /(scot %ud (lent envelopes.u.mailbox)))
     :_  this
     :~  [%pass backlog %agent [ship.act %chat-push-hook] %watch backlog]
@@ -91,23 +91,23 @@
       %remove
     ^-  (quip card _this)
     |^
-    =/  =rid  (path-to-rid path.act)
-    =/  ship  (~(get by tracking) rid)
+    =/  ship  (~(get by tracking) rid.act)
     ?~  ship
-      ~&  [dap.bowl %unknown-host-cannot-leave path.act]
+      ~&  [dap.bowl %unknown-host-cannot-leave rid.act]
       [~ this]
     ?:  &(!=(u.ship src.bowl) !(team:title our.bowl src.bowl))
       [~ this]
-    =.  tracking  (~(del by tracking) rid)
+    =.  tracking  (~(del by tracking) rid.act)
     :_  this
-    :*  [%pass [%mailbox path.act] %agent [u.ship %chat-push-hook] %leave ~]
+    =/  path  (rid-to-path rid.act)
+    :*  [%pass [%mailbox path] %agent [u.ship %chat-push-hook] %leave ~]
         :*  %give
             %fact
             ~[/tracking]
             %chat-pull-hook-update
             !>([%tracking tracking])
         ==
-        (pull-backlog-subscriptions u.ship path.act)
+        (pull-backlog-subscriptions u.ship path)
     ==
     ::
     ++  pull-backlog-subscriptions
@@ -177,7 +177,7 @@
                 [our.bowl %chat-push-hook]
                 %poke
                 %chat-push-hook-action
-                !>([%remove chat])
+                !>([%remove (path-to-rid chat)])
             ==
             :*  %pass
                 /
@@ -281,12 +281,10 @@
       ++  fact-push-update
         |=  fact=update:push
         ^-  (quip card _this)
-        =/  =rid  (path-to-rid path.fact)
-        ?.  (~(has by tracking) rid)  [~ this]
-        ~&  [%chat-redirect rid %from (~(get by tracking) rid) %to proxy.fact]
-        =.  tracking  (~(put by tracking) rid proxy.fact)
-        ::  Now when the kick comes along, we'll instead sub to the
-        ::  proxy.
+        ?.  (~(has by tracking) rid.fact)  [~ this]
+        ~&  [%chat-rdr rid.fact fro=(~(get by tracking) rid.fact) to=proxy.fact]
+        =.  tracking  (~(put by tracking) rid.fact proxy.fact)
+        ::  Now when the kick comes along, we'll instead sub to the proxy.
         [~ this]
     --
   ==

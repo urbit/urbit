@@ -45,7 +45,7 @@
   ?.  =(our.bowl ship)
     ~
   =/  allow-history  (fall (~(get by allow-history.contents) path) |)
-  =/  =action:hook  [%add path allow-history]
+  =/  =action:hook  [%add (path-to-rid path) allow-history]
   ~&  [%migrating-local-chat path allow-history=allow-history]
   =/  vas  !>(action)
   `[%pass / %agent [our.bowl %chat-push-hook] %poke %chat-push-hook-action vas]
@@ -100,27 +100,28 @@
       [~ state]
     ?-  -.act
         %add
-      =/  =rid  (path-to-rid path.act)
-      =/  chat-path  [%mailbox path.act]
-      =/  chat-wire  [%store path.act]
-      ?:  (~(has by providers) rid)  [~ state]
-      =:  providers  (~(put ju providers) rid our.bowl)
-          allow-history  (~(put by allow-history) rid allow-history.act)
+      =/  path  (rid-to-path rid.act)
+      =/  chat-path  [%mailbox path]
+      =/  chat-wire  [%store path]
+      ?:  (~(has by providers) rid.act)  [~ state]
+      =:  providers  (~(put ju providers) rid.act our.bowl)
+          allow-history  (~(put by allow-history) rid.act allow-history.act)
       ==
       :_  state
       [%pass chat-wire %agent [our.bowl %chat-store] %watch chat-path]~
     ::
         %set-proxies
-      =/  =rid  (path-to-rid path.act)
-      ?>  (~(has by providers) rid)
-      ?>  (~(all in proxies.act) |=(=ship (is-permitted bowl ship path.act)))
-      =.  providers  (~(put by providers) rid (~(put in proxies.act) our.bowl))
+      ?>  (~(has by providers) rid.act)
+      ?>  %-  ~(all in proxies.act)
+        |=  =ship
+        (is-permitted bowl ship (rid-to-path rid.act))
+      =.  providers
+        (~(put by providers) rid.act (~(put in proxies.act) our.bowl))
       [~ state]
     ::
         %remove
-      =/  =rid  (path-to-rid path.act)
-      ?.  (~(has by providers) rid)  [~ state]
-      =.  providers  (~(del by providers) rid)
+      ?.  (~(has by providers) rid.act)  [~ state]
+      =.  providers  (~(del by providers) rid.act)
       =/  backlog-paths=(list path)
         %+  murn  ~(tap by sup.bowl)
         |=  [duct [@p =path]]
@@ -129,10 +130,10 @@
           `path
         ~
       :_  state
-      :~  [%give %kick [%mailbox path.act]~ ~]
-          :: XX what happens if backlog-paths is empty?
+      =/  path  (rid-to-path rid.act)
+      :~  [%give %kick [%mailbox path]~ ~]
           [%give %kick backlog-paths ~]
-          [%pass [%mailbox path.act] %agent [our.bowl %chat-store] %leave ~]
+          [%pass [%mailbox path] %agent [our.bowl %chat-store] %leave ~]
       ==
     ==
   --
@@ -156,11 +157,7 @@
   ++  redirect
     |=  [=rid provider=ship]
     ^-  (list card)
-    =/  chat  (rid-to-path rid)
-    ::  XX can it be guaranteed that the fact be sent before the kick?
-    :~  [%give %fact ~ %chat-push-hook-update !>([%redirect provider chat])]
-        ::  XX what happens if I use ~ here instead of [path]~, or don't
-        ::  specify the ship?
+    :~  [%give %fact ~ %chat-push-hook-update !>([%redirect provider rid])]
         [%give %kick ~[path] `src.bowl]
     ==
   ::
@@ -178,7 +175,7 @@
     ?.  ?|  (~(has ju providers) rid src.bowl)
             =(our.bowl (provider-for src.bowl rid))
         ==
-      ~&  [%redirect src.bowl %to (provider-for src.bowl rid)]
+      ~&  [%redirect src.bowl to=(provider-for src.bowl rid)]
       (redirect rid (provider-for src.bowl rid))
     ::  Provide directly
     =/  envs  envelopes:(need (chat-scry:store bowl pas))
@@ -206,7 +203,7 @@
     ?.  ?|  (~(has ju providers) rid src.bowl)
             =(our.bowl (provider-for src.bowl rid))
         ==
-      ~&  [%redirect src.bowl %to (provider-for src.bowl rid)]
+      ~&  [%redirect src.bowl to=(provider-for src.bowl rid)]
       (redirect rid (provider-for src.bowl rid))
     ::  Provide directly
     =/  box  (chat-scry:store bowl path)
@@ -218,16 +215,19 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   |^
-  ?+  -.sign                  (on-agent:def wire sign)
-      %kick  ?+  wire         !!
-          [%permissions ~]    kick-permissions
-          [%store @ *]        (kick-store wire)
-      ==
-      %watch-ack              (watch-ack wire p.sign)
-      %fact  ?+  p.cage.sign  (on-agent:def wire sign)
-          %chat-update        (fact-chat-update !<(update:store q.cage.sign))
-          %permission-update  (fact-perm-update !<(permission-update q.cage.sign))
-  ==  ==
+  ?+  -.sign  (on-agent:def wire sign)
+      %kick
+    ?+  wire              !!
+        [%permissions ~]  kick-permissions
+        [%store @ *]      (kick-store wire)
+    ==
+      %watch-ack  (watch-ack wire p.sign)
+      %fact
+    ?+  p.cage.sign         (on-agent:def wire sign)
+        %chat-update        (fact-chat-update !<(update:store q.cage.sign))
+        %permission-update  (fact-perm-update !<(permission-update q.cage.sign))
+    ==
+  ==
   ::
   ++  kick-permissions
     :_  this
@@ -295,8 +295,6 @@
       %+  turn  ~(tap in who)
       |=  =ship
       ?:  (is-permitted bowl ship chat)
-        ::  XX If they are permitted, under what cicumstances will it be
-        ::  remove?
         ?:  ?|(=(kind %remove) =(ship our.bowl) (is-managed path))  ~
         ::  if ship has just been added to the permitted group,
         ::  send them an invite

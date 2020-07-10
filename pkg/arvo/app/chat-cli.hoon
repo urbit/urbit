@@ -851,7 +851,7 @@
       %^  act  %do-leave  %chat-pull-hook
       :-  %chat-pull-hook-action
       !>  ^-  action:pull-hook
-      [%remove (target-to-path target)]
+      [%remove (path-to-rid (target-to-path target))]
     ::  +say: send messages
     ::
     ++  say

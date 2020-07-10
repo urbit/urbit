@@ -5,10 +5,10 @@
   $%  ::  %add: subscribe to a foreign chatroom, mirroring its contents into
       ::  our store
       ::
-      [%add =ship =path ask-history=?]
+      [%add =ship =rid ask-history=?]
       ::  %remove: stop subscribing to a foreign chatroom
       ::
-      [%remove =path]
+      [%remove =rid]
   ==
 ::
 +$  update

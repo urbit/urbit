@@ -27,13 +27,13 @@
     ++  parse-json
       %-  of
       :~  [%add add]
-          [%remove pa]
+          [%remove (cu path-to-rid pa)]
       ==
     ::
     ++  add
       %-  ot
       :~  [%ship (su ;~(pfix sig fed:ag))]
-          [%path pa]
+          [%path (cu path-to-rid pa)]
           [%ask-history bo]
       ==
     --

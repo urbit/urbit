@@ -341,7 +341,6 @@
           %metadata-store
       ==
       :: ensure chat-cli can sub to invites
-      (sy ~[%chat-hook])
       :: and file server can receive pokes
       (sy ~[%chat-hook %file-server])
     ==

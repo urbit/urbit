@@ -205,8 +205,8 @@
     ::  always just delete the chat from chat-store
     ::
     :+  ?:  (team:title our.bol ship:(path-to-rid app-path.act))
-          (chat-push-hook-poke [%remove app-path.act])
-        (chat-pull-hook-poke [%remove app-path.act])
+          (chat-push-hook-poke [%remove (path-to-rid app-path.act)])
+        (chat-pull-hook-poke [%remove (path-to-rid app-path.act)])
       (chat-poke [%delete app-path.act])
     ::  if we still have metadata for the chat, remove it, and the associated
     ::  group if it's unmanaged
@@ -233,7 +233,8 @@
     =/  group-path
       ?.  (is-managed app-path.act)  app-path.act
       (group-from-chat app-path.act)
-    :~  (chat-pull-hook-poke [%add ship.act app-path.act ask-history.act])
+    :~  %-  chat-pull-hook-poke
+          [%add ship.act (path-to-rid app-path.act) ask-history.act]
         (permission-hook-poke [%add-synced ship.act group-path])
         (metadata-hook-poke [%add-synced ship.act group-path])
     ==
@@ -311,7 +312,7 @@
     |=  [=path history=?]
     ^-  (list card)
     :~  (chat-poke [%create path])
-        (chat-push-hook-poke [%add path history])
+        (chat-push-hook-poke [%add (path-to-rid path) history])
     ==
   ::
   ++  create-group
