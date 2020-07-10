@@ -122,7 +122,7 @@ footNote :: String -> Doc
 footNote exe = string $ intercalate "\n"
   [ "Development Usage:"
   , "  To create a development ship, use a fakezod:"
-  , "    $ " <>exe<> " new zod /path/to/pill -F zod -A arvo/folder"
+  , "    $ " <>exe<> " new zod -B /path/to/pill -F zod -A arvo/folder"
   , ""
   , "Simple Usage: "
   , "  $ " <>exe<> " new pier <my-comet> to create a comet (anonymous urbit)"
