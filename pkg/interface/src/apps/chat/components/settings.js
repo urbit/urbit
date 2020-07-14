@@ -217,11 +217,6 @@ export class SettingsScreen extends Component {
         );
       }
 
-      const groups = {};
-      Object.keys(props.permissions).forEach((pem) => {
-        groups[pem] = props.permissions[pem].who;
-      });
-
       return (
         <div>
           <div className={'w-100 fl mt3'} style={{ maxWidth: '29rem' }}>
@@ -231,7 +226,7 @@ export class SettingsScreen extends Component {
               group to add this chat to.
             </p>
             <InviteSearch
-              groups={groups}
+              groups={props.groups}
               contacts={props.contacts}
               associations={props.associations}
               groupResults={true}
@@ -357,7 +352,7 @@ export class SettingsScreen extends Component {
     const { props, state } = this;
     const isinPopout = this.props.popout ? 'popout/' : '';
 
-    const permission = Array.from(props.permission.who.values());
+    const permission = Array.from(props.group.members.values());
 
     if (state.isLoading) {
       let title = props.station.substr(1);

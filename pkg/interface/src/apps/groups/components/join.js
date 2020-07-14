@@ -47,7 +47,7 @@ export class JoinScreen extends Component {
 
     const text = 'Joining group';
 
-    this.props.api.contactView.join({ ship, name }).then(() => {
+    this.props.api.contacts.join({ ship, name }).then(() => {
       this.setState({ awaiting: text });
     });
   }
