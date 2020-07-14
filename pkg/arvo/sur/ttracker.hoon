@@ -1,0 +1,9 @@
+|%
++$  action
+  $%
+     [%facilities station=@t]
+  ==
+
+
+--
+
