@@ -22,19 +22,41 @@ class UrbitShipPlugin {
       'UrbitShipPlugin',
       async (compilation) => {
         const src = path.resolve(compiler.options.output.path, 'index.js');
-        return Promise.all(this.piers.map(pier => {
-          const dst = path.resolve(pier, 'app/landscape/js/index.js');
-          copyFile(src, dst).then(() => {
-            if(!this.herb) {
+
+        return Promise.all(this.piers.map((pier) => {
+          const landscapeHtml = path.resolve(pier, 'app/landscape/index.html');
+          fs.readFile(landscapeHtml, 'utf8', (err, data) => {
+            if (err) {
+              return console.log(err);
+            }
+            const result = data.replace('/~landscape/js/index.js', 'http://localhost:9000/index.js');
+
+            if (data === result) {
               return;
             }
-            pier = pier.split('/');
-            const desk = pier.pop();
-            return exec(`herb -p hood -d '+hood/commit %${desk}' ${pier.join('/')}`);
+
+            fs.writeFile(landscapeHtml, result, 'utf8', (err) => {
+              if (err) {
+                return console.log(err);
+              }
+            });
           });
         }));
+        // uncomment to copy into all piers
+        //
+        // return Promise.all(this.piers.map(pier => {
+        //   const dst = path.resolve(pier, 'app/landscape/js/index.js');
+        //   copyFile(src, dst).then(() => {
+        //     if(!this.herb) {
+        //       return;
+        //     }
+        //     pier = pier.split('/');
+        //     const desk = pier.pop();
+        //     return exec(`herb -p hood -d '+hood/commit %${desk}' ${pier.join('/')}`);
+        //   });
+        // }));
       }
-    )
+    );
   }
 }
 
@@ -77,12 +99,12 @@ module.exports = {
     extensions: ['.js', '.ts', '.tsx']
   },
   devtool: 'inline-source-map',
-  // devServer: {
-  //   contentBase: path.join(__dirname, './'),
-  //   hot: true,
-  //   port: 9000,
-  //   historyApiFallback: true
-  // },
+  devServer: {
+    contentBase: path.join(__dirname, '../dist'),
+    hot: true,
+    port: 9000,
+    historyApiFallback: true
+  },
   plugins: [
     new UrbitShipPlugin(urbitrc)
     // new CleanWebpackPlugin(),

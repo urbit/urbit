@@ -62,23 +62,24 @@ Perform the following steps to get the above set up for urbit's apps:
 cd urbit/pkg/interface
 npm install
 
-## Start watching the entire directory for changes
-npm run build:dev
+## Start your development server
+npm run start
 ```
 
-Any changes made to any files within the `/pkg/interface` directory will now trigger
-a gulp rebuild when saved. To sync these changes to your running ship, enter
-dojo and input the following:
+Once your development server is running and built, commit on your ship to point
+your ship toward the the dev server:
 
 ```
 |commit %home
 ```
 
+You only have to do this once.
+
 Your urbit should take a moment to process the changes, and will emit a `>=`.
 Refreshing your browser will display the newly-rendered interface.
 
 Once you are done editing code, and wish to commit changes to git, stop your
-`build:dev` process. Do not commit compiled code, but submit the source code
+process. Do not commit compiled code, but submit the source code
 for review.
 
 Please also ensure your pull request fits our standards for [Git
