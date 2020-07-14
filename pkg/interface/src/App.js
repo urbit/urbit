@@ -20,18 +20,6 @@ import GlobalStore from './store/store';
 import GlobalSubscription from './subscription/global';
 import GlobalApi from './api/global';
 
-
-// const Style = createGlobalStyle`
-//   ${cssReset}
-//   html {
-//     background-color: ${p => p.theme.colors.white};
-//   }
-//
-//   strong {
-//     font-weight: 600;
-//   }
-// `;
-
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
   height: 100%;
