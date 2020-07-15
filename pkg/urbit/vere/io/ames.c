@@ -315,35 +315,85 @@ _ames_lane_from_sockaddr(struct sockaddr_in* add_u)
   return u3_ames_encode_lane(lan_u);
 }
 
-/* _ames_serialize_packet(): u3_panc to atom (retains pac_u)
+/* _ames_serialize_packet(): u3_panc to atom, updating the origin lane if dop_o
+**                           (retains pac_u)
 */
 static u3_noun
-_ames_serialize_packet(u3_panc* pac_u)
+_ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
 {
-  u3_body* bod_u = &pac_u->bod_u;
-  c3_w     bod_w = u3r_met(3, bod_u->con);
+  c3_y sen_y = 2 << pac_u->hed_u.sac_y;
+  c3_y rec_y = 2 << pac_u->hed_u.rac_y;
+  c3_o nal_o = c3n;
 
-  u3_head* hed_u = &pac_u->hed_u;
-  c3_w     hed_w = hed_u->ver_y
-                 | (hed_u->mug_l << 3)
-                 | (hed_u->sac_y << 23)
-                 | (hed_u->rac_y << 25)
-                 | (hed_u->enc_o << 26);
-
-  c3_y     sen_y = 2 << hed_u->sac_y;
-  c3_y     rec_y = 2 << hed_u->rac_y;
-
-  //  allocate, then write: header (4 bytes), sender, recipient, body
+  //  update the body's lane, if desired
   //
-  c3_y*    pac_y = c3_malloc( 4 + sen_y + rec_y + bod_w );
-  memcpy(pac_y, &hed_w, 4);
-  u3r_bytes(0, sen_y, pac_y + 4,                 bod_u->sen);
-  u3r_bytes(0, rec_y, pac_y + 4 + sen_y,         bod_u->rec);
-  u3r_bytes(0, bod_w, pac_y + 4 + sen_y + rec_y, bod_u->con);
+  if (c3y == dop_o) {
+    //  unpack (jam [(unit lane) body])
+    //
+    u3_noun lon, bod;
+    {
+      u3_noun old = u3qe_cue(pac_u->bod_u.con);
+      u3x_cell(old, &lon, &bod);
+      u3k(lon); u3k(bod);
+      u3z(old);
+    }
 
-  u3_noun pac = u3i_bytes(4 + sen_y + rec_y + bod_w, pac_y);
+    //  only replace the lane if it was ~
+    //
+    //NOTE  this sets an opaque lane even in the "sender is galaxy" case,
+    //      but that doesn't matter: ames.hoon ignores origin in that case,
+    //      always using the appropriate galaxy lane instead.
+    //
+    if (u3_nul == lon) {
+      u3z(lon);
+      lon = u3nt(u3_nul, c3n, u3k(pac_u->ore));
+      nal_o = c3y;
 
-  c3_free(pac_y);
+      u3z(pac_u->bod_u.con);
+      pac_u->bod_u.con = u3ke_jam(u3nc(lon, bod));
+    }
+    else {
+      u3z(lon); u3z(bod);
+    }
+  }
+
+  //  serialize the packet
+  //
+  u3_noun pac;
+  {
+    //  start with the body
+    //
+    u3_body* bod_u = &pac_u->bod_u;
+    c3_w     bod_w = u3r_met(3, bod_u->con);
+
+    c3_y*    pac_y = c3_malloc( 4 + sen_y + rec_y + bod_w );
+    u3r_bytes(0, sen_y, pac_y + 4,                 bod_u->sen);
+    u3r_bytes(0, rec_y, pac_y + 4 + sen_y,         bod_u->rec);
+    u3r_bytes(0, bod_w, pac_y + 4 + sen_y + rec_y, bod_u->con);
+
+    //  if we updated the origin lane, we need to update the mug too
+    //
+    if (c3y == nal_o) {
+      u3_noun bod = u3i_bytes(sen_y + rec_y + bod_w, pac_y + 4);
+      pac_u->hed_u.mug_l = u3r_mug(bod) & ((1 << 20) - 1);
+      u3z(bod);
+    }
+
+    //  now we can serialize the head
+    //
+    u3_head* hed_u = &pac_u->hed_u;
+    c3_w     hed_w = hed_u->ver_y
+                   | (hed_u->mug_l << 3)
+                   | (hed_u->sac_y << 23)
+                   | (hed_u->rac_y << 25)
+                   | (hed_u->enc_o << 26);
+
+    memcpy(pac_y, &hed_w, 4);
+
+    pac = u3i_bytes(4 + sen_y + rec_y + bod_w, pac_y);
+    c3_free(pac_y);
+  }
+
   return pac;
 }
 
@@ -573,59 +623,13 @@ _ames_put_packet(u3_ames* sam_u,
 static void
 _ames_forward(u3_panc* pac_u, u3_noun lan)
 {
-  c3_o nal = c3n;
-
-  //  repack the maybe-updated packet
-  //
-  {
-    //  unpack (jam [(unit lane) body])
-    //
-    u3_noun lon, bod;
-    {
-      u3_noun old = u3ke_cue(pac_u->bod_u.con);
-      u3x_cell(old, &lon, &bod);
-      u3k(lon); u3k(bod);
-      u3z(old);
-    }
-
-    //  only replace the lane if it was ~
-    //
-    if (u3_nul == lon) {
-      u3z(lon);
-      lon = u3nt(u3_nul, c3n, u3k(pac_u->ore));
-      //TODO  ore is always opaque lane. what about the sender=galaxy case?
-      nal = c3y;
-    }
-
-    pac_u->bod_u.con = u3ke_jam(u3nc(lon, bod));
-  }
-
-  //  if we updated the origin lane, serialize the body to update the mug hash
-  //
-  //TODO  refactor into serialize_packet?
-  if (c3y == nal) {
-    c3_w  bod_w = u3r_met(3, pac_u->bod_u.con);
-    c3_y  sen_y = 2 << pac_u->hed_u.sac_y;
-    c3_y  rec_y = 2 << pac_u->hed_u.rac_y;
-    c3_y* bod_y = c3_malloc(sen_y + rec_y + bod_w);
-    u3r_bytes(0, sen_y, bod_y,                 pac_u->bod_u.sen);
-    u3r_bytes(0, rec_y, bod_y + sen_y,         pac_u->bod_u.rec);
-    u3r_bytes(0, bod_w, bod_y + sen_y + rec_y, pac_u->bod_u.con);
-    u3_noun bod = u3i_bytes(sen_y + rec_y + bod_w, bod_y);
-
-    pac_u->hed_u.mug_l = u3r_mug(bod) & ((1 << 20) - 1);
-
-    c3_free(bod_y);
-    u3z(bod);
-  }
-
   pac_u->sam_u->fow_d++;
   if ( 0 == (pac_u->sam_u->fow_d % 1000) ) {
     u3l_log("ames: forwarded %" PRIu64 " total\n", pac_u->sam_u->fow_d);
   }
 
   pac_u->sam_u->foq_d--;
-  _ames_ef_send(pac_u->sam_u, lan, _ames_serialize_packet(pac_u));
+  _ames_ef_send(pac_u->sam_u, lan, _ames_serialize_packet(pac_u, c3y));
   _ames_panc_free(pac_u);
 }
 
@@ -643,7 +647,9 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
     pac_u->sam_u->foq_d--;
     u3l_log("ames: giving up scry\n");
     pac_u->sam_u->see_o = c3n;
-    _ames_put_packet(pac_u->sam_u, _ames_serialize_packet(pac_u), pac_u->ore);
+    _ames_put_packet(pac_u->sam_u,
+                     _ames_serialize_packet(pac_u, c3n),
+                     pac_u->ore);
     _ames_panc_free(pac_u);
   }
   //  if there is a lane, forward the packet on it
