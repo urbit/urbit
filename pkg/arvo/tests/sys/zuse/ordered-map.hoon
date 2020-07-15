@@ -1,8 +1,7 @@
 ::  TODO: move +ordered-map to zuse
 ::
 /+  *test
-/=  ames  /:  /===/sys/vane/ames
-          /!noun/
+/=  ames  /sys/vane/ames
 ::
 =/  items-from-keys
   |=  keys=(list @ud)

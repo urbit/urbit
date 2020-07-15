@@ -63,7 +63,7 @@ export class NewDmScreen extends Component {
       },
       () => {
         const groupPath = station;
-        props.api.chatView.create(
+        props.api.chat.create(
           `~${window.ship} <-> ~${state.ship}`,
           '',
           station,

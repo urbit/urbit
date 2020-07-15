@@ -50,7 +50,8 @@
 ::      ?
 ::    /seen/wood-url/some-path              have we seen this here
 ::
-/+  *link, default-agent, verb, dbug
+/-  *link
+/+  store=link-store, default-agent, verb, dbug
 ::
 |%
 +$  state-0
@@ -101,8 +102,8 @@
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         ::TODO  move json conversion into mark once mark performance improves
-        %json         (do-action:do (action:de-json !<(json vase)))
-        %link-action  (do-action:do !<(action vase))
+        %json         (do-action:do (action:dejs:store !<(json vase)))
+        %link-action  (do-action:do !<(action:store vase))
       ==
     [cards this]
   ::
@@ -121,7 +122,7 @@
     ::
         [%y ?(%annotations %discussions) *]
       =/  [spath=^path surl=url]
-        (break-discussion-path t.t.path)
+        (break-discussion-path:store t.t.path)
       =-  ``noun+!>(-)
       ::
       ?:  =(~ surl)
@@ -174,22 +175,22 @@
     |^  ?+  path  (on-watch:def path)
             [%local-pages *]
           %+  give  %link-initial
-          ^-  initial
+          ^-  initial:store
           [%local-pages (get-local-pages:do t.path)]
         ::
             [%submissions *]
           %+  give  %link-initial
-          ^-  initial
+          ^-  initial:store
           [%submissions (get-submissions:do t.path)]
         ::
             [%annotations *]
           %+  give  %link-initial
-          ^-  initial
+          ^-  initial:store
           [%annotations (get-annotations:do t.path)]
         ::
             [%discussions *]
           %+  give  %link-initial
-          ^-  initial
+          ^-  initial:store
           [%discussions (get-discussions:do t.path)]
         ::
             [%seen ~]
@@ -218,7 +219,7 @@
 ::  writing
 ::
 ++  do-action
-  |=  =action
+  |=  =action:store
   ^-  (quip card _state)
   ?-  -.action
     %save  (save-page +.action)
@@ -284,8 +285,8 @@
   :+  %give  %fact
   :+  :~  /annotations
           [%annotations %$ path]
-          [%annotations (build-discussion-path url)]
-          [%annotations (build-discussion-path path url)]
+          [%annotations (build-discussion-path:store url)]
+          [%annotations (build-discussion-path:store path url)]
       ==
     %link-update
   !>([%annotations path url [note]~])
@@ -324,11 +325,11 @@
     ?:  ?=(^ (find ~[submission] submissions.links))
       [| submissions.links]
     :-  &
-    (submissions:merge submissions.links ~[submission])
+    (submissions:merge:store submissions.links ~[submission])
   =.  by-group  (~(put by by-group) path links)
   ::  add submission to global sites
   ::
-  =/  =site  (site-from-url url.submission)
+  =/  =site  (site-from-url:store url.submission)
   =.  by-site  (~(add ja by-site) site [path submission])
   ::  send updates to subscribers
   ::
@@ -354,7 +355,7 @@
     ?:  ?=(^ (find ~[comment] comments.discussion))
       [| comments.discussion]
     :-  &
-    (comments:merge comments.discussion ~[comment])
+    (comments:merge:store comments.discussion ~[comment])
   =.  urls  (~(put by urls) url discussion)
   =.  discussions  (~(put by discussions) path urls)
   ::  send updates to subscribers
@@ -365,8 +366,8 @@
   :+  %give  %fact
   :+  :~  /discussions
           [%discussions '' path]
-          [%discussions (build-discussion-path url)]
-          [%discussions (build-discussion-path path url)]
+          [%discussions (build-discussion-path:store url)]
+          [%discussions (build-discussion-path:store path url)]
       ==
     %link-update
   !>([%discussions path url [comment]~])
@@ -420,7 +421,7 @@
   |=  =path
   ^-  ?
   =/  [=^path =url]
-    (break-discussion-path path)
+    (break-discussion-path:store path)
   %.  url
   %~  has  in
   seen:(~(gut by by-group) path *links)
@@ -430,7 +431,7 @@
   |=  =path
   ^-  (per-path-url notes)
   =/  args=[=^path =url]
-    (break-discussion-path path)
+    (break-discussion-path:store path)
   |^  ?~  path
         ::  all paths
         ::
@@ -460,7 +461,7 @@
   |=  =path
   ^-  (per-path-url comments)
   =/  args=[=^path =url]
-    (break-discussion-path path)
+    (break-discussion-path:store path)
   |^  ?~  path
         ::  all paths
         ::

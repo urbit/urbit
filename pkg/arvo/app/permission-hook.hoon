@@ -296,7 +296,12 @@
 ++  permission-scry
   |=  pax=path
   ^-  permission
-  =.  pax  ;:(weld /=permission-store/(scot %da now.bowl)/permission pax /noun)
+  =.  pax
+    ;:  weld
+      /(scot %p our.bowl)/permission-store/(scot %da now.bowl)/permission
+      pax
+      /noun
+    ==
   (need .^((unit permission) %gx pax))
 ::
 ++  permitted

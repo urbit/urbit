@@ -376,6 +376,16 @@
       veb=_veb-all-off
   ==
 ::
++$  queued-event-1
+  $%  [%call =duct type=* wrapped-task=(hobo task-1)]
+      [%take =wire =duct type=* =sign]
+  ==
+::
++$  task-1
+  $%  [%wegh ~]
+      task
+  ==
+::
 +$  ames-state-1
   $:  peers=(map ship ship-state-1)
       =unix=duct
@@ -520,45 +530,81 @@
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
     ++  scry  scry:adult-core
-    ++  stay  [%3 %larva queued-events ames-state.adult-gate]
+    ++  stay  [%4 %larva queued-events ames-state.adult-gate]
     ++  load
+      |^
       |=  $=  old
-          $%  $:  %3
-              $%  [%larva events=_queued-events state=_ames-state.adult-gate]
+          $%  $:  %4
+              $%  $:  %larva
+                      events=(qeu queued-event)
+                      state=_ames-state.adult-gate
+                  ==
+                  [%adult state=_ames-state.adult-gate]
+              ==  ==
+          ::
+              $:  %3
+              $%  $:  %larva
+                      events=(qeu queued-event-1)
+                      state=_ames-state.adult-gate
+                  ==
                   [%adult state=_ames-state.adult-gate]
               ==  ==
           ::
               $:  %2
-              $%  [%larva events=_queued-events state=ames-state-2]
+              $%  [%larva events=(qeu queued-event-1) state=ames-state-2]
                   [%adult state=ames-state-2]
               ==  ==
           ::
-              $%  [%larva events=_queued-events state=ames-state-1]
+              $%  [%larva events=(qeu queued-event-1) state=ames-state-1]
                   [%adult state=ames-state-1]
           ==  ==
       ?-    old
+          [%4 %adult *]  (load:adult-core %4 state.old)
           [%3 %adult *]  (load:adult-core %3 state.old)
           [%2 %adult *]  (load:adult-core %2 state.old)
           [%adult *]     (load:adult-core %1 state.old)
       ::
-          [%3 %larva *]
+          [%4 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
         =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core %4 state.old)
+        larval-gate
+      ::
+          [%3 %larva *]
+        ~>  %slog.1^leaf/"ames: larva: load"
+        =.  queued-events  (queued-events-1-to-4 events.old)
         =.  adult-gate     (load:adult-core %3 state.old)
         larval-gate
       ::
           [%2 %larva *]
         ~>  %slog.1^leaf/"ames: larva: load"
-        =.  queued-events  events.old
+        =.  queued-events  (queued-events-1-to-4 events.old)
         =.  adult-gate     (load:adult-core %2 state.old)
         larval-gate
       ::
           [%larva *]
         ~>  %slog.0^leaf/"ames: larva: load"
-        =.  queued-events  events.old
+        =.  queued-events  (queued-events-1-to-4 events.old)
         =.  adult-gate     (load:adult-core %1 state.old)
         larval-gate
       ==
+      ::
+      ++  queued-events-1-to-4
+        |=  events=(qeu queued-event-1)
+        ^-  (qeu queued-event)
+        %-  ~(gas to *(qeu queued-event))
+        ^-  (list queued-event)
+        %+  murn  ~(tap to events)
+        |=  e=queued-event-1
+        ^-  (unit queued-event)
+        ?.  ?=(%call -.e)
+          `e
+        ?:  ?=([%wegh ~] wrapped-task.e)
+          ~
+        ?:  ?=([%soft %wegh ~] wrapped-task.e)
+          ~
+        `e
+      --
     --
 ::  adult ames, after metamorphosis from larva
 ::
@@ -602,7 +648,6 @@
       %stir  (on-stir:event-core arg.task)
       %trim  on-trim:event-core
       %vega  on-vega:event-core
-      %wegh  on-wegh:event-core
       %plea  (on-plea:event-core [ship plea]:task)
     ==
   ::
@@ -634,7 +679,7 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  [%3 %adult ames-state]
+++  stay  [%4 %adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
@@ -642,13 +687,15 @@
       $%  [%1 ames-state-1]
           [%2 ames-state-2]
           [%3 ^ames-state]
+          [%4 ^ames-state]
       ==
   |^  ^+  ames-gate
       ::
       =?  old-state  ?=(%1 -.old-state)  %2^(state-1-to-2 +.old-state)
       =?  old-state  ?=(%2 -.old-state)  %3^(state-2-to-3 +.old-state)
+      =?  old-state  ?=(%3 -.old-state)  %4^+.old-state
       ::
-      ?>  ?=(%3 -.old-state)
+      ?>  ?=(%4 -.old-state)
       ames-gate(ames-state +.old-state)
   ::
   ++  state-1-to-2
@@ -702,6 +749,13 @@
   ?.  =(%$ ren)  [~ ~]
   ?.  =([%& our] why)
     [~ ~]
+  ?:  =(tyl /whey)
+    =/  maz=(list mass)
+      =+  [known alien]=(skid ~(val by peers.ames-state) |=(^ =(%known +<-)))
+      :~  peers-known+&+known
+          peers-alien+&+alien
+      ==
+    ``mass+!>(maz)
   ?+    syd  ~
       %peers
     ?^  tyl  [~ ~]
@@ -1375,20 +1429,6 @@
     ^+  event-core
     ::
     (emit unix-duct.ames-state %give %turf turfs)
-  ::  +on-wegh: produce memory usage report
-  ::
-  ++  on-wegh
-    ^+  event-core
-    ::
-    =+  [known alien]=(skid ~(val by peers.ames-state) |=(^ =(%known +<-)))
-    ::
-    %-  emit
-    :^  duct  %give  %mass
-    :+  %ames  %|
-    :~  peers-known+&+known
-        peers-alien+&+alien
-        dot+&+ames-state
-    ==
   ::  +on-born: handle unix process restart
   ::
   ++  on-born
@@ -1404,9 +1444,10 @@
     (emit unix-duct.ames-state %give %turf turfs)
   ::  +on-trim: handle request to free memory
   ::  +on-vega: handle kernel reload
+  ::  +on-trim: handle request to free memory
   ::
-  ++  on-trim  event-core
   ++  on-vega  event-core
+  ++  on-trim  event-core
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
   ::    Also requests key and life from Jael on first request.
@@ -2963,16 +3004,13 @@
   |=  [=symmetric-key plaintext=shut-packet]
   ^-  @
   ::
-  =.  meat.plaintext
-    ?.  ?&  ?=(%& -.meat.plaintext)
-            (gth (met 13 fragment.p.meat.plaintext) 1)
-        ==
-      meat.plaintext
-    %=    meat.plaintext
+  =?    meat.plaintext
+      ?&  ?=(%& -.meat.plaintext)
+          (gth (met 13 fragment.p.meat.plaintext) 1)
+      ==
+    %_    meat.plaintext
         fragment.p
-      %^  end  13  1
-      %^  rsh  13  fragment-num.p.meat.plaintext
-      fragment.p.meat.plaintext
+      (cut 13 [[fragment-num 1] fragment]:p.meat.plaintext)
     ==
   (en:crub:crypto symmetric-key (jam plaintext))
 ::  +decrypt: decrypt packet content to a $shut-packet or die

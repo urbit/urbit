@@ -101,7 +101,7 @@
     =^  cards  state
       ?+  sign-arvo  (on-arvo:def wire sign-arvo)
         [%e %bound *]  `state
-        [%f *]  (handle-build:lsp wire +.sign-arvo)
+        [%c *]  (handle-build:lsp wire +.sign-arvo)
       ==
     [cards this]
   ::
@@ -192,13 +192,10 @@
   ^-  (quip card _state)
   ~&  >  %lsp-shutdown
   :_  *state-zero
-  %-  zing
   %+  turn
     ~(tap in ~(key by builds))
   |=  uri=@t
-  :+  [%pass /ford/[uri] %arvo %f %kill ~]
-  [%pass /ford/[uri]/deps %arvo %f %kill ~]
-  ~
+  [%pass /ford/[uri] %arvo %c %warp our.bow %home ~]
 ::
 ++  handle-did-close
   |=  [uri=@t version=(unit @)]
@@ -210,10 +207,7 @@
   =.  builds
     (~(del by builds) uri)
   :_  state
-  :~
-    [%pass /ford/[uri] %arvo %f %kill ~]
-    [%pass /ford/[uri]/deps %arvo %f %kill ~]
-  ==
+  [%pass /ford/[uri] %arvo %c %warp our.bow %home ~]~
 ::
 ++  handle-did-save
   |=  [uri=@t version=(unit @)]
@@ -240,43 +234,25 @@
   `state
 ::
 ++  handle-build
-  |=  [=path =gift:able:ford]
+  |=  [=path =gift:able:clay]
   ^-  (quip card _state)
-  ?.  ?=([%made *] gift)
-    [~ state]
-  ?.  ?=([%complete *] result.gift)
-    [~ state]
+  ?>  ?=([%writ *] gift)
   =/  uri=@t
     (snag 1 path)
-  =/  =build-result:ford
-    build-result.result.gift
-  ?+  build-result  [~ state]
-        ::
-      [%success %plan *]
-    =.  preludes
-      (~(put by preludes) uri -:vase.build-result)
+  =;  res=(quip card _state)
+    [(snoc -.res (build-file | uri path)) +.res]
+  ?~  p.gift
     [~ state]
-        ::
-      [%success %core *]
-    =.  builds
-      (~(put by builds) uri vase.build-result)
-    =.  ford-diagnostics
-      (~(del by ford-diagnostics) uri)
-    :_  state
-    (give-rpc-notification (get-diagnostics uri))
-        ::
-      [%error *]
-    =/  error-ranges=(list =range:lsp-sur)
-      (get-errors-from-tang:build uri message.build-result)
-    ?~  error-ranges
-      [~ state]
-    =.  ford-diagnostics
-      %+  ~(put by ford-diagnostics)
-        uri
-      [i.error-ranges 1 'Build Error']~
-    :_  state
-    (give-rpc-notification (get-diagnostics uri))
-  ==
+  =.  builds
+    (~(put by builds) uri q.r.u.p.gift)
+  =.  ford-diagnostics
+    (~(del by ford-diagnostics) uri)
+  =+  .^(=open:clay %cs /(scot %p our.bow)/home/(scot %da now.bow)/open)
+  =/  =type  -:(open (uri-to-path:build uri))
+  =.  preludes
+    (~(put by preludes) uri type)
+  :_  state
+  (give-rpc-notification (get-diagnostics uri))
 ::
 ++  get-diagnostics
   |=  uri=@t
@@ -287,20 +263,14 @@
     (~(gut by ford-diagnostics) uri ~)
   (get-parser-diagnostics uri)
 ::
-++  get-build-deps
-  |=  [=path buf=wall]
-  ^-  schematic:ford
-  =/  parse=(like scaffold:ford)
-    %+  (lsp-parser [byk.bow path])  [1 1]
-    (zing (join "\0a" buf))
-  =/  =scaffold:ford
-    ?~  q.parse  *scaffold:ford
-    p.u.q.parse
-  :*  %plan
-    [[our.bow %home] (flop path)]
-    *coin
-    scaffold(sources `(list hoon)`~[[%cnts ~[[%& 1]] ~]])
-  ==
+++  build-file
+  |=  [eager=? uri=@t =path]
+  ^-  card
+  =/  =rave:clay
+    ?:  eager
+      [%sing %a da+now.bow path]
+    [%next %a da+now.bow path]
+  [%pass /ford/[uri] %arvo %c %warp our.bow %home `rave]
 ::
 ++  handle-did-open
   |=  item=text-document-item:lsp-sur
@@ -311,18 +281,10 @@
     (~(put by bufs) uri.item buf)
   =/  =path
     (uri-to-path:build uri.item)
-  =/  =schematic:ford
-    [%core [our.bow %home] (flop path)]
-  =/  dep-schematic=schematic:ford
-    (get-build-deps path buf)
   :_  state
   %+  weld
     (give-rpc-notification (get-diagnostics uri.item))
-  ^-  (list card)
-  :~
-    [%pass /ford/[uri.item] %arvo %f %build live=%.y schematic]
-    [%pass /ford/[uri.item]/deps %arvo %f %build live=%.y dep-schematic]
-  ==
+  [(build-file & uri.item path) ~]
 ::
 ++  get-parser-diagnostics
   |=  uri=@t
@@ -330,7 +292,7 @@
   =/  t=tape
     (zing (join "\0a" `wall`(~(got by bufs) uri)))
   =/  parse
-    (lily:auto t (lsp-parser *beam))
+    (lily:auto t (lsp-parser (uri-to-path:build uri)))
   ?.  ?=(%| -.parse)
     ~
   =/  loc=position:lsp-sur

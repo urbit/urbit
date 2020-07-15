@@ -43,6 +43,7 @@
 ::
 =,  mimes:html
 |_  {hed/marl tal/marl}
+++  grad  %mime
 ::
 ++  grow                                                ::  convert to
   |%
