@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Spinner } from '../../../../components/Spinner';
 import { GroupView } from '../../../../components/Group';
-import { deSig, uxToHex } from '../../../../lib/util';
-
+import { deSig, uxToHex, writeText } from '../../../../lib/util';
 
 export class GroupDetail extends Component {
   constructor(props) {
@@ -174,7 +173,7 @@ export class GroupDetail extends Component {
   renderSettings() {
     const { props } = this;
 
-    const { group, association } = props; 
+    const { group, association } = props;
 
     const groupOwner = (deSig(props.match.params.ship) === window.ship);
 
@@ -186,11 +185,39 @@ export class GroupDetail extends Component {
       { description: 'Janitor', tag: 'janitor', addDescription: 'Make Janitor' }
     ];
 
+    let shortcode = <div />;
+
+    if (group?.policy?.open) {
+      shortcode = <div className="mt4">
+        <p className="f9 mt4 lh-copy">Share</p>
+        <p className="f9 gray2 mb2">Share a shortcode to join this group</p>
+        <div className="relative w-100 flex"
+          style={{ maxWidth: '29rem' }}
+        >
+          <input
+            className="f8 mono ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
+            disabled={true}
+            value={props.path.substr(6)}
+          />
+          <span className="lh-solid f8 pointer absolute pa3 inter"
+            style={{ right: 12, top: 1 }}
+            ref="copy"
+            onClick={() => {
+              writeText(props.path.substr(6));
+              this.refs.copy.innerText = 'Copied';
+            }}
+          >
+            Copy
+              </span>
+        </div>
+      </div>;
+    }
     return (
       <div className="pa4 w-100 h-100 white-d overflow-y-auto">
         <div className="f8 f9-m f9-l f9-xl w-100">
           <Link to={'/~groups/detail' + props.path}>{'⟵ Channels'}</Link>
         </div>
+        {shortcode}
       { group && <GroupView permissions className="mt6" resourcePath={props.path} group={group} tags={tags} api={props.api} /> }
         <div className={(groupOwner) ? '' : 'o-30'}>
           <p className="f9 mt3 lh-copy">Rename</p>
