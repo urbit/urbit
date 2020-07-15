@@ -702,7 +702,7 @@
       ==
     ~
   ::  /ax/protocol/version           @
-  ::  /ax/peers                      (map ship ?(%alien known))
+  ::  /ax/peers                      (map ship ?(%alien %known))
   ::  /ax/peers/[ship]               ship-state
   ::  /ax/peers/[ship]/forward-lane  (unit lane)
   ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
@@ -727,21 +727,19 @@
       ~  ``noun+!>(u.peer)
     ::
         [%forward-lane ~]
-      ::TODO  (list lane) instead?
-      ::TODO  refactor wrt +send-blob to share routing logic
       ::  find lane for u.who, or their galaxy
       ::
       :^  ~  ~  %noun
-      !>  ^-  (unit lane)
+      !>  ^-  (list lane)
       =/  ship-state  (~(get by peers.ames-state) u.who)
       ?.  ?=([~ %known *] ship-state)
         ~
       =/  peer-state  +.u.ship-state
       ?.  =(~ route.peer-state)  ::NOTE  avoid tmi
-        `lane:(need route.peer-state)
-      |-  ^-  (unit lane)
+        [lane:(need route.peer-state)]~
+      |-  ^-  (list lane)
       ?:  ?=(%czar (clan:title sponsor.peer-state))
-        `[%& sponsor.peer-state]
+        [%& sponsor.peer-state]~
       =/  next  (~(get by peers.ames-state) sponsor.peer-state)
       ?.  ?=([~ %known *] next)
         ~
