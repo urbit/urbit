@@ -72,8 +72,15 @@ if(urbitrc.URL) {
     ...devServer, 
     index: '',
     proxy: {
-      context: () => true,
-      target: urbitrc.URL
+      '/~landscape/js/index.js': {
+        target: 'http://localhost:9000',
+        pathRewrite: (req, path) => '/index.js'
+      },
+      '**': {
+        target: urbitrc.URL,
+        // ensure proxy doesn't timeout channels
+        proxyTimeout: 0
+      }
     }
   }
 }

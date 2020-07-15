@@ -154,5 +154,5 @@ class App extends React.Component {
   }
 }
 
-export default hot(App);
+export default process.env.NODE_ENV === 'production' ? App : hot(App);
 
