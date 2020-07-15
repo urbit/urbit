@@ -223,7 +223,28 @@
   ==
 ::
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+++  on-peek   
+  |=  =path
+  ^-  (unit (unit cage))
+  |^
+  ?+  path  (on-peek:def path)
+    [%x %clay %base %hash ~]  ``hash+!>(base-hash)
+  ==
+  ::  stolen from +trouble
+  ::  TODO: move to a lib?
+  ++  base-hash
+    ^-  @uv
+    =+  .^  ota=(unit [=ship =desk =aeon:clay])
+            %gx  /(scot %p our.bowl)/hood/(scot %da now.bowl)/kiln/ota/noun
+        ==
+    ?~  ota
+      *@uv
+    =/  parent  (scot %p ship.u.ota)
+    =+  .^(=cass:clay %cs /[parent]/[desk.u.ota]/1/late/foo)
+    %^  end  3  3
+    .^(@uv %cz /[parent]/[desk.u.ota]/(scot %ud ud.cass))
+  --
+  
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 --
