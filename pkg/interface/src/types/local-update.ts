@@ -2,7 +2,8 @@ import { Path } from './noun';
 
 export type LocalUpdate =
   LocalUpdateSidebarToggle
-| LocalUpdateSelectedGroups;
+| LocalUpdateSelectedGroups
+| LocalUpdateBaseHash;
 
 interface LocalUpdateSidebarToggle {
   sidebarToggle: boolean;
@@ -10,6 +11,10 @@ interface LocalUpdateSidebarToggle {
 
 interface LocalUpdateSelectedGroups {
   selected: SelectedGroup[];
+}
+
+interface LocalUpdateBaseHash {
+  baseHash: string;
 }
 
 export type SelectedGroup = [Path, string];

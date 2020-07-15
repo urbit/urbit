@@ -61,6 +61,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     this.subscription.start();
+    this.api.local.getBaseHash();
   }
 
   render() {
@@ -69,6 +70,7 @@ export default class App extends React.Component {
     const associations = this.state.associations ? this.state.associations : { contacts: {} };
     const selectedGroups = this.state.selectedGroups ? this.state.selectedGroups : [];
     const { state } = this;
+    const baseHash = this.state.baseHash;
 
     return (
       <ThemeProvider theme={light}>
@@ -77,6 +79,7 @@ export default class App extends React.Component {
             <StatusBarWithRouter props={this.props}
             associations={associations}
             invites={this.state.invites}
+            baseHash={baseHash}
             api={this.api}
             />
             <Content>
