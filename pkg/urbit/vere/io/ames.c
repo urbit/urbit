@@ -84,8 +84,6 @@ typedef struct _u3_panc u3_panc;
     u3_body  bod_u;                     //  body
   };
 
-//TODO  keep linked list in u3_ames for garbage collection, cancelling on-exit
-
 /* _ames_alloc(): libuv buffer allocator.
 */
 static void
@@ -608,7 +606,7 @@ _ames_put_packet(u3_ames* sam_u,
                  u3_noun  lan)
 {
   u3_noun wir = u3nc(c3__ames, u3_nul);
-  u3_noun cad = u3nt(c3__hear, u3nc(c3n, lan), msg);  // trnasfer, unchanged
+  u3_noun cad = u3nt(c3__hear, u3nc(c3n, lan), msg);
 
   u3_auto_peer(
     u3_auto_plan(&sam_u->car_u,
@@ -624,7 +622,7 @@ static void
 _ames_forward(u3_panc* pac_u, u3_noun lan)
 {
   pac_u->sam_u->fow_d++;
-  if ( 0 == (pac_u->sam_u->fow_d % 1000) ) {
+  if ( 0 == (pac_u->sam_u->fow_d % 10000) ) {
     u3l_log("ames: forwarded %" PRIu64 " total\n", pac_u->sam_u->fow_d);
   }
 
