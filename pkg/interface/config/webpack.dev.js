@@ -60,6 +60,25 @@ class UrbitShipPlugin {
   }
 }
 
+let devServer = {
+  contentBase: path.join(__dirname, '../dist'),
+  hot: true,
+  port: 9000,
+  historyApiFallback: true
+}
+
+if(urbitrc.URL) {
+  devServer = {
+    ...devServer, 
+    index: '',
+    proxy: {
+      context: () => true,
+      target: urbitrc.URL
+    }
+  }
+}
+
+
 module.exports = {
   mode: 'development',
   entry: {
@@ -76,7 +95,8 @@ module.exports = {
             plugins: [
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
-              '@babel/plugin-proposal-class-properties'
+              '@babel/plugin-proposal-class-properties',
+              'react-hot-loader/babel'
             ]
           }
         },
@@ -99,12 +119,7 @@ module.exports = {
     extensions: ['.js', '.ts', '.tsx']
   },
   devtool: 'inline-source-map',
-  devServer: {
-    contentBase: path.join(__dirname, '../dist'),
-    hot: true,
-    port: 9000,
-    historyApiFallback: true
-  },
+  devServer: devServer,
   plugins: [
     new UrbitShipPlugin(urbitrc)
     // new CleanWebpackPlugin(),

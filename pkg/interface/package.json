@@ -46,6 +46,7 @@
     "eslint-plugin-react": "^7.19.0",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.2.0",
+    "react-hot-loader": "^4.12.21",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "webpack": "^4.43.0",
