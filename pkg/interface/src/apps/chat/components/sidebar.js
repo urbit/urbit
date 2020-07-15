@@ -1,40 +1,17 @@
 import React, { Component } from 'react';
-import _ from 'lodash';
 
 import Welcome from './lib/welcome';
 import { alphabetiseAssociations } from '../../../lib/util';
 import { SidebarInvite } from './lib/sidebar-invite';
 import { GroupItem } from './lib/group-item';
-import { ShipSearchInput } from './lib/ship-search';
 
 export class Sidebar extends Component {
-  constructor() {
-    super();
-    this.state = {
-      dmOverlay: false
-    };
-  }
-
   onClickNew() {
     this.props.history.push('/~chat/new');
   }
 
-  onClickDm() {
-    this.setState(({ dmOverlay }) => ({ dmOverlay: !dmOverlay }) );
-  }
-
-  onClickJoin() {
-    this.props.history.push('/~chat/join');
-  }
-
-  goDm(ship) {
-    this.setState({ dmOverlay: false }, () => {
-      this.props.history.push(`/~chat/new/dm/~${ship}`);
-    });
-  }
-
   render() {
-    const { props, state } = this;
+    const { props } = this;
 
     const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
@@ -60,12 +37,12 @@ export class Sidebar extends Component {
           groupedChannels[path] = [box];
         }
       } else {
-        if (groupedChannels['/~/']) {
-          const array = groupedChannels['/~/'];
+        if (groupedChannels['dm']) {
+          const array = groupedChannels['dm'];
           array.push(box);
-          groupedChannels['/~/'] = array;
+          groupedChannels['dm'] = array;
         } else {
-          groupedChannels['/~/'] = [box];
+          groupedChannels['dm'] = [box];
         }
       }
     });
@@ -109,29 +86,21 @@ export class Sidebar extends Component {
           />
         );
       });
-      if (groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
+      if (groupedChannels['dm'] && groupedChannels['dm'].length !== 0) {
         groupedItems.push(
           <GroupItem
-            association={'/~/'}
+            association={'dm'}
             chatMetadata={chatAssoc}
-            channels={groupedChannels['/~/']}
+            channels={groupedChannels['dm']}
             inbox={props.inbox}
             station={props.station}
             unreads={props.unreads}
-            index={'/~/'}
-            key={'/~/'}
+            index={'dm'}
+            key={'dm'}
             {...props}
           />
         );
       }
-    const candidates = state.dmOverlay
-          ? _.chain(this.props.contacts)
-               .values()
-               .map(_.keys)
-               .flatten()
-               .uniq()
-               .value()
-          : [];
 
     return (
       <div
@@ -143,33 +112,7 @@ export class Sidebar extends Component {
             className="dib f9 pointer green2 gray4-d mr4"
             onClick={this.onClickNew.bind(this)}
           >
-            New Chat
-          </a>
-
-          <div className="dib relative mr4">
-            { state.dmOverlay && (
-              <ShipSearchInput
-                className="absolute"
-                contacts={{}}
-                candidates={candidates}
-                onSelect={this.goDm.bind(this)}
-                onClear={this.onClickDm.bind(this)}
-
-              />
-            )}
-          <a
-            className="f9 pointer green2 gray4-d"
-            onClick={this.onClickDm.bind(this)}
-          >
-            DM
-          </a>
-          </div>
-
-          <a
-            className="dib f9 pointer gray4-d"
-            onClick={this.onClickJoin.bind(this)}
-          >
-            Join Chat
+            New Group Chat
           </a>
         </div>
         <div className="overflow-y-auto h-100">

@@ -147,7 +147,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
         />
         <Route
           exact
-          path="/~chat/new/dm/:ship"
+          path="/~chat/new/dm/:ship?"
           render={(props) => {
             const ship = props.match.params.ship;
 
