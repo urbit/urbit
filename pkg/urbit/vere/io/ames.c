@@ -616,18 +616,26 @@ _ames_put_packet(u3_ames* sam_u,
   _ames_cap_queue(sam_u);
 }
 
-/*  _ames_forward(): forward pac_u onto lan, then free pac_u
+/*  _ames_forward(): forward pac_u onto the (list lane) las, then free pac_u
 */
 static void
-_ames_forward(u3_panc* pac_u, u3_noun lan)
+_ames_forward(u3_panc* pac_u, u3_noun las)
 {
   pac_u->sam_u->fow_d++;
   if ( 0 == (pac_u->sam_u->fow_d % 10000) ) {
     u3l_log("ames: forwarded %" PRIu64 " total\n", pac_u->sam_u->fow_d);
   }
 
+  {
+    u3_noun pac = _ames_serialize_packet(pac_u, c3y);
+    while (u3_nul != las) {
+      _ames_ef_send(pac_u->sam_u, u3h(las), u3k(pac));
+      las = u3t(las);
+    }
+    u3z(pac);
+  }
+
   pac_u->sam_u->foq_d--;
-  _ames_ef_send(pac_u->sam_u, lan, _ames_serialize_packet(pac_u, c3y));
   _ames_panc_free(pac_u);
 }
 
@@ -637,11 +645,11 @@ static void
 _ames_lane_scry_cb(void* vod_p, u3_noun nun)
 {
   u3_panc* pac_u = vod_p;
-  u3_weak  lan = u3r_at(15, nun);  //TODO  why [~ %noun ~ lane]
+  u3_weak  las = u3r_at(15, nun);  //TODO  why [~ %noun ~ lane]
 
   //  if scry fails, remember we can't scry, and just inject the packet
   //
-  if (u3_none == lan) {
+  if (u3_none == las) {
     pac_u->sam_u->foq_d--;
     u3l_log("ames: giving up scry\n");
     pac_u->sam_u->see_o = c3n;
@@ -652,8 +660,8 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
   }
   //  if there is a lane, forward the packet on it
   //
-  else if (u3_nul != lan) {
-    _ames_forward(pac_u, u3k(u3t(lan)));
+  else if (u3_nul != las) {
+    _ames_forward(pac_u, u3k(las));
   }
   //  if there is no lane, drop the packet
 
@@ -788,7 +796,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
           //
           if ( (c3y == u3a_is_cat(rec))
             && (256 > rec) ) {
-            _ames_forward(pac_u, u3nc(c3y, u3k(rec)));
+            _ames_forward(pac_u, u3nc(u3nc(c3y, u3k(rec)), u3_nul));
           }
           //  otherwise, if there's space in the queue, scry the lane out of ames
           //
