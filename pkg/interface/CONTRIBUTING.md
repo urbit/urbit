@@ -88,6 +88,23 @@ hygiene][contributing].
 [contributing]: /CONTRIBUTING.md#git-practice [arvo]: /pkg/arvo
 [interface]:/pkg/interface
 
+### Webpack Dev Server
+
+If you are only intending to test the JS on one ship, then you may use the
+webpack dev server to allow for HMR. To do this, uncomment the `URL` property
+in your urbitrc and replace it with the URL of the urbit that you are testing
+on. e.g.
+
+```javascript
+module.exports = {
+  URL: 'http://localhost:80'
+}
+```
+
+and then run `npm run start` as usual. You can then access a hot reloaded
+version of the interface at `http://localhost:9000`. Note that this also works
+for non-locally hosted ships.
+
 ## Linting
 
 The Urbit interface uses Eslint to lint the JavaScript code. To install the
