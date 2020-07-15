@@ -124,6 +124,7 @@ export class InviteSearch extends Component<
 
   search(event) {
     const searchTerm = event.target.value.toLowerCase().replace('~', '');
+    const { state, props } = this;
 
     this.setState({ searchValue: event.target.value });
 
@@ -132,26 +133,26 @@ export class InviteSearch extends Component<
     }
 
     if (searchTerm.length > 0) {
-      if (this.state.inviteError === true) {
+      if (state.inviteError === true) {
         this.setState({ inviteError: false });
       }
 
-      let groupMatches = !this.props.groupResults ? [] :
-        this.state.groups.filter((e) => {
+      let groupMatches = !props.groupResults ? [] :
+        state.groups.filter((e) => {
           return (
             e[0].includes(searchTerm) || e[1].toLowerCase().includes(searchTerm)
           );
         });
 
-      let shipMatches = !this.props.shipResults ? []  :
-         this.state.peers.filter((e) => {
+      let shipMatches = !props.shipResults ? []  :
+         state.peers.filter((e) => {
           return (
-            e.includes(searchTerm) && !this.props.invites.ships.includes(e)
+            e.includes(searchTerm) && !props.invites.ships.includes(e)
           );
         });
 
-        for (const contact of this.state.contacts.keys()) {
-          const thisContact = this.state.contacts.get(contact) || [];
+        for (const contact of state.contacts.keys()) {
+          const thisContact = state.contacts.get(contact) || [];
           const match = thisContact.filter((e) => {
             return e.toLowerCase().includes(searchTerm);
           });
@@ -167,11 +168,11 @@ export class InviteSearch extends Component<
           isValid = false;
         }
 
-        if (isValid && shipMatches.findIndex((s) => s === searchTerm) < 0) {
+        if (props.shipResults && isValid && shipMatches.findIndex((s) => s === searchTerm) < 0) {
           shipMatches.unshift(searchTerm);
         }
 
-      const { selected } = this.state;
+      const { selected } = state;
       const groupIdx = groupMatches.findIndex(([path]) => path === selected);
       const shipIdx = shipMatches.findIndex((ship) => ship === selected);
       const staleSelection = groupIdx < 0 && shipIdx < 0;
