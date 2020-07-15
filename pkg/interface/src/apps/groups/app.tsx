@@ -104,8 +104,10 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               );
             }}
           />
-          <Route exact path="/~groups/join"
+        <Route exact path="/~groups/join/:ship?/:name?"
             render={(props) => {
+              const ship = props.match.params.ship || '';
+              const name = props.match.params.name || '';
               return (
                 <Skeleton
                   history={props.history}
@@ -122,6 +124,8 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
                     groups={groups}
                     contacts={contacts}
                     api={api}
+                    ship={ship}
+                    name={name}
                   />
                 </Skeleton>
               );

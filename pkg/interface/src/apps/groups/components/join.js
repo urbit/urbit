@@ -20,7 +20,7 @@ export class JoinScreen extends Component {
   componentDidMount() {
     // direct join from incoming URL
     if ((this.props.ship) && (this.props.name)) {
-      const incomingGroup = `/${this.props.ship}/${this.props.notebook}`;
+      const incomingGroup = `${this.props.ship}/${this.props.name}`;
       this.setState({ group: incomingGroup }, () => {
         this.onClickJoin();
       });
@@ -117,7 +117,7 @@ export class JoinScreen extends Component {
             onClick={this.onClickJoin.bind(this)}
             className={joinClasses}
           >Join Group</button>
-          <Spinner awaiting={this.state.awaiting} classes="mt4" text={this.state.text} />
+          <Spinner awaiting={this.state.awaiting} classes="mt4" text="Joining group..." />
         </div>
       </div>
     );
