@@ -366,14 +366,20 @@
   ?>  ?=(^ full-file.client-response)
   (pure:m q.data.u.full-file.client-response)
 ::
-++  fetch-json
+++  fetch-cord
   |=  url=tape
-  =/  m  (strand ,json)
+  =/  m  (strand ,cord)
   ^-  form:m
   =/  =request:http  [%'GET' (crip url) ~ ~]
   ;<  ~                      bind:m  (send-request request)
   ;<  =client-response:iris  bind:m  take-client-response
-  ;<  =cord                  bind:m  (extract-body client-response)
+  (extract-body client-response)
+::
+++  fetch-json
+  |=  url=tape
+  =/  m  (strand ,json)
+  ^-  form:m
+  ;<  =cord  bind:m  (fetch-cord url)
   =/  json=(unit json)  (de-json:html cord)
   ?~  json
     (strand-fail %json-parse-error ~)
