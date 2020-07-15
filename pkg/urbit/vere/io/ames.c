@@ -386,7 +386,7 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
                    | (hed_u->mug_l << 3)
                    | (hed_u->sac_y << 23)
                    | (hed_u->rac_y << 25)
-                   | (hed_u->enc_o << 26);
+                   | (hed_u->enc_o << 27);
 
     memcpy(pac_y, &hed_w, 4);
 
@@ -714,7 +714,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       hed_u.mug_l = (hed_w >> 3) & ((1 << 20) - 1);
       hed_u.sac_y = (hed_w >> 23) & 0x3;
       hed_u.rac_y = (hed_w >> 25) & 0x3;
-      hed_u.enc_o = (hed_w >> 26) & 0x1;
+      hed_u.enc_o = (hed_w >> 27) & 0x1;
     }
 
     //  ensure the mug is valid
