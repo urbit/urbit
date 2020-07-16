@@ -645,7 +645,7 @@ static void
 _ames_lane_scry_cb(void* vod_p, u3_noun nun)
 {
   u3_panc* pac_u = vod_p;
-  u3_weak  las = u3r_at(15, nun);  //TODO  why [~ %noun ~ lane]
+  u3_weak  las = u3r_at(7, nun);
 
   //  if scry fails, remember we can't scry, and just inject the packet
   //
@@ -1065,7 +1065,7 @@ static void
 _ames_prot_scry_cb(void* vod_p, u3_noun nun)
 {
   u3_ames* sam_u = vod_p;
-  u3_weak  ver   = u3r_at(15, nun);  //TODO  nun is [~ %noun ~ x] now?
+  u3_weak  ver   = u3r_at(7, nun);
 
   if (u3_none == ver) {
     //  assume protocol version 0
