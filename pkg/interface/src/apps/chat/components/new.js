@@ -146,7 +146,7 @@ export class NewScreen extends Component {
       if (state.groups.length > 0) {
         groupPath = state.groups[0];
       }
-      const submit = props.api.chatView.create(
+      const submit = props.api.chat.create(
         state.title,
         state.description,
         appPath,

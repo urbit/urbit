@@ -9,6 +9,11 @@
 =,  sole
 |_  sole-action
 ::
+++  grad  %noun
+++  grow
+  |%
+  ++  noun  +<.grad
+  --
 ++  grab                                                ::  convert from
   |%
   ++  json

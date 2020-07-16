@@ -84,7 +84,7 @@ export class S3Upload extends Component {
                  accept="image/*"
                  onChange={this.onChange.bind(this)} />
           <img className="invert-d"
-               src="/~groups/img/ImageUpload.png"
+               src="/~landscape/img/ImageUpload.png"
                width="32"
                height="32"
                onClick={this.onClick.bind(this)} />

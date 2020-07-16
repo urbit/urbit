@@ -100,14 +100,22 @@
   |=  pax=path
   ^-  (unit invitatory)
   =.  pax
-    ;:(weld /=invite-store/(scot %da now.bowl)/invitatory pax /noun)
+    ;:  weld
+      /(scot %p our.bowl)/invite-store/(scot %da now.bowl)/invitatory
+      pax
+      /noun
+    ==
   .^((unit invitatory) %gx pax)
 ::
 ++  invite-scry
   |=  [pax=path uid=serial]
   ^-  (unit invite)
   =.  pax
-    ;:(weld /=invite-store/(scot %da now.bowl)/invite pax /(scot %uv uid)/noun)
+    ;:  weld
+      /(scot %p our.bowl)/invite-store/(scot %da now.bowl)/invite
+      pax
+      /(scot %uv uid)/noun
+    ==
   .^((unit invite) %gx pax)
 --
 

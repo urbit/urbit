@@ -12,15 +12,34 @@
   $~  [*thread-form ~]
   [=thread-form kid=(map tid trie)]
 ::
-+$  trying  ?(%find %build %none)
++$  trying  ?(%build %none)
 +$  state
   $:  starting=(map yarn [=trying =vase])
       running=trie
       tid=(map tid yarn)
   ==
 ::
++$  clean-slate-any
+  $^  clean-slate-ket
+  $%  clean-slate-sig
+      clean-slate
+  ==
+::
 +$  clean-slate
-  $:  starting=(map yarn [=trying =vase])
+  $:  %1
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+  ==
+::
++$  clean-slate-ket
+  $:  starting=(map yarn [trying=?(%build %find %none) =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+  ==
+::
++$  clean-slate-sig
+  $:  starting=~
       running=(list yarn)
       tid=(map tid yarn)
   ==
@@ -87,9 +106,10 @@
   ==
 ::
 ++  tap-yarn
-  =|  =yarn
   |=  =trie
-  ^-  (list [=^yarn =thread-form])
+  %-  flop  ::  preorder
+  =|  =yarn
+  |-  ^-  (list [=^yarn =thread-form])
   %+  welp
     ?~  yarn
       ~
@@ -116,12 +136,17 @@
   ++  on-init   on-init:def
   ++  on-save   clean-state:sc
   ++  on-load
+    |^
     |=  old-state=vase
-    =+  !<(=clean-slate old-state)
-    =.  tid.state  tid.clean-slate
+    =+  !<(any=clean-slate-any old-state)
+    =?  any  ?=(^ -.any)  (old-to-1 any)
+    =?  any  ?=(~ -.any)  (old-to-1 any)
+    ?>  ?=(%1 -.any)
+    ::
+    =.  tid.state  tid.any
     =/  yarns=(list yarn)
-      %+  welp  running.clean-slate
-      ~(tap in ~(key by starting.clean-slate))
+      %+  welp  running.any
+      ~(tap in ~(key by starting.any))
     |-  ^-  (quip card _this)
     ?~  yarns
       `this
@@ -130,10 +155,18 @@
     =^  cards-2  this
       $(yarns t.yarns)
     [(weld cards-1 cards-2) this]
+    ::
+    ++  old-to-1
+      |=  old=clean-slate-ket
+      ^-  clean-slate
+      1+old(starting (~(run by starting.old) |=([* v=vase] none+v)))
+    --
   ::
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?:  ?=(%spider-kill mark)
+      (on-load on-save)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         %spider-input  (on-poke-input:sc !<(input vase))
@@ -182,7 +215,6 @@
     =^  cards  state
       ?+  wire  (on-arvo:def wire sign-arvo)
         [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
-        [%find @ ~]    (handle-find:sc i.t.wire sign-arvo)
         [%build @ ~]   (handle-build:sc i.t.wire sign-arvo)
       ==
     [cards this]
@@ -243,33 +275,15 @@
     ~|  [%already-starting yarn]
     !!
   ::
-  =:  starting.state  (~(put by starting.state) yarn [%find vase])
+  =:  starting.state  (~(put by starting.state) yarn [%build vase])
       tid.state       (~(put by tid.state) new-tid yarn)
     ==
+  =/  pax=path
+    ~|  no-file-for-thread+file
+    (need (get-fit:clay [our q.byk da+now]:bowl %ted file))
   =/  =card
-    =/  =schematic:ford  [%path [our.bowl %home] %ted file]
-    [%pass /find/[new-tid] %arvo %f %build live=%.n schematic]
-  [[card ~] state]
-::
-++  handle-find
-  |=  [=tid =sign-arvo]
-  ^-  (quip card ^state)
-  =/  =yarn  (~(got by tid.state) tid)
-  =.  starting.state
-    (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
-  ?>  ?=([%f %made *] sign-arvo)
-  ?:  ?=(%incomplete -.result.sign-arvo)
-    (thread-fail-not-running tid %find-thread-incomplete tang.result.sign-arvo)
-  =/  =build-result:ford  build-result.result.sign-arvo
-  ?:  ?=(%error -.build-result)
-    (thread-fail-not-running tid %find-thread-error message.build-result)
-  ?.  ?=([%path *] +.build-result)
-    (thread-fail-not-running tid %find-thread-strange ~)
-  =.  starting.state
-    (~(jab by starting.state) yarn |=([=trying =vase] [%build vase]))
-  =/  =card
-    =/  =schematic:ford  [%core rail.build-result]
-    [%pass /build/[tid] %arvo %f %build live=%.n schematic]
+    :+  %pass  /build/[new-tid]
+    [%arvo %c %warp our.bowl %home ~ %sing %a da+now.bowl pax]
   [[card ~] state]
 ::
 ++  handle-build
@@ -278,16 +292,14 @@
   =/  =yarn  (~(got by tid.state) tid)
   =.  starting.state
     (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
-  ?>  ?=([%f %made *] sign-arvo)
-  ?:  ?=(%incomplete -.result.sign-arvo)
-    (thread-fail-not-running tid %build-thread-incomplete tang.result.sign-arvo)
-  =/  =build-result:ford  build-result.result.sign-arvo
-  ?:  ?=(%error -.build-result)
-    (thread-fail-not-running tid %build-thread-error message.build-result)
-  =/  =cage  (result-to-cage:ford build-result)
-  ?.  ?=(%noun p.cage)
-    (thread-fail-not-running tid %build-thread-strange >p.cage< ~)
-  =/  maybe-thread  (mule |.(!<(thread q.cage)))
+  ~|  sign+[- +<]:sign-arvo
+  ?>  ?=([?(%b %c) %writ *] sign-arvo)
+  =/  =riot:clay  p.sign-arvo
+  ?~  riot
+    (thread-fail-not-running tid %build-thread-error *tang)
+  ?.  ?=(%vase p.r.u.riot)
+    (thread-fail-not-running tid %build-thread-strange >[p q]:u.riot< ~)
+  =/  maybe-thread  (mule |.(!<(thread !<(vase q.r.u.riot))))
   ?:  ?=(%| -.maybe-thread)
     (thread-fail-not-running tid %thread-not-thread ~)
   (start-thread yarn p.maybe-thread)
@@ -368,15 +380,13 @@
 ::
 ++  thread-fail-not-running
   |=  [=tid =term =tang]
+  ^-  (quip card ^state)
   =/  =yarn  (~(got by tid.state) tid)
   :_  state(starting (~(del by starting.state) yarn))
-  %-  welp  :_  (thread-say-fail tid term tang)
-  =/  =trying  trying:(~(got by starting.state) yarn)
-  ?-  trying
-    %find   [%pass /find/[tid] %arvo %f %kill ~]~
-    %build  [%pass /build/[tid] %arvo %f %kill ~]~
-    %none   ~
-  ==
+  =/  moz  (thread-say-fail tid term tang)
+  ?.  ?=([~ %build *] (~(get by starting.state) yarn))
+    moz
+  :_(moz [%pass /build/[tid] %arvo %c %warp our.bowl %home ~])
 ::
 ++  thread-say-fail
   |=  [=tid =term =tang]
@@ -388,7 +398,7 @@
 ++  thread-fail
   |=  [=yarn =term =tang]
   ^-  (quip card ^state)
-  %-  (slog leaf+"strand {<yarn>} failed" leaf+<term> tang)
+  ::  %-  (slog leaf+"strand {<yarn>} failed" leaf+<term> tang)
   =/  =tid  (yarn-to-tid yarn)
   =/  fail-cards  (thread-say-fail tid term tang)
   =^  cards  state  (thread-clean yarn)
@@ -464,5 +474,5 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  state(running (turn (tap-yarn running.state) head))
+  1+state(running (turn (tap-yarn running.state) head))
 --

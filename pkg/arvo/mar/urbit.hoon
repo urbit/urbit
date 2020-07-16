@@ -9,4 +9,9 @@
   |%
   ++  noun  @p
   --
+++  grow
+  |%
+  ++  noun  her
+  --
+++  grad  %noun
 --

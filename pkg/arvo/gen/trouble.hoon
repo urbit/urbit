@@ -7,8 +7,9 @@
 :-  %noun
 =<
 :~
-  [%base-hash .^(@uv %cz (pathify ~.base ~))]
+  [%base-hash base-hash]
   [%home-hash .^(@uv %cz (pathify ~.home ~))]
+  [%kids-hash .^(@uv %cz (pathify ~.kids ~))]
   ::
   (info %our our)
   (info %sponsor sponsor)
@@ -40,4 +41,14 @@
       life=lyfe
       rift=ryft
   ==
+::
+++  base-hash
+  =+  .^  ota=(unit [=ship =desk =aeon:clay])
+          %gx  /(scot %p our)/hood/(scot %da now)/kiln/ota/noun
+      ==
+  ?~  ota
+    *@uv
+  =/  parent  (scot %p ship.u.ota)
+  =+  .^(=cass:clay %cs /[parent]/[desk.u.ota]/1/late/foo)
+  .^(@uv %cz /[parent]/[desk.u.ota]/(scot %ud ud.cass))
 --

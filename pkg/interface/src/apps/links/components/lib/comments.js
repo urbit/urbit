@@ -16,7 +16,7 @@ export class Comments extends Component {
         this.props.comments.local[page]
     ) {
       this.setState({ requested: this.props.commentPage });
-      this.props.api.getCommentsPage(
+      this.props.api.links.getCommentsPage(
         this.props.resourcePath,
         this.props.url,
         this.props.commentPage);

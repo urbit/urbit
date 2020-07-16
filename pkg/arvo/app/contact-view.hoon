@@ -1,14 +1,15 @@
 ::  contact-view: sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *group-store,
-    *group-hook,
-    *invite-store,
-    *contact-hook,
-    *metadata-store,
-    *metadata-hook,
-    *permission-group-hook,
-    *permission-hook
+/-  *group-store
+/-  *group-hook
+/-  *invite-store
+/-  *contact-hook
+/-  *metadata-store
+/-  *metadata-hook
+/-  *permission-group-hook
+/-  *permission-hook
+::
 /+  *server, *contact-json, default-agent, dbug
 |%
 +$  versioned-state
@@ -256,11 +257,16 @@
 ::
 ++  all-scry
   ^-  rolodex
-  .^(rolodex %gx /=contact-store/(scot %da now.bol)/all/noun)
+  .^(rolodex %gx /(scot %p our.bol)/contact-store/(scot %da now.bol)/all/noun)
 ::
 ++  contact-scry
   |=  pax=path
   ^-  (unit contact)
-  =.  pax  ;:(weld /=contact-store/(scot %da now.bol)/contact pax /noun)
+  =.  pax
+    ;:  weld
+      /(scot %p our.bol)/contact-store/(scot %da now.bol)/contact
+      pax
+      /noun
+    ==
   .^((unit contact) %gx pax)
 --

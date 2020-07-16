@@ -1,7 +1,7 @@
 ::  link-view: encapsulating link management
 ::
 |%
-++  view-action
+++  action
   $%  ::  %create: create a new link collection
       ::
       ::    with specified metadata and group. %ships creates a new group,
