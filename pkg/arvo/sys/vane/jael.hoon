@@ -1202,6 +1202,12 @@
       %turf
     ?.  ?=(~ tyl)  [~ ~]
     [~ ~ %noun !>(tuf.own.pki.lex)]
+  ::
+      %ships-with-deeds
+    ?.  ?=(~ tyl)  [~ ~]
+    :^  ~  ~  %noun  !>
+    ^-  (set @p)
+    ~(key by pos.zim.pki.lex)
   ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve
