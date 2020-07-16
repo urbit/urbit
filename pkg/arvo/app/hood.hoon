@@ -42,7 +42,6 @@
 ++  on-leave  on-leave:def
 ++  on-peek
   |=  =path
-  ~&  peeking=path
   ^-  (unit (unit cage))
   ?+  path  (on-peek:def path)
     [* %kiln *]  (on-peek:kiln-core path)
