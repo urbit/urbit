@@ -24,6 +24,7 @@ export default class LaunchApp extends React.Component {
     const { props } = this;
 
     return (
+      <div className="h-100 flex flex-column h-100">
       <div className='v-mid ph2 dtc-m dtc-l dtc-xl flex justify-between flex-wrap' style={{ maxWidth: '40rem' }}>
         <Welcome firstTime={props.launch.firstTime} api={props.api} />
         <Tiles
@@ -34,6 +35,8 @@ export default class LaunchApp extends React.Component {
           weather={props.weather}
         />
       </div>
+      <div className="gray2-d gray2 ml4 mb4 f8"> {props.baseHash} </div>
+    </div>
     );
   }
 }

@@ -61,6 +61,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     this.subscription.start();
+    this.api.local.getBaseHash();
   }
 
   render() {
