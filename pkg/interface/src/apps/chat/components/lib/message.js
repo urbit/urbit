@@ -4,6 +4,43 @@ import { uxToHex, cite, writeText } from '../../../../lib/util';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { darcula, atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
+export class CodeBlock extends Component {
+  static defaultProps = {
+    language: 'markdown',
+  }
+
+  constructor() {
+    super();
+    const scheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    this.state = {
+      scheme
+    };
+  }
+
+  componentDidMount() {
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    darkModeMediaQuery.addListener((event) => {
+      const scheme = event.matches ? 'dark' : 'light';
+      if (scheme !== this.state.scheme) {
+        this.setState({ scheme });
+      }
+    });
+  }
+
+  render() {
+    const { language, value } = this.props;
+    const style = this.state.scheme === 'dark' ? darcula : atomOneLight;
+    return (
+      <SyntaxHighlighter language={language} style={style}>
+        {value}
+      </SyntaxHighlighter>
+    );
+  }
+}
+
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -28,6 +65,7 @@ const DISABLED_INLINE_TOKENS = [
 const MessageMarkdown = React.memo(
   props => (<ReactMarkdown
               {...props}
+              renderers={{code: CodeBlock}}
               plugins={[[RemarkDisableTokenizers, { block: DISABLED_BLOCK_TOKENS, inline: DISABLED_INLINE_TOKENS }]]}
             />));
 
