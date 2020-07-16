@@ -22,26 +22,6 @@ class UrbitShipPlugin {
       'UrbitShipPlugin',
       async (compilation) => {
         const src = path.resolve(compiler.options.output.path, 'index.js');
-
-        return Promise.all(this.piers.map((pier) => {
-          const landscapeHtml = path.resolve(pier, 'app/landscape/index.html');
-          fs.readFile(landscapeHtml, 'utf8', (err, data) => {
-            if (err) {
-              return console.log(err);
-            }
-            const result = data.replace('/~landscape/js/index.js', 'http://localhost:9000/index.js');
-
-            if (data === result) {
-              return;
-            }
-
-            fs.writeFile(landscapeHtml, result, 'utf8', (err) => {
-              if (err) {
-                return console.log(err);
-              }
-            });
-          });
-        }));
         // uncomment to copy into all piers
         //
         // return Promise.all(this.piers.map(pier => {
@@ -65,11 +45,11 @@ let devServer = {
   hot: true,
   port: 9000,
   historyApiFallback: true
-}
+};
 
 if(urbitrc.URL) {
   devServer = {
-    ...devServer, 
+    ...devServer,
     index: '',
     proxy: {
       '/~landscape/js/index.js': {
@@ -82,9 +62,8 @@ if(urbitrc.URL) {
         proxyTimeout: 0
       }
     }
-  }
+  };
 }
-
 
 module.exports = {
   mode: 'development',
