@@ -35,7 +35,7 @@ export default class LaunchApp extends React.Component {
           weather={props.weather}
         />
       </div>
-      <div className="gray2-d gray2 ml4 mb4 f8"> {props.baseHash} </div>
+      <div className="absolute bottom-0 left-0 f9 gray2 ml4 mb4 f8"> {props.baseHash} </div>
     </div>
     );
   }
