@@ -65,6 +65,10 @@ export class GroupItem extends Component {
       );
     });
 
+    if (channelItems.length === 0) {
+      channelItems.push(<p className="gray2 mt4 f9 tc">No direct messages</p>);
+    }
+
     let dmLink = <div />;
 
     if (props.index === 'dm') {

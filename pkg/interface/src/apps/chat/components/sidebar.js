@@ -86,21 +86,20 @@ export class Sidebar extends Component {
           />
         );
       });
-      if (groupedChannels['dm'] && groupedChannels['dm'].length !== 0) {
-        groupedItems.push(
-          <GroupItem
-            association={'dm'}
-            chatMetadata={chatAssoc}
-            channels={groupedChannels['dm']}
-            inbox={props.inbox}
-            station={props.station}
-            unreads={props.unreads}
-            index={'dm'}
-            key={'dm'}
-            {...props}
-          />
-        );
-      }
+      // add direct messages after groups
+      groupedItems.push(
+        <GroupItem
+          association={'dm'}
+          chatMetadata={chatAssoc}
+          channels={groupedChannels['dm']}
+          inbox={props.inbox}
+          station={props.station}
+          unreads={props.unreads}
+          index={'dm'}
+          key={'dm'}
+          {...props}
+        />
+      );
 
     return (
       <div
