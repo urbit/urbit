@@ -34,7 +34,6 @@ import GlobalApi from './api/global';
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
-  line-height: ${p => p.theme.lineHeights.regular};
   height: 100%;
   width: 100%;
   padding: 0;
