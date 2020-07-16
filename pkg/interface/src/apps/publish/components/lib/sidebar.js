@@ -123,9 +123,6 @@ export class Sidebar extends Component {
           <Link to="/~publish/new" className="green2 pa4 f9 dib">
             New Notebook
           </Link>
-          <Link to="/~publish/join" className="f9 gray2">
-            Join Notebook
-          </Link>
         </div>
         <div className="overflow-y-auto pb1"
         style={{ height: 'calc(100% - 82px)' }}

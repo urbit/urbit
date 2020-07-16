@@ -18,21 +18,31 @@ export class JoinScreen extends Component {
   }
 
   componentDidMount() {
-    // direct join from incoming URL
-    if ((this.props.ship) && (this.props.name)) {
-      const incomingGroup = `/${this.props.ship}/${this.props.notebook}`;
+    this.componentDidUpdate();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { props, state } = this;
+    // autojoin by URL, waits for group information
+    if ((props.ship && props.name) &&
+    (prevProps && (prevProps.groups !== props.groups))) {
+      console.log('autojoining');
+      const incomingGroup = `${props.ship}/${props.name}`;
+      // push to group if already exists
+      if (`/ship/${incomingGroup}` in props.groups) {
+        this.props.history.push(`/~groups/ship/${incomingGroup}`);
+        return;
+      }
       this.setState({ group: incomingGroup }, () => {
         this.onClickJoin();
       });
     }
-  }
-
-  componentDidUpdate() {
-    if (this.props.groups) {
-      if (this.state.awaiting) {
-        const group = `/ship/${this.state.group}`;
-        if (group in this.props.groups) {
-          this.props.history.push(`/~groups${group}`);
+    // once we've joined, push to group page
+    if (props.groups) {
+      if (state.awaiting) {
+        const group = `/ship/${state.group}`;
+        if (group in props.groups) {
+          props.history.push(`/~groups${group}`);
         }
       }
     }
@@ -41,6 +51,7 @@ export class JoinScreen extends Component {
 
   onClickJoin() {
     const { props, state } = this;
+    console.log('i am joining');
 
     const { group } = state;
     const [ship, name] = group.split('/');
@@ -117,7 +128,7 @@ export class JoinScreen extends Component {
             onClick={this.onClickJoin.bind(this)}
             className={joinClasses}
           >Join Group</button>
-          <Spinner awaiting={this.state.awaiting} classes="mt4" text={this.state.text} />
+          <Spinner awaiting={this.state.awaiting} classes="mt4" text="Joining group..." />
         </div>
       </div>
     );

@@ -23,8 +23,7 @@ export class JoinScreen extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
 
-    if ((props.autoJoin !== '/undefined/undefined' &&
-      props.autoJoin !== '/~/undefined/undefined') &&
+    if ((props.autoJoin !== '/undefined/undefined') &&
       (props.api && (prevProps?.api !== props.api))) {
       let station = props.autoJoin.split('/');
 
