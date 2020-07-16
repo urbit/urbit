@@ -791,7 +791,7 @@ u3_serf_play(u3_serf* sef_u, c3_d eve_d, u3_noun lit)
 u3_noun
 u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
 {
-  u3_noun wen, pat, gon, pro;
+  u3_noun wen, pat, pro;
 
   //  stash the previous date and set current
   //
@@ -805,30 +805,38 @@ u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
     u3A->now = u3k(now);
   }
 
-  //  XX incomplete interface, should pass [lyc] as well
-  //
-  gon = u3m_soft(mil_w, u3v_peek, u3k(pat));
 
-  //  read succeeded, produce result
-  //
-  if ( u3_blip == u3h(gon) ) {
-    if ( u3_nul == gon ) {
-      pro = u3nc(c3__done, u3_nul);
+  {
+    u3_noun tag, dat;
+
+    //  XX incomplete interface, should pass [lyc] as well
+    //
+    u3_noun gon = u3m_soft(mil_w, u3v_peek, u3k(pat));
+    u3x_cell(gon, &tag, &dat);
+
+    //  read succeeded, produce result
+    //
+    if ( u3_blip == tag ) {
+      if ( u3_nul == dat ) {
+        pro = u3nc(c3__done, u3_nul);
+      }
+      else {
+        //  prepend the %noun mark
+        //
+        //    XX incomplete interface, should recv mark from arvo
+        //
+        pro = u3nq(c3__done, u3_nul, c3__noun, u3k(u3t(dat)));
+      }
+
+      u3z(gon);
     }
+    //  read failed, produce trace
+    //
+    //    NB, reads should *not* fail deterministically
+    //
     else {
-      //  prepend the %noun mark
-      //
-      //    XX incomplete interface, should recv mark from arvo
-      //
-      pro = u3nq(c3__done, u3_nul, c3__noun, u3k(u3t(gon)));
+      pro = u3nc(c3__bail, gon);
     }
-  }
-  //  read failed, produce trace
-  //
-  //    NB, reads should *not* fail deterministically
-  //
-  else {
-    pro = u3nc(c3__bail, u3k(gon));
   }
 
   //  restore the previous date
@@ -838,7 +846,6 @@ u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
   u3z(u3A->now);
   u3A->now = wen;
 
-  u3z(gon);
   u3z(sam);
   return u3nc(c3__peek, pro);
 }
