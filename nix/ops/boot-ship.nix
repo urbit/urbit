@@ -10,9 +10,10 @@ let
   tlon  = import ../pkgs { inherit pkgs; };
   arvo  = tlon.arvo;
   urbit = tlon.urbit;
+  herb = tlon.herb;
 
 in
 
 import ./fakeship {
-  inherit pkgs tlon deps arvo pill ship debug;
+  inherit pkgs arvo pill ship herb urbit;
 }
