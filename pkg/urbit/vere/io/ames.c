@@ -744,11 +744,16 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       c3_d rec_d[2];
       u3r_chubs(0, 2, rec_d, rec);
 
+      //  if we are the recipient, simply let it pass the filter
+      //
+      if ( (rec_d[0] == sam_u->pir_u->who_d[0])
+        && (rec_d[1] == sam_u->pir_u->who_d[1]) )
+      {
+        u3z(sen); u3z(rec);
+      }
       //  if we are not the recipient, attempt to forward statelessly
       //
-      if ( (rec_d[0] != sam_u->pir_u->who_d[0])
-        || (rec_d[1] != sam_u->pir_u->who_d[1]) )
-      {
+      else {
         pas_o = c3n;
 
         //  if the queue is full, and we can't forward synchronously,
