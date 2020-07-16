@@ -66,9 +66,6 @@ const StatusBar = (props) => {
         }
          <p className="dib f9 v-mid inter ml2 white-d">{locationName}</p>
       </div>
-    <div className="tr gray2-d gray2 mr4 f9">
-    { props.baseHash }
-    </div>
     </div>
   );
 };
