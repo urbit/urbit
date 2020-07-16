@@ -15,7 +15,7 @@ export class GroupItem extends Component {
     }
 
     const channels = props.channels ? props.channels : [];
-    const first = (props.index === 0) ? 'mt1 ' : 'mt4 ';
+    const first = (props.index === 0) ? 'mt1 ' : 'mt6 ';
 
     const channelItems = channels.sort((a, b) => {
       if (props.index === 'dm') {
@@ -82,7 +82,7 @@ export class GroupItem extends Component {
     }
     return (
       <div className={first + 'relative'}>
-      <p className="f9 ph4 fw6 pb2 gray3">{title}</p>
+      <p className="f9 ph4 gray3">{title}</p>
         {dmLink}
         {channelItems}
       </div>
