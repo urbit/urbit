@@ -104,6 +104,13 @@
   =.  +<+.$.abet  old
   ..abet
 ::
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?.  ?=([%x %kiln %ota ~] path)
+    [~ ~]
+  ``noun+!>(ota)
+::
 ++  poke-commit
   |=  [mon/kiln-commit auto=?]
   =<  abet
@@ -342,7 +349,7 @@
         "OTAs disabled"
       "OTAs from {<desk.u.ota>} on {<ship.u.ota>}"
   ?:  =(0 ~(wyt by syn))
-    [%leaf "no syncs configured"]~
+    [%leaf "no other syncs configured"]~
   %+  turn  ~(tap in ~(key by syn))
   |=(a/kiln-sync (render "sync configured" [sud her syd]:a))
 ::

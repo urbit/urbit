@@ -39,7 +39,13 @@
   [d this]
 ::
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+++  on-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+  path  (on-peek:def path)
+    [* %kiln *]  (on-peek:kiln-core path)
+  ==
+::
 ++  on-save   !>(state)
 ++  on-load
   |=  =old-state=vase

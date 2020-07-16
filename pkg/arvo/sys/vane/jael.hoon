@@ -869,9 +869,17 @@
               ?=(%rift -.a-diff)
               (gth to.a-diff rift.point)
           ==
-        %+  public-keys-give
-          (subscribers-on-ship who)
-        [%breach who]
+        =.  ..feel
+          %+  public-keys-give
+            (subscribers-on-ship who)
+          [%breach who]
+        =/  sor  (~(get by sources-reverse) %& who)
+        ?~  sor
+          ..feel
+        ::  delay resubscribing because Ames is going to clear any
+        ::  messages we send now.
+        ::
+        (emit hen %pass /breach/(scot %ud u.sor) %b %wait now)
       ::
       =.  point
         ?-  -.a-diff

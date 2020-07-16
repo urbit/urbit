@@ -16,6 +16,7 @@ export interface StoreState {
   // local state
   sidebarShown: boolean;
   selectedGroups: SelectedGroup[];
+  baseHash: string | null;
   // invite state
   invites: Invites;
   // metadata state
