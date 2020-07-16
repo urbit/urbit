@@ -38,6 +38,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       pendingMessages: new Map(),
       chatInitialized: false,
       sidebarShown: true,
+      baseHash: null,
       invites: {},
       associations: {
         chat: {},

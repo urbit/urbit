@@ -74,6 +74,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
       unreads[stat] = Boolean(unread);
       if (
         unread &&
+        stat in associations.chat &&
         (selectedGroups.length === 0 ||
           selectedGroups
             .map((e) => {

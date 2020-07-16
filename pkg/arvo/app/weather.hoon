@@ -42,8 +42,10 @@
     ?.  ?=([%all ~] wire)  (on-watch:def wire)
     =/  jon
       %-  pairs:enjs:format
-      :~  [%weather data]
-          [%location s+location]
+      :*  ['location' s+location]
+        ::
+          ?.  ?=([%o *] data)  ~
+          ~(tap by p.data)
       ==
     :_  this
     [%give %fact ~ %json !>(jon)]~
