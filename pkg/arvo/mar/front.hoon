@@ -7,8 +7,10 @@
   ::
 |_  all/(map knot cord)
 ::
+++  grad  %noun
 ++  grow                                                ::  convert to
   |%
+  ++  noun  all
   ++  json
     :-  %o
     %-  ~(run by all)

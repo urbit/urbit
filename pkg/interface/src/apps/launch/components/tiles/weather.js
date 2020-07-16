@@ -37,7 +37,7 @@ export default class WeatherTile extends React.Component {
       this.setState({ latlng }, (err) => {
       console.log(err);
       }, { maximumAge: Infinity, timeout: 10000 });
-      this.props.api.weather(latlng);
+      this.props.api.launch.weather(latlng);
       this.setState({ manualEntry: !this.state.manualEntry });
     } else {
       this.setState({ error: true });

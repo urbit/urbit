@@ -35,7 +35,7 @@ export class Links extends Component {
          !this.props.links[linkPage] || // don't have info?
          this.props.links.local[linkPage] // waiting on post confirmation?
     ) {
-      this.props.api?.getPage(this.props.resourcePath, this.props.page);
+      this.props.api?.links.getPage(this.props.resourcePath, this.props.page);
     }
   }
 

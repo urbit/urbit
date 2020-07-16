@@ -42,7 +42,7 @@ export class AddScreen extends Component {
       },
       awaiting: true
     }, () => {
-      const submit = props.api.group.add(props.path, aud);
+      const submit = props.api.groups.add(props.path, aud);
       submit.then(() => {
         this.setState({ awaiting: false });
         props.history.push('/~groups' + props.path);

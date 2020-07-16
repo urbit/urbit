@@ -45,7 +45,7 @@ export class JoinScreen extends Component {
       this.setState({
         station,
         awaiting: true
-      }, () => props.api.chatView.join(ship, station, true));
+      }, () => props.api.chat.join(ship, station, true));
     }
 
     if (state.station in props.inbox ||
@@ -78,7 +78,7 @@ export class JoinScreen extends Component {
       station,
       awaiting: true
     }, () => {
-      props.api.chatView.join(ship, station, true);
+      props.api.chat.join(ship, station, true);
     });
   }
 

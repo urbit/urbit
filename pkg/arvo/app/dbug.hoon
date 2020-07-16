@@ -360,12 +360,13 @@
     :-  %a
     %+  turn
       %+  sort  ~(tap by sessions:auth-state:v-eyre)
-      |=  [[@uv a=@da] [@uv b=@da]]
-      (gth a b)
+      |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
+      (gth expiry-time.a expiry-time.b)
     |=  [cookie=@uv session:eyre]
     %-  pairs
     :~  'cookie'^s+(end 3 4 (rsh 3 2 (scot %x (shax cookie))))
         'expiry'^(time expiry-time)
+        'channels'^(numb ~(wyt in channels))
     ==
   ::
     ::  /eyre/channels.json

@@ -489,20 +489,6 @@
         %private-keys
       (curd abet:~(private-keys ~(feed su hen our now pki etn) hen))
     ::
-        %wegh
-      %_    +>
-          moz
-        :_  moz
-        ^-  move
-        :^  hen  %give  %mass
-        ^-  mass
-        :+  %jael  %|
-        :~  pki+&+pki
-            etn+&+etn
-            dot+&+lex
-        ==
-      ==
-    ::
     ::  authenticated remote request
     ::    {$west p/ship q/path r/*}
     ::
@@ -883,9 +869,17 @@
               ?=(%rift -.a-diff)
               (gth to.a-diff rift.point)
           ==
-        %+  public-keys-give
-          (subscribers-on-ship who)
-        [%breach who]
+        =.  ..feel
+          %+  public-keys-give
+            (subscribers-on-ship who)
+          [%breach who]
+        =/  sor  (~(get by sources-reverse) %& who)
+        ?~  sor
+          ..feel
+        ::  delay resubscribing because Ames is going to clear any
+        ::  messages we send now.
+        ::
+        (emit hen %pass /breach/(scot %ud u.sor) %b %wait now)
       ::
       =.  point
         ?-  -.a-diff
@@ -1023,6 +1017,12 @@
   ::
   ?.  =(lot [%$ %da now])  ~
   ?.  =(%$ ren)  [~ ~]
+  ?:  =(tyl /whey)
+    =/  maz=(list mass)
+      :~  pki+&+pki.lex
+          etn+&+etn.lex
+      ==
+    ``mass+!>(maz)
   ?+    syd
       ~
   ::

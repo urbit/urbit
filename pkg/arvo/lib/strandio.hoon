@@ -26,6 +26,12 @@
   |=  tin=strand-input:strand
   `[%done bowl.tin]
 ::
+++  get-beak
+  =/  m  (strand ,beak)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  `[%done [our q.byk da+now]:bowl.tin]
+::
 ++  get-time
   =/  m  (strand ,@da)
   ^-  form:m
@@ -380,6 +386,93 @@
   ;<  ~  bind:m  (send-request (hiss-to-request:html hiss))
   take-maybe-sigh
 ::
+::  +build-fail: build the source file at the specified $beam
+::
+++  build-file
+  |=  [[=ship =desk =case] =spur]
+  =*  arg  +<
+  =/  m  (strand ,vase)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %a case (flop spur))
+  ?~  riot
+    (strand-fail %build-file >arg< ~)
+  ?>  =(%vase p.r.u.riot)
+  (pure:m !<(vase q.r.u.riot))
+::  +build-mark: build a mark definition to a $dais
+::
+++  build-mark
+  |=  [[=ship =desk =case] mak=mark]
+  =*  arg  +<
+  =/  m  (strand ,dais:clay)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %b case /[mak])
+  ?~  riot
+    (strand-fail %build-mark >arg< ~)
+  ?>  =(%dais p.r.u.riot)
+  (pure:m !<(dais:clay q.r.u.riot))
+::  +build-cast: build a mark conversion gate ($tube)
+::
+++  build-cast
+  |=  [[=ship =desk =case] =mars:clay]
+  =*  arg  +<
+  =/  m  (strand ,tube:clay)
+  ^-  form:m
+  ;<  =riot:clay  bind:m
+    (warp ship desk ~ %sing %c case /[a.mars]/[b.mars])
+  ?~  riot
+    (strand-fail %build-cast >arg< ~)
+  ?>  =(%tube p.r.u.riot)
+  (pure:m !<(tube:clay q.r.u.riot))
+::
+::  Read from Clay
+::
+++  warp
+  |=  [=ship =riff:clay]
+  =/  m  (strand ,riot:clay)
+  ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %c %warp ship riff)
+  (take-writ /warp)
+::
+++  read-file
+  |=  [[=ship =desk =case:clay] =spur]
+  =*  arg  +<
+  =/  m  (strand ,cage)
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case (flop spur))
+  ?~  riot
+    (strand-fail %read-file >arg< ~)
+  (pure:m r.u.riot)
+::
+++  check-for-file
+  |=  [[=ship =desk =case:clay] =spur]
+  =/  m  (strand ,?)
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case (flop spur))
+  (pure:m ?=(^ riot))
+::
+++  list-tree
+  |=  [[=ship =desk =case:clay] =spur]
+  =*  arg  +<
+  =/  m  (strand ,(list path))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %t case (flop spur))
+  ?~  riot
+    (strand-fail %list-tree >arg< ~)
+  (pure:m !<((list path) q.r.u.riot))
+::
+::  Take Clay read result
+::
+++  take-writ
+  |=  =wire
+  =/  m  (strand ,riot:clay)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+      [~ %sign * ?(%b %c) %writ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done +>.sign-arvo.u.in.tin]
+  ==
+::
 ::  Queue on skip, try next on fail %ignore
 ::
 ++  main-loop
@@ -486,6 +579,12 @@
     (pure:m ~)
   ;<  ~  bind:m  (flog-text i.wall)
   loop(wall t.wall)
+::
+++  trace
+  |=  =tang
+  =/  m  (strand ,~)
+  ^-  form:m
+  (pure:m ((slog tang) ~))
 ::
 ++  app-message
   |=  [app=term =cord =tang]

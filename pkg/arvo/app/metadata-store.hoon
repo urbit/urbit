@@ -61,9 +61,27 @@
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
-      ?:  ?=(%metadata-action mark)
+      ?+  mark  (on-poke:def mark vase)
+          %metadata-action
         (poke-metadata-action:mc !<(metadata-action vase))
-      (on-poke:def mark vase)
+          %noun
+        =/  val=(each [%cleanup path] tang)
+          (mule |.(!<([%cleanup path] vase)))
+        ?.  ?=(%& -.val)
+          (on-poke:def mark vase)
+        =/  group=path  +.p.val
+        =/  res=(set resource)  (~(get ju group-indices) group)
+        =.  group-indices  (~(del by group-indices) group)
+        :-  ~
+        %+  roll  ~(tap in res)
+        |=  [r=resource out=_state]
+        =.  resource-indices.out  (~(del by resource-indices.out) r)
+        =.  app-indices.out
+          %-  ~(del ju app-indices.out)
+          [app-name.r group app-path.r]
+        =.  associations.out  (~(del by associations.out) group r)
+        out
+      ==
     [cards this]
   ::
   ++  on-watch

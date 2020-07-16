@@ -1,6 +1,7 @@
 /-  verb
 =,  dejs:format
 |_  =event:verb
+++  grad  %noun
 ++  grab
   |%
   ++  noun  event:verb
