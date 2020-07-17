@@ -10,6 +10,7 @@ import { GroupUpdate } from "./group-update";
 import { PermissionUpdate } from "./permission-update";
 import { LaunchUpdate, WeatherState } from "./launch-update";
 import { LinkListenUpdate } from './link-listen-update';
+import { ConnectionStatus } from "./connection";
 
 interface MarksToTypes {
   readonly json: any;
@@ -28,6 +29,7 @@ interface MarksToTypes {
   readonly 'local': LocalUpdate;
   readonly 'weather': WeatherState | {};
   readonly 'location': string;
+  readonly 'connection': ConnectionStatus;
 }
 
 export type Cage = Partial<MarksToTypes>;
