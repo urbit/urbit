@@ -1,7 +1,7 @@
 /-  glob
 /+  default-agent, verb, dbug
 |%
-++  hash   0v4.jhi39.ns412.vhlmi.i1b1h.56kvu
+++  hash  0v5.8ftoc.8afop.f4kkn.r4kil.lk95a
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
 +$  all-states
   $%  state-0
@@ -9,10 +9,15 @@
 +$  card  card:agent:gall
 --
 |%
-++  wait
-  |=  [=path now=@da time=@dr]
+++  wait-timeout
+  |=  [=path now=@da]
   ^-  card
-  [%pass [%timer path] %arvo %b %wait (add now time)]
+  [%pass [%timer path] %arvo %b %wait (add now ~m30)]
+::
+++  wait-start
+  |=  now=@da
+  ^-  card
+  [%pass /start %arvo %b %wait now]
 ::
 ++  poke-file-server
   |=  [our=@p =cage]
@@ -36,6 +41,7 @@
 --
 =|  state=state-0
 =.  hash.state  hash
+=/  serve-path=path  /'~landscape'/js/index
 ^-  agent:gall
 %+  verb  |
 %-  agent:dbug
@@ -45,15 +51,8 @@
     def  ~(. (default-agent this %|) bowl)
 ++  on-init
   ^-  (quip card _this)
-  =/  new-tid=@ta  (cat 3 'glob--' (scot %uv eny.bowl))
-  =/  args  [~ `new-tid %glob !>([hash.state ~])]
-  :_  this(glob.state `[%| new-tid])
-  =/  action  !>([%unserve-dir /'~glob'])
-  :~  (poke-file-server our.bowl %file-server-action action)
-      (wait /[new-tid] now.bowl ~s15)
-      (watch-spider /(scot %uv hash.state) our.bowl /thread-result/[new-tid])
-      (poke-spider /(scot %uv hash.state) our.bowl %spider-start !>(args))
-  ==
+  ::  delay through timer to make sure %spider has started
+  [[(wait-start now.bowl) ~] this]
 ::
 ++  on-save   !>(state)
 ++  on-load
@@ -79,9 +78,22 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ?:  =(%kick q.vase)
-    (on-load !>(state(hash *@uv)))
-  (on-poke:def mark vase)
+  ?+    mark  (on-poke:def mark vase)
+      %glob-make
+    :_  this
+    =/  home=path  /(scot %p our.bowl)/home/(scot %da now.bowl)
+    =+  .^(=tube:clay %cc (weld home /js/mime))
+    =+  .^(js=@t %cx (weld home /app/landscape/js/index/js))
+    =+  !<(=mime (tube !>(js)))
+    =/  =glob:glob  (~(put by *glob:glob) /js mime)
+    =/  =path  /(cat 3 'glob-' (scot %uv (sham glob)))/glob
+    [%pass /make %agent [our.bowl %hood] %poke %drum-put !>([path (jam glob)])]~
+  ::
+      %noun
+    ?:  =(%kick q.vase)
+      (on-load !>(state(hash *@uv)))
+    (on-poke:def mark vase)
+  ==
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
@@ -90,6 +102,8 @@
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?:  ?=([%serving @ ~] wire)
+    (on-agent:def wire sign)
+  ?:  ?=([%make ~] wire)
     (on-agent:def wire sign)
   ?.  ?=([%running @ ~] wire)
     %-  (slog leaf+"glob: strange on-agent! {<wire -.sign>}" ~)
@@ -134,13 +148,23 @@
         ==
       :_  this(glob.state `[%& glob])  :_  ~
       %+  poke-file-server  our.bowl
-      [%file-server-action !>([%serve-glob /'~glob' glob %|])]
+      [%file-server-action !>([%serve-glob serve-path glob %&])]
     ==
   ==
 ::
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
+  ?:  ?=([%start ~] wire)
+    =/  new-tid=@ta  (cat 3 'glob--' (scot %uv eny.bowl))
+    =/  args  [~ `new-tid %glob !>([hash.state ~])]
+    =/  action  !>([%unserve-dir serve-path])
+    :_  this(glob.state `[%| new-tid])
+    :~  (poke-file-server our.bowl %file-server-action action)
+        (wait-timeout /[new-tid] now.bowl)
+        (watch-spider /(scot %uv hash.state) our.bowl /thread-result/[new-tid])
+        (poke-spider /(scot %uv hash.state) our.bowl %spider-start !>(args))
+    ==
   ?.  ?=([%timer @ ~] wire)
     %-  (slog leaf+"glob: strange on-arvo wire: {<wire [- +<]:sign-arvo>}" ~)
     `this
@@ -155,7 +179,7 @@
     `this
   ?^  error.sign-arvo
     %-  (slog leaf+"glob: timer handling failed; will retry" ~)
-    [[(wait t.wire now.bowl ~s15)]~ this]
+    [[(wait-timeout t.wire now.bowl)]~ this]
   %-  (slog leaf+"glob: timed out; retrying" ~)
   (on-load !>(state(hash *@uv)))
 ::

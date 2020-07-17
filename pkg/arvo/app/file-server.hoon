@@ -2,17 +2,13 @@
 /+  *server, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
-+$  versioned-state
-  $%  state-zero
-  ==
-::
 +$  serving  (map url-base=path [=content public=?])
 +$  content
   $%  [%clay =path]
       [%glob =glob:glob]
   ==
-+$  state-zero
-  $:  %0
++$  state-1
+  $:  %1
       =configuration:srv
       =serving
   ==
@@ -21,7 +17,7 @@
 %+  verb  |
 %-  agent:dbug
 ::
-=|  state-zero
+=|  state-1
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
@@ -53,7 +49,32 @@
 ++  on-load
   |=  old-vase=vase
   ^-  (quip card _this)
-  [~ this(state !<(state-zero old-vase))]
+  |^
+  =+  !<(old-state=versioned-state old-vase)
+  =?  old-state  ?=(%0 -.old-state)
+    %=    old-state
+        -  %1
+        serving-0
+      %-  ~(run by serving-0.old-state)
+      |=  [=clay=path public=?]
+      ^-  [content ?]
+      [[%clay clay-path] public]
+    ==
+  ?>  ?=(%1 -.old-state)
+  [~ this(state old-state)]
+  ::
+  +$  versioned-state
+    $%  state-1
+        state-0
+    ==
+  ::
+  +$  serving-0  (map url-base=path [=clay=path public=?])
+  +$  state-0
+    $:  %0
+        =configuration:srv
+        =serving-0
+    ==
+  --
 ::
 ++  on-poke
   |=  [=mark =vase]
