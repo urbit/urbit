@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 export class ResubscribeElement extends Component {
   onClickResubscribe() {
-    this.props.api.chatHook.addSynced(
+    this.props.api.chat.addSynced(
       this.props.host,
       this.props.station,
       true);

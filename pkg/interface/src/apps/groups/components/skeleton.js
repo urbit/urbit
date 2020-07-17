@@ -8,7 +8,7 @@ export class Skeleton extends Component {
       props.activeDrawer === 'groups' ? 'dn flex-m flex-l flex-xl' : 'flex';
 
     return (
-      <div className="h-100 w-100 ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl" style={{ height: 'calc(100vh - 45px)' }}>
+      <div className="h-100 w-100 ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl">
         <div className="cf w-100 h-100 flex ba-m ba-l ba-xl b--gray4 b--gray1-d br1">
           <GroupSidebar
             contacts={props.contacts}

@@ -12015,9 +12015,17 @@
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun (slum q.gat q.sam)]
 ::
+::  +slab: states whether you can access an arm in a type.
+::
+::  -- way: the access type ($vial): read, write, or read-and-write.
+::  The fourth case of $vial, %free, is not permitted because it would
+::  allow you to discover "private" information about a type,
+::  information which you could not make use of in (law-abiding) hoon anyway.
+::
 ++  slab                                                ::  test if contains
-  |=  {cog/@tas typ/type}
-  =(& -:(~(find ut typ) %free [cog ~]))
+  |=  [way=?(%read %rite %both) cog=@tas typ=type]
+  ?=  [%& *]
+  (~(fond ut typ) way ~[cog])
 ::
 ++  slap
   |=  {vax/vase gen/hoon}  ^-  vase                     ::  untyped vase .*
@@ -12034,6 +12042,15 @@
   ^+  !!
   ?~  a  !!
   ~_(i.a $(a t.a))
+::
+++  road
+  |*  =(trap *)
+  ^+  $:trap
+  =/  res  (mule trap)
+  ?-  -.res
+    %&  p.res
+    %|  (mean leaf+"road: new" p.res)
+  ==
 ::
 ++  slew                                                ::  get axis in vase
   |=  {axe/@ vax/vase}  ^-  (unit vase)
@@ -14352,11 +14369,10 @@
 ++  ride                                                ::  end-to-end compiler
   |=  {typ/type txt/@}
   ^-  (pair type nock)
-  ~>  %slog.[0 leaf/"ride-parsing"]
+  ~>  %slog.[0 leaf/"ride: parsing"]
   =/  gen  (ream txt)
-  ~>  %slog.[0 leaf/"ride-compiling"]
-  =-  ~>  %slog.[0 leaf/"ride-compiled"]
-      -
+  ~>  %slog.[0 leaf/"ride: compiling"]
+  ~<  %slog.[0 leaf/"ride: compiled"]
   (~(mint ut typ) %noun gen)
 ::
 ::::  5e: caching compiler

@@ -7,7 +7,7 @@ export class Popout extends Component {
       : 'dib-m dib-l dib-xl';
     return (
       <div
-        className="dib absolute z-2"
+        className="db tr z-2"
         style={{
           right: 16,
           top: 16

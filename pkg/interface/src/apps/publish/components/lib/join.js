@@ -18,16 +18,18 @@ export class JoinScreen extends Component {
   }
 
   componentDidMount() {
-    // direct join from incoming URL
-    if ((this.props.ship) && (this.props.notebook)) {
-      const incomingBook = `${this.props.ship}/${this.props.notebook}`;
-      this.setState({ book: incomingBook }, () => {
-        this.onClickJoin();
-      });
-    }
+    this.componentDidUpdate();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    if ((this.props.ship) && (this.props.notebook)) {
+      const incomingBook = `${this.props.ship}/${this.props.notebook}`;
+      if (this.props.api && (prevProps?.api !== this.props.api)) {
+        this.setState({ book: incomingBook }, () => {
+          this.onClickJoin();
+        });
+      }
+    }
     // redirect to notebook when we have it
     if (this.props.notebooks) {
       if (this.state.awaiting) {
@@ -93,7 +95,7 @@ export class JoinScreen extends Component {
 
     // TODO: askHistory setting
     this.setState({ disable: true });
-    this.props.api.action('publish','publish-action', actionData).catch((err) => {
+    this.props.api.publish.publishAction(actionData).catch((err) => {
       console.log(err);
     }).then(() => {
       this.setState({ awaiting: text });

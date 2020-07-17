@@ -8,8 +8,8 @@ export class History extends Component {
   render() {
     return (
       <div
-        className="relative flex flex-column-reverse overflow-container flex-auto"
-        style={{ height: 'calc(100% - 1rem)', resize: 'none' }}
+        className="h-100 relative flex flex-column-reverse overflow-container flex-auto"
+        style={{ resize: 'none' }}
       >
         <div style={{ marginTop: 'auto' }}>
           {this.props.commandLog.map((text, index) => {

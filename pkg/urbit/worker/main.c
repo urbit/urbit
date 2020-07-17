@@ -427,7 +427,7 @@ _worker_lame(u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
 {
   u3_noun rep;
   u3_noun wir, tag, cad;
-  c3_o pac_o = c3n;
+  c3_o rec_o = c3n;
   c3_d evt_d = u3V.sen_d;
 
   u3V.sen_d = u3V.dun_d;
@@ -467,16 +467,16 @@ _worker_lame(u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
                              u3nc(u3k(tag), u3k(cad))));
   }
 
-  pac_o = _(c3__meme == why);
+  //  reclaim memory on bail:meme?
+  //
+  rec_o = __(c3__meme == why);
 
   _worker_send_replace(evt_d, u3nc(now, rep));
 
   u3z(ovo); u3z(why); u3z(tan);
 
-  //  XX review, always pack on meme?
-  //
-  if ( c3y == pac_o ) {
-    _worker_pack();
+  if ( c3y == rec_o ) {
+    u3m_reclaim();
   }
 }
 
@@ -554,16 +554,13 @@ _worker_sure_feck(u3_noun ovo, u3_noun vir, c3_w pre_w)
 
     if ( (pre_w > low_w) && !(pos_w > low_w) ) {
       //  XX set flag(s) in u3V so we don't repeat endlessly?
-      //  XX pack here too?
       //
-      pac_o = c3y;
       rec_o = c3y;
       pri   = 1;
     }
     else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
       //  XX we should probably jam/cue our entire state at this point
       //
-      pac_o = c3y;
       rec_o = c3y;
       pri   = 0;
     }
@@ -1018,8 +1015,9 @@ main(c3_i argc, c3_c* argv[])
   c3_c*      dir_c = argv[1];
   c3_c*      key_c = argv[2];
   c3_c*      wag_c = argv[3];
+  c3_c*      hap_c = argv[4];
 
-  c3_assert(4 == argc);
+  c3_assert(5 == argc);
 
   memset(&u3V, 0, sizeof(u3V));
   memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
@@ -1038,6 +1036,7 @@ main(c3_i argc, c3_c* argv[])
   */
   {
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
+    sscanf(hap_c, "%" SCNu32, &u3_Host.ops_u.hap_w);
   }
 
   /* load pier directory

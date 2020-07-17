@@ -39,9 +39,16 @@
   ++  on-watch
     |=  =wire
     ^-  (quip card _this)
-    ?.  ?=([%weathertile ~] wire)  (on-watch:def wire)
+    ?.  ?=([%all ~] wire)  (on-watch:def wire)
+    =/  jon
+      %-  pairs:enjs:format
+      :*  ['location' s+location]
+        ::
+          ?.  ?=([%o *] data)  ~
+          ~(tap by p.data)
+      ==
     :_  this
-    [%give %fact ~ %json !>(data)]~
+    [%give %fact ~ %json !>(jon)]~
   ::
   ++  on-arvo
     |=  [=wire =sign-arvo]
@@ -74,14 +81,22 @@
   =/  str=@t  +.jon
   =/  req=request:http  (request-darksky str)
   =/  out  *outbound-config:iris
-  =/  lismov  [%pass /[(scot %da now.bol)] %arvo %i %request req out]~
+  =/  lismov=(list card)
+    [%pass /[(scot %da now.bol)] %arvo %i %request req out]~
   ?~  timer
-    :-  [[%pass /timer %arvo %b %wait (add now.bol ~h3)] lismov]
+    :-  %+  weld  lismov
+        ^-  (list card)
+        :~  [%pass /timer %arvo %b %wait (add now.bol ~h3)]
+            [%give %fact ~[/all] %json !>((frond:enjs:format %location jon))]
+        ==
     %=  state
       location  str
       timer    `(add now.bol ~h3)
     ==
-  [lismov state(location str)]
+  :_  state(location str)
+  %+  weld  lismov
+  ^-  (list card)
+  [%give %fact ~[/all] %json !>((frond:enjs:format %location jon))]~
 ::
 ++  request-darksky
   |=  location=@t
@@ -107,11 +122,17 @@
   ?>  ?=(%o -.u.ujon)
   ?:  (gth 200 status-code.response-header.response)
     [~ state]
-  =/  jon=json  %-  pairs:enjs:format  :~
-    currently+(~(got by p.u.ujon) 'currently')
-    daily+(~(got by p.u.ujon) 'daily')
-  ==
-  :-  [%give %fact ~[/weathertile] %json !>(jon)]~
+  =/  error  (~(get by p.u.ujon) 'error')
+  ?^  error
+    ~&  "fetching weather failed: {<u.error>}"
+    [~ state]
+  =/  jon=json
+    %+  frond:enjs:format  %weather
+    %-  pairs:enjs:format
+    :~  [%currently (~(got by p.u.ujon) 'currently')]
+        [%daily (~(got by p.u.ujon) 'daily')]
+    ==
+  :-  [%give %fact ~[/all] %json !>(jon)]~
   %=  state
     data  jon
     time  now.bol

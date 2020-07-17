@@ -387,7 +387,7 @@ export class ChatInput extends Component {
         </div>
         <div style={{ height: '16px', width: '16px', flexBasis: 16, marginTop: 10 }}>
           <img
-            style={{ filter: state.code && 'invert(100%)', height: '100%', width: '100%' }}
+            style={{ filter: state.code && 'invert(100%)', height: '14px', width: '14px' }}
             onClick={this.toggleCode}
             src="/~chat/img/CodeEval.png"
             className="contrast-10-d bg-white bg-none-d ba b--gray1-d br1"

@@ -1,5 +1,6 @@
 /-  *spider
 |_  stop=[=tid nice=?]
+++  grad  %noun
 ++  grab
   |%
   ++  noun  ,[=tid nice=?]

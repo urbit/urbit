@@ -34,7 +34,7 @@ export class InviteElement extends Component {
       success: true,
       members: []
     }, () => {
-      props.api.inviteToCollection(props.resourcePath, aud).then(() => {
+      props.api.links.inviteToCollection(props.resourcePath, aud).then(() => {
         this.setState({ awaiting: false });
       });
     });

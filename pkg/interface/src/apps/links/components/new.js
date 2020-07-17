@@ -119,7 +119,7 @@ export class NewScreen extends Component {
       ships: [],
       disabled: true
     }, () => {
-      const submit = props.api.createCollection(
+      const submit = props.api.links.createCollection(
         appPath,
         state.title,
         state.description,

@@ -139,7 +139,7 @@
         :*  (scot %p our.bowl)
             q.byk.bowl
             (scot %da now.bowl)
-            -.u.clay-path
+            (lowercase -.u.clay-path)
         ==
       ?.  .^(? %cu scry-path)  [not-found:gen %.n]
       =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
@@ -150,6 +150,17 @@
           [~ %css]   (css-response:gen file)
           [~ %png]   (png-response:gen file)
       ==
+    ::
+    ++  lowercase
+      |=  upper=(list @t)
+      %+  turn  upper
+      |=  word=@t
+      %-  crip
+      %+  turn  (rip 3 word)
+      |=  char=@t
+      ?.  &((gte char 'A') (lte char 'Z'))
+        char
+      (add char ^~((sub 'a' 'A')))
     ::
     ++  get-clay-path
       |=  pax=path
@@ -207,11 +218,33 @@
   ?+  +<.sign  (on-arvo:def wire sign)
       %bound
     ?:  accepted.sign  [~ this]
+    ~&  [dap.bowl %failed-to-bind path.binding.sign]
     [~ this(serving (~(del by serving) path.binding.sign))]
   ==
 ::
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+++  on-peek   
+  |=  =path
+  ^-  (unit (unit cage))
+  |^
+  ?+  path  (on-peek:def path)
+    [%x %clay %base %hash ~]  ``hash+!>(base-hash)
+  ==
+  ::  stolen from +trouble
+  ::  TODO: move to a lib?
+  ++  base-hash
+    ^-  @uv
+    =+  .^  ota=(unit [=ship =desk =aeon:clay])
+            %gx  /(scot %p our.bowl)/hood/(scot %da now.bowl)/kiln/ota/noun
+        ==
+    ?~  ota
+      *@uv
+    =/  parent  (scot %p ship.u.ota)
+    =+  .^(=cass:clay %cs /[parent]/[desk.u.ota]/1/late/foo)
+    %^  end  3  3
+    .^(@uv %cz /[parent]/[desk.u.ota]/(scot %ud ud.cass))
+  --
+  
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 --

@@ -49,7 +49,7 @@ export class Note extends Component {
     const { props } = this;
     if ((prevProps && prevProps.api !== props.api) || props.api) {
       if (!(props.notebooks[props.ship]?.[props.book]?.notes?.[props.note]?.file)) {
-        props.api.fetchNote(props.ship, props.book, props.note);
+        props.api.publish.fetchNote(props.ship, props.book, props.note);
       }
 
       if (prevProps) {
@@ -63,7 +63,7 @@ export class Note extends Component {
               note: props.note
             }
           };
-          props.api.publishAction(readAction);
+          props.api.publish.publishAction(readAction);
         }
       }
     }
@@ -92,7 +92,7 @@ export class Note extends Component {
     const fullyLoaded = (loadedComments === allComments);
 
     if (atBottom && !fullyLoaded) {
-      this.props.api.fetchCommentsPage(this.props.ship,
+      this.props.api.publish.fetchCommentsPage(this.props.ship,
         this.props.book, this.props.note, loadedComments, 30);
     }
   }
@@ -109,7 +109,7 @@ export class Note extends Component {
     const popout = (props.popout) ? 'popout/' : '';
     const baseUrl = `/~publish/${popout}notebook/${props.ship}/${props.book}`;
     this.setState({ deleting: true });
-    this.props.api.publishAction(deleteAction)
+    this.props.api.publish.publishAction(deleteAction)
     .then(() => {
       props.history.push(baseUrl);
     });

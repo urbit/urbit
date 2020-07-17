@@ -8,14 +8,14 @@ export class SidebarSwitcher extends Component {
 
     const classes = this.props.classes ? this.props.classes : '';
 
-    const paddingTop = this.props.classes ? '0px' : '5px';
+    const paddingTop = this.props.classes ? '0px' : '8px';
 
     return (
       <div className={classes} style={{ paddingTop: paddingTop }}>
         <a
           className='pointer flex-shrink-0'
           onClick={() => {
-            this.props.api.sidebarToggle();
+            this.props.api.local.sidebarToggle();
           }}
         >
           <img

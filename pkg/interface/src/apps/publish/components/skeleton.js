@@ -18,7 +18,7 @@ export class Skeleton extends Component {
       ? '': 'ba-m ba-l ba-xl b--gray4 b--gray1-d br1';
 
     return (
-      <div className={'w-100 ' + popoutWindow} style={{ height: 'calc(100vh - 45px)' }}>
+      <div className={'w-100 h-100 ' + popoutWindow}>
         <div className={'cf w-100 h-100 flex ' + popoutBorder}>
           <Sidebar
             popout={popout}

@@ -17,9 +17,15 @@ export class JoinScreen extends Component {
   }
 
   componentDidMount() {
-    const { props } = this;
-    if (props.autoJoin !== '/undefined/undefined' &&
-      props.autoJoin !== '/~/undefined/undefined') {
+    this.componentDidUpdate();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { props, state } = this;
+
+    if ((props.autoJoin !== '/undefined/undefined' &&
+      props.autoJoin !== '/~/undefined/undefined') &&
+      (props.api && (prevProps?.api !== props.api))) {
       let station = props.autoJoin.split('/');
       const sig = props.autoJoin.includes('/~/');
 
@@ -39,14 +45,11 @@ export class JoinScreen extends Component {
       this.setState({
         station,
         awaiting: true
-      }, () => props.api.chatView.join(ship, station, true));
+      }, () => props.api.chat.join(ship, station, true));
     }
-  }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { props, state } = this;
     if (state.station in props.inbox ||
-       (props.chatSynced !== prevProps.chatSynced && state.station !== '/')) {
+       (props?.chatSynced !== prevProps?.chatSynced && state.station !== '/')) {
       this.setState({ awaiting: false });
       props.history.push(`/~chat/room${state.station}`);
     }
@@ -75,7 +78,7 @@ export class JoinScreen extends Component {
       station,
       awaiting: true
     }, () => {
-      props.api.chatView.join(ship, station, true);
+      props.api.chat.join(ship, station, true);
     });
   }
 

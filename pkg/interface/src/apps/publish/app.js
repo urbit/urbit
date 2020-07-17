@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import _ from 'lodash';
 
 import './css/custom.css';
@@ -19,15 +19,7 @@ import { EditPost } from './components/lib/edit-post';
 export default class PublishApp extends React.Component {
   constructor(props) {
     super(props);
-    this.store = new PublishStore();
-    this.state = this.store.state;
     this.unreadTotal = 0;
-    this.resetControllers();
-  }
-
-  resetControllers() {
-    this.api = null;
-    this.subscription = null;
   }
 
   componentDidMount() {
@@ -35,47 +27,52 @@ export default class PublishApp extends React.Component {
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
-    this.store.setStateHandler(this.setState.bind(this));
+    this.props.subscription.startApp('publish');
 
-    const channel = new this.props.channel();
-    this.api = new PublishApi(this.props.ship, channel, this.store);
+    this.props.api.publish.fetchNotebooks();
 
-    this.subscription = new PublishSubscription(this.store, this.api, channel);
-    this.subscription.start();
-    this.api.fetchNotebooks();
+    if (!this.props.sidebarShown) {
+      this.props.api.local.sidebarToggle();
+    }
+
   }
 
   componentWillUnmount() {
-    this.subscription.delete();
-    this.store.clear();
-    this.store.setStateHandler(() => {});
-    this.resetControllers();
+    this.props.subscription.stopApp('publish');
   }
 
   render() {
-    const { state, props } = this;
+    const { props } = this;
 
-    const contacts = state.contacts ? state.contacts : {};
-    const associations = state.associations ? state.associations : { contacts: {} };
+    const contacts = props.contacts ? props.contacts : {};
+    const associations = props.associations ? props.associations : { contacts: {} };
     const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
-    const notebooks = state.notebooks ? state.notebooks : {};
+    const notebooks = props.notebooks ? props.notebooks : {};
 
     const unreadTotal = _.chain(notebooks)
       .values()
       .map(_.values)
       .flatten() // flatten into array of notebooks
+      .filter((each) => {
+        return ((selectedGroups.map((e) => {
+          return e[0];
+        }).includes(each?.['writers-group-path'])) ||
+        (selectedGroups.length === 0));
+      })
       .map('num-unread')
       .reduce((acc, count) => acc + count, 0)
       .value();
 
     if (this.unreadTotal !== unreadTotal) {
-      document.title = unreadTotal > 0 ? `OS1 - Publish (${unreadTotal})` : 'OS1 - Publish';
+      document.title = unreadTotal > 0 ? `(${unreadTotal}) OS1 - Publish` : 'OS1 - Publish';
       this.unreadTotal = unreadTotal;
     }
 
+    const { api, groups, permissions, sidebarShown } = props;
+
     return (
-      <div>
+      <Switch>
         <Route exact path="/~publish"
           render={(props) => {
             return (
@@ -84,12 +81,12 @@ export default class PublishApp extends React.Component {
                 active={'sidebar'}
                 rightPanelHide={true}
                 sidebarShown={true}
-                invites={state.invites}
+                invites={props.invites}
                 notebooks={notebooks}
                 associations={associations}
                 selectedGroups={selectedGroups}
                 contacts={contacts}
-                api={this.api}
+                api={api}
               >
                 <div className={`h-100 w-100 overflow-x-hidden flex flex-column
                  bg-white bg-gray0-d dn db-ns`}
@@ -111,20 +108,20 @@ export default class PublishApp extends React.Component {
                 popout={false}
                 active={'rightPanel'}
                 rightPanelHide={false}
-                sidebarShown={state.sidebarShown}
-                invites={state.invites}
+                sidebarShown={sidebarShown}
+                invites={props.invites}
                 notebooks={notebooks}
                 associations={associations}
                 selectedGroups={selectedGroups}
                 contacts={contacts}
-                api={this.api}
+                api={api}
               >
                 <NewScreen
                   associations={associations.contacts}
                   notebooks={notebooks}
-                  groups={state.groups}
+                  groups={groups}
                   contacts={contacts}
-                  api={this.api}
+                  api={api}
                   {...props}
                 />
               </Skeleton>
@@ -140,19 +137,19 @@ export default class PublishApp extends React.Component {
                 popout={false}
                 active={'rightPanel'}
                 rightPanelHide={false}
-                sidebarShown={state.sidebarShown}
-                invites={state.invites}
+                sidebarShown={sidebarShown}
+                invites={props.invites}
                 notebooks={notebooks}
                 associations={associations}
                 selectedGroups={selectedGroups}
                 contacts={contacts}
-                api={this.api}
+                api={api}
               >
                 <JoinScreen
                   notebooks={notebooks}
                   ship={ship}
                   notebook={notebook}
-                  api={this.api}
+                  api={api}
                   {...props}
                 />
               </Skeleton>
@@ -184,22 +181,22 @@ export default class PublishApp extends React.Component {
                   popout={popout}
                   active={'rightPanel'}
                   rightPanelHide={false}
-                  sidebarShown={state.sidebarShown}
-                  invites={state.invites}
+                  sidebarShown={sidebarShown}
+                  invites={props.invites}
                   notebooks={notebooks}
                   associations={associations}
                   selectedGroups={selectedGroups}
                   contacts={contacts}
                   path={path}
-                  api={this.api}
+                  api={api}
                 >
                   <NewPost
                     notebooks={notebooks}
                     ship={ship}
                     book={notebook}
-                    sidebarShown={state.sidebarShown}
+                    sidebarShown={sidebarShown}
                     popout={popout}
-                    api={this.api}
+                    api={api}
                     {...props}
                   />
                 </Skeleton>
@@ -210,28 +207,28 @@ export default class PublishApp extends React.Component {
                   popout={popout}
                   active={'rightPanel'}
                   rightPanelHide={false}
-                  sidebarShown={state.sidebarShown}
-                  invites={state.invites}
+                  sidebarShown={sidebarShown}
+                  invites={props.invites}
                   notebooks={notebooks}
                   associations={associations}
                   contacts={contacts}
                   selectedGroups={selectedGroups}
                   path={path}
-                  api={this.api}
+                  api={api}
                 >
                   <Notebook
                     notebooks={notebooks}
                     view={view}
                     ship={ship}
                     book={notebook}
-                    groups={state.groups}
+                    groups={groups}
                     contacts={contacts}
                     notebookContacts={notebookContacts}
                     associations={associations.contacts}
-                    sidebarShown={state.sidebarShown}
+                    sidebarShown={sidebarShown}
                     popout={popout}
-                    permissions={state.permissions}
-                    api={this.api}
+                    permissions={permissions}
+                    api={api}
                     {...props}
                   />
                 </Skeleton>
@@ -250,7 +247,7 @@ export default class PublishApp extends React.Component {
 
             const bookGroupPath =
               notebooks?.[ship]?.[notebook]?.['subscribers-group-path'];
-            const notebookContacts = (bookGroupPath in state.contacts)
+            const notebookContacts = (bookGroupPath in contacts)
               ? contacts[bookGroupPath] : {};
 
             const edit = Boolean(props.match.params.edit) || false;
@@ -261,23 +258,23 @@ export default class PublishApp extends React.Component {
                   popout={popout}
                   active={'rightPanel'}
                   rightPanelHide={false}
-                  sidebarShown={state.sidebarShown}
-                  invites={state.invites}
+                  sidebarShown={sidebarShown}
+                  invites={props.invites}
                   notebooks={notebooks}
                   selectedGroups={selectedGroups}
                   associations={associations}
                   contacts={contacts}
                   path={path}
-                  api={this.api}
+                  api={api}
                 >
                   <EditPost
                     notebooks={notebooks}
                     book={notebook}
                     note={note}
                     ship={ship}
-                    sidebarShown={state.sidebarShown}
+                    sidebarShown={sidebarShown}
                     popout={popout}
-                    api={this.api}
+                    api={api}
                     {...props}
                   />
                 </Skeleton>
@@ -288,25 +285,25 @@ export default class PublishApp extends React.Component {
                   popout={popout}
                   active={'rightPanel'}
                   rightPanelHide={false}
-                  sidebarShown={state.sidebarShown}
-                  invites={state.invites}
+                  sidebarShown={sidebarShown}
+                  invites={props.invites}
                   notebooks={notebooks}
                   associations={associations}
                   selectedGroups={selectedGroups}
                   contacts={contacts}
                   path={path}
-                  api={this.api}
+                  api={api}
                 >
                   <Note
                     notebooks={notebooks}
                     book={notebook}
-                    groups={state.groups}
+                    groups={groups}
                     contacts={notebookContacts}
                     ship={ship}
                     note={note}
-                    sidebarShown={state.sidebarShown}
+                    sidebarShown={sidebarShown}
                     popout={popout}
-                    api={this.api}
+                    api={api}
                     {...props}
                   />
                 </Skeleton>
@@ -314,7 +311,7 @@ export default class PublishApp extends React.Component {
             }
           }}
         />
-      </div>
+      </Switch>
     );
   }
 }

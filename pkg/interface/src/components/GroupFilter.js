@@ -26,7 +26,7 @@ export default class GroupFilter extends Component {
     const selected = localStorage.getItem('urbit-selectedGroups');
     if (selected) {
       this.setState({ selected: JSON.parse(selected) }, (() => {
-        this.props.api.setSelected(this.state.selected);
+        this.props.api.local.setSelected(this.state.selected);
       }));
     }
   }
@@ -97,7 +97,7 @@ export default class GroupFilter extends Component {
       selected: selected,
       results: []
     }, (() => {
-        this.props.api.setSelected(this.state.selected);
+        this.props.api.local.setSelected(this.state.selected);
         localStorage.setItem('urbit-selectedGroups', JSON.stringify(this.state.selected));
     }));
   }
@@ -108,7 +108,7 @@ export default class GroupFilter extends Component {
       return e !== group;
     });
     this.setState({ selected: selected }, (() => {
-      this.props.api.setSelected(this.state.selected);
+      this.props.api.local.setSelected(this.state.selected);
       localStorage.setItem('urbit-selectedGroups', JSON.stringify(this.state.selected));
     }));
   }
@@ -163,7 +163,7 @@ export default class GroupFilter extends Component {
           <li
           key={group[0]}
           className="tl list white-d f9 pv2 ph3 pointer hover-bg-gray4 hover-bg-gray1-d inter"
-onClick={() => this.addGroup(group)}
+          onClick={() => this.addGroup(group)}
           >
             <span className="mix-blend-diff white">{(group[1]) ? group[1] : group[0]}</span>
           </li>
@@ -223,7 +223,12 @@ onClick={() => this.addGroup(group)}
 }}
         >
           <p className="tc bb b--gray3 b--gray1-d gray3 pv4 f9">Group Select and Filter</p>
-          <Link to="/~groups" className="ma4 bg-gray5 bg-gray1-d f9 tl pa1 br1 db no-underline" style={{ paddingLeft: '6.5px', paddingRight: '6.5px' }}>Manage all Groups
+          <Link to="/~groups"
+          className="ma4 bg-gray5 bg-gray1-d f9 tl pa1 br1 db no-underline"
+          style={{ paddingLeft: '6.5px', paddingRight: '6.5px' }}
+          onClick={() => this.setState({ open: false })}
+          >
+          Manage all Groups
           {inviteCount}
           </Link>
           <p className="pt4 gray3 f9 tl mh4">Filter Groups</p>

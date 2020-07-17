@@ -22,10 +22,7 @@ import { makeRoutePath, amOwnerOfGroup, base64urlDecode } from '../../lib/util';
 export class LinksApp extends Component {
   constructor(props) {
     super(props);
-    this.store = new LinksStore();
-    this.state = this.store.state;
     this.totalUnseen = 0;
-    this.resetControllers();
   }
 
   componentDidMount() {
@@ -33,54 +30,57 @@ export class LinksApp extends Component {
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
-    this.store.setStateHandler(this.setState.bind(this));
-
-    const channel = new this.props.channel();
-    this.api = new LinksApi(this.props.ship, channel, this.store);
-
-    this.subscription = new LinksSubscription(this.store, this.api, channel);
-    this.subscription.start();
+    this.props.api.links.getPage('', 0);
+    this.props.subscription.startApp('link');
+    if (!this.props.sidebarShown) {
+      this.props.api.local.sidebarToggle();
+    }
   }
 
   componentWillUnmount() {
-    this.subscription.delete();
-    this.store.clear();
-    this.store.setStateHandler(() => {});
-    this.resetControllers();
+    this.props.subscription.stopApp('link');
   }
 
-  resetControllers() {
-    this.api = null;
-    this.subscription = null;
-  }
 
   render() {
-    const { state, props } = this;
+    const { props } = this;
 
-    const contacts = state.contacts ? state.contacts : {};
-    const groups = state.groups ? state.groups : {};
+    const contacts = props.contacts ? props.contacts : {};
+    const groups = props.groups ? props.groups : {};
 
-    const associations = state.associations ? state.associations : { link: {}, contacts: {} };
-    const links = state.links ? state.links : {};
-    const comments = state.comments ? state.comments : {};
+    const associations = props.associations ? props.associations : { link: {}, contacts: {} };
+    const links = props.links ? props.links : {};
+    const comments = props.linkComments ? props.linkComments : {};
 
-    const seen = state.seen ? state.seen : {};
+    const seen = props.linksSeen ? props.linksSeen : {};
 
+    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
+
+    const selGroupPaths = selectedGroups.map(g => g[0]);
     const totalUnseen = _.reduce(
-      seen,
-      (acc, links) => acc + _.reduce(links, (total, hasSeen) => total + (hasSeen ? 0 : 1), 0),
+      links,
+      (acc, collection, path) => {
+        if(selGroupPaths.length > 0
+           && !selGroupPaths.includes(associations.link?.[path]?.['group-path'])) {
+          return acc;
+        }
+        return acc + collection.unseenCount;
+      },
       0
     );
 
     if(totalUnseen !== this.totalUnseen) {
-      document.title = totalUnseen !== 0 ? `OS1 - Links (${totalUnseen})` : 'OS1 - Links';
+      document.title = totalUnseen !== 0 ? `(${totalUnseen}) OS1 - Links` : 'OS1 - Links';
       this.totalUnseen = totalUnseen;
     }
 
-    const invites = state.invites ?
-      state.invites : {};
+    const invites = props.invites ?
+      props.invites : {};
 
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
+
+    const listening = props.linkListening;
+
+    const { api, sidebarShown } = this.props;
 
     return (
       <Switch>
@@ -93,11 +93,11 @@ export class LinksApp extends Component {
                 invites={invites}
                 groups={groups}
                 rightPanelHide={true}
-                sidebarShown={state.sidebarShown}
+                sidebarShown={sidebarShown}
                 selectedGroups={selectedGroups}
                 links={links}
-                listening={state.listening}
-                api={this.api}
+                listening={listening}
+                api={api}
               >
                 <MessageScreen text="Select or create a collection to begin." />
               </Skeleton>
@@ -111,17 +111,17 @@ export class LinksApp extends Component {
                 associations={associations}
                 invites={invites}
                 groups={groups}
-                sidebarShown={state.sidebarShown}
+                sidebarShown={sidebarShown}
                 selectedGroups={selectedGroups}
                 links={links}
-                listening={state.listening}
-                api={this.api}
+                listening={listening}
+                api={api}
               >
                 <NewScreen
                   associations={associations}
                   groups={groups}
                   contacts={contacts}
-                  api={this.api}
+                  api={api}
                   {...props}
                 />
               </Skeleton>
@@ -131,8 +131,16 @@ export class LinksApp extends Component {
         <Route exact path="/~link/join/:resource"
           render={ (props) => {
             const resourcePath = '/' + props.match.params.resource;
-            this.api.joinCollection(resourcePath);
-            props.history.push(makeRoutePath(resourcePath));
+
+            const autoJoin = () => {
+              try {
+                api.links.joinCollection(resourcePath);
+                props.history.push(makeRoutePath(resourcePath));
+              } catch(err) {
+                setTimeout(autoJoin, 2000);
+              }
+            };
+            autoJoin();
           }}
         />
         <Route exact path="/~link/(popout)?/:resource/members"
@@ -151,14 +159,14 @@ export class LinksApp extends Component {
                 invites={invites}
                 groups={groups}
                 selected={resourcePath}
-                sidebarShown={state.sidebarShown}
+                sidebarShown={sidebarShown}
                 selectedGroups={selectedGroups}
                 links={links}
-                listening={state.listening}
-                api={this.api}
+                listening={listening}
+                api={api}
               >
                 <MemberScreen
-                  sidebarShown={state.sidebarShown}
+                  sidebarShown={sidebarShown}
                   resource={resource}
                   contacts={contacts}
                   contactDetails={contactDetails}
@@ -167,7 +175,7 @@ export class LinksApp extends Component {
                   amOwner={amOwner}
                   resourcePath={resourcePath}
                   popout={popout}
-                  api={this.api}
+                  api={api}
                   {...props}
                 />
               </Skeleton>
@@ -190,15 +198,15 @@ export class LinksApp extends Component {
                 invites={invites}
                 groups={groups}
                 selected={resourcePath}
-                sidebarShown={state.sidebarShown}
+                sidebarShown={sidebarShown}
                 selectedGroups={selectedGroups}
                 popout={popout}
                 links={links}
-                listening={state.listening}
-                api={this.api}
+                listening={listening}
+                api={api}
               >
                 <SettingsScreen
-                  sidebarShown={state.sidebarShown}
+                  sidebarShown={sidebarShown}
                   resource={resource}
                   contacts={contacts}
                   contactDetails={contactDetails}
@@ -207,7 +215,7 @@ export class LinksApp extends Component {
                   amOwner={amOwner}
                   resourcePath={resourcePath}
                   popout={popout}
-                  api={this.api}
+                  api={api}
                   {...props}
                 />
               </Skeleton>
@@ -245,13 +253,13 @@ export class LinksApp extends Component {
                   invites={invites}
                   groups={groups}
                   selected={resourcePath}
-                  sidebarShown={state.sidebarShown}
+                  sidebarShown={sidebarShown}
                   selectedGroups={selectedGroups}
                   sidebarHideMobile={true}
                   popout={popout}
                   links={links}
-                  listening={state.listening}
-                  api={this.api}
+                  listening={listening}
+                  api={api}
                 >
                   <Links
                   {...props}
@@ -264,8 +272,8 @@ export class LinksApp extends Component {
                   resource={resource}
                   amOwner={amOwner}
                   popout={popout}
-                  sidebarShown={state.sidebarShown}
-                  api={this.api}
+                  sidebarShown={sidebarShown}
+                  api={api}
                   />
                 </Skeleton>
               );
@@ -303,13 +311,13 @@ export class LinksApp extends Component {
                   invites={invites}
                   groups={groups}
                   selected={resourcePath}
-                  sidebarShown={state.sidebarShown}
+                  sidebarShown={sidebarShown}
                   selectedGroups={selectedGroups}
                   sidebarHideMobile={true}
                   popout={popout}
                   links={links}
-                  listening={state.listening}
-                  api={this.api}
+                  listening={listening}
+                  api={api}
                 >
                   <LinkDetail
                   {...props}
@@ -322,11 +330,11 @@ export class LinksApp extends Component {
                   groupPath={resource['group-path']}
                   amOwner={amOwner}
                   popout={popout}
-                  sidebarShown={state.sidebarShown}
+                  sidebarShown={sidebarShown}
                   data={data}
                   comments={coms}
                   commentPage={commentPage}
-                  api={this.api}
+                  api={api}
                   />
                 </Skeleton>
               );

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import GroupsApi from '../../api/groups';
 import GroupsSubscription from '../../subscription/groups';
@@ -17,9 +17,6 @@ import GroupDetail from './components/lib/group-detail';
 export default class GroupsApp extends Component {
   constructor(props) {
     super(props);
-    this.store = new GroupsStore();
-    this.state = this.store.state;
-    this.resetControllers();
   }
 
   componentDidMount() {
@@ -27,44 +24,33 @@ export default class GroupsApp extends Component {
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
-    this.store.setStateHandler(this.setState.bind(this));
-    const channel = new this.props.channel();
-    this.api = new GroupsApi(this.props.ship, channel, this.store);
-
-    this.subscription = new GroupsSubscription(this.store, this.api, channel);
-    this.subscription.start();
+    this.props.subscription.startApp('groups')
   }
 
   componentWillUnmount() {
-    this.subscription.delete();
-    this.store.clear();
-    this.store.setStateHandler(() => {});
-    this.resetControllers();
+    this.props.subscription.stopApp('groups')
   }
 
-  resetControllers() {
-    this.api = null;
-    this.subscription = null;
-  }
 
   render() {
-    const { state, props } = this;
+    const { props } = this;
 
-    const contacts = state.contacts ? state.contacts : {};
+    const contacts = props.contacts || {};
     const defaultContacts =
-      (Boolean(state.contacts) && '/~/default' in state.contacts) ?
-        state.contacts['/~/default'] : {};
-    const groups = state.groups ? state.groups : {};
+      (Boolean(props.contacts) && '/~/default' in props.contacts) ?
+        props.contacts['/~/default'] : {};
+    const groups = props.groups ? props.groups : {};
 
     const invites =
-      (Boolean(state.invites) && '/contacts' in state.invites) ?
-        state.invites['/contacts'] : {};
-    const associations = state.associations ? state.associations : {};
+      (Boolean(props.invites) && '/contacts' in props.invites) ?
+        props.invites['/contacts'] : {};
+    const associations = props.associations ? props.associations : {};
     const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
-    const s3 = state.s3 ? state.s3 : {};
+    const s3 = props.s3 ? props.s3 : {};
+    const { api } = props;
 
     return (
-        <div>
+        <Switch>
           <Route exact path="/~groups"
             render={(props) => {
               return (
@@ -72,7 +58,7 @@ export default class GroupsApp extends Component {
                   activeDrawer="groups"
                   selectedGroups={selectedGroups}
                   history={props.history}
-                  api={this.api}
+                  api={api}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -95,7 +81,7 @@ export default class GroupsApp extends Component {
                 <Skeleton
                   history={props.history}
                   selectedGroups={selectedGroups}
-                  api={this.api}
+                  api={api}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -106,7 +92,7 @@ export default class GroupsApp extends Component {
                     history={props.history}
                     groups={groups}
                     contacts={contacts}
-                    api={this.api}
+                    api={api}
                   />
                 </Skeleton>
               );
@@ -129,7 +115,7 @@ export default class GroupsApp extends Component {
                 <Skeleton
                   history={props.history}
                   selectedGroups={selectedGroups}
-                  api={this.api}
+                  api={api}
                   contacts={contacts}
                   invites={invites}
                   groups={groups}
@@ -142,7 +128,7 @@ export default class GroupsApp extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     activeDrawer={(detail || settings) ? 'detail' : 'contacts'}
-                    api={this.api}
+                    api={api}
                     path={groupPath}
                     {...props}
                   />
@@ -153,7 +139,7 @@ export default class GroupsApp extends Component {
                     activeDrawer={(detail || settings) ? 'detail' : 'contacts'}
                     settings={settings}
                     associations={associations}
-                    api={this.api}
+                    api={api}
                     {...props}
                   />
                 </Skeleton>
@@ -171,7 +157,7 @@ export default class GroupsApp extends Component {
                 <Skeleton
                   history={props.history}
                   selectedGroups={selectedGroups}
-                  api={this.api}
+                  api={api}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -185,11 +171,11 @@ export default class GroupsApp extends Component {
                     group={group}
                     activeDrawer="rightPanel"
                     path={groupPath}
-                    api={this.api}
+                    api={api}
                     {...props}
                   />
                   <AddScreen
-                    api={this.api}
+                    api={api}
                     groups={groups}
                     path={groupPath}
                     history={props.history}
@@ -215,7 +201,7 @@ export default class GroupsApp extends Component {
               return (
                 <Skeleton
                   history={props.history}
-                  api={this.api}
+                  api={api}
                   selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
@@ -230,12 +216,12 @@ export default class GroupsApp extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
-                    api={this.api}
+                    api={api}
                     selectedContact={shipPath}
                     {...props}
                   />
                   <ContactCard
-                    api={this.api}
+                    api={api}
                     history={props.history}
                     contact={contact}
                     path={groupPath}
@@ -268,7 +254,7 @@ export default class GroupsApp extends Component {
               return (
                 <Skeleton
                   history={props.history}
-                  api={this.api}
+                  api={api}
                   selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
@@ -283,12 +269,12 @@ export default class GroupsApp extends Component {
                     defaultContacts={defaultContacts}
                     group={group}
                     path={groupPath}
-                    api={this.api}
+                    api={api}
                     selectedContact={shipPath}
                     {...props}
                   />
                   <ContactCard
-                    api={this.api}
+                    api={api}
                     history={props.history}
                     contact={contact}
                     path={groupPath}
@@ -307,7 +293,7 @@ export default class GroupsApp extends Component {
               return (
                 <Skeleton
                   history={props.history}
-                  api={this.api}
+                  api={api}
                   selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
@@ -317,7 +303,7 @@ export default class GroupsApp extends Component {
                   associations={associations}
                 >
                   <ContactCard
-                    api={this.api}
+                    api={api}
                     history={props.history}
                     path="/~/default"
                     contact={me}
@@ -328,7 +314,7 @@ export default class GroupsApp extends Component {
               );
             }}
           />
-        </div>
+        </Switch>
     );
   }
 }
