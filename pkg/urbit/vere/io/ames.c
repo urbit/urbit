@@ -694,8 +694,6 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     && (sam_u->ver_y != (0x7 & *((c3_w*)buf_u->base))) )
   {
     pas_o = c3n;
-    //TODO  unless sender is our sponsee (transitively?)
-    //TODO  how does this interact with forwards?
 
     sam_u->vet_d++;
     if ( 0 == (sam_u->vet_d % 100) ) {
