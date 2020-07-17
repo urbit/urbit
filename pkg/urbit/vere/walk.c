@@ -115,7 +115,8 @@ _walk_mkdirp(c3_c* bas_c, u3_noun pax)
   len_w = 1 + fas_w + pax_w;
 
   pax_c = c3_malloc(1 + len_w);
-  strncpy(pax_c, bas_c, len_w);
+  strcpy(pax_c, bas_c);
+
   pax_c[fas_w] = '/';
   waq_y = (void*)(1 + pax_c + fas_w);
   u3r_bytes(0, pax_w, waq_y, u3h(pax));

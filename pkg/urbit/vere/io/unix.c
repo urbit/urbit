@@ -108,9 +108,9 @@ _unix_down(c3_c* pax_c, c3_c* sub_c)
   c3_w sub_w = strlen(sub_c);
   c3_c* don_c = c3_malloc(pax_w + sub_w + 2);
 
-  strncpy(don_c, pax_c, pax_w);
+  strcpy(don_c, pax_c);
   don_c[pax_w] = '/';
-  strncpy(don_c + pax_w + 1, sub_c, sub_w);
+  strcpy(don_c + pax_w + 1, sub_c);
   don_c[pax_w + 1 + sub_w] = '\0';
 
   return don_c;
@@ -666,9 +666,9 @@ _unix_create_dir(u3_udir* dir_u, u3_udir* par_u, u3_noun nam)
   c3_w  pax_w = strlen(par_u->pax_c);
   c3_c* pax_c = c3_malloc(pax_w + 1 + nam_w + 1);
 
-  strncpy(pax_c, par_u->pax_c, pax_w);
+  strcpy(pax_c, par_u->pax_c);
   pax_c[pax_w] = '/';
-  strncpy(pax_c + pax_w + 1, nam_c, nam_w);
+  strcpy(pax_c + pax_w + 1, nam_c);
   pax_c[pax_w + 1 + nam_w] = '\0';
 
   c3_free(nam_c);
@@ -1111,11 +1111,11 @@ _unix_sync_file(u3_unix* unx_u, u3_udir* par_u, u3_noun nam, u3_noun ext, u3_nou
   c3_w  ext_w = strlen(ext_c);
   c3_c* pax_c = c3_malloc(par_w + 1 + nam_w + 1 + ext_w + 1);
 
-  strncpy(pax_c, par_u->pax_c, par_w);
+  strcpy(pax_c, par_u->pax_c);
   pax_c[par_w] = '/';
-  strncpy(pax_c + par_w + 1, nam_c, nam_w);
+  strcpy(pax_c + par_w + 1, nam_c);
   pax_c[par_w + 1 + nam_w] = '.';
-  strncpy(pax_c + par_w + 1 + nam_w + 1, ext_c, ext_w);
+  strcpy(pax_c + par_w + 1 + nam_w + 1, ext_c);
   pax_c[par_w + 1 + nam_w + 1 + ext_w] = '\0';
 
   c3_free(nam_c); c3_free(ext_c);
