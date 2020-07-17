@@ -6,6 +6,7 @@
 +$  versioned-state
   $%  state-zero
       state-one
+      state-two
   ==
 ::
 +$  rolodex-0  (map path contacts-0)
@@ -35,7 +36,7 @@
   ==
 --
 ::
-=|  state-one
+=|  state-two
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -89,7 +90,7 @@
           color.con
           ~
       ==
-    $(old [%1 new-rolodex])]
+    $(old [%1 new-rolodex])
   ::
   ++  on-poke
     |=  [=mark =vase]
