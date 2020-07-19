@@ -6567,7 +6567,7 @@
       ;~(pose pure pesc pold net wut col com)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
-      ;~(pose aln hep dot cab sig)
+      ;~(pose aln hep cab dot zap sig tar say lit rit)
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
