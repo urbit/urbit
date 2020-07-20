@@ -883,9 +883,9 @@ static c3_o
 _ce_image_move(u3e_image* img_u, c3_o bak_o)
 {
   c3_c old_c[8193];
-  c3_c new_c[8193];
-  snprintf(old_c, 8192, "%s/.urb/chk/%s.bin", u3P.dir_c, img_u->nam_c);
-  snprintf(new_c, 8192, "%s.bak", old_c);
+  c3_c new_c[8197];
+  snprintf(old_c, 8193, "%s/.urb/chk/%s.bin", u3P.dir_c, img_u->nam_c);
+  snprintf(new_c, 8197, "%s.bak", old_c);
 
   c3_i ret_i;
 

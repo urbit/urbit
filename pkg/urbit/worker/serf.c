@@ -220,8 +220,8 @@ _serf_grab(u3_serf* sef_u)
         mkdir(nam_c, 0700);
       }
 
-      c3_c man_c[2048];
-      snprintf(man_c, 2048, "%s/%s-serf.txt", nam_c, wen_c);
+      c3_c man_c[2054];
+      snprintf(man_c, 2053, "%s/%s-serf.txt", nam_c, wen_c);
 
       fil_u = fopen(man_c, "w");
       fprintf(fil_u, "%s\r\n", wen_c);
@@ -603,7 +603,7 @@ u3_noun
 u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 {
   c3_t  tac_t = ( 0 != u3_Host.tra_u.fil_u );
-  c3_c  lab_c[2048];
+  c3_c  lab_c[2056];
   u3_noun pro;
 
   // XX refactor tracing
@@ -615,7 +615,7 @@ u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
     {
       c3_c* cad_c = u3m_pretty(cad);
       c3_c* wir_c = u3m_pretty_path(wir);
-      snprintf(lab_c, 2048, "work [%s %s]", wir_c, cad_c);
+      snprintf(lab_c, 2056, "work [%s %s]", wir_c, cad_c);
       c3_free(cad_c);
       c3_free(wir_c);
     }
@@ -870,8 +870,8 @@ _serf_writ_live_exit(c3_w cod_w)
         mkdir(nam_c, 0700);
       }
 
-      c3_c man_c[2048];
-      snprintf(man_c, 2048, "%s/%s.txt", nam_c, wen_c);
+      c3_c man_c[2054];
+      snprintf(man_c, 2053, "%s/%s.txt", nam_c, wen_c);
 
       fil_u = fopen(man_c, "w");
 
