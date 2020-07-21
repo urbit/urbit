@@ -162,14 +162,15 @@ so that I can type e.g. `git mu origin/foo 1337`.
 If you're making a Vere release, just play it safe and update all the pills.
 
 For an Urbit OS release, after all the merge commits, make a release with the
-commit message "release: urbit-os-v1.0.xx".  This commit should have an
-up-to-date solid pill.  If neither the pill nor the JS need to be updated (e.g
-if the pill was updated in the previous merge commit), consider making the
-release commit with --allow-empty.
+commit message "release: urbit-os-v1.0.xx".  This commit should have up-to-date
+artifacts from pkg/interface and a new solid pill.  If neither the pill nor the
+JS need to be updated (e.g if the pill was already updated in the previous merge
+commit), consider making the release commit with --allow-empty.
 
 If anything in `pkg/interface` has changed, ensure it has been built and
-deployed properly.  For most things, it is sufficient to run `npm install; npm
-run build:prod` in `pkg/interface`.
+deployed properly.  You'll want to do this before making a pill, since you want
+the pill to have the new files/hash.  For most things, it is sufficient to run
+`npm install; npm run build:prod` in `pkg/interface`.
 
 However, if you've made a change to Landscape's JS, then you will need to build
 a "glob" and upload it to bootstrap.urbit.org.  To do this, run `npm install;
