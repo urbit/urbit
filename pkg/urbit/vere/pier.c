@@ -597,8 +597,8 @@ _pier_play(u3_play* pay_u)
 
       //  XX temporary hack
       //
-      u3l_log("pier: replay barrier reached, packing\r\n");
-      u3_pier_pack(pir_u);
+      u3l_log("pier: replay barrier reached, cramming\r\n");
+      u3_pier_cram(pir_u);
     }
     else if ( pay_u->eve_d == log_u->dun_d ) {
       _pier_work_init(pir_u);
@@ -868,21 +868,21 @@ _pier_on_lord_save(void* ptr_v)
   // _pier_next(pir_u);
 }
 
-/* _pier_on_lord_pack(): worker state-export complete (portable snapshot).
+/* _pier_on_lord_cram(): worker state-export complete (portable snapshot).
 */
 static void
-_pier_on_lord_pack(void* ptr_v)
+_pier_on_lord_cram(void* ptr_v)
 {
   u3_pier* pir_u = ptr_v;
 
 #ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): lord: pack\r\n", pir_u->god_u->eve_d);
+  fprintf(stderr, "pier: (%" PRIu64 "): lord: cram\r\n", pir_u->god_u->eve_d);
 #endif
 
   //  XX temporary hack
   //
   if ( u3_psat_play == pir_u->sat_e ) {
-    u3l_log("pier: pack complete, shutting down\r\n");
+    u3l_log("pier: cram complete, shutting down\r\n");
     u3_pier_bail(pir_u);
     exit(0);
   }
@@ -1189,7 +1189,7 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
       .work_done_f = _pier_on_lord_work_done,
       .work_bail_f = _pier_on_lord_work_bail,
       .save_f = _pier_on_lord_save,
-      .pack_f = _pier_on_lord_pack,
+      .cram_f = _pier_on_lord_cram,
       .bail_f = _pier_on_lord_bail,
       .exit_f = _pier_on_lord_exit
     };
@@ -1469,33 +1469,33 @@ u3_pier_save(u3_pier* pir_u)
 }
 
 static void
-_pier_pack_cb(void* ptr_v, c3_d eve_d)
+_pier_cram_cb(void* ptr_v, c3_d eve_d)
 {
   u3_pier* pir_u = ptr_v;
 
 #ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): snap: send at %" PRIu64 "\r\n", pir_u->god_u->eve_d, eve_d);
+  fprintf(stderr, "pier: (%" PRIu64 "): cram: send at %" PRIu64 "\r\n", pir_u->god_u->eve_d, eve_d);
 #endif
 
-  u3_lord_pack(pir_u->god_u);
+  u3_lord_cram(pir_u->god_u);
 }
 
-/* u3_pier_pack(): save a portable snapshot.
+/* u3_pier_cram(): save a portable snapshot.
 */
 c3_o
-u3_pier_pack(u3_pier* pir_u)
+u3_pier_cram(u3_pier* pir_u)
 {
 #ifdef VERBOSE_PIER
-  fprintf(stderr, "pier: (%" PRIu64 "): snap: plan\r\n", pir_u->god_u->eve_d);
+  fprintf(stderr, "pier: (%" PRIu64 "): cram: plan\r\n", pir_u->god_u->eve_d);
 #endif
 
   if ( u3_psat_play == pir_u->sat_e ) {
-    u3_lord_pack(pir_u->god_u);
+    u3_lord_cram(pir_u->god_u);
     return c3y;
   }
 
   if ( u3_psat_work == pir_u->sat_e ) {
-    _pier_wall_plan(pir_u, 0, pir_u, _pier_pack_cb);
+    _pier_wall_plan(pir_u, 0, pir_u, _pier_cram_cb);
     return c3y;
   }
 

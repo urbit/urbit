@@ -175,7 +175,7 @@ main(c3_i argc, c3_c* argv[])
     u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
 
     if ( eve_d ) {
-      u3_serf_unpack(&u3V, eve_d);
+      u3_serf_uncram(&u3V, eve_d);
     }
   }
 

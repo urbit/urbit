@@ -19,9 +19,10 @@
   +$  gang  (unit (set ship))
   +$  writ
     $%  $:  %live
-            $%  [%exit cod=@]
+            $%  [%cram eve=@]
+                [%exit cod=@]
                 [%save eve=@]
-                [%pack eve=@]
+                [%pack ~]
         ==  ==
         [%peek mil=@ now=@da lyc=gang pat=path]
         [%play eve=@ lit=(list ?((pair @da ovum) *))]
@@ -107,7 +108,8 @@ data Serf = Serf
 data Live
   = LExit Atom -- exit status code
   | LSave EventId
-  | LPack EventId
+  | LCram EventId
+  | LPack ()
  deriving (Show)
 
 data Play
@@ -260,9 +262,9 @@ sendSnapshotRequest serf eve = do
   sendWrit serf (WLive $ LSave eve)
   recvLive serf
 
-sendCompactionRequest :: Serf -> EventId -> IO ()
-sendCompactionRequest serf eve = do
-  sendWrit serf (WLive $ LPack eve)
+sendCompactionRequest :: Serf -> IO ()
+sendCompactionRequest serf = do
+  sendWrit serf (WLive $ LPack ())
   recvLive serf
 
 sendScryRequest :: Serf -> Wen -> Gang -> Path -> IO (Maybe (Term, Noun))
@@ -410,7 +412,7 @@ snapshot serf = withSerfLockIO serf $ \ss -> do
 -}
 compact :: Serf -> IO ()
 compact serf = withSerfLockIO serf $ \ss -> do
-  sendCompactionRequest serf (ssLast ss)
+  sendCompactionRequest serf
   pure (ss, ())
 
 {-|
