@@ -70,7 +70,7 @@ export class LinksApp extends Component {
     );
 
     if(totalUnseen !== this.totalUnseen) {
-      document.title = totalUnseen !== 0 ? `OS1 - Links (${totalUnseen})` : 'OS1 - Links';
+      document.title = totalUnseen !== 0 ? `(${totalUnseen}) OS1 - Links` : 'OS1 - Links';
       this.totalUnseen = totalUnseen;
     }
 

@@ -1,11 +1,11 @@
 /-  spider
-/+  strandio
+/+  strand, strandio
 =,  strand=strand:spider
 ^-  thread:spider
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([pax=path ~] arg)
-;<  =bowl:spider  bind:m  get-bowl:strandio
-=/  bek=beak  [our q.byk da+now]:bowl
-(build-file:strandio bek (flop pax))
+?^  bem=(de-beam:format pax)
+  (build-file:strandio u.bem)
+(strand-fail:strand %path-not-beam >pax< ~)

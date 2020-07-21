@@ -97,7 +97,7 @@ export default class GroupFilter extends Component {
       selected: selected,
       results: []
     }, (() => {
-        this.props.api.setSelected(this.state.selected);
+        this.props.api.local.setSelected(this.state.selected);
         localStorage.setItem('urbit-selectedGroups', JSON.stringify(this.state.selected));
     }));
   }
@@ -108,7 +108,7 @@ export default class GroupFilter extends Component {
       return e !== group;
     });
     this.setState({ selected: selected }, (() => {
-      this.props.api.setSelected(this.state.selected);
+      this.props.api.local.setSelected(this.state.selected);
       localStorage.setItem('urbit-selectedGroups', JSON.stringify(this.state.selected));
     }));
   }

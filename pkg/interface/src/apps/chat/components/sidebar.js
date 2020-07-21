@@ -138,7 +138,7 @@ export class Sidebar extends Component {
     return (
       <div
         className={`h-100-minus-96-s h-100 w-100 overflow-x-hidden flex
-      bg-gray0-d flex-column relative z1`}
+      bg-gray0-d flex-column relative z1 lh-solid`}
       >
         <div className="w-100 bg-transparent pa4">
           <a

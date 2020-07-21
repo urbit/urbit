@@ -158,7 +158,7 @@ export class Notebook extends Component {
         newPost = (
           <Link
             to={newUrl}
-            className='NotebookButton bg-light-green green2 ph2 pt3'
+            className='NotebookButton bg-light-green green2 pa2'
           >
             New Post
           </Link>
@@ -169,7 +169,7 @@ export class Notebook extends Component {
     const unsub = (window.ship === props.ship.slice(1))
       ?  null
       :  <button onClick={this.unsubscribe}
-             className="NotebookButton bg-white bg-gray0-d black white-d ba b--black b--gray2-d ml3"
+             className="NotebookButton bg-white bg-gray0-d black white-d ba b--black b--gray2-d ml3 ph1"
          >
            Unsubscribe
          </button>;
