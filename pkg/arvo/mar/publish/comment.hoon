@@ -59,7 +59,7 @@
         old-parser
       ==
     --
-  ++  noun  comment
+  ++  noun  ?(comment-2 comment-3)
   --
 ++  grad  %mime
 --
