@@ -35,6 +35,8 @@ const StatusBar = (props) => {
     : {};
   const connection = props.connection || 'connected';
 
+  const reconnect = props.subscription.restart.bind(props.subscription);
+
   return (
     <div
       className={
@@ -67,7 +69,10 @@ const StatusBar = (props) => {
         }
          <p className="dib f9 v-mid inter ml2 white-d">{locationName}</p>
     { connection === 'disconnected' && 
-      (<span onClick={() => props.subscription.restart()} className="ml4 ph2 dib f9 v-mid red2 inter ba b-red2 br1">Disconnected</span> )
+      (<span 
+        onClick={reconnect}
+        className="ml4 ph2 dib f9 v-mid red2 inter ba b-red2 br1 pointer"
+        >Reconnect ↻</span> )
     }
     { connection === 'reconnecting' &&
       (<span className="ml4 ph2 dib f9 v-mid yellow2 inter ba b-yellow2 br1">Reconnecting</span> )

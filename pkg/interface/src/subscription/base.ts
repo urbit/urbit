@@ -15,6 +15,7 @@ export default class BaseSubscription<S extends object> {
 
   // Exists to allow subclasses to hook
   restart() {
+    this.handleEvent({ data: { connection: 'reconnecting' }});
     this.start();
   }
 
