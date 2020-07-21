@@ -393,10 +393,12 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
     if ( (pre_w > low_w) && !(pos_w > low_w) ) {
       //  XX set flag(s) in u3V so we don't repeat endlessly?
       //
+      pac_o = c3y;
       rec_o = c3y;
       pri   = 1;
     }
     else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
+      pac_o = c3y;
       rec_o = c3y;
       pri   = 0;
     }
