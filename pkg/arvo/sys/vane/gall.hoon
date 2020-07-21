@@ -622,7 +622,12 @@
     %+  roll  nex
     |=  [[=care:clay =^path] cor=_mo-core]
     ^+  cor
-    ?>  =(%a care)
+    ::  We throw away %z results because we only have them to guarantee
+    ::  molting.  Clay will tell us if e.g. changing hoon.hoon affects
+    ::  the result of a particular app (usually it will).
+    ::
+    ?.  =(%a care)
+      cor
     =/  dap  dap:;;([%app dap=@tas %hoon ~] path)
     =/  rag  (mo-scry-agent-cage dap p.sign-arvo)
     ?:  ?=(%| -.rag)
