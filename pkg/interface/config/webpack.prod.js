@@ -1,7 +1,6 @@
 const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const urbitrc = require('./urbitrc');
 
 module.exports = {
   mode: 'production',

@@ -77,7 +77,7 @@
   ~[leaf+"from {<sud>}" leaf+"on {<who>}" leaf+"to {<syd>}"]
 ::
 ++  on-load
-  |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7) old=any-state]
+  |=  [hood-version=@ud old=any-state]
   =<  abet
   =?  .  ?=(%0 -.old)
     =/  recognized-ota=(unit [syd=desk her=ship sud=desk])

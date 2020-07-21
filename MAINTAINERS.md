@@ -119,7 +119,7 @@ the network.
 
 Take [this PR][1], as an example.  This constituted a great hotfix.  It's a
 single commit, targeting a problem that existed on the network at the time.
-Here's it should be released and deployed OTA.
+Here's how it should be released and deployed OTA.
 
 [1]: https://github.com/urbit/urbit/pull/2025
 
@@ -159,14 +159,29 @@ so that I can type e.g. `git mu origin/foo 1337`.
 
 ### Prepare a release commit
 
-You should create Landscape or alternative pill builds, if or as appropriate
-(i.e., if anything in Landscape changed -- don't trust any compiled JS/CSS
-that's included in the commit), and commit these in a release commit.
-
-You should always create a solid pill, in particular, as it's convenient for
-tooling to be able to boot directly from a given release.
-
 If you're making a Vere release, just play it safe and update all the pills.
+
+For an Urbit OS release, after all the merge commits, make a release with the
+commit message "release: urbit-os-v1.0.xx".  This commit should have an
+up-to-date solid pill.  If neither the pill nor the JS need to be updated (e.g
+if the pill was updated in the previous merge commit), consider making the
+release commit with --allow-empty.
+
+If anything in `pkg/interface` has changed, ensure it has been built and
+deployed properly.  For most things, it is sufficient to run `npm install; npm
+run build:prod` in `pkg/interface`.
+
+However, if you've made a change to Landscape's JS, then you will need to build
+a "glob" and upload it to bootstrap.urbit.org.  To do this, run `npm install;
+npm run build:prod` in `pkg/interface`, and add the resulting
+`pkg/arvo/app/landscape/index.js` to a fakezod at that path (or just create a
+new fakezod with `urbit -F zod -B bin/solid.pill -A pkg/arvo`).  Run
+`:glob|make`, and this will output a file in `fakezod/.urb/put/glob-0vXXX.glob`.
+
+Upload this file to bootstrap.urbit.org, and modify `+hash` at the top of
+`pkg/arvo/app/glob.hoon` to match the hash in the filename.  Do not commit the
+produced `index.js` and make sure it doesn't end up in your pills (they should
+be less than 10MB each).
 
 ### Tag the resulting commit
 
@@ -205,7 +220,7 @@ You can get the "contributions" section by the shortlog between the
 last release and this release:
 
 ```
-git log --pretty=short LAST_RELEASE.. | git shortlog
+git shortlog LAST_RELEASE..
 ```
 
 I originally tried to curate this list somewhat, but now just paste it
