@@ -96,9 +96,11 @@
     ++  migrate-md-resource
       |=  md-resource
       ^-  md-resource
-      ?.  =(%chat app-name)
-        [app-name app-path]
-      [%chat (new-app-path app-path)]
+      ?:  =(%chat app-name)
+        [%chat (new-app-path app-path)]
+      ?:  =(%contacts app-name)
+         [%contacts ship+app-path]
+      [app-name app-path]
     ::
     ++  migrate-resource-indices
       |=  resource-indices=(jug md-resource group-path)
@@ -120,9 +122,11 @@
       %-  ~(run in indices)
       |=  [=group-path =app-path]
       :-  (new-group-path group-path)
-      ?.  =(%chat app)
-         app-path
-      (new-app-path app-path)
+      ?:  =(%chat app)
+        (new-app-path app-path)
+      ?:  =(%contacts app)
+        ship+app-path
+      app-path
     ::
     ++  migrate-group-indices
       |=  group-indices=(jug group-path md-resource)
