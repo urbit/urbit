@@ -1666,7 +1666,9 @@ u3_pier_bail(u3_pier* pir_u)
 
   //  exig i/o drivers
   //
-  if ( pir_u->wok_u ) {
+  if (  (u3_psat_work == pir_u->sat_e)
+     && pir_u->wok_u )
+  {
     _pier_work_close(pir_u->wok_u);
     pir_u->wok_u = 0;
   }
