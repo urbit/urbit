@@ -169,9 +169,7 @@ release commit with --allow-empty.
 
 If anything in `pkg/interface` has changed, ensure it has been built and
 deployed properly.  For most things, it is sufficient to run `npm install; npm
-run build:prod` in `pkg/interface`.  Note that a valid urbitrc is required,
-though it probably shouldn't be.  See `pkg/interface/CONTRIBUTING.md` to create
-one.
+run build:prod` in `pkg/interface`.
 
 However, if you've made a change to Landscape's JS, then you will need to build
 a "glob" and upload it to bootstrap.urbit.org.  To do this, run `npm install;
