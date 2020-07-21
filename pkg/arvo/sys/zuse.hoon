@@ -7071,6 +7071,9 @@
     --
   --
 ::
+::  +mop: constructs and validates ordered ordered map based on key,
+::  val, and comparator gate
+::
 ++  mop
   |*  [key=mold value=mold]
   |=  ord=$-([key key] ?)
@@ -7087,6 +7090,9 @@
 ::    Conceptually smaller items go on the left, so the item with the
 ::    smallest key can be popped off the head. If $key is `@` and
 ::    .compare is +lte, then the numerically smallest item is the head.
+::
+::  WARNING: ordered-map will not work properly if two keys can be
+::  unequal under noun equality but equal via the compare gate
 ::
 ++  ordered-map
   |*  [key=mold val=mold]
