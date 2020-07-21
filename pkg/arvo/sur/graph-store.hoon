@@ -8,7 +8,6 @@
   ?>  (check-balance:((ordered-map key value) ord) b)
   b
 ::
-+$  mark          term
 +$  graph         ((mop atom node) gth)
 +$  marked-graph  [p=graph q=(unit mark)]
 ::

@@ -145,18 +145,18 @@
         =*  node   +.i.node-list
         %_  $
             node-list  t.node-list
-            graph      (add-node-at-index graph index node ~ mark)
+            graph      (add-node-at-index graph index node mark)
         ==
       ::
       ++  add-node-at-index
+        =|  parent-hash=(unit hash:store)
         |=  $:  =graph:store
                 =index:store
                 =node:store
-                parent-hash=(unit hash:store)
                 mark=(unit mark:store)
             ==
         ^-  graph:store
-        ?~  index  graph
+        ?<  ?=(~ index)
         ?>  (validate-graph (gas:orm ~ [i.index node]~) mark)
         =*  atom   i.index
         %^  put:orm
@@ -167,7 +167,7 @@
         ?~  t.index
           =*  p  post.node
           =/  =validated-portion:store
-            [parent-hash author.p index.p time-sent.p contents.p]
+            [parent-hash author.p time-sent.p contents.p]
           =/  =hash:store  (mug validated-portion)
           ?~  hash.p  node
           ~|  "hash of post does not match calculated hash"

@@ -21,7 +21,6 @@
 +$  validated-portion
   $:  parent-hash=(unit hash)
       author=ship
-      =index
       time-sent=time
       contents=(list content)
   ==
