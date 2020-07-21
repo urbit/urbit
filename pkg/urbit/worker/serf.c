@@ -260,10 +260,10 @@ _serf_grab(u3_serf* sef_u)
   }
 }
 
-/* _serf_static_grab(): garbage collect, checking for profiling. RETAIN.
+/* u3_serf_grab(): garbage collect.
 */
-static void
-_serf_static_grab(void)
+void
+u3_serf_grab(void)
 {
   c3_assert( u3R == &(u3H->rod_u) );
 
@@ -280,7 +280,7 @@ _serf_static_grab(void)
 static void
 _serf_cram(u3_serf* sef_u)
 {
-  _serf_static_grab();
+  u3_serf_grab();
 
   u3l_log("serf (%" PRIu64 "): compacting loom\r\n", sef_u->dun_d);
 
@@ -293,7 +293,7 @@ _serf_cram(u3_serf* sef_u)
 
   u3l_log("serf (%" PRIu64 "): compacted loom\r\n", sef_u->dun_d);
 
-  _serf_static_grab();
+  u3_serf_grab();
 }
 
 /* u3_serf_post(): update serf state post-writ.
@@ -966,7 +966,7 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
         return c3n;
       }
 
-      _serf_static_grab();
+      u3_serf_grab();
 
       *ret = u3nc(c3__live, u3_nul);
       return c3y;
@@ -1197,7 +1197,7 @@ u3_serf_init(u3_serf* sef_u)
   //   if ( !(pen_w > (1 << 28)) ) {
   //     fprintf(stderr, "\r\n");
   //     u3a_print_memory(stderr, "serf: contiguous free space", pen_w);
-  //     _serf_static_grab();
+  //     u3_serf_grab();
   //   }
   // }
 

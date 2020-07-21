@@ -305,7 +305,7 @@ start (Config exePax pierPath flags onSlog onStdr onDead) = do
   config  = show (compileFlags flags)
   rock    = "0"      -- XX support loading from rock
   cache   = "50000"  -- XX support memo-cache size
-  args    = [pierPath, diskKey, config, cache, rock]
+  args    = ["serf", pierPath, diskKey, config, cache, rock]
   pSpec   = (proc exePax args) { std_in  = CreatePipe
                                , std_out = CreatePipe
                                , std_err = CreatePipe
