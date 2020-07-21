@@ -9,6 +9,9 @@ class Channel {
     this.onChannelError = (err) => {
       console.error('event source error: ', err);
     };
+    this.onChannelOpen = (e) => {
+      console.log('open', e);
+    };
   }
 
   init() {
@@ -56,6 +59,10 @@ class Channel {
 
   setOnChannelError(onError = (err) => {}) {
     this.onChannelError = onError;
+  }
+
+  setOnChannelOpen(onOpen = (e) => {}) {
+    this.onChannelOpen = onOpen;
   }
 
   deleteOnUnload() {
@@ -215,6 +222,8 @@ class Channel {
         console.log("Unrecognized response: ", e);
       }
     }
+
+    this.eventSource.onopen = this.onChannelOpen;
 
     this.eventSource.onerror = e => {
       this.delete();

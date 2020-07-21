@@ -1,6 +1,7 @@
 import BaseSubscription from './base';
 import { StoreState } from '../store/type';
 import { Path } from '../types/noun';
+import _ from 'lodash';
 
 
 /**
@@ -49,6 +50,16 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     this.subscribe('/all', 's3-store');
     this.subscribe('/all', 'launch');
     this.subscribe('/all', 'weather');
+  }
+
+  restart() {
+    super.restart();
+    _.mapValues(this.openSubscriptions, (subs, app: AppName) => {
+      if(subs.length > 0) {
+        this.stopApp(app);
+        this.startApp(app);
+      }
+    });
   }
 
   startApp(app: AppName) {

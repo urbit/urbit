@@ -95,6 +95,8 @@ class App extends React.Component {
             associations={associations}
             invites={this.state.invites}
             api={this.api}
+            connection={this.state.connection}
+            subscription={this.subscription}
             />
             <Content>
             <Switch>

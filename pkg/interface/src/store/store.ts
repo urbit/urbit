@@ -15,6 +15,7 @@ import PublishUpdateReducer from '../reducers/publish-update';
 import PublishResponseReducer from '../reducers/publish-response';
 import LaunchReducer from '../reducers/launch-update';
 import LinkListenReducer from '../reducers/listen-update';
+import ConnectionReducer from '../reducers/connection';
 
 
 export default class GlobalStore extends BaseStore<StoreState> {
@@ -31,12 +32,14 @@ export default class GlobalStore extends BaseStore<StoreState> {
   publishUpdateReducer = new PublishUpdateReducer();
   publishResponseReducer = new PublishResponseReducer();
   launchReducer = new LaunchReducer();
+  connReducer = new ConnectionReducer();
 
 
   initialState(): StoreState {
     return {
       pendingMessages: new Map(),
       chatInitialized: false,
+      connection: 'connected',
       sidebarShown: true,
       baseHash: null,
       invites: {},
@@ -90,5 +93,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.publishResponseReducer.reduce(data, this.state);
     this.launchReducer.reduce(data, this.state);
     this.linkListenReducer.reduce(data, this.state);
+    this.connReducer.reduce(data, this.state);
   }
 }
