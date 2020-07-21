@@ -138,7 +138,7 @@
         |=  nodes=(map index:store node:store)
         ^-  (list [index:store node:store])
         %+  sort  ~(tap by nodes)
-        |=  [p=[=index:store =node:store] q=[=index:store =node:store]]
+        |=  [p=[=index:store *] q=[=index:store *]]
         ^-  ?
         (lth (lent p.index) (lent q.index))
       ::
@@ -415,7 +415,7 @@
       %+  roll  (tap:orm graph)
       |=  [[=atom:store =node:store] out=?]
       ?&  out
-          =(%& (mule |.((vale:dais [atom post.node]))))
+          =(%& -:(mule |.((vale:dais [atom post.node]))))
           ?-  -.children.node
               %empty  %.y
               %graph  ^$(graph p.children.node)
