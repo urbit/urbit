@@ -130,8 +130,17 @@
           graphs
         %+  ~(put by graphs)
           resource
-        [(add-node-list resource graph mark ~(tap by nodes)) mark]
+        :_  mark
+        (add-node-list resource graph mark (sort-nodes nodes))
       ==
+      ::
+      ++  sort-nodes
+        |=  nodes=(map index:store node:store)
+        ^-  (list [index:store node:store])
+        %+  sort  ~(tap by nodes)
+        |=  [p=[=index:store =node:store] q=[=index:store =node:store]]
+        ^-  ?
+        (lth (lent p.index) (lent q.index))
       ::
       ++  add-node-list
         |=  $:  =resource:store
