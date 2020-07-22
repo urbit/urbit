@@ -738,42 +738,72 @@
   --
 ::  +scry: dereference namespace
 ::
-::    The ones producing vases are expected to be used like this:
-::
-::    &tang [(sell .^(vase %a /=peer=/~zod)) ~]
-::
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
-  ?.  =(lot [%$ %da now])  ~
-  ?.  =(%$ ren)  [~ ~]
-  ?.  =([%& our] why)
-    [~ ~]
-  ?:  =(tyl /whey)
+  ::TODO  don't special-case whey scry
+  ::
+  ?:  &(=(%$ ren) =(tyl /whey))
     =/  maz=(list mass)
       =+  [known alien]=(skid ~(val by peers.ames-state) |=(^ =(%known +<-)))
       :~  peers-known+&+known
           peers-alien+&+alien
       ==
     ``mass+!>(maz)
-  ?+    syd  ~
-      %peers
-    ?^  tyl  [~ ~]
+  ::  only respond for the local identity, %$ desk, current timestamp
+  ::
+  ?.  ?&  =(&+our why)
+          =([%$ %da now] lot)
+          =(%$ syd)
+      ==
+    ~
+  ::  /ax/protocol/version           @
+  ::  /ax/peers                      (map ship ?(%alien %known))
+  ::  /ax/peers/[ship]               ship-state
+  ::  /ax/peers/[ship]/forward-lane  (list lane)
+  ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
+  ::  /ax/snd-bones/[ship]/[bone]    vase
+  ::
+  ?.  ?=(%x ren)  ~
+  ?+    tyl  ~
+      [%protocol %version ~]
+    ``noun+!>(protocol-version)
+  ::
+      [%peers ~]
     :^  ~  ~  %noun
     !>  ^-  (map ship ?(%alien %known))
     (~(run by peers.ames-state) head)
   ::
-      %peer
-    ?.  ?=([@ ~] tyl)  [~ ~]
-    =/  who  (slaw %p i.tyl)
+      [%peers @ *]
+    =/  who  (slaw %p i.t.tyl)
     ?~  who  [~ ~]
     ?~  peer=(~(get by peers.ames-state) u.who)
       [~ ~]
-    ``noun+!>(u.peer)
+    ?+  t.t.tyl  [~ ~]
+      ~  ``noun+!>(u.peer)
+    ::
+        [%forward-lane ~]
+      ::  find lane for u.who, or their galaxy
+      ::
+      :^  ~  ~  %noun
+      !>  ^-  (list lane)
+      =/  ship-state  (~(get by peers.ames-state) u.who)
+      ?.  ?=([~ %known *] ship-state)
+        ~
+      =/  peer-state  +.u.ship-state
+      ?.  =(~ route.peer-state)  ::NOTE  avoid tmi
+        [lane:(need route.peer-state)]~
+      |-  ^-  (list lane)
+      ?:  ?=(%czar (clan:title sponsor.peer-state))
+        [%& sponsor.peer-state]~
+      =/  next  (~(get by peers.ames-state) sponsor.peer-state)
+      ?.  ?=([~ %known *] next)
+        ~
+      $(peer-state +.u.next)
+    ==
   ::
-      %bones
-    ?.  ?=([@ ~] tyl)  [~ ~]
-    =/  who  (slaw %p i.tyl)
+      [%bones @ ~]
+    =/  who  (slaw %p i.t.tyl)
     ?~  who  [~ ~]
     =/  per  (~(get by peers.ames-state) u.who)
     ?.  ?=([~ %known *] per)  [~ ~]
@@ -782,11 +812,10 @@
       [snd=~(key by snd) rcv=~(key by rcv)]
     ``noun+!>(res)
   ::
-      %snd-bone
-    ?.  ?=([@ @ ~] tyl)  [~ ~]
-    =/  who  (slaw %p i.tyl)
+      [%snd-bones @ @ ~]
+    =/  who  (slaw %p i.t.tyl)
     ?~  who  [~ ~]
-    =/  ost  (slaw %ud i.t.tyl)
+    =/  ost  (slaw %ud i.t.t.tyl)
     ?~  ost  [~ ~]
     =/  per  (~(get by peers.ames-state) u.who)
     ?.  ?=([~ %known *] per)  [~ ~]
