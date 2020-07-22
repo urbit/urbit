@@ -2,7 +2,7 @@ module Urbit.Vere.AmesNockWriter where
 
 import Urbit.Prelude
 
-import Urbit.Vere.KingAmes
+import Network.Ames.Types
 --import Urbit.Vere.Pier.Types
 
 -- The Nock Writer

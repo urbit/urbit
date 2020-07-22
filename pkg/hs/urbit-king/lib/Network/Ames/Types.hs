@@ -1,4 +1,4 @@
-module Urbit.Vere.KingAmes where
+module Network.Ames.Types where
 
 import Urbit.Prelude
 
@@ -119,4 +119,5 @@ data AmesRouterWriterApi = AmesRouterWriterApi
   , arwaLeaveRouter :: WriterLeaveRouter
     -- ^ Functions with a writer calls to join and leave the router.
   }
+
 
