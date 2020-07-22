@@ -1,13 +1,13 @@
-/-  *publish,
-    *group-store,
-    *group-hook,
-    *permission-hook,
-    *permission-group-hook,
-    *permission-store,
-    *invite-store,
-    *metadata-store,
-    *metadata-hook,
-    *rw-security
+/-  *publish
+/-  *group-store
+/-  *group-hook
+/-  *permission-hook
+/-  *permission-group-hook
+/-  *permission-store
+/-  *invite-store
+/-  *metadata-store
+/-  *metadata-hook
+/-  *rw-security
 /+  *server, *publish, cram, default-agent, dbug
 ::
 ~%  %publish  ..is  ~
@@ -127,7 +127,6 @@
       ::
           cards
         ;:  weld
-          (kill-builds pubs.zero)
           kick-cards
           init-cards
           (move-files old-subs)
@@ -224,21 +223,6 @@
       ?~  paths
         [~ subs]
       [[%give %kick paths ~]~ subs]
-    ::
-    ++  kill-builds
-      |=  pubs=(map @tas collection-zero)
-      ^-  (list card)
-      %-  zing
-      %+  turn  ~(tap by pubs)
-      |=  [col-name=@tas col-data=collection-zero]
-      ^-  (list card)
-      :-  [%pass /collection/[col-name] %arvo %f %kill ~]
-      %-  zing
-      %+  turn  ~(tap by pos.col-data)
-      |=  [pos-name=@tas *]
-      :~  [%pass /post/[col-name]/[pos-name] %arvo %f %kill ~]
-          [%pass /comments/[col-name]/[pos-name] %arvo %f %kill ~]
-      ==
     ::
     ++  send-invites
       |=  [book=@tas subscribers=(set @p)]
@@ -1145,7 +1129,11 @@
   ^-  [(list card) write=path read=path]
   ?>  ?=(^ group-path.group)
   =/  scry-path
-    ;:(weld /=group-store/(scot %da now.bol) group-path.group /noun)
+    ;:  weld
+      /(scot %p our.bol)/group-store/(scot %da now.bol)
+      group-path.group
+      /noun
+    ==
   =/  grp  .^((unit ^group) %gx scry-path)
   ?:  use-preexisting.group
     ?~  grp  !!

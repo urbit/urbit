@@ -8,7 +8,7 @@ export class SidebarSwitcher extends Component {
 
     const classes = this.props.classes ? this.props.classes : '';
 
-    const paddingTop = this.props.classes ? '0px' : '5px';
+    const paddingTop = this.props.classes ? '0px' : '8px';
 
     return (
       <div className={classes} style={{ paddingTop: paddingTop }}>

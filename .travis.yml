@@ -5,6 +5,7 @@ jobs:
     nix: 2.3.6
     before_install:
       - git lfs pull
+      - echo "trusted-users = root travis" | sudo tee -a /etc/nix/nix.conf && sudo pkill nix-daemon
     install:
       - nix-env -iA cachix -f https://cachix.org/api/v1/install
     script:

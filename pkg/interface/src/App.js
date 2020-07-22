@@ -1,3 +1,5 @@
+import { hot } from 'react-hot-loader/root';
+import 'react-hot-loader';
 import * as React from 'react';
 import { BrowserRouter as Router, Route, withRouter, Switch } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
@@ -31,7 +33,7 @@ const Root = styled.div`
 
 const StatusBarWithRouter = withRouter(StatusBar);
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.ship = window.ship;
@@ -47,6 +49,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     this.subscription.start();
+    this.api.local.getBaseHash();
   }
 
   render() {
@@ -63,9 +66,11 @@ export default class App extends React.Component {
         <Root>
           <Router>
             <StatusBarWithRouter props={this.props}
-              associations={associations}
-              invites={this.state.invites}
-              api={this.api}
+            associations={associations}
+            invites={this.state.invites}
+            api={this.api}
+            connection={this.state.connection}
+            subscription={this.subscription}
             />
             <ModuleContext>
             <Switch>
@@ -139,4 +144,6 @@ export default class App extends React.Component {
     );
   }
 }
+
+export default process.env.NODE_ENV === 'production' ? App : hot(App);
 

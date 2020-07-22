@@ -1,9 +1,5 @@
 import React from 'react';
 
-import LaunchApi from '../../api/launch';
-import LaunchStore from '../../store/launch';
-import LaunchSubscription from '../../subscription/launch';
-
 import './css/custom.css';
 
 import Tiles from './components/tiles';
@@ -24,6 +20,7 @@ export default class LaunchApp extends React.Component {
     const { props } = this;
 
     return (
+      <div className="h-100 flex flex-column h-100">
       <div className='v-mid ph2 dtc-m dtc-l dtc-xl flex justify-between flex-wrap' style={{ maxWidth: '40rem' }}>
         <Welcome firstTime={props.launch.firstTime} api={props.api} />
         <Tiles
@@ -34,6 +31,8 @@ export default class LaunchApp extends React.Component {
           weather={props.weather}
         />
       </div>
+      <div className="absolute mono bottom-0 left-0 f9 gray2 ml4 mb4 f8"> {props.baseHash} </div>
+    </div>
     );
   }
 }

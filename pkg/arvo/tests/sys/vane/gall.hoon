@@ -1,6 +1,5 @@
 /+  *test
-::
-/=  gall-raw  /:  /===/sys/vane/gall  /!noun/
+/=  gall-raw  /sys/vane/gall
 ::
 =/  test-pit=vase  !>(..zuse)
 =/  gall-gate  (gall-raw test-pit)
@@ -19,43 +18,39 @@
     =/  =task:able:gall  [%init ~nec]
     [duct type task]
   ::
-  =/  expected-moves  ~
+  =/  expected-moves=(list move:gall-gate)  ~
   ::
-  =^  results  gall-gate
+  =/  res
     (gall-call gall-gate time *sley call-args expected-moves)
   ::
-  results
-::  +test-conf: test %conf
+  -.res
+::  +test-conf: test %conf; TODO: test clay response
 ::
 ++  test-conf
   ^-  tang
   ::
   =/  =duct  ~[/init]
   =/  time  (add ~1111.1.1 ~s1)
-  =/  =term  %my-agent
+  =/  dap=term  %my-agent
   =/  ship  ~nec
   ::
   =/  call-args
     =/  =type  -:!>(*task:able:gall)
-    =/  =task:able:gall
-      =/  =dock  [ship term]
-      [%conf dock dock]
+    =/  =task:able:gall  [%conf dap]
     [duct type task]
   ::
   =/  =move:gall-gate
-    =/  =path  /sys/cor/[term]/(scot %p ship)/[term]/(scot %da time)
+    =/  =wire  /sys/cor/[dap]/(scot %p ship)/home/(scot %da time)
     =/  =note-arvo
-      =/  =schematic:ford  [%core [ship term] /hoon/[term]/app]
-      =/  =task:able:ford  [%build %.y schematic]
-      [%f task]
-    [duct %pass path note-arvo]
+      [%c %warp ship %home ~ %sing %a da+time /app/[dap]/hoon]
+    [duct %pass wire note-arvo]
   ::
   =/  expected-moves=(list move:gall-gate)  ~[move]
   ::
-  =^  results  gall-gate
+  =/  res
     (gall-call gall-gate time *sley call-args expected-moves)
   ::
-  results
+  -.res
 ::  +gall-call: have %gall run a +task and assert it produces expected-moves
 ::
 ++  gall-call
@@ -65,16 +60,16 @@
           call-args=[=duct =type wrapped-task=(hobo task:able:gall)]
           expected-moves=(list move:gall-gate)
       ==
-  ^-  [tang _gall-gate]
-  ::
   =/  gall-core  (gall-gate our=~nec now=now eny=`@`0xdead.beef scry=scry)
   ::
-  =^  moves  gall-gate  (call:gall-core [duct ~ type wrapped-task]:call-args)
+  =/  res
+    =/  =type  -:!>(*task:able:gall)
+    (call:gall-core duct.call-args dud=~ type wrapped-task.call-args)
   ::
   =/  output=tang
     %+  expect-eq
       !>  expected-moves
-      !>  moves
+      !>  -.res
   ::
-  [output gall-gate]
+  [output +.res]
 --

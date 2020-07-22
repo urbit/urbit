@@ -27,7 +27,7 @@ export class Welcome extends Component {
 
     return ((!wasWelcomed && this.state.show) && (contacts.length !== 0)) ? (
       <div className="ma4 pa2 bg-welcome-green bg-gray1-d white-d">
-        <p className="f8 lh-copy">Each Group is a list of other Urbit IDs that share some set of modules: chats, links and notebooks.</p>
+        <p className="f8 lh-copy">Each Group is a list of other Urbit IDs that share some set of modules: chats, links, and notebooks.</p>
         <p className="f8 pt2 dib pointer bb"
           onClick={(() => this.disableWelcome())}
         >

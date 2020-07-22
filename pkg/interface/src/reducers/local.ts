@@ -3,7 +3,7 @@ import { StoreState } from '../store/type';
 import { Cage } from '../types/cage';
 import { LocalUpdate } from '../types/local-update';
 
-type LocalState = Pick<StoreState, 'sidebarShown' | 'selectedGroups'>;
+type LocalState = Pick<StoreState, 'sidebarShown' | 'selectedGroups' | 'baseHash'>;
 
 export default class LocalReducer<S extends LocalState> {
     reduce(json: Cage, state: S) {
@@ -11,7 +11,13 @@ export default class LocalReducer<S extends LocalState> {
         if (data) {
             this.sidebarToggle(data, state);
             this.setSelected(data, state);
+            this.baseHash(data, state);
         }
+    }
+    baseHash(obj: LocalUpdate, state: S) {
+      if ('baseHash' in obj) {
+        state.baseHash = obj.baseHash;
+      }
     }
 
     sidebarToggle(obj: LocalUpdate, state: S) {

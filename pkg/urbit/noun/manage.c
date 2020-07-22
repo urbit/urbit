@@ -10,6 +10,7 @@
 #include <openssl/crypto.h>
 
 #include "all.h"
+#include "vere/vere.h"
 
 //  XX stack-overflow recovery should be gated by -a
 //
@@ -496,7 +497,7 @@ _pave_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 static void
 _pave_parts(void)
 {
-  u3R->cax.har_p = u3h_new();
+  u3R->cax.har_p = u3h_new_cache(u3_Host.ops_u.hap_w);
   u3R->jed.war_p = u3h_new();
   u3R->jed.cod_p = u3h_new();
   u3R->jed.han_p = u3h_new();

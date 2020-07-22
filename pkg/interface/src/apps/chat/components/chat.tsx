@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import _ from "lodash";
 import moment from "moment";
 
@@ -359,6 +359,10 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
       props.pendingMessages.get(props.station) || []
     ).map((value) => ({ ...value, pending: true }));
 
+    if(unread !== 0) {
+      unread += pendingMessages.length;
+    }
+
     messages = pendingMessages.concat(messages);
 
     const messageElements = messages.map((msg, i) => {
@@ -389,10 +393,9 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
       );
       if (unread > 0 && i === unread - 1) {
         return (
-          <>
+          <Fragment key={msg.uid}>
             {messageElem}
             <div
-              key={"unreads" + msg.uid}
               ref={this.setUnreadMarker}
               className="mv2 green2 flex items-center f9"
             >
@@ -409,19 +412,18 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
                 className="b--green2 ma0 bt-0"
               />
             </div>
-          </>
+          </Fragment>
         );
       } else if (dayBreak) {
         return (
-          <>
+          <Fragment key={msg.uid}>
             {messageElem}
             <div
-              key={"daybreak" + msg.uid}
               className="pv3 gray2 b--gray2 flex items-center justify-center f9 "
             >
               <p>{moment(_.get(messages[i], when)).calendar()}</p>
             </div>
-          </>
+          </Fragment>
         );
       } else {
         return messageElem;
