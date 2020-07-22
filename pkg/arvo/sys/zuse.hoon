@@ -5295,12 +5295,26 @@
       ~
     (some (~(run by lum) need))
   ::                                                    ::  ++drop-pole:unity
-  ++  drop-pole                                         ::  unit tuple
-    |*  but/(pole (unit))
-    ?~  but  !!
-    ?~  +.but
-      u:->.but
-    [u:->.but (drop-pole +.but)]
+  ++  drop-pole                                         ::  collapse to tuple
+    |^  |*  pul=(pole (unit))
+        ?:  (test-pole pul)  ~
+        (some (need-pole pul))
+    ::
+    ++  test-pole
+      |*  pul=(pole (unit))
+      ^-  ?
+      ?~  pul  &
+      ?|  ?=(~ -.pul)
+          ?~(+.pul | (test-pole +.pul))
+      ==
+    ::
+    ++  need-pole
+      |*  pul=(pole (unit))
+      ?~  pul  !!
+      ?~  +.pul
+        u:->.pul
+      [u:->.pul (need-pole +.pul)]
+    --
   --
 ::                                                      ::::
 ::::                      ++format                      ::  (2d) common formats
@@ -6553,7 +6567,7 @@
       ;~(pose pure pesc pold net wut col com)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
-      ;~(pose aln hep dot cab sig)
+      ;~(pose aln hep cab dot zap sig tar say lit rit)
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
