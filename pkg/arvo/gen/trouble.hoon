@@ -10,6 +10,7 @@
   [%base-hash base-hash]
   [%home-hash .^(@uv %cz (pathify ~.home ~))]
   [%kids-hash .^(@uv %cz (pathify ~.kids ~))]
+  [%glob-hash glob-state]
   ::
   (info %our our)
   (info %sponsor sponsor)
@@ -51,4 +52,10 @@
   =/  parent  (scot %p ship.u.ota)
   =+  .^(=cass:clay %cs /[parent]/[desk.u.ota]/1/late/foo)
   .^(@uv %cz /[parent]/[desk.u.ota]/(scot %ud ud.cass))
+::
+++  glob-state
+  ^-  [@uv @tas]
+  =<  [hash ?~(glob %waiting ?:(-.u.glob %done %trying))]
+  !<  [@ud hash=@uv glob=(unit [? *])]
+  .^(vase %gx (weld (pathify ~.glob ~) /dbug/state/noun))
 --
