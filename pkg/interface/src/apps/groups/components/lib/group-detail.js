@@ -108,7 +108,7 @@ export class GroupDetail extends Component {
             </div>
               <div className="flex flex-column flex-auto">
                 <p className="f9 inter ml2 w-100">{each.title}</p>
-                <p className="f9 inter ml2 w-100">
+                <p className="f9 inter mt2 ml2 w-100">
                   <span className="f9 di mr2 inter">{each.app}</span>
                   <Link className="f9 di green2" to={each.link}>
                     Open
@@ -198,7 +198,8 @@ export class GroupDetail extends Component {
               onBlur={() => {
                 if (groupOwner) {
                   this.setState({ awaiting: true }, (() => {
-                    props.api.metadata.add(
+                    props.api.metadata.metadataAdd(
+                      'contacts',
                       association['app-path'],
                       association['group-path'],
                       this.state.title,
@@ -227,7 +228,8 @@ export class GroupDetail extends Component {
               onBlur={() => {
                 if (groupOwner) {
                   this.setState({ awaiting: true }, (() => {
-                    props.api.metadata.add(
+                    props.api.metadata.metadataAdd(
+                      'contacts',
                       association['app-path'],
                       association['group-path'],
                       association.metadata.title,
@@ -250,7 +252,7 @@ export class GroupDetail extends Component {
           onClick={() => {
             if (groupOwner) {
               this.setState({ awaiting: true, type: 'Deleting' }, (() => {
-                props.api.contactView.delete(props.path).then(() => {
+                props.api.contacts.delete(props.path).then(() => {
                   props.history.push('/~groups');
                 });
               }));

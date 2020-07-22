@@ -1,7 +1,6 @@
 const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const urbitrc = require('./urbitrc');
 
 module.exports = {
   mode: 'production',
@@ -11,11 +10,11 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js?$/,
+        test: /\.(j|t)sx?$/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
+            presets: ['@babel/preset-env', '@babel/typescript', '@babel/preset-react'],
             plugins: [
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
@@ -39,7 +38,7 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.js']
+    extensions: ['.js', '.ts', '.tsx']
   },
   devtool: 'inline-source-map',
   // devServer: {
@@ -58,7 +57,7 @@ module.exports = {
   output: {
     filename: 'index.js',
     chunkFilename: 'index.js',
-    path: path.resolve(urbitrc.URBIT_PIERS[0] + '/app/landscape/', 'js'),
+    path: path.resolve(__dirname, '../../arvo/app/landscape/js'),
     publicPath: '/'
   },
   optimization: {

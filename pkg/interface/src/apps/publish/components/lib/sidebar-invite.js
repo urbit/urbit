@@ -2,23 +2,11 @@ import React, { Component } from 'react';
 
 export class SidebarInvite extends Component {
   onAccept() {
-    const action = {
-      accept: {
-        path: '/publish',
-        uid: this.props.uid
-      }
-    };
-    this.props.api.inviteAction(action);
+    this.props.api.invite.accept('/publish', this.props.uid);
   }
 
   onDecline() {
-    const action = {
-      decline: {
-        path: '/publish',
-        uid: this.props.uid
-      }
-    };
-    this.props.api.inviteAction(action);
+    this.props.api.invite.decline('/publish', this.props.uid);
   }
 
   render() {

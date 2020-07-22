@@ -22,20 +22,47 @@ class UrbitShipPlugin {
       'UrbitShipPlugin',
       async (compilation) => {
         const src = path.resolve(compiler.options.output.path, 'index.js');
-        return Promise.all(this.piers.map(pier => {
-          const dst = path.resolve(pier, 'app/landscape/js/index.js');
-          copyFile(src, dst).then(() => {
-            if(!this.herb) {
-              return;
-            }
-            pier = pier.split('/');
-            const desk = pier.pop();
-            return exec(`herb -p hood -d '+hood/commit %${desk}' ${pier.join('/')}`);
-          });
-        }));
+        // uncomment to copy into all piers
+        //
+        // return Promise.all(this.piers.map(pier => {
+        //   const dst = path.resolve(pier, 'app/landscape/js/index.js');
+        //   copyFile(src, dst).then(() => {
+        //     if(!this.herb) {
+        //       return;
+        //     }
+        //     pier = pier.split('/');
+        //     const desk = pier.pop();
+        //     return exec(`herb -p hood -d '+hood/commit %${desk}' ${pier.join('/')}`);
+        //   });
+        // }));
       }
-    )
+    );
   }
+}
+
+let devServer = {
+  contentBase: path.join(__dirname, '../dist'),
+  hot: true,
+  port: 9000,
+  historyApiFallback: true
+};
+
+if(urbitrc.URL) {
+  devServer = {
+    ...devServer,
+    index: '',
+    proxy: {
+      '/~landscape/js/index.js': {
+        target: 'http://localhost:9000',
+        pathRewrite: (req, path) => '/index.js'
+      },
+      '**': {
+        target: urbitrc.URL,
+        // ensure proxy doesn't timeout channels
+        proxyTimeout: 0
+      }
+    }
+  };
 }
 
 module.exports = {
@@ -46,15 +73,16 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js?$/,
+        test: /\.(j|t)sx?$/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
+            presets: ['@babel/preset-env', '@babel/typescript', '@babel/preset-react'],
             plugins: [
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
-              '@babel/plugin-proposal-class-properties'
+              '@babel/plugin-proposal-class-properties',
+              'react-hot-loader/babel'
             ]
           }
         },
@@ -74,15 +102,10 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.js']
+    extensions: ['.js', '.ts', '.tsx']
   },
   devtool: 'inline-source-map',
-  // devServer: {
-  //   contentBase: path.join(__dirname, './'),
-  //   hot: true,
-  //   port: 9000,
-  //   historyApiFallback: true
-  // },
+  devServer: devServer,
   plugins: [
     new UrbitShipPlugin(urbitrc)
     // new CleanWebpackPlugin(),

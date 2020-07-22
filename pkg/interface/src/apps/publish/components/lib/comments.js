@@ -53,7 +53,7 @@ export class Comments extends Component {
 
    this.textArea.value = '';
    this.setState({ commentBody: '', awaiting: 'new' });
-   const submit = this.props.api.publishAction(comment);
+    const submit = this.props.api.publish.publishAction(comment);
    submit.then(() => {
      this.setState({ awaiting: null });
     });
@@ -87,11 +87,11 @@ export class Comments extends Component {
 
     this.setState({ awaiting: 'edit' });
 
-    window.api
+    this.props.api.publish
       .publishAction(comment)
       .then(() => {
- this.setState({ awaiting: null, editing: null });
-});
+    this.setState({ awaiting: null, editing: null });
+    });
   }
 
   commentDelete(idx) {
@@ -106,7 +106,7 @@ export class Comments extends Component {
     };
 
     this.setState({ awaiting: { kind: 'del', what: idx } });
-    window.api
+    this.props.api.publish
       .publishAction(comment)
       .then(() => {
  this.setState({ awaiting: null });

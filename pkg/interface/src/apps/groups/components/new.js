@@ -67,7 +67,7 @@ export class NewScreen extends Component {
       invites: '',
       awaiting: true
     }, () => {
-      props.api.contactView.create(
+      props.api.contacts.create(
         group,
         aud,
         this.state.title,

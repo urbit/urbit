@@ -456,20 +456,30 @@
 ++  contacts-scry
   |=  pax=path
   ^-  (unit contacts)
-  =.  pax  ;:(weld /=contact-store/(scot %da now.bol)/contacts pax /noun)
+  =.  pax
+    ;:  weld
+      /(scot %p our.bol)/contact-store/(scot %da now.bol)/contacts
+      pax
+      /noun
+    ==
   .^((unit contacts) %gx pax)
 ::
 ++  invite-scry
   |=  uid=serial
   ^-  (unit invite)
   =/  pax
-    /=invite-store/(scot %da now.bol)/invite/contacts/(scot %uv uid)/noun
+    ;:  weld
+      /(scot %p our.bol)/invite-store/(scot %da now.bol)
+      /invite/contacts/(scot %uv uid)/noun
+    ==
   .^((unit invite) %gx pax)
 ::
 ++  group-scry
   |=  pax=path
-  ^-  (unit group)
-  .^((unit group) %gx ;:(weld /=group-store/(scot %da now.bol) pax /noun))
+  .^  (unit group)
+    %gx
+    ;:(weld /(scot %p our.bol)/group-store/(scot %da now.bol) pax /noun)
+  ==
 ::
 ++  pull-wire
   |=  pax=path
