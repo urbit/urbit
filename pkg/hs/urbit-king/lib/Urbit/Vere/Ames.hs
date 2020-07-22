@@ -17,6 +17,14 @@ import Urbit.Vere.Ames.DNS (galaxyPort, resolvServ)
 import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
 
 
+-- Constants -------------------------------------------------------------------
+
+-- | How many unprocessed ames packets to allow in the queue before we stop
+-- dropping incoming packets.
+queueBound :: Word
+queueBound = 1000
+
+
 -- Types -----------------------------------------------------------------------
 
 data AmesDrv = AmesDrv
@@ -106,13 +114,31 @@ ames'
   -> (Text -> RIO e ())
   -> RIO e ([Ev], RAcquire e (DriverApi NewtEf))
 ames' who isFake stderr = do
+  -- Unfortunately, we cannot use TBQueue because the only behavior
+  -- provided for when full is to block the writer, and we want to
+  -- instead drop the incoming packet on the floor. The implementation
+  -- below uses materially the same data structures as TBQueue, however.
   ventQ :: TQueue EvErr <- newTQueueIO
+  avail :: TVar Word <- newTVarIO queueBound
+  let
+    enqueuePacket p = do
+      vail <- readTVar avail
+      if vail > 0
+        then do
+          modifyTVar avail (subtract 1)
+          writeTQueue ventQ p
+        else pure ()  -- TODO debounced logging
+    dequeuePacket = do
+      pM <- tryReadTQueue ventQ
+      when (isJust pM) $ modifyTVar avail (+ 1)
+      pure pM
+
   env <- ask
-  let (bornEvs, startDriver) = ames env who isFake (writeTQueue ventQ) stderr
+  let (bornEvs, startDriver) = ames env who isFake enqueuePacket stderr
 
   let runDriver = do
         diOnEffect <- startDriver
-        let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
+        let diEventSource = fmap RRWork <$> dequeuePacket
         pure (DriverApi {..})
 
   pure (bornEvs, runDriver)
