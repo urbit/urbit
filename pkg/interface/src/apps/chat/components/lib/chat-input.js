@@ -150,6 +150,7 @@ export class ChatInput extends Component {
     if(patpSearch !== null) {
       this.patpAutocomplete(value, false);
     }
+    this.props.onChange(value);
   }
 
   getLetterType(letter) {
@@ -364,6 +365,7 @@ export class ChatInput extends Component {
           style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}
         >
           <CodeEditor
+            value={this.props.message}
             options={options}
             editorDidMount={(editor) => {
             this.editor = editor;
