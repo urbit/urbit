@@ -1,10 +1,9 @@
 /-  *resource
 |%
-+$  atom        @u
 +$  index       (list atom)
 +$  uid         [=resource =index]
 ::
-::  mug hash of +validated-portion
+::  +sham (half sha-256) hash of +validated-portion
 +$  hash  @ux
 ::
 +$  signature   [p=@ux q=ship r=life]

@@ -177,7 +177,7 @@
           =*  p  post.node
           =/  =validated-portion:store
             [parent-hash author.p time-sent.p contents.p]
-          =/  =hash:store  (mug validated-portion)
+          =/  =hash:store  `@ux`(sham validated-portion)
           ?~  hash.p  node
           ~|  "hash of post does not match calculated hash"
           ?>  =(hash u.hash.p)
@@ -413,7 +413,7 @@
             /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[u.mark]
         ==
       %+  roll  (tap:orm graph)
-      |=  [[=atom:store =node:store] out=?]
+      |=  [[=atom =node:store] out=?]
       ?&  out
           =(%& -:(mule |.((vale:dais [atom post.node]))))
           ?-  -.children.node
@@ -450,8 +450,8 @@
       [%x %graph-subset @ @ @ @ ~]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
-    =/  start=(unit atom:store)  (rush i.t.t.t.t.path dem:ag)
-    =/  end=(unit atom:store)    (rush i.t.t.t.t.t.path dem:ag)
+    =/  start=(unit atom)  (rush i.t.t.t.t.path dem:ag)
+    =/  end=(unit atom)    (rush i.t.t.t.t.t.path dem:ag)
     =/  graph=(unit marked-graph:store)
       (~(get by graphs) [ship term])
     ?~  graph  ~
@@ -490,8 +490,8 @@
       [%x %node-children-subset @ @ @ @ @ *]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
-    =/  start=(unit atom:store)  (rush i.t.t.t.t.path dem:ag)
-    =/  end=(unit atom:store)    (rush i.t.t.t.t.t.path dem:ag)
+    =/  start=(unit atom)  (rush i.t.t.t.t.path dem:ag)
+    =/  end=(unit atom)    (rush i.t.t.t.t.t.path dem:ag)
     =/  =index:store
       (turn t.t.t.t.t.t.path |=(=cord (slav %ud cord)))
     =/  node=(unit node:store)  (get-node ship term index)

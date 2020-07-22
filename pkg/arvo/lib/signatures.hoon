@@ -12,14 +12,6 @@
     our
   life
 ::
-::  sha256 noun hash
-::  
-++  sha256-mug
-  |=  yux/*  ^-  @ux  ^-  @
-  ?@  yux
-    (shax yux)
-  (shax (jam yux))
-::
 ++  is-signature-valid
   |=  [=signature =hash now=time]
   ^-  ?
