@@ -67,11 +67,12 @@
         old  [%2 new-rolodex]
         ::
           cards
-        :_  cards
         =/  paths
           %+  turn
             ~(val by sup.bol)
           |=([=ship =path] path)
+        ?~  paths  cards
+        :_  cards
         [%give %kick paths ~]
       ==
 

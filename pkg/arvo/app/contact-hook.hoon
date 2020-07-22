@@ -68,12 +68,13 @@
         ::
           cards
         ^-  (list card)
-        %+  welp
+        ;:  welp
           :~  [%pass /group %agent [our.bol %group-store] %leave ~]
               [%pass /group %agent [our.bol %group-store] %watch /groups]
-              kick-old-subs
           ==
-        cards
+          kick-old-subs
+          cards
+        ==
       ==
     %_    $
       -.old  %1
@@ -87,7 +88,8 @@
         %+  turn
           ~(val by sup.bol)
         |=([=ship =path] path)
-      [%give %kick paths ~]
+      ?~  paths  ~
+      [%give %kick paths ~]~
     --
   ::
   ++  on-poke

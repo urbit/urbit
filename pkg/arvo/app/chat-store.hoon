@@ -64,7 +64,7 @@
       =?  cards  ?=(^ kick-paths)
         :_  cards
         [%give %kick kick-paths ~]
-      $(old [%3 inbox.old])
+      $(old [%3 inbox])
     ::
       ?(%0 %1)  $(old (old-to-2 inbox.old))
     ::
