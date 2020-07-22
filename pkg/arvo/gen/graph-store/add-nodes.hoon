@@ -5,6 +5,6 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=resource nodes=(map index node) ~] ~]
     ==
-:-  %graph-action
-^-  action
-[%0 [%add-nodes resource nodes]]
+:-  %graph-update
+^-  updates
+[%0 now [%add-nodes resource nodes]]

@@ -3,8 +3,8 @@
 /-  *graph-store
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[=resource =graph ~] ~]
+        [[=resource =graph mark=(unit mark) ~] ~]
     ==
-:-  %graph-action
-^-  action
-[%0 [%add-graph resource graph]]
+:-  %graph-update
+^-  update
+[%0 now [%add-graph resource graph mark]]

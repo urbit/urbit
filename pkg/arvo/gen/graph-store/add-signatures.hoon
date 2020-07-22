@@ -5,6 +5,6 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[=uid =signatures ~] ~]
     ==
-:-  %graph-action
-^-  action
-[%0 [%add-signatures uid signatures]]
+:-  %graph-update
+^-  update
+[%0 now [%add-signatures uid signatures]]
