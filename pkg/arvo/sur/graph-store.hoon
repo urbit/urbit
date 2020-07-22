@@ -1,13 +1,5 @@
 /-  *post
 |%
-++  mop
-  |*  [key=mold value=mold]
-  |=  ord=$-([key key] ?)
-  |=  a=*
-  =/  b  ;;((tree [key=key val=value]) a)
-  ?>  (check-balance:((ordered-map key value) ord) b)
-  b
-::
 +$  graph         ((mop atom node) gth)
 +$  marked-graph  [p=graph q=(unit mark)]
 ::

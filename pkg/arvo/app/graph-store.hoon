@@ -140,7 +140,7 @@
         %+  sort  ~(tap by nodes)
         |=  [p=[=index:store *] q=[=index:store *]]
         ^-  ?
-        (lth (lent p.index) (lent q.index))
+        (lth (lent index.p) (lent index.q))
       ::
       ++  add-node-list
         |=  $:  =resource:store
