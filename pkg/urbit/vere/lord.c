@@ -25,9 +25,10 @@
 ::
 +$  writ
   $%  $:  %live
-          $%  [%exit cod=@]
+          $%  [%cram eve=@]
+              [%exit cod=@]
               [%save eve=@]
-              [%pack eve=@]
+              [%pack ~]
       ==  ==
       [%peek mil=@ now=@da lyc=gang pat=path]
       [%play eve=@ lit=(list ?((pair @da ovum) *))]
@@ -108,6 +109,7 @@ _lord_writ_free(u3_writ* wit_u)
     } break;
 
     case u3_writ_save:
+    case u3_writ_cram:
     case u3_writ_pack:
     case u3_writ_exit: {
     } break;
@@ -196,6 +198,7 @@ _lord_writ_str(u3_writ_type typ_e)
     case u3_writ_peek: return "peek";
     case u3_writ_play: return "play";
     case u3_writ_save: return "save";
+    case u3_writ_cram: return "cram";
     case u3_writ_pack: return "pack";
     case u3_writ_exit: return "exit";
   }
@@ -258,8 +261,14 @@ _lord_plea_live(u3_lord* god_u, u3_noun dat)
       god_u->cb_u.save_f(god_u->cb_u.ptr_v);
     } break;
 
+    case u3_writ_cram: {
+      god_u->cb_u.cram_f(god_u->cb_u.ptr_v);
+    } break;
+
     case u3_writ_pack: {
-      god_u->cb_u.pack_f(god_u->cb_u.ptr_v);
+      //  XX wire into cb
+      //
+      u3l_log("pier: pack complete\n");
     } break;
   }
 
@@ -738,8 +747,12 @@ _lord_writ_jam(u3_lord* god_u, u3_writ* wit_u)
         msg = u3nt(c3__live, c3__save, u3i_chubs(1, &god_u->eve_d));
       } break;
 
+      case u3_writ_cram: {
+        msg = u3nt(c3__live, c3__cram, u3i_chubs(1, &god_u->eve_d));
+      } break;
+
       case u3_writ_pack: {
-        msg = u3nt(c3__live, c3__pack, u3i_chubs(1, &god_u->eve_d));
+        msg = u3nt(c3__live, c3__pack, u3_nul);
       } break;
 
       case u3_writ_exit: {
@@ -938,17 +951,17 @@ u3_lord_save(u3_lord* god_u)
   }
 }
 
-/* u3_lord_pack(): save portable state.
+/* u3_lord_cram(): save portable state.
 */
 c3_o
-u3_lord_pack(u3_lord* god_u)
+u3_lord_cram(u3_lord* god_u)
 {
   if ( god_u->dep_w ) {
     return c3n;
   }
   else {
     u3_writ* wit_u = _lord_writ_new(god_u);
-    wit_u->typ_e = u3_writ_pack;
+    wit_u->typ_e = u3_writ_cram;
     _lord_writ_plan(god_u, wit_u);
     return c3y;
   }
@@ -1053,7 +1066,7 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
   //  spawn new process and connect to it
   //
   {
-    c3_c* arg_c[7];
+    c3_c* arg_c[8];
     c3_c  key_c[256];
     c3_c  wag_c[11];
     c3_c  hap_c[11];
@@ -1070,21 +1083,22 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
     sprintf(hap_c, "%u", u3_Host.ops_u.hap_w);
 
     arg_c[0] = god_u->bin_c;            //  executable
-    arg_c[1] = god_u->pax_c;            //  path to checkpoint directory
-    arg_c[2] = key_c;                   //  disk key
-    arg_c[3] = wag_c;                   //  runtime config
-    arg_c[4] = hap_c;                   //  hash table size
+    arg_c[1] = "serf";                  //  protocol
+    arg_c[2] = god_u->pax_c;            //  path to checkpoint directory
+    arg_c[3] = key_c;                   //  disk key
+    arg_c[4] = wag_c;                   //  runtime config
+    arg_c[5] = hap_c;                   //  hash table size
 
     if ( u3_Host.ops_u.roc_c ) {
       //  XX validate
       //
-      arg_c[5] = u3_Host.ops_u.roc_c;
+      arg_c[6] = u3_Host.ops_u.roc_c;
     }
     else {
-      arg_c[5] = "0";
+      arg_c[6] = "0";
     }
 
-    arg_c[6] = 0;
+    arg_c[7] = 0;
 
     uv_pipe_init(u3L, &god_u->inn_u.pyp_u, 0);
     uv_timer_init(u3L, &god_u->out_u.tim_u);

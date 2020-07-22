@@ -248,6 +248,7 @@
 #   define c3__cow    c3_s3('c','o','w')
 #   define c3__cpu    c3_s3('c','p','u')
 #   define c3__crad   c3_s4('c','r','a','d')
+#   define c3__cram   c3_s4('c','r','a','m')
 #   define c3__crap   c3_s4('c','r','a','p')
 #   define c3__cret   c3_s4('c','r','e','t')
 #   define c3__crib   c3_s4('c','r','i','b')
