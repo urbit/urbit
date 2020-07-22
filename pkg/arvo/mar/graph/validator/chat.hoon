@@ -1,10 +1,10 @@
 /-  graph=graph-store
-|_  [=atom:store =post:store]
+|_  [=atom =post:store]
 ++  grab
   |%
   ++  noun
-    |=  [=atom:store =post:store]
-    ^-  [atom:store post:store]
+    |=  [=atom =post:store]
+    ^-  [atom post:store]
     ?>  ?=([@ ~] index.post)
     [atom post]
   --
