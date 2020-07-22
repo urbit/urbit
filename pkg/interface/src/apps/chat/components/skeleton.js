@@ -19,13 +19,15 @@ const Skeleton = ({sidebar, children}) => {
     //   'db dn-m dn-l dn-xl': !this.props.chatHideOnMobile,
     //   'w-100 inter pt4 f8': !this.props.chatHideOnMobile
     // });
-    //
 
     const [open, setOpen] = useState(true);
 
     return (
         <Row height='100%'>
           <ColumnView open={open} onChange={() => setOpen(!open)}>
+            <Button onClick={() => setOpen(!open)}>
+              Click
+            </Button>
             <Sidebar>
               {sidebar}
             </Sidebar>
