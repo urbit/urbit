@@ -125,7 +125,7 @@ export class Settings extends Component {
 
     const ownedUnmanaged =
       owner &&
-      props.notebook?.['writers-group-path'].slice(0, 3) === '/~/';
+      !props.contacts[props.notebook?.['writers-group-path']];
 
     if (!ownedUnmanaged) {
       return null;
@@ -205,32 +205,9 @@ export class Settings extends Component {
       ? 'relative checked bg-green2 br3 h1 toggle v-mid z-0'
       : 'relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0';
 
-    const copyShortcode = <div>
-      {this.renderHeader('Share', 'Share a shortcode to join this notebook')}
-      <div className="relative w-100 flex" style={{ maxWidth: '29rem' }}>
-        <input
-          className={'f8 mono ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
-            'pa3 db w-100 flex-auto mr3'}
-          disabled={true}
-          value={`${this.props.host}/${this.props.book}` || ''}
-        />
-        <span className="f8 pointer absolute pa3 inter"
-          style={{ right: 12, top: 1 }}
-          ref="copy"
-          onClick={() => {
-            writeText(`${this.props.host}/${this.props.book}`);
-            this.refs.copy.innerText = 'Copied';
-          }}
-        >
-            Copy
-          </span>
-      </div>
-    </div>;
-
     if (this.props.host.slice(1) === window.ship) {
       return (
         <div className="flex-column">
-          {copyShortcode}
           {this.renderGroupify()}
           {this.renderHeader(
             'Delete Notebook',

@@ -9,10 +9,11 @@
 ::    we concat the ship onto the head of the path,
 ::    and trust it to take care of the rest.
 ::
-/-  view=chat-view, hook=chat-hook,
+/-  view=chat-view, hook=chat-hook,  *group,
     *permission-store, *group-store, *invite-store,
-    *rw-security, sole
-/+  shoe, default-agent, verb, dbug, store=chat-store
+    sole
+/+  shoe, default-agent, verb, dbug, store=chat-store,
+    group-store, grpl=group, resource
 ::
 |%
 +$  card  card:shoe
@@ -195,6 +196,7 @@
   --
 ::
 |_  =bowl:gall
+++  grp  ~(. grpl bowl)
 ::  +prep: setup & state adapter
 ::
 ++  prep
@@ -744,10 +746,10 @@
       =/  with-group=?     ?=(%village-with-group security)
       =/  =target          [with-group our-self path]
       =/  real-path=^path  (target-to-path target)
-      =/  =rw-security
+      =/  =policy
         ?-  security
-          %channel                         %channel
-          ?(%village %village-with-group)  %village
+          %channel                         *open:policy
+          ?(%village %village-with-group)  *invite:policy
         ==
       ?^  (scry-for (unit mailbox:store) %chat-store [%mailbox real-path])
         =-  [[- ~] state]
@@ -766,9 +768,10 @@
           ''
           real-path  ::  chat
           real-path  ::  group
-          rw-security
+          policy
           ~
           (fall allow-history %.y)
+          with-group
       ==
     ::  +delete: delete local chats
     ::
@@ -798,30 +801,30 @@
         ::  if they weren't permitted before, some hook will send an invite.
         ::  but if they already were, we want to send an invite ourselves.
         ::
-        ?.  %^  scry-for  ?
-              %permission-store
-            [%permitted (scot %p ship) real-path]
+        ?.  (is-member:grp ship real-path)
           ~
         `(invite-card real-path ship)
       ::  whitelist: empty if no matching permission, else true if whitelist
       ::
       =/  whitelist=(unit ?)
-        =;  perm=(unit permission)
-          ?~(perm ~ `?=(%white kind.u.perm))
+        =;  grp=(unit ^group)
+          ?~(grp ~ `?=(%open -.u.grp))
         ::TODO  +permission-of-target?
-        %^  scry-for  (unit permission)
-          %permission-store
-        [%permission real-path]
+        %^  scry-for  (unit ^group)
+          %group-store
+        `^path`[%groups real-path]
       ?~  whitelist
         ~&  [%weird-no-permission real-path]
         ~
+      =/  rid=resource
+        (de-path:resource real-path)
       %-  some
       %^  act  %do-permission  %group-store
       :-  %group-action
-      !>  ^-  group-action
+      !>   ^-  action:group-store
       ?:  =(u.whitelist allow)
-        [%add ships real-path]
-      [%remove ships real-path]
+        [%add-members rid ships]
+      [%remove-members rid ships]
     ::  +join: sync with remote mailbox
     ::
     ++  join

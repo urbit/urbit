@@ -2,8 +2,8 @@
 +$  group-path    path
 +$  app-name      @tas
 +$  app-path      path
-+$  resource      [=app-name =app-path]
-+$  associations  (map [group-path resource] metadata)
++$  md-resource   [=app-name =app-path]
++$  associations  (map [group-path md-resource] metadata)
 ::
 +$  metadata
   $:  title=@t
@@ -14,13 +14,13 @@
   ==
 ::
 +$  metadata-action
-  $%  [%add =group-path =resource =metadata]
-      [%remove =group-path =resource]
+  $%  [%add =group-path resource=md-resource =metadata]
+      [%remove =group-path resource=md-resource]
   ==
 ::
 +$  metadata-update
   $%  metadata-action
       [%associations =associations]
-      [%update-metadata =group-path =resource =metadata]
+      [%update-metadata =group-path resource=md-resource =metadata]
   ==
 --

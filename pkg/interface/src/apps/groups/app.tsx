@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import GroupsApi from '../../api/groups';
-import GroupsSubscription from '../../subscription/groups';
-import GroupsStore from '../../store/groups';
-
 import './css/custom.css';
 
 import { Skeleton } from './components/skeleton';
@@ -12,13 +8,22 @@ import { NewScreen } from './components/new';
 import { ContactSidebar } from './components/lib/contact-sidebar';
 import { ContactCard } from './components/lib/contact-card';
 import { AddScreen } from './components/lib/add-contact';
+import { JoinScreen } from './components/join';
 import GroupDetail from './components/lib/group-detail';
 
-export default class GroupsApp extends Component {
-  constructor(props) {
-    super(props);
-  }
+import { PatpNoSig } from '../../types/noun';
+import GlobalApi from '../../api/global';
+import { StoreState } from '../../store/type';
+import GlobalSubscription from '../../subscription/global';
 
+
+type GroupsAppProps = StoreState & {
+  ship: PatpNoSig;
+  api: GlobalApi;
+  subscription: GlobalSubscription;
+}
+
+export default class GroupsApp extends Component<GroupsAppProps, {}> {
   componentDidMount() {
     document.title = 'OS1 - Groups';
     // preload spinner asset
@@ -39,15 +44,16 @@ export default class GroupsApp extends Component {
     const defaultContacts =
       (Boolean(props.contacts) && '/~/default' in props.contacts) ?
         props.contacts['/~/default'] : {};
-    const groups = props.groups ? props.groups : {};
 
     const invites =
       (Boolean(props.invites) && '/contacts' in props.invites) ?
         props.invites['/contacts'] : {};
-    const associations = props.associations ? props.associations : {};
     const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
     const s3 = props.s3 ? props.s3 : {};
+    const groups = props.groups || {};
+    const associations = props.associations || {};
     const { api } = props;
+
 
     return (
         <Switch>
@@ -98,18 +104,48 @@ export default class GroupsApp extends Component {
               );
             }}
           />
-          <Route exact path="/~groups/(detail)?/(settings)?/:ship/:group/"
+        <Route exact path="/~groups/join/:ship?/:name?"
+            render={(props) => {
+              const ship = props.match.params.ship || '';
+              const name = props.match.params.name || '';
+              return (
+                <Skeleton
+                  history={props.history}
+                  selectedGroups={selectedGroups}
+                  api={api}
+                  contacts={contacts}
+                  groups={groups}
+                  invites={invites}
+                  associations={associations}
+                  activeDrawer="rightPanel"
+                >
+                  <JoinScreen
+                    history={props.history}
+                    groups={groups}
+                    contacts={contacts}
+                    api={api}
+                    ship={ship}
+                    name={name}
+                  />
+                </Skeleton>
+              );
+            }}
+          />
+          <Route exact path="/~groups/(detail)?/(settings)?/ship/:ship/:group/"
             render={(props) => {
               const groupPath =
-                `/${props.match.params.ship}/${props.match.params.group}`;
+                `/ship/${props.match.params.ship}/${props.match.params.group}`;
               const groupContacts = contacts[groupPath] || {};
-              const group = groups[groupPath] || new Set([]);
+              const group = groups[groupPath] ;
               const detail = Boolean(props.match.url.includes('/detail'));
               const settings = Boolean(props.match.url.includes('/settings'));
 
               const association = (associations.contacts?.[groupPath])
                 ? associations.contacts[groupPath]
                 : {};
+              if(!group) {
+                return null;
+              }
 
               return (
                 <Skeleton
@@ -130,12 +166,14 @@ export default class GroupsApp extends Component {
                     activeDrawer={(detail || settings) ? 'detail' : 'contacts'}
                     api={api}
                     path={groupPath}
+                    groups={groups}
                     {...props}
                   />
                   <GroupDetail
                     association={association}
                     path={groupPath}
                     group={group}
+                    groups={groups}
                     activeDrawer={(detail || settings) ? 'detail' : 'contacts'}
                     settings={settings}
                     associations={associations}
@@ -146,12 +184,16 @@ export default class GroupsApp extends Component {
               );
             }}
           />
-          <Route exact path="/~groups/add/:ship/:group"
+          <Route exact path="/~groups/add/ship/:ship/:group"
             render={(props) => {
               const groupPath =
-                `/${props.match.params.ship}/${props.match.params.group}`;
+                `/ship/${props.match.params.ship}/${props.match.params.group}`;
               const groupContacts = contacts[groupPath] || {};
-              const group = groups[groupPath] || new Set([]);
+              const group = groups[groupPath] || {};
+
+              if(!group) {
+                return null;
+              }
 
               return (
                 <Skeleton
@@ -168,7 +210,8 @@ export default class GroupsApp extends Component {
                   <ContactSidebar
                     contacts={groupContacts}
                     defaultContacts={defaultContacts}
-                    group={group}
+		    group={group}
+		    groups={groups}
                     activeDrawer="rightPanel"
                     path={groupPath}
                     api={api}
@@ -185,10 +228,10 @@ export default class GroupsApp extends Component {
               );
             }}
           />
-          <Route exact path="/~groups/share/:ship/:group"
+          <Route exact path="/~groups/share/ship/:ship/:group"
             render={(props) => {
               const groupPath =
-                `/${props.match.params.ship}/${props.match.params.group}`;
+                `/ship/${props.match.params.ship}/${props.match.params.group}`;
               const shipPath = `${groupPath}/${window.ship}`;
               const rootIdentity = defaultContacts[window.ship] || {};
 
@@ -196,7 +239,10 @@ export default class GroupsApp extends Component {
               const contact =
                 (window.ship in groupContacts) ?
                   groupContacts[window.ship] : {};
-              const group = groups[groupPath] || new Set([]);
+              const group = groups[groupPath];
+              if(!group) {
+                return null;
+              }
 
               return (
                 <Skeleton
@@ -218,6 +264,7 @@ export default class GroupsApp extends Component {
                     path={groupPath}
                     api={api}
                     selectedContact={shipPath}
+                    groups={groups}
                     {...props}
                   />
                   <ContactCard
@@ -234,10 +281,10 @@ export default class GroupsApp extends Component {
               );
             }}
           />
-          <Route exact path="/~groups/view/:ship/:group/:contact"
+          <Route exact path="/~groups/view/ship/:ship/:group/:contact"
             render={(props) => {
               const groupPath =
-                `/${props.match.params.ship}/${props.match.params.group}`;
+                `/ship/${props.match.params.ship}/${props.match.params.group}`;
               const shipPath =
                 `${groupPath}/${props.match.params.contact}`;
 
@@ -245,11 +292,14 @@ export default class GroupsApp extends Component {
               const contact =
                 (props.match.params.contact in groupContacts) ?
                   groupContacts[props.match.params.contact] : {};
-              const group = groups[groupPath] || new Set([]);
+              const group = groups[groupPath] ;
 
               const rootIdentity =
                 props.match.params.contact === window.ship ?
-                  defaultContacts[window.ship] : null;
+                defaultContacts[window.ship] : null;
+              if(!group) {
+                return null;
+              }
 
               return (
                 <Skeleton
@@ -271,6 +321,7 @@ export default class GroupsApp extends Component {
                     path={groupPath}
                     api={api}
                     selectedContact={shipPath}
+                    groups={groups}
                     {...props}
                   />
                   <ContactCard

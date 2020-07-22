@@ -17,6 +17,7 @@ export interface StoreState {
   // local state
   sidebarShown: boolean;
   selectedGroups: SelectedGroup[];
+  dark: boolean;
   connection: ConnectionStatus;
   baseHash: string | null;
   // invite state

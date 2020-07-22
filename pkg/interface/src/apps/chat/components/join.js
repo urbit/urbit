@@ -23,16 +23,13 @@ export class JoinScreen extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
 
-    if ((props.autoJoin !== '/undefined/undefined' &&
-      props.autoJoin !== '/~/undefined/undefined') &&
+    if ((props.autoJoin !== '/undefined/undefined') &&
       (props.api && (prevProps?.api !== props.api))) {
       let station = props.autoJoin.split('/');
-      const sig = props.autoJoin.includes('/~/');
 
-      const ship = sig ? station[2] : station[1];
+      const ship = station[1];
       if (
         station.length < 2 ||
-        (Boolean(sig) && station.length < 3) ||
         !urbitOb.isValidPatp(ship)
       ) {
         this.setState({
@@ -59,12 +56,10 @@ export class JoinScreen extends Component {
     const { props, state } = this;
 
     let station = state.station.split('/');
-    const sig = state.station.includes('/~/');
 
-    const ship = sig ? station[2] : station[1];
+    const ship = station[1];
     if (
       station.length < 2 ||
-      (Boolean(sig) && station.length < 3) ||
       !urbitOb.isValidPatp(ship)
     ) {
       this.setState({
@@ -84,7 +79,7 @@ export class JoinScreen extends Component {
 
   stationChange(event) {
     this.setState({
-      station: `/${event.target.value}`
+      station: `/${event.target.value.trim()}`
     });
   }
 
@@ -116,7 +111,7 @@ export class JoinScreen extends Component {
         </div>
         <h2 className="mb3 f8">Join Existing Chat</h2>
         <div className="w-100">
-          <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/chat-name</span> or <span className="mono">~/~ship/chat-name</span></p>
+          <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/chat-name</span></p>
           <p className="f9 gray2 mb4">Chat names use lowercase, hyphens, and slashes.</p>
           <textarea
             ref={ (e) => {

@@ -80,7 +80,8 @@
       %publish
       %weather
       %group-store
-      %group-hook
+      %group-pull-hook
+      %group-push-hook
       %permission-store
       %permission-hook
       %permission-group-hook
@@ -229,6 +230,9 @@
     (se-born | %home %file-server)
   =?  ..on-load  (lte hood-version %7)
     (se-born | %home %glob)
+  =?  ..on-load  (lte hood-version %8)
+    =>  (se-born | %home %group-push-hook)
+    (se-born | %home %group-pull-hook)
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect

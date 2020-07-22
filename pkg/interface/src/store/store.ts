@@ -73,6 +73,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       notebooks: {},
       contacts: {},
       selectedGroups: [],
+      dark: false,
       inbox: {},
       chatSynced: null,
     };

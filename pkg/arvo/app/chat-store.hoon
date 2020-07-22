@@ -1,6 +1,6 @@
 :: chat-store: data store that holds linear sequences of chat messages
 ::
-/+  store=chat-store, default-agent, verb, dbug
+/+  store=chat-store, default-agent, verb, dbug, group-store
 ~%  %chat-store-top  ..is  ~
 |%
 +$  card  card:agent:gall
@@ -8,17 +8,19 @@
   $%  state-0
       state-1
       state-2
+      state-3
   ==
 ::
 +$  state-0  [%0 =inbox:store]
 +$  state-1  [%1 =inbox:store]
 +$  state-2  [%2 =inbox:store]
++$  state-3  [%3 =inbox:store]
 +$  admin-action
   $%  [%trim ~]
   ==
 --
 ::
-=|  state-2
+=|  state-3
 =*  state  -
 ::
 %-  agent:dbug
@@ -39,11 +41,34 @@
     ^-  (quip card _this)
     |^
     =/  old  !<(versioned-state old-vase)
-    =?  old  ?=(%0 -.old) 
-      (old-to-2 inbox.old) 
-    =?  old  ?=(%1 -.old) 
-      (old-to-2 inbox.old) 
-    [~ this(state [%2 inbox.old])]
+    =|  cards=(list card)
+    |-
+    ^-  (quip card _this)
+    ?-  -.old
+        %3  [cards this(state old)]
+      ::
+        %2
+      =/  =inbox:store
+        (migrate-path-map:group-store inbox.old)
+      =/  kick-paths
+        %~  tap  in
+        %+  roll
+          ~(val by sup.bowl)
+        |=  [[=ship sub=path] subs=(set path)]
+        ^-  (set path)
+        ?.  ?=([@ @ *] sub)
+          subs
+        ?.  &(=(%mailbox i.sub) =('~' i.t.sub))
+          subs
+        (~(put in subs) sub)
+      =?  cards  ?=(^ kick-paths)
+        :_  cards
+        [%give %kick kick-paths ~]
+      $(old [%3 inbox])
+    ::
+      ?(%0 %1)  $(old (old-to-2 inbox.old))
+    ::
+    ==
     ::
     ++  old-to-2
       |=  =inbox:store

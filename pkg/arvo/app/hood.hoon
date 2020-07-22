@@ -17,6 +17,7 @@
   $%  state
       state-7
       [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
+      [%7 drum=state:drum helm=state:helm kiln=state:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum

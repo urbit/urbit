@@ -16,7 +16,7 @@ export class NotebookItem extends Component {
       <Link
       to={'/~publish/notebook/' + props.path}
       >
-        <div className={'w-100 v-mid f9 ph4 pv1 ' + selectedClass}>
+        <div className={'w-100 v-mid f9 ph5 pv1 ' + selectedClass}>
           <p className="dib f9">{props.title}</p>
           {unread}
         </div>

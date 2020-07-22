@@ -1,10 +1,44 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import _ from 'lodash';
 import Mousetrap from 'mousetrap';
 import urbitOb from 'urbit-ob';
 import { Sigil } from '../lib/sigil';
+import { PatpNoSig, Path } from '../types/noun';
+import { Groups} from '../types/group-update';
+import { Rolodex, Contact } from '../types/contact-update';
+import { Associations } from '../types/metadata-update';
 
-export class InviteSearch extends Component {
+export interface Invites {
+  ships: PatpNoSig[];
+  groups: string[][];
+}
+
+interface InviteSearchProps {
+  groups: Groups;
+  contacts: Rolodex;
+  groupResults: boolean;
+  shipResults: boolean;
+  invites: Invites;
+  setInvite: (inv: Invites) => void;
+  disabled?: boolean;
+	associations?: Associations;
+}
+
+interface InviteSearchState {
+  groups: string[][];
+  peers: PatpNoSig[];
+  contacts: Map<PatpNoSig, string[]>;
+  searchValue: string;
+  searchResults: Invites;
+  selected: PatpNoSig | Path | null;
+  inviteError: boolean;
+}
+
+export class InviteSearch extends Component<
+  InviteSearchProps,
+  InviteSearchState
+> {
+  textarea: React.RefObject<HTMLTextAreaElement> = createRef();
   constructor(props) {
     super(props);
     this.state = {
@@ -14,14 +48,12 @@ export class InviteSearch extends Component {
       searchValue: '',
       searchResults: {
         groups: [],
-        ships: []
+        ships: [],
       },
       selected: null,
-      inviteError: false
+      inviteError: false,
     };
     this.search = this.search.bind(this);
-
-    this.textarea = React.createRef();
   }
 
   componentDidMount() {
@@ -36,42 +68,50 @@ export class InviteSearch extends Component {
   }
 
   peerUpdate() {
-    let groups = Array.from(Object.keys(this.props.contacts));
-    groups = groups.filter(e => !e.startsWith('/~/'))
-    .map((e) => {
-      const eachGroup = [];
-      eachGroup.push(e);
-      if (this.props.associations) {
-        let name = e;
-        if (e in this.props.associations) {
-          name = (this.props.associations[e].metadata.title !== '')
-            ? this.props.associations[e].metadata.title : e;
+    const groups = Array.from(Object.keys(this.props.contacts))
+      .filter((e) => !e.startsWith('/~/'))
+      .map((e) => {
+        const eachGroup: Path[] = [];
+        eachGroup.push(e);
+        if (this.props.associations) {
+          let name = e;
+          if (e in this.props.associations) {
+            name =
+              this.props.associations[e].metadata.title !== ''
+                ? this.props.associations[e].metadata.title
+                : e;
+          }
+          eachGroup.push(name);
         }
-        eachGroup.push(name);
-      }
-      return Array.from(eachGroup);
-    });
+        return Array.from(eachGroup);
+      });
 
-    let peers = [];
-    const peerSet = new Set();
+    let peers: PatpNoSig[] = [];
+    const peerSet = new Set<PatpNoSig>();
     const contacts = new Map();
 
-    Object.keys(this.props.groups).map((group) => {
-      if (this.props.groups[group].size > 0) {
-        const groupEntries = this.props.groups[group].values();
+    _.map(this.props.groups, (group, path) => {
+      if (group.members.size > 0) {
+        const groupEntries = group.members.values();
         for (const member of groupEntries) {
           peerSet.add(member);
         }
       }
 
-      if (this.props.contacts[group]) {
-        const groupEntries = this.props.groups[group].values();
+	    const groupContacts = this.props.contacts[path];
+
+      if (groupContacts) {
+        const groupEntries = group.members.values();
         for (const member of groupEntries) {
-          if (this.props.contacts[group][member]) {
+          if (groupContacts[member]) {
             if (contacts.has(member)) {
-              contacts.get(member).push(this.props.contacts[group][member].nickname);
+              contacts
+                .get(member)
+                .push(groupContacts[member].nickname);
             } else {
-              contacts.set(member, [this.props.contacts[group][member].nickname]);
+              contacts.set(member, [
+                groupContacts[member].nickname,
+              ]);
             }
           }
         }
@@ -84,6 +124,7 @@ export class InviteSearch extends Component {
 
   search(event) {
     const searchTerm = event.target.value.toLowerCase().replace('~', '');
+    const { state, props } = this;
 
     this.setState({ searchValue: event.target.value });
 
@@ -92,25 +133,26 @@ export class InviteSearch extends Component {
     }
 
     if (searchTerm.length > 0) {
-      if (this.state.inviteError === true) {
+      if (state.inviteError === true) {
         this.setState({ inviteError: false });
       }
 
-      let groupMatches = [];
-      if (this.props.groupResults) {
-        groupMatches = this.state.groups.filter((e) => {
-          return (e[0].includes(searchTerm) || e[1].toLowerCase().includes(searchTerm));
-        });
-      }
-
-      let shipMatches = [];
-      if (this.props.shipResults) {
-        shipMatches = this.state.peers.filter((e) => {
-          return e.includes(searchTerm) && !this.props.invites.ships.includes(e);
+      let groupMatches = !props.groupResults ? [] :
+        state.groups.filter((e) => {
+          return (
+            e[0].includes(searchTerm) || e[1].toLowerCase().includes(searchTerm)
+          );
         });
 
-        for (const contact of this.state.contacts.keys()) {
-          const thisContact = this.state.contacts.get(contact);
+      let shipMatches = !props.shipResults ? []  :
+         state.peers.filter((e) => {
+          return (
+            e.includes(searchTerm) && !props.invites.ships.includes(e)
+          );
+        });
+
+        for (const contact of state.contacts.keys()) {
+          const thisContact = state.contacts.get(contact) || [];
           const match = thisContact.filter((e) => {
             return e.toLowerCase().includes(searchTerm);
           });
@@ -126,30 +168,34 @@ export class InviteSearch extends Component {
           isValid = false;
         }
 
-        if (isValid && shipMatches.findIndex(s => s === searchTerm) < 0) {
+        if (props.shipResults && isValid && shipMatches.findIndex((s) => s === searchTerm) < 0) {
           shipMatches.unshift(searchTerm);
         }
-      }
 
-      const { selected } = this.state;
+      const { selected } = state;
       const groupIdx = groupMatches.findIndex(([path]) => path === selected);
-      const shipIdx = shipMatches.findIndex(ship => ship === selected);
+      const shipIdx = shipMatches.findIndex((ship) => ship === selected);
       const staleSelection = groupIdx < 0 && shipIdx < 0;
-      if(!selected || staleSelection) {
+      if (!selected || staleSelection) {
         const newSelection = _.get(groupMatches, '[0][0]') || shipMatches[0];
         this.setState({ selected: newSelection });
       }
 
-      if(searchTerm.length < 3) {
-        groupMatches = groupMatches.filter(([, name]) =>
-          name.toLowerCase().split(' ').some(s => s.startsWith(searchTerm))
-        ).sort((a,b) => a[1].length - b[1].length);
+      if (searchTerm.length < 3) {
+        groupMatches = groupMatches
+          .filter(([, name]) =>
+            name
+              .toLowerCase()
+              .split(' ')
+              .some((s) => s.startsWith(searchTerm))
+          )
+          .sort((a, b) => a[1].length - b[1].length);
 
-        shipMatches = shipMatches.slice(0,3);
+        shipMatches = shipMatches.slice(0, 3);
       }
 
       this.setState({
-        searchResults: { groups: groupMatches, ships: shipMatches }
+        searchResults: { groups: groupMatches, ships: shipMatches },
       });
     }
   }
@@ -165,16 +211,16 @@ export class InviteSearch extends Component {
     mousetrap.bind(['up', 'shift+tab'], (e) => {
       e.preventDefault();
       e.stopPropagation();
-      this.nextSelection('backward');
+      this.nextSelection(true);
     });
 
     mousetrap.bind('enter', (e) => {
       e.preventDefault();
       e.stopPropagation();
       const { selected } = this.state;
-      if(selected.startsWith('/')) {
+      if (selected && selected.startsWith('/')) {
         this.addGroup(selected);
-      } else {
+      } else if (selected) {
         this.addShip(selected);
       }
       this.setState({ selected: null });
@@ -183,40 +229,38 @@ export class InviteSearch extends Component {
   nextSelection(backward = false) {
     const { selected, searchResults } = this.state;
     const { ships, groups } = searchResults;
-    if(!selected) {
+    if (!selected) {
       return;
     }
     let groupIdx = groups.findIndex(([path]) => path === selected);
-    let shipIdx = ships.findIndex(ship => ship === selected);
-    if(groupIdx >= 0) {
+    let shipIdx = ships.findIndex((ship) => ship === selected);
+    if (groupIdx >= 0) {
       backward ? groupIdx-- : groupIdx++;
-      let selected = _.get(groups,[groupIdx], '[0]');
-      if(groupIdx === groups.length) {
-        selected = ships.length === 0
-              ?  groups[0][0]
-              :  ships[0];
+      let selected = _.get(groups, [groupIdx, 0]);
+      if (groupIdx === groups.length) {
+        selected = ships.length === 0 ? groups[0][0] : ships[0];
       }
-      if(groupIdx < 0) {
-        selected = ships.length === 0
-              ?  groups[groups.length - 1][0]
-              :  ships[ships.length - 1];
+      if (groupIdx < 0) {
+        selected =
+          ships.length === 0
+            ? groups[groups.length - 1][0]
+            : ships[ships.length - 1];
       }
       this.setState({ selected });
       return;
     }
-    if(shipIdx >= 0) {
+    if (shipIdx >= 0) {
       backward ? shipIdx-- : shipIdx++;
       let selected = ships[shipIdx];
-      if(shipIdx === ships.length) {
-        selected = groups.length === 0
-              ?  ships[0]
-              :  groups[0][0];
+      if (shipIdx === ships.length) {
+        selected = groups.length === 0 ? ships[0] : groups[0][0];
       }
 
-      if(shipIdx < 0) {
-        selected = groups.length === 0
-              ?  ships[ships.length - 1]
-              :  groups[groups.length - 1][0];
+      if (shipIdx < 0) {
+        selected =
+          groups.length === 0
+            ? ships[ships.length - 1]
+            : groups[groups.length - 1][0];
       }
 
       this.setState({ selected });
@@ -226,7 +270,7 @@ export class InviteSearch extends Component {
     const { ships } = this.props.invites;
     this.setState({
       searchValue: '',
-      searchResults: { groups: [], ships: [] }
+      searchResults: { groups: [], ships: [] },
     });
     this.props.setInvite({ groups: [], ships: ships });
   }
@@ -235,7 +279,7 @@ export class InviteSearch extends Component {
     let { groups, ships } = this.props.invites;
     this.setState({
       searchValue: '',
-      searchResults: { groups: [], ships: [] }
+      searchResults: { groups: [], ships: [] },
     });
     ships = ships.filter((e) => {
       return e !== ship;
@@ -246,7 +290,7 @@ export class InviteSearch extends Component {
   addGroup(group) {
     this.setState({
       searchValue: '',
-      searchResults: { groups: [], ships: [] }
+      searchResults: { groups: [], ships: [] },
     });
     this.props.setInvite({ groups: [group], ships: [] });
   }
@@ -255,7 +299,7 @@ export class InviteSearch extends Component {
     const { groups, ships } = this.props.invites;
     this.setState({
       searchValue: '',
-      searchResults: { groups: [], ships: [] }
+      searchResults: { groups: [], ships: [] },
     });
     if (!ships.includes(ship)) {
       ships.push(ship);
@@ -264,13 +308,11 @@ export class InviteSearch extends Component {
       return false;
     }
     this.props.setInvite({ groups: groups, ships: ships });
+    return true;
   }
 
   submitShipToAdd(ship) {
-    const searchTerm = ship
-      .toLowerCase()
-      .replace('~', '')
-      .trim();
+    const searchTerm = ship.toLowerCase().replace('~', '').trim();
     let isValid = true;
     if (!urbitOb.isValidPatp('~' + searchTerm)) {
       isValid = false;
@@ -310,7 +352,7 @@ export class InviteSearch extends Component {
     let invErrElem = <span />;
     if (state.inviteError) {
       invErrElem = (
-        <span className="f9 inter red2 db pt2">
+        <span className='f9 inter red2 db pt2'>
           Invited ships must be validly formatted ship names.
         </span>
       );
@@ -322,14 +364,14 @@ export class InviteSearch extends Component {
     ) {
       const groupHeader =
         state.searchResults.groups.length > 0 ? (
-          <p className="f9 gray2 ph3 pb2">Groups</p>
+          <p className='f9 gray2 ph3 pb2'>Groups</p>
         ) : (
           ''
         );
 
       const shipHeader =
         state.searchResults.ships.length > 0 ? (
-          <p className="f9 gray2 pv2 ph3">Ships</p>
+          <p className='f9 gray2 pv2 ph3'>Ships</p>
         ) : (
           ''
         );
@@ -341,42 +383,47 @@ export class InviteSearch extends Component {
             className={
               'list white-d f8 pv2 ph3 pointer' +
               ' hover-bg-gray4 hover-bg-gray1-d ' +
-              ((group[1]) ? 'inter' : 'mono') +
-              ( group[0] === state.selected ? ' bg-gray1-d bg-gray4' : '')
+              (group[1] ? 'inter' : 'mono') +
+              (group[0] === state.selected ? ' bg-gray1-d bg-gray4' : '')
             }
             onClick={() => this.addGroup(group[0])}
           >
-            <span className="mix-blend-diff white">{(group[1]) ? group[1] : group[0]}</span>
+            <span className='mix-blend-diff white'>
+              {group[1] ? group[1] : group[0]}
+            </span>
           </li>
         );
       });
 
       const shipResults = state.searchResults.ships.map((ship) => {
-        const nicknames = (this.state.contacts.has(ship))
-          ? this.state.contacts.get(ship)
-            .filter((e) => {
- return !(e === '');
-})
-            .join(', ')
-          : '';
+        const nicknames = (this.state.contacts.get(ship) || [])
+          .filter((e) => {
+            return !(e === '');
+          })
+          .join(', ');
+
         return (
           <li
             key={ship}
             className={
               'list mono white-d f8 pv1 ph3 pointer' +
               ' hover-bg-gray4 hover-bg-gray1-d relative' +
-              ( ship === state.selected ? ' bg-gray1-d bg-gray4' : '')
+              (ship === state.selected ? ' bg-gray1-d bg-gray4' : '')
             }
-            onClick={e => this.addShip(ship)}
+            onClick={(e) => this.addShip(ship)}
           >
             <Sigil
               ship={'~' + ship}
               size={24}
-              color="#000000"
-              classes="mix-blend-diff v-mid"
+              color='#000000'
+              classes='mix-blend-diff v-mid'
             />
-            <span className="v-mid ml2 mw5 truncate dib mix-blend-diff white">{'~' + ship}</span>
-            <span className="absolute right-1 di truncate mw4 inter f9 pt1 mix-blend-diff white">{nicknames}</span>
+            <span className='v-mid ml2 mw5 truncate dib mix-blend-diff white'>
+              {'~' + ship}
+            </span>
+            <span className='absolute right-1 di truncate mw4 inter f9 pt1 mix-blend-diff white'>
+              {nicknames}
+            </span>
           </li>
         );
       });
@@ -403,7 +450,7 @@ export class InviteSearch extends Component {
       const groups = groupInvites.map((group) => {
         return (
           <span
-            key={group}
+            key={group[0]}
             className={
               'f9 mono black pa2 bg-gray5 bg-gray1-d' +
               ' ba b--gray4 b--gray2-d white-d dib mr2 mt2 c-default'
@@ -411,8 +458,8 @@ export class InviteSearch extends Component {
           >
             {group}
             <span
-              className="white-d ml3 mono pointer"
-              onClick={e => this.deleteGroup(group)}
+              className='white-d ml3 mono pointer'
+              onClick={(e) => this.deleteGroup()}
             >
               x
             </span>
@@ -431,8 +478,8 @@ export class InviteSearch extends Component {
           >
             {'~' + ship}
             <span
-              className="white-d ml3 mono pointer"
-              onClick={e => this.deleteShip(ship)}
+              className='white-d ml3 mono pointer'
+              onClick={(e) => this.deleteShip(ship)}
             >
               x
             </span>
@@ -447,22 +494,22 @@ export class InviteSearch extends Component {
             'white-d pa3 db w-100 inter'
           }
         >
-          <span className="db gray2">Participants</span>
+          <span className='db gray2'>Participants</span>
           {groups} {ships}
         </div>
       );
     }
 
     return (
-      <div className="relative">
+      <div className='relative'>
         <img
-          src="/~chat/img/search.png"
-          className="absolute invert-d"
+          src='/~chat/img/search.png'
+          className='absolute invert-d'
           style={{
             height: 16,
             width: 16,
             top: 14,
-            left: 12
+            left: 12,
           }}
         />
         <textarea
@@ -477,7 +524,7 @@ export class InviteSearch extends Component {
           spellCheck={false}
           style={{
             resize: 'none',
-            paddingLeft: 36
+            paddingLeft: 36,
           }}
           onChange={this.search}
           value={state.searchValue}

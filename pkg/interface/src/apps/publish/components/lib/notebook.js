@@ -110,7 +110,8 @@ export class Notebook extends Component {
                   host={this.props.ship}
                   book={this.props.book}
                   notebook={notebook}
-                  permissions={this.props.permissions}
+                  contacts={this.props.contacts}
+                  associations={this.props.associations}
                   groups={this.props.groups}
                   api={this.props.api}
                 />;
@@ -153,8 +154,9 @@ export class Notebook extends Component {
 
     let newPost = null;
     if (notebook?.['writers-group-path'] in props.groups) {
-      const writers = notebook?.['writers-group-path'];
-      if (props.groups?.[writers].has(window.ship)) {
+      const group = props.groups[notebook?.['writers-group-path']];
+      const writers = group.tags?.publish?.[`writers-${props.book}`] || new Set();
+      if (props.ship === `~${window.ship}` || writers.has(ship)) {
         newPost = (
           <Link
             to={newUrl}
