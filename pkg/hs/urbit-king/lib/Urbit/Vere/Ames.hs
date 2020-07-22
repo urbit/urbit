@@ -19,7 +19,7 @@ import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
 
 -- Constants -------------------------------------------------------------------
 
--- | How many unprocessed ames packets to allow in the queue before we stop
+-- | How many unprocessed ames packets to allow in the queue before we start
 -- dropping incoming packets.
 queueBound :: Word
 queueBound = 1000
