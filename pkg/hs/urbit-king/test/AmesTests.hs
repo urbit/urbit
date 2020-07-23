@@ -80,8 +80,8 @@ runGala
 runGala point = do
     env <- ask
     que <- newTQueueIO
-    let (_, runAmes) =
-          ames env (fromIntegral point) True (writeTQueue que) noStderr
+    let enqueue = \p -> writeTQueue que p $> Intake
+    let (_, runAmes) = ames env (fromIntegral point) True enqueue noStderr
     cb <- runAmes
     io (cb turfEf)
     pure (que, cb)

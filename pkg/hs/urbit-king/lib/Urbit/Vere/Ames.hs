@@ -2,7 +2,7 @@
   Ames IO Driver
 -}
 
-module Urbit.Vere.Ames (ames, ames') where
+module Urbit.Vere.Ames (ames, ames', PacketOutcome(..)) where
 
 import Urbit.Prelude
 
