@@ -2,12 +2,12 @@
   Ames IO Driver
 -}
 
-module Urbit.Vere.Ames (ames, ames') where
+module Urbit.Vere.Ames (ames, ames', PacketOutcome(..)) where
 
 import Urbit.Prelude
 
-import Network.Socket        hiding (recvFrom, sendTo)
-import Urbit.Arvo            hiding (Fake)
+import Network.Socket              hiding (recvFrom, sendTo)
+import Urbit.Arvo                  hiding (Fake)
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
 
@@ -17,14 +17,32 @@ import Urbit.Vere.Ames.DNS (galaxyPort, resolvServ)
 import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
 
 
+-- Constants -------------------------------------------------------------------
+
+-- | How many unprocessed ames packets to allow in the queue before we start
+-- dropping incoming packets.
+queueBound :: Word
+queueBound = 1000
+
+-- | How often, measured in number of packets dropped, we should announce packet
+-- loss.
+packetsDroppedPerComplaint :: Word
+packetsDroppedPerComplaint = 1000
+
+
 -- Types -----------------------------------------------------------------------
 
 data AmesDrv = AmesDrv
   { aTurfs    :: TVar (Maybe [Turf])
+  , aDropped  :: TVar Word
   , aUdpServ  :: UdpServ
   , aResolvr  :: ResolvServ
   , aRecvTid  :: Async ()
   }
+
+data PacketOutcome
+  = Intake
+  | Ouster
 
 
 -- Utils -----------------------------------------------------------------------
@@ -106,13 +124,34 @@ ames'
   -> (Text -> RIO e ())
   -> RIO e ([Ev], RAcquire e (DriverApi NewtEf))
 ames' who isFake stderr = do
+  -- Unfortunately, we cannot use TBQueue because the only behavior
+  -- provided for when full is to block the writer. The implementation
+  -- below uses materially the same data structures as TBQueue, however.
   ventQ :: TQueue EvErr <- newTQueueIO
+  avail :: TVar Word <- newTVarIO queueBound
+  let
+    enqueuePacket p = do
+      vail <- readTVar avail
+      if vail > 0
+        then do
+          modifyTVar avail (subtract 1)
+          writeTQueue ventQ p
+          pure Intake
+        else do
+          _ <- readTQueue ventQ
+          writeTQueue ventQ p
+          pure Ouster
+    dequeuePacket = do
+      pM <- tryReadTQueue ventQ
+      when (isJust pM) $ modifyTVar avail (+ 1)
+      pure pM
+
   env <- ask
-  let (bornEvs, startDriver) = ames env who isFake (writeTQueue ventQ) stderr
+  let (bornEvs, startDriver) = ames env who isFake enqueuePacket stderr
 
   let runDriver = do
         diOnEffect <- startDriver
-        let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
+        let diEventSource = fmap RRWork <$> dequeuePacket
         pure (DriverApi {..})
 
   pure (bornEvs, runDriver)
@@ -135,7 +174,7 @@ ames
   => e
   -> Ship
   -> Bool
-  -> (EvErr -> STM ())
+  -> (EvErr -> STM PacketOutcome)
   -> (Text -> RIO e ())
   -> ([Ev], RAcquire e (NewtEf -> IO ()))
 ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
@@ -151,20 +190,31 @@ ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
     drv  <- mkRAcquire start stop
     pure (handleEffect drv mode)
 
-  start :: RIO e AmesDrv
+  start :: HasLogFunc e => RIO e AmesDrv
   start = do
     aTurfs   <- newTVarIO Nothing
+    aDropped <- newTVarIO 0
     aUdpServ <- udpServ isFake who
-    aRecvTid <- queuePacketsThread aUdpServ
+    aRecvTid <- queuePacketsThread aDropped aUdpServ
     aResolvr <- resolvServ aTurfs (usSend aUdpServ) stderr
     pure (AmesDrv { .. })
 
   hearFailed _ = pure ()
 
-  queuePacketsThread :: UdpServ -> RIO e (Async ())
-  queuePacketsThread UdpServ {..} = async $ forever $ atomically $ do
-    (p, a, b) <- usRecv
-    enqueueEv (EvErr (hearEv p a b) hearFailed)
+  queuePacketsThread :: HasLogFunc e => TVar Word -> UdpServ -> RIO e (Async ())
+  queuePacketsThread dropCtr UdpServ {..} = async $ forever $ do
+    outcome <- atomically $ do
+      (p, a, b) <- usRecv
+      enqueueEv (EvErr (hearEv p a b) hearFailed)
+    case outcome of
+      Intake -> pure ()
+      Ouster -> do
+        d <- atomically $ do
+          d <- readTVar dropCtr
+          writeTVar dropCtr (d + 1)
+          pure d
+        when (d `rem` packetsDroppedPerComplaint == 0) $
+          logWarn "ames: queue full; dropping inbound packets"
 
   stop :: AmesDrv -> RIO e ()
   stop AmesDrv {..} = io $ do
