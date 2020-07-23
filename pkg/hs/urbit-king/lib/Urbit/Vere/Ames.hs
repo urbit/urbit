@@ -6,8 +6,9 @@ module Urbit.Vere.Ames (ames, ames') where
 
 import Urbit.Prelude
 
-import Network.Socket        hiding (recvFrom, sendTo)
-import Urbit.Arvo            hiding (Fake)
+import Control.Concurrent.STM.TVar        (stateTVar)
+import Network.Socket              hiding (recvFrom, sendTo)
+import Urbit.Arvo                  hiding (Fake)
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
 
@@ -24,15 +25,25 @@ import Urbit.Vere.Ames.UDP (UdpServ(..), fakeUdpServ, realUdpServ)
 queueBound :: Word
 queueBound = 1000
 
+-- | How often, measured in number of packets dropped, we should announce packet
+-- loss.
+packetsDroppedPerComplaint :: Word
+packetsDroppedPerComplaint = 1000
+
 
 -- Types -----------------------------------------------------------------------
 
 data AmesDrv = AmesDrv
   { aTurfs    :: TVar (Maybe [Turf])
+  , aDropped  :: TVar Word
   , aUdpServ  :: UdpServ
   , aResolvr  :: ResolvServ
   , aRecvTid  :: Async ()
   }
+
+data PacketOutcome
+  = Intake
+  | Ouster
 
 
 -- Utils -----------------------------------------------------------------------
@@ -127,7 +138,11 @@ ames' who isFake stderr = do
         then do
           modifyTVar avail (subtract 1)
           writeTQueue ventQ p
-        else pure ()  -- TODO debounced logging
+          pure Intake
+        else do
+          _ <- readTQueue ventQ
+          writeTQueue ventQ p
+          pure Ouster
     dequeuePacket = do
       pM <- tryReadTQueue ventQ
       when (isJust pM) $ modifyTVar avail (+ 1)
@@ -161,7 +176,7 @@ ames
   => e
   -> Ship
   -> Bool
-  -> (EvErr -> STM ())
+  -> (EvErr -> STM PacketOutcome)
   -> (Text -> RIO e ())
   -> ([Ev], RAcquire e (NewtEf -> IO ()))
 ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
@@ -177,20 +192,28 @@ ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
     drv  <- mkRAcquire start stop
     pure (handleEffect drv mode)
 
-  start :: RIO e AmesDrv
+  start :: HasLogFunc e => RIO e AmesDrv
   start = do
     aTurfs   <- newTVarIO Nothing
+    aDropped <- newTVarIO 0
     aUdpServ <- udpServ isFake who
-    aRecvTid <- queuePacketsThread aUdpServ
+    aRecvTid <- queuePacketsThread aDropped aUdpServ
     aResolvr <- resolvServ aTurfs (usSend aUdpServ) stderr
     pure (AmesDrv { .. })
 
   hearFailed _ = pure ()
 
-  queuePacketsThread :: UdpServ -> RIO e (Async ())
-  queuePacketsThread UdpServ {..} = async $ forever $ atomically $ do
-    (p, a, b) <- usRecv
-    enqueueEv (EvErr (hearEv p a b) hearFailed)
+  queuePacketsThread :: HasLogFunc e => TVar Word -> UdpServ -> RIO e (Async ())
+  queuePacketsThread dropCtr UdpServ {..} = async $ forever $ do
+    outcome <- atomically $ do
+      (p, a, b) <- usRecv
+      enqueueEv (EvErr (hearEv p a b) hearFailed)
+    case outcome of
+      Intake -> pure ()
+      Ouster -> do
+        d <- atomically $ stateTVar dropCtr (\d -> (d, d + 1))
+        when (d `rem` packetsDroppedPerComplaint == 0) $
+          logWarn "ames: queue full; dropping inbound packets"
 
   stop :: AmesDrv -> RIO e ()
   stop AmesDrv {..} = io $ do
