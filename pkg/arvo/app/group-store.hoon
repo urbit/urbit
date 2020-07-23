@@ -75,7 +75,9 @@
     ?:  ?=(%1 -.old)
       `this(state old)
     |^
-    :-  ~[kick-all]
+    :-  :~  [%pass / %agent [our.bowl dap.bowl] %poke %noun !>(%perm-upgrade)]
+            kick-all
+        ==
     =*  paths  ~(key by groups.old)
     =/  [unmanaged=(list path) managed=(list path)]
       (skid ~(tap in paths) |=(=path =('~' (snag 0 path))))
@@ -102,7 +104,7 @@
       ^+  groups
       ?~  paths
         groups
-      ?:  =(/~/default i.paths)
+      ?:  |(=(/~/default i.paths) =(4 (lent i.paths)))
         $(paths t.paths)
       =/  [=resource =group]
         (migrate-unmanaged i.paths)
@@ -124,18 +126,16 @@
     ++  migrate-unmanaged
       |=  pax=path
       ^-  [resource group]
-      =/  =group:state-zero:store
+      =/  members=(set ship)
         (~(got by groups.old) pax)
-      =/  [=policy members=(set ship)]
-        (unmanaged-permissions pax)
-      =.  members
-        (~(uni in members) group)
+      =|  =invite:policy 
       ?>  ?=(^ pax)
       =/  rid=resource
         (resource-from-old-path t.pax)
       =/  =tags
         (~(put ju *tags) %admin entity.rid)
-      [rid members tags policy %.y]
+      :-  rid
+      [members tags invite %.y]
     ::
     ++  resource-from-old-path
       |=  pax=path
@@ -145,66 +145,17 @@
         (slav %p i.pax)
       [ship i.t.pax]
     ::
-    ++  unmanaged-permissions
-      |=  pax=path
-      ^-  [policy (set ship)]
-      =/  perm
-        ~|  pax
-        (scry-group-permissions pax)
-      ?~  perm
-        [*invite:policy ~]
-      ?:  ?=(%black kind.u.perm)
-        :-  [%open ~ who.u.perm]
-        ~
-      :_  who.u.perm
-      *invite:policy
-    ::
-    ++  migrate-group
+   ++  migrate-group
       |=  pax=path
       =/  members
         (~(got by groups.old) pax)
-      =^  =policy  members
-        (migrate-permissions pax members)
+      =|  =invite:policy  
       =/  rid=resource
         (resource-from-old-path pax)
       =/  =tags
         (~(put ju *tags) %admin entity.rid)
-      [rid members tags policy %.n]
+      [rid members tags invite %.n]
     ::
-    ++  migrate-permissions
-      |=  [pax=path ships=(set ship)]
-      ^-  [policy (set ship)]
-      =/  perm
-        (scry-group-permissions pax)
-      ?~  perm
-        [*invite:policy ships]
-      ?>  ?=(%white kind.u.perm)
-      [[%invite ~] (~(uni in ships) who.u.perm)]
-    ::
-    ++  scry-unmanaged-groups
-      ^-  (set path)
-      .^  (set path)
-        %gx
-        (scot %p our.bowl)
-        %permission-store
-        (scot %da now.bowl)
-        /keys/noun
-      ==
-    ::
-    ++  scry-group-permissions
-      |=  pax=path
-      ^-  (unit permission:permission-store)
-      .^  (unit permission:permission-store)
-        %gx
-        (scot %p our.bowl)
-        %permission-store
-        (scot %da now.bowl)
-        ;:  weld
-          /permission
-          pax
-          /noun
-        ==
-      ==
     --
   ::
   ++  on-poke
@@ -212,9 +163,13 @@
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
-      ?:  ?=(?(%group-update %group-action) mark)
+      ?+    mark  (on-poke:def mark vase)
+        %noun  (poke-noun:gc vase)
+        ::
+          ?(%group-update %group-action)
         (poke-group-update:gc !<(update:store vase))
-      (on-poke:def mark vase)
+        ::
+      ==
     [cards this]
   ::
   ++  on-watch
@@ -286,6 +241,92 @@
       (~(has in ban-ranks.policy) (clan:title ship))
     ==
   ==
+++  poke-noun
+  |=  =vase
+  ^-  (quip card _state)
+  =/  noun
+    !<(%perm-upgrade vase)
+  |^
+  =/  perms=(list path)
+    ~(tap in scry-permissions)
+  |-
+  ?~  perms
+    `state
+  =*  pax  i.perms
+  ?>  ?=(^ pax)
+  ?:  |(!=('~' i.pax) =(4 (lent pax)))
+    $(perms t.perms)
+  =/  rid=resource
+    (make-rid t.pax)
+  =/  perm
+    (scry-group-permissions pax)
+  ?~  perm
+    $(perms t.perms)
+  ?:  (~(has by groups) rid)
+    %_    $
+      perms  t.perms
+    ::
+        groups
+      %+  ~(jab by groups)  rid
+      (update-existing u.perm)
+    ==
+  %_    $
+    perms  t.perms
+    ::
+        groups
+    %+  ~(put by groups)  rid
+    (add-new u.perm)
+  ==
+  ++  make-rid
+    |=  =path
+    ^-  resource
+    ?>  ?=([@ @ *] path)
+    :-  (slav %p i.path)
+    i.t.path 
+  ::
+  ++  add-new
+    |=  =permission:permission-store
+    ^-  group
+    ?:  ?=(%black kind.permission)
+      [~ ~ [%open ~ who.permission] %.y]
+    [who.permission ~ [%invite ~] %.y]
+  ::   
+  ++  update-existing
+    |=  =permission:permission-store
+    |=  =group
+    ^+  group
+    ?:  ?=(%black kind.permission)
+      group
+    ?>  ?=(%invite -.policy.group)
+    %_  group
+      members  (~(uni in members.group) who.permission)
+    ==
+  ::
+  ++  scry-permissions
+    ^-  (set path)
+    .^  (set path)
+      %gx
+      (scot %p our.bol)
+      %permission-store
+      (scot %da now.bol)
+      /keys/noun
+    ==
+  ::
+  ++  scry-group-permissions
+    |=  pax=path
+    ^-  (unit permission:permission-store)
+    .^  (unit permission:permission-store)
+      %gx
+      (scot %p our.bol)
+      %permission-store
+      (scot %da now.bol)
+      ;:  weld
+        /permission
+        pax
+        /noun
+      ==
+    ==
+  --
 ::
 ++  poke-group-update
   |=  =update:store
