@@ -51,9 +51,9 @@ export class Subscribers extends Component {
         group={group}
         tags={tags}
         appTags={appTags}
-        contacts={props.contacts}
-        groups={props.groups}
-        associations={props.associations}
+        contacts={this.props.contacts}
+        groups={this.props.groups}
+        associations={this.props.associations}
         api={this.props.api}
       />
     );
