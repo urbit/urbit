@@ -287,7 +287,6 @@
       *@uv
     =/  parent  (scot %p ship.u.ota)
     =+  .^(=cass:clay %cs /[parent]/[desk.u.ota]/1/late/foo)
-    %^  end  3  3
     .^(@uv %cz /[parent]/[desk.u.ota]/(scot %ud ud.cass))
   --
   
