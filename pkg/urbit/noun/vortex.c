@@ -326,3 +326,39 @@ u3v_mark(FILE* fil_u)
   tot_w += u3a_maid(fil_u, "  wish cache", u3a_mark_noun(arv_u->yot));
   return   u3a_maid(fil_u, "total arvo stuff", tot_w);
 }
+
+/* u3v_reclaim(): clear ad-hoc persistent caches to reclaim memory.
+*/
+void
+u3v_reclaim(void)
+{
+  //  clear the u3v_wish cache
+  //
+  //    NB: this would leak if not on the home road
+  //
+  if ( &(u3H->rod_u) == u3R ) {
+    u3z(u3A->yot);
+    u3A->yot = u3_nul;
+  }
+}
+
+/* u3v_rewrite_compact(): rewrite arvo kernel for compaction.
+*/
+void
+u3v_rewrite_compact()
+{
+  u3v_arvo* arv_u = &(u3H->arv_u);
+
+  u3a_rewrite_noun(arv_u->roc);
+  u3a_rewrite_noun(arv_u->now);
+  u3a_rewrite_noun(arv_u->wen);
+  u3a_rewrite_noun(arv_u->sen);
+  u3a_rewrite_noun(arv_u->yot);
+
+  arv_u->roc = u3a_rewritten_noun(arv_u->roc);
+  arv_u->now = u3a_rewritten_noun(arv_u->now);
+  arv_u->wen = u3a_rewritten_noun(arv_u->wen);
+  arv_u->sen = u3a_rewritten_noun(arv_u->sen);
+  arv_u->yot = u3a_rewritten_noun(arv_u->yot);
+}
+
