@@ -1849,42 +1849,52 @@ u3m_wipe(void)
 void
 u3m_reclaim(void)
 {
+  u3v_reclaim();
+  u3j_reclaim();
+  u3n_reclaim();
+  u3a_reclaim();
+}
+
+/* _cm_pack_rewrite(): trace through arena, rewriting pointers.
+*/
+static void
+_cm_pack_rewrite(void)
+{
+  //  XX fix u3a_rewrit* to support south roads
+  //
   c3_assert( &(u3H->rod_u) == u3R );
 
-  //  clear the u3v_wish cache
+  //  NB: these implementations must be kept in sync with u3m_reclaim();
+  //  anything not reclaimed must be rewritable
   //
-  //    NB: this will leak if not on the home road
-  //
-  u3z(u3A->yot);
-  u3A->yot = u3_nul;
+  u3v_rewrite_compact();
+  u3j_rewrite_compact();
+  u3n_rewrite_compact();
+  u3a_rewrite_compact();
+}
 
-  //  clear the memoization cache
-  //
-  u3h_free(u3R->cax.har_p);
-  u3R->cax.har_p = u3h_new();
+/* u3m_pack: compact (defragment) memory.
+*/
+c3_w
+u3m_pack(void)
+{
+  c3_w pre_w = u3a_open(u3R);
 
-  //  clear the jet battery hash cache
+  //  reclaim first, to free space, and discard anything we can't/don't rewrite
   //
-  u3h_free(u3R->jed.bas_p);
-  u3R->jed.bas_p = u3h_new();
+  u3m_reclaim();
 
-  //  re-establish the warm jet state
+  //  sweep the heap, finding and saving new locations
   //
-  //    XX might this reduce fragmentation?
-  //
-  // u3j_ream();
+  u3a_pack_seek(u3R);
 
-  //  clear the jet hank cache
+  //  trace roots, rewriting inner pointers
   //
-  u3h_walk(u3R->jed.han_p, u3j_free_hank);
-  u3h_free(u3R->jed.han_p);
-  u3R->jed.han_p = u3h_new();
+  _cm_pack_rewrite();
 
-  //  clear the bytecode cache
+  //  sweep the heap, relocating objects to their new locations
   //
-  //    We can't just u3h_free() -- the value is a post to a u3n_prog.
-  //    Note that this requires that the hank cache also be freed.
-  //
-  u3n_free();
-  u3R->byc.har_p = u3h_new();
+  u3a_pack_move(u3R);
+
+  return (u3a_open(u3R) - pre_w);
 }

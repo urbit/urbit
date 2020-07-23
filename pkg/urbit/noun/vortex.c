@@ -327,6 +327,21 @@ u3v_mark(FILE* fil_u)
   return   u3a_maid(fil_u, "total arvo stuff", tot_w);
 }
 
+/* u3v_reclaim(): clear ad-hoc persistent caches to reclaim memory.
+*/
+void
+u3v_reclaim(void)
+{
+  //  clear the u3v_wish cache
+  //
+  //    NB: this would leak if not on the home road
+  //
+  if ( &(u3H->rod_u) == u3R ) {
+    u3z(u3A->yot);
+    u3A->yot = u3_nul;
+  }
+}
+
 /* u3v_rewrite_compact(): rewrite arvo kernel for compaction.
 */
 void
