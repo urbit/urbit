@@ -269,7 +269,7 @@
   ==
 ::
 ++  on-leave  on-leave:def
-++  on-peek   
+++  on-peek
   |=  =path
   ^-  (unit (unit cage))
   |^
@@ -287,10 +287,9 @@
       *@uv
     =/  parent  (scot %p ship.u.ota)
     =+  .^(=cass:clay %cs /[parent]/[desk.u.ota]/1/late/foo)
-    %^  end  3  3
+    %^  end  0  25
     .^(@uv %cz /[parent]/[desk.u.ota]/(scot %ud ud.cass))
   --
-  
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 --
