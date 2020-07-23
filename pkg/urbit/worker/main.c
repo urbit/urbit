@@ -298,11 +298,7 @@ _cw_pack(c3_i argc, c3_c* argv[])
   c3_c* dir_c = argv[2];
 
   u3m_boot(dir_c);
-
-  {
-    c3_w len_w = u3m_pack();
-    u3a_print_memory(stderr, "urbit-worker: pack: gained", len_w);
-  }
+  u3a_print_memory(stderr, "urbit-worker: pack: gained", u3m_pack());
 
   u3e_save();
 }

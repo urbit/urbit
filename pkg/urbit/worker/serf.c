@@ -257,6 +257,8 @@ _serf_grab(u3_serf* sef_u)
 
     u3z(sef_u->sac);
     sef_u->sac = u3_nul;
+
+    u3l_log("\n");
   }
 }
 
@@ -309,12 +311,13 @@ u3_serf_post(u3_serf* sef_u)
   //  XX this runs on replay too, |mass s/b elsewhere
   //
   if ( c3y == sef_u->mut_o ) {
-    sef_u->mut_o = c3n;
     _serf_grab(sef_u);
+    sef_u->mut_o = c3n;
   }
 
   if ( c3y == sef_u->pac_o ) {
-    u3m_pack();
+    u3a_print_memory(stderr, "serf: pack: gained", u3m_pack());
+    u3l_log("\n");
     sef_u->pac_o = c3n;
   }
 }
@@ -979,7 +982,7 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
       }
       else {
         u3z(com);
-        u3m_pack();
+        u3a_print_memory(stderr, "serf: pack: gained", u3m_pack());
         *ret = u3nc(c3__live, u3_nul);
         return c3y;
       }
