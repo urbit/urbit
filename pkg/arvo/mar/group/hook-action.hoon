@@ -1,6 +1,6 @@
 /-  *group-hook
 =,  dejs:format
-|_  act=group-hook-action
+|_  act=action
 ++  grad  %noun
 ++  grow
   |%
@@ -8,7 +8,7 @@
   --
 ++  grab
   |%
-  ++  noun  group-hook-action
+  ++  noun  action
   ++  json
     |=  jon=^json
     =<  (parse-action jon)

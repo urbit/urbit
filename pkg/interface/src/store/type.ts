@@ -11,11 +11,15 @@ import { S3State } from '../types/s3-update';
 import { Permissions } from '../types/permission-update';
 import { LaunchState, WeatherState } from '../types/launch-update';
 import { LinkComments, LinkCollections, LinkSeen } from '../types/link-update';
+import { ConnectionStatus } from '../types/connection';
 
 export interface StoreState {
   // local state
   sidebarShown: boolean;
   selectedGroups: SelectedGroup[];
+  dark: boolean;
+  connection: ConnectionStatus;
+  baseHash: string | null;
   // invite state
   invites: Invites;
   // metadata state

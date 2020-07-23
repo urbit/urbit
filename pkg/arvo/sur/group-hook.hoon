@@ -1,12 +1,16 @@
+/-  *group, store=group-store, *resource
 |%
-+$  group-hook-action
-  $%  [%add =ship =path]             :: if ship is our, make the group publicly
-                                     :: available for other ships to sync
-                                     :: if ship is foreign, delete any local
-                                     :: group at that path and mirror the
-                                     :: foreign group at our local path
-                                     ::
-      [%remove =path]                :: remove the path.
+::  $action: request to change group-hook state
+::
+::    %add:
+::      if ship is ours make group available to sync, else sync foreign group
+::      to group-store.
+::    %remove:
+::      if ship is ours make unavailable to sync, else stop syncing foreign
+::      group.
+::
++$  action
+  $%  [%add rid=resource]
+      [%remove rid=resource]
   ==
 --
-

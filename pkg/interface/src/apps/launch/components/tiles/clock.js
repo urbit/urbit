@@ -258,6 +258,17 @@ class Clock extends React.Component {
       '#FF611E'
     );
 
+    // Night
+    degArc(
+      ctx,
+      ctr,
+      ctr,
+      ctr / 2,
+      state.night,
+      state.nightEnd,
+      'rgb(26, 26, 26)'
+    );
+
     if (
       radToDeg(this.angle) > splitArc(state.sunriseEnd, state.nightEnd)
       && radToDeg(this.angle) < splitArc(state.sunset, state.night)
@@ -308,16 +319,6 @@ class Clock extends React.Component {
       );
     }
 
-    // Night
-    degArc(
-      ctx,
-      ctr,
-      ctr,
-      ctr / 2,
-      state.night,
-      state.nightEnd,
-      'rgb(26, 26, 26)'
-    );
 
     // Outer borders
     circleOutline(

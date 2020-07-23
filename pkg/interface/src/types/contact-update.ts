@@ -77,7 +77,7 @@ export interface Contact {
   website: string;
   notes: string;
   color: string;
-  avatar: ContactAvatar | null;
+  avatar: string | null;
 }
 
 export type ContactEdit = {

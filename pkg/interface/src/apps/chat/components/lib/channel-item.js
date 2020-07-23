@@ -13,7 +13,7 @@ export class ChannelItem extends Component {
   render() {
     const { props } = this;
 
-    const unreadElem = props.unread ? 'fw6' : '';
+    const unreadElem = props.unread ? 'fw6 white-d' : '';
 
     const title = props.title;
 
@@ -23,7 +23,7 @@ export class ChannelItem extends Component {
 
     return (
       <div
-        className={'z1 ph4 pb1 ' + selectedCss}
+        className={'z1 ph5 pv1 ' + selectedCss}
         onClick={this.onClick.bind(this)}
       >
         <div className="w-100 v-mid">

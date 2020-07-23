@@ -21,24 +21,42 @@
 ::  /app-name/%app-name                            associations for app
 ::  /group/%group-path                             associations for group
 ::
-/+  *metadata-json, default-agent, verb, dbug
+/-  *metadata-store, *metadata-hook
+/+  *metadata-json, default-agent, verb, dbug, resource
 |%
 +$  card  card:agent:gall
 ::
-+$  versioned-state
-  $%  state-zero
+::
++$  state-base
+  $:  =associations
+      group-indices=(jug group-path md-resource)
+      app-indices=(jug app-name [group-path app-path])
+      resource-indices=(jug md-resource group-path)
   ==
 ::
 +$  state-zero
   $:  %0
-      =associations
-      group-indices=(jug group-path resource)
-      app-indices=(jug app-name [group-path app-path])
-      resource-indices=(jug resource group-path)
+      state-base
+  ==
+::
++$  state-one
+  $:  %1
+      state-base
+  ==
+::
++$  state-two
+  $:  %2
+      state-base
+  ==
+::
++$  versioned-state
+  $%  state-zero
+      state-one
+      state-two
   ==
 --
 ::
-=|  state-zero
+=|  state-two
 =*  state  -
 %+  verb  |
 %-  agent:dbug
@@ -53,8 +71,116 @@
   ++  on-init  on-init:def
   ++  on-save  !>(state)
   ++  on-load
-    |=  old=vase
-    `this(state !<(state-zero old))
+    |=  =vase
+    ^-  (quip card _this)
+    =/  old
+      !<(versioned-state vase)
+    =|  cards=(list card)
+    |-
+    |^
+    ?:  ?=(%2 -.old)
+      [cards this(state old)]
+    ?:  ?=(%1 -.old)
+      %_   $
+        old  [%2 +.old]
+      ::
+          cards
+        %+  turn
+          ~(tap in ~(key by group-indices.old))
+        |=  =group-path
+        ^-  card
+        =/  rid=resource
+          (de-path:resource group-path)
+        ?:  =(our.bowl entity.rid)
+          (poke-md-hook %add-owned group-path)
+        (poke-md-hook %add-synced entity.rid group-path)
+      ==
+    =/  new-state=state-one
+      %*  .  *state-one
+        associations      (migrate-associations associations.old)
+        group-indices     (migrate-group-indices group-indices.old)
+        app-indices       (migrate-app-indices app-indices.old)
+        resource-indices  (migrate-resource-indices resource-indices.old)
+      ==
+    $(old new-state)
+    ::
+    ++  poke-md-hook
+      |=  act=metadata-hook-action
+      ^-  card
+      =/  =cage
+        :_  !>(act)
+        %metadata-hook-action
+      [%pass / %agent [our.bowl %metadata-hook] %poke cage]
+    ::
+    ++  new-group-path
+      |=  =group-path
+      ship+(new-app-path group-path)
+
+    ++  new-app-path
+      |=  =app-path
+      ^-  path
+      ?>  ?=(^ app-path)
+      ?:  =('~' i.app-path)
+        t.app-path
+      app-path
+    ::
+    ++  migrate-md-resource
+      |=  md-resource
+      ^-  md-resource
+      ?:  =(%chat app-name)
+        [%chat (new-app-path app-path)]
+      ?:  =(%contacts app-name)
+         [%contacts ship+app-path]
+      [app-name app-path]
+    ::
+    ++  migrate-resource-indices
+      |=  resource-indices=(jug md-resource group-path)
+      ^-  (jug md-resource group-path)
+      %-  malt
+      %+  turn
+        ~(tap by resource-indices)
+      |=  [=md-resource paths=(set group-path)]
+      :_  (~(run in paths) new-group-path)
+      (migrate-md-resource md-resource)
+    ::
+    ++  migrate-app-indices
+      |=  app-indices=(jug app-name [group-path app-path])
+      %-  malt
+      %+  turn
+        ~(tap by app-indices)
+      |=  [app=term indices=(set [=group-path =app-path])]
+      :-  app
+      %-  ~(run in indices)
+      |=  [=group-path =app-path]
+      :-  (new-group-path group-path)
+      ?:  =(%chat app)
+        (new-app-path app-path)
+      ?:  =(%contacts app)
+        ship+app-path
+      app-path
+    ::
+    ++  migrate-group-indices
+      |=  group-indices=(jug group-path md-resource)
+      %-  malt
+      %+  turn
+        ~(tap by group-indices)
+      |=  [=group-path resources=(set md-resource)]
+      :-  (new-group-path group-path)
+      %-  sy
+      %+  turn
+        ~(tap in resources)
+      migrate-md-resource
+    ::
+    ++  migrate-associations
+      |=  =^associations
+      %-  malt
+      %+  turn
+        ~(tap by associations)
+      |=  [[=group-path =md-resource] =metadata]
+      :_  metadata
+      :_  (migrate-md-resource md-resource)
+      (new-group-path group-path)
+    --
   ::
   ++  on-poke
     |=  [=mark =vase]
@@ -70,11 +196,11 @@
         ?.  ?=(%& -.val)
           (on-poke:def mark vase)
         =/  group=path  +.p.val
-        =/  res=(set resource)  (~(get ju group-indices) group)
+        =/  res=(set md-resource)  (~(get ju group-indices) group)
         =.  group-indices  (~(del by group-indices) group)
         :-  ~
         %+  roll  ~(tap in res)
-        |=  [r=resource out=_state]
+        |=  [r=md-resource out=_state]
         =.  resource-indices.out  (~(del by resource-indices.out) r)
         =.  app-indices.out
           %-  ~(del ju app-indices.out)
@@ -126,8 +252,8 @@
     ::
         [%x %metadata @ @ @ ~]
       =/  =group-path  (stab (slav %t i.t.t.path))
-      =/  =resource    [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
-      ``noun+!>((~(get by associations) [group-path resource]))
+      =/  =md-resource    [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
+      ``noun+!>((~(get by associations) [group-path md-resource]))
     ==
   ::
   ++  on-agent  on-agent:def
@@ -149,42 +275,42 @@
   ==
 ::
 ++  handle-add
-  |=  [=group-path =resource =metadata]
+  |=  [=group-path =md-resource =metadata]
   ^-  (quip card _state)
-  :-  %+  send-diff  app-name.resource
-      ?.  (~(has by resource-indices) resource)
-        [%add group-path resource metadata]
-      [%update-metadata group-path resource metadata]
+  :-  %+  send-diff  app-name.md-resource
+      ?.  (~(has by resource-indices) md-resource)
+        [%add group-path md-resource metadata]
+      [%update-metadata group-path md-resource metadata]
   %=  state
       associations
-    (~(put by associations) [group-path resource] metadata)
+    (~(put by associations) [group-path md-resource] metadata)
   ::
       group-indices
-    (~(put ju group-indices) group-path resource)
+    (~(put ju group-indices) group-path md-resource)
   ::
       app-indices
-    (~(put ju app-indices) app-name.resource [group-path app-path.resource])
+    (~(put ju app-indices) app-name.md-resource [group-path app-path.md-resource])
   ::
       resource-indices
-    (~(put ju resource-indices) resource group-path)
+    (~(put ju resource-indices) md-resource group-path)
   ==
 ::
 ++  handle-remove
-  |=  [=group-path =resource]
+  |=  [=group-path =md-resource]
   ^-  (quip card _state)
-  :-  (send-diff app-name.resource [%remove group-path resource])
+  :-  (send-diff app-name.md-resource [%remove group-path md-resource])
   %=  state
       associations
-    (~(del by associations) [group-path resource])
+    (~(del by associations) [group-path md-resource])
   ::
       group-indices
-    (~(del ju group-indices) group-path resource)
+    (~(del ju group-indices) group-path md-resource)
   ::
       app-indices
-    (~(del ju app-indices) app-name.resource [group-path app-path.resource])
+    (~(del ju app-indices) app-name.md-resource [group-path app-path.md-resource])
   ::
       resource-indices
-    (~(del ju resource-indices) resource group-path)
+    (~(del ju resource-indices) md-resource group-path)
   ==
 ::
 ++  metadata-for-app
@@ -201,9 +327,9 @@
   ^-  ^associations
   %-  ~(gas by *^associations)
   %+  turn  ~(tap in (~(gut by group-indices) group-path ~))
-  |=  =resource
-  :-  [group-path resource]
-  (~(got by associations) [group-path resource])
+  |=  =md-resource
+  :-  [group-path md-resource]
+  (~(got by associations) [group-path md-resource])
 ::
 ++  send-diff
   |=  [=app-name upd=metadata-update]

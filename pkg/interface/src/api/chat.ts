@@ -59,7 +59,7 @@ export default class ChatApi extends BaseApi<StoreState> {
    */
   create(
     title: string, description: string, appPath: string, groupPath: string,
-    security: any, members: PatpNoSig[], allowHistory: boolean
+    policy: any, members: PatpNoSig[], allowHistory: boolean, managed: boolean
   ): Promise<any> {
     return this.viewAction({
       create: {
@@ -67,9 +67,10 @@ export default class ChatApi extends BaseApi<StoreState> {
         description,
         'app-path': appPath,
         'group-path': groupPath,
-        security,
+        policy,
         members,
-        'allow-history': allowHistory
+        'allow-history': allowHistory,
+        managed
       }
     });
   }
@@ -129,6 +130,10 @@ export default class ChatApi extends BaseApi<StoreState> {
         'ask-history': askHistory
       }
     });
+  }
+
+  invite(path: Path, ships: Patp[]) {
+    return this.viewAction({ invite: { 'app-path': path, ships }})
   }
 
 

@@ -1,5 +1,10 @@
 import _ from 'lodash';
 
+export function resourceAsPath(resource) {
+  const { name, ship } = resource;
+  return `/ship/~${ship}/${name}`;
+}
+
 export function uuid() {
   let str = '0v';
   str += Math.ceil(Math.random()*8)+'.';

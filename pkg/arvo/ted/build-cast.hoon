@@ -5,8 +5,9 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([a=mark b=mark ~] arg)
-;<  =bowl:spider  bind:m  get-bowl:strandio
-=/  bek=beak  [our q.byk da+now]:bowl
-;<  =tube:clay  bind:m  (build-cast:strandio bek a b)
+=+  !<([pax=path ~] arg)
+?~  bem=(de-beam:format pax)
+  (strand-fail:strand %path-not-beam >pax< ~)
+=/  =mars:clay  [i.t i]:?>(?=([@ @ ~] s.u.bem) s.u.bem)
+;<  =tube:clay  bind:m  (build-cast:strandio -.u.bem mars)
 (pure:m !>(tube))

@@ -35,7 +35,7 @@
   ?~(caz this $(caz t.caz, this (emit i.caz)))
 ::
 ++  on-load
-  |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7) old=any-state]
+  |=  [hood-version=@ud old=any-state]
   =<  abet
   =?  old  ?=(%0 -.old)  (state-0-to-1 old)
   ?>  ?=(%1 -.old)

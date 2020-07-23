@@ -110,7 +110,8 @@ export class Notebook extends Component {
                   host={this.props.ship}
                   book={this.props.book}
                   notebook={notebook}
-                  permissions={this.props.permissions}
+                  contacts={this.props.contacts}
+                  associations={this.props.associations}
                   groups={this.props.groups}
                   api={this.props.api}
                 />;
@@ -153,12 +154,13 @@ export class Notebook extends Component {
 
     let newPost = null;
     if (notebook?.['writers-group-path'] in props.groups) {
-      const writers = notebook?.['writers-group-path'];
-      if (props.groups?.[writers].has(window.ship)) {
+      const group = props.groups[notebook?.['writers-group-path']];
+      const writers = group.tags?.publish?.[`writers-${props.book}`] || new Set();
+      if (props.ship === `~${window.ship}` || writers.has(ship)) {
         newPost = (
           <Link
             to={newUrl}
-            className='NotebookButton bg-light-green green2 ph2 pt3'
+            className='NotebookButton bg-light-green green2 pa2'
           >
             New Post
           </Link>
@@ -169,7 +171,7 @@ export class Notebook extends Component {
     const unsub = (window.ship === props.ship.slice(1))
       ?  null
       :  <button onClick={this.unsubscribe}
-             className="NotebookButton bg-white bg-gray0-d black white-d ba b--black b--gray2-d ml3"
+             className="NotebookButton bg-white bg-gray0-d black white-d ba b--black b--gray2-d ml3 ph1"
          >
            Unsubscribe
          </button>;
