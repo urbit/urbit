@@ -1860,6 +1860,10 @@ u3m_reclaim(void)
 static void
 _cm_pack_rewrite(void)
 {
+  //  XX fix u3a_rewrit* to support south roads
+  //
+  c3_assert( &(u3H->rod_u) == u3R );
+
   //  NB: these implementations must be kept in sync with u3m_reclaim();
   //  anything not reclaimed must be rewritable
   //
