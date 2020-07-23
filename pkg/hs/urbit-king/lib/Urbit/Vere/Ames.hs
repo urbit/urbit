@@ -126,8 +126,7 @@ ames'
   -> RIO e ([Ev], RAcquire e (DriverApi NewtEf))
 ames' who isFake stderr = do
   -- Unfortunately, we cannot use TBQueue because the only behavior
-  -- provided for when full is to block the writer, and we want to
-  -- instead drop the incoming packet on the floor. The implementation
+  -- provided for when full is to block the writer. The implementation
   -- below uses materially the same data structures as TBQueue, however.
   ventQ :: TQueue EvErr <- newTQueueIO
   avail :: TVar Word <- newTVarIO queueBound
