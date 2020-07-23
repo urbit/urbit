@@ -12,7 +12,7 @@ export class SidebarInvite extends Component {
     const { props } = this;
 
     return (
-      <div className='w-100 bg-transparent pa4 bb b--gray4 b--gray1-d'>
+      <div className='w-100 bg-white pa4 bb b--gray4 b--gray1-d z-5' style={{position: 'sticky', top: 0}}>
         <div className='w-100 v-mid'>
           <p className="dib f8 mono gray4-d">
             {props.invite.text}
