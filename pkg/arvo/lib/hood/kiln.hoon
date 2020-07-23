@@ -208,7 +208,7 @@
   ::
   ++  get-germ
     |=  =desk
-    =+  .^(=cass:clay %cw /(scot %p our)/home/(scot %da now))
+    =+  .^(=cass:clay %cw /(scot %p our)/[desk]/(scot %da now))
     ?-  ud.cass
       %0  %init
       %1  %that
