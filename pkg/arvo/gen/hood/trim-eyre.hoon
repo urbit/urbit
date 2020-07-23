@@ -1,0 +1,13 @@
+::  Helm: tell %eyre to release memory
+::
+::::  /hoon/trim-eyre/hood/gen
+  ::
+/?    310
+::
+::::
+  ::
+:-  %say
+|=  $:  {now/@da eny/@uvJ bec/beak}
+        {arg/~ ~}
+    ==
+[%helm-trim-eyre ~]

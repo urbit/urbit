@@ -41,6 +41,7 @@
   ?>  ?=(%1 -.old)
   this(sat old)
 ::
+::
 ++  poke-rekey                                        ::  rotate private keys
   |=  des=@t
   =/  sed=(unit seed:able:jael)
@@ -78,6 +79,10 @@
   ?~  sed
     this
   (emit %pass / %arvo %j %moon u.sed)
+::
+++  poke-trim-eyre
+  |=  ~  =<  abet
+  (emit %pass /eyre/trim %arvo %e %trim 0)
 ::
 ++  poke-mass
   |=  ~  =<  abet
@@ -224,6 +229,7 @@
     %helm-reset            =;(f (f !<(_+<.f vase)) poke-reset)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
+    %helm-trim-eyre        =;(f (f !<(_+<.f vase)) poke-trim-eyre)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
     %helm-write-sec-atom   =;(f (f !<(_+<.f vase)) poke-sec-atom)
   ==
