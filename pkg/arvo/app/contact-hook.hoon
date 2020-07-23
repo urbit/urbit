@@ -16,17 +16,19 @@
   $%  state-zero
       state-one
       state-two
+      state-three
   ==
 ::
 +$  state-zero  [%0 state-base]
 +$  state-one   [%1 state-base]
 +$  state-two   [%2 state-base]
++$  state-three  [%3 state-base]
 +$  state-base
   $:  =synced
       invite-created=_|
   ==
 --
-=|  state-two
+=|  state-three
 =*  state  -
 %-  agent:dbug
 %+  verb  |
@@ -53,8 +55,27 @@
     =|  cards=(list card)
     |^
     |-  ^-  (quip card _this) 
-    ?:  ?=(%2 -.old)
+    ?:  ?=(%3 -.old)
       [cards this(state old)]
+    ?:  ?=(%2 -.old)
+      %_  $
+        old  [%3 +.old]
+      ::
+          cards
+        %+  welp
+          cards
+        %-  zing
+        %+  turn
+          ~(tap by synced.old)
+        |=  [=path =ship]
+        ^-  (list card)
+        ?.  =(ship our.bol)
+          ~
+        ?>  ?=([%ship *] path)
+        :~  (pass-store contacts+t.path %leave ~)
+            (pass-store contacts+path %watch contacts+path)
+        ==
+      ==
     ?:  ?=(%1 -.old)
       %_    $
         -.old  %2
@@ -90,6 +111,11 @@
         |=([=ship =path] path)
       ?~  paths  ~
       [%give %kick paths ~]~
+    ::
+    ++  pass-store
+      |=  [=wire =task:agent:gall]
+      ^-  card
+      [%pass wire %agent [our.bol %contact-store] task]
     --
   ::
   ++  on-poke
