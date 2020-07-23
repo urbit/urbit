@@ -6,7 +6,6 @@ module Urbit.Vere.Ames (ames, ames') where
 
 import Urbit.Prelude
 
-import Control.Concurrent.STM.TVar        (stateTVar)
 import Network.Socket              hiding (recvFrom, sendTo)
 import Urbit.Arvo                  hiding (Fake)
 import Urbit.King.Config
@@ -210,7 +209,10 @@ ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
     case outcome of
       Intake -> pure ()
       Ouster -> do
-        d <- atomically $ stateTVar dropCtr (\d -> (d, d + 1))
+        d <- atomically $ do
+          d <- readTVar dropCtr
+          writeTVar dropCtr (d + 1)
+          pure d
         when (d `rem` packetsDroppedPerComplaint == 0) $
           logWarn "ames: queue full; dropping inbound packets"
 
