@@ -314,7 +314,7 @@ u3_serf_post(u3_serf* sef_u)
   }
 
   if ( c3y == sef_u->pac_o ) {
-    u3a_compact();
+    u3m_pack();
     sef_u->pac_o = c3n;
   }
 }
@@ -979,7 +979,7 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
       }
       else {
         u3z(com);
-        u3a_compact();
+        u3m_pack();
         *ret = u3nc(c3__live, u3_nul);
         return c3y;
       }

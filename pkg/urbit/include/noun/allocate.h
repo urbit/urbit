@@ -470,6 +470,11 @@
           void
           u3a_reclaim(void);
 
+        /* u3a_rewrite_compact(): rewrite pointers in ad-hoc persistent road structures.
+        */
+          void
+          u3a_rewrite_compact(void);
+
         /* u3a_rewrite_ptr(): mark a pointer as already having been rewritten
         */
           c3_o
@@ -489,11 +494,6 @@
         */
           u3_noun
           u3a_rewritten_noun(u3_noun som);
-
-        /* u3a_compact(): compact (north) road.
-        */
-          void
-          u3a_compact();
 
         /* u3a_count_noun(): count size of noun.
         */
@@ -522,6 +522,16 @@
         */
           c3_w
           u3a_sweep(void);
+
+        /* u3a_pack_seek(): sweep the heap, modifying boxes to record new addresses.
+        */
+          void
+          u3a_pack_seek(u3a_road* rod_u);
+
+        /* u3a_pack_move(): sweep the heap, moving boxes to new addresses.
+        */
+          void
+          u3a_pack_move(u3a_road* rod_u);
 
         /* u3a_sane(): check allocator sanity.
         */

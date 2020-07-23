@@ -1854,3 +1854,43 @@ u3m_reclaim(void)
   u3n_reclaim();
   u3a_reclaim();
 }
+
+/* _cm_pack_rewrite(): trace through arena, rewriting pointers.
+*/
+static void
+_cm_pack_rewrite(void)
+{
+  //  NB: these implementations must be kept in sync with u3m_reclaim();
+  //  anything not reclaimed must be rewritable
+  //
+  u3v_rewrite_compact();
+  u3j_rewrite_compact();
+  u3n_rewrite_compact();
+  u3a_rewrite_compact();
+}
+
+/* u3m_pack: compact (defragment) memory.
+*/
+c3_w
+u3m_pack(void)
+{
+  c3_w pre_w = u3a_open(u3R);
+
+  //  reclaim first, to free space, and discard anything we can't/don't rewrite
+  //
+  u3m_reclaim();
+
+  //  sweep the heap, finding and saving new locations
+  //
+  u3a_pack_seek(u3R);
+
+  //  trace roots, rewriting inner pointers
+  //
+  _cm_pack_rewrite();
+
+  //  sweep the heap, relocating objects to their new locations
+  //
+  u3a_pack_move(u3R);
+
+  return (u3a_open(u3R) - pre_w);
+}

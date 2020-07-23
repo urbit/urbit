@@ -1965,7 +1965,7 @@ u3a_reclaim(void)
 /* u3a_rewrite_compact(): rewrite pointers in ad-hoc persistent road structures.
 */
 void
-u3a_rewrite_compact()
+u3a_rewrite_compact(void)
 {
   u3a_rewrite_noun(u3R->ski.gul);
   u3a_rewrite_noun(u3R->bug.tax);
@@ -2236,144 +2236,219 @@ u3a_sweep(void)
   return neg_w;
 }
 
-
-/* u3a_compact(): compact road.
+/* u3a_pack_seek(): sweep the heap, modifying boxes to record new addresses.
 */
 void
-u3a_compact(void)
+u3a_pack_seek(u3a_road* rod_u)
 {
-  // sleep(10);  // in case you need to attach a debugger
+  //  the heap in [rod_u] is swept from "front" to "back".
+  //  new locations are calculated for each in-use allocation box
+  //  (simply the "deepest" linearly-available location),
+  //  and stored in the box itself
+  //
+  //  box_w: front of the heap
+  //  end_w: back of the heap
+  //  new_p: initial new location (data of first box)
+  //
+  c3_w*    box_w = u3a_into(rod_u->rut_p);
+  c3_w*    end_w = u3a_into(rod_u->hat_p);
+  u3_post  new_p = (rod_u->rut_p + c3_wiseof(u3a_box));
+  u3a_box* box_u;
+  c3_w     siz_w;
 
-  /* Note if u3m_reclaim changes to not reclaim something, or if other
-   * things are added to the loom, they will need to be added to the
-   * tracing step
-  */
-  u3m_reclaim();
-
-  assert(c3y == u3a_is_north(u3R));
-  u3_post box_p = _(u3a_is_north(u3R)) ? u3R->rut_p : u3R->hat_p;
-  u3_post end_p = _(u3a_is_north(u3R)) ? u3R->hat_p : u3R->rut_p;
-
-  fprintf(stderr, "compact: sweep 1 beginning\r\n");
-
-  /* Sweep through arena, recording new address
-   *
-   * Don't trace to preserve memory locality
-  */
-  {
-    u3_post new_p = c3_wiseof(u3a_box) + 1;
-    c3_w*   box_w = u3a_into(box_p);
-    c3_w*   end_w = u3a_into(end_p);
-
+  if ( c3y == u3a_is_north(rod_u) ) {
+    //  north roads are swept low to high
+    //
+    //    new locations are recorded in the trailing size word
+    //
     while ( box_w < end_w ) {
-      u3a_box* box_u = (void *)box_w;
+      box_u = (void *)box_w;
+      siz_w = box_u->siz_w;
 
-      /* If not free, rewrite trailing size word to be new pointer.
-       *
-       * Another option would be to use the refcount and just
-       * regenerate it by tracing.
-      */
-      if ( box_u->use_w > 0 ) {
-        //fprintf(stderr, "compact: found size %d at box_u %p, setting to new_p %x\r\n", box_u->siz_w, box_u, new_p);
-        box_w[box_u->siz_w - 1] = new_p;
-        new_p += box_u->siz_w;
-        //fprintf(stderr, "compact: adding to new_p %x\r\n", new_p);
-      }
-
-      box_w += box_u->siz_w;
-    }
-  }
-
-  fprintf(stderr, "compact: sweep 1 complete\r\n");
-
-  /* Trace through arena, rewriting pointers
-   *
-   * Don't sweep because it's ad-hoc polymorphic
-  */
-  {
-    u3v_rewrite_compact();
-    u3j_rewrite_compact();
-    u3n_rewrite_compact();
-    u3a_rewrite_compact();
-  }
-
-  fprintf(stderr, "compact: trace complete\r\n");
-
-  c3_w* new_w = (void*)u3a_botox(u3a_into(c3_wiseof(u3a_box) + 1));
-
-  /* Sweep through arena, moving nouns
-   *
-   * Don't trace because you need to move in order
-  */
-  {
-    c3_w* box_w = u3a_into(box_p);
-    c3_w* end_w = u3a_into(end_p);
-
-    while ( box_w < end_w ) {
-      u3a_box* old_u = (void *)box_w;
-      c3_w siz_w = old_u->siz_w; // store because we're about to overwrite
-
-      /* Unmark if marked
-      */
-      old_u->use_w &= 0x7fffffff;
-
-      //fprintf(stderr, "compact: 364 == %d\r\n", *((c3_w*)0x200000364));
-      //fprintf(stderr, "compact: found size %d at old_u %p\r\n", old_u->siz_w, old_u);
-
-
-      /* If not free, move to new home
-      */
-      if ( old_u->use_w > 0 ) {
-        //fprintf(stderr, "compact: writing to %p from %p\r\n", u3a_botox(u3a_into(box_w[siz_w - 1])), box_w);
-        assert(new_w == (c3_w*)u3a_botox(u3a_into(box_w[siz_w - 1])));
-        new_w = (c3_w*)u3a_botox(u3a_into(box_w[siz_w - 1]));
-        c3_w i_w;
-        if ( new_w > box_w ) {
-          fprintf(stderr, "compact: whoa new_w %p, i_w %d\r\n", new_w, i_w);
-          c3_assert(0);
-        }
-        for ( i_w = 0; i_w < siz_w - 1; i_w++ ) {
-          new_w[i_w] = box_w[i_w];
-        }
-        new_w[siz_w - 1] = siz_w;
-        new_w += siz_w;
+      if ( box_u->use_w ) {
+        box_w[siz_w - 1] = new_p;
+        new_p += siz_w;
       }
 
       box_w += siz_w;
     }
   }
+  //  XX untested!
+  //
+  else {
+    //  south roads are swept high to low
+    //
+    //    new locations are recorded in the leading size word
+    //
+    //    since we traverse backward, [siz_w] holds the size of the next box,
+    //    and we must initially offset to point to the head of the first box
+    //
+    siz_w  = box_w[-1];
+    box_w -= siz_w;
+    new_p -= siz_w;
 
-  fprintf(stderr, "compact: sweep 2 complete\r\n");
+    while ( end_w < box_w ) {
+      box_u = (void *)box_w;
+      siz_w = box_w[-1];
 
-  /* Set new end of heap.
-  */
+      if ( box_u->use_w ) {
+        box_u->siz_w = new_p;
+        new_p -= siz_w;
+      }
+
+      box_w -= siz_w;
+    }
+  }
+}
+static u3_post
+_ca_pack_move_north(c3_w* box_w, c3_w* end_w, u3_post new_p)
+{
+  u3a_box* old_u;
+  c3_w     siz_w;
+
+  //  relocate allocation boxes
+  //
+  //    new locations have been recorded in the trailing size word,
+  //    and are recalculated and asserted to ensure sanity
+  //
+  while ( box_w < end_w ) {
+    old_u = (void *)box_w;
+    siz_w = old_u->siz_w;
+
+    old_u->use_w &= 0x7fffffff;
+
+    if ( old_u->use_w ) {
+      c3_w* new_w = (void*)u3a_botox(u3a_into(new_p));
+
+      c3_assert( box_w[siz_w - 1] == new_p );
+
+      //  note: includes leading size
+      //
+      if ( new_w < box_w ) {
+        c3_w i_w;
+
+        for ( i_w = 0; i_w < siz_w - 1; i_w++ ) {
+          new_w[i_w] = box_w[i_w];
+        }
+      }
+      else {
+        c3_assert( new_w == box_w );
+      }
+
+      //  restore trailing size
+      //
+      new_w[siz_w - 1] = siz_w;
+
+      new_p += siz_w;
+    }
+
+    box_w += siz_w;
+  }
+
+  return new_p;
+}
+
+//  XX untested!
+//
+static u3_post
+_ca_pack_move_south(c3_w* box_w, c3_w* end_w, u3_post new_p)
+{
+  u3a_box* old_u;
+  c3_w     siz_w;
+  c3_o     yuz_o;
+
+  //  offset initial addresses (point to the head of the first box)
+  //
+  siz_w  = box_w[-1];
+  box_w -= siz_w;
+  new_p -= siz_w;
+
+  //  relocate allocation boxes
+  //
+  //    new locations have been recorded in the leading size word,
+  //    and are recalculated and asserted to ensure sanity
+  //
+  while ( 1 ) {
+    old_u = (void *)box_w;
+
+    old_u->use_w &= 0x7fffffff;
+
+    if ( old_u->use_w ) {
+      c3_w* new_w = (void*)u3a_botox(u3a_into(new_p));
+
+      c3_assert( old_u->siz_w == new_p );
+
+      //  note: includes trailing size
+      //
+      if ( new_w > box_w ) {
+        c3_w i_w;
+
+        for ( i_w = 1; i_w < siz_w; i_w++ ) {
+          new_w[i_w] = box_w[i_w];
+        }
+      }
+      else {
+        c3_assert( new_w == box_w );
+      }
+
+      //  restore leading size
+      //
+      new_w[0] = siz_w;
+
+      yuz_o = c3y;
+    }
+    else {
+      yuz_o = c3n;
+    }
+
+    //  move backwards only if there is more work to be done
+    //
+    if ( box_w > end_w ) {
+      siz_w  = box_w[-1];
+      box_w -= siz_w;
+
+      if ( c3y == yuz_o ) {
+        new_p -= siz_w;
+      }
+    }
+    else {
+      c3_assert( end_w == box_w );
+      break;
+    }
+  }
+
+  return new_p;
+}
+
+/* u3a_pack_move(): sweep the heap, moving boxes to new addresses.
+*/
+void
+u3a_pack_move(u3a_road* rod_u)
+{
+  //  box_w: front of the heap
+  //  end_w: back of the heap
+  //  new_p: initial new location (data of first box)
+  //  las_p: newly calculated last location
+  //
+  c3_w*   box_w = u3a_into(rod_u->rut_p);
+  c3_w*   end_w = u3a_into(rod_u->hat_p);
+  u3_post new_p = (rod_u->rut_p + c3_wiseof(u3a_box));
+  u3_post las_p = ( c3y == u3a_is_north(rod_u) )
+                  ? _ca_pack_move_north(box_w, end_w, new_p)
+                  : _ca_pack_move_south(box_w, end_w, new_p);
+
+  rod_u->hat_p  = (las_p - c3_wiseof(u3a_box));
+
+  //  clear free lists and cell allocator
+  //
   {
-    u3R->hat_p = u3a_outa(new_w);
-
     c3_w i_w;
     for ( i_w = 0; i_w < u3a_fbox_no; i_w++ ) {
       u3R->all.fre_p[i_w] = 0;
     }
 
-    u3R->all.cel_p = 0;
     u3R->all.fre_w = 0;
-
-    u3n_ream();
-
-    fprintf(stderr, "compact: running |mass to verify correct compaction\r\n");
-    u3m_mark(stderr);
-    fprintf(stderr, "compact: marked\r\n");
-    u3a_sweep();
-    fprintf(stderr, "compact: swept\r\n");
-    c3_w lid_w = u3a_idle(u3R);
-    if ( 0 == lid_w ) {
-      fprintf(stderr, "free lists: B/0\r\n");
-    }
-    else {
-      u3a_print_memory(stderr, "free lists", u3a_idle(u3R));
-    }
-
-    fprintf(stderr, "compact: done\r\n");
+    u3R->all.cel_p = 0;
   }
 }
 
