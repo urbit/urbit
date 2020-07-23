@@ -4,9 +4,9 @@ set -e
 
 URBIT_VERSION="0.10.7"
 
-deps="                                                                    \
-  curl gmp sigsegv argon2 ed25519 ent h2o scrypt sni uv murmur3 secp256k1 \
-  softfloat3 ncurses ssl crypto z lmdb ge-additions aes_siv               \
+deps="                                                                \
+  curl gmp sigsegv argon2 ed25519 ent h2o scrypt uv murmur3 secp256k1 \
+  softfloat3 ssl crypto z lmdb ge-additions aes_siv pthread           \
 "
 
 headers="             \
