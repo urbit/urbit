@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
-export class SidebarInvite extends Component {
-  onAccept() {
-    this.props.api.invite.accept('/link', this.props.uid);
-  }
+import GlobalApi from '../api/global';
+import { Invite } from '../types/invite-update';
 
-  onDecline() {
-    this.props.api.invite.decline('/link', this.props.uid);
-  }
-
+export class SidebarInvite extends Component<{invite: Invite, onAccept: Function, onDecline: Function}, {}> {
   render() {
     const { props } = this;
 
@@ -20,13 +15,13 @@ export class SidebarInvite extends Component {
         </div>
         <a
           className="dib pointer pa2 f9 bg-green2 white mt4"
-          onClick={this.onAccept.bind(this)}
+          onClick={this.props.onAccept.bind(this)}
         >
           Accept Invite
         </a>
         <a
           className="dib pointer ml4 pa2 f9 bg-black bg-gray0-d white mt4"
-          onClick={this.onDecline.bind(this)}
+          onClick={this.props.onDecline.bind(this)}
         >
           Decline
         </a>
@@ -35,3 +30,4 @@ export class SidebarInvite extends Component {
   }
 }
 
+export default SidebarInvite;
