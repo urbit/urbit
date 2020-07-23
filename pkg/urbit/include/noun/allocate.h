@@ -465,6 +465,11 @@
           c3_w
           u3a_mark_road(FILE* fil_u);
 
+        /* u3a_reclaim(): clear ad-hoc persistent caches to reclaim memory.
+        */
+          void
+          u3a_reclaim(void);
+
         /* u3a_rewrite_ptr(): mark a pointer as already having been rewritten
         */
           c3_o

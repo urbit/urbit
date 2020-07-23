@@ -1849,42 +1849,8 @@ u3m_wipe(void)
 void
 u3m_reclaim(void)
 {
-  c3_assert( &(u3H->rod_u) == u3R );
-
-  //  clear the u3v_wish cache
-  //
-  //    NB: this will leak if not on the home road
-  //
-  u3z(u3A->yot);
-  u3A->yot = u3_nul;
-
-  //  clear the memoization cache
-  //
-  u3h_free(u3R->cax.har_p);
-  u3R->cax.har_p = u3h_new();
-
-  //  clear the jet battery hash cache
-  //
-  u3h_free(u3R->jed.bas_p);
-  u3R->jed.bas_p = u3h_new();
-
-  //  re-establish the warm jet state
-  //
-  //    XX might this reduce fragmentation?
-  //
-  // u3j_ream();
-
-  //  clear the jet hank cache
-  //
-  u3h_walk(u3R->jed.han_p, u3j_free_hank);
-  u3h_free(u3R->jed.han_p);
-  u3R->jed.han_p = u3h_new();
-
-  //  clear the bytecode cache
-  //
-  //    We can't just u3h_free() -- the value is a post to a u3n_prog.
-  //    Note that this requires that the hank cache also be freed.
-  //
-  u3n_free();
-  u3R->byc.har_p = u3h_new();
+  u3v_reclaim();
+  u3j_reclaim();
+  u3n_reclaim();
+  u3a_reclaim();
 }

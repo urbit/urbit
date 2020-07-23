@@ -374,10 +374,10 @@ u3a_reflux(void)
   }
 }
 
-/* u3a_reclaim(): reclaim from memoization cache.
+/* _ca_reclaim_half(): reclaim from memoization cache.
 */
-void
-u3a_reclaim(void)
+static void
+_ca_reclaim_half(void)
 {
   //  XX u3l_log avoid here, as it can
   //  cause problems when handling errors
@@ -435,7 +435,7 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 
           //  memory nearly empty; reclaim; should not be needed
           //
-          // if ( (u3a_open(u3R) + u3R->all.fre_w) < 65536 ) { u3a_reclaim(); }
+          // if ( (u3a_open(u3R) + u3R->all.fre_w) < 65536 ) { _ca_reclaim_half(); }
           box_u = _ca_box_make_hat(siz_w, ald_w, alp_w, 1);
 
           /* Flush a bunch of cell cache, then try again.
@@ -447,7 +447,7 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
               return _ca_willoc(len_w, ald_w, alp_w);
             }
             else {
-              u3a_reclaim();
+              _ca_reclaim_half();
               return _ca_willoc(len_w, ald_w, alp_w);
             }
           }
@@ -534,7 +534,7 @@ _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
     if ( 0 != ptr_v ) {
       break;
     }
-    u3a_reclaim();
+    _ca_reclaim_half();
   }
   return ptr_v;
 }
@@ -1949,6 +1949,17 @@ u3a_mark_road(FILE* fil_u)
   tot_w += u3a_maid(fil_u, "  new profile trace", u3a_mark_noun(u3R->pro.trace));
   tot_w += u3a_maid(fil_u, "  memoization cache", u3h_mark(u3R->cax.har_p));
   return   u3a_maid(fil_u, "total road stuff", tot_w);
+}
+
+/* u3a_reclaim(): clear ad-hoc persistent caches to reclaim memory.
+*/
+void
+u3a_reclaim(void)
+{
+  //  clear the memoization cache
+  //
+  u3h_free(u3R->cax.har_p);
+  u3R->cax.har_p = u3h_new();
 }
 
 /* u3a_rewrite_compact(): rewrite pointers in ad-hoc persistent road structures.
