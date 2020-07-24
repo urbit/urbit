@@ -85,15 +85,16 @@
         old  [%2 +.old]
       ::
           cards
-        %+  turn
+        %+  murn
           ~(tap in ~(key by group-indices.old))
         |=  =group-path
-        ^-  card
-        =/  rid=resource
-          (de-path:resource group-path)
-        ?:  =(our.bowl entity.rid)
-          (poke-md-hook %add-owned group-path)
-        (poke-md-hook %add-synced entity.rid group-path)
+        ^-  (unit card)
+        =/  rid=(unit resource)
+          (de-path-soft:resource group-path)
+        ?~  rid  ~
+        ?:  =(our.bowl entity.u.rid)
+          `(poke-md-hook %add-owned group-path)
+        `(poke-md-hook %add-synced entity.u.rid group-path)
       ==
     =/  new-state=state-one
       %*  .  *state-one
