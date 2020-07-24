@@ -41,7 +41,7 @@
 
     /* Stub.
     */
-#     define c3_stub       (assert(!"stub"), 0)
+#     define c3_stub       c3_assert(!"stub")
 
     /* Size in words.
     */
