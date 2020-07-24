@@ -6,7 +6,6 @@ import urbitOb from 'urbit-ob';
 export class JoinScreen extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       group: '',
       error: false,
@@ -21,12 +20,11 @@ export class JoinScreen extends Component {
     this.componentDidUpdate();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate() {
     const { props, state } = this;
     // autojoin by URL, waits for group information
     if ((props.ship && props.name) &&
-    (prevProps && (prevProps.groups !== props.groups))) {
-      console.log('autojoining');
+      (props.contacts && (Object.keys(props.contacts).length > 0) && !state.group)) {
       const incomingGroup = `${props.ship}/${props.name}`;
       // push to group if already exists
       if (`/ship/${incomingGroup}` in props.groups) {
@@ -48,10 +46,8 @@ export class JoinScreen extends Component {
     }
   }
 
-
   onClickJoin() {
     const { props, state } = this;
-    console.log('i am joining');
 
     const { group } = state;
     const [ship, name] = group.split('/');
