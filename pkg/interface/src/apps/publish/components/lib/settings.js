@@ -133,7 +133,7 @@ export class Settings extends Component {
       // don't give the option to make inclusive if we don't own the target
       // group
       const targetOwned = (state.targetGroup)
-        ? state.targetGroup.slice(0, window.ship.length+3) === `/~${window.ship}/`
+        ? Boolean(state.targetGroup.includes(`/~${window.ship}/`))
         : false;
       let inclusiveToggle = <div />;
       if (targetOwned) {
