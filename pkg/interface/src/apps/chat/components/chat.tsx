@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import _ from "lodash";
 import moment from "moment";
 
@@ -19,6 +19,7 @@ import { Contacts } from "../../../types/contact-update";
 import { Path, Patp } from "../../../types/noun";
 import GlobalApi from "../../../api/global";
 import { Association } from "../../../types/metadata-update";
+import {Group} from "../../../types/group-update";
 
 function getNumPending(props: any) {
   const result = props.pendingMessages.has(props.station)
@@ -79,7 +80,7 @@ type ChatScreenProps = RouteComponentProps<{
   length: number;
   inbox: Inbox;
   contacts: Contacts;
-  permission: any;
+  group: Group;
   pendingMessages: Map<Path, Envelope[]>;
   s3: any;
   popout: boolean;
@@ -359,6 +360,10 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
       props.pendingMessages.get(props.station) || []
     ).map((value) => ({ ...value, pending: true }));
 
+    if(unread !== 0) {
+      unread += pendingMessages.length;
+    }
+
     messages = pendingMessages.concat(messages);
 
     const messageElements = messages.map((msg, i) => {
@@ -384,15 +389,15 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           paddingTop={paddingTop}
           paddingBot={paddingBot}
           pending={Boolean(msg.pending)}
-          group={props.association}
+          group={props.group}
+          association={props.association}
         />
       );
       if (unread > 0 && i === unread - 1) {
         return (
-          <>
+          <Fragment key={msg.uid}>
             {messageElem}
             <div
-              key={"unreads" + msg.uid}
               ref={this.setUnreadMarker}
               className="mv2 green2 flex items-center f9"
             >
@@ -409,19 +414,18 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
                 className="b--green2 ma0 bt-0"
               />
             </div>
-          </>
+          </Fragment>
         );
       } else if (dayBreak) {
         return (
-          <>
+          <Fragment key={msg.uid}>
             {messageElem}
             <div
-              key={"daybreak" + msg.uid}
               className="pv3 gray2 b--gray2 flex items-center justify-center f9 "
             >
               <p>{moment(_.get(messages[i], when)).calendar()}</p>
             </div>
-          </>
+          </Fragment>
         );
       } else {
         return messageElem;
@@ -503,7 +507,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
 
     const lastMsgNum = messages.length > 0 ? messages.length : 0;
 
-    const group = Array.from(props.permission.who.values());
+    const group = Array.from(props.group.members);
 
     const isinPopout = props.popout ? "popout/" : "";
 

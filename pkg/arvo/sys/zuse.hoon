@@ -795,6 +795,7 @@
       $%  [%doze p=(unit @da)]                          ::  next alarm
           [%wake error=(unit tang)]                     ::  wakeup or failed
           [%meta p=vase]
+          [%heck syn=sign-arvo]                         ::  response to %huck
       ==
     ++  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
@@ -802,7 +803,7 @@
           $>(%crud vane-task)                           ::  error with trace
           [%rest p=@da]                                 ::  cancel alarm
           [%drip p=vase]                                ::  give in next event
-          [%huck p=vase]                                ::  give back
+          [%huck syn=sign-arvo]                         ::  give back
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           [%wait p=@da]                                 ::  set alarm
@@ -5295,12 +5296,26 @@
       ~
     (some (~(run by lum) need))
   ::                                                    ::  ++drop-pole:unity
-  ++  drop-pole                                         ::  unit tuple
-    |*  but/(pole (unit))
-    ?~  but  !!
-    ?~  +.but
-      u:->.but
-    [u:->.but (drop-pole +.but)]
+  ++  drop-pole                                         ::  collapse to tuple
+    |^  |*  pul=(pole (unit))
+        ?:  (test-pole pul)  ~
+        (some (need-pole pul))
+    ::
+    ++  test-pole
+      |*  pul=(pole (unit))
+      ^-  ?
+      ?~  pul  &
+      ?|  ?=(~ -.pul)
+          ?~(+.pul | (test-pole +.pul))
+      ==
+    ::
+    ++  need-pole
+      |*  pul=(pole (unit))
+      ?~  pul  !!
+      ?~  +.pul
+        u:->.pul
+      [u:->.pul (need-pole +.pul)]
+    --
   --
 ::                                                      ::::
 ::::                      ++format                      ::  (2d) common formats
@@ -6553,7 +6568,7 @@
       ;~(pose pure pesc pold net wut col com)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
-      ;~(pose aln hep dot cab sig)
+      ;~(pose aln hep cab dot zap sig tar say lit rit)
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
@@ -7070,6 +7085,18 @@
       $(pops [oldest pops])
     --
   --
+::
+::  +mop: constructs and validates ordered ordered map based on key,
+::  val, and comparator gate
+::
+++  mop
+  |*  [key=mold value=mold]
+  |=  ord=$-([key key] ?)
+  |=  a=*
+  =/  b  ;;((tree [key=key val=value]) a)
+  ?>  (check-balance:((ordered-map key value) ord) b)
+  b
+::
 ::  $mk-item: constructor for +ordered-map item type
 ::
 ++  mk-item  |$  [key val]  [key=key val=val]
@@ -7078,6 +7105,9 @@
 ::    Conceptually smaller items go on the left, so the item with the
 ::    smallest key can be popped off the head. If $key is `@` and
 ::    .compare is +lte, then the numerically smallest item is the head.
+::
+::  WARNING: ordered-map will not work properly if two keys can be
+::  unequal under noun equality but equal via the compare gate
 ::
 ++  ordered-map
   |*  [key=mold val=mold]
@@ -7151,6 +7181,7 @@
     ?~  a    ~
     ?~  l.a  `n.a
     $(a l.a)
+  ::
   ::  +pop: produce .head (smallest item) and .rest or crash if empty
   ::
   ++  pop
@@ -7317,6 +7348,68 @@
     ?:  (compare key.n.a key.n.b)
       $(l.b $(b l.b, r.a ~), a r.a)
     $(r.b $(b r.b, l.a ~), a l.a)
+  ::
+  ::  +get: get val at key or return ~
+  ::
+  ++  get
+    |=  [a=(tree item) b=key]
+    ^-  (unit val)
+    ?~  a  ~
+    ?:  =(b key.n.a)
+      `val.n.a
+    ?:  (compare b key.n.a)
+      $(a l.a)
+    $(a r.a)
+  ::
+  ::  +subset: take a range excluding start and/or end and all elements
+  ::  outside the range
+  ::
+  ++  subset
+    |=  $:  tre=(tree item)
+            start=(unit key)
+            end=(unit key)
+        ==
+    ^-  (tree item)
+    |^
+    ?:  ?&(?=(~ start) ?=(~ end))
+      tre
+    ?~  start
+      (del-span tre %end end)
+    ?~  end
+      (del-span tre %start start)
+    ?>  (compare u.start u.end)
+    =.  tre  (del-span tre %start start)
+    (del-span tre %end end)
+    ::
+    ++  del-span
+      |=  [a=(tree item) b=?(%start %end) c=(unit key)]
+      ^-  (tree item)
+      ?~  a  a
+      ?~  c  a
+      ?-  b
+          %start
+        ::  found key
+        ?:  =(key.n.a u.c)
+          (nip a(l ~))
+        ::  traverse to find key
+        ?:  (compare key.n.a u.c)
+          ::  found key to the left of start
+          $(a (nip a(l ~)))
+        ::  found key to the right of start
+        a(l $(a l.a))
+      ::
+          %end
+        ::  found key
+        ?:  =(u.c key.n.a)
+          (nip a(r ~))
+        ::  traverse to find key
+        ?:  (compare key.n.a u.c)
+          :: found key to the left of end
+          a(r $(a r.a))
+        :: found key to the right of end
+        $(a (nip a(r ~)))
+      ==
+    --
   --
 ::                                                      ::
 ::::                      ++userlib                     ::  (2u) non-vane utils

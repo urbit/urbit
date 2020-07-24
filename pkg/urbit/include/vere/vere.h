@@ -398,8 +398,9 @@
           u3_writ_peek = 1,
           u3_writ_play = 2,
           u3_writ_save = 3,
-          u3_writ_pack = 4,
-          u3_writ_exit = 5
+          u3_writ_cram = 4,
+          u3_writ_pack = 5,
+          u3_writ_exit = 6
         } u3_writ_type;
 
       /* u3_writ: ipc message from king to serf
@@ -433,7 +434,7 @@
           void (*work_done_f)(void*, u3_ovum*, u3_fact*, u3_gift*);
           void (*work_bail_f)(void*, u3_ovum*, u3_noun lud);
           void (*save_f)(void*);
-          void (*pack_f)(void*);
+          void (*cram_f)(void*);
           void (*bail_f)(void*);
           void (*exit_f)(void*);
         } u3_lord_cb;
@@ -942,10 +943,10 @@
         c3_o
         u3_lord_save(u3_lord* god_u);
 
-      /* u3_lord_pack(): save portable state.
+      /* u3_lord_cram(): save portable state.
       */
         c3_o
-        u3_lord_pack(u3_lord* god_u);
+        u3_lord_cram(u3_lord* god_u);
 
       /* u3_lord_work(): attempt work.
       */
@@ -1215,10 +1216,10 @@
         c3_o
         u3_pier_save(u3_pier* pir_u);
 
-      /* u3_pier_pack(): save a portable snapshot.
+      /* u3_pier_cram(): save a portable snapshot.
       */
         c3_o
-        u3_pier_pack(u3_pier* pir_u);
+        u3_pier_cram(u3_pier* pir_u);
 
       /* u3_pier_info(): print status info.
       */

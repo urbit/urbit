@@ -1005,6 +1005,15 @@
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
       :_(fod.dom.red `(bind u.ezy |=(a/cage [%& a])))
+    ?:  ?=([%s [%ud *] %late *] mun)
+      :_  fod.dom.red
+      ^-  (unit (unit (each cage lobe)))
+      :^  ~  ~  %&
+      ^-  cage
+      :-  %cass
+      ?~  let.dom
+        !>([0 *@da])
+      !>([let.dom t:(~(got by hut.ran) (~(got by hit.dom) let.dom))])
     =+  nao=(case-to-aeon case.mun)
     ?~(nao [~ fod.dom.red] (read-at-aeon:ze for u.nao mun))
   ::
@@ -3469,11 +3478,7 @@
           %open
         ``open+!>(prelude:(ford:fusion static-ford-args))
       ::
-          %late
-        :^  ~  ~  %cass
-        ?~  let.dom
-          !>([0 *@da])
-        !>([let.dom t:(~(got by hut.ran) (~(got by hit.dom) let.dom))])
+          %late  !!  :: handled in +aver
       ==
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::

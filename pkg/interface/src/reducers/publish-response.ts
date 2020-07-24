@@ -70,6 +70,8 @@ export default class PublishResponseReducer<S extends PublishState> {
           json.data.notebook["notes-by-date"];
         state.notebooks[json.host][json.notebook].subscribers =
           json.data.notebook.subscribers;
+        state.notebooks[json.host][json.notebook].writers =
+          json.data.notebook.writers;
         state.notebooks[json.host][json.notebook].comments =
           json.data.notebook.comments;
         state.notebooks[json.host][json.notebook]["subscribers-group-path"] =

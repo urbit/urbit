@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Spinner } from '../../../../components/Spinner';
-import { deSig, uxToHex } from '../../../../lib/util';
+import { GroupView } from '../../../../components/Group';
+import { deSig, uxToHex, writeText } from '../../../../lib/util';
 
 export class GroupDetail extends Component {
   constructor(props) {
@@ -108,7 +109,7 @@ export class GroupDetail extends Component {
             </div>
               <div className="flex flex-column flex-auto">
                 <p className="f9 inter ml2 w-100">{each.title}</p>
-                <p className="f9 inter ml2 w-100">
+                <p className="f9 inter mt2 ml2 w-100">
                   <span className="f9 di mr2 inter">{each.app}</span>
                   <Link className="f9 di green2" to={each.link}>
                     Open
@@ -158,8 +159,8 @@ export class GroupDetail extends Component {
           <p className="f9 mw5 mw3-m mw4-l">{title}</p>
           <p className="f9 gray2">{description}</p>
           <p className="f9">
-            {props.group.size + ' participant' +
-              ((props.group.size === 1) ? '' : 's')}
+            {props.group.members.size + ' participant' +
+             ((props.group.members.size === 1) ? '' : 's')}
           </p>
         </div>
         <p className={'gray2 f9 mb2 pt6 ' + (isEmpty ? 'dn' : '')}>Group Channels</p>
@@ -172,25 +173,60 @@ export class GroupDetail extends Component {
   renderSettings() {
     const { props } = this;
 
-    const groupOwner = (deSig(props.match.params.ship) === window.ship);
+    const { group, association } = props;
 
-    const association = props.association;
+    const groupOwner = (deSig(props.match.params.ship) === window.ship);
 
     const deleteButtonClasses = (groupOwner) ? 'b--red2 red2 pointer bg-gray0-d' : 'b--gray3 gray3 bg-gray0-d c-default';
 
+    const tags = [
+      { description: 'Admin', tag: 'admin', addDescription: 'Make Admin' },
+      { description: 'Moderator', tag: 'moderator', addDescription: 'Make Moderator' },
+      { description: 'Janitor', tag: 'janitor', addDescription: 'Make Janitor' }
+    ];
+
+    let shortcode = <div />;
+
+    if (group?.policy?.open) {
+      shortcode = <div className="mt4">
+        <p className="f9 mt4 lh-copy">Share</p>
+        <p className="f9 gray2 mb2">Share a shortcode to join this group</p>
+        <div className="relative w-100 flex"
+          style={{ maxWidth: '29rem' }}
+        >
+          <input
+            className="f8 mono ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
+            disabled={true}
+            value={props.path.substr(6)}
+          />
+          <span className="lh-solid f8 pointer absolute pa3 inter"
+            style={{ right: 12, top: 1 }}
+            ref="copy"
+            onClick={() => {
+              writeText(props.path.substr(6));
+              this.refs.copy.innerText = 'Copied';
+            }}
+          >
+            Copy
+              </span>
+        </div>
+      </div>;
+    }
     return (
-      <div className="pa4 w-100 h-100 white-d">
+      <div className="pa4 w-100 h-100 white-d overflow-y-auto">
         <div className="f8 f9-m f9-l f9-xl w-100">
           <Link to={'/~groups/detail' + props.path}>{'⟵ Channels'}</Link>
         </div>
+        {shortcode}
+      { group && <GroupView permissions className="mt6" resourcePath={props.path} group={group} tags={tags} api={props.api} /> }
         <div className={(groupOwner) ? '' : 'o-30'}>
-          <p className="f8 mt3 lh-copy">Rename</p>
-          <p className="f9 gray2 mb4">Change the name of this group</p>
+          <p className="f9 mt3 lh-copy">Rename</p>
+          <p className="f9 gray2 mb2">Change the name of this group</p>
           <div className="relative w-100 flex"
           style={{ maxWidth: '29rem' }}
           >
             <input
-              className={'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
+              className={'f9 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
               'focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3'}
               value={this.state.title}
               disabled={!groupOwner}
@@ -214,13 +250,13 @@ export class GroupDetail extends Component {
               }}
             />
           </div>
-          <p className="f8 mt3 lh-copy">Change description</p>
-          <p className="f9 gray2 mb4">Change the description of this group</p>
+          <p className="f9 mt3 lh-copy">Change description</p>
+          <p className="f9 gray2 mb2">Change the description of this group</p>
           <div className="relative w-100 flex"
             style={{ maxWidth: '29rem' }}
           >
             <input
-              className={'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
+              className={'f9 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
                 'focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3'}
               value={this.state.description}
               disabled={!groupOwner}
@@ -244,8 +280,8 @@ export class GroupDetail extends Component {
               }}
             />
           </div>
-          <p className="f8 mt3 lh-copy">Delete Group</p>
-          <p className="f9 gray2 mb4">
+          <p className="f9 mt3 lh-copy">Delete Group</p>
+          <p className="f9 gray2 mb2">
           Permanently delete this group. All current members will no longer see this group.
           </p>
           <a className={'dib f9 ba pa2 ' + deleteButtonClasses}

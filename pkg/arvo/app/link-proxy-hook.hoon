@@ -19,8 +19,9 @@
 ::    when adding support for new paths, the only things you'll likely want
 ::    to touch are +permitted, +initial-response, & +kick-proxies.
 ::
-/-  *link, group-store, *metadata-store
-/+  store=link-store, metadata, default-agent, verb, dbug
+/-  *link, *metadata-store, *group
+/+  metadata, default-agent, verb, dbug, group-store, grpl=group,
+    resource, store=link-store
 ~%  %link-proxy-hook-top  ..is  ~
 |%
 +$  state-0
@@ -29,11 +30,20 @@
       ::      but can't we use [wex sup]:bowl for that?
       active=(map path (set ship))
   ==
++$  state-1
+  $:  %1
+      active=(map path (set ship))
+  ==
+::
++$  versioned-state
+  $%  state-0
+      state-1
+  ==
 ::
 +$  card  card:agent:gall
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 ::
 %-  agent:dbug
@@ -52,9 +62,20 @@
   ::
   ++  on-save  !>(state)
   ++  on-load
-    |=  old=vase
+    |=  old-vase=vase
     ^-  (quip card _this)
-    [~ this(state !<(state-0 old))]
+    =/  old
+      !<(versioned-state old-vase)
+    ?-  -.old
+      %1  [~ this(state old)]
+    ::
+        %0
+      :_  this(state [%1 +.old])
+      :~  [%pass /groups %agent [our.bowl %group-store] %leave ~]
+          watch-groups:do
+      ==
+    ==
+
   ::
   ++  on-watch
     |=  =path
@@ -97,6 +118,7 @@
 ::
 |_  =bowl:gall
 +*  md  ~(. metadata bowl)
+   grp   ~(. grpl bowl)
 ::
 ::  permissions
 ::
@@ -117,10 +139,7 @@
   %+  lien  (groups-from-resource:md %link u.target)
   |=  =group-path
   ^-  ?
-  =-  (~(has in (fall - *group:group-store)) who)
-  %^  scry-for  (unit group:group-store)
-    %group-store
-  group-path
+  (~(has in (members-from-path:grp group-path)) who)
 ::
 ++  kick-revoked-permissions
   |=  [=path who=(list ship)]
@@ -177,17 +196,14 @@
   %+  kick-revoked-permissions
     app-path.resource.upd
   %~  tap  in
-  =-  (fall - *group:group-store)
-  %^  scry-for  (unit group:group-store)
-    %group-store
-  group-path.upd
+  (members-from-path:grp group-path.upd)
 ::
 ::  groups subscription
 ::TODO  largely copied from link-listen-hook. maybe make a store-listener lib?
 ::
 ++  watch-groups
   ^-  card
-  [%pass /groups %agent [our.bowl %group-store] %watch /all]
+  [%pass /groups %agent [our.bowl %group-store] %watch /groups]
 ::
 ++  take-groups-sign
   |=  =sign:agent:gall
@@ -209,25 +225,25 @@
     =*  vase  q.cage.sign
     ?+  mark  ~|([dap.bowl %unexpected-mark mark] !!)
       %group-initial  [~ state]
-      %group-update   (handle-group-update !<(group-update:group-store vase))
+      %group-update   (handle-group-update !<(update:group-store vase))
     ==
   ==
 ::
 ++  handle-group-update
-  |=  upd=group-update:group-store
+  |=  upd=update:group-store
   ^-  (quip card _state)
   :_  state
-  ?.  ?=(%remove -.upd)  ~
+  ?.  ?=(%remove-members -.upd)  ~
   ::  if someone was removed from a group, find all link resources associated
   ::  with that group, then kick their subscriptions if they're no longer
   ::
   %-  zing
-  %+  turn  (app-paths-from-group:md %link pax.upd)
+  %+  turn  (app-paths-from-group:md %link (en-path:resource resource.upd))
   |=  =app-path
   ^-  (list card)
   %+  kick-revoked-permissions
     app-path
-  ~(tap in members.upd)
+  ~(tap in ships.upd)
 ::
 ::  proxy subscriptions
 ::

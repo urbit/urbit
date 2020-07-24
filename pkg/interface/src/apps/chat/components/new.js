@@ -3,7 +3,6 @@ import { InviteSearch } from '../../../components/InviteSearch';
 import { Spinner } from '../../../components/Spinner';
 import { Link } from 'react-router-dom';
 import { deSig } from '../../../lib/util';
-import urbitOb from 'urbit-ob';
 
 export class NewScreen extends Component {
   constructor(props) {
@@ -14,9 +13,8 @@ export class NewScreen extends Component {
       idName: '',
       groups: [],
       ships: [],
-      security: 'channel',
+      privacy: 'invite',
       idError: false,
-      inviteError: false,
       allowHistory: true,
       createGroup: false,
       awaiting: false
@@ -24,9 +22,7 @@ export class NewScreen extends Component {
 
     this.titleChange = this.titleChange.bind(this);
     this.descriptionChange = this.descriptionChange.bind(this);
-    this.allowHistoryChange = this.allowHistoryChange.bind(this);
     this.setInvite = this.setInvite.bind(this);
-    this.createGroupChange = this.createGroupChange.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -62,32 +58,13 @@ export class NewScreen extends Component {
     });
   }
 
-  createGroupChange(event) {
-    if (event.target.checked) {
-      this.setState({
-        createGroup: Boolean(event.target.checked),
-        security: 'village'
-      });
-    } else {
-      this.setState({
-        createGroup: Boolean(event.target.checked),
-        security: 'channel'
-      });
-    }
-  }
-
-  allowHistoryChange(event) {
-    this.setState({ allowHistory: Boolean(event.target.checked) });
-  }
-
   onClickCreate() {
     const { props, state } = this;
     const grouped = (this.state.createGroup || (this.state.groups.length > 0));
 
     if (!state.title) {
       this.setState({
-        idError: true,
-        inviteError: false
+        idError: true
       });
       return;
     }
@@ -96,37 +73,19 @@ export class NewScreen extends Component {
 
     if (station in props.inbox) {
       this.setState({
-        inviteError: false,
         idError: true,
         success: false
       });
       return;
     }
 
-    let isValid = true;
     const aud = state.ships.map(mem => `~${deSig(mem.trim())}`);
-    aud.forEach((mem) => {
-      if (!urbitOb.isValidPatp(mem)) {
-        isValid = false;
-      }
-    });
-
-    if(state.ships.length === 1 && state.security === 'village' && !state.createGroup) {
-      props.history.push(`/~chat/new/dm/${aud[0]}`);
-    }
-
-    if (!isValid) {
-      this.setState({
-        inviteError: true,
-        idError: false,
-        success: false
-      });
-      return;
-    }
 
     if (this.textarea) {
       this.textarea.value = '';
     }
+
+    const policy = state.privacy === 'invite' ? { invite: { pending: aud } } : { open: { banRanks: [], banned: [] } };
 
     this.setState({
       error: false,
@@ -135,14 +94,8 @@ export class NewScreen extends Component {
       ships: [],
       awaiting: true
     }, () => {
-      // if we want a "proper group" that can be managed from the contacts UI,
-      // we make a path of the form /~zod/cool-group
-      // if not, we make a path of the form /~/~zod/free-chat
-      let appPath = `/~${window.ship}${station}`;
-      if (!state.createGroup && state.groups.length === 0) {
-        appPath = `/~${appPath}`;
-      }
-      let groupPath = appPath;
+      const appPath = `/~${window.ship}${station}`;
+      let groupPath = `/ship${appPath}`;
       if (state.groups.length > 0) {
         groupPath = state.groups[0];
       }
@@ -151,9 +104,10 @@ export class NewScreen extends Component {
         state.description,
         appPath,
         groupPath,
-        state.security,
+        policy,
         aud,
-        state.allowHistory
+        state.allowHistory,
+        state.createGroup
       );
       submit.then(() => {
         this.setState({ awaiting: false });
@@ -164,24 +118,14 @@ export class NewScreen extends Component {
 
   render() {
     const { props, state } = this;
-    let inviteSwitchClasses = (state.security === 'village')
-      ? 'relative checked bg-green2 br3 h1 toggle v-mid z-0'
-      : 'relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0';
-    if (state.createGroup) {
-      inviteSwitchClasses = inviteSwitchClasses + ' o-50';
-    }
-
-    const createGroupClasses = state.createGroup
-      ? 'relative checked bg-green2 br3 h1 toggle v-mid z-0'
-      : 'relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0';
 
     const createClasses = state.idName
-      ? 'pointer db f9 green2 bg-gray0-d ba pv3 ph4 b--green2'
-      : 'pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 b--gray3';
+      ? 'pointer db f9 green2 bg-gray0-d ba pv3 ph4 b--green2 mt4'
+      : 'pointer db f9 gray2 ba bg-gray0-d pa2 pv3 ph4 b--gray3 mt4';
 
     const idClasses =
       'f7 ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 ' +
-      'focus-b--black focus-b--white-d ';
+      'focus-b--black focus-b--white-d mt1 ';
 
     let idErrElem = (<span />);
     if (state.idError) {
@@ -191,29 +135,6 @@ export class NewScreen extends Component {
         </span>
       );
     }
-
-    let createGroupToggle = <div />;
-    if (state.groups.length === 0) {
-      createGroupToggle = (
-        <div className="mv7">
-          <input
-            type="checkbox"
-            style={{ WebkitAppearance: 'none', width: 28 }}
-            className={createGroupClasses}
-            onChange={this.createGroupChange}
-          />
-          <span className="dib f9 white-d inter ml3">Create Group</span>
-          <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
-            Participants will share this group across applications
-          </p>
-        </div>
-      );
-    }
-
-    const groups = {};
-    Object.keys(props.permissions).forEach((pem) => {
-      groups[pem] = props.permissions[pem].who;
-    });
 
     return (
       <div
@@ -225,9 +146,9 @@ export class NewScreen extends Component {
         <div className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8">
           <Link to="/~chat/">{'⟵ All Chats'}</Link>
         </div>
-        <h2 className="mb3 f8">New Chat</h2>
+        <h2 className="mb4 f8">New Group Chat</h2>
         <div className="w-100">
-          <p className="f8 mt3 lh-copy db">Name</p>
+          <p className="f8 mt4 db">Name</p>
           <textarea
             className={idClasses}
             placeholder="Secret Chat"
@@ -238,7 +159,7 @@ export class NewScreen extends Component {
             onChange={this.titleChange}
           />
               {idErrElem}
-          <p className="f8 mt3 lh-copy db">
+          <p className="f8 mt4 db">
             Description
             <span className="gray3"> (Optional)</span>
           </p>
@@ -251,26 +172,27 @@ export class NewScreen extends Component {
             }}
             onChange={this.descriptionChange}
           />
-          <p className="f8 mt4 lh-copy db">
-            Invite
-            <span className="gray3"> (Optional)</span>
+          <div className="mt4 db relative">
+            <p className="f8">
+              Select Group
           </p>
-          <p className="f9 gray2 db mb2 pt1">
-            Selected groups or ships will be able to post to chat
+          <Link className="green2 absolute right-0 bottom-0 f9" to="/~groups/new">+New</Link>
+            <p className="f9 gray2 db mv1">
+              Chat will be added to selected group
           </p>
+          </div>
           <InviteSearch
-            groups={groups}
+            groups={props.groups}
             contacts={props.contacts}
             associations={props.associations}
             groupResults={true}
-            shipResults={true}
+            shipResults={false}
             invites={{
               groups: state.groups,
-              ships: state.ships
+              ships: []
             }}
             setInvite={this.setInvite}
           />
-          {createGroupToggle}
           <button
             onClick={this.onClickCreate.bind(this)}
             className={createClasses}

@@ -3,10 +3,6 @@ import { Switch, Route } from 'react-router-dom';
 
 import _ from 'lodash';
 
-import LinksApi from '../../api/links';
-import LinksStore from '../../store/links';
-import LinksSubscription from '../../subscription/links';
-
 import './css/custom.css';
 
 import { Skeleton } from './components/skeleton';
@@ -45,7 +41,8 @@ export class LinksApp extends Component {
   render() {
     const { props } = this;
 
-    const contacts = props.contacts ? props.contacts : {};
+    const contacts = props.contacts ? props.contacts : {}; 
+
     const groups = props.groups ? props.groups : {};
 
     const associations = props.associations ? props.associations : { link: {}, contacts: {} };
@@ -70,7 +67,7 @@ export class LinksApp extends Component {
     );
 
     if(totalUnseen !== this.totalUnseen) {
-      document.title = totalUnseen !== 0 ? `OS1 - Links (${totalUnseen})` : 'OS1 - Links';
+      document.title = totalUnseen !== 0 ? `(${totalUnseen}) OS1 - Links` : 'OS1 - Links';
       this.totalUnseen = totalUnseen;
     }
 
@@ -172,6 +169,8 @@ export class LinksApp extends Component {
                   contactDetails={contactDetails}
                   groupPath={resource['group-path']}
                   group={group}
+                  groups={groups}
+                  associations={associations}
                   amOwner={amOwner}
                   resourcePath={resourcePath}
                   popout={popout}

@@ -4,10 +4,6 @@ import _ from 'lodash';
 
 import './css/custom.css';
 
-import PublishApi from '../../api/publish';
-import PublishStore from '../../store/publish';
-import PublishSubscription from '../../subscription/publish';
-
 import { Skeleton } from './components/skeleton';
 import { NewScreen } from './components/lib/new';
 import { JoinScreen } from './components/lib/join';
@@ -65,11 +61,11 @@ export default class PublishApp extends React.Component {
       .value();
 
     if (this.unreadTotal !== unreadTotal) {
-      document.title = unreadTotal > 0 ? `OS1 - Publish (${unreadTotal})` : 'OS1 - Publish';
+      document.title = unreadTotal > 0 ? `(${unreadTotal}) OS1 - Publish` : 'OS1 - Publish';
       this.unreadTotal = unreadTotal;
     }
 
-    const { api, groups, permissions, sidebarShown } = props;
+    const { api, groups, sidebarShown } = props;
 
     return (
       <Switch>
@@ -88,11 +84,12 @@ export default class PublishApp extends React.Component {
                 contacts={contacts}
                 api={api}
               >
-                <div className={`h-100 w-100 overflow-x-hidden flex flex-column
+                <div
+                  className={`h-100 w-100 overflow-x-hidden flex flex-column
                  bg-white bg-gray0-d dn db-ns`}
                 >
-                  <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
-                    <p className="f9 pt3 gray2 w-100 h-100 dtc v-mid tc">
+                  <div className='pl3 pr3 pt2 dt pb3 w-100 h-100'>
+                    <p className='f9 pt3 gray2 w-100 h-100 dtc v-mid tc'>
                       Select or create a notebook to begin.
                     </p>
                   </div>
@@ -101,8 +98,10 @@ export default class PublishApp extends React.Component {
             );
           }}
         />
-        <Route exact path="/~publish/new"
-          render={(props) => {
+        <Route
+          exact
+          path='/~publish/new'
+          render={props => {
             return (
               <Skeleton
                 popout={false}
@@ -128,8 +127,10 @@ export default class PublishApp extends React.Component {
             );
           }}
         />
-        <Route exact path="/~publish/join/:ship?/:notebook?"
-          render={(props) => {
+        <Route
+          exact
+          path='/~publish/join/:ship?/:notebook?'
+          render={props => {
             const ship = props.match.params.ship || '';
             const notebook = props.match.params.notebook || '';
             return (
@@ -156,9 +157,11 @@ export default class PublishApp extends React.Component {
             );
           }}
         />
-        <Route exact path="/~publish/:popout?/notebook/:ship/:notebook/:view?"
-          render={(props) => {
-            const view = (props.match.params.view)
+        <Route
+          exact
+          path='/~publish/:popout?/notebook/:ship/:notebook/:view?'
+          render={props => {
+            const view = props.match.params.view
               ? props.match.params.view
               : 'posts';
 
@@ -172,8 +175,8 @@ export default class PublishApp extends React.Component {
             const bookGroupPath =
               notebooks?.[ship]?.[notebook]?.['subscribers-group-path'];
 
-            const notebookContacts = (bookGroupPath in contacts)
-              ? contacts[bookGroupPath] : {};
+            const notebookContacts =
+              bookGroupPath in contacts ? contacts[bookGroupPath] : {};
 
             if (view === 'new') {
               return (
@@ -227,7 +230,6 @@ export default class PublishApp extends React.Component {
                     associations={associations.contacts}
                     sidebarShown={sidebarShown}
                     popout={popout}
-                    permissions={permissions}
                     api={api}
                     {...props}
                   />
@@ -236,8 +238,10 @@ export default class PublishApp extends React.Component {
             }
           }}
         />
-        <Route exact path="/~publish/:popout?/note/:ship/:notebook/:note/:edit?"
-          render={(props) => {
+        <Route
+          exact
+          path='/~publish/:popout?/note/:ship/:notebook/:note/:edit?'
+          render={props => {
             const ship = props.match.params.ship || '';
             const notebook = props.match.params.notebook || '';
             const path = `${ship}/${notebook}`;

@@ -1,14 +1,24 @@
 /-  *publish
-/-  *group-store
-/-  *group-hook
+/-  *group
+/-  group-hook
 /-  *permission-hook
 /-  *permission-group-hook
 /-  *permission-store
 /-  *invite-store
 /-  *metadata-store
 /-  *metadata-hook
-/-  *rw-security
-/+  *server, *publish, cram, default-agent, dbug
+/-  contact-view
+/-  pull-hook
+/-  push-hook
+/+  *server
+/+  *publish
+/+  cram
+/+  default-agent
+/+  dbug
+/+  verb
+/+  grpl=group
+/+  group-store
+/+  resource
 ::
 ~%  %publish  ..is  ~
 |%
@@ -42,6 +52,8 @@
   $%  [%1 state-two]
       [%2 state-two]
       [%3 state-three]
+      [%4 state-three]
+      [%5 state-three]
   ==
 ::
 +$  metadata-delta
@@ -57,9 +69,10 @@
   ==
 --
 ::
-=|  [%3 state-three]
+=|  [%5 state-three]
 =*  state  -
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  bol=bowl:gall
@@ -85,6 +98,7 @@
             %poke  %file-server-action
             !>([%serve-dir /'~publish' /app/landscape %.n])
         ==
+        [%pass /groups %agent [our.bol %group-store] %watch /groups]
     ==
   ::
   ++  on-save  !>(state)
@@ -174,15 +188,58 @@
       ==
     ::
         %3
-      :_  this(state p.old-state)
-      %+  welp  cards
-      :~  [%pass /bind %arvo %e %disconnect [~ /'~publish']]
-          [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
-          :*  %pass  /srving  %agent  [our.bol %file-server]
-              %poke  %file-server-action
-              !>([%serve-dir /'~publish' /app/landscape %.n])
-      ==  ==
+      %=  $
+          -.p.old-state  %4
+      ::
+          cards
+        %+  welp  cards
+        :~  [%pass /bind %arvo %e %disconnect [~ /'~publish']]
+            [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
+            :*  %pass  /srving  %agent  [our.bol %file-server]
+                %poke  %file-server-action
+                !>([%serve-dir /'~publish' /app/landscape %.n])
+        ==  ==
+      ==
+    ::
+        %4
+      %=  $
+          p.old-state
+        =/  new-books=(map [@p @tas] notebook)
+          %-  ~(run by books.p.old-state)
+          |=  old-notebook=notebook-3
+          ^-  notebook-3
+          (convert-notebook-3-4 old-notebook)
+        [%5 our-paths.p.old-state new-books tile-num.p.old-state [~ ~]]
+      ::
+          cards
+        %+  welp  cards
+        :~  [%pass /groups %agent [our.bol %group-store] %watch /groups]
+        ==
+      ==
+    ::
+        %5
+      [cards this(state p.old-state)]
     ==
+    ++  convert-notebook-3-4
+      |=  prev=notebook-3
+      ^-  notebook-3
+      %=    prev
+          writers
+        ?>  ?=(^ writers.prev)
+        :-  %ship
+        ?:  =('~' i.writers.prev)
+          t.writers.prev
+        writers.prev
+      ::
+          subscribers
+        ?>  ?=(^ subscribers.prev)
+        :-  %ship
+        %+  scag  2
+        ?:  =('~' i.subscribers.prev)
+          t.subscribers.prev
+        subscribers.prev
+
+      ==
     ::
     ++  convert-comment-2-3
       |=  prev=comment-2
@@ -387,6 +444,14 @@
     ^-  (quip card _this)
     ?-    -.sin
         %poke-ack
+      ?:  ?=([%join-group @ @ ~] wir)
+        ?^  p.sin
+          (on-agent:def wir sin)
+        =/  =ship
+          (slav %p i.t.wir)
+        =^  cards  state
+          (subscribe-notebook ship i.t.t.wir)
+        [cards this]
       ?~  p.sin
         [~ this]
       =^  cards  state
@@ -427,6 +492,10 @@
         :_  this
         [%pass /permissions %agent [our.bol %permission-store] %watch /updates]~
       ::
+          [%groups ~]
+        :_  this
+        [%pass /groups %agent [our.bol %group-store] %watch /groups]~
+      ::
           [%invites ~]
         :_  this
         :_  ~
@@ -445,9 +514,9 @@
           (handle-notebook-delta:main !<(notebook-delta q.cage.sin) state)
         [cards this]
       ::
-          [%permissions ~]
+          [%groups ~]
         =^  cards  state
-          (handle-permission-update:main !<(permission-update q.cage.sin))
+          (handle-group-update:main !<(update:group-store q.cage.sin))
         [cards this]
       ::
           [%invites ~]
@@ -506,6 +575,13 @@
   --
 ::
 |_  bol=bowl:gall
+++  grup  ~(. grpl bol)
+::
+++  metadata-store-poke
+  |=  act=metadata-action
+  ^-  card
+  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
+  ::
 ::
 ++  get-last-update
   |=  [host=@p book-name=@tas]
@@ -899,41 +975,31 @@
       %.n
   ==
 ::
-++  get-subscriber-paths
-  |=  [book-name=@tas who=@p]
-  ^-  (list path)
-  %+  roll  ~(val by sup.bol)
-  |=  [[whom=@p pax=path] out=(list path)]
-  ?.  =(who whom)
-    out
-  ?.  ?=([%notebook @ *] pax)
-    out
-  ?.  =(i.t.pax book-name)
-    out
-  [pax out]
-::
-++  handle-permission-update
-  |=  upd=permission-update
+++  handle-group-update
+  |=  =update:group-store
   ^-  (quip card _state)
-  ?.  ?=(?(%remove %add) -.upd)
+  ?.  ?=(?(%remove-members %add-members) -.update)
     [~ state]
+  =*  ships  ships.update
+  =/  =path
+    (en-path:resource resource.update)
   =/  book=(unit @tas)
     %+  roll  ~(tap by books)
     |=  [[[who=@p nom=@tas] book=notebook] out=(unit @tas)]
     ?.  =(who our.bol)
       out
-    ?.  =(path.upd subscribers.book)
+    ?.  =(path subscribers.book)
       out
     `nom
   ?~  book
     [~ state]
   :_  state
   %-  zing
-  %+  turn  ~(tap in who.upd)
+  %+  turn  ~(tap in ships)
   |=  who=@p
   ?.  (allowed who %read u.book)
-    [%give %kick (get-subscriber-paths u.book who) `who]~
-  ?:  ?|(?=(%remove -.upd) (is-managed path.upd))
+    [%give %kick [/notebook/[u.book]]~ `who]~
+  ?:  ?|(?=(%remove-members -.update) (is-managed-path:grup path))
     ~
   =/  uid  (sham %publish who u.book eny.bol)
   =/  inv=invite
@@ -959,11 +1025,35 @@
     [~ state]
   ::
       %accepted
-    ?>  ?=([%notebook @ ~] path.invite.upd)
+    ?>  ?=([@ @ *] path.invite.upd)
     =/  book  i.t.path.invite.upd
-    =/  wir=wire  /subscribe/(scot %p ship.invite.upd)/[book]
+    =/  group
+      (group-from-book notebook+book^~)
+    ?^  group
+      (subscribe-notebook ship.invite.upd book)
+    =/  rid=resource
+      (de-path:resource ship+path.invite.upd)
+    =/  join-wire=wire
+      /join-group/[(scot %p ship.invite.upd)]/[book]
+    =/  =cage
+      :-  %group-update
+      !>  ^-  action:group-store
+      [%add-members rid (sy our.bol ~)]
     :_  state
-    [%pass wir %agent [ship.invite.upd %publish] %watch path.invite.upd]~
+    [%pass join-wire %agent [entity.rid %group-push-hook] %poke cage]~
+  ==
+::
+++  subscribe-notebook
+  |=  [=ship book=@tas]
+  ^-  (quip card _state)
+  =/  pax=path  /notebook/[book]
+  =/  wir=wire  /subscribe/[(scot %p ship)]/[book]
+  =?  tile-num  (gth tile-num 0)
+    (dec tile-num)
+  =/  jon=json  (frond:enjs:format %notifications (numb:enjs:format tile-num))
+  :_  state
+  :~  [%pass wir %agent [ship %publish] %watch pax]
+      [%give %fact [/publishtile]~ %json !>(jon)]
   ==
 ::
 ++  watch-notebook
@@ -984,17 +1074,26 @@
 ::
 ++  our-beak  /(scot %p our.bol)/[q.byk.bol]/(scot %da now.bol)
 ::
+++  book-writers
+  |=  [host=@p book=@tas]
+  ^-  (set ship)
+  =/  =notebook  (~(got by books) host book)
+  =/  rid=resource
+    (de-path:resource writers.notebook)
+  %-  ~(uni in (fall (scry-tag:grup rid %admin) ~))
+  %+  fall
+    (scry-tag:grup rid `tag`[%publish (cat 3 %writers- book)])
+  ~
+::
 ++  allowed
   |=  [who=@p mod=?(%read %write) book=@tas]
   ^-  ?
-  =/  scry-bek  /(scot %p our.bol)/permission-store/(scot %da now.bol)
-  =/  book=notebook  (~(got by books) our.bol book)
-  =/  scry-pax
-    ?:  =(%read mod)
-      subscribers.book
-    writers.book
-  =/  full-pax  :(weld scry-bek /permitted/(scot %p who) scry-pax /noun)
-  .^(? %gx full-pax)
+  =/  =notebook  (~(got by books) our.bol book)
+  =/  rid=resource
+    (de-path:resource writers.notebook)
+  ?:  ?=(%read mod)
+    (~(has in (members:grup rid)) who)
+  (~(has in (book-writers our.bol book)) who)
 ::
 ++  write-file
   |=  [pax=path cay=cage]
@@ -1053,20 +1152,32 @@
   [%give %fact [/primary]~ %publish-primary-delta !>(del)]
 ::
 ++  group-poke
-  |=  act=group-action
+  |=  act=action:group-store
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
 ::
-++  group-hook-poke
-  |=  act=group-hook-action
+++  group-proxy-poke
+  |=  [who=ship act=action:group-store]
   ^-  card
-  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
+  [%pass / %agent [who %group-push-hook] %poke %group-update !>(act)]
 ::
-++  contact-view-create
-  |=  [=path ships=(set ship) title=@t description=@t]
-  =/  act  [%create path ships title description]
+++  group-pull-hook-poke
+  |=  act=action:pull-hook
+  ^-  card
+  [%pass / %agent [our.bol %group-pull-hook] %poke %pull-hook-action !>(act)]
+::
+++  contact-view-poke
+  |=  act=contact-view-action:contact-view
   ^-  card
   [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
+::
+++  contact-view-create
+  |=  [=path ships=(set ship) =policy title=@t description=@t]
+  =/  rid=resource
+    (de-path:resource path)
+  =/  act=contact-view-action:contact-view
+    [%create name.rid policy title description]
+  (contact-view-poke act)
 ::
 ++  perm-hook-poke
   |=  act=permission-hook-action
@@ -1097,20 +1208,6 @@
       !>(act)
   ==
 ::
-++  create-security
-  |=  [read=path write=path sec=rw-security]
-  ^-  (list card)
-  =+  ^-  [read-type=?(%black %white) write-type=?(%black %white)]
-    ?-  sec
-      %channel  [%black %black]
-      %village  [%white %white]
-      %journal  [%black %white]
-      %mailbox  [%white %black]
-    ==
-  :~  (perm-group-hook-poke [%associate read [[read read-type] ~ ~]])
-      (perm-group-hook-poke [%associate write [[write write-type] ~ ~]])
-  ==
-::
 ++  generate-invites
   |=  [book=@tas invitees=(set ship)]
   ^-  (list card)
@@ -1118,7 +1215,7 @@
   |=  who=ship
   =/  uid  (sham %publish who book eny.bol)
   =/  inv=invite
-    :*  our.bol  %publish  /notebook/[book]  who
+    :*  our.bol  %publish  /(scot %p our.bol)/[book]  who
         (crip "invite for notebook {<our.bol>}/{(trip book)}")
     ==
   =/  act=invite-action  [%invite /publish uid inv]
@@ -1129,45 +1226,29 @@
   ^-  [(list card) write=path read=path]
   ?>  ?=(^ group-path.group)
   =/  scry-path
-    ;:  weld
-      /(scot %p our.bol)/group-store/(scot %da now.bol)
-      group-path.group
-      /noun
-    ==
+    ;:(welp /(scot %p our.bol)/group-store/(scot %da now.bol) [%groups group-path.group] /noun)
   =/  grp  .^((unit ^group) %gx scry-path)
   ?:  use-preexisting.group
     ?~  grp  !!
     ?.  (is-managed group-path.group)  !!
-    :_  [group-path.group group-path.group]
-    :~  %-  perm-group-hook-poke
-        [%associate group-path.group [[group-path.group %white] ~ ~]]
-      ::
-        (perm-hook-poke [%add-owned group-path.group group-path.group])
-    ==
+    `[group-path.group group-path.group]
   ::
+  =/  =policy
+    *open:policy
   ?:  make-managed.group
     ?^  grp  [~ group-path.group group-path.group]
     ?.  (is-managed group-path.group)  !!
     =/  whole-grp  (~(put in invitees.group) our.bol)
     :_  [group-path.group group-path.group]
-    [(contact-view-create [group-path.group whole-grp title about])]~
+    [(contact-view-create [group-path.group whole-grp policy title about])]~
   ::  make unmanaged group
-  =*  write-path  group-path.group
-  =/  read-path   (weld write-path /read)
-  ?^  grp  [~ write-path read-path]
-  ?:  (is-managed group-path.group)  !!
-  :_  [write-path read-path]
-  %-  zing
-  :~  [(group-poke [%bundle write-path])]~
-      [(group-poke [%bundle read-path])]~
-      [(group-hook-poke [%add our.bol write-path])]~
-      [(group-hook-poke [%add our.bol read-path])]~
-      [(group-poke [%add (sy our.bol ~) write-path])]~
-      (create-security read-path write-path %journal)
-      [(perm-hook-poke [%add-owned write-path write-path])]~
-      [(perm-hook-poke [%add-owned read-path read-path])]~
-      (generate-invites book (~(del in invitees.group) our.bol))
-  ==
+  =*  group-path  group-path.group
+  :_  [group-path group-path]
+  ?^  grp  ~
+  =/  rid=resource
+    (de-path:resource group-path)
+  :-  (group-poke %add-group rid policy %.y)
+  (generate-invites book (~(del in invitees.group) our.bol))
 ::
 ++  handle-poke-fail
   |=  wir=wire
@@ -1602,14 +1683,12 @@
     ?>  ?=(^ writers.u.book)
     ?>  ?=(^ subscribers.u.book)
     =/  cards=(list card)
-      :~  (delete-dir pax)
-          (perm-hook-poke [%remove writers.u.book])
-          (perm-hook-poke [%remove subscribers.u.book])
-      ==
-    =?  cards  =('~' i.writers.u.book)
-      [(group-poke [%unbundle writers.u.book]) cards]
-    =?  cards  =('~' i.subscribers.u.book)
-      [(group-poke [%unbundle subscribers.u.book]) cards]
+      ~[(delete-dir pax)]
+
+    =/  rid=resource
+      (de-path:resource writers.u.book)
+    =?  cards  (is-managed:grup rid)
+      [(group-poke %remove-group rid ~) cards]
     [cards state]
   ::  %del-note:
   ::    If poke is from us, eagerly remove note from books, and place the
@@ -1710,18 +1789,33 @@
   ::
       %subscribe
     ?>  (team:title our.bol src.bol)
-    =/  wir=wire  /subscribe/(scot %p who.act)/[book.act]
+    =/  join-wire=wire
+      /join-group/[(scot %p who.act)]/[book.act]
+    =/  rid=resource
+      [who.act book.act]
+    =/  =cage
+      :-  %group-update
+      !>  ^-  action:group-store
+      [%add-members rid (sy our.bol ~)]
     :_  state
-    [%pass wir %agent [who.act %publish] %watch /notebook/[book.act]]~
+    [%pass join-wire %agent [who.act %group-push-hook] %poke cage]~
   ::  %unsubscribe
   ::
       %unsubscribe
     ?>  (team:title our.bol src.bol)
     =/  wir=wire  /subscribe/(scot %p who.act)/[book.act]
     =/  del=primary-delta  [%del-book who.act book.act]
+    =/  book=notebook
+      (~(got by books) who.act book.act)
+    =/  rid=resource
+      (de-path:resource writers.book)
+    =/  =group
+      (need (scry-group:grup rid))
     :_  state(books (~(del by books) who.act book.act))
     :~  `card`[%pass wir %agent [who.act %publish] %leave ~]
         `card`[%give %fact [/primary]~ %publish-primary-delta !>(del)]
+        (group-proxy-poke who.act %remove-members rid (sy our.bol ~))
+        (group-poke %remove-group rid ~)
     ==
   ::  %read
   ::
@@ -1750,86 +1844,56 @@
     ?~  book
       ~|("nonexistent notebook: {<book.act>}" !!)
     ::
-    =/  old-write      writers.u.book
-    =/  old-read  subscribers.u.book
-    ?>  ?=([%'~' ^] old-write)
-    =/  destroy-old-groups=(list card)
-      :~  (group-poke [%unbundle old-write])
-          (group-poke [%unbundle old-read])
-          (group-hook-poke [%remove old-write])
-          (group-hook-poke [%remove old-read])
-          (perm-hook-poke [%remove old-write])
-          (perm-hook-poke [%remove old-read])
-      ==
-    ::
+    =*  old-group-path  writers.u.book
+    =/  app-path  /[(scot %p our.bol)]/[book.act]
+    =/  =metadata
+      (need (metadata-scry old-group-path app-path))
+    =/  old-rid=resource
+      (de-path:resource old-group-path)
+    ?<  (is-managed:grup old-rid)
     ?~  target.act
-      :: create new group from subscribers
-      ::
-      =.  writers.u.book      (slag 1 writers.u.book)
-      =.  subscribers.u.book  writers.u.book
-      =/  del=notebook-delta  [%edit-book our.bol book.act u.book]
-      :_  state(books (~(put by books) [our.bol book.act] u.book))
-      %+  weld  destroy-old-groups
-      ^-  (list card)
-      :~  [%give %fact [/notebook/[book.act]]~ %publish-notebook-delta !>(del)]
-          [%give %fact [/primary]~ %publish-primary-delta !>(del)]
-          %-  contact-view-create
-          :*  writers.u.book
-              (get-subscribers book.act)
-              title.u.book
-              description.u.book
+      ::  just create contacts object for group
+      :_  state
+      ~[(contact-view-poke %groupify old-rid title.metadata description.metadata)]
+    ::  change associations
+    =*  group-path  u.target.act
+    =/  rid=resource
+      (de-path:resource group-path)
+    =/  old-group=group
+      (need (scry-group:grup old-rid))
+    =/  =group
+      (need (scry-group:grup rid))
+    =/  ships=(set ship)
+      (~(dif in members.old-group) members.group)
+    =.  subscribers.u.book
+      group-path
+    =.  writers.u.book
+      group-path
+    =.  books
+      (~(put by books) [our.bol book.act] u.book)
+    =/  del
+      [%edit-book our.bol book.act u.book]
+    :_  state
+    :*  [%give %fact [/primary]~ %publish-primary-delta !>(del)]
+        [%give %fact [/notebook/[book.act]]~ %publish-notebook-delta !>(del)]
+        (metadata-store-poke %remove app-path %publish app-path)
+        (metadata-store-poke %add group-path [%publish app-path] metadata)
+        (group-poke %remove-group old-rid ~)
+        ?.  inclusive.act
+          ~
+        :-  (group-poke %add-members rid ships)
+        %+  turn
+          ~(tap in ships)
+        |=  =ship
+        =/  =invite
+          :*  our.bol
+              %contact-hook
+              group-path
+              ship  ''
           ==
-          %-  metadata-poke
-          :*  %add
-              writers.u.book
-              [%publish /(scot %p our.bol)/[book.act]]
-              title.u.book
-              description.u.book
-              0x0
-              date-created.u.book
-              our.bol
-          ==
-      ==
-    ::
-    ?>  ?=(^ u.target.act)
-    =.  writers.u.book  u.target.act
-    =.  subscribers.u.book  u.target.act
-    =/  group-host=@p  (slav %p i.u.target.act)
-    ::
-    =/  scry-pax  :(weld /=group-store/(scot %da now.bol) u.target.act /noun)
-    =/  old-group=(set @p)  (need .^((unit (set @p)) %gx scry-pax))
-    =/  dif-peeps=(set @p)  (~(dif in (get-subscribers book.act)) old-group)
-    ::
-    =/  del=notebook-delta  [%edit-book our.bol book.act u.book]
-    :_  state(books (~(put by books) [our.bol book.act] u.book))
-    %+  weld
-      %+  weld  destroy-old-groups
-      ^-  (list card)
-      :~  [%give %fact [/notebook/[book.act]]~ %publish-notebook-delta !>(del)]
-          [%give %fact [/primary]~ %publish-primary-delta !>(del)]
-          %-  metadata-poke
-          :*  %add
-              writers.u.book
-              [%publish /(scot %p our.bol)/[book.act]]
-              title.u.book
-              description.u.book
-              0x0
-              date-created.u.book
-              our.bol
-          ==
-      ==
-    ?:  ?&  inclusive.act
-            =(group-host our.bol)
-        ==
-      :: add all subscribers to group
-      ::
-      [(group-poke [%add dif-peeps u.target.act])]~
-    :: kick subscribers who are not already in group
-    ::
-    %+  turn  ~(tap in dif-peeps)
-    |=  who=@p
-    ^-  card
-    [%give %kick (get-subscriber-paths book.act who) `who]
+        =/  act=invite-action  [%invite /contacts (shaf %msg-uid eny.bol) invite]
+        [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
+    ==
   ==
 ::
 ++  get-subscribers
@@ -1871,6 +1935,23 @@
   ^-  card
   [%pass / %agent [our.bol %metadata-hook] %poke %metadata-action !>(act)]
 ::
+::
+++  metadata-scry
+  |=  [group-path=path app-path=path]
+  ^-  (unit metadata)
+  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)  ~
+  .^  (unit metadata)
+    %gx
+    (scot %p our.bol)
+    %metadata-store
+    (scot %da now.bol)
+    %metadata
+    (scot %t (spat group-path))
+    %publish
+    (scot %t (spat app-path))
+    /noun
+  ==
+::
 ++  emit-metadata
   |=  del=metadata-delta
   ^-  (list card)
@@ -1901,46 +1982,30 @@
     |=  [group-path=path app-path=path =metadata]
     ^-  (list card)
     [(metadata-poke [%add group-path [%publish app-path] metadata])]~
-  ::
-  ++  metadata-scry
-    |=  [group-path=path app-path=path]
-    ^-  (unit metadata)
-    ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)  ~
-    .^  (unit metadata)
-      %gx
+  --
+::
+++  group-from-book
+  |=  app-path=path
+  ^-  (unit path)
+  ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
+    ?:  ?=([@ ^] app-path)
+      ~&  [%assuming-ported-legacy-publish app-path]
+      `[%'~' app-path]
+    ~&([%weird-publish app-path] ~)
+  =/  resource-indices
+    .^  (jug md-resource group-path)
+      %gy
       (scot %p our.bol)
       %metadata-store
       (scot %da now.bol)
-      %metadata
-      (scot %t (spat group-path))
-      %publish
-      (scot %t (spat app-path))
-      /noun
+      /resource-indices
     ==
-  ::
-  ++  group-from-book
-    |=  app-path=path
-    ^-  (unit path)
-    ?.  .^(? %gu (scot %p our.bol) %metadata-store (scot %da now.bol) ~)
-      ?:  ?=([@ ^] app-path)
-        ~&  [%assuming-ported-legacy-publish app-path]
-        `[%'~' app-path]
-      ~&([%weird-publish app-path] ~)
-    =/  resource-indices
-      .^  (jug resource group-path)
-        %gy
-        (scot %p our.bol)
-        %metadata-store
-        (scot %da now.bol)
-        /resource-indices
-      ==
-    =/  groups=(unit (set path))
-      (~(get by resource-indices) [%publish app-path])
-    ?~  groups  ~
-    =/  group-paths  ~(tap in u.groups)
-    ?~  group-paths  ~
-    `i.group-paths
-  --
+  =/  groups=(unit (set path))
+    (~(get by resource-indices) [%publish app-path])
+  ?~  groups  ~
+  =/  group-paths  ~(tap in u.groups)
+  ?~  group-paths  ~
+  `i.group-paths
 ::
 ++  metadata-hook-poke
   |=  act=metadata-hook-action
@@ -1977,9 +2042,10 @@
       (merge-notebooks (~(got by books) host.del book.del) data.del)
     =^  cards  state
       (emit-updates-and-state host.del book.del data.del del sty)
+    =/  rid=resource
+      (de-path:resource writers.data.del)
     :_  state
-    :*  (group-hook-poke [%add host.del writers.data.del])
-        (group-hook-poke [%add host.del subscribers.data.del])
+    :*  (group-pull-hook-poke [%add host.del rid])
         (metadata-hook-poke [%add-synced host.del writers.data.del])
         cards
     ==
@@ -2137,6 +2203,19 @@
   ?.  =(book i.t.pax)  out
   [[%s (scot %p who)] out]
 ::
+++  get-writers-json
+  |=  [host=@p book=@tas]
+  =/  =tag
+    [%publish (cat 3 %writers- book)]
+  ^-  json
+  =/  writers=(list ship)
+    ~(tap in (book-writers host book))
+  :-  %a
+  %+  turn  writers
+  |=  who=@p
+  ^-  json
+  [%s (scot %p who)]
+::
 ++  get-notebook-json
   |=  [host=@p book-name=@tas]
   ^-  (unit json)
@@ -2151,6 +2230,8 @@
   =.  p.notebook-json
     (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
   =/  notebooks-json  (notebooks-map:enjs our.bol books)
+  =.  p.notebook-json
+    (~(put by p.notebook-json) %writers (get-writers-json host book-name))
   ?>  ?=(%o -.notebooks-json)
   =/  host-books-json  (~(got by p.notebooks-json) (scot %p host))
   ?>  ?=(%o -.host-books-json)
@@ -2259,6 +2340,8 @@
       (~(uni by p.notebook-json) (notes-page:enjs notes.u.book 0 50))
     =.  p.notebook-json
       (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
+    =.  p.notebook-json
+      (~(put by p.notebook-json) %writers (get-writers-json u.host book-name))
     (json-response:gen (json-to-octs (pairs notebook+notebook-json ~)))
   ::
   ::  single note, with initial 50 comments, as json

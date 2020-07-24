@@ -1,14 +1,14 @@
-/-  srv=file-server
+/-  srv=file-server, glob
 /+  *server, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
-+$  versioned-state
-  $%  state-zero
++$  serving  (map url-base=path [=content public=?])
++$  content
+  $%  [%clay =path]
+      [%glob =glob:glob]
   ==
-::
-+$  serving  (map url-base=path [clay-base=path public=?])
-+$  state-zero
-  $:  %0
++$  state-1
+  $:  %1
       =configuration:srv
       =serving
   ==
@@ -17,7 +17,7 @@
 %+  verb  |
 %-  agent:dbug
 ::
-=|  state-zero
+=|  state-1
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
@@ -33,7 +33,7 @@
         %+  turn
           ^-  (list path)
           [/ /'~landscape' ~]
-        |=(pax=path [pax [/app/landscape %.n]])
+        |=(pax=path [pax [clay+/app/landscape %.n]])
       ==
   :~  (connect /)
       (connect /'~landscape')
@@ -49,7 +49,32 @@
 ++  on-load
   |=  old-vase=vase
   ^-  (quip card _this)
-  [~ this(state !<(state-zero old-vase))]
+  |^
+  =+  !<(old-state=versioned-state old-vase)
+  =?  old-state  ?=(%0 -.old-state)
+    %=    old-state
+        -  %1
+        serving-0
+      %-  ~(run by serving-0.old-state)
+      |=  [=clay=path public=?]
+      ^-  [content ?]
+      [[%clay clay-path] public]
+    ==
+  ?>  ?=(%1 -.old-state)
+  [~ this(state old-state)]
+  ::
+  +$  versioned-state
+    $%  state-1
+        state-0
+    ==
+  ::
+  +$  serving-0  (map url-base=path [=clay=path public=?])
+  +$  state-0
+    $:  %0
+        =configuration:srv
+        =serving-0
+    ==
+  --
 ::
 ++  on-poke
   |=  [=mark =vase]
@@ -75,7 +100,14 @@
       ?:  (~(has by serving) url-base)
         ~|("url already bound to {<(~(got by serving) url-base.act)>}" !!)
       :-  [%pass url-base %arvo %e %connect [~ url-base] %file-server]~
-      this(serving (~(put by serving) url-base [clay-base.act public.act]))
+      this(serving (~(put by serving) url-base clay+clay-base.act public.act))
+    ::
+        %serve-glob
+      =*  url-base  url-base.act
+      ?:  (~(has by serving) url-base)
+        ~|("url already bound to {<(~(got by serving) url-base.act)>}" !!)
+      :-  [%pass url-base %arvo %e %connect [~ url-base] %file-server]~
+      this(serving (~(put by serving) url-base glob+glob.act public.act))
     ::
         %unserve-dir
       :-  [%pass url-base.act %arvo %e %disconnect [~ url-base.act]]~
@@ -84,9 +116,9 @@
         %toggle-permission
       ?.  (~(has by serving) url-base.act)
         ~|("url is not bound" !!)
-      =/  [clay-base=path public=?]  (~(got by serving) url-base.act)
+      =/  [=content public=?]  (~(got by serving) url-base.act)
       :-  ~
-      this(serving (~(put by serving) url-base.act [clay-base !public]))
+      this(serving (~(put by serving) url-base.act [content !public]))
     ::
         %set-landscape-homepage-prefix
       =.  landscape-homepage-prefix.configuration  prefix.act
@@ -133,22 +165,36 @@
       |=  req-line=request-line
       ^-  [simple-payload:http ?]
       =/  pax=path  (snoc site.req-line (need ext.req-line))
-      =/  clay-path=(unit [path ?])  (get-clay-path pax)
-      ?~  clay-path  [not-found:gen %.n]
-      =/  scry-path
-        :*  (scot %p our.bowl)
-            q.byk.bowl
-            (scot %da now.bowl)
-            (lowercase -.u.clay-path)
+      =/  content=(unit [=content suffix=path public=?])  (get-content pax)
+      ?~  content  [not-found:gen %.n]
+      ?-  -.content.u.content
+          %clay
+        =/  scry-path
+          :*  (scot %p our.bowl)
+              q.byk.bowl
+              (scot %da now.bowl)
+              (lowercase (weld path.content.u.content suffix.u.content))
+          ==
+        ?.  .^(? %cu scry-path)  [not-found:gen %.n]
+        =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
+        :_  public.u.content
+        ?+  ext.req-line  not-found:gen
+            [~ %html]  (html-response:gen file)
+            [~ %js]    (js-response:gen file)
+            [~ %css]   (css-response:gen file)
+            [~ %png]   (png-response:gen file)
         ==
-      ?.  .^(? %cu scry-path)  [not-found:gen %.n]
-      =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
-      :_  +.u.clay-path
-      ?+  ext.req-line  not-found:gen
-          [~ %html]  (html-response:gen file)
-          [~ %js]    (js-response:gen file)
-          [~ %css]   (css-response:gen file)
-          [~ %png]   (png-response:gen file)
+      ::
+          %glob
+        =/  data=(unit mime)
+          (~(get by glob.content.u.content) suffix.u.content)
+        ?~  data
+          [not-found:gen %.n]
+        :_  public.u.content
+        =/  mime-type=@t  (rsh 3 1 (crip <p.u.data>))
+        ::  Should maybe inspect to see how long cache should hold
+        ::
+        [[200 ['content-type' mime-type] max-1-da:gen ~] `q.u.data]
       ==
     ::
     ++  lowercase
@@ -162,24 +208,24 @@
         char
       (add char ^~((sub 'a' 'A')))
     ::
-    ++  get-clay-path
+    ++  get-content
       |=  pax=path
-      ^-  (unit [path ?])
-      =/  first-try  (match-clay-path pax (~(del by serving) /))
+      ^-  (unit [content path ?])
+      =/  first-try  (match-content-path pax (~(del by serving) /))
       ?^  first-try  first-try
       =/  root  (~(get by serving) /)
       ?~  root  ~
-      (match-clay-path pax (~(gas by *^serving) [[/ u.root] ~]))
+      (match-content-path pax (~(gas by *^serving) [[/ u.root] ~]))
     ::
-    ++  match-clay-path
+    ++  match-content-path
       |=  [pax=path =^serving]
-      ^-  (unit [path ?])
+      ^-  (unit [content path ?])
       %-  ~(rep by serving)
-      |=  [[url-base=path clay-base=path public=?] out=(unit [path ?])]
+      |=  [[url-base=path =content public=?] out=(unit [content path ?])]
       ?^  out  out
       =/  suf  (get-suffix url-base pax)
       ?~  suf  ~
-      `[(weld clay-base u.suf) public]
+      `[content u.suf public]
     ::
     ++  get-suffix
       |=  [a=path b=path]
@@ -218,11 +264,33 @@
   ?+  +<.sign  (on-arvo:def wire sign)
       %bound
     ?:  accepted.sign  [~ this]
+    ~&  [dap.bowl %failed-to-bind path.binding.sign]
     [~ this(serving (~(del by serving) path.binding.sign))]
   ==
 ::
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+++  on-peek   
+  |=  =path
+  ^-  (unit (unit cage))
+  |^
+  ?+  path  (on-peek:def path)
+    [%x %clay %base %hash ~]  ``hash+!>(base-hash)
+  ==
+  ::  stolen from +trouble
+  ::  TODO: move to a lib?
+  ++  base-hash
+    ^-  @uv
+    =+  .^  ota=(unit [=ship =desk =aeon:clay])
+            %gx  /(scot %p our.bowl)/hood/(scot %da now.bowl)/kiln/ota/noun
+        ==
+    ?~  ota
+      *@uv
+    =/  parent  (scot %p ship.u.ota)
+    =+  .^(=cass:clay %cs /[parent]/[desk.u.ota]/1/late/foo)
+    %^  end  3  3
+    .^(@uv %cz /[parent]/[desk.u.ota]/(scot %ud ud.cass))
+  --
+  
 ++  on-agent  on-agent:def
 ++  on-fail   on-fail:def
 --

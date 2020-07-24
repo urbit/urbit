@@ -75,9 +75,9 @@
   ::    Useful if you want to continue working after other moves finish.
   ::
   ++  huck
-    |=  mov=vase
+    |=  syn=sign-arvo
     =<  [moves state]
-    event-core(moves [duct %give %meta mov]~)
+    event-core(moves [duct %give %heck syn]~)
   ::  +drip:  XX
   ::
   ++  drip
@@ -286,7 +286,7 @@
       %crud  (crud:event-core [p q]:task)
       %rest  (rest:event-core date=p.task)
       %drip  (drip:event-core move=p.task)
-      %huck  (huck:event-core move=p.task)
+      %huck  (huck:event-core syn.task)
       %trim  trim:event-core
       %vega  vega:event-core
       %wait  (wait:event-core date=p.task)
@@ -378,23 +378,63 @@
 ++  scry
   |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
+  ::TODO  don't special-case whey scry
   ::
-  ?.  ?=(%& -.why)
-    ~
   ?:  &(=(ren %$) =(tyl /whey))
     =/  maz=(list mass)
       :~  timers+&+timers.state
       ==
     ``mass+!>(maz)
-  ?.  ?=(%timers syd)
-    [~ ~]
-  =/  tiz=(list [@da duct])
+  ::  only respond for the local identity, %$ desk, current timestamp
+  ::
+  ?.  ?&  =(&+our why)
+          =([%$ %da now] lot)
+          =(%$ syd)
+      ==
+    ~
+  ::  /bx/debug/timers  (list [@da duct])  all timers and their ducts
+  ::  /bx/timers        (list @da)         all timer timestamps
+  ::  /bx/timers/next   (unit @da)         the very next timer to fire
+  ::  /bx/timers/[da]   (list @da)         all timers up to and including da
+  ::
+  ?.  ?=(%x ren)  ~
+  ?+  tyl  [~ ~]
+      [%debug %timers ~]
+    :^  ~  ~  %noun
+    !>  ^-  (list [@da duct])
     %-  zing
     %+  turn  (tap:timer-map timers)
     |=  [date=@da q=(qeu duct)]
     %+  turn  ~(tap to q)
     |=(d=duct [date d])
-  [~ ~ %noun !>(tiz)]
+  ::
+      [%timers ~]
+    :^  ~  ~  %noun
+    !>  ^-  (list @da)
+    %-  zing
+    %+  turn  (tap:timer-map timers)
+    |=  [date=@da q=(qeu duct)]
+    (reap ~(wyt in q) date)
+  ::
+      [%timers %next ~]
+    :^  ~  ~  %noun
+    !>  ^-  (unit @da)
+    (bind (peek:timer-map timers) head)
+  ::
+      [%timers @ ~]
+    ?~  til=(slaw %da i.t.tyl)
+      [~ ~]
+    :^  ~  ~  %noun
+    !>  ^-  (list @da)
+    =/  tiz=(list [date=@da q=(qeu duct)])
+      (tap:timer-map timers)
+    |-  ^-  (list @da)
+    ?~  tiz  ~
+    ?:  (gth date.i.tiz u.til)  ~
+    %+  weld
+      (reap ~(wyt in q.i.tiz) date.i.tiz)
+    $(tiz t.tiz)
+  ==
 ::
 ++  stay  state
 ++  take

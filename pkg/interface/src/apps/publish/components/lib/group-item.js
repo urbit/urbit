@@ -13,7 +13,7 @@ export class GroupItem extends Component {
     }
 
     const groupedBooks = props.groupedBooks ? props.groupedBooks : [];
-    const first = (props.index === 0) ? 'pt1' : 'pt4';
+    const first = (props.index === 0) ? 'pt1' : 'pt6';
 
     const notebookItems = groupedBooks.map((each, i) => {
       const unreads = props.notebooks[each]['num-unread'] || 0;
