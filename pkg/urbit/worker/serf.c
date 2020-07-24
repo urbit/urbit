@@ -31,9 +31,10 @@
 ::
 +$  writ
   $%  $:  %live
-          $%  [%exit cod=@]
+          $%  [%cram eve=@]
+              [%exit cod=@]
               [%save eve=@]
-              [%pack eve=@]
+              [%pack ~]
       ==  ==
       [%peek mil=@ now=@da lyc=gang pat=path]
       [%play eve=@ lit=(list ?((pair @da ovum) *))]
@@ -220,8 +221,8 @@ _serf_grab(u3_serf* sef_u)
         mkdir(nam_c, 0700);
       }
 
-      c3_c man_c[2048];
-      snprintf(man_c, 2048, "%s/%s-serf.txt", nam_c, wen_c);
+      c3_c man_c[2054];
+      snprintf(man_c, 2053, "%s/%s-serf.txt", nam_c, wen_c);
 
       fil_u = fopen(man_c, "w");
       fprintf(fil_u, "%s\r\n", wen_c);
@@ -256,13 +257,15 @@ _serf_grab(u3_serf* sef_u)
 
     u3z(sef_u->sac);
     sef_u->sac = u3_nul;
+
+    u3l_log("\n");
   }
 }
 
-/* _serf_static_grab(): garbage collect, checking for profiling. RETAIN.
+/* u3_serf_grab(): garbage collect.
 */
-static void
-_serf_static_grab(void)
+void
+u3_serf_grab(void)
 {
   c3_assert( u3R == &(u3H->rod_u) );
 
@@ -274,12 +277,12 @@ _serf_static_grab(void)
   fflush(stderr);
 }
 
-/* _serf_pack(): deduplicate and compact memory
+/* _serf_cram(): deduplicate and compact memory. ORPHANED
 */
 static void
-_serf_pack(u3_serf* sef_u)
+_serf_cram(u3_serf* sef_u)
 {
-  _serf_static_grab();
+  u3_serf_grab();
 
   u3l_log("serf (%" PRIu64 "): compacting loom\r\n", sef_u->dun_d);
 
@@ -288,11 +291,11 @@ _serf_pack(u3_serf* sef_u)
     return;
   }
 
-  u3_serf_unpack(sef_u, sef_u->dun_d);
+  u3_serf_uncram(sef_u, sef_u->dun_d);
 
   u3l_log("serf (%" PRIu64 "): compacted loom\r\n", sef_u->dun_d);
 
-  _serf_static_grab();
+  u3_serf_grab();
 }
 
 /* u3_serf_post(): update serf state post-writ.
@@ -308,12 +311,13 @@ u3_serf_post(u3_serf* sef_u)
   //  XX this runs on replay too, |mass s/b elsewhere
   //
   if ( c3y == sef_u->mut_o ) {
-    sef_u->mut_o = c3n;
     _serf_grab(sef_u);
+    sef_u->mut_o = c3n;
   }
 
   if ( c3y == sef_u->pac_o ) {
-    _serf_pack(sef_u);
+    u3a_print_memory(stderr, "serf: pack: gained", u3m_pack());
+    u3l_log("\n");
     sef_u->pac_o = c3n;
   }
 }
@@ -392,10 +396,12 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
     if ( (pre_w > low_w) && !(pos_w > low_w) ) {
       //  XX set flag(s) in u3V so we don't repeat endlessly?
       //
+      pac_o = c3y;
       rec_o = c3y;
       pri   = 1;
     }
     else if ( (pre_w > hig_w) && !(pos_w > hig_w) ) {
+      pac_o = c3y;
       rec_o = c3y;
       pri   = 0;
     }
@@ -603,7 +609,7 @@ u3_noun
 u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 {
   c3_t  tac_t = ( 0 != u3_Host.tra_u.fil_u );
-  c3_c  lab_c[2048];
+  c3_c  lab_c[2056];
   u3_noun pro;
 
   // XX refactor tracing
@@ -615,7 +621,7 @@ u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
     {
       c3_c* cad_c = u3m_pretty(cad);
       c3_c* wir_c = u3m_pretty_path(wir);
-      snprintf(lab_c, 2048, "work [%s %s]", wir_c, cad_c);
+      snprintf(lab_c, 2056, "work [%s %s]", wir_c, cad_c);
       c3_free(cad_c);
       c3_free(wir_c);
     }
@@ -870,8 +876,8 @@ _serf_writ_live_exit(c3_w cod_w)
         mkdir(nam_c, 0700);
       }
 
-      c3_c man_c[2048];
-      snprintf(man_c, 2048, "%s/%s.txt", nam_c, wen_c);
+      c3_c man_c[2054];
+      snprintf(man_c, 2053, "%s/%s.txt", nam_c, wen_c);
 
       fil_u = fopen(man_c, "w");
 
@@ -914,7 +920,6 @@ c3_o
 u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
 {
   u3_noun tag, dat;
-  c3_o  ret_o;
 
   //  refcounts around snapshots require special handling
   //
@@ -945,9 +950,9 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
       return c3y;
     }
 
-    //  NB: the %pack $writ only saves the rock, it doesn't load it
+    //  NB: the %cram $writ only saves the rock, it doesn't load it
     //
-    case c3__pack: {
+    case c3__cram: {
       c3_d eve_d;
 
       if ( c3n == u3r_safe_chub(dat, &eve_d) ) {
@@ -958,7 +963,7 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
       u3z(com);
 
       if( eve_d != sef_u->dun_d ) {
-        fprintf(stderr, "serf (%" PRIu64 "): pack failed: %" PRIu64 "\r\n",
+        fprintf(stderr, "serf (%" PRIu64 "): cram failed: %" PRIu64 "\r\n",
                         sef_u->dun_d,
                         eve_d);
         return c3n;
@@ -971,10 +976,23 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
         return c3n;
       }
 
-      _serf_static_grab();
+      u3_serf_grab();
 
       *ret = u3nc(c3__live, u3_nul);
       return c3y;
+    }
+
+    case c3__pack: {
+      if ( u3_nul != dat ) {
+        u3z(com);
+        return c3n;
+      }
+      else {
+        u3z(com);
+        u3a_print_memory(stderr, "serf: pack: gained", u3m_pack());
+        *ret = u3nc(c3__live, u3_nul);
+        return c3y;
+      }
     }
 
     case c3__save: {
@@ -1102,10 +1120,10 @@ _serf_ripe(u3_serf* sef_u)
   return u3nc(u3i_chubs(1, &sef_u->dun_d), sef_u->mug_l);
 }
 
-/* u3_serf_unpack(): initialize from rock at [eve_d].
+/* u3_serf_uncram(): initialize from rock at [eve_d].
 */
 void
-u3_serf_unpack(u3_serf* sef_u, c3_d eve_d)
+u3_serf_uncram(u3_serf* sef_u, c3_d eve_d)
 {
   c3_o roc_o;
   c3_c nam_c[8193];
@@ -1189,7 +1207,7 @@ u3_serf_init(u3_serf* sef_u)
   //   if ( !(pen_w > (1 << 28)) ) {
   //     fprintf(stderr, "\r\n");
   //     u3a_print_memory(stderr, "serf: contiguous free space", pen_w);
-  //     _serf_static_grab();
+  //     u3_serf_grab();
   //   }
   // }
 

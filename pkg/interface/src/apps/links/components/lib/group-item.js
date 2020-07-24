@@ -14,7 +14,7 @@ export class GroupItem extends Component {
     }
 
     const channels = props.channels ? props.channels : [];
-    const first = (props.index === 0) ? 'pt1' : 'pt4';
+    const first = (props.index === 0) ? 'pt1' : 'pt6';
 
     const channelItems = channels.map((each, i) => {
       const meta = props.linkMetadata[each];
@@ -36,7 +36,7 @@ export class GroupItem extends Component {
     });
     return (
       <div className={first}>
-      <p className="f9 ph4 pb2 fw6 gray3">{title}</p>
+      <p className="f9 ph4 pb2 gray3">{title}</p>
         {channelItems}
       </div>
     );

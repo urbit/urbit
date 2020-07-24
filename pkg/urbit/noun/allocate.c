@@ -374,10 +374,10 @@ u3a_reflux(void)
   }
 }
 
-/* u3a_reclaim(): reclaim from memoization cache.
+/* _ca_reclaim_half(): reclaim from memoization cache.
 */
-void
-u3a_reclaim(void)
+static void
+_ca_reclaim_half(void)
 {
   //  XX u3l_log avoid here, as it can
   //  cause problems when handling errors
@@ -435,7 +435,7 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
 
           //  memory nearly empty; reclaim; should not be needed
           //
-          // if ( (u3a_open(u3R) + u3R->all.fre_w) < 65536 ) { u3a_reclaim(); }
+          // if ( (u3a_open(u3R) + u3R->all.fre_w) < 65536 ) { _ca_reclaim_half(); }
           box_u = _ca_box_make_hat(siz_w, ald_w, alp_w, 1);
 
           /* Flush a bunch of cell cache, then try again.
@@ -447,7 +447,7 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
               return _ca_willoc(len_w, ald_w, alp_w);
             }
             else {
-              u3a_reclaim();
+              _ca_reclaim_half();
               return _ca_willoc(len_w, ald_w, alp_w);
             }
           }
@@ -534,7 +534,7 @@ _ca_walloc(c3_w len_w, c3_w ald_w, c3_w alp_w)
     if ( 0 != ptr_v ) {
       break;
     }
-    u3a_reclaim();
+    _ca_reclaim_half();
   }
   return ptr_v;
 }
@@ -1679,6 +1679,29 @@ u3a_mark_ptr(void* ptr_v)
   }
 }
 
+u3_post
+u3a_rewritten(u3_post ptr_v)
+{
+  u3a_box* box_u = u3a_botox(u3a_into(ptr_v));
+  c3_w* box_w = (c3_w*) box_u;
+  return (u3_post)box_w[box_u->siz_w - 1];
+}
+
+u3_noun
+u3a_rewritten_noun(u3_noun som)
+{
+  if ( c3y == u3a_is_cat(som) ) {
+    return som;
+  }
+  u3_post som_p = u3a_rewritten(u3a_to_off(som));
+  if ( c3y == u3a_is_pug(som) ) {
+    return u3a_to_pug(som_p);
+  }
+  else {
+    return u3a_to_pom(som_p);
+  }
+}
+
 /* u3a_mark_mptr(): mark a malloc-allocated ptr for gc.
 */
 c3_w
@@ -1926,6 +1949,39 @@ u3a_mark_road(FILE* fil_u)
   tot_w += u3a_maid(fil_u, "  new profile trace", u3a_mark_noun(u3R->pro.trace));
   tot_w += u3a_maid(fil_u, "  memoization cache", u3h_mark(u3R->cax.har_p));
   return   u3a_maid(fil_u, "total road stuff", tot_w);
+}
+
+/* u3a_reclaim(): clear ad-hoc persistent caches to reclaim memory.
+*/
+void
+u3a_reclaim(void)
+{
+  //  clear the memoization cache
+  //
+  u3h_free(u3R->cax.har_p);
+  u3R->cax.har_p = u3h_new();
+}
+
+/* u3a_rewrite_compact(): rewrite pointers in ad-hoc persistent road structures.
+*/
+void
+u3a_rewrite_compact(void)
+{
+  u3a_rewrite_noun(u3R->ski.gul);
+  u3a_rewrite_noun(u3R->bug.tax);
+  u3a_rewrite_noun(u3R->bug.mer);
+  u3a_rewrite_noun(u3R->pro.don);
+  u3a_rewrite_noun(u3R->pro.day);
+  u3a_rewrite_noun(u3R->pro.trace);
+  u3h_rewrite(u3R->cax.har_p);
+
+  u3R->ski.gul = u3a_rewritten_noun(u3R->ski.gul);
+  u3R->bug.tax = u3a_rewritten_noun(u3R->bug.tax);
+  u3R->bug.mer = u3a_rewritten_noun(u3R->bug.mer);
+  u3R->pro.don = u3a_rewritten_noun(u3R->pro.don);
+  u3R->pro.day = u3a_rewritten_noun(u3R->pro.day);
+  u3R->pro.trace = u3a_rewritten_noun(u3R->pro.trace);
+  u3R->cax.har_p = u3a_rewritten(u3R->cax.har_p);
 }
 
 /* _ca_print_box(): heuristically print the contents of an allocation box.
@@ -2178,6 +2234,255 @@ u3a_sweep(void)
   c3_assert( (0 == leq_w) && (0 == weq_w) );
 
   return neg_w;
+}
+
+/* u3a_pack_seek(): sweep the heap, modifying boxes to record new addresses.
+*/
+void
+u3a_pack_seek(u3a_road* rod_u)
+{
+  //  the heap in [rod_u] is swept from "front" to "back".
+  //  new locations are calculated for each in-use allocation box
+  //  (simply the "deepest" linearly-available location),
+  //  and stored in the box itself
+  //
+  //  box_w: front of the heap
+  //  end_w: back of the heap
+  //  new_p: initial new location (data of first box)
+  //
+  c3_w*    box_w = u3a_into(rod_u->rut_p);
+  c3_w*    end_w = u3a_into(rod_u->hat_p);
+  u3_post  new_p = (rod_u->rut_p + c3_wiseof(u3a_box));
+  u3a_box* box_u;
+  c3_w     siz_w;
+
+  if ( c3y == u3a_is_north(rod_u) ) {
+    //  north roads are swept low to high
+    //
+    //    new locations are recorded in the trailing size word
+    //
+    while ( box_w < end_w ) {
+      box_u = (void *)box_w;
+      siz_w = box_u->siz_w;
+
+      if ( box_u->use_w ) {
+        box_w[siz_w - 1] = new_p;
+        new_p += siz_w;
+      }
+
+      box_w += siz_w;
+    }
+  }
+  //  XX untested!
+  //
+  else {
+    //  south roads are swept high to low
+    //
+    //    new locations are recorded in the leading size word
+    //
+    //    since we traverse backward, [siz_w] holds the size of the next box,
+    //    and we must initially offset to point to the head of the first box
+    //
+    siz_w  = box_w[-1];
+    box_w -= siz_w;
+    new_p -= siz_w;
+
+    while ( end_w < box_w ) {
+      box_u = (void *)box_w;
+      siz_w = box_w[-1];
+
+      if ( box_u->use_w ) {
+        box_u->siz_w = new_p;
+        new_p -= siz_w;
+      }
+
+      box_w -= siz_w;
+    }
+  }
+}
+static u3_post
+_ca_pack_move_north(c3_w* box_w, c3_w* end_w, u3_post new_p)
+{
+  u3a_box* old_u;
+  c3_w     siz_w;
+
+  //  relocate allocation boxes
+  //
+  //    new locations have been recorded in the trailing size word,
+  //    and are recalculated and asserted to ensure sanity
+  //
+  while ( box_w < end_w ) {
+    old_u = (void *)box_w;
+    siz_w = old_u->siz_w;
+
+    old_u->use_w &= 0x7fffffff;
+
+    if ( old_u->use_w ) {
+      c3_w* new_w = (void*)u3a_botox(u3a_into(new_p));
+
+      c3_assert( box_w[siz_w - 1] == new_p );
+
+      //  note: includes leading size
+      //
+      if ( new_w < box_w ) {
+        c3_w i_w;
+
+        for ( i_w = 0; i_w < siz_w - 1; i_w++ ) {
+          new_w[i_w] = box_w[i_w];
+        }
+      }
+      else {
+        c3_assert( new_w == box_w );
+      }
+
+      //  restore trailing size
+      //
+      new_w[siz_w - 1] = siz_w;
+
+      new_p += siz_w;
+    }
+
+    box_w += siz_w;
+  }
+
+  return new_p;
+}
+
+//  XX untested!
+//
+static u3_post
+_ca_pack_move_south(c3_w* box_w, c3_w* end_w, u3_post new_p)
+{
+  u3a_box* old_u;
+  c3_w     siz_w;
+  c3_o     yuz_o;
+
+  //  offset initial addresses (point to the head of the first box)
+  //
+  siz_w  = box_w[-1];
+  box_w -= siz_w;
+  new_p -= siz_w;
+
+  //  relocate allocation boxes
+  //
+  //    new locations have been recorded in the leading size word,
+  //    and are recalculated and asserted to ensure sanity
+  //
+  while ( 1 ) {
+    old_u = (void *)box_w;
+
+    old_u->use_w &= 0x7fffffff;
+
+    if ( old_u->use_w ) {
+      c3_w* new_w = (void*)u3a_botox(u3a_into(new_p));
+
+      c3_assert( old_u->siz_w == new_p );
+
+      //  note: includes trailing size
+      //
+      if ( new_w > box_w ) {
+        c3_w i_w;
+
+        for ( i_w = 1; i_w < siz_w; i_w++ ) {
+          new_w[i_w] = box_w[i_w];
+        }
+      }
+      else {
+        c3_assert( new_w == box_w );
+      }
+
+      //  restore leading size
+      //
+      new_w[0] = siz_w;
+
+      yuz_o = c3y;
+    }
+    else {
+      yuz_o = c3n;
+    }
+
+    //  move backwards only if there is more work to be done
+    //
+    if ( box_w > end_w ) {
+      siz_w  = box_w[-1];
+      box_w -= siz_w;
+
+      if ( c3y == yuz_o ) {
+        new_p -= siz_w;
+      }
+    }
+    else {
+      c3_assert( end_w == box_w );
+      break;
+    }
+  }
+
+  return new_p;
+}
+
+/* u3a_pack_move(): sweep the heap, moving boxes to new addresses.
+*/
+void
+u3a_pack_move(u3a_road* rod_u)
+{
+  //  box_w: front of the heap
+  //  end_w: back of the heap
+  //  new_p: initial new location (data of first box)
+  //  las_p: newly calculated last location
+  //
+  c3_w*   box_w = u3a_into(rod_u->rut_p);
+  c3_w*   end_w = u3a_into(rod_u->hat_p);
+  u3_post new_p = (rod_u->rut_p + c3_wiseof(u3a_box));
+  u3_post las_p = ( c3y == u3a_is_north(rod_u) )
+                  ? _ca_pack_move_north(box_w, end_w, new_p)
+                  : _ca_pack_move_south(box_w, end_w, new_p);
+
+  rod_u->hat_p  = (las_p - c3_wiseof(u3a_box));
+
+  //  clear free lists and cell allocator
+  //
+  {
+    c3_w i_w;
+    for ( i_w = 0; i_w < u3a_fbox_no; i_w++ ) {
+      u3R->all.fre_p[i_w] = 0;
+    }
+
+    u3R->all.fre_w = 0;
+    u3R->all.cel_p = 0;
+  }
+}
+
+/* u3a_rewrite_ptr(): mark a pointer as already having been rewritten
+*/
+c3_o
+u3a_rewrite_ptr(void* ptr_v)
+{
+  u3a_box* box_u = u3a_botox(ptr_v);
+  if ( box_u->use_w & 0x80000000 ) {
+    /* Already rewritten.
+    */
+    return c3n;
+  }
+  box_u->use_w |= 0x80000000;
+  return c3y;
+}
+
+void
+u3a_rewrite_noun(u3_noun som)
+{
+  if ( c3n == u3a_is_cell(som) ) {
+    return;
+  }
+
+  if ( c3n == u3a_rewrite_ptr(u3a_to_ptr((som))) ) return;
+
+  u3a_cell* cel = u3a_to_ptr(som);
+
+  u3a_rewrite_noun(cel->hed);
+  u3a_rewrite_noun(cel->tel);
+
+  cel->hed = u3a_rewritten_noun(cel->hed);
+  cel->tel = u3a_rewritten_noun(cel->tel);
 }
 
 /* u3a_slab(): create a length-bounded proto-atom.

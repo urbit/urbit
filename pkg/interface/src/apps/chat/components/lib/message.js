@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { OverlaySigil } from './overlay-sigil';
 import { uxToHex, cite, writeText } from '../../../../lib/util';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
+import urbitOb from 'urbit-ob';
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -71,7 +73,7 @@ export class Message extends Component {
         </div>
       );
     } else if ('url' in letter) {
-      let imgMatch =
+      const imgMatch =
         /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|svg|SVG)$/
         .exec(letter.url);
       const youTubeRegex = new RegExp(String(/(?:https?:\/\/(?:[a-z]+.)?)/.source) // protocol
@@ -122,7 +124,6 @@ export class Message extends Component {
           <div>
           <a href={letter.url}
           className="f7 lh-copy v-top bb b--white-d word-break-all"
-          href={letter.url}
           target="_blank"
           rel="noopener noreferrer"
           >
@@ -154,6 +155,22 @@ export class Message extends Component {
         </p>
       );
     } else {
+      const group = letter.text.match(
+        /([~][/])?(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z])+([/-])?)+/
+      );
+      if ((group !== null) // matched possible chatroom
+        && (group[2].length > 2) // possible ship?
+        && (urbitOb.isValidPatp(group[2]) // valid patp?
+          && (group[0] === letter.text))) { // entire message is room name?
+        return (
+          <Link
+            className="bb b--black b--white-d f7 mono lh-copy v-top"
+            to={'/~groups/join/' + group.input}
+          >
+            {letter.text}
+          </Link>
+        );
+      } else {
         return (
           <section className="chat-md-message">
             <MessageMarkdown
@@ -163,6 +180,7 @@ export class Message extends Component {
         );
     }
   }
+}
 
   render() {
     const { props, state } = this;
@@ -205,6 +223,7 @@ export class Message extends Component {
            contact={contact}
            color={color}
            sigilClass={sigilClass}
+           association={props.association}
            group={props.group}
            className="fl pr3 v-top bg-white bg-gray0-d"
          />

@@ -1,16 +1,20 @@
 ::  contact-view: sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
-/-  *group-store
-/-  *group-hook
-/-  *invite-store
-/-  *contact-hook
-/-  *metadata-store
-/-  *metadata-hook
-/-  *permission-group-hook
-/-  *permission-hook
+/-
+    group-hook,
+    *invite-store,
+    *contact-hook,
+    *metadata-store,
+    *metadata-hook,
+    *permission-group-hook,
+    *permission-hook,
+    pull-hook,
+    push-hook
+/+  *server, *contact-json, default-agent, dbug, verb,
+    grpl=group, mdl=metadata, resource,
+    group-store
 ::
-/+  *server, *contact-json, default-agent, dbug
 |%
 +$  versioned-state
   $%  state-0
@@ -27,6 +31,7 @@
 =*  state  -
 ::
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -40,9 +45,7 @@
     :_  this
     :~  [%pass /updates %agent [our.bowl %contact-store] %watch /updates]
         (contact-poke:cc [%create /~/default])
-        (group-poke:cc [%bundle /~/default])
         (contact-poke:cc [%add /~/default our.bowl *contact])
-        (group-poke:cc [%add [our.bowl ~ ~] /~/default])
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
             !>([%serve-dir /'~groups' /app/landscape %.n])
@@ -93,6 +96,14 @@
     |=  [=wire =sign:agent:gall]
     ^-  (quip card _this)
     ?+  -.sign  (on-agent:def wire sign)
+       %poke-ack
+      ?.  ?=([%join-group %ship @ @ ~] wire)
+        (on-agent:def wire sign)
+      ?^  p.sign
+        (on-agent:def wire sign)
+      :_  this
+      (joined-group:cc t.wire)
+    ::
         %kick
       [[%pass / %agent [our.bol %contact-store] %watch /updates]~ this]
     ::
@@ -117,6 +128,8 @@
   --
 ::
 |_  bol=bowl:gall
+++  grp  ~(. grpl bol)
+++  md  ~(. mdl bol)
 ++  poke-json
   |=  jon=json
   ^-  (list card)
@@ -126,30 +139,72 @@
 ++  poke-contact-view-action
   |=  act=contact-view-action
   ^-  (list card)
+  ?>  (team:title our.bol src.bol)
   ?-  -.act
       %create
-    ?>  ?=([@ *] path.act)
-    %+  weld
-      :~  (group-poke [%bundle path.act])
-          (contact-poke [%create path.act])
-          (contact-hook-poke [%add-owned path.act])
-          (group-hook-poke [%add our.bol path.act])
-          (group-poke [%add (~(put in ships.act) our.bol) path.act])
-          (perm-group-hook-poke [%associate path.act [[path.act %white] ~ ~]])
-          (permission-hook-poke [%add-owned path.act path.act])
+    =/  rid=resource
+      [our.bol name.act]
+    =/  =path
+      (en-path:resource rid)
+    ;:  weld
+      :~  (group-poke [%add-group rid policy.act %.n])
+          (group-poke [%add-members rid (sy our.bol ~)])
+          (group-push-poke %add rid)
+          (contact-poke [%create path])
+          (contact-hook-poke [%add-owned path])
       ==
-    (create-metadata path.act title.act description.act)
+      (create-metadata path title.act description.act)
+      ?.  ?=(%invite -.policy.act)
+        ~
+      %+  turn
+        ~(tap in pending.policy.act)
+      |=  =ship
+      (send-invite our.bol %contacts path ship '')
+    ==
+  ::
+      %join
+    =/  =path
+      (en-path:resource resource.act)
+    =/  =cage
+      :-  %group-update
+      !>  ^-  update:group-store
+      [%add-members resource.act (sy our.bol ~)]
+    =/  =wire
+      [%join-group path]
+    [%pass wire %agent [entity.resource.act %group-push-hook] %poke cage]~
+  ::
+      %invite
+    =*  rid  resource.act
+    =/  =path
+      (en-path:resource rid)
+    =/  =group
+      (need (scry-group:grp rid))
+    :-  (send-invite entity.rid %contacts path ship.act text.act)
+    ?.  ?=(%invite -.policy.group)  ~
+    ~[(add-pending rid ship.act)]
   ::
       %delete
-    %+  weld
-    :~  (contact-hook-poke [%remove path.act])
-        (group-poke [%unbundle path.act])
-        (contact-poke [%delete path.act])
+    =/  rid=resource
+      (de-path:resource path.act)
+    =/  group-pokes=(list card)
+      ?:  =(our.bol entity.rid)
+        ~[(group-push-poke %remove rid)]
+      :~  (group-proxy-poke %remove-members rid (sy our.bol ~))
+          (group-pull-poke %remove rid)
+      ==
+    ;:  weld
+      group-pokes
+      :~  (contact-hook-poke [%remove path.act])
+          (group-poke [%remove-group rid ~])
+          (contact-poke [%delete path.act])
+      ==
+      (delete-metadata path.act)
     ==
-    (delete-metadata path.act)
   ::
       %remove
-    :~  (group-poke [%remove [ship.act ~ ~] path.act])
+    =/  rid=resource
+      (de-path:resource path.act)
+    :~  (group-poke %remove-members rid (sy ship.act ~))
         (contact-poke [%remove path.act ship.act])
     ==
   ::
@@ -157,6 +212,16 @@
     ::  determine whether to send to our contact-hook or foreign
     ::  send contact-action to contact-hook with %add action
     [(share-poke recipient.act [%add path.act ship.act contact.act])]~
+  ::
+      %groupify
+    =/  =path
+      (en-path:resource resource.act)
+    %+  weld
+      :~  (group-poke %expose resource.act ~)
+          (contact-poke [%create path])
+          (contact-hook-poke [%add-owned path])
+      ==
+    (create-metadata path title.act description.act)
   ==
 ++  poke-handle-http-request
   |=  =inbound-request:eyre
@@ -183,7 +248,39 @@
     ==
   ==
 ::
+++  joined-group
+  |=  =path
+  ^-  (list card)
+  =/  rid=resource
+    (de-path:resource path)
+  :~  (group-pull-poke [%add entity.rid rid])
+      (contact-hook-poke [%add-synced entity.rid path])
+      (sync-metadata entity.rid path)
+  ==
+::
 ::  +utilities
+::
+++  add-pending
+  |=  [rid=resource =ship]
+  ^-  card
+  =/  app=term
+    ?:  =(our.bol entity.rid)
+      %group-store
+    %group-push-hook
+  =/  =cage
+    :-  %group-action
+    !>  ^-  action:group-store
+    [%change-policy rid %invite %add-invites (sy ship ~)]
+  [%pass / %agent [entity.rid app] %poke cage]
+::
+++  send-invite
+  |=  =invite
+  ^-  card
+  =/  =cage
+    :-  %invite-action
+    !>  ^-  invite-action
+    [%invite /contacts (shaf %invite-uid eny.bol) invite]
+  [%pass / %agent [recipient.invite %invite-hook] %poke cage]
 ::
 ++  contact-poke
   |=  act=contact-action
@@ -201,14 +298,24 @@
   [%pass / %agent [ship %contact-hook] %poke %contact-action !>(act)]
 ::
 ++  group-poke
-  |=  act=group-action
+  |=  act=action:group-store
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
 ::
-++  group-hook-poke
-  |=  act=group-hook-action
+++  group-push-poke
+  |=  act=action:push-hook
   ^-  card
-  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(act)]
+  [%pass / %agent [our.bol %group-push-hook] %poke %push-hook-action !>(act)]
+::
+++  group-proxy-poke
+  |=  act=action:group-store
+  ^-  card
+  [%pass / %agent [entity.resource.act %group-push-hook] %poke %group-update !>(act)]
+::
+++  group-pull-poke
+  |=  act=action:pull-hook
+  ^-  card
+  [%pass / %agent [our.bol %group-pull-hook] %poke %pull-hook-action !>(act)]
 ::
 ++  metadata-poke
   |=  act=metadata-action
@@ -233,6 +340,11 @@
   :*  %pass  /  %agent  [our.bol %permission-hook]
       %poke  %permission-hook-action  !>(act)
   ==
+::
+++  sync-metadata
+  |=  [=ship =path]
+  ^-  card
+  (metadata-hook-poke %add-synced ship path)
 ::
 ++  create-metadata
   |=  [=path title=@t description=@t]

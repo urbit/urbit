@@ -373,11 +373,13 @@ _song_x_cape(c3_ys mov, c3_ys off,
     //  we cons [a] and [b] as posts so that we don't
     //  touch their reference counts.
     //
-    key = u3nc(u3a_to_off(a), u3a_to_off(b));
-    u3t_off(euq_o);
-    u3h_put(har_p, key, c3y);
-    u3t_on(euq_o);
-    u3z(key);
+    if ( a != b ) {
+      key = u3nc(u3a_to_off(a), u3a_to_off(b));
+      u3t_off(euq_o);
+      u3h_put(har_p, key, c3y);
+      u3t_on(euq_o);
+      u3z(key);
+    }
     fam = _eq_pop(mov, off);
   }
 

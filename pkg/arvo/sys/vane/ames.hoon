@@ -743,7 +743,7 @@
   ^-  (unit (unit cage))
   ::TODO  don't special-case whey scry
   ::
-  ?:  &(?=(%$ ren) =(tyl /whey))
+  ?:  &(=(%$ ren) =(tyl /whey))
     =/  maz=(list mass)
       =+  [known alien]=(skid ~(val by peers.ames-state) |=(^ =(%known +<-)))
       :~  peers-known+&+known
@@ -760,7 +760,7 @@
   ::  /ax/protocol/version           @
   ::  /ax/peers                      (map ship ?(%alien %known))
   ::  /ax/peers/[ship]               ship-state
-  ::  /ax/peers/[ship]/forward-lane  (unit lane)
+  ::  /ax/peers/[ship]/forward-lane  (list lane)
   ::  /ax/bones/[ship]               [snd=(set bone) rcv=(set bone)]
   ::  /ax/snd-bones/[ship]/[bone]    vase
   ::

@@ -1,7 +1,6 @@
 const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const urbitrc = require('./urbitrc');
 
 module.exports = {
   mode: 'production',
@@ -17,6 +16,7 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env', '@babel/typescript', '@babel/preset-react'],
             plugins: [
+              '@babel/transform-runtime',
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
               '@babel/plugin-proposal-class-properties'

@@ -43,15 +43,6 @@ export class Sidebar extends Component {
 
     const groupedNotebooks = {};
     Object.keys(notebooks).map((book) => {
-      if (notebooks[book]['subscribers-group-path'].startsWith('/~/')) {
-        if (groupedNotebooks['/~/']) {
-          const array = groupedNotebooks['/~/'];
-          array.push(book);
-          groupedNotebooks['/~/'] = array;
-        } else {
-          groupedNotebooks['/~/'] = [book];
-        };
-      };
       const path = notebooks[book]['subscribers-group-path']
         ? notebooks[book]['subscribers-group-path'] : book;
       if (path in associations) {
@@ -62,6 +53,14 @@ export class Sidebar extends Component {
         } else {
           groupedNotebooks[path] = [book];
         }
+      } else {
+        if (groupedNotebooks['/~/']) {
+          const array = groupedNotebooks['/~/'];
+          array.push(book);
+          groupedNotebooks['/~/'] = array;
+        } else {
+          groupedNotebooks['/~/'] = [book];
+        };
       }
     });
 
@@ -123,9 +122,6 @@ export class Sidebar extends Component {
         <div className="w-100 f9">
           <Link to="/~publish/new" className="green2 pa4 f9 dib">
             New Notebook
-          </Link>
-          <Link to="/~publish/join" className="f9 gray2">
-            Join Notebook
           </Link>
         </div>
         <div className="overflow-y-auto pb1"

@@ -185,10 +185,10 @@ export class SettingsScreen extends Component {
 
     const chatOwner = (deSig(props.match.params.ship) === window.ship);
 
+    const groupPath =  props.association['group-path'];
     const ownedUnmanagedVillage =
       chatOwner &&
-      props.station.slice(0, 3) === '/~/' &&
-      props.permission.kind === 'white';
+      !props.contacts[groupPath];
 
     if (!ownedUnmanagedVillage) {
       return null;
@@ -217,11 +217,6 @@ export class SettingsScreen extends Component {
         );
       }
 
-      const groups = {};
-      Object.keys(props.permissions).forEach((pem) => {
-        groups[pem] = props.permissions[pem].who;
-      });
-
       return (
         <div>
           <div className={'w-100 fl mt3'} style={{ maxWidth: '29rem' }}>
@@ -231,7 +226,7 @@ export class SettingsScreen extends Component {
               group to add this chat to.
             </p>
             <InviteSearch
-              groups={groups}
+              groups={props.groups}
               contacts={props.contacts}
               associations={props.associations}
               groupResults={true}
@@ -357,7 +352,7 @@ export class SettingsScreen extends Component {
     const { props, state } = this;
     const isinPopout = this.props.popout ? 'popout/' : '';
 
-    const permission = Array.from(props.permission.who.values());
+    const permission = Array.from(props.group.members.values());
 
     if (state.isLoading) {
       let title = props.station.substr(1);
@@ -456,29 +451,6 @@ export class SettingsScreen extends Component {
         </div>
         <div className="w-100 pl3 mt4 cf">
           <h2 className="f8 pb2">Chat Settings</h2>
-          <div className="w-100 mt3">
-            <p className="f8 mt3 lh-copy">Share</p>
-            <p className="f9 gray2 mb4">Share a shortcode to join this chat</p>
-            <div className="relative w-100 flex"
-              style={{ maxWidth: '29rem' }}
-            >
-              <input
-                className="f8 mono ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
-                disabled={true}
-                value={props.station.substr(1)}
-              />
-              <span className="f8 pointer absolute pa3 inter"
-                style={{ right: 12, top: 1 }}
-                ref="copy"
-                onClick={() => {
-                  writeText(props.station.substr(1));
-                  this.refs.copy.innerText = 'Copied';
-                }}
-              >
-                Copy
-              </span>
-            </div>
-          </div>
           {this.renderGroupify()}
           {this.renderDelete()}
           {this.renderMetadataSettings()}

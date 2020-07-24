@@ -141,6 +141,11 @@
         void
         u3m_reclaim(void);
 
+      /* u3m_pack: compact (defragment) memory.
+      */
+        c3_w
+        u3m_pack(void);
+
       /* u3m_rock_stay(): jam state into [dir_c] at [evt_d]
       */
         c3_o

@@ -850,12 +850,8 @@ _cttp_creq_connect(u3_creq* ceq_u)
 
   // set hostname for TLS handshake
   if ( ceq_u->hot_c && c3y == ceq_u->sec ) {
-    c3_w len_w  = 1 + strlen(ceq_u->hot_c);
-    c3_c* hot_c = c3_malloc(len_w);
-    strncpy(hot_c, ceq_u->hot_c, len_w);
-
     c3_free(ceq_u->cli_u->ssl.server_name);
-    ceq_u->cli_u->ssl.server_name = hot_c;
+    ceq_u->cli_u->ssl.server_name = strdup(ceq_u->hot_c);
   }
 
   _cttp_creq_fire(ceq_u);

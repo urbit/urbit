@@ -1,4 +1,5 @@
 /-  sur=chat-view, *rw-security
+/+  group-store
 ^?
 =<  [sur .]
 =,  sur
@@ -17,6 +18,7 @@
           [%delete delete]
           [%join join]
           [%groupify groupify]
+          [%invite invite]
       ==
     ::
     ++  create
@@ -25,9 +27,10 @@
           [%description so]
           [%app-path pa]
           [%group-path pa]
-          [%security sec]
+          [%policy policy:dejs:group-store]
           [%members (as (su ;~(pfix sig fed:ag)))]
           [%allow-history bo]
+          [%managed bo]
       ==
     ::
     ++  delete
@@ -43,11 +46,11 @@
     ++  groupify
       =-  (ot [%app-path pa] [%existing -] ~)
       (mu (ot [%group-path pa] [%inclusive bo] ~))
-    ::
-    ++  sec
-      =,  dejs:format
-      ^-  $-(json rw-security)
-      (su (perk %channel %village %journal %mailbox ~))
+    ++  invite
+      %-  ot
+      :~  app-path+pa
+          ships+(as (su ;~(pfix sig fed:ag)))
+      ==
     --
   --
 --

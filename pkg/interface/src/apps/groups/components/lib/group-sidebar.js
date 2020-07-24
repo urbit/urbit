@@ -13,6 +13,7 @@ export class GroupSidebar extends Component {
 
   render() {
     const { props } = this;
+    const { api } = props;
 
     const selectedClass = (props.selected === 'me') ? 'bg-gray4 bg-gray1-d' : 'bg-white bg-gray0-d';
 
@@ -122,6 +123,9 @@ export class GroupSidebar extends Component {
         <div className="overflow-auto pb8 h-100">
           <Link to="/~groups/new" className="dib">
             <p className="f9 pt4 pl4 green2 bn">Create Group</p>
+          </Link>
+          <Link to="/~groups/join" className="dib">
+            <p className="f9 pt4 pl4 green2 bn">Join Group</p>
           </Link>
           <Welcome contacts={props.contacts} />
           <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Your Identity</h2>

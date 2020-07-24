@@ -1,134 +1,40 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Path, Patp } from '../types/noun';
-
+import { Path, Patp, Enc } from '../types/noun';
+import {
+  GroupAction,
+  GroupPolicy,
+  Resource,
+  Tag,
+  GroupPolicyDiff,
+} from '../types/group-update';
 
 export default class GroupsApi extends BaseApi<StoreState> {
-  add(path: Path, ships: Patp[] = []) {
-    return this.action('group-store', 'group-action', {
-      add: { members: ships, path }
-    });
+  remove(resource: Resource, ships: Patp[]) {
+    return this.proxyAction({ removeMembers: { resource, ships } });
   }
 
-  remove(path: Path, ships: Patp[] = []) {
-    return this.action('group-store', 'group-action', {
-      remove: { members: ships, path }
-    });
-  }
-}
-
-class PrivateHelper extends BaseApi {
-  contactViewAction(data) {
-    return this.action('contact-view', 'json', data);
+  addTag(resource: Resource, tag: Tag, ships: Patp[]) {
+    return this.proxyAction({ addTag: { resource, tag, ships } });
   }
 
-  contactCreate(path, ships = [], title, description) {
-    return this.contactViewAction({
-      create: {
-        path,
-        ships,
-        title,
-        description
-      }
-    });
+  removeTag(resource: Resource, tag: Tag, ships: Patp[]) {
+    return this.proxyAction({ removeTag: { resource, tag, ships } });
   }
 
-
-
-
-
-  contactShare(recipient, path, ship, contact) {
-    return this.contactViewAction({
-      share: {
-        recipient, path, ship, contact
-      }
-    });
+  add(resource: Resource, ships: Patp[]) {
+    return this.proxyAction({ addMembers: { resource, ships } });
   }
 
-  contactDelete(path) {
-    return this.contactViewAction({ delete: { path } });
+  changePolicy(resource: Resource, diff: GroupPolicyDiff) {
+    return this.proxyAction({ changePolicy: { resource, diff } });
   }
 
-  contactRemove(path, ship) {
-    return this.contactViewAction({ remove: { path, ship } });
+  private proxyAction(action: GroupAction) {
+    return this.action('group-push-hook', 'group-update', action);
   }
 
-  contactHookAction(data) {
-    return this.action('contact-hook', 'contact-action', data);
-  }
-
-  contactEdit(path, ship, editField) {
-    /* editField can be...
-    {nickname: ''}
-    {email: ''}
-    {phone: ''}
-    {website: ''}
-    {notes: ''}
-    {color: 'fff'}  // with no 0x prefix
-    {avatar: null}
-    {avatar: {url: ''}}
-    */
-    return this.contactHookAction({
-      edit: {
-        path, ship, 'edit-field': editField
-      }
-    });
-  }
-
-  inviteAction(data) {
-    return this.action('invite-store', 'json', data);
-  }
-
-  inviteAccept(uid) {
-    return this.inviteAction({
-      accept: {
-        path: '/contacts',
-        uid
-      }
-    });
-  }
-
-  inviteDecline(uid) {
-    return this.inviteAction({
-      decline: {
-        path: '/contacts',
-        uid
-      }
-    });
-  }
-
-  metadataAction(data) {
-    return this.action('metadata-hook', 'metadata-action', data);
-  }
-
-  metadataAdd(appPath, groupPath, title, description, dateCreated, color) {
-    const creator = `~${window.ship}`;
-    return this.metadataAction({
-      add: {
-        'group-path': groupPath,
-        resource: {
-          'app-path': appPath,
-          'app-name': 'contacts'
-        },
-        metadata: {
-          title,
-          description,
-          color,
-          'date-created': dateCreated,
-          creator
-        }
-      }
-    });
-  }
-
-  setSelected(selected) {
-    this.store.handleEvent({
-      data: {
-        local: {
-          selected: selected
-        }
-      }
-    });
+  private storeAction(action: GroupAction) {
+    return this.action('group-store', 'group-action', action);
   }
 }
-
