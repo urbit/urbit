@@ -107,6 +107,7 @@
     u3_noun u3we_jam(u3_noun);
     u3_noun u3we_mat(u3_noun);
     u3_noun u3we_rub(u3_noun);
+    u3_noun u3we_leer(u3_noun);
     u3_noun u3we_lore(u3_noun);
     u3_noun u3we_loss(u3_noun);
     u3_noun u3we_lune(u3_noun);
