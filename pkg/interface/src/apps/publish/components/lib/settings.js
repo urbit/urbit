@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { writeText } from '../../../../lib/util';
 import { Spinner } from '../../../../components/Spinner';
 import { InviteSearch } from '../../../../components/InviteSearch';
+import Toggle from '../../../../components/toggle';
 
 export class Settings extends Component {
   constructor(props) {
@@ -137,18 +137,12 @@ export class Settings extends Component {
         : false;
       let inclusiveToggle = <div />;
       if (targetOwned) {
-        // TODO toggle component into /lib
-        const inclusiveClasses = state.inclusive
-          ? 'relative checked bg-green2 br3 h1 toggle v-mid z-0'
-          : 'relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0';
         inclusiveToggle = (
           <div className="mt4">
-            <input
-              type="checkbox"
-              style={{ WebkitAppearance: 'none', width: 28 }}
-              className={inclusiveClasses}
-              onChange={this.changeInclusive}
-            />
+          <Toggle
+            boolean={state.inclusive}
+            change={this.changeInclusive}
+          />
             <span className="dib f9 white-d inter ml3">
               Add all members to group
             </span>
@@ -201,10 +195,6 @@ export class Settings extends Component {
   }
 
   render() {
-    const commentsSwitchClasses = (this.state.comments)
-      ? 'relative checked bg-green2 br3 h1 toggle v-mid z-0'
-      : 'relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0';
-
     if (this.props.host.slice(1) === window.ship) {
       return (
         <div className="flex-column">
@@ -274,11 +264,9 @@ export class Settings extends Component {
             />
           </div>
           <div className="mv6">
-            <input
-              type="checkbox"
-              style={{ WebkitAppearance: 'none', width: 28 }}
-              className={commentsSwitchClasses}
-              onChange={this.changeComments}
+            <Toggle
+              boolean={this.state.comments}
+              change={this.changeComments}
             />
             <span className="dib f9 white-d inter ml3">Comments</span>
             <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
@@ -293,7 +281,7 @@ export class Settings extends Component {
         </div>
       );
     } else {
-      return copyShortcode;
+      return '';
     }
   }
 }

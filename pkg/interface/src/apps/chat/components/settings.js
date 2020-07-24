@@ -6,6 +6,7 @@ import { Spinner } from '../../../components/Spinner';
 import { ChatTabBar } from './lib/chat-tabbar';
 import { InviteSearch } from '../../../components/InviteSearch';
 import SidebarSwitcher from '../../../components/SidebarSwitch';
+import Toggle from '../../../components/toggle';
 
 export class SettingsScreen extends Component {
   constructor(props) {
@@ -195,18 +196,12 @@ export class SettingsScreen extends Component {
     } else {
       let inclusiveToggle = <div />;
       if (state.targetGroup) {
-        // TODO toggle component into /lib
-        const inclusiveClasses = state.inclusive
-          ? 'relative checked bg-green2 br3 h1 toggle v-mid z-0'
-          : 'relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0';
         inclusiveToggle = (
           <div className="mt4">
-            <input
-              type="checkbox"
-              style={{ WebkitAppearance: 'none', width: 28 }}
-              className={inclusiveClasses}
-              onChange={this.changeInclusive}
-            />
+          <Toggle
+            boolean={state.inclusive}
+            change={this.changeInclusive}
+          />
             <span className="dib f9 white-d inter ml3">
               Add all members to group
             </span>
