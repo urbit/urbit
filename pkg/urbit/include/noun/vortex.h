@@ -34,6 +34,11 @@
 
   /**  Functions.
   **/
+    /* u3v_life(): execute initial lifecycle, producing Arvo core.
+    */
+      u3_noun
+      u3v_life(u3_noun eve);
+
     /* u3v_boot(): evaluate boot sequence, making a kernel
     */
       c3_o
@@ -98,3 +103,13 @@
     */
       c3_w
       u3v_mark(FILE* fil_u);
+
+    /* u3v_reclaim(): clear ad-hoc persistent caches to reclaim memory.
+    */
+      void
+      u3v_reclaim(void);
+
+    /* u3v_rewrite_compact(): rewrite arvo kernel for compaction.
+    */
+      void
+      u3v_rewrite_compact();

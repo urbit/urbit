@@ -17,7 +17,7 @@ static void
 _save_time_cb(uv_timer_t* tim_u)
 {
   u3_pier *pir_u = tim_u->data;
-  u3_pier_snap(pir_u);
+  u3_pier_save(pir_u);
 }
 
 /* u3_save_ef_chld(): report save termination.

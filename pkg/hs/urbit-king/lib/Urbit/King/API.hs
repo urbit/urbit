@@ -4,7 +4,14 @@
          ships. Do it or strip it out.
 -}
 
-module Urbit.King.API (King(..), kingAPI, readPortsFile) where
+module Urbit.King.API
+  ( King(..)
+  , TermConn
+  , TermConnAPI
+  , kingAPI
+  , readPortsFile
+  )
+where
 
 import RIO.Directory
 import Urbit.Prelude
@@ -12,7 +19,7 @@ import Urbit.Prelude
 import Network.Socket (Socket)
 import Prelude        (read)
 import Urbit.Arvo     (Belt)
-import Urbit.King.App (HasConfigDir(..))
+import Urbit.King.App (HasPierPath(..))
 
 import qualified Network.HTTP.Types             as H
 import qualified Network.Wai                    as W
@@ -43,16 +50,16 @@ data King = King
 {-|
     Get the filepath of the urbit config directory and the ports file.
 -}
-portsFilePath :: HasConfigDir e => RIO e (FilePath, FilePath)
+portsFilePath :: HasPierPath e => RIO e (FilePath, FilePath)
 portsFilePath = do
-    dir <- view configDirL
+    dir <- view pierPathL
     fil <- pure (dir </> ".king.ports")
     pure (dir, fil)
 
 {-|
     Write the ports file.
 -}
-portsFile :: HasConfigDir e => Word -> RAcquire e (FilePath, FilePath)
+portsFile :: HasPierPath e => Word -> RAcquire e (FilePath, FilePath)
 portsFile por =
     mkRAcquire mkFile (removeFile . snd)
   where
@@ -65,7 +72,7 @@ portsFile por =
 {-|
     Get the HTTP port for the running Urbit daemon.
 -}
-readPortsFile :: HasConfigDir e => RIO e (Maybe Word)
+readPortsFile :: HasPierPath e => RIO e (Maybe Word)
 readPortsFile = do
     (_, fil) <- portsFilePath
     bs <- readFile fil
@@ -86,7 +93,7 @@ kingServer is =
 {-|
     Start the HTTP server and write to the ports file.
 -}
-kingAPI :: (HasConfigDir e, HasLogFunc e)
+kingAPI :: (HasPierPath e, HasLogFunc e)
         => RAcquire e King
 kingAPI = do
     (port, sock) <- io $ W.openFreePort
