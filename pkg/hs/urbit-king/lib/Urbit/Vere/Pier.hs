@@ -122,17 +122,24 @@ runSerf
   -> RAcquire e Serf
 runSerf vSlog pax = do
   env <- ask
-  Serf.withSerf (config env)
+  heuSerf <- heuristicallyFindSerf
+  Serf.withSerf (config env heuSerf)
  where
   slog txt = atomically (readTVar vSlog) >>= (\f -> f txt)
-  config env = Serf.Config
-    { scSerf = env ^. pierConfigL . pcSerfExe . to unpack
+  config env heuSerf = Serf.Config
+    { scSerf = env ^. pierConfigL . pcSerfExe . to (unpack . fromMaybe heuSerf)
     , scPier = pax
     , scFlag = env ^. pierConfigL . pcSerfFlags
     , scSlog = \(pri, tank) -> printTank slog pri tank
     , scStdr = \txt -> slog (txt <> "\r\n")
     , scDead = pure () -- TODO: What can be done?
     }
+  heuristicallyFindSerf = serfPrgm <$> listToMaybe <$> getArgs
+  serfPrgm = \case
+    Just (stripSuffix "urbit"      -> Just pfix) -> pfix <> "urbit-worker"
+    Just (stripSuffix "urbit-king" -> Just pfix) -> pfix <> "urbit-worker"
+    _                                            -> "urbit-worker"
+    
 
 
 -- Boot a new ship. ------------------------------------------------------------
