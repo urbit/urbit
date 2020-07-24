@@ -399,10 +399,16 @@
     ~
   =/  =ship  (slav %p i.t.path)
   ?:  =(ship our.bol)
+    ::  local dm, no need to do cleanup
+    ~
+  ?:  ?=(^ (groups-of-chat path))
+    ::  correctly initialized, no need to do cleanup
+    ::
     ~
   :-  =-  [%pass /fixdm %agent [our.bol %chat-view] %poke %chat-view-action -]
       !>  ^-  action:store
       [%delete path]
+  =/  new-dm  /(scot %p our.bol)/(crip (weld "dm--" (trip (scot %p ship))))
   =/  mailbox=(unit mailbox:store)  (chat-scry path)
   ?~  mailbox
     ~
@@ -412,8 +418,8 @@
           %-  crip
           (zing [(trip (scot %p our.bol)) " <-> " (trip (scot %p ship)) ~])
           ''
-          /(scot %p our.bol)/(crip (weld "dm--" (trip (scot %p ship))))
-          /(scot %p our.bol)/(crip (weld "dm--" (trip (scot %p ship))))
+          new-dm
+          new-dm
           [%invite (silt ~[ship])]
           (silt ~[ship])
           %.y
@@ -422,7 +428,7 @@
     ::
       =-  [%pass /fixdm %agent [our.bol %chat-store] %poke %chat-action -]
       !>  ^-  action:store
-      [%messages  envelopes.u.mailbox]
+      [%messages new-dm envelopes.u.mailbox]
   ==
 ::
 ++  poke-json
