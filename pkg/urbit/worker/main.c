@@ -288,6 +288,143 @@ _cw_queu(c3_i argc, c3_c* argv[])
   }
 }
 
+/* _cw_thaw(); jam/cue cold jet dashboard
+*/
+static void
+_cw_thaw(c3_i argc, c3_c* argv[])
+{
+  c3_assert( 3 <= argc );
+
+  c3_c* dir_c = argv[2];
+  c3_w  pre_w;
+
+  u3m_boot(dir_c);
+
+  pre_w = u3a_open(u3R) + u3a_idle(u3R);
+
+  // u3_serf_grab();
+  // u3a_print_memory(stderr, "urbit-worker: thaw: open", u3a_open(u3R));
+  // u3a_print_memory(stderr, "urbit-worker: thaw: idle", u3a_idle(u3R));
+
+  u3m_reclaim();
+
+  fprintf(stderr, "urbit-worker: thaw: reclaim\r\n");
+
+  // u3a_print_memory(stderr, "urbit-worker: thaw: open", u3a_open(u3R));
+  // u3a_print_memory(stderr, "urbit-worker: thaw: idle", u3a_idle(u3R));
+
+  {
+    u3p(u3h_root) bak_p;
+    u3_noun cod = u3j_stay();
+    c3_d  len_d = u3s_jam_met(cod, &bak_p);
+    c3_w  byt_w, wor_w, len_w;
+
+    fprintf(stderr, "urbit-worker: thaw: measured cold state %" PRIu64 "\r\n", len_d);
+
+    if ( len_d > 0xffffffffULL ) {
+      fprintf(stderr, "urbit-worker: thaw: overflow c3_w: %" PRIu64 "\r\n", len_d);
+      exit(1);
+    }
+
+    //  length in bytes a la u3i_bytes
+    //
+    byt_w = (c3_w)(len_d >> 3ULL);
+    if ( len_d > (c3_d)(byt_w << 3) ) {
+      byt_w++;
+    }
+
+    //  length in words
+    //
+    wor_w = (c3_w)(len_d >> 5ULL);
+    if ( len_d > (c3_d)(wor_w << 5) ) {
+      wor_w++;
+    }
+
+    //  byte-length of word-length
+    //
+    len_w = 4 * wor_w;
+
+
+    {
+      c3_w* buf_w;
+      void* ptr_v = mmap(0, len_w, PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE, -1, 0);
+
+      if ( MAP_FAILED == ptr_v ) {
+        fprintf(stderr, "urbit-worker: thaw: mmap %s\r\n", strerror(errno));
+        exit(1);
+      }
+
+      buf_w = ptr_v;
+      u3s_jam_buf(cod, bak_p, buf_w);
+
+      fprintf(stderr, "urbit-worker: thaw: jammed cold state\r\n");
+
+      u3h_free(bak_p);
+
+      u3z(cod);
+      u3j_free();
+
+      {
+        u3R->jed.war_p = u3h_new();
+        u3R->jed.cod_p = u3h_new();
+        u3R->jed.han_p = u3h_new();
+        u3R->jed.bas_p = u3h_new();
+        u3R->jed.hot_p = u3h_new();
+      }
+
+      // u3a_print_memory(stderr, "urbit-worker: thaw: open", u3a_open(u3R));
+      // u3a_print_memory(stderr, "urbit-worker: thaw: idle", u3a_idle(u3R));
+      // u3_serf_grab();
+
+      fprintf(stderr, "urbit-worker: thaw: free'd jet state\r\n");
+
+      {
+        u3_noun doc = u3i_words(wor_w, buf_w);
+        fprintf(stderr, "urbit-worker: thaw: allocated atom\r\n");
+        cod = u3ke_cue(doc);
+      }
+
+      fprintf(stderr, "urbit-worker: cue'd cold state\r\n");
+
+      u3j_boot(c3n);
+
+      fprintf(stderr, "urbit-worker: booted jet dashboard\r\n");
+
+      u3j_load(cod);
+
+      fprintf(stderr, "urbit-worker: loaded cold state\r\n");
+
+      u3j_ream();
+
+      fprintf(stderr, "urbit-worker: reamed jet dashboard\r\n");
+
+      u3n_ream();
+
+      fprintf(stderr, "urbit-worker: reamed bytecode state\r\n");
+    }
+  }
+
+  // u3a_print_memory(stderr, "urbit-worker: thaw: open", u3a_open(u3R));
+  // u3a_print_memory(stderr, "urbit-worker: thaw: idle", u3a_idle(u3R));
+  // u3_serf_grab();
+
+  {
+    c3_w aft_w = u3a_open(u3R) + u3a_idle(u3R);
+
+    if ( pre_w > aft_w ) {
+      u3a_print_memory(stderr, "urbit-worker: thaw: reclaimed", (pre_w - aft_w));
+    }
+    else if ( pre_w == aft_w ) {
+      fprintf(stderr, "urbit-worker: thaw: reclaimed: 0/B\r\n");
+    }
+    else {
+      u3a_print_memory(stderr, "urbit-worker: thaw: lost", (aft_w - pre_w));
+    }
+  }
+
+  u3e_save();
+}
+
 /* _cw_pack(); compact memory, save, and exit.
 */
 static void
@@ -320,9 +457,11 @@ _cw_usage(c3_i argc, c3_c* argv[])
           "    %s cram <pier>\n\n"
           "  cue persistent state:\n"
           "    %s queu <pier> <at-event>\n\n"
+          "  jam/cue cold jet dashboard:\n"
+          "    %s thaw <pier>\n\n"
           "  run as a 'serf':\n"
           "    %s serf <pier> <key> <flags> <cache-size> <at-event>\n",
-          argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
+          argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
 }
 
 /* main(): main() when run as urbit-worker
@@ -361,6 +500,9 @@ main(c3_i argc, c3_c* argv[])
     }
     else if ( 0 == strcmp("queu", argv[1]) ) {
       _cw_queu(argc, argv);
+    }
+    else if ( 0 == strcmp("thaw", argv[1]) ) {
+      _cw_thaw(argc, argv);
     }
     else if ( 0 == strcmp("pack", argv[1]) ) {
       _cw_pack(argc, argv);
