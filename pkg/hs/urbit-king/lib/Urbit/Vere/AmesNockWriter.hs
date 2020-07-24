@@ -44,11 +44,14 @@ data NockWriter = NockWriter
 -- handles the details of the
 --
 -- TODO: Write the ' version of this.
+--
+-- TODO: Probably need to pass in a pier instead so we can figure out the
+-- ShipLife.
 nockWriter :: forall e
             . (HasLogFunc e)
            => e
            -> AmesRouterWriterApi
-           -> Ship
+           -> ShipLife
            -> ([AmesNockWriterEv], RAcquire e (AmesNockWriterEf -> IO ()))
 nockWriter env api who = (initialEvs, runWriter)
   where
@@ -97,7 +100,7 @@ nockWriter env api who = (initialEvs, runWriter)
     -- it wants to use to encrypt messages which go out on Transports. (Note:
     -- messages are not encrypted in the local only case where both ship's
     -- Writers are connected to the same router.)
-    key ship = Nothing
+    key ship = mempty
 
     -- The second thing the Router does on connection is to signal to the ship
     -- to resend all unacknowledged messages.

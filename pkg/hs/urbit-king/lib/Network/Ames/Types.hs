@@ -29,15 +29,16 @@ data Life = Life UD
 
 -- An network key is a ship and a life, which corresponds to a unique
 -- public/private keypair.
-data NetworkKeyID = NetworkKeyID Ship Life
+data ShipLife = ShipLife Ship Life
   deriving (Eq, Ord, Show)
 
 -- A message comes from a MsgSource, which is one or more identified ships.
-data MsgSource = MsgSource (NonEmpty NetworkKeyID)
+data MsgSource = MsgSource (NonEmpty ShipLife)
   deriving (Eq, Ord, Show)
 
--- A message can only be delivered to a single identified target.
-data MsgDest = MsgDest NetworkKeyID
+-- A message can only be delivered to a single identified target: a ship/lyfe
+-- pair.
+data MsgDest = MsgDest ShipLife
   deriving (Eq, Ord, Show)
 
 -- Transport Layer Definitions -------------------------------------------------
@@ -86,7 +87,7 @@ data Writer = Writer
   { wRecvMsg :: MsgSource -> MsgDest -> Atom -> IO (Maybe Atom)
     -- ^ The writer receives an inbound message from a MsgDest.
 
-  , wPrivateKey :: Ship -> Maybe ByteString
+  , wPrivateKey :: ShipLife -> ByteString
     -- ^ Provide the rest of the system with the private key for the ship, so
     -- that the Router has the private key to encrypt the message if necessary.
 
@@ -100,15 +101,18 @@ data Writer = Writer
 -- The router is the central component that mediates between the Transports and
 -- the Writers.
 
+data Router = Router
+
+
 -- The Writer wishes to send a message as a MsgSource. Returns a TMVar
 -- which will be written to when/if the remote end signals that it
 -- acknowledges the message or sends a naxplenation.
 type WriterSendMsg = MsgSource -> MsgDest -> Atom -> IO (TMVar (Maybe Atom))
 
 -- The Writer calls this to add itself into the router
-type WriterJoinRouter = Writer -> Ship -> IO ()
+type WriterJoinRouter = Writer -> ShipLife -> IO ()
 
-type WriterLeaveRouter = Ship -> IO ()
+type WriterLeaveRouter = ShipLife -> IO ()
 
 -- The API given to the Writer to access Router functionality
 data AmesRouterWriterApi = AmesRouterWriterApi
