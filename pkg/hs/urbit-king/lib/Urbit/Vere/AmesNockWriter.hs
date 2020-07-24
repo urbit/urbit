@@ -23,7 +23,7 @@ data AmesNockWriterEf
   deriving (Eq, Ord, Show)
 
 data AmesNockWriterEv
-    = AmesNockWriterEvHear () UD MsgSource Atom
+    = AmesNockWriterEvHear () MsgSource Atom
       -- ^ NockWriter sends a %hear event to Urbit when hearing an event on the
       -- network. The message will be decrypted by the king using the ship's
       -- key scryed out of the ship, if needed.
@@ -68,29 +68,23 @@ nockWriter env api who enqueueEv = (initialEvs, runWriter)
           io $ ((arwaJoinRouter api) w who)
           NockWriter <$> newTVarIO []
 
-        leaveRouter x = do
-          io $ ((arwaLeaveRouter api) who)
-          pure ()
+        leaveRouter x = io $ ((arwaLeaveRouter api) who)
 
     handleEf :: NockWriter -> AmesNockWriterEf -> IO ()
     handleEf writer = runRIO env . \case
       AmesNockWriterEfSend (_, _) msgNum source dest msg -> do
         logDebug $ displayShow ("(nock writer) send: ", msgNum, source, dest)
 
-        -- Send the message to the router, receiving a signaling variable which
-        -- will be filled when the message has been acknowledged remotely.
-        responseVar <- io $ (arwaSend api) source dest msg
-
-        -- Record the responseVar that will be signaled when the message is
-        -- acknowledged.
-        io $ atomically $ modifyTVar
-          (nwUnackedMsgs writer)
-          (\x -> snoc x (responseVar, msgNum))
+        io $ (arwaSend api) source dest msg callback
+        where
+          callback response = enqueueEv (EvErr (ackEv response) ignoreResult)
+          ackEv response = error "TODO: ackEv Blip"
+          ignoreResult _ = pure ()
 
     -- Called by the router when this ship receives a message. We enqueue a
     -- message and write to the completeVar when we have an answer of whether
     -- this message completed or not.
-    recv :: MsgSource -> MsgDest -> Atom -> TMVar (Maybe Atom) -> IO ()
+    recv :: MsgSource -> MsgDest -> Atom -> (Maybe Atom -> STM ()) -> IO ()
     recv src dst msg completeVar =
       atomically $ enqueueEv (EvErr recvEv recvResult)
       where
@@ -99,9 +93,9 @@ nockWriter env api who enqueueEv = (initialEvs, runWriter)
           RunSwap e m w n f -> error "Don't know what to do with RunSwap yet."
           RunBail goofs ->
              -- TODO: goofs to the sort of message sent across the network.
-            atomically $ putTMVar completeVar (Just 0)
+            atomically $ completeVar (Just 0)
           RunOkay _ ->
-            atomically $ putTMVar completeVar Nothing
+            atomically $ completeVar Nothing
 
     -- The first thing the Router does is ask the Writer what the private key
     -- it wants to use to encrypt messages which go out on Transports. (Note:
@@ -111,4 +105,5 @@ nockWriter env api who enqueueEv = (initialEvs, runWriter)
 
     -- The second thing the Router does on connection is to signal to the ship
     -- to resend all unacknowledged messages.
-    restart = pure ()
+    restart =
+      error "TODO: restart is going to be a bunch of scries into the ship"

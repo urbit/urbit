@@ -4,8 +4,6 @@ import Urbit.Prelude
 
 import Data.List.NonEmpty (NonEmpty) --((:|)))
 
-import Control.Concurrent.STM.TMVar ()
-
 -- Let's just start making data structures.
 
 -- The main operations in ames are %hear task (a new packet from unix) which
@@ -84,7 +82,7 @@ data Transport = Transport
 -- A writer is an interface for a thing which wishes to send and receive
 -- natural numbers on the network.
 data Writer = Writer
-  { wRecvMsg :: MsgSource -> MsgDest -> Atom -> TMVar (Maybe Atom) -> IO ()
+  { wRecvMsg :: MsgSource -> MsgDest -> Atom -> (Maybe Atom -> STM ()) -> IO ()
     -- ^ The writer receives an inbound message from a MsgDest.
 
   , wPrivateKey :: ShipLife -> ByteString
@@ -104,10 +102,11 @@ data Writer = Writer
 data Router = Router
 
 
--- The Writer wishes to send a message as a MsgSource. Returns a TMVar
--- which will be written to when/if the remote end signals that it
--- acknowledges the message or sends a naxplenation.
-type WriterSendMsg = MsgSource -> MsgDest -> Atom -> IO (TMVar (Maybe Atom))
+-- The Writer wishes to send a message as a MsgSource. Returns an stm function
+-- which will be called when/if the remote end signals that it acknowledges the
+-- message or sends a naxplenation.
+type WriterSendMsg = MsgSource -> MsgDest -> Atom -> (Maybe Atom -> STM ())
+                  -> IO ()
 
 -- The Writer calls this to add itself into the router
 type WriterJoinRouter = Writer -> ShipLife -> IO ()

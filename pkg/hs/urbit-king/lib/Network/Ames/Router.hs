@@ -15,16 +15,13 @@ data RouterImpl = RouterImpl
 -- Writer interface implementation --------------------------------------------
 
 writerSend :: RouterImpl -> WriterSendMsg
-writerSend impl src dst@(MsgDest shipLife) msg = do
+writerSend impl src dst@(MsgDest shipLife) msg completed = do
   -- First, check to see if the destination is another Writer on this same
   -- Router. This happens in the multi-tennat case and means we don't need to
   -- perform any encryption, or deal with any of the main
   ships <- atomically $ readTVar (riShips impl)
   case M.lookup shipLife ships of
-    Just writer -> do
-      completed <- newEmptyTMVarIO
-      (wRecvMsg writer) src dst msg completed
-      pure completed
+    Just writer -> (wRecvMsg writer) src dst msg completed
     Nothing -> error "Need to handle communication over transports"
 
 
