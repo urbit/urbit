@@ -3,7 +3,7 @@ module Urbit.Vere.AmesNockWriter where
 import Urbit.Prelude
 
 import Network.Ames.Types
---import Urbit.Vere.Pier.Types
+import Urbit.Vere.Pier.Types
 
 -- The Nock Writer
 
@@ -52,8 +52,9 @@ nockWriter :: forall e
            => e
            -> AmesRouterWriterApi
            -> ShipLife
+           -> (EvErr -> STM ())
            -> ([AmesNockWriterEv], RAcquire e (AmesNockWriterEf -> IO ()))
-nockWriter env api who = (initialEvs, runWriter)
+nockWriter env api who enqueueEv = (initialEvs, runWriter)
   where
     -- TODO: This isn't going to work for the restart case. We'll have to
     -- figure out how to make this take 
@@ -86,15 +87,21 @@ nockWriter env api who = (initialEvs, runWriter)
           (nwUnackedMsgs writer)
           (\x -> snoc x (responseVar, msgNum))
 
-    -- Called by the router when this ship receives a message
-    recv a b c = do
-      -- TODO: Unsure how to write this at first glance. We're receiving a
-      -- message from another subsystem, which wants a synchronous response
-      -- since
-
-      -- TODO: This always is immediately acknowledging the message, even
-      -- though that's not what should go on here?
-      pure Nothing
+    -- Called by the router when this ship receives a message. We enqueue a
+    -- message and write to the completeVar when we have an answer of whether
+    -- this message completed or not.
+    recv :: MsgSource -> MsgDest -> Atom -> TMVar (Maybe Atom) -> IO ()
+    recv src dst msg completeVar =
+      atomically $ enqueueEv (EvErr recvEv recvResult)
+      where
+        recvEv = error "Move the blip code." -- EvBlip $ BlipEv
+        recvResult = \case
+          RunSwap e m w n f -> error "Don't know what to do with RunSwap yet."
+          RunBail goofs ->
+             -- TODO: goofs to the sort of message sent across the network.
+            atomically $ putTMVar completeVar (Just 0)
+          RunOkay _ ->
+            atomically $ putTMVar completeVar Nothing
 
     -- The first thing the Router does is ask the Writer what the private key
     -- it wants to use to encrypt messages which go out on Transports. (Note:

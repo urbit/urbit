@@ -21,7 +21,10 @@ writerSend impl src dst@(MsgDest shipLife) msg = do
   -- perform any encryption, or deal with any of the main
   ships <- atomically $ readTVar (riShips impl)
   case M.lookup shipLife ships of
-    Just writer -> (wRecvMsg writer) src dst msg >>= newTMVarIO
+    Just writer -> do
+      completed <- newEmptyTMVarIO
+      (wRecvMsg writer) src dst msg completed
+      pure completed
     Nothing -> error "Need to handle communication over transports"
 
 

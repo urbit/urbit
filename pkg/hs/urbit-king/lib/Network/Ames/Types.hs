@@ -84,7 +84,7 @@ data Transport = Transport
 -- A writer is an interface for a thing which wishes to send and receive
 -- natural numbers on the network.
 data Writer = Writer
-  { wRecvMsg :: MsgSource -> MsgDest -> Atom -> IO (Maybe Atom)
+  { wRecvMsg :: MsgSource -> MsgDest -> Atom -> TMVar (Maybe Atom) -> IO ()
     -- ^ The writer receives an inbound message from a MsgDest.
 
   , wPrivateKey :: ShipLife -> ByteString
@@ -124,4 +124,6 @@ data AmesRouterWriterApi = AmesRouterWriterApi
     -- ^ Functions with a writer calls to join and leave the router.
   }
 
+-- TODO: Everything about this.
+data AmesTransportRouterApi = AmesTransportRouterApi
 
