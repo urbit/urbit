@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Spinner } from '../../../../components/Spinner';
+import { Toggle } from '../../../../components/toggle';
 import { GroupView } from '../../../../components/Group';
 import { deSig, uxToHex, writeText } from '../../../../lib/util';
+import { roleForShip, resourceFromPath } from '../../../../lib/group';
 
 export class GroupDetail extends Component {
   constructor(props) {
@@ -15,6 +17,7 @@ export class GroupDetail extends Component {
     };
     this.changeTitle = this.changeTitle.bind(this);
     this.changeDescription = this.changeDescription.bind(this);
+    this.changePolicy = this.changePolicy.bind(this);
   }
 
   componentDidMount() {
@@ -46,6 +49,17 @@ export class GroupDetail extends Component {
   changeDescription(event) {
     this.setState({ description: event.target.value });
   }
+
+  changePolicy() {
+    this.setState({ awaiting: true }, () => {
+      this.props.api.groups.changePolicy(resourceFromPath(this.props.path),
+      Boolean(this.props.group?.policy?.open)
+        ? { replace: { invite: { pending: [] } } }
+        : { replace: { open: { banned: [], banRanks: [] } } }
+        ).then(() => this.setState({ awaiting: false }));
+      }
+      );
+    }
 
   renderDetail() {
     const { props } = this;
@@ -175,7 +189,8 @@ export class GroupDetail extends Component {
 
     const { group, association } = props;
 
-    const groupOwner = (deSig(props.match.params.ship) === window.ship);
+    const ourRole = roleForShip(group, window.ship);
+    const groupOwner = (ourRole === 'admin');
 
     const deleteButtonClasses = (groupOwner) ? 'b--red2 red2 pointer bg-gray0-d' : 'b--gray3 gray3 bg-gray0-d c-default';
 
@@ -280,7 +295,17 @@ export class GroupDetail extends Component {
               }}
             />
           </div>
-          <p className="f9 mt3 lh-copy">Delete Group</p>
+          <div className="relative w-100 mt6" style={{ maxWidth: '29rem' }}>
+          <Toggle
+            boolean={(Boolean(group?.policy?.invite))}
+            change={this.changePolicy}
+          />
+            <span className="dib f9 white-d inter ml3">Private Group</span>
+            <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
+              If private, members must be invited
+            </p>
+          </div>
+          <p className="f9 mt6 lh-copy">Delete Group</p>
           <p className="f9 gray2 mb2">
           Permanently delete this group. All current members will no longer see this group.
           </p>
