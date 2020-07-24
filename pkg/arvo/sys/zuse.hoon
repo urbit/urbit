@@ -5336,23 +5336,22 @@
   |%
   ::                                                    ::  ++to-wain:format
   ++  to-wain                                           ::  atom to line list
-    ~%  %lore  ..is  ~
-    |=  lub/@
-    =|  tez/(list @t)
-    |-  ^+  tez
-    =+  ^=  wor
-      =+  [meg=0 i=0]
-      |-  ^-  {meg/@ i/@ end/@f}
-      =+  gam=(cut 3 [i 1] lub)
-      ?:  =(0 gam)
-        [meg i %.y]
-      ?:  =(10 gam)
-        [meg i %.n]
-      $(meg (cat 3 meg gam), i +(i))
-    ?:  end.wor
-      (flop ^+(tez [meg.wor tez]))
-    ?:  =(0 lub)  (flop tez)
-    $(lub (rsh 3 +(i.wor) lub), tez [meg.wor tez])
+    ~%  %leer  ..is  ~
+    |=  txt=@
+    =/  len=@  (met 3 txt)
+    =|  [i=@ out=(list @t)]
+    |-  ^+  out
+    =+  |-  ^-  j=@
+        ?:  ?|  =(i len)
+                =(10 (cut 3 [i 1] txt))
+            ==
+          i
+        $(i +(i))
+    =.  out  :_  out
+      (cut 3 [i (sub j i)] txt)
+    ?:  =(j len)
+      (flop out)
+    $(i +(j))
   ::                                                    ::  ++of-wain:format
   ++  of-wain                                           ::  line list to atom
     |=  tez/(list @t)
