@@ -397,35 +397,32 @@
   ?>  ?=([@ @ *] path)
   ?.  =('~' i.path)
     ~
-  ::  is local dm
-  ?:  =((slav %p i.t.path) our.bol)
+  =/  =ship  (slav %p i.t.path)
+  ?:  =(ship our.bol)
     ~
-  ::  is foreign dm
   :-  =-  [%pass /fixdm %agent [our.bol %chat-view] %poke %chat-view-action -]
-      !>
-      ^-  action:store
+      !>  ^-  action:store
       [%delete path]
   =/  mailbox=(unit mailbox:store)  (chat-scry path)
   ?~  mailbox
     ~
   :~  =-  [%pass /fixdm %agent [our.bol %chat-view] %poke %chat-view-action -]
-      !>
-      ^-  action:view
+      !>  ^-  action:view
       :*  %create
-          (crip "<(scot %p our.bol)> <-> [i.t.path]")
+          %-  crip
+          (zing [(trip (scot %p our.bol)) " <-> " (trip (scot %p ship)) ~])
           ''
-          /ship/(scot %p our.bol)/(crip (weld "dm--" (trip i.t.path)))
-          /ship/(scot %p our.bol)/(crip (weld "dm--" (trip i.t.path)))
-          [%invite (silt ~[(slav %p i.t.path)])]
-          (silt ~[(slav %p i.t.path)])
+          /(scot %p our.bol)/(crip (weld "dm--" (trip (scot %p ship))))
+          /(scot %p our.bol)/(crip (weld "dm--" (trip (scot %p ship))))
+          [%invite (silt ~[ship])]
+          (silt ~[ship])
           %.y
           %.n
       ==
     ::
       =-  [%pass /fixdm %agent [our.bol %chat-store] %poke %chat-action -]
-      !>
-      ^-  action:store
-      [%messages path envelopes.u.mailbox]
+      !>  ^-  action:store
+      [%messages  envelopes.u.mailbox]
   ==
 ::
 ++  poke-json
