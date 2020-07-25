@@ -2744,7 +2744,6 @@
       |=  rut=(unit rand)
       ^+  ..abet
       ?:  lost  ..abet
-      ~&  >  taking-update=inx
       ?~  rut
         =.  nako.sat  (~(put to nako.sat) ~)
         work
@@ -2776,7 +2775,6 @@
     ::
     ++  take-backfill
       |=  =blob
-      ~&  >  [%taking-backfill p.blob]
       ^+  ..abet
       ?:  lost  ..abet
       =?    need.sat
@@ -2785,7 +2783,6 @@
               !(~(has by have.sat) q.q.blob)
           ==
         [q.q.blob need.sat]
-      ~&  >  [%putting-backfill p.blob]
       ::  We can't put a blob in lat.ran if its parent isn't already
       ::  there.  Unions are in reverse order so we don't overwrite
       ::  existing blobs.
@@ -2804,7 +2801,6 @@
         ..abet
       |-  ^+  ..abet
       ?:  =(~ need.sat)
-        ~&  >  %done-work
         ::  NB: if you change to release nakos as we get enough blobs
         ::  for them instead of all at the end, you *must* store the
         ::  `lim` that should be applied after the nako is complete and
@@ -2814,17 +2810,13 @@
         =.  lat.ran  (~(uni by have.sat) lat.ran)
         |-  ^+  ..abet
         ?:  =(~ nako.sat)
-          ~&  >  %pausing-work
           ..abet
         =^  next=(unit nako)  nako.sat  ~(get to nako.sat)
         ?~  next
-          ~&  >  %really-done-work
           ..abet(done &)
-        ~&  >  %applying-work
         =.  ..abet  (apply-foreign-update u.next)
         =.  ..foreign-update  =<(?>(?=(^ ref) .) wake)
         $
-      ~&  >  %need-work
       ?>  ?=(^ need.sat)
       ::  This is what removes an item from `need`.  This happens every
       ::  time we take a backfill response, but it could happen more than
@@ -2835,9 +2827,7 @@
       ?:  ?|  (~(has by lat.ran) i.need.sat)
               (~(has by have.sat) i.need.sat)
           ==
-        ~&  >  [%skip-work i.need.sat]
         $(need.sat t.need.sat)
-      ~&  >  [%get-work i.need.sat]
       ::  Otherwise, fetch the next blob
       ::
       =/  =fill  [syd i.need.sat]
@@ -2893,7 +2883,6 @@
         $(aeon +(aeon))
       ::  produce updated state
       ::
-      ~&  >  inx=inx
       =/  =rave  rave:(~(got by bom.u.ref) inx)
       ?>  ?=(%many -.rave)
       =:  let.dom   (max let.nako let.dom)
@@ -4550,7 +4539,6 @@
     ::
         %boon
       =+  ;;  =blob  payload.q.hin
-      ~&  blob=p.blob
       ::
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
