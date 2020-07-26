@@ -280,8 +280,8 @@ separate releases.
 (**Note**: the following steps are automated by some other Tlon-internal
 tooling.  Just ask `~nidsut-tomdun` for details.)
 
-For Urbit OS updates, this means copying the files into ~zod's %base desk.  The
-changes will be synced to /~zod/kids and then propagated through other galaxies
+For Urbit OS updates, this means copying the files into ~zod's %home desk.  The
+changes should be merged into /~zod/kids and then propagated through other galaxies
 and stars to the rest of the network.
 
 For consistency, I create a release tarball and then rsync the files in.
@@ -289,9 +289,10 @@ For consistency, I create a release tarball and then rsync the files in.
 ```
 $ wget https://github.com/urbit/urbit/archive/urbit-os-vx.y.z.tar.gz
 $ tar xzf urbit-os-vx.y.z.tar.gz
-$ herb zod -p hood -d "+hood/mount /=base="
-$ rsync -zr --delete urbit-urbit-os-vx.y.z/pkg/arvo/ zod/base
-$ herb zod -p hood -d "+hood/commit %base"
+$ herb zod -p hood -d "+hood/mount /=home="
+$ rsync -zr --delete urbit-urbit-os-vx.y.z/pkg/arvo/ zod/home
+$ herb zod -p hood -d "+hood/commit %home"
+$ herb zod -p hood -d "+hood/merge %kids our %home"
 ```
 
 For Vere updates, this means simply shutting down each desired ship, installing

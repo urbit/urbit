@@ -10,14 +10,19 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-zero
+      state-one
   ==
 ::
 +$  state-zero
   $:  %0
       synced=(map group-path ship)
   ==
++$   state-one
+  $:  %1
+      synced=(map group-path ship)
+  ==
 --
-=|  state-zero
+=|  state-one
 =*  state  -
 %-  agent:dbug
 %+  verb  |
@@ -32,7 +37,17 @@
     [[%pass /updates %agent [our.bowl %metadata-store] %watch /updates]~ this]
   ::
   ++  on-save   !>(state)
-  ++  on-load   |=(=vase `this(state !<(state-zero vase)))
+  ++  on-load   
+    |=  =vase
+    =/  old
+      !<(versioned-state vase)
+    ?:  ?=(%1 -.old)
+      `this(state old)
+    ::  groups OTA did not migrate metadata syncs
+    ::  we clear our syncs, and wait for metadata-store
+    ::  to poke us with the syncs
+    `this
+  ::
   ++  on-leave  on-leave:def
   ++  on-peek   on-peek:def
   ++  on-arvo   on-arvo:def

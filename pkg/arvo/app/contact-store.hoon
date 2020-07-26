@@ -7,6 +7,7 @@
   $%  state-zero
       state-one
       state-two
+      state-three
   ==
 ::
 +$  rolodex-0  (map path contacts-0)
@@ -34,9 +35,13 @@
   $:  %2
      =rolodex
   ==
++$  state-three
+  $:  %3
+     =rolodex
+  ==
 --
 ::
-=|  state-two
+=|  state-three
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -54,8 +59,23 @@
     =/  old  !<(versioned-state old-vase)
     =|  cards=(list card)
     |-
-    ?:  ?=(%2 -.old)
+    ?:  ?=(%3 -.old)
       [cards this(state old)]
+    ?:  ?=(%2 -.old)
+      %_    $
+        -.old  %3
+      ::
+          rolodex.old
+        =/  def
+          (~(get by rolodex.old) /ship/~/default)
+        ?~  def
+          rolodex.old
+        =.  rolodex.old
+          (~(del by rolodex.old) /ship/~/default)
+        =.  rolodex.old
+          (~(put by rolodex.old) /~/default u.def)
+        rolodex.old
+      ==
     ?:  ?=(%1 -.old)
       =/  new-rolodex=^rolodex
         %-  malt

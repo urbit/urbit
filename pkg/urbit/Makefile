@@ -2,7 +2,7 @@ include config.mk
 
 jets = jets/tree.c $(wildcard jets/*/*.c)
 noun = $(wildcard noun/*.c)
-vere = $(wildcard vere/*.c)
+vere = $(wildcard vere/*.c) $(wildcard vere/*/*.c)
 daemon = $(wildcard daemon/*.c)
 worker = $(wildcard worker/*.c)
 tests  = $(wildcard tests/*.c)

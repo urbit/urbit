@@ -15,6 +15,12 @@ import System.Environment (getProgName)
 
 --------------------------------------------------------------------------------
 
+data KingOpts = KingOpts
+  { koSharedHttpPort  :: Maybe Word16
+  , koSharedHttpsPort :: Maybe Word16
+  }
+ deriving (Show)
+
 data Opts = Opts
     { oQuiet        :: Bool
     , oHashless     :: Bool
@@ -23,6 +29,9 @@ data Opts = Opts
     , oDryFrom      :: Maybe Word64
     , oVerbose      :: Bool
     , oAmesPort     :: Maybe Word16
+    , oNoAmes       :: Bool
+    , oNoHttp       :: Bool
+    , oNoHttps      :: Bool
     , oTrace        :: Bool
     , oCollectFx    :: Bool
     , oLocalhost    :: Bool
@@ -31,6 +40,7 @@ data Opts = Opts
     , oHttpPort     :: Maybe Word16
     , oHttpsPort    :: Maybe Word16
     , oLoopbackPort :: Maybe Word16
+    , oSerfExe      :: Maybe Text
     }
   deriving (Show)
 
@@ -93,7 +103,7 @@ data Bug
 
 data Cmd
     = CmdNew New Opts
-    | CmdRun Run Opts Bool
+    | CmdRun KingOpts [(Run, Opts, Bool)]
     | CmdBug Bug
     | CmdCon FilePath
   deriving (Show)
@@ -221,6 +231,24 @@ opts = do
       <> help "Ames port"
       <> hidden
 
+    oNoAmes <-
+     switch
+     $  long "no-ames"
+     <> help "Run with Ames disabled."
+     <> hidden
+
+    oNoHttp <-
+     switch
+     $  long "no-http"
+     <> help "Run with HTTP disabled."
+     <> hidden
+
+    oNoHttps <-
+     switch
+     $  long "no-https"
+     <> help "Run with HTTPS disabled."
+     <> hidden
+
     oHttpPort <-
       optional
       $  option auto
@@ -245,13 +273,18 @@ opts = do
       <> help "Localhost-only HTTP port"
       <> hidden
 
-    -- Always disable hashboard. Right now, urbit is almost unusable with this
-    -- flag enabled and it is disabled in vere.
-    let oHashless = True
-    -- oHashless  <- switch $ short 'S'
-    --                     <> long "hashless"
-    --                     <> help "Disable battery hashing"
-    --                     <> hidden
+    oSerfExe <-
+      optional
+      $  strOption
+      $  metavar "PATH"
+      <> long "serf"
+      <> help "Path to Serf"
+      <> hidden
+
+    oHashless  <- switch $ short 'S'
+                        <> long "hashless"
+                        <> help "Disable battery hashing (Ignored for now)"
+                        <> hidden
 
     oQuiet     <- switch $ short 'q'
                         <> long "quiet"
@@ -307,15 +340,33 @@ opts = do
 newShip :: Parser Cmd
 newShip = CmdNew <$> new <*> opts
 
+runOneShip :: Parser (Run, Opts, Bool)
+runOneShip = (,,) <$> fmap Run pierPath <*> opts <*> df
+ where
+  df = switch (short 'd' <> long "daemon" <> help "Daemon mode" <> hidden)
+
+kingOpts :: Parser KingOpts
+kingOpts = do
+  koSharedHttpPort <-
+    optional
+    $  option auto
+    $  metavar "PORT"
+    <> long "shared-http-port"
+    <> help "HTTP port"
+    <> hidden
+
+  koSharedHttpsPort <-
+    optional
+    $  option auto
+    $  metavar "PORT"
+    <> long "shared-https-port"
+    <> help "HTTPS port"
+    <> hidden
+
+  pure (KingOpts{..})
+
 runShip :: Parser Cmd
-runShip = do
-    rPierPath <- pierPath
-    o         <- opts
-    daemon    <- switch $ short 'd'
-                         <> long "daemon"
-                         <> help "Daemon mode"
-                         <> hidden
-    pure (CmdRun (Run{..}) o daemon)
+runShip = CmdRun <$> kingOpts <*> some runOneShip
 
 valPill :: Parser Bug
 valPill = do

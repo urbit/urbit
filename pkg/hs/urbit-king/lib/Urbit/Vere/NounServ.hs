@@ -55,24 +55,24 @@ wsConn :: (FromNoun i, ToNoun o, Show i, Show o, HasLogFunc e)
        -> WS.Connection
        -> RIO e ()
 wsConn pre inp out wsc = do
-    logWarn (pre <> "(wcConn) Connected!")
+    logDebug (pre <> "(wcConn) Connected!")
 
     writer <- withRIOThread $ forever $ do
-        logWarn (pre <> "(wsConn) Waiting for data.")
+        logDebug (pre <> "(wsConn) Waiting for data.")
         byt <- io $ toStrict <$> WS.receiveData wsc
-        logWarn (pre <> "Got data")
+        logDebug (pre <> "Got data")
         dat <- cueBSExn byt >>= fromNounExn
-        logWarn (pre <> "(wsConn) Decoded data, writing to chan")
+        logDebug (pre <> "(wsConn) Decoded data, writing to chan")
         atomically $ writeTBMChan inp dat
 
     reader <- withRIOThread $ forever $ do
-        logWarn (pre <> "Waiting for data from chan")
+        logDebug (pre <> "Waiting for data from chan")
         atomically (readTBMChan out) >>= \case
             Nothing  -> do
-                logWarn (pre <> "(wsConn) Connection closed")
+                logDebug (pre <> "(wsConn) Connection closed")
                 error "dead-conn"
             Just msg -> do
-                logWarn (pre <> "(wsConn) Got message! " <> displayShow msg)
+                logDebug (pre <> "(wsConn) Got message! " <> displayShow msg)
                 io $ WS.sendBinaryData wsc $ fromStrict $ jamBS $ toNoun msg
 
     let cleanup = do
@@ -82,7 +82,7 @@ wsConn pre inp out wsc = do
 
     flip finally cleanup $ do
          res <- atomically (waitCatchSTM writer <|> waitCatchSTM reader)
-         logWarn $ displayShow (res :: Either SomeException ())
+         logDebug $ displayShow (res :: Either SomeException ())
 
 
 --------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ wsServApp :: (HasLogFunc e, ToNoun o, FromNoun i, Show i, Show o)
           -> WS.PendingConnection
           -> RIO e ()
 wsServApp cb pen = do
-    logError "NOUNSERV (wsServer) Got connection!"
+    logDebug "NOUNSERV (wsServer) Got connection!"
     wsc <- io $ WS.acceptRequest pen
     inp <- io $ newTBMChanIO 5
     out <- io $ newTBMChanIO 5
@@ -125,10 +125,10 @@ wsServer = do
 
     tid <- async $ do
         env <- ask
-        logError "NOUNSERV (wsServer) Starting server"
+        logDebug "NOUNSERV (wsServer) Starting server"
         io $ WS.runServer "127.0.0.1" 9999
            $ runRIO env . wsServApp (writeTBMChan con)
-        logError "NOUNSERV (wsServer) Server died"
+        logDebug "NOUNSERV (wsServer) Server died"
         atomically $ closeTBMChan con
 
     pure $ Server (readTBMChan con) tid 9999
@@ -147,34 +147,34 @@ example = Just (99, (), 44)
 
 testIt :: HasLogFunc e => RIO e ()
 testIt = do
-    logTrace "(testIt) Starting Server"
+    logDebug "(testIt) Starting Server"
     Server{..} <- wsServer @Example @Example
-    logTrace "(testIt) Connecting"
+    logDebug "(testIt) Connecting"
     Client{..} <- wsClient @Example @Example "/" sData
 
-    logTrace "(testIt) Accepting connection"
+    logDebug "(testIt) Accepting connection"
     sConn <- fromJust "accept" =<< atomically sAccept
 
     let
         clientSend = do
-            logTrace "(testIt) Sending from client"
+            logDebug "(testIt) Sending from client"
             atomically (cSend cConn example)
-            logTrace "(testIt) Waiting for response"
+            logDebug "(testIt) Waiting for response"
             res <- atomically (cRecv sConn)
             print ("clientSend", res, example)
             unless (res == Just example) $ do
                 error "Bad data"
-            logInfo "(testIt) Success"
+            logDebug "(testIt) Success"
 
         serverSend = do
-            logTrace "(testIt) Sending from server"
+            logDebug "(testIt) Sending from server"
             atomically (cSend sConn example)
-            logTrace "(testIt) Waiting for response"
+            logDebug "(testIt) Waiting for response"
             res <- atomically (cRecv cConn)
             print ("serverSend", res, example)
             unless (res == Just example) $ do
                 error "Bad data"
-            logInfo "(testIt) Success"
+            logDebug "(testIt) Success"
 
     clientSend
     clientSend
