@@ -679,20 +679,36 @@ _ames_recv_cb(uv_udp_t*        wax_u,
               unsigned         flg_i)
 {
   u3_ames* sam_u = wax_u->data;
-
-  c3_o pas_o = c3y;
+  c3_o     pas_o = c3y;
+  c3_y*    byt_y = (c3_y*)buf_u->base;
+  c3_y*    bod_y = byt_y + 4;
+  u3_head  hed_u;
 
   //  ensure a sane message size
   //
   if (4 >= nrd_i) {
     pas_o = c3n;
   }
+  //  unpack the packet header
+  //
+  else {
+    c3_w hed_w = (byt_y[0] <<  0)
+               | (byt_y[1] <<  8)
+               | (byt_y[2] << 16)
+               | (byt_y[3] << 24);
+
+    hed_u.ver_y = hed_w & 0x7;
+    hed_u.mug_l = (hed_w >> 3) & ((1 << 20) - 1);
+    hed_u.sac_y = (hed_w >> 23) & 0x3;
+    hed_u.rac_y = (hed_w >> 25) & 0x3;
+    hed_u.enc_o = (hed_w >> 27) & 0x1;
+  }
 
   //  ensure the protocol version matches ours
   //
   if ( c3y == pas_o
     && (c3y == sam_u->fit_o)
-    && (sam_u->ver_y != (0x7 & *((c3_w*)buf_u->base))) )
+    && (sam_u->ver_y != hed_u.ver_y) )
   {
     pas_o = c3n;
 
@@ -703,25 +719,6 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   }
 
   if (c3y == pas_o) {
-    c3_y*   byt_y = (c3_y*)buf_u->base;
-    c3_y*   bod_y = byt_y + 4;
-    u3_head hed_u;
-
-    //  unpack the packet header
-    //
-    {
-      c3_w hed_w = (byt_y[0] <<  0)
-                 | (byt_y[1] <<  8)
-                 | (byt_y[2] << 16)
-                 | (byt_y[3] << 24);
-
-      hed_u.ver_y = hed_w & 0x7;
-      hed_u.mug_l = (hed_w >> 3) & ((1 << 20) - 1);
-      hed_u.sac_y = (hed_w >> 23) & 0x3;
-      hed_u.rac_y = (hed_w >> 25) & 0x3;
-      hed_u.enc_o = (hed_w >> 27) & 0x1;
-    }
-
     //  ensure the mug is valid
     //
     if ( hed_u.mug_l != _ca_mug_body(nrd_i - 4, bod_y) ) {
