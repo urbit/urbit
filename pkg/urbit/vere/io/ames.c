@@ -1089,8 +1089,13 @@ static void
 _ames_io_info(u3_auto* car_u)
 {
   u3_ames* sam_u = (u3_ames*)car_u;
-  u3l_log("      dropped: %" PRIu64 "\n", sam_u->dop_d);
-  u3l_log("      crashed: %" PRIu64 "\n", sam_u->fal_d);
+  u3l_log("               dropped: %" PRIu64 "\n", sam_u->dop_d);
+  u3l_log("      forwards dropped: %" PRIu64 "\n", sam_u->fod_d);
+  u3l_log("      forwards pending: %" PRIu64 "\n", sam_u->foq_d);
+  u3l_log("             forwarded: %" PRIu64 "\n", sam_u->fow_d);
+  u3l_log("        filtered (ver): %" PRIu64 "\n", sam_u->vet_d);
+  u3l_log("        filtered (mug): %" PRIu64 "\n", sam_u->mut_d);
+  u3l_log("               crashed: %" PRIu64 "\n", sam_u->fal_d);
 }
 
 /* u3_ames_io_init(): initialize ames I/O.
