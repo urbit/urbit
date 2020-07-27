@@ -2048,9 +2048,11 @@
       (emit-updates-and-state host.del book.del data.del del sty)
     =/  rid=resource
       (de-path:resource writers.data.del)
+    =?  cards  !=(our.bol entity.rid)
+      :_  cards
+      (group-pull-hook-poke [%add host.del rid])
     :_  state
-    :*  (group-pull-hook-poke [%add host.del rid])
-        (metadata-hook-poke [%add-synced host.del writers.data.del])
+    :*  (metadata-hook-poke [%add-synced host.del writers.data.del])
         cards
     ==
   ::
