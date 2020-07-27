@@ -627,12 +627,13 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
   }
 
   {
+    u3_noun los = las;
     u3_noun pac = _ames_serialize_packet(pac_u, c3y);
     while (u3_nul != las) {
-      _ames_ef_send(pac_u->sam_u, u3h(las), u3k(pac));
+      _ames_ef_send(pac_u->sam_u, u3k(u3h(las)), u3k(pac));
       las = u3t(las);
     }
-    u3z(pac);
+    u3z(los); u3z(pac);
   }
 
   pac_u->sam_u->foq_d--;
