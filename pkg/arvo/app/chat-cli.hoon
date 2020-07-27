@@ -462,7 +462,7 @@
           security
           ;~  plug
             path
-            (punt ;~(pfix ace resource))
+            (punt ;~(pfix ace group))
             (punt ;~(pfix ace glyph))
             (punt ;~(pfix ace (fuss 'y' 'n')))
           ==
@@ -534,17 +534,15 @@
     ::     ;~(pfix ace ;~(plug i.opt $(opt t.opt)))
     ::   --
     ::
-    ++  resource  ;~((glue net) ship sym)
+    ++  group  ;~((glue net) ship sym)
     ++  tag   |*(a=@tas (cold a (jest a)))  ::TODO  into stdlib
     ++  ship  ;~(pfix sig fed:ag)
     ++  path  ;~(pfix net ;~(plug urs:ab (easy ~)))  ::NOTE  short only, tmp
     ::  +mang: un/managed indicator prefix
     ::
-    ++  mang
-      ;~  pose
-        (cold %| (jest '~/'))
-        (cold %& (easy ~))
-      ==
+    ::    deprecated, as sig prefix is no longer used
+    ::
+    ++  mang  (cold %& (easy ~))
     ::  +tarl: local target, as /path
     ::
     ++  tarl  (stag our-self path)
@@ -752,7 +750,6 @@
       =/  =target          [with-group our-self path]
       =/  real-path=^path  (target-to-path target)
       =/  group-path=^path  ?~(ugroup ship+real-path (en-path:resource u.ugroup))
-      ?<  &(?=(%channel security) with-group)
       =/  =policy
         ?-  security
           %channel  *open:policy
