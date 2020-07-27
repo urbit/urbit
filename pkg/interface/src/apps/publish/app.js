@@ -65,7 +65,7 @@ export default class PublishApp extends React.Component {
       this.unreadTotal = unreadTotal;
     }
 
-    const { api, groups, sidebarShown } = props;
+    const { api, groups, sidebarShown, invites } = props;
 
     return (
       <Switch>
@@ -77,7 +77,7 @@ export default class PublishApp extends React.Component {
                 active={'sidebar'}
                 rightPanelHide={true}
                 sidebarShown={true}
-                invites={props.invites}
+                invites={invites}
                 notebooks={notebooks}
                 associations={associations}
                 selectedGroups={selectedGroups}
@@ -108,7 +108,7 @@ export default class PublishApp extends React.Component {
                 active={'rightPanel'}
                 rightPanelHide={false}
                 sidebarShown={sidebarShown}
-                invites={props.invites}
+                invites={invites}
                 notebooks={notebooks}
                 associations={associations}
                 selectedGroups={selectedGroups}
@@ -139,7 +139,7 @@ export default class PublishApp extends React.Component {
                 active={'rightPanel'}
                 rightPanelHide={false}
                 sidebarShown={sidebarShown}
-                invites={props.invites}
+                invites={invites}
                 notebooks={notebooks}
                 associations={associations}
                 selectedGroups={selectedGroups}
@@ -185,7 +185,7 @@ export default class PublishApp extends React.Component {
                   active={'rightPanel'}
                   rightPanelHide={false}
                   sidebarShown={sidebarShown}
-                  invites={props.invites}
+                  invites={invites}
                   notebooks={notebooks}
                   associations={associations}
                   selectedGroups={selectedGroups}
@@ -211,7 +211,7 @@ export default class PublishApp extends React.Component {
                   active={'rightPanel'}
                   rightPanelHide={false}
                   sidebarShown={sidebarShown}
-                  invites={props.invites}
+                  invites={invites}
                   notebooks={notebooks}
                   associations={associations}
                   contacts={contacts}
@@ -263,7 +263,7 @@ export default class PublishApp extends React.Component {
                   active={'rightPanel'}
                   rightPanelHide={false}
                   sidebarShown={sidebarShown}
-                  invites={props.invites}
+                  invites={invites}
                   notebooks={notebooks}
                   selectedGroups={selectedGroups}
                   associations={associations}
@@ -290,7 +290,7 @@ export default class PublishApp extends React.Component {
                   active={'rightPanel'}
                   rightPanelHide={false}
                   sidebarShown={sidebarShown}
-                  invites={props.invites}
+                  invites={invites}
                   notebooks={notebooks}
                   associations={associations}
                   selectedGroups={selectedGroups}
