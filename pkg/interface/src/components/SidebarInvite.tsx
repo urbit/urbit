@@ -6,7 +6,7 @@ export class SidebarInvite extends Component<{invite: Invite, onAccept: Function
     const { props } = this;
 
     return (
-      <div className='w-100 bg-white pa4 bb b--gray4 b--gray1-d z-5' style={{position: 'sticky', top: 0}}>
+      <div className='w-100 bg-white bg-gray0-d pa4 bb b--gray4 b--gray1-d  z-5' style={{position: 'sticky', top: 0}}>
         <div className='w-100 v-mid'>
           <p className="dib f8 mono gray4-d">
             {props.invite.text ? props.invite.text : props.invite.path}
