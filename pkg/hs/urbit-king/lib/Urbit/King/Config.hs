@@ -1,29 +1,40 @@
 {-|
-    Pier Configuration
+  Pier Configuration
 -}
 module Urbit.King.Config where
 
 import Urbit.Prelude
 
+import qualified Urbit.Vere.Serf as Serf
+
 {-|
-    All the configuration data revolving around a ship and the current
-    execution options.
+  All the configuration data revolving around a ship and the current
+  execution options.
 -}
 data PierConfig = PierConfig
-    { _pcPierPath :: FilePath
-    , _pcDryRun   :: Bool
-    } deriving (Show)
+  { _pcPierPath  :: FilePath
+  , _pcDryRun    :: Bool
+  , _pcSerfExe   :: Text
+  , _pcSerfFlags :: [Serf.Flag]
+  } deriving (Show)
 
 makeLenses ''PierConfig
 
-class HasPierConfig env where
-    pierConfigL :: Lens' env PierConfig
+class HasPierPath a where
+  pierPathL :: Lens' a FilePath
 
-pierPathL ∷ HasPierConfig a => Lens' a FilePath
-pierPathL = pierConfigL . pcPierPath
+class HasDryRun a where
+  dryRunL :: Lens' a Bool
 
-dryRunL :: HasPierConfig a => Lens' a Bool
-dryRunL = pierConfigL . pcDryRun
+class (HasPierPath a, HasDryRun a) => HasPierConfig a where
+  pierConfigL :: Lens' a PierConfig
+
+instance HasPierPath PierConfig where
+  pierPathL = pcPierPath
+
+instance HasDryRun PierConfig where
+  dryRunL = pcDryRun
+
 
 -------------------------------------------------------------------------------
 
@@ -36,6 +47,9 @@ data NetMode
 data NetworkConfig = NetworkConfig
   { _ncNetMode    :: NetMode
   , _ncAmesPort   :: Maybe Word16
+  , _ncNoAmes     :: Bool
+  , _ncNoHttp     :: Bool
+  , _ncNoHttps    :: Bool
   , _ncHttpPort   :: Maybe Word16
   , _ncHttpsPort  :: Maybe Word16
   , _ncLocalPort  :: Maybe Word16

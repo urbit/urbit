@@ -2,10 +2,14 @@
     UNIX Filesystem Driver
 -}
 
-module Urbit.Vere.Clay (clay) where
+module Urbit.Vere.Clay
+  ( clay
+  , clay'
+  )
+where
 
 import Urbit.Arvo            hiding (Term)
-import Urbit.King.Config
+import Urbit.King.App
 import Urbit.Prelude
 import Urbit.Vere.Pier.Types
 
@@ -112,26 +116,52 @@ buildActionListFromDifferences fp snapshot = do
 
 --------------------------------------------------------------------------------
 
-clay :: forall e. (HasPierConfig e, HasLogFunc e)
-     => KingId -> QueueEv -> ([Ev], RAcquire e (EffCb e SyncEf))
-clay king enqueueEv =
+_boatFailed :: e -> WorkError -> IO ()
+_boatFailed env _ = runRIO env $ do
+  pure () -- TODO What can we do?
+
+clay'
+  :: HasPierEnv e
+  => RIO e ([Ev], RAcquire e (DriverApi SyncEf))
+clay' = do
+  ventQ :: TQueue EvErr <- newTQueueIO
+  env <- ask
+
+  let (bornEvs, startDriver) = clay env (writeTQueue ventQ)
+
+  let runDriver = do
+        diOnEffect <- startDriver
+        let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
+        pure (DriverApi {..})
+
+  pure (bornEvs, runDriver)
+
+clay
+  :: forall e
+   . (HasPierConfig e, HasLogFunc e, HasKingId e)
+  => e
+  -> (EvErr -> STM ())
+  -> ([Ev], RAcquire e (SyncEf -> IO ()))
+clay env plan =
     (initialEvents, runSync)
   where
-    initialEvents = [
-      EvBlip $ BlipEvBoat $ BoatEvBoat () ()
-      -- TODO: In the case of -A, we need to read all the data from the
-      -- specified directory and shove it into an %into event.
-      ]
+    king = fromIntegral (env ^. kingIdL)
 
-    runSync :: RAcquire e (EffCb e SyncEf)
+    boatEv = EvBlip $ BlipEvBoat $ BoatEvBoat () ()
+
+    -- TODO: In the case of -A, we need to read all the data from the
+    -- specified directory and shove it into an %into event.
+    initialEvents = [boatEv]
+
+    runSync :: RAcquire e (SyncEf -> IO ())
     runSync = handleEffect <$> mkRAcquire start stop
 
     start :: RIO e ClayDrv
     start = ClayDrv <$> newTVarIO mempty
     stop c = pure ()
 
-    handleEffect :: ClayDrv -> SyncEf -> RIO e ()
-    handleEffect cd = \case
+    handleEffect :: ClayDrv -> SyncEf -> IO ()
+    handleEffect cd = runRIO env . \case
       SyncEfHill _ mountPoints -> do
         logDebug $ displayShow ("(clay) known mount points:", mountPoints)
         pierPath <- view pierPathL
@@ -151,8 +181,15 @@ clay king enqueueEv =
         logDebug $ displayShow ("(clay) dirk actions: ", actions)
 
         let !intoList = map (actionsToInto dir) actions
-        atomically $ enqueueEv $ EvBlip $ BlipEvSync $
-            SyncEvInto (Some (king, ())) desk False intoList
+
+        let syncEv = EvBlip
+                   $ BlipEvSync
+                   $ SyncEvInto (Some (king, ())) desk False intoList
+
+        let syncFailed _ = pure ()
+
+        atomically $ plan (EvErr syncEv syncFailed)
+
 
         atomically $ modifyTVar
             (cdMountPoints cd)

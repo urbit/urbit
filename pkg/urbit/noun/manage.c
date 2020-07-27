@@ -7,8 +7,10 @@
 #include <ctype.h>
 #include <sigsegv.h>
 #include <curl/curl.h>
+#include <openssl/crypto.h>
 
 #include "all.h"
+#include "vere/vere.h"
 
 //  XX stack-overflow recovery should be gated by -a
 //
@@ -67,10 +69,10 @@
       /* u3m_soft_top(): top-level safety wrapper.
       */
         u3_noun
-        u3m_soft_top(c3_w    sec_w,                     //  timer seconds
+        u3m_soft_top(c3_w    mil_w,                     //  timer ms
                      c3_w    pad_w,                     //  base memory pad
                      u3_funk fun_f,
-                     u3_noun arg);
+                     u3_noun   arg);
 
 
 static sigjmp_buf u3_Signal;
@@ -322,10 +324,10 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
   }
 }
 
-/* _cm_signal_deep(): start deep processing; set timer for sec_w or 0.
+/* _cm_signal_deep(): start deep processing; set timer for [mil_w] or 0.
 */
 static void
-_cm_signal_deep(c3_w sec_w)
+_cm_signal_deep(c3_w mil_w)
 {
   //  disable outer system signal handling
   //
@@ -346,15 +348,19 @@ _cm_signal_deep(c3_w sec_w)
     u3H->rod_u.bug.mer = u3i_string("emergency buffer");
   }
 
-  if ( sec_w ) {
+  if ( mil_w ) {
     struct itimerval itm_u;
 
     timerclear(&itm_u.it_interval);
-    itm_u.it_value.tv_sec = sec_w;
-    itm_u.it_value.tv_usec = 0;
+    itm_u.it_value.tv_sec  = (mil_w / 1000);
+    itm_u.it_value.tv_usec = 1000 * (mil_w % 1000);
 
-    setitimer(ITIMER_VIRTUAL, &itm_u, 0);
-    signal(SIGVTALRM, _cm_signal_handle_alrm);
+    if ( setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
+      u3l_log("loom: set timer failed %s\r\n", strerror(errno));
+    }
+    else {
+      signal(SIGVTALRM, _cm_signal_handle_alrm);
+    }
   }
 
   u3t_boot();
@@ -369,14 +375,18 @@ _cm_signal_done()
   signal(SIGTERM, SIG_IGN);
   signal(SIGVTALRM, SIG_IGN);
 
+#ifndef NO_OVERFLOW
   stackoverflow_deinstall_handler();
+#endif
   {
     struct itimerval itm_u;
 
     timerclear(&itm_u.it_interval);
     timerclear(&itm_u.it_value);
 
-    setitimer(ITIMER_VIRTUAL, &itm_u, 0);
+    if ( setitimer(ITIMER_VIRTUAL, &itm_u, 0) ) {
+      u3l_log("loom: clear timer failed %s\r\n", strerror(errno));
+    }
   }
 
   //  restore outer system signal handling
@@ -495,7 +505,7 @@ _pave_south(c3_w* mem_w, c3_w siz_w, c3_w len_w)
 static void
 _pave_parts(void)
 {
-  u3R->cax.har_p = u3h_new();
+  u3R->cax.har_p = u3h_new_cache(u3_Host.ops_u.hap_w);
   u3R->jed.war_p = u3h_new();
   u3R->jed.cod_p = u3h_new();
   u3R->jed.han_p = u3h_new();
@@ -787,6 +797,13 @@ u3m_leap(c3_w pad_w)
 #endif
 }
 
+void
+_print_diff(c3_c* cap_c, c3_w a, c3_w b)
+{
+  c3_w diff = a<b ? b-a : a-b;
+  u3a_print_memory(stderr, cap_c, diff);
+}
+
 /* u3m_fall(): in u3R, return an inner road to its parent.
 */
 void
@@ -795,6 +812,9 @@ u3m_fall()
   c3_assert(0 != u3R->par_p);
 
 #if 0
+  /*  If you're printing a lot of these you need to change
+   *  u3a_print_memory from fprintf to u3l_log
+  */
   fprintf(stderr, "fall: from %s %p, to %s %p (cap 0x%x, was 0x%x)\r\n",
           _(u3a_is_north(u3R)) ? "north" : "south",
           u3R,
@@ -802,6 +822,9 @@ u3m_fall()
           u3to(u3_road, u3R->par_p),
           u3R->hat_p,
           u3R->rut_p);
+  _print_diff("unused free", u3R->hat_p, u3R->cap_p);
+  _print_diff("freeing", u3R->rut_p, u3R->hat_p);
+  _print_diff("stack", u3R->cap_p, u3R->mat_p);
 #endif
 
   u3to(u3_road, u3R->par_p)->pro.nox_d += u3R->pro.nox_d;
@@ -911,17 +934,17 @@ u3m_water(c3_w* low_w, c3_w* hig_w)
 /* u3m_soft_top(): top-level safety wrapper.
 */
 u3_noun
-u3m_soft_top(c3_w    sec_w,                     //  timer seconds
+u3m_soft_top(c3_w    mil_w,                     //  timer ms
              c3_w    pad_w,                     //  base memory pad
              u3_funk fun_f,
-             u3_noun arg)
+             u3_noun   arg)
 {
   u3_noun why, pro;
   c3_l    sig_l;
 
   /* Enter internal signal regime.
   */
-  _cm_signal_deep(0);
+  _cm_signal_deep(mil_w);
 
   if ( 0 != (sig_l = sigsetjmp(u3_Signal, 1)) ) {
     //  reinitialize trace state
@@ -1194,13 +1217,13 @@ u3m_grab(u3_noun som, ...)   // terminate with u3_none
 ** Produces [0 product] or [%error (list tank)], top last.
 */
 u3_noun
-u3m_soft(c3_w    sec_w,
+u3m_soft(c3_w    mil_w,
          u3_funk fun_f,
-         u3_noun arg)
+         u3_noun   arg)
 {
   u3_noun why;
 
-  why = u3m_soft_top(sec_w, (1 << 20), fun_f, arg);   // 2MB pad
+  why = u3m_soft_top(mil_w, (1 << 20), fun_f, arg);   // 2MB pad
 
   if ( 0 == u3h(why) ) {
     return why;
@@ -1633,6 +1656,11 @@ u3m_boot(c3_c* dir_c)
   */
   u3m_init();
 
+  /* In the worker, set the openssl memory allocation functions to always
+  ** work on the loom.
+  */
+  CRYPTO_set_mem_functions(u3a_malloc_ssl, u3a_realloc_ssl, u3a_free_ssl);
+
   /* Activate the storage system.
   */
   nuu_o = u3e_live(c3n, dir_c);
@@ -1742,7 +1770,7 @@ u3m_rock_load(c3_c* dir_c, c3_d evt_d)
       //  XX u3m_file bails, but we'd prefer to return errors
       //
       u3_noun fil = u3m_file(nam_c);
-      u3a_print_memory(stderr, "rock: load", u3r_met(3, fil));
+      u3a_print_memory(stderr, "rock: load", u3r_met(5, fil));
 
       u3_noun pro = u3m_soft(0, u3ke_cue, fil);
 
@@ -1821,42 +1849,52 @@ u3m_wipe(void)
 void
 u3m_reclaim(void)
 {
+  u3v_reclaim();
+  u3j_reclaim();
+  u3n_reclaim();
+  u3a_reclaim();
+}
+
+/* _cm_pack_rewrite(): trace through arena, rewriting pointers.
+*/
+static void
+_cm_pack_rewrite(void)
+{
+  //  XX fix u3a_rewrit* to support south roads
+  //
   c3_assert( &(u3H->rod_u) == u3R );
 
-  //  clear the u3v_wish cache
+  //  NB: these implementations must be kept in sync with u3m_reclaim();
+  //  anything not reclaimed must be rewritable
   //
-  //    NB: this will leak if not on the home road
-  //
-  u3z(u3A->yot);
-  u3A->yot = u3_nul;
+  u3v_rewrite_compact();
+  u3j_rewrite_compact();
+  u3n_rewrite_compact();
+  u3a_rewrite_compact();
+}
 
-  //  clear the memoization cache
-  //
-  u3h_free(u3R->cax.har_p);
-  u3R->cax.har_p = u3h_new();
+/* u3m_pack: compact (defragment) memory.
+*/
+c3_w
+u3m_pack(void)
+{
+  c3_w pre_w = u3a_open(u3R);
 
-  //  clear the jet battery hash cache
+  //  reclaim first, to free space, and discard anything we can't/don't rewrite
   //
-  u3h_free(u3R->jed.bas_p);
-  u3R->jed.bas_p = u3h_new();
+  u3m_reclaim();
 
-  //  re-establish the warm jet state
+  //  sweep the heap, finding and saving new locations
   //
-  //    XX might this reduce fragmentation?
-  //
-  // u3j_ream();
+  u3a_pack_seek(u3R);
 
-  //  clear the jet hank cache
+  //  trace roots, rewriting inner pointers
   //
-  u3h_walk(u3R->jed.han_p, u3j_free_hank);
-  u3h_free(u3R->jed.han_p);
-  u3R->jed.han_p = u3h_new();
+  _cm_pack_rewrite();
 
-  //  clear the bytecode cache
+  //  sweep the heap, relocating objects to their new locations
   //
-  //    We can't just u3h_free() -- the value is a post to a u3n_prog.
-  //    Note that this requires that the hank cache also be freed.
-  //
-  u3n_free();
-  u3R->byc.har_p = u3h_new();
+  u3a_pack_move(u3R);
+
+  return (u3a_open(u3R) - pre_w);
 }

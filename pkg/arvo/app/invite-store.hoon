@@ -44,8 +44,8 @@
     ^-  (quip card _this)
     =/  cards=(list card)
       ?+    path  (on-watch:def path)
-          [%all ~]         [%give %fact ~ %invite-initial !>(invites)]~
-          [%updates ~]     ~
+          [%all ~]      [%give %fact ~ %invite-update !>([%initial invites])]~
+          [%updates ~]  ~
           [%invitatory *]
         =/  inv=invitatory  (~(got by invites) t.path)
         [%give %fact ~ %invite-update !>([%invitatory inv])]~

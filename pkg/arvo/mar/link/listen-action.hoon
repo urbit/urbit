@@ -3,6 +3,7 @@
 /-  *link-listen-hook
 =,  dejs:format
 |_  act=action
+++  grad  %noun
 ++  grab
   |%
   ++  noun  action
