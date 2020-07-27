@@ -2,6 +2,8 @@ module Urbit.Vere.AmesNockWriter where
 
 import Urbit.Prelude
 
+import Urbit.Arvo.Event
+import Urbit.King.App
 import Network.Ames.Types
 import Urbit.Vere.Pier.Types
 
@@ -38,6 +40,23 @@ data NockWriter = NockWriter
   { nwUnackedMsgs :: TVar [(TMVar (Maybe Atom), UD)]
   }
 
+nockWriter'
+  :: HasPierEnv e
+  => AmesRouterWriterApi
+  -> ShipLife
+  -> RIO e ([Ev], RAcquire e (DriverApi AmesNockWriterEf))
+nockWriter' api who = do
+  ventQ :: TQueue EvErr <- newTQueueIO
+  env <- ask
+  let (bornEvs, startDriver) = nockWriter env api who (writeTQueue ventQ)
+
+  let runDriver = do
+        diOnEffect <- startDriver
+        let diEventSource = fmap RRWork <$> tryReadTQueue ventQ
+        pure (DriverApi {..})
+
+  pure (bornEvs, runDriver)
+
 
 -- The Nock Writer is a per-ship IO driver which plugs into the per-King Router
 -- infrastructure. It takes the message sending function from the Router and
@@ -53,7 +72,7 @@ nockWriter :: forall e
            -> AmesRouterWriterApi
            -> ShipLife
            -> (EvErr -> STM ())
-           -> ([AmesNockWriterEv], RAcquire e (AmesNockWriterEf -> IO ()))
+           -> ([Ev], RAcquire e (AmesNockWriterEf -> IO ()))
 nockWriter env api who enqueueEv = (initialEvs, runWriter)
   where
     -- TODO: This isn't going to work for the restart case. We'll have to

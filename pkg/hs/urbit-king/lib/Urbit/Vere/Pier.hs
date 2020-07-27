@@ -23,6 +23,7 @@ import RIO.Directory
 import Urbit.Arvo
 import Urbit.King.App
 import Urbit.Vere.Pier.Types
+import Network.Ames.Types
 
 import Control.Monad.STM      (retry)
 import System.Posix.Files     (ownerModes, setFileMode)
@@ -47,6 +48,7 @@ import qualified Urbit.Vere.Serf        as Serf
 import qualified Urbit.Vere.Term        as Term
 import qualified Urbit.Vere.Term.API    as Term
 import qualified Urbit.Vere.Term.Demux  as Term
+import qualified Urbit.Vere.AmesNockWriter as AmesNockWriter
 
 
 -- Initialize pier directory. --------------------------------------------------
@@ -261,8 +263,9 @@ pier
   -> TVar (Text -> IO ())
   -> MVar ()
   -> MultiEyreApi
+  -> AmesRouterWriterApi
   -> RAcquire PierEnv ()
-pier (serf, log) vSlog startedSig multi = do
+pier (serf, log) vSlog startedSig multi ames = do
   let logId = Log.identity log :: LogIdentity
   let ship  = who logId :: Ship
 
@@ -311,7 +314,7 @@ pier (serf, log) vSlog startedSig multi = do
     let err = atomically . Term.trace muxed . (<> "\r\n")
     let siz = TermSize { tsWide = 80, tsTall = 24 }
     let fak = isFake logId
-    drivers env multi ship fak compute (siz, muxed) err sigint
+    drivers env multi ames ship fak compute (siz, muxed) err sigint
 
   scrySig <- newEmptyTMVarIO
   onKill  <- view onKillPierSigL
@@ -413,6 +416,7 @@ drivers
   :: HasPierEnv e
   => e
   -> MultiEyreApi
+  -> AmesRouterWriterApi
   -> Ship
   -> Bool
   -> (RunReq -> STM ())
@@ -420,7 +424,7 @@ drivers
   -> (Text -> RIO e ())
   -> IO ()
   -> RAcquire e ([Ev], RAcquire e Drivers)
-drivers env multi who isFake plan termSys stderr serfSIGINT = do
+drivers env multi amesApi who isFake plan termSys stderr serfSIGINT = do
   (behnBorn, runBehn) <- rio Behn.behn'
   (termBorn, runTerm) <- rio (Term.term' termSys serfSIGINT)
   (amesBorn, runAmes) <- rio (Ames.ames' who isFake stderr)
@@ -428,7 +432,12 @@ drivers env multi who isFake plan termSys stderr serfSIGINT = do
   (clayBorn, runClay) <- rio Clay.clay'
   (irisBorn, runIris) <- rio Iris.client'
 
-  let initialEvents = mconcat [behnBorn,clayBorn,amesBorn,httpBorn,irisBorn,termBorn]
+  -- TODO: Need to deal with life numbers at this layer instead.
+  (kamsBorn, runKams) <-
+    rio (AmesNockWriter.nockWriter' amesApi (ShipLife who (Life 1)))
+
+  let initialEvents = mconcat [
+        behnBorn,clayBorn,amesBorn,httpBorn,irisBorn,termBorn,kamsBorn]
 
   let runDrivers = do
         behn <- runBehn

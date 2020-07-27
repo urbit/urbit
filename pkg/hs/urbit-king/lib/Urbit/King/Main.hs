@@ -86,6 +86,8 @@ import Urbit.Vere.Eyre.Multi (multiEyre, MultiEyreApi, MultiEyreConf(..))
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Serf
 import Urbit.King.App
+import Network.Ames.Router
+import Network.Ames.Types
 
 import Control.Concurrent     (myThreadId)
 import Control.Exception      (AsyncException(UserInterrupt))
@@ -185,11 +187,12 @@ tryBootFromPill
   -> Ship
   -> LegacyBootEvent
   -> MultiEyreApi
+  -> AmesRouterWriterApi
   -> RIO PierEnv ()
-tryBootFromPill oExit pill lite ship boot multi = do
+tryBootFromPill oExit pill lite ship boot multi ames = do
   mStart <- newEmptyMVar
   vSlog  <- logSlogs
-  runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart multi
+  runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart multi ames
  where
   bootedPier vSlog = do
     view pierPathL >>= lockFile
@@ -204,8 +207,9 @@ runOrExitImmediately
   -> Bool
   -> MVar ()
   -> MultiEyreApi
+  -> AmesRouterWriterApi
   -> RIO PierEnv ()
-runOrExitImmediately vSlog getPier oExit mStart multi = do
+runOrExitImmediately vSlog getPier oExit mStart multi ames = do
   rwith getPier (if oExit then shutdownImmediately else runPier)
  where
   shutdownImmediately :: (Serf, Log.EventLog) -> RIO PierEnv ()
@@ -216,7 +220,7 @@ runOrExitImmediately vSlog getPier oExit mStart multi = do
 
   runPier :: (Serf, Log.EventLog) -> RIO PierEnv ()
   runPier serfLog = do
-    runRAcquire (Pier.pier serfLog vSlog mStart multi)
+    runRAcquire (Pier.pier serfLog vSlog mStart multi ames)
 
 tryPlayShip
   :: Bool
@@ -224,11 +228,12 @@ tryPlayShip
   -> Maybe Word64
   -> MVar ()
   -> MultiEyreApi
+  -> AmesRouterWriterApi
   -> RIO PierEnv ()
-tryPlayShip exitImmediately fullReplay playFrom mStart multi = do
+tryPlayShip exitImmediately fullReplay playFrom mStart multi ames = do
   when fullReplay wipeSnapshot
   vSlog <- logSlogs
-  runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart multi
+  runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart multi ames
  where
   wipeSnapshot = do
     shipPath <- view pierPathL
@@ -475,40 +480,45 @@ newShip CLI.New{..} opts = do
   -}
   multi <- multiEyre (MultiEyreConf Nothing Nothing True)
 
-  case nBootType of
-    CLI.BootComet -> do
-      pill <- pillFrom nPillSource
-      putStrLn "boot: retrieving list of stars currently accepting comets"
-      starList <- dawnCometList
-      putStrLn ("boot: " ++ (tshow $ length starList) ++
-                " star(s) currently accepting comets")
-      putStrLn "boot: mining a comet"
-      eny <- io $ Sys.randomIO
-      let seed = mineComet (Set.fromList starList) eny
-      putStrLn ("boot: found comet " ++ renderShip (sShip seed))
-      bootFromSeed multi pill seed
-
-    CLI.BootFake name -> do
-      pill <- pillFrom nPillSource
-      ship <- shipFrom name
-      runTryBootFromPill multi pill name ship (Fake ship)
-
-    CLI.BootFromKeyfile keyFile -> do
-      text <- readFileUtf8 keyFile
-      asAtom <- case cordToUW (Cord $ T.strip text) of
-        Nothing -> error "Couldn't parse keyfile. Hint: keyfiles start with 0w?"
-        Just (UW a) -> pure a
-
-      asNoun <- cueExn asAtom
-      seed :: Seed <- case fromNoun asNoun of
-        Nothing -> error "Keyfile does not seem to contain a seed."
-        Just s  -> pure s
-
-      pill <- pillFrom nPillSource
-
-      bootFromSeed multi pill seed
+  -- TODO: Hack because RAcquire vs RIO
+  runRAcquire $ do
+    routerApi <- buildDefaultAmesRouter
+    rio (go multi routerApi)
 
   where
+    go multi ames = case nBootType of
+      CLI.BootComet -> do
+        pill <- pillFrom nPillSource
+        putStrLn "boot: retrieving list of stars currently accepting comets"
+        starList <- dawnCometList
+        putStrLn ("boot: " ++ (tshow $ length starList) ++
+                  " star(s) currently accepting comets")
+        putStrLn "boot: mining a comet"
+        eny <- io $ Sys.randomIO
+        let seed = mineComet (Set.fromList starList) eny
+        putStrLn ("boot: found comet " ++ renderShip (sShip seed))
+        bootFromSeed multi ames pill seed
+
+      CLI.BootFake name -> do
+        pill <- pillFrom nPillSource
+        ship <- shipFrom name
+        runTryBootFromPill multi ames pill name ship (Fake ship)
+
+      CLI.BootFromKeyfile keyFile -> do
+        text <- readFileUtf8 keyFile
+        asAtom <- case cordToUW (Cord $ T.strip text) of
+          Nothing -> error "Couldn't parse keyfile. Hint: keyfiles start with 0w?"
+          Just (UW a) -> pure a
+
+        asNoun <- cueExn asAtom
+        seed :: Seed <- case fromNoun asNoun of
+          Nothing -> error "Keyfile does not seem to contain a seed."
+          Just s  -> pure s
+
+        pill <- pillFrom nPillSource
+
+        bootFromSeed multi ames pill seed
+
     shipFrom :: Text -> RIO KingEnv Ship
     shipFrom name = case Ob.parsePatp name of
       Left x  -> error "Invalid ship name"
@@ -527,8 +537,9 @@ newShip CLI.New{..} opts = do
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> pure x
 
-    bootFromSeed :: MultiEyreApi -> Pill -> Seed -> RIO KingEnv ()
-    bootFromSeed multi pill seed = do
+    bootFromSeed :: MultiEyreApi -> AmesRouterWriterApi -> Pill -> Seed
+                 -> RIO KingEnv ()
+    bootFromSeed multi ames pill seed = do
       ethReturn <- dawnVent seed
 
       case ethReturn of
@@ -536,16 +547,16 @@ newShip CLI.New{..} opts = do
         Right dawn -> do
           let ship = sShip $ dSeed dawn
           name <- nameFromShip ship
-          runTryBootFromPill multi pill name ship (Dawn dawn)
+          runTryBootFromPill multi ames pill name ship (Dawn dawn)
 
     -- Now that we have all the information for running an application with a
     -- PierConfig, do so.
-    runTryBootFromPill multi pill name ship bootEvent = do
+    runTryBootFromPill multi ames pill name ship bootEvent = do
       vKill <- view kingEnvKillSignal
       let pierConfig = toPierConfig (pierPath name) opts
       let networkConfig = toNetworkConfig opts
       runPierEnv pierConfig networkConfig vKill $
-        tryBootFromPill True pill nLite ship bootEvent multi
+        tryBootFromPill True pill nLite ship bootEvent multi ames
 ------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
 runShipEnv :: CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a -> RIO KingEnv a
@@ -556,8 +567,9 @@ runShipEnv (CLI.Run pierPath) opts vKill act = do
   netConfig = toNetworkConfig opts
 
 runShip
-  :: CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> RIO PierEnv ()
-runShip (CLI.Run pierPath) opts daemon multi = do
+  :: CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> AmesRouterWriterApi
+  -> RIO PierEnv ()
+runShip (CLI.Run pierPath) opts daemon multi ames = do
     mStart  <- newEmptyMVar
     if daemon
     then runPier mStart
@@ -581,6 +593,7 @@ runShip (CLI.Run pierPath) opts daemon multi = do
         (CLI.oDryFrom opts)
         mStart
         multi
+        ames
 
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
@@ -674,15 +687,15 @@ main = do
   TODO Use logging system instead of printing.
 -}
 runShipRestarting
-  :: CLI.Run -> CLI.Opts -> MultiEyreApi -> RIO KingEnv ()
-runShipRestarting r o multi = do
+  :: CLI.Run -> CLI.Opts -> MultiEyreApi -> AmesRouterWriterApi -> RIO KingEnv ()
+runShipRestarting r o multi ames = do
   let pier = pack (CLI.rPierPath r)
-      loop = runShipRestarting r o multi
+      loop = runShipRestarting r o multi ames
 
   onKill    <- view onKillKingSigL
   vKillPier <- newEmptyTMVarIO
 
-  tid <- asyncBound $ runShipEnv r o vKillPier $ runShip r o True multi
+  tid <- asyncBound $ runShipEnv r o vKillPier $ runShip r o True multi ames
 
   let onShipExit = Left <$> waitCatchSTM tid
       onKillRequ = Right <$> onKill
@@ -707,10 +720,11 @@ runShipRestarting r o multi = do
   TODO This is messy and shared a lot of logic with `runShipRestarting`.
 -}
 runShipNoRestart
-  :: CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> RIO KingEnv ()
-runShipNoRestart r o d multi = do
+  :: CLI.Run -> CLI.Opts -> Bool -> MultiEyreApi -> AmesRouterWriterApi
+  -> RIO KingEnv ()
+runShipNoRestart r o d multi ames = do
   vKill  <- view kingEnvKillSignal -- killing ship same as killing king
-  tid    <- asyncBound (runShipEnv r o vKill $ runShip r o d multi)
+  tid    <- asyncBound (runShipEnv r o vKill $ runShip r o d multi ames)
   onKill <- view onKillKingSigL
 
   let pier = pack (CLI.rPierPath r)
@@ -752,19 +766,27 @@ runShips CLI.KingOpts {..} ships = do
   -}
   multi <- multiEyre meConf
 
-  go multi ships
+  -- TODO: Fix up monads so everything is in RAcquire here. Also, why not
+  -- multiEyre above? Why isn't that RAcquire?
+  runRAcquire $ do
+    routerApi <- buildDefaultAmesRouter
+    rio (go multi routerApi ships)
  where
-  go :: MultiEyreApi -> [(CLI.Run, CLI.Opts, Bool)] ->  RIO KingEnv ()
-  go me = \case
+  go :: MultiEyreApi
+     -> AmesRouterWriterApi
+     -> [(CLI.Run, CLI.Opts, Bool)]
+     ->  RIO KingEnv ()
+  go me ames = \case
     []    -> pure ()
-    [rod] -> runSingleShip rod me
-    ships -> runMultipleShips (ships <&> \(r, o, _) -> (r, o)) me
+    [rod] -> runSingleShip rod me ames
+    ships -> runMultipleShips (ships <&> \(r, o, _) -> (r, o)) me ames
 
 
 -- TODO Duplicated logic.
-runSingleShip :: (CLI.Run, CLI.Opts, Bool) -> MultiEyreApi -> RIO KingEnv ()
-runSingleShip (r, o, d) multi = do
-  shipThread <- async (runShipNoRestart r o d multi)
+runSingleShip :: (CLI.Run, CLI.Opts, Bool) -> MultiEyreApi -> AmesRouterWriterApi
+              -> RIO KingEnv ()
+runSingleShip (r, o, d) multi ames = do
+  shipThread <- async (runShipNoRestart r o d multi ames)
 
   {-
     Wait for the ship to go down.
@@ -784,10 +806,11 @@ runSingleShip (r, o, d) multi = do
     pure ()
 
 
-runMultipleShips :: [(CLI.Run, CLI.Opts)] -> MultiEyreApi -> RIO KingEnv ()
-runMultipleShips ships multi = do
+runMultipleShips :: [(CLI.Run, CLI.Opts)] -> MultiEyreApi -> AmesRouterWriterApi
+                 -> RIO KingEnv ()
+runMultipleShips ships multi ames = do
   shipThreads <- for ships $ \(r, o) -> do
-    async (runShipRestarting r o multi)
+    async (runShipRestarting r o multi ames)
 
   {-
     Since `spin` never returns, this will run until the main

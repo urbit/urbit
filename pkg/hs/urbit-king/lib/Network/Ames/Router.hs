@@ -1,4 +1,4 @@
-module Network.Ames.Router (buildRouter) where
+module Network.Ames.Router (buildRouter, buildDefaultAmesRouter) where
 
 import Urbit.Prelude
 
@@ -40,8 +40,9 @@ writerJoinRouter impl writer ship = do
 
 writerLeaveRouter :: RouterImpl -> WriterLeaveRouter
 writerLeaveRouter impl ship = do
-  atomically $ modifyTVar (riShips impl) (M.delete ship)
-
+  atomically $ do
+    modifyTVar (riShips impl) (M.delete ship)
+    modifyTVar (riKeys impl) (M.delete ship)
 
 
 
@@ -68,6 +69,13 @@ buildRouter =
       , arwaJoinRouter = (writerJoinRouter impl)
       , arwaLeaveRouter = (writerLeaveRouter impl)
       }
+
+
+buildDefaultAmesRouter :: RAcquire e AmesRouterWriterApi
+buildDefaultAmesRouter = do
+  (transportRouterApi, routerWriterApi) <- buildRouter
+  pure routerWriterApi
+
 
 {-
 
