@@ -5334,21 +5334,23 @@
   ::                                                    ::::
 ++  format  ^?
   |%
-  ::                                                    ::  ++to-wain:format
-  ++  to-wain                                           ::  atom to line list
+  ::  0 ending a line (invalid @t) is not preserved     ::  ++to-wain:format
+  ++  to-wain                                           ::  @t to line list
     ~%  %leer  ..is  ~
-    |=  txt=@
+    |=  txt=@t
     =/  len=@  (met 3 txt)
+    =/  cut  =+(cut -(a 3, c 1, d txt))
+    =/  sub  sub
     =|  [i=@ out=(list @t)]
     |-  ^+  out
     =+  |-  ^-  j=@
         ?:  ?|  =(i len)
-                =(10 (cut 3 [i 1] txt))
+                =(10 (cut(b i)))
             ==
           i
         $(i +(i))
     =.  out  :_  out
-      (cut 3 [i (sub j i)] txt)
+      (cut(b i, c (sub j i)))
     ?:  =(j len)
       (flop out)
     $(i +(j))
