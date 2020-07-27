@@ -1811,12 +1811,16 @@
       (de-path:resource writers.book)
     =/  =group
       (need (scry-group:grup rid))
-    :_  state(books (~(del by books) who.act book.act))
-    :~  `card`[%pass wir %agent [who.act %publish] %leave ~]
-        `card`[%give %fact [/primary]~ %publish-primary-delta !>(del)]
-        (group-proxy-poke who.act %remove-members rid (sy our.bol ~))
-        (group-poke %remove-group rid ~)
-    ==
+    =/  cards=(list card)
+      :~  [%pass wir %agent [who.act %publish] %leave ~]
+          [%give %fact [/primary]~ %publish-primary-delta !>(del)]
+      ==
+    =?  cards  hidden.group
+      %+  weld  cards
+      :~  (group-proxy-poke who.act %remove-members rid (sy our.bol ~))
+          (group-poke %remove-group rid ~)
+      ==
+    [cards state(books (~(del by books) who.act book.act))]
   ::  %read
   ::
       %read
