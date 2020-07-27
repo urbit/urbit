@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { ChannelItem } from './channel-item';
 
 export class GroupItem extends Component {
@@ -14,10 +15,10 @@ export class GroupItem extends Component {
     }
 
     const channels = props.channels ? props.channels : [];
-    const first = (props.index === 0) ? 'pt1' : 'pt4';
+    const first = (props.index === 0) ? 'mt1 ' : 'mt6 ';
 
     const channelItems = channels.sort((a, b) => {
-      if (props.index === '/~/') {
+      if (props.index === 'dm') {
         const aPreview = props.messagePreviews[a];
         const bPreview = props.messagePreviews[b];
         const aWhen = aPreview ? aPreview.when : 0;
@@ -63,10 +64,27 @@ export class GroupItem extends Component {
         />
       );
     });
+
+    if (channelItems.length === 0) {
+      channelItems.push(<p className="gray2 mt4 f9 tc">No direct messages</p>);
+    }
+
+    let dmLink = <div />;
+
+    if (props.index === 'dm') {
+      dmLink = <Link
+                className="absolute right-0 f9 top-0 mr4 green2 bg-gray5 bg-gray1-d b--transparent br1"
+                to="/~chat/new/dm"
+                style={{ padding: '0rem 0.2rem' }}
+               >
+               + DM
+               </Link>;
+    }
     return (
-      <div className={first}>
-      <p className="f9 ph4 fw6 pb2 gray3">{title}</p>
-      {channelItems}
+      <div className={first + 'relative'}>
+      <p className="f9 ph4 gray3">{title}</p>
+        {dmLink}
+        {channelItems}
       </div>
     );
   }

@@ -98,11 +98,13 @@
           [crds old]
         =/  [pax=path =ship]
           i.syncs
+        ?>  ?=(^ pax)
+        ?.  =('~' i.pax)
+          $(syncs t.syncs) 
+        =/  new-path=path
+          t.pax
         =.  synced.old
           (~(del by synced.old) pax)
-        =/  new-path=path
-          ?>  ?=(^ pax)
-          ?:(=('~' i.pax) t.pax pax)
         ?.  =(ship our.bol)
           =.  synced.old
             (~(put by synced.old) new-path ship)

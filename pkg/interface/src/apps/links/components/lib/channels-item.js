@@ -16,7 +16,7 @@ export class ChannelsItem extends Component {
 
     return (
       <Link to={makeRoutePath(props.link)}>
-        <div className={'w-100 v-mid f9 ph4 z1 pv1 relative ' + selectedClass}>
+        <div className={'w-100 v-mid f9 ph5 z1 pv1 relative ' + selectedClass}>
           <p className="f9 dib">{props.name}</p>
           <p className="f9 dib fr">
             {unseenCount}

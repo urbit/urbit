@@ -6,6 +6,8 @@
 +$  versioned-state
   $%  state-zero
       state-one
+      state-two
+      state-three
   ==
 ::
 +$  rolodex-0  (map path contacts-0)
@@ -29,9 +31,17 @@
   $:  %1
       =rolodex
   ==
++$  state-two
+  $:  %2
+     =rolodex
+  ==
++$  state-three
+  $:  %3
+     =rolodex
+  ==
 --
 ::
-=|  state-one
+=|  state-three
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -47,8 +57,45 @@
   ++  on-load
     |=  old-vase=vase
     =/  old  !<(versioned-state old-vase)
+    =|  cards=(list card)
+    |-
+    ?:  ?=(%3 -.old)
+      [cards this(state old)]
+    ?:  ?=(%2 -.old)
+      %_    $
+        -.old  %3
+      ::
+          rolodex.old
+        =/  def
+          (~(get by rolodex.old) /ship/~/default)
+        ?~  def
+          rolodex.old
+        =.  rolodex.old
+          (~(del by rolodex.old) /ship/~/default)
+        =.  rolodex.old
+          (~(put by rolodex.old) /~/default u.def)
+        rolodex.old
+      ==
     ?:  ?=(%1 -.old)
-      [~ this(state old)]
+      =/  new-rolodex=^rolodex
+        %-  malt
+        %+  turn
+          ~(tap by rolodex.old)
+        |=  [=path =contacts]
+        [ship+path contacts]
+      %_    $
+        old  [%2 new-rolodex]
+        ::
+          cards
+        =/  paths
+          %+  turn
+            ~(val by sup.bol)
+          |=([=ship =path] path)
+        ?~  paths  cards
+        :_  cards
+        [%give %kick paths ~]
+      ==
+
     =/  new-rolodex=^rolodex
       %-  ~(run by rolodex.old)
       |=  cons=contacts-0
@@ -64,7 +111,7 @@
           color.con
           ~
       ==
-    [~ this(state [%1 new-rolodex])]
+    $(old [%1 new-rolodex])
   ::
   ++  on-poke
     |=  [=mark =vase]

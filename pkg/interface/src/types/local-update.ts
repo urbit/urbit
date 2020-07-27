@@ -3,7 +3,8 @@ import { Path } from './noun';
 export type LocalUpdate =
   LocalUpdateSidebarToggle
 | LocalUpdateSelectedGroups
-| LocalUpdateSetDark;
+| LocalUpdateSetDark
+| LocalUpdateBaseHash;
 
 interface LocalUpdateSidebarToggle {
   sidebarToggle: boolean;
@@ -15,6 +16,10 @@ interface LocalUpdateSelectedGroups {
 
 interface LocalUpdateSetDark {
   setDark: boolean;
+}
+
+interface LocalUpdateBaseHash {
+  baseHash: string;
 }
 
 export type SelectedGroup = [Path, string];

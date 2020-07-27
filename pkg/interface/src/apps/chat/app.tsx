@@ -74,6 +74,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
       unreads[stat] = Boolean(unread);
       if (
         unread &&
+        stat in associations.chat &&
         (selectedGroups.length === 0 ||
           selectedGroups
             .map((e) => {
@@ -88,7 +89,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
 
     if (totalUnreads !== this.totalUnreads) {
       document.title =
-        totalUnreads > 0 ? `OS1 - Chat (${totalUnreads})` : 'OS1 - Chat';
+        totalUnreads > 0 ? `(${totalUnreads}) OS1 - Chat` : 'OS1 - Chat';
       this.totalUnreads = totalUnreads;
     }
 
@@ -147,7 +148,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
         />
         <Route
           exact
-          path="/~chat/new/dm/:ship"
+          path="/~chat/new/dm/:ship?"
           render={(props) => {
             const ship = props.match.params.ship;
 

@@ -103,6 +103,7 @@
       %metadata-hook
       %s3-store
       %file-server
+      %glob
       %graph-store
       %graph-push-hook
       %graph-pull-hook
@@ -231,6 +232,8 @@
   =?  ..on-load  (lte hood-version %5)
     (se-born | %home %file-server)
   =?  ..on-load  (lte hood-version %7)
+    (se-born | %home %glob)
+  =?  ..on-load  (lte hood-version %8)
     =>  (se-born | %home %group-push-hook)
     (se-born | %home %group-pull-hook)
   ..on-load

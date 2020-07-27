@@ -230,6 +230,15 @@
         ?:  =('~' i.writers.prev)
           t.writers.prev
         writers.prev
+      ::
+          subscribers
+        ?>  ?=(^ subscribers.prev)
+        :-  %ship
+        %+  scag  2
+        ?:  =('~' i.subscribers.prev)
+          t.subscribers.prev
+        subscribers.prev
+
       ==
     ::
     ++  convert-comment-2-3

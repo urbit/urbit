@@ -492,11 +492,11 @@
 ++  v-ames
   |%
   ++  peers
-    (scry (map ship ?(%alien %known)) %a %peers ~)
+    (scry (map ship ?(%alien %known)) %ax %$ /peers)
   ::
   ++  peer
     |=  who=ship
-    (scry ship-state:ames %a %peer /(scot %p who))
+    (scry ship-state:ames %ax %$ /peers/(scot %p who))
   ::
   ++  peer-to-json
     =,  ames
@@ -768,7 +768,7 @@
 ++  v-behn
   |%
   ++  timers
-    (scry ,(list [date=@da =duct]) %b %timers ~)
+    (scry ,(list [date=@da =duct]) %bx %$ /debug/timers)
   --
 ::
 ::  clay

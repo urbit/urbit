@@ -1,7 +1,9 @@
+import { hot } from 'react-hot-loader/root';
+import 'react-hot-loader';
 import * as React from 'react';
 import { BrowserRouter as Router, Route, withRouter, Switch } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
- 
+
 import './css/indigo-static.css';
 import './css/fonts.css';
 import { light, dark, inverted, paperDark } from '@tlon/indigo-react';
@@ -33,7 +35,6 @@ import GlobalApi from './api/global';
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
-  line-height: ${p => p.theme.lineHeights.regular};
   height: 100%;
   width: 100%;
   padding: 0;
@@ -46,7 +47,7 @@ const Content = styled.div`
 
 const StatusBarWithRouter = withRouter(StatusBar);
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.ship = window.ship;
@@ -67,8 +68,9 @@ export default class App extends React.Component {
     this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
     this.api.local.setDark(this.themeWatcher.matches);
     this.themeWatcher.addListener(this.updateTheme);
+    this.api.local.getBaseHash();
   }
-  
+
   componentWillUnmount() {
     this.themeWatcher.removeListener(this.updateTheme);
   }
@@ -93,6 +95,8 @@ export default class App extends React.Component {
             associations={associations}
             invites={this.state.invites}
             api={this.api}
+            connection={this.state.connection}
+            subscription={this.subscription}
             />
             <Content>
             <Switch>
@@ -166,4 +170,6 @@ export default class App extends React.Component {
     );
   }
 }
+
+export default process.env.NODE_ENV === 'production' ? App : hot(App);
 

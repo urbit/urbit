@@ -205,7 +205,7 @@
     =/  wire
       (make-wire /store)
     :_  state
-    [%pass wire %agent [our.bowl %group-store] %poke update-mark.config vase]~
+    [%pass wire %agent [our.bowl store-name.config] %poke update-mark.config vase]~
   ::
   ++  poke-hook-action
     |=  =action

@@ -61,8 +61,7 @@ export default class PublishApp extends React.Component {
       .value();
 
     if (this.unreadTotal !== unreadTotal) {
-      document.title =
-        unreadTotal > 0 ? `OS1 - Publish (${unreadTotal})` : 'OS1 - Publish';
+      document.title = unreadTotal > 0 ? `(${unreadTotal}) OS1 - Publish` : 'OS1 - Publish';
       this.unreadTotal = unreadTotal;
     }
 

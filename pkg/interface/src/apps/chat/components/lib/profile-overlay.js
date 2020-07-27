@@ -54,7 +54,7 @@ export class ProfileOverlay extends Component {
       ? '/~groups/me'
       : `/~groups/view${association['group-path']}/${window.ship}`;
 
-    const img = (contact && (contact.avatar !== null))
+    let img = (contact && (contact.avatar !== null))
       ? <img src={contact.avatar} height={160} width={160} className="brt2 dib" />
       : <Sigil
         ship={ship}
@@ -63,6 +63,10 @@ export class ProfileOverlay extends Component {
         classes="brt2"
         svgClass="brt2"
         />;
+
+      if (!group.hidden) {
+        img = <Link to={`/~groups/view${association['group-path']}/${ship}`}>{img}</Link>;
+      }
 
     return (
       <div

@@ -9,9 +9,7 @@
 #include <uv.h>
 #include <sigsegv.h>
 #include <stdlib.h>
-#include <ncurses/curses.h>
 #include <termios.h>
-#include <ncurses/term.h>
 #include <dirent.h>
 #include <openssl/conf.h>
 #include <openssl/engine.h>
@@ -20,6 +18,7 @@
 #include <h2o.h>
 #include <curl/curl.h>
 #include <argon2.h>
+#include <lmdb.h>
 
 #define U3_GLOBAL
 #define C3_GLOBAL
@@ -97,9 +96,17 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.kno_w = DefaultKernel;
 
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:A:H:I:C:w:u:e:F:k:p:LljacdgqstvxPDRS")) )
+                 "X:Y:G:J:B:K:A:H:I:C:w:u:e:F:k:n:p:r:LljacdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
+      case 'X': {
+        u3_Host.ops_u.pek_c = strdup(optarg);
+        break;
+      }
+      case 'Y': {
+        u3_Host.ops_u.puk_c = strdup(optarg);
+        break;
+      }
       case 'J': {
         u3_Host.ops_u.lit_c = strdup(optarg);
         break;
@@ -162,6 +169,10 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.key_c = strdup(optarg);
         break;
       }
+      case 'n': {
+        u3_Host.ops_u.til_c = strdup(optarg);
+        break;
+      }
       case 'p': {
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
@@ -171,6 +182,10 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'R': {
         u3_Host.ops_u.rep = c3y;
         return c3y;
+      }
+      case 'r': {
+        u3_Host.ops_u.roc_c = strdup(optarg);
+        break;
       }
       case 'L': { u3_Host.ops_u.net = c3n; break; }
       case 'l': { u3_Host.ops_u.lit = c3y; break; }
@@ -398,7 +413,9 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-u url        URL from which to download pill\n",
     "-v            Verbose\n",
     "-w name       Boot as ~name\n",
+    "-X path       Scry, jam to file, then exit\n"
     "-x            Exit immediately\n",
+    "-Y file       Optional name of jamfile (for -X)\n"
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
@@ -449,7 +466,6 @@ report(void)
          (libsigsegv_version >> 8) & 0xff,
          libsigsegv_version & 0xff);
   printf("openssl: %s\n", SSLeay_version(SSLEAY_VERSION));
-  printf("curses: %s\n", curses_version());
   printf("libuv: %s\n", uv_version_string());
   printf("libh2o: %d.%d.%d\n",
          H2O_LIBRARY_VERSION_MAJOR,
@@ -474,19 +490,7 @@ _stop_exit(c3_i int_i)
   //  explicit fprintf to avoid allocation in u3l_log
   //
   fprintf(stderr, "\r\n[received keyboard stop signal, exiting]\r\n");
-  u3_daemon_bail();
-}
-
-/* _stop_signal(): handle termination signal.
-*/
-static void
-_stop_signal(c3_i int_i)
-{
-  //  if we have a pier, unmap the event log before dumping core
-  //
-  if ( 0 != u3K.len_w ) {
-    u3_pier_db_shutdown(u3_pier_stub());
-  }
+  u3_king_bail();
 }
 
 /*
@@ -584,7 +588,7 @@ _fork_into_background_process()
 static void
 _stop_on_boot_completed_cb()
 {
-  u3_pier_exit(u3_pier_stub());
+  u3_king_exit();
 }
 
 c3_i
@@ -602,12 +606,6 @@ main(c3_i   argc,
   c3_i worker_exe_len = 1 + strlen(argv[0]) + strlen("-worker");
   u3_Host.wrk_c = c3_malloc(worker_exe_len);
   snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
-
-  // Set TERMINFO_DIRS environment variable
-  c3_i terminfo_len = 1 + strlen(argv[0]) + strlen("-terminfo");
-  c3_c terminfo_dir[terminfo_len];
-  snprintf(terminfo_dir, terminfo_len, "%s-terminfo", argv[0]);
-  setenv("TERMINFO_DIRS", terminfo_dir, 1);
 
   if ( c3y == u3_Host.ops_u.dem ) {
     _fork_into_background_process();
@@ -650,10 +648,6 @@ main(c3_i   argc,
   //    Configured here using signal() so as to be immediately available.
   //
   signal(SIGTSTP, _stop_exit);
-
-  //  Cleanup on SIGABRT.
-  //
-  signal(SIGABRT, _stop_signal);
 
   printf("~\n");
   //  printf("welcome.\n");
@@ -768,7 +762,7 @@ main(c3_i   argc,
       exit(1);
     }
 
-    u3_daemon_commence();
+    u3_king_commence();
 
     //  uninitialize curl
     //

@@ -199,9 +199,7 @@
         (mean >mote.u.dud< tang.u.dud)
       ?:  =(/sys/lyv wire)
         (molt duct ~)
-      ::  TODO: test this or remove and assert /sys/lyv
-      ::
-      (molt duct `[duct %pass wire %b %huck !>(sign)])
+      (molt duct `[duct %pass wire %b %huck sign])
     ::
     ++  load
       |^
@@ -622,7 +620,12 @@
     %+  roll  nex
     |=  [[=care:clay =^path] cor=_mo-core]
     ^+  cor
-    ?>  =(%a care)
+    ::  We throw away %z results because we only have them to guarantee
+    ::  molting.  Clay will tell us if e.g. changing hoon.hoon affects
+    ::  the result of a particular app (usually it will).
+    ::
+    ?.  =(%a care)
+      cor
     =/  dap  dap:;;([%app dap=@tas %hoon ~] path)
     =/  rag  (mo-scry-agent-cage dap p.sign-arvo)
     ?:  ?=(%| -.rag)
@@ -752,14 +755,13 @@
   ::
   ++  mo-handle-use
     ~/  %mo-handle-use
-    |=  [=path hin=(hypo sign-arvo)]
+    |=  [=path =sign-arvo]
     ^+  mo-core
     ::
     ?.  ?=([@ @ *] path)
       ~&  [%mo-handle-use-bad-path path]
       !!
     ::
-    =/  =sign-arvo  q.hin
     ?.  ?=([?(%g %b) %unto *] sign-arvo)
       =/  app
         =/  =term  i.path
@@ -1509,7 +1511,7 @@
       =.  ap-core
         (ap-pass wire %agent dock %leave ~)
       =/  way  [%out (scot %p p.dock) q.dock wire]
-      (ap-pass way %arvo %b %huck !>([%unto %kick ~]))
+      (ap-pass way %arvo %b %huck `sign-arvo`[%g %unto %kick ~])
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
@@ -1737,7 +1739,7 @@
 ::
 ++  take
   ~/  %gall-take
-  |=  [=wire =duct dud=(unit goof) hin=(hypo sign-arvo)]
+  |=  [=wire =duct dud=(unit goof) typ=type syn=sign-arvo]
   ^-  [(list move) _gall-payload]
   ?^  dud
     ~&(%gall-take-dud ((slog tang.u.dud) [~ gall-payload]))
@@ -1745,13 +1747,11 @@
     [~ gall-payload]
   ::
   ~|  [%gall-take-failed wire]
-  ::
   ?>  ?=([?(%sys %use) *] wire)
-  =/  mo-core  (mo-abed:mo duct)
-  =/  =sign-arvo  q.hin
-  =>  ?-  i.wire
-        %sys  (mo-handle-sys:mo-core t.wire sign-arvo)
-        %use  (mo-handle-use:mo-core t.wire hin)
-      ==
-  mo-abet
+  =<  mo-abet
+  %.  [t.wire ?:(?=([%b %heck *] syn) syn.syn syn)]
+  ?-  i.wire
+    %sys  mo-handle-sys:(mo-abed:mo duct)
+    %use  mo-handle-use:(mo-abed:mo duct)
+  ==
 --

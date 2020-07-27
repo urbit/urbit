@@ -21,8 +21,8 @@
 ::  /app-name/%app-name                            associations for app
 ::  /group/%group-path                             associations for group
 ::
-/-  *metadata-store
-/+  *metadata-json, default-agent, verb, dbug
+/-  *metadata-store, *metadata-hook
+/+  *metadata-json, default-agent, verb, dbug, resource
 |%
 +$  card  card:agent:gall
 ::
@@ -44,13 +44,19 @@
       state-base
   ==
 ::
++$  state-two
+  $:  %2
+      state-base
+  ==
+::
 +$  versioned-state
   $%  state-zero
       state-one
+      state-two
   ==
 --
 ::
-=|  state-one
+=|  state-two
 =*  state  -
 %+  verb  |
 %-  agent:dbug
@@ -69,9 +75,26 @@
     ^-  (quip card _this)
     =/  old
       !<(versioned-state vase)
-    ?:  ?=(%1 -.old)
-      `this(state old)
+    =|  cards=(list card)
+    |-
     |^
+    ?:  ?=(%2 -.old)
+      [cards this(state old)]
+    ?:  ?=(%1 -.old)
+      %_   $
+        old  [%2 +.old]
+      ::
+          cards
+        %+  turn
+          ~(tap in ~(key by group-indices.old))
+        |=  =group-path
+        ^-  card
+        =/  rid=resource
+          (de-path:resource group-path)
+        ?:  =(our.bowl entity.rid)
+          (poke-md-hook %add-owned group-path)
+        (poke-md-hook %add-synced entity.rid group-path)
+      ==
     =/  new-state=state-one
       %*  .  *state-one
         associations      (migrate-associations associations.old)
@@ -79,7 +102,15 @@
         app-indices       (migrate-app-indices app-indices.old)
         resource-indices  (migrate-resource-indices resource-indices.old)
       ==
-    `this(state new-state)
+    $(old new-state)
+    ::
+    ++  poke-md-hook
+      |=  act=metadata-hook-action
+      ^-  card
+      =/  =cage
+        :_  !>(act)
+        %metadata-hook-action
+      [%pass / %agent [our.bowl %metadata-hook] %poke cage]
     ::
     ++  new-group-path
       |=  =group-path
@@ -96,9 +127,11 @@
     ++  migrate-md-resource
       |=  md-resource
       ^-  md-resource
-      ?.  =(%chat app-name)
-        [app-name app-path]
-      [%chat (new-app-path app-path)]
+      ?:  =(%chat app-name)
+        [%chat (new-app-path app-path)]
+      ?:  =(%contacts app-name)
+         [%contacts ship+app-path]
+      [app-name app-path]
     ::
     ++  migrate-resource-indices
       |=  resource-indices=(jug md-resource group-path)
@@ -120,9 +153,11 @@
       %-  ~(run in indices)
       |=  [=group-path =app-path]
       :-  (new-group-path group-path)
-      ?.  =(%chat app)
-         app-path
-      (new-app-path app-path)
+      ?:  =(%chat app)
+        (new-app-path app-path)
+      ?:  =(%contacts app)
+        ship+app-path
+      app-path
     ::
     ++  migrate-group-indices
       |=  group-indices=(jug group-path md-resource)

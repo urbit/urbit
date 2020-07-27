@@ -1,6 +1,13 @@
+stages:
+  - compile
+  # Don't run the combine stage in pull requests, because deploy is disabled there.
+  - name: combine
+    if: type != pull_request
+
 jobs:
   include:
-  - os: linux
+  - stage: compile
+    os: linux
     language: nix
     nix: 2.3.6
     before_install:
@@ -15,7 +22,8 @@ jobs:
       - make release
       - sh/ci-tests
 
-  - os: linux
+  - stage: compile
+    os: linux
     language: generic
     env: STACK_YAML=pkg/hs/stack.yaml
     cache:
@@ -32,7 +40,8 @@ jobs:
       - stack test
       - sh/release-king-linux64-dynamic
 
-  - os: osx
+  - stage: compile
+    os: osx
     language: generic
     sudo: required
     env: STACK_YAML=pkg/hs/stack.yaml
@@ -49,6 +58,12 @@ jobs:
     script:
       - stack test
       - sh/release-king-darwin-dynamic
+
+  - stage: combine
+    os: linux
+    language: generic
+    script:
+      - sh/combine-release-builds
 
 deploy:
   - skip_cleanup: true
