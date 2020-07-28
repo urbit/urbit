@@ -3,8 +3,8 @@
 /-  *graph-store
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[=uid =signatures ~] ~]
+        [[[=resource =index] =signatures ~] ~]
     ==
 :-  %graph-update
 ^-  update
-[%0 now [%add-signatures uid signatures]]
+[%0 now [%add-signatures [resource index] signatures]]
