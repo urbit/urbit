@@ -22,6 +22,8 @@
 #include <vere/vere.h>
 #include <vere/serf.h>
 
+#include "ur/hashcons.h"
+
 static u3_serf   u3V;             //  one serf per process
 static u3_moat inn_u;             //  input stream
 static u3_mojo out_u;             //  output stream
@@ -288,6 +290,421 @@ _cw_queu(c3_i argc, c3_c* argv[])
   }
 }
 
+
+//  stack frame for recording head vs tail iteration
+//
+//    In Hoon, this structure would be as follows:
+//
+//    $%  [%root ~]
+//        [%head cell=^]
+//        [%tail cell=^ hed-mug=@]
+//    ==
+//
+
+#define STACK_ROOT 0
+#define STACK_HEAD 1
+#define STACK_TAIL 2
+
+typedef struct ur_temp_s
+{
+  uint64_t prev;
+  uint64_t size;
+  void    *base;
+  void     *top;
+} ur_temp_t;
+
+void
+ur_temp_init(ur_temp_t  *t)
+{
+  uint64_t fib19 = 4181, fib20 = 6765;
+
+  t->prev = fib19;
+  t->size = fib20;
+  t->base = malloc(fib20);
+  t->top  = t->base;
+}
+
+void*
+ur_temp_push(ur_temp_t *t, size_t wide)
+{
+  uint64_t fill = t->top - t->base;
+  uint64_t grow = t->size + wide;
+
+  if ( fill > (t->size + wide) ) {
+    uint64_t next = t->prev + t->size;
+    t->base = realloc(t->base, next);
+    t->top  = t->base + fill;
+  }
+
+  {
+    void* ptr = t->top;
+    t->top += wide;
+    return ptr;
+  }
+}
+
+void*
+ur_temp_peek(ur_temp_t *t, size_t wide)
+{
+  return t->top - wide;
+}
+
+void
+ur_temp_pop(ur_temp_t *t, size_t wide)
+{
+  t->top -= wide;
+  assert( t->top >= t->base );
+}
+
+typedef struct _ur_frame_s
+{
+  c3_y      tag_y;
+  u3a_cell* cel_u;
+  ur_nref     ref;
+} _ur_frame_t;
+
+typedef struct _ur_stack_s
+{
+  uint32_t prev;
+  uint32_t size;
+  uint32_t fill;
+  _ur_frame_t *entries;
+} _ur_stack_t;
+
+static inline void
+_stack_push(_ur_stack_t *s, c3_y tag_y, u3a_cell* cel_u, ur_nref ref)
+{
+  if ( s->fill == s->size ) {
+    uint32_t next = s->prev + s->size;
+    s->entries = realloc(s->entries, next * sizeof(_ur_frame_t));
+    s->prev = s->size;
+    s->size = next;
+  }
+
+  _ur_frame_t* fam_u = &(s->entries[s->fill++]);
+  fam_u->tag_y = tag_y;
+  fam_u->cel_u = cel_u;
+  fam_u->ref   = ref;
+}
+
+static ur_nref
+_from_loom(ur_root_t *r, u3_noun a)
+{
+  ur_nref   ref;
+
+  _ur_stack_t s;
+  s.prev = 89;
+  s.size = 144;
+  s.fill = 0;
+  s.entries = malloc((s.prev + s.size) * sizeof(_ur_frame_t));
+  _stack_push(&s, STACK_ROOT, 0, 0);
+
+  // ur_temp_t t;
+  // ur_temp_init(&t);
+
+  // {
+  //   _ur_frame_t *fam_u = ur_temp_push(&t, sizeof(_ur_frame_t));
+  //   fam_u->tag_y = STACK_ROOT;
+  // }
+
+  advance: {
+    //  u3 direct == ur direct
+    //
+    if ( c3y == u3a_is_cat(a) ) {
+      ref = (ur_nref)a;
+      goto retreat;
+    }
+    else {
+      u3a_noun* som_u = u3a_to_ptr(a);
+      u3a_box*  box_u = u3a_botox(som_u);
+      c3_w*     box_w = (void*)box_u;
+
+      //  all bits set == already reallocated
+      //
+      if ( 0xffffffff == box_w[0] ) {
+        ref = ( ((uint64_t)box_w[2]) << 32
+              | ((uint64_t)box_w[1]) );
+        goto retreat;
+      }
+      else if ( c3y == u3a_is_atom(a) ) {
+        u3a_atom* vat_u = (u3a_atom*)som_u;
+
+        //  coin an nref
+        //
+        switch ( vat_u->len_w ) {
+          case 2: {
+            ref = ur_coin64(r, ( ((uint64_t)vat_u->buf_w[1]) << 32
+                               | ((uint64_t)vat_u->buf_w[0]) ));
+          } break;
+
+          case 1: {
+            ref = ur_coin64(r, (uint64_t)vat_u->buf_w[0]);
+          } break;
+
+
+          default: {
+            c3_assert( vat_u->len_w );
+
+            uint8_t *byt = (uint8_t*)vat_u->buf_w;
+            uint64_t len = u3r_met(3, a);
+
+            ref = ur_coin_bytes(r, byt, len);
+          } break;
+        }
+
+        //  overwrite u3a_atom with reallocated reference
+        //
+        box_w[0] = 0xffffffff;
+        box_w[1] = ref & 0xffffffff;
+        box_w[2] = ref >> 32;
+
+        goto retreat;
+      }
+      else {
+        u3a_cell* cel_u = (u3a_cell*)som_u;
+        _stack_push(&s, STACK_HEAD, cel_u, 0);
+        // {
+        //   _ur_frame_t *fam_u = ur_temp_push(&t, sizeof(_ur_frame_t));
+        //   fam_u->tag_y = STACK_HEAD;
+        //   fam_u->cel_u = cel_u;
+        // }
+        a = cel_u->hed;
+        goto advance;
+      }
+    }
+  }
+
+  retreat: {
+    _ur_frame_t fam_u = s.entries[--s.fill];
+
+    // c3_y      tag_y;
+    // u3a_cell* cel_u;
+    // ur_nref     hed;
+    // {
+    //   _ur_frame_t *fam_u = ur_temp_peek(&t, sizeof(_ur_frame_t));
+
+    //   tag_y = fam_u->tag_y;
+    //   cel_u = fam_u->cel_u;
+    //   hed   = fam_u->ref;
+
+    //   ur_temp_pop(&t, sizeof(_ur_frame_t));
+    // }
+
+    switch ( fam_u.tag_y ) {
+    // switch ( tag_y ) {
+      default: {
+        c3_assert(0);
+      }
+
+      case STACK_ROOT: {
+        break;
+      }
+
+      case STACK_HEAD: {
+        _stack_push(&s, STACK_TAIL, fam_u.cel_u, ref);
+        // {
+        //   _ur_frame_t *fam_u = ur_temp_push(&t, sizeof(_ur_frame_t));
+        //   fam_u->tag_y = STACK_TAIL;
+        //   fam_u->cel_u = cel_u;
+        //   fam_u->ref   = ref;
+        // }
+
+        a = fam_u.cel_u->tel;
+        // a = cel_u->tel;
+        goto advance;
+      }
+
+      case STACK_TAIL: {
+        u3a_cell* cel_u = fam_u.cel_u;
+        u3a_box*  box_u = u3a_botox(cel_u);
+        c3_w*     box_w = (void*)box_u;
+
+        ref = ur_cons(r, fam_u.ref, ref);
+        // ref = ur_cons(r, hed, ref);
+
+        //  overwrite u3a_atom with reallocated reference
+        //
+        box_w[0] = 0xffffffff;
+        box_w[1] = ref & 0xffffffff;
+        box_w[2] = ref >> 32;
+
+        goto retreat;
+      }
+    }
+  }
+
+  free(s.entries);
+  // free(t.base);
+
+  return ref;
+}
+
+typedef struct ur_nvec_s {
+  void*    data;
+  uint64_t fill;
+  ur_nref* refs;
+} ur_nvec_t;
+
+void
+ur_nvec_init(ur_nvec_t *v, uint64_t size, void* ptr)
+{
+  v->data = ptr;
+  v->fill = 0;
+  v->refs = calloc(size, sizeof(ur_nref));
+}
+
+//  XX u3h_use()
+static c3_w
+_hamt_count(u3p(u3h_root) har_p)
+{
+  u3h_root* har_u = u3to(u3h_root, har_p);
+  return har_u->use_w;
+}
+
+static void
+_from_hamt(u3_noun kev, void* ptr)
+{
+  ur_nvec_t *v = (ur_nvec_t*)ptr;
+  ur_root_t *r = v->data;
+
+  v->refs[v->fill++] = _from_loom(r, kev);
+}
+
+static u3_noun
+_ref_to_noun(ur_nref ref, u3_noun* vat, u3_noun* cel)
+{
+  switch ( ur_nref_tag(ref) ) {
+    default: assert(0);
+
+    case ur_direct: {
+      if ( 0x7fffffffULL > ref ) {
+        return (u3_atom)ref;
+      }
+      else {
+        c3_w wor_w[2];
+
+        wor_w[0] = ref & 0xffffffff;
+        wor_w[1] = ref >> 32;
+
+        return u3i_words(2, wor_w);
+      }
+    } break;
+
+    case ur_iatom:  return vat[ur_nref_idx(ref)];
+
+    case ur_icell:  return cel[ur_nref_idx(ref)];
+  }
+}
+
+void
+do_stuff(void)
+{
+  ur_root_t *r = ur_hcon_init();
+
+  //  allow read/write on the whole loom, bypassing page tracking
+  //
+  if ( 0 != mprotect((void *)u3_Loom, u3a_bytes, (PROT_READ | PROT_WRITE)) ) {
+    c3_assert(0);
+  }
+
+  fprintf(stderr, "hc: cells fill %" PRIu64 " size %" PRIu64 "\r\n", r->cells.fill, r->cells.size);
+  fprintf(stderr, "hc: atoms fill %" PRIu64 " size %" PRIu64 "\r\n", r->atoms.fill, r->atoms.size);
+
+  ur_nref  ken = _from_loom(r, u3A->roc);
+
+  fprintf(stderr, "hc: cells fill %" PRIu64 " size %" PRIu64 "\r\n", r->cells.fill, r->cells.size);
+  fprintf(stderr, "hc: atoms fill %" PRIu64 " size %" PRIu64 "\r\n", r->atoms.fill, r->atoms.size);
+
+
+  c3_w   cod_w = _hamt_count(u3R->jed.cod_p);
+  ur_nvec_t  v;
+
+  fprintf(stderr, "hc: cold count %u\r\n", cod_w);
+
+  ur_nvec_init(&v, cod_w, r);
+  u3h_walk_with(u3R->jed.cod_p, _from_hamt, &v);
+
+  fprintf(stderr, "hc: cells fill %" PRIu64 " size %" PRIu64 "\r\n", r->cells.fill, r->cells.size);
+  fprintf(stderr, "hc: atoms fill %" PRIu64 " size %" PRIu64 "\r\n", r->atoms.fill, r->atoms.size);
+
+  u3m_pave(c3y, c3n);
+  // XX wtf?
+  u3R->jed.hot_p = u3h_new();
+
+  u3_atom *vat;
+  u3_noun *cel;
+
+  {
+    ur_atoms_t *atoms = &(r->atoms);
+    uint64_t    *lens = atoms->lens;
+    uint8_t    **byts = atoms->bytes;
+    uint64_t  i, fill = atoms->fill;
+
+    vat = calloc(fill, sizeof(u3_atom));
+
+    for ( i = 0; i < fill; i++ ) {
+      vat[i] = u3i_bytes(lens[i], byts[i]);
+      //  XX mug?
+    }
+  }
+
+  {
+    ur_cells_t *cells = &(r->cells);
+    ur_nref     *heds = cells->heads, *tals = cells->tails;
+    uint64_t  i, fill = cells->fill;
+    u3_noun  hed, tal;
+
+    cel = calloc(fill, sizeof(u3_noun));
+
+    for ( i = 0; i < fill; i++ ) {
+      hed = _ref_to_noun(heds[i], vat, cel);
+      tal = _ref_to_noun(tals[i], vat, cel);
+      cel[i] = u3nc(hed, tal);
+      //  XX mug?
+    }
+  }
+
+  u3A->roc = cel[ur_nref_idx(ken)];
+
+  {
+    uint32_t  i;
+    ur_nref ref;
+    u3_noun kev;
+
+    for ( i = 0; i < cod_w; i++) {
+      ref = v.refs[i];
+      kev = cel[ur_nref_idx(ref)];
+      u3h_put(u3R->jed.cod_p, u3h(kev), u3k(u3t(kev)));
+      u3z(kev);
+    }
+  }
+
+  //  mark all pages dirty
+  //
+  memset((void*)u3P.dit_w, 0xff, u3a_pages >> 3);
+}
+
+/* _cw_uniq(); deduplicate persistent nouns
+*/
+static void
+_cw_uniq(c3_i argc, c3_c* argv[])
+{
+  c3_assert( 3 <= argc );
+
+  c3_c* dir_c = argv[2];
+  c3_d  eve_d = u3m_boot(dir_c);
+
+  u3_serf_grab();
+
+  do_stuff();
+
+  u3_serf_grab();
+
+  u3A->ent_d = eve_d;
+
+  u3e_save();
+}
+
 /* _cw_pack(); compact memory, save, and exit.
 */
 static void
@@ -361,6 +778,9 @@ main(c3_i argc, c3_c* argv[])
     }
     else if ( 0 == strcmp("queu", argv[1]) ) {
       _cw_queu(argc, argv);
+    }
+    else if ( 0 == strcmp("uniq", argv[1]) ) {
+      _cw_uniq(argc, argv);
     }
     else if ( 0 == strcmp("pack", argv[1]) ) {
       _cw_pack(argc, argv);
