@@ -207,7 +207,7 @@
   ==
 ::
 ++  on-load
-  |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7 %8) old=any-state]
+  |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7 %8 %9) old=any-state]
   =<  se-abet  =<  se-view
   =.  sat  old
   =.  dev  (~(gut by bin) ost *source)
@@ -234,6 +234,8 @@
   =?  ..on-load  (lte hood-version %8)
     =>  (se-born | %home %group-push-hook)
     (se-born | %home %group-pull-hook)
+  =?  ..on-load  (lte hood-version %9)
+   (se-born | %home %graph-store)
   ..on-load
 ::
 ++  reap-phat                                         ::  ack connect
