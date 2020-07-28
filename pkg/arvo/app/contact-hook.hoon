@@ -172,7 +172,12 @@
     ==
   ::
   ++  on-leave  on-leave:def
-  ++  on-peek   on-peek:def
+  ++  on-peek   
+    |=  =path
+    ^-  (unit (unit cage))
+    ?.  ?=([%x %synced ~] path)
+      (on-peek:def path)
+    ``noun+!>(synced)
   ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
   --
