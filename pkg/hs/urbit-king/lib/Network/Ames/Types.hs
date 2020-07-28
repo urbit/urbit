@@ -4,6 +4,8 @@ import Urbit.Prelude
 
 import Data.List.NonEmpty (NonEmpty) --((:|)))
 
+import qualified Data.List.NonEmpty as NE
+
 -- Let's just start making data structures.
 
 -- The main operations in ames are %hear task (a new packet from unix) which
@@ -30,14 +32,38 @@ data Life = Life UD
 data ShipLife = ShipLife Ship Life
   deriving (Eq, Ord, Show)
 
+instance ToNoun ShipLife where
+  toNoun (ShipLife ship (Life life)) = toNoun (ship, life)
+
+instance FromNoun ShipLife where
+  parseNoun n = named "ShipLife" $ do
+    (ship, life) <- parseNoun n
+    pure (ShipLife ship (Life life))
+
 -- A message comes from a MsgSource, which is one or more identified ships.
 data MsgSource = MsgSource (NonEmpty ShipLife)
   deriving (Eq, Ord, Show)
+
+instance ToNoun MsgSource where
+  toNoun (MsgSource x) = toNoun $ toList x
+
+instance FromNoun MsgSource where
+  parseNoun n = named "MsgSource" $ do
+    l :: [ShipLife] <- parseNoun n
+    pure (MsgSource $ NE.fromList l)
 
 -- A message can only be delivered to a single identified target: a ship/lyfe
 -- pair.
 data MsgDest = MsgDest ShipLife
   deriving (Eq, Ord, Show)
+
+instance ToNoun MsgDest where
+  toNoun (MsgDest sl) = toNoun sl
+
+instance FromNoun MsgDest where
+  parseNoun n = named "MsgDest" $ do
+    sl <- parseNoun n
+    pure (MsgDest sl)
 
 -- Transport Layer Definitions -------------------------------------------------
 
@@ -88,10 +114,6 @@ data Writer = Writer
   , wPrivateKey :: ShipLife -> ByteString
     -- ^ Provide the rest of the system with the private key for the ship, so
     -- that the Router has the private key to encrypt the message if necessary.
-
-  , wRestart :: IO ()
-    -- ^ Called on startup to restore whatever unacknowledged messages were
-    -- never acknowledged.
   }
 
 -- Router ------------------------

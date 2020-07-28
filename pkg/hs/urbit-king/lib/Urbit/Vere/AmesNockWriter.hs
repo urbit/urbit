@@ -41,7 +41,7 @@ data NockWriter = NockWriter
   }
 
 nockWriter'
-  :: HasPierEnv e
+  :: (HasPierEnv e, HasNetworkConfig e, HasKingId e)
   => AmesRouterWriterApi
   -> ShipLife
   -> RIO e ([Ev], RAcquire e (DriverApi AmesNockWriterEf))
@@ -67,7 +67,7 @@ nockWriter' api who = do
 -- TODO: Probably need to pass in a pier instead so we can figure out the
 -- ShipLife.
 nockWriter :: forall e
-            . (HasLogFunc e)
+            . (HasLogFunc e, HasNetworkConfig e, HasKingId e)
            => e
            -> AmesRouterWriterApi
            -> ShipLife
@@ -75,15 +75,15 @@ nockWriter :: forall e
            -> ([Ev], RAcquire e (AmesNockWriterEf -> IO ()))
 nockWriter env api who enqueueEv = (initialEvs, runWriter)
   where
-    -- TODO: This isn't going to work for the restart case. We'll have to
-    -- figure out how to make this take 
-    initialEvs = []
+    -- Tell the ames system to resend any unacknowledged messages.
+    kingid = fromIntegral (env ^. kingIdL)
+    initialEvs = [EvBlip $ BlipEvKams $ KamsEvBorn (fromIntegral kingid, ()) ()]
 
     runWriter :: RAcquire e (AmesNockWriterEf -> IO ())
     runWriter = handleEf <$> mkRAcquire joinRouter leaveRouter
       where
         joinRouter = do
-          let w = Writer recv key restart
+          let w = Writer recv key
           io $ ((arwaJoinRouter api) w who)
           NockWriter <$> newTVarIO []
 
@@ -97,7 +97,7 @@ nockWriter env api who enqueueEv = (initialEvs, runWriter)
         io $ (arwaSend api) source dest msg callback
         where
           callback response = enqueueEv (EvErr (ackEv response) ignoreResult)
-          ackEv response = error "TODO: ackEv Blip"
+          ackEv response = EvBlip $ BlipEvKams $ KamsEvAck () msgNum response
           ignoreResult _ = pure ()
 
     -- Called by the router when this ship receives a message. We enqueue a
@@ -107,7 +107,7 @@ nockWriter env api who enqueueEv = (initialEvs, runWriter)
     recv src dst msg completeVar =
       atomically $ enqueueEv (EvErr recvEv recvResult)
       where
-        recvEv = error "Move the blip code." -- EvBlip $ BlipEv
+        recvEv = EvBlip $ BlipEvKams $ KamsEvHear () src msg
         recvResult = \case
           RunSwap e m w n f -> error "Don't know what to do with RunSwap yet."
           RunBail goofs ->
@@ -121,8 +121,3 @@ nockWriter env api who enqueueEv = (initialEvs, runWriter)
     -- messages are not encrypted in the local only case where both ship's
     -- Writers are connected to the same router.)
     key ship = mempty
-
-    -- The second thing the Router does on connection is to signal to the ship
-    -- to resend all unacknowledged messages.
-    restart =
-      error "TODO: restart is going to be a bunch of scries into the ship"

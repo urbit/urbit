@@ -27,15 +27,13 @@ writerSend impl src dst@(MsgDest shipLife) msg completed = do
 
 writerJoinRouter :: RouterImpl -> WriterJoinRouter
 writerJoinRouter impl writer ship = do
+  -- TODO: If we have to scry for the key, how do we deal with IPC during
+  -- startup in the AmesNockWriter case?
   let key = (wPrivateKey writer) ship
 
   atomically $ do
     modifyTVar (riShips impl) (M.insert ship writer)
     modifyTVar (riKeys impl) (M.insert ship key)
-
-  -- Now that the Router has all the information about this writer, give the
-  -- writer a chance to give commands.
-  (wRestart writer)
 
 
 writerLeaveRouter :: RouterImpl -> WriterLeaveRouter

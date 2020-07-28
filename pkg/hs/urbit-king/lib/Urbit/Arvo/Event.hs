@@ -16,6 +16,7 @@ import qualified Crypto.Sign.Ed25519       as Ed
 import qualified Data.ByteString           as BS
 import qualified Data.ByteString.Char8     as C
 import qualified Network.HTTP.Types.Method as H
+import qualified Network.Ames.Types        as A
 
 -- Misc Types ------------------------------------------------------------------
 
@@ -240,6 +241,15 @@ data BehnEv
 
 deriveNoun ''BehnEv
 
+-- King Ames Events ------------------------------------------------------------
+
+data KamsEv
+    = KamsEvBorn (KingId, ())  ()
+    | KamsEvHear ()            A.MsgSource Atom
+    | KamsEvAck  ()            UD          (Maybe Atom)
+    deriving (Eq, Ord, Show)
+
+deriveNoun ''KamsEv
 
 -- Newt Events -----------------------------------------------------------------
 
@@ -304,6 +314,7 @@ data BlipEv
     | BlipEvBoat       BoatEv
     | BlipEvHttpClient HttpClientEv
     | BlipEvHttpServer HttpServerEv
+    | BlipEvKams       KamsEv
     | BlipEvNewt       NewtEv
     | BlipEvSync       SyncEv
     | BlipEvTerm       TermEv
@@ -375,6 +386,7 @@ getSpinnerNameForEvent = \case
         BlipEvBoat _           -> Just "boat"
         BlipEvHttpClient _     -> Just "iris"
         BlipEvHttpServer _     -> Just "eyre"
+        BlipEvKams _           -> Just "kams"
         BlipEvNewt _           -> Just "newt"
         BlipEvSync _           -> Just "clay"
         BlipEvTerm t | isRet t -> Nothing
