@@ -30,7 +30,7 @@ if [ -n "${HOST-}" ]
 then os=$(sed 's$^[^-]*-\([^-]*\)-.*$\1$' <<< "$HOST")
      cpu=$(sed 's$-.*$$' <<< ${HOST})
 else os=$(uname -s)
-     cpu=$(uname -p)
+     cpu=$(uname -m)
 fi
 
 case $(tr A-Z a-z <<< $cpu) in
