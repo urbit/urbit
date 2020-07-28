@@ -97,14 +97,12 @@ export class JoinScreen extends Component {
           <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/group-name</span></p>
           <p className="f9 gray2 mb4">Group names use lowercase, hyphens, and slashes.</p>
           <textarea
-            ref={ (e) => {
-            this.textarea = e;
-            } }
             className={'f7 mono ba bg-gray0-d white-d pa3 mb2 db ' +
-            'focus-b--black focus-b--white-d b--gray3 b--gray2-d nowrap '}
+            'focus-b--black focus-b--white-d b--gray3 b--gray2-d nowrap overflow-y-hidden'}
             placeholder="~zod/group-name"
             spellCheck="false"
             rows={1}
+            cols={32}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
@@ -112,7 +110,7 @@ export class JoinScreen extends Component {
               }
             }}
             style={{
-              resize: 'none'
+              resize: 'none',
             }}
             onChange={this.groupChange}
             value={this.state.group}
