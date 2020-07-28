@@ -594,7 +594,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           envelopes={props.envelopes}
           contacts={props.contacts}
           onEnter={() => this.setState({ scrollLocked: false })}
-          onChange={(msg: string) => this.setState({
+          onUnmount={(msg: string) => this.setState({
             messages: this.state.messages.set(props.station, msg)
           })}
           s3={props.s3}

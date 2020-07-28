@@ -40,7 +40,7 @@ export class ChatInput extends Component {
     super(props);
 
     this.state = {
-      message: '',
+      message: props.message,
       patpSearch: null
     };
 
@@ -99,6 +99,10 @@ export class ChatInput extends Component {
     });
   }
 
+  componentWillUnmount() {
+    this.props.onUnmount(this.state.message);
+  }
+
   nextAutocompleteSuggestion(backward = false) {
     const { patpSuggestions } = this.state;
     let idx = patpSuggestions.findIndex(s => s === this.state.selectedSuggestion);
@@ -150,7 +154,9 @@ export class ChatInput extends Component {
     if(patpSearch !== null) {
       this.patpAutocomplete(value, false);
     }
-    this.props.onChange(value);
+    this.setState({
+      message: value
+    });
   }
 
   getLetterType(letter) {
