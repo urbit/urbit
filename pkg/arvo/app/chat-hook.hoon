@@ -406,7 +406,7 @@
     ::
     ~
   :-  =-  [%pass /fixdm %agent [our.bol %chat-view] %poke %chat-view-action -]
-      !>  ^-  action:store
+      !>  ^-  action:view
       [%delete path]
   =/  new-dm  /(scot %p our.bol)/(crip (weld "dm--" (trip (scot %p ship))))
   =/  mailbox=(unit mailbox:store)  (chat-scry path)
@@ -419,7 +419,7 @@
           (zing [(trip (scot %p our.bol)) " <-> " (trip (scot %p ship)) ~])
           ''
           new-dm
-          new-dm
+          ship+new-dm
           [%invite (silt ~[ship])]
           (silt ~[ship])
           %.y
