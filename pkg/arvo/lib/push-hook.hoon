@@ -194,7 +194,12 @@
         =^  cards  push-hook
           (on-fail:og term tang)
         [cards this]
-      ++  on-peek   on-peek:og
+      ++  on-peek   
+        |=  =path
+        ^-  (unit (unit cage))
+        ?.  ?=([%x %synced ~] path)
+          (on-peek:def path)
+        ``noun+!>(sharing)
     --
   |_  =bowl:gall
   +*  og   ~(. push-hook bowl)
