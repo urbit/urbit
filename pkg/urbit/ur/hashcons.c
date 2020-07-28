@@ -9,7 +9,7 @@
 
 #include <murmur3.h>
 
-#include "noun/hashcons.h"
+#include "ur/hashcons.h"
 
 ur_mug
 ur_mug_bytes(const uint8_t *byt, uint64_t len)
@@ -64,7 +64,9 @@ ur_mug64(uint64_t x)
 ur_mug
 ur_mug_both(ur_mug hed, ur_mug tal)
 {
-  return ur_mug32(hed ^ (0x7fffffff ^ tal));
+  //  XX not correct per u3r_mug, but necessary to avoid collisions
+  //
+  return ur_mug32(hed ^ (0x7fffffff ^ ur_mug32(tal)));
 }
 
 ur_mug
@@ -111,17 +113,18 @@ ur_dict64_grow(ur_root_t *r, ur_dict64_t *dict, uint64_t prev, uint64_t size)
 
   for ( i = 0; i < old_size; i++ ) {
     ur_pail64_t *old_bucket = &(old_buckets[i]);
-    uint64_t old_fill = old_bucket->fill;
-    uint64_t j;
+    uint8_t old_fill = old_bucket->fill;
+    uint8_t j;
 
     for ( j = 0; j < old_fill; j++ ) {
-      ur_nref ref = (ur_nref)old_bucket->data[old_fill];
+      ur_nref ref = (ur_nref)old_bucket->data[j];
       ur_mug  mug = ur_nref_mug(r, ref);
       
-      ur_pail64_t *bucket = &(buckets[ mug % next ]);
-      uint64_t   new_fill = bucket->fill;
+      uint64_t        idx = ( mug % next );
+      ur_pail64_t *bucket = &(buckets[idx]);
+      uint8_t   new_fill = bucket->fill;
 
-      if( 10 == new_fill ) {
+      if ( 10 == new_fill ) {
         free(buckets);
         return ur_dict64_grow(r, dict, size, next);
       }
@@ -148,21 +151,24 @@ ur_atoms_grow(ur_atoms_t *atoms)
   uint64_t  *lens = atoms->lens;
   ur_mug    *mugs = atoms->mugs;
 
-  atoms->bytes = malloc(next * (sizeof(*atoms->bytes)
-                              + sizeof(*atoms->lens)
-                              + sizeof(*atoms->mugs)));
+  atoms->bytes = malloc(next * ( sizeof(*atoms->bytes)
+                               + sizeof(*atoms->lens)
+                               + sizeof(*atoms->mugs) ));
   assert( atoms->bytes );
 
-  atoms->lens  = (void*)(atoms->bytes + (next * sizeof(*atoms->bytes)));
-  atoms->mugs  = (void*)(atoms->lens  + (next * sizeof(*atoms->lens)));
+  atoms->lens  = (void*)((char*)atoms->bytes + (next * sizeof(*atoms->bytes)));
+  atoms->mugs  = (void*)((char*)atoms->lens  + (next * sizeof(*atoms->lens)));
 
   if ( bytes ) {
     memcpy(atoms->bytes, bytes, size * (sizeof(*bytes)));
-    memcpy(atoms->lens, lens, size * (sizeof(*lens)));
-    memcpy(atoms->mugs, mugs, size * (sizeof(*mugs)));
+    memcpy(atoms->lens,   lens, size * (sizeof(*lens)));
+    memcpy(atoms->mugs,   mugs, size * (sizeof(*mugs)));
 
     free(bytes);
   }
+
+  atoms->prev = size;
+  atoms->size = next;
 }
 
 void
@@ -175,21 +181,24 @@ ur_cells_grow(ur_cells_t *cells)
   ur_nref *tails = cells->tails;
   ur_mug   *mugs = cells->mugs;
 
-  cells->heads = malloc(next * (sizeof(*cells->heads)
-                              + sizeof(*cells->heads)
-                              + sizeof(*cells->mugs)));
+  cells->heads = malloc(next * ( sizeof(*cells->heads)
+                               + sizeof(*cells->heads)
+                               + sizeof(*cells->mugs) ));
   assert( cells->heads );
 
-  cells->tails = (void*)(cells->heads + (next * sizeof(*cells->heads)));
-  cells->mugs  = (void*)(cells->tails + (next * sizeof(*cells->tails)));
+  cells->tails = (void*)((char*)cells->heads + (next * sizeof(*cells->heads)));
+  cells->mugs  = (void*)((char*)cells->tails + (next * sizeof(*cells->tails)));
 
   if ( heads ) {
     memcpy(cells->heads, heads, size * (sizeof(*heads)));
     memcpy(cells->tails, tails, size * (sizeof(*tails)));
-    memcpy(cells->mugs, mugs, size * (sizeof(*mugs)));
+    memcpy(cells->mugs,   mugs, size * (sizeof(*mugs)));
 
     free(heads);
   }
+
+  cells->prev = size;
+  cells->size = next;
 }
 
 void
@@ -218,7 +227,8 @@ static ur_nref
 _coin_unsafe(ur_atoms_t *atoms, ur_mug mug, uint8_t *byt, uint64_t len)
 {
   uint64_t fill = atoms->fill;
-  ur_nref   tom = ( fill & ((uint64_t)ur_iatom << 62) );
+  ur_tag    tag = ur_iatom;
+  ur_nref   tom = ( fill | ((uint64_t)tag << 62) );
   uint8_t *copy = malloc(len);
 
   //  XX necessary?
@@ -231,6 +241,7 @@ _coin_unsafe(ur_atoms_t *atoms, ur_mug mug, uint8_t *byt, uint64_t len)
   atoms->bytes[fill] = copy;
   atoms->lens[fill] = len;
   atoms->mugs[fill] = mug;
+  atoms->fill = 1 + fill;
 
   return tom;
 }
@@ -239,7 +250,8 @@ static ur_nref
 _cons_unsafe(ur_cells_t *cells, ur_mug mug, ur_nref hed, ur_nref tal)
 {
   uint64_t fill = cells->fill;
-  ur_nref   cel = ( fill & ((uint64_t)ur_icell << 62) );
+  ur_tag    tag = ur_icell;
+  ur_nref   cel = ( fill | ((uint64_t)tag << 62) );
 
   //  XX necessary?
   //
@@ -320,7 +332,7 @@ ur_cons(ur_root_t *r, ur_nref hed, ur_nref tal)
                                   ur_nref_mug(r, tal));
 
   while ( 1 ) {
-    uint64_t        idx = ( mug % cells->size );
+    uint64_t        idx = ( mug % dict->size );
     ur_pail64_t *bucket = &(dict->buckets[idx]);
     uint8_t   i, b_fill = bucket->fill;
     ur_nref cel;

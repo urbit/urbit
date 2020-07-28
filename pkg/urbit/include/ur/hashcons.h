@@ -5,17 +5,17 @@
 typedef uint8_t  ur_bool_t;
 
 #if    (32 == (CHAR_BIT * __SIZEOF_INT__))
-#  define  ur_lz32  __builtin_ctz
+#  define  ur_lz32  __builtin_clz
 #elif  (32 == (CHAR_BIT * __SIZEOF_LONG__))
-#  define  ur_lz32  __builtin_ctzl
+#  define  ur_lz32  __builtin_clzl
 #else
 #  error   "port me"
 #endif
 
 #if    (64 == (CHAR_BIT * __SIZEOF_LONG__))
-#  define  ur_lz64  __builtin_ctzl
+#  define  ur_lz64  __builtin_clzl
 #elif  (64 == (CHAR_BIT * __SIZEOF_LONG_LONG__))
-#  define  ur_lz64  __builtin_ctzll
+#  define  ur_lz64  __builtin_clzll
 #else
 #  error   "port me"
 #endif
@@ -25,8 +25,8 @@ typedef uint8_t  ur_bool_t;
 #define ur_mask_31(a)  (a & 0x7fffffff)
 #define ur_mask_62(a)  (a & 0x3fffffffffffffffULL)
 
-#define ur_met0_32(a)  ( 32 - ur_lz32(a) )
-#define ur_met0_64(a)  ( 64 - ur_lz64(a) )
+#define ur_met0_32(a)  ( (a) ? 32 - ur_lz32(a) : 0 )
+#define ur_met0_64(a)  ( (a) ? 64 - ur_lz64(a) : 0 )
 
 #define ur_met3_32(a)                           \
         ({ uint8_t _a = ur_met0_32(a);          \
