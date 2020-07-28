@@ -752,7 +752,11 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     //  "[..] on 64-bit there is no penalty for making this huge (say 1TB)."
     //
     {
-      const size_t siz_i = 1099511627776;
+      #if defined(U3_CPU_aarch64) && defined(U3_OS_linux)
+        const size_t siz_i = 64424509440;
+      #else
+        const size_t siz_i = 1099511627776;
+      #endif
 
       if ( 0 == (log_u->mdb_u = u3_lmdb_init(log_c, siz_i)) ) {
         fprintf(stderr, "disk: failed to initialize database");
