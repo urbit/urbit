@@ -1,16 +1,16 @@
-/-  store=graph-store
-|_  [=atom =post:store]
+/-  *post
+|_  i=indexed-post
 ++  grow
   |%
-  ++  noun  [atom post]
+  ++  noun  i
   --
 ++  grab
   |%
   ++  noun
-    |=  [=^atom =post:store]
-    ^-  [^^atom post:store]
-    ?>  ?=([@ ~] index.post)
-    [atom post]
+    |=  p=*
+    =/  ip  ;;(indexed-post p)
+    ?>  ?=([@ ~] index.p.ip)
+    ip
   --
 ::
 ++  grad  %noun

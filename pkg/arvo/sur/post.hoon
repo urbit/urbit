@@ -17,6 +17,8 @@
       =signatures
   ==
 ::
++$  indexed-post  [a=atom p=post]
+::
 +$  validated-portion
   $:  parent-hash=(unit hash)
       author=ship

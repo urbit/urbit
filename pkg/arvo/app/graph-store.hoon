@@ -166,6 +166,7 @@
             ==
         ^-  graph:store
         ?<  ?=(~ index)
+        ~|  "validation of node failed using mark {<mark>}"
         ?>  (validate-graph (gas:orm ~ [i.index node]~) mark)
         =*  atom   i.index
         %^  put:orm
