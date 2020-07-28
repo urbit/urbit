@@ -16,7 +16,7 @@ import LinksApp from './apps/links/app';
 import PublishApp from './apps/publish/app';
 
 import StatusBar from './components/StatusBar';
-import NotFound from './components/404';
+import ErrorComponent from './components/Error';
 
 import GlobalStore from './store/store';
 import GlobalSubscription from './subscription/global';
@@ -161,7 +161,11 @@ class App extends React.Component {
                 />
               )}
               />
-              <Route component={NotFound} />
+              <Route
+                render={(props) => (
+                  <ErrorComponent {...props} code={404} description="Not Found" />
+                )}
+               />
               </Switch>
             </Content>
           </Router>

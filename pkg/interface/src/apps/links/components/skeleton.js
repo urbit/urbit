@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ChannelsSidebar } from './lib/channel-sidebar';
+import ErrorBoundary from '../../../components/ErrorBoundary';
 
 export class Skeleton extends Component {
   render() {
@@ -40,7 +41,9 @@ export class Skeleton extends Component {
             flexGrow: 1
           }}
           >
-            {this.props.children}
+            <ErrorBoundary>
+              {props.children}
+            </ErrorBoundary>
           </div>
         </div>
       </div>
