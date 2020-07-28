@@ -1210,7 +1210,13 @@ _pier_init(c3_w wag_w, c3_c* pax_c)
 u3_pier*
 u3_pier_stay(c3_w wag_w, u3_noun pax)
 {
-  u3_pier* pir_u = _pier_init(wag_w, u3r_string(pax));
+  u3_pier* pir_u;
+
+  if ( !(pir_u = _pier_init(wag_w, u3r_string(pax))) ) {
+    fprintf(stderr, "pier: stay: init fail\r\n");
+    u3_king_bail();
+    return 0;
+  }
 
   if ( c3n == u3_disk_read_meta(pir_u->log_u,  pir_u->who_d,
                                &pir_u->fak_o, &pir_u->lif_w) )
@@ -1420,7 +1426,13 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
              u3_noun pil,                   //  type-of/path-to pill
              u3_noun pax)                   //  path to pier
 {
-  u3_pier* pir_u = _pier_init(wag_w, u3r_string(pax));
+  u3_pier* pir_u;
+
+  if ( !(pir_u = _pier_init(wag_w, u3r_string(pax))) ) {
+    fprintf(stderr, "pier: boot: init fail\r\n");
+    u3_king_bail();
+    return 0;
+  }
 
   if ( c3n == _pier_boot_plan(pir_u, who, ven, pil) ) {
     fprintf(stderr, "pier: boot plan fail\r\n");

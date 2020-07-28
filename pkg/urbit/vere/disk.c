@@ -692,7 +692,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
   //
   {
     if ( 0 == (log_u->dir_u = u3_foil_folder(pax_c)) ) {
-      fprintf(stderr, "disk: failed to load pier at %s", pax_c);
+      fprintf(stderr, "disk: failed to load pier at %s\r\n", pax_c);
       c3_free(log_u);
       return 0;
     }
@@ -707,7 +707,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     strcat(urb_c, "/.urb");
 
     if ( 0 == (log_u->urb_u = u3_foil_folder(urb_c)) ) {
-      fprintf(stderr, "disk: failed to load /.urb in %s", pax_c);
+      fprintf(stderr, "disk: failed to load /.urb in %s\r\n", pax_c);
       c3_free(urb_c);
       c3_free(log_u);
       return 0;
@@ -740,7 +740,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     strcat(log_c, "/.urb/log");
 
     if ( 0 == (log_u->com_u = u3_foil_folder(log_c)) ) {
-      fprintf(stderr, "disk: failed to load /.urb/log in %s", pax_c);
+      fprintf(stderr, "disk: failed to load /.urb/log in %s\r\n", pax_c);
       c3_free(log_c);
       c3_free(log_u);
       return 0;
@@ -759,7 +759,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
       #endif
 
       if ( 0 == (log_u->mdb_u = u3_lmdb_init(log_c, siz_i)) ) {
-        fprintf(stderr, "disk: failed to initialize database");
+        fprintf(stderr, "disk: failed to initialize database\r\n");
         c3_free(log_c);
         c3_free(log_u);
         return 0;
@@ -776,7 +776,7 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
     c3_d fir_d;
 
     if ( c3n == u3_lmdb_gulf(log_u->mdb_u, &fir_d, &log_u->dun_d) ) {
-      fprintf(stderr, "disk: failed to load latest event from database");
+      fprintf(stderr, "disk: failed to load latest event from database\r\n");
       c3_free(log_u);
       return 0;
     }
