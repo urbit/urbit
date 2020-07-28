@@ -445,7 +445,7 @@
     =/  =term   i.t.t.t.path
     =/  result=(unit marked-graph:store)
       (~(get by graphs) [ship term])
-    ?~  result  ~
+    ?~  result  [~ ~]
     ``noun+!>(u.result)
   ::
       [%x %graph-subset @ @ @ @ ~]
@@ -455,7 +455,7 @@
     =/  end=(unit atom)    (rush i.t.t.t.t.t.path dem:ag)
     =/  graph=(unit marked-graph:store)
       (~(get by graphs) [ship term])
-    ?~  graph  ~
+    ?~  graph  [~ ~]
     ``noun+!>(`graph:store`(subset:orm p.u.graph start end))
   ::
       [%x %node @ @ @ *]
@@ -464,7 +464,7 @@
     =/  =index:store
       (turn t.t.t.t.path |=(=cord (slav %ud cord)))
     =/  node=(unit node:store)  (get-node ship term index)
-    ?~  node  ~
+    ?~  node  [~ ~]
     ``noun+!>(u.node)
   ::
       [%x %post @ @ @ *]
@@ -473,7 +473,7 @@
     =/  =index:store
       (turn t.t.t.t.path |=(=cord (slav %ud cord)))
     =/  node=(unit node:store)  (get-node ship term index)
-    ?~  node  ~
+    ?~  node  [~ ~]
     ``noun+!>(post.u.node)
   ::
       [%x %node-children @ @ @ *]
@@ -482,9 +482,9 @@
     =/  =index:store
       (turn t.t.t.t.path |=(=cord (slav %ud cord)))
     =/  node=(unit node:store)  (get-node ship term index)
-    ?~  node  ~
+    ?~  node  [~ ~]
     ?-  -.children.u.node
-        %empty  ~
+        %empty  [~ ~]
         %graph  ``noun+!>(p.children.u.node)
     ==
   ::
@@ -496,9 +496,9 @@
     =/  =index:store
       (turn t.t.t.t.t.t.path |=(=cord (slav %ud cord)))
     =/  node=(unit node:store)  (get-node ship term index)
-    ?~  node  ~
+    ?~  node  [~ ~]
     ?-  -.children.u.node
-        %empty  ~
+        %empty  [~ ~]
         %graph  ``noun+!>(`graph:store`(subset:orm p.children.u.node start end))
     ==
   ::
@@ -506,17 +506,17 @@
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
     =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
-    ?~  update-log  ~
+    ?~  update-log  [~ ~]
     ``noun+!>(u.update-log)
   ::
       [%x %peek-update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
     =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
-    ?~  update-log  ~
+    ?~  update-log  [~ ~]
     =/  result=(unit [time update:store])
       (peek:orm-log:store u.update-log) 
-    ?~  result  ``noun+!>(~)
+    ?~  result  [~ ~]
     ``noun+!>([~ -.u.result])
   ==
   ::
