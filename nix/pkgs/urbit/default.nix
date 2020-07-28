@@ -1,7 +1,7 @@
 {
   pkgs,
   debug,
-  argon2, ed25519, ent, ge-additions, libaes_siv, h2o, murmur3, scrypt, secp256k1, softfloat3, uv, ivory-header, ca-header
+  argon2, ed25519, ent, ge-additions, urcrypt, libaes_siv, h2o, murmur3, scrypt, secp256k1, softfloat3, uv, ivory-header, ca-header
 }:
 
 let
@@ -26,7 +26,7 @@ let
     [ curl gmp sigseg openssl zlib lmdb ];
 
   vendor =
-    [ argon2 softfloat3 ed25519 ent ge-additions libaes_siv h2o scrypt uv murmur3 secp256k1 ivory-header ca-header ];
+    [ argon2 softfloat3 ed25519 ent ge-additions urcrypt libaes_siv h2o scrypt uv murmur3 secp256k1 ivory-header ca-header ];
 
   urbit = pkgs.stdenv.mkDerivation {
     inherit name meta;

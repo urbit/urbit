@@ -19,6 +19,9 @@ let
   ge-additions = env:
     import ./pkgs/ge-additions/cross.nix env;
 
+  urcrypt = env:
+    import ./pkgs/urcrypt/cross.nix env;
+
   libaes_siv = env:
     import ./pkgs/libaes_siv/cross.nix env;
 
