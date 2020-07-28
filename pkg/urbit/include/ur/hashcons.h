@@ -93,3 +93,15 @@ typedef struct ur_root_s {
   ur_cells_t cells;
   ur_atoms_t atoms;
 } ur_root_t;
+
+ur_nref
+ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len);
+
+ur_nref
+ur_coin64(ur_root_t *r, uint64_t n);
+
+ur_nref
+ur_cons(ur_root_t *r, ur_nref hed, ur_nref tal);
+
+ur_root_t*
+ur_hcon_init(void);

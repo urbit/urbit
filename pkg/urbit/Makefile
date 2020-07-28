@@ -2,12 +2,13 @@ include config.mk
 
 jets = jets/tree.c $(wildcard jets/*/*.c)
 noun = $(wildcard noun/*.c)
+ur   = $(wildcard ur/*.c)
 vere = $(wildcard vere/*.c) $(wildcard vere/*/*.c)
 daemon = $(wildcard daemon/*.c)
 worker = $(wildcard worker/*.c)
 tests  = $(wildcard tests/*.c)
 
-common  = $(jets) $(noun) $(vere)
+common  = $(jets) $(noun) $(ur) $(vere)
 headers = $(shell find include -type f)
 
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')
