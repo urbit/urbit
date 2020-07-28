@@ -410,6 +410,7 @@ data Drivers = Drivers
   , dNewt :: NewtEf -> IO ()
   , dSync :: SyncEf -> IO ()
   , dTerm :: TermEf -> IO ()
+  , dKams :: KamsEf -> IO ()
   }
 
 drivers
@@ -446,6 +447,7 @@ drivers env multi amesApi who isFake plan termSys stderr serfSIGINT = do
         iris <- runIris
         eyre <- runEyre
         clay <- runClay
+        kams <- runKams
 
         -- Sources lower in the list are starved until sources above them
         -- have no events to offer.
@@ -463,6 +465,7 @@ drivers env multi amesApi who isFake plan termSys stderr serfSIGINT = do
           , dIris = diOnEffect iris
           , dEyre = diOnEffect eyre
           , dSync = diOnEffect clay
+          , dKams = diOnEffect kams
           }
 
   pure (initialEvents, runDrivers)
@@ -494,6 +497,7 @@ router slog waitFx Drivers {..} = do
         GoodParse (EfVane (VEHttpClient ef)) -> io (dIris ef)
         GoodParse (EfVane (VEHttpServer ef)) -> io (dEyre ef)
         GoodParse (EfVane (VENewt       ef)) -> io (dNewt ef)
+        GoodParse (EfVane (VEKams       ef)) -> io (dKams ef)
         GoodParse (EfVane (VESync       ef)) -> io (dSync ef)
         GoodParse (EfVane (VETerm       ef)) -> io (dTerm ef)
         FailParse n -> logError $ display $ pack @Text (ppShow n)

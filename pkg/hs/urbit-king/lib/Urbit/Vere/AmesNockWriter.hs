@@ -2,6 +2,7 @@ module Urbit.Vere.AmesNockWriter where
 
 import Urbit.Prelude
 
+import Urbit.Arvo.Effect
 import Urbit.Arvo.Event
 import Urbit.King.App
 import Network.Ames.Types
@@ -15,27 +16,6 @@ import Urbit.Vere.Pier.Types
 -- receiving and puts them
 
 
--- Ames Events/Effects ---------------------------------------------------------
-
-data AmesNockWriterEf
-    = AmesNockWriterEfSend (Atom, ()) UD MsgSource MsgDest Atom
-      -- ^ Sends a plaintext message to the destination as one of a set of
-      -- azimuth ids. The message will be encrypted by the king using the
-      -- ship's key scryed out of the ship, if appropriate.
-  deriving (Eq, Ord, Show)
-
-data AmesNockWriterEv
-    = AmesNockWriterEvHear () MsgSource Atom
-      -- ^ NockWriter sends a %hear event to Urbit when hearing an event on the
-      -- network. The message will be decrypted by the king using the ship's
-      -- key scryed out of the ship, if needed.
-
-    | AmesNockWriterEvAck () UD (Maybe Atom)
-      -- ^ NockWriter sends an %ack event to Urbit when hearing either a
-      -- positive or negative acknowledgement relayed by the router.
-  deriving (Eq, Ord, Show)
-
-
 data NockWriter = NockWriter
   { nwUnackedMsgs :: TVar [(TMVar (Maybe Atom), UD)]
   }
@@ -44,7 +24,7 @@ nockWriter'
   :: (HasPierEnv e, HasNetworkConfig e, HasKingId e)
   => AmesRouterWriterApi
   -> ShipLife
-  -> RIO e ([Ev], RAcquire e (DriverApi AmesNockWriterEf))
+  -> RIO e ([Ev], RAcquire e (DriverApi KamsEf))
 nockWriter' api who = do
   ventQ :: TQueue EvErr <- newTQueueIO
   env <- ask
@@ -62,24 +42,22 @@ nockWriter' api who = do
 -- infrastructure. It takes the message sending function from the Router and
 -- handles the details of the
 --
--- TODO: Write the ' version of this.
---
 -- TODO: Probably need to pass in a pier instead so we can figure out the
--- ShipLife.
+-- ShipLife from the ship configuration instead of hard coding 1.
 nockWriter :: forall e
             . (HasLogFunc e, HasNetworkConfig e, HasKingId e)
            => e
            -> AmesRouterWriterApi
            -> ShipLife
            -> (EvErr -> STM ())
-           -> ([Ev], RAcquire e (AmesNockWriterEf -> IO ()))
+           -> ([Ev], RAcquire e (KamsEf -> IO ()))
 nockWriter env api who enqueueEv = (initialEvs, runWriter)
   where
     -- Tell the ames system to resend any unacknowledged messages.
     kingid = fromIntegral (env ^. kingIdL)
     initialEvs = [EvBlip $ BlipEvKams $ KamsEvBorn (fromIntegral kingid, ()) ()]
 
-    runWriter :: RAcquire e (AmesNockWriterEf -> IO ())
+    runWriter :: RAcquire e (KamsEf -> IO ())
     runWriter = handleEf <$> mkRAcquire joinRouter leaveRouter
       where
         joinRouter = do
@@ -89,9 +67,9 @@ nockWriter env api who enqueueEv = (initialEvs, runWriter)
 
         leaveRouter x = io $ ((arwaLeaveRouter api) who)
 
-    handleEf :: NockWriter -> AmesNockWriterEf -> IO ()
+    handleEf :: NockWriter -> KamsEf -> IO ()
     handleEf writer = runRIO env . \case
-      AmesNockWriterEfSend (_, _) msgNum source dest msg -> do
+      KamsEfSend (_, _) msgNum source dest msg -> do
         logDebug $ displayShow ("(nock writer) send: ", msgNum, source, dest)
 
         io $ (arwaSend api) source dest msg callback

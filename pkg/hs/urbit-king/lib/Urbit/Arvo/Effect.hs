@@ -12,6 +12,7 @@ import Urbit.Arvo.Common (AmesDest, Turf)
 import Urbit.Arvo.Common (ReOrg(..), reorgThroughNoun)
 import Urbit.Arvo.Common (Desk)
 
+import qualified Network.Ames.Types        as A
 
 -- Newt Effects ----------------------------------------------------------------
 
@@ -63,6 +64,13 @@ data HttpServerEf
 
 deriveNoun ''HttpServerEf
 
+-- King Ames Effects -----------------------------------------------------------
+
+data KamsEf
+    = KamsEfSend (Atom, ()) UD A.MsgSource A.MsgDest Atom
+  deriving (Eq, Ord, Show)
+
+deriveNoun ''KamsEf
 
 -- File System Effects ---------------------------------------------------------
 
@@ -157,6 +165,7 @@ data VaneEf
     | VEBehn       BehnEf
     | VETerm       TermEf
     | VEClay       SyncEf
+    | VEKams       KamsEf
     | VESync       SyncEf
     | VEBoat       SyncEf
   deriving (Eq, Ord, Show)
