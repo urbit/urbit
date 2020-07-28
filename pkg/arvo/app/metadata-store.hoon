@@ -255,6 +255,11 @@
       =/  =group-path  (stab (slav %t i.t.t.path))
       =/  =md-resource    [`@tas`i.t.t.t.path (stab (slav %t i.t.t.t.t.path))]
       ``noun+!>((~(get by associations) [group-path md-resource]))
+    ::
+        [%x %resource @ *]
+      =/  app=@tas         i.t.t.path
+      =/  app-path=^path   t.t.t.path
+      ``noun+!>((~(get by resource-indices) app app-path))
     ==
   ::
   ++  on-agent  on-agent:def
