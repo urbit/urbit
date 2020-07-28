@@ -920,6 +920,7 @@
     {@ $newt *}  %a
     {@ $sync *}  %c
     {@ $term *}  %d
+    {@ $kams *}  %k
     {@ $http-client *}  %i
     {@ $http-server *}  %e
     {@ $behn *}  %b

@@ -2132,6 +2132,43 @@
     ++  oath  @                                         ::  signature
     --  ::  pki
   --  ::  jael
+++  kams  ^?
+  |%
+  ++  able  ^?
+    |%
+    +$  task
+      $%  [%hear =msgsrc msg=@]
+          [%ack id=@ud response=(unit @)]
+          $>(%plea vane-task)
+          $>(%born vane-task)
+          $>(%crud vane-task)
+          $>(%init vane-task)
+          $>(%trim vane-task)
+          $>(%vega vane-task)
+      ==
+    ::
+    +$  gift
+      $%  [%send id=@ud =msgsrc =msgdst msg=@]
+      ==
+    --
+    ::
+    ::  +shiplife: a pair which represents an instance of an urbit
+    ::
+    +$  shiplife  [ship=@p life=@ud]
+    ::
+    ::  +msgsrc: a message is signed by one or more ships
+    ::
+    ::  TODO: for now, this will always be a list of 1 until we get ring
+    ::  signatures on outbound messages, which is not going to happen by the
+    ::  first release, but we want to make sure that the API allows for it at
+    ::  the Urbit level.
+    ::
+    +$  msgsrc  (list shiplife)
+    ::
+    ::  +msgdst: a destination can only be one ship
+    ::
+    +$  msgdst  shiplife
+  --  :: kams
 ::
 ++  gift-arvo                                           ::  out result <-$
   $~  [%init ~zod]
@@ -2143,6 +2180,7 @@
       gift:able:gall
       gift:able:iris
       gift:able:jael
+      gift:able:kams
   ==
 ++  task-arvo                                           ::  in request ->$
   $%  task:able:ames
@@ -2153,6 +2191,7 @@
       task:able:gall
       task:able:iris
       task:able:jael
+      task:able:kams
   ==
 ++  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -2164,6 +2203,7 @@
       {$g task:able:gall}
       [%i task:able:iris]
       {$j task:able:jael}
+      [%k task:able:kams]
       {@tas $meta vase}
   ==
 ++  sign-arvo                                           ::  in result $<-
@@ -2182,6 +2222,7 @@
       {$g gift:able:gall}
       [%i gift:able:iris]
       {$j gift:able:jael}
+      [%k gift:able:kams]
   ==
 ::  $unix-task: input from unix
 ::

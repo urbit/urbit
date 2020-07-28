@@ -34,6 +34,7 @@
         [%g /vane/gall]  ::  applications
         [%i /vane/iris]  ::  http client
         [%j /vane/jael]  ::  identity and security
+        [%k /vane/kams]  ::  temporary king ames bring up vane
     ==
   |=  [=term =path]
   =/  pax  (weld sys path)

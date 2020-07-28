@@ -54,8 +54,9 @@ nockWriter :: forall e
 nockWriter env api who enqueueEv = (initialEvs, runWriter)
   where
     -- Tell the ames system to resend any unacknowledged messages.
-    kingid = fromIntegral (env ^. kingIdL)
-    initialEvs = [EvBlip $ BlipEvKams $ KamsEvBorn (fromIntegral kingid, ()) ()]
+    -- kingid = fromIntegral (env ^. kingIdL)
+    -- initialEvs = [EvBlip $ BlipEvKams $ KamsEvBorn (fromIntegral kingid, ()) ()]
+    initialEvs = []
 
     runWriter :: RAcquire e (KamsEf -> IO ())
     runWriter = handleEf <$> mkRAcquire joinRouter leaveRouter
