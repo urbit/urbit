@@ -94,6 +94,7 @@ interface ChatScreenState {
   scrollLocked: boolean;
   read: number;
   active: boolean;
+  messages: Map<string, string>;
   lastScrollHeight: number | null;
 }
 
@@ -118,6 +119,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
       scrollLocked: false,
       read: props.read,
       active: true,
+      messages: new Map(),
       // only for FF
       lastScrollHeight: null,
     };
@@ -594,8 +596,12 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           envelopes={props.envelopes}
           contacts={props.contacts}
           onEnter={() => this.setState({ scrollLocked: false })}
+          onChange={(msg: string) => this.setState({
+            messages: this.state.messages.set(props.station, msg)
+          })}
           s3={props.s3}
           placeholder="Message..."
+          message={this.state.messages.get(props.station) || ""}
         />
       </div>
     );
