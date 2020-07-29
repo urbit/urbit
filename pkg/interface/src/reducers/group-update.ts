@@ -25,7 +25,6 @@ function decodeGroup(group: Enc<Group>): Group {
     tags: decodeTags(group.tags),
     policy: decodePolicy(group.policy),
   };
-  console.log(res);
   return res;
 }
 
