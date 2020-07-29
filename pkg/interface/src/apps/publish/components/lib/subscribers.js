@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { GroupView } from '../../../../components/Group';
+import { resourceFromPath } from '../../../../lib/group';
 
 export class Subscribers extends Component {
   constructor(props) {
@@ -7,6 +8,7 @@ export class Subscribers extends Component {
     this.redirect = this.redirect.bind(this);
     this.addUser = this.addUser.bind(this);
     this.removeUser = this.removeUser.bind(this);
+    this.addAll = this.addAll.bind(this);
   }
 
   addUser(who, path) {
@@ -20,6 +22,18 @@ export class Subscribers extends Component {
   redirect(url) {
     window.location.href = url;
   }
+
+  addAll() {
+    const path = this.props.notebook['writers-group-path'];
+    const group = path ? this.props.groups[path] : null;
+    const resource = resourceFromPath(path);
+    this.props.api.groups.addTag(
+      resource,
+      { app: 'publish', tag: `writers-${this.props.book}` },
+      [...group.members].map(m => `~${m}`)
+    );
+  }
+
 
   render() {
     const path = this.props.notebook['writers-group-path'];
@@ -45,17 +59,25 @@ export class Subscribers extends Component {
     ];
 
     return (
-      <GroupView
-        permissions
-        resourcePath={path}
-        group={group}
-        tags={tags}
-        appTags={appTags}
-        contacts={this.props.contacts}
-        groups={this.props.groups}
-        associations={this.props.associations}
-        api={this.props.api}
-      />
+      <div>
+        <button
+           onClick={this.addAll}
+           className={'dib f9 black gray4-d bg-gray0-d ba pa2 mb4 b--black b--gray1-d pointer'}
+        >
+          Add all members as writers
+        </button>
+        <GroupView
+          permissions
+          resourcePath={path}
+          group={group}
+          tags={tags}
+          appTags={appTags}
+          contacts={this.props.contacts}
+          groups={this.props.groups}
+          associations={this.props.associations}
+          api={this.props.api}
+        />
+      </div>
     );
   }
 }
