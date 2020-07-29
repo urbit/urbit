@@ -222,10 +222,48 @@ _cu_from_loom(ur_root_t *r, u3_noun a)
   return ref;
 }
 
+typedef struct _cu_vec_s {
+  ur_nvec_t* vec_u;
+  ur_root_t* rot_u;
+} _cu_vec;
+
+/* _cu_hamt_walk(): reallocate key/value pair in hamt walk.
+*/
+static void
+_cu_hamt_walk(u3_noun kev, void* ptr)
+{
+  _cu_vec*   dat_u = (_cu_vec*)ptr;
+  ur_nvec_t* vec_u = dat_u->vec_u;
+  ur_root_t* rot_u = dat_u->rot_u;
+
+  vec_u->refs[vec_u->fill++] = _cu_from_loom(rot_u, kev);
+}
+
+typedef struct _cu_loom_s {
+  u3_atom *vat;
+  u3_noun *cel;
+} _cu_loom;
+
+/* _cu_atoms_to_loom(): allocate all indirect atoms on the loom.
+*/
+static void
+_cu_atoms_to_loom(ur_root_t* rot_u, _cu_loom* lom_u)
+{
+  c3_d*  len_d = rot_u->atoms.lens;
+  c3_y** byt_y = rot_u->atoms.bytes;
+  c3_d   fil_d = rot_u->atoms.fill;
+  u3_atom* vat = lom_u->vat = calloc(fil_d, sizeof(u3_atom));
+  c3_d     i_d;
+
+  for ( i_d = 0; i_d < fil_d; i_d++ ) {
+    vat[i_d] = u3i_bytes(len_d[i_d], byt_y[i_d]);
+  }
+}
+
 /* _cu_ref_to_noun(): lookup/allocate [ref] on the loom.
 */
 static u3_noun
-_cu_ref_to_noun(ur_nref ref, u3_noun* vat, u3_noun* cel)
+_cu_ref_to_noun(ur_nref ref, _cu_loom* lom_u)
 {
   switch ( ur_nref_tag(ref) ) {
     default: assert(0);
@@ -244,27 +282,28 @@ _cu_ref_to_noun(ur_nref ref, u3_noun* vat, u3_noun* cel)
       }
     } break;
 
-    case ur_iatom:  return vat[ur_nref_idx(ref)];
+    case ur_iatom:  return lom_u->vat[ur_nref_idx(ref)];
 
-    case ur_icell:  return cel[ur_nref_idx(ref)];
+    case ur_icell:  return lom_u->cel[ur_nref_idx(ref)];
   }
 }
 
-typedef struct _cu_vec_s {
-  ur_nvec_t* vec_u;
-  ur_root_t* rot_u;
-} _cu_vec;
-
-/* _cu_hamt_walk(): reallocate key/value pair in hamt walk.
+/* _cu_cells_to_loom(): allocate all cells on the loom.
 */
 static void
-_cu_hamt_walk(u3_noun kev, void* ptr)
+_cu_cells_to_loom(ur_root_t* rot_u, _cu_loom* lom_u)
 {
-  _cu_vec*   dat_u = (_cu_vec*)ptr;
-  ur_nvec_t* vec_u = dat_u->vec_u;
-  ur_root_t* rot_u = dat_u->rot_u;
+  ur_nref* hed = rot_u->cells.heads;
+  ur_nref* tal = rot_u->cells.tails;
+  c3_d   fil_d = rot_u->cells.fill;
+  u3_noun* cel = lom_u->cel = calloc(fil_d, sizeof(u3_noun));
+  c3_d     i_d;
 
-  vec_u->refs[vec_u->fill++] = _cu_from_loom(rot_u, kev);
+  for ( i_d = 0; i_d < fil_d; i_d++ ) {
+    cel[i_d] = u3nc(_cu_ref_to_noun(hed[i_d], lom_u),
+                    _cu_ref_to_noun(tal[i_d], lom_u));
+    //  XX mug?
+  }
 }
 
 /* u3u_uniq(): hash-cons roots off-loom, reallocate on loom.
@@ -277,6 +316,8 @@ u3u_uniq(void)
   ur_root_t *r = ur_hcon_init();
 
   //  allow read/write on the whole loom, bypassing page tracking
+  //
+  //    NB: u3e_save() will reinstate protection flags
   //
   if ( 0 != mprotect((void *)u3_Loom, u3a_bytes, (PROT_READ | PROT_WRITE)) ) {
     c3_assert(0);
@@ -302,61 +343,42 @@ u3u_uniq(void)
     u3h_walk_with(u3R->jed.cod_p, _cu_hamt_walk, &dat_u);
   }
 
-
   fprintf(stderr, "hc: cells fill %" PRIu64 " size %" PRIu64 "\r\n", r->cells.fill, r->cells.size);
   fprintf(stderr, "hc: atoms fill %" PRIu64 " size %" PRIu64 "\r\n", r->atoms.fill, r->atoms.size);
 
+  //  NB: hot jet state is not yet re-established
+  //
   u3m_pave(c3y, c3n);
-  // XX wtf?
-  u3R->jed.hot_p = u3h_new();
-
-  u3_atom *vat;
-  u3_noun *cel;
 
   {
-    ur_atoms_t *atoms = &(r->atoms);
-    uint64_t    *lens = atoms->lens;
-    uint8_t    **byts = atoms->bytes;
-    uint64_t  i, fill = atoms->fill;
+    _cu_loom lom_u;
+    _cu_atoms_to_loom(r, &lom_u);
+    _cu_cells_to_loom(r, &lom_u);
 
-    vat = calloc(fill, sizeof(u3_atom));
+    //  restore kernel reference (always a cell)
+    //
+    u3A->roc = lom_u.cel[ur_nref_idx(ken)];
 
-    for ( i = 0; i < fill; i++ ) {
-      vat[i] = u3i_bytes(lens[i], byts[i]);
-      //  XX mug?
+    //  restore cold jet state (always cells)
+    //
+    {
+      c3_w    i_w;
+      ur_nref ref;
+      u3_noun kev;
+
+      for ( i_w = 0; i_w < cod_w; i_w++) {
+        ref = v.refs[i_w];
+        kev = lom_u.cel[ur_nref_idx(ref)];
+        u3h_put(u3R->jed.cod_p, u3h(kev), u3k(u3t(kev)));
+        u3z(kev);
+      }
     }
   }
 
-  {
-    ur_cells_t *cells = &(r->cells);
-    ur_nref     *heds = cells->heads, *tals = cells->tails;
-    uint64_t  i, fill = cells->fill;
-    u3_noun  hed, tal;
-
-    cel = calloc(fill, sizeof(u3_noun));
-
-    for ( i = 0; i < fill; i++ ) {
-      hed = _cu_ref_to_noun(heds[i], vat, cel);
-      tal = _cu_ref_to_noun(tals[i], vat, cel);
-      cel[i] = u3nc(hed, tal);
-      //  XX mug?
-    }
-  }
-
-  u3A->roc = cel[ur_nref_idx(ken)];
-
-  {
-    uint32_t  i;
-    ur_nref ref;
-    u3_noun kev;
-
-    for ( i = 0; i < cod_w; i++) {
-      ref = v.refs[i];
-      kev = cel[ur_nref_idx(ref)];
-      u3h_put(u3R->jed.cod_p, u3h(kev), u3k(u3t(kev)));
-      u3z(kev);
-    }
-  }
+  //  allocate new hot jet state; re-establish warm
+  //
+  u3j_boot(c3y);
+  u3j_ream();
 
   //  mark all pages dirty
   //
