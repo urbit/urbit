@@ -2237,7 +2237,7 @@
       ::  %clay: new process
       ::
       $>(%boat task:able:clay)
-      ::  %behn/%eyre/%iris: new process
+      ::  %behn/%eyre/%iris/%kams: new process
       ::
       $>(%born vane-task)
       ::  %eyre: cancel request
