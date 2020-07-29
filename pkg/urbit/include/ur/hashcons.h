@@ -39,28 +39,6 @@ typedef uint8_t  ur_bool_t;
 #define ur_nref_tag(ref)       ( ref >> 62 )
 #define ur_nref_idx(ref)       ur_mask_62(ref)
 
-typedef struct ur_pail32_s {
-  uint8_t  fill;
-  uint32_t data[10];
-} ur_pail32_t;
-
-typedef struct ur_dict32_s {
-  uint64_t     prev;
-  uint64_t     size;
-  ur_pail32_t *buckets;
-} ur_dict32_t;
-
-typedef struct ur_pail64_s {
-  uint8_t  fill;
-  uint64_t data[10];
-} ur_pail64_t;
-
-typedef struct ur_dict64_s {
-  uint64_t     prev;
-  uint64_t     size;
-  ur_pail64_t *buckets;
-} ur_dict64_t;
-
 typedef uint32_t ur_mug;
 typedef uint64_t ur_nref;
 typedef enum {
@@ -69,24 +47,35 @@ typedef enum {
   ur_icell = 2,
 } ur_tag;
 
+typedef struct ur_pail_s {
+  uint8_t  fill;
+  ur_nref  refs[10];
+} ur_pail_t;
+
+typedef struct ur_dict_s {
+  uint64_t      prev;
+  uint64_t      size;
+  ur_pail_t *buckets;
+} ur_dict_t;
+
 typedef struct ur_cells_s {
-  ur_dict64_t dict;
-  uint64_t    prev;
-  uint64_t    size;
-  uint64_t    fill;
-  ur_mug     *mugs;
-  ur_nref   *heads;
-  ur_nref   *tails;
+  ur_dict_t dict;
+  uint64_t  prev;
+  uint64_t  size;
+  uint64_t  fill;
+  ur_mug   *mugs;
+  ur_nref *heads;
+  ur_nref *tails;
 } ur_cells_t;
 
 typedef struct ur_atoms_s {
-  ur_dict64_t dict;
-  uint64_t    prev;
-  uint64_t    size;
-  uint64_t    fill;
-  ur_mug     *mugs;
-  uint8_t  **bytes;
-  uint64_t   *lens;
+  ur_dict_t  dict;
+  uint64_t   prev;
+  uint64_t   size;
+  uint64_t   fill;
+  ur_mug    *mugs;
+  uint8_t **bytes;
+  uint64_t  *lens;
 } ur_atoms_t;
 
 typedef struct ur_root_s {

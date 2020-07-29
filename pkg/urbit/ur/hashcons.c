@@ -102,34 +102,32 @@ ur_tail(ur_root_t *r, ur_nref ref)
 }
 
 void
-ur_dict64_grow(ur_root_t *r, ur_dict64_t *dict, uint64_t prev, uint64_t size)
+ur_dict_grow(ur_root_t *r, ur_dict_t *dict, uint64_t prev, uint64_t size)
 {
-  ur_pail64_t *buckets, *old_buckets = dict->buckets;
+  ur_pail_t *buckets, *old_buckets = dict->buckets;
   uint64_t old_size = dict->size;
-  uint64_t next = prev + size;
-  uint64_t i;
+  uint64_t  i, next = prev + size;
 
   buckets = calloc(next, sizeof(*buckets));
 
   for ( i = 0; i < old_size; i++ ) {
-    ur_pail64_t *old_bucket = &(old_buckets[i]);
-    uint8_t old_fill = old_bucket->fill;
-    uint8_t j;
+    ur_pail_t *old_bucket = &(old_buckets[i]);
+    uint8_t   j, old_fill = old_bucket->fill;
 
     for ( j = 0; j < old_fill; j++ ) {
-      ur_nref ref = (ur_nref)old_bucket->data[j];
+      ur_nref ref = old_bucket->refs[j];
       ur_mug  mug = ur_nref_mug(r, ref);
       
-      uint64_t        idx = ( mug % next );
-      ur_pail64_t *bucket = &(buckets[idx]);
-      uint8_t   new_fill = bucket->fill;
+      uint64_t      idx = ( mug % next );
+      ur_pail_t *bucket = &(buckets[idx]);
+      uint8_t  new_fill = bucket->fill;
 
       if ( 10 == new_fill ) {
         free(buckets);
-        return ur_dict64_grow(r, dict, size, next);
+        return ur_dict_grow(r, dict, size, next);
       }
 
-      bucket->data[new_fill] = (uint64_t)ref;
+      bucket->refs[new_fill] = ref;
       bucket->fill = 1 + new_fill;
     }
   }
@@ -154,10 +152,10 @@ ur_atoms_grow(ur_atoms_t *atoms)
   atoms->bytes = malloc(next * ( sizeof(*atoms->bytes)
                                + sizeof(*atoms->lens)
                                + sizeof(*atoms->mugs) ));
-  assert( atoms->bytes );
-
   atoms->lens  = (void*)((char*)atoms->bytes + (next * sizeof(*atoms->bytes)));
   atoms->mugs  = (void*)((char*)atoms->lens  + (next * sizeof(*atoms->lens)));
+
+  assert( atoms->bytes );
 
   if ( bytes ) {
     memcpy(atoms->bytes, bytes, size * (sizeof(*bytes)));
@@ -184,10 +182,10 @@ ur_cells_grow(ur_cells_t *cells)
   cells->heads = malloc(next * ( sizeof(*cells->heads)
                                + sizeof(*cells->heads)
                                + sizeof(*cells->mugs) ));
-  assert( cells->heads );
-
   cells->tails = (void*)((char*)cells->heads + (next * sizeof(*cells->heads)));
   cells->mugs  = (void*)((char*)cells->tails + (next * sizeof(*cells->tails)));
+
+  assert( cells->heads );
 
   if ( heads ) {
     memcpy(cells->heads, heads, size * (sizeof(*heads)));
@@ -269,19 +267,19 @@ ur_nref
 ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
 {
   ur_atoms_t *atoms = &(r->atoms);
-  ur_dict64_t *dict = &(atoms->dict);
+  ur_dict_t   *dict = &(atoms->dict);
   ur_mug        mug = ur_mug_bytes(byt, len);
 
   while ( 1 ) {
-    uint64_t        idx = ( mug % dict->size );
-    ur_pail64_t *bucket = &(dict->buckets[idx]);
-    uint8_t   i, b_fill = bucket->fill;
+    uint64_t      idx = ( mug % dict->size );
+    ur_pail_t *bucket = &(dict->buckets[idx]);
+    uint8_t i, b_fill = bucket->fill;
     ur_nref tom;
 
     for ( i = 0; i < b_fill; i++ ) {
       uint8_t *t_byt;
       uint64_t t_len;
-      tom = (ur_nref)bucket->data[i];
+      tom = bucket->refs[i];
 
       ur_bytes(r, tom, &t_byt, &t_len);
 
@@ -293,7 +291,7 @@ ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
     }
 
     if ( 10 == b_fill ) {
-      ur_dict64_grow(r, dict, dict->prev, dict->size);
+      ur_dict_grow(r, dict, dict->prev, dict->size);
       continue;
     }
 
@@ -303,7 +301,7 @@ ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
 
     tom = _coin_unsafe(atoms, mug, byt, len);
     
-    bucket->data[b_fill] = (uint64_t)tom;
+    bucket->refs[b_fill] = tom;
     bucket->fill = 1 + b_fill;
 
     return tom;
@@ -327,18 +325,18 @@ ur_nref
 ur_cons(ur_root_t *r, ur_nref hed, ur_nref tal)
 {
   ur_cells_t *cells = &(r->cells);
-  ur_dict64_t *dict = &(cells->dict);
+  ur_dict_t   *dict = &(cells->dict);
   ur_mug mug        = ur_mug_both(ur_nref_mug(r, hed),
                                   ur_nref_mug(r, tal));
 
   while ( 1 ) {
-    uint64_t        idx = ( mug % dict->size );
-    ur_pail64_t *bucket = &(dict->buckets[idx]);
-    uint8_t   i, b_fill = bucket->fill;
+    uint64_t      idx = ( mug % dict->size );
+    ur_pail_t *bucket = &(dict->buckets[idx]);
+    uint8_t i, b_fill = bucket->fill;
     ur_nref cel;
 
     for ( i = 0; i < b_fill; i++ ) {
-      cel = (ur_nref)bucket->data[i];
+      cel = bucket->refs[i];
 
       if (  (hed == ur_head(r, cel))
          && (tal == ur_tail(r, cel)) )
@@ -348,7 +346,7 @@ ur_cons(ur_root_t *r, ur_nref hed, ur_nref tal)
     }
 
     if ( 10 == b_fill ) {
-      ur_dict64_grow(r, dict, dict->prev, dict->size);
+      ur_dict_grow(r, dict, dict->prev, dict->size);
       continue;
     }
 
@@ -358,7 +356,7 @@ ur_cons(ur_root_t *r, ur_nref hed, ur_nref tal)
 
     cel = _cons_unsafe(cells, mug, hed, tal);
 
-    bucket->data[b_fill] = (uint64_t)cel;
+    bucket->refs[b_fill] = cel;
     bucket->fill = 1 + b_fill;
 
     return cel;
@@ -372,7 +370,7 @@ ur_hcon_init(void)
   assert( r );
 
   {
-    ur_dict64_t *dict;
+    ur_dict_t *dict;
     uint64_t fib11 = 89, fib12 = 144;
 
     //  allocate atom storage
@@ -384,7 +382,7 @@ ur_hcon_init(void)
     //  allocate atom hashtable
     //
     dict = &(r->atoms.dict);
-    ur_dict64_grow(r, dict, fib11, fib12);
+    ur_dict_grow(r, dict, fib11, fib12);
 
     //  allocate cell storage
     //
@@ -395,7 +393,7 @@ ur_hcon_init(void)
     //  allocate cell hashtable
     //
     dict = &(r->cells.dict);
-    ur_dict64_grow(r, dict, fib11, fib12);
+    ur_dict_grow(r, dict, fib11, fib12);
   }
 
   return r;
