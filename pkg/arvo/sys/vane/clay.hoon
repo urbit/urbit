@@ -4643,7 +4643,9 @@
     :+  desk  %|
     :~  ankh+&+ank.dom.dojo
         mime+&+mim.dom.dojo
-        ford+&+fod.dom.dojo
+        ford-vases+&+vases.fod.dom.dojo
+        ford-marks+&+marks.fod.dom.dojo
+        ford-casts+&+casts.fod.dom.dojo
     ==
   :~  domestic+|+domestic
       foreign+&+hoy.ruf
