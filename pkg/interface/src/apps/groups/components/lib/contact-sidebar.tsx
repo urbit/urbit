@@ -155,7 +155,7 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
         <div className="overflow-auto h-100">
           <Link
             to={'/~groups/add' + props.path}
-            className={((props.path.includes(window.ship))
+            className={((role === "admin" || role === "moderator")
               ? 'dib'
               : 'dn')}
           >
