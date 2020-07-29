@@ -47,6 +47,11 @@ typedef enum {
   ur_icell = 2,
 } ur_tag;
 
+typedef struct ur_nvec_s {
+  uint64_t fill;
+  ur_nref* refs;
+} ur_nvec_t;
+
 typedef struct ur_pail_s {
   uint8_t  fill;
   ur_nref  refs[10];
@@ -94,3 +99,6 @@ ur_cons(ur_root_t *r, ur_nref hed, ur_nref tal);
 
 ur_root_t*
 ur_hcon_init(void);
+
+void
+ur_nvec_init(ur_nvec_t *v, uint64_t size);

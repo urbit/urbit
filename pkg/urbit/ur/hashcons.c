@@ -270,6 +270,10 @@ ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
   ur_dict_t   *dict = &(atoms->dict);
   ur_mug        mug = ur_mug_bytes(byt, len);
 
+  //  XX should check for <= 62 bits, coin direct
+  //  XX conflicts with current u3u_uniq() use-case
+  //
+
   while ( 1 ) {
     uint64_t      idx = ( mug % dict->size );
     ur_pail_t *bucket = &(dict->buckets[idx]);
@@ -397,4 +401,11 @@ ur_hcon_init(void)
   }
 
   return r;
+}
+
+void
+ur_nvec_init(ur_nvec_t *v, uint64_t size)
+{
+  v->fill = 0;
+  v->refs = calloc(size, sizeof(ur_nref));
 }
