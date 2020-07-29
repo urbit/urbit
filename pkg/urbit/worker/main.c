@@ -339,13 +339,15 @@ _cw_usage(c3_i argc, c3_c* argv[])
           "    %s grab <pier>\n\n"
           "  compact persistent state:\n"
           "    %s pack <pier>\n\n"
+          "  deduplicate persistent state:\n"
+          "    %s uniq <pier>\n\n"
           "  jam persistent state:\n"
           "    %s cram <pier>\n\n"
           "  cue persistent state:\n"
           "    %s queu <pier> <at-event>\n\n"
           "  run as a 'serf':\n"
           "    %s serf <pier> <key> <flags> <cache-size> <at-event>\n",
-          argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
+          argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
 }
 
 /* main(): main() when run as urbit-worker
