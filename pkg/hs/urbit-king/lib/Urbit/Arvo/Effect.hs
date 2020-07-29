@@ -68,6 +68,11 @@ deriveNoun ''HttpServerEf
 
 data KamsEf
     = KamsEfSend (Atom, ()) UD A.MsgSource A.MsgDest Atom
+      -- ^ We're sending a message with an Urbit supplied id number which will
+      -- be returned to us with KamsEvAck.
+    | KamsEfAck (Atom, ())  (KingId, UD) Bool
+      -- ^ We are sending an acknowledgement to a message we received from a
+      -- KamsEvHear.
   deriving (Eq, Ord, Show)
 
 deriveNoun ''KamsEf

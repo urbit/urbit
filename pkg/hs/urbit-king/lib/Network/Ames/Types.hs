@@ -73,18 +73,22 @@ data Route = Route
   { rtTransport :: String
   , rtAddr      :: String
   }
+  deriving (Ord, Eq, Show)
 
--- TODO: Write this instance; routes must be noun serializable
---instance ToNoun Route where
+instance ToNoun Route where
+  toNoun (Route transport addr) = toNoun (transport, addr)
+
+instance FromNoun Route where
+  parseNoun n = named "Route" $ do
+    (transport, addr) <- parseNoun n
+    pure (Route transport addr)
 
 -- Attempting to send a message will result in one of the following results.
 data TransportSendResult
-  = TSROK
-    -- ^ The remote end acknowledged the message, and the end-to-end property
-    -- is satisfied; we can remove it from our outgoing message store.
-  | TSRNACK ByteString
-    -- ^ The remote end failed with the above nacksplanation, which must be
-    -- sent back to the sender.
+  = TSRDelivered Bool
+    -- ^ The remote end acknowledged the message, either positively or
+    -- negatively, and the end-to-end property is satisfied; we can remove it
+    -- from our outgoing message store.
   | TSRFAIL
     -- ^ The transport failed to route the message, we should try another one,
     -- or wait a while and try again.
@@ -108,7 +112,7 @@ data Transport = Transport
 -- A writer is an interface for a thing which wishes to send and receive
 -- natural numbers on the network.
 data Writer = Writer
-  { wRecvMsg :: MsgSource -> MsgDest -> Atom -> (Maybe Atom -> STM ()) -> IO ()
+  { wRecvMsg :: MsgSource -> MsgDest -> Atom -> (Bool -> STM ()) -> IO ()
     -- ^ The writer receives an inbound message from a MsgDest.
 
   , wPrivateKey :: ShipLife -> ByteString
@@ -127,7 +131,7 @@ data Router = Router
 -- The Writer wishes to send a message as a MsgSource. Returns an stm function
 -- which will be called when/if the remote end signals that it acknowledges the
 -- message or sends a naxplenation.
-type WriterSendMsg = MsgSource -> MsgDest -> Atom -> (Maybe Atom -> STM ())
+type WriterSendMsg = MsgSource -> MsgDest -> Atom -> (Bool -> STM ())
                   -> IO ()
 
 -- The Writer calls this to add itself into the router
@@ -148,3 +152,110 @@ data AmesRouterWriterApi = AmesRouterWriterApi
 -- TODO: Everything about this.
 data AmesTransportRouterApi = AmesTransportRouterApi
 
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+{-
+
+The problem: we want to actually support both actor model passing
+(confirmations of at-least-once delivery are handled by the runtime) and
+current Ames behaviour (messags resolve in an ack/nack inside of ames).
+
+The conceptual interface is `Atom -> Bool`, where the bool is whether the
+request succeeded or failed. Naxplanations, as in current ames, are sent as
+additional packets, which can only be acked. Notably, Ted was really right when
+he was talking about naxplanations having to be separate messages from the
+actual nack message. That was subtle and I didn't totally get that before.
+
+Current Urbit on King Ames:
+
+  [send effect] -> {local send msg} -> {remote queues message}
+                                    -> [remote runs ok, emits ack effect]
+                                    <- {remote uses ack effect to ack msg]
+                -> {local takes ack effect and enqueues ack event in local}
+
+  [send effect] -> {local send msg} -> {remote queues message}
+                                    -> [remote crashes and replaces, emits nack
+                                        effect, naxplanation effect]
+                                    <- {remote uses ack effect to nack msg]
+                                    <- {remote sends naxplanation message}
+                -> {local takes nack effect and enqueues nack event in local}
+                -> {local enqueues naxplanation msg}
+                   -> {works}
+                   -> {sends nackplanation message} -> {remote queues}
+                                                    -> [remote works because has
+                                                        to, emits ack]
+                                                    <- {remote uses ack effect
+                                                        to ack msg}
+                -> {local takes ack effect and queues ack event in local}
+
+`Network.Ames.SimpleLibrary`:
+
+The simple library just has an lmdb database of unacknowledged messages and a
+function supplied by the user.
+
+  <receives a recv call> -> <runs an (Atom -> Either [Text] ()) function>
+                         -> <returned (Right ())>
+                         -> [sends positive ack back]
+
+  <receives a recv call> -> <runs an (Atom -> Either [Text] ()) function>
+                         -> <returned (Left errmsg)>
+                         <- {sends negative ack back}
+                         <- {sends naxplanation msg as msg}
+                         -> {receives naxplanation ack, marks message committed}
+
+  <sends a msg> -> {round trip}
+                -> {library receives positive ack. marks as committed}
+
+  <sends a msg> -> {round trip}
+                -> {library receives negative ack. marks as committed}
+                -> {library receives naxplanation. calls the naxplanation
+                    function}
+
+SKEW actor:
+
+  [send effect] -> {local send msg} -> {remote recv msg}
+                                    -> [remote runs ok]
+                                    -> {remote sends ack}
+                -> {local notes ack and marks message as handled}
+
+  [send effect] -> {local send msg} -> {remote recv msg}
+                                    -> [remote crash]
+                                    -> {remote sends nack}
+                                    -> {remote enqueues nackplanation message}
+                -> {local receives nack and marks message as handled}
+                -> {local queues up nackplanation message, must succeed}
+                -> {local sends positve ack re: naxplanation to remote}
+                                    -> {remote marks naxplanation as handled}
+
+This looks general enough to be implementable everywhere under different
+persistence regiemes.
+
+-}
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+-- TODO: The following is scratch thinking about messages between routers that
+-- I'd need to handle
+
+-- A list of messages sent between KingAmes environments. These do not
+-- correlate to messages that are sent into Urbit itself.
+data KingAmesMsg
+  = KAMCometIntroduction
+    -- ^ A comet introduces itself, equivalent to `+$open-packet` and
+    -- `+on-hear-open`.
+
+  | KAMRouteRequest ShipLife
+    -- ^ One side of the pipe asks for known routes to ShipLife
+  | KAMRouteResponse ShipLife [Route]
+    -- ^ The other side replies, gossiping about routes
+
+  -- TODO: Should we gossip about keys, or should we just always read Azimuth?
+
+  | KAMSend ByteString
+
+-- Things which get moved entirely into the king and which never touch your
+-- Urbit:
+--
+--  - +on-hear-open / comet plaintext self-attestation

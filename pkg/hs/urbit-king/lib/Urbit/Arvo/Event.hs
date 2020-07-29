@@ -245,8 +245,12 @@ deriveNoun ''BehnEv
 
 data KamsEv
     = KamsEvBorn (KingId, ())  ()
-    | KamsEvHear ()            A.MsgSource Atom
-    | KamsEvAck  ()            UD          (Maybe Atom)
+    | KamsEvHear ()            (KingId, UD)  A.MsgSource Atom
+      -- ^ We heard an incoming message with a system assigned id which we will
+      -- pass back in the KamsEfAck acknowledgement.
+    | KamsEvAck  ()            UD              Bool
+      -- ^ We heard an incoming acknowledgement of a message we sent with
+      -- KamsEfSend.
     deriving (Eq, Ord, Show)
 
 deriveNoun ''KamsEv
