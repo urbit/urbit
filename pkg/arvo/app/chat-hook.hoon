@@ -19,8 +19,10 @@
       state-2
       state-3
       state-4
+      state-5
   ==
 ::
++$  state-5  [%5 state-base]
 +$  state-4  [%4 state-base]
 +$  state-3  [%3 state-base]
 +$  state-2  [%2 state-base]
@@ -48,7 +50,7 @@
   $%  [%chat-update update:store]
   ==
 --
-=|  state-4
+=|  state-5
 =*  state  -
 ::
 %-  agent:dbug
@@ -77,14 +79,14 @@
     =/  old  !<(versioned-state old-vase)
     =|  cards=(list card)
     |-
-    ?:  ?=(%4 -.old)
+    ?:  ?=(%5 -.old)
       [cards this(state old)]
-    ?:  ?=(%3 -.old)
+    ?:  ?=(?(%3 %4) -.old)
       =.  cards
         %+  weld  cards
         ^-  (list card)
         [%pass /pokeme %agent [our.bol %chat-hook] %poke %noun !>(%fix-dm)]~
-      $(-.old %4)
+      $(-.old %5)
     ?:  ?=(%2 -.old)
       =.  cards
         %+  weld  cards
@@ -406,7 +408,7 @@
     ::
     ~
   :-  =-  [%pass /fixdm %agent [our.bol %chat-view] %poke %chat-view-action -]
-      !>  ^-  action:store
+      !>  ^-  action:view
       [%delete path]
   =/  new-dm  /(scot %p our.bol)/(crip (weld "dm--" (trip (scot %p ship))))
   =/  mailbox=(unit mailbox:store)  (chat-scry path)
@@ -419,7 +421,7 @@
           (zing [(trip (scot %p our.bol)) " <-> " (trip (scot %p ship)) ~])
           ''
           new-dm
-          new-dm
+          ship+new-dm
           [%invite (silt ~[ship])]
           (silt ~[ship])
           %.y
