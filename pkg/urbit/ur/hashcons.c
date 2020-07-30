@@ -367,6 +367,107 @@ ur_cons(ur_root_t *r, ur_nref hed, ur_nref tal)
   }
 }
 
+static void
+_print_memory(FILE *f, const char *c, uint64_t bytes)
+{
+  if ( !bytes ) {
+    fprintf(f, "%s: B/0\r\n", c);
+  }
+  else {
+    uint32_t g = (bytes / 1000000000);
+    uint32_t m = (bytes % 1000000000) / 1000000;
+    uint32_t k = (bytes % 1000000) / 1000;
+    uint32_t b = (bytes % 1000);
+
+    if ( g ) {
+      fprintf(f, "%s: GB/%d.%03d.%03d.%03d\r\n", c, g, m, k, b);
+    }
+    else if ( m ) {
+      fprintf(f, "%s: MB/%d.%03d.%03d\r\n", c, m, k, b);
+    }
+    else if ( k ) {
+      fprintf(f, "%s: KB/%d.%03d\r\n", c, k, b);
+    }
+    else if ( b ) {
+      fprintf(f, "%s: B/%d\r\n", c, b);
+    }
+  }
+}
+
+static uint64_t
+_dict_info(FILE *f, ur_dict_t *dict)
+{
+  uint64_t data = dict->size * sizeof(*dict->buckets);
+  _print_memory(f, "    dict", data);
+  return data;
+}
+
+static uint64_t
+_atoms_info(FILE *f, ur_atoms_t *atoms)
+{
+  uint64_t total = 0;
+  uint64_t  size = atoms->size;
+  uint64_t  fill = atoms->fill;
+  uint64_t  refs = size * ( sizeof(*atoms->bytes)
+                          + sizeof(*atoms->lens)
+                          + sizeof(*atoms->mugs) );
+  uint64_t i, data = 0;
+
+  fprintf(f, "  atoms (%" PRIu64 "):\r\n", fill);
+
+  _print_memory(f, "    refs", refs);
+  total += refs;
+
+  for ( i = 0; i < fill; i++ ) {
+    data += atoms->lens[i];
+  }
+  _print_memory(f, "    data", data);
+  total += data;
+
+  total += _dict_info(f, &(atoms->dict));
+  _print_memory(f, "  total", total);
+  return total;
+}
+
+static uint64_t
+_cells_info(FILE *f, ur_cells_t *cells)
+{
+  uint64_t total = 0;
+  uint64_t  size = cells->size;
+  uint64_t  fill = cells->fill;
+  uint64_t  refs = size * ( sizeof(*cells->heads)
+                          + sizeof(*cells->heads)
+                          + sizeof(*cells->mugs) );
+
+  fprintf(f, "  cells (%" PRIu64 "):\r\n", fill);
+
+  _print_memory(f, "    refs", refs);
+  total += refs;
+
+  total += _dict_info(f, &(cells->dict));
+  _print_memory(f, "  total", total);
+  return total;
+}
+
+void
+ur_hcon_info(FILE *f, ur_root_t *r)
+{
+  uint64_t total = 0;
+
+  fprintf(stderr, "hash-cons arena:\r\n");
+
+  {
+    uint64_t root = sizeof(*r);
+    _print_memory(f, "  root", root);
+    total += root;
+  }
+
+  total += _atoms_info(f, &(r->atoms));
+  total += _cells_info(f, &(r->cells));
+
+  _print_memory(f, "total", total);
+}
+
 ur_root_t*
 ur_hcon_init(void)
 {

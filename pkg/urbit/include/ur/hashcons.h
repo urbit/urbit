@@ -97,6 +97,9 @@ ur_coin64(ur_root_t *r, uint64_t n);
 ur_nref
 ur_cons(ur_root_t *r, ur_nref hed, ur_nref tal);
 
+void
+ur_hcon_info(FILE *f, ur_root_t *r);
+
 ur_root_t*
 ur_hcon_init(void);
 
