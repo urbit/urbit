@@ -15,6 +15,7 @@ import { ConnectionStatus } from '../types/connection';
 export interface StoreState {
   // local state
   sidebarShown: boolean;
+  omniboxShown: boolean;
   dark: boolean;
   connection: ConnectionStatus;
   baseHash: string | null;

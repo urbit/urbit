@@ -1,7 +1,7 @@
-
 export type LocalUpdate =
   LocalUpdateSidebarToggle
 | LocalUpdateSetDark
+| LocalUpdateSetOmniboxShown
 | LocalUpdateBaseHash;
 
 interface LocalUpdateSidebarToggle {
@@ -14,4 +14,8 @@ interface LocalUpdateSetDark {
 
 interface LocalUpdateBaseHash {
   baseHash: string;
+}
+
+interface LocalUpdateSetOmniboxShown {
+  omniboxShown: boolean;
 }

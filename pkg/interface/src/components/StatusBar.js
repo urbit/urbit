@@ -1,39 +1,34 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Sigil } from '../lib/sigil';
-
-const getLocationName = (basePath) => {
-  if (basePath === '~chat')
-    return 'Chat';
-  else if (basePath === '~dojo')
-    return 'Dojo';
-  else if (basePath === '~groups')
-    return 'Groups';
-  else if (basePath === '~link')
-    return 'Links';
-  else if (basePath === '~publish')
-    return 'Publish';
-  else
-    return 'Unknown';
-};
+import { Box, Text, Icon } from '@tlon/indigo-react';
 
 const StatusBar = (props) => {
   const location = useLocation();
-  const basePath = location.pathname.split('/')[1];
-  const locationName = location.pathname === '/'
-    ? 'Home'
-    : getLocationName(basePath);
+  const atHome = Boolean(location.pathname === '/');
 
-  const display = (!window.location.href.includes('popout/') &&
-    (locationName !== 'Unknown'))
+  const display = (!window.location.href.includes('popout/'))
       ? 'db' : 'dn';
 
   const invites = (props.invites && props.invites['/contacts'])
     ? props.invites['/contacts']
     : {};
+
+  const Notification = (Object.keys(invites).length > 0)
+    ?  <Icon size="22px" icon="Bullet"
+          fill="blue" position="absolute"
+          top={'-8px'} right={'7px'}
+       />
+    : null;
+
   const connection = props.connection || 'connected';
 
   const reconnect = props.subscription.restart.bind(props.subscription);
+
+  const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
+
+  const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
+    navigator.userAgent
+  );
 
   return (
     <div
@@ -42,38 +37,81 @@ const StatusBar = (props) => {
       }
       style={{ height: 45 }}
     >
-      <div className="fl lh-copy absolute left-0 pl4" style={{ top: 8 }}>
-      <Link to="/~groups/me"
-          className="dib v-top" style={{ lineHeight: 0, paddingTop: 6 }}>
-          <Sigil
-            ship={'~' + window.ship}
-            classes="v-mid mix-blend-diff"
-            size={16}
-            color={'#000000'}
+      <div className='fl absolute left-0 pl4' style={{ top: 10 }}>
+        {atHome ? null : (
+          <Box
+            style={{ cursor: 'pointer' }}
+            display='inline-block'
+            borderRadius={2}
+            color='washedGray'
+            border={1}
+            py={1}
+            px={2}
+            mr={2}
+            onClick={() => props.history.push('/')}
+          >
+            <img
+              className='invert-d'
+              src='/~landscape/img/icon-home.png'
+              height='12'
+              width='12'
+            />
+          </Box>
+        )}
+        <Box
+          border={1}
+          borderRadius={2}
+          color='washedGray'
+          display='inline-block'
+          style={{ cursor: 'pointer' }}
+          py={1}
+          px={2}
+          onClick={() => props.api.local.setOmnibox()}
+        >
+          <Text display='inline-block' style={{ transform: 'rotate(180deg)' }}>
+            ↩
+          </Text>
+          <Text ml={2} color='black'>
+            Leap
+          </Text>
+          <Text display={mobile ? 'none' : 'inline-block'} ml={4} color='gray'>
+            {metaKey}L
+          </Text>
+        </Box>
+        {connection === 'disconnected' && (
+          <span
+            onClick={reconnect}
+            className='ml4 ph2 dib f9 v-mid red2 inter ba b-red2 br1 pointer'
+          >
+            Reconnect ↻
+          </span>
+        )}
+        {connection === 'reconnecting' && (
+          <span className='ml4 ph2 dib f9 v-mid yellow2 inter ba b-yellow2 br1'>
+            Reconnecting
+          </span>
+        )}
+      </div>
+      <div className='fl absolute relative right-0 pr4' style={{ top: 10 }}>
+        <Box
+          style={{ cursor: 'pointer' }}
+          display='inline-block'
+          borderRadius={2}
+          color='washedGray'
+          border={1}
+          px={2}
+          py={1}
+          onClick={() => props.history.push('/~groups')}
+        >
+          <img
+            className='invert-d v-mid'
+            src='/~landscape/img/groups.png'
+            height='16'
+            width='16'
           />
-      </Link>
-      <span className="dib f9 v-mid gray2 ml1 mr1 c-default inter">/</span>
-        {
-          location.pathname === '/'
-            ? null
-            : <Link
-                className="dib f9 v-mid inter ml2 no-underline white-d"
-                to="/"
-                style={{ top: 14 }}
-              >
-              ⟵
-              </Link>
-        }
-         <p className="dib f9 v-mid inter ml2 white-d">{locationName}</p>
-    { connection === 'disconnected' &&
-      (<span
-        onClick={reconnect}
-        className="ml4 ph2 dib f9 v-mid red2 inter ba b-red2 br1 pointer"
-        >Reconnect ↻</span> )
-    }
-    { connection === 'reconnecting' &&
-      (<span className="ml4 ph2 dib f9 v-mid yellow2 inter ba b-yellow2 br1">Reconnecting</span> )
-    }
+          {Notification}
+          <Text ml={1}>Groups</Text>
+        </Box>
       </div>
     </div>
   );

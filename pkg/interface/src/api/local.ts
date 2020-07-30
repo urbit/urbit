@@ -28,4 +28,14 @@ export default class LocalApi extends BaseApi<StoreState> {
     });
   }
 
+    setOmnibox() {
+    this.store.handleEvent({
+      data: {
+        local: {
+          omniboxShown: true
+        },
+      },
+    });
+  }
+
 }

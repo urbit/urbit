@@ -41,6 +41,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       chatInitialized: false,
       connection: 'connected',
       sidebarShown: true,
+      omniboxShown: false,
       baseHash: null,
       invites: {},
       associations: {
