@@ -5,6 +5,7 @@ import { NotebookPosts } from './notebook-posts';
 import { Subscribers } from './subscribers';
 import { Settings } from './settings';
 import { cite } from '../../../../lib/util';
+import { roleForShip } from '../../../../lib/group';
 
 export class Notebook extends Component {
   constructor(props) {
@@ -176,11 +177,15 @@ export class Notebook extends Component {
            Unsubscribe
          </button>;
 
-    const subsComponent = (this.props.ship.slice(1) !== window.ship)
-      ? null
-      : <Link to={subs} className={tabStyles.subscribers}>
+
+    const group = props.groups[notebook?.['writers-group-path']];
+    const role = roleForShip(group, window.ship);
+
+    const subsComponent = (this.props.ship.slice(1) === window.ship) || (role === 'admin') 
+      ? (<Link to={subs} className={tabStyles.subscribers}>
           Subscribers
-        </Link>;
+        </Link>)
+      : null
 
     const settingsComponent = (this.props.ship.slice(1) !== window.ship)
       ? null

@@ -6,7 +6,8 @@ import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 
 import './css/indigo-static.css';
 import './css/fonts.css';
-import { light, dark, inverted, paperDark } from '@tlon/indigo-react';
+import light from './themes/light';
+import dark from './themes/old-dark';
 
 import LaunchApp from './apps/launch/app';
 import ChatApp from './apps/chat/app';
@@ -16,7 +17,7 @@ import LinksApp from './apps/links/app';
 import PublishApp from './apps/publish/app';
 
 import StatusBar from './components/StatusBar';
-import NotFound from './components/404';
+import ErrorComponent from './components/Error';
 
 import GlobalStore from './store/store';
 import GlobalSubscription from './subscription/global';
@@ -85,7 +86,7 @@ class App extends React.Component {
     const associations = this.state.associations ? this.state.associations : { contacts: {} };
     const selectedGroups = this.state.selectedGroups ? this.state.selectedGroups : [];
     const { state } = this;
-    const theme = state.dark ? paperDark : light;
+    const theme = state.dark ? dark : light;
 
     return (
       <ThemeProvider theme={theme}>
@@ -161,7 +162,11 @@ class App extends React.Component {
                 />
               )}
               />
-              <Route component={NotFound} />
+              <Route
+                render={(props) => (
+                  <ErrorComponent {...props} code={404} description="Not Found" />
+                )}
+               />
               </Switch>
             </Content>
           </Router>

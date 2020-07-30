@@ -18,17 +18,17 @@
       state-1
       state-2
       state-3
+      state-4
+      state-5
+      state-6
   ==
 ::
-+$  state-3
-  $:  %3
-      state-base
-  ==
++$  state-6  [%6 state-base]
++$  state-5  [%5 state-base]
++$  state-4  [%4 state-base]
++$  state-3  [%3 state-base]
++$  state-2  [%2 state-base]
 ::
-+$  state-2
-  $:  %2
-      state-base
-  ==
 +$  state-1
   $:  %1
       loaded-cards=*
@@ -52,7 +52,7 @@
   $%  [%chat-update update:store]
   ==
 --
-=|  state-3
+=|  state-6
 =*  state  -
 ::
 %-  agent:dbug
@@ -81,8 +81,14 @@
     =/  old  !<(versioned-state old-vase)
     =|  cards=(list card)
     |-
-    ?:  ?=(%3 -.old)
+    ?:  ?=(%6 -.old)
       [cards this(state old)]
+    ?:  ?=(?(%3 %4 %5) -.old)
+      =.  cards
+        %+  weld  cards
+        ^-  (list card)
+        [%pass /pokeme %agent [our.bol %chat-hook] %poke %noun !>(%fix-dm)]~
+      $(-.old %6)
     ?:  ?=(%2 -.old)
       =.  cards
         %+  weld  cards
@@ -319,9 +325,9 @@
     ^-  (quip card _this)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-          %json              (poke-json:cc !<(json vase))
-          %chat-action       (poke-chat-action:cc !<(action:store vase))
-          %noun              [~ state]
+          %json         (poke-json:cc !<(json vase))
+          %chat-action  (poke-chat-action:cc !<(action:store vase))
+          %noun         (poke-fix-dms:cc %fix-dms)
       ::
           %chat-hook-action
         (poke-chat-hook-action:cc !<(action:hook vase))
@@ -382,6 +388,52 @@
 ~%  %chat-hook-library  ..card  ~
 |_  bol=bowl:gall
 ++  grp  ~(. grpl bol)
+::
+++  poke-fix-dms
+  |=  a=%fix-dms
+  ^-  (quip card _state)
+  :_  state
+  %-  zing
+  %+  turn
+    ~(tap by synced)
+  |=  [=path host=ship]
+  ^-  (list card)
+  ?>  ?=([@ @ *] path)
+  =/  =ship  (slav %p i.path)
+  ?:  =(ship our.bol)
+    ::  local dm, no need to do cleanup
+    ~
+  ?:  ?=(^ (groups-of-chat path))
+    ::  correctly initialized, no need to do cleanup
+    ::
+    ~
+  ?.  =((end 3 4 i.t.path) 'dm--')
+    ~
+  :-  =-  [%pass /fixdm %agent [our.bol %chat-view] %poke %chat-view-action -]
+      !>  ^-  action:view
+      [%delete path]
+  =/  new-dm  /(scot %p our.bol)/(crip (weld "dm--" (trip (scot %p ship))))
+  =/  mailbox=(unit mailbox:store)  (chat-scry path)
+  ?~  mailbox
+    ~
+  :~  =-  [%pass /fixdm %agent [our.bol %chat-view] %poke %chat-view-action -]
+      !>  ^-  action:view
+      :*  %create
+          %-  crip
+          (zing [(trip (scot %p our.bol)) " <-> " (trip (scot %p ship)) ~])
+          ''
+          new-dm
+          ship+new-dm
+          [%invite (silt ~[ship])]
+          (silt ~[ship])
+          %.y
+          %.n
+      ==
+    ::
+      =-  [%pass /fixdm %agent [our.bol %chat-store] %poke %chat-action -]
+      !>  ^-  action:store
+      [%messages new-dm envelopes.u.mailbox]
+  ==
 ::
 ++  poke-json
   |=  jon=json

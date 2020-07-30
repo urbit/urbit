@@ -6,7 +6,6 @@ import urbitOb from 'urbit-ob';
 export class JoinScreen extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       group: '',
       error: false,
@@ -21,12 +20,11 @@ export class JoinScreen extends Component {
     this.componentDidUpdate();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate() {
     const { props, state } = this;
     // autojoin by URL, waits for group information
     if ((props.ship && props.name) &&
-    (prevProps && (prevProps.groups !== props.groups))) {
-      console.log('autojoining');
+      (props.contacts && (Object.keys(props.contacts).length > 0) && !state.group)) {
       const incomingGroup = `${props.ship}/${props.name}`;
       // push to group if already exists
       if (`/ship/${incomingGroup}` in props.groups) {
@@ -48,10 +46,8 @@ export class JoinScreen extends Component {
     }
   }
 
-
   onClickJoin() {
     const { props, state } = this;
-    console.log('i am joining');
 
     const { group } = state;
     const [ship, name] = group.split('/');
@@ -101,14 +97,12 @@ export class JoinScreen extends Component {
           <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/group-name</span></p>
           <p className="f9 gray2 mb4">Group names use lowercase, hyphens, and slashes.</p>
           <textarea
-            ref={ (e) => {
-            this.textarea = e;
-            } }
             className={'f7 mono ba bg-gray0-d white-d pa3 mb2 db ' +
-            'focus-b--black focus-b--white-d b--gray3 b--gray2-d nowrap '}
+            'focus-b--black focus-b--white-d b--gray3 b--gray2-d nowrap overflow-y-hidden'}
             placeholder="~zod/group-name"
             spellCheck="false"
             rows={1}
+            cols={32}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
@@ -116,7 +110,7 @@ export class JoinScreen extends Component {
               }
             }}
             style={{
-              resize: 'none'
+              resize: 'none',
             }}
             onChange={this.groupChange}
             value={this.state.group}

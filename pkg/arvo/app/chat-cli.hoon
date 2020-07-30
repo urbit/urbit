@@ -72,7 +72,7 @@
 +$  glyph  char
 ++  glyphs  "!@#$%^&()-=_+[]\{}'\\:\",.<>?"
 ::
-+$  nu-security  ?(%channel %village %village-with-group)
++$  nu-security  ?(%channel %village)
 ::
 +$  command
   $%  [%target (set target)]                        ::  set messaging target
@@ -81,7 +81,7 @@
     ::
       ::
       ::  create chat
-      [%create nu-security path (unit glyph) (unit ?)]
+      [%create nu-security path (unit resource) (unit glyph) (unit ?)]
       [%delete path]                                ::  delete chat
       [%invite [? path] (set ship)]                   ::  allow
       [%banish [? path] (set ship)]                   ::  disallow
@@ -293,8 +293,6 @@
 ::
 ++  target-to-path
   |=  target
-  %+  weld
-    ?:(in-group ~ /~)
   [(scot %p ship) path]
 ::  +path-to-target: deduces a target from a mailbox path
 ::
@@ -464,6 +462,7 @@
           security
           ;~  plug
             path
+            (punt ;~(pfix ace group))
             (punt ;~(pfix ace glyph))
             (punt ;~(pfix ace (fuss 'y' 'n')))
           ==
@@ -535,16 +534,15 @@
     ::     ;~(pfix ace ;~(plug i.opt $(opt t.opt)))
     ::   --
     ::
+    ++  group  ;~((glue net) ship sym)
     ++  tag   |*(a=@tas (cold a (jest a)))  ::TODO  into stdlib
     ++  ship  ;~(pfix sig fed:ag)
     ++  path  ;~(pfix net ;~(plug urs:ab (easy ~)))  ::NOTE  short only, tmp
     ::  +mang: un/managed indicator prefix
     ::
-    ++  mang
-      ;~  pose
-        (cold %| (jest '~/'))
-        (cold %& (easy ~))
-      ==
+    ::    deprecated, as sig prefix is no longer used
+    ::
+    ++  mang  (cold %& (easy ~))
     ::  +tarl: local target, as /path
     ::
     ++  tarl  (stag our-self path)
@@ -585,7 +583,7 @@
     ::  +security: security mode
     ::
     ++  security
-      (perk %channel %village-with-group %village ~)
+      (perk %channel %village ~)
     ::
     ::  +glyph: shorthand character
     ::
@@ -741,15 +739,21 @@
     ::  +create: new local mailbox
     ::
     ++  create
-      |=  [security=nu-security =path gyf=(unit char) allow-history=(unit ?)]
+      |=  $:  security=nu-security
+              =path
+              ugroup=(unit resource)
+              gyf=(unit char)
+              allow-history=(unit ?)
+          ==
       ^-  (quip card _state)
-      =/  with-group=?     ?=(%village-with-group security)
+      =/  with-group=?     ?=(^ ugroup)
       =/  =target          [with-group our-self path]
       =/  real-path=^path  (target-to-path target)
+      =/  group-path=^path  ?~(ugroup ship+real-path (en-path:resource u.ugroup))
       =/  =policy
         ?-  security
-          %channel                         *open:policy
-          ?(%village %village-with-group)  *invite:policy
+          %channel  *open:policy
+          %village  *invite:policy
         ==
       ?^  (scry-for (unit mailbox:store) %chat-store [%mailbox real-path])
         =-  [[- ~] state]
@@ -767,7 +771,7 @@
           (rsh 3 1 (spat path))
           ''
           real-path  ::  chat
-          real-path  ::  group
+          group-path  ::  group
           policy
           ~
           (fall allow-history %.y)

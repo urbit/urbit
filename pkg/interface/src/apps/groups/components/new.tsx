@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { InviteSearch, Invites } from '../../../components/InviteSearch';
 import { Spinner } from '../../../components/Spinner';
+import { Toggle } from '../../../components/toggle';
 import { RouteComponentProps } from 'react-router-dom';
 import { Groups, GroupPolicy, Resource } from '../../../types/group-update';
 import { Contacts, Rolodex } from '../../../types/contact-update';
@@ -129,9 +130,6 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
         </span>
       );
     }
-    const privacySwitchClasses = this.state.privacy
-      ? 'relative checked bg-green2 br3 h1 toggle v-mid z-0'
-      : 'relative bg-gray4 bg-gray1-d br3 h1 toggle v-mid z-0';
 
     return (
       <div className='h-100 w-100 mw6 pa3 pt4 overflow-x-hidden bg-gray0-d white-d flex flex-column'>
@@ -174,11 +172,9 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
             onChange={this.descriptionChange}
           />
           <div className='mv7'>
-            <input
-              type='checkbox'
-              style={{ WebkitAppearance: 'none', width: 28 }}
-              onChange={this.groupPrivacyChange}
-              className={privacySwitchClasses}
+            <Toggle
+            boolean={this.state.privacy}
+            change={this.groupPrivacyChange}
             />
             <span className='dib f9 white-d inter ml3'>Private Group</span>
             <p className='f9 gray2 pt1' style={{ paddingLeft: 40 }}>
