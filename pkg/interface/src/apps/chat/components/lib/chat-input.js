@@ -216,29 +216,60 @@ export class ChatInput extends Component {
       return;
     }
     let message = [];
-    editorMessage.split(' ').map((each) => {
-      if (this.isUrl(each)) {
-        if (message.length > 0) {
-          message = message.join(' ');
-          message = this.getLetterType(message);
-          props.api.chat.message(
-            props.station,
-            `~${window.ship}`,
-            Date.now(),
-            message
-          );
-          message = [];
-        }
-        const URL = this.getLetterType(each);
-        props.api.chat.message(
-          props.station,
-          `~${window.ship}`,
-          Date.now(),
-          URL
-        );
+    let isInCodeBlock = false;
+    let endOfCodeBlock = false;
+    editorMessage.split(/\r?\n/).forEach((line) => {
+      // A line of backticks enters and exits a codeblock
+      if (line.startsWith('```')) {
+        // But we need to check if we've ended a codeblock
+        endOfCodeBlock = isInCodeBlock;
+        isInCodeBlock = (!isInCodeBlock);
       } else {
-        return message.push(each);
+        endOfCodeBlock = false;
       }
+      if (isInCodeBlock) {
+        message.push(`\n${line}`);
+      } else if (endOfCodeBlock) {
+        message.push(`\n${line}\n`);
+      } else {
+        line.split(/\s/).forEach((str) => {
+          if (
+            (str.startsWith('`') && str !== '`')
+            || (str === '`' && !isInCodeBlock)
+          ) {
+            isInCodeBlock = true;
+          } else if (
+            (str.endsWith('`') && str !== '`')
+            || (str === '`' && isInCodeBlock)
+          ) {
+            isInCodeBlock = false;
+          }
+          if (this.isUrl(str) && !isInCodeBlock) {
+            if (message.length > 0) {
+              message = message.join(' ');
+              message = this.getLetterType(message);
+              props.api.chat.message(
+                props.station,
+                `~${window.ship}`,
+                Date.now(),
+                message
+              );
+              message = [];
+            }
+            const URL = this.getLetterType(str);
+            props.api.chat.message(
+              props.station,
+              `~${window.ship}`,
+              Date.now(),
+              URL
+            );
+          } else {
+            message.push(str);
+          }
+        });
+
+      }
+
     });
 
     if (message.length > 0) {
