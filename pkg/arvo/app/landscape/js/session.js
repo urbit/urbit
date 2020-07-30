@@ -1,0 +1,1 @@
+window.ship = 'hastuc-dibtux';

@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@babel/runtime": "^7.10.5",
+    "@capacitor/ios": "^2.4.0",
     "@reach/disclosure": "^0.10.5",
     "@reach/menu-button": "^0.10.1",
     "@reach/tabs": "^0.10.5",
@@ -41,6 +42,8 @@
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-react": "^7.9.4",
     "@babel/preset-typescript": "^7.10.1",
+    "@capacitor/cli": "^2.4.0",
+    "@capacitor/core": "^2.4.0",
     "@types/lodash": "^4.14.155",
     "@types/react": "^16.9.38",
     "@types/react-router-dom": "^5.1.5",

@@ -51,12 +51,13 @@ const StatusBarWithRouter = withRouter(StatusBar);
 class App extends React.Component {
   constructor(props) {
     super(props);
+    console.log('start');
     this.ship = window.ship;
     this.store = new GlobalStore();
     this.store.setStateHandler(this.setState.bind(this));
     this.state = this.store.state;
 
-    this.appChannel = new window.channel();
+    this.appChannel = new window.channel('http://localhost:9000');
     this.api = new GlobalApi(this.ship, this.appChannel, this.store);
     this.subscription =
       new GlobalSubscription(this.store, this.api, this.appChannel);
@@ -65,11 +66,31 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    console.log('mount');
     this.subscription.start();
     this.themeWatcher = window.matchMedia('(prefers-color-scheme: dark)');
     this.api.local.setDark(this.themeWatcher.matches);
     this.themeWatcher.addListener(this.updateTheme);
     this.api.local.getBaseHash();
+      console.log('authing');
+    fetch('http://localhost:9000/~/login', 
+      { method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+          "Content-Type": 'application/x-www-form-urlencoded'
+        },
+        body: `${encodeURIComponent('password')}=${encodeURIComponent('rivnub-haddeg-donpel-nidnyd')}` }).then(res => {
+      console.log(res.status);
+      console.log('connected');
+      console.log(res);
+          return res;
+    }).then(r => r.text()).then(r => { console.log(r); }).catch(e => {
+      console.error(JSON.stringify(e, null, 2))
+      console.error(e.message);
+      console.error(e.stack);
+    });
+
   }
 
   componentWillUnmount() {

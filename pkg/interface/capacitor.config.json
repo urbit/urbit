@@ -1,0 +1,16 @@
+{
+  "appId": "com.tlon.landscape",
+  "appName": "landscape",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "../arvo/app/landscape",
+  "server": {
+    "iosScheme": "http"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {}
+}
