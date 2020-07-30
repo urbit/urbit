@@ -18,13 +18,26 @@ export class OmniboxResult extends Component {
   render() {
     const { icon, text, subtext, link, navigate, selected, dark } = this.props;
 
-    const invertGraphic = ((!dark && this.state.hovered || selected === link) || (dark && !(this.state.hovered || selected === link)))
-      ? { filter: 'invert(1)' }
-      : { filter: 'invert(0)' };
+    let invertGraphic = {};
+
+    if (icon.toLowerCase() !== 'dojo') {
+      invertGraphic = (!dark && this.state.hovered) ||
+      selected === link ||
+      (dark && !(this.state.hovered || selected === link))
+        ? { filter: "invert(1)" }
+        : { filter: "invert(0)" };
+    } else {
+      invertGraphic =
+        (!dark && this.state.hovered) ||
+        selected === link ||
+        (dark && !(this.state.hovered || selected === link))
+          ? { filter: "invert(0)" }
+          : { filter: "invert(1)" };
+    }
 
     let graphic = <div />;
     if (defaultApps.includes(icon.toLowerCase())) {
-      graphic = <img className="invert-d mr2 v-mid" height="12" width="12" src={`/~landscape/img/${icon.toLowerCase()}.png`} style={invertGraphic} />;
+      graphic = <img className="mr2 v-mid" height="12" width="12" src={`/~landscape/img/${icon.toLowerCase()}.png`} style={invertGraphic} />;
     } else {
       graphic = <Icon />;
     }
