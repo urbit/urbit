@@ -28,7 +28,7 @@
   ?.  =(a.u.deed r.signature)  %.y
   ::  verify signature from ship at life
   ::
-  ?=(^ (tear:as:crub:crypto b.u.deed p.signature))
+  =(`hash (tear:as:crub:crypto b.u.deed p.signature))
 ::
 ++  are-signatures-valid
   |=  [=signatures =hash now=time]

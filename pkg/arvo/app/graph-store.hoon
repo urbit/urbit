@@ -91,10 +91,14 @@
       :_  %_  state
               graphs       (~(put by graphs) resource [graph mark])
               update-logs  (~(put by update-logs) resource (gas:orm-log ~ ~))
+              validators
+            ?~  mark  validators
+            (~(put in validators) u.mark)
           ==
       %-  zing
       :~  (give [/updates /keys ~] [%add-graph resource graph mark])
           ?~  mark  ~
+          ?:  (~(has in validators) u.mark)  ~
           =/  wire  (weld /graph (en-path:res resource))
           =/  =rave:clay  [%sing %b [%da now.bowl] /[u.mark]]
           [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
@@ -545,7 +549,15 @@
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
   ?+  -.sign-arvo  (on-arvo:def wire sign-arvo)
-      %c           [~ this]
+      %c
+    :_  this
+    ?>  ?=([%graph @ *] wire)
+    =/  =resource:store  (de-path:res t.wire)
+    =/  gra=(unit marked-graph:store)  (~(get by graphs) resource)
+    ?~  gra  ~
+    ?~  q.u.gra  ~
+    =/  =rave:clay  [%next %b [%da now.bowl] /[u.q.u.gra]]
+    [%pass wire %arvo %c %warp our.bowl [%home `rave]]~
   ==
 ::
 ++  on-agent  on-agent:def

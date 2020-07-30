@@ -22,6 +22,7 @@
       =tag-queries
       =update-logs
       archive=graphs
+      validators=(set mark)
   ==
 ::
 +$  update
