@@ -1,3 +1,5 @@
+::NOTE  only used in /ted/azimuth-tracker
+::TODO  replace/rewrite with /lib/azio/azimuth?
 /+  strandio
 =,  strand=strand:strandio
 =,  able:jael
