@@ -191,8 +191,9 @@
           node
         ::  recurse children
         ::
-        ~|  "index does not exist to add a node to!"
-        =/  parent=node:store  (need (get:orm graph atom))
+        =/  parent=node:store
+          ~|  "index does not exist to add a node to!"
+          (need (get:orm graph atom))
         %_  parent
             children
           ^-  internal-graph:store
@@ -245,8 +246,9 @@
         ::
         ?~  t.index
           +:`[* graph:store]`(del:orm graph atom)
-        ~|  "parent index does not exist to remove a node from!"
-        =/  =node:store  (need (get:orm graph atom))
+        =/  =node:store
+          ~|  "parent index does not exist to remove a node from!"
+          (need (get:orm graph atom))
         ~|  "child index does not exist to remove a node from!"
         ?>  ?=(%graph -.children.node)
         %^  put:orm
@@ -279,8 +281,9 @@
         ^-  graph:store
         ?~  index  graph
         =*  atom   i.index
-        ~|  "node does not exist to add signatures to!" 
-        =/  =node:store  (need (get:orm graph atom))
+        =/  =node:store
+          ~|  "node does not exist to add signatures to!" 
+          (need (get:orm graph atom))
         ::  last index in list
         ::
         %^  put:orm
@@ -323,8 +326,9 @@
         ^-  graph:store
         ?~  index  graph
         =*  atom   i.index
-        ~|  "node does not exist to add signatures to!" 
-        =/  =node:store  (need (get:orm graph atom))
+        =/  =node:store
+          ~|  "node does not exist to add signatures to!" 
+          (need (get:orm graph atom))
         ::  last index in list
         ::
         %^  put:orm
