@@ -313,8 +313,6 @@ u3u_uniq(void)
 {
   c3_assert( &(u3H->rod_u) == u3R );
 
-  ur_root_t *r = ur_hcon_init();
-
   //  allow read/write on the whole loom, bypassing page tracking
   //
   //    NB: u3e_save() will reinstate protection flags
@@ -323,23 +321,27 @@ u3u_uniq(void)
     c3_assert(0);
   }
 
-  //  reallocate kernel
+  //  stash event number
   //
-  ur_nref  ken = _cu_from_loom(r, u3A->roc);
+  c3_d eve_d = u3A->ent_d;
 
-  //  reallocate cold jet state
+
+  //  reallocate kernel and cold jet state
   //
+  ur_root_t* rot_u = ur_hcon_init();
+  ur_nref    ken = _cu_from_loom(rot_u, u3A->roc);
+
   ur_nvec_t cod_u;
   {
     c3_w    cod_w = u3h_wyt(u3R->jed.cod_p);
-    _cu_vec dat_u = { .vec_u = &cod_u, .rot_u = r };
+    _cu_vec dat_u = { .vec_u = &cod_u, .rot_u = rot_u };
     ur_nvec_init(&cod_u, cod_w);
     u3h_walk_with(u3R->jed.cod_p, _cu_hamt_walk, &dat_u);
   }
 
   //  print [rot_u] measurements
   //
-  ur_hcon_info(stderr, r);
+  ur_hcon_info(stderr, rot_u);
   fprintf(stderr, "\r\n");
 
   //  reinitialize looom
@@ -352,8 +354,8 @@ u3u_uniq(void)
     //  reallocate all nouns on the loom
     //
     _cu_loom lom_u;
-    _cu_atoms_to_loom(r, &lom_u);
-    _cu_cells_to_loom(r, &lom_u);
+    _cu_atoms_to_loom(rot_u, &lom_u);
+    _cu_cells_to_loom(rot_u, &lom_u);
 
     //  restore kernel reference (always a cell)
     //
@@ -380,6 +382,10 @@ u3u_uniq(void)
   //
   u3j_boot(c3y);
   u3j_ream();
+
+  //  restore event number
+  //
+  u3A->ent_d = eve_d;
 
   //  mark all pages dirty
   //

@@ -298,15 +298,14 @@ _cw_uniq(c3_i argc, c3_c* argv[])
   c3_assert( 3 <= argc );
 
   c3_c* dir_c = argv[2];
-  c3_d  eve_d = u3m_boot(dir_c);
+
+  u3m_boot(dir_c);
 
   u3_serf_grab();
 
   u3u_uniq();
 
   u3_serf_grab();
-
-  u3A->ent_d = eve_d;
 
   u3e_save();
 }
