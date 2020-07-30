@@ -143,7 +143,7 @@ export class GroupView extends Component<
 
   isAdmin(): boolean {
     const us = `~${window.ship}`;
-    const role = roleForShip(this.props.group, us);
+    const role = roleForShip(this.props.group, window.ship);
     const resource = resourceFromPath(this.props.resourcePath);
     return resource.ship == us || role === 'admin';
   }
@@ -156,10 +156,15 @@ export class GroupView extends Component<
       return options;
     }
     const role = roleForShip(group, ship);
+    const myRole = roleForShip(group, window.ship);
     if (role === 'admin' || resource.ship === ship) {
       return [];
     }
-    if ('open' in group.policy) {
+    if (
+      'open' in group.policy // If blacklist, not whitelist
+      && (this.isAdmin()) // And we can ban people (TODO: add || role === 'moderator')
+      && ship !== window.ship // We can't ban ourselves
+    ) {
       options.unshift({ text: 'Ban', onSelect: () => this.banUser(ship) });
     }
     if (this.isAdmin() && !role) {
