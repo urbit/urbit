@@ -58,7 +58,6 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ~&  >  %initting
   =+  !<(old=all-states old-state)
   ?>  ?=(%0 -.old)
   ?~  glob.old
