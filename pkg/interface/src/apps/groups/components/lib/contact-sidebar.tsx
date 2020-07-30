@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { FixedSizeList as List } from 'react-window';
+
 import { ContactItem } from './contact-item';
 import { ShareSheet } from './share-sheet';
 import { Sigil } from '../../../../lib/sigil';
@@ -23,6 +25,7 @@ interface ContactSidebarProps {
 }
 interface ContactSidebarState {
 	awaiting: boolean;
+  memberboxHeight: number;
 }
 
 
@@ -31,9 +34,20 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
   constructor(props) {
     super(props);
     this.state = {
-      awaiting: false
+      awaiting: false,
+      memberboxHeight: 0
     };
+    this.memberbox = this.memberbox.bind(this);
   }
+
+  memberbox(element) {
+    if (element) {
+      this.setState({
+        memberboxHeight: element.getBoundingClientRect().height
+      })
+    }
+  }
+
   render() {
     const { props } = this;
 
@@ -145,14 +159,14 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
     const detailHref = `/~groups/detail${props.path}`;
 
     return (
-      <div className={'bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 ' +
+      <div ref={this.memberbox} className={'bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 ' +
       'flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative ' +
       'overflow-hidden flex-shrink-0 ' + responsiveClasses}
       >
         <div className="pt3 pb5 pl3 f8 db dn-m dn-l dn-xl">
           <Link to="/~groups/">{'⟵ All Groups'}</Link>
         </div>
-        <div className="overflow-auto h-100">
+        <div className="overflow-auto h-100 flex flex-column">
           <Link
             to={'/~groups/add' + props.path}
             className={((props.path.includes(window.ship))
@@ -166,8 +180,20 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
           >Channels</Link>
           {shareSheet}
           <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Members</h2>
-          {contactItems}
-          {groupItems}
+          <List
+            height={this.state.memberboxHeight}
+            className="flex-auto"
+            itemCount={contactItems.length + groupItems.length}
+            itemSize={44}
+            width="100%"
+          >
+            {({ index, style }) => (<div style={style}>{
+              index <= (contactItems.length - 1) // If the index is within the length of contact items,
+                ? contactItems[index] // show a contact item
+                : groupItems[index - contactItems.length] // Otherwise show a group item
+              }</div>)}
+          </List>
+
         </div>
         <Spinner awaiting={this.state.awaiting} text="Removing from group..." classes="pa2 ba absolute right-1 bottom-1 b--gray1-d" />
         </div>
