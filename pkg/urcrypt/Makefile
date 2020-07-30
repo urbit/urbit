@@ -6,14 +6,26 @@ PREFIX ?= ./out
 
 .PHONY: all test install clean
 
-all: urcrypt.c urcrypt.h
-	$(CC) $(CFLAGS) -O3 -Wall -Werror -pedantic -std=gnu99 -c urcrypt.c
-	$(AR) rcs liburcrypt.a urcrypt.o
+CFLAGS := $(CFLAGS) -O3 -Wall -Werror -pedantic -std=gnu99
+SOURCES = urcrypt.c urcrypt.h
+
+liburcrypt.a: $(SOURCES)
+	$(CC) $(CFLAGS) -c urcrypt.c -o urcrypt-static.o
+	$(AR) rcs liburcrypt.a urcrypt-static.o
+
+liburcrypt.so: $(SOURCES)
+	$(CC) $(CFLAGS) -fPIC -c urcrypt.c -o urcrypt-shared.o
+	$(CC) -shared urcrypt-shared.o -o liburcrypt.so \
+		-led25519 -lge-additions \
+		-Wl,--no-undefined
+
+all: liburcrypt.a liburcrypt.so
 
 install: all
 	@mkdir -p $(PREFIX)/lib/
 	@mkdir -p $(PREFIX)/include/
 	cp liburcrypt.a $(PREFIX)/lib/
+	cp liburcrypt.so $(PREFIX)/lib/
 	cp urcrypt.h $(PREFIX)/include/
 
 clean:

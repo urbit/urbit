@@ -5,5 +5,5 @@ pkgs.stdenv.mkDerivation rec {
   builder = ./builder.sh;
   src     = ../../../pkg/urcrypt;
 
-  nativeBuildInputs = [ ed25519 ge-additions ];
+  buildInputs = [ ed25519 ge-additions ];
 }
