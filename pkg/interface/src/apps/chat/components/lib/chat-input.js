@@ -57,24 +57,6 @@ export class ChatInput extends Component {
 
     this.editor = null;
 
-    // perf testing:
-    /* let closure = () => {
-      let x = 0;
-      for (var i = 0; i < 30; i++) {
-        x++;
-        props.api.chat.message(
-          props.station,
-          `~${window.ship}`,
-          Date.now(),
-          {
-            text: `${x}`
-          }
-        );
-      }
-      setTimeout(closure, 1000);
-    };
-    this.closure = closure.bind(this);*/
-
     moment.updateLocale('en', {
         relativeTime : {
             past: function(input) {
@@ -284,8 +266,24 @@ export class ChatInput extends Component {
       message = [];
     }
 
-    // perf:
-    // setTimeout(this.closure, 2000);
+    // perf testing:
+    /*let closure = () => {
+      let x = 0;
+      for (var i = 0; i < 30; i++) {
+        x++;
+        props.api.chat.message(
+          props.station,
+          `~${window.ship}`,
+          Date.now(),
+          {
+            text: `${x}`
+          }
+        );
+      }
+      setTimeout(closure, 1000);
+    };
+    this.closure = closure.bind(this);
+    setTimeout(this.closure, 2000);*/
 
     this.editor.setValue('');
   }
