@@ -244,6 +244,15 @@ typedef struct _cu_loom_s {
   u3_noun *cel;
 } _cu_loom;
 
+/* _cu_loom_free(): dispose loom relocation pointers
+*/
+static void
+_cu_loom_free(_cu_loom* lom_u)
+{
+  free(lom_u->vat);
+  free(lom_u->cel);
+}
+
 /* _cu_atoms_to_loom(): allocate all indirect atoms on the loom.
 */
 static void
@@ -376,7 +385,14 @@ u3u_uniq(void)
         u3z(kev);
       }
     }
+
+    _cu_loom_free(&lom_u);
   }
+
+  //  dispose off-loom structures
+  //
+  ur_nvec_free(&cod_u);
+  ur_hcon_free(rot_u);
 
   //  allocate new hot jet state; re-establish warm
   //
