@@ -1,7 +1,5 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-
-import GroupFilter from './GroupFilter';
 import { Sigil } from '../lib/sigil';
 
 const getLocationName = (basePath) => {
@@ -54,7 +52,6 @@ const StatusBar = (props) => {
             color={'#000000'}
           />
       </Link>
-      <GroupFilter invites={invites} associations={props.associations} api={props.api} />
       <span className="dib f9 v-mid gray2 ml1 mr1 c-default inter">/</span>
         {
           location.pathname === '/'
@@ -68,8 +65,8 @@ const StatusBar = (props) => {
               </Link>
         }
          <p className="dib f9 v-mid inter ml2 white-d">{locationName}</p>
-    { connection === 'disconnected' && 
-      (<span 
+    { connection === 'disconnected' &&
+      (<span
         onClick={reconnect}
         className="ml4 ph2 dib f9 v-mid red2 inter ba b-red2 br1 pointer"
         >Reconnect ↻</span> )

@@ -72,7 +72,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
       linkComments: {},
       notebooks: {},
       contacts: {},
-      selectedGroups: [],
       dark: false,
       inbox: {},
       chatSynced: null,

@@ -84,7 +84,6 @@ class App extends React.Component {
     const channel = window.channel;
 
     const associations = this.state.associations ? this.state.associations : { contacts: {} };
-    const selectedGroups = this.state.selectedGroups ? this.state.selectedGroups : [];
     const { state } = this;
     const theme = state.dark ? dark : light;
 
