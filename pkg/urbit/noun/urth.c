@@ -323,34 +323,34 @@ u3u_uniq(void)
     c3_assert(0);
   }
 
-  fprintf(stderr, "hc: cells fill %" PRIu64 " size %" PRIu64 "\r\n", r->cells.fill, r->cells.size);
-  fprintf(stderr, "hc: atoms fill %" PRIu64 " size %" PRIu64 "\r\n", r->atoms.fill, r->atoms.size);
-
+  //  reallocate kernel
+  //
   ur_nref  ken = _cu_from_loom(r, u3A->roc);
 
-  fprintf(stderr, "hc: cells fill %" PRIu64 " size %" PRIu64 "\r\n", r->cells.fill, r->cells.size);
-  fprintf(stderr, "hc: atoms fill %" PRIu64 " size %" PRIu64 "\r\n", r->atoms.fill, r->atoms.size);
-
-
-  c3_w   cod_w = u3h_wyt(u3R->jed.cod_p);
-  ur_nvec_t  v;
-
-  fprintf(stderr, "hc: cold count %u\r\n", cod_w);
-
+  //  reallocate cold jet state
+  //
+  ur_nvec_t cod_u;
   {
-    _cu_vec dat_u = { .vec_u = &v, .rot_u = r };
-    ur_nvec_init(&v, cod_w);
+    c3_w    cod_w = u3h_wyt(u3R->jed.cod_p);
+    _cu_vec dat_u = { .vec_u = &cod_u, .rot_u = r };
+    ur_nvec_init(&cod_u, cod_w);
     u3h_walk_with(u3R->jed.cod_p, _cu_hamt_walk, &dat_u);
   }
 
-  fprintf(stderr, "hc: cells fill %" PRIu64 " size %" PRIu64 "\r\n", r->cells.fill, r->cells.size);
-  fprintf(stderr, "hc: atoms fill %" PRIu64 " size %" PRIu64 "\r\n", r->atoms.fill, r->atoms.size);
+  //  print [rot_u] measurements
+  //
+  ur_hcon_info(stderr, r);
+  fprintf(stderr, "\r\n");
 
-  //  NB: hot jet state is not yet re-established
+  //  reinitialize looom
+  //
+  //    NB: hot jet state is not yet re-established
   //
   u3m_pave(c3y, c3n);
 
   {
+    //  reallocate all nouns on the loom
+    //
     _cu_loom lom_u;
     _cu_atoms_to_loom(r, &lom_u);
     _cu_cells_to_loom(r, &lom_u);
@@ -362,12 +362,13 @@ u3u_uniq(void)
     //  restore cold jet state (always cells)
     //
     {
-      c3_w    i_w;
+      c3_d  max_d = cod_u.fill;
+      c3_d    i_d;
       ur_nref ref;
       u3_noun kev;
 
-      for ( i_w = 0; i_w < cod_w; i_w++) {
-        ref = v.refs[i_w];
+      for ( i_d = 0; i_d < max_d; i_d++) {
+        ref = cod_u.refs[i_d];
         kev = lom_u.cel[ur_nref_idx(ref)];
         u3h_put(u3R->jed.cod_p, u3h(kev), u3k(u3t(kev)));
         u3z(kev);
