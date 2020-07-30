@@ -468,6 +468,41 @@ ur_hcon_info(FILE *f, ur_root_t *r)
   _print_memory(f, "total", total);
 }
 
+static void
+_dict_free(ur_dict_t *dict)
+{
+  free(dict->buckets);
+}
+
+static void
+_atoms_free(ur_atoms_t *atoms)
+{
+  uint8_t  **bytes = atoms->bytes;
+  uint64_t i, fill = atoms->fill;
+
+  for ( i = 0; i < fill; i++ ) {
+    free(bytes[i]);
+  }
+
+  _dict_free(&(atoms->dict));
+  free(bytes);
+}
+
+static void
+_cells_free(ur_cells_t *cells)
+{
+  _dict_free(&(cells->dict));
+  free(cells->heads);
+}
+
+void
+ur_hcon_free(ur_root_t *r)
+{
+  _atoms_free(&(r->atoms));
+  _cells_free(&(r->cells));
+  free(r);
+}
+
 ur_root_t*
 ur_hcon_init(void)
 {
@@ -502,6 +537,12 @@ ur_hcon_init(void)
   }
 
   return r;
+}
+
+void
+ur_nvec_free(ur_nvec_t *v)
+{
+  free(v->refs);
 }
 
 void

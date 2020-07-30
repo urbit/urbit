@@ -100,8 +100,14 @@ ur_cons(ur_root_t *r, ur_nref hed, ur_nref tal);
 void
 ur_hcon_info(FILE *f, ur_root_t *r);
 
+void
+ur_hcon_free(ur_root_t *r);
+
 ur_root_t*
 ur_hcon_init(void);
+
+void
+ur_nvec_free(ur_nvec_t *v);
 
 void
 ur_nvec_init(ur_nvec_t *v, uint64_t size);
