@@ -70,6 +70,7 @@ class App extends React.Component {
     this.api.local.setDark(this.themeWatcher.matches);
     this.themeWatcher.addListener(this.updateTheme);
     this.api.local.getBaseHash();
+    this.store.rehydrate();
   }
 
   componentWillUnmount() {

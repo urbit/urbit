@@ -2,7 +2,7 @@ import { Inbox, Envelope } from '../types/chat-update';
 import { ChatHookUpdate } from '../types/chat-hook-update';
 import { Path } from '../types/noun';
 import { Invites } from '../types/invite-update';
-import { SelectedGroup } from '../types/local-update';
+import { SelectedGroup, BackgroundConfig } from '../types/local-update';
 import { Associations } from '../types/metadata-update';
 import { Rolodex } from '../types/contact-update';
 import { Notebooks } from '../types/publish-update';
@@ -20,6 +20,9 @@ export interface StoreState {
   dark: boolean;
   connection: ConnectionStatus;
   baseHash: string | null;
+  background: BackgroundConfig;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
   // invite state
   invites: Invites;
   // metadata state
