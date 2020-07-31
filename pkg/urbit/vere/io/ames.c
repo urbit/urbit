@@ -1102,6 +1102,7 @@ _ames_prot_scry_cb(void* vod_p, u3_noun nun)
   }
 
   sam_u->fit_o = c3y;
+  u3z(nun);
 }
 
 /* _ames_io_info(): print status info.
