@@ -2,35 +2,38 @@
 **
 */
 #include "all.h"
-
-#include <ed25519.h>
-#include <ge.h>
+#include <urcrypt.h>
 
 /* functions
 */
   u3_noun
+  u3qc_scalarmult_base(u3_atom a)
+  {
+    c3_w met_w = u3r_met(3, a);
+
+    if ( met_w > 32 ) {
+      return u3_none;
+    }
+    else {
+      c3_y a_y[32], out_y[32];
+
+      memset(a_y, 0, 32);
+      u3r_bytes(0, met_w, a_y, a);
+
+      urcrypt_ed_scalarmult_base(a_y, out_y);
+      return u3i_bytes(32, out_y);
+    }
+  }
+
+  u3_noun
   u3wee_scalarmult_base(u3_noun cor)
   {
-    u3_noun scalar = u3r_at(u3x_sam, cor);
+    u3_noun a = u3r_at(u3x_sam, cor);
 
-    if ( (u3_none == scalar) || (c3n == u3ud(scalar)) ) {
+    if ( (u3_none == a) || (c3n == u3ud(a)) ) {
       return u3m_bail(c3__exit);
     }
-
-    c3_w met_w = u3r_met(3, scalar);
-    if ( met_w > 32 ) {
-      return u3m_bail(c3__fail);
+    else {
+      return u3qc_scalarmult_base(a);
     }
-
-    c3_y scalar_y[32];
-    memset(scalar_y, 0, 32);
-    u3r_bytes(0, met_w, scalar_y, scalar);
-
-    ge_p3 R;
-    ge_scalarmult_base(&R, scalar_y);
-
-    c3_y output_y[32];
-    ge_p3_tobytes(output_y, &R);
-
-    return u3i_bytes(32, output_y);
   }
