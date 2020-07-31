@@ -6,8 +6,8 @@
 
 /* functions
 */
-  u3_noun
-  u3qc_scalarmult_base(u3_atom a)
+  static u3_atom
+  _cqee_scalarmult_base(u3_atom a)
   {
     c3_w met_w = u3r_met(3, a);
 
@@ -34,6 +34,6 @@
       return u3m_bail(c3__exit);
     }
     else {
-      return u3qc_scalarmult_base(a);
+      return _cqee_scalarmult_base(a);
     }
   }

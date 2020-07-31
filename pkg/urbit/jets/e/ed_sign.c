@@ -6,7 +6,7 @@
 
 /* functions
 */
-  static u3_noun
+  static u3_atom
   _cqee_sign(u3_noun a,
              u3_noun b)
   {

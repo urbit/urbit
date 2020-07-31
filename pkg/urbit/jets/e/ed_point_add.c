@@ -7,8 +7,8 @@
 /* functions
 */
 
-  u3_noun
-  u3qc_point_add(u3_atom a,
+  static u3_atom
+  _cqee_point_add(u3_atom a,
                  u3_atom b)
   {
     c3_w ate_w, bet_w;
@@ -43,6 +43,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qc_point_add(a, b);
+      return _cqee_point_add(a, b);
     }
   }

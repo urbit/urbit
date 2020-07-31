@@ -6,8 +6,8 @@
 
 /* functions
 */
-  u3_noun
-  u3qc_add_double_scalarmult(u3_atom a,
+  static u3_atom
+  _cqee_add_double_scalarmult(u3_atom a,
                              u3_atom b,
                              u3_atom c,
                              u3_atom d)
@@ -53,6 +53,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qc_add_double_scalarmult(a, b, c, d);
+      return _cqee_add_double_scalarmult(a, b, c, d);
     }
   }
