@@ -32,6 +32,8 @@ export class Omnibox extends Component {
     if (prevProps && this.props.show && prevProps.show !== this.props.show) {
       Mousetrap.bind('escape', () => this.props.api.local.setOmnibox());
       document.addEventListener('mousedown', this.handleClickOutside);
+      const touchstart = new Event('touchstart');
+      this.input.dispatchEvent(touchstart);
       this.input.focus();
     }
   }
