@@ -103,7 +103,9 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
       api,
       chatInitialized,
       pendingMessages,
-      groups
+      groups,
+      hideAvatars,
+      hideNicknames
     } = props;
 
     const renderChannelSidebar = (props, station?) => (
@@ -280,6 +282,8 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
                   popout={popout}
                   sidebarShown={sidebarShown}
                   chatInitialized={chatInitialized}
+                  hideAvatars={hideAvatars}
+                  hideNicknames={hideNicknames}
                   {...props}
                 />
               </Skeleton>

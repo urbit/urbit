@@ -48,6 +48,7 @@ export class Message extends Component {
 
   renderWithSigil(timestamp) {
     const { props, state } = this;
+    const { hideNicknames, hideAvatars } = props;
     const paddingTop = props.paddingTop ? { 'paddingTop': '6px' } : '';
     const datestamp =
       '~' + moment.unix(props.msg.when / 1000).format('YYYY.M.D');
@@ -58,7 +59,7 @@ export class Message extends Component {
     let color = '#000000';
     let sigilClass = 'mix-blend-diff';
     if (contact) {
-      name = (contact.nickname.length > 0)
+      name = (contact.nickname.length > 0 && !hideNicknames)
         ? contact.nickname : `~${props.msg.author}`;
       color = `#${uxToHex(contact.color)}`;
       sigilClass = '';
@@ -77,6 +78,7 @@ export class Message extends Component {
           sigilClass={sigilClass}
           association={props.association}
           group={props.group}
+          hideAvatars={hideAvatars}
           className="fl pr3 v-top bg-white bg-gray0-d"
         />
         <div className="fr clamp-message white-d"
@@ -86,7 +88,7 @@ export class Message extends Component {
               <span
                 className={
                   'pointer ' +
-                  (contact.nickname || state.copied ? null : 'mono')
+                  ((contact.nickname && !hideNicknames) || state.copied ? null : 'mono')
                 }
                 onClick={() => {
                   writeText(props.msg.author);

@@ -87,6 +87,8 @@ type ChatScreenProps = RouteComponentProps<{
   sidebarShown: boolean;
   chatInitialized: boolean;
   envelopes: Envelope[];
+  hideAvatars: boolean;
+  hideNicknames: boolean;
 };
 
 interface ChatScreenState {
@@ -393,6 +395,8 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           pending={Boolean(msg.pending)}
           group={props.group}
           association={props.association}
+          hideAvatars={props.hideAvatars}
+          hideNicknames={props.hideNicknames}
         />
       );
       if (unread > 0 && i === unread - 1) {
