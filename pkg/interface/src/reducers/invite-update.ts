@@ -50,7 +50,6 @@ export default class InviteReducer<S extends InviteState> {
   accepted(json: InviteUpdate, state: S) {
     const data = _.get(json, 'accepted', false);
     if (data) {
-      console.log(data);
       delete state.invites[data.path][data.uid];
     }
   }

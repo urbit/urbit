@@ -179,7 +179,7 @@ export class Notebook extends Component {
 
 
     const group = props.groups[notebook?.['writers-group-path']];
-    const role = roleForShip(group, window.ship);
+    const role = group ? roleForShip(group, window.ship) : undefined;
 
     const subsComponent = (this.props.ship.slice(1) === window.ship) || (role === 'admin') 
       ? (<Link to={subs} className={tabStyles.subscribers}>

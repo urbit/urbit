@@ -48,4 +48,3 @@ export default class PublishStore extends BaseStore {
     this.responseReducer.reduce(data, this.state);
   }
 }
-

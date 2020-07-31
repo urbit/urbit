@@ -85,8 +85,8 @@ export class Message extends Component {
             <p className={`v-mid f9 gray2 dib mr3 c-default`}>
               <span
                 className={
-                  'pointer ' +
-                  (contact.nickname || state.copied ? null : 'mono')
+                  'mw5 dib truncate pointer ' +
+                  (contact.nickname || state.copied ? '' : 'mono')
                 }
                 onClick={() => {
                   writeText(props.msg.author);

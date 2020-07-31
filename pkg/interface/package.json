@@ -24,6 +24,7 @@
     "react-dom": "^16.8.6",
     "react-markdown": "^4.3.1",
     "react-router-dom": "^5.0.0",
+    "react-window": "^1.8.5",
     "remark-disable-tokenizers": "^1.0.24",
     "style-loader": "^1.2.1",
     "styled-components": "^5.1.0",
