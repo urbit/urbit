@@ -91,7 +91,7 @@ function BucketList({
             </Box>
           ))}
           <Input
-            mt={4}
+            mt={2}
             type="text"
             label="New Bucket"
             id="newBucket"
@@ -139,55 +139,53 @@ export default function S3Form(props: S3FormProps) {
     [api]
   );
   return (
-    <Box
-      display="grid"
-      gridTemplateColumns="1fr"
-      gridTemplateRows="auto"
-      gridRowGap={4}
-      justifyItems="start"
-    >
-      <Box color="black" fontSize={1} mb={4} mt={7} fontWeight={900}>
-        S3 Credentials
-      </Box>
-      <Formik
-        initialValues={
-          {
-            s3bucket: s3.configuration.currentBucket,
-            s3buckets: Array.from(s3.configuration.buckets),
-            s3endpoint: s3.credentials?.endpoint,
-            s3accessKeyId: s3.credentials?.accessKeyId,
-            s3secretAccessKey: s3.credentials?.secretAccessKey,
-          } as FormSchema
-        }
-        onSubmit={onSubmit}
-      >
-        <Form>
-          <Input width="256px" type="text" label="Endpoint" id="s3endpoint" />
-          <Input
-            width="256px"
-            type="text"
-            label="Access Key ID"
-            id="s3accessKeyId"
-          />
-          <Input
-            width="256px"
-            type="password"
-            label="Secret Access Key"
-            id="s3secretAccessKey"
-          />
-          <Button border={1} type="submit">
-            Submit
-          </Button>
-        </Form>
-      </Formik>
-      <Box color="black" fontSize={1} my={2} fontWeight={700}>
-        S3 Buckets
-      </Box>
-      <BucketList
-        buckets={s3.configuration.buckets}
-        selected={s3.configuration.currentBucket}
-        api={api}
-      />
-    </Box>
+    <>
+      <Col>
+        <Box color="black" mb={4} fontSize={1} fontWeight={900}>
+          S3 Credentials
+        </Box>
+        <Formik
+          initialValues={
+            {
+              s3bucket: s3.configuration.currentBucket,
+              s3buckets: Array.from(s3.configuration.buckets),
+              s3endpoint: s3.credentials?.endpoint,
+              s3accessKeyId: s3.credentials?.accessKeyId,
+              s3secretAccessKey: s3.credentials?.secretAccessKey,
+            } as FormSchema
+          }
+          onSubmit={onSubmit}
+        >
+          <Form>
+            <Input width="256px" type="text" label="Endpoint" id="s3endpoint" />
+            <Input
+              width="256px"
+              type="text"
+              label="Access Key ID"
+              id="s3accessKeyId"
+            />
+            <Input
+              width="256px"
+              type="password"
+              label="Secret Access Key"
+              id="s3secretAccessKey"
+            />
+            <Button border={1} type="submit">
+              Submit
+            </Button>
+          </Form>
+        </Formik>
+      </Col>
+      <Col>
+        <Box color="black" mb={4} fontSize={1} fontWeight={700}>
+          S3 Buckets
+        </Box>
+        <BucketList
+          buckets={s3.configuration.buckets}
+          selected={s3.configuration.currentBucket}
+          api={api}
+        />
+      </Col>
+    </>
   );
 }

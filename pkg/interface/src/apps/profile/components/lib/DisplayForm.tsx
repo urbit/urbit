@@ -94,7 +94,6 @@ function BackgroundPicker({
         {bgType === "url" && (
           <Col>
             <Input ml={4} type="text" label="URL" id="bgUrl" name="bgUrl" />
-            {/*<ImagePicker  url={bgUrl || ''} />*/}
           </Col>
         )}
         {bgType === "color" && (
@@ -158,7 +157,7 @@ export default function DisplayForm(props: DisplayFormProps) {
             gridTemplateRows="auto"
             gridRowGap={2}
           >
-            <Box color="black" fontSize={1} mb={4} fontWeight={900}>
+            <Box color="black" fontSize={1} mb={3} fontWeight={900}>
               Display Preferences
             </Box>
 
@@ -166,7 +165,6 @@ export default function DisplayForm(props: DisplayFormProps) {
               <Input
                 label="Home Tile Order"
                 id="order"
-                mt={2}
                 type="text"
                 width={256}
               />
@@ -175,15 +173,13 @@ export default function DisplayForm(props: DisplayFormProps) {
               bgType={props.values.bgType}
               bgUrl={props.values.bgUrl}
             />
-            <Box mt={3}>
+            <Box>
               <Checkbox
-                mt={3}
                 label="Disable avatars"
                 id="avatars"
                 caption="Do not show user-set avatars"
               />
               <Checkbox
-                mt={3}
                 label="Disable nicknames"
                 id="nicknames"
                 caption="Do not show user-set nicknames"
@@ -191,12 +187,11 @@ export default function DisplayForm(props: DisplayFormProps) {
             </Box>
           </Box>
           <Button
-            onClick={logoutAll}
             border={1}
             borderColor="washedGray"
             type="submit"
           >
-            Submit
+            Save
           </Button>
         </Form>
       )}

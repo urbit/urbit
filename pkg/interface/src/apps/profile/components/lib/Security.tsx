@@ -9,11 +9,11 @@ interface SecuritySettingsProps {
 
 export default function SecuritySettings({ api }: SecuritySettingsProps) {
   return (
-    <>
-      <Box color="black" fontSize={1} mt={7} mb={2} fontWeight={900}>
+    <Box display="grid" gridTemplateRows="auto" gridTemplateColumns="1fr" gridRowGap={2}>
+      <Box color="black" fontSize={1} mb={4} fontWeight={900}>
         Security
       </Box>
-      <Box color="black" fontSize={0} mt={4} fontWeight={700}>
+      <Box color="black" fontSize={0} fontWeight={700}>
         Log out of this session
       </Box>
       <Box fontSize={0} mt={2} color="gray">
@@ -36,6 +36,6 @@ export default function SecuritySettings({ api }: SecuritySettingsProps) {
           </Button>
         </form>
       </Box>
-    </>
+    </Box>
   );
 }

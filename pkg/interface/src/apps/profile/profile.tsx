@@ -19,10 +19,15 @@ export default function ProfileScreen(props: any) {
         border={1}
         borderColor="washedGray"
       >
-        <Col collapse borderRight={1} borderColor="washedGray">
+        <Col
+          display={["none", "block"]}
+          collapse
+          borderRight={1}
+          borderColor="washedGray"
+        >
           <Box borderBottom={1} borderBottomColor="washedGray">
             <Box
-              backgroundColor="black"
+              bg="black"
               borderRadius={8}
               margin={4}
               height={128}
@@ -31,7 +36,11 @@ export default function ProfileScreen(props: any) {
               justifyContent="center"
               alignItems="center"
             >
-              <Sigil ship={ship} size={80} color={dark ? '#FFFFFF' : '#00000'}/>
+              <Sigil
+                ship={`~${ship}`}
+                size={80}
+                color={dark ? "#FFFFFF" : "#000000"}
+              />
             </Box>
           </Box>
           <Box py={4}>

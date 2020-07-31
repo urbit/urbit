@@ -192,17 +192,6 @@ class Clock extends React.Component {
     const newX = cx + (ctr - 15) * Math.cos(this.angle);
     const newY = cy + (ctr - 15) * Math.sin(this.angle);
 
-    // Initial background
-    circle(
-      ctx,
-      ctr,
-      ctr,
-      ctr,
-      -1,
-      2 * Math.PI,
-      background
-    );
-
     // Day
     degArc(
       ctx,
@@ -332,6 +321,7 @@ class Clock extends React.Component {
       1
     );
 
+    /*
     // Outer borders
     circleOutline(
       ctx,
@@ -343,6 +333,7 @@ class Clock extends React.Component {
       background,
       1
     );
+    */
 
     // Center white circle with time and date
     circle(
@@ -354,7 +345,6 @@ class Clock extends React.Component {
       2 * Math.PI,
       background
     );
-
     // Center white circle border
     circleOutline(
       ctx,

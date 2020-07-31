@@ -22,7 +22,7 @@ import SecuritySettings from "./lib/Security";
 
 type ProfileProps = StoreState & { api: GlobalApi; ship: string };
 
-export default function Profile({
+export default function Settings({
   api,
   launch,
   s3,
@@ -32,29 +32,26 @@ export default function Profile({
   background,
 }: ProfileProps) {
   return (
-    <Col
-      backgroundColor="white"
-      fontSize={2}
-      p={4}
-      m={3}
-      borderRadius={1}
-      maxWidth="300px"
-    >
-      <Box color="black" fontSize={0} mb={4}>
-        Ship Settings
+      <Box
+        backgroundColor="white"
+        fontSize={2}
+        display="grid"
+        gridTemplateRows="auto"
+        gridTemplateColumns="1fr"
+        gridRowGap={7}
+        p={4}
+        maxWidth="300px"
+      >
+        <DisplayForm
+          api={api}
+          launch={launch}
+          dark={dark}
+          hideNicknames={hideNicknames}
+          hideAvatars={hideAvatars}
+          background={background}
+        />
+        <S3Form api={api} s3={s3} />
+        <SecuritySettings api={api} />
       </Box>
-      <DisplayForm
-        api={api}
-        launch={launch}
-        dark={dark}
-        hideNicknames={hideNicknames}
-        hideAvatars={hideAvatars}
-        background={background}
-      />
-
-      <S3Form api={api} s3={s3} />
-
-      <SecuritySettings api={api} />
-    </Col>
   );
 }
