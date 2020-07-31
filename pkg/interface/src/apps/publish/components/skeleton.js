@@ -33,7 +33,7 @@ export class Skeleton extends Component {
             selectedGroups={props.selectedGroups}
             api={this.props.api}
           />
-          <div className={'h-100 w-100 relative white-d flex-auto ' + rightPanelHide} style={{
+          <div className={'bg-white bg-gray0-d h-100 w-100 relative white-d flex-auto ' + rightPanelHide} style={{
             flexGrow: 1
           }}
           >

@@ -29,7 +29,7 @@ function darkColors(dark) {
     background = '#333';
   } else {
     text = '#000000';
-    background = '#ffffff';
+    background = '#ffffff00';
   }
  }
 
