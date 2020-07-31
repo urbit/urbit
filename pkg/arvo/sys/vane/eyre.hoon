@@ -1962,7 +1962,7 @@
     ==
   ::
   ?:  ?=(%code-changed -.task)
-    ~>  %slog.[0 leaf+"eyre: code-changed: throwing away old cookies"]
+    ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
     =.  authentication-state.server-state.ax  *authentication-state
     ::
     =/  event-args  [[our eny duct now scry-gate] server-state.ax]
@@ -1970,12 +1970,6 @@
     =*  channel-state  channel-state.server-state.ax
     ::
     =/  channel-ids=(list @t)  ~(tap in ~(key by session.channel-state))
-    ?:  =(~ channel-ids)
-      [~ http-server-gate]
-    ::
-    =/  len=tape  (scow %ud (lent channel-ids))
-    ~>  %slog.[0 leaf+"eyre: code-changed: closing {len} channels"]
-    ::
     =|  moves=(list (list move))
     |-  ^-  [(list move) _http-server-gate]
     ?~  channel-ids
