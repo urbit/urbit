@@ -181,7 +181,7 @@ export class Omnibox extends Component {
     const { props, state } = this;
     const categoryResult = [];
 
-    const renderResults = <Box maxHeight="400px">
+    const renderResults = <Box maxHeight="400px" overflowY="scroll">
       {categoryResult}
     </Box>;
 
