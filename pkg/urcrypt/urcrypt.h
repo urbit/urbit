@@ -19,6 +19,7 @@ int urcrypt_ed_add_double_scalarmult(uint8_t a[32],
                                      uint8_t b_point[32],
                                      uint8_t out[32]);
 void urcrypt_ed_puck(uint8_t seed[32], uint8_t out[32]);
+void urcrypt_ed_shar(uint8_t public[32], uint8_t seed[32], uint8_t out[32]);
 void urcrypt_ed_sign(uint8_t *message,
                      size_t length,
                      uint8_t seed[32],

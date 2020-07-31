@@ -127,6 +127,19 @@ urcrypt_ed_puck(uint8_t seed[32], uint8_t out[32])
 }
 
 void
+urcrypt_ed_shar(uint8_t public[32], uint8_t seed[32], uint8_t out[32])
+{
+  uint8_t self[32], exp[64];
+
+  memset(self, 0, 32);
+  memset(exp, 0, 64);
+  memset(out, 0, 32);
+
+  ed25519_create_keypair(self, exp, seed);
+  ed25519_key_exchange(out, public, exp);
+}
+
+void
 urcrypt_ed_sign(uint8_t *message,
                 size_t length,
                 uint8_t seed[32],
