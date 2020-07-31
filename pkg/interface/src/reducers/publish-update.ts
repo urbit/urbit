@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import { PublishUpdate } from '../types/publish-update';
 import { Cage } from '../types/cage';
 import { StoreState } from '../store/type';
@@ -108,7 +106,7 @@ export default class PublishUpdateReducer<S extends PublishState> {
 
       if (state.notebooks[host][book].notes[note].comments) {
         let limboCommentIdx =
-          _.findIndex(state.notebooks[host][book].notes[note].comments, (o) => {
+        state.notebooks[host][book].notes[note].comments.findIndex((o) => {
           let oldVal = o[getTagFromFrond(o)];
           let newVal = comment[Object.keys(comment)[0]];
           return (oldVal.pending &&

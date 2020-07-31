@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { StoreState } from '../store/type';
 import { Cage } from '../types/cage';
 import { InviteUpdate } from '../types/invite-update';
@@ -20,42 +19,42 @@ export default class InviteReducer<S extends InviteState> {
   }
 
   initial(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'initial', false);
+    const data = json['initial'] || false;
     if (data) {
       state.invites = data;
     }
   }
 
   create(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'create', false);
+    const data = json['create'] || false;
     if (data) {
       state.invites[data.path] = {};
     }
   }
 
   delete(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'delete', false);
+    const data = json['delete'] || false;
     if (data) {
       delete state.invites[data.path];
     }
   }
 
   invite(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'invite', false);
+    const data = json['invite'] || false;
     if (data) {
       state.invites[data.path][data.uid] = data.invite;
     }
   }
 
   accepted(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'accepted', false);
+    const data = json['accepted'] || false;
     if (data) {
       delete state.invites[data.path][data.uid];
     }
   }
 
   decline(json: InviteUpdate, state: S) {
-    const data = _.get(json, 'decline', false);
+    const data = json['decline'] || false;
     if (data) {
       delete state.invites[data.path][data.uid];
     }

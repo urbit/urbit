@@ -1,5 +1,4 @@
 import React, { Component, createRef } from 'react';
-import _ from 'lodash';
 import Mousetrap from 'mousetrap';
 import urbitOb from 'urbit-ob';
 import { Sigil } from '../lib/sigil';
@@ -90,7 +89,8 @@ export class InviteSearch extends Component<
     const peerSet = new Set<PatpNoSig>();
     const contacts = new Map();
 
-    _.map(this.props.groups, (group, path) => {
+    Object.keys(this.props.groups).forEach((path) => {
+      const group = this.props.groups[path];
       if (group.members.size > 0) {
         const groupEntries = group.members.values();
         for (const member of groupEntries) {
@@ -98,7 +98,7 @@ export class InviteSearch extends Component<
         }
       }
 
-	    const groupContacts = this.props.contacts[path];
+      const groupContacts = this.props.contacts[path];
 
       if (groupContacts) {
         const groupEntries = group.members.values();
@@ -117,6 +117,7 @@ export class InviteSearch extends Component<
         }
       }
     });
+
     peers = Array.from(peerSet);
 
     this.setState({ groups: groups, peers: peers, contacts: contacts });
@@ -177,7 +178,7 @@ export class InviteSearch extends Component<
       const shipIdx = shipMatches.findIndex((ship) => ship === selected);
       const staleSelection = groupIdx < 0 && shipIdx < 0;
       if (!selected || staleSelection) {
-        const newSelection = _.get(groupMatches, '[0][0]') || shipMatches[0];
+        const newSelection = (groupMatches[0] && groupMatches[0].length) ? groupMatches[0][0] : shipMatches[0];
         this.setState({ selected: newSelection });
       }
 
@@ -236,7 +237,7 @@ export class InviteSearch extends Component<
     let shipIdx = ships.findIndex((ship) => ship === selected);
     if (groupIdx >= 0) {
       backward ? groupIdx-- : groupIdx++;
-      let selected = _.get(groups, [groupIdx, 0]);
+      let selected = groups[groupIdx][0];
       if (groupIdx === groups.length) {
         selected = ships.length === 0 ? groups[0][0] : ships[0];
       }

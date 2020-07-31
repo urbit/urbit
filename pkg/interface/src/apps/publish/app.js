@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import _ from 'lodash';
 
 import './css/custom.css';
 
@@ -46,19 +45,17 @@ export default class PublishApp extends React.Component {
 
     const notebooks = props.notebooks ? props.notebooks : {};
 
-    const unreadTotal = _.chain(notebooks)
-      .values()
-      .map(_.values)
-      .flatten() // flatten into array of notebooks
+    const unreadTotal = Object.values(notebooks)
+      .map((owner) => Object.values(owner))
+      .flat()
       .filter((each) => {
         return ((selectedGroups.map((e) => {
           return e[0];
         }).includes(each?.['writers-group-path'])) ||
         (selectedGroups.length === 0));
       })
-      .map('num-unread')
-      .reduce((acc, count) => acc + count, 0)
-      .value();
+      .map((each) => each['num-unread'])
+      .reduce((acc, count) => acc + count, 0);
 
     if (this.unreadTotal !== unreadTotal) {
       document.title = unreadTotal > 0 ? `(${unreadTotal}) OS1 - Publish` : 'OS1 - Publish';

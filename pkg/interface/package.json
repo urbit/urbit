@@ -14,7 +14,6 @@
     "codemirror": "^5.51.0",
     "css-loader": "^3.5.3",
     "formik": "^2.1.4",
-    "lodash": "^4.17.15",
     "markdown-to-jsx": "^6.11.4",
     "moment": "^2.20.1",
     "mousetrap": "^1.6.5",

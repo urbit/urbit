@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-import _ from 'lodash';
-
 import './css/custom.css';
 
 import { Skeleton } from './components/skeleton';
@@ -41,7 +39,7 @@ export class LinksApp extends Component {
   render() {
     const { props } = this;
 
-    const contacts = props.contacts ? props.contacts : {}; 
+    const contacts = props.contacts ? props.contacts : {};
 
     const groups = props.groups ? props.groups : {};
 
@@ -54,17 +52,14 @@ export class LinksApp extends Component {
     const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
     const selGroupPaths = selectedGroups.map(g => g[0]);
-    const totalUnseen = _.reduce(
-      links,
-      (acc, collection, path) => {
+    const totalUnseen = Object.entries(links)
+      .reduce((acc, [path, collection]) => {
         if(selGroupPaths.length > 0
            && !selGroupPaths.includes(associations.link?.[path]?.['group-path'])) {
           return acc;
         }
-        return acc + collection.unseenCount;
-      },
-      0
-    );
+        return acc + (collection.unseenCount || 0);
+      }, 0);
 
     if(totalUnseen !== this.totalUnseen) {
       document.title = totalUnseen !== 0 ? `(${totalUnseen}) OS1 - Links` : 'OS1 - Links';

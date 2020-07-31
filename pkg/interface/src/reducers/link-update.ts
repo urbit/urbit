@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { StoreState } from '../store/type';
 import { LinkUpdate, Pagination } from '../types/link-update';
 
@@ -11,7 +10,7 @@ type LinkState = Pick<StoreState, 'linksSeen' | 'links' | 'linkListening' | 'lin
 
 export default class LinkUpdateReducer<S extends LinkState> {
   reduce(json: any, state: S) {
-    const data = _.get(json, 'link-update', false);
+    const data = json['link-update'] || false;
     if(data) {
       this.submissionsPage(data, state);
       this.submissionsUpdate(data, state);
@@ -23,7 +22,7 @@ export default class LinkUpdateReducer<S extends LinkState> {
   }
 
   submissionsPage(json: LinkUpdate, state: S) {
-    const data = _.get(json, 'initial-submissions', false);
+    const data = json['initial-submissions'] || false;
     if (data) {
       //  { "initial-submissions": {
       //    "/~ship/group": {
@@ -71,7 +70,7 @@ export default class LinkUpdateReducer<S extends LinkState> {
   }
 
   submissionsUpdate(json: LinkUpdate, state: S) {
-    const data = _.get(json, 'submissions', false);
+    const data = json['submissions'] || false;
     if (data) {
       //  { "submissions": {
       //    path: /~ship/group
@@ -97,7 +96,7 @@ export default class LinkUpdateReducer<S extends LinkState> {
   }
 
   discussionsPage(json: LinkUpdate, state: S) {
-    const data = _.get(json, 'initial-discussions', false);
+    const data = json['initial-discussions'] || false;
     if (data) {
       //  { "initial-discussions": {
       //    path: "/~ship/group"
@@ -135,7 +134,7 @@ export default class LinkUpdateReducer<S extends LinkState> {
   }
 
   discussionsUpdate(json: LinkUpdate, state: S) {
-    const data = _.get(json, 'discussions', false);
+    const data = json['discussions'] || false;
     if (data) {
       //  { "discussions": {
       //    path: /~ship/path
@@ -154,7 +153,7 @@ export default class LinkUpdateReducer<S extends LinkState> {
   }
 
   observationUpdate(json: LinkUpdate, state: S) {
-    const data = _.get(json, 'observation', false);
+    const data = json['observation'] || false;
     if (data) {
       //  { "observation": {
       //    path: /~ship/path

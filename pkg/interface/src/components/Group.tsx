@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import _, { capitalize } from 'lodash';
 import { FixedSizeList as List } from 'react-window';
 
 import { Dropdown } from '../apps/publish/components/lib/dropdown';
@@ -181,7 +180,7 @@ export class GroupView extends Component<
           (acc, role) => [
             ...acc,
             {
-              text: `Make ${capitalize(role)}`,
+              text: `Make ${role.charAt(0).toUpperCase()}${role.slice(1).toLowerCase()}`,
               onSelect: () => this.addTag(ship, { tag: role }),
             },
           ],
@@ -200,10 +199,14 @@ export class GroupView extends Component<
   getAppTags(ship: Patp): [GroupViewAppTag[], GroupViewAppTag[]] {
     const { tags } = this.props.group;
     const { appTags } = this.props;
-
-    return _.partition(appTags, ({ app, tag }) => {
+    const criterion = ({ app, tag }) => {
       return tags?.[app]?.[tag]?.has(ship);
-    });
+    };
+
+    return appTags ? [
+      appTags.filter(appTag => criterion(appTag)),
+      appTags.filter(appTag => !criterion(appTag)),
+    ] : [[], []];
   }
 
   memberElements() {
@@ -228,7 +231,7 @@ export class GroupView extends Component<
               {role && (
                 <Tag
                   onRemove={onRoleRemove}
-                  description={capitalize(role)}
+                  description={`${role.charAt(0).toUpperCase()}${role.slice(1).toLowerCase()}`}
                 />
               )}
               {present.map((tag, idx) => (

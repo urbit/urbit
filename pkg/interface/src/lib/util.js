@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 export function resourceAsPath(resource) {
   const { name, ship } = resource;
   return `/ship/~${ship}/${name}`;
@@ -88,7 +86,7 @@ function hexToDec(hex) {
 }
 
 export function hexToRgba(hex, a) {
-  const [r,g,b] = _.chunk(hex, 2).map(hexToDec);
+  const [r,g,b] = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex).map(hexToDec);
   return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
 

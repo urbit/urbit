@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import _ from 'lodash';
 import urbitOb from 'urbit-ob';
 import Mousetrap from 'mousetrap';
 
@@ -119,35 +118,30 @@ export class ShipSearch extends Component {
 
       return (
         hay.startsWith(needle) ||
-        _.some(_.words(hay), s => s.startsWith(needle))
+        hay.split(/\s/).some(s => s.startsWith(needle))
       );
     };
 
     let candidates = this.state.suggestions;
 
     if (isStale || this.state.suggestions.length === 0) {
-      const contacts = _.chain(this.props.contacts)
-        .defaultTo({})
-        .map((details, ship) => ({ ...details, ship }))
-        .filter(
-          ({ nickname, ship }) => matchString(nickname) || matchString(ship)
-        )
-        .map('ship')
-        .value();
+      const contacts = Object.keys(this.props.contacts)
+        .map((ship) => ({ ...this.props.contacts[ship], ship}))
+        .filter(({ nickname, ship }) => matchString(nickname) || matchString(ship))
+        .map((details) => details.ship);
 
       const exactMatch = urbitOb.isValidPatp(`~${needle}`) ? [needle] : [];
 
-      candidates = _.chain(this.props.candidates)
-        .defaultTo([])
-        .union(contacts)
-        .union(exactMatch)
-        .value();
+      candidates = this.props.candidates
+        .concat(contacts)
+        .concat(exactMatch)
+        .filter((value, index, self) => self.indexOf(value) === index);
+
     }
 
-    const suggestions = _.chain(candidates)
+    const suggestions = candidates
       .filter(matchString)
-      .filter(s => s.length < 28) // exclude comets
-      .value();
+      .filter(s => s.length < 28); // exclude comets
 
     this.bindShortcuts();
     this.setState({ suggestions, selected: suggestions[0] });

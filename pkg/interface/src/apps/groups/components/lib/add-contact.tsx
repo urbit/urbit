@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { InviteSearch, Invites } from '../../../../components/InviteSearch';
 import { Spinner } from '../../../../components/Spinner';

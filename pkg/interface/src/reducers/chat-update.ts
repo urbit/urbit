@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { StoreState } from '../store/type';
 import { Cage } from '../types/cage';
 import { ChatUpdate } from '../types/chat-update';
@@ -26,7 +25,7 @@ export default class ChatReducer<S extends ChatState> {
   }
 
   initial(json: ChatUpdate, state: S) {
-    const data = _.get(json, 'initial', false);
+    const data = json['initial'] || false;
     if (data) {
       state.inbox = data;
       state.chatInitialized = true;
@@ -38,7 +37,7 @@ export default class ChatReducer<S extends ChatState> {
   }
 
   message(json: ChatUpdate, state: S) {
-    const data = _.get(json, 'message', false);
+    const data = json['message'] || false;
     if (data) {
       state.inbox[data.path].envelopes.unshift(data.envelope);
       state.inbox[data.path].config.length
@@ -47,7 +46,7 @@ export default class ChatReducer<S extends ChatState> {
   }
 
   messages(json: ChatUpdate, state: S) {
-    const data = _.get(json, 'messages', false);
+    const data = json['message'] || false;
     if (data) {
       state.inbox[data.path].envelopes =
         state.inbox[data.path].envelopes.concat(data.envelopes);
@@ -55,7 +54,7 @@ export default class ChatReducer<S extends ChatState> {
   }
 
   read(json: ChatUpdate, state: S) {
-    const data = _.get(json, 'read', false);
+    const data = json['read'] || false;
     if (data) {
       state.inbox[data.path].config.read =
         state.inbox[data.path].config.length;
@@ -63,7 +62,7 @@ export default class ChatReducer<S extends ChatState> {
   }
 
   create(json: ChatUpdate, state: S) {
-    const data = _.get(json, 'create', false);
+    const data = json['create'] || false;
     if (data) {
       state.inbox[data.path] = {
         envelopes: [],
@@ -76,14 +75,14 @@ export default class ChatReducer<S extends ChatState> {
   }
 
   delete(json: ChatUpdate, state: S) {
-    const data = _.get(json, 'delete', false);
+    const data = json['delete'] || false;
     if (data) {
       delete state.inbox[data.path];
     }
   }
 
   pending(json: ChatUpdate, state: S) {
-    const msg = _.get(json, 'message', false);
+    const data = json['message'] || false;
     if (!msg || !state.pendingMessages.has(msg.path)) {
       return;
     }

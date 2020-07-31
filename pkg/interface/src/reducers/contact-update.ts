@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { StoreState } from '../store/type';
 import { Cage } from '../types/cage';
 import { ContactUpdate } from '../types/contact-update';
@@ -19,28 +18,28 @@ export default class ContactReducer<S extends ContactState>  {
   }
 
   initial(json: ContactUpdate, state: S) {
-    const data = _.get(json, 'initial', false);
+    const data = json['initial'] || false;
     if (data) {
       state.contacts = data;
     }
   }
 
   create(json: ContactUpdate, state: S) {
-    const data = _.get(json, 'create', false);
+    const data = json['create'] || false;
     if (data) {
       state.contacts[data.path] = {};
     }
   }
 
   delete(json: ContactUpdate, state: S) {
-    const data = _.get(json, 'delete', false);
+    const data = json['delete'] || false;
     if (data) {
       delete state.contacts[data.path];
     }
   }
 
   add(json: ContactUpdate, state: S) {
-    const data = _.get(json, 'add', false);
+    const data = json['add'] || false;
     if (
       data &&
       (data.path in state.contacts)
@@ -50,7 +49,7 @@ export default class ContactReducer<S extends ContactState>  {
   }
 
   remove(json: ContactUpdate, state: S) {
-    const data = _.get(json, 'remove', false);
+    const data = json['remove'] || false;
     if (
       data &&
       (data.path in state.contacts) &&
@@ -61,7 +60,7 @@ export default class ContactReducer<S extends ContactState>  {
   }
 
   edit(json: ContactUpdate, state: S) {
-    const data = _.get(json, 'edit', false);
+    const data = json['edit'] || false;
     if (
       data &&
       (data.path in state.contacts) &&

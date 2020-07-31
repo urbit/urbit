@@ -1,8 +1,6 @@
 import BaseSubscription from './base';
 import { StoreState } from '../store/type';
 import { Path } from '../types/noun';
-import _ from 'lodash';
-
 
 /**
  * Path to subscribe on and app to subscribe to
@@ -54,7 +52,8 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
 
   restart() {
     super.restart();
-    _.mapValues(this.openSubscriptions, (subs, app: AppName) => {
+    Object.keys(this.openSubscriptions).forEach((app: AppName) => {
+      const subs = this.openSubscriptions[app];
       if(subs.length > 0) {
         this.stopApp(app);
         this.startApp(app);

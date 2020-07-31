@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { StoreState } from '../store/type';
 import { Cage } from '../types/cage';
 import { PermissionUpdate } from '../types/permission-update';
@@ -7,7 +6,7 @@ type PermissionState = Pick<StoreState, "permissions">;
 
 export default class PermissionReducer<S extends PermissionState> {
   reduce(json: Cage, state: S) {
-    const data = _.get(json, 'permission-update', false);
+    const data = json['permission-update'] || false;
     if (data) {
       this.initial(data, state);
       this.create(data, state);
@@ -18,7 +17,7 @@ export default class PermissionReducer<S extends PermissionState> {
   }
 
   initial(json: PermissionUpdate, state: S) {
-    const data = _.get(json, 'initial', false);
+    const data = json['initial'] || false;
     if (data) {
       for (const perm in data) {
         state.permissions[perm] = {
@@ -30,7 +29,7 @@ export default class PermissionReducer<S extends PermissionState> {
   }
 
   create(json: PermissionUpdate, state: S) {
-    const data = _.get(json, 'create', false);
+    const data = json['create'] || false;
     if (data) {
       state.permissions[data.path] = {
         kind: data.kind,
@@ -40,14 +39,14 @@ export default class PermissionReducer<S extends PermissionState> {
   }
 
   delete(json: PermissionUpdate, state: S) {
-    const data = _.get(json, 'delete', false);
+    const data = json['delete'] || false;
     if (data) {
       delete state.permissions[data.path];
     }
   }
 
   add(json: PermissionUpdate, state: S) {
-    const data = _.get(json, 'add', false);
+    const data = json['add'] || false;
     if (data) {
       for (const member of data.who) {
         state.permissions[data.path].who.add(member);
@@ -56,7 +55,7 @@ export default class PermissionReducer<S extends PermissionState> {
   }
 
   remove(json: PermissionUpdate, state: S) {
-    const data = _.get(json, 'remove', false);
+    const data = json['remove'] || false;
     if (data) {
       for (const member of data.who) {
         state.permissions[data.path].who.delete(member);

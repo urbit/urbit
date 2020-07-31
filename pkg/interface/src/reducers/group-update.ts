@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { StoreState } from '../store/type';
 import { Cage } from '../types/cage';
 import {
@@ -41,27 +40,21 @@ function decodePolicy(policy: Enc<GroupPolicy>): GroupPolicy {
 }
 
 function decodeTags(tags: Enc<Tags>): Tags {
-  return _.reduce(
-    tags,
-    (acc, tag, key): Tags => {
+  return Object.entries(tags)
+    .reduce((acc, [key, tag]) => {
       if (Array.isArray(tag)) {
         acc.role[key] = new Set(tag);
         return acc;
       } else {
-        const app = _.reduce(
-          tag,
-          (inner, t, k) => {
+        const app = Object.entries(tag)
+          .reduce((inner, [k, t]) => {
             inner[k] = new Set(t);
             return inner;
-          },
-          {}
-        );
+          }, {});
         acc[key] = app;
         return acc;
       }
-    },
-    { role: {} }
-  );
+    }, { role: {} });
 }
 
 export default class GroupReducer<S extends GroupState> {
@@ -84,7 +77,10 @@ export default class GroupReducer<S extends GroupState> {
   initial(json: GroupUpdate, state: S) {
     const data = json['initial'];
     if (data) {
-      state.groups = _.mapValues(data, decodeGroup);
+      state.groups = Object.entries(data).reduce((acc, [key, value]) => {
+        acc[key] = decodeGroup(value);
+        return acc;
+      }, {});
     }
   }
 
@@ -141,13 +137,11 @@ export default class GroupReducer<S extends GroupState> {
       const { resource, tag, ships } = json.addTag;
       const resourcePath = resourceAsPath(resource);
       const tags = state.groups[resourcePath].tags;
-      const tagAccessors =
-        'app' in tag ? [tag.app,tag.tag] :  ['role', tag.tag];
-      const tagged = _.get(tags, tagAccessors, new Set());
+      const tagged = tags[tag['app'] || 'role'][tag.tag] || new Set();
       for (const ship of ships) {
         tagged.add(ship);
       }
-      _.set(tags, tagAccessors, tagged);
+      tags[tag['app'] || 'role'][tag.tag] = tagged;
     }
   }
 
@@ -156,9 +150,7 @@ export default class GroupReducer<S extends GroupState> {
       const { resource, tag, ships } = json.removeTag;
       const resourcePath = resourceAsPath(resource);
       const tags = state.groups[resourcePath].tags;
-      const tagAccessors =
-        'app' in tag ? [tag.app,tag.tag] :  ['role', tag.tag];
-      const tagged = _.get(tags, tagAccessors, new Set());
+      const tagged = tags[tag['app'] || 'role'][tag.tag] || new Set();
 
       if (!tagged) {
         return;
@@ -166,7 +158,7 @@ export default class GroupReducer<S extends GroupState> {
       for (const ship of ships) {
         tagged.delete(ship);
       }
-      _.set(tags, tagAccessors, tagged);
+      tags[tag['app'] || 'role'][tag.tag] = tagged;
     }
   }
 

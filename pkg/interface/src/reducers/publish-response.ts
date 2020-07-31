@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { StoreState } from '../store/type';
 import { Cage } from '../types/cage';
 
@@ -6,7 +5,7 @@ type PublishState = Pick<StoreState, 'notebooks'>;
 
 export default class PublishResponseReducer<S extends PublishState> {
   reduce(json: Cage, state: S) {
-    const data = _.get(json, 'publish-response', false);
+    const data = json['publish-response'] || false;
     if (!data) { return; }
     switch(data.type) {
       case "notebooks":

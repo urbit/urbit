@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 export default class Api {
   constructor(ship, channel) {
     this.ship = ship;
@@ -9,7 +7,7 @@ export default class Api {
   }
 
   bind(path, method, ship = this.ship, appl = 'dojo', success, fail) {
-    this.bindPaths = _.uniq([...this.bindPaths, path]);
+    this.bindPaths = [...this.bindPaths, path].filter((value, index, self) => self.indexOf(value) === index);
 
     window.subscriptionId = this.channel.subscribe(ship, appl, path,
       (err) => {

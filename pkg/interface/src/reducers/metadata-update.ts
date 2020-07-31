@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import { StoreState } from '../store/type';
 
 import { MetadataUpdate } from '../types/metadata-update';
@@ -19,7 +17,7 @@ export default class MetadataReducer<S extends MetadataState> {
   }
 
   associations(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'associations', false);
+    let data = json['associations'] || false;
     if (data) {
       let metadata = state.associations;
       Object.keys(data).forEach((key) => {
@@ -40,7 +38,7 @@ export default class MetadataReducer<S extends MetadataState> {
   }
 
   add(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'add', false);
+    let data = json['add'] || false;
     if (data) {
       let metadata = state.associations;
       let appName = data['app-name'];
@@ -59,7 +57,7 @@ export default class MetadataReducer<S extends MetadataState> {
   }
 
   update(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'update-metadata', false);
+    let data = json['update-metadata'] || false;
     if (data) {
       let metadata = state.associations;
       let appName = data['app-name'];
@@ -78,7 +76,7 @@ export default class MetadataReducer<S extends MetadataState> {
   }
 
   remove(json: MetadataUpdate, state: S) {
-    let data = _.get(json, 'remove', false);
+    let data = json['remove'] || false;
     if (data) {
       let metadata = state.associations;
       let appName = data['app-name'];

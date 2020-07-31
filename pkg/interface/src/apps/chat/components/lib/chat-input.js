@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import _ from 'lodash';
 import moment from 'moment';
 import { UnControlled as CodeEditor } from 'react-codemirror2';
 import CodeMirror from 'codemirror';
@@ -339,12 +338,10 @@ export class ChatInput extends Component {
         classes={sigilClass}
         />;
 
-    const candidates = _.chain(this.props.envelopes)
-      .defaultTo([])
-      .map('author')
-      .uniq()
-      .reverse()
-      .value();
+    const candidates = this.props.envelopes
+      .map(envelope => envelope.author)
+      .filter((value, index, self) => self.indexOf(value) === index)
+      .reverse();
 
     const codeTheme = state.code ? ' code' : '';
 
