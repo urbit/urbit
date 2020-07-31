@@ -23,7 +23,7 @@ export class Skeleton extends Component {
 
     return (
       <div className={'absolute w-100 ' + popoutWindow} style={{ height: 'calc(100% - 45px)' }}>
-        <div className={'cf w-100 h-100 flex ' + popoutBorder}>
+        <div className={'bg-white bg-gray0-d cf w-100 h-100 flex ' + popoutBorder}>
         <ChannelsSidebar
             active={props.active}
             popout={popout}
@@ -37,7 +37,7 @@ export class Skeleton extends Component {
             listening={props.listening}
             api={props.api}
         />
-          <div className={'h-100 w-100 flex-auto relative bg-white bg-gray0-d' + rightPanelHide} style={{
+          <div className={'h-100 w-100 flex-auto relative ' + rightPanelHide} style={{
             flexGrow: 1
           }}
           >

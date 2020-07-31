@@ -29,7 +29,7 @@ function darkColors(dark) {
     background = '#333';
   } else {
     text = '#000000';
-    background = '#ffffff00';
+    background = '#ffffff';
   }
  }
 
@@ -401,7 +401,7 @@ export default class ClockTile extends React.Component {
 
   renderWrapper(child) {
     return (
-      <Tile>
+      <Tile transparent>
         {child}
       </Tile>
     );

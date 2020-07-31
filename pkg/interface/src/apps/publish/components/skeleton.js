@@ -20,7 +20,7 @@ export class Skeleton extends Component {
 
     return (
       <div className={'w-100 h-100 ' + popoutWindow}>
-        <div className={'cf w-100 h-100 flex ' + popoutBorder}>
+        <div className={'bg-white bg-gray0-d cf w-100 h-100 flex ' + popoutBorder}>
           <Sidebar
             popout={popout}
             sidebarShown={props.sidebarShown}
@@ -33,7 +33,7 @@ export class Skeleton extends Component {
             selectedGroups={props.selectedGroups}
             api={this.props.api}
           />
-          <div className={'bg-white bg-gray0-d h-100 w-100 relative white-d flex-auto ' + rightPanelHide} style={{
+          <div className={'h-100 w-100 relative white-d flex-auto ' + rightPanelHide} style={{
             flexGrow: 1
           }}
           >
