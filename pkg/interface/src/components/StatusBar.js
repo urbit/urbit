@@ -15,6 +15,8 @@ const getLocationName = (basePath) => {
     return 'Links';
   else if (basePath === '~publish')
     return 'Publish';
+  else if (basePath === '~profile')
+    return 'Profile';
   else
     return 'Unknown';
 };
@@ -40,12 +42,12 @@ const StatusBar = (props) => {
   return (
     <div
       className={
-        'bg-white bg-gray0-d w-100 justify-between relative tc pt3 ' + display
+        'w-100 justify-between relative tc pt3 ' + display
       }
       style={{ height: 45 }}
     >
-      <div className="fl lh-copy absolute left-0 pl4" style={{ top: 8 }}>
-      <Link to="/~groups/me"
+      <div className="bg-white b--gray4 ba bg-gray0-d fl lh-copy absolute left-0 ml4 pl2 pr2 br1" style={{ top: 8 }}>
+      <Link to="/~profile"
           className="dib v-top" style={{ lineHeight: 0, paddingTop: 6 }}>
           <Sigil
             ship={'~' + window.ship}

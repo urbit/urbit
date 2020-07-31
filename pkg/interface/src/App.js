@@ -15,6 +15,7 @@ import DojoApp from './apps/dojo/app';
 import GroupsApp from './apps/groups/app';
 import LinksApp from './apps/links/app';
 import PublishApp from './apps/publish/app';
+import Profile from './apps/profile/profile';
 
 import StatusBar from './components/StatusBar';
 import ErrorComponent from './components/Error';
@@ -40,6 +41,13 @@ const Root = styled.div`
   width: 100%;
   padding: 0;
   margin: 0;
+  ${p => p.background?.type === 'url' ? `
+    background-image: url('${p.background?.url}');
+    background-size: cover;
+    ` : p.background?.type === 'color' ? `
+    background-color: ${p.background.color}
+    ` : ``
+  }
 `;
 
 const Content = styled.div`
@@ -88,10 +96,11 @@ class App extends React.Component {
     const selectedGroups = this.state.selectedGroups ? this.state.selectedGroups : [];
     const { state } = this;
     const theme = state.dark ? dark : light;
+    const { background } = state;
 
     return (
       <ThemeProvider theme={theme}>
-        <Root>
+        <Root background={background} >
           <Router>
             <StatusBarWithRouter props={this.props}
             associations={associations}
@@ -162,6 +171,12 @@ class App extends React.Component {
                   {...p}
                 />
               )}
+              />
+              <Route
+                path="/~profile" 
+                render={ p => (
+                  <Profile ship={this.ship} api={this.api} {...state} />
+                )}
               />
               <Route
                 render={(props) => (
