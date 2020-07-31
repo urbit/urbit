@@ -6,6 +6,7 @@
 #include <ed25519.h>
 #include <ge-additions.h>
 
+int urcrypt_ed_point_add(uint8_t a[32], uint8_t b[32], uint8_t out[32]);
 int urcrypt_ed_scalarmult(uint8_t a[32], uint8_t b[32], uint8_t out[32]);
 void urcrypt_ed_sign(uint8_t *message,
                      size_t length,
