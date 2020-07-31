@@ -57,6 +57,29 @@ urcrypt_ed_scalarmult_base(uint8_t a[32], uint8_t out[32])
   ge_p3_tobytes(out, &R);
 }
 
+int
+urcrypt_ed_add_scalarmult_scalarmult_base(uint8_t a[32],
+                                          uint8_t a_point[32],
+                                          uint8_t b[32],
+                                          uint8_t out[32])
+{
+  ge_p2 r;
+  ge_p3 A;
+
+  if (ge_frombytes_negate_vartime(&A, a_point) != 0) {
+    return -1;
+  }
+
+  // Undo the negation from above. See add_scalar.c in the ed25519 distro.
+  fe_neg(A.X, A.X);
+  fe_neg(A.T, A.T);
+
+  ge_double_scalarmult_vartime(&r, a, &A, b);
+  ge_tobytes(out, &r);
+
+  return 0;
+}
+
 void
 urcrypt_ed_sign(uint8_t *message,
                 size_t length,

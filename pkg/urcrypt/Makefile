@@ -4,7 +4,7 @@ PREFIX ?= ./out
 
 ################################################################################
 
-.PHONY: all test install clean
+.PHONY: all install clean
 
 CFLAGS := $(CFLAGS) -O3 -Wall -Werror -pedantic -std=gnu99
 SOURCES = urcrypt.c urcrypt.h
@@ -29,4 +29,4 @@ install: all
 	cp urcrypt.h $(PREFIX)/include/
 
 clean:
-	rm -rf ./out
+	rm urcrypt-static.o urcrypt-shared.o liburcrypt.a liburcrypt.so
