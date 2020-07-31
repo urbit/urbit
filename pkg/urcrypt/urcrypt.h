@@ -13,6 +13,11 @@ int urcrypt_ed_add_scalarmult_scalarmult_base(uint8_t a[32],
                                               uint8_t a_point[32],
                                               uint8_t b[32],
                                               uint8_t out[32]);
+int urcrypt_ed_add_double_scalarmult(uint8_t a[32],
+                                     uint8_t a_point[32],
+                                     uint8_t b[32],
+                                     uint8_t b_point[32],
+                                     uint8_t out[32]);
 void urcrypt_ed_sign(uint8_t *message,
                      size_t length,
                      uint8_t seed[32],
