@@ -40,7 +40,7 @@ export default class S3Reducer<S extends S3State> {
   currentBucket(json: S3Update, state: S) {
     const data = _.get(json, 'setCurrentBucket', false);
     if (data && state.s3) {
-
+      state.s3.configuration.currentBucket = data;
     }
   }
 
