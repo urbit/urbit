@@ -87,7 +87,7 @@ export class Message extends Component {
             <p className={`v-mid f9 gray2 dib mr3 c-default`}>
               <span
                 className={
-                  'pointer ' +
+                  'mw5 dib truncate pointer ' +
                   ((contact.nickname && !hideNicknames) || state.copied ? null : 'mono')
                 }
                 onClick={() => {
