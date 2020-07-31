@@ -229,7 +229,7 @@ export class ChatWindow extends Component {
     return (
       <div
         className={
-          "overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex" +
+          "overflow-y-scroll bg-white bg-gray0-d pt3 pb2 flex " +
           "flex-column-reverse relative"
         }
         style={{ height: "100%", resize: "vertical" }}
