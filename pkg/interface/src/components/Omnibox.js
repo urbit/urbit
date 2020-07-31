@@ -52,12 +52,16 @@ export class Omnibox extends Component {
       }
     };
 
-    if (evt.key === 'ArrowDown') {
-      this.setNextSelected();
+    if (
+      evt.key === 'ArrowUp' ||
+      (evt.shiftKey && evt.key === 'Tab')) {
+        evt.preventDefault();
+      return this.setPreviousSelected();
     }
 
-    if (evt.key === 'ArrowUp') {
-      this.setPreviousSelected();
+    if (evt.key === 'ArrowDown' || evt.key === 'Tab') {
+      evt.preventDefault();
+      this.setNextSelected();
     }
 
     if (evt.key === 'Enter') {
@@ -101,7 +105,7 @@ export class Omnibox extends Component {
 
     // wipe results if backspacing
     if (query.length === 0) {
-      this.setState({ results: results });
+      this.setState({ results: results, selected: '' });
       return;
     }
 
@@ -129,6 +133,7 @@ export class Omnibox extends Component {
     setPreviousSelected() {
     const current = this.state.selected;
     const flattenedResults = Array.from(this.state.results.values()).flat();
+    const totalLength = flattenedResults.length;
     if (current !== '') {
       const currentIndex = flattenedResults.indexOf(
         ...flattenedResults.filter((e) => {
@@ -138,9 +143,12 @@ export class Omnibox extends Component {
       if (currentIndex > 0) {
       const nextLink = flattenedResults[currentIndex - 1].link;
       this.setState({ selected: nextLink });
+      } else {
+      const nextLink = flattenedResults[totalLength - 1].link;
+      this.setState({ selected: nextLink });
       }
     } else {
-      const nextLink = flattenedResults[0].link;
+      const nextLink = flattenedResults[totalLength - 1].link;
       this.setState({ selected: nextLink });
     }
   }
@@ -156,6 +164,9 @@ export class Omnibox extends Component {
       );
       if (currentIndex < flattenedResults.length - 1) {
       const nextLink = flattenedResults[currentIndex + 1].link;
+      this.setState({ selected: nextLink });
+      } else {
+      const nextLink = flattenedResults[0].link;
       this.setState({ selected: nextLink });
       }
     } else {
@@ -187,7 +198,7 @@ export class Omnibox extends Component {
             dark={props.dark}
                  />;
         });
-         categoryResult.push(<Box key={i} width='50vw' maxWidth='600px'>
+         categoryResult.push(<Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
         <Rule borderTopWidth="0.5px" color="washedGray" />
         <Text gray ml={2}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>
           {each}
@@ -210,7 +221,7 @@ export class Omnibox extends Component {
           <Row justifyContent='center'>
             <Box
               mt='20vh'
-              width='50vw'
+              width='max(50vw, 300px)'
               maxWidth='600px'
               borderRadius='2'
               backgroundColor='white'
@@ -225,7 +236,7 @@ export class Omnibox extends Component {
                 className="ba b--transparent w-100 br2 white-d bg-gray0-d inter f9 pa2"
                 style={{ maxWidth: 'calc(600px - 1.15rem)', boxSizing: 'border-box' }}
                 placeholder="Search..."
-                onKeyUp={e => this.control(e) }
+                onKeyDown={e => this.control(e) }
                 onChange={this.search}
                 value={state.query}
               />
