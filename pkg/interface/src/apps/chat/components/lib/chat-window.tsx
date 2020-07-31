@@ -267,6 +267,8 @@ export class ChatWindow extends Component {
           unread={unread}
           envelopes={props.envelopes}
           pendingMessages={props.pendingMessages}
+          association={props.association}
+          group={props.group}
           contacts={props.contacts}
           numPages={state.numPages} />
       </Fragment>

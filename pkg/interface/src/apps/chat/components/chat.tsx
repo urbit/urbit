@@ -133,6 +133,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           match={props.match}
           api={props.api}
           group={props.group}
+          association={props.association}
           contacts={props.contacts}
           inbox={props.inbox}
           pendingMessages={props.pendingMessages}
