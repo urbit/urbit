@@ -154,3 +154,12 @@ urcrypt_ed_sign(uint8_t *message,
   ed25519_create_keypair(public, secret, seed);
   ed25519_sign(out, message, length, public, secret);
 }
+
+bool
+urcrypt_ed_veri(uint8_t *message, size_t length,
+                uint8_t public[32], uint8_t signature[64])
+{
+  return ( ed25519_verify(signature, message, length, public) == 1 )
+    ? true
+    : false;
+}

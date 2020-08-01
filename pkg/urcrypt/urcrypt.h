@@ -2,6 +2,7 @@
 #define URCRYPT_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
 #include <ed25519.h>
 #include <ge-additions.h>
@@ -25,4 +26,6 @@ void urcrypt_ed_sign(uint8_t *message,
                      uint8_t seed[32],
                      uint8_t out[64]);
 
+bool urcrypt_ed_veri(uint8_t *message, size_t length,
+                     uint8_t signature[64], uint8_t public[32]);
 #endif

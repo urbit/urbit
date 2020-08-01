@@ -20,6 +20,8 @@
     else {
       c3_y pub_y[32], sek_y[32], shr_y[32];
 
+      memset(pub_y, 0, 32);
+      memset(sek_y, 0, 32);
       u3r_bytes(0, 32, pub_y, pub);
       u3r_bytes(0, 32, sek_y, sek);
 
