@@ -1,3 +1,24 @@
+::  lib/pull-hook/hoon: helper for creating a push hook
+::  
+::   lib/pull-hook is a helper for automatically pulling data from a
+::   corresponding push-hook to a store. 
+::   
+::   ## Interfacing notes:
+::
+::   lib/push-hook provides the inner door with its own separate state.
+::   The inner door may interact with the library by producing cards or
+::   scrying. Do not pass any cards on a wire beginning with /helper as
+::   these wires are reserved by this library. Any watches/pokes/peeks
+::   not listed below will be routed to the inner door.
+::
+::   ##  Subscription paths
+::
+::   /tracking: The set of resources we are pulling
+::
+::   ##  Pokes
+::
+::   %pull-hook-action: Add/remove a resource from pulling.
+::
 /-  *pull-hook
 /+  default-agent, resource
 ::
@@ -5,13 +26,24 @@
 |%
 +$  card   card:agent:gall
 ::
+::  $config: configuration for the pull hook
+::
+::    .store-name: name of the store to proxy subscriptions to.
+::    .update-mark: mark that updates will be tagged with
+::    .push-hook-name: name of the corresponding push-hook
+
 +$  config
   $:  store-name=term
       update=mold
       update-mark=term
       push-hook-name=term
   ==
+::  
+::  $state-0: state for the pull hook
 ::
+::    .tracking: a map of resources we are pulling, and the ships that
+::    we are pulling them from.
+::    .inner-state: state given to internal door
 +$  state-0
   $:  %0
     tracking=(map resource ship)
@@ -37,7 +69,7 @@
   |*  config
   $_  ^|
   |_  bowl:gall
-  ::
+  ::  from agent:gall
   ++  on-init
     *[(list card) _^|(..on-init)]
   ::
@@ -77,7 +109,9 @@
     *[(list card) _^|(..on-init)]
   ::  +on-pull-nack: handle failed pull subscription
   ::
-  ::    This arm is called when a pull subscription fails.
+  ::    This arm is called when a pull subscription fails. lib/pull-hook
+  ::    will automatically delete the resource from .tracking by the
+  ::    time this arm is called.
   ::
   ++  on-pull-nack
     |~  [resource tang]
