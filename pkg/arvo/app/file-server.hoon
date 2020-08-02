@@ -169,7 +169,7 @@
       ?~  content  [not-found:gen %.n]
       ?-  -.content.u.content
           %clay
-        =/  scry-path
+        =/  scry-path=path
           :*  (scot %p our.bowl)
               q.byk.bowl
               (scot %da now.bowl)
@@ -179,10 +179,16 @@
         =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
         :_  public.u.content
         ?+  ext.req-line  not-found:gen
-            [~ %html]  (html-response:gen file)
             [~ %js]    (js-response:gen file)
             [~ %css]   (css-response:gen file)
             [~ %png]   (png-response:gen file)
+          ::
+              [~ %html]
+            %.  file
+            %*    .   html-response:gen 
+                cache  
+              !=(/app/landscape/index/html (slag 3 scry-path))
+            ==
         ==
       ::
           %glob
