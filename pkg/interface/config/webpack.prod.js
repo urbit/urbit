@@ -56,8 +56,7 @@ module.exports = {
     // }),
   ],
   output: {
-    filename: 'index.js',
-    chunkFilename: 'index.js',
+    filename: 'index.[contenthash].js',
     path: path.resolve(__dirname, '../../arvo/app/landscape/js'),
     publicPath: '/'
   },
