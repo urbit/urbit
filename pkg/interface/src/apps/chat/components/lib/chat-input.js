@@ -197,10 +197,13 @@ export class ChatInput extends Component {
       this.editor.setValue('');
       return;
     }
+
+    let messages = []; // Users can send one or more messages on submit, depending on message content
     let message = [];
     let isInCodeBlock = false;
     let endOfCodeBlock = false;
     editorMessage.split(/\r?\n/).forEach((line) => {
+      message.push('\n');
       // A line of backticks enters and exits a codeblock
       if (line.startsWith('```')) {
         // But we need to check if we've ended a codeblock
@@ -209,10 +212,9 @@ export class ChatInput extends Component {
       } else {
         endOfCodeBlock = false;
       }
-      if (isInCodeBlock) {
-        message.push(`\n${line}`);
-      } else if (endOfCodeBlock) {
-        message.push(`\n${line}\n`);
+
+      if (isInCodeBlock || endOfCodeBlock) {
+        message.push(line);
       } else {
         line.split(/\s/).forEach((str) => {
           if (
@@ -226,45 +228,38 @@ export class ChatInput extends Component {
           ) {
             isInCodeBlock = false;
           }
+
           if (this.isUrl(str) && !isInCodeBlock) {
             if (message.length > 0) {
-              message = message.join(' ');
-              message = this.getLetterType(message);
-              props.api.chat.message(
-                props.station,
-                `~${window.ship}`,
-                Date.now(),
-                message
-              );
+              // If we're in the middle of a message, add it to the stack and reset
+              messages.push(message);
               message = [];
             }
-            const URL = this.getLetterType(str);
-            props.api.chat.message(
-              props.station,
-              `~${window.ship}`,
-              Date.now(),
-              URL
-            );
+            messages.push([str]);
+            message = [];
           } else {
             message.push(str);
           }
         });
-
       }
-
     });
 
-    if (message.length > 0) {
-      message = message.join(' ');
-      message = this.getLetterType(message);
-      props.api.chat.message(
-        props.station,
-        `~${window.ship}`,
-        Date.now(),
-        message
-      );
-      message = [];
+    if (message.length) {
+      // Add any remaining message
+      messages.push(message);
     }
+
+    messages.forEach((message) => {
+      if (message.length > 0) {
+        message = this.getLetterType(message.join(' '));
+        props.api.chat.message(
+          props.station,
+          `~${window.ship}`,
+          Date.now(),
+          message
+        );
+      }
+    });
 
     // perf testing:
     /*let closure = () => {
