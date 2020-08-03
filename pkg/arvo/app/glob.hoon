@@ -82,7 +82,17 @@
     :_  this
     =/  home=path  /(scot %p our.bowl)/home/(scot %da now.bowl)
     =+  .^(=tube:clay %cc (weld home /js/mime))
-    =+  .^(js=@t %cx (weld home /app/landscape/js/index/js))
+    =+  .^(arch %cy (weld home /app/landscape/js))
+    =/  bundle=path
+      %-  need
+      ^-  (unit path)
+      %-  ~(rep by dir)
+      |=  [[file=@t ~] out=(unit path)]
+      ?^  out  out
+      ?.  =((end 3 5 file) 'index')
+        ~
+      `/[file]/js
+    =+  .^(js=@t %cx :(weld home /app/landscape/js bundle))
     =+  !<(=mime (tube !>(js)))
     =/  =glob:glob  (~(put by *glob:glob) /js mime)
     =/  =path  /(cat 3 'glob-' (scot %uv (sham glob)))/glob
