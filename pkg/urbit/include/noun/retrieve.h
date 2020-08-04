@@ -346,6 +346,15 @@
                   c3_y*   c_y,
                   u3_atom d);
 
+      /* u3r_unpack():
+      **
+      **   Copy (len_w) bytes of (a) into (buf_y) if it fits, returning overage
+      */
+        c3_w
+        u3r_unpack(c3_w len_w,
+                   c3_y *buf_y,
+                   u3_atom a);
+
       /* u3r_chop():
       **
       **   Into the bloq space of `met`, from position `fum` for a
