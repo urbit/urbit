@@ -12,14 +12,14 @@
   {
     c3_y a_y[32], b_y[32], out_y[32];
 
-    if ( (0 == u3r_unpack(32, a_y, a)) &&
-         (0 == u3r_unpack(32, b_y, b)) &&
-         (0 == urcrypt_ed_scalarmult(a_y, b_y, out_y)) ) {
-      return u3i_bytes(32, out_y);
-    }
-    else {
+    if ( (0 != u3r_unpack(32, a_y, a)) ||
+         (0 != u3r_unpack(32, b_y, b)) ||
+         (0 != urcrypt_ed_scalarmult(a_y, b_y, out_y)) ) {
       // hoon does not check size of inputs
       return u3_none;
+    }
+    else {
+      return u3i_bytes(32, out_y);
     }
   }
 

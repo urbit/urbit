@@ -9,16 +9,16 @@
   static u3_atom
   _cqee_puck(u3_atom sed)
   {
-    c3_y sed_y[32], pub_y[32];
-    c3_w met_w;
+    c3_y sed_y[32];
 
-    if ( 0 == u3r_unpack(32, sed_y, sed) ) {
-      urcrypt_ed_puck(sed_y, pub_y);
-      return u3i_bytes(32, pub_y);
-    }
-    else {
+    if ( 0 != u3r_unpack(32, sed_y, sed) ) {
       // hoon explicitly crashes on mis-size
       return u3m_bail(c3__exit);
+    }
+    else {
+      c3_y pub_y[32];
+      urcrypt_ed_puck(sed_y, pub_y);
+      return u3i_bytes(32, pub_y);
     }
   }
 

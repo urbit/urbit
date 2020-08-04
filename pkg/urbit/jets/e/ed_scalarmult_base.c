@@ -9,17 +9,13 @@
   static u3_atom
   _cqee_scalarmult_base(u3_atom a)
   {
-    c3_w met_w = u3r_met(3, a);
+    c3_y a_y[32];
 
-    if ( met_w > 32 ) {
+    if ( 0 != u3r_unpack(32, a_y, a) ) {
       return u3_none;
     }
     else {
-      c3_y a_y[32], out_y[32];
-
-      memset(a_y, 0, 32);
-      u3r_bytes(0, met_w, a_y, a);
-
+      c3_y out_y[32];
       urcrypt_ed_scalarmult_base(a_y, out_y);
       return u3i_bytes(32, out_y);
     }

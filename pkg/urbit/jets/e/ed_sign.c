@@ -10,24 +10,22 @@
   _cqee_sign(u3_noun a,
              u3_noun b)
   {
-    c3_w b_w = u3r_met(3, b);
+    c3_y sed_y[32];
 
-    if ( b_w > 32 ) {
+    if ( 0 != u3r_unpack(32, sed_y, b) ) {
       // hoon calls suck, which calls puck, which crashes
       return u3m_bail(c3__exit);
     }
     else {
-      c3_w  a_w = u3r_met(3, a);
-      c3_y* mes_y = u3a_malloc(a_w);
-      c3_y  sed_y[32], sig_y[64];
+      c3_y  sig_y[64];
+      c3_y* mes_y;
+      c3_w  met_w = u3r_met(3, a);
 
-      memset(sed_y, 0, 32);
-      u3r_bytes(0, a_w, mes_y, a);
-      u3r_bytes(0, b_w, sed_y, b);
-
-      urcrypt_ed_sign(mes_y, a_w, sed_y, sig_y);
-
+      mes_y = u3a_malloc(met_w);
+      u3r_bytes(0, met_w, mes_y, a);
+      urcrypt_ed_sign(mes_y, met_w, sed_y, sig_y);
       u3a_free(mes_y);
+
       return u3i_bytes(64, sig_y);
     }
   }

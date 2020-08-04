@@ -11,28 +11,24 @@
              u3_noun m,
              u3_noun pk)
   {
-    c3_w set_w, pek_w;
+    c3_y  sig_y[64], pub_y[32];
 
-    if ( ((set_w = u3r_met(3, s)) > 64) ||
-         ((pek_w = u3r_met(3, pk)) > 32) ) {
+    if ( (0 != u3r_unpack(64, sig_y, s)) ||
+         (0 != u3r_unpack(32, pub_y, pk)) ) {
       // hoon checks sizes, but weirdly and without crashes
       return u3_none;
     }
     else {
-      c3_y  sig_y[64], pub_y[32];
+      c3_t  val_t;
+      c3_y* mes_y;
       c3_w  met_w = u3r_met(3, m);
-      c3_y* mes_y = u3a_malloc(met_w);
-      c3_o  ret_o;
 
-      memset(sig_y, 0, 64);
-      memset(pub_y, 0, 32);
-      u3r_bytes(0, 64, sig_y, s);
-      u3r_bytes(0, 32, pub_y, pk);
+      mes_y = u3a_malloc(met_w);
       u3r_bytes(0, met_w, mes_y, m);
-
-      ret_o = urcrypt_ed_veri(mes_y, met_w, pub_y, sig_y) ? c3y : c3n;
+      val_t = urcrypt_ed_veri(mes_y, met_w, pub_y, sig_y);
       u3a_free(mes_y);
-      return ret_o;
+
+      return val_t ? c3y : c3n;
     }
   }
 

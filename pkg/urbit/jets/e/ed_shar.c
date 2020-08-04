@@ -7,24 +7,18 @@
   static u3_atom
   _cqee_shar(u3_atom pub, u3_atom sek)
   {
-    c3_w pet_w, set_w;
+    c3_y pub_y[32], sek_y[32];
 
-    if ( (pet_w = u3r_met(3, pub)) > 32 ) {
+    if ( 0 != u3r_unpack(32, pub_y, pub) ) {
       // pub is not size checked in the hoon
       return u3_none;
     }
-    else if ( (set_w = u3r_met(3, sek)) > 32 ) {
+    else if ( 0 != u3r_unpack(32, sek_y, sek) ) {
       // sek explicitly bails through suck
       return u3m_bail(c3__exit);
     }
     else {
-      c3_y pub_y[32], sek_y[32], shr_y[32];
-
-      memset(pub_y, 0, 32);
-      memset(sek_y, 0, 32);
-      u3r_bytes(0, 32, pub_y, pub);
-      u3r_bytes(0, 32, sek_y, sek);
-
+      c3_y shr_y[32];
       urcrypt_ed_shar(pub_y, sek_y, shr_y);
       return u3i_bytes(32, shr_y);
     }
