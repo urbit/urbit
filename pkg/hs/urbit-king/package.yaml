@@ -64,6 +64,7 @@ dependencies:
   - mtl
   - multimap
   - murmur3
+  - natpmp-static
   - network
   - optparse-applicative
   - para
