@@ -121,7 +121,7 @@ class Clock extends React.Component {
   }
 
   initGeolocation() {
-    if (typeof this.props.data === 'string') {
+    if (false && typeof this.props.data === 'string') {
       const latlon = this.props.data.split(',');
       const lat = latlon[0];
       const lon = latlon[1];
@@ -191,6 +191,17 @@ class Clock extends React.Component {
     this.angle = degToRad(convert(time, this.referenceTime));
     const newX = cx + (ctr - 15) * Math.cos(this.angle);
     const newY = cy + (ctr - 15) * Math.sin(this.angle);
+
+    // Center white circle with time and date
+    circle(
+      ctx,
+      ctr,
+      ctr,
+      ctr,
+      -1,
+      2 * Math.PI,
+      background
+    );
 
     // Day
     degArc(
@@ -321,21 +332,7 @@ class Clock extends React.Component {
       1
     );
 
-    /*
     // Outer borders
-    circleOutline(
-      ctx,
-      ctr,
-      ctr,
-      ctr,
-      -1,
-      2 * Math.PI,
-      background,
-      1
-    );
-    */
-
-    // Center white circle with time and date
     circle(
       ctx,
       ctr,
@@ -343,8 +340,10 @@ class Clock extends React.Component {
       ctr/1.85,
       -1,
       2 * Math.PI,
-      background
+      background,
+      1
     );
+
     // Center white circle border
     circleOutline(
       ctx,
