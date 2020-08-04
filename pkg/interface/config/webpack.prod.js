@@ -49,7 +49,7 @@ module.exports = {
   //   historyApiFallback: true
   // },
   plugins: [
-    new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: ['**/*', '!channel.js'] }),
+    new CleanWebpackPlugin(),
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',
     //   template: './public/index.html',
@@ -57,8 +57,8 @@ module.exports = {
   ],
   output: {
     filename: 'index.[contenthash].js',
-    path: path.resolve(__dirname, '../../arvo/app/landscape/js'),
-    publicPath: '/'
+    path: path.resolve(__dirname, '../../arvo/app/landscape/js/bundle'),
+    publicPath: '/',
   },
   optimization: {
     minimize: true,
