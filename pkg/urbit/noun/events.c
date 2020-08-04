@@ -609,44 +609,47 @@ _ce_image_sync(u3e_image* img_u)
   c3_sync(img_u->fid_i);
 }
 
-/* _ce_patch_apply(): apply patch to image.
+/* _ce_image_resize(): resize image, truncating if it shrunk.
+*/
+static void
+_ce_image_resize(u3e_image* img_u, c3_w pgs_w)
+{
+  if ( img_u->pgs_w > pgs_w ) {
+    if ( ftruncate(img_u->fid_i, pgs_w << (u3a_page + 2)) ) {
+      fprintf(stderr, "loom: image truncate %s: %s\r\n",
+                      img_u->nam_c,
+                      strerror(errno));
+      c3_assert(0);
+    }
+  }
+
+  img_u->pgs_w = pgs_w;
+}
+
+/* _ce_patch_apply(): apply patch to images.
 */
 static void
 _ce_patch_apply(u3_ce_patch* pat_u)
 {
   c3_w i_w;
 
-  //u3l_log("image: nor_w %d, new %d\r\n", u3P.nor_u.pgs_w, pat_u->con_u->nor_w);
-  //u3l_log("image: sou_w %d, new %d\r\n", u3P.sou_u.pgs_w, pat_u->con_u->sou_w);
+  //  resize images
+  //
+  _ce_image_resize(&u3P.nor_u, pat_u->con_u->nor_w);
+  _ce_image_resize(&u3P.sou_u, pat_u->con_u->sou_w);
 
-  if ( u3P.nor_u.pgs_w > pat_u->con_u->nor_w ) {
-    c3_w ret_w;
-    ret_w = ftruncate(u3P.nor_u.fid_i, pat_u->con_u->nor_w << (u3a_page + 2));
-    if (ret_w){
-      fprintf(stderr, "loom: patch apply truncate north: %s\r\n", strerror(errno));
-      c3_assert(0);
-    }
-  }
-  u3P.nor_u.pgs_w = pat_u->con_u->nor_w;
-
-  if ( u3P.sou_u.pgs_w > pat_u->con_u->sou_w ) {
-    c3_w ret_w;
-    ret_w = ftruncate(u3P.sou_u.fid_i, pat_u->con_u->sou_w << (u3a_page + 2));
-    if (ret_w){
-      fprintf(stderr, "loom: patch apply truncate south: %s\r\n", strerror(errno));
-      c3_assert(0);
-    }
-  }
-  u3P.sou_u.pgs_w = pat_u->con_u->sou_w;
-
-  if ( (-1 == lseek(pat_u->mem_i, 0, SEEK_SET)) ||
-       (-1 == lseek(u3P.nor_u.fid_i, 0, SEEK_SET)) ||
-       (-1 == lseek(u3P.sou_u.fid_i, 0, SEEK_SET)) )
+  //  seek to begining of patch and images
+  //
+  if (  (-1 == lseek(pat_u->mem_i, 0, SEEK_SET))
+     || (-1 == lseek(u3P.nor_u.fid_i, 0, SEEK_SET))
+     || (-1 == lseek(u3P.sou_u.fid_i, 0, SEEK_SET)) )
   {
     fprintf(stderr, "loom: patch apply seek 0: %s\r\n", strerror(errno));
     c3_assert(0);
   }
 
+  //  write patch pages into the appropriate image
+  //
   for ( i_w = 0; i_w < pat_u->con_u->pgs_w; i_w++ ) {
     c3_w pag_w = pat_u->con_u->mem_u[i_w].pag_w;
     c3_w mem_w[1 << u3a_page];
