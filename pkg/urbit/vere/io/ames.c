@@ -77,7 +77,7 @@
     u3_ames*         sam_u;             //  ames backpointer
     struct _u3_panc* pre_u;             //  previous packet
     struct _u3_panc* nex_u;             //  next packet
-    u3_noun          ore;               //  origin lane
+    u3_lane          ore_u;             //  origin lane
     u3_head          hed_u;             //  header
     u3_body          bod_u;             //  body
   } u3_panc;
@@ -121,7 +121,6 @@ _ames_panc_free(u3_panc* pac_u) {
     pac_u->sam_u->pac_u = pac_u->nex_u;
   }
 
-  u3z(pac_u->ore);
   c3_free(pac_u->bod_u.con_y);
   c3_free(pac_u);
 }
@@ -298,15 +297,15 @@ u3_ames_encode_lane(u3_lane lan) {
   return u3ke_jam(u3nt(c3__ipv4, u3i_words(1, &lan.pip_w), lan.por_s));
 }
 
-/* _ames_lane_from_sockaddr(): sockaddr_in to lane noun
+/* _ames_lane_from_sockaddr(): sockaddr_in to lane struct
 */
-static u3_noun
+static u3_lane
 _ames_lane_from_sockaddr(struct sockaddr_in* add_u)
 {
   u3_lane lan_u;
   lan_u.por_s = ntohs(add_u->sin_port);
   lan_u.pip_w = ntohl(add_u->sin_addr.s_addr);
-  return u3_ames_encode_lane(lan_u);
+  return lan_u;
 }
 
 /* _ames_serialize_packet(): u3_panc to atom, updating the origin lane if dop_o
@@ -341,7 +340,7 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
     //
     if (u3_nul == lon) {
       u3z(lon);
-      lon = u3nt(u3_nul, c3n, u3k(pac_u->ore));
+      lon = u3nt(u3_nul, c3n, u3_ames_encode_lane(pac_u->ore_u));
       nal_o = c3y;
 
       c3_free(pac_u->bod_u.con_y);
@@ -606,10 +605,10 @@ _ames_hear_bail(u3_ovum* egg_u, u3_noun lud)
 static void
 _ames_put_packet(u3_ames* sam_u,
                  u3_noun  msg,
-                 u3_noun  lan)
+                 u3_lane  lan_u)
 {
   u3_noun wir = u3nc(c3__ames, u3_nul);
-  u3_noun cad = u3nt(c3__hear, u3nc(c3n, lan), msg);
+  u3_noun cad = u3nt(c3__hear, u3nc(c3n, u3_ames_encode_lane(lan_u)), msg);
 
   u3_auto_peer(
     u3_auto_plan(&sam_u->car_u,
@@ -659,7 +658,7 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
     pac_u->sam_u->see_o = c3n;
     _ames_put_packet(pac_u->sam_u,
                      _ames_serialize_packet(pac_u, c3n),
-                     pac_u->ore);
+                     pac_u->ore_u);
     _ames_panc_free(pac_u);
   }
   //  if there is a lane, forward the packet on it
@@ -804,7 +803,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       pac_u->bod_u.rec_d[1] = rec_d[1];
       pac_u->bod_u.con_w = con_w;
       pac_u->bod_u.con_y = con_y;
-      pac_u->ore = _ames_lane_from_sockaddr((struct sockaddr_in *)adr_u);
+      pac_u->ore_u = _ames_lane_from_sockaddr((struct sockaddr_in *)adr_u);
 
       if (0 != sam_u->pac_u) {
         pac_u->nex_u = sam_u->pac_u;
@@ -834,9 +833,9 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   //
   if (c3y == pas_o) {
     c3_free(con_y);
-    u3_noun ore = _ames_lane_from_sockaddr((struct sockaddr_in *)adr_u);
-    u3_noun msg = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
-    _ames_put_packet(sam_u, msg, ore);
+    u3_lane ore_u = _ames_lane_from_sockaddr((struct sockaddr_in *)adr_u);
+    u3_noun msg   = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
+    _ames_put_packet(sam_u, msg, ore_u);
   }
 
   c3_free(buf_u->base);
