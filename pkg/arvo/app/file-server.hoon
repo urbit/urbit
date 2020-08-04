@@ -7,17 +7,20 @@
   $%  [%clay =path]
       [%glob =glob:glob]
   ==
-+$  state-1
-  $:  %1
-      =configuration:srv
++$  state-base
+  $:  =configuration:srv
       =serving
+  ==
++$  state-2
+  $:  %2
+      state-base
   ==
 --
 ::
 %+  verb  |
 %-  agent:dbug
 ::
-=|  state-1
+=|  state-2
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
@@ -60,12 +63,18 @@
       ^-  [content ?]
       [[%clay clay-path] public]
     ==
-  ?>  ?=(%1 -.old-state)
+  =?  old-state  ?=(%1 -.old-state)
+    %=  old-state
+       -  %2
+       serving  (~(del by serving.old-state) /'~landscape'/js/index)
+    ==
+  ?>  ?=(%2 -.old-state)
   [~ this(state old-state)]
   ::
   +$  versioned-state
-    $%  state-1
-        state-0
+    $%  state-0
+        state-1
+        state-2
     ==
   ::
   +$  serving-0  (map url-base=path [=clay=path public=?])
@@ -73,6 +82,10 @@
     $:  %0
         =configuration:srv
         =serving-0
+    ==
+  +$  state-1
+    $:  %1
+        state-base
     ==
   --
 ::
