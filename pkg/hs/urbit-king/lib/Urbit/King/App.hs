@@ -9,6 +9,8 @@ module Urbit.King.App
   , kingEnvKillSignal
   , killKingActionL
   , onKillKingSigL
+  , RunningEnv
+  , runRunningEnv
   , PierEnv
   , runPierEnv
   , killPierActionL
@@ -17,6 +19,8 @@ module Urbit.King.App
   , HasKingId(..)
   , HasProcId(..)
   , HasKingEnv(..)
+  , HasMultiEyreApi(..)
+  , HasRunningEnv(..)
   , HasPierEnv(..)
   , module Urbit.King.Config
   )
@@ -30,6 +34,7 @@ import System.Posix.Internals (c_getpid)
 import System.Posix.Types     (CPid(..))
 import System.Random          (randomIO)
 import Urbit.King.App.Class   (HasStderrLogFunc(..))
+import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
 
 
 -- KingEnv ---------------------------------------------------------------------
@@ -69,7 +74,6 @@ instance HasProcId KingEnv where
 
 instance HasKingId KingEnv where
   kingIdL = kingEnvKingId
-
 
 -- Running KingEnvs ------------------------------------------------------------
 
@@ -121,14 +125,64 @@ killKingActionL :: HasKingEnv e => Getter e (STM ())
 killKingActionL =
   kingEnvL . kingEnvKillSignal . to (\kil -> void (tryPutTMVar kil ()))
 
+-- RunningEnv ------------------------------------------------------------------
+
+-- The running environment is everything in King, eyre configuration shared
+-- across ships, and IP information shared across ships.
+--
+-- TODO: Implement that IP information for real.
+
+class HasMultiEyreApi a where
+  multiEyreApiL :: Lens' a MultiEyreApi
+
+class (HasKingEnv a, HasMultiEyreApi a) => HasRunningEnv a where
+  runningEnvL :: Lens' a RunningEnv
+
+data RunningEnv = RunningEnv
+  { _runningEnvKingEnv      :: !KingEnv
+  , _runningEnvMultiEyreApi :: MultiEyreApi
+  }
+
+makeLenses ''RunningEnv
+
+instance HasKingEnv RunningEnv where
+  kingEnvL = runningEnvKingEnv
+
+instance HasLogFunc RunningEnv where
+  logFuncL = kingEnvL . logFuncL
+
+instance HasStderrLogFunc RunningEnv where
+  stderrLogFuncL = kingEnvL . stderrLogFuncL
+
+instance HasProcId RunningEnv where
+  procIdL = kingEnvL . procIdL
+
+instance HasKingId RunningEnv where
+  kingIdL = kingEnvL . kingEnvKingId
+
+instance HasMultiEyreApi RunningEnv where
+  multiEyreApiL = runningEnvMultiEyreApi
+
+-- Running Running Envs --------------------------------------------------------
+
+runRunningEnv :: MultiEyreApi -> RIO RunningEnv () -> RIO KingEnv ()
+runRunningEnv multi action = do
+    king <- ask
+
+    let runningEnv = RunningEnv { _runningEnvKingEnv      = king
+                                , _runningEnvMultiEyreApi = multi
+                                }
+
+    io (runRIO runningEnv action)
 
 -- PierEnv ---------------------------------------------------------------------
 
-class (HasKingEnv a, HasPierConfig a, HasNetworkConfig a) => HasPierEnv a where
+class (HasKingEnv a, HasRunningEnv a, HasPierConfig a, HasNetworkConfig a) =>
+      HasPierEnv a where
   pierEnvL :: Lens' a PierEnv
 
 data PierEnv = PierEnv
-  { _pierEnvKingEnv       :: !KingEnv
+  { _pierEnvRunningEnv    :: !RunningEnv
   , _pierEnvPierConfig    :: !PierConfig
   , _pierEnvNetworkConfig :: !NetworkConfig
   , _pierEnvKillSignal    :: !(TMVar ())
@@ -137,7 +191,13 @@ data PierEnv = PierEnv
 makeLenses ''PierEnv
 
 instance HasKingEnv PierEnv where
-  kingEnvL = pierEnvKingEnv
+  kingEnvL = pierEnvRunningEnv . kingEnvL
+
+instance HasRunningEnv PierEnv where
+  runningEnvL = pierEnvRunningEnv
+
+instance HasMultiEyreApi PierEnv where
+  multiEyreApiL = pierEnvRunningEnv . multiEyreApiL
 
 instance HasPierEnv PierEnv where
   pierEnvL = id
@@ -180,11 +240,11 @@ killPierActionL =
 -- Running Pier Envs -----------------------------------------------------------
 
 runPierEnv
-  :: PierConfig -> NetworkConfig -> TMVar () -> RIO PierEnv a -> RIO KingEnv a
+  :: PierConfig -> NetworkConfig -> TMVar () -> RIO PierEnv a -> RIO RunningEnv a
 runPierEnv pierConfig networkConfig vKill action = do
-  app <- ask
+  running <- ask
 
-  let pierEnv = PierEnv { _pierEnvKingEnv       = app
+  let pierEnv = PierEnv { _pierEnvRunningEnv    = running
                         , _pierEnvPierConfig    = pierConfig
                         , _pierEnvNetworkConfig = networkConfig
                         , _pierEnvKillSignal    = vKill

@@ -11,7 +11,7 @@ where
 import Urbit.Prelude hiding (Builder)
 
 import Urbit.Arvo                hiding (ServerId, reqUrl, secure)
-import Urbit.King.App            (HasKingId(..), HasPierEnv(..))
+import Urbit.King.App            (HasKingId(..), HasMultiEyreApi(..), HasPierEnv(..))
 import Urbit.King.Config
 import Urbit.Vere.Eyre.Multi
 import Urbit.Vere.Eyre.PortsFile
@@ -170,15 +170,17 @@ execRespActs (Drv v) who reqId ev = readMVar v >>= \case
       atomically (routeRespAct who (sLiveReqs sv) reqId act)
 
 startServ
-  :: (HasPierConfig e, HasLogFunc e, HasNetworkConfig e)
-  => MultiEyreApi
-  -> Ship
+  :: (HasPierConfig e, HasLogFunc e, HasMultiEyreApi e, HasNetworkConfig e)
+  => Ship
   -> Bool
   -> HttpServerConf
   -> (EvErr -> STM ())
   -> RIO e Serv
-startServ multi who isFake conf plan = do
+startServ who isFake conf plan = do
   logDebug (displayShow ("EYRE", "startServ"))
+
+  env <- ask
+  let multi = env ^. multiEyreApiL
 
   let vLive = meaLive multi
 
@@ -281,16 +283,15 @@ _bornFailed env _ = runRIO env $ do
   pure () -- TODO What should this do?
 
 eyre'
-  :: HasPierEnv e
-  => MultiEyreApi
-  -> Ship
+  :: (HasPierEnv e, HasMultiEyreApi e)
+  => Ship
   -> Bool
   -> RIO e ([Ev], RAcquire e (DriverApi HttpServerEf))
-eyre' multi who isFake = do
+eyre' who isFake = do
   ventQ :: TQueue EvErr <- newTQueueIO
   env <- ask
 
-  let (bornEvs, startDriver) = eyre env multi who (writeTQueue ventQ) isFake
+  let (bornEvs, startDriver) = eyre env who (writeTQueue ventQ) isFake
 
   let runDriver = do
         diOnEffect <- startDriver
@@ -315,14 +316,14 @@ eyre
   :: forall e
    . (HasPierEnv e)
   => e
-  -> MultiEyreApi
   -> Ship
   -> (EvErr -> STM ())
   -> Bool
   -> ([Ev], RAcquire e (HttpServerEf -> IO ()))
-eyre env multi who plan isFake = (initialEvents, runHttpServer)
+eyre env who plan isFake = (initialEvents, runHttpServer)
  where
   king = fromIntegral (env ^. kingIdL)
+  multi = env ^. multiEyreApiL
 
   initialEvents :: [Ev]
   initialEvents = [bornEv king]
@@ -343,7 +344,7 @@ eyre env multi who plan isFake = (initialEvents, runHttpServer)
   restart :: Drv -> HttpServerConf -> RIO e Serv
   restart (Drv var) conf = do
     logDebug "Restarting http server"
-    let startAct = startServ multi who isFake conf plan
+    let startAct = startServ who isFake conf plan
     res <- fromEither =<< restartService var startAct kill
     logDebug "Done restating http server"
     pure res
