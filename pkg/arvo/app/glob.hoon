@@ -41,7 +41,7 @@
 --
 =|  state=state-0
 =.  hash.state  hash
-=/  serve-path=path  /'~landscape'/js/index
+=/  serve-path=path  /'~landscape'/js/bundle
 ^-  agent:gall
 %+  verb  |
 %-  agent:dbug
@@ -82,7 +82,7 @@
     :_  this
     =/  home=path  /(scot %p our.bowl)/home/(scot %da now.bowl)
     =+  .^(=tube:clay %cc (weld home /js/mime))
-    =+  .^(arch %cy (weld home /app/landscape/js))
+    =+  .^(arch %cy (weld home /app/landscape/js/bundle))
     =/  bundle=path
       %-  need
       ^-  (unit path)
@@ -92,9 +92,9 @@
       ?.  =((end 3 5 file) 'index')
         ~
       `/[file]/js
-    =+  .^(js=@t %cx :(weld home /app/landscape/js bundle))
+    =+  .^(js=@t %cx :(weld home /app/landscape/js/bundle bundle))
     =+  !<(=mime (tube !>(js)))
-    =/  =glob:glob  (~(put by *glob:glob) /js mime)
+    =/  =glob:glob  (~(put by *glob:glob) bundle mime)
     =/  =path  /(cat 3 'glob-' (scot %uv (sham glob)))/glob
     [%pass /make %agent [our.bowl %hood] %poke %drum-put !>([path (jam glob)])]~
   ::
