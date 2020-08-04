@@ -11,23 +11,15 @@
   _cqee_point_add(u3_atom a,
                  u3_atom b)
   {
-    c3_w ate_w, bet_w;
+    c3_y a_y[32], b_y[32], out_y[32];
 
-    if ( ((ate_w = u3r_met(3, a)) > 32) ||
-         ((bet_w = u3r_met(3, b)) > 32) ) {
-      return u3_none;
+    if ( (0 == u3r_unpack(32, a_y, a)) &&
+         (0 == u3r_unpack(32, b_y, b)) &&
+         (0 == urcrypt_ed_point_add(a_y, b_y, out_y)) ) {
+      return u3i_bytes(32, out_y);
     }
     else {
-      c3_y a_y[32], b_y[32], out_y[32];
-
-      memset(a_y, 0, 32);
-      memset(b_y, 0, 32);
-      u3r_bytes(0, ate_w, a_y, a);
-      u3r_bytes(0, bet_w, b_y, b);
-
-      return ( 0 == urcrypt_ed_point_add(a_y, b_y, out_y) )
-        ? u3i_bytes(32, out_y)
-        : u3_none;
+      return u3_none;
     }
   }
 

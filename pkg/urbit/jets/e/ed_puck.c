@@ -12,16 +12,14 @@
     c3_y sed_y[32], pub_y[32];
     c3_w met_w;
 
-    if ( (met_w = u3r_met(3, sed)) > 32 ) {
+    if ( 0 == u3r_unpack(32, sed_y, sed) ) {
+      urcrypt_ed_puck(sed_y, pub_y);
+      return u3i_bytes(32, pub_y);
+    }
+    else {
       // hoon explicitly crashes on mis-size
       return u3m_bail(c3__exit);
     }
-
-    memset(sed_y, 0, 32);
-    u3r_bytes(0, met_w, sed_y, sed);
-
-    urcrypt_ed_puck(sed_y, pub_y);
-    return u3i_bytes(32, pub_y);
   }
 
   u3_noun
