@@ -803,92 +803,53 @@ _lord_writ_plan(u3_lord* god_u, u3_writ* wit_u)
   _lord_writ_send(god_u, wit_u);
 }
 
-/* u3_lord_peek(): read namespace.
+/* u3_lord_peek_pico(): read namespace, injecting what's missing.
 */
 void
-u3_lord_peek(u3_lord*   god_u,
-             u3_noun      gan,
-             u3_noun      ful,
-             void*      ptr_v,
-             u3_peek_cb fun_f)
+u3_lord_peek_pico(u3_lord* god_u,
+                  u3_pico* pic_u)
 {
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_peek;
   wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
-  wit_u->pek_u->ptr_v = ptr_v;
-  wit_u->pek_u->fun_f = fun_f;
+  wit_u->pek_u->ptr_v = pic_u->ptr_v;
+  wit_u->pek_u->fun_f = pic_u->fun_f;
   wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
-  wit_u->pek_u->gan   = gan;
-  wit_u->pek_u->ful   = ful;
+  wit_u->pek_u->gan   = pic_u->gan;
 
-  //  XX cache check
+  //  construct the full scry path
   //
+  switch ( pic_u->typ_e ) {
+    default: c3_assert(0);
 
-  _lord_writ_plan(god_u, wit_u);
-}
+    case u3_pico_full: {
+      wit_u->pek_u->ful = pic_u->ful;
+    } break;
 
-/* u3_lord_peek_mine(): read namespace, injecting ship (our).
-*/
-void
-u3_lord_peek_mine(u3_lord*   god_u,
-                  u3_noun      gan,
-                  c3_m       car_m,
-                  u3_noun      pax,
-                  void*      ptr_v,
-                  u3_peek_cb fun_f)
-{
-  u3_writ* wit_u = _lord_writ_new(god_u);
-  wit_u->typ_e = u3_writ_peek;
-  wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
-  wit_u->pek_u->ptr_v = ptr_v;
-  wit_u->pek_u->fun_f = fun_f;
-  wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
-  wit_u->pek_u->gan   = gan;
+    case u3_pico_mine: {
+      //  XX cache
+      //
+      u3_pier* pir_u = god_u->cb_u.ptr_v;  //  XX do better
+      u3_noun our = u3dc("scot", 'p', u3i_chubs(2, pir_u->who_d));
+      wit_u->pek_u->ful = u3nt(pic_u->min_u.car_m, our, pic_u->min_u.pax);
+    } break;
 
-  {
-    //  XX cache
-    //
-    u3_pier* pir_u = god_u->cb_u.ptr_v;  //  XX do better
-    u3_noun our = u3dc("scot", 'p', u3i_chubs(2, pir_u->who_d));
-    wit_u->pek_u->ful = u3nt(car_m, our, pax);
+    case u3_pico_last: {
+      //  XX cache
+      //
+      u3_pier* pir_u = god_u->cb_u.ptr_v;  //  XX do better
+      u3_noun our = u3dc("scot", 'p', u3i_chubs(2, pir_u->who_d));
+      u3_noun cas = u3dc("scot", c3__da, u3k(wit_u->pek_u->now));
+
+      wit_u->pek_u->ful = u3nc(pic_u->las_u.car_m,
+                               u3nq(our,
+                                    pic_u->las_u.des,
+                                    cas,
+                                    pic_u->las_u.pax));
+    } break;
   }
 
-  //  XX cache check
-  //
-
-  _lord_writ_plan(god_u, wit_u);
-}
-
-/* u3_lord_peek_last(): read namespace, injecting ship (our) and case (now).
-*/
-void
-u3_lord_peek_last(u3_lord*   god_u,
-                  u3_noun      gan,
-                  c3_m       car_m,
-                  u3_atom      des,
-                  u3_noun      pax,
-                  void*      ptr_v,
-                  u3_peek_cb fun_f)
-{
-  u3_writ* wit_u = _lord_writ_new(god_u);
-  wit_u->typ_e = u3_writ_peek;
-  wit_u->pek_u = c3_calloc(sizeof(*wit_u->pek_u));
-  wit_u->pek_u->ptr_v = ptr_v;
-  wit_u->pek_u->fun_f = fun_f;
-  wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
-  wit_u->pek_u->gan   = gan;
-
-  {
-    //  XX cache
-    //
-    u3_pier* pir_u = god_u->cb_u.ptr_v;  //  XX do better
-    u3_noun our = u3dc("scot", 'p', u3i_chubs(2, pir_u->who_d));
-    u3_noun cas = u3dc("scot", c3__da, u3k(wit_u->pek_u->now));
-
-    wit_u->pek_u->ful = u3nc(car_m, u3nq(our, des, cas, pax));
-  }
-
-  //  NB, won't be cached, result shouldn't be
+  //  XX cache check, unless last
   //
   _lord_writ_plan(god_u, wit_u);
 }

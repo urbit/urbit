@@ -381,6 +381,36 @@
       */
         typedef void (*u3_peek_cb)(void*, u3_noun);
 
+      /* u3_pico_type: kinds of proto-peek
+      */
+        typedef enum {
+          u3_pico_full = 0,
+          u3_pico_mine = 1,
+          u3_pico_last = 2
+        } u3_pico_type;
+
+      /* u3_pico: proto-peek
+      */
+        typedef struct _u3_pico {
+          struct _u3_pico* nex_u;               //  next in queue
+          void*            ptr_v;               //  context
+          u3_peek_cb       fun_f;               //  callback
+          u3_noun            gan;               //  leakset
+          u3_pico_type     typ_e;               //  type-tagged
+          union {                               //
+            u3_noun          ful;               //  full: /care/beam
+            struct {                            //  mine:
+              c3_m         car_m;               //    care
+              u3_noun        pax;               //    /desk/case/path
+            } min_u;                            //
+            struct {                            //  last:
+              c3_m         car_m;               //    care
+              u3_atom        des;               //    desk
+              u3_noun        pax;               //    /path
+            } las_u;
+          };
+        } u3_pico;
+
       /* u3_peek: namespace read request
       */
         typedef struct _u3_peek {
@@ -603,6 +633,10 @@
             u3_play*       pay_u;               //    recompute
             u3_work*       wok_u;               //    work
           };
+          struct {
+            u3_pico*       ent_u;
+            u3_pico*       ext_u;
+          } pec_u;
           // XX remove
           c3_s             por_s;               //  UDP port
           u3_save*         sav_u;               //  autosave
@@ -958,35 +992,11 @@
         void
         u3_lord_play(u3_lord* god_u, u3_info fon_u);
 
-      /* u3_lord_peek(): read namespace.
+      /* u3_lord_peek_pico(): read namespace, injecting what's missing.
       */
         void
-        u3_lord_peek(u3_lord*   god_u,
-                     u3_noun      gan,
-                     u3_noun      ful,
-                     void*      ptr_v,
-                     u3_peek_cb fun_f);
-
-      /* u3_lord_peek_mine(): read namespace, injecting ship.
-      */
-        void
-        u3_lord_peek_mine(u3_lord*   god_u,
-                          u3_noun      gan,
-                          c3_m       car_m,
-                          u3_noun      pax,
-                          void*      ptr_v,
-                          u3_peek_cb fun_f);
-
-      /* u3_lord_peek_last(): read namespace, injecting ship and case.
-      */
-        void
-        u3_lord_peek_last(u3_lord*   god_u,
-                          u3_noun      gan,
-                          c3_m       car_m,
-                          u3_atom      des,
-                          u3_noun      pax,
-                          void*      ptr_v,
-                          u3_peek_cb fun_f);
+        u3_lord_peek_pico(u3_lord* god_u,
+                          u3_pico* pic_u);
 
     /**  Filesystem (new api).
     **/
@@ -1198,6 +1208,38 @@
       */
         void
         u3_newt_mojo_stop(u3_mojo* moj_u, u3_moor_bail bal_f);
+
+    /** Pier scries.
+    **/
+      /* u3_pier_peek(): read namespace.
+      */
+        void
+        u3_pier_peek(u3_pier*   pir_u,
+                     u3_noun      gan,
+                     u3_noun      ful,
+                     void*      ptr_v,
+                     u3_peek_cb fun_f);
+
+      /* u3_pier_peek_mine(): read namespace, injecting ship.
+      */
+        void
+        u3_pier_peek_mine(u3_pier*   pir_u,
+                          u3_noun      gan,
+                          c3_m       car_m,
+                          u3_noun      pax,
+                          void*      ptr_v,
+                          u3_peek_cb fun_f);
+
+      /* u3_pier_peek_last(): read namespace, injecting ship and case.
+      */
+        void
+        u3_pier_peek_last(u3_pier*   pir_u,
+                          u3_noun      gan,
+                          c3_m       car_m,
+                          u3_atom      des,
+                          u3_noun      pax,
+                          void*      ptr_v,
+                          u3_peek_cb fun_f);
 
     /** Pier control.
     **/
