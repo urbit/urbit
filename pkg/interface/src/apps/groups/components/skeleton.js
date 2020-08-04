@@ -10,7 +10,7 @@ export class Skeleton extends Component {
 
     return (
       <div className="h-100 w-100 ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl">
-        <div className="cf w-100 h-100 flex ba-m ba-l ba-xl b--gray4 b--gray1-d br1">
+        <div className="bg-white bg-gray0-d cf w-100 h-100 flex ba-m ba-l ba-xl b--gray4 b--gray1-d br1">
           <GroupSidebar
             contacts={props.contacts}
             groups={props.groups}

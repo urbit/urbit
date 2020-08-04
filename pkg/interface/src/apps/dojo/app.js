@@ -47,7 +47,6 @@ export default class DojoApp extends Component {
   render() {
     return (
       <div
-        className="bg-white bg-gray0-d"
         style={{ height: 'calc(100vh - 45px)' }}
       >
         <Route
