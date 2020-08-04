@@ -13,9 +13,6 @@
 #include "all.h"
 #include "vere/vere.h"
 
-struct _u3_panc;
-typedef struct _u3_panc u3_panc;
-
 /* u3_pact: ames packet, coming or going.
 */
   typedef struct _u3_pact {
@@ -32,27 +29,27 @@ typedef struct _u3_panc u3_panc;
 /* u3_ames: ames networking.
 */
   typedef struct _u3_ames {             //  packet network state
-    u3_auto       car_u;                //  driver
-    u3_pier*      pir_u;                //  pier
+    u3_auto          car_u;             //  driver
+    u3_pier*         pir_u;             //  pier
     union {                             //
-      uv_udp_t    wax_u;                //
-      uv_handle_t had_u;                //
+      uv_udp_t       wax_u;             //
+      uv_handle_t    had_u;             //
     };                                  //
-    c3_c*         dns_c;                //  domain XX multiple/fallback
-    c3_d          dop_d;                //  drop count
-    c3_d          fal_d;                //  crash count
-    c3_w          imp_w[256];           //  imperial IPs
-    time_t        imp_t[256];           //  imperial IP timestamps
-    c3_o          imp_o[256];           //  imperial print status
-    c3_o          see_o;                //  can scry
-    c3_o          fit_o;                //  filtering active
-    c3_y          ver_y;                //  protocol version
-    c3_d          vet_d;                //  version mismatches filtered
-    c3_d          mut_d;                //  invalid mugs filtered
-    u3_panc*      pac_u;                //  packets pending forwards
-    c3_d          foq_d;                //  forward queue size
-    c3_d          fow_d;                //  forwarded count
-    c3_d          fod_d;                //  forwards dropped count
+    c3_c*            dns_c;             //  domain XX multiple/fallback
+    c3_d             dop_d;             //  drop count
+    c3_d             fal_d;             //  crash count
+    c3_w             imp_w[256];        //  imperial IPs
+    time_t           imp_t[256];        //  imperial IP timestamps
+    c3_o             imp_o[256];        //  imperial print status
+    c3_o             see_o;             //  can scry
+    c3_o             fit_o;             //  filtering active
+    c3_y             ver_y;             //  protocol version
+    c3_d             vet_d;             //  version mismatches filtered
+    c3_d             mut_d;             //  invalid mugs filtered
+    struct _u3_panc* pac_u;             //  packets pending forwards
+    c3_d             foq_d;             //  forward queue size
+    c3_d             fow_d;             //  forwarded count
+    c3_d             fod_d;             //  forwards dropped count
   } u3_ames;
 
 /* u3_head: ames packet header
@@ -76,14 +73,14 @@ typedef struct _u3_panc u3_panc;
 
 /* u3_panc: deconstructed incoming packet
 */
-  struct _u3_panc {
-    u3_ames* sam_u;                     //  ames backpointer
-    u3_panc* pre_u;                     //  previous packet
-    u3_panc* nex_u;                     //  next packet
-    u3_noun  ore;                       //  origin lane
-    u3_head  hed_u;                     //  header
-    u3_body  bod_u;                     //  body
-  };
+  typedef struct _u3_panc {
+    u3_ames*         sam_u;             //  ames backpointer
+    struct _u3_panc* pre_u;             //  previous packet
+    struct _u3_panc* nex_u;             //  next packet
+    u3_noun          ore;               //  origin lane
+    u3_head          hed_u;             //  header
+    u3_body          bod_u;             //  body
+  } u3_panc;
 
 /* _ames_alloc(): libuv buffer allocator.
 */
@@ -379,9 +376,8 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
     //  if we updated the origin lane, we need to update the mug too
     //
     if (c3y == nal_o) {
-      u3_noun bod = u3i_bytes(sen_y + rec_y + bod_u->con_w, pac_y + 4);
-      pac_u->hed_u.mug_l = u3r_mug(bod) & ((1 << 20) - 1);
-      u3z(bod);
+      pac_u->hed_u.mug_l = _ca_mug_body(sen_y + rec_y + bod_u->con_w,
+                                        pac_y + 4);
     }
 
     //  now we can serialize the head
@@ -705,7 +701,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
                | (byt_y[3] << 24);
 
     hed_u.ver_y = hed_w & 0x7;
-    hed_u.mug_l = (hed_w >> 3) & ((1 << 20) - 1);
+    hed_u.mug_l = (hed_w >> 3) & 0xfffff; //NOTE ((1 << 20) - 1)
     hed_u.sac_y = (hed_w >> 23) & 0x3;
     hed_u.rac_y = (hed_w >> 25) & 0x3;
     hed_u.enc_o = (hed_w >> 27) & 0x1;
@@ -758,11 +754,8 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 
     //  ensure the content is cue-able
     //
-    u3_noun con = u3i_bytes(con_w, con_y);
-    u3_noun pro = u3m_soft(0, u3qe_cue, con);
-    if (u3_blip != u3h(pro)) {
-      pas_o = c3n;
-    }
+    u3_noun pro = u3m_soft(0, u3ke_cue, u3i_bytes(con_w, con_y));
+    pas_o = (u3_blip == u3h(pro)) ? c3y : c3n;
     u3z(pro);
   }
 
@@ -822,7 +815,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       //  if the recipient is a galaxy, their lane is always &+~gax
       //
       if ( (rec_d[1] == 0) && (256 > rec_d[0]) ) {
-        _ames_forward(pac_u, u3nc(u3nc(c3y, rec_d[0]), u3_nul));
+        _ames_forward(pac_u, u3nc(u3nc(c3y, (c3_y)rec_d[0]), u3_nul));
       }
       //  otherwise, if there's space in the queue, scry the lane out of ames
       //
@@ -951,6 +944,32 @@ _ames_ef_turf(u3_ames* sam_u, u3_noun tuf)
   }
 }
 
+/* _ames_prot_scry_cb(): receive protocol version
+*/
+static void
+_ames_prot_scry_cb(void* vod_p, u3_noun nun)
+{
+  u3_ames* sam_u = vod_p;
+  u3_weak  ver   = u3r_at(7, nun);
+
+  if (u3_none == ver) {
+    //  assume protocol version 0
+    //
+    sam_u->ver_y = 0;
+  }
+  else if ( (c3n == u3a_is_cat(ver))
+         || (7 < ver) ) {
+    u3m_p("ames: strange protocol", nun);
+    sam_u->ver_y = 0;
+  }
+  else {
+    sam_u->ver_y = ver;
+  }
+
+  sam_u->fit_o = c3y;
+  u3z(nun);
+}
+
 /* _ames_io_talk(): start receiving ames traffic.
 */
 static void
@@ -967,6 +986,12 @@ _ames_io_talk(u3_auto* car_u)
 
     u3_auto_plan(car_u, u3_ovum_init(0, c3__a, wir, cad));
   }
+
+  //  scry the protocol version out of arvo
+  //
+  u3_pier_peek_last(car_u->pir_u, u3_nul, c3_s2('a', 'x'), u3_nul,
+                    u3nt(u3i_string("protocol"), u3i_string("version"), u3_nul),
+                    sam_u, _ames_prot_scry_cb);
 }
 
 /* _ames_kick_newt(): apply packet network outputs.
@@ -1079,32 +1104,6 @@ _ames_io_exit(u3_auto* car_u)
   uv_close(&sam_u->had_u, _ames_exit_cb);
 }
 
-/* _ames_prot_scry_cb(): receive protocol version
-*/
-static void
-_ames_prot_scry_cb(void* vod_p, u3_noun nun)
-{
-  u3_ames* sam_u = vod_p;
-  u3_weak  ver   = u3r_at(7, nun);
-
-  if (u3_none == ver) {
-    //  assume protocol version 0
-    //
-    sam_u->ver_y = 0;
-  }
-  else if ( (c3n == u3a_is_cat(ver))
-         || (7 < ver) ) {
-    u3m_p("ames: strange protocol", nun);
-    sam_u->ver_y = 0;
-  }
-  else {
-    sam_u->ver_y = ver;
-  }
-
-  sam_u->fit_o = c3y;
-  u3z(nun);
-}
-
 /* _ames_io_info(): print status info.
 */
 static void
@@ -1140,12 +1139,6 @@ u3_ames_io_init(u3_pier* pir_u)
   if ( c3y == sam_u->pir_u->fak_o ) {
     u3_Host.ops_u.net = c3n;
   }
-
-  //  scry the protocol version out of arvo
-  //
-  u3_pier_peek_last(pir_u, u3_nul, c3_s2('a', 'x'), u3_nul,
-                    u3nt(u3i_string("protocol"), u3i_string("version"), u3_nul),
-                    sam_u, _ames_prot_scry_cb);
 
   u3_auto* car_u = &sam_u->car_u;
   car_u->nam_m = c3__ames;
