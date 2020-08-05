@@ -1,11 +1,10 @@
-::  lib/pull-hook/hoon: helper for creating a push hook
+::  lib/pull-hook: helper for creating a push hook
 ::  
 ::   lib/pull-hook is a helper for automatically pulling data from a
 ::   corresponding push-hook to a store. 
 ::   
 ::   ## Interfacing notes:
 ::
-::   lib/push-hook provides the inner door with its own separate state.
 ::   The inner door may interact with the library by producing cards or
 ::   scrying. Do not pass any cards on a wire beginning with /helper as
 ::   these wires are reserved by this library. Any watches/pokes/peeks
@@ -28,10 +27,10 @@
 ::
 ::  $config: configuration for the pull hook
 ::
-::    .store-name: name of the store to proxy subscriptions to.
+::    .store-name: name of the store to send subscription updates to.
 ::    .update-mark: mark that updates will be tagged with
 ::    .push-hook-name: name of the corresponding push-hook
-
+::
 +$  config
   $:  store-name=term
       update=mold
@@ -44,6 +43,7 @@
 ::    .tracking: a map of resources we are pulling, and the ships that
 ::    we are pulling them from.
 ::    .inner-state: state given to internal door
+::
 +$  state-0
   $:  %0
     tracking=(map resource ship)
@@ -69,6 +69,28 @@
   |*  config
   $_  ^|
   |_  bowl:gall
+  ::  +on-pull-nack: handle failed pull subscription
+  ::
+  ::    This arm is called when a pull subscription fails. lib/pull-hook
+  ::    will automatically delete the resource from .tracking by the
+  ::    time this arm is called.
+  ::
+  ++  on-pull-nack
+    |~  [resource tang]
+    *[(list card) _^|(..on-init)]
+  ::  +on-pull-kick: produce any additional resubscribe path
+  ::
+  ::    If non-null, the produced path is appended to the original
+  ::    subscription path. This should be used to encode extra
+  ::    information onto the path in order to reduce the payload of a
+  ::    kick and resubscribe.
+  ::
+  ::    If null, a resubscribe is not attempted
+  ::
+  ++  on-pull-kick
+    |~  resource
+    *(unit path)
+  ::
   ::  from agent:gall
   ++  on-init
     *[(list card) _^|(..on-init)]
@@ -107,28 +129,6 @@
   ++  on-fail
     |~  [term tang]
     *[(list card) _^|(..on-init)]
-  ::  +on-pull-nack: handle failed pull subscription
-  ::
-  ::    This arm is called when a pull subscription fails. lib/pull-hook
-  ::    will automatically delete the resource from .tracking by the
-  ::    time this arm is called.
-  ::
-  ++  on-pull-nack
-    |~  [resource tang]
-    *[(list card) _^|(..on-init)]
-  ::  +on-pull-kick: produce any additional resubscribe path
-  ::
-  ::    If non-null, the produced path is appended to the original
-  ::    subscription path. This should be used to encode extra
-  ::    information onto the path in order to reduce the payload of a
-  ::    kick and resubscribe.
-  ::
-  ::    If null, a resubscribe is not attempted
-  ::
-  ++  on-pull-kick
-    |~  resource
-    *(unit path)
-  ::  ::
   --
 ++  agent
   |*  =config
@@ -243,7 +243,10 @@
         =^  cards  pull-hook
           (on-fail:og term tang)
         [cards this]
-      ++  on-peek   on-peek:def
+      ++  on-peek   
+        |=  =path
+        ^-  (unit (unit cage))
+        (on-peek:og path)
     --
   |_  =bowl:gall
   +*  og   ~(. pull-hook bowl)
