@@ -783,7 +783,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       c3_free(con_y);
 
       sam_u->fod_d++;
-      if ( 0 == (sam_u->fod_d % 1000) ) {
+      if ( 0 == (sam_u->fod_d % 100000) ) {
         u3l_log("ames: dropped %" PRIu64 " forwards total\n", sam_u->fod_d);
       }
     }
