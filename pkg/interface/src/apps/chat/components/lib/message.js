@@ -1,53 +1,45 @@
-import React, { Component } from 'react';
+import React, { Component, forwardRef } from 'react';
 import { OverlaySigil } from './overlay-sigil';
 import MessageContent from './message-content';
 import { uxToHex, cite, writeText } from '../../../../lib/util';
 import moment from 'moment';
 
 
-export class Message extends Component {
-  constructor() {
-    super();
-    this.state = {
-      copied: false
-    };
-  }
+export const Message = forwardRef((props, ref) => {
+  const pending = props.msg.pending ? ' o-40' : '';
+  const containerClass =
+    props.renderSigil ?
+      `w-100 f7 pl3 pt4 pr3 cf flex lh-copy ` + pending :
+      'w-100 pr3 cf hide-child flex' + pending;
 
-  render() {
-    const { props, state } = this;
-
-    const pending = props.msg.pending ? ' o-40' : '';
-    const containerClass =
-      props.renderSigil ?
-        `w-100 f7 pl3 pt4 pr3 cf flex lh-copy ` + pending :
-        'w-100 pr3 cf hide-child flex' + pending;
-
-    const timestamp =
-      moment.unix(props.msg.when / 1000).format(
-        props.renderSigil ? 'hh:mm a' : 'hh:mm'
-      );
-
-    return (
-      <div
-        ref={this.containerRef}
-        className={containerClass}
-        style={{
-          minHeight: 'min-content'
-        }}
-      >
-        {
-          props.renderSigil ? (
-            this.renderWithSigil(timestamp)
-          ) : (
-            this.renderWithoutSigil(timestamp)
-          )
-        }
-      </div>
+  const timestamp =
+    moment.unix(props.msg.when / 1000).format(
+      props.renderSigil ? 'hh:mm a' : 'hh:mm'
     );
-  }
 
-  renderWithSigil(timestamp) {
-    const { props, state } = this;
+  return (
+    <div ref={ref} className={containerClass}
+         style={{
+           minHeight: 'min-content'
+         }}>
+      {
+        props.renderSigil ? (
+          renderWithSigil(props, timestamp)
+        ) : (
+          <div className="flex w-100">
+            <p className="child pt2 pl2 pr1 mono f9 gray2 dib">{timestamp}</p>
+            <div className="fr f7 clamp-message white-d pr3 lh-copy"
+                 style={{ flexGrow: 1 }}>
+              <MessageContent letter={props.msg.letter} />
+            </div>
+          </div>
+        )
+      }
+    </div>
+  );
+});
+
+const renderWithSigil = (props, timestamp) => {
     const paddingTop = props.paddingTop ? { 'paddingTop': '6px' } : '';
     const datestamp =
       '~' + moment.unix(props.msg.when / 1000).format('YYYY.M.D');
@@ -86,18 +78,14 @@ export class Message extends Component {
               <span
                 className={
                   'mw5 dib truncate pointer ' +
-                  (contact.nickname || state.copied ? '' : 'mono')
+                  (contact.nickname ? '' : 'mono')
                 }
                 onClick={() => {
                   writeText(props.msg.author);
-                  this.setState({ copied: true });
-                  setTimeout(() => {
-                    this.setState({ copied: false });
-                  }, 800);
                 }}
                 title={`~${props.msg.author}`}
               >
-                {state.copied && 'Copied' || name}
+                {name}
               </span>
             </p>
             <p className={`v-mid mono f9 gray2 dib`}>{timestamp}</p>
@@ -111,17 +99,3 @@ export class Message extends Component {
     );
   }
 
-  renderWithoutSigil(timestamp) {
-    const { props } = this;
-
-    return (
-      <div className="flex w-100">
-        <p className="child pt2 pl2 pr1 mono f9 gray2 dib">{timestamp}</p>
-        <div className="fr f7 clamp-message white-d pr3 lh-copy"
-             style={{ flexGrow: 1 }}>
-        <MessageContent letter={props.msg.letter} />
-        </div>
-      </div>
-    );
-  }
-}

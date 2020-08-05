@@ -16,8 +16,6 @@ import GlobalApi from "../../../api/global";
 import { Association } from "../../../types/metadata-update";
 import {Group} from "../../../types/group-update";
 
-const ACTIVITY_TIMEOUT = 60000; // a minute
-
 
 type ChatScreenProps = RouteComponentProps<{
   ship: Patp;
@@ -41,8 +39,6 @@ type ChatScreenProps = RouteComponentProps<{
 };
 
 interface ChatScreenState {
-  read: number;
-  active: boolean;
   messages: Map<string, string>;
 }
 
@@ -54,12 +50,8 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
     super(props);
 
     this.state = {
-      active: true,
       messages: new Map(),
     };
-
-    this.handleActivity = this.handleActivity.bind(this);
-    this.setInactive = this.setInactive.bind(this);
 
     moment.updateLocale("en", {
       calendar: {
@@ -73,41 +65,6 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
     });
   }
 
-  componentDidMount() {
-    document.addEventListener("mousemove", this.handleActivity, false);
-    document.addEventListener("mousedown", this.handleActivity, false);
-    document.addEventListener("keypress", this.handleActivity, false);
-    document.addEventListener("touchmove", this.handleActivity, false);
-    this.activityTimeout = setTimeout(this.setInactive, ACTIVITY_TIMEOUT);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener("mousemove", this.handleActivity, false);
-    document.removeEventListener("mousedown", this.handleActivity, false);
-    document.removeEventListener("keypress", this.handleActivity, false);
-    document.removeEventListener("touchmove", this.handleActivity, false);
-    if (this.activityTimeout) {
-      clearTimeout(this.activityTimeout);
-    }
-  }
-
-  handleActivity() {
-    if (!this.state.active) {
-      this.setState({ active: true });
-    }
-
-    if (this.activityTimeout) {
-      clearTimeout(this.activityTimeout);
-    }
-
-    this.activityTimeout = setTimeout(this.setInactive, ACTIVITY_TIMEOUT);
-  }
-
-  setInactive() {
-    this.activityTimeout = null;
-    this.setState({ active: false, scrollLocked: true });
-  }
-
   render() {
     const { props, state } = this;
 
@@ -115,11 +72,17 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
     const ownerContact =
       window.ship in props.contacts ? props.contacts[window.ship] : false;
 
+    const pendingMessages = (props.pendingMessages.get(props.station) || [])
+      .map((value) => ({
+        ...value,
+        pending: true
+      }));
+    const messages = pendingMessages.concat(props.envelopes);
+
     return (
       <div
         key={props.station}
-        className="h-100 w-100 overflow-hidden flex flex-column relative"
-      >
+        className="h-100 w-100 overflow-hidden flex flex-column relative">
         <ChatHeader
           match={props.match}
           location={props.location}
@@ -130,20 +93,8 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           sidebarShown={props.sidebarShown}
           popout={props.popout} />
         <ChatWindow
-          match={props.match}
-          api={props.api}
-          group={props.group}
-          association={props.association}
-          contacts={props.contacts}
-          inbox={props.inbox}
-          pendingMessages={props.pendingMessages}
-          envelopes={props.envelopes}
-          station={props.station}
-          chatSynced={props.chatSynced}
-          chatInitialized={props.chatInitialized}
-          length={props.length}
-          read={props.read}
-          active={state.active} />
+          messages={messages}
+          contacts={props.contacts} />
         <ChatInput
           api={props.api}
           numMsgs={lastMsgNum}
@@ -152,7 +103,6 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           ownerContact={ownerContact}
           envelopes={props.envelopes}
           contacts={props.contacts}
-          onEnter={() => this.setState({ scrollLocked: false })}
           onUnmount={(msg: string) => this.setState({
             messages: this.state.messages.set(props.station, msg)
           })}
