@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Box, Text, Icon } from '@tlon/indigo-react';
+import ReconnectButton from './ReconnectButton';
 
 const StatusBar = (props) => {
   const location = useLocation();
@@ -20,10 +21,6 @@ const StatusBar = (props) => {
        />
     : null;
 
-  const connection = props.connection || 'connected';
-
-  const reconnect = props.subscription.restart.bind(props.subscription);
-
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
 
   const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
@@ -37,7 +34,7 @@ const StatusBar = (props) => {
       }
       style={{ height: 45 }}
     >
-      <div className='fl absolute left-0 pl4' style={{ top: 10 }}>
+      <div className='absolute left-0 pl4' style={{ top: 10 }}>
         {atHome ? null : (
           <Box
             style={{ cursor: 'pointer' }}
@@ -64,6 +61,7 @@ const StatusBar = (props) => {
           color='washedGray'
           display='inline-block'
           style={{ cursor: 'pointer' }}
+          lineHeight="min"
           py={1}
           px={2}
           onClick={() => props.api.local.setOmnibox()}
@@ -78,19 +76,10 @@ const StatusBar = (props) => {
             {metaKey}L
           </Text>
         </Box>
-        {connection === 'disconnected' && (
-          <span
-            onClick={reconnect}
-            className='ml4 ph2 dib f9 v-mid red2 inter ba b-red2 br1 pointer'
-          >
-            Reconnect ↻
-          </span>
-        )}
-        {connection === 'reconnecting' && (
-          <span className='ml4 ph2 dib f9 v-mid yellow2 inter ba b-yellow2 br1'>
-            Reconnecting
-          </span>
-        )}
+        <ReconnectButton
+        connection={props.connection}
+        subscription={props.subscription}
+        />
       </div>
       <div className='fl absolute relative right-0 pr4' style={{ top: 10 }}>
         <Box
