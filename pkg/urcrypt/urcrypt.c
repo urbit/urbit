@@ -163,3 +163,125 @@ urcrypt_ed_veri(uint8_t *message, size_t length,
     ? true
     : false;
 }
+
+static void
+reverse_bytes(size_t size, uint8_t *in, uint8_t *out) {
+  size_t i, j;
+  for ( i = 0, j = size - 1; i < size; i++, j-- ) {
+    out[i] = in[j];
+  }
+}
+
+int
+urcrypt_aes_ecba_en(uint8_t key[16], uint8_t block[16], uint8_t out[16])
+{
+  AES_KEY aes_key;
+  uint8_t rkey[16], rblock[16], rout[16];
+
+  reverse_bytes(16, key, rkey);
+  reverse_bytes(16, block, rblock);
+
+  if ( 0 != AES_set_encrypt_key(rkey, 128, &aes_key) ) {
+    return -1;
+  }
+  else {
+    AES_ecb_encrypt(rblock, rout, &aes_key, AES_ENCRYPT);
+    reverse_bytes(16, rout, out);
+    return 0;
+  }
+}
+
+int
+urcrypt_aes_ecba_de(uint8_t key[16], uint8_t block[16], uint8_t out[16])
+{
+  AES_KEY aes_key;
+  uint8_t rkey[16], rblock[16], rout[16];
+
+  reverse_bytes(16, key, rkey);
+  reverse_bytes(16, block, rblock);
+
+  if ( 0 != AES_set_decrypt_key(rkey, 128, &aes_key) ) {
+    return -1;
+  }
+  else {
+    AES_ecb_encrypt(rblock, rout, &aes_key, AES_DECRYPT);
+    reverse_bytes(16, rout, out);
+    return 0;
+  }
+}
+
+int
+urcrypt_aes_ecbb_en(uint8_t key[24], uint8_t block[16], uint8_t out[16])
+{
+  AES_KEY aes_key;
+  uint8_t rkey[24], rblock[16], rout[16];
+
+  reverse_bytes(24, key, rkey);
+  reverse_bytes(16, block, rblock);
+
+  if ( 0 != AES_set_encrypt_key(rkey, 192, &aes_key) ) {
+    return -1;
+  }
+  else {
+    AES_ecb_encrypt(rblock, rout, &aes_key, AES_ENCRYPT);
+    reverse_bytes(16, rout, out);
+    return 0;
+  }
+}
+
+int
+urcrypt_aes_ecbb_de(uint8_t key[24], uint8_t block[16], uint8_t out[16])
+{
+  AES_KEY aes_key;
+  uint8_t rkey[24], rblock[16], rout[16];
+
+  reverse_bytes(24, key, rkey);
+  reverse_bytes(16, block, rblock);
+
+  if ( 0 != AES_set_decrypt_key(rkey, 192, &aes_key) ) {
+    return -1;
+  }
+  else {
+    AES_ecb_encrypt(rblock, rout, &aes_key, AES_DECRYPT);
+    reverse_bytes(16, rout, out);
+    return 0;
+  }
+}
+
+int
+urcrypt_aes_ecbc_en(uint8_t key[32], uint8_t block[16], uint8_t out[16])
+{
+  AES_KEY aes_key;
+  uint8_t rkey[32], rblock[16], rout[16];
+
+  reverse_bytes(32, key, rkey);
+  reverse_bytes(16, block, rblock);
+
+  if ( 0 != AES_set_encrypt_key(rkey, 256, &aes_key) ) {
+    return -1;
+  }
+  else {
+    AES_ecb_encrypt(rblock, rout, &aes_key, AES_ENCRYPT);
+    reverse_bytes(16, rout, out);
+    return 0;
+  }
+}
+
+int
+urcrypt_aes_ecbc_de(uint8_t key[32], uint8_t block[16], uint8_t out[16])
+{
+  AES_KEY aes_key;
+  uint8_t rkey[32], rblock[16], rout[16];
+
+  reverse_bytes(32, key, rkey);
+  reverse_bytes(16, block, rblock);
+
+  if ( 0 != AES_set_decrypt_key(rkey, 256, &aes_key) ) {
+    return -1;
+  }
+  else {
+    AES_ecb_encrypt(rblock, rout, &aes_key, AES_DECRYPT);
+    reverse_bytes(16, rout, out);
+    return 0;
+  }
+}

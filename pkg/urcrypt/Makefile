@@ -16,7 +16,7 @@ liburcrypt.a: $(SOURCES)
 liburcrypt.so: $(SOURCES)
 	$(CC) $(CFLAGS) -fPIC -c urcrypt.c -o urcrypt-shared.o
 	$(CC) -shared urcrypt-shared.o -o liburcrypt.so \
-		-led25519 -lge-additions \
+		-led25519 -lge-additions -lssl \
 		-Wl,--no-undefined
 
 all: liburcrypt.a liburcrypt.so
