@@ -77,7 +77,26 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
         ...value,
         pending: true
       }));
-    const messages = pendingMessages.concat(props.envelopes);
+
+    const isChatMissing =
+      props.chatInitialized &&
+      !(props.station in props.inbox) &&
+      props.chatSynced &&
+      !(props.station in props.chatSynced);
+
+    const isChatLoading =
+      props.chatInitialized &&
+      !(props.station in props.inbox) &&
+      props.chatSynced &&
+      (props.station in props.chatSynced);
+
+    const isChatUnsynced =
+      props.chatSynced &&
+      !(props.station in props.chatSynced) &&
+      props.envelopes.length > 0;
+    
+    const unreadCount = props.length - props.read;
+    const unreadMsg = unreadCount > 0 && props.envelopes[unread - 1];
 
     return (
       <div
@@ -93,8 +112,18 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           sidebarShown={props.sidebarShown}
           popout={props.popout} />
         <ChatWindow
-          messages={messages}
-          contacts={props.contacts} />
+          isChatMissing={isChatMissing}
+          isChatLoading={isChatLoading}
+          isChatUnsynced={isChatUnsynced}
+          unreadCount={unreadCount}
+          unreadMsg={unreadMsg}
+          pendingMessages={pendingMessages}
+          messages={props.envelopes}
+          length={props.length}
+          contacts={props.contacts} 
+          ship={props.match.params.ship}
+          station={props.station}
+          api={props.api} />
         <ChatInput
           api={props.api}
           numMsgs={lastMsgNum}

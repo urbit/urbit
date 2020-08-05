@@ -2,54 +2,78 @@ import React, { Component, Fragment } from "react";
 
 import { scrollIsAtTop, scrollIsAtBottom } from "../../../../lib/util";
 
+// Restore chat position on FF when new messages come in
+const recalculateScrollTop = (lastScrollHeight, scrollContainer) => {
+  if (!scrollContainer || !lastScrollHeight) {
+    return;
+  }
+
+  const newScrollTop = scrollContainer.scrollHeight - lastScrollHeight;
+  if (scrollContainer.scrollTop !== 0 ||
+      scrollContainer.scrollTop === newScrollTop) {
+    return;
+  }
+
+  scrollContainer.scrollTop = scrollContainer.scrollHeight - lastScrollHeight;
+};
+
+
 export class ChatScrollContainer extends Component {
   constructor(props) {
     super(props);
 
+    // only for FF
     this.state = {
-      scrollLocked: false,
-      // only for FF
       lastScrollHeight: null
     };
 
-    this.scrollContainer = null;
-    this.onScroll = this.onScroll.bind(this);
-    this.scrolledToReference = false;
-  }
+    this.isTriggeredScroll = false;
+    this.containerDidScroll = this.containerDidScroll.bind(this);
 
-  componentDidUpdate(prevProps) {
+    this.containerRef = React.createRef();
+    this.scrollRef = React.createRef();
+  }
+  
+  containerDidScroll(e) {
     const { props } = this;
-    if (!!prevProps.active && !props.active) {
-      this.setState({ scrollLocked: true });  
+
+    if (scrollIsAtTop(e.target)) {
+      // Save scroll position for FF
+      if (navigator.userAgent.includes("Firefox")) {
+        this.setState({
+          lastScrollHeight: e.target.scrollHeight,
+        });
+      }
+
+      props.scrollIsAtTop();
+    } else if (scrollIsAtBottom(e.target) && !this.isTriggeredScroll) {
+      props.scrollIsAtBottom();
     }
+
+    this.isTriggeredScroll = false;
   }
 
   render() {
     // Replace with just the "not Firefox" implementation
     // when Firefox #1042151 is patched.
 
-    return (
-      <Fragment>
-        { navigator.userAgent.includes("Firefox") ?
-            this.firefoxScrollContainer() :
-            this.normalScrollContainer()
-        }
-      </Fragment>
-    );
+    if (navigator.userAgent.includes("Firefox")) {
+      return this.firefoxScrollContainer();
+    } else {
+      return this.normalScrollContainer();
+    }
   }
 
   firefoxScrollContainer() {
     return (
       <div
         className="relative overflow-y-scroll h-100"
-        onScroll={this.onScroll}
-        ref={(e) => {
-          this.scrollContainer = e;
-        }}>
+        onScroll={this.containerDidScroll}
+        ref={this.containerRef}>
         <div
           className="bg-white bg-gray0-d pt3 pb2 flex flex-column-reverse"
           style={{ resize: "vertical" }}>
-          <div ref={(el) => { this.scrollElement = el; }}></div>
+          <div ref={this.scrollRef}></div>
           {this.props.children}
         </div>
       </div>
@@ -64,75 +88,24 @@ export class ChatScrollContainer extends Component {
           "flex-column-reverse relative"
         }
         style={{ height: "100%", resize: "vertical" }}
-        onScroll={this.onScroll}>
-        <div
-          ref={(el) => { this.scrollElement = el; }}
-        ></div>
+        onScroll={this.containerDidScroll}>
+        <div ref={this.scrollRef}></div>
         {this.props.children}
       </div>
     );
   }
 
-  scrollToRef() {
-    const { props } = this;
-    const ref = props.scrollReference;
-
-    if (ref && !this.scrolledToReference) {
-      this.setState({ scrollLocked: true }, () => {
-        ref.scrollIntoView({ block: "center" });
-        if (ref.offsetParent && scrollIsAtBottom(ref.offsetParent)) {
-          this.props.dismissUnread();
-          this.setState({
-            scrollLocked: false,
-          });
-        }
-      });
-      this.scrolledToReference = true;
-    }
-  }
-
-  onScroll(e) {
-    if (scrollIsAtTop(e.target)) {
-      // Save scroll position for FF
-      if (navigator.userAgent.includes("Firefox")) {
-        this.setState({
-          lastScrollHeight: e.target.scrollHeight,
-        });
-      }
-      this.setState({ scrollLocked: true }, () => {
-        this.props.fetchPrevious();
-      });
-    } else if (scrollIsAtBottom(e.target)) {
-      this.props.dismissUnread();
-      this.setState({ scrollLocked: false });
-    }
-  }
-
-  scrollToBottom(scrollLocked) {
-    if (!this.state.scrollLocked && this.scrollElement) {
+  scrollToBottom() {
+    this.isTriggeredScroll = true;
+    if (this.scrollElement) {
       this.scrollElement.scrollIntoView();
     }
 
     if (navigator.userAgent.includes("Firefox")) {
-      this.recalculateScrollTop();
+      recalculateScrollTop(
+        this.state.lastScrollHeight,
+        this.scrollContainer
+      );
     }
-
-    this.setState({ scrollLocked });
   }
-
-  // Restore chat position on FF when new messages come in
-  recalculateScrollTop() {
-    const { lastScrollHeight } = this.state;
-    if (!this.scrollContainer || !lastScrollHeight) {
-      return;
-    }
-
-    const target = this.scrollContainer;
-    const newScrollTop = this.scrollContainer.scrollHeight - lastScrollHeight;
-    if (target.scrollTop !== 0 || newScrollTop === target.scrollTop) {
-      return;
-    }
-    target.scrollTop = target.scrollHeight - lastScrollHeight;
-  }
-
 }

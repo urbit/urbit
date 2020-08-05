@@ -1,11 +1,11 @@
-import React, { Component, forwardRef } from 'react';
+import React, { Component } from 'react';
 import { OverlaySigil } from './overlay-sigil';
 import MessageContent from './message-content';
 import { uxToHex, cite, writeText } from '../../../../lib/util';
 import moment from 'moment';
 
 
-export const Message = forwardRef((props, ref) => {
+export const Message = (props) => {
   const pending = props.msg.pending ? ' o-40' : '';
   const containerClass =
     props.renderSigil ?
@@ -18,7 +18,7 @@ export const Message = forwardRef((props, ref) => {
     );
 
   return (
-    <div ref={ref} className={containerClass}
+    <div className={containerClass}
          style={{
            minHeight: 'min-content'
          }}>
@@ -37,7 +37,7 @@ export const Message = forwardRef((props, ref) => {
       }
     </div>
   );
-});
+};
 
 const renderWithSigil = (props, timestamp) => {
     const paddingTop = props.paddingTop ? { 'paddingTop': '6px' } : '';

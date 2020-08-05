@@ -6,7 +6,7 @@ import { Message } from "./message";
 type IMessage = Envelope & { pending?: boolean };
 
 
-export const ChatMessage = React.forwardRef((props, ref) => {
+export const ChatMessage = (props) => {
 
   const unread = 0;
   const index = props.index;
@@ -29,7 +29,6 @@ export const ChatMessage = React.forwardRef((props, ref) => {
 
   return (
     <Message
-      ref={ref}
       key={msg.uid}
       msg={msg}
       contacts={props.contacts}
@@ -75,5 +74,5 @@ export const ChatMessage = React.forwardRef((props, ref) => {
   } else {
     return messageElem;
   }*/
-});
+};
 
