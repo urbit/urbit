@@ -35,7 +35,7 @@ import System.Posix.Types     (CPid(..))
 import System.Random          (randomIO)
 import Urbit.King.App.Class   (HasStderrLogFunc(..))
 import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
-
+import Urbit.Vere.Ports       (PortControlApi, HasPortControlApi(..))
 
 -- KingEnv ---------------------------------------------------------------------
 
@@ -135,12 +135,14 @@ killKingActionL =
 class HasMultiEyreApi a where
   multiEyreApiL :: Lens' a MultiEyreApi
 
-class (HasKingEnv a, HasMultiEyreApi a) => HasRunningEnv a where
+class (HasKingEnv a, HasMultiEyreApi a, HasPortControlApi a) =>
+      HasRunningEnv a where
   runningEnvL :: Lens' a RunningEnv
 
 data RunningEnv = RunningEnv
-  { _runningEnvKingEnv      :: !KingEnv
-  , _runningEnvMultiEyreApi :: MultiEyreApi
+  { _runningEnvKingEnv        :: !KingEnv
+  , _runningEnvMultiEyreApi   :: MultiEyreApi
+  , _runningEnvPortControlApi :: PortControlApi
   }
 
 makeLenses ''RunningEnv
@@ -163,14 +165,19 @@ instance HasKingId RunningEnv where
 instance HasMultiEyreApi RunningEnv where
   multiEyreApiL = runningEnvMultiEyreApi
 
+instance HasPortControlApi RunningEnv where
+  portControlApiL = runningEnvPortControlApi
+
 -- Running Running Envs --------------------------------------------------------
 
-runRunningEnv :: MultiEyreApi -> RIO RunningEnv () -> RIO KingEnv ()
-runRunningEnv multi action = do
+runRunningEnv :: MultiEyreApi -> PortControlApi -> RIO RunningEnv ()
+              -> RIO KingEnv ()
+runRunningEnv multi ports action = do
     king <- ask
 
-    let runningEnv = RunningEnv { _runningEnvKingEnv      = king
-                                , _runningEnvMultiEyreApi = multi
+    let runningEnv = RunningEnv { _runningEnvKingEnv        = king
+                                , _runningEnvMultiEyreApi   = multi
+                                , _runningEnvPortControlApi = ports
                                 }
 
     io (runRIO runningEnv action)
@@ -198,6 +205,9 @@ instance HasRunningEnv PierEnv where
 
 instance HasMultiEyreApi PierEnv where
   multiEyreApiL = pierEnvRunningEnv . multiEyreApiL
+
+instance HasPortControlApi PierEnv where
+  portControlApiL = pierEnvRunningEnv . portControlApiL
 
 instance HasPierEnv PierEnv where
   pierEnvL = id

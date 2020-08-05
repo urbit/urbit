@@ -50,6 +50,7 @@ dependencies:
   - Glob
   - hashable
   - hashtables
+  - heap
   - http-client
   - http-client-tls
   - http-types

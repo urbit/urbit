@@ -3,13 +3,14 @@
 -- | This module is a thin wrapper above libnatpmp.h and getgateway.h.
 
 module Network.NATPMP (Error(..),
-                        NatPmpResponse(..),
-                        ProtocolType(..),
-                        initNatPmp,
-                        closeNatPmp,
-                        getDefaultGateway,
-                        getPublicAddress,
-                        setPortMapping) where
+                       NatPmpResponse(..),
+                       ProtocolType(..),
+                       NatPmpHandle,
+                       initNatPmp,
+                       closeNatPmp,
+                       getDefaultGateway,
+                       getPublicAddress,
+                       setPortMapping) where
 
 #include <netinet/in.h>
 

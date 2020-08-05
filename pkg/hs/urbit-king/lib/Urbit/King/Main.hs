@@ -82,6 +82,7 @@ import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Dawn
 import Urbit.Vere.Pier
+import Urbit.Vere.Ports
 import Urbit.Vere.Eyre.Multi (multiEyre, MultiEyreConf(..))
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Serf
@@ -472,8 +473,12 @@ newShip CLI.New{..} opts = do
   -}
   multi <- multiEyre (MultiEyreConf Nothing Nothing True)
 
+  -- TODO: We hit the same problem as above: we need the running options to
+  -- determine how to configure the ports
+  ports <- buildInactivePorts
+
   -- here we are with a king env, and we now need a multi env.
-  runRunningEnv multi go
+  runRunningEnv multi ports go
   where
     go :: RIO RunningEnv ()
     go = case nBootType of
@@ -584,6 +589,11 @@ runShip (CLI.Run pierPath) opts daemon = do
         (CLI.oDryFrom opts)
         mStart
 
+
+buildPortHandler :: (HasLogFunc e) => Maybe CLI.IPSource -> RIO e PortControlApi
+buildPortHandler Nothing          = buildInactivePorts
+buildPortHandler (Just CLI.IPSourceNAT) = buildNATPorts
+buildPortHandler (Just (CLI.IPSourceManual _)) = error "wut do"
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do
@@ -746,7 +756,9 @@ runShips CLI.KingOpts {..} ships = do
 
   multi <- multiEyre meConf
 
-  runRunningEnv multi (go ships)
+  ports <- buildPortHandler koIPSource
+
+  runRunningEnv multi ports (go ships)
  where
   go :: [(CLI.Run, CLI.Opts, Bool)] ->  RIO RunningEnv ()
   go = \case
