@@ -70,7 +70,7 @@ export function DropLaunchTiles({ tiles, name }: any) {
       <Box
         display="grid"
         gridGap={2}
-        gridTemplateColumns={["96px 96px", "96px 96px 96px"]}
+        gridTemplateColumns={["96px 96px", "96px 96px 96px 96px"]}
         gridAutoRows="96px"
       >
         <DragTilePreview />

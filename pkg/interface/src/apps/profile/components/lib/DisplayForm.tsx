@@ -18,6 +18,12 @@ import GlobalApi from "../../../../api/global";
 import { BackgroundConfig } from "../../../../types/local-update";
 import { LaunchState } from "../../../../types/launch-update";
 import { DropLaunchTiles } from "./DropLaunch";
+import { ImageInput } from "./ImageInput";
+import {
+  S3Configuration,
+  S3Credentials,
+  S3State,
+} from "../../../../types/s3-update";
 
 const tiles = ["publish", "links", "chat", "dojo", "clock", "weather"];
 
@@ -50,6 +56,7 @@ interface DisplayFormProps {
   background: BackgroundConfig;
   hideAvatars: boolean;
   hideNicknames: boolean;
+  s3: S3State;
 }
 
 function ImagePicker({ url }: { url: string }) {
@@ -69,34 +76,56 @@ function ImagePicker({ url }: { url: string }) {
 function BackgroundPicker({
   bgType,
   bgUrl,
+  api,
+  s3,
 }: {
   bgType: BgType;
   bgUrl?: string;
+  api: GlobalApi;
+  s3: S3State;
 }) {
   return (
     <Box>
       <InputLabel>Landscape Background</InputLabel>
       <Box display="flex" alignItems="center">
-        <Box mt={3} mr={10}>
+        <Box mt={3} mr={7}>
           <Radio label="Image" id="url" name="bgType" />
+          {bgType === "url" && (
+            <ImageInput
+              api={api}
+              s3={s3}
+              id="bgUrl"
+              name="bgUrl"
+              label="URL"
+              url={bgUrl || ""}
+            />
+          )}
           <Radio label="Color" id="color" name="bgType" />
+          {bgType === "color" && (
+            <Input
+              ml={4}
+              type="text"
+              label="Color"
+              id="bgColor"
+              name="bgColor"
+            />
+          )}
           <Radio label="None" id="none" name="bgType" />
         </Box>
-        {bgType === "url" && (
-          <Col>
-            <Input ml={4} type="text" label="URL" id="bgUrl" name="bgUrl" />
-          </Col>
-        )}
-        {bgType === "color" && (
-          <Input ml={4} type="text" label="Color" id="bgColor" name="bgColor" />
-        )}
       </Box>
     </Box>
   );
 }
 
 export default function DisplayForm(props: DisplayFormProps) {
-  const { api, launch, background, hideAvatars, hideNicknames } = props;
+  const {
+    api,
+    launch,
+    background,
+    hideAvatars,
+    hideNicknames,
+    s3
+  } = props;
 
   let bgColor, bgUrl;
   if (background?.type === "url") {
@@ -175,6 +204,8 @@ export default function DisplayForm(props: DisplayFormProps) {
             <BackgroundPicker
               bgType={props.values.bgType}
               bgUrl={props.values.bgUrl}
+              api={api}
+              s3={s3}
             />
             <Box>
               <Checkbox

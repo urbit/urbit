@@ -32,26 +32,27 @@ export default function Settings({
   background,
 }: ProfileProps) {
   return (
-      <Box
-        backgroundColor="white"
-        fontSize={2}
-        display="grid"
-        gridTemplateRows="auto"
-        gridTemplateColumns="1fr"
-        gridRowGap={7}
-        p={4}
-        maxWidth="300px"
-      >
-        <DisplayForm
-          api={api}
-          launch={launch}
-          dark={dark}
-          hideNicknames={hideNicknames}
-          hideAvatars={hideAvatars}
-          background={background}
-        />
-        <S3Form api={api} s3={s3} />
-        <SecuritySettings api={api} />
-      </Box>
+    <Box
+      backgroundColor="white"
+      fontSize={2}
+      display="grid"
+      gridTemplateRows="auto"
+      gridTemplateColumns="1fr"
+      gridRowGap={7}
+      p={4}
+      maxWidth="400px"
+    >
+      <DisplayForm
+        api={api}
+        launch={launch}
+        dark={dark}
+        hideNicknames={hideNicknames}
+        hideAvatars={hideAvatars}
+        background={background}
+        s3={s3}
+      />
+      <S3Form api={api} s3={s3} />
+      <SecuritySettings api={api} />
+    </Box>
   );
 }
