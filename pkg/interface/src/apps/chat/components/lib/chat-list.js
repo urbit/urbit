@@ -34,13 +34,15 @@ export default class ChatList extends Component {
       <DynamicSizeList
         height={props.height}
         width={props.width}
-        itemCount={props.messages.length}>
+        itemCount={props.messages.length}
+        itemData={props.messages}
+        overscanCount={0}>
         { forwardRef((pro, ref) => (
             <ChatMessage
               ref={ref}
-              previousMsg={props.messages[pro.index - 1]}
-              nextMsg={props.messages[pro.index + 1]}
-              msg={props.messages[pro.index]}
+              previousMsg={pro.data[pro.index - 1]}
+              nextMsg={pro.data[pro.index + 1]}
+              msg={pro.data[pro.index]}
               index={pro.index}
               contacts={props.contacts}
             />
