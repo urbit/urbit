@@ -17,21 +17,12 @@ import _ from "lodash";
 import GlobalApi from "../../../../api/global";
 import { BackgroundConfig } from "../../../../types/local-update";
 import { LaunchState } from "../../../../types/launch-update";
+import { DropLaunchTiles } from "./DropLaunch";
 
 const tiles = ["publish", "links", "chat", "dojo", "clock", "weather"];
 
 const formSchema = Yup.object().shape({
-  order: Yup.string()
-    .required("Required")
-    .test(
-      "tiles",
-      "Invalid tile ordering",
-      (o: string = "") =>
-        _.difference(
-          o.split(", ").map((i) => i.trim()),
-          tiles
-        ).length === 0
-    ),
+  tileOrdering: Yup.array().of(Yup.string()),
   bgType: Yup.string()
     .oneOf(["none", "color", "url"], "invalid")
     .required("Required"),
@@ -44,7 +35,7 @@ const formSchema = Yup.object().shape({
 type BgType = "none" | "url" | "color";
 
 interface FormSchema {
-  order: string;
+  tileOrdering: string[];
   bgType: BgType;
   bgColor: string | undefined;
   bgUrl: string | undefined;
@@ -107,7 +98,6 @@ function BackgroundPicker({
 export default function DisplayForm(props: DisplayFormProps) {
   const { api, launch, background, hideAvatars, hideNicknames } = props;
 
-  const initialOrder = launch.tileOrdering.join(", ");
   let bgColor, bgUrl;
   if (background?.type === "url") {
     bgUrl = background.url;
@@ -119,21 +109,25 @@ export default function DisplayForm(props: DisplayFormProps) {
 
   const logoutAll = useCallback(() => {}, []);
 
+  console.log(tiles);
+
   return (
     <Formik
       validationSchema={formSchema}
       initialValues={
         {
-          order: initialOrder,
           bgType,
           bgColor,
           bgUrl,
           avatars: hideAvatars,
           nicknames: hideNicknames,
+          tileOrdering: launch.tileOrdering,
         } as FormSchema
       }
       onSubmit={(values, actions) => {
-        api.launch.changeOrder(values.order.split(", "));
+        console.log("saving");
+        console.log(values.tileOrdering);
+        api.launch.changeOrder(values.tileOrdering);
 
         const bgConfig: BackgroundConfig =
           values.bgType === "color"
@@ -155,18 +149,27 @@ export default function DisplayForm(props: DisplayFormProps) {
             display="grid"
             gridTemplateColumns="1fr"
             gridTemplateRows="auto"
-            gridRowGap={2}
+            gridRowGap={3}
           >
             <Box color="black" fontSize={1} mb={3} fontWeight={900}>
               Display Preferences
             </Box>
 
-            <Box>
-              <Input
+            <Box mb={2}>
+              {/*<Input
                 label="Home Tile Order"
                 id="order"
                 type="text"
                 width={256}
+              />*/}
+              <InputLabel display="block" pb={2}>
+                Tile Order
+              </InputLabel>
+              <DropLaunchTiles
+                id="tileOrdering"
+                name="tileOrdering"
+                tiles={launch.tiles}
+                order={launch.tileOrdering}
               />
             </Box>
             <BackgroundPicker
@@ -186,11 +189,7 @@ export default function DisplayForm(props: DisplayFormProps) {
               />
             </Box>
           </Box>
-          <Button
-            border={1}
-            borderColor="washedGray"
-            type="submit"
-          >
+          <Button border={1} borderColor="washedGray" type="submit">
             Save
           </Button>
         </Form>

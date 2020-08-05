@@ -9,7 +9,7 @@ import Settings from "./components/settings";
 export default function ProfileScreen(props: any) {
   const { ship, dark } = props;
   return (
-    <Box height="100%" px={3} pb={3} borderRadius={1}>
+    <Box height="100%" px={[0,3]} pb={[0,3]} borderRadius={1}>
       <Box
         height="100%"
         width="100%"
