@@ -100,7 +100,8 @@ _pier_work_send(u3_work* wok_u)
     u3_noun    ovo;
     u3_pico* pic_u;
 
-    while ( len_w-- && car_u && (egg_u = u3_auto_next(car_u, &ovo)) ) {
+    while ( len_w && car_u && (egg_u = u3_auto_next(car_u, &ovo)) ) {
+      len_w--;
       u3_lord_work(god_u, egg_u, ovo);
 
       //  queue events depth first
@@ -109,8 +110,7 @@ _pier_work_send(u3_work* wok_u)
 
       //  interleave scry requests
       //
-      if ( len_w
-        && (pic_u = _pier_peek_next(pir_u)) )
+      if ( len_w && (pic_u = _pier_peek_next(pir_u)) )
       {
         len_w--;
         u3_lord_peek_pico(god_u, pic_u);
