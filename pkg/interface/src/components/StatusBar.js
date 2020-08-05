@@ -68,8 +68,8 @@ const StatusBar = (props) => {
               </Link>
         }
          <p className="dib f9 v-mid inter ml2 white-d">{locationName}</p>
-    { connection === 'disconnected' && 
-      (<span 
+    { connection === 'disconnected' &&
+      (<span
         onClick={reconnect}
         className="ml4 ph2 dib f9 v-mid red2 inter ba b-red2 br1 pointer"
         >Reconnect ↻</span> )
