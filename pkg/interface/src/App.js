@@ -3,6 +3,7 @@ import 'react-hot-loader';
 import * as React from 'react';
 import { BrowserRouter as Router, Route, withRouter, Switch } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
+import { sigil as sigiljs, stringRenderer } from 'urbit-sigil-js';
 
 import Mousetrap from 'mousetrap';
 
@@ -25,6 +26,8 @@ import ErrorComponent from './components/Error';
 import GlobalStore from './store/store';
 import GlobalSubscription from './subscription/global';
 import GlobalApi from './api/global';
+import { uxToHex } from './lib/util';
+import { Sigil } from './lib/sigil';
 
 // const Style = createGlobalStyle`
 //   ${cssReset}
@@ -65,6 +68,7 @@ class App extends React.Component {
       new GlobalSubscription(this.store, this.api, this.appChannel);
 
     this.updateTheme = this.updateTheme.bind(this);
+    this.setFavicon = this.setFavicon.bind(this);
   }
 
   componentDidMount() {
@@ -77,14 +81,39 @@ class App extends React.Component {
       e.preventDefault();
       this.api.local.setOmnibox();
     });
+    this.setFavicon();
   }
 
   componentWillUnmount() {
     this.themeWatcher.removeListener(this.updateTheme);
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    this.setFavicon();
+  }
+
   updateTheme(e) {
     this.api.local.setDark(e.matches);
+  }
+
+  setFavicon() {
+    if (window.ship.length < 14) {
+      let background = '#ffffff';
+      if (this.state.contacts.hasOwnProperty('/~/default')) {
+        background = `#${uxToHex(this.state.contacts['/~/default'][window.ship].color)}`;
+      }
+      const foreground = Sigil.foregroundFromBackground(background);
+      const svg = sigiljs({
+        patp: window.ship,
+        renderer: stringRenderer,
+        size: 16,
+        colors: [background, foreground]
+      });
+      const dataurl = 'data:image/svg+xml;base64,' + btoa(svg);
+      const favicon = document.querySelector('[rel=icon]');
+      favicon.href = dataurl;
+      favicon.type = 'image/svg+xml';
+    }
   }
 
   render() {

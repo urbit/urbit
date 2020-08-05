@@ -57,24 +57,6 @@ export class ChatInput extends Component {
 
     this.editor = null;
 
-    // perf testing:
-    /* let closure = () => {
-      let x = 0;
-      for (var i = 0; i < 30; i++) {
-        x++;
-        props.api.chat.message(
-          props.station,
-          `~${window.ship}`,
-          Date.now(),
-          {
-            text: `${x}`
-          }
-        );
-      }
-      setTimeout(closure, 1000);
-    };
-    this.closure = closure.bind(this);*/
-
     moment.updateLocale('en', {
         relativeTime : {
             past: function(input) {
@@ -215,46 +197,88 @@ export class ChatInput extends Component {
       this.editor.setValue('');
       return;
     }
+
+    let messages = []; // Users can send one or more messages on submit, depending on message content
     let message = [];
-    editorMessage.split(' ').map((each) => {
-      if (this.isUrl(each)) {
-        if (message.length > 0) {
-          message = message.join(' ');
-          message = this.getLetterType(message);
-          props.api.chat.message(
-            props.station,
-            `~${window.ship}`,
-            Date.now(),
-            message
-          );
-          message = [];
-        }
-        const URL = this.getLetterType(each);
+    let isInCodeBlock = false;
+    let endOfCodeBlock = false;
+    editorMessage.split(/\r?\n/).forEach((line) => {
+      message.push('\n');
+      // A line of backticks enters and exits a codeblock
+      if (line.startsWith('```')) {
+        // But we need to check if we've ended a codeblock
+        endOfCodeBlock = isInCodeBlock;
+        isInCodeBlock = (!isInCodeBlock);
+      } else {
+        endOfCodeBlock = false;
+      }
+
+      if (isInCodeBlock || endOfCodeBlock) {
+        message.push(line);
+      } else {
+        line.split(/\s/).forEach((str) => {
+          if (
+            (str.startsWith('`') && str !== '`')
+            || (str === '`' && !isInCodeBlock)
+          ) {
+            isInCodeBlock = true;
+          } else if (
+            (str.endsWith('`') && str !== '`')
+            || (str === '`' && isInCodeBlock)
+          ) {
+            isInCodeBlock = false;
+          }
+
+          if (this.isUrl(str) && !isInCodeBlock) {
+            if (message.length > 0) {
+              // If we're in the middle of a message, add it to the stack and reset
+              messages.push(message);
+              message = [];
+            }
+            messages.push([str]);
+            message = [];
+          } else {
+            message.push(str);
+          }
+        });
+      }
+    });
+
+    if (message.length) {
+      // Add any remaining message
+      messages.push(message);
+    }
+
+    messages.forEach((message) => {
+      if (message.length > 0) {
+        message = this.getLetterType(message.join(' '));
         props.api.chat.message(
           props.station,
           `~${window.ship}`,
           Date.now(),
-          URL
+          message
         );
-      } else {
-        return message.push(each);
       }
     });
 
-    if (message.length > 0) {
-      message = message.join(' ');
-      message = this.getLetterType(message);
-      props.api.chat.message(
-        props.station,
-        `~${window.ship}`,
-        Date.now(),
-        message
-      );
-      message = [];
-    }
-
-    // perf:
-    // setTimeout(this.closure, 2000);
+    // perf testing:
+    /*let closure = () => {
+      let x = 0;
+      for (var i = 0; i < 30; i++) {
+        x++;
+        props.api.chat.message(
+          props.station,
+          `~${window.ship}`,
+          Date.now(),
+          {
+            text: `${x}`
+          }
+        );
+      }
+      setTimeout(closure, 1000);
+    };
+    this.closure = closure.bind(this);
+    setTimeout(this.closure, 2000);*/
 
     this.editor.setValue('');
   }

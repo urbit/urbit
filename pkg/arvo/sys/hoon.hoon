@@ -7762,11 +7762,13 @@
   ++  teal
     |=  mod/spec
     ^-  spec
+    ?:  ?=(%& -.tik)  mod
     [%over [%& 3]~ mod]
   ::
   ++  tele
     |=  syn/skin
     ^-  skin
+    ?:  ?=(%& -.tik)  syn
     [%over [%& 3]~ syn]
   ::
   ++  gray
