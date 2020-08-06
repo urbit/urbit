@@ -13,11 +13,10 @@ export class ChatHeader extends Component {
     const isinPopout = props.popout ? "popout/" : "";
     const group = Array.from(props.group.members);
     let title = props.station.substr(1);
-    if (props.association && "metadata" in props.association) {
-      title =
-        props.association.metadata.title !== ""
-          ? props.association.metadata.title
-          : props.station.substr(1);
+    if (props.association && 
+      "metadata" in props.association && 
+      props.association.metadata.tile !== "") {
+      title = props.association.metadata.title
     }
 
     return (
