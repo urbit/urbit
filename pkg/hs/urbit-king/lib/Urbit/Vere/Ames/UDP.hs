@@ -33,6 +33,7 @@ module Urbit.Vere.Ames.UDP
 where
 
 import Urbit.Prelude
+import Urbit.Vere.Ports
 
 import Network.Socket hiding (recvFrom, sendTo)
 
@@ -151,7 +152,10 @@ fakeUdpServ = do
   Real UDP server.  See module-level docs.
 -}
 realUdpServ
-  :: forall e . HasLogFunc e => PortNumber -> HostAddress -> RIO e UdpServ
+  :: forall e . (HasLogFunc e, HasPortControlApi e)
+  => PortNumber
+  -> HostAddress
+  -> RIO e UdpServ
 realUdpServ por hos = do
   logDebug $ displayShow ("AMES", "UDP", "Starting real UDP server.")
 
@@ -197,11 +201,21 @@ realUdpServ por hos = do
           logWarn "AMES: UDP: Dropping outbound packet because queue is full."
 
   tOpen <- async $ forever $ do
-    sk <- forceBind por hos
-    atomically (writeTVar vSock (Just sk))
-    broken <- atomically (takeTMVar vFail)
-    logWarn "AMES: UDP: Closing broken socket."
-    io (close broken)
+     sk <- forceBind por hos
+     sn <- io $ getSocketName sk
+
+     let waitForRelease = do
+           atomically (writeTVar vSock (Just sk))
+           broken <- atomically (takeTMVar vFail)
+           logWarn "AMES: UDP: Closing broken socket."
+           io (close broken)
+
+     case sn of
+       (SockAddrInet boundPort _) ->
+         -- When we're on IPv4, maybe port forward at the NAT.
+         rwith (requestPortAccess $ fromIntegral boundPort) $
+             \() -> waitForRelease
+       _ -> waitForRelease
 
   tSend <- async $ forever $ join $ atomically $ do
     (adr, byt) <- readTBQueue qSend

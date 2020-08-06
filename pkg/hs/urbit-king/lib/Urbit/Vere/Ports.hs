@@ -1,7 +1,9 @@
-module Urbit.Vere.Ports where
+module Urbit.Vere.Ports (HasPortControlApi(..),
+                         PortControlApi(..),
+                         buildInactivePorts,
+                         buildNATPorts,
+                         requestPortAccess) where
 
--- (PortControlApi,
---                          buildInactivePorts) 
 import Control.Monad.STM (check)
 import Urbit.Prelude
 import Network.NATPMP
@@ -74,12 +76,14 @@ data PortThreadMsg
 -- scope. OTOH, NAT-PMP is all timeout based, and we want that timeout to be
 -- fairly short, such as 15 minutes, so the portThread needs to keep track of
 -- the time of the next port request.
-portThread :: (HasLogFunc e) => TQueue PortThreadMsg -> RIO e ()
+portThread :: forall e. (HasLogFunc e)
+           => TQueue PortThreadMsg
+           -> RIO e ()
 portThread q = do
   pmp <- io $ initNatPmp
   case pmp of
     Left err -> do
-      logError "error initializing NatPmp"
+      logError "ports: error initializing NAT-PMP. Falling back to null."
       loopErr q
     Right pmp -> loop pmp mempty
   where
@@ -90,7 +94,7 @@ portThread q = do
             Nothing -> newTVarIO False
             Just (fireTime, _) -> do
               let timeTo = fireTime - now
-              let ms = round $ timeTo * 1000
+              let ms = round $ timeTo * 1000000
               registerDelay ms
       command <- atomically $
         (Left <$> fini delay) <|> (Right <$> readTQueue q)
@@ -109,6 +113,9 @@ portThread q = do
               -> RIO e ()
     handlePTM pmp msg nextRenew = case msg of
       PTMInitialRequestOpen p notifyComplete -> do
+        logInfo $
+          displayShow ("ports: sending initial request to NAT-PMP for port ", p)
+        -- TODO: Some error checking would be nice.
         io $ setPortMapping pmp PTUDP p p portLeaseLifetime
         let filteredPort = filterPort p nextRenew
         now <- io $ getPOSIXTime
@@ -120,6 +127,9 @@ portThread q = do
         loop pmp withRenew
 
       PTMRequestOpen p -> do
+        logInfo $
+          displayShow ("ports: sending renewing request to NAT-PMP for port ",
+                       p)
         io $ setPortMapping pmp PTUDP p p portLeaseLifetime
         let filteredPort = filterPort p nextRenew
         now <- io $ getPOSIXTime
@@ -128,6 +138,8 @@ portThread q = do
         loop pmp withRenew
 
       PTMRequestClose p -> do
+        logInfo $
+          displayShow ("ports: releasing lease for ", p)
         io $ setPortMapping pmp PTUDP p p 0
         let removed = filterPort p nextRenew
         loop pmp removed

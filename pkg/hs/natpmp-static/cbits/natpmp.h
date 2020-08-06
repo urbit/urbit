@@ -32,6 +32,8 @@ POSSIBILITY OF SUCH DAMAGE.
 /* NAT-PMP Port as defined by the NAT-PMP draft */
 #define NATPMP_PORT (5351)
 
+#define ENABLE_STRNATPMPERR
+
 #include <time.h>
 #if !defined(_MSC_VER)
 #include <sys/time.h>
