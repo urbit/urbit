@@ -64,7 +64,7 @@ export class ChatWindow extends Component {
     } else if (props.messages.length >= prevProps.messages.length + 10) {
       this.hasAskedForMessages = false;
       let numPages = props.unreadCount > 0 ? 
-        Math.ceil(props.unreadCount / PAGE_SIZE) : 1;
+        Math.ceil(props.unreadCount / PAGE_SIZE) : this.state.numPages;
 
       if (this.state.numPages === numPages) {
         if (props.unreadCount > 20) {
