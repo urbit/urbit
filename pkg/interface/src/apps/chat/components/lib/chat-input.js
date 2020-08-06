@@ -268,8 +268,8 @@ export class ChatInput extends Component {
           }}>
           <img style={{
                  filter: state.inCodeMode && 'invert(100%)',
-                 height: '100%',
-                 width: '100%'
+                 height: '14px',
+                 width: '14px',
                }}
                onClick={this.toggleCode}
                src="/~chat/img/CodeEval.png"
