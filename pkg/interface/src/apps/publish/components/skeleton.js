@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Sidebar } from './lib/sidebar';
+import ErrorBoundary from '../../../components/ErrorBoundary';
 
 export class Skeleton extends Component {
   render() {
@@ -36,7 +37,9 @@ export class Skeleton extends Component {
             flexGrow: 1
           }}
           >
-            {props.children}
+            <ErrorBoundary>
+              {props.children}
+            </ErrorBoundary>
           </div>
         </div>
       </div>

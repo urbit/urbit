@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Link } from 'react-router-dom';
 import { GroupItem } from './group-item';
-import { SidebarInvite } from './sidebar-invite';
+import SidebarInvite from '../../../../components/SidebarInvite';
 import { Welcome } from './welcome';
 import { alphabetiseAssociations } from '../../../../lib/util';
 
@@ -17,9 +17,9 @@ export class ChannelsSidebar extends Component {
         return (
           <SidebarInvite
             key={uid}
-            uid={uid}
             invite={props.invites[uid]}
-            api={props.api}
+            onAccept={() => props.api.invite.accept('/link', uid)}
+            onDecline={() => props.api.invite.decline('/link', uid)}
           />
         );
       });
