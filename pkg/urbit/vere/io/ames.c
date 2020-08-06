@@ -823,7 +823,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
                            u3dc("scot", 'p', u3i_chubs(2, rec_d)),
                            u3i_string("forward-lane"),
                            u3_nul);
-        u3_pier_peek_last(sam_u->pir_u, u3_nul, c3_s2('a', 'x'),
+        u3_pier_peek_last(sam_u->pir_u, u3_nul, c3__ax,
                           u3_nul, pax, pac_u, _ames_lane_scry_cb);
       }
     }
@@ -988,7 +988,7 @@ _ames_io_talk(u3_auto* car_u)
 
   //  scry the protocol version out of arvo
   //
-  u3_pier_peek_last(car_u->pir_u, u3_nul, c3_s2('a', 'x'), u3_nul,
+  u3_pier_peek_last(car_u->pir_u, u3_nul, c3__ax, u3_nul,
                     u3nt(u3i_string("protocol"), u3i_string("version"), u3_nul),
                     sam_u, _ames_prot_scry_cb);
 }
