@@ -5,7 +5,6 @@ import { S3Upload } from './s3-upload';
 import { uxToHex } from '../../../../lib/util';
 
 
-
 const URL_REGEX = new RegExp(String(/^((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source));
 
 export class ChatInput extends Component {
@@ -91,10 +90,12 @@ export class ChatInput extends Component {
       return;
     }
 
+    let messages = [];
     let message = [];
     let isInCodeBlock = false;
     let endOfCodeBlock = false;
     text.split(/\r?\n/).forEach((line) => {
+      message.push('\n');
       // A line of backticks enters and exits a codeblock
       if (line.startsWith('```')) {
         // But we need to check if we've ended a codeblock
@@ -103,10 +104,9 @@ export class ChatInput extends Component {
       } else {
         endOfCodeBlock = false;
       }
-      if (isInCodeBlock) {
-        message.push(`\n${line}`);
-      } else if (endOfCodeBlock) {
-        message.push(`\n${line}\n`);
+
+      if (isInCodeBlock || endOfCodeBlock) {
+        message.push(line);
       } else {
         line.split(/\s/).forEach((str) => {
           if (
@@ -120,45 +120,92 @@ export class ChatInput extends Component {
           ) {
             isInCodeBlock = false;
           }
+
           if (this.isUrl(str) && !isInCodeBlock) {
             if (message.length > 0) {
-              message = message.join(' ');
-              message = this.getLetterType(message);
-              props.api.chat.message(
-                props.station,
-                `~${window.ship}`,
-                Date.now(),
-                message
-              );
+              // If we're in the middle of a message, add it to the stack and reset
+              messages.push(message);
               message = [];
             }
-            const URL = this.getLetterType(str);
-            props.api.chat.message(
-              props.station,
-              `~${window.ship}`,
-              Date.now(),
-              URL
-            );
+            messages.push([str]);
+            message = [];
           } else {
             message.push(str);
           }
         });
-
       }
-
     });
 
-    if (message.length > 0) {
-      message = message.join(' ');
-      message = this.getLetterType(message);
-      props.api.chat.message(
-        props.station,
-        `~${window.ship}`,
-        Date.now(),
-        message
-      );
-      message = [];
+    if (message.length) {
+      // Add any remaining message
+      messages.push(message);
     }
+
+    messages.forEach((message) => {
+      if (message.length > 0) {
+        message = this.getLetterType(message.join(' '));
+        props.api.chat.message(
+          props.station,
+          `~${window.ship}`,
+          Date.now(),
+          message
+        );
+      }
+    });
+
+    // perf testing:
+    /*let closure = () => {
+      let x = 0;
+      for (var i = 0; i < 30; i++) {
+        x++;
+        props.api.chat.message(
+          props.station,
+          `~${window.ship}`,
+          Date.now(),
+          {
+            text: `${x}`
+          }
+        );
+      }
+      setTimeout(closure, 1000);
+    };
+    this.closure = closure.bind(this);
+    setTimeout(this.closure, 2000);*/
+
+    this.editor.setValue('');
+  }
+
+  toggleCode() {
+    if(this.state.code) {
+      this.setState({ code: false });
+      this.editor.setOption('mode', MARKDOWN_CONFIG);
+      this.editor.setOption('placeholder', this.props.placeholder);
+    } else {
+      this.setState({ code: true });
+      this.editor.setOption('mode', null);
+      this.editor.setOption('placeholder', 'Code...');
+    }
+    const value = this.editor.getValue();
+
+    // Force redraw of placeholder
+    if(value.length === 0) {
+      this.editor.setValue(' ');
+      this.editor.setValue('');
+    }
+  }
+
+  uploadSuccess(url) {
+    const { props } = this;
+    props.api.chat.message(
+      props.station,
+      `~${window.ship}`,
+      Date.now(),
+      { url }
+    );
+  }
+
+  uploadError(error) {
+    //  no-op for now
   }
 
   render() {

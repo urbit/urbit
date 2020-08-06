@@ -77,7 +77,7 @@ const renderWithSigil = (props, timestamp) => {
             <p className={`v-mid f9 gray2 dib mr3 c-default`}>
               <span
                 className={
-                  'mw5 dib truncate pointer ' +
+                  'mw5 db truncate pointer ' +
                   (contact.nickname ? '' : 'mono')
                 }
                 onClick={() => {

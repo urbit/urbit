@@ -42,7 +42,6 @@ export default class PublishApp extends React.Component {
 
     const contacts = props.contacts ? props.contacts : {};
     const associations = props.associations ? props.associations : { contacts: {} };
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
     const notebooks = props.notebooks ? props.notebooks : {};
 
@@ -50,12 +49,6 @@ export default class PublishApp extends React.Component {
       .values()
       .map(_.values)
       .flatten() // flatten into array of notebooks
-      .filter((each) => {
-        return ((selectedGroups.map((e) => {
-          return e[0];
-        }).includes(each?.['writers-group-path'])) ||
-        (selectedGroups.length === 0));
-      })
       .map('num-unread')
       .reduce((acc, count) => acc + count, 0)
       .value();
@@ -80,7 +73,6 @@ export default class PublishApp extends React.Component {
                 invites={invites}
                 notebooks={notebooks}
                 associations={associations}
-                selectedGroups={selectedGroups}
                 contacts={contacts}
                 api={api}
               >
@@ -111,7 +103,6 @@ export default class PublishApp extends React.Component {
                 invites={invites}
                 notebooks={notebooks}
                 associations={associations}
-                selectedGroups={selectedGroups}
                 contacts={contacts}
                 api={api}
               >
@@ -142,7 +133,6 @@ export default class PublishApp extends React.Component {
                 invites={invites}
                 notebooks={notebooks}
                 associations={associations}
-                selectedGroups={selectedGroups}
                 contacts={contacts}
                 api={api}
               >
@@ -188,7 +178,6 @@ export default class PublishApp extends React.Component {
                   invites={invites}
                   notebooks={notebooks}
                   associations={associations}
-                  selectedGroups={selectedGroups}
                   contacts={contacts}
                   path={path}
                   api={api}
@@ -215,7 +204,6 @@ export default class PublishApp extends React.Component {
                   notebooks={notebooks}
                   associations={associations}
                   contacts={contacts}
-                  selectedGroups={selectedGroups}
                   path={path}
                   api={api}
                 >
@@ -265,7 +253,6 @@ export default class PublishApp extends React.Component {
                   sidebarShown={sidebarShown}
                   invites={invites}
                   notebooks={notebooks}
-                  selectedGroups={selectedGroups}
                   associations={associations}
                   contacts={contacts}
                   path={path}
@@ -293,7 +280,6 @@ export default class PublishApp extends React.Component {
                   invites={invites}
                   notebooks={notebooks}
                   associations={associations}
-                  selectedGroups={selectedGroups}
                   contacts={contacts}
                   path={path}
                   api={api}
