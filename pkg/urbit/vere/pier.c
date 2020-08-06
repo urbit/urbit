@@ -26,13 +26,11 @@
 
 #undef VERBOSE_PIER
 
-/* _pier_peek_new(): add a new u3_pico to the peek queue
+/* _pier_peek_plan(): add a u3_pico to the peek queue
 */
-static u3_pico*
-_pier_peek_new(u3_pier* pir_u)
+static void
+_pier_peek_plan(u3_pier* pir_u, u3_pico* pic_u)
 {
-  u3_pico* pic_u = c3_calloc(sizeof(*pic_u));
-
   if (!pir_u->pec_u.ent_u) {
     c3_assert( !pir_u->pec_u.ext_u );
     pir_u->pec_u.ent_u = pir_u->pec_u.ext_u = pic_u;
@@ -42,7 +40,7 @@ _pier_peek_new(u3_pier* pir_u)
     pir_u->pec_u.ent_u = pic_u;
   }
 
-  return pic_u;
+  u3_pier_spin(pir_u);
 }
 
 /* _pier_peek_next(): pop u3_pico off of peek queue
@@ -114,7 +112,7 @@ _pier_work_send(u3_work* wok_u)
       {
         len_w--;
         u3_lord_peek_pico(god_u, pic_u);
-        c3_free(pic_u);
+        u3_pico_free(pic_u);
       }
     }
 
@@ -123,7 +121,7 @@ _pier_work_send(u3_work* wok_u)
     while ( len_w-- && (pic_u = _pier_peek_next(pir_u)) )
     {
       u3_lord_peek_pico(god_u, pic_u);
-      c3_free(pic_u);
+      u3_pico_free(pic_u);
     }
   }
 }
@@ -419,7 +417,7 @@ u3_pier_peek(u3_pier*   pir_u,
              void*      ptr_v,
              u3_peek_cb fun_f)
 {
-  u3_pico* pic_u = _pier_peek_new(pir_u);
+  u3_pico* pic_u = u3_pico_init();
 
   pic_u->ptr_v = ptr_v;
   pic_u->fun_f = fun_f;
@@ -428,7 +426,7 @@ u3_pier_peek(u3_pier*   pir_u,
   pic_u->typ_e = u3_pico_full;
   pic_u->ful   = ful;
 
-  u3_pier_spin(pir_u);
+  _pier_peek_plan(pir_u, pic_u);
 }
 
 /* u3_pier_peek_mine(): read namespace, injecting ship.
@@ -441,7 +439,7 @@ u3_pier_peek_mine(u3_pier*   pir_u,
                   void*      ptr_v,
                   u3_peek_cb fun_f)
 {
-  u3_pico* pic_u = _pier_peek_new(pir_u);
+  u3_pico* pic_u = u3_pico_init();
 
   pic_u->ptr_v = ptr_v;
   pic_u->fun_f = fun_f;
@@ -451,7 +449,7 @@ u3_pier_peek_mine(u3_pier*   pir_u,
   pic_u->min_u.car_m = car_m;
   pic_u->min_u.pax   = pax;
 
-  u3_pier_spin(pir_u);
+  _pier_peek_plan(pir_u, pic_u);
 }
 
 /* u3_pier_peek_last(): read namespace, injecting ship and case.
@@ -465,7 +463,7 @@ u3_pier_peek_last(u3_pier*   pir_u,
                   void*      ptr_v,
                   u3_peek_cb fun_f)
 {
-  u3_pico* pic_u = _pier_peek_new(pir_u);
+  u3_pico* pic_u = u3_pico_init();
 
   pic_u->ptr_v = ptr_v;
   pic_u->fun_f = fun_f;
@@ -476,7 +474,7 @@ u3_pier_peek_last(u3_pier*   pir_u,
   pic_u->las_u.des   = des;
   pic_u->las_u.pax   = pax;
 
-  u3_pier_spin(pir_u);
+  _pier_peek_plan(pir_u, pic_u);
 }
 
 /* _pier_work_init(): begin processing new events
