@@ -388,6 +388,8 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
                    | (hed_u->rac_y << 25)
                    | (hed_u->enc_o << 27);
 
+    //  XX assumes little-endian
+    //
     memcpy(pac_y, &hed_w, 4);
 
     pac = u3i_bytes(4 + sen_y + rec_y + bod_u->con_w, pac_y);
