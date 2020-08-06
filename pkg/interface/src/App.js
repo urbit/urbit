@@ -5,6 +5,9 @@ import { BrowserRouter as Router, Route, withRouter, Switch } from 'react-router
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { sigil as sigiljs, stringRenderer } from 'urbit-sigil-js';
 
+import Mousetrap from 'mousetrap';
+import 'mousetrap-global-bind';
+
 import './css/indigo-static.css';
 import './css/fonts.css';
 import light from './themes/light';
@@ -18,6 +21,7 @@ import LinksApp from './apps/links/app';
 import PublishApp from './apps/publish/app';
 
 import StatusBar from './components/StatusBar';
+import Omnibox from './components/Omnibox';
 import ErrorComponent from './components/Error';
 
 import GlobalStore from './store/store';
@@ -74,6 +78,10 @@ class App extends React.Component {
     this.api.local.setDark(this.themeWatcher.matches);
     this.themeWatcher.addListener(this.updateTheme);
     this.api.local.getBaseHash();
+    Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
+      e.preventDefault();
+      this.api.local.setOmnibox();
+    });
     this.setFavicon();
   }
 
@@ -113,7 +121,6 @@ class App extends React.Component {
     const channel = window.channel;
 
     const associations = this.state.associations ? this.state.associations : { contacts: {} };
-    const selectedGroups = this.state.selectedGroups ? this.state.selectedGroups : [];
     const { state } = this;
     const theme = state.dark ? dark : light;
 
@@ -121,81 +128,99 @@ class App extends React.Component {
       <ThemeProvider theme={theme}>
         <Root>
           <Router>
-            <StatusBarWithRouter props={this.props}
-            associations={associations}
-            invites={this.state.invites}
-            api={this.api}
-            connection={this.state.connection}
-            subscription={this.subscription}
+            <StatusBarWithRouter
+              props={this.props}
+              associations={associations}
+              invites={this.state.invites}
+              api={this.api}
+              connection={this.state.connection}
+              subscription={this.subscription}
+            />
+            <Omnibox
+              associations={state.associations}
+              apps={state.launch}
+              api={this.api}
+              dark={state.dark}
+              show={state.omniboxShown}
             />
             <Content>
-            <Switch>
-              <Route exact path="/"
-              render={ p => (
-                <LaunchApp
-                  ship={this.ship}
-                  api={this.api}
-                  {...state}
-                  {...p}
+              <Switch>
+                <Route
+                  exact
+                  path='/'
+                  render={p => (
+                    <LaunchApp
+                      ship={this.ship}
+                      api={this.api}
+                      {...state}
+                      {...p}
+                    />
+                  )}
                 />
-              )}
-              />
-              <Route path="/~chat" render={ p => (
-                <ChatApp
-                  ship={this.ship}
-                  api={this.api}
-                  subscription={this.subscription}
-                  {...state}
-                  {...p}
+                <Route
+                  path='/~chat'
+                  render={p => (
+                    <ChatApp
+                      ship={this.ship}
+                      api={this.api}
+                      subscription={this.subscription}
+                      {...state}
+                      {...p}
+                    />
+                  )}
                 />
-              )}
-              />
-              <Route path="/~dojo" render={ p => (
-                <DojoApp
-                  ship={this.ship}
-                  channel={channel}
-                  selectedGroups={selectedGroups}
-                  subscription={this.subscription}
-                  {...p}
+                <Route
+                  path='/~dojo'
+                  render={p => (
+                    <DojoApp
+                      ship={this.ship}
+                      channel={channel}
+                      subscription={this.subscription}
+                      {...p}
+                    />
+                  )}
                 />
-              )}
-              />
-              <Route path="/~groups" render={ p => (
-                <GroupsApp
-                  ship={this.ship}
-                  api={this.api}
-                  subscription={this.subscription}
-                  {...state}
-                  {...p}
+                <Route
+                  path='/~groups'
+                  render={p => (
+                    <GroupsApp
+                      ship={this.ship}
+                      api={this.api}
+                      subscription={this.subscription}
+                      {...state}
+                      {...p}
+                    />
+                  )}
                 />
-              )}
-              />
-              <Route path="/~link" render={ p => (
-                <LinksApp
-                  ship={this.ship}
-                  ship={this.ship}
-                  api={this.api}
-                  subscription={this.subscription}
-                  {...state}
-                  {...p}
+                <Route
+                  path='/~link'
+                  render={p => (
+                    <LinksApp
+                      ship={this.ship}
+                      api={this.api}
+                      subscription={this.subscription}
+                      {...state}
+                      {...p}
+                    />
+                  )}
                 />
-              )}
-              />
-              <Route path="/~publish" render={ p => (
-                <PublishApp
-                  ship={this.ship}
-                  api={this.api}
-                  subscription={this.subscription}
-                  {...state}
-                  {...p}
+                <Route
+                  path='/~publish'
+                  render={p => (
+                    <PublishApp
+                      ship={this.ship}
+                      api={this.api}
+                      subscription={this.subscription}
+                      {...state}
+                      {...p}
+                    />
+                  )}
                 />
-              )}
-              />
               <Route
-                render={(props) => (
+                render={props => (
                   <ErrorComponent {...props} code={404} description="Not Found" />
                 )}
-               />
+              />
               </Switch>
             </Content>
           </Router>

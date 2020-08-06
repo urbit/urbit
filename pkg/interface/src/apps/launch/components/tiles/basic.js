@@ -1,6 +1,7 @@
 import React  from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
+import defaultApps from '../../../../lib/default-apps';
 
 import Tile from './tile';
 
@@ -29,7 +30,9 @@ export default class BasicTile extends React.PureComponent {
       </span>
     );
 
-    const routeList = ['/~chat', '/~publish', '/~link', '/~groups', '/~dojo'];
+    const routeList = defaultApps.map((e) => {
+      return `/~${e}`;
+    });
 
     const tile =  ( routeList.indexOf(props.linkedUrl) !== -1 ) ? (
       <Link className="w-100 h-100 db pa2 no-underline" to={props.linkedUrl}>

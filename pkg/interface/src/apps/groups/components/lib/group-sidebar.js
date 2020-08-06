@@ -72,16 +72,6 @@ export class GroupSidebar extends Component {
           (path in props.groups)
         );
       })
-      .filter((path) => {
-        const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
-        if (selectedGroups.length === 0) {
-          return true;
-        }
-        const selectedPaths = selectedGroups.map(((e) => {
-        return e[0];
-      }));
-        return (selectedPaths.includes(path));
-      })
       .sort((a, b) => {
         let aName = a.substr(1);
         let bName = b.substr(1);

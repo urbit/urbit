@@ -119,6 +119,9 @@ export function writeText(str) {
 // trim patps to match dojo, chat-cli
 export function cite(ship) {
   let patp = ship, shortened = '';
+  if (patp === null || patp === '') {
+    return null;
+  }
   if (patp.startsWith('~')) {
     patp = patp.substr(1);
   }
