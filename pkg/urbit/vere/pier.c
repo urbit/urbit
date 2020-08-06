@@ -26,6 +26,42 @@
 
 #undef VERBOSE_PIER
 
+/* _pier_peek_plan(): add a u3_pico to the peek queue
+*/
+static void
+_pier_peek_plan(u3_pier* pir_u, u3_pico* pic_u)
+{
+  if (!pir_u->pec_u.ent_u) {
+    c3_assert( !pir_u->pec_u.ext_u );
+    pir_u->pec_u.ent_u = pir_u->pec_u.ext_u = pic_u;
+  }
+  else {
+    pir_u->pec_u.ent_u->nex_u = pic_u;
+    pir_u->pec_u.ent_u = pic_u;
+  }
+
+  u3_pier_spin(pir_u);
+}
+
+/* _pier_peek_next(): pop u3_pico off of peek queue
+*/
+static u3_pico*
+_pier_peek_next(u3_pier* pir_u)
+{
+  u3_pico* pic_u = pir_u->pec_u.ext_u;
+
+  if (pic_u) {
+    pir_u->pec_u.ext_u = pic_u->nex_u;
+    if (!pir_u->pec_u.ext_u) {
+      pir_u->pec_u.ent_u = 0;
+    }
+
+    pic_u->nex_u = 0;
+  }
+
+  return pic_u;
+}
+
 /* _pier_work_send(): send new events for processing
 */
 static void
@@ -60,13 +96,32 @@ _pier_work_send(u3_work* wok_u)
   {
     u3_ovum* egg_u;
     u3_noun    ovo;
+    u3_pico* pic_u;
 
-    while (  len_w-- && car_u && (egg_u = u3_auto_next(car_u, &ovo)) ) {
+    while ( len_w && car_u && (egg_u = u3_auto_next(car_u, &ovo)) ) {
+      len_w--;
       u3_lord_work(god_u, egg_u, ovo);
 
       //  queue events depth first
       //
       car_u = egg_u->car_u;
+
+      //  interleave scry requests
+      //
+      if ( len_w && (pic_u = _pier_peek_next(pir_u)) )
+      {
+        len_w--;
+        u3_lord_peek(god_u, pic_u);
+        u3_pico_free(pic_u);
+      }
+    }
+
+    //  if there's room left in the batch, fill it up with remaining scries
+    //
+    while ( len_w-- && (pic_u = _pier_peek_next(pir_u)) )
+    {
+      u3_lord_peek(god_u, pic_u);
+      u3_pico_free(pic_u);
     }
   }
 }
@@ -351,6 +406,75 @@ u3_pier_spin(u3_pier* pir_u)
   if ( !uv_is_active((uv_handle_t*)&wok_u->idl_u) ) {
     uv_idle_start(&wok_u->idl_u, _pier_work_idle_cb);
   }
+}
+
+/* u3_pier_peek(): read namespace.
+*/
+void
+u3_pier_peek(u3_pier*   pir_u,
+             u3_noun      gan,
+             u3_noun      ful,
+             void*      ptr_v,
+             u3_peek_cb fun_f)
+{
+  u3_pico* pic_u = u3_pico_init();
+
+  pic_u->ptr_v = ptr_v;
+  pic_u->fun_f = fun_f;
+  pic_u->gan   = gan;
+  //
+  pic_u->typ_e = u3_pico_full;
+  pic_u->ful   = ful;
+
+  _pier_peek_plan(pir_u, pic_u);
+}
+
+/* u3_pier_peek_mine(): read namespace, injecting ship.
+*/
+void
+u3_pier_peek_mine(u3_pier*   pir_u,
+                  u3_noun      gan,
+                  c3_m       car_m,
+                  u3_noun      pax,
+                  void*      ptr_v,
+                  u3_peek_cb fun_f)
+{
+  u3_pico* pic_u = u3_pico_init();
+
+  pic_u->ptr_v = ptr_v;
+  pic_u->fun_f = fun_f;
+  pic_u->gan   = gan;
+  //
+  pic_u->typ_e       = u3_pico_mine;
+  pic_u->min_u.car_m = car_m;
+  pic_u->min_u.pax   = pax;
+
+  _pier_peek_plan(pir_u, pic_u);
+}
+
+/* u3_pier_peek_last(): read namespace, injecting ship and case.
+*/
+void
+u3_pier_peek_last(u3_pier*   pir_u,
+                  u3_noun      gan,
+                  c3_m       car_m,
+                  u3_atom      des,
+                  u3_noun      pax,
+                  void*      ptr_v,
+                  u3_peek_cb fun_f)
+{
+  u3_pico* pic_u = u3_pico_init();
+
+  pic_u->ptr_v = ptr_v;
+  pic_u->fun_f = fun_f;
+  pic_u->gan   = gan;
+  //
+  pic_u->typ_e       = u3_pico_last;
+  pic_u->las_u.car_m = car_m;
+  pic_u->las_u.des   = des;
+  pic_u->las_u.pax   = pax;
+
+  _pier_peek_plan(pir_u, pic_u);
 }
 
 /* _pier_work_init(): begin processing new events
@@ -1024,7 +1148,7 @@ _pier_on_lord_live(void* ptr_v)
         //  run the requested scry, jam to disk, then exit
         //
         u3l_log("pier: scry\n");
-        u3_lord_peek_last(god_u, u3_nul, u3k(car), u3k(dek), u3k(pax),
+        u3_pier_peek_last(pir_u, u3_nul, u3k(car), u3k(dek), u3k(pax),
                           pir_u, _pier_on_scry_done);
       }
       u3z(pex);
