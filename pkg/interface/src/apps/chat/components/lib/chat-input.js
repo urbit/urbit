@@ -246,7 +246,7 @@ export class ChatInput extends Component {
           onUnmount={props.onUnmount}
           message={props.message}
           placeholder='Message...' />
-        <div className="ml3 mr3"
+        <div className="ml2 mr2"
              style={{
                height: '16px',
                width: '16px',
