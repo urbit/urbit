@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 
 export const UnreadNotice = (props) => {
-  const { unreadCount, unreadMsg, onRead } = props;
+  const { unreadCount, unreadMsg, dismissUnread } = props;
 
   if (!unreadMsg || (unreadCount === 0)) {
     return null;
@@ -31,7 +31,7 @@ export const UnreadNotice = (props) => {
           )}
           <span className="green3">{timestamp}</span>
         </p>
-        <div onClick={onRead}
+        <div onClick={dismissUnread}
              className="ml4 inter b--green2 pointer tr lh-copy">
           Mark as Read
         </div>

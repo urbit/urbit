@@ -7,7 +7,6 @@ type IMessage = Envelope & { pending?: boolean };
 
 
 export const ChatMessage = (props) => {
-
   const unread = 0;
   const index = props.index;
   const msg = props.msg;

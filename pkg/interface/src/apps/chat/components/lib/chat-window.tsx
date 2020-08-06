@@ -7,13 +7,12 @@ import { ResubscribeElement } from "./resubscribe-element";
 import { BacklogElement } from "./backlog-element";
 
 const MAX_BACKLOG_SIZE = 1000;
-const DEFAULT_BACKLOG_SIZE = 300;
+const DEFAULT_BACKLOG_SIZE = 200;
 
 
 export class ChatWindow extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       numPages: 1,
     };
@@ -42,8 +41,11 @@ export class ChatWindow extends Component {
   }
 
   scrollIsAtTop() {
-    this.setState({ numPages: this.state.numPages + 1 }, () => {
-      this.fetchBacklog();
+    const { props, state } = this;
+    this.setState({ numPages: state.numPages + 1 }, () => {
+      if (state.numPages * 100 < props.length) {
+        this.fetchBacklog();
+      }
     });
   }
 
@@ -63,12 +65,12 @@ export class ChatWindow extends Component {
   }
 
   dismissUnread() {
-    //this.props.api.chat.read(this.props.station);
+    this.props.api.chat.read(this.props.station);
   }
 
   fetchBacklog() {
-    const size = DEFAULT_BACKLOG_SIZE;
     const { props } = this;
+    const size = DEFAULT_BACKLOG_SIZE;
 
     if (
       props.messages.length >= props.length ||
@@ -89,15 +91,23 @@ export class ChatWindow extends Component {
 
   render() {
     const { props, state } = this;
+    const sliceLength = (
+      state.numPages * 100 <
+      props.messages.length + props.pendingMessages.length
+    ) ? state.numPages * 100 :
+        props.messages.length + props.pendingMessages.length;
 
-    const messages = props.pendingMessages.concat(props.messages);
+    const messages =
+      props.pendingMessages
+        .concat(props.messages)
+        .slice(0, sliceLength);
 
     return (
       <Fragment>
         <UnreadNotice
           unreadCount={props.unreadCount}
           unreadMsg={props.unreadMsg}
-          onRead={this.dismissUnread} />
+          dismissUnread={this.dismissUnread} />
         <ChatScrollContainer
           scrollIsAtBottom={this.scrollIsAtBottom}
           scrollIsAtTop={this.scrollIsAtTop}>

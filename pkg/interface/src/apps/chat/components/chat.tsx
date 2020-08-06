@@ -96,7 +96,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
       props.envelopes.length > 0;
     
     const unreadCount = props.length - props.read;
-    const unreadMsg = unreadCount > 0 && props.envelopes[unread - 1];
+    const unreadMsg = unreadCount > 0 && props.envelopes[unreadCount - 1];
 
     return (
       <div
@@ -120,7 +120,9 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           pendingMessages={pendingMessages}
           messages={props.envelopes}
           length={props.length}
-          contacts={props.contacts} 
+          contacts={props.contacts}
+          association={props.association}
+          group={props.group}
           ship={props.match.params.ship}
           station={props.station}
           api={props.api} />

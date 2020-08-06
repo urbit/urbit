@@ -28,6 +28,10 @@ export class ChatScrollContainer extends Component {
     };
 
     this.isTriggeredScroll = false;
+
+    this.isAtBottom = true;
+    this.isAtTop = false;
+
     this.containerDidScroll = this.containerDidScroll.bind(this);
 
     this.containerRef = React.createRef();
@@ -45,12 +49,26 @@ export class ChatScrollContainer extends Component {
         });
       }
 
-      props.scrollIsAtTop();
-    } else if (scrollIsAtBottom(e.target) && !this.isTriggeredScroll) {
-      props.scrollIsAtBottom();
-    }
+      if (!this.isAtTop) {
+        props.scrollIsAtTop();
+      }
 
-    this.isTriggeredScroll = false;
+      this.isTriggeredScroll = false;
+      this.isAtBottom = false;
+      this.isAtTop = true;
+    } else if (scrollIsAtBottom(e.target) && !this.isTriggeredScroll) {
+      if (!this.isAtBottom) {
+        props.scrollIsAtBottom();
+      }
+
+      this.isTriggeredScroll = false;
+      this.isAtBottom = true;
+      this.isAtTop = false;
+    } else {
+      this.isAtBottom = false;
+      this.isAtTop = false;
+      this.isTriggeredScroll = false;
+    }
   }
 
   render() {
