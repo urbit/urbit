@@ -177,7 +177,7 @@ const theme = {
   ],
   // z-index
   zIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-  breakpoints: ["34.375em", "46.875em", "60em"],
+  breakpoints: ["550px", "750px", "960px"],
 };
 export type Theme = typeof theme;
 export const styled = baseStyled as ThemedStyledInterface<Theme>;
