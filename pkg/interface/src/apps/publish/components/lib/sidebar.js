@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { SidebarInvite } from './sidebar-invite';
+import SidebarInvite from '../../../../components/SidebarInvite';
 import { Welcome } from './welcome';
 import { GroupItem } from './group-item';
 import { alphabetiseAssociations } from '../../../../lib/util';
@@ -19,13 +19,13 @@ export class Sidebar extends Component {
     const sidebarInvites =  !(props.invites && props.invites['/publish'])
       ? null
       : Object.keys(props.invites['/publish'])
-          .map((uid, i) => {
+          .map((uid) => {
             return (
               <SidebarInvite
-                uid={uid}
+                key={uid}
                 invite={props.invites['/publish'][uid]}
-                api={this.props.api}
-                key={i}
+                onAccept={() => props.api.invite.accept('/publish', uid)}
+                onDecline={() => props.api.invite.decline('/publish', uid)}
               />
             );
         });

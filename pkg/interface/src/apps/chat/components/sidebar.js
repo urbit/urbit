@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import Welcome from './lib/welcome';
 import { alphabetiseAssociations } from '../../../lib/util';
-import { SidebarInvite } from './lib/sidebar-invite';
+import SidebarInvite from '../../../components/SidebarInvite';
 import { GroupItem } from './lib/group-item';
 
 export class Sidebar extends Component {
@@ -51,10 +51,10 @@ export class Sidebar extends Component {
       .map((uid) => {
         return (
           <SidebarInvite
-            uid={uid}
             key={uid}
             invite={props.invites[uid]}
-            api={props.api}
+            onAccept={() => props.api.invite.accept('/chat', uid)}
+            onDecline={() => props.api.invite.decline('/chat', uid)}
           />
         );
       });
