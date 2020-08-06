@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { Box, Row, Rule, Text } from '@tlon/indigo-react';
 import index from '../lib/omnibox';
 import Mousetrap from 'mousetrap';
+import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
 
 import { cite } from '../lib/util';
@@ -33,8 +34,8 @@ export class Omnibox extends Component {
       Mousetrap.bind('escape', () => this.props.api.local.setOmnibox());
       document.addEventListener('mousedown', this.handleClickOutside);
       const touchstart = new Event('touchstart');
-      this.input.dispatchEvent(touchstart);
-      this.input.focus();
+      this.omniInput.input.dispatchEvent(touchstart);
+      this.omniInput.input.focus();
     }
   }
 
@@ -77,7 +78,9 @@ export class Omnibox extends Component {
 
   handleClickOutside(evt) {
     if (this.props.show && !this.omniBox.contains(evt.target)) {
-      this.props.api.local.setOmnibox();
+      this.setState({ results: this.initialResults(), query: '' }, () => {
+        this.props.api.local.setOmnibox();
+      });
     }
   }
 
@@ -121,10 +124,11 @@ export class Omnibox extends Component {
       results.set(category,
         categoryIndex.filter((result) => {
           return (
-            result.title.includes(query) ||
-            result.link.includes(query) ||
-            result.app.includes(query) ||
-            (result.host !== null ? result.host.includes(query) : false));
+            result.title.toLowerCase().includes(query) ||
+            result.link.toLowerCase().includes(query) ||
+            result.app.toLowerCase().includes(query) ||
+            (result.host !== null ? result.host.includes(query) : false)
+          );
         })
       );
     });
@@ -133,26 +137,26 @@ export class Omnibox extends Component {
   }
 
     setPreviousSelected() {
-    const current = this.state.selected;
-    const flattenedResults = Array.from(this.state.results.values()).flat();
-    const totalLength = flattenedResults.length;
-    if (current !== '') {
-      const currentIndex = flattenedResults.indexOf(
-        ...flattenedResults.filter((e) => {
-          return e.link === current;
-        })
-      );
-      if (currentIndex > 0) {
-      const nextLink = flattenedResults[currentIndex - 1].link;
-      this.setState({ selected: nextLink });
+      const current = this.state.selected;
+      const flattenedResults = Array.from(this.state.results.values()).flat();
+      const totalLength = flattenedResults.length;
+      if (current !== '') {
+        const currentIndex = flattenedResults.indexOf(
+          ...flattenedResults.filter((e) => {
+            return e.link === current;
+          })
+        );
+        if (currentIndex > 0) {
+        const nextLink = flattenedResults[currentIndex - 1].link;
+        this.setState({ selected: nextLink });
+        } else {
+        const nextLink = flattenedResults[totalLength - 1].link;
+        this.setState({ selected: nextLink });
+        }
       } else {
-      const nextLink = flattenedResults[totalLength - 1].link;
-      this.setState({ selected: nextLink });
+        const nextLink = flattenedResults[totalLength - 1].link;
+        this.setState({ selected: nextLink });
       }
-    } else {
-      const nextLink = flattenedResults[totalLength - 1].link;
-      this.setState({ selected: nextLink });
-    }
   }
 
   setNextSelected() {
@@ -181,7 +185,7 @@ export class Omnibox extends Component {
     const { props, state } = this;
     const categoryResult = [];
 
-    const renderResults = <Box maxHeight="400px" overflowY="scroll">
+    const renderResults = <Box maxHeight="400px" overflowY="scroll" overflowX="hidden">
       {categoryResult}
     </Box>;
 
@@ -218,8 +222,7 @@ export class Omnibox extends Component {
           top='0'
           right='0'
           zIndex='9'
-          display={props.show ? 'block' : 'none'}
-        >
+          display={props.show ? 'block' : 'none'}>
           <Row justifyContent='center'>
             <Box
               mt='20vh'
@@ -229,18 +232,12 @@ export class Omnibox extends Component {
               backgroundColor='white'
               ref={(el) => {
                 this.omniBox = el;
-              }}
-            >
-              <input
-                ref={(el) => {
-                this.input = el;
-              }}
-                className="ba b--transparent w-100 br2 white-d bg-gray0-d inter f9 pa2"
-                style={{ maxWidth: 'calc(600px - 1.15rem)', boxSizing: 'border-box' }}
-                placeholder="Search..."
-                onKeyDown={e => this.control(e) }
-                onChange={this.search}
-                value={state.query}
+              }}>
+              <OmniboxInput
+                ref={(el) => { this.omniInput = el; }}
+                control={e => this.control(e)}
+                search={this.search}
+                query={state.query}
               />
               {renderResults}
             </Box>

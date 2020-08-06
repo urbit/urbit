@@ -24,50 +24,53 @@ export class OmniboxResult extends Component {
       invertGraphic = (!dark && this.state.hovered) ||
       selected === link ||
       (dark && !(this.state.hovered || selected === link))
-        ? { filter: "invert(1)" }
-        : { filter: "invert(0)" };
+        ? { filter: 'invert(1)', paddingTop: 2 }
+        : { filter: 'invert(0)', paddingTop: 2 };
     } else {
       invertGraphic =
         (!dark && this.state.hovered) ||
         selected === link ||
         (dark && !(this.state.hovered || selected === link))
-          ? { filter: "invert(0)" }
-          : { filter: "invert(1)" };
+          ? { filter: 'invert(0)', paddingTop: 2 }
+          : { filter: 'invert(1)', paddingTop: 2 };
     }
 
     let graphic = <div />;
-    if (defaultApps.includes(icon.toLowerCase())) {
+    if (defaultApps.includes(icon.toLowerCase()) || icon.toLowerCase() === 'links') {
       graphic = <img className="mr2 v-mid" height="12" width="12" src={`/~landscape/img/${icon.toLowerCase()}.png`} style={invertGraphic} />;
     } else {
-      graphic = <Icon />;
+      graphic = <Icon verticalAlign="middle" mr={2} size="12px" />;
     }
     return (
         <Row
           py='2'
           px='2'
-          display='block'
-          style={{ cursor: "pointer" }}
+          display='flex'
+          flexDirection='row'
+          style={{ cursor: 'pointer' }}
           onMouseEnter={() => this.setHover(true)}
           onMouseLeave={() => this.setHover(false)}
           backgroundColor={
-            this.state.hovered || selected === link ? "blue" : "white"
+            this.state.hovered || selected === link ? 'blue' : 'white'
           }
-          onClick={navigate}>
+          onClick={navigate}
+          width="100%"
+        >
           {this.state.hovered || selected === link ? (
             <>
             {graphic}
-              <Text color='white' mr='1'>
+              <Text color='white' mr='1' style={{ 'flex-shrink': 0 }}>
                 {text}
               </Text>
-              <Text style={{ float: "right" }} color='white'>
+              <Text pr='2' color='white' width='100%' textAlign='right'>
                 {subtext}
               </Text>
             </>
           ) : (
             <>
             {graphic}
-              <Text mr='1'>{text}</Text>
-              <Text style={{ float: "right" }} gray>
+              <Text mr='1' style={{ 'flex-shrink': 0 }}>{text}</Text>
+              <Text pr='2' gray width='100%' textAlign='right'>
                 {subtext}
               </Text>
             </>
