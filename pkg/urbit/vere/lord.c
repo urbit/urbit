@@ -803,11 +803,10 @@ _lord_writ_plan(u3_lord* god_u, u3_writ* wit_u)
   _lord_writ_send(god_u, wit_u);
 }
 
-/* u3_lord_peek_pico(): read namespace, injecting what's missing.
+/* u3_lord_peek(): read namespace, injecting what's missing.
 */
 void
-u3_lord_peek_pico(u3_lord* god_u,
-                  u3_pico* pic_u)
+u3_lord_peek(u3_lord* god_u, u3_pico* pic_u)
 {
   u3_writ* wit_u = _lord_writ_new(god_u);
   wit_u->typ_e = u3_writ_peek;

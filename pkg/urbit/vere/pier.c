@@ -111,7 +111,7 @@ _pier_work_send(u3_work* wok_u)
       if ( len_w && (pic_u = _pier_peek_next(pir_u)) )
       {
         len_w--;
-        u3_lord_peek_pico(god_u, pic_u);
+        u3_lord_peek(god_u, pic_u);
         u3_pico_free(pic_u);
       }
     }
@@ -120,7 +120,7 @@ _pier_work_send(u3_work* wok_u)
     //
     while ( len_w-- && (pic_u = _pier_peek_next(pir_u)) )
     {
-      u3_lord_peek_pico(god_u, pic_u);
+      u3_lord_peek(god_u, pic_u);
       u3_pico_free(pic_u);
     }
   }
