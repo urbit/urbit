@@ -1002,11 +1002,10 @@
         void
         u3_lord_play(u3_lord* god_u, u3_info fon_u);
 
-      /* u3_lord_peek_pico(): read namespace, injecting what's missing.
+      /* u3_lord_peek(): read namespace, injecting what's missing.
       */
         void
-        u3_lord_peek_pico(u3_lord* god_u,
-                          u3_pico* pic_u);
+        u3_lord_peek(u3_lord* god_u, u3_pico* pic_u);
 
     /**  Filesystem (new api).
     **/
