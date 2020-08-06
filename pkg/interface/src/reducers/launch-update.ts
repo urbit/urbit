@@ -50,7 +50,6 @@ export default class LaunchReducer<S extends LaunchState> {
 
   changeIsShown(json: LaunchUpdate, state: S) {
     const data = _.get(json, 'changeIsShown', false);
-    console.log(json, data);
     if (data) {
       let tile = state.launch.tiles[data.name];
       console.log(tile);

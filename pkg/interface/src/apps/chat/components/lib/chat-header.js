@@ -54,12 +54,10 @@ export class ChatHeader extends Component {
             </h2>
           </Link>
           <ChatTabBar
-            {...props}
+            location={props.location}
             station={props.station}
-            numPeers={group.length}
             isOwner={deSig(props.match.params.ship) === window.ship}
             popout={props.popout}
-            api={props.api}
           />
         </div>
       </Fragment>

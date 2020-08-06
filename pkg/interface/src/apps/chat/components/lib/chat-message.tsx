@@ -7,11 +7,16 @@ type IMessage = Envelope & { pending?: boolean };
 
 
 export const ChatMessage = (props) => {
-  const unread = 0;
-  const index = props.index;
-  const msg = props.msg;
-  const previousMsg = props.previousMsg;
-  const nextMsg = props.nextMsg;
+  const {
+    msg,
+    previousMsg,
+    nextMsg,
+    isLastUnread,
+    group,
+    association,
+    contacts,
+    unreadRef
+  } = props;
 
   // Render sigil if previous message is not by the same sender
   const aut = ["author"];
@@ -26,24 +31,26 @@ export const ChatMessage = (props) => {
     moment(_.get(nextMsg, when)).format("YYYY.MM.DD") !==
     moment(_.get(msg, when)).format("YYYY.MM.DD");
 
-  return (
+  const messageElem = (
     <Message
       key={msg.uid}
       msg={msg}
-      contacts={props.contacts}
       renderSigil={renderSigil}
       paddingTop={paddingTop}
       paddingBot={paddingBot}
       pending={Boolean(msg.pending)}
-      group={props.group}
-      association={props.association}
+      group={group}
+      contacts={contacts}
+      association={association}
     />
   );
-/*  if (unread > 0 && index === unread - 1) {
+
+  if (props.isLastUnread) {
     return (
       <Fragment key={msg.uid}>
         {messageElem}
-        <div className="mv2 green2 flex items-center f9">
+        <div ref={unreadRef}
+             className="mv2 green2 flex items-center f9">
           <hr className="dn-s ma0 w2 b--green2 bt-0" />
           <p className="mh4">New messages below</p>
           <hr className="ma0 flex-grow-1 b--green2 bt-0" />
@@ -72,6 +79,6 @@ export const ChatMessage = (props) => {
     );
   } else {
     return messageElem;
-  }*/
+  }
 };
 

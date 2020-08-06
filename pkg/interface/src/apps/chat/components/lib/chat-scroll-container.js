@@ -125,4 +125,19 @@ export class ChatScrollContainer extends Component {
       );
     }
   }
+
+  scrollToReference(ref) {
+    this.isTriggeredScroll = true;
+    if (this.scrollRef.current && ref.current) {
+      ref.current.scrollIntoView({ block: 'center' });
+    }
+
+    if (navigator.userAgent.includes("Firefox")) {
+      recalculateScrollTop(
+        this.state.lastScrollHeight,
+        this.scrollContainer
+      );
+    }
+  }
+
 }
