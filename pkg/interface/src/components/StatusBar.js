@@ -32,8 +32,7 @@ const StatusBar = (props) => {
       className={
         'bg-white bg-gray0-d w-100 justify-between relative tc pt3 ' + display
       }
-      style={{ height: 45 }}
-    >
+      style={{ height: 45 }}>
       <div className='absolute left-0 pl4' style={{ top: 10 }}>
         {atHome ? null : (
           <Box
@@ -45,8 +44,7 @@ const StatusBar = (props) => {
             py={1}
             px={2}
             mr={2}
-            onClick={() => props.history.push('/')}
-          >
+            onClick={() => props.history.push('/')}>
             <img
               className='invert-d'
               src='/~landscape/img/icon-home.png'
@@ -61,11 +59,10 @@ const StatusBar = (props) => {
           color='washedGray'
           display='inline-block'
           style={{ cursor: 'pointer' }}
-          lineHeight="min"
+          lineHeight='min'
           py={1}
           px={2}
-          onClick={() => props.api.local.setOmnibox()}
-        >
+          onClick={() => props.api.local.setOmnibox()}>
           <Text display='inline-block' style={{ transform: 'rotate(180deg)' }}>
             ↩
           </Text>
@@ -77,8 +74,8 @@ const StatusBar = (props) => {
           </Text>
         </Box>
         <ReconnectButton
-        connection={props.connection}
-        subscription={props.subscription}
+          connection={props.connection}
+          subscription={props.subscription}
         />
       </div>
       <div className='fl absolute relative right-0 pr4' style={{ top: 10 }}>
@@ -87,13 +84,13 @@ const StatusBar = (props) => {
           display='inline-block'
           borderRadius={2}
           color='washedGray'
+          lineHeight='min'
           border={1}
           px={2}
           py={1}
-          onClick={() => props.history.push('/~groups')}
-        >
+          onClick={() => props.history.push('/~groups')}>
           <img
-            className='invert-d v-mid'
+            className='invert-d v-mid mr1'
             src='/~landscape/img/groups.png'
             height='16'
             width='16'
