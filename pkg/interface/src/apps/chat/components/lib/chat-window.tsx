@@ -77,7 +77,11 @@ export class ChatWindow extends Component {
           }
         });
       }
-    } else if (state.numPages === 1 && this.props.unreadCount < INITIAL_LOAD) {
+    } else if (
+      state.numPages === 1 &&
+      this.props.unreadCount < INITIAL_LOAD &&
+      this.props.unreadCount > 0
+    ) {
       this.dismissUnread();
       this.scrollToBottom();
     }
@@ -139,12 +143,10 @@ export class ChatWindow extends Component {
 
   render() {
     const { props, state } = this;
-    const sliceLength = (
-      state.numPages * PAGE_SIZE <
+    const sliceLength = Math.min(
+      state.numPages * PAGE_SIZE,
       props.messages.length + props.pendingMessages.length
-    ) ? state.numPages * PAGE_SIZE :
-        props.messages.length + props.pendingMessages.length;
-
+    );
     const messages =
       props.pendingMessages
         .concat(props.messages)
