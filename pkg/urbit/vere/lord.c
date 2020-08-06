@@ -355,8 +355,6 @@ _lord_plea_peek_bail(u3_lord* god_u, u3_peek* pek_u, u3_noun dud)
   u3z(pek_u->gan);
   u3z(pek_u->ful);
   c3_free(pek_u);
-
-  _lord_bail(god_u);
 }
 
 /* _lord_plea_peek_done(): hear serf %peek %done
