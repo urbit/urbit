@@ -46,7 +46,7 @@ export class ProfileOverlay extends Component {
     if (!(top || bottom)) {
       bottom = `-${Math.round(OVERLAY_HEIGHT / 2)}px`;
     }
-    const containerStyle = { top, bottom, left: '100%' };
+    const containerStyle = { top, bottom, left: '100%', maxWidth: '160px' };
 
     const isOwn = window.ship === ship;
 
@@ -79,7 +79,7 @@ export class ProfileOverlay extends Component {
         </div>
         <div className="pv3 pl3 pr2">
           {contact && contact.nickname && (
-            <div className="b white-d">{contact.nickname}</div>
+            <div className="b white-d truncate">{contact.nickname}</div>
           )}
           <div className="mono gray2">{cite(`~${ship}`)}</div>
           {!isOwn && (

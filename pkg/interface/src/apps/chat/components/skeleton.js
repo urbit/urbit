@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
+import ErrorBoundary from '../../../components/ErrorBoundary';
 
 export class Skeleton extends Component {
   render() {
@@ -61,7 +62,9 @@ export class Skeleton extends Component {
               width: 'calc(100% - 300px)'
             }}
           >
-            {this.props.children}
+            <ErrorBoundary>
+              {this.props.children}
+            </ErrorBoundary>
           </div>
         </div>
       </div>

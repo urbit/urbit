@@ -30,7 +30,7 @@ If applicable, add screenshots to help explain your problem.
 **System (please supply the following information, if relevant):**
  - OS: [e.g. macOS, linux64, FreeBSD]
  - Vere and Urbit OS versions
- - Your ship's `%base` hash (use `.^(@uv %cz /=base=)` to check)
+ - Your ship's `%base` hash (use `+trouble` to check)
 
 **Additional context**
 Add any other context about the problem here.

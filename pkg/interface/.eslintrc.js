@@ -47,6 +47,21 @@ const rules = {
   ],
   "handle-callback-err": "off",
   "linebreak-style": ["error", "unix"],
+  "max-lines": [
+    "error",
+    {
+      "max": 200,
+      "skipBlankLines": true,
+      "skipComments": true
+    }
+  ],
+  "max-lines-per-function": [
+    "error",
+    {
+      "skipBlankLines": true,
+      "skipComments": true
+    }
+  ],
   "max-statements-per-line": [
     "error",
     {
@@ -132,8 +147,8 @@ const rules = {
 module.exports = {
   "env": env,
   "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "eslint/recommended",
   ],
   "settings": {
     "react": {
