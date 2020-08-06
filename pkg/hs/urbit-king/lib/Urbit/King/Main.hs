@@ -144,7 +144,7 @@ toPierConfig pierPath o@(CLI.Opts{..}) = PierConfig { .. }
  where
   _pcPierPath  = pierPath
   _pcDryRun    = oDryRun || isJust oDryFrom
-  _pcSerfExe   = fromMaybe "urbit-worker" oSerfExe
+  _pcSerfExe   = oSerfExe
   _pcSerfFlags = toSerfFlags o
 
 toNetworkConfig :: CLI.Opts -> NetworkConfig

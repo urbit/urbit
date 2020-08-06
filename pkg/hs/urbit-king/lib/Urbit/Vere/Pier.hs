@@ -25,6 +25,8 @@ import Urbit.King.App
 import Urbit.Vere.Pier.Types
 
 import Control.Monad.STM      (retry)
+import System.Environment     (getExecutablePath)
+import System.FilePath        (splitFileName, (</>))
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.King.API         (TermConn)
@@ -122,17 +124,25 @@ runSerf
   -> RAcquire e Serf
 runSerf vSlog pax = do
   env <- ask
-  Serf.withSerf (config env)
+  serfProg <- io getSerfProg
+  Serf.withSerf (config env serfProg)
  where
   slog txt = atomically (readTVar vSlog) >>= (\f -> f txt)
-  config env = Serf.Config
-    { scSerf = env ^. pierConfigL . pcSerfExe . to unpack
+  config env serfProg = Serf.Config
+    { scSerf = env ^. pierConfigL . pcSerfExe . to (maybe serfProg unpack)
     , scPier = pax
     , scFlag = env ^. pierConfigL . pcSerfFlags
     , scSlog = \(pri, tank) -> printTank slog pri tank
     , scStdr = \txt -> slog (txt <> "\r\n")
     , scDead = pure () -- TODO: What can be done?
     }
+  getSerfProg :: IO FilePath
+  getSerfProg = do
+    (path, filename) <- splitFileName <$> getExecutablePath
+    pure $ case filename of
+      "urbit"      -> path </> "urbit-worker"
+      "urbit-king" -> path </> "urbit-worker"
+      _            -> "urbit-worker"
 
 
 -- Boot a new ship. ------------------------------------------------------------
