@@ -213,7 +213,6 @@ export class Omnibox extends Component {
     });
 
     return (
-      <>
         <Box
           backgroundColor='lightGray'
           width='100vw'
@@ -243,7 +242,6 @@ export class Omnibox extends Component {
             </Box>
           </Row>
         </Box>
-      </>
     );
   }
 }
