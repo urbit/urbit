@@ -6,6 +6,7 @@ import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { sigil as sigiljs, stringRenderer } from 'urbit-sigil-js';
 
 import Mousetrap from 'mousetrap';
+import 'mousetrap-global-bind';
 
 import './css/indigo-static.css';
 import './css/fonts.css';
@@ -77,7 +78,7 @@ class App extends React.Component {
     this.api.local.setDark(this.themeWatcher.matches);
     this.themeWatcher.addListener(this.updateTheme);
     this.api.local.getBaseHash();
-    Mousetrap.bind(['command+l', 'ctrl+l'], (e) => {
+    Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
       this.api.local.setOmnibox();
     });

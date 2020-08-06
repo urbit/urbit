@@ -40,7 +40,7 @@ export class Omnibox extends Component {
   }
 
   componentWillUpdate(prevProps) {
-    if (!this.props.show && prevProps.show !== this.props.show) {
+    if (this.props.show && prevProps.show !== this.props.show) {
       Mousetrap.unbind('escape');
       document.removeEventListener('mousedown', this.handleClickOutside);
     }

@@ -70,7 +70,7 @@ const StatusBar = (props) => {
             Leap
           </Text>
           <Text display={mobile ? 'none' : 'inline-block'} ml={4} color='gray'>
-            {metaKey}L
+            {metaKey}/
           </Text>
         </Box>
         <ReconnectButton

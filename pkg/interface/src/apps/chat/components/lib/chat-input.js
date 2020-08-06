@@ -363,13 +363,7 @@ export class ChatInput extends Component {
         'Shift-3': cm =>
           cm.getValue().length === 0
             ? this.toggleCode()
-            : CodeMirror.Pass,
-        'Cmd-L': () => {
-          this.props.api.local.setOmnibox();
-        },
-        'Ctrl-L': () => {
-          this.props.api.local.setOmnibox();
-        }
+            : CodeMirror.Pass
       }
     };
 
