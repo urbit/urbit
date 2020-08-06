@@ -815,7 +815,7 @@ u3_lord_peek_pico(u3_lord* god_u,
   wit_u->pek_u->ptr_v = pic_u->ptr_v;
   wit_u->pek_u->fun_f = pic_u->fun_f;
   wit_u->pek_u->now   = u3_time_in_tv(&wit_u->tim_u);
-  wit_u->pek_u->gan   = pic_u->gan;
+  wit_u->pek_u->gan   = u3k(pic_u->gan);
 
   //  construct the full scry path
   //
@@ -823,7 +823,7 @@ u3_lord_peek_pico(u3_lord* god_u,
     default: c3_assert(0);
 
     case u3_pico_full: {
-      wit_u->pek_u->ful = pic_u->ful;
+      wit_u->pek_u->ful = u3k(pic_u->ful);
     } break;
 
     case u3_pico_mine: {
@@ -831,7 +831,7 @@ u3_lord_peek_pico(u3_lord* god_u,
       //
       u3_pier* pir_u = god_u->cb_u.ptr_v;  //  XX do better
       u3_noun our = u3dc("scot", 'p', u3i_chubs(2, pir_u->who_d));
-      wit_u->pek_u->ful = u3nt(pic_u->min_u.car_m, our, pic_u->min_u.pax);
+      wit_u->pek_u->ful = u3nt(pic_u->min_u.car_m, our, u3k(pic_u->min_u.pax));
     } break;
 
     case u3_pico_last: {
@@ -843,9 +843,9 @@ u3_lord_peek_pico(u3_lord* god_u,
 
       wit_u->pek_u->ful = u3nc(pic_u->las_u.car_m,
                                u3nq(our,
-                                    pic_u->las_u.des,
+                                    u3k(pic_u->las_u.des),
                                     cas,
-                                    pic_u->las_u.pax));
+                                    u3k(pic_u->las_u.pax)));
     } break;
   }
 
