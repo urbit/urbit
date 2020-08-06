@@ -23,8 +23,29 @@ export class ChatWindow extends Component {
     this.scrollIsAtBottom = this.scrollIsAtBottom.bind(this);
     this.scrollIsAtTop = this.scrollIsAtTop.bind(this);
 
-    this.unreadReference = React.createRef();
-    this.containerReference = React.createRef();
+    this.scrollReference = React.createRef();
+  }
+
+  componentDidMount() {
+    this.initialFetch();
+  }
+
+  initialFetch() {
+    const { props } = this;
+    if (props.messages.length <= 0) {
+      const unreadUnloaded = props.unreadCount - props.messages.length;
+
+      if (unreadUnloaded <= MAX_BACKLOG_SIZE &&
+          unreadUnloaded + 20 > DEFAULT_BACKLOG_SIZE) {
+        this.fetchBacklog(unreadUnloaded + 20);
+      } else {
+        this.fetchBacklog(DEFAULT_BACKLOG_SIZE);
+      }
+    } else {
+      setTimeout(() => {
+        this.initialFetch();
+      }, 5000);
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -34,6 +55,10 @@ export class ChatWindow extends Component {
       props.history.push("/~chat");
     } else if (props.messages.length >= prevProps.messages.length + 10) {
       this.hasAskedForMessages = false;
+      if (props.unreadCount === 0) {
+        return;
+      }
+      this.setState({ numPages: Math.ceil(props.unreadCount / 100) });
     } else if (state.numPages === 1 && props.unreadCount !== 0) {
       this.dismissUnread();
       this.scrollToBottom();
@@ -44,7 +69,7 @@ export class ChatWindow extends Component {
     const { props, state } = this;
     this.setState({ numPages: state.numPages + 1 }, () => {
       if (state.numPages * 100 < props.length) {
-        this.fetchBacklog();
+        this.fetchBacklog(DEFAULT_BACKLOG_SIZE);
       }
     });
   }
@@ -56,8 +81,8 @@ export class ChatWindow extends Component {
   }
 
   scrollToBottom() {
-    if (this.containerReference.current) {
-      this.containerReference.current.scrollToBottom();
+    if (this.scrollReference.current) {
+      this.scrollReference.current.scrollToBottom();
     }
     if (this.state.numPages !== 1) {
       this.setState({ numPages: 1 });
@@ -68,9 +93,8 @@ export class ChatWindow extends Component {
     this.props.api.chat.read(this.props.station);
   }
 
-  fetchBacklog() {
+  fetchBacklog(size) {
     const { props } = this;
-    const size = DEFAULT_BACKLOG_SIZE;
 
     if (
       props.messages.length >= props.length ||
@@ -109,6 +133,7 @@ export class ChatWindow extends Component {
           unreadMsg={props.unreadMsg}
           dismissUnread={this.dismissUnread} />
         <ChatScrollContainer
+          ref={this.scrollReference}
           scrollIsAtBottom={this.scrollIsAtBottom}
           scrollIsAtTop={this.scrollIsAtTop}>
           <BacklogElement isChatLoading={props.isChatLoading} />

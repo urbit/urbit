@@ -40,7 +40,6 @@ export class ChatScrollContainer extends Component {
   
   containerDidScroll(e) {
     const { props } = this;
-
     if (scrollIsAtTop(e.target)) {
       // Save scroll position for FF
       if (navigator.userAgent.includes("Firefox")) {
@@ -115,8 +114,8 @@ export class ChatScrollContainer extends Component {
 
   scrollToBottom() {
     this.isTriggeredScroll = true;
-    if (this.scrollElement) {
-      this.scrollElement.scrollIntoView();
+    if (this.scrollRef.current) {
+      this.scrollRef.current.scrollIntoView(false);
     }
 
     if (navigator.userAgent.includes("Firefox")) {
