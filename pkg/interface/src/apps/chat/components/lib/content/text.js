@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import urbitOb from 'urbit-ob';
-import { Link } from 'react-router-dom'; 
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
