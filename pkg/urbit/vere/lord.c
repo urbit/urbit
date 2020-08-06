@@ -349,6 +349,8 @@ _lord_plea_peek_bail(u3_lord* god_u, u3_peek* pek_u, u3_noun dud)
 {
   u3_pier_punt_goof("peek", dud);
 
+  pek_u->fun_f(pek_u->ptr_v, u3_nul);
+
   u3z(pek_u->now);
   u3z(pek_u->gan);
   u3z(pek_u->ful);
