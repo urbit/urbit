@@ -3,108 +3,16 @@ import React, { useCallback } from "react";
 import {
   Input,
   Box,
-  Center,
   Button,
-  Checkbox,
   Col,
   Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
+  Menu
 } from "@tlon/indigo-react";
 
 import { Formik, Form } from "formik";
-import * as Yup from "yup";
 import GlobalApi from "../../../../api/global";
-import { S3State } from "../../../../types/s3-update";
-
-function BucketList({
-  buckets,
-  selected,
-  api,
-}: {
-  buckets: Set<string>;
-  selected: string;
-  api: GlobalApi;
-}) {
-  const _buckets = Array.from(buckets);
-
-  const onSubmit = useCallback(
-    (values: { newBucket: string }) => {
-      api.s3.addBucket(values.newBucket);
-    },
-    [api]
-  );
-
-  const onSelect = useCallback(
-    (bucket: string) => {
-      return function () {
-        api.s3.setCurrentBucket(bucket);
-      };
-    },
-    [api]
-  );
-
-  const onDelete = useCallback(
-    (bucket: string) => {
-      return function () {
-        api.s3.removeBucket(bucket);
-      };
-    },
-    [api]
-  );
-
-  return (
-    <Formik initialValues={{ newBucket: "" }} onSubmit={onSubmit}>
-      <Form>
-        <Col alignItems="start">
-          {_buckets.map((bucket) => (
-            <Box
-              key={bucket}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              borderRadius={1}
-              border={1}
-              borderColor="washedGray"
-              fontSize={1}
-              pl={2}
-              mb={2}
-              width="100%"
-            >
-              <Text>{bucket}</Text>
-              {bucket === selected && (
-                <Text p={1} color="green">
-                  Active
-                </Text>
-              )}
-              {bucket !== selected && (
-                <Menu>
-                  <MenuButton sm>Options</MenuButton>
-                  <MenuList>
-                    <MenuItem onSelect={onSelect(bucket)}>Make Active</MenuItem>
-                    <MenuItem onSelect={onDelete(bucket)}>Delete</MenuItem>
-                  </MenuList>
-                </Menu>
-              )}
-            </Box>
-          ))}
-          <Input
-            mt={2}
-            type="text"
-            label="New Bucket"
-            id="newBucket"
-            name="newBucket"
-          />
-          <Button border={1} borderColor="washedGrey" type="submit">
-            Add
-          </Button>
-        </Col>
-      </Form>
-    </Formik>
-  );
-}
+import { BucketList } from './BucketList';
+import { S3State } from "../../../../types";
 
 interface FormSchema {
   s3bucket: string;
@@ -136,7 +44,7 @@ export default function S3Form(props: S3FormProps) {
         api.s3.setAccessKeyId(values.s3accessKeyId);
       }
     },
-    [api]
+    [api, s3]
   );
   return (
     <>

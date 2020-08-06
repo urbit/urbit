@@ -121,7 +121,7 @@ class Clock extends React.Component {
   }
 
   initGeolocation() {
-    if (false && typeof this.props.data === 'string') {
+    if (typeof this.props.data === 'string') {
       const latlon = this.props.data.split(',');
       const lat = latlon[0];
       const lon = latlon[1];

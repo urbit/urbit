@@ -14,7 +14,7 @@ export default class S3Client {
     this.accessKeyId = accessKeyId;
     this.secretAccessKey = secretAccessKey;
 
-    this.s3 = S3({
+    this.s3 = new S3({
       endpoint: endpoint,
       credentials: {
         accessKeyId: this.accessKeyId,
