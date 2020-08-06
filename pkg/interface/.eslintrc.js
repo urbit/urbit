@@ -50,13 +50,13 @@ const rules = {
   "max-lines": [
     "error",
     {
-      "max": 200,
+      "max": 300,
       "skipBlankLines": true,
       "skipComments": true
     }
   ],
   "max-lines-per-function": [
-    "error",
+    "warn",
     {
       "skipBlankLines": true,
       "skipComments": true
