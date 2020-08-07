@@ -4,6 +4,8 @@
 #include "all.h"
 #include <urcrypt.h>
 
+typedef int (*urcrypt_ecb)(const c3_y*, const c3_y[16], c3_y[16]);
+
 /* functions
 */
 
@@ -11,20 +13,27 @@
    * jets we unpack with an unconditional u3r_bytes */
 
   static u3_atom
-  _cqea_ecba_en(u3_atom key,
-                u3_atom blk)
+  _cqea_ecba_help(c3_y* key_y, u3_atom blk, urcrypt_ecb low_f)
   {
-    c3_y key_y[16], blk_y[16], out_y[16];
+    c3_y blk_y[16], out_y[16];
 
-    u3r_bytes(0, 16, key_y, key);
     u3r_bytes(0, 16, blk_y, blk);
 
-    if ( 0 != urcrypt_aes_ecba_en(key_y, blk_y, out_y) ) {
+    if ( 0 != (*low_f)(key_y, blk_y, out_y) ) {
       return u3_none;
     }
     else {
       return u3i_bytes(16, out_y);
     }
+  }
+
+  static u3_atom
+  _cqea_ecba_en(u3_atom key,
+                u3_atom blk)
+  {
+    c3_y key_y[16];
+    u3r_bytes(0, 16, key_y, key);
+    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecba_en);
   }
 
   u3_noun
@@ -45,17 +54,9 @@
   _cqea_ecba_de(u3_atom key,
                 u3_atom blk)
   {
-    c3_y key_y[16], blk_y[16], out_y[16];
-
+    c3_y key_y[16];
     u3r_bytes(0, 16, key_y, key);
-    u3r_bytes(0, 16, blk_y, blk);
-
-    if ( 0 != urcrypt_aes_ecba_de(key_y, blk_y, out_y) ) {
-      return u3_none;
-    }
-    else {
-      return u3i_bytes(16, out_y);
-    }
+    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecba_de);
   }
 
   u3_noun
@@ -76,17 +77,9 @@
   _cqea_ecbb_en(u3_atom key,
                 u3_atom blk)
   {
-    c3_y key_y[24], blk_y[16], out_y[16];
-
+    c3_y key_y[24];
     u3r_bytes(0, 24, key_y, key);
-    u3r_bytes(0, 16, blk_y, blk);
-
-    if ( 0 != urcrypt_aes_ecbb_en(key_y, blk_y, out_y) ) {
-      return u3_none;
-    }
-    else {
-      return u3i_bytes(16, out_y);
-    }
+    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecbb_en);
   }
 
   u3_noun
@@ -107,17 +100,9 @@
   _cqea_ecbb_de(u3_atom key,
                 u3_atom blk)
   {
-    c3_y key_y[24], blk_y[16], out_y[16];
-
+    c3_y key_y[24];
     u3r_bytes(0, 24, key_y, key);
-    u3r_bytes(0, 16, blk_y, blk);
-
-    if ( 0 != urcrypt_aes_ecbb_de(key_y, blk_y, out_y) ) {
-      return u3_none;
-    }
-    else {
-      return u3i_bytes(16, out_y);
-    }
+    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecbb_de);
   }
 
   u3_noun
@@ -138,17 +123,9 @@
   _cqea_ecbc_en(u3_atom key,
                 u3_atom blk)
   {
-    c3_y key_y[32], blk_y[16], out_y[16];
-
+    c3_y key_y[32];
     u3r_bytes(0, 32, key_y, key);
-    u3r_bytes(0, 16, blk_y, blk);
-
-    if ( 0 != urcrypt_aes_ecbc_en(key_y, blk_y, out_y) ) {
-      return u3_none;
-    }
-    else {
-      return u3i_bytes(16, out_y);
-    }
+    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecbc_en);
   }
 
   u3_noun
@@ -169,17 +146,9 @@
   _cqea_ecbc_de(u3_atom key,
                 u3_atom blk)
   {
-    c3_y key_y[32], blk_y[16], out_y[16];
-
+    c3_y key_y[32];
     u3r_bytes(0, 32, key_y, key);
-    u3r_bytes(0, 16, blk_y, blk);
-
-    if ( 0 != urcrypt_aes_ecbc_de(key_y, blk_y, out_y) ) {
-      return u3_none;
-    }
-    else {
-      return u3i_bytes(16, out_y);
-    }
+    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecbc_de);
   }
 
   u3_noun

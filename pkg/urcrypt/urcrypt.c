@@ -390,7 +390,8 @@ static uint8_t*
 _urcrypt_cbc_pad(size_t *length_ptr, const uint8_t *message)
 {
   size_t length  = *length_ptr,
-         padding = 16 - (length % 16),
+         rem     = length % 16,
+         padding = rem ? 16 - rem : 0,
          padded  = length + padding;
   uint8_t *buf   = urcrypt_malloc(padded);
 
@@ -399,6 +400,31 @@ _urcrypt_cbc_pad(size_t *length_ptr, const uint8_t *message)
 
   *length_ptr = padded;
   return buf;
+}
+
+uint8_t*
+_urcrypt_cbc_help(const uint8_t *message,
+                  size_t length,
+                  const AES_KEY *key,
+                  const uint8_t ivec[16],
+                  const int enc,
+                  size_t *out_length)
+{
+  uint8_t riv[16], *in, *out;
+
+  _urcrypt_reverse_copy(16, ivec, riv);
+  FILE* nukes = fopen("/tmp/urcrypt.txt", "w");
+  fprintf(nukes, "length before: %d\r\n", (int) length);
+  in  = _urcrypt_cbc_pad(&length, message);
+  fprintf(nukes, "length after: %d\r\n", (int) length);
+  fclose(nukes);
+  out = urcrypt_malloc(length);
+  AES_cbc_encrypt(in, out, length, key, riv, enc);
+  urcrypt_free(in);
+
+  _urcrypt_reverse_inplace(length, out);
+  *out_length = length;
+  return out;
 }
 
 uint8_t*
@@ -417,16 +443,36 @@ urcrypt_aes_cbca_en(const uint8_t *message,
     return NULL;
   }
   else {
-    uint8_t riv[16], *in, *out;
+    return _urcrypt_cbc_help(message,
+                             length,
+                             &aes_key,
+                             ivec,
+                             AES_ENCRYPT,
+                             out_length);
+  }
+}
 
-    _urcrypt_reverse_copy(16, ivec, riv);
-    in  = _urcrypt_cbc_pad(&length, message);
-    out = urcrypt_malloc(length);
-    AES_cbc_encrypt(in, out, length, &aes_key, riv, AES_ENCRYPT);
-    urcrypt_free(in);
+uint8_t*
+urcrypt_aes_cbca_de(const uint8_t *message,
+                    size_t length,
+                    const uint8_t key[16],
+                    const uint8_t ivec[16],
+                    size_t *out_length)
+{
+  AES_KEY aes_key;
+  uint8_t rkey[16];
 
-    _urcrypt_reverse_inplace(length, out);
-    *out_length = length;
-    return out;
+  _urcrypt_reverse_copy(16, key, rkey);
+
+  if ( 0 != AES_set_decrypt_key(rkey, 128, &aes_key) ) {
+    return NULL;
+  }
+  else {
+    return _urcrypt_cbc_help(message,
+                             length,
+                             &aes_key,
+                             ivec,
+                             AES_DECRYPT,
+                             out_length);
   }
 }
