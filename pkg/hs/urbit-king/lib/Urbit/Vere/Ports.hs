@@ -23,8 +23,8 @@ data PortControlApi = PortControlApi
   }
 
 -- Builds a Ports struct which does nothing when called.
-buildInactivePorts :: RIO e PortControlApi
-buildInactivePorts = pure $ PortControlApi noop noop
+buildInactivePorts :: PortControlApi
+buildInactivePorts = PortControlApi noop noop
   where
     noop x = pure ()
 

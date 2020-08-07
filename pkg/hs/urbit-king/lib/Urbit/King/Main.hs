@@ -475,7 +475,7 @@ newShip CLI.New{..} opts = do
 
   -- TODO: We hit the same problem as above: we need the running options to
   -- determine how to configure the ports
-  ports <- buildInactivePorts
+  let ports = buildInactivePorts
 
   -- here we are with a king env, and we now need a multi env.
   runRunningEnv multi ports go
@@ -591,7 +591,7 @@ runShip (CLI.Run pierPath) opts daemon = do
 
 
 buildPortHandler :: (HasLogFunc e) => Bool -> RIO e PortControlApi
-buildPortHandler False  = buildInactivePorts
+buildPortHandler False  = pure $ buildInactivePorts
 buildPortHandler True   = buildNATPorts
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
