@@ -590,10 +590,9 @@ runShip (CLI.Run pierPath) opts daemon = do
         mStart
 
 
-buildPortHandler :: (HasLogFunc e) => Maybe CLI.IPSource -> RIO e PortControlApi
-buildPortHandler Nothing          = buildInactivePorts
-buildPortHandler (Just CLI.IPSourceNAT) = buildNATPorts
-buildPortHandler (Just (CLI.IPSourceManual _)) = error "wut do"
+buildPortHandler :: (HasLogFunc e) => Bool -> RIO e PortControlApi
+buildPortHandler False  = buildInactivePorts
+buildPortHandler True   = buildNATPorts
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do
@@ -756,7 +755,7 @@ runShips CLI.KingOpts {..} ships = do
 
   multi <- multiEyre meConf
 
-  ports <- buildPortHandler koIPSource
+  ports <- buildPortHandler koUseNATPMP
 
   runRunningEnv multi ports (go ships)
  where

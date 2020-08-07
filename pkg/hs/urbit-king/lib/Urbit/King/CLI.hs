@@ -13,15 +13,12 @@ import Options.Applicative.Help.Pretty
 import Data.Word          (Word16)
 import System.Environment (getProgName)
 
-import Data.IP
-import Network.Socket
-
 --------------------------------------------------------------------------------
 
 data KingOpts = KingOpts
   { koSharedHttpPort  :: Maybe Word16
   , koSharedHttpsPort :: Maybe Word16
-  , koIPSource        :: Maybe IPSource
+  , koUseNATPMP       :: Bool
   }
  deriving (Show)
 
@@ -57,11 +54,6 @@ data BootType
 data PillSource
   = PillSourceFile FilePath
   | PillSourceURL String
-  deriving (Show)
-
-data IPSource
-  = IPSourceManual HostAddress
-  | IPSourceNAT
   deriving (Show)
 
 data New = New
@@ -204,22 +196,12 @@ pillFromURL = PillSourceURL <$> strOption
                     <> value defaultPillURL
                     <> help "URL to pill file")
 
-ipFromNAT :: Parser IPSource
-ipFromNAT = flag' IPSourceNAT
-                     ( long "ip-from-nat"
-                    <> help "Try to fetch the local IP from the NAT gateway")
-
-ipReader :: ReadM HostAddress
-ipReader = eitherReader $ \arg ->
-  case readMay arg :: Maybe IPv4 of
-    Nothing -> Left ("Cannot parse ipv4 address: " ++ arg)
-    Just ipv4 -> Right $ toHostAddress ipv4
-
-ipFromManual :: Parser IPSource
-ipFromManual = IPSourceManual <$> option ipReader
-                     ( long "ip-manual"
-                    <> metavar "IPv4"
-                    <> help "Manually specify the external IP")
+enableNAT :: Parser Bool
+enableNAT = (flag' False
+               ( long "no-port-forwarding"
+              <> help "Disable trying to ask the router to forward ames ports"))
+            <|>
+            (pure True)
 
 pierPath :: Parser FilePath
 pierPath = strArgument (metavar "PIER" <> help "Path to pier")
@@ -373,7 +355,7 @@ runOneShip = (,,) <$> fmap Run pierPath <*> opts <*> df
 
 kingOpts :: Parser KingOpts
 kingOpts = do
-  koIPSource <- optional (ipFromManual <|> ipFromNAT)
+  koUseNATPMP <- enableNAT
 
   koSharedHttpPort <-
     optional

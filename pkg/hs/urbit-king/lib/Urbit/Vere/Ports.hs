@@ -115,27 +115,40 @@ portThread q = do
       PTMInitialRequestOpen p notifyComplete -> do
         logInfo $
           displayShow ("ports: sending initial request to NAT-PMP for port ", p)
-        -- TODO: Some error checking would be nice.
-        io $ setPortMapping pmp PTUDP p p portLeaseLifetime
-        let filteredPort = filterPort p nextRenew
-        now <- io $ getPOSIXTime
-        let repeatMsg = PTMRequestOpen p
-        let withRenew =
-              insert (now + (fromIntegral portRenewalTime), repeatMsg)
-              filteredPort
-        atomically notifyComplete
-        loop pmp withRenew
+        ret <- io $ setPortMapping pmp PTUDP p p portLeaseLifetime
+        case ret of
+          Left err -> do
+            logError $
+              displayShow ("ports: failed to request NAT-PMP for port ", p,
+                           ":", err, ", disabling NAT-PMP")
+            loopErr q
+          Right _ -> do
+            let filteredPort = filterPort p nextRenew
+            now <- io $ getPOSIXTime
+            let repeatMsg = PTMRequestOpen p
+            let withRenew =
+                  insert (now + (fromIntegral portRenewalTime), repeatMsg)
+                  filteredPort
+            atomically notifyComplete
+            loop pmp withRenew
 
       PTMRequestOpen p -> do
         logInfo $
           displayShow ("ports: sending renewing request to NAT-PMP for port ",
                        p)
-        io $ setPortMapping pmp PTUDP p p portLeaseLifetime
-        let filteredPort = filterPort p nextRenew
-        now <- io $ getPOSIXTime
-        let withRenew =
-              insert (now + (fromIntegral portRenewalTime), msg) filteredPort
-        loop pmp withRenew
+        ret <- io $ setPortMapping pmp PTUDP p p portLeaseLifetime
+        case ret of
+          Left err -> do
+            logError $
+              displayShow ("ports: failed to request NAT-PMP for port ", p,
+                           ":", err, ", disabling NAT-PMP")
+            loopErr q
+          Right _ -> do
+            let filteredPort = filterPort p nextRenew
+            now <- io $ getPOSIXTime
+            let withRenew =
+                  insert (now + (fromIntegral portRenewalTime), msg) filteredPort
+            loop pmp withRenew
 
       PTMRequestClose p -> do
         logInfo $
