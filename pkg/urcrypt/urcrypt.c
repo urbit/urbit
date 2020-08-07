@@ -413,11 +413,7 @@ _urcrypt_cbc_help(const uint8_t *message,
   uint8_t riv[16], *in, *out;
 
   _urcrypt_reverse_copy(16, ivec, riv);
-  FILE* nukes = fopen("/tmp/urcrypt.txt", "w");
-  fprintf(nukes, "length before: %d\r\n", (int) length);
   in  = _urcrypt_cbc_pad(&length, message);
-  fprintf(nukes, "length after: %d\r\n", (int) length);
-  fclose(nukes);
   out = urcrypt_malloc(length);
   AES_cbc_encrypt(in, out, length, key, riv, enc);
   urcrypt_free(in);
@@ -465,6 +461,106 @@ urcrypt_aes_cbca_de(const uint8_t *message,
   _urcrypt_reverse_copy(16, key, rkey);
 
   if ( 0 != AES_set_decrypt_key(rkey, 128, &aes_key) ) {
+    return NULL;
+  }
+  else {
+    return _urcrypt_cbc_help(message,
+                             length,
+                             &aes_key,
+                             ivec,
+                             AES_DECRYPT,
+                             out_length);
+  }
+}
+
+uint8_t*
+urcrypt_aes_cbcb_en(const uint8_t *message,
+                    size_t length,
+                    const uint8_t key[24],
+                    const uint8_t ivec[16],
+                    size_t *out_length)
+{
+  AES_KEY aes_key;
+  uint8_t rkey[24];
+
+  _urcrypt_reverse_copy(24, key, rkey);
+
+  if ( 0 != AES_set_encrypt_key(rkey, 192, &aes_key) ) {
+    return NULL;
+  }
+  else {
+    return _urcrypt_cbc_help(message,
+                             length,
+                             &aes_key,
+                             ivec,
+                             AES_ENCRYPT,
+                             out_length);
+  }
+}
+
+uint8_t*
+urcrypt_aes_cbcb_de(const uint8_t *message,
+                    size_t length,
+                    const uint8_t key[24],
+                    const uint8_t ivec[16],
+                    size_t *out_length)
+{
+  AES_KEY aes_key;
+  uint8_t rkey[24];
+
+  _urcrypt_reverse_copy(24, key, rkey);
+
+  if ( 0 != AES_set_decrypt_key(rkey, 192, &aes_key) ) {
+    return NULL;
+  }
+  else {
+    return _urcrypt_cbc_help(message,
+                             length,
+                             &aes_key,
+                             ivec,
+                             AES_DECRYPT,
+                             out_length);
+  }
+}
+
+uint8_t*
+urcrypt_aes_cbcc_en(const uint8_t *message,
+                    size_t length,
+                    const uint8_t key[32],
+                    const uint8_t ivec[16],
+                    size_t *out_length)
+{
+  AES_KEY aes_key;
+  uint8_t rkey[32];
+
+  _urcrypt_reverse_copy(32, key, rkey);
+
+  if ( 0 != AES_set_encrypt_key(rkey, 256, &aes_key) ) {
+    return NULL;
+  }
+  else {
+    return _urcrypt_cbc_help(message,
+                             length,
+                             &aes_key,
+                             ivec,
+                             AES_ENCRYPT,
+                             out_length);
+  }
+}
+
+uint8_t*
+urcrypt_aes_cbcc_de(const uint8_t *message,
+                    size_t length,
+                    const uint8_t key[32],
+                    const uint8_t ivec[16],
+                    size_t *out_length)
+{
+  AES_KEY aes_key;
+  uint8_t rkey[32];
+
+  _urcrypt_reverse_copy(32, key, rkey);
+
+  if ( 0 != AES_set_decrypt_key(rkey, 256, &aes_key) ) {
     return NULL;
   }
   else {

@@ -83,5 +83,25 @@ uint8_t* urcrypt_aes_cbca_de(const uint8_t *message,
                              const uint8_t key[16],
                              const uint8_t ivec[16],
                              size_t *out_length);
+uint8_t* urcrypt_aes_cbcb_en(const uint8_t *message,
+                             size_t length,
+                             const uint8_t key[24],
+                             const uint8_t ivec[16],
+                             size_t *out_length);
+uint8_t* urcrypt_aes_cbcb_de(const uint8_t *message,
+                             size_t length,
+                             const uint8_t key[24],
+                             const uint8_t ivec[16],
+                             size_t *out_length);
+uint8_t* urcrypt_aes_cbcc_en(const uint8_t *message,
+                             size_t length,
+                             const uint8_t key[32],
+                             const uint8_t ivec[16],
+                             size_t *out_length);
+uint8_t* urcrypt_aes_cbcc_de(const uint8_t *message,
+                             size_t length,
+                             const uint8_t key[32],
+                             const uint8_t ivec[16],
+                             size_t *out_length);
 
 #endif
