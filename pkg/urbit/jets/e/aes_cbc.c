@@ -17,9 +17,9 @@
                 u3_atom iv,
                 u3_atom msg)
   {
-    c3_y key_y[16], iv_y[16], *msg_y, *out_y;
-    c3_w met_w;
     size_t len;
+    c3_w met_w;
+    c3_y key_y[16], iv_y[16], *msg_y, *out_y;
 
     u3r_bytes(0, 16, key_y, key);
     u3r_bytes(0, 16, iv_y, iv);

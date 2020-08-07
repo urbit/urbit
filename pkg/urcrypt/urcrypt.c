@@ -242,7 +242,7 @@ urcrypt_ed_veri(const uint8_t *message,
 }
 
 static void
-reverse_copy(size_t size, const uint8_t *in, uint8_t *out) {
+_urcrypt_reverse_copy(size_t size, const uint8_t *in, uint8_t *out) {
   size_t i, j;
   for ( i = 0, j = size - 1; i < size; i++, j-- ) {
     out[i] = in[j];
@@ -250,7 +250,7 @@ reverse_copy(size_t size, const uint8_t *in, uint8_t *out) {
 }
 
 static void
-reverse_inplace(size_t size, uint8_t *ptr) {
+_urcrypt_reverse_inplace(size_t size, uint8_t *ptr) {
   size_t i, j;
   uint8_t tmp;
   for ( i = 0, j = size - 1; i < j; i++, j-- ) {
@@ -268,15 +268,15 @@ urcrypt_aes_ecba_en(const uint8_t key[16],
   AES_KEY aes_key;
   uint8_t rkey[16], rblock[16];
 
-  reverse_copy(16, key, rkey);
-  reverse_copy(16, block, rblock);
+  _urcrypt_reverse_copy(16, key, rkey);
+  _urcrypt_reverse_copy(16, block, rblock);
 
   if ( 0 != AES_set_encrypt_key(rkey, 128, &aes_key) ) {
     return -1;
   }
   else {
     AES_ecb_encrypt(rblock, out, &aes_key, AES_ENCRYPT);
-    reverse_inplace(16, out);
+    _urcrypt_reverse_inplace(16, out);
     return 0;
   }
 }
@@ -289,15 +289,15 @@ urcrypt_aes_ecba_de(const uint8_t key[16],
   AES_KEY aes_key;
   uint8_t rkey[16], rblock[16];
 
-  reverse_copy(16, key, rkey);
-  reverse_copy(16, block, rblock);
+  _urcrypt_reverse_copy(16, key, rkey);
+  _urcrypt_reverse_copy(16, block, rblock);
 
   if ( 0 != AES_set_decrypt_key(rkey, 128, &aes_key) ) {
     return -1;
   }
   else {
     AES_ecb_encrypt(rblock, out, &aes_key, AES_DECRYPT);
-    reverse_inplace(16, out);
+    _urcrypt_reverse_inplace(16, out);
     return 0;
   }
 }
@@ -310,15 +310,15 @@ urcrypt_aes_ecbb_en(const uint8_t key[24],
   AES_KEY aes_key;
   uint8_t rkey[24], rblock[16];
 
-  reverse_copy(24, key, rkey);
-  reverse_copy(16, block, rblock);
+  _urcrypt_reverse_copy(24, key, rkey);
+  _urcrypt_reverse_copy(16, block, rblock);
 
   if ( 0 != AES_set_encrypt_key(rkey, 192, &aes_key) ) {
     return -1;
   }
   else {
     AES_ecb_encrypt(rblock, out, &aes_key, AES_ENCRYPT);
-    reverse_inplace(16, out);
+    _urcrypt_reverse_inplace(16, out);
     return 0;
   }
 }
@@ -331,15 +331,15 @@ urcrypt_aes_ecbb_de(const uint8_t key[24],
   AES_KEY aes_key;
   uint8_t rkey[24], rblock[16];
 
-  reverse_copy(24, key, rkey);
-  reverse_copy(16, block, rblock);
+  _urcrypt_reverse_copy(24, key, rkey);
+  _urcrypt_reverse_copy(16, block, rblock);
 
   if ( 0 != AES_set_decrypt_key(rkey, 192, &aes_key) ) {
     return -1;
   }
   else {
     AES_ecb_encrypt(rblock, out, &aes_key, AES_DECRYPT);
-    reverse_inplace(16, out);
+    _urcrypt_reverse_inplace(16, out);
     return 0;
   }
 }
@@ -352,15 +352,15 @@ urcrypt_aes_ecbc_en(const uint8_t key[32],
   AES_KEY aes_key;
   uint8_t rkey[32], rblock[16];
 
-  reverse_copy(32, key, rkey);
-  reverse_copy(16, block, rblock);
+  _urcrypt_reverse_copy(32, key, rkey);
+  _urcrypt_reverse_copy(16, block, rblock);
 
   if ( 0 != AES_set_encrypt_key(rkey, 256, &aes_key) ) {
     return -1;
   }
   else {
     AES_ecb_encrypt(rblock, out, &aes_key, AES_ENCRYPT);
-    reverse_inplace(16, out);
+    _urcrypt_reverse_inplace(16, out);
     return 0;
   }
 }
@@ -373,17 +373,32 @@ urcrypt_aes_ecbc_de(const uint8_t key[32],
   AES_KEY aes_key;
   uint8_t rkey[32], rblock[16];
 
-  reverse_copy(32, key, rkey);
-  reverse_copy(16, block, rblock);
+  _urcrypt_reverse_copy(32, key, rkey);
+  _urcrypt_reverse_copy(16, block, rblock);
 
   if ( 0 != AES_set_decrypt_key(rkey, 256, &aes_key) ) {
     return -1;
   }
   else {
     AES_ecb_encrypt(rblock, out, &aes_key, AES_DECRYPT);
-    reverse_inplace(16, out);
+    _urcrypt_reverse_inplace(16, out);
     return 0;
   }
+}
+
+static uint8_t*
+_urcrypt_cbc_pad(size_t *length_ptr, const uint8_t *message)
+{
+  size_t length  = *length_ptr,
+         padding = 16 - (length % 16),
+         padded  = length + padding;
+  uint8_t *buf   = urcrypt_malloc(padded);
+
+  memset(buf, 0, padding);
+  _urcrypt_reverse_copy(length, message, buf + padding);
+
+  *length_ptr = padded;
+  return buf;
 }
 
 uint8_t*
@@ -396,28 +411,22 @@ urcrypt_aes_cbca_en(const uint8_t *message,
   AES_KEY aes_key;
   uint8_t rkey[16];
 
-  reverse_copy(16, key, rkey);
+  _urcrypt_reverse_copy(16, key, rkey);
 
   if ( 0 != AES_set_encrypt_key(rkey, 128, &aes_key) ) {
     return NULL;
   }
   else {
     uint8_t riv[16], *in, *out;
-    size_t padding = 16 - (length % 16),
-           padded = length + padding;
 
-    reverse_copy(16, ivec, riv);
-
-    in = urcrypt_malloc(padded);
-    memset(in, 0, padding);
-    reverse_copy(length, message, in + padding);
-
-    out = urcrypt_malloc(padded);
-    AES_cbc_encrypt(in, out, padded, &aes_key, riv, AES_ENCRYPT);
+    _urcrypt_reverse_copy(16, ivec, riv);
+    in  = _urcrypt_cbc_pad(&length, message);
+    out = urcrypt_malloc(length);
+    AES_cbc_encrypt(in, out, length, &aes_key, riv, AES_ENCRYPT);
     urcrypt_free(in);
 
-    reverse_inplace(padded, out);
-    *out_length = padded;
+    _urcrypt_reverse_inplace(length, out);
+    *out_length = length;
     return out;
   }
 }
