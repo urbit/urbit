@@ -24,9 +24,7 @@
     u3r_bytes(0, 16, key_y, key);
     u3r_bytes(0, 16, iv_y, iv);
 
-    met_w = u3r_met(3, msg);
-    msg_y = u3a_malloc(met_w);
-    u3r_bytes(0, met_w, msg_y, msg);
+    msg_y = u3r_unpack_alloc(&met_w, msg);
     out_y = urcrypt_aes_cbca_en(msg_y, met_w, key_y, iv_y, &len);
     u3a_free(msg_y);
 

@@ -1093,6 +1093,20 @@ u3r_unpack(c3_w len_w, c3_y *buf_y, u3_atom a)
   }
 }
 
+/* u3r_unpack_alloc():
+**
+**  Allocate a new byte array with all the bytes of (a)
+*/
+c3_y*
+u3r_unpack_alloc(c3_w* len_w, u3_atom a)
+{
+  c3_w  met_w = u3r_met(3, a);
+  c3_y* a_y = u3a_malloc(met_w);
+  u3r_bytes(0, met_w, a_y, a);
+  *len_w = met_w;
+  return a_y;
+}
+
 /* u3r_mp():
 **
 **   Copy (b) into (a_mp).

@@ -19,13 +19,9 @@
       return u3_none;
     }
     else {
-      c3_t  val_t;
-      c3_y* mes_y;
-      c3_w  met_w = u3r_met(3, m);
-
-      mes_y = u3a_malloc(met_w);
-      u3r_bytes(0, met_w, mes_y, m);
-      val_t = urcrypt_ed_veri(mes_y, met_w, pub_y, sig_y);
+      c3_w  met_w;
+      c3_y* mes_y = u3r_unpack_alloc(&met_w, m);
+      c3_t  val_t = urcrypt_ed_veri(mes_y, met_w, pub_y, sig_y);
       u3a_free(mes_y);
 
       return val_t ? c3y : c3n;

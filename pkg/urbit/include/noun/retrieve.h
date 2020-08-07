@@ -355,6 +355,13 @@
                    c3_y *buf_y,
                    u3_atom a);
 
+      /* u3r_unpack_alloc():
+      **
+      **  Allocate a new byte array with all the bytes of (a)
+      */
+        c3_y*
+        u3r_unpack_alloc(c3_w* len_w, u3_atom a);
+
       /* u3r_chop():
       **
       **   Into the bloq space of `met`, from position `fum` for a

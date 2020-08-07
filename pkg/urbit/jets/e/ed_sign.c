@@ -18,11 +18,9 @@
     }
     else {
       c3_y  sig_y[64];
-      c3_y* mes_y;
-      c3_w  met_w = u3r_met(3, a);
+      c3_w  met_w;
+      c3_y* mes_y = u3r_unpack_alloc(&met_w, a);
 
-      mes_y = u3a_malloc(met_w);
-      u3r_bytes(0, met_w, mes_y, a);
       urcrypt_ed_sign(mes_y, met_w, sed_y, sig_y);
       u3a_free(mes_y);
 
