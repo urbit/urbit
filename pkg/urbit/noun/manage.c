@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <sigsegv.h>
 #include <curl/curl.h>
-#include <openssl/crypto.h>
+#include <urcrypt.h>
 
 #include "all.h"
 #include "vere/vere.h"
@@ -1656,10 +1656,9 @@ u3m_boot(c3_c* dir_c)
   */
   u3m_init();
 
-  /* In the worker, set the openssl memory allocation functions to always
-  ** work on the loom.
+  /* Initialize cryptography suite with loom allocation functions.
   */
-  CRYPTO_set_mem_functions(u3a_malloc_ssl, u3a_realloc_ssl, u3a_free_ssl);
+  urcrypt_init(&u3a_malloc, &u3a_realloc, &u3a_free);
 
   /* Activate the storage system.
   */

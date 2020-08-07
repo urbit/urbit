@@ -7,6 +7,9 @@
 /* functions
 */
 
+  /* All of the ECB hoon truncates its key and blk inputs with +fe, in these
+   * jets we unpack with an unconditional u3r_bytes */
+
   static u3_atom
   _cqea_ecba_en(u3_atom key,
                 u3_atom blk)
