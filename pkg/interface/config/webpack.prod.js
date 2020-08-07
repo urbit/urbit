@@ -1,6 +1,6 @@
 const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -49,17 +49,16 @@ module.exports = {
   //   historyApiFallback: true
   // },
   plugins: [
-    // new CleanWebpackPlugin(),
+    new CleanWebpackPlugin(),
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',
     //   template: './public/index.html',
     // }),
   ],
   output: {
-    filename: 'index.js',
-    chunkFilename: 'index.js',
-    path: path.resolve(__dirname, '../../arvo/app/landscape/js'),
-    publicPath: '/'
+    filename: 'index.[contenthash].js',
+    path: path.resolve(__dirname, '../../arvo/app/landscape/js/bundle'),
+    publicPath: '/',
   },
   optimization: {
     minimize: true,
