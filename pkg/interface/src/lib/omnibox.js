@@ -100,6 +100,8 @@ export default function index(associations, apps) {
       const obj = result(apps[e].type.basic.title, apps[e].type.basic.linkedUrl, apps[e].type.basic.title, null);
       applications.push(obj);
   });
+  // add groups separately
+  applications.push(result('Groups', '/~groups', 'groups', null));
   index.set('apps', applications);
 
   return index;
