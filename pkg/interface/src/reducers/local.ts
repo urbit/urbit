@@ -3,7 +3,7 @@ import { StoreState } from '../store/type';
 import { Cage } from '../types/cage';
 import { LocalUpdate, BackgroundConfig } from '../types/local-update';
 
-type LocalState = Pick<StoreState, 'sidebarShown' | 'selectedGroups' | 'baseHash' | 'hideAvatars' | 'hideNicknames' | 'background' | 'dark'>;
+type LocalState = Pick<StoreState, 'sidebarShown' | 'omniboxShown' | 'baseHash' | 'hideAvatars' | 'hideNicknames' | 'background' | 'dark'>;
 
 export default class LocalReducer<S extends LocalState> {
     rehydrate(state: S) {
@@ -25,12 +25,12 @@ export default class LocalReducer<S extends LocalState> {
         const data = json['local'];
         if (data) {
             this.sidebarToggle(data, state);
-            this.setSelected(data, state);
             this.setDark(data, state);
             this.baseHash(data, state);
             this.backgroundConfig(data, state)
             this.hideAvatars(data, state)
             this.hideNicknames(data, state)
+            this.omniboxShown(data, state);
         }
     }
     baseHash(obj: LocalUpdate, state: S) {
@@ -39,15 +39,15 @@ export default class LocalReducer<S extends LocalState> {
       }
     }
 
-    sidebarToggle(obj: LocalUpdate, state: S) {
-      if ('sidebarToggle' in obj) {
-          state.sidebarShown = !state.sidebarShown;
+    omniboxShown(obj: LocalUpdate, state: S) {
+      if ('omniboxShown' in obj) {
+          state.omniboxShown = !state.omniboxShown;
       }
     }
 
-    setSelected(obj: LocalUpdate, state: S) {
-      if ('selected' in obj) {
-        state.selectedGroups = obj.selected;
+    sidebarToggle(obj: LocalUpdate, state: S) {
+      if ('sidebarToggle' in obj) {
+          state.sidebarShown = !state.sidebarShown;
       }
     }
 

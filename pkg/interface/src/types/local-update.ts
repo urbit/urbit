@@ -1,20 +1,14 @@
-import { Path } from './noun';
-
 export type LocalUpdate =
   LocalUpdateSidebarToggle
-| LocalUpdateSelectedGroups
 | LocalUpdateSetDark
 | LocalUpdateBaseHash
 | LocalUpdateBackgroundConfig
 | LocalUpdateHideAvatars
-| LocalUpdateHideNicknames;
+| LocalUpdateHideNicknames
+| LocalUpdateSetOmniboxShown;
 
 interface LocalUpdateSidebarToggle {
   sidebarToggle: boolean;
-}
-
-interface LocalUpdateSelectedGroups {
-  selected: SelectedGroup[];
 }
 
 interface LocalUpdateSetDark {
@@ -49,5 +43,6 @@ interface BackgroundConfigColor {
   color: string;
 }
 
-
-export type SelectedGroup = [Path, string];
+interface LocalUpdateSetOmniboxShown {
+  omniboxShown: boolean;
+}

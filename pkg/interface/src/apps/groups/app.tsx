@@ -48,7 +48,6 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
     const invites =
       (Boolean(props.invites) && '/contacts' in props.invites) ?
         props.invites['/contacts'] : {};
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
     const s3 = props.s3 ? props.s3 : {};
     const groups = props.groups || {};
     const associations = props.associations || {};
@@ -62,7 +61,6 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               return (
                 <Skeleton
                   activeDrawer="groups"
-                  selectedGroups={selectedGroups}
                   history={props.history}
                   api={api}
                   contacts={contacts}
@@ -86,7 +84,6 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               return (
                 <Skeleton
                   history={props.history}
-                  selectedGroups={selectedGroups}
                   api={api}
                   contacts={contacts}
                   groups={groups}
@@ -111,7 +108,6 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               return (
                 <Skeleton
                   history={props.history}
-                  selectedGroups={selectedGroups}
                   api={api}
                   contacts={contacts}
                   groups={groups}
@@ -150,7 +146,6 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               return (
                 <Skeleton
                   history={props.history}
-                  selectedGroups={selectedGroups}
                   api={api}
                   contacts={contacts}
                   invites={invites}
@@ -198,7 +193,6 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               return (
                 <Skeleton
                   history={props.history}
-                  selectedGroups={selectedGroups}
                   api={api}
                   contacts={contacts}
                   groups={groups}
@@ -248,7 +242,6 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
                 <Skeleton
                   history={props.history}
                   api={api}
-                  selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -305,7 +298,6 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
                 <Skeleton
                   history={props.history}
                   api={api}
-                  selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}
@@ -345,7 +337,6 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
                 <Skeleton
                   history={props.history}
                   api={api}
-                  selectedGroups={selectedGroups}
                   contacts={contacts}
                   groups={groups}
                   invites={invites}

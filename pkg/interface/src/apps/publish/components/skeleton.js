@@ -30,7 +30,6 @@ export class Skeleton extends Component {
             path={props.path}
             invites={props.invites}
             associations={props.associations}
-            selectedGroups={props.selectedGroups}
             api={this.props.api}
           />
           <div className={'h-100 w-100 relative white-d flex-auto ' + rightPanelHide} style={{

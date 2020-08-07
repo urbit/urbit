@@ -53,7 +53,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
     const unreads = {};
     let totalUnreads = 0;
 
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
     const associations = props.associations
       ? props.associations
       : { chat: {}, contacts: {} };
@@ -74,14 +73,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
       unreads[stat] = Boolean(unread);
       if (
         unread &&
-        stat in associations.chat &&
-        (selectedGroups.length === 0 ||
-          selectedGroups
-            .map((e) => {
-              return e[0];
-            })
-            .includes(associations.chat?.[stat]?.['group-path']) ||
-          props.groups[associations.chat?.[stat]?.['group-path']]?.hidden)
+        stat in associations.chat
       ) {
         totalUnreads += unread;
       }
@@ -113,7 +105,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
         inbox={inbox}
         messagePreviews={messagePreviews}
         associations={associations}
-        selectedGroups={selectedGroups}
         contacts={contacts}
         invites={invites['/chat'] || {}}
         unreads={unreads}

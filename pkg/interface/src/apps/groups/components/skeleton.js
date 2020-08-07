@@ -17,7 +17,6 @@ export class Skeleton extends Component {
             invites={props.invites}
             activeDrawer={props.activeDrawer}
             selected={props.selected}
-            selectedGroups={props.selectedGroups}
             history={props.history}
             api={props.api}
             associations={props.associations}
