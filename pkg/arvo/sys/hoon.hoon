@@ -262,6 +262,9 @@
 ++  tail  |*(^ ,:+<+)                                   ::  get tail
 ++  test  |=(^ =(+<- +<+))                              ::  equality
 ::
+++  lead  |*(h=* |*(* [h +<]))                          ::  put head
+++  late  |*(t=* |*(* [+< t]))                          ::  put tail
+::
 ::  #  %containers
 ::
 ::    the most basic of data types
