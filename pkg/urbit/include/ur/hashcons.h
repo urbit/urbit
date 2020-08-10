@@ -163,3 +163,10 @@ ur_nvec_free(ur_nvec_t *v);
 
 void
 ur_nvec_init(ur_nvec_t *v, uint64_t size);
+
+void
+ur_walk_fore(ur_root_t *r,
+             ur_nref  ref,
+             void      *v,
+             void      (*atom)(ur_root_t*, ur_nref, void*),
+             ur_bool_t (*cell)(ur_root_t*, ur_nref, void*));

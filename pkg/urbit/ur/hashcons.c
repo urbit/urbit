@@ -821,3 +821,54 @@ ur_nvec_init(ur_nvec_t *v, uint64_t size)
   v->fill = 0;
   v->refs = calloc(size, sizeof(ur_nref));
 }
+
+void
+ur_walk_fore(ur_root_t *r,
+             ur_nref  ref,
+             void      *v,
+             void      (*atom)(ur_root_t*, ur_nref, void*),
+             ur_bool_t (*cell)(ur_root_t*, ur_nref, void*))
+{
+  uint64_t prev = 89, size = 144, fill = 0;
+  ur_nref *top, *don;
+
+  don  = malloc(size * sizeof(*don));
+  top  = don + ++fill;
+  *top = ref;
+
+  while ( top != don ) {
+    //  visit atom, pop stack
+    //
+    if ( !ur_deep(ref) ) {
+      atom(r, ref, v);
+      top--; fill--;
+    }
+    //  visit cell, pop stack if false
+    //
+    else if ( !cell(r, ref, v) ) {
+      top--; fill--;
+    }
+    //  push the tail, continue into the head
+    //
+    else {
+      *top = ur_tail(r, ref);
+
+      //  reallocate "stack" if full
+      //
+      if ( size == fill ) {
+        uint64_t next = prev + size;
+        don  = realloc(don, next * sizeof(*don));
+        top  = don + fill;
+        prev = size;
+        size = next;
+      }
+
+      top++; fill++;
+      *top = ur_head(r, ref);
+    }
+
+    ref = *top;
+  }
+
+  free(don);
+}
