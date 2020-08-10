@@ -20,13 +20,20 @@ typedef uint8_t  ur_bool_t;
 #  error   "port me"
 #endif
 
+#define ur_lz8(a)      ( ur_lz32(a) - 24 )
+
 #define ur_mask_3(a)   (a & 0x7)
 #define ur_mask_8(a)   (a & 0xff)
 #define ur_mask_31(a)  (a & 0x7fffffff)
 #define ur_mask_62(a)  (a & 0x3fffffffffffffffULL)
 
+#define ur_met0_8(a)   ( (a) ? 8  - ur_lz8(a)  : 0 )
 #define ur_met0_32(a)  ( (a) ? 32 - ur_lz32(a) : 0 )
 #define ur_met0_64(a)  ( (a) ? 64 - ur_lz64(a) : 0 )
+
+#define ur_met3_8(a)                            \
+        ({ uint8_t _a = ur_met0_8(a);           \
+           ( (_a >> 3) + !!ur_mask_3(_a) ); })  \
 
 #define ur_met3_32(a)                           \
         ({ uint8_t _a = ur_met0_32(a);          \

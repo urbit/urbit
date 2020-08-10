@@ -353,7 +353,7 @@ u3u_uniq(void)
   ur_hcon_info(stderr, rot_u);
   fprintf(stderr, "\r\n");
 
-  //  reinitialize looom
+  //  reinitialize loom
   //
   //    NB: hot jet state is not yet re-established
   //

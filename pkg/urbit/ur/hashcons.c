@@ -221,6 +221,80 @@ ur_bytes(ur_root_t *r, ur_nref ref, uint8_t **byt, uint64_t *len)
   }
 }
 
+static inline uint64_t
+_met0_bytes(uint8_t *byt, uint64_t len)
+{
+  //  XX requires no trailing null bytes
+  //
+  uint64_t last = len - 1;
+  return (last << 3) + ur_met0_8(byt[last]);
+}
+
+uint64_t
+ur_met(ur_root_t *r, uint8_t bloq, ur_nref ref)
+{
+  assert( !ur_deep(ref) );
+
+  //  these cases are the same, except for the
+  //  bit-width calculation and the width of their operands
+  //
+  switch ( ur_nref_tag(ref) ) {
+    default: assert(0);
+
+    case ur_direct: {
+      uint8_t m_bit = ur_met0_64(ref);
+
+      switch ( bloq ) {
+        case 0: return m_bit;
+        case 1: return (m_bit + 1) >> 1;
+        case 2: return (m_bit + 3) >> 2;
+
+        {
+          //  hand-inline of ur_met3_64
+          //
+          uint8_t m_byt = (m_bit >> 3) + !!ur_mask_3(m_bit);
+
+          case 3: return m_byt;
+          default: {
+            uint8_t off = (bloq - 3);
+            return (m_byt + ((1 << off) - 1)) >> off;
+          }
+        }
+      }
+    } break;
+
+    case ur_iatom: {
+      uint64_t m_bit;
+
+      {
+        uint64_t idx = ur_nref_idx(ref);
+        uint64_t len = r->atoms.lens[idx];
+        uint8_t *byt = r->atoms.bytes[idx];
+
+        m_bit = _met0_bytes(byt, len);
+      }
+
+      switch ( bloq ) {
+        case 0: return m_bit;
+        case 1: return (m_bit + 1) >> 1;
+        case 2: return (m_bit + 3) >> 2;
+
+        {
+          //  hand-inline of ur_met3_64
+          //
+          uint64_t m_byt = (m_bit >> 3) + !!ur_mask_3(m_bit);
+
+          case 3: return m_byt;
+          default: {
+            uint8_t off = (bloq - 3);
+            return (m_byt + ((1ULL << off) - 1)) >> off;
+          }
+        }
+      }
+    } break;
+  }
+}
+
 static ur_nref
 _coin_unsafe(ur_atoms_t *atoms, ur_mug mug, uint8_t *byt, uint64_t len)
 {
