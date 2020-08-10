@@ -10,6 +10,18 @@ export class OmniboxResult extends Component {
       hovered: false
     };
     this.setHover = this.setHover.bind(this);
+    this.result = React.createRef();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { props, state } = this;
+    if (prevProps &&
+      !state.hovered &&
+      prevProps.selected !== props.selected &&
+      props.selected === props.link
+      ) {
+        this.result.current.scrollIntoView({ block: 'nearest' });
+      }
   }
 
   setHover(boolean) {
@@ -55,6 +67,7 @@ export class OmniboxResult extends Component {
           }
           onClick={navigate}
           width="100%"
+          ref={this.result}
         >
           {this.state.hovered || selected === link ? (
             <>
