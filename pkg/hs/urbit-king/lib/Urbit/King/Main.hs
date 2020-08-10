@@ -92,6 +92,7 @@ import Control.Concurrent     (myThreadId)
 import Control.Exception      (AsyncException(UserInterrupt))
 import Control.Lens           ((&))
 import System.Process         (system)
+import System.IO              (hPutStrLn)
 import Text.Show.Pretty       (pPrint)
 import Urbit.Noun.Conversions (cordToUW)
 import Urbit.Noun.Time        (Wen)
@@ -592,7 +593,10 @@ runShip (CLI.Run pierPath) opts daemon = do
 
 buildPortHandler :: (HasLogFunc e) => Bool -> RIO e PortControlApi
 buildPortHandler False  = pure $ buildInactivePorts
-buildPortHandler True   = buildNATPorts
+-- TODO: Figure out what to do about logging here. The "port: " messages are
+-- the sort of thing that should be put on the muxed terminal log, but we don't
+-- have that at this layer.
+buildPortHandler True   = buildNATPorts (io . hPutStrLn stderr . unpack)
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do

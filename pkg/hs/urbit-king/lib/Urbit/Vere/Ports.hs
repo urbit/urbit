@@ -9,6 +9,7 @@ import Urbit.Prelude
 import Network.NATPMP
 import Data.Time.Clock.POSIX
 import Data.Heap
+import Network.Socket
 
 -- This module deals with ports and port requests. When a component wants to
 -- ensure that it is externally reachable, possibly from outside a NAT, it
@@ -30,10 +31,12 @@ buildInactivePorts = PortControlApi noop noop
 
 -- Builds a Ports struct which tries to hole-punch by talking to the NAT
 -- gateway over NAT-PMP.
-buildNATPorts :: (HasLogFunc e) => RIO e PortControlApi
-buildNATPorts = do
+buildNATPorts :: (HasLogFunc e)
+              => (Text -> RIO e ())
+              -> RIO e PortControlApi
+buildNATPorts stderr = do
   q <- newTQueueIO
-  async $ portThread q
+  async $ portThread q stderr
   pure $ PortControlApi (addRequest q) (removeRequest q)
   where
     addRequest :: TQueue PortThreadMsg -> Word16 -> IO ()
@@ -78,15 +81,39 @@ data PortThreadMsg
 -- the time of the next port request.
 portThread :: forall e. (HasLogFunc e)
            => TQueue PortThreadMsg
+           -> (Text -> RIO e ())
            -> RIO e ()
-portThread q = do
+portThread q stderr = do
   pmp <- io $ initNatPmp
+  --pmp <- pure $ Left ErrNoGatewaySupport
   case pmp of
     Left err -> do
-      logError "ports: error initializing NAT-PMP. Falling back to null."
-      loopErr q
-    Right pmp -> loop pmp mempty
+      ip <- likelyIPAddress
+      case ip of
+        Just (192, 168, c, d) -> do
+          stderr $ "port: you appear to be behind a router since your ip " ++
+                   "is 192.168." ++ (tshow c) ++ "." ++ (tshow d) ++ ", but " ++
+                   "we could not request port forwarding (NAT-PMP error: " ++
+                   (tshow err) ++ ")"
+          stderr $ "port: urbit performance will be degregaded unless you " ++
+                   "manually forward your ames port."
+          loopErr q
+        _ -> do
+          stderr $ "port: couldn't find router; assuming on public internet"
+          loopErr q
+    Right pmp -> foundRouter pmp
   where
+    foundRouter :: NatPmpHandle -> RIO e ()
+    foundRouter pmp = do
+      pubAddr <- io $ getPublicAddress pmp
+      case pubAddr of
+        Left _ -> pure ()
+        Right addr -> do
+          let (a, b, c, d) = hostAddressToTuple addr
+          stderr $ "port: router reports that our public IP is " ++ (tshow a) ++
+                   "." ++ (tshow b) ++ "." ++ (tshow c) ++ "." ++ (tshow d)
+      loop pmp mempty
+
     loop :: NatPmpHandle -> MinPrioHeap POSIXTime PortThreadMsg -> RIO e ()
     loop pmp nextRenew = forever $ do
       now <- io $ getPOSIXTime
@@ -114,12 +141,12 @@ portThread q = do
     handlePTM pmp msg nextRenew = case msg of
       PTMInitialRequestOpen p notifyComplete -> do
         logInfo $
-          displayShow ("ports: sending initial request to NAT-PMP for port ", p)
+          displayShow ("port: sending initial request to NAT-PMP for port ", p)
         ret <- io $ setPortMapping pmp PTUDP p p portLeaseLifetime
         case ret of
           Left err -> do
             logError $
-              displayShow ("ports: failed to request NAT-PMP for port ", p,
+              displayShow ("port: failed to request NAT-PMP for port ", p,
                            ":", err, ", disabling NAT-PMP")
             loopErr q
           Right _ -> do
@@ -134,13 +161,13 @@ portThread q = do
 
       PTMRequestOpen p -> do
         logInfo $
-          displayShow ("ports: sending renewing request to NAT-PMP for port ",
+          displayShow ("port: sending renewing request to NAT-PMP for port ",
                        p)
         ret <- io $ setPortMapping pmp PTUDP p p portLeaseLifetime
         case ret of
           Left err -> do
             logError $
-              displayShow ("ports: failed to request NAT-PMP for port ", p,
+              displayShow ("port: failed to request NAT-PMP for port ", p,
                            ":", err, ", disabling NAT-PMP")
             loopErr q
           Right _ -> do
@@ -152,7 +179,7 @@ portThread q = do
 
       PTMRequestClose p -> do
         logInfo $
-          displayShow ("ports: releasing lease for ", p)
+          displayShow ("port: releasing lease for ", p)
         io $ setPortMapping pmp PTUDP p p 0
         let removed = filterPort p nextRenew
         loop pmp removed
@@ -178,6 +205,20 @@ portThread q = do
         PTMInitialRequestOpen _ onComplete -> atomically onComplete
         PTMRequestOpen _ -> pure ()
         PTMRequestClose _ -> pure ()
+
+-- When we were unable to connect to a router, get the ip address on the
+-- default ipv4 interface to check if it
+likelyIPAddress :: RIO e (Maybe (Word8, Word8, Word8, Word8))
+likelyIPAddress = do
+  -- Try opening a socket to 1.1.1.1 to get our own IP address. Since UDP is
+  -- stateless and we aren't sending anything, we aren't actually contacting
+  -- them in any way.
+  sock <- io $ socket AF_INET Datagram 0
+  io $ connect sock (SockAddrInet 53 (tupleToHostAddress (8, 8, 8, 8)))
+  sockAddr <- io $ getSocketName sock
+  case sockAddr of
+    SockAddrInet _ addr -> pure $ Just $ hostAddressToTuple addr
+    _                   -> pure $ Nothing
 
 -- Acquire a port for the duration of the RAcquire.
 requestPortAccess :: forall e. (HasPortControlApi e) => Word16 -> RAcquire e ()
