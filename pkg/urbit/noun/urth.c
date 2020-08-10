@@ -29,10 +29,6 @@ _cu_met_3(u3a_atom* vat_u)
   }
 }
 
-//  XX this is morally correct, but not useful
-//  for deduplicating the loom
-//
-#if 0
 static inline ur_nref
 _cu_atom_to_ref(u3a_atom* vat_u, ur_root_t *r)
 {
@@ -60,20 +56,6 @@ _cu_atom_to_ref(u3a_atom* vat_u, ur_root_t *r)
   }
 
   return ref;
-}
-#endif
-
-/* _cu_atom_to_ref(): indirect u3 atom to ur_nref.
-*/
-static inline ur_nref
-_cu_atom_to_ref(u3a_atom* vat_u, ur_root_t *r)
-{
-  c3_assert( vat_u->len_w );
-
-  c3_y* byt_y = (c3_y*)vat_u->buf_w;
-  c3_w  len_w = _cu_met_3(vat_u);
-
-  return ur_coin_bytes(r, byt_y, (c3_d)len_w);
 }
 
 /* _cu_box_check(): check loom allocation box for relocation pointer.
@@ -240,8 +222,9 @@ _cu_hamt_walk(u3_noun kev, void* ptr)
 }
 
 typedef struct _cu_loom_s {
-  u3_atom *vat;
-  u3_noun *cel;
+  ur_dict32_t map_u;  //  direct->indirect mapping
+  u3_atom      *vat;  //  indirect atoms
+  u3_noun      *cel;  //  cells
 } _cu_loom;
 
 /* _cu_loom_free(): dispose loom relocation pointers
@@ -249,6 +232,7 @@ typedef struct _cu_loom_s {
 static void
 _cu_loom_free(_cu_loom* lom_u)
 {
+  ur_dict_free((ur_dict_t*)&(lom_u->map_u));
   free(lom_u->vat);
   free(lom_u->cel);
 }
@@ -278,16 +262,29 @@ _cu_ref_to_noun(ur_nref ref, _cu_loom* lom_u)
     default: assert(0);
 
     case ur_direct: {
-      if ( 0x7fffffffULL > ref ) {
+      if ( 0x7fffffffULL >= ref ) {
         return (u3_atom)ref;
       }
       else {
-        c3_w wor_w[2];
+        c3_w val_w;
 
-        wor_w[0] = ref & 0xffffffff;
-        wor_w[1] = ref >> 32;
+        //  XX the ur_root_t argument here is only used to dereference a mug,
+        //  but these atoms are all direct, so it'll never be used
+        //
+        if ( ur_dict32_get(0, &lom_u->map_u, ref, &val_w) ) {
+          return (u3_atom)val_w;
+        }
+        else {
+          u3_atom vat;
+          {
+            c3_w wor_w[2] = { ref & 0xffffffff, ref >> 32 };
+            vat = val_w = u3i_words(2, wor_w);
+          }
 
-        return u3i_words(2, wor_w);
+          ur_dict32_put(0, &lom_u->map_u, ref, val_w);
+
+          return vat;
+        }
       }
     } break;
 
@@ -362,7 +359,10 @@ u3u_uniq(void)
   {
     //  reallocate all nouns on the loom
     //
-    _cu_loom lom_u;
+    _cu_loom lom_u = {0};
+
+    ur_dict32_grow(0, &lom_u.map_u, 89, 144);
+
     _cu_atoms_to_loom(rot_u, &lom_u);
     _cu_cells_to_loom(rot_u, &lom_u);
 

@@ -518,16 +518,12 @@ _cons_unsafe(ur_cells_t *cells, ur_mug mug, ur_nref hed, ur_nref tal)
   return cel;
 }
 
-ur_nref
-ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
+static ur_nref
+_coin_bytes_unsafe(ur_root_t *r, uint8_t *byt, uint64_t len)
 {
   ur_atoms_t *atoms = &(r->atoms);
   ur_dict_t   *dict = &(atoms->dict);
   ur_mug        mug = ur_mug_bytes(byt, len);
-
-  //  XX should check for <= 62 bits, coin direct
-  //  XX conflicts with current u3u_uniq() use-case
-  //
 
   while ( 1 ) {
     uint64_t      idx = ( mug % dict->size );
@@ -568,6 +564,31 @@ ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
 }
 
 ur_nref
+ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
+{
+  //  strip trailing zeroes
+  //
+  while ( len && !byt[len - 1] ) {
+    len--;
+  }
+
+  //  produce a direct atom if possible
+  //
+  if ( 62 >= _met0_bytes(byt, len) ) {
+    uint64_t i, direct = 0;
+
+    for ( i = 0; i < len; i++ ) {
+      direct |= byt[i] << (8 * i);
+    }
+
+    return (ur_nref)direct;
+  }
+  else {
+    return _coin_bytes_unsafe(r, byt, len);
+  }
+}
+
+ur_nref
 ur_coin64(ur_root_t *r, uint64_t n)
 {
   if ( ur_direct == ur_nref_tag(n) ) {
@@ -576,7 +597,7 @@ ur_coin64(ur_root_t *r, uint64_t n)
   else {
     //  XX little-endian
     //
-    return ur_coin_bytes(r, (uint8_t*)&n, ur_met3_64(n));
+    return _coin_bytes_unsafe(r, (uint8_t*)&n, ur_met3_64(n));
   }
 }
 
