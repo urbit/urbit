@@ -64,23 +64,12 @@ export class Sidebar extends Component {
       }
     });
 
-    const selectedGroups = props.selectedGroups ? props.selectedGroups: [];
     const groupedItems = Object.keys(associations)
-      .filter((each) => {
-        if (selectedGroups.length === 0) {
-          return true;
-        }
-        const selectedPaths = selectedGroups.map((e) => {
-        return e[0];
-        });
-        return (selectedPaths.includes(each));
-      })
       .map((each, i) => {
         const books = groupedNotebooks[each] || [];
         if (books.length === 0)
         return;
-        if ((selectedGroups.length === 0) &&
-        groupedNotebooks['/~/'] &&
+        if (groupedNotebooks['/~/'] &&
         groupedNotebooks['/~/'].length !== 0) {
           i = i + 1;
         }
@@ -95,8 +84,7 @@ export class Sidebar extends Component {
           />
         );
       });
-    if ((selectedGroups.length === 0) &&
-      groupedNotebooks['/~/'] &&
+    if (groupedNotebooks['/~/'] &&
       groupedNotebooks['/~/'].length !== 0) {
         groupedItems.unshift(
           <GroupItem

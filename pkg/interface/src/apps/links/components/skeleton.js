@@ -31,7 +31,6 @@ export class Skeleton extends Component {
             invites={linkInvites}
             groups={props.groups}
             selected={props.selected}
-            selectedGroups={props.selectedGroups}
             sidebarShown={props.sidebarShown}
             links={props.links}
             listening={props.listening}
