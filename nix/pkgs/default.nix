@@ -16,7 +16,7 @@ let
 
   urcrypt = import ./urcrypt {
     inherit pkgs ge-additions;
-    inherit (deps) ed25519;
+    inherit (deps) ed25519 argon2;
   };
 
   libaes_siv = import ./libaes_siv {

@@ -12,6 +12,8 @@
 #include <openssl/crypto.h>
 #include <openssl/aes.h>
 
+#include <argon2.h>
+
 typedef void *(*urcrypt_malloc_t)(size_t);
 typedef void *(*urcrypt_realloc_t)(void*, size_t);
 typedef void (*urcrypt_free_t)(void*);
@@ -103,5 +105,28 @@ uint8_t* urcrypt_aes_cbcc_de(const uint8_t *message,
                              const uint8_t key[32],
                              const uint8_t ivec[16],
                              size_t *out_length);
+
+typedef enum urcrypt_argon2_type {
+  urcrypt_argon2_d  = 0,
+  urcrypt_argon2_i  = 1,
+  urcrypt_argon2_id = 2,
+  urcrypt_argon2_u  = 10,
+} urcrypt_argon2_type;
+
+const char* urcrypt_argon2(urcrypt_argon2_type type,
+                           uint32_t version,
+                           uint32_t threads,
+                           uint32_t memory_cost,
+                           uint32_t time_cost,
+                           size_t secret_length,
+                           const uint8_t *secret,
+                           size_t associated_length,
+                           const uint8_t *associated,
+                           size_t password_length,
+                           const uint8_t *password,
+                           size_t salt_length,
+                           const uint8_t *salt,
+                           size_t out_length,
+                           uint8_t *out);
 
 #endif
