@@ -28,18 +28,6 @@ export class ChatTabBar extends Component {
 
     return (
       <div className="dib flex-shrink-0 flex-grow-1">
-        {props.isOwner ? (
-          <div className={'dib pt2 f9 pl6 lh-solid'}>
-            <Link
-              className={'no-underline ' + memColor}
-              to={'/~chat/' + popout + 'members' + props.station}
-            >
-              Members
-            </Link>
-          </div>
-        ) : (
-          <div className="dib" style={{ width: 0 }}></div>
-        )}
         <div className={'dib pt2 f9 pl6 pr6 lh-solid'}>
           <Link
             className={'no-underline ' + setColor}

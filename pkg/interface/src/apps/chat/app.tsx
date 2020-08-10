@@ -279,44 +279,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
         />
         <Route
           exact
-          path="/~chat/(popout)?/members/(~)?/:ship/:station+"
-          render={(props) => {
-            let station = `/${props.match.params.ship}/${props.match.params.station}`;
-
-            const popout = props.match.url.includes('/popout/');
-
-            const association =
-              station in associations['chat'] ? associations.chat[station] : {};
-            const groupPath = association['group-path'];
-
-            const group = groups[groupPath] || {};
-            return (
-              <Skeleton
-                associations={associations}
-                invites={invites}
-                sidebarHideOnMobile={true}
-                sidebarShown={sidebarShown}
-                popout={popout}
-                sidebar={renderChannelSidebar(props, station)}
-              >
-                <MemberScreen
-                  {...props}
-                  api={api}
-                  group={group}
-                  groups={groups}
-                  associations={associations}
-                  station={station}
-                  association={association}
-                  contacts={contacts}
-                  popout={popout}
-                  sidebarShown={sidebarShown}
-                />
-              </Skeleton>
-            );
-          }}
-        />
-        <Route
-          exact
           path="/~chat/(popout)?/settings/(~)?/:ship/:station+"
           render={(props) => {
             let station = `/${props.match.params.ship}/${props.match.params.station}`;
