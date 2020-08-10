@@ -12,8 +12,6 @@ module Network.NATPMP (Error(..),
                        getPublicAddress,
                        setPortMapping) where
 
-import Control.Monad.IO.Unlift (MonadIO(..), MonadUnliftIO, withRunInIO)
-
 #include <netinet/in.h>
 
 #include <getgateway.h>
@@ -23,9 +21,9 @@ import Control.Monad.IO.Unlift (MonadIO(..), MonadUnliftIO, withRunInIO)
 import Prelude
 import Foreign
 import Foreign.C
-
 import Network.Socket
 
+import Control.Monad.IO.Unlift (MonadIO(..), MonadUnliftIO, withRunInIO)
 
 -- Opaque type for the internals of nat pmp
 data NatPmpStruct
@@ -33,9 +31,6 @@ type NatPmpHandle = Ptr NatPmpStruct
 
 -- The response type, in its internal form. This struct is a C tagged union
 -- with additional data, but we need to read and write from its C form.
---
--- TODO: What's easier? Exposing the internal C sum type here using Storable,
--- or manual translation?
 data NatPmpResponse
   = NatPmpResponsePublicAddress HostAddress
   | NatPmpResponseUDPPortMapping Word16 Word16 Word32
@@ -76,8 +71,6 @@ foreign import ccall unsafe "natpmp.h sendnewportmappingrequest" sendNewPortMapp
 
 foreign import ccall unsafe "binding.h readNatResponseSynchronously" readNatResponseSynchronously :: NatPmpHandle -> NatPmpResponseHandle -> IO CInt
 
---foreign import ccall unsafe "binding.h reatNatResponseSynchronously" 
-
 -- Give the type system some help
 _peekCUInt :: Ptr CUInt -> IO CUInt
 _peekCUInt = peek
@@ -87,9 +80,6 @@ uintToEnum = toEnum . fromIntegral
 
 intToEnum :: Enum e => CInt -> e
 intToEnum = toEnum . fromIntegral
-
--- intFromEnum :: Enum e => e -> CInt
--- intFromEnum = fromIntegral . fromEnum
 
 
 -- Fetches the default gateway as an ipv4 address
@@ -101,8 +91,6 @@ getDefaultGateway =
         0 -> (Just . fromIntegral) <$> _peekCUInt pReturnAddr
         _ -> pure Nothing
 
--- TODO: Unsure about how to actually bind this library together. So RespType
--- is an enum which is just the integer in a low level 
 
 data RespType
   = RTPublicAddress
@@ -120,6 +108,7 @@ instance Enum RespType where
   toEnum 2 = RTTCPPortMapping
   toEnum unmatched = error ("RespType.toEnum: Cannot match " ++ show unmatched)
 
+
 data ProtocolType
   = PTUDP
   | PTTCP
@@ -132,7 +121,6 @@ instance Enum ProtocolType where
   toEnum 1 = PTUDP
   toEnum 2 = PTTCP
   toEnum x = error ("ProtocolType.toEnum: Cannot match " ++ show x)
-
 
 
 data Error
@@ -222,6 +210,7 @@ initNatPmp = do
     _ -> do
       liftIO $ free natpmp
       pure $ Left $ intToEnum ret
+
 
 closeNatPmp :: (MonadIO m)
             => NatPmpHandle -> m (Either Error ())
