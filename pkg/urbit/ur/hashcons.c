@@ -100,6 +100,181 @@ ur_tail(ur_root_t *r, ur_nref ref)
   assert( ur_deep(ref) );
   return r->cells.tails[ur_nref_idx(ref)];
 }
+void
+ur_dict32_grow(ur_root_t *r, ur_dict32_t *dict, uint64_t prev, uint64_t size)
+{
+  ur_pail32_t *buckets, *old_buckets = dict->buckets;
+  uint64_t old_size = dict->size;
+  uint64_t  i, next = prev + size;
+
+  buckets = calloc(next, sizeof(*buckets));
+
+  for ( i = 0; i < old_size; i++ ) {
+    ur_pail32_t *old_bucket = &(old_buckets[i]);
+    uint8_t     j, old_fill = old_bucket->fill;
+
+    for ( j = 0; j < old_fill; j++ ) {
+      uint32_t val = old_bucket->vals[j];
+      ur_nref  ref = old_bucket->refs[j];
+      ur_mug   mug = ur_nref_mug(r, ref);
+
+      uint64_t        idx = ( mug % next );
+      ur_pail32_t *bucket = &(buckets[idx]);
+      uint8_t    new_fill = bucket->fill;
+
+      if ( 10 == new_fill ) {
+        free(buckets);
+        return ur_dict32_grow(r, dict, size, next);
+      }
+
+      bucket->refs[new_fill] = ref;
+      bucket->vals[new_fill] = val;
+      bucket->fill = 1 + new_fill;
+    }
+  }
+
+  free(old_buckets);
+
+  dict->prev = size;
+  dict->size = next;
+  dict->buckets = buckets;
+}
+
+ur_bool_t
+ur_dict32_get(ur_root_t *r, ur_dict32_t *dict, ur_nref ref, uint32_t *out)
+{
+  ur_mug   mug = ur_nref_mug(r, ref);
+  uint64_t idx = ( mug % dict->size );
+
+  ur_pail32_t *bucket = &(dict->buckets[idx]);
+  uint8_t     i, fill = bucket->fill;
+
+  for ( i = 0; i < fill; i++ ) {
+    if ( ref == bucket->refs[i] ) {
+      *out = bucket->vals[i];
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+void
+ur_dict32_put(ur_root_t *r, ur_dict32_t *dict, ur_nref ref, uint32_t val)
+{
+  ur_mug mug = ur_nref_mug(r, ref);
+
+  while ( 1 ) {
+    uint64_t        idx = ( mug % dict->size );
+    ur_pail32_t *bucket = &(dict->buckets[idx]);
+    uint8_t     i, fill = bucket->fill;
+
+    for ( i = 0; i < fill; i++ ) {
+      if ( ref == bucket->refs[i] ) {
+        bucket->vals[i] = val;
+        return;
+      }
+    }
+
+    if ( 10 == fill ) {
+      ur_dict32_grow(r, dict, dict->prev, dict->size);
+      continue;
+    }
+
+    bucket->refs[fill] = ref;
+    bucket->vals[fill] = val;
+    bucket->fill = 1 + fill;
+    break;
+  }
+}
+
+void
+ur_dict64_grow(ur_root_t *r, ur_dict64_t *dict, uint64_t prev, uint64_t size)
+{
+  ur_pail64_t *buckets, *old_buckets = dict->buckets;
+  uint64_t old_size = dict->size;
+  uint64_t  i, next = prev + size;
+
+  buckets = calloc(next, sizeof(*buckets));
+
+  for ( i = 0; i < old_size; i++ ) {
+    ur_pail64_t *old_bucket = &(old_buckets[i]);
+    uint8_t     j, old_fill = old_bucket->fill;
+
+    for ( j = 0; j < old_fill; j++ ) {
+      uint64_t val = old_bucket->vals[j];
+      ur_nref  ref = old_bucket->refs[j];
+      ur_mug   mug = ur_nref_mug(r, ref);
+
+      uint64_t        idx = ( mug % next );
+      ur_pail64_t *bucket = &(buckets[idx]);
+      uint8_t    new_fill = bucket->fill;
+
+      if ( 10 == new_fill ) {
+        free(buckets);
+        return ur_dict64_grow(r, dict, size, next);
+      }
+
+      bucket->refs[new_fill] = ref;
+      bucket->vals[new_fill] = val;
+      bucket->fill = 1 + new_fill;
+    }
+  }
+
+  free(old_buckets);
+
+  dict->prev = size;
+  dict->size = next;
+  dict->buckets = buckets;
+}
+
+ur_bool_t
+ur_dict64_get(ur_root_t *r, ur_dict64_t *dict, ur_nref ref, uint64_t *out)
+{
+  ur_mug   mug = ur_nref_mug(r, ref);
+  uint64_t idx = ( mug % dict->size );
+
+  ur_pail64_t *bucket = &(dict->buckets[idx]);
+  uint8_t     i, fill = bucket->fill;
+
+  for ( i = 0; i < fill; i++ ) {
+    if ( ref == bucket->refs[i] ) {
+      *out = bucket->vals[i];
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+void
+ur_dict64_put(ur_root_t *r, ur_dict64_t *dict, ur_nref ref, uint64_t val)
+{
+  ur_mug mug = ur_nref_mug(r, ref);
+
+  while ( 1 ) {
+    uint64_t        idx = ( mug % dict->size );
+    ur_pail64_t *bucket = &(dict->buckets[idx]);
+    uint8_t     i, fill = bucket->fill;
+
+    for ( i = 0; i < fill; i++ ) {
+      if ( ref == bucket->refs[i] ) {
+        bucket->vals[i] = val;
+        return;
+      }
+    }
+
+    if ( 10 == fill ) {
+      ur_dict64_grow(r, dict, dict->prev, dict->size);
+      continue;
+    }
+
+    bucket->refs[fill] = ref;
+    bucket->vals[fill] = val;
+    bucket->fill = 1 + fill;
+    break;
+  }
+}
 
 void
 ur_dict_grow(ur_root_t *r, ur_dict_t *dict, uint64_t prev, uint64_t size)
@@ -137,6 +312,12 @@ ur_dict_grow(ur_root_t *r, ur_dict_t *dict, uint64_t prev, uint64_t size)
   dict->prev = size;
   dict->size = next;
   dict->buckets = buckets;
+}
+
+void
+ur_dict_free(ur_dict_t *dict)
+{
+  free(dict->buckets);
 }
 
 void
@@ -543,12 +724,6 @@ ur_hcon_info(FILE *f, ur_root_t *r)
 }
 
 static void
-_dict_free(ur_dict_t *dict)
-{
-  free(dict->buckets);
-}
-
-static void
 _atoms_free(ur_atoms_t *atoms)
 {
   uint8_t  **bytes = atoms->bytes;
@@ -558,14 +733,14 @@ _atoms_free(ur_atoms_t *atoms)
     free(bytes[i]);
   }
 
-  _dict_free(&(atoms->dict));
+  ur_dict_free(&(atoms->dict));
   free(bytes);
 }
 
 static void
 _cells_free(ur_cells_t *cells)
 {
-  _dict_free(&(cells->dict));
+  ur_dict_free(&(cells->dict));
   free(cells->heads);
 }
 

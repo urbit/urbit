@@ -59,6 +59,30 @@ typedef struct ur_nvec_s {
   ur_nref* refs;
 } ur_nvec_t;
 
+typedef struct ur_pail32_s {
+  uint8_t  fill;
+  ur_nref  refs[10];
+  uint32_t vals[10];
+} ur_pail32_t;
+
+typedef struct ur_dict32_s {
+  uint64_t        prev;
+  uint64_t        size;
+  ur_pail32_t *buckets;
+} ur_dict32_t;
+
+typedef struct ur_pail64_s {
+  uint8_t  fill;
+  ur_nref  refs[10];
+  uint64_t vals[10];
+} ur_pail64_t;
+
+typedef struct ur_dict64_s {
+  uint64_t        prev;
+  uint64_t        size;
+  ur_pail64_t *buckets;
+} ur_dict64_t;
+
 typedef struct ur_pail_s {
   uint8_t  fill;
   ur_nref  refs[10];
@@ -94,6 +118,27 @@ typedef struct ur_root_s {
   ur_cells_t cells;
   ur_atoms_t atoms;
 } ur_root_t;
+
+void
+ur_dict32_grow(ur_root_t *r, ur_dict32_t *dict, uint64_t prev, uint64_t size);
+
+ur_bool_t
+ur_dict32_get(ur_root_t *r, ur_dict32_t *dict, ur_nref ref, uint32_t *out);
+
+void
+ur_dict32_put(ur_root_t *r, ur_dict32_t *dict, ur_nref ref, uint32_t val);
+
+void
+ur_dict64_grow(ur_root_t *r, ur_dict64_t *dict, uint64_t prev, uint64_t size);
+
+void
+ur_dict_free(ur_dict_t *dict);
+
+ur_bool_t
+ur_dict64_get(ur_root_t *r, ur_dict64_t *dict, ur_nref ref, uint64_t *out);
+
+void
+ur_dict64_put(ur_root_t *r, ur_dict64_t *dict, ur_nref ref, uint64_t val);
 
 ur_nref
 ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len);
