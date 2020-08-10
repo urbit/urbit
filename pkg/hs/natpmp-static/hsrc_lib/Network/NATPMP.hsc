@@ -12,6 +12,8 @@ module Network.NATPMP (Error(..),
                        getPublicAddress,
                        setPortMapping) where
 
+import Control.Monad.IO.Unlift (MonadIO(..), MonadUnliftIO, withRunInIO)
+
 #include <netinet/in.h>
 
 #include <getgateway.h>
@@ -210,31 +212,34 @@ instance Enum Error where
   toEnum unmatched = error ("Error.toEnum: Cannot match " ++ show unmatched)
 
 
-initNatPmp :: IO (Either Error NatPmpHandle)
+initNatPmp :: (MonadIO m)
+           => m (Either Error NatPmpHandle)
 initNatPmp = do
-  natpmp  <- mallocBytes #{size natpmp_t}
-  ret <- _init_nat_pmp natpmp 0 0
+  natpmp <- liftIO $ mallocBytes #{size natpmp_t}
+  ret    <- liftIO $ _init_nat_pmp natpmp 0 0
   case ret of
     0 -> pure $ Right natpmp
     _ -> do
-      free natpmp
+      liftIO $ free natpmp
       pure $ Left $ intToEnum ret
 
-closeNatPmp :: NatPmpHandle -> IO (Either Error ())
+closeNatPmp :: (MonadIO m)
+            => NatPmpHandle -> m (Either Error ())
 closeNatPmp handle = do
-  ret <- _close_nat_pmp handle
-  free handle
+  ret <- liftIO $ _close_nat_pmp handle
+  liftIO $ free handle
   case ret of
     0 -> pure $ Right ()
     _ -> pure $ Left $ intToEnum ret
 
 
 -- Public interface for getting the public IPv4 address
-getPublicAddress :: NatPmpHandle -> IO (Either Error HostAddress)
+getPublicAddress :: (MonadIO m)
+                 => NatPmpHandle -> m (Either Error HostAddress)
 getPublicAddress natpmp = do
-  sendRetcode <- sendPublicAddressRequest natpmp
+  sendRetcode <- liftIO $ sendPublicAddressRequest natpmp
   case sendRetcode of
-    2 -> alloca $ \(pResponse :: NatPmpResponseHandle) -> do
+    2 -> liftIO $ alloca $ \(pResponse :: NatPmpResponseHandle) -> do
       respRetcode <- readNatResponseSynchronously natpmp pResponse
       case respRetcode of
         0 -> peek pResponse >>= \case
@@ -244,17 +249,18 @@ getPublicAddress natpmp = do
     _ -> pure $ Left $ intToEnum sendRetcode
 
 
-setPortMapping :: NatPmpHandle -> ProtocolType -> Word16 -> Word16 -> Word32
-               -> IO (Either Error ())
+setPortMapping :: (MonadIO m)
+               => NatPmpHandle -> ProtocolType -> Word16 -> Word16 -> Word32
+               -> m (Either Error ())
 setPortMapping natpmp protocol privatePort publicPort lifetime = do
   let protocolNum = fromEnum protocol
   sendResp <-
-    sendNewPortMappingRequest natpmp
+    liftIO $ sendNewPortMappingRequest natpmp
     (fromIntegral protocolNum) (CUShort privatePort) (CUShort publicPort)
     (CUInt lifetime)
 
   case sendResp of
-    12 -> alloca $ \(pResponse :: NatPmpResponseHandle) -> do
+    12 -> liftIO $ alloca $ \(pResponse :: NatPmpResponseHandle) -> do
       respRetcode <- readNatResponseSynchronously natpmp pResponse
       case respRetcode of
         0 -> peek pResponse >>= \case

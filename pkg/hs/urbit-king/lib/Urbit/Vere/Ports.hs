@@ -84,7 +84,7 @@ portThread :: forall e. (HasLogFunc e)
            -> (Text -> RIO e ())
            -> RIO e ()
 portThread q stderr = do
-  pmp <- io $ initNatPmp
+  pmp <- initNatPmp
   --pmp <- pure $ Left ErrNoGatewaySupport
   case pmp of
     Left err -> do
@@ -105,7 +105,7 @@ portThread q stderr = do
   where
     foundRouter :: NatPmpHandle -> RIO e ()
     foundRouter pmp = do
-      pubAddr <- io $ getPublicAddress pmp
+      pubAddr <- getPublicAddress pmp
       case pubAddr of
         Left _ -> pure ()
         Right addr -> do
@@ -142,7 +142,7 @@ portThread q stderr = do
       PTMInitialRequestOpen p notifyComplete -> do
         logInfo $
           displayShow ("port: sending initial request to NAT-PMP for port ", p)
-        ret <- io $ setPortMapping pmp PTUDP p p portLeaseLifetime
+        ret <- setPortMapping pmp PTUDP p p portLeaseLifetime
         case ret of
           Left err -> do
             logError $
@@ -163,7 +163,7 @@ portThread q stderr = do
         logInfo $
           displayShow ("port: sending renewing request to NAT-PMP for port ",
                        p)
-        ret <- io $ setPortMapping pmp PTUDP p p portLeaseLifetime
+        ret <- setPortMapping pmp PTUDP p p portLeaseLifetime
         case ret of
           Left err -> do
             logError $
@@ -180,7 +180,7 @@ portThread q stderr = do
       PTMRequestClose p -> do
         logInfo $
           displayShow ("port: releasing lease for ", p)
-        io $ setPortMapping pmp PTUDP p p 0
+        setPortMapping pmp PTUDP p p 0
         let removed = filterPort p nextRenew
         loop pmp removed
 
