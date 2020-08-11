@@ -1193,40 +1193,6 @@ u3r_word_fit(c3_w *out_w, u3_atom a)
   }
 }
 
-/* u3r_size_fit():
-**
-**   Fill (out) with (a) if it fits, returning success.
-*/
-c3_t
-u3r_size_fit(size_t *out_p, u3_atom a)
-{
-  if ( 0 == a ) {
-    *out_p = 0;
-    return 1;
-  }
-  else {
-    c3_w met_w = u3r_met(3, a);
-    if ( met_w > sizeof(size_t) ) {
-      return 0;
-    }
-    else {
-      u3r_bytes(0, sizeof(size_t), (c3_y*) out_p, a);
-#if c3_endian == c3_endian_big
-      { // reverse those bytes
-        c3_w i_w, j_w;
-        c3_y tmp, *s_y = (c3_y*) out_p;
-        for ( i_w = 0, j_w = sizeof(size_t) - 1; i_w < j_w; ++i_w, --j_w ) {
-          tmp = s_y[i_w];
-          s_y[i_w] = s_y[j_w];
-          s_y[j_w] = tmp;
-        }
-      }
-#endif
-      return 1;
-    }
-  }
-}
-
 /* u3r_chub():
 **
 **   Return double-word (a_w) of (b).

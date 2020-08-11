@@ -13,6 +13,7 @@
 #include <openssl/aes.h>
 
 #include <argon2.h>
+#include <blake2.h>
 
 typedef void *(*urcrypt_malloc_t)(size_t);
 typedef void *(*urcrypt_realloc_t)(void*, size_t);
@@ -128,5 +129,12 @@ const char* urcrypt_argon2(urcrypt_argon2_type type,
                            const uint8_t *salt,
                            size_t out_length,
                            uint8_t *out);
+
+int urcrypt_blake2(size_t message_length,
+                   const uint8_t *message,
+                   size_t key_length,
+                   const uint8_t key[64],
+                   size_t out_length,
+                   uint8_t *out);
 
 #endif

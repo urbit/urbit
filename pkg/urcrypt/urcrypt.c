@@ -686,3 +686,36 @@ urcrypt_argon2(urcrypt_argon2_type type,
     }
   }
 }
+
+int
+urcrypt_blake2(size_t message_length,
+               const uint8_t *message,
+               size_t key_length,
+               const uint8_t key[64],
+               size_t out_length,
+               uint8_t *out)
+{
+  int ret;
+  uint8_t rkey[64];
+  uint8_t *rmessage;
+
+  if ( key_length > 64 ) {
+    return -1;
+  }
+
+  rmessage = _urcrypt_reverse_alloc(message_length, message);
+  _urcrypt_reverse_copy(key_length, key, rkey);
+  ret = blake2b(out, out_length,
+                rmessage, message_length,
+                rkey, key_length);
+
+  urcrypt_free(rmessage);
+
+  if ( 0 != ret ) {
+    return -1;
+  }
+  else {
+    _urcrypt_reverse_inplace(out_length, out);
+    return 0;
+  }
+}

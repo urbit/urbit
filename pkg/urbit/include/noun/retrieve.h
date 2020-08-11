@@ -412,14 +412,6 @@
         u3r_word_fit(c3_w*   out_w,
                      u3_atom a);
 
-      /* u3r_size_fit():
-      **
-      **   Fill (out) with (a) if it fits, returning success.
-      */
-        c3_t
-        u3r_size_fit(size_t *out_p,
-                     u3_atom a);
-
       /* u3r_chub():
       **
       **   Return double-word (a_w) of (b).

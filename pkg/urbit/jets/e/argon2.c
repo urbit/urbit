@@ -28,14 +28,6 @@
     }
   }
 
-  static c3_y*
-  _cqear_unpack_bytes(size_t size, u3_atom in)
-  {
-    c3_w len_w = size;
-    c3_assert(size == len_w);
-    return u3r_bytes_alloc(0, len_w, in);
-  }
-
 /* functions
 */
 
@@ -47,38 +39,37 @@
                // input params
                u3_atom wid, u3_atom dat, u3_atom wis, u3_atom sat )
   {
-    size_t out_sz, key_sz, ex_sz, dat_sz, sat_sz;
-    c3_w ver_w, ted_w, mem_w, tim_w;
     urcrypt_argon2_type typ_u;
+    c3_w out_w, wik_w, wix_w, wid_w, wis_w, ver_w, ted_w, mem_w, tim_w;
 
-    if ( !(u3r_size_fit(&out_sz, out) &&
+    if ( !(u3r_word_fit(&out_w, out) &&
            _cqear_unpack_type(&typ_u, type) &&
            u3r_word_fit(&ver_w, version) &&
            u3r_word_fit(&ted_w, threads) &&
            u3r_word_fit(&mem_w, mem_cost) &&
            u3r_word_fit(&tim_w, time_cost) &&
-           u3r_size_fit(&key_sz, wik) &&
-           u3r_size_fit(&ex_sz, wix) &&
-           u3r_size_fit(&dat_sz, wid) &&
-           u3r_size_fit(&sat_sz, wis)) ) {
+           u3r_word_fit(&wik_w, wik) &&
+           u3r_word_fit(&wix_w, wix) &&
+           u3r_word_fit(&wid_w, wid) &&
+           u3r_word_fit(&wis_w, wis)) ) {
       u3l_log("%s\r\n", "argon2-punt");
       return u3_none;
     }
     else {
       u3_atom ret;
-      c3_y *key_y = _cqear_unpack_bytes(key_sz, key),
-           *ex_y  = _cqear_unpack_bytes(ex_sz, extra),
-           *dat_y = _cqear_unpack_bytes(dat_sz, dat),
-           *sat_y = _cqear_unpack_bytes(sat_sz, sat),
-           *out_y = u3a_malloc(out_sz);
+      c3_y *key_y = u3r_bytes_alloc(0, wik_w, key),
+           *ex_y  = u3r_bytes_alloc(0, wix_w, extra),
+           *dat_y = u3r_bytes_alloc(0, wid_w, dat),
+           *sat_y = u3r_bytes_alloc(0, wis_w, sat),
+           *out_y = u3a_malloc(out_w);
 
       const c3_c* err_c = urcrypt_argon2(
           typ_u, ver_w, ted_w, mem_w, tim_w,
-          key_sz, key_y,
-          ex_sz,  ex_y,
-          dat_sz, dat_y,
-          sat_sz, sat_y,
-          out_sz, out_y);
+          wik_w, key_y,
+          wix_w,  ex_y,
+          wid_w, dat_y,
+          wis_w, sat_y,
+          out_w, out_y);
 
       u3a_free(key_y);
       u3a_free(ex_y);
@@ -86,7 +77,7 @@
       u3a_free(sat_y);
 
       if ( NULL == err_c ) {
-        ret = u3i_bytes(out_sz, out_y);
+        ret = u3i_bytes(out_w, out_y);
       }
       else {
         ret = u3_none;
