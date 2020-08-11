@@ -173,14 +173,6 @@ export class ChatInput extends Component {
     setTimeout(this.closure, 2000);*/
   }
 
-  toggleCode() {
-    if(this.state.code) {
-      this.setState({ code: false });
-    } else {
-      this.setState({ code: true });
-    }
-  }
-
   uploadSuccess(url) {
     const { props } = this;
     props.api.chat.message(
