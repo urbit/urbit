@@ -104,7 +104,7 @@ export class Omnibox extends Component {
 
   search(event) {
     const { state } = this;
-    const query = event.target.value;
+    let query = event.target.value;
     const results = this.initialResults();
 
     this.setState({ query: query });
@@ -119,6 +119,8 @@ export class Omnibox extends Component {
     if (query.length === 1) {
       return;
     }
+
+    query = query.toLowerCase();
 
     ['commands', 'subscriptions', 'groups', 'apps'].map((category) => {
       const categoryIndex = state.index.get(category);
