@@ -15,6 +15,7 @@ export class OmniboxInput extends Component {
       placeholder='Search...'
       onKeyDown={props.control}
       onChange={props.search}
+      spellCheck={false}
       value={props.query}
     />
     );
