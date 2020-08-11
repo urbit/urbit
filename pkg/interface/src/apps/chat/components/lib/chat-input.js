@@ -188,7 +188,6 @@ export class ChatInput extends Component {
   }
 
   render() {
-    console.log('hi');
     const { props, state } = this;
 
     const color = props.ownerContact
