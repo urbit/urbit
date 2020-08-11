@@ -124,7 +124,7 @@ export default class ChatEditor extends Component {
           onChange={(e, d, v) => this.messageChange(e, d, v)}
           editorDidMount={(editor) => {
             this.editor = editor;
-            if (BROWSER_REGEX.test(navigator.userAgent)) {
+            if (!(BROWSER_REGEX.test(navigator.userAgent))) {
               editor.focus();
             }
           }}
