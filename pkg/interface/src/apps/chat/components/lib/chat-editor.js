@@ -47,6 +47,7 @@ export default class ChatEditor extends Component {
 
   componentDidUpdate(prevProps) {
     const { props } = this;
+
     if (prevProps.message !== props.message) {
       this.editor.setValue(props.message);
       this.editor.setOption('mode', MARKDOWN_CONFIG);
