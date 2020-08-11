@@ -68,6 +68,7 @@ export class Omnibox extends Component {
     }
 
     if (evt.key === 'Enter') {
+      evt.preventDefault();
       if (this.state.selected !== '') {
         this.navigate(this.state.selected);
       } else {
@@ -103,7 +104,7 @@ export class Omnibox extends Component {
 
   search(event) {
     const { state } = this;
-    const query = event.target.value;
+    let query = event.target.value;
     const results = this.initialResults();
 
     this.setState({ query: query });
@@ -118,6 +119,8 @@ export class Omnibox extends Component {
     if (query.length === 1) {
       return;
     }
+
+    query = query.toLowerCase();
 
     ['commands', 'subscriptions', 'groups', 'apps'].map((category) => {
       const categoryIndex = state.index.get(category);
@@ -189,7 +192,7 @@ export class Omnibox extends Component {
       {categoryResult}
     </Box>;
 
-      ['commands', 'subscriptions', 'groups', 'apps'].map((category, i) => {
+      ['apps', 'commands', 'groups', 'subscriptions'].map((category, i) => {
       const categoryResults = state.results.get(category);
       if (categoryResults.length > 0) {
         const each = categoryResults.map((result, i) => {
@@ -214,7 +217,7 @@ export class Omnibox extends Component {
 
     return (
         <Box
-          backgroundColor='lightGray'
+          backgroundColor='scales.black30'
           width='100vw'
           height='100vh'
           position='absolute'
