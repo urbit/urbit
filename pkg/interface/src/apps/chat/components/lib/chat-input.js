@@ -94,8 +94,10 @@ export class ChatInput extends Component {
     let message = [];
     let isInCodeBlock = false;
     let endOfCodeBlock = false;
-    text.split(/\r?\n/).forEach((line) => {
-      message.push('\n');
+    text.split(/\r?\n/).forEach((line, index) => {
+      if (index !== 0) {
+        message.push('\n');
+      }
       // A line of backticks enters and exits a codeblock
       if (line.startsWith('```')) {
         // But we need to check if we've ended a codeblock
