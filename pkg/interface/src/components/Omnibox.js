@@ -106,7 +106,7 @@ export class Omnibox extends Component {
     const query = event.target.value;
     const results = this.initialResults();
 
-    this.setState({ query: query });
+    this.setState({ query });
 
     // wipe results if backspacing
     if (query.length === 0) {
@@ -124,10 +124,10 @@ export class Omnibox extends Component {
       results.set(category,
         categoryIndex.filter((result) => {
           return (
-            result.title.toLowerCase().includes(query) ||
-            result.link.toLowerCase().includes(query) ||
-            result.app.toLowerCase().includes(query) ||
-            (result.host !== null ? result.host.includes(query) : false)
+            result.title.toLowerCase().includes(query.toLowerCase()) ||
+            result.link.toLowerCase().includes(query.toLowerCase()) ||
+            result.app.toLowerCase().includes(query.toLowerCase()) ||
+            (result.host !== null ? result.host.includes(query.toLowerCase()) : false)
           );
         })
       );
