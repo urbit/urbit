@@ -23,6 +23,7 @@ export class Omnibox extends Component {
     this.control - this.control.bind(this);
     this.setPreviousSelected = this.setPreviousSelected.bind(this);
     this.setNextSelected = this.setNextSelected.bind(this);
+    this.renderResults = this.renderResults.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -46,7 +47,11 @@ export class Omnibox extends Component {
     }
   }
 
-    control(evt) {
+  getSearchedCategories() {
+    return ['apps', 'commands', 'groups', 'subscriptions'];
+  }
+
+  control(evt) {
     if (evt.key === 'Escape') {
       if (this.state.query.length > 0) {
         this.setState({ query: '', results: this.initialResults() });
@@ -86,12 +91,7 @@ export class Omnibox extends Component {
   }
 
   initialResults() {
-    return new Map([
-      ['commands', []],
-      ['subscriptions', []],
-      ['groups', []],
-      ['apps', []]
-    ]);
+    return new Map(this.getSearchedCategories().map(category => [category, []]));
   }
 
   navigate(link) {
@@ -106,8 +106,9 @@ export class Omnibox extends Component {
     const { state } = this;
     let query = event.target.value;
     const results = this.initialResults();
+    let selected = state.selected;
 
-    this.setState({ query: query });
+    this.setState({ query });
 
     // wipe results if backspacing
     if (query.length === 0) {
@@ -122,7 +123,7 @@ export class Omnibox extends Component {
 
     query = query.toLowerCase();
 
-    ['commands', 'subscriptions', 'groups', 'apps'].map((category) => {
+    this.getSearchedCategories().map((category) => {
       const categoryIndex = state.index.get(category);
       results.set(category,
         categoryIndex.filter((result) => {
@@ -136,30 +137,35 @@ export class Omnibox extends Component {
       );
     });
 
-    this.setState({ results: results });
+    const flattenedResultLinks = Array.from(results.values()).flat().map(result => result.link);
+    if (!flattenedResultLinks.includes(selected)) {
+      selected = flattenedResultLinks[0];
+    }
+
+    this.setState({ results, selected });
   }
 
-    setPreviousSelected() {
-      const current = this.state.selected;
-      const flattenedResults = Array.from(this.state.results.values()).flat();
-      const totalLength = flattenedResults.length;
-      if (current !== '') {
-        const currentIndex = flattenedResults.indexOf(
-          ...flattenedResults.filter((e) => {
-            return e.link === current;
-          })
-        );
-        if (currentIndex > 0) {
+  setPreviousSelected() {
+    const current = this.state.selected;
+    const flattenedResults = Array.from(this.state.results.values()).flat();
+    const totalLength = flattenedResults.length;
+    if (current !== '') {
+      const currentIndex = flattenedResults.indexOf(
+        ...flattenedResults.filter((e) => {
+          return e.link === current;
+        })
+      );
+      if (currentIndex > 0) {
         const nextLink = flattenedResults[currentIndex - 1].link;
         this.setState({ selected: nextLink });
-        } else {
-        const nextLink = flattenedResults[totalLength - 1].link;
-        this.setState({ selected: nextLink });
-        }
       } else {
         const nextLink = flattenedResults[totalLength - 1].link;
         this.setState({ selected: nextLink });
       }
+    } else {
+      const nextLink = flattenedResults[totalLength - 1].link;
+      this.setState({ selected: nextLink });
+    }
   }
 
   setNextSelected() {
@@ -184,37 +190,38 @@ export class Omnibox extends Component {
     }
   }
 
+  renderResults() {
+    const { props, state } = this;
+    return <Box maxHeight="400px" overflowY="scroll" overflowX="hidden">
+      {this.getSearchedCategories()
+        .map(category => Object({ category, categoryResults: state.results.get(category) }))
+        .filter(category => category.categoryResults.length > 0)
+        .map(({ category, categoryResults }, i) => (
+          <Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
+            <Rule borderTopWidth="0.5px" color="washedGray" />
+            <Text gray ml={2}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>
+            {categoryResults.map((result, i2) => (
+              <OmniboxResult
+                key={i2}
+                icon={result.app}
+                text={result.title}
+                subtext={cite(result.host)}
+                link={result.link}
+                navigate={() => this.navigate(result.link)}
+                selected={this.state.selected}
+                dark={props.dark} />
+            ))}
+          </Box>
+        ))
+      }
+    </Box>;
+  }
+
   render() {
     const { props, state } = this;
-    const categoryResult = [];
-
-    const renderResults = <Box maxHeight="400px" overflowY="scroll" overflowX="hidden">
-      {categoryResult}
-    </Box>;
-
-      ['apps', 'commands', 'groups', 'subscriptions'].map((category, i) => {
-      const categoryResults = state.results.get(category);
-      if (categoryResults.length > 0) {
-        const each = categoryResults.map((result, i) => {
-          return <OmniboxResult
-            key={i}
-            icon={result.app}
-            text={result.title}
-            subtext={cite(result.host)}
-            link={result.link}
-            navigate={() => this.navigate(result.link)}
-            selected={this.state.selected}
-            dark={props.dark}
-                 />;
-        });
-         categoryResult.push(<Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
-        <Rule borderTopWidth="0.5px" color="washedGray" />
-        <Text gray ml={2}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>
-          {each}
-        </Box>);
-      }
-    });
-
+    if (!state.selected && Array.from(this.state.results.values()).flat().length) {
+      this.setNextSelected();
+    }
     return (
         <Box
           backgroundColor='scales.black30'
@@ -236,12 +243,14 @@ export class Omnibox extends Component {
                 this.omniBox = el;
               }}>
               <OmniboxInput
-                ref={(el) => { this.omniInput = el; }}
+                ref={(el) => {
+                  this.omniInput = el;
+                }}
                 control={e => this.control(e)}
                 search={this.search}
                 query={state.query}
               />
-              {renderResults}
+              {this.renderResults()}
             </Box>
           </Row>
         </Box>
