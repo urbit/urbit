@@ -192,7 +192,7 @@ export class Omnibox extends Component {
       {categoryResult}
     </Box>;
 
-      ['commands', 'subscriptions', 'groups', 'apps'].map((category, i) => {
+      ['apps', 'commands', 'groups', 'subscriptions'].map((category, i) => {
       const categoryResults = state.results.get(category);
       if (categoryResults.length > 0) {
         const each = categoryResults.map((result, i) => {
