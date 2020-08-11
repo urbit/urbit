@@ -174,7 +174,9 @@ export class ChatWindow extends Component {
               <ChatMessage
                 unreadRef={this.unreadReference}
                 isLastUnread={
-                  props.unreadCount > 0 && i === props.unreadCount - 1
+                  props.unreadCount > 0 &&
+                  i === props.unreadCount - 1 &&
+                  state.numPages !== 1
                 }
                 msg={msg}
                 previousMsg={messages[i - 1]}
