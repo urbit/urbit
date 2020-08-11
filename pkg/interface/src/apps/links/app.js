@@ -120,8 +120,9 @@ export class LinksApp extends Component {
 
             const autoJoin = () => {
               try {
-                api.links.joinCollection(resourcePath);
-                props.history.push(makeRoutePath(resourcePath));
+                api.links.joinCollection(resourcePath).then(() => {
+                  props.history.push(makeRoutePath(resourcePath));
+                });
               } catch(err) {
                 setTimeout(autoJoin, 2000);
               }
@@ -258,6 +259,8 @@ export class LinksApp extends Component {
                   amOwner={amOwner}
                   popout={popout}
                   sidebarShown={sidebarShown}
+                  listening={listening}
+                  subscription={this.props.subscription}
                   api={api}
                   />
                 </Skeleton>

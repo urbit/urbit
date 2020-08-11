@@ -37,6 +37,15 @@ export class Links extends Component {
     ) {
       this.props.api?.links.getPage(this.props.resourcePath, this.props.page);
     }
+    // if we are subscribed to links, but don't have this,
+    // join it
+    const subscribed = (
+      this.props.subscription?.openSubscriptions.link &&
+      this.props.subscription.openSubscriptions.link.length > 0
+      );
+      if (subscribed && !this.props.listening.has(this.props.resourcePath)) {
+        this.props.history.push(`/~link/join${this.props.resourcePath}`);
+      };
   }
 
   render() {
