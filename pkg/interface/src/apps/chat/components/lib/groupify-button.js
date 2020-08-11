@@ -1,5 +1,18 @@
 import React, { Component } from 'react';
+import Toggle from '../../../../components/toggle';
+import { InviteSearch } from '../../../../components/InviteSearch';
 
+
+/*    this.setState({
+      isLoading: true,
+      awaiting: true,
+      type: 'Converting chat...'
+    }, (() => {
+      props.api.chat.groupify(
+        props.station, targetGroup, inclusive
+      ).then(() => this.setState({ awaiting: false }));
+    }));
+*/
 
 export class GroupifyButton extends Component {
 
@@ -44,14 +57,16 @@ export class GroupifyButton extends Component {
   render() {
     const { inclusive, targetGroup } = this.state;
     const {
+      api,
       isOwner,
       association,
+      associations,
       contacts,
       groups,
-      groupifyChat,
+      station
     } = this.props;
 
-    const groupPath =  association['group-path'];
+    const groupPath = association['group-path'];
     const ownedUnmanagedVillage =
       isOwner &&
       !contacts[groupPath];
@@ -61,34 +76,38 @@ export class GroupifyButton extends Component {
     }
 
     return (
-      <div>
-        <div className={'w-100 fl mt3'} style={{ maxWidth: '29rem' }}>
-          <p className="f8 mt3 lh-copy db">Convert Chat</p>
-          <p className="f9 gray2 db mb4">
-            Convert this chat into a group with associated chat, or select a
-            group to add this chat to.
-          </p>
-          <InviteSearch
-            groups={groups}
-            contacts={contacts}
-            associations={associations}
-            groupResults={true}
-            shipResults={false}
-            invites={{
-              groups: targetGroup ? [targetGroup] : [],
-              ships: []
-            }}
-            setInvite={this.changeTargetGroup.bind(this)}
-          />
-          {this.renderInclusive()}
-          <a onClick={() => {
-            groupifyChat(targetGroup, inclusive);
+      <div className={'w-100 fl mt3'} style={{ maxWidth: '29rem' }}>
+        <p className="f8 mt3 lh-copy db">Convert Chat</p>
+        <p className="f9 gray2 db mb4">
+          Convert this chat into a group with associated chat, or select a
+          group to add this chat to.
+        </p>
+        <InviteSearch
+          groups={groups}
+          contacts={contacts}
+          associations={associations}
+          groupResults={true}
+          shipResults={false}
+          invites={{
+            groups: targetGroup ? [targetGroup] : [],
+            ships: []
           }}
-             className={
-               'dib f9 black gray4-d bg-gray0-d ba pa2 mt4 b--black ' + 
-               'b--gray1-d pointer'
-             }>Convert to group</a>
-        </div>
+          setInvite={this.changeTargetGroup.bind(this)}
+        />
+        {this.renderInclusiveToggle()}
+        <a onClick={() => {
+          changeLoading(true, true, 'Converting to group...', () => {
+            api.chat.groupify(
+              station, targetGroup, inclusive
+            ).then(() => {
+              changeLoading(false, false, '', () => {});
+            });
+          });
+        }}
+           className={
+             'dib f9 black gray4-d bg-gray0-d ba pa2 mt4 b--black ' + 
+             'b--gray1-d pointer'
+           }>Convert to group</a>
       </div>
     );
   }

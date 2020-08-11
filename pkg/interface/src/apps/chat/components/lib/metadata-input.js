@@ -1,3 +1,4 @@
+import React, { Component } from 'react';
 
 export class MetadataInput extends Component {
 
@@ -7,46 +8,45 @@ export class MetadataInput extends Component {
     this.state = {
       value: props.initialValue
     };
-    
-    this.inputRef = React.createRef();
   }
 
   componentDidUpdate(prevProps) {
     const { props } = this;
     if (prevProps.initialValue !== props.initialValue) {
-      this.setState({ value: props.initialValue }, () => {
-        if (this.inputRef.current) {
-          this.inputRef.current.value = props.initialValue;
-        }
-      });
+      this.setState({ value: props.initialValue });
     }
   }
 
   render() {
     const {
-      isDisabled,
-      changeValue,
       title,
-      description
+      description,
+      isDisabled,
+      setValue
     } = this.props;
 
-    <div className={'w-100 pb6 fl mt3 ' + ((isOwner) ? '' : 'o-30')}>
-      <p className="f8 mt3 lh-copy">{title}</p>
-      <p className="f9 gray2 db mb4">{description}</p>
-      <div className="relative w-100 flex" style={{ maxWidth: '29rem' }}>
-        <input
-          ref={this.inputRef}
-          className={'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
-          'focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3'}
-          value={state.value}
-          disabled={isDisabled}
-          onBlur={() => {
-            if (!isDisabled) {
-              changeValue(state.value);
-            }
-          }}
-        />
+    return (
+      <div className={'w-100 mb3 fl ' + ((isDisabled) ? 'o-30' : '')}>
+        <p className="f8 lh-copy">{title}</p>
+        <p className="f9 gray2 db mb4">{description}</p>
+        <div className="relative w-100 flex" style={{ maxWidth: '29rem' }}>
+          <input
+            className={'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
+            'focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3'}
+            type="text"
+            value={this.state.value}
+            disabled={isDisabled}
+            onChange={(e) => {
+              this.setState({ value: e.target.value });
+            }}
+            onBlur={() => {
+              if (!isDisabled) {
+                setValue(this.state.value || '');
+              }
+            }}
+          />
+        </div>
       </div>
-    </div>
+    );
   }
 }
