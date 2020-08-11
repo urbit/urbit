@@ -44,8 +44,15 @@ export class Notebook extends Component {
     const { props } = this;
     if ((prevProps && (prevProps.api !== props.api)) || props.api) {
       const notebook = props.notebooks?.[props.ship]?.[props.book];
+      const subscribed = (
+        props.subscription?.openSubscriptions.publish &&
+        props.subscription.openSubscriptions.publish.length > 0
+        );
       if (!notebook?.subscribers) {
         props.api.publish.fetchNotebook(props.ship, props.book);
+      }
+      if (subscribed && !notebook) {
+        props.history.push(`/~publish/join/${props.ship}/${props.book}`);
       }
     }
   }
@@ -181,7 +188,7 @@ export class Notebook extends Component {
     const group = props.groups[notebook?.['writers-group-path']];
     const role = group ? roleForShip(group, window.ship) : undefined;
 
-    const subsComponent = (this.props.ship.slice(1) === window.ship) || (role === 'admin') 
+    const subsComponent = (this.props.ship.slice(1) === window.ship) || (role === 'admin')
       ? (<Link to={subs} className={tabStyles.subscribers}>
           Subscribers
         </Link>)

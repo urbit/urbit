@@ -219,6 +219,7 @@ export default class PublishApp extends React.Component {
                     sidebarShown={sidebarShown}
                     popout={popout}
                     api={api}
+                    subscription={this.props.subscription}
                     {...props}
                   />
                 </Skeleton>
