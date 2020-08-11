@@ -9,6 +9,8 @@ import OmniboxResult from './OmniboxResult';
 import { cite } from '../lib/util';
 
 export class Omnibox extends Component {
+  searchCategories = ['commands', 'apps', 'groups', 'subscriptions'];
+
   constructor(props) {
     super(props);
     this.state = {
@@ -85,12 +87,7 @@ export class Omnibox extends Component {
   }
 
   initialResults() {
-    return new Map([
-      ['commands', []],
-      ['subscriptions', []],
-      ['groups', []],
-      ['apps', []]
-    ]);
+    return new Map(this.searchCategories.map(category => [category, []]));
   }
 
   navigate(link) {
@@ -119,7 +116,7 @@ export class Omnibox extends Component {
       return;
     }
 
-    ['commands', 'subscriptions', 'groups', 'apps'].map((category) => {
+    this.searchCategories.map((category) => {
       const categoryIndex = state.index.get(category);
       results.set(category,
         categoryIndex.filter((result) => {
@@ -189,7 +186,7 @@ export class Omnibox extends Component {
       {categoryResult}
     </Box>;
 
-      ['commands', 'subscriptions', 'groups', 'apps'].map((category, i) => {
+      this.searchCategories.map((category, i) => {
       const categoryResults = state.results.get(category);
       if (categoryResults.length > 0) {
         const each = categoryResults.map((result, i) => {
