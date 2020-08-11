@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { SidebarSwitcher } from '../../../../components/SidebarSwitch';
-import { NotebookPosts } from './notebook-posts';
+import { NotebookPosts } from './NotebookPosts';
 import { Subscribers } from './subscribers';
 import { Settings } from './settings';
 import { cite } from '../../../../lib/util';
@@ -94,11 +94,12 @@ export class Notebook extends Component {
       case 'posts': {
         const notesList = notebook?.['notes-by-date'] || [];
         const notes = notebook?.notes || null;
-        inner = <NotebookPosts notes={notes}
+        inner = <NotebookPosts 
+                  notes={notes}
                   popout={props.popout}
                   list={notesList}
                   host={props.ship}
-                  notebookName={props.book}
+                  book={props.book}
                   contacts={props.notebookContacts}
                 />;
         break;
