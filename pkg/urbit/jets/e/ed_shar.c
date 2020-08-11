@@ -9,11 +9,11 @@
   {
     c3_y pub_y[32], sek_y[32];
 
-    if ( 0 != u3r_unpack(32, pub_y, pub) ) {
+    if ( 0 != u3r_bytes_fit(32, pub_y, pub) ) {
       // pub is not size checked in the hoon
       return u3_none;
     }
-    else if ( 0 != u3r_unpack(32, sek_y, sek) ) {
+    else if ( 0 != u3r_bytes_fit(32, sek_y, sek) ) {
       // sek explicitly bails through suck
       return u3m_bail(c3__exit);
     }

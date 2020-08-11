@@ -12,14 +12,14 @@
   {
     c3_y sed_y[32];
 
-    if ( 0 != u3r_unpack(32, sed_y, b) ) {
+    if ( 0 != u3r_bytes_fit(32, sed_y, b) ) {
       // hoon calls suck, which calls puck, which crashes
       return u3m_bail(c3__exit);
     }
     else {
       c3_y  sig_y[64];
       c3_w  met_w;
-      c3_y* mes_y = u3r_unpack_alloc(&met_w, a);
+      c3_y* mes_y = u3r_bytes_all(&met_w, a);
 
       urcrypt_ed_sign(mes_y, met_w, sed_y, sig_y);
       u3a_free(mes_y);

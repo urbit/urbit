@@ -346,21 +346,22 @@
                   c3_y*   c_y,
                   u3_atom d);
 
-      /* u3r_unpack():
+      /* u3r_bytes_fit():
       **
       **   Copy (len_w) bytes of (a) into (buf_y) if it fits, returning overage
       */
         c3_w
-        u3r_unpack(c3_w len_w,
-                   c3_y *buf_y,
-                   u3_atom a);
+        u3r_bytes_fit(c3_w    len_w,
+                      c3_y*   buf_y,
+                      u3_atom a);
 
-      /* u3r_unpack_alloc():
+      /* u3r_bytes_all():
       **
       **  Allocate a new byte array with all the bytes of (a)
       */
         c3_y*
-        u3r_unpack_alloc(c3_w* len_w, u3_atom a);
+        u3r_bytes_all(c3_w*   len_w,
+                      u3_atom a);
 
       /* u3r_chop():
       **

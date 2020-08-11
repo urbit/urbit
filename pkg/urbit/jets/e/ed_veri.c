@@ -13,14 +13,14 @@
   {
     c3_y  sig_y[64], pub_y[32];
 
-    if ( (0 != u3r_unpack(64, sig_y, s)) ||
-         (0 != u3r_unpack(32, pub_y, pk)) ) {
+    if ( (0 != u3r_bytes_fit(64, sig_y, s)) ||
+         (0 != u3r_bytes_fit(32, pub_y, pk)) ) {
       // hoon checks sizes, but weirdly and without crashes
       return u3_none;
     }
     else {
       c3_w  met_w;
-      c3_y* mes_y = u3r_unpack_alloc(&met_w, m);
+      c3_y* mes_y = u3r_bytes_all(&met_w, m);
       c3_t  val_t = urcrypt_ed_veri(mes_y, met_w, pub_y, sig_y);
       u3a_free(mes_y);
 

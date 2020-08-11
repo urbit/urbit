@@ -1076,12 +1076,12 @@ u3r_bytes(c3_w    a_w,
   }
 }
 
-/* u3r_unpack():
+/* u3r_bytes_fit():
 **
 **  Copy (len_w) bytes of (a) into (buf_y) if it fits, returning overage
 */
 c3_w
-u3r_unpack(c3_w len_w, c3_y *buf_y, u3_atom a)
+u3r_bytes_fit(c3_w len_w, c3_y *buf_y, u3_atom a)
 {
   c3_w met_w = u3r_met(3, a);
   if ( met_w <= len_w ) {
@@ -1093,12 +1093,12 @@ u3r_unpack(c3_w len_w, c3_y *buf_y, u3_atom a)
   }
 }
 
-/* u3r_unpack_alloc():
+/* u3r_bytes_all():
 **
 **  Allocate a new byte array with all the bytes of (a)
 */
 c3_y*
-u3r_unpack_alloc(c3_w* len_w, u3_atom a)
+u3r_bytes_all(c3_w* len_w, u3_atom a)
 {
   c3_w  met_w = u3r_met(3, a);
   c3_y* a_y = u3a_malloc(met_w);

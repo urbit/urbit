@@ -11,7 +11,7 @@
   {
     c3_y a_y[32];
 
-    if ( 0 != u3r_unpack(32, a_y, a) ) {
+    if ( 0 != u3r_bytes_fit(32, a_y, a) ) {
       return u3_none;
     }
     else {

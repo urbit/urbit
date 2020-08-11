@@ -13,8 +13,8 @@
   {
     c3_y a_y[32], b_y[32], out_y[32];
 
-    if ( (0 != u3r_unpack(32, a_y, a)) ||
-         (0 != u3r_unpack(32, b_y, b)) ||
+    if ( (0 != u3r_bytes_fit(32, a_y, a)) ||
+         (0 != u3r_bytes_fit(32, b_y, b)) ||
          (0 != urcrypt_ed_point_add(a_y, b_y, out_y)) ) {
       return u3_none;
     }

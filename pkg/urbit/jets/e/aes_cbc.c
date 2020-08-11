@@ -25,7 +25,7 @@ typedef c3_y* (*urcrypt_cbc)(const c3_y*,
 
     u3r_bytes(0, 16, iv_y, iv);
 
-    msg_y = u3r_unpack_alloc(&met_w, msg);
+    msg_y = u3r_bytes_all(&met_w, msg);
     out_y = (*low_f)(msg_y, met_w, key_y, iv_y, &len);
     u3a_free(msg_y);
 

@@ -11,7 +11,7 @@
   {
     c3_y sed_y[32];
 
-    if ( 0 != u3r_unpack(32, sed_y, sed) ) {
+    if ( 0 != u3r_bytes_fit(32, sed_y, sed) ) {
       // hoon explicitly crashes on mis-size
       return u3m_bail(c3__exit);
     }

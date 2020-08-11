@@ -13,9 +13,9 @@
   {
     c3_y a_y[32], b_y[32], c_y[32], out_y[32];
 
-    if ( (0 != u3r_unpack(32, a_y, a)) ||
-         (0 != u3r_unpack(32, b_y, b)) ||
-         (0 != u3r_unpack(32, c_y, c)) ||
+    if ( (0 != u3r_bytes_fit(32, a_y, a)) ||
+         (0 != u3r_bytes_fit(32, b_y, b)) ||
+         (0 != u3r_bytes_fit(32, c_y, c)) ||
          (0 != urcrypt_ed_add_scalarmult_scalarmult_base(a_y, b_y, c_y, out_y)) ) {
       return u3_none;
     }
