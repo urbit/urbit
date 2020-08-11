@@ -112,6 +112,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           sidebarShown={props.sidebarShown}
           popout={props.popout} />
         <ChatWindow
+          history={props.history}
           isChatMissing={isChatMissing}
           isChatLoading={isChatLoading}
           isChatUnsynced={isChatUnsynced}
