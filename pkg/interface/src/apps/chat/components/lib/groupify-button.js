@@ -3,17 +3,6 @@ import Toggle from '../../../../components/toggle';
 import { InviteSearch } from '../../../../components/InviteSearch';
 
 
-/*    this.setState({
-      isLoading: true,
-      awaiting: true,
-      type: 'Converting chat...'
-    }, (() => {
-      props.api.chat.groupify(
-        props.station, targetGroup, inclusive
-      ).then(() => this.setState({ awaiting: false }));
-    }));
-*/
-
 export class GroupifyButton extends Component {
 
   constructor(props) {
