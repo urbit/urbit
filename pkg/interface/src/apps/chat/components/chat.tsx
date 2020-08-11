@@ -94,7 +94,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
       props.chatSynced &&
       !(props.station in props.chatSynced) &&
       props.envelopes.length > 0;
-    
+
     const unreadCount = props.length - props.read;
     const unreadMsg = unreadCount > 0 && props.envelopes[unreadCount - 1];
 
@@ -141,6 +141,9 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           s3={props.s3}
           placeholder="Message..."
           message={this.state.messages.get(props.station) || ""}
+          deleteMessage={() => this.setState({
+            messages: this.state.messages.set(props.station, "")
+          })}
         />
       </div>
     );

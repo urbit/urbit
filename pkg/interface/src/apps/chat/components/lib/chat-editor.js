@@ -80,11 +80,17 @@ export default class ChatEditor extends Component {
       return;
     }
 
+    this.setState({ message: '' });
     this.props.submit(editorMessage);
     this.editor.setValue('');
   }
 
   messageChange(editor, data, value) {
+    if (this.state.message !== '' && value == '') {
+      this.setState({
+        message: value
+      });
+    }
     if (value == this.props.message || value == '' || value == ' ') {
       return;
     }
@@ -124,7 +130,7 @@ export default class ChatEditor extends Component {
           onChange={(e, d, v) => this.messageChange(e, d, v)}
           editorDidMount={(editor) => {
             this.editor = editor;
-            if (BROWSER_REGEX.test(navigator.userAgent)) {
+            if (!(BROWSER_REGEX.test(navigator.userAgent))) {
               editor.focus();
             }
           }}

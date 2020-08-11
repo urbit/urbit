@@ -10,7 +10,7 @@ const URL_REGEX = new RegExp(String(/^((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\
 export class ChatInput extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       inCodeMode: false,
     };
@@ -140,6 +140,8 @@ export class ChatInput extends Component {
       // Add any remaining message
       messages.push(message);
     }
+
+    props.deleteMessage();
 
     messages.forEach((message) => {
       if (message.length > 0) {
