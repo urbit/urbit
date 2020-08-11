@@ -171,27 +171,6 @@ export class ChatInput extends Component {
     };
     this.closure = closure.bind(this);
     setTimeout(this.closure, 2000);*/
-
-    this.editor.setValue('');
-  }
-
-  toggleCode() {
-    if(this.state.code) {
-      this.setState({ code: false });
-      this.editor.setOption('mode', MARKDOWN_CONFIG);
-      this.editor.setOption('placeholder', this.props.placeholder);
-    } else {
-      this.setState({ code: true });
-      this.editor.setOption('mode', null);
-      this.editor.setOption('placeholder', 'Code...');
-    }
-    const value = this.editor.getValue();
-
-    // Force redraw of placeholder
-    if(value.length === 0) {
-      this.editor.setValue(' ');
-      this.editor.setValue('');
-    }
   }
 
   uploadSuccess(url) {
