@@ -43,7 +43,7 @@ export class MetadataColor extends Component {
   render() {
     const { props, state } = this;
     return (
-      <div className="cf w-100">
+      <div className={'cf w-100 mb3 ' + ((props.isDisabled) ? 'o-30' : '')}>
         <p className="f8 lh-copy">Change color</p>
         <p className="f9 gray2 db mb4">Give this chat a color when viewing group channels</p>
         <div className="relative w-100 flex"
