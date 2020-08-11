@@ -99,6 +99,7 @@ export class ChatWindow extends Component {
   scrollIsAtBottom() {
     if (this.state.numPages !== 1) {
       this.setState({ numPages: 1 });
+      this.dismissUnread();
     }
   }
 
