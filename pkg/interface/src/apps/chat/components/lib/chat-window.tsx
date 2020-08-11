@@ -20,7 +20,7 @@ export class ChatWindow extends Component {
     };
 
     this.hasAskedForMessages = false;
-    
+
     this.dismissUnread = this.dismissUnread.bind(this);
     this.scrollIsAtBottom = this.scrollIsAtBottom.bind(this);
     this.scrollIsAtTop = this.scrollIsAtTop.bind(this);
@@ -60,20 +60,20 @@ export class ChatWindow extends Component {
     const { props, state } = this;
 
     if (props.isChatMissing) {
-      props.history.push("/~chat");
+      props.history.push(`/~chat/join${props.station}`);
     } else if (props.messages.length >= prevProps.messages.length + 10) {
       this.hasAskedForMessages = false;
-      let numPages = props.unreadCount > 0 ? 
+      let numPages = props.unreadCount > 0 ?
         Math.ceil(props.unreadCount / PAGE_SIZE) : this.state.numPages;
 
       if (this.state.numPages === numPages) {
         if (props.unreadCount > 20) {
-          this.scrollToUnread();    
+          this.scrollToUnread();
         }
       } else {
         this.setState({ numPages }, () => {
           if (props.unreadCount > 20) {
-            this.scrollToUnread();    
+            this.scrollToUnread();
           }
         });
       }
