@@ -70,6 +70,7 @@ export class Omnibox extends Component {
     }
 
     if (evt.key === 'Enter') {
+      evt.preventDefault();
       if (this.state.selected !== '') {
         this.navigate(this.state.selected);
       } else {
