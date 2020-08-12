@@ -14,8 +14,6 @@ export default class LaunchApp extends React.Component {
 
   }
 
-  componentWillUnmount() {}
-
   render() {
     const { props } = this;
 

@@ -13,13 +13,7 @@ import './css/fonts.css';
 import light from './themes/light';
 import dark from './themes/old-dark';
 
-import LaunchApp from './apps/launch/app';
-import ChatApp from './apps/chat/app';
-import DojoApp from './apps/dojo/app';
-import GroupsApp from './apps/groups/app';
-import LinksApp from './apps/links/app';
-import PublishApp from './apps/publish/app';
-
+import { Content } from './components/Content';
 import StatusBar from './components/StatusBar';
 import Omnibox from './components/Omnibox';
 import ErrorComponent from './components/Error';
@@ -30,27 +24,12 @@ import GlobalApi from './api/global';
 import { uxToHex } from './lib/util';
 import { Sigil } from './lib/sigil';
 
-// const Style = createGlobalStyle`
-//   ${cssReset}
-//   html {
-//     background-color: ${p => p.theme.colors.white};
-//   }
-//
-//   strong {
-//     font-weight: 600;
-//   }
-// `;
-
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
   height: 100%;
   width: 100%;
   padding: 0;
   margin: 0;
-`;
-
-const Content = styled.div`
-   height: calc(100% - 45px);
 `;
 
 const StatusBarWithRouter = withRouter(StatusBar);
@@ -118,10 +97,9 @@ class App extends React.Component {
   }
 
   render() {
-    const channel = window.channel;
-
-    const associations = this.state.associations ? this.state.associations : { contacts: {} };
     const { state } = this;
+    const associations = state.associations ?
+      state.associations : { contacts: {} };
     const theme = state.dark ? dark : light;
 
     return (
@@ -143,86 +121,11 @@ class App extends React.Component {
               dark={state.dark}
               show={state.omniboxShown}
             />
-            <Content>
-              <Switch>
-                <Route
-                  exact
-                  path='/'
-                  render={p => (
-                    <LaunchApp
-                      ship={this.ship}
-                      api={this.api}
-                      {...state}
-                      {...p}
-                    />
-                  )}
-                />
-                <Route
-                  path='/~chat'
-                  render={p => (
-                    <ChatApp
-                      ship={this.ship}
-                      api={this.api}
-                      subscription={this.subscription}
-                      {...state}
-                      {...p}
-                    />
-                  )}
-                />
-                <Route
-                  path='/~dojo'
-                  render={p => (
-                    <DojoApp
-                      ship={this.ship}
-                      channel={channel}
-                      subscription={this.subscription}
-                      {...p}
-                    />
-                  )}
-                />
-                <Route
-                  path='/~groups'
-                  render={p => (
-                    <GroupsApp
-                      ship={this.ship}
-                      api={this.api}
-                      subscription={this.subscription}
-                      {...state}
-                      {...p}
-                    />
-                  )}
-                />
-                <Route
-                  path='/~link'
-                  render={p => (
-                    <LinksApp
-                      ship={this.ship}
-                      api={this.api}
-                      subscription={this.subscription}
-                      {...state}
-                      {...p}
-                    />
-                  )}
-                />
-                <Route
-                  path='/~publish'
-                  render={p => (
-                    <PublishApp
-                      ship={this.ship}
-                      api={this.api}
-                      subscription={this.subscription}
-                      {...state}
-                      {...p}
-                    />
-                  )}
-                />
-              <Route
-                render={props => (
-                  <ErrorComponent {...props} code={404} description="Not Found" />
-                )}
-              />
-              </Switch>
-            </Content>
+          <Content
+            ship={this.ship}
+            api={this.api}
+            subscription={this.subscription}
+            {...state} />
           </Router>
         </Root>
       </ThemeProvider>
