@@ -93,7 +93,11 @@
         [%create (pairs [%path (path path.upd)]~)]
     ?:  ?=(%delete -.upd)
         [%delete (pairs [%path (path path.upd)]~)]
-    [*@t *json]
+    ?>  ?=(%keys -.upd)
+        :-  %keys
+        :-  %a
+        %+  turn  ~(tap by keys.upd)
+        |=  pax=^path  (path pax)
     ==
   --
 ++  dejs
