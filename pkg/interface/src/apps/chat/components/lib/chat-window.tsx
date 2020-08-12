@@ -172,6 +172,7 @@ export class ChatWindow extends Component {
           />
           { messages.map((msg, i) => (
               <ChatMessage
+                key={msg.uid}
                 unreadRef={this.unreadReference}
                 isLastUnread={
                   props.unreadCount > 0 &&
