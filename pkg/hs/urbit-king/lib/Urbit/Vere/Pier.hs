@@ -434,7 +434,7 @@ drivers env multi who isFake plan termSys stderr serfSIGINT = do
   (behnBorn, runBehn) <- rio Behn.behn'
   (termBorn, runTerm) <- rio (Term.term' termSys serfSIGINT)
   (amesBorn, runAmes) <- rio (Ames.ames' who isFake stderr)
-  (httpBorn, runEyre) <- rio (Eyre.eyre' multi who isFake)
+  (httpBorn, runEyre) <- rio (Eyre.eyre' multi who isFake stderr)
   (clayBorn, runClay) <- rio Clay.clay'
   (irisBorn, runIris) <- rio Iris.client'
 
