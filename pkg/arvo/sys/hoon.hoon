@@ -11364,7 +11364,7 @@
       ::
           {$face *}
         =^  cox  gid  $(q.ham q.q.ham)
-        :_(gid [%palm [['/' ~] ~ ~ ~] [%leaf (trip p.q.ham)] cox ~])
+        :_(gid [%palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] cox ~])
       ::
           {$list *}
         =^  cox  gid  $(q.ham q.q.ham)
@@ -11376,10 +11376,10 @@
       ::
           {$plot *}
         =^  coz  gid  (many p.q.ham)
-        :_(gid [%rose [[' ' ~] ['{' ~] ['}' ~]] coz])
+        :_(gid [%rose [[' ' ~] ['[' ~] [']' ~]] coz])
       ::
           {$pear *}
-        :_(gid [%leaf '$' ~(rend co [%$ p.q.ham q.q.ham])])
+        :_(gid [%leaf '%' ~(rend co [%$ p.q.ham q.q.ham])])
       ::
           {$stop *}
         =+  num=~(rend co [%$ %ud p.q.ham])
