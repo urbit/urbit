@@ -1,45 +1,73 @@
 import defaultApps from './default-apps';
 
-export default function index(associations, apps) {
-  const index = new Map([
+  const indexes = new Map([
     ['commands', []],
     ['subscriptions', []],
     ['groups', []],
     ['apps', []]
   ]);
 
-  // result schematic
-  const result = function(title, link, app, host) {
-    return {
-      'title': title,
-      'link': link,
-      'app': app,
-      'host': host
-    };
+// result schematic
+const result = function(title, link, app, host) {
+  return {
+    'title': title,
+    'link': link,
+    'app': app,
+    'host': host
   };
+};
 
+const commandIndex = function () {
   // commands are special cased for default suite
   const commands = [];
-  defaultApps.filter((e) => {
-    return (e !== 'dojo');
-  }).map((e) => {
-    let title = e;
-    if (e === 'link') {
-      title = 'Links';
-    }
+  defaultApps
+    .filter((e) => {
+      return e !== 'dojo';
+    })
+    .map((e) => {
+      let title = e;
+      if (e === 'link') {
+        title = 'Links';
+      }
 
-    title = title.charAt(0).toUpperCase() + title.slice(1);
+      title = title.charAt(0).toUpperCase() + title.slice(1);
 
-    let obj = result(`${title}: Create`, `/~${e}/new`, e, null);
-    commands.push(obj);
-
-    if (title === 'Groups') {
-      obj = result(`${title}: Join Group`, `/~${e}/join`, title, null);
+      let obj = result(`${title}: Create`, `/~${e}/new`, e, null);
       commands.push(obj);
-    }
-  });
-  index.set('commands', commands);
 
+      if (title === 'Groups') {
+        obj = result(`${title}: Join Group`, `/~${e}/join`, title, null);
+        commands.push(obj);
+      }
+    });
+  return commands;
+};
+
+const appIndex = function (apps) {
+  // all apps are indexed from launch data
+  // indexed into 'apps'
+  const applications = [];
+  Object.keys(apps)
+    .filter((e) => {
+      return apps[e]?.type?.basic;
+    })
+    .map((e) => {
+      const obj = result(
+        apps[e].type.basic.title,
+        apps[e].type.basic.linkedUrl,
+        apps[e].type.basic.title,
+        null
+      );
+      applications.push(obj);
+    });
+  // add groups separately
+  applications.push(
+    result('Groups', '/~groups', 'groups', null)
+  );
+  return applications;
+};
+
+export default function index(associations, apps) {
   // all metadata from all apps is indexed
   // into subscriptions and groups
   const subscriptions = [];
@@ -72,15 +100,9 @@ export default function index(associations, apps) {
           );
           groups.push(obj);
         } else {
-          let endpoint = '';
-          if (app === 'chat') {
-            endpoint = '/room';
-          } else if (app === 'publish') {
-            endpoint = '/notebook';
-          }
           const obj = result(
             title,
-            `/~${each['app-name']}${endpoint}${each['app-path']}`,
+            `/~${each['app-name']}/join${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
             shipStart.slice(0, shipStart.indexOf('/'))
           );
@@ -88,21 +110,11 @@ export default function index(associations, apps) {
         }
       });
   });
-  index.set('subscriptions', subscriptions);
-  index.set('groups', groups);
 
-  // all apps are indexed from launch data
-  // indexed into 'apps'
-  const applications = [];
-  Object.keys(apps).filter((e) => {
-    return (apps[e]?.type?.basic);
-    }).map((e) => {
-      const obj = result(apps[e].type.basic.title, apps[e].type.basic.linkedUrl, apps[e].type.basic.title, null);
-      applications.push(obj);
-  });
-  // add groups separately
-  applications.push(result('Groups', '/~groups', 'groups', null));
-  index.set('apps', applications);
+  indexes.set('commands', commandIndex());
+  indexes.set('subscriptions', subscriptions);
+  indexes.set('groups', groups);
+  indexes.set('apps', appIndex(apps));
 
-  return index;
+  return indexes;
 };
