@@ -48,7 +48,7 @@ sendEf g w bs = NewtEfSend (0, ()) (EachYes g) bs
 data NetworkTestApp = NetworkTestApp
     { _ntaLogFunc        :: !LogFunc
     , _ntaNetworkConfig  :: !NetworkConfig
-    , _ntaPortControlApi :: PortControlApi
+    , _ntaPortControlApi :: !PortControlApi
     , _ntaKingId         :: !Word16
     }
 

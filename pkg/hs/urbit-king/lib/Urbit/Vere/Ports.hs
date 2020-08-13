@@ -1,5 +1,5 @@
 module Urbit.Vere.Ports (HasPortControlApi(..),
-                         PortControlApi(..),
+                         PortControlApi,
                          buildInactivePorts,
                          buildNATPorts,
                          requestPortAccess) where
@@ -83,12 +83,9 @@ portThread :: forall e. (HasLogFunc e)
            -> (Text -> RIO e ())
            -> RIO e ()
 portThread q stderr = do
-  pmp <- initNatPmp
-  --pmp <- pure $ Left ErrNoGatewaySupport
-  case pmp of
+  initNatPmp >>= \case
     Left err -> do
-      ip <- likelyIPAddress
-      case ip of
+      likelyIPAddress >>= \case
         Just (192, 168, c, d) -> do
           stderr $ "port: you appear to be behind a router since your ip " ++
                    "is 192.168." ++ (tshow c) ++ "." ++ (tshow d) ++ ", but " ++
@@ -104,8 +101,7 @@ portThread q stderr = do
  where
   foundRouter :: NatPmpHandle -> RIO e ()
   foundRouter pmp = do
-    pubAddr <- getPublicAddress pmp
-    case pubAddr of
+    getPublicAddress pmp >>= \case
       Left _ -> pure ()
       Right addr -> do
         let (a, b, c, d) = hostAddressToTuple addr
@@ -114,7 +110,7 @@ portThread q stderr = do
     loop pmp mempty
 
   loop :: NatPmpHandle -> MinPrioHeap POSIXTime PortThreadMsg -> RIO e ()
-  loop pmp nextRenew = forever $ do
+  loop pmp nextRenew = do
     now <- io $ getPOSIXTime
     delay <- case viewHead nextRenew of
           Nothing -> newTVarIO False
@@ -141,20 +137,19 @@ portThread q stderr = do
     PTMInitialRequestOpen p notifyComplete -> do
       logInfo $
         displayShow ("port: sending initial request to NAT-PMP for port ", p)
-      ret <- setPortMapping pmp PTUdp p p portLeaseLifetime
-      case ret of
+      setPortMapping pmp PTUdp p p portLeaseLifetime >>= \case
         Left err -> do
           logError $
             displayShow ("port: failed to request NAT-PMP for port ", p,
                          ":", err, ", disabling NAT-PMP")
           loopErr q
         Right _ -> do
-          let filteredPort = filterPort p nextRenew
+          let filteredHeap = filterPort p nextRenew
           now <- io $ getPOSIXTime
           let repeatMsg = PTMRequestOpen p
           let withRenew =
                 insert (now + fromIntegral portRenewalTime, repeatMsg)
-                filteredPort
+                filteredHeap
           atomically notifyComplete
           loop pmp withRenew
 
@@ -170,10 +165,10 @@ portThread q stderr = do
                          ":", err, ", disabling NAT-PMP")
           loopErr q
         Right _ -> do
-          let filteredPort = filterPort p nextRenew
+          let filteredHeap = filterPort p nextRenew
           now <- io $ getPOSIXTime
           let withRenew =
-                insert (now + (fromIntegral portRenewalTime), msg) filteredPort
+                insert (now + (fromIntegral portRenewalTime), msg) filteredHeap
           loop pmp withRenew
 
     PTMRequestClose p -> do
@@ -198,22 +193,23 @@ portThread q stderr = do
   fini = check <=< readTVar
 
   -- The NAT system is considered "off" but we still need to signal back to
-  -- the main thread that blocking actions are copmlete
+  -- the main thread that blocking actions are complete.
   loopErr q = forever $ do
-    (atomically $ readTQueue q) >>= \case
+    readTQueueIO q >>= \case
       PTMInitialRequestOpen _ onComplete -> atomically onComplete
       PTMRequestOpen _ -> pure ()
       PTMRequestClose _ -> pure ()
 
 -- When we were unable to connect to a router, get the ip address on the
--- default ipv4 interface to check if it
+-- default ipv4 interface to check if we look like we're on an internal network
+-- or not.
 likelyIPAddress :: MonadIO m => m (Maybe (Word8, Word8, Word8, Word8))
 likelyIPAddress = liftIO do
   -- Try opening a socket to 1.1.1.1 to get our own IP address. Since UDP is
   -- stateless and we aren't sending anything, we aren't actually contacting
   -- them in any way.
   sock <- socket AF_INET Datagram 0
-  connect sock (SockAddrInet 53 (tupleToHostAddress (8, 8, 8, 8)))
+  connect sock (SockAddrInet 53 (tupleToHostAddress (1, 1, 1, 1)))
   sockAddr <- getSocketName sock
   case sockAddr of
     SockAddrInet _ addr -> pure $ Just $ hostAddressToTuple addr

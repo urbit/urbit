@@ -91,8 +91,7 @@ intToEnum = toEnum . fromIntegral
 getDefaultGateway :: IO (Maybe HostAddress)
 getDefaultGateway =
   alloca $ \(pReturnAddr :: Ptr CUInt) -> do
-      ret <- _get_default_gateway pReturnAddr
-      case ret of
+      _get_default_gateway pReturnAddr >>= \case
         0 -> (Just . fromIntegral) <$> _peekCUInt pReturnAddr
         _ -> pure Nothing
 
@@ -151,7 +150,7 @@ data Error
   | ErrOutOfResources
   --
   | ErrTryAgain
-  | ErrHaskellBindingsErr
+  | ErrHaskellBindings
   deriving (Eq, Show)
 
 instance Enum Error where
@@ -177,7 +176,7 @@ instance Enum Error where
   fromEnum ErrOutOfResources = -53
   --
   fromEnum ErrTryAgain = -100
-  fromEnum ErrHaskellBindingsErr = -200
+  fromEnum ErrHaskellBindings = -200
 
   toEnum (-1) = ErrInvalidArgs
   toEnum (-2) = ErrSocketError
@@ -201,7 +200,7 @@ instance Enum Error where
   toEnum (-53) = ErrOutOfResources
   --
   toEnum (-100) = ErrTryAgain
-  toEnum (-200) = ErrHaskellBindingsErr
+  toEnum (-200) = ErrHaskellBindings
   toEnum unmatched = error ("Error.toEnum: Cannot match " ++ show unmatched)
 
 
@@ -225,7 +224,7 @@ closeNatPmp handle = liftIO do
     _ -> pure $ Left $ intToEnum ret
 
 
--- Public interface for getting the public IPv4 address
+-- | Public interface for getting the public IPv4 address
 getPublicAddress :: MonadIO m => NatPmpHandle -> m (Either Error HostAddress)
 getPublicAddress natpmp = liftIO do
   sendRetcode <- sendPublicAddressRequest natpmp
@@ -235,11 +234,12 @@ getPublicAddress natpmp = liftIO do
       case respRetcode of
         0 -> peek pResponse >>= \case
           NatPmpResponsePublicAddress addr -> pure $ Right addr
-          _ -> pure $ Left ErrHaskellBindingsErr
+          _ -> pure $ Left ErrHaskellBindings
         _ -> pure $ Left $ intToEnum respRetcode
     _ -> pure $ Left $ intToEnum sendRetcode
 
-
+-- | Requests that the router maps the privatePort on our local computer in our
+-- private network to publicPort on the public internet.
 setPortMapping :: MonadIO m
                => NatPmpHandle
                -> ProtocolType
@@ -251,8 +251,8 @@ setPortMapping natpmp protocol privatePort publicPort lifetime = liftIO do
   let protocolNum = fromEnum protocol
   sendResp <-
     sendNewPortMappingRequest natpmp
-    (fromIntegral protocolNum) (CUShort privatePort) (CUShort publicPort)
-    (CUInt lifetime)
+      (fromIntegral protocolNum) (CUShort privatePort) (CUShort publicPort)
+      (CUInt lifetime)
 
   case sendResp of
     12 -> alloca $ \(pResponse :: NatPmpResponseHandle) -> do
@@ -261,6 +261,6 @@ setPortMapping natpmp protocol privatePort publicPort lifetime = liftIO do
         0 -> peek pResponse >>= \case
           NatPmpResponseUdpPortMapping _ _ _ -> pure $ Right ()
           NatPmpResponseTcpPortMapping _ _ _ -> pure $ Right ()
-          _ -> pure $ Left ErrHaskellBindingsErr
+          _ -> pure $ Left ErrHaskellBindings
         _ -> pure $ Left $ intToEnum respRetcode
     x -> pure $ Left $ intToEnum x
