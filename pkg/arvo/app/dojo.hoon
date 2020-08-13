@@ -502,8 +502,8 @@
       ^+  +>
       ::  XX needs filter
       ::
-      :: ?:  ?=({$show $3} -.mad)
-      ::  (dy-rash %tan (dy-show-source q.mad) ~)       ::  XX separate command
+      ?:  ?=({$show $3} -.mad)
+        (dy-rash %tan (dy-show-source q.mad) ~)       ::  XX separate command
       ?:  ?=($brev -.mad)
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
@@ -592,7 +592,7 @@
                     ::  XX  actually print something meaningful here
                     ::
                     %2  [[%rose [~ "  " ~] *tank ~] maar]
-                    %3  ~
+                    ::%3  handled above 
                     %4  ~
                     %5  [[%rose [~ "  " ~] (xskol p.q.cay) ~] maar]
                   ==
@@ -638,6 +638,49 @@
           :-  i=""
           t=(turn `wain`?~(r.hit ~ (to-wain:format q.u.r.hit)) trip)
       ==
+  ::
+  ::  XX needs filter
+  ::
+  ++  dy-shown
+    =/  jank-bucwut  :: FIXME just $? fishes when defined for some reason
+      |*  [a=mold b=mold]
+      |=(c=_`*`*a ?:(& (a c) (b c)))
+    ::
+    ::$?  hoon
+    ;:    jank-bucwut
+        hoon
+        $^  {dy-shown dy-shown}
+        $%  {$ur cord}
+            {$sa mark}
+            {$as mark dy-shown}
+            {$do hoon dy-shown}
+            {$ge path (list dy-shown) (map term (unit dy-shown))}
+            {$dv path}
+        ==
+    ==
+  ::
+  ++  dy-show-source
+    |=  a/dojo-source  ^-  tank
+    =-  >[-]<
+    =+  `{@ bil/dojo-build}`a
+    |-  ^-  dy-shown
+    ::?-  -.bil
+    ?+  -.bil  dv+/[-.bil]/todo
+      $?($ur $dv $sa)  bil
+      $ex  ?.  ?=({$cltr *} p.bil)  p.bil
+               |-  ^-  hoon
+               ?~  p.p.bil  !!
+               ?~  t.p.p.bil  i.p.p.bil
+               [i.p.p.bil $(p.p.bil t.p.p.bil)]
+      $tu  ?~  p.bil  !!
+           |-
+           ?~  t.p.bil  ^$(bil q.i.p.bil)
+           [^$(bil q.i.p.bil) $(p.bil t.p.bil)]
+      $as  bil(q $(bil q.q.bil))
+      $do  bil(q $(bil q.q.bil))
+      $ge  :+  %ge  q.p.p.bil
+           [(turn p.q.p.bil ..$) (~(run by q.q.p.bil) (lift ..$))]
+    ==
     ::
     ++  dy-edit                                         ::  handle edit
       |=  cal/sole-change
@@ -874,6 +917,8 @@
       ^+  +>+>
       ?>  ?=(~ cud)
       ?:  =(nex num)
+        dy-over
+      ?:  =([%show %3] -.mad)                           :: just show source
         dy-over
       dy-make(cud `[nex (~(got by job) nex)])
     --
