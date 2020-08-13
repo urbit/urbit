@@ -503,7 +503,7 @@
       ::  XX needs filter
       ::
       ?:  ?=({$show $3} -.mad)
-        (dy-rash %tan (dy-show-source q.mad) ~)       ::  XX separate command
+        (dy-rash %tan (dy-show-source q.mad) ~)
       ?:  ?=($brev -.mad)
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
@@ -654,6 +654,7 @@
             {$sa mark}
             {$as mark dy-shown}
             {$do hoon dy-shown}
+            {$te term (list dy-shown)}
             {$ge path (list dy-shown) (map term (unit dy-shown))}
             {$dv path}
         ==
@@ -664,8 +665,7 @@
     =-  >[-]<
     =+  `{@ bil/dojo-build}`a
     |-  ^-  dy-shown
-    ::?-  -.bil
-    ?+  -.bil  dv+/[-.bil]/todo
+    ?-  -.bil
       $?($ur $dv $sa)  bil
       $ex  ?.  ?=({$cltr *} p.bil)  p.bil
                |-  ^-  hoon
@@ -678,6 +678,7 @@
            [^$(bil q.i.p.bil) $(p.bil t.p.bil)]
       $as  bil(q $(bil q.q.bil))
       $do  bil(q $(bil q.q.bil))
+      $te  bil(q (turn q.bil ..$))
       $ge  :+  %ge  q.p.p.bil
            [(turn p.q.p.bil ..$) (~(run by q.q.p.bil) (lift ..$))]
     ==
