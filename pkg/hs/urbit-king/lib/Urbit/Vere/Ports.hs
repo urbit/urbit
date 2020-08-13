@@ -23,32 +23,31 @@ data PortControlApi = PortControlApi
   , pRemovePortRequest :: Word16 -> IO ()
   }
 
--- Builds a Ports struct which does nothing when called.
+-- | Builds a PortControlApi struct which does nothing when called.
 buildInactivePorts :: PortControlApi
 buildInactivePorts = PortControlApi noop noop
-  where
-    noop x = pure ()
+ where
+  noop x = pure ()
 
--- Builds a Ports struct which tries to hole-punch by talking to the NAT
--- gateway over NAT-PMP.
+-- | Builds a PortControlApi struct which tries to hole-punch by talking to the
+-- NAT gateway over NAT-PMP.
 buildNATPorts :: (HasLogFunc e)
               => (Text -> RIO e ())
               -> RIO e PortControlApi
 buildNATPorts stderr = do
   q <- newTQueueIO
   async $ portThread q stderr
-  pure $ PortControlApi (addRequest q) (removeRequest q)
-  where
-    addRequest :: TQueue PortThreadMsg -> Word16 -> IO ()
-    addRequest q port = do
-      resp <- newEmptyTMVarIO
-      atomically $
-        writeTQueue q (PTMInitialRequestOpen port (putTMVar resp True))
-      atomically $ takeTMVar resp
-      pure ()
 
-    removeRequest :: TQueue PortThreadMsg -> Word16 -> IO ()
-    removeRequest q port = atomically $ writeTQueue q (PTMRequestClose port)
+  let addRequest port = do
+        resp <- newEmptyTMVarIO
+        atomically $
+          writeTQueue q (PTMInitialRequestOpen port (putTMVar resp True))
+        atomically $ takeTMVar resp
+        pure ()
+
+  let removeRequest port = atomically $ writeTQueue q (PTMRequestClose port)
+
+  pure $ PortControlApi addRequest removeRequest
 
 portLeaseLifetime :: Word32
 portLeaseLifetime = 15 * 60
@@ -102,120 +101,120 @@ portThread q stderr = do
           stderr $ "port: couldn't find router; assuming on public internet"
           loopErr q
     Right pmp -> foundRouter pmp
-  where
-    foundRouter :: NatPmpHandle -> RIO e ()
-    foundRouter pmp = do
-      pubAddr <- getPublicAddress pmp
-      case pubAddr of
-        Left _ -> pure ()
-        Right addr -> do
-          let (a, b, c, d) = hostAddressToTuple addr
-          stderr $ "port: router reports that our public IP is " ++ (tshow a) ++
-                   "." ++ (tshow b) ++ "." ++ (tshow c) ++ "." ++ (tshow d)
-      loop pmp mempty
+ where
+  foundRouter :: NatPmpHandle -> RIO e ()
+  foundRouter pmp = do
+    pubAddr <- getPublicAddress pmp
+    case pubAddr of
+      Left _ -> pure ()
+      Right addr -> do
+        let (a, b, c, d) = hostAddressToTuple addr
+        stderr $ "port: router reports that our public IP is " ++ (tshow a) ++
+                 "." ++ (tshow b) ++ "." ++ (tshow c) ++ "." ++ (tshow d)
+    loop pmp mempty
 
-    loop :: NatPmpHandle -> MinPrioHeap POSIXTime PortThreadMsg -> RIO e ()
-    loop pmp nextRenew = forever $ do
-      now <- io $ getPOSIXTime
-      delay <- case viewHead nextRenew of
-            Nothing -> newTVarIO False
-            Just (fireTime, _) -> do
-              let timeTo = fireTime - now
-              let ms = round $ timeTo * 1000000
-              registerDelay ms
-      command <- atomically $
-        (Left <$> fini delay) <|> (Right <$> readTQueue q)
-      case command of
-        Left () -> do
-          -- the timeout has fired, meaning the top of the heap should be
-          -- popped and rerun.
-          case (Data.Heap.view nextRenew) of
-            Nothing -> error "Internal heap managing error."
-            Just ((_, msg), rest) -> handlePTM pmp msg rest
-        Right msg -> handlePTM pmp msg nextRenew
+  loop :: NatPmpHandle -> MinPrioHeap POSIXTime PortThreadMsg -> RIO e ()
+  loop pmp nextRenew = forever $ do
+    now <- io $ getPOSIXTime
+    delay <- case viewHead nextRenew of
+          Nothing -> newTVarIO False
+          Just (fireTime, _) -> do
+            let timeTo = fireTime - now
+            let ms = round $ timeTo * 1000000
+            registerDelay ms
+    command <- atomically $
+      (Left <$> fini delay) <|> (Right <$> readTQueue q)
+    case command of
+      Left () -> do
+        -- the timeout has fired, meaning the top of the heap should be
+        -- popped and rerun.
+        case (Data.Heap.view nextRenew) of
+          Nothing -> error "Internal heap managing error."
+          Just ((_, msg), rest) -> handlePTM pmp msg rest
+      Right msg -> handlePTM pmp msg nextRenew
 
-    handlePTM :: NatPmpHandle
-              -> PortThreadMsg
-              -> MinPrioHeap POSIXTime PortThreadMsg
-              -> RIO e ()
-    handlePTM pmp msg nextRenew = case msg of
-      PTMInitialRequestOpen p notifyComplete -> do
-        logInfo $
-          displayShow ("port: sending initial request to NAT-PMP for port ", p)
-        ret <- setPortMapping pmp PTUdp p p portLeaseLifetime
-        case ret of
-          Left err -> do
-            logError $
-              displayShow ("port: failed to request NAT-PMP for port ", p,
-                           ":", err, ", disabling NAT-PMP")
-            loopErr q
-          Right _ -> do
-            let filteredPort = filterPort p nextRenew
-            now <- io $ getPOSIXTime
-            let repeatMsg = PTMRequestOpen p
-            let withRenew =
-                  insert (now + (fromIntegral portRenewalTime), repeatMsg)
-                  filteredPort
-            atomically notifyComplete
-            loop pmp withRenew
+  handlePTM :: NatPmpHandle
+            -> PortThreadMsg
+            -> MinPrioHeap POSIXTime PortThreadMsg
+            -> RIO e ()
+  handlePTM pmp msg nextRenew = case msg of
+    PTMInitialRequestOpen p notifyComplete -> do
+      logInfo $
+        displayShow ("port: sending initial request to NAT-PMP for port ", p)
+      ret <- setPortMapping pmp PTUdp p p portLeaseLifetime
+      case ret of
+        Left err -> do
+          logError $
+            displayShow ("port: failed to request NAT-PMP for port ", p,
+                         ":", err, ", disabling NAT-PMP")
+          loopErr q
+        Right _ -> do
+          let filteredPort = filterPort p nextRenew
+          now <- io $ getPOSIXTime
+          let repeatMsg = PTMRequestOpen p
+          let withRenew =
+                insert (now + fromIntegral portRenewalTime, repeatMsg)
+                filteredPort
+          atomically notifyComplete
+          loop pmp withRenew
 
-      PTMRequestOpen p -> do
-        logInfo $
-          displayShow ("port: sending renewing request to NAT-PMP for port ",
-                       p)
-        ret <- setPortMapping pmp PTUdp p p portLeaseLifetime
-        case ret of
-          Left err -> do
-            logError $
-              displayShow ("port: failed to request NAT-PMP for port ", p,
-                           ":", err, ", disabling NAT-PMP")
-            loopErr q
-          Right _ -> do
-            let filteredPort = filterPort p nextRenew
-            now <- io $ getPOSIXTime
-            let withRenew =
-                  insert (now + (fromIntegral portRenewalTime), msg) filteredPort
-            loop pmp withRenew
+    PTMRequestOpen p -> do
+      logInfo $
+        displayShow ("port: sending renewing request to NAT-PMP for port ",
+                     p)
+      ret <- setPortMapping pmp PTUdp p p portLeaseLifetime
+      case ret of
+        Left err -> do
+          logError $
+            displayShow ("port: failed to request NAT-PMP for port ", p,
+                         ":", err, ", disabling NAT-PMP")
+          loopErr q
+        Right _ -> do
+          let filteredPort = filterPort p nextRenew
+          now <- io $ getPOSIXTime
+          let withRenew =
+                insert (now + (fromIntegral portRenewalTime), msg) filteredPort
+          loop pmp withRenew
 
-      PTMRequestClose p -> do
-        logInfo $
-          displayShow ("port: releasing lease for ", p)
-        setPortMapping pmp PTUdp p p 0
-        let removed = filterPort p nextRenew
-        loop pmp removed
+    PTMRequestClose p -> do
+      logInfo $
+        displayShow ("port: releasing lease for ", p)
+      setPortMapping pmp PTUdp p p 0
+      let removed = filterPort p nextRenew
+      loop pmp removed
 
-    filterPort :: Word16
-               -> MinPrioHeap POSIXTime PortThreadMsg
-               -> MinPrioHeap POSIXTime PortThreadMsg
-    filterPort p = Data.Heap.filter okPort
-      where
-        -- initial requests should never be in the heap
-        okPort (_, PTMInitialRequestOpen _ _) = False
-        okPort (_, PTMRequestOpen x) = p /= x
-        okPort (_, PTMRequestClose x) = p /= x
+  filterPort :: Word16
+             -> MinPrioHeap POSIXTime PortThreadMsg
+             -> MinPrioHeap POSIXTime PortThreadMsg
+  filterPort p = Data.Heap.filter okPort
+    where
+      -- initial requests should never be in the heap
+      okPort (_, PTMInitialRequestOpen _ _) = False
+      okPort (_, PTMRequestOpen x) = p /= x
+      okPort (_, PTMRequestClose x) = p /= x
 
-    -- block (retry) until the delay TVar is set to True
-    fini :: TVar Bool -> STM ()
-    fini = check <=< readTVar
+  -- block (retry) until the delay TVar is set to True
+  fini :: TVar Bool -> STM ()
+  fini = check <=< readTVar
 
-    -- The NAT system is considered "off" but we still need to signal back to
-    -- the main thread that blocking actions are copmlete
-    loopErr q = forever $ do
-      (atomically $ readTQueue q) >>= \case
-        PTMInitialRequestOpen _ onComplete -> atomically onComplete
-        PTMRequestOpen _ -> pure ()
-        PTMRequestClose _ -> pure ()
+  -- The NAT system is considered "off" but we still need to signal back to
+  -- the main thread that blocking actions are copmlete
+  loopErr q = forever $ do
+    (atomically $ readTQueue q) >>= \case
+      PTMInitialRequestOpen _ onComplete -> atomically onComplete
+      PTMRequestOpen _ -> pure ()
+      PTMRequestClose _ -> pure ()
 
 -- When we were unable to connect to a router, get the ip address on the
 -- default ipv4 interface to check if it
-likelyIPAddress :: RIO e (Maybe (Word8, Word8, Word8, Word8))
-likelyIPAddress = do
+likelyIPAddress :: MonadIO m => m (Maybe (Word8, Word8, Word8, Word8))
+likelyIPAddress = liftIO do
   -- Try opening a socket to 1.1.1.1 to get our own IP address. Since UDP is
   -- stateless and we aren't sending anything, we aren't actually contacting
   -- them in any way.
-  sock <- io $ socket AF_INET Datagram 0
-  io $ connect sock (SockAddrInet 53 (tupleToHostAddress (8, 8, 8, 8)))
-  sockAddr <- io $ getSocketName sock
+  sock <- socket AF_INET Datagram 0
+  connect sock (SockAddrInet 53 (tupleToHostAddress (8, 8, 8, 8)))
+  sockAddr <- getSocketName sock
   case sockAddr of
     SockAddrInet _ addr -> pure $ Just $ hostAddressToTuple addr
     _                   -> pure $ Nothing
@@ -224,16 +223,14 @@ likelyIPAddress = do
 requestPortAccess :: forall e. (HasPortControlApi e) => Word16 -> RAcquire e ()
 requestPortAccess port = do
   mkRAcquire request release
-  where
-    request :: RIO e ()
-    request = do
-      env <- ask
-      let api = env ^. portControlApiL
-      io $ (pAddPortRequest api) port
+ where
+  request :: RIO e ()
+  request = do
+    api <- asks (^. portControlApiL)
+    io $ pAddPortRequest api port
 
-    release :: () -> RIO e ()
-    release _ = do
-      env <- ask
-      let api = env ^. portControlApiL
-      io $ (pRemovePortRequest api) port
+  release :: () -> RIO e ()
+  release _ = do
+    api <- asks (^. portControlApiL)
+    io $ pRemovePortRequest api port
 

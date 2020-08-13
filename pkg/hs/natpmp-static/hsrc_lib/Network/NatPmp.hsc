@@ -206,20 +206,20 @@ instance Enum Error where
 
 
 initNatPmp :: MonadIO m => m (Either Error NatPmpHandle)
-initNatPmp = do
-  natpmp <- liftIO $ mallocBytes #{size natpmp_t}
-  ret    <- liftIO $ _init_nat_pmp natpmp 0 0
+initNatPmp = liftIO do
+  natpmp <- mallocBytes #{size natpmp_t}
+  ret    <- _init_nat_pmp natpmp 0 0
   case ret of
     0 -> pure $ Right natpmp
     _ -> do
-      liftIO $ free natpmp
+      free natpmp
       pure $ Left $ intToEnum ret
 
 
 closeNatPmp :: MonadIO m => NatPmpHandle -> m (Either Error ())
-closeNatPmp handle = do
-  ret <- liftIO $ _close_nat_pmp handle
-  liftIO $ free handle
+closeNatPmp handle = liftIO do
+  ret <- _close_nat_pmp handle
+  free handle
   case ret of
     0 -> pure $ Right ()
     _ -> pure $ Left $ intToEnum ret
@@ -227,10 +227,10 @@ closeNatPmp handle = do
 
 -- Public interface for getting the public IPv4 address
 getPublicAddress :: MonadIO m => NatPmpHandle -> m (Either Error HostAddress)
-getPublicAddress natpmp = do
-  sendRetcode <- liftIO $ sendPublicAddressRequest natpmp
+getPublicAddress natpmp = liftIO do
+  sendRetcode <- sendPublicAddressRequest natpmp
   case sendRetcode of
-    2 -> liftIO $ alloca $ \(pResponse :: NatPmpResponseHandle) -> do
+    2 -> alloca $ \(pResponse :: NatPmpResponseHandle) -> do
       respRetcode <- readNatResponseSynchronously natpmp pResponse
       case respRetcode of
         0 -> peek pResponse >>= \case
@@ -247,15 +247,15 @@ setPortMapping :: MonadIO m
                -> Port
                -> LifetimeSeconds
                -> m (Either Error ())
-setPortMapping natpmp protocol privatePort publicPort lifetime = do
+setPortMapping natpmp protocol privatePort publicPort lifetime = liftIO do
   let protocolNum = fromEnum protocol
   sendResp <-
-    liftIO $ sendNewPortMappingRequest natpmp
+    sendNewPortMappingRequest natpmp
     (fromIntegral protocolNum) (CUShort privatePort) (CUShort publicPort)
     (CUInt lifetime)
 
   case sendResp of
-    12 -> liftIO $ alloca $ \(pResponse :: NatPmpResponseHandle) -> do
+    12 -> alloca $ \(pResponse :: NatPmpResponseHandle) -> do
       respRetcode <- readNatResponseSynchronously natpmp pResponse
       case respRetcode of
         0 -> peek pResponse >>= \case

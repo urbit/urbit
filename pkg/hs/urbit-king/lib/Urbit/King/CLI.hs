@@ -197,11 +197,9 @@ pillFromURL = PillSourceURL <$> strOption
                     <> help "URL to pill file")
 
 enableNAT :: Parser Bool
-enableNAT = (flag' False
+enableNAT = not <$> switch
                ( long "no-port-forwarding"
-              <> help "Disable trying to ask the router to forward ames ports"))
-            <|>
-            (pure True)
+              <> help "Disable trying to ask the router to forward ames ports")
 
 pierPath :: Parser FilePath
 pierPath = strArgument (metavar "PIER" <> help "Path to pier")

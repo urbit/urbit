@@ -141,8 +141,8 @@ class (HasKingEnv a, HasMultiEyreApi a, HasPortControlApi a) =>
 
 data HostEnv = HostEnv
   { _hostEnvKingEnv        :: !KingEnv
-  , _hostEnvMultiEyreApi   :: MultiEyreApi
-  , _hostEnvPortControlApi :: PortControlApi
+  , _hostEnvMultiEyreApi   :: !MultiEyreApi
+  , _hostEnvPortControlApi :: !PortControlApi
   }
 
 makeLenses ''HostEnv
@@ -170,8 +170,8 @@ instance HasPortControlApi HostEnv where
 
 -- Running Running Envs --------------------------------------------------------
 
-runHostEnv :: MultiEyreApi -> PortControlApi -> RIO HostEnv ()
-              -> RIO KingEnv ()
+runHostEnv :: MultiEyreApi -> PortControlApi -> RIO HostEnv a
+           -> RIO KingEnv a
 runHostEnv multi ports action = do
     king <- ask
 

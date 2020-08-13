@@ -152,7 +152,8 @@ fakeUdpServ = do
   Real UDP server.  See module-level docs.
 -}
 realUdpServ
-  :: forall e . (HasLogFunc e, HasPortControlApi e)
+  :: forall e
+   . (HasLogFunc e, HasPortControlApi e)
   => PortNumber
   -> HostAddress
   -> RIO e UdpServ

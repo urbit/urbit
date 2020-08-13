@@ -28,8 +28,11 @@ import qualified Urbit.EventLog.LMDB as Log
 
 --------------------------------------------------------------------------------
 
-type HasAmes e = (HasLogFunc e, HasNetworkConfig e, HasKingId e,
-                   HasPortControlApi e)
+type HasAmes e =
+  ( HasLogFunc e
+  , HasNetworkConfig e
+  , HasKingId e
+  , HasPortControlApi e)
 
 -- Utils -----------------------------------------------------------------------
 

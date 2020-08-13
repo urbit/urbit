@@ -474,47 +474,45 @@ newShip CLI.New{..} opts = do
   -}
   multi <- multiEyre (MultiEyreConf Nothing Nothing True)
 
-  -- TODO: We hit the same problem as above: we need the running options to
-  -- determine how to configure the ports
+  -- TODO: We hit the same problem as above: we need a host env to boot a ship
+  -- because it may autostart the ship, so build an inactive port configuration.
   let ports = buildInactivePorts
 
   -- here we are with a king env, and we now need a multi env.
-  runHostEnv multi ports go
+  runHostEnv multi ports $ case nBootType of
+    CLI.BootComet -> do
+      pill <- pillFrom nPillSource
+      putStrLn "boot: retrieving list of stars currently accepting comets"
+      starList <- dawnCometList
+      putStrLn ("boot: " ++ (tshow $ length starList) ++
+                " star(s) currently accepting comets")
+      putStrLn "boot: mining a comet"
+      eny <- io $ Sys.randomIO
+      let seed = mineComet (Set.fromList starList) eny
+      putStrLn ("boot: found comet " ++ renderShip (sShip seed))
+      bootFromSeed pill seed
+
+    CLI.BootFake name -> do
+      pill <- pillFrom nPillSource
+      ship <- shipFrom name
+      runTryBootFromPill pill name ship (Fake ship)
+
+    CLI.BootFromKeyfile keyFile -> do
+      text <- readFileUtf8 keyFile
+      asAtom <- case cordToUW (Cord $ T.strip text) of
+        Nothing -> error "Couldn't parse keyfile. Hint: keyfiles start with 0w?"
+        Just (UW a) -> pure a
+
+      asNoun <- cueExn asAtom
+      seed :: Seed <- case fromNoun asNoun of
+        Nothing -> error "Keyfile does not seem to contain a seed."
+        Just s  -> pure s
+
+      pill <- pillFrom nPillSource
+
+      bootFromSeed pill seed
+
   where
-    go :: RIO HostEnv ()
-    go = case nBootType of
-      CLI.BootComet -> do
-        pill <- pillFrom nPillSource
-        putStrLn "boot: retrieving list of stars currently accepting comets"
-        starList <- dawnCometList
-        putStrLn ("boot: " ++ (tshow $ length starList) ++
-                  " star(s) currently accepting comets")
-        putStrLn "boot: mining a comet"
-        eny <- io $ Sys.randomIO
-        let seed = mineComet (Set.fromList starList) eny
-        putStrLn ("boot: found comet " ++ renderShip (sShip seed))
-        bootFromSeed pill seed
-
-      CLI.BootFake name -> do
-        pill <- pillFrom nPillSource
-        ship <- shipFrom name
-        runTryBootFromPill pill name ship (Fake ship)
-
-      CLI.BootFromKeyfile keyFile -> do
-        text <- readFileUtf8 keyFile
-        asAtom <- case cordToUW (Cord $ T.strip text) of
-          Nothing -> error "Couldn't parse keyfile. Hint: keyfiles start with 0w?"
-          Just (UW a) -> pure a
-
-        asNoun <- cueExn asAtom
-        seed :: Seed <- case fromNoun asNoun of
-          Nothing -> error "Keyfile does not seem to contain a seed."
-          Just s  -> pure s
-
-        pill <- pillFrom nPillSource
-
-        bootFromSeed pill seed
-
     shipFrom :: Text -> RIO HostEnv Ship
     shipFrom name = case Ob.parsePatp name of
       Left x  -> error "Invalid ship name"
@@ -525,7 +523,7 @@ newShip CLI.New{..} opts = do
       Just x  -> x
       Nothing -> "./" <> unpack name
 
-    nameFromShip :: Ship -> RIO HostEnv Text
+    nameFromShip :: HasKingEnv e => Ship -> RIO e Text
     nameFromShip s = name
       where
         nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral s
@@ -546,16 +544,17 @@ newShip CLI.New{..} opts = do
 
     -- Now that we have all the information for running an application with a
     -- PierConfig, do so.
-    runTryBootFromPill :: Pill -> Text -> Ship -> LegacyBootEvent
+    runTryBootFromPill :: Pill
+                       -> Text
+                       -> Ship
+                       -> LegacyBootEvent
                        -> RIO HostEnv ()
     runTryBootFromPill pill name ship bootEvent = do
-      env <- ask
-      let vKill = (env ^. kingEnvL) ^. kingEnvKillSignal
+      vKill <- asks (^. kingEnvL . kingEnvKillSignal)
       let pierConfig = toPierConfig (pierPath name) opts
       let networkConfig = toNetworkConfig opts
       runPierEnv pierConfig networkConfig vKill $
         tryBootFromPill True pill nLite ship bootEvent
-------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
 runShipEnv :: CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a -> RIO HostEnv a
 runShipEnv (CLI.Run pierPath) opts vKill act = do
@@ -591,8 +590,8 @@ runShip (CLI.Run pierPath) opts daemon = do
         mStart
 
 
-buildPortHandler :: (HasLogFunc e) => Bool -> RIO e PortControlApi
-buildPortHandler False  = pure $ buildInactivePorts
+buildPortHandler :: HasLogFunc e => Bool -> RIO e PortControlApi
+buildPortHandler False  = pure buildInactivePorts
 -- TODO: Figure out what to do about logging here. The "port: " messages are
 -- the sort of thing that should be put on the muxed terminal log, but we don't
 -- have that at this layer.
@@ -725,8 +724,7 @@ runShipNoRestart
   :: CLI.Run -> CLI.Opts -> Bool -> RIO HostEnv ()
 runShipNoRestart r o d = do
   -- killing ship same as killing king
-  env <- ask
-  let vKill = (env ^. kingEnvL) ^. kingEnvKillSignal
+  vKill  <- asks (^. kingEnvL . kingEnvKillSignal)
   tid    <- asyncBound (runShipEnv r o vKill $ runShip r o d)
   onKill <- view onKillKingSigL
 
