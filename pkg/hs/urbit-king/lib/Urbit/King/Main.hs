@@ -759,7 +759,7 @@ runShips CLI.KingOpts {..} ships = do
 
   multi <- multiEyre meConf
 
-  ports <- buildPortHandler koUseNATPMP
+  ports <- buildPortHandler koUseNatPmp
 
   runRunningEnv multi ports (go ships)
  where

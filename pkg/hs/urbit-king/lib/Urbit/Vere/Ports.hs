@@ -6,7 +6,7 @@ module Urbit.Vere.Ports (HasPortControlApi(..),
 
 import Control.Monad.STM (check)
 import Urbit.Prelude
-import Network.NATPMP
+import Network.NatPmp
 import Data.Time.Clock.POSIX
 import Data.Heap
 import Network.Socket
@@ -142,7 +142,7 @@ portThread q stderr = do
       PTMInitialRequestOpen p notifyComplete -> do
         logInfo $
           displayShow ("port: sending initial request to NAT-PMP for port ", p)
-        ret <- setPortMapping pmp PTUDP p p portLeaseLifetime
+        ret <- setPortMapping pmp PTUdp p p portLeaseLifetime
         case ret of
           Left err -> do
             logError $
@@ -163,7 +163,7 @@ portThread q stderr = do
         logInfo $
           displayShow ("port: sending renewing request to NAT-PMP for port ",
                        p)
-        ret <- setPortMapping pmp PTUDP p p portLeaseLifetime
+        ret <- setPortMapping pmp PTUdp p p portLeaseLifetime
         case ret of
           Left err -> do
             logError $
@@ -180,7 +180,7 @@ portThread q stderr = do
       PTMRequestClose p -> do
         logInfo $
           displayShow ("port: releasing lease for ", p)
-        setPortMapping pmp PTUDP p p 0
+        setPortMapping pmp PTUdp p p 0
         let removed = filterPort p nextRenew
         loop pmp removed
 

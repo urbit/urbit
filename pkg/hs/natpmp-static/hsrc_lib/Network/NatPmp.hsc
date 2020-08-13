@@ -2,10 +2,12 @@
 
 -- | This module is a thin wrapper above libnatpmp.h and getgateway.h.
 
-module Network.NATPMP (Error(..),
+module Network.NatPmp (Error(..),
                        NatPmpResponse(..),
                        ProtocolType(..),
                        NatPmpHandle,
+                       Port,
+                       LifetimeSeconds,
                        initNatPmp,
                        closeNatPmp,
                        getDefaultGateway,
@@ -23,18 +25,21 @@ import Foreign
 import Foreign.C
 import Network.Socket
 
-import Control.Monad.IO.Unlift (MonadIO(..), MonadUnliftIO, withRunInIO)
+import Control.Monad.IO.Unlift (MonadIO(..))
 
 -- Opaque type for the internals of nat pmp
 data NatPmpStruct
 type NatPmpHandle = Ptr NatPmpStruct
 
+type Port = Word16
+type LifetimeSeconds = Word32
+
 -- The response type, in its internal form. This struct is a C tagged union
 -- with additional data, but we need to read and write from its C form.
 data NatPmpResponse
   = NatPmpResponsePublicAddress HostAddress
-  | NatPmpResponseUDPPortMapping Word16 Word16 Word32
-  | NatPmpResponseTCPPortMapping Word16 Word16 Word32
+  | NatPmpResponseUdpPortMapping Port Port LifetimeSeconds
+  | NatPmpResponseTcpPortMapping Port Port LifetimeSeconds
   deriving (Show)
 
 instance Storable NatPmpResponse where
@@ -47,13 +52,13 @@ instance Storable NatPmpResponse where
       RTPublicAddress  ->
         NatPmpResponsePublicAddress <$>
           (#{peek natpmpresp_t, pnu.publicaddress.addr} p)
-      RTUDPPortMapping ->
-        NatPmpResponseUDPPortMapping
+      RTUdpPortMapping ->
+        NatPmpResponseUdpPortMapping
           <$> (#{peek natpmpresp_t, pnu.newportmapping.privateport} p)
           <*> (#{peek natpmpresp_t, pnu.newportmapping.mappedpublicport} p)
           <*> (#{peek natpmpresp_t, pnu.newportmapping.lifetime} p)
-      RTTCPPortMapping ->
-        NatPmpResponseTCPPortMapping
+      RTTcpPortMapping ->
+        NatPmpResponseTcpPortMapping
           <$> (#{peek natpmpresp_t, pnu.newportmapping.privateport} p)
           <*> (#{peek natpmpresp_t, pnu.newportmapping.mappedpublicport} p)
           <*> (#{peek natpmpresp_t, pnu.newportmapping.lifetime} p)
@@ -94,32 +99,32 @@ getDefaultGateway =
 
 data RespType
   = RTPublicAddress
-  | RTUDPPortMapping
-  | RTTCPPortMapping
+  | RTUdpPortMapping
+  | RTTcpPortMapping
   deriving (Eq, Show)
 
 instance Enum RespType where
   fromEnum RTPublicAddress = 0
-  fromEnum RTUDPPortMapping = 1
-  fromEnum RTTCPPortMapping = 2
+  fromEnum RTUdpPortMapping = 1
+  fromEnum RTTcpPortMapping = 2
 
   toEnum 0 = RTPublicAddress
-  toEnum 1 = RTUDPPortMapping
-  toEnum 2 = RTTCPPortMapping
+  toEnum 1 = RTUdpPortMapping
+  toEnum 2 = RTTcpPortMapping
   toEnum unmatched = error ("RespType.toEnum: Cannot match " ++ show unmatched)
 
 
 data ProtocolType
-  = PTUDP
-  | PTTCP
+  = PTUdp
+  | PTTcp
   deriving (Eq, Show)
 
 instance Enum ProtocolType where
-  fromEnum PTUDP = 1
-  fromEnum PTTCP = 2
+  fromEnum PTUdp = 1
+  fromEnum PTTcp = 2
 
-  toEnum 1 = PTUDP
-  toEnum 2 = PTTCP
+  toEnum 1 = PTUdp
+  toEnum 2 = PTTcp
   toEnum x = error ("ProtocolType.toEnum: Cannot match " ++ show x)
 
 
@@ -200,8 +205,7 @@ instance Enum Error where
   toEnum unmatched = error ("Error.toEnum: Cannot match " ++ show unmatched)
 
 
-initNatPmp :: (MonadIO m)
-           => m (Either Error NatPmpHandle)
+initNatPmp :: MonadIO m => m (Either Error NatPmpHandle)
 initNatPmp = do
   natpmp <- liftIO $ mallocBytes #{size natpmp_t}
   ret    <- liftIO $ _init_nat_pmp natpmp 0 0
@@ -212,8 +216,7 @@ initNatPmp = do
       pure $ Left $ intToEnum ret
 
 
-closeNatPmp :: (MonadIO m)
-            => NatPmpHandle -> m (Either Error ())
+closeNatPmp :: MonadIO m => NatPmpHandle -> m (Either Error ())
 closeNatPmp handle = do
   ret <- liftIO $ _close_nat_pmp handle
   liftIO $ free handle
@@ -223,8 +226,7 @@ closeNatPmp handle = do
 
 
 -- Public interface for getting the public IPv4 address
-getPublicAddress :: (MonadIO m)
-                 => NatPmpHandle -> m (Either Error HostAddress)
+getPublicAddress :: MonadIO m => NatPmpHandle -> m (Either Error HostAddress)
 getPublicAddress natpmp = do
   sendRetcode <- liftIO $ sendPublicAddressRequest natpmp
   case sendRetcode of
@@ -238,8 +240,12 @@ getPublicAddress natpmp = do
     _ -> pure $ Left $ intToEnum sendRetcode
 
 
-setPortMapping :: (MonadIO m)
-               => NatPmpHandle -> ProtocolType -> Word16 -> Word16 -> Word32
+setPortMapping :: MonadIO m
+               => NatPmpHandle
+               -> ProtocolType
+               -> Port
+               -> Port
+               -> LifetimeSeconds
                -> m (Either Error ())
 setPortMapping natpmp protocol privatePort publicPort lifetime = do
   let protocolNum = fromEnum protocol
@@ -253,8 +259,8 @@ setPortMapping natpmp protocol privatePort publicPort lifetime = do
       respRetcode <- readNatResponseSynchronously natpmp pResponse
       case respRetcode of
         0 -> peek pResponse >>= \case
-          NatPmpResponseUDPPortMapping _ _ _ -> pure $ Right ()
-          NatPmpResponseTCPPortMapping _ _ _ -> pure $ Right ()
+          NatPmpResponseUdpPortMapping _ _ _ -> pure $ Right ()
+          NatPmpResponseTcpPortMapping _ _ _ -> pure $ Right ()
           _ -> pure $ Left ErrHaskellBindingsErr
         _ -> pure $ Left $ intToEnum respRetcode
     x -> pure $ Left $ intToEnum x

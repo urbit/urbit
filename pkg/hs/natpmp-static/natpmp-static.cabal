@@ -41,7 +41,7 @@ library
   cc-options: -Wall -Os -g -fPIC
   ghc-options: -Wall -fprof-auto -fPIC
     
-  exposed-modules: Network.NATPMP
+  exposed-modules: Network.NatPmp
   -- other-modules:
   -- other-extensions:
 

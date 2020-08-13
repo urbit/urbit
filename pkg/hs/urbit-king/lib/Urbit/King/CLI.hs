@@ -18,7 +18,7 @@ import System.Environment (getProgName)
 data KingOpts = KingOpts
   { koSharedHttpPort  :: Maybe Word16
   , koSharedHttpsPort :: Maybe Word16
-  , koUseNATPMP       :: Bool
+  , koUseNatPmp       :: Bool
   }
  deriving (Show)
 
@@ -355,7 +355,7 @@ runOneShip = (,,) <$> fmap Run pierPath <*> opts <*> df
 
 kingOpts :: Parser KingOpts
 kingOpts = do
-  koUseNATPMP <- enableNAT
+  koUseNatPmp <- enableNAT
 
   koSharedHttpPort <-
     optional
