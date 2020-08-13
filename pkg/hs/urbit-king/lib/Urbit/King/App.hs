@@ -9,8 +9,8 @@ module Urbit.King.App
   , kingEnvKillSignal
   , killKingActionL
   , onKillKingSigL
-  , RunningEnv
-  , runRunningEnv
+  , HostEnv
+  , runHostEnv
   , PierEnv
   , runPierEnv
   , killPierActionL
@@ -20,7 +20,7 @@ module Urbit.King.App
   , HasProcId(..)
   , HasKingEnv(..)
   , HasMultiEyreApi(..)
-  , HasRunningEnv(..)
+  , HasHostEnv(..)
   , HasPierEnv(..)
   , module Urbit.King.Config
   )
@@ -125,7 +125,7 @@ killKingActionL :: HasKingEnv e => Getter e (STM ())
 killKingActionL =
   kingEnvL . kingEnvKillSignal . to (\kil -> void (tryPutTMVar kil ()))
 
--- RunningEnv ------------------------------------------------------------------
+-- HostEnv ------------------------------------------------------------------
 
 -- The running environment is everything in King, eyre configuration shared
 -- across ships, and IP information shared across ships.
@@ -136,60 +136,60 @@ class HasMultiEyreApi a where
   multiEyreApiL :: Lens' a MultiEyreApi
 
 class (HasKingEnv a, HasMultiEyreApi a, HasPortControlApi a) =>
-      HasRunningEnv a where
-  runningEnvL :: Lens' a RunningEnv
+      HasHostEnv a where
+  hostEnvL :: Lens' a HostEnv
 
-data RunningEnv = RunningEnv
-  { _runningEnvKingEnv        :: !KingEnv
-  , _runningEnvMultiEyreApi   :: MultiEyreApi
-  , _runningEnvPortControlApi :: PortControlApi
+data HostEnv = HostEnv
+  { _hostEnvKingEnv        :: !KingEnv
+  , _hostEnvMultiEyreApi   :: MultiEyreApi
+  , _hostEnvPortControlApi :: PortControlApi
   }
 
-makeLenses ''RunningEnv
+makeLenses ''HostEnv
 
-instance HasKingEnv RunningEnv where
-  kingEnvL = runningEnvKingEnv
+instance HasKingEnv HostEnv where
+  kingEnvL = hostEnvKingEnv
 
-instance HasLogFunc RunningEnv where
+instance HasLogFunc HostEnv where
   logFuncL = kingEnvL . logFuncL
 
-instance HasStderrLogFunc RunningEnv where
+instance HasStderrLogFunc HostEnv where
   stderrLogFuncL = kingEnvL . stderrLogFuncL
 
-instance HasProcId RunningEnv where
+instance HasProcId HostEnv where
   procIdL = kingEnvL . procIdL
 
-instance HasKingId RunningEnv where
+instance HasKingId HostEnv where
   kingIdL = kingEnvL . kingEnvKingId
 
-instance HasMultiEyreApi RunningEnv where
-  multiEyreApiL = runningEnvMultiEyreApi
+instance HasMultiEyreApi HostEnv where
+  multiEyreApiL = hostEnvMultiEyreApi
 
-instance HasPortControlApi RunningEnv where
-  portControlApiL = runningEnvPortControlApi
+instance HasPortControlApi HostEnv where
+  portControlApiL = hostEnvPortControlApi
 
 -- Running Running Envs --------------------------------------------------------
 
-runRunningEnv :: MultiEyreApi -> PortControlApi -> RIO RunningEnv ()
+runHostEnv :: MultiEyreApi -> PortControlApi -> RIO HostEnv ()
               -> RIO KingEnv ()
-runRunningEnv multi ports action = do
+runHostEnv multi ports action = do
     king <- ask
 
-    let runningEnv = RunningEnv { _runningEnvKingEnv        = king
-                                , _runningEnvMultiEyreApi   = multi
-                                , _runningEnvPortControlApi = ports
+    let hostEnv = HostEnv { _hostEnvKingEnv        = king
+                                , _hostEnvMultiEyreApi   = multi
+                                , _hostEnvPortControlApi = ports
                                 }
 
-    io (runRIO runningEnv action)
+    io (runRIO hostEnv action)
 
 -- PierEnv ---------------------------------------------------------------------
 
-class (HasKingEnv a, HasRunningEnv a, HasPierConfig a, HasNetworkConfig a) =>
+class (HasKingEnv a, HasHostEnv a, HasPierConfig a, HasNetworkConfig a) =>
       HasPierEnv a where
   pierEnvL :: Lens' a PierEnv
 
 data PierEnv = PierEnv
-  { _pierEnvRunningEnv    :: !RunningEnv
+  { _pierEnvHostEnv    :: !HostEnv
   , _pierEnvPierConfig    :: !PierConfig
   , _pierEnvNetworkConfig :: !NetworkConfig
   , _pierEnvKillSignal    :: !(TMVar ())
@@ -198,16 +198,16 @@ data PierEnv = PierEnv
 makeLenses ''PierEnv
 
 instance HasKingEnv PierEnv where
-  kingEnvL = pierEnvRunningEnv . kingEnvL
+  kingEnvL = pierEnvHostEnv . kingEnvL
 
-instance HasRunningEnv PierEnv where
-  runningEnvL = pierEnvRunningEnv
+instance HasHostEnv PierEnv where
+  hostEnvL = pierEnvHostEnv
 
 instance HasMultiEyreApi PierEnv where
-  multiEyreApiL = pierEnvRunningEnv . multiEyreApiL
+  multiEyreApiL = pierEnvHostEnv . multiEyreApiL
 
 instance HasPortControlApi PierEnv where
-  portControlApiL = pierEnvRunningEnv . portControlApiL
+  portControlApiL = pierEnvHostEnv . portControlApiL
 
 instance HasPierEnv PierEnv where
   pierEnvL = id
@@ -250,11 +250,11 @@ killPierActionL =
 -- Running Pier Envs -----------------------------------------------------------
 
 runPierEnv
-  :: PierConfig -> NetworkConfig -> TMVar () -> RIO PierEnv a -> RIO RunningEnv a
+  :: PierConfig -> NetworkConfig -> TMVar () -> RIO PierEnv a -> RIO HostEnv a
 runPierEnv pierConfig networkConfig vKill action = do
   running <- ask
 
-  let pierEnv = PierEnv { _pierEnvRunningEnv    = running
+  let pierEnv = PierEnv { _pierEnvHostEnv    = running
                         , _pierEnvPierConfig    = pierConfig
                         , _pierEnvNetworkConfig = networkConfig
                         , _pierEnvKillSignal    = vKill

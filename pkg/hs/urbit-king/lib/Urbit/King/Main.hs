@@ -443,7 +443,7 @@ validateNounVal inpVal = do
 
 --------------------------------------------------------------------------------
 
-pillFrom :: CLI.PillSource -> RIO RunningEnv Pill
+pillFrom :: CLI.PillSource -> RIO HostEnv Pill
 pillFrom = \case
   CLI.PillSourceFile pillPath -> do
     logDebug $ display $ "boot: reading pill from " ++ (pack pillPath :: Text)
@@ -479,9 +479,9 @@ newShip CLI.New{..} opts = do
   let ports = buildInactivePorts
 
   -- here we are with a king env, and we now need a multi env.
-  runRunningEnv multi ports go
+  runHostEnv multi ports go
   where
-    go :: RIO RunningEnv ()
+    go :: RIO HostEnv ()
     go = case nBootType of
       CLI.BootComet -> do
         pill <- pillFrom nPillSource
@@ -515,7 +515,7 @@ newShip CLI.New{..} opts = do
 
         bootFromSeed pill seed
 
-    shipFrom :: Text -> RIO RunningEnv Ship
+    shipFrom :: Text -> RIO HostEnv Ship
     shipFrom name = case Ob.parsePatp name of
       Left x  -> error "Invalid ship name"
       Right p -> pure $ Ship $ fromIntegral $ Ob.fromPatp p
@@ -525,7 +525,7 @@ newShip CLI.New{..} opts = do
       Just x  -> x
       Nothing -> "./" <> unpack name
 
-    nameFromShip :: Ship -> RIO RunningEnv Text
+    nameFromShip :: Ship -> RIO HostEnv Text
     nameFromShip s = name
       where
         nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral s
@@ -533,7 +533,7 @@ newShip CLI.New{..} opts = do
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> pure x
 
-    bootFromSeed :: Pill -> Seed -> RIO RunningEnv ()
+    bootFromSeed :: Pill -> Seed -> RIO HostEnv ()
     bootFromSeed pill seed = do
       ethReturn <- dawnVent seed
 
@@ -547,7 +547,7 @@ newShip CLI.New{..} opts = do
     -- Now that we have all the information for running an application with a
     -- PierConfig, do so.
     runTryBootFromPill :: Pill -> Text -> Ship -> LegacyBootEvent
-                       -> RIO RunningEnv ()
+                       -> RIO HostEnv ()
     runTryBootFromPill pill name ship bootEvent = do
       env <- ask
       let vKill = (env ^. kingEnvL) ^. kingEnvKillSignal
@@ -557,7 +557,7 @@ newShip CLI.New{..} opts = do
         tryBootFromPill True pill nLite ship bootEvent
 ------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
 
-runShipEnv :: CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a -> RIO RunningEnv a
+runShipEnv :: CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a -> RIO HostEnv a
 runShipEnv (CLI.Run pierPath) opts vKill act = do
   runPierEnv pierConfig netConfig vKill act
  where
@@ -689,7 +689,7 @@ main = do
   TODO Use logging system instead of printing.
 -}
 runShipRestarting
-  :: CLI.Run -> CLI.Opts -> RIO RunningEnv ()
+  :: CLI.Run -> CLI.Opts -> RIO HostEnv ()
 runShipRestarting r o = do
   let pier = pack (CLI.rPierPath r)
       loop = runShipRestarting r o
@@ -722,7 +722,7 @@ runShipRestarting r o = do
   TODO This is messy and shared a lot of logic with `runShipRestarting`.
 -}
 runShipNoRestart
-  :: CLI.Run -> CLI.Opts -> Bool -> RIO RunningEnv ()
+  :: CLI.Run -> CLI.Opts -> Bool -> RIO HostEnv ()
 runShipNoRestart r o d = do
   -- killing ship same as killing king
   env <- ask
@@ -761,9 +761,9 @@ runShips CLI.KingOpts {..} ships = do
 
   ports <- buildPortHandler koUseNatPmp
 
-  runRunningEnv multi ports (go ships)
+  runHostEnv multi ports (go ships)
  where
-  go :: [(CLI.Run, CLI.Opts, Bool)] ->  RIO RunningEnv ()
+  go :: [(CLI.Run, CLI.Opts, Bool)] ->  RIO HostEnv ()
   go = \case
     []    -> pure ()
     [rod] -> runSingleShip rod
@@ -771,7 +771,7 @@ runShips CLI.KingOpts {..} ships = do
 
 
 -- TODO Duplicated logic.
-runSingleShip :: (CLI.Run, CLI.Opts, Bool) -> RIO RunningEnv ()
+runSingleShip :: (CLI.Run, CLI.Opts, Bool) -> RIO HostEnv ()
 runSingleShip (r, o, d) = do
   shipThread <- async (runShipNoRestart r o d)
 
@@ -793,7 +793,7 @@ runSingleShip (r, o, d) = do
     pure ()
 
 
-runMultipleShips :: [(CLI.Run, CLI.Opts)] -> RIO RunningEnv ()
+runMultipleShips :: [(CLI.Run, CLI.Opts)] -> RIO HostEnv ()
 runMultipleShips ships = do
   shipThreads <- for ships $ \(r, o) -> do
     async (runShipRestarting r o)
