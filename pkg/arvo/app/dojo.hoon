@@ -589,9 +589,7 @@
                   ?-  p.p.mad
                     %0  ~
                     %1  [[%rose [~ "  " ~] (skol p.q.cay) ~] maar]
-                    ::  XX  actually print something meaningful here
-                    ::
-                    %2  [[%rose [~ "  " ~] *tank ~] maar]
+                    %2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] maar]
                     ::%3  handled above 
                     %4  ~
                     %5  [[%rose [~ "  " ~] (xskol p.q.cay) ~] maar]
@@ -638,6 +636,26 @@
           :-  i=""
           t=(turn `wain`?~(r.hit ~ (to-wain:format q.u.r.hit)) trip)
       ==
+    ++  dy-show-type-noun
+      |=  a/type  ^-  tank
+    =-  >[-]<
+    |-  ^-  $?  $%  {$atom @tas (unit @)}
+                    {$cell _$ _$}
+                    {$face $@(term tune) _$}
+                    {$fork (set _$)}
+                    {$hold _$ hoon}
+                ==
+                wain                :: "<|core|>"
+                $?($noun $void)
+            ==
+    ?+  a  a
+      {$face ^}  a(q $(a q.a))
+      {$cell ^}  a(p $(a p.a), q $(a q.a))
+      {$fork *}  a(p (silt (turn ~(tap in p.a) |=(b/type ^$(a b)))))
+      {$hint *}  !!
+      {$core ^}  `wain`/core
+      {$hold *}  a(p $(a p.a))
+    ==
   ::
   ::  XX needs filter
   ::
