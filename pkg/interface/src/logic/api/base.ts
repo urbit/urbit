@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { uuid } from "../lib/util";
-import { Patp, Path } from "../types/noun";
+import { Patp, Path } from "~/types/noun";
 import BaseStore from '../store/base';
 
 export default class BaseApi<S extends object = {}> {

@@ -4,14 +4,14 @@ import { FixedSizeList as List } from 'react-window';
 
 import { ContactItem } from './contact-item';
 import { ShareSheet } from './share-sheet';
-import { Sigil } from '../../../../../logic/lib/sigil';
-import { Spinner } from '../../../../components/Spinner';
-import { cite } from '../../../../../logic/lib/util';
-import { roleForShip, resourceFromPath } from '../../../../../logic/lib/group';
-import { Path, PatpNoSig } from '../../../../../types/noun';
-import { Rolodex, Contacts, Contact } from '../../../../../types/contact-update';
-import { Groups, Group } from '../../../../../types/group-update';
-import GlobalApi from '../../../../../logic/api/global';
+import { Sigil } from '~/logic/lib/sigil';
+import { Spinner } from '~/views/components/Spinner';
+import { cite } from '~/logic/lib/util';
+import { roleForShip, resourceFromPath } from '~/logic/lib/group';
+import { Path, PatpNoSig } from '~/types/noun';
+import { Rolodex, Contacts, Contact } from '~/types/contact-update';
+import { Groups, Group } from '~/types/group-update';
+import GlobalApi from '~/logic/api/global';
 
 interface ContactSidebarProps {
 	activeDrawer: 'contacts' | 'detail' | 'rightPanel';

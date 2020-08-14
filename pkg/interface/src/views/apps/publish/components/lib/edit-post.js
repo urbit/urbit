@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { SidebarSwitcher } from '../../../../components/SidebarSwitch';
-import { Spinner } from '../../../../components/Spinner';
+import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
+import { Spinner } from '~/views/components/Spinner';
 import { Link } from 'react-router-dom';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-import { dateToDa } from '../../../../../logic/lib/util';
+import { dateToDa } from '~/logic/lib/util';
 
 import 'codemirror/mode/markdown/markdown';
 

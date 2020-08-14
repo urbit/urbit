@@ -11,10 +11,10 @@ import { AddScreen } from './components/lib/add-contact';
 import { JoinScreen } from './components/join';
 import GroupDetail from './components/lib/group-detail';
 
-import { PatpNoSig } from '../../../types/noun';
-import GlobalApi from '../../../logic/api/global';
-import { StoreState } from '../../../logic/store/type';
-import GlobalSubscription from '../../../logic/subscription/global';
+import { PatpNoSig } from '~/types/noun';
+import GlobalApi from '~/logic/api/global';
+import { StoreState } from '~/logic/store/type';
+import GlobalSubscription from '~/logic/subscription/global';
 
 
 type GroupsAppProps = StoreState & {

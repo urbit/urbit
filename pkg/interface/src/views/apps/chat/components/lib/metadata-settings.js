@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { MetadataColor } from './metadata-color';
 import { MetadataInput } from './metadata-input';
-import { uxToHex } from '../../../../../logic/lib/util';
+import { uxToHex } from '~/logic/lib/util';
 
 
 export const MetadataSettings = (props) => {

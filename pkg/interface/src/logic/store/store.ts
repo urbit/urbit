@@ -5,7 +5,7 @@ import LocalReducer from '../reducers/local';
 import ChatReducer from '../reducers/chat-update';
 
 import { StoreState } from './type';
-import { Cage } from '../types/cage';
+import { Cage } from '~/types/cage';
 import ContactReducer from '../reducers/contact-update';
 import LinkUpdateReducer from '../reducers/link-update';
 import S3Reducer from '../reducers/s3-update';

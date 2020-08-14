@@ -3,13 +3,13 @@ import React, { Component } from 'react';
 import { LoadingScreen } from './loading';
 import { MessageScreen } from './lib/message-screen';
 import { LinksTabBar } from './lib/links-tabbar';
-import { SidebarSwitcher } from '../../../components/SidebarSwitch';
+import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { Link } from 'react-router-dom';
 import { LinkItem } from './lib/link-item';
 import { LinkSubmit } from './lib/link-submit';
 import { Pagination } from './lib/pagination';
 
-import { makeRoutePath, getContactDetails } from '../../../../logic/lib/util';
+import { makeRoutePath, getContactDetails } from '~/logic/lib/util';
 
 export class Links extends Component {
   constructor(props) {

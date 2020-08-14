@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import ChatEditor from './chat-editor';
 import { S3Upload } from './s3-upload'
 ;
-import { uxToHex } from '../../../../../logic/lib/util';
-import { Sigil } from '../../../../../logic/lib/sigil';
+import { uxToHex } from '~/logic/lib/util';
+import { Sigil } from '~/logic/lib/sigil';
 
 
 const URL_REGEX = new RegExp(String(/^((\w+:\/\/)[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/.source));

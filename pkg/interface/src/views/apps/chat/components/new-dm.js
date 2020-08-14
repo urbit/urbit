@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Spinner } from '../../../components/Spinner';
+import { Spinner } from '~/views/components/Spinner';
 import { Link } from 'react-router-dom';
-import { InviteSearch } from '../../../components/InviteSearch';
+import { InviteSearch } from '~/views/components/InviteSearch';
 import urbitOb from 'urbit-ob';
-import { deSig } from '../../../../logic/lib/util';
+import { deSig } from '~/logic/lib/util';
 
 export class NewDmScreen extends Component {
   constructor(props) {

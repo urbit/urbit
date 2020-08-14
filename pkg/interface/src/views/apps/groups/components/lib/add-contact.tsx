@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import { Link } from 'react-router-dom';
-import { InviteSearch, Invites } from '../../../../components/InviteSearch';
-import { Spinner } from '../../../../components/Spinner';
+import { InviteSearch, Invites } from '~/views/components/InviteSearch';
+import { Spinner } from '~/views/components/Spinner';
 import { uuid } from '../../../../lib/util';
-import { Groups } from '../../../../types/group-update';
-import { Rolodex } from '../../../../types/contact-update';
-import { Path } from '../../../../types/noun';
+import { Groups } from '~/types/group-update';
+import { Rolodex } from '~/types/contact-update';
+import { Path } from '~/types/noun';
 import GlobalApi from '../../../../api/global';
 import { History } from 'history';
 

@@ -1,7 +1,7 @@
 
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Path, Patp } from '../types/noun';
+import { Path, Patp } from '~/types/noun';
 
 export default class MetadataApi extends BaseApi<StoreState> {
 

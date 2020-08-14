@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 import { LoadingScreen } from './loading';
 import { LinksTabBar } from './lib/links-tabbar';
 import { MemberElement } from './lib/member-element';
-import { SidebarSwitcher } from '../../../components/SidebarSwitch';
-import { makeRoutePath } from '../../../../logic/lib/util';
-import { GroupView } from '../../../components/Group';
+import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
+import { makeRoutePath } from '~/logic/lib/util';
+import { GroupView } from '~/views/components/Group';
 
 export class MemberScreen extends Component {
   render() {

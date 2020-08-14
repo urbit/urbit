@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { makeRoutePath } from '../../../../../logic/lib/util';
+import { makeRoutePath } from '~/logic/lib/util';
 
 export class LinksTabBar extends Component {
   render() {

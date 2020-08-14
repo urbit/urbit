@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Sigil } from '../../../../../logic/lib/sigil';
+import { Sigil } from '~/logic/lib/sigil';
 
 import { Link } from 'react-router-dom';
 import { EditElement } from './edit-element';
-import { Spinner } from '../../../../components/Spinner';
-import { uxToHex } from '../../../../../logic/lib/util';
+import { Spinner } from '~/views/components/Spinner';
+import { uxToHex } from '~/logic/lib/util';
 import { S3Upload } from './s3-upload';
 
 export class ContactCard extends Component {

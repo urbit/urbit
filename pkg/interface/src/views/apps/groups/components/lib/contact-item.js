@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Sigil } from '../../../../../logic/lib/sigil';
-import { uxToHex, cite } from '../../../../../logic/lib/util';
+import { Sigil } from '~/logic/lib/sigil';
+import { uxToHex, cite } from '~/logic/lib/util';
 
 export class ContactItem extends Component {
   render() {

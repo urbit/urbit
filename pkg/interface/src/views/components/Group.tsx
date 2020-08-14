@@ -3,22 +3,22 @@ import _, { capitalize } from 'lodash';
 import { FixedSizeList as List } from 'react-window';
 
 import { Dropdown } from '../apps/publish/components/lib/dropdown';
-import { cite, deSig } from '../../logic/lib/util';
-import { roleForShip, resourceFromPath } from '../../logic/lib/group';
+import { cite, deSig } from '~/logic/lib/util';
+import { roleForShip, resourceFromPath } from '~/logic/lib/group';
 import {
   Group,
   InvitePolicy,
   OpenPolicy,
   roleTags,
   Groups,
-} from '../../types/group-update';
-import { Path, PatpNoSig, Patp } from '../../types/noun';
+} from '~/types/group-update';
+import { Path, PatpNoSig, Patp } from '~/types/noun';
 import GlobalApi from '../api/global';
 import { Menu, MenuButton, MenuList, MenuItem } from '@tlon/indigo-react';
 import InviteSearch, { Invites } from './InviteSearch';
 import { Spinner } from './Spinner';
-import { Rolodex } from '../../types/contact-update';
-import { Associations } from '../../types/metadata-update';
+import { Rolodex } from '~/types/contact-update';
+import { Associations } from '~/types/metadata-update';
 
 class GroupMember extends Component<{ ship: Patp; options: any[] }, {}> {
   render() {

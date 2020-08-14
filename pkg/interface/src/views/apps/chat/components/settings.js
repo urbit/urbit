@@ -1,14 +1,14 @@
 import React, { Component, Fragment } from 'react';
-import { deSig } from '../../../../logic/lib/util';
+import { deSig } from '~/logic/lib/util';
 import { Link } from 'react-router-dom';
 
 import { ChatHeader } from './lib/chat-header';
 import { MetadataSettings } from './lib/metadata-settings';
 import { DeleteButton } from './lib/delete-button';
 import { GroupifyButton } from './lib/groupify-button';
-import { Spinner } from '../../../components/Spinner';
+import { Spinner } from '~/views/components/Spinner';
 import { ChatTabBar } from './lib/chat-tabbar';
-import SidebarSwitcher from '../../../components/SidebarSwitch';
+import SidebarSwitcher from '~/views/components/SidebarSwitch';
 
 
 export class SettingsScreen extends Component {

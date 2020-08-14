@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { InviteSearch } from '../../../../components/InviteSearch';
-import { Spinner } from '../../../../components/Spinner';
+import { InviteSearch } from '~/views/components/InviteSearch';
+import { Spinner } from '~/views/components/Spinner';
 
 export class InviteElement extends Component {
   constructor(props) {

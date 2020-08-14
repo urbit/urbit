@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Box, Row, Rule, Text } from '@tlon/indigo-react';
-import index from '../../logic/lib/omnibox';
+import index from '~/logic/lib/omnibox';
 import Mousetrap from 'mousetrap';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
 
-import { cite } from '../../logic/lib/util';
+import { cite } from '~/logic/lib/util';
 
 export class Omnibox extends Component {
   constructor(props) {

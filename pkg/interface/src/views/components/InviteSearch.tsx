@@ -2,11 +2,11 @@ import React, { Component, createRef } from 'react';
 import _ from 'lodash';
 import Mousetrap from 'mousetrap';
 import urbitOb from 'urbit-ob';
-import { Sigil } from '../../logic/lib/sigil';
-import { PatpNoSig, Path } from '../../types/noun';
-import { Groups} from '../../types/group-update';
-import { Rolodex, Contact } from '../../types/contact-update';
-import { Associations } from '../../types/metadata-update';
+import { Sigil } from '~/logic/lib/sigil';
+import { PatpNoSig, Path } from '~/types/noun';
+import { Groups} from '~/types/group-update';
+import { Rolodex, Contact } from '~/types/contact-update';
+import { Associations } from '~/types/metadata-update';
 
 export interface Invites {
   ships: PatpNoSig[];
