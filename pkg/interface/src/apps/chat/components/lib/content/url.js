@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Box } from '@tlon/indigo-react';
 
 const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 
@@ -79,11 +80,19 @@ export default class UrlContent extends Component {
           >
             {content.url}
           </a>
-          <a className="bs ml2 f7 pointer lh-copy v-top"
-             onClick={e => this.unfoldEmbed()}
+          <Box
+            border={1}
+            borderRadius={2}
+            display='inline-block'
+            style={{ cursor: 'pointer' }}
+            opacity={.8}
+            px={2}
+            ml={1}
+            mb={1}
+            onClick={e => this.unfoldEmbed()}
           >
-            [embed]
-          </a>
+            {this.state.unfold ? 'collapse' : 'embed'}
+          </Box>
           {contents}
         </div>
       );
