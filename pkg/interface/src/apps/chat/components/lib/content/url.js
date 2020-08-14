@@ -84,6 +84,7 @@ export default class UrlContent extends Component {
             border={1}
             borderRadius={2}
             display='inline-block'
+            fontSize={0}
             style={{ cursor: 'pointer' }}
             opacity={.8}
             px={2}
