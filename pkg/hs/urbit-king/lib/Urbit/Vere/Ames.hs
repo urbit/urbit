@@ -233,7 +233,7 @@ ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
 
     NewtEfSend (_id, ()) dest (MkBytes bs) -> do
       atomically (readTVar aTurfs) >>= \case
-        Nothing    -> pure ()
+        Nothing    -> stderr "ames: send before turfs" >> pure ()
         Just turfs -> sendPacket drv mode dest bs
 
   sendPacket :: AmesDrv -> NetworkMode -> AmesDest -> ByteString -> RIO e ()

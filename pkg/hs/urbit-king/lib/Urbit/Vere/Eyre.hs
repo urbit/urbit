@@ -175,8 +175,9 @@ startServ
   -> Bool
   -> HttpServerConf
   -> (EvErr -> STM ())
+  -> (Text -> RIO e ())
   -> RIO e Serv
-startServ who isFake conf plan = do
+startServ who isFake conf plan stderr = do
   logDebug (displayShow ("EYRE", "startServ"))
 
   multi <- view multiEyreApiL
@@ -271,6 +272,10 @@ startServ who isFake conf plan = do
       fil = pierPath <> "/.http.ports"
 
   logDebug $ displayShow ("EYRE", "All Servers Started.", srvId, por, fil)
+  for secPor $ \p ->
+    stderr ("http: secure web interface live on https://localhost:" <> tshow p)
+  stderr ("http: web interface live on http://localhost:" <> tshow insPor)
+  stderr ("http: loopback live on http://localhost:" <> tshow lopPor)
 
   pure (Serv srvId conf lop ins mSec por fil vLive)
 
@@ -285,12 +290,15 @@ eyre'
   :: (HasPierEnv e, HasMultiEyreApi e)
   => Ship
   -> Bool
+  -> (Text -> RIO e ())
   -> RIO e ([Ev], RAcquire e (DriverApi HttpServerEf))
-eyre' who isFake = do
+
+eyre' who isFake stderr = do
   ventQ :: TQueue EvErr <- newTQueueIO
   env <- ask
 
-  let (bornEvs, startDriver) = eyre env who (writeTQueue ventQ) isFake
+  let (bornEvs, startDriver) =
+        eyre env who (writeTQueue ventQ) isFake stderr
 
   let runDriver = do
         diOnEffect <- startDriver
@@ -318,8 +326,9 @@ eyre
   -> Ship
   -> (EvErr -> STM ())
   -> Bool
+  -> (Text -> RIO e ())
   -> ([Ev], RAcquire e (HttpServerEf -> IO ()))
-eyre env who plan isFake = (initialEvents, runHttpServer)
+eyre env who plan isFake stderr = (initialEvents, runHttpServer)
  where
   king = fromIntegral (env ^. kingIdL)
   multi = env ^. multiEyreApiL
@@ -343,7 +352,7 @@ eyre env who plan isFake = (initialEvents, runHttpServer)
   restart :: Drv -> HttpServerConf -> RIO e Serv
   restart (Drv var) conf = do
     logDebug "Restarting http server"
-    let startAct = startServ who isFake conf plan
+    let startAct = startServ who isFake conf plan stderr
     res <- fromEither =<< restartService var startAct kill
     logDebug "Done restating http server"
     pure res

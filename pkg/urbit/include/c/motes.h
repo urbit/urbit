@@ -26,6 +26,7 @@
 #   define c3__at     c3_s2('a','t')
 #   define c3__atom   c3_s4('a','t','o','m')
 #   define c3__auth   c3_s4('a','u','t','h')
+#   define c3__ax     c3_s2('a','x')
 #   define c3__axe    c3_s3('a','x','e')
 #   define c3__axil   c3_s4('a','x','i','l')
 #   define c3__axis   c3_s4('a','x','i','s')
