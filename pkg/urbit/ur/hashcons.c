@@ -482,18 +482,14 @@ _coin_unsafe(ur_atoms_t *atoms, ur_mug mug, uint8_t *byt, uint64_t len)
   uint64_t fill = atoms->fill;
   ur_tag    tag = ur_iatom;
   ur_nref   tom = ( fill | ((uint64_t)tag << 62) );
-  uint8_t *copy = malloc(len);
 
   //  XX necessary?
   //
   assert( 62 >= ur_met0_64(fill) );
 
-  assert(copy);
-  memcpy(copy, byt, len);
-
-  atoms->bytes[fill] = copy;
-  atoms->lens[fill] = len;
-  atoms->mugs[fill] = mug;
+  atoms->bytes[fill] = byt;
+  atoms->lens[fill]  = len;
+  atoms->mugs[fill]  = mug;
   atoms->fill = 1 + fill;
 
   return tom;
@@ -584,7 +580,11 @@ ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
     return (ur_nref)direct;
   }
   else {
-    return _coin_bytes_unsafe(r, byt, len);
+    uint8_t *copy = malloc(len);
+    assert( copy );
+    memcpy(copy, byt, len);
+
+    return _coin_bytes_unsafe(r, copy, len);
   }
 }
 
@@ -595,9 +595,20 @@ ur_coin64(ur_root_t *r, uint64_t n)
     return n;
   }
   else {
-    //  XX little-endian
-    //
-    return _coin_bytes_unsafe(r, (uint8_t*)&n, ur_met3_64(n));
+    uint8_t *byt = malloc(8);
+    assert( byt );
+    assert( 8 == ur_met3_64(n) );
+
+    byt[0] = ur_mask_8(n);
+    byt[1] = ur_mask_8(n >>  8);
+    byt[2] = ur_mask_8(n >> 16);
+    byt[3] = ur_mask_8(n >> 24);
+    byt[4] = ur_mask_8(n >> 32);
+    byt[5] = ur_mask_8(n >> 40);
+    byt[6] = ur_mask_8(n >> 48);
+    byt[7] = ur_mask_8(n >> 56);
+
+    return _coin_bytes_unsafe(r, byt, 8);
   }
 }
 
