@@ -95,8 +95,8 @@ _cu_box_stash(u3a_noun* som_u, ur_nref ref)
 //    In Hoon, this structure would be as follows:
 //
 //    $%  [%root ~]
-//        [%head cell=^]
-//        [%tail cell=^ hed-mug=@]
+//        [%head loom-cell=^]
+//        [%tail loom-cell=^ off-loom-head=*]
 //    ==
 //
 
