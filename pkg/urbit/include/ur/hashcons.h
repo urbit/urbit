@@ -173,3 +173,17 @@ ur_walk_fore(ur_root_t *r,
 
 uint64_t
 ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt);
+
+typedef enum {
+  ur_cue_good = 0,
+  ur_cue_gone = 1
+} ur_cue_res_e;
+
+typedef enum {
+  ur_jam_atom = 0,
+  ur_jam_cell = 1,
+  ur_jam_back = 2
+} ur_cue_tag_e;
+
+ur_cue_res_e
+ur_cue(ur_root_t *r, uint64_t len, const uint8_t *byt, ur_nref *out);

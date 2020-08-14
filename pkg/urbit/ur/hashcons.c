@@ -1115,6 +1115,192 @@ ur_bsw_mat_bytes(ur_bsw_t *bsw, uint64_t len_bit, uint64_t len, uint8_t *byt)
   }
 }
 
+typedef struct ur_bsr_s {
+  uint64_t    left;
+  uint64_t    bits;
+  uint8_t      off;
+  const uint8_t *bytes;
+} ur_bsr_t;
+
+static inline ur_cue_res_e
+ur_bsr_bit(ur_bsr_t *bsr, uint8_t *out)
+{
+  uint8_t left = bsr->left;
+
+  if ( !left ) {
+    return ur_cue_gone;
+  }
+  else {
+    uint8_t byt = bsr->bytes[0];
+    uint8_t off = bsr->off;
+    uint8_t bit = (byt >> off) & 1;
+
+    if ( 7 == off ) {
+      left--;
+
+      if ( left ) {
+        bsr->bytes++;
+        bsr->left = left;
+      }
+      else {
+        bsr->bytes = 0;
+        bsr->left  = 0;
+      }
+
+      bsr->off = 0;
+    }
+    else {
+      bsr->off = 1 + off;
+    }
+
+    bsr->bits++;
+
+    *out = bit;
+
+    return ur_cue_good;
+  }
+}
+
+static inline ur_cue_res_e
+ur_bsr_tag(ur_bsr_t *bsr, ur_cue_tag_e *out)
+{
+  ur_cue_res_e res;
+  uint8_t      bit;
+
+  if ( ur_cue_good != (res = ur_bsr_bit(bsr, &bit)) ) {
+    return res;
+  }
+  else if ( 0 == bit ) {
+    *out = ur_jam_atom;
+    return ur_cue_good;
+  }
+  else if ( ur_cue_good != (res = ur_bsr_bit(bsr, &bit)) ) {
+    return res;
+  }
+
+  *out = ( 0 == bit ) ? ur_jam_cell : ur_jam_back;
+  return ur_cue_good;
+}
+
+static inline ur_cue_res_e
+ur_bsr_zeros(ur_bsr_t *bsr, uint8_t *out)
+{
+  ur_cue_res_e res;
+  uint8_t bit, len = 0;
+
+  while ( (ur_cue_good == (res = ur_bsr_bit(bsr, &bit))) && (0 == bit) ) {
+    len++;
+  }
+
+  if ( ur_cue_good != res ) {
+    return res;
+  }
+  else {
+    *out = len;
+    return ur_cue_good;
+  }
+}
+
+static inline uint64_t
+ur_bsr64(ur_bsr_t *bsr, uint8_t len)
+{
+  uint64_t acc = 0;
+  uint64_t   i;
+  uint8_t  bit;
+
+  for ( i = 0; i < len; i++ ) {
+    if ( ur_cue_good != ur_bsr_bit(bsr, &bit) ) {
+      bsr->bits += len - i;
+      bsr->bytes = 0;
+      return acc;
+    }
+
+    acc ^= (uint64_t)bit << i;
+  }
+
+  return acc;
+}
+
+static inline void
+ur_bsr_bytes(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
+{
+  uint8_t  left = bsr->left;
+  uint8_t   off = bsr->off;
+  ur_bool_t end = len >= left;
+
+  if ( !left ) {
+    return;
+  }
+
+  if ( !off ) {
+    if ( end ) {
+      memcpy(out, bsr->bytes, left);
+      bsr->bytes = 0;
+      left = 0;
+    }
+    else {
+      memcpy(out, bsr->bytes, len);
+      bsr->bytes += len;
+      left -= len;
+    }
+  }
+  //  the most-significant bits from a byte in the stream
+  //  become the least-significant bits of an output byte, and vice-versa
+  //
+  else {
+    uint8_t   rest = 8 - off;
+    const uint8_t *bytes = bsr->bytes;
+    uint8_t    byt = bytes[0];
+    uint8_t   l, m;
+    uint64_t   max = end ? (left - 1) : len;
+    uint64_t     i;
+
+    for ( i = 0; i < max; i++ ) {
+      m      = byt >> off;
+      byt    = bytes[1 + i];
+      l      = byt & ((1 << off) - 1);
+      out[i] = m ^ (l << rest);
+    }
+
+    if ( end ) {
+      out[max] = bytes[max] >> off;
+
+      bsr->bytes = 0;
+      left = 0;
+    }
+    else {
+      bsr->bytes += max;
+      left -= max;
+    }
+  }
+
+  bsr->left  = left;
+  bsr->bits += len << 3;
+}
+
+static inline ur_cue_res_e
+ur_bsr_mat(ur_bsr_t *bsr, uint64_t *out)
+{
+  uint8_t len;
+
+  if ( ur_cue_gone == ur_bsr_zeros(bsr, &len) ) {
+    return ur_cue_gone;
+  }
+
+  //  XX
+  assert( 64 > len );
+
+  if ( !len ) {
+    *out = 0;
+  }
+  else {
+    len--;
+    *out = ur_bsr64(bsr, len) ^ (1ULL << len);
+  }
+
+  return ur_cue_good;
+}
+
 static inline void
 _jam_mat(ur_root_t *r, ur_nref ref, ur_bsw_t *bsw, uint64_t len_bit)
 {
@@ -1216,4 +1402,210 @@ ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt)
   *byt = j.bsw.bytes;
 
   return j.bsw.bits;
+}
+
+typedef struct _cue_s {
+  ur_dict64_t dict;
+  ur_bsr_t     bsr;
+} _cue_t;
+
+static inline ur_cue_res_e
+_cue_atom(ur_root_t *r, _cue_t *c, ur_nref *out)
+{
+  ur_bsr_t    *bsr = &c->bsr;
+  ur_cue_res_e res;
+  uint64_t     len;
+
+  if ( ur_cue_good != (res = ur_bsr_mat(bsr, &len)) ) {
+    return res;
+  }
+
+  if ( 62 >= len ) {
+    *out = (ur_nref)ur_bsr64(bsr, len);
+  }
+  else {
+    uint8_t *byt = calloc(len, 1);
+    ur_bsr_bytes(bsr, len, byt);
+
+    //  strip trailing zeroes
+    //
+    while ( len && !byt[len - 1] ) {
+      len--;
+    }
+
+    *out = _coin_bytes_unsafe(r, byt, len);
+  }
+
+  return ur_cue_good;
+}
+
+static inline ur_cue_res_e
+_cue_back(ur_bsr_t *bsr, uint64_t *out)
+{
+  ur_cue_res_e res;
+  uint64_t     len;
+
+  if ( ur_cue_good != (res = ur_bsr_mat(bsr, &len)) ) {
+    return res;
+  }
+
+  //  XX
+  assert( 62 >= len );
+
+  *out = ur_bsr64(bsr, len);
+  return ur_cue_good;
+}
+
+#define STACK_ROOT 0
+#define STACK_HEAD 1
+#define STACK_TAIL 2
+
+//  stack frame for recording head vs tail iteration
+//
+//    In Hoon, this structure would be as follows:
+//
+//    $%  [%root ~]
+//        [%head cursor=@]
+//        [%tail cursor=@ hed-ref=*]
+//    ==
+//
+typedef struct _cue_frame_s {
+  uint8_t   tag;
+  uint64_t bits;
+  ur_nref   ref;
+} _cue_frame_t;
+
+typedef struct _cue_stack_s {
+  uint32_t   prev;
+  uint32_t   size;
+  uint32_t   fill;
+  _cue_frame_t* f;
+} _cue_stack_t;
+
+static inline void
+_cue_stack_push(_cue_stack_t *s, uint8_t tag, uint64_t bits, ur_nref ref)
+{
+  if ( s->fill == s->size ) {
+    uint32_t next = s->prev + s->size;
+    s->f = realloc(s->f, next * sizeof(*s->f));
+    s->prev = s->size;
+    s->size = next;
+  }
+
+  _cue_frame_t* f = &(s->f[s->fill++]);
+  f->tag  = tag;
+  f->bits = bits;
+  f->ref  = ref;
+}
+
+ur_cue_res_e
+ur_cue(ur_root_t *r, uint64_t len, const uint8_t *byt, ur_nref *out)
+{
+  ur_cue_res_e res;
+  ur_nref      ref;
+  _cue_t         c = {0};
+  _cue_stack_t   s = { .prev = 89, .size = 144, .fill = 0, .f = 0 };
+
+  //  init bitstream-reader
+  //
+  c.bsr.left  = len;
+  c.bsr.bytes = byt;
+
+  //  init dictionary
+  //
+  {
+    uint64_t fib11 = 89, fib12 = 144;
+    ur_dict64_grow(r, &c.dict, fib11, fib12);
+  }
+
+  //  setup stack
+  //
+  s.f = malloc(s.size * sizeof(*s.f));
+  _cue_stack_push(&s, STACK_ROOT, 0, 0);
+
+  //  advance into buffer
+  //
+  advance: {
+    uint64_t    bits = c.bsr.bits;
+    ur_cue_tag_e tag;
+
+    if ( ur_cue_good != (res = ur_bsr_tag(&c.bsr, &tag)) ) {
+      goto perfect;
+    }
+
+    switch ( tag ) {
+      default: assert(0);
+
+      case ur_jam_atom: {
+        if ( ur_cue_good != (res = _cue_atom(r, &c, &ref)) ) {
+          goto perfect;
+        }
+        else {
+          ur_dict64_put(r, &c.dict, bits, (uint64_t)ref);
+          goto retreat;
+        }
+      }
+
+      case ur_jam_back: {
+        uint64_t bak, val;
+
+        if ( ur_cue_good != (res = _cue_back(&c.bsr, &bak)) ) {
+          goto perfect;
+        }
+        else if ( !ur_dict64_get(r, &c.dict, bak, &val) ) {
+          //  XX distinguish bad backref?
+          //
+          res = ur_cue_gone;
+          goto perfect;
+        }
+
+        ref = (ur_nref)val;
+        goto retreat;
+      }
+
+      case ur_jam_cell: {
+        _cue_stack_push(&s, STACK_HEAD, bits, 0);
+        goto advance;
+      }
+    }
+  }
+
+  //  retreat down the stack
+  //
+  retreat: {
+    _cue_frame_t f = s.f[--s.fill];
+
+    switch ( f.tag ) {
+      default: assert(0);
+
+      case STACK_ROOT: {
+        res = ur_cue_good;
+        goto perfect;
+      }
+
+      case STACK_HEAD: {
+        _cue_stack_push(&s, STACK_TAIL, f.bits, ref);
+        goto advance;
+      }
+
+      case STACK_TAIL: {
+        ref = ur_cons(r, f.ref, ref);
+        ur_dict64_put(r, &c.dict, f.bits, (uint64_t)ref);
+        goto retreat;
+      }
+    }
+  }
+
+  //  we done
+  //
+  perfect: {
+    ur_dict_free((ur_dict_t*)&c.dict);
+    free(s.f);
+
+    if ( ur_cue_good == res ) {
+      *out = ref;
+    }
+
+    return res;
+  }
 }
