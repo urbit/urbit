@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Button } from '@tlon/indigo-react';
 
 const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 
@@ -79,11 +80,14 @@ export default class UrlContent extends Component {
           >
             {content.url}
           </a>
-          <a className="bs ml2 f7 pointer lh-copy v-top"
-             onClick={e => this.unfoldEmbed()}
+          <Button
+            border={1}
+            style={{ display: 'inline-flex', height: '1.66em' }} // Height is hacked to line-height until Button supports proper size
+            ml={1}
+            onClick={e => this.unfoldEmbed()}
           >
-            [embed]
-          </a>
+            {this.state.unfold ? 'collapse' : 'embed'}
+          </Button>
           {contents}
         </div>
       );
