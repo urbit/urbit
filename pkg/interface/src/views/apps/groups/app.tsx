@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import Helmet from 'react-helmet';
 
 import './css/custom.css';
 
@@ -25,7 +26,6 @@ type GroupsAppProps = StoreState & {
 
 export default class GroupsApp extends Component<GroupsAppProps, {}> {
   componentDidMount() {
-    document.title = 'OS1 - Groups';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
@@ -55,6 +55,10 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
 
 
     return (
+      <>
+        <Helmet>
+          <title>OS1 - Groups</title>
+        </Helmet>
         <Switch>
           <Route exact path="/~groups"
             render={(props) => {
@@ -357,6 +361,7 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
             }}
           />
         </Switch>
+      </>
     );
   }
 }

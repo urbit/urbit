@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { Route, Switch, useLocation, withRouter } from "react-router-dom";
 import { Center, Text } from "@tlon/indigo-react";
 import _ from "lodash";
+import Helmet from 'react-helmet';
 
 import "./css/custom.css";
 
@@ -61,99 +62,104 @@ export default function PublishApp(props: PublishAppProps) {
     : "rightPanel";
 
   return (
-    <Route
-      path={[
-        "/~publish/notebook/:ship/:notebook/note/:noteId",
-        "/~publish/notebook/:ship/:notebook/*",
-        "/~publish/notebook/:ship/:notebook",
-        "/~publish",
-      ]}
-    >
-      <RouterSkeleton
-        popout={location.pathname.includes("popout/")}
-        active={active}
-        sidebarShown={sidebarShown}
-        invites={invites}
-        notebooks={notebooks}
-        associations={associations}
-        contacts={contacts}
-        api={api}
+    <>
+      <Helmet>
+        <title>{unreadTotal > 0 ? `(${unreadTotal}) ` : ''}OS1 - Publish</title>
+      </Helmet>
+      <Route
+        path={[
+          "/~publish/notebook/:ship/:notebook/note/:noteId",
+          "/~publish/notebook/:ship/:notebook/*",
+          "/~publish/notebook/:ship/:notebook",
+          "/~publish",
+        ]}
       >
-        <Switch>
-          <Route exact path="/~publish">
-            <Center width="100%" height="100%">
-              <Text color="lightGray">
-                Select or create a notebook to begin.
-              </Text>
-            </Center>
-          </Route>
-          <Route
-            exact
-            path="/~publish/new"
-            render={(props) => {
-              return (
-                <NewScreen
-                  associations={associations}
-                  api={api}
-                  notebooks={notebooks}
-                  groups={groups}
-                  {...props}
-                />
-              );
-            }}
-          />
-          <Route
-            exact
-            path="/~publish/join/:ship/:notebook"
-            render={(props) => {
-              const ship = props.match.params.ship || "";
-              const notebook = props.match.params.notebook || "";
-              return (
-                <JoinScreen
-                  notebooks={notebooks}
-                  ship={ship}
-                  book={notebook}
-                  api={api}
-                  {...props}
-                />
-              );
-            }}
-          />
-          <Route
-            path="/~publish/notebook/:ship/:notebook"
-            render={(props) => {
-              const view = props.match.params.view
-                ? props.match.params.view
-                : "posts";
-
-
-              const ship = props.match.params.ship || "";
-              const book = props.match.params.notebook || "";
-
-              const bookGroupPath =
-                notebooks?.[ship]?.[book]?.["subscribers-group-path"];
-
-              const notebookContacts =
-                bookGroupPath in contacts ? contacts[bookGroupPath] : {};
-
-              const notebook = notebooks?.[ship]?.[book];
+        <RouterSkeleton
+          popout={location.pathname.includes("popout/")}
+          active={active}
+          sidebarShown={sidebarShown}
+          invites={invites}
+          notebooks={notebooks}
+          associations={associations}
+          contacts={contacts}
+          api={api}
+        >
+          <Switch>
+            <Route exact path="/~publish">
+              <Center width="100%" height="100%">
+                <Text color="lightGray">
+                  Select or create a notebook to begin.
+                </Text>
+              </Center>
+            </Route>
+            <Route
+              exact
+              path="/~publish/new"
+              render={(props) => {
                 return (
-                  <NotebookRoutes
-                    notebook={notebook}
-                    ship={ship}
-                    book={book}
+                  <NewScreen
+                    associations={associations}
+                    api={api}
+                    notebooks={notebooks}
                     groups={groups}
-                    contacts={contacts}
-                    notebookContacts={notebookContacts}
-                    sidebarShown={sidebarShown}
+                    {...props}
+                  />
+                );
+              }}
+            />
+            <Route
+              exact
+              path="/~publish/join/:ship/:notebook"
+              render={(props) => {
+                const ship = props.match.params.ship || "";
+                const notebook = props.match.params.notebook || "";
+                return (
+                  <JoinScreen
+                    notebooks={notebooks}
+                    ship={ship}
+                    book={notebook}
                     api={api}
                     {...props}
                   />
                 );
-            }}
-          />
-        </Switch>
-      </RouterSkeleton>
-    </Route>
+              }}
+            />
+            <Route
+              path="/~publish/notebook/:ship/:notebook"
+              render={(props) => {
+                const view = props.match.params.view
+                  ? props.match.params.view
+                  : "posts";
+
+
+                const ship = props.match.params.ship || "";
+                const book = props.match.params.notebook || "";
+
+                const bookGroupPath =
+                  notebooks?.[ship]?.[book]?.["subscribers-group-path"];
+
+                const notebookContacts =
+                  bookGroupPath in contacts ? contacts[bookGroupPath] : {};
+
+                const notebook = notebooks?.[ship]?.[book];
+                  return (
+                    <NotebookRoutes
+                      notebook={notebook}
+                      ship={ship}
+                      book={book}
+                      groups={groups}
+                      contacts={contacts}
+                      notebookContacts={notebookContacts}
+                      sidebarShown={sidebarShown}
+                      api={api}
+                      {...props}
+                    />
+                  );
+              }}
+            />
+          </Switch>
+        </RouterSkeleton>
+      </Route>
+    </>
   );
 }
