@@ -51,8 +51,6 @@ export class Comments extends Component {
 
       const { nickname, color, member, avatar } = getContactDetails(contacts[ship]);
 
-      const nameClass = nickname ? 'inter' : 'mono';
-
       return(
         <CommentItem
           key={time}
@@ -60,10 +58,10 @@ export class Comments extends Component {
           time={time}
           content={udon}
           nickname={nickname}
-          nameClass={nameClass}
+          hasNickname={Boolean(nickname)}
           color={color}
           avatar={avatar}
-          member={member}
+          member={member || false}
         />
       );
     });
