@@ -550,7 +550,7 @@ newShip CLI.New{..} opts = do
                        -> LegacyBootEvent
                        -> RIO HostEnv ()
     runTryBootFromPill pill name ship bootEvent = do
-      vKill <- asks (^. kingEnvL . kingEnvKillSignal)
+      vKill <- view (kingEnvL . kingEnvKillSignal)
       let pierConfig = toPierConfig (pierPath name) opts
       let networkConfig = toNetworkConfig opts
       runPierEnv pierConfig networkConfig vKill $
@@ -595,7 +595,7 @@ buildPortHandler False  = pure buildInactivePorts
 -- TODO: Figure out what to do about logging here. The "port: " messages are
 -- the sort of thing that should be put on the muxed terminal log, but we don't
 -- have that at this layer.
-buildPortHandler True   = buildNATPorts (io . hPutStrLn stderr . unpack)
+buildPortHandler True   = buildNatPorts (io . hPutStrLn stderr . unpack)
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do
@@ -724,7 +724,7 @@ runShipNoRestart
   :: CLI.Run -> CLI.Opts -> Bool -> RIO HostEnv ()
 runShipNoRestart r o d = do
   -- killing ship same as killing king
-  vKill  <- asks (^. kingEnvL . kingEnvKillSignal)
+  vKill  <- view (kingEnvL . kingEnvKillSignal)
   tid    <- asyncBound (runShipEnv r o vKill $ runShip r o d)
   onKill <- view onKillKingSigL
 

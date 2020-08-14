@@ -179,7 +179,7 @@ startServ
 startServ who isFake conf plan = do
   logDebug (displayShow ("EYRE", "startServ"))
 
-  multi <- asks (^. multiEyreApiL)
+  multi <- view multiEyreApiL
 
   let vLive = meaLive multi
 

@@ -127,10 +127,8 @@ killKingActionL =
 
 -- HostEnv ------------------------------------------------------------------
 
--- The running environment is everything in King, eyre configuration shared
--- across ships, and IP information shared across ships.
---
--- TODO: Implement that IP information for real.
+-- The host environment is everything in King, eyre configuration shared
+-- across ships, and nat punching data.
 
 class HasMultiEyreApi a where
   multiEyreApiL :: Lens' a MultiEyreApi
@@ -189,7 +187,7 @@ class (HasKingEnv a, HasHostEnv a, HasPierConfig a, HasNetworkConfig a) =>
   pierEnvL :: Lens' a PierEnv
 
 data PierEnv = PierEnv
-  { _pierEnvHostEnv    :: !HostEnv
+  { _pierEnvHostEnv       :: !HostEnv
   , _pierEnvPierConfig    :: !PierConfig
   , _pierEnvNetworkConfig :: !NetworkConfig
   , _pierEnvKillSignal    :: !(TMVar ())
@@ -252,9 +250,9 @@ killPierActionL =
 runPierEnv
   :: PierConfig -> NetworkConfig -> TMVar () -> RIO PierEnv a -> RIO HostEnv a
 runPierEnv pierConfig networkConfig vKill action = do
-  running <- ask
+  host <- ask
 
-  let pierEnv = PierEnv { _pierEnvHostEnv    = running
+  let pierEnv = PierEnv { _pierEnvHostEnv       = host
                         , _pierEnvPierConfig    = pierConfig
                         , _pierEnvNetworkConfig = networkConfig
                         , _pierEnvKillSignal    = vKill

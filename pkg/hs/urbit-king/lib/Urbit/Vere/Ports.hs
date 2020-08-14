@@ -1,15 +1,16 @@
 module Urbit.Vere.Ports (HasPortControlApi(..),
                          PortControlApi,
                          buildInactivePorts,
-                         buildNATPorts,
+                         buildNatPorts,
                          requestPortAccess) where
 
 import Control.Monad.STM (check)
 import Urbit.Prelude
 import Network.NatPmp
 import Data.Time.Clock.POSIX
-import Data.Heap
 import Network.Socket
+
+import qualified Data.Heap as DH
 
 -- This module deals with ports and port requests. When a component wants to
 -- ensure that it is externally reachable, possibly from outside a NAT, it
@@ -31,21 +32,21 @@ buildInactivePorts = PortControlApi noop noop
 
 -- | Builds a PortControlApi struct which tries to hole-punch by talking to the
 -- NAT gateway over NAT-PMP.
-buildNATPorts :: (HasLogFunc e)
+buildNatPorts :: (HasLogFunc e)
               => (Text -> RIO e ())
               -> RIO e PortControlApi
-buildNATPorts stderr = do
+buildNatPorts stderr = do
   q <- newTQueueIO
   async $ portThread q stderr
 
   let addRequest port = do
         resp <- newEmptyTMVarIO
         atomically $
-          writeTQueue q (PTMRequestOpen port (putTMVar resp True))
+          writeTQueue q (PTMOpen port (putTMVar resp True))
         atomically $ takeTMVar resp
         pure ()
 
-  let removeRequest port = atomically $ writeTQueue q (PTMRequestClose port)
+  let removeRequest port = atomically $ writeTQueue q (PTMClose port)
 
   pure $ PortControlApi addRequest removeRequest
 
@@ -58,13 +59,13 @@ portRenewalTime = portLeaseLifetime - 60
 
 -- Messages sent from the main thread to the port mapping communication thread.
 data PortThreadMsg
-  = PTMRequestOpen Word16 (STM ())
+  = PTMOpen Word16 (STM ())
     -- ^ Does the open request, and then calls the passed in stm action to
     -- singal completion to the main thread. We want to block on the initial
     -- setting opening because we want the forwarding set up before we actually
     -- start using the port.
 
-  | PTMRequestClose Word16
+  | PTMClose Word16
     -- ^ Close command. No synchronization because there's nothing we can do if
     -- it fails.
 
@@ -88,19 +89,25 @@ portThread q stderr = do
   initNatPmp >>= \case
     Left err -> do
       likelyIPAddress >>= \case
-        Just (192, 168, c, d) -> do
-          stderr $ "port: you appear to be behind a router since your ip " ++
-                   "is 192.168." ++ (tshow c) ++ "." ++ (tshow d) ++ ", but " ++
-                   "we could not request port forwarding (NAT-PMP error: " ++
-                   (tshow err) ++ ")"
-          stderr $ "port: urbit performance will be degregaded unless you " ++
-                   "manually forward your ames port."
-          loopErr q
-        _ -> do
-          stderr $ "port: couldn't find router; assuming on public internet"
-          loopErr q
+        Just ip@(192, 168, c, d) -> warnBehindRouterAndErr ip err
+        Just ip@(10, _, _, _)    -> warnBehindRouterAndErr ip err
+        _                        -> assumeOnPublicInternet
     Right pmp -> foundRouter pmp
  where
+  warnBehindRouterAndErr (a, b, c, d) err = do
+    stderr $ "port: you appear to be behind a router since your ip " ++
+             "is " ++ (tshow a) ++ "." ++ (tshow b) ++ "." ++ (tshow c) ++
+             "." ++ (tshow d) ++ ", but " ++
+             "we could not request port forwarding (NAT-PMP error: " ++
+             (tshow err) ++ ")"
+    stderr $ "port: urbit performance will be degregaded unless you " ++
+             "manually forward your ames port."
+    loopErr q
+
+  assumeOnPublicInternet = do
+    stderr $ "port: couldn't find router; assuming on public internet"
+    loopErr q
+
   foundRouter :: NatPmpHandle -> RIO e ()
   foundRouter pmp = do
     getPublicAddress pmp >>= \case
@@ -111,10 +118,10 @@ portThread q stderr = do
                  "." ++ (tshow b) ++ "." ++ (tshow c) ++ "." ++ (tshow d)
     loop pmp mempty
 
-  loop :: NatPmpHandle -> MinPrioHeap POSIXTime RenewAction -> RIO e ()
+  loop :: NatPmpHandle -> DH.MinPrioHeap POSIXTime RenewAction -> RIO e ()
   loop pmp nextRenew = do
     now <- io $ getPOSIXTime
-    delay <- case viewHead nextRenew of
+    delay <- case DH.viewHead nextRenew of
           Nothing -> newTVarIO False
           Just (fireTime, _) -> do
             let timeTo = fireTime - now
@@ -123,15 +130,15 @@ portThread q stderr = do
     command <- atomically $
       (Left <$> fini delay) <|> (Right <$> readTQueue q)
     case command of
-      Left () -> handleRenew pmp nextRenew
+      Left ()   -> handleRenew pmp nextRenew
       Right msg -> handlePTM pmp msg nextRenew
 
   handlePTM :: NatPmpHandle
             -> PortThreadMsg
-            -> MinPrioHeap POSIXTime RenewAction
+            -> DH.MinPrioHeap POSIXTime RenewAction
             -> RIO e ()
   handlePTM pmp msg nextRenew = case msg of
-    PTMRequestOpen p notifyComplete -> do
+    PTMOpen p notifyComplete -> do
       logInfo $
         displayShow ("port: sending initial request to NAT-PMP for port ", p)
       setPortMapping pmp PTUdp p p portLeaseLifetime >>= \case
@@ -146,12 +153,12 @@ portThread q stderr = do
           let filteredHeap = filterPort p nextRenew
           now <- io $ getPOSIXTime
           let withRenew =
-                insert (now + fromIntegral portRenewalTime, RenewAction p)
-                filteredHeap
+                DH.insert (now + fromIntegral portRenewalTime, RenewAction p)
+                          filteredHeap
           atomically notifyComplete
           loop pmp withRenew
 
-    PTMRequestClose p -> do
+    PTMClose p -> do
       logInfo $
         displayShow ("port: releasing lease for ", p)
       setPortMapping pmp PTUdp p p 0
@@ -159,10 +166,10 @@ portThread q stderr = do
       loop pmp removed
 
   handleRenew :: NatPmpHandle
-              -> MinPrioHeap POSIXTime RenewAction
+              -> DH.MinPrioHeap POSIXTime RenewAction
               -> RIO e ()
   handleRenew pmp nextRenew = do
-    case (Data.Heap.view nextRenew) of
+    case (DH.view nextRenew) of
       Nothing -> error "Internal heap managing error."
       Just ((_, RenewAction p), rest) -> do
         logInfo $
@@ -178,16 +185,16 @@ portThread q stderr = do
             -- We don't need to filter the port because we just did.
             now <- io $ getPOSIXTime
             let withRenew =
-                  insert (now + (fromIntegral portRenewalTime), RenewAction p)
-                  rest
+                  DH.insert (now + fromIntegral portRenewalTime, RenewAction p)
+                            rest
             loop pmp withRenew
 
   filterPort :: Word16
-             -> MinPrioHeap POSIXTime RenewAction
-             -> MinPrioHeap POSIXTime RenewAction
-  filterPort p = Data.Heap.filter okPort
-    where
-      okPort (_, RenewAction x) = p /= x
+             -> DH.MinPrioHeap POSIXTime RenewAction
+             -> DH.MinPrioHeap POSIXTime RenewAction
+  filterPort p = DH.filter okPort
+   where
+    okPort (_, RenewAction x) = p /= x
 
   -- block (retry) until the delay TVar is set to True
   fini :: TVar Bool -> STM ()
@@ -197,8 +204,8 @@ portThread q stderr = do
   -- the main thread that blocking actions are complete.
   loopErr q = forever $ do
     (atomically $ readTQueue q) >>= \case
-      PTMRequestOpen _ onComplete -> atomically onComplete
-      PTMRequestClose _ -> pure ()
+      PTMOpen _ onComplete -> atomically onComplete
+      PTMClose _ -> pure ()
 
 -- When we were unable to connect to a router, get the ip address on the
 -- default ipv4 interface to check if we look like we're on an internal network
@@ -222,11 +229,11 @@ requestPortAccess port = do
  where
   request :: RIO e ()
   request = do
-    api <- asks (^. portControlApiL)
+    api <- view portControlApiL
     io $ pAddPortRequest api port
 
   release :: () -> RIO e ()
   release _ = do
-    api <- asks (^. portControlApiL)
+    api <- view portControlApiL
     io $ pRemovePortRequest api port
 

@@ -196,8 +196,8 @@ pillFromURL = PillSourceURL <$> strOption
                     <> value defaultPillURL
                     <> help "URL to pill file")
 
-enableNAT :: Parser Bool
-enableNAT = not <$> switch
+enableNat :: Parser Bool
+enableNat = not <$> switch
                ( long "no-port-forwarding"
               <> help "Disable trying to ask the router to forward ames ports")
 
@@ -353,7 +353,7 @@ runOneShip = (,,) <$> fmap Run pierPath <*> opts <*> df
 
 kingOpts :: Parser KingOpts
 kingOpts = do
-  koUseNatPmp <- enableNAT
+  koUseNatPmp <- enableNat
 
   koSharedHttpPort <-
     optional
