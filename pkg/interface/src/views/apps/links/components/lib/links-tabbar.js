@@ -6,17 +6,11 @@ export class LinksTabBar extends Component {
   render() {
     const props = this.props;
 
-    let memColor = '',
-        setColor = '';
+    let setColor = '';
 
     if (props.location.pathname.includes('/settings')) {
-      memColor = 'gray3';
       setColor = 'black white-d';
-    } else if (props.location.pathname.includes('/members')) {
-      memColor = 'black white-d';
-      setColor = 'gray3';
     } else {
-      memColor = 'gray3';
       setColor = 'gray3';
     }
 
@@ -26,18 +20,6 @@ export class LinksTabBar extends Component {
 
     return (
       <div className="dib flex-shrink-0 flex-grow-1">
-        {props.amOwner ? (
-          <div className={'dib pt2 f9 pl6 lh-solid'}>
-            <Link
-              className={'no-underline ' + memColor}
-              to={makeRoutePath(props.resourcePath, props.popout) + '/members'}
-            >
-              Members
-            </Link>
-          </div>
-        ) : (
-          <div className="dib" style={{ width: 0 }}></div>
-        )}
         <div className={'dib pt2 f9 pl6 pr6 lh-solid'}>
           <Link
             className={'no-underline ' + setColor}

@@ -7,7 +7,6 @@ import './css/custom.css';
 
 import { Skeleton } from './components/skeleton';
 import { NewScreen } from './components/new';
-import { MemberScreen } from './components/member';
 import { SettingsScreen } from './components/settings';
 import { MessageScreen } from './components/lib/message-screen';
 import { Links } from './components/links-list';
@@ -17,7 +16,6 @@ import {
   amOwnerOfGroup,
   base64urlDecode
 } from '../../../logic/lib/util';
-
 
 export class LinksApp extends Component {
   constructor(props) {
@@ -40,7 +38,6 @@ export class LinksApp extends Component {
   componentWillUnmount() {
     this.props.subscription.stopApp('link');
   }
-
 
   render() {
     const { props } = this;
@@ -68,7 +65,6 @@ export class LinksApp extends Component {
 
     const invites = props.invites ?
       props.invites : {};
-
 
     const listening = props.linkListening;
 
@@ -131,46 +127,6 @@ export class LinksApp extends Component {
               }
             };
             autoJoin();
-          }}
-        />
-        <Route exact path="/~link/(popout)?/:resource/members"
-          render={(props) => {
-            const popout = props.match.url.includes('/popout/');
-            const resourcePath = '/' + props.match.params.resource;
-            const resource = associations.link[resourcePath] || { metadata: {} };
-
-            const contactDetails = contacts[resource['group-path']] || {};
-            const group = groups[resource['group-path']] || new Set([]);
-            const amOwner = amOwnerOfGroup(resource['group-path']);
-
-            return (
-              <Skeleton
-                associations={associations}
-                invites={invites}
-                groups={groups}
-                selected={resourcePath}
-                sidebarShown={sidebarShown}
-                links={links}
-                listening={listening}
-                api={api}
-              >
-                <MemberScreen
-                  sidebarShown={sidebarShown}
-                  resource={resource}
-                  contacts={contacts}
-                  contactDetails={contactDetails}
-                  groupPath={resource['group-path']}
-                  group={group}
-                  groups={groups}
-                  associations={associations}
-                  amOwner={amOwner}
-                  resourcePath={resourcePath}
-                  popout={popout}
-                  api={api}
-                  {...props}
-                />
-              </Skeleton>
-            );
           }}
         />
         <Route exact path="/~link/(popout)?/:resource/settings"
@@ -283,11 +239,8 @@ export class LinksApp extends Component {
               const page = props.match.params.page || 0;
               const url = base64urlDecode(props.match.params.encodedUrl);
 
-              const data = links[resourcePath]
-                ? links[resourcePath][page]
-                  ? links[resourcePath][page][index]
-                  : {}
-                : {};
+              const data = links?.[resourcePath]?.[page]?.[index] || {};
+
               const coms = !comments[resourcePath]
                 ? undefined
                 : comments[resourcePath][url];
