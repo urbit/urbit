@@ -4,18 +4,19 @@ by Benjamin `~siprel` and Elliot `~littel-ponnys`
 
 SKEW is a 4 letter extension of the SK Calculus with the ideas developed for
 Nock. This post is designed to give an overview of SKEW's predecessors, what
-SKEW is, why it should become the successor to Nock 4K+ and why it's better.
+SKEW is, why it should become the successor to Nock 4K and why it's better.
 
 The [SK Calculus][skwiki] is a Turing complete combinator introduced by
 Schönfinkel and Curry in the 1920s. There is a straightforward encoding of the
 Lambda Calculus into the SK combinator. It is simple, and well understood. We
-believe it is the best foundation to build on due to how well researched it is.
+believe it is the best foundation to build on due to how well researched it is
+and its simplicity.
 
-Nock is both an aspirational thought experiment and a series of simple
-combinators, [first proposed][ognock] by Curtis Yarvin. It was intended to
-define a frozen core language for his Urbit system. In this document, I'll
-refer to the aspiration as "Nock" and the current implementation with their
-version number, such as "Nock 4K".
+Nock is both an aspirational thought experiment and a series of combinators,
+[first proposed][ognock] by Curtis Yarvin. It was intended to define a frozen
+core language for his Urbit system. In this document, I'll refer to the
+aspiration as "Nock" and the current implementation with their version number,
+such as "Nock 4K".
 
 If one does not care about the history of Nock, you can easily skip to the
 section "Introducing SKEW," but understanding the problems Nock was supposed to
@@ -69,7 +70,11 @@ which caused a state change and/or an output side effect. You could write this
 as snapshots or as a full write-ahead log. Everything that Urbit could do would
 be loaded through new events passed to your Urbit.
 
-{{Talk about persistence benefits.}}
+Doing this moves the problems of persistence out of the system and into the
+runtime. Programmers no longer need to worry about the persistence and fsyncs
+and other such details because the runtime treats event processing like an ACID
+database. Either a transaction succeeds or it fails: an event can't half
+succeed and this greatly simplifies error handling.
 
 Once you have a system whose state is deterministically generated purely from
 input events, you can mitigate the [Trusting Trust][trustingtrust] attack by
@@ -128,29 +133,27 @@ perfect". Nock 4K is a big ball of mud.
 Nock opcode 11, which implements the concept of jets, has the design flaw that
 it works through side effects and is impure. When one reduces an opcode 11, you
 get the value it wraps, but the interpreter may now annotate that value in a
-way that you cannot detect so that it can jet it. This is not detectable from
-user code, and these side effects break the serialization requirements for
-nock: if you serialize a nock value from inside nock code, you do not serialize
-the hints that applied to it. If you serialize it at the interpreter level, you
-no longer have values of the simple Noun data structure because you must also
-store the jet registration side effects, which are not standardized.
+way that user code cannot detect. These side effects break the serialization
+requirements for nock: if you serialize a nock value from inside nock code, you
+do not serialize the hints that applied to it. If you serialize it at the
+interpreter level, you no longer have values of the simple Noun data structure
+because you must also store the jet registration side effects, which are not
+standardized.
 
 Nock opcodes 6 through 10 are not needed for completeness, and are only there
-as optimizations. Nock 9 in particular is an optimization directly on how Hoon
-implements closures and is a leak of the semantics of the frontend language
-into the core language. Nock 10 was added during the transition from Nock 5K to
-Nock 4K and is an optimization which makes efficient modifications to a Nock
-data structure. Most of these should have been implemented as jets and their
-inclusion are certainly not "tiny and diamond perfect". But why then are they
-here? Why aren't Nock opcodes 6 through 10 jets in the first place?
+as optimizations. Nock 9 in particular is an optimization directly on how
+Urbit's Hoon frontend language implements closures and is a leak of the
+semantics of the frontend language into the core language. Nock 10 was added
+during the transition from Nock 5K to Nock 4K and is an optimization which
+makes efficient modifications to a Nock data structure. Most of these should
+have been implemented as jets and their inclusion is certainly not "tiny and
+diamond perfect". But why then are they here? Why aren't Nock opcodes 6 through
+10 jets in the first place?
 
 Nock opcode 9 and 10 are used in the calling convention, if they were jets that
 you had to nominally call, how would you call them without them? But for the
 rest, if they were jetted functions, you couldn't rely on them to exist in the
 subject anyway.
-
-But the core issue with Nock 4K is that tree addressing causes function
-dispatch to be slow.
 
 Nock 4K's implementation of serializable closures is tied to the idea that a
 function's entire environment will be passed to it as an argument. This is
@@ -170,10 +173,16 @@ dispatch in Nock 4K requires multiple indirect jumps. Pointer chasing is slow
 and Nock 4K does a ton of it.
 
 This is part of the calling convention for Nock 4K: you look up the code you're
-going to call in your subject (at least one pointer indirection, usually more),
-you replace an empty version of where the arguments would be with the real
-arguments you're going to pass (another pointer indirection and an allocation)
-and then you run the above.
+going to call in your subject (at least one pointer indirection, usually a long
+linked list traversal), you replace an empty version of where the arguments
+would be with the real arguments you're going to pass (another pointer
+indirection and an allocation).
+
+Doing linked list traversal is bad, but can sometimes be mitigated with caching
+and guards at the cost of significant complexity in the interpreter. Allocating
+inside your function calling convention is terrible. On a quick test running
+the Ackerman function, the Urbit v0.10.7 interpreter spent 45% of the runtime
+in the allocator or in reference count management. This is bonkers.
 
 There are other small issues with Curtis' Nock 4K: why bake in natural numbers
 and cons cells? Why make the assumption that equality is always structural
@@ -186,24 +195,40 @@ be "tiny and diamond perfect".
 
 # Introducing SKEW
 
-{{We start with the uneriched lambda calculus. Yada yada, it isn't used in
-practice because you can't do SHA-256 on church numerals.}}
+There is already an ultra-minimalist pure functional core language: the SK
+encoding of the unenriched lambda calculus. Implementing an interpreter for it
+is trivial. The encoding of all data as functions is beautiful.
 
-So what minimal changes to the SK encoding of the unenriched lambda calculus
-would you need to make calculating SHA-256 of a church numeral feasible?
+However, the unenriched lambda calculus is not used in practice because it is
+infeasibly slow. You have no operations other than function
+application. Performing SHA-256 on the church numeral encoding of natural
+numbers will never happen on even our most powerful hardware.
+
+The traditional approach is to enrich the lambda calculus with additional
+built-in operations and data types, usually many. This makes competitive
+performance at the expense of radical simplicity, which makes interpreters
+difficult to implement. And the sets of operations differ among the enriched
+lambda calculi.
+
+Finally, in these enriched lambda calculi, code is not data. Functions are
+opaque values and cannot be inspected. Therefore, they cannot be interpreted
+for virtualization. Therefore, they cannot be serialized.
 
 ## The Basic Reduction Rules
 
 Let's first list our functional requirements:
 
 - We need to be able to perform any computable computation in a way which can
-  be frozen forever.
+  be frozen forever. That's SK and is a solved problem.
 
 - We need to be able to recognize functions and values and replace them with
-  optimized versions to make runtime practical.
+  optimized versions to make runtime practical. Jets are our alternative to
+  unprincipled enrichments to the lambda calculus.
 
 - We need to be able to virtualize computations / have every value be
-  inspectable and serializable.
+  inspectable and serializable. This allows us to serialize the closure
+  which represents your entire system in a standard way and lets us write
+  virtualized interpreter functions.
 
 We propose an extension of SK which has the following reduction rules:
 
@@ -281,7 +306,8 @@ jet declaration is a side effect that's not visible from within interpreted
 code: if I give you a value, you have no way of knowing it has been jetted. In
 SKEW, there's no need to do that because the jet hint is pure and part of the
 value of the function. Unlike Nock 4K, SKEW is entirely pure: if I give you a
-value, you can see whether it has a jet annotation.
+value, you can see whether it has a jet annotation, and you can properly
+serialize that this value has a jet annotation.
 
 Our final requirement is being able to virtualize computations: we must have a
 way of running a function which we don't know if it will error by infinite
@@ -293,17 +319,17 @@ e w x)`, the W combinator will switch on x. Mnemonic: *sWitch*.
     (W 0 1 2 3 4 K)
     2
 
-sWitch gives us generalized introspection on SKEW code. However, this operation
-is very naive so we expect that the only practical use will be in the
-specification of jets.
+sWitch gives us generalized introspection on SKEW code and is designed to look
+similar to conditionals as implemented on top of the unenriched lambda
+calculus. However, this operation is very naive so we expect that the only
+practical use will be in the specification of jets.
 
 ## Jet Matching Data Types
 
 In SKEW, everything is made up of the unenriched lambda calculus, including
-numbers which are Church numerals, which are functions.  Traditionally, this
-has not been seen as practical: most system enrich the lambda calculus with
-cons cells, strings, numbers, etc. Nock 4K baked in natural numbers and cons
-cells.
+numbers which are Church numerals, which are functions.  This has not been seen
+as practical: most system enrich the lambda calculus with cons cells, strings,
+numbers, etc. Nock 4K baked in natural numbers and cons cells.
 
 But jets give us a way to recognize any function, including classes of
 functions such as the functions for Church numerals, and this allows a SKEW
@@ -335,8 +361,9 @@ executing the raw SK code.
 We've called these data jets in this writeup, but they're used anywhere you
 want to match a class of functions, such as the Turner's set combinators. In
 Nock 4K, opcode 10 was added for more efficient copy-on-write modifications of
-data structures. In SKEW, Turner's Bn, Cn, and Sn pattern of combinators are
-jets from day one, as are many common control flow combinators.
+data structures. In SKEW, Turner's Bn, Cn, and Sn pattern of combinators aren't
+hard coded, but are jets from day one, as are many common control flow
+combinators.
 
 ## Performance Comparisons with Nock 4K
 
@@ -391,24 +418,27 @@ be recognized, and turned back into its raw SKEW value when needed.
 But why is SKEW so much faster than Nock 4K? Lambda lifting and
 supercombinators do help. The ability to have data jets helps a bit. Having
 jets for common control flow combinators like the Turner combinators help a
-bit. But the main speedup is that SKEW isn't doing recursive indirect pointer
-chasing to find the target of a function call, and Nock 4K must do this because
-of how it stores data. In SKEW, function dispatch is either a direct jump (in
-the case of calling a jet) or a single indirect pointer jump (all other cases).
+bit. But the main speedup is that SKEW is neither doing multiple layers of
+indirect pointer chasing to find the target of a function call, nor is it
+allocating on every function call! In SKEW, function dispatch is either a
+direct jump (in the case of calling a jet) or a single indirect pointer jump
+(all other cases).
 
 Urbit has a history of using the [Ackerman function][ackerman] in its
 documentation. Let's benchmark it on both systems, as this is a more direct
 comparison than the Mandelbrot example because Ackerman is mostly testing
 function dispatch and both SKEW and Nock 4K have equivalent jets on natural
-numbers.
+numbers. Because I've heard Nock 4K's speed compared to Python several times,
+both by people who work for Tlon and don't, I've included the default python
+interpreter on my Mac.
 
-| (m, n)  | Urbit 0.10.7 | SKEW     |
-|---------|--------------|----------|
-| (3, 8)  | 3.25s        | 0.376s   |
-| (3, 9)  | 11s          | 1.289s   |
-| (3, 10) | 45.5s        | 6.257s   |
-| (3, 11) | 2m48s        | 30.358s  |
-| (4, 1)  | *44m58s      | 9m58.68s |
+| (m, n)  | Urbit 0.10.7 | Python 2.7.10 | SKEW     |
+|---------|--------------|---------------|----------|
+| (3, 8)  | 3.25s        | 0.472s        | 0.376s   |
+| (3, 9)  | 11s          | 2.166s        | 1.289s   |
+| (3, 10) | 45.5s        | 9.825s        | 6.257s   |
+| (3, 11) | 2m48s        | 44.241s       | 30.358s  |
+| (4, 1)  | *44m58s      | (SIGSEGV)     | 9m58.68s |
 
 (* The time for (4,1) on Urbit was taken with the `-time` command instead of a
 stopwatch because I wasn't going to sit there with a stopwatch after I sat for
@@ -543,13 +573,14 @@ And we can do this in a really short, simple interpreter. The code in the
 (including jets) with another 1500 shared in the `urbit-uruk` package, giving
 you a SKEW runtime with a full persistence engine. This is all fairly simple
 Haskell code and is within the capabilities of a motivated college student to
-implement.
+implement with usable performance, and we believe there's a lot of room for
+improvement if one relaxes the simplicity constraint.
 
-Compare this simplicity with just the `nock/` directory in the reference Nock
-4K interpreter: it is 11,200 lines of ANSI C which implements a complex
-bytecode interpreter and is still slow. About 1900 lines of that is spent in
-the code that deals with Nock 4K's side-effect based jet registration
-system. And the simpler SKEW run time system is significantly faster.
+Compare this simplicity with the `nock/` directory in the reference Nock 4K
+interpreter: it is 11,200 lines of ANSI C which implements a complex bytecode
+interpreter and is still orders of magnitude slower. About 1900 lines of that
+is spent in the code that deals with Nock 4K's side-effect based jet
+registration system.
 
 We've presented the reduction rules for a candidate successor to Nock 4K, along
 with interpreters for this system which are over 100x faster than the Vere Nock
