@@ -1,6 +1,6 @@
 import BaseStore from "../store/base";
 import BaseApi from "../api/base";
-import { Path } from "../types/noun";
+import { Path } from "~/types/noun";
 
 export default class BaseSubscription<S extends object> {
   private errorCount = 0;

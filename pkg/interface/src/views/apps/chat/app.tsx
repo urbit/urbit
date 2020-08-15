@@ -11,11 +11,11 @@ import { SettingsScreen } from './components/settings';
 import { NewScreen } from './components/new';
 import { JoinScreen } from './components/join';
 import { NewDmScreen } from './components/new-dm';
-import { PatpNoSig } from '../../../types/noun';
-import GlobalApi from '../../logic/api/global';
-import { StoreState } from '../../logic/store/type';
-import GlobalSubscription from '../../logic/subscription/global';
-import {groupBunts} from '../../../types/group-update';
+import { PatpNoSig } from '~/types/noun';
+import GlobalApi from '~/logic/api/global';
+import { StoreState } from '~/logic/store/type';
+import GlobalSubscription from '~/logic/subscription/global';
+import {groupBunts} from '~/types/group-update';
 
 type ChatAppProps = StoreState & {
   ship: PatpNoSig;

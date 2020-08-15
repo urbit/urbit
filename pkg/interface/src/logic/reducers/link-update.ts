@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { StoreState } from '../../store/type';
-import { LinkUpdate, Pagination } from '../../types/link-update';
+import { LinkUpdate, Pagination } from '~/types/link-update';
 
 // page size as expected from link-view.
 // must change in parallel with the +page-size in /app/link-view to

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { GroupView } from '../../../../components/Group';
-import { resourceFromPath } from '../../../../../logic/lib/group';
+import { GroupView } from '~/views/components/Group';
+import { resourceFromPath } from '~/logic/lib/group';
 
 export class Subscribers extends Component {
   constructor(props) {

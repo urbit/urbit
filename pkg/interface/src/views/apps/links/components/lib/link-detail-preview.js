@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { cite } from '../../../../../logic/lib/util';
+import { cite } from '~/logic/lib/util';
 import moment from 'moment';
 
 export class LinkPreview extends Component {

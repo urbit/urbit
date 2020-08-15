@@ -1,13 +1,13 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Path, Patp, Enc } from '../types/noun';
+import { Path, Patp, Enc } from '~/types/noun';
 import {
   GroupAction,
   GroupPolicy,
   Resource,
   Tag,
   GroupPolicyDiff,
-} from '../types/group-update';
+} from '~/types/group-update';
 
 export default class GroupsApi extends BaseApi<StoreState> {
   remove(resource: Resource, ships: Patp[]) {

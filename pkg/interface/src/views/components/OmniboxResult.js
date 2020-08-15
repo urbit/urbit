@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Icon, Text } from '@tlon/indigo-react';
-import defaultApps from '../../logic/lib/default-apps';
+import defaultApps from '~/logic/lib/default-apps';
 
 export class OmniboxResult extends Component {
   constructor(props) {

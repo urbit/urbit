@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 
 import { Link } from 'react-router-dom';
 import { GroupItem } from './group-item';
-import SidebarInvite from '../../../../components/SidebarInvite';
+import SidebarInvite from '~/views/components/SidebarInvite';
 import { Welcome } from './welcome';
-import { alphabetiseAssociations } from '../../../../../logic/lib/util';
+import { alphabetiseAssociations } from '~/logic/lib/util';
 
 export class ChannelsSidebar extends Component {
   // drawer to the left

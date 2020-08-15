@@ -1,6 +1,6 @@
 import BaseSubscription from './base';
 import { StoreState } from '../store/type';
-import { Path } from '../types/noun';
+import { Path } from '~/types/noun';
 import _ from 'lodash';
 
 

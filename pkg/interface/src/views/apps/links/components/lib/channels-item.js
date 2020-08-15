@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { makeRoutePath } from '../../../../../logic/lib/util';
+import { makeRoutePath } from '~/logic/lib/util';
 
 export class ChannelsItem extends Component {
   render() {

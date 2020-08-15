@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Spinner } from '../../../../components/Spinner';
-import { Toggle } from '../../../../components/toggle';
-import { GroupView } from '../../../../components/Group';
+import { Spinner } from '~/views/components/Spinner';
+import { Toggle } from '~/views/components/toggle';
+import { GroupView } from '~/views/components/Group';
 
-import { deSig, uxToHex, writeText } from '../../../../../logic/lib/util';
-import { roleForShip, resourceFromPath } from '../../../../../logic/lib/group';
+import { deSig, uxToHex, writeText } from '~/logic/lib/util';
+import { roleForShip, resourceFromPath } from '~/logic/lib/group';
 
 export class GroupDetail extends Component {
   constructor(props) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { GroupSidebar } from './lib/group-sidebar';
-import ErrorBoundary from '../../../components/ErrorBoundary';
+import ErrorBoundary from '~/views/components/ErrorBoundary';
 
 export class Skeleton extends Component {
   render() {

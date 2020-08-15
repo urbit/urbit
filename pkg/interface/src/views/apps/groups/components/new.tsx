@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 
 import { Link } from 'react-router-dom';
-import { InviteSearch, Invites } from '../../../components/InviteSearch';
-import { Spinner } from '../../../components/Spinner';
-import { Toggle } from '../../../components/toggle';
+import { InviteSearch, Invites } from '~/views/components/InviteSearch';
+import { Spinner } from '~/views/components/Spinner';
+import { Toggle } from '~/views/components/toggle';
 import { RouteComponentProps } from 'react-router-dom';
 
-import { Groups, GroupPolicy, Resource } from '../../../../types/group-update';
-import { Contacts, Rolodex } from '../../../../types/contact-update';
-import GlobalApi from '../../../../logic/api/global';
-import { Patp, PatpNoSig, Enc } from '../../../../types/noun';
+import { Groups, GroupPolicy, Resource } from '~/types/group-update';
+import { Contacts, Rolodex } from '~/types/contact-update';
+import GlobalApi from '~/logic/api/global';
+import { Patp, PatpNoSig, Enc } from '~/types/noun';
 
 type NewScreenProps = Pick<RouteComponentProps, 'history'> & {
   groups: Groups;

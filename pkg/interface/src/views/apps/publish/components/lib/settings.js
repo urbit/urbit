@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Spinner } from '../../../../components/Spinner';
-import { InviteSearch } from '../../../../components/InviteSearch';
-import Toggle from '../../../../components/toggle';
+import { Spinner } from '~/views/components/Spinner';
+import { InviteSearch } from '~/views/components/InviteSearch';
+import Toggle from '~/views/components/toggle';
 
 export class Settings extends Component {
   constructor(props) {

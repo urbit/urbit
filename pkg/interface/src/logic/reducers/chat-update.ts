@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { StoreState } from '../../../store/type';
-import { Cage } from '../../types/cage';
-import { ChatUpdate } from '../../types/chat-update';
-import { ChatHookUpdate } from '../../types/chat-hook-update';
+import { Cage } from '~/types/cage';
+import { ChatUpdate } from '~/types/chat-update';
+import { ChatHookUpdate } from '~/types/chat-hook-update';
 
 type ChatState = Pick<StoreState, 'chatInitialized' | 'chatSynced' | 'inbox' | 'pendingMessages'>;
 
