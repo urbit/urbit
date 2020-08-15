@@ -22,8 +22,8 @@ export class ChannelItem extends Component {
       : 'bg-white bg-gray0-d gray3-d hover-bg-gray5 hover-bg-gray1-d pointer';
 
     return (
-      <div
-        className={'z1 ph5 pv1 ' + selectedCss}
+      <a
+        className={'z1 ph5 pv1 db ' + selectedCss}
         onClick={this.onClick.bind(this)}
       >
         <div className="w-100 v-mid">
@@ -31,7 +31,7 @@ export class ChannelItem extends Component {
               {title}
           </p>
         </div>
-      </div>
+      </a>
     );
   }
 }
