@@ -41,7 +41,7 @@ export default class TextContent extends Component {
     const content = props.content;
 
     const group = content.text.match(
-      /([~][/])?(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z])+([/-])?)+/
+      /([~][/])?(~[a-z]{3,6})(-[a-z]{6})?([/])(([a-z0-9])+([/-])?)+/
     );
     if ((group !== null) // matched possible chatroom
       && (group[2].length > 2) // possible ship?
