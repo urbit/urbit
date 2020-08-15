@@ -59,6 +59,7 @@ class App extends React.Component {
     this.api.local.getBaseHash();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
+      e.stopImmediatePropagation();
       this.api.local.setOmnibox();
     });
     this.setFavicon();
