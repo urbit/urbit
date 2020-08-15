@@ -621,12 +621,12 @@ checkComet = do
 
 main :: IO ()
 main = do
-  args <- CLI.parseArgs
+  (args, log) <- CLI.parseArgs
 
   hSetBuffering stdout NoBuffering
   setupSignalHandlers
 
-  runKingEnv args $ case args of
+  runKingEnv args log $ case args of
     CLI.CmdRun ko ships                       -> runShips ko ships
     CLI.CmdNew n  o                           -> newShip n o
     CLI.CmdBug (CLI.CollectAllFX pax        ) -> collectAllFx pax
@@ -640,11 +640,12 @@ main = do
     CLI.CmdCon pier                           -> connTerm pier
 
  where
-  runKingEnv args =
+  runKingEnv args log =
     let verb = verboseLogging args
-    in if willRunTerminal args
-       then runKingEnvLogFile verb
-       else runKingEnvStderr verb
+    in case logTarget (CLI.lTarget log) args of
+       CLI.LogFile f -> runKingEnvLogFile verb f
+       CLI.LogStderr -> runKingEnvStderr  verb
+       CLI.LogOff    -> runKingEnvNoLog
 
   setupSignalHandlers = do
     mainTid <- myThreadId
@@ -657,12 +658,23 @@ main = do
     CLI.CmdRun ko ships -> any CLI.oVerbose (ships <&> \(_, o, _) -> o)
     _                   -> False
 
-  willRunTerminal :: CLI.Cmd -> Bool
-  willRunTerminal = \case
-    CLI.CmdCon _                 -> True
-    CLI.CmdRun ko [(_,_,daemon)] -> not daemon
-    CLI.CmdRun ko _              -> False
-    _                            -> False
+  -- If the user hasn't specified where to log, what we do depends on what
+  -- command she has issued. Notably, the LogFile Nothing outcome means that
+  -- runKingEnvLogFile should run an IO action to get the official app data
+  -- directory and open a canonically named log file there.
+  logTarget :: Maybe (CLI.LogTarget FilePath)
+            -> CLI.Cmd
+            -> CLI.LogTarget (Maybe FilePath)
+  logTarget = \case
+    Just (CLI.LogFile f) -> const $ CLI.LogFile (Just f)
+    Just CLI.LogStderr   -> const $ CLI.LogStderr
+    Just CLI.LogOff      -> const $ CLI.LogOff
+    Nothing              -> \case
+      CLI.CmdCon _                             -> CLI.LogFile Nothing
+      CLI.CmdRun ko [(_,_,daemon)] | daemon    -> CLI.LogStderr
+                                   | otherwise -> CLI.LogFile Nothing
+      CLI.CmdRun ko _                          -> CLI.LogStderr
+      _                                        -> CLI.LogStderr
 
 
 {-
@@ -731,11 +743,11 @@ runShipNoRestart r o d multi = do
         cancel tid
       logTrace $ display (pier <> " terminated.")
 
-runShips :: CLI.KingOpts -> [(CLI.Run, CLI.Opts, Bool)] -> RIO KingEnv ()
-runShips CLI.KingOpts {..} ships = do
+runShips :: CLI.Host -> [(CLI.Run, CLI.Opts, Bool)] -> RIO KingEnv ()
+runShips CLI.Host {..} ships = do
   let meConf = MultiEyreConf
-        { mecHttpPort      = fromIntegral <$> koSharedHttpPort
-        , mecHttpsPort     = fromIntegral <$> koSharedHttpsPort
+        { mecHttpPort      = fromIntegral <$> hSharedHttpPort
+        , mecHttpsPort     = fromIntegral <$> hSharedHttpsPort
         , mecLocalhostOnly = False -- TODO Localhost-only needs to be
                                    -- a king-wide option.
         }

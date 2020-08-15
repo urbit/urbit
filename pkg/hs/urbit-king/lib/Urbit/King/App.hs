@@ -25,11 +25,14 @@ where
 import Urbit.King.Config
 import Urbit.Prelude
 
-import System.Directory       (createDirectoryIfMissing, getHomeDirectory)
+import System.Directory       ( createDirectoryIfMissing
+                              , getAppUserDataDirectory
+                              )
 import System.Posix.Internals (c_getpid)
 import System.Posix.Types     (CPid(..))
 import System.Random          (randomIO)
 import Urbit.King.App.Class   (HasStderrLogFunc(..))
+
 
 
 -- KingEnv ---------------------------------------------------------------------
@@ -80,29 +83,34 @@ runKingEnvStderr verb inner = do
 
   withLogFunc logOptions $ \logFunc -> runKingEnv logFunc logFunc inner
 
-runKingEnvLogFile :: Bool -> RIO KingEnv a -> IO a
-runKingEnvLogFile verb inner = withLogFileHandle $ \h -> do
-  logOptions <-
-    logOptionsHandle h verb <&> setLogUseTime True <&> setLogUseLoc False
-  stderrLogOptions <-
-    logOptionsHandle stderr verb <&> setLogUseTime False <&> setLogUseLoc False
+runKingEnvLogFile :: Bool -> Maybe FilePath -> RIO KingEnv a -> IO a
+runKingEnvLogFile verb fileM inner = do
+  logFile <- case fileM of
+    Just f  -> pure f
+    Nothing -> defaultLogFile
+  withLogFileHandle logFile $ \h -> do
+    logOptions <-
+      logOptionsHandle h verb <&> setLogUseTime True <&> setLogUseLoc False
+    stderrLogOptions <-
+      logOptionsHandle stderr verb <&> setLogUseTime False <&> setLogUseLoc False
 
-  withLogFunc stderrLogOptions $ \stderrLogFunc -> withLogFunc logOptions
-    $ \logFunc -> runKingEnv logFunc stderrLogFunc inner
+    withLogFunc stderrLogOptions $ \stderrLogFunc -> withLogFunc logOptions
+      $ \logFunc -> runKingEnv logFunc stderrLogFunc inner
 
-withLogFileHandle :: (Handle -> IO a) -> IO a
-withLogFileHandle act = do
-  home <- getHomeDirectory
-  let logDir = home </> ".urbit"
-  createDirectoryIfMissing True logDir
-  withFile (logDir </> "king.log") AppendMode $ \handle -> do
+withLogFileHandle :: FilePath -> (Handle -> IO a) -> IO a
+withLogFileHandle f act =
+  withFile f AppendMode $ \handle -> do
     hSetBuffering handle LineBuffering
     act handle
 
+defaultLogFile :: IO FilePath
+defaultLogFile = do
+  logDir <- getAppUserDataDirectory "urbit"
+  createDirectoryIfMissing True logDir
+  pure (logDir </> "king.log")
+
 runKingEnvNoLog :: RIO KingEnv a -> IO a
-runKingEnvNoLog act = withFile "/dev/null" AppendMode $ \handle -> do
-  logOptions <- logOptionsHandle handle True
-  withLogFunc logOptions $ \logFunc -> runKingEnv logFunc logFunc act
+runKingEnvNoLog act = runKingEnv mempty mempty act
 
 runKingEnv :: LogFunc -> LogFunc -> RIO KingEnv a -> IO a
 runKingEnv logFunc stderr action = do
