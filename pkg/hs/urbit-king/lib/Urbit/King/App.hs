@@ -76,23 +76,32 @@ instance HasKingId KingEnv where
 
 -- Running KingEnvs ------------------------------------------------------------
 
-runKingEnvStderr :: Bool -> RIO KingEnv a -> IO a
-runKingEnvStderr verb inner = do
+runKingEnvStderr :: Bool -> LogLevel -> RIO KingEnv a -> IO a
+runKingEnvStderr verb lvl inner = do
   logOptions <-
-    logOptionsHandle stderr verb <&> setLogUseTime True <&> setLogUseLoc False
+    logOptionsHandle stderr verb
+      <&> setLogUseTime True
+      <&> setLogUseLoc False
+      <&> setLogMinLevel lvl
 
   withLogFunc logOptions $ \logFunc -> runKingEnv logFunc logFunc inner
 
-runKingEnvLogFile :: Bool -> Maybe FilePath -> RIO KingEnv a -> IO a
-runKingEnvLogFile verb fileM inner = do
+runKingEnvLogFile :: Bool -> LogLevel -> Maybe FilePath -> RIO KingEnv a -> IO a
+runKingEnvLogFile verb lvl fileM inner = do
   logFile <- case fileM of
     Just f  -> pure f
     Nothing -> defaultLogFile
   withLogFileHandle logFile $ \h -> do
     logOptions <-
-      logOptionsHandle h verb <&> setLogUseTime True <&> setLogUseLoc False
+      logOptionsHandle h verb
+        <&> setLogUseTime True
+        <&> setLogUseLoc False
+        <&> setLogMinLevel lvl
     stderrLogOptions <-
-      logOptionsHandle stderr verb <&> setLogUseTime False <&> setLogUseLoc False
+      logOptionsHandle stderr verb
+        <&> setLogUseTime False
+        <&> setLogUseLoc False
+        <&> setLogMinLevel lvl
 
     withLogFunc stderrLogOptions $ \stderrLogFunc -> withLogFunc logOptions
       $ \logFunc -> runKingEnv logFunc stderrLogFunc inner

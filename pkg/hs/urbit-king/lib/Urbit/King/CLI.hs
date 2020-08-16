@@ -49,7 +49,7 @@ data Opts = Opts
 -- | Options for the logging subsystem.
 data Log = Log
     { lTarget  :: Maybe (LogTarget FilePath)
-    , lLevel   :: Maybe LogLevel
+    , lLevel   :: LogLevel
     }
   deriving (Show)
 
@@ -375,20 +375,19 @@ log = do
         )
 
   lLevel <-
-    optional
-      $ ( flag' LevelDebug
+        ( flag' LevelDebug
         $ long "log-debug"
        <> help "Log errors, warnings, info, and debug messages"
        <> hidden
         )
     <|> ( flag' LevelInfo
         $ long "log-info"
-       <> help "Log errors, warnings, and info (default)"
+       <> help "Log errors, warnings, and info"
        <> hidden
         )
     <|> ( flag' LevelWarn
         $ long "log-warn"
-       <> help "Log errors and warnings"
+       <> help "Log errors and warnings (default)"
        <> hidden
         )
     <|> ( flag' LevelError
@@ -396,6 +395,7 @@ log = do
        <> help "Log errors only"
        <> hidden
         )
+    <|> pure LevelWarn
 
   pure (Log{..})
 
