@@ -94,11 +94,11 @@
   |=  =path
   ^-  (unit (unit cage))
   ?>  (team:title our.bowl src.bowl)
-  ?+  path      (on-watch:def path)
+  ?+    path  (on-watch:def path)
       [%x %credentials ~]
-        [~ ~ %s3-update !>(`noun`[%credentials credentials])]
+    [~ ~ %s3-update !>(`update`[%credentials credentials])]
       [%x %configuration ~]
-        [~ ~ %s3-update !>(`noun`[%configuration configuration])]
+    [~ ~ %s3-update !>(`update`[%configuration configuration])]
   ==
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def
