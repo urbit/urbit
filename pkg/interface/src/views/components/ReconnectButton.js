@@ -8,7 +8,7 @@ const ReconnectButton = ({ connection, subscription }) => {
     return (
       <>
       <Box
-        ml={4}
+        ml={2}
         px={2}
         py={1}
         display='inline-block'
@@ -27,7 +27,7 @@ const ReconnectButton = ({ connection, subscription }) => {
       return (
         <>
         <Box
-          ml={4}
+          ml={2}
           px={2}
           py={1}
           lineHeight="0"
