@@ -26,7 +26,8 @@ import Urbit.King.Config
 import Urbit.Prelude
 
 import System.Directory       ( createDirectoryIfMissing
-                              , getAppUserDataDirectory
+                              , getXdgDirectory
+                              , XdgDirectory(XdgCache)
                               )
 import System.Posix.Internals (c_getpid)
 import System.Posix.Types     (CPid(..))
@@ -83,7 +84,6 @@ runKingEnvStderr verb lvl inner = do
       <&> setLogUseTime True
       <&> setLogUseLoc False
       <&> setLogMinLevel lvl
-
   withLogFunc logOptions $ \logFunc -> runKingEnv logFunc logFunc inner
 
 runKingEnvLogFile :: Bool -> LogLevel -> Maybe FilePath -> RIO KingEnv a -> IO a
@@ -102,7 +102,6 @@ runKingEnvLogFile verb lvl fileM inner = do
         <&> setLogUseTime False
         <&> setLogUseLoc False
         <&> setLogMinLevel lvl
-
     withLogFunc stderrLogOptions $ \stderrLogFunc -> withLogFunc logOptions
       $ \logFunc -> runKingEnv logFunc stderrLogFunc inner
 
@@ -114,7 +113,7 @@ withLogFileHandle f act =
 
 defaultLogFile :: IO FilePath
 defaultLogFile = do
-  logDir <- getAppUserDataDirectory "urbit"
+  logDir <- getXdgDirectory XdgCache "urbit"
   createDirectoryIfMissing True logDir
   pure (logDir </> "king.log")
 
