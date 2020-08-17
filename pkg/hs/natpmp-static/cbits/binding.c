@@ -54,7 +54,8 @@ int readNatResponseSynchronously(natpmp_t* natpmp, natpmpresp_t * response)
 		getnatpmprequesttimeout(natpmp, &timeout);
 		r = select(FD_SETSIZE, &fds, NULL, NULL, &timeout);
 		if(r<0) {
-			fprintf(stderr, "select()");
+			fprintf(stderr, "select():  errno=%d '%s'\n",
+			        sav_errno, strerror(sav_errno));
 			return 1;
 		}
 		r = readnatpmpresponseorretry(natpmp, response);
