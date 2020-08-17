@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Sigil } from '../../../../../logic/lib/sigil';
-import { cite } from '../../../../../logic/lib/util';
+import { Sigil } from '~/logic/lib/sigil';
+import { cite } from '~/logic/lib/util';
 import moment from 'moment';
 
 export class CommentItem extends Component {

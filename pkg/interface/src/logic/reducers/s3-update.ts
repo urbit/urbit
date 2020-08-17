@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { StoreState } from '../../store/type';
-import { Cage } from '../../types/cage';
-import { S3Update } from '../../types/s3-update';
+import { Cage } from '~/types/cage';
+import { S3Update } from '~/types/s3-update';
 
 type S3State = Pick<StoreState, 's3'>;
 

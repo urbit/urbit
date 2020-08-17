@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import SidebarInvite from '../../../../components/SidebarInvite';
+import SidebarInvite from '~/views/components/SidebarInvite';
 import { Welcome } from './welcome';
 import { GroupItem } from './group-item';
-import { alphabetiseAssociations } from '../../../../../logic/lib/util';
+import { alphabetiseAssociations } from '~/logic/lib/util';
 
 export class Sidebar extends Component {
   render() {

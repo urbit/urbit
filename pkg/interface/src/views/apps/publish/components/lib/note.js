@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { SidebarSwitcher } from '../../../../components/SidebarSwitch';
-import { Spinner } from '../../../../components/Spinner';
+import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
+import { Spinner } from '~/views/components/Spinner';
 import { Comments } from './comments';
 import { NoteNavigation } from './note-navigation';
 import moment from 'moment';
 import ReactMarkdown from 'react-markdown';
-import { cite } from '../../../../../logic/lib/util';
+import { cite } from '~/logic/lib/util';
 
 export class Note extends Component {
   constructor(props) {

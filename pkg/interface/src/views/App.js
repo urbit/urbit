@@ -18,11 +18,11 @@ import StatusBar from './components/StatusBar';
 import Omnibox from './components/Omnibox';
 import ErrorComponent from './components/Error';
 
-import GlobalStore from '../logic/store/store';
-import GlobalSubscription from '../logic/subscription/global';
-import GlobalApi from '../logic/api/global';
-import { uxToHex } from '../logic/lib/util';
-import { Sigil } from '../logic/lib/sigil';
+import GlobalStore from '~/logic/store/store';
+import GlobalSubscription from '~/logic/subscription/global';
+import GlobalApi from '~/logic/api/global';
+import { uxToHex } from '~/logic/lib/util';
+import { Sigil } from '~/logic/lib/sigil';
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};

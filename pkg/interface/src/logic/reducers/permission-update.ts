@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { StoreState } from '../../store/type';
-import { Cage } from '../../types/cage';
-import { PermissionUpdate } from '../../types/permission-update';
+import { Cage } from '~/types/cage';
+import { PermissionUpdate } from '~/types/permission-update';
 
 type PermissionState = Pick<StoreState, "permissions">;
 

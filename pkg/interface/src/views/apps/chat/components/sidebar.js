@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
 import Welcome from './lib/welcome';
-import { alphabetiseAssociations } from '../../../../logic/lib/util';
-import SidebarInvite from '../../../components/SidebarInvite';
+import { alphabetiseAssociations } from '~/logic/lib/util';
+import SidebarInvite from '~/views/components/SidebarInvite';
 import { GroupItem } from './lib/group-item';
 
 export class Sidebar extends Component {

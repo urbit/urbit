@@ -2,8 +2,8 @@ import _ from 'lodash';
 
 import { StoreState } from '../../store/type';
 
-import { MetadataUpdate } from '../../types/metadata-update';
-import { Cage } from '../../types/cage';
+import { MetadataUpdate } from '~/types/metadata-update';
+import { Cage } from '~/types/cage';
 
 type MetadataState = Pick<StoreState, 'associations'>;
 

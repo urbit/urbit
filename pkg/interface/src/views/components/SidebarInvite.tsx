@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Invite } from '../types/invite-update';
+import { Invite } from '~/types/invite-update';
 
 export class SidebarInvite extends Component<{invite: Invite, onAccept: Function, onDecline: Function}, {}> {
   render() {

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { StoreState } from '../../store/type';
-import { Cage } from '../../types/cage';
-import { LinkListenUpdate } from '../../types/link-listen-update';
+import { Cage } from '~/types/cage';
+import { LinkListenUpdate } from '~/types/link-listen-update';
 
 type LinkListenState = Pick<StoreState, 'linkListening'>;
 

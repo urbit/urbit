@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 
-import { scrollIsAtTop, scrollIsAtBottom } from "../../../../../logic/lib/util";
+import { scrollIsAtTop, scrollIsAtBottom } from "~/logic/lib/util";
 
 // Restore chat position on FF when new messages come in
 const recalculateScrollTop = (lastScrollHeight, scrollContainer) => {

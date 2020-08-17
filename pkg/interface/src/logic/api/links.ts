@@ -2,7 +2,7 @@ import { stringToTa } from '../lib/util';
 
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Path } from '../types/noun';
+import { Path } from '~/types/noun';
 
 export default class LinksApi extends BaseApi<StoreState> {
 

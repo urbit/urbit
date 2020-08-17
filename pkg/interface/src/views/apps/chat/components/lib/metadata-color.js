@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { uxToHex } from '../../../../../logic/lib/util';
+import { uxToHex } from '~/logic/lib/util';
 
 
 export class MetadataColor extends Component {

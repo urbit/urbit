@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { cite } from '../../../../logic/lib/util';
-import { Spinner } from '../../../components/Spinner';
+import { cite } from '~/logic/lib/util';
+import { Spinner } from '~/views/components/Spinner';
 
 export class Input extends Component {
   constructor(props) {

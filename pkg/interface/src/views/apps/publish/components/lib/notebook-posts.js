@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import { cite } from '../../../../../logic/lib/util';
+import { cite } from '~/logic/lib/util';
 
 export class NotebookPosts extends Component {
   constructor(props) {

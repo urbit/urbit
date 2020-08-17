@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 
-import { uxToHex, makeRoutePath } from '../../../../logic/lib/util';
+import { uxToHex, makeRoutePath } from '~/logic/lib/util';
 import { Link } from 'react-router-dom';
 
 import { LoadingScreen } from './loading';
-import { Spinner } from '../../../components/Spinner';
+import { Spinner } from '~/views/components/Spinner';
 import { LinksTabBar } from './lib/links-tabbar';
-import SidebarSwitcher from '../../../components/SidebarSwitch';
+import SidebarSwitcher from '~/views/components/SidebarSwitch';
 
 export class SettingsScreen extends Component {
   constructor(props) {

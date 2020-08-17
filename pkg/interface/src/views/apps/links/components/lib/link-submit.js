@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Spinner } from '../../../../components/Spinner';
+import { Spinner } from '~/views/components/Spinner';
 
 export class LinkSubmit extends Component {
   constructor() {

@@ -6,15 +6,15 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { ChatWindow } from './lib/chat-window';
 import { ChatHeader } from './lib/chat-header';
 import { ChatInput } from "./lib/chat-input";
-import { deSig } from "../../../../logic/lib/util";
-import { ChatHookUpdate } from "../../../../types/chat-hook-update";
-import ChatApi from "../../../../logic/api/chat";
-import { Inbox, Envelope } from "../../../../types/chat-update";
-import { Contacts } from "../../../../types/contact-update";
-import { Path, Patp } from "../../../../types/noun";
-import GlobalApi from "../../../../logic/api/global";
-import { Association } from "../../../../types/metadata-update";
-import {Group} from "../../../../types/group-update";
+import { deSig } from "~/logic/lib/util";
+import { ChatHookUpdate } from "~/types/chat-hook-update";
+import ChatApi from "~/logic/api/chat";
+import { Inbox, Envelope } from "~/types/chat-update";
+import { Contacts } from "~/types/contact-update";
+import { Path, Patp } from "~/types/noun";
+import GlobalApi from "~/logic/api/global";
+import { Association } from "~/types/metadata-update";
+import {Group} from "~/types/group-update";
 
 
 type ChatScreenProps = RouteComponentProps<{

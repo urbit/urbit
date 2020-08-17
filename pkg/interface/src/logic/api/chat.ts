@@ -1,7 +1,7 @@
 import BaseApi from './base';
 import { uuid } from '../lib/util';
-import { Letter, ChatAction, Envelope } from '../types/chat-update';
-import { Patp, Path, PatpNoSig } from '../types/noun';
+import { Letter, ChatAction, Envelope } from '~/types/chat-update';
+import { Patp, Path, PatpNoSig } from '~/types/noun';
 import { StoreState } from '../store/type';
 import BaseStore from '../store/base';
 
