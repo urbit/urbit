@@ -51,24 +51,14 @@ export class ChannelsSidebar extends Component {
       }
     });
 
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
     let i = -1;
     const groupedItems = Object.keys(associations)
-    .filter((each) => {
-      if (selectedGroups.length === 0) {
-        return true;
-      };
-      const selectedPaths = selectedGroups.map((e) => {
-        return e[0];
-      });
-      return selectedPaths.includes(each);
-    })
     .map((each) => {
       const channels = groupedChannels[each];
       if (!channels || channels.length === 0)
         return;
       i++;
-      if ((selectedGroups.length === 0) && groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
+      if (groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
         i++;
       }
 
@@ -84,7 +74,7 @@ export class ChannelsSidebar extends Component {
         />
       );
     });
-    if ((selectedGroups.length === 0) && groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
+    if (groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
       groupedItems.unshift(
         <GroupItem
           key={'/~/'}

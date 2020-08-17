@@ -29,15 +29,15 @@
     %^  cat  3  (get-val /mar/js/hoon)
     '  ~&  >  new-val=new-val  .'
   =/  js-contents
-    %^  cat  3  (get-val /app/publish/js/index/js)
+    %^  cat  3  (get-val /app/landscape/js/channel/js)
     'extra'
   =/  files
     :~  [/sys/zuse/hoon zuse-contents]
         [/mar/js/hoon mar-contents]
-        [/app/publish/js/index/js js-contents]
+        [/app/landscape/js/channel/js js-contents]
     ==
   ;<  ~  bind:m  (send-events (insert-files:util her desk files))
-  (pure:m /app/publish/js/index/js js-contents)
+  (pure:m /app/landscape/js/channel/js js-contents)
   ::
   ++  aqua-path
     |=  =path
