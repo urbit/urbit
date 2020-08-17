@@ -16,6 +16,7 @@ export interface StoreState {
   // local state
   sidebarShown: boolean;
   omniboxShown: boolean;
+  suspendedFocus: HTMLInputElement | null;
   dark: boolean;
   connection: ConnectionStatus;
   baseHash: string | null;

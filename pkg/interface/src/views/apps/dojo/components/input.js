@@ -80,8 +80,11 @@ render() {
         {this.props.prompt}
       </span>
       <input
-        autoCorrect="false"
-        autoFocus={true}
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        tabindex="0"
+        wrap="off"
         className="mono ml1 flex-auto dib w-100"
         id="dojo"
         cursor={this.props.cursor}
