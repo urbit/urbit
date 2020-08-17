@@ -227,8 +227,11 @@
 
 ++  peek-group-join
   |=  [rid=resource =ship]
-  =/  =group
-    (~(gut by groups) rid *group)
+  =/  ugroup
+    (~(get by groups) rid)
+  ?~  ugroup
+    %.n
+  =*  group   u.ugroup
   =*  policy  policy.group
   ?-  -.policy
       %invite
