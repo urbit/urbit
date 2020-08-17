@@ -192,7 +192,13 @@ export class Omnibox extends Component {
 
   renderResults() {
     const { props, state } = this;
-    return <Box maxHeight="400px" overflowY="scroll" overflowX="hidden">
+    return <Box
+            maxHeight="400px"
+            overflowY="scroll"
+            overflowX="hidden"
+            borderBottomLeftRadius='2'
+            borderBottomRightRadius='2'
+           >
       {this.getSearchedCategories()
         .map(category => Object({ category, categoryResults: state.results.get(category) }))
         .filter(category => category.categoryResults.length > 0)
