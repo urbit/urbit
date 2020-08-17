@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 
-
-const IMAGE_REGEX = 
-  /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM|svg|SVG)$/;
+const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 
 const YOUTUBE_REGEX =
   new RegExp(
@@ -25,8 +23,7 @@ export default class UrlContent extends Component {
     let unfoldState = this.state.unfold;
     unfoldState = !unfoldState;
     this.setState({ unfold: unfoldState });
-    const iframe = this.refs.iframe;
-    iframe.setAttribute('src', iframe.getAttribute('data-src'));
+    this.iframe.setAttribute('src', this.iframe.dataset.src);
   }
 
   render() {
@@ -42,13 +39,12 @@ export default class UrlContent extends Component {
           className="o-80-d"
           src={content.url}
           style={{
-            width: '50%',
-            maxWidth: '250px'
+            maxWidth: '18rem'
           }}
         ></img>
       );
       return (
-        <a className={`f7 lh-copy v-top word-break-all`}
+        <a className='f7 lh-copy v-top word-break-all'
           href={content.url}
           target="_blank"
           rel="noopener noreferrer"
@@ -63,7 +59,9 @@ export default class UrlContent extends Component {
           ? 'db' : 'dn')}
         >
         <iframe
-          ref="iframe"
+          ref={(el) => {
+            this.iframe = el;
+          }}
           width="560"
           height="315"
           data-src={`https://www.youtube.com/embed/${ytMatch[1]}`}
@@ -75,12 +73,15 @@ export default class UrlContent extends Component {
       return (
         <div>
           <a href={content.url}
-            className={`f7 lh-copy v-top bb b--white-d word-break-all`}
-            href={content.url}
+            className='f7 lh-copy v-top bb b--white-d word-break-all'
             target="_blank"
-            rel="noopener noreferrer">{content.url}</a>
-          <a className="ml2 f7 pointer lh-copy v-top"
-             onClick={e => this.unfoldEmbed()}>
+            rel="noopener noreferrer"
+          >
+            {content.url}
+          </a>
+          <a className="bs ml2 f7 pointer lh-copy v-top"
+             onClick={e => this.unfoldEmbed()}
+          >
             [embed]
           </a>
           {contents}
@@ -88,7 +89,7 @@ export default class UrlContent extends Component {
       );
     } else {
       return (
-        <a className={`f7 lh-copy v-top bb b--white-d b--black word-break-all`}
+        <a className='f7 lh-copy v-top bb b--white-d b--black word-break-all'
           href={content.url}
           target="_blank"
           rel="noopener noreferrer"

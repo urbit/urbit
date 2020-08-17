@@ -53,7 +53,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
     const unreads = {};
     let totalUnreads = 0;
 
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
     const associations = props.associations
       ? props.associations
       : { chat: {}, contacts: {} };
@@ -74,14 +73,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
       unreads[stat] = Boolean(unread);
       if (
         unread &&
-        stat in associations.chat &&
-        (selectedGroups.length === 0 ||
-          selectedGroups
-            .map((e) => {
-              return e[0];
-            })
-            .includes(associations.chat?.[stat]?.['group-path']) ||
-          props.groups[associations.chat?.[stat]?.['group-path']]?.hidden)
+        stat in associations.chat
       ) {
         totalUnreads += unread;
       }
@@ -111,7 +103,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
         inbox={inbox}
         messagePreviews={messagePreviews}
         associations={associations}
-        selectedGroups={selectedGroups}
         contacts={contacts}
         invites={invites['/chat'] || {}}
         unreads={unreads}
@@ -281,44 +272,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
                   sidebarShown={sidebarShown}
                   chatInitialized={chatInitialized}
                   {...props}
-                />
-              </Skeleton>
-            );
-          }}
-        />
-        <Route
-          exact
-          path="/~chat/(popout)?/members/(~)?/:ship/:station+"
-          render={(props) => {
-            let station = `/${props.match.params.ship}/${props.match.params.station}`;
-
-            const popout = props.match.url.includes('/popout/');
-
-            const association =
-              station in associations['chat'] ? associations.chat[station] : {};
-            const groupPath = association['group-path'];
-
-            const group = groups[groupPath] || {};
-            return (
-              <Skeleton
-                associations={associations}
-                invites={invites}
-                sidebarHideOnMobile={true}
-                sidebarShown={sidebarShown}
-                popout={popout}
-                sidebar={renderChannelSidebar(props, station)}
-              >
-                <MemberScreen
-                  {...props}
-                  api={api}
-                  group={group}
-                  groups={groups}
-                  associations={associations}
-                  station={station}
-                  association={association}
-                  contacts={contacts}
-                  popout={popout}
-                  sidebarShown={sidebarShown}
                 />
               </Skeleton>
             );

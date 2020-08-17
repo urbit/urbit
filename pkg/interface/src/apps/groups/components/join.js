@@ -103,6 +103,7 @@ export class JoinScreen extends Component {
             spellCheck="false"
             rows={1}
             cols={32}
+            autoFocus={true}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
@@ -110,7 +111,7 @@ export class JoinScreen extends Component {
               }
             }}
             style={{
-              resize: 'none',
+              resize: 'none'
             }}
             onChange={this.groupChange}
             value={this.state.group}

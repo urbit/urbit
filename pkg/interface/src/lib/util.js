@@ -119,6 +119,9 @@ export function writeText(str) {
 // trim patps to match dojo, chat-cli
 export function cite(ship) {
   let patp = ship, shortened = '';
+  if (patp === null || patp === '') {
+    return null;
+  }
   if (patp.startsWith('~')) {
     patp = patp.substr(1);
   }
@@ -275,3 +278,38 @@ export function stringToSymbol(str) {
   }
   return result;
 }
+
+export function scrollIsAtTop(container) {
+  if (
+    (navigator.userAgent.includes("Safari") &&
+      navigator.userAgent.includes("Chrome")) ||
+    navigator.userAgent.includes("Firefox")
+  ) {
+    return container.scrollTop === 0;
+  } else if (navigator.userAgent.includes("Safari")) {
+    return (
+      container.scrollHeight + Math.round(container.scrollTop) <=
+      container.clientHeight + 10
+    );
+  } else {
+    return false;
+  }
+}
+
+export function scrollIsAtBottom(container) {
+  if (
+    (navigator.userAgent.includes("Safari") &&
+      navigator.userAgent.includes("Chrome")) ||
+    navigator.userAgent.includes("Firefox")
+  ) {
+    return (
+      container.scrollHeight - Math.round(container.scrollTop) <=
+      container.clientHeight + 10
+    );
+  } else if (navigator.userAgent.includes("Safari")) {
+    return container.scrollTop === 0;
+  } else {
+    return false;
+  }
+}
+
