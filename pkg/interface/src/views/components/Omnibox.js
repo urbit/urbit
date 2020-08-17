@@ -194,7 +194,7 @@ export class Omnibox extends Component {
     const { props, state } = this;
     return <Box
             maxHeight="400px"
-            overflowY="scroll"
+            overflowY="auto"
             overflowX="hidden"
             borderBottomLeftRadius='2'
             borderBottomRightRadius='2'
