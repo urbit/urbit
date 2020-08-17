@@ -1,181 +1,174 @@
-#include "all.h"
+#include <inttypes.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <string.h>
+#include <assert.h>
+#include <stdio.h>
+
 #include "ur/hashcons.h"
 
-static c3_i
-_test_jam(const c3_c* cap_c,
-          ur_root_t*  rot_u,
-          ur_nref       ref,
-          c3_w        len_w,
-          const c3_y* res_y)
+static int
+_test_jam_spec(const char    *cap,
+               ur_root_t       *r,
+               ur_nref        ref,
+               size_t         len,
+               const uint8_t *res)
 {
-  c3_d  i_d, len_d;
-  c3_y* out_y;
-  c3_i  ret_i;
+  uint64_t   i, out_len;
+  uint8_t *out;
+  int      ret;
 
-  ur_jam(rot_u, ref, &len_d, &out_y);
+  ur_jam(r, ref, &out_len, &out);
 
-  if ( 0 != memcmp(out_y, res_y, len_w) ) {
-    fprintf(stderr, "\033[31mjam %s fail\033[0m\r\n", cap_c);
+  if ( 0 != memcmp(out, res, len) ) {
+    fprintf(stderr, "\033[31mjam %s fail\033[0m\r\n", cap);
 
     fprintf(stderr, "  actual: { ");
-    for ( i_d = 0; i_d < len_d; i_d++ ) {
-      fprintf(stderr, "0x%x, ", out_y[i_d]);
+    for ( i = 0; i < out_len; i++ ) {
+      fprintf(stderr, "0x%x, ", out[i]);
     }
     fprintf(stderr, "}\r\n");
     fprintf(stderr, "  expect: { ");
-    for ( i_d = 0; i_d < len_w; i_d++ ) {
-      fprintf(stderr, "0x%x, ", res_y[i_d]);
+    for ( i = 0; i < len; i++ ) {
+      fprintf(stderr, "0x%x, ", res[i]);
     }
     fprintf(stderr, "}\r\n");
 
-    ret_i = 0;
+    ret = 0;
   }
   else {
-    ret_i = 1;
+    ret = 1;
   }
 
-  c3_free(out_y);
+  free(out);
 
-  return ret_i;
+  return ret;
 }
 
-static c3_i
-_test_cue(const c3_c* cap_c,
-          ur_root_t*  rot_u,
-          ur_nref       ref,
-          c3_w        len_w,
-          const c3_y* res_y)
+static int
+_test_cue_spec(const char    *cap,
+               ur_root_t*       r,
+               ur_nref        ref,
+               size_t         len,
+               const uint8_t *res)
 {
   ur_nref out;
 
-  if ( ur_cue_good != ur_cue(rot_u, len_w, res_y, &out) ) {
-    fprintf(stderr, "\033[31mcue %s fail 1\033[0m\r\n", cap_c);
+  if ( ur_cue_good != ur_cue(r, len, res, &out) ) {
+    fprintf(stderr, "\033[31mcue %s fail 1\033[0m\r\n", cap);
     return 0;
   }
   else if ( ref != out ) {
-    fprintf(stderr, "\033[31mcue %s fail 2 ref=%" PRIu64 " out=%" PRIu64 " \033[0m\r\n", cap_c, ref, out);
+    fprintf(stderr, "\033[31mcue %s fail 2 ref=%" PRIu64 " out=%" PRIu64 " \033[0m\r\n", cap, ref, out);
     return 0;
   }
 
   return 1;
 }
 
-static c3_i
-_test_ur(void)
+static int
+_test_jam_cue(void)
 {
-  ur_root_t* rot_u = ur_hcon_init();
-  c3_d  i_d, len_d;
-  c3_y* byt_y;
-  c3_i  res_i = 1;
+  ur_root_t *r = ur_hcon_init();
+  int      ret = 1;
 
-#     define nc(a, b)     ur_cons(rot_u, a, b)
-#     define nt(a, b, c)  nc(a, nc(b, c))
+#     define NC(a, b)     ur_cons(r, a, b)
+#     define NT(a, b, c)  NC(a, NC(b, c))
+
+#     define FAST         0x74736166
+#     define FULL         0x6c6c7566
+
+#     define TEST_CASE(a, b)                                   \
+        const char* cap = a;                                   \
+        ur_nref     ref = b;                                   \
+        ret &= _test_jam_spec(cap, r, ref, sizeof(res), res);  \
+        ret &= _test_cue_spec(cap, r, ref, sizeof(res), res);  \
 
   {
-    c3_c* cap_c    = "0";
-    c3_y  res_y[1] = { 0x2 };
-    ur_nref ref    = 0;
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[1] = { 0x2 };
+    TEST_CASE("0", 0);
   }
 
   {
-    c3_c* cap_c    = "1";
-    c3_y  res_y[1] = { 0xc };
-    ur_nref ref    = 1;
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[1] = { 0xc };
+    TEST_CASE("1", 1);
   }
   
   {
-    c3_c* cap_c    = "2";
-    c3_y  res_y[1] = { 0x48 };
-    ur_nref ref    = 2;
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[1] = { 0x48 };
+    TEST_CASE("2", 2);
   }
 
   {
-    c3_c*  cap_c   = "%fast";
-    c3_y  res_y[6] = { 0xc0, 0x37, 0xb, 0x9b, 0xa3, 0x3 };
-    ur_nref  ref   = c3__fast;
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[6] = { 0xc0, 0x37, 0xb, 0x9b, 0xa3, 0x3 };
+    TEST_CASE("%fast", FAST);
   }
 
   {
-    c3_c* cap_c    = "%full";
-    c3_y  res_y[6] = { 0xc0, 0x37, 0xab, 0x63, 0x63, 0x3 };
-    ur_nref ref    = c3__full;
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[6] = { 0xc0, 0x37, 0xab, 0x63, 0x63, 0x3 };
+    TEST_CASE("%full", FULL);
   }
 
   {
-    c3_c* cap_c    = "[0 0]";
-    c3_y  res_y[1] = { 0x29 };
-    ur_nref ref    = nc(0, 0);
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[1] = { 0x29 };
+    TEST_CASE("[0 0]", NC(0, 0));
   }
 
   {
-    c3_c* cap_c    = "[1 1]";
-    c3_y  res_y[2] = { 0x31, 0x3 };
-    ur_nref ref    = nc(1, 1);
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[2] = { 0x31, 0x3 };
+    TEST_CASE("[1 1]", NC(1, 1));
   }
 
   {
-    c3_c* cap_c    = "[2 3]";
-    c3_y  res_y[2] = { 0x21, 0xd1 };
-    ur_nref ref    = nc(2, 3);
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[2] = { 0x21, 0xd1 };
+    TEST_CASE("[2 3]", NC(2, 3));
   }
 
   {
-    c3_c* cap_c     = "[%fast %full]";
-    c3_y  res_y[11] = { 0x1, 0xdf, 0x2c, 0x6c, 0x8e, 0xe, 0x7c, 0xb3, 0x3a, 0x36, 0x36 }; 
-    ur_nref ref     = nc(c3__fast, c3__full);
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[11] = { 0x1, 0xdf, 0x2c, 0x6c, 0x8e, 0xe, 0x7c, 0xb3, 0x3a, 0x36, 0x36 }; 
+    TEST_CASE("[%fast %full]", NC(FAST, FULL));
   }
 
   {
-    c3_c* cap_c    = "[1 1 1]";
-    c3_y  res_y[2] = {  0x71, 0xcc };
-    ur_nref ref    = nc(1, nc(1, 1));
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[2] = {  0x71, 0xcc };
+    TEST_CASE("[1 1 1]", NC(1, NC(1, 1)));
   }
 
   {
-    c3_c* cap_c     = "[%fast %full %fast]";
-    c3_y  res_y[12] = { 0x1, 0xdf, 0x2c, 0x6c, 0x8e, 0x1e, 0xf0, 0xcd, 0xea, 0xd8, 0xd8, 0x93 };
-    ur_nref ref     = nc(c3__fast, nc(c3__full, c3__fast));
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[12] = { 0x1, 0xdf, 0x2c, 0x6c, 0x8e, 0x1e, 0xf0, 0xcd, 0xea, 0xd8, 0xd8, 0x93 };
+    TEST_CASE("[%fast %full %fast]", NC(FAST, NC(FULL, FAST)));
   }
 
   {
-    c3_c* cap_c    = "[[0 0] [[0 0] 1 1] 1 1]";
-    c3_y  res_y[6] = { 0xa5, 0x35, 0x19, 0xf3, 0x18, 0x5 };
-    ur_nref ref    = nc(nc(0, 0), nc(nc(nc(0, 0), nc(1, 1)), nc(1, 1)));
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[6] = { 0xa5, 0x35, 0x19, 0xf3, 0x18, 0x5 };
+    TEST_CASE("[[0 0] [[0 0] 1 1] 1 1]", NC(NC(0, 0), NC(NC(NC(0, 0), NC(1, 1)), NC(1, 1))));
   }
 
   {
-    c3_c* cap_c    = "big";
-    c3_y  res_y[14] = { 0x15, 0x17, 0xb2, 0xd0, 0x85, 0x59, 0xb8, 0x61, 0x87, 0x5f, 0x10, 0x54, 0x55, 0x5 };
-    ur_nref ref    = nc(nc(nc(1, nc(nc(2, nc(nc(3, nc(nc(4, nc(nt(5, 6, nc(7, nc(nc(8, 0), 0))), 0)), 0)), 0)), 0)), 0), 0);
-    res_i &= _test_jam(cap_c, rot_u, ref, sizeof(res_y), res_y);
-    res_i &= _test_cue(cap_c, rot_u, ref, sizeof(res_y), res_y);
+    uint8_t res[14] = { 0x15, 0x17, 0xb2, 0xd0, 0x85, 0x59, 0xb8, 0x61, 0x87, 0x5f, 0x10, 0x54, 0x55, 0x5 };
+    TEST_CASE("deep", NC(NC(NC(1, NC(NC(2, NC(NC(3, NC(NC(4, NC(NT(5, 6, NC(7, NC(NC(8, 0), 0))), 0)), 0)), 0)), 0)), 0), 0));
   }
 
-  return res_i;
+  {
+    uint8_t inp[33] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+    uint8_t res[35] = { 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8 };
+    TEST_CASE("wide", ur_coin_bytes(r, inp, sizeof(inp)));
+  }
+
+  return ret;
+}
+
+static int
+_test_ur(void)
+{
+  int ret = 1;
+
+  if ( !_test_jam_cue() ) {
+    fprintf(stderr, "ur test jam/cue failed\r\n");
+    ret = 0;
+  }
+
+  return ret;
 }
 
 int
