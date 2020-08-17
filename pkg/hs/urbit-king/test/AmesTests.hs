@@ -15,6 +15,7 @@ import Urbit.Noun.Time
 import Urbit.Prelude
 import Urbit.Vere.Ames
 import Urbit.Vere.Pier.Types
+import Urbit.Vere.Ports
 
 import Control.Concurrent (runInBoundThread)
 import Data.LargeWord     (LargeKey(..))
@@ -27,7 +28,11 @@ import qualified Urbit.EventLog.LMDB as Log
 
 --------------------------------------------------------------------------------
 
-type HasAmes e = (HasLogFunc e, HasNetworkConfig e, HasKingId e)
+type HasAmes e =
+  ( HasLogFunc e
+  , HasNetworkConfig e
+  , HasKingId e
+  , HasPortControlApi e)
 
 -- Utils -----------------------------------------------------------------------
 
@@ -41,9 +46,10 @@ sendEf :: Galaxy -> Wen -> Bytes -> NewtEf
 sendEf g w bs = NewtEfSend (0, ()) (EachYes g) bs
 
 data NetworkTestApp = NetworkTestApp
-    { _ntaLogFunc       :: !LogFunc
-    , _ntaNetworkConfig :: !NetworkConfig
-    , _ntaKingId        :: !Word16
+    { _ntaLogFunc        :: !LogFunc
+    , _ntaNetworkConfig  :: !NetworkConfig
+    , _ntaPortControlApi :: !PortControlApi
+    , _ntaKingId         :: !Word16
     }
 
 makeLenses ''NetworkTestApp
@@ -57,20 +63,25 @@ instance HasNetworkConfig NetworkTestApp where
 instance HasKingId NetworkTestApp where
   kingIdL = ntaKingId
 
+instance HasPortControlApi NetworkTestApp where
+  portControlApiL = ntaPortControlApi
+
 runNetworkApp :: RIO NetworkTestApp a -> IO a
-runNetworkApp = runRIO NetworkTestApp
-  { _ntaLogFunc       = mkLogFunc (\_ _ _ _ -> pure ())
-  , _ntaKingId        = 34
-  , _ntaNetworkConfig = NetworkConfig { _ncNetMode   = NMNormal
-                                      , _ncAmesPort  = Nothing
-                                      , _ncNoAmes    = False
-                                      , _ncNoHttp    = False
-                                      , _ncNoHttps   = False
-                                      , _ncHttpPort  = Nothing
-                                      , _ncHttpsPort = Nothing
-                                      , _ncLocalPort = Nothing
-                                      }
-  }
+runNetworkApp =
+  runRIO NetworkTestApp
+    { _ntaLogFunc        = mkLogFunc (\_ _ _ _ -> pure ())
+    , _ntaKingId         = 34
+    , _ntaPortControlApi = buildInactivePorts
+    , _ntaNetworkConfig  = NetworkConfig { _ncNetMode   = NMNormal
+                                         , _ncAmesPort  = Nothing
+                                         , _ncNoAmes    = False
+                                         , _ncNoHttp    = False
+                                         , _ncNoHttps   = False
+                                         , _ncHttpPort  = Nothing
+                                         , _ncHttpsPort = Nothing
+                                         , _ncLocalPort = Nothing
+                                         }
+    }
 
 runGala
   :: forall e
@@ -110,8 +121,7 @@ sendThread cb (to, val) = void $ mkRAcquire start cancel
 zodSelfMsg :: Property
 zodSelfMsg = forAll arbitrary (ioProperty . runNetworkApp . runTest)
  where
-  runTest
-    :: (HasLogFunc e, HasNetworkConfig e, HasKingId e) => Bytes -> RIO e Bool
+  runTest :: (HasAmes e) => Bytes -> RIO e Bool
   runTest val = runRAcquire $ do
     env         <- ask
     (zodQ, zod) <- runGala 0
@@ -121,15 +131,13 @@ zodSelfMsg = forAll arbitrary (ioProperty . runNetworkApp . runTest)
 twoTalk :: Property
 twoTalk = forAll arbitrary (ioProperty . runNetworkApp . runTest)
   where
-    runTest :: (HasLogFunc e, HasNetworkConfig e, HasKingId e)
-            => (Word8, Word8, Bytes) -> RIO e Bool
+    runTest :: (HasAmes e) => (Word8, Word8, Bytes) -> RIO e Bool
     runTest (aliceShip, bobShip, val) =
       if aliceShip == bobShip
         then pure True
         else go aliceShip bobShip val
 
-    go :: (HasLogFunc e, HasNetworkConfig e, HasKingId e)
-       => Word8 -> Word8 -> Bytes -> RIO e Bool
+    go :: (HasAmes e) => Word8 -> Word8 -> Bytes -> RIO e Bool
     go aliceShip bobShip val = runRAcquire $ do
         (aliceQ, alice) <- runGala aliceShip
         (bobQ,   bob)   <- runGala bobShip
