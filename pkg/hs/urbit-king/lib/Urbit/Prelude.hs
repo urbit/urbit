@@ -34,10 +34,9 @@ import Text.Show.Pretty (pPrint, ppShow)
 import RIO (RIO, runRIO)
 import RIO (Utf8Builder, display, displayShow)
 import RIO (threadDelay)
-
-import RIO (HasLogFunc, LogFunc, logDebug, logError, logFuncL, logInfo,
-            logOptionsHandle, logOther, logWarn, mkLogFunc, setLogUseLoc,
-            setLogUseTime, withLogFunc)
+import RIO (HasLogFunc, LogFunc, LogLevel(..), logDebug, logError, logFuncL,
+            logInfo, logOptionsHandle, logOther, logWarn, mkLogFunc,
+            setLogMinLevel, setLogUseLoc, setLogUseTime, withLogFunc)
 
 io :: MonadIO m => IO a -> m a
 io = liftIO

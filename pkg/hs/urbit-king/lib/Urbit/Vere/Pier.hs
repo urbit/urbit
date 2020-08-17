@@ -501,7 +501,7 @@ router slog waitFx Drivers {..} = do
 
 logEvent :: HasLogFunc e => Ev -> RIO e ()
 logEvent ev = do
-  logTrace $ "<- " <> display (summarizeEvent ev)
+  logInfo  $ "<- " <> display (summarizeEvent ev)
   logDebug $ "[EVENT]\n" <> display pretty
  where
   pretty :: Text
@@ -509,7 +509,7 @@ logEvent ev = do
 
 logEffect :: HasLogFunc e => Lenient Ef -> RIO e ()
 logEffect ef = do
-  logTrace $ "  -> " <> display (summarizeEffect ef)
+  logInfo  $ "  -> " <> display (summarizeEffect ef)
   logDebug $ display $ "[EFFECT]\n" <> pretty ef
  where
   pretty :: Lenient Ef -> Text
