@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Box } from '@tlon/indigo-react';
+
 import './css/custom.css';
 
 import Tiles from './components/tiles';
@@ -31,7 +33,20 @@ export default class LaunchApp extends React.Component {
           weather={props.weather}
         />
       </div>
-      <div className="absolute mono bottom-0 left-0 f9 gray2 ml4 mb4 f8"> {props.baseHash} </div>
+      <Box 
+        position="absolute"
+        fontFamily="mono"
+        left="0"
+        bottom="0"
+        color="gray"
+        bg="white"
+        ml={3}
+        mb={3}
+        borderRadius={2}
+        fontSize={0}
+        p={2}>
+        {props.baseHash}
+      </Box>
     </div>
     );
   }
