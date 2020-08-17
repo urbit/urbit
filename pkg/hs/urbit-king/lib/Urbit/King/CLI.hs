@@ -18,6 +18,7 @@ import System.Environment (getProgName)
 data KingOpts = KingOpts
   { koSharedHttpPort  :: Maybe Word16
   , koSharedHttpsPort :: Maybe Word16
+  , koUseNatPmp       :: Bool
   }
  deriving (Show)
 
@@ -195,6 +196,11 @@ pillFromURL = PillSourceURL <$> strOption
                     <> value defaultPillURL
                     <> help "URL to pill file")
 
+enableNat :: Parser Bool
+enableNat = not <$> switch
+               ( long "no-port-forwarding"
+              <> help "Disable trying to ask the router to forward ames ports")
+
 pierPath :: Parser FilePath
 pierPath = strArgument (metavar "PIER" <> help "Path to pier")
 
@@ -347,6 +353,8 @@ runOneShip = (,,) <$> fmap Run pierPath <*> opts <*> df
 
 kingOpts :: Parser KingOpts
 kingOpts = do
+  koUseNatPmp <- enableNat
+
   koSharedHttpPort <-
     optional
     $  option auto

@@ -2,6 +2,7 @@ resolver: lts-14.21
 
 packages:
   - lmdb-static
+  - natpmp-static
   - proto
   - racquire
   - terminal-progress-bar
