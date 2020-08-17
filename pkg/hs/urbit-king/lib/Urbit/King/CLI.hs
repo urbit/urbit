@@ -19,6 +19,7 @@ import System.Environment (getProgName)
 data Host = Host
   { hSharedHttpPort  :: Maybe Word16
   , hSharedHttpsPort :: Maybe Word16
+  , hUseNatPmp       :: Bool
   }
  deriving (Show)
 
@@ -423,6 +424,13 @@ host = do
     $  metavar "PORT"
     <> long "shared-https-port"
     <> help "HTTPS port"
+    <> hidden
+
+  hUseNatPmp <-
+    fmap not
+    $  switch
+    $  long "no-port-forwarding"
+    <> help "Disable trying to ask the router to forward ames ports"
     <> hidden
 
   pure (Host{..})

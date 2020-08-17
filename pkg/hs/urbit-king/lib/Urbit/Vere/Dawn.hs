@@ -18,6 +18,8 @@ import Network.Ethereum.Api.Types    hiding (blockNumber)
 import Network.Ethereum.Web3
 import Network.HTTP.Client.TLS
 
+import Data.Solidity.Prim.Address  (fromHexString)
+
 import qualified Crypto.Hash.SHA256    as SHA256
 import qualified Crypto.Hash.SHA512    as SHA512
 import qualified Crypto.Sign.Ed25519   as Ed
@@ -25,14 +27,13 @@ import qualified Data.Binary           as B
 import qualified Data.ByteArray        as BA
 import qualified Data.ByteString       as BS
 import qualified Data.ByteString.Char8 as C
-import qualified Network.Ethereum.Ens  as Ens
+-- import qualified Network.Ethereum.Ens  as Ens
 import qualified Network.HTTP.Client   as C
 import qualified Urbit.Azimuth         as AZ
 import qualified Urbit.Ob              as Ob
 
 -- During boot, use the infura provider
-provider = HttpProvider
-  "https://mainnet.infura.io/v3/196a7f37c7d54211b4a07904ec73ad87"
+provider = HttpProvider "http://eth-mainnet.urbit.org:8545"
 
 -- Conversion Utilities --------------------------------------------------------
 
@@ -224,8 +225,16 @@ dawnVent dSeed@(Seed ship life ring oaf) = do
     block <- blockNumber
     putStrLn ("boot: ethereum block #" ++ tshow block)
 
-    putStrLn "boot: retrieving azimuth contract"
-    azimuth <- withAccount () $ Ens.resolve "azimuth.eth"
+    -- TODO: Eventually look up the contract from ENS. Right now, our infura
+    -- node is filtering everything except for a very small set of contracts,
+    -- so just hard code the address.
+    --
+    --  putStrLn "boot: retrieving azimuth contract"
+    --  azimuth <- withAccount () $ Ens.resolve "azimuth.eth"
+    let azimuthAddr = "0x223c067f8cf28ae173ee5cafea60ca44c335fecb"
+    let azimuth = case fromHexString azimuthAddr of
+          Left _ -> error "Impossible"
+          Right x -> x
 
     immediateSponsor <- validateShipAndGetImmediateSponsor block azimuth dSeed
     dSponsor <- getSponsorshipChain block azimuth immediateSponsor
