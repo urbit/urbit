@@ -13,8 +13,6 @@ export class Sidebar extends Component {
   render() {
     const { props } = this;
 
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
-
     const contactAssoc =
       (props.associations && 'contacts' in props.associations)
       ? alphabetiseAssociations(props.associations.contacts) : {};
@@ -61,15 +59,6 @@ export class Sidebar extends Component {
 
     const groupedItems = Object.keys(contactAssoc)
       .filter(each => (groupedChannels[each] || []).length !== 0)
-      .filter((each) => {
-        if (selectedGroups.length === 0) {
-          return true;
-        }
-        const selectedPaths = selectedGroups.map((e) => {
-          return e[0];
-        });
-        return selectedPaths.includes(each);
-      })
       .map((each, i) => {
         const channels = groupedChannels[each] || [];
         return(

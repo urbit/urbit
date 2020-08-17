@@ -1831,6 +1831,8 @@
   ::
       %subscribe
     ?>  (team:title our.bol src.bol)
+    ?:  =(our.bol who.act)
+      [~ state]
     =/  join-wire=wire
       /join-group/[(scot %p who.act)]/[book.act]
     =/  meta=(unit (set path))
