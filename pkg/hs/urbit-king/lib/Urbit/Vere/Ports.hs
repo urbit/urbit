@@ -60,8 +60,8 @@ portRenewalTime = portLeaseLifetime - 60
 -- Messages sent from the main thread to the port mapping communication thread.
 data PortThreadMsg
   = PTMOpen Word16 (STM ())
-    -- ^ Does the open request, and then calls the passed in stm action to
-    -- singal completion to the main thread. We want to block on the initial
+    -- ^ Does the open request, and then runs the passed in stm action to
+    -- signal completion to the main thread. We want to block on the initial
     -- setting opening because we want the forwarding set up before we actually
     -- start using the port.
 
@@ -89,7 +89,7 @@ portThread q stderr = do
   initNatPmp >>= \case
     Left err -> do
       likelyIPAddress >>= \case
-        Just ip@(192, 168, c, d) -> warnBehindRouterAndErr ip err
+        Just ip@(192, 168, _, _) -> warnBehindRouterAndErr ip err
         Just ip@(10, _, _, _)    -> warnBehindRouterAndErr ip err
         _                        -> assumeOnPublicInternet
     Right pmp -> foundRouter pmp
