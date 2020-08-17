@@ -2,12 +2,13 @@ import React from 'react';
 
 import { useLocation } from 'react-router-dom';
 import { Box, Text, Row } from '@tlon/indigo-react';
+
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
 
 import { Sigil } from '~/logic/lib/sigil';
 
-const StatusBar = (props) => {
+function StatusBar(props) {
   const location = useLocation();
   const atHome = Boolean(location.pathname === '/');
 
@@ -36,8 +37,8 @@ const StatusBar = (props) => {
             <img
               className='invert-d'
               src='/~landscape/img/icon-home.png'
-              height='12'
-              width='12'
+              height='11'
+              width='11'
             />
           </StatusBarItem>
         )}
@@ -62,8 +63,8 @@ const StatusBar = (props) => {
           <img
             className='invert-d v-mid'
             src='/~landscape/img/groups.png'
-            height='16'
-            width='16'
+            height='15'
+            width='15'
           />
           <Text display={["none", "inline"]} ml={2}>Groups</Text>
         </StatusBarItem>
@@ -71,7 +72,6 @@ const StatusBar = (props) => {
           <Sigil ship={props.ship} size={24} color={"#000000"} classes="dib mix-blend-diff" />
           <Text ml={2} display={["none", "inline"]} fontFamily="mono">{props.ship}</Text>
         </StatusBarItem>
-
       </Row>
     </Box>
   );

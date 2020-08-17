@@ -153,9 +153,13 @@
     =*  headers   header-list.req
     =/  req-line  (parse-request-line url.req)
     ?.  =(method.req %'GET')  not-found:gen
+    =.  site.req-line
+      %+  murn  site.req-line
+      |=  =cord
+      ^-  (unit ^cord)
+      ?:(=(cord '') ~ `cord)
     =?  req-line  ?=(~ ext.req-line)
-      [[[~ %html] ~['index']] args.req-line]
-    ?>  ?=(^ ext.req-line)
+      [[[~ %html] (snoc site.req-line 'index')] args.req-line]
     ?~  site.req-line
       not-found:gen
     =*  url-prefix  landscape-homepage-prefix.configuration
@@ -177,7 +181,9 @@
     ++  get-file
       |=  req-line=request-line
       ^-  [simple-payload:http ?]
-      =/  pax=path  (snoc site.req-line (need ext.req-line))
+      =/  pax=path
+        ?~  ext.req-line  site.req-line
+        (snoc site.req-line u.ext.req-line)
       =/  content=(unit [=content suffix=path public=?])  (get-content pax)
       ?~  content  [not-found:gen %.n]
       ?-  -.content.u.content
