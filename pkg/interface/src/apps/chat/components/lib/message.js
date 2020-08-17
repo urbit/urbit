@@ -51,7 +51,7 @@ const renderWithSigil = (props, timestamp) => {
     let color = '#000000';
     let sigilClass = 'mix-blend-diff';
     if (contact) {
-      name = (contact.nickname.length > 0 && !hideNicknames)
+      name = (contact.nickname.length > 0 && !props.hideNicknames)
         ? contact.nickname : `~${props.msg.author}`;
       color = `#${uxToHex(contact.color)}`;
       sigilClass = '';
@@ -70,7 +70,7 @@ const renderWithSigil = (props, timestamp) => {
           sigilClass={sigilClass}
           association={props.association}
           group={props.group}
-          hideAvatars={hideAvatars}
+          hideAvatars={props.hideAvatars}
           className="fl pr3 v-top bg-white bg-gray0-d"
         />
         <div className="fr clamp-message white-d"
