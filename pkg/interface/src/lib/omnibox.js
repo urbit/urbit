@@ -38,6 +38,8 @@ export default function index(associations, apps) {
       commands.push(obj);
     }
   });
+
+  commands.push(result('Profile', '/~profile', 'profile', null));
   index.set('commands', commands);
 
   // all metadata from all apps is indexed

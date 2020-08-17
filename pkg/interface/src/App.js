@@ -145,6 +145,7 @@ class App extends React.Component {
               api={this.api}
               connection={this.state.connection}
               subscription={this.subscription}
+              ship={this.ship}
             />
             <Omnibox
               associations={state.associations}

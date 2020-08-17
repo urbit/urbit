@@ -1,106 +1,79 @@
 import React from 'react';
 
 import { useLocation } from 'react-router-dom';
-import { Box, Text, Icon } from '@tlon/indigo-react';
+import { Box, Text, Row } from '@tlon/indigo-react';
 import ReconnectButton from './ReconnectButton';
+import { StatusBarItem } from './StatusBarItem';
+
+import { Sigil } from '../lib/sigil';
 
 const StatusBar = (props) => {
   const location = useLocation();
   const atHome = Boolean(location.pathname === '/');
 
   const display = (!window.location.href.includes('popout/'))
-      ? 'db' : 'dn';
+      ? 'grid' : 'none';
 
   const invites = (props.invites && props.invites['/contacts'])
     ? props.invites['/contacts']
     : {};
 
-  const Notification = (Object.keys(invites).length > 0)
-    ?  <Icon size="22px" icon="Bullet"
-          fill="blue" position="absolute"
-          top={'-8px'} right={'7px'}
-       />
-    : null;
 
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
 
-  const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(
-    navigator.userAgent
-  );
-
   return (
-    <div
-      className={
-        'w-100 justify-between relative tc pt3 ' + display
-      }
-      style={{ height: 45 }}>
-      <div className='absolute left-0 pl4' style={{ top: 10 }}>
+    <Box
+      display={display}
+      width="100%"
+      gridTemplateRows="30px"
+      gridTemplateColumns="2fr 1fr"
+      py={2}
+      px={3}
+      >
+      <Row collapse>
         {atHome ? null : (
-          <Box
-            style={{ cursor: 'pointer' }}
-            display='inline-block'
-            borderRadius={2}
-            color='washedGray'
-            border={1}
-            py={1}
-            px={2}
-            mr={2}
-            onClick={() => props.history.push('/')}>
+          <StatusBarItem mr={2} onClick={() => props.history.push('/')}>
             <img
               className='invert-d'
               src='/~landscape/img/icon-home.png'
               height='12'
               width='12'
             />
-          </Box>
+          </StatusBarItem>
         )}
-        <Box
-          border={1}
-          borderRadius={2}
-          color='washedGray'
-          display='inline-block'
-          style={{ cursor: 'pointer' }}
-          lineHeight='min'
-          py={1}
-          px={2}
-          onClick={() => props.api.local.setOmnibox()}>
+        <StatusBarItem onClick={() => props.api.local.setOmnibox()}>
           <Text display='inline-block' style={{ transform: 'rotate(180deg)' }}>
             ↩
           </Text>
           <Text ml={2} color='black'>
             Leap
           </Text>
-          <Text display={mobile ? 'none' : 'inline-block'} ml={4} color='gray'>
+          <Text display={['none', 'inline']} ml={4} color='gray'>
             {metaKey}/
           </Text>
-        </Box>
+        </StatusBarItem>
         <ReconnectButton
           connection={props.connection}
           subscription={props.subscription}
         />
-      </div>
-      <div className='fl absolute relative right-0 pr4' style={{ top: 10 }}>
-        <Box
-          style={{ cursor: 'pointer' }}
-          display='inline-block'
-          borderRadius={2}
-          color='washedGray'
-          lineHeight='min'
-          border={1}
-          px={2}
-          py={1}
-          onClick={() => props.history.push('/~groups')}>
+      </Row>
+      <Row justifyContent="flex-end" collapse>
+        <StatusBarItem onClick={() => props.history.push('/~groups')} mr={2} badge={Object.keys(invites).length > 0}>
           <img
-            className='invert-d v-mid mr1'
+            className='invert-d v-mid'
             src='/~landscape/img/groups.png'
             height='16'
             width='16'
           />
-          {Notification}
-          <Text ml={1}>Groups</Text>
-        </Box>
-      </div>
-    </div>
+          <Text display={["none", "inline"]} ml={2}>Groups</Text>
+        </StatusBarItem>
+        <StatusBarItem onClick={() => props.history.push('/~profile')}>
+          <Sigil ship={props.ship} size={24} color={"#000000"} classes="dib mix-blend-diff" />
+          <Text ml={2} display={["none", "inline"]} fontFamily="mono">{props.ship}</Text>
+        </StatusBarItem>
+
+      </Row>
+    </Box>
   );
 };
 
