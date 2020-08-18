@@ -11,14 +11,14 @@ export default class CodeContent extends Component {
       (Boolean(content.code.output) &&
        content.code.output.length && content.code.output.length > 0) ?
       (
-        <pre className={`f7 clamp-attachment pa1 mt0 mb0 b--gray4 b--gray1-d bl br bb`}>
+        <pre className={`code f7 clamp-attachment pa1 mt0 mb0 b--gray4 b--gray1-d bl br bb`}>
           {content.code.output[0].join('\n')}
         </pre>
       ) : null;
-    
+
     return (
       <div className="mv2">
-        <pre className={`f7 clamp-attachment pa1 mt0 mb0 bg-light-gray b--gray4 b--gray1-d ba`}>
+        <pre className={`code f7 clamp-attachment pa1 mt0 mb0 bg-light-gray b--gray4 b--gray1-d ba`}>
           {content.code.expression}
         </pre>
         {outputElement}

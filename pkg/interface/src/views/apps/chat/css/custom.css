@@ -256,7 +256,7 @@ blockquote {
     font-family: 'Inter';
 }
 
-.code, .chat.code .react-codemirror2 .CodeMirror * {
+code, .code, .chat.code .react-codemirror2 .CodeMirror * {
   font-family: 'Source Code Pro';
 }
 
