@@ -23,32 +23,28 @@ typedef void (*urcrypt_free_t)(void*);
 
 /* We depend on OpenSSL for various reasons, which doesn't promise not to
  * allocate memory and has the annoying CRYPTO_set_mem_functions api. We
- * are therefore forced to use it, so we adopt a similar approach with
- * urcrypt_init().
+ * are therefore forced to support it in some fashion.
  *
- * This creates an issue for certain link configurations when the client of
- * urcrypt also uses the CRYPTO_set_mem_functions() api. The simplest thing
- * that is guaranteed to work is to call first CRYPTO_set_mem_functions() and
- * then urcrypt_init() with the same arguments during process initialization. 
+ * If you need to control urcrypt's internal OpenSSL allocation, you can call
+ * this function. It just wraps the OpenSSL function.
  *
- * You should call this function once. It will return 0 on success.  Calling
- * any other library functions without exactly one successful call to
- * urcrypt_init() will result in undefined behavior.
+ * urcrypt will not use these functions directly.
  */
-int urcrypt_init(urcrypt_malloc_t, urcrypt_realloc_t, urcrypt_free_t);
+int urcrypt_set_openssl_functions(urcrypt_malloc_t malloc_ptr,
+                                  urcrypt_realloc_t realloc_ptr,
+                                  urcrypt_free_t free_ptr);
 
-/* We can transparently deal with padding since we already use memory
- * allocation; in cases where we return allocated memory, it should
- * be freed with urcrypt_free() by the caller.
- */
-void urcrypt_free(void*);
+// const arguments are not written to, non-const arguments may be
+// array sizes[64] are purely documentary
 
+// 0 on success, result in out
 int urcrypt_ed_point_add(const uint8_t a[32],
                          const uint8_t b[32],
                          uint8_t out[32]);
 int urcrypt_ed_scalarmult(const uint8_t a[32],
                           const uint8_t b[32],
                           uint8_t out[32]);
+// void functions have no failure mode
 void urcrypt_ed_scalarmult_base(const uint8_t a[32],
                                 uint8_t out[32]);
 int urcrypt_ed_add_scalarmult_scalarmult_base(const uint8_t a[32],
@@ -70,68 +66,51 @@ void urcrypt_ed_sign(const uint8_t *message,
                      size_t length,
                      const uint8_t seed[32],
                      uint8_t out[64]);
+// return value means the signature was (not) verified
 bool urcrypt_ed_veri(const uint8_t *message,
                      size_t length,
                      const uint8_t signature[64],
                      const uint8_t public[32]);
 
-// XX let's de-const the reversed arrays and promise to trash them instead,
-// it will save us a malloc in some cases and it's a better API since
-// it puts the decision to copy in the caller's hands.
+int urcrypt_aes_ecba_en(uint8_t key[16], uint8_t block[16], uint8_t out[16]);
+int urcrypt_aes_ecba_de(uint8_t key[16], uint8_t block[16], uint8_t out[16]);
+int urcrypt_aes_ecbb_en(uint8_t key[24], uint8_t block[16], uint8_t out[16]);
+int urcrypt_aes_ecbb_de(uint8_t key[24], uint8_t block[16], uint8_t out[16]);
+int urcrypt_aes_ecbc_en(uint8_t key[32], uint8_t block[16], uint8_t out[16]);
+int urcrypt_aes_ecbc_de(uint8_t key[32], uint8_t block[16], uint8_t out[16]);
 
-int urcrypt_aes_ecba_en(const uint8_t key[16],
-                        const uint8_t block[16],
-                        uint8_t out[16]);
-int urcrypt_aes_ecba_de(const uint8_t key[16],
-                        const uint8_t block[16],
-                        uint8_t out[16]);
-int urcrypt_aes_ecbb_en(const uint8_t key[24],
-                        const uint8_t block[16],
-                        uint8_t out[16]);
-int urcrypt_aes_ecbb_de(const uint8_t key[24],
-                        const uint8_t block[16],
-                        uint8_t out[16]);
-int urcrypt_aes_ecbc_en(const uint8_t key[32],
-                        const uint8_t block[16],
-                        uint8_t out[16]);
-int urcrypt_aes_ecbc_de(const uint8_t key[32],
-                        const uint8_t block[16],
-                        uint8_t out[16]);
-
-/* return an alloc'd output pointer and write its length to out_length
- * caller should urcrypt_free() the returned pointer. The return value
- * is NULL on an error. */
-
-uint8_t* urcrypt_aes_cbca_en(const uint8_t *message,
-                             size_t length,
-                             const uint8_t key[16],
-                             const uint8_t ivec[16],
-                             size_t *out_length);
-uint8_t* urcrypt_aes_cbca_de(const uint8_t *message,
-                             size_t length,
-                             const uint8_t key[16],
-                             const uint8_t ivec[16],
-                             size_t *out_length);
-uint8_t* urcrypt_aes_cbcb_en(const uint8_t *message,
-                             size_t length,
-                             const uint8_t key[24],
-                             const uint8_t ivec[16],
-                             size_t *out_length);
-uint8_t* urcrypt_aes_cbcb_de(const uint8_t *message,
-                             size_t length,
-                             const uint8_t key[24],
-                             const uint8_t ivec[16],
-                             size_t *out_length);
-uint8_t* urcrypt_aes_cbcc_en(const uint8_t *message,
-                             size_t length,
-                             const uint8_t key[32],
-                             const uint8_t ivec[16],
-                             size_t *out_length);
-uint8_t* urcrypt_aes_cbcc_de(const uint8_t *message,
-                             size_t length,
-                             const uint8_t key[32],
-                             const uint8_t ivec[16],
-                             size_t *out_length);
+// message and length are read/write so
+// realloc_ptr can be used as realloc to pad message
+int urcrypt_aes_cbca_en(uint8_t **message_ptr,
+                        size_t *length_ptr,
+                        uint8_t key[16],
+                        uint8_t ivec[16],
+                        urcrypt_realloc_t realloc_ptr);
+int urcrypt_aes_cbca_de(uint8_t **message_ptr,
+                        size_t *length_ptr,
+                        uint8_t key[16],
+                        uint8_t ivec[16],
+                        urcrypt_realloc_t realloc_ptr);
+int urcrypt_aes_cbcb_en(uint8_t **message_ptr,
+                        size_t *length_ptr,
+                        uint8_t key[24],
+                        uint8_t ivec[16],
+                        urcrypt_realloc_t realloc_ptr);
+int urcrypt_aes_cbcb_de(uint8_t **message_ptr,
+                        size_t *length_ptr,
+                        uint8_t key[24],
+                        uint8_t ivec[16],
+                        urcrypt_realloc_t realloc_ptr);
+int urcrypt_aes_cbcc_en(uint8_t **message_ptr,
+                        size_t *length_ptr,
+                        uint8_t key[32],
+                        uint8_t ivec[16],
+                        urcrypt_realloc_t realloc_ptr);
+int urcrypt_aes_cbcc_de(uint8_t **message_ptr,
+                        size_t *length_ptr,
+                        uint8_t key[32],
+                        uint8_t ivec[16],
+                        urcrypt_realloc_t realloc_ptr);
 
 typedef enum urcrypt_argon2_type {
   urcrypt_argon2_d  = 0,
@@ -147,20 +126,22 @@ const char* urcrypt_argon2(urcrypt_argon2_type type,
                            uint32_t memory_cost,
                            uint32_t time_cost,
                            size_t secret_length,
-                           const uint8_t *secret,
+                           uint8_t *secret,
                            size_t associated_length,
-                           const uint8_t *associated,
+                           uint8_t *associated,
                            size_t password_length,
-                           const uint8_t *password,
+                           uint8_t *password,
                            size_t salt_length,
-                           const uint8_t *salt,
+                           uint8_t *salt,
                            size_t out_length,
-                           uint8_t *out);
+                           uint8_t *out,
+                           urcrypt_malloc_t malloc_ptr,
+                           urcrypt_free_t free_ptr);
 
 int urcrypt_blake2(size_t message_length,
-                   const uint8_t *message,
+                   uint8_t *message,
                    size_t key_length,
-                   const uint8_t key[64],
+                   uint8_t key[64],
                    size_t out_length,
                    uint8_t *out);
 

@@ -1,69 +1,45 @@
 #include "urcrypt.h"
 
-static bool initialized = false;
-static urcrypt_malloc_t urcrypt_malloc_ptr;
-static urcrypt_realloc_t urcrypt_realloc_ptr;
-static urcrypt_free_t urcrypt_free_ptr;
-
-static void* _urcrypt_malloc(size_t len)
-{
-  return (*urcrypt_malloc_ptr)(len);
-}
-
-static void* _urcrypt_realloc(void *ptr, size_t len)
-{
-  return (*urcrypt_realloc_ptr)(ptr, len);
-}
-
-void urcrypt_free(void *ptr)
-{
-  (*urcrypt_free_ptr)(ptr);
-}
+static urcrypt_malloc_t _urcrypt_ssl_malloc_ptr;
+static urcrypt_realloc_t _urcrypt_ssl_realloc_ptr;
+static urcrypt_free_t _urcrypt_ssl_free_ptr;
 
 static void*
 _urcrypt_malloc_ssl(size_t len
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
                , const char* file, int line
 #endif
-) { return _urcrypt_malloc(len); }
+) { return (*_urcrypt_ssl_malloc_ptr)(len); }
 
 static void*
 _urcrypt_realloc_ssl(void* ptr, size_t len
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
                , const char* file, int line
 #endif
-) { return _urcrypt_realloc(ptr, len); }
+) { return (*_urcrypt_ssl_realloc_ptr)(ptr, len); }
 
 static void
 _urcrypt_free_ssl(void* ptr
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
                , const char* file, int line
 #endif
-) { urcrypt_free(ptr); }
+) { (*_urcrypt_ssl_free_ptr)(ptr); }
 
 int
-urcrypt_init(_urcrypt_malloc_t m, _urcrypt_realloc_t r, urcrypt_free_t f)
+urcrypt_set_openssl_functions(urcrypt_malloc_t malloc_ptr,
+                              urcrypt_realloc_t realloc_ptr,
+                              urcrypt_free_t free_ptr)
 {
-  if ( initialized ) {
-    return -1;
+  int ret = CRYPTO_set_mem_functions(&_urcrypt_malloc_ssl,
+                                     &_urcrypt_realloc_ssl,
+                                     &_urcrypt_free_ssl);
+  if ( 0 == ret ) {
+    _urcrypt_ssl_malloc_ptr = malloc_ptr;
+    _urcrypt_ssl_realloc_ptr = realloc_ptr;
+    _urcrypt_ssl_free_ptr = free_ptr;
   }
-  else if ( (NULL == m) || (NULL == r) || (NULL == f) ) {
-    return -2;
-  }
-  else {
-    initialized = true;
-    urcrypt_malloc_ptr  = m;
-    urcrypt_realloc_ptr = r;
-    urcrypt_free_ptr    = f;
-    if ( CRYPTO_set_mem_functions(&_urcrypt_malloc_ssl,
-                                  &_urcrypt_realloc_ssl,
-                                  &_urcrypt_free_ssl) ) {
-      return 0;
-    }
-    else {
-      return -3;
-    }
-  }
+
+  return ret;
 }
 
 int
@@ -241,23 +217,7 @@ urcrypt_ed_veri(const uint8_t *message,
 }
 
 static void
-_urcrypt_reverse_copy(size_t size, const uint8_t *in, uint8_t *out) {
-  size_t i, j;
-  for ( i = 0, j = size - 1; i < size; i++, j-- ) {
-    out[i] = in[j];
-  }
-}
-
-static uint8_t*
-_urcrypt_reverse_alloc(size_t size, const uint8_t *in)
-{
-  uint8_t *out = _urcrypt_malloc(size);
-  _urcrypt_reverse_copy(size, in, out);
-  return out;
-}
-
-static void
-_urcrypt_reverse_inplace(size_t size, uint8_t *ptr) {
+_urcrypt_reverse(size_t size, uint8_t *ptr) {
   size_t i, j;
   uint8_t tmp;
   for ( i = 0, j = size - 1; i < j; i++, j-- ) {
@@ -268,329 +228,306 @@ _urcrypt_reverse_inplace(size_t size, uint8_t *ptr) {
 }
 
 int
-urcrypt_aes_ecba_en(const uint8_t key[16],
-                    const uint8_t block[16],
-                    uint8_t out[16])
+urcrypt_aes_ecba_en(uint8_t key[16], uint8_t block[16], uint8_t out[16])
 {
   AES_KEY aes_key;
-  uint8_t rkey[16], rblock[16];
 
-  _urcrypt_reverse_copy(16, key, rkey);
-  _urcrypt_reverse_copy(16, block, rblock);
+  _urcrypt_reverse(16, key);
+  _urcrypt_reverse(16, block);
 
-  if ( 0 != AES_set_encrypt_key(rkey, 128, &aes_key) ) {
+  if ( 0 != AES_set_encrypt_key(key, 128, &aes_key) ) {
     return -1;
   }
   else {
-    AES_ecb_encrypt(rblock, out, &aes_key, AES_ENCRYPT);
-    _urcrypt_reverse_inplace(16, out);
+    AES_ecb_encrypt(block, out, &aes_key, AES_ENCRYPT);
+    _urcrypt_reverse(16, out);
     return 0;
   }
 }
 
 int
-urcrypt_aes_ecba_de(const uint8_t key[16],
-                    const uint8_t block[16],
-                    uint8_t out[16])
+urcrypt_aes_ecba_de(uint8_t key[16], uint8_t block[16], uint8_t out[16])
 {
   AES_KEY aes_key;
-  uint8_t rkey[16], rblock[16];
 
-  _urcrypt_reverse_copy(16, key, rkey);
-  _urcrypt_reverse_copy(16, block, rblock);
+  _urcrypt_reverse(16, key);
+  _urcrypt_reverse(16, block);
 
-  if ( 0 != AES_set_decrypt_key(rkey, 128, &aes_key) ) {
+  if ( 0 != AES_set_decrypt_key(key, 128, &aes_key) ) {
     return -1;
   }
   else {
-    AES_ecb_encrypt(rblock, out, &aes_key, AES_DECRYPT);
-    _urcrypt_reverse_inplace(16, out);
+    AES_ecb_encrypt(block, out, &aes_key, AES_DECRYPT);
+    _urcrypt_reverse(16, out);
     return 0;
   }
 }
 
 int
-urcrypt_aes_ecbb_en(const uint8_t key[24],
-                    const uint8_t block[16],
-                    uint8_t out[16])
+urcrypt_aes_ecbb_en(uint8_t key[24], uint8_t block[16], uint8_t out[16])
 {
   AES_KEY aes_key;
-  uint8_t rkey[24], rblock[16];
 
-  _urcrypt_reverse_copy(24, key, rkey);
-  _urcrypt_reverse_copy(16, block, rblock);
+  _urcrypt_reverse(24, key);
+  _urcrypt_reverse(16, block);
 
-  if ( 0 != AES_set_encrypt_key(rkey, 192, &aes_key) ) {
+  if ( 0 != AES_set_encrypt_key(key, 192, &aes_key) ) {
     return -1;
   }
   else {
-    AES_ecb_encrypt(rblock, out, &aes_key, AES_ENCRYPT);
-    _urcrypt_reverse_inplace(16, out);
+    AES_ecb_encrypt(block, out, &aes_key, AES_ENCRYPT);
+    _urcrypt_reverse(16, out);
     return 0;
   }
 }
 
 int
-urcrypt_aes_ecbb_de(const uint8_t key[24],
-                    const uint8_t block[16],
-                    uint8_t out[16])
+urcrypt_aes_ecbb_de(uint8_t key[24], uint8_t block[16], uint8_t out[16])
 {
   AES_KEY aes_key;
-  uint8_t rkey[24], rblock[16];
 
-  _urcrypt_reverse_copy(24, key, rkey);
-  _urcrypt_reverse_copy(16, block, rblock);
+  _urcrypt_reverse(24, key);
+  _urcrypt_reverse(16, block);
 
-  if ( 0 != AES_set_decrypt_key(rkey, 192, &aes_key) ) {
+  if ( 0 != AES_set_decrypt_key(key, 192, &aes_key) ) {
     return -1;
   }
   else {
-    AES_ecb_encrypt(rblock, out, &aes_key, AES_DECRYPT);
-    _urcrypt_reverse_inplace(16, out);
+    AES_ecb_encrypt(block, out, &aes_key, AES_DECRYPT);
+    _urcrypt_reverse(16, out);
     return 0;
   }
 }
 
 int
-urcrypt_aes_ecbc_en(const uint8_t key[32],
-                    const uint8_t block[16],
-                    uint8_t out[16])
+urcrypt_aes_ecbc_en(uint8_t key[32], uint8_t block[16], uint8_t out[16])
 {
   AES_KEY aes_key;
-  uint8_t rkey[32], rblock[16];
 
-  _urcrypt_reverse_copy(32, key, rkey);
-  _urcrypt_reverse_copy(16, block, rblock);
+  _urcrypt_reverse(32, key);
+  _urcrypt_reverse(16, block);
 
-  if ( 0 != AES_set_encrypt_key(rkey, 256, &aes_key) ) {
+  if ( 0 != AES_set_encrypt_key(key, 256, &aes_key) ) {
     return -1;
   }
   else {
-    AES_ecb_encrypt(rblock, out, &aes_key, AES_ENCRYPT);
-    _urcrypt_reverse_inplace(16, out);
+    AES_ecb_encrypt(block, out, &aes_key, AES_ENCRYPT);
+    _urcrypt_reverse(16, out);
     return 0;
   }
 }
 
 int
-urcrypt_aes_ecbc_de(const uint8_t key[32],
-                    const uint8_t block[16],
-                    uint8_t out[16])
+urcrypt_aes_ecbc_de(uint8_t key[32], uint8_t block[16], uint8_t out[16])
 {
   AES_KEY aes_key;
-  uint8_t rkey[32], rblock[16];
 
-  _urcrypt_reverse_copy(32, key, rkey);
-  _urcrypt_reverse_copy(16, block, rblock);
+  _urcrypt_reverse(32, key);
+  _urcrypt_reverse(16, block);
 
-  if ( 0 != AES_set_decrypt_key(rkey, 256, &aes_key) ) {
+  if ( 0 != AES_set_decrypt_key(key, 256, &aes_key) ) {
     return -1;
   }
   else {
-    AES_ecb_encrypt(rblock, out, &aes_key, AES_DECRYPT);
-    _urcrypt_reverse_inplace(16, out);
+    AES_ecb_encrypt(block, out, &aes_key, AES_DECRYPT);
+    _urcrypt_reverse(16, out);
     return 0;
   }
 }
 
-static uint8_t*
-_urcrypt_cbc_pad(size_t *length_ptr, const uint8_t *message)
+int
+_urcrypt_cbc_pad(uint8_t **message_ptr,
+                 size_t *length_ptr,
+                 urcrypt_realloc_t realloc_ptr)
 {
   size_t length  = *length_ptr,
-         rem     = length % 16,
-         padding = rem ? 16 - rem : 0,
-         padded  = length + padding;
-  uint8_t *buf   = _urcrypt_malloc(padded);
+         rem     = length % 16;
 
-  memset(buf, 0, padding);
-  _urcrypt_reverse_copy(length, message, buf + padding);
+  if ( 0 == rem ) {
+    // no padding necessary
+    return 0;
+  }
+  else {
+    size_t padding = 16 - rem,
+           padded  = length + padding;
 
-  *length_ptr = padded;
-  return buf;
+    if ( padded < length ) {
+      return -1;
+    }
+    else {
+      uint8_t *out = (*realloc_ptr)(*message_ptr, padded);
+      if ( NULL == out ) {
+        return -2;
+      }
+      else {
+        *message_ptr = out;
+        *length_ptr = padded;
+        memset(out + length, 0, padding);
+        _urcrypt_reverse(padded, out);
+        return 0;
+      }
+    }
+  }
 }
 
-uint8_t*
-_urcrypt_cbc_help(const uint8_t *message,
-                  size_t length,
+int
+_urcrypt_cbc_help(uint8_t **message_ptr,
+                  size_t *length_ptr,
                   const AES_KEY *key,
-                  const uint8_t ivec[16],
+                  uint8_t ivec[16],
                   const int enc,
-                  size_t *out_length)
+                  urcrypt_realloc_t realloc_ptr)
 {
-  uint8_t riv[16], *in, *out;
-
-  _urcrypt_reverse_copy(16, ivec, riv);
-  in  = _urcrypt_cbc_pad(&length, message);
-  out = _urcrypt_malloc(length);
-  AES_cbc_encrypt(in, out, length, key, riv, enc);
-  urcrypt_free(in);
-
-  _urcrypt_reverse_inplace(length, out);
-  *out_length = length;
-  return out;
-}
-
-uint8_t*
-urcrypt_aes_cbca_en(const uint8_t *message,
-                    size_t length,
-                    const uint8_t key[16],
-                    const uint8_t ivec[16],
-                    size_t *out_length)
-{
-  AES_KEY aes_key;
-  uint8_t rkey[16];
-
-  _urcrypt_reverse_copy(16, key, rkey);
-
-  if ( 0 != AES_set_encrypt_key(rkey, 128, &aes_key) ) {
-    return NULL;
+  if ( 0 != _urcrypt_cbc_pad(message_ptr, length_ptr, realloc_ptr) ) {
+    return -1;
   }
   else {
-    return _urcrypt_cbc_help(message,
-                             length,
-                             &aes_key,
-                             ivec,
-                             AES_ENCRYPT,
-                             out_length);
+    uint8_t *out = *message_ptr;
+    size_t length = *length_ptr;
+    _urcrypt_reverse(16, ivec);
+    AES_cbc_encrypt(out, out, length, key, ivec, enc);
+    _urcrypt_reverse(length, out);
+    return 0;
   }
 }
 
-uint8_t*
-urcrypt_aes_cbca_de(const uint8_t *message,
-                    size_t length,
-                    const uint8_t key[16],
-                    const uint8_t ivec[16],
-                    size_t *out_length)
+int
+urcrypt_aes_cbca_en(uint8_t **message_ptr,
+                    size_t *length_ptr,
+                    uint8_t key[16],
+                    uint8_t ivec[16],
+                    urcrypt_realloc_t realloc_ptr)
 {
   AES_KEY aes_key;
-  uint8_t rkey[16];
 
-  _urcrypt_reverse_copy(16, key, rkey);
+  _urcrypt_reverse(16, key);
 
-  if ( 0 != AES_set_decrypt_key(rkey, 128, &aes_key) ) {
-    return NULL;
+  if ( 0 != AES_set_encrypt_key(key, 128, &aes_key) ) {
+    return -1;
   }
   else {
-    return _urcrypt_cbc_help(message,
-                             length,
-                             &aes_key,
-                             ivec,
-                             AES_DECRYPT,
-                             out_length);
+    return _urcrypt_cbc_help(message_ptr, length_ptr,
+        &aes_key, ivec, AES_ENCRYPT, realloc_ptr);
   }
 }
 
-uint8_t*
-urcrypt_aes_cbcb_en(const uint8_t *message,
-                    size_t length,
-                    const uint8_t key[24],
-                    const uint8_t ivec[16],
-                    size_t *out_length)
+int
+urcrypt_aes_cbca_de(uint8_t **message_ptr,
+                    size_t *length_ptr,
+                    uint8_t key[16],
+                    uint8_t ivec[16],
+                    urcrypt_realloc_t realloc_ptr)
 {
   AES_KEY aes_key;
-  uint8_t rkey[24];
 
-  _urcrypt_reverse_copy(24, key, rkey);
+  _urcrypt_reverse(16, key);
 
-  if ( 0 != AES_set_encrypt_key(rkey, 192, &aes_key) ) {
-    return NULL;
+  if ( 0 != AES_set_decrypt_key(key, 128, &aes_key) ) {
+    return -1;
   }
   else {
-    return _urcrypt_cbc_help(message,
-                             length,
-                             &aes_key,
-                             ivec,
-                             AES_ENCRYPT,
-                             out_length);
+    return _urcrypt_cbc_help(message_ptr, length_ptr,
+        &aes_key, ivec, AES_DECRYPT, realloc_ptr);
   }
 }
 
-uint8_t*
-urcrypt_aes_cbcb_de(const uint8_t *message,
-                    size_t length,
-                    const uint8_t key[24],
-                    const uint8_t ivec[16],
-                    size_t *out_length)
+int
+urcrypt_aes_cbcb_en(uint8_t **message_ptr,
+                    size_t *length_ptr,
+                    uint8_t key[24],
+                    uint8_t ivec[16],
+                    urcrypt_realloc_t realloc_ptr)
 {
   AES_KEY aes_key;
-  uint8_t rkey[24];
 
-  _urcrypt_reverse_copy(24, key, rkey);
+  _urcrypt_reverse(24, key);
 
-  if ( 0 != AES_set_decrypt_key(rkey, 192, &aes_key) ) {
-    return NULL;
+  if ( 0 != AES_set_encrypt_key(key, 192, &aes_key) ) {
+    return -1;
   }
   else {
-    return _urcrypt_cbc_help(message,
-                             length,
-                             &aes_key,
-                             ivec,
-                             AES_DECRYPT,
-                             out_length);
+    return _urcrypt_cbc_help(message_ptr, length_ptr,
+        &aes_key, ivec, AES_ENCRYPT, realloc_ptr);
   }
 }
 
-uint8_t*
-urcrypt_aes_cbcc_en(const uint8_t *message,
-                    size_t length,
-                    const uint8_t key[32],
-                    const uint8_t ivec[16],
-                    size_t *out_length)
+int
+urcrypt_aes_cbcb_de(uint8_t **message_ptr,
+                    size_t *length_ptr,
+                    uint8_t key[24],
+                    uint8_t ivec[16],
+                    urcrypt_realloc_t realloc_ptr)
 {
   AES_KEY aes_key;
-  uint8_t rkey[32];
 
-  _urcrypt_reverse_copy(32, key, rkey);
+  _urcrypt_reverse(24, key);
 
-  if ( 0 != AES_set_encrypt_key(rkey, 256, &aes_key) ) {
-    return NULL;
+  if ( 0 != AES_set_decrypt_key(key, 192, &aes_key) ) {
+    return -1;
   }
   else {
-    return _urcrypt_cbc_help(message,
-                             length,
-                             &aes_key,
-                             ivec,
-                             AES_ENCRYPT,
-                             out_length);
+    return _urcrypt_cbc_help(message_ptr, length_ptr,
+        &aes_key, ivec, AES_DECRYPT, realloc_ptr);
   }
 }
 
-uint8_t*
-urcrypt_aes_cbcc_de(const uint8_t *message,
-                    size_t length,
-                    const uint8_t key[32],
-                    const uint8_t ivec[16],
-                    size_t *out_length)
+int
+urcrypt_aes_cbcc_en(uint8_t **message_ptr,
+                    size_t *length_ptr,
+                    uint8_t key[32],
+                    uint8_t ivec[16],
+                    urcrypt_realloc_t realloc_ptr)
 {
   AES_KEY aes_key;
-  uint8_t rkey[32];
 
-  _urcrypt_reverse_copy(32, key, rkey);
+  _urcrypt_reverse(32, key);
 
-  if ( 0 != AES_set_decrypt_key(rkey, 256, &aes_key) ) {
-    return NULL;
+  if ( 0 != AES_set_encrypt_key(key, 256, &aes_key) ) {
+    return -1;
   }
   else {
-    return _urcrypt_cbc_help(message,
-                             length,
-                             &aes_key,
-                             ivec,
-                             AES_DECRYPT,
-                             out_length);
+    return _urcrypt_cbc_help(message_ptr, length_ptr,
+        &aes_key, ivec, AES_ENCRYPT, realloc_ptr);
   }
 }
+
+int
+urcrypt_aes_cbcc_de(uint8_t **message_ptr,
+                    size_t *length_ptr,
+                    uint8_t key[32],
+                    uint8_t ivec[16],
+                    urcrypt_realloc_t realloc_ptr)
+{
+  AES_KEY aes_key;
+
+  _urcrypt_reverse(32, key);
+
+  if ( 0 != AES_set_decrypt_key(key, 256, &aes_key) ) {
+    return -1;
+  }
+  else {
+    return _urcrypt_cbc_help(message_ptr, length_ptr,
+        &aes_key, ivec, AES_DECRYPT, realloc_ptr);
+  }
+}
+
+/* argon2 does memory allocation, but takes function pointers in the context.
+ * the signatures don't match, so we need these wrappers.
+ */
+static urcrypt_malloc_t _urcrypt_argon2_malloc_ptr;
+static urcrypt_free_t _urcrypt_argon2_free_ptr;
 
 static int
 _urcrypt_argon2_alloc(uint8_t** output, size_t bytes)
 {
-  *output = _urcrypt_malloc(bytes);
+  *output = (*_urcrypt_argon2_malloc_ptr)(bytes);
   return (NULL != output);
 }
 
 static void
 _urcrypt_argon2_free(uint8_t* memory, size_t bytes)
 {
-  urcrypt_free(memory);
+  (*_urcrypt_argon2_free_ptr)(memory);
 }
 
 // library convention is to have sizes in size_t, but argon2 wants them
@@ -604,15 +541,17 @@ urcrypt_argon2(urcrypt_argon2_type type,
                uint32_t memory_cost,
                uint32_t time_cost,
                size_t secret_length,
-               const uint8_t *secret,
+               uint8_t *secret,
                size_t associated_length,
-               const uint8_t *associated,
+               uint8_t *associated,
                size_t password_length,
-               const uint8_t *password,
+               uint8_t *password,
                size_t salt_length,
-               const uint8_t *salt,
+               uint8_t *salt,
                size_t out_length,
-               uint8_t *out)
+               uint8_t *out,
+               urcrypt_malloc_t malloc_ptr,
+               urcrypt_free_t free_ptr)
 {
   if ( !( SZ_32(secret_length) &&
           SZ_32(associated_length) &&
@@ -624,7 +563,6 @@ urcrypt_argon2(urcrypt_argon2_type type,
   else {
     int (*f)(argon2_context*);
     int result;
-    uint8_t *rsecret, *rassoc, *rpassword, *rsalt;
 
     switch ( type ) {
       default:
@@ -643,20 +581,21 @@ urcrypt_argon2(urcrypt_argon2_type type,
         break;
     }
 
-    rsecret   = _urcrypt_reverse_alloc(secret_length, secret);
-    rassoc    = _urcrypt_reverse_alloc(associated_length, associated);
-    rpassword = _urcrypt_reverse_alloc(password_length, password);
-    rsalt     = _urcrypt_reverse_alloc(salt_length, salt);
+    _urcrypt_reverse(secret_length, secret);
+    _urcrypt_reverse(associated_length, associated);
+    _urcrypt_reverse(password_length, password);
+    _urcrypt_reverse(salt_length, salt);
+
     argon2_context context = {
       out,                   // output array, at least [digest length] in size
       out_length,            // digest length
-      rpassword,             // password array
+      password,              // password array
       password_length,       // password length
-      rsalt,                 // salt array
+      salt,                  // salt array
       salt_length,           // salt length
-      rsecret,               // optional secret data
+      secret,                // optional secret data
       secret_length,
-      rassoc,                // optional associated data
+      associated,            // optional associated data
       associated_length,
       time_cost,             // performance cost configuration
       memory_cost,
@@ -668,17 +607,15 @@ urcrypt_argon2(urcrypt_argon2_type type,
       ARGON2_DEFAULT_FLAGS   // by default only internal memory is cleared
     };
 
+    _urcrypt_argon2_malloc_ptr = malloc_ptr;
+    _urcrypt_argon2_free_ptr = free_ptr;
     result = (*f)(&context);
-    urcrypt_free(rsecret);
-    urcrypt_free(rassoc);
-    urcrypt_free(rpassword);
-    urcrypt_free(rsalt);
 
     if ( ARGON2_OK != result ) {
       return argon2_error_message(result);
     }
     else {
-      _urcrypt_reverse_inplace(out_length, out);
+      _urcrypt_reverse(out_length, out);
       return NULL;
     }
   }
@@ -686,33 +623,27 @@ urcrypt_argon2(urcrypt_argon2_type type,
 
 int
 urcrypt_blake2(size_t message_length,
-               const uint8_t *message,
+               uint8_t *message,
                size_t key_length,
-               const uint8_t key[64],
+               uint8_t key[64],
                size_t out_length,
                uint8_t *out)
 {
-  int ret;
-  uint8_t rkey[64];
-  uint8_t *rmessage;
-
   if ( key_length > 64 ) {
     return -1;
   }
-
-  rmessage = _urcrypt_reverse_alloc(message_length, message);
-  _urcrypt_reverse_copy(key_length, key, rkey);
-  ret = blake2b(out, out_length,
-                rmessage, message_length,
-                rkey, key_length);
-
-  urcrypt_free(rmessage);
-
-  if ( 0 != ret ) {
-    return -1;
-  }
   else {
-    _urcrypt_reverse_inplace(out_length, out);
-    return 0;
+    _urcrypt_reverse(message_length, message);
+    _urcrypt_reverse(key_length, key);
+
+    if ( 0 != blake2b(out, out_length,
+                      message, message_length,
+                      key, key_length)) {
+      return -1;
+    }
+    else {
+      _urcrypt_reverse(out_length, out);
+      return 0;
+    }
   }
 }
