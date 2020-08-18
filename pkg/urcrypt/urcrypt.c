@@ -26,20 +26,21 @@ _urcrypt_free_ssl(void* ptr
 ) { (*_urcrypt_ssl_free_ptr)(ptr); }
 
 int
-urcrypt_set_openssl_functions(urcrypt_malloc_t malloc_ptr,
-                              urcrypt_realloc_t realloc_ptr,
-                              urcrypt_free_t free_ptr)
+urcrypt_set_openssl_mem_functions(urcrypt_malloc_t malloc_ptr,
+                                  urcrypt_realloc_t realloc_ptr,
+                                  urcrypt_free_t free_ptr)
 {
-  int ret = CRYPTO_set_mem_functions(&_urcrypt_malloc_ssl,
-                                     &_urcrypt_realloc_ssl,
-                                     &_urcrypt_free_ssl);
-  if ( 0 == ret ) {
+  if ( CRYPTO_set_mem_functions(&_urcrypt_malloc_ssl,
+                                &_urcrypt_realloc_ssl,
+                                &_urcrypt_free_ssl) ) {
     _urcrypt_ssl_malloc_ptr = malloc_ptr;
     _urcrypt_ssl_realloc_ptr = realloc_ptr;
     _urcrypt_ssl_free_ptr = free_ptr;
+    return 0;
   }
-
-  return ret;
+  else {
+    return -1;
+  }
 }
 
 int
@@ -218,12 +219,14 @@ urcrypt_ed_veri(const uint8_t *message,
 
 static void
 _urcrypt_reverse(size_t size, uint8_t *ptr) {
-  size_t i, j;
-  uint8_t tmp;
-  for ( i = 0, j = size - 1; i < j; i++, j-- ) {
-    tmp = ptr[i];
-    ptr[i] = ptr[j];
-    ptr[j] = tmp;
+  if ( size > 0 ) {
+    size_t i, j;
+    uint8_t tmp;
+    for ( i = 0, j = size - 1; i < j; i++, j-- ) {
+      tmp = ptr[i];
+      ptr[i] = ptr[j];
+      ptr[j] = tmp;
+    }
   }
 }
 
@@ -522,7 +525,7 @@ static int
 _urcrypt_argon2_alloc(uint8_t** output, size_t bytes)
 {
   *output = (*_urcrypt_argon2_malloc_ptr)(bytes);
-  return (NULL != output);
+  return (NULL != *output);
 }
 
 static void
@@ -564,6 +567,7 @@ urcrypt_argon2(urcrypt_argon2_type type,
   else {
     int (*f)(argon2_context*);
     int result;
+
 
     switch ( type ) {
       default:

@@ -69,7 +69,9 @@
           wix_w,  ex_y,
           wid_w, dat_y,
           wis_w, sat_y,
-          out_w, out_y);
+          out_w, out_y,
+          &u3a_malloc,
+          &u3a_free);
 
       u3a_free(key_y);
       u3a_free(ex_y);

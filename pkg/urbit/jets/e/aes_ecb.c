@@ -4,7 +4,7 @@
 #include "all.h"
 #include <urcrypt.h>
 
-typedef int (*urcrypt_ecb)(const c3_y*, const c3_y[16], c3_y[16]);
+typedef int (*urcrypt_ecb)(c3_y*, c3_y[16], c3_y[16]);
 
 /* functions
 */
@@ -13,7 +13,7 @@ typedef int (*urcrypt_ecb)(const c3_y*, const c3_y[16], c3_y[16]);
    * jets we unpack with an unconditional u3r_bytes */
 
   static u3_atom
-  _cqea_ecba_help(c3_y* key_y, u3_atom blk, urcrypt_ecb low_f)
+  _cqea_ecb_help(c3_y* key_y, u3_atom blk, urcrypt_ecb low_f)
   {
     c3_y blk_y[16], out_y[16];
 
@@ -33,7 +33,7 @@ typedef int (*urcrypt_ecb)(const c3_y*, const c3_y[16], c3_y[16]);
   {
     c3_y key_y[16];
     u3r_bytes(0, 16, key_y, key);
-    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecba_en);
+    return _cqea_ecb_help(key_y, blk, &urcrypt_aes_ecba_en);
   }
 
   u3_noun
@@ -56,7 +56,7 @@ typedef int (*urcrypt_ecb)(const c3_y*, const c3_y[16], c3_y[16]);
   {
     c3_y key_y[16];
     u3r_bytes(0, 16, key_y, key);
-    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecba_de);
+    return _cqea_ecb_help(key_y, blk, &urcrypt_aes_ecba_de);
   }
 
   u3_noun
@@ -79,7 +79,7 @@ typedef int (*urcrypt_ecb)(const c3_y*, const c3_y[16], c3_y[16]);
   {
     c3_y key_y[24];
     u3r_bytes(0, 24, key_y, key);
-    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecbb_en);
+    return _cqea_ecb_help(key_y, blk, &urcrypt_aes_ecbb_en);
   }
 
   u3_noun
@@ -102,7 +102,7 @@ typedef int (*urcrypt_ecb)(const c3_y*, const c3_y[16], c3_y[16]);
   {
     c3_y key_y[24];
     u3r_bytes(0, 24, key_y, key);
-    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecbb_de);
+    return _cqea_ecb_help(key_y, blk, &urcrypt_aes_ecbb_de);
   }
 
   u3_noun
@@ -125,7 +125,7 @@ typedef int (*urcrypt_ecb)(const c3_y*, const c3_y[16], c3_y[16]);
   {
     c3_y key_y[32];
     u3r_bytes(0, 32, key_y, key);
-    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecbc_en);
+    return _cqea_ecb_help(key_y, blk, &urcrypt_aes_ecbc_en);
   }
 
   u3_noun
@@ -148,7 +148,7 @@ typedef int (*urcrypt_ecb)(const c3_y*, const c3_y[16], c3_y[16]);
   {
     c3_y key_y[32];
     u3r_bytes(0, 32, key_y, key);
-    return _cqea_ecba_help(key_y, blk, &urcrypt_aes_ecbc_de);
+    return _cqea_ecb_help(key_y, blk, &urcrypt_aes_ecbc_de);
   }
 
   u3_noun

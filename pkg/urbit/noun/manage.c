@@ -1656,9 +1656,27 @@ u3m_boot(c3_c* dir_c)
   */
   u3m_init();
 
+  /* Initialize OpenSSL with loom allocation functions.
+   * IMPORTANT: this should come before the urcrypt_set_openssl [...]
+   * call, because in usual circumstances that will override the functions
+   * we set here, but weird linking situations we don't currently encounter
+   * could mean we need to set both, and it doesn't hurt.
+   */
+  if ( 0 == CRYPTO_set_mem_functions(&u3a_malloc_ssl,
+                                     &u3a_realloc_ssl,
+                                     &u3a_free_ssl) ) {
+    u3l_log("%s\r\n", "openssl initialization failed");
+    exit(1);
+  }
+
   /* Initialize cryptography suite with loom allocation functions.
   */
-  urcrypt_init(&u3a_malloc, &u3a_realloc, &u3a_free);
+  if ( 0 != urcrypt_set_openssl_mem_functions(&u3a_malloc,
+                                              &u3a_realloc,
+                                              &u3a_free) ) {
+    u3l_log("%s\r\n", "urcrypt initialization failed");
+    exit(1);
+  }
 
   /* Activate the storage system.
   */

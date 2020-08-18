@@ -26,13 +26,13 @@ typedef void (*urcrypt_free_t)(void*);
  * are therefore forced to support it in some fashion.
  *
  * If you need to control urcrypt's internal OpenSSL allocation, you can call
- * this function. It just wraps the OpenSSL function.
+ * this function. It wraps the OpenSSL function, returning 0 on success.
  *
  * urcrypt will not use these functions directly.
  */
-int urcrypt_set_openssl_functions(urcrypt_malloc_t malloc_ptr,
-                                  urcrypt_realloc_t realloc_ptr,
-                                  urcrypt_free_t free_ptr);
+int urcrypt_set_openssl_mem_functions(urcrypt_malloc_t malloc_ptr,
+                                      urcrypt_realloc_t realloc_ptr,
+                                      urcrypt_free_t free_ptr);
 
 // const arguments are not written to, non-const arguments may be
 // array sizes[64] are purely documentary

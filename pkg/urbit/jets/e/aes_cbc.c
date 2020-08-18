@@ -8,35 +8,33 @@
  * the ECB functions, which truncate them, hence the raw u3r_bytes unpacking.
  */
 
-typedef c3_y* (*urcrypt_cbc)(const c3_y*,
-                             size_t,
-                             const c3_y*,
-                             const c3_y*,
-                             size_t*);
+typedef int (*urcrypt_cbc)(c3_y**,
+                           size_t*,
+                           c3_y*,
+                           c3_y*,
+                           urcrypt_realloc_t);
 
 /* functions
 */
   static u3_atom
   _cqea_cbc_help(c3_y* key_y, u3_atom iv, u3_atom msg, urcrypt_cbc low_f)
   {
-    size_t len;
-    c3_w met_w;
-    c3_y iv_y[16], *msg_y, *out_y;
+    u3_atom ret;
+    c3_w    met_w;
+    c3_y    iv_y[16];
+    c3_y*   msg_y = u3r_bytes_all(&met_w, msg);
+    size_t  len = met_w;
 
     u3r_bytes(0, 16, iv_y, iv);
-
-    msg_y = u3r_bytes_all(&met_w, msg);
-    out_y = (*low_f)(msg_y, met_w, key_y, iv_y, &len);
-    u3a_free(msg_y);
-
-    if ( NULL == out_y ) {
-      return u3_none;
+    if ( 0 != (*low_f)(&msg_y, &len, key_y, iv_y, &u3a_realloc) ) {
+      ret = u3_none;
     }
     else {
-      u3_atom ret = u3i_bytes(len, out_y);
-      urcrypt_free(out_y);
-      return ret;
+      ret = u3i_bytes(len, msg_y);
     }
+    u3a_free(msg_y);
+
+    return ret;
   }
 
   static u3_atom
