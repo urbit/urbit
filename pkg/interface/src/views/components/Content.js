@@ -67,9 +67,7 @@ export const Content = (props) => {
           path="/~profile"
           render={ p => (
             <Profile
-             ship={this.ship}
-             api={this.api}
-             {...state}
+             {...props}
             />
           )}
         />

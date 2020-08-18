@@ -27,7 +27,7 @@ function StatusBar(props) {
       display={display}
       width="100%"
       gridTemplateRows="30px"
-      gridTemplateColumns="2fr 1fr"
+      gridTemplateColumns="3fr 1fr"
       py={2}
       px={3}
       >
@@ -42,7 +42,7 @@ function StatusBar(props) {
             />
           </StatusBarItem>
         )}
-        <StatusBarItem onClick={() => props.api.local.setOmnibox()}>
+        <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
           <Text display='inline-block' style={{ transform: 'rotate(180deg)' }}>
             ↩
           </Text>
@@ -53,13 +53,9 @@ function StatusBar(props) {
             {metaKey}/
           </Text>
         </StatusBarItem>
-        <ReconnectButton
-          connection={props.connection}
-          subscription={props.subscription}
-        />
-      </Row>
-      <Row justifyContent="flex-end" collapse>
-        <StatusBarItem onClick={() => props.history.push('/~groups')} mr={2} badge={Object.keys(invites).length > 0}>
+        <StatusBarItem 
+          onClick={() => props.history.push('/~groups')}
+          badge={Object.keys(invites).length > 0}>
           <img
             className='invert-d v-mid'
             src='/~landscape/img/groups.png'
@@ -68,6 +64,13 @@ function StatusBar(props) {
           />
           <Text display={["none", "inline"]} ml={2}>Groups</Text>
         </StatusBarItem>
+        <ReconnectButton
+          connection={props.connection}
+          subscription={props.subscription}
+        />
+      </Row>
+      <Row justifyContent="flex-end" collapse>
+
         <StatusBarItem onClick={() => props.history.push('/~profile')}>
           <Sigil ship={props.ship} size={24} color={"#000000"} classes="dib mix-blend-diff" />
           <Text ml={2} display={["none", "inline"]} fontFamily="mono">{props.ship}</Text>
