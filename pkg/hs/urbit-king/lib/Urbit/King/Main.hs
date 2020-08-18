@@ -590,15 +590,14 @@ runShip (CLI.Run pierPath) opts daemon = do
         mStart
 
 
-buildPortHandler :: HasLogFunc e => Maybe CLI.NatSetting -> RIO e PortControlApi
-buildPortHandler Nothing  = pure buildInactivePorts
+buildPortHandler :: HasLogFunc e => CLI.Nat -> RIO e PortControlApi
+buildPortHandler CLI.NatNever  = pure buildInactivePorts
 -- TODO: Figure out what to do about logging here. The "port: " messages are
 -- the sort of thing that should be put on the muxed terminal log, but we don't
 -- have that at this layer.
-buildPortHandler (Just CLI.NatSettingAlways) =
-  buildNatPorts TryNatAlways (io . hPutStrLn stderr . unpack)
-buildPortHandler (Just CLI.NatSettingWhenPrivateNetwork) =
-  buildNatPorts TryNatWhenPrivate (io . hPutStrLn stderr . unpack)
+buildPortHandler CLI.NatAlways = buildNatPorts (io . hPutStrLn stderr . unpack)
+buildPortHandler CLI.NatWhenPrivateNetwork =
+  buildNatPortsWhenPrivate (io . hPutStrLn stderr . unpack)
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do

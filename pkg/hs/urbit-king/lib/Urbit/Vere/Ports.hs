@@ -1,7 +1,7 @@
 module Urbit.Vere.Ports (HasPortControlApi(..),
                          PortControlApi,
-                         TryNat(..),
                          buildInactivePorts,
+                         buildNatPortsWhenPrivate,
                          buildNatPorts,
                          requestPortAccess) where
 
@@ -31,24 +31,23 @@ buildInactivePorts = PortControlApi noop noop
  where
   noop x = pure ()
 
-data TryNat
-  = TryNatAlways
-  | TryNatWhenPrivate
+-- | Builds a PortControlApi struct which tries to hole-punch by talking to the
+-- NAT gateway over NAT-PMP iff we are on a private network ip.
+buildNatPortsWhenPrivate :: (HasLogFunc e)
+                         => (Text -> RIO e ())
+                         -> RIO e PortControlApi
+buildNatPortsWhenPrivate stderr = do
+  behind <- likelyBehindRouter
+  if behind
+    then buildNatPorts stderr
+    else pure buildInactivePorts
 
 -- | Builds a PortControlApi struct which tries to hole-punch by talking to the
 -- NAT gateway over NAT-PMP.
 buildNatPorts :: (HasLogFunc e)
-              => TryNat
-              -> (Text -> RIO e ())
+              => (Text -> RIO e ())
               -> RIO e PortControlApi
-
-buildNatPorts TryNatWhenPrivate stderr = do
-  behind <- likelyBehindRouter
-  if behind
-    then buildNatPorts TryNatAlways stderr
-    else pure buildInactivePorts
-
-buildNatPorts TryNatAlways stderr = do
+buildNatPorts stderr = do
   q <- newTQueueIO
   async $ portThread q stderr
 
