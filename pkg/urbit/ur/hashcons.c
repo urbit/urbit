@@ -990,6 +990,138 @@ ur_bsw8_slow(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
 }
 
 static inline void
+_bsw64_unsafe(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  uint64_t  fill = bsw->fill;
+  uint8_t    off = bsw->off;
+  uint8_t *bytes = bsw->bytes;
+
+  bsw->bits += len;
+
+  if ( off ) {
+    uint8_t rest = 8 - off;
+
+    if ( len < rest ) {
+      bytes[fill] ^= (val & ((1 << len) - 1)) << off;
+      bsw->off = off + len;
+      return;
+    }
+
+    bytes[fill++] ^= (val & ((1 << rest) - 1)) << off;
+    val >>= rest;
+    len  -= rest;
+  }
+
+  switch ( len >> 3 ) {
+    case 8: {
+      bytes[fill++] = ur_mask_8(val);
+      bytes[fill++] = ur_mask_8(val >>  8);
+      bytes[fill++] = ur_mask_8(val >> 16);
+      bytes[fill++] = ur_mask_8(val >> 24);
+      bytes[fill++] = ur_mask_8(val >> 32);
+      bytes[fill++] = ur_mask_8(val >> 40);
+      bytes[fill++] = ur_mask_8(val >> 48);
+      bytes[fill++] = ur_mask_8(val >> 56);
+
+      //  no offset is possible here
+      //
+      bsw->fill = fill;
+      bsw->off  = 0;
+      return;
+    }
+
+    case 7: {
+      bytes[fill++] = ur_mask_8(val);
+      bytes[fill++] = ur_mask_8(val >>  8);
+      bytes[fill++] = ur_mask_8(val >> 16);
+      bytes[fill++] = ur_mask_8(val >> 24);
+      bytes[fill++] = ur_mask_8(val >> 32);
+      bytes[fill++] = ur_mask_8(val >> 40);
+      bytes[fill++] = ur_mask_8(val >> 48);
+      val >>= 56;
+    } break;
+
+    case 6: {
+      bytes[fill++] = ur_mask_8(val);
+      bytes[fill++] = ur_mask_8(val >>  8);
+      bytes[fill++] = ur_mask_8(val >> 16);
+      bytes[fill++] = ur_mask_8(val >> 24);
+      bytes[fill++] = ur_mask_8(val >> 32);
+      bytes[fill++] = ur_mask_8(val >> 40);
+      val >>= 48;
+    } break;
+
+    case 5: {
+      bytes[fill++] = ur_mask_8(val);
+      bytes[fill++] = ur_mask_8(val >>  8);
+      bytes[fill++] = ur_mask_8(val >> 16);
+      bytes[fill++] = ur_mask_8(val >> 24);
+      bytes[fill++] = ur_mask_8(val >> 32);
+      val >>= 40;
+    } break;
+
+    case 4: {
+      bytes[fill++] = ur_mask_8(val);
+      bytes[fill++] = ur_mask_8(val >>  8);
+      bytes[fill++] = ur_mask_8(val >> 16);
+      bytes[fill++] = ur_mask_8(val >> 24);
+      val >>= 32;
+    } break;
+
+    case 3: {
+      bytes[fill++] = ur_mask_8(val);
+      bytes[fill++] = ur_mask_8(val >>  8);
+      bytes[fill++] = ur_mask_8(val >> 16);
+      val >>= 24;
+    } break;
+
+    case 2: {
+      bytes[fill++] = ur_mask_8(val);
+      bytes[fill++] = ur_mask_8(val >>  8);
+      val >>= 16;
+    } break;
+
+    case 1: {
+      bytes[fill++] = ur_mask_8(val);
+      val >>= 8;
+    } break;
+  }
+
+  off = ur_mask_3(len);
+
+  if ( off ) {
+    bytes[fill] = (uint8_t)(val & ((1 << off) - 1));
+  }
+
+  bsw->fill = fill;
+  bsw->off  = off;
+}
+
+void
+ur_bsw64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  uint8_t bits = bsw->off + len;
+
+  if ( bsw->fill + (bits >> 3) + !!ur_mask_3(bits) >= bsw->size ) {
+    ur_bsw_grow(bsw);
+  }
+
+  _bsw64_unsafe(bsw, (len > 64) ? 64 : len, val);
+}
+
+void
+ur_bsw64_slow(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  len = (len > 64) ? 64 : len;
+
+  while ( len ) {
+    ur_bsw_bit(bsw, val & 0xff);
+    val >>= 1;
+    len--;
+  }
+}
+
+static inline void
 _bsw_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 {
   uint64_t fill = bsw->fill;
@@ -1035,46 +1167,6 @@ ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
   }
 
   _bsw_bytes_unsafe(bsw, len, byt);
-}
-
-static inline void
-_bsw64_unsafe(ur_bsw_t *bsw, uint8_t len_bit, uint64_t val)
-{
-  //  assumes little-endian
-  //
-  uint8_t    *byt = (uint8_t*)&val;
-  uint8_t len_byt = len_bit >> 3;
-  uint8_t     low = ur_mask_3(len_bit);
-
-  if ( len_byt ) {
-    _bsw_bytes_unsafe(bsw, len_byt, byt);
-  }
-
-  if ( low ) {
-    _bsw8_unsafe(bsw, low, byt[len_byt]);
-  }
-}
-
-void
-ur_bsw64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
-{
-  uint8_t bits = bsw->off + len;
-
-  if ( bsw->fill + (bits >> 3) + !!ur_mask_3(bits) >= bsw->size ) {
-    ur_bsw_grow(bsw);
-  }
-
-  _bsw64_unsafe(bsw, (len > 64) ? 64 : len, val);
-}
-
-void
-ur_bsw64_slow(ur_bsw_t *bsw, uint8_t len, uint64_t val)
-{
-  while ( len ) {
-    ur_bsw_bit(bsw, val & 0xff);
-    val >>= 1;
-    len--;
-  }
 }
 
 static inline void
