@@ -7,17 +7,20 @@
   $%  [%clay =path]
       [%glob =glob:glob]
   ==
-+$  state-1
-  $:  %1
-      =configuration:srv
++$  state-base
+  $:  =configuration:srv
       =serving
+  ==
++$  state-2
+  $:  %2
+      state-base
   ==
 --
 ::
 %+  verb  |
 %-  agent:dbug
 ::
-=|  state-1
+=|  state-2
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
@@ -60,12 +63,18 @@
       ^-  [content ?]
       [[%clay clay-path] public]
     ==
-  ?>  ?=(%1 -.old-state)
+  =?  old-state  ?=(%1 -.old-state)
+    %=  old-state
+       -  %2
+       serving  (~(del by serving.old-state) /'~landscape'/js/index)
+    ==
+  ?>  ?=(%2 -.old-state)
   [~ this(state old-state)]
   ::
   +$  versioned-state
-    $%  state-1
-        state-0
+    $%  state-0
+        state-1
+        state-2
     ==
   ::
   +$  serving-0  (map url-base=path [=clay=path public=?])
@@ -73,6 +82,10 @@
     $:  %0
         =configuration:srv
         =serving-0
+    ==
+  +$  state-1
+    $:  %1
+        state-base
     ==
   --
 ::
@@ -140,9 +153,13 @@
     =*  headers   header-list.req
     =/  req-line  (parse-request-line url.req)
     ?.  =(method.req %'GET')  not-found:gen
+    =.  site.req-line
+      %+  murn  site.req-line
+      |=  =cord
+      ^-  (unit ^cord)
+      ?:(=(cord '') ~ `cord)
     =?  req-line  ?=(~ ext.req-line)
-      [[[~ %html] ~['index']] args.req-line]
-    ?>  ?=(^ ext.req-line)
+      [[[~ %html] (snoc site.req-line 'index')] args.req-line]
     ?~  site.req-line
       not-found:gen
     =*  url-prefix  landscape-homepage-prefix.configuration
@@ -164,12 +181,14 @@
     ++  get-file
       |=  req-line=request-line
       ^-  [simple-payload:http ?]
-      =/  pax=path  (snoc site.req-line (need ext.req-line))
+      =/  pax=path
+        ?~  ext.req-line  site.req-line
+        (snoc site.req-line u.ext.req-line)
       =/  content=(unit [=content suffix=path public=?])  (get-content pax)
       ?~  content  [not-found:gen %.n]
       ?-  -.content.u.content
           %clay
-        =/  scry-path
+        =/  scry-path=path
           :*  (scot %p our.bowl)
               q.byk.bowl
               (scot %da now.bowl)
@@ -179,10 +198,16 @@
         =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
         :_  public.u.content
         ?+  ext.req-line  not-found:gen
-            [~ %html]  (html-response:gen file)
             [~ %js]    (js-response:gen file)
             [~ %css]   (css-response:gen file)
             [~ %png]   (png-response:gen file)
+          ::
+              [~ %html]
+            %.  file
+            %*    .   html-response:gen 
+                cache  
+              !=(/app/landscape/index/html (slag 3 scry-path))
+            ==
         ==
       ::
           %glob

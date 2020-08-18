@@ -80,9 +80,11 @@
   ++  max-1-wk  ['cache-control' 'max-age=604800']
   ::
   ++  html-response
+    =|  cache=?
     |=  =octs
     ^-  simple-payload:http
-    [[200 [['content-type' 'text/html'] max-1-wk ~]] `octs]
+    :_  `octs
+    [200 [['content-type' 'text/html'] ?:(cache [max-1-wk ~] ~)]]
   ::
   ++  js-response
     |=  =octs

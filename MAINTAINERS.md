@@ -175,14 +175,15 @@ the pill to have the new files/hash.  For most things, it is sufficient to run
 However, if you've made a change to Landscape's JS, then you will need to build
 a "glob" and upload it to bootstrap.urbit.org.  To do this, run `npm install;
 npm run build:prod` in `pkg/interface`, and add the resulting
-`pkg/arvo/app/landscape/index.js` to a fakezod at that path (or just create a
+`pkg/arvo/app/landscape/index.[hash].js` to a fakezod at that path (or just create a
 new fakezod with `urbit -F zod -B bin/solid.pill -A pkg/arvo`).  Run
 `:glob|make`, and this will output a file in `fakezod/.urb/put/glob-0vXXX.glob`.
 
 Upload this file to bootstrap.urbit.org, and modify `+hash` at the top of
-`pkg/arvo/app/glob.hoon` to match the hash in the filename.  Do not commit the
-produced `index.js` and make sure it doesn't end up in your pills (they should
-be less than 10MB each).
+`pkg/arvo/app/glob.hoon` to match the hash in the filename of the `.glob` file. 
+Amend `pkg/arvo/app/landscape/index.html` to import the hashed JS bundle, instead
+of the unversioned index.js. Do not commit the produced `index.js` and 
+make sure it doesn't end up in your pills (they should be less than 10MB each).
 
 ### Tag the resulting commit
 
