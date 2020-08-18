@@ -42,6 +42,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       connection: 'connected',
       sidebarShown: true,
       omniboxShown: false,
+      suspendedFocus: null,
       baseHash: null,
       invites: {},
       associations: {
