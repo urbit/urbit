@@ -60,6 +60,15 @@ const renderWithSigil = (props, timestamp) => {
       name = cite(props.msg.author);
     }
 
+    let nameSpan = null;
+
+    const copyNotice = (saveName) => {
+      nameSpan.innerText = 'Copied';
+      setTimeout(() => {
+        nameSpan.innerText = saveName;
+      }, 800);
+    };
+
     return (
       <div className="flex w-100">
         <OverlaySigil
@@ -80,8 +89,11 @@ const renderWithSigil = (props, timestamp) => {
                   'mw5 db truncate pointer ' +
                   (contact.nickname ? '' : 'mono')
                 }
+                ref={(e) => nameSpan = e}
                 onClick={() => {
+                  const saveName = name;
                   writeText(props.msg.author);
+                  copyNotice(saveName);
                 }}
                 title={`~${props.msg.author}`}
               >
