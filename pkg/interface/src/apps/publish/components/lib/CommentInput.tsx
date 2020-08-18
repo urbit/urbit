@@ -1,9 +1,8 @@
 import React from "react";
 import * as Yup from "yup";
-import GlobalApi from "../../../../api/global";
 import { Formik, FormikHelpers, Form } from "formik";
 import { AsyncButton } from '../../../../components/AsyncButton';
-import { TextArea, Button } from "@tlon/indigo-react";
+import { TextArea } from "@tlon/indigo-react";
 
 interface FormSchema {
   comment: string;

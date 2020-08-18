@@ -127,7 +127,7 @@ export class LinkSubmit extends Component {
         </button>
         <Spinner awaiting={this.state.disabled} classes="mt3 absolute right-0" text="Posting to collection..." />
       </div>
-    );
+    ) ;
   }
 }
 

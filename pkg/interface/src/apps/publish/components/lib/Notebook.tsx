@@ -1,12 +1,9 @@
-import React, { Component, useEffect } from "react";
+import React from "react";
 import { Link, RouteComponentProps, Route, Switch } from "react-router-dom";
-import { SidebarSwitcher } from "../../../../components/SidebarSwitch";
 import { NotebookPosts } from "./NotebookPosts";
-import { Subscribers } from "./subscribers";
+import { Subscribers } from "./Subscribers";
 import { Settings } from "./Settings";
-import { cite } from "../../../../lib/util";
 import { roleForShip } from "../../../../lib/group";
-import { PublishContent } from "./PublishContent";
 import {
   Box,
   Button,
@@ -45,16 +42,9 @@ interface NotebookProps {
 export function Notebook(props: NotebookProps & RouteComponentProps) {
   const { api, ship, book, notebook, notebookContacts, groups } = props;
 
-  useEffect(() => {
-    api.publish.fetchNotesPage(ship, book, 1, 50);
-    api.publish.fetchNotebook(ship, book);
-  }, [ship, book, api]);
-
   const contact = notebookContacts[ship];
   const group = groups[notebook?.["writers-group-path"]];
-
   const role = group ? roleForShip(group, window.ship) : undefined;
-
   const isOwn = `~${window.ship}` === ship;
   const isAdmin = role === "admin" || isOwn;
 
@@ -67,14 +57,17 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
   return (
     <Box
       pt={4}
+      mx="auto"
       display="grid"
       gridAutoRows="min-content"
-      gridTemplateColumns="1fr 1fr"
-      width="100%"
+      gridTemplateColumns={["1fr", "1fr 1fr"]}
       maxWidth="500px"
-      gridRowGap={6}
+      gridRowGap={[4, 6]}
       gridColumnGap={3}
     >
+      <Box display={["block", "none"]} gridColumn={"1/3"}>
+        <Link to="/~publish">{"<- All Notebooks"}</Link>
+      </Box>
       <Box>
         {notebook?.title}
         <br />
@@ -83,7 +76,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
           {contact?.nickname || ship}
         </Text>
       </Box>
-      <Row justifyContent="flex-end">
+      <Row justifyContent={["flex-start", "flex-end"]}>
         {isWriter && (
           <Link to={`/~publish/notebook/${ship}/${book}/new`}>
             <Button primary border>
@@ -92,12 +85,12 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
           </Link>
         )}
         {!isOwn && (
-          <Button ml={2} error border>
+          <Button ml={isWriter ? 2 : 0} error border>
             Unsubscribe
           </Button>
         )}
       </Row>
-      <Box gridColumn="1/4">
+      <Box gridColumn={["1/2", "1/3"]}>
         <Tabs>
           <TabList>
             <Tab>All Posts</Tab>

@@ -77,6 +77,7 @@ export default function PublishApp(props: PublishAppProps) {
   return (
     <Route
       path={[
+        "/~publish/notebook/:ship/:notebook/note/:noteId",
         "/~publish/notebook/:ship/:notebook/*",
         "/~publish/notebook/:ship/:notebook",
         "/~publish",
@@ -139,32 +140,27 @@ export default function PublishApp(props: PublishAppProps) {
                 ? props.match.params.view
                 : "posts";
 
-              const popout = Boolean(props.match.params.popout) || false;
 
               const ship = props.match.params.ship || "";
               const book = props.match.params.notebook || "";
 
               const bookGroupPath =
-                notebooks?.[ship]?.[notebook]?.["subscribers-group-path"];
+                notebooks?.[ship]?.[book]?.["subscribers-group-path"];
 
               const notebookContacts =
                 bookGroupPath in contacts ? contacts[bookGroupPath] : {};
 
               const notebook = notebooks[ship][book];
 
-
                 return (
                   <NotebookRoutes
                     notebook={notebook}
-                    view={view}
                     ship={ship}
                     book={book}
                     groups={groups}
                     contacts={contacts}
                     notebookContacts={notebookContacts}
-                    associations={associations.contacts}
                     sidebarShown={sidebarShown}
-                    popout={popout}
                     api={api}
                     {...props}
                   />

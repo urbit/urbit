@@ -11,8 +11,9 @@ interface PublishContentProps {
   api: GlobalApi;
 }
 
-export const PublishContent = (props: PublishContentProps) => {
-  const { children, sidebarShown, api } = props;
+export const PublishContent = forwardRef((props: PublishContentProps) => {
+  const { children, sidebarShown, api, onScroll } = props;
+  
 
   const { query } = useQuery();
   const popout = !!query.get("popout");

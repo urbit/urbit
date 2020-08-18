@@ -1,5 +1,5 @@
-import React from "react";
-import { RouteComponentProps, Link, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import { RouteComponentProps, Link, Route, Switch } from "react-router-dom";
 import { Box, Text } from "@tlon/indigo-react";
 import GlobalApi from "../../../../api/global";
 import { PublishContent } from "./PublishContent";
@@ -26,11 +26,17 @@ export function NotebookRoutes(
 ) {
   const { ship, book, api, notebook, notebookContacts } = props;
 
+  useEffect(() => {
+    api.publish.fetchNotesPage(ship, book, 1, 50);
+    api.publish.fetchNotebook(ship, book);
+  }, [ship, book]);
+
+
   const baseUrl = `/~publish/notebook/${ship}/${book}`;
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
   return (
-    <PublishContent sidebarShown api={api}>
+    <Switch>
       <Route
         path={baseUrl}
         exact
@@ -69,6 +75,6 @@ export function NotebookRoutes(
           );
         }}
       />
-    </PublishContent>
+    </Switch>
   );
 }

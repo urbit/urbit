@@ -1,4 +1,4 @@
-import React, { Component, useState, useCallback } from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import { Sigil } from "../../../../lib/sigil";
 import CommentInput from "./CommentInput";
@@ -6,7 +6,15 @@ import { uxToHex, cite } from "../../../../lib/util";
 import { Comment, NoteId } from "../../../../types/publish-update";
 import { Contacts } from "../../../../types/contact-update";
 import GlobalApi from "../../../../api/global";
-import { Button } from "@tlon/indigo-react";
+import { Button, Box, Row, Text } from "@tlon/indigo-react";
+import styled from "styled-components";
+import { Author } from "./Author";
+
+const ClickBox = styled(Box)`
+  cursor: pointer;
+  margin-left: ${(p) => p.theme.space[2]}px;
+  padding-top: ${(p) => p.theme.space[1]}px;
+`;
 
 interface CommentItemProps {
   pending?: boolean;
@@ -19,103 +27,61 @@ interface CommentItemProps {
 }
 
 export function CommentItem(props: CommentItemProps) {
+  const { ship, contacts, book, note, api } = props;
   const [editing, setEditing] = useState<boolean>(false);
-  const pending = props.pending ? "o-60" : "";
   const commentPath = Object.keys(props.comment)[0];
   const commentData = props.comment[commentPath];
   const content = commentData.content.split("\n").map((line, i) => {
     return (
-      <p className="mb2" key={i}>
+      <Text className="mb2" key={i}>
         {line}
-      </p>
+      </Text>
     );
   });
-  const date = moment(commentData["date-created"]).fromNow();
-
-  const contact =
-    commentData.author.substr(1) in props.contacts
-      ? props.contacts[commentData.author.substr(1)]
-      : null;
-
-  let name = commentData.author;
-  let color = "#000000";
-  let classes = "mix-blend-diff";
-  let avatar: string | null = null;
-  if (contact) {
-    name = contact.nickname.length > 0 ? contact.nickname : commentData.author;
-    color = `#${uxToHex(contact.color)}`;
-    classes = "";
-    avatar = contact.avatar;
-  }
-
-  const img =
-    avatar !== null ? (
-      <img src={avatar} height={24} width={24} className="dib" />
-    ) : (
-      <Sigil
-        ship={commentData.author}
-        size={24}
-        color={color}
-        classes={classes}
-      />
-    );
-
-  if (name === commentData.author) {
-    name = cite(commentData.author);
-  }
 
   const disabled = props.pending || window.ship !== commentData.author.slice(1);
 
-  const onUpdate = useCallback(
-    async ({ comment }) => {
-      const action = {
-        "edit-comment": {
-          who: props.ship.slice(1),
-          book: props.book,
-          note: props.note,
-          body: comment,
-          comment: commentPath,
-        },
-      };
-      await props.api.publish.publishAction(action);
+  const onUpdate = async ({ comment }) => {
+    await api.publish.updateComment(
+      ship.slice(1),
+      book,
+      note,
+      commentPath,
+      comment
+    );
+    setEditing(false);
+  };
 
-      setEditing(false);
-    },
-    [props.api, props.ship, props.note, props.book, commentPath, setEditing]
-  );
+  const onDelete = async () => {
+    await api.publish.deleteComment(ship.slice(1), book, note, commentPath);
+  };
 
   return (
-    <div className={"mb8 " + pending}>
-      <div className="flex mv3 bg-white bg-gray0-d">
-        {img}
-        <div
-          className={"f9 mh2 pt1 " + (contact?.nickname ? null : "mono")}
-          title={commentData.author}
-        >
-          {name}
-        </div>
-        <div className="f9 gray3 pt1">{date}</div>
+    <Box mb={4} opacity={props.pending ? "60%" : "100%"}>
+      <Row bg="white" my={3}>
+        <Author
+          showImage
+          contacts={contacts}
+          ship={ship}
+          date={commentData["date-created"]}
+        />
         {!disabled && !editing && (
           <>
-            <div
-              onClick={() => setEditing(true)}
-              className="green2 pointer ml2 f9 pt1"
-            >
+            <ClickBox color="green" onClick={() => setEditing(true)}>
               Edit
-            </div>
-            <div className="red2 pointer ml2 f9 pt1">Delete</div>
+            </ClickBox>
+            <ClickBox color="red" onClick={onDelete}>
+              Delete
+            </ClickBox>
           </>
         )}
         {editing && (
-          <div
-            onClick={() => setEditing(false)}
-            className="red2 pointer ml2 f9 pt1"
-          >
+          <ClickBox onClick={() => setEditing(false)} color="red">
             Cancel
-          </div>
+          </ClickBox>
         )}
-      </div>
-      <div className="f8 lh-solid mb2">
+      </Row>
+      <Box mb={2}>
         {!editing && content}
         {editing && (
           <CommentInput
@@ -124,8 +90,8 @@ export function CommentItem(props: CommentItemProps) {
             label="Update"
           />
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 

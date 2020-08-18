@@ -1,14 +1,16 @@
 import React, { Component } from "react";
-import { Col, Box } from "@tlon/indigo-react";
+import moment from "moment";
+import { Box } from "@tlon/indigo-react";
 import { Link } from "react-router-dom";
-import {Note} from "../../../../types/publish-update";
+import { Notebook } from "../../../../types/publish-update";
 
 function NavigationItem(props: {
   url: string;
   title: string;
-  date: string;
+  date: number;
   prev?: boolean;
 }) {
+  const date = moment(date).fromNow();
   return (
     <Box
       justifySelf={props.prev ? "start" : "end"}
@@ -22,43 +24,54 @@ function NavigationItem(props: {
           {props.prev ? "Previous" : "Next"}
         </Box>
         <Box mb={1}>{props.title}</Box>
-        <Box color="gray">{props.date}</Box>
+        <Box color="gray">{date}</Box>
       </Link>
     </Box>
   );
 }
 
-
 interface NoteNavigationProps {
   book: string;
-  next: any;
-  prev: any;
+  nextId?: string;
+  prevId?: string;
   ship: string;
+  notebook: Notebook;
 }
-  
 
 export function NoteNavigation(props: NoteNavigationProps) {
-  let nextComponent = <div />;
-  let prevComponent = <div />;
+  let nextComponent = <Box />;
+  let prevComponent = <Box />;
   let nextUrl = "";
   let prevUrl = "";
-  const { next, prev } = props;
+  const { nextId, prevId, notebook } = props;
+  const next =
+    nextId && nextId in notebook?.notes ? notebook?.notes[nextId] : null;
 
-  if(!next && !prev) {
+  const prev =
+    prevId && prevId in notebook?.notes ? notebook?.notes[prevId] : null;
+  if (!next && !prev) {
     return null;
   }
 
   if (next) {
-    nextUrl = `/~publish/notebook/${props.ship}/${props.book}/note/${props.next.id}`;
+    nextUrl = `/~publish/notebook/${props.ship}/${props.book}/note/${props.nextId}`;
     nextComponent = (
-      <NavigationItem title={next.title} date={next.date} url={nextUrl} />
+      <NavigationItem
+        title={next.title}
+        date={next["date-created"]}
+        url={nextUrl}
+      />
     );
   }
   if (prev) {
-    prevUrl = `/~publish/notebook/${props.ship}/${props.book}/note/${props.prev.id}`;
-
+    prevUrl = `/~publish/notebook/${props.ship}/${props.book}/note/${props.prevId}`;
     prevComponent = (
-      <NavigationItem title={prev.title} date={prev.date} url={prevUrl} prev />
+      <NavigationItem
+        title={prev.title}
+        date={prev["date-created"]}
+        url={prevUrl}
+        prev
+      />
     );
   }
 

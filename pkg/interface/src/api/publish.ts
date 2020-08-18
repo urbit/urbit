@@ -1,6 +1,6 @@
 import BaseApi from './base';
 import { PublishResponse } from '../types/publish-response';
-import { PatpNoSig } from '../types/noun';
+import { PatpNoSig, Path } from '../types/noun';
 import { BookId, NoteId } from '../types/publish-update';
 
 export default class PublishApi extends BaseApi {
@@ -80,5 +80,80 @@ export default class PublishApi extends BaseApi {
   publishAction(act: any) {
     return this.action('publish', 'publish-action', act);
   }
+
+  newBook(bookId: string, title: string, description: string, group: Path) {
+    return this.publishAction({
+      "new-book": {
+        book: bookId,
+        title: title,
+        about: description,
+        coms: true,
+        group: {
+          'group-path': group,
+          invitees: [],
+          'use-preexisting': true,
+          'make-managed': true
+        }
+      }
+    });
+  }
+
+  newNote(who: PatpNoSig, book: string, note: string, title: string, body: string) {
+    return this.publishAction({
+      'new-note': {
+        who,
+        book,
+        note,
+        title,
+        body
+      }
+    });
+  }
+
+  editNote(who: PatpNoSig, book: string, note: string, title: string, body: string) {
+    return this.publishAction({
+      'edit-note': {
+        who,
+        book,
+        note,
+        title,
+        body
+      }
+    });
+  }
+
+  delNote(who: PatpNoSig, book: string, note: string) {
+    return this.publishAction({
+      'del-note': {
+        who,
+        book,
+        note
+      }
+    });
+  }
+
+  updateComment(who: PatpNoSig, book: string, note: string, comment: Path, body: string) {
+    return this.publishAction({ 
+      'edit-comment': {
+        who,
+        book,
+        note,
+        comment,
+        body
+      }
+    });
+  }
+
+  deleteComment(who: PatpNoSig, book: string, note: string, comment: Path ) {
+    return this.publishAction({
+      "del-comment": {
+        who,
+        book,
+        note,
+        comment
+      },
+    });
+  }
+
 }
 

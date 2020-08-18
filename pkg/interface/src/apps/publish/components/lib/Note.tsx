@@ -1,17 +1,18 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Text, Col } from "@tlon/indigo-react";
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from "react-markdown";
 import { Link, RouteComponentProps } from "react-router-dom";
-import { SidebarSwitcher } from "../../../../components/SidebarSwitch";
 import { Spinner } from "../../../../components/Spinner";
 import { Comments } from "./Comments";
 import { NoteNavigation } from "./NoteNavigation";
-import moment from "moment";
-import { cite } from "../../../../lib/util";
-import { PublishContent } from "./PublishContent";
-import { NoteId, Note as INote, Notebook } from "../../../../types/publish-update";
+import {
+  NoteId,
+  Note as INote,
+  Notebook,
+} from "../../../../types/publish-update";
 import { Contacts } from "../../../../types/contact-update";
 import GlobalApi from "../../../../api/global";
+import { Author } from "./Author";
 
 interface NoteProps {
   ship: string;
@@ -25,10 +26,7 @@ interface NoteProps {
 
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
-
   const { notebook, note, contacts, ship, book, noteId, api } = props;
-  // fetch note and read actions
-  //
   useEffect(() => {
     api.publish.fetchNote(ship, book, noteId);
   }, [ship, book, noteId]);
@@ -37,81 +35,32 @@ export function Note(props: NoteProps & RouteComponentProps) {
 
   const deletePost = async () => {
     setDeleting(true);
-    const deleteAction = {
-      "del-note": {
-        who: props.ship.slice(1),
-        book: props.book,
-        note: props.noteId,
-      },
-    };
-    await api.publish.publishAction(deleteAction);
+    await api.publish.delNote(ship, book, noteId);
     props.history.push(baseUrl);
   };
 
-  const comments = note?.comments || false;
-  const title = note?.title || "";
-  const author = note?.author || "";
-  const file = note?.file || "";
-  const date = moment(note?.["date-created"]).fromNow() || 0;
+  const comments = note?.comments || [];
+  const file = note?.file;
+  const newfile = file ? file.slice(file.indexOf(";>") + 2) : "";
 
-  const contact =
-    author.substr(1) in props.contacts
-      ? props.contacts[author.substr(1)]
-      : null;
-
-  let name = author;
-  if (contact) {
-    name = contact.nickname.length > 0 ? contact.nickname : author;
-  }
-
-  if (name === author) {
-    name = cite(author);
-  }
-
-  if (!file) {
-    return null;
-  }
-
-  const newfile = file.slice(file.indexOf(";>") + 2);
-  const prevId = note?.["prev-note"] || null;
-  const nextId = note?.["next-note"] || null;
-  const prevDate =
-    prevId ? moment(notebook?.notes?.[prevId]?.["date-created"]).fromNow() : 0;
-  const nextDate =
-    nextId ? moment(notebook?.notes?.[nextId]?.["date-created"]).fromNow() : 0;
-
-  const prev =
-    prevId === null
-      ? null
-      : {
-          id: prevId,
-          title: notebook?.notes?.[prevId]?.title,
-          date: prevDate,
-        };
-  const next =
-    nextId === null
-      ? null
-      : {
-          id: nextId,
-          title: notebook?.notes?.[nextId]?.title,
-          date: nextDate,
-        };
-
-  let editPost = null;
+  let editPost: JSX.Element | null = null;
   const editUrl = props.location.pathname + "/edit";
-  if (`~${window.ship}` === author) {
+  if (`~${window.ship}` === note?.author) {
     editPost = (
-      <div className="dib">
-        <Link className="green2 f9" to={editUrl}>
-          Edit
+      <Box display="inline-block">
+        <Link to={editUrl}>
+          <Text color="green">Edit</Text>
         </Link>
-        <p
+        <Text
           className="dib f9 red2 ml2 pointer"
-          onClick={() => deletePost()}
+          color="red"
+          ml={2}
+          onClick={deletePost}
+          css={{ cursor: "pointer" }}
         >
           Delete
-        </p>
-      </div>
+        </Text>
+      </Box>
     );
   }
 
@@ -120,7 +69,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       my={3}
       display="grid"
       gridTemplateColumns="1fr"
-      gridAutoRows="auto"
+      gridAutoRows="min-content"
       maxWidth="500px"
       width="100%"
       gridRowGap={4}
@@ -129,41 +78,38 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Text>{"<- Notebook Index"}</Text>
       </Link>
       <Col>
-        <Box mb={2}>{title}</Box>
+        <Box mb={2}>{note?.title || ""}</Box>
         <Box display="flex">
-          <Text
-            color="gray"
-            mr={2}
-            fontFamily={contact?.nickname ? "sans" : "mono"}
-          >
-            {name}
-          </Text>
-          <Text className="di" style={{ lineHeight: 1 }}>
-            <Text color="gray">{date}</Text>
-            <Text ml={2}>{editPost}</Text>
-          </Text>
+          <Author
+            ship={ship}
+            contacts={contacts}
+            date={note?.["date-created"]}
+          />
+          <Text ml={2}>{editPost}</Text>
         </Box>
       </Col>
       <Box className="md" style={{ overflowWrap: "break-word" }}>
         <ReactMarkdown source={newfile} linkTarget={"_blank"} />
       </Box>
       <NoteNavigation
-        prev={prev}
-        next={next}
+        notebook={notebook}
+        prevId={note?.["prev-note"] || undefined}
+        nextId={note?.["next-note"] || undefined}
         ship={props.ship}
         book={props.book}
       />
-      <Comments
-        enabled={notebook.comments}
-        ship={props.ship}
-        book={props.book}
-        noteId={props.noteId}
-        note={props.note}
-        comments={comments}
-        numComments={props.note?.["num-comments"]}
-        contacts={props.contacts}
-        api={props.api}
-      />
+      {notebook.comments && (
+        <Comments
+          ship={props.ship}
+          book={props.book}
+          noteId={props.noteId}
+          note={props.note}
+          comments={comments}
+          numComments={props.note["num-comments"]}
+          contacts={props.contacts}
+          api={props.api}
+        />
+      )}
       <Spinner
         text="Deleting post..."
         awaiting={deleting}

@@ -105,6 +105,8 @@ export function Sidebar(props: any) {
     );
   }
 
+  const display = props.path ? ['none', 'block'] : 'block';
+
   return (
     <Col
       borderRight={[0, 1]}
@@ -112,6 +114,7 @@ export function Sidebar(props: any) {
       height="100%"
       pt={[3, 0]}
       overflowY="auto"
+      display={display}
       maxWidth={["none", "250px"]}
     >
       <Box>

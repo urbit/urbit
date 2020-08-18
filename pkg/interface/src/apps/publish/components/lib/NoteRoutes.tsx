@@ -19,7 +19,7 @@ interface NoteRoutesProps {
 }
 
 export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {
-  const { ship, book, api, notebook, notebookContacts, noteId } = props;
+  const { ship, book, noteId } = props;
 
   const baseUrl = `/~publish/notebook/${ship}/${book}/note/${noteId}`;
 
