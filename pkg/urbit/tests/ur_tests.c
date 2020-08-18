@@ -252,6 +252,39 @@ _test_bsw8(void)
 }
 
 static int
+_test_bsw32_loop(const char* cap, uint32_t val)
+{
+  int    ret = 1;
+  ur_bsw_t a = {0};
+  ur_bsw_t b = {0};
+  uint8_t i, j;
+
+  for ( i = 0; i < 8; i++) {
+    for ( j = 0; j <= 32; j++ ) {
+      _bsw_init(&a, 1, 1);
+      _bsw_init(&b, 1, 1);
+      a.off = a.bits = b.off = b.bits = i;
+
+      ur_bsw32_slow(&a, j, val);
+      ur_bsw32(&b, j, val);
+
+      ret &= _bsw_cmp_check(cap, val, i, j, &a, &b);
+    }
+  }
+
+  return ret;
+}
+
+static int
+_test_bsw32(void)
+{
+  return _test_bsw32_loop("bsw 32 ones", 0xffffffff)
+       & _test_bsw32_loop("bsw 32 zeros", 0x0)
+       & _test_bsw32_loop("bsw 32 alt 1", 0xaaaaaaaa)
+       & _test_bsw32_loop("bsw 32 alt 2", 0x55555555);
+}
+
+static int
 _test_bsw64_loop(const char* cap, uint64_t val)
 {
   int    ret = 1;
@@ -331,6 +364,7 @@ _test_bsw(void)
 {
   return _test_bsw_bit()
        & _test_bsw8()
+       & _test_bsw32()
        & _test_bsw64()
        & _test_bsw_bytes();
 }

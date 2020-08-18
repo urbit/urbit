@@ -196,6 +196,11 @@ void
 ur_bsw8_slow(ur_bsw_t *bsw, uint8_t len, uint8_t byt);
 
 void
+ur_bsw32(ur_bsw_t *bsw, uint8_t len, uint32_t val);
+void
+ur_bsw32_slow(ur_bsw_t *bsw, uint8_t len, uint32_t val);
+
+void
 ur_bsw64(ur_bsw_t *bsw, uint8_t len_bit, uint64_t val);
 void
 ur_bsw64_slow(ur_bsw_t *bsw, uint8_t len, uint64_t val);
