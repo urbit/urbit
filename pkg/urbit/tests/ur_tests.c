@@ -7,6 +7,334 @@
 
 #include "ur/hashcons.h"
 
+static void
+_bsw_init(ur_bsw_t *bsw, uint64_t prev, uint64_t size)
+{
+  bsw->prev = prev;
+  bsw->size = size;
+  bsw->bits = 0;
+  bsw->fill = 0;
+  bsw->off  = 0;
+
+  free(bsw->bytes);
+  bsw->bytes = calloc(size, 1);
+}
+
+static int
+_bsw_bit_check(const char* cap, ur_bsw_t *bsw, uint8_t byt, uint8_t off)
+{
+  int ret = 1;
+
+  if ( !ur_bsw_sane(bsw) ) {
+    fprintf(stderr, "%s: insane off=%u fill=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                    cap, bsw->off, bsw->fill, bsw->bits);
+    ret = 0;
+  }
+
+  if ( byt != bsw->bytes[0] ) {
+    fprintf(stderr, "%s: bytes fail (%u, %u)\r\n", cap, byt, bsw->bytes[0]);
+    ret = 0;
+  }
+
+  if ( off != bsw->off ) {
+    fprintf(stderr, "%s: offset fail (%u, %u)\r\n", cap, off, bsw->off);
+    ret = 0;
+  }
+
+  return ret;
+}
+
+static int
+_test_bsw_bit_ones(void)
+{
+  int      ret = 1;
+  ur_bsw_t bsw = {0};
+  _bsw_init(&bsw, 1, 1);
+
+  ret &= _bsw_bit_check("bsw ones init", &bsw, 0x0, 0);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw ones a", &bsw, 0x1, 1);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw ones b", &bsw, 0x3, 2);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw ones c", &bsw, 0x7, 3);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw ones d", &bsw, 0xf, 4);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw ones e", &bsw, 0x1f, 5);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw ones f", &bsw, 0x3f, 6);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw ones g", &bsw, 0x7f, 7);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw ones h", &bsw, 0xff, 0);
+
+  if ( bsw.size != 2 ) {
+    fprintf(stderr, "bsw ones grow: fail\r\n");
+    ret = 0;
+  }
+
+  free(bsw.bytes);
+
+  return ret;
+}
+
+static int
+_test_bsw_bit_zeros(void)
+{
+  int      ret = 1;
+  ur_bsw_t bsw = {0};
+  _bsw_init(&bsw, 1, 1);
+
+  ret &= _bsw_bit_check("bsw zeros init", &bsw, 0x0, 0);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw zeros a", &bsw, 0x0, 1);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw zeros b", &bsw, 0x0, 2);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw zeros c", &bsw, 0x0, 3);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw zeros d", &bsw, 0x0, 4);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw zeros e", &bsw, 0x0, 5);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw zeros f", &bsw, 0x0, 6);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw zeros g", &bsw, 0x0, 7);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw zeros h", &bsw, 0x0, 0);
+
+  if ( bsw.size != 2 ) {
+    fprintf(stderr, "bsw zeros grow: fail\r\n");
+    ret = 0;
+  }
+
+  free(bsw.bytes);
+
+  return ret;
+}
+
+static int
+_test_bsw_bit_alt(void)
+{
+  int      ret = 1;
+  ur_bsw_t bsw = {0};
+  _bsw_init(&bsw, 1, 1);
+
+  ret &= _bsw_bit_check("bsw alt init", &bsw, 0x0, 0);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw alt a", &bsw, 0x0, 1);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw alt b", &bsw, 0x2, 2);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw alt c", &bsw, 0x2, 3);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw alt d", &bsw, 0xa, 4);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw alt e", &bsw, 0xa, 5);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw alt f", &bsw, 0x2a, 6);
+
+  ur_bsw_bit(&bsw, 0);
+  ret &= _bsw_bit_check("bsw alt g", &bsw, 0x2a, 7);
+
+  ur_bsw_bit(&bsw, 1);
+  ret &= _bsw_bit_check("bsw alt h", &bsw, 0xaa, 0);
+
+  if ( bsw.size != 2 ) {
+    fprintf(stderr, "bsw alt grow: fail\r\n");
+    ret = 0;
+  }
+
+  free(bsw.bytes);
+
+  return ret;
+}
+
+static int
+_test_bsw_bit(void)
+{
+  return _test_bsw_bit_ones()
+       & _test_bsw_bit_zeros()
+       & _test_bsw_bit_alt();
+}
+
+static int
+_bsw_cmp_check(const char* cap, uint8_t val, uint8_t off, uint8_t len, ur_bsw_t *a, ur_bsw_t *b)
+{
+  int ret = 1;
+
+  if ( !ur_bsw_sane(a) ) {
+    fprintf(stderr, "%s: val 0x%02x off %u, len %u: a insane off=%u fill=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                    cap, val, off, len, a->off, a->fill, a->bits);
+    ret = 0;
+  }
+  if ( !ur_bsw_sane(b) ) {
+    fprintf(stderr, "%s: val 0x%02x off %u len %u: b insane off=%u fill=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                    cap, val, off, len, b->off, b->fill, b->bits);
+    ret = 0;
+  }
+
+  if ( a->bytes[0] != b->bytes[0] ) {
+    fprintf(stderr, "%s: val 0x%02x off %u len %u: bytes fail (0x%02x, 0x%02x)\r\n",
+                    cap, val, off, len, a->bytes[0], b->bytes[0]);
+    ret = 0;
+  }
+
+  if ( a->off != b->off ) {
+    fprintf(stderr, "%s: val 0x%02x off %u len %u: offset fail (%u, %u)\r\n",
+                    cap, val, off, len, a->off, b->off);
+    ret = 0;
+  }
+
+  if ( a->fill != b->fill ) {
+    fprintf(stderr, "%s: val 0x%02x off %u len %u: fill fail (%" PRIu64 ", %" PRIu64 ")\r\n",
+                    cap, val, off, len, a->fill, b->fill);
+    ret = 0;
+  }
+
+  return ret;
+}
+
+static int
+_test_bsw8_loop(const char* cap, uint8_t val)
+{
+  int    ret = 1;
+  ur_bsw_t a = {0};
+  ur_bsw_t b = {0};
+  uint8_t i, j;
+
+  for ( i = 0; i < 8; i++) {
+    for ( j = 0; j <= 8; j++ ) {
+      _bsw_init(&a, 1, 1);
+      _bsw_init(&b, 1, 1);
+      a.off = a.bits = b.off = b.bits = i;
+
+      ur_bsw8_slow(&a, j, val);
+      ur_bsw8(&b, j, val);
+
+      ret &= _bsw_cmp_check(cap, val, i, j, &a, &b);
+    }
+  }
+
+  return ret;
+}
+
+static int
+_test_bsw8(void)
+{
+  return _test_bsw8_loop("bsw bits ones", 0xff)
+       & _test_bsw8_loop("bsw bits zeros", 0x0)
+       & _test_bsw8_loop("bsw bits alt 1", 0xaa)
+       & _test_bsw8_loop("bsw bits alt 2", 0x55);
+}
+
+static int
+_test_bsw64_loop(const char* cap, uint64_t val)
+{
+  int    ret = 1;
+  ur_bsw_t a = {0};
+  ur_bsw_t b = {0};
+  uint8_t i, j;
+
+  for ( i = 0; i < 8; i++) {
+    for ( j = 0; j <= 64; j++ ) {
+      _bsw_init(&a, 1, 1);
+      _bsw_init(&b, 1, 1);
+      a.off = a.bits = b.off = b.bits = i;
+
+      ur_bsw64_slow(&a, j, val);
+      ur_bsw64(&b, j, val);
+
+      ret &= _bsw_cmp_check(cap, val, i, j, &a, &b);
+    }
+  }
+
+  return ret;
+}
+
+static int
+_test_bsw64(void)
+{
+  return _test_bsw64_loop("bsw 64 ones", 0xffffffffffffffffULL)
+       & _test_bsw64_loop("bsw 64 zeros", 0x0ULL)
+       & _test_bsw64_loop("bsw 64 alt 1", 0xaaaaaaaaaaaaaaaaULL)
+       & _test_bsw64_loop("bsw 64 alt 2", 0x5555555555555555ULL);
+}
+
+static int
+_test_bsw_bytes_loop(const char* cap, uint64_t len, uint8_t val)
+{
+  int    ret = 1;
+  ur_bsw_t a = {0};
+  ur_bsw_t b = {0};
+  uint8_t i, j, *byt;
+
+  for ( i = 0; i < 8; i++) {
+    _bsw_init(&a, 1, 1);
+    _bsw_init(&b, 1, 1);
+    a.off = a.bits = b.off = b.bits = i;
+    byt = malloc(len);
+
+    for ( j = 0; j < len; j++ ) {
+     ur_bsw8_slow(&a, 8, val);
+     byt[j] = val;
+    }
+
+    ur_bsw_bytes(&b, len, byt);
+    free(byt);
+
+    ret &= _bsw_cmp_check(cap, val, 8, i, &a, &b);
+  }
+
+  return ret;
+}
+
+static int
+_test_bsw_bytes(void)
+{
+  return _test_bsw_bytes_loop("bsw bytes nought", 0, 0x0)
+       & _test_bsw_bytes_loop("bsw bytes ones odd", 3, 0xff)
+       & _test_bsw_bytes_loop("bsw bytes ones even", 4, 0xff)
+       & _test_bsw_bytes_loop("bsw bytes zeros odd", 5, 0x0)
+       & _test_bsw_bytes_loop("bsw bytes zeros even", 6, 0x0)
+       & _test_bsw_bytes_loop("bsw bytes alt 1 odd", 7, 0xaa)
+       & _test_bsw_bytes_loop("bsw bytes alt 1 even", 8, 0xaa)
+       & _test_bsw_bytes_loop("bsw bytes alt 2 odd", 9, 0x55)
+       & _test_bsw_bytes_loop("bsw bytes alt 2 odd", 10, 0x55);
+}
+
+static int
+_test_bsw(void)
+{
+  return _test_bsw_bit()
+       & _test_bsw8()
+       & _test_bsw64()
+       & _test_bsw_bytes();
+}
+
 static int
 _test_jam_spec(const char    *cap,
                ur_root_t       *r,
@@ -162,6 +490,11 @@ static int
 _test_ur(void)
 {
   int ret = 1;
+
+  if ( !_test_bsw() ) {
+    fprintf(stderr, "ur test bsw failed\r\n");
+    ret = 0;
+  }
 
   if ( !_test_jam_cue() ) {
     fprintf(stderr, "ur test jam/cue failed\r\n");

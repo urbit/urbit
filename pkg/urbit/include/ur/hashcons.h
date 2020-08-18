@@ -171,6 +171,38 @@ ur_walk_fore(ur_root_t *r,
              void      (*atom)(ur_root_t*, ur_nref, void*),
              ur_bool_t (*cell)(ur_root_t*, ur_nref, void*));
 
+
+typedef struct ur_bsw_s {
+  uint64_t    prev;
+  uint64_t    size;
+  uint64_t    fill;
+  uint64_t    bits;
+  uint8_t      off;
+  uint8_t   *bytes;
+} ur_bsw_t;
+
+void
+ur_bsw_grow(ur_bsw_t *bsw);
+
+ur_bool_t
+ur_bsw_sane(ur_bsw_t *bsw);
+
+void
+ur_bsw_bit(ur_bsw_t *bsw, uint8_t bit);
+
+void
+ur_bsw8(ur_bsw_t *bsw, uint8_t len, uint8_t byt);
+void
+ur_bsw8_slow(ur_bsw_t *bsw, uint8_t len, uint8_t byt);
+
+void
+ur_bsw64(ur_bsw_t *bsw, uint8_t len_bit, uint64_t val);
+void
+ur_bsw64_slow(ur_bsw_t *bsw, uint8_t len, uint64_t val);
+
+void
+ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt);
+
 uint64_t
 ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt);
 

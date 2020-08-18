@@ -884,23 +884,12 @@ ur_walk_fore(ur_root_t *r,
   free(don);
 }
 
-typedef struct ur_bsw_s {
-  uint64_t    prev;
-  uint64_t    size;
-  uint64_t    fill;
-  uint64_t    bits;
-  uint8_t      off;
-  uint8_t   *bytes;
-} ur_bsw_t;
-
-static inline void
+void
 ur_bsw_grow(ur_bsw_t *bsw)
 {
   uint64_t prev = bsw->prev;
   uint64_t size = bsw->size;
   uint64_t next = prev + size;
-
-  // fprintf(stderr, "bsw: grow: %" PRIu64 "-%" PRIu64" fill: %" PRIu64 "\r\n", size, next, bsw->fill);
 
   bsw->bytes = realloc(bsw->bytes, next);
   assert(bsw->bytes);
@@ -910,21 +899,23 @@ ur_bsw_grow(ur_bsw_t *bsw)
   bsw->size  = next;
 }
 
-static void
-ur_bsw_bit(ur_bsw_t *bsw, uint8_t bit)
+ur_bool_t
+ur_bsw_sane(ur_bsw_t *bsw)
+{
+  return (  (8 > bsw->off)
+         && ((bsw->fill << 3) + bsw->off == bsw->bits) );
+}
+
+static inline void
+_bsw_bit_unsafe(ur_bsw_t *bsw, uint8_t bit)
 {
   uint64_t fill = bsw->fill;
   uint8_t   off = bsw->off;
-  uint8_t   old = bsw->bytes[fill];
 
-  bsw->bytes[fill] = old ^ ((bit & 1) << off);
+  bsw->bytes[fill] ^= (bit & 1) << off;
 
   if ( 7 == off ) {
-    if ( ++fill == bsw->size ) {
-      ur_bsw_grow(bsw);
-    }
-
-    bsw->fill = fill;
+    bsw->fill = 1 + fill;
     bsw->off  = 0;
   }
   else {
@@ -932,92 +923,81 @@ ur_bsw_bit(ur_bsw_t *bsw, uint8_t bit)
   }
 
   bsw->bits++;
-
-  // if ( (bsw->fill << 3) + bsw->off != bsw->bits ) {
-  //   fprintf(stderr, "bit fill: %" PRIu64 " off: %u bits: %" PRIu64 ", calc: %" PRIu64 "\r\n",
-  //                   bsw->fill,
-  //                   bsw->off,
-  //                   bsw->bits,
-  //                   (bsw->fill << 3) + bsw->off);
-  //   assert(0);
-  // }
 }
 
-static void
-ur_bsw_bits(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
+void
+ur_bsw_bit(ur_bsw_t *bsw, uint8_t bit)
 {
-  uint64_t fill = bsw->fill;
-  uint8_t   off = bsw->off;
-
-  //  XX
-  assert( 8 > len );
-
+  if (  (7 == bsw->off)
+     && ((1 + bsw->fill) == bsw->size) )
   {
-    uint8_t rest = 8 - off;
-    uint8_t  old = bsw->bytes[fill];
-
-    if ( len < rest ) {
-      uint8_t left = (byt & ((1 << len) - 1)) << off;
-
-      bsw->bytes[fill] = old ^ left;
-      bsw->off = off + len;
-    }
-    else {
-      uint8_t left, right;
-
-      left  = (byt & ((1 << rest) - 1)) << off;
-      off   = len - rest;
-      right = (byt >> rest) & ((1 << off) - 1);
-
-      if ( (fill + 1 + !!off) >= bsw->size ) {
-        ur_bsw_grow(bsw);
-      }
-
-      bsw->bytes[fill] = old ^ left;
-      fill++;
-      bsw->bytes[fill] = right;
-
-      bsw->fill = fill;
-      bsw->off  = off;
-    }
-  }
-
-  bsw->bits += len;
-
-  // if ( (bsw->fill << 3) + bsw->off != bsw->bits ) {
-  //   fprintf(stderr, "bits fill: %" PRIu64 " off: %u bits: %" PRIu64 ", calc: %" PRIu64 "\r\n",
-  //                   bsw->fill,
-  //                   bsw->off,
-  //                   bsw->bits,
-  //                   (bsw->fill << 3) + bsw->off);
-  //   assert(0);
-  // }
-}
-
-static void
-ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
-{
-  uint64_t fill = bsw->fill;
-  uint64_t full = fill + len;
-  uint8_t   off = bsw->off;
-
-  //  XX
-  assert(len);
-
-  if ( (full + !!off) >= bsw->size ) {
-    uint64_t prev = bsw->prev;
-
-    //  be sure to grow sufficiently
-    //
-    if ( len > prev ) {
-      bsw->prev = len;
-    }
-
     ur_bsw_grow(bsw);
   }
 
+  _bsw_bit_unsafe(bsw, bit);
+}
+
+static inline void
+_bsw8_unsafe(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
+{
+  uint64_t fill = bsw->fill;
+  uint8_t   off = bsw->off;
+  uint8_t rest = 8 - off;
+  uint8_t  old = bsw->bytes[fill];
+
+  if ( len < rest ) {
+    uint8_t left = (byt & ((1 << len) - 1)) << off;
+
+    bsw->bytes[fill] = old ^ left;
+    bsw->off = off + len;
+  }
+  else {
+    uint8_t left, right;
+
+    left  = (byt & ((1 << rest) - 1)) << off;
+    off   = len - rest;
+    right = (byt >> rest) & ((1 << off) - 1);
+
+    bsw->bytes[fill] = old ^ left;
+    fill++;
+    bsw->bytes[fill] = right;
+
+    bsw->fill = fill;
+    bsw->off  = off;
+  }
+
+  bsw->bits += len;
+}
+
+void
+ur_bsw8(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
+{
+  if ( bsw->fill + !!((bsw->off + len) >> 3) >= bsw->size ) {
+    ur_bsw_grow(bsw);
+  }
+
+  _bsw8_unsafe(bsw, (len > 8) ? 8 : len, byt);
+}
+
+void
+ur_bsw8_slow(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
+{
+  while ( len ) {
+    ur_bsw_bit(bsw, byt);
+    byt >>= 1;
+    len--;
+  }
+}
+
+static inline void
+_bsw_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
+{
+  uint64_t fill = bsw->fill;
+  uint8_t   off = bsw->off;
+
   if ( !off ) {
     memcpy(bsw->bytes + fill, byt, len);
+    fill += len;
   }
   else {
     uint8_t rest = 8 - off;
@@ -1033,25 +1013,32 @@ ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
     }
 
     bsw->bytes[fill] = old;
-
-    assert( full == fill );
   }
 
-  bsw->fill  = full;
+  bsw->fill  = fill;
   bsw->bits += len << 3;
-
-  // if ( (bsw->fill << 3) + bsw->off != bsw->bits ) {
-  //   fprintf(stderr, "bytes fill: %" PRIu64 " off: %u bits: %" PRIu64 ", calc: %" PRIu64 "\r\n",
-  //                   bsw->fill,
-  //                   bsw->off,
-  //                   bsw->bits,
-  //                   (bsw->fill << 3) + bsw->off);
-  //   assert(0);
-  // }
 }
 
-static void
-ur_bsw64(ur_bsw_t *bsw, uint8_t len_bit, uint64_t val)
+void
+ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
+{
+  if ( (bsw->fill + len + !!bsw->off) >= bsw->size ) {
+    uint64_t prev = bsw->prev;
+
+    //  be sure to grow sufficiently
+    //
+    if ( len > prev ) {
+      bsw->prev = len;
+    }
+
+    ur_bsw_grow(bsw);
+  }
+
+  _bsw_bytes_unsafe(bsw, len, byt);
+}
+
+static inline void
+_bsw64_unsafe(ur_bsw_t *bsw, uint8_t len_bit, uint64_t val)
 {
   //  assumes little-endian
   //
@@ -1060,44 +1047,74 @@ ur_bsw64(ur_bsw_t *bsw, uint8_t len_bit, uint64_t val)
   uint8_t     low = ur_mask_3(len_bit);
 
   if ( len_byt ) {
-    ur_bsw_bytes(bsw, len_byt, byt);
+    _bsw_bytes_unsafe(bsw, len_byt, byt);
   }
 
   if ( low ) {
-    ur_bsw_bits(bsw, low, byt[len_byt]);
+    _bsw8_unsafe(bsw, low, byt[len_byt]);
+  }
+}
+
+void
+ur_bsw64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  uint8_t bits = bsw->off + len;
+
+  if ( bsw->fill + (bits >> 3) + !!ur_mask_3(bits) >= bsw->size ) {
+    ur_bsw_grow(bsw);
+  }
+
+  _bsw64_unsafe(bsw, (len > 64) ? 64 : len, val);
+}
+
+void
+ur_bsw64_slow(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  while ( len ) {
+    ur_bsw_bit(bsw, val & 0xff);
+    val >>= 1;
+    len--;
   }
 }
 
 static inline void
-ur_bsw_mat64(ur_bsw_t *bsw, uint8_t len_bit, uint64_t val)
+_bsw_mat64_unsafe(ur_bsw_t *bsw, uint8_t len_len, uint8_t len, uint64_t val)
 {
   if ( 0 == val ) {
-    ur_bsw_bit(bsw, 1);
+    _bsw_bit_unsafe(bsw, 1);
   }
   else {
-    uint8_t len_len = ur_met0_64(len_bit);
-
-    ur_bsw64(bsw, len_len + 1, 1ULL << len_len);
-    ur_bsw64(bsw, len_len - 1, len_bit);
-    ur_bsw64(bsw, len_bit, val);
+    _bsw64_unsafe(bsw, len_len + 1, 1ULL << len_len);
+    _bsw64_unsafe(bsw, len_len - 1, len);
+    _bsw64_unsafe(bsw, len, val);
   }
 }
 
+void
+ur_bsw_mat64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  len = ( len > 64 ) ? 64 : len;
+
+  {
+    uint8_t len_len = ur_met0_64(len);
+    uint8_t    next = ( 0 == val ) ? 1 : len + (2 * len_len);
+    uint8_t    bits = bsw->off + next;
+
+    if ( bsw->fill + (bits >> 3) + !!ur_mask_3(bits) >= bsw->size ) {
+      ur_bsw_grow(bsw);
+    }
+
+    _bsw_mat64_unsafe(bsw, len_len, len, val);
+  }
+}
 
 static inline void
-ur_bsw_mat_bytes(ur_bsw_t *bsw, uint64_t len_bit, uint64_t len, uint8_t *byt)
+_bsw_mat_bytes_unsafe(ur_bsw_t *bsw, uint8_t len_len, uint64_t len_bit, uint64_t len, uint8_t *byt)
 {
   //  write run-length
   //
-  {
-    uint8_t len_len = ur_met0_64(len_bit);
-
-    //  XX
-    assert( 64 > len_len );
-
-    ur_bsw64(bsw, len_len + 1, 1ULL << len_len);
-    ur_bsw64(bsw, len_len - 1, len_bit);
-  }
+  _bsw64_unsafe(bsw, len_len + 1, 1ULL << len_len);
+  _bsw64_unsafe(bsw, len_len - 1, len_bit);
 
   //  write bytes
   //
@@ -1105,13 +1122,41 @@ ur_bsw_mat_bytes(ur_bsw_t *bsw, uint64_t len_bit, uint64_t len, uint8_t *byt)
     uint8_t low = ur_mask_3(len_bit);
 
     if ( !low ) {
-      ur_bsw_bytes(bsw, len, byt);
+      _bsw_bytes_unsafe(bsw, len, byt);
     }
     else {
-      uint64_t last = len - 1;
-      ur_bsw_bytes(bsw, last, byt);
-      ur_bsw_bits(bsw, low, byt[last]);
+      len--;
+      _bsw_bytes_unsafe(bsw, len, byt);
+      _bsw8_unsafe(bsw, low, byt[len]);
     }
+  }
+}
+
+void
+ur_bsw_mat_bytes(ur_bsw_t *bsw, uint64_t len_bit, uint64_t len, uint8_t *byt)
+{
+  uint8_t len_len = ur_met0_64(len_bit);
+
+  //  XX
+  assert( 64 > len_len );
+
+  {
+    uint8_t  bits = bsw->off + (2 * len_len);
+    uint64_t need = len + (bits >> 3) + !!ur_mask_3(bits);
+
+    if ( (bsw->fill + need) >= bsw->size ) {
+      uint64_t prev = bsw->prev;
+
+      //  be sure to grow sufficiently
+      //
+      if ( need > prev ) {
+        bsw->prev = need;
+      }
+
+      ur_bsw_grow(bsw);
+    }
+
+    _bsw_mat_bytes_unsafe(bsw, len_len, len_bit, len, byt);
   }
 }
 
