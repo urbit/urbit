@@ -10,13 +10,13 @@
     |=  p=*
     =/  ip  ;;(indexed-post p)
     ?+    index.p.ip  ~|(index+index.p.ip !!)
-        ::  top-level link post
+        ::  top-level link post; title and url
         ::
         [@ ~]
-      ?>  ?=([[%text @] [%url @] [%text @] ~] contents.p.ip)
+      ?>  ?=([[%text @] [%url @] ~] contents.p.ip)
       ip
     ::
-        ::  comment on link post
+        ::  comment on link post; comment text
         ::
         [@ @ ~]
       ?>  ?=([[%text @] ~] contents.p.ip)
