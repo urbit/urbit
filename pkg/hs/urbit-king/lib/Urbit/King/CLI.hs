@@ -19,7 +19,7 @@ import System.Environment (getProgName)
 data Host = Host
   { hSharedHttpPort  :: Maybe Word16
   , hSharedHttpsPort :: Maybe Word16
-  , hUseNatPmp       :: Bool
+  , hUseNatPmp       :: Maybe NatSetting
   }
  deriving (Show)
 
@@ -69,6 +69,11 @@ data BootType
 data PillSource
   = PillSourceFile FilePath
   | PillSourceURL String
+  deriving (Show)
+
+data NatSetting
+  = NatSettingAlways
+  | NatSettingWhenPrivateNetwork
   deriving (Show)
 
 data New = New
@@ -427,11 +432,17 @@ host = do
     <> hidden
 
   hUseNatPmp <-
-    fmap not
-    $  switch
-    $  long "no-port-forwarding"
+     ( flag' (Just NatSettingAlways)
+     $ long "port-forwarding"
+    <> help "Always try to search for a router to forward ames ports"
+    <> hidden
+     ) <|>
+     ( flag' Nothing
+     $ long "no-port-forwarding"
     <> help "Disable trying to ask the router to forward ames ports"
     <> hidden
+     ) <|>
+     (pure $ Just NatSettingWhenPrivateNetwork)
 
   pure (Host{..})
 

@@ -1,5 +1,6 @@
 module Urbit.Vere.Ports (HasPortControlApi(..),
                          PortControlApi,
+                         TryNat(..),
                          buildInactivePorts,
                          buildNatPorts,
                          requestPortAccess) where
@@ -30,12 +31,24 @@ buildInactivePorts = PortControlApi noop noop
  where
   noop x = pure ()
 
+data TryNat
+  = TryNatAlways
+  | TryNatWhenPrivate
+
 -- | Builds a PortControlApi struct which tries to hole-punch by talking to the
 -- NAT gateway over NAT-PMP.
 buildNatPorts :: (HasLogFunc e)
-              => (Text -> RIO e ())
+              => TryNat
+              -> (Text -> RIO e ())
               -> RIO e PortControlApi
-buildNatPorts stderr = do
+
+buildNatPorts TryNatWhenPrivate stderr = do
+  behind <- likelyBehindRouter
+  if behind
+    then buildNatPorts TryNatAlways stderr
+    else pure buildInactivePorts
+
+buildNatPorts TryNatAlways stderr = do
   q <- newTQueueIO
   async $ portThread q stderr
 
@@ -221,6 +234,14 @@ likelyIPAddress = liftIO do
   case sockAddr of
     SockAddrInet _ addr -> pure $ Just $ hostAddressToTuple addr
     _                   -> pure $ Nothing
+
+likelyBehindRouter :: MonadIO m => m Bool
+likelyBehindRouter = do
+  likelyIPAddress >>= \case
+    Just ip@(192, 168, _, _) -> pure True
+    Just ip@(10, _, _, _)    -> pure True
+    _                        -> pure False
+
 
 -- Acquire a port for the duration of the RAcquire.
 requestPortAccess :: forall e. (HasPortControlApi e) => Word16 -> RAcquire e ()
