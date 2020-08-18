@@ -1,12 +1,8 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import { Row, Box, Text, Icon } from '@tlon/indigo-react';
 import ReconnectButton from './ReconnectButton';
 
 const StatusBar = (props) => {
-  const location = useLocation();
-  const atHome = Boolean(location.pathname === '/');
-
   const invites = (props.invites && props.invites['/contacts'])
     ? props.invites['/contacts']
     : {};
@@ -33,7 +29,6 @@ const StatusBar = (props) => {
     pt="10px"
     display={(window.location.href.includes('popout/') ? 'none' : 'flex')}>
       <Box pl={3} display="inline-block">
-        {atHome ? null : (
           <Box
             style={{ cursor: 'pointer' }}
             display='inline-block'
@@ -53,7 +48,6 @@ const StatusBar = (props) => {
               width='11'
             />
           </Box>
-        )}
         <Box
           border={1}
           borderRadius={2}
