@@ -1,21 +1,9 @@
 #ifndef URCRYPT_H
 #define URCRYPT_H
 
-// XX most of these should be moved to urcrypt.c
-
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>
-
-#include <ed25519.h>
-#include <ge-additions.h>
-
-#include <openssl/crypto.h>
-#include <openssl/aes.h>
-
-#include <argon2.h>
-#include <blake2.h>
 
 typedef void *(*urcrypt_malloc_t)(size_t);
 typedef void *(*urcrypt_realloc_t)(void*, size_t);

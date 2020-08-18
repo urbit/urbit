@@ -1,5 +1,15 @@
 #include "urcrypt.h"
 
+#include <string.h>
+#include <ed25519.h>
+#include <ge-additions.h>
+
+#include <openssl/crypto.h>
+#include <openssl/aes.h>
+
+#include <argon2.h>
+#include <blake2.h>
+
 static urcrypt_malloc_t _urcrypt_ssl_malloc_ptr;
 static urcrypt_realloc_t _urcrypt_ssl_realloc_ptr;
 static urcrypt_free_t _urcrypt_ssl_free_ptr;
