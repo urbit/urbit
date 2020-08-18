@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Box } from "@tlon/indigo-react";
-import { Sidebar } from "./lib/sidebar";
+import { Sidebar } from "./lib/Sidebar";
 import ErrorBoundary from "../../../components/ErrorBoundary";
 import { Notebooks } from "../../../types/publish-update";
 import { Path } from "../../../types/noun";
@@ -22,7 +22,7 @@ type SkeletonProps = RouteComponentProps<{ ship: string; notebook: string }> & {
   contacts: Rolodex;
   api: GlobalApi;
   children: React.ReactNode;
-}
+};
 
 export function Skeleton(props: SkeletonProps) {
   const popout = props.popout ? props.popout : false;

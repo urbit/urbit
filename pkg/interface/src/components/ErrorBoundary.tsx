@@ -21,6 +21,7 @@ class ErrorBoundary extends Component<
 
   componentDidCatch(error) {
     this.setState({ error });
+    debugger;
     return false;
   }
 

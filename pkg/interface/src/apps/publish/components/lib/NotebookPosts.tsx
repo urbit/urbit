@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { Col } from '@tlon/indigo-react';
-import { Note, NoteId } from "../../../../types/publish-update";
+import { Notes, NoteId } from "../../../../types/publish-update";
 import { NotePreview } from "./NotePreview";
 import { Contacts } from "../../../../types/contact-update";
 
 interface NotebookPostsProps {
   list: NoteId[];
   contacts: Contacts;
-  notes: Note[];
+  notes: Notes;
   host: string;
   book: string;
 }

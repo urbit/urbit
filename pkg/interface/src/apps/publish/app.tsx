@@ -7,14 +7,15 @@ import "./css/custom.css";
 
 import { Skeleton } from "./components/skeleton";
 import { NewScreen } from "./components/lib/new";
-import { JoinScreen } from "./components/lib/join";
-import { Notebook } from "./components/lib/notebook";
-import { Note } from "./components/lib/note";
+import { JoinScreen } from "./components/lib/Join";
+import { Notebook } from "./components/lib/Notebook";
+import { Note } from "./components/lib/Note";
 import { NewPost } from "./components/lib/new-post";
 import { EditPost } from "./components/lib/edit-post";
 import { StoreState } from "../../store/type";
 import GlobalApi from "../../api/global";
 import GlobalSubscription from "../../subscription/global";
+import {NotebookRoutes} from "./components/lib/NotebookRoutes";
 
 type PublishAppProps = StoreState & {
   api: GlobalApi;
@@ -76,8 +77,8 @@ export default function PublishApp(props: PublishAppProps) {
   return (
     <Route
       path={[
-        "/~publish/notebook/:popout?/:ship/:notebook",
-        "/~publish/:popout?/note/:ship/:notebook/:note/:edit?",
+        "/~publish/notebook/:ship/:notebook/*",
+        "/~publish/notebook/:ship/:notebook",
         "/~publish",
       ]}
     >
@@ -116,7 +117,7 @@ export default function PublishApp(props: PublishAppProps) {
           />
           <Route
             exact
-            path="/~publish/join/:ship?/:notebook?"
+            path="/~publish/join/:ship/:notebook"
             render={(props) => {
               const ship = props.match.params.ship || "";
               const notebook = props.match.params.notebook || "";
@@ -124,7 +125,7 @@ export default function PublishApp(props: PublishAppProps) {
                 <JoinScreen
                   notebooks={notebooks}
                   ship={ship}
-                  notebook={notebook}
+                  book={notebook}
                   api={api}
                   {...props}
                 />
@@ -132,8 +133,7 @@ export default function PublishApp(props: PublishAppProps) {
             }}
           />
           <Route
-            exact
-            path="/~publish/:popout?/notebook/:ship/:notebook/:view?"
+            path="/~publish/notebook/:ship/:notebook"
             render={(props) => {
               const view = props.match.params.view
                 ? props.match.params.view
@@ -142,7 +142,7 @@ export default function PublishApp(props: PublishAppProps) {
               const popout = Boolean(props.match.params.popout) || false;
 
               const ship = props.match.params.ship || "";
-              const notebook = props.match.params.notebook || "";
+              const book = props.match.params.notebook || "";
 
               const bookGroupPath =
                 notebooks?.[ship]?.[notebook]?.["subscribers-group-path"];
@@ -150,25 +150,15 @@ export default function PublishApp(props: PublishAppProps) {
               const notebookContacts =
                 bookGroupPath in contacts ? contacts[bookGroupPath] : {};
 
-              if (view === "new") {
+              const notebook = notebooks[ship][book];
+
+
                 return (
-                  <NewPost
-                    notebooks={notebooks}
-                    ship={ship}
-                    book={notebook}
-                    sidebarShown={sidebarShown}
-                    popout={popout}
-                    api={api}
-                    {...props}
-                  />
-                );
-              } else {
-                return (
-                  <Notebook
-                    notebooks={notebooks}
+                  <NotebookRoutes
+                    notebook={notebook}
                     view={view}
                     ship={ship}
-                    book={notebook}
+                    book={book}
                     groups={groups}
                     contacts={contacts}
                     notebookContacts={notebookContacts}
@@ -179,55 +169,6 @@ export default function PublishApp(props: PublishAppProps) {
                     {...props}
                   />
                 );
-              }
-            }}
-          />
-          <Route
-            exact
-            path="/~publish/:popout?/note/:ship/:notebook/:note/:edit?"
-            render={(props) => {
-              const ship = props.match.params.ship || "";
-              const notebook = props.match.params.notebook || "";
-              const note = props.match.params.note || "";
-
-              const popout = Boolean(props.match.params.popout) || false;
-
-              const bookGroupPath =
-                notebooks?.[ship]?.[notebook]?.["subscribers-group-path"];
-              const notebookContacts =
-                bookGroupPath in contacts ? contacts[bookGroupPath] : {};
-
-              const edit = Boolean(props.match.params.edit) || false;
-
-              if (edit) {
-                return (
-                  <EditPost
-                    notebooks={notebooks}
-                    book={notebook}
-                    note={note}
-                    ship={ship}
-                    sidebarShown={sidebarShown}
-                    popout={popout}
-                    api={api}
-                    {...props}
-                  />
-                );
-              } else {
-                return (
-                  <Note
-                    notebooks={notebooks}
-                    book={notebook}
-                    groups={groups}
-                    contacts={notebookContacts}
-                    ship={ship}
-                    note={note}
-                    sidebarShown={sidebarShown}
-                    popout={popout}
-                    api={api}
-                    {...props}
-                  />
-                );
-              }
             }}
           />
         </Switch>

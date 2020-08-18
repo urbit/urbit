@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, forwardRef } from "react";
 import { Box } from "@tlon/indigo-react";
 import { Link } from "react-router-dom";
 import { SidebarSwitcher } from "../../../../components/SidebarSwitch";
@@ -11,7 +11,7 @@ interface PublishContentProps {
   api: GlobalApi;
 }
 
-export function PublishContent(props: PublishContentProps) {
+export const PublishContent = (props: PublishContentProps) => {
   const { children, sidebarShown, api } = props;
 
   const { query } = useQuery();
@@ -27,16 +27,18 @@ export function PublishContent(props: PublishContentProps) {
       height="100%"
       width="100%"
       display="grid"
-      gridTemplateColumns="16px 1fr 16px"
-      gridTemplateRows="1fr"
+      gridTemplateColumns="1fr"
+      gridAutoRows="auto"
+      justifyItems="center"
+      overflowY="scroll"
     >
-      <SidebarSwitcher popout={popout} sidebarShown={sidebarShown} api={api} />
+      {/*<SidebarSwitcher popout={popout} sidebarShown={sidebarShown} api={api} />*/}
       {children}
-      <Box pt={2} justifySelf="end" display={popoutDisplay}>
+  {/*<Box pt={2} justifySelf="end" display={popoutDisplay}>
         <Link target="_blank" to="">
           <img src="/~landscape/img/popout.png" height={16} width={16} />
         </Link>
-      </Box>
+      </Box>*/}
     </Box>
   );
-}
+};

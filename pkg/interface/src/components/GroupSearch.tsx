@@ -34,7 +34,7 @@ const Candidate = ({ title, selected, onClick }) => (
     width="100%"
   >
     {title}
-  InviteSearch</CandidateBox>
+  </CandidateBox>
 );
 
 function renderCandidate(

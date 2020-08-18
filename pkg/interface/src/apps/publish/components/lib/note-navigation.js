@@ -48,7 +48,7 @@ export class NoteNavigation extends Component {
     }
 
     return (
-        <div className="flex pt4">
+        <div className="flex">
           {prevComponent}
           {nextComponent}
         </div>
