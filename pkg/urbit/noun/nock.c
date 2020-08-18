@@ -7,6 +7,8 @@
 // along with some other debugging info
 #        undef VERBOSE_BYTECODE
 
+static c3_o _logging_enabled = c3n;
+
 /* _n_mush_in(): see _n_mush().
 */
 static u3_noun
@@ -969,7 +971,7 @@ static void _n_print_stack(u3p(u3_noun) empty) {
 }
 #endif
 
-#ifdef VERBOSE_BYTECODE
+//#ifdef VERBOSE_BYTECODE
 // match to OPCODE TABLE
 static char* opcode_names[] = {
   "halt", "bail",
@@ -1002,7 +1004,7 @@ static char* opcode_names[] = {
   "mutb", "muts", "mitb", "mits",
   "kutb", "kuts", "kitb", "kits",
 };
-#endif
+//#endif
 
 /* _n_apen(): emit the instructions contained in src to dst
  */
@@ -1435,7 +1437,7 @@ _n_rewo(c3_y* buf, c3_w* ip_w)
   return one | (two << 8) | (tre << 16) | (qua << 24);
 }
 
-#ifdef VERBOSE_BYTECODE
+//#ifdef VERBOSE_BYTECODE
 /* _n_print_byc(): print bytecode. used for debugging.
  */
 static void
@@ -1443,10 +1445,10 @@ _n_print_byc(c3_y* pog, c3_w her_w)
 {
   c3_w ip_w = 0;
   if ( her_w == 0 ) {
-    fprintf(stderr, "begin: {");
+    u3l_log("begin: {");
   }
   else {
-    fprintf(stderr, "resume: {");
+    u3l_log("resume: {");
   }
   int first = 1;
   while ( pog[ip_w] ) {
@@ -1454,38 +1456,38 @@ _n_print_byc(c3_y* pog, c3_w her_w)
       first = 0;
     }
     else if (ip_w == her_w) {
-      fprintf(stderr, " [*]");
+      u3l_log(" [*]");
     }
     else {
-      fprintf(stderr, " ");
+      u3l_log(" ");
     }
     switch ( _n_arg(pog[ip_w]) ) {
       case 0:
-        fprintf(stderr, "%s", opcode_names[pog[ip_w++]]);
+        u3l_log("%s", opcode_names[pog[ip_w++]]);
         break;
 
       case 1:
-        fprintf(stderr, "[%s ", opcode_names[pog[ip_w++]]);
-        fprintf(stderr, "%u]", pog[ip_w++]);
+        u3l_log("[%s ", opcode_names[pog[ip_w++]]);
+        u3l_log("%u]", pog[ip_w++]);
         break;
 
       case 2:
-        fprintf(stderr, "[%s ", opcode_names[pog[ip_w++]]);
-        fprintf(stderr, "%u]", _n_resh(pog, &ip_w));
+        u3l_log("[%s ", opcode_names[pog[ip_w++]]);
+        u3l_log("%u]", _n_resh(pog, &ip_w));
         break;
 
       case 4:
-        fprintf(stderr, "[%s", opcode_names[pog[ip_w++]]);
-        fprintf(stderr, "%u]", _n_rewo(pog, &ip_w));
+        u3l_log("[%s", opcode_names[pog[ip_w++]]);
+        u3l_log("%u]", _n_rewo(pog, &ip_w));
         break;
       default:
         c3_assert(0);
         break;
     }
   }
-  fprintf(stderr, " halt}\r\n");
+  u3l_log(" halt}\r\n");
 }
-#endif
+//#endif
 
 /* _n_bite(): compile a nock formula to bytecode. RETAIN.
  */
@@ -1653,16 +1655,23 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
   u3R->pro.nox_d += 1;
 #endif
 #ifdef VERBOSE_BYTECODE
-  #define BURN() fprintf(stderr, "%s ", opcode_names[pog[ip_w]]); goto *lab[pog[ip_w++]]
+  #define BURN() u3l_log("%s ", opcode_names[pog[ip_w]]); goto *lab[pog[ip_w++]]
 #else
-  #define BURN() goto *lab[pog[ip_w++]]
+  //  #define BURN() goto *lab[pog[ip_w++]]
+  #define BURN()  \
+    if (_(_logging_enabled)) { \
+        u3l_log("%s ", opcode_names[pog[ip_w]]); \
+    }                                            \
+    goto *lab[pog[ip_w++]];
 #endif
   BURN();
   {
     do_halt: // [product ...burnframes...]
       x = _n_pep(mov, off);
 #ifdef VERBOSE_BYTECODE
-      fprintf(stderr, "return\r\n");
+      if (_(_logging_enabled)) {
+        u3l_log("return\r\n");
+      }
 #endif
       if ( empty == u3R->cap_p ) {
         return x;
@@ -1676,7 +1685,9 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
         u3R->cap_p = u3of(burnframe, fam - (mov+off));
         _n_push(mov, off, x);
 #ifdef VERBOSE_BYTECODE
-        _n_print_byc(pog, ip_w);
+        if (_(_logging_enabled)) {
+          _n_print_byc(pog, ip_w);
+        }
 #endif
         BURN();
       }
@@ -1864,11 +1875,13 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       pog   = pog_u->byc_u.ops_y;
       ip_w  = 0;
 #ifdef U3_CPU_DEBUG
-    u3R->pro.nox_d += 1;
+      u3R->pro.nox_d += 1;
 #endif
 #ifdef VERBOSE_BYTECODE
-      fprintf(stderr, "\r\nnock jump: %u\r\n", o);
-      _n_print_byc(pog, ip_w);
+      if (_(_logging_enabled)) {
+        u3l_log("\r\nnock jump: %u\r\n", o);
+        _n_print_byc(pog, ip_w);
+      }
 #endif
       u3z(o);
       BURN();
@@ -2025,17 +2038,19 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
         pog   = pog_u->byc_u.ops_y;
         ip_w  = 0;
 #ifdef U3_CPU_DEBUG
-    u3R->pro.nox_d += 1;
+        u3R->pro.nox_d += 1;
 #endif
 #ifdef VERBOSE_BYTECODE
-        fprintf(stderr, "\r\nhead kick jump: %u, sp: %p\r\n", u3r_at(sit_u->axe, cor), top);
-        _n_print_byc(pog, ip_w);
+        if (_(_logging_enabled)) { \
+          u3l_log("\r\nhead kick jump: %u, sp: %p\r\n", u3r_at(sit_u->axe, cor), top);
+          _n_print_byc(pog, ip_w);
+        }
 #endif
         _n_push(mov, off, o);
       }
 #ifdef VERBOSE_BYTECODE
-      else {
-        fprintf(stderr, "head jet\r\n");
+      else if (_(_logging_enabled)) {
+        u3l_log("head jet\r\n");
       }
 #endif
       BURN();
@@ -2057,16 +2072,18 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
         pog   = pog_u->byc_u.ops_y;
         ip_w  = 0;
 #ifdef U3_CPU_DEBUG
-    u3R->pro.nox_d += 1;
+        u3R->pro.nox_d += 1;
 #endif
 #ifdef VERBOSE_BYTECODE
-        fprintf(stderr, "\r\ntail kick jump: %u, sp: %p\r\n", u3x_at(sit_u->axe, o);, top);
-        _n_print_byc(pog, ip_w);
+        if (_(_logging_enabled))) {
+          u3l_log("\r\ntail kick jump: %u, sp: %p\r\n", u3x_at(sit_u->axe, o);, top);
+          _n_print_byc(pog, ip_w);
+        }
 #endif
       }
 #ifdef VERBOSE_BYTECODE
-      else {
-        fprintf(stderr, "tail jet\r\n");
+      else if (_(_logging_enabled)) {
+        u3l_log("tail jet\r\n");
       }
 #endif
       BURN();
@@ -2134,6 +2151,20 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       x = _n_pep(mov, off);
       if ( !(u3C.wag_w & u3o_quiet) ) {
         u3t_off(noc_o);
+        // 1717658988 = leaf
+        u3_noun tron =
+            u3nq(0, 1717658988, 37, u3nq(116, 114, 111, u3nc(110, 0)));
+        u3_noun trof =
+            u3nq(0, 1717658988, 37, u3nq(116, 114, 111, u3nc(102, 0)));
+        if (c3y == u3r_sing(x, tron)) {
+          //          u3l_log("turning on the tron\r\n");
+          _logging_enabled = c3y;
+        } else if (c3y == u3r_sing(x, trof)) {
+          //          u3l_log("turning off the trof\r\n");
+          _logging_enabled = c3n;
+        }
+        u3z(tron);
+        u3z(trof);
         u3t_slog(x);
         u3t_on(noc_o);
       }
