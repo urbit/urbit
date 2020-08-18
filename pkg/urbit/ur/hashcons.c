@@ -943,24 +943,26 @@ _bsw8_unsafe(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
   uint64_t fill = bsw->fill;
   uint8_t   off = bsw->off;
   uint8_t rest = 8 - off;
-  uint8_t  old = bsw->bytes[fill];
+  uint8_t l, m;
 
+  //  the least-significant bits of the input become the
+  //  most-significant bits of a byte in the output stream
+  //
   if ( len < rest ) {
-    uint8_t left = (byt & ((1 << len) - 1)) << off;
+    l = byt & ((1 << len) - 1);
 
-    bsw->bytes[fill] = old ^ left;
+    bsw->bytes[fill] ^= l << off;
     bsw->off = off + len;
   }
+  //  and vice-versa
+  //
   else {
-    uint8_t left, right;
+    l = byt & ((1 << rest) - 1);
+    m = byt >> rest;
 
-    left  = (byt & ((1 << rest) - 1)) << off;
-    off   = len - rest;
-    right = (byt >> rest) & ((1 << off) - 1);
-
-    bsw->bytes[fill] = old ^ left;
-    fill++;
-    bsw->bytes[fill] = right;
+    bsw->bytes[fill++] ^= l << off;
+    off = len - rest;
+    bsw->bytes[fill]    = m & ((1 << off) - 1);
 
     bsw->fill = fill;
     bsw->off  = off;
@@ -1131,20 +1133,22 @@ _bsw_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
     memcpy(bsw->bytes + fill, byt, len);
     fill += len;
   }
+  //  the least-significant bits of the input become the
+  //  most-significant bits of a byte in the output stream, and vice-versa
+  //
   else {
     uint8_t rest = 8 - off;
-    uint8_t left, right, old = bsw->bytes[fill];
-    uint64_t i;
+    uint8_t mask = (1 << rest) - 1;
+    uint8_t l, m = bsw->bytes[fill];
+    uint64_t   i;
 
     for ( i = 0; i < len; i++ ) {
-      left  = (byt[i] & ((1 << rest) - 1)) << off;
-      right = (byt[i] >> rest) & ((1 << off) - 1);
-
-      bsw->bytes[fill++] = old ^ left;
-      old = right;
+      l = byt[i] & mask;
+      bsw->bytes[fill++] = m ^ (l << off);
+      m = byt[i] >> rest;
     }
 
-    bsw->bytes[fill] = old;
+    bsw->bytes[fill] = m;
   }
 
   bsw->fill  = fill;
