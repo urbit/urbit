@@ -69,6 +69,14 @@ portLeaseLifetime = 15 * 60
 portRenewalTime :: Word32
 portRenewalTime = portLeaseLifetime - 60
 
+-- Number of retries before we give up on performing nat operations.
+maxRetries :: Int
+maxRetries = 3
+
+-- How long to wait between retries.
+networkRetryDelay :: Int
+networkRetryDelay = 5 * 1000000
+
 -- Messages sent from the main thread to the port mapping communication thread.
 data PortThreadMsg
   = PTMOpen Word16 (STM ())
@@ -163,6 +171,8 @@ portThread q stderr = do
       logInfo $
         displayShow ("port: sending initial request to NAT-PMP for port ", p)
       setPortMapping pmp PTUdp p p portLeaseLifetime >>= \case
+        Left err | isResetAndRetry err -> do
+          attemptReestablishNatPmpThen (\pmp -> handlePTM pmp msg nextRenew)
         Left err -> do
           logError $
             displayShow ("port: failed to request NAT-PMP for port ", p,
@@ -197,10 +207,12 @@ portThread q stderr = do
           displayShow ("port: sending renewing request to NAT-PMP for port ",
                        p)
         setPortMapping pmp PTUdp p p portLeaseLifetime >>= \case
+          Left err | isResetAndRetry err -> do
+            attemptReestablishNatPmpThen (\pmp -> handleRenew pmp nextRenew)
           Left err -> do
             logError $
               displayShow ("port: failed to request NAT-PMP for port ", p,
-                           ":", err, ", disabling NAT-PMP")
+                           ":", err, ". disabling NAT-PMP")
             loopErr q
           Right _ -> do
             -- We don't need to filter the port because we just did.
@@ -209,6 +221,29 @@ portThread q stderr = do
                   DH.insert (now + fromIntegral portRenewalTime, RenewAction p)
                             rest
             loop pmp withRenew
+
+  -- If the internal natpmp socket is closed (laptop lid closed, network
+  -- change, etc), attempt to reestablish a connection.
+  attemptReestablishNatPmpThen :: (NatPmpHandle -> RIO e ())
+                               -> RIO e ()
+  attemptReestablishNatPmpThen andThen = do
+    logInfo $
+      displayShow ("port: network changed. Attempting NAT reconnect");
+    loop 0
+   where
+    loop :: Int -> RIO e ()
+    loop tryNum = do
+      initNatPmp >>= \case
+        Left err -> do
+          if tryNum == maxRetries
+            then do
+              stderr $ "port: failed to reestablish a connection to your router"
+              loopErr q
+            else do
+              threadDelay networkRetryDelay
+              loop (tryNum + 1)
+        Right pmp -> do
+          andThen pmp
 
   filterPort :: Word16
              -> DH.MinPrioHeap POSIXTime RenewAction
@@ -252,6 +287,13 @@ likelyBehindRouter = do
     Just ip@(10, _, _, _)    -> pure True
     _                        -> pure False
 
+-- Some of the errors that we encounter happen when the underlying sockets have
+-- closed out from under us. When this happens, we want to wait a short time
+-- and reset the system.
+isResetAndRetry :: Error -> Bool
+isResetAndRetry ErrRecvFrom = True
+isResetAndRetry ErrSendErr  = True
+isResetAndRetry _           = False
 
 -- Acquire a port for the duration of the RAcquire.
 requestPortAccess :: forall e. (HasPortControlApi e) => Word16 -> RAcquire e ()
