@@ -68,25 +68,27 @@ export class Sidebar extends Component {
             association={contactAssoc[each]}
             chatMetadata={chatAssoc}
             channels={channels}
+            messagePreviews={props.messagePreviews}
+            groups={props.groups}
             inbox={props.inbox}
             station={props.station}
             unreads={props.unreads}
-            {...props}
           />
         );
       });
       // add direct messages after groups
       groupedItems.push(
         <GroupItem
-          association={'dm'}
+          association={"dm"}
           chatMetadata={chatAssoc}
-          channels={groupedChannels['dm']}
+          channels={groupedChannels["dm"]}
+          messagePreviews={props.messagePreviews}
           inbox={props.inbox}
+          groups={props.groups}
           station={props.station}
           unreads={props.unreads}
-          index={'dm'}
-          key={'dm'}
-          {...props}
+          index={"dm"}
+          key={"dm"}
         />
       );
 

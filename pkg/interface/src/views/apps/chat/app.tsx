@@ -108,6 +108,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
         unreads={unreads}
         api={api}
         station={station}
+        groups={groups}
         {...props}
       />
     );

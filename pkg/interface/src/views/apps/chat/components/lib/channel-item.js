@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 
 export class ChannelItem extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   onClick() {
     const { props } = this;
     props.history.push('/~chat/room' + props.box);
