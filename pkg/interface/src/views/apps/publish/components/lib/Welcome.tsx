@@ -1,6 +1,6 @@
 import React from "react";
 import { Box } from "@tlon/indigo-react";
-import { useLocalStorageState } from "../../../../lib/useLocalStorageState";
+import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
 
 export function Welcome(props: Parameters<typeof Box>[0]) {
   const [wasWelcomed, setWasWelcomed] = useLocalStorageState(

@@ -1,8 +1,8 @@
-import React from "react";
+import React, {ReactNode} from "react";
 import moment from "moment";
-import { Sigil } from "../../../../lib/sigil";
-import { uxToHex, cite } from "../../../../lib/util";
-import { Contacts } from "../../../../types/contact-update";
+import { Sigil } from "~/logic/lib/sigil"
+import { uxToHex, cite } from "~/logic/lib/util";
+import { Contacts } from "~/types/contact-update";
 import { Row, Box } from "@tlon/indigo-react";
 
 interface AuthorProps {
@@ -10,6 +10,7 @@ interface AuthorProps {
   ship: string;
   date: number;
   showImage?: boolean;
+  children: ReactNode;
 }
 
 export function Author(props: AuthorProps) {
@@ -31,7 +32,7 @@ export function Author(props: AuthorProps) {
               ship={ship}
               size={24}
               color={color}
-              classes="mix-blend-diff"
+              classes={contact?.color ? '' : "mix-blend-diff"}
             />
           )}
         </Box>
@@ -46,6 +47,7 @@ export function Author(props: AuthorProps) {
       <Box ml={2} color="gray">
         {dateFmt}
       </Box>
+      {props.children}
     </Row>
   );
 }

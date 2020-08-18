@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import moment from "moment";
-import { Sigil } from "../../../../lib/sigil";
+import { Sigil } from "~/logic/lib/sigil";
 import CommentInput from "./CommentInput";
-import { uxToHex, cite } from "../../../../lib/util";
-import { Comment, NoteId } from "../../../../types/publish-update";
-import { Contacts } from "../../../../types/contact-update";
-import GlobalApi from "../../../../api/global";
+import { uxToHex, cite } from "~/logic/lib/util";
+import { Comment, NoteId } from "~/types/publish-update";
+import { Contacts } from "~/types/contact-update";
+import GlobalApi from "~/logic/api/global";
 import { Button, Box, Row, Text } from "@tlon/indigo-react";
 import styled from "styled-components";
 import { Author } from "./Author";
 
 const ClickBox = styled(Box)`
   cursor: pointer;
-  margin-left: ${(p) => p.theme.space[2]}px;
-  padding-top: ${(p) => p.theme.space[1]}px;
+  padding-left: ${p => p.theme.space[2]}px;
 `;
 
 interface CommentItemProps {
@@ -64,22 +63,23 @@ export function CommentItem(props: CommentItemProps) {
           contacts={contacts}
           ship={ship}
           date={commentData["date-created"]}
-        />
-        {!disabled && !editing && (
-          <>
-            <ClickBox color="green" onClick={() => setEditing(true)}>
-              Edit
+        >
+          {!disabled && !editing && (
+            <>
+              <ClickBox color="green" onClick={() => setEditing(true)}>
+                Edit
+              </ClickBox>
+              <ClickBox color="red" onClick={onDelete}>
+                Delete
+              </ClickBox>
+            </>
+          )}
+          {editing && (
+            <ClickBox onClick={() => setEditing(false)} color="red">
+              Cancel
             </ClickBox>
-            <ClickBox color="red" onClick={onDelete}>
-              Delete
-            </ClickBox>
-          </>
-        )}
-        {editing && (
-          <ClickBox onClick={() => setEditing(false)} color="red">
-            Cancel
-          </ClickBox>
-        )}
+          )}
+        </Author>
       </Row>
       <Box mb={2}>
         {!editing && content}

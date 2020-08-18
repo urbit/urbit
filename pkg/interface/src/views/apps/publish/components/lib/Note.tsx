@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Box, Text, Col } from "@tlon/indigo-react";
 import ReactMarkdown from "react-markdown";
 import { Link, RouteComponentProps } from "react-router-dom";
-import { Spinner } from "../../../../components/Spinner";
+import { Spinner } from "~/views/components/Spinner";
 import { Comments } from "./Comments";
 import { NoteNavigation } from "./NoteNavigation";
 import {
   NoteId,
   Note as INote,
   Notebook,
-} from "../../../../types/publish-update";
-import { Contacts } from "../../../../types/contact-update";
-import GlobalApi from "../../../../api/global";
+} from "~/types/publish-update";
+import { Contacts } from "~/types/contact-update";
+import GlobalApi from "~/logic/api/global";
 import { Author } from "./Author";
 
 interface NoteProps {
@@ -35,7 +35,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
 
   const deletePost = async () => {
     setDeleting(true);
-    await api.publish.delNote(ship, book, noteId);
+    await api.publish.delNote(ship.slice(1), book, noteId);
     props.history.push(baseUrl);
   };
 
@@ -73,6 +73,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       maxWidth="500px"
       width="100%"
       gridRowGap={4}
+      mx="auto"
     >
       <Link to={baseUrl}>
         <Text>{"<- Notebook Index"}</Text>
@@ -100,7 +101,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       />
       {notebook.comments && (
         <Comments
-          ship={props.ship}
+          ship={ship}
           book={props.book}
           noteId={props.noteId}
           note={props.note}

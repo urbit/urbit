@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Box, Text, Col } from "@tlon/indigo-react";
 import { Link } from "react-router-dom";
-import SidebarInvite from "../../../../components/SidebarInvite";
+import SidebarInvite from "~/views/components/SidebarInvite";
 import { Welcome } from "./Welcome";
 import { GroupItem } from "./GroupItem";
-import { alphabetiseAssociations } from "../../../../lib/util";
+import { alphabetiseAssociations } from "~/logic/lib/util";
 
 export function Sidebar(props: any) {
   const sidebarInvites = !(props.invites && props.invites["/publish"])

@@ -1,8 +1,8 @@
 import React, { useCallback, useState, useRef, useEffect } from "react";
 import { Col, Text, ErrorMessage } from "@tlon/indigo-react";
-import { Spinner } from "../../../../components/Spinner";
-import { Notebooks } from "../../../../types/publish-update";
-import { useWaitForProps } from "../../../../lib/useWaitForProps";
+import { Spinner } from "~/views/components/Spinner";
+import { Notebooks } from "~/types/publish-update";
+import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import { RouteComponentProps } from "react-router-dom";
 
 interface JoinScreenProps {

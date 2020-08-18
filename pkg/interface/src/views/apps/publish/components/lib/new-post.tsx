@@ -1,9 +1,9 @@
 import React from "react";
-import { stringToSymbol } from "../../../../lib/util";
+import { stringToSymbol } from "~/logic/lib/util";
 import { FormikHelpers } from "formik";
-import GlobalApi from "../../../../api/global";
-import { useWaitForProps } from "../../../../lib/useWaitForProps";
-import { Notebook } from "../../../../types/publish-update";
+import GlobalApi from "~/logic/api/global";
+import { useWaitForProps } from "~/logic/lib/useWaitForProps";
+import { Notebook } from "~/types/publish-update";
 import { RouteComponentProps } from "react-router-dom";
 import { PostForm, PostFormSchema } from "./NoteForm";
 

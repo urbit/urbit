@@ -8,7 +8,7 @@ import { Groups } from "../../../../types/group-update";
 import { Contacts, Rolodex } from "../../../../types/contact-update";
 import Notebook from "./Notebook";
 import NewPost from "./new-post";
-import Note from "./Note";
+import { NoteRoutes } from './NoteRoutes';
 
 interface NotebookRoutesProps {
   api: GlobalApi;
@@ -62,7 +62,7 @@ export function NotebookRoutes(
           const { noteId } = routeProps.match.params;
           const note = notebook?.notes[noteId];
           return (
-            <Note
+            <NoteRoutes
               api={api}
               book={book}
               ship={ship}

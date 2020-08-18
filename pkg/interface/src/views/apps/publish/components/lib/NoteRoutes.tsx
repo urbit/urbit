@@ -1,12 +1,12 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 
-import { NoteId, Note as INote, Notebook } from "../../../../types/publish-update";
-import { Contacts } from "../../../../types/contact-update";
-import GlobalApi from "../../../../api/global";
+import { NoteId, Note as INote, Notebook } from "~/types/publish-update";
+import { Contacts } from "~/types/contact-update";
+import GlobalApi from "~/logic/api/global";
 import { RouteComponentProps } from "react-router-dom";
 import Note from "./Note";
-import EditPost from "./EditPost";
+import { EditPost } from "./EditPost";
 
 interface NoteRoutesProps {
   ship: string;
@@ -27,16 +27,17 @@ export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {
   return (
     <Switch>
       <Route
+        path={relativePath("/edit")}
+        render={(routeProps) => <EditPost {...routeProps} {...props} />}
+      />
+      <Route
         path={baseUrl}
         exact
         render={(routeProps) => {
           return <Note {...routeProps} {...props} />;
         }}
       />
-      <Route
-        path={relativePath("/edit")}
-        render={(routeProps) => <EditPost {...routeProps} {...props} />}
-      />
+
     </Switch>
   );
 }

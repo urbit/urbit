@@ -3,7 +3,7 @@ import { Link, RouteComponentProps, Route, Switch } from "react-router-dom";
 import { NotebookPosts } from "./NotebookPosts";
 import { Subscribers } from "./Subscribers";
 import { Settings } from "./Settings";
-import { roleForShip } from "../../../../lib/group";
+import { roleForShip } from "~/logic/lib/group";
 import {
   Box,
   Button,
@@ -15,10 +15,10 @@ import {
   TabPanel,
   Row,
 } from "@tlon/indigo-react";
-import { Notebook as INotebook } from "../../../../types/publish-update";
-import { Groups } from "../../../../types/group-update";
-import { Contacts, Rolodex } from "../../../../types/contact-update";
-import GlobalApi from "../../../../api/global";
+import { Notebook as INotebook } from "~/types/publish-update";
+import { Groups } from "~/types/group-update";
+import { Contacts, Rolodex } from "~/types/contact-update";
+import GlobalApi from "~/logic/api/global";
 import styled from "styled-components";
 
 const TabList = styled(_TabList)`

@@ -2,11 +2,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Col } from "@tlon/indigo-react";
 import { CommentItem } from "./CommentItem";
 import CommentInput from "./CommentInput";
-import { dateToDa } from "../../../../lib/util";
-import { Comment, Note, NoteId } from "../../../../types/publish-update";
-import { Contacts } from "../../../../types/contact-update";
+import { dateToDa } from "~/logic/lib/util";
+import { Comment, Note, NoteId } from "~/types/publish-update";
+import { Contacts } from "~/types/contact-update";
 import _ from "lodash";
-import GlobalApi from "../../../../api/global";
+import GlobalApi from "~/logic/api/global";
 import { FormikHelpers } from "formik";
 
 interface CommentsProps {
@@ -59,9 +59,10 @@ export function Comments(props: CommentsProps) {
       <CommentInput onSubmit={onSubmit} />
       {Array.from(pending).map((com, i) => {
         const da = dateToDa(new Date());
+        const ship = `~${window.ship}`;
         const comment = {
           [da]: {
-            author: `~${window.ship}`,
+            author: ship,
             content: com,
             "date-created": Math.round(new Date().getTime()),
           },
@@ -71,6 +72,7 @@ export function Comments(props: CommentsProps) {
             comment={comment}
             key={i}
             contacts={props.contacts}
+            ship={ship}
             pending={true}
           />
         );

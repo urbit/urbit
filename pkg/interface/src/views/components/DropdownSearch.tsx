@@ -14,7 +14,7 @@ import {
   ErrorMessage,
   InputCaption,
 } from "@tlon/indigo-react";
-import { useDropdown } from "../lib/useDropdown";
+import { useDropdown } from "~/logic/lib/useDropdown";
 import styled from "styled-components";
 import { space, color, layout, border } from "styled-system";
 

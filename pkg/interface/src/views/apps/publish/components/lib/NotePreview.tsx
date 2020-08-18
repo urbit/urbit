@@ -1,8 +1,8 @@
 import React from "react";
 import { Col, Box } from "@tlon/indigo-react";
-import { cite } from "../../../../lib/util";
-import { Note } from "../../../../types/publish-update";
-import { Contact } from "../../../../types/contact-update";
+import { cite } from "~/logic/lib/util";
+import { Note } from "~/types/publish-update";
+import { Contact } from "~/types/contact-update";
 import ReactMarkdown from "react-markdown";
 import moment from "moment";
 import { Link } from "react-router-dom";

@@ -2,15 +2,15 @@ import React, { useCallback } from "react";
 import { Box, Input, Col } from "@tlon/indigo-react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import GlobalApi from "../../../../api/global";
-import { AsyncButton } from "../../../../components/AsyncButton";
-import { FormError } from "../../../../components/FormError";
+import GlobalApi from "~/logic/api/global";
+import { AsyncButton } from "~/views/components/AsyncButton";
+import { FormError } from "~/views/components/FormError";
 import { RouteComponentProps } from "react-router-dom";
-import { stringToSymbol } from "../../../../lib/util";
-import GroupSearch from "../../../../components/GroupSearch";
-import { Associations } from "../../../../types/metadata-update";
-import { useWaitForProps } from "../../../../lib/useWaitForProps";
-import { Notebooks } from "../../../../types/publish-update";
+import { stringToSymbol } from "~/logic/lib/util";
+import GroupSearch from "~/views/components/GroupSearch";
+import { Associations } from "~/types/metadata-update";
+import { useWaitForProps } from "~/logic/lib/useWaitForProps";
+import { Notebooks } from "~/types/publish-update";
 
 interface FormSchema {
   name: string;
