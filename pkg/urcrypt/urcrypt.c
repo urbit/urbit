@@ -340,18 +340,19 @@ _urcrypt_cbc_pad(uint8_t **message_ptr,
                  size_t *length_ptr,
                  urcrypt_realloc_t realloc_ptr)
 {
-  size_t length  = *length_ptr,
-         rem     = length % 16;
+  size_t length = *length_ptr,
+         remain = length % 16;
 
-  if ( 0 == rem ) {
-    // no padding necessary
+  if ( 0 == remain ) {
+    // no padding needed
     return 0;
   }
   else {
-    size_t padding = 16 - rem,
+    size_t padding = 16 - remain,
            padded  = length + padding;
 
     if ( padded < length ) {
+      // size_t overflow
       return -1;
     }
     else {
@@ -360,10 +361,9 @@ _urcrypt_cbc_pad(uint8_t **message_ptr,
         return -2;
       }
       else {
-        *message_ptr = out;
-        *length_ptr = padded;
         memset(out + length, 0, padding);
-        _urcrypt_reverse(padded, out);
+        *message_ptr = out;
+        *length_ptr  = padded;
         return 0;
       }
     }
@@ -385,6 +385,7 @@ _urcrypt_cbc_help(uint8_t **message_ptr,
     uint8_t *out = *message_ptr;
     size_t length = *length_ptr;
     _urcrypt_reverse(16, ivec);
+    _urcrypt_reverse(length, out);
     AES_cbc_encrypt(out, out, length, key, ivec, enc);
     _urcrypt_reverse(length, out);
     return 0;
