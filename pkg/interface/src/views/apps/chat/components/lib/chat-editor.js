@@ -15,7 +15,7 @@ const MARKDOWN_CONFIG = {
   name: 'markdown',
   tokenTypeOverrides: {
     header: 'presentation',
-    quote: 'presentation',
+    quote: 'quote',
     list1: 'presentation',
     list2: 'presentation',
     list3: 'presentation',
