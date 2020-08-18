@@ -5,12 +5,12 @@ static urcrypt_malloc_t urcrypt_malloc_ptr;
 static urcrypt_realloc_t urcrypt_realloc_ptr;
 static urcrypt_free_t urcrypt_free_ptr;
 
-void* urcrypt_malloc(size_t len)
+static void* _urcrypt_malloc(size_t len)
 {
   return (*urcrypt_malloc_ptr)(len);
 }
 
-void* urcrypt_realloc(void *ptr, size_t len)
+static void* _urcrypt_realloc(void *ptr, size_t len)
 {
   return (*urcrypt_realloc_ptr)(ptr, len);
 }
@@ -21,48 +21,47 @@ void urcrypt_free(void *ptr)
 }
 
 static void*
-urcrypt_malloc_ssl(size_t len
+_urcrypt_malloc_ssl(size_t len
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
                , const char* file, int line
 #endif
-) { return urcrypt_malloc(len); }
+) { return _urcrypt_malloc(len); }
 
 static void*
-urcrypt_realloc_ssl(void* ptr, size_t len
+_urcrypt_realloc_ssl(void* ptr, size_t len
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
                , const char* file, int line
 #endif
-) { return urcrypt_realloc(ptr, len); }
+) { return _urcrypt_realloc(ptr, len); }
 
 static void
-urcrypt_free_ssl(void* ptr
+_urcrypt_free_ssl(void* ptr
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
                , const char* file, int line
 #endif
 ) { urcrypt_free(ptr); }
 
-/* IMPORTANT: it is an error (undefined behavior) to call functions in
- * this library without first calling urcrypt_init() exactly once.
- */
 int
-urcrypt_init(urcrypt_malloc_t m, urcrypt_realloc_t r, urcrypt_free_t f)
+urcrypt_init(_urcrypt_malloc_t m, _urcrypt_realloc_t r, urcrypt_free_t f)
 {
   if ( initialized ) {
     return -1;
   }
+  else if ( (NULL == m) || (NULL == r) || (NULL == f) ) {
+    return -2;
+  }
   else {
     initialized = true;
-    urcrypt_malloc_ptr  = ( NULL == m ) ? &malloc  : m;
-    urcrypt_realloc_ptr = ( NULL == r ) ? &realloc : r;
-    urcrypt_free_ptr    = ( NULL == f ) ? &free    : f;
-
-    if ( CRYPTO_set_mem_functions(&urcrypt_malloc_ssl,
-                                  &urcrypt_realloc_ssl,
-                                  &urcrypt_free_ssl) ) {
+    urcrypt_malloc_ptr  = m;
+    urcrypt_realloc_ptr = r;
+    urcrypt_free_ptr    = f;
+    if ( CRYPTO_set_mem_functions(&_urcrypt_malloc_ssl,
+                                  &_urcrypt_realloc_ssl,
+                                  &_urcrypt_free_ssl) ) {
       return 0;
     }
     else {
-      return -2;
+      return -3;
     }
   }
 }
@@ -252,7 +251,7 @@ _urcrypt_reverse_copy(size_t size, const uint8_t *in, uint8_t *out) {
 static uint8_t*
 _urcrypt_reverse_alloc(size_t size, const uint8_t *in)
 {
-  uint8_t *out = urcrypt_malloc(size);
+  uint8_t *out = _urcrypt_malloc(size);
   _urcrypt_reverse_copy(size, in, out);
   return out;
 }
@@ -401,7 +400,7 @@ _urcrypt_cbc_pad(size_t *length_ptr, const uint8_t *message)
          rem     = length % 16,
          padding = rem ? 16 - rem : 0,
          padded  = length + padding;
-  uint8_t *buf   = urcrypt_malloc(padded);
+  uint8_t *buf   = _urcrypt_malloc(padded);
 
   memset(buf, 0, padding);
   _urcrypt_reverse_copy(length, message, buf + padding);
@@ -422,7 +421,7 @@ _urcrypt_cbc_help(const uint8_t *message,
 
   _urcrypt_reverse_copy(16, ivec, riv);
   in  = _urcrypt_cbc_pad(&length, message);
-  out = urcrypt_malloc(length);
+  out = _urcrypt_malloc(length);
   AES_cbc_encrypt(in, out, length, key, riv, enc);
   urcrypt_free(in);
 
@@ -584,7 +583,7 @@ urcrypt_aes_cbcc_de(const uint8_t *message,
 static int
 _urcrypt_argon2_alloc(uint8_t** output, size_t bytes)
 {
-  *output = urcrypt_malloc(bytes);
+  *output = _urcrypt_malloc(bytes);
   return (NULL != output);
 }
 
@@ -598,8 +597,6 @@ _urcrypt_argon2_free(uint8_t* memory, size_t bytes)
 // in uint32_t, so here's a helper macro for ensuring equivalence.
 #define SZ_32(s) ( sizeof(size_t) <= sizeof(uint32_t) || s <= 0xFFFFFFFF )
 
-// returns a constant error message string or NULL for success
-// (so user doesn't have to call argon2_error_message)
 const char*
 urcrypt_argon2(urcrypt_argon2_type type,
                uint32_t version,

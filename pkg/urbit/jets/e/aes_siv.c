@@ -3,8 +3,6 @@
 */
 #include "all.h"
 
-#include <openssl/aes.h>
-
 #include "aes_siv.h"
 
 /* functions
