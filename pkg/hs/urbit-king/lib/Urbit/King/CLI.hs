@@ -445,8 +445,8 @@ host = do
      ) <|>
      ( flag' NatWhenPrivateNetwork
      $ long "port-forwarding-when-internal"
-    <> help ("Try asking the router to forward when ip is 192.168.0.0/24 or" <>
-             "10.0.0.0/8 (default).")
+    <> help ("Try asking the router to forward when ip is 192.168.0.0/16, " <>
+             "172.16.0.0/12 or 10.0.0.0/8 (default).")
     <> hidden
      ) <|>
      (pure $ NatWhenPrivateNetwork)

@@ -104,6 +104,8 @@ portThread q stderr = do
     Left err -> do
       likelyIPAddress >>= \case
         Just ip@(192, 168, _, _) -> warnBehindRouterAndErr ip err
+        Just ip@(172, x, _, _)
+          | (x >= 16 && x <= 31) -> warnBehindRouterAndErr ip err
         Just ip@(10, _, _, _)    -> warnBehindRouterAndErr ip err
         _                        -> assumeOnPublicInternet
     Right pmp -> foundRouter pmp
@@ -245,6 +247,8 @@ likelyBehindRouter :: MonadIO m => m Bool
 likelyBehindRouter = do
   likelyIPAddress >>= \case
     Just ip@(192, 168, _, _) -> pure True
+    Just ip@(172, x, _, _)
+      | (x >= 16 && x <= 31) -> pure True
     Just ip@(10, _, _, _)    -> pure True
     _                        -> pure False
 
