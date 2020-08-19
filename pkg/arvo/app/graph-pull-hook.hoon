@@ -36,13 +36,13 @@
   ^-  (quip card _this)
   :_  this
   =-  [%pass /pull-nack %agent [our.bowl %graph-store] %poke %graph-update -]~
-  ^-  update:store
-  !>([%0 now.bowl [%archive-graph resource])
+  !>  ^-  update:store
+  [%0 now.bowl [%archive-graph resource]]
 ::
 ++  on-pull-kick
   |=  =resource
   ^-  (unit path)
-  =/  maybe-time  (peek-log:graph resource)
+  =/  maybe-time  (peek-update-log:graph resource)
   ?~  maybe-time  `/
   `/(scot %da u.maybe-time)
 --
