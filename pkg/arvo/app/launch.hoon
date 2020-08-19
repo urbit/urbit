@@ -161,10 +161,11 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
-  ?+  path  (on-peek:def path)
-      [%x %tiles ~]  ``noun+!>([tiles tile-ordering])
+  ?.  (team:title our.bowl src.bowl)  ~
+  ?+  path  [~ ~]
+      [%x %tiles ~]       ``noun+!>([tiles tile-ordering])
       [%x %first-time ~]  ``noun+!>(first-time)
-      [%x %keys ~]  ``noun+!>(~(key by tiles))
+      [%x %keys ~]        ``noun+!>(~(key by tiles))
   ==
 ::
 ++  on-arvo
