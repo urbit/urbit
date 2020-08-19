@@ -6,7 +6,6 @@ import urbitOb from 'urbit-ob';
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
-  'blockquote',
   'atxHeading',
   'thematicBreak',
   'list',

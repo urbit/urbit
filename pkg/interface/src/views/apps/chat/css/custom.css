@@ -256,9 +256,16 @@ blockquote {
     font-family: 'Inter';
 }
 
-.chat .CodeMirror.cm-s-code.chat .cm-s-tlon * {
-   font-family: 'Source Code Pro';
+code, pre.code {
+  background-color: var(--light-gray);
+}
 
+code, .code, .chat.code .react-codemirror2 .CodeMirror * {
+  font-family: 'Source Code Pro';
+}
+
+.chat .CodeMirror.cm-s-code.chat * {
+   font-family: 'Source Code Pro';
 }
 
 .chat .CodeMirror-selected { background:#BAE3FE !important; color: black; }
@@ -267,6 +274,7 @@ pre.CodeMirror-placeholder.CodeMirror-line-like { color: var(--gray); }
 .chat .cm-s-tlon span { font-family: "Inter"}
 .chat .cm-s-tlon span.cm-meta { color: var(--gray); }
 .chat .cm-s-tlon span.cm-number { color: var(--gray); }
+.chat .cm-s-tlon span.cm-quote { color: var(--gray); }
 .chat .cm-s-tlon span.cm-keyword { line-height: 1em; font-weight: bold; color: var(--gray); }
 .chat .cm-s-tlon span.cm-atom { font-weight: bold; color: var(--gray); }
 .chat .cm-s-tlon span.cm-def { color: black; }
