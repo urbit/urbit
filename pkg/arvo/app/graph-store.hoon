@@ -512,6 +512,15 @@
         %graph  ``noun+!>(`graph:store`(subset:orm p.children.u.node start end))
     ==
   ::
+      [%x %update-log-subset @ @ @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.t.path
+    =/  start=(unit time)  (slaw %da i.t.t.t.t.path)
+    =/  end=(unit time)    (slaw %da i.t.t.t.t.t.path)
+    =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
+    ?~  update-log  [~ ~]
+    ``noun+!>((subset:orm-log u.update-log start end))
+  ::
       [%x %update-log @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
