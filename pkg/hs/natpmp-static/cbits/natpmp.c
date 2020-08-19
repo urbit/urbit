@@ -57,8 +57,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 LIBSPEC int initnatpmp(natpmp_t * p, int forcegw, in_addr_t forcedgw)
 {
-  fprintf(stderr, "[] top of initnatpmp\r\n");
-
 #ifdef WIN32
 	u_long ioctlArg = 1;
 #else
@@ -84,21 +82,16 @@ LIBSPEC int initnatpmp(natpmp_t * p, int forcegw, in_addr_t forcedgw)
 	if(forcegw) {
 		p->gateway = forcedgw;
 	} else {
-      fprintf(stderr, "[] starting looking for gateway\r\n");
 		if(getdefaultgateway(&(p->gateway)) < 0)
 			return NATPMP_ERR_CANNOTGETGATEWAY;
-      fprintf(stderr, "[] found gateway\r\n");
 	}
 
-    fprintf(stderr, "[] about to connect()\r\n");
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(NATPMP_PORT);
 	addr.sin_addr.s_addr = p->gateway;
-	if(connect(p->s, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-      return NATPMP_ERR_CONNECTERR;
-    }
-    fprintf(stderr, "[] connect()ed\r\n");
+	if(connect(p->s, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+		return NATPMP_ERR_CONNECTERR;
 	return 0;
 }
 
