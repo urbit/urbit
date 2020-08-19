@@ -202,13 +202,39 @@ ur_bsw64(ur_bsw_t *bsw, uint8_t len_bit, uint64_t val);
 void
 ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt);
 
-uint64_t
-ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt);
+
+typedef struct ur_bsr_s {
+  uint64_t        left;
+  uint64_t        bits;
+  uint8_t          off;
+  const uint8_t *bytes;
+} ur_bsr_t;
 
 typedef enum {
   ur_cue_good = 0,
   ur_cue_gone = 1
 } ur_cue_res_e;
+
+ur_bool_t
+ur_bsr_sane(ur_bsr_t *bsr);
+
+ur_cue_res_e
+ur_bsr_bit(ur_bsr_t *bsr, uint8_t *out);
+
+uint8_t
+ur_bsr_bit_any(ur_bsr_t *bsr);
+
+uint8_t
+ur_bsr8_any(ur_bsr_t *bsr, uint8_t len);
+
+uint32_t
+ur_bsr32_any(ur_bsr_t *bsr, uint8_t len);
+
+uint64_t
+ur_bsr64_any(ur_bsr_t *bsr, uint8_t len);
+
+uint64_t
+ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt);
 
 typedef enum {
   ur_jam_atom = 0,

@@ -406,6 +406,685 @@ _test_bsw(void)
 }
 
 static int
+_bsr_bit_check(const char  *cap,
+               ur_bsr_t    *bsr,
+               uint8_t      off,
+               uint64_t    bits,
+               uint8_t      exp,
+               uint8_t      val,
+               ur_cue_res_e ser,
+               ur_cue_res_e res)
+{
+  int ret = 1;
+
+  if ( !ur_bsr_sane(bsr) ) {
+    fprintf(stderr, "%s: insane off=%u left=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                    cap, bsr->off, bsr->left, bsr->bits);
+    ret = 0;
+  }
+
+  if ( ser != res ) {
+    fprintf(stderr, "%s: val not equal (%s, %s) off=%u left=%" PRIu64 " byte=%02x bits=%" PRIu64 "\r\n",
+                    cap, (ur_cue_good == ser) ? "good" : "gone",
+                    (ur_cue_good == res) ? "good" : "gone",
+                    bsr->off, bsr->left, bsr->left ? bsr->bytes[0] : 0, bsr->bits);
+    ret = 0;
+  }
+
+  if ( (ur_cue_good == res) && (exp != val) ) {
+    fprintf(stderr, "%s: res not equal (%02x, %02x) off=%u left=%" PRIu64 " byte=%02x bits=%" PRIu64 "\r\n",
+                    cap, exp, val, bsr->off, bsr->left, bsr->left ? bsr->bytes[0] : 0, bsr->bits);
+    ret = 0;
+  }
+
+  if ( off != bsr->off ) {
+    fprintf(stderr, "%s: offset fail (%u, %u)\r\n", cap, off, bsr->off);
+    ret = 0;
+  }
+
+  if ( bits != bsr->bits ) {
+    fprintf(stderr, "%s: bits fail (%" PRIu64 ", %" PRIu64 ")\r\n", cap, bits, bsr->bits);
+    ret = 0;
+  }
+
+  return ret;
+}
+
+static int
+_test_bsr_bit_ones(void)
+{
+  int          ret    = 1;
+  uint8_t     ones[1] = { 0xff };
+  ur_bsr_t     bsr    = { .left = sizeof(ones), .bytes = ones };
+  uint8_t      out;
+  ur_cue_res_e res;
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 1", &bsr, 1, 1, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 2", &bsr, 2, 2, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 3", &bsr, 3, 3, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 4", &bsr, 4, 4, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 5", &bsr, 5, 5, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 6", &bsr, 6, 6, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 7", &bsr, 7, 7, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 8", &bsr, 0, 8, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 9", &bsr, 0, 8, ur_cue_gone, res, 0, 0);
+
+  return ret;
+}
+
+static int
+_test_bsr_bit_zeros(void)
+{
+  int          ret    = 1;
+  uint8_t     ones[1] = { 0x0 };
+  ur_bsr_t     bsr    = { .left = sizeof(ones), .bytes = ones };
+  uint8_t      out;
+  ur_cue_res_e res;
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 1", &bsr, 1, 1, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 2", &bsr, 2, 2, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 3", &bsr, 3, 3, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 4", &bsr, 4, 4, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 5", &bsr, 5, 5, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 6", &bsr, 6, 6, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 7", &bsr, 7, 7, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 8", &bsr, 0, 8, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 9", &bsr, 0, 8, ur_cue_gone, res, 0, 0);
+
+  return ret;
+}
+
+static int
+_test_bsr_bit_alt(void)
+{
+  int          ret    = 1;
+  uint8_t     ones[1] = { 0xaa };
+  ur_bsr_t     bsr    = { .left = sizeof(ones), .bytes = ones };
+  uint8_t      out;
+  ur_cue_res_e res;
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 1", &bsr, 1, 1, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 2", &bsr, 2, 2, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 3", &bsr, 3, 3, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 4", &bsr, 4, 4, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 5", &bsr, 5, 5, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 6", &bsr, 6, 6, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 7", &bsr, 7, 7, ur_cue_good, res, 0, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 8", &bsr, 0, 8, ur_cue_good, res, 1, out);
+
+  res  = ur_bsr_bit(&bsr, &out);
+  ret &= _bsr_bit_check("bsr bit ones 9", &bsr, 0, 8, ur_cue_gone, res, 0, 0);
+
+  return ret;
+}
+
+static int
+_test_bsr_bit(void)
+{
+  return _test_bsr_bit_ones()
+       & _test_bsr_bit_zeros()
+       & _test_bsr_bit_alt();
+}
+
+static int
+_bsr_bit_any_check(const char* cap, ur_bsr_t *bsr, uint8_t off, uint64_t bits, uint8_t exp, uint8_t val)
+{
+  int ret = 1;
+
+  if ( !ur_bsr_sane(bsr) ) {
+    fprintf(stderr, "%s: insane off=%u left=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                    cap, bsr->off, bsr->left, bsr->bits);
+    ret = 0;
+  }
+
+  if ( exp != val ) {
+    fprintf(stderr, "%s: not equal (%02x, %02x) off=%u left=%" PRIu64 " byte=%02x bits=%" PRIu64 "\r\n",
+                    cap, exp, val, bsr->off, bsr->left, bsr->left ? bsr->bytes[0] : 0, bsr->bits);
+    ret = 0;
+  }
+
+  if ( off != bsr->off ) {
+    fprintf(stderr, "%s: offset fail (%u, %u)\r\n", cap, off, bsr->off);
+    ret = 0;
+  }
+
+  if ( bits != bsr->bits ) {
+    fprintf(stderr, "%s: bits fail (%" PRIu64 ", %" PRIu64 ")\r\n", cap, bits, bsr->bits);
+    ret = 0;
+  }
+
+  return ret;
+}
+
+static int
+_test_bsr_bit_any_ones(void)
+{
+  int      ret     = 1;
+  uint8_t  ones[1] = { 0xff };
+  ur_bsr_t bsr     = { .left = sizeof(ones), .bytes = ones };
+  uint8_t  out;
+
+  ret &= _bsr_bit_any_check("bsr bit-any ones init", &bsr, 0, 0, 0, 0);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones 1", &bsr, 1, 1, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones 2", &bsr, 2, 2, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones 3", &bsr, 3, 3, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones 4", &bsr, 4, 4, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones 5", &bsr, 5, 5, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones 6", &bsr, 6, 6, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones 7", &bsr, 7, 7, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones 8", &bsr, 0, 8, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones off 9", &bsr, 0, 9, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones off 10", &bsr, 0, 10, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones off 11", &bsr, 0, 11, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones off 12", &bsr, 0, 12, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones off 13", &bsr, 0, 13, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones off 14", &bsr, 0, 14, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones off 15", &bsr, 0, 15, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones off 16", &bsr, 0, 16, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any ones off 17", &bsr, 0, 17, 0, out);
+
+  return ret;
+}
+
+static int
+_test_bsr_bit_any_zeros(void)
+{
+  int      ret     = 1;
+  uint8_t  ones[1] = { 0x0 };
+  ur_bsr_t bsr     = { .left = sizeof(ones), .bytes = ones };
+  uint8_t  out;
+
+  ret &= _bsr_bit_any_check("bsr bit-any zeros init", &bsr, 0, 0, 0, 0);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros 1", &bsr, 1, 1, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros 2", &bsr, 2, 2, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros 3", &bsr, 3, 3, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros 4", &bsr, 4, 4, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros 5", &bsr, 5, 5, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros 6", &bsr, 6, 6, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros 7", &bsr, 7, 7, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros 8", &bsr, 0, 8, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros off 9", &bsr, 0, 9, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros off 10", &bsr, 0, 10, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros off 11", &bsr, 0, 11, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros off 12", &bsr, 0, 12, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros off 13", &bsr, 0, 13, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros off 14", &bsr, 0, 14, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros off 15", &bsr, 0, 15, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros off 16", &bsr, 0, 16, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any zeros off 17", &bsr, 0, 17, 0, out);
+
+  return ret;
+}
+
+static int
+_test_bsr_bit_any_alt(void)
+{
+  int      ret     = 1;
+  uint8_t  ones[1] = { 0xaa };
+  ur_bsr_t bsr     = { .left = sizeof(ones), .bytes = ones };
+  uint8_t  out;
+
+  ret &= _bsr_bit_any_check("bsr bit-any alt init", &bsr, 0, 0, 0, 0);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt 1", &bsr, 1, 1, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt 2", &bsr, 2, 2, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt 3", &bsr, 3, 3, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt 4", &bsr, 4, 4, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt 5", &bsr, 5, 5, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt 6", &bsr, 6, 6, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt 7", &bsr, 7, 7, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt 8", &bsr, 0, 8, 1, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt off 9", &bsr, 0, 9, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt off 10", &bsr, 0, 10, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt off 11", &bsr, 0, 11, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt off 12", &bsr, 0, 12, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt off 13", &bsr, 0, 13, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt off 14", &bsr, 0, 14, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt off 15", &bsr, 0, 15, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt off 16", &bsr, 0, 16, 0, out);
+
+  out = ur_bsr_bit_any(&bsr);
+  ret &= _bsr_bit_any_check("bsr bit-any alt off 17", &bsr, 0, 17, 0, out);
+
+  return ret;
+}
+
+static int
+_test_bsr_bit_any(void)
+{
+  return _test_bsr_bit_any_ones()
+       & _test_bsr_bit_any_zeros()
+       & _test_bsr_bit_any_alt();
+}
+
+static int
+_bsr_cmp_any_check(const char* cap, uint8_t off, uint8_t len, ur_bsr_t *a, ur_bsr_t *b)
+{
+  int ret = 1;
+
+  if ( !ur_bsr_sane(a) ) {
+    fprintf(stderr, "%s: off %u, len %u a insane off=%u left=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                    cap, off, len, a->off, a->left, a->bits);
+    ret = 0;
+  }
+
+  if ( !ur_bsr_sane(b) ) {
+    fprintf(stderr, "%s: off %u, len %u a insane off=%u left=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                    cap, off, len, b->off, b->left, b->bits);
+    ret = 0;
+  }
+
+  if ( a->off != b->off ) {
+    fprintf(stderr, "%s: off %u len %u: offset fail (%u, %u)\r\n",
+                    cap, off, len, a->off, b->off);
+    ret = 0;
+  }
+
+  if ( a->left != b->left ) {
+    fprintf(stderr, "%s: off %u len %u: left fail (%" PRIu64 ", %" PRIu64 ")\r\n",
+                    cap, off, len, a->left, b->left);
+    ret = 0;
+  }
+
+  if ( a->bits != b->bits ) {
+    fprintf(stderr, "%s: off %u len %u: bits fail (%" PRIu64 ", %" PRIu64 ")\r\n",
+                    cap, off, len, a->bits, b->bits);
+    ret = 0;
+  }
+
+  return ret;
+}
+
+static uint8_t
+_bsr8_any_slow(ur_bsr_t *bsr, uint8_t len)
+{
+  uint8_t i, out = 0;
+
+  len = (len > 8) ? 8 : len;
+
+  for ( i = 0; i < len; i++ ) {
+    out ^= ur_bsr_bit_any(bsr) << i;
+  }
+
+  return out;
+}
+
+static int
+_test_bsr8_loop(const char *cap, uint8_t len, uint8_t val)
+{
+  int         ret = 1;
+  uint8_t *bytes;
+  ur_bsr_t a, b;
+  uint8_t  c, d, i, j, k;
+
+  for ( i = 0; i < 8; i++) {
+    for ( j = 0; j <= 8; j++ ) {
+      bytes = malloc(len);
+
+      for ( k = 0; k < len; k++ ) {
+        bytes[k] = val;
+      }
+
+      a.left = b.left = len;
+      a.bytes = b.bytes = bytes;
+      a.off = a.bits = b.off = b.bits = i;
+
+      c = _bsr8_any_slow(&a, j);
+      d = ur_bsr8_any(&b, j);
+
+      ret &= _bsr_cmp_any_check(cap, i, j, &a, &b);
+
+      if ( c != d ) {
+        fprintf(stderr, "%s: off %u, len %u not equal (%02x, %02x) off=%u left=%" PRIu64 " byte=%02x bits=%" PRIu64 "\r\n",
+                        cap, i, j, c, d, b.off, b.left, b.left ? b.bytes[0] : 0, b.bits);
+        ret = 0;
+      }
+
+      free(bytes);
+    }
+  }
+
+  return ret;
+}
+
+static int
+_test_bsr8(void)
+{
+  return _test_bsr8_loop("bsr8 ones 1", 1, 0xff)
+       & _test_bsr8_loop("bsr8 ones 2", 2, 0xff)
+       & _test_bsr8_loop("bsr8 zeros 1", 1, 0x0)
+       & _test_bsr8_loop("bsr8 zeros 2", 2, 0x0)
+       & _test_bsr8_loop("bsr8 alt-1 1", 1, 0xaa)
+       & _test_bsr8_loop("bsr8 alt-1 2", 2, 0xaa)
+       & _test_bsr8_loop("bsr8 alt-2 1", 1, 0x55)
+       & _test_bsr8_loop("bsr8 alt-2 2", 2, 0x55);
+}
+
+static uint32_t
+_bsr32_any_slow(ur_bsr_t *bsr, uint8_t len)
+{
+  uint32_t out = 0;
+  uint8_t    i;
+
+  len = (len > 32) ? 32 : len;
+
+  for ( i = 0; i < len; i++ ) {
+    out ^= (uint32_t)ur_bsr_bit_any(bsr) << i;
+  }
+
+  return out;
+}
+
+static int
+_test_bsr32_loop(const char *cap, uint8_t len, uint8_t val)
+{
+  int         ret = 1;
+  uint8_t *bytes;
+  ur_bsr_t a, b;
+  uint32_t c, d;
+  uint8_t  i, j, k;
+
+  for ( i = 0; i < 8; i++) {
+    for ( j = 0; j <= 32; j++ ) {
+      bytes = malloc(len);
+
+      for ( k = 0; k < len; k++ ) {
+        bytes[k] = val;
+      }
+
+      a.left = b.left = len;
+      a.bytes = b.bytes = bytes;
+      a.off = a.bits = b.off = b.bits = i;
+
+      c = _bsr32_any_slow(&a, j);
+      d = ur_bsr32_any(&b, j);
+
+      ret &= _bsr_cmp_any_check(cap, i, j, &a, &b);
+
+      if ( c != d ) {
+        fprintf(stderr, "%s: off %u, len %u not equal (%08x, %08x) off=%u left=%" PRIu64 " byte=%02x bits=%" PRIu64 "\r\n",
+                        cap, i, j, c, d, b.off, b.left, b.left ? b.bytes[0] : 0, b.bits);
+        ret = 0;
+      }
+
+      free(bytes);
+    }
+  }
+
+  return ret;
+}
+
+static int
+_test_bsr32(void)
+{
+  return _test_bsr32_loop("bsr32 ones 1", 1, 0xff)
+       & _test_bsr32_loop("bsr32 ones 2", 2, 0xff)
+       & _test_bsr32_loop("bsr32 ones 3", 3, 0xff)
+       & _test_bsr32_loop("bsr32 ones 4", 4, 0xff)
+       & _test_bsr32_loop("bsr32 zeros 1", 1, 0x0)
+       & _test_bsr32_loop("bsr32 zeros 2", 2, 0x0)
+       & _test_bsr32_loop("bsr32 zeros 3", 3, 0x0)
+       & _test_bsr32_loop("bsr32 zeros 4", 4, 0x0)
+       & _test_bsr32_loop("bsr32 alt-1 1", 1, 0xaa)
+       & _test_bsr32_loop("bsr32 alt-1 2", 2, 0xaa)
+       & _test_bsr32_loop("bsr32 alt-1 3", 3, 0xaa)
+       & _test_bsr32_loop("bsr32 alt-1 4", 4, 0xaa)
+       & _test_bsr32_loop("bsr32 alt-2 1", 1, 0x55)
+       & _test_bsr32_loop("bsr32 alt-2 2", 2, 0x55)
+       & _test_bsr32_loop("bsr32 alt-2 3", 3, 0x55)
+       & _test_bsr32_loop("bsr32 alt-2 4", 4, 0x55);
+}
+
+static uint64_t
+_bsr64_any_slow(ur_bsr_t *bsr, uint8_t len)
+{
+  uint64_t out = 0;
+  uint8_t    i;
+
+  len = (len > 64) ? 64 : len;
+
+  for ( i = 0; i < len; i++ ) {
+    out ^= (uint64_t)ur_bsr_bit_any(bsr) << i;
+  }
+
+  return out;
+}
+
+static int
+_test_bsr64_loop(const char *cap, uint8_t len, uint8_t val)
+{
+  int         ret = 1;
+  uint8_t *bytes;
+  ur_bsr_t a, b;
+  uint64_t c, d;
+  uint8_t  i, j, k;
+
+  for ( i = 0; i < 8; i++) {
+    for ( j = 0; j <= 64; j++ ) {
+      bytes = malloc(len);
+
+      for ( k = 0; k < len; k++ ) {
+        bytes[k] = val;
+      }
+
+      a.left = b.left = len;
+      a.bytes = b.bytes = bytes;
+      a.off = a.bits = b.off = b.bits = i;
+
+      c = _bsr64_any_slow(&a, j);
+      d = ur_bsr64_any(&b, j);
+
+      ret &= _bsr_cmp_any_check(cap, i, j, &a, &b);
+
+      if ( c != d ) {
+        fprintf(stderr, "%s: off %u, len %u not equal (%016" PRIx64", %016" PRIx64") off=%u left=%" PRIu64 " byte=%02x bits=%" PRIu64 "\r\n",
+                        cap, i, j, c, d, b.off, b.left, b.left ? b.bytes[0] : 0, b.bits);
+        ret = 0;
+      }
+
+      free(bytes);
+    }
+  }
+
+  return ret;
+}
+
+static int
+_test_bsr64(void)
+{
+  return _test_bsr64_loop("bsr64 ones 1", 1, 0xff)
+       & _test_bsr64_loop("bsr64 ones 2", 2, 0xff)
+       & _test_bsr64_loop("bsr64 ones 3", 3, 0xff)
+       & _test_bsr64_loop("bsr64 ones 4", 4, 0xff)
+       & _test_bsr64_loop("bsr64 ones 5", 5, 0xff)
+       & _test_bsr64_loop("bsr64 ones 6", 6, 0xff)
+       & _test_bsr64_loop("bsr64 ones 7", 7, 0xff)
+       & _test_bsr64_loop("bsr64 ones 8", 8, 0xff)
+       & _test_bsr64_loop("bsr64 zeros 1", 1, 0x0)
+       & _test_bsr64_loop("bsr64 zeros 2", 2, 0x0)
+       & _test_bsr64_loop("bsr64 zeros 3", 3, 0x0)
+       & _test_bsr64_loop("bsr64 zeros 4", 4, 0x0)
+       & _test_bsr64_loop("bsr64 zeros 5", 5, 0x0)
+       & _test_bsr64_loop("bsr64 zeros 6", 6, 0x0)
+       & _test_bsr64_loop("bsr64 zeros 7", 7, 0x0)
+       & _test_bsr64_loop("bsr64 zeros 8", 8, 0x0)
+       & _test_bsr64_loop("bsr64 alt-1 1", 1, 0xaa)
+       & _test_bsr64_loop("bsr64 alt-1 2", 2, 0xaa)
+       & _test_bsr64_loop("bsr64 alt-1 3", 3, 0xaa)
+       & _test_bsr64_loop("bsr64 alt-1 4", 4, 0xaa)
+       & _test_bsr64_loop("bsr64 alt-1 5", 5, 0xaa)
+       & _test_bsr64_loop("bsr64 alt-1 6", 6, 0xaa)
+       & _test_bsr64_loop("bsr64 alt-1 7", 7, 0xaa)
+       & _test_bsr64_loop("bsr64 alt-1 8", 8, 0xaa)
+       & _test_bsr64_loop("bsr64 alt-2 1", 1, 0x55)
+       & _test_bsr64_loop("bsr64 alt-2 2", 2, 0x55)
+       & _test_bsr64_loop("bsr64 alt-2 3", 3, 0x55)
+       & _test_bsr64_loop("bsr64 alt-2 4", 4, 0x55)
+       & _test_bsr64_loop("bsr64 alt-2 5", 5, 0x55)
+       & _test_bsr64_loop("bsr64 alt-2 6", 6, 0x55)
+       & _test_bsr64_loop("bsr64 alt-2 7", 7, 0x55)
+       & _test_bsr64_loop("bsr64 alt-2 8", 8, 0x55);
+}
+
+static int
+_test_bsr(void)
+{
+  return _test_bsr_bit()
+       & _test_bsr_bit_any()
+       & _test_bsr8()
+       & _test_bsr32()
+       & _test_bsr64();
+}
+
+static int
 _test_jam_spec(const char    *cap,
                ur_root_t       *r,
                ur_nref        ref,
@@ -563,6 +1242,11 @@ _test_ur(void)
 
   if ( !_test_bsw() ) {
     fprintf(stderr, "ur test bsw failed\r\n");
+    ret = 0;
+  }
+
+  if ( !_test_bsr() ) {
+    fprintf(stderr, "ur test bsr failed\r\n");
     ret = 0;
   }
 
