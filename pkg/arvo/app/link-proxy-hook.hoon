@@ -27,6 +27,7 @@
 ++  on-load
   |=  old-vase=vase
   ^-  (quip card _this)
+  ::  TODO: get rid of all subscriptions in bowl
   :_  this
   [%pass /groups %agent [our.bowl %group-store] %leave ~]~
 ::
