@@ -13,7 +13,7 @@ import {
 } from '~/types/group-update';
 import { Path, PatpNoSig, Patp } from '~/types/noun';
 import GlobalApi from '~/logic/api/global';
-import { Menu, MenuButton, MenuList, MenuItem } from '@tlon/indigo-react';
+import { Menu, MenuButton, MenuList, MenuItem, Text } from '@tlon/indigo-react';
 import InviteSearch, { Invites } from './InviteSearch';
 import { Spinner } from './Spinner';
 import { Rolodex } from '~/types/contact-update';
@@ -26,7 +26,7 @@ class GroupMember extends Component<{ ship: Patp; options: any[] }, {}> {
     return (
       <div className='flex justify-between f9 items-center'>
         <div className='flex flex-column'>
-          <div className='mono mr2'>{`${cite(ship)}`}</div>
+          <Text mono mr='2'>{`${cite(ship)}`}</Text>
           {children}
         </div>
         {options.length > 0 && (
@@ -48,12 +48,12 @@ class Tag extends Component<{ description: string; onRemove?: () => any }, {}> {
   render() {
     const { description, onRemove } = this.props;
     return (
-      <div className='br-pill ba b-black r-full items-center ph2 f9 mr2 flex'>
-        <div>{description}</div>
+      <div className='br-pill ba b-black b--white-d r-full items-center ph2 f9 mr2 flex'>
+        <Text>{description}</Text>
         {Boolean(onRemove) && (
-          <div onClick={onRemove} className='ml1 f9 pointer'>
+          <Text onClick={onRemove} ml='1' style={{ cursor: 'pointer' }}>
             ✗
-          </div>
+          </Text>
         )}
       </div>
     );
@@ -272,7 +272,7 @@ export class GroupView extends Component<
         {ships.map((ship) => (
           <GroupMember key={ship} ship={ship} options={options(ship)} />
         ))}
-        {ships.length === 0 && <div className='f9'>No ships are pending</div>}
+        {ships.length === 0 && <Text className='f9'>No ships are pending</Text>}
         {props.inviteShips && this.isAdmin() && (
           <>
             <div className='f9 gray2 mt6 mb3'>Invite</div>
@@ -325,9 +325,9 @@ export class GroupView extends Component<
     return (
       <div className={className}>
         <div className='flex flex-column'>
-          <div className='f9 gray2'>Host</div>
+          <Text gray display='block'>Host</Text>
           <div className='flex justify-between mt3'>
-            <div className='f9 mono mr2'>{cite(resource.ship)}</div>
+            <Text mono mr='2'>{cite(resource.ship)}</Text>
           </div>
         </div>
         {'invite' in group.policy && this.renderInvites(group.policy)}

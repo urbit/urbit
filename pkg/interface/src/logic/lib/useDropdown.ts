@@ -13,10 +13,9 @@ export function useDropdown<C>(
       setOptions(opts);
       if (selected) {
         const idx = opts.findIndex((c) => key(c) === key(selected));
-        console.log(idx);
         if (idx < 0) {
           setSelected(undefined);
-        }       
+        }
       }
     },
     [candidates, searchPred, key, selected, setOptions, setSelected]

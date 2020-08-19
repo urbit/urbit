@@ -50,7 +50,7 @@ export function NewScreen(props: NewScreenProps & RouteComponentProps) {
   };
   return (
     <Col p={3}>
-      <Box mb={4}>New Notebook</Box>
+      <Box mb={4} color="black">New Notebook</Box>
       <Formik
         validationSchema={formSchema}
         initialValues={{ name: "", description: "", group: "" }}

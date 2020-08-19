@@ -137,6 +137,8 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
           ref={textarea}
           border={1}
           borderColor="washedGray"
+          bg="white"
+          color="black"
           borderRadius={2}
           onChange={onChange}
           value={query}

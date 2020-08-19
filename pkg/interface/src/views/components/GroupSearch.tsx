@@ -25,7 +25,7 @@ const CandidateBox = styled(Box)<{ selected: boolean }>`
 `;
 
 const ClickableText = styled(Text)`
-  pointer: cursor;
+  cursor: pointer;
 
 `;
 
@@ -34,6 +34,7 @@ const Candidate = ({ title, selected, onClick }) => (
     onClick={onClick}
     selected={selected}
     borderColor="washedGray"
+    color="black"
     fontSize={0}
     p={1}
     width="100%"
@@ -95,9 +96,9 @@ export function GroupSearch(props: InviteSearchProps) {
       onSelect={onSelect}
       onRemove={onRemove}
       renderChoice={({ candidate, onRemove }) => (
-        <Box px={2} py={1} border={1} borderColor="washedGrey" fontSize={0}>
+        <Box px={2} py={1} border={1} borderColor="washedGrey" color="black" fontSize={0}>
           {candidate.metadata.title}
-          <ClickableText ml={2} onClick={onRemove}>
+          <ClickableText ml={2} onClick={onRemove} color="black">
             x
           </ClickableText>
         </Box>
