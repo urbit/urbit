@@ -47,7 +47,7 @@ export function PostForm(props: PostFormProps) {
         <Form style={{ display: "contents" }}>
           <Input width="100%" placeholder="Post Title" id="title" />
           <Box gridRow={["1/2", "auto"]} mt={1} justifySelf={["start", "end"]}>
-            <AsyncButton loadingText={loadingText} type="submit">
+            <AsyncButton primary loadingText={loadingText}>
               {submitLabel}
             </AsyncButton>
           </Box>
