@@ -12,10 +12,11 @@ import {
   Center,
 } from "@tlon/indigo-react";
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
-import GlobalApi from "../../../../api/global";
-import { Notebook } from "../../../../types/publish-update";
-import { Contacts } from "../../../../types/contact-update";
-import { FormError } from "../../../../components/FormError";
+import GlobalApi from "~/logic/api/global";
+import { Notebook } from "~/types/publish-update";
+import { Contacts } from "~/types/contact-update";
+import { FormError } from "~/views/components/FormError";
+import { RouteComponentProps, useHistory } from "react-router-dom";
 
 interface SettingsProps {
   host: string;
@@ -48,6 +49,7 @@ const ResetOnPropsChange = (props: { init: FormSchema; book: string }) => {
 
 export function Settings(props: SettingsProps) {
   const { host, notebook, api, book } = props;
+  const history = useHistory();
   const initialValues: FormSchema = {
     name: notebook?.title,
     description: notebook?.about,
@@ -59,21 +61,19 @@ export function Settings(props: SettingsProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      await api.publish.publishAction({
-        "edit-book": {
-          book,
-          title: values.name,
-          about: values.description,
-          coms: values.comments,
-          group: null,
-        },
-      });
+      const { name, description, comments } = values;
+      await api.publish.editBook(book, name, description, comments);
       api.publish.fetchNotebook(host, book);
       actions.setStatus({ success: null });
     } catch (e) {
       console.log(e);
       actions.setStatus({ error: e.message });
     }
+  };
+
+  const onDelete = async () => {
+    await api.publish.delBook(book);
+    history.push("/~publish");
   };
 
   return (
@@ -94,9 +94,9 @@ export function Settings(props: SettingsProps) {
             <InputLabel>Delete Notebook</InputLabel>
             <InputCaption>
               Permanently delete this notebook. (All current members will no
-              longer see this notebook
+              longer see this notebook.)
             </InputCaption>
-            <Button mt={1} border error>
+            <Button onClick={onDelete} mt={1} border error>
               Delete this notebook
             </Button>
           </Col>

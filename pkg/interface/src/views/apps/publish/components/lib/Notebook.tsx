@@ -60,16 +60,16 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
       mx="auto"
       display="grid"
       gridAutoRows="min-content"
-      gridTemplateColumns={["1fr", "1fr 1fr"]}
+      gridTemplateColumns={["100%", "1fr 1fr"]}
       maxWidth="500px"
       gridRowGap={[4, 6]}
       gridColumnGap={3}
     >
-      <Box display={["block", "none"]} gridColumn={"1/3"}>
+      <Box display={["block", "none"]} gridColumn={["1/2", "1/3"]}>
         <Link to="/~publish">{"<- All Notebooks"}</Link>
       </Box>
       <Box>
-        {notebook?.title}
+        <Text> {notebook?.title}</Text>
         <br />
         <Text color="lightGray">by </Text>
         <Text fontFamily={contact?.nickname ? "sans" : "mono"}>

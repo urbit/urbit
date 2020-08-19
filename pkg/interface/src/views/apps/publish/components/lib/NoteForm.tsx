@@ -34,8 +34,8 @@ export function PostForm(props: PostFormProps) {
       p={[2, 4]}
       display="grid"
       justifyItems="start"
-      gridTemplateRows={["64px 64px 1fr", "64px 1fr"]}
-      gridTemplateColumns={["1fr", "1fr 1fr"]}
+      gridAutoRows="min-content"
+      gridTemplateColumns={["100%", "1fr 1fr"]}
       gridColumnGap={2}
       gridRowGap={2}
     >
@@ -46,12 +46,12 @@ export function PostForm(props: PostFormProps) {
       >
         <Form style={{ display: "contents" }}>
           <Input width="100%" placeholder="Post Title" id="title" />
-          <Box mt={1} justifySelf="end">
+          <Box gridRow={["1/2", "auto"]} mt={1} justifySelf={["start", "end"]}>
             <AsyncButton loadingText={loadingText} type="submit">
               {submitLabel}
             </AsyncButton>
           </Box>
-          <MarkdownField gridColumn="1/3" id="body" />
+          <MarkdownField gridColumn={["1/2", "1/3"]} id="body" />
         </Form>
       </Formik>
     </Box>
