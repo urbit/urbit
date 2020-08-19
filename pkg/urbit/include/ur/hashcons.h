@@ -202,6 +202,9 @@ ur_bsw64(ur_bsw_t *bsw, uint8_t len_bit, uint64_t val);
 void
 ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt);
 
+void
+ur_bsw_bex(ur_bsw_t *bsw, uint8_t n);
+
 
 typedef struct ur_bsr_s {
   uint64_t        left;

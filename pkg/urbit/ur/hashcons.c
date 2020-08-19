@@ -1230,14 +1230,58 @@ ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 }
 
 static inline void
-_bsw_mat64_unsafe(ur_bsw_t *bsw, uint8_t len_len, uint8_t len, uint64_t val)
+_bsw_bex_unsafe(ur_bsw_t *bsw, uint8_t n)
 {
-  if ( 0 == val ) {
+  uint64_t fill = bsw->fill;
+  uint8_t   off = bsw->off;
+  uint32_t bits = n + off;
+
+  fill += bits >> 3;
+  off   = ur_mask_3(bits);
+
+  bsw->bytes[fill] ^= 1 << off;
+
+  if ( 7 == off ) {
+    bsw->off  = 0;
+    bsw->fill = 1 + fill;
+  }
+  else {
+    bsw->off  = 1 + off;
+    bsw->fill = fill;
+  }
+
+  bsw->bits += 1 + n;
+}
+
+void
+ur_bsw_bex(ur_bsw_t *bsw, uint8_t n)
+{
+  uint32_t bits = 1 + n + bsw->off;
+  uint8_t  need = (bits >> 3) + !!ur_mask_3(bits);
+
+  if ( bsw->fill + need >= bsw->size ) {
+    if ( need > bsw->prev ) {
+      bsw->prev = need;
+    }
+    ur_bsw_grow(bsw);
+  }
+
+  _bsw_bex_unsafe(bsw, n);
+}
+
+static inline void
+_bsw_mat64_unsafe(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  if ( 0 == len ) {
     _bsw_bit_unsafe(bsw, 1);
   }
   else {
-    _bsw64_unsafe(bsw, len_len + 1, 1ULL << len_len);
-    _bsw64_unsafe(bsw, len_len - 1, len);
+    {
+      uint8_t nel = ur_met0_64(len);
+      _bsw_bex_unsafe(bsw, nel);
+      _bsw64_unsafe(bsw, nel - 1, len);
+    }
+
     _bsw64_unsafe(bsw, len, val);
   }
 }
@@ -1248,16 +1292,15 @@ ur_bsw_mat64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
   len = ( len > 64 ) ? 64 : len;
 
   {
-    uint8_t len_len = ur_met0_64(len);
-    uint8_t    next = ( 0 == val ) ? 1 : len + (2 * len_len);
-    uint8_t    bits = bsw->off + next;
+    uint8_t next = ( 0 == val ) ? 1 : len + (2 * ur_met0_64(len));
+    uint8_t bits = bsw->off + next;
 
     if ( bsw->fill + (bits >> 3) + !!ur_mask_3(bits) >= bsw->size ) {
       ur_bsw_grow(bsw);
     }
-
-    _bsw_mat64_unsafe(bsw, len_len, len, val);
   }
+
+  _bsw_mat64_unsafe(bsw, len, val);
 }
 
 static inline void
@@ -1265,7 +1308,7 @@ _bsw_mat_bytes_unsafe(ur_bsw_t *bsw, uint8_t len_len, uint64_t len_bit, uint64_t
 {
   //  write run-length
   //
-  _bsw64_unsafe(bsw, len_len + 1, 1ULL << len_len);
+  _bsw_bex_unsafe(bsw, len_len);
   _bsw64_unsafe(bsw, len_len - 1, len_bit);
 
   //  write bytes

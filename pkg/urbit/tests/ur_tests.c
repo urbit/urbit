@@ -395,6 +395,42 @@ _test_bsw_bytes(void)
        & _test_bsw_bytes_loop("bsw bytes alt 2 odd", 10, 0x55);
 }
 
+static void
+_bsw_bex_slow(ur_bsw_t *bsw, uint8_t n)
+{
+  while ( n >= 64 ) {
+    _bsw64_slow(bsw, 64, 0);
+    n -= 64;
+  }
+
+  _bsw64_slow(bsw, n + 1, 1ULL << n);
+}
+
+static int
+_test_bsw_bex()
+{
+  int    ret = 1;
+  ur_bsw_t a = {0};
+  ur_bsw_t b = {0};
+  uint8_t  i, l;
+  uint32_t j, k;
+
+  for ( i = 0; i < 8; i++) {
+    for ( j = 0; j < 256; j++ ) {
+      _bsw_init(&a, 1, 1);
+      _bsw_init(&b, 1, 1);
+      a.off = a.bits = b.off = b.bits = i;
+
+      _bsw_bex_slow(&a, j);
+      ur_bsw_bex(&b, j);
+
+      ret &= _bsw_cmp_check("bsw bex", j, i, j + 1, &a, &b);
+    }
+  }
+
+  return ret;
+}
+
 static int
 _test_bsw(void)
 {
@@ -402,7 +438,8 @@ _test_bsw(void)
        & _test_bsw8()
        & _test_bsw32()
        & _test_bsw64()
-       & _test_bsw_bytes();
+       & _test_bsw_bytes()
+       & _test_bsw_bex();
 }
 
 static int
