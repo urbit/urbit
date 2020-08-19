@@ -30,6 +30,8 @@ const Root = styled.div`
   width: 100%;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-flow: column nowrap;
 `;
 
 const StatusBarWithRouter = withRouter(StatusBar);
