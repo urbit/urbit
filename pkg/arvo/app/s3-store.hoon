@@ -93,10 +93,11 @@
   ~/  %s3-peek
   |=  =path
   ^-  (unit (unit cage))
-  ?>  (team:title our.bowl src.bowl)
-  ?+    path  (on-watch:def path)
+  ?.  (team:title our.bowl src.bowl)  ~
+  ?+    path  [~ ~]
       [%x %credentials ~]
     [~ ~ %s3-update !>(`update`[%credentials credentials])]
+  ::
       [%x %configuration ~]
     [~ ~ %s3-update !>(`update`[%configuration configuration])]
   ==
