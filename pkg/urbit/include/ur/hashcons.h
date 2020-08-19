@@ -4,6 +4,9 @@
 
 typedef uint8_t  ur_bool_t;
 
+#define ur_min(a, b)   ( ((a) < (b)) ? (a) : (b) )
+#define ur_max(a, b)   ( ((a) > (b)) ? (a) : (b) )
+
 #if    (32 == (CHAR_BIT * __SIZEOF_INT__))
 #  define  ur_lz32  __builtin_clz
 #elif  (32 == (CHAR_BIT * __SIZEOF_LONG__))
@@ -182,7 +185,7 @@ typedef struct ur_bsw_s {
 } ur_bsw_t;
 
 void
-ur_bsw_grow(ur_bsw_t *bsw);
+ur_bsw_grow(ur_bsw_t *bsw, uint64_t need);
 
 ur_bool_t
 ur_bsw_sane(ur_bsw_t *bsw);

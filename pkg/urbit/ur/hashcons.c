@@ -885,15 +885,14 @@ ur_walk_fore(ur_root_t *r,
 }
 
 void
-ur_bsw_grow(ur_bsw_t *bsw)
+ur_bsw_grow(ur_bsw_t *bsw, uint64_t step)
 {
-  uint64_t prev = bsw->prev;
   uint64_t size = bsw->size;
-  uint64_t next = prev + size;
+  uint64_t next = size + step;
 
   bsw->bytes = realloc(bsw->bytes, next);
   assert(bsw->bytes);
-  memset(bsw->bytes + size, 0, prev);
+  memset(bsw->bytes + size, 0, step);
 
   bsw->prev  = size;
   bsw->size  = next;
@@ -931,7 +930,7 @@ ur_bsw_bit(ur_bsw_t *bsw, uint8_t bit)
   if (  (7 == bsw->off)
      && ((1 + bsw->fill) == bsw->size) )
   {
-    ur_bsw_grow(bsw);
+    ur_bsw_grow(bsw, bsw->prev);
   }
 
   _bsw_bit_unsafe(bsw, bit);
@@ -974,11 +973,13 @@ _bsw8_unsafe(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
 void
 ur_bsw8(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
 {
+  len = ur_min(8, len);
+
   if ( bsw->fill + !!((bsw->off + len) >> 3) >= bsw->size ) {
-    ur_bsw_grow(bsw);
+    ur_bsw_grow(bsw, bsw->prev);
   }
 
-  _bsw8_unsafe(bsw, (len > 8) ? 8 : len, byt);
+  _bsw8_unsafe(bsw, len, byt);
 }
 
 static inline void
@@ -1050,13 +1051,17 @@ _bsw32_unsafe(ur_bsw_t *bsw, uint8_t len, uint32_t val)
 void
 ur_bsw32(ur_bsw_t *bsw, uint8_t len, uint32_t val)
 {
-  uint8_t bits = bsw->off + len;
+  uint8_t bits, need;
 
-  if ( bsw->fill + (bits >> 3) + !!ur_mask_3(bits) >= bsw->size ) {
-    ur_bsw_grow(bsw);
+  len  = ur_min(32, len);
+  bits = bsw->off + len;
+  need = (bits >> 3) + !!ur_mask_3(bits);
+
+  if ( bsw->fill + need >= bsw->size ) {
+    ur_bsw_grow(bsw, ur_max(need, bsw->prev));
   }
 
-  _bsw32_unsafe(bsw, (len > 32) ? 32 : len, val);
+  _bsw32_unsafe(bsw, len, val);
 }
 
 static inline void
@@ -1170,13 +1175,17 @@ _bsw64_unsafe(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 void
 ur_bsw64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 {
-  uint8_t bits = bsw->off + len;
+  uint8_t bits, need;
 
-  if ( bsw->fill + (bits >> 3) + !!ur_mask_3(bits) >= bsw->size ) {
-    ur_bsw_grow(bsw);
+  len  = ur_min(64, len);
+  bits = bsw->off + len;
+  need = (bits >> 3) + !!ur_mask_3(bits);
+
+  if ( bsw->fill + need >= bsw->size ) {
+    ur_bsw_grow(bsw, ur_max(need, bsw->prev));
   }
 
-  _bsw64_unsafe(bsw, (len > 64) ? 64 : len, val);
+  _bsw64_unsafe(bsw, len, val);
 }
 
 static inline void
@@ -1214,16 +1223,10 @@ _bsw_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 void
 ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 {
-  if ( (bsw->fill + len + !!bsw->off) >= bsw->size ) {
-    uint64_t prev = bsw->prev;
+  uint64_t need = len + !!bsw->off;
 
-    //  be sure to grow sufficiently
-    //
-    if ( len > prev ) {
-      bsw->prev = len;
-    }
-
-    ur_bsw_grow(bsw);
+  if ( bsw->fill + need >= bsw->size ) {
+    ur_bsw_grow(bsw, ur_max(need, bsw->prev));
   }
 
   _bsw_bytes_unsafe(bsw, len, byt);
@@ -1260,10 +1263,7 @@ ur_bsw_bex(ur_bsw_t *bsw, uint8_t n)
   uint8_t  need = (bits >> 3) + !!ur_mask_3(bits);
 
   if ( bsw->fill + need >= bsw->size ) {
-    if ( need > bsw->prev ) {
-      bsw->prev = need;
-    }
-    ur_bsw_grow(bsw);
+    ur_bsw_grow(bsw, ur_max(need, bsw->prev));
   }
 
   _bsw_bex_unsafe(bsw, n);
@@ -1289,15 +1289,15 @@ _bsw_mat64_unsafe(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 void
 ur_bsw_mat64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 {
-  len = ( len > 64 ) ? 64 : len;
+  uint8_t next, bits, need;
 
-  {
-    uint8_t next = ( 0 == val ) ? 1 : len + (2 * ur_met0_64(len));
-    uint8_t bits = bsw->off + next;
+  len  = ur_min(64, len);
+  next = ( 0 == len ) ? 1 : len + (2 * ur_met0_64(len));
+  bits = bsw->off + next;
+  need = (bits >> 3) + !!ur_mask_3(bits);
 
-    if ( bsw->fill + (bits >> 3) + !!ur_mask_3(bits) >= bsw->size ) {
-      ur_bsw_grow(bsw);
-    }
+  if ( bsw->fill + need >= bsw->size ) {
+    ur_bsw_grow(bsw, ur_max(need, bsw->prev));
   }
 
   _bsw_mat64_unsafe(bsw, len, val);
@@ -1339,16 +1339,8 @@ ur_bsw_mat_bytes(ur_bsw_t *bsw, uint64_t len_bit, uint64_t len, uint8_t *byt)
     uint8_t  bits = bsw->off + (2 * len_len);
     uint64_t need = len + (bits >> 3) + !!ur_mask_3(bits);
 
-    if ( (bsw->fill + need) >= bsw->size ) {
-      uint64_t prev = bsw->prev;
-
-      //  be sure to grow sufficiently
-      //
-      if ( need > prev ) {
-        bsw->prev = need;
-      }
-
-      ur_bsw_grow(bsw);
+    if ( bsw->fill + need >= bsw->size ) {
+      ur_bsw_grow(bsw, ur_max(need, bsw->prev));
     }
 
     _bsw_mat_bytes_unsafe(bsw, len_len, len_bit, len, byt);
@@ -1446,7 +1438,7 @@ ur_bsr8_any(ur_bsr_t *bsr, uint8_t len)
 {
   uint64_t left = bsr->left;
 
-  len = ( len > 8 ) ? 8 : len;
+  len = ur_min(8, len);
 
   bsr->bits += len;
 
@@ -1489,7 +1481,7 @@ ur_bsr32_any(ur_bsr_t *bsr, uint8_t len)
 {
   uint64_t left = bsr->left;
 
-  len = ( len > 32 ) ? 32 : len;
+  len = ur_min(32, len);
 
   bsr->bits += len;
 
@@ -1571,7 +1563,7 @@ ur_bsr64_any(ur_bsr_t *bsr, uint8_t len)
 {
   uint64_t left = bsr->left;
 
-  len = ( len > 64 ) ? 64 : len;
+  len = ur_min(64, len);
 
   bsr->bits += len;
 

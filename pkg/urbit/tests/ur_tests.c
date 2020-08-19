@@ -221,7 +221,7 @@ _bsw_cmp_check(const char* cap, uint8_t val, uint8_t off, uint8_t len, ur_bsw_t 
 static void
 _bsw8_slow(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
 {
-  len = (len > 8) ? 8 : len;
+  len = ur_min(8, len);
 
   while ( len ) {
     ur_bsw_bit(bsw, byt);
@@ -266,7 +266,7 @@ _test_bsw8(void)
 static void
 _bsw32_slow(ur_bsw_t *bsw, uint8_t len, uint32_t val)
 {
-  len = (len > 32) ? 32 : len;
+  len = ur_min(32, len);
 
   while ( len ) {
     ur_bsw_bit(bsw, val & 0xff);
@@ -311,7 +311,7 @@ _test_bsw32(void)
 static void
 _bsw64_slow(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 {
-  len = (len > 64) ? 64 : len;
+  len = ur_min(64, len);
 
   while ( len ) {
     ur_bsw_bit(bsw, val & 0xff);
@@ -885,7 +885,7 @@ _bsr8_any_slow(ur_bsr_t *bsr, uint8_t len)
 {
   uint8_t i, out = 0;
 
-  len = (len > 8) ? 8 : len;
+  len = ur_min(8, len);
 
   for ( i = 0; i < len; i++ ) {
     out ^= ur_bsr_bit_any(bsr) << i;
@@ -951,7 +951,7 @@ _bsr32_any_slow(ur_bsr_t *bsr, uint8_t len)
   uint32_t out = 0;
   uint8_t    i;
 
-  len = (len > 32) ? 32 : len;
+  len = ur_min(32, len);
 
   for ( i = 0; i < len; i++ ) {
     out ^= (uint32_t)ur_bsr_bit_any(bsr) << i;
@@ -1026,7 +1026,7 @@ _bsr64_any_slow(ur_bsr_t *bsr, uint8_t len)
   uint64_t out = 0;
   uint8_t    i;
 
-  len = (len > 64) ? 64 : len;
+  len = ur_min(64, len);
 
   for ( i = 0; i < len; i++ ) {
     out ^= (uint64_t)ur_bsr_bit_any(bsr) << i;
