@@ -80,7 +80,7 @@ export class Input extends Component {
   render() {
     return (
       <div className="flex flex-row flex-grow-1 relative">
-        <div className="flex-shrink-0">{cite(this.props.ship)}:dojo
+        <div className="flex-shrink-0"><span class="dn-s">{cite(this.props.ship)}:</span>dojo
         </div>
         <span id="prompt">
           {this.props.prompt}
