@@ -178,11 +178,34 @@ linked list traversal), you replace an empty version of where the arguments
 would be with the real arguments you're going to pass (another pointer
 indirection and an allocation).
 
-Doing linked list traversal is bad, but can sometimes be mitigated with caching
-and guards at the cost of significant complexity in the interpreter. Allocating
-inside your function calling convention is terrible. On a quick test running
-the Ackerman function, the Urbit v0.10.7 interpreter spent 45% of the runtime
-in the allocator or in reference count management. This is bonkers.
+Doing linked list traversal is bad. Allocating inside your function calling
+convention is bad. On a quick test running the Ackerman function, the Urbit
+v0.10.7 interpreter spent 45% of the runtime in the allocator or in reference
+count management. It had an L2 cache miss rate of approximately 25%. This is
+bonkers.
+
+When you count up the work that goes into dispatching a single function call,
+the current nock interpreter does the stack and program counter management
+overhead to perform 23 internal bytecodes, which allocates 7 cons cells,
+increases the refcount of 12 memory locations, decreases the refcount of 4
+nouns (which may affect other memory locations because refcount decrement is
+recursive), and performs 3 arbitrary tree walks. We do this even if we are
+calling a jet: since jet registration is a stateful side effect, we must
+perform all the tree math to first get the noun which has the jet registration.
+
+This isn't just inefficient, it's extremely hard to reason about. Actually
+producing the last paragraph took more than an hour (and I suspect it's
+actually worse because I didn't delve into the site hooks system).
+
+The traditional rejoinder to the above is that it doesn't matter since the jet
+system means you should be making few calls in Nock and should be calling jets
+which are large and perform a lot of work. But the majority of the mismatches
+between the Nock code and the jet which replaces it have been in these large
+jets. It is the small, numeric jets like `+add` and data structure jets which
+have a better record of exactly matching the Nock specification. The largest
+jets in the system were formerly the compiler jets and that iteration of them
+has been removed because of mismatches and because their size made changes to
+both the Nock specification and the matching jet code difficult.
 
 There are other small issues with Curtis' Nock 4K: why bake in natural numbers
 and cons cells? Why make the assumption that equality is always structural
@@ -420,9 +443,9 @@ supercombinators do help. The ability to have data jets helps a bit. Having
 jets for common control flow combinators like the Turner combinators help a
 bit. But the main speedup is that SKEW is neither doing multiple layers of
 indirect pointer chasing to find the target of a function call, nor is it
-allocating on every function call! In SKEW, function dispatch is either a
-direct jump (in the case of calling a jet) or a single indirect pointer jump
-(all other cases).
+allocating multiple times on every function call! In SKEW, function dispatch is
+either a direct jump (in the case of calling a jet) or a single indirect
+pointer jump (all other cases).
 
 Urbit has a history of using the [Ackerman function][ackerman] in its
 documentation. Let's benchmark it on both systems, as this is a more direct
