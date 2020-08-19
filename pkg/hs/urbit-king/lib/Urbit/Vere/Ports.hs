@@ -99,6 +99,8 @@ portThread :: forall e. (HasLogFunc e)
            -> RIO e ()
 portThread q stderr = do
   initNatPmp >>= \case
+    Left ErrCannotGetGateway -> do
+      assumeOnPublicInternet
     Left err -> do
       likelyIPAddress >>= \case
         Just ip@(192, 168, _, _) -> warnBehindRouterAndErr ip err
@@ -123,7 +125,12 @@ portThread q stderr = do
   foundRouter :: NatPmpHandle -> RIO e ()
   foundRouter pmp = do
     getPublicAddress pmp >>= \case
-      Left _ -> pure ()
+      Left ErrCannotGetGateway -> assumeOnPublicInternet
+      Left ErrNoGatewaySupport -> assumeOnPublicInternet
+      Left err -> do
+        stderr $ "port: received error when asking router for public ip: " ++
+          (tshow err)
+        loopErr q
       Right addr -> do
         let (a, b, c, d) = hostAddressToTuple addr
         stderr $ "port: router reports that our public IP is " ++ (tshow a) ++
