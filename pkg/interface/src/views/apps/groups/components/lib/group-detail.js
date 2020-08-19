@@ -19,6 +19,7 @@ export class GroupDetail extends Component {
     this.changeTitle = this.changeTitle.bind(this);
     this.changeDescription = this.changeDescription.bind(this);
     this.changePolicy = this.changePolicy.bind(this);
+    this.getShortcode = this.getShortcode.bind(this);
   }
 
   componentDidMount() {
@@ -185,6 +186,41 @@ export class GroupDetail extends Component {
     );
   }
 
+  getShortcode(group, path) {
+    if (group?.policy?.open) {
+      return (
+        <div className='mt4'>
+          <p className='f9 mt4 lh-copy'>Share</p>
+          <p className='f9 gray2 mb2'>
+            Share a shortcode to join this group
+          </p>
+          <div
+            className='relative w-100 flex'
+            style={{ maxWidth: '29rem' }}>
+            <input
+              className={'f8 mono ba b--gray3 b--gray2-d bg-gray0-d ' +
+              'white-d pa3 db w-100 flex-auto mr3 pr9'}
+              disabled={true}
+              value={path.substr(6)}
+            />
+            <span
+              className='lh-solid f8 pointer absolute pa3 inter'
+              style={{ right: 12, top: 1 }}
+              ref='copy'
+              onClick={() => {
+                writeText(path.substr(6));
+                this.refs.copy.innerText = 'Copied';
+              }}>
+              Copy
+            </span>
+          </div>
+        </div>
+      );
+    } else {
+      return <div />;
+    };
+  }
+
   renderSettings() {
     const { props } = this;
 
@@ -201,33 +237,8 @@ export class GroupDetail extends Component {
       { description: 'Janitor', tag: 'janitor', addDescription: 'Make Janitor' }
     ];
 
-    let shortcode = <div />;
+    const shortcode = this.getShortcode(group, props.path);
 
-    if (group?.policy?.open) {
-      shortcode = <div className="mt4">
-        <p className="f9 mt4 lh-copy">Share</p>
-        <p className="f9 gray2 mb2">Share a shortcode to join this group</p>
-        <div className="relative w-100 flex"
-          style={{ maxWidth: '29rem' }}
-        >
-          <input
-            className="f8 mono ba b--gray3 b--gray2-d bg-gray0-d white-d pa3 db w-100 flex-auto mr3"
-            disabled={true}
-            value={props.path.substr(6)}
-          />
-          <span className="lh-solid f8 pointer absolute pa3 inter"
-            style={{ right: 12, top: 1 }}
-            ref="copy"
-            onClick={() => {
-              writeText(props.path.substr(6));
-              this.refs.copy.innerText = 'Copied';
-            }}
-          >
-            Copy
-              </span>
-        </div>
-      </div>;
-    }
     return (
       <div className="pa4 w-100 h-100 white-d overflow-y-auto">
         <div className="f8 f9-m f9-l f9-xl w-100">
