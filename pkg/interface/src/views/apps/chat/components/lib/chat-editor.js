@@ -122,7 +122,7 @@ export default class ChatEditor extends Component {
     return (
       <div
         className={
-          'chat fr h-100 flex flex-shrink-0 bg-gray0-d lh-copy pl2 w-100 items-center' +
+          'chat fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center' +
           (props.inCodeMode ? ' code' : '')
         }
         style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ChatEditor from './chat-editor';
-import { S3Upload } from './s3-upload';
-import { Col } from '@tlon/indigo-react';
+import { S3Upload } from './s3-upload'
+;
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
@@ -211,60 +211,54 @@ export class ChatInput extends Component {
         />;
 
     return (
-      <div
-        className={
-          "pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white " +
-          "bg-gray0-d relative"
-        }
-        style={{ flexGrow: 1 }}>
-        <Col
-          style={{ float: 'left' }}
-          flexDirection="row"
-          alignItems="flex-end"
-          mb="5px"
-        >
+      <div className={
+             "pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white " +
+             "bg-gray0-d relative"
+           }
+           style={{ flexGrow: 1 }}>
+        <div className="fl"
+             style={{
+               marginTop: 6,
+               flexBasis: 24,
+               height: 24
+             }}>
           {avatar}
-        </Col>
+        </div>
         <ChatEditor
           inCodeMode={state.inCodeMode}
           submit={this.submit}
           onUnmount={props.onUnmount}
           message={props.message}
-          placeholder='Message...'
-        />
-        <Col flexDirection="row" alignItems="flex-end" mb="9px">
-          <div
-            className='ml2 mr2'
-            style={{
-              height: "16px",
-              width: "16px",
-              flexBasis: 16
-            }}>
-            <S3Upload
-              configuration={props.s3.configuration}
-              credentials={props.s3.credentials}
-              uploadSuccess={this.uploadSuccess.bind(this)}
-              uploadError={this.uploadError.bind(this)}
-            />
-          </div>
-          <div
-            style={{
-              height: "16px",
-              width: "16px",
-              flexBasis: 16
-            }}>
-            <img
-              style={{
-                filter: state.inCodeMode && "invert(100%)",
-                height: "14px",
-                width: "14px",
-              }}
-              onClick={this.toggleCode}
-              src='/~chat/img/CodeEval.png'
-              className='contrast-10-d bg-white bg-none-d ba b--gray1-d br1'
-            />
-          </div>
-        </Col>
+          placeholder='Message...' />
+        <div className="ml2 mr2"
+             style={{
+               height: '16px',
+               width: '16px',
+               flexBasis: 16,
+               marginTop: 10
+             }}>
+          <S3Upload
+            configuration={props.s3.configuration}
+            credentials={props.s3.credentials}
+            uploadSuccess={this.uploadSuccess.bind(this)}
+            uploadError={this.uploadError.bind(this)}
+          />
+        </div>
+        <div style={{
+               height: '16px',
+               width: '16px',
+               flexBasis: 16,
+               marginTop: 10
+          }}>
+          <img style={{
+                 filter: state.inCodeMode && 'invert(100%)',
+                 height: '14px',
+                 width: '14px',
+               }}
+               onClick={this.toggleCode}
+               src="/~chat/img/CodeEval.png"
+               className="contrast-10-d bg-white bg-none-d ba b--gray1-d br1" />
+        </div>
       </div>
     );
   }
