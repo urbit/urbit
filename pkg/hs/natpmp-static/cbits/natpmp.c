@@ -282,11 +282,19 @@ int readnatpmpresponseorretry(natpmp_t * p, natpmpresp_t * response)
 			gettimeofday(&now, NULL);	// check errors !
 			if(timercmp(&now, &p->retry_time, >=)) {
 				int delay, r;
-				if(p->try_number >= 9) {
+                // NOTE: This used to be 9, and was changed for the haskell
+                // bindings to be 5.
+				if(p->try_number >= 5) {
 					return NATPMP_ERR_NOGATEWAYSUPPORT;
 				}
 				/*printf("retry! %d\n", p->try_number);*/
-				delay = 250 * (1<<p->try_number);	// ms
+
+                // NOTE: Changed how delays are calculated. Waiting up to four
+                // minutes for a packet that might never get a response is not
+                // a good user experience. Instead, retry up to 2 seconds.
+                //
+				// delay = 250 * (1<<p->try_number);	// ms
+                delay = 250 * p->try_number;	// ms
 				/*for(i=0; i<p->try_number; i++)
 					delay += delay;*/
 				p->retry_time.tv_sec += (delay / 1000);
