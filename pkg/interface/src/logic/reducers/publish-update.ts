@@ -1,9 +1,9 @@
 import _ from 'lodash';
 
-import { PublishUpdate } from '../../types/publish-update';
-import { Cage } from '../../types/cage';
+import { PublishUpdate } from '~/types/publish-update';
+import { Cage } from '~/types/cage';
 import { StoreState } from '../../store/type';
-import { getTagFromFrond } from '../../types/noun';
+import { getTagFromFrond } from '~/types/noun';
 
 type PublishState = Pick<StoreState, 'notebooks'>;
 

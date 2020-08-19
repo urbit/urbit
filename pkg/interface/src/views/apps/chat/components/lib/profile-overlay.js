@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { cite } from '../../../../../logic/lib/util';
-import { Sigil } from '../../../../../logic/lib/sigil';
+import { cite } from '~/logic/lib/util';
+import { Sigil } from '~/logic/lib/sigil';
 
 export const OVERLAY_HEIGHT = 250;
 

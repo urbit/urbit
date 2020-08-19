@@ -1,8 +1,8 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Patp, Path, Enc } from '../types/noun';
-import { Contact, ContactEdit } from '../types/contact-update';
-import { GroupPolicy, Resource } from '../types/group-update';
+import { Patp, Path, Enc } from '~/types/noun';
+import { Contact, ContactEdit } from '~/types/contact-update';
+import { GroupPolicy, Resource } from '~/types/group-update';
 
 export default class ContactsApi extends BaseApi<StoreState> {
   create(

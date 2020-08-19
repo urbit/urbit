@@ -2,145 +2,99 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Spinner } from '../../../components/Spinner';
 import urbitOb from 'urbit-ob';
+import { Box, Text, Input, Button } from '@tlon/indigo-react';
+import { Formik, Form } from 'formik'
+import * as Yup from 'yup';
+
+
+const schema = Yup.object().shape({
+  station: Yup.string()
+    .lowercase()
+    .trim()
+    .test('is-station',
+      'Chat must have a valid name',
+      (val) =>
+        val &&
+        val.split('/').length === 2 &&
+        urbitOb.isValidPatp(val.split('/')[0])
+    )
+    .required('Required')
+});
+
 
 export class JoinScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      station: '/',
-      error: false,
       awaiting: false
     };
-
-    this.stationChange = this.stationChange.bind(this);
   }
 
   componentDidMount() {
-    this.componentDidUpdate();
+    if (this.props.station) {
+      this.onSubmit({ station: this.props.station });
+    }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { props, state } = this;
-
-    if ((props.autoJoin !== '/undefined/undefined') &&
-      (props.api && (prevProps?.api !== props.api))) {
-      let station = props.autoJoin.split('/');
-
-      const ship = station[1];
-      if (
-        station.length < 2 ||
-        !urbitOb.isValidPatp(ship)
-      ) {
-        this.setState({
-          error: true
-        });
+  onSubmit(values) {
+    console.log(values);
+    this.setState({ awaiting: true }, () => {
+      console.log(values);
+      const station = values.station.trim();
+      if (`/${station}` in this.props.chatSynced) {
+        this.props.history.push(`/~chat/room/${station}`);
         return;
       }
-      station = props.autoJoin;
 
-      this.setState({
-        station,
-        awaiting: true
-      }, () => props.api.chat.join(ship, station, true));
-    }
-
-    if (state.station in props.inbox ||
-       (props?.chatSynced !== prevProps?.chatSynced && state.station !== '/')) {
-      this.setState({ awaiting: false });
-      props.history.push(`/~chat/room${state.station}`);
-    }
-  }
-
-  onClickJoin() {
-    const { props, state } = this;
-
-    let station = state.station.split('/');
-
-    const ship = station[1];
-    if (
-      station.length < 2 ||
-      !urbitOb.isValidPatp(ship)
-    ) {
-      this.setState({
-        error: true
-      });
-      return;
-    }
-    station = state.station.trim();
-
-    this.setState({
-      station,
-      awaiting: true
-    }, () => {
-      props.api.chat.join(ship, station, true);
-    });
-  }
-
-  stationChange(event) {
-    this.setState({
-      station: `/${event.target.value.trim()}`
+      props.api.chat.join(ship, station, true)
+      this.props.history.push(`/~chat/room/${station}`);
     });
   }
 
   render() {
-    const { state } = this;
-
-    let joinClasses = 'db f9 green2 ba pa2 b--green2 bg-gray0-d pointer';
-    if ((!state.station) || (state.station === '/')) {
-      joinClasses = 'db f9 gray2 ba pa2 b--gray3 bg-gray0-d pointer';
-    }
-
-    let errElem = (<span />);
-    if (state.error) {
-      errElem = (
-        <span className="f9 inter red2 db">
-          Chat must have a valid name.
-        </span>
-      );
-    }
+    const { props, state } = this;
 
     return (
-      <div className={`h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column
-      bg-gray0-d white-d`}
-      >
-        <div
-          className="w-100 dn-m dn-l dn-xl inter pt1 pb6 f8"
-        >
-          <Link to="/~chat/">{'⟵ All Chats'}</Link>
-        </div>
-        <h2 className="mb3 f8">Join Existing Chat</h2>
-        <div className="w-100">
-          <p className="f8 lh-copy mt3 db">Enter a <span className="mono">~ship/chat-name</span></p>
-          <p className="f9 gray2 mb4">Chat names use lowercase, hyphens, and slashes.</p>
-          <textarea
-            ref={ (e) => {
-            this.textarea = e;
-            } }
-            className={'f7 mono ba bg-gray0-d white-d pa3 mb2 db ' +
-            'focus-b--black focus-b--white-d b--gray3 b--gray2-d'}
-            placeholder="~zod/chatroom"
-            spellCheck="false"
-            rows={1}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                this.onClickJoin();
-              }
-            }}
-            style={{
-              resize: 'none'
-            }}
-            onChange={this.stationChange}
-          />
-          {errElem}
-          <br />
-          <button
-            onClick={this.onClickJoin.bind(this)}
-            className={joinClasses}
-          >Join Chat</button>
-          <Spinner awaiting={this.state.awaiting} classes="mt4" text="Joining chat..." />
-        </div>
-      </div>
+      <Formik
+        enableReinitialize={true}
+        initialValues={{ station: props.station }}
+        validationSchema={schema}
+        onSubmit={this.onSubmit.bind(this)}>
+        <Form>
+          <Box width="100%" height="100%" p={3} overflowX="hidden">
+            <Box
+              width="100%"
+              pt={1} pb={5}
+              display={['', 'none', 'none', 'none']}
+              fontSize={0}>
+              <Link to="/~chat/">{'⟵ All Chats'}</Link>
+            </Box>
+            <Text mb={3} fontSize={0}>Join Existing Chat</Text>
+            <Box width="100%" maxWidth={350}>
+              <Box mt={3} mb={3} display="block">
+                <Text display="inline" fontSize={0}>
+                  Enter a{' '}
+                </Text>
+                <Text display="inline" fontSize={0} fontFamily="mono">
+                  ~ship/chat-name
+                </Text>
+              </Box>
+              <Input
+                mt={4}
+                id="station"
+                placeholder="~zod/chatroom"
+                fontFamily="mono" 
+                caption="Chat names use lowercase, hyphens, and slashes." />
+              <Button>Join Chat</Button>
+              <Spinner
+                awaiting={this.state.awaiting}
+                classes="mt4"
+                text="Joining chat..." />
+            </Box>
+          </Box>
+        </Form>
+      </Formik>
     );
   }
 }

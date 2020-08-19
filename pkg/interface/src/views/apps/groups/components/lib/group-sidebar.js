@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 
 import { Link } from 'react-router-dom';
 import { GroupItem } from './group-item';
-import SidebarInvite from '../../../../components/SidebarInvite';
+import SidebarInvite from '~/views/components/SidebarInvite';
 import { Welcome } from './welcome';
 
-import { cite } from '../../../../../logic/lib/util';
-import { Sigil } from '../../../../../logic/lib/sigil';
+import { cite } from '~/logic/lib/util';
+import { Sigil } from '~/logic/lib/sigil';
 
 
 export class GroupSidebar extends Component {

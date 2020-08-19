@@ -15,7 +15,7 @@ import {
   makeRoutePath,
   amOwnerOfGroup,
   base64urlDecode
-} from '../../../logic/lib/util';
+} from '~/logic/lib/util';
 
 export class LinksApp extends Component {
   constructor(props) {

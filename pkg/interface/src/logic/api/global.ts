@@ -1,4 +1,4 @@
-import { Patp } from '../types/noun';
+import { Patp } from '~/types/noun';
 import BaseApi from './base';
 import ChatApi from './chat';
 import { StoreState } from '../store/type';

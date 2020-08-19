@@ -8,13 +8,14 @@ const ReconnectButton = ({ connection, subscription }) => {
     return (
       <>
       <Box
-        ml={4}
+        ml={2}
         px={2}
         py={1}
         display='inline-block'
         color='red'
         border={1}
-        lineHeight='min'
+        verticalAlign="middle"
+        lineHeight='0'
         borderRadius={2}
         style={{ cursor: 'pointer' }}
         onClick={reconnect}>
@@ -26,10 +27,11 @@ const ReconnectButton = ({ connection, subscription }) => {
       return (
         <>
         <Box
-          ml={4}
+          ml={2}
           px={2}
           py={1}
-          lineHeight="min"
+          lineHeight="0"
+          verticalAlign="middle"
           display='inline-block'
           color='yellow'
           border={1}

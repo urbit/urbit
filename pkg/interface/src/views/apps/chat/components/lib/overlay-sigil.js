@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Sigil } from '../../../../../logic/lib/sigil';
+import { Sigil } from '~/logic/lib/sigil';
 import {
   ProfileOverlay,
   OVERLAY_HEIGHT

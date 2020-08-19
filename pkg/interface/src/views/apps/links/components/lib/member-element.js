@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Sigil } from '../../../../../logic/lib/sigil';
-import { uxToHex, cite } from '../../../../../logic/lib/util';
+import { Sigil } from '~/logic/lib/sigil';
+import { uxToHex, cite } from '~/logic/lib/util';
 export class MemberElement extends Component {
   onRemove() {
     const { props } = this;

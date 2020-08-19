@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { StoreState } from '../../store/type';
-import { Cage } from '../../types/cage';
-import { ContactUpdate } from '../../types/contact-update';
+import { Cage } from '~/types/cage';
+import { ContactUpdate } from '~/types/contact-update';
 
 type ContactState  = Pick<StoreState, 'contacts'>;
 

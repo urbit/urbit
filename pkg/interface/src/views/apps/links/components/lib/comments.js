@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { CommentItem } from './comment-item';
 import { CommentsPagination } from './comments-pagination';
 
-import { getContactDetails } from '../../../../../logic/lib/util';
+import { getContactDetails } from '~/logic/lib/util';
 export class Comments extends Component {
   constructor(props) {
     super(props);

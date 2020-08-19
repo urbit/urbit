@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ChannelsSidebar } from './lib/channel-sidebar';
-import ErrorBoundary from '../../../components/ErrorBoundary';
+import ErrorBoundary from '~/views/components/ErrorBoundary';
 
 export class Skeleton extends Component {
   render() {

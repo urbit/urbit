@@ -18,11 +18,11 @@ import StatusBar from './components/StatusBar';
 import Omnibox from './components/Omnibox';
 import ErrorComponent from './components/Error';
 
-import GlobalStore from '../logic/store/store';
-import GlobalSubscription from '../logic/subscription/global';
-import GlobalApi from '../logic/api/global';
-import { uxToHex } from '../logic/lib/util';
-import { Sigil } from '../logic/lib/sigil';
+import GlobalStore from '~/logic/store/store';
+import GlobalSubscription from '~/logic/subscription/global';
+import GlobalApi from '~/logic/api/global';
+import { uxToHex } from '~/logic/lib/util';
+import { Sigil } from '~/logic/lib/sigil';
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -30,6 +30,8 @@ const Root = styled.div`
   width: 100%;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-flow: column nowrap;
 `;
 
 const StatusBarWithRouter = withRouter(StatusBar);
@@ -59,6 +61,7 @@ class App extends React.Component {
     this.api.local.getBaseHash();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
+      e.stopImmediatePropagation();
       this.api.local.setOmnibox();
     });
     this.setFavicon();

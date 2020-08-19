@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { CommentItem } from './comment-item';
 import CommentInput from './comment-input';
-import { dateToDa } from '../../../../../logic/lib/util';
-import { Spinner } from '../../../../components/Spinner';
+import { dateToDa } from '~/logic/lib/util';
+import { Spinner } from '~/views/components/Spinner';
 
 export class Comments extends Component {
   constructor(props) {

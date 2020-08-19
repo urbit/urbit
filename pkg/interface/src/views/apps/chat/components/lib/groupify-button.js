@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Toggle from '../../../../components/toggle';
-import { InviteSearch } from '../../../../components/InviteSearch';
+import Toggle from '~/views/components/toggle';
+import { InviteSearch } from '~/views/components/InviteSearch';
 
 
 export class GroupifyButton extends Component {

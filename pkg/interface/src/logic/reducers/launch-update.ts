@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { LaunchUpdate } from '../../types/launch-update';
-import { Cage } from '../../types/cage';
+import { LaunchUpdate } from '~/types/launch-update';
+import { Cage } from '~/types/cage';
 import { StoreState } from '../../store/type';
 
 type LaunchState = Pick<StoreState, 'launch' | 'weather' | 'userLocation'>;

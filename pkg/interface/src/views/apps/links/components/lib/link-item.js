@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 
-import { Sigil } from '../../../../../logic/lib/sigil';
+import { Sigil } from '~/logic/lib/sigil';
 import { Link } from 'react-router-dom';
-import { makeRoutePath, cite } from '../../../../../logic/lib/util';
+import { makeRoutePath, cite } from '~/logic/lib/util';
 
 export class LinkItem extends Component {
   constructor(props) {

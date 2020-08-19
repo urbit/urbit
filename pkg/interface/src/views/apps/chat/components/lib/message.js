@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { OverlaySigil } from './overlay-sigil';
 import MessageContent from './message-content';
-import { uxToHex, cite, writeText } from '../../../../../logic/lib/util';
+import { uxToHex, cite, writeText } from '~/logic/lib/util';
 import moment from 'moment';
 
 

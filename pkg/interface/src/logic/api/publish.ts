@@ -1,7 +1,7 @@
 import BaseApi from './base';
-import { PublishResponse } from '../types/publish-response';
-import { PatpNoSig } from '../types/noun';
-import { BookId, NoteId } from '../types/publish-update';
+import { PublishResponse } from '~/types/publish-response';
+import { PatpNoSig } from '~/types/noun';
+import { BookId, NoteId } from '~/types/publish-update';
 
 export default class PublishApi extends BaseApi {
   handleEvent(data: PublishResponse) {

@@ -2,8 +2,8 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 
 import { ChatTabBar } from "./chat-tabbar";
-import { SidebarSwitcher } from "../../../../components/SidebarSwitch";
-import { deSig } from "../../../../../logic/lib/util";
+import { SidebarSwitcher } from "~/views/components/SidebarSwitch";
+import { deSig } from "~/logic/lib/util";
 
 
 export const ChatHeader = (props) => {

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { SidebarSwitcher } from '../../../../components/SidebarSwitch';
+import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { NotebookPosts } from './notebook-posts';
 import { Subscribers } from './subscribers';
 import { Settings } from './settings';
-import { cite } from '../../../../../logic/lib/util';
-import { roleForShip } from '../../../../../logic/lib/group';
+import { cite } from '~/logic/lib/util';
+import { roleForShip } from '~/logic/lib/group';
 
 export class Notebook extends Component {
   constructor(props) {

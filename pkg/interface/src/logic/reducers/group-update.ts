@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { StoreState } from '../../store/type';
-import { Cage } from '../../types/cage';
+import { Cage } from '~/types/cage';
 import {
   GroupUpdate,
   Group,
@@ -11,8 +11,8 @@ import {
   OpenPolicy,
   InvitePolicyDiff,
   InvitePolicy,
-} from '../../types/group-update';
-import { Enc, PatpNoSig } from '../../types/noun';
+} from '~/types/group-update';
+import { Enc, PatpNoSig } from '~/types/noun';
 import { resourceAsPath } from '../lib/util';
 
 type GroupState = Pick<StoreState, 'groups' | 'groupKeys'>;

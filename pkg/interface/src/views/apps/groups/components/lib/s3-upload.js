@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import S3Client from '../../../../../logic/lib/s3';
+import S3Client from '~/logic/lib/s3';
 
 export class S3Upload extends Component {
 

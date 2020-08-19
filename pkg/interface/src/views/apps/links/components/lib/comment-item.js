@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Sigil } from '../../../../../logic/lib/sigil';
-import { cite } from '../../../../../logic/lib/util';
+import { Sigil } from '~/logic/lib/sigil';
+import { cite } from '~/logic/lib/util';
 import moment from 'moment';
 import { Box, Text, Row } from '@tlon/indigo-react';
 

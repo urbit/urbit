@@ -1,6 +1,6 @@
 import BaseApi from "./base";
 import { StoreState } from "../store/type";
-import { Serial, Path } from "../types/noun";
+import { Serial, Path } from "~/types/noun";
 
 export default class InviteApi extends BaseApi<StoreState> {
   accept(app: Path, uid: Serial) {

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Sigil } from '../../../../../logic/lib/sigil';
+import { Sigil } from '~/logic/lib/sigil';
 import CommentInput from './comment-input';
-import { uxToHex, cite } from '../../../../../logic/lib/util';
+import { uxToHex, cite } from '~/logic/lib/util';
 
 export class CommentItem extends Component {
   constructor(props) {

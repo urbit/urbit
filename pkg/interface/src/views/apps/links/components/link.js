@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { LinksTabBar } from './lib/links-tabbar';
 import { LinkPreview } from './lib/link-detail-preview';
-import { SidebarSwitcher } from '../../../components/SidebarSwitch';
+import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { Link } from 'react-router-dom';
 import { Comments } from './lib/comments';
-import { Spinner } from '../../../components/Spinner';
+import { Spinner } from '~/views/components/Spinner';
 import { LoadingScreen } from './loading';
-import { makeRoutePath, getContactDetails } from '../../../../logic/lib/util';
+import { makeRoutePath, getContactDetails } from '~/logic/lib/util';
 import CommentItem from './lib/comment-item';
 
 export class LinkDetail extends Component {

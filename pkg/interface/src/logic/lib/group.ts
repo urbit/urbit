@@ -1,5 +1,5 @@
-import { roleTags, RoleTags, Group, Resource } from '../../types/group-update';
-import { PatpNoSig, Path } from '../../types/noun';
+import { roleTags, RoleTags, Group, Resource } from '~/types/group-update';
+import { PatpNoSig, Path } from '~/types/noun';
 
 
 export function roleForShip(group: Group, ship: PatpNoSig): RoleTags | undefined {
