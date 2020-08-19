@@ -1,6 +1,7 @@
 module Urbit.Vere.Ports (HasPortControlApi(..),
                          PortControlApi,
                          buildInactivePorts,
+                         buildNatPortsWhenPrivate,
                          buildNatPorts,
                          requestPortAccess) where
 
@@ -29,6 +30,17 @@ buildInactivePorts :: PortControlApi
 buildInactivePorts = PortControlApi noop noop
  where
   noop x = pure ()
+
+-- | Builds a PortControlApi struct which tries to hole-punch by talking to the
+-- NAT gateway over NAT-PMP iff we are on a private network ip.
+buildNatPortsWhenPrivate :: (HasLogFunc e)
+                         => (Text -> RIO e ())
+                         -> RIO e PortControlApi
+buildNatPortsWhenPrivate stderr = do
+  behind <- likelyBehindRouter
+  if behind
+    then buildNatPorts stderr
+    else pure buildInactivePorts
 
 -- | Builds a PortControlApi struct which tries to hole-punch by talking to the
 -- NAT gateway over NAT-PMP.
@@ -87,9 +99,13 @@ portThread :: forall e. (HasLogFunc e)
            -> RIO e ()
 portThread q stderr = do
   initNatPmp >>= \case
+    Left ErrCannotGetGateway -> do
+      assumeOnPublicInternet
     Left err -> do
       likelyIPAddress >>= \case
         Just ip@(192, 168, _, _) -> warnBehindRouterAndErr ip err
+        Just ip@(172, x, _, _)
+          | (x >= 16 && x <= 31) -> warnBehindRouterAndErr ip err
         Just ip@(10, _, _, _)    -> warnBehindRouterAndErr ip err
         _                        -> assumeOnPublicInternet
     Right pmp -> foundRouter pmp
@@ -111,7 +127,12 @@ portThread q stderr = do
   foundRouter :: NatPmpHandle -> RIO e ()
   foundRouter pmp = do
     getPublicAddress pmp >>= \case
-      Left _ -> pure ()
+      Left ErrCannotGetGateway -> assumeOnPublicInternet
+      Left ErrNoGatewaySupport -> assumeOnPublicInternet
+      Left err -> do
+        stderr $ "port: received error when asking router for public ip: " ++
+          (tshow err)
+        loopErr q
       Right addr -> do
         let (a, b, c, d) = hostAddressToTuple addr
         stderr $ "port: router reports that our public IP is " ++ (tshow a) ++
@@ -221,6 +242,16 @@ likelyIPAddress = liftIO do
   case sockAddr of
     SockAddrInet _ addr -> pure $ Just $ hostAddressToTuple addr
     _                   -> pure $ Nothing
+
+likelyBehindRouter :: MonadIO m => m Bool
+likelyBehindRouter = do
+  likelyIPAddress >>= \case
+    Just ip@(192, 168, _, _) -> pure True
+    Just ip@(172, x, _, _)
+      | (x >= 16 && x <= 31) -> pure True
+    Just ip@(10, _, _, _)    -> pure True
+    _                        -> pure False
+
 
 -- Acquire a port for the duration of the RAcquire.
 requestPortAccess :: forall e. (HasPortControlApi e) => Word16 -> RAcquire e ()

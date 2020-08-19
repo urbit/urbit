@@ -55,22 +55,22 @@ int readNatResponseSynchronously(natpmp_t* natpmp, natpmpresp_t * response)
 		r = select(FD_SETSIZE, &fds, NULL, NULL, &timeout);
 		sav_errno = errno;
 		if(r<0) {
-			fprintf(stderr, "select():  errno=%d '%s'\n",
-			        sav_errno, strerror(sav_errno));
+			/* fprintf(stderr, "select():  errno=%d '%s'\n", */
+			/*         sav_errno, strerror(sav_errno)); */
 			return 1;
 		}
 		r = readnatpmpresponseorretry(natpmp, response);
 		sav_errno = errno;
 		/* printf("readnatpmpresponseorretry returned %d (%s)\n", */
 		/*        r, r==0?"OK":(r==NATPMP_TRYAGAIN?"TRY AGAIN":"FAILED")); */
-		if(r<0 && r!=NATPMP_TRYAGAIN) {
-#ifdef ENABLE_STRNATPMPERR
-			fprintf(stderr, "readnatpmpresponseorretry() failed : %s\n",
-			        strnatpmperr(r));
-#endif
-			fprintf(stderr, "  errno=%d '%s'\n",
-			        sav_errno, strerror(sav_errno));
-		}
+/* 		if(r<0 && r!=NATPMP_TRYAGAIN) { */
+/* #ifdef ENABLE_STRNATPMPERR */
+/* 			fprintf(stderr, "readnatpmpresponseorretry() failed : %s\n", */
+/* 			        strnatpmperr(r)); */
+/* #endif */
+/* 			fprintf(stderr, "  errno=%d '%s'\n", */
+/* 			        sav_errno, strerror(sav_errno)); */
+/* 		} */
 	} while(r==NATPMP_TRYAGAIN);
 
     return r;
