@@ -981,16 +981,6 @@ ur_bsw8(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
   _bsw8_unsafe(bsw, (len > 8) ? 8 : len, byt);
 }
 
-void
-ur_bsw8_slow(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
-{
-  while ( len ) {
-    ur_bsw_bit(bsw, byt);
-    byt >>= 1;
-    len--;
-  }
-}
-
 static inline void
 _bsw32_unsafe(ur_bsw_t *bsw, uint8_t len, uint32_t val)
 {
@@ -1067,18 +1057,6 @@ ur_bsw32(ur_bsw_t *bsw, uint8_t len, uint32_t val)
   }
 
   _bsw32_unsafe(bsw, (len > 32) ? 32 : len, val);
-}
-
-void
-ur_bsw32_slow(ur_bsw_t *bsw, uint8_t len, uint32_t val)
-{
-  len = (len > 32) ? 32 : len;
-
-  while ( len ) {
-    ur_bsw_bit(bsw, val & 0xff);
-    val >>= 1;
-    len--;
-  }
 }
 
 static inline void
@@ -1199,18 +1177,6 @@ ur_bsw64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
   }
 
   _bsw64_unsafe(bsw, (len > 64) ? 64 : len, val);
-}
-
-void
-ur_bsw64_slow(ur_bsw_t *bsw, uint8_t len, uint64_t val)
-{
-  len = (len > 64) ? 64 : len;
-
-  while ( len ) {
-    ur_bsw_bit(bsw, val & 0xff);
-    val >>= 1;
-    len--;
-  }
 }
 
 static inline void

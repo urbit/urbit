@@ -218,6 +218,18 @@ _bsw_cmp_check(const char* cap, uint8_t val, uint8_t off, uint8_t len, ur_bsw_t 
   return ret;
 }
 
+static void
+_bsw8_slow(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
+{
+  len = (len > 8) ? 8 : len;
+
+  while ( len ) {
+    ur_bsw_bit(bsw, byt);
+    byt >>= 1;
+    len--;
+  }
+}
+
 static int
 _test_bsw8_loop(const char* cap, uint8_t val)
 {
@@ -232,7 +244,7 @@ _test_bsw8_loop(const char* cap, uint8_t val)
       _bsw_init(&b, 1, 1);
       a.off = a.bits = b.off = b.bits = i;
 
-      ur_bsw8_slow(&a, j, val);
+      _bsw8_slow(&a, j, val);
       ur_bsw8(&b, j, val);
 
       ret &= _bsw_cmp_check(cap, val, i, j, &a, &b);
@@ -251,6 +263,18 @@ _test_bsw8(void)
        & _test_bsw8_loop("bsw bits alt 2", 0x55);
 }
 
+static void
+_bsw32_slow(ur_bsw_t *bsw, uint8_t len, uint32_t val)
+{
+  len = (len > 32) ? 32 : len;
+
+  while ( len ) {
+    ur_bsw_bit(bsw, val & 0xff);
+    val >>= 1;
+    len--;
+  }
+}
+
 static int
 _test_bsw32_loop(const char* cap, uint32_t val)
 {
@@ -265,7 +289,7 @@ _test_bsw32_loop(const char* cap, uint32_t val)
       _bsw_init(&b, 1, 1);
       a.off = a.bits = b.off = b.bits = i;
 
-      ur_bsw32_slow(&a, j, val);
+      _bsw32_slow(&a, j, val);
       ur_bsw32(&b, j, val);
 
       ret &= _bsw_cmp_check(cap, val, i, j, &a, &b);
@@ -284,6 +308,18 @@ _test_bsw32(void)
        & _test_bsw32_loop("bsw 32 alt 2", 0x55555555);
 }
 
+static void
+_bsw64_slow(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  len = (len > 64) ? 64 : len;
+
+  while ( len ) {
+    ur_bsw_bit(bsw, val & 0xff);
+    val >>= 1;
+    len--;
+  }
+}
+
 static int
 _test_bsw64_loop(const char* cap, uint64_t val)
 {
@@ -298,7 +334,7 @@ _test_bsw64_loop(const char* cap, uint64_t val)
       _bsw_init(&b, 1, 1);
       a.off = a.bits = b.off = b.bits = i;
 
-      ur_bsw64_slow(&a, j, val);
+      _bsw64_slow(&a, j, val);
       ur_bsw64(&b, j, val);
 
       ret &= _bsw_cmp_check(cap, val, i, j, &a, &b);
@@ -332,7 +368,7 @@ _test_bsw_bytes_loop(const char* cap, uint64_t len, uint8_t val)
     byt = malloc(len);
 
     for ( j = 0; j < len; j++ ) {
-     ur_bsw8_slow(&a, 8, val);
+     _bsw8_slow(&a, 8, val);
      byt[j] = val;
     }
 
