@@ -5,7 +5,7 @@ import { useField } from "formik";
 import styled from "styled-components";
 
 import { DropdownSearch } from "./DropdownSearch";
-import { Associations, Association } from "../types/metadata-update";
+import { Associations, Association } from "~/types/metadata-update";
 
 interface InviteSearchProps {
   disabled?: boolean;
@@ -22,6 +22,11 @@ const CandidateBox = styled(Box)<{ selected: boolean }>`
   &:hover {
     background-color: ${(p) => p.theme.colors.washedGray};
   }
+`;
+
+const ClickableText = styled(Text)`
+  pointer: cursor;
+
 `;
 
 const Candidate = ({ title, selected, onClick }) => (
@@ -92,9 +97,9 @@ export function GroupSearch(props: InviteSearchProps) {
       renderChoice={({ candidate, onRemove }) => (
         <Box px={2} py={1} border={1} borderColor="washedGrey" fontSize={0}>
           {candidate.metadata.title}
-          <Text ml={2} onClick={onRemove}>
+          <ClickableText ml={2} onClick={onRemove}>
             x
-          </Text>
+          </ClickableText>
         </Box>
       )}
       value={group}

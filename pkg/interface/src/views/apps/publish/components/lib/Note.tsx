@@ -79,7 +79,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Text>{"<- Notebook Index"}</Text>
       </Link>
       <Col>
-        <Box mb={2}>{note?.title || ""}</Box>
+        <Text display="block" mb={2}>{note?.title || ""}</Text>
         <Box display="flex">
           <Author
             ship={ship}
@@ -89,7 +89,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           <Text ml={2}>{editPost}</Text>
         </Box>
       </Col>
-      <Box className="md" style={{ overflowWrap: "break-word" }}>
+      <Box color="black" className="md" style={{ overflowWrap: "break-word" }}>
         <ReactMarkdown source={newfile} linkTarget={"_blank"} />
       </Box>
       <NoteNavigation

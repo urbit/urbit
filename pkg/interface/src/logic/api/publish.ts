@@ -99,6 +99,26 @@ export default class PublishApi extends BaseApi {
     });
   }
 
+  editBook(bookId: string, title: string, description: string, coms: boolean) {
+    return this.publishAction({
+      "edit-book": {
+        book: bookId,
+        title: title,
+        about: description,
+        coms,
+        group: null
+      }
+    });
+  }
+
+  delBook(book: string) {
+    return this.publishAction({
+      "del-book": {
+        book
+      }
+    });
+  }
+
   newNote(who: PatpNoSig, book: string, note: string, title: string, body: string) {
     return this.publishAction({
       'new-note': {

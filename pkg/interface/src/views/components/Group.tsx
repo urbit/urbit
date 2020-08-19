@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import _, { capitalize } from 'lodash';
 import { FixedSizeList as List } from 'react-window';
 
-import { Dropdown } from '../apps/publish/components/lib/dropdown';
 import { cite, deSig } from '~/logic/lib/util';
 import { roleForShip, resourceFromPath } from '~/logic/lib/group';
 import {
@@ -13,7 +12,7 @@ import {
   Groups,
 } from '~/types/group-update';
 import { Path, PatpNoSig, Patp } from '~/types/noun';
-import GlobalApi from '../api/global';
+import GlobalApi from '~/logic/api/global';
 import { Menu, MenuButton, MenuList, MenuItem } from '@tlon/indigo-react';
 import InviteSearch, { Invites } from './InviteSearch';
 import { Spinner } from './Spinner';

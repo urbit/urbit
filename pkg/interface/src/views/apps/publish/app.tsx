@@ -8,13 +8,9 @@ import "./css/custom.css";
 import { Skeleton } from "./components/skeleton";
 import { NewScreen } from "./components/lib/new";
 import { JoinScreen } from "./components/lib/Join";
-import { Notebook } from "./components/lib/Notebook";
-import { Note } from "./components/lib/Note";
-import { NewPost } from "./components/lib/new-post";
-import { EditPost } from "./components/lib/edit-post";
-import { StoreState } from "../../store/type";
-import GlobalApi from "../../api/global";
-import GlobalSubscription from "../../subscription/global";
+import { StoreState } from "~/logic/store/type";
+import GlobalApi from "~/logic/api/global";
+import GlobalSubscription from "~/logic/subscription/global";
 import {NotebookRoutes} from "./components/lib/NotebookRoutes";
 
 type PublishAppProps = StoreState & {
@@ -45,7 +41,6 @@ export default function PublishApp(props: PublishAppProps) {
   }, []);
 
   const contacts = props.contacts ? props.contacts : {};
-  const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
   const notebooks = props.notebooks ? props.notebooks : {};
 
@@ -55,15 +50,6 @@ export default function PublishApp(props: PublishAppProps) {
     .values()
     .map(_.values)
     .flatten() // flatten into array of notebooks
-    .filter((each) => {
-      return (
-        selectedGroups
-          .map((e) => {
-            return e[0];
-          })
-          .includes(each?.["writers-group-path"]) || selectedGroups.length === 0
-      );
-    })
     .map("num-unread")
     .reduce((acc, count) => acc + count, 0)
     .value();
@@ -90,7 +76,6 @@ export default function PublishApp(props: PublishAppProps) {
         invites={invites}
         notebooks={notebooks}
         associations={associations}
-        selectedGroups={selectedGroups}
         contacts={contacts}
         api={api}
       >

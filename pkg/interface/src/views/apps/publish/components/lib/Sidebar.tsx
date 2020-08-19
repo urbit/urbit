@@ -58,15 +58,6 @@ export function Sidebar(props: any) {
 
   const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
   const groupedItems = Object.keys(associations)
-    .filter((each) => {
-      if (selectedGroups.length === 0) {
-        return true;
-      }
-      const selectedPaths = selectedGroups.map((e) => {
-        return e[0];
-      });
-      return selectedPaths.includes(each);
-    })
     .map((each, i) => {
       const books = groupedNotebooks[each] || [];
       if (books.length === 0) return;

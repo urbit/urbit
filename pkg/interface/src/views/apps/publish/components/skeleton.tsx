@@ -1,13 +1,12 @@
 import React, { useRef, SyntheticEvent } from "react";
 import { Box, Center } from "@tlon/indigo-react";
 import { Sidebar } from "./lib/Sidebar";
-import ErrorBoundary from "../../../components/ErrorBoundary";
-import { Notebooks } from "../../../types/publish-update";
-import { SelectedGroup } from "../../../types/local-update";
-import { Rolodex } from "../../../types/contact-update";
-import { Invites } from "../../../types/invite-update";
-import GlobalApi from "../../../api/global";
-import { Associations } from "../../../types/metadata-update";
+import ErrorBoundary from "~/views/components/ErrorBoundary";
+import { Notebooks } from "~/types/publish-update";
+import { Rolodex } from "~/types/contact-update";
+import { Invites } from "~/types/invite-update";
+import GlobalApi from "~/logic/api/global";
+import { Associations } from "~/types/metadata-update";
 import { RouteComponentProps } from "react-router-dom";
 
 type SkeletonProps = RouteComponentProps<{
@@ -18,7 +17,6 @@ type SkeletonProps = RouteComponentProps<{
   notebooks: Notebooks;
   invites: Invites;
   associations: Associations;
-  selectedGroups: SelectedGroup[];
   contacts: Rolodex;
   api: GlobalApi;
   children: React.ReactNode;
@@ -34,8 +32,8 @@ export function Skeleton(props: SkeletonProps) {
       `${props.match.params.ship}/${props.match.params.notebook}`) ||
     undefined;
 
-  const onScroll = (e: SyntheticEvent<HTMLDivElement>) => {
-    const { scrollHeight, scrollTop, clientHeight } = e.target;
+  const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollHeight, scrollTop, clientHeight } = e.target as HTMLDivElement;
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
     if (noteId && notebook && ship) {
       const note = notebooks?.[ship]?.[notebook]?.notes?.[noteId];
@@ -85,7 +83,6 @@ export function Skeleton(props: SkeletonProps) {
           path={path}
           invites={props.invites}
           associations={props.associations}
-          selectedGroups={props.selectedGroups}
           api={props.api}
         />
         <Box
