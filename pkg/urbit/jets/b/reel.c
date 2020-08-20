@@ -10,14 +10,11 @@
             u3_noun b)
   {
     u3_noun pro = u3k(u3x_at(u3x_sam_3, b));
-    if ( u3_nul == a ) {
-      return pro;
-    }
-    else {
+    if ( u3_nul != a ) {
       u3j_site sit_u;
       u3_noun  i, t = a;
       c3_w     j_w, len_w = 0, all_w = 89, pre_w = 55;
-      u3_noun* vec = u3a_malloc(all_w);
+      u3_noun* vec = u3a_malloc(all_w * sizeof(u3_noun));
 
       // stuff list into an array
       do {
@@ -30,7 +27,7 @@
             // grow vec fib-wise
             all_w += pre_w;
             pre_w = len_w;
-            vec = u3a_realloc(vec, all_w);
+            vec = u3a_realloc(vec, all_w * sizeof(u3_noun));
           }
           vec[len_w++] = i;
         }
@@ -43,8 +40,8 @@
       }
       u3j_gate_lose(&sit_u);
       u3a_free(vec);
-      return pro;
     }
+    return pro;
   }
   u3_noun
   u3wb_reel(u3_noun cor)
