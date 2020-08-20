@@ -9,21 +9,26 @@ typedef uint8_t  ur_bool_t;
 
 #if    (32 == (CHAR_BIT * __SIZEOF_INT__))
 #  define  ur_lz32  __builtin_clz
+#  define  ur_tz32  __builtin_ctz
 #elif  (32 == (CHAR_BIT * __SIZEOF_LONG__))
 #  define  ur_lz32  __builtin_clzl
+#  define  ur_tz32  __builtin_ctzl
 #else
 #  error   "port me"
 #endif
 
 #if    (64 == (CHAR_BIT * __SIZEOF_LONG__))
 #  define  ur_lz64  __builtin_clzl
+#  define  ur_tz64  __builtin_ctzl
 #elif  (64 == (CHAR_BIT * __SIZEOF_LONG_LONG__))
 #  define  ur_lz64  __builtin_clzll
+#  define  ur_tz64  __builtin_ctzll
 #else
 #  error   "port me"
 #endif
 
 #define ur_lz8(a)      ( ur_lz32(a) - 24 )
+#define ur_tz8         ur_tz32
 
 #define ur_mask_3(a)   (a & 0x7)
 #define ur_mask_8(a)   (a & 0xff)
@@ -259,6 +264,12 @@ ur_bsr64_any(ur_bsr_t *bsr, uint8_t len);
 
 void
 ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out);
+
+ur_cue_res_e
+ur_bsr_rub_log(ur_bsr_t *bsr, uint8_t *out);
+
+ur_cue_res_e
+ur_bsr_zeros(ur_bsr_t *bsr, uint8_t *out);
 
 uint64_t
 ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt);

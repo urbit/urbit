@@ -1194,6 +1194,130 @@ _test_bsr_bytes_any(void)
 }
 
 static int
+_bsr_cmp_check(const char* cap,
+               uint8_t     off,
+               uint8_t     len,
+               ur_bsr_t     *a,
+               ur_bsr_t     *b,
+               uint8_t       c,
+               uint8_t       d,
+               ur_cue_res_e  e,
+               ur_cue_res_e  f)
+{
+  int ret = 1;
+
+  if ( !ur_bsr_sane(a) ) {
+    fprintf(stderr, "%s: off %u, len %u a insane off=%u left=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                    cap, off, len, a->off, a->left, a->bits);
+    ret = 0;
+  }
+
+  if ( !ur_bsr_sane(b) ) {
+    fprintf(stderr, "%s: off %u, len %u a insane off=%u left=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                    cap, off, len, b->off, b->left, b->bits);
+    ret = 0;
+  }
+
+  if ( e != f ) {
+    fprintf(stderr, "%s: off %u, len %u ret not equal (%s, %s) off=%u left=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                    cap, off, len,
+                    (ur_cue_good == e) ? "good" : "gone",
+                    (ur_cue_good == f) ? "good" : "gone",
+                    b->off, b->left, b->bits);
+    ret = 0;
+  }
+
+  if ( (ur_cue_good == e) && (c != d) ) {
+    fprintf(stderr, "%s: off %u, len %u val not equal (%02x, %02x) off=%u left=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                    cap, off, len, c, d, b->off, b->left, b->bits);
+    ret = 0;
+  }
+
+  if ( a->off != b->off ) {
+    fprintf(stderr, "%s: off %u len %u: offset fail (%u, %u)\r\n",
+                    cap, off, len, a->off, b->off);
+    ret = 0;
+  }
+
+  if ( a->left != b->left ) {
+    fprintf(stderr, "%s: off %u len %u: left fail (%" PRIu64 ", %" PRIu64 ")\r\n",
+                    cap, off, len, a->left, b->left);
+    ret = 0;
+  }
+
+  if ( a->bits != b->bits ) {
+    fprintf(stderr, "%s: off %u len %u: bits fail (%" PRIu64 ", %" PRIu64 ")\r\n",
+                    cap, off, len, a->bits, b->bits);
+    ret = 0;
+  }
+
+
+  return ret;
+}
+
+static int
+_test_bsr_rub_log_loop(const char *cap, uint8_t len, uint8_t val)
+{
+  int          ret = 1;
+  ur_bsr_t    a, b;
+  uint8_t    *bytes, c, d;
+  uint8_t     i, j, k;
+  ur_cue_res_e   e, f;
+
+  bytes = malloc(len);
+
+  for ( i = 0; i < 8; i++) {
+    for ( j = 0; j < len; j++ ) {
+      a.left = b.left = len;
+      a.bytes = b.bytes = bytes;
+      a.off = a.bits = b.off = b.bits = i;
+
+      memset(bytes, 0x0, j);
+      memset(bytes + j, val, len - j);
+
+      e = ur_bsr_zeros(&a, &c);
+      f = ur_bsr_rub_log(&b, &d);
+
+      ret &= _bsr_cmp_check(cap, i, j, &a, &b, c, d, e, f);
+    }
+  }
+
+  free(bytes);
+
+  return ret;
+}
+
+static int
+_test_bsr_rub_log(void)
+{
+  int ret = _test_bsr_rub_log_loop("bsr rub_log nought", 0, 0x0)
+          & _test_bsr_rub_log_loop("bsr rub_log ones odd", 3, 0xff)
+          & _test_bsr_rub_log_loop("bsr rub_log ones even", 4, 0xff)
+          & _test_bsr_rub_log_loop("bsr rub_log ones big", 50, 0xff)
+          & _test_bsr_rub_log_loop("bsr rub_log zeros odd", 5, 0x0)
+          & _test_bsr_rub_log_loop("bsr rub_log zeros even", 6, 0x0)
+          & _test_bsr_rub_log_loop("bsr rub_log zeros big", 50, 0x0);
+
+  {
+    uint8_t i, j = 5;
+    char  cap[1024];
+
+    for ( i = 0; i < 8; i++ ) {
+      snprintf(cap, 1000, "bsr rub_log 1<<%u odd", i);
+      ret &= _test_bsr_rub_log_loop((const char*)cap, j++, 0x1 << i);
+
+      snprintf(cap, 1000, "bsr rub_log 1<<%u even", i);
+      ret &= _test_bsr_rub_log_loop((const char*)cap, j++, 0x1 << i);
+
+      snprintf(cap, 1000, "bsr rub_log 1<<%u big", i);
+      ret &= _test_bsr_rub_log_loop((const char*)cap, 50, 0x1 << i);
+    }
+  }
+
+  return ret;
+}
+
+static int
 _test_bsr(void)
 {
   return _test_bsr_bit()
@@ -1201,7 +1325,8 @@ _test_bsr(void)
        & _test_bsr_bytes_any()
        & _test_bsr8()
        & _test_bsr32()
-       & _test_bsr64();
+       & _test_bsr64()
+       & _test_bsr_rub_log();
 }
 
 static int

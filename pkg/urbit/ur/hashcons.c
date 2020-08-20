@@ -1869,6 +1869,75 @@ ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
 }
 
 static inline ur_cue_res_e
+_bsr_rub_log_meme(ur_bsr_t *bsr)
+{
+  bsr->bits += 256;
+  bsr->bytes += 32;
+  bsr->left  -= 32;
+
+  //  XX distinguish meme status
+  //
+  return ur_cue_gone;
+}
+
+ur_cue_res_e
+ur_bsr_rub_log(ur_bsr_t *bsr, uint8_t *out)
+{
+  uint64_t left = bsr->left;
+
+  if ( !left ) {
+    return ur_cue_gone;
+  }
+  else {
+    uint8_t      off = bsr->off;
+    uint8_t     rest = 8 - off;
+    const uint8_t *b = bsr->bytes;
+    uint8_t      byt = b[0] >> off;
+    uint8_t     skip = 0;
+
+    while ( !byt ) {
+      if ( 32 == skip ) {
+        return _bsr_rub_log_meme(bsr);
+      }
+
+      skip++;
+
+      if ( skip == left ) {
+        bsr->bits += (skip << 3) - off;
+        bsr->bytes = 0;
+        bsr->left  = 0;
+        bsr->off   = 0;
+        return ur_cue_gone;
+      }
+
+      byt = b[skip];
+    }
+
+    {
+      uint32_t zeros = ur_tz8(byt) + (skip ? ((skip << 3) - off) : 0);
+
+      if ( 255 < zeros ) {
+        return _bsr_rub_log_meme(bsr);
+      }
+      else {
+        uint32_t bits = off + 1 + zeros;
+        uint8_t bytes = bits >> 3;
+
+        left -= bytes;
+
+        bsr->bytes  = left ? (b + bytes) : 0;
+        bsr->bits  += 1 + zeros;
+        bsr->left   = left;
+        bsr->off    = ur_mask_3(bits);
+
+        *out = zeros;
+        return ur_cue_good;
+      }
+    }
+  }
+}
+
+static inline ur_cue_res_e
 ur_bsr_tag(ur_bsr_t *bsr, ur_cue_tag_e *out)
 {
   ur_cue_res_e res;
@@ -1889,23 +1958,26 @@ ur_bsr_tag(ur_bsr_t *bsr, ur_cue_tag_e *out)
   return ur_cue_good;
 }
 
-static inline ur_cue_res_e
+ur_cue_res_e
 ur_bsr_zeros(ur_bsr_t *bsr, uint8_t *out)
 {
   ur_cue_res_e res;
-  uint8_t bit, len = 0;
+  uint8_t   bit, i = 0;
 
-  while ( (ur_cue_good == (res = ur_bsr_bit(bsr, &bit))) && (0 == bit) ) {
-    len++;
+  do {
+    if ( ur_cue_good != (res = ur_bsr_bit(bsr, &bit)) ) {
+      return res;
+    }
+    else if ( bit ) {
+      *out = i;
+      return ur_cue_good;
+    }
   }
+  while ( ++i );
 
-  if ( ur_cue_good != res ) {
-    return res;
-  }
-  else {
-    *out = len;
-    return ur_cue_good;
-  }
+  //  XX distinguish meme
+  //
+  return ur_cue_gone;
 }
 
 static inline uint64_t
