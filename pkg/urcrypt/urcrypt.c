@@ -6,6 +6,7 @@
 
 #include <openssl/crypto.h>
 #include <openssl/aes.h>
+#include <openssl/ripemd.h>
 
 #include <argon2.h>
 #include <blake2.h>
@@ -522,6 +523,22 @@ urcrypt_aes_cbcc_de(uint8_t **message_ptr,
   else {
     return _urcrypt_cbc_help(message_ptr, length_ptr,
         &aes_key, ivec, AES_DECRYPT, realloc_ptr);
+  }
+}
+
+int
+urcrypt_ripemd160(uint8_t *message, size_t length, uint8_t out[20])
+{
+  unsigned long n = length;
+
+  if ( length != n ) {
+    return -1;
+  }
+  else {
+    _urcrypt_reverse(length, message);
+    RIPEMD160(message, n, out);
+    _urcrypt_reverse(20, out);
+    return 0;
   }
 }
 
