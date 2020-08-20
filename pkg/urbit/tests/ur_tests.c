@@ -353,6 +353,19 @@ _test_bsw64(void)
        & _test_bsw64_loop("bsw 64 alt 2", 0x5555555555555555ULL);
 }
 
+static void
+_bsw_bytes_slow(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
+{
+  uint64_t i, len_byt = len >> 3;
+
+  for ( i = 0; i < len_byt; i++ ) {
+    _bsw8_slow(bsw, 8, byt[i]);
+    len -= 8;
+  }
+
+  _bsw8_slow(bsw, len, byt[len_byt]);
+}
+
 static int
 _test_bsw_bytes_loop(const char* cap, uint64_t len, uint8_t val)
 {
@@ -360,23 +373,25 @@ _test_bsw_bytes_loop(const char* cap, uint64_t len, uint8_t val)
   ur_bsw_t a = {0};
   ur_bsw_t b = {0};
   uint8_t i, j, *byt;
+  uint64_t   len_bit = len << 3;
+
+  byt = malloc(len);
+  memset(byt, val, len);
 
   for ( i = 0; i < 8; i++) {
-    _bsw_init(&a, 1, 1);
-    _bsw_init(&b, 1, 1);
-    a.off = a.bits = b.off = b.bits = i;
-    byt = malloc(len);
+    for ( j = 0; j < len_bit; j++ ) {
+      _bsw_init(&a, 1, 1);
+      _bsw_init(&b, 1, 1);
+      a.off = a.bits = b.off = b.bits = i;
 
-    for ( j = 0; j < len; j++ ) {
-     _bsw8_slow(&a, 8, val);
-     byt[j] = val;
+      _bsw_bytes_slow(&a, j, byt);
+      ur_bsw_bytes(&b, j, byt);
+
+      ret &= _bsw_cmp_check(cap, val, i, j, &a, &b);
     }
-
-    ur_bsw_bytes(&b, len, byt);
-    free(byt);
-
-    ret &= _bsw_cmp_check(cap, val, 8, i, &a, &b);
   }
+
+  free(byt);
 
   return ret;
 }

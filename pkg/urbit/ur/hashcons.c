@@ -1191,12 +1191,19 @@ ur_bsw64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 static inline void
 _bsw_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 {
-  uint64_t fill = bsw->fill;
-  uint8_t   off = bsw->off;
+  uint64_t len_byt = len >> 3;
+  uint8_t  len_bit = ur_mask_3(len);
+  uint64_t    fill = bsw->fill;
+  uint8_t      off = bsw->off;
 
   if ( !off ) {
-    memcpy(bsw->bytes + fill, byt, len);
-    fill += len;
+    memcpy(bsw->bytes + fill, byt, len_byt);
+    fill += len_byt;
+    off   = len_bit;
+
+    if ( off ) {
+      bsw->bytes[fill] = byt[len_byt] & ((1 << off) - 1);
+    }
   }
   //  the least-significant bits of the input become the
   //  most-significant bits of a byte in the output stream, and vice-versa
@@ -1207,23 +1214,38 @@ _bsw_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
     uint8_t l, m = bsw->bytes[fill];
     uint64_t   i;
 
-    for ( i = 0; i < len; i++ ) {
+    for ( i = 0; i < len_byt; i++ ) {
       l = byt[i] & mask;
       bsw->bytes[fill++] = m ^ (l << off);
       m = byt[i] >> rest;
     }
 
-    bsw->bytes[fill] = m;
+    if ( len_bit < rest ) {
+      l = byt[len_byt] & ((1 << len_bit) - 1);
+      bsw->bytes[fill] = m ^ (l << off);
+      off += len_bit;
+    }
+    else {
+      l = byt[len_byt] & mask;
+      bsw->bytes[fill++] = m ^ (l << off);
+
+      m = byt[len_byt] >> rest;
+
+      off = len_bit - rest;
+      bsw->bytes[fill] = m & ((1 << off) - 1);
+    }
   }
 
+  bsw->off   = off;
   bsw->fill  = fill;
-  bsw->bits += len << 3;
+  bsw->bits += len;
 }
 
 void
 ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 {
-  uint64_t need = len + !!bsw->off;
+  uint8_t  bits = len + bsw->off;
+  uint64_t need = (bits >> 3) + !!ur_mask_3(bits);
 
   if ( bsw->fill + need >= bsw->size ) {
     ur_bsw_grow(bsw, ur_max(need, bsw->prev));
@@ -1304,47 +1326,36 @@ ur_bsw_mat64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 }
 
 static inline void
-_bsw_mat_bytes_unsafe(ur_bsw_t *bsw, uint8_t len_len, uint64_t len_bit, uint64_t len, uint8_t *byt)
+_bsw_mat_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 {
-  //  write run-length
-  //
-  _bsw_bex_unsafe(bsw, len_len);
-  _bsw64_unsafe(bsw, len_len - 1, len_bit);
-
-  //  write bytes
-  //
-  {
-    uint8_t low = ur_mask_3(len_bit);
-
-    if ( !low ) {
-      _bsw_bytes_unsafe(bsw, len, byt);
+  if ( 0 == len ) {
+    _bsw_bit_unsafe(bsw, 1);
+  }
+  else {
+    //  write run-length
+    //
+    {
+      uint8_t nel = ur_met0_64(len);
+      _bsw_bex_unsafe(bsw, nel);
+      _bsw64_unsafe(bsw, nel - 1, len);
     }
-    else {
-      len--;
-      _bsw_bytes_unsafe(bsw, len, byt);
-      _bsw8_unsafe(bsw, low, byt[len]);
-    }
+
+    _bsw_bytes_unsafe(bsw, len, byt);
   }
 }
 
 void
-ur_bsw_mat_bytes(ur_bsw_t *bsw, uint64_t len_bit, uint64_t len, uint8_t *byt)
+ur_bsw_mat_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 {
-  uint8_t len_len = ur_met0_64(len_bit);
+  uint64_t next = ( 0 == len ) ? 1 : len + (2 * ur_met0_64(len));
+  uint64_t bits = bsw->off + next;
+  uint64_t need = (bits >> 3) + !!ur_mask_3(bits);
 
-  //  XX
-  assert( 64 > len_len );
-
-  {
-    uint8_t  bits = bsw->off + (2 * len_len);
-    uint64_t need = len + (bits >> 3) + !!ur_mask_3(bits);
-
-    if ( bsw->fill + need >= bsw->size ) {
-      ur_bsw_grow(bsw, ur_max(need, bsw->prev));
-    }
-
-    _bsw_mat_bytes_unsafe(bsw, len_len, len_bit, len, byt);
+  if ( bsw->fill + need >= bsw->size ) {
+    ur_bsw_grow(bsw, ur_max(need, bsw->prev));
   }
+
+  _bsw_mat_bytes_unsafe(bsw, len, byt);
 }
 
 ur_bool_t
@@ -1822,20 +1833,20 @@ ur_bsr_mat(ur_bsr_t *bsr, uint64_t *out)
 }
 
 static inline void
-_jam_mat(ur_root_t *r, ur_nref ref, ur_bsw_t *bsw, uint64_t len_bit)
+_jam_mat(ur_root_t *r, ur_nref ref, ur_bsw_t *bsw, uint64_t len)
 {
   switch ( ur_nref_tag(ref) ) {
     default: assert(0);
 
     case ur_direct: {
-      ur_bsw_mat64(bsw, len_bit, ref);
+      ur_bsw_mat64(bsw, len, ref);
     } break;
 
     case ur_iatom: {
-      uint64_t len;
-      uint8_t *byt;
-      ur_bytes(r, ref, &byt, &len);
-      ur_bsw_mat_bytes(bsw, len_bit, len, byt);
+      uint64_t len_byt;
+      uint8_t     *byt;
+      ur_bytes(r, ref, &byt, &len_byt);
+      ur_bsw_mat_bytes(bsw, len, byt);
     } break;
   }
 }
