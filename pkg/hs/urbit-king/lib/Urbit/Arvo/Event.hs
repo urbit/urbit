@@ -3,8 +3,7 @@
 -}
 module Urbit.Arvo.Event where
 
-import Urbit.Noun.Tree (HoonMap, HoonSet)
-import Urbit.Prelude   hiding (Term)
+import Urbit.Prelude hiding (Term)
 
 import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Desk, Mime)

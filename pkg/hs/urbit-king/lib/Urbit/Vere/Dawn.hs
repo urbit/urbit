@@ -11,11 +11,11 @@ import Urbit.Prelude     hiding (Call, rights, to)
 import Data.Bits                     (xor)
 import Data.List                     (nub)
 import Data.Text                     (splitOn)
+import Data.Solidity.Prim            (Address, UIntN, BytesN)
 import Network.Ethereum.Account
 import Network.Ethereum.Api.Eth
-import Network.Ethereum.Api.Provider
 import Network.Ethereum.Api.Types    hiding (blockNumber)
-import Network.Ethereum.Web3
+import Network.Web3.Provider
 import Network.HTTP.Client.TLS
 
 import qualified Crypto.Hash.SHA256    as SHA256
@@ -161,10 +161,10 @@ validateShipAndGetImmediateSponsor block azimuth (Seed ship life ring oaf) =
       -- A comet address is the fingerprint of the keypair
       let shipFromPass = cometFingerprint $ ringToPass ring
       when (ship /= shipFromPass) $
-        fail ("comet name doesn't match fingerprint " ++ show ship ++ " vs " ++
+        error ("comet name doesn't match fingerprint " ++ show ship ++ " vs " ++
               show shipFromPass)
       when (life /= 1) $
-        fail ("comet can never be re-keyed")
+        error ("comet can never be re-keyed")
       pure (shipSein ship)
 
     validateMoon = do
@@ -178,14 +178,14 @@ validateShipAndGetImmediateSponsor block azimuth (Seed ship life ring oaf) =
 
       whoP <- retrievePoint block azimuth ship
       case epNet whoP of
-        Nothing -> fail "ship not keyed"
+        Nothing -> error "ship not keyed"
         Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
           when (netLife /= life) $
-              fail ("keyfile life mismatch; keyfile claims life " ++
+              error ("keyfile life mismatch; keyfile claims life " ++
                     show life ++ ", but Azimuth claims life " ++
                     show netLife)
           when ((ringToPass ring) /= pass) $
-              fail "keyfile does not match blockchain"
+              error "keyfile does not match blockchain"
           -- TODO: The hoon code does a breach check, but the C code never
           -- supplies the data necessary for it to function.
           pure who
@@ -201,16 +201,16 @@ getSponsorshipChain block azimuth = loop
       ethPoint <- retrievePoint block azimuth ship
 
       case (clanFromShip ship, epNet ethPoint) of
-        (Ob.Comet, _) -> fail "Comets cannot be sponsors"
-        (Ob.Moon, _)  -> fail "Moons cannot be sponsors"
+        (Ob.Comet, _) -> error "Comets cannot be sponsors"
+        (Ob.Moon, _)  -> error "Moons cannot be sponsors"
 
         (_, Nothing) ->
-            fail $ unpack ("Ship " ++ renderShip ship ++ " not booted")
+            error $ unpack ("Ship " ++ renderShip ship ++ " not booted")
 
         (Ob.Galaxy, Just _) -> pure [(ship, ethPoint)]
 
         (_, Just (_, _, _, (False, _), _)) ->
-            fail $ unpack ("Ship " ++ renderShip ship ++ " has no sponsor")
+            error $ unpack ("Ship " ++ renderShip ship ++ " has no sponsor")
 
         (_, Just (_, _, _, (True, sponsor), _)) -> do
             chain <- loop sponsor

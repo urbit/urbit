@@ -87,14 +87,11 @@ import Urbit.Vere.Pier.Types
 import Urbit.Vere.Serf
 import Urbit.King.App
 
-import Control.Concurrent     (myThreadId)
-import Control.Exception      (AsyncException(UserInterrupt))
-import Control.Lens           ((&))
-import System.Process         (system)
-import Text.Show.Pretty       (pPrint)
-import Urbit.Noun.Conversions (cordToUW)
-import Urbit.Noun.Time        (Wen)
-import Urbit.Vere.LockFile    (lockFile)
+import Control.Concurrent  (myThreadId)
+import Control.Exception   (AsyncException(UserInterrupt))
+import System.Process      (system)
+import Urbit.Noun.Time     (Wen)
+import Urbit.Vere.LockFile (lockFile)
 
 import qualified Data.Set                as Set
 import qualified Data.Text               as T
