@@ -1958,28 +1958,6 @@ ur_bsr_tag(ur_bsr_t *bsr, ur_cue_tag_e *out)
   return ur_cue_good;
 }
 
-ur_cue_res_e
-ur_bsr_zeros(ur_bsr_t *bsr, uint8_t *out)
-{
-  ur_cue_res_e res;
-  uint8_t   bit, i = 0;
-
-  do {
-    if ( ur_cue_good != (res = ur_bsr_bit(bsr, &bit)) ) {
-      return res;
-    }
-    else if ( bit ) {
-      *out = i;
-      return ur_cue_good;
-    }
-  }
-  while ( ++i );
-
-  //  XX distinguish meme
-  //
-  return ur_cue_gone;
-}
-
 static inline uint64_t
 ur_bsr64(ur_bsr_t *bsr, uint8_t len)
 {
@@ -2059,10 +2037,11 @@ ur_bsr_bytes(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
 static inline ur_cue_res_e
 ur_bsr_mat(ur_bsr_t *bsr, uint64_t *out)
 {
-  uint8_t len;
+  ur_cue_res_e res;
+  uint8_t      len;
 
-  if ( ur_cue_gone == ur_bsr_zeros(bsr, &len) ) {
-    return ur_cue_gone;
+  if ( ur_cue_good != (res = ur_bsr_rub_log(bsr, &len)) ) {
+    return res;
   }
 
   //  XX

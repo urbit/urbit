@@ -1255,6 +1255,28 @@ _bsr_cmp_check(const char* cap,
   return ret;
 }
 
+static ur_cue_res_e
+_bsr_rub_log_slow(ur_bsr_t *bsr, uint8_t *out)
+{
+  ur_cue_res_e res;
+  uint8_t   bit, i = 0;
+
+  do {
+    if ( ur_cue_good != (res = ur_bsr_bit(bsr, &bit)) ) {
+      return res;
+    }
+    else if ( bit ) {
+      *out = i;
+      return ur_cue_good;
+    }
+  }
+  while ( ++i );
+
+  //  XX distinguish meme
+  //
+  return ur_cue_gone;
+}
+
 static int
 _test_bsr_rub_log_loop(const char *cap, uint8_t len, uint8_t val)
 {
@@ -1275,7 +1297,7 @@ _test_bsr_rub_log_loop(const char *cap, uint8_t len, uint8_t val)
       memset(bytes, 0x0, j);
       memset(bytes + j, val, len - j);
 
-      e = ur_bsr_zeros(&a, &c);
+      e = _bsr_rub_log_slow(&a, &c);
       f = ur_bsr_rub_log(&b, &d);
 
       ret &= _bsr_cmp_check(cap, i, j, &a, &b, c, d, e, f);
