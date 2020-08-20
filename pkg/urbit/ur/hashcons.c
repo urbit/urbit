@@ -1533,10 +1533,10 @@ ur_bsr8_any(ur_bsr_t *bsr, uint8_t len)
     return 0;
   }
   else {
-    uint8_t          off = bsr->off;
-    uint8_t         rest = 8 - off;
-    const uint8_t *bytes = bsr->bytes;
-    uint8_t            m = bytes[0] >> off;
+    uint8_t      off = bsr->off;
+    uint8_t     rest = 8 - off;
+    const uint8_t *b = bsr->bytes;
+    uint8_t        m = b[0] >> off;
 
     if ( len < rest ) {
       bsr->off = off + len;
@@ -1556,7 +1556,7 @@ ur_bsr8_any(ur_bsr_t *bsr, uint8_t len)
       bsr->bytes++;
 
       {
-        uint8_t l = bytes[1] & ((1 << off) - 1);
+        uint8_t l = b[1] & ((1 << off) - 1);
         return m ^ (l << rest);
       }
     }
