@@ -15,15 +15,16 @@ module Urbit.Prelude
     , module RIO
     , io, rio
     , logTrace
+    , fail
     ) where
 
 import ClassyPrelude
 import Urbit.Noun
 
-import Control.Lens hiding (Each, Index, cons, index, snoc, uncons, unsnoc,
-                     (<.>), (<|))
-
 import Control.Arrow    ((<<<), (>>>))
+import Control.Lens hiding (Each, Index, cons, index, snoc, uncons, unsnoc,
+                            (<.>), (<|))
+import Control.Monad.Fail (fail)
 import Data.Acquire     (Acquire, mkAcquire, with)
 import Data.RAcquire    (RAcquire, mkRAcquire, rwith)
 import Data.RAcquire    (MonadAcquire(..), MonadRIO(..))

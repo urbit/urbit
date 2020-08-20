@@ -18,9 +18,7 @@ import qualified Control.Exception     as E
 import qualified Control.Monad.Catch   as C ()
 import qualified Data.Acquire.Internal as Act
 
-import Control.Applicative     (Applicative(..))
-import Control.Monad           (ap, liftM)
-import Control.Monad.IO.Unlift (MonadIO(..), MonadUnliftIO, withRunInIO)
+import Control.Monad.IO.Unlift (MonadUnliftIO, withRunInIO)
 import Control.Monad.Reader
 import Data.Typeable           (Typeable)
 
