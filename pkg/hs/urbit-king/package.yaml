@@ -75,7 +75,6 @@ dependencies:
   - racquire
   - random
   - regex-tdfa
-  - regex-tdfa-text
   - resourcet
   - rio
   - semigroups
