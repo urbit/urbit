@@ -257,6 +257,9 @@ ur_bsr32_any(ur_bsr_t *bsr, uint8_t len);
 uint64_t
 ur_bsr64_any(ur_bsr_t *bsr, uint8_t len);
 
+void
+ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out);
+
 uint64_t
 ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt);
 

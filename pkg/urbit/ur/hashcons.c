@@ -1769,6 +1769,105 @@ ur_bsr64_any(ur_bsr_t *bsr, uint8_t len)
   }
 }
 
+void
+ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
+{
+  uint64_t left = bsr->left;
+
+  if ( !left ) {
+    return;
+  }
+  else {
+    const uint8_t *b = bsr->bytes;
+    uint8_t      off = bsr->off;
+    uint64_t len_byt = len >> 3;
+    uint8_t  len_bit = ur_mask_3(len);
+
+    if ( !off ) {
+      uint8_t  bits = off + len_bit;
+      uint64_t need = len_byt + (bits >> 3) + !!ur_mask_3(bits);
+
+      if ( need > left ) {
+        memcpy(out, b, left);
+        bsr->bytes = 0;
+        bsr->left = 0;
+      }
+      else {
+        memcpy(out, b, len_byt);
+        off   = len_bit;
+        left -= len_byt;
+
+        if ( !left ) {
+          bsr->bytes = 0;
+        }
+        else {
+          bsr->bytes += len_byt;
+        }
+
+        bsr->left = left;
+
+        if ( off ) {
+          out[len_byt] = b[len_byt] & ((1 << off) - 1);
+        }
+      }
+    }
+    //  the most-significant bits from a byte in the stream
+    //  become the least-significant bits of an output byte, and vice-versa
+    //
+    else {
+      uint64_t  need = len_byt + (len_bit >> 3) + !!ur_mask_3(len_bit);
+      ur_bool_t  end = need >= left;
+      uint64_t   max = end ? (left - 1) : len_byt;
+      uint8_t   rest = 8 - off;
+      uint8_t   mask = (1 << off) - 1;
+      uint8_t    byt = b[0];
+      uint8_t   l, m = byt >> off;
+      uint64_t     i;
+
+      for ( i = 0; i < max; i++ ) {
+        byt    = b[1ULL + i];
+        l      = byt & mask;
+        out[i] = m ^ (l << rest);
+        m      = byt >> off;
+      }
+
+      if ( end ) {
+        if ( len_bit && len_bit < rest ) {
+          out[max] = m & ((1 << len_bit) - 1);
+          bsr->bytes += max;
+          left -= max;
+          off += len_bit;
+        }
+        else {
+          out[max] = m;
+          bsr->bytes = 0;
+          left = 0;
+          off  = 0;
+        }
+      }
+      else {
+        uint8_t bits = off + len_bit;
+
+        bsr->bytes += max;
+        left -= max + !!(bits >> 3);
+        off   = ur_mask_3(bits);
+
+        if ( len_bit <= rest ) {
+          out[max] = m & ((1 << len_bit) - 1);
+        }
+        else {
+          l = b[1ULL + max] & ((1 << off) - 1);;
+          out[max] = m ^ (l << rest);
+        }
+      }
+    }
+
+    bsr->off   = off;
+    bsr->left  = left;
+    bsr->bits += len;
+  }
+}
+
 static inline ur_cue_res_e
 ur_bsr_tag(ur_bsr_t *bsr, ur_cue_tag_e *out)
 {

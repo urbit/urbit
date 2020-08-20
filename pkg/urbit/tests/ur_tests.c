@@ -1126,11 +1126,88 @@ _test_bsr64(void)
        & _test_bsr64_loop("bsr64 alt-2 8", 8, 0x55);
 }
 
+static void
+_bsr_bytes_any_slow(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
+{
+  uint64_t i, len_byt = len >> 3;
+
+  for ( i = 0; i < len_byt; i++ ) {
+    out[i] = _bsr8_any_slow(bsr, 8);
+  }
+
+  out[len_byt] = _bsr8_any_slow(bsr, ur_mask_3(len));
+}
+
+static int
+_test_bsr_bytes_any_loop(const char *cap, uint8_t len, uint8_t val)
+{
+  int          ret = 1;
+  uint64_t len_bit = len << 3;
+  ur_bsr_t    a, b;
+  uint8_t    *bytes, *c, *d;
+  uint8_t     i, j, k;
+
+  c     = malloc(len);
+  d     = malloc(len);
+  bytes = malloc(len);
+  memset(bytes, val, len);
+
+  for ( i = 0; i < 8; i++) {
+    for ( j = 1; j <= len_bit; j++ ) {
+      a.left = b.left = len;
+      a.bytes = b.bytes = bytes;
+      a.off = a.bits = b.off = b.bits = i;
+      memset(c, 0x0, len);
+      memset(d, 0x0, len);
+
+      _bsr_bytes_any_slow(&a, j, c);
+      ur_bsr_bytes_any(&b, j, d);
+
+      ret &= _bsr_cmp_any_check(cap, i, j, &a, &b);
+
+      if ( memcmp(c, d, len) ) {
+        fprintf(stderr, "%s: off %u, len %u not equal off=%u left=%" PRIu64 " bits=%" PRIu64 "\r\n",
+                        cap, i, j, b.off, b.left, b.bits);
+        fprintf(stderr, "  a: { ");
+        for ( k = 0; k < len; k++ ) {
+          fprintf(stderr, "%02x, ", c[k]);
+        }
+        fprintf(stderr, "}\r\n");
+        fprintf(stderr, "  b: { ");
+        for ( k = 0; k < len; k++ ) {
+          fprintf(stderr, "%02x, ", d[k]);
+        }
+        fprintf(stderr, "}\r\n");
+        ret = 0;
+      }
+    }
+  }
+
+  free(bytes);
+
+  return ret;
+}
+
+static int
+_test_bsr_bytes_any(void)
+{
+  return _test_bsr_bytes_any_loop("bsr bytes nought", 0, 0x0)
+       & _test_bsr_bytes_any_loop("bsr bytes ones odd", 3, 0xff)
+       & _test_bsr_bytes_any_loop("bsr bytes ones even", 4, 0xff)
+       & _test_bsr_bytes_any_loop("bsr bytes zeros odd", 5, 0x0)
+       & _test_bsr_bytes_any_loop("bsr bytes zeros even", 6, 0x0)
+       & _test_bsr_bytes_any_loop("bsr bytes alt 1 odd", 7, 0xaa)
+       & _test_bsr_bytes_any_loop("bsr bytes alt 1 even", 8, 0xaa)
+       & _test_bsr_bytes_any_loop("bsr bytes alt 2 odd", 9, 0x55)
+       & _test_bsr_bytes_any_loop("bsr bytes alt 2 odd", 10, 0x55);
+}
+
 static int
 _test_bsr(void)
 {
   return _test_bsr_bit()
        & _test_bsr_bit_any()
+       & _test_bsr_bytes_any()
        & _test_bsr8()
        & _test_bsr32()
        & _test_bsr64();
