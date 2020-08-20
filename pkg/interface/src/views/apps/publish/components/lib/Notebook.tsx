@@ -109,7 +109,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
               />
             </TabPanel>
             <TabPanel>
-              <Box>{notebook?.about}</Box>
+              <Box color="black">{notebook?.about}</Box>
             </TabPanel>
             <TabPanel>
               <Subscribers
