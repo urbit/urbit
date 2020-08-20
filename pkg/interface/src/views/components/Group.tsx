@@ -272,7 +272,7 @@ export class GroupView extends Component<
         {ships.map((ship) => (
           <GroupMember key={ship} ship={ship} options={options(ship)} />
         ))}
-        {ships.length === 0 && <Text className='f9'>No ships are pending</Text>}
+        {ships.length === 0 && <Text>No ships are pending</Text>}
         {props.inviteShips && this.isAdmin() && (
           <>
             <div className='f9 gray2 mt6 mb3'>Invite</div>
@@ -312,7 +312,7 @@ export class GroupView extends Component<
         {ships.map((ship) => (
           <GroupMember key={ship} ship={ship} options={options(ship)} />
         ))}
-        {ships.length === 0 && <div className='f9'>No ships are banned</div>}
+        {ships.length === 0 && <Text>No ships are banned</Text>}
       </div>
     );
   }
