@@ -552,9 +552,34 @@ urcrypt_sha1(uint8_t *message, size_t length, uint8_t out[20])
 }
 
 void
-urcrypt_sha256(uint8_t *message, size_t length, uint8_t out[32])
+urcrypt_sha256(const uint8_t *message, size_t length, uint8_t out[32])
 {
   SHA256(message, length, out);
+}
+
+void
+urcrypt_shas(uint8_t *salt, size_t salt_length,
+             const uint8_t *message, size_t message_length,
+             uint8_t out[32])
+{
+  size_t i;
+  uint8_t mid[32];
+
+  // docs don't say what happens if msg overlaps with out
+  urcrypt_sha256(message, message_length, mid);
+
+  if ( salt_length > 32 ) {
+    for ( i = 0; i < 32; i++ ) {
+      salt[i] ^= mid[i];
+    }
+    urcrypt_sha256(salt, salt_length, out);
+  }
+  else {
+    for ( i = 0; i < salt_length; i++ ) {
+      mid[i] ^= salt[i];
+    }
+    urcrypt_sha256(mid, 32, out);
+  }
 }
 
 /* argon2 does memory allocation, but takes function pointers in the context.

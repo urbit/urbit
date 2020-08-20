@@ -69,15 +69,19 @@
     }
   }
 
-  u3_noun
-  u3qe_shas(u3_atom sal,
+  static u3_atom
+  _cqe_shas(u3_atom sal,
             u3_atom ruz)
   {
-    u3_noun one = _cqe_shax(ruz);
-    u3_noun two = u3qc_mix(sal, one);
-    u3_noun tri = _cqe_shax(two);
+    c3_w sal_w, ruz_w;
+    c3_y *sal_y, *ruz_y, out_y[32];
 
-    u3z(one); u3z(two); return tri;
+    sal_y = u3r_bytes_all(&sal_w, sal);
+    ruz_y = u3r_bytes_all(&ruz_w, ruz);
+    urcrypt_shas(sal_y, sal_w, ruz_y, ruz_w, out_y);
+    u3a_free(sal_y);
+    u3a_free(ruz_y);
+    return u3i_bytes(32, out_y);
   }
 
   u3_noun
@@ -139,7 +143,7 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qe_shas(sal, ruz);
+      return _cqe_shas(sal, ruz);
     }
   }
 
@@ -156,7 +160,7 @@
     while ( 0 != b ) {
       u3_noun x = u3qc_mix(a, c);
       u3_noun y = u3qc_mix(b, x);
-      u3_noun d = u3qe_shas(c3_s4('o','g','-','b'), y);
+      u3_noun d = _cqe_shas(c3_s4('o','g','-','b'), y);
       u3_noun m;
 
       u3z(x); u3z(y);
@@ -183,7 +187,7 @@
             u3_atom b)
   {
     u3_noun x = u3qc_mix(b, a);
-    u3_noun c = u3qe_shas(c3_s4('o','g','-','a'), x);
+    u3_noun c = _cqe_shas(c3_s4('o','g','-','a'), x);
     u3_noun l = _og_list(a, b, c);
     u3_noun r = u3qc_can(0, l);
 
