@@ -96,6 +96,7 @@ export default function PublishApp(props: PublishAppProps) {
                   associations={associations}
                   api={api}
                   notebooks={notebooks}
+                  groups={groups}
                   {...props}
                 />
               );

@@ -11,23 +11,25 @@ import GroupSearch from "~/views/components/GroupSearch";
 import { Associations } from "~/types/metadata-update";
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import { Notebooks } from "~/types/publish-update";
+import { Groups } from "~/types/group-update";
 
 interface FormSchema {
   name: string;
   description: string;
-  group: string;
+  group?: string;
 }
 
 const formSchema = Yup.object({
   name: Yup.string().required("Notebook must have a name"),
   description: Yup.string(),
-  group: Yup.string().required("Notebook must be part of a group"),
+  group: Yup.string(),
 });
 
 interface NewScreenProps {
   api: GlobalApi;
   associations: Associations;
   notebooks: Notebooks;
+  groups: Groups;
 }
 
 export function NewScreen(props: NewScreenProps & RouteComponentProps) {
@@ -41,6 +43,9 @@ export function NewScreen(props: NewScreenProps & RouteComponentProps) {
       const { name, description, group } = values;
       await props.api.publish.newBook(bookId, name, description, group);
       await waiter((p) => !!p?.notebooks?.[`~${window.ship}`]?.[bookId]);
+      if (!group) {
+        await waiter((p) => !!p?.groups?.[`/ship/~${window.ship}/${bookId}`]);
+      }
       actions.setStatus({ success: null });
       history.push(`/~publish/notebook/~${window.ship}/${bookId}`);
     } catch (e) {

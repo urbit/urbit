@@ -82,19 +82,24 @@ export default class PublishApi extends BaseApi {
     return this.action('publish', 'publish-action', act);
   }
 
-  newBook(bookId: string, title: string, description: string, group: Path) {
+  newBook(bookId: string, title: string, description: string, group?: Path) {
+    const groupInfo = group ? { 'group-path': group,
+      invitees: [],
+      'use-preexisting': true,
+      'make-managed': true
+    } : {
+      'group-path': `/ship/~${window.ship}/${bookId}`,
+      invitees: [],
+      'use-preexisting': false,
+      'make-managed': false
+    };
     return this.publishAction({
       "new-book": {
         book: bookId,
         title: title,
         about: description,
         coms: true,
-        group: {
-          'group-path': group,
-          invitees: [],
-          'use-preexisting': true,
-          'make-managed': true
-        }
+        group: groupInfo
       }
     });
   }
