@@ -1358,6 +1358,82 @@ ur_bsw_mat_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
   _bsw_mat_bytes_unsafe(bsw, len, byt);
 }
 
+static inline void
+_bsw_back64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  _bsw8_unsafe(bsw, 2, 3);
+  _bsw_mat64_unsafe(bsw, len, val);
+}
+
+void
+ur_bsw_back64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  uint64_t next = ( 0 == len ) ? 1 : len + (2 * ur_met0_64(len));
+  uint64_t bits = 2 + bsw->off + next;
+  uint64_t need = (bits >> 3) + !!ur_mask_3(bits);
+
+  if ( bsw->fill + need >= bsw->size ) {
+    ur_bsw_grow(bsw, ur_max(need, bsw->prev));
+  }
+
+  _bsw_back64(bsw, len, val);
+}
+
+static inline void
+_bsw_atom64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  _bsw_bit_unsafe(bsw, 0);
+  _bsw_mat64_unsafe(bsw, len, val);
+}
+
+void
+ur_bsw_atom64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
+{
+  uint64_t next = ( 0 == len ) ? 1 : len + (2 * ur_met0_64(len));
+  uint64_t bits = 1 + bsw->off + next;
+  uint64_t need = (bits >> 3) + !!ur_mask_3(bits);
+
+  if ( bsw->fill + need >= bsw->size ) {
+    ur_bsw_grow(bsw, ur_max(need, bsw->prev));
+  }
+
+  _bsw_atom64(bsw, len, val);
+}
+
+static inline void
+_bsw_atom_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
+{
+  _bsw_bit_unsafe(bsw, 0);
+  _bsw_mat_bytes_unsafe(bsw, len, byt);
+}
+
+void
+ur_bsw_atom_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
+{
+  uint64_t next = ( 0 == len ) ? 1 : len + (2 * ur_met0_64(len));
+  uint64_t bits = 1 + bsw->off + next;
+  uint64_t need = (bits >> 3) + !!ur_mask_3(bits);
+
+  if ( bsw->fill + need >= bsw->size ) {
+    ur_bsw_grow(bsw, ur_max(need, bsw->prev));
+  }
+
+  _bsw_atom_bytes_unsafe(bsw, len, byt);
+}
+
+void
+ur_bsw_cell(ur_bsw_t *bsw)
+{
+  uint8_t bits = 2 + bsw->off;
+  uint8_t need = (bits >> 3) + !!ur_mask_3(bits);
+
+  if ( bsw->fill + need >= bsw->size ) {
+    ur_bsw_grow(bsw, ur_max(need, bsw->prev));
+  }
+
+  _bsw8_unsafe(bsw, 2, 1);
+}
+
 ur_bool_t
 ur_bsr_sane(ur_bsr_t *bsr)
 {
@@ -1833,21 +1909,17 @@ ur_bsr_mat(ur_bsr_t *bsr, uint64_t *out)
 }
 
 static inline void
-_jam_mat(ur_root_t *r, ur_nref ref, ur_bsw_t *bsw, uint64_t len)
+_bsw_atom(ur_root_t *r, ur_nref ref, ur_bsw_t *bsw, uint64_t len)
 {
   switch ( ur_nref_tag(ref) ) {
     default: assert(0);
 
-    case ur_direct: {
-      ur_bsw_mat64(bsw, len, ref);
-    } break;
+    case ur_direct: return ur_bsw_atom64(bsw, len, ref);
 
     case ur_iatom: {
-      uint64_t len_byt;
-      uint8_t     *byt;
-      ur_bytes(r, ref, &byt, &len_byt);
-      ur_bsw_mat_bytes(bsw, len, byt);
-    } break;
+      uint8_t *byt = r->atoms.bytes[ur_nref_idx(ref)];
+      return ur_bsw_atom_bytes(bsw, len, byt);
+    }
   }
 }
 
@@ -1862,27 +1934,21 @@ _jam_atom(ur_root_t *r, ur_nref ref, void *ptr)
   _jam_t         *j = ptr;
   ur_dict64_t *dict = &(j->dict);
   ur_bsw_t     *bsw = &j->bsw;
-  uint64_t bak, len_bit;
-
-  len_bit = ur_met(r, 0, ref);
+  uint64_t bak, len = ur_met(r, 0, ref);
 
   if ( !ur_dict64_get(r, dict, ref, &bak) ) {
     ur_dict64_put(r, dict, ref, bsw->bits);
 
-    ur_bsw_bit(bsw, 0);
-    _jam_mat(r, ref, bsw, len_bit);
+    _bsw_atom(r, ref, bsw, len);
   }
   else {
-    uint64_t bak_bit = ur_met0_64(bak);
+    uint64_t len_bak = ur_met0_64(bak);
 
-    if ( len_bit <= bak_bit ) {
-      ur_bsw_bit(bsw, 0);
-      _jam_mat(r, ref, bsw, len_bit);
+    if ( len <= len_bak ) {
+      _bsw_atom(r, ref, bsw, len);
     }
     else {
-      ur_bsw_bit(bsw, 1);
-      ur_bsw_bit(bsw, 1);
-      ur_bsw_mat64(bsw, bak_bit, bak);
+      ur_bsw_back64(bsw, len_bak, bak);
     }
   }
 }
@@ -1898,17 +1964,12 @@ _jam_cell(ur_root_t *r, ur_nref ref, void *ptr)
   if ( !ur_dict64_get(r, dict, ref, &bak) ) {
     ur_dict64_put(r, dict, ref, bsw->bits);
 
-    ur_bsw_bit(bsw, 1);
-    ur_bsw_bit(bsw, 0);
-
-    return 1; // true
+    ur_bsw_cell(bsw);
+    return 1;
   }
   else {
-    ur_bsw_bit(bsw, 1);
-    ur_bsw_bit(bsw, 1);
-    ur_bsw_mat64(bsw, ur_met0_64(bak), bak);
-
-    return 0; // false
+    ur_bsw_back64(bsw, ur_met0_64(bak), bak);
+    return 0;
   }
 }
 

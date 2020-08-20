@@ -185,7 +185,7 @@ typedef struct ur_bsw_s {
 } ur_bsw_t;
 
 void
-ur_bsw_grow(ur_bsw_t *bsw, uint64_t need);
+ur_bsw_grow(ur_bsw_t *bsw, uint64_t step);
 
 ur_bool_t
 ur_bsw_sane(ur_bsw_t *bsw);
@@ -200,13 +200,31 @@ void
 ur_bsw32(ur_bsw_t *bsw, uint8_t len, uint32_t val);
 
 void
-ur_bsw64(ur_bsw_t *bsw, uint8_t len_bit, uint64_t val);
+ur_bsw64(ur_bsw_t *bsw, uint8_t len, uint64_t val);
 
 void
 ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt);
 
 void
 ur_bsw_bex(ur_bsw_t *bsw, uint8_t n);
+
+void
+ur_bsw_mat64(ur_bsw_t *bsw, uint8_t len, uint64_t val);
+
+void
+ur_bsw_mat_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt);
+
+void
+ur_bsw_back64(ur_bsw_t *bsw, uint8_t len, uint64_t val);
+
+void
+ur_bsw_atom64(ur_bsw_t *bsw, uint8_t len, uint64_t val);
+
+void
+ur_bsw_atom_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt);
+
+void
+ur_bsw_cell(ur_bsw_t *bsw);
 
 
 typedef struct ur_bsr_s {
