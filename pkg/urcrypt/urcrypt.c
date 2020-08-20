@@ -7,6 +7,7 @@
 #include <openssl/crypto.h>
 #include <openssl/aes.h>
 #include <openssl/ripemd.h>
+#include <openssl/sha.h>
 
 #include <argon2.h>
 #include <blake2.h>
@@ -524,6 +525,14 @@ urcrypt_aes_cbcc_de(uint8_t **message_ptr,
     return _urcrypt_cbc_help(message_ptr, length_ptr,
         &aes_key, ivec, AES_DECRYPT, realloc_ptr);
   }
+}
+
+void
+urcrypt_sha1(uint8_t *message, size_t length, uint8_t out[20])
+{
+  _urcrypt_reverse(length, message);
+  SHA1(message, length, out);
+  _urcrypt_reverse(20, out);
 }
 
 int

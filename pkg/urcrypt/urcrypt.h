@@ -100,6 +100,7 @@ int urcrypt_aes_cbcc_de(uint8_t **message_ptr,
                         uint8_t ivec[16],
                         urcrypt_realloc_t realloc_ptr);
 
+void urcrypt_sha1(uint8_t *message, size_t length, uint8_t out[20]);
 int urcrypt_ripemd160(uint8_t *message, size_t length, uint8_t out[20]);
 
 typedef enum urcrypt_argon2_type {

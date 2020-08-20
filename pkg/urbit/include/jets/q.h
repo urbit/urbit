@@ -132,7 +132,6 @@
     u3_noun u3qe_shay(u3_atom, u3_atom);
     u3_noun u3qe_shas(u3_atom, u3_atom);
     u3_noun u3qe_shal(u3_atom, u3_atom);
-    u3_noun u3qe_sha1(u3_atom, u3_atom);
 
     u3_noun u3qe_hmac(u3_noun, u3_atom, u3_atom,
                       u3_atom, u3_atom, u3_atom, u3_atom);
