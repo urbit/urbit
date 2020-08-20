@@ -2001,7 +2001,7 @@ ur_bsr_mat(ur_bsr_t *bsr, uint64_t *out)
   }
   else {
     len--;
-    *out = ur_bsr64(bsr, len) ^ (1ULL << len);
+    *out = ur_bsr64_any(bsr, len) ^ (1ULL << len);
   }
 
   return ur_cue_good;
@@ -2112,19 +2112,20 @@ _cue_atom(ur_root_t *r, _cue_t *c, ur_nref *out)
   }
 
   if ( 62 >= len ) {
-    *out = (ur_nref)ur_bsr64(bsr, len);
+    *out = (ur_nref)ur_bsr64_any(bsr, len);
   }
   else {
-    uint8_t *byt = calloc(len, 1);
-    ur_bsr_bytes(bsr, len, byt);
+    uint64_t len_byt = (len >> 3) + !!ur_mask_3(len);
+    uint8_t *byt = calloc(len_byt, 1);
+    ur_bsr_bytes_any(bsr, len, byt);
 
     //  strip trailing zeroes
     //
-    while ( len && !byt[len - 1] ) {
-      len--;
+    while ( len_byt && !byt[len_byt - 1] ) {
+      len_byt--;
     }
 
-    *out = _coin_bytes_unsafe(r, byt, len);
+    *out = _coin_bytes_unsafe(r, byt, len_byt);
   }
 
   return ur_cue_good;
@@ -2143,7 +2144,7 @@ _cue_back(ur_bsr_t *bsr, uint64_t *out)
   //  XX
   assert( 62 >= len );
 
-  *out = ur_bsr64(bsr, len);
+  *out = ur_bsr64_any(bsr, len);
   return ur_cue_good;
 }
 
