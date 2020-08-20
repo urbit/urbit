@@ -2,7 +2,7 @@
 **
 */
 #include "all.h"
-
+#include <urcrypt.h>
 
 #if defined(U3_OS_osx)
 #include <CommonCrypto/CommonDigest.h>
@@ -41,42 +41,16 @@
     }
   }
 
-//   u3_noun
-//   u3qe_shax(
-//                     u3_atom a)
-//   {
-//     c3_w  met_w = u3r_met(3, a);
-//     return u3qe_shay(met_w, a);
-//   }
-//  XX  preformance
-u3_noun
-  u3qe_shax(u3_atom a)
+  static u3_atom
+  _cqe_shax(u3_atom a)
   {
-    c3_w  met_w = u3r_met(3, a);
-    c3_y* fat_y = u3a_malloc(met_w + 1);
-
-    u3r_bytes(0, met_w, fat_y, a);
-    {
-      c3_y dig_y[32];
-#if defined(U3_OS_osx)
-      CC_SHA256_CTX ctx_h;
-
-      CC_SHA256_Init(&ctx_h);
-      CC_SHA256_Update(&ctx_h, fat_y, met_w);
-      CC_SHA256_Final(dig_y, &ctx_h);
-#else
-      SHA256_CTX ctx_h;
-
-      SHA256_Init(&ctx_h);
-      SHA256_Update(&ctx_h, fat_y, met_w);
-      SHA256_Final(dig_y, &ctx_h);
-#endif
-      u3a_free(fat_y);
-      return u3i_bytes(32, dig_y);
-    }
+    c3_w  len_w;
+    c3_y  out_y[32];
+    c3_y* dat_y = u3r_bytes_all(&len_w, a);
+    urcrypt_sha256(dat_y, len_w, out_y);
+    u3a_free(dat_y);
+    return u3i_bytes(32, out_y);
   }
-
-//  XX end preformance
 
   u3_noun
   u3qe_shal(u3_atom a,
@@ -110,9 +84,9 @@ u3_noun
   u3qe_shas(u3_atom sal,
             u3_atom ruz)
   {
-    u3_noun one = u3qe_shax(ruz);
+    u3_noun one = _cqe_shax(ruz);
     u3_noun two = u3qc_mix(sal, one);
-    u3_noun tri = u3qe_shax(two);
+    u3_noun tri = _cqe_shax(two);
 
     u3z(one); u3z(two); return tri;
   }
@@ -127,7 +101,7 @@ u3_noun
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qe_shax(a);
+      return _cqe_shax(a);
     }
   }
 

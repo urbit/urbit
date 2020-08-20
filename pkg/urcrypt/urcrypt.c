@@ -527,14 +527,6 @@ urcrypt_aes_cbcc_de(uint8_t **message_ptr,
   }
 }
 
-void
-urcrypt_sha1(uint8_t *message, size_t length, uint8_t out[20])
-{
-  _urcrypt_reverse(length, message);
-  SHA1(message, length, out);
-  _urcrypt_reverse(20, out);
-}
-
 int
 urcrypt_ripemd160(uint8_t *message, size_t length, uint8_t out[20])
 {
@@ -549,6 +541,20 @@ urcrypt_ripemd160(uint8_t *message, size_t length, uint8_t out[20])
     _urcrypt_reverse(20, out);
     return 0;
   }
+}
+
+void
+urcrypt_sha1(uint8_t *message, size_t length, uint8_t out[20])
+{
+  _urcrypt_reverse(length, message);
+  SHA1(message, length, out);
+  _urcrypt_reverse(20, out);
+}
+
+void
+urcrypt_sha256(uint8_t *message, size_t length, uint8_t out[32])
+{
+  SHA256(message, length, out);
 }
 
 /* argon2 does memory allocation, but takes function pointers in the context.
