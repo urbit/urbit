@@ -8,39 +8,24 @@ import { Spinner } from '~/views/components/Spinner';
 import { LinksTabBar } from './lib/links-tabbar';
 import SidebarSwitcher from '~/views/components/SidebarSwitch';
 
+import { MetadataSettings } from '~/views/components/metadata/settings';
+
 export class SettingsScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       isLoading: false,
-      title: '',
-      description: '',
-      color: '',
-      disabled: false,
+      awaiting: false,
       type: 'Editing'
     };
 
-    this.changeTitle = this.changeTitle.bind(this);
-    this.changeDescription = this.changeDescription.bind(this);
-    this.changeColor = this.changeColor.bind(this);
-    this.submitColor = this.submitColor.bind(this);
     this.renderDelete = this.renderDelete.bind(this);
-    this.renderMetadataSettings = this.renderMetadataSettings.bind(this);
     this.markAllAsSeen = this.markAllAsSeen.bind(this);
+    this.changeLoading = this.changeLoading.bind(this);
   }
 
-  componentDidMount() {
-    if ((this.props.resource) && ('metadata' in this.props.resource)) {
-      this.setState({
-        title: this.props.resource.metadata.title,
-        description: this.props.resource.metadata.description,
-        color: `#${uxToHex(this.props.resource.metadata.color || '0x0')}`
-      });
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate() {
     const { props, state } = this;
 
     if (Boolean(state.isLoading) && !props.resource) {
@@ -50,64 +35,14 @@ export class SettingsScreen extends Component {
         props.history.push('/~link');
       });
     }
-
-    if (((props.resource) && ('metadata' in props.resource))
-      && (prevProps !== props)) {
-      this.setState({
-        title: props.resource.metadata.title,
-        description: props.resource.metadata.description,
-        color: `#${uxToHex(this.props.resource.metadata.color || '0x0')}`
-      });
-    }
   }
 
-  changeTitle() {
-    this.setState({ title: event.target.value });
-  }
-
-  changeDescription() {
-    this.setState({ description: event.target.value });
-  }
-
-  changeColor() {
-    this.setState({ color: event.target.value });
-  }
-
-  submitColor() {
-    const { props, state } = this;
-    const { resource } = props;
-
-    if (!('metadata' in resource)) {
-      resource.metadata = {};
-    }
-
-    // submit color if valid
-    let color = state.color;
-    if (color.startsWith('#')) {
-      color = state.color.substr(1);
-    }
-    const hexExp = /([0-9A-Fa-f]{6})/;
-    const hexTest = hexExp.exec(color);
-    let currentColor = '000000';
-    if (props.resource && 'metadata' in props.resource) {
-      currentColor = uxToHex(props.resource.metadata.color);
-    }
-    if (hexTest && (hexTest[1] !== currentColor)) {
-      if (props.amOwner) {
-        this.setState({ disabled: true });
-        props.api.metadataAdd(
-          'link',
-          props.resourcePath,
-          props.groupPath,
-          resource.metadata.title,
-          resource.metadata.description,
-          resource.metadata['date-created'],
-          color
-        ).then(() => {
-          this.setState({ disabled: false });
-        });
-      }
-    }
+  changeLoading(isLoading, awaiting, type, closure) {
+    this.setState({
+      isLoading,
+      awaiting,
+      type
+    }, closure);
   }
 
   removeCollection() {
@@ -115,7 +50,7 @@ export class SettingsScreen extends Component {
 
     this.setState({
       isLoading: true,
-      disabled: true,
+      awaiting: true,
       type: 'Removing'
     });
     props.api.links.removeCollection(props.resourcePath)
@@ -131,7 +66,7 @@ export class SettingsScreen extends Component {
 
     this.setState({
       isLoading: true,
-      disabled: true,
+      awaiting: true,
       type: 'Deleting'
     });
     props.api.links.deleteCollection(props.resourcePath)
@@ -175,112 +110,13 @@ export class SettingsScreen extends Component {
             Delete this collection, for you and all group members.
           </p>
           <a onClick={this.deleteCollection.bind(this)}
-             className="dib f9 ba pa2 b--red2 red2 pointer bg-gray0-d"
+             className="dib f9 ba pa2 b--red2 red2 pointer bg-gray0-d mb4"
           >
             Delete collection
           </a>
         </div>
       );
     }
-  }
-
-  renderMetadataSettings() {
-    const { props, state } = this;
-    const { resource } = props;
-
-    if (!('metadata' in resource)) {
-      resource.metadata = {};
-    }
-
-    return(
-      <div>
-        <div className={'w-100 pb6 fl mt3 ' + ((props.amOwner) ? '' : 'o-30')}>
-        <p className="f8 mt3 lh-copy">Rename</p>
-        <p className="f9 gray2 db mb4">Change the name of this collection</p>
-        <div className="relative w-100 flex"
-        style={{ maxWidth: '29rem' }}
-        >
-          <input
-            className={'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
-            'focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3'}
-            value={this.state.title}
-            disabled={!props.amOwner || this.state.disabled}
-            onChange={this.changeTitle}
-            onBlur={() => {
-              if (props.amOwner) {
-                this.setState({ disabled: true });
-                props.api.metadata.metadataAdd(
-                  'link',
-                  props.resourcePath,
-                  props.groupPath,
-                  state.title,
-                  resource.metadata.description,
-                  resource.metadata['date-created'],
-                  uxToHex(resource.metadata.color)
-                ).then(() => {
-                  this.setState({ disabled: false });
-                });
-              }
-            }}
-          />
-          </div>
-          <p className="f8 mt3 lh-copy">Change description</p>
-          <p className="f9 gray2 db mb4">
-            Change the description of this collection
-          </p>
-          <div className="relative w-100 flex"
-            style={{ maxWidth: '29rem' }}
-          >
-            <input
-              className={'f8 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
-                'focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3'}
-              value={this.state.description}
-              disabled={!props.amOwner || this.state.disabled}
-              onChange={this.changeDescription}
-              onBlur={() => {
-                if (props.amOwner) {
-                  this.setState({ disabled: true });
-                  props.api.metadata.metadataAdd(
-                    'link',
-                    props.resourcePath,
-                    props.groupPath,
-                    resource.metadata.title,
-                    state.description,
-                    resource.metadata['date-created'],
-                    uxToHex(resource.metadata.color)
-                  ).then(() => {
-                    this.setState({ disabled: false });
-                  });
-                }
-              }}
-            />
-          </div>
-          <p className="f8 mt3 lh-copy">Change color</p>
-          <p className="f9 gray2 db mb4">Give this collection a color when viewing group channels</p>
-          <div className="relative w-100 flex"
-            style={{ maxWidth: '10rem' }}
-          >
-            <div className="absolute"
-              style={{
-                height: 16,
-                width: 16,
-                backgroundColor: state.color,
-                top: 13,
-                left: 11
-              }}
-            />
-            <input
-              className={'pl7 f8 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
-                'focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3'}
-              value={this.state.color}
-              disabled={!props.amOwner || this.state.disabled}
-              onChange={this.changeColor}
-              onBlur={this.submitColor}
-            />
-          </div>
-        </div>
-      </div>
-    );
   }
 
   render() {
@@ -367,11 +203,18 @@ export class SettingsScreen extends Component {
             </a>
           {this.renderRemove()}
           {this.renderDelete()}
-          {this.renderMetadataSettings()}
+          <MetadataSettings
+            isOwner={props.amOwner}
+            changeLoading={this.changeLoading}
+            api={props.api}
+            association={props.resource}
+            resource="collection"
+            app="link"
+          />
           <Spinner
-            awaiting={this.state.disabled}
+            awaiting={this.state.awaiting}
             classes="absolute right-1 bottom-1 pa2 ba b--black b--gray0-d white-d"
-            text={`${this.state.type} collection...`}
+            text={this.state.type}
           />
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import { MetadataColor } from './color';
 import { MetadataInput } from './input';
@@ -53,7 +53,7 @@ export const MetadataSettings = (props) => {
           isDisabled={!isOwner}
           initialValue={description}
           setValue={(val) => {
-            changeLoading(false, true, 'Editing chat...', () => {
+            changeLoading(false, true, `Editing ${resource}...`, () => {
               api.metadata.metadataAdd(
                 app,
                 association['app-path'],

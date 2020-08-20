@@ -93,7 +93,7 @@ export class SettingsScreen extends Component {
           association={association}
           resource="chat"
           app="chat"
-          station={station} />
+        />
         <Spinner
           awaiting={this.state.awaiting}
           classes="absolute right-2 bottom-2 ba pa2 b--gray1-d"
