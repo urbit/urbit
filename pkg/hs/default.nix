@@ -6,7 +6,7 @@
 }:
 let
   cabalPackageName = "urbit-king";
-  compiler = "ghc865"; # matching stack.yaml
+  compiler = "ghc883"; # matching stack.yaml
 
   # Pin static-haskell-nix version.
   static-haskell-nix =
