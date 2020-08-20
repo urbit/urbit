@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { LoadingScreen } from './loading';
 import { Spinner } from '~/views/components/Spinner';
-import { LinksTabBar } from './lib/links-tabbar';
+import { TabBar } from '~/views/components/chat-link-tabbar';
 import SidebarSwitcher from '~/views/components/SidebarSwitch';
 
 import { MetadataSettings } from '~/views/components/metadata/settings';
@@ -154,7 +154,12 @@ export class SettingsScreen extends Component {
                 {props.resource.metadata.title}
               </h2>
             </Link>
-            <LinksTabBar {...props} />
+            <TabBar
+              location={props.location}
+              popout={props.popout}
+              popoutHref={makeRoutePath(props.resourcePath, true, props.page)}
+              settings={makeRoutePath(props.resourcePath, props.popout) + '/settings'}
+            />
           </div>
           <div className="w-100 pl3 mt4 cf">
             <h2 className="f8 pb2">Removing...</h2>
@@ -190,8 +195,13 @@ export class SettingsScreen extends Component {
               {props.resource.metadata.title}
             </h2>
           </Link>
-          <LinksTabBar {...props} />
-        </div>
+          <TabBar
+            location={props.location}
+            popout={props.popout}
+            popoutHref={makeRoutePath(props.resourcePath, true, props.page)}
+            settings={makeRoutePath(props.resourcePath, props.popout) + '/settings'}
+          />
+          </div>
         <div className="w-100 pl3 mt4 cf">
           <h2 className="f8 pb2">Collection Settings</h2>
           <p className="f8 mt3 lh-copy db">Mark all links as read</p>
