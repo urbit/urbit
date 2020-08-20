@@ -915,16 +915,13 @@ _test_bsr8_loop(const char *cap, uint8_t len, uint8_t val)
   int         ret = 1;
   uint8_t *bytes;
   ur_bsr_t a, b;
-  uint8_t  c, d, i, j, k;
+  uint8_t  c, d, i, j;
+
+  bytes = malloc(len);
+  memset(bytes, val, len);
 
   for ( i = 0; i < 8; i++) {
     for ( j = 0; j <= 8; j++ ) {
-      bytes = malloc(len);
-
-      for ( k = 0; k < len; k++ ) {
-        bytes[k] = val;
-      }
-
       a.left = b.left = len;
       a.bytes = b.bytes = bytes;
       a.off = a.bits = b.off = b.bits = i;
@@ -939,10 +936,10 @@ _test_bsr8_loop(const char *cap, uint8_t len, uint8_t val)
                         cap, i, j, c, d, b.off, b.left, b.left ? b.bytes[0] : 0, b.bits);
         ret = 0;
       }
-
-      free(bytes);
     }
   }
+
+  free(bytes);
 
   return ret;
 }
@@ -982,16 +979,13 @@ _test_bsr32_loop(const char *cap, uint8_t len, uint8_t val)
   uint8_t *bytes;
   ur_bsr_t a, b;
   uint32_t c, d;
-  uint8_t  i, j, k;
+  uint8_t  i, j;
+
+  bytes = malloc(len);
+  memset(bytes, val, len);
 
   for ( i = 0; i < 8; i++) {
     for ( j = 0; j <= 32; j++ ) {
-      bytes = malloc(len);
-
-      for ( k = 0; k < len; k++ ) {
-        bytes[k] = val;
-      }
-
       a.left = b.left = len;
       a.bytes = b.bytes = bytes;
       a.off = a.bits = b.off = b.bits = i;
@@ -1006,10 +1000,10 @@ _test_bsr32_loop(const char *cap, uint8_t len, uint8_t val)
                         cap, i, j, c, d, b.off, b.left, b.left ? b.bytes[0] : 0, b.bits);
         ret = 0;
       }
-
-      free(bytes);
     }
   }
+
+  free(bytes);
 
   return ret;
 }
@@ -1057,16 +1051,13 @@ _test_bsr64_loop(const char *cap, uint8_t len, uint8_t val)
   uint8_t *bytes;
   ur_bsr_t a, b;
   uint64_t c, d;
-  uint8_t  i, j, k;
+  uint8_t  i, j;
+
+  bytes = malloc(len);
+  memset(bytes, val, len);
 
   for ( i = 0; i < 8; i++) {
     for ( j = 0; j <= 64; j++ ) {
-      bytes = malloc(len);
-
-      for ( k = 0; k < len; k++ ) {
-        bytes[k] = val;
-      }
-
       a.left = b.left = len;
       a.bytes = b.bytes = bytes;
       a.off = a.bits = b.off = b.bits = i;
@@ -1081,10 +1072,10 @@ _test_bsr64_loop(const char *cap, uint8_t len, uint8_t val)
                         cap, i, j, c, d, b.off, b.left, b.left ? b.bytes[0] : 0, b.bits);
         ret = 0;
       }
-
-      free(bytes);
     }
   }
+
+  free(bytes);
 
   return ret;
 }
