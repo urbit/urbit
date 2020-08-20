@@ -13,31 +13,20 @@
 /* functions
 */
 
-  u3_noun
-  u3qe_shay(u3_atom a,
-            u3_atom b)
+  static u3_atom
+  _cqe_shay(u3_atom wid,
+            u3_atom dat)
   {
-    c3_assert(_(u3a_is_cat(a)));
-    c3_y* fat_y = u3a_malloc(a + 1);
-
-    u3r_bytes(0, a, fat_y, b);
-    {
-      c3_y dig_y[32];
-#if defined(U3_OS_osx)
-      CC_SHA256_CTX ctx_h;
-
-      CC_SHA256_Init(&ctx_h);
-      CC_SHA256_Update(&ctx_h, fat_y, a);
-      CC_SHA256_Final(dig_y, &ctx_h);
-#else
-      SHA256_CTX ctx_h;
-
-      SHA256_Init(&ctx_h);
-      SHA256_Update(&ctx_h, fat_y, a);
-      SHA256_Final(dig_y, &ctx_h);
-#endif
-      u3a_free(fat_y);
-      return u3i_bytes(32, dig_y);
+    c3_w len_w;
+    if ( !u3r_word_fit(&len_w, wid) ) {
+      return u3m_bail(c3__fail);
+    }
+    else {
+      c3_y  out_y[32];
+      c3_y* dat_y = u3r_bytes_alloc(0, len_w, dat);
+      urcrypt_sha256(dat_y, len_w, out_y);
+      u3a_free(dat_y);
+      return u3i_bytes(32, out_y);
     }
   }
 
@@ -110,20 +99,14 @@
   {
     u3_noun a, b;
 
-//     static int few = 0;
-//     if(few == 0) printf("foo\r\n");
-//     few++; few %= 1000;
-
-
     if ( (u3_none == (a = u3r_at(u3x_sam_2, cor))) ||
          (u3_none == (b = u3r_at(u3x_sam_3, cor))) ||
          (c3n == u3ud(a)) ||
-         (c3n == u3a_is_cat(a)) ||
          (c3n == u3ud(b)) )
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qe_shay(a, b);
+      return _cqe_shay(a, b);
     }
   }
 
