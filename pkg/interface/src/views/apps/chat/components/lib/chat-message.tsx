@@ -2,23 +2,23 @@ import React, { PureComponent, Fragment } from "react";
 import moment from "moment";
 
 import { Message } from "./message";
-
-type IMessage = Envelope & { pending?: boolean };
-
+import { Envelope } from "~/types/chat-update";
+import _ from "lodash";
 
 export const ChatMessage = (props) => {
   const {
     msg,
     previousMsg,
     nextMsg,
-    isLastUnread,
+    isFirstUnread,
     group,
     association,
     contacts,
     unreadRef,
     hideAvatars,
     hideNicknames,
-    remoteContentPolicy
+    remoteContentPolicy,
+    className = ''
   } = props;
 
   // Render sigil if previous message is not by the same sender
@@ -48,10 +48,11 @@ export const ChatMessage = (props) => {
       hideNicknames={hideNicknames}
       hideAvatars={hideAvatars}
       remoteContentPolicy={remoteContentPolicy}
+      className={className}
     />
   );
 
-  if (props.isLastUnread) {
+  if (isFirstUnread) {
     return (
       <Fragment key={msg.uid}>
         {messageElem}
@@ -75,12 +76,12 @@ export const ChatMessage = (props) => {
   } else if (dayBreak) {
     return (
       <Fragment key={msg.uid}>
-        {messageElem}
         <div
           className="pv3 gray2 b--gray2 flex items-center justify-center f9 "
         >
           <p>{moment(_.get(msg, when)).calendar()}</p>
         </div>
+        {messageElem}
       </Fragment>
     );
   } else {

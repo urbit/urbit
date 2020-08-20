@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 
 export const UnreadNotice = (props) => {
-  const { unreadCount, unreadMsg, dismissUnread } = props;
+  const { unreadCount, unreadMsg, dismissUnread, onClick } = props;
 
   if (!unreadMsg || (unreadCount === 0)) {
     return null;
@@ -22,7 +22,7 @@ export const UnreadNotice = (props) => {
         "ba b--green2 green2 bg-white bg-gray0-d flex items-center " +
         "pa2 f9 justify-between br1"
       }>
-        <p className="lh-copy db">
+        <p className="lh-copy db pointer" onClick={onClick}>
           {unreadCount} new messages since{' '}
           {datestamp && (
             <>

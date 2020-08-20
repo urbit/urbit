@@ -116,7 +116,10 @@ export default class RemoteContent extends Component<RemoteContentProps, RemoteC
         </>
       );
     } else if (isOembed && remoteContentPolicy.oembedShown) {
-      this.loadOembed();
+      if (!this.state.embed) {
+        this.loadOembed();
+      }
+
       return (
         <Fragment>
           {renderUrl ? this.wrapInLink(this.state.embed && this.state.embed.title ? this.state.embed.title : url) : null}
