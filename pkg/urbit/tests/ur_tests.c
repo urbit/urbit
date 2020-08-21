@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "ur/hashcons.h"
+#include "ur/ur.h"
 
 static void
 _bsw_init(ur_bsw_t *bsw, uint64_t prev, uint64_t size)
