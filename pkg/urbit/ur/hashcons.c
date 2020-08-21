@@ -1869,6 +1869,73 @@ ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
 }
 
 static inline ur_cue_res_e
+_bsr_set_gone(ur_bsr_t *bsr, uint8_t bits)
+{
+  bsr->bits += bits;
+  bsr->bytes = 0;
+  bsr->left  = 0;
+  bsr->off   = 0;
+  return ur_cue_gone;
+}
+
+ur_cue_res_e
+ur_bsr_tag(ur_bsr_t *bsr, ur_cue_tag_e *out)
+{
+  uint64_t left = bsr->left;
+
+  if ( !left ) {
+    return ur_cue_gone;
+  }
+  else {
+    const uint8_t *b = bsr->bytes;
+    uint8_t      off = bsr->off;
+    uint8_t      bit = (b[0] >> off) & 1;
+    uint8_t      len = 1;
+
+    if ( 0 == bit ) {
+      *out = ur_jam_atom;
+    }
+    else {
+      if ( 7 == off ) {
+        if ( 1 == left ) {
+          return _bsr_set_gone(bsr, 1);
+        }
+
+        bit = b[1] & 1;
+      }
+      else {
+        bit = (b[0] >> (off + 1)) & 1;
+      }
+
+      len++;
+      *out = ( 0 == bit ) ? ur_jam_cell : ur_jam_back;
+    }
+
+    {
+      uint8_t  bits = off + len;
+      uint8_t bytes = bits >> 3;
+
+      left -= bytes;
+
+      if ( !left ) {
+        bsr->bytes = 0;
+        bsr->left  = 0;
+        bsr->off   = 0;
+      }
+      else {
+        bsr->bytes += bytes;
+        bsr->left   = left;
+        bsr->off    = ur_mask_3(bits);
+      }
+
+      bsr->bits += len;
+
+      return ur_cue_good;
+    }
+  }
+}
+
+static inline ur_cue_res_e
 _bsr_rub_log_meme(ur_bsr_t *bsr)
 {
   bsr->bits += 256;
@@ -1903,11 +1970,7 @@ ur_bsr_rub_log(ur_bsr_t *bsr, uint8_t *out)
       skip++;
 
       if ( skip == left ) {
-        bsr->bits += (skip << 3) - off;
-        bsr->bytes = 0;
-        bsr->left  = 0;
-        bsr->off   = 0;
-        return ur_cue_gone;
+        return _bsr_set_gone(bsr, (skip << 3) - off);
       }
 
       byt = b[skip];
@@ -1935,27 +1998,6 @@ ur_bsr_rub_log(ur_bsr_t *bsr, uint8_t *out)
       }
     }
   }
-}
-
-static inline ur_cue_res_e
-ur_bsr_tag(ur_bsr_t *bsr, ur_cue_tag_e *out)
-{
-  ur_cue_res_e res;
-  uint8_t      bit;
-
-  if ( ur_cue_good != (res = ur_bsr_bit(bsr, &bit)) ) {
-    return res;
-  }
-  else if ( 0 == bit ) {
-    *out = ur_jam_atom;
-    return ur_cue_good;
-  }
-  else if ( ur_cue_good != (res = ur_bsr_bit(bsr, &bit)) ) {
-    return res;
-  }
-
-  *out = ( 0 == bit ) ? ur_jam_cell : ur_jam_back;
-  return ur_cue_good;
 }
 
 static inline uint64_t

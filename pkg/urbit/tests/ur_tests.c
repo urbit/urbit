@@ -1339,6 +1339,74 @@ _test_bsr_rub_log(void)
   return ret;
 }
 
+static ur_cue_res_e
+_bsr_tag_slow(ur_bsr_t *bsr, ur_cue_tag_e *out)
+{
+  ur_cue_res_e res;
+  uint8_t      bit;
+
+  if ( ur_cue_good != (res = ur_bsr_bit(bsr, &bit)) ) {
+    return res;
+  }
+  else if ( 0 == bit ) {
+    *out = ur_jam_atom;
+    return ur_cue_good;
+  }
+  else if ( ur_cue_good != (res = ur_bsr_bit(bsr, &bit)) ) {
+    return res;
+  }
+
+  *out = ( 0 == bit ) ? ur_jam_cell : ur_jam_back;
+  return ur_cue_good;
+}
+
+static int
+_test_bsr_tag_loop(const char *cap, uint8_t len, uint8_t val)
+{
+  int           ret = 1;
+  ur_bsr_t     a, b;
+  uint8_t    *bytes;
+  ur_cue_tag_e c, d;
+  uint8_t      i, j, k;
+  ur_cue_res_e    e, f;
+
+  bytes = malloc(len);
+
+  for ( i = 0; i < 8; i++) {
+    for ( j = 0; j < len; j++ ) {
+      a.left = b.left = len;
+      a.bytes = b.bytes = bytes;
+      a.off = a.bits = b.off = b.bits = i;
+
+      memset(bytes, 0x0, j);
+      memset(bytes + j, val, len - j);
+
+      e = _bsr_tag_slow(&a, &c);
+      f = ur_bsr_tag(&b, &d);
+
+      ret &= _bsr_cmp_check(cap, i, j, &a, &b, c, d, e, f);
+    }
+  }
+
+  free(bytes);
+
+  return ret;
+}
+
+static int
+_test_bsr_tag(void)
+{
+  return _test_bsr_tag_loop("bsr tag nought", 0, 0x0)
+       & _test_bsr_tag_loop("bsr tag ones 1", 1, 0xff)
+       & _test_bsr_tag_loop("bsr tag ones 2", 2, 0xff)
+       & _test_bsr_tag_loop("bsr tag zeros 1", 1, 0x0)
+       & _test_bsr_tag_loop("bsr tag zeros 2", 2, 0x0)
+       & _test_bsr_tag_loop("bsr tag alt-1 1", 1, 0xaa)
+       & _test_bsr_tag_loop("bsr tag alt-1 2", 2, 0xaa)
+       & _test_bsr_tag_loop("bsr tag alt-2 1", 1, 0x55)
+       & _test_bsr_tag_loop("bsr tag alt-2 2", 2, 0x55);
+}
+
 static int
 _test_bsr(void)
 {
@@ -1348,7 +1416,8 @@ _test_bsr(void)
        & _test_bsr8()
        & _test_bsr32()
        & _test_bsr64()
-       & _test_bsr_rub_log();
+       & _test_bsr_rub_log()
+       & _test_bsr_tag();
 }
 
 static int
