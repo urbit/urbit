@@ -407,7 +407,7 @@ _test_bsw_bytes(void)
        & _test_bsw_bytes_loop("bsw bytes alt 1 odd", 7, 0xaa)
        & _test_bsw_bytes_loop("bsw bytes alt 1 even", 8, 0xaa)
        & _test_bsw_bytes_loop("bsw bytes alt 2 odd", 9, 0x55)
-       & _test_bsw_bytes_loop("bsw bytes alt 2 odd", 10, 0x55);
+       & _test_bsw_bytes_loop("bsw bytes alt 2 even", 10, 0x55);
 }
 
 static void
@@ -476,7 +476,7 @@ _bsr_bit_check(const char  *cap,
   }
 
   if ( ser != res ) {
-    fprintf(stderr, "%s: val not equal (%s, %s) off=%u left=%" PRIu64 " byte=%02x bits=%" PRIu64 "\r\n",
+    fprintf(stderr, "%s: res not equal (%s, %s) off=%u left=%" PRIu64 " byte=%02x bits=%" PRIu64 "\r\n",
                     cap, (ur_cue_good == ser) ? "good" : "gone",
                     (ur_cue_good == res) ? "good" : "gone",
                     bsr->off, bsr->left, bsr->left ? bsr->bytes[0] : 0, bsr->bits);
@@ -484,7 +484,7 @@ _bsr_bit_check(const char  *cap,
   }
 
   if ( (ur_cue_good == res) && (exp != val) ) {
-    fprintf(stderr, "%s: res not equal (%02x, %02x) off=%u left=%" PRIu64 " byte=%02x bits=%" PRIu64 "\r\n",
+    fprintf(stderr, "%s: val not equal (%02x, %02x) off=%u left=%" PRIu64 " byte=%02x bits=%" PRIu64 "\r\n",
                     cap, exp, val, bsr->off, bsr->left, bsr->left ? bsr->bytes[0] : 0, bsr->bits);
     ret = 0;
   }
@@ -1190,7 +1190,7 @@ _test_bsr_bytes_any(void)
        & _test_bsr_bytes_any_loop("bsr bytes alt 1 odd", 7, 0xaa)
        & _test_bsr_bytes_any_loop("bsr bytes alt 1 even", 8, 0xaa)
        & _test_bsr_bytes_any_loop("bsr bytes alt 2 odd", 9, 0x55)
-       & _test_bsr_bytes_any_loop("bsr bytes alt 2 odd", 10, 0x55);
+       & _test_bsr_bytes_any_loop("bsr bytes alt 2 even", 10, 0x55);
 }
 
 static int
