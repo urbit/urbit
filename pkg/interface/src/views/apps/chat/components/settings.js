@@ -89,6 +89,8 @@ export class SettingsScreen extends Component {
           isOwner={isOwner}
           changeLoading={this.changeLoading}
           station={station}
+          association={association}
+          contacts={contacts}
           api={api} />
         <MetadataSettings
           isOwner={isOwner}
