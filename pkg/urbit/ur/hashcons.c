@@ -1437,11 +1437,13 @@ ur_bsw_cell(ur_bsw_t *bsw)
 ur_bool_t
 ur_bsr_sane(ur_bsr_t *bsr)
 {
+  ur_bool_t ret = 8 > bsr->off;
+
   if ( !bsr->left ) {
-    return !bsr->off && !bsr->bytes;
+    ret = ret && (!bsr->off && !bsr->bytes);
   }
 
-  return 1;
+  return ret;
 }
 
 ur_cue_res_e
