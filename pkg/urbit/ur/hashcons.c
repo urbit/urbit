@@ -1455,32 +1455,22 @@ ur_bsr_bit(ur_bsr_t *bsr, uint8_t *out)
     return ur_cue_gone;
   }
   else {
-    uint8_t byt = bsr->bytes[0];
-    uint8_t off = bsr->off;
-    uint8_t bit = (byt >> off) & 1;
+    const uint8_t *b = bsr->bytes;
+    uint8_t      off = bsr->off;
+    uint8_t      bit = (b[0] >> off) & 1;
 
     if ( 7 == off ) {
-      left--;
-
-      if ( left ) {
-        bsr->bytes++;
-        bsr->left = left;
-      }
-      else {
-        bsr->bytes = 0;
-        bsr->left  = 0;
-      }
-
-      bsr->off = 0;
+      bsr->bytes = ( --left ) ? (b + 1) : 0;
+      bsr->left  = left;
+      bsr->off   = 0;
     }
     else {
-      bsr->off = 1 + off;
+      bsr->off   = 1 + off;
     }
 
     bsr->bits++;
 
     *out = bit;
-
     return ur_cue_good;
   }
 }
@@ -1496,26 +1486,17 @@ ur_bsr_bit_any(ur_bsr_t *bsr)
     return 0;
   }
   else {
-    uint8_t byt = bsr->bytes[0];
-    uint8_t off = bsr->off;
-    uint8_t bit = (byt >> off) & 1;
+    const uint8_t *b = bsr->bytes;
+    uint8_t      off = bsr->off;
+    uint8_t      bit = (b[0] >> off) & 1;
 
     if ( 7 == off ) {
-      left--;
-
-      if ( left ) {
-        bsr->bytes++;
-        bsr->left = left;
-      }
-      else {
-        bsr->bytes = 0;
-        bsr->left  = 0;
-      }
-
-      bsr->off = 0;
+      bsr->bytes = ( --left ) ? (b + 1) : 0;
+      bsr->left  = left;
+      bsr->off   = 0;
     }
     else {
-      bsr->off = 1 + off;
+      bsr->off   = 1 + off;
     }
 
     return bit;
