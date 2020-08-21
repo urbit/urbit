@@ -139,9 +139,9 @@ openFreePort hos = do
  where
   doBind sok = do
     adr <-
-      Net.getAddrInfo (Just Net.defaultHints) (Just hos) Nothing >>= \case
-        [] -> error ("unable to determine numeric hostname from " ++ hos)
-        x:_ -> pure (Net.addrAddress x)
+      Net.getAddrInfo Nothing (Just hos) Nothing >>= \case
+        []     -> error ("unable to determine numeric hostname from " ++ hos)
+        ip : _ -> pure (Net.addrAddress ip)
       
     Net.bind sok adr
     Net.listen sok 1
