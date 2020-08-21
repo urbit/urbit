@@ -103,8 +103,8 @@ int urcrypt_aes_cbcc_de(uint8_t **message_ptr,
 int urcrypt_ripemd160(uint8_t *message, size_t length, uint8_t out[20]);
 
 void urcrypt_sha1(uint8_t *message, size_t length, uint8_t out[20]);
-void urcrypt_sha256(const uint8_t *message, size_t length, uint8_t out[32]);
-void urcrypt_sha512(const uint8_t *message, size_t length, uint8_t out[64]);
+void urcrypt_shay(const uint8_t *message, size_t length, uint8_t out[32]);
+void urcrypt_shal(const uint8_t *message, size_t length, uint8_t out[64]);
 void urcrypt_shas(uint8_t *salt, size_t salt_length,
                   const uint8_t *message, size_t message_length,
                   uint8_t out[32]);

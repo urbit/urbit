@@ -18,7 +18,7 @@
     else {
       c3_y  out_y[32];
       c3_y* dat_y = u3r_bytes_alloc(0, len_w, dat);
-      urcrypt_sha256(dat_y, len_w, out_y);
+      urcrypt_shay(dat_y, len_w, out_y);
       u3a_free(dat_y);
       return u3i_bytes(32, out_y);
     }
@@ -30,7 +30,7 @@
     c3_w  len_w;
     c3_y  out_y[32];
     c3_y* dat_y = u3r_bytes_all(&len_w, a);
-    urcrypt_sha256(dat_y, len_w, out_y);
+    urcrypt_shay(dat_y, len_w, out_y);
     u3a_free(dat_y);
     return u3i_bytes(32, out_y);
   }
@@ -46,7 +46,7 @@
     else {
       c3_y  out_y[64];
       c3_y* dat_y = u3r_bytes_alloc(0, len_w, dat);
-      urcrypt_sha512(dat_y, len_w, out_y);
+      urcrypt_shal(dat_y, len_w, out_y);
       u3a_free(dat_y);
       return u3i_bytes(64, out_y);
     }
