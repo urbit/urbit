@@ -75,7 +75,7 @@ maxRetries = 3
 
 -- How long to wait between retries.
 networkRetryDelay :: Int
-networkRetryDelay = 5 * 1000000
+networkRetryDelay = 5 * 1_000_000
 
 -- Messages sent from the main thread to the port mapping communication thread.
 data PortThreadMsg
@@ -172,6 +172,7 @@ portThread q stderr = do
         displayShow ("port: sending initial request to NAT-PMP for port ", p)
       setPortMapping pmp PTUdp p p portLeaseLifetime >>= \case
         Left err | isResetAndRetry err -> do
+          closeNatPmp pmp
           attemptReestablishNatPmpThen (\pmp -> handlePTM pmp msg nextRenew)
         Left err -> do
           logError $
@@ -208,6 +209,7 @@ portThread q stderr = do
                        p)
         setPortMapping pmp PTUdp p p portLeaseLifetime >>= \case
           Left err | isResetAndRetry err -> do
+            closeNatPmp pmp
             attemptReestablishNatPmpThen (\pmp -> handleRenew pmp nextRenew)
           Left err -> do
             logError $
