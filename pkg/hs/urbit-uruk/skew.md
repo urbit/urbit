@@ -489,7 +489,18 @@ seconds. This does not matter at this order of magnitude.)
 SKEW is fast because function calls are fast. Nock 4K is slow because function
 calls are slow.
 
+And to emphasize, performance matters. Now that we're expecting Urbit to have
+[Providers][providers], or communities and companies which provide hosting
+services, lower costs per unit of computation mean either easier shared hosting
+for communities, or lower prices or high profits for companies. Nock 4K's
+profligate CPU and memory usages have costs born by the people who run
+Urbit. We must remember that people are very [perceptive to even small
+delays][googlespeed] and that this causes measurable differences in system
+usage and adoption; successful systems are fast.
+
 [ackerman]: https://urbit.org/docs/tutorials/hoon/ackermann/
+[providers]: https://urbit.org/blog/providers/
+[googlespeed]: https://ai.googleblog.com/2009/06/speed-matters.html
 
 ## Storage and Snapshot Strategy
 
