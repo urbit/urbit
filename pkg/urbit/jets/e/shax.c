@@ -4,12 +4,6 @@
 #include "all.h"
 #include <urcrypt.h>
 
-#if defined(U3_OS_osx)
-#include <CommonCrypto/CommonDigest.h>
-#else
-#include <openssl/sha.h>
-#endif
-
 /* functions
 */
 
@@ -41,31 +35,20 @@
     return u3i_bytes(32, out_y);
   }
 
-  u3_noun
-  u3qe_shal(u3_atom a,
-            u3_atom b)
+  static u3_atom
+  _cqe_shal(u3_atom wid,
+            u3_atom dat)
   {
-    c3_assert(_(u3a_is_cat(a)));
-    c3_y* fat_y = u3a_malloc(a + 1);
-
-    u3r_bytes(0, a, fat_y, b);
-    {
-      c3_y dig_y[64];
-#if defined(U3_OS_osx)
-      CC_SHA512_CTX ctx_h;
-
-      CC_SHA512_Init(&ctx_h);
-      CC_SHA512_Update(&ctx_h, fat_y, a);
-      CC_SHA512_Final(dig_y, &ctx_h);
-#else
-      SHA512_CTX ctx_h;
-
-      SHA512_Init(&ctx_h);
-      SHA512_Update(&ctx_h, fat_y, a);
-      SHA512_Final(dig_y, &ctx_h);
-#endif
-      u3a_free(fat_y);
-      return u3i_bytes(64, dig_y);
+    c3_w len_w;
+    if ( !u3r_word_fit(&len_w, wid) ) {
+      return u3m_bail(c3__fail);
+    }
+    else {
+      c3_y  out_y[64];
+      c3_y* dat_y = u3r_bytes_alloc(0, len_w, dat);
+      urcrypt_sha512(dat_y, len_w, out_y);
+      u3a_free(dat_y);
+      return u3i_bytes(64, out_y);
     }
   }
 
@@ -122,12 +105,11 @@
     if ( (u3_none == (a = u3r_at(u3x_sam_2, cor))) ||
          (u3_none == (b = u3r_at(u3x_sam_3, cor))) ||
          (c3n == u3ud(a)) ||
-         (c3n == u3a_is_cat(a)) ||
          (c3n == u3ud(b)) )
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qe_shal(a, b);
+      return _cqe_shal(a, b);
     }
   }
 
