@@ -35,7 +35,7 @@ jobs:
     before_install:
       - sh/travis-install-stack
     install:
-      - stack --no-terminal --install-ghc build urbit-king --only-dependencies
+      - stack --no-terminal --no-install-ghc build urbit-king --fast --only-dependencies
     script:
       - stack test
       - sh/release-king-linux64-dynamic
@@ -54,7 +54,7 @@ jobs:
     before_install:
       - sh/travis-install-stack
     install:
-      - stack --no-terminal --install-ghc build urbit-king --only-dependencies
+      - stack --no-terminal --install-ghc build urbit-king --fast --only-dependencies
     script:
       - stack test
       - sh/release-king-darwin-dynamic
