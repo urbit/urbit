@@ -1924,10 +1924,7 @@ _bsr_rub_log_meme(ur_bsr_t *bsr)
   bsr->bits += 256;
   bsr->bytes += 32;
   bsr->left  -= 32;
-
-  //  XX distinguish meme status
-  //
-  return ur_cue_gone;
+  return ur_cue_meme;
 }
 
 ur_cue_res_e
@@ -1983,8 +1980,8 @@ ur_bsr_rub_log(ur_bsr_t *bsr, uint8_t *out)
   }
 }
 
-static inline ur_cue_res_e
-ur_bsr_mat(ur_bsr_t *bsr, uint64_t *out)
+ur_cue_res_e
+ur_bsr_rub_len(ur_bsr_t *bsr, uint64_t *out)
 {
   ur_cue_res_e res;
   uint8_t      len;
@@ -1992,16 +1989,23 @@ ur_bsr_mat(ur_bsr_t *bsr, uint64_t *out)
   if ( ur_cue_good != (res = ur_bsr_rub_log(bsr, &len)) ) {
     return res;
   }
-
-  //  XX
-  assert( 64 > len );
-
-  if ( !len ) {
-    *out = 0;
+  else if ( 64 <= len ) {
+    return ur_cue_meme;
   }
-  else {
-    len--;
-    *out = ur_bsr64_any(bsr, len) ^ (1ULL << len);
+
+  switch ( len ) {
+    case 0: {
+      *out = 0;
+    } break;
+
+    case 1: {
+      *out = 1;
+    } break;
+
+    default: {
+      len--;
+      *out = ur_bsr64_any(bsr, len) ^ (1ULL << len);
+    } break;
   }
 
   return ur_cue_good;
@@ -2107,7 +2111,7 @@ _cue_atom(ur_root_t *r, _cue_t *c, ur_nref *out)
   ur_cue_res_e res;
   uint64_t     len;
 
-  if ( ur_cue_good != (res = ur_bsr_mat(bsr, &len)) ) {
+  if ( ur_cue_good != (res = ur_bsr_rub_len(bsr, &len)) ) {
     return res;
   }
 
@@ -2137,12 +2141,12 @@ _cue_back(ur_bsr_t *bsr, uint64_t *out)
   ur_cue_res_e res;
   uint64_t     len;
 
-  if ( ur_cue_good != (res = ur_bsr_mat(bsr, &len)) ) {
+  if ( ur_cue_good != (res = ur_bsr_rub_len(bsr, &len)) ) {
     return res;
   }
-
-  //  XX
-  assert( 62 >= len );
+  else if ( 62 < len ) {
+    return ur_cue_meme;
+  }
 
   *out = ur_bsr64_any(bsr, len);
   return ur_cue_good;

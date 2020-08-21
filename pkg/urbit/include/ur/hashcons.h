@@ -241,7 +241,8 @@ typedef struct ur_bsr_s {
 
 typedef enum {
   ur_cue_good = 0,
-  ur_cue_gone = 1
+  ur_cue_gone = 1,
+  ur_cue_meme = 2
 } ur_cue_res_e;
 
 typedef enum {
@@ -276,6 +277,9 @@ ur_bsr_tag(ur_bsr_t *bsr, ur_cue_tag_e *out);
 
 ur_cue_res_e
 ur_bsr_rub_log(ur_bsr_t *bsr, uint8_t *out);
+
+ur_cue_res_e
+ur_bsr_rub_len(ur_bsr_t *bsr, uint64_t *out);
 
 uint64_t
 ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt);

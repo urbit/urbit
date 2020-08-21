@@ -1272,9 +1272,7 @@ _bsr_rub_log_slow(ur_bsr_t *bsr, uint8_t *out)
   }
   while ( ++i );
 
-  //  XX distinguish meme
-  //
-  return ur_cue_gone;
+  return ur_cue_meme;
 }
 
 static int
