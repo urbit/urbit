@@ -13420,6 +13420,10 @@
           (stag %like (most col rope))
           (cold [%base %cell] ket)
         ==
+      :-  '`'
+        ;~  pfix  tec
+          (cook |=(s=spec [%bscl [%base %null] ~[s]]) wyde)
+        ==
       :-  '='
         ;~  pfix  tis
           %+  sear
@@ -13581,7 +13585,14 @@
             ;~  pfix  tar
               (stag %kthp (stag [%base %noun] ;~(pfix tec wide)))
             ==
-            (stag %kthp ;~(plug wyde ;~(pfix tec wide)))
+            ::
+            %+  stag
+              %kthp
+            ;~  plug
+              ;~(less ;~(pfix tec (easy ~)) wyde)
+              ;~(pfix tec wide)
+            ==
+            ::
             (stag %ktls ;~(pfix lus ;~(plug wide ;~(pfix tec wide))))
             (cook |=(a/hoon [[%rock %n ~] a]) wide)
           ==
