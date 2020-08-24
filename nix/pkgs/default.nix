@@ -14,13 +14,13 @@ let
     inherit (deps) ed25519;
   };
 
-  urcrypt = import ./urcrypt {
-    inherit pkgs ge-additions;
-    inherit (deps) ed25519 argon2;
-  };
-
   libaes_siv = import ./libaes_siv {
     inherit pkgs;
+  };
+
+  urcrypt = import ./urcrypt {
+    inherit pkgs ge-additions libaes_siv;
+    inherit (deps) ed25519 argon2;
   };
 
   mkUrbit = { debug }:

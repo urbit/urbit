@@ -2,11 +2,135 @@
 **
 */
 #include "all.h"
+#include <urcrypt.h>
 
 #include "aes_siv.h"
 
+typedef int (*urcrypt_siv)(c3_y*, size_t,
+                           urcrypt_aes_siv_data*, size_t,
+                           c3_y*, c3_y[16], c3_y*);
+
 /* functions
  */
+  // soc_w = number of items
+  // mat_w = size in bytes of assoc array
+  // dat_w = size of allocation (array + atom storage)
+  static void
+  _cqea_measure_ads(u3_noun ads, c3_w* soc_w, c3_w *mat_w, c3_w *dat_w)
+  {
+    u3_noun i, t;
+    c3_w a_w, b_w, tmp_w, met_w;
+
+    for ( a_w = b_w = 0, t = ads; u3_nul != t; ++a_w ) {
+      u3x_cell(t, &i, &t);
+      if ( c3n == u3ud(i) ) {
+        u3m_bail(c3__exit);
+        return;
+      }
+      else {
+        tmp_w = b_w;
+        b_w += u3r_met(3, i);
+        if ( b_w < tmp_w ) {
+          u3m_bail(c3__fail);
+          return;
+        }
+      }
+    }
+
+    // check for size overflows
+    tmp_w = a_w * sizeof(urcrypt_aes_siv_data);
+    if ( (tmp_w / a_w) != sizeof(urcrypt_aes_siv_data) ) {
+      u3m_bail(c3__fail);
+    }
+    else if ( (*dat_w = tmp_w + b_w) < tmp_w ) {
+      u3m_bail(c3__fail);
+    }
+    else {
+      *soc_w = a_w;
+      *mat_w = tmp_w;
+    }
+  }
+
+  // assumes ads is a valid (list @) because it's already been measured
+  static void
+  _cqea_encode_ads(u3_noun ads,
+                   c3_w mat_w,
+                   urcrypt_aes_siv_data *dat_u)
+  {
+    c3_w met_w;
+    u3_noun i, t;
+    urcrypt_aes_siv_data *cur_u;
+    c3_y *dat_y = ((c3_y*) dat_u) + mat_w;
+
+    for ( cur_u = dat_u, t = ads; u3_nul != t; t = u3t(t), ++cur_u ) {
+      i = u3h(t);
+      met_w = u3r_met(3, i);
+      u3r_bytes(0, met_w, dat_y, i);
+      cur_u->length = met_w;
+      cur_u->bytes = dat_y;
+      dat_y += met_w;
+    }
+  }
+
+  static u3_noun
+  _cqea_siv_en(c3_y*   key_y,
+               c3_w    key_w,
+               u3_noun ads,
+               u3_atom txt,
+               urcrypt_siv low_f)
+  {
+    u3_noun ret;
+    c3_w txt_w, soc_w;
+    c3_y *txt_y, *out_y, iv_y[16];
+    c3_t ads_t = ( u3_nul != ads );
+    urcrypt_aes_siv_data *dat_u;
+
+    if ( !ads_t ) {
+      soc_w = 0;
+      dat_u = NULL;
+    }
+    else {
+      c3_w mat_w, dat_w;
+
+      _cqea_measure_ads(ads, &soc_w, &mat_w, &dat_w);
+      dat_u = u3a_malloc(dat_w);
+      _cqea_encode_ads(ads, mat_w, dat_u);
+    }
+
+    txt_y = u3r_bytes_all(&txt_w, txt);
+    out_y = u3a_malloc(txt_w);
+
+    ret = ( 0 != (*low_f)(txt_y, txt_w, dat_u, soc_w, key_y, iv_y, out_y) )
+        ? u3_none
+        : u3nt(u3i_bytes(16, iv_y),
+               u3i_words(1, &txt_w),
+               u3i_bytes(txt_w, out_y));
+
+    u3a_free(txt_y);
+    u3a_free(out_y);
+    if ( ads_t ) {
+      u3a_free(dat_u);
+    }
+
+    return ret;
+  }
+
+  static u3_noun
+  _cqea_siva_en(u3_atom key,
+                u3_noun ads,
+                u3_atom txt)
+  {
+    if ( u3r_met(3, key) > 32 ) {
+      // hoon doesn't explicitly check size, but we need 32.
+      return u3_none;
+    }
+    else {
+      c3_y key_y[32];
+      u3r_bytes(0, 32, key_y, key);
+      return _cqea_siv_en(key_y, 32, ads, txt, &urcrypt_aes_siva_en);
+    }
+  }
+
 static void u3r_bytes_reverse(c3_w    a_w,
                               c3_w    b_w,
                               c3_y*   c_y,  /* out */
@@ -152,21 +276,6 @@ static u3_noun _siv_de(c3_y* key_y,
   return u3nc(0, rev_msg);
 }
 
-
-u3_noun
-u3qea_siva_en(u3_atom key,
-              u3_noun ads,
-              u3_atom txt)
-{
-  c3_y key_y[32];
-  if (u3r_met(3, key) > 32) {
-    return u3_none;
-  }
-
-  u3r_bytes_reverse(0, 32, key_y, key);
-  return _siv_en(key_y, 32, ads, txt);
-}
-
 u3_noun
 u3wea_siva_en(u3_noun cor)
 {
@@ -179,7 +288,7 @@ u3wea_siva_en(u3_noun cor)
        c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
-    return u3qea_siva_en(key, ads, txt);
+    return _cqea_siva_en(key, ads, txt);
   }
 }
 

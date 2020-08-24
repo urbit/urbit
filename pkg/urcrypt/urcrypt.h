@@ -100,6 +100,19 @@ int urcrypt_aes_cbcc_de(uint8_t **message_ptr,
                         uint8_t ivec[16],
                         urcrypt_realloc_t realloc_ptr);
 
+typedef struct {
+  size_t length;
+  uint8_t *bytes;
+} urcrypt_aes_siv_data;
+
+int urcrypt_aes_siva_en(uint8_t *message,
+                        size_t message_length,
+                        urcrypt_aes_siv_data *data,
+                        size_t data_length,
+                        uint8_t key[32],
+                        uint8_t iv[16],
+                        uint8_t *out);
+
 int urcrypt_ripemd160(uint8_t *message, size_t length, uint8_t out[20]);
 
 void urcrypt_sha1(uint8_t *message, size_t length, uint8_t out[20]);

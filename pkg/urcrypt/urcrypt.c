@@ -5,9 +5,10 @@
 #include <ge-additions.h>
 
 #include <openssl/crypto.h>
-#include <openssl/aes.h>
 #include <openssl/ripemd.h>
 #include <openssl/sha.h>
+#include <openssl/aes.h>
+#include <aes_siv.h>
 
 #include <argon2.h>
 #include <blake2.h>
@@ -527,6 +528,69 @@ urcrypt_aes_cbcc_de(uint8_t **message_ptr,
   }
 }
 
+static int
+_urcrypt_aes_siv_en(uint8_t *key,
+                    size_t key_length,
+                    uint8_t *message,
+                    size_t message_length,
+                    urcrypt_aes_siv_data *data,
+                    size_t data_length,
+                    uint8_t iv[16],
+                    uint8_t *out)
+{
+  AES_SIV_CTX *ctx = AES_SIV_CTX_new();
+
+  if ( NULL == ctx ) {
+    return -1;
+  }
+  else {
+    int code;
+    _urcrypt_reverse(key_length, key);
+    if ( 0 == AES_SIV_Init(ctx, key, key_length) ) {
+      code = -2;
+    }
+    else {
+      uint8_t *bytes;
+      size_t i, blen;
+
+      for ( i = 0; i < data_length; ++i ) {
+        blen = data[i].length;
+        bytes = data[i].bytes;
+        _urcrypt_reverse(blen, bytes);
+        if ( 0 == AES_SIV_AssociateData(ctx, bytes, blen) ) {
+          code = -3;
+          goto finish;
+        }
+      }
+
+      _urcrypt_reverse(message_length, message);
+      if ( 0 == AES_SIV_EncryptFinal(ctx, iv, out, message, message_length) ) {
+        code = -4;
+      }
+      else {
+        _urcrypt_reverse(16, iv);
+        _urcrypt_reverse(message_length, out);
+        code = 0;
+      }
+    }
+finish:
+    AES_SIV_CTX_free(ctx);
+    return code;
+  }
+}
+
+int
+urcrypt_aes_siva_en(uint8_t *message,
+                    size_t message_length,
+                    urcrypt_aes_siv_data *data,
+                    size_t data_length,
+                    uint8_t key[32],
+                    uint8_t iv[16],
+                    uint8_t *out)
+{
+  return _urcrypt_aes_siv_en(key, 32, message, message_length, data, data_length, iv, out);
+}
+
 int
 urcrypt_ripemd160(uint8_t *message, size_t length, uint8_t out[20])
 {
@@ -640,7 +704,6 @@ urcrypt_argon2(urcrypt_argon2_type type,
   else {
     int (*f)(argon2_context*);
     int result;
-
 
     switch ( type ) {
       default:
