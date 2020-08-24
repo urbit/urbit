@@ -97,3 +97,14 @@
     */
       c3_o
       u3e_wipe(void);
+
+
+    /* u3e_yolo(): disable dirty page tracking, read/write whole loom.
+    */
+      c3_o
+      u3e_yolo(void);
+
+    /* u3e_foul(): dirty all the pages of the loom.
+    */
+      void
+      u3e_foul(void);

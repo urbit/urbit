@@ -221,6 +221,23 @@ _cu_hamt_walk(u3_noun kev, void* ptr)
   vec_u->refs[vec_u->fill++] = _cu_from_loom(rot_u, kev);
 }
 
+/* _cu_all_from_loom(): reallocate essential persistent state off-loom.
+**
+**   NB: destroys the loom.
+*/
+static ur_nref
+_cu_all_from_loom(ur_root_t* rot_u, ur_nvec_t* cod_u)
+{
+  ur_nref   ken = _cu_from_loom(rot_u, u3A->roc);
+  c3_w    cod_w = u3h_wyt(u3R->jed.cod_p);
+  _cu_vec dat_u = { .vec_u = cod_u, .rot_u = rot_u };
+
+  ur_nvec_init(cod_u, cod_w);
+  u3h_walk_with(u3R->jed.cod_p, _cu_hamt_walk, &dat_u);
+
+  return ken;
+}
+
 typedef struct _cu_loom_s {
   ur_dict32_t map_u;  //  direct->indirect mapping
   u3_atom      *vat;  //  indirect atoms
@@ -312,43 +329,72 @@ _cu_cells_to_loom(ur_root_t* rot_u, _cu_loom* lom_u)
   }
 }
 
-/* u3u_uniq(): hash-cons roots off-loom, reallocate on loom.
+/* _cu_all_to_loom(): reallocate all of [rot_u] on the loom, restore roots.
 */
-void
-u3u_uniq(void)
+static void
+_cu_all_to_loom(ur_root_t* rot_u, ur_nref ken, ur_nvec_t* cod_u)
 {
-  c3_assert( &(u3H->rod_u) == u3R );
+  _cu_loom lom_u = {0};
+  ur_dict32_grow(0, &lom_u.map_u, 89, 144);
 
-  //  allow read/write on the whole loom, bypassing page tracking
+  _cu_atoms_to_loom(rot_u, &lom_u);
+  _cu_cells_to_loom(rot_u, &lom_u);
+
+  //  restore kernel reference (always a cell)
   //
-  //    NB: u3e_save() will reinstate protection flags
+  u3A->roc = lom_u.cel[ur_nref_idx(ken)];
+
+  //  restore cold jet state (always cells)
   //
-  if ( 0 != mprotect((void *)u3_Loom, u3a_bytes, (PROT_READ | PROT_WRITE)) ) {
-    c3_assert(0);
+  {
+    c3_d  max_d = cod_u->fill;
+    c3_d    i_d;
+    ur_nref ref;
+    u3_noun kev;
+
+    for ( i_d = 0; i_d < max_d; i_d++) {
+      ref = cod_u->refs[i_d];
+      kev = lom_u.cel[ur_nref_idx(ref)];
+      u3h_put(u3R->jed.cod_p, u3h(kev), u3k(u3t(kev)));
+      u3z(kev);
+    }
+  }
+
+  _cu_loom_free(&lom_u);
+}
+
+/* _cu_realloc(): hash-cons roots off-loom, reallocate on loom.
+*/
+static ur_nref
+_cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
+{
+  //  bypassing page tracking as an optimization
+  //
+  //    NB: u3e_yolo() will mark all as dirty, and
+  //    u3e_save() will reinstate protection flags
+  //
+  if ( c3n == u3e_yolo() ) {
+    if ( fil_u ) {
+      fprintf(fil_u, "uniq: unable to bypass page tracking, continuing\r\n");
+    }
   }
 
   //  stash event number
   //
   c3_d eve_d = u3A->ent_d;
 
-
   //  reallocate kernel and cold jet state
   //
   ur_root_t* rot_u = ur_hcon_init();
-  ur_nref    ken = _cu_from_loom(rot_u, u3A->roc);
-
-  ur_nvec_t cod_u;
-  {
-    c3_w    cod_w = u3h_wyt(u3R->jed.cod_p);
-    _cu_vec dat_u = { .vec_u = &cod_u, .rot_u = rot_u };
-    ur_nvec_init(&cod_u, cod_w);
-    u3h_walk_with(u3R->jed.cod_p, _cu_hamt_walk, &dat_u);
-  }
+  ur_nvec_t  cod_u;
+  ur_nref      ken = _cu_all_from_loom(rot_u, &cod_u);
 
   //  print [rot_u] measurements
   //
-  ur_hcon_info(stderr, rot_u);
-  fprintf(stderr, "\r\n");
+  if ( fil_u ) {
+    ur_hcon_info(fil_u, rot_u);
+    fprintf(stderr, "\r\n");
+  }
 
   //  reinitialize loom
   //
@@ -356,43 +402,9 @@ u3u_uniq(void)
   //
   u3m_pave(c3y, c3n);
 
-  {
-    //  reallocate all nouns on the loom
-    //
-    _cu_loom lom_u = {0};
-
-    ur_dict32_grow(0, &lom_u.map_u, 89, 144);
-
-    _cu_atoms_to_loom(rot_u, &lom_u);
-    _cu_cells_to_loom(rot_u, &lom_u);
-
-    //  restore kernel reference (always a cell)
-    //
-    u3A->roc = lom_u.cel[ur_nref_idx(ken)];
-
-    //  restore cold jet state (always cells)
-    //
-    {
-      c3_d  max_d = cod_u.fill;
-      c3_d    i_d;
-      ur_nref ref;
-      u3_noun kev;
-
-      for ( i_d = 0; i_d < max_d; i_d++) {
-        ref = cod_u.refs[i_d];
-        kev = lom_u.cel[ur_nref_idx(ref)];
-        u3h_put(u3R->jed.cod_p, u3h(kev), u3k(u3t(kev)));
-        u3z(kev);
-      }
-    }
-
-    _cu_loom_free(&lom_u);
-  }
-
-  //  dispose off-loom structures
+  //  reallocate all nouns on the loom
   //
-  ur_nvec_free(&cod_u);
-  ur_hcon_free(rot_u);
+  _cu_all_to_loom(rot_u, ken, &cod_u);
 
   //  allocate new hot jet state; re-establish warm
   //
@@ -405,5 +417,29 @@ u3u_uniq(void)
 
   //  mark all pages dirty
   //
-  memset((void*)u3P.dit_w, 0xff, u3a_pages >> 3);
+  u3e_foul();
+
+  *tor_u = rot_u;
+  *doc_u = cod_u;
+
+  return ken;
+}
+
+/* u3u_uniq(): hash-cons roots off-loom, reallocate on loom.
+*/
+void
+u3u_uniq(void)
+{
+  ur_root_t* rot_u;
+  ur_nvec_t  cod_u;
+  ur_nref      ken;
+
+  c3_assert( &(u3H->rod_u) == u3R );
+
+  ken = _cu_realloc(stderr, &rot_u, &cod_u);
+
+  //  dispose off-loom structures
+  //
+  ur_nvec_free(&cod_u);
+  ur_hcon_free(rot_u);
 }

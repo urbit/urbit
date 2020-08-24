@@ -995,3 +995,25 @@ u3e_wipe(void)
 
   return c3y;
 }
+
+/* u3e_yolo(): disable dirty page tracking, read/write whole loom.
+*/
+c3_o
+u3e_yolo(void)
+{
+  //    NB: u3e_save() will reinstate protection flags
+  //
+  if ( 0 != mprotect((void *)u3_Loom, u3a_bytes, (PROT_READ | PROT_WRITE)) ) {
+    return c3n;
+  }
+
+  return c3y;
+}
+
+/* u3e_foul(): dirty all the pages of the loom.
+*/
+void
+u3e_foul(void)
+{
+  memset((void*)u3P.dit_w, 0xff, u3a_pages >> 3);
+}
