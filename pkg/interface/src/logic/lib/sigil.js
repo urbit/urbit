@@ -13,7 +13,7 @@ export const foregroundFromBackground = (background) => {
   return ((whiteBrightness - brightness) < 50) ? 'black' : 'white';
 }
 
-export const Sigil = memo(({ classes = '', color, ship, size }) => {
+export const Sigil = memo(({ classes = '', color, ship, size, svgClass = '' }) => {
   return ship.length > 14
     ? (<div
       className={'bg-black dib ' + classes}
@@ -31,7 +31,7 @@ export const Sigil = memo(({ classes = '', color, ship, size }) => {
           color,
           foregroundFromBackground(color)
         ],
-        class: classes
+        class: svgClass
       })}
     </div>)
 })
