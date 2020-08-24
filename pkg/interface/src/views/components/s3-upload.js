@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import S3Client from '~/logic/lib/s3';
 
 export class S3Upload extends Component {
+
   constructor(props) {
     super(props);
     this.s3 = new S3Client();
@@ -11,14 +12,14 @@ export class S3Upload extends Component {
 
   isReady(creds, config) {
     return (
-      Boolean(creds) &&
+      !!creds &&
       'endpoint' in creds &&
       'accessKeyId' in creds &&
       'secretAccessKey' in creds &&
       creds.endpoint !== '' &&
       creds.accessKeyId !== '' &&
       creds.secretAccessKey !== '' &&
-      Boolean(config) &&
+      !!config &&
       'currentBucket' in config &&
       config.currentBucket !== ''
     );
@@ -30,9 +31,7 @@ export class S3Upload extends Component {
   }
 
   setCredentials(credentials, configuration) {
-    if (!this.isReady(credentials, configuration)) {
- return;
-}
+    if (!this.isReady(credentials, configuration)) { return; }
     this.s3.setCredentials(
       credentials.endpoint,
       credentials.accessKeyId,
@@ -46,16 +45,12 @@ export class S3Upload extends Component {
 
   onChange() {
     const { props } = this;
-    if (!this.inputRef.current) {
- return;
-}
-    const files = this.inputRef.current.files;
-    if (files.length <= 0) {
- return;
-}
+    if (!this.inputRef.current) { return; }
+    let files = this.inputRef.current.files;
+    if (files.length <= 0) { return; }
 
-    const file = files.item(0);
-    const bucket = props.configuration.currentBucket;
+    let file = files.item(0);
+    let bucket = props.configuration.currentBucket;
 
     this.s3.upload(bucket, file.name, file).then((data) => {
       if (!data || !('Location' in data)) {
@@ -69,9 +64,7 @@ export class S3Upload extends Component {
   }
 
   onClick() {
-    if (!this.inputRef.current) {
-      return;
-    }
+    if (!this.inputRef.current) { return; }
     this.inputRef.current.click();
   }
 
@@ -80,23 +73,21 @@ export class S3Upload extends Component {
     if (!this.isReady(props.credentials, props.configuration)) {
       return <div></div>;
     } else {
-      const classes = props.className ?
-        'pointer ' + props.className : 'pointer';
+      let classes = !!props.className ?
+        "pointer " + props.className : "pointer";
       return (
         <div className={classes}>
           <input className="dn"
                  type="file"
                  id="fileElement"
                  ref={this.inputRef}
-                 accept="image/*"
-                 onChange={this.onChange.bind(this)}
-          />
+                 accept={props.accept}
+                 onChange={this.onChange.bind(this)} />
           <img className="invert-d"
-               src="/~chat/img/ImageUpload.png"
-               width="16"
-               height="16"
-               onClick={this.onClick.bind(this)}
-          />
+               src="/~landscape/img/ImageUpload.png"
+               width={props.size}
+               height={props.size}
+               onClick={this.onClick.bind(this)} />
         </div>
       );
     }

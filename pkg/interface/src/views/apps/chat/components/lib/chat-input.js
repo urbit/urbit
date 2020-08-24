@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ChatEditor from './chat-editor';
-import { S3Upload } from './s3-upload'
+import { S3Upload } from '~/views/components/s3-upload'
 ;
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
@@ -242,6 +242,8 @@ export class ChatInput extends Component {
             credentials={props.s3.credentials}
             uploadSuccess={this.uploadSuccess.bind(this)}
             uploadError={this.uploadError.bind(this)}
+            size={16}
+            accept="image/*"
           />
         </div>
         <div style={{

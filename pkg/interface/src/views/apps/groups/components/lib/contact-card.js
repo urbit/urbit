@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { EditElement } from './edit-element';
 import { Spinner } from '~/views/components/Spinner';
 import { uxToHex } from '~/logic/lib/util';
-import { S3Upload } from './s3-upload';
+import { S3Upload } from '~/views/components/s3-upload';
 
 export class ContactCard extends Component {
   constructor(props) {
@@ -492,6 +492,8 @@ export class ContactCard extends Component {
               credentials={props.s3.credentials}
               uploadSuccess={this.uploadSuccess.bind(this)}
               uploadError={this.uploadError.bind(this)}
+              size={32}
+              accept="image/*"
             />
           </span>
           <EditElement

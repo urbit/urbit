@@ -72,7 +72,7 @@ export class LinksApp extends Component {
 
     const listening = props.linkListening;
 
-    const { api, sidebarShown } = this.props;
+    const { api, sidebarShown, s3 } = this.props;
 
     return (
       <Switch>
@@ -263,6 +263,7 @@ export class LinksApp extends Component {
                   popout={popout}
                   sidebarShown={sidebarShown}
                   api={api}
+                  s3={s3}
                   />
                 </Skeleton>
               );

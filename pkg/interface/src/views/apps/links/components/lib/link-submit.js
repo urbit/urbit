@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+
+import { S3Upload } from '~/views/components/s3-upload';
 import { Spinner } from '~/views/components/Spinner';
+import { startsWith } from 'lodash';
 
 export class LinkSubmit extends Component {
   constructor() {
@@ -60,7 +63,17 @@ export class LinkSubmit extends Component {
     this.setState({ linkTitle: event.target.value });
   }
 
+  uploadSuccess(url) {
+    this.setState({ linkValue: url });
+    this.setLinkValid(url);
+  }
+
+  uploadError(error) {
+    //  no-op for now
+  }
+
   render() {
+    console.log('s3', this.props.s3);
     const activeClasses = (this.state.linkValid && !this.state.disabled)
       ? 'green2 pointer' : 'gray2';
 
@@ -90,6 +103,15 @@ export class LinkSubmit extends Component {
             }
           }}
           value={this.state.linkValue}
+        />
+        <S3Upload
+          className="fr pr3 absolute top-1 right-0"
+          configuration={this.props.s3.configuration}
+          credentials={this.props.s3.credentials}
+          uploadSuccess={this.uploadSuccess.bind(this)}
+          uploadError={this.uploadError.bind(this)}
+          size={16}
+          accept="*"
         />
         <textarea
           className="pl2 bg-gray0-d white-d w-100 f8"
