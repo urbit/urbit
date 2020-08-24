@@ -22,7 +22,7 @@ import GlobalStore from '~/logic/store/store';
 import GlobalSubscription from '~/logic/subscription/global';
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
-import { Sigil } from '~/logic/lib/sigil';
+import { foregroundFromBackground } from '~/logic/lib/sigil';
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -85,7 +85,7 @@ class App extends React.Component {
       if (this.state.contacts.hasOwnProperty('/~/default')) {
         background = `#${uxToHex(this.state.contacts['/~/default'][window.ship].color)}`;
       }
-      const foreground = Sigil.foregroundFromBackground(background);
+      const foreground = foregroundFromBackground(background);
       const svg = sigiljs({
         patp: window.ship,
         renderer: stringRenderer,
