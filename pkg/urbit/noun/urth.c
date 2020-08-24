@@ -7,7 +7,7 @@
 #include <ctype.h>
 
 #include "all.h"
-#include "ur/hashcons.h"
+#include "ur/ur.h"
 
 /* _cu_met_3(): atom bytewidth a la u3r_met(3, ...)
 */
@@ -442,4 +442,174 @@ u3u_uniq(void)
   //
   ur_nvec_free(&cod_u);
   ur_hcon_free(rot_u);
+}
+
+static c3_o
+_cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
+{
+  c3_i fid_i;
+
+  //  open rock file, creating the containing directory if necessary
+  //
+  {
+    c3_w  nam_w = 1 + snprintf(0, 0, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, eve_d);
+    c3_c* nam_c = c3_malloc(nam_w);
+    c3_i ret_i;
+
+    //  create $pier/.urb/roc, if it doesn't exist
+    //
+    //    NB, $pier/.urb is guaranteed to already exist
+    //
+    {
+      ret_i = snprintf(nam_c, nam_w, "%s/.urb/roc", dir_c);
+
+      if ( ret_i < 0 ) {
+        fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): %s\r\n",
+                        dir_c, eve_d, strerror(errno));
+        c3_free(nam_c);
+        return c3n;
+      }
+      else if ( ret_i >= nam_w ) {
+        fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): truncated\r\n",
+                        dir_c, eve_d);
+        c3_free(nam_c);
+        return c3n;
+      }
+
+      if (  mkdir(nam_c, 0700)
+         && (EEXIST != errno) )
+      {
+        fprintf(stderr, "rock: directory create failed (%s, %" PRIu64 "): %s\r\n",
+                        dir_c, eve_d, strerror(errno));
+        c3_free(nam_c);
+        return c3n;
+      }
+    }
+
+    ret_i = snprintf(nam_c, nam_w, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, eve_d);
+
+    if ( ret_i < 0 ) {
+      fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): %s\r\n",
+                      dir_c, eve_d, strerror(errno));
+      c3_free(nam_c);
+      return c3n;
+    }
+    else if ( ret_i >= nam_w ) {
+      fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): truncated\r\n",
+                      dir_c, eve_d);
+      c3_free(nam_c);
+      return c3n;
+    }
+
+    if ( -1 == (fid_i = open(nam_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
+      fprintf(stderr, "rock: open failed (%s, %" PRIu64 "): %s\r\n",
+                      dir_c, eve_d, strerror(errno));
+      c3_free(nam_c);
+      return c3n;
+    }
+
+    c3_free(nam_c);
+  }
+
+  //  write jam-buffer into [fid_i]
+  //
+  //    XX deduplicate with _write() wrapper in term.c
+  //
+  {
+    ssize_t ret_i;
+
+    while ( len_d > 0 ) {
+      c3_w lop_w = 0;
+      //  retry interrupt/async errors
+      //
+      do {
+        //  abort pathological retry loop
+        //
+        if ( 100 == ++lop_w ) {
+          fprintf(stderr, "rock: write loop: %s\r\n", strerror(errno));
+          close(fid_i);
+          //  XX unlink file?
+          //
+          return c3n;
+        }
+
+        ret_i = write(fid_i, byt_y, len_d);
+      }
+      while (  (ret_i < 0)
+            && (  (errno == EINTR)
+               || (errno == EAGAIN)
+               || (errno == EWOULDBLOCK) ));
+
+      //  assert on true errors
+      //
+      //    NB: can't call u3l_log here or we would re-enter _write()
+      //
+      if ( ret_i < 0 ) {
+        fprintf(stderr, "rock: write failed %s\r\n", strerror(errno));
+        close(fid_i);
+        //  XX unlink file?
+        //
+        return c3n;
+      }
+      //  continue partial writes
+      //
+      else {
+        len_d -= ret_i;
+        byt_y += ret_i;
+      }
+    }
+  }
+
+  close(fid_i);
+
+  return c3y;
+}
+
+/* u3u_cram(): globably deduplicate memory, and write a rock to disk.
+*/
+c3_o
+u3u_cram(c3_c* dir_c, c3_d eve_d)
+{
+  c3_o  ret_o = c3y;
+  c3_d  len_d;
+  c3_y* byt_y;
+
+  c3_assert( &(u3H->rod_u) == u3R );
+
+  {
+    ur_root_t* rot_u;
+    ur_nvec_t  cod_u;
+    ur_nref      ken = _cu_realloc(stderr, &rot_u, &cod_u);
+
+    {
+      ur_nref roc = u3_nul;
+      c3_d  max_d = cod_u.fill;
+      c3_d    i_d;
+
+      //  cons vector of cold jet-state entries onto a list
+      //
+      for ( i_d = 0; i_d < max_d; i_d++) {
+        roc = ur_cons(rot_u, cod_u.refs[i_d], roc);
+      }
+
+      roc = ur_cons(rot_u, ur_coin64(rot_u, c3__fast), ur_cons(rot_u, ken, roc));
+
+      ur_jam(rot_u, roc, &len_d, &byt_y);
+    }
+
+    //  dispose off-loom structures
+    //
+    ur_nvec_free(&cod_u);
+    ur_hcon_free(rot_u);
+  }
+
+  //  write jam-buffer into pier
+  //
+  if ( c3n == _cu_rock_save(dir_c, eve_d, len_d, byt_y) ) {
+    ret_o = c3n;
+  }
+
+  c3_free(byt_y);
+
+  return ret_o;
 }

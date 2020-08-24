@@ -251,15 +251,24 @@ _cw_cram(c3_i argc, c3_c* argv[])
 
   c3_c* dir_c = argv[2];
   c3_d  eve_d = u3m_boot(dir_c);
+  c3_o  ret_o;
 
   fprintf(stderr, "urbit-worker: cram: preparing\r\n");
 
-  if ( c3n == u3m_rock_stay(dir_c, eve_d) ) {
+  if ( c3n == (ret_o = u3u_cram(dir_c, eve_d)) ) {
     fprintf(stderr, "urbit-worker: cram: unable to jam state\r\n");
-    exit(1);
+  }
+  else {
+    fprintf(stderr, "urbit-worker: cram: rock saved at event %" PRIu64 "\r\n", eve_d);
   }
 
-  fprintf(stderr, "urbit-worker: cram: rock saved at event %" PRIu64 "\r\n", eve_d);
+  //  save even on failure, as we just did all the work of deduplication
+  //
+  u3e_save();
+
+  if ( c3n == ret_o ) {
+    exit(1);
+  }
 }
 
 /* _cw_queu(); cue rock, save, and exit.
