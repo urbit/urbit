@@ -103,7 +103,7 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
           },
         };
 
-    const { groupName } = this.state;
+    const groupName = this.state.groupName.trim();
     this.setState(
       {
         invites: { ships: [], groups: [] },
@@ -115,7 +115,7 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
           .then(() => {
             this.setState({ awaiting: false });
             props.history.push(
-              `/~groups/ship/~${window.ship}/${state.groupName}`
+              `/~groups/ship/~${window.ship}/${groupName}`
             );
           });
       }
