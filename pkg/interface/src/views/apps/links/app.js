@@ -59,7 +59,7 @@ export class LinksApp extends Component {
       props.invites : {};
 
     const listening = props.linkListening;
-    const { api, sidebarShown, hideAvatars, hideNicknames } = this.props;
+    const { api, sidebarShown, hideAvatars, hideNicknames, s3 } = this.props;
 
     return (
       <>
@@ -256,6 +256,7 @@ export class LinksApp extends Component {
                     api={api}
                     hideNicknames={hideNicknames}
                     hideAvatars={hideAvatars}
+                    s3={s3}
                   />
                   </Skeleton>
                 );

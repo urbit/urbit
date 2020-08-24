@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+
+import { S3Upload } from '~/views/components/s3-upload';
 import { Spinner } from '~/views/components/Spinner';
+import { Icon } from "@tlon/indigo-react";
 
 export class LinkSubmit extends Component {
   constructor() {
@@ -60,23 +63,29 @@ export class LinkSubmit extends Component {
     this.setState({ linkTitle: event.target.value });
   }
 
+  uploadSuccess(url) {
+    this.setState({ linkValue: url });
+    this.setLinkValid(url);
+  }
+
+  uploadError(error) {
+    //  no-op for now
+  }
+
   render() {
+    console.log('s3', this.props.s3);
     const activeClasses = (this.state.linkValid && !this.state.disabled)
       ? 'green2 pointer' : 'gray2';
 
     const focus = (this.state.submitFocus)
       ? 'b--black b--white-d'
       : 'b--gray4 b--gray2-d';
-
+    
     return (
       <div className={'relative ba br1 w-100 mb6 ' + focus}>
-        <textarea
-          className="pl2 bg-gray0-d white-d w-100 f8"
-          style={{
-            resize: 'none',
-            height: 40,
-            paddingTop: 10
-          }}
+        <input
+          type="url"
+          className="pl2 bg-gray0-d white-d w-100 f8 pt2"
           placeholder="Paste link here"
           onChange={this.setLinkValue}
           onBlur={() => this.setState({ submitFocus: false })}
@@ -91,41 +100,51 @@ export class LinkSubmit extends Component {
           }}
           value={this.state.linkValue}
         />
-        <textarea
-          className="pl2 bg-gray0-d white-d w-100 f8"
-          style={{
-            resize: 'none',
-            height: 40,
-            paddingTop: 16
-          }}
-          placeholder="Enter title"
-          onChange={this.setLinkTitle}
-          onBlur={() => this.setState({ submitFocus: false })}
-          onFocus={() => this.setState({ submitFocus: true })}
-          spellCheck="false"
-          rows={1}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              this.onClickPost();
+        <div className="flex flex-auto mt2 pt2">
+          <input
+            type="text"
+            className="pl2 bg-gray0-d white-d w-100 f8"
+            style={{
+              resize: 'none',
+              height: 40
+            }}
+            placeholder="Enter title"
+            onChange={this.setLinkTitle}
+            onBlur={() => this.setState({ submitFocus: false })}
+            onFocus={() => this.setState({ submitFocus: true })}
+            spellCheck="false"
+            rows={1}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                this.onClickPost();
+              }
+            }}
+            value={this.state.linkTitle}
+          />
+          {!this.state.disabled ? <S3Upload
+            configuration={this.props.s3.configuration}
+            credentials={this.props.s3.credentials}
+            uploadSuccess={this.uploadSuccess.bind(this)}
+            uploadError={this.uploadError.bind(this)}
+            className="nowrap flex items-center pr2 h-100"
+          ><span className="green2 f8">Upload File</span></S3Upload> : null}
+          {!this.state.disabled ? <button
+            className={
+              'bg-gray0-d f8 flex-shrink-0 pr2 ' + activeClasses
             }
-          }}
-          value={this.state.linkTitle}
-        />
-        <button
-          className={
-            'absolute bg-gray0-d f8 ml2 flex-shrink-0 ' + activeClasses
-          }
-          disabled={!this.state.linkValid || this.state.disabled}
-          onClick={this.onClickPost.bind(this)}
-          style={{
-            bottom: 12,
-            right: 8
-          }}
-        >
-          Post
-        </button>
-        <Spinner awaiting={this.state.disabled} classes="mt3 absolute right-0" text="Posting to collection..." />
+            disabled={!this.state.linkValid || this.state.disabled}
+            onClick={this.onClickPost.bind(this)}
+            style={{
+              bottom: 12,
+              right: 8
+            }}
+          >
+            Post
+          </button> : null}
+          <Spinner awaiting={this.state.disabled} classes="nowrap flex items-center pr2" style={{flex: '1 1 14rem'}} text="Posting to collection..." />
+        </div>
+        
       </div>
     ) ;
   }
