@@ -106,8 +106,7 @@ export class LinkSubmit extends Component {
           credentials={this.props.s3.credentials}
           uploadSuccess={this.uploadSuccess.bind(this)}
           uploadError={this.uploadError.bind(this)}
-          render={() => <span className="green2 f8">Upload File</span>}
-        />
+        ><span className="green2 f8">Upload File</span></S3Upload>
         <input
           type="text"
           className="pl2 bg-gray0-d white-d w-100 f8 mb2 pb2"

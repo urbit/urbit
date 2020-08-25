@@ -243,14 +243,14 @@ export class ChatInput extends Component {
             uploadSuccess={this.uploadSuccess.bind(this)}
             uploadError={this.uploadError.bind(this)}
             accept="image/*"
-            render={() => (
-              <img
-                className="invert-d"
-                src="/~chat/img/ImageUpload.png"
-                width="16"
-                height="16"
-              />)}
-          />
+          >
+            <img
+              className="invert-d"
+              src="/~chat/img/ImageUpload.png"
+              width="16"
+              height="16"
+            />
+          </S3Upload>
         </div>
         <div style={{
             height: '16px',

@@ -87,7 +87,7 @@ export class S3Upload extends Component {
       configuration,
       className,
       accept = '*',
-      render = false,
+      children = false
     } = this.props;
     if (!this.isReady(credentials, configuration)) {
       return <div></div>;
@@ -95,12 +95,7 @@ export class S3Upload extends Component {
       let classes = !!className
         ? "pointer " + className
         : "pointer";
-      const display = render
-        ? render()
-        : <Icon
-          display="inline-block"
-          icon='ArrowNorth'
-        />;
+      const display = children || <Icon icon='ArrowNorth' />;
       return (
         <div>
           <input
