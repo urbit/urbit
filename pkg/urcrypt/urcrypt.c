@@ -528,6 +528,41 @@ urcrypt_aes_cbcc_de(uint8_t **message_ptr,
   }
 }
 
+static AES_SIV_CTX*
+_urcrypt_aes_siv_init(uint8_t *key,
+                      size_t key_length,
+                      urcrypt_aes_siv_data *data,
+                      size_t data_length)
+{
+  AES_SIV_CTX *ctx = AES_SIV_CTX_new();
+  if ( NULL == ctx ) {
+    return NULL;
+  }
+  else {
+    _urcrypt_reverse(key_length, key);
+    if ( 0 == AES_SIV_Init(ctx, key, key_length) ) {
+      AES_SIV_CTX_free(ctx);
+      return NULL;
+    }
+    else {
+      size_t i, len;
+      uint8_t *dat;
+
+      for ( i = 0; i < data_length; ++i ) {
+        len = data[i].length;
+        dat = data[i].bytes;
+        _urcrypt_reverse(len, dat);
+        if ( 0 == AES_SIV_AssociateData(ctx, dat, len) ) {
+          AES_SIV_CTX_free(ctx);
+          return NULL;
+        }
+      }
+
+      return ctx;
+    }
+  }
+}
+
 static int
 _urcrypt_aes_siv_en(uint8_t *key,
                     size_t key_length,
@@ -538,44 +573,58 @@ _urcrypt_aes_siv_en(uint8_t *key,
                     uint8_t iv[16],
                     uint8_t *out)
 {
-  AES_SIV_CTX *ctx = AES_SIV_CTX_new();
+  AES_SIV_CTX *ctx = _urcrypt_aes_siv_init(key, key_length, data, data_length);
 
   if ( NULL == ctx ) {
     return -1;
   }
   else {
-    int code;
-    _urcrypt_reverse(key_length, key);
-    if ( 0 == AES_SIV_Init(ctx, key, key_length) ) {
-      code = -2;
+    int ret;
+    _urcrypt_reverse(message_length, message);
+    ret = AES_SIV_EncryptFinal(ctx, iv, out, message, message_length);
+    AES_SIV_CTX_free(ctx);
+
+    if ( 0 == ret ) {
+      return -2;
     }
     else {
-      uint8_t *bytes;
-      size_t i, blen;
-
-      for ( i = 0; i < data_length; ++i ) {
-        blen = data[i].length;
-        bytes = data[i].bytes;
-        _urcrypt_reverse(blen, bytes);
-        if ( 0 == AES_SIV_AssociateData(ctx, bytes, blen) ) {
-          code = -3;
-          goto finish;
-        }
-      }
-
-      _urcrypt_reverse(message_length, message);
-      if ( 0 == AES_SIV_EncryptFinal(ctx, iv, out, message, message_length) ) {
-        code = -4;
-      }
-      else {
-        _urcrypt_reverse(16, iv);
-        _urcrypt_reverse(message_length, out);
-        code = 0;
-      }
+      _urcrypt_reverse(16, iv);
+      _urcrypt_reverse(message_length, out);
+      return 0;
     }
-finish:
+  }
+}
+
+int
+_urcrypt_aes_siv_de(uint8_t *message,
+                    size_t message_length,
+                    uint8_t *key,
+                    size_t key_length,
+                    urcrypt_aes_siv_data *data,
+                    size_t data_length,
+                    uint8_t iv[16],
+                    uint8_t *out)
+{
+  AES_SIV_CTX *ctx = _urcrypt_aes_siv_init(key, key_length, data, data_length);
+
+  if ( NULL == ctx ) {
+    return -1;
+  }
+  else {
+    int ret;
+
+    _urcrypt_reverse(message_length, message);
+    _urcrypt_reverse(16, iv);
+    ret = AES_SIV_DecryptFinal(ctx, out, iv, message, message_length);
     AES_SIV_CTX_free(ctx);
-    return code;
+
+    if ( 0 == ret ) {
+      return -2;
+    }
+    else {
+      _urcrypt_reverse(message_length, out);
+      return 0;
+    }
   }
 }
 
@@ -588,7 +637,21 @@ urcrypt_aes_siva_en(uint8_t *message,
                     uint8_t iv[16],
                     uint8_t *out)
 {
-  return _urcrypt_aes_siv_en(key, 32, message, message_length, data, data_length, iv, out);
+  return _urcrypt_aes_siv_en(key, 32,
+      message, message_length, data, data_length, iv, out);
+}
+
+int
+urcrypt_aes_siva_de(uint8_t *message,
+                    size_t message_length,
+                    urcrypt_aes_siv_data *data,
+                    size_t data_length,
+                    uint8_t key[32],
+                    uint8_t iv[16],
+                    uint8_t *out)
+{
+  return _urcrypt_aes_siv_de(key, 32,
+      message, message_length, data, data_length, iv, out);
 }
 
 int
