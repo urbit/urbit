@@ -1,4 +1,4 @@
-crossenv:
+{ crossenv }:
 
 rec {
   argon2       = import ./deps/argon2/cross.nix       { inherit crossenv; };
@@ -9,6 +9,6 @@ rec {
   softfloat3   = import ./deps/softfloat3/cross.nix   { inherit crossenv; };
   secp256k1    = import ./deps/secp256k1/cross.nix    { inherit crossenv; };
   h2o          = import ./deps/h2o/cross.nix          { inherit crossenv uv; };
-  ivory-header = import ./deps/ivory-header/cross.nix { inherit crossenv; };
+  ivory-header = import ./deps/ivory-header/cross.nix { inherit crossenv; ivory = ../bin/ivory.pill; };
   ca-header    = import ./deps/ca-header/cross.nix    { inherit crossenv; };
 }
