@@ -1,4 +1,4 @@
-{ pkgs ? import ../nixpkgs.nix }:
+{ pkgs ? import ../nixpkgs.nix { } }:
 
 let
 
@@ -7,7 +7,7 @@ let
   ent          = import ./ent          { inherit pkgs; };
   arvo         = import ./arvo         { inherit pkgs; };
   arvo-ropsten = import ./arvo-ropsten { inherit pkgs; };
-  herb         = import ../../pkg/herb { inherit pkgs; };
+  herb         = import ./herb         { inherit pkgs; };
 
   ge-additions = import ./ge-additions {
     inherit pkgs;

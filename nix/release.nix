@@ -1,8 +1,10 @@
+{ pkgs ? import ./nixpkgs.nix { } }:
+
 let
 
-  nixpkgs   = import ./nixpkgs.nix;
-  nixcrpkgs = import ./nixcrpkgs.nix;
-  crossdeps = import ./crossdeps.nix;
+  nixpkgs   = pkgs;
+  nixcrpkgs = import ./nixcrpkgs.nix { inherit pkgs; };
+  crossdeps = crossenv: import ./crossdeps.nix { inherit crossenv; };
 
   release =
     env_name: env: {

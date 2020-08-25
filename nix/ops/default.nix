@@ -1,4 +1,4 @@
-{ pkgs ? import ../nixpkgs.nix, debug ? false }:
+{ pkgs ? import ../nixpkgs.nix { }, debug ? false }:
 
 let
 

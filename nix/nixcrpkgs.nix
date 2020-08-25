@@ -1,6 +1,6 @@
-let
+{ pkgs ? import ./nixpkgs.nix { } }:
 
-  nixpkgs = import ./nixpkgs.nix;
+let
 
   osx_sdk = builtins.fetchurl {
     sha256 = "89aa34dfe5bcbc7d53d3c55a84b35ac810ecfbcdd16a64c9667992b0c36c60c4";
