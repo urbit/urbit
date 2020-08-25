@@ -1,8 +1,7 @@
 let
 
   pkgs = import ./nixpkgs.nix;
-  tlon = import ./pkgs { pkgs=pkgs; };
-  deps = import ./deps { pkgs=pkgs; };
+  deps = import ./deps { inherit pkgs; };
 
   tools =
     with pkgs;
@@ -24,7 +23,7 @@ let
 
 in
 
-pkgs.stdenv.mkDerivation rec {
+pkgs.stdenv.mkDerivation {
   name        = "urbit-deps-env";
   env         = pkgs.buildEnv { name = name; paths = buildInputs; };
   buildInputs = tools ++ libs ++ osx ++ vendor;

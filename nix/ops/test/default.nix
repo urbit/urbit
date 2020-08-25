@@ -1,6 +1,6 @@
 { pkgs, herb, urbit, ship }:
 
-pkgs.stdenv.mkDerivation rec {
+pkgs.stdenv.mkDerivation {
   name        = "test";
   builder     = ./builder.sh;
   buildInputs = [ herb ];

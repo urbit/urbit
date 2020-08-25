@@ -1,6 +1,6 @@
 { pkgs, herb, urbit, pier, arvo }:
 
-pkgs.stdenv.mkDerivation rec {
+pkgs.stdenv.mkDerivation {
   name        = "ivory";
   builder     = ./builder.sh;
   buildInputs = [ herb pkgs.coreutils ];
