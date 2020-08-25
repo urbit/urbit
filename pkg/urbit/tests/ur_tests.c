@@ -892,6 +892,12 @@ _bsr_cmp_any_check(const char* cap, uint8_t off, uint8_t len, ur_bsr_t *a, ur_bs
     ret = 0;
   }
 
+  if ( a->bytes != b->bytes ) {
+    fprintf(stderr, "%s: off %u len %u: bytes fail (%p, %p)\r\n",
+                    cap, off, len, a->bytes, b->bytes);
+    ret = 0;
+  }
+
   return ret;
 }
 
@@ -1248,6 +1254,12 @@ _bsr_cmp_check(const char* cap,
   if ( a->bits != b->bits ) {
     fprintf(stderr, "%s: off %u len %u: bits fail (%" PRIu64 ", %" PRIu64 ")\r\n",
                     cap, off, len, a->bits, b->bits);
+    ret = 0;
+  }
+
+  if ( a->bytes != b->bytes ) {
+    fprintf(stderr, "%s: off %u len %u: bytes fail (%p, %p)\r\n",
+                    cap, off, len, a->bytes, b->bytes);
     ret = 0;
   }
 

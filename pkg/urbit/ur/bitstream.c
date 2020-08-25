@@ -400,10 +400,11 @@ ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
         }
       }
       else {
-        uint8_t bits = off + len_bit;
+        uint8_t  bits = off + len_bit;
+        uint64_t step = max + !!(bits >> 3);
 
-        bsr->bytes += max;
-        left -= max + !!(bits >> 3);
+        bsr->bytes += step;
+        left -= step;
         off   = ur_mask_3(bits);
 
         if ( len_bit <= rest ) {
