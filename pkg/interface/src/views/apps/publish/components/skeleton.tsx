@@ -1,4 +1,4 @@
-import React, { useRef, SyntheticEvent } from "react";
+import React, { useRef, SyntheticEvent, useEffect } from "react";
 import { Box, Center } from "@tlon/indigo-react";
 import { Sidebar } from "./lib/Sidebar";
 import ErrorBoundary from "~/views/components/ErrorBoundary";
@@ -25,6 +25,7 @@ type SkeletonProps = RouteComponentProps<{
 export function Skeleton(props: SkeletonProps) {
   const { api, notebooks } = props;
   const { ship, notebook, noteId } = props.match.params;
+  const scrollRef = useRef<HTMLDivElement>();
 
   const path =
     (ship &&
@@ -66,6 +67,28 @@ export function Skeleton(props: SkeletonProps) {
     }
   };
 
+  // send read immediately if we aren't in a scrollable container
+  useEffect(() => {
+    if(!(noteId && notebook && ship)) {
+      return;
+    }
+    const note = notebooks?.[ship]?.[notebook]?.notes?.[noteId];
+    setTimeout(() => {
+      const { clientHeight, scrollHeight } = scrollRef.current;
+      const isScrolling = clientHeight < scrollHeight;
+      if(!isScrolling && note) {
+        api.publish.publishAction({
+          read: {
+            who: ship.slice(1),
+            book: notebook,
+            note: noteId,
+          },
+        });
+      }
+
+    }, 1500);
+  }, [noteId, notebook, ship, notebooks])
+
   const panelDisplay = !path ? ["none", "block"] : "block";
   return (
     <Box height="100%" width="100%" px={[0, 3]} pb={[0, 3]}>
@@ -86,6 +109,7 @@ export function Skeleton(props: SkeletonProps) {
           api={props.api}
         />
         <Box
+          ref={scrollRef}
           display={panelDisplay}
           width="100%"
           height="100%"
