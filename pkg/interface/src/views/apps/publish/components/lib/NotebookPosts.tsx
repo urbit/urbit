@@ -24,7 +24,7 @@ export function NotebookPosts(props: NotebookPostsProps) {
         return (
           <NotePreview
             key={noteId}
-            host={note?.author}
+            host={props.host}
             book={props.book}
             note={note}
             contact={props.contacts[note.author.substr(1)]}
