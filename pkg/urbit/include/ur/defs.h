@@ -5,6 +5,10 @@
 #include <assert.h>
 #include <limits.h>
 
+#define ur_fib10          55
+#define ur_fib11          89
+#define ur_fib12         144
+
 typedef uint8_t  ur_bool_t;
 
 #define ur_min(a, b)   ( ((a) < (b)) ? (a) : (b) )
