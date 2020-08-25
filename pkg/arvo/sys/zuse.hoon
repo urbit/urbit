@@ -1271,6 +1271,9 @@
           ::    the first place.
           ::
           [%disconnect =binding]
+          ::  notifies us that web login code changed
+          ::
+          [%code-changed ~]
       ==
     ::
     --
@@ -1956,6 +1959,7 @@
           [%turf ~]                                     ::  view domains
           $>(%vega vane-task)                           ::  report upgrade
           $>(%plea vane-task)                           ::  ames request
+          [%step ~]                                     ::  reset web login code
       ==                                                ::
     ::
     +$  dawn-event

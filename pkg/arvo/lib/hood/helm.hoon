@@ -79,6 +79,13 @@
     this
   (emit %pass / %arvo %j %moon u.sed)
 ::
+++  poke-code
+  |=  act=?(~ %reset)
+  =<  abet
+  ?~  act
+    this
+  (emit %pass / %arvo %j %step ~)
+::
 ++  poke-mass
   |=  ~  =<  abet
   (emit %pass /heft %arvo %d %flog %heft ~)
@@ -213,6 +220,7 @@
     %helm-atom             =;(f (f !<(_+<.f vase)) poke-atom)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
+    %helm-code             =;(f (f !<(_+<.f vase)) poke-code)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)

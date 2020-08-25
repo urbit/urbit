@@ -1960,6 +1960,25 @@
     ::
       closed-connections
     ==
+  ::
+  ?:  ?=(%code-changed -.task)
+    ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
+    =.  authentication-state.server-state.ax  *authentication-state
+    ::
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+    =*  by-channel  by-channel:(per-server-event event-args)
+    =*  channel-state  channel-state.server-state.ax
+    ::
+    =/  channel-ids=(list @t)  ~(tap in ~(key by session.channel-state))
+    =|  moves=(list (list move))
+    |-  ^-  [(list move) _http-server-gate]
+    ?~  channel-ids
+      [(zing (flop moves)) http-server-gate]
+    ::  discard channel state, and cancel any active gall subscriptions
+    ::
+    =^  mov  server-state.ax  (discard-channel:by-channel i.channel-ids |)
+    $(moves [mov moves], channel-ids t.channel-ids)
+  ::
   ::  all other commands operate on a per-server-event
   ::
   =/  event-args  [[our eny duct now scry-gate] server-state.ax]
