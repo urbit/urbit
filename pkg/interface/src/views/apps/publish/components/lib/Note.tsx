@@ -82,7 +82,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Text display="block" mb={2}>{note?.title || ""}</Text>
         <Box display="flex">
           <Author
-            ship={ship}
+            ship={note?.author}
             contacts={contacts}
             date={note?.["date-created"]}
           />

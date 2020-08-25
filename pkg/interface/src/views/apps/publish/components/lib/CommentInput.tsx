@@ -1,7 +1,7 @@
 import React from "react";
 import * as Yup from "yup";
-import { Formik, FormikHelpers, Form } from "formik";
-import { AsyncButton } from '../../../../components/AsyncButton';
+import { Formik, FormikHelpers, Form, useFormikContext } from "formik";
+import { AsyncButton } from "../../../../components/AsyncButton";
 import { TextArea } from "@tlon/indigo-react";
 
 interface FormSchema {
@@ -22,11 +22,21 @@ interface CommentInputProps {
   label?: string;
   placeholder?: string;
 }
+const SubmitTextArea = (props) => {
+  const { submitForm } = useFormikContext<FormSchema>();
+  const onKeyDown = (e: KeyboardEvent) => {
+    if ((e.getModifierState("Control") || e.metaKey) && e.key === "Enter") {
+      submitForm();
+    }
+  };
+  return <TextArea onKeyDown={onKeyDown} {...props} />;
+};
 
 export default function CommentInput(props: CommentInputProps) {
   const initialValues: FormSchema = { comment: props.initial || "" };
   const label = props.label || "Add Comment";
   const loading = props.loadingText || "Commenting...";
+
   return (
     <Formik
       validationSchema={formSchema}
@@ -34,7 +44,10 @@ export default function CommentInput(props: CommentInputProps) {
       initialValues={initialValues}
     >
       <Form>
-        <TextArea id="comment" placeholder={props.placeholder || ""} />
+        <SubmitTextArea
+          id="comment"
+          placeholder={props.placeholder || ""}
+        />
         <AsyncButton loadingText={loading} border type="submit">
           {label}
         </AsyncButton>

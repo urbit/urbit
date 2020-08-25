@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Col } from '@tlon/indigo-react';
+import { Col } from "@tlon/indigo-react";
 import { Notes, NoteId } from "../../../../types/publish-update";
 import { NotePreview } from "./NotePreview";
 import { Contacts } from "../../../../types/contact-update";
@@ -17,15 +17,16 @@ export function NotebookPosts(props: NotebookPostsProps) {
     <Col>
       {props.list.map((noteId: NoteId) => {
         const note = props.notes[noteId];
-        if(!note) {
-          console.log(noteId)
+        if (!note) {
+          console.log(noteId);
           return null;
         }
         return (
           <NotePreview
-            host={props.host}
+            key={noteId}
+            host={note?.author}
             book={props.book}
-            note={props.notes[noteId]}
+            note={note}
             contact={props.contacts[note.author.substr(1)]}
           />
         );
