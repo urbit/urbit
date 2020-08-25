@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Text, Box, Col } from '@tlon/indigo-react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 type ErrorProps = RouteComponentProps & {
@@ -11,28 +12,30 @@ class ErrorComponent extends Component<ErrorProps> {
   render () {
     const { code, error, history, description } = this.props;
     return (
-        <div className="pa4 inter tc flex flex-column items-center justify-center w-100 h-100">
-          <h1 className="mb4 fw2 f2" style={{
-            fontFeatureSettings: '\'zero\' 1',
-          }}>
-            {code ? code : 'Error'}
-           </h1>
-           {description ? <p className="tc mb4">{description}</p> : null}
-          {error ? (
-            <div className="mb4">
-              <p className="mb4"><code>&ldquo;{error.message}&rdquo;</code></p>
-              <details>
-                <summary>Stack trace</summary>
-                <pre className="tl">{error.stack}</pre>
-              </details>
-            </div>
-            ) : null}
-          <p className="tc mb4">If this is unexpected, email <code>support@tlon.io</code> or <a className="bb" href="https://github.com/urbit/urbit/issues/new/choose">submit an issue</a>.</p>
+      <Col alignItems="center" justifyContent="center" height="100%" p={4}>
+        <Box mb={4}>
+          <Text fontSize={3}>
+           {code ? code : 'Error'}
+         </Text>
+       </Box>
+       { description && (<Box mb={4}><Text>{description}</Text></Box>) }
+       {error && (
+         <Box mb={4}>
+           <Box mb={2}>
+             <Text fontFamily="mono"><code>&ldquo;{error.message}&rdquo;</code></Text>
+           </Box>
+            <details>
+              <summary>Stack trace</summary>
+              <pre style={{ wordWrap: 'break-word' }} className="tl">{error.stack}</pre>
+            </details>
+          </Box>
+       )}
+          <Text mb={4} textAlign="center">If this is unexpected, email <code>support@tlon.io</code> or <a className="bb" href="https://github.com/urbit/urbit/issues/new/choose">submit an issue</a>.</Text>
           {history.length > 1
             ? <button className="bg-light-green green2 pa2 pointer" onClick={() => history.go(-1) }>Go back</button>
             : <button className="bg-light-green green2 pa2 pointer" onClick={() => history.push('/') }>Go home</button>
           }
-        </div>
+        </Col>
       );
   }
 }
