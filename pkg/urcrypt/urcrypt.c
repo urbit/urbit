@@ -528,6 +528,19 @@ urcrypt_aes_cbcc_de(uint8_t **message_ptr,
   }
 }
 
+/* FIXME TODO remove
+#include <stdarg.h>
+void dbg(const char* fmt, ...)
+{
+  va_list ap;
+  FILE *nukes = fopen("/tmp/urcrypt.txt", "a");
+  va_start(ap, fmt);
+  vfprintf(nukes, fmt, ap);
+  va_end(ap);
+  fclose(nukes);
+}
+*/
+
 static AES_SIV_CTX*
 _urcrypt_aes_siv_init(uint8_t *key,
                       size_t key_length,
@@ -596,10 +609,10 @@ _urcrypt_aes_siv_en(uint8_t *key,
 }
 
 int
-_urcrypt_aes_siv_de(uint8_t *message,
-                    size_t message_length,
-                    uint8_t *key,
+_urcrypt_aes_siv_de(uint8_t *key,
                     size_t key_length,
+                    uint8_t *message,
+                    size_t message_length,
                     urcrypt_aes_siv_data *data,
                     size_t data_length,
                     uint8_t iv[16],
@@ -651,6 +664,58 @@ urcrypt_aes_siva_de(uint8_t *message,
                     uint8_t *out)
 {
   return _urcrypt_aes_siv_de(key, 32,
+      message, message_length, data, data_length, iv, out);
+}
+
+int
+urcrypt_aes_sivb_en(uint8_t *message,
+                    size_t message_length,
+                    urcrypt_aes_siv_data *data,
+                    size_t data_length,
+                    uint8_t key[48],
+                    uint8_t iv[16],
+                    uint8_t *out)
+{
+  return _urcrypt_aes_siv_en(key, 48,
+      message, message_length, data, data_length, iv, out);
+}
+
+int
+urcrypt_aes_sivb_de(uint8_t *message,
+                    size_t message_length,
+                    urcrypt_aes_siv_data *data,
+                    size_t data_length,
+                    uint8_t key[48],
+                    uint8_t iv[16],
+                    uint8_t *out)
+{
+  return _urcrypt_aes_siv_de(key, 48,
+      message, message_length, data, data_length, iv, out);
+}
+
+int
+urcrypt_aes_sivc_en(uint8_t *message,
+                    size_t message_length,
+                    urcrypt_aes_siv_data *data,
+                    size_t data_length,
+                    uint8_t key[64],
+                    uint8_t iv[16],
+                    uint8_t *out)
+{
+  return _urcrypt_aes_siv_en(key, 64,
+      message, message_length, data, data_length, iv, out);
+}
+
+int
+urcrypt_aes_sivc_de(uint8_t *message,
+                    size_t message_length,
+                    urcrypt_aes_siv_data *data,
+                    size_t data_length,
+                    uint8_t key[64],
+                    uint8_t iv[16],
+                    uint8_t *out)
+{
+  return _urcrypt_aes_siv_de(key, 64,
       message, message_length, data, data_length, iv, out);
 }
 
