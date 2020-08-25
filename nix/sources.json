@@ -1,0 +1,122 @@
+{
+    "argon2": {
+        "branch": "master",
+        "description": "With argon2u. Based off https://github.com/P-H-C/phc-winner-argon2",
+        "homepage": "",
+        "owner": "urbit",
+        "repo": "argon2",
+        "rev": "4da94a611ee62bad87ab2b131ffda3bcc0723d9c",
+        "sha256": "0bqq1hg367l4jkb6cqhxlblpvdbwz3l586qsfakwzfd9wdvnm3yc",
+        "type": "tarball",
+        "url": "https://github.com/urbit/argon2/archive/4da94a611ee62bad87ab2b131ffda3bcc0723d9c.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "ed25519": {
+        "branch": "master",
+        "description": "Submodule included by Urbit",
+        "homepage": null,
+        "owner": "urbit",
+        "repo": "ed25519",
+        "rev": "76385f2ebbbc9580a9c236952d68d11d73a6135c",
+        "sha256": "0s1spif4s9lgcwcny3fl2fvpbw6acqn3s8r6qxnrmkd9icgyw4cp",
+        "type": "tarball",
+        "url": "https://github.com/urbit/ed25519/archive/76385f2ebbbc9580a9c236952d68d11d73a6135c.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "h2o": {
+        "branch": "urbit",
+        "description": "Submodule included by Urbit",
+        "homepage": null,
+        "owner": "urbit",
+        "repo": "h2o",
+        "rev": "0ed9ac70757a16ec45f91b8a347850d9699c3fb1",
+        "sha256": "16b5zbwdq371hhqga76dh7x4c0qr3xb5ah9r8hnm6rip460p6xpm",
+        "type": "tarball",
+        "url": "https://github.com/urbit/h2o/archive/0ed9ac70757a16ec45f91b8a347850d9699c3fb1.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "haskell-nix": {
+        "branch": "master",
+        "description": "Alternative Haskell Infrastructure for Nixpkgs",
+        "homepage": "https://input-output-hk.github.io/haskell.nix",
+        "owner": "input-output-hk",
+        "repo": "haskell.nix",
+        "rev": "0c6fdfbecc1e065437e6dd7e6c28e4cbe2200cdd",
+        "sha256": "016pi9iyijhndin2s576w31li2fkxi103a03l1a7cxas2nyyhidg",
+        "type": "tarball",
+        "url": "https://github.com/input-output-hk/haskell.nix/archive/0c6fdfbecc1e065437e6dd7e6c28e4cbe2200cdd.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "libscrypt": {
+        "branch": "master",
+        "description": null,
+        "homepage": null,
+        "owner": "urbit",
+        "repo": "libscrypt",
+        "rev": "029693ff1cbe4f69d3a2da87d0f4f034f92cc0c2",
+        "sha256": "17pcxypzjmmrvacw45cacvibm6mlr9ip30hy30l1appsnywx679n",
+        "type": "tarball",
+        "url": "https://github.com/urbit/libscrypt/archive/029693ff1cbe4f69d3a2da87d0f4f034f92cc0c2.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "libuv": {
+        "branch": "urbit",
+        "description": "Submodule included by Urbit",
+        "homepage": null,
+        "owner": "urbit",
+        "repo": "libuv",
+        "rev": "6429495dc9a80aaf1c243038b381451f12bc7dcf",
+        "sha256": "07m2m4v9mds0wihzjxjwswwfj3rnk2ycr3vgwfcrvnb5xjz7rs15",
+        "type": "tarball",
+        "url": "https://github.com/urbit/libuv/archive/6429495dc9a80aaf1c243038b381451f12bc7dcf.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "murmur3": {
+        "branch": "master",
+        "description": null,
+        "homepage": null,
+        "owner": "urbit",
+        "repo": "murmur3",
+        "rev": "71a75d57ca4e7ca0f7fc2fd84abd93595b0624ca",
+        "sha256": "0k7jq2nb4ad9ajkr6wc4w2yy2f2hkwm3nkbj2pklqgwsg6flxzwg",
+        "type": "tarball",
+        "url": "https://github.com/urbit/murmur3/archive/71a75d57ca4e7ca0f7fc2fd84abd93595b0624ca.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "niv": {
+        "branch": "master",
+        "description": "Easy dependency management for Nix projects",
+        "homepage": "https://github.com/nmattia/niv",
+        "owner": "nmattia",
+        "repo": "niv",
+        "rev": "89ae775e9dfc2571f912156dd2f8627e14d4d507",
+        "sha256": "0ssw6byyn79fpyzswi28s5b85x66xh4xsfhmcfl5mkdxxpmyy0ns",
+        "type": "tarball",
+        "url": "https://github.com/nmattia/niv/archive/89ae775e9dfc2571f912156dd2f8627e14d4d507.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "secp256k1": {
+        "branch": "master",
+        "description": "Optimized C library for EC operations on curve secp256k1",
+        "homepage": null,
+        "owner": "bitcoin-core",
+        "repo": "secp256k1",
+        "rev": "670cdd3f8be25f81472b2d16dcd228b0d24a5c45",
+        "sha256": "0ak2hrr0wznl5d9s905qwn5yds7k22i28d2jp957l4a8yf8cqv3s",
+        "type": "tarball",
+        "url": "https://github.com/bitcoin-core/secp256k1/archive/670cdd3f8be25f81472b2d16dcd228b0d24a5c45.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "softfloat3": {
+        "branch": "master",
+        "description": null,
+        "homepage": null,
+        "owner": "urbit",
+        "repo": "berkeley-softfloat-3",
+        "rev": "ec4c7e31b32e07aad80e52f65ff46ac6d6aad986",
+        "sha256": "1lz4bazbf7lns1xh8aam19c814a4n4czq5xsq5rmi9sgqw910339",
+        "type": "tarball",
+        "url": "https://github.com/urbit/berkeley-softfloat-3/archive/ec4c7e31b32e07aad80e52f65ff46ac6d6aad986.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    }
+}
