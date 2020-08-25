@@ -184,7 +184,7 @@ would be with the real arguments you're going to pass (another pointer
 indirection and an allocation).
 
 Doing linked list traversal is bad. Allocating inside your function calling
-convention is bad. On a quick test running the Ackerman function, the Urbit
+convention is bad. On a quick test running the Ackermann function, the Urbit
 v0.10.7 interpreter spent 45% of the runtime in the allocator or in reference
 count management. It had an L2 cache miss rate of approximately 25%. This is
 bonkers. We know it's slow, but why exactly is it slow?
@@ -197,6 +197,8 @@ nouns (which may affect other memory locations because refcount decrement is
 recursive), and performs 3 arbitrary tree walks. We do this even if we are
 calling a jet: since jet registration is a stateful side effect, we must
 perform all the tree math to first get the noun which has the jet registration.
+
+{{Ted says this may also do hashtable lookup on jet call.}}
 
 This isn't just inefficient, it's extremely hard to reason about. Actually
 producing the last paragraph took more than two hours of work (and I suspect I
@@ -437,7 +439,7 @@ via the `time` command:
 | 800x800    | -            | 50.9s   |
 | 900x900    | -            | 1m2.33s |
 
-Why is SKEW fast?
+Why is SKEW so much faster than Nock 4K?
 
 There's been half a century of research into how to make lambda calculus based
 systems fast. We're able to take the best, simplest tricks and just apply them
@@ -465,40 +467,48 @@ calls. We can sympathize with how Nock 4K used dynamic scoping as part of its
 strategy to implement serializable closures, but SKEW meets those serialization
 requirements in a different way which doesn't pay the dynamic lookup tax.
 
-Urbit has a history of using the [Ackerman function][ackerman] in its
+Urbit has a history of using the [Ackermann function][ackermann] in its
 documentation. Let's benchmark it on both systems, as this is a more direct
-comparison than the Mandelbrot example because Ackerman is mostly testing
+comparison than the Mandelbrot example because Ackermann is mostly testing
 function dispatch and both SKEW and Nock 4K have equivalent jets on natural
 numbers. Because I've heard Nock 4K's speed compared to Python several times,
 both by people who work for Tlon and don't, I've included the default python
 interpreter on my Mac.
 
-| (m, n)  | Urbit 0.10.7 | Python 2.7.10 | SKEW     |
-|---------|--------------|---------------|----------|
-| (3, 8)  | 3.25s        | 0.472s        | 0.376s   |
-| (3, 9)  | 11s          | 2.166s        | 1.289s   |
-| (3, 10) | 45.5s        | 9.825s        | 6.257s   |
-| (3, 11) | 2m48s        | 44.241s       | 30.358s  |
-| (4, 1)  | *44m58s      | (SIGSEGV)     | 9m58.68s |
+| (m, n)  | Urbit 0.10.7 | Python 2.7.10 | SKEW     | GHC 8.8.4 |
+|---------|--------------|---------------|----------|-----------|
+| (3, 8)  | 3.25s        | 0.472s        | 0.376s   | 0.134s    |
+| (3, 9)  | 11s          | 2.166s        | 1.289s   | 0.453s    |
+| (3, 10) | 45.5s        | 9.825s        | 6.257s   | 1.797s    |
+| (3, 11) | 2m48s        | 44.241s       | 30.358s  | 7.795s    |
+| (4, 1)  | *44m58s      | (SIGSEGV)     | 9m58.68s | 2m42.85s  |
 
 (* The time for (4,1) on Urbit was taken with the `-time` command instead of a
 stopwatch because I wasn't going to sit there with a stopwatch after I sat for
 10 minutes waiting for the SKEW result for (4,1). Time may be off by up to 15
 seconds. This does not matter at this order of magnitude.)
 
-SKEW is fast because function calls are fast. Nock 4K is slow because function
-calls are slow.
+We also include a Haskell version of the Ackermann function to show that
+there's still significant performance work that can be done. The current SKEW
+interpreter is extremely simple at about three to four thousand lines of
+Haskell; one of the design goals of a Nock is that you should be able to write
+your own interpreter and have at least decent performance and our prototype is
+within that complexity. But since we have none of Nock 4K's problematic memory
+access patterns and since SK is a common internal representation for functional
+programming environments, there is no reason we shouldn't be able to match the
+performance of GHC's generated code if actual engineering effort is spent on
+making a performant SKEW interpreter.
 
 And to emphasize, performance matters. Now that we're expecting Urbit to have
 [Providers][providers], or communities and companies which provide hosting
 services, lower costs per unit of computation mean either easier shared hosting
-for communities, or lower prices or high profits for companies. Nock 4K's
-profligate CPU and memory usages have costs born by the people who run
-Urbit. We must remember that people are very [perceptive to even small
-delays][googlespeed] and that this causes measurable differences in system
-usage and adoption; successful systems are fast.
+for communities, or lower prices for consumers, or high profits for
+companies. Nock 4K's profligate CPU and memory usages have costs born by the
+people who run Urbit. We must remember that people are very [perceptive to even
+small delays][googlespeed] and that this causes measurable differences in
+system usage and adoption; successful systems are fast.
 
-[ackerman]: https://urbit.org/docs/tutorials/hoon/ackermann/
+[ackermann]: https://urbit.org/docs/tutorials/hoon/ackermann/
 [providers]: https://urbit.org/blog/providers/
 [googlespeed]: https://ai.googleblog.com/2009/06/speed-matters.html
 
@@ -621,8 +631,8 @@ primops needed can be written as jets), while Nock 4K is tied to the semantics
 of its corresponding frontend language.
 
 And we can do this in a really short, simple interpreter. The code in the
-`urbit-uruk-rts` package for the SKEW runtime is about 2600 lines of code
-(including jets) with another 1500 shared in the `urbit-uruk` package, giving
+`urbit-uruk-rts` package for the SKEW runtime is about 2,600 lines of code
+(including jets) with another 1,500 shared in the `urbit-uruk` package, giving
 you a SKEW runtime with a full persistence engine. This is all fairly simple
 Haskell code and is within the capabilities of a motivated college student to
 implement with usable performance, and we believe there's a lot of room for
@@ -631,7 +641,7 @@ improvement if one relaxes the simplicity constraint.
 Compare this simplicity with the `nock/` directory in the reference Nock 4K
 interpreter: it is 11,200 lines of ANSI C which implements a complex bytecode
 interpreter and is still orders of magnitude slower. This does not include any
-jetting code. About 1900 lines of that is spent in the code that deals with
+jetting code. About 1,900 lines of that is spent in the code that deals with
 Nock 4K's side-effect based jet registration system, which is a major part of
 what makes implementing a Nock 4K interpreter hard, and which has no analogue
 in SKEW.
