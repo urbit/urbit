@@ -207,7 +207,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
                 <JoinScreen
                   api={api}
                   inbox={inbox}
-                  autoJoin={station}
+                  station={station}
                   chatSynced={chatSynced || {}}
                   {...props}
                 />
