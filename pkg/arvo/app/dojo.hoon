@@ -636,8 +636,8 @@
           :-  i=""
           t=(turn `wain`?~(r.hit ~ (to-wain:format q.u.r.hit)) trip)
       ==
-    ++  dy-show-type-noun
-      |=  a/type  ^-  tank
+  ++  dy-show-type-noun
+    |=  a/type  ^-  tank
     =-  >[-]<
     |-  ^-  $?  $%  {$atom @tas (unit @)}
                     {$cell _$ _$}
