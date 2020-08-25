@@ -1475,18 +1475,24 @@ _test_cue_spec(const char    *cap,
                size_t         len,
                const uint8_t *res)
 {
+  int     ret = 1;
   ur_nref out;
 
-  if ( ur_cue_good != ur_cue(r, len, res, &out) ) {
+  if ( !ur_cue_test(len, res) ) {
     fprintf(stderr, "\033[31mcue %s fail 1\033[0m\r\n", cap);
-    return 0;
-  }
-  else if ( ref != out ) {
-    fprintf(stderr, "\033[31mcue %s fail 2 ref=%" PRIu64 " out=%" PRIu64 " \033[0m\r\n", cap, ref, out);
-    return 0;
+    ret = 0;
   }
 
-  return 1;
+  if ( ur_cue_good != ur_cue(r, len, res, &out) ) {
+    fprintf(stderr, "\033[31mcue %s fail 2\033[0m\r\n", cap);
+    ret = 0;
+  }
+  else if ( ref != out ) {
+    fprintf(stderr, "\033[31mcue %s fail 3 ref=%" PRIu64 " out=%" PRIu64 " \033[0m\r\n", cap, ref, out);
+    ret = 0;
+  }
+
+  return ret;
 }
 
 static int
