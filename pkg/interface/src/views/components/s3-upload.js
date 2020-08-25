@@ -1,10 +1,16 @@
 import React, { Component } from 'react'
+import { Icon } from "@tlon/indigo-react";
+
 import S3Client from '~/logic/lib/s3';
+import { Spinner } from './Spinner';
 
 export class S3Upload extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      isUploading: false
+    };
     this.s3 = new S3Client();
     this.setCredentials(props.credentials, props.configuration);
     this.inputRef = React.createRef();
@@ -52,15 +58,22 @@ export class S3Upload extends Component {
     let file = files.item(0);
     let bucket = props.configuration.currentBucket;
 
-    this.s3.upload(bucket, file.name, file).then((data) => {
-      if (!data || !('Location' in data)) {
-        return;
-      }
-      this.props.uploadSuccess(data.Location);
-    }).catch((err) => {
-      console.error(err);
-      this.props.uploadError(err);
-    });
+    this.setState({ isUploading: true });
+
+    this.s3.upload(bucket, file.name, file)
+      .then((data) => {
+        if (!data || !('Location' in data)) {
+          return;
+        }
+        this.props.uploadSuccess(data.Location);
+      })
+      .catch((err) => {
+        console.error(err);
+        this.props.uploadError(err);
+      })
+      .finally(() => {
+        this.setState({ isUploading: false });
+      });
   }
 
   onClick() {
@@ -69,25 +82,39 @@ export class S3Upload extends Component {
   }
 
   render() {
-    const { props } = this;
-    if (!this.isReady(props.credentials, props.configuration)) {
+    const {
+      credentials,
+      configuration,
+      className,
+      accept = '*',
+      render = false,
+    } = this.props;
+    if (!this.isReady(credentials, configuration)) {
       return <div></div>;
     } else {
-      let classes = !!props.className ?
-        "pointer " + props.className : "pointer";
+      let classes = !!className
+        ? "pointer " + className
+        : "pointer";
+      const display = render
+        ? render()
+        : <Icon
+          display="inline-block"
+          icon='ArrowNorth'
+        />;
       return (
-        <div className={classes}>
-          <input className="dn"
-                 type="file"
-                 id="fileElement"
-                 ref={this.inputRef}
-                 accept={props.accept}
-                 onChange={this.onChange.bind(this)} />
-          <img className="invert-d"
-               src="/~landscape/img/ImageUpload.png"
-               width={props.size}
-               height={props.size}
-               onClick={this.onClick.bind(this)} />
+        <div>
+          <input
+            className="dn"
+            type="file"
+            id="fileElement"
+            ref={this.inputRef}
+            accept={accept}
+            onChange={this.onChange.bind(this)} />
+          {this.state.isUploading
+            ? <Spinner awaiting={true} classes={className} />
+            : <span className={`pointer ${className}`} onClick={this.onClick.bind(this)}>{display}</span>
+          }
+          
         </div>
       );
     }

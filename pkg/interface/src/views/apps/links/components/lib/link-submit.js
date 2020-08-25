@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { S3Upload } from '~/views/components/s3-upload';
 import { Spinner } from '~/views/components/Spinner';
-import { startsWith } from 'lodash';
+import { Icon } from "@tlon/indigo-react";
 
 export class LinkSubmit extends Component {
   constructor() {
@@ -83,13 +83,9 @@ export class LinkSubmit extends Component {
 
     return (
       <div className={'relative ba br1 w-100 mb6 ' + focus}>
-        <textarea
-          className="pl2 bg-gray0-d white-d w-100 f8"
-          style={{
-            resize: 'none',
-            height: 40,
-            paddingTop: 10
-          }}
+        <input
+          type="url"
+          className="pl2 bg-gray0-d white-d w-100 f8 mt2 pt2"
           placeholder="Paste link here"
           onChange={this.setLinkValue}
           onBlur={() => this.setState({ submitFocus: false })}
@@ -110,11 +106,11 @@ export class LinkSubmit extends Component {
           credentials={this.props.s3.credentials}
           uploadSuccess={this.uploadSuccess.bind(this)}
           uploadError={this.uploadError.bind(this)}
-          size={16}
-          accept="*"
+          render={() => <span className="green2 f8">Upload File</span>}
         />
-        <textarea
-          className="pl2 bg-gray0-d white-d w-100 f8"
+        <input
+          type="text"
+          className="pl2 bg-gray0-d white-d w-100 f8 mb2 pb2"
           style={{
             resize: 'none',
             height: 40,

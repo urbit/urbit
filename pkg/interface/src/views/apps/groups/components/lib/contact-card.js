@@ -492,8 +492,14 @@ export class ContactCard extends Component {
               credentials={props.s3.credentials}
               uploadSuccess={this.uploadSuccess.bind(this)}
               uploadError={this.uploadError.bind(this)}
-              size={32}
               accept="image/*"
+              render={() => (
+                <img
+                  className="invert-d"
+                  src="/~chat/img/ImageUpload.png"
+                  width="32"
+                  height="32"
+                />)}
             />
           </span>
           <EditElement
