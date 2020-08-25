@@ -1365,6 +1365,7 @@
     |^
     |=  [updated=? =yoki =rang]
     ^+  ..park
+    =/  abort  ..park
     =:  hut.ran  (~(uni by hut.rang) hut.ran)
         lat.ran  (~(uni by lat.rang) lat.ran)
       ==
@@ -1428,6 +1429,10 @@
         %|  p.value
         %&  lobe:(~(got by change-cages) path)
       ==
+    ::  if we didn't change the data and it's not a merge commit, abort
+    ::
+    ?:  &(?=([@ ~] p.p.yoki) =(data old-lobes))
+      abort
     =/  =yaki
       ?-  -.yoki
         %&  (make-yaki p.p.yoki data now)
