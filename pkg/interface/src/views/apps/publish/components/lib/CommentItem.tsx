@@ -61,7 +61,7 @@ export function CommentItem(props: CommentItemProps) {
         <Author
           showImage
           contacts={contacts}
-          ship={ship}
+          ship={commentData?.author}
           date={commentData["date-created"]}
         >
           {!disabled && !editing && (
