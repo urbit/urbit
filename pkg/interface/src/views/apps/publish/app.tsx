@@ -137,10 +137,6 @@ export default function PublishApp(props: PublishAppProps) {
                 bookGroupPath in contacts ? contacts[bookGroupPath] : {};
 
               const notebook = notebooks?.[ship]?.[book];
-              if(!notebook) {
-                return null
-              }
-
                 return (
                   <NotebookRoutes
                     notebook={notebook}
