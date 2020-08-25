@@ -38,6 +38,7 @@ let
       bash ./configure
     '';
 
+    # FIXME: (brendan): Why is -j8 hardcoded - causes problems on CI agents.
     installPhase = ''
       make all -j8
       make test
