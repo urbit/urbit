@@ -78,6 +78,8 @@ export default class PublishResponseReducer<S extends PublishState> {
           json.data.notebook["subscribers-group-path"];
         state.notebooks[json.host][json.notebook]["writers-group-path"] =
           json.data.notebook["writers-group-path"];
+        state.notebooks[json.host][json.notebook].about = 
+          json.data.notebook.about;
         if (state.notebooks[json.host][json.notebook].notes) {
           for (var key in json.data.notebook.notes) {
             let oldNote = state.notebooks[json.host][json.notebook].notes[key];

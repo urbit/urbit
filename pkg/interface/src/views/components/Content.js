@@ -6,6 +6,7 @@ import { TwoPaneApp } from './TwoPaneApp';
 import LaunchApp from '../apps/launch/app';
 import DojoApp from '../apps/dojo/app';
 import GroupsApp from '../apps/groups/app';
+import ErrorComponent from './Error';
 
 
 export const Container = styled.div`

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { NotebookItem } from './notebook-item';
+import { Box, Text } from "@tlon/indigo-react";
+import { NotebookItem } from './NotebookItem';
 
 export class GroupItem extends Component {
   render() {
@@ -33,10 +34,10 @@ export class GroupItem extends Component {
       );
     });
     return (
-      <div className={first}>
-      <p className="f9 ph4 pb2 fw6 gray3">{title}</p>
-      {notebookItems}
-      </div>
+      <Box className={first}>
+        <Box fontSize={0} px={3} fontWeight="700" pb={2} color="lightGray">{title}</Box>
+        {notebookItems}
+      </Box>
     );
   }
 }
