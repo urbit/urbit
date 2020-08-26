@@ -164,10 +164,7 @@
           (fact-group-update:cc wire !<(update:group-store q.cage.sign))
         [cards this]
       ::
-          %invite-update
-        =^  cards  state
-          (fact-invite-update:cc wire !<(invite-update q.cage.sign))
-        [cards this]
+        %invite-update  [~ this]
       ==
     ==
   ::
@@ -480,17 +477,6 @@
     =/  act=invite-action  [%invite /contacts (shaf %msg-uid eny.bol) invite]
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   --
-::
-++  fact-invite-update
-  |=  [wir=wire fact=invite-update]
-  ^-  (quip card _state)
-  ?+  -.fact  [~ state]
-      %accepted
-    =/  rid=resource
-      (de-path:resource path.invite.fact)
-    :_  state
-    ~[(contact-view-poke %join rid)]
-  ==
 ::
 ++  group-hook-poke
   |=  =action:group-hook

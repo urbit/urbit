@@ -15,7 +15,7 @@ const MARKDOWN_CONFIG = {
   name: 'markdown',
   tokenTypeOverrides: {
     header: 'presentation',
-    quote: 'presentation',
+    quote: 'quote',
     list1: 'presentation',
     list2: 'presentation',
     list3: 'presentation',
@@ -121,16 +121,18 @@ export default class ChatEditor extends Component {
 
     return (
       <div
-        className="chat fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center"
-        style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}
-      >
+        className={
+          'chat fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center' +
+          (props.inCodeMode ? ' code' : '')
+        }
+        style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}>
         <CodeEditor
           value={props.message}
           options={options}
           onChange={(e, d, v) => this.messageChange(e, d, v)}
           editorDidMount={(editor) => {
             this.editor = editor;
-            if (!(BROWSER_REGEX.test(navigator.userAgent))) {
+            if (!BROWSER_REGEX.test(navigator.userAgent)) {
               editor.focus();
             }
           }}

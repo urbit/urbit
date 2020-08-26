@@ -1,14 +1,14 @@
 import React from 'react';
 
 import { useLocation } from 'react-router-dom';
-import { Box, Text, Row } from '@tlon/indigo-react';
-
+import { Row, Box, Text, Icon } from '@tlon/indigo-react';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
-
 import { Sigil } from '~/logic/lib/sigil';
 
-function StatusBar(props) {
+
+const StatusBar = (props) => {
+
   const location = useLocation();
   const atHome = Boolean(location.pathname === '/');
 
@@ -70,7 +70,6 @@ function StatusBar(props) {
         />
       </Row>
       <Row justifyContent="flex-end" collapse>
-
         <StatusBarItem onClick={() => props.history.push('/~profile')}>
           <Sigil ship={props.ship} size={24} color={"#000000"} classes="dib mix-blend-diff" />
           <Text ml={2} display={["none", "inline"]} fontFamily="mono">{props.ship}</Text>

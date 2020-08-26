@@ -1,8 +1,22 @@
 import React, { Component } from 'react';
 import { GroupView } from '~/views/components/Group';
 import { resourceFromPath } from '~/logic/lib/group';
+import {Notebook} from '~/types/publish-update';
+import GlobalApi from '~/logic/api/global';
+import {Groups} from '~/types/group-update';
+import {Associations} from '~/types/metadata-update';
+import {Rolodex} from '~/types/contact-update';
 
-export class Subscribers extends Component {
+interface SubscribersProps {
+  notebook: Notebook;
+  api: GlobalApi;
+  groups: Groups;
+  book: string;
+  associations: Associations;
+  contacts: Rolodex;
+}
+
+export class Subscribers extends Component<SubscribersProps> {
   constructor(props) {
     super(props);
     this.redirect = this.redirect.bind(this);
@@ -57,6 +71,7 @@ export class Subscribers extends Component {
         addDesc: 'Allow user to write to this notebook'
       },
     ];
+    
 
     return (
       <div>

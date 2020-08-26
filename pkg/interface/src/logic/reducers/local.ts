@@ -3,8 +3,7 @@ import { StoreState } from '~/store/type';
 import { Cage } from '~/types/cage';
 import { LocalUpdate, BackgroundConfig } from '~/types/local-update';
 
-
-type LocalState = Pick<StoreState, 'sidebarShown' | 'omniboxShown' | 'baseHash' | 'hideAvatars' | 'hideNicknames' | 'background' | 'dark'>;
+type LocalState = Pick<StoreState, 'sidebarShown' | 'omniboxShown' | 'baseHash' | 'hideAvatars' | 'hideNicknames' | 'background' | 'dark' | 'suspendedFocus'>;
 
 export default class LocalReducer<S extends LocalState> {
     rehydrate(state: S) {
@@ -43,6 +42,13 @@ export default class LocalReducer<S extends LocalState> {
     omniboxShown(obj: LocalUpdate, state: S) {
       if ('omniboxShown' in obj) {
           state.omniboxShown = !state.omniboxShown;
+          if (state.suspendedFocus) {
+            state.suspendedFocus.focus();
+            state.suspendedFocus = null;
+          } else {
+            state.suspendedFocus = document.activeElement;
+            document.activeElement?.blur();
+          }
       }
     }
 

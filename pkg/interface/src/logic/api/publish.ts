@@ -1,6 +1,7 @@
 import BaseApi from './base';
+
 import { PublishResponse } from '~/types/publish-response';
-import { PatpNoSig } from '~/types/noun';
+import { PatpNoSig, Path } from '~/types/noun';
 import { BookId, NoteId } from '~/types/publish-update';
 
 export default class PublishApi extends BaseApi {
@@ -80,5 +81,105 @@ export default class PublishApi extends BaseApi {
   publishAction(act: any) {
     return this.action('publish', 'publish-action', act);
   }
+
+  newBook(bookId: string, title: string, description: string, group?: Path) {
+    const groupInfo = group ? { 'group-path': group,
+      invitees: [],
+      'use-preexisting': true,
+      'make-managed': true
+    } : {
+      'group-path': `/ship/~${window.ship}/${bookId}`,
+      invitees: [],
+      'use-preexisting': false,
+      'make-managed': false
+    };
+    return this.publishAction({
+      "new-book": {
+        book: bookId,
+        title: title,
+        about: description,
+        coms: true,
+        group: groupInfo
+      }
+    });
+  }
+
+  editBook(bookId: string, title: string, description: string, coms: boolean) {
+    return this.publishAction({
+      "edit-book": {
+        book: bookId,
+        title: title,
+        about: description,
+        coms,
+        group: null
+      }
+    });
+  }
+
+  delBook(book: string) {
+    return this.publishAction({
+      "del-book": {
+        book
+      }
+    });
+  }
+
+  newNote(who: PatpNoSig, book: string, note: string, title: string, body: string) {
+    return this.publishAction({
+      'new-note': {
+        who,
+        book,
+        note,
+        title,
+        body
+      }
+    });
+  }
+
+  editNote(who: PatpNoSig, book: string, note: string, title: string, body: string) {
+    return this.publishAction({
+      'edit-note': {
+        who,
+        book,
+        note,
+        title,
+        body
+      }
+    });
+  }
+
+  delNote(who: PatpNoSig, book: string, note: string) {
+    return this.publishAction({
+      'del-note': {
+        who,
+        book,
+        note
+      }
+    });
+  }
+
+  updateComment(who: PatpNoSig, book: string, note: string, comment: Path, body: string) {
+    return this.publishAction({ 
+      'edit-comment': {
+        who,
+        book,
+        note,
+        comment,
+        body
+      }
+    });
+  }
+
+  deleteComment(who: PatpNoSig, book: string, note: string, comment: Path ) {
+    return this.publishAction({
+      "del-comment": {
+        who,
+        book,
+        note,
+        comment
+      },
+    });
+  }
+
 }
 
