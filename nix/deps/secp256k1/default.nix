@@ -5,21 +5,9 @@ pkgs.stdenv.mkDerivation {
   src     = pkgs.sources.secp256k1;
   builder = ./builder.sh;
 
-  configureFlags = [
-    "--disable-shared"
-    "--enable-module-recovery"
-  ];
+  nativeBuildInputs = [ pkgs.autoconf pkgs.automake pkgs.libtool pkgs.m4 ];
+  buildInputs       = [ pkgs.gmp ];
 
-  buildInputs = [
-    pkgs.gmp
-  ];
-
-  nativeBuildInputs = [
-    pkgs.autoconf
-    pkgs.automake
-    pkgs.libtool
-    pkgs.m4
-  ];
-
-  CFLAGS = "-fPIC";
+  configureFlags = ["--disable-shared" "--enable-module-recovery" ];
+  CFLAGS         = "-fPIC";
 }

@@ -2,15 +2,17 @@
 
 let
 
-  nixpkgs   = pkgs;
   nixcrpkgs = import ./nixcrpkgs.nix { inherit pkgs; };
-  crossdeps = crossenv: import ./crossdeps.nix { inherit crossenv; };
 
-  release =
-    env_name: env: {
-      inherit env env_name;
-      deps = crossdeps env;
-    };
+  pills = import ./deps/pills { inherit pkgs; };
+
+  crossdeps = crossenv:
+    import ./crossdeps.nix { inherit crossenv pills; };
+
+  release = env_name: env: {
+    inherit env env_name;
+    deps = crossdeps env;
+  };
 
   linux64 = release "linux64" nixcrpkgs.linux64;
   darwin  = release "darwin"  nixcrpkgs.mac;

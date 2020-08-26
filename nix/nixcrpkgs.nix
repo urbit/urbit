@@ -9,4 +9,7 @@ let
 
 in
 
-import ./nixcrpkgs/top.nix { inherit osx_sdk nixpkgs; }
+import ./nixcrpkgs/top.nix {
+  inherit osx_sdk;
+  nixpkgs = pkgs;
+}

@@ -1,4 +1,4 @@
-{ pkgs }:
+{ pkgs}:
 
 pkgs.stdenv.mkDerivation {
   name    = "ed25519";

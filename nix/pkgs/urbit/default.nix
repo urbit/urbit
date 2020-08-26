@@ -51,7 +51,7 @@ let
     # See https://github.com/NixOS/nixpkgs/issues/18995
     hardeningDisable = if debug then [ "all" ] else [];
 
-    CFLAGS           = "-O3 -g -Werror";
+    CFLAGS           = if debug then "-O0 -g" else "-O3 -g -Werror";
     MEMORY_DEBUG     = debug;
     CPU_DEBUG        = debug;
     EVENT_TIME_DEBUG = false;

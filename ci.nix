@@ -41,11 +41,10 @@ let
     crossSystem = native.lib.systems.examples.musl64;
   };
 
-  default = import ./default.nix { pkgs = native; };
+  release = import ./default.nix { pkgs = musl64; };
 
 in
 
-default // {
- native = haskellPackages native;
- musl64 = haskellPackages musl64;
+release // {
+  haskell = haskellPackages musl64;
 }
