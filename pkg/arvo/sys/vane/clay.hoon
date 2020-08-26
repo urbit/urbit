@@ -1373,12 +1373,12 @@
         %&  q.p.yoki
         %|  (~(run by q.p.yoki) |=(=lobe |+lobe))
       ==
-    =/  old-lobes=(map path lobe)
+    =/  old-yaki
       ?:  =(0 let.dom)
-        ~
-      q:(aeon-to-yaki:ze let.dom)
+        *yaki
+      (aeon-to-yaki:ze let.dom)
     =/  [deletes=(set path) changes=(map path (each page lobe))]
-      (get-changes old-lobes new-data)
+      (get-changes q.old-yaki new-data)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
     ::
     ::  promote ford cache
@@ -1391,13 +1391,6 @@
             |(!=(~ sys-changes) !=(~ (need-vane-update changes)))
         ==
       (sys-update yoki new-data changes)
-    =.  ..park
-      %-  emil
-      =/  changed=(set path)  ~(key by changes)
-      =/  existed=(set path)  ~(key by old-lobes)
-      %^  print  deletes
-        (~(int in changed) existed)
-      (~(dif in changed) existed)
     ::  clear caches if zuse reloaded
     ::
     =/  is-zuse-new=?  !=(~ sys-changes)
@@ -1408,7 +1401,7 @@
     =.  fer.dom  `(build-reef fer.dom ~(key by changes) new-data)
     =?  ank.dom  is-zuse-new  *ankh
     =?  changes  is-zuse-new
-      (changes-for-upgrade old-lobes deletes changes)
+      (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  =args:ford:fusion
       [zuse:(need fer.dom) ank.dom deletes changes lat.ran fod.dom]
@@ -1428,6 +1421,12 @@
         %|  p.value
         %&  lobe:(~(got by change-cages) path)
       ==
+    ::  if we didn't change the data and it's not a merge commit, abort
+    ::
+    ::  very important to keep all permanent changes below this point
+    ::
+    ?:  &(=([r.old-yaki ~] p.p.yoki) =(data q.old-yaki))
+      ..park
     =/  =yaki
       ?-  -.yoki
         %&  (make-yaki p.p.yoki data now)
@@ -1450,6 +1449,7 @@
       (checkout-mime args deletes ~(key by changes))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
+    =.  ..park  (emil (print q.old-yaki data))
     ::
     wake:(ergo mim)
     ::
@@ -1739,8 +1739,14 @@
     ::  Print notification to console
     ::
     ++  print
-      |=  [deletes=(set path) changes=(set path) additions=(set path)]
+      |=  [old=(map path lobe) new=(map path lobe)]
       ^-  (list move)
+      =/  [deletes=(set path) upserts=(map path (each page lobe))]
+        (get-changes old (~(run by new) |=(=lobe |+lobe)))
+      =/  upsert-set  ~(key by upserts)
+      =/  old-set     ~(key by old)
+      =/  changes=(set path)    (~(int in upsert-set) old-set)
+      =/  additions=(set path)  (~(dif in upsert-set) old-set)
       ?~  hun
         ~
       ?:  =(0 let.dom)
