@@ -87,337 +87,30 @@ ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt)
   return j.bsw.bits;
 }
 
-#define CUE_HEAD32 0xffffffff
-#define CUE_HEAD64 0xffffffffffffffffULL
-
 /*
 **  stack frame for recording head vs tail iteration
 **
-**    $?  [CUE_HEAD_NN bits=@]
+**    $?  [CUE_HEAD bits=@]
 **    [hed=* bits=@]
 */
-typedef struct _cue32_frame_s {
-  uint32_t  ref;
-  uint64_t bits;
-} _cue32_frame_t;
 
-typedef struct _cue64_frame_s {
+#define CUE_HEAD 0xffffffffffffffffULL
+
+typedef struct _cue_frame_s {
   uint64_t  ref;
   uint64_t bits;
-} _cue64_frame_t;
+} _cue_frame_t;
 
-typedef struct _cue32_stack_s {
-  uint32_t     prev;
-  uint32_t     size;
-  uint32_t     fill;
-  _cue32_frame_t* f;
-} _cue32_stack_t;
-
-typedef struct _cue64_stack_s {
-  uint32_t     prev;
-  uint32_t     size;
-  uint32_t     fill;
-  _cue64_frame_t* f;
-} _cue64_stack_t;
-
-static inline ur_cue_res_e
-_cue_walk32_next(ur_root_t      *r,
-                 _cue32_stack_t *s,
-                 ur_bsr_t     *bsr,
-                 ur_dict32_t *dict,
-                 ur_coin32_f  coin,
-                 uint32_t     *out)
-{
-  while ( 1 ) {
-    uint64_t len, bits = bsr->bits;
-    ur_cue_tag_e   tag;
-    ur_cue_res_e   res;
-
-    if ( ur_cue_good != (res = ur_bsr_tag(bsr, &tag)) ) {
-      return res;
-    }
-
-    switch ( tag ) {
-      default: assert(0);
-
-      case ur_jam_cell: {
-        //  reallocate the stack if full
-        //
-        if ( s->fill == s->size ) {
-          uint32_t next = s->prev + s->size;
-          s->f = realloc(s->f, next * sizeof(*s->f));
-          s->prev = s->size;
-          s->size = next;
-        }
-
-        //  save a head-frame and read the head from the stream
-        //
-        {
-          _cue32_frame_t* f = &(s->f[s->fill++]);
-          f->ref  = CUE_HEAD32;
-          f->bits = bits;
-        }
-        continue;
-      }
-
-      case ur_jam_back: {
-        if ( ur_cue_good != (res = ur_bsr_rub_len(bsr, &len)) ) {
-          return res;
-        }
-        else if ( 62 < len ) {
-          return ur_cue_meme;
-        }
-        else {
-          uint64_t bak = ur_bsr64_any(bsr, len);
-
-          //  XX distinguish bad backref?
-          //
-          return ur_dict32_get(r, dict, bak, out)
-               ? ur_cue_good
-               : ur_cue_gone;
-        }
-      }
-
-      case ur_jam_atom: {
-        if ( ur_cue_good != (res = ur_bsr_rub_len(bsr, &len)) ) {
-          return res;
-        }
-
-        *out = coin(r, bsr, len);
-        ur_dict32_put(r, dict, bits, *out);
-        return ur_cue_good;
-      }
-    }
-  }
-}
-
-ur_cue_res_e
-ur_cue_walk32_unsafe(ur_root_t       *r,
-                     ur_dict32_t  *dict,
-                     uint64_t       len,
-                     const uint8_t *byt,
-                     uint32_t      *out,
-                     ur_coin32_f   coin,
-                     ur_cons32_f   cons)
-{
-  ur_cue_res_e res;
-  uint32_t     ref;
-  ur_bsr_t     bsr = {0};
-  _cue32_stack_t s = {0};
-
-  //  init bitstream-reader
-  //
-  bsr.left  = len;
-  bsr.bytes = byt;
-
-  //  setup stack
-  //
-  s.prev = ur_fib10;
-  s.size = ur_fib11;
-  s.f = malloc(s.size * sizeof(*s.f));
-
-  //  advance into stream
-  //
-  res = _cue_walk32_next(r, &s, &bsr, dict, coin, &ref);
-
-  //  process result
-  //
-  while ( s.fill && (ur_cue_good == res) ) {
-    //  peek at the top of the stack
-    //
-    _cue32_frame_t *f = &(s.f[s.fill - 1]);
-
-    //  f is a head-frame; stash result and read the tail from the stream
-    //
-    if ( CUE_HEAD32 == f->ref ) {
-      f->ref = ref;
-      res    = _cue_walk32_next(r, &s, &bsr, dict, coin, &ref);
-    }
-    //  f is a tail-frame; pop the stack and continue
-    //
-    else {
-      ref = cons(r, f->ref, ref);
-      ur_dict32_put(r, dict, f->bits, ref);
-      s.fill--;
-    }
-  }
-
-  free(s.f);
-
-  if ( ur_cue_good == res ) {
-    *out = ref;
-  }
-  return res;
-}
-
-ur_cue_res_e
-ur_cue_walk32(ur_root_t       *r,
-              uint64_t       len,
-              const uint8_t *byt,
-              uint32_t      *out,
-              ur_coin32_f   coin,
-              ur_cons32_f   cons)
-{
-  ur_dict32_t dict = {0};
-  ur_dict32_grow(r, &dict, ur_fib11, ur_fib12);
-  ur_cue_res_e res = ur_cue_walk32_unsafe(r, &dict, len,
-                                          byt, out, coin, cons);
-
-  ur_dict_free((ur_dict_t*)&dict);
-  return res;
-}
-
-static inline ur_cue_res_e
-_cue_walk64_next(ur_root_t      *r,
-                 _cue64_stack_t *s,
-                 ur_bsr_t     *bsr,
-                 ur_dict64_t *dict,
-                 ur_coin64_f  coin,
-                 uint64_t     *out)
-{
-  while ( 1 ) {
-    uint64_t len, bits = bsr->bits;
-    ur_cue_tag_e   tag;
-    ur_cue_res_e   res;
-
-    if ( ur_cue_good != (res = ur_bsr_tag(bsr, &tag)) ) {
-      return res;
-    }
-
-    switch ( tag ) {
-      default: assert(0);
-
-      case ur_jam_cell: {
-        //  reallocate the stack if full
-        //
-        if ( s->fill == s->size ) {
-          uint32_t next = s->prev + s->size;
-          s->f = realloc(s->f, next * sizeof(*s->f));
-          s->prev = s->size;
-          s->size = next;
-        }
-
-        //  save a head-frame and read the head from the stream
-        //
-        {
-          _cue64_frame_t* f = &(s->f[s->fill++]);
-          f->ref  = CUE_HEAD64;
-          f->bits = bits;
-        }
-        continue;
-      }
-
-      case ur_jam_back: {
-        if ( ur_cue_good != (res = ur_bsr_rub_len(bsr, &len)) ) {
-          return res;
-        }
-        else if ( 62 < len ) {
-          return ur_cue_meme;
-        }
-        else {
-          uint64_t bak = ur_bsr64_any(bsr, len);
-
-          //  XX distinguish bad backref?
-          //
-          return ur_dict64_get(r, dict, bak, out)
-               ? ur_cue_good
-               : ur_cue_gone;
-        }
-      }
-
-      case ur_jam_atom: {
-        if ( ur_cue_good != (res = ur_bsr_rub_len(bsr, &len)) ) {
-          return res;
-        }
-
-        *out = coin(r, bsr, len);
-        ur_dict64_put(r, dict, bits, *out);
-        return ur_cue_good;
-      }
-    }
-  }
-}
-
-ur_cue_res_e
-ur_cue_walk64_unsafe(ur_root_t       *r,
-                     ur_dict64_t  *dict,
-                     uint64_t       len,
-                     const uint8_t *byt,
-                     uint64_t      *out,
-                     ur_coin64_f   coin,
-                     ur_cons64_f   cons)
-{
-  ur_cue_res_e res;
-  uint64_t     ref;
-  ur_bsr_t     bsr = {0};
-  _cue64_stack_t s = {0};
-
-  //  init bitstream-reader
-  //
-  bsr.left  = len;
-  bsr.bytes = byt;
-
-  //  setup stack
-  //
-  s.prev = ur_fib10;
-  s.size = ur_fib11;
-  s.f = malloc(s.size * sizeof(*s.f));
-
-  //  advance into stream
-  //
-  res = _cue_walk64_next(r, &s, &bsr, dict, coin, &ref);
-
-  //  process result
-  //
-  while ( s.fill && (ur_cue_good == res) ) {
-    //  peek at the top of the stack
-    //
-    _cue64_frame_t *f = &(s.f[s.fill - 1]);
-
-    //  f is a head-frame; stash result and read the tail from the stream
-    //
-    if ( CUE_HEAD64 == f->ref ) {
-      f->ref = ref;
-      res    = _cue_walk64_next(r, &s, &bsr, dict, coin, &ref);
-    }
-    //  f is a tail-frame; pop the stack and continue
-    //
-    else {
-      ref = cons(r, f->ref, ref);
-      ur_dict64_put(r, dict, f->bits, ref);
-      s.fill--;
-    }
-  }
-
-  free(s.f);
-
-  if ( ur_cue_good == res ) {
-    *out = ref;
-  }
-  return res;
-}
-
-ur_cue_res_e
-ur_cue_walk64(ur_root_t       *r,
-              uint64_t       len,
-              const uint8_t *byt,
-              uint64_t      *out,
-              ur_coin64_f   coin,
-              ur_cons64_f   cons)
-{
-  ur_dict64_t dict = {0};
-  ur_dict64_grow(r, &dict, ur_fib11, ur_fib12);
-
-  ur_cue_res_e res = ur_cue_walk64_unsafe(r, &dict, len,
-                                          byt, out, coin, cons);
-
-  ur_dict_free((ur_dict_t*)&dict);
-  return res;
-}
+typedef struct _cue_stack_s {
+  uint32_t   prev;
+  uint32_t   size;
+  uint32_t   fill;
+  _cue_frame_t* f;
+} _cue_stack_t;
 
 static inline ur_cue_res_e
 _cue_next(ur_root_t      *r,
-          _cue64_stack_t *s,
+          _cue_stack_t   *s,
           ur_bsr_t     *bsr,
           ur_dict64_t *dict,
           ur_nref      *out)
@@ -447,8 +140,8 @@ _cue_next(ur_root_t      *r,
         //  save a head-frame and read the head from the stream
         //
         {
-          _cue64_frame_t* f = &(s->f[s->fill++]);
-          f->ref  = CUE_HEAD64;
+          _cue_frame_t* f = &(s->f[s->fill++]);
+          f->ref  = CUE_HEAD;
           f->bits = bits;
         }
         continue;
@@ -511,7 +204,7 @@ ur_cue_unsafe(ur_root_t       *r,
               ur_nref       *out)
 {
   ur_bsr_t     bsr = {0};
-  _cue64_stack_t s = {0};
+  _cue_stack_t   s = {0};
   ur_cue_res_e res;
   ur_nref      ref;
 
@@ -535,11 +228,11 @@ ur_cue_unsafe(ur_root_t       *r,
   while ( s.fill && (ur_cue_good == res) ) {
     //  peek at the top of the stack
     //
-    _cue64_frame_t *f = &(s.f[s.fill - 1]);
+    _cue_frame_t *f = &(s.f[s.fill - 1]);
 
     //  f is a head-frame; stash result and read the tail from the stream
     //
-    if ( CUE_HEAD64 == f->ref ) {
+    if ( CUE_HEAD == f->ref ) {
       f->ref = ref;
       res    = _cue_next(r, &s, &bsr, dict, &ref);
     }
@@ -574,6 +267,13 @@ ur_cue(ur_root_t       *r,
   ur_dict_free((ur_dict_t*)&dict);
   return res;
 }
+
+/*
+**  stack frame for recording head vs tail iteration
+**
+**    [hed=? bits=@]
+**
+*/
 
 typedef struct _cue_test_frame_s {
   ur_bool_t tal;
