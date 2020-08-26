@@ -8,6 +8,8 @@
 #define ur_fib10          55
 #define ur_fib11          89
 #define ur_fib12         144
+#define ur_fib33     3524578
+#define ur_fib34     5702887
 
 typedef uint8_t  ur_bool_t;
 
