@@ -11,6 +11,8 @@
 #define ur_nref_tag(ref)       ( ref >> 62 )
 #define ur_nref_idx(ref)       ur_mask_62(ref)
 
+#define ur_pail_max            10
+
 typedef uint32_t ur_mug;
 typedef uint64_t ur_nref;
 typedef enum {
@@ -26,8 +28,8 @@ typedef struct ur_nvec_s {
 
 typedef struct ur_pail32_s {
   uint8_t  fill;
-  ur_nref  refs[10];
-  uint32_t vals[10];
+  ur_nref  refs[ur_pail_max];
+  uint32_t vals[ur_pail_max];
 } ur_pail32_t;
 
 typedef struct ur_dict32_s {
@@ -38,8 +40,8 @@ typedef struct ur_dict32_s {
 
 typedef struct ur_pail64_s {
   uint8_t  fill;
-  ur_nref  refs[10];
-  uint64_t vals[10];
+  ur_nref  refs[ur_pail_max];
+  uint64_t vals[ur_pail_max];
 } ur_pail64_t;
 
 typedef struct ur_dict64_s {
@@ -50,7 +52,7 @@ typedef struct ur_dict64_s {
 
 typedef struct ur_pail_s {
   uint8_t  fill;
-  ur_nref  refs[10];
+  ur_nref  refs[ur_pail_max];
 } ur_pail_t;
 
 typedef struct ur_dict_s {
@@ -100,7 +102,19 @@ void
 ur_dict64_grow(ur_root_t *r, ur_dict64_t *dict, uint64_t prev, uint64_t size);
 
 void
+ur_dict_grow(ur_root_t *r, ur_dict_t *dict, uint64_t prev, uint64_t size);
+
+ur_bool_t
+ur_dict_get(ur_root_t *r, ur_dict_t *dict, ur_nref ref);
+
+void
+ur_dict_put(ur_root_t *r, ur_dict_t *dict, ur_nref ref);
+
+void
 ur_dict_free(ur_dict_t *dict);
+
+void
+ur_dict_wipe(ur_dict_t *dict);
 
 ur_bool_t
 ur_dict64_get(ur_root_t *r, ur_dict64_t *dict, ur_nref ref, uint64_t *out);
