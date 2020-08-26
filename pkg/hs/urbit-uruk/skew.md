@@ -189,21 +189,20 @@ v0.10.7 interpreter spent 45% of the runtime in the allocator or in reference
 count management. It had an L2 cache miss rate of approximately 25%. This is
 bonkers. We know it's slow, but why exactly is it slow?
 
-When you count up the work that goes into dispatching a single function call,
-the current nock interpreter does the stack and program counter management
-overhead to perform 23 internal bytecodes, which allocates 7 cons cells,
-increases the refcount of 12 memory locations, decreases the refcount of 4
-nouns (which may affect other memory locations because refcount decrement is
-recursive), and performs 3 arbitrary tree walks. We do this even if we are
-calling a jet: since jet registration is a stateful side effect, we must
-perform all the tree math to first get the noun which has the jet registration.
-
-{{Ted says this may also do hashtable lookup on jet call.}}
+I traced through running `(add 2 2)`. When you count up the work that goes into
+dispatching a single function call, the current nock interpreter does the stack
+and program counter management overhead to perform 23 internal bytecodes, which
+allocates 7 cons cells, increases the refcount of 12 memory locations,
+decreases the refcount of 4 nouns (which may affect other memory locations
+because refcount decrement is recursive), and performs 3 arbitrary tree
+walks. We do this even if we are calling a jet: since jet registration is a
+stateful side effect, we must perform all the tree math to first get the noun
+which has the jet registration.
 
 This isn't just inefficient, it's extremely hard to reason about. Actually
 producing the last paragraph took more than two hours of work (and I suspect I
 have under counted operations because I didn't delve into the site hooks
-system).
+system, which in uncached cases, can perform a hash table lookup).
 
 The traditional rejoinder to the above is that it doesn't matter that
 individual function dispatch is slow since the jet system implies you should be
