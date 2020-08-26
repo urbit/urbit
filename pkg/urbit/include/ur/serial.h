@@ -2,6 +2,7 @@
 #define UR_SERIAL_H
 
 #include <inttypes.h>
+#include <ur/defs.h>
 #include <ur/bitstream.h>
 
 uint64_t
