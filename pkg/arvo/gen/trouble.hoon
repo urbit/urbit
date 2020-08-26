@@ -9,6 +9,7 @@
 ::             children
 ::  glob-hash: hash of the glob, which is the js for landscape
 ::
+/+  version
 :-  %say
 |=  [[now=time * bec=beak] ~ ~]
 =*  our      p.bec
@@ -16,7 +17,7 @@
 :-  %noun
 =<
 :~
-  [%base-hash base-hash]
+  [%base-hash (base-hash:version our now)]
   [%sour-hash sour-hash]
   [%home-hash .^(@uv %cz (pathify ~.home ~))]
   [%kids-hash .^(@uv %cz (pathify ~.kids ~))]
@@ -52,21 +53,6 @@
       life=lyfe
       rift=ryft
   ==
-::
-++  base-hash
-  =+  .^  ota=(unit [=ship =desk =aeon:clay])
-          %gx  /(scot %p our)/hood/(scot %da now)/kiln/ota/noun
-      ==
-  ?~  ota
-    ~
-  =/  parent  (scot %p ship.u.ota)
-  =/  takos
-    .^  (list tako:clay)  %cs
-        /(scot %p our)/home/(scot %da now)/base/[parent]/[desk.u.ota]
-    ==
-  %+  turn  takos
-  |=  =tako:clay
-  .^(@uv %cs /(scot %p our)/home/(scot %da now)/hash/(scot %uv tako))
 ::
 ++  sour-hash
   =+  .^  ota=(unit [=ship =desk =aeon:clay])
