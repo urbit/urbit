@@ -6,19 +6,16 @@ import { useField } from "formik";
 import { S3State } from "~/types/s3-update";
 import { useS3 } from "~/logic/lib/useS3";
 
-interface ImageInputProps {
+type ImageInputProps = Parameters<typeof Box>[0] & {
   id: string;
-  name: string;
   label: string;
-  url: string;
-  api: GlobalApi;
   s3: S3State;
-}
+};
 
 export function ImageInput(props: ImageInputProps) {
-  const { name, id, label, url, api } = props;
+  const { id, label, s3, ...rest } = props;
 
-  const { uploadDefault, canUpload } = useS3(props.s3);
+  const { uploadDefault, canUpload } = useS3(s3);
 
   const [uploading, setUploading] = useState(false);
 
@@ -47,8 +44,8 @@ export function ImageInput(props: ImageInputProps) {
   }, [ref]);
 
   return (
-    <Box display="flex">
-      <Input type="text" label={label} id={id} />
+    <Box {...rest} display="flex">
+      <Input disabled={uploading} type="text" label={label} id={id} />
       {canUpload && (
         <>
           <Button

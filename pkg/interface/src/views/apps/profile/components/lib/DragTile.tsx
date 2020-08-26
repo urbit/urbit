@@ -1,10 +1,26 @@
 import React, { useMemo } from "react";
 import { useDrag } from "react-dnd";
 import { usePreview } from "react-dnd-multi-backend";
-import { capitalize } from 'lodash';
+import { capitalize } from "lodash";
 import { TileTypeBasic, Tile } from "../../../../types/launch-update";
 
-import { Box, Img, Text } from "@tlon/indigo-react";
+import { Box, Img as _Img, Text } from "@tlon/indigo-react";
+import styled from "styled-components";
+
+// Need to change dojo image
+const Img = styled(_Img)<{ invert?: boolean }>`
+  ${(p) =>
+    p.theme.colors.white !== "rgba(255,255,255,1)" ? `filter: invert(1);` : ``}
+
+  ${(p) =>
+    !p.invert
+      ? ``
+      : p.theme.colors.white !== "rgba(255,255,255,1)"
+      ? `
+      filter: invert(0);
+      `
+      : `filter: invert(1);`}
+`;
 
 interface DragTileProps {
   index: number;
@@ -27,6 +43,7 @@ function DragTileBox({ title, index, tile, ...props }: any) {
       justifyContent="space-around"
       flexDirection="column"
       border={1}
+      borderColor="black"
       height="100%"
       width="100%"
       style={{ cursor: "move" }}
@@ -38,7 +55,13 @@ function DragTileBox({ title, index, tile, ...props }: any) {
 function DragTileCustom({ index, title, style }: any) {
   const tile = { type: { custom: null } };
   return (
-    <DragTileBox bg="white" style={style} title={title} tile={tile} index={index}>
+    <DragTileBox
+      bg="white"
+      style={style}
+      title={title}
+      tile={tile}
+      index={index}
+    >
       <Text fontSize={1}>{capitalize(title)}</Text>
     </DragTileBox>
   );
@@ -55,11 +78,19 @@ function DragTileBasic(props: {
     <DragTileBox
       tile={{ type: props.tile }}
       index={props.index}
-      bg={isDojo ? "black" : "white"}
+      bg={
+        "white" // isDojo ? "black" : "white"
+      }
       style={props.style}
     >
-      <Img width="48px" height="48px" src={tile.iconUrl} />
-      <Text color={isDojo ? "white" : "black"}>{tile.title}</Text>
+      <Img width="48px" height="48px" src={tile.iconUrl} invert={isDojo} />
+      <Text
+        color={
+          "black" // isDojo ? "white" : "black"
+        }
+      >
+        {tile.title}
+      </Text>
     </DragTileBox>
   );
 }

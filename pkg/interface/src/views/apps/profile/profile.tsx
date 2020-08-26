@@ -1,68 +1,124 @@
 import React from "react";
 
-import { Box, Col, Center, Icon } from "@tlon/indigo-react";
+import { Box, Text, Row, Col, Center, Icon } from "@tlon/indigo-react";
 
 import { Sigil } from "~/logic/lib/sigil";
+import { uxToHex, MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 
 import Settings from "./components/settings";
+import { Route, Link } from "react-router-dom";
+import { ContactCard } from "../groups/components/lib/ContactCard";
+
+const SidebarItem = ({ children, view, current }) => {
+  const selected = current === view;
+  const color = selected ? "blue" : "black";
+  return (
+    <Link to={`/~profile/${view}`}>
+      <Row
+        display="flex"
+        alignItems="center"
+        verticalAlign="middle"
+        py={1}
+        px={3}
+        backgroundColor={selected ? "washedBlue" : "white"}
+      >
+        <Icon mr={2} display="inline-block" icon="Circle" fill={color} />
+        <Text color={color} fontSize={0}>
+          {children}
+        </Text>
+      </Row>
+    </Link>
+  );
+};
 
 export default function ProfileScreen(props: any) {
   const { ship, dark } = props;
   return (
-    <Box height="100%" px={[0,3]} pb={[0,3]} borderRadius={1}>
-      <Box
-        height="100%"
-        width="100%"
-        display="flex"
-        borderRadius={1}
-        bg="white"
-        border={1}
-        borderColor="washedGray"
-      >
-        <Col
-          display={["none", "block"]}
-          collapse
-          borderRight={1}
-          borderColor="washedGray"
-        >
-          <Box borderBottom={1} borderBottomColor="washedGray">
+    <Route
+      path={["/~profile/:view", "/~profile"]}
+      render={({ match, history }) => {
+        const { view } = match.params;
+        const contact = props.contacts?.["/~/default"]?.[window.ship];
+        const sigilColor = contact?.color
+          ? `#${uxToHex(contact.color)}`
+          : dark
+          ? "#FFFFFF"
+          : "#000000";
+        if(!contact) {
+          return null;
+        }
+        if (!view && !MOBILE_BROWSER_REGEX.test(window.navigator.userAgent)) {
+          history.replace("/~profile/settings");
+        }
+
+        return (
+          <Box height="100%" px={[0, 3]} pb={[0, 3]} borderRadius={1}>
             <Box
-              bg="black"
-              borderRadius={8}
-              margin={4}
-              height={128}
-              width={128}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
+              height="100%"
+              width="100%"
+              display="grid"
+              gridTemplateColumns={["100%", "200px 1fr"]}
+              gridTemplateRows={["48px 1fr", "1fr"]}
+              borderRadius={1}
+              bg="white"
+              border={1}
+              borderColor="washedGray"
             >
-              <Sigil
-                ship={`~${ship}`}
-                size={80}
-                color={dark ? "#FFFFFF" : "#000000"}
-              />
+              <Col
+                display={!view ? "flex" : ["none", "flex"]}
+                alignItems="center"
+                borderRight={1}
+                borderColor="washedGray"
+              >
+                <Box width="100%" borderBottom={1} borderBottomColor="washedGray">
+                  <Box
+                    mx="auto"
+                    bg={sigilColor}
+                    borderRadius={8}
+                    my={4}
+                    height={128}
+                    width={128}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <Sigil ship={`~${ship}`} size={80} color={sigilColor} />
+                  </Box>
+                </Box>
+                <Box width="100%" py={3}>
+                  <SidebarItem current={view} view="settings">
+                    Ship Settings
+                  </SidebarItem>
+                  <SidebarItem current={view} view="identity">
+                    Your Identity
+                  </SidebarItem>
+                </Box>
+              </Col>
+              <Box
+                display={!view ? "none" : ["flex", "none"]}
+                alignItems="center"
+                px={3}
+                borderBottom={1}
+                borderBottomColor="washedGray"
+              >
+                <Link to="/~profile">{"<- Back"}</Link>
+              </Box>
+              <Box overflowY="auto" flexGrow={1}>
+                {view === "settings" && <Settings {...props} />}
+
+                {view === "identity" && (
+                  <ContactCard
+                    contact={contact}
+                    path="/~/default"
+                    api={props.api}
+                    s3={props.s3}
+                  />
+                )}
+              </Box>
             </Box>
           </Box>
-          <Box py={4}>
-            <Box
-              display="flex"
-              alignItems="center"
-              verticalAlign="middle"
-              fontSize={0}
-              py={1}
-              px={3}
-              color="blue"
-              backgroundColor="washedBlue"
-            >
-              <Icon mr={2} display="inline-block" icon="Circle" fill="blue" />
-              Ship Settings
-            </Box>
-          </Box>
-        </Col>
-        <Box overflowY="auto" flexGrow={1}>
-          <Settings {...props} />
-        </Box>
-      </Box>
-    </Box>
+        );
+      }}
+    ></Route>
   );
 }

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, InputLabel, Radio, Input } from '@tlon/indigo-react';
 
-import GlobalApi from '../../../../api/global';
-import { S3State } from '../../../../types';
-import { ImageInput } from './ImageInput';
+import GlobalApi from '~/logic/api/global';
+import { S3State } from '~/types';
+import { ImageInput } from '~/views/components/ImageInput';
 
 export type BgType = "none" | "url" | "color";
 

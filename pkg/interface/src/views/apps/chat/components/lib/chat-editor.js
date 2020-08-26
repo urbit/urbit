@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { UnControlled as CodeEditor } from 'react-codemirror2';
+import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 import CodeMirror from 'codemirror';
 
 import 'codemirror/mode/markdown/markdown';
@@ -132,7 +133,7 @@ export default class ChatEditor extends Component {
           onChange={(e, d, v) => this.messageChange(e, d, v)}
           editorDidMount={(editor) => {
             this.editor = editor;
-            if (!BROWSER_REGEX.test(navigator.userAgent)) {
+            if (!MOBILE_BROWSER_REGEX.test(navigator.userAgent)) {
               editor.focus();
             }
           }}

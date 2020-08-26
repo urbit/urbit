@@ -1,50 +1,40 @@
-import React from 'react';
-import { Box, Text } from '@tlon/indigo-react';
+import React from "react";
+import { Box, Text } from "@tlon/indigo-react";
+
+const ReconnectBox = ({ color, children, onClick }) => (
+  <Box
+    ml={2}
+    px={2}
+    py={1}
+    display="flex"
+    color={color}
+    bg="white"
+    alignItems="center"
+    border={1}
+    verticalAlign="middle"
+    lineHeight="0"
+    borderRadius={2}
+    style={{ cursor: "pointer" }}
+    onClick={onClick}
+  >
+    <Text color={color}>{children}</Text>
+  </Box>
+);
 
 const ReconnectButton = ({ connection, subscription }) => {
-  const connectedStatus = connection || 'connected';
+  const connectedStatus = connection || "connected";
   const reconnect = subscription.restart.bind(subscription);
-  if (connectedStatus === 'disconnected') {
+  if (connectedStatus === "disconnected") {
     return (
-      <>
-      <Box
-        ml={2}
-        px={2}
-        py={1}
-        display='inline-block'
-        color='red'
-        bg="white"
-        border={1}
-        verticalAlign="middle"
-        lineHeight='0'
-        borderRadius={2}
-        style={{ cursor: 'pointer' }}
-        onClick={reconnect}>
-        <Text color='red'>Reconnect ↻</Text>
-      </Box>
-      </>
+      <ReconnectBox onClick={reconnect} color="red">
+        Reconnect ↻
+      </ReconnectBox>
     );
-    } else if (connectedStatus === 'reconnecting') {
-      return (
-        <>
-        <Box
-          ml={2}
-          px={2}
-          py={1}
-          bg='white'
-          lineHeight="0"
-          verticalAlign="middle"
-          display='inline-block'
-          color='yellow'
-          border={1}
-          borderRadius={2}>
-          <Text color='yellow'>Reconnecting</Text>
-        </Box>
-        </>
-      );
-      } else {
-        return null;
-      }
-    };
+  } else if (connectedStatus === "reconnecting") {
+    return <ReconnectBox color="yellow">Reconnecting</ReconnectBox>;
+  } else {
+    return null;
+  }
+};
 
 export default ReconnectButton;
