@@ -6,4 +6,7 @@ pkgs.stdenv.mkDerivation {
   src     = ../../../pkg/ge-additions;
 
   nativeBuildInputs = [ ed25519 ];
+
+  CFLAGS="-I${ed25519}/include";
+  LDFLAGS="-L${ed25519}/lib";
 }

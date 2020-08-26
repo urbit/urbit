@@ -9,8 +9,14 @@ let
 in pkgs.stdenv.mkDerivation {
   name        = "uv";
   src         = pkgs.sources.libuv;
-  buildInputs = osx ++ [ pkgs.autoconf pkgs.automake pkgs.libtool pkgs.m4 ];
   builder     = ./builder.sh;
+
+  nativeBuildInputs = osx ++ [
+    pkgs.autoconf
+    pkgs.automake
+    pkgs.libtool
+    pkgs.m4
+  ];
 
   configureFlags = [ "--disable-shared" ];
   CFLAGS         = "-fPIC";

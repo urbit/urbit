@@ -6,4 +6,7 @@ pkgs.stdenv.mkDerivation {
   src     = ../../../pkg/libaes_siv;
 
   nativeBuildInputs = [ pkgs.openssl ];
+
+  CFLAGS="-I${pkgs.openssl}/include";
+  LDFLAGS="-L${pkgs.openssl}/lib";
 }

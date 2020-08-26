@@ -9,7 +9,7 @@ let
   name =
     if debug then "urbit-debug" else "urbit";
 
-  meta = rec {
+  meta = {
     inherit debug;
     bin   = "${urbit}/bin/${name}";
     flags = if debug then [ "-g" ] else [];
@@ -17,7 +17,7 @@ let
   };
 
   sigseg =
-    pkgs.libsigsegv.overrideAttrs (oldAttrs: rec {
+    pkgs.libsigsegv.overrideAttrs (oldAttrs: {
       patches = [ ./libsigsegv_fix.patch ];
     });
 
