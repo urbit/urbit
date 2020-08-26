@@ -70,10 +70,6 @@ h2 {
   line-height: 16px;
 }
 
-.chat-md-message > pre {
-  overflow-x: auto;
-}
-
 .mono {
   font-family: "Source Code Pro", monospace;
 }
