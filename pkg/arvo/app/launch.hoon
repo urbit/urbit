@@ -77,7 +77,7 @@
     :~  [%pass / %arvo %e %disconnect [~ /]]
         :*  %pass  /srv  %agent  [our.bowl %file-server]
             %poke  %file-server-action
-            !>([%serve-dir / /app/landscape %.n])
+            !>([%serve-dir / /app/landscape %.n %.y])
         ==
     ==
   %+  turn  ~(tap by wex.bowl)

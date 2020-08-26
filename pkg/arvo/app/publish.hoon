@@ -96,7 +96,7 @@
         ==
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~publish' /app/landscape %.n])
+            !>([%serve-dir /'~publish' /app/landscape %.n %.y])
         ==
         [%pass /groups %agent [our.bol %group-store] %watch /groups]
     ==
@@ -126,7 +126,7 @@
             [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
             :*  %pass  /srv  %agent  [our.bol %file-server]
                 %poke  %file-server-action
-                !>([%serve-dir /'~publish' /app/landscape %.n])
+                !>([%serve-dir /'~publish' /app/landscape %.n %.y])
             ==
         ==
       =+  ^-  [kick-cards=(list card) old-subs=(jug @tas @p)]  kick-subs
@@ -197,7 +197,7 @@
             [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
             :*  %pass  /srving  %agent  [our.bol %file-server]
                 %poke  %file-server-action
-                !>([%serve-dir /'~publish' /app/landscape %.n])
+                !>([%serve-dir /'~publish' /app/landscape %.n %.y])
         ==  ==
       ==
     ::

@@ -48,7 +48,7 @@
         (contact-poke:cc [%add /~/default our.bowl *contact])
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~groups' /app/landscape %.n])
+            !>([%serve-dir /'~groups' /app/landscape %.n %.y])
         ==
     ==
   ::
@@ -63,7 +63,7 @@
         [%pass / %arvo %e %connect [~ /'contact-view'] %contact-view]
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~groups' /app/landscape %.n])
+            !>([%serve-dir /'~groups' /app/landscape %.n %.y])
         ==
     ==
   ::
