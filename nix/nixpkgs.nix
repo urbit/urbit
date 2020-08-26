@@ -10,10 +10,10 @@ let
   # hit rate from `cachix use iohk`.
   nixpkgs = import haskellNix.sources.nixpkgs-2003 nixpkgsArgs;
 
-  fetchgithublfs = import ./fetchgithublfs { pkgs = nixpkgs; };
+  fetchlfs = import ./fetchlfs { pkgs = nixpkgs; };
 
 in
 
 nixpkgs // {
-  inherit sources fetchgithublfs;
+  inherit sources fetchlfs;
 }
