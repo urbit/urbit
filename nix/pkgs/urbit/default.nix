@@ -1,6 +1,7 @@
 {
   pkgs,
   debug,
+  curl, gmp, openssl, zlib, lmdb,
   argon2, ed25519, ent, ge-additions, libaes_siv, h2o, murmur3, scrypt, secp256k1, softfloat3, uv, ivory-header, ca-header
 }:
 
@@ -22,7 +23,6 @@ let
     });
 
   deps =
-    with pkgs;
     [ curl gmp sigseg openssl zlib lmdb ];
 
   vendor =
