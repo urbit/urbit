@@ -2083,7 +2083,7 @@
           &+~
         ?:  (~(has in (reachable-takos:ze r.ali-yaki)) r.bob-yaki)
           $(germ %fine)
-        =/  merge-points  find-merge-points
+        =/  merge-points  (find-merge-points ali-yaki bob-yaki)
         ?~  merge-points
           :~  %|  %merge-no-merge-base
               leaf+"consider a %this or %that merge to get a mergebase"
@@ -2134,42 +2134,6 @@
         |=  m=(map path lobe)
         ^-  (map path (each page lobe))
         (~(run by m) |=(=lobe |+lobe))
-      ::
-      ::  Find the most recent common ancestor(s).
-      ::
-      ::    Pretty sure this could be a lot more efficient.
-      ::
-      ++  find-merge-points
-        ^-  (set yaki)
-        %-  reduce-merge-points
-        =+  r=(reachable-takos:ze r.ali-yaki)
-        |-  ^-  (set yaki)
-        ~!  bob-yaki
-        ?:  (~(has in r) r.bob-yaki)  (~(put in *(set yaki)) bob-yaki)
-        %+  roll  p.bob-yaki
-        |=  [t=tako s=(set yaki)]
-        ?:  (~(has in r) t)
-          (~(put in s) (~(got by hut.ran) t))
-        (~(uni in s) ^$(bob-yaki (~(got by hut.ran) t)))
-      ::
-      ::  Eliminate redundant merge-point candidates
-      ::
-      ++  reduce-merge-points
-        |=  unk=(set yaki)
-        =|  gud=(set yaki)
-        =/  zar=(map tako (set tako))
-          %+  roll  ~(tap in unk)
-          |=  [yak=yaki qar=(map tako (set tako))]
-          (~(put by qar) r.yak (reachable-takos:ze r.yak))
-        |-
-        ^-  (set yaki)
-        ?~  unk  gud
-        =+  bun=(~(del in `(set yaki)`unk) n.unk)
-        ?:  %+  levy  ~(tap by (~(uni in gud) bun))
-            |=  yak=yaki
-            !(~(has in (~(got by zar) r.yak)) r.n.unk)
-          $(gud (~(put in gud) n.unk), unk bun)
-        $(unk bun)
       ::
       ::  The set of changes between the mergebase and one of the desks
       ::  being merged
@@ -2424,6 +2388,43 @@
         ==
       --
     --
+  ::
+  ::  Find the most recent common ancestor(s).
+  ::
+  ::    Pretty sure this could be a lot more efficient.
+  ::
+  ++  find-merge-points
+    |=  [=ali=yaki =bob=yaki]
+    ^-  (set yaki)
+    %-  reduce-merge-points
+    =+  r=(reachable-takos:ze r.ali-yaki)
+    |-  ^-  (set yaki)
+    ~!  bob-yaki
+    ?:  (~(has in r) r.bob-yaki)  (~(put in *(set yaki)) bob-yaki)
+    %+  roll  p.bob-yaki
+    |=  [t=tako s=(set yaki)]
+    ?:  (~(has in r) t)
+      (~(put in s) (~(got by hut.ran) t))
+    (~(uni in s) ^$(bob-yaki (~(got by hut.ran) t)))
+  ::
+  ::  Eliminate redundant merge-point candidates
+  ::
+  ++  reduce-merge-points
+    |=  unk=(set yaki)
+    =|  gud=(set yaki)
+    =/  zar=(map tako (set tako))
+      %+  roll  ~(tap in unk)
+      |=  [yak=yaki qar=(map tako (set tako))]
+      (~(put by qar) r.yak (reachable-takos:ze r.yak))
+    |-
+    ^-  (set yaki)
+    ?~  unk  gud
+    =+  bun=(~(del in `(set yaki)`unk) n.unk)
+    ?:  %+  levy  ~(tap by (~(uni in gud) bun))
+        |=  yak=yaki
+        !(~(has in (~(got by zar) r.yak)) r.n.unk)
+      $(gud (~(put in gud) n.unk), unk bun)
+    $(unk bun)
   ::
   ::  Update mime cache
   ::
@@ -3563,7 +3564,7 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      ?.  ?=([?(%yaki %blob %hash %cage %open %late) * ~] pax)
+      ?.  ?=([?(%yaki %blob %hash %cage %open %late %base) * *] pax)
         `~
       ?-    i.pax
           %yaki
@@ -3600,6 +3601,19 @@
         ``open+!>(prelude:(ford:fusion static-ford-args))
       ::
           %late  !!  :: handled in +aver
+          %base
+        ?>  ?=(^ t.t.pax)
+        :^  ~  ~  %uvs  !>
+        ^-  (list @uv)
+        =/  him  (slav %p i.t.pax)
+        =/  other  dom:((de our now ski hen ruf) him i.t.t.pax)
+        ?:  =(0 let.other)
+          ~
+        =/  our-yaki  (~(got by hut.ran) (~(got by hit.dom) yon))
+        =/  other-yaki  (~(got by hut.ran) (~(got by hit.other) let.other))
+        %+  turn  ~(tap in (find-merge-points other-yaki our-yaki))
+        |=  =yaki
+        r.yaki
       ==
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::

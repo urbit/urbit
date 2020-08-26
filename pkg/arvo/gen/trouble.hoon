@@ -1,5 +1,14 @@
 ::  Print useful diagnostic information
 ::
+::  base-hash: loosely, the most recent successfully applied update.
+::             Technically, the mergebase of %home with OTA source
+::  sour-hash: most recently downloaded update (not necessarily applied)
+::  home-hash: hash of %home desk, which may differ if you have changed
+::             it, for example with notebooks or 3rd party apps
+::  kids-hash: hash of the %kids desk, which is what you serve to your
+::             children
+::  glob-hash: hash of the glob, which is the js for landscape
+::
 :-  %say
 |=  [[now=time * bec=beak] ~ ~]
 =*  our      p.bec
@@ -8,6 +17,7 @@
 =<
 :~
   [%base-hash base-hash]
+  [%sour-hash sour-hash]
   [%home-hash .^(@uv %cz (pathify ~.home ~))]
   [%kids-hash .^(@uv %cz (pathify ~.kids ~))]
   [%glob-hash glob-state]
@@ -44,6 +54,21 @@
   ==
 ::
 ++  base-hash
+  =+  .^  ota=(unit [=ship =desk =aeon:clay])
+          %gx  /(scot %p our)/hood/(scot %da now)/kiln/ota/noun
+      ==
+  ?~  ota
+    ~
+  =/  parent  (scot %p ship.u.ota)
+  =/  takos
+    .^  (list tako:clay)  %cs
+        /(scot %p our)/home/(scot %da now)/base/[parent]/[desk.u.ota]
+    ==
+  %+  turn  takos
+  |=  =tako:clay
+  .^(@uv %cs /(scot %p our)/home/(scot %da now)/hash/(scot %uv tako))
+::
+++  sour-hash
   =+  .^  ota=(unit [=ship =desk =aeon:clay])
           %gx  /(scot %p our)/hood/(scot %da now)/kiln/ota/noun
       ==
