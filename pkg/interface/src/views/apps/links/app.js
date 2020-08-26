@@ -66,7 +66,7 @@ export class LinksApp extends Component {
 
     const listening = props.linkListening;
 
-    const { api, sidebarShown } = this.props;
+    const { api, sidebarShown, hideAvatars, hideNicknames } = this.props;
 
     return (
       <>
@@ -261,7 +261,9 @@ export class LinksApp extends Component {
                     popout={popout}
                     sidebarShown={sidebarShown}
                     api={api}
-                    />
+                    hideNicknames={hideNicknames}
+                    hideAvatars={hideAvatars}
+                  />
                   </Skeleton>
                 );
               }}
@@ -321,6 +323,8 @@ export class LinksApp extends Component {
                     comments={coms}
                     commentPage={commentPage}
                     api={api}
+                    hideAvatars={hideAvatars}
+                    hideNicknames={hideNicknames}
                     />
                   </Skeleton>
                 );

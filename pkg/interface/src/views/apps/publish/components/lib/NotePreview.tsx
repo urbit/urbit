@@ -13,6 +13,7 @@ interface NotePreviewProps {
   book: string;
   note: Note;
   contact?: Contact;
+  hideNicknames?: boolean;
 }
 
 const WrappedBox = styled(Box)`
@@ -23,7 +24,7 @@ export function NotePreview(props: NotePreviewProps) {
   const { note, contact } = props;
 
   let name = note.author;
-  if (contact) {
+  if (contact && !props.hideNicknames) {
     name = contact.nickname.length > 0 ? contact.nickname : note.author;
   }
   if (name === note.author) {
@@ -51,7 +52,10 @@ export function NotePreview(props: NotePreviewProps) {
           />
         </WrappedBox>
         <Box color="gray" display="flex">
-          <Box mr={3} fontFamily={contact?.nickname ? "sans" : "mono"}>
+          <Box
+            mr={3}
+            fontFamily={contact?.nickname && !props.hideNicknames ? "sans" : "mono"}
+          >
             {name}
           </Box>
           <Box color={note.read ? "gray" : "green"} mr={3}>

@@ -22,6 +22,8 @@ interface NoteProps {
   notebook: Notebook;
   contacts: Contacts;
   api: GlobalApi;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
 }
 
 export function Note(props: NoteProps & RouteComponentProps) {
@@ -82,6 +84,8 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Text display="block" mb={2}>{note?.title || ""}</Text>
         <Box display="flex">
           <Author
+            hideNicknames={props.hideNicknames}
+            hideAvatars={props.hideAvatars}
             ship={note?.author}
             contacts={contacts}
             date={note?.["date-created"]}
@@ -109,6 +113,8 @@ export function Note(props: NoteProps & RouteComponentProps) {
           numComments={props.note["num-comments"]}
           contacts={props.contacts}
           api={props.api}
+          hideNicknames={props.hideNicknames}
+          hideAvatars={props.hideAvatars}
         />
       )}
       <Spinner

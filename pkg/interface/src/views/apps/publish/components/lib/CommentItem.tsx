@@ -23,6 +23,8 @@ interface CommentItemProps {
   ship: string;
   api: GlobalApi;
   note: NoteId;
+  hideNicknames: boolean;
+  hideAvatars: boolean;
 }
 
 export function CommentItem(props: CommentItemProps) {
@@ -63,6 +65,8 @@ export function CommentItem(props: CommentItemProps) {
           contacts={contacts}
           ship={commentData?.author}
           date={commentData["date-created"]}
+          hideAvatars={props.hideAvatars}
+          hideNicknames={props.hideNicknames}
         >
           {!disabled && !editing && (
             <>

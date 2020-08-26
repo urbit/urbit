@@ -37,6 +37,7 @@ interface NotebookProps {
   notebookContacts: Contacts;
   contacts: Rolodex;
   groups: Groups;
+  hideNicknames: boolean;
 }
 
 export function Notebook(props: NotebookProps & RouteComponentProps) {
@@ -53,6 +54,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
 
   const notesList = notebook?.["notes-by-date"] || [];
   const notes = notebook?.notes || {};
+  const showNickname = contact?.nickname && !props.hideNicknames;
 
   return (
     <Box
@@ -72,8 +74,8 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
         <Text> {notebook?.title}</Text>
         <br />
         <Text color="lightGray">by </Text>
-        <Text fontFamily={contact?.nickname ? "sans" : "mono"}>
-          {contact?.nickname || ship}
+        <Text fontFamily={showNickname ? "sans" : "mono"}>
+          {showNickname ? contact?.nickname : ship}
         </Text>
       </Box>
       <Row justifyContent={["flex-start", "flex-end"]}>
@@ -106,6 +108,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
                 host={ship}
                 book={book}
                 contacts={notebookContacts}
+                hideNicknames={props.hideNicknames}
               />
             </TabPanel>
             <TabPanel>

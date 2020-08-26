@@ -96,6 +96,8 @@ export class Links extends Component {
           resourcePath={props.resourcePath}
           popout={props.popout}
           api={props.api}
+          hideNicknames={props.hideNicknames}
+          hideAvatars={props.hideAvatars}
           />
         );
       });

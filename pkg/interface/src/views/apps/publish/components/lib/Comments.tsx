@@ -19,6 +19,8 @@ interface CommentsProps {
   api: GlobalApi;
   numComments: number;
   enabled: boolean;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
 }
 
 export function Comments(props: CommentsProps) {
@@ -74,6 +76,8 @@ export function Comments(props: CommentsProps) {
             contacts={props.contacts}
             ship={ship}
             pending={true}
+            hideNicknames={props.hideNicknames}
+            hideAvatars={props.hideAvatars}
           />
         );
       })}
@@ -86,6 +90,8 @@ export function Comments(props: CommentsProps) {
           book={book}
           ship={ship}
           note={note["note-id"]}
+          hideNicknames={props.hideNicknames}
+          hideAvatars={props.hideAvatars}
         />
       ))}
     </Col>

@@ -37,7 +37,9 @@ export class CommentItem extends Component {
 
     const pending = props.pending ? 'o-60' : '';
 
-    const img = (props.avatar)
+    const showAvatar = props.avatar && !props.hideAvatars
+    const showNickname = props.nickname && !props.hideNicknames;
+    const img = showAvatar
       ? <img src={props.avatar} height={36} width={36} className="dib" />
       : <Sigil
         ship={'~' + props.ship}
@@ -54,7 +56,7 @@ export class CommentItem extends Component {
             <span className={'black white-d ' + props.nameClass}
             title={props.ship}
             >
-              {props.nickname ? props.nickname : cite(props.ship)}
+              {showNickname ? props.nickname : cite(props.ship)}
             </span>
             <span className="ml2">
               {this.state.timeSinceComment}
