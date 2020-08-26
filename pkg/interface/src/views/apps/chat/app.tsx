@@ -192,37 +192,37 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
             render={(props) => {
               let station = `/${props.match.params.ship}/${props.match.params.station}`;
 
-              return (
-                <Skeleton
-                  associations={associations}
-                  invites={invites}
-                  sidebarHideOnMobile={true}
-                  sidebar={renderChannelSidebar(props)}
-                  sidebarShown={sidebarShown}
-                >
-                  <JoinScreen
-                    api={api}
-                    inbox={inbox}
-                    autoJoin={station}
-                    chatSynced={chatSynced || {}}
-                    {...props}
-                  />
-                </Skeleton>
-              );
-            }}
-          />
-          <Route
-            exact
-            path="/~chat/(popout)?/room/(~)?/:ship/:station+"
-            render={(props) => {
-              let station = `/${props.match.params.ship}/${props.match.params.station}`;
-              const mailbox = inbox[station] || {
-                config: {
-                  read: 0,
-                  length: 0
-                },
-                envelopes: []
-              };
+            return (
+              <Skeleton
+                associations={associations}
+                invites={invites}
+                sidebarHideOnMobile={true}
+                sidebar={renderChannelSidebar(props)}
+                sidebarShown={sidebarShown}
+              >
+                <JoinScreen
+                  api={api}
+                  inbox={inbox}
+                  station={station}
+                  chatSynced={chatSynced || {}}
+                  {...props}
+                />
+              </Skeleton>
+            );
+          }}
+        />
+        <Route
+          exact
+          path="/~chat/(popout)?/room/(~)?/:ship/:station+"
+          render={(props) => {
+            let station = `/${props.match.params.ship}/${props.match.params.station}`;
+            const mailbox = inbox[station] || {
+              config: {
+                read: 0,
+                length: 0
+              },
+              envelopes: []
+            };
 
               let roomContacts = {};
               const associatedGroup =
