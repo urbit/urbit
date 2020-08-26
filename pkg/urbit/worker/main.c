@@ -189,7 +189,12 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
     u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
 
     if ( eve_d ) {
-      u3_serf_uncram(&u3V, eve_d);
+      //  XX need not be fatal, need a u3m_reboot equivalent
+      //
+      if ( c3n == u3u_uncram(u3V.dir_c, eve_d) ) {
+        fprintf(stderr, "serf (%" PRIu64 "): rock load failed\r\n", eve_d);
+        exit(1);
+      }
     }
   }
 
@@ -292,7 +297,12 @@ _cw_queu(c3_i argc, c3_c* argv[])
     memset(&u3V, 0, sizeof(u3V));
     u3V.dir_c = strdup(dir_c);
     u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
-    u3_serf_uncram(&u3V, eve_d);
+
+    if ( c3n == u3u_uncram(dir_c, eve_d) ) {
+      fprintf(stderr, "urbit-worker: queu: failed\r\n");
+      exit(1);
+    }
+
     u3e_save();
 
     fprintf(stderr, "urbit-worker: queu: rock loaded at event %" PRIu64 "\r\n", eve_d);

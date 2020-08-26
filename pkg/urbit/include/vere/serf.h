@@ -24,11 +24,6 @@
       u3_noun
       u3_serf_init(u3_serf* sef_u);
 
-    /* u3_serf_uncram(): initialize from rock at [eve_d].
-    */
-      void
-      u3_serf_uncram(u3_serf* sef_u, c3_d eve_d);
-
     /* u3_serf_writ(): apply writ [wit], producing plea [*pel] on c3y.
     */
       c3_o

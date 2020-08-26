@@ -277,27 +277,6 @@ u3_serf_grab(void)
   fflush(stderr);
 }
 
-/* _serf_cram(): deduplicate and compact memory. ORPHANED
-*/
-static void
-_serf_cram(u3_serf* sef_u)
-{
-  u3_serf_grab();
-
-  u3l_log("serf (%" PRIu64 "): compacting loom\r\n", sef_u->dun_d);
-
-  if ( c3n == u3m_rock_stay(sef_u->dir_c, sef_u->dun_d) ) {
-    u3l_log("serf: unable to jam state\r\n");
-    return;
-  }
-
-  u3_serf_uncram(sef_u, sef_u->dun_d);
-
-  u3l_log("serf (%" PRIu64 "): compacted loom\r\n", sef_u->dun_d);
-
-  u3_serf_grab();
-}
-
 /* u3_serf_post(): update serf state post-writ.
 */
 void
@@ -971,11 +950,18 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
 
       u3l_log("serf (%" PRIu64 "): saving rock\r\n", sef_u->dun_d);
 
-      if ( c3n == u3m_rock_stay(sef_u->dir_c, eve_d) ) {
+      if ( c3n == u3u_cram(sef_u->dir_c, eve_d) ) {
         fprintf(stderr, "serf (%" PRIu64 "): unable to jam state\r\n", eve_d);
         return c3n;
       }
 
+      if ( u3r_mug(u3A->roc) != sef_u->mug_l ) {
+        fprintf(stderr, "serf (%" PRIu64 "): mug mismatch 0x%08x 0x%08x\r\n",
+                        eve_d, sef_u->mug_l, u3r_mug(u3A->roc));
+        return c3n;
+      }
+
+      u3e_save();
       u3_serf_grab();
 
       *ret = u3nc(c3__live, u3_nul);
@@ -1118,67 +1104,6 @@ _serf_ripe(u3_serf* sef_u)
                  : u3r_mug(u3A->roc);
 
   return u3nc(u3i_chubs(1, &sef_u->dun_d), sef_u->mug_l);
-}
-
-/* u3_serf_uncram(): initialize from rock at [eve_d].
-*/
-void
-u3_serf_uncram(u3_serf* sef_u, c3_d eve_d)
-{
-  c3_o roc_o;
-  c3_c nam_c[8193];
-  snprintf(nam_c, 8192, "%s/.urb/roc/%" PRIu64 ".jam", sef_u->dir_c, eve_d);
-
-  struct stat buf_b;
-  c3_i        fid_i = open(nam_c, O_RDONLY, 0644);
-
-  if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
-    fprintf(stderr, "serf: rock: %s not found\r\n", nam_c);
-    roc_o = c3n;
-  }
-  else {
-    fprintf(stderr, "serf: rock: %s found\r\n", nam_c);
-    roc_o = c3y;
-  }
-
-  close(fid_i);
-
-
-  if ( c3y == roc_o ) {
-    if ( c3n == u3e_hold() ) {
-      fprintf(stderr, "serf: unable to backup checkpoint\r\n");
-    }
-    else {
-      u3m_wipe();
-
-      if ( c3n == u3m_rock_load(sef_u->dir_c, eve_d) ) {
-        fprintf(stderr, "serf: compaction failed, restoring checkpoint\r\n");
-
-        if ( c3n == u3e_fall() ) {
-          fprintf(stderr, "serf: unable to restore checkpoint\r\n");
-          c3_assert(0);
-        }
-      }
-
-      if ( c3n == u3e_drop() ) {
-        fprintf(stderr, "serf: warning: orphaned backup checkpoint file\r\n");
-      }
-
-      //  leave rocks on disk
-      //
-      // if ( c3n == u3m_rock_drop(sef_u->dir_c, sef_u->dun_d) ) {
-      //   u3l_log("serf: warning: orphaned state file\r\n");
-      // }
-
-      fprintf(stderr, "serf (%" PRIu64 "): compacted loom\r\n", eve_d);
-
-      sef_u->sen_d = sef_u->dun_d = eve_d;
-
-      //  save now for flexibility
-      //
-      u3e_save();
-    }
-  }
 }
 
 /* u3_serf_init(): init or restore, producing status.

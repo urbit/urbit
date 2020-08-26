@@ -11,3 +11,7 @@
       */
         c3_o
         u3u_cram(c3_c* dir_c, c3_d eve_d);
+      /* u3u_uncram(): restore persistent state from a rock.
+      */
+        c3_o
+        u3u_uncram(c3_c* dir_c, c3_d eve_d);
