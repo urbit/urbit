@@ -32,7 +32,7 @@ let
     inherit name meta;
     exename = name;
     src     = ../../../pkg/urbit;
-    nativeBuildInputs = deps ++ vendor;
+    buildInputs = deps ++ vendor;
 
     configurePhase = ''
       bash ./configure

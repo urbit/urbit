@@ -1,7 +1,7 @@
 { pkgs }:
 
 pkgs.stdenv.mkDerivation {
-  name    = "ent-7506f";
-  builder = ./builder.sh;
+  name    = "ent";
   src     = ../../../pkg/ent;
+  builder = ./builder.sh
 }

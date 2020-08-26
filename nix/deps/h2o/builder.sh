@@ -99,8 +99,12 @@ CFLAGS=" \
   -I$src/deps/yoml
 "
 
-for s in $sources
-do cc $CFLAGS -c $src/$s -o $(sed 's|/|_|g; s/.c$/.o/' <<< $s)
+for dep in $nativeBuildInputs; do
+   CFLAGS="${CFLAGS-} -I$dep/include"
+done
+
+for s in $sources; do
+  $CC $CFLAGS -c $src/$s -o $(sed 's|/|_|g; s/.c$/.o/' <<< $s)
 done
 
 mkdir -p $out/{lib,include}
