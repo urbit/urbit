@@ -35,6 +35,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return _cqee_shar(pub, sek);
+      return u3l_punt("shar", _cqee_shar(pub, sek));
     }
   }

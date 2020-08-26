@@ -41,6 +41,7 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return _cqee_add_double_scalarmult(a, b, c, d);
+      return u3l_punt("add-double-scalarmult",
+                      _cqee_add_double_scalarmult(a, b, c, d));
     }
   }

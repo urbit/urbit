@@ -161,15 +161,6 @@ _cqea_siv_de(c3_y*   key_y,
   }
 }
 
-static u3_noun
-_cqea_siv_punt(c3_y* nam_y, u3_noun val)
-{
-  if ( u3_none == val ) {
-    u3l_log("%s-punt\r\n", nam_y);
-  }
-  return val;
-}
-
 // the siv* hoon doesn't explicitly check keysizes, but all of these functions
 // have fixed maximum keysizes, so we will punt if we get a key that is too
 // large.
@@ -201,7 +192,7 @@ u3wea_siva_en(u3_noun cor)
        c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
-    return _cqea_siv_punt("siva-en", _cqea_siva_en(key, ads, txt));
+    return u3l_punt("siva-en", _cqea_siva_en(key, ads, txt));
   }
 }
 
@@ -237,7 +228,7 @@ u3wea_siva_de(u3_noun cor)
        c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
-    return _cqea_siv_punt("siva-de", _cqea_siva_de(key, ads, iv, len, txt));
+    return u3l_punt("siva-de", _cqea_siva_de(key, ads, iv, len, txt));
   }
 }
 
@@ -269,7 +260,7 @@ u3wea_sivb_en(u3_noun cor)
        c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
-    return _cqea_siv_punt("sivb-en", _cqea_sivb_en(key, ads, txt));
+    return u3l_punt("sivb-en", _cqea_sivb_en(key, ads, txt));
   }
 }
 
@@ -305,7 +296,7 @@ u3wea_sivb_de(u3_noun cor)
        c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
-    return _cqea_siv_punt("sivb-de", _cqea_sivb_de(key, ads, iv, len, txt));
+    return u3l_punt("sivb-de", _cqea_sivb_de(key, ads, iv, len, txt));
   }
 }
 
@@ -336,7 +327,7 @@ u3wea_sivc_en(u3_noun cor)
        c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
-    return _cqea_siv_punt("sivc-en", _cqea_sivc_en(key, ads, txt));
+    return u3l_punt("sivc-en", _cqea_sivc_en(key, ads, txt));
   }
 }
 
@@ -372,6 +363,6 @@ u3wea_sivc_de(u3_noun cor)
        c3n == u3ud(txt) ) {
     return u3m_bail(c3__exit);
   } else {
-    return _cqea_siv_punt("sivc-de", _cqea_sivc_de(key, ads, iv, len, txt));
+    return u3l_punt("sivc-de", _cqea_sivc_de(key, ads, iv, len, txt));
   }
 }

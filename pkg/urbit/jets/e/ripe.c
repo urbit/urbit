@@ -18,13 +18,10 @@
       c3_y out_y[20];
       c3_y *dat_y = u3r_bytes_alloc(0, len_w, dat);
 
-      if ( 0 == urcrypt_ripemd160(dat_y, len_w, out_y) ) {
-        ret = u3i_bytes(20, out_y);
-      }
-      else {
-        u3l_log("%s\r\n", "ripemd160-punt");
-        ret = u3_none;
-      }
+      ret = ( 0 == urcrypt_ripemd160(dat_y, len_w, out_y) )
+          ? u3i_bytes(20, out_y)
+          : u3_none;
+
       u3a_free(dat_y);
       return ret;
     }
@@ -43,6 +40,6 @@
       return u3m_bail(c3__exit);
     }
     else {
-      return _cqe_ripe(wid, dat);
+      return u3l_punt("ripe", _cqe_ripe(wid, dat));
     }
   }

@@ -57,7 +57,7 @@ typedef int (*urcrypt_cbc)(c3_y**,
          c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
-      return _cqea_cbca_en(a, b, c);
+      return u3l_punt("cbca-en", _cqea_cbca_en(a, b, c));
     }
   }
 
@@ -81,7 +81,7 @@ typedef int (*urcrypt_cbc)(c3_y**,
          c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
-      return _cqea_cbca_de(a, b, c);
+      return u3l_punt("cbca-de", _cqea_cbca_de(a, b, c));
     }
   }
 
@@ -105,7 +105,7 @@ typedef int (*urcrypt_cbc)(c3_y**,
          c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
-      return _cqea_cbcb_en(a, b, c);
+      return u3l_punt("cbcb-en", _cqea_cbcb_en(a, b, c));
     }
   }
 
@@ -129,7 +129,7 @@ typedef int (*urcrypt_cbc)(c3_y**,
          c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
-      return _cqea_cbcb_de(a, b, c);
+      return u3l_punt("cbcb-de", _cqea_cbcb_de(a, b, c));
     }
   }
 
@@ -153,7 +153,7 @@ typedef int (*urcrypt_cbc)(c3_y**,
          c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
-      return _cqea_cbcc_en(a, b, c);
+      return u3l_punt("cbcc-en", _cqea_cbcc_en(a, b, c));
     }
   }
 
@@ -177,6 +177,6 @@ typedef int (*urcrypt_cbc)(c3_y**,
          c3n == u3ud(b) ) {
       return u3m_bail(c3__exit);
     } else {
-      return _cqea_cbcc_de(a, b, c);
+      return u3l_punt("cbcc-de", _cqea_cbcc_de(a, b, c));
     }
   }

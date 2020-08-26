@@ -30,6 +30,6 @@
       return u3m_bail(c3__exit);
     }
     else {
-      return _cqee_scalarmult_base(a);
+      return u3l_punt("scalarmult-base", _cqee_scalarmult_base(a));
     }
   }

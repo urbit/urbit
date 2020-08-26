@@ -35,6 +35,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return _cqee_point_add(a, b);
+      return u3l_punt("point-add", _cqee_point_add(a, b));
     }
   }

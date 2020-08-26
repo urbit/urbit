@@ -37,6 +37,6 @@
                          u3x_sam_7, &c, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return _cqee_veri(a, b, c);
+      return u3l_punt("veri", _cqee_veri(a, b, c));
     }
   }

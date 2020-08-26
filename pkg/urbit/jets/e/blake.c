@@ -34,7 +34,6 @@
         return u3i_bytes(out_w, out_y);
       }
       else {
-        u3l_log("%s\r\n", "blake2-punt: library error");
         return u3_none;
       }
     }
@@ -56,6 +55,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return _cqe_blake(wid, dat, wik, dak, out);
+      return u3l_punt("blake", _cqe_blake(wid, dat, wik, dak, out));
     }
   }

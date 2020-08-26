@@ -55,7 +55,6 @@
                 u3r_word_fit(&ted_w, threads) &&
                 u3r_word_fit(&mem_w, mem_cost) &&
                 u3r_word_fit(&tim_w, time_cost)) ) {
-      u3l_log("%s\r\n", "argon2-punt");
       return u3_none;
     }
     else {
@@ -86,7 +85,7 @@
       }
       else {
         ret = u3_none;
-        u3l_log("argon2-punt: %s\r\n", err_c);
+        u3l_log("argon2-error: %s\r\n", err_c);
       }
 
       u3a_free(out_y);
@@ -130,9 +129,10 @@
       return u3m_bail(c3__exit);
     }
     else {
-      return _cqe_argon2(out, type, version,
-                         threads, mem_cost, time_cost,
-                         wik, key, wix, extra,
-                         wid, dat, wis, sat);
+      return u3l_punt("argon2",
+          _cqe_argon2(out, type, version,
+                      threads, mem_cost, time_cost,
+                      wik, key, wix, extra,
+                      wid, dat, wis, sat));
     }
   }

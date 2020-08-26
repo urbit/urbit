@@ -38,6 +38,7 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return _cqee_add_scalarmult_scalarmult_base(a, b, c);
+      return u3l_punt("add-scalarmult-scalarmult-base",
+                      _cqee_add_scalarmult_scalarmult_base(a, b, c));
     }
   }

@@ -35,6 +35,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return _cqee_scalarmult(a, b);
+      return u3l_punt("scalarmult", _cqee_scalarmult(a, b));
     }
   }
