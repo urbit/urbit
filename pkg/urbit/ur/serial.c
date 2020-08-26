@@ -457,54 +457,153 @@ ur_cue(ur_root_t       *r,
                        (uint64_t*)out, _cue_coin, ur_cons);
 }
 
-static inline uint32_t
-_cue_test_coin(ur_root_t *r, ur_bsr_t *bsr, uint64_t len)
-{
-  //  XX need a ur_bsr_skip()
-  //
-  {
-    uint64_t len_byt = (len >> 3) + !!ur_mask_3(len);
-    uint8_t *byt = calloc(len_byt, 1);
-    ur_bsr_bytes_any(bsr, len, byt);
+typedef struct _cue_test_frame_s {
+  ur_bool_t tal;
+  uint64_t bits;
+} _cue_test_frame_t;
 
-    free(byt);
+typedef struct _cue_test_stack_s {
+  uint32_t        prev;
+  uint32_t        size;
+  uint32_t        fill;
+  _cue_test_frame_t* f;
+} _cue_test_stack_t;
+
+static inline ur_cue_res_e
+_cue_test_next(_cue_test_stack_t *s,
+               ur_bsr_t        *bsr,
+               ur_dict_t      *dict)
+{
+  while ( 1 ) {
+    uint64_t len, bits = bsr->bits;
+    ur_cue_tag_e   tag;
+    ur_cue_res_e   res;
+
+    if ( ur_cue_good != (res = ur_bsr_tag(bsr, &tag)) ) {
+      return res;
+    }
+
+    switch ( tag ) {
+      default: assert(0);
+
+      case ur_jam_cell: {
+        //  reallocate the stack if full
+        //
+        if ( s->fill == s->size ) {
+          uint32_t next = s->prev + s->size;
+          s->f = realloc(s->f, next * sizeof(*s->f));
+          s->prev = s->size;
+          s->size = next;
+        }
+
+        //  save a head-frame and read the head from the stream
+        //
+        {
+          _cue_test_frame_t* f = &(s->f[s->fill++]);
+          f->tal  = 0;
+          f->bits = bits;
+        }
+        continue;
+      }
+
+      case ur_jam_back: {
+        if ( ur_cue_good != (res = ur_bsr_rub_len(bsr, &len)) ) {
+          return res;
+        }
+        else if ( 62 < len ) {
+          return ur_cue_meme;
+        }
+        else {
+          uint64_t bak = ur_bsr64_any(bsr, len);
+
+          //  XX distinguish bad backref?
+          //
+          return ur_dict_get((ur_root_t*)0, dict, bak)
+               ? ur_cue_good
+               : ur_cue_gone;
+        }
+      }
+
+      case ur_jam_atom: {
+        if ( ur_cue_good != (res = ur_bsr_rub_len(bsr, &len)) ) {
+          return res;
+        }
+
+        //  XX need a ur_bsr_skip()
+        //
+        {
+          uint64_t len_byt = (len >> 3) + !!ur_mask_3(len);
+          uint8_t *byt = calloc(len_byt, 1);
+          ur_bsr_bytes_any(bsr, len, byt);
+
+          free(byt);
+        }
+
+        ur_dict_put((ur_root_t*)0, dict, bits);
+        return ur_cue_good;
+      }
+    }
   }
-
-  return 0;
 }
 
-static inline uint32_t
-_cue_test_cons(ur_root_t *r, uint32_t hed, uint32_t tal)
-{
-  return 0;
-}
-
-ur_bool_t
-ur_cue_test_unsafe(ur_dict32_t  *dict,
+ur_cue_res_e
+ur_cue_test_unsafe(ur_dict_t    *dict,
                    uint64_t       len,
                    const uint8_t *byt)
 {
-  //  NB, the root argument is unused, as all dict keys are
-  //  backreferences, limited to 62-bit direct atoms
+  ur_bsr_t        bsr = {0};
+  _cue_test_stack_t s = {0};
+  ur_cue_res_e    res;
+
+  //  init bitstream-reader
   //
-  ur_root_t     *r = 0;
-  uint32_t     out;
-  ur_cue_res_e res = ur_cue_walk32_unsafe(r, dict, len,
-                                          byt, &out,
-                                          _cue_test_coin,
-                                          _cue_test_cons);
-  return ur_cue_good == res;
+  bsr.left  = len;
+  bsr.bytes = byt;
+
+  //  setup stack
+  //
+  s.prev = ur_fib10;
+  s.size = ur_fib11;
+  s.f = malloc(s.size * sizeof(*s.f));
+
+  //  advance into stream
+  //
+  res = _cue_test_next(&s, &bsr, dict);
+
+  //  process result
+  //
+  while ( s.fill && (ur_cue_good == res) ) {
+    //  peek at the top of the stack
+    //
+    _cue_test_frame_t *f = &(s.f[s.fill - 1]);
+
+    //  f is a head-frame; stash result and read the tail from the stream
+    //
+    if ( !f->tal ) {
+      f->tal = 1;
+      res    = _cue_test_next(&s, &bsr, dict);
+    }
+    //  f is a tail-frame; pop the stack and continue
+    //
+    else {
+      ur_dict_put((ur_root_t*)0, dict, f->bits);
+      s.fill--;
+    }
+  }
+
+  free(s.f);
+
+  return res;
 }
 
 ur_bool_t
 ur_cue_test(uint64_t len, const uint8_t *byt)
 {
-  ur_root_t     *r = 0;
-  ur_dict32_t dict = {0};
-  ur_dict32_grow(r, &dict, ur_fib11, ur_fib12);
+  ur_dict_t dict = {0};
+  ur_dict_grow((ur_root_t*)0, &dict, ur_fib11, ur_fib12);
 
-  ur_bool_t ret = ur_cue_test_unsafe(&dict, len, byt);
+  ur_bool_t ret = ur_cue_good == ur_cue_test_unsafe(&dict, len, byt);
 
-  ur_dict_free((ur_dict_t*)&dict);
+  ur_dict_free(&dict);
   return ret;
 }

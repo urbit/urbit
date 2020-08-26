@@ -58,8 +58,8 @@ ur_cue_unsafe(ur_root_t       *r,
 ur_cue_res_e
 ur_cue(ur_root_t *r, uint64_t len, const uint8_t *byt, ur_nref *out);
 
-ur_bool_t
-ur_cue_test_unsafe(ur_dict32_t  *dict,
+ur_cue_res_e
+ur_cue_test_unsafe(ur_dict_t    *dict,
                    uint64_t       len,
                    const uint8_t *byt);
 
