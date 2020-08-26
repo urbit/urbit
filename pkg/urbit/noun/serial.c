@@ -6,6 +6,7 @@
 #include <fcntl.h>
 
 #include "all.h"
+#include "ur/ur.h"
 
 /* _cs_met0_w(): safe bitwidth for any c3_w
 */
@@ -724,5 +725,210 @@ u3s_cue(u3_atom a)
   //
   c3_assert( u3R->cap_p == cap_p );
 
+  return pro;
+}
+
+/*
+**  stack frame for recording head vs tail iteration
+**
+**    $?  [u3_none bits=@]
+**    [hed=* bits=@]
+*/
+typedef struct _cue_frame_s {
+  u3_weak ref;
+  c3_d  bit_d;
+} _cue_frame_t;
+
+typedef struct _cue_stack_s {
+  c3_w          pre_w;
+  c3_w          siz_w;
+  c3_w          fil_w;
+  _cue_frame_t* fam_u;
+} _cue_stack_t;
+
+/* _cs_cue_xeno_next(): read next value from bitstream, bookkeeping off-loom.
+*/
+static inline ur_cue_res_e
+_cs_cue_xeno_next(_cue_stack_t* tac_u,
+                  ur_bsr_t*     red_u,
+                  ur_dict32_t*  dic_u,
+                  u3_noun*        out)
+{
+  ur_root_t* rot_u = 0;
+
+  while ( 1 ) {
+    c3_d  len_d, bit_d = red_u->bits;
+    ur_cue_tag_e tag_e;
+    ur_cue_res_e res_e;
+
+    if ( ur_cue_good != (res_e = ur_bsr_tag(red_u, &tag_e)) ) {
+      return res_e;
+    }
+
+    switch ( tag_e ) {
+      default: c3_assert(0);
+
+      case ur_jam_cell: {
+        //  reallocate the stack if full
+        //
+        if ( tac_u->fil_w == tac_u->siz_w ) {
+          c3_w nex_w = tac_u->pre_w + tac_u->siz_w;
+          tac_u->fam_u = c3_realloc(tac_u->fam_u, nex_w * sizeof(*tac_u->fam_u));
+          tac_u->pre_w = tac_u->siz_w;
+          tac_u->siz_w = nex_w;
+        }
+
+        //  save a head-frame and read the head from the stream
+        //
+        {
+          _cue_frame_t* fam_u = &(tac_u->fam_u[tac_u->fil_w++]);
+          fam_u->ref   = u3_none;
+          fam_u->bit_d = bit_d;
+        }
+        continue;
+      }
+
+      case ur_jam_back: {
+        if ( ur_cue_good != (res_e = ur_bsr_rub_len(red_u, &len_d)) ) {
+          return res_e;
+        }
+        else if ( 62 < len_d ) {
+          return ur_cue_meme;
+        }
+        else {
+          c3_d bak_d = ur_bsr64_any(red_u, len_d);
+          c3_w bak_w;
+
+          if ( !ur_dict32_get(rot_u, dic_u, bak_d, &bak_w) ) {
+            //  XX distinguish bad backref?
+            //
+            return ur_cue_gone;
+          }
+          else {
+            *out = u3k((u3_noun)bak_w);
+            return ur_cue_good;
+          }
+        }
+      }
+
+      case ur_jam_atom: {
+        if ( ur_cue_good != (res_e = ur_bsr_rub_len(red_u, &len_d)) ) {
+          return res_e;
+        }
+
+        if ( 31 >= len_d ) {
+          *out = (u3_noun)ur_bsr32_any(red_u, len_d);
+        }
+        //  XX need a ur_bsr_words_any()
+        //
+        else {
+          c3_d  byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
+          c3_y* byt_y;
+
+          //  XX check that byt_d fits in a c3_w;
+
+          byt_y = c3_calloc(byt_d);
+          ur_bsr_bytes_any(red_u, len_d, byt_y);
+
+          *out = u3i_bytes(byt_d, byt_y);
+
+          c3_free(byt_y);
+        }
+
+        ur_dict32_put(rot_u, dic_u, bit_d, *out);
+        return ur_cue_good;
+      }
+    }
+  }
+}
+
+/* _cs_cue_xeno_unsafe(): cue onto the loom, all bookkeeping off-loom.
+*/
+static ur_cue_res_e
+_cs_cue_xeno_unsafe(ur_dict32_t* dic_u,
+                    c3_d         len_d,
+                    const c3_y*  byt_y,
+                    u3_noun*       out)
+{
+  ur_bsr_t     red_u = {0};
+  _cue_stack_t tac_u = {0};
+  ur_cue_res_e res_e;
+  u3_noun        ref;
+
+  //  init bitstream-reader
+  //
+  red_u.left  = len_d;
+  red_u.bytes = byt_y;
+
+  //  setup stack
+  //
+  tac_u.pre_w = ur_fib10;
+  tac_u.siz_w = ur_fib11;
+  tac_u.fam_u = c3_malloc(tac_u.siz_w * sizeof(*tac_u.fam_u));
+
+  //  advance into stream
+  //
+  res_e = _cs_cue_xeno_next(&tac_u, &red_u, dic_u, &ref);
+
+  //  process result
+  //
+  while ( tac_u.fil_w && (ur_cue_good == res_e) ) {
+    //  peek at the top of the stack
+    //
+    _cue_frame_t* fam_u = &(tac_u.fam_u[tac_u.fil_w - 1]);
+
+    //  f is a head-frame; stash result and read the tail from the stream
+    //
+    if ( u3_none == fam_u->ref ) {
+      fam_u->ref = ref;
+      res_e      = _cs_cue_xeno_next(&tac_u, &red_u, dic_u, &ref);
+    }
+    //  f is a tail-frame; pop the stack and continue
+    //
+    else {
+      ur_root_t* rot_u = 0;
+
+      ref = u3nc(fam_u->ref, ref);
+      ur_dict32_put(rot_u, dic_u, fam_u->bit_d, ref);
+      tac_u.fil_w--;
+    }
+  }
+
+  c3_free(tac_u.fam_u);
+
+  if ( ur_cue_good == res_e ) {
+    *out = ref;
+  }
+  return res_e;
+}
+
+/* u3s_cue_xeno(): cue onto the loom, bookkeeping off the loom.
+*/
+u3_noun
+u3s_cue_xeno(c3_d len_d, const c3_y* byt_y)
+{
+  ur_dict32_t  dic_u = {0};
+  ur_cue_res_e res_e;
+  u3_noun        pro;
+
+  c3_assert( &(u3H->rod_u) == u3R );
+
+  //  XX tune the initial dictionary size for less reallocation
+  //
+  {
+    ur_root_t* rot_u = 0;
+    ur_dict32_grow(rot_u, &dic_u, ur_fib33, ur_fib34);
+  }
+
+  //  errors are fatal
+  //
+  if ( ur_cue_good !=
+       (res_e = _cs_cue_xeno_unsafe(&dic_u, len_d, byt_y, &pro)) )
+  {
+    fprintf(stderr, "cue xeno: failed\r\n");
+    exit(1);
+  }
+
+  ur_dict_free((ur_dict_t*)&dic_u);
   return pro;
 }

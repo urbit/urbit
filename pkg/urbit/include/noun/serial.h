@@ -34,3 +34,8 @@
       */
         u3_noun
         u3s_cue(u3_atom a);
+
+      /* u3s_cue_xeno(): cue onto the loom, bookkeeping off the loom.
+      */
+        u3_noun
+        u3s_cue_xeno(c3_d len_d, const  c3_y* byt_y);
