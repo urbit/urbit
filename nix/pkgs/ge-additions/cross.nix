@@ -1,8 +1,9 @@
 { env_name, env, deps }:
 
 env.make_derivation rec {
-  name = "ge-additions";
-  src  = ../../../pkg/ge-additions;
+  name    = "ge-additions";
+  src     = ../../../pkg/ge-additions;
+  builder = ./builder.sh;
 
   buildInputs = [ deps.ed25519 ];
 

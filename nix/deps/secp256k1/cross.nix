@@ -1,24 +1,15 @@
 { crossenv, sources }:
 
 crossenv.make_derivation {
-  name = "secp256k1";
-  src  = sources.secp256k1;
+  name    = "secp256k1";
+  src     = sources.secp256k1;
+  builder = ./release.sh;
 
-  depsBuildBuild = with crossenv.nixpkgs; [
-    autoconf
-    automake
-    libtool
-    m4
-  ];
-
-  depsBuildHost = [
-    crossenv.libgmp
-  ];
-
-  preConfigure = ''
-    ./autogen.sh
-  '';
-   
+  cross_inputs  = [ crossenv.libgmp ];
+  native_inputs =
+    with crossenv.nixpkgs;
+    [ autoconf automake libtool m4 ];
+  
   configureFlags = ["--disable-shared" "--enable-module-recovery" ];
   CFLAGS         = "-fPIC";
 }
