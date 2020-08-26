@@ -415,24 +415,91 @@ ur_cue_walk64(ur_root_t       *r,
   return res;
 }
 
-static inline uint64_t
-_cue_coin(ur_root_t *r, ur_bsr_t *bsr, uint64_t len)
+static inline ur_cue_res_e
+_cue_next(ur_root_t      *r,
+          _cue64_stack_t *s,
+          ur_bsr_t     *bsr,
+          ur_dict64_t *dict,
+          ur_nref      *out)
 {
-  if ( 62 >= len ) {
-    return ur_bsr64_any(bsr, len);
-  }
-  else {
-    uint64_t len_byt = (len >> 3) + !!ur_mask_3(len);
-    uint8_t *byt = calloc(len_byt, 1);
-    ur_bsr_bytes_any(bsr, len, byt);
+  while ( 1 ) {
+    uint64_t len, bits = bsr->bits;
+    ur_cue_tag_e   tag;
+    ur_cue_res_e   res;
 
-    //  strip trailing zeroes
-    //
-    while ( len_byt && !byt[len_byt - 1] ) {
-      len_byt--;
+    if ( ur_cue_good != (res = ur_bsr_tag(bsr, &tag)) ) {
+      return res;
     }
 
-    return (uint64_t)ur_coin_bytes_unsafe(r, byt, len_byt);
+    switch ( tag ) {
+      default: assert(0);
+
+      case ur_jam_cell: {
+        //  reallocate the stack if full
+        //
+        if ( s->fill == s->size ) {
+          uint32_t next = s->prev + s->size;
+          s->f = realloc(s->f, next * sizeof(*s->f));
+          s->prev = s->size;
+          s->size = next;
+        }
+
+        //  save a head-frame and read the head from the stream
+        //
+        {
+          _cue64_frame_t* f = &(s->f[s->fill++]);
+          f->ref  = CUE_HEAD64;
+          f->bits = bits;
+        }
+        continue;
+      }
+
+      case ur_jam_back: {
+        if ( ur_cue_good != (res = ur_bsr_rub_len(bsr, &len)) ) {
+          return res;
+        }
+        else if ( 62 < len ) {
+          return ur_cue_meme;
+        }
+        else {
+          uint64_t val, bak = ur_bsr64_any(bsr, len);
+
+          //  XX distinguish bad backref?
+          //
+          if ( !ur_dict64_get(r, dict, bak, &val) ) {
+            return  ur_cue_gone;
+          }
+
+          *out = (ur_nref)val;
+          return ur_cue_good;
+        }
+      }
+
+      case ur_jam_atom: {
+        if ( ur_cue_good != (res = ur_bsr_rub_len(bsr, &len)) ) {
+          return res;
+        }
+        else if ( 62 >= len ) {
+          *out = (ur_nref)ur_bsr64_any(bsr, len);
+        }
+        else {
+          uint64_t len_byt = (len >> 3) + !!ur_mask_3(len);
+          uint8_t *byt = calloc(len_byt, 1);
+          ur_bsr_bytes_any(bsr, len, byt);
+
+          //  strip trailing zeroes
+          //
+          while ( len_byt && !byt[len_byt - 1] ) {
+            len_byt--;
+          }
+
+          *out = ur_coin_bytes_unsafe(r, byt, len_byt);
+        }
+
+        ur_dict64_put(r, dict, bits, (uint64_t)*out);
+        return ur_cue_good;
+      }
+    }
   }
 }
 
@@ -443,8 +510,54 @@ ur_cue_unsafe(ur_root_t       *r,
               const uint8_t *byt,
               ur_nref       *out)
 {
-  return ur_cue_walk64_unsafe(r, dict, len, byt,
-                              (uint64_t*)out, _cue_coin, ur_cons);
+  ur_bsr_t     bsr = {0};
+  _cue64_stack_t s = {0};
+  ur_cue_res_e res;
+  ur_nref      ref;
+
+  //  init bitstream-reader
+  //
+  bsr.left  = len;
+  bsr.bytes = byt;
+
+  //  setup stack
+  //
+  s.prev = ur_fib10;
+  s.size = ur_fib11;
+  s.f = malloc(s.size * sizeof(*s.f));
+
+  //  advance into stream
+  //
+  res = _cue_next(r, &s, &bsr, dict, &ref);
+
+  //  process result
+  //
+  while ( s.fill && (ur_cue_good == res) ) {
+    //  peek at the top of the stack
+    //
+    _cue64_frame_t *f = &(s.f[s.fill - 1]);
+
+    //  f is a head-frame; stash result and read the tail from the stream
+    //
+    if ( CUE_HEAD64 == f->ref ) {
+      f->ref = ref;
+      res    = _cue_next(r, &s, &bsr, dict, &ref);
+    }
+    //  f is a tail-frame; pop the stack and continue
+    //
+    else {
+      ref = ur_cons(r, f->ref, ref);
+      ur_dict64_put(r, dict, f->bits, (uint64_t)ref);
+      s.fill--;
+    }
+  }
+
+  free(s.f);
+
+  if ( ur_cue_good == res ) {
+    *out = ref;
+  }
+  return res;
 }
 
 ur_cue_res_e
@@ -453,8 +566,13 @@ ur_cue(ur_root_t       *r,
        const uint8_t *byt,
        ur_nref       *out)
 {
-  return ur_cue_walk64(r, len, byt,
-                       (uint64_t*)out, _cue_coin, ur_cons);
+  ur_dict64_t dict = {0};
+  ur_dict64_grow(r, &dict, ur_fib11, ur_fib12);
+
+  ur_cue_res_e res = ur_cue_unsafe(r, &dict, len, byt, out);
+
+  ur_dict_free((ur_dict_t*)&dict);
+  return res;
 }
 
 typedef struct _cue_test_frame_s {
