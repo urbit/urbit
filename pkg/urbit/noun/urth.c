@@ -444,49 +444,21 @@ u3u_uniq(void)
   ur_hcon_free(rot_u);
 }
 
+/* _cu_rock_path_make(): format rock path, creating directory if necessary..
+*/
 static c3_o
-_cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
+_cu_rock_path_make(c3_c* dir_c, c3_d eve_d, c3_c** out_c)
 {
-  c3_i fid_i;
+  c3_w  nam_w = 1 + snprintf(0, 0, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, eve_d);
+  c3_c* nam_c = c3_malloc(nam_w);
+  c3_i ret_i;
 
-  //  open rock file, creating the containing directory if necessary
+  //  create $pier/.urb/roc, if it doesn't exist
+  //
+  //    NB, $pier/.urb is guaranteed to already exist
   //
   {
-    c3_w  nam_w = 1 + snprintf(0, 0, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, eve_d);
-    c3_c* nam_c = c3_malloc(nam_w);
-    c3_i ret_i;
-
-    //  create $pier/.urb/roc, if it doesn't exist
-    //
-    //    NB, $pier/.urb is guaranteed to already exist
-    //
-    {
-      ret_i = snprintf(nam_c, nam_w, "%s/.urb/roc", dir_c);
-
-      if ( ret_i < 0 ) {
-        fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): %s\r\n",
-                        dir_c, eve_d, strerror(errno));
-        c3_free(nam_c);
-        return c3n;
-      }
-      else if ( ret_i >= nam_w ) {
-        fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): truncated\r\n",
-                        dir_c, eve_d);
-        c3_free(nam_c);
-        return c3n;
-      }
-
-      if (  mkdir(nam_c, 0700)
-         && (EEXIST != errno) )
-      {
-        fprintf(stderr, "rock: directory create failed (%s, %" PRIu64 "): %s\r\n",
-                        dir_c, eve_d, strerror(errno));
-        c3_free(nam_c);
-        return c3n;
-      }
-    }
-
-    ret_i = snprintf(nam_c, nam_w, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, eve_d);
+    ret_i = snprintf(nam_c, nam_w, "%s/.urb/roc", dir_c);
 
     if ( ret_i < 0 ) {
       fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): %s\r\n",
@@ -498,6 +470,49 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
       fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): truncated\r\n",
                       dir_c, eve_d);
       c3_free(nam_c);
+      return c3n;
+    }
+
+    if (  mkdir(nam_c, 0700)
+       && (EEXIST != errno) )
+    {
+      fprintf(stderr, "rock: directory create failed (%s, %" PRIu64 "): %s\r\n",
+                      dir_c, eve_d, strerror(errno));
+      c3_free(nam_c);
+      return c3n;
+    }
+  }
+
+  ret_i = snprintf(nam_c, nam_w, "%s/.urb/roc/%" PRIu64 ".jam", dir_c, eve_d);
+
+  if ( ret_i < 0 ) {
+    fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): %s\r\n",
+                    dir_c, eve_d, strerror(errno));
+    c3_free(nam_c);
+    return c3n;
+  }
+  else if ( ret_i >= nam_w ) {
+    fprintf(stderr, "rock: path format failed (%s, %" PRIu64 "): truncated\r\n",
+                    dir_c, eve_d);
+    c3_free(nam_c);
+    return c3n;
+  }
+
+  *out_c = nam_c;
+  return c3y;
+}
+
+static c3_o
+_cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
+{
+  c3_i fid_i;
+
+  //  open rock file, creating the containing directory if necessary
+  //
+  {
+    c3_c* nam_c;
+
+    if ( c3n == _cu_rock_path_make(dir_c, eve_d, &nam_c) ) {
       return c3n;
     }
 
