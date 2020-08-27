@@ -1313,14 +1313,15 @@
       ::
           %subscribe
         ::
+        =,  i.requests
         =/  channel-wire=wire
-          /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
+          (channel-wire channel-id request-id)
         ::
         =.  gall-moves
           :_  gall-moves
           ^-  move
-          :^  duct  %pass  channel-wire
-          =,  i.requests
+          :^  duct  %pass
+            (subscription-wire channel-id request-id ship app)
           :*  %g  %deal  [our ship]  app
               `task:agent:gall`[%watch-as %json path]
           ==
@@ -1328,14 +1329,13 @@
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
           |=  =channel
-          =,  i.requests
           channel(subscriptions (~(put by subscriptions.channel) channel-wire [ship app path duct]))
         ::
         $(requests t.requests)
       ::
           %unsubscribe
         =/  channel-wire=wire
-          /channel/subscription/[channel-id]/(scot %ud subscription-id.i.requests)
+          (channel-wire channel-id subscription-id.i.requests)
         ::
         =/  usession  (~(get by session.channel-state.state) channel-id)
         ?~  usession
@@ -1352,8 +1352,9 @@
         =.  gall-moves
           :_  gall-moves
           ^-  move
-          :^  duc.u.maybe-subscription  %pass  channel-wire
           =,  u.maybe-subscription
+          :^  duc  %pass
+            (subscription-wire channel-id subscription-id.i.requests ship app)
           :*  %g  %deal  [our ship]  app
               `task:agent:gall`[%leave ~]
           ==
@@ -1376,8 +1377,31 @@
     ::  +on-gall-response: turns a gall response into an event
     ::
     ++  on-gall-response
-      |=  [channel-id=@t request-id=@ud =sign:agent:gall]
+      |=  [channel-id=@t request-id=@ud extra=wire =sign:agent:gall]
       ^-  [(list move) server-state]
+      ::  if the channel doesn't exist, we should clean up subscriptions
+      ::
+      ::    this is a band-aid solution. you really want eyre to have cleaned
+      ::    these up on-channel-delete in the first place.
+      ::    until the source of that bug is discovered though, we keep this
+      ::    in place to ensure a slightly tidier home.
+      ::
+      ?:  ?&  !(~(has by session.channel-state.state) channel-id)
+              ?=(?(%fact %watch-ack) -.sign)
+              ?=([@ @ ~] extra)
+          ==
+        =/  =ship     (slav %p i.extra)
+        =*  app=term  i.t.extra
+        =/  =tape
+          %+  weld  "eyre: removing watch for "
+          "non-existent channel {(trip channel-id)} on {(trip app)}"
+        %-  (slog leaf+tape ~)
+        :_  state
+        :_  ~
+        ^-  move
+        :^  duct  %pass
+          (subscription-wire channel-id request-id ship app)
+        [%g %deal [our ship] app `task:agent:gall`[%leave ~]]
       ::
       ?-    -.sign
           %poke-ack
@@ -1552,8 +1576,9 @@
       %+  turn  ~(tap by subscriptions.session)
       |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
       ^-  move
-      ::
-      [duc %pass channel-wire [%g %deal [our ship] app %leave ~]]
+      :^  duc  %pass
+        (weld channel-wire /(scot %p ship)/[app])
+      [%g %deal [our ship] app %leave ~]
     --
   ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup
   ::
@@ -1844,6 +1869,16 @@
   ::  alphabetize based on site
   ::
   (aor ?~(site.a '' u.site.a) ?~(site.b '' u.site.b))
+::
+++  channel-wire
+  |=  [channel-id=@t request-id=@ud]
+  ^-  wire
+  /channel/subscription/[channel-id]/(scot %ud request-id)
+::
+++  subscription-wire
+  |=  [channel-id=@t request-id=@ud =ship app=term]
+  ^-  wire
+  (weld (channel-wire channel-id request-id) /(scot %p ship)/[app])
 --
 ::  end the =~
 ::
@@ -2176,12 +2211,17 @@
     ::
         ?(%poke %subscription)
       ?>  ?=([%g %unto *] sign)
+      ~|  wire
       ?>  ?=([@ @ @t @ *] wire)
+      =*  channel-id  i.t.t.wire
+      =*  request-id  i.t.t.t.wire
+      =*  extra-wire  t.t.t.t.wire
       =/  on-gall-response
         on-gall-response:by-channel:(per-server-event event-args)
       ::  ~&  [%gall-response sign]
       =^  moves  server-state.ax
-        (on-gall-response i.t.t.wire `@ud`(slav %ud i.t.t.t.wire) p.sign)
+        %-  on-gall-response
+        [channel-id (slav %ud request-id) extra-wire p.sign]
       [moves http-server-gate]
     ==
   ::

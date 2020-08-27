@@ -904,7 +904,7 @@
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         %+  expect-gall-deal
-          :*  /channel/subscription/'0123456789abcdef'/1
+          :*  /channel/subscription/'0123456789abcdef'/1/~nul/two
               [~nul ~nul]  %two  %leave  ~
           ==
           card.i.moves
@@ -942,7 +942,8 @@
       now=(add ~1111.1.2 ~m1)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %watch-ack ~]
@@ -957,7 +958,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
@@ -1158,7 +1160,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %watch-ack ~]
@@ -1201,7 +1204,7 @@
           ::  we want to cancel the subscription id on which we originally subscribed
           ::
           %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'1'
+            :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
                 [~nul ~nul]  %two  %leave  ~
             ==
             card.i.moves
@@ -1259,7 +1262,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %watch-ack ~]
@@ -1302,7 +1306,7 @@
         ::
         ;:  weld
           %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'2'
+            :*  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
                 [~nul ~nul]  %two
                 %watch-as  %json  /one/two/three
             ==
@@ -1334,7 +1338,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
@@ -1349,7 +1354,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'2'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'2'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
@@ -1451,7 +1457,7 @@
         ::
         ;:  weld
           %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'1'
+            :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
                 [~nul ~nul]  %two  %leave  ~
             ==
             card.i.moves
@@ -1471,7 +1477,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'2'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'2'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
@@ -1547,7 +1554,8 @@
       now=(add ~1111.1.2 ~m2)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %watch-ack ~]
@@ -1618,7 +1626,8 @@
       now=(add ~1111.1.2 ~m4)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '1'] ~])]
@@ -1706,7 +1715,8 @@
       now=(add ~1111.1.2 ~m7)
       scry=scry-provides-code
       ^=  take-args
-        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'/~nul/two
+            duct=~[/http-put-request]
             ^-  (hypo sign:eyre-gate)
             :-  *type
             [%g %unto %fact %json !>(`json`[%a [%n '2'] ~])]
@@ -2189,7 +2199,7 @@
             card.i.moves
         ::
           %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'1'
+            :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
                 [~nul ~nul]  %two
                 %watch-as  %json  /one/two/three
             ==
