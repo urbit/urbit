@@ -42,20 +42,14 @@ export class LinksApp extends Component {
     this.props.subscription.stopApp('graph');
   }
 
-
   render() {
     const { props } = this;
-
     const contacts = props.contacts ? props.contacts : {};
-
     const groups = props.groups ? props.groups : {};
-
     const associations = props.associations ? props.associations : { link: {}, contacts: {} };
     const links = props.links ? props.links : {};
     const comments = props.linkComments ? props.linkComments : {};
-
     const seen = props.linksSeen ? props.linksSeen : {};
-
     const totalUnseen = _.reduce(
       links,
       (acc, collection) => acc + collection.unseenCount,
@@ -65,9 +59,7 @@ export class LinksApp extends Component {
     const invites = props.invites ?
       props.invites : {};
 
-
     const listening = props.linkListening;
-
     const { api, sidebarShown, hideAvatars, hideNicknames } = this.props;
 
     return (
