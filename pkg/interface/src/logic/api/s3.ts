@@ -18,15 +18,15 @@ export default class S3Api extends BaseApi<StoreState> {
   }
 
   setEndpoint(endpoint: string) {
-    this.s3Action({ setEndpoint: endpoint });
+    this.s3Action({ 'set-endpoint': endpoint });
   }
 
   setAccessKeyId(accessKeyId: string) {
-    this.s3Action({ setAccessKeyId: accessKeyId });
+    this.s3Action({ 'set-access-key-id': accessKeyId });
   }
 
   setSecretAccessKey(secretAccessKey: string) {
-    this.s3Action({ setSecretAccessKey: secretAccessKey });
+    this.s3Action({ 'set-secret-access-key': secretAccessKey });
   }
 
   private s3Action(data: any) {
