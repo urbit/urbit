@@ -24,9 +24,9 @@ export default function SecuritySettings({ api }: SecuritySettingsProps) {
           </Button>
         </form>
       </Box>
-      <Box color="black" fontSize={0} mt={4} fontWeight={700}>
+      {/* <Box color="black" fontSize={0} mt={4} fontWeight={700}>
         Log out of all sessions
-      </Box>
+      </Box> */}
       {/* Restore after testing sending 'all' in POST body
       <Box fontSize={0} mt={2} color="gray">
         You will be logged out of all browsers that have currently logged into your Urbit.
