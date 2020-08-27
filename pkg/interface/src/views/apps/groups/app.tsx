@@ -333,33 +333,6 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               );
             }}
           />
-          <Route exact path="/~groups/me"
-            render={(props) => {
-              const me = defaultContacts[window.ship] || {};
-
-              return (
-                <Skeleton
-                  history={props.history}
-                  api={api}
-                  contacts={contacts}
-                  groups={groups}
-                  invites={invites}
-                  activeDrawer="rightPanel"
-                  selected="me"
-                  associations={associations}
-                >
-                  <ContactCard
-                    api={api}
-                    history={props.history}
-                    path="/~/default"
-                    contact={me}
-                    s3={s3}
-                    ship={window.ship}
-                  />
-                </Skeleton>
-              );
-            }}
-          />
         </Switch>
       </>
     );

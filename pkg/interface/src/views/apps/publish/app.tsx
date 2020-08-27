@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { Route, Switch, useLocation, withRouter } from "react-router-dom";
 import { Center, Text } from "@tlon/indigo-react";
 import _ from "lodash";
-import Helmet from 'react-helmet';
+import Helmet from "react-helmet";
 
 import "./css/custom.css";
 
@@ -12,7 +12,7 @@ import { JoinScreen } from "./components/lib/Join";
 import { StoreState } from "~/logic/store/type";
 import GlobalApi from "~/logic/api/global";
 import GlobalSubscription from "~/logic/subscription/global";
-import {NotebookRoutes} from "./components/lib/NotebookRoutes";
+import { NotebookRoutes } from "./components/lib/NotebookRoutes";
 
 type PublishAppProps = StoreState & {
   api: GlobalApi;
@@ -55,7 +55,15 @@ export default function PublishApp(props: PublishAppProps) {
     .reduce((acc, count) => acc + count, 0)
     .value();
 
-  const { api, groups, sidebarShown, invites, associations } = props;
+  const {
+    api,
+    groups,
+    sidebarShown,
+    invites,
+    associations,
+    hideNicknames,
+    hideAvatars,
+  } = props;
 
   const active = location.pathname.endsWith("/~publish")
     ? "sidebar"
@@ -64,7 +72,7 @@ export default function PublishApp(props: PublishAppProps) {
   return (
     <>
       <Helmet>
-        <title>{unreadTotal > 0 ? `(${unreadTotal}) ` : ''}OS1 - Publish</title>
+        <title>{unreadTotal > 0 ? `(${unreadTotal}) ` : ""}OS1 - Publish</title>
       </Helmet>
       <Route
         path={[
@@ -131,7 +139,6 @@ export default function PublishApp(props: PublishAppProps) {
                   ? props.match.params.view
                   : "posts";
 
-
                 const ship = props.match.params.ship || "";
                 const book = props.match.params.notebook || "";
 
@@ -142,19 +149,21 @@ export default function PublishApp(props: PublishAppProps) {
                   bookGroupPath in contacts ? contacts[bookGroupPath] : {};
 
                 const notebook = notebooks?.[ship]?.[book];
-                  return (
-                    <NotebookRoutes
-                      notebook={notebook}
-                      ship={ship}
-                      book={book}
-                      groups={groups}
-                      contacts={contacts}
-                      notebookContacts={notebookContacts}
-                      sidebarShown={sidebarShown}
-                      api={api}
-                      {...props}
-                    />
-                  );
+                return (
+                  <NotebookRoutes
+                    notebook={notebook}
+                    ship={ship}
+                    book={book}
+                    groups={groups}
+                    contacts={contacts}
+                    notebookContacts={notebookContacts}
+                    sidebarShown={sidebarShown}
+                    api={api}
+                    hideNicknames={hideNicknames}
+                    hideAvatars={hideAvatars}
+                    {...props}
+                  />
+                );
               }}
             />
           </Switch>

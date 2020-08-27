@@ -19,6 +19,8 @@ interface NotebookRoutesProps {
   notebookContacts: Contacts;
   contacts: Rolodex;
   groups: Groups;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
 }
 
 export function NotebookRoutes(
@@ -70,6 +72,8 @@ export function NotebookRoutes(
               notebook={notebook}
               note={note}
               contacts={notebookContacts}
+              hideAvatars={props.hideAvatars}
+              hideNicknames={props.hideNicknames}
               {...routeProps}
             />
           );

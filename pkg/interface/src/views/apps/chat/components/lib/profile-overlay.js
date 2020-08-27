@@ -34,7 +34,7 @@ export class ProfileOverlay extends Component {
   }
 
   render() {
-    const { contact, ship, color, topSpace, bottomSpace, group, association } = this.props;
+    const { contact, ship, color, topSpace, bottomSpace, group, association, hideNicknames, hideAvatars } = this.props;
 
     let top, bottom;
     if (topSpace < OVERLAY_HEIGHT / 2) {
@@ -51,10 +51,10 @@ export class ProfileOverlay extends Component {
     const isOwn = window.ship === ship;
 
     const identityHref = group.hidden
-      ? '/~groups/me'
+      ? '/~profile/identity'
       : `/~groups/view${association['group-path']}/${window.ship}`;
 
-    let img = (contact && (contact.avatar !== null))
+    let img = contact?.avatar && !hideAvatars
       ? <img src={contact.avatar} height={160} width={160} className="brt2 dib" />
       : <Sigil
         ship={ship}
@@ -63,6 +63,7 @@ export class ProfileOverlay extends Component {
         classes="brt2"
         svgClass="brt2"
         />;
+    const showNickname = contact?.nickname && !hideNicknames;
 
       if (!group.hidden) {
         img = <Link to={`/~groups/view${association['group-path']}/${ship}`}>{img}</Link>;
@@ -78,7 +79,7 @@ export class ProfileOverlay extends Component {
         {img}
         </div>
         <div className="pv3 pl3 pr2">
-          {contact && contact.nickname && (
+          {showNickname && (
             <div className="b white-d truncate">{contact.nickname}</div>
           )}
           <div className="mono gray2">{cite(`~${ship}`)}</div>

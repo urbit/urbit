@@ -184,7 +184,10 @@ export class ChatWindow extends Component {
                 nextMsg={messages[i + 1]}
                 association={props.association}
                 group={props.group}
-                contacts={props.contacts} />
+                contacts={props.contacts} 
+                hideAvatars={props.hideAvatars}
+                hideNicknames={props.hideNicknames}
+              />
             ))
           }
         </ChatScrollContainer>

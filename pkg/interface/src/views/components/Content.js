@@ -6,6 +6,7 @@ import { TwoPaneApp } from './TwoPaneApp';
 import LaunchApp from '../apps/launch/app';
 import DojoApp from '../apps/dojo/app';
 import GroupsApp from '../apps/groups/app';
+import Profile from '../apps/profile/profile';
 import ErrorComponent from './Error';
 
 
@@ -63,6 +64,16 @@ export const Content = (props) => {
               {...props} />
           )}
         />
+        <Route
+          path="/~profile"
+          render={ p => (
+            <Profile
+             {...props}
+            />
+          )}
+        />
+
+
         <Route
           render={p => (
             <ErrorComponent

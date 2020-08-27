@@ -93,6 +93,7 @@ export function Skeleton(props: SkeletonProps) {
   return (
     <Box height="100%" width="100%" px={[0, 3]} pb={[0, 3]}>
       <Box
+        bg="white"
         display="flex"
         border={[0, 1]}
         borderColor={["washedGray", "washedGray"]}

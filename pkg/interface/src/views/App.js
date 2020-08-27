@@ -31,6 +31,13 @@ const Root = styled.div`
   width: 100%;
   padding: 0;
   margin: 0;
+  ${p => p.background?.type === 'url' ? `
+    background-image: url('${p.background?.url}');
+    background-size: cover;
+    ` : p.background?.type === 'color' ? `
+    background-color: ${p.background.color};
+    ` : ``
+  }
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -60,6 +67,7 @@ class App extends React.Component {
     this.api.local.setDark(this.themeWatcher.matches);
     this.themeWatcher.addListener(this.updateTheme);
     this.api.local.getBaseHash();
+    this.store.rehydrate();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -96,15 +104,16 @@ class App extends React.Component {
     const associations = state.associations ?
       state.associations : { contacts: {} };
     const theme = state.dark ? dark : light;
+    const { background } = state;
 
     return (
       <ThemeProvider theme={theme}>
         <Helmet>
           {window.ship.length < 14
-            ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} /> 
+            ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
             : null}
         </Helmet>
-        <Root>
+        <Root background={background} >
           <Router>
             <StatusBarWithRouter
               props={this.props}
@@ -113,6 +122,7 @@ class App extends React.Component {
               api={this.api}
               connection={this.state.connection}
               subscription={this.subscription}
+              ship={this.ship}
             />
             <Omnibox
               associations={state.associations}

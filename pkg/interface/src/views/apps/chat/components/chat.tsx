@@ -36,6 +36,8 @@ type ChatScreenProps = RouteComponentProps<{
   sidebarShown: boolean;
   chatInitialized: boolean;
   envelopes: Envelope[];
+  hideAvatars: boolean;
+  hideNicknames: boolean;
 };
 
 interface ChatScreenState {
@@ -126,7 +128,10 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           group={props.group}
           ship={props.match.params.ship}
           station={props.station}
-          api={props.api} />
+          api={props.api}
+          hideNicknames={props.hideNicknames}
+          hideAvatars={props.hideAvatars}
+        />
         <ChatInput
           api={props.api}
           numMsgs={lastMsgNum}

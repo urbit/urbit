@@ -10,7 +10,9 @@ interface AuthorProps {
   ship: string;
   date: number;
   showImage?: boolean;
-  children: ReactNode;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
+  children?: ReactNode;
 }
 
 export function Author(props: AuthorProps) {
@@ -18,14 +20,16 @@ export function Author(props: AuthorProps) {
   const noSig = ship.slice(1);
   const contact = noSig in contacts ? contacts[noSig] : null;
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : "#000000";
-  const name = contact?.nickname || cite(ship);
+  const showAvatar = !props.hideAvatars && contact?.avatar;
+  const showNickname = !props.hideNicknames && contact?.nickname;
 
+  const name = showNickname ? contact?.nickname : cite(ship);
   const dateFmt = moment(date).fromNow();
   return (
     <Row alignItems="center" width="auto">
       {showImage && (
         <Box>
-          {contact?.avatar ? (
+          {showAvatar ? (
             <img src={contact?.avatar} height={24} width={24} className="dib" />
           ) : (
             <Sigil
@@ -40,7 +44,7 @@ export function Author(props: AuthorProps) {
       <Box
         ml={showImage ? 2 : 0}
         color="gray"
-        fontFamily={contact?.nickname ? "sans" : "mono"}
+        fontFamily={showNickname ? "sans" : "mono"}
       >
         {name}
       </Box>

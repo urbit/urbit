@@ -40,6 +40,9 @@ const commandIndex = function () {
         commands.push(obj);
       }
     });
+
+  commands.push(result('Profile', '/~profile', 'profile', null));
+
   return commands;
 };
 

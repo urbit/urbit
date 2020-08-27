@@ -12,7 +12,7 @@ export default class LaunchApi extends BaseApi<StoreState> {
     this.launchAction({ remove: name });
   }
 
-  changeOrder(orderedTiles = []) {
+  changeOrder(orderedTiles: string[] = []) {
     this.launchAction({ 'change-order': orderedTiles });
   }
 
