@@ -35,7 +35,7 @@ const Root = styled.div`
     background-image: url('${p.background?.url}');
     background-size: cover;
     ` : p.background?.type === 'color' ? `
-    background-color: ${p.background.color}
+    background-color: ${p.background.color};
     ` : ``
   }
   display: flex;
@@ -110,7 +110,7 @@ class App extends React.Component {
       <ThemeProvider theme={theme}>
         <Helmet>
           {window.ship.length < 14
-            ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} /> 
+            ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
             : null}
         </Helmet>
         <Root background={background} >
