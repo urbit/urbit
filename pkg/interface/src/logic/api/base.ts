@@ -54,7 +54,7 @@ export default class BaseApi<S extends object = {}> {
     });
   }
 
-  scry<T>(app: string, path: Path): Promise<T> {
+  scry<T>(path: Path, app: string): Promise<T> {
     return fetch(`/~/scry/${app}${path}.json`).then(r => r.json() as Promise<T>);
   }
 }
