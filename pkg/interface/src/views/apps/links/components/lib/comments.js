@@ -53,7 +53,7 @@ export class Comments extends Component {
 
       const { nickname, color, member, avatar } = getContactDetails(contacts[ship]);
 
-      const nameClass = nickname && hideNicknames ? 'inter' : 'mono';
+      const nameClass = nickname && !hideNicknames ? 'inter' : 'mono';
 
       return(
         <CommentItem
