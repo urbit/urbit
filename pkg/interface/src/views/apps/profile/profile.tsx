@@ -86,11 +86,11 @@ export default function ProfileScreen(props: any) {
                   </Box>
                 </Box>
                 <Box width="100%" py={3}>
-                  <SidebarItem current={view} view="settings">
-                    Ship Settings
-                  </SidebarItem>
                   <SidebarItem current={view} view="identity">
                     Your Identity
+                  </SidebarItem>
+                  <SidebarItem current={view} view="settings">
+                    Ship Settings
                   </SidebarItem>
                 </Box>
               </Col>

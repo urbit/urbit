@@ -90,6 +90,8 @@ export class OverlaySigil extends Component {
             association={props.association}
             group={props.group}
             onDismiss={this.profileHide}
+            hideAvatars={hideAvatars}
+            hideNicknames={props.hideNicknames}
           />
         )}
         {img}

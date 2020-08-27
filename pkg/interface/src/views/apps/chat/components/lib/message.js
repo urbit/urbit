@@ -47,12 +47,14 @@ const renderWithSigil = (props, timestamp) => {
 
     const contact = props.msg.author in props.contacts
       ? props.contacts[props.msg.author] : false;
+    const showNickname = !props.hideNicknames && contact?.nickname;
     let name = `~${props.msg.author}`;
     let color = '#000000';
     let sigilClass = 'mix-blend-diff';
     if (contact) {
-      name = (contact.nickname.length > 0 && !props.hideNicknames)
-        ? contact.nickname : `~${props.msg.author}`;
+      name = showNickname
+        ? contact.nickname
+        : `~${props.msg.author}`;
       color = `#${uxToHex(contact.color)}`;
       sigilClass = '';
     }
@@ -71,6 +73,7 @@ const renderWithSigil = (props, timestamp) => {
           association={props.association}
           group={props.group}
           hideAvatars={props.hideAvatars}
+          hideNicknames={props.hideNicknames}
           className="fl pr3 v-top bg-white bg-gray0-d"
         />
         <div className="fr clamp-message white-d"
@@ -80,7 +83,7 @@ const renderWithSigil = (props, timestamp) => {
               <span
                 className={
                   'mw5 db truncate pointer ' +
-                  (contact.nickname ? '' : 'mono')
+                  (showNickname ? '' : 'mono')
                 }
                 onClick={() => {
                   writeText(props.msg.author);
