@@ -61,7 +61,7 @@
     :_  this
     :~  :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~chat' /app/landscape %.n])
+            !>([%serve-dir /'~chat' /app/landscape %.n %.y])
         ==
       [%pass / %arvo %e %connect [~ /'chat-view'] %chat-view]
       [%pass /updates %agent [our.bol %chat-store] %watch /updates]
@@ -167,7 +167,7 @@
         [%pass / %arvo %e %connect [~ /'chat-view'] %chat-view]
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~chat' /app/landscape %.n])
+            !>([%serve-dir /'~chat' /app/landscape %.n %.y])
         ==
     ==
   ::

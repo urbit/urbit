@@ -65,7 +65,7 @@
         [%pass - %agent [our.bowl %invite-store] %watch -]
         :*  %pass  /srv  %agent  [our.bowl %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~link' /app/landscape %.n])
+            !>([%serve-dir /'~link' /app/landscape %.n %.y])
         ==
     ==
   ::
@@ -81,7 +81,7 @@
       :-  [%pass /connect %arvo %e %disconnect [~ /'~link']]
       :~  :*  %pass  /srv  %agent  [our.bowl %file-server]
           %poke  %file-server-action
-          !>([%serve-dir /'~link' /app/landscape %.n])
+          !>([%serve-dir /'~link' /app/landscape %.n %.y])
       ==  ==
     ==
   ::
