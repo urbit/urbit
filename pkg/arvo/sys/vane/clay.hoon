@@ -2391,48 +2391,59 @@
   ::
   ::  Find the most recent common ancestor(s).
   ::
+  ::    For performance, this depends on +reachable-takos being
+  ::    memoized.
+  ::
   ++  find-merge-points
     |=  [=ali=yaki =bob=yaki]
     ^-  (set yaki)
     ::  Loop through ancestors breadth-first, lazily generating ancestry
     ::
     =/  ali-takos  (reachable-takos:ze r.ali-yaki)
+    ::  Tako worklist
+    ::
     =/  takos=(list tako)  ~[r.bob-yaki]
-    =/  bases  *(set tako)
-    =/  done  *(set tako)
+    ::  Mergebase candidates.  Have proven they're common ancestors, but
+    ::  not that they're a most recent
+    ::
+    =|  bases=(set tako)
+    ::  Takos we've already checked or are in our worklist
+    ::
+    =|  done=(set tako)
     |-  ^-  (set yaki)
     =*  outer-loop  $
+    ::  If we've finished our worklist, convert to yakis and return
+    ::
     ?~  takos
       (silt (turn ~(tap in bases) ~(got by hut.ran)))
     =.  done  (~(put in done) i.takos)
+    ::  If this is a common ancestor, stop recursing through our
+    ::  parentage.  Check if it's comparable to any existing candidate.
+    ::
     ?:  (~(has in ali-takos) i.takos)
       =/  base-list  ~(tap in bases)
       |-  ^-  (set yaki)
       =*  bases-loop  $
       ?~  base-list
-        ::  Remove all ancestors of new candidate
+        ::  Proven it's not an ancestor of any previous candidate.
+        ::  Remove all ancestors of new candidate and add it to the
+        ::  candidate list.
         ::
         =.  bases
           =/  new-reachable  (reachable-takos:ze i.takos)
           (~(put in (~(dif in bases) new-reachable)) i.takos)
         outer-loop(takos t.takos)
-      =/  base-reachable  (reachable-takos:ze i.base-list)
-      ::  Not a mergebase if an ancestor of another candidate
+      ::  If it's an ancestor of another candidate, this is not most
+      ::  recent, so skip and try next in worklist.
       ::
+      =/  base-reachable  (reachable-takos:ze i.base-list)
       ?:  (~(has in base-reachable) i.takos)
         outer-loop(takos t.takos)
       bases-loop(base-list t.base-list)
     ::  Append parents to list and recurse
     ::
     =/  bob-yaki  (~(got by hut.ran) i.takos)
-    %=    outer-loop
-        takos
-      %+  weld  t.takos
-      ^-  (list tako)
-      %+  skip  p.bob-yaki
-      |=  a=tako
-      (~(has in done) a)
-    ==
+    outer-loop(takos (weld t.takos (skip p.bob-yaki ~(has in done))))
   ::
   ::  Update mime cache
   ::
