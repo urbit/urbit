@@ -9,19 +9,21 @@ _setup(void)
   u3m_pave(c3y, c3n);
 }
 
-/* _test_jam(): spot check jam/cue
+/* _test_jam_spot_a(): spot check jam/cue
 */
-static void
-_test_jam(void)
+static c3_i
+_test_jam_spot_a(void)
 {
+  c3_i ret_i = 1;
+
   if ( 0xc != u3qe_jam(1) ) {
     fprintf(stderr, "jam: fail (a)\r\n");
-    exit(1);
+    ret_i = 0;
   }
 
   if ( 1 != u3ke_cue(u3qe_jam(1)) ) {
     fprintf(stderr, "jam: fail (b)\r\n");
-    exit(1);
+    ret_i = 0;
   }
 
   {
@@ -29,12 +31,12 @@ _test_jam(void)
 
     if ( 0x1231 != u3qe_jam(a) ) {
       fprintf(stderr, "jam: fail (c)\r\n");
-      exit(1);
+      ret_i = 0;
     }
 
     if ( c3y != u3r_sing(a, u3ke_cue(u3qe_jam(a))) ) {
       fprintf(stderr, "jam: fail (d)\r\n");
-      exit(1);
+      ret_i = 0;
     }
   }
 
@@ -43,28 +45,26 @@ _test_jam(void)
 
     if ( 0x344871 != u3qe_jam(a) ) {
       fprintf(stderr, "jam: fail (e)\r\n");
-      exit(1);
+      ret_i = 0;
     }
 
     if ( c3y != u3r_sing(a, u3ke_cue(u3qe_jam(a))) ) {
       fprintf(stderr, "jam: fail (f)\r\n");
-      exit(1);
+      ret_i = 0;
     }
   }
 
   {
     u3_noun a = u3nc(u3nc(1, 2), 3);
 
-    // fprintf(stderr, "%x\n", u3qe_jam(a));
-
     if ( 0x3448c5 != u3qe_jam(a) ) {
       fprintf(stderr, "jam: fail (g)\r\n");
-      exit(1);
+      ret_i = 0;
     }
 
     if ( c3y != u3r_sing(a, u3ke_cue(u3qe_jam(a))) ) {
       fprintf(stderr, "jam: fail (h)\r\n");
-      exit(1);
+      ret_i = 0;
     }
   }
 
@@ -74,7 +74,7 @@ _test_jam(void)
 
     if ( c3y != u3r_sing(a, u3ke_cue(u3qe_jam(a))) ) {
       fprintf(stderr, "jam: fail (j)\r\n");
-      exit(1);
+      ret_i = 0;
     }
   }
 
@@ -84,7 +84,7 @@ _test_jam(void)
 
     if ( c3y != u3r_sing(a, u3ke_cue(u3qe_jam(a))) ) {
       fprintf(stderr, "jam: fail (k)\r\n");
-      exit(1);
+      ret_i = 0;
     }
   }
 
@@ -93,16 +93,20 @@ _test_jam(void)
 
     if ( c3y != u3r_sing(a, u3ke_cue(u3qe_jam(a))) ) {
       fprintf(stderr, "jam: fail (l)\r\n");
-      exit(1);
+      ret_i = 0;
     }
   }
+
+  return ret_i;
 }
 
-/* _test_cue_jam(): more jam/cue spot-checking, ported from the 64-bit effort
+/* _test_jam_spot_b(): more jam/cue spot-checking, ported from the 64-bit effort
 */
-static void
-_test_cue_jam()
+static c3_i
+_test_jam_spot_b()
 {
+  c3_i ret_i = 1;
+
   // the boot msg from the worker
   {
     u3_noun dat = u3_nul;
@@ -114,13 +118,14 @@ _test_cue_jam()
     u3_noun tail_out =    u3t(out_1);
 
     if (c3__play != head_out){
-      printf("*** cue_jam 0 out head \n");
+      fprintf(stderr, "*** cue_jam 0 out head\r\n");
+      ret_i = 0;
     }
 
     if (u3_nul != tail_out){
-      printf("*** cue_jam 0 out tail \n");
+      fprintf(stderr, "*** cue_jam 0 out tail\r\n");
+      ret_i = 0;
     }
-
   }
 
   // the boot msg from the worker, again,
@@ -144,7 +149,8 @@ _test_cue_jam()
     u3_noun jam_2 = u3i_bytes(len_w, buf_y);
 
     if ( c3n == u3r_sing(jam_1, jam_2) ) {
-      printf("*** error in 6 byte message\n");
+      fprintf(stderr, "*** error in 6 byte message\r\n");
+      ret_i = 0;
     }
 
     u3_noun out_1 = u3ke_cue(jam_2);
@@ -153,13 +159,14 @@ _test_cue_jam()
     u3_noun tail_out =    u3t(out_1);
 
     if (c3__play != head_out){
-      printf("*** cue_jam 0 out head \n");
+      fprintf(stderr, "*** cue_jam 0 out head\r\n");
+      ret_i = 0;
     }
 
     if (u3_nul != tail_out){
-      printf("*** cue_jam 0 out tail \n");
+      fprintf(stderr, "*** cue_jam 0 out tail\r\n");
+      ret_i = 0;
     }
-
   }
 
   // 1
@@ -169,13 +176,15 @@ _test_cue_jam()
     u3_atom jam_1 = u3ke_jam(in_1);
 
     if (12 != jam_1){
-      printf("*** cue_jam 1a \n");
+      fprintf(stderr, "*** cue_jam 1a\r\n");
+      ret_i = 0;
     }
 
     u3_noun out_1 = u3ke_cue(jam_1);
 
     if (1 != out_1){
-      printf("*** cue_jam 1b \n");
+      fprintf(stderr, "*** cue_jam 1b\r\n");
+      ret_i = 0;
     }
   }
 
@@ -186,7 +195,8 @@ _test_cue_jam()
     u3_atom jam_1 = u3ke_jam(in_1);
 
     if (817 != jam_1){
-      printf("*** cue_jam 2 in \n");
+      fprintf(stderr, "*** cue_jam 2 in\r\n");
+      ret_i = 0;
     }
 
     u3_noun out_1 = u3ke_cue(jam_1);
@@ -196,11 +206,13 @@ _test_cue_jam()
     u3_noun tail_out =    u3t(out_1);
 
     if (1 != head_out){
-      printf("*** cue_jam 2 out head \n");
+      fprintf(stderr, "*** cue_jam 2 out head\r\n");
+      ret_i = 0;
     }
 
     if (1 != tail_out){
-      printf("*** cue_jam 2 out tail \n");
+      fprintf(stderr, "*** cue_jam 2 out tail\r\n");
+      ret_i = 0;
     }
   }
 
@@ -211,7 +223,8 @@ _test_cue_jam()
     u3_atom jam_1 = u3ke_jam(in_1);
 
     if (4657 != jam_1){
-      printf("*** cue_jam 2 in \n");
+      fprintf(stderr, "*** cue_jam 2 in\r\n");
+      ret_i = 0;
     }
 
     u3_noun out_1 = u3ke_cue(jam_1);
@@ -220,11 +233,13 @@ _test_cue_jam()
     u3_noun tail_out =    u3t(out_1);
 
     if (1 != head_out){
-      printf("*** cue_jam 2 out head \n");
+      fprintf(stderr, "*** cue_jam 2 out head\r\n");
+      ret_i = 0;
     }
 
     if (2 != tail_out){
-      printf("*** cue_jam 2 out tail \n");
+      fprintf(stderr, "*** cue_jam 2 out tail\r\n");
+      ret_i = 0;
     }
   }
 
@@ -252,25 +267,49 @@ _test_cue_jam()
     u3_noun a2 = u3h(out_1);
     u3_noun r2 = u3t(out_1);
     if (a2 != a){
-      printf("*** _cue_jam: complicated a\n");
+      fprintf(stderr, "*** _cue_jam: complicated a\r\n");
+      ret_i = 0;
     }
 
     u3_noun b2 = u3h(r2);
     u3_noun s2 = u3t(r2);
     if (b2 != b){
-      printf("*** _cue_jam: complicated b\n");
+      fprintf(stderr, "*** _cue_jam: complicated b\r\n");
+      ret_i = 0;
     }
 
     u3_noun c2 = u3h(s2);
     u3_noun d2 = u3t(s2);
     if (c2 != c){
-      printf("*** _cue_jam: complicated c\n");
+      fprintf(stderr, "*** _cue_jam: complicated c\r\n");
+      ret_i = 0;
     }
 
     if (d2 != d){
-      printf("*** _cue_jam: complicated d\n");
+      fprintf(stderr, "*** _cue_jam: complicated d\r\n");
+      ret_i = 0;
     }
   }
+
+  return 1;
+}
+
+static c3_i
+_test_jam(void)
+{
+  c3_i ret_i = 1;
+
+  if ( !_test_jam_spot_a() ) {
+    fprintf(stderr, "test jam: spot a: failed\r\n");
+    ret_i = 0;
+  }
+
+  if ( !_test_jam_spot_b() ) {
+    fprintf(stderr, "test jam: spot b: failed\r\n");
+    ret_i = 0;
+  }
+
+  return ret_i;
 }
 
 /* main(): run all test cases.
@@ -280,10 +319,11 @@ main(int argc, char* argv[])
 {
   _setup();
 
-  _test_jam();
-  _test_cue_jam();
+  if ( !_test_jam() ) {
+    fprintf(stderr, "test jam: failed\r\n");
+    exit(1);
+  }
 
-  fprintf(stderr, "test_jam: ok\n");
-
+  fprintf(stderr, "test jam: ok\r\n");
   return 0;
 }
