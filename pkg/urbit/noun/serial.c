@@ -965,10 +965,10 @@ _cs_cue_xeno_next(_cue_stack_t* tac_u,
   }
 }
 
-/* _cs_cue_xeno_unsafe(): cue onto the loom, all bookkeeping off-loom.
+/* u3s_cue_xeno_unsafe(): cue onto the loom, all bookkeeping off-loom.
 */
-static ur_cue_res_e
-_cs_cue_xeno_unsafe(ur_dict32_t* dic_u,
+ur_cue_res_e
+u3s_cue_xeno_unsafe(ur_dict32_t* dic_u,
                     c3_d         len_d,
                     const c3_y*  byt_y,
                     u3_noun*       out)
@@ -1046,7 +1046,7 @@ u3s_cue_xeno(c3_d len_d, const c3_y* byt_y)
   //  errors are fatal
   //
   if ( ur_cue_good !=
-       (res_e = _cs_cue_xeno_unsafe(&dic_u, len_d, byt_y, &pro)) )
+       (res_e = u3s_cue_xeno_unsafe(&dic_u, len_d, byt_y, &pro)) )
   {
     fprintf(stderr, "cue xeno: failed\r\n");
     exit(1);
