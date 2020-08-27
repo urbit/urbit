@@ -142,7 +142,6 @@
     `['' (~(play ut sut) wing+t.p.gen)]
   ::
       [^ *]      (both p.gen q.gen)
-      [%ktcn *]  loop(gen p.gen)
       [%brcn *]  (grow q.gen)
       [%brpt *]  (grow q.gen)
       [%cnts *]
