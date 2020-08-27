@@ -30,6 +30,11 @@
         c3_o
         u3s_jam_file(u3_noun a, c3_c* pas_c);
 
+      /* u3s_jam_xeno(): jam with off-loom buffer (re-)allocation.
+      */
+        c3_d
+        u3s_jam_xeno(u3_noun a, c3_d* len_d, c3_y** byt_y);
+
       /* u3s_cue(): cue [a]
       */
         u3_noun

@@ -502,6 +502,129 @@ u3s_jam_file(u3_noun a, c3_c* pas_c)
   }
 }
 
+typedef struct _jam_xeno_s {
+  u3p(u3h_root) har_p;
+  ur_bsw_t      rit_u;
+} _jam_xeno_t;
+
+/* _cs_coin_chub(): shortcircuit u3i_chubs().
+*/
+static inline u3_atom
+_cs_coin_chub(c3_d a_d)
+{
+  return ( 0x7fffffffULL >= a_d ) ? a_d : u3i_chubs(1, &a_d);
+}
+
+/* _cs_jam_xeno_atom(): encode in/direct atom in bitstream.
+*/
+static inline void
+_cs_jam_bsw_atom(ur_bsw_t* rit_u, c3_w met_w, u3_atom a)
+{
+  if ( c3y == u3a_is_cat(a) ) {
+    //  XX need a ur_bsw_atom32()
+    //
+    ur_bsw_atom64(rit_u, (c3_y)met_w, (c3_d)a);
+  }
+  else {
+    u3a_atom* vat_u = u3a_to_ptr(a);
+    //  XX assumes little-endian
+    //  XX need a ur_bsw_atom_words()
+    //
+    c3_y*     byt_y = (c3_y*)vat_u->buf_w;
+    ur_bsw_atom_bytes(rit_u, (c3_d)met_w, byt_y);
+  }
+}
+
+/* _cs_jam_bsw_back(): encode in/direct backref in bitstream.
+*/
+static inline void
+_cs_jam_bsw_back(ur_bsw_t* rit_u, c3_w met_w, u3_atom a)
+{
+  c3_d bak_d = ( c3y == u3a_is_cat(a) )
+             ? (c3_d)a
+             : u3r_chub(0, a);
+
+  //  XX need a ur_bsw_back32()
+  //
+  ur_bsw_back64(rit_u, (c3_y)met_w, bak_d);
+}
+
+/* _cs_jam_xeno_atom(): encode atom or backref in bitstream.
+*/
+static void
+_cs_jam_xeno_atom(u3_atom a, void* ptr_v)
+{
+  _jam_xeno_t* jam_u = ptr_v;
+  ur_bsw_t*    rit_u = &(jam_u->rit_u);
+  u3_weak        bak = u3h_git(jam_u->har_p, a);
+  c3_w         met_w = u3r_met(0, a);
+
+  if ( u3_none == bak ) {
+    u3h_put(jam_u->har_p, a, _cs_coin_chub(rit_u->bits));
+    _cs_jam_bsw_atom(rit_u, met_w, a);
+  }
+  else {
+    c3_w bak_w = u3r_met(0, bak);
+
+    if ( met_w <= bak_w ) {
+      _cs_jam_bsw_atom(rit_u, met_w, a);
+    }
+    else {
+      _cs_jam_bsw_back(rit_u, bak_w, bak);
+    }
+  }
+}
+
+/* _cs_jam_xeno_cell(): encode cell or backref in bitstream.
+*/
+static c3_o
+_cs_jam_xeno_cell(u3_noun a, void* ptr_v)
+{
+  _jam_xeno_t* jam_u = ptr_v;
+  ur_bsw_t*    rit_u = &(jam_u->rit_u);
+  u3_weak        bak = u3h_git(jam_u->har_p, a);
+
+  if ( u3_none == bak ) {
+    u3h_put(jam_u->har_p, a, _cs_coin_chub(rit_u->bits));
+    ur_bsw_cell(rit_u);
+    return c3y;
+  }
+  else {
+    _cs_jam_bsw_back(rit_u, u3r_met(0, bak), bak);
+    return c3n;
+  }
+}
+
+/* u3s_jam_xeno(): jam with off-loom buffer (re-)allocation.
+*/
+c3_d
+u3s_jam_xeno(u3_noun a, c3_d* len_d, c3_y** byt_y)
+{
+  _jam_xeno_t jam_u = {0};
+
+  c3_assert( &(u3H->rod_u) == u3R );
+
+  jam_u.har_p = u3h_new();
+
+  jam_u.rit_u.prev  = ur_fib11;
+  jam_u.rit_u.size  = ur_fib12;
+  jam_u.rit_u.bytes = c3_calloc(jam_u.rit_u.size);
+
+  //  as this is a hot path, we unsafely elide overflow checks
+  //
+  //    a page-fault overflow detection system is urgently needed ...
+  //
+  u3a_walk_fore_unsafe(a, &jam_u, _cs_jam_xeno_atom,
+                                  _cs_jam_xeno_cell);
+
+  *len_d = jam_u.rit_u.fill + !!jam_u.rit_u.off;
+  *byt_y = jam_u.rit_u.bytes;
+
+  u3h_free(jam_u.har_p);
+
+  return jam_u.rit_u.bits;
+}
+
 #define CUE_ROOT 0
 #define CUE_HEAD 1
 #define CUE_TAIL 2
@@ -1101,7 +1224,7 @@ u3s_cue_smol(c3_w len_w, const c3_y* byt_y)
 static inline u3_weak
 _cs_cue_get(u3p(u3h_root) har_p, c3_d key_d)
 {
-  u3_atom key = u3i_chubs(1, &key_d);
+  u3_atom key = _cs_coin_chub(key_d);
   u3_weak pro = u3h_get(har_p, key);
   u3z(key);
   return pro;
@@ -1112,7 +1235,7 @@ _cs_cue_get(u3p(u3h_root) har_p, c3_d key_d)
 static inline u3_noun
 _cs_cue_put(u3p(u3h_root) har_p, c3_d key_d, u3_noun val)
 {
-  u3_atom key = u3i_chubs(1, &key_d);
+  u3_atom key = _cs_coin_chub(key_d);
   u3h_put(har_p, key, u3k(val));
   u3z(key);
   return val;
