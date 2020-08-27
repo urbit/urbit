@@ -35,6 +35,8 @@ export interface StoreState {
   groupKeys: Set<Path>;
   permissions: Permissions;
   s3: S3State;
+  graphs: Object;
+  graphKeys: Set<String>;
 
 
   // App specific states

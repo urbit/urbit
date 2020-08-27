@@ -31,6 +31,7 @@ export class LinksApp extends Component {
 
     this.props.api.links.getPage('', 0);
     this.props.subscription.startApp('link');
+    this.props.subscription.startApp('graph');
     if (!this.props.sidebarShown) {
       this.props.api.local.sidebarToggle();
     }
@@ -38,6 +39,7 @@ export class LinksApp extends Component {
 
   componentWillUnmount() {
     this.props.subscription.stopApp('link');
+    this.props.subscription.stopApp('graph');
   }
 
 
