@@ -2347,7 +2347,6 @@
   ::  all notebooks, short form
       [[[~ %json] [%'publish-view' %notebooks ~]] ~]
     %-  json-response:gen
-    %-  json-to-octs
     (notebooks-map:enjs our.bol books)
   ::
   ::  notes pagination
@@ -2366,7 +2365,6 @@
     ?~  length
       not-found:gen
     %-  json-response:gen
-    %-  json-to-octs
     :-  %o
     (notes-page:enjs notes.u.book u.start u.length)
   ::
@@ -2390,7 +2388,6 @@
     ?~  length
       not-found:gen
     %-  json-response:gen
-    %-  json-to-octs
     (comments-page:enjs comments.u.note u.start u.length)
   ::
   ::  single notebook with initial 50 notes in short form, as json
@@ -2409,7 +2406,7 @@
       (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
     =.  p.notebook-json
       (~(put by p.notebook-json) %writers (get-writers-json u.host book-name))
-    (json-response:gen (json-to-octs (pairs notebook+notebook-json ~)))
+    (json-response:gen (pairs notebook+notebook-json ~))
   ::
   ::  single note, with initial 50 comments, as json
       [[[~ %json] [%'publish-view' @ @ @ ~]] ~]
@@ -2424,7 +2421,7 @@
     ?~  note  not-found:gen
     =/  jon=json
       o+(note-presentation:enjs u.book note-name u.note)
-    (json-response:gen (json-to-octs jon))
+    (json-response:gen jon)
   ==
 ::
 --

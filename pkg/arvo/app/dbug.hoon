@@ -148,9 +148,7 @@
   ::
   =;  json=(unit json)
     ?~  json  not-found:gen
-    %-  json-response:gen
-    =,  html
-    (as-octt:mimes (en-json u.json))
+    (json-response:gen u.json)
   =,  enjs:format
   ?+  site  ~
     ::  /apps.json: {appname: running?}
