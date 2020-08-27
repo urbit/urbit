@@ -50,7 +50,6 @@ export default class DojoApp extends Component {
           <title>OS1 - Dojo</title>
         </Helmet>
         <div
-          className="bg-white bg-gray0-d"
           style={{ height: '100%' }}
         >
           <Route
@@ -68,7 +67,7 @@ export default class DojoApp extends Component {
               return (
                 <div className="w-100 h-100 flex-m flex-l flex-xl">
                   <div
-                    className="db dn-m dn-l dn-xl inter bg-white bg-gray0-d dt w-100"
+                    className="db dn-m dn-l dn-xl inter dt w-100"
                     style={{ height: 40 }}
                   >
                   </div>
