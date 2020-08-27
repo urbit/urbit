@@ -39,3 +39,23 @@
       */
         u3_noun
         u3s_cue_xeno(c3_d len_d, const  c3_y* byt_y);
+
+      /* u3s_cue_smol(): cue onto the loom, bitwidth fits in a direct atom.
+      */
+        u3_noun
+        u3s_cue_smol(c3_w len_w, const c3_y* byt_y);
+
+      /* u3s_cue_full(): cue onto the loom.
+      */
+        u3_noun
+        u3s_cue_full(c3_d len_d, const c3_y* byt_y);
+
+      /* u3s_cue_bytes(): cue bytes.
+      */
+        u3_noun
+        u3s_cue_bytes(c3_d len_d, const c3_y* byt_y);
+
+      /* u3s_cue_atom(): cue atom.
+      */
+        u3_noun
+        u3s_cue_atom(u3_atom a);
