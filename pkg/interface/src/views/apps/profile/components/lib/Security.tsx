@@ -17,9 +17,9 @@ export default function SecuritySettings({ api }: SecuritySettingsProps) {
         Log out of this session
       </Box>
       <Box fontSize={0} mt={2} color="gray">
-        You will be logged out of your Urbit on this browser
+        You will be logged out of your Urbit on this browser.
         <form method="post" action="/~/logout">
-          <Button narrow mt={2} border={1}>
+          <Button narrow mt='4' border={1}>
             Logout
           </Button>
         </form>
@@ -27,15 +27,15 @@ export default function SecuritySettings({ api }: SecuritySettingsProps) {
       <Box color="black" fontSize={0} mt={4} fontWeight={700}>
         Log out of all sessions
       </Box>
+      {/* Restore after testing sending 'all' in POST body
       <Box fontSize={0} mt={2} color="gray">
-        You will be logged out of all browsers that have currently logged into
-        your Urbit
+        You will be logged out of all browsers that have currently logged into your Urbit.
         <form method="post" action="/~/logout">
-          <Button error narrow mt={2} border={1}>
-            Logout Everywhere
+          <Button error narrow mt={4} border={1}>
+            Logout
           </Button>
         </form>
-      </Box>
+      </Box> */}
     </Box>
   );
 }
