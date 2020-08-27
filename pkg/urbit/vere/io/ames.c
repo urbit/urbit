@@ -655,20 +655,25 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
   //  if scry fails, remember we can't scry, and just inject the packet
   //
   if (u3_none == las) {
-    pac_u->sam_u->foq_d--;
     u3l_log("ames: giving up scry\n");
     pac_u->sam_u->see_o = c3n;
     _ames_put_packet(pac_u->sam_u,
                      _ames_serialize_packet(pac_u, c3n),
                      pac_u->ore_u);
+    pac_u->sam_u->foq_d--;
+    _ames_panc_free(pac_u);
+  }
+  //  if there is no lane, drop the packet
+  //
+  else if (u3_nul == las) {
+    pac_u->sam_u->foq_d--;
     _ames_panc_free(pac_u);
   }
   //  if there is a lane, forward the packet on it
   //
-  else if (u3_nul != las) {
+  else {
     _ames_forward(pac_u, u3k(las));
   }
-  //  if there is no lane, drop the packet
 
   u3z(nun);
 }
