@@ -19,15 +19,15 @@ _bsw_atom(ur_root_t *r, ur_nref ref, ur_bsw_t *bsw, uint64_t len)
 }
 
 typedef struct _jam_s {
-  ur_dict64_t dict;
-  ur_bsw_t     bsw;
+  ur_dict64_t *dict;
+  ur_bsw_t      bsw;
 } _jam_t;
 
 static void
 _jam_atom(ur_root_t *r, ur_nref ref, void *ptr)
 {
   _jam_t         *j = ptr;
-  ur_dict64_t *dict = &(j->dict);
+  ur_dict64_t *dict = j->dict;
   ur_bsw_t     *bsw = &j->bsw;
   uint64_t bak, len = ur_met(r, 0, ref);
 
@@ -52,7 +52,7 @@ static ur_bool_t
 _jam_cell(ur_root_t *r, ur_nref ref, void *ptr)
 {
   _jam_t         *j = ptr;
-  ur_dict64_t *dict = &(j->dict);
+  ur_dict64_t *dict = j->dict;
   ur_bsw_t     *bsw = &j->bsw;
   uint64_t      bak;
 
@@ -69,22 +69,39 @@ _jam_cell(ur_root_t *r, ur_nref ref, void *ptr)
 }
 
 uint64_t
-ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt)
+ur_jam_unsafe(ur_root_t      *r,
+              ur_nref       ref,
+              ur_dict64_t *dict,
+              uint64_t     *len,
+              uint8_t     **byt)
 {
   _jam_t j = {0};
+
+  j.dict = dict;
 
   j.bsw.prev  = ur_fib11;
   j.bsw.size  = ur_fib12;
   j.bsw.bytes = calloc(j.bsw.size, 1);
-  ur_dict64_grow(r, &j.dict, ur_fib11, ur_fib12);
 
   ur_walk_fore(r, ref, &j, _jam_atom, _jam_cell);
-  ur_dict_free((ur_dict_t*)&j.dict);
 
   *len = j.bsw.fill + !!j.bsw.off;
   *byt = j.bsw.bytes;
 
   return j.bsw.bits;
+}
+
+uint64_t
+ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt)
+{
+  ur_dict64_t dict = {0};
+  ur_dict64_grow(r, &dict, ur_fib11, ur_fib12);
+
+  {
+    uint64_t bits = ur_jam_unsafe(r, ref, &dict, len, byt);
+    ur_dict_free((ur_dict_t*)&dict);
+    return bits;
+  }
 }
 
 /*
