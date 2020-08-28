@@ -1126,13 +1126,15 @@ _test_bsr64(void)
 static void
 _bsr_bytes_any_slow(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
 {
-  uint64_t i, len_byt = len >> 3;
+  uint64_t i, len_byt = len >> 3, len_bit = ur_mask_3(len);
 
   for ( i = 0; i < len_byt; i++ ) {
     out[i] = _bsr8_any_slow(bsr, 8);
   }
 
-  out[len_byt] = _bsr8_any_slow(bsr, ur_mask_3(len));
+  if ( len_bit ) {
+    out[len_byt] = _bsr8_any_slow(bsr, len_bit);
+  }
 }
 
 static int

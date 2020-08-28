@@ -130,22 +130,22 @@ ur_bsr32_any(ur_bsr_t *bsr, uint8_t len)
     return 0;
   }
   else {
-    uint8_t      off = bsr->off;
-    uint8_t     rest = 8 - off;
-    const uint8_t *b = bsr->bytes;
-    uint32_t       m = b[0] >> off;
+    uint8_t  off = bsr->off;
+    uint8_t rest = 8 - off;
+    uint32_t   m = bsr->bytes[0] >> off;
 
     if ( len < rest ) {
       bsr->off = off + len;
       return m & ((1 << len) - 1);
     }
     else {
-      uint8_t mask, len_byt;
-      uint32_t   l;
+      const uint8_t *b;
+      uint8_t     mask, len_byt;
+      uint32_t       l;
 
       len -= rest;
       left--;
-      bsr->bytes++;
+      b = ++bsr->bytes;
 
       len_byt = len >> 3;
 
@@ -164,33 +164,44 @@ ur_bsr32_any(ur_bsr_t *bsr, uint8_t len)
       mask = (1 << off) - 1;
 
       switch ( len_byt ) {
+        default: assert(0);
+
         case 4: {
-          l = (uint32_t)b[1]
-            ^ (uint32_t)b[2] << 8
-            ^ (uint32_t)b[3] << 16
-            ^ (uint32_t)b[4] << 24;
+          l = (uint32_t)b[0]
+            ^ (uint32_t)b[1] << 8
+            ^ (uint32_t)b[2] << 16
+            ^ (uint32_t)b[3] << 24;
         } break;
 
         case 3: {
-          l = (uint32_t)b[1]
-            ^ (uint32_t)b[2] << 8
-            ^ (uint32_t)b[3] << 16
-            ^ (uint32_t)(b[4] & mask) << 24;
+          l = (uint32_t)b[0]
+            ^ (uint32_t)b[1] << 8
+            ^ (uint32_t)b[2] << 16;
+
+          if ( mask ) {
+            l ^= (uint32_t)(b[3] & mask) << 24;
+          }
         } break;
 
         case 2: {
-          l = (uint32_t)b[1]
-            ^ (uint32_t)b[2] << 8
-            ^ (uint32_t)(b[3] & mask) << 16;
+          l = (uint32_t)b[0]
+            ^ (uint32_t)b[1] << 8;
+
+          if ( mask ) {
+            l ^= (uint32_t)(b[2] & mask) << 16;
+          }
         } break;
 
         case 1: {
-          l = (uint32_t)b[1]
-            ^ (uint32_t)(b[2] & mask) << 8;
+          l = (uint32_t)b[0];
+
+          if ( mask ) {
+            l ^= (uint32_t)(b[1] & mask) << 8;
+          }
         } break;
 
         case 0: {
-           l = (uint32_t)(b[1] & mask);
+          l = ( mask ) ? (uint32_t)(b[0] & mask) : 0;
         } break;
       }
 
@@ -212,22 +223,22 @@ ur_bsr64_any(ur_bsr_t *bsr, uint8_t len)
     return 0;
   }
   else {
-    uint8_t      off = bsr->off;
-    uint8_t     rest = 8 - off;
-    const uint8_t *b = bsr->bytes;
-    uint64_t       m = b[0] >> off;
+    uint8_t  off = bsr->off;
+    uint8_t rest = 8 - off;
+    uint64_t   m = bsr->bytes[0] >> off;
 
     if ( len < rest ) {
       bsr->off = off + len;
       return m & ((1 << len) - 1);
     }
     else {
-      uint8_t mask, len_byt;
-      uint64_t   l;
+      const uint8_t *b;
+      uint8_t     mask, len_byt;
+      uint64_t       l;
 
       len -= rest;
       left--;
-      bsr->bytes++;
+      b = ++bsr->bytes;
 
       len_byt = len >> 3;
 
@@ -247,74 +258,95 @@ ur_bsr64_any(ur_bsr_t *bsr, uint8_t len)
 
       switch ( len_byt ) {
         case 8: {
-          l = (uint64_t)b[1]
-            ^ (uint64_t)b[2] << 8
-            ^ (uint64_t)b[3] << 16
-            ^ (uint64_t)b[4] << 24
-            ^ (uint64_t)b[5] << 32
-            ^ (uint64_t)b[6] << 40
-            ^ (uint64_t)b[7] << 48
-            ^ (uint64_t)b[8] << 56;
+          l = (uint64_t)b[0]
+            ^ (uint64_t)b[1] << 8
+            ^ (uint64_t)b[2] << 16
+            ^ (uint64_t)b[3] << 24
+            ^ (uint64_t)b[4] << 32
+            ^ (uint64_t)b[5] << 40
+            ^ (uint64_t)b[6] << 48
+            ^ (uint64_t)b[7] << 56;
         } break;
 
         case 7: {
-          l = (uint64_t)b[1]
-            ^ (uint64_t)b[2] << 8
-            ^ (uint64_t)b[3] << 16
-            ^ (uint64_t)b[4] << 24
-            ^ (uint64_t)b[5] << 32
-            ^ (uint64_t)b[6] << 40
-            ^ (uint64_t)b[7] << 48
-            ^ (uint64_t)(b[8] & mask) << 56;
+          l = (uint64_t)b[0]
+            ^ (uint64_t)b[1] << 8
+            ^ (uint64_t)b[2] << 16
+            ^ (uint64_t)b[3] << 24
+            ^ (uint64_t)b[4] << 32
+            ^ (uint64_t)b[5] << 40
+            ^ (uint64_t)b[6] << 48;
+
+          if ( mask ) {
+            l ^= (uint64_t)(b[7] & mask) << 56;
+          }
         } break;
 
         case 6: {
-          l = (uint64_t)b[1]
-            ^ (uint64_t)b[2] << 8
-            ^ (uint64_t)b[3] << 16
-            ^ (uint64_t)b[4] << 24
-            ^ (uint64_t)b[5] << 32
-            ^ (uint64_t)b[6] << 40
-            ^ (uint64_t)(b[7] & mask) << 48;
+          l = (uint64_t)b[0]
+            ^ (uint64_t)b[1] << 8
+            ^ (uint64_t)b[2] << 16
+            ^ (uint64_t)b[3] << 24
+            ^ (uint64_t)b[4] << 32
+            ^ (uint64_t)b[5] << 40;
+
+          if ( mask ) {
+            l ^= (uint64_t)(b[6] & mask) << 48;
+          }
         } break;
 
         case 5: {
-          l = (uint64_t)b[1]
-            ^ (uint64_t)b[2] << 8
-            ^ (uint64_t)b[3] << 16
-            ^ (uint64_t)b[4] << 24
-            ^ (uint64_t)b[5] << 32
-            ^ (uint64_t)(b[6] & mask) << 40;
+          l = (uint64_t)b[0]
+            ^ (uint64_t)b[1] << 8
+            ^ (uint64_t)b[2] << 16
+            ^ (uint64_t)b[3] << 24
+            ^ (uint64_t)b[4] << 32;
+
+          if ( mask ) {
+            l ^= (uint64_t)(b[5] & mask) << 40;
+          }
         } break;
 
         case 4: {
-          l = (uint64_t)b[1]
-            ^ (uint64_t)b[2] << 8
-            ^ (uint64_t)b[3] << 16
-            ^ (uint64_t)b[4] << 24
-            ^ (uint64_t)(b[5] & mask) << 32;
+          l = (uint64_t)b[0]
+            ^ (uint64_t)b[1] << 8
+            ^ (uint64_t)b[2] << 16
+            ^ (uint64_t)b[3] << 24;
+
+          if ( mask ) {
+            l ^= (uint64_t)(b[4] & mask) << 32;
+          }
         } break;
 
         case 3: {
-          l = (uint64_t)b[1]
-            ^ (uint64_t)b[2] << 8
-            ^ (uint64_t)b[3] << 16
-            ^ (uint64_t)(b[4] & mask) << 24;
+          l = (uint64_t)b[0]
+            ^ (uint64_t)b[1] << 8
+            ^ (uint64_t)b[2] << 16;
+
+          if ( mask ) {
+            l ^= (uint64_t)(b[3] & mask) << 24;
+          }
         } break;
 
         case 2: {
-          l = (uint64_t)b[1]
-            ^ (uint64_t)b[2] << 8
-            ^ (uint64_t)(b[3] & mask) << 16;
+          l = (uint64_t)b[0]
+            ^ (uint64_t)b[1] << 8;
+
+          if ( mask ) {
+            l ^= (uint64_t)(b[2] & mask) << 16;
+          }
         } break;
 
         case 1: {
-          l = (uint64_t)b[1]
-            ^ (uint64_t)(b[2] & mask) << 8;
+          l = (uint64_t)b[0];
+
+          if ( mask ) {
+            l ^= (uint64_t)(b[1] & mask) << 8;
+          }
         } break;
 
         case 0: {
-           l = (uint64_t)(b[1] & mask);
+          l = ( mask ) ? (uint64_t)(b[0] & mask) : 0;
         } break;
       }
 
@@ -925,19 +957,21 @@ _bsw_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
       m = byt[i] >> rest;
     }
 
-    if ( len_bit < rest ) {
-      l = byt[len_byt] & ((1 << len_bit) - 1);
-      bsw->bytes[fill] = m ^ (l << off);
-      off += len_bit;
-    }
-    else {
-      l = byt[len_byt] & mask;
-      bsw->bytes[fill++] = m ^ (l << off);
+    if ( len_bit ) {
+      if ( len_bit < rest ) {
+        l = byt[len_byt] & ((1 << len_bit) - 1);
+        bsw->bytes[fill] = m ^ (l << off);
+        off += len_bit;
+      }
+      else {
+        l = byt[len_byt] & mask;
+        bsw->bytes[fill++] = m ^ (l << off);
 
-      m = byt[len_byt] >> rest;
+        m = byt[len_byt] >> rest;
 
-      off = len_bit - rest;
-      bsw->bytes[fill] = m & ((1 << off) - 1);
+        off = len_bit - rest;
+        bsw->bytes[fill] = m & ((1 << off) - 1);
+      }
     }
   }
 
