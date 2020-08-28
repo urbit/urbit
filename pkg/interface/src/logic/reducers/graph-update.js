@@ -22,7 +22,13 @@ const keys = (json, state) => {
   const data = _.get(json, 'keys', false);
   if (data) {
     state.graphKeys = new Set(data.map((res) => {
-      return res.ship + '/' + res.name;
+      let resource = res.ship + '/' + res.name;
+
+      if (!(resource in state.graphs)) {
+        state.graphs[resource] = new OrderedMap();
+      }
+
+      return resource;
     }));
   }
 };
@@ -35,9 +41,7 @@ const addGraph = (json, state) => {
     }
 
     let resource = data.resource.ship + '/' + data.resource.name;
-    if (!(resource in state.graphs)) {
-      state.graphs[resource] = new OrderedMap();
-    }
+    state.graphs[resource] = new OrderedMap();
 
     for (let i in data.graph) {
       let item = data.graph[i];

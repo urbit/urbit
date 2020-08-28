@@ -3,7 +3,7 @@ import { StoreState } from '../store/type';
 import { Patp, Path, PatpNoSig } from '~/types/noun';
 
 
-export const createPost = (contents: Object[], parentIndex: string) => {
+export const createPost = (contents: Object[], parentIndex: string = '') => {
   return {
     author: `~${window.ship}`,
     index: parentIndex + '/' + Date.now(),
@@ -74,37 +74,47 @@ export default class GraphApi extends BaseApi<StoreState> {
   getKeys() {
     this.scry<any>('graph-store', '/keys')
       .then((keys) => {
-        console.log(keys);
+        this.store.handleEvent({
+          data: keys
+        });
       });
   }
 
   getTags() {
     this.scry<any>('graph-store', '/tags')
       .then((tags) => {
-        console.log(tags);
+        this.store.handleEvent({
+          data: tags
+        });
       });
   }
 
   getTagQueries() {
     this.scry<any>('graph-store', '/tag-queries')
       .then((tagQueries) => {
-        console.log(tagQueries);
+        this.store.handleEvent({
+          data: tagQueries
+        });
       });
   }
 
   getGraph(ship: string, resource: string) {
     this.scry<any>('graph-store', `/graph/${ship}/${resource}`)
       .then((graph) => {
-        console.log(graph);
+        this.store.handleEvent({
+          data: graph
+        });
       });
   }
 
   getGraphSubset(ship: string, resource: string, start: string, end: start) {
     this.scry<any>(
       'graph-store',
-      `/graph-subset/${ship}/${resource}/${start}/${end}`
+      `/graph-subset/${ship}/${resource}/${end}/${start}`
     ).then((subset) => {
-      console.log(subset);
+      this.store.handleEvent({
+        data: subset
+      });
     });
   }
 
@@ -113,37 +123,10 @@ export default class GraphApi extends BaseApi<StoreState> {
       'graph-store',
       `/node/${ship}/${resource}/${index}`
     ).then((node) => {
-      console.log(node);
+      this.store.handleEvent({
+        data: node
+      });
     });
   }
-
-  getPost(ship: string, resource: string, index: string) {
-    this.scry<any>(
-      'graph-store',
-      `/post/${ship}/${resource}/${index}`
-    ).then((post) => {
-      console.log(post);
-    });
-  }
-
-  getNodeChildren(ship: string, resource: string, index: string) {
-    this.scry<any>(
-      'graph-store',
-      `/node-children/${ship}/${resource}/${index}`
-    ).then((children) => {
-      console.log(children);
-    });
-  }
-
-  getNodeChildrenSubset(ship: string, resource: string,
-                        start: string, end: string, index: string) {
-    this.scry<any>(
-      'graph-store',
-      `/node-children-subset/${ship}/${resource}/${start}/${end}/${index}`
-    ).then((subset) => {
-      console.log(subset);
-    });
-  }
-
 }
 
