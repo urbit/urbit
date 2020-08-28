@@ -121,6 +121,31 @@ _jam_bench(void)
       fprintf(stderr, "  jam cons: %u ms\r\n", mil_w);
     }
 
+    {
+      gettimeofday(&b4, 0);
+
+      {
+        ur_dict64_t dic_u = {0};
+        c3_d  len_d;
+        c3_y* byt_y;
+
+        ur_dict64_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
+
+        for ( i_w = 0; i_w < max_w; i_w++ ) {
+          ur_jam_unsafe(rot_u, ref, &dic_u, &len_d, &byt_y);
+          c3_free(byt_y);
+          ur_dict64_wipe(&dic_u);
+        }
+
+        ur_dict_free((ur_dict_t*)&dic_u);
+      }
+
+      gettimeofday(&f2, 0);
+      timersub(&f2, &b4, &d0);
+      mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+      fprintf(stderr, "  jam cons unsafe: %u ms\r\n", mil_w);
+    }
+
     ur_hcon_free(rot_u);
     break;
   }
@@ -187,8 +212,6 @@ _cue_bench(void)
     fprintf(stderr, "  cue xeno: %u ms (estimated)\r\n", mil_w * 8);
   }
 
-  //  NB: runs 1/8th the number of times
-  //
   {
     gettimeofday(&b4, 0);
 
@@ -205,8 +228,9 @@ _cue_bench(void)
 
       ur_dict32_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
 
-      for ( i_w = 0; i_w < max_w / 8; i_w++ ) {
-        u3z(u3s_cue_xeno(len_w, byt_y));
+      for ( i_w = 0; i_w < max_w; i_w++ ) {
+        u3s_cue_xeno_unsafe(&dic_u, len_w, byt_y, &out);
+        u3z(out);
         ur_dict32_wipe(&dic_u);
       }
 
@@ -216,7 +240,7 @@ _cue_bench(void)
     gettimeofday(&f2, 0);
     timersub(&f2, &b4, &d0);
     mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-    fprintf(stderr, "  cue xeno unsafe: %u ms (estimated)\r\n", mil_w * 8);
+    fprintf(stderr, "  cue xeno unsafe: %u ms\r\n", mil_w);
   }
 
   {
@@ -239,6 +263,36 @@ _cue_bench(void)
     timersub(&f2, &b4, &d0);
     mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
     fprintf(stderr, "  cue test: %u ms\r\n", mil_w);
+  }
+
+  {
+    gettimeofday(&b4, 0);
+
+    {
+      ur_dict_t dic_u = {0};
+      u3_noun       out;
+
+      c3_w  len_w = u3r_met(3, vat);
+      // XX assumes little-endian
+      //
+      c3_y* byt_y = ( c3y == u3a_is_cat(vat) )
+                  ? (c3_y*)&vat
+                  : (c3_y*)((u3a_atom*)u3a_to_ptr(vat))->buf_w;
+
+      ur_dict_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
+
+      for ( i_w = 0; i_w < max_w; i_w++ ) {
+        ur_cue_test_unsafe(&dic_u, len_w, byt_y);
+        ur_dict_wipe(&dic_u);
+      }
+
+      ur_dict_free(&dic_u);
+    }
+
+    gettimeofday(&f2, 0);
+    timersub(&f2, &b4, &d0);
+    mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+    fprintf(stderr, "  cue test unsafe: %u ms\r\n", mil_w);
   }
 
   {
