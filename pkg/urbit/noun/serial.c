@@ -1140,14 +1140,12 @@ _cs_cue_smol_next(c3_ys           mov,
         }
         else {
           c3_w  byt_w = (len_d >> 3) + !!ur_mask_3(len_d);
-          c3_w* wor_w = u3a_slaq(3, byt_w);
-          //  XX assumes little-endian
-          //  XX need a ur_bsr_words_any()
-          //
-          c3_y* byt_y = (c3_y*)wor_w;
+          c3_y* byt_y = u3a_calloc(1, byt_w);
 
           ur_bsr_bytes_any(red_u, len_d, byt_y);
-          vat = u3a_malt(wor_w);
+
+          vat = u3i_bytes(byt_w, byt_y);
+          u3a_free(byt_y);
         }
 
         u3h_put(har_p, (u3_noun)(c3_w)bit_d, u3k(vat));
@@ -1314,14 +1312,19 @@ _cs_cue_full_next(c3_ys           mov,
           //  XX check that byt_d fits in a c3_w;
           //
           c3_d  byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
-          c3_w* wor_w = u3a_slaq(3, byt_d);
-          //  XX assumes little-endian
+          //  XX the following (little-endian cheat) corrupts the loom
           //
-          c3_y* byt_y = (c3_y*)wor_w;
+          //    c3_w* wor_w = u3a_slaq(3, byt_d);
+          //    c3_y* byt_y = (c3_y*)wor_w;
+          //    //  copy bytes
+          //    vat = u3a_malt(wor_w);
+          //
+          c3_y* byt_y = u3a_calloc(1, byt_d);
 
           ur_bsr_bytes_any(red_u, len_d, byt_y);
 
-          vat = u3a_malt(wor_w);
+          vat = u3i_bytes(byt_d, byt_y);
+          u3a_free(byt_y);
         }
 
         return _cs_cue_put(har_p, bit_d, vat);
