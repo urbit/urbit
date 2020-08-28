@@ -115,31 +115,33 @@ ur_dict32_grow(ur_root_t *r, ur_dict32_t *dict, uint64_t prev, uint64_t size)
 
   buckets = calloc(next, sizeof(*buckets));
 
-  for ( i = 0; i < old_size; i++ ) {
-    ur_pail32_t *old_bucket = &(old_buckets[i]);
-    uint8_t     j, old_fill = old_bucket->fill;
+  if ( old_buckets ) {
+    for ( i = 0; i < old_size; i++ ) {
+      ur_pail32_t *old_bucket = &(old_buckets[i]);
+      uint8_t     j, old_fill = old_bucket->fill;
 
-    for ( j = 0; j < old_fill; j++ ) {
-      uint32_t val = old_bucket->vals[j];
-      ur_nref  ref = old_bucket->refs[j];
-      ur_mug   mug = ur_nref_mug(r, ref);
+      for ( j = 0; j < old_fill; j++ ) {
+        uint32_t val = old_bucket->vals[j];
+        ur_nref  ref = old_bucket->refs[j];
+        ur_mug   mug = ur_nref_mug(r, ref);
 
-      uint64_t        idx = ( mug % next );
-      ur_pail32_t *bucket = &(buckets[idx]);
-      uint8_t    new_fill = bucket->fill;
+        uint64_t        idx = ( mug % next );
+        ur_pail32_t *bucket = &(buckets[idx]);
+        uint8_t    new_fill = bucket->fill;
 
-      if ( ur_pail_max == new_fill ) {
-        free(buckets);
-        return ur_dict32_grow(r, dict, size, next);
+        if ( ur_pail_max == new_fill ) {
+          free(buckets);
+          return ur_dict32_grow(r, dict, size, next);
+        }
+
+        bucket->refs[new_fill] = ref;
+        bucket->vals[new_fill] = val;
+        bucket->fill = 1 + new_fill;
       }
-
-      bucket->refs[new_fill] = ref;
-      bucket->vals[new_fill] = val;
-      bucket->fill = 1 + new_fill;
     }
-  }
 
-  free(old_buckets);
+    free(old_buckets);
+  }
 
   dict->prev = size;
   dict->size = next;
@@ -195,6 +197,17 @@ ur_dict32_put(ur_root_t *r, ur_dict32_t *dict, ur_nref ref, uint32_t val)
 }
 
 void
+ur_dict32_wipe(ur_dict32_t *dict)
+{
+  ur_pail32_t *buckets = dict->buckets;
+  uint64_t     i, size = dict->size;
+
+  for ( i = 0; i < size; i++ ) {
+    buckets[i].fill = 0;
+  }
+}
+
+void
 ur_dict64_grow(ur_root_t *r, ur_dict64_t *dict, uint64_t prev, uint64_t size)
 {
   ur_pail64_t *buckets, *old_buckets = dict->buckets;
@@ -203,31 +216,33 @@ ur_dict64_grow(ur_root_t *r, ur_dict64_t *dict, uint64_t prev, uint64_t size)
 
   buckets = calloc(next, sizeof(*buckets));
 
-  for ( i = 0; i < old_size; i++ ) {
-    ur_pail64_t *old_bucket = &(old_buckets[i]);
-    uint8_t     j, old_fill = old_bucket->fill;
+  if ( old_buckets ) {
+    for ( i = 0; i < old_size; i++ ) {
+      ur_pail64_t *old_bucket = &(old_buckets[i]);
+      uint8_t     j, old_fill = old_bucket->fill;
 
-    for ( j = 0; j < old_fill; j++ ) {
-      uint64_t val = old_bucket->vals[j];
-      ur_nref  ref = old_bucket->refs[j];
-      ur_mug   mug = ur_nref_mug(r, ref);
+      for ( j = 0; j < old_fill; j++ ) {
+        uint64_t val = old_bucket->vals[j];
+        ur_nref  ref = old_bucket->refs[j];
+        ur_mug   mug = ur_nref_mug(r, ref);
 
-      uint64_t        idx = ( mug % next );
-      ur_pail64_t *bucket = &(buckets[idx]);
-      uint8_t    new_fill = bucket->fill;
+        uint64_t        idx = ( mug % next );
+        ur_pail64_t *bucket = &(buckets[idx]);
+        uint8_t    new_fill = bucket->fill;
 
-      if ( ur_pail_max == new_fill ) {
-        free(buckets);
-        return ur_dict64_grow(r, dict, size, next);
+        if ( ur_pail_max == new_fill ) {
+          free(buckets);
+          return ur_dict64_grow(r, dict, size, next);
+        }
+
+        bucket->refs[new_fill] = ref;
+        bucket->vals[new_fill] = val;
+        bucket->fill = 1 + new_fill;
       }
-
-      bucket->refs[new_fill] = ref;
-      bucket->vals[new_fill] = val;
-      bucket->fill = 1 + new_fill;
     }
-  }
 
-  free(old_buckets);
+    free(old_buckets);
+  }
 
   dict->prev = size;
   dict->size = next;
@@ -283,6 +298,17 @@ ur_dict64_put(ur_root_t *r, ur_dict64_t *dict, ur_nref ref, uint64_t val)
 }
 
 void
+ur_dict64_wipe(ur_dict64_t *dict)
+{
+  ur_pail64_t *buckets = dict->buckets;
+  uint64_t     i, size = dict->size;
+
+  for ( i = 0; i < size; i++ ) {
+    buckets[i].fill = 0;
+  }
+}
+
+void
 ur_dict_grow(ur_root_t *r, ur_dict_t *dict, uint64_t prev, uint64_t size)
 {
   ur_pail_t *buckets, *old_buckets = dict->buckets;
@@ -291,29 +317,31 @@ ur_dict_grow(ur_root_t *r, ur_dict_t *dict, uint64_t prev, uint64_t size)
 
   buckets = calloc(next, sizeof(*buckets));
 
-  for ( i = 0; i < old_size; i++ ) {
-    ur_pail_t *old_bucket = &(old_buckets[i]);
-    uint8_t   j, old_fill = old_bucket->fill;
+  if ( old_buckets ) {
+    for ( i = 0; i < old_size; i++ ) {
+      ur_pail_t *old_bucket = &(old_buckets[i]);
+      uint8_t   j, old_fill = old_bucket->fill;
 
-    for ( j = 0; j < old_fill; j++ ) {
-      ur_nref ref = old_bucket->refs[j];
-      ur_mug  mug = ur_nref_mug(r, ref);
-      
-      uint64_t      idx = ( mug % next );
-      ur_pail_t *bucket = &(buckets[idx]);
-      uint8_t  new_fill = bucket->fill;
+      for ( j = 0; j < old_fill; j++ ) {
+        ur_nref ref = old_bucket->refs[j];
+        ur_mug  mug = ur_nref_mug(r, ref);
 
-      if ( ur_pail_max == new_fill ) {
-        free(buckets);
-        return ur_dict_grow(r, dict, size, next);
+        uint64_t      idx = ( mug % next );
+        ur_pail_t *bucket = &(buckets[idx]);
+        uint8_t  new_fill = bucket->fill;
+
+        if ( ur_pail_max == new_fill ) {
+          free(buckets);
+          return ur_dict_grow(r, dict, size, next);
+        }
+
+        bucket->refs[new_fill] = ref;
+        bucket->fill = 1 + new_fill;
       }
-
-      bucket->refs[new_fill] = ref;
-      bucket->fill = 1 + new_fill;
     }
-  }
 
-  free(old_buckets);
+    free(old_buckets);
+  }
 
   dict->prev = size;
   dict->size = next;
@@ -369,6 +397,7 @@ void
 ur_dict_free(ur_dict_t *dict)
 {
   free(dict->buckets);
+  dict->buckets = 0;
 }
 
 void
@@ -604,7 +633,7 @@ ur_coin_bytes_unsafe(ur_root_t *r, uint8_t *byt, uint64_t len)
     }
 
     tom = _coin_unsafe(atoms, mug, byt, len);
-    
+
     bucket->refs[b_fill] = tom;
     bucket->fill = 1 + b_fill;
 

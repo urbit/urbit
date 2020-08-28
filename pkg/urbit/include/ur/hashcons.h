@@ -99,7 +99,19 @@ void
 ur_dict32_put(ur_root_t *r, ur_dict32_t *dict, ur_nref ref, uint32_t val);
 
 void
+ur_dict32_wipe(ur_dict32_t *dict);
+
+void
 ur_dict64_grow(ur_root_t *r, ur_dict64_t *dict, uint64_t prev, uint64_t size);
+
+ur_bool_t
+ur_dict64_get(ur_root_t *r, ur_dict64_t *dict, ur_nref ref, uint64_t *out);
+
+void
+ur_dict64_put(ur_root_t *r, ur_dict64_t *dict, ur_nref ref, uint64_t val);
+
+void
+ur_dict64_wipe(ur_dict64_t *dict);
 
 void
 ur_dict_grow(ur_root_t *r, ur_dict_t *dict, uint64_t prev, uint64_t size);
@@ -115,12 +127,6 @@ ur_dict_free(ur_dict_t *dict);
 
 void
 ur_dict_wipe(ur_dict_t *dict);
-
-ur_bool_t
-ur_dict64_get(ur_root_t *r, ur_dict64_t *dict, ur_nref ref, uint64_t *out);
-
-void
-ur_dict64_put(ur_root_t *r, ur_dict64_t *dict, ur_nref ref, uint64_t val);
 
 ur_nref
 ur_coin_bytes_unsafe(ur_root_t *r, uint8_t *byt, uint64_t len);
