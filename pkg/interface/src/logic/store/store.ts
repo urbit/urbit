@@ -54,6 +54,12 @@ export default class GlobalStore extends BaseStore<StoreState> {
       suspendedFocus: null,
       baseHash: null,
       background: undefined,
+      remoteContentPolicy: {
+        imageShown: true,
+        audioShown: true,
+        videoShown: true,
+        oembedShown: false,
+      },
       hideAvatars: false,
       hideNicknames: false,
       invites: {},

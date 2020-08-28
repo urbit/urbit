@@ -31,7 +31,7 @@ export const Message = (props) => {
             <p className="child pt2 pl2 pr1 mono f9 gray2 dib">{timestamp}</p>
             <div className="fr f7 clamp-message white-d pr3 lh-copy"
                  style={{ flexGrow: 1 }}>
-              <MessageContent letter={props.msg.letter} />
+              <MessageContent letter={props.msg.letter} remoteContentPolicy={props.remoteContentPolicy}/>
             </div>
           </div>
         )
@@ -98,7 +98,7 @@ const renderWithSigil = (props, timestamp) => {
               {datestamp}
             </p>
           </div>
-          <MessageContent letter={props.msg.letter} />
+          <MessageContent letter={props.msg.letter} remoteContentPolicy={props.remoteContentPolicy} />
         </div>
       </div>
     );

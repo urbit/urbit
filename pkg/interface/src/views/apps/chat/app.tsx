@@ -89,7 +89,8 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
       pendingMessages,
       groups,
       hideAvatars,
-      hideNicknames
+      hideNicknames,
+      remoteContentPolicy
     } = props;
 
     const renderChannelSidebar = (props, station?) => (
@@ -271,6 +272,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
                     chatInitialized={chatInitialized}
                     hideAvatars={hideAvatars}
                     hideNicknames={hideNicknames}
+                    remoteContentPolicy={remoteContentPolicy}
                     {...props}
                   />
                 </Skeleton>
