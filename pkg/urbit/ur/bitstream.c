@@ -369,14 +369,18 @@ ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
     //  become the least-significant bits of an output byte, and vice-versa
     //
     else {
-      uint64_t  need = len_byt + (len_bit >> 3) + !!ur_mask_3(len_bit);
-      ur_bool_t  end = need >= left;
-      uint64_t   max = end ? (left - 1) : len_byt;
-      uint8_t   rest = 8 - off;
-      uint8_t   mask = (1 << off) - 1;
-      uint8_t    byt = b[0];
-      uint8_t   l, m = byt >> off;
-      uint64_t     i;
+      uint8_t  rest = 8 - off;
+      uint8_t  mask = (1 << off) - 1;
+      uint8_t   byt = b[0];
+      uint8_t  l, m = byt >> off;
+      ur_bool_t end;
+      uint64_t    i, max;
+
+      {
+        uint64_t need = len_byt + !!len_bit;
+        end = need >= left;
+        max = end ? (left - 1) : len_byt;
+      }
 
       for ( i = 0; i < max; i++ ) {
         byt    = b[1ULL + i];
@@ -407,12 +411,14 @@ ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
         left -= step;
         off   = ur_mask_3(bits);
 
-        if ( len_bit <= rest ) {
-          out[max] = m & ((1 << len_bit) - 1);
-        }
-        else {
-          l = b[1ULL + max] & ((1 << off) - 1);;
-          out[max] = m ^ (l << rest);
+        if ( len_bit ) {
+          if ( len_bit <= rest ) {
+            out[max] = m & ((1 << len_bit) - 1);
+          }
+          else {
+            l = b[1ULL + max] & ((1 << off) - 1);;
+            out[max] = m ^ (l << rest);
+          }
         }
       }
     }
