@@ -17,7 +17,8 @@
 ;<  ~              bind:m  (check-file-touched ~marbud %home file)
 ;<  ~              bind:m  (breach az ~bud)
 ;<  ~              bind:m  (real-ship az ~bud)
-;<  ~              bind:m  (dojo ~bud "|merge %home ~marbud %kids, =gem %this")
+;<  ~              bind:m
+  (dojo ~bud "|merge %home ~marbud %kids, =gem %only-this")
 ;<  file=@t        bind:m  (touch-file ~bud %kids %bar)
 ;<  file=@t        bind:m  (touch-file ~bud %kids %baz)
 ;<  ~              bind:m  (check-file-touched ~marbud %home file)

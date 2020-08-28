@@ -2032,13 +2032,13 @@
       ^-  (each (unit merge-result) [term tang])
       ?-    germ
       ::
-      ::  If this is a %this merge, we check to see if ali's and bob's
+      ::  If this is a %only-this merge, we check to see if ali's and bob's
       ::  commits are the same, in which case we're done.  Otherwise, we
       ::  check to see if ali's commit is in the ancestry of bob's, in
       ::  which case we're done.  Otherwise, we create a new commit with
       ::  bob's data plus ali and bob as parents.
       ::
-          %this
+          %only-this
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
         ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
@@ -2049,17 +2049,47 @@
             lat=~
         ==
       ::
-      ::  If this is a %that merge, we check to see if ali's and bob's
+      ::  If this is a %only-that merge, we check to see if ali's and bob's
       ::  commits are the same, in which case we're done.  Otherwise, we
       ::  create a new commit with ali's data plus ali and bob as
       ::  parents.
       ::
-          %that
+          %only-that
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
         :*  %&  ~
             conflicts=~
             new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki q.ali-yaki)]
+            lat=~
+        ==
+      ::
+      ::  Create a merge commit with exactly the contents of the
+      ::  destination desk except take any files from the source commit
+      ::  which are not in the destination desk.
+      ::
+          %take-this
+        ?:  =(r.ali-yaki r.bob-yaki)
+          &+~
+        ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
+          &+~
+        =/  new-data  (~(uni by q.ali-yaki) q.bob-yaki)
+        :*  %&  ~
+            conflicts=~
+            new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki new-data)]
+            lat=~
+        ==
+      ::
+      ::  Create a merge commit with exactly the contents of the source
+      ::  commit except preserve any files from the destination desk
+      ::  which are not in the source commit.
+      ::
+          %take-that
+        ?:  =(r.ali-yaki r.bob-yaki)
+          &+~
+        =/  new-data  (~(uni by q.bob-yaki) q.ali-yaki)
+        :*  %&  ~
+            conflicts=~
+            new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki new-data)]
             lat=~
         ==
       ::
@@ -2082,7 +2112,7 @@
           ==
         &+`[conflicts=~ new=|+ali-yaki lat=~]
       ::
-          ?(%meet %mate %meld)
+          ?(%meet %mate %meld %meet-this %meet-that)
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
         ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
@@ -2095,7 +2125,7 @@
               leaf+"consider a %this or %that merge to get a mergebase"
           ==
         =/  merge-point=yaki  n.merge-points
-        ?.  ?=(%meet germ)
+        ?:  ?=(?(%mate %meld) germ)
           =/  ali-diffs=cane  (diff-base ali-yaki bob-yaki merge-point)
           =/  bob-diffs=cane  (diff-base bob-yaki ali-yaki merge-point)
           =/  bof=(map path (unit cage))
@@ -2113,13 +2143,35 @@
           %-  ~(uni by `(map path *)`cal.bob-diffs)
           %-  ~(uni by `(map path *)`can.bob-diffs)
           `(map path *)`old.bob-diffs
-        ?.  =(~ both-diffs)
+        ?:  &(?=(%meet germ) !=(~ both-diffs))
           :~  %|  %meet-conflict
             >~(key by both-diffs)<
             leaf+"consider a %mate merge"
           ==
+        =/  both-done=(map path lobe)
+          |^
+          ?-  germ
+            %meet       ~
+            %meet-this  (resolve (~(uni by new.bob-diffs) cal.bob-diffs))
+            %meet-that  (resolve (~(uni by new.ali-diffs) cal.ali-diffs))
+          ==
+          ++  resolve
+            |=  news=(map path lobe)
+            %-  malt  ^-  (list [path lobe])
+            %+  murn  ~(tap by both-diffs)
+            |=  [=path *]
+            ^-  (unit [^path lobe])
+            =/  new  (~(get by news) path)
+            ?~  new
+              ~
+            `[path u.new]
+          --
+        ::
+        =/  deleted
+          %-  ~(dif by (~(uni by old.ali-diffs) old.bob-diffs))
+          (~(run by both-done) |=(* ~))
         =/  not-deleted=(map path lobe)
-          %+  roll  ~(tap by (~(uni by old.ali-diffs) old.bob-diffs))
+          %+  roll  ~(tap by deleted)
           =<  .(not-deleted q.merge-point)
           |=  [[pax=path ~] not-deleted=(map path lobe)]
           (~(del by not-deleted) pax)
@@ -3855,7 +3907,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%4                                        ::  vane version
+    $:  ver=%5                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
@@ -4114,8 +4166,14 @@
   ~!  [old=old new=*state-4]
   =?  old  ?=(%2 -.old)  (load-2-to-3 old)
   =?  old  ?=(%3 -.old)  (load-3-to-4 old)
-  ?>  ?=(%4 -.old)
+  =?  old  ?=(%4 -.old)  (load-4-to-5 old)
+  ?>  ?=(%5 -.old)
   ..^^$(ruf +.old)
+  ::
+  ++  load-4-to-5
+    |=  =state-4
+    ^-  state-5
+    state-4(- %5, pun ~)
   ::
   ++  load-3-to-4
     |=  =state-3
@@ -4324,8 +4382,19 @@
       --
     --
   ::
-  +$  any-state  $%(state-4 state-3 state-2)
-  +$  state-4  [%4 raft]
+  +$  any-state  $%(state-5 state-4 state-3 state-2)
+  +$  state-5  [%5 raft]
+  +$  state-4
+    $:  %4
+        rom=room
+        hoy=(map ship rung)
+        ran=rang
+        mon=(map term beam)
+        hez=(unit duct)
+        cez=(map @ta crew)
+        pud=(unit [=desk =yoki])
+        pun=(list *)
+    ==
   +$  state-3
     $:  %3
         rom=room-3
@@ -4335,7 +4404,7 @@
         hez=(unit duct)
         cez=(map @ta crew)
         pud=(unit [=desk =yoki])
-        pun=(list move)
+        pun=(list *)
     ==
   +$  rung-3  rus=(map desk rede-3)
   +$  rede-3
