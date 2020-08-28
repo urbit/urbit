@@ -1070,153 +1070,6 @@ _cs_cue_need(ur_cue_res_e res_e)
   }
 }
 
-/* _cs_cue_smol_next(): read next value from bitstream, direct-atom cursors.
-*/
-static inline u3_noun
-_cs_cue_smol_next(c3_ys           mov,
-                  c3_ys           off,
-                  u3p(u3h_root) har_p,
-                  ur_bsr_t*     red_u)
-{
-  while ( 1 ) {
-    c3_d  len_d, bit_d = red_u->bits;
-    ur_cue_tag_e tag_e;
-
-    _cs_cue_need(ur_bsr_tag(red_u, &tag_e));
-
-    switch ( tag_e ) {
-      default: c3_assert(0);
-
-      case ur_jam_cell: {
-        //  wind the stack
-        //
-        u3R->cap_p += mov;
-
-        //  ensure we haven't overflowed (ie, run into the heap)
-        //  (off==0 means we're on a north road)
-        //
-        if ( 0 == off ) {
-          if( !(u3R->cap_p > u3R->hat_p) ) {
-            u3m_bail(c3__meme);
-          }
-        }
-        else {
-          if( !(u3R->cap_p < u3R->hat_p) ) {
-            u3m_bail(c3__meme);
-          }
-        }
-
-        //  save a head-frame and read the head from the stream
-        //
-        {
-          _cue_frame_t* fam_u = u3to(_cue_frame_t, u3R->cap_p + off);
-          fam_u->ref   = u3_none;
-          fam_u->bit_d = bit_d;
-        }
-        continue;
-      }
-
-      case ur_jam_back: {
-        _cs_cue_need(ur_bsr_rub_len(red_u, &len_d));
-
-        //  XX review, s/b deterministic error
-        //
-        c3_assert( 32 > len_d );
-
-        {
-          c3_w  bak_w = ur_bsr32_any(red_u, len_d);
-          u3_weak bak = u3h_get(har_p, (u3_noun)bak_w);
-          return u3x_good(bak);
-        }
-      }
-
-      case ur_jam_atom: {
-        u3_atom vat;
-
-        _cs_cue_need(ur_bsr_rub_len(red_u, &len_d));
-
-        if ( 31 >= len_d ) {
-          vat = (u3_noun)ur_bsr32_any(red_u, len_d);
-        }
-        else {
-          c3_w  byt_w = (len_d >> 3) + !!ur_mask_3(len_d);
-          c3_y* byt_y = u3a_calloc(1, byt_w);
-
-          ur_bsr_bytes_any(red_u, len_d, byt_y);
-
-          vat = u3i_bytes(byt_w, byt_y);
-          u3a_free(byt_y);
-        }
-
-        u3h_put(har_p, (u3_noun)(c3_w)bit_d, u3k(vat));
-
-        return vat;
-      }
-    }
-  }
-}
-
-/* u3s_cue_smol(): cue onto the loom, bitwidth fits in a direct atom.
-*/
-u3_noun
-u3s_cue_smol(c3_w len_w, const c3_y* byt_y)
-{
-  ur_bsr_t red_u = {0};
-  u3_noun    ref;
-
-  c3_assert( 0x10000000 >= len_w );
-
-  //  initialize a hash table for dereferencing backrefs
-  //
-  u3p(u3h_root) har_p = u3h_new();
-  const u3_post top_p = u3R->cap_p;
-
-  //  initialize signed stack offsets (relative to north/south road)
-  //
-  c3_ys mov, off;
-  {
-    c3_o nor_o = u3a_is_north(u3R);
-    c3_y wis_y = c3_wiseof(_cue_frame_t);
-    mov = ( c3y == nor_o ? -wis_y : wis_y );
-    off = ( c3y == nor_o ? 0 : -wis_y );
-  }
-
-  //  init bitstream-reader
-  //
-  red_u.left  = len_w;
-  red_u.bytes = byt_y;
-
-  //  advance into stream
-  //
-  ref = _cs_cue_smol_next(mov, off, har_p, &red_u);
-
-  //  process result
-  //
-  while ( top_p != u3R->cap_p ) {
-    //  peek at the top of the stack
-    //
-    _cue_frame_t* fam_u = u3to(_cue_frame_t, u3R->cap_p + off);
-
-    //  f is a head-frame; stash result and read the tail from the stream
-    //
-    if ( u3_none == fam_u->ref ) {
-      fam_u->ref = ref;
-      ref = _cs_cue_smol_next(mov, off, har_p, &red_u);
-    }
-    //  f is a tail-frame; pop the stack and continue
-    //
-    else {
-      ref = u3nc(fam_u->ref, ref);
-      u3h_put(har_p, (u3_noun)(c3_w)fam_u->bit_d, u3k(ref));
-      u3R->cap_p -= mov;
-    }
-  }
-
-  u3h_free(har_p);
-
-  return ref;
-}
-
 /* _cs_cue_get(): u3h_get wrapper handling allocation and refcounts.
 */
 static inline u3_weak
@@ -1333,10 +1186,10 @@ _cs_cue_full_next(c3_ys           mov,
   }
 }
 
-/* u3s_cue_full(): cue onto the loom.
+/* u3s_cue_bytes(): cue bytes onto the loom.
 */
 u3_noun
-u3s_cue_full(c3_d len_d, const c3_y* byt_y)
+u3s_cue_bytes(c3_d len_d, const c3_y* byt_y)
 {
   ur_bsr_t red_u = {0};
   u3_noun    ref;
@@ -1390,18 +1243,6 @@ u3s_cue_full(c3_d len_d, const c3_y* byt_y)
   u3h_free(har_p);
 
   return ref;
-}
-
-/* u3s_cue_bytes(): cue bytes.
-*/
-u3_noun
-u3s_cue_bytes(c3_d len_d, const c3_y* byt_y)
-{
-  //  check if we can bitwise-index [len_d] bytes in a direct atom
-  //
-  return ( 0x10000000ULL >= len_d )
-       ? u3s_cue_smol(len_d, byt_y)
-       : u3s_cue_full(len_d, byt_y);
 }
 
 /* u3s_cue_atom(): cue atom.

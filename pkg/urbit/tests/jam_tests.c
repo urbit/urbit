@@ -415,21 +415,6 @@ _test_cue_spec(const c3_c* cap_c,
     u3z(pro);
   }
 
-  //  if we haven't failed yet, run u3s_cue_full w/out virtualization
-  //
-  if ( ret_i ) {
-    u3_noun out = u3s_cue_full(len_w, byt_y);
-
-    if ( c3n == u3r_sing(ref, out) ) {
-      fprintf(stderr, "\033[31mcue %s fail 5\033[0m\r\n", cap_c);
-      u3m_p("ref", ref);
-      u3m_p("out", out);
-      ret_i = 0;
-    }
-
-    u3z(out);
-  }
-
   return ret_i;
 }
 
