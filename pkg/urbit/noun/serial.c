@@ -1162,22 +1162,24 @@ _cs_cue_full_next(c3_ys           mov,
         //  XX need a ur_bsr_words_any()
         //
         else {
-          //  XX check that byt_d fits in a c3_w;
-          //
-          c3_d  byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
-          //  XX the following (little-endian cheat) corrupts the loom
-          //
-          //    c3_w* wor_w = u3a_slaq(3, byt_d);
-          //    c3_y* byt_y = (c3_y*)wor_w;
-          //    //  copy bytes
-          //    vat = u3a_malt(wor_w);
-          //
-          c3_y* byt_y = u3a_calloc(1, byt_d);
+          c3_w* wor_w;
+          c3_y* byt_y;
+
+          {
+            c3_d byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
+
+            if ( 0xffffffffULL < byt_d) {
+              return u3m_bail(c3__meme);
+            }
+
+            //  XX assumes little-endian
+            //
+            wor_w = u3a_slaq(3, byt_d);
+            byt_y = (c3_y*)wor_w;
+          }
 
           ur_bsr_bytes_any(red_u, len_d, byt_y);
-
-          vat = u3i_bytes(byt_d, byt_y);
-          u3a_free(byt_y);
+          vat = u3a_malt(wor_w);
         }
 
         return _cs_cue_put(har_p, bit_d, vat);
