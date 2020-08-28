@@ -296,6 +296,64 @@ _cue_bench(void)
   u3z(vat);
 }
 
+static u3_noun
+_cue_loop(u3_atom a)
+{
+  c3_w i_w, max_w = 20000;
+
+  for ( i_w = 0; i_w < max_w; i_w++ ) {
+    u3z(u3s_cue(a));
+  }
+
+  return u3_blip;
+}
+
+static u3_noun
+_cue_atom_loop(u3_atom a)
+{
+  c3_w i_w, max_w = 20000;
+
+  for ( i_w = 0; i_w < max_w; i_w++ ) {
+    u3z(u3s_cue_atom(a));
+  }
+
+  return u3_blip;
+}
+
+static void
+_cue_soft_bench(void)
+{
+  struct timeval b4, f2, d0;
+  u3_atom vat = u3ke_jam(_ames_writ_ex());
+  c3_w  mil_w;
+
+  fprintf(stderr, "\r\ncue virtual microbenchmark:\r\n");
+
+  {
+    gettimeofday(&b4, 0);
+
+    u3z(u3m_soft(0, _cue_loop, u3k(vat)));
+
+    gettimeofday(&f2, 0);
+    timersub(&f2, &b4, &d0);
+    mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+    fprintf(stderr, "  cue virtual og: %u ms\r\n", mil_w);
+  }
+
+  {
+    gettimeofday(&b4, 0);
+
+    u3z(u3m_soft(0, _cue_atom_loop, u3k(vat)));
+
+    gettimeofday(&f2, 0);
+    timersub(&f2, &b4, &d0);
+    mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+    fprintf(stderr, "  cue virtual atom: %u ms\r\n", mil_w);
+  }
+
+  u3z(vat);
+}
+
 /* main(): run all benchmarks
 */
 int
@@ -305,6 +363,7 @@ main(int argc, char* argv[])
 
   _jam_bench();
   _cue_bench();
+  _cue_soft_bench();
 
   //  GC
   //
