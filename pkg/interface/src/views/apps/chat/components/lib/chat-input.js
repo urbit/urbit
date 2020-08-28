@@ -201,7 +201,10 @@ export class ChatInput extends Component {
     const sigilClass = props.ownerContact
       ? '' : 'mix-blend-diff';
 
-    const avatar = (props.ownerContact && (props.ownerContact.avatar !== null))
+    const avatar = (
+        props.ownerContact &&
+        ((props.ownerContact.avatar !== null) && !props.hideAvatars)
+      )
       ? <img src={props.ownerContact.avatar} height={24} width={24} className="dib" />
       : <Sigil
         ship={window.ship}

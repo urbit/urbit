@@ -149,6 +149,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           deleteMessage={() => this.setState({
             messages: this.state.messages.set(props.station, "")
           })}
+          hideAvatars={props.hideAvatars}
         />
       </div>
     );
