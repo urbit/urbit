@@ -679,7 +679,6 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
     u3z(los); u3z(pac);
   }
 
-  pac_u->sam_u->foq_d--;
   _ames_panc_free(pac_u);
 }
 
@@ -691,6 +690,8 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
   u3_panc* pac_u = vod_p;
   u3_weak  las = u3r_at(7, nun);
 
+  pac_u->sam_u->foq_d--;
+
   //  if scry fails, remember we can't scry, and just inject the packet
   //
   if (u3_none == las) {
@@ -701,7 +702,6 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
     _ames_put_packet(pac_u->sam_u,
                      _ames_serialize_packet(pac_u, c3n),
                      pac_u->ore_u);
-    pac_u->sam_u->foq_d--;
     _ames_panc_free(pac_u);
   }
   else {
@@ -718,7 +718,6 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
     //  if there is no lane, drop the packet
     //
     if (u3_nul == las) {
-      pac_u->sam_u->foq_d--;
       _ames_panc_free(pac_u);
     }
     //  if there is a lane, forward the packet on it
@@ -867,8 +866,6 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     //  otherwise, proceed with forwarding
     //
     else {
-      sam_u->foq_d++;
-
       //  store the packet details for later processing
       //
       u3_panc* pac_u = c3_calloc(sizeof(*pac_u));
@@ -896,6 +893,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       //  otherwise, there's space in the scry queue; scry the lane out of ames
       //
       else {
+        sam_u->foq_d++;
         u3_noun pax = u3nq(u3i_string("peers"),
                            u3dc("scot", 'p', u3i_chubs(2, rec_d)),
                            u3i_string("forward-lane"),
