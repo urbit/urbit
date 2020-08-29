@@ -24,7 +24,9 @@ Example:
 **Expected design behavior**
 A clear and concise description of how you expected the design to behave, look, feel, or be implemented.
 
-If you are a designer involved directly as the point-person of the observed design issue, please include screenshot(s) of the intended design in your description of expected behavior. Link to the associated design if it exists.
+If you are a designer involved directly as the point-person of the observed design issue, please include screenshot(s) of the intended design in your description of expected behavior. Link to the associated design if it exists (via Figma or otherwise).
+
+If a textual specification existed to describe the project implementation plan, please include it here.
 
 If the observed design issue involves an Indigo component mis-implementation, please provide a link to the correct implementation of the component.
 
