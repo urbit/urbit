@@ -4,9 +4,64 @@
 #include "all.h"
 #include "../include/secp256k1.h"
 #include "../include/secp256k1_recovery.h"
+#include "urcrypt.h"
 
 /* util funcs
  */
+
+static c3_t
+_cqe_is_8(const c3_w words[8], u3_noun non)
+{
+  if ( (c3n == u3ud(non)) ||
+       (8 != u3r_met(5, non)) ) {
+    return 0;
+  }
+  else {
+    c3_w i;
+    for ( i = 0; i < 8; ++i ) {
+      if ( words[i] != u3r_word(i, non) ) {
+        return 0;
+      }
+    }
+    return 1;
+  }
+}
+
+/* FIXME!!!
+ * The hoon contains a generic secp core which is actually jetted, and then
+ * +secp256k1 passes these constants to it. This should be restructured so
+ * that the constants are matched as part of the batteries in the core stack
+ * of the jetted gates.
+*/
+static c3_t
+_cqe_256k1_veri(u3_noun cor)
+{
+  static const c3_w pow_w[8] = {
+    0xfffffc2f, 0xfffffffe, 0xffffffff, 0xffffffff,
+    0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };
+  static const c3_w xow_w[8] = {
+    0x16f81798, 0x59f2815b, 0x2dce28d9, 0x29bfcdb,
+    0xce870b07, 0x55a06295, 0xf9dcbbac, 0x79be667e };
+  static const c3_w yow_w[8] = {
+    0xfb10d4b8, 0x9c47d08f, 0xa6855419, 0xfd17b448,
+    0xe1108a8,  0x5da4fbfc, 0x26a3c465, 0x483ada77 };
+  static const c3_w now_w[8] = {
+    0xd0364141, 0xbfd25e8c, 0xaf48a03b, 0xbaaedce6,
+    0xfffffffe, 0xffffffff, 0xffffffff, 0xffffffff };
+
+  u3_noun w, p, b, mor, a, g, x, y, n, sam = u3x_at(254, cor);
+  u3x_qual(sam, &w, &p, &b, &mor);
+  u3x_trel(mor, &a, &g, &n);
+  u3x_cell(g, &x, &y);
+
+  return ( 32 == w &&
+           0  == b &&
+           7  == a &&
+           _cqe_is_8(pow_w, p) &&
+           _cqe_is_8(xow_w, x) &&
+           _cqe_is_8(yow_w, y) &&
+           _cqe_is_8(now_w, n) );
+}
 
 /* no guarantees if 'in' and 'out' overlap / are the same */
 static void byte_reverse(c3_y *i_y,  /* in */
@@ -257,6 +312,26 @@ u3qe_reco(u3_atom has,
   return(u3nc(x, y));
 }
 
+static u3_atom
+_cqe_make(u3_atom has,
+          u3_atom prv)
+{
+  c3_y has_y[32], prv_y[32], out_y[32];
+
+  if ( ( u3r_met(3, has) > 32 ) ||
+       ( u3r_met(3, prv) > 32 ) ) {
+    // hoon doesn't check size
+    return u3_none;
+  }
+  else {
+    u3r_bytes(0, 32, has_y, has);
+    u3r_bytes(0, 32, prv_y, prv);
+
+    return ( 0 == urcrypt_secp_make(has_y, prv_y, out_y) )
+      ? u3i_bytes(32, out_y)
+      : u3_none;
+  }
+}
 
 u3_noun
 u3we_make(u3_noun cor)
@@ -267,49 +342,13 @@ u3we_make(u3_noun cor)
                         u3x_sam_3,  &prv,
                         0)) ||
        (c3n == u3ud(has)) ||
-       (c3n == u3ud(prv)) )
-    {
-      u3l_log("\rsecp jet: crypto package error\n");
-      return u3m_bail(c3__exit);
-    } else {
-    return u3qe_make(has, prv);
-  }
-}
-
-
-
-u3_noun
-u3qe_make(u3_atom has,
-          u3_atom prv)
-{
-
-  c3_y hel_y[32]; /* hash, little endian */
-  c3_y heb_y[32]; /* hash, big endian */
-  u3r_bytes(0, 32, hel_y, has);
-  byte_reverse(hel_y, heb_y, 32);
-
-  c3_y pel_y[32];  /* priv key, little endian */
-  c3_y peb_y[32];  /* priv key, big endian */
-  u3r_bytes(0, 32, pel_y, prv);
-  byte_reverse(pel_y, peb_y, 32);
-
-
-  c3_ws ret_ws;
-  c3_y  neb_y[32]; /* nonce */
-  ret_ws = secp256k1_nonce_function_rfc6979(neb_y,                /* OUT: return arg for nonce */
-                                            (const c3_y *) heb_y, /* IN: message / hash */
-                                            (const c3_y *) peb_y, /* IN: key32 */
-                                            NULL,                 /* IN: algorithm (NULL == ECDSA) */
-                                            (void *) NULL,        /* IN: arbitrary data pointer (unused) */
-                                            0);                   /* IN: attempt number (0 == normal) */
-  if (1 != ret_ws) {
-    u3l_log("\rsecp jet: crypto package error\n");
+       (c3n == u3ud(prv)) ) {
     return u3m_bail(c3__exit);
   }
-
-  c3_y nel_y[32];
-  byte_reverse(neb_y, nel_y, 32);
-  u3_noun non = u3i_words(8, (const c3_w*) nel_y);
-  return(non);
+  else {
+    return u3l_punt("secp-make",
+        _cqe_256k1_veri(cor)
+        ? _cqe_make(has, prv)
+        : u3_none);
+  }
 }
-

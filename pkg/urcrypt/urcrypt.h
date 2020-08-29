@@ -23,6 +23,7 @@ int urcrypt_set_openssl_mem_functions(urcrypt_malloc_t malloc_ptr,
                                       urcrypt_free_t free_ptr);
 
 // const arguments are not written to, non-const arguments may be
+// all arrays are in little-endian byte order.
 // array sizes[64] are purely documentary
 
 // 0 on success, result in out
@@ -189,5 +190,7 @@ int urcrypt_blake2(size_t message_length,
                    uint8_t key[64],
                    size_t out_length,
                    uint8_t *out);
+
+int urcrypt_secp_make(uint8_t hash[32], uint8_t key[32], uint8_t out[32]);
 
 #endif

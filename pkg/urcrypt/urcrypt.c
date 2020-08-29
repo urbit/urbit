@@ -13,6 +13,9 @@
 #include <argon2.h>
 #include <blake2.h>
 
+#include <secp256k1.h>
+#include <secp256k1_recovery.h>
+
 static urcrypt_malloc_t _urcrypt_ssl_malloc_ptr;
 static urcrypt_realloc_t _urcrypt_ssl_realloc_ptr;
 static urcrypt_free_t _urcrypt_ssl_free_ptr;
@@ -914,5 +917,26 @@ urcrypt_blake2(size_t message_length,
       _urcrypt_reverse(out_length, out);
       return 0;
     }
+  }
+}
+
+int
+urcrypt_secp_make(uint8_t hash[32], uint8_t key[32], uint8_t out[32])
+{
+  _urcrypt_reverse(32, hash);
+  _urcrypt_reverse(32, key);
+
+  if ( 1 != secp256k1_nonce_function_rfc6979(
+    out,   // OUT: return arg for nonce
+    hash,  // IN: message / hash */
+    key,   // IN: key32
+    NULL,  // IN: algorithm (NULL == ECDSA)
+    NULL,  // IN: arbitrary data pointer (unused)
+    0) ) { // IN: attempt number (0 == normal)
+    return -1;
+  }
+  else {
+    _urcrypt_reverse(32, out);
+    return 0;
   }
 }

@@ -19,8 +19,9 @@ let
   };
 
   urcrypt = import ./urcrypt {
-    inherit pkgs ge-additions libaes_siv;
-    inherit (deps) ed25519 argon2;
+    inherit ge-additions libaes_siv;
+    inherit (pkgs) stdenv openssl gmp;
+    inherit (deps) ed25519 argon2 secp256k1;
   };
 
   mkUrbit = { debug }:

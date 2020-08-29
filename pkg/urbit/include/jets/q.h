@@ -132,7 +132,6 @@
                       u3_atom, u3_atom, u3_atom, u3_atom);
 
 
-    u3_noun u3qe_make(u3_atom has, u3_atom prv);
     u3_noun u3qe_reco(u3_atom has, u3_atom sig_v, u3_atom sig_r, u3_atom sig_s);
     u3_noun u3qe_sign(u3_atom has, u3_atom prv);
 
