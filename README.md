@@ -1,79 +1,24 @@
-# Urbit
+# Lagoon for Urbit
+## Linear Algebra in hOON
 
-A personal server operating function.
+LAGOON, the _Linear AlGebra in hOON_ library, implements a suite of basic matrix operations for numerical applications. Lagoon endeavors to be mathematically accurate and notationally convenient. The fundamental problem Lagoon solves is representing memory-adjacent array data in a uniformly accessible way to Hoon.
 
-> The Urbit address space, Azimuth, is now live on the Ethereum blockchain. You
-> can find it at [`0x223c067f8cf28ae173ee5cafea60ca44c335fecb`][azim] or
-> [`azimuth.eth`][aens]. Owners of Azimuth points (galaxies, stars, or planets)
-> can view or manage them using [Bridge][brid], and can also use them to boot
-> [Arvo][arvo], the Urbit OS.
+What I do have done:
+- vector library + jets in `@rs` and `@rd`
+- matrix library + jets in `@rs`
 
-[azim]: https://etherscan.io/address/0x223c067f8cf28ae173ee5cafea60ca44c335fecb
-[aens]: https://etherscan.io/address/azimuth.eth
-[brid]: https://github.com/urbit/bridge
-[arvo]: https://github.com/urbit/urbit/tree/master/pkg/arvo
+What I don't have done:
+- matrix library + jets in `@rd`
+- profiling data on performance
+- some utility routines, in particular pretty-printing and import/export
 
-## Install
+I considered adding in ATLAS or another BLAS package as a dependency but ultimately decided not to for the alpha version.  Instead everything is done via SoftFloat as with other Urbit floating-point operations.  I have some basic unit test setups but as of Ford Fusion it seems that unit testing is itself broken.  Large tests and rigorous profiling will require import/export routines as well to avoid tedious manual entry.  I'd also like jet-by-jet comparison with the Hoon, which I didn't have time to finish.
 
-To install and run Urbit, please follow the instructions at
-[urbit.org/docs/getting-started/][start].  You'll be on the live network in a
-few minutes.
+The future roadmap:
+- Full unit testing suite compatible with whatever the recommended practice is or will be.
+- Prospectus for sister library of scientific algorithms (based on `lazytrig` but jetted), provisionally Saloon (Scientific ALgorithms in hOON).
+- Vectors and matrices in other significant types (`@ud`, `@rh`, `@rq` come to mind).  Creation of a complex type, without which certain operations (like eigenvalues/eigenvectors) will not be supportable.
+- Code refactor of Lagoon:  I have done some terrible terrible things, like being inconsistent on 0-indexing and 1-indexing.
+- I'd like to write a blog post on jetting for those interested.
 
-If you're interested in Urbit development, keep reading.
-
-[start]: https://urbit.org/docs/getting-started/
-
-## Development
-
-[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)][trav]
-
-Urbit uses [Nix][nix] to manage builds.  On Linux and macOS you can install Nix
-via:
-
-```
-curl -L https://nixos.org/nix/install | sh
-```
-
-The Makefile in the project's root directory contains useful phony targets for
-building, installing, testing, and so on.  You can use it to avoid dealing with
-Nix explicitly.
-
-To build Urbit, for example, use:
-
-```
-make build
-```
-
-The test suite can similarly be run via a simple:
-
-```
-make test
-```
-
-Note that some of the Makefile targets need access to pills tracked via [git
-LFS][git-lfs], so you'll also need to have those available locally:
-
-```
-git lfs install
-git lfs pull
-```
-
-[trav]: https://github.com/urbit/urbit.git
-[nix]: https://nixos.org/nix/
-[git-lfs]: https://git-lfs.github.com
-
-## Contributing
-
-Contributions of any form are more than welcome!  Please take a look at our
-[contributing guidelines][cont] for details on our git practices, coding
-styles, how we manage issues, and so on.
-
-You might also be interested in:
-
-- joining the [urbit-dev][list] mailing list.
-- [applying to Hoon School][mail], a course we run to teach the Hoon
-  programming language and Urbit application development.
-
-[list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
-[mail]: mailto:support@urbit.org
-[cont]: https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md
+(Do not, of course, include this branch's README file in any PRs.)
