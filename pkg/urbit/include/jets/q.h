@@ -205,6 +205,78 @@
     u3_noun u3qes_gte(u3_atom, u3_atom);
     u3_noun u3qes_gth(u3_atom, u3_atom);
 
+    /* Lagoon operators */
+    u3_noun u3qelvs_zeros(u3_atom);
+    u3_noun u3qelvs_ones(u3_atom);
+    u3_noun u3qelvs_get(u3_atom, u3_atom);
+    u3_noun u3qelvs_set(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvs_adds(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvs_subs(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvs_muls(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvs_divs(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvs_addv(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvs_subv(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvs_mulv(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvs_divv(u3_atom, u3_atom, u3_atom);
+
+    u3_noun u3qelvd_zeros(u3_atom);
+    u3_noun u3qelvd_ones(u3_atom);
+    u3_noun u3qelvd_get(u3_atom, u3_atom);
+    u3_noun u3qelvd_set(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvd_adds(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvd_subs(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvd_muls(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvd_divs(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvd_addv(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvd_subv(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvd_mulv(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelvd_divv(u3_atom, u3_atom, u3_atom);
+
+    u3_noun u3qelms_cantor(u3_atom, u3_atom);
+    u3_noun u3qelms_decantor(u3_atom);
+    u3_noun u3qelms_zeros(u3_atom, u3_atom);
+    u3_noun u3qelms_ones(u3_atom, u3_atom);
+    u3_noun u3qelms_id(u3_atom, u3_atom);
+    u3_noun u3qelms_get(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_set(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_getc(u3_atom, u3_atom);
+    u3_noun u3qelms_setc(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_getr(u3_atom, u3_atom);
+    u3_noun u3qelms_swapc(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_swapr(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_setr(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_adds(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_subs(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_muls(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_divs(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_addsc(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_subsc(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_mulsc(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_divsc(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_addsr(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_subsr(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_mulsr(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_divsr(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_addvc(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_subvc(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_mulvc(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_divvc(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_addvr(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_subvr(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_mulvr(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_divvr(u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_addm(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_subm(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_mulm(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_divm(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_mmul(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_mpow(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_minor(u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_submatrix(u3_atom, u3_atom, u3_atom, u3_atom, u3_atom);
+    u3_noun u3qelms_augment(u3_atom);
+    u3_noun u3qelms_invert(u3_atom);
+
+
   /** Tier 6.
   **/
     u3_noun u3qf_bull(u3_noun, u3_noun);
