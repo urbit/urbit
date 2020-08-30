@@ -10,14 +10,15 @@ import Urbit.Prelude
 
 import Data.Conduit
 import Urbit.Arvo
-import Urbit.Time
+import Urbit.Noun.Time
 import Urbit.Vere.Pier.Types
 
 import Control.Monad.Trans.Maybe (MaybeT(..))
-import Urbit.Vere.Log            (EventLog)
+import Urbit.EventLog.LMDB       (EventLog)
 
 import qualified Data.Conduit.Combinators as C
-import qualified Urbit.Vere.Log           as Log
+import qualified Urbit.EventLog.LMDB      as Log
+
 
 --------------------------------------------------------------------------------
 
@@ -39,7 +40,7 @@ run log = do
     hSetEcho stdin False
     logInfo $ displayShow (Log.identity log)
     let cycle = fromIntegral $ lifecycleLen $ Log.identity log
-    las <- Log.lastEv log
+    las <- atomically (Log.lastEv log)
     loop cycle las las
   where
     failRead cur =

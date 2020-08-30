@@ -55,7 +55,7 @@
           |=(cud/(urge cord) [i.bob cud])
         %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob p.i.ali))
         |=(cud/(urge cord) [i.ali cud])
-    ::
+      ::
           %|
         ?:  =(p.i.ali (lent p.i.bob))
           %+  bind  $(ali t.ali, bob t.bob)
@@ -68,7 +68,12 @@
     ::
         %|
       ?-  -.i.bob
-          %|  ~
+          %|
+        ?.  =(i.ali i.bob)
+          ~
+        %+  bind  $(ali t.ali, bob t.bob)
+        |=(cud/(urge cord) [i.ali cud])
+      ::
           %&
         ?:  =(p.i.bob (lent p.i.ali))
           %+  bind  $(ali t.ali, bob t.bob)

@@ -9,27 +9,27 @@
   %+  murn
     %~  tap  in
     =-  (~(gut by -) group-path ~)
-    .^  (jug ^group-path resource)
+    .^  (jug ^group-path md-resource)
       %gy
       (scot %p our.bowl)
       %metadata-store
       (scot %da now.bowl)
       /group-indices
     ==
-  |=  =resource
+  |=  =md-resource
   ^-  (unit app-path)
-  ?.  =(app-name.resource app-name)  ~
-  `app-path.resource
+  ?.  =(app-name.md-resource app-name)  ~
+  `app-path.md-resource
 ::
 ++  groups-from-resource
-  |=  =resource
+  |=  =md-resource
   ^-  (list group-path)
   =;  resources
     %~  tap  in
     %+  ~(gut by resources)
-      resource
+      md-resource
     *(set group-path)
-  .^  (jug ^resource group-path)
+  .^  (jug ^md-resource group-path)
     %gy
     (scot %p our.bowl)
     %metadata-store
@@ -38,9 +38,9 @@
   ==
 ::
 ++  check-resource-permissions
-  |=  [=ship =resource]
+  |=  [=ship =md-resource]
   ^-  ?
-  %+  lien  (groups-from-resource resource)
+  %+  lien  (groups-from-resource md-resource)
   |=  =group-path
   .^  ?
     %gx

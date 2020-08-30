@@ -135,6 +135,13 @@
     u3_noun u3wea_cbcc_en(u3_noun);
     u3_noun u3wea_cbcc_de(u3_noun);
 
+    u3_noun u3wea_siva_en(u3_noun);
+    u3_noun u3wea_siva_de(u3_noun);
+    u3_noun u3wea_sivb_en(u3_noun);
+    u3_noun u3wea_sivb_de(u3_noun);
+    u3_noun u3wea_sivc_en(u3_noun);
+    u3_noun u3wea_sivc_de(u3_noun);
+
     u3_noun u3wea_de(u3_noun);
     u3_noun u3wea_en(u3_noun);
 

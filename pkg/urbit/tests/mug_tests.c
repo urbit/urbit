@@ -94,6 +94,87 @@ _test_mug(void)
     c3_free(str_w);
   }
 
+  {
+    c3_w  som_w[4];
+    u3_noun som;
+
+    {
+      som_w[0] = 0;
+      som_w[1] = 0;
+      som_w[2] = 0;
+      som_w[3] = 1;
+      som      = u3i_words(4, som_w);
+
+      if ( 0x519bd45c != u3r_mug(som) ) {
+        fprintf(stderr, "fail (j) (1)\r\n");
+        exit(1);
+      }
+
+      if ( 0x519bd45c != u3r_mug_words(som_w, 4) ) {
+        fprintf(stderr, "fail (j) (2)\r\n");
+        exit(1);
+      }
+      u3z(som);
+    }
+
+    {
+      som_w[0] = 0;
+      som_w[1] = 1;
+      som_w[2] = 0;
+      som_w[3] = 1;
+      som      = u3i_words(4, som_w);
+
+      if ( 0x540eb8a9 != u3r_mug(som) ) {
+        fprintf(stderr, "fail (k) (1)\r\n");
+        exit(1);
+      }
+
+      if ( 0x540eb8a9 != u3r_mug_words(som_w, 4) ) {
+        fprintf(stderr, "fail (k) (2)\r\n");
+        exit(1);
+      }
+      u3z(som);
+    }
+
+    {
+      som_w[0] = 1;
+      som_w[1] = 1;
+      som_w[2] = 0;
+      som_w[3] = 1;
+      som      = u3i_words(4, som_w);
+
+      if ( 0x319d28f9 != u3r_mug(som) ) {
+        fprintf(stderr, "fail (l) (1)\r\n");
+        exit(1);
+      }
+
+      if ( 0x319d28f9 != u3r_mug_words(som_w, 4) ) {
+        fprintf(stderr, "fail (l) (2)\r\n");
+        exit(1);
+      }
+      u3z(som);
+    }
+
+    {
+      som_w[0] = 0;
+      som_w[1] = 0;
+      som_w[2] = 0;
+      som_w[3] = 0xffff;
+      som      = u3i_words(4, som_w);
+
+      if ( 0x5230a260 != u3r_mug(som) ) {
+        fprintf(stderr, "fail (m) (1)\r\n");
+        exit(1);
+      }
+
+      if ( 0x5230a260 != u3r_mug_words(som_w, 4) ) {
+        fprintf(stderr, "fail (m) (2)\r\n");
+        exit(1);
+      }
+      u3z(som);
+    }
+  }
+
   fprintf(stderr, "test_mug: ok\n");
 }
 

@@ -66,7 +66,7 @@
       **  Produces [%$ result] or [%error (list tank)].
       */
         u3_noun
-        u3m_soft(c3_w sec_w, u3_funk fun_f, u3_noun arg);
+        u3m_soft(c3_w mil_w, u3_funk fun_f, u3_noun arg);
 
       /* u3m_soft_slam: top-level call.
       */
@@ -140,6 +140,11 @@
       */
         void
         u3m_reclaim(void);
+
+      /* u3m_pack: compact (defragment) memory.
+      */
+        c3_w
+        u3m_pack(void);
 
       /* u3m_rock_stay(): jam state into [dir_c] at [evt_d]
       */
