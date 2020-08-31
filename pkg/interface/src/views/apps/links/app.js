@@ -70,7 +70,7 @@ export class LinksApp extends Component {
 
     return (
       <>
-        <Helmet>
+        <Helmet defer={false}>
           <title>{totalUnseen > 0 ? `(${totalUnseen}) ` : ''}OS1 - Links</title>
         </Helmet>
         <Switch>

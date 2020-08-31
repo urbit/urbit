@@ -108,7 +108,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
 
     return (
       <>
-        <Helmet>
+        <Helmet defer={false}>
           <title>{totalUnreads > 0 ? `(${totalUnreads}) ` : ''}OS1 - Chat</title>
         </Helmet>
         <Switch>
