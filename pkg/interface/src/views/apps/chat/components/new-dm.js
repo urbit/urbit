@@ -3,7 +3,7 @@ import { Spinner } from '~/views/components/Spinner';
 import { Link } from 'react-router-dom';
 import { InviteSearch } from '~/views/components/InviteSearch';
 import urbitOb from 'urbit-ob';
-import { deSig } from '~/logic/lib/util';
+import { deSig, cite } from '~/logic/lib/util';
 
 export class NewDmScreen extends Component {
   constructor(props) {
@@ -91,7 +91,7 @@ export class NewDmScreen extends Component {
 
       const aud = state.ship !== window.ship ? [`~${state.ships[0]}`] : [];
 
-      let title = `~${window.ship} <-> ~${state.ships[0]}`;
+      let title = `${cite(window.ship)} <-> ${cite(state.ships[0])}`;
 
       if (state.title !== '') {
         title = state.title;
