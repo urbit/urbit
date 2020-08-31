@@ -1184,6 +1184,8 @@ _test_bsr_bytes_any_loop(const char *cap, uint8_t len, uint8_t val)
   }
 
   free(bytes);
+  free(d);
+  free(c);
 
   return ret;
 }
