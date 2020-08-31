@@ -1209,13 +1209,13 @@ u3_ames_io_init(u3_pier* pir_u)
   //
   //    assuming we store:
   //    a (list lane) with 1 item, 1+8 + 1 + (6*2) = 22 words
-  //    and a @da as timestamp,                       5 words
+  //    and a @da as timestamp,                       8 words
   //    consed together,                              6 words
   //    with worst-case (128-bit) @p keys,            8 words
   //    and an additional cell for the k-v pair,      6 words
-  //    that makes for a per-entry memory use of     47 words => 188 bytes
+  //    that makes for a per-entry memory use of     50 words => 200 bytes
   //
-  //    the 500k entries below would take about 94mb (in the worst case, but
+  //    the 500k entries below would take about 100mb (in the worst case, but
   //    not accounting for hashtable overhead).
   //    we could afford more, but 500k entries is more than we'll likely use
   //    in the near future.
