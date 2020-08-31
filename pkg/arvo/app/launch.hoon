@@ -77,7 +77,7 @@
     :~  [%pass / %arvo %e %disconnect [~ /]]
         :*  %pass  /srv  %agent  [our.bowl %file-server]
             %poke  %file-server-action
-            !>([%serve-dir / /app/landscape %.n])
+            !>([%serve-dir / /app/landscape %.n %.y])
         ==
     ==
   %+  turn  ~(tap by wex.bowl)
@@ -161,8 +161,11 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
-  ?+  path  (on-peek:def path)
-      [%x %keys ~]  ``noun+!>(~(key by tiles))
+  ?.  (team:title our.bowl src.bowl)  ~
+  ?+  path  [~ ~]
+      [%x %tiles ~]       ``noun+!>([tiles tile-ordering])
+      [%x %first-time ~]  ``noun+!>(first-time)
+      [%x %keys ~]        ``noun+!>(~(key by tiles))
   ==
 ::
 ++  on-arvo

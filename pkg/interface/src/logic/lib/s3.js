@@ -1,3 +1,5 @@
+import S3 from 'aws-sdk/clients/s3';
+
 export default class S3Client {
   constructor() {
     this.s3 = null;
@@ -8,27 +10,20 @@ export default class S3Client {
   }
 
   setCredentials(endpoint, accessKeyId, secretAccessKey) {
-    if (!window.AWS) {
-      setTimeout(() => {
-        this.setCredentials(endpoint, accessKeyId, secretAccessKey);
-      }, 2000);
-      return;
-    }
-    this.endpoint = new window.AWS.Endpoint(endpoint);
+    this.endpoint = endpoint;
     this.accessKeyId = accessKeyId;
     this.secretAccessKey = secretAccessKey;
 
-    this.s3 =
-      new window.AWS.S3({
-        endpoint: this.endpoint,
-        credentials: new window.AWS.Credentials({
-          accessKeyId: this.accessKeyId,
-          secretAccessKey: this.secretAccessKey
-        })
-      });
+    this.s3 = new S3({
+      endpoint: endpoint,
+      credentials: {
+        accessKeyId: this.accessKeyId,
+        secretAccessKey: this.secretAccessKey
+      }
+    });
   }
 
-  upload(bucket, filename, buffer) {
+  async upload(bucket, filename, buffer) {
     const params = {
       Bucket: bucket,
       Key:  filename,
@@ -36,19 +31,11 @@ export default class S3Client {
       ACL: 'public-read',
       ContentType: buffer.type
     };
-    return new Promise((resolve, reject) => {
-      if (!this.s3) {
-        reject({ error: 'S3 not initialized!' });
-        return;
-      }
-      this.s3.upload(params, (error, data) => {
-        if (error) {
-          reject({ error });
-        } else {
-          resolve(data);
-        }
-      });
-    });
+
+    if(!this.s3) {
+      throw new Error('S3 not initialized');
+    }
+    return this.s3.upload(params).promise();
   }
 }
 

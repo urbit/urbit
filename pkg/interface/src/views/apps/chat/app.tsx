@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import Helmet from 'react-helmet';
 
 import './css/custom.css';
 
@@ -24,14 +25,11 @@ type ChatAppProps = StoreState & {
 };
 
 export default class ChatApp extends React.Component<ChatAppProps, {}> {
-  totalUnreads = 0;
-
   constructor(props) {
     super(props);
   }
 
   componentDidMount() {
-    document.title = 'OS1 - Chat';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
@@ -79,12 +77,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
       }
     });
 
-    if (totalUnreads !== this.totalUnreads) {
-      document.title =
-        totalUnreads > 0 ? `(${totalUnreads}) OS1 - Chat` : 'OS1 - Chat';
-      this.totalUnreads = totalUnreads;
-    }
-
     const {
       invites,
       s3,
@@ -95,7 +87,9 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
       api,
       chatInitialized,
       pendingMessages,
-      groups
+      groups,
+      hideAvatars,
+      hideNicknames
     } = props;
 
     const renderChannelSidebar = (props, station?) => (
@@ -113,88 +107,92 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
     );
 
     return (
-      <Switch>
-        <Route
-          exact
-          path="/~chat"
-          render={(props) => {
-            return (
-              <Skeleton
-                associations={associations}
-                invites={invites}
-                chatHideonMobile={true}
-                sidebarShown={sidebarShown}
-                sidebar={renderChannelSidebar(props)}
-              >
-                <div className="h-100 w-100 overflow-x-hidden flex flex-column bg-white bg-gray0-d">
-                  <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
-                    <p className="f8 pt3 gray2 w-100 h-100 dtc v-mid tc">
-                      Select, create, or join a chat to begin.
-                    </p>
+      <>
+        <Helmet defer={false}>
+          <title>{totalUnreads > 0 ? `(${totalUnreads}) ` : ''}OS1 - Chat</title>
+        </Helmet>
+        <Switch>
+          <Route
+            exact
+            path="/~chat"
+            render={(props) => {
+              return (
+                <Skeleton
+                  associations={associations}
+                  invites={invites}
+                  chatHideonMobile={true}
+                  sidebarShown={sidebarShown}
+                  sidebar={renderChannelSidebar(props)}
+                >
+                  <div className="h-100 w-100 overflow-x-hidden flex flex-column bg-white bg-gray0-d">
+                    <div className="pl3 pr3 pt2 dt pb3 w-100 h-100">
+                      <p className="f8 pt3 gray2 w-100 h-100 dtc v-mid tc">
+                        Select, create, or join a chat to begin.
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Skeleton>
-            );
-          }}
-        />
-        <Route
-          exact
-          path="/~chat/new/dm/:ship?"
-          render={(props) => {
-            const ship = props.match.params.ship;
+                </Skeleton>
+              );
+            }}
+          />
+          <Route
+            exact
+            path="/~chat/new/dm/:ship?"
+            render={(props) => {
+              const ship = props.match.params.ship;
 
-            return (
-              <Skeleton
-                associations={associations}
-                invites={invites}
-                sidebarHideOnMobile={true}
-                sidebar={renderChannelSidebar(props)}
-                sidebarShown={sidebarShown}
-              >
-                <NewDmScreen
-                  api={api}
-                  inbox={inbox}
-                  groups={groups || {}}
-                  contacts={contacts || {}}
-                  associations={associations.contacts}
-                  chatSynced={chatSynced || {}}
-                  autoCreate={ship}
-                  {...props}
-                />
-              </Skeleton>
-            );
-          }}
-        />
-        <Route
-          exact
-          path="/~chat/new"
-          render={(props) => {
-            return (
-              <Skeleton
-                associations={associations}
-                invites={invites}
-                sidebarHideOnMobile={true}
-                sidebar={renderChannelSidebar(props)}
-                sidebarShown={sidebarShown}
-              >
-                <NewScreen
-                  api={api}
-                  inbox={inbox || {}}
-                  groups={groups}
-                  contacts={contacts || {}}
-                  associations={associations.contacts}
-                  chatSynced={chatSynced || {}}
-                  {...props}
-                />
-              </Skeleton>
-            );
-          }}
-        />
-        <Route
-          exact
-          path="/~chat/join/:ship?/:station?"
-          render={(props) => {
-            let station = `/${props.match.params.ship}/${props.match.params.station}`;
+              return (
+                <Skeleton
+                  associations={associations}
+                  invites={invites}
+                  sidebarHideOnMobile={true}
+                  sidebar={renderChannelSidebar(props)}
+                  sidebarShown={sidebarShown}
+                >
+                  <NewDmScreen
+                    api={api}
+                    inbox={inbox}
+                    groups={groups || {}}
+                    contacts={contacts || {}}
+                    associations={associations.contacts}
+                    chatSynced={chatSynced || {}}
+                    autoCreate={ship}
+                    {...props}
+                  />
+                </Skeleton>
+              );
+            }}
+          />
+          <Route
+            exact
+            path="/~chat/new"
+            render={(props) => {
+              return (
+                <Skeleton
+                  associations={associations}
+                  invites={invites}
+                  sidebarHideOnMobile={true}
+                  sidebar={renderChannelSidebar(props)}
+                  sidebarShown={sidebarShown}
+                >
+                  <NewScreen
+                    api={api}
+                    inbox={inbox || {}}
+                    groups={groups}
+                    contacts={contacts || {}}
+                    associations={associations.contacts}
+                    chatSynced={chatSynced || {}}
+                    {...props}
+                  />
+                </Skeleton>
+              );
+            }}
+          />
+          <Route
+            exact
+            path="/~chat/join/:ship?/:station?"
+            render={(props) => {
+              let station = `/${props.match.params.ship}/${props.match.params.station}`;
 
             return (
               <Skeleton
@@ -207,7 +205,7 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
                 <JoinScreen
                   api={api}
                   inbox={inbox}
-                  autoJoin={station}
+                  station={station}
                   chatSynced={chatSynced || {}}
                   {...props}
                 />
@@ -228,93 +226,96 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
               envelopes: []
             };
 
-            let roomContacts = {};
-            const associatedGroup =
-              station in associations['chat'] &&
-              'group-path' in associations.chat[station]
-                ? associations.chat[station]['group-path']
-                : '';
+              let roomContacts = {};
+              const associatedGroup =
+                station in associations['chat'] &&
+                'group-path' in associations.chat[station]
+                  ? associations.chat[station]['group-path']
+                  : '';
 
-            if (associations.chat[station] && associatedGroup in contacts) {
-              roomContacts = contacts[associatedGroup];
-            }
+              if (associations.chat[station] && associatedGroup in contacts) {
+                roomContacts = contacts[associatedGroup];
+              }
 
-            const association =
-              station in associations['chat'] ? associations.chat[station] : {};
+              const association =
+                station in associations['chat'] ? associations.chat[station] : {};
 
-            const group = groups[association['group-path']] || groupBunts.group();
+              const group = groups[association['group-path']] || groupBunts.group();
 
-            const popout = props.match.url.includes('/popout/');
+              const popout = props.match.url.includes('/popout/');
 
-            return (
-              <Skeleton
-                associations={associations}
-                invites={invites}
-                sidebarHideOnMobile={true}
-                popout={popout}
-                sidebarShown={sidebarShown}
-                sidebar={renderChannelSidebar(props, station)}
-              >
-                <ChatScreen
-                  chatSynced={chatSynced || {}}
-                  station={station}
-                  association={association}
-                  api={api}
-                  read={mailbox.config.read}
-                  length={mailbox.config.length}
-                  envelopes={mailbox.envelopes}
-                  inbox={inbox}
-                  contacts={roomContacts}
-                  group={group}
-                  pendingMessages={pendingMessages}
-                  s3={s3}
+              return (
+                <Skeleton
+                  associations={associations}
+                  invites={invites}
+                  sidebarHideOnMobile={true}
                   popout={popout}
                   sidebarShown={sidebarShown}
-                  chatInitialized={chatInitialized}
-                  {...props}
-                />
-              </Skeleton>
-            );
-          }}
-        />
-        <Route
-          exact
-          path="/~chat/(popout)?/settings/(~)?/:ship/:station+"
-          render={(props) => {
-            let station = `/${props.match.params.ship}/${props.match.params.station}`;
-            const popout = props.match.url.includes('/popout/');
+                  sidebar={renderChannelSidebar(props, station)}
+                >
+                  <ChatScreen
+                    chatSynced={chatSynced || {}}
+                    station={station}
+                    association={association}
+                    api={api}
+                    read={mailbox.config.read}
+                    length={mailbox.config.length}
+                    envelopes={mailbox.envelopes}
+                    inbox={inbox}
+                    contacts={roomContacts}
+                    group={group}
+                    pendingMessages={pendingMessages}
+                    s3={s3}
+                    popout={popout}
+                    sidebarShown={sidebarShown}
+                    chatInitialized={chatInitialized}
+                    hideAvatars={hideAvatars}
+                    hideNicknames={hideNicknames}
+                    {...props}
+                  />
+                </Skeleton>
+              );
+            }}
+          />
+          <Route
+            exact
+            path="/~chat/(popout)?/settings/(~)?/:ship/:station+"
+            render={(props) => {
+              let station = `/${props.match.params.ship}/${props.match.params.station}`;
+              const popout = props.match.url.includes('/popout/');
 
-            const association =
-              station in associations['chat'] ? associations.chat[station] : {};
-            const group = groups[association['group-path']] || groupBunts.group();
+              const association =
+                station in associations['chat'] ? associations.chat[station] : {};
+              const group = groups[association['group-path']] || groupBunts.group();
 
-            return (
-              <Skeleton
-                associations={associations}
-                invites={invites}
-                sidebarHideOnMobile={true}
-                popout={popout}
-                sidebarShown={sidebarShown}
-                sidebar={renderChannelSidebar(props, station)}
-              >
-                <SettingsScreen
-                  {...props}
-                  station={station}
-                  association={association}
-                  groups={groups || {}}
-                  group={group}
-                  contacts={contacts || {}}
-                  associations={associations.contacts}
-                  api={api}
-                  inbox={inbox}
+              return (
+                <Skeleton
+                  associations={associations}
+                  invites={invites}
+                  sidebarHideOnMobile={true}
                   popout={popout}
                   sidebarShown={sidebarShown}
-                />
-              </Skeleton>
-            );
-          }}
-        />
-      </Switch>
+                  sidebar={renderChannelSidebar(props, station)}
+                >
+                  <SettingsScreen
+                    {...props}
+                    station={station}
+                    association={association}
+                    groups={groups || {}}
+                    group={group}
+                    contacts={contacts || {}}
+                    associations={associations.contacts}
+                    api={api}
+                    inbox={inbox}
+                    popout={popout}
+                    sidebarShown={sidebarShown}
+                  />
+                </Skeleton>
+              );
+            }}
+          />
+        </Switch>
+      </>
     );
   }
 }

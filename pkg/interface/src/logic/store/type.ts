@@ -11,6 +11,7 @@ import { Permissions } from '~/types/permission-update';
 import { LaunchState, WeatherState } from '~/types/launch-update';
 import { LinkComments, LinkCollections, LinkSeen } from '~/types/link-update';
 import { ConnectionStatus } from '~/types/connection';
+import { BackgroundConfig } from '~/types/local-update';
 
 export interface StoreState {
   // local state
@@ -20,6 +21,9 @@ export interface StoreState {
   dark: boolean;
   connection: ConnectionStatus;
   baseHash: string | null;
+  background: BackgroundConfig;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
   // invite state
   invites: Invites;
   // metadata state

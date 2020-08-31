@@ -2,25 +2,23 @@
 /+  *server, default-agent, verb, dbug
 |%
 +$  card  card:agent:gall
-+$  serving  (map url-base=path [=content public=?])
++$  serving    (map url-base=path [=content public=? single-page=?])
 +$  content
   $%  [%clay =path]
       [%glob =glob:glob]
   ==
-+$  state-base
-  $:  =configuration:srv
+::
++$  state-3
+  $:  %3
+      =configuration:srv
       =serving
-  ==
-+$  state-2
-  $:  %2
-      state-base
   ==
 --
 ::
 %+  verb  |
 %-  agent:dbug
 ::
-=|  state-2
+=|  state-3
 =*  state  -
 ^-  agent:gall
 |_  =bowl:gall
@@ -36,7 +34,7 @@
         %+  turn
           ^-  (list path)
           [/ /'~landscape' ~]
-        |=(pax=path [pax [clay+/app/landscape %.n]])
+        |=(pax=path [pax [clay+/app/landscape %.n %.y]])
       ==
   :~  (connect /)
       (connect /'~landscape')
@@ -68,24 +66,35 @@
        -  %2
        serving  (~(del by serving.old-state) /'~landscape'/js/index)
     ==
-  ?>  ?=(%2 -.old-state)
+  =?  old-state  ?=(%2 -.old-state)
+    %=    old-state
+        -  %3
+        serving
+      %-  ~(run by serving.old-state)
+      |=  [=content public=?]
+      ^-  [^content ? ?]
+      [content public %.y]
+    ==
+  ?>  ?=(%3 -.old-state)
   [~ this(state old-state)]
   ::
+  +$  serving-0  (map url-base=path [=clay=path public=?])
+  +$  serving-1  (map url-base=path [=content public=?])
   +$  versioned-state
     $%  state-0
-        state-1
-        state-2
+        [%1 state-1]
+        [%2 state-1]
+        state-3
     ==
   ::
-  +$  serving-0  (map url-base=path [=clay=path public=?])
   +$  state-0
     $:  %0
         =configuration:srv
         =serving-0
     ==
   +$  state-1
-    $:  %1
-        state-base
+    $:  =configuration:srv
+        serving=serving-1
     ==
   --
 ::
@@ -113,14 +122,17 @@
       ?:  (~(has by serving) url-base)
         ~|("url already bound to {<(~(got by serving) url-base.act)>}" !!)
       :-  [%pass url-base %arvo %e %connect [~ url-base] %file-server]~
-      this(serving (~(put by serving) url-base clay+clay-base.act public.act))
+      %_  this
+          serving
+        (~(put by serving) url-base clay+clay-base.act public.act spa.act)
+      ==
     ::
         %serve-glob
       =*  url-base  url-base.act
       ?:  (~(has by serving) url-base)
         ~|("url already bound to {<(~(got by serving) url-base.act)>}" !!)
       :-  [%pass url-base %arvo %e %connect [~ url-base] %file-server]~
-      this(serving (~(put by serving) url-base glob+glob.act public.act))
+      this(serving (~(put by serving) url-base glob+glob.act public.act %.y))
     ::
         %unserve-dir
       :-  [%pass url-base.act %arvo %e %disconnect [~ url-base.act]]~
@@ -129,9 +141,9 @@
         %toggle-permission
       ?.  (~(has by serving) url-base.act)
         ~|("url is not bound" !!)
-      =/  [=content public=?]  (~(got by serving) url-base.act)
+      =/  [=content public=? spa=?]  (~(got by serving) url-base.act)
       :-  ~
-      this(serving (~(put by serving) url-base.act [content !public]))
+      this(serving (~(put by serving) url-base.act [content !public spa]))
     ::
         %set-landscape-homepage-prefix
       =.  landscape-homepage-prefix.configuration  prefix.act
@@ -158,6 +170,7 @@
       |=  =cord
       ^-  (unit ^cord)
       ?:(=(cord '') ~ `cord)
+    =/  is-file   ?=(^ ext.req-line)
     =?  req-line  ?=(~ ext.req-line)
       [[[~ %html] (snoc site.req-line 'index')] args.req-line]
     ?~  site.req-line
@@ -174,17 +187,18 @@
       %-  js-response:gen
       (as-octt:mimes:html "window.ship = '{+:(scow %p our.bowl)}';")
     ::
-    =/  [payload=simple-payload:http public=?]  (get-file req-line)
+    =/  [payload=simple-payload:http public=?]  (get-file req-line is-file)
     ?:  public  payload
     (require-authorization-simple:app inbound-request payload)
     ::
     ++  get-file
-      |=  req-line=request-line
+      |=  [req-line=request-line is-file=?]
       ^-  [simple-payload:http ?]
       =/  pax=path
         ?~  ext.req-line  site.req-line
         (snoc site.req-line u.ext.req-line)
-      =/  content=(unit [=content suffix=path public=?])  (get-content pax)
+      =/  content=(unit [=content suffix=path public=?])
+        (get-content pax is-file)
       ?~  content  [not-found:gen %.n]
       ?-  -.content.u.content
           %clay
@@ -234,23 +248,28 @@
       (add char ^~((sub 'a' 'A')))
     ::
     ++  get-content
-      |=  pax=path
+      |=  [pax=path is-file=?]
       ^-  (unit [content path ?])
-      =/  first-try  (match-content-path pax (~(del by serving) /))
+      =/  first-try  (match-content-path pax (~(del by serving) /) is-file)
       ?^  first-try  first-try
       =/  root  (~(get by serving) /)
       ?~  root  ~
-      (match-content-path pax (~(gas by *^serving) [[/ u.root] ~]))
+      (match-content-path pax (~(gas by *^serving) [[/ u.root] ~]) is-file)
     ::
     ++  match-content-path
-      |=  [pax=path =^serving]
+      |=  [pax=path =^serving is-file=?]
       ^-  (unit [content path ?])
       %-  ~(rep by serving)
-      |=  [[url-base=path =content public=?] out=(unit [content path ?])]
+      |=  $:  [url-base=path =content public=? spa=?]
+              out=(unit [content path ?])
+          ==
       ?^  out  out
       =/  suf  (get-suffix url-base pax)
       ?~  suf  ~
-      `[content u.suf public]
+      =-  `[content - public]
+      ?:  ?&(spa !is-file)
+        /index/html
+      u.suf
     ::
     ++  get-suffix
       |=  [a=path b=path]

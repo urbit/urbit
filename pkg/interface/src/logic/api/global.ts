@@ -11,6 +11,7 @@ import GroupsApi from './groups';
 import LaunchApi from './launch';
 import LinksApi from './links';
 import PublishApi from './publish';
+import S3Api from './s3';
 
 export default class GlobalApi extends BaseApi<StoreState> {
   chat = new ChatApi(this.ship, this.channel, this.store);
@@ -22,6 +23,7 @@ export default class GlobalApi extends BaseApi<StoreState> {
   launch = new LaunchApi(this.ship, this.channel, this.store);
   links = new LinksApi(this.ship, this.channel, this.store);
   publish = new PublishApi(this.ship, this.channel, this.store);
+  s3 = new S3Api(this.ship, this.channel, this.store);
 
 
   constructor(public ship: Patp, public channel: any, public store: GlobalStore) {

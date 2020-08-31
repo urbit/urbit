@@ -4,6 +4,7 @@ import * as React from 'react';
 import { BrowserRouter as Router, Route, withRouter, Switch } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { sigil as sigiljs, stringRenderer } from 'urbit-sigil-js';
+import Helmet from 'react-helmet';
 
 import Mousetrap from 'mousetrap';
 import 'mousetrap-global-bind';
@@ -22,7 +23,7 @@ import GlobalStore from '~/logic/store/store';
 import GlobalSubscription from '~/logic/subscription/global';
 import GlobalApi from '~/logic/api/global';
 import { uxToHex } from '~/logic/lib/util';
-import { Sigil } from '~/logic/lib/sigil';
+import { foregroundFromBackground } from '~/logic/lib/sigil';
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -30,6 +31,13 @@ const Root = styled.div`
   width: 100%;
   padding: 0;
   margin: 0;
+  ${p => p.background?.type === 'url' ? `
+    background-image: url('${p.background?.url}');
+    background-size: cover;
+    ` : p.background?.type === 'color' ? `
+    background-color: ${p.background.color};
+    ` : ``
+  }
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -50,7 +58,7 @@ class App extends React.Component {
       new GlobalSubscription(this.store, this.api, this.appChannel);
 
     this.updateTheme = this.updateTheme.bind(this);
-    this.setFavicon = this.setFavicon.bind(this);
+    this.faviconString = this.faviconString.bind(this);
   }
 
   componentDidMount() {
@@ -59,44 +67,36 @@ class App extends React.Component {
     this.api.local.setDark(this.themeWatcher.matches);
     this.themeWatcher.addListener(this.updateTheme);
     this.api.local.getBaseHash();
+    this.store.rehydrate();
     Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
       e.preventDefault();
       e.stopImmediatePropagation();
       this.api.local.setOmnibox();
     });
-    this.setFavicon();
   }
 
   componentWillUnmount() {
     this.themeWatcher.removeListener(this.updateTheme);
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    this.setFavicon();
-  }
-
   updateTheme(e) {
     this.api.local.setDark(e.matches);
   }
 
-  setFavicon() {
-    if (window.ship.length < 14) {
-      let background = '#ffffff';
-      if (this.state.contacts.hasOwnProperty('/~/default')) {
-        background = `#${uxToHex(this.state.contacts['/~/default'][window.ship].color)}`;
-      }
-      const foreground = Sigil.foregroundFromBackground(background);
-      const svg = sigiljs({
-        patp: window.ship,
-        renderer: stringRenderer,
-        size: 16,
-        colors: [background, foreground]
-      });
-      const dataurl = 'data:image/svg+xml;base64,' + btoa(svg);
-      const favicon = document.querySelector('[rel=icon]');
-      favicon.href = dataurl;
-      favicon.type = 'image/svg+xml';
+  faviconString() {
+    let background = '#ffffff';
+    if (this.state.contacts.hasOwnProperty('/~/default')) {
+      background = `#${uxToHex(this.state.contacts['/~/default'][window.ship].color)}`;
     }
+    const foreground = foregroundFromBackground(background);
+    const svg = sigiljs({
+      patp: window.ship,
+      renderer: stringRenderer,
+      size: 16,
+      colors: [background, foreground]
+    });
+    const dataurl = 'data:image/svg+xml;base64,' + btoa(svg);
+    return dataurl;
   }
 
   render() {
@@ -104,10 +104,16 @@ class App extends React.Component {
     const associations = state.associations ?
       state.associations : { contacts: {} };
     const theme = state.dark ? dark : light;
+    const { background } = state;
 
     return (
       <ThemeProvider theme={theme}>
-        <Root>
+        <Helmet>
+          {window.ship.length < 14
+            ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
+            : null}
+        </Helmet>
+        <Root background={background} >
           <Router>
             <StatusBarWithRouter
               props={this.props}
@@ -116,6 +122,7 @@ class App extends React.Component {
               api={this.api}
               connection={this.state.connection}
               subscription={this.subscription}
+              ship={this.ship}
             />
             <Omnibox
               associations={state.associations}

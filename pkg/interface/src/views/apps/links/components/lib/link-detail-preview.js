@@ -112,7 +112,9 @@ export class LinkPreview extends Component {
       );
     }
 
-    const nameClass = props.nickname ? 'inter' : 'mono';
+    const showNickname = props.nickname && !props.hideNicknames;
+
+    const nameClass = showNickname ? 'inter' : 'mono';
 
     return (
       <div className="pb6 w-100">
@@ -132,7 +134,7 @@ export class LinkPreview extends Component {
             <span className={'f9 pr2 white-d dib ' + nameClass}
             title={props.ship}
             >
-              {props.nickname ? props.nickname : cite(props.ship)}
+              {showNickname ? props.nickname : cite(props.ship)}
             </span>
             <span className="f9 inter gray2 pr3 dib">
               {this.state.timeSinceLinkPost}

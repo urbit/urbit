@@ -34,6 +34,14 @@ export default class GlobalStore extends BaseStore<StoreState> {
   launchReducer = new LaunchReducer();
   connReducer = new ConnectionReducer();
 
+  rehydrate() {
+    this.localReducer.rehydrate(this.state);
+  }
+
+  dehydrate() {
+    this.localReducer.dehydrate(this.state);
+  }
+
 
   initialState(): StoreState {
     return {
@@ -44,6 +52,9 @@ export default class GlobalStore extends BaseStore<StoreState> {
       omniboxShown: false,
       suspendedFocus: null,
       baseHash: null,
+      background: undefined,
+      hideAvatars: false,
+      hideNicknames: false,
       invites: {},
       associations: {
         chat: {},

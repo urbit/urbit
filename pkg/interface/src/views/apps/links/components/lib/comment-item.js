@@ -34,13 +34,17 @@ export class CommentItem extends Component {
   render() {
     const props = this.props;
 
-    const img = (props.avatar)
+    const member = props.member || false;
+
+    const showAvatar = props.avatar && !props.hideAvatars;
+    const showNickname = props.nickname && !props.hideNicknames;
+    const img = showAvatar
       ? <img src={props.avatar} height={36} width={36} className="dib" />
       : <Sigil
         ship={'~' + props.ship}
         size={36}
         color={'#' + props.color}
-        classes={(props.member ? 'mix-blend-diff' : '')}
+        classes={(member ? 'mix-blend-diff' : '')}
         />;
 
     return (
@@ -49,7 +53,7 @@ export class CommentItem extends Component {
           {img}
           <Row fontSize={0} alignItems="center" ml={2}>
             <Text mono={!props.hasNickname} title={props.ship}>
-              {props.nickname ? props.nickname : cite(props.ship)}
+              {showNickname ? props.nickname : cite(props.ship)}
             </Text>
             <Text gray ml={2}>
               {this.state.timeSinceComment}

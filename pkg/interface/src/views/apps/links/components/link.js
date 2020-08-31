@@ -166,6 +166,7 @@ export class LinkDetail extends Component {
               page={props.page}
               linkIndex={props.linkIndex}
               time={this.state.data.time}
+              hideNicknames={props.hideNicknames}
             />
             <div className="relative">
               <div className={'relative ba br1 mt6 mb6 ' + focus}>
@@ -217,6 +218,8 @@ export class LinkDetail extends Component {
               linkPage={props.page}
               linkIndex={props.linkIndex}
               api={props.api}
+              hideAvatars={props.hideAvatars}
+              hideNicknames={props.hideNicknames}
             />
           </div>
         </div>

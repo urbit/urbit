@@ -1,5 +1,6 @@
 import BaseApi from "./base";
 import { StoreState } from "../store/type";
+import { BackgroundConfig } from "../types/local-update";
 
 export default class LocalApi extends BaseApi<StoreState> {
   getBaseHash() {
@@ -36,6 +37,40 @@ export default class LocalApi extends BaseApi<StoreState> {
         },
       },
     });
+  }
+
+  setBackground(backgroundConfig: BackgroundConfig) {
+    this.store.handleEvent({
+      data: {
+        local: {
+          backgroundConfig
+        }
+      }
+    });
+  }
+
+  hideAvatars(hideAvatars: boolean) {
+    this.store.handleEvent({
+      data: {
+        local: {
+          hideAvatars
+        }
+      }
+    });
+  }
+
+  hideNicknames(hideNicknames: boolean) {
+    this.store.handleEvent({
+      data: {
+        local: {
+          hideNicknames
+        }
+      }
+    });
+  }
+
+  dehydrate() {
+    this.store.dehydrate();
   }
 
 }

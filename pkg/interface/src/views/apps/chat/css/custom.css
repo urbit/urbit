@@ -70,10 +70,6 @@ h2 {
   line-height: 16px;
 }
 
-.chat-md-message > pre {
-  overflow-x: auto;
-}
-
 .mono {
   font-family: "Source Code Pro", monospace;
 }
@@ -254,6 +250,10 @@ blockquote {
 
 .chat .CodeMirror * {
     font-family: 'Inter';
+}
+
+code {
+  white-space: normal;
 }
 
 code, pre.code {
