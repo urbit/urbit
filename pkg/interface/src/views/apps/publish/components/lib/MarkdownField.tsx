@@ -12,7 +12,7 @@ export const MarkdownField = ({ id, ...rest }: { id: string; } & Parameters<type
   const [{ value }, { error, touched }, { setValue, setTouched }] = useField(id);
 
   return (
-    <Box width="100%" display="flex" flexDirection="column" {...rest}>
+    <Box height="100%" width="100%" display="flex" flexDirection="column" {...rest}>
       <MarkdownEditor
         onFocus={() => setTouched(true)}
         onBlur={() => setTouched(false)}
