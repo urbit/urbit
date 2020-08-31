@@ -705,9 +705,7 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
     _ames_panc_free(pac_u);
   }
   else {
-    if ( 0 < pac_u->sam_u->saw_d ) {
-      pac_u->sam_u->saw_d--;
-    }
+    pac_u->sam_u->saw_d = 0;
 
     //  cache the scry result for later use
     //
