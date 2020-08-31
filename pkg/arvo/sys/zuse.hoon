@@ -6311,7 +6311,7 @@
     |_  ent/_`(map term @t)`[[%apos '\''] ~ ~]
     ::                                                  ::  ++apex:de-xml:html
     ++  apex                                            ::  top level
-      =+  spa=;~(pose comt whit)
+      =+  spa=;~(pose comt whit decl)
       %+  knee  *manx  |.  ~+
       %+  ifix  [(star spa) (star spa)]
       ;~  pose
@@ -6359,6 +6359,12 @@
         whit
         ;~(less (jest '-->') hep)
       ==
+    ::
+    ++  decl                                            ::  ++decl:de-xml:html
+      %+  ifix                                          ::  XML declaration
+        [(jest '<?xml') (jest '?>')]
+      %-  star
+      ;~(less (jest '?>') prn)
     ::                                                  ::  ++escp:de-xml:html
     ++  escp                                            ::
       ;~(pose ;~(less led ban pad prn) enty)
