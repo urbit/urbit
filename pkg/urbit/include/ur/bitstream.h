@@ -52,6 +52,9 @@ ur_bsr64_any(ur_bsr_t *bsr, uint8_t len);
 void
 ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out);
 
+void
+ur_bsr_skip_any(ur_bsr_t *bsr, uint64_t len);
+
 ur_cue_res_e
 ur_bsr_tag(ur_bsr_t *bsr, ur_cue_tag_e *out);
 

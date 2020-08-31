@@ -464,6 +464,55 @@ ur_bsr_bytes_any(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
   }
 }
 
+void
+ur_bsr_skip_any(ur_bsr_t *bsr, uint64_t len)
+{
+  uint64_t left = bsr->left;
+
+  bsr->bits += len;
+
+  if ( !left ) {
+    return;
+  }
+  else {
+    const uint8_t *b = bsr->bytes;
+    uint8_t      off = bsr->off;
+    uint64_t len_byt = len >> 3;
+    uint8_t  len_bit = ur_mask_3(len);
+    uint64_t    need = len_byt + !!len_bit;
+    uint8_t     rest = 8 - off;
+    uint64_t    last = left - 1;
+
+    b += ur_min(last, len_byt) + 1;
+
+    if ( need >= left ) {
+      uint8_t bits = len - (last << 3);
+
+      if ( bits < rest ) {
+        bsr->bytes = b - 1;
+        left = 1;
+        off += len_bit;
+      }
+      else {
+        bsr->bytes = 0;
+        left = 0;
+        off  = 0;
+      }
+    }
+    else {
+      uint8_t bits = off + len_bit;
+      uint8_t step = !!(bits >> 3);
+
+      bsr->bytes = b - (1 - step);
+      left -= len_byt + step;
+      off   = ur_mask_3(bits);
+    }
+
+    bsr->off  = off;
+    bsr->left = left;
+  }
+}
+
 static inline ur_cue_res_e
 _bsr_set_gone(ur_bsr_t *bsr, uint8_t bits)
 {

@@ -364,16 +364,7 @@ _cue_test_next(_cue_test_stack_t *s,
           return res;
         }
 
-        //  XX need a ur_bsr_skip()
-        //
-        {
-          uint64_t len_byt = (len >> 3) + !!ur_mask_3(len);
-          uint8_t *byt = calloc(len_byt, 1);
-          ur_bsr_bytes_any(bsr, len, byt);
-
-          free(byt);
-        }
-
+        ur_bsr_skip_any(bsr, len);
         ur_dict_put((ur_root_t*)0, dict, bits);
         return ur_cue_good;
       }

@@ -1205,6 +1205,54 @@ _test_bsr_bytes_any(void)
 }
 
 static int
+_test_bsr_skip_any_loop(const char *cap, uint8_t len, uint8_t val)
+{
+  int        ret = 1;
+  uint64_t   max = (len << 3) + 7;
+  ur_bsr_t  a, b;
+  uint8_t *bytes, *c;
+  uint8_t   i, j, k;
+
+  c     = malloc(1 + len);
+  bytes = malloc(len);
+  memset(bytes, val, len);
+
+  for ( i = 0; i < 8; i++) {
+    for ( j = 1; j <= max; j++ ) {
+      a.left = b.left = len;
+      a.bytes = b.bytes = len ? bytes : 0;
+      a.off   = b.off   = len ? i     : 0;
+      a.bits  = b.bits  = i;
+      memset(c, 0x0, len);
+
+      _bsr_bytes_any_slow(&a, j, c);
+      ur_bsr_skip_any(&b, j);
+
+      ret &= _bsr_cmp_any_check(cap, i, j, &a, &b);
+    }
+  }
+
+  free(bytes);
+  free(c);
+
+  return ret;
+}
+
+static int
+_test_bsr_skip_any(void)
+{
+  return _test_bsr_skip_any_loop("bsr skip nought", 0, 0x0)
+       & _test_bsr_skip_any_loop("bsr skip ones odd", 3, 0xff)
+       & _test_bsr_skip_any_loop("bsr skip ones even", 4, 0xff)
+       & _test_bsr_skip_any_loop("bsr skip zeros odd", 5, 0x0)
+       & _test_bsr_skip_any_loop("bsr skip zeros even", 6, 0x0)
+       & _test_bsr_skip_any_loop("bsr skip alt 1 odd", 7, 0xaa)
+       & _test_bsr_skip_any_loop("bsr skip alt 1 even", 8, 0xaa)
+       & _test_bsr_skip_any_loop("bsr skip alt 2 odd", 9, 0x55)
+       & _test_bsr_skip_any_loop("bsr skip alt 2 even", 10, 0x55);
+}
+
+static int
 _bsr_cmp_check(const char* cap,
                uint8_t     off,
                uint8_t     len,
@@ -1428,6 +1476,7 @@ _test_bsr(void)
   return _test_bsr_bit()
        & _test_bsr_bit_any()
        & _test_bsr_bytes_any()
+       & _test_bsr_skip_any()
        & _test_bsr8()
        & _test_bsr32()
        & _test_bsr64()
