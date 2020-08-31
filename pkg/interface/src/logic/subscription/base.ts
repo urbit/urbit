@@ -38,6 +38,10 @@ export default class BaseSubscription<S extends object> {
     }, Math.pow(2,this.errorCount - 1) * 750);
   }
 
+  scry(path: Path, app: string) {
+    return this.api.scry(path, app);
+  }
+
   subscribe(path: Path, app: string) {
     return this.api.subscribe(path, 'PUT', this.api.ship, app,
       this.handleEvent.bind(this),
