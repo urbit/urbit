@@ -18,6 +18,7 @@ function UnreadCount(props: { unread: number }) {
       fontWeight="700"
       py={1}
       borderRadius={1}
+      flexShrink='0'
       color="white"
       bg="lightGray"
     >
@@ -41,7 +42,7 @@ export function NotebookItem(props: NotebookItemProps) {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Box py={1}>{props.title}</Box>
+        <Box py='1' pr='1'>{props.title}</Box>
         {props.unreadCount > 0 && <UnreadCount unread={props.unreadCount} />}
       </HoverBox>
     </Link>
