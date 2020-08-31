@@ -43,7 +43,8 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     groups: []
   };
   start() {
-    this.subscribe('/all', 'invite-store');
+    this.scry('/all', 'invite-store');
+    this.subscribe('/updates', 'invite-store');
     this.subscribe('/groups', 'group-store');
     this.subscribe('/primary', 'contact-view');
     this.subscribe('/all', 'metadata-store');
