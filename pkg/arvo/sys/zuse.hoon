@@ -6311,9 +6311,10 @@
     |_  ent/_`(map term @t)`[[%apos '\''] ~ ~]
     ::                                                  ::  ++apex:de-xml:html
     ++  apex                                            ::  top level
-      =+  spa=;~(pose comt whit decl)
+      =+  spa=;~(pose comt whit)
       %+  knee  *manx  |.  ~+
-      %+  ifix  [(star spa) (star spa)]
+      %+  ifix  
+        [;~(plug (punt decl) (star spa)) (star spa)]
       ;~  pose
         %+  sear  |=({a/marx b/marl c/mane} ?.(=(c n.a) ~ (some [a b])))
           ;~(plug head many tail)
