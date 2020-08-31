@@ -113,10 +113,10 @@ _ames_pact_free(u3_pact* pac_u)
 */
 static void
 _ames_panc_free(u3_panc* pac_u) {
-  if (0 != pac_u->nex_u) {
+  if ( 0 != pac_u->nex_u ) {
     pac_u->nex_u->pre_u = pac_u->pre_u;
   }
-  if (0 != pac_u->pre_u) {
+  if ( 0 != pac_u->pre_u ) {
     pac_u->pre_u->nex_u = pac_u->nex_u;
   } else {
     c3_assert(pac_u == pac_u->sam_u->pac_u);
@@ -312,7 +312,7 @@ _ames_lane_from_sockaddr(struct sockaddr_in* add_u)
 
 /* _ames_lane_into_cache(): put las for who into cache, including timestamp
 */
-void
+static void
 _ames_lane_into_cache(u3p(u3h_root) lax_p, u3_noun who, u3_noun las) {
   struct timeval tim_tv;
   gettimeofday(&tim_tv, 0);
@@ -324,11 +324,11 @@ _ames_lane_into_cache(u3p(u3h_root) lax_p, u3_noun who, u3_noun las) {
 
 /* _ames_lane_from_cache(): retrieve lane for who from cache, if any & fresh
 */
-u3_weak
+static u3_weak
 _ames_lane_from_cache(u3p(u3h_root) lax_p, u3_noun who) {
   u3_weak lac = u3h_git(lax_p, who);
 
-  if (u3_none != lac) {
+  if ( u3_none != lac ) {
     struct timeval tim_tv;
     gettimeofday(&tim_tv, 0);
     u3_noun now = u3_time_in_tv(&tim_tv);
@@ -336,7 +336,7 @@ _ames_lane_from_cache(u3p(u3h_root) lax_p, u3_noun who) {
 
     //  consider entries older than 2 minutes stale, ignore them
     //
-    if (120000 > u3_time_gap_ms(u3k(den), now)) {
+    if ( 120000 > u3_time_gap_ms(u3k(den), now) ) {
       lac = u3k(u3h(lac));
     } else {
       lac = u3_none;
@@ -359,7 +359,7 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
 
   //  update the body's lane, if desired
   //
-  if (c3y == dop_o) {
+  if ( c3y == dop_o ) {
     //  unpack (jam [(unit lane) body])
     //
     u3_noun lon, bod;
@@ -377,7 +377,7 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
     //      but that doesn't matter: ames.hoon ignores origin in that case,
     //      always using the appropriate galaxy lane instead.
     //
-    if (u3_nul == lon) {
+    if ( u3_nul == lon ) {
       u3z(lon);
       lon = u3nt(u3_nul, c3n, u3_ames_encode_lane(pac_u->ore_u));
       nal_o = c3y;
@@ -413,7 +413,7 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
 
     //  if we updated the origin lane, we need to update the mug too
     //
-    if (c3y == nal_o) {
+    if ( c3y == nal_o ) {
       pac_u->hed_u.mug_l = _ca_mug_body(sen_y + rec_y + bod_u->con_w,
                                         pac_y + 4);
     }
@@ -672,7 +672,7 @@ _ames_forward(u3_panc* pac_u, u3_noun las)
   {
     u3_noun los = las;
     u3_noun pac = _ames_serialize_packet(pac_u, c3y);
-    while (u3_nul != las) {
+    while ( u3_nul != las ) {
       _ames_ef_send(pac_u->sam_u, u3k(u3h(las)), u3k(pac));
       las = u3t(las);
     }
@@ -694,8 +694,8 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
 
   //  if scry fails, remember we can't scry, and just inject the packet
   //
-  if (u3_none == las) {
-    if (5 < ++pac_u->sam_u->saw_d) {
+  if ( u3_none == las ) {
+    if ( 5 < ++pac_u->sam_u->saw_d ) {
       u3l_log("ames: giving up scry\n");
       pac_u->sam_u->see_o = c3n;
     }
@@ -705,7 +705,7 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
     _ames_panc_free(pac_u);
   }
   else {
-    if (0 < pac_u->sam_u->saw_d) {
+    if ( 0 < pac_u->sam_u->saw_d ) {
       pac_u->sam_u->saw_d--;
     }
 
@@ -717,7 +717,7 @@ _ames_lane_scry_cb(void* vod_p, u3_noun nun)
 
     //  if there is no lane, drop the packet
     //
-    if (u3_nul == las) {
+    if ( u3_nul == las ) {
       _ames_panc_free(pac_u);
     }
     //  if there is a lane, forward the packet on it
@@ -747,7 +747,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 
   //  ensure a sane message size
   //
-  if (4 >= nrd_i) {
+  if ( 4 >= nrd_i ) {
     pas_o = c3n;
   }
   //  unpack the packet header
@@ -800,7 +800,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   c3_d  rec_d[2];
   c3_w  con_w = nrd_i - 4 - sen_y - rec_y;
   c3_y* con_y = NULL;
-  if (c3y == pas_o) {
+  if ( c3y == pas_o ) {
     u3_noun sen = u3i_bytes(sen_y, bod_y);
     u3_noun rec = u3i_bytes(rec_y, bod_y + sen_y);
     u3r_chubs(0, 2, rec_d, rec);
@@ -848,8 +848,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     //      so can't pluck these out of the event queue like it does in
     //      _ames_cap_queue. as such, blocked on u3_lord_peek_cancel or w/e.
     //
-    if ( (u3_none == lac) && (1000 < sam_u->foq_d) )
-    {
+    if ( (u3_none == lac) && (1000 < sam_u->foq_d) ) {
       c3_free(con_y);
 
       sam_u->fod_d++;
@@ -859,7 +858,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     }
     //  if we know there's no lane, drop the packet
     //
-    else if (u3_nul == lac) {
+    else if ( u3_nul == lac ) {
       c3_free(con_y);
       u3z(lac);
     }
@@ -879,7 +878,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       pac_u->bod_u.con_y = con_y;
       pac_u->ore_u = _ames_lane_from_sockaddr((struct sockaddr_in *)adr_u);
 
-      if (0 != sam_u->pac_u) {
+      if ( 0 != sam_u->pac_u ) {
         pac_u->nex_u = sam_u->pac_u;
         sam_u->pac_u->pre_u = pac_u;
       }
@@ -887,7 +886,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 
       //  if we already know the lane, just forward
       //
-      if (u3_none != lac) {
+      if ( u3_none != lac ) {
         _ames_forward(pac_u, lac);
       }
       //  otherwise, there's space in the scry queue; scry the lane out of ames
@@ -906,7 +905,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 
   //  if we passed the filter, inject the packet
   //
-  if (c3y == pas_o) {
+  if ( c3y == pas_o ) {
     c3_free(con_y);
     u3_lane ore_u = _ames_lane_from_sockaddr((struct sockaddr_in *)adr_u);
     u3_noun msg   = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
@@ -1026,7 +1025,7 @@ _ames_prot_scry_cb(void* vod_p, u3_noun nun)
   u3_ames* sam_u = vod_p;
   u3_weak  ver   = u3r_at(7, nun);
 
-  if (u3_none == ver) {
+  if ( u3_none == ver ) {
     //  assume protocol version 0
     //
     sam_u->ver_y = 0;
