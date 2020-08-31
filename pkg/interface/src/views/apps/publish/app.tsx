@@ -71,7 +71,7 @@ export default function PublishApp(props: PublishAppProps) {
 
   return (
     <>
-      <Helmet>
+      <Helmet defer={false}>
         <title>{unreadTotal > 0 ? `(${unreadTotal}) ` : ""}OS1 - Publish</title>
       </Helmet>
       <Route
