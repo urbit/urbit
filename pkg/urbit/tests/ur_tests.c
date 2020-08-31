@@ -1140,22 +1140,23 @@ _bsr_bytes_any_slow(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
 static int
 _test_bsr_bytes_any_loop(const char *cap, uint8_t len, uint8_t val)
 {
-  int          ret = 1;
-  uint64_t len_bit = len << 3;
-  ur_bsr_t    a, b;
-  uint8_t    *bytes, *c, *d;
-  uint8_t     i, j, k;
+  int        ret = 1;
+  uint64_t   max = (len << 3) + 7;
+  ur_bsr_t  a, b;
+  uint8_t *bytes, *c, *d;
+  uint8_t   i, j, k;
 
-  c     = malloc(len);
-  d     = malloc(len);
+  c     = malloc(1 + len);
+  d     = malloc(1 + len);
   bytes = malloc(len);
   memset(bytes, val, len);
 
   for ( i = 0; i < 8; i++) {
-    for ( j = 1; j <= len_bit; j++ ) {
+    for ( j = 1; j <= max; j++ ) {
       a.left = b.left = len;
-      a.bytes = b.bytes = bytes;
-      a.off = a.bits = b.off = b.bits = i;
+      a.bytes = b.bytes = len ? bytes : 0;
+      a.off   = b.off   = len ? i     : 0;
+      a.bits  = b.bits  = i;
       memset(c, 0x0, len);
       memset(d, 0x0, len);
 
