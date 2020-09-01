@@ -4,7 +4,8 @@ import defaultApps from './default-apps';
     ['commands', []],
     ['subscriptions', []],
     ['groups', []],
-    ['apps', []]
+    ['apps', []],
+    ['other', []]
   ]);
 
 // result schematic
@@ -41,8 +42,6 @@ const commandIndex = function () {
       }
     });
 
-  commands.push(result('Profile', '/~profile', 'profile', null));
-
   return commands;
 };
 
@@ -53,6 +52,9 @@ const appIndex = function (apps) {
   Object.keys(apps)
     .filter((e) => {
       return apps[e]?.type?.basic;
+    })
+    .sort((a,b) => {
+      return a.localeCompare(b);
     })
     .map((e) => {
       const obj = result(
@@ -68,6 +70,14 @@ const appIndex = function (apps) {
     result('Groups', '/~groups', 'groups', null)
   );
   return applications;
+};
+
+const otherIndex = function() {
+  const other = [];
+  other.push(result('Profile and Settings', '/~profile/identity', 'profile', null));
+  other.push(result('Log Out', '/~/logout', 'logout', null));
+
+  return other;
 };
 
 export default function index(associations, apps) {
@@ -118,6 +128,7 @@ export default function index(associations, apps) {
   indexes.set('subscriptions', subscriptions);
   indexes.set('groups', groups);
   indexes.set('apps', appIndex(apps));
+  indexes.set('other', otherIndex());
 
   return indexes;
 };
