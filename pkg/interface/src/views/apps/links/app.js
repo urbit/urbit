@@ -28,8 +28,6 @@ export class LinksApp extends Component {
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
-    this.props.api.links.getPage('', 0);
-    this.props.subscription.startApp('link');
     this.props.subscription.startApp('graph');
     if (!this.props.sidebarShown) {
       this.props.api.local.sidebarToggle();
@@ -37,7 +35,6 @@ export class LinksApp extends Component {
   }
 
   componentWillUnmount() {
-    this.props.subscription.stopApp('link');
     this.props.subscription.stopApp('graph');
   }
 
@@ -46,25 +43,17 @@ export class LinksApp extends Component {
     const contacts = props.contacts ? props.contacts : {};
     const groups = props.groups ? props.groups : {};
     const associations = props.associations ? props.associations : { link: {}, contacts: {} };
-    const links = props.links ? props.links : {};
-    const comments = props.linkComments ? props.linkComments : {};
-    const seen = props.linksSeen ? props.linksSeen : {};
-    const totalUnseen = _.reduce(
-      links,
-      (acc, collection) => acc + collection.unseenCount,
-      0
-    );
+    const graphKeys = props.graphKeys || new Set([]);
 
     const invites = props.invites ?
       props.invites : {};
 
-    const listening = props.linkListening;
     const { api, sidebarShown, hideAvatars, hideNicknames } = this.props;
 
     return (
       <>
         <Helmet defer={false}>
-          <title>{totalUnseen > 0 ? `(${totalUnseen}) ` : ''}OS1 - Links</title>
+          <title>OS1 - Links</title>
         </Helmet>
         <Switch>
           <Route exact path="/~link"
@@ -77,9 +66,8 @@ export class LinksApp extends Component {
                   groups={groups}
                   rightPanelHide={true}
                   sidebarShown={sidebarShown}
-                  links={links}
-                  listening={listening}
                   api={api}
+                  graphKeys={graphKeys}
                 >
                   <MessageScreen text="Select or create a collection to begin." />
                 </Skeleton>
@@ -94,8 +82,6 @@ export class LinksApp extends Component {
                   invites={invites}
                   groups={groups}
                   sidebarShown={sidebarShown}
-                  links={links}
-                  listening={listening}
                   api={api}
                 >
                   <NewScreen
@@ -141,8 +127,6 @@ export class LinksApp extends Component {
                   groups={groups}
                   selected={resourcePath}
                   sidebarShown={sidebarShown}
-                  links={links}
-                  listening={listening}
                   api={api}
                 >
                   <MemberScreen
@@ -182,8 +166,6 @@ export class LinksApp extends Component {
                   selected={resourcePath}
                   sidebarShown={sidebarShown}
                   popout={popout}
-                  links={links}
-                  listening={listening}
                   api={api}
                 >
                   <SettingsScreen
@@ -216,18 +198,6 @@ export class LinksApp extends Component {
 
                 const popout = props.match.url.includes('/popout/');
 
-                const channelLinks = links[resourcePath]
-                ? links[resourcePath]
-                : { local: {} };
-
-                const channelComments = comments[resourcePath]
-                  ? comments[resourcePath]
-                  : {};
-
-                const channelSeen = seen[resourcePath]
-                  ? seen[resourcePath]
-                  : {};
-
                 return (
                   <Skeleton
                     associations={associations}
@@ -237,16 +207,11 @@ export class LinksApp extends Component {
                     sidebarShown={sidebarShown}
                     sidebarHideMobile={true}
                     popout={popout}
-                    links={links}
-                    listening={listening}
                     api={api}
                   >
                     <Links
                     {...props}
                     contacts={contactDetails}
-                    links={channelLinks}
-                    comments={channelComments}
-                    seen={channelSeen}
                     page={page}
                     resourcePath={resourcePath}
                     resource={resource}
@@ -276,17 +241,6 @@ export class LinksApp extends Component {
                 const page = props.match.params.page || 0;
                 const url = base64urlDecode(props.match.params.encodedUrl);
 
-                const data = links[resourcePath]
-                  ? links[resourcePath][page]
-                    ? links[resourcePath][page][index]
-                    : {}
-                  : {};
-                const coms = !comments[resourcePath]
-                  ? undefined
-                  : comments[resourcePath][url];
-
-                const commentPage = props.match.params.commentpage || 0;
-
                 return (
                   <Skeleton
                     associations={associations}
@@ -296,8 +250,6 @@ export class LinksApp extends Component {
                     sidebarShown={sidebarShown}
                     sidebarHideMobile={true}
                     popout={popout}
-                    links={links}
-                    listening={listening}
                     api={api}
                   >
                     <LinkDetail
@@ -312,9 +264,6 @@ export class LinksApp extends Component {
                     amOwner={amOwner}
                     popout={popout}
                     sidebarShown={sidebarShown}
-                    data={data}
-                    comments={coms}
-                    commentPage={commentPage}
                     api={api}
                     hideAvatars={hideAvatars}
                     hideNicknames={hideNicknames}

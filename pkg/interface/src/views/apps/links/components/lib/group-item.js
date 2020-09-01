@@ -21,18 +21,14 @@ export class GroupItem extends Component {
       if (!meta)
         return null;
       const selected = (props.selected === each);
-      const unseenCount = props.links[each]
-        ? props.links[each].unseenCount
-        : 0;
-        return (
-          <ChannelsItem
-            key={each}
-            link={each}
-            selected={selected}
-            unseenCount={unseenCount}
-            name={meta.metadata.title}
-          />
-        );
+      return (
+        <ChannelsItem
+          key={each}
+          link={each}
+          selected={selected}
+          name={meta.metadata.title}
+        />
+      );
     });
     return (
       <div className={first}>

@@ -27,7 +27,8 @@ export class ChannelsSidebar extends Component {
     const associations = props.associations.contacts ? alphabetiseAssociations(props.associations.contacts) : {};
 
     const groupedChannels = {};
-    [...props.listening].map((path) => {
+    console.log(props.graphKeys);
+    [...props.graphKeys].map((path) => {
       const groupPath = props.associations.link[path] ?
         props.associations.link[path]['group-path'] : '';
 
@@ -70,23 +71,10 @@ export class ChannelsSidebar extends Component {
           linkMetadata={props.associations['link']}
           channels={channels}
           selected={props.selected}
-          links={props.links}
         />
       );
     });
-    if (groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
-      groupedItems.unshift(
-        <GroupItem
-          key={'/~/'}
-          index={0}
-          association={'/~/'}
-          linkMetadata={props.associations['link']}
-          channels={groupedChannels['/~/']}
-          selected={props.selected}
-          links={props.links}
-        />
-      );
-    }
+    //TODO handle unmanaged links
 
     const activeClasses = (props.active === 'collections') ? ' ' : 'dn-s ';
 
