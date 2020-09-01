@@ -15,6 +15,14 @@ typedef enum {
   ur_jam_back = 2
 } ur_cue_tag_e;
 
+/*
+**  stateful bitstream reader, backed by a byte-buffer,
+**  supporting a variety of read sizes/patterns.
+**
+**    NB: ur_bsr*_any() functions behave as if the stream were infinite,
+**    subject to overall limit of a 64-bit bit-cursor.
+**
+*/
 typedef struct ur_bsr_s {
   uint64_t        left;
   uint64_t        bits;
@@ -30,6 +38,12 @@ typedef struct ur_bsw_s {
   uint8_t      off;
   uint8_t   *bytes;
 } ur_bsw_t;
+
+/*
+**  initialize bitstream and check for 64-bit bit-cursor overflow.
+*/
+ur_cue_res_e
+ur_bsr_init(ur_bsr_t *bsr, uint64_t len, const uint8_t *bytes);
 
 ur_bool_t
 ur_bsr_sane(ur_bsr_t *bsr);

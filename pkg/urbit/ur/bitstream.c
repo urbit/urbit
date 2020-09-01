@@ -5,6 +5,21 @@
 #include "ur/defs.h"
 #include "ur/bitstream.h"
 
+ur_cue_res_e
+ur_bsr_init(ur_bsr_t *bsr, uint64_t len, const uint8_t *bytes)
+{
+  //  check for overflow
+  //
+  if ( (len << 3) < len ) {
+    return ur_cue_meme;
+  }
+
+  bsr->left  = len;
+  bsr->bytes = bytes;
+
+  return ur_cue_good;
+}
+
 ur_bool_t
 ur_bsr_sane(ur_bsr_t *bsr)
 {

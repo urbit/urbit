@@ -227,8 +227,9 @@ ur_cue_unsafe(ur_root_t       *r,
 
   //  init bitstream-reader
   //
-  bsr.left  = len;
-  bsr.bytes = byt;
+  if ( ur_cue_good != (res = ur_bsr_init(&bsr, len, byt)) ) {
+    return res;
+  }
 
   //  setup stack
   //
@@ -383,8 +384,9 @@ ur_cue_test_unsafe(ur_dict_t    *dict,
 
   //  init bitstream-reader
   //
-  bsr.left  = len;
-  bsr.bytes = byt;
+  if ( ur_cue_good != (res = ur_bsr_init(&bsr, len, byt)) ) {
+    return res;
+  }
 
   //  setup stack
   //
