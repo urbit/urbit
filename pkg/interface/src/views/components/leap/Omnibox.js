@@ -6,8 +6,6 @@ import Mousetrap from 'mousetrap';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
 
-import { cite } from '~/logic/lib/util';
-
 export class Omnibox extends Component {
   constructor(props) {
     super(props);
@@ -228,7 +226,7 @@ export class Omnibox extends Component {
                 key={i2}
                 icon={result.app}
                 text={result.title}
-                subtext={cite(result.host)}
+                subtext={result.host}
                 link={result.link}
                 navigate={() => this.navigate(result.link)}
                 selected={this.state.selected}

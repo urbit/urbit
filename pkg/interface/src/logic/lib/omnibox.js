@@ -1,4 +1,5 @@
 import defaultApps from './default-apps';
+import { cite } from '~/logic/lib/util';
 
   const indexes = new Map([
     ['commands', []],
@@ -109,7 +110,7 @@ export default function index(associations, apps) {
             title,
             `/~${app}${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
-            shipStart.slice(0, shipStart.indexOf('/'))
+            cite(shipStart.slice(0, shipStart.indexOf('/')))
           );
           groups.push(obj);
         } else {
@@ -117,7 +118,7 @@ export default function index(associations, apps) {
             title,
             `/~${each['app-name']}/join${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
-            shipStart.slice(0, shipStart.indexOf('/'))
+            (associations?.contacts?.[each['group-path']]?.metadata?.title || null)
           );
           subscriptions.push(obj);
         }
