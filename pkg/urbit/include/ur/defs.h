@@ -5,17 +5,34 @@
 #include <assert.h>
 #include <limits.h>
 
-#define ur_fib10          55
-#define ur_fib11          89
-#define ur_fib12         144
-#define ur_fib33     3524578
-#define ur_fib34     5702887
-
 typedef uint8_t  ur_bool_t;
 
 #define ur_min(a, b)   ( ((a) < (b)) ? (a) : (b) )
 #define ur_max(a, b)   ( ((a) > (b)) ? (a) : (b) )
 
+/*
+**  fibonacci constants, for convenient initialization of
+**  objects intended to be reallocated with fibonacci growth
+*/
+#define ur_fib10          55
+#define ur_fib11          89
+#define ur_fib12         144
+#define ur_fib27      196418
+#define ur_fib28      317811
+#define ur_fib33     3524578
+#define ur_fib34     5702887
+
+/*
+**  bit-masking helpers
+*/
+#define ur_mask_3(a)   (a & 0x7)
+#define ur_mask_8(a)   (a & 0xff)
+#define ur_mask_31(a)  (a & 0x7fffffff)
+#define ur_mask_62(a)  (a & 0x3fffffffffffffffULL)
+
+/*
+**  atom measurement
+*/
 #if    (32 == (CHAR_BIT * __SIZEOF_INT__))
 #  define  ur_lz32  __builtin_clz
 #  define  ur_tz32  __builtin_ctz
@@ -39,20 +56,16 @@ typedef uint8_t  ur_bool_t;
 #define ur_lz8(a)      ( ur_lz32(a) - 24 )
 #define ur_tz8         ur_tz32
 
-#define ur_mask_3(a)   (a & 0x7)
-#define ur_mask_8(a)   (a & 0xff)
-#define ur_mask_31(a)  (a & 0x7fffffff)
-#define ur_mask_62(a)  (a & 0x3fffffffffffffffULL)
-
 #define ur_met0_8(a)   ( (a) ? 8  - ur_lz8(a)  : 0 )
 #define ur_met0_32(a)  ( (a) ? 32 - ur_lz32(a) : 0 )
 #define ur_met0_64(a)  ( (a) ? 64 - ur_lz64(a) : 0 )
 
+/*
+**  unsafe wrt trailing null bytes, which are invalid
+*/
 inline uint64_t
-ur_met0_bytes(uint8_t *byt, uint64_t len)
+ur_met0_bytes_unsafe(uint8_t *byt, uint64_t len)
 {
-  //  XX requires no trailing null bytes
-  //
   uint64_t last = len - 1;
   return (last << 3) + ur_met0_8(byt[last]);
 }

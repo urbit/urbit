@@ -15,7 +15,7 @@
 //  declarations of inline functions
 //
 uint64_t
-ur_met0_bytes(uint8_t *byt, uint64_t len);
+ur_met0_bytes_unsafe(uint8_t *byt, uint64_t len);
 
 ur_mug
 ur_mug_bytes(const uint8_t *byt, uint64_t len)
@@ -534,7 +534,7 @@ ur_met(ur_root_t *r, uint8_t bloq, ur_nref ref)
         uint64_t len = r->atoms.lens[idx];
         uint8_t *byt = r->atoms.bytes[idx];
 
-        m_bit = ur_met0_bytes(byt, len);
+        m_bit = ur_met0_bytes_unsafe(byt, len);
       }
 
       switch ( bloq ) {
@@ -652,7 +652,7 @@ ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
 
   //  produce a direct atom if possible
   //
-  if ( 62 >= ur_met0_bytes(byt, len) ) {
+  if ( 62 >= ur_met0_bytes_unsafe(byt, len) ) {
     uint64_t i, direct = 0;
 
     for ( i = 0; i < len; i++ ) {
