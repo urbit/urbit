@@ -923,14 +923,11 @@ _cs_cue_xeno_next(_cue_stack_t* tac_u,
           c3_w bak_w;
 
           if ( !ur_dict32_get(rot_u, dic_u, bak_d, &bak_w) ) {
-            //  XX distinguish bad backref?
-            //
-            return ur_cue_gone;
+            return ur_cue_back;
           }
-          else {
-            *out = u3k((u3_noun)bak_w);
-            return ur_cue_good;
-          }
+
+          *out = u3k((u3_noun)bak_w);
+          return ur_cue_good;
         }
       }
 
@@ -980,8 +977,14 @@ u3s_cue_xeno_unsafe(ur_dict32_t* dic_u,
 
   //  init bitstream-reader
   //
-  red_u.left  = len_d;
-  red_u.bytes = byt_y;
+  if ( ur_cue_good != (res_e = ur_bsr_init(&red_u, len_d, byt_y)) ) {
+    return res_e;
+  }
+  //  bit-cursor (and backreferences) must fit in 62-bit direct atoms
+  //
+  else if ( 0x7ffffffffffffffULL < len_d ) {
+    return ur_cue_meme;
+  }
 
   //  setup stack
   //
@@ -1213,8 +1216,13 @@ u3s_cue_bytes(c3_d len_d, const c3_y* byt_y)
 
   //  init bitstream-reader
   //
-  red_u.left  = len_d;
-  red_u.bytes = byt_y;
+  _cs_cue_need(ur_bsr_init(&red_u, len_d, byt_y));
+
+  //  bit-cursor (and backreferences) must fit in 62-bit direct atoms
+  //
+  if ( 0x7ffffffffffffffULL < len_d ) {
+    return u3m_bail(c3__meme);
+  }
 
   //  advance into stream
   //
