@@ -209,7 +209,12 @@
         =^  cards  pull-hook
           (on-fail:og term tang)
         [cards this]
-      ++  on-peek   on-peek:def
+      ++  on-peek   
+        |=  =path
+        ^-  (unit (unit cage))
+        ?.  =(/x/helper/pull-hook/synced path)
+          (on-peek:og path)
+        ``noun+!>(~(key by tracking))
     --
   |_  =bowl:gall
   +*  og   ~(. pull-hook bowl)
