@@ -1,6 +1,6 @@
 ---
-name: OS1 Bug report
-about: 'Use this template to file a bug for any OS1 app: Chat, Publish, Links, Groups,
+name: Landscape bug report
+about: 'Use this template to file a bug for any Landscape app: Chat, Publish, Links, Groups,
   Weather or Clock'
 title: ''
 labels: landscape

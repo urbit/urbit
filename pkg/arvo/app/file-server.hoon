@@ -1,3 +1,7 @@
+::  file-server [landscape]:
+::
+::  mounts HTTP endpoints for Landscape (and third-party) user applications
+::
 /-  srv=file-server, glob
 /+  *server, default-agent, verb, dbug
 |%
@@ -218,8 +222,8 @@
           ::
               [~ %html]
             %.  file
-            %*    .   html-response:gen 
-                cache  
+            %*    .   html-response:gen
+                cache
               !=(/app/landscape/index/html (slag 3 scry-path))
             ==
         ==

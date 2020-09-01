@@ -1,3 +1,7 @@
+::  glob [landscape]:
+::
+::  prompts content delivery and Gall state storage for Landscape JS blob
+::
 /-  glob
 /+  default-agent, verb, dbug
 |%

@@ -1,4 +1,6 @@
-::  link-view: frontend endpoints
+::  link-view [landscape]:
+::
+::frontend endpoints
 ::
 ::  endpoints, mapping onto link-store's paths. p is for page as in pagination.
 ::  only the /0/submissions endpoint provides updates.
