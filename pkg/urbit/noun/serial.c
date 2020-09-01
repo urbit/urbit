@@ -963,8 +963,10 @@ _cs_cue_xeno_next(_cue_stack_t* tac_u,
 }
 
 /* u3s_cue_xeno_unsafe(): cue onto the loom, all bookkeeping off-loom.
+**
+**   NB: unsafe wrt to [dic_u], which must be empty.
 */
-ur_cue_res_e
+c3_o
 u3s_cue_xeno_unsafe(ur_dict32_t* dic_u,
                     c3_d         len_d,
                     const c3_y*  byt_y,
@@ -978,12 +980,12 @@ u3s_cue_xeno_unsafe(ur_dict32_t* dic_u,
   //  init bitstream-reader
   //
   if ( ur_cue_good != (res_e = ur_bsr_init(&red_u, len_d, byt_y)) ) {
-    return res_e;
+    return c3n;
   }
   //  bit-cursor (and backreferences) must fit in 62-bit direct atoms
   //
   else if ( 0x7ffffffffffffffULL < len_d ) {
-    return ur_cue_meme;
+    return c3n;
   }
 
   //  setup stack
@@ -1020,43 +1022,46 @@ u3s_cue_xeno_unsafe(ur_dict32_t* dic_u,
     }
   }
 
-  c3_free(tac_u.fam_u);
-
   if ( ur_cue_good == res_e ) {
     *out = ref;
+    c3_free(tac_u.fam_u);
+    return c3y;
   }
-  return res_e;
+  else {
+    //  unwind the stack, disposing intermediate nouns
+    //
+    while ( tac_u.fil_w ) {
+      _cue_frame_t* fam_u = &(tac_u.fam_u[--tac_u.fil_w]);
+
+      if ( u3_none != fam_u->ref ) {
+        u3z(fam_u->ref);
+      }
+    }
+
+    c3_free(tac_u.fam_u);
+    return c3n;
+  }
 }
 
 /* u3s_cue_xeno(): cue onto the loom, bookkeeping off the loom.
 */
-u3_noun
-u3s_cue_xeno(c3_d len_d, const c3_y* byt_y)
+c3_o
+u3s_cue_xeno(c3_d len_d, const c3_y* byt_y, u3_noun* out)
 {
   ur_dict32_t  dic_u = {0};
-  ur_cue_res_e res_e;
-  u3_noun        pro;
+  c3_o         ret_o;
 
   c3_assert( &(u3H->rod_u) == u3R );
 
   //  XX tune the initial dictionary size for less reallocation
   //
-  {
-    ur_root_t* rot_u = 0;
-    ur_dict32_grow(rot_u, &dic_u, ur_fib33, ur_fib34);
-  }
+  ur_dict32_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
 
-  //  errors are fatal
-  //
-  if ( ur_cue_good !=
-       (res_e = u3s_cue_xeno_unsafe(&dic_u, len_d, byt_y, &pro)) )
-  {
-    fprintf(stderr, "cue xeno: failed\r\n");
-    exit(1);
-  }
+  ret_o = u3s_cue_xeno_unsafe(&dic_u, len_d, byt_y, out);
 
   ur_dict_free((ur_dict_t*)&dic_u);
-  return pro;
+
+  return ret_o;
 }
 
 /* _cs_cue_need(): bail on ur_cue_* read failures.

@@ -1,6 +1,12 @@
 /* i/n/serial.h
 **
 */
+    /*  forward declarations
+    */
+      /* ur_dict32_s: off-loom 32-bit dictionary.
+      */
+        struct ur_dict32_s;
+
     /*  Noun serialization. All noun arguments RETAINED.
     */
 
@@ -40,10 +46,18 @@
         u3_noun
         u3s_cue(u3_atom a);
 
+      /* u3s_cue_xeno_unsafe(): cue onto the loom, all bookkeeping off-loom.
+      */
+        c3_o
+        u3s_cue_xeno_unsafe(struct ur_dict32_s* dic_u,
+                            c3_d         len_d,
+                            const c3_y*  byt_y,
+                            u3_noun*       out);
+
       /* u3s_cue_xeno(): cue onto the loom, bookkeeping off the loom.
       */
-        u3_noun
-        u3s_cue_xeno(c3_d len_d, const  c3_y* byt_y);
+        c3_o
+        u3s_cue_xeno(c3_d len_d, const c3_y* byt_y, u3_noun* out);
 
       /* u3s_cue_bytes(): cue bytes onto the loom.
       */

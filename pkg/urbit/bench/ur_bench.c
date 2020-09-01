@@ -2,14 +2,6 @@
 #include "vere/vere.h"
 #include "ur/ur.h"
 
-//  XX not declared in serial.h due to presence of ur_* types
-//
-ur_cue_res_e
-u3s_cue_xeno_unsafe(ur_dict32_t* dic_u,
-                    c3_d         len_d,
-                    const c3_y*  byt_y,
-                    u3_noun*       out);
-
 /* _setup(): prepare for tests.
 */
 static void
@@ -188,12 +180,11 @@ _cue_bench(void)
     fprintf(stderr, "  cue atom: %u ms\r\n", mil_w);
   }
 
-  //  NB: runs 1/8th the number of times
-  //
   {
     gettimeofday(&b4, 0);
 
     {
+      u3_noun out;
       c3_w  len_w = u3r_met(3, vat);
       // XX assumes little-endian
       //
@@ -201,15 +192,16 @@ _cue_bench(void)
                   ? (c3_y*)&vat
                   : (c3_y*)((u3a_atom*)u3a_to_ptr(vat))->buf_w;
 
-      for ( i_w = 0; i_w < max_w / 8; i_w++ ) {
-        u3z(u3s_cue_xeno(len_w, byt_y));
+      for ( i_w = 0; i_w < max_w; i_w++ ) {
+        u3s_cue_xeno(len_w, byt_y, &out);
+        u3z(out);
       }
     }
 
     gettimeofday(&f2, 0);
     timersub(&f2, &b4, &d0);
     mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-    fprintf(stderr, "  cue xeno: %u ms (estimated)\r\n", mil_w * 8);
+    fprintf(stderr, "  cue xeno: %u ms\r\n", mil_w);
   }
 
   {

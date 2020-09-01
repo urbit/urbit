@@ -1,14 +1,6 @@
 #include "all.h"
 #include "ur/ur.h"
 
-//  XX not declared in serial.h due to presence of ur_* types
-//
-ur_cue_res_e
-u3s_cue_xeno_unsafe(ur_dict32_t* dic_u,
-                    c3_d         len_d,
-                    const c3_y*  byt_y,
-                    u3_noun*       out);
-
 /* _setup(): prepare for tests.
 */
 static void
@@ -380,7 +372,7 @@ _test_cue_spec(const c3_c* cap_c,
 
     ur_dict32_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
 
-    if ( ur_cue_good != u3s_cue_xeno_unsafe(&dic_u, len_w, byt_y, &out) ) {
+    if ( c3n == u3s_cue_xeno_unsafe(&dic_u, len_w, byt_y, &out) ) {
       fprintf(stderr, "\033[31mcue %s fail 1\033[0m\r\n", cap_c);
       ret_i = 0;
     }

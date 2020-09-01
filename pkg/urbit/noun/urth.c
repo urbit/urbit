@@ -754,12 +754,25 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
   //    XX errors are fatal, barring a full "u3m_reboot"-type operation.
   //
   {
-    u3_noun roc, cod, ref = u3s_cue_xeno(len_d, byt_y);
+    ur_dict32_t  dic_u = {0};
+    u3_noun   roc, cod, ref;
 
-    if ( u3r_pq(ref, c3__fast, &roc, &cod) ) {
-      u3z(ref);
+    //  XX tune the initial dictionary size for less reallocation
+    //
+    ur_dict32_grow((ur_root_t*)0, &dic_u, ur_fib33, ur_fib34);
+
+    if ( c3n == u3s_cue_xeno_unsafe(&dic_u, len_d, byt_y, &ref) ) {
+      fprintf(stderr, "uncram: failed to cue rock\r\n");
+      ur_dict_free((ur_dict_t*)&dic_u);
+      return c3n;
+    }
+
+    ur_dict_free((ur_dict_t*)&dic_u);
+
+    if ( c3n == u3r_pq(ref, c3__fast, &roc, &cod) ) {
       fprintf(stderr, "uncram: failed: invalid rock format\r\n");
-      exit(1);
+      u3z(ref);
+      return c3n;
     }
 
     u3A->roc = u3k(roc);
