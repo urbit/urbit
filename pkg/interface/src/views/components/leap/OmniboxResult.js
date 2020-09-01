@@ -96,18 +96,45 @@ export class OmniboxResult extends Component {
           {this.state.hovered || selected === link ? (
             <>
             {graphic}
-              <Text display="inline-block" verticalAlign="middle" color='white' mr='1' style={{ 'flex-shrink': 0 }}>
+              <Text
+                display="inline-block"
+                verticalAlign="middle"
+                color='white'
+                maxWidth="60%"
+                style={{ 'flex-shrink': 0 }}
+                mr='1'>
                 {text}
               </Text>
-            <Text pr='2' display="inline-block" verticalAlign="middle" color='white' width='100%' textAlign='right'>
+            <Text pr='2'
+            display="inline-block"
+            verticalAlign="middle"
+            color='white'
+            width='100%'
+            textAlign='right'
+            >
                 {subtext}
               </Text>
             </>
           ) : (
             <>
             {graphic}
-              <Text mr='1' display="inline-block" verticalAlign="middle" style={{ 'flex-shrink': 0 }}>{text}</Text>
-              <Text pr='2' display="inline-block" verticalAlign="middle" gray width='100%' textAlign='right'>
+              <Text
+                mr='1'
+                display="inline-block"
+                verticalAlign="middle"
+                maxWidth="60%"
+                style={{ 'flex-shrink': 0 }}
+              >
+              {text}
+            </Text>
+              <Text
+                pr='2'
+                display="inline-block"
+                verticalAlign="middle"
+                gray
+                width='100%'
+                textAlign='right'
+              >
                 {subtext}
               </Text>
             </>
