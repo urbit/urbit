@@ -13,6 +13,7 @@ import { SettingsScreen } from './components/settings';
 import { MessageScreen } from './components/lib/message-screen';
 import { Links } from './components/links-list';
 import { LinkDetail } from './components/link';
+
 import {
   makeRoutePath,
   amOwnerOfGroup,
@@ -31,6 +32,7 @@ export class LinksApp extends Component {
 
     this.props.api.links.getPage('', 0);
     this.props.subscription.startApp('link');
+    this.props.subscription.startApp('graph');
     if (!this.props.sidebarShown) {
       this.props.api.local.sidebarToggle();
     }
@@ -38,22 +40,17 @@ export class LinksApp extends Component {
 
   componentWillUnmount() {
     this.props.subscription.stopApp('link');
+    this.props.subscription.stopApp('graph');
   }
-
 
   render() {
     const { props } = this;
-
     const contacts = props.contacts ? props.contacts : {};
-
     const groups = props.groups ? props.groups : {};
-
     const associations = props.associations ? props.associations : { link: {}, contacts: {} };
     const links = props.links ? props.links : {};
     const comments = props.linkComments ? props.linkComments : {};
-
     const seen = props.linksSeen ? props.linksSeen : {};
-
     const totalUnseen = _.reduce(
       links,
       (acc, collection) => acc + collection.unseenCount,
@@ -63,9 +60,7 @@ export class LinksApp extends Component {
     const invites = props.invites ?
       props.invites : {};
 
-
     const listening = props.linkListening;
-
     const { api, sidebarShown, hideAvatars, hideNicknames } = this.props;
 
     return (
