@@ -5,8 +5,9 @@
 
 typedef enum {
   ur_cue_good = 0,
-  ur_cue_gone = 1,
-  ur_cue_meme = 2
+  ur_cue_back = 1,
+  ur_cue_gone = 2,
+  ur_cue_meme = 3
 } ur_cue_res_e;
 
 typedef enum {

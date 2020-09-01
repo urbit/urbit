@@ -174,10 +174,8 @@ _cue_next(ur_root_t      *r,
         else {
           uint64_t val, bak = ur_bsr64_any(bsr, len);
 
-          //  XX distinguish bad backref?
-          //
           if ( !ur_dict64_get(r, dict, bak, &val) ) {
-            return  ur_cue_gone;
+            return  ur_cue_back;
           }
 
           *out = (ur_nref)val;
@@ -356,12 +354,9 @@ _cue_test_next(_cue_test_stack_t *s,
         }
         else {
           uint64_t bak = ur_bsr64_any(bsr, len);
-
-          //  XX distinguish bad backref?
-          //
           return ur_dict_get((ur_root_t*)0, dict, bak)
                ? ur_cue_good
-               : ur_cue_gone;
+               : ur_cue_back;
         }
       }
 
