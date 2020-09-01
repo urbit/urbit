@@ -692,6 +692,42 @@ _king_loop_exit()
   unlink(u3K.certs_c);
 }
 
+static void
+_king_boot_ivory(void)
+{
+  c3_d  len_d;
+  c3_y* byt_y;
+
+  if ( u3_Host.ops_u.lit_c ) {
+    if ( c3n == u3u_mmap_read("lite", u3_Host.ops_u.lit_c, &len_d, &byt_y) ) {
+      u3l_log("lite: unable to load ivory pill at %s\n",
+              u3_Host.ops_u.lit_c);
+      exit(1);
+    }
+  }
+  else {
+    len_d = u3_Ivory_pill_len;
+    byt_y = u3_Ivory_pill;
+  }
+
+  {
+    u3_noun pil = u3ke_cue(u3i_bytes(len_d, byt_y));
+
+    if ( c3n == u3v_boot_lite(pil)) {
+      u3l_log("lite: boot failed\r\n");
+      exit(1);
+    }
+  }
+
+  if ( u3_Host.ops_u.lit_c ) {
+    if ( c3n == u3u_munmap(len_d, byt_y) ) {
+      u3l_log("lite: unable to unmap ivory pill at %s\n",
+              u3_Host.ops_u.lit_c);
+      exit(1);
+    }
+  }
+}
+
 /* u3_king_commence(): start the daemon
 */
 void
@@ -726,21 +762,7 @@ u3_king_commence()
 
   //  boot the ivory pill
   //
-  {
-    u3_noun lit;
-
-    if ( 0 != u3_Host.ops_u.lit_c ) {
-      lit = u3m_file(u3_Host.ops_u.lit_c);
-    }
-    else {
-      lit = u3i_bytes(u3_Ivory_pill_len, u3_Ivory_pill);
-    }
-
-    if ( c3n == u3v_boot_lite(lit)) {
-      u3l_log("lite: boot failed\r\n");
-      exit(1);
-    }
-  }
+  _king_boot_ivory();
 
   //  disable core dumps (due to lmdb size)
   //

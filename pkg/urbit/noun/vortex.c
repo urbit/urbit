@@ -50,30 +50,29 @@ u3v_boot(u3_noun eve)
 static u3_noun
 _cv_lite(u3_noun pil)
 {
-  u3_noun arv = u3ke_cue(pil);
   u3_noun eve, pro;
 
-  u3x_trel(arv, &eve, 0, 0);
+  u3x_trel(pil, &eve, 0, 0);
 
-  u3l_log("lite: arvo formula %x\r\n", u3r_mug(arv));
+  u3l_log("lite: arvo formula %x\r\n", u3r_mug(pil));
   pro = u3v_life(u3k(eve));
   u3l_log("lite: core %x\r\n", u3r_mug(pro));
 
-  u3z(arv);
+  u3z(pil);
   return pro;
 }
 
 /* u3v_boot_lite(): light bootstrap sequence, just making a kernel.
 */
 c3_o
-u3v_boot_lite(u3_atom lit)
+u3v_boot_lite(u3_noun pil)
 {
   //  ensure zero-initialized kernel
   //
   u3A->roc = 0;
 
   {
-    u3_noun pro = u3m_soft(0, _cv_lite, lit);
+    u3_noun pro = u3m_soft(0, _cv_lite, pil);
 
     if ( u3_blip != u3h(pro) ) {
       u3z(pro);
