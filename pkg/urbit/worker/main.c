@@ -42,7 +42,14 @@ _cw_serf_fail(void* vod_p, const c3_c* wut_c)
 static void
 _cw_serf_send(u3_noun pel)
 {
-  u3_newt_write(&out_u, u3ke_jam(pel));
+  u3_noun mat = u3ke_jam(pel);
+  c3_d  len_w = u3r_met(3, mat);
+  c3_y* byt_y = c3_malloc(len_w);
+
+  u3r_bytes(0, len_w, byt_y, mat);
+  u3_newt_send(&out_u, len_w, byt_y);
+
+  u3z(mat);
 }
 
 /* _cw_serf_send_slog(): send hint output (hod is [priority tank]).
@@ -64,11 +71,11 @@ _cw_serf_send_stdr(c3_c* str_c)
 /* _cw_serf_writ():
 */
 static void
-_cw_serf_writ(void* vod_p, u3_noun mat)
+_cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
 {
-  u3_noun ret;
+  u3_noun ret, jar = u3ke_cue(u3i_bytes(len_d, byt_y));
 
-  if ( c3n == u3_serf_writ(&u3V, u3ke_cue(mat), &ret) ) {
+  if ( c3n == u3_serf_writ(&u3V, jar, &ret) ) {
     _cw_serf_fail(0, "bad jar");
   }
   else {

@@ -652,14 +652,12 @@ _lord_plea_work(u3_lord* god_u, u3_noun dat)
 /* _lord_on_plea(): handle plea from serf.
 */
 static void
-_lord_on_plea(void* ptr_v, u3_noun mat)
+_lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
   u3_lord* god_u = ptr_v;
-  u3_noun    jar = u3ke_cue(mat);
-  u3_noun    tag, dat;
+  u3_noun    tag, dat, jar = u3ke_cue(u3i_bytes(len_d, byt_y));
 
   if ( c3n == u3r_cell(jar, &tag, &dat) ) {
-    u3m_p("jar", jar);
     return _lord_plea_foul(god_u, 0, jar);
   }
 
@@ -706,64 +704,62 @@ _lord_writ_new(u3_lord* god_u)
   return wit_u;
 }
 
-/* _lord_writ_jam(): serialize writ.
+/* _lord_writ_make(): cons writ.
 */
-static void
-_lord_writ_jam(u3_lord* god_u, u3_writ* wit_u)
+static u3_noun
+_lord_writ_make(u3_lord* god_u, u3_writ* wit_u)
 {
-  if ( 0 == wit_u->mat ) {
-    u3_noun msg;
+  u3_noun msg;
 
-    switch ( wit_u->typ_e ) {
-      default: c3_assert(0);
+  switch ( wit_u->typ_e ) {
+    default: c3_assert(0);
 
-      case u3_writ_work: {
-        u3_noun mil = u3i_words(1, &wit_u->wok_u.egg_u->mil_w);
-        msg = u3nt(c3__work, mil, u3k(wit_u->wok_u.job));
-      } break;
+    case u3_writ_work: {
+      u3_noun mil = u3i_words(1, &wit_u->wok_u.egg_u->mil_w);
+      msg = u3nt(c3__work, mil, u3k(wit_u->wok_u.job));
+    } break;
 
-      case u3_writ_peek: {
-        msg = u3nc(c3__peek, u3nq(0,  //  XX support timeouts
-                                  u3k(wit_u->pek_u->now),
-                                  u3k(wit_u->pek_u->gan),
-                                  u3k(wit_u->pek_u->ful)));
-      } break;
+    case u3_writ_peek: {
+      msg = u3nc(c3__peek, u3nq(0,  //  XX support timeouts
+                                u3k(wit_u->pek_u->now),
+                                u3k(wit_u->pek_u->gan),
+                                u3k(wit_u->pek_u->ful)));
+    } break;
 
-      case u3_writ_play: {
-        u3_fact* tac_u = wit_u->fon_u.ext_u;
-        c3_d     eve_d = tac_u->eve_d;
-        u3_noun    lit = u3_nul;
+    case u3_writ_play: {
+      u3_fact* tac_u = wit_u->fon_u.ext_u;
+      c3_d     eve_d = tac_u->eve_d;
+      u3_noun    lit = u3_nul;
 
-        while ( tac_u ) {
-          lit   = u3nc(u3k(tac_u->job), lit);
-          tac_u = tac_u->nex_u;
-        }
+      while ( tac_u ) {
+        lit   = u3nc(u3k(tac_u->job), lit);
+        tac_u = tac_u->nex_u;
+      }
 
-        msg = u3nt(c3__play, u3i_chubs(1, &eve_d), u3kb_flop(lit));
+      msg = u3nt(c3__play, u3i_chubs(1, &eve_d), u3kb_flop(lit));
 
-      } break;
+    } break;
 
-      case u3_writ_save: {
-        msg = u3nt(c3__live, c3__save, u3i_chubs(1, &god_u->eve_d));
-      } break;
+    case u3_writ_save: {
+      msg = u3nt(c3__live, c3__save, u3i_chubs(1, &god_u->eve_d));
+    } break;
 
-      case u3_writ_cram: {
-        msg = u3nt(c3__live, c3__cram, u3i_chubs(1, &god_u->eve_d));
-      } break;
+    case u3_writ_cram: {
+      msg = u3nt(c3__live, c3__cram, u3i_chubs(1, &god_u->eve_d));
+    } break;
 
-      case u3_writ_pack: {
-        msg = u3nt(c3__live, c3__pack, u3_nul);
-      } break;
+    case u3_writ_pack: {
+      msg = u3nt(c3__live, c3__pack, u3_nul);
+    } break;
 
-      case u3_writ_exit: {
-        //  requested exit code is always 0
-        //
-        msg = u3nt(c3__live, c3__exit, 0);
-      } break;
-    }
-
-    wit_u->mat = u3ke_jam(msg);
+    case u3_writ_exit: {
+      //  requested exit code is always 0
+      //
+      msg = u3nt(c3__live, c3__exit, 0);
+    } break;
   }
+
+  return msg;
 }
 
 /* _lord_writ_send(): send writ to serf.
@@ -778,9 +774,17 @@ _lord_writ_send(u3_lord* god_u, u3_writ* wit_u)
     god_u->inn_u.bal_f = _lord_bail_noop;
   }
 
-  _lord_writ_jam(god_u, wit_u);
-  u3_newt_write(&god_u->inn_u, wit_u->mat);
-  wit_u->mat = 0;
+  {
+    u3_noun jar = _lord_writ_make(god_u, wit_u);
+    u3_noun mat = u3ke_jam(jar);
+    c3_w  len_w = u3r_met(3, mat);
+    c3_y* byt_y = c3_malloc(len_w);
+
+    u3r_bytes(0, len_w, byt_y, mat);
+    u3_newt_send(&god_u->inn_u, len_w, byt_y);
+
+    u3z(mat);
+  }
 }
 
 /* _lord_writ_plan(): enqueue a writ and send.
