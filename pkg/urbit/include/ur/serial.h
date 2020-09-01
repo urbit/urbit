@@ -5,6 +5,15 @@
 #include <ur/defs.h>
 #include <ur/bitstream.h>
 
+/*
+**  bit-wise serialize a noun of arbitrary into a byte-buffer.
+**  supports up to 64-bits of bit-addressed output (nearly 2 EiB).
+**  as this is an impractical volume data, cursor overflow is not checked.
+**
+**  unsafe variant is unsafe wrt its [dict] parameter, which must be empty,
+**  but can be passed in order to skip reallocation inside hot loops.
+**
+*/
 uint64_t
 ur_jam_unsafe(ur_root_t      *r,
               ur_nref       ref,
@@ -15,6 +24,17 @@ ur_jam_unsafe(ur_root_t      *r,
 uint64_t
 ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt);
 
+/*
+**  bitwise deserialization of an arbitrary byte-buffer into a noun.
+**  supports up to 62-bits of bit-addressed input (511 PiB).
+**  return will be [ur_cue_good] upon success.
+**
+**  unsafe variant is unsafe wrt its [dict] parameter, which must be empty,
+**  but can be passed in order to skip reallocation inside hot loops.
+**
+**  test variant does not allocate nouns, but merely parses the input.
+**
+*/
 ur_cue_res_e
 ur_cue_unsafe(ur_root_t       *r,
               ur_dict64_t  *dict,

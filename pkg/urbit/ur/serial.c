@@ -230,6 +230,11 @@ ur_cue_unsafe(ur_root_t       *r,
   if ( ur_cue_good != (res = ur_bsr_init(&bsr, len, byt)) ) {
     return res;
   }
+  //  bit-cursor (and backreferences) must fit in 62-bit direct atoms
+  //
+  else if ( 0x7ffffffffffffffULL < len ) {
+    return ur_cue_meme;
+  }
 
   //  setup stack
   //
@@ -386,6 +391,11 @@ ur_cue_test_unsafe(ur_dict_t    *dict,
   //
   if ( ur_cue_good != (res = ur_bsr_init(&bsr, len, byt)) ) {
     return res;
+  }
+  //  bit-cursor (and backreferences) must fit in 62-bit direct atoms
+  //
+  else if ( 0x7ffffffffffffffULL < len ) {
+    return ur_cue_meme;
   }
 
   //  setup stack
