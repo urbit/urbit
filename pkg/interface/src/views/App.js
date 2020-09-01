@@ -1,7 +1,7 @@
 import { hot } from 'react-hot-loader/root';
 import 'react-hot-loader';
 import * as React from 'react';
-import { BrowserRouter as Router, Route, withRouter, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { sigil as sigiljs, stringRenderer } from 'urbit-sigil-js';
 import Helmet from 'react-helmet';
@@ -16,8 +16,7 @@ import dark from './themes/old-dark';
 
 import { Content } from './components/Content';
 import StatusBar from './components/StatusBar';
-import Omnibox from './components/Omnibox';
-import ErrorComponent from './components/Error';
+import Omnibox from './components/leap/Omnibox';
 
 import GlobalStore from '~/logic/store/store';
 import GlobalSubscription from '~/logic/subscription/global';
@@ -36,7 +35,7 @@ const Root = styled.div`
     background-size: cover;
     ` : p.background?.type === 'color' ? `
     background-color: ${p.background.color};
-    ` : ``
+    ` : ''
   }
   display: flex;
   flex-flow: column nowrap;
@@ -135,14 +134,14 @@ class App extends React.Component {
             ship={this.ship}
             api={this.api}
             subscription={this.subscription}
-            {...state} />
+            {...state}
+          />
           </Router>
         </Root>
       </ThemeProvider>
     );
   }
 }
-
 
 export default process.env.NODE_ENV === 'production' ? App : hot(App);
 
