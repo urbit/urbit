@@ -657,41 +657,30 @@ u3u_cram(c3_c* dir_c, c3_d eve_d)
   return ret_o;
 }
 
-/* _cu_rock_load(): load a rock into a byte buffer.
+/* u3u_mmap_read(): open and mmap the file at [pat_c] for reading.
 */
-static c3_o
-_cu_rock_load(c3_c* dir_c, c3_d eve_d, c3_d* out_d, c3_y** out_y)
+c3_o
+u3u_mmap_read(c3_c* cap_c, c3_c* pat_c, c3_d* out_d, c3_y** out_y)
 {
   c3_i fid_i;
   c3_d len_d;
 
-  //  open rock file
+  //  open file
   //
-  {
-    c3_c* nam_c;
-
-    if ( c3n == _cu_rock_path(dir_c, eve_d, &nam_c) ) {
-      return c3n;
-    }
-
-    if ( -1 == (fid_i = open(nam_c, O_RDONLY, 0644)) ) {
-      fprintf(stderr, "rock: open failed (%s, %" PRIu64 "): %s\r\n",
-                      dir_c, eve_d, strerror(errno));
-      c3_free(nam_c);
-      return c3n;
-    }
-
-    c3_free(nam_c);
+  if ( -1 == (fid_i = open(pat_c, O_RDONLY, 0644)) ) {
+    fprintf(stderr, "%s: open failed (%s): %s\r\n",
+                    cap_c, pat_c, strerror(errno));
+    return c3n;
   }
 
-  //  measure rock file
+  //  measure file
   //
   {
     struct stat buf_b;
 
     if ( -1 == fstat(fid_i, &buf_b) ) {
-      fprintf(stderr, "rock: stat failed (%s, %" PRIu64 "): %s\r\n",
-                        dir_c, eve_d, strerror(errno));
+      fprintf(stderr, "%s: stat failed (%s): %s\r\n",
+                      cap_c, pat_c, strerror(errno));
       close(fid_i);
       return c3n;
     }
@@ -699,14 +688,14 @@ _cu_rock_load(c3_c* dir_c, c3_d eve_d, c3_d* out_d, c3_y** out_y)
     len_d = buf_b.st_size;
   }
 
-  //  mmap rock file
+  //  mmap file
   //
   {
     void* ptr_v;
 
     if ( MAP_FAILED == (ptr_v = mmap(0, len_d, PROT_READ, MAP_SHARED, fid_i, 0)) ) {
-      fprintf(stderr, "rock: mmap failed (%s, %" PRIu64 "): %s\r\n",
-                        dir_c, eve_d, strerror(errno));
+      fprintf(stderr, "%s: mmap failed (%s): %s\r\n",
+                      cap_c, pat_c, strerror(errno));
       close(fid_i);
       return c3n;
     }
@@ -715,7 +704,82 @@ _cu_rock_load(c3_c* dir_c, c3_d eve_d, c3_d* out_d, c3_y** out_y)
     *out_y = (c3_y*)ptr_v;
   }
 
+  //  close file
+  //
   close(fid_i);
+
+  return c3y;
+}
+
+/* u3u_mmap(): open/create file-backed mmap at [pat_c] for read/write.
+*/
+c3_o
+u3u_mmap(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y** out_y)
+{
+  c3_i fid_i;
+
+  //  open file
+  //
+  if ( -1 == (fid_i = open(pat_c, O_RDWR | O_CREAT | O_TRUNC, 0644)) ) {
+    fprintf(stderr, "%s: open failed (%s): %s\r\n",
+                    cap_c, pat_c, strerror(errno));
+    return c3n;
+  }
+
+  //  grow [fid_i] to [len_w]
+  //
+  //    XX build with _FILE_OFFSET_BITS == 64 ?
+  //
+  if ( 0 != ftruncate(fid_i, len_d) ) {
+    fprintf(stderr, "%s: ftruncate grow %s: %s\r\n",
+                    cap_c, pat_c, strerror(errno));
+    close(fid_i);
+    return c3n;
+  }
+
+  //  mmap file
+  //
+  {
+    void* ptr_v;
+
+    if ( MAP_FAILED == (ptr_v = mmap(0, len_d, PROT_READ|PROT_WRITE, MAP_SHARED, fid_i, 0)) ) {
+      fprintf(stderr, "%s: mmap failed (%s): %s\r\n",
+                      cap_c, pat_c, strerror(errno));
+      close(fid_i);
+      return c3n;
+    }
+
+    *out_y = (c3_y*)ptr_v;
+  }
+
+  //  close file
+  //
+  close(fid_i);
+
+  return c3y;
+}
+
+/* u3u_mmap_save(): sync file-backed mmap.
+*/
+c3_o
+u3u_mmap_save(c3_c* cap_c, c3_c* pat_c, c3_d len_d, c3_y* byt_y)
+{
+  if ( 0 != msync(byt_y, len_d, MS_SYNC) ) {
+    fprintf(stderr, "%s: msync %s: %s\r\n", cap_c, pat_c, strerror(errno));
+    return c3n;
+  }
+
+  return c3y;
+}
+
+/* u3u_munmap(): unmap the region at [byt_y].
+*/
+c3_o
+u3u_munmap(c3_d len_d, c3_y* byt_y)
+{
+  if ( 0 != munmap(byt_y, len_d) ) {
+    return c3n;
+  }
 
   return c3y;
 }
@@ -725,12 +789,19 @@ _cu_rock_load(c3_c* dir_c, c3_d eve_d, c3_d* out_d, c3_y** out_y)
 c3_o
 u3u_uncram(c3_c* dir_c, c3_d eve_d)
 {
+  c3_c* nam_c;
   c3_d  len_d;
   c3_y* byt_y;
 
   //  load rock file into buffer
   //
-  if ( c3n == _cu_rock_load(dir_c, eve_d, &len_d, &byt_y) ) {
+  if ( c3n == _cu_rock_path(dir_c, eve_d, &nam_c) ) {
+    fprintf(stderr, "uncram: failed to make rock path (%s, %" PRIu64 ")\r\n",
+                    dir_c, eve_d);
+    return c3n;
+  }
+  else if ( c3n == u3u_mmap_read("rock", nam_c, &len_d, &byt_y) ) {
+    c3_free(nam_c);
     return c3n;
   }
 
@@ -764,6 +835,7 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
     if ( c3n == u3s_cue_xeno_unsafe(&dic_u, len_d, byt_y, &ref) ) {
       fprintf(stderr, "uncram: failed to cue rock\r\n");
       ur_dict_free((ur_dict_t*)&dic_u);
+      c3_free(nam_c);
       return c3n;
     }
 
@@ -772,6 +844,7 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
     if ( c3n == u3r_pq(ref, c3__fast, &roc, &cod) ) {
       fprintf(stderr, "uncram: failed: invalid rock format\r\n");
       u3z(ref);
+      c3_free(nam_c);
       return c3n;
     }
 
@@ -780,6 +853,8 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
 
     u3z(ref);
   }
+
+  u3u_munmap(len_d, byt_y);
 
   //  allocate new hot jet state; re-establish warm
   //
@@ -796,9 +871,14 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
 
   //  leave rocks on disk
   //
-  // if ( c3n == u3m_rock_drop(dir_c, eve_d) ) {
-  //   u3l_log("serf: warning: orphaned state file\r\n");
+  // if ( 0 != unlink(nam_c) ) {
+  //   fprintf(stderr, "uncram: failed to delete rock (%s, %" PRIu64 "): %s\r\n",
+  //                   dir_c, eve_d, strerror(errno));
+  //   c3_free(nam_c);
+  //   return c3n;
   // }
+
+  c3_free(nam_c);
 
   return c3y;
 }
