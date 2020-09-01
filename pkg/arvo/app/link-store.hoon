@@ -101,13 +101,15 @@
   :_  this(state *state-1)
   =/  orm  orm:graph-store
   |^  ^-  (list card)
-  %+  murn  ~(tap by by-group.s)
+  %-  zing
+  %+  turn  ~(tap by by-group.s)
   |=  [=path =links]
-  ^-  (unit card)
+  ^-  (list card)
   ?.  ?=([@ @ *] path)
     (on-bad-path path links)
-  :-  ~
-  %+  add-graph  `resource`[(slav %p i.path) i.t.path]
+  =/  =resource  [(slav %p i.path) i.t.path]
+  :_  [(archive-graph resource)]~
+  %+  add-graph  resource
   ^-  graph:gra
   %+  gas:orm  ~
   =/  comments  (~(gut by discussions.s) path *(map url discussion))
@@ -155,11 +157,21 @@
   ++  add-graph
     |=  [=resource =graph:gra]
     ^-  card
-    =-  [%pass /migrate-link %agent [our.bowl %graph-store] -]
-    ^-  task:agent:gall
-    :+  %poke  %graph-update
-    !>  ^-  update:gra
+    %-  poke-graph-store
     [%0 now.bowl %add-graph resource graph `%graph-validator-link]
+  ::
+  ++  archive-graph
+    |=  =resource
+    ^-  card
+    %-  poke-graph-store
+    [%0 now.bowl %archive-graph resource]
+  ::
+  ++  poke-graph-store
+    |=  =update:gra
+    ^-  card
+    :*  %pass  /migrate-link  %agent  [our.bowl %graph-store]
+        %poke  %graph-update  !>(update)
+    ==
   --
 ::
 ++  on-poke   on-poke:def
