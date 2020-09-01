@@ -1,4 +1,6 @@
-::  permission-hook: mirror remote permissions
+::  permission-hook [landscape]:
+::
+::  mirror remote permissions
 ::
 ::    allows mirroring permissions between local and foreign ships.
 ::    local permission path are exposed according to the permssion paths

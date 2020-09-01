@@ -1,4 +1,6 @@
-::  permission-group-hook: groups into permissions
+::  permission-group-hook [landscape]:
+::
+::  groups into permissions
 ::
 ::    mirror the ships in specified groups to specified permission paths
 ::

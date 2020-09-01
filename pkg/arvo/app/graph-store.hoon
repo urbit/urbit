@@ -1,3 +1,6 @@
+::  graph-store [landscape]
+::
+::
 /+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug
 ~%  %graph-store-top  ..is  ~
 |%
@@ -282,7 +285,7 @@
         ?~  index  graph
         =*  atom   i.index
         =/  =node:store
-          ~|  "node does not exist to add signatures to!" 
+          ~|  "node does not exist to add signatures to!"
           (need (get:orm graph atom))
         ::  last index in list
         ::
@@ -327,7 +330,7 @@
         ?~  index  graph
         =*  atom   i.index
         =/  =node:store
-          ~|  "node does not exist to add signatures to!" 
+          ~|  "node does not exist to add signatures to!"
           (need (get:orm graph atom))
         ::  last index in list
         ::
@@ -525,7 +528,7 @@
     =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
     ?~  update-log  [~ ~]
     =/  result=(unit [time update:store])
-      (peek:orm-log:store u.update-log) 
+      (peek:orm-log:store u.update-log)
     ?~  result  [~ ~]
     ``noun+!>([~ -.u.result])
   ==
