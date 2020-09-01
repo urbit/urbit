@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { LoadingScreen } from './loading';
 import { MessageScreen } from './lib/message-screen';
-import { LinksTabBar } from './lib/links-tabbar';
+import { TabBar } from '~/views/components/chat-link-tabbar';
 import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { Link } from 'react-router-dom';
 import { LinkItem } from './lib/link-item';
@@ -129,11 +129,11 @@ export class Links extends Component {
              {props.resource.metadata.title}
            </h2>
          </Link>
-          <LinksTabBar
-          {...props}
-          popout={props.popout}
-          page={props.page}
-          resourcePath={props.resourcePath}
+          <TabBar
+            location={props.location}
+            popout={props.popout}
+            popoutHref={makeRoutePath(props.resourcePath, true, props.page)}
+            settings={makeRoutePath(props.resourcePath, props.popout) + '/settings'}
           />
         </div>
         <div className="w-100 mt6 flex justify-center overflow-y-scroll ph4 pb4">

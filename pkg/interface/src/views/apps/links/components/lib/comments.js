@@ -62,7 +62,7 @@ export class Comments extends Component {
           time={time}
           content={udon}
           nickname={nickname}
-          nameClass={nameClass}
+          hasNickname={Boolean(nickname)}
           color={color}
           avatar={avatar}
           member={member}

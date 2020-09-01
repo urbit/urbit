@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
-export const ChatTabBar = (props) => {
+export const TabBar = (props) => {
   const {
     location,
-    station
+    settings,
+    popoutHref
   } = props;
   let setColor = '', popout = '';
 
@@ -22,11 +23,11 @@ export const ChatTabBar = (props) => {
       <div className={'dib pt2 f9 pl6 pr6 lh-solid'}>
         <Link
           className={'no-underline ' + setColor}
-          to={'/~chat/' + popout + 'settings' + station}>
+          to={settings}>
           Settings
         </Link>
       </div>
-      <a href={'/~chat/popout/room' + station} rel="noopener noreferrer"
+      <a href={popoutHref} rel="noopener noreferrer"
          target="_blank"
          className="dib fr pr1"
          style={{ paddingTop: '8px' }}>
@@ -38,4 +39,4 @@ export const ChatTabBar = (props) => {
       </a>
     </div>
   );
-}
+};

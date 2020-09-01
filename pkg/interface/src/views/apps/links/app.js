@@ -8,7 +8,6 @@ import './css/custom.css';
 
 import { Skeleton } from './components/skeleton';
 import { NewScreen } from './components/new';
-import { MemberScreen } from './components/member';
 import { SettingsScreen } from './components/settings';
 import { MessageScreen } from './components/lib/message-screen';
 import { Links } from './components/links-list';
@@ -19,7 +18,6 @@ import {
   amOwnerOfGroup,
   base64urlDecode
 } from '~/logic/lib/util';
-
 
 export class LinksApp extends Component {
   constructor(props) {
