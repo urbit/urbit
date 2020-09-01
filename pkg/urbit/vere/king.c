@@ -5,8 +5,10 @@
 #include <curl/curl.h>
 #include <unistd.h>
 #include <uv.h>
+
 #include "all.h"
 #include "vere/vere.h"
+#include "ur/ur.h"
 
 #include "ivory.h"
 
@@ -711,7 +713,17 @@ _king_boot_ivory(void)
   }
 
   {
-    u3_noun pil = u3ke_cue(u3i_bytes(len_d, byt_y));
+    ur_dict32_t  dic_u = {0};
+    u3_noun        pil;
+
+    ur_dict32_grow((ur_root_t*)0, &dic_u, ur_fib27, ur_fib28);
+
+    if ( c3n == u3s_cue_xeno_unsafe(&dic_u, len_d, byt_y, &pil) ) {
+      u3l_log("lite: unable to cue ivory pill\r\n");
+      exit(1);
+    }
+
+    ur_dict_free((ur_dict_t*)&dic_u);
 
     if ( c3n == u3v_boot_lite(pil)) {
       u3l_log("lite: boot failed\r\n");
