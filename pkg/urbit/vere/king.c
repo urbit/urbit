@@ -774,16 +774,7 @@ u3_king_commence()
 
   //  boot the ivory pill
   //
-  {
-    struct timeval b4, f2, d0;
-    gettimeofday(&b4, 0);
-
-    _king_boot_ivory();
-
-    gettimeofday(&f2, 0);
-    timersub(&f2, &b4, &d0);
-    fprintf(stderr, "lite: boot %lu ms\r\n", (d0.tv_sec * 1000) + (d0.tv_usec / 1000));
-  }
+  _king_boot_ivory();
 
   //  disable core dumps (due to lmdb size)
   //
