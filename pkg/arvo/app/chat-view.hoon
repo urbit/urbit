@@ -298,6 +298,7 @@
       ~[(chat-hook-poke %add-synced ship.act app-path.act ask-history.act)]
     =/  rid=resource
       (de-path:resource ship+app-path.act)
+    ?<  =(our.bol entity.rid)
     =/  =cage
       :-  %group-update
       !>  ^-  action:group-store
