@@ -587,7 +587,7 @@ _serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 u3_noun
 u3_serf_work(u3_serf* sef_u, c3_w mil_w, u3_noun job)
 {
-  c3_t  tac_t = ( 0 != u3_Host.tra_u.fil_u );
+  c3_t  tac_t = ( u3C.wag_w & u3o_trace );
   c3_c  lab_c[2056];
   u3_noun pro;
 
@@ -838,7 +838,7 @@ u3_serf_peek(u3_serf* sef_u, c3_w mil_w, u3_noun sam)
 /* _serf_writ_live_exit(): exit on command.
 */
 static void
-_serf_writ_live_exit(c3_w cod_w)
+_serf_writ_live_exit(u3_serf* sef_u, c3_w cod_w)
 {
   if ( u3C.wag_w & u3o_debug_cpu ) {
     FILE* fil_u;
@@ -874,6 +874,8 @@ _serf_writ_live_exit(c3_w cod_w)
   //  XX move to jets.c
   //
   c3_free(u3D.ray_u);
+
+  sef_u->xit_f();
 
   exit(cod_w);
 }
@@ -924,7 +926,7 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
       u3z(com);
       //  NB, doesn't return
       //
-      _serf_writ_live_exit(cod_y);
+      _serf_writ_live_exit(sef_u, cod_y);
       *ret = u3nc(c3__live, u3_nul);
       return c3y;
     }
@@ -997,22 +999,6 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
   }
 }
 
-/* _serf_step_trace(): initialize or rotate trace file.
-*/
-static void
-_serf_step_trace(u3_serf* sef_u)
-{
-  if ( u3C.wag_w & u3o_trace ) {
-    if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
-      u3t_trace_open(sef_u->dir_c);
-    }
-    else if ( u3_Host.tra_u.con_w >= 100000 ) {
-      u3t_trace_close();
-      u3t_trace_open(sef_u->dir_c);
-    }
-  }
-}
-
 /* u3_serf_writ(): apply writ [wit], producing plea [*pel] on c3y.
 */
 c3_o
@@ -1025,8 +1011,6 @@ u3_serf_writ(u3_serf* sef_u, u3_noun wit, u3_noun* pel)
     ret_o = c3n;
   }
   else {
-    _serf_step_trace(sef_u);
-
     switch ( tag ) {
       default: {
         ret_o = c3n;

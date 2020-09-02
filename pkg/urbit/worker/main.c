@@ -28,6 +28,9 @@ static u3_serf   u3V;             //  one serf per process
 static u3_moat inn_u;             //  input stream
 static u3_mojo out_u;             //  output stream
 
+#undef SERF_TRACE_JAM
+#undef SERF_TRACE_CUE
+
 /* _cw_serf_fail(): failure stub.
 */
 static void
@@ -42,13 +45,24 @@ _cw_serf_fail(void* vod_p, const c3_c* wut_c)
 static void
 _cw_serf_send(u3_noun pel)
 {
-  u3_noun mat = u3ke_jam(pel);
-  c3_d  len_w = u3r_met(3, mat);
-  c3_y* byt_y = c3_malloc(len_w);
+  u3_noun mat;
+  c3_w  len_w;
+  c3_y* byt_y;
 
+#ifdef SERF_TRACE_JAM
+  u3t_event_trace("serf ipc jam", 'B');
+#endif
+
+  mat   = u3ke_jam(pel);
+  len_w = u3r_met(3, mat);
+  byt_y = c3_malloc(len_w);
   u3r_bytes(0, len_w, byt_y, mat);
-  u3_newt_send(&out_u, len_w, byt_y);
 
+#ifdef SERF_TRACE_JAM
+  u3t_event_trace("serf ipc jam", 'E');
+#endif
+
+  u3_newt_send(&out_u, len_w, byt_y);
   u3z(mat);
 }
 
@@ -68,12 +82,41 @@ _cw_serf_send_stdr(c3_c* str_c)
   _cw_serf_send_slog(u3nc(0, u3i_string(str_c)));
 }
 
-/* _cw_serf_writ():
+
+/* _cw_serf_step_trace(): initialize or rotate trace file.
+*/
+static void
+_cw_serf_step_trace(void)
+{
+  if ( u3C.wag_w & u3o_trace ) {
+    if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
+      u3t_trace_open(u3V.dir_c);
+    }
+    else if ( u3_Host.tra_u.con_w >= 100000 ) {
+      u3t_trace_close();
+      u3t_trace_open(u3V.dir_c);
+    }
+  }
+}
+
+/* _cw_serf_writ(): process a command from the king.
 */
 static void
 _cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
 {
-  u3_noun ret, jar = u3ke_cue(u3i_bytes(len_d, byt_y));
+  u3_noun ret, jar;
+
+  _cw_serf_step_trace();
+
+#ifdef SERF_TRACE_CUE
+  u3t_event_trace("serf ipc cue", 'B');
+#endif
+
+  jar = u3ke_cue(u3i_bytes(len_d, byt_y));
+
+#ifdef SERF_TRACE_CUE
+  u3t_event_trace("serf ipc cue", 'E');
+#endif
 
   if ( c3n == u3_serf_writ(&u3V, jar, &ret) ) {
     _cw_serf_fail(0, "bad jar");
@@ -106,6 +149,14 @@ _cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
   dup2(2, 1);
 
   close(nul_i);
+}
+
+/* _cw_serf_stdio(): cleanup on serf exit.
+*/
+static void
+_cw_serf_exit(void)
+{
+  u3t_trace_close();
 }
 
 /* _cw_serf_commence(); initialize and run serf
@@ -213,6 +264,12 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
     u3C.stderr_log_f = _cw_serf_send_stdr;
     u3C.slog_f = _cw_serf_send_slog;
   }
+
+  u3V.xit_f = _cw_serf_exit;
+
+#if defined(SERF_TRACE_JAM) || defined(SERF_TRACE_CUE)
+  u3t_trace_open(u3V.dir_c);
+#endif
 
   //  start serf
   //
