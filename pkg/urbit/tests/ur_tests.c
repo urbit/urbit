@@ -1321,7 +1321,7 @@ _bsr_cmp_check(const char* cap,
 }
 
 static ur_cue_res_e
-_bsr_rub_log_slow(ur_bsr_t *bsr, uint8_t *out)
+_bsr_log_slow(ur_bsr_t *bsr, uint8_t *out)
 {
   ur_cue_res_e res;
   uint8_t   bit, i = 0;
@@ -1341,7 +1341,7 @@ _bsr_rub_log_slow(ur_bsr_t *bsr, uint8_t *out)
 }
 
 static int
-_test_bsr_rub_log_loop(const char *cap, uint8_t len, uint8_t val)
+_test_bsr_log_loop(const char *cap, uint8_t len, uint8_t val)
 {
   int          ret = 1;
   ur_bsr_t    a, b;
@@ -1360,8 +1360,8 @@ _test_bsr_rub_log_loop(const char *cap, uint8_t len, uint8_t val)
       memset(bytes, 0x0, j);
       memset(bytes + j, val, len - j);
 
-      e = _bsr_rub_log_slow(&a, &c);
-      f = ur_bsr_rub_log(&b, &d);
+      e = _bsr_log_slow(&a, &c);
+      f = ur_bsr_log(&b, &d);
 
       ret &= _bsr_cmp_check(cap, i, j, &a, &b, c, d, e, f);
     }
@@ -1373,29 +1373,29 @@ _test_bsr_rub_log_loop(const char *cap, uint8_t len, uint8_t val)
 }
 
 static int
-_test_bsr_rub_log(void)
+_test_bsr_log(void)
 {
-  int ret = _test_bsr_rub_log_loop("bsr rub_log nought", 0, 0x0)
-          & _test_bsr_rub_log_loop("bsr rub_log ones odd", 3, 0xff)
-          & _test_bsr_rub_log_loop("bsr rub_log ones even", 4, 0xff)
-          & _test_bsr_rub_log_loop("bsr rub_log ones big", 50, 0xff)
-          & _test_bsr_rub_log_loop("bsr rub_log zeros odd", 5, 0x0)
-          & _test_bsr_rub_log_loop("bsr rub_log zeros even", 6, 0x0)
-          & _test_bsr_rub_log_loop("bsr rub_log zeros big", 50, 0x0);
+  int ret = _test_bsr_log_loop("bsr log nought", 0, 0x0)
+          & _test_bsr_log_loop("bsr log ones odd", 3, 0xff)
+          & _test_bsr_log_loop("bsr log ones even", 4, 0xff)
+          & _test_bsr_log_loop("bsr log ones big", 50, 0xff)
+          & _test_bsr_log_loop("bsr log zeros odd", 5, 0x0)
+          & _test_bsr_log_loop("bsr log zeros even", 6, 0x0)
+          & _test_bsr_log_loop("bsr log zeros big", 50, 0x0);
 
   {
     uint8_t i, j = 5;
     char  cap[1024];
 
     for ( i = 0; i < 8; i++ ) {
-      snprintf(cap, 1000, "bsr rub_log 1<<%u odd", i);
-      ret &= _test_bsr_rub_log_loop((const char*)cap, j++, 0x1 << i);
+      snprintf(cap, 1000, "bsr log 1<<%u odd", i);
+      ret &= _test_bsr_log_loop((const char*)cap, j++, 0x1 << i);
 
-      snprintf(cap, 1000, "bsr rub_log 1<<%u even", i);
-      ret &= _test_bsr_rub_log_loop((const char*)cap, j++, 0x1 << i);
+      snprintf(cap, 1000, "bsr log 1<<%u even", i);
+      ret &= _test_bsr_log_loop((const char*)cap, j++, 0x1 << i);
 
-      snprintf(cap, 1000, "bsr rub_log 1<<%u big", i);
-      ret &= _test_bsr_rub_log_loop((const char*)cap, 50, 0x1 << i);
+      snprintf(cap, 1000, "bsr log 1<<%u big", i);
+      ret &= _test_bsr_log_loop((const char*)cap, 50, 0x1 << i);
     }
   }
 
@@ -1480,7 +1480,7 @@ _test_bsr(void)
        & _test_bsr8()
        & _test_bsr32()
        & _test_bsr64()
-       & _test_bsr_rub_log()
+       & _test_bsr_log()
        & _test_bsr_tag();
 }
 

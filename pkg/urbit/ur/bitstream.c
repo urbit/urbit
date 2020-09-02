@@ -596,7 +596,7 @@ ur_bsr_tag(ur_bsr_t *bsr, ur_cue_tag_e *out)
 }
 
 static inline ur_cue_res_e
-_bsr_rub_log_meme(ur_bsr_t *bsr)
+_bsr_log_meme(ur_bsr_t *bsr)
 {
   bsr->bits += 256;
   bsr->bytes += 32;
@@ -605,7 +605,7 @@ _bsr_rub_log_meme(ur_bsr_t *bsr)
 }
 
 ur_cue_res_e
-ur_bsr_rub_log(ur_bsr_t *bsr, uint8_t *out)
+ur_bsr_log(ur_bsr_t *bsr, uint8_t *out)
 {
   uint64_t left = bsr->left;
 
@@ -621,7 +621,7 @@ ur_bsr_rub_log(ur_bsr_t *bsr, uint8_t *out)
 
     while ( !byt ) {
       if ( 32 == skip ) {
-        return _bsr_rub_log_meme(bsr);
+        return _bsr_log_meme(bsr);
       }
 
       skip++;
@@ -637,7 +637,7 @@ ur_bsr_rub_log(ur_bsr_t *bsr, uint8_t *out)
       uint32_t zeros = ur_tz8(byt) + (skip ? ((skip << 3) - off) : 0);
 
       if ( 255 < zeros ) {
-        return _bsr_rub_log_meme(bsr);
+        return _bsr_log_meme(bsr);
       }
       else {
         uint32_t bits = off + 1 + zeros;
@@ -663,7 +663,7 @@ ur_bsr_rub_len(ur_bsr_t *bsr, uint64_t *out)
   ur_cue_res_e res;
   uint8_t      len;
 
-  if ( ur_cue_good != (res = ur_bsr_rub_log(bsr, &len)) ) {
+  if ( ur_cue_good != (res = ur_bsr_log(bsr, &len)) ) {
     return res;
   }
   else if ( 64 <= len ) {
@@ -687,6 +687,19 @@ ur_bsr_rub_len(ur_bsr_t *bsr, uint64_t *out)
 
   return ur_cue_good;
 }
+
+/*
+**  bitstream-writer operations follow a pattern of an unsafe (inline)
+**  implementation, unsafe wrt to buffer size and reallocation,
+**  wrapped in a public function with buffer size checks.
+**
+**  higher-level operations made up of multiple discrete writes check
+**  the buffer size once for all involved writes.
+**
+**  this pattern should be easily adaptable to an alternate bitstream-writer
+**  implementation that flushes accumulated output periodically instead
+**  of reallocating the output buffer.
+*/
 
 void
 ur_bsw_grow(ur_bsw_t *bsw, uint64_t step)
