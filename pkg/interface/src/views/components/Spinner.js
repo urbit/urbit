@@ -8,7 +8,7 @@ export class Spinner extends Component {
 
     if (awaiting) {
       return (
-        <div className={classes + ' z-2 bg-white bg-gray0-d white-d'}>
+        <div className={classes + ' z-2 bg-white bg-gray0-d white-d flex'}>
           <img className="invert-d spin-active v-mid"
             src="/~landscape/img/Spinner.png"
             width={16}
