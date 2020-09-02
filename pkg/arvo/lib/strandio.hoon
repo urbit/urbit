@@ -241,6 +241,15 @@
   ;<  our=@p  bind:m  get-our
   (watch wire [our term] path)
 ::
+++  scry
+  |*  [=mold =path]
+  =/  m  (strand mold)
+  ?>  ?=(^ path)
+  ?>  ?=(^ t.path)
+  ;<  =bowl:spider  bind:m  get-bowl
+  %-  pure:m
+  .^(mold i.path (scot %p our.bowl) i.t.path (scot %da now.bowl) t.t.path)
+::
 ++  leave
   |=  [=wire =dock]
   =/  m  (strand ,~)
