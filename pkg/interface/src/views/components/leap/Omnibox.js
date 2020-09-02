@@ -6,8 +6,6 @@ import Mousetrap from 'mousetrap';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
 
-import { cite } from '~/logic/lib/util';
-
 export class Omnibox extends Component {
   constructor(props) {
     super(props);
@@ -26,9 +24,13 @@ export class Omnibox extends Component {
     this.renderResults = this.renderResults.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps !== this.props) {
       this.setState({ index: index(this.props.associations, this.props.apps.tiles) });
+    }
+
+    if (prevProps && (prevProps.apps !== this.props.apps) && (this.state.query === '')) {
+      this.setState({ results: this.initialResults() });
     }
 
     if (prevProps && this.props.show && prevProps.show !== this.props.show) {
@@ -48,7 +50,7 @@ export class Omnibox extends Component {
   }
 
   getSearchedCategories() {
-    return ['apps', 'commands', 'groups', 'subscriptions'];
+    return ['apps', 'commands', 'groups', 'subscriptions', 'other'];
   }
 
   control(evt) {
@@ -91,7 +93,18 @@ export class Omnibox extends Component {
   }
 
   initialResults() {
-    return new Map(this.getSearchedCategories().map(category => [category, []]));
+    return new Map(this.getSearchedCategories().map((category) => {
+      if (!this.state) {
+        return [category, []];
+      }
+      if (category === 'apps') {
+        return ['apps', this.state.index.get('apps')];
+      }
+      if (category === 'other') {
+        return ['other', this.state.index.get('other')];
+      }
+      return [category, []];
+    }));
   }
 
   navigate(link) {
@@ -202,23 +215,26 @@ export class Omnibox extends Component {
       {this.getSearchedCategories()
         .map(category => Object({ category, categoryResults: state.results.get(category) }))
         .filter(category => category.categoryResults.length > 0)
-        .map(({ category, categoryResults }, i) => (
-          <Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
+        .map(({ category, categoryResults }, i) => {
+          const categoryTitle = (category === 'other')
+            ? null : <Text gray ml={2}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>;
+          return (<Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
             <Rule borderTopWidth="0.5px" color="washedGray" />
-            <Text gray ml={2}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>
+            {categoryTitle}
             {categoryResults.map((result, i2) => (
               <OmniboxResult
                 key={i2}
                 icon={result.app}
                 text={result.title}
-                subtext={cite(result.host)}
+                subtext={result.host}
                 link={result.link}
                 navigate={() => this.navigate(result.link)}
                 selected={this.state.selected}
                 dark={props.dark} />
             ))}
           </Box>
-        ))
+        );
+      })
       }
     </Box>;
   }
