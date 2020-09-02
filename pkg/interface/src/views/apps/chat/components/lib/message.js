@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { OverlaySigil } from './overlay-sigil';
 import MessageContent from './message-content';
 import { uxToHex, cite, writeText } from '~/logic/lib/util';
@@ -9,7 +9,7 @@ export const Message = (props) => {
   const pending = props.msg.pending ? ' o-40' : '';
   const containerClass =
     props.renderSigil ?
-      `w-100 f7 pl3 pt4 pr3 cf flex lh-copy ` + pending :
+      'w-100 f7 pl3 pt4 pr3 cf flex lh-copy ' + pending :
       'w-100 pr3 cf hide-child flex' + pending;
 
   const timestamp =
@@ -63,10 +63,12 @@ const renderWithSigil = (props, timestamp) => {
     let nameSpan = null;
 
     const copyNotice = (saveName) => {
-      nameSpan.innerText = 'Copied';
-      setTimeout(() => {
-        nameSpan.innerText = saveName;
-      }, 800);
+      if (nameSpan !== null) {
+        nameSpan.innerText = 'Copied';
+        setTimeout(() => {
+          nameSpan.innerText = saveName;
+        }, 800);
+      }
     };
 
     return (
@@ -92,7 +94,7 @@ const renderWithSigil = (props, timestamp) => {
                 ref={(e) => nameSpan = e}
                 onClick={() => {
                   const saveName = name;
-                  writeText(props.msg.author);
+                  writeText(`~${props.msg.author}`);
                   copyNotice(saveName);
                 }}
                 title={`~${props.msg.author}`}
@@ -109,5 +111,5 @@ const renderWithSigil = (props, timestamp) => {
         </div>
       </div>
     );
-  }
+  };
 
