@@ -225,6 +225,7 @@
     ++  add
       |=  [=ship =resource]
       ~|  resource
+      ?<  |(=(our.bowl ship) =(our.bowl entity.resource))
       ?:  (~(has by tracking) resource)
         [~ state]
       =.  tracking
