@@ -194,6 +194,11 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
             render={(props) => {
               let station = `/${props.match.params.ship}/${props.match.params.station}`;
 
+              // ensure we know joined chats
+              if(!chatInitialized) {
+                return null;
+              }
+
             return (
               <Skeleton
                 associations={associations}
