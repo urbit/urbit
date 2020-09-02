@@ -93,9 +93,8 @@ const renderWithSigil = (props, timestamp) => {
                 }
                 ref={(e) => nameSpan = e}
                 onClick={() => {
-                  const saveName = name;
                   writeText(`~${props.msg.author}`);
-                  copyNotice(saveName);
+                  copyNotice(name);
                 }}
                 title={`~${props.msg.author}`}
               >
