@@ -19,6 +19,9 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#undef LORD_TRACE_JAM
+#undef LORD_TRACE_CUE
+
 /*
 |%
 ::  +writ: from king to serf
@@ -150,6 +153,10 @@ _lord_stop(u3_lord* god_u)
   u3_newt_mojo_stop(&god_u->inn_u, _lord_bail_noop);
 
   uv_close((uv_handle_t*)&god_u->cub_u, 0);
+
+#if defined(LORD_TRACE_JAM) || defined(LORD_TRACE_CUE)
+  u3t_trace_close();
+#endif
 }
 
 /* _lord_bail(): serf/lord error.
@@ -655,7 +662,17 @@ static void
 _lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
   u3_lord* god_u = ptr_v;
-  u3_noun    tag, dat, jar = u3ke_cue(u3i_bytes(len_d, byt_y));
+  u3_noun    tag, dat, jar;
+
+#ifdef LORD_TRACE_CUE
+  u3t_event_trace("king ipc cue", 'B');
+#endif
+
+  jar = u3ke_cue(u3i_bytes(len_d, byt_y));
+
+#ifdef LORD_TRACE_CUE
+  u3t_event_trace("king ipc cue", 'E');
+#endif
 
   if ( c3n == u3r_cell(jar, &tag, &dat) ) {
     return _lord_plea_foul(god_u, 0, jar);
@@ -776,13 +793,24 @@ _lord_writ_send(u3_lord* god_u, u3_writ* wit_u)
 
   {
     u3_noun jar = _lord_writ_make(god_u, wit_u);
-    u3_noun mat = u3ke_jam(jar);
-    c3_w  len_w = u3r_met(3, mat);
-    c3_y* byt_y = c3_malloc(len_w);
+    u3_noun mat;
+    c3_w  len_w;
+    c3_y* byt_y;
 
+#ifdef LORD_TRACE_JAM
+    u3t_event_trace("king ipc jam", 'B');
+#endif
+
+    mat   = u3ke_jam(jar);
+    len_w = u3r_met(3, mat);
+    byt_y = c3_malloc(len_w);
     u3r_bytes(0, len_w, byt_y, mat);
-    u3_newt_send(&god_u->inn_u, len_w, byt_y);
 
+#ifdef LORD_TRACE_JAM
+    u3t_event_trace("king ipc jam", 'E');
+#endif
+
+    u3_newt_send(&god_u->inn_u, len_w, byt_y);
     u3z(mat);
   }
 }
@@ -1130,6 +1158,10 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
       return 0;
     }
   }
+
+#if defined(LORD_TRACE_JAM) || defined(LORD_TRACE_CUE)
+  u3t_trace_open(god_u->pax_c);
+#endif
 
   //  start reading from proc
   //
