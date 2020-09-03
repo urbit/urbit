@@ -7,6 +7,9 @@
 
 #include "ur/ur.h"
 
+/*
+**  initialize helper for bitstream-writer tests.
+*/
 static void
 _bsw_init(ur_bsw_t *bsw, uint64_t prev, uint64_t size)
 {
@@ -20,6 +23,9 @@ _bsw_init(ur_bsw_t *bsw, uint64_t prev, uint64_t size)
   bsw->bytes = calloc(size, 1);
 }
 
+/*
+**  check bitstream-writer test invariants.
+*/
 static int
 _bsw_bit_check(const char* cap, ur_bsw_t *bsw, uint8_t byt, uint8_t off)
 {
@@ -44,6 +50,9 @@ _bsw_bit_check(const char* cap, ur_bsw_t *bsw, uint8_t byt, uint8_t off)
   return ret;
 }
 
+/*
+**  test 8 sequential writes of a set bit.
+*/
 static int
 _test_bsw_bit_ones(void)
 {
@@ -87,6 +96,9 @@ _test_bsw_bit_ones(void)
   return ret;
 }
 
+/*
+**  test 8 sequential writes of 1 null bit.
+*/
 static int
 _test_bsw_bit_zeros(void)
 {
@@ -130,6 +142,9 @@ _test_bsw_bit_zeros(void)
   return ret;
 }
 
+/*
+**  test 8 sequential writes of alternating bits.
+*/
 static int
 _test_bsw_bit_alt(void)
 {
@@ -181,6 +196,16 @@ _test_bsw_bit(void)
        & _test_bsw_bit_alt();
 }
 
+/*
+**  subsequents bitstream-writer tests assume the correctnesss of
+**  ur_bsw_bit(), and compare the output of a bit-at-a-time
+**  "golden master" with that of the relevant, higher-level operation.
+**
+**    XX the "golden" master implementations shouldn't be in bitstream module,
+**    as we don't intend to run them, but it's kind of weird implement them
+**    in the test itself.
+**
+*/
 static int
 _bsw_cmp_check(const char* cap, uint8_t val, uint8_t off, uint8_t len, ur_bsw_t *a, ur_bsw_t *b)
 {
@@ -218,6 +243,9 @@ _bsw_cmp_check(const char* cap, uint8_t val, uint8_t off, uint8_t len, ur_bsw_t 
   return ret;
 }
 
+/*
+**  ur_bsw8 golden master
+*/
 static void
 _bsw8_slow(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
 {
@@ -230,6 +258,10 @@ _bsw8_slow(ur_bsw_t *bsw, uint8_t len, uint8_t byt)
   }
 }
 
+/*
+**  at varying offsets, write varying numbers of bits via
+**  ur_bsw8 and master, comparing the result each time.
+*/
 static int
 _test_bsw8_loop(const char* cap, uint8_t val)
 {
@@ -263,6 +295,9 @@ _test_bsw8(void)
        & _test_bsw8_loop("bsw bits alt 2", 0x55);
 }
 
+/*
+**  ur_bsw32 golden master
+*/
 static void
 _bsw32_slow(ur_bsw_t *bsw, uint8_t len, uint32_t val)
 {
@@ -275,6 +310,10 @@ _bsw32_slow(ur_bsw_t *bsw, uint8_t len, uint32_t val)
   }
 }
 
+/*
+**  at varying offsets, write varying numbers of bits via
+**  ur_bsw32 and master, comparing the result each time.
+*/
 static int
 _test_bsw32_loop(const char* cap, uint32_t val)
 {
@@ -308,6 +347,9 @@ _test_bsw32(void)
        & _test_bsw32_loop("bsw 32 alt 2", 0x55555555);
 }
 
+/*
+**  ur_bsw64 golden master
+*/
 static void
 _bsw64_slow(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 {
@@ -320,6 +362,10 @@ _bsw64_slow(ur_bsw_t *bsw, uint8_t len, uint64_t val)
   }
 }
 
+/*
+**  at varying offsets, write varying numbers of bits via
+**  ur_bsw64 and master, comparing the result each time.
+*/
 static int
 _test_bsw64_loop(const char* cap, uint64_t val)
 {
@@ -353,6 +399,9 @@ _test_bsw64(void)
        & _test_bsw64_loop("bsw 64 alt 2", 0x5555555555555555ULL);
 }
 
+/*
+**  ur_bsw_bytes() golden master
+*/
 static void
 _bsw_bytes_slow(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 {
@@ -366,6 +415,10 @@ _bsw_bytes_slow(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
   _bsw8_slow(bsw, len, byt[len_byt]);
 }
 
+/*
+**  at varying offsets, write varying numbers of bits via
+**  ur_bsw_bytes and master, comparing the result each time.
+*/
 static int
 _test_bsw_bytes_loop(const char* cap, uint64_t len, uint8_t val)
 {
@@ -410,6 +463,9 @@ _test_bsw_bytes(void)
        & _test_bsw_bytes_loop("bsw bytes alt 2 even", 10, 0x55);
 }
 
+/*
+**  ur_bsw_bex golden master
+*/
 static void
 _bsw_bex_slow(ur_bsw_t *bsw, uint8_t n)
 {
@@ -421,6 +477,10 @@ _bsw_bex_slow(ur_bsw_t *bsw, uint8_t n)
   _bsw64_slow(bsw, n + 1, 1ULL << n);
 }
 
+/*
+**  at varying offsets, write varying numbers of bits via
+**  ur_bsw_bex and master, comparing the result each time.
+*/
 static int
 _test_bsw_bex()
 {
@@ -457,6 +517,9 @@ _test_bsw(void)
        & _test_bsw_bex();
 }
 
+/*
+**  check bitstream-reader test invariants.
+*/
 static int
 _bsr_bit_check(const char  *cap,
                ur_bsr_t    *bsr,
@@ -502,6 +565,10 @@ _bsr_bit_check(const char  *cap,
   return ret;
 }
 
+/*
+**  read a bit 8 times from a bitstream initialized to all ones,
+**  checking invariants and result after each read.
+*/
 static int
 _test_bsr_bit_ones(void)
 {
@@ -541,6 +608,10 @@ _test_bsr_bit_ones(void)
   return ret;
 }
 
+/*
+**  read a bit 8 times from a bitstream initialized to all zeros,
+**  checking invariants and result after each read.
+*/
 static int
 _test_bsr_bit_zeros(void)
 {
@@ -580,6 +651,10 @@ _test_bsr_bit_zeros(void)
   return ret;
 }
 
+/*
+**  read a bit 8 times from a bitstream initialized to alternating zeros and ones,
+**  checking invariants and result after each read.
+*/
 static int
 _test_bsr_bit_alt(void)
 {
@@ -627,6 +702,10 @@ _test_bsr_bit(void)
        & _test_bsr_bit_alt();
 }
 
+/*
+**  check bitstream-reader test invariants, after (maybe) reading
+**  of the end of the stream.
+*/
 static int
 _bsr_bit_any_check(const char* cap, ur_bsr_t *bsr, uint8_t off, uint64_t bits, uint8_t exp, uint8_t val)
 {
@@ -657,6 +736,10 @@ _bsr_bit_any_check(const char* cap, ur_bsr_t *bsr, uint8_t off, uint64_t bits, u
   return ret;
 }
 
+/*
+**  read a bit 17 times from a bitstream initialized to 8 ones,
+**  checking invariants and result after each read.
+*/
 static int
 _test_bsr_bit_any_ones(void)
 {
@@ -721,6 +804,10 @@ _test_bsr_bit_any_ones(void)
   return ret;
 }
 
+/*
+**  read a bit 17 times from a bitstream initialized to 8 zeros,
+**  checking invariants and result after each read.
+*/
 static int
 _test_bsr_bit_any_zeros(void)
 {
@@ -785,6 +872,10 @@ _test_bsr_bit_any_zeros(void)
   return ret;
 }
 
+/*
+**  read a bit 17 times from a bitstream initialized to 8 bits of alternating,
+**  ones and zeros, checking invariants and result after each read.
+*/
 static int
 _test_bsr_bit_any_alt(void)
 {
@@ -857,6 +948,16 @@ _test_bsr_bit_any(void)
        & _test_bsr_bit_any_alt();
 }
 
+/*
+**  subsequents bitstream-reader tests assume the correctnesss of
+**  ur_bsr_bit_any(), and compare the output of a bit-at-a-time
+**  "golden master" with that of the relevant, higher-level operation.
+**
+**    XX the "golden" master implementations shouldn't be in bitstream module,
+**    as we don't intend to run them, but it's kind of weird implement them
+**    in the test itself.
+**
+*/
 static int
 _bsr_cmp_any_check(const char* cap, uint8_t off, uint8_t len, ur_bsr_t *a, ur_bsr_t *b)
 {
@@ -901,6 +1002,9 @@ _bsr_cmp_any_check(const char* cap, uint8_t off, uint8_t len, ur_bsr_t *a, ur_bs
   return ret;
 }
 
+/*
+**  ur_bsr8_any golden master
+*/
 static uint8_t
 _bsr8_any_slow(ur_bsr_t *bsr, uint8_t len)
 {
@@ -915,6 +1019,11 @@ _bsr8_any_slow(ur_bsr_t *bsr, uint8_t len)
   return out;
 }
 
+/*
+**  from a bitstream-reader initialized with varying values/lengths/offsets,
+**  read a varying numbers of bits via ur_bsr8_any and master, comparing
+**  the results and respective states each time.
+*/
 static int
 _test_bsr8_loop(const char *cap, uint8_t len, uint8_t val)
 {
@@ -963,6 +1072,9 @@ _test_bsr8(void)
        & _test_bsr8_loop("bsr8 alt-2 2", 2, 0x55);
 }
 
+/*
+**  ur_bsr32_any golden master
+*/
 static uint32_t
 _bsr32_any_slow(ur_bsr_t *bsr, uint8_t len)
 {
@@ -978,6 +1090,11 @@ _bsr32_any_slow(ur_bsr_t *bsr, uint8_t len)
   return out;
 }
 
+/*
+**  from a bitstream-reader initialized with varying values/lengths/offsets,
+**  read a varying numbers of bits via ur_bsr32_any and master, comparing
+**  the results and respective states each time.
+*/
 static int
 _test_bsr32_loop(const char *cap, uint8_t len, uint8_t val)
 {
@@ -1035,6 +1152,9 @@ _test_bsr32(void)
        & _test_bsr32_loop("bsr32 alt-2 4", 4, 0x55);
 }
 
+/*
+**  ur_bsr64_any golden master
+*/
 static uint64_t
 _bsr64_any_slow(ur_bsr_t *bsr, uint8_t len)
 {
@@ -1050,6 +1170,11 @@ _bsr64_any_slow(ur_bsr_t *bsr, uint8_t len)
   return out;
 }
 
+/*
+**  from a bitstream-reader initialized with varying values/lengths/offsets,
+**  read a varying numbers of bits via ur_bsr64_any and master, comparing
+**  the results and respective states each time.
+*/
 static int
 _test_bsr64_loop(const char *cap, uint8_t len, uint8_t val)
 {
@@ -1123,6 +1248,9 @@ _test_bsr64(void)
        & _test_bsr64_loop("bsr64 alt-2 8", 8, 0x55);
 }
 
+/*
+**  ur_bsr_bytes_any golden master
+*/
 static void
 _bsr_bytes_any_slow(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
 {
@@ -1137,6 +1265,11 @@ _bsr_bytes_any_slow(ur_bsr_t *bsr, uint64_t len, uint8_t *out)
   }
 }
 
+/*
+**  from a bitstream-reader initialized with varying values/lengths/offsets,
+**  read a varying numbers of bits via ur_bsr_bytes_any and master, comparing
+**  the results and respective states each time.
+*/
 static int
 _test_bsr_bytes_any_loop(const char *cap, uint8_t len, uint8_t val)
 {
@@ -1204,6 +1337,11 @@ _test_bsr_bytes_any(void)
        & _test_bsr_bytes_any_loop("bsr bytes alt 2 even", 10, 0x55);
 }
 
+/*
+**  from a bitstream-reader initialized with varying values/lengths/offsets,
+**  skip a varying numbers of bits via ur_bsr_skip_any and read the same via
+**  ur_bsr_bytes_any master, comparing the respective states each time.
+*/
 static int
 _test_bsr_skip_any_loop(const char *cap, uint8_t len, uint8_t val)
 {
@@ -1252,6 +1390,10 @@ _test_bsr_skip_any(void)
        & _test_bsr_skip_any_loop("bsr skip alt 2 even", 10, 0x55);
 }
 
+/*
+**  compare the result and state of two reads (that were not permitted
+**  to read past the end of the stream).
+*/
 static int
 _bsr_cmp_check(const char* cap,
                uint8_t     off,
@@ -1320,6 +1462,9 @@ _bsr_cmp_check(const char* cap,
   return ret;
 }
 
+/*
+**  ur_bsr_log golden master
+*/
 static ur_cue_res_e
 _bsr_log_slow(ur_bsr_t *bsr, uint8_t *out)
 {
@@ -1340,6 +1485,11 @@ _bsr_log_slow(ur_bsr_t *bsr, uint8_t *out)
   return ur_cue_meme;
 }
 
+/*
+**  from a bitstream-reader initialized with varying values/lengths/offsets,
+**  read a varying numbers of bits via ur_bsr_log and master, comparing
+**  the results and respective states each time.
+*/
 static int
 _test_bsr_log_loop(const char *cap, uint8_t len, uint8_t val)
 {
@@ -1402,6 +1552,9 @@ _test_bsr_log(void)
   return ret;
 }
 
+/*
+**  ur_bsr_tag golden master
+*/
 static ur_cue_res_e
 _bsr_tag_slow(ur_bsr_t *bsr, ur_cue_tag_e *out)
 {
@@ -1423,6 +1576,11 @@ _bsr_tag_slow(ur_bsr_t *bsr, ur_cue_tag_e *out)
   return ur_cue_good;
 }
 
+/*
+**  from a bitstream-reader initialized with varying values/lengths/offsets,
+**  read a jam type tag via ur_bsr_tag and master, comparing the results and
+**  respective states each time.
+*/
 static int
 _test_bsr_tag_loop(const char *cap, uint8_t len, uint8_t val)
 {
@@ -1549,6 +1707,9 @@ _test_cue_spec(const char    *cap,
   return ret;
 }
 
+/*
+**  test jam/cue correctness and roundtrips across a variety of inputs
+*/
 static int
 _test_jam_cue(void)
 {
