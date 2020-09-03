@@ -23,29 +23,35 @@
 +$  clean-slate-any
   $^  clean-slate-ket
   $%  clean-slate-sig
+      clean-slate-1
       clean-slate
   ==
 ::
 +$  clean-slate
-  $:  %1
+  $:  %2
       starting=(map yarn [=trying =vase])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [@ta =mark])
   ==
 ::
++$  clean-slate-1
+  $:  %1
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+  ==
+::
 +$  clean-slate-ket
   $:  starting=(map yarn [trying=?(%build %find %none) =vase])
       running=(list yarn)
       tid=(map tid yarn)
-      serving=(map tid [@ta =mark])
   ==
 ::
 +$  clean-slate-sig
   $:  starting=~
       running=(list yarn)
       tid=(map tid yarn)
-      serving=(map tid [@ta =mark])
   ==
 ::
 +$  start-args
@@ -140,7 +146,7 @@
   ++  on-init   
     ^-  (quip card _this)
     :_  this
-    [%pass /bind %arvo %e %connect [~ /spider] %spider]~
+    ~[bind-eyre:sc]
   ++  on-save   clean-state:sc
   ++  on-load
     |^
@@ -148,7 +154,9 @@
     =+  !<(any=clean-slate-any old-state)
     =?  any  ?=(^ -.any)  (old-to-1 any)
     =?  any  ?=(~ -.any)  (old-to-1 any)
-    ?>  ?=(%1 -.any)
+    =^  upgrade-cards  any  
+      (old-to-2 any)
+    ?>  ?=(%2 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
@@ -161,12 +169,26 @@
       (handle-stop-thread:sc (yarn-to-tid i.yarns) |)
     =^  cards-2  this
       $(yarns t.yarns)
-    [(weld cards-1 cards-2) this]
+    [:(weld upgrade-cards cards-1 cards-2) this]
     ::
     ++  old-to-1
       |=  old=clean-slate-ket
-      ^-  clean-slate
+      ^-  clean-slate-1
       1+old(starting (~(run by starting.old) |=([* v=vase] none+v)))
+    ::
+    ++  old-to-2
+      |=  old=clean-slate-any
+      ^-  (quip card clean-slate)
+      ?>  ?=(?(%1 %2) -.old)
+      ?:  ?=(%2 -.old)
+        `old
+      :-  ~[bind-eyre:sc]
+      :*  %2
+        starting.old
+        running.old
+        tid.old
+        ~
+      ==
     --
   ::
   ++  on-poke
@@ -227,6 +249,7 @@
       ?+  wire  (on-arvo:def wire sign-arvo)
         [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
         [%build @ ~]   (handle-build:sc i.t.wire sign-arvo)
+        [%bind ~]      `state
       ==
     [cards this]
   ::  On unexpected failure, kill all outstanding strands
@@ -239,6 +262,11 @@
   --
 ::
 |_  =bowl:gall
+::
+++  bind-eyre
+  ^-  card
+  [%pass /bind %arvo %e %connect [~ /spider] %spider]
+::
 ++  handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
   ^-  (quip card _state)
@@ -545,5 +573,5 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  1+state(running (turn (tap-yarn running.state) head))
+  2+state(running (turn (tap-yarn running.state) head))
 --
