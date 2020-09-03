@@ -1,6 +1,6 @@
 import BaseApi from "./base";
 import { StoreState } from "../store/type";
-import { BackgroundConfig } from "../types/local-update";
+import { BackgroundConfig, LocalUpdateRemoteContentPolicy } from "../types/local-update";
 
 export default class LocalApi extends BaseApi<StoreState> {
   getBaseHash() {
@@ -64,6 +64,16 @@ export default class LocalApi extends BaseApi<StoreState> {
       data: {
         local: {
           hideNicknames
+        }
+      }
+    });
+  }
+
+  setRemoteContentPolicy(policy: LocalUpdateRemoteContentPolicy) {
+    this.store.handleEvent({
+      data: {
+        local: {
+          remoteContentPolicy: policy
         }
       }
     });

@@ -15,6 +15,7 @@ import { Path, Patp } from "~/types/noun";
 import GlobalApi from "~/logic/api/global";
 import { Association } from "~/types/metadata-update";
 import {Group} from "~/types/group-update";
+import { LocalUpdateRemoteContentPolicy } from "~/types";
 
 
 type ChatScreenProps = RouteComponentProps<{
@@ -38,6 +39,7 @@ type ChatScreenProps = RouteComponentProps<{
   envelopes: Envelope[];
   hideAvatars: boolean;
   hideNicknames: boolean;
+  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
 };
 
 interface ChatScreenState {
@@ -131,6 +133,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           api={props.api}
           hideNicknames={props.hideNicknames}
           hideAvatars={props.hideAvatars}
+          remoteContentPolicy={props.remoteContentPolicy}
         />
         <ChatInput
           api={props.api}

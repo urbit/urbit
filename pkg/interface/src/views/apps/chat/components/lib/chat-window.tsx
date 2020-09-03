@@ -187,6 +187,7 @@ export class ChatWindow extends Component {
                 contacts={props.contacts} 
                 hideAvatars={props.hideAvatars}
                 hideNicknames={props.hideNicknames}
+                remoteContentPolicy={props.remoteContentPolicy}
               />
             ))
           }

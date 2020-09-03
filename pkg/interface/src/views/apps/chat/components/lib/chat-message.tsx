@@ -17,7 +17,8 @@ export const ChatMessage = (props) => {
     contacts,
     unreadRef,
     hideAvatars,
-    hideNicknames
+    hideNicknames,
+    remoteContentPolicy
   } = props;
 
   // Render sigil if previous message is not by the same sender
@@ -46,6 +47,7 @@ export const ChatMessage = (props) => {
       association={association}
       hideNicknames={hideNicknames}
       hideAvatars={hideAvatars}
+      remoteContentPolicy={remoteContentPolicy}
     />
   );
 
