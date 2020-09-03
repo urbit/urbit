@@ -18,6 +18,7 @@
 
 #include "all.h"
 #include "vere/vere.h"
+#include "ur/hashcons.h"
 
 #undef LORD_TRACE_JAM
 #undef LORD_TRACE_CUE
@@ -71,6 +72,7 @@ _lord_stop_cb(void*       ptr_v,
   void (*exit_f)(void*) = god_u->cb_u.exit_f;
   void* exit_v = god_u->cb_u.ptr_v;
 
+  ur_dict_free((ur_dict_t*)god_u->dic_u);
   c3_free(god_u);
 
   if ( exit_f ) {
@@ -661,20 +663,27 @@ _lord_plea_work(u3_lord* god_u, u3_noun dat)
 static void
 _lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
 {
-  u3_lord* god_u = ptr_v;
-  u3_noun    tag, dat, jar;
+  u3_lord*     god_u = ptr_v;
+  ur_dict32_t* dic_u = god_u->dic_u;
+  u3_noun   tag, dat, jar = u3_blip;
+  c3_o         ret_o;
 
 #ifdef LORD_TRACE_CUE
   u3t_event_trace("king ipc cue", 'B');
 #endif
 
-  jar = u3ke_cue(u3i_bytes(len_d, byt_y));
+  ret_o = u3s_cue_xeno_unsafe(dic_u, len_d, byt_y, &jar);
+  //  XX check if the dictionary grew too much and shrink?
+  //
+  ur_dict32_wipe(dic_u);
 
 #ifdef LORD_TRACE_CUE
   u3t_event_trace("king ipc cue", 'E');
 #endif
 
-  if ( c3n == u3r_cell(jar, &tag, &dat) ) {
+  if (  (c3n == ret_o)
+     || (c3n == u3r_cell(jar, &tag, &dat)) )
+  {
     return _lord_plea_foul(god_u, 0, jar);
   }
 
@@ -1158,6 +1167,12 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
 #if defined(LORD_TRACE_JAM) || defined(LORD_TRACE_CUE)
   u3t_trace_open(god_u->pax_c);
 #endif
+
+  {
+    ur_dict32_t* dic_u = c3_calloc(sizeof(*dic_u));
+    ur_dict32_grow((ur_root_t*)0, dic_u, ur_fib10, ur_fib11);
+    god_u->dic_u = dic_u;
+  }
 
   //  start reading from proc
   //

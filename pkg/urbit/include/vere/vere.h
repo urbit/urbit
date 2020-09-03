@@ -444,6 +444,7 @@
           uv_process_t         cub_u;           //  process handle
           uv_process_options_t ops_u;           //  process configuration
           uv_stdio_container_t cod_u[3];        //  process options
+          void*                dic_u;           //  cue dictionary
           time_t               wen_t;           //  process creation time
           u3_mojo              inn_u;           //  client's stdin
           u3_moat              out_u;           //  client's stdout
