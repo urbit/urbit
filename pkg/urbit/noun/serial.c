@@ -629,17 +629,24 @@ _cs_cue_xeno_next(_cue_stack_t* tac_u,
         //  XX need a ur_bsr_words_any()
         //
         else {
-          c3_d  byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
+          c3_w* wor_w;
           c3_y* byt_y;
 
-          //  XX check that byt_d fits in a c3_w;
-          //
-          byt_y = c3_calloc(byt_d);
+          {
+            c3_d byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
+
+            if ( 0xffffffffULL < byt_d) {
+              return u3m_bail(c3__meme);
+            }
+
+            //  XX assumes little-endian
+            //
+            wor_w = u3a_slaq(3, byt_d);
+            byt_y = (c3_y*)wor_w;
+          }
+
           ur_bsr_bytes_any(red_u, len_d, byt_y);
-
-          *out = u3i_bytes(byt_d, byt_y);
-
-          c3_free(byt_y);
+          *out = u3a_malt(wor_w);
         }
 
         ur_dict32_put(rot_u, dic_u, bit_d, *out);
