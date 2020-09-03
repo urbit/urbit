@@ -24,9 +24,10 @@
 
 #include "ur/hashcons.h"
 
-static u3_serf   u3V;             //  one serf per process
-static u3_moat inn_u;             //  input stream
-static u3_mojo out_u;             //  output stream
+static u3_serf       u3V;             //  one serf per process
+static u3_moat     inn_u;             //  input stream
+static u3_mojo     out_u;             //  output stream
+static ur_dict32_t dic_u;             //  cue dictionary
 
 #undef SERF_TRACE_JAM
 #undef SERF_TRACE_CUE
@@ -101,6 +102,7 @@ static void
 _cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
 {
   u3_noun ret, jar;
+  c3_o  ret_o;
 
   _cw_serf_step_trace();
 
@@ -108,13 +110,18 @@ _cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
   u3t_event_trace("serf ipc cue", 'B');
 #endif
 
-  jar = u3ke_cue(u3i_bytes(len_d, byt_y));
+  ret_o = u3s_cue_xeno_unsafe(&dic_u, len_d, byt_y, &jar);
+  //  XX check if the dictionary grew too much and shrink?
+  //
+  ur_dict32_wipe(&dic_u);
 
 #ifdef SERF_TRACE_CUE
   u3t_event_trace("serf ipc cue", 'E');
 #endif
 
-  if ( c3n == u3_serf_writ(&u3V, jar, &ret) ) {
+  if (  (c3n == ret_o)
+     || (c3n == u3_serf_writ(&u3V, jar, &ret)) )
+  {
     _cw_serf_fail(0, "bad jar");
   }
   else {
@@ -152,6 +159,7 @@ _cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
 static void
 _cw_serf_exit(void)
 {
+  ur_dict_free((ur_dict_t*)&dic_u);
   u3t_trace_close();
 }
 
@@ -224,6 +232,8 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
 
     uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
   }
+
+  ur_dict32_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
 
   //  set up writing
   //
