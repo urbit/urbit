@@ -45,25 +45,21 @@ _cw_serf_fail(void* vod_p, const c3_c* wut_c)
 static void
 _cw_serf_send(u3_noun pel)
 {
-  u3_noun mat;
-  c3_w  len_w;
+  c3_d  len_d;
   c3_y* byt_y;
 
 #ifdef SERF_TRACE_JAM
   u3t_event_trace("serf ipc jam", 'B');
 #endif
 
-  mat   = u3ke_jam(pel);
-  len_w = u3r_met(3, mat);
-  byt_y = c3_malloc(len_w);
-  u3r_bytes(0, len_w, byt_y, mat);
+  u3s_jam_xeno(pel, &len_d, &byt_y);
 
 #ifdef SERF_TRACE_JAM
   u3t_event_trace("serf ipc jam", 'E');
 #endif
 
-  u3_newt_send(&out_u, len_w, byt_y);
-  u3z(mat);
+  u3_newt_send(&out_u, len_d, byt_y);
+  u3z(pel);
 }
 
 /* _cw_serf_send_slog(): send hint output (hod is [priority tank]).

@@ -291,8 +291,6 @@ u3s_jam_xeno(u3_noun a, c3_d* len_d, c3_y** byt_y)
 {
   _jam_xeno_t jam_u = {0};
 
-  c3_assert( &(u3H->rod_u) == u3R );
-
   jam_u.har_p = u3h_new();
 
   jam_u.rit_u.prev  = ur_fib11;
