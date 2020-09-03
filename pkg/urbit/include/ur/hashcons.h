@@ -9,8 +9,7 @@
 #include "ur/defs.h"
 
 /*
-**  noun references are representated by 64-bits, with the top 2 bits
-**  reserved for discriminable tags.
+**  64-bit noun references, with the top 2 bits reserved for type tags.
 */
 typedef uint64_t ur_nref;
 
@@ -223,8 +222,7 @@ void
 ur_nvec_free(ur_nvec_t *v);
 
 /*
-**  abitrary depth-first, pre-order noun traversal, where
-**  cells can optionally short-circuit.
+**  depth-first, pre-order noun traversal, cells can short-circuit.
 */
 void
 ur_walk_fore(ur_root_t *r,
