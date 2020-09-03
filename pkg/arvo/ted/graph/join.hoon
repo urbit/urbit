@@ -29,9 +29,9 @@
   (scry-metadata rid.action)
 ?^  group
   ::  We have group, graph is managed
-  :: ;<  ~  bind:m  
-  ::   %+  poke-our   %graph-pull-hook
-  ::   pull-hook-action+!>([%add ship.action rid.action])
+  ;<  ~  bind:m  
+     %+  poke-our   %graph-pull-hook
+     pull-hook-action+!>([%add ship.action rid.action])
   (pure:m !>(~))
 :: Else, add group then join
 ;<  ~  bind:m  
