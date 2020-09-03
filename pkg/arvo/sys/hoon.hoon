@@ -13453,6 +13453,7 @@
         ==
       :-  '!'
         ;~  pose
+          (stag %zpbn (stag %cltr ;~(pfix ;~(plug zap ban) (ifix [lac rac] (most ace wide)))))
           (stag %wtzp ;~(pfix zap wide))
           (stag %zpzp (cold ~ ;~(plug zap zap)))
         ==
