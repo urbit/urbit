@@ -69,7 +69,7 @@ you're guaranteed to have exactly the files in the source commit plus
 any files you separately added.
                                                                       
 We speak of merging into a destination *desk* from a source *commit*
-becaus while you can only merge on top of a desk, you can merge from
+because while you can only merge on top of a desk, you can merge from
 historical commits.  For example,
                                                                       
     |merge %old our %home, =cas ud+5, =gem %init

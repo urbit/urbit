@@ -2453,7 +2453,7 @@
           [%| %mate-conflict -]
         =/  old=(map path lobe)                         ::  oldies but goodies
           %+  roll  ~(tap by (~(uni by old.dal) old.dob))
-          =<  .(old q.bas)
+          =<  .(old q.bob)
           |=  [[pax=path ~] old=(map path lobe)]
           (~(del by old) pax)
         =/  [hot=(map path lobe) lat=(map lobe blob)]   ::  new content
