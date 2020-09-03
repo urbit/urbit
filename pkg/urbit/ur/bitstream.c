@@ -1037,21 +1037,31 @@ _bsw_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
       m = byt[i] >> rest;
     }
 
-    if ( len_bit ) {
-      if ( len_bit < rest ) {
-        l = byt[len_byt] & ((1 << len_bit) - 1);
-        bsw->bytes[fill] = m ^ (l << off);
-        off += len_bit;
-      }
-      else {
-        l = byt[len_byt] & mask;
-        bsw->bytes[fill++] = m ^ (l << off);
+    //  no trailing bits; we need only write the rest of the last byte.
+    //
+    //    NB: while semantically equivalent to the subsequent block,
+    //    this case must be separate to avoid reading off the end of [byt]
+    //
+    if ( !len_bit ) {
+      bsw->bytes[fill] = m;
+    }
+    //  trailing bits fit into the current output byte.
+    //
+    else if ( len_bit < rest ) {
+      l = byt[len_byt] & ((1 << len_bit) - 1);
+      bsw->bytes[fill] = m ^ (l << off);
+      off += len_bit;
+    }
+    //  trailing bits extend into the next output byte.
+    //
+    else {
+      l = byt[len_byt] & mask;
+      bsw->bytes[fill++] = m ^ (l << off);
 
-        m = byt[len_byt] >> rest;
+      m = byt[len_byt] >> rest;
 
-        off = len_bit - rest;
-        bsw->bytes[fill] = m & ((1 << off) - 1);
-      }
+      off = len_bit - rest;
+      bsw->bytes[fill] = m & ((1 << off) - 1);
     }
   }
 
