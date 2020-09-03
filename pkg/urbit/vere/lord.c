@@ -793,25 +793,21 @@ _lord_writ_send(u3_lord* god_u, u3_writ* wit_u)
 
   {
     u3_noun jar = _lord_writ_make(god_u, wit_u);
-    u3_noun mat;
-    c3_w  len_w;
+    c3_d  len_d;
     c3_y* byt_y;
 
 #ifdef LORD_TRACE_JAM
     u3t_event_trace("king ipc jam", 'B');
 #endif
 
-    mat   = u3ke_jam(jar);
-    len_w = u3r_met(3, mat);
-    byt_y = c3_malloc(len_w);
-    u3r_bytes(0, len_w, byt_y, mat);
+    u3s_jam_xeno(jar, &len_d, &byt_y);
 
 #ifdef LORD_TRACE_JAM
     u3t_event_trace("king ipc jam", 'E');
 #endif
 
-    u3_newt_send(&god_u->inn_u, len_w, byt_y);
-    u3z(mat);
+    u3_newt_send(&god_u->inn_u, len_d, byt_y);
+    u3z(jar);
   }
 }
 
