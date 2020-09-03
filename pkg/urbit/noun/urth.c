@@ -385,14 +385,14 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 
   //  reallocate kernel and cold jet state
   //
-  ur_root_t* rot_u = ur_hcon_init();
+  ur_root_t* rot_u = ur_root_init();
   ur_nvec_t  cod_u;
   ur_nref      ken = _cu_all_from_loom(rot_u, &cod_u);
 
   //  print [rot_u] measurements
   //
   if ( fil_u ) {
-    ur_hcon_info(fil_u, rot_u);
+    ur_root_info(fil_u, rot_u);
     fprintf(stderr, "\r\n");
   }
 
@@ -441,7 +441,7 @@ u3u_uniq(void)
   //  dispose off-loom structures
   //
   ur_nvec_free(&cod_u);
-  ur_hcon_free(rot_u);
+  ur_root_free(rot_u);
 }
 
 /* _cu_rock_path(): format rock path.
@@ -643,7 +643,7 @@ u3u_cram(c3_c* dir_c, c3_d eve_d)
     //  dispose off-loom structures
     //
     ur_nvec_free(&cod_u);
-    ur_hcon_free(rot_u);
+    ur_root_free(rot_u);
   }
 
   //  write jam-buffer into pier

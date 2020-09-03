@@ -1552,7 +1552,7 @@ _test_cue_spec(const char    *cap,
 static int
 _test_jam_cue(void)
 {
-  ur_root_t *r = ur_hcon_init();
+  ur_root_t *r = ur_root_init();
   int      ret = 1;
 
 #     define NC(a, b)     ur_cons(r, a, b)
@@ -1637,6 +1637,8 @@ _test_jam_cue(void)
     uint8_t res[35] = { 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8 };
     TEST_CASE("wide", ur_coin_bytes(r, inp, sizeof(inp)));
   }
+
+  ur_root_free(r);
 
   return ret;
 }

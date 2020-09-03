@@ -8,23 +8,37 @@
 
 #include "ur/defs.h"
 
-#define ur_nref_tag(ref)       ( ref >> 62 )
-#define ur_nref_idx(ref)       ur_mask_62(ref)
-
-#define ur_pail_max            10
-
-typedef uint32_t ur_mug;
+/*
+**  noun references are representated by 64-bits, with the top 2 bits
+**  reserved for discriminable tags.
+*/
 typedef uint64_t ur_nref;
+
 typedef enum {
   ur_direct = 0,
   ur_iatom = 1,
   ur_icell = 2,
 } ur_tag;
 
-typedef struct ur_nvec_s {
-  uint64_t fill;
-  ur_nref* refs;
-} ur_nvec_t;
+#define ur_nref_tag(ref)       ( ref >> 62 )
+#define ur_nref_idx(ref)       ur_mask_62(ref)
+
+/*
+**  31-bit, non-zero, murmur3-based noun hash.
+*/
+typedef uint32_t ur_mug;
+
+/*
+**  associative structures (dictionaries) of noun references,
+**  distributed by mug across fixed-size buckets (pails),
+**  reallocated with fibonacci growth once a bucket is full.
+**
+**    - ur_dict_t:   set of noun references
+**    - ur_dict32_t: map from noun reference to uint32
+**    - ur_dict32_t: map from noun reference to uint64
+*/
+
+#define ur_pail_max            10
 
 typedef struct ur_pail32_s {
   uint8_t  fill;
@@ -61,6 +75,10 @@ typedef struct ur_dict_s {
   ur_pail_t *buckets;
 } ur_dict_t;
 
+/*
+**  cells are hash-consed, atoms are deduplicated (byte-array comparison),
+**  mug hashes are stored, and noun references are unique within a root.
+*/
 typedef struct ur_cells_s {
   ur_dict_t dict;
   uint64_t  prev;
@@ -86,9 +104,22 @@ typedef struct ur_root_s {
   ur_atoms_t atoms;
 } ur_root_t;
 
-uint64_t
-ur_met(ur_root_t *r, uint8_t bloq, ur_nref ref);
+/*
+**  a vector of noun references.
+*/
+typedef struct ur_nvec_s {
+  uint64_t fill;
+  ur_nref* refs;
+} ur_nvec_t;
 
+/*
+**  type-specific dictionary operations.
+**
+**    NB: [r] is only used to retrieve the stored mug of cells and
+**    indirect atoms. If all references are direct atoms (62-bits or less),
+**    [r] can be null. This option is used extensively in cue (de-serialization)
+**    implementations, where the dictionary keys are bit-cursors.
+*/
 void
 ur_dict32_grow(ur_root_t *r, ur_dict32_t *dict, uint64_t prev, uint64_t size);
 
@@ -123,11 +154,26 @@ void
 ur_dict_put(ur_root_t *r, ur_dict_t *dict, ur_nref ref);
 
 void
-ur_dict_free(ur_dict_t *dict);
-
-void
 ur_dict_wipe(ur_dict_t *dict);
 
+/*
+**  free the buckets of any dictionary (cast to ur_dict_t*).
+*/
+void
+ur_dict_free(ur_dict_t *dict);
+
+/*
+**  measure the bloq (binary-exponent) length of an atom in [r]
+*/
+uint64_t
+ur_met(ur_root_t *r, uint8_t bloq, ur_nref ref);
+
+/*
+**  find or allocate an atom in [r]
+**
+**  unsafe variant is unsafe wrt allocation (byte arrays must be
+**  allocated with system malloc) and trailing null bytes (not allowed).
+*/
 ur_nref
 ur_coin_bytes_unsafe(ur_root_t *r, uint8_t *byt, uint64_t len);
 
@@ -137,24 +183,49 @@ ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len);
 ur_nref
 ur_coin64(ur_root_t *r, uint64_t n);
 
+/*
+**  find or construct a cell in [r]
+*/
 ur_nref
 ur_cons(ur_root_t *r, ur_nref hed, ur_nref tal);
 
-void
-ur_hcon_info(FILE *f, ur_root_t *r);
+/*
+**  calculate the mug of [ref], or produce the stored value in [r].
+*/
+ur_mug
+ur_nref_mug(ur_root_t *r, ur_nref ref);
 
-void
-ur_hcon_free(ur_root_t *r);
-
+/*
+**  initialize a noun arena (root).
+*/
 ur_root_t*
-ur_hcon_init(void);
+ur_root_init(void);
+
+/*
+**  print root details to [f]
+*/
+void
+ur_root_info(FILE *f, ur_root_t *r);
+
+/*
+**  dispose all allocations in [r]
+*/
+void
+ur_root_free(ur_root_t *r);
+
+/*
+**  initialize or dispose a vector of noun references
+*/
+void
+ur_nvec_init(ur_nvec_t *v, uint64_t size);
 
 void
 ur_nvec_free(ur_nvec_t *v);
 
-void
-ur_nvec_init(ur_nvec_t *v, uint64_t size);
-
+/*
+**  abitrary depth-first, pre-order noun traversal, where
+**  cells can optionally short-circuit.
+*/
 void
 ur_walk_fore(ur_root_t *r,
              ur_nref  ref,

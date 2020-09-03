@@ -17,95 +17,6 @@
 uint64_t
 ur_met0_bytes_unsafe(uint8_t *byt, uint64_t len);
 
-ur_mug
-ur_mug_bytes(const uint8_t *byt, uint64_t len)
-{
-  uint32_t seed = 0xcafebabe;
-  ur_mug    mug;
-
-  while ( 1 ) {
-    uint32_t raw;
-    MurmurHash3_x86_32(byt, len, seed, &raw);
-    mug = (raw >> 31) ^ ( ur_mask_31(raw) );
-
-    if ( 0 == mug ) {
-      seed++;
-    }
-    else {
-      return mug;
-    }
-  }
-}
-
-ur_mug
-ur_mug32(uint32_t x)
-{
-  uint8_t byt[4] = {
-    ur_mask_8(x >>  0),
-    ur_mask_8(x >>  8),
-    ur_mask_8(x >> 16),
-    ur_mask_8(x >> 24)
-  };
-
-  return ur_mug_bytes(byt, ur_met3_32(x));
-}
-
-ur_mug
-ur_mug64(uint64_t x)
-{
-  uint8_t byt[8] = {
-    ur_mask_8(x >>  0),
-    ur_mask_8(x >>  8),
-    ur_mask_8(x >> 16),
-    ur_mask_8(x >> 24),
-    ur_mask_8(x >> 32),
-    ur_mask_8(x >> 40),
-    ur_mask_8(x >> 48),
-    ur_mask_8(x >> 56)
-  };
-
-  return ur_mug_bytes(byt, ur_met3_64(x));
-}
-
-ur_mug
-ur_mug_both(ur_mug hed, ur_mug tal)
-{
-  //  XX not correct per u3r_mug, but necessary to avoid collisions
-  //
-  return ur_mug32(hed ^ (0x7fffffff ^ ur_mug32(tal)));
-}
-
-ur_mug
-ur_nref_mug(ur_root_t *r, ur_nref ref)
-{
-  switch ( ur_nref_tag(ref) ) {
-    default: assert(0);
-
-    case ur_direct: return ur_mug64(ref);
-    case ur_iatom:  return r->atoms.mugs[ur_nref_idx(ref)];
-    case ur_icell:  return r->cells.mugs[ur_nref_idx(ref)];
-  }
-}
-
-ur_bool_t
-ur_deep(ur_nref ref)
-{
-  return ur_icell == ur_nref_tag(ref);
-}
-
-ur_nref
-ur_head(ur_root_t *r, ur_nref ref)
-{
-  assert( ur_deep(ref) );
-  return r->cells.heads[ur_nref_idx(ref)];
-}
-
-ur_nref
-ur_tail(ur_root_t *r, ur_nref ref)
-{
-  assert( ur_deep(ref) );
-  return r->cells.tails[ur_nref_idx(ref)];
-}
 void
 ur_dict32_grow(ur_root_t *r, ur_dict32_t *dict, uint64_t prev, uint64_t size)
 {
@@ -394,13 +305,6 @@ ur_dict_put(ur_root_t *r, ur_dict_t *dict, ur_nref ref)
 }
 
 void
-ur_dict_free(ur_dict_t *dict)
-{
-  free(dict->buckets);
-  dict->buckets = 0;
-}
-
-void
 ur_dict_wipe(ur_dict_t *dict)
 {
   ur_pail_t *buckets = dict->buckets;
@@ -409,6 +313,103 @@ ur_dict_wipe(ur_dict_t *dict)
   for ( i = 0; i < size; i++ ) {
     buckets[i].fill = 0;
   }
+}
+
+void
+ur_dict_free(ur_dict_t *dict)
+{
+  free(dict->buckets);
+  dict->buckets = 0;
+}
+
+ur_mug
+ur_mug_bytes(const uint8_t *byt, uint64_t len)
+{
+  uint32_t seed = 0xcafebabe;
+  ur_mug    mug;
+
+  while ( 1 ) {
+    uint32_t raw;
+    MurmurHash3_x86_32(byt, len, seed, &raw);
+    mug = (raw >> 31) ^ ( ur_mask_31(raw) );
+
+    if ( 0 == mug ) {
+      seed++;
+    }
+    else {
+      return mug;
+    }
+  }
+}
+
+ur_mug
+ur_mug32(uint32_t x)
+{
+  uint8_t byt[4] = {
+    ur_mask_8(x >>  0),
+    ur_mask_8(x >>  8),
+    ur_mask_8(x >> 16),
+    ur_mask_8(x >> 24)
+  };
+
+  return ur_mug_bytes(byt, ur_met3_32(x));
+}
+
+ur_mug
+ur_mug64(uint64_t x)
+{
+  uint8_t byt[8] = {
+    ur_mask_8(x >>  0),
+    ur_mask_8(x >>  8),
+    ur_mask_8(x >> 16),
+    ur_mask_8(x >> 24),
+    ur_mask_8(x >> 32),
+    ur_mask_8(x >> 40),
+    ur_mask_8(x >> 48),
+    ur_mask_8(x >> 56)
+  };
+
+  return ur_mug_bytes(byt, ur_met3_64(x));
+}
+
+ur_mug
+ur_mug_both(ur_mug hed, ur_mug tal)
+{
+  //  XX not correct per u3r_mug, but necessary to avoid collisions
+  //
+  return ur_mug32(hed ^ (0x7fffffff ^ ur_mug32(tal)));
+}
+
+ur_mug
+ur_nref_mug(ur_root_t *r, ur_nref ref)
+{
+  switch ( ur_nref_tag(ref) ) {
+    default: assert(0);
+
+    case ur_direct: return ur_mug64(ref);
+    case ur_iatom:  return r->atoms.mugs[ur_nref_idx(ref)];
+    case ur_icell:  return r->cells.mugs[ur_nref_idx(ref)];
+  }
+}
+
+ur_bool_t
+ur_deep(ur_nref ref)
+{
+  return ur_icell == ur_nref_tag(ref);
+}
+
+ur_nref
+ur_head(ur_root_t *r, ur_nref ref)
+{
+  assert( ur_deep(ref) );
+  return r->cells.heads[ur_nref_idx(ref)];
+}
+
+ur_nref
+ur_tail(ur_root_t *r, ur_nref ref)
+{
+  assert( ur_deep(ref) );
+  return r->cells.tails[ur_nref_idx(ref)];
 }
 
 void
@@ -819,7 +820,7 @@ _cells_info(FILE *f, ur_cells_t *cells)
 }
 
 void
-ur_hcon_info(FILE *f, ur_root_t *r)
+ur_root_info(FILE *f, ur_root_t *r)
 {
   uint64_t total = 0;
 
@@ -859,7 +860,7 @@ _cells_free(ur_cells_t *cells)
 }
 
 void
-ur_hcon_free(ur_root_t *r)
+ur_root_free(ur_root_t *r)
 {
   _atoms_free(&(r->atoms));
   _cells_free(&(r->cells));
@@ -867,7 +868,7 @@ ur_hcon_free(ur_root_t *r)
 }
 
 ur_root_t*
-ur_hcon_init(void)
+ur_root_init(void)
 {
   ur_root_t *r = calloc(1, sizeof(*r));
   assert( r );

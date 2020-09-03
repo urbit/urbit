@@ -86,7 +86,7 @@ _jam_bench(void)
   }
 
   while ( 1 ) {
-    ur_root_t* rot_u = ur_hcon_init();
+    ur_root_t* rot_u = ur_root_init();
     c3_d       len_d;
     c3_y*      byt_y;
     ur_nref      ref;
@@ -138,7 +138,7 @@ _jam_bench(void)
       fprintf(stderr, "  jam cons unsafe: %u ms\r\n", mil_w);
     }
 
-    ur_hcon_free(rot_u);
+    ur_root_free(rot_u);
     break;
   }
 
@@ -291,7 +291,7 @@ _cue_bench(void)
     gettimeofday(&b4, 0);
 
     {
-      ur_root_t* rot_u = ur_hcon_init();
+      ur_root_t* rot_u = ur_root_init();
       ur_nref      ref;
       c3_w  len_w = u3r_met(3, vat);
       // XX assumes little-endian
@@ -304,7 +304,7 @@ _cue_bench(void)
         ur_cue(rot_u, len_w, byt_y, &ref);
       }
 
-      ur_hcon_free(rot_u);
+      ur_root_free(rot_u);
     }
 
     gettimeofday(&f2, 0);
@@ -327,9 +327,9 @@ _cue_bench(void)
                   : (c3_y*)((u3a_atom*)u3a_to_ptr(vat))->buf_w;
 
       for ( i_w = 0; i_w < max_w; i_w++ ) {
-        rot_u = ur_hcon_init();
+        rot_u = ur_root_init();
         ur_cue(rot_u, len_w, byt_y, &ref);
-        ur_hcon_free(rot_u);
+        ur_root_free(rot_u);
       }
     }
 
