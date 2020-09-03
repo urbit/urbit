@@ -5,10 +5,10 @@
 ::   
 ::   ## Interfacing notes:
 ::
-::   The inner door may interact with the library by producing cards or
-::   scrying. Do not pass any cards on a wire beginning with /helper as
-::   these wires are reserved by this library. Any watches/pokes/peeks
-::   not listed below will be routed to the inner door.
+::   The inner door may interact with the library by producing cards.
+::   Do not pass any cards on a wire beginning with /helper as these
+::   wires are reserved by this library. Any watches/pokes/peeks not
+::   listed below will be routed to the inner door.
 ::
 ::   ##  Subscription paths
 ::
