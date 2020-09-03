@@ -222,12 +222,6 @@ _bsw_cmp_check(const char* cap, uint8_t val, uint8_t off, uint8_t len, ur_bsw_t 
     ret = 0;
   }
 
-  if ( a->bytes[0] != b->bytes[0] ) {
-    fprintf(stderr, "%s: val 0x%02x off %u len %u: bytes fail (0x%02x, 0x%02x)\r\n",
-                    cap, val, off, len, a->bytes[0], b->bytes[0]);
-    ret = 0;
-  }
-
   if ( a->off != b->off ) {
     fprintf(stderr, "%s: val 0x%02x off %u len %u: offset fail (%u, %u)\r\n",
                     cap, val, off, len, a->off, b->off);
@@ -238,6 +232,26 @@ _bsw_cmp_check(const char* cap, uint8_t val, uint8_t off, uint8_t len, ur_bsw_t 
     fprintf(stderr, "%s: val 0x%02x off %u len %u: fill fail (%" PRIu64 ", %" PRIu64 ")\r\n",
                     cap, val, off, len, a->fill, b->fill);
     ret = 0;
+  }
+
+  {
+    uint64_t k, len_byt = a->fill + !!a->off;
+
+    if ( memcmp(a->bytes, b->bytes, len_byt) ) {
+      fprintf(stderr, "%s: val 0x%02x off %u, len %u not equal off=%u fill=%" PRIu64 "\r\n",
+                      cap, val, off, len, b->off, b->fill);
+      fprintf(stderr, "  a: { ");
+      for ( k = 0; k < len_byt; k++ ) {
+        fprintf(stderr, "%02x, ", a->bytes[k]);
+      }
+      fprintf(stderr, "}\r\n");
+      fprintf(stderr, "  b: { ");
+      for ( k = 0; k < len_byt; k++ ) {
+        fprintf(stderr, "%02x, ", b->bytes[k]);
+      }
+      fprintf(stderr, "}\r\n");
+      ret = 0;
+    }
   }
 
   return ret;
