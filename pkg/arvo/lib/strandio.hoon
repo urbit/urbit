@@ -243,7 +243,8 @@
 ::
 ++  scry
   |*  [=mold =path]
-  =/  m  (strand mold)
+  =/  m  (strand ,mold)
+  ^-  form:m
   ?>  ?=(^ path)
   ?>  ?=(^ t.path)
   ;<  =bowl:spider  bind:m  get-bowl

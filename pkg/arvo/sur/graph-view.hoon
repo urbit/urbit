@@ -1,7 +1,17 @@
-/-  group
+/-  *group
 /+  resource
 ^?
 |%
+::  $associated: A group to associate, or a policy if it is unmanaged
+::
++$  associated
+  $%  [%group rid=resource]
+      [%policy =policy]
+  ==
+::  $app: An app that is associated to a graph-store mark
+::
++$  app-name  ?(%chat %publish %links)
+::
 ::  $error: An error from a graph-view poke
 ::  
 ::    %offline: Ship is offline
@@ -24,13 +34,13 @@
         rid=resource
         title=@t
         description=@t
-        mark=(unit mark)
-        associated=(each resource policy:group)
+        app=app-name
+        =associated
     ==
-    [%delete rid=resource ~]
+    [%delete rid=resource]
     [%join rid=resource =ship] 
-    [%invite rid=resource ships=(set ship)]
-    [%groupify rid=resource title=@t description=@t]
+    ::[%invite rid=resource ships=(set ship)]
+    :: [%groupify rid=resource title=@t description=@t]
   ==
 --
 
