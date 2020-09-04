@@ -918,42 +918,59 @@
                 u3_noun fel,
                 u3_noun tub)
   {
-    u3_noun vex = u3x_good(u3n_slam_on(u3k(fel), u3k(tub)));
-    u3_noun p_vex, q_vex;
-    u3_noun ret;
+    //  lef: list of successful [fel] parse results
+    //  wag: initial accumulator
+    //
+    u3_noun wag, lef = u3_nul;
 
-    u3x_cell(vex, &p_vex, &q_vex);
-    if ( c3n == u3du(q_vex) ) {
-      ret = u3nq(u3k(p_vex),
-                 u3_nul,
-                 u3k(rud),
-                 u3k(tub));
-    }
-    else {
-      u3_noun uq_vex = u3t(q_vex);
-      u3_noun puq_vex, quq_vex;
-      u3_noun wag, p_wag, q_wag, uq_wag, puq_wag, quq_wag;
+    {
+      u3_noun    vex, p_vex, q_vex;
+      u3j_site fel_u;
+      u3j_gate_prep(&fel_u, u3k(fel));
 
-      u3x_cell(uq_vex, &puq_vex, &quq_vex);
-      wag = _cqe_stir_fun(rud, raq, fel, quq_vex);
+      vex = u3j_gate_slam(&fel_u, u3k(tub));
+      u3x_cell(vex, &p_vex, &q_vex);
 
-      u3x_cell(wag, &p_wag, &q_wag);
-      if ( c3n == u3du(q_wag) ) {
-        return u3m_bail(c3__fail);
+      while ( u3_nul != q_vex ) {
+        lef = u3nc(vex, lef);
+        tub = u3x_at(7, q_vex); // q.u.q.vex
+
+        vex = u3j_gate_slam(&fel_u, u3k(tub));
+        u3x_cell(vex, &p_vex, &q_vex);
       }
-      uq_wag = u3t(q_wag);
-      u3x_cell(uq_wag, &puq_wag, &quq_wag);
 
-      ret = u3nq(_last(p_vex, p_wag),
-                 u3_nul,
-                 u3x_good(u3n_slam_on(u3k(raq),
-                                      u3nc(u3k(puq_vex),
-                                           u3k(puq_wag)))),
-                 u3k(quq_wag));
-      u3z(wag);
+      wag = u3nq(u3k(p_vex), u3_nul, u3k(rud), u3k(tub));
+      u3z(vex);
+      u3j_gate_lose(&fel_u);
     }
-    u3z(vex);
-    return ret;
+
+    //  fold [lef] into [wag] by way of [raq]
+    //
+    if ( u3_nul != lef ) {
+      u3_noun  p_vex, puq_vex, gaw, p_wag, puq_wag, quq_wag;
+      u3_noun   i, t = lef;
+      u3j_site raq_u;
+      u3j_gate_prep(&raq_u, u3k(raq));
+
+      do {
+        u3x_cell(t, &i, &t);
+        u3x_qual(i, &p_vex, 0, &puq_vex, 0);
+        u3x_qual(wag, &p_wag, 0, &puq_wag, &quq_wag);
+
+        gaw = u3nq(_last(p_vex, p_wag),
+                   u3_nul,
+                   u3j_gate_slam(&raq_u,
+                                 u3nc(u3k(puq_vex), u3k(puq_wag))),
+                   u3k(quq_wag));
+        u3z(wag);
+        wag = gaw;
+      } while ( u3_nul != t );
+
+      u3z(lef);
+      u3j_gate_lose(&raq_u);
+    }
+
+    return wag;
   }
 
   u3_noun
