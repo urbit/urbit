@@ -1,38 +1,57 @@
 import React, { Component } from 'react';
 import ChatEditor from './chat-editor';
-import { S3Upload } from '~/views/components/s3-upload'
+import { S3Upload, SubmitDragger } from '~/views/components/s3-upload'
 ;
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
+import GlobalApi from '~/logic/api/global';
+import { Envelope } from '~/types/chat-update';
+import { Contacts, S3Configuration } from '~/types';
+
+interface ChatInputProps {
+  api: GlobalApi;
+  numMsgs: number;
+  station: any;
+  owner: string;
+  ownerContact: any;
+  envelopes: Envelope[];
+  contacts: Contacts;
+  onUnmount(msg: string): void;
+  s3: any;
+  placeholder: string;
+  message: string;
+  deleteMessage(): void;
+  hideAvatars: boolean;
+  onPaste?(): void;
+}
+
+interface ChatInputState {
+  inCodeMode: boolean;
+  submitFocus: boolean;
+  uploadingPaste: boolean;
+}
 
 
+export class ChatInput extends Component<ChatInputProps, ChatInputState> {
+  public s3Uploader: React.RefObject<S3Upload>;
+  private chatEditor: React.RefObject<ChatEditor>;
 
-
-export class ChatInput extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       inCodeMode: false,
+      submitFocus: false,
+      uploadingPaste: false,
     };
+
+    this.s3Uploader = React.createRef();
+    this.chatEditor = React.createRef();
 
     this.submit = this.submit.bind(this);
     this.toggleCode = this.toggleCode.bind(this);
-  }
-
-  uploadSuccess(url) {
-    const { props } = this;
-    props.api.chat.message(
-      props.station,
-      `~${window.ship}`,
-      Date.now(),
-      { url }
-    );
-  }
-
-  uploadError(error) {
-    //  no-op for now
+    
   }
 
   toggleCode() {
@@ -105,16 +124,46 @@ export class ChatInput extends Component {
 
   uploadSuccess(url) {
     const { props } = this;
-    props.api.chat.message(
-      props.station,
-      `~${window.ship}`,
-      Date.now(),
-      { url }
-    );
+    if (this.state.uploadingPaste) {
+      this.chatEditor.current.editor.setValue(url);
+      this.setState({ uploadingPaste: false });
+    } else {
+      props.api.chat.message(
+        props.station,
+        `~${window.ship}`,
+        Date.now(),
+        { url }
+      );
+    }
+    
   }
 
   uploadError(error) {
     //  no-op for now
+  }
+
+  readyToUpload(): boolean {
+    return Boolean(this.s3Uploader.current?.inputRef.current);
+  }
+
+  onPaste(codemirrorInstance, event: ClipboardEvent) {
+    if (!event.clipboardData || !event.clipboardData.files.length) {
+      return;
+    }
+    this.setState({ uploadingPaste: true });
+    event.preventDefault();
+    event.stopPropagation();
+    this.uploadFiles(event.clipboardData.files);
+  }
+
+  uploadFiles(files: FileList) {
+    if (!this.readyToUpload()) {
+      return;
+    }
+    this.s3Uploader.current.inputRef.current.files = files;
+    const fire = document.createEvent("HTMLEvents");
+    fire.initEvent("change", true, true);
+    this.s3Uploader.current?.inputRef.current?.dispatchEvent(fire);
   }
 
   render() {
@@ -143,7 +192,8 @@ export class ChatInput extends Component {
              "pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white " +
              "bg-gray0-d relative"
            }
-           style={{ flexGrow: 1 }}>
+           style={{ flexGrow: 1 }}
+           >
         <div className="fl"
              style={{
                 marginTop: 6,
@@ -153,11 +203,14 @@ export class ChatInput extends Component {
           {avatar}
         </div>
         <ChatEditor
+          ref={this.chatEditor}
           inCodeMode={state.inCodeMode}
           submit={this.submit}
           onUnmount={props.onUnmount}
           message={props.message}
-          placeholder='Message...' />
+          onPaste={this.onPaste.bind(this)}
+          placeholder='Message...'
+        />
         <div className="ml2 mr2"
              style={{
                 height: '16px',
@@ -166,11 +219,12 @@ export class ChatInput extends Component {
                 marginTop: 10
               }}>
           <S3Upload
+            ref={this.s3Uploader}
             configuration={props.s3.configuration}
             credentials={props.s3.credentials}
             uploadSuccess={this.uploadSuccess.bind(this)}
             uploadError={this.uploadError.bind(this)}
-            accept="image/*"
+            accept="*"
           >
             <img
               className="invert-d"
@@ -187,7 +241,7 @@ export class ChatInput extends Component {
             marginTop: 10
           }}>
           <img style={{
-              filter: state.inCodeMode && 'invert(100%)',
+              filter: state.inCodeMode ? 'invert(100%)' : '',
               height: '14px',
               width: '14px',
             }}

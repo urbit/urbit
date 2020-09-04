@@ -15,6 +15,8 @@ import GlobalApi from "~/logic/api/global";
 import { Association } from "~/types/metadata-update";
 import {Group} from "~/types/group-update";
 import { LocalUpdateRemoteContentPolicy } from "~/types";
+import { S3Upload, SubmitDragger } from '~/views/components/s3-upload';
+import { IUnControlledCodeMirror } from "react-codemirror2";
 
 
 type ChatScreenProps = RouteComponentProps<{
@@ -43,9 +45,11 @@ type ChatScreenProps = RouteComponentProps<{
 
 interface ChatScreenState {
   messages: Map<string, string>;
+  dragover: boolean;
 }
 
 export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
+  private chatInput: React.RefObject<ChatInput>;
   lastNumPending = 0;
   activityTimeout: NodeJS.Timeout | null = null;
 
@@ -54,7 +58,10 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
 
     this.state = {
       messages: new Map(),
+      dragover: false,
     };
+
+    this.chatInput = React.createRef();
 
     moment.updateLocale("en", {
       calendar: {
@@ -66,6 +73,26 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
         sameElse: "DD/MM/YYYY",
       },
     });
+  }
+
+  readyToUpload(): boolean {
+    return Boolean(this.chatInput.current?.s3Uploader.current?.inputRef.current);
+  }
+
+  onDragEnter() {
+    if (!this.readyToUpload()) {
+      return;
+    }
+    this.setState({ dragover: true });
+  }
+
+  onDrop(event: DragEvent) {
+    this.setState({ dragover: false });
+    if (!event.dataTransfer || !event.dataTransfer.files.length) {
+      return;
+    }
+    event.preventDefault();
+    this.chatInput.current?.uploadFiles(event.dataTransfer.files);
   }
 
   render() {
@@ -104,7 +131,18 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
     return (
       <div
         key={props.station}
-        className="h-100 w-100 overflow-hidden flex flex-column relative">
+        className="h-100 w-100 overflow-hidden flex flex-column relative"
+        onDragEnter={this.onDragEnter.bind(this)}
+        onDragOver={event => {
+          event.preventDefault();
+          if (!this.state.dragover) {
+            this.setState({ dragover: true });
+          }
+        }}
+        onDragLeave={() => this.setState({ dragover: false })}
+        onDrop={this.onDrop.bind(this)}
+      >
+        {this.state.dragover ? <SubmitDragger /> : null}
         <ChatHeader {...props} />
         <ChatWindow
           isChatMissing={isChatMissing}
@@ -116,6 +154,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           ship={props.match.params.ship}
           {...props} />
         <ChatInput
+          ref={this.chatInput}
           api={props.api}
           numMsgs={lastMsgNum}
           station={props.station}
