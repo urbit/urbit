@@ -1435,6 +1435,8 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
   return pir_u;
 }
 
+/* _pier_save_cb(): save snapshot upon serf/disk synchronization.
+*/
 static void
 _pier_save_cb(void* ptr_v, c3_d eve_d)
 {
@@ -1468,6 +1470,8 @@ u3_pier_save(u3_pier* pir_u)
   return c3n;
 }
 
+/* _pier_cram_cb(): save snapshot upon serf/disk synchronization.
+*/
 static void
 _pier_cram_cb(void* ptr_v, c3_d eve_d)
 {
@@ -1502,6 +1506,8 @@ u3_pier_cram(u3_pier* pir_u)
   return c3n;
 }
 
+/* _pier_work_close_cb(): dispose u3_work after closing handles.
+*/
 static void
 _pier_work_close_cb(uv_handle_t* idl_u)
 {
@@ -1509,6 +1515,8 @@ _pier_work_close_cb(uv_handle_t* idl_u)
   c3_free(wok_u);
 }
 
+/* _pier_work_close(): close drivers/handles in the u3_psat_work state.
+*/
 static void
 _pier_work_close(u3_work* wok_u)
 {
