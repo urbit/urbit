@@ -6,6 +6,12 @@ module Urbit.Vere.Dawn ( dawnVent
                        , dawnCometList
                        , renderShip
                        , mineComet
+                       -- Used only in testing
+                       , mix
+                       , shas
+                       , shaf
+                       , cometFingerprintBS
+                       , cometFingerprint
                        ) where
 
 import Urbit.Arvo.Common
