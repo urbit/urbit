@@ -1506,6 +1506,30 @@ u3_pier_cram(u3_pier* pir_u)
   return c3n;
 }
 
+/* u3_pier_meld(): globally deduplicate persistent state.
+*/
+void
+u3_pier_meld(u3_pier* pir_u)
+{
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): meld: plan\r\n", pir_u->god_u->eve_d);
+#endif
+
+  u3_lord_meld(pir_u->god_u);
+}
+
+/* u3_pier_pack(): defragment persistent state.
+*/
+void
+u3_pier_pack(u3_pier* pir_u)
+{
+#ifdef VERBOSE_PIER
+  fprintf(stderr, "pier: (%" PRIu64 "): meld: plan\r\n", pir_u->god_u->eve_d);
+#endif
+
+  u3_lord_pack(pir_u->god_u);
+}
+
 /* _pier_work_close_cb(): dispose u3_work after closing handles.
 */
 static void

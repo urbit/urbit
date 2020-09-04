@@ -343,12 +343,6 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
         rec_o = c3y;
       }
 
-      //  pack memory on |pack
-      //
-      if ( c3__pack == u3h(fec) ) {
-        pac_o = c3y;
-      }
-
       riv = u3t(riv);
       i_w++;
     }
@@ -366,6 +360,9 @@ _serf_sure_feck(u3_serf* sef_u, c3_w pre_w, u3_noun vir)
   //    high-priority: 2^22 contiguous words remaining (~8 MB)
   //    low-priority:  2^27 contiguous words remaining (~536 MB)
   //    XX maybe use 2^23 (~16 MB) and 2^26 (~268 MB?
+  //
+  //    XX these thresholds should trigger notifications sent to the king
+  //    instead of directly triggering these remedial actions.
   //
   {
     u3_noun pri = u3_none;

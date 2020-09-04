@@ -32,6 +32,7 @@
           $%  [%cram eve=@]
               [%exit cod=@]
               [%save eve=@]
+              [%meld ~]
               [%pack ~]
       ==  ==
       [%peek mil=@ now=@da lyc=gang pat=path]
@@ -272,6 +273,12 @@ _lord_plea_live(u3_lord* god_u, u3_noun dat)
 
     case u3_writ_cram: {
       god_u->cb_u.cram_f(god_u->cb_u.ptr_v);
+    } break;
+
+    case u3_writ_meld: {
+      //  XX wire into cb
+      //
+      u3l_log("pier: meld complete\n");
     } break;
 
     case u3_writ_pack: {
@@ -774,6 +781,10 @@ _lord_writ_make(u3_lord* god_u, u3_writ* wit_u)
       msg = u3nt(c3__live, c3__cram, u3i_chubs(1, &god_u->eve_d));
     } break;
 
+    case u3_writ_meld: {
+      msg = u3nt(c3__live, c3__meld, u3_nul);
+    } break;
+
     case u3_writ_pack: {
       msg = u3nt(c3__live, c3__pack, u3_nul);
     } break;
@@ -1002,6 +1013,26 @@ u3_lord_cram(u3_lord* god_u)
     _lord_writ_plan(god_u, wit_u);
     return c3y;
   }
+}
+
+/* u3_lord_meld(): globally deduplicate persistent state.
+*/
+void
+u3_lord_meld(u3_lord* god_u)
+{
+  u3_writ* wit_u = _lord_writ_new(god_u);
+  wit_u->typ_e = u3_writ_meld;
+  _lord_writ_plan(god_u, wit_u);
+}
+
+/* u3_lord_pack(): defragment persistent state.
+*/
+void
+u3_lord_pack(u3_lord* god_u)
+{
+  u3_writ* wit_u = _lord_writ_new(god_u);
+  wit_u->typ_e = u3_writ_pack;
+  _lord_writ_plan(god_u, wit_u);
 }
 
 /* u3_lord_exit(): shutdown gracefully.
