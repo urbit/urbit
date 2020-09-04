@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-deprecations #-}
-
 {-|
     Use etherium to access PKI information.
 -}
