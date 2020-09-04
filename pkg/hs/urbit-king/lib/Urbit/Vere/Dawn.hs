@@ -2,12 +2,17 @@
     Use etherium to access PKI information.
 -}
 
-module Urbit.Vere.Dawn where
+module Urbit.Vere.Dawn ( dawnVent
+                       , dawnCometList
+                       , renderShip
+                       , mineComet
+                       ) where
 
 import Urbit.Arvo.Common
 import Urbit.Arvo.Event  hiding (Address)
 import Urbit.Prelude     hiding (Call, rights, to, (.=))
 
+import Data.Bifunctor                (bimap)
 import Data.Bits                     (xor)
 import Data.List                     (nub)
 import Data.Text                     (splitOn)
@@ -21,6 +26,7 @@ import qualified Crypto.Sign.Ed25519   as Ed
 import qualified Data.Binary           as B
 import qualified Data.ByteString       as BS
 import qualified Data.ByteString.Char8 as C
+import qualified Data.ByteString.Lazy  as L
 import qualified Network.HTTP.Client   as C
 import qualified Urbit.Ob              as Ob
 
@@ -28,20 +34,19 @@ import qualified Network.HTTP.Client.TLS as TLS
 import qualified Network.HTTP.Types      as HT
 
 -- During boot, use the infura provider
+provider :: String
 provider = "http://eth-mainnet.urbit.org:8545"
 
 -- The address of the azimuth contract as a string.
-azimuthAddr = "0x223c067f8cf28ae173ee5cafea60ca44c335fecb" :: Text
+azimuthAddr :: Text
+azimuthAddr = "0x223c067f8cf28ae173ee5cafea60ca44c335fecb"
 
 -- Conversion Utilities --------------------------------------------------------
 
 passFromBS :: ByteString -> ByteString -> ByteString -> Pass
-passFromBS enc aut sut | bytesAtom sut /= 1 =
-      Pass (Ed.PublicKey mempty) (Ed.PublicKey mempty)
-passFromBS enc aut sut =
-      Pass (decode aut) (decode enc)
-    where
-      decode = Ed.PublicKey
+passFromBS enc aut sut
+  | bytesAtom sut /= 1 = Pass (Ed.PublicKey mempty) (Ed.PublicKey mempty)
+  | otherwise          = Pass (Ed.PublicKey aut) (Ed.PublicKey enc)
 
 bsToBool :: ByteString -> Bool
 bsToBool bs = bytesAtom bs == 1
@@ -60,8 +65,7 @@ hexStrToAtom =
   bytesAtom . reverse . toBytes . hexString . removePrefix . encodeUtf8
 
 onLeft :: (a -> b) -> Either a c -> Either b c
-onLeft fun (Left a) = Left $ fun a
-onLeft fun (Right c) = Right c
+onLeft fun = bimap fun id
 
 -- Data Validation -------------------------------------------------------------
 
@@ -92,6 +96,7 @@ ringToPass Ring{..} = Pass{..}
 --
 -- So, like with Vere, we roll our own.
 
+dawnSendHTTP :: String -> L.ByteString -> RIO e (Either Int L.ByteString)
 dawnSendHTTP endpoint requestData = liftIO do
   manager <- C.newManager TLS.tlsManagerSettings
 
@@ -99,7 +104,7 @@ dawnSendHTTP endpoint requestData = liftIO do
   let request = initialRequest
         { C.method = "POST"
         , C.requestBody = C.RequestBodyLBS $ requestData
-        , C.requestHeaders = [("Accept", "applciation/json"),
+        , C.requestHeaders = [("Accept", "application/json"),
                               ("Content-Type", "application/json"),
                               ("Charsets", "utf-8")]
         }
@@ -110,7 +115,7 @@ dawnSendHTTP endpoint requestData = liftIO do
   let code = HT.statusCode $ C.responseStatus response
   case code of
     200 -> pure $ Right $ C.responseBody response
-    x   -> pure $ Left x
+    _   -> pure $ Left code
 
 class RequestMethod m where
   getRequestMethod :: m -> Text
@@ -138,11 +143,11 @@ dawnPostRequests :: forall req e resp
 dawnPostRequests endpoint responseBuilder requests = do
   -- Encode our input requests
   let requestPayload =
-        encode $ Array $ fromList $ map toFullRequest $ zip [0..] requests
+        encode $ Array $ fromList $ fmap toFullRequest $ zip [0..] requests
 
   -- Send to the server
   responses <- dawnSendHTTP endpoint requestPayload >>= \case
-    Left err -> error $ "error fetching " ++ provider ++ ": HTTP " ++ (show err)
+    Left err -> error $ "error fetching " <> provider <> ": HTTP " <> (show err)
     Right x -> pure x
 
   -- Get a list of the result texts in the order of the submitted requests
@@ -151,24 +156,20 @@ dawnPostRequests endpoint responseBuilder requests = do
     Just x  -> pure $ map rrResult $ sortOn rrId x
 
   -- Build the final result structure by calling the passed in builder with the
-  -- request (some outputs need data from the request sturcture, eitherwise,
+  -- request (some outputs need data from the request structure, eitherwise,
   -- we'd lean on FromJSON).
   let results = map (uncurry responseBuilder) (zip requests rawSorted)
   pure results
 
  where
   toFullRequest :: (Int, req) -> Value
-  toFullRequest (id, req) = object [ "jsonrpc" .= ("2.0" :: Text)
-                                   , "method"  .= getRequestMethod req
-                                   , "params"  .= req
-                                   , "id"      .= id
-                                   ]
+  toFullRequest (rid, req) = object [ "jsonrpc" .= ("2.0" :: Text)
+                                    , "method"  .= getRequestMethod req
+                                    , "params"  .= req
+                                    , "id"      .= rid
+                                    ]
 
 -- Azimuth JSON Requests -------------------------------------------------------
-
--- Simple packing a block number to the text format.
-blockNumToStr :: Int -> Text
-blockNumToStr bn = pack $ "0x" <> (showHex bn "")
 
 -- Not a full implementation of the Ethereum ABI, but just the ability to call
 -- a method by encoded id (like 0x63fa9a87 for `points(uint32)`), and a single
@@ -191,7 +192,7 @@ instance ToJSON BlockRequest where
 -- No need to parse, it's already in the format we'll pass as an argument to
 -- eth calls which take a block number.
 parseBlockRequest :: BlockRequest -> Text -> TextBlockNum
-parseBlockRequest br txt = txt
+parseBlockRequest _ txt = txt
 
 type TextBlockNum = Text
 
@@ -204,6 +205,7 @@ instance RequestMethod PointRequest where
   getRequestMethod PointRequest{..} = "eth_call"
 
 instance ToJSON PointRequest where
+  -- 0x63fa9a87 is the points(uint32) call.
   toJSON PointRequest{..} =
     Array $ fromList [object [ "to" .= azimuthAddr
                              , "data" .= encodeCall "0x63fa9a87" grqPointId],
@@ -304,13 +306,14 @@ instance RequestMethod TurfRequest where
   getRequestMethod TurfRequest{..} = "eth_call"
 
 instance ToJSON TurfRequest where
+  -- 0xeccc8ff1 is the dnsDomains(uint32) call.
   toJSON TurfRequest{..} =
     Array $ fromList [object [ "to" .= azimuthAddr
                              , "data" .= encodeCall "0xeccc8ff1" trqTurfId],
                       String trqHexBlockNum
                      ]
 
--- This is another hack instead of a full Ethereum ABI resposne.
+-- This is another hack instead of a full Ethereum ABI response.
 parseTurfResponse :: TurfRequest -> Text -> Turf
 parseTurfResponse a raw = turf
   where
@@ -318,7 +321,7 @@ parseTurfResponse a raw = turf
     (_, blRest) = splitAt 64 without0x
     (utfLenStr, utfStr) = splitAt 64 blRest
     utfLen = fromIntegral $ bytesAtom $ reverse $ toBytes $ hexString utfLenStr
-    dnsStr = decodeUtf8 $ (BS.take utfLen) $ toBytes $ hexString utfStr
+    dnsStr = decodeUtf8 $ BS.take utfLen $ toBytes $ hexString utfStr
     turf = Turf $ fmap Cord $ reverse $ splitOn "." dnsStr
 
 -- Azimuth Functions -----------------------------------------------------------
@@ -326,7 +329,7 @@ parseTurfResponse a raw = turf
 retrievePoint :: String -> TextBlockNum -> Ship -> RIO e EthPoint
 retrievePoint endpoint block ship =
   dawnPostRequests provider parseEthPoint
-    [(PointRequest block (fromIntegral ship))] >>= \case
+    [PointRequest block (fromIntegral ship)] >>= \case
       [x] -> pure x
       _   -> error "JSON server returned multiple return values."
 
@@ -341,7 +344,7 @@ validateShipAndGetSponsor endpoint block (Seed ship life ring oaf) =
       -- A comet address is the fingerprint of the keypair
       let shipFromPass = cometFingerprint $ ringToPass ring
       when (ship /= shipFromPass) $
-        fail ("comet name doesn't match fingerprint " ++ show ship ++ " vs " ++
+        fail ("comet name doesn't match fingerprint " <> show ship <> " vs " <>
               show shipFromPass)
       when (life /= 1) $
         fail ("comet can never be re-keyed")
@@ -354,15 +357,15 @@ validateShipAndGetSponsor endpoint block (Seed ship life ring oaf) =
       pure $ shipSein ship
 
     validateRest = do
-      putStrLn ("boot: retrieving " ++ renderShip ship ++ "'s public keys")
+      putStrLn ("boot: retrieving " <> renderShip ship <> "'s public keys")
 
       whoP <- retrievePoint endpoint block ship
       case epNet whoP of
         Nothing -> fail "ship not keyed"
         Just (netLife, pass, contNum, (hasSponsor, who), _) -> do
           when (netLife /= life) $
-              fail ("keyfile life mismatch; keyfile claims life " ++
-                    show life ++ ", but Azimuth claims life " ++
+              fail ("keyfile life mismatch; keyfile claims life " <>
+                    show life <> ", but Azimuth claims life " <>
                     show netLife)
           when ((ringToPass ring) /= pass) $
               fail "keyfile does not match blockchain"
@@ -377,7 +380,7 @@ getSponsorshipChain :: String -> TextBlockNum -> Ship -> RIO e [(Ship,EthPoint)]
 getSponsorshipChain endpoint block = loop
   where
     loop ship = do
-      putStrLn ("boot: retrieving keys for sponsor " ++ renderShip ship)
+      putStrLn ("boot: retrieving keys for sponsor " <> renderShip ship)
       ethPoint <- retrievePoint endpoint block ship
 
       case (clanFromShip ship, epNet ethPoint) of
@@ -385,16 +388,16 @@ getSponsorshipChain endpoint block = loop
         (Ob.Moon, _)  -> fail "Moons cannot be sponsors"
 
         (_, Nothing) ->
-            fail $ unpack ("Ship " ++ renderShip ship ++ " not booted")
+            fail $ unpack ("Ship " <> renderShip ship <> " not booted")
 
         (Ob.Galaxy, Just _) -> pure [(ship, ethPoint)]
 
         (_, Just (_, _, _, (False, _), _)) ->
-            fail $ unpack ("Ship " ++ renderShip ship ++ " has no sponsor")
+            fail $ unpack ("Ship " <> renderShip ship <> " has no sponsor")
 
         (_, Just (_, _, _, (True, sponsor), _)) -> do
             chain <- loop sponsor
-            pure $ chain ++ [(ship, ethPoint)]
+            pure $ chain <> [(ship, ethPoint)]
 
 -- Produces either an error or a validated boot event structure.
 dawnVent :: HasLogFunc e => Seed -> RIO e (Either Text Dawn)
@@ -409,7 +412,7 @@ dawnVent dSeed@(Seed ship life ring oaf) =
       x     -> error "Unexpected multiple returns from block # request"
 
     let dBloq = hexStrToAtom hexStrBlock
-    putStrLn ("boot: ethereum block #" ++ tshow dBloq)
+    putStrLn ("boot: ethereum block #" <> tshow dBloq)
 
     immediateSponsor <- validateShipAndGetSponsor provider hexStrBlock dSeed
     dSponsor <- getSponsorshipChain provider hexStrBlock immediateSponsor
