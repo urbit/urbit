@@ -5509,16 +5509,32 @@
 ::
 ++  stir
   ~/  %stir
-  |*  {rud/* raq/_=>(~ |*({a/* b/*} [a b])) fel/rule}
+  |*  [rud=* raq=_=>(~ |*([a=* b=*] [a b])) fel=rule]
   ~/  %fun
-  |=  tub/nail
+  |=  tub=nail
   ^-  (like _rud)
-  =+  vex=(fel tub)
-  ?~  q.vex
-    [p.vex [~ rud tub]]
-  =+  wag=$(tub q.u.q.vex)
-  ?>  ?=(^ q.wag)
-  [(last p.vex p.wag) [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]]
+  ::
+  ::  lef: successful interim parse results per .fel
+  ::  wag: initial accumulator
+  ::
+  =+  ^=  [lef wag]
+    =|  lef=(list _(fel tub))
+    =|  wag=[p=hair q=[~ u=[p=_rud q=nail]]]
+    |-  ^+  [lef wag]
+    =+  vex=(fel tub)
+    ?~  q.vex
+      =.  wag  [p.vex [~ rud tub]]
+      [lef wag]
+    $(lef [vex lef], tub q.u.q.vex)
+  ::
+  ::  fold .lef into .wag, combining results with .raq
+  ::
+  %+  roll  lef
+  |=  [vex=_(fel tub) wag=_wag]
+  ^+  wag
+  :-  (last p.vex p.wag)
+  ?>  ?=(^ q.vex)
+  [~ (raq p.u.q.vex p.u.q.wag) q.u.q.wag]
 ::
 ++  stun                                                ::  parse several times
   |*  {lig/{@ @} fel/rule}
