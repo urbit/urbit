@@ -2,10 +2,10 @@
 */
     /**  Functions.
     **/
-      /* u3u_uniq(): hash-cons roots off-loom, reallocate on loom.
+      /* u3u_meld(): globally deduplicate memory.
       */
         void
-        u3u_uniq(void);
+        u3u_meld(void);
 
       /* u3u_cram(): globably deduplicate memory, and write a rock to disk.
       */

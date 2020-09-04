@@ -34,6 +34,7 @@
           $%  [%cram eve=@]
               [%exit cod=@]
               [%save eve=@]
+              [%meld ~]
               [%pack ~]
       ==  ==
       [%peek mil=@ now=@da lyc=gang pat=path]
@@ -978,6 +979,19 @@ u3_serf_live(u3_serf* sef_u, u3_noun com, u3_noun* ret)
       else {
         u3z(com);
         u3a_print_memory(stderr, "serf: pack: gained", u3m_pack());
+        *ret = u3nc(c3__live, u3_nul);
+        return c3y;
+      }
+    }
+
+    case c3__meld: {
+      if ( u3_nul != dat ) {
+        u3z(com);
+        return c3n;
+      }
+      else {
+        u3z(com);
+        u3u_meld();
         *ret = u3nc(c3__live, u3_nul);
         return c3y;
       }

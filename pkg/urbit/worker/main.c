@@ -382,7 +382,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
 /* _cw_uniq(); deduplicate persistent nouns
 */
 static void
-_cw_uniq(c3_i argc, c3_c* argv[])
+_cw_meld(c3_i argc, c3_c* argv[])
 {
   c3_assert( 3 <= argc );
 
@@ -392,7 +392,7 @@ _cw_uniq(c3_i argc, c3_c* argv[])
 
   u3_serf_grab();
 
-  u3u_uniq();
+  u3u_meld();
 
   u3_serf_grab();
 
@@ -428,7 +428,7 @@ _cw_usage(c3_i argc, c3_c* argv[])
           "  compact persistent state:\n"
           "    %s pack <pier>\n\n"
           "  deduplicate persistent state:\n"
-          "    %s uniq <pier>\n\n"
+          "    %s meld <pier>\n\n"
           "  jam persistent state:\n"
           "    %s cram <pier>\n\n"
           "  cue persistent state:\n"
@@ -475,8 +475,8 @@ main(c3_i argc, c3_c* argv[])
     else if ( 0 == strcmp("queu", argv[1]) ) {
       _cw_queu(argc, argv);
     }
-    else if ( 0 == strcmp("uniq", argv[1]) ) {
-      _cw_uniq(argc, argv);
+    else if ( 0 == strcmp("meld", argv[1]) ) {
+      _cw_meld(argc, argv);
     }
     else if ( 0 == strcmp("pack", argv[1]) ) {
       _cw_pack(argc, argv);

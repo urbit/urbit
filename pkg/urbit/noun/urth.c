@@ -425,10 +425,10 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
   return ken;
 }
 
-/* u3u_uniq(): hash-cons roots off-loom, reallocate on loom.
+/* u3u_meld(): globally deduplicate memory.
 */
 void
-u3u_uniq(void)
+u3u_meld(void)
 {
   ur_root_t* rot_u;
   ur_nvec_t  cod_u;
