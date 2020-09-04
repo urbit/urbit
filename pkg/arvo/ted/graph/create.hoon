@@ -5,6 +5,7 @@
 ++  strand  strand:spider
 ++  poke  poke:strandio
 ++  poke-our   poke-our:strandio
+::
 ++  handle-group
   |=  [rid=resource =associated:graph-view]
   =/  m  (strand ,resource)
@@ -17,6 +18,7 @@
     (poke-our %group-push-hook %push-hook-action !>([%add rid]))
   (pure:m rid)
 --
+::
 =,  strand=strand:spider
 ^-  thread:spider
 |=  arg=vase
@@ -54,4 +56,3 @@
 ;<  ~  bind:m
   (poke-our %metadata-hook %metadata-hook-action !>([%add-owned group-path]))
 (pure:m !>(~))
-

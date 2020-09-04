@@ -5,6 +5,7 @@
 ++  strand  strand:spider
 ++  poke  poke:strandio
 ++  poke-our   poke-our:strandio
+::
 ++  scry-metadata
   |=  rid=resource
   =/  m  (strand ,(unit resource))
@@ -16,6 +17,7 @@
       /noun
     ==
   (pure:m (bind pax de-path:resource))
+::
 ++  scry-group
   |=  rid=resource
   =/  m  (strand ,(unit resource))
@@ -27,6 +29,7 @@
       /noun
     ==
   (pure:m (need ugroup))
+::
 ++  delete-graph
   |=  rid=resource
   =/  m  (strand ,~)
@@ -36,6 +39,7 @@
     (poke-our %graph-store %graph-update [%archive-graph rid.action])
   (pure:m ~)
 --
+::
 ^-  thread:spider
 |=  arg=vase
 =/  m  (strand ,vase)
@@ -53,9 +57,8 @@
 ?.  hidden.u.ugroup
   (delete-graph rid.action)
 ;<  ~  bind:m
-  (poke-our %group-push-hook %pull-hook-action [%remove rid.action])
+  (poke-our %group-push-hook %push-hook-action [%remove rid.action])
 ;<  ~  bind:m
   (poke-our %group-store %group-action !>([%remove-group rid.action])
 ;<  ~  bind:m  (delete-graph rid.action)
 (pure:m !>(~))
-

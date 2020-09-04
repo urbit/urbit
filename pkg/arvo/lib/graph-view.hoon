@@ -19,6 +19,7 @@
     :~  create+create
         delete+delete
         join+join
+        leave+leave
         ::groupify+groupify
         ::invite+invite
     ==
@@ -31,12 +32,17 @@
           app+app
           associated+associated
       ==
+    ::
     ++  app
       |=  jon=json
       ^-  app-name
       ?>  ?=(%s -.jon)
-      ~!  app-name
       %chat
+    ::
+    ++  leave
+      %-  ot
+      :~  resource+dejs:resource
+      ==
     ::
     ++  delete
       %-  ot
@@ -51,12 +57,12 @@
     ::
     ++  groupify  !!
     ++  invite    !!
+    ::
     ++  associated
       %-  of
       :~  group+dejs:resource
           policy+policy:dejs:group-store
       ==
-
     --
   --
 --
