@@ -57,10 +57,13 @@ shipSein = Ship . fromIntegral . Ob.fromPatp . Ob.sein . Ob.patp . fromIntegral
 renderShip :: Ship -> Text
 renderShip = Ob.renderPatp . Ob.patp . fromIntegral
 
-
 hexStrToAtom :: Text -> Atom
 hexStrToAtom =
   bytesAtom . reverse . toBytes . hexString . removePrefix . encodeUtf8
+
+onLeft :: (a -> b) -> Either a c -> Either b c
+onLeft fun (Left a) = Left $ fun a
+onLeft fun (Right c) = Right c
 
 -- Data Validation -------------------------------------------------------------
 
@@ -397,34 +400,34 @@ getSponsorshipChain endpoint block = loop
 
 -- Produces either an error or a validated boot event structure.
 dawnVent :: HasLogFunc e => Seed -> RIO e (Either Text Dawn)
-dawnVent dSeed@(Seed ship life ring oaf) = do
-  blockResponses
-    <- dawnPostRequests provider parseBlockRequest [BlockRequest]
+dawnVent dSeed@(Seed ship life ring oaf) =
+  -- The type checker can't figure this out on its own.
+  (onLeft tshow :: Either SomeException Dawn -> Either Text Dawn) <$> try do
+    blockResponses
+      <- dawnPostRequests provider parseBlockRequest [BlockRequest]
 
-  hexStrBlock <- case blockResponses of
-    [num] -> pure num
-    x     -> error "Unexpected multiple returns from block # request"
+    hexStrBlock <- case blockResponses of
+      [num] -> pure num
+      x     -> error "Unexpected multiple returns from block # request"
 
-  let dBloq = hexStrToAtom hexStrBlock
-  putStrLn ("boot: ethereum block #" ++ tshow dBloq)
+    let dBloq = hexStrToAtom hexStrBlock
+    putStrLn ("boot: ethereum block #" ++ tshow dBloq)
 
-  immediateSponsor <- validateShipAndGetSponsor provider hexStrBlock dSeed
-  dSponsor <- getSponsorshipChain provider hexStrBlock immediateSponsor
+    immediateSponsor <- validateShipAndGetSponsor provider hexStrBlock dSeed
+    dSponsor <- getSponsorshipChain provider hexStrBlock immediateSponsor
 
-  putStrLn "boot: retrieving galaxy table"
-  dCzar <- (mapToHoonMap . mapFromList) <$>
-    (dawnPostRequests provider parseGalaxyTableEntry $
-       map (PointRequest hexStrBlock) [0..255])
+    putStrLn "boot: retrieving galaxy table"
+    dCzar <- (mapToHoonMap . mapFromList) <$>
+      (dawnPostRequests provider parseGalaxyTableEntry $
+         map (PointRequest hexStrBlock) [0..255])
 
-  putStrLn "boot: retrieving network domains"
-  dTurf <- nub <$> (dawnPostRequests provider parseTurfResponse $
-    map (TurfRequest hexStrBlock) [0..2])
+    putStrLn "boot: retrieving network domains"
+    dTurf <- nub <$> (dawnPostRequests provider parseTurfResponse $
+      map (TurfRequest hexStrBlock) [0..2])
 
-  let dNode = Nothing
+    let dNode = Nothing
 
-  -- TODO: Figure out exception handling now. We don't want all the `error`
-  -- statements in ehre to literally kill the program.
-  pure $ Right $ MkDawn{..}
+    pure $ MkDawn{..}
 
 
 -- Comet List ------------------------------------------------------------------
