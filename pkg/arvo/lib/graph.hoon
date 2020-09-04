@@ -13,9 +13,15 @@
 ::
 ++  get-graph
   |=  res=resource
-  ^-  marked-graph:store
-  %+  scry-for  marked-graph:store
+  ^-  update:store
+  %+  scry-for  update:store
   /graph/(scot %p entity.res)/[name.res]
+::
+++  get-update-log
+  |=  rid=resource 
+  ^-  update-log:store
+  %+  scry-for  update-log:store
+  /update-log/(scot %p entity.rid)/[name.rid]
 ::
 ++  peek-log
   |=  res=resource

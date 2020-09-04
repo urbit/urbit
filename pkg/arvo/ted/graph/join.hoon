@@ -5,17 +5,29 @@
 ++  strand  strand:spider
 ++  poke  poke:strandio
 ++  poke-our   poke-our:strandio
+++  check-live
+  |=  who=ship
+  =/  m  (strand ,~)
+  ^-  form:m
+  %+  (set-timeout:strandio ,~)  ~s10
+  ;<  ~  bind:m
+    (poke [who %hood] %helm-hi !>(~))
+  (pure:m ~)
 ++  scry-metadata
   |=  rid=resource
   =/  m  (strand ,(unit resource))
-  ;<  pax=(unit path)  bind:m
-    %+  scry:strandio   ,(unit path)
+  ^-  form:m
+  ;<  pax=(unit (set path))  bind:m
+    %+  scry:strandio   ,(unit (set path))
     ;:  weld
-      /gx/metadata-store/resource/graph
+      /gx/metadata-store/resource/chat
       (en-path:resource rid)
       /noun
     ==
-  (pure:m (bind pax de-path:resource))
+  %-  pure:m
+  ?~  pax  ~
+  ?~  u.pax  ~
+  `(de-path:resource n.u.pax)
 --
 ^-  thread:spider
 |=  arg=vase
@@ -27,6 +39,7 @@
 ?<  =(our.bowl entity.rid.action)
 ;<  group=(unit resource)  bind:m  
   (scry-metadata rid.action)
+;<  ~  bind:m  (check-live entity.rid.action)
 ?^  group
   ::  We have group, graph is managed
   ;<  ~  bind:m  
@@ -47,6 +60,7 @@
   %+  poke-our  %metadata-hook
   metadata-hook-action+!>([%add-synced ship.action rid.action])
 ;<  ~  bind:m  
-  (poke-our %graph-pull-hook %pull-hook-action !>([%add ship.action rid.action]))
+  %+  poke-our  %graph-pull-hook
+  pull-hook-action+!>([%add ship.action rid.action]))
 (pure:m !>(~))
 
