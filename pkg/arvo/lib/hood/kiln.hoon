@@ -25,7 +25,7 @@
   ==
 +$  per-desk                                            ::  per-desk state
   $:  auto=?                                            ::  escalate on failure
-      gem=germ                                          ::  strategy
+      gem=?(%this %that germ)                           ::  strategy
       her=@p                                            ::  from ship
       sud=@tas                                          ::  from desk
       cas=case                                          ::  at case
@@ -47,11 +47,12 @@
       sud=desk                                          ::
   ==
 +$  kiln-merge                                          ::
+  $@  ~
   $:  syd=desk                                          ::
       ali=ship                                          ::
       sud=desk                                          ::
       cas=case                                          ::
-      gim=?($auto germ)                                 ::
+      gim=?(%auto germ)                                 ::
   ==
 --
 |=  [bowl:gall state]
@@ -204,14 +205,14 @@
   ::
   ::  If destination desk doesn't exist, need a %init merge.  If this is
   ::  its first revision, it probably doesn't have a mergebase yet, so
-  ::  use %that.
+  ::  use %take-that.
   ::
   ++  get-germ
     |=  =desk
     =+  .^(=cass:clay %cw /(scot %p our)/[desk]/(scot %da now))
     ?-  ud.cass
       %0  %init
-      %1  %that
+      %1  %take-that
       *   %mate
     ==
   ::
@@ -372,6 +373,7 @@
 ::
 ++  poke-merge                                        ::
   |=  kiln-merge
+  ?~  +<  abet
   abet:abet:(merge:(work syd) ali sud cas gim)
 ::
 ++  poke-cancel
@@ -603,20 +605,21 @@
     ::    Initial merges from any source must use the %init germ.
     ::    Subsequent merges may use any germ, but if the source is
     ::    a remote ship with which we have not yet merged, we won't
-    ::    share a merge-base commit and all germs but %that will fail.
+    ::    share a merge-base commit and all germs but %only-that will
+    ::    fail.
     ::
-    ::    We want to always use %that for the first remote merge.
-    ::    But we also want local syncs (%base to %home or %kids)
-    ::    to succeed after that first remote sync. To accomplish both
-    ::    we simply use %that for the first three sync merges.
-    ::    (The first two are from the pill.)
+    ::    We want to always use %only-that for the first remote merge.
+    ::    But we also want local syncs (%base to %home or %kids) to
+    ::    succeed after that first remote sync. To accomplish both we
+    ::    simply use %only-that for the first three sync merges.  (The
+    ::    first two are from the pill.)
     ::
     =/  =germ
       =/  =cass
         .^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now))
       ?:  =(0 ud.cass)
         %init
-      ?:((gth 2 ud.cass) %that %mate)
+      ?:((gth 2 ud.cass) %only-that %mate)
     =<  %-  spam
         ?:  =(our her)  ~
         [(render "beginning sync" sud her syd) ~]
@@ -677,6 +680,8 @@
   ::
   ++  perform                                         ::
     ^+  .
+    ?<  ?=(%this gem)
+    ?<  ?=(%that gem)
     (blab [%pass /kiln/[syd] %arvo %c [%merg syd her sud cas gem]] ~)
   ::
   ++  fancy-merge                                     ::  send to self
@@ -812,6 +817,8 @@
       =.  ..mere  (fancy-merge tic our syd %init)
       =>  (spam leaf+"%melding %{(trip sud)} into scratch space" ~)
       %-  blab  :_  ~
+      ?<  ?=(%this gem)
+      ?<  ?=(%that gem)
       =/  note  [%merg (cat 3 syd '-scratch') her sud cas gem]
       [%pass /kiln/[syd] %arvo %c note]
     ==

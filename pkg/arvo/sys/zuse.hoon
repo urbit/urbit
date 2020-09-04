@@ -904,18 +904,17 @@
         lab/(map @tas @ud)                              ::  labels
     ==                                                  ::
   ++  germ                                              ::  merge style
-    $?  $init                                           ::  new desk
-        $this                                           ::  ours with parents
-        $that                                           ::  hers with parents
-        $fine                                           ::  fast forward
-        $meet                                           ::  orthogonal files
-        $mate                                           ::  orthogonal changes
-        $meld                                           ::  force merge
-    ==                                                  ::
-  ++  khan                                              ::
-    $~  [~ ~]
-    $:  fil/(unit (unit cage))                          ::  see ++khan-to-soba
-        dir/(unit (map @ta (unit khan)))                ::
+    $?  %init                                           ::  new desk
+        %fine                                           ::  fast forward
+        %meet                                           ::  orthogonal files
+        %mate                                           ::  orthogonal changes
+        %meld                                           ::  force merge
+        %only-this                                      ::  ours with parents
+        %only-that                                      ::  hers with parents
+        %take-this                                      ::  ours unless absent
+        %take-that                                      ::  hers unless absent
+        %meet-this                                      ::  ours if conflict
+        %meet-that                                      ::  hers if conflict
     ==                                                  ::
   ++  lobe  @uvI                                        ::  blob ref
   ++  maki  {p/@ta q/@ta r/@ta s/path}                  ::
