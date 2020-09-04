@@ -38,6 +38,7 @@
         =associated
     ==
     [%delete rid=resource]
+    [%leave rid=resource]
     [%join rid=resource =ship] 
     ::[%invite rid=resource ships=(set ship)]
     :: [%groupify rid=resource title=@t description=@t]

@@ -5,14 +5,16 @@
 ++  strand  strand:spider
 ++  poke  poke:strandio
 ++  poke-our   poke-our:strandio
+::
 ++  check-live
   |=  who=ship
   =/  m  (strand ,~)
   ^-  form:m
-  %+  (set-timeout:strandio ,~)  ~s10
+  %+  (set-timeout:strandio ,~)  ~s20
   ;<  ~  bind:m
     (poke [who %hood] %helm-hi !>(~))
   (pure:m ~)
+::
 ++  scry-metadata
   |=  rid=resource
   =/  m  (strand ,(unit resource))
@@ -29,6 +31,7 @@
   ?~  u.pax  ~
   `(de-path:resource n.u.pax)
 --
+::
 ^-  thread:spider
 |=  arg=vase
 =/  m  (strand ,vase)
@@ -63,4 +66,3 @@
   %+  poke-our  %graph-pull-hook
   pull-hook-action+!>([%add ship.action rid.action]))
 (pure:m !>(~))
-
