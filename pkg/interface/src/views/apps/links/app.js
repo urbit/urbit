@@ -67,8 +67,7 @@ export class LinksApp extends Component {
                   rightPanelHide={true}
                   sidebarShown={sidebarShown}
                   api={api}
-                  graphKeys={graphKeys}
-                >
+                  graphKeys={graphKeys}>
                   <MessageScreen text="Select or create a collection to begin." />
                 </Skeleton>
               );
@@ -83,11 +82,8 @@ export class LinksApp extends Component {
                   groups={groups}
                   sidebarShown={sidebarShown}
                   api={api}
-                >
+                  graphKeys={graphKeys}>
                   <NewScreen
-                    associations={associations}
-                    groups={groups}
-                    contacts={contacts}
                     api={api}
                     {...props}
                   />
@@ -127,8 +123,7 @@ export class LinksApp extends Component {
                   groups={groups}
                   selected={resourcePath}
                   sidebarShown={sidebarShown}
-                  api={api}
-                >
+                  api={api}>
                   <MemberScreen
                     sidebarShown={sidebarShown}
                     resource={resource}
@@ -142,8 +137,7 @@ export class LinksApp extends Component {
                     resourcePath={resourcePath}
                     popout={popout}
                     api={api}
-                    {...props}
-                  />
+                    {...props} />
                 </Skeleton>
               );
             }}
@@ -166,8 +160,7 @@ export class LinksApp extends Component {
                   selected={resourcePath}
                   sidebarShown={sidebarShown}
                   popout={popout}
-                  api={api}
-                >
+                  api={api}>
                   <SettingsScreen
                     sidebarShown={sidebarShown}
                     resource={resource}
@@ -179,8 +172,7 @@ export class LinksApp extends Component {
                     resourcePath={resourcePath}
                     popout={popout}
                     api={api}
-                    {...props}
-                  />
+                    {...props} />
                 </Skeleton>
               );
             }}
@@ -207,21 +199,19 @@ export class LinksApp extends Component {
                     sidebarShown={sidebarShown}
                     sidebarHideMobile={true}
                     popout={popout}
-                    api={api}
-                  >
+                    api={api}>
                     <Links
-                    {...props}
-                    contacts={contactDetails}
-                    page={page}
-                    resourcePath={resourcePath}
-                    resource={resource}
-                    amOwner={amOwner}
-                    popout={popout}
-                    sidebarShown={sidebarShown}
-                    api={api}
-                    hideNicknames={hideNicknames}
-                    hideAvatars={hideAvatars}
-                  />
+                      {...props}
+                      contacts={contactDetails}
+                      page={page}
+                      resourcePath={resourcePath}
+                      resource={resource}
+                      amOwner={amOwner}
+                      popout={popout}
+                      sidebarShown={sidebarShown}
+                      api={api}
+                      hideNicknames={hideNicknames}
+                      hideAvatars={hideAvatars} />
                   </Skeleton>
                 );
               }}
@@ -250,24 +240,22 @@ export class LinksApp extends Component {
                     sidebarShown={sidebarShown}
                     sidebarHideMobile={true}
                     popout={popout}
-                    api={api}
-                  >
+                    api={api}>
                     <LinkDetail
-                    {...props}
-                    resource={resource}
-                    page={page}
-                    url={url}
-                    linkIndex={index}
-                    contacts={contactDetails}
-                    resourcePath={resourcePath}
-                    groupPath={resource['group-path']}
-                    amOwner={amOwner}
-                    popout={popout}
-                    sidebarShown={sidebarShown}
-                    api={api}
-                    hideAvatars={hideAvatars}
-                    hideNicknames={hideNicknames}
-                    />
+                      {...props}
+                      resource={resource}
+                      page={page}
+                      url={url}
+                      linkIndex={index}
+                      contacts={contactDetails}
+                      resourcePath={resourcePath}
+                      groupPath={resource['group-path']}
+                      amOwner={amOwner}
+                      popout={popout}
+                      sidebarShown={sidebarShown}
+                      api={api}
+                      hideAvatars={hideAvatars}
+                      hideNicknames={hideNicknames} />
                   </Skeleton>
                 );
               }}
