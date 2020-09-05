@@ -8,7 +8,7 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 ++  axle                                                ::
-  $:  %3                                                ::
+  $:  %4                                                ::
       hey/(unit duct)                                   ::  default duct
       dug/(map duct axon)                               ::  conversations
       lit/?                                             ::  boot in lite mode
@@ -21,7 +21,7 @@
       tem/(unit (list dill-belt))                       ::  pending, reverse
       wid/_80                                           ::  terminal width
       pos/@ud                                           ::  cursor position
-      see/(list @c)                                     ::  current line
+      see=$%([%lin (list @c)] [%klr stub])              ::  current line
   ==                                                    ::
 +$  log-level  ?(%hush %soft %loud)                     ::  none, line, full
 --  =>                                                  ::
@@ -170,86 +170,27 @@
           %+  done  %blit
           :~  [%lin p.bit]
               [%mor ~]
-              [%lin see]
+              see
               [%hop pos]
           ==
         ?:  ?=($klr -.bit)
           %+  done  %blit
-          :~  [%lin (cvrt:ansi p.bit)]
+          :~  [%klr p.bit]
               [%mor ~]
-              [%lin see]
+              see
               [%hop pos]
           ==
         ?:  ?=($pro -.bit)
-          (done(see p.bit) %blit [[%lin p.bit] [%hop pos] ~])
+          =.  see  [%lin p.bit]
+          (done %blit [see [%hop pos] ~])
         ?:  ?=($pom -.bit)
-          =.  see  (cvrt:ansi p.bit)
-          (done %blit [[%lin see] [%hop pos] ~])
+          =.  see  [%klr p.bit]
+          (done %blit [see [%hop pos] ~])
         ?:  ?=($hop -.bit)
           (done(pos p.bit) %blit [bit ~])
         ?:  ?=($qit -.bit)
           (dump %logo ~)
         (done %blit [bit ~])
-      ::
-      ++  ansi
-        |%
-        ++  cvrt                                        ::  stub to (list @c)
-          |=  a/stub                                    ::  with ANSI codes
-          ^-  (list @c)
-          %-  zing  %+  turn  a
-          |=  a/(pair stye (list @c))
-          ^-  (list @c)
-          ;:  weld
-              ?:  =(0 ~(wyt in p.p.a))  ~
-              `(list @c)`(zing (turn ~(tap in p.p.a) ef))
-              (bg p.q.p.a)
-              (fg q.q.p.a)
-              q.a
-              ?~(p.p.a ~ (ef ~))
-              (bg ~)
-              (fg ~)
-          ==
-        ::
-        ++  ef  |=(a/^deco (scap (deco a)))             ::  ANSI effect
-        ::
-        ++  fg  |=(a/^tint (scap (tint a)))             ::  ANSI foreground
-        ::
-        ++  bg                                          ::  ANSI background
-          |=  a/^tint
-          %-  scap
-          =>((tint a) [+(p) q])                         ::  (add 10 fg)
-        ::
-        ++  scap                                        ::  ANSI escape seq
-          |=  a/$@(@ (pair @ @))
-          %-  (list @c)
-          :+  27  '['                                   ::  "\033[{a}m"
-          ?@(a :~(a 'm') :~(p.a q.a 'm'))
-        ::
-        ++  deco                                        ::  ANSI effects
-          |=  a/^deco  ^-  @
-          ?-  a
-            ~   '0'
-            $br  '1'
-            $un  '4'
-            $bl  '5'
-          ==
-        ::
-        ++  tint                                        ::  ANSI colors (fg)
-          |=  a/^tint
-          ^-  (pair @ @)
-          :-  '3'
-          ?-  a
-            $k  '0'
-            $r  '1'
-            $g  '2'
-            $y  '3'
-            $b  '4'
-            $m  '5'
-            $c  '6'
-            $w  '7'
-            ~  '9'
-           ==
-        --
       ::  XX move
       ::
       ++  sein
@@ -396,7 +337,7 @@
     =*  duc  (need hey.all)
     =/  app  %hood
     =/  see  (tuba "<awaiting {(trip app)}, this may take a minute>")
-    =/  zon=axon  [app input=[~ ~] width=80 cursor=(lent see) see]
+    =/  zon=axon  [app input=[~ ~] width=80 cursor=(lent see) lin+see]
     ::
     =^  moz  all  abet:(~(into as duc zon) ~)
     [moz ..^$]
@@ -439,7 +380,7 @@
       ++  axle-1
         $:  $1
             hey/(unit duct)
-            dug/(map duct axon)
+            dug/(map duct axon-3)
             lit/?
             $=  hef
             $:  a/(unit mass)
@@ -458,7 +399,7 @@
       ++  axle-2
         $:  %2
             hey/(unit duct)
-            dug/(map duct axon)
+            dug/(map duct axon-3)
             lit/?
             dog/_|
             $=  hef
@@ -476,15 +417,34 @@
             (map @tas log-level)
         ==
       ::
-      ++  axle-any
-        $%(axle-1 axle-2 axle)
+      +$  axle-3
+        $:  %3
+            hey=(unit duct)
+            dug=(map duct axon-3)
+            lit=?
+            $=  veb
+            $~  (~(put by *(map @tas log-level)) %hole %soft)
+            (map @tas log-level)
+        ==
+      +$  axon-3
+        $:  ram=term
+            tem=(unit (list dill-belt))
+            wid=_80
+            pos=@ud
+            see=(list @c)
+        ==
+      ::
+      +$  axle-any
+        $%(axle-1 axle-2 axle-3 axle)
       --
   ::
   |=  old=axle-any
   ?-  -.old
     %1  $(old [%2 [hey dug lit dog=& hef veb]:old])
     %2  $(old [%3 [hey dug lit veb]:old])
-    %3  ..^$(all old)
+    %3  =-  $(old [%4 hey.old - lit.old veb.old])
+        (~(run by dug.old) |=(a=axon-3 a(see lin+see.a)))
+    %4  ..^$(all old)
   ==
 ::
 ++  scry

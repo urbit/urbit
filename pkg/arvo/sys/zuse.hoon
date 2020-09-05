@@ -1157,6 +1157,7 @@
     $%  {$bel ~}                                        ::  make a noise
         {$clr ~}                                        ::  clear the screen
         {$hop p/@ud}                                    ::  set cursor position
+        [%klr p=stub]                                   ::  set styled line
         {$lin p/(list @c)}                              ::  set current line
         {$mor ~}                                        ::  newline
         {$sag p/path q/*}                               ::  save to jamfile
