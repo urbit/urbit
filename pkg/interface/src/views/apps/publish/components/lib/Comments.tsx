@@ -8,6 +8,7 @@ import { Contacts } from "~/types/contact-update";
 import _ from "lodash";
 import GlobalApi from "~/logic/api/global";
 import { FormikHelpers } from "formik";
+import { LocalUpdateRemoteContentPolicy } from "~/types";
 
 interface CommentsProps {
   comments: Comment[];
@@ -21,6 +22,7 @@ interface CommentsProps {
   enabled: boolean;
   hideAvatars: boolean;
   hideNicknames: boolean;
+  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
 }
 
 export function Comments(props: CommentsProps) {
@@ -78,6 +80,7 @@ export function Comments(props: CommentsProps) {
             pending={true}
             hideNicknames={props.hideNicknames}
             hideAvatars={props.hideAvatars}
+            remoteContentPolicy={props.remoteContentPolicy}
           />
         );
       })}
@@ -92,6 +95,7 @@ export function Comments(props: CommentsProps) {
           note={note["note-id"]}
           hideNicknames={props.hideNicknames}
           hideAvatars={props.hideAvatars}
+          remoteContentPolicy={props.remoteContentPolicy}
         />
       ))}
     </Col>

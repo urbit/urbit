@@ -63,6 +63,7 @@ export default function PublishApp(props: PublishAppProps) {
     associations,
     hideNicknames,
     hideAvatars,
+    remoteContentPolicy
   } = props;
 
   const active = location.pathname.endsWith("/~publish")
@@ -161,6 +162,7 @@ export default function PublishApp(props: PublishAppProps) {
                     api={api}
                     hideNicknames={hideNicknames}
                     hideAvatars={hideAvatars}
+                    remoteContentPolicy={remoteContentPolicy}
                     {...props}
                   />
                 );
