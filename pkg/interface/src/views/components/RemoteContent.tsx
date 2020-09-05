@@ -56,7 +56,7 @@ export default class RemoteContent extends Component<RemoteContentProps, RemoteC
   wrapInLink(contents) {
     return (<a
       href={this.props.url}
-      className={`f7 lh-copy v-top word-break-all ${(typeof contents === 'string') ? 'bb b--white-d b--black' : ''}`}
+      className={`word-break-all ${(typeof contents === 'string') ? 'bb b--white-d b--black' : ''}`}
       target="_blank"
       rel="noopener noreferrer"
     >

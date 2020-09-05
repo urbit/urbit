@@ -221,6 +221,7 @@ export class LinkDetail extends Component {
               api={props.api}
               hideAvatars={props.hideAvatars}
               hideNicknames={props.hideNicknames}
+              remoteContentPolicy={props.remoteContentPolicy}
             />
           </div>
         </div>
