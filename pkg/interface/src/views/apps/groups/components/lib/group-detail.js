@@ -324,11 +324,13 @@ export class GroupDetail extends Component {
           <a className={'dib f9 ba pa2 ' + deleteButtonClasses}
           onClick={() => {
             if (groupOwner) {
-              this.setState({ awaiting: true, type: 'Deleting' }, (() => {
-                props.api.contacts.delete(props.path).then(() => {
-                  props.history.push('/~groups');
-                });
-              }));
+              if (prompt(`To confirm deleting this group, type ${props.path.substr(6)}`) === props.path.substr(6)) {
+                this.setState({ awaiting: true, type: 'Deleting' }, (() => {
+                  props.api.contacts.delete(props.path).then(() => {
+                    props.history.push('/~groups');
+                  });
+                }));
+              }
             }
           }}
           >Delete this group</a>
