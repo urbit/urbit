@@ -325,7 +325,11 @@
     =^  cards  shoe  (on-leave:og path)
     [(deal cards) this]
   ::
-  ++  on-peek  on-peek:og
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?.  =(/x/dbug/state path)  ~
+    ``noun+(slop on-save:og !>(shoe=state))
   ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
