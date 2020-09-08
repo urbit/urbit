@@ -25,6 +25,7 @@ ur_dict32_grow(ur_root_t *r, ur_dict32_t *dict, uint64_t prev, uint64_t size)
   uint64_t  i, next = prev + size;
 
   buckets = calloc(next, sizeof(*buckets));
+  assert( buckets );
 
   if ( old_buckets ) {
     for ( i = 0; i < old_size; i++ ) {
@@ -126,6 +127,7 @@ ur_dict64_grow(ur_root_t *r, ur_dict64_t *dict, uint64_t prev, uint64_t size)
   uint64_t  i, next = prev + size;
 
   buckets = calloc(next, sizeof(*buckets));
+  assert( buckets );
 
   if ( old_buckets ) {
     for ( i = 0; i < old_size; i++ ) {
@@ -227,6 +229,7 @@ ur_dict_grow(ur_root_t *r, ur_dict_t *dict, uint64_t prev, uint64_t size)
   uint64_t  i, next = prev + size;
 
   buckets = calloc(next, sizeof(*buckets));
+  assert( buckets );
 
   if ( old_buckets ) {
     for ( i = 0; i < old_size; i++ ) {
@@ -425,10 +428,10 @@ ur_atoms_grow(ur_atoms_t *atoms)
   atoms->bytes = malloc(next * ( sizeof(*atoms->bytes)
                                + sizeof(*atoms->lens)
                                + sizeof(*atoms->mugs) ));
+  assert( atoms->bytes );
+
   atoms->lens  = (void*)((char*)atoms->bytes + (next * sizeof(*atoms->bytes)));
   atoms->mugs  = (void*)((char*)atoms->lens  + (next * sizeof(*atoms->lens)));
-
-  assert( atoms->bytes );
 
   if ( bytes ) {
     memcpy(atoms->bytes, bytes, size * (sizeof(*bytes)));
@@ -455,10 +458,10 @@ ur_cells_grow(ur_cells_t *cells)
   cells->heads = malloc(next * ( sizeof(*cells->heads)
                                + sizeof(*cells->heads)
                                + sizeof(*cells->mugs) ));
+  assert( cells->heads );
+
   cells->tails = (void*)((char*)cells->heads + (next * sizeof(*cells->heads)));
   cells->mugs  = (void*)((char*)cells->tails + (next * sizeof(*cells->tails)));
-
-  assert( cells->heads );
 
   if ( heads ) {
     memcpy(cells->heads, heads, size * (sizeof(*heads)));
@@ -914,6 +917,7 @@ ur_nvec_init(ur_nvec_t *v, uint64_t size)
 {
   v->fill = 0;
   v->refs = calloc(size, sizeof(ur_nref));
+  assert( v->refs );
 }
 
 void
@@ -927,6 +931,7 @@ ur_walk_fore(ur_root_t *r,
   ur_nref *top, *don;
 
   don  = malloc(size * sizeof(*don));
+  assert( don );
   top  = don + ++fill;
   *top = ref;
 
@@ -952,6 +957,7 @@ ur_walk_fore(ur_root_t *r,
       if ( size == fill ) {
         uint64_t next = prev + size;
         don  = realloc(don, next * sizeof(*don));
+        assert( don );
         top  = don + fill;
         prev = size;
         size = next;

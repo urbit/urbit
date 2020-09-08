@@ -82,6 +82,7 @@ ur_jam_unsafe(ur_root_t      *r,
   j.bsw.prev  = ur_fib11;
   j.bsw.size  = ur_fib12;
   j.bsw.bytes = calloc(j.bsw.size, 1);
+  assert( j.bsw.bytes );
 
   ur_walk_fore(r, ref, &j, _jam_atom, _jam_cell);
 
@@ -150,6 +151,7 @@ _cue_next(ur_root_t      *r,
         if ( s->fill == s->size ) {
           uint32_t next = s->prev + s->size;
           s->f = realloc(s->f, next * sizeof(*s->f));
+          assert( s->f );
           s->prev = s->size;
           s->size = next;
         }
@@ -193,6 +195,8 @@ _cue_next(ur_root_t      *r,
         else {
           uint64_t len_byt = (len >> 3) + !!ur_mask_3(len);
           uint8_t *byt = calloc(len_byt, 1);
+          assert( byt );
+
           ur_bsr_bytes_any(bsr, len, byt);
 
           //  strip trailing zeroes
@@ -239,6 +243,7 @@ ur_cue_unsafe(ur_root_t       *r,
   s.prev = ur_fib10;
   s.size = ur_fib11;
   s.f = malloc(s.size * sizeof(*s.f));
+  assert( s.f );
 
   //  advance into stream
   //
@@ -331,6 +336,7 @@ _cue_test_next(_cue_test_stack_t *s,
         if ( s->fill == s->size ) {
           uint32_t next = s->prev + s->size;
           s->f = realloc(s->f, next * sizeof(*s->f));
+          assert( s->f );
           s->prev = s->size;
           s->size = next;
         }
@@ -398,6 +404,7 @@ ur_cue_test_unsafe(ur_dict_t    *dict,
   s.prev = ur_fib10;
   s.size = ur_fib11;
   s.f = malloc(s.size * sizeof(*s.f));
+  assert( s.f );
 
   //  advance into stream
   //
