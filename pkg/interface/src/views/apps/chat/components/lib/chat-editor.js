@@ -101,9 +101,14 @@ export default class ChatEditor extends Component {
   }
 
   render() {
-    const { props } = this;
+    const {
+      inCodeMode,
+      placeholder,
+      message,
+      ...props
+    } = this.props;
 
-    const codeTheme = props.inCodeMode ? ' code' : '';
+    const codeTheme = inCodeMode ? ' code' : '';
 
     const options = {
       mode: MARKDOWN_CONFIG,
@@ -112,7 +117,7 @@ export default class ChatEditor extends Component {
       lineWrapping: true,
       scrollbarStyle: 'native',
       cursorHeight: 0.85,
-      placeholder: props.inCodeMode ? 'Code...' : props.placeholder,
+      placeholder: inCodeMode ? 'Code...' : placeholder,
       extraKeys: {
         'Enter': () => {
           this.submit();
@@ -127,11 +132,11 @@ export default class ChatEditor extends Component {
       <div
         className={
           'chat fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center' +
-          (props.inCodeMode ? ' code' : '')
+          (inCodeMode ? ' code' : '')
         }
         style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}>
         <CodeEditor
-          value={props.message}
+          value={message}
           options={options}
           onChange={(e, d, v) => this.messageChange(e, d, v)}
           editorDidMount={(editor) => {
@@ -140,6 +145,7 @@ export default class ChatEditor extends Component {
               editor.focus();
             }
           }}
+          {...props}
         />
       </div>
     );
