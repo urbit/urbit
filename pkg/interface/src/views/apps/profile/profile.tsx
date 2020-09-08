@@ -1,4 +1,6 @@
 import React from "react";
+import { Route, Link, Switch } from "react-router-dom";
+import Helmet from 'react-helmet';
 
 import { Box, Text, Row, Col, Icon } from "@tlon/indigo-react";
 
@@ -6,7 +8,6 @@ import { Sigil } from "~/logic/lib/sigil";
 import { uxToHex, MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 
 import Settings from "./components/settings";
-import { Route, Link } from "react-router-dom";
 import { ContactCard } from "../groups/components/lib/ContactCard";
 
 const SidebarItem = ({ children, view, current }) => {
@@ -33,6 +34,11 @@ const SidebarItem = ({ children, view, current }) => {
 export default function ProfileScreen(props: any) {
   const { ship, dark } = props;
   return (
+    <>
+    <Helmet defer={false}>
+      <title>OS1 - Profile</title>
+    </Helmet>
+    <Switch>
     <Route
       path={["/~profile/:view", "/~profile"]}
       render={({ match, history }) => {
@@ -119,5 +125,7 @@ export default function ProfileScreen(props: any) {
         );
       }}
     ></Route>
+      </Switch>
+    </>
   );
 }
