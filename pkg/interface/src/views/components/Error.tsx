@@ -12,7 +12,7 @@ class ErrorComponent extends Component<ErrorProps> {
   render () {
     const { code, error, history, description } = this.props;
     return (
-      <Col alignItems="center" justifyContent="center" height="100%" p={4}>
+      <Col alignItems="center" justifyContent="center" height="100%" p="4" backgroundColor="white">
         <Box mb={4}>
           <Text fontSize={3}>
            {code ? code : 'Error'}
