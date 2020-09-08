@@ -8,7 +8,6 @@ import { ChatHeader } from './lib/chat-header';
 import { ChatInput } from "./lib/chat-input";
 import { deSig } from "~/logic/lib/util";
 import { ChatHookUpdate } from "~/types/chat-hook-update";
-import ChatApi from "~/logic/api/chat";
 import { Inbox, Envelope } from "~/types/chat-update";
 import { Contacts } from "~/types/contact-update";
 import { Path, Patp } from "~/types/noun";
@@ -27,7 +26,7 @@ type ChatScreenProps = RouteComponentProps<{
   association: Association;
   api: GlobalApi;
   read: number;
-  length: number;
+  mailboxSize: number;
   inbox: Inbox;
   contacts: Contacts;
   group: Group;
@@ -99,42 +98,23 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
       !(props.station in props.chatSynced) &&
       props.envelopes.length > 0;
 
-    const unreadCount = props.length - props.read;
+    const unreadCount = props.mailboxSize - props.read;
     const unreadMsg = unreadCount > 0 && props.envelopes[unreadCount - 1];
-
+    
     return (
       <div
         key={props.station}
         className="h-100 w-100 overflow-hidden flex flex-column relative">
-        <ChatHeader
-          match={props.match}
-          location={props.location}
-          api={props.api}
-          group={props.group}
-          association={props.association}
-          station={props.station}
-          sidebarShown={props.sidebarShown}
-          popout={props.popout} />
+        <ChatHeader {...props} />
         <ChatWindow
-          history={props.history}
           isChatMissing={isChatMissing}
           isChatLoading={isChatLoading}
           isChatUnsynced={isChatUnsynced}
           unreadCount={unreadCount}
           unreadMsg={unreadMsg}
-          pendingMessages={pendingMessages}
-          messages={props.envelopes}
-          length={props.length}
-          contacts={props.contacts}
-          association={props.association}
-          group={props.group}
+          stationPendingMessages={pendingMessages}
           ship={props.match.params.ship}
-          station={props.station}
-          api={props.api}
-          hideNicknames={props.hideNicknames}
-          hideAvatars={props.hideAvatars}
-          remoteContentPolicy={props.remoteContentPolicy}
-        />
+          {...props} />
         <ChatInput
           api={props.api}
           numMsgs={lastMsgNum}
