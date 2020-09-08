@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ChannelItem } from './channel-item';
-import { deSig } from "~/logic/lib/util";
+import { deSig, cite } from "~/logic/lib/util";
 
 export class GroupItem extends Component {
   render() {
     const { props } = this;
     const association = props.association ? props.association : {};
-    const DEFAULT_TITLE_REGEX = new RegExp(`(( <-> )?~${deSig(window.ship)}( <-> )?)`);
+    const DEFAULT_TITLE_REGEX = new RegExp(`(( <-> )?~(?:${window.ship}|${deSig(cite(window.ship))})( <-> )?)`);
 
     let title = association['app-path'] ? association['app-path'] : 'Direct Messages';
     if (association.metadata && association.metadata.title) {
