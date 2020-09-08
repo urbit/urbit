@@ -143,10 +143,8 @@ export class GroupView extends Component<
   }
 
   isAdmin(): boolean {
-    const us = `~${window.ship}`;
     const role = roleForShip(this.props.group, window.ship);
-    const resource = resourceFromPath(this.props.resourcePath);
-    return resource.ship == us || role === 'admin';
+    return role === 'admin';
   }
 
   optionsForShip(ship: Patp, missing: GroupViewAppTag[]) {
