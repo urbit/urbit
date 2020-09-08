@@ -27,8 +27,6 @@
 ::      - Graph store integration
 ::    
 ::
-
-::
 /-  *metadata-store, contacts=contact-store, *group
 /+  default-agent, verb, dbug, resource
 ~%  %sane-app  ..is  ~
@@ -66,34 +64,26 @@
   ~[subscribe-to-agent-builds]
 ++  on-save  !>(state)
 ::
-::
 ++  on-load
   |=  =vase
-  =/  old
-    !<(state-zero vase)
+  =/  old  !<(state-zero vase)
   `this(mode mode.old)
-::
 ::
 ++  on-poke  
   |=  [=mark =vase]
   ^-  (quip card _this)
   ?.  =(%noun mark)
     (on-poke:def mark vase)
-  ~!  action
-  =/  act=action
-    !<(action vase)
+  =/  act=action  !<(action vase)
   ?:  ?=(^mode act)
     `this(mode act)
   %-  (check-sane:sc act)
   `this
 ::
-::
 ++  on-agent  on-agent:def
-::
 ++  on-watch  on-watch:def
-::
 ++  on-leave  on-leave:def
-
+::
 ++  on-peek   
   |=  =path
   ^-  (unit (unit cage))
@@ -105,8 +95,7 @@
   |=  [=wire =sign-arvo]
   ?>  ?=([%rebuilds ~] wire)
   ?>  ?=([%c %wris *] sign-arvo)
-  =/  ucheck
-    check-type:sc 
+  =/  ucheck  check-type:sc 
   :_  this
   %.  ~[subscribe-to-agent-builds]
   ?~  ucheck  same
@@ -116,6 +105,7 @@
 --
 ::
 |_  =bowl:gall
+::
 ++  subscribe-to-agent-builds
   ^-  card
   ~&  >>  "Subscribing..."
@@ -148,9 +138,7 @@
 ::
 ++  xor
   |*  [a=(set) b=(set)]
-  %-  
-    %~  uni  in  (~(dif in a) b)
-  (~(dif in b) a)
+  (~(uni in (~(dif in a) b)) (~(dif in b) a))
 ::
 ++  check-sane
   |=  =check
@@ -170,7 +158,7 @@
     ~|  %crashing-to-abort-merge
     (bex (bex 256))
   same
-::  +store-hook-desync: check desync between store and hookk
+::  +store-hook-desync: check desync between store and hook
 ::
 ::    check desync between store and hook for contacts,
 ::    metadata, group and graph
@@ -183,6 +171,7 @@
   =.  issues
     contact-desync
   issues
+  ::
   ++  report-desync
     |=  [app=term =(set path)]
     ^+  issues
@@ -203,6 +192,7 @@
     =/  desyncs=(set path)
       (xor groups group-syncs)
     (report-desync %metadata-store desyncs)
+  ::
   ++  contact-desync
     ^+  issues
     =/  contacts
@@ -212,17 +202,15 @@
     =/  desyncs
       (xor contact-syncs contacts)
     (report-desync %contact-store desyncs)
+  ::
   --
 ::  +metadata-group-desync: check desync between metadata and groups
 ::
 ++  metadata-group-desync
   ^-  issues
-  =/  groups=(set path)
-    group-store-paths
-  =/  metadata
-    metadata-store-paths
-  =/  desyncs
-    (xor groups metadata)
+  =/  groups=(set path)  group-store-paths
+  =/  metadata           metadata-store-paths
+  =/  desyncs            (xor groups metadata)
   %+  turn
     ~(tap in desyncs)
   |=  =path
@@ -231,12 +219,9 @@
 ::
 ++  contact-group-desync
   ^-  issues
-  =/  groups=(set path)
-    managed-group-store-paths
-  =/  contacts
-    contact-store-paths
-  =/  desyncs
-    (xor contacts groups)
+  =/  groups=(set path)    managed-group-store-paths
+  =/  contacts             contact-store-paths
+  =/  desyncs              (xor contacts groups)
   %+  turn
     ~(tap in desyncs)
   |=  =path
