@@ -58,7 +58,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
         imageShown: true,
         audioShown: true,
         videoShown: true,
-        oembedShown: false,
+        oembedShown: true,
       },
       hideAvatars: false,
       hideNicknames: false,
