@@ -130,6 +130,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
                 api={api}
                 notebook={notebook}
                 contacts={notebookContacts}
+                groups={groups}
               />
             </TabPanel>
           </TabPanels>
