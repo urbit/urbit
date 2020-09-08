@@ -9,7 +9,7 @@ import { Contacts, Rolodex } from "../../../../types/contact-update";
 import Notebook from "./Notebook";
 import NewPost from "./new-post";
 import { NoteRoutes } from './NoteRoutes';
-import { LocalUpdateRemoteContentPolicy } from "~/types";
+import { LocalUpdateRemoteContentPolicy, Associations } from "~/types";
 
 interface NotebookRoutesProps {
   api: GlobalApi;
@@ -23,6 +23,7 @@ interface NotebookRoutesProps {
   hideAvatars: boolean;
   hideNicknames: boolean;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
+  associations: Associations;
 }
 
 export function NotebookRoutes(

@@ -50,7 +50,6 @@ const ResetOnPropsChange = (props: { init: FormSchema; book: string }) => {
 
 export function MetadataForm(props: MetadataFormProps) {
   const { host, notebook, api, book } = props;
-  const history = useHistory();
   const initialValues: FormSchema = {
     name: notebook?.title,
     description: notebook?.about,
@@ -72,11 +71,6 @@ export function MetadataForm(props: MetadataFormProps) {
     }
   };
 
-  const onDelete = async () => {
-    await api.publish.delBook(book);
-    history.push("/~publish");
-  };
-
   return (
     <Formik
       validationSchema={formSchema}
@@ -84,16 +78,6 @@ export function MetadataForm(props: MetadataFormProps) {
       onSubmit={onSubmit}
     >
       <Form style={{ display: "contents" }}>
-          <Col mb={4}>
-            <InputLabel>Delete Notebook</InputLabel>
-            <InputCaption>
-              Permanently delete this notebook. (All current members will no
-              longer see this notebook.)
-            </InputCaption>
-            <Button onClick={onDelete} mt={1} border error>
-              Delete this notebook
-            </Button>
-          </Col>
           <Input
             id="name"
             label="Rename"

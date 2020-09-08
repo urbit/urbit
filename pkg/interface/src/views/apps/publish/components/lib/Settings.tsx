@@ -5,7 +5,9 @@ import { Notebook } from "~/types/publish-update";
 import { Contacts } from "~/types/contact-update";
 
 import { MetadataForm } from "./MetadataForm";
-import { Groups } from "~/types";
+import { Groups, Associations } from "~/types";
+import GroupifyForm from "./GroupifyForm";
+import { useHistory } from "react-router-dom";
 
 interface SettingsProps {
   host: string;
@@ -14,13 +16,18 @@ interface SettingsProps {
   contacts: Contacts;
   groups: Groups;
   api: GlobalApi;
+  associations: Associations;
 }
 
+const Divider = (props) => (
+  <Box {...props} mb={4} borderBottom={1} borderBottomColor="lightGray" />
+);
 export function Settings(props: SettingsProps) {
-  const onGroupify = () => {
-    return props.api.publish.groupify(props.book);
+  const history = useHistory();
+  const onDelete = async () => {
+    await props.api.publish.delBook(props.book);
+    history.push("/~publish");
   };
-
   const groupPath = props.notebook?.["writers-group-path"];
 
   const isUnmanaged = props.groups?.[groupPath]?.hidden || false;
@@ -36,17 +43,22 @@ export function Settings(props: SettingsProps) {
     >
       {isUnmanaged && (
         <>
-          <Col mb={4}>
-            <InputLabel>Groupify</InputLabel>
-            <InputCaption>Turn this notebook into a group</InputCaption>
-            <Button onClick={onGroupify} border>
-              Groupify
-            </Button>
-          </Col>
-          <Box mb={4} borderBottom={1} borderBottomColor="washedGray" />
+          <GroupifyForm {...props} />
+          <Divider mt={4} />
         </>
       )}
       <MetadataForm {...props} />
+      <Divider />
+      <Col mb={4}>
+        <InputLabel>Delete Notebook</InputLabel>
+        <InputCaption>
+          Permanently delete this notebook. (All current members will no longer
+          see this notebook.)
+        </InputCaption>
+        <Button onClick={onDelete} mt={1} border error>
+          Delete this notebook
+        </Button>
+      </Col>
     </Box>
   );
 }
