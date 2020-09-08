@@ -116,6 +116,9 @@ export default class ChatEditor extends Component {
       extraKeys: {
         'Enter': () => {
           this.submit();
+        },
+        'Esc': () => {
+          this.editor?.getInputField().blur();
         }
       }
     };
