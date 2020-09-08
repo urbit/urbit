@@ -123,6 +123,7 @@ export class LinkDetail extends Component {
           pending={true}
           content={com}
           member={our.member}
+          remoteContentPolicy={props.remoteContentPolicy}
           time={new Date().getTime()}
         />
       );
