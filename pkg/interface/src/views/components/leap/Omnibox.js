@@ -6,6 +6,8 @@ import Mousetrap from 'mousetrap';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
 
+import defaultApps from '~/logic/lib/default-apps';
+
 export class Omnibox extends Component {
   constructor(props) {
     super(props);
@@ -13,7 +15,7 @@ export class Omnibox extends Component {
       index: new Map([]),
       query: '',
       results: this.initialResults(),
-      selected: ''
+      selected: []
     };
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.search = this.search.bind(this);
@@ -77,9 +79,11 @@ export class Omnibox extends Component {
     if (evt.key === 'Enter') {
       evt.preventDefault();
       if (this.state.selected !== '') {
-        this.navigate(this.state.selected);
+        this.navigate(this.state.selected[0], this.state.selected[1]);
       } else {
-        this.navigate(Array.from(this.state.results.values()).flat()[0].link);
+        this.navigate(
+          Array.from(this.state.results.values()).flat()[0].app,
+          Array.from(this.state.results.values()).flat()[0].link);
       }
     }
   }
@@ -107,11 +111,15 @@ export class Omnibox extends Component {
     }));
   }
 
-  navigate(link) {
+  navigate(app, link) {
     const { props } = this;
     this.setState({ results: this.initialResults(), query: '' }, () => {
       props.api.local.setOmnibox();
-      props.history.push(link);
+      if (defaultApps.includes(app.toLowerCase()) || app === 'profile') {
+        props.history.push(link);
+      } else {
+        window.location.href = link;
+      }
     });
   }
 
@@ -165,19 +173,22 @@ export class Omnibox extends Component {
     if (current !== '') {
       const currentIndex = flattenedResults.indexOf(
         ...flattenedResults.filter((e) => {
-          return e.link === current;
+          return e.link === current[1];
         })
       );
       if (currentIndex > 0) {
+        const nextApp = flattenedResults[currentIndex - 1].app;
         const nextLink = flattenedResults[currentIndex - 1].link;
-        this.setState({ selected: nextLink });
+        this.setState({ selected: [nextApp, nextLink] });
       } else {
+        const nextApp = flattenedResults[totalLength - 1].app;
         const nextLink = flattenedResults[totalLength - 1].link;
-        this.setState({ selected: nextLink });
+        this.setState({ selected: [nextApp, nextLink] });
       }
     } else {
+      const nextApp = flattenedResults[totalLength - 1].app;
       const nextLink = flattenedResults[totalLength - 1].link;
-      this.setState({ selected: nextLink });
+      this.setState({ selected: [nextApp, nextLink] });
     }
   }
 
@@ -187,19 +198,22 @@ export class Omnibox extends Component {
     if (current !== '') {
       const currentIndex = flattenedResults.indexOf(
         ...flattenedResults.filter((e) => {
-          return e.link === current;
+          return e.link === current[1];
         })
       );
       if (currentIndex < flattenedResults.length - 1) {
+      const nextApp = flattenedResults[currentIndex + 1].app;
       const nextLink = flattenedResults[currentIndex + 1].link;
-      this.setState({ selected: nextLink });
+      this.setState({ selected: [nextApp, nextLink] });
       } else {
+      const nextApp = flattenedResults[0].app;
       const nextLink = flattenedResults[0].link;
-      this.setState({ selected: nextLink });
+      this.setState({ selected: [nextApp, nextLink] });
       }
     } else {
+      const nextApp = flattenedResults[0].app;
       const nextLink = flattenedResults[0].link;
-      this.setState({ selected: nextLink });
+      this.setState({ selected: [nextApp, nextLink] });
     }
   }
 
@@ -228,8 +242,8 @@ export class Omnibox extends Component {
                 text={result.title}
                 subtext={result.host}
                 link={result.link}
-                navigate={() => this.navigate(result.link)}
-                selected={this.state.selected}
+                navigate={() => this.navigate(result.app, result.link)}
+                selected={this.state.selected[1]}
                 dark={props.dark} />
             ))}
           </Box>
@@ -241,7 +255,7 @@ export class Omnibox extends Component {
 
   render() {
     const { props, state } = this;
-    if (!state.selected && Array.from(this.state.results.values()).flat().length) {
+    if (state?.selected.length === 0 && Array.from(this.state.results.values()).flat().length) {
       this.setNextSelected();
     }
     return (
