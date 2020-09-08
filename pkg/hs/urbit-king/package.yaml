@@ -51,6 +51,7 @@ dependencies:
   - hashable
   - hashtables
   - heap
+  - hexstring
   - http-client
   - http-client-tls
   - http-types
@@ -101,7 +102,6 @@ dependencies:
   - unliftio-core
   - unordered-containers
   - urbit-atom
-  - urbit-azimuth
   - urbit-eventlog-lmdb
   - urbit-hob
   - urbit-noun
@@ -114,7 +114,6 @@ dependencies:
   - wai-websockets
   - warp
   - warp-tls
-  - web3
   - websockets
 
 default-extensions:
