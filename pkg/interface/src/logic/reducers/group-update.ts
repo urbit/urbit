@@ -78,6 +78,7 @@ export default class GroupReducer<S extends GroupState> {
       this.addGroup(data, state);
       this.removeGroup(data, state);
       this.changePolicy(data, state);
+      this.expose(data, state);
     }
   }
 
@@ -186,6 +187,15 @@ export default class GroupReducer<S extends GroupState> {
       }
     }
   }
+
+  expose(json: GroupUpdate, state: S) {
+    if( 'expose' in json && state) {
+      const { resource } = json.expose;
+      const resourcePath = resourceAsPath(resource);
+      state.groups[resourcePath].hidden = false;
+    }
+  }
+
 
   private inviteChangePolicy(diff: InvitePolicyDiff, policy: InvitePolicy) {
     if ('addInvites' in diff) {

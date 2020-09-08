@@ -163,6 +163,7 @@ export default function PublishApp(props: PublishAppProps) {
                     hideNicknames={hideNicknames}
                     hideAvatars={hideAvatars}
                     remoteContentPolicy={remoteContentPolicy}
+                    associations={associations}
                     {...props}
                   />
                 );
