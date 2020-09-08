@@ -292,7 +292,7 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
               className={number === mailboxSize ? 'pb3' : ''}
             />
           }}
-        /> : null}
+        /> : <div style={{height: '100%', width: '100%'}}></div>}
       </Fragment>
     );
   }
