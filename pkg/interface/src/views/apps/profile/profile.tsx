@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Text, Row, Col, Center, Icon } from "@tlon/indigo-react";
+import { Box, Text, Row, Col, Icon } from "@tlon/indigo-react";
 
 import { Sigil } from "~/logic/lib/sigil";
 import { uxToHex, MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
@@ -15,7 +15,6 @@ const SidebarItem = ({ children, view, current }) => {
   return (
     <Link to={`/~profile/${view}`}>
       <Row
-        display="flex"
         alignItems="center"
         verticalAlign="middle"
         py={1}
@@ -85,7 +84,7 @@ export default function ProfileScreen(props: any) {
                     <Sigil ship={`~${ship}`} size={80} color={sigilColor} />
                   </Box>
                 </Box>
-                <Box width="100%" py={3}>
+                <Box width="100%" py={3} zIndex='2'>
                   <SidebarItem current={view} view="identity">
                     Your Identity
                   </SidebarItem>
