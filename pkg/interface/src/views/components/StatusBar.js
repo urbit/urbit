@@ -74,6 +74,16 @@ const StatusBar = (props) => {
           <Sigil ship={props.ship} size={24} color={"#000000"} classes="dib mix-blend-diff" />
           <Text ml={2} display={["none", "inline"]} fontFamily="mono">{props.ship}</Text>
         </StatusBarItem>
+        {'requestFullscreen' in document.documentElement ? <StatusBarItem ml={2} onClick={() => {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+            document.fullscreenElement = null;
+          } else {
+            document.documentElement.requestFullscreen();
+          }
+        }}>
+          <Icon icon={document.fullscreenElement ? 'Minus' : 'Plus'} />
+        </StatusBarItem> : null}
       </Row>
     </Box>
   );
