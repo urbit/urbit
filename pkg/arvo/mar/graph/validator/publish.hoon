@@ -9,8 +9,15 @@
   ++  noun
     |=  p=*
     =/  ip  ;;(indexed-post p)
-    ?>  (gte 2 (lent index.p.ip))
-    ip
+    |^
+    ?+    index.p.ip  !!
+      [@ @ ~]  ip
+    ::  top level post must have title as first content
+        [@ ~]
+      ?>  ?=(^ contents.p.ip)
+      ?>  ?=(%text -.i.contents.p.ip)
+      ip
+    ==
   --
 ::
 ++  grad  %noun

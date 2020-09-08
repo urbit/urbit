@@ -306,12 +306,16 @@
       ^-  node:graph-store
       =/  =index:graph-store
         ~[date-created.note]
+      =/  contents=(list content:graph-store)
+        :~  [%text title.note]
+            [%text file.note]
+        ==
       :_  (comments-to-children index note)
       ^-  post:graph-store
       :*  author.note
           index
           date-created.note
-          [%text file.note]~
+          contents
           ~  ~
       ==
     ::
