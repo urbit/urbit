@@ -53,6 +53,14 @@
   }
 
   static u3_noun
+  _last_k(u3_noun zyc, u3_noun naz)
+  {
+    u3_noun pro = _last(zyc, naz);
+    u3z(zyc); u3z(naz);
+    return pro;
+  }
+
+  static u3_noun
   _next(u3_noun tub)
   {
     u3_noun p_tub, q_tub;
@@ -972,20 +980,15 @@
       u3j_gate_prep(&raq_u, u3k(raq));
 
       while ( len_w-- > 0 ) {
-        top   = u3a_peek(sizeof(u3_noun));
-        p_vex = *top;
+        top     = u3a_peek(sizeof(u3_noun));
+        p_vex   = *top;
         u3a_pop(sizeof(u3_noun));
 
         top     = u3a_peek(sizeof(u3_noun));
         puq_vex = *top;
         u3a_pop(sizeof(u3_noun));
 
-        {
-          u3_noun p_gaw = _last(p_vex, p_wag);
-          u3z(p_vex); u3z(p_wag);
-          p_wag = p_gaw;
-        }
-
+        p_wag   = _last_k(p_vex, p_wag);
         puq_wag = u3j_gate_slam(&raq_u, u3nc(puq_vex, puq_wag));
       }
 
