@@ -29,29 +29,38 @@ _cu_met_3(u3a_atom* vat_u)
   }
 }
 
+/* _cu_atom_to_ref(): allocate indirect atom off-loom.
+*/
 static inline ur_nref
-_cu_atom_to_ref(u3a_atom* vat_u, ur_root_t *r)
+_cu_atom_to_ref(ur_root_t* rot_u, u3a_atom* vat_u)
 {
   ur_nref ref;
+  c3_d  val_d;
 
   switch ( vat_u->len_w ) {
     case 2: {
-      ref = ur_coin64(r, ( ((c3_d)vat_u->buf_w[1]) << 32
-                         | ((c3_d)vat_u->buf_w[0]) ));
+      val_d = ((c3_d)vat_u->buf_w[1]) << 32
+            | ((c3_d)vat_u->buf_w[0]);
+      ref = ur_coin64(rot_u, val_d);
     } break;
 
     case 1: {
-      ref = ur_coin64(r, (c3_d)vat_u->buf_w[0]);
+      val_d = (c3_d)vat_u->buf_w[0];
+      ref = ur_coin64(rot_u, val_d);
     } break;
 
-
     default: {
-      c3_assert( vat_u->len_w );
-
+      //  XX assumes little-endian
+      //
       c3_y* byt_y = (c3_y*)vat_u->buf_w;
-      c3_w  len_w = _cu_met_3(vat_u);
+      c3_d  len_d = ((c3_d)vat_u->len_w) << 2;
 
-      ref = ur_coin_bytes(r, byt_y, (c3_d)len_w);
+      c3_assert( len_d );
+
+      //  NB: this call will accounts for any trailing null bytes
+      //  caused by an overestimate in [len_d]
+      //
+      ref = ur_coin_bytes(rot_u, byt_y, len_d);
     } break;
   }
 
@@ -90,25 +99,19 @@ _cu_box_stash(u3a_noun* som_u, ur_nref ref)
   box_w[2] = ref >> 32;
 }
 
-//  stack frame for recording head vs tail iteration
-//
-//    In Hoon, this structure would be as follows:
-//
-//    $%  [%root ~]
-//        [%head loom-cell=^]
-//        [%tail loom-cell=^ off-loom-head=*]
-//    ==
-//
+/*
+**  stack frame for recording head vs tail iteration
+**
+**    $?  [LOM_HEAD cell=*]
+**    [ref=* cell=*]
+*/
 
-#define STACK_ROOT 0
-#define STACK_HEAD 1
-#define STACK_TAIL 2
+#define LOM_HEAD 0xffffffffffffffffULL
 
 typedef struct _cu_frame_s
 {
-  c3_y      tag_y;
-  u3a_cell* cel_u;
   ur_nref     ref;
+  u3a_cell* cel_u;
 } _cu_frame;
 
 typedef struct _cu_stack_s
@@ -119,91 +122,103 @@ typedef struct _cu_stack_s
   _cu_frame* fam_u;
 } _cu_stack;
 
-/* _cu_stack_push(): push a "stack" frame.
+/* _cu_from_loom_next(): advance off-loom reallocation traversal.
 */
-static inline void
-_cu_stack_push(_cu_stack *s, c3_y tag_y, u3a_cell* cel_u, ur_nref ref)
+static inline ur_nref
+_cu_from_loom_next(_cu_stack* tac_u, ur_root_t* rot_u, u3_noun a)
 {
-  if ( s->fil_w == s->siz_w ) {
-    c3_w nex_w = s->pre_w + s->siz_w;
-    s->fam_u   = c3_realloc(s->fam_u, nex_w * sizeof(*s->fam_u));
-    s->pre_w   = s->siz_w;
-    s->siz_w   = nex_w;
-  }
+  while ( 1 ) {
+    //  u3 direct == ur direct
+    //
+    if ( c3y == u3a_is_cat(a) ) {
+      return (ur_nref)a;
+    }
+    else {
+      u3a_noun* som_u = u3a_to_ptr(a);
+      ur_nref   ref;
 
-  _cu_frame* fam_u = &(s->fam_u[s->fil_w++]);
-  fam_u->tag_y = tag_y;
-  fam_u->cel_u = cel_u;
-  fam_u->ref   = ref;
+      //  check for relocation pointers
+      //
+      if ( c3y == _cu_box_check(som_u, &ref) ) {
+        return ref;
+      }
+      //  reallocate indirect atoms, stashing relocation pointers
+      //
+      else if ( c3y == u3a_is_atom(a) ) {
+        ref = _cu_atom_to_ref(rot_u, (u3a_atom*)som_u);
+        _cu_box_stash(som_u, ref);
+        return ref;
+      }
+      else {
+        u3a_cell* cel_u = (u3a_cell*)som_u;
+
+        //  reallocate the stack if full
+        //
+        if ( tac_u->fil_w == tac_u->siz_w ) {
+          c3_w nex_w   = tac_u->pre_w + tac_u->siz_w;
+          tac_u->fam_u = c3_realloc(tac_u->fam_u, nex_w * sizeof(*tac_u->fam_u));
+          tac_u->pre_w = tac_u->siz_w;
+          tac_u->siz_w = nex_w;
+        }
+
+        //  push a head-frame and continue into the head
+        //
+        {
+          _cu_frame* fam_u = &(tac_u->fam_u[tac_u->fil_w++]);
+          fam_u->ref   = LOM_HEAD;
+          fam_u->cel_u = cel_u;
+        }
+
+        a = cel_u->hed;
+        continue;
+      }
+    }
+  }
 }
 
 /* _cu_from_loom(): reallocate [a] off loom, in [r].
 */
 static ur_nref
-_cu_from_loom(ur_root_t *r, u3_noun a)
+_cu_from_loom(ur_root_t* rot_u, u3_noun a)
 {
-  ur_nref   ref;
+  _cu_stack tac_u = {0};
+  ur_nref     ref;
 
-  _cu_stack s = { .pre_w = 89, .siz_w = 144, .fil_w = 0, .fam_u = 0 };
-  s.fam_u = c3_malloc((s.pre_w + s.siz_w) * sizeof(*s.fam_u));
-  _cu_stack_push(&s, STACK_ROOT, 0, 0);
+  tac_u.pre_w = ur_fib10;
+  tac_u.siz_w = ur_fib11;
+  tac_u.fam_u = c3_malloc(tac_u.siz_w * sizeof(*tac_u.fam_u));
 
-  advance: {
-    //  u3 direct == ur direct
+  ref = _cu_from_loom_next(&tac_u, rot_u, a);
+
+  //  incorporate reallocated ref, accounting for cells
+  //
+  while ( tac_u.fil_w ) {
+    //  peek at the top of the stack
     //
-    if ( c3y == u3a_is_cat(a) ) {
-      ref = (ur_nref)a;
-      goto retreat;
+    _cu_frame* fam_u = &(tac_u.fam_u[tac_u.fil_w - 1]);
+
+    //  [fam_u] is a head-frame; stash ref and continue into the tail
+    //
+    if ( LOM_HEAD == fam_u->ref ) {
+      fam_u->ref = ref;
+      ref        = _cu_from_loom_next(&tac_u, rot_u, fam_u->cel_u->tel);
     }
+    //  [fam_u] is a tail-frame; cons refs and pop the stack
+    //
     else {
-      u3a_noun* som_u = u3a_to_ptr(a);
-
-      //  all bits set == already reallocated
-      //
-      if ( c3y == _cu_box_check(som_u, &ref) ) {
-        goto retreat;
-      }
-      else if ( c3y == u3a_is_atom(a) ) {
-        ref = _cu_atom_to_ref((u3a_atom*)som_u, r);
-        _cu_box_stash(som_u, ref);
-        goto retreat;
-      }
-      else {
-        u3a_cell* cel_u = (u3a_cell*)som_u;
-        _cu_stack_push(&s, STACK_HEAD, cel_u, 0);
-        a = cel_u->hed;
-        goto advance;
-      }
+      ref = ur_cons(rot_u, fam_u->ref, ref);
+      _cu_box_stash((u3a_noun*)fam_u->cel_u, ref);
+      tac_u.fil_w--;
     }
   }
 
-  retreat: {
-    _cu_frame fam_u = s.fam_u[--s.fil_w];
-
-    switch ( fam_u.tag_y ) {
-      default:          c3_assert(0);
-      case STACK_ROOT:  break;
-
-      case STACK_HEAD: {
-        _cu_stack_push(&s, STACK_TAIL, fam_u.cel_u, ref);
-        a = fam_u.cel_u->tel;
-        goto advance;
-      }
-
-      case STACK_TAIL: {
-        u3a_cell* cel_u = fam_u.cel_u;
-        ref = ur_cons(r, fam_u.ref, ref);
-        _cu_box_stash((u3a_noun*)cel_u, ref);
-        goto retreat;
-      }
-    }
-  }
-
-  free(s.fam_u);
+  c3_free(tac_u.fam_u);
 
   return ref;
 }
 
+/* _cu_vec: parameters for cold-state hamt walk.
+*/
 typedef struct _cu_vec_s {
   ur_nvec_t* vec_u;
   ur_root_t* rot_u;
@@ -393,7 +408,7 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
   //
   if ( fil_u ) {
     ur_root_info(fil_u, rot_u);
-    fprintf(stderr, "\r\n");
+    fprintf(fil_u, "\r\n");
   }
 
   //  reinitialize loom
@@ -432,11 +447,10 @@ u3u_meld(void)
 {
   ur_root_t* rot_u;
   ur_nvec_t  cod_u;
-  ur_nref      ken;
 
   c3_assert( &(u3H->rod_u) == u3R );
 
-  ken = _cu_realloc(stderr, &rot_u, &cod_u);
+  _cu_realloc(stderr, &rot_u, &cod_u);
 
   //  dispose off-loom structures
   //
