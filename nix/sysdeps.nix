@@ -23,16 +23,14 @@ let
     http2Support = false;
     scpSupport = false;
     gssSupport = false;
+    ldapSupport = false;
+    brotliSupport = false;
     zlib = ourzlib;
     openssl = ouropenssl;
   }).overrideAttrs (oldAttrs: rec {
     dontDisableStatic = true;
     configureFlags = oldAttrs.configureFlags ++ [
-      "--disable-ldap"
-      "--disable-gssapi"
-      "--disable-scp"
       "--disable-shared"
-      "--disable-manual"
     ];
   });
 
