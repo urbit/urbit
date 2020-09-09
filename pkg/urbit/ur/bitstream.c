@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
@@ -708,7 +709,13 @@ ur_bsw_grow(ur_bsw_t *bsw, uint64_t step)
   uint64_t next = size + step;
 
   bsw->bytes = realloc(bsw->bytes, next);
-  assert(bsw->bytes);
+
+  if ( !bsw->bytes ) {
+    fprintf(stderr,
+            "ur: bitstream-write allocation failed, out of memory\r\n");
+    abort();
+  }
+
   memset(bsw->bytes + size, 0, step);
 
   bsw->prev  = size;

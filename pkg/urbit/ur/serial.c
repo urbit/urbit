@@ -3,6 +3,18 @@
 
 #include "ur/ur.h"
 
+static void*
+_oom(const char* cap, void* v)
+{
+  if ( !v ) {
+    fprintf(stderr,
+            "ur: hashcons: %s: allocation failed, out of memory\r\n", cap);
+    abort();
+  }
+
+  return v;
+}
+
 static inline void
 _bsw_atom(ur_root_t *r, ur_nref ref, ur_bsw_t *bsw, uint64_t len)
 {
@@ -81,8 +93,7 @@ ur_jam_unsafe(ur_root_t      *r,
 
   j.bsw.prev  = ur_fib11;
   j.bsw.size  = ur_fib12;
-  j.bsw.bytes = calloc(j.bsw.size, 1);
-  assert( j.bsw.bytes );
+  j.bsw.bytes = _oom("jam", calloc(j.bsw.size, 1));
 
   ur_walk_fore(r, ref, &j, _jam_atom, _jam_cell);
 
@@ -150,8 +161,7 @@ _cue_next(ur_root_t      *r,
         //
         if ( s->fill == s->size ) {
           uint32_t next = s->prev + s->size;
-          s->f = realloc(s->f, next * sizeof(*s->f));
-          assert( s->f );
+          s->f = _oom("cue_next stack", realloc(s->f, next * sizeof(*s->f)));
           s->prev = s->size;
           s->size = next;
         }
@@ -194,8 +204,7 @@ _cue_next(ur_root_t      *r,
         }
         else {
           uint64_t len_byt = (len >> 3) + !!ur_mask_3(len);
-          uint8_t *byt = calloc(len_byt, 1);
-          assert( byt );
+          uint8_t     *byt = _oom("cue_next bytes", calloc(len_byt, 1));
 
           ur_bsr_bytes_any(bsr, len, byt);
 
@@ -242,8 +251,7 @@ ur_cue_unsafe(ur_root_t       *r,
   //
   s.prev = ur_fib10;
   s.size = ur_fib11;
-  s.f = malloc(s.size * sizeof(*s.f));
-  assert( s.f );
+  s.f = _oom("cue stack", malloc(s.size * sizeof(*s.f)));
 
   //  advance into stream
   //
@@ -335,8 +343,7 @@ _cue_test_next(_cue_test_stack_t *s,
         //
         if ( s->fill == s->size ) {
           uint32_t next = s->prev + s->size;
-          s->f = realloc(s->f, next * sizeof(*s->f));
-          assert( s->f );
+          s->f = _oom("cue_test", realloc(s->f, next * sizeof(*s->f)));
           s->prev = s->size;
           s->size = next;
         }
@@ -403,8 +410,7 @@ ur_cue_test_unsafe(ur_dict_t    *dict,
   //
   s.prev = ur_fib10;
   s.size = ur_fib11;
-  s.f = malloc(s.size * sizeof(*s.f));
-  assert( s.f );
+  s.f =  _oom("cue_test", malloc(s.size * sizeof(*s.f)));
 
   //  advance into stream
   //

@@ -17,6 +17,18 @@
 uint64_t
 ur_met0_bytes_unsafe(uint8_t *byt, uint64_t len);
 
+static void*
+_oom(const char* cap, void* v)
+{
+  if ( !v ) {
+    fprintf(stderr,
+            "ur: hashcons: %s: allocation failed, out of memory\r\n", cap);
+    abort();
+  }
+
+  return v;
+}
+
 void
 ur_dict32_grow(ur_root_t *r, ur_dict32_t *dict, uint64_t prev, uint64_t size)
 {
@@ -24,8 +36,7 @@ ur_dict32_grow(ur_root_t *r, ur_dict32_t *dict, uint64_t prev, uint64_t size)
   uint64_t old_size = dict->size;
   uint64_t  i, next = prev + size;
 
-  buckets = calloc(next, sizeof(*buckets));
-  assert( buckets );
+  buckets = _oom("dict32_grow", calloc(next, sizeof(*buckets)));
 
   if ( old_buckets ) {
     for ( i = 0; i < old_size; i++ ) {
@@ -126,8 +137,7 @@ ur_dict64_grow(ur_root_t *r, ur_dict64_t *dict, uint64_t prev, uint64_t size)
   uint64_t old_size = dict->size;
   uint64_t  i, next = prev + size;
 
-  buckets = calloc(next, sizeof(*buckets));
-  assert( buckets );
+  buckets = _oom("dict64_grow", calloc(next, sizeof(*buckets)));
 
   if ( old_buckets ) {
     for ( i = 0; i < old_size; i++ ) {
@@ -228,8 +238,7 @@ ur_dict_grow(ur_root_t *r, ur_dict_t *dict, uint64_t prev, uint64_t size)
   uint64_t old_size = dict->size;
   uint64_t  i, next = prev + size;
 
-  buckets = calloc(next, sizeof(*buckets));
-  assert( buckets );
+  buckets = _oom("dict_grow", calloc(next, sizeof(*buckets)));
 
   if ( old_buckets ) {
     for ( i = 0; i < old_size; i++ ) {
@@ -425,11 +434,9 @@ ur_atoms_grow(ur_atoms_t *atoms)
   uint64_t  *lens = atoms->lens;
   ur_mug    *mugs = atoms->mugs;
 
-  atoms->bytes = malloc(next * ( sizeof(*atoms->bytes)
-                               + sizeof(*atoms->lens)
-                               + sizeof(*atoms->mugs) ));
-  assert( atoms->bytes );
-
+  atoms->bytes = _oom("atoms_grow", malloc(next * ( sizeof(*atoms->bytes)
+                                                  + sizeof(*atoms->lens)
+                                                  + sizeof(*atoms->mugs) )));
   atoms->lens  = (void*)((char*)atoms->bytes + (next * sizeof(*atoms->bytes)));
   atoms->mugs  = (void*)((char*)atoms->lens  + (next * sizeof(*atoms->lens)));
 
@@ -455,11 +462,9 @@ ur_cells_grow(ur_cells_t *cells)
   ur_nref *tails = cells->tails;
   ur_mug   *mugs = cells->mugs;
 
-  cells->heads = malloc(next * ( sizeof(*cells->heads)
-                               + sizeof(*cells->heads)
-                               + sizeof(*cells->mugs) ));
-  assert( cells->heads );
-
+  cells->heads = _oom("cells_grow", malloc(next * ( sizeof(*cells->heads)
+                                                  + sizeof(*cells->heads)
+                                                  + sizeof(*cells->mugs) )));
   cells->tails = (void*)((char*)cells->heads + (next * sizeof(*cells->heads)));
   cells->mugs  = (void*)((char*)cells->tails + (next * sizeof(*cells->tails)));
 
@@ -666,8 +671,7 @@ ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
     return (ur_nref)direct;
   }
   else {
-    uint8_t *copy = malloc(len);
-    assert( copy );
+    uint8_t *copy = _oom("coin_bytes", malloc(len));
     memcpy(copy, byt, len);
 
     return ur_coin_bytes_unsafe(r, copy, len);
@@ -681,9 +685,10 @@ ur_coin64(ur_root_t *r, uint64_t n)
     return n;
   }
   else {
-    uint8_t *byt = malloc(8);
-    assert( byt );
+    uint8_t *byt;
     assert( 8 == ur_met3_64(n) );
+
+    byt = _oom("coin64", malloc(8));
 
     byt[0] = ur_mask_8(n);
     byt[1] = ur_mask_8(n >>  8);
@@ -873,8 +878,7 @@ ur_root_free(ur_root_t *r)
 ur_root_t*
 ur_root_init(void)
 {
-  ur_root_t *r = calloc(1, sizeof(*r));
-  assert( r );
+  ur_root_t *r = _oom("root_init", calloc(1, sizeof(*r)));
 
   {
     ur_dict_t *dict;
@@ -916,8 +920,7 @@ void
 ur_nvec_init(ur_nvec_t *v, uint64_t size)
 {
   v->fill = 0;
-  v->refs = calloc(size, sizeof(ur_nref));
-  assert( v->refs );
+  v->refs = _oom("nvec_init", calloc(size, sizeof(ur_nref)));
 }
 
 void
@@ -930,8 +933,7 @@ ur_walk_fore(ur_root_t *r,
   uint64_t prev = 89, size = 144, fill = 0;
   ur_nref *top, *don;
 
-  don  = malloc(size * sizeof(*don));
-  assert( don );
+  don  = _oom("walk_fore", malloc(size * sizeof(*don)));
   top  = don + ++fill;
   *top = ref;
 
@@ -956,8 +958,7 @@ ur_walk_fore(ur_root_t *r,
       //
       if ( size == fill ) {
         uint64_t next = prev + size;
-        don  = realloc(don, next * sizeof(*don));
-        assert( don );
+        don  = _oom("walk_fore", realloc(don, next * sizeof(*don)));
         top  = don + fill;
         prev = size;
         size = next;
