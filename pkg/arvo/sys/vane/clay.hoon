@@ -2119,7 +2119,7 @@
           &+~
         ?:  (~(has in (reachable-takos:ze r.ali-yaki)) r.bob-yaki)
           $(germ %fine)
-        =/  merge-points  find-merge-points
+        =/  merge-points  (find-merge-points ali-yaki bob-yaki)
         ?~  merge-points
           :~  %|  %merge-no-merge-base
               leaf+"consider a %this or %that merge to get a mergebase"
@@ -2192,42 +2192,6 @@
         |=  m=(map path lobe)
         ^-  (map path (each page lobe))
         (~(run by m) |=(=lobe |+lobe))
-      ::
-      ::  Find the most recent common ancestor(s).
-      ::
-      ::    Pretty sure this could be a lot more efficient.
-      ::
-      ++  find-merge-points
-        ^-  (set yaki)
-        %-  reduce-merge-points
-        =+  r=(reachable-takos:ze r.ali-yaki)
-        |-  ^-  (set yaki)
-        ~!  bob-yaki
-        ?:  (~(has in r) r.bob-yaki)  (~(put in *(set yaki)) bob-yaki)
-        %+  roll  p.bob-yaki
-        |=  [t=tako s=(set yaki)]
-        ?:  (~(has in r) t)
-          (~(put in s) (~(got by hut.ran) t))
-        (~(uni in s) ^$(bob-yaki (~(got by hut.ran) t)))
-      ::
-      ::  Eliminate redundant merge-point candidates
-      ::
-      ++  reduce-merge-points
-        |=  unk=(set yaki)
-        =|  gud=(set yaki)
-        =/  zar=(map tako (set tako))
-          %+  roll  ~(tap in unk)
-          |=  [yak=yaki qar=(map tako (set tako))]
-          (~(put by qar) r.yak (reachable-takos:ze r.yak))
-        |-
-        ^-  (set yaki)
-        ?~  unk  gud
-        =+  bun=(~(del in `(set yaki)`unk) n.unk)
-        ?:  %+  levy  ~(tap by (~(uni in gud) bun))
-            |=  yak=yaki
-            !(~(has in (~(got by zar) r.yak)) r.n.unk)
-          $(gud (~(put in gud) n.unk), unk bun)
-        $(unk bun)
       ::
       ::  The set of changes between the mergebase and one of the desks
       ::  being merged
@@ -2482,6 +2446,62 @@
         ==
       --
     --
+  ::
+  ::  Find the most recent common ancestor(s).
+  ::
+  ::    For performance, this depends on +reachable-takos being
+  ::    memoized.
+  ::
+  ++  find-merge-points
+    |=  [=ali=yaki =bob=yaki]
+    ^-  (set yaki)
+    ::  Loop through ancestors breadth-first, lazily generating ancestry
+    ::
+    =/  ali-takos  (reachable-takos:ze r.ali-yaki)
+    ::  Tako worklist
+    ::
+    =/  takos=(list tako)  ~[r.bob-yaki]
+    ::  Mergebase candidates.  Have proven they're common ancestors, but
+    ::  not that they're a most recent
+    ::
+    =|  bases=(set tako)
+    ::  Takos we've already checked or are in our worklist
+    ::
+    =|  done=(set tako)
+    |-  ^-  (set yaki)
+    =*  outer-loop  $
+    ::  If we've finished our worklist, convert to yakis and return
+    ::
+    ?~  takos
+      (silt (turn ~(tap in bases) ~(got by hut.ran)))
+    =.  done  (~(put in done) i.takos)
+    ::  If this is a common ancestor, stop recursing through our
+    ::  parentage.  Check if it's comparable to any existing candidate.
+    ::
+    ?:  (~(has in ali-takos) i.takos)
+      =/  base-list  ~(tap in bases)
+      |-  ^-  (set yaki)
+      =*  bases-loop  $
+      ?~  base-list
+        ::  Proven it's not an ancestor of any previous candidate.
+        ::  Remove all ancestors of new candidate and add it to the
+        ::  candidate list.
+        ::
+        =.  bases
+          =/  new-reachable  (reachable-takos:ze i.takos)
+          (~(put in (~(dif in bases) new-reachable)) i.takos)
+        outer-loop(takos t.takos)
+      ::  If it's an ancestor of another candidate, this is not most
+      ::  recent, so skip and try next in worklist.
+      ::
+      =/  base-reachable  (reachable-takos:ze i.base-list)
+      ?:  (~(has in base-reachable) i.takos)
+        outer-loop(takos t.takos)
+      bases-loop(base-list t.base-list)
+    ::  Append parents to list and recurse
+    ::
+    =/  bob-yaki  (~(got by hut.ran) i.takos)
+    outer-loop(takos (weld t.takos (skip p.bob-yaki ~(has in done))))
   ::
   ::  Update mime cache
   ::
@@ -3400,6 +3420,7 @@
     ++  reachable-takos                                 ::  reachable
       |=  p/tako
       ^-  (set tako)
+      ~+
       =|  s=(set tako)
       |-  ^-  (set tako)
       =.  s  (~(put in s) p)
@@ -3621,7 +3642,7 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      ?.  ?=([?(%yaki %blob %hash %cage %open %late) * ~] pax)
+      ?.  ?=([?(%yaki %blob %hash %cage %open %late %base) * *] pax)
         `~
       ?-    i.pax
           %yaki
@@ -3658,6 +3679,19 @@
         ``open+!>(prelude:(ford:fusion static-ford-args))
       ::
           %late  !!  :: handled in +aver
+          %base
+        ?>  ?=(^ t.t.pax)
+        :^  ~  ~  %uvs  !>
+        ^-  (list @uv)
+        =/  him  (slav %p i.t.pax)
+        =/  other  dom:((de our now ski hen ruf) him i.t.t.pax)
+        ?:  =(0 let.other)
+          ~
+        =/  our-yaki  (~(got by hut.ran) (~(got by hit.dom) yon))
+        =/  other-yaki  (~(got by hut.ran) (~(got by hit.other) let.other))
+        %+  turn  ~(tap in (find-merge-points other-yaki our-yaki))
+        |=  =yaki
+        r.yaki
       ==
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::
