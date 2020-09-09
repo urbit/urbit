@@ -259,101 +259,93 @@ typedef struct _cu_loom_s {
   u3_noun      *cel;  //  cells
 } _cu_loom;
 
-/* _cu_loom_free(): dispose loom relocation pointers
-*/
-static void
-_cu_loom_free(_cu_loom* lom_u)
-{
-  ur_dict_free((ur_dict_t*)&(lom_u->map_u));
-  free(lom_u->vat);
-  free(lom_u->cel);
-}
-
-/* _cu_atoms_to_loom(): allocate all indirect atoms on the loom.
-*/
-static void
-_cu_atoms_to_loom(ur_root_t* rot_u, _cu_loom* lom_u)
-{
-  c3_d*  len_d = rot_u->atoms.lens;
-  c3_y** byt_y = rot_u->atoms.bytes;
-  c3_d   fil_d = rot_u->atoms.fill;
-  u3_atom* vat = lom_u->vat = calloc(fil_d, sizeof(u3_atom));
-  c3_d     i_d;
-
-  for ( i_d = 0; i_d < fil_d; i_d++ ) {
-    vat[i_d] = u3i_bytes(len_d[i_d], byt_y[i_d]);
-  }
-}
-
 /* _cu_ref_to_noun(): lookup/allocate [ref] on the loom.
 */
 static u3_noun
-_cu_ref_to_noun(ur_nref ref, _cu_loom* lom_u)
+_cu_ref_to_noun(ur_root_t* rot_u, ur_nref ref, _cu_loom* lom_u)
 {
   switch ( ur_nref_tag(ref) ) {
-    default: assert(0);
+    default: c3_assert(0);
 
+    //  all ur indirect atoms have been pre-reallocated on the loom.
+    //
+    case ur_iatom:  return lom_u->vat[ur_nref_idx(ref)];
+
+
+    //  cells were allocated off-loom in cons-order, and are traversed
+    //  in the same order: we've already relocated any one we could need here.
+    //
+    case ur_icell:  return lom_u->cel[ur_nref_idx(ref)];
+
+    //  u3 direct atoms are 31-bit, while ur direct atoms are 62-bit;
+    //  we use a hashtable to deduplicate the non-overlapping space
+    //
     case ur_direct: {
+      u3_atom vat;
+
       if ( 0x7fffffffULL >= ref ) {
         return (u3_atom)ref;
       }
+      else if ( ur_dict32_get(rot_u, &lom_u->map_u, ref, (c3_w*)&vat) ) {
+        return vat;
+      }
       else {
-        c3_w val_w;
-
-        //  XX the ur_root_t argument here is only used to dereference a mug,
-        //  but these atoms are all direct, so it'll never be used
-        //
-        if ( ur_dict32_get(0, &lom_u->map_u, ref, &val_w) ) {
-          return (u3_atom)val_w;
+        {
+          c3_w wor_w[2] = { ref & 0xffffffff, ref >> 32 };
+          vat = (c3_w)u3i_words(2, wor_w);
         }
-        else {
-          u3_atom vat;
-          {
-            c3_w wor_w[2] = { ref & 0xffffffff, ref >> 32 };
-            vat = val_w = u3i_words(2, wor_w);
-          }
 
-          ur_dict32_put(0, &lom_u->map_u, ref, val_w);
-
-          return vat;
-        }
+        ur_dict32_put(0, &lom_u->map_u, ref, (c3_w)vat);
+        return vat;
       }
     } break;
-
-    case ur_iatom:  return lom_u->vat[ur_nref_idx(ref)];
-
-    case ur_icell:  return lom_u->cel[ur_nref_idx(ref)];
-  }
-}
-
-/* _cu_cells_to_loom(): allocate all cells on the loom.
-*/
-static void
-_cu_cells_to_loom(ur_root_t* rot_u, _cu_loom* lom_u)
-{
-  ur_nref* hed = rot_u->cells.heads;
-  ur_nref* tal = rot_u->cells.tails;
-  c3_d   fil_d = rot_u->cells.fill;
-  u3_noun* cel = lom_u->cel = calloc(fil_d, sizeof(u3_noun));
-  c3_d     i_d;
-
-  for ( i_d = 0; i_d < fil_d; i_d++ ) {
-    cel[i_d] = u3nc(_cu_ref_to_noun(hed[i_d], lom_u),
-                    _cu_ref_to_noun(tal[i_d], lom_u));
-    //  XX mug?
   }
 }
 
 /* _cu_all_to_loom(): reallocate all of [rot_u] on the loom, restore roots.
+**                NB: requires all roots to be cells
+**                    does *not* track refcounts, which must be
+**                    subsequently reconstructed via tracing.
 */
 static void
 _cu_all_to_loom(ur_root_t* rot_u, ur_nref ken, ur_nvec_t* cod_u)
 {
-  _cu_loom lom_u = {0};
-  ur_dict32_grow(0, &lom_u.map_u, 89, 144);
+  _cu_loom  lom_u = {0};
+  c3_d i_d, fil_d;
 
-  _cu_atoms_to_loom(rot_u, &lom_u);
-  _cu_cells_to_loom(rot_u, &lom_u);
+  ur_dict32_grow(0, &lom_u.map_u, ur_fib11, ur_fib12);
+
+  //  allocate all atoms on the loom.
+  //
+  {
+    c3_d*  len_d = rot_u->atoms.lens;
+    c3_y** byt_y = rot_u->atoms.bytes;
+
+    fil_d = rot_u->atoms.fill;
+    lom_u.vat = calloc(fil_d, sizeof(u3_atom));
+
+    for ( i_d = 0; i_d < fil_d; i_d++ ) {
+      lom_u.vat[i_d] = u3i_bytes(len_d[i_d], byt_y[i_d]);
+    }
+  }
+
+  //  allocate all cells on the loom.
+  //
+  {
+    ur_nref* hed = rot_u->cells.heads;
+    ur_nref* tal = rot_u->cells.tails;
+    u3_noun  cel;
+
+    fil_d = rot_u->cells.fill;
+    lom_u.cel = c3_calloc(fil_d * sizeof(u3_noun));
+
+    for ( i_d = 0; i_d < fil_d; i_d++ ) {
+      cel = u3nc(_cu_ref_to_noun(rot_u, hed[i_d], &lom_u),
+                 _cu_ref_to_noun(rot_u, tal[i_d], &lom_u));
+      lom_u.cel[i_d] = cel;
+      u3r_mug(cel);
+    }
+  }
 
   //  restore kernel reference (always a cell)
   //
@@ -375,7 +367,11 @@ _cu_all_to_loom(ur_root_t* rot_u, ur_nref ken, ur_nvec_t* cod_u)
     }
   }
 
-  _cu_loom_free(&lom_u);
+  //  dispose of relocation pointers
+  //
+  c3_free(lom_u.cel);
+  c3_free(lom_u.vat);
+  ur_dict_free((ur_dict_t*)&lom_u.map_u);
 }
 
 /* _cu_realloc(): hash-cons roots off-loom, reallocate on loom.
@@ -420,6 +416,10 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
   //  reallocate all nouns on the loom
   //
   _cu_all_to_loom(rot_u, ken, &cod_u);
+
+  //  establish correct refcounts via tracing
+  //
+  u3m_grab(u3_none);
 
   //  allocate new hot jet state; re-establish warm
   //
