@@ -70,7 +70,7 @@ const StatusBar = (props) => {
       <Row justifyContent="flex-end" collapse>
         <StatusBarItem onClick={() => props.history.push('/~profile')}>
           <Sigil ship={props.ship} size={24} color={"#000000"} classes="dib mix-blend-diff" />
-          <Text ml={2} display={["none", "inline"]} fontFamily="mono">{props.ship}</Text>
+          <Text ml={2} display={["none", "inline"]} fontFamily="mono">~{props.ship}</Text>
         </StatusBarItem>
       </Row>
     </Box>
