@@ -78,7 +78,7 @@ export class Omnibox extends Component {
 
     if (evt.key === 'Enter') {
       evt.preventDefault();
-      if (this.state.selected !== '') {
+      if (this.state.selected !== []) {
         this.navigate(this.state.selected[0], this.state.selected[1]);
       } else {
         this.navigate(
@@ -133,7 +133,7 @@ export class Omnibox extends Component {
 
     // wipe results if backspacing
     if (query.length === 0) {
-      this.setState({ results: results, selected: '' });
+      this.setState({ results: results, selected: [] });
       return;
     }
 
@@ -170,7 +170,7 @@ export class Omnibox extends Component {
     const current = this.state.selected;
     const flattenedResults = Array.from(this.state.results.values()).flat();
     const totalLength = flattenedResults.length;
-    if (current !== '') {
+    if (current !== []) {
       const currentIndex = flattenedResults.indexOf(
         ...flattenedResults.filter((e) => {
           return e.link === current[1];
@@ -195,7 +195,7 @@ export class Omnibox extends Component {
   setNextSelected() {
     const current = this.state.selected;
     const flattenedResults = Array.from(this.state.results.values()).flat();
-    if (current !== '') {
+    if (current !== []) {
       const currentIndex = flattenedResults.indexOf(
         ...flattenedResults.filter((e) => {
           return e.link === current[1];
@@ -232,6 +232,7 @@ export class Omnibox extends Component {
         .map(({ category, categoryResults }, i) => {
           const categoryTitle = (category === 'other')
             ? null : <Text gray ml={2}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>;
+          const selected = this.state.selected?.length ? this.state.selected[1] : '';
           return (<Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
             <Rule borderTopWidth="0.5px" color="washedGray" />
             {categoryTitle}
@@ -243,7 +244,7 @@ export class Omnibox extends Component {
                 subtext={result.host}
                 link={result.link}
                 navigate={() => this.navigate(result.app, result.link)}
-                selected={this.state.selected[1]}
+                selected={selected}
                 dark={props.dark} />
             ))}
           </Box>
@@ -255,7 +256,7 @@ export class Omnibox extends Component {
 
   render() {
     const { props, state } = this;
-    if (state?.selected.length === 0 && Array.from(this.state.results.values()).flat().length) {
+    if (state?.selected?.length === 0 && Array.from(this.state.results.values()).flat().length) {
       this.setNextSelected();
     }
     return (
