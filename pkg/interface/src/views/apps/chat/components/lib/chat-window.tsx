@@ -232,10 +232,13 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
     const debouncedFetch = _.debounce(this.fetchMessages, 500).bind(this);
 
     envelopes
-      .concat(stationPendingMessages)
       .forEach((message) => {
         messages[message.number] = message;
       });
+    
+    stationPendingMessages.sort((a, b) => a.when - b.when).forEach((message, index) => {
+      messages[mailboxSize + index + 1] = message;
+    });
     
     return (
       <Fragment>
@@ -250,7 +253,7 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
         {messages.length ? <VirtualList
           ref={this.virtualList}
           style={{height: '100%', width: '100%', visibility: this.state.initialized ? 'initial' : 'hidden'}}
-          totalCount={mailboxSize}
+          totalCount={mailboxSize + stationPendingMessages.length}
           followOutput={!this.state.idle}
           endReached={this.dismissUnread}
           scrollSeek={{
@@ -289,7 +292,7 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
               hideAvatars={hideAvatars}
               hideNicknames={hideNicknames}
               remoteContentPolicy={remoteContentPolicy}
-              className={number === mailboxSize ? 'pb3' : ''}
+              className={number === mailboxSize + stationPendingMessages.length ? 'pb3' : ''}
             />
           }}
         /> : <div style={{height: '100%', width: '100%'}}></div>}
