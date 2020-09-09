@@ -18,6 +18,7 @@
 /+  verb
 /+  grpl=group
 /+  group-store
+/+  graph-store
 /+  resource
 ::
 ~%  %publish  ..is  ~
@@ -55,6 +56,7 @@
       [%4 state-three]
       [%5 state-three]
       [%6 state-three]
+      [%7 state-three]
   ==
 ::
 +$  metadata-delta
@@ -70,7 +72,7 @@
   ==
 --
 ::
-=|  [%6 state-three]
+=|  [%7 state-three]
 =*  state  -
 %-  agent:dbug
 %+  verb  |
@@ -238,8 +240,100 @@
       ==
     ::
         %6
+      %_  $
+        -.p.old-state  %7
+        ::
+          cards
+        %+  weld  cards
+        %+  roll  ~(tap by books.p.old-state)
+        |=  [[[who=@p book=@tas] nb=notebook] out=(list card)]
+        ^-  (list card)
+        =/  =resource
+          [who book]
+        ?.  =(who our.bol)
+          :_  out
+          (poke-graph-pull %add who resource)
+        =/  =graph:graph-store
+          (notebook-to-graph nb)
+        %+  weld  out
+        ^-  (list card)
+        :~ 
+          %-  poke-graph-store
+          :*  %0  date-created.nb  %add-graph
+              resource 
+              graph
+              `%graph-validator-publish
+          ==
+          (poke-graph-push %add resource)
+        ==
+      ==
+    ::
+        %7
       [cards this(state p.old-state)]
     ==
+    ++  notebook-to-graph
+      |=  =notebook
+      ^-  graph:graph-store
+      %+  gas:orm:graph-store  *graph:graph-store
+      %+  turn  ~(tap by notes.notebook)
+      |=  [@ta =note]
+      ^-  [atom node:graph-store]
+      :-  date-created.note
+      (note-to-node note)
+    ::
+    ++  comments-to-children
+      |=  [=index:graph-store =note]
+      ^-  internal-graph:graph-store
+      ?:  =(~ comments.note)
+        [%empty ~]
+      :-  %graph
+      %+  gas:orm:graph-store  *graph:graph-store
+      %+  turn  ~(tap by comments.note)
+      |=  [when=@da =comment]
+      ^-  [atom node:graph-store]
+      :-  when
+      :_  [%empty ~]
+      ^-  post:graph-store
+      :*  author.comment
+          (snoc index when)
+          when
+          [%text content.comment]~
+          ~  ~
+      ==
+    ::
+    ++  note-to-node
+      |=  =note
+      ^-  node:graph-store
+      =/  =index:graph-store
+        ~[date-created.note]
+      =/  contents=(list content:graph-store)
+        :~  [%text title.note]
+            [%text file.note]
+        ==
+      :_  (comments-to-children index note)
+      ^-  post:graph-store
+      :*  author.note
+          index
+          date-created.note
+          contents
+          ~  ~
+      ==
+    ::
+    ++  poke-our
+      |=  [app=term =cage]
+      [%pass / %agent [our.bol app] %poke cage]
+    ::
+    ++  poke-graph-pull
+      |=  =action:pull-hook
+      (poke-our %graph-pull-hook pull-hook-action+!>(action))
+    ::
+    ++  poke-graph-store
+      |=  =update:graph-store
+      (poke-our %graph-store graph-update+!>(update))
+    ::
+    ++  poke-graph-push
+      |=  =action:push-hook
+      (poke-our %graph-push-hook push-hook-action+!>(action))
     ++  convert-notebook-3-4
       |=  prev=notebook-3
       ^-  notebook-3
