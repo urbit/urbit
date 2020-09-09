@@ -157,7 +157,7 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
         if (!idle) {
           idle = true;
         }
-      } else if (idle) {
+      } else if (idle && (unreadCount === 0 || this.state.range.endIndex === 0)) {
         idle = false;
       }
       this.setState({ idle });
@@ -170,6 +170,10 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
     }
 
     if (!idle && prevProps.unreadCount !== unreadCount) {
+      this.virtualList.current?.scrollToIndex(mailboxSize);
+    }
+
+    if  (!idle && envelopes.length !== prevProps.envelopes.length) {
       this.virtualList.current?.scrollToIndex(mailboxSize);
     }
   }
@@ -244,7 +248,7 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
       <Fragment>
         <UnreadNotice
           unreadCount={unreadCount}
-          unreadMsg={unreadMsg}
+          unreadMsg={this.state.idle ? unreadMsg : false}
           dismissUnread={this.dismissUnread}
           onClick={this.scrollToUnread}
         />
@@ -282,6 +286,7 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
               isFirstUnread={
                 unreadCount
                 && mailboxSize - unreadCount === number
+                && this.state.idle
               }
               msg={msg}
               previousMsg={messages[number + 1]}
