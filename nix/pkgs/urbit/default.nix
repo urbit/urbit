@@ -46,6 +46,13 @@ let
       mkdir -p $out/bin
       cp ./build/urbit $out/bin/$exename
       cp ./build/urbit-worker $out/bin/$exename-worker
+    '' + pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
+      # Hack stolen from //nixpkgs/pkgs/stdenv/darwin/portable-libsystem.sh
+      #
+      # TODO: Put this behind a static compilation flag.
+      find "$out/bin" -exec \
+        install_name_tool -change ${pkgs.stdenv.cc.libc}/lib/libSystem.B.dylib \
+          /usr/lib/libSystem.B.dylib {} \;
     '';
 
     # See https://github.com/NixOS/nixpkgs/issues/18995
