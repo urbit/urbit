@@ -155,6 +155,7 @@
         struct {
           c3_w* lin_w;                      //  current line (utf32)
           c3_w  len_w;                      //  length of current line
+          c3_w  sap_w;                      //  escape chars in current line
           c3_w  cus_w;                      //  cursor position
         } mir;
 
