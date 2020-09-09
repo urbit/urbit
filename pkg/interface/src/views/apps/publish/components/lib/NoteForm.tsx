@@ -31,10 +31,11 @@ export function PostForm(props: PostFormProps) {
   return (
     <Box
       width="100%"
+      height="100%"
       p={[2, 4]}
       display="grid"
       justifyItems="start"
-      gridAutoRows="min-content"
+      gridTemplateRows={["64px 64px 1fr", "64px 1fr"]}
       gridTemplateColumns={["100%", "1fr 1fr"]}
       gridColumnGap={2}
       gridRowGap={2}

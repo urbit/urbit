@@ -8,17 +8,16 @@ import './css/custom.css';
 
 import { Skeleton } from './components/skeleton';
 import { NewScreen } from './components/new';
-import { MemberScreen } from './components/member';
 import { SettingsScreen } from './components/settings';
 import { MessageScreen } from './components/lib/message-screen';
 import { Links } from './components/links-list';
 import { LinkDetail } from './components/link';
+
 import {
   makeRoutePath,
   amOwnerOfGroup,
   base64urlDecode
 } from '~/logic/lib/util';
-
 
 export class LinksApp extends Component {
   constructor(props) {
@@ -31,6 +30,7 @@ export class LinksApp extends Component {
 
     this.props.api.links.getPage('', 0);
     this.props.subscription.startApp('link');
+    this.props.subscription.startApp('graph');
     if (!this.props.sidebarShown) {
       this.props.api.local.sidebarToggle();
     }
@@ -38,22 +38,17 @@ export class LinksApp extends Component {
 
   componentWillUnmount() {
     this.props.subscription.stopApp('link');
+    this.props.subscription.stopApp('graph');
   }
-
 
   render() {
     const { props } = this;
-
     const contacts = props.contacts ? props.contacts : {};
-
     const groups = props.groups ? props.groups : {};
-
     const associations = props.associations ? props.associations : { link: {}, contacts: {} };
     const links = props.links ? props.links : {};
     const comments = props.linkComments ? props.linkComments : {};
-
     const seen = props.linksSeen ? props.linksSeen : {};
-
     const totalUnseen = _.reduce(
       links,
       (acc, collection) => acc + collection.unseenCount,
@@ -63,14 +58,12 @@ export class LinksApp extends Component {
     const invites = props.invites ?
       props.invites : {};
 
-
     const listening = props.linkListening;
-
-    const { api, sidebarShown, hideAvatars, hideNicknames } = this.props;
+    const { api, sidebarShown, hideAvatars, hideNicknames, s3, remoteContentPolicy } = this.props;
 
     return (
       <>
-        <Helmet>
+        <Helmet defer={false}>
           <title>{totalUnseen > 0 ? `(${totalUnseen}) ` : ''}OS1 - Links</title>
         </Helmet>
         <Switch>
@@ -263,6 +256,7 @@ export class LinksApp extends Component {
                     api={api}
                     hideNicknames={hideNicknames}
                     hideAvatars={hideAvatars}
+                    s3={s3}
                   />
                   </Skeleton>
                 );
@@ -325,6 +319,7 @@ export class LinksApp extends Component {
                     api={api}
                     hideAvatars={hideAvatars}
                     hideNicknames={hideNicknames}
+                    remoteContentPolicy={remoteContentPolicy}
                     />
                   </Skeleton>
                 );

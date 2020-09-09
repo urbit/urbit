@@ -195,7 +195,6 @@
     =/  pax  t.t.t.t.site.url
     =/  envelopes  (envelope-scry [(scot %ud start) (scot %ud end) pax])
     %-  json-response:gen
-    %-  json-to-octs
     %-  update:enjs:store
     [%messages pax start end envelopes]
   ==

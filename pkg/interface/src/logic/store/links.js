@@ -6,6 +6,7 @@ import InviteReducer from '../reducers/invite-update';
 import LinkReducer from '../reducers/link-update';
 import ListenReducer from '../reducers/listen-update';
 import LocalReducer from '../reducers/local';
+import S3Reducer from '../reducers/s3-update';
 
 import BaseStore from './base';
 
@@ -21,6 +22,7 @@ export default class LinksStore extends BaseStore {
     this.localReducer = new LocalReducer();
     this.linkReducer = new LinkReducer();
     this.listenReducer = new ListenReducer();
+    this.s3Reducer = new S3Reducer();
   }
 
   initialState() {
@@ -37,6 +39,7 @@ export default class LinksStore extends BaseStore {
       comments: {},
       seen: {},
       permissions: {},
+      s3: {},
       sidebarShown: true
     };
   }
@@ -50,6 +53,7 @@ export default class LinksStore extends BaseStore {
     this.localReducer.reduce(data, this.state);
     this.linkReducer.reduce(data, this.state);
     this.listenReducer.reduce(data, this.state);
+    this.s3Reducer.reduce(data, this.state);
   }
 }
 

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ChannelItem } from './channel-item';
+import { deSig, cite } from "~/logic/lib/util";
 
 export class GroupItem extends Component {
   render() {
     const { props } = this;
     const association = props.association ? props.association : {};
+    const DEFAULT_TITLE_REGEX = new RegExp(`(( <-> )?~(?:${window.ship}|${deSig(cite(window.ship))})( <-> )?)`);
 
     let title = association['app-path'] ? association['app-path'] : 'Direct Messages';
     if (association.metadata && association.metadata.title) {
@@ -47,9 +49,13 @@ export class GroupItem extends Component {
         each in props.chatMetadata &&
         props.chatMetadata[each].metadata
       ) {
-        title = props.chatMetadata[each].metadata.title
-          ? props.chatMetadata[each].metadata.title
-          : each.substr(1);
+        if (props.chatMetadata[each].metadata.title) {
+          title = props.chatMetadata[each].metadata.title
+        }
+      }
+      
+      if (DEFAULT_TITLE_REGEX.test(title) && props.index === "dm") {
+        title = title.replace(DEFAULT_TITLE_REGEX, '');
       }
       const selected = props.station === each;
 

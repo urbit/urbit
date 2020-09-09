@@ -11,6 +11,7 @@ import GroupsApi from './groups';
 import LaunchApi from './launch';
 import LinksApi from './links';
 import PublishApi from './publish';
+import GraphApi from './graph';
 import S3Api from './s3';
 
 export default class GlobalApi extends BaseApi<StoreState> {
@@ -24,10 +25,15 @@ export default class GlobalApi extends BaseApi<StoreState> {
   links = new LinksApi(this.ship, this.channel, this.store);
   publish = new PublishApi(this.ship, this.channel, this.store);
   s3 = new S3Api(this.ship, this.channel, this.store);
+  graph = new GraphApi(this.ship, this.channel, this.store);
 
 
-  constructor(public ship: Patp, public channel: any, public store: GlobalStore) {
-    super(ship,channel,store);
+  constructor(
+    public ship: Patp,
+    public channel: any,
+    public store: GlobalStore
+  ) {
+    super(ship, channel, store);
   }
 }
 

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 
-export function useWaitForProps<P>(props: P, timeout: number) {
+export function useWaitForProps<P>(props: P, timeout: number = 0) {
   const [resolve, setResolve] = useState<() => void>(() => () => {});
   const [ready, setReady] = useState<(p: P) => boolean | undefined>();
 
@@ -24,9 +24,11 @@ export function useWaitForProps<P>(props: P, timeout: number) {
       setReady(() => r);
       return new Promise<void>((resolve, reject) => {
         setResolve(() => resolve);
-        setTimeout(() => {
-          reject(new Error("Timed out"));
-        }, timeout);
+        if(timeout > 0) {
+          setTimeout(() => {
+            reject(new Error("Timed out"));
+          }, timeout);
+        }
       });
     },
     [setResolve, setReady, timeout]

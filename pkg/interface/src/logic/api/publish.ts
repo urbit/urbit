@@ -82,6 +82,17 @@ export default class PublishApi extends BaseApi {
     return this.action('publish', 'publish-action', act);
   }
 
+  groupify(bookId: string, group: Path | null) {
+    return this.publishAction({
+      groupify: {
+        book: bookId,
+        target: group,
+        inclusive: false
+      }
+    });
+  }
+
+
   newBook(bookId: string, title: string, description: string, group?: Path) {
     const groupInfo = group ? { 'group-path': group,
       invitees: [],

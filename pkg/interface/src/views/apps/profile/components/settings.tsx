@@ -19,6 +19,7 @@ import { StoreState } from "../../../store/type";
 import DisplayForm from "./lib/DisplayForm";
 import S3Form from "./lib/S3Form";
 import SecuritySettings from "./lib/Security";
+import RemoteContentForm from "./lib/RemoteContent";
 
 type ProfileProps = StoreState & { api: GlobalApi; ship: string };
 
@@ -30,6 +31,7 @@ export default function Settings({
   hideAvatars,
   hideNicknames,
   background,
+  remoteContentPolicy
 }: ProfileProps) {
   return (
     <Box
@@ -51,6 +53,7 @@ export default function Settings({
         background={background}
         s3={s3}
       />
+      <RemoteContentForm {...{api, remoteContentPolicy}} />
       <S3Form api={api} s3={s3} />
       <SecuritySettings api={api} />
     </Box>

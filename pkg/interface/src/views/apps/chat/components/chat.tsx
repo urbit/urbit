@@ -8,13 +8,15 @@ import { ChatHeader } from './lib/chat-header';
 import { ChatInput } from "./lib/chat-input";
 import { deSig } from "~/logic/lib/util";
 import { ChatHookUpdate } from "~/types/chat-hook-update";
-import ChatApi from "~/logic/api/chat";
 import { Inbox, Envelope } from "~/types/chat-update";
 import { Contacts } from "~/types/contact-update";
 import { Path, Patp } from "~/types/noun";
 import GlobalApi from "~/logic/api/global";
 import { Association } from "~/types/metadata-update";
 import {Group} from "~/types/group-update";
+import { LocalUpdateRemoteContentPolicy } from "~/types";
+import { S3Upload, SubmitDragger } from '~/views/components/s3-upload';
+import { IUnControlledCodeMirror } from "react-codemirror2";
 
 
 type ChatScreenProps = RouteComponentProps<{
@@ -26,7 +28,7 @@ type ChatScreenProps = RouteComponentProps<{
   association: Association;
   api: GlobalApi;
   read: number;
-  length: number;
+  mailboxSize: number;
   inbox: Inbox;
   contacts: Contacts;
   group: Group;
@@ -38,13 +40,16 @@ type ChatScreenProps = RouteComponentProps<{
   envelopes: Envelope[];
   hideAvatars: boolean;
   hideNicknames: boolean;
+  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
 };
 
 interface ChatScreenState {
   messages: Map<string, string>;
+  dragover: boolean;
 }
 
 export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
+  private chatInput: React.RefObject<ChatInput>;
   lastNumPending = 0;
   activityTimeout: NodeJS.Timeout | null = null;
 
@@ -53,7 +58,10 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
 
     this.state = {
       messages: new Map(),
+      dragover: false,
     };
+
+    this.chatInput = React.createRef();
 
     moment.updateLocale("en", {
       calendar: {
@@ -65,6 +73,26 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
         sameElse: "DD/MM/YYYY",
       },
     });
+  }
+
+  readyToUpload(): boolean {
+    return Boolean(this.chatInput.current?.s3Uploader.current?.inputRef.current);
+  }
+
+  onDragEnter() {
+    if (!this.readyToUpload()) {
+      return;
+    }
+    this.setState({ dragover: true });
+  }
+
+  onDrop(event: DragEvent) {
+    this.setState({ dragover: false });
+    if (!event.dataTransfer || !event.dataTransfer.files.length) {
+      return;
+    }
+    event.preventDefault();
+    this.chatInput.current?.uploadFiles(event.dataTransfer.files);
   }
 
   render() {
@@ -97,42 +125,36 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
       !(props.station in props.chatSynced) &&
       props.envelopes.length > 0;
 
-    const unreadCount = props.length - props.read;
+    const unreadCount = props.mailboxSize - props.read;
     const unreadMsg = unreadCount > 0 && props.envelopes[unreadCount - 1];
-
+    
     return (
       <div
         key={props.station}
-        className="h-100 w-100 overflow-hidden flex flex-column relative">
-        <ChatHeader
-          match={props.match}
-          location={props.location}
-          api={props.api}
-          group={props.group}
-          association={props.association}
-          station={props.station}
-          sidebarShown={props.sidebarShown}
-          popout={props.popout} />
+        className="h-100 w-100 overflow-hidden flex flex-column relative"
+        onDragEnter={this.onDragEnter.bind(this)}
+        onDragOver={event => {
+          event.preventDefault();
+          if (!this.state.dragover) {
+            this.setState({ dragover: true });
+          }
+        }}
+        onDragLeave={() => this.setState({ dragover: false })}
+        onDrop={this.onDrop.bind(this)}
+      >
+        {this.state.dragover ? <SubmitDragger /> : null}
+        <ChatHeader {...props} />
         <ChatWindow
-          history={props.history}
           isChatMissing={isChatMissing}
           isChatLoading={isChatLoading}
           isChatUnsynced={isChatUnsynced}
           unreadCount={unreadCount}
           unreadMsg={unreadMsg}
-          pendingMessages={pendingMessages}
-          messages={props.envelopes}
-          length={props.length}
-          contacts={props.contacts}
-          association={props.association}
-          group={props.group}
+          stationPendingMessages={pendingMessages}
           ship={props.match.params.ship}
-          station={props.station}
-          api={props.api}
-          hideNicknames={props.hideNicknames}
-          hideAvatars={props.hideAvatars}
-        />
+          {...props} />
         <ChatInput
+          ref={this.chatInput}
           api={props.api}
           numMsgs={lastMsgNum}
           station={props.station}
@@ -149,6 +171,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           deleteMessage={() => this.setState({
             messages: this.state.messages.set(props.station, "")
           })}
+          hideAvatars={props.hideAvatars}
         />
       </div>
     );

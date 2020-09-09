@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-import { MetadataColor } from './metadata-color';
-import { MetadataInput } from './metadata-input';
+import { MetadataColor } from './color';
+import { MetadataInput } from './input';
 import { uxToHex } from '~/logic/lib/util';
 
 
@@ -11,13 +11,14 @@ export const MetadataSettings = (props) => {
     association,
     changeLoading,
     api,
-    station
+    resource,
+    app
   } = props;
 
-  const title = 
+  const title =
     (props.association && 'metadata' in props.association) ?
     association.metadata.title : '';
-  const description = 
+  const description =
     (props.association && 'metadata' in props.association) ?
     association.metadata.description : '';
   const color =
@@ -28,13 +29,13 @@ export const MetadataSettings = (props) => {
     <div className="cf mt6">
       <MetadataInput
         title='Rename'
-        description='Change the name of this chat'
+        description={`Change the name of this ${resource}`}
         isDisabled={!isOwner}
         initialValue={title}
         setValue={(val) => {
-          changeLoading(false, true, 'Editing chat...', () => {
+          changeLoading(false, true, `Editing ${resource}...`, () => {
             api.metadata.metadataAdd(
-              'chat',
+              app,
               association['app-path'],
               association['group-path'],
               val,
@@ -48,13 +49,13 @@ export const MetadataSettings = (props) => {
         }} />
         <MetadataInput
           title='Change description'
-          description='Change the description of this chat'
+          description={`Change the description of this ${resource}`}
           isDisabled={!isOwner}
           initialValue={description}
           setValue={(val) => {
-            changeLoading(false, true, 'Editing chat...', () => {
+            changeLoading(false, true, `Editing ${resource}...`, () => {
               api.metadata.metadataAdd(
-                'chat',
+                app,
                 association['app-path'],
                 association['group-path'],
                 association.metadata.title,
@@ -67,12 +68,13 @@ export const MetadataSettings = (props) => {
             });
           }} />
       <MetadataColor
-        initialValue={color} 
+        initialValue={color}
         isDisabled={!isOwner}
+        resource={resource}
         setValue={(val) => {
-          changeLoading(false, true, 'Editing chat...', () => {
+          changeLoading(false, true, `Editing ${resource}...`, () => {
             props.api.metadata.metadataAdd(
-              'chat',
+              app,
               association['app-path'],
               association['group-path'],
               association.metadata.title,

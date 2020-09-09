@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { GroupView } from '~/views/components/Group';
-import { resourceFromPath } from '~/logic/lib/group';
+import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import {Notebook} from '~/types/publish-update';
 import GlobalApi from '~/logic/api/global';
 import {Groups} from '~/types/group-update';
 import {Associations} from '~/types/metadata-update';
 import {Rolodex} from '~/types/contact-update';
+import {Box, Button} from '@tlon/indigo-react';
 
 interface SubscribersProps {
   notebook: Notebook;
@@ -71,16 +72,20 @@ export class Subscribers extends Component<SubscribersProps> {
         addDesc: 'Allow user to write to this notebook'
       },
     ];
-    
+
+    if(!group) {
+      return null;
+    }
+
+    const role = roleForShip(group, window.ship)
 
     return (
-      <div>
-        <button
-           onClick={this.addAll}
-           className={'dib f9 black gray4-d bg-gray0-d ba pa2 mb4 b--black b--gray1-d pointer'}
-        >
-          Add all members as writers
-        </button>
+      <Box>
+        { role === 'admin' && (
+          <Button mb={3} border onClick={this.addAll}>
+            Add all members as writers
+          </Button>
+        )}
         <GroupView
           permissions
           resourcePath={path}
@@ -92,7 +97,7 @@ export class Subscribers extends Component<SubscribersProps> {
           associations={this.props.associations}
           api={this.props.api}
         />
-      </div>
+      </Box>
     );
   }
 }
