@@ -18,7 +18,7 @@ export function JoinScreen(props: JoinScreenProps & RouteComponentProps) {
   const [error, setError] = useState(false);
   const joining = useRef(false);
 
-  const waiter = useWaitForProps(props, 10000);
+  const waiter = useWaitForProps(props);
 
   const onJoin = useCallback(async () => {
     joining.current = true;

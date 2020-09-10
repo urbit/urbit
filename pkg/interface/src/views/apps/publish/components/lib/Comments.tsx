@@ -10,6 +10,7 @@ import GlobalApi from "~/logic/api/global";
 import { FormikHelpers } from "formik";
 import {GraphNode, Graph} from "~/types/graph-update";
 import {createPost} from "~/logic/api/graph";
+import { LocalUpdateRemoteContentPolicy } from "~/types";
 
 interface CommentsProps {
   comments: Graph;
@@ -20,6 +21,7 @@ interface CommentsProps {
   api: GlobalApi;
   hideAvatars: boolean;
   hideNicknames: boolean;
+  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
 }
 
 export function Comments(props: CommentsProps) {
@@ -53,6 +55,7 @@ export function Comments(props: CommentsProps) {
           ship={ship}
           hideNicknames={props.hideNicknames}
           hideAvatars={props.hideAvatars}
+          remoteContentPolicy={props.remoteContentPolicy}
         />
       ))}
     </Col>

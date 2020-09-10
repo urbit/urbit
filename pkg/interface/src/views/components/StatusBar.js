@@ -32,7 +32,6 @@ const StatusBar = (props) => {
       px={3}
       >
       <Row collapse>
-        {atHome ? null : (
           <StatusBarItem mr={2} onClick={() => props.history.push('/')}>
             <img
               className='invert-d'
@@ -41,7 +40,6 @@ const StatusBar = (props) => {
               width='11'
             />
           </StatusBarItem>
-        )}
         <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
           <Text display='inline-block' style={{ transform: 'rotate(180deg)' }}>
             ↩
@@ -53,7 +51,7 @@ const StatusBar = (props) => {
             {metaKey}/
           </Text>
         </StatusBarItem>
-        <StatusBarItem 
+        <StatusBarItem
           onClick={() => props.history.push('/~groups')}
           badge={Object.keys(invites).length > 0}>
           <img
@@ -72,7 +70,7 @@ const StatusBar = (props) => {
       <Row justifyContent="flex-end" collapse>
         <StatusBarItem onClick={() => props.history.push('/~profile')}>
           <Sigil ship={props.ship} size={24} color={"#000000"} classes="dib mix-blend-diff" />
-          <Text ml={2} display={["none", "inline"]} fontFamily="mono">{props.ship}</Text>
+          <Text ml={2} display={["none", "inline"]} fontFamily="mono">~{props.ship}</Text>
         </StatusBarItem>
       </Row>
     </Box>

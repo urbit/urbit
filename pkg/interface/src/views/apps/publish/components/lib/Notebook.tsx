@@ -15,13 +15,11 @@ import {
   TabPanel,
   Row,
 } from "@tlon/indigo-react";
-import { Notebook as INotebook } from "~/types/publish-update";
 import { Groups } from "~/types/group-update";
 import { Contacts, Rolodex } from "~/types/contact-update";
 import GlobalApi from "~/logic/api/global";
 import styled from "styled-components";
-import {Association, Associations} from "~/types";
-import {Graph} from "~/types/graph-update";
+import {Association, Associations, Graph } from "~/types";
 
 const TabList = styled(_TabList)`
   margin-bottom: ${(p) => p.theme.space[4]}px;
@@ -134,6 +132,8 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
                 api={api}
                 association={props.association}
                 contacts={notebookContacts}
+                associations={props.associations}
+                groups={groups}
               />
             </TabPanel>
           </TabPanels>

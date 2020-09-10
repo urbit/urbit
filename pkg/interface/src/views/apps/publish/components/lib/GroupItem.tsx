@@ -17,7 +17,7 @@ export class GroupItem extends Component<GroupItemProps> {
     const title =
       props.groupAssociation?.metadata?.title || "Unmanaged Notebooks";
     return (
-      <Box>
+      <Box pb={2} pt={1}>
         <Box fontSize={0} px={3} fontWeight="700" pb={2} color="lightGray">
           {title}
         </Box>

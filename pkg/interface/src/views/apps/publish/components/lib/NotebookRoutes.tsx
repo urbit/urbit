@@ -4,7 +4,15 @@ import GlobalApi from "~/logic/api/global";
 import Notebook from "./Notebook";
 import NewPost from "./new-post";
 import { NoteRoutes } from './NoteRoutes';
-import { Association, Associations, Graphs, Groups, Contacts, Rolodex } from "~/types";
+import { 
+  Association,
+  Associations,
+  Graphs,
+  Groups,
+  Contacts,
+  Rolodex,
+  LocalUpdateRemoteContentPolicy
+} from "~/types";
 
 interface NotebookRoutesProps {
   api: GlobalApi;
@@ -17,6 +25,7 @@ interface NotebookRoutesProps {
   hideAvatars: boolean;
   hideNicknames: boolean;
   association: Association;
+  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   associations: Associations;
 }
 
@@ -80,6 +89,7 @@ export function NotebookRoutes(
               contacts={notebookContacts}
               hideAvatars={props.hideAvatars}
               hideNicknames={props.hideNicknames}
+              remoteContentPolicy={props.remoteContentPolicy}
               {...routeProps}
             />
           );

@@ -1,10 +1,12 @@
 import defaultApps from './default-apps';
+import { cite } from '~/logic/lib/util';
 
   const indexes = new Map([
     ['commands', []],
     ['subscriptions', []],
     ['groups', []],
-    ['apps', []]
+    ['apps', []],
+    ['other', []]
   ]);
 
 // result schematic
@@ -41,8 +43,6 @@ const commandIndex = function () {
       }
     });
 
-  commands.push(result('Profile', '/~profile', 'profile', null));
-
   return commands;
 };
 
@@ -53,6 +53,9 @@ const appIndex = function (apps) {
   Object.keys(apps)
     .filter((e) => {
       return apps[e]?.type?.basic;
+    })
+    .sort((a,b) => {
+      return a.localeCompare(b);
     })
     .map((e) => {
       const obj = result(
@@ -68,6 +71,14 @@ const appIndex = function (apps) {
     result('Groups', '/~groups', 'groups', null)
   );
   return applications;
+};
+
+const otherIndex = function() {
+  const other = [];
+  other.push(result('Profile and Settings', '/~profile/identity', 'profile', null));
+  other.push(result('Log Out', '/~/logout', 'logout', null));
+
+  return other;
 };
 
 export default function index(associations, apps) {
@@ -99,7 +110,7 @@ export default function index(associations, apps) {
             title,
             `/~${app}${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
-            shipStart.slice(0, shipStart.indexOf('/'))
+            cite(shipStart.slice(0, shipStart.indexOf('/')))
           );
           groups.push(obj);
         } else {
@@ -107,7 +118,7 @@ export default function index(associations, apps) {
             title,
             `/~${each['app-name']}/join${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
-            shipStart.slice(0, shipStart.indexOf('/'))
+            (associations?.contacts?.[each['group-path']]?.metadata?.title || null)
           );
           subscriptions.push(obj);
         }
@@ -118,6 +129,7 @@ export default function index(associations, apps) {
   indexes.set('subscriptions', subscriptions);
   indexes.set('groups', groups);
   indexes.set('apps', appIndex(apps));
+  indexes.set('other', otherIndex());
 
   return indexes;
 };

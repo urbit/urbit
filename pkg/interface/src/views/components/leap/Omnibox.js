@@ -6,7 +6,7 @@ import Mousetrap from 'mousetrap';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
 
-import { cite } from '~/logic/lib/util';
+import defaultApps from '~/logic/lib/default-apps';
 
 export class Omnibox extends Component {
   constructor(props) {
@@ -15,7 +15,7 @@ export class Omnibox extends Component {
       index: new Map([]),
       query: '',
       results: this.initialResults(),
-      selected: ''
+      selected: []
     };
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.search = this.search.bind(this);
@@ -26,9 +26,13 @@ export class Omnibox extends Component {
     this.renderResults = this.renderResults.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps !== this.props) {
       this.setState({ index: index(this.props.associations, this.props.apps.tiles) });
+    }
+
+    if (prevProps && (prevProps.apps !== this.props.apps) && (this.state.query === '')) {
+      this.setState({ results: this.initialResults() });
     }
 
     if (prevProps && this.props.show && prevProps.show !== this.props.show) {
@@ -48,7 +52,7 @@ export class Omnibox extends Component {
   }
 
   getSearchedCategories() {
-    return ['apps', 'commands', 'groups', 'subscriptions'];
+    return ['apps', 'commands', 'groups', 'subscriptions', 'other'];
   }
 
   control(evt) {
@@ -74,10 +78,12 @@ export class Omnibox extends Component {
 
     if (evt.key === 'Enter') {
       evt.preventDefault();
-      if (this.state.selected !== '') {
-        this.navigate(this.state.selected);
+      if (this.state.selected !== []) {
+        this.navigate(this.state.selected[0], this.state.selected[1]);
       } else {
-        this.navigate(Array.from(this.state.results.values()).flat()[0].link);
+        this.navigate(
+          Array.from(this.state.results.values()).flat()[0].app,
+          Array.from(this.state.results.values()).flat()[0].link);
       }
     }
   }
@@ -91,14 +97,29 @@ export class Omnibox extends Component {
   }
 
   initialResults() {
-    return new Map(this.getSearchedCategories().map(category => [category, []]));
+    return new Map(this.getSearchedCategories().map((category) => {
+      if (!this.state) {
+        return [category, []];
+      }
+      if (category === 'apps') {
+        return ['apps', this.state.index.get('apps')];
+      }
+      if (category === 'other') {
+        return ['other', this.state.index.get('other')];
+      }
+      return [category, []];
+    }));
   }
 
-  navigate(link) {
+  navigate(app, link) {
     const { props } = this;
     this.setState({ results: this.initialResults(), query: '' }, () => {
       props.api.local.setOmnibox();
-      props.history.push(link);
+      if (defaultApps.includes(app.toLowerCase()) || app === 'profile') {
+        props.history.push(link);
+      } else {
+        window.location.href = link;
+      }
     });
   }
 
@@ -112,7 +133,7 @@ export class Omnibox extends Component {
 
     // wipe results if backspacing
     if (query.length === 0) {
-      this.setState({ results: results, selected: '' });
+      this.setState({ results: results, selected: [] });
       return;
     }
 
@@ -149,44 +170,50 @@ export class Omnibox extends Component {
     const current = this.state.selected;
     const flattenedResults = Array.from(this.state.results.values()).flat();
     const totalLength = flattenedResults.length;
-    if (current !== '') {
+    if (current !== []) {
       const currentIndex = flattenedResults.indexOf(
         ...flattenedResults.filter((e) => {
-          return e.link === current;
+          return e.link === current[1];
         })
       );
       if (currentIndex > 0) {
+        const nextApp = flattenedResults[currentIndex - 1].app;
         const nextLink = flattenedResults[currentIndex - 1].link;
-        this.setState({ selected: nextLink });
+        this.setState({ selected: [nextApp, nextLink] });
       } else {
+        const nextApp = flattenedResults[totalLength - 1].app;
         const nextLink = flattenedResults[totalLength - 1].link;
-        this.setState({ selected: nextLink });
+        this.setState({ selected: [nextApp, nextLink] });
       }
     } else {
+      const nextApp = flattenedResults[totalLength - 1].app;
       const nextLink = flattenedResults[totalLength - 1].link;
-      this.setState({ selected: nextLink });
+      this.setState({ selected: [nextApp, nextLink] });
     }
   }
 
   setNextSelected() {
     const current = this.state.selected;
     const flattenedResults = Array.from(this.state.results.values()).flat();
-    if (current !== '') {
+    if (current !== []) {
       const currentIndex = flattenedResults.indexOf(
         ...flattenedResults.filter((e) => {
-          return e.link === current;
+          return e.link === current[1];
         })
       );
       if (currentIndex < flattenedResults.length - 1) {
+      const nextApp = flattenedResults[currentIndex + 1].app;
       const nextLink = flattenedResults[currentIndex + 1].link;
-      this.setState({ selected: nextLink });
+      this.setState({ selected: [nextApp, nextLink] });
       } else {
+      const nextApp = flattenedResults[0].app;
       const nextLink = flattenedResults[0].link;
-      this.setState({ selected: nextLink });
+      this.setState({ selected: [nextApp, nextLink] });
       }
     } else {
+      const nextApp = flattenedResults[0].app;
       const nextLink = flattenedResults[0].link;
-      this.setState({ selected: nextLink });
+      this.setState({ selected: [nextApp, nextLink] });
     }
   }
 
@@ -202,30 +229,34 @@ export class Omnibox extends Component {
       {this.getSearchedCategories()
         .map(category => Object({ category, categoryResults: state.results.get(category) }))
         .filter(category => category.categoryResults.length > 0)
-        .map(({ category, categoryResults }, i) => (
-          <Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
+        .map(({ category, categoryResults }, i) => {
+          const categoryTitle = (category === 'other')
+            ? null : <Text gray ml={2}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>;
+          const selected = this.state.selected?.length ? this.state.selected[1] : '';
+          return (<Box key={i} width='max(50vw, 300px)' maxWidth='600px'>
             <Rule borderTopWidth="0.5px" color="washedGray" />
-            <Text gray ml={2}>{category.charAt(0).toUpperCase() + category.slice(1)}</Text>
+            {categoryTitle}
             {categoryResults.map((result, i2) => (
               <OmniboxResult
                 key={i2}
                 icon={result.app}
                 text={result.title}
-                subtext={cite(result.host)}
+                subtext={result.host}
                 link={result.link}
-                navigate={() => this.navigate(result.link)}
-                selected={this.state.selected}
+                navigate={() => this.navigate(result.app, result.link)}
+                selected={selected}
                 dark={props.dark} />
             ))}
           </Box>
-        ))
+        );
+      })
       }
     </Box>;
   }
 
   render() {
     const { props, state } = this;
-    if (!state.selected && Array.from(this.state.results.values()).flat().length) {
+    if (state?.selected?.length === 0 && Array.from(this.state.results.values()).flat().length) {
       this.setNextSelected();
     }
     return (

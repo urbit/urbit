@@ -1,12 +1,13 @@
 import React from "react";
+import { Route, Link, Switch } from "react-router-dom";
+import Helmet from 'react-helmet';
 
-import { Box, Text, Row, Col, Center, Icon } from "@tlon/indigo-react";
+import { Box, Text, Row, Col, Icon } from "@tlon/indigo-react";
 
 import { Sigil } from "~/logic/lib/sigil";
 import { uxToHex, MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 
 import Settings from "./components/settings";
-import { Route, Link } from "react-router-dom";
 import { ContactCard } from "../groups/components/lib/ContactCard";
 
 const SidebarItem = ({ children, view, current }) => {
@@ -15,7 +16,6 @@ const SidebarItem = ({ children, view, current }) => {
   return (
     <Link to={`/~profile/${view}`}>
       <Row
-        display="flex"
         alignItems="center"
         verticalAlign="middle"
         py={1}
@@ -34,6 +34,11 @@ const SidebarItem = ({ children, view, current }) => {
 export default function ProfileScreen(props: any) {
   const { ship, dark } = props;
   return (
+    <>
+    <Helmet defer={false}>
+      <title>OS1 - Profile</title>
+    </Helmet>
+    <Switch>
     <Route
       path={["/~profile/:view", "/~profile"]}
       render={({ match, history }) => {
@@ -85,7 +90,7 @@ export default function ProfileScreen(props: any) {
                     <Sigil ship={`~${ship}`} size={80} color={sigilColor} />
                   </Box>
                 </Box>
-                <Box width="100%" py={3}>
+                <Box width="100%" py={3} zIndex='2'>
                   <SidebarItem current={view} view="identity">
                     Your Identity
                   </SidebarItem>
@@ -120,5 +125,7 @@ export default function ProfileScreen(props: any) {
         );
       }}
     ></Route>
+      </Switch>
+    </>
   );
 }

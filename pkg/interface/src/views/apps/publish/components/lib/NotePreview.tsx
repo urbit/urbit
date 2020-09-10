@@ -44,7 +44,6 @@ export function NotePreview(props: NotePreviewProps) {
       ? "1 Comment"
       : `${numComments} Comments`;
   const date = moment(post["time-sent"]).fromNow();
-  //const popout = props.popout ? "popout/" : "";
   const url = `/~publish/notebook/ship/${props.host}/${props.book}/note/${
     post.index.split("/")[1]
   }`;

@@ -6,7 +6,7 @@ import { RouteComponentProps } from "react-router-dom";
 import Note from "./Note";
 import { EditPost } from "./EditPost";
 
-import { GraphNode, Graph, Contacts } from "~/types";
+import { GraphNode, Graph, Contacts, LocalUpdateRemoteContentPolicy } from "~/types";
 
 interface NoteRoutesProps {
   ship: string;
@@ -18,6 +18,7 @@ interface NoteRoutesProps {
   api: GlobalApi;
   hideAvatars: boolean;
   hideNicknames: boolean;
+  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
 }
 
 export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {

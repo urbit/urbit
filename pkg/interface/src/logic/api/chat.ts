@@ -12,7 +12,7 @@ export default class ChatApi extends BaseApi<StoreState> {
    * Fetch backlog
    */
   fetchMessages(start: number, end: number, path: Path) {
-    fetch(`/chat-view/paginate/${start}/${end}${path}`)
+    return fetch(`/chat-view/paginate/${start}/${end}${path}`)
       .then(response => response.json())
       .then((json) => {
         this.store.handleEvent({
