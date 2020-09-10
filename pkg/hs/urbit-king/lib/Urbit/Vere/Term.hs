@@ -472,7 +472,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                 loop rd
               else if w == 3 then do
                 -- ETX (^C)
-                logDebug $ displayShow "Ctrl-c interrupt"
+                logInfo $ displayShow "Ctrl-c interrupt"
                 atomically $ do
                   writeTQueue wq [Term.Trace "interrupt\r\n"]
                   writeTQueue rq $ Ctl $ Cord "c"
