@@ -20,6 +20,8 @@ import { Groups } from "~/types/group-update";
 import { Contacts, Rolodex } from "~/types/contact-update";
 import GlobalApi from "~/logic/api/global";
 import styled from "styled-components";
+import {Association, Associations} from "~/types";
+import {Graph} from "~/types/graph-update";
 
 const TabList = styled(_TabList)`
   margin-bottom: ${(p) => p.theme.space[4]}px;
@@ -33,18 +35,20 @@ interface NotebookProps {
   api: GlobalApi;
   ship: string;
   book: string;
-  notebook: INotebook;
+  graph: Graph;
   notebookContacts: Contacts;
+  association: Association;
+  associations: Associations;
   contacts: Rolodex;
   groups: Groups;
   hideNicknames: boolean;
 }
 
 export function Notebook(props: NotebookProps & RouteComponentProps) {
-  const { api, ship, book, notebook, notebookContacts, groups } = props;
+  const { api, ship, book, association, notebookContacts, groups } = props;
 
   const contact = notebookContacts[ship];
-  const group = groups[notebook?.["writers-group-path"]];
+  const group = groups[association['group-path']];
   const role = group ? roleForShip(group, window.ship) : undefined;
   const isOwn = `~${window.ship}` === ship;
   const isAdmin = role === "admin" || isOwn;
@@ -52,9 +56,9 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
   const isWriter =
     isOwn || group.tags?.publish?.[`writers-${book}`]?.has(window.ship);
 
-  const notesList = notebook?.["notes-by-date"] || [];
-  const notes = notebook?.notes || {};
   const showNickname = contact?.nickname && !props.hideNicknames;
+
+  const { metadata } = props.association || {};
 
   return (
     <Box
@@ -71,7 +75,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
         <Link to="/~publish">{"<- All Notebooks"}</Link>
       </Box>
       <Box>
-        <Text> {notebook?.title}</Text>
+        <Text> {metadata?.title}</Text>
         <br />
         <Text color="lightGray">by </Text>
         <Text fontFamily={showNickname ? "sans" : "mono"}>
@@ -80,7 +84,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
       </Box>
       <Row justifyContent={["flex-start", "flex-end"]}>
         {isWriter && (
-          <Link to={`/~publish/notebook/${ship}/${book}/new`}>
+          <Link to={`/~publish/notebook/ship/${ship}/${book}/new`}>
             <Button primary border>
               New Post
             </Button>
@@ -103,8 +107,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
           <TabPanels>
             <TabPanel>
               <NotebookPosts
-                notes={notes}
-                list={notesList}
+                graph={props.graph}
                 host={ship}
                 book={book}
                 contacts={notebookContacts}
@@ -112,15 +115,16 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
               />
             </TabPanel>
             <TabPanel>
-              <Box color="black">{notebook?.about}</Box>
+              <Box color="black">{metadata?.description}</Box>
             </TabPanel>
             <TabPanel>
               <Subscribers
-                host={ship}
                 book={book}
-                notebook={notebook}
+                association={association}
+                associations={props.associations}
                 api={api}
                 groups={groups}
+                contacts={props.contacts}
               />
             </TabPanel>
             <TabPanel>
@@ -128,7 +132,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
                 host={ship}
                 book={book}
                 api={api}
-                notebook={notebook}
+                association={props.association}
                 contacts={notebookContacts}
               />
             </TabPanel>

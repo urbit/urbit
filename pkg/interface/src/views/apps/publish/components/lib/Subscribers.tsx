@@ -4,22 +4,22 @@ import { resourceFromPath } from '~/logic/lib/group';
 import {Notebook} from '~/types/publish-update';
 import GlobalApi from '~/logic/api/global';
 import {Groups} from '~/types/group-update';
-import {Associations} from '~/types/metadata-update';
+import {Associations, Association} from '~/types/metadata-update';
 import {Rolodex} from '~/types/contact-update';
+import {GraphNode} from '~/types/graph-update';
 
 interface SubscribersProps {
-  notebook: Notebook;
   api: GlobalApi;
   groups: Groups;
   book: string;
   associations: Associations;
+  association: Association;
   contacts: Rolodex;
 }
 
 export class Subscribers extends Component<SubscribersProps> {
-  constructor(props) {
+  constructor(props: SubscribersProps) {
     super(props);
-    this.redirect = this.redirect.bind(this);
     this.addUser = this.addUser.bind(this);
     this.removeUser = this.removeUser.bind(this);
     this.addAll = this.addAll.bind(this);
@@ -33,13 +33,12 @@ export class Subscribers extends Component<SubscribersProps> {
     this.props.api.groups.remove(path, [who]);
   }
 
-  redirect(url) {
-    window.location.href = url;
-  }
-
   addAll() {
-    const path = this.props.notebook['writers-group-path'];
+    const path = this.props.association['group-path'];
     const group = path ? this.props.groups[path] : null;
+    if(!group) {
+      return;
+    }
     const resource = resourceFromPath(path);
     this.props.api.groups.addTag(
       resource,
@@ -50,7 +49,7 @@ export class Subscribers extends Component<SubscribersProps> {
 
 
   render() {
-    const path = this.props.notebook['writers-group-path'];
+    const path = this.props.association['group-path'];
     const group = path ? this.props.groups[path] : null;
 
 
@@ -71,7 +70,10 @@ export class Subscribers extends Component<SubscribersProps> {
         addDesc: 'Allow user to write to this notebook'
       },
     ];
-    
+
+    if(!group) {
+      return null;
+    }
 
     return (
       <div>

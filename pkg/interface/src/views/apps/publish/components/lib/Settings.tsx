@@ -4,24 +4,23 @@ import * as Yup from "yup";
 import {
   Box,
   Input,
-  Checkbox,
   Col,
   InputLabel,
   InputCaption,
   Button,
-  Center,
 } from "@tlon/indigo-react";
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
 import GlobalApi from "~/logic/api/global";
-import { Notebook } from "~/types/publish-update";
 import { Contacts } from "~/types/contact-update";
 import { FormError } from "~/views/components/FormError";
-import { RouteComponentProps, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { Association } from "~/types";
+import { uxToHex } from "~/logic/lib/util";
 
 interface SettingsProps {
   host: string;
   book: string;
-  notebook: Notebook;
+  association: Association;
   contacts: Contacts;
   api: GlobalApi;
 }
@@ -29,13 +28,11 @@ interface SettingsProps {
 interface FormSchema {
   name: string;
   description: string;
-  comments: boolean;
 }
 
 const formSchema = Yup.object({
   name: Yup.string().required("Notebook must have a name"),
   description: Yup.string(),
-  comments: Yup.boolean(),
 });
 
 const ResetOnPropsChange = (props: { init: FormSchema; book: string }) => {
@@ -48,12 +45,12 @@ const ResetOnPropsChange = (props: { init: FormSchema; book: string }) => {
 };
 
 export function Settings(props: SettingsProps) {
-  const { host, notebook, api, book } = props;
+  const { api, book } = props;
   const history = useHistory();
+  const { metadata } = props.association || {};
   const initialValues: FormSchema = {
-    name: notebook?.title,
-    description: notebook?.about,
-    comments: notebook?.comments,
+    name: metadata?.title,
+    description: metadata?.description,
   };
 
   const onSubmit = async (
@@ -61,9 +58,16 @@ export function Settings(props: SettingsProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      const { name, description, comments } = values;
-      await api.publish.editBook(book, name, description, comments);
-      api.publish.fetchNotebook(host, book);
+      const { name, description } = values;
+      await api.metadata.metadataAdd(
+        "publish",
+        props.association["app-path"],
+        props.association["group-path"],
+        name,
+        description,
+        props.association.metadata["date-created"],
+        uxToHex(props.association.metadata.color)
+      );
       actions.setStatus({ success: null });
     } catch (e) {
       console.log(e);
@@ -72,7 +76,7 @@ export function Settings(props: SettingsProps) {
   };
 
   const onDelete = async () => {
-    await api.publish.delBook(book);
+    await api.graph.deleteGraph(book);
     history.push("/~publish");
   };
 
@@ -96,7 +100,7 @@ export function Settings(props: SettingsProps) {
               Permanently delete this notebook. (All current members will no
               longer see this notebook.)
             </InputCaption>
-            <Button onClick={onDelete} mt={1} border error>
+            <Button type="button" onClick={onDelete} mt={1} border error>
               Delete this notebook
             </Button>
           </Col>
@@ -109,11 +113,6 @@ export function Settings(props: SettingsProps) {
             id="description"
             label="Change description"
             caption="Change the description of this notebook"
-          />
-          <Checkbox
-            id="comments"
-            label="Comments"
-            caption="Subscribers may comment when enabled"
           />
           <ResetOnPropsChange init={initialValues} book={book} />
           <AsyncButton loadingText="Updating.." border>

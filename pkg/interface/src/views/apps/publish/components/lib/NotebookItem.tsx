@@ -29,7 +29,7 @@ function UnreadCount(props: { unread: number }) {
 
 export function NotebookItem(props: NotebookItemProps) {
   return (
-    <Link to={"/~publish/notebook/" + props.path}>
+    <Link to={"/~publish/notebook" + props.path}>
       <HoverBox
         bg="white"
         bgActive="washedGray"

@@ -1,40 +1,37 @@
 import React, { useEffect } from "react";
-import { RouteComponentProps, Link, Route, Switch } from "react-router-dom";
-import { Box, Text } from "@tlon/indigo-react";
-import GlobalApi from "../../../../api/global";
-import { PublishContent } from "./PublishContent";
-import { Notebook as INotebook } from "../../../../types/publish-update";
-import { Groups } from "../../../../types/group-update";
-import { Contacts, Rolodex } from "../../../../types/contact-update";
+import { RouteComponentProps, Route, Switch } from "react-router-dom";
+import GlobalApi from "~/logic/api/global";
 import Notebook from "./Notebook";
 import NewPost from "./new-post";
 import { NoteRoutes } from './NoteRoutes';
+import { Association, Associations, Graphs, Groups, Contacts, Rolodex } from "~/types";
 
 interface NotebookRoutesProps {
   api: GlobalApi;
   ship: string;
   book: string;
-  notes: any;
-  notebook: INotebook;
+  graphs: Graphs;
   notebookContacts: Contacts;
   contacts: Rolodex;
   groups: Groups;
   hideAvatars: boolean;
   hideNicknames: boolean;
+  association: Association;
+  associations: Associations;
 }
 
 export function NotebookRoutes(
   props: NotebookRoutesProps & RouteComponentProps
 ) {
-  const { ship, book, api, notebook, notebookContacts } = props;
+  const { ship, book, api, notebookContacts } = props;
 
   useEffect(() => {
-    api.publish.fetchNotesPage(ship, book, 1, 50);
-    api.publish.fetchNotebook(ship, book);
+    ship && book && api.graph.getGraph(ship, book);
   }, [ship, book]);
 
+  const graph = props.graphs[`${ship.slice(1)}/${book}`];
 
-  const baseUrl = `/~publish/notebook/${ship}/${book}`;
+  const baseUrl = `/~publish/notebook/ship/${ship}/${book}`;
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
   return (
@@ -43,7 +40,7 @@ export function NotebookRoutes(
         path={baseUrl}
         exact
         render={(routeProps) => {
-          return <Notebook {...props} />;
+          return <Notebook {...props} graph={graph} />;
         }}
       />
       <Route
@@ -54,7 +51,8 @@ export function NotebookRoutes(
             api={api}
             book={book}
             ship={ship}
-            notebook={notebook}
+            association={props.association}
+            graph={graph}
           />
         )}
       />
@@ -62,15 +60,23 @@ export function NotebookRoutes(
         path={relativePath("/note/:noteId")}
         render={(routeProps) => {
           const { noteId } = routeProps.match.params;
-          const note = notebook?.notes[noteId];
+          const noteIdNum = parseInt(noteId, 10);
+
+          if(!graph) {
+            return null;
+          }
+          const note = graph.get(noteIdNum);
+          if(!note) {
+            return null;
+          }
           return (
             <NoteRoutes
               api={api}
               book={book}
               ship={ship}
-              noteId={noteId}
-              notebook={notebook}
               note={note}
+              notebook={graph}
+              noteId={noteIdNum}
               contacts={notebookContacts}
               hideAvatars={props.hideAvatars}
               hideNicknames={props.hideNicknames}
