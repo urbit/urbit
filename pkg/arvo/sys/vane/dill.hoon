@@ -118,6 +118,7 @@
           $heft  (dump %whey ~)
           $lyra  (dump kyz)
           $pack  (dump kyz)
+          $crop  (dump trim+p.kyz)
           $veer  (dump kyz)
           $verb  (dump kyz)
         ==

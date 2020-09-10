@@ -1111,6 +1111,7 @@
           {$logo ~}                                     ::  logout
           [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
           {$pack ~}                                     ::  compact memory
+          {$trim p/@ud}                                 ::  trim kernel state
           {$veer p/@ta q/path r/@t}                     ::  install vane
           {$verb ~}                                     ::  verbose mode
           [%whey ~]                                     ::  memory report
@@ -1120,6 +1121,7 @@
       $%  {$belt p/belt}                                ::  terminal input
           {$blew p/blew}                                ::  terminal config
           {$boot lit/? p/*}                             ::  weird %dill boot
+          {$crop p/@ud}                                 ::  trim kernel state
           $>(%crud vane-task)                           ::  error with trace
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
@@ -1192,7 +1194,8 @@
         {$url p/@t}                                     ::  activate url
     ==                                                  ::
   ++  flog                                              ::  sent to %dill
-    $%  {$crud p/@tas q/(list tank)}                    ::
+    $%  {$crop p/@ud}                                   ::  trim kernel state
+        {$crud p/@tas q/(list tank)}                    ::
         {$heft ~}                                       ::
         [%lyra hoon=(unit @t) arvo=@t]                  ::  upgrade kernel
         {$pack ~}                                       ::  compact memory

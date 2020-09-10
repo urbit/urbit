@@ -187,6 +187,10 @@
     (module-ova:pill top)
   |=([=wire =flog:dill] [%pass wire %arvo %d %flog flog])
 ::
+++  poke-trim
+  |=  pri=@ud  =<  abet
+  (emit %pass /pack %arvo %d %flog %crop pri)
+::
 ++  poke-verb                                         ::  toggle verbose
   |=  ~  =<  abet
   (flog %verb ~)
@@ -232,6 +236,7 @@
     %helm-reset            =;(f (f !<(_+<.f vase)) poke-reset)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
+    %helm-trim             =;(f (f !<(_+<.f vase)) poke-trim)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
     %helm-write-sec-atom   =;(f (f !<(_+<.f vase)) poke-sec-atom)
   ==
