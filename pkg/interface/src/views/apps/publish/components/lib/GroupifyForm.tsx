@@ -34,10 +34,11 @@ export function GroupifyForm(props: GroupifyFormProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      // TODO
-      // await props.api.publish.groupify(props.book, values.group);
+      await props.api.graph.groupifyGraph(
+        `~${window.ship}`, props.book, 'publish', values.group || undefined);
       actions.setStatus({ success: null });
     } catch (e) {
+      console.error(e);
       actions.setStatus({ error: e.message });
     }
   };

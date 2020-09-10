@@ -41,7 +41,7 @@
     [%leave rid=resource]
     [%join rid=resource =ship app=app-name] 
     ::[%invite rid=resource ships=(set ship)]
-    :: [%groupify rid=resource title=@t description=@t]
+    [%groupify rid=resource app=app-name to=(unit resource)]
   ==
 --
 

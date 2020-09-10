@@ -75,6 +75,19 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
+  groupifyGraph(ship: Patp, name: string, app: string, toPath?: string) {
+    const resource = makeResource(ship, name);
+    const to = toPath && resourceFromPath(toPath);
+
+    return this.viewAction('graph-groupify', {
+      groupify: {
+        resource,
+        app,
+        to
+      }
+    });
+  }
+
   addGraph(ship: Patp, name: string, graph: any, mark: any) {
     this.storeAction({
       'add-graph': {
