@@ -1792,8 +1792,7 @@ u3_pier_exit(u3_pier* pir_u)
 void
 u3_pier_bail(u3_pier* pir_u)
 {
-  pir_u->sat_e = u3_psat_done;
-
+  //  halt serf
   //
   if ( pir_u->god_u ) {
     u3_lord_halt(pir_u->god_u);
@@ -1815,6 +1814,8 @@ u3_pier_bail(u3_pier* pir_u)
     u3_disk_exit(pir_u->log_u);
     pir_u->log_u = 0;
   }
+
+  pir_u->sat_e = u3_psat_done;
 
   _pier_done(pir_u);
 }
