@@ -1,22 +1,23 @@
-import React, { Component } from "react";
+import React from "react";
 import { PostFormSchema, PostForm } from "./NoteForm";
-import { Note } from "../../../../types/publish-update";
 import { FormikHelpers } from "formik";
-import GlobalApi from "../../../../api/global";
+import GlobalApi from "~/logic/api/global";
 import { RouteComponentProps } from "react-router-dom";
+import { GraphNode, TextContent } from "~/types";
 interface EditPostProps {
   ship: string;
-  noteId: string;
-  note: Note;
+  noteId: number;
+  note: GraphNode;
   api: GlobalApi;
   book: string;
 }
 
 export function EditPost(props: EditPostProps & RouteComponentProps) {
   const { note, book, noteId, api, ship, history } = props;
-  const body = note.file.slice(note.file.indexOf(";>") + 2);
+  const [title, file] = note.post.contents as TextContent[];
+  const body = file.text.slice(file.text.indexOf(";>") + 2);
   const initial: PostFormSchema = {
-    title: note.title,
+    title: title.text,
     body,
   };
 
@@ -25,11 +26,11 @@ export function EditPost(props: EditPostProps & RouteComponentProps) {
     actions: FormikHelpers<PostFormSchema>
   ) => {
     const { title, body } = values;
-    const host = ship.slice(1);
     try {
-      await api.publish.editNote(host, book, noteId, title, body);
-      history.push(`/~publish/notebook/${ship}/${book}/note/${noteId}`);
+      // graph-store does not support editing nodes
+      throw new Error("Unsupported");
     } catch (e) {
+      console.error(e);
       actions.setStatus({ error: "Failed to edit notebook" });
     }
   };
@@ -38,7 +39,7 @@ export function EditPost(props: EditPostProps & RouteComponentProps) {
     <PostForm
       initial={initial}
       onSubmit={onSubmit}
-      submitLabel={`Update ${note.title}`}
+      submitLabel={`Update ${title.text}`}
       loadingText="Updating..."
     />
   );

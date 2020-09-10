@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import moment from "moment";
 import { Box } from "@tlon/indigo-react";
 import { Link } from "react-router-dom";
-import { Notebook } from "../../../../types/publish-update";
+import {Graph, GraphNode} from "~/types";
 
 function NavigationItem(props: {
   url: string;
@@ -10,7 +10,7 @@ function NavigationItem(props: {
   date: number;
   prev?: boolean;
 }) {
-  const date = moment(date).fromNow();
+  const date = moment(props.date).fromNow();
   return (
     <Box
       justifySelf={props.prev ? "start" : "end"}
@@ -30,12 +30,19 @@ function NavigationItem(props: {
   );
 }
 
+function getAdjacentId(graph: Graph, child: number, backwards = false): number | null {
+  const children = Array.from(graph);
+  const i = children.findIndex(([index]) => index === child);
+  const target = children[backwards ? i-1 : i+1];
+  return target?.[0] || null;
+}
+  
+
 interface NoteNavigationProps {
   book: string;
-  nextId?: string;
-  prevId?: string;
+  noteId: number;
   ship: string;
-  notebook: Notebook;
+  notebook: Graph;
 }
 
 export function NoteNavigation(props: NoteNavigationProps) {
@@ -43,32 +50,39 @@ export function NoteNavigation(props: NoteNavigationProps) {
   let prevComponent = <Box />;
   let nextUrl = "";
   let prevUrl = "";
-  const { nextId, prevId, notebook } = props;
-  const next =
-    nextId && nextId in notebook?.notes ? notebook?.notes[nextId] : null;
+  const { noteId, notebook } = props;
+  if(!notebook) {
+    return null;
+  }
+  const nextId = getAdjacentId(notebook, noteId);
+  const prevId = getAdjacentId(notebook, noteId, true);
+  const next = nextId && notebook.get(nextId);
+  const prev = prevId && notebook.get(prevId);
 
-  const prev =
-    prevId && prevId in notebook?.notes ? notebook?.notes[prevId] : null;
   if (!next && !prev) {
     return null;
   }
 
   if (next) {
-    nextUrl = `/~publish/notebook/${props.ship}/${props.book}/note/${props.nextId}`;
+    nextUrl = `/~publish/notebook/ship/${props.ship}/${props.book}/note/${nextId}`;
+    const title = next.post.contents[0]?.text;
+    const date = next.post['time-sent'];
     nextComponent = (
       <NavigationItem
-        title={next.title}
-        date={next["date-created"]}
+        title={title}
+        date={date}
         url={nextUrl}
       />
     );
   }
   if (prev) {
-    prevUrl = `/~publish/notebook/${props.ship}/${props.book}/note/${props.prevId}`;
+    prevUrl = `/~publish/notebook/ship/${props.ship}/${props.book}/note/${prevId}`;
+    const title = prev.post.contents[0]?.text;
+    const date = prev.post['time-sent'];
     prevComponent = (
       <NavigationItem
-        title={prev.title}
-        date={prev["date-created"]}
+        title={title}
+        date={date}
         url={prevUrl}
         prev
       />

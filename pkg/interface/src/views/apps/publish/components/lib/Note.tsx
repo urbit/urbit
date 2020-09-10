@@ -5,21 +5,15 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { Spinner } from "~/views/components/Spinner";
 import { Comments } from "./Comments";
 import { NoteNavigation } from "./NoteNavigation";
-import {
-  NoteId,
-  Note as INote,
-  Notebook,
-} from "~/types/publish-update";
-import { Contacts } from "~/types/contact-update";
 import GlobalApi from "~/logic/api/global";
 import { Author } from "./Author";
+import { Contacts, GraphNode, Graph} from "~/types";
 
 interface NoteProps {
   ship: string;
   book: string;
-  noteId: NoteId;
-  note: INote;
-  notebook: Notebook;
+  note: GraphNode;
+  notebook: Graph;
   contacts: Contacts;
   api: GlobalApi;
   hideAvatars: boolean;
@@ -28,31 +22,27 @@ interface NoteProps {
 
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
-  const { notebook, note, contacts, ship, book, noteId, api } = props;
-  useEffect(() => {
-    api.publish.fetchNote(ship, book, noteId);
-  }, [ship, book, noteId]);
+  const { contacts, ship, notebook, book, api, note } = props;
 
-  const baseUrl = `/~publish/notebook/${props.ship}/${props.book}`;
+  const baseUrl = `/~publish/notebook/ship/${props.ship}/${props.book}`;
 
   const deletePost = async () => {
     setDeleting(true);
-    await api.publish.delNote(ship.slice(1), book, noteId);
+    const indices = [note.post.index]
+    await api.graph.removeNodes(ship, book, indices);
     props.history.push(baseUrl);
   };
 
-  const comments = note?.comments || [];
-  const file = note?.file;
+  const comments = note?.children
+  const file = note?.post?.contents[1]?.text || "";
   const newfile = file ? file.slice(file.indexOf(";>") + 2) : "";
 
-  let editPost: JSX.Element | null = null;
-  const editUrl = props.location.pathname + "/edit";
-  if (`~${window.ship}` === note?.author) {
-    editPost = (
+  const noteId = parseInt(note.post.index.split('/')[1], 10);
+
+  let adminLinks: JSX.Element | null = null;
+  if (window.ship === note?.post?.author) {
+    adminLinks = (
       <Box display="inline-block">
-        <Link to={editUrl}>
-          <Text color="green">Edit</Text>
-        </Link>
         <Text
           className="dib f9 red2 ml2 pointer"
           color="red"
@@ -81,16 +71,16 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Text>{"<- Notebook Index"}</Text>
       </Link>
       <Col>
-        <Text display="block" mb={2}>{note?.title || ""}</Text>
+        <Text display="block" mb={2}>{note?.post?.contents[0]?.text || ""}</Text>
         <Box display="flex">
           <Author
             hideNicknames={props.hideNicknames}
             hideAvatars={props.hideAvatars}
-            ship={note?.author}
+            ship={note?.post?.author}
             contacts={contacts}
-            date={note?.["date-created"]}
+            date={note?.post?.["time-sent"]}
           />
-          <Text ml={2}>{editPost}</Text>
+          <Text ml={2}>{adminLinks}</Text>
         </Box>
       </Col>
       <Box color="black" className="md" style={{ overflowWrap: "break-word" }}>
@@ -98,25 +88,20 @@ export function Note(props: NoteProps & RouteComponentProps) {
       </Box>
       <NoteNavigation
         notebook={notebook}
-        prevId={note?.["prev-note"] || undefined}
-        nextId={note?.["next-note"] || undefined}
+        noteId={noteId}
         ship={props.ship}
         book={props.book}
       />
-      {notebook.comments && (
-        <Comments
-          ship={ship}
-          book={props.book}
-          noteId={props.noteId}
-          note={props.note}
-          comments={comments}
-          numComments={props.note["num-comments"]}
-          contacts={props.contacts}
-          api={props.api}
-          hideNicknames={props.hideNicknames}
-          hideAvatars={props.hideAvatars}
-        />
-      )}
+      <Comments
+        ship={ship}
+        book={props.book}
+        note={props.note}
+        comments={comments}
+        contacts={props.contacts}
+        api={props.api}
+        hideNicknames={props.hideNicknames}
+        hideAvatars={props.hideAvatars}
+      />
       <Spinner
         text="Deleting post..."
         awaiting={deleting}
