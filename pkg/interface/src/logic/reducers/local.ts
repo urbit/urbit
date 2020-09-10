@@ -3,7 +3,7 @@ import { StoreState } from '~/store/type';
 import { Cage } from '~/types/cage';
 import { LocalUpdate, BackgroundConfig } from '~/types/local-update';
 
-type LocalState = Pick<StoreState, 'sidebarShown' | 'omniboxShown' | 'baseHash' | 'hideAvatars' | 'hideNicknames' | 'background' | 'dark' | 'suspendedFocus'>;
+type LocalState = Pick<StoreState, 'sidebarShown' | 'omniboxShown' | 'baseHash' | 'hideAvatars' | 'hideNicknames' | 'background' | 'dark' | 'suspendedFocus' | 'remoteContentPolicy'>;
 
 export default class LocalReducer<S extends LocalState> {
     rehydrate(state: S) {
@@ -18,7 +18,7 @@ export default class LocalReducer<S extends LocalState> {
     }
 
     dehydrate(state: S) {
-      const json = _.pick(state, ['hideNicknames' , 'hideAvatars' , 'background']);
+      const json = _.pick(state, ['hideNicknames' , 'hideAvatars' , 'background', 'remoteContentPolicy']);
       localStorage.setItem('localReducer', JSON.stringify(json));
     }
     reduce(json: Cage, state: S) {
@@ -31,6 +31,7 @@ export default class LocalReducer<S extends LocalState> {
             this.hideAvatars(data, state)
             this.hideNicknames(data, state)
             this.omniboxShown(data, state);
+            this.remoteContentPolicy(data, state);
         }
     }
     baseHash(obj: LocalUpdate, state: S) {
@@ -67,6 +68,12 @@ export default class LocalReducer<S extends LocalState> {
     backgroundConfig(obj: LocalUpdate, state: S) {
       if('backgroundConfig' in obj) {
         state.background = obj.backgroundConfig;
+      }
+    }
+
+    remoteContentPolicy(obj: LocalUpdate, state: S) {
+      if('remoteContentPolicy' in obj) {
+        state.remoteContentPolicy = obj.remoteContentPolicy;
       }
     }
 

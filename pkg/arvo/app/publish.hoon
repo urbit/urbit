@@ -1,3 +1,7 @@
+::  publish [landscape]
+::
+::  stores notebooks in clay, subscribes and allow subscriptions to notebooks
+::
 /-  *publish
 /-  *group
 /-  group-hook

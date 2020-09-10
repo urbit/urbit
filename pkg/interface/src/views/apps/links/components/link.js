@@ -123,6 +123,7 @@ export class LinkDetail extends Component {
           pending={true}
           content={com}
           member={our.member}
+          remoteContentPolicy={props.remoteContentPolicy}
           time={new Date().getTime()}
         />
       );
@@ -167,6 +168,7 @@ export class LinkDetail extends Component {
               linkIndex={props.linkIndex}
               time={this.state.data.time}
               hideNicknames={props.hideNicknames}
+              remoteContentPolicy={props.remoteContentPolicy}
             />
             <div className="relative">
               <div className={'relative ba br1 mt6 mb6 ' + focus}>
@@ -220,6 +222,7 @@ export class LinkDetail extends Component {
               api={props.api}
               hideAvatars={props.hideAvatars}
               hideNicknames={props.hideNicknames}
+              remoteContentPolicy={props.remoteContentPolicy}
             />
           </div>
         </div>

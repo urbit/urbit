@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { FixedSizeList as List } from 'react-window';
+import { Virtuoso as VirtualList } from 'react-virtuoso';
 
 import { ContactItem } from './contact-item';
 import { ShareSheet } from './share-sheet';
@@ -180,19 +180,17 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
           >Channels</Link>
           {shareSheet}
           <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Members</h2>
-          <List
-            height={this.state.memberboxHeight}
+          <VirtualList
+            style={{ height: this.state.memberboxHeight, width: '100%' }}
             className="flex-auto"
-            itemCount={contactItems.length + groupItems.length}
-            itemSize={44}
-            width="100%"
-          >
-            {({ index, style }) => (<div style={style}>{
-              index <= (contactItems.length - 1) // If the index is within the length of contact items,
+            totalCount={contactItems.length + groupItems.length}
+            itemHeight={44} // We happen to know this
+            item={
+              (index) =>  index <= (contactItems.length - 1) // If the index is within the length of contact items,
                 ? contactItems[index] // show a contact item
                 : groupItems[index - contactItems.length] // Otherwise show a group item
-              }</div>)}
-          </List>
+            }
+          />
 
         </div>
         <Spinner awaiting={this.state.awaiting} text="Removing from group..." classes="pa2 ba absolute right-1 bottom-1 b--gray1-d" />

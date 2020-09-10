@@ -1,128 +1,65 @@
 import React, { useEffect } from "react";
-import { AsyncButton } from "../../../../components/AsyncButton";
-import * as Yup from "yup";
-import {
-  Box,
-  Input,
-  Checkbox,
-  Col,
-  InputLabel,
-  InputCaption,
-  Button,
-  Center,
-} from "@tlon/indigo-react";
-import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
+import { Box, Col, Button, InputLabel, InputCaption } from "@tlon/indigo-react";
 import GlobalApi from "~/logic/api/global";
 import { Notebook } from "~/types/publish-update";
 import { Contacts } from "~/types/contact-update";
-import { FormError } from "~/views/components/FormError";
-import { RouteComponentProps, useHistory } from "react-router-dom";
+
+import { MetadataForm } from "./MetadataForm";
+import { Groups, Associations } from "~/types";
+import GroupifyForm from "./GroupifyForm";
+import { useHistory } from "react-router-dom";
 
 interface SettingsProps {
   host: string;
   book: string;
   notebook: Notebook;
   contacts: Contacts;
+  groups: Groups;
   api: GlobalApi;
+  associations: Associations;
 }
 
-interface FormSchema {
-  name: string;
-  description: string;
-  comments: boolean;
-}
-
-const formSchema = Yup.object({
-  name: Yup.string().required("Notebook must have a name"),
-  description: Yup.string(),
-  comments: Yup.boolean(),
-});
-
-const ResetOnPropsChange = (props: { init: FormSchema; book: string }) => {
-  const { resetForm } = useFormikContext<FormSchema>();
-  useEffect(() => {
-    resetForm({ values: props.init });
-  }, [props.book]);
-
-  return null;
-};
-
+const Divider = (props) => (
+  <Box {...props} mb={4} borderBottom={1} borderBottomColor="lightGray" />
+);
 export function Settings(props: SettingsProps) {
-  const { host, notebook, api, book } = props;
   const history = useHistory();
-  const initialValues: FormSchema = {
-    name: notebook?.title,
-    description: notebook?.about,
-    comments: notebook?.comments,
-  };
-
-  const onSubmit = async (
-    values: FormSchema,
-    actions: FormikHelpers<FormSchema>
-  ) => {
-    try {
-      const { name, description, comments } = values;
-      await api.publish.editBook(book, name, description, comments);
-      api.publish.fetchNotebook(host, book);
-      actions.setStatus({ success: null });
-    } catch (e) {
-      console.log(e);
-      actions.setStatus({ error: e.message });
-    }
-  };
-
   const onDelete = async () => {
-    await api.publish.delBook(book);
+    await props.api.publish.delBook(props.book);
     history.push("/~publish");
   };
+  const groupPath = props.notebook?.["writers-group-path"];
+
+  const isUnmanaged = props.groups?.[groupPath]?.hidden || false;
 
   return (
-    <Formik
-      validationSchema={formSchema}
-      initialValues={initialValues}
-      onSubmit={onSubmit}
+    <Box
+      mx="auto"
+      maxWidth="300px"
+      mb={4}
+      gridTemplateColumns="1fr"
+      gridAutoRows="auto"
+      display="grid"
     >
-      <Form>
-        <Box
-          maxWidth="300px"
-          mb={4}
-          gridTemplateColumns="1fr"
-          gridAutoRows="auto"
-          display="grid"
-        >
-          <Col mb={4}>
-            <InputLabel>Delete Notebook</InputLabel>
-            <InputCaption>
-              Permanently delete this notebook. (All current members will no
-              longer see this notebook.)
-            </InputCaption>
-            <Button onClick={onDelete} mt={1} border error>
-              Delete this notebook
-            </Button>
-          </Col>
-          <Input
-            id="name"
-            label="Rename"
-            caption="Change the name of this notebook"
-          />
-          <Input
-            id="description"
-            label="Change description"
-            caption="Change the description of this notebook"
-          />
-          <Checkbox
-            id="comments"
-            label="Comments"
-            caption="Subscribers may comment when enabled"
-          />
-          <ResetOnPropsChange init={initialValues} book={book} />
-          <AsyncButton loadingText="Updating.." border>
-            Save
-          </AsyncButton>
-          <FormError message="Failed to update settings" />
-        </Box>
-      </Form>
-    </Formik>
+      {isUnmanaged && (
+        <>
+          <GroupifyForm {...props} />
+          <Divider mt={4} />
+        </>
+      )}
+      <MetadataForm {...props} />
+      <Divider />
+      <Col mb={4}>
+        <InputLabel>Delete Notebook</InputLabel>
+        <InputCaption>
+          Permanently delete this notebook. (All current members will no longer
+          see this notebook.)
+        </InputCaption>
+        <Button onClick={onDelete} mt={1} border error>
+          Delete this notebook
+        </Button>
+      </Col>
+    </Box>
   );
 }
 

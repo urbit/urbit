@@ -1,4 +1,6 @@
-::  metadata-hook: allow syncing foreign metadata
+::  metadata-hook [landscape]:
+::
+::  allow syncing foreign metadata
 ::
 ::  watch paths:
 ::  /group/%group-path                      all updates related to this group
@@ -37,7 +39,7 @@
     [[%pass /updates %agent [our.bowl %metadata-store] %watch /updates]~ this]
   ::
   ++  on-save   !>(state)
-  ++  on-load   
+  ++  on-load
     |=  =vase
     =/  old
       !<(versioned-state vase)

@@ -3,6 +3,7 @@ import { Sigil } from '~/logic/lib/sigil';
 import { cite } from '~/logic/lib/util';
 import moment from 'moment';
 import { Box, Text, Row } from '@tlon/indigo-react';
+import RichText from '~/views/components/RichText';
 
 export class CommentItem extends Component {
   constructor(props) {
@@ -60,7 +61,7 @@ export class CommentItem extends Component {
             </Text>
           </Row>
         </Row>
-        <Text display="block" py={3} fontSize={1}>{props.content}</Text>
+        <Text display="block" py={3} fontSize={1}><RichText remoteContentPolicy={props.remoteContentPolicy}>{props.content}</RichText></Text>
       </Box>
     );
   }

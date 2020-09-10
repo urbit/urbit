@@ -59,7 +59,7 @@ export class LinksApp extends Component {
       props.invites : {};
 
     const listening = props.linkListening;
-    const { api, sidebarShown, hideAvatars, hideNicknames } = this.props;
+    const { api, sidebarShown, hideAvatars, hideNicknames, s3, remoteContentPolicy } = this.props;
 
     return (
       <>
@@ -256,6 +256,7 @@ export class LinksApp extends Component {
                     api={api}
                     hideNicknames={hideNicknames}
                     hideAvatars={hideAvatars}
+                    s3={s3}
                   />
                   </Skeleton>
                 );
@@ -318,6 +319,7 @@ export class LinksApp extends Component {
                     api={api}
                     hideAvatars={hideAvatars}
                     hideNicknames={hideNicknames}
+                    remoteContentPolicy={remoteContentPolicy}
                     />
                   </Skeleton>
                 );
