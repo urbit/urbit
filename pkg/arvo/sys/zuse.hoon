@@ -1110,6 +1110,7 @@
           {$init p/@p}                                  ::  set owner
           {$logo ~}                                     ::  logout
           [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
+          {$meld ~}                                     ::  unify memory
           {$pack ~}                                     ::  compact memory
           {$trim p/@ud}                                 ::  trim kernel state
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -1131,6 +1132,7 @@
           {$harm ~}                                     ::  all terms hung up
           $>(%init vane-task)                           ::  after gall ready
           [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
+          {$meld ~}                                     ::  unify memory
           {$noop ~}                                     ::  no operation
           {$pack ~}                                     ::  compact memory
           {$talk p/tank}                                ::
@@ -1198,6 +1200,7 @@
         {$crud p/@tas q/(list tank)}                    ::
         {$heft ~}                                       ::
         [%lyra hoon=(unit @t) arvo=@t]                  ::  upgrade kernel
+        {$meld ~}                                       ::  unify memory
         {$pack ~}                                       ::  compact memory
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
