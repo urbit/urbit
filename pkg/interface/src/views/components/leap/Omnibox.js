@@ -58,7 +58,7 @@ export class Omnibox extends Component {
   control(evt) {
     if (evt.key === 'Escape') {
       if (this.state.query.length > 0) {
-        this.setState({ query: '', results: this.initialResults() });
+        this.setState({ query: '', results: this.initialResults(), selected: [] });
       } else if (this.props.show) {
         this.props.api.local.setOmnibox();
       }
@@ -78,8 +78,10 @@ export class Omnibox extends Component {
 
     if (evt.key === 'Enter') {
       evt.preventDefault();
-      if (this.state.selected !== []) {
+      if (this.state.selected.length > 0) {
         this.navigate(this.state.selected[0], this.state.selected[1]);
+      } else if (Array.from(this.state.results.values()).flat().length === 0) {
+        return;
       } else {
         this.navigate(
           Array.from(this.state.results.values()).flat()[0].app,
@@ -90,7 +92,7 @@ export class Omnibox extends Component {
 
   handleClickOutside(evt) {
     if (this.props.show && !this.omniBox.contains(evt.target)) {
-      this.setState({ results: this.initialResults(), query: '' }, () => {
+      this.setState({ results: this.initialResults(), query: '', selected: [] }, () => {
         this.props.api.local.setOmnibox();
       });
     }
@@ -158,9 +160,9 @@ export class Omnibox extends Component {
       );
     });
 
-    const flattenedResultLinks = Array.from(results.values()).flat().map(result => result.link);
+    const flattenedResultLinks = Array.from(results.values()).flat().map(result => [result.app, result.link]);
     if (!flattenedResultLinks.includes(selected)) {
-      selected = flattenedResultLinks[0];
+      selected = flattenedResultLinks[0] || [];
     }
 
     this.setState({ results, selected });
