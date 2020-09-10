@@ -800,17 +800,18 @@ _term_read_cb(uv_stream_t* tcp_u,
   c3_free(buf_u->base);
 }
 
-/* _term_spin_write_str(): write null-terminated string
+/* _term_spin_dump(): write static vector to terminal FD.
 */
 static void
-_term_spin_write_str(u3_utty*    uty_u,
-                     const c3_c* str_c)
+_term_spin_dump(u3_utty*    uty_u,
+                c3_w        len_w,
+                const c3_c* str_c)
 {
-  // c3_i fid_i = uv_fileno(&uty_u->pop_u);
-  c3_i fid_i = uty_u->pop_u.io_watcher.fd;  //  XX old libuv
-  c3_w len_w = strlen(str_c);
+  c3_i fid_i;
 
-  if (  len_w != write(fid_i, str_c, len_w) ) {
+  if (  !uv_fileno((uv_handle_t*)&uty_u->pop_u, &fid_i)
+     && (len_w != write(fid_i, str_c, len_w)) )
+  {
     // ignore, we just tryin
   }
 }
@@ -820,7 +821,8 @@ _term_spin_write_str(u3_utty*    uty_u,
 static void
 _term_spin_move_left(u3_utty* uty_u)
 {
-  _term_spin_write_str(uty_u, (const c3_c*)uty_u->ufo_u.out.cub1_y);
+  const c3_c* str_c = (const c3_c*)uty_u->ufo_u.out.cub1_y;
+  _term_spin_dump(uty_u, strlen(str_c), str_c);
 }
 
 /* _term_spin_timer_cb(): render spinner
@@ -830,57 +832,75 @@ _term_spin_timer_cb(uv_timer_t* tim_u)
 {
   u3_utty* uty_u = tim_u->data;
   u3_utat* tat_u = &uty_u->tat_u;
+  c3_w     bac_w;
 
-  c3_w cus_w = tat_u->mir.cus_w;
-  c3_l col_l = tat_u->siz.col_l;
+  //  calculate backoff from end of line, or bail out
+  //
+  {
+    c3_w cus_w = tat_u->mir.cus_w;
+    c3_l col_l = tat_u->siz.col_l;
 
-  if ( cus_w >= col_l ) {  //  shenanigans!
-    return;
+    if ( cus_w >= col_l ) {  //  shenanigans!
+      return;
+    }
+
+    bac_w = col_l - 1 - cus_w;
   }
 
-  c3_w bac_w = col_l - 1 - cus_w;  //  backoff from end of line
-  c3_d lag_d = tat_u->sun_u.eve_d++;
-
+  c3_d       lag_d   = tat_u->sun_u.eve_d++;
   const c3_c daz_c[] = "|/-\\";
-  const c3_c dal_c[] = "\xc2\xab";
-  const c3_c dar_c[] = "\xc2\xbb";
+  //               | + « + why + » + \0
+  c3_c       buf_c[1 + 2 +  4  + 2 + 1];
+  c3_c*      cur_c   = buf_c;
+  c3_w       sol_w   = 1;  //  spinner length (utf-32)
 
-  c3_c buf_c[1 + 2 +  4  + 2 + 1];
-  //         | + « + why + » + \0
-
-  c3_c* cur_c = buf_c;
-
-  *cur_c++ = daz_c[lag_d % strlen(daz_c)];
-  c3_w sol_w = 1;  //  spinner length (utf-32)
+  *cur_c++ = daz_c[lag_d % (sizeof(daz_c) - 1)];
 
   if ( tat_u->sun_u.why_c[0] ) {
-    strncpy(cur_c, dal_c, 2);
-    cur_c += 2;
-    sol_w += 1;    //  length of dal_c (utf-32)
+    {
+      const c3_c dal_c[] = "\xc2\xab";
+      *cur_c++ = dal_c[0];
+      *cur_c++ = dal_c[1];
+      sol_w++;             //  length of dal_c (utf-32)
+    }
 
-    strncpy(cur_c, tat_u->sun_u.why_c, 4);
-    cur_c += 4;
-    sol_w += 4;    //  XX assumed utf-8
+    {
+      c3_c* why_c = tat_u->sun_u.why_c;
+      *cur_c++ = *why_c++;
+      *cur_c++ = *why_c++;
+      *cur_c++ = *why_c++;
+      *cur_c++ = *why_c++;
+      sol_w += 4;          //  XX assumed utf-8
+    }
 
-    strncpy(cur_c, dar_c, 2);
-    cur_c += 2;
-    sol_w += 1;    //  length of dar_c (utf-32)
+    {
+      const c3_c dar_c[] = "\xc2\xbb";
+      *cur_c++ = dar_c[0];
+      *cur_c++ = dar_c[1];
+      sol_w++;             //  length of dar_c (utf-32)
+    }
   }
 
   *cur_c = '\0';
 
-  // One-time cursor backoff.
+  //  One-time cursor backoff.
+  //
   if ( c3n == tat_u->sun_u.diz_o ) {
     c3_w i_w;
     for ( i_w = bac_w; i_w < sol_w; i_w++ ) {
       _term_spin_move_left(uty_u);
     }
+
+    tat_u->sun_u.diz_o = c3y;
   }
 
-  _term_spin_write_str(uty_u, buf_c);
-  tat_u->sun_u.diz_o = c3y;
+  {
+    c3_w len_w = cur_c - buf_c;
+    _term_spin_dump(uty_u, len_w, buf_c);
+  }
 
   //  Cursor stays on spinner.
+  //
   while ( sol_w-- ) {
     _term_spin_move_left(uty_u);
   }
