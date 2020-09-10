@@ -21,21 +21,26 @@ export class LinkSubmit extends Component {
     const title = this.state.linkTitle
       ? this.state.linkTitle
       : this.state.linkValue;
-      this.setState({ disabled: true });
 
+    const parentIndex = this.props.parentIndex || '';
     let post = createPost([
       { text: title },
       { url: link }
-    ]);
+    ], parentIndex);
 
-    this.props.api.graph.addPost(`~${this.props.ship}`, this.props.name, post)
-      .then((r) => {
+    this.setState({ disabled: true }, () => {
+      this.props.api.graph.addPost(
+        `~${this.props.ship}`,
+        this.props.name,
+        post
+      ).then((r) => {
         this.setState({
           disabled: false,
           linkValue: '',
           linkTitle: '',
         });
       });
+    });
   }
 
   setLinkValue(event) {
@@ -119,4 +124,3 @@ export class LinkSubmit extends Component {
   }
 }
 
-export default LinkSubmit;

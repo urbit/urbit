@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import moment from 'moment';
 
 import { Sigil } from '~/logic/lib/sigil';
 import { Link } from 'react-router-dom';

@@ -106,8 +106,12 @@ export class LinksApp extends Component {
           />
           <Route exact path="/~link/(popout)?/:ship/:name/settings"
             render={ (props) => {
+              const resourcePath = 
+                `${props.match.params.ship}/${props.match.params.name}`;
               const popout = props.match.url.includes('/popout/');
-              const resource = associations.link[resourcePath] || false;
+              const resource =
+                associations.link[resourcePath] ?
+                  associations.link[resourcePath] : { metadata: {} };
 
               const contactDetails = contacts[resource['group-path']] || {};
               const group = groups[resource['group-path']] || new Set([]);
@@ -121,13 +125,14 @@ export class LinksApp extends Component {
                   selected={resourcePath}
                   sidebarShown={sidebarShown}
                   popout={popout}
+                  graphKeys={graphKeys}
                   api={api}>
                   <SettingsScreen
                     sidebarShown={sidebarShown}
                     resource={resource}
                     contacts={contacts}
                     contactDetails={contactDetails}
-                    groupPath={resource['group-path']}
+                    graphResource={graphKeys.has(resourcePath)}
                     group={group}
                     amOwner={amOwner}
                     resourcePath={resourcePath}

@@ -27,10 +27,7 @@ export const LinkPreview = (props) => {
           </span>
         </a>
         <div className="w-100 pt1">
-          <span className={
-                  'f9 pr2 white-d dib ' + nameClass
-                }
-                title={author}>
+          <span className={'f9 pr2 white-d dib ' + nameClass} title={author}>
             {showNickname ? props.nickname : cite(`~${author}`)}
           </span>
           <span className="f9 inter gray2 pr3 dib">{timeSent}</span>

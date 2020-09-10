@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { TabBar } from '~/views/components/chat-link-tabbar';
 import { LinkPreview } from './lib/link-preview';
 import { LinkSubmit } from './lib/link-submit';
+import { CommentSubmit } from './lib/comment-submit';
 import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { Link } from 'react-router-dom';
 import { Comments } from './lib/comments';
@@ -37,16 +38,14 @@ export const LinkDetail = (props) => {
           popout={props.popout}
           api={props.api}
         />
-        <Link
-          className="dib f9 fw4 pt2 gray2 lh-solid"
-          to="/~link">
-            {`<- ${title}`}
+        <Link className="dib f9 fw4 pt2 gray2 lh-solid" to="/~link">
+          {`<- ${title}`}
         </Link>
         <TabBar
           location={props.location}
           popout={props.popout}
-          popoutHref={"/~link"}
-          settings={"/~link"}
+          popoutHref={`/~link/popout/${resourcePath}/${props.match.params.index}`}
+          settings={`/~link/${resourcePath}/settings`}
         />
       </div>
       <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
@@ -58,10 +57,11 @@ export const LinkDetail = (props) => {
             hideNicknames={props.hideNicknames}
             commentNumber={props.node.children.size} />
           <div className="flex">
-            <LinkSubmit
+            <CommentSubmit
               name={props.name}
               ship={props.ship}
-              api={props.api} />
+              api={props.api}
+              parentIndex={props.node.post.index} />
           </div>
           <Comments
             comments={props.node.children}
