@@ -34,10 +34,11 @@ export default function PublishApp(props: PublishAppProps) {
 
   useEffect(() => {
     props.subscription.startApp("publish");
-    props.api.publish.fetchNotebooks();
+    props.subscription.startApp("graph");
 
     return () => {
       props.subscription.stopApp("publish");
+      props.subscription.stopApp("graph");
     };
   }, []);
 
@@ -69,6 +70,9 @@ export default function PublishApp(props: PublishAppProps) {
     ? "sidebar"
     : "rightPanel";
 
+  const appAssociations = props.associations?.publish || {}; 
+  const graphs = props.graphs || {}
+
   return (
     <>
       <Helmet defer={false}>
@@ -76,9 +80,9 @@ export default function PublishApp(props: PublishAppProps) {
       </Helmet>
       <Route
         path={[
-          "/~publish/notebook/:ship/:notebook/note/:noteId",
-          "/~publish/notebook/:ship/:notebook/*",
-          "/~publish/notebook/:ship/:notebook",
+          "/~publish/notebook/ship/:ship/:notebook/note/:noteId",
+          "/~publish/notebook/ship/:ship/:notebook/*",
+          "/~publish/notebook/ship/:ship/:notebook",
           "/~publish",
         ]}
       >
@@ -88,6 +92,7 @@ export default function PublishApp(props: PublishAppProps) {
           sidebarShown={sidebarShown}
           invites={invites}
           notebooks={notebooks}
+          graphs={graphs}
           associations={associations}
           contacts={contacts}
           api={api}
@@ -117,7 +122,7 @@ export default function PublishApp(props: PublishAppProps) {
             />
             <Route
               exact
-              path="/~publish/join/:ship/:notebook"
+              path="/~publish/join/ship/:ship/:notebook"
               render={(props) => {
                 const ship = props.match.params.ship || "";
                 const notebook = props.match.params.notebook || "";
@@ -133,7 +138,7 @@ export default function PublishApp(props: PublishAppProps) {
               }}
             />
             <Route
-              path="/~publish/notebook/:ship/:notebook"
+              path="/~publish/notebook/ship/:ship/:notebook"
               render={(props) => {
                 const view = props.match.params.view
                   ? props.match.params.view
@@ -141,9 +146,11 @@ export default function PublishApp(props: PublishAppProps) {
 
                 const ship = props.match.params.ship || "";
                 const book = props.match.params.notebook || "";
+    
+                const association = appAssociations?.[`/ship/${ship}/${book}`];
 
-                const bookGroupPath =
-                  notebooks?.[ship]?.[book]?.["subscribers-group-path"];
+
+                const bookGroupPath = association?.['group-path'];
 
                 const notebookContacts =
                   bookGroupPath in contacts ? contacts[bookGroupPath] : {};
@@ -157,6 +164,9 @@ export default function PublishApp(props: PublishAppProps) {
                     groups={groups}
                     contacts={contacts}
                     notebookContacts={notebookContacts}
+                    association={association}
+                    associations={associations}
+                    graphs={graphs}
                     sidebarShown={sidebarShown}
                     api={api}
                     hideNicknames={hideNicknames}

@@ -35,19 +35,30 @@ interface NewScreenProps {
 export function NewScreen(props: NewScreenProps & RouteComponentProps) {
   const { history } = props;
 
-  const waiter = useWaitForProps(props, 5000);
-
   const onSubmit = async (values: FormSchema, actions) => {
     const bookId = stringToSymbol(values.name);
     try {
       const { name, description, group } = values;
-      await props.api.publish.newBook(bookId, name, description, group);
-      await waiter((p) => !!p?.notebooks?.[`~${window.ship}`]?.[bookId]);
-      if (!group) {
-        await waiter((p) => !!p?.groups?.[`/ship/~${window.ship}/${bookId}`]);
+      if (group) {
+        await props.api.graph.createManagedGraph(
+          bookId,
+          name,
+          description,
+          "publish",
+          group
+        );
+      } else {
+        await props.api.graph.createUnmanagedGraph(
+          bookId,
+          name,
+          description,
+          "publish",
+          { open: { banned: [], banRanks: [] } }
+        );
       }
+
       actions.setStatus({ success: null });
-      history.push(`/~publish/notebook/~${window.ship}/${bookId}`);
+      history.push(`/~publish/notebook/ship/~${window.ship}/${bookId}`);
     } catch (e) {
       console.error(e);
       actions.setStatus({ error: "Notebook creation failed" });
@@ -55,7 +66,9 @@ export function NewScreen(props: NewScreenProps & RouteComponentProps) {
   };
   return (
     <Col p={3}>
-      <Box mb={4} color="black">New Notebook</Box>
+      <Box mb={4} color="black">
+        New Notebook
+      </Box>
       <Formik
         validationSchema={formSchema}
         initialValues={{ name: "", description: "", group: "" }}

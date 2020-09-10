@@ -8,6 +8,7 @@ import { Invites } from "~/types/invite-update";
 import GlobalApi from "~/logic/api/global";
 import { Associations } from "~/types/metadata-update";
 import { RouteComponentProps } from "react-router-dom";
+import {Graphs} from "~/types/graph-update";
 
 type SkeletonProps = RouteComponentProps<{
   ship?: string;
@@ -18,6 +19,7 @@ type SkeletonProps = RouteComponentProps<{
   invites: Invites;
   associations: Associations;
   contacts: Rolodex;
+  graphs: Graphs;
   api: GlobalApi;
   children: React.ReactNode;
 };
@@ -30,7 +32,7 @@ export function Skeleton(props: SkeletonProps) {
   const path =
     (ship &&
       notebook &&
-      `${props.match.params.ship}/${props.match.params.notebook}`) ||
+      `/ship/${props.match.params.ship}/${props.match.params.notebook}`) ||
     undefined;
 
   const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -45,25 +47,13 @@ export function Skeleton(props: SkeletonProps) {
       const fullyLoaded = note["num-comments"] === loadedComments;
       if (distanceFromBottom < 40) {
         if (!fullyLoaded) {
-          api.publish.fetchCommentsPage(
-            ship,
-            notebook,
-            noteId,
-            loadedComments,
-            30
-          );
         }
         if (!note.read) {
-          api.publish.publishAction({
-            read: {
-              who: ship.slice(1),
-              book: notebook,
-              note: noteId,
-            },
-          });
+          // TODO: stubbed for notification-store
         }
       }
     } else if (notebook && ship) {
+      // TODO: lazy load notebooks
     }
   };
 
@@ -77,13 +67,7 @@ export function Skeleton(props: SkeletonProps) {
       const { clientHeight, scrollHeight } = scrollRef.current;
       const isScrolling = clientHeight < scrollHeight;
       if(!isScrolling && note) {
-        api.publish.publishAction({
-          read: {
-            who: ship.slice(1),
-            book: notebook,
-            note: noteId,
-          },
-        });
+        // TODO: stubbed for notification-store
       }
 
     }, 1500);
@@ -103,6 +87,7 @@ export function Skeleton(props: SkeletonProps) {
       >
         <Sidebar
           notebooks={props.notebooks}
+          graphs={props.graphs}
           contacts={props.contacts}
           path={path}
           invites={props.invites}

@@ -1,10 +1,11 @@
-import React, { Component } from "react";
+import React from "react";
 import { Box, Text, Col } from "@tlon/indigo-react";
 import { Link } from "react-router-dom";
 import SidebarInvite from "~/views/components/SidebarInvite";
 import { Welcome } from "./Welcome";
 import { GroupItem } from "./GroupItem";
 import { alphabetiseAssociations } from "~/logic/lib/util";
+import _ from "lodash";
 
 export function Sidebar(props: any) {
   const sidebarInvites = !(props.invites && props.invites["/publish"])
@@ -23,80 +24,37 @@ export function Sidebar(props: any) {
     props.associations && "contacts" in props.associations
       ? alphabetiseAssociations(props.associations.contacts)
       : {};
+  const appAssociations =
+    props.associations && "publish" in props.associations
+      ? props.associations.publish
+      : {};
 
-  const notebooks = {};
-  Object.keys(props.notebooks).map((host) => {
-    Object.keys(props.notebooks[host]).map((notebook) => {
-      const title = `${host}/${notebook}`;
-      notebooks[title] = props.notebooks[host][notebook];
-    });
-  });
+  const groups = props.groups || {};
 
-  const groupedNotebooks = {};
-  Object.keys(notebooks).map((book) => {
-    const path = notebooks[book]["subscribers-group-path"]
-      ? notebooks[book]["subscribers-group-path"]
-      : book;
-    if (path in associations) {
-      if (groupedNotebooks[path]) {
-        const array = groupedNotebooks[path];
-        array.push(book);
-        groupedNotebooks[path] = array;
-      } else {
-        groupedNotebooks[path] = [book];
-      }
-    } else {
-      if (groupedNotebooks["/~/"]) {
-        const array = groupedNotebooks["/~/"];
-        array.push(book);
-        groupedNotebooks["/~/"] = array;
-      } else {
-        groupedNotebooks["/~/"] = [book];
-      }
-    }
-  });
-
-  const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
-  const groupedItems = Object.keys(associations)
-    .map((each, i) => {
-      const books = groupedNotebooks[each] || [];
-      if (books.length === 0) return;
-      if (
-        selectedGroups.length === 0 &&
-        groupedNotebooks["/~/"] &&
-        groupedNotebooks["/~/"].length !== 0
-      ) {
-        i = i + 1;
-      }
-      return (
-        <GroupItem
-          key={i}
-          index={i}
-          association={associations[each]}
-          groupedBooks={books}
-          notebooks={notebooks}
-          path={props.path}
-        />
-      );
-    });
-  if (
-    selectedGroups.length === 0 &&
-    groupedNotebooks["/~/"] &&
-    groupedNotebooks["/~/"].length !== 0
-  ) {
-    groupedItems.unshift(
+  const groupedItems = _.chain(props.graphs)
+    .reduce((acc, g, path) => {
+      const appPath = `/ship/~${path}`;
+      return appPath in appAssociations
+        ? [...acc, appAssociations[appPath]]
+        : acc;
+    }, [] as any[])
+    .groupBy((association) =>
+      groups?.[association["group-path"]]?.hidden
+        ? "unmanaged"
+        : association["group-path"]
+    )
+    .map((appPaths, groupPath) => (
       <GroupItem
-        key={"/~/"}
-        index={0}
-        association={"/~/"}
-        groupedBooks={groupedNotebooks["/~/"]}
-        notebooks={notebooks}
+        key={groupPath}
+        groupAssociation={groupPath !== "unmanaged" && associations[groupPath]}
+        appAssociations={appAssociations}
+        appPaths={_.map(appPaths, 'app-path')}
         path={props.path}
       />
-    );
-  }
+    ))
+    .value();
 
-  const display = props.path ? ['none', 'block'] : 'block';
+  const display = props.path ? ["none", "block"] : "block";
 
   return (
     <Col
@@ -113,9 +71,7 @@ export function Sidebar(props: any) {
           <Box color="green">New Notebook</Box>
         </Link>
       </Box>
-      <Box
-        className="overflow-y-auto pb1"
-      >
+      <Box overflowY="auto" pb={1}>
         <Welcome mx={2} />
         {sidebarInvites}
         {groupedItems}
