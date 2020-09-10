@@ -882,29 +882,28 @@ ur_root_init(void)
 
   {
     ur_dict_t *dict;
-    uint64_t fib11 = 89, fib12 = 144;
 
     //  allocate atom storage
     //
-    r->atoms.prev  = fib11;
-    r->atoms.size  = fib12;
+    r->atoms.prev = ur_fib11;
+    r->atoms.size = ur_fib12;
     ur_atoms_grow(&(r->atoms));
 
     //  allocate atom hashtable
     //
     dict = &(r->atoms.dict);
-    ur_dict_grow(r, dict, fib11, fib12);
+    ur_dict_grow(r, dict, ur_fib11, ur_fib12);
 
     //  allocate cell storage
     //
-    r->cells.prev  = fib11;
-    r->cells.size  = fib12;
+    r->cells.prev = ur_fib11;
+    r->cells.size = ur_fib12;
     ur_cells_grow(&(r->cells));
 
     //  allocate cell hashtable
     //
     dict = &(r->cells.dict);
-    ur_dict_grow(r, dict, fib11, fib12);
+    ur_dict_grow(r, dict, ur_fib11, ur_fib12);
   }
 
   return r;
@@ -930,7 +929,7 @@ ur_walk_fore(ur_root_t *r,
              void      (*atom)(ur_root_t*, ur_nref, void*),
              ur_bool_t (*cell)(ur_root_t*, ur_nref, void*))
 {
-  uint64_t prev = 89, size = 144, fill = 0;
+  uint64_t prev = ur_fib11, size = ur_fib12, fill = 0;
   ur_nref *top, *don;
 
   don  = _oom("walk_fore", malloc(size * sizeof(*don)));
