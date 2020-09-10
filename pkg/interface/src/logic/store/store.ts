@@ -110,7 +110,5 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.linkListenReducer.reduce(data, this.state);
     this.connReducer.reduce(data, this.state);
     GraphReducer(data, this.state);
-
-    console.log(this.state);
   }
 }

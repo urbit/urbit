@@ -95,7 +95,7 @@ export class LinksApp extends Component {
 
               const autoJoin = () => {
                 try {
-                  api.links.joinCollection(resource);
+                  // TODO: graph join
                   props.history.push(`/~link/${resource}`);
                 } catch(err) {
                   setTimeout(autoJoin, 2000);
