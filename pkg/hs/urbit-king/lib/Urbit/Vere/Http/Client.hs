@@ -140,7 +140,7 @@ client env plan = (initialEvents, runHttpClient)
     runReq HttpClientDrv{..} id req = async $
       case cvtReq req of
         Nothing -> do
-          logDebug $ displayShow ("(malformed http client request)", id, req)
+          logInfo $ displayShow ("(malformed http client request)", id, req)
           planEvent id (Cancel ())
         Just r -> do
           logDebug $ displayShow ("(http client request)", id, req)
