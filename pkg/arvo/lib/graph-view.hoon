@@ -6,8 +6,9 @@
 |%
 ++  app-to-mark
   |=  app=app-name
-  ?+  app  !!
+  ?+  app  ~|("nonexistent app" !!)
     %chat  %graph-validator-chat
+    %publish  %graph-validator-publish
   ==
 ++  dejs
   =,  dejs:format
@@ -37,7 +38,10 @@
       |=  jon=json
       ^-  app-name
       ?>  ?=(%s -.jon)
-      %chat
+      ?+  p.jon  !!
+        %chat     %chat
+        %publish  %publish
+      ==
     ::
     ++  leave
       %-  ot
@@ -53,6 +57,7 @@
       %-  ot
       :~  resource+dejs:resource
           ship+(su ;~(pfix sig fed:ag))
+          app+app
       ==
     ::
     ++  groupify  !!

@@ -16,13 +16,13 @@
   (pure:m ~)
 ::
 ++  scry-metadata
-  |=  rid=resource
+  |=  [app=app-name:graph-view rid=resource]
   =/  m  (strand ,(unit resource))
   ^-  form:m
   ;<  pax=(unit (set path))  bind:m
     %+  scry:strandio   ,(unit (set path))
     ;:  weld
-      /gx/metadata-store/resource/chat
+      /gx/metadata-store/resource/[app]
       (en-path:resource rid)
       /noun
     ==
@@ -62,7 +62,8 @@
 ;<  ~  bind:m
   %+  poke-our  %metadata-hook
   metadata-hook-action+!>([%add-synced ship.action rid.action])
+::
 ;<  ~  bind:m  
   %+  poke-our  %graph-pull-hook
-  pull-hook-action+!>([%add ship.action rid.action]))
+  pull-hook-action+!>([%add ship.action rid.action])
 (pure:m !>(~))

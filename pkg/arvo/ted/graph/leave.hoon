@@ -50,14 +50,14 @@
 ?<  =(our.bowl entity.rid.action)
 ;<  ugroup-rid=(unit resource)  bind:m  
   (scry-metadata rid.action)
-?~  ugroup-rid  (fail:m %nonexistent)
+?~  ugroup-rid  !!
 ;<  ugroup=(unit group)
   (scry-group u.ugroup-rid)
 ?~  ugroup  (fail:m %nonexistent)
 ?.  hidden.u.ugroup
   (delete-graph rid.action)
 ;<  ~  bind:m
-  (poke-our %group-push-hook %pull-hook-action [%remove rid.action])
+  (poke-our %group-push-hook %pull-hook-action !>([%remove rid.action]))
 ;<  ~  bind:m
   (poke-our %group-store %group-action !>([%remove-group rid.action])
 ;<  ~  bind:m  (delete-graph rid.action)

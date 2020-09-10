@@ -24,7 +24,7 @@ export function JoinScreen(props: JoinScreenProps & RouteComponentProps) {
     joining.current = true;
 
     try {
-      await api.graph.joinGraph(ship, book);
+      await api.graph.joinGraph(ship, book, 'publish');
       props.history.push(`/~publish/notebook/ship/${ship}/${book}`);
     } catch (e) {
       console.error(e);
