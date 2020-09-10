@@ -61,6 +61,7 @@
 */
 static void
 _lord_stop_cb(void*       ptr_v,
+              ssize_t     err_i,
               const c3_c* err_c)
 {
   u3_lord* god_u = ptr_v;
@@ -122,6 +123,7 @@ _lord_writ_free(u3_writ* wit_u)
 */
 static void
 _lord_bail_noop(void*       ptr_v,
+                ssize_t     err_i,
                 const c3_c* err_c)
 {
 }
@@ -986,10 +988,18 @@ _lord_on_serf_exit(uv_process_t* req_u,
 */
 static void
 _lord_on_serf_bail(void*       ptr_v,
+                   ssize_t     err_i,
                    const c3_c* err_c)
 {
   u3_lord* god_u = ptr_v;
-  u3l_log("pier: serf error: %s\r\n", err_c);
+
+  if ( UV_EOF == err_i ) {
+    u3l_log("pier: serf unexpectedly shut down\r\n");
+  }
+  else {
+    u3l_log("pier: serf error: %s\r\n", err_c);
+  }
+
   _lord_bail(god_u);
 }
 

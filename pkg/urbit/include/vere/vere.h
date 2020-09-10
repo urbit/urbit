@@ -44,7 +44,7 @@
 
     /* u3_moor_bail: bailout callback function.
     */
-      typedef void (*u3_moor_bail)(void*, const c3_c* err_c);
+      typedef void (*u3_moor_bail)(void*, ssize_t err_i, const c3_c* err_c);
 
     /* u3_meat: blob message block.
     */
