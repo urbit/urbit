@@ -379,6 +379,10 @@ _cu_all_to_loom(ur_root_t* rot_u, ur_nref ken, ur_nvec_t* cod_u)
 static ur_nref
 _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 {
+#ifdef U3_MEMORY_DEBUG
+  c3_assert(0);
+#endif
+
   //  bypassing page tracking as an optimization
   //
   //    NB: u3e_yolo() will mark all as dirty, and
@@ -442,6 +446,13 @@ _cu_realloc(FILE* fil_u, ur_root_t** tor_u, ur_nvec_t* doc_u)
 
 /* u3u_meld(): globally deduplicate memory.
 */
+#ifdef U3_MEMORY_DEBUG
+void
+u3u_meld(void)
+{
+  fprintf(stderr, "u3: unable to meld under U3_MEMORY_DEBUG\r\n");
+}
+#else
 void
 u3u_meld(void)
 {
@@ -457,6 +468,7 @@ u3u_meld(void)
   ur_nvec_free(&cod_u);
   ur_root_free(rot_u);
 }
+#endif
 
 /* _cu_rock_path(): format rock path.
 */
@@ -624,6 +636,14 @@ _cu_rock_save(c3_c* dir_c, c3_d eve_d, c3_d len_d, c3_y* byt_y)
 
 /* u3u_cram(): globably deduplicate memory, and write a rock to disk.
 */
+#ifdef U3_MEMORY_DEBUG
+c3_o
+u3u_cram(c3_c* dir_c, c3_d eve_d)
+{
+  fprintf(stderr, "u3: unable to cram under U3_MEMORY_DEBUG\r\n");
+  return c3n;
+}
+#else
 c3_o
 u3u_cram(c3_c* dir_c, c3_d eve_d)
 {
@@ -670,6 +690,7 @@ u3u_cram(c3_c* dir_c, c3_d eve_d)
 
   return ret_o;
 }
+#endif
 
 /* u3u_mmap_read(): open and mmap the file at [pat_c] for reading.
 */
