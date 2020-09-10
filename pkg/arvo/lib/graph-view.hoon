@@ -21,7 +21,7 @@
         delete+delete
         join+join
         leave+leave
-        ::groupify+groupify
+        groupify+groupify
         ::invite+invite
     ==
     ::
@@ -60,7 +60,12 @@
           app+app
       ==
     ::
-    ++  groupify  !!
+    ++  groupify  
+      %-  ou
+      :~  resource+(un dejs:resource)
+          app+(un app)
+          to+(uf ~ (mu dejs:resource))
+      ==
     ++  invite    !!
     ::
     ++  associated
