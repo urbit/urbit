@@ -79,8 +79,8 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
     return Boolean(this.chatInput.current?.s3Uploader.current?.inputRef.current);
   }
 
-  onDragEnter() {
-    if (!this.readyToUpload()) {
+  onDragEnter(event) {
+    if (!this.readyToUpload() || !event.dataTransfer.files.length) {
       return;
     }
     this.setState({ dragover: true });
@@ -88,7 +88,12 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
 
   onDrop(event: DragEvent) {
     this.setState({ dragover: false });
+    event.preventDefault();
     if (!event.dataTransfer || !event.dataTransfer.files.length) {
+      return;
+    }
+    if (event.dataTransfer.items.length && !event.dataTransfer.files.length) {
+      event.preventDefault();
       return;
     }
     event.preventDefault();
@@ -135,7 +140,13 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
         onDragEnter={this.onDragEnter.bind(this)}
         onDragOver={event => {
           event.preventDefault();
-          if (!this.state.dragover) {
+          if (
+            !this.state.dragover
+            && (
+              (event.dataTransfer.files.length && event.dataTransfer.files[0].kind === 'file')
+              || (event.dataTransfer.items.length && event.dataTransfer.items[0].kind === 'file')
+            )
+          ) {
             this.setState({ dragover: true });
           }
         }}

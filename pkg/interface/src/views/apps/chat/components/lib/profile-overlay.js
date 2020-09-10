@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { cite } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
 export const OVERLAY_HEIGHT = 250;
 
-export class ProfileOverlay extends Component {
+export class ProfileOverlay extends PureComponent {
   constructor() {
     super();
 

@@ -28,19 +28,19 @@ export class GroupItem extends Component {
 
         return bWhen - aWhen;
       } else {
-      const aAssociation = a in props.chatMetadata ? props.chatMetadata[a] : {};
-      const bAssociation = b in props.chatMetadata ? props.chatMetadata[b] : {};
-      let aTitle = a;
-      let bTitle = b;
-      if (aAssociation.metadata && aAssociation.metadata.title) {
-        aTitle = (aAssociation.metadata.title !== '')
-          ? aAssociation.metadata.title : a;
-        }
-      if (bAssociation.metadata && bAssociation.metadata.title) {
-        bTitle =
-          bAssociation.metadata.title !== '' ? bAssociation.metadata.title : b;
-        }
-      return aTitle.toLowerCase().localeCompare(bTitle.toLowerCase());
+        const aAssociation = a in props.chatMetadata ? props.chatMetadata[a] : {};
+        const bAssociation = b in props.chatMetadata ? props.chatMetadata[b] : {};
+        let aTitle = a;
+        let bTitle = b;
+        if (aAssociation.metadata && aAssociation.metadata.title) {
+          aTitle = (aAssociation.metadata.title !== '')
+            ? aAssociation.metadata.title : a;
+          }
+        if (bAssociation.metadata && bAssociation.metadata.title) {
+          bTitle =
+            bAssociation.metadata.title !== '' ? bAssociation.metadata.title : b;
+          }
+        return aTitle.toLowerCase().localeCompare(bTitle.toLowerCase());
       }
     }).map((each, i) => {
       const unread = props.unreads[each];
