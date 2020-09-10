@@ -164,7 +164,7 @@ tryOpenChoices
 tryOpenChoices hos = go
  where
   go (p :| ps) = do
-    logDebug (displayShow ("EYRE", "Trying to open port.", p))
+    logInfo (displayShow ("EYRE", "Trying to open port.", p))
     io (tryOpen hos p) >>= \case
       Left err -> do
         logError (displayShow ("EYRE", "Failed to open port.", p))
@@ -185,7 +185,7 @@ tryOpenAny hos = do
       pure (Right (p, s))
 
 logDbg :: (HasLogFunc e, Show a) => [Text] -> a -> RIO e ()
-logDbg ctx msg = logDebug (prefix <> suffix)
+logDbg ctx msg = logInfo (prefix <> suffix)
  where
   prefix = display (concat $ fmap (<> ": ") ctx)
   suffix = displayShow msg
@@ -312,7 +312,7 @@ configCreds TlsConfig {..} =
 fakeServ :: HasLogFunc e => ServConf -> RIO e ServApi
 fakeServ conf = do
   let por = fakePort (scPort conf)
-  logDebug (displayShow ("EYRE", "SERV", "Running Fake Server", por))
+  logInfo (displayShow ("EYRE", "SERV", "Running Fake Server", por))
   pure $ ServApi
     { saKil = pure ()
     , saPor = pure por
@@ -331,7 +331,7 @@ getFirstTlsConfig (MTC var) = do
 
 realServ :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
 realServ vLive conf@ServConf {..} = do
-  logDebug (displayShow ("EYRE", "SERV", "Running Real Server"))
+  logInfo (displayShow ("EYRE", "SERV", "Running Real Server"))
   kil <- newEmptyTMVarIO
   por <- newEmptyTMVarIO
 
@@ -344,7 +344,7 @@ realServ vLive conf@ServConf {..} = do
     }
  where
   runServ vPort = do
-    logDebug (displayShow ("EYRE", "SERV", "runServ"))
+    logInfo (displayShow ("EYRE", "SERV", "runServ"))
     rwith (forceOpenSocket scHost scPort) $ \(por, sok) -> do
       atomically (putTMVar vPort por)
       startServer scType scHost por sok scRedi vLive

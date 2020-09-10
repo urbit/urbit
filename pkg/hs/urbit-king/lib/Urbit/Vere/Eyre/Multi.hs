@@ -72,7 +72,7 @@ leaveMultiEyre MultiEyreApi {..} who = do
 
 multiEyre :: HasLogFunc e => MultiEyreConf -> RIO e MultiEyreApi
 multiEyre conf@MultiEyreConf {..} = do
-  logDebug (displayShow ("EYRE", "MULTI", conf))
+  logInfo (displayShow ("EYRE", "MULTI", conf))
 
   vLive <- io emptyLiveReqs >>= newTVarIO
   vPlan <- newTVarIO mempty
@@ -96,7 +96,7 @@ multiEyre conf@MultiEyreConf {..} = do
           Just cb -> cb who reqId
 
   mIns <- for mecHttpPort $ \por -> do
-    logDebug (displayShow ("EYRE", "MULTI", "HTTP", por))
+    logInfo (displayShow ("EYRE", "MULTI", "HTTP", por))
     serv vLive $ ServConf
       { scHost = host
       , scPort = SPChoices $ singleton $ fromIntegral por
@@ -109,7 +109,7 @@ multiEyre conf@MultiEyreConf {..} = do
       }
 
   mSec <- for mecHttpsPort $ \por -> do
-    logDebug (displayShow ("EYRE", "MULTI", "HTTPS", por))
+    logInfo (displayShow ("EYRE", "MULTI", "HTTPS", por))
     serv vLive $ ServConf
       { scHost = host
       , scPort = SPChoices $ singleton $ fromIntegral por

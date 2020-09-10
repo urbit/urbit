@@ -80,14 +80,14 @@ forceBind :: HasLogFunc e => PortNumber -> HostAddress -> RIO e Socket
 forceBind por hos = go
  where
   go = do
-    logDebug (display ("AMES: UDP: Opening socket on port " <> tshow por))
+    logInfo (display ("AMES: UDP: Opening socket on port " <> tshow por))
     io (doBind por hos) >>= \case
       Right sk -> do
-        logDebug (display ("AMES: UDP: Opened socket on port " <> tshow por))
+        logInfo (display ("AMES: UDP: Opened socket on port " <> tshow por))
         pure sk
       Left err -> do
-        logDebug (display ("AMES: UDP: " <> tshow err))
-        logDebug ("AMES: UDP: Failed to open UDP socket. Waiting")
+        logInfo (display ("AMES: UDP: " <> tshow err))
+        logInfo ("AMES: UDP: Failed to open UDP socket. Waiting")
         threadDelay 250_000
         go
 
@@ -138,7 +138,7 @@ recvPacket sok = do
 -}
 fakeUdpServ :: HasLogFunc e => RIO e UdpServ
 fakeUdpServ = do
-  logDebug $ displayShow ("AMES", "UDP", "\"Starting\" fake UDP server.")
+  logInfo $ displayShow ("AMES", "UDP", "\"Starting\" fake UDP server.")
   pure UdpServ { .. }
  where
   usSend = \_ _ -> pure ()
@@ -158,7 +158,7 @@ realUdpServ
   -> HostAddress
   -> RIO e UdpServ
 realUdpServ por hos = do
-  logDebug $ displayShow ("AMES", "UDP", "Starting real UDP server.")
+  logInfo $ displayShow ("AMES", "UDP", "Starting real UDP server.")
 
   env <- ask
 
@@ -178,7 +178,7 @@ realUdpServ por hos = do
   -}
   let signalBrokenSocket :: Socket -> RIO e ()
       signalBrokenSocket sock = do
-        logDebug $ displayShow ("AMES", "UDP"
+        logInfo $ displayShow ("AMES", "UDP"
                                , "Socket broken. Requesting new socket"
                                )
         atomically $ do
@@ -242,11 +242,11 @@ realUdpServ por hos = do
             enqueueRecvPacket p a b
 
   let shutdown = do
-        logDebug "AMES: UDP: Shutting down. (killing threads)"
+        logInfo "AMES: UDP: Shutting down. (killing threads)"
         cancel tOpen
         cancel tSend
         cancel tRecv
-        logDebug "AMES: UDP: Shutting down. (closing socket)"
+        logInfo "AMES: UDP: Shutting down. (closing socket)"
         io $ join $ atomically $ do
           res <- readTVar vSock <&> maybe (pure ()) close
           writeTVar vSock Nothing

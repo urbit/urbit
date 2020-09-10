@@ -178,21 +178,21 @@ bootNewShip
   -> RIO e ()
 bootNewShip pill lite ship bootEv = do
   seq@(BootSeq ident x y) <- genBootSeq ship pill lite bootEv
-  logDebug "BootSeq Computed"
+  logInfo "BootSeq Computed"
 
   pierPath <- view pierPathL
 
   rio (setupPierDirectory pierPath)
-  logDebug "Directory setup."
+  logInfo "Directory setup."
 
   let logPath = (pierPath </> ".urb/log")
 
   rwith (Log.new logPath ident) $ \log -> do
-    logDebug "Event log onitialized."
+    logInfo "Event log onitialized."
     jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
     writeJobs log (fromList jobs)
 
-  logDebug "Finsihed populating event log with boot sequence"
+  logInfo "Finsihed populating event log with boot sequence"
 
 
 -- Resume an existing ship. ----------------------------------------------------
@@ -216,16 +216,16 @@ resumed vSlog replayUntil = do
   serf <- runSerf vSlog tap
 
   rio $ do
-    logDebug "Replaying events"
+    logInfo "Replaying events"
     Serf.execReplay serf log replayUntil >>= \case
       Left err -> error (show err)
       Right 0  -> do
-        logDebug "No work during replay so no snapshot"
+        logInfo "No work during replay so no snapshot"
         pure ()
       Right _  -> do
-        logDebug "Taking snapshot"
+        logInfo "Taking snapshot"
         io (Serf.snapshot serf)
-        logDebug "SNAPSHOT TAKEN"
+        logInfo "SNAPSHOT TAKEN"
 
   pure (serf, log)
 
@@ -251,14 +251,14 @@ acquireWorker :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
 acquireWorker nam act = mkRAcquire (async act) kill
  where
   kill tid = do
-    logDebug ("Killing worker thread: " <> display nam)
+    logInfo ("Killing worker thread: " <> display nam)
     cancel tid
 
 acquireWorkerBound :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
 acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
  where
   kill tid = do
-    logDebug ("Killing worker thread: " <> display nam)
+    logInfo ("Killing worker thread: " <> display nam)
     cancel tid
 
 
@@ -293,11 +293,11 @@ pier (serf, log) vSlog startedSig = do
     pure (res, Term.useDemux res)
 
   void $ acquireWorker "TERMSERV Listener" $ forever $ do
-    logDebug "TERMSERV Waiting for external terminal."
+    logInfo "TERMSERV Waiting for external terminal."
     atomically $ do
       ext <- Term.connClient <$> readTQueue termApiQ
       Term.addDemux ext demux
-    logDebug "TERMSERV External terminal connected."
+    logInfo "TERMSERV External terminal connected."
 
   --  Slogs go to both stderr and to the terminal.
   env <- ask
@@ -377,7 +377,7 @@ pier (serf, log) vSlog startedSig = do
         threadDelay 15_000_000
         wen <- io Time.now
         let kal = \mTermNoun -> runRIO env $ do
-              logDebug $ displayShow ("scry result: ", mTermNoun)
+              logInfo $ displayShow ("scry result: ", mTermNoun)
         let nkt = MkKnot $ tshow $ Time.MkDate wen
         let pax = Path ["j", "~zod", "life", nkt, "~zod"]
         atomically $ putTMVar scrySig (wen, Nothing, pax, kal)
@@ -501,7 +501,7 @@ router slog waitFx Drivers {..} = do
 
 logEvent :: HasLogFunc e => Ev -> RIO e ()
 logEvent ev = do
-  logInfo  $ "<- " <> display (summarizeEvent ev)
+  --logInfo  $ "<- " <> display (summarizeEvent ev)
   logDebug $ "[EVENT]\n" <> display pretty
  where
   pretty :: Text
@@ -509,7 +509,7 @@ logEvent ev = do
 
 logEffect :: HasLogFunc e => Lenient Ef -> RIO e ()
 logEffect ef = do
-  logInfo  $ "  -> " <> display (summarizeEffect ef)
+  --logInfo  $ "  -> " <> display (summarizeEffect ef)
   logDebug $ display $ "[EFFECT]\n" <> pretty ef
  where
   pretty :: Lenient Ef -> Text
