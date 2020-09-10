@@ -313,11 +313,13 @@ _term_tcsetattr(c3_i fil_i, c3_i act_i, const struct termios* tms_u)
   return ret_i;
 }
 
-/* _term_write_cb(): general write callback.
+/* _term_it_write_cb(): general write callback.
 */
 static void
-_term_write_cb(uv_write_t* wri_u, c3_i sas_i)
+_term_it_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
+  //  write failure is logged, but otherwise ignored.
+  //
   if ( 0 != sas_i ) {
     u3l_log("term: write: %s\n", uv_strerror(sas_i));
   }
@@ -333,17 +335,48 @@ _term_it_write(u3_utty*  uty_u,
                uv_buf_t* buf_u,
                void*     ptr_v)
 {
-  uv_write_t* wri_u = c3_malloc(sizeof(*wri_u));
-  c3_w        ret_w;
+  //  work off a local copy of the buffer, in case we need
+  //  to manipulate the length/pointer
+  //
+  uv_buf_t     fub_u = { .base = buf_u->base, .len = buf_u->len };
+  uv_stream_t* han_u = (uv_stream_t*)&(uty_u->pop_u);
+  c3_i         ret_i;
 
-  wri_u->data = ptr_v;
+  //  try to write synchronously
+  //
+  while ( 1 ) {
+    ret_i = uv_try_write(han_u, &fub_u, 1);
 
-  if ( (ret_w = uv_write(wri_u,
-                         (uv_stream_t*)&(uty_u->pop_u),
-                         buf_u, 1,
-                         _term_write_cb)) )
-  {
-    u3l_log("term: write: %s\n", uv_strerror(ret_w));
+    if ( (ret_i > 0) && (ret_i < fub_u.len) ) {
+      fub_u.len  -= ret_i;
+      fub_u.base += ret_i;
+      continue;
+    }
+    else {
+      break;
+    }
+  }
+
+  //  cue an async write if necessary
+  //
+  if ( UV_EAGAIN == ret_i ) {
+    uv_write_t* wri_u = c3_malloc(sizeof(*wri_u));
+    wri_u->data = ptr_v;
+
+    //  invoke callback manually on error
+    //
+    if ( (ret_i = uv_write(wri_u, han_u, &fub_u, 1, _term_it_write_cb)) ) {
+      _term_it_write_cb(wri_u, ret_i);
+    }
+  }
+  else {
+    //  synchronous write failure is logged, but otherwise ignored
+    //
+    if ( ret_i < 0 ) {
+      u3l_log("term: write: %s\n", uv_strerror(ret_i));
+    }
+
+    c3_free(ptr_v);
   }
 }
 
