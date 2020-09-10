@@ -21,7 +21,6 @@ export class SettingsScreen extends Component {
     };
 
     this.renderDelete = this.renderDelete.bind(this);
-    this.markAllAsSeen = this.markAllAsSeen.bind(this);
     this.changeLoading = this.changeLoading.bind(this);
   }
 
@@ -75,10 +74,6 @@ export class SettingsScreen extends Component {
         isLoading: false
       });
     });
-  }
-
-  markAllAsSeen() {
-    this.props.api.links.seenLink(this.props.resourcePath);
   }
 
   renderRemove() {
@@ -206,11 +201,6 @@ export class SettingsScreen extends Component {
           <h2 className="f8 pb2">Collection Settings</h2>
           <p className="f8 mt3 lh-copy db">Mark all links as read</p>
           <p className="f9 gray2 db mb4">Mark all links in this collection as read.</p>
-          <a className="dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer"
-            onClick={this.markAllAsSeen}
-          >
-              Mark all as read
-            </a>
           {this.renderRemove()}
           {this.renderDelete()}
           <MetadataSettings

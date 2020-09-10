@@ -45,7 +45,7 @@ export default class GraphApi extends BaseApi<StoreState> {
       children: { empty: null }
     };
 
-    this.storeAction({
+    return this.storeAction({
       'add-nodes': {
         resource: { ship, name },
         nodes

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Spinner } from '~/views/components/Spinner';
+import { createPost } from '~/logic/api/graph';
+
 
 export class LinkSubmit extends Component {
   constructor() {
@@ -7,7 +9,6 @@ export class LinkSubmit extends Component {
     this.state = {
       linkValue: '',
       linkTitle: '',
-      linkValid: false,
       submitFocus: false,
       disabled: false
     };
@@ -21,39 +22,24 @@ export class LinkSubmit extends Component {
       ? this.state.linkTitle
       : this.state.linkValue;
       this.setState({ disabled: true });
-    this.props.api.links.postLink(this.props.resourcePath, link, title).then((r) => {
-      this.setState({
-        disabled: false,
-        linkValue: '',
-        linkTitle: '',
-        linkValid: false
+
+    let post = createPost([
+      { text: title },
+      { url: link }
+    ]);
+
+    this.props.api.graph.addPost(`~${this.props.ship}`, this.props.name, post)
+      .then((r) => {
+        this.setState({
+          disabled: false,
+          linkValue: '',
+          linkTitle: '',
+        });
       });
-    });
-  }
-
-  setLinkValid(link) {
-    const URLparser = new RegExp(
-      /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
-    );
-
-    const validURL = URLparser.exec(link);
-
-    if (!validURL) {
-      const checkProtocol = URLparser.exec('http://' + link);
-      if (checkProtocol) {
-        this.setState({ linkValid: true });
-        this.setState({ linkValue: 'http://' + link });
-      } else {
-        this.setState({ linkValid: false });
-      }
-    } else if (validURL) {
-      this.setState({ linkValid: true });
-    }
   }
 
   setLinkValue(event) {
     this.setState({ linkValue: event.target.value });
-    this.setLinkValid(event.target.value);
   }
 
   setLinkTitle(event) {
@@ -61,8 +47,7 @@ export class LinkSubmit extends Component {
   }
 
   render() {
-    const activeClasses = (this.state.linkValid && !this.state.disabled)
-      ? 'green2 pointer' : 'gray2';
+    const activeClasses = (!this.state.disabled) ? 'green2 pointer' : 'gray2';
 
     const focus = (this.state.submitFocus)
       ? 'b--black b--white-d'
@@ -116,7 +101,7 @@ export class LinkSubmit extends Component {
           className={
             'absolute bg-gray0-d f8 ml2 flex-shrink-0 ' + activeClasses
           }
-          disabled={!this.state.linkValid || this.state.disabled}
+          disabled={this.state.disabled}
           onClick={this.onClickPost.bind(this)}
           style={{
             bottom: 12,
@@ -125,9 +110,12 @@ export class LinkSubmit extends Component {
         >
           Post
         </button>
-        <Spinner awaiting={this.state.disabled} classes="mt3 absolute right-0" text="Posting to collection..." />
+        <Spinner
+          awaiting={this.state.disabled}
+          classes="mt3 absolute right-0"
+          text="Posting to collection..." />
       </div>
-    ) ;
+    );
   }
 }
 

@@ -5,9 +5,7 @@ import ErrorBoundary from '~/views/components/ErrorBoundary';
 export class Skeleton extends Component {
   render() {
     const { props } = this;
-    const rightPanelHide = props.rightPanelHide
-      ? 'dn-s' : '';
-
+    const rightPanelHide = props.rightPanelHide ? 'dn-s' : '';
     const popout = props.popout ? props.popout : false;
 
     const popoutWindow = (popout)
@@ -16,7 +14,7 @@ export class Skeleton extends Component {
     const popoutBorder = (popout)
       ? '' : 'ba-m ba-l ba-xl b--gray4 b--gray1-d br1';
 
-      const linkInvites = ('/link' in props.invites)
+    const linkInvites = ('/link' in props.invites)
       ? props.invites['/link'] : {};
 
     return (

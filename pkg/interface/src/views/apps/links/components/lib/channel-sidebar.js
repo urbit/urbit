@@ -23,9 +23,7 @@ export const ChannelSidebar = (props) => {
     alphabetiseAssociations(props.associations.contacts) : {};
 
   const groupedChannels = {};
-  console.log(props.graphKeys);
   [...props.graphKeys].map((path) => {
-    console.log(props.associations.link);
     const groupPath = props.associations.link[path] ?
       props.associations.link[path]['group-path'] : '';
 
