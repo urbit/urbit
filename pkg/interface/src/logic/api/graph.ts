@@ -3,7 +3,7 @@ import { StoreState } from '../store/type';
 import { Patp, Path, PatpNoSig } from '~/types/noun';
 import _ from 'lodash';
 import {makeResource, resourceFromPath} from '../lib/group';
-import {GroupPolicy, Enc} from '~/types';
+import {GroupPolicy, Enc, Post} from '~/types';
 
 export const createPost = (contents: Object[], parentIndex: string = '') => {
   return {
@@ -55,12 +55,13 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  joinGraph(ship: Patp, name: string) {
+  joinGraph(ship: Patp, name: string, app: string) {
     const resource = makeResource(ship, name);
     return this.viewAction('graph-join', {
       join: {
         resource,
-        ship
+        ship,
+        app
       }
     });
   }
@@ -92,7 +93,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  addPost(ship: Patp, name: string, post: Object) {
+  addPost(ship: Patp, name: string, post: Post) {
     let nodes = {};
     const resource = { ship, name };
     nodes[post.index] = {
@@ -162,7 +163,7 @@ export default class GraphApi extends BaseApi<StoreState> {
       });
   }
 
-  getGraphSubset(ship: string, resource: string, start: string, end: start) {
+  getGraphSubset(ship: string, resource: string, start: string, end: string) {
     this.scry<any>(
       'graph-store',
       `/graph-subset/${ship}/${resource}/${end}/${start}`
