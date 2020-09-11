@@ -489,7 +489,17 @@ _term_it_show_line(u3_utty* uty_u, c3_w wor_w, c3_w sap_w)
 {
   u3_utat* tat_u = &uty_u->tat_u;
 
-  _term_it_dump(uty_u, tat_u->mir.byt_w, tat_u->mir.lin_y);
+  //  we have to reallocate the current line on write,
+  //  or we have a data race if a) the write is async,
+  //  and b) a new output line arrives before the write completes.
+  //
+  {
+    c3_w  len_w = tat_u->mir.byt_w;
+    c3_y* hun_y = c3_malloc(len_w);
+    memcpy(hun_y, tat_u->mir.lin_y, len_w);
+
+    _term_it_send(uty_u, len_w, hun_y);
+  }
 
   //  XX refactor to avoid updating state
   //
