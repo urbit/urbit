@@ -32,8 +32,6 @@
       u3a_pile_sane(&pil_u);
       u3j_gate_prep(&sit_u, u3k(b));
 
-      top = u3a_peek(&pil_u);
-
       while ( len_w-- > 0 ) {
         pro = u3j_gate_slam(&sit_u, u3nc(u3k(*top), pro));
         top = u3a_pop(&pil_u);
