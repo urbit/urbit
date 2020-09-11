@@ -207,8 +207,9 @@ u3_term_log_init(void)
     //  Initialize mirror and accumulator state.
     //
     {
-      uty_u->tat_u.mir.lin_w = 0;
-      uty_u->tat_u.mir.len_w = 0;
+      uty_u->tat_u.mir.lin_y = 0;
+      uty_u->tat_u.mir.byt_w = 0;
+      uty_u->tat_u.mir.wor_w = 0;
       uty_u->tat_u.mir.sap_w = 0;
       uty_u->tat_u.mir.cus_w = 0;
 
@@ -392,26 +393,6 @@ _term_it_send_cord(u3_utty*    uty_u,
   u3z(txt);
 }
 
-/* _term_it_show_wide(): show wide text, retaining.
-*/
-static void
-_term_it_show_wide(u3_utty* uty_u, c3_w len_w, c3_w* txt_w)
-{
-  u3_noun txt = u3do("tuft", u3i_words(len_w, txt_w));
-
-  {
-    c3_w  byt_w = u3r_met(3, txt);
-    c3_y* byt_y = c3_malloc(byt_w);
-    u3r_bytes(0, byt_w, byt_y, txt);
-
-    _term_it_send(uty_u, byt_w, byt_y);
-  }
-
-  uty_u->tat_u.mir.cus_w += len_w;
-
-  u3z(txt);
-}
-
 /* _term_it_show_clear(): clear to the beginning of the current line.
 */
 static void
@@ -421,7 +402,7 @@ _term_it_show_clear(u3_utty* uty_u)
     _term_it_dump(uty_u, TERM_LIT("\r"));
     _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.el_u);
 
-    uty_u->tat_u.mir.len_w = 0;
+    uty_u->tat_u.mir.wor_w = 0;
     uty_u->tat_u.mir.cus_w = 0;
   }
 }
@@ -464,21 +445,20 @@ _term_it_show_cursor(u3_utty* uty_u, c3_w cur_w)
   uty_u->tat_u.mir.cus_w = cur_w;
 }
 
-/* _term_it_show_line(): set current line
+/* _term_it_show_line(): render current line.
 */
 static void
-_term_it_show_line(u3_utty* uty_u, c3_w* lin_w, c3_w len_w, c3_w sap_w)
+_term_it_show_line(u3_utty* uty_u, c3_w wor_w, c3_w sap_w)
 {
-  _term_it_show_wide(uty_u, len_w, lin_w);
+  u3_utat* tat_u = &uty_u->tat_u;
 
-  if ( lin_w != uty_u->tat_u.mir.lin_w ) {
-    if ( uty_u->tat_u.mir.lin_w ) {
-      c3_free(uty_u->tat_u.mir.lin_w);
-    }
-    uty_u->tat_u.mir.lin_w = lin_w;
-  }
-  uty_u->tat_u.mir.len_w = len_w;
-  uty_u->tat_u.mir.sap_w = sap_w;
+  _term_it_dump(uty_u, tat_u->mir.byt_w, tat_u->mir.lin_y);
+
+  //  XX refactor to avoid updating state
+  //
+  tat_u->mir.cus_w += wor_w;
+  tat_u->mir.wor_w = wor_w;
+  tat_u->mir.sap_w = sap_w;
 }
 
 /* _term_it_refresh_line(): refresh current line.
@@ -486,13 +466,40 @@ _term_it_show_line(u3_utty* uty_u, c3_w* lin_w, c3_w len_w, c3_w sap_w)
 static void
 _term_it_refresh_line(u3_utty* uty_u)
 {
-  c3_w len_w = uty_u->tat_u.mir.len_w;
-  c3_w sap_w = uty_u->tat_u.mir.sap_w;
-  c3_w cus_w = uty_u->tat_u.mir.cus_w;
+  u3_utat* tat_u = &uty_u->tat_u;
+  c3_w     wor_w = tat_u->mir.wor_w;
+  c3_w     sap_w = tat_u->mir.sap_w;
+  c3_w     cus_w = tat_u->mir.cus_w;
 
   _term_it_show_clear(uty_u);
-  _term_it_show_line(uty_u, uty_u->tat_u.mir.lin_w, len_w, sap_w);
+  _term_it_show_line(uty_u, wor_w, sap_w);
   _term_it_show_cursor(uty_u, cus_w);
+}
+
+/* _term_it_set_line(): set current line.
+*/
+static void
+_term_it_set_line(u3_utty* uty_u,
+                  c3_w*    lin_w,
+                  c3_w     wor_w,
+                  c3_w     sap_w)
+{
+  u3_utat* tat_u = &uty_u->tat_u;
+  u3_noun    txt = u3do("tuft", u3i_words(wor_w, lin_w));
+  c3_w     byt_w = u3r_met(3, txt);
+  c3_y*    hun_y = (c3_y*)lin_w;
+
+  u3r_bytes(0, byt_w, hun_y, txt);
+
+  c3_free(tat_u->mir.lin_y);
+  tat_u->mir.lin_y = hun_y;
+  tat_u->mir.byt_w = byt_w;
+  tat_u->mir.wor_w = wor_w;
+  tat_u->mir.sap_w = sap_w;
+
+  _term_it_show_line(uty_u, wor_w, sap_w);
+
+  u3z(txt);
 }
 
 /* _term_it_show_more(): new current line.
@@ -1198,7 +1205,7 @@ _term_it_show_stub(u3_utty* uty_u,
     }
   }
 
-  _term_it_show_line(uty_u, lin_w, i_w, sap_w);
+  _term_it_set_line(uty_u, lin_w, i_w, sap_w);
 
   u3z(tub);
 }
@@ -1220,7 +1227,7 @@ _term_it_show_tour(u3_utty* uty_u,
     }
   }
 
-  _term_it_show_line(uty_u, lin_w, len_w, 0);
+  _term_it_set_line(uty_u, lin_w, len_w, 0);
 
   u3z(lin);
 }
