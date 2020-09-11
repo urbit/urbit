@@ -986,8 +986,6 @@
       u3j_site raq_u;
       u3j_gate_prep(&raq_u, u3k(raq));
 
-      top = u3a_peek(&pil_u);
-
       while ( len_w-- > 0 ) {
         p_vex   = *top;
         top     = u3a_pop(&pil_u);
