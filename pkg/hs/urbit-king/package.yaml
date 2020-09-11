@@ -50,6 +50,8 @@ dependencies:
   - Glob
   - hashable
   - hashtables
+  - heap
+  - hexstring
   - http-client
   - http-client-tls
   - http-types
@@ -64,6 +66,7 @@ dependencies:
   - mtl
   - multimap
   - murmur3
+  - natpmp-static
   - network
   - optparse-applicative
   - para
@@ -99,7 +102,6 @@ dependencies:
   - unliftio-core
   - unordered-containers
   - urbit-atom
-  - urbit-azimuth
   - urbit-eventlog-lmdb
   - urbit-hob
   - urbit-noun
@@ -112,7 +114,6 @@ dependencies:
   - wai-websockets
   - warp
   - warp-tls
-  - web3
   - websockets
 
 default-extensions:

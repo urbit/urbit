@@ -9,6 +9,8 @@ module Urbit.King.App
   , kingEnvKillSignal
   , killKingActionL
   , onKillKingSigL
+  , HostEnv
+  , runHostEnv
   , PierEnv
   , runPierEnv
   , killPierActionL
@@ -17,6 +19,8 @@ module Urbit.King.App
   , HasKingId(..)
   , HasProcId(..)
   , HasKingEnv(..)
+  , HasMultiEyreApi(..)
+  , HasHostEnv(..)
   , HasPierEnv(..)
   , module Urbit.King.Config
   )
@@ -25,11 +29,16 @@ where
 import Urbit.King.Config
 import Urbit.Prelude
 
-import System.Directory       (createDirectoryIfMissing, getHomeDirectory)
+import System.Directory       ( createDirectoryIfMissing
+                              , getXdgDirectory
+                              , XdgDirectory(XdgCache)
+                              )
 import System.Posix.Internals (c_getpid)
 import System.Posix.Types     (CPid(..))
 import System.Random          (randomIO)
 import Urbit.King.App.Class   (HasStderrLogFunc(..))
+import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
+import Urbit.Vere.Ports       (PortControlApi, HasPortControlApi(..))
 
 
 -- KingEnv ---------------------------------------------------------------------
@@ -70,39 +79,50 @@ instance HasProcId KingEnv where
 instance HasKingId KingEnv where
   kingIdL = kingEnvKingId
 
-
 -- Running KingEnvs ------------------------------------------------------------
 
-runKingEnvStderr :: Bool -> RIO KingEnv a -> IO a
-runKingEnvStderr verb inner = do
+runKingEnvStderr :: Bool -> LogLevel -> RIO KingEnv a -> IO a
+runKingEnvStderr verb lvl inner = do
   logOptions <-
-    logOptionsHandle stderr verb <&> setLogUseTime True <&> setLogUseLoc False
-
+    logOptionsHandle stderr verb
+      <&> setLogUseTime True
+      <&> setLogUseLoc False
+      <&> setLogMinLevel lvl
   withLogFunc logOptions $ \logFunc -> runKingEnv logFunc logFunc inner
 
-runKingEnvLogFile :: Bool -> RIO KingEnv a -> IO a
-runKingEnvLogFile verb inner = withLogFileHandle $ \h -> do
-  logOptions <-
-    logOptionsHandle h verb <&> setLogUseTime True <&> setLogUseLoc False
-  stderrLogOptions <-
-    logOptionsHandle stderr verb <&> setLogUseTime False <&> setLogUseLoc False
+runKingEnvLogFile :: Bool -> LogLevel -> Maybe FilePath -> RIO KingEnv a -> IO a
+runKingEnvLogFile verb lvl fileM inner = do
+  logFile <- case fileM of
+    Just f  -> pure f
+    Nothing -> defaultLogFile
+  withLogFileHandle logFile $ \h -> do
+    logOptions <-
+      logOptionsHandle h verb
+        <&> setLogUseTime True
+        <&> setLogUseLoc False
+        <&> setLogMinLevel lvl
+    stderrLogOptions <-
+      logOptionsHandle stderr verb
+        <&> setLogUseTime False
+        <&> setLogUseLoc False
+        <&> setLogMinLevel lvl
+    withLogFunc stderrLogOptions $ \stderrLogFunc -> withLogFunc logOptions
+      $ \logFunc -> runKingEnv logFunc stderrLogFunc inner
 
-  withLogFunc stderrLogOptions $ \stderrLogFunc -> withLogFunc logOptions
-    $ \logFunc -> runKingEnv logFunc stderrLogFunc inner
-
-withLogFileHandle :: (Handle -> IO a) -> IO a
-withLogFileHandle act = do
-  home <- getHomeDirectory
-  let logDir = home </> ".urbit"
-  createDirectoryIfMissing True logDir
-  withFile (logDir </> "king.log") AppendMode $ \handle -> do
+withLogFileHandle :: FilePath -> (Handle -> IO a) -> IO a
+withLogFileHandle f act =
+  withFile f AppendMode $ \handle -> do
     hSetBuffering handle LineBuffering
     act handle
 
+defaultLogFile :: IO FilePath
+defaultLogFile = do
+  logDir <- getXdgDirectory XdgCache "urbit"
+  createDirectoryIfMissing True logDir
+  pure (logDir </> "king.log")
+
 runKingEnvNoLog :: RIO KingEnv a -> IO a
-runKingEnvNoLog act = withFile "/dev/null" AppendMode $ \handle -> do
-  logOptions <- logOptionsHandle handle True
-  withLogFunc logOptions $ \logFunc -> runKingEnv logFunc logFunc act
+runKingEnvNoLog act = runKingEnv mempty mempty act
 
 runKingEnv :: LogFunc -> LogFunc -> RIO KingEnv a -> IO a
 runKingEnv logFunc stderr action = do
@@ -121,14 +141,69 @@ killKingActionL :: HasKingEnv e => Getter e (STM ())
 killKingActionL =
   kingEnvL . kingEnvKillSignal . to (\kil -> void (tryPutTMVar kil ()))
 
+-- HostEnv ------------------------------------------------------------------
+
+-- The host environment is everything in King, eyre configuration shared
+-- across ships, and nat punching data.
+
+class HasMultiEyreApi a where
+  multiEyreApiL :: Lens' a MultiEyreApi
+
+class (HasKingEnv a, HasMultiEyreApi a, HasPortControlApi a) =>
+      HasHostEnv a where
+  hostEnvL :: Lens' a HostEnv
+
+data HostEnv = HostEnv
+  { _hostEnvKingEnv        :: !KingEnv
+  , _hostEnvMultiEyreApi   :: !MultiEyreApi
+  , _hostEnvPortControlApi :: !PortControlApi
+  }
+
+makeLenses ''HostEnv
+
+instance HasKingEnv HostEnv where
+  kingEnvL = hostEnvKingEnv
+
+instance HasLogFunc HostEnv where
+  logFuncL = kingEnvL . logFuncL
+
+instance HasStderrLogFunc HostEnv where
+  stderrLogFuncL = kingEnvL . stderrLogFuncL
+
+instance HasProcId HostEnv where
+  procIdL = kingEnvL . procIdL
+
+instance HasKingId HostEnv where
+  kingIdL = kingEnvL . kingEnvKingId
+
+instance HasMultiEyreApi HostEnv where
+  multiEyreApiL = hostEnvMultiEyreApi
+
+instance HasPortControlApi HostEnv where
+  portControlApiL = hostEnvPortControlApi
+
+-- Running Running Envs --------------------------------------------------------
+
+runHostEnv :: MultiEyreApi -> PortControlApi -> RIO HostEnv a
+           -> RIO KingEnv a
+runHostEnv multi ports action = do
+    king <- ask
+
+    let hostEnv = HostEnv { _hostEnvKingEnv        = king
+                                , _hostEnvMultiEyreApi   = multi
+                                , _hostEnvPortControlApi = ports
+                                }
+
+    io (runRIO hostEnv action)
 
 -- PierEnv ---------------------------------------------------------------------
 
-class (HasKingEnv a, HasPierConfig a, HasNetworkConfig a) => HasPierEnv a where
+class (HasKingEnv a, HasHostEnv a, HasPierConfig a, HasNetworkConfig a) =>
+      HasPierEnv a where
   pierEnvL :: Lens' a PierEnv
 
 data PierEnv = PierEnv
-  { _pierEnvKingEnv       :: !KingEnv
+  { _pierEnvHostEnv       :: !HostEnv
   , _pierEnvPierConfig    :: !PierConfig
   , _pierEnvNetworkConfig :: !NetworkConfig
   , _pierEnvKillSignal    :: !(TMVar ())
@@ -137,7 +212,16 @@ data PierEnv = PierEnv
 makeLenses ''PierEnv
 
 instance HasKingEnv PierEnv where
-  kingEnvL = pierEnvKingEnv
+  kingEnvL = pierEnvHostEnv . kingEnvL
+
+instance HasHostEnv PierEnv where
+  hostEnvL = pierEnvHostEnv
+
+instance HasMultiEyreApi PierEnv where
+  multiEyreApiL = pierEnvHostEnv . multiEyreApiL
+
+instance HasPortControlApi PierEnv where
+  portControlApiL = pierEnvHostEnv . portControlApiL
 
 instance HasPierEnv PierEnv where
   pierEnvL = id
@@ -180,11 +264,11 @@ killPierActionL =
 -- Running Pier Envs -----------------------------------------------------------
 
 runPierEnv
-  :: PierConfig -> NetworkConfig -> TMVar () -> RIO PierEnv a -> RIO KingEnv a
+  :: PierConfig -> NetworkConfig -> TMVar () -> RIO PierEnv a -> RIO HostEnv a
 runPierEnv pierConfig networkConfig vKill action = do
-  app <- ask
+  host <- ask
 
-  let pierEnv = PierEnv { _pierEnvKingEnv       = app
+  let pierEnv = PierEnv { _pierEnvHostEnv       = host
                         , _pierEnvPierConfig    = pierConfig
                         , _pierEnvNetworkConfig = networkConfig
                         , _pierEnvKillSignal    = vKill

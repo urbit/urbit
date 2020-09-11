@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { SidebarInvite } from './sidebar-invite';
+import SidebarInvite from '../../../../components/SidebarInvite';
 import { Welcome } from './welcome';
 import { GroupItem } from './group-item';
 import { alphabetiseAssociations } from '../../../../lib/util';
@@ -19,13 +19,13 @@ export class Sidebar extends Component {
     const sidebarInvites =  !(props.invites && props.invites['/publish'])
       ? null
       : Object.keys(props.invites['/publish'])
-          .map((uid, i) => {
+          .map((uid) => {
             return (
               <SidebarInvite
-                uid={uid}
+                key={uid}
                 invite={props.invites['/publish'][uid]}
-                api={this.props.api}
-                key={i}
+                onAccept={() => props.api.invite.accept('/publish', uid)}
+                onDecline={() => props.api.invite.decline('/publish', uid)}
               />
             );
         });
@@ -64,23 +64,12 @@ export class Sidebar extends Component {
       }
     });
 
-    const selectedGroups = props.selectedGroups ? props.selectedGroups: [];
     const groupedItems = Object.keys(associations)
-      .filter((each) => {
-        if (selectedGroups.length === 0) {
-          return true;
-        }
-        const selectedPaths = selectedGroups.map((e) => {
-        return e[0];
-        });
-        return (selectedPaths.includes(each));
-      })
       .map((each, i) => {
         const books = groupedNotebooks[each] || [];
         if (books.length === 0)
         return;
-        if ((selectedGroups.length === 0) &&
-        groupedNotebooks['/~/'] &&
+        if (groupedNotebooks['/~/'] &&
         groupedNotebooks['/~/'].length !== 0) {
           i = i + 1;
         }
@@ -95,8 +84,7 @@ export class Sidebar extends Component {
           />
         );
       });
-    if ((selectedGroups.length === 0) &&
-      groupedNotebooks['/~/'] &&
+    if (groupedNotebooks['/~/'] &&
       groupedNotebooks['/~/'].length !== 0) {
         groupedItems.unshift(
           <GroupItem

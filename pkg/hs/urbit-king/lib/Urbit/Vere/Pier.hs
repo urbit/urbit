@@ -25,12 +25,13 @@ import Urbit.King.App
 import Urbit.Vere.Pier.Types
 
 import Control.Monad.STM      (retry)
+import System.Environment     (getExecutablePath)
+import System.FilePath        (splitFileName, (</>))
 import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.King.API         (TermConn)
 import Urbit.Noun.Time        (Wen)
 import Urbit.TermSize         (TermSize(..))
-import Urbit.Vere.Eyre.Multi  (MultiEyreApi)
 import Urbit.Vere.Serf        (Serf)
 
 import qualified Data.Text              as T
@@ -122,17 +123,25 @@ runSerf
   -> RAcquire e Serf
 runSerf vSlog pax = do
   env <- ask
-  Serf.withSerf (config env)
+  serfProg <- io getSerfProg
+  Serf.withSerf (config env serfProg)
  where
   slog txt = atomically (readTVar vSlog) >>= (\f -> f txt)
-  config env = Serf.Config
-    { scSerf = env ^. pierConfigL . pcSerfExe . to unpack
+  config env serfProg = Serf.Config
+    { scSerf = env ^. pierConfigL . pcSerfExe . to (maybe serfProg unpack)
     , scPier = pax
     , scFlag = env ^. pierConfigL . pcSerfFlags
     , scSlog = \(pri, tank) -> printTank slog pri tank
     , scStdr = \txt -> slog (txt <> "\r\n")
     , scDead = pure () -- TODO: What can be done?
     }
+  getSerfProg :: IO FilePath
+  getSerfProg = do
+    (path, filename) <- splitFileName <$> getExecutablePath
+    pure $ case filename of
+      "urbit"      -> path </> "urbit-worker"
+      "urbit-king" -> path </> "urbit-worker"
+      _            -> "urbit-worker"
 
 
 -- Boot a new ship. ------------------------------------------------------------
@@ -169,21 +178,21 @@ bootNewShip
   -> RIO e ()
 bootNewShip pill lite ship bootEv = do
   seq@(BootSeq ident x y) <- genBootSeq ship pill lite bootEv
-  logDebug "BootSeq Computed"
+  logInfo "BootSeq Computed"
 
   pierPath <- view pierPathL
 
   rio (setupPierDirectory pierPath)
-  logDebug "Directory setup."
+  logInfo "Directory setup."
 
   let logPath = (pierPath </> ".urb/log")
 
   rwith (Log.new logPath ident) $ \log -> do
-    logDebug "Event log onitialized."
+    logInfo "Event log onitialized."
     jobs <- (\now -> bootSeqJobs now seq) <$> io Time.now
     writeJobs log (fromList jobs)
 
-  logDebug "Finsihed populating event log with boot sequence"
+  logInfo "Finsihed populating event log with boot sequence"
 
 
 -- Resume an existing ship. ----------------------------------------------------
@@ -207,16 +216,16 @@ resumed vSlog replayUntil = do
   serf <- runSerf vSlog tap
 
   rio $ do
-    logDebug "Replaying events"
+    logInfo "Replaying events"
     Serf.execReplay serf log replayUntil >>= \case
       Left err -> error (show err)
       Right 0  -> do
-        logDebug "No work during replay so no snapshot"
+        logInfo "No work during replay so no snapshot"
         pure ()
       Right _  -> do
-        logDebug "Taking snapshot"
+        logInfo "Taking snapshot"
         io (Serf.snapshot serf)
-        logDebug "SNAPSHOT TAKEN"
+        logInfo "SNAPSHOT TAKEN"
 
   pure (serf, log)
 
@@ -242,14 +251,14 @@ acquireWorker :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
 acquireWorker nam act = mkRAcquire (async act) kill
  where
   kill tid = do
-    logDebug ("Killing worker thread: " <> display nam)
+    logInfo ("Killing worker thread: " <> display nam)
     cancel tid
 
 acquireWorkerBound :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
 acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
  where
   kill tid = do
-    logDebug ("Killing worker thread: " <> display nam)
+    logInfo ("Killing worker thread: " <> display nam)
     cancel tid
 
 
@@ -260,9 +269,8 @@ pier
   :: (Serf, EventLog)
   -> TVar (Text -> IO ())
   -> MVar ()
-  -> MultiEyreApi
   -> RAcquire PierEnv ()
-pier (serf, log) vSlog startedSig multi = do
+pier (serf, log) vSlog startedSig = do
   let logId = Log.identity log :: LogIdentity
   let ship  = who logId :: Ship
 
@@ -285,11 +293,11 @@ pier (serf, log) vSlog startedSig multi = do
     pure (res, Term.useDemux res)
 
   void $ acquireWorker "TERMSERV Listener" $ forever $ do
-    logDebug "TERMSERV Waiting for external terminal."
+    logInfo "TERMSERV Waiting for external terminal."
     atomically $ do
       ext <- Term.connClient <$> readTQueue termApiQ
       Term.addDemux ext demux
-    logDebug "TERMSERV External terminal connected."
+    logInfo "TERMSERV External terminal connected."
 
   --  Slogs go to both stderr and to the terminal.
   env <- ask
@@ -311,7 +319,7 @@ pier (serf, log) vSlog startedSig multi = do
     let err = atomically . Term.trace muxed . (<> "\r\n")
     let siz = TermSize { tsWide = 80, tsTall = 24 }
     let fak = isFake logId
-    drivers env multi ship fak compute (siz, muxed) err sigint
+    drivers env ship fak compute (siz, muxed) err sigint
 
   scrySig <- newEmptyTMVarIO
   onKill  <- view onKillPierSigL
@@ -369,7 +377,7 @@ pier (serf, log) vSlog startedSig multi = do
         threadDelay 15_000_000
         wen <- io Time.now
         let kal = \mTermNoun -> runRIO env $ do
-              logDebug $ displayShow ("scry result: ", mTermNoun)
+              logInfo $ displayShow ("scry result: ", mTermNoun)
         let nkt = MkKnot $ tshow $ Time.MkDate wen
         let pax = Path ["j", "~zod", "life", nkt, "~zod"]
         atomically $ putTMVar scrySig (wen, Nothing, pax, kal)
@@ -412,7 +420,6 @@ data Drivers = Drivers
 drivers
   :: HasPierEnv e
   => e
-  -> MultiEyreApi
   -> Ship
   -> Bool
   -> (RunReq -> STM ())
@@ -420,11 +427,11 @@ drivers
   -> (Text -> RIO e ())
   -> IO ()
   -> RAcquire e ([Ev], RAcquire e Drivers)
-drivers env multi who isFake plan termSys stderr serfSIGINT = do
+drivers env who isFake plan termSys stderr serfSIGINT = do
   (behnBorn, runBehn) <- rio Behn.behn'
   (termBorn, runTerm) <- rio (Term.term' termSys serfSIGINT)
   (amesBorn, runAmes) <- rio (Ames.ames' who isFake stderr)
-  (httpBorn, runEyre) <- rio (Eyre.eyre' multi who isFake)
+  (httpBorn, runEyre) <- rio (Eyre.eyre' who isFake stderr)
   (clayBorn, runClay) <- rio Clay.clay'
   (irisBorn, runIris) <- rio Iris.client'
 
@@ -494,7 +501,7 @@ router slog waitFx Drivers {..} = do
 
 logEvent :: HasLogFunc e => Ev -> RIO e ()
 logEvent ev = do
-  logTrace $ "<- " <> display (summarizeEvent ev)
+  --logInfo  $ "<- " <> display (summarizeEvent ev)
   logDebug $ "[EVENT]\n" <> display pretty
  where
   pretty :: Text
@@ -502,7 +509,7 @@ logEvent ev = do
 
 logEffect :: HasLogFunc e => Lenient Ef -> RIO e ()
 logEffect ef = do
-  logTrace $ "  -> " <> display (summarizeEffect ef)
+  --logInfo  $ "  -> " <> display (summarizeEffect ef)
   logDebug $ display $ "[EFFECT]\n" <> pretty ef
  where
   pretty :: Lenient Ef -> Text

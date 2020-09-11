@@ -268,7 +268,7 @@
       %group-store
     %group-push-hook
   =/  =cage
-    :-  %group-action
+    :-  %group-update
     !>  ^-  action:group-store
     [%change-policy rid %invite %add-invites (sy ship ~)]
   [%pass / %agent [entity.rid app] %poke cage]

@@ -31,21 +31,21 @@ restartService
   -> (s -> RIO e ())
   -> RIO e (Either SomeException s)
 restartService vServ sstart kkill = do
-  logDebug "restartService"
+  logInfo "restartService"
   modifyMVar vServ $ \case
     Nothing -> doStart
     Just sv -> doRestart sv
  where
   doRestart :: s -> RIO e (Maybe s, Either SomeException s)
   doRestart serv = do
-    logDebug "doStart"
+    logInfo "doStart"
     try (kkill serv) >>= \case
       Left  exn -> pure (Nothing, Left exn)
       Right ()  -> doStart
 
   doStart :: RIO e (Maybe s, Either SomeException s)
   doStart = do
-    logDebug "doStart"
+    logInfo "doStart"
     try sstart <&> \case
       Right s   -> (Just s, Right s)
       Left  exn -> (Nothing, Left exn)
@@ -59,7 +59,7 @@ stopService
   -> (s -> RIO e ())
   -> RIO e (Either SomeException ())
 stopService vServ kkill = do
-  logDebug "stopService"
+  logInfo "stopService"
   modifyMVar vServ $ \case
     Nothing -> pure (Nothing, Right ())
     Just sv -> do
