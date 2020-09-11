@@ -6,17 +6,17 @@
 //  declarations of inline functions
 //
 void
-u3a_drop(u3a_pile* pil_u);
+u3a_drop(const u3a_pile* pil_u);
 void*
-u3a_peek(u3a_pile* pil_u);
+u3a_peek(const u3a_pile* pil_u);
 void*
-u3a_pop(u3a_pile* pil_u);
+u3a_pop(const u3a_pile* pil_u);
 void*
-u3a_push(u3a_pile* pil_u);
+u3a_push(const u3a_pile* pil_u);
 void
-u3a_pile_sane(u3a_pile* pil_u);
+u3a_pile_sane(const u3a_pile* pil_u);
 c3_o
-u3a_pile_done(u3a_pile* pil_u);
+u3a_pile_done(const u3a_pile* pil_u);
 
 /* _box_count(): adjust memory count.
 */
