@@ -439,24 +439,28 @@ _term_it_show_blank(u3_utty* uty_u)
 static void
 _term_it_show_cursor(u3_utty* uty_u, c3_w cur_w)
 {
+  c3_w cus_w = uty_u->tat_u.mir.cus_w;
+  c3_w dif_w;
+
   //NOTE  assumes all styled text precedes the cursor. drum enforces this.
   //
-  cur_w = cur_w + uty_u->tat_u.mir.sap_w;
+  cur_w += uty_u->tat_u.mir.sap_w;
 
-  if ( cur_w < uty_u->tat_u.mir.cus_w ) {
-    c3_w dif_w = (uty_u->tat_u.mir.cus_w - cur_w);
+  if ( cur_w < cus_w ) {
+    dif_w = cus_w - cur_w;
 
     while ( dif_w-- ) {
       _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.cub1_u);
     }
   }
-  else if ( cur_w > uty_u->tat_u.mir.cus_w ) {
-    c3_w dif_w = (cur_w - uty_u->tat_u.mir.cus_w);
+  else if ( cur_w > cus_w ) {
+    dif_w = cur_w - cus_w;
 
     while ( dif_w-- ) {
       _term_it_dump_buf(uty_u, &uty_u->ufo_u.out.cuf1_u);
     }
   }
+
   uty_u->tat_u.mir.cus_w = cur_w;
 }
 
