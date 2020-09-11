@@ -468,6 +468,10 @@ _term_it_show_blank(u3_utty* uty_u)
 static void
 _term_it_show_cursor(u3_utty* uty_u, c3_w cur_w)
 {
+  //NOTE  assumes all styled text precedes the cursor. drum enforces this.
+  //
+  cur_w = cur_w + uty_u->tat_u.mir.sap_w;
+
   if ( cur_w < uty_u->tat_u.mir.cus_w ) {
     c3_w dif_w = (uty_u->tat_u.mir.cus_w - cur_w);
 
@@ -488,7 +492,7 @@ _term_it_show_cursor(u3_utty* uty_u, c3_w cur_w)
 /* _term_it_show_line(): set current line
 */
 static void
-_term_it_show_line(u3_utty* uty_u, c3_w* lin_w, c3_w len_w)
+_term_it_show_line(u3_utty* uty_u, c3_w* lin_w, c3_w len_w, c3_w sap_w)
 {
   _term_it_show_wide(uty_u, len_w, lin_w);
 
@@ -499,6 +503,7 @@ _term_it_show_line(u3_utty* uty_u, c3_w* lin_w, c3_w len_w)
     uty_u->tat_u.mir.lin_w = lin_w;
   }
   uty_u->tat_u.mir.len_w = len_w;
+  uty_u->tat_u.mir.sap_w = sap_w;
 }
 
 /* _term_it_refresh_line(): refresh current line.
@@ -507,10 +512,11 @@ static void
 _term_it_refresh_line(u3_utty* uty_u)
 {
   c3_w len_w = uty_u->tat_u.mir.len_w;
+  c3_w sap_w = uty_u->tat_u.mir.sap_w;
   c3_w cus_w = uty_u->tat_u.mir.cus_w;
 
   _term_it_show_clear(uty_u);
-  _term_it_show_line(uty_u, uty_u->tat_u.mir.lin_w, len_w);
+  _term_it_show_line(uty_u, uty_u->tat_u.mir.lin_w, len_w, sap_w);
   _term_it_show_cursor(uty_u, cus_w);
 }
 
@@ -1036,6 +1042,167 @@ u3_term_ef_ctlc(void)
   _term_it_refresh_line(uty_u);
 }
 
+/* _term_it_put_tint(): put ansi color id on lin_w. RETAINS col.
+*/
+static void
+_term_it_put_tint(c3_w* lin_w,
+                  u3_noun col)
+{
+  switch ( col ) {
+    default:
+    case u3_nul: *lin_w = '9'; break;
+    case 'k':    *lin_w = '0'; break;
+    case 'r':    *lin_w = '1'; break;
+    case 'g':    *lin_w = '2'; break;
+    case 'y':    *lin_w = '3'; break;
+    case 'b':    *lin_w = '4'; break;
+    case 'm':    *lin_w = '5'; break;
+    case 'c':    *lin_w = '6'; break;
+    case 'w':    *lin_w = '7'; break;
+  }
+}
+
+/* _term_it_put_deco(): put ansi sgr code on lin_w. RETAINS dec.
+*/
+static void
+_term_it_put_deco(c3_w* lin_w,
+                  u3_noun dec)
+{
+  switch ( dec ) {
+    default:
+    case u3_nul: *lin_w = '0'; break;
+    case c3__br: *lin_w = '1'; break;
+    case c3__un: *lin_w = '4'; break;
+    case c3__bl: *lin_w = '5'; break;
+  }
+}
+
+/* _term_it_show_stub(): send styled text to terminal as ansi escape sequences
+*/
+static void
+_term_it_show_stub(u3_utty* uty_u,
+                   u3_noun tub)
+{
+  c3_w tuc_w = u3qb_lent(tub);
+
+  //  count the amount of characters across all stubs
+  //
+  c3_w lec_w = 0;
+  {
+    u3_noun nub = tub;
+    while ( u3_nul != nub ) {
+      u3_noun nib = u3t(u3h(nub));
+      lec_w = lec_w + u3qb_lent(nib);
+      nub = u3t(nub);
+    }
+  }
+
+  //  allocate enough memory for every display character, plus styles
+  //
+  //NOTE  we use max 20 characters per styl for escape codes:
+  //      3 for opening, 4 for decorations, 4 for colors, 4 for closing,
+  //      and 5 as separators between decorations and colors.
+  //
+  c3_w* lin_w = c3_malloc(  sizeof(c3_w) * (lec_w + (20 * tuc_w))  );
+
+  //  write the contents to the buffer,
+  //  tracking total and escape characters written
+  //
+  c3_w   i_w = 0;
+  c3_w sap_w = 0;
+  {
+    u3_noun nub = tub;
+    while ( u3_nul != nub ) {
+      u3_noun tyl, nib, dec, bag, fog;
+      u3x_cell(u3h(nub), &tyl, &nib);
+      u3x_trel(tyl, &dec, &bag, &fog);
+
+      c3_o tyl_o = c3n;
+      if ( (u3_nul != dec) || (u3_nul != bag) || (u3_nul != fog) ) {
+        tyl_o = c3y;
+      }
+
+      //  write style escape sequences
+      //
+      if ( c3y == tyl_o ) {
+        c3_o mor_o = c3n;
+        lin_w[i_w++] = 27;
+        lin_w[i_w++] = '[';
+        sap_w += 2;
+
+        //  text decorations
+        //
+        {
+          u3_noun dos = u3qdi_tap(dec);
+          u3_noun des = dos;
+          while ( u3_nul != des ) {
+            if ( c3y == mor_o ) {
+              lin_w[i_w++] = ';';
+              sap_w++;
+            }
+            _term_it_put_deco(&lin_w[i_w++], u3h(des));
+            sap_w++;
+            mor_o = c3y;
+            des = u3t(des);
+          }
+          u3z(dos);
+        }
+
+        //  background color
+        //
+        if ( u3_nul != bag ) {
+          if ( c3y == mor_o ) {
+            lin_w[i_w++] = ';';
+            sap_w++;
+          }
+          lin_w[i_w++] = '4';
+          _term_it_put_tint(&lin_w[i_w++], bag);
+          sap_w += 2;
+          mor_o = c3y;
+        }
+
+        //  foreground color
+        //
+        if ( u3_nul != fog ) {
+          if ( c3y == mor_o ) {
+            lin_w[i_w++] = ';';
+            sap_w++;
+          }
+          lin_w[i_w++] = '3';
+          _term_it_put_tint(&lin_w[i_w++], fog);
+          sap_w += 2;
+          mor_o = c3y;
+        }
+
+        lin_w[i_w++] = 'm';
+        sap_w++;
+      }
+
+      //  write the text itself
+      //
+      for ( i_w = i_w; u3_nul != nib; i_w++, nib = u3t(nib) ) {
+        lin_w[i_w] = u3r_word(0, u3h(nib));
+      }
+
+      //  if we applied any styles, toggle them off
+      //
+      if ( c3y == tyl_o ) {
+        lin_w[i_w++] = 27;
+        lin_w[i_w++] = '[';
+        lin_w[i_w++] = '0';
+        lin_w[i_w++] = 'm';
+        sap_w += 4;
+      }
+
+      nub = u3t(nub);
+    }
+  }
+
+  _term_it_show_line(uty_u, lin_w, i_w, sap_w);
+
+  u3z(tub);
+}
+
 /* _term_ef_blit(): send blit to terminal.
 */
 static void
@@ -1064,10 +1231,17 @@ _term_ef_blit(u3_utty* uty_u,
       }
     } break;
 
+    case c3__klr: {
+      if ( c3n == u3_Host.ops_u.tem ) {
+        _term_it_show_clear(uty_u);
+      }
+      _term_it_show_stub(uty_u, u3k(u3t(blt)));
+    } break;
+
     case c3__lin: {
       u3_noun lin = u3t(blt);
       c3_w    len_w = u3kb_lent(u3k(lin));
-      c3_w*   lin_w = c3_malloc(4 * len_w);
+      c3_w*   lin_w = c3_malloc( sizeof(c3_w) * len_w );
 
       {
         c3_w i_w;
@@ -1079,9 +1253,9 @@ _term_ef_blit(u3_utty* uty_u,
 
       if ( c3n == u3_Host.ops_u.tem ) {
         _term_it_show_clear(uty_u);
-        _term_it_show_line(uty_u, lin_w, len_w);
+        _term_it_show_line(uty_u, lin_w, len_w, 0);
       } else {
-        _term_it_show_line(uty_u, lin_w, len_w);
+        _term_it_show_line(uty_u, lin_w, len_w, 0);
       }
     } break;
 

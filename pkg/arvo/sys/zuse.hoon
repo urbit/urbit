@@ -861,7 +861,7 @@
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
-          {$werp who/ship wer/ship rif/riff}            ::  external file req
+          {$werp who/ship wer/ship rif/riff-any}        ::  external file req
           $>(%plea vane-task)                           ::  ames request
       ==                                                ::
     --  ::able
@@ -967,7 +967,10 @@
         who/(pair (set ship) (map @ta crew))            ::
     ==                                                  ::
   ++  regs  (map path rule)                             ::  rules for paths
-  ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
+  +$  riff  [p=desk q=(unit rave)]                      ::  request+desist
+  +$  riff-any
+    $^  [[%1 ~] riff]
+    riff
   ++  rite                                              ::  new permissions
     $%  {$r red/(unit rule)}                            ::  for read
         {$w wit/(unit rule)}                            ::  for write

@@ -59,7 +59,6 @@
     |~  [term tang]
     *[(list card) _^|(..on-init)]
   ::  +resource-for-update: get affected resource from an update
-
   ++  resource-for-update
     |~  vase
     *(unit resource)

@@ -25,6 +25,29 @@ export class NewPost extends Component {
 
   postSubmit() {
     const { state } = this;
+
+    // perf testing:
+    /*let closure = () => {
+      let x = 0;
+      for (var i = 0; i < 5; i++) {
+        x++;
+        let rand = Math.floor(Math.random() * 1000);
+        const newNote = {
+          'new-note': {
+            who: this.props.ship.slice(1),
+            book: this.props.book,
+            note: stringToSymbol(this.state.title + '-' + Date.now() + '-' + rand),
+            title: 'asdf-' + rand + '-' + Date.now(),
+            body: 'asdf-' + Date.now()
+          }
+        };
+
+        this.props.api.publishAction(newNote);
+      }
+      setTimeout(closure, 3000);
+    };
+    setTimeout(closure, 2000);*/
+
     if (state.submit && !state.disabled) {
       const newNote = {
         'new-note': {

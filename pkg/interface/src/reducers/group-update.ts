@@ -6,6 +6,7 @@ import {
   Group,
   Tags,
   GroupPolicy,
+  GroupPolicyDiff,
   OpenPolicyDiff,
   OpenPolicy,
   InvitePolicyDiff,
@@ -24,7 +25,6 @@ function decodeGroup(group: Enc<Group>): Group {
     tags: decodeTags(group.tags),
     policy: decodePolicy(group.policy),
   };
-  console.log(res);
   return res;
 }
 
@@ -179,6 +179,8 @@ export default class GroupReducer<S extends GroupState> {
         this.openChangePolicy(diff.open, policy);
       } else if ('invite' in policy && 'invite' in diff) {
         this.inviteChangePolicy(diff.invite, policy);
+      } else if ('replace' in diff) {
+        state.groups[resourcePath].policy = diff.replace;
       } else {
         console.log('bad policy diff');
       }

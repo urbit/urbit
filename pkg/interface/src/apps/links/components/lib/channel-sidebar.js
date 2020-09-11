@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Link } from 'react-router-dom';
 import { GroupItem } from './group-item';
-import { SidebarInvite } from './sidebar-invite';
+import SidebarInvite from '../../../../components/SidebarInvite';
 import { Welcome } from './welcome';
 import { alphabetiseAssociations } from '../../../../lib/util';
 
@@ -17,9 +17,9 @@ export class ChannelsSidebar extends Component {
         return (
           <SidebarInvite
             key={uid}
-            uid={uid}
             invite={props.invites[uid]}
-            api={props.api}
+            onAccept={() => props.api.invite.accept('/link', uid)}
+            onDecline={() => props.api.invite.decline('/link', uid)}
           />
         );
       });
@@ -51,24 +51,14 @@ export class ChannelsSidebar extends Component {
       }
     });
 
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
     let i = -1;
     const groupedItems = Object.keys(associations)
-    .filter((each) => {
-      if (selectedGroups.length === 0) {
-        return true;
-      };
-      const selectedPaths = selectedGroups.map((e) => {
-        return e[0];
-      });
-      return selectedPaths.includes(each);
-    })
     .map((each) => {
       const channels = groupedChannels[each];
       if (!channels || channels.length === 0)
         return;
       i++;
-      if ((selectedGroups.length === 0) && groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
+      if (groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
         i++;
       }
 
@@ -84,7 +74,7 @@ export class ChannelsSidebar extends Component {
         />
       );
     });
-    if ((selectedGroups.length === 0) && groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
+    if (groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
       groupedItems.unshift(
         <GroupItem
           key={'/~/'}
