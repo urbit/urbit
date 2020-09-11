@@ -350,7 +350,8 @@
             return u3a_peek(pil_u);
           }
 
-        //  XX unfortunate forward declaration
+        //  we have to forward-declare u3m_bail() here, as our
+        //  headers don't have the necessary guards.
         //
           c3_i
           u3m_bail(c3_m how_m) __attribute__((noreturn));
