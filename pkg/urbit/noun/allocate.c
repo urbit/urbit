@@ -3,6 +3,15 @@
 */
 #include "all.h"
 
+//  declarations of inline functions
+//
+void*
+u3a_peek(u3a_pile* pil_u);
+void
+u3a_pop(u3a_pile* pil_u);
+void*
+u3a_push(u3a_pile* pil_u);
+
 /* _box_count(): adjust memory count.
 */
 #ifdef  U3_CPU_DEBUG
@@ -589,67 +598,52 @@ u3a_wealloc(void* lag_v, c3_w len_w)
     }
   }
 }
-/* u3a_push(): allocate space on the road stack
-*/
-void*
-u3a_push(c3_w len_w)
-{
-  void *cur, *top = u3to(void, u3R->cap_p);
-  if ( c3y == u3a_is_north(u3R) ) {
-    top -= len_w;
-    cur = top;
-    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
 
-    if( !( cap_p < u3R->mat_p &&
-           cap_p > u3R->hat_p ) )
-    {
-      u3m_bail(c3__meme);
-    }
-
-    return cur;
-  }
-  else {
-    cur = top;
-    top += len_w;
-    u3R->cap_p = u3of(void, top);
-    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
-
-    if( !( cap_p > u3R->mat_p &&
-           cap_p < u3R->hat_p ) )
-    {
-      u3m_bail(c3__meme);
-    }
-
-    return cur;
-  }
-}
-
-/* u3a_pop(): deallocate space on the road stack
+/* u3a_pile_prep(): initialize stack control.
 */
 void
-u3a_pop(c3_w len_w)
+u3a_pile_prep(u3a_pile* pil_u, c3_w len_w)
 {
-  void* top = u3to(void, u3R->cap_p);
-  if ( c3y == u3a_is_north(u3R) ) {
-    top += len_w;
-    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
-    c3_assert(cap_p <= u3R->mat_p);
-    c3_assert(cap_p > u3R->hat_p);
-  }
-  else {
-    top -= len_w;
-    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
-    c3_assert(cap_p >= u3R->mat_p);
-    c3_assert(cap_p < u3R->hat_p);
-  }
+  //  frame size, in words
+  //
+  c3_w wor_w = (len_w + 3) >> 2;
+  c3_o nor_o = u3a_is_north(u3R);
+
+  pil_u->top_p  = u3R->cap_p;
+  pil_u->mov_ws = (c3y == nor_o) ? -wor_w :  wor_w;
+  pil_u->off_ws = (c3y == nor_o) ?      0 : -wor_w;
 }
 
-/* u3a_peek(): examine the top of the road stack
+/* u3a_pile_sane(): bail on invalid road stack state.
 */
-void*
-u3a_peek(c3_w len_w)
+void
+u3a_pile_sane(u3a_pile* pil_u)
 {
-  return u3to(void, u3R->cap_p) - (c3y == u3a_is_north(u3R) ? 0 : len_w);
+  //  !off means we're on a north road
+  //
+  if ( !pil_u->off_ws ) {
+    if( !(u3R->cap_p > u3R->hat_p) ) {
+      u3m_bail(c3__meme);
+    }
+    c3_assert( pil_u->top_p >= u3R->cap_p );
+  }
+  else {
+    if( !(u3R->cap_p < u3R->hat_p) ) {
+      u3m_bail(c3__meme);
+    }
+    c3_assert( pil_u->top_p <= u3R->cap_p );
+  }
+
+  //  XX also stash road pointer in [pil_u] and assert same road?
+  //
+}
+
+/* u3a_pile_done(): assert valid upon completion.
+*/
+void
+u3a_pile_done(u3a_pile* pil_u)
+{
+  c3_assert( pil_u->top_p == u3R->cap_p );
 }
 
 /* u3a_wfree(): free storage.

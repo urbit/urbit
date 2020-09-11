@@ -168,6 +168,13 @@
         u3a_flag_sand  = 0x1,                 //  bump allocation (XX not impl)
       };
 
+    /* u3_pile: stack control, abstracted over road direction.
+    */
+      typedef struct _u3a_pile {
+        u3_post top_p;
+        c3_ws  mov_ws;
+        c3_ws  off_ws;
+      } u3a_pile;
 
   /**  Macros.  Should be better commented.
   **/
@@ -302,6 +309,35 @@
 
 #   define u3_Loom      ((c3_w *)(void *)U3_OS_LoomBase)
 
+  /**  inline functions.
+  **/
+    /**  road stack.
+    **/
+      /* u3a_peek(): examine the top of the road stack
+      */
+        inline void*
+        u3a_peek(u3a_pile* pil_u)
+        {
+          return u3to(void, (u3R->cap_p + pil_u->off_ws));
+        }
+
+      /* u3a_pop(): deallocate space on the road stack
+      */
+        inline void
+        u3a_pop(u3a_pile* pil_u)
+        {
+          u3R->cap_p -= pil_u->mov_ws;
+        }
+
+      /* u3a_push(): allocate space on the road stack
+      */
+        inline void*
+        u3a_push(u3a_pile* pil_u)
+        {
+          u3R->cap_p += pil_u->mov_ws;
+          return u3a_peek(pil_u);
+        }
+
   /**  Functions.
   **/
     /**  Allocation.
@@ -328,20 +364,20 @@
           void*
           u3a_wealloc(void* lag_v, c3_w len_w);
 
-        /* u3a_push(): allocate space on the road stack
-        */
-          void*
-          u3a_push(c3_w len_w);
-
-        /* u3a_pop(): deallocate space on the road stack
+        /* u3a_pile_prep(): initialize stack control.
         */
           void
-          u3a_pop(c3_w len_w);
+          u3a_pile_prep(u3a_pile* pil_u, c3_w len_w);
 
-        /* u3a_peek(): examine the top of the road stack
+        /* u3a_pile_sane(): bail on invalid road stack state.
         */
-          void*
-          u3a_peek(c3_w len_w);
+          void
+          u3a_pile_sane(u3a_pile* pil_u);
+
+        /* u3a_pile_done(): assert valid upon completion.
+        */
+          void
+          u3a_pile_done(u3a_pile* pil_u);
 
 
       /* C-style aligned allocation - *not* compatible with above.

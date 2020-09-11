@@ -930,9 +930,12 @@
     //  top:   stack pointer
     //  len_w: number of result pairs on the stack
     //
-    u3_noun p_wag, puq_wag, quq_wag;
-    u3_noun*  top;
-    c3_w    len_w = 0;
+    u3_noun  p_wag, puq_wag, quq_wag;
+    u3_noun*   top;
+    u3a_pile pil_u;
+    c3_w     len_w = 0;
+
+    u3a_pile_prep(&pil_u, sizeof(u3_noun));
 
     //  push incremental, successful [fel] parse results onto road stack
     //
@@ -949,10 +952,10 @@
       while ( u3_nul != q_vex ) {
         u3x_trel(q_vex, 0, &puq_vex, &quq_vex);
 
-        top  = u3a_push(sizeof(u3_noun));
+        top  = u3a_push(&pil_u);
         *top = u3k(puq_vex);
 
-        top  = u3a_push(sizeof(u3_noun));
+        top  = u3a_push(&pil_u);
         *top = u3k(p_vex);
         ++len_w;
 
@@ -972,6 +975,10 @@
       u3j_gate_lose(&fel_u);
     }
 
+    //  check for stack overflow
+    //
+    u3a_pile_sane(&pil_u);
+
     //  unwind the stack, folding parse results into [wag] by way of [raq]
     //
     if ( len_w ) {
@@ -980,13 +987,13 @@
       u3j_gate_prep(&raq_u, u3k(raq));
 
       while ( len_w-- > 0 ) {
-        top     = u3a_peek(sizeof(u3_noun));
+        top     = u3a_peek(&pil_u);
         p_vex   = *top;
-        u3a_pop(sizeof(u3_noun));
+        u3a_pop(&pil_u);
 
-        top     = u3a_peek(sizeof(u3_noun));
+        top     = u3a_peek(&pil_u);
         puq_vex = *top;
-        u3a_pop(sizeof(u3_noun));
+        u3a_pop(&pil_u);
 
         p_wag   = _last_k(p_vex, p_wag);
         puq_wag = u3j_gate_slam(&raq_u, u3nc(puq_vex, puq_wag));
@@ -994,6 +1001,8 @@
 
       u3j_gate_lose(&raq_u);
     }
+
+    u3a_pile_done(&pil_u);
 
     return u3nq(p_wag, u3_nul, puq_wag, quq_wag);
   }
