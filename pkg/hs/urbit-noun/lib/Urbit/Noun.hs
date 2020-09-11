@@ -17,6 +17,7 @@ module Urbit.Noun
     , _Cue
     , LoadErr(..)
     , loadFile
+    , saveFile
     ) where
 
 import ClassyPrelude
@@ -55,3 +56,6 @@ loadFile pax = try $ do
     non <- cueBS byt & either (throwIO . CueErr) pure
     res <- fromNounErr non & either (throwIO . uncurry ParseErr) pure
     pure res
+
+saveFile :: forall a. ToNoun a => FilePath -> a -> IO ()
+saveFile pax = (writeFile pax) . jamBS . toNoun
