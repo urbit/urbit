@@ -1272,16 +1272,17 @@ _term_ef_blit(u3_utty* uty_u,
     } break;
 
     case c3__sav: {
-      _term_it_save(u3k(u3h(u3t(blt))), u3k(u3t(u3t(blt))));
+      u3_noun pax, dat;
+      u3x_cell(u3t(blt), &pax, &dat);
+
+      _term_it_save(u3k(pax), u3k(dat));
     } break;
 
     case c3__sag: {
-      u3_noun pib = u3k(u3t(u3t(blt)));
-      u3_noun jam;
+      u3_noun pax, dat;
+      u3x_cell(u3t(blt), &pax, &dat);
 
-      jam = u3ke_jam(pib);
-
-      _term_it_save(u3k(u3h(u3t(blt))), jam);
+      _term_it_save(u3k(pax), u3qe_jam(dat));
     } break;
 
     case c3__url: {
