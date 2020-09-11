@@ -145,9 +145,10 @@
         } siz;
 
         struct {
-          c3_w* lin_w;                      //  current line (utf32)
-          c3_w  len_w;                      //  length of current line
-          c3_w  sap_w;                      //  escape chars in current line
+          c3_y* lin_y;                      //  current line (utf8)
+          c3_w  byt_w;                      //  utf8 line-length
+          c3_w  wor_w;                      //  utf32 line-length
+          c3_w  sap_w;                      //  escape chars in line
           c3_w  cus_w;                      //  cursor position
         } mir;
 
