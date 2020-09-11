@@ -770,37 +770,11 @@ _term_read_cb(uv_stream_t* tcp_u,
   c3_free(buf_u->base);
 }
 
-/* _term_spin_dump(): write static vector to terminal FD.
+/* _term_spin_step(): advance spinner state and (re-)render.
 */
 static void
-_term_spin_dump(u3_utty*    uty_u,
-                c3_w        len_w,
-                const c3_c* str_c)
+_term_spin_step(u3_utty* uty_u)
 {
-  c3_i fid_i;
-
-  if (  !uv_fileno((uv_handle_t*)&uty_u->pop_u, &fid_i)
-     && (len_w != write(fid_i, str_c, len_w)) )
-  {
-    // ignore, we just tryin
-  }
-}
-
-/* _term_spin_move_left(): move the cursor left
-*/
-static void
-_term_spin_move_left(u3_utty* uty_u)
-{
-  uv_buf_t* buf_u = &uty_u->ufo_u.out.cub1_u;
-  _term_spin_dump(uty_u, buf_u->len, buf_u->base);
-}
-
-/* _term_spin_timer_cb(): render spinner
-*/
-static void
-_term_spin_timer_cb(uv_timer_t* tim_u)
-{
-  u3_utty* uty_u = tim_u->data;
   u3_utat* tat_u = &uty_u->tat_u;
   c3_w     bac_w;
 
@@ -824,56 +798,85 @@ _term_spin_timer_cb(uv_timer_t* tim_u)
   c3_c*      cur_c   = buf_c;
   c3_w       sol_w   = 1;  //  spinner length (utf-32)
 
+  //  set spinner char
+  //
   *cur_c++ = daz_c[lag_d % (sizeof(daz_c) - 1)];
 
+  //  if we have a spinner, add it between brackets
+  //
   if ( tat_u->sun_u.why_c[0] ) {
-    {
-      const c3_c dal_c[] = "\xc2\xab";
-      *cur_c++ = dal_c[0];
-      *cur_c++ = dal_c[1];
-      sol_w++;             //  length of dal_c (utf-32)
-    }
+    *cur_c++ = '\xc2';
+    *cur_c++ = '\xab';
+    sol_w++;
 
     {
       c3_c* why_c = tat_u->sun_u.why_c;
       *cur_c++ = *why_c++;
       *cur_c++ = *why_c++;
       *cur_c++ = *why_c++;
-      *cur_c++ = *why_c++;
-      sol_w += 4;          //  XX assumed utf-8
+      *cur_c++ = *why_c;
+      //  XX assumes one glyph per char
+      //
+      sol_w += 4;
     }
 
-    {
-      const c3_c dar_c[] = "\xc2\xbb";
-      *cur_c++ = dar_c[0];
-      *cur_c++ = dar_c[1];
-      sol_w++;             //  length of dar_c (utf-32)
-    }
+    *cur_c++ = '\xc2';
+    *cur_c++ = '\xbb';
+    sol_w++;
   }
 
   *cur_c = '\0';
 
-  //  One-time cursor backoff.
+  //  write spinner, adjusting cursor as needed
   //
-  if ( c3n == tat_u->sun_u.diz_o ) {
-    c3_w i_w;
-    for ( i_w = bac_w; i_w < sol_w; i_w++ ) {
-      _term_spin_move_left(uty_u);
+  //    NB: we simply bail out if anything goes wrong
+  //
+  {
+    uv_buf_t lef_u = uty_u->ufo_u.out.cub1_u;
+    c3_i fid_i;
+
+    if ( uv_fileno((uv_handle_t*)&uty_u->pop_u, &fid_i) ) {
+      return;
     }
 
-    tat_u->sun_u.diz_o = c3y;
-  }
+    //  One-time cursor backoff.
+    //
+    if ( c3n == tat_u->sun_u.diz_o ) {
+      c3_w i_w;
 
-  {
-    c3_w len_w = cur_c - buf_c;
-    _term_spin_dump(uty_u, len_w, buf_c);
-  }
+      for ( i_w = bac_w; i_w < sol_w; i_w++ ) {
+        if ( lef_u.len != write(fid_i, lef_u.base, lef_u.len) ) {
+          return;
+        }
+      }
 
-  //  Cursor stays on spinner.
-  //
-  while ( sol_w-- ) {
-    _term_spin_move_left(uty_u);
+      tat_u->sun_u.diz_o = c3y;
+    }
+
+    {
+      c3_w len_w = cur_c - buf_c;
+      if ( len_w != write(fid_i, buf_c, len_w) ) {
+        return;
+      }
+    }
+
+    //  Cursor stays on spinner.
+    //
+    while ( sol_w-- ) {
+      if ( lef_u.len != write(fid_i, lef_u.base, lef_u.len) ) {
+        return;
+      }
+    }
   }
+}
+
+/* _term_spin_timer_cb(): render spinner
+*/
+static void
+_term_spin_timer_cb(uv_timer_t* tim_u)
+{
+  u3_utty* uty_u = tim_u->data;
+  _term_spin_step(uty_u);
 }
 
 #define _SPIN_COOL_US 500UL  //  spinner activation delay when cool
