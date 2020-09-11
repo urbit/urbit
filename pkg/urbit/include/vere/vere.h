@@ -136,14 +136,6 @@
         c3_w        pid_w;                  //  pid of checkpoint process
       } u3_save;
 
-    /* u3_ubuf: unix tty i/o buffer.
-    */
-      typedef struct _u3_ubuf {
-        struct _u3_ubuf* nex_u;
-        c3_w             len_w;
-        c3_y             hun_y[0];          //  bytes to send
-      } u3_ubuf;
-
     /* u3_utat: unix terminal state.
     */
       typedef struct {
@@ -153,9 +145,10 @@
         } siz;
 
         struct {
-          c3_w* lin_w;                      //  current line (utf32)
-          c3_w  len_w;                      //  length of current line
-          c3_w  sap_w;                      //  escape chars in current line
+          c3_y* lin_y;                      //  current line (utf8)
+          c3_w  byt_w;                      //  utf8 line-length
+          c3_w  wor_w;                      //  utf32 line-length
+          c3_w  sap_w;                      //  escape chars in line
           c3_w  cus_w;                      //  cursor position
         } mir;
 
@@ -190,25 +183,26 @@
     /* u2_utfo: unix terminfo strings.
     */
       typedef struct {
+        //    disabled, currently unused
+        //
+        // struct {
+        //   uv_buf_t kcuu1_u;              //  key_up
+        //   uv_buf_t kcud1_u;              //  key_down
+        //   uv_buf_t kcub1_u;              //  key_back
+        //   uv_buf_t kcuf1_u;              //  key_forward
+        // } inn;
         struct {
-          const c3_y* kcuu1_y;              //  key_up
-          const c3_y* kcud1_y;              //  key_down
-          const c3_y* kcub1_y;              //  key_back
-          const c3_y* kcuf1_y;              //  key_forward
-          c3_w        max_w;                //  maximum input sequence length
-        } inn;
-        struct {
-          const c3_y* clear_y;              //  clear_screen
-          const c3_y* el_y;                 //  clr_bol clear to beginning
-          // const c3_y* el1_y;                //  clr_eol clear to end
-          const c3_y* ed_y;                 //  clear to end of screen
-          const c3_y* bel_y;                //  bel sound bell
-          const c3_y* cub1_y;               //  parm_left
-          const c3_y* cuf1_y;               //  parm_right
-          const c3_y* cuu1_y;               //  parm_up
-          const c3_y* cud1_y;               //  parm_down
-          // const c3_y* cub_y;                //  parm_left_cursor #num
-          // const c3_y* cuf_y;                //  parm_right_cursor #num
+          uv_buf_t clear_u;              //  clear_screen
+          uv_buf_t el_u;                 //  clr_bol clear to beginning
+          // uv_buf_t el1_u;             //  clr_eol clear to end
+          uv_buf_t ed_u;                 //  clear to end of screen
+          uv_buf_t bel_u;                //  bel sound bell
+          uv_buf_t cub1_u;               //  parm_left
+          uv_buf_t cuf1_u;               //  parm_right
+          uv_buf_t cuu1_u;               //  parm_up
+          uv_buf_t cud1_u;               //  parm_down
+          // uv_buf_t cub_u;             //  parm_left_cursor #num
+          // uv_buf_t cuf_u;             //  parm_right_cursor #num
         } out;
       } u3_utfo;
 
