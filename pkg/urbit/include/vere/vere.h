@@ -183,12 +183,14 @@
     /* u2_utfo: unix terminfo strings.
     */
       typedef struct {
-        struct {
-          uv_buf_t kcuu1_u;              //  key_up
-          uv_buf_t kcud1_u;              //  key_down
-          uv_buf_t kcub1_u;              //  key_back
-          uv_buf_t kcuf1_u;              //  key_forward
-        } inn;
+        //    disabled, currently unused
+        //
+        // struct {
+        //   uv_buf_t kcuu1_u;              //  key_up
+        //   uv_buf_t kcud1_u;              //  key_down
+        //   uv_buf_t kcub1_u;              //  key_back
+        //   uv_buf_t kcuf1_u;              //  key_forward
+        // } inn;
         struct {
           uv_buf_t clear_u;              //  clear_screen
           uv_buf_t el_u;                 //  clr_bol clear to beginning
