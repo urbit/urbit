@@ -15,6 +15,9 @@
 
 //  macros for string literal args/buffers
 //
+//    since (sizeof(s) - 1) is used for vector length, parameters
+//    must be appropriately typed. use with care!
+//
 #define TERM_LIT(s)      sizeof(s) - 1, (const c3_y*)(s)
 #define TERM_LIT_BUF(s)  uv_buf_init(s, sizeof(s) - 1)
 
@@ -150,7 +153,8 @@ u3_term_log_init(void)
 
     //  configure output escape sequences
     //
-    //    (as reported by the terminfo database we bundled)
+    //    our requirements are minimal here, so we bypass terminfo
+    //    and simply use constant sequences.
     //
     {
       uty_u->ufo_u.out.clear_u = TERM_LIT_BUF("\033[H\033[2J");
@@ -380,6 +384,15 @@ _term_it_write(u3_utty*  uty_u,
   }
 }
 
+/* _term_it_dump_buf(): write static buffer.
+*/
+static void
+_term_it_dump_buf(u3_utty*  uty_u,
+                  uv_buf_t* buf_u)
+{
+  _term_it_write(uty_u, buf_u, 0);
+}
+
 /* _term_it_dump(): write static vector.
 */
 static void
@@ -388,16 +401,7 @@ _term_it_dump(u3_utty*    uty_u,
               const c3_y* hun_y)
 {
   uv_buf_t buf_u = uv_buf_init((c3_c*)hun_y, len_w);
-  _term_it_write(uty_u, &buf_u, 0);
-}
-
-/* _term_it_dump_buf(): write static buffer.
-*/
-static void
-_term_it_dump_buf(u3_utty*  uty_u,
-                  uv_buf_t* buf_u)
-{
-  _term_it_write(uty_u, buf_u, 0);
+  _term_it_dump_buf(uty_u, &buf_u);
 }
 
 /* _term_it_send(): write dynamic vector, freeing pointer.
@@ -524,6 +528,7 @@ _term_it_set_line(u3_utty* uty_u,
   //  convert lin_w in-place from utf-32 to utf-8
   //
   //    (this is just a hand-translation of +tuft)
+  //    XX refactor for use here and in a jet
   //
   {
     c3_w car_w, i_w;
@@ -741,10 +746,9 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       u3_noun huv = u3i_bytes(tat_u->fut.wid_w, tat_u->fut.syb_y);
       u3_noun wug;
 
-      // u3l_log("muck-utf8 len %d\n", tat_u->fut.len_w);
-      // u3l_log("muck-utf8 %x\n", huv);
+      //  XX  implement directly here and jet
+      //
       wug = u3do("taft", huv);
-      // u3l_log("muck-utf32 %x\n", tat_u->fut.len_w);
 
       tat_u->fut.len_w = tat_u->fut.wid_w = 0;
       _term_io_belt(uty_u, u3nt(c3__txt, wug, u3_nul));
