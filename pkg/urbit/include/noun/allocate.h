@@ -319,7 +319,7 @@
         /* u3a_drop(): drop a roac stack frame per [pil_u].
         */
           inline void
-          u3a_drop(u3a_pile* pil_u)
+          u3a_drop(const u3a_pile* pil_u)
           {
             u3R->cap_p -= pil_u->mov_ws;
           }
@@ -327,7 +327,7 @@
         /* u3a_peek(): examine the top of the road stack.
         */
           inline void*
-          u3a_peek(u3a_pile* pil_u)
+          u3a_peek(const u3a_pile* pil_u)
           {
             return u3to(void, (u3R->cap_p + pil_u->off_ws));
           }
@@ -335,7 +335,7 @@
         /* u3a_pop(): drop a stack frame, peek at the new top;
         */
           inline void*
-          u3a_pop(u3a_pile* pil_u)
+          u3a_pop(const u3a_pile* pil_u)
           {
             u3a_drop(pil_u);
             return u3a_peek(pil_u);
@@ -344,7 +344,7 @@
         /* u3a_push(): push a frame onto the road stack, per [pil_u].
         */
           inline void*
-          u3a_push(u3a_pile* pil_u)
+          u3a_push(const u3a_pile* pil_u)
           {
             u3R->cap_p += pil_u->mov_ws;
             return u3a_peek(pil_u);
@@ -359,7 +359,7 @@
         /* u3a_pile_sane(): bail on invalid road stack state.
         */
           inline void
-          u3a_pile_sane(u3a_pile* pil_u)
+          u3a_pile_sane(const u3a_pile* pil_u)
           {
             //  !off means we're on a north road
             //
@@ -388,7 +388,7 @@
         /* u3a_pile_done(): assert valid upon completion.
         */
           inline c3_o
-          u3a_pile_done(u3a_pile* pil_u)
+          u3a_pile_done(const u3a_pile* pil_u)
           {
             return (pil_u->top_p == u3R->cap_p) ? c3y : c3n;
           }
