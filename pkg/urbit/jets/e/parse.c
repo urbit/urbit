@@ -986,14 +986,13 @@
       u3j_site raq_u;
       u3j_gate_prep(&raq_u, u3k(raq));
 
-      while ( len_w-- > 0 ) {
-        top     = u3a_peek(&pil_u);
-        p_vex   = *top;
-        u3a_pop(&pil_u);
+      top = u3a_peek(&pil_u);
 
-        top     = u3a_peek(&pil_u);
+      while ( len_w-- > 0 ) {
+        p_vex   = *top;
+        top     = u3a_pop(&pil_u);
         puq_vex = *top;
-        u3a_pop(&pil_u);
+        top     = u3a_pop(&pil_u);
 
         p_wag   = _last_k(p_vex, p_wag);
         puq_wag = u3j_gate_slam(&raq_u, u3nc(puq_vex, puq_wag));
@@ -1002,7 +1001,7 @@
       u3j_gate_lose(&raq_u);
     }
 
-    u3a_pile_done(&pil_u);
+    c3_assert( c3y == u3a_pile_done(&pil_u) );
 
     return u3nq(p_wag, u3_nul, puq_wag, quq_wag);
   }

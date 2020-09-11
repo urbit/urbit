@@ -32,15 +32,15 @@
       u3a_pile_sane(&pil_u);
       u3j_gate_prep(&sit_u, u3k(b));
 
-      while ( len_w-- > 0 ) {
-        top = u3a_peek(&pil_u);
-        u3a_pop(&pil_u);
+      top = u3a_peek(&pil_u);
 
+      while ( len_w-- > 0 ) {
         pro = u3j_gate_slam(&sit_u, u3nc(u3k(*top), pro));
+        top = u3a_pop(&pil_u);
       }
 
       u3j_gate_lose(&sit_u);
-      u3a_pile_done(&pil_u);
+      c3_assert( c3y == u3a_pile_done(&pil_u) );
     }
 
     return pro;
