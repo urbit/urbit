@@ -29,6 +29,8 @@
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ::  Add graph to graph-store
 ::
+?.  =(our.bowl entity.rid.action)
+  (strand-fail:strandio %bad-request ~)
 =/  =update:graph
   [%0 now.bowl %add-graph rid.action *graph:graph `(app-to-mark:graph-view app.action)]
 ;<  ~  bind:m

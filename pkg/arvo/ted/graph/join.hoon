@@ -3,6 +3,7 @@
 =>
 |% 
 ++  strand  strand:spider
+++  fail    strand-fail:strand
 ++  poke  poke:strandio
 ++  poke-our   poke-our:strandio
 ::
@@ -10,6 +11,8 @@
   |=  who=ship
   =/  m  (strand ,~)
   ^-  form:m
+  %+  (map-err:strandio ,~)  
+    |=(* [%offline *tang])
   %+  (set-timeout:strandio ,~)  ~s20
   ;<  ~  bind:m
     (poke [who %hood] %helm-hi !>(~))
@@ -39,7 +42,8 @@
 =+  !<(=action:graph-view arg)
 ?>  ?=(%join -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
-?<  =(our.bowl entity.rid.action)
+?:  =(our.bowl entity.rid.action)
+  (fail %bad-request ~)
 ;<  group=(unit resource)  bind:m  
   (scry-metadata app.action rid.action)
 ;<  ~  bind:m  (check-live entity.rid.action)
@@ -51,6 +55,7 @@
   (pure:m !>(~))
 :: Else, add group then join
 ;<  ~  bind:m  
+  %+  (map-err:strandio ,~)  |=(* [%forbidden ~])
   %+  poke
     [ship.action %group-push-hook]
   group-update+!>([%add-members rid.action (sy our.bowl ~)])

@@ -1,5 +1,5 @@
 /-  spider
-/+  libstrand=strand, default-agent, verb, server
+/+  libstrand=strand, default-agent, verb, server 
 =,  strand=strand:libstrand
 |%
 +$  card         card:agent:gall
@@ -473,7 +473,15 @@
   :_  state(serving (~(del by serving.state) tid))
   %+  give-simple-payload:app:server  eyre-id
   ^-  simple-payload:http
-  [[500 ~] ~]
+  :_  ~  :_  ~
+  ?.  ?=(http-error:spider term)
+    ((slog tang) 500)
+  ?-  term
+    %bad-request  400
+    %forbidden    403
+    %nonexistent  404
+    %offline      504
+  ==
 ::
 ++  thread-fail
   |=  [=yarn =term =tang]

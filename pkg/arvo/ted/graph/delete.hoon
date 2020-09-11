@@ -33,10 +33,11 @@
   (pure:m (need ugroup))
 ::
 ++  delete-graph
-  |=  [group=resource rid=resource app=app-name:graph-view]
+  |=  rid=resource
   =/  m  (strand ,~)
-  ::;<  ~  bind:m
-  ::  (poke-our %graph-push-hook %push-hook-action [%remove rid.action])
+  ^-  form:m
+  ;<  ~  bind:m
+    (poke-our %graph-push-hook %push-hook-action !>([%remove rid]))
   ;<  =bowl:spider  bind:m  get-bowl:strandio
   ;<  ~  bind:m
     (poke-our %graph-store %graph-update !>([%0 now.bowl %archive-graph rid]))
@@ -50,7 +51,8 @@
 =+  !<(=action:graph-view arg)
 ?>  ?=(%delete -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
-?>  =(our.bowl entity.rid.action)
+?.  =(our.bowl entity.rid.action)
+  (strand-fail:strandio %bad-request ~)
 ;<  ugroup-rid=(unit resource)  bind:m  
   (scry-metadata rid.action)
 ?~  ugroup-rid  !!

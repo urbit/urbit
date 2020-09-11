@@ -47,7 +47,8 @@
 =+  !<(=action:graph-view arg)
 ?>  ?=(%groupify -.action)
 ;<  =group  bind:m  (scry-group rid.action)
-?>  hidden.group
+?.  hidden.group
+  (strand-fail:strandio %bad-request ~)
 ;<  =metadata  bind:m
   (scry-metadatum app.action rid.action)
 ?~  to.action

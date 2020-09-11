@@ -295,6 +295,20 @@
     [%pass /wait/(scot %da until) %arvo %b %wait until]
   (send-raw-card card)
 ::
+++  map-err
+  |*  computation-result=mold
+  =/  m  (strand ,computation-result)
+  |=  [f=$-([term tang] [term tang]) computation=form:m]
+  ^-  form:m
+  |=  tin=strand-input:strand
+  =*  loop  $
+  =/  c-res  (computation tin)
+  ?:  ?=(%cont -.next.c-res)
+    c-res(self.next ..loop(computation self.next.c-res))
+  ?.  ?=(%fail -.next.c-res)
+    c-res
+  c-res(err.next (f err.next.c-res))
+::
 ++  set-timeout
   |*  computation-result=mold
   =/  m  (strand ,computation-result)

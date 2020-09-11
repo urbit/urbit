@@ -52,7 +52,8 @@
 =+  !<([=action:graph-view ~] arg)
 ?>  ?=(%leave -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
-?<  =(our.bowl entity.rid.action)
+?:  =(our.bowl entity.rid.action)
+  (strand-fail:strandio %bad-request ~)
 ;<  group-rid=resource  bind:m  
   (scry-metadata app.action rid.action)
 ;<  g=group  bind:m
