@@ -46,18 +46,20 @@
     ++  leave
       %-  ot
       :~  resource+dejs:resource
+          app+app
       ==
     ::
     ++  delete
       %-  ot
       :~  resource+dejs:resource
+          app+app
       ==
     ::
     ++  join
       %-  ot
       :~  resource+dejs:resource
-          ship+(su ;~(pfix sig fed:ag))
           app+app
+          ship+(su ;~(pfix sig fed:ag))
       ==
     ::
     ++  groupify  

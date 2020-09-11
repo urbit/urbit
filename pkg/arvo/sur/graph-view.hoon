@@ -37,9 +37,9 @@
         app=app-name
         =associated
     ==
-    [%delete rid=resource]
-    [%leave rid=resource]
-    [%join rid=resource =ship app=app-name] 
+    [%delete rid=resource app=app-name]
+    [%leave rid=resource app=app-name]
+    [%join rid=resource app=app-name =ship] 
     ::[%invite rid=resource ships=(set ship)]
     [%groupify rid=resource app=app-name to=(unit resource)]
   ==

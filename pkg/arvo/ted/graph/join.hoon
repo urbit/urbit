@@ -41,7 +41,7 @@
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ?<  =(our.bowl entity.rid.action)
 ;<  group=(unit resource)  bind:m  
-  (scry-metadata rid.action)
+  (scry-metadata app.action rid.action)
 ;<  ~  bind:m  (check-live entity.rid.action)
 ?^  group
   ::  We have group, graph is managed
