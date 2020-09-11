@@ -286,7 +286,9 @@ u3_term_log_exit(void)
     }
   }
 
-  uv_close((uv_handle_t*)&u3_Host.uty_u->pop_u, 0);
+  if ( u3_Host.uty_u ) {
+    uv_close((uv_handle_t*)&u3_Host.uty_u->pop_u, 0);
+  }
 }
 
 /*  _term_tcsetattr(): tcsetattr w/retry on EINTR.
