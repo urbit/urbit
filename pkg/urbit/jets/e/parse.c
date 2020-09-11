@@ -918,6 +918,13 @@
     }
   }
 
+/* _stir_pair(): stack frame recording intermediate parse results
+*/
+  typedef struct {
+    u3_noun har;  //  hair, p_vex
+    u3_noun res;  //  parse-result, puq_vex
+  } _stir_pair;
+
 /* stir
 */
   static u3_noun
@@ -926,16 +933,15 @@
                 u3_noun fel,
                 u3_noun tub)
   {
+    //  pil_u: stack control structure
+    //  par_u: frame pointer
     //  wag:   initial accumulator (deconstructed)
-    //  top:   stack pointer
-    //  len_w: number of result pairs on the stack
     //
-    u3_noun  p_wag, puq_wag, quq_wag;
-    u3_noun*   top;
-    u3a_pile pil_u;
-    c3_w     len_w = 0;
+    u3a_pile    pil_u;
+    _stir_pair* par_u;
+    u3_noun     p_wag, puq_wag, quq_wag;
 
-    u3a_pile_prep(&pil_u, sizeof(u3_noun));
+    u3a_pile_prep(&pil_u, sizeof(*par_u));
 
     //  push incremental, successful [fel] parse results onto road stack
     //
@@ -952,12 +958,9 @@
       while ( u3_nul != q_vex ) {
         u3x_trel(q_vex, 0, &puq_vex, &quq_vex);
 
-        top  = u3a_push(&pil_u);
-        *top = u3k(puq_vex);
-
-        top  = u3a_push(&pil_u);
-        *top = u3k(p_vex);
-        ++len_w;
+        par_u = u3a_push(&pil_u);
+        par_u->har = u3k(p_vex);
+        par_u->res = u3k(puq_vex);
 
         u3z(tub);
         tub = u3k(quq_vex);
@@ -977,8 +980,7 @@
 
     //  unwind the stack, folding parse results into [wag] by way of [raq]
     //
-    if ( len_w ) {
-      u3_noun  p_vex, puq_vex;
+    if ( c3n == u3a_pile_done(&pil_u) ) {
       u3j_site raq_u;
       u3j_gate_prep(&raq_u, u3k(raq));
 
@@ -986,17 +988,11 @@
       //
       u3a_pile_sane(&pil_u);
 
-      while ( len_w-- > 0 ) {
-        p_vex   = *top;
-        top     = u3a_pop(&pil_u);
-        puq_vex = *top;
-        top     = u3a_pop(&pil_u);
-
-        p_wag   = _last_k(p_vex, p_wag);
-        puq_wag = u3j_gate_slam(&raq_u, u3nc(puq_vex, puq_wag));
+      while ( c3n == u3a_pile_done(&pil_u) ) {
+        p_wag   = _last_k(par_u->har, p_wag);
+        puq_wag = u3j_gate_slam(&raq_u, u3nc(par_u->res, puq_wag));
+        par_u   = u3a_pop(&pil_u);
       }
-
-      c3_assert( c3y == u3a_pile_done(&pil_u) );
 
       u3j_gate_lose(&raq_u);
     }
