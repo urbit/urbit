@@ -1081,7 +1081,7 @@ _term_it_put_deco(c3_w* lin_w,
 */
 static void
 _term_it_show_stub(u3_utty* uty_u,
-                   u3_noun tub)
+                   u3_noun    tub)
 {
   c3_w tuc_w = u3qb_lent(tub);
 
@@ -1203,6 +1203,28 @@ _term_it_show_stub(u3_utty* uty_u,
   u3z(tub);
 }
 
+/* _term_it_show_tour(): send utf32 to terminal.
+*/
+static void
+_term_it_show_tour(u3_utty* uty_u,
+                   u3_noun    lin)
+{
+  c3_w  len_w = u3qb_lent(lin);
+  c3_w* lin_w = c3_malloc( sizeof(c3_w) * len_w );
+
+  {
+    c3_w i_w;
+
+    for ( i_w = 0; u3_nul != lin; i_w++, lin = u3t(lin) ) {
+      lin_w[i_w] = u3r_word(0, u3h(lin));
+    }
+  }
+
+  _term_it_show_line(uty_u, lin_w, len_w, 0);
+
+  u3z(lin);
+}
+
 /* _term_ef_blit(): send blit to terminal.
 */
 static void
@@ -1239,24 +1261,10 @@ _term_ef_blit(u3_utty* uty_u,
     } break;
 
     case c3__lin: {
-      u3_noun lin = u3t(blt);
-      c3_w    len_w = u3kb_lent(u3k(lin));
-      c3_w*   lin_w = c3_malloc( sizeof(c3_w) * len_w );
-
-      {
-        c3_w i_w;
-
-        for ( i_w = 0; u3_nul != lin; i_w++, lin = u3t(lin) ) {
-          lin_w[i_w] = u3r_word(0, u3h(lin));
-        }
-      }
-
       if ( c3n == u3_Host.ops_u.tem ) {
         _term_it_show_clear(uty_u);
-        _term_it_show_line(uty_u, lin_w, len_w, 0);
-      } else {
-        _term_it_show_line(uty_u, lin_w, len_w, 0);
       }
+      _term_it_show_tour(uty_u, u3k(u3t(blt)));
     } break;
 
     case c3__mor: {
