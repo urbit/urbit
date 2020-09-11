@@ -975,16 +975,16 @@
       u3j_gate_lose(&fel_u);
     }
 
-    //  check for stack overflow
-    //
-    u3a_pile_sane(&pil_u);
-
     //  unwind the stack, folding parse results into [wag] by way of [raq]
     //
     if ( len_w ) {
       u3_noun  p_vex, puq_vex;
       u3j_site raq_u;
       u3j_gate_prep(&raq_u, u3k(raq));
+
+      //  check for stack overflow
+      //
+      u3a_pile_sane(&pil_u);
 
       while ( len_w-- > 0 ) {
         p_vex   = *top;
@@ -996,10 +996,10 @@
         puq_wag = u3j_gate_slam(&raq_u, u3nc(puq_vex, puq_wag));
       }
 
+      c3_assert( c3y == u3a_pile_done(&pil_u) );
+
       u3j_gate_lose(&raq_u);
     }
-
-    c3_assert( c3y == u3a_pile_done(&pil_u) );
 
     return u3nq(p_wag, u3_nul, puq_wag, quq_wag);
   }
