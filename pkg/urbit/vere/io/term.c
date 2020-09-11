@@ -485,11 +485,39 @@ _term_it_set_line(u3_utty* uty_u,
                   c3_w     sap_w)
 {
   u3_utat* tat_u = &uty_u->tat_u;
-  u3_noun    txt = u3do("tuft", u3i_words(wor_w, lin_w));
-  c3_w     byt_w = u3r_met(3, txt);
   c3_y*    hun_y = (c3_y*)lin_w;
+  c3_w     byt_w = 0;
 
-  u3r_bytes(0, byt_w, hun_y, txt);
+  //  convert lin_w in-place from utf-32 to utf-8
+  //
+  //    (this is just a hand-translation of +tuft)
+  //
+  {
+    c3_w car_w, i_w;
+
+    for ( i_w = 0; i_w < wor_w; i_w++ ) {
+      car_w = lin_w[i_w];
+
+      if ( 0x7f >= car_w ) {
+        hun_y[byt_w++] = car_w;
+      }
+      else if ( 0x7ff >= car_w ) {
+        hun_y[byt_w++] = 0xc0 ^ ((car_w >>  6) & 0x1f);
+        hun_y[byt_w++] = 0x80 ^ (car_w & 0x3f);
+      }
+      else if ( 0xffff >= car_w ) {
+        hun_y[byt_w++] = 0xe0 ^ ((car_w >> 12) &  0xf);
+        hun_y[byt_w++] = 0x80 ^ ((car_w >>  6) & 0x3f);
+        hun_y[byt_w++] = 0x80 ^ (car_w & 0x3f);
+      }
+      else {
+        hun_y[byt_w++] = 0xf0 ^ ((car_w >> 18) &  0x7);
+        hun_y[byt_w++] = 0x80 ^ ((car_w >> 12) & 0x3f);
+        hun_y[byt_w++] = 0x80 ^ ((car_w >>  6) & 0x3f);
+        hun_y[byt_w++] = 0x80 ^ (car_w & 0x3f);
+      }
+    }
+  }
 
   c3_free(tat_u->mir.lin_y);
   tat_u->mir.lin_y = hun_y;
@@ -498,8 +526,6 @@ _term_it_set_line(u3_utty* uty_u,
   tat_u->mir.sap_w = sap_w;
 
   _term_it_show_line(uty_u, wor_w, sap_w);
-
-  u3z(txt);
 }
 
 /* _term_it_show_more(): new current line.
