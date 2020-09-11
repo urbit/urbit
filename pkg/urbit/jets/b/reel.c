@@ -16,7 +16,6 @@
       u3j_site sit_u;
       u3_noun*   top;
       u3_noun   i, t = a;
-      c3_w     len_w = 0;
 
       u3a_pile_prep(&pil_u, sizeof(u3_noun));
 
@@ -26,19 +25,17 @@
         u3x_cell(t, &i, &t);
         top  = u3a_push(&pil_u);
         *top = i;
-        ++len_w;
       } while ( u3_nul != t );
 
       u3a_pile_sane(&pil_u);
       u3j_gate_prep(&sit_u, u3k(b));
 
-      while ( len_w-- > 0 ) {
+      while ( c3n == u3a_pile_done(&pil_u) ) {
         pro = u3j_gate_slam(&sit_u, u3nc(u3k(*top), pro));
         top = u3a_pop(&pil_u);
       }
 
       u3j_gate_lose(&sit_u);
-      c3_assert( c3y == u3a_pile_done(&pil_u) );
     }
 
     return pro;
