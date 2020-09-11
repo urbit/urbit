@@ -209,6 +209,7 @@ u3_term_log_init(void)
     {
       uty_u->tat_u.mir.lin_w = 0;
       uty_u->tat_u.mir.len_w = 0;
+      uty_u->tat_u.mir.sap_w = 0;
       uty_u->tat_u.mir.cus_w = 0;
 
       uty_u->tat_u.esc.ape = c3n;
