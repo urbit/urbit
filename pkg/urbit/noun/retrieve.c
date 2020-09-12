@@ -1455,101 +1455,24 @@ u3r_mug_cell(u3_noun hed,
   return u3r_mug_both(lus_w, biq_w);
 }
 
-#define MUG_ROOT 0
-#define MUG_HEAD 1
-#define MUG_TAIL 2
+/* _cr_mug: stack frame for recording cell travesal
+**          !mug == head-frame
+*/
+typedef struct {
+  c3_l  mug_l;
+  u3_cell cel;
+} _cr_mugf;
 
-//  stack frame for recording head vs tail iteration
-//
-//    In Hoon, this structure would be as follows:
-//
-//    $%  [%root ~]
-//        [%head cell=^]
-//        [%tail cell=^ hed-mug=@]
-//    ==
-//
-typedef struct mugframe
+/* _cr_mug_next(): advance mug calculation, pushing cells onto the stack.
+*/
+static inline c3_l
+_cr_mug_next(u3a_pile* pil_u, u3_noun veb)
 {
-  c3_y      tag_y;
-  u3a_cell* cel_u;
-  c3_w      mug_w;
-} mugframe;
-
-static inline void
-_mug_push(c3_ys mov,
-          c3_ys off,
-          c3_y tag_y,
-          u3a_cell* cel_u,
-          c3_w mug_w)
-{
-  u3R->cap_p += mov;
-
-  //  ensure we haven't overflowed the stack
-  //  (off==0 means we're on a north road)
-  //
-  if ( 0 == off ) {
-    if( !(u3R->cap_p > u3R->hat_p) ) {
-      u3m_bail(c3__meme);
-    }
-  }
-  else {
-    if( !(u3R->cap_p < u3R->hat_p) ) {
-      u3m_bail(c3__meme);
-    }
-  }
-
-  mugframe* fam_u = u3to(mugframe, u3R->cap_p + off);
-  fam_u->tag_y = tag_y;
-  fam_u->cel_u = cel_u;
-  fam_u->mug_w = mug_w;
-}
-
-static inline mugframe
-_mug_pop(c3_ys mov, c3_ys off)
-{
-  mugframe* fam_u = u3to(mugframe, u3R->cap_p + off);
-  u3R->cap_p -= mov;
-
-  return *fam_u;
-}
-
-//  u3r_mug(): statefully mug a noun using a 31-bit MurmurHash3
-//
-c3_w
-u3r_mug(u3_noun veb)
-{
-  //  sanity check (makes a clear error message)
-  //
-  c3_assert( u3_none != veb );
-
-  //  initialize signed stack offsets (relative to north/south road)
-  //
-  c3_ys mov, off;
-  {
-    c3_y wis_y = c3_wiseof(mugframe);
-    c3_o nor_o = u3a_is_north(u3R);
-    mov = ( c3y == nor_o ? -wis_y : wis_y );
-    off = ( c3y == nor_o ? 0 : -wis_y );
-  }
-
-  //  stash the current stack post
-  //
-  u3p(mugframe) cap_p = u3R->cap_p;
-
-  //  push the (only) ROOT stack frame (our termination condition)
-  //
-  _mug_push(mov, off, MUG_ROOT, 0, 0);
-
-  c3_w mug_w;
-
-  //  read from the current noun .veb
-  //
-  advance: {
+  while ( 1 ) {
     //  veb is a direct atom, mug is not memoized
     //
-    if ( _(u3a_is_cat(veb)) ) {
-      mug_w = u3r_mug_words(&veb, 1);
-      goto retreat;
+    if ( c3y == u3a_is_cat(veb) ) {
+      return (c3_l)u3r_mug_words(&veb, 1);
     }
     //  veb is indirect, a pointer into the loom
     //
@@ -1558,72 +1481,86 @@ u3r_mug(u3_noun veb)
 
       //  veb has already been mugged, return memoized value
       //
-      if ( 0 != veb_u->mug_w ) {
-        mug_w = veb_u->mug_w;
-        goto retreat;
+      //    XX debug mode, assert 31-bit?
+      //
+      if ( veb_u->mug_w ) {
+        return (c3_l)veb_u->mug_w;
       }
       //  veb is an indirect atom, mug its bytes and memoize
       //
-      else if ( _(u3a_is_atom(veb)) ) {
+      else if ( c3y == u3a_is_atom(veb) ) {
         u3a_atom* vat_u = (u3a_atom*)veb_u;
-        mug_w = u3r_mug_words(vat_u->buf_w, vat_u->len_w);
-        vat_u->mug_w = mug_w;
-        goto retreat;
+        c3_l      mug_l = u3r_mug_words(vat_u->buf_w, vat_u->len_w);
+        vat_u->mug_w = mug_l;
+        return mug_l;
       }
       //  veb is a cell, push a stack frame to mark head-recursion
       //  and read the head
       //
       else {
         u3a_cell* cel_u = (u3a_cell*)veb_u;
-        _mug_push(mov, off, MUG_HEAD, cel_u, 0);
+        _cr_mugf* fam_u = u3a_push(pil_u);
+
+        //  check for overflow
+        //
+        u3a_pile_sane(pil_u);
+
+        fam_u->mug_l = 0;
+        fam_u->cel   = veb;
+
         veb = cel_u->hed;
-        goto advance;
+        continue;
       }
     }
   }
+}
 
-  //  consume the popped stack frame and mug from above
-  //
-  retreat: {
-    mugframe fam_u = _mug_pop(mov, off);
-
-    switch ( fam_u.tag_y ) {
-      default: {
-        c3_assert(0);
-      }
-
-      //  we done
-      //
-      case MUG_ROOT: {
-        break;
-      }
-
-      //  mug_w is the mug of the head of cel_u
-      //  push a stack frame to mark tail recursion,
-      //  record the mug of the head, and read the tail
-      //
-      case MUG_HEAD: {
-        _mug_push(mov, off, MUG_TAIL, fam_u.cel_u, mug_w);
-
-        veb = fam_u.cel_u->tel;
-        goto advance;
-      }
-
-      //  mug_w is the mug of the tail of cel_u
-      //  combine the mugs, memoize the value, and recur
-      //
-      case MUG_TAIL: {
-        u3a_cell* cel_u = fam_u.cel_u;
-        mug_w = u3r_mug_both(fam_u.mug_w, mug_w);
-        cel_u->mug_w = mug_w;
-        goto retreat;
-      }
-    }
-  }
+/* u3r_mug(): statefully mug a noun with 31-bit murmur3.
+*/
+c3_l
+u3r_mug(u3_noun veb)
+{
+  u3a_pile  pil_u;
+  _cr_mugf* fam_u;
+  c3_l      mug_l;
 
   //  sanity check
   //
-  c3_assert( u3R->cap_p == cap_p );
+  c3_assert( u3_none != veb );
 
-  return mug_w;
+  u3a_pile_prep(&pil_u, sizeof(*fam_u));
+
+  //  commence mugging
+  //
+  mug_l = _cr_mug_next(&pil_u, veb);
+
+  //  process cell results
+  //
+  if ( c3n == u3a_pile_done(&pil_u) ) {
+    fam_u = u3a_peek(&pil_u);
+
+    do {
+      //  fam_u is a head-frame: stash mug and continue into the tail
+      //
+      if ( !fam_u->mug_l ) {
+        u3a_cell* cel_u = u3a_to_ptr(fam_u->cel);
+
+        fam_u->mug_l = mug_l;
+        mug_l        = _cr_mug_next(&pil_u, cel_u->tel);
+        fam_u        = u3a_peek(&pil_u);
+      }
+      //  fam_u is a tail-frame: calculate/memoize cell mug and pop the stack
+      //
+      else {
+        u3a_cell* cel_u = u3a_to_ptr(fam_u->cel);
+
+        mug_l        = u3r_mug_both(fam_u->mug_l, mug_l);
+        cel_u->mug_w = mug_l;
+        fam_u        = u3a_pop(&pil_u);
+      }
+    }
+    while ( c3n == u3a_pile_done(&pil_u) );
+  }
+
+  return mug_l;
 }
