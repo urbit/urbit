@@ -168,7 +168,7 @@
         u3a_flag_sand  = 0x1,                 //  bump allocation (XX not impl)
       };
 
-    /* u3_pile: stack control, abstracted over road direction.
+    /* u3a_pile: stack control, abstracted over road direction.
     */
       typedef struct _u3a_pile {
         c3_ws    mov_ws;
@@ -316,7 +316,7 @@
   **/
     /**  road stack.
     **/
-        /* u3a_drop(): drop a roac stack frame per [pil_u].
+        /* u3a_drop(): drop a road stack frame per [pil_u].
         */
           inline void
           u3a_drop(const u3a_pile* pil_u)
@@ -332,7 +332,7 @@
             return u3to(void, (u3R->cap_p + pil_u->off_ws));
           }
 
-        /* u3a_pop(): drop a stack frame, peek at the new top;
+        /* u3a_pop(): drop a road stack frame, peek at the new top.
         */
           inline void*
           u3a_pop(const u3a_pile* pil_u)
