@@ -1064,6 +1064,36 @@ _ca_take_atom(u3a_atom* old_u)
   return new;
 }
 
+/* _ca_take_cell(): reallocate a cell atom off the stack.
+*/
+static inline u3_cell
+_ca_take_cell(u3a_cell* old_u, u3_noun hed, u3_noun tel)
+{
+  //  XX use u3a_celloc?
+  //
+  c3_w*     new_w = u3a_walloc(c3_wiseof(u3a_cell));
+  u3a_cell* new_u = (u3a_cell*)(void *)new_w;
+  u3_cell     new = u3a_to_pom(u3a_outa(new_u));
+
+#ifdef VERBOSE_TAKE
+  u3l_log("%s: cell %p to %p\r\n", ( c3y == u3a_is_north(u3R) )
+                                   ? "north"
+                                   : "south",
+                                   old_u,
+                                   new_u);
+#endif
+
+  new_u->mug_w = old_u->mug_w;
+  new_u->hed   = hed;
+  new_u->tel   = tel;
+
+  //  borrow mug slot to record new destination in [old_u]
+  //
+  old_u->mug_w = new;
+
+  return new;
+}
+
 #define TAKE_ROOT 0
 #define TAKE_HEAD 1
 #define TAKE_TAIL 2
@@ -1073,23 +1103,23 @@ _ca_take_atom(u3a_atom* old_u)
 //    In Hoon, this structure would be as follows:
 //
 //    $%  [%root ~]
-//        [%head old=* new=*]
-//        [%tail old=* new=*]
+//        [%head old=^]
+//        [%tail old=^ hed=*]
 //    ==
 //
 typedef struct takeframe
 {
-  c3_y      tag_y;
-  u3a_cell* old_u;
-  u3a_cell* new_u;
+  c3_y  tag_y;
+  u3_cell old;
+  u3_noun hed;
 } takeframe;
 
 static inline void
-_ca_take_push(c3_ys mov,
-              c3_ys off,
-              c3_y tag_y,
-              u3a_cell* old_u,
-              u3a_cell* new_u)
+_ca_take_push(c3_ys   mov,
+              c3_ys   off,
+              c3_y  tag_y,
+              u3_cell old,
+              u3_cell hed)
 {
   u3R->cap_p += mov;
 
@@ -1109,8 +1139,8 @@ _ca_take_push(c3_ys mov,
 
   takeframe* fam_u = u3to(takeframe, u3R->cap_p + off);
   fam_u->tag_y = tag_y;
-  fam_u->old_u = old_u;
-  fam_u->new_u = new_u;
+  fam_u->old   = old;
+  fam_u->hed   = hed;
 }
 
 static inline takeframe
@@ -1211,32 +1241,15 @@ u3a_take(u3_noun veb)
         pro = nov;
         goto retreat;
       }
+      else if ( c3y == u3a_is_atom(veb) ) {
+        pro = _ca_take_atom((u3a_atom*)veb_u);
+        goto retreat;
+      }
       else {
-        if ( c3y == u3a_is_atom(veb) ) {
-          pro = _ca_take_atom((u3a_atom*)veb_u);
-          goto retreat;
-        }
-        else {
-          u3a_cell* old_u = u3a_to_ptr(veb);
-          //  XX use u3a_celloc?
-          //
-          c3_w*     new_w = u3a_walloc(c3_wiseof(u3a_cell));
-          u3a_cell* new_u = (u3a_cell*)(void *)new_w;
-
-#ifdef VERBOSE_TAKE
-          u3l_log("%s: cell %p to %p\r\n", ( c3y == nor_o )
-                                           ? "north"
-                                           : "south",
-                                           old_u,
-                                           new_u);
-#endif
-
-          new_u->mug_w = old_u->mug_w;
-
-          veb = old_u->hed;
-          _ca_take_push(mov, off, TAKE_HEAD, old_u, new_u);
-          goto advance;
-        }
+        u3a_cell* old_u = (u3a_cell*)veb_u;
+        _ca_take_push(mov, off, TAKE_HEAD, veb, 0);
+        veb = old_u->hed;
+        goto advance;
       }
     }
   }
@@ -1261,10 +1274,10 @@ u3a_take(u3_noun veb)
       //  and advance to copy the tail
       //
       case TAKE_HEAD: {
-        fam_u.new_u->hed = pro;
+        u3a_cell* old_u = u3a_to_ptr(fam_u.old);
 
-        veb = fam_u.old_u->tel;
-        _ca_take_push(mov, off, TAKE_TAIL, fam_u.old_u, fam_u.new_u);
+        _ca_take_push(mov, off, TAKE_TAIL, fam_u.old, pro);
+        veb = old_u->tel;
         goto advance;
       }
 
@@ -1272,13 +1285,9 @@ u3a_take(u3_noun veb)
       //  and produce the whole copied cell (as if it were a read from above).
       //
       case TAKE_TAIL: {
-        fam_u.new_u->tel = pro;
-        pro = u3a_to_pom(u3a_outa(fam_u.new_u));
+        u3a_cell* old_u = u3a_to_ptr(fam_u.old);
 
-        //  Borrow mug slot to record new destination in old_u.
-        //
-        fam_u.old_u->mug_w = pro;
-
+        pro = _ca_take_cell(old_u, fam_u.hed, pro);
         goto retreat;
       }
     }
