@@ -1026,11 +1026,47 @@ _me_gain_use(u3_noun dog)
   }
 }
 
+#undef VERBOSE_TAKE
+
+/* _ca_take_atom(): reallocate an indirect atom off the stack.
+*/
+static inline u3_atom
+_ca_take_atom(u3a_atom* old_u)
+{
+  c3_w*     new_w = u3a_walloc(old_u->len_w + c3_wiseof(u3a_atom));
+  u3a_atom* new_u = (u3a_atom*)(void *)new_w;
+  u3_noun     new = u3a_to_pug(u3a_outa(new_u));
+
+#ifdef VERBOSE_TAKE
+  u3l_log("%s: atom %p to %p\r\n", ( c3y == u3a_is_north(u3R) )
+                                   ? "north"
+                                   : "south",
+                                   old_u,
+                                   new_u);
+#endif
+
+  //  XX use memcpy?
+  //
+  new_u->mug_w = old_u->mug_w;
+  new_u->len_w = old_u->len_w;
+  {
+    c3_w i_w;
+
+    for ( i_w=0; i_w < old_u->len_w; i_w++ ) {
+      new_u->buf_w[i_w] = old_u->buf_w[i_w];
+    }
+  }
+
+  //  borrow mug slot to record new destination in [old_u]
+  //
+  old_u->mug_w = new;
+
+  return new;
+}
+
 #define TAKE_ROOT 0
 #define TAKE_HEAD 1
 #define TAKE_TAIL 2
-
-#undef VERBOSE_TAKE
 
 //  stack frame for recording head vs tail iteration
 //
@@ -1177,34 +1213,7 @@ u3a_take(u3_noun veb)
       }
       else {
         if ( c3y == u3a_is_atom(veb) ) {
-          u3a_atom* old_u = u3a_to_ptr(veb);
-          c3_w*     new_w = u3a_walloc(old_u->len_w + c3_wiseof(u3a_atom));
-          u3a_atom* new_u = (u3a_atom*)(void *)new_w;
-          u3_noun     new = u3a_to_pug(u3a_outa(new_u));
-
-#ifdef VERBOSE_TAKE
-          u3l_log("%s: atom %p to %p\r\n", ( c3y == nor_o )
-                                           ? "north"
-                                           : "south",
-                                           old_u,
-                                           new_u);
-#endif
-
-          new_u->mug_w = old_u->mug_w;
-          new_u->len_w = old_u->len_w;
-          {
-            c3_w i_w;
-
-            for ( i_w=0; i_w < old_u->len_w; i_w++ ) {
-              new_u->buf_w[i_w] = old_u->buf_w[i_w];
-            }
-          }
-
-          //  Borrow mug slot to record new destination in .old_u.
-          //
-          old_u->mug_w = new;
-
-          pro = new;
+          pro = _ca_take_atom((u3a_atom*)veb_u);
           goto retreat;
         }
         else {
