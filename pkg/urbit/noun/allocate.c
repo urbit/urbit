@@ -1111,37 +1111,17 @@ typedef struct takeframe
 {
   c3_y  tag_y;
   u3_cell old;
-  u3_noun hed;
+  u3_weak hed;
 } takeframe;
 
-/* u3a_take(): gain, copying juniors.
-*/
-u3_noun
-u3a_take(u3_noun veb)
+static inline u3_noun
+_ca_take_next(u3a_pile* pil_u, u3_noun veb)
 {
-  u3a_pile pil_u;
-  u3_noun    pro;
-  c3_o     nor_o = u3a_is_north(u3R);
+  c3_o nor_o = u3a_is_north(u3R);
 
-  u3t_on(coy_o);
-
-  c3_assert(u3_none != veb);
-
-  u3a_pile_prep(&pil_u, sizeof(takeframe));
-
-  //  push the ROOT stack frame (our termination condition)
-  //
-  {
-    takeframe* fam_u = u3a_push(&pil_u);
-    fam_u->tag_y = TAKE_ROOT;
-  }
-
-  //  read from the current noun .veb
-  //
-  advance: {
+  while (1) {
     if ( c3y == u3a_is_cat(veb) ) {
-      pro = veb;
-      goto retreat;
+      return veb;
     }
     //  senior pointers are not refcounted
     //
@@ -1149,8 +1129,7 @@ u3a_take(u3_noun veb)
                       ? u3a_north_is_senior(u3R, veb)
                       : u3a_south_is_senior(u3R, veb)) )
     {
-      pro = veb;
-      goto retreat;
+      return veb;
     }
     //  not junior; a normal pointer in our road -- refcounted
     //
@@ -1161,10 +1140,7 @@ u3a_take(u3_noun veb)
       //  bypass normal road checks in u3k
       //
       _me_gain_use(veb);
-      pro = veb;
-      goto retreat;
-
-
+      return veb;
     }
     //  junior pointers are copied
     //
@@ -1191,29 +1167,55 @@ u3a_take(u3_noun veb)
         //  bypass normal road checks in u3k
         //
         _me_gain_use(nov);
-        pro = nov;
-        goto retreat;
+        return nov;
       }
       else if ( c3y == u3a_is_atom(veb) ) {
-        pro = _ca_take_atom((u3a_atom*)veb_u);
-        goto retreat;
+        return _ca_take_atom((u3a_atom*)veb_u);
       }
       else {
         u3a_cell*  old_u = (u3a_cell*)veb_u;
 
         {
-          takeframe* fam_u = u3a_push(&pil_u);
-          u3a_pile_sane(&pil_u);
+          takeframe* fam_u = u3a_push(pil_u);
+          u3a_pile_sane(pil_u);
 
           fam_u->tag_y = TAKE_HEAD;
           fam_u->old   = veb;
+          fam_u->hed   = u3_none;
         }
 
         veb = old_u->hed;
-        goto advance;
+        continue;
       }
     }
   }
+}
+
+/* u3a_take(): gain, copying juniors.
+*/
+u3_noun
+u3a_take(u3_noun veb)
+{
+  u3a_pile pil_u;
+  u3_noun    pro;
+  c3_o     nor_o = u3a_is_north(u3R);
+
+  u3t_on(coy_o);
+
+  c3_assert(u3_none != veb);
+
+  u3a_pile_prep(&pil_u, sizeof(takeframe));
+
+  //  push the ROOT stack frame (our termination condition)
+  //
+  {
+    takeframe* fam_u = u3a_push(&pil_u);
+    fam_u->tag_y = TAKE_ROOT;
+  }
+
+  //  read from the current noun .veb
+  //
+  pro = _ca_take_next(&pil_u, veb);
 
   //  consume: popped stack frame, and .pro from above
   //
@@ -1237,12 +1239,15 @@ u3a_take(u3_noun veb)
       //
       case TAKE_HEAD: {
         u3a_cell* old_u = u3a_to_ptr(fam_u->old);
+        c3_assert( u3_none == fam_u->hed );
 
         fam_u->tag_y = TAKE_TAIL;
         fam_u->hed   = pro;
 
-        veb = old_u->tel;
-        goto advance;
+        // veb = old_u->tel;
+        // goto advance;
+        pro = _ca_take_next(&pil_u, old_u->tel);
+        goto retreat;
       }
 
       //  .pro is the copied tail of a cell; save a pointer to it in .new_u,
@@ -1250,6 +1255,7 @@ u3a_take(u3_noun veb)
       //
       case TAKE_TAIL: {
         u3a_cell* old_u = u3a_to_ptr(fam_u->old);
+        c3_assert( u3_none != fam_u->hed );
 
         pro = _ca_take_cell(old_u, fam_u->hed, pro);
         u3a_pop(&pil_u);
