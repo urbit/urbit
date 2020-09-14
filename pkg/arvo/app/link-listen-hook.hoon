@@ -29,9 +29,12 @@
 ++  on-load
   |=  =vase
   ^-  (quip card _this)
-  ::  TODO: get rid of all subscriptions in bowl
   :_  this
-  [%pass /groups %agent [our.bowl %group-store] %leave ~]~
+  :-  [%pass /groups %agent [our.bowl %group-store] %leave ~]
+  %+  turn  ~(tap in ~(key by wex.bowl))
+  |=  [=wire =ship =term]
+  ^-  card
+  [%pass wire %agent [ship term] %leave ~]
 ::
 ++  on-agent  on-agent:def
 ++  on-poke   on-poke:def

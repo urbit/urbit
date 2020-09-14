@@ -150,7 +150,7 @@
   ::
   ++  on-bad-path
     |=  [=path =links]
-    ^-  (unit card)
+    ^-  (list card)
     ~|  discarding-malformed-links+[path links]
     ~
   ::

@@ -27,9 +27,13 @@
 ++  on-load
   |=  old-vase=vase
   ^-  (quip card _this)
-  ::  TODO: get rid of all subscriptions in bowl
+  =/  paths
+    %+  turn  ~(val by sup.bowl)
+    |=([=ship =path] path)
   :_  this
-  [%pass /groups %agent [our.bowl %group-store] %leave ~]~
+  :-  [%pass /groups %agent [our.bowl %group-store] %leave ~]
+  ?~  paths  ~
+  [%give %kick paths ~]~
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
