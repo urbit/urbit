@@ -1114,74 +1114,27 @@ typedef struct takeframe
   u3_noun hed;
 } takeframe;
 
-static inline void
-_ca_take_push(c3_ys   mov,
-              c3_ys   off,
-              c3_y  tag_y,
-              u3_cell old,
-              u3_cell hed)
-{
-  u3R->cap_p += mov;
-
-  //  ensure we haven't overflowed the stack
-  //  (off==0 means we're on a north road)
-  //
-  if ( 0 == off ) {
-    if( !(u3R->cap_p > u3R->hat_p) ) {
-      u3m_bail(c3__meme);
-    }
-  }
-  else {
-    if( !(u3R->cap_p < u3R->hat_p) ) {
-      u3m_bail(c3__meme);
-    }
-  }
-
-  takeframe* fam_u = u3to(takeframe, u3R->cap_p + off);
-  fam_u->tag_y = tag_y;
-  fam_u->old   = old;
-  fam_u->hed   = hed;
-}
-
-static inline takeframe
-_ca_take_pop(c3_ys mov, c3_ys off)
-{
-  takeframe* fam_u = u3to(takeframe, u3R->cap_p + off);
-  u3R->cap_p -= mov;
-
-  return *fam_u;
-}
-
 /* u3a_take(): gain, copying juniors.
 */
 u3_noun
 u3a_take(u3_noun veb)
 {
-  c3_assert(u3_none != veb);
+  u3a_pile pil_u;
+  u3_noun    pro;
+  c3_o     nor_o = u3a_is_north(u3R);
 
   u3t_on(coy_o);
 
-  //  initialize signed stack offsets (relative to north/south road)
+  c3_assert(u3_none != veb);
+
+  u3a_pile_prep(&pil_u, sizeof(takeframe));
+
+  //  push the ROOT stack frame (our termination condition)
   //
-  c3_o  nor_o = u3a_is_north(u3R);
-  c3_ys mov, off;
   {
-    c3_y wis_y = c3_wiseof(takeframe);
-    mov = ( c3y == nor_o ? -wis_y : wis_y );
-    off = ( c3y == nor_o ? 0 : -wis_y );
+    takeframe* fam_u = u3a_push(&pil_u);
+    fam_u->tag_y = TAKE_ROOT;
   }
-
-  //  stash the current stack post
-  //
-  u3p(takeframe) cap_p = u3R->cap_p;
-
-  //  push the (only) ROOT stack frame (our termination condition)
-  //
-  _ca_take_push(mov, off, TAKE_ROOT, 0, 0);
-
-  //  the finished copy  of our current noun .veb
-  //
-  u3_noun pro;
 
   //  read from the current noun .veb
   //
@@ -1246,8 +1199,16 @@ u3a_take(u3_noun veb)
         goto retreat;
       }
       else {
-        u3a_cell* old_u = (u3a_cell*)veb_u;
-        _ca_take_push(mov, off, TAKE_HEAD, veb, 0);
+        u3a_cell*  old_u = (u3a_cell*)veb_u;
+
+        {
+          takeframe* fam_u = u3a_push(&pil_u);
+          u3a_pile_sane(&pil_u);
+
+          fam_u->tag_y = TAKE_HEAD;
+          fam_u->old   = veb;
+        }
+
         veb = old_u->hed;
         goto advance;
       }
@@ -1257,9 +1218,9 @@ u3a_take(u3_noun veb)
   //  consume: popped stack frame, and .pro from above
   //
   retreat: {
-    takeframe fam_u = _ca_take_pop(mov, off);
+    takeframe* fam_u = u3a_peek(&pil_u);
 
-    switch ( fam_u.tag_y ) {
+    switch ( fam_u->tag_y ) {
       default: {
         c3_assert(0);
       }
@@ -1267,6 +1228,7 @@ u3a_take(u3_noun veb)
       //  .fam_u is our stack root, we're done.
       //
       case TAKE_ROOT: {
+        u3a_pop(&pil_u);
         break;
       }
 
@@ -1274,9 +1236,11 @@ u3a_take(u3_noun veb)
       //  and advance to copy the tail
       //
       case TAKE_HEAD: {
-        u3a_cell* old_u = u3a_to_ptr(fam_u.old);
+        u3a_cell* old_u = u3a_to_ptr(fam_u->old);
 
-        _ca_take_push(mov, off, TAKE_TAIL, fam_u.old, pro);
+        fam_u->tag_y = TAKE_TAIL;
+        fam_u->hed   = pro;
+
         veb = old_u->tel;
         goto advance;
       }
@@ -1285,9 +1249,10 @@ u3a_take(u3_noun veb)
       //  and produce the whole copied cell (as if it were a read from above).
       //
       case TAKE_TAIL: {
-        u3a_cell* old_u = u3a_to_ptr(fam_u.old);
+        u3a_cell* old_u = u3a_to_ptr(fam_u->old);
 
-        pro = _ca_take_cell(old_u, fam_u.hed, pro);
+        pro = _ca_take_cell(old_u, fam_u->hed, pro);
+        u3a_pop(&pil_u);
         goto retreat;
       }
     }
@@ -1295,7 +1260,7 @@ u3a_take(u3_noun veb)
 
   //  sanity check
   //
-  c3_assert( u3R->cap_p == cap_p );
+  c3_assert( c3y == u3a_pile_done(&pil_u) );
 
   u3t_off(coy_o);
 
