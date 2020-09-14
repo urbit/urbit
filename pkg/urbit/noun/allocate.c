@@ -1094,25 +1094,11 @@ _ca_take_cell(u3a_cell* old_u, u3_noun hed, u3_noun tel)
   return new;
 }
 
-#define TAKE_ROOT 0
-#define TAKE_HEAD 1
-#define TAKE_TAIL 2
-
-//  stack frame for recording head vs tail iteration
-//
-//    In Hoon, this structure would be as follows:
-//
-//    $%  [%root ~]
-//        [%head old=^]
-//        [%tail old=^ hed=*]
-//    ==
-//
-typedef struct takeframe
+typedef struct _ca_take
 {
-  c3_y  tag_y;
-  u3_cell old;
-  u3_weak hed;
-} takeframe;
+  u3_weak hed;  //  taken head
+  u3_cell old;  //  old cell
+} _ca_take;
 
 static inline u3_noun
 _ca_take_next(u3a_pile* pil_u, u3_noun veb)
@@ -1176,12 +1162,11 @@ _ca_take_next(u3a_pile* pil_u, u3_noun veb)
         u3a_cell*  old_u = (u3a_cell*)veb_u;
 
         {
-          takeframe* fam_u = u3a_push(pil_u);
+          _ca_take* fam_u = u3a_push(pil_u);
           u3a_pile_sane(pil_u);
 
-          fam_u->tag_y = TAKE_HEAD;
-          fam_u->old   = veb;
-          fam_u->hed   = u3_none;
+          fam_u->hed = u3_none;
+          fam_u->old = veb;
         }
 
         veb = old_u->hed;
@@ -1196,77 +1181,44 @@ _ca_take_next(u3a_pile* pil_u, u3_noun veb)
 u3_noun
 u3a_take(u3_noun veb)
 {
-  u3a_pile pil_u;
-  u3_noun    pro;
-  c3_o     nor_o = u3a_is_north(u3R);
+  u3a_pile  pil_u;
+  _ca_take* fam_u;
+  u3_noun     pro;
+  c3_o      nor_o = u3a_is_north(u3R);
 
   u3t_on(coy_o);
 
   c3_assert(u3_none != veb);
 
-  u3a_pile_prep(&pil_u, sizeof(takeframe));
+  u3a_pile_prep(&pil_u, sizeof(*fam_u));
 
-  //  push the ROOT stack frame (our termination condition)
-  //
-  {
-    takeframe* fam_u = u3a_push(&pil_u);
-    fam_u->tag_y = TAKE_ROOT;
-  }
-
-  //  read from the current noun .veb
+  //  commence taking
   //
   pro = _ca_take_next(&pil_u, veb);
 
-  //  consume: popped stack frame, and .pro from above
+  //  process cell results
   //
-  retreat: {
-    takeframe* fam_u = u3a_peek(&pil_u);
+  if ( c3n == u3a_pile_done(&pil_u) ) {
+    fam_u = u3a_peek(&pil_u);
 
-    switch ( fam_u->tag_y ) {
-      default: {
-        c3_assert(0);
-      }
-
-      //  .fam_u is our stack root, we're done.
+    do {
+      //  fam_u is a head-frame: stash copy and continue into the tail
       //
-      case TAKE_ROOT: {
-        u3a_pop(&pil_u);
-        break;
-      }
-
-      //  .pro is the copied head of a cell; save a pointer to it in .new_u
-      //  and advance to copy the tail
-      //
-      case TAKE_HEAD: {
+      if ( u3_none == fam_u->hed ) {
         u3a_cell* old_u = u3a_to_ptr(fam_u->old);
-        c3_assert( u3_none == fam_u->hed );
-
-        fam_u->tag_y = TAKE_TAIL;
-        fam_u->hed   = pro;
-
-        // veb = old_u->tel;
-        // goto advance;
-        pro = _ca_take_next(&pil_u, old_u->tel);
-        goto retreat;
+        fam_u->hed = pro;
+        pro        = _ca_take_next(&pil_u, old_u->tel);
+        fam_u      = u3a_peek(&pil_u);
       }
-
-      //  .pro is the copied tail of a cell; save a pointer to it in .new_u,
-      //  and produce the whole copied cell (as if it were a read from above).
+      //  fam_u is a tail-frame: copy cell and pop the stack
       //
-      case TAKE_TAIL: {
+      else {
         u3a_cell* old_u = u3a_to_ptr(fam_u->old);
-        c3_assert( u3_none != fam_u->hed );
-
-        pro = _ca_take_cell(old_u, fam_u->hed, pro);
-        u3a_pop(&pil_u);
-        goto retreat;
+        pro   = _ca_take_cell(old_u, fam_u->hed, pro);
+        fam_u = u3a_pop(&pil_u);
       }
-    }
+    } while ( c3n == u3a_pile_done(&pil_u) );
   }
-
-  //  sanity check
-  //
-  c3_assert( c3y == u3a_pile_done(&pil_u) );
 
   u3t_off(coy_o);
 
