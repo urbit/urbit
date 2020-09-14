@@ -20,42 +20,17 @@ where
 import Urbit.Prelude hiding (Term)
 
 import Urbit.Arvo
+import Urbit.Arvo.Pill
 import Urbit.Noun.Time
 import Urbit.Vere.Serf.Types
 
 import Urbit.EventLog.LMDB (LogIdentity(..))
 
 
--- Avoid touching Nock values. -------------------------------------------------
-
-{-|
-    Nock values are raw nouns with tons of duplicated structure, so
-    printing or comparing them is insane.
--}
-newtype Nock = Nock Noun
-  deriving newtype (FromNoun, ToNoun)
-
-instance Eq Nock where
-  (==) (Nock x) (Nock y) = jamBS x == jamBS y
-
-instance Show Nock where
-  show _ = "Nock"
-
-
 --------------------------------------------------------------------------------
-
-data Pill = Pill
-  { pBootFormulas   :: [Nock]
-  , pKernelOvums    :: [Ev]
-  , pUserspaceOvums :: [Ev]
-  }
- deriving (Eq, Show)
 
 data BootSeq = BootSeq LogIdentity [Nock] [Ev]
   deriving (Eq, Show)
-
-deriveNoun ''Pill
-
 
 -- Jobs ------------------------------------------------------------------------
 
