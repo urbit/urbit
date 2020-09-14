@@ -27,7 +27,6 @@
   |=  old-vase=vase
   ^-  (quip card _this)
   :_  this(state [%2 ~])
-  ::  TODO: leave all subscriptions
   [%pass /connect %arvo %e %disconnect [~ /'~link']]~
 ::
 ++  on-poke   on-poke:def
