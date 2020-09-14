@@ -11,7 +11,7 @@
     =/  ip  ;;(indexed-post p)
     ?+    index.p.ip  ~|(index+index.p.ip !!)
         ::  top-level link post; title and url
-        ::
+        ::
         [@ ~]
       ?>  ?=([[%text @] [%url @] ~] contents.p.ip)
       ip
