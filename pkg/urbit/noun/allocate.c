@@ -1100,74 +1100,54 @@ typedef struct _ca_take
   u3_cell old;  //  old cell
 } _ca_take;
 
+/* _ca_take_next_south: take next noun, pushing cells on stack.
+*/
 static inline u3_noun
-_ca_take_next(u3a_pile* pil_u, u3_noun veb)
+_ca_take_next_north(u3a_pile* pil_u, u3_noun veb)
 {
-  c3_o nor_o = u3a_is_north(u3R);
-
-  while (1) {
-    if ( c3y == u3a_is_cat(veb) ) {
-      return veb;
-    }
-    //  senior pointers are not refcounted
+  while ( 1 ) {
+    //  direct atoms and senior refs are not counted.
     //
-    else if ( c3y == (( c3y == nor_o )
-                      ? u3a_north_is_senior(u3R, veb)
-                      : u3a_south_is_senior(u3R, veb)) )
+    if (  (c3y == u3a_is_cat(veb))
+       || (c3y == u3a_north_is_senior(u3R, veb)) )
     {
       return veb;
     }
-    //  not junior; a normal pointer in our road -- refcounted
+    //  not junior; normal (heap) refs on our road are counted.
     //
-    else if ( c3n == (( c3y == nor_o )
-                      ? u3a_north_is_junior(u3R, veb)
-                      : u3a_south_is_junior(u3R, veb)) )
-    {
-      //  bypass normal road checks in u3k
-      //
-      _me_gain_use(veb);
+    else if ( c3n == u3a_north_is_junior(u3R, veb) ) {
+      _me_gain_use(veb); // bypass branches in u3k()
       return veb;
     }
-    //  junior pointers are copied
+    //  junior (stack) refs are copied.
     //
     else {
       u3a_noun* veb_u = u3a_to_ptr(veb);
 
-      //  32-bit mug_w: already copied .veb and .mug_w is the pointer
+      //  32-bit mug_w: already copied [veb] and [mug_w] is the new ref.
       //
       if ( veb_u->mug_w >> 31 ) {
         u3_noun nov = (u3_noun)veb_u->mug_w;
 
-        c3_assert( c3y == (( c3y == nor_o)
-                           ? u3a_north_is_normal(u3R, nov)
-                           : u3a_south_is_normal(u3R, nov)) );
+        c3_assert( c3y == u3a_north_is_normal(u3R, nov) );
 
 #ifdef VERBOSE_TAKE
-          u3l_log("%s: %p is already %p\r\n", ( c3y == nor_o )
-                                           ? "north"
-                                           : "south",
-                                           veb_u,
-                                           u3a_to_ptr(nov));
+        u3l_log("north: %p is already %p\r\n", veb_u, u3a_to_ptr(nov));
 #endif
 
-        //  bypass normal road checks in u3k
-        //
-        _me_gain_use(nov);
+        _me_gain_use(nov); // bypass branches in u3k()
         return nov;
       }
       else if ( c3y == u3a_is_atom(veb) ) {
         return _ca_take_atom((u3a_atom*)veb_u);
       }
       else {
-        u3a_cell*  old_u = (u3a_cell*)veb_u;
+        u3a_cell* old_u = (u3a_cell*)veb_u;
+        _ca_take* fam_u = u3a_push(pil_u);
+        u3a_pile_sane(pil_u);
 
-        {
-          _ca_take* fam_u = u3a_push(pil_u);
-          u3a_pile_sane(pil_u);
-
-          fam_u->hed = u3_none;
-          fam_u->old = veb;
-        }
+        fam_u->hed = u3_none;
+        fam_u->old = veb;
 
         veb = old_u->hed;
         continue;
@@ -1176,25 +1156,75 @@ _ca_take_next(u3a_pile* pil_u, u3_noun veb)
   }
 }
 
-/* u3a_take(): gain, copying juniors.
+/* _ca_take_next_south: take next noun, pushing cells on stack.
 */
-u3_noun
-u3a_take(u3_noun veb)
+static inline u3_noun
+_ca_take_next_south(u3a_pile* pil_u, u3_noun veb)
 {
-  u3a_pile  pil_u;
-  _ca_take* fam_u;
+  while ( 1 ) {
+    //  direct atoms and senior refs are not counted.
+    //
+    if (  (c3y == u3a_is_cat(veb))
+       || (c3y == u3a_south_is_senior(u3R, veb)) )
+    {
+      return veb;
+    }
+    //  not junior; a normal pointer in our road -- refcounted
+    //
+    else if ( c3n == u3a_south_is_junior(u3R, veb) ) {
+      _me_gain_use(veb); // bypass branches in u3k()
+      return veb;
+    }
+    //  junior (stack) refs are copied.
+    //
+    else {
+      u3a_noun* veb_u = u3a_to_ptr(veb);
+
+      //  32-bit mug_w: already copied [veb] and [mug_w] is the new ref.
+      //
+      if ( veb_u->mug_w >> 31 ) {
+        u3_noun nov = (u3_noun)veb_u->mug_w;
+
+        c3_assert( c3y == u3a_south_is_normal(u3R, nov) );
+
+#ifdef VERBOSE_TAKE
+        u3l_log("south: %p is already %p\r\n", veb_u, u3a_to_ptr(nov));
+#endif
+
+        _me_gain_use(nov); // bypass branches in u3k()
+        return nov;
+      }
+      else if ( c3y == u3a_is_atom(veb) ) {
+        return _ca_take_atom((u3a_atom*)veb_u);
+      }
+      else {
+        u3a_cell* old_u = (u3a_cell*)veb_u;
+        _ca_take* fam_u = u3a_push(pil_u);
+        u3a_pile_sane(pil_u);
+
+        fam_u->hed = u3_none;
+        fam_u->old = veb;
+
+        veb = old_u->hed;
+        continue;
+      }
+    }
+  }
+}
+
+/* _ca_take_north(): in a north road, gain, copying juniors (from stack).
+*/
+static u3_noun
+_ca_take_north(u3_noun veb)
+{
   u3_noun     pro;
-  c3_o      nor_o = u3a_is_north(u3R);
-
-  u3t_on(coy_o);
-
-  c3_assert(u3_none != veb);
-
+  _ca_take* fam_u;
+  u3a_pile  pil_u;
   u3a_pile_prep(&pil_u, sizeof(*fam_u));
 
   //  commence taking
   //
-  pro = _ca_take_next(&pil_u, veb);
+  pro = _ca_take_next_north(&pil_u, veb);
 
   //  process cell results
   //
@@ -1207,7 +1237,7 @@ u3a_take(u3_noun veb)
       if ( u3_none == fam_u->hed ) {
         u3a_cell* old_u = u3a_to_ptr(fam_u->old);
         fam_u->hed = pro;
-        pro        = _ca_take_next(&pil_u, old_u->tel);
+        pro        = _ca_take_next_north(&pil_u, old_u->tel);
         fam_u      = u3a_peek(&pil_u);
       }
       //  fam_u is a tail-frame: copy cell and pop the stack
@@ -1220,8 +1250,64 @@ u3a_take(u3_noun veb)
     } while ( c3n == u3a_pile_done(&pil_u) );
   }
 
-  u3t_off(coy_o);
+  return pro;
+}
+/* _ca_take_south(): in a south road, gain, copying juniors (from stack).
+*/
+static u3_noun
+_ca_take_south(u3_noun veb)
+{
+  u3_noun     pro;
+  _ca_take* fam_u;
+  u3a_pile  pil_u;
+  u3a_pile_prep(&pil_u, sizeof(*fam_u));
 
+  //  commence taking
+  //
+  pro = _ca_take_next_south(&pil_u, veb);
+
+  //  process cell results
+  //
+  if ( c3n == u3a_pile_done(&pil_u) ) {
+    fam_u = u3a_peek(&pil_u);
+
+    do {
+      //  fam_u is a head-frame: stash copy and continue into the tail
+      //
+      if ( u3_none == fam_u->hed ) {
+        u3a_cell* old_u = u3a_to_ptr(fam_u->old);
+        fam_u->hed = pro;
+        pro        = _ca_take_next_south(&pil_u, old_u->tel);
+        fam_u      = u3a_peek(&pil_u);
+      }
+      //  fam_u is a tail-frame: copy cell and pop the stack
+      //
+      else {
+        u3a_cell* old_u = u3a_to_ptr(fam_u->old);
+        pro   = _ca_take_cell(old_u, fam_u->hed, pro);
+        fam_u = u3a_pop(&pil_u);
+      }
+    } while ( c3n == u3a_pile_done(&pil_u) );
+  }
+
+  return pro;
+}
+
+/* u3a_take(): gain, copying juniors.
+*/
+u3_noun
+u3a_take(u3_noun veb)
+{
+  u3_noun pro;
+  u3t_on(coy_o);
+
+  c3_assert(u3_none != veb);
+
+  pro = ( c3y == u3a_is_north(u3R) )
+        ? _ca_take_north(veb)
+        : _ca_take_south(veb);
+
+  u3t_off(coy_o);
   return pro;
 }
 
