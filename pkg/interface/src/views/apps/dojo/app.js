@@ -20,7 +20,7 @@ export default class DojoApp extends Component {
     this.store.setStateHandler(this.setState.bind(this));
 
     this.state = this.store.state;
-    this.resetControllers();
+    this.resetControllers = this.resetControllers.bind(this);
   }
 
   resetControllers() {
@@ -29,6 +29,7 @@ export default class DojoApp extends Component {
   }
 
   componentDidMount() {
+    this.resetControllers();
     const channel = new window.channel();
     this.api = new Api(this.props.ship, channel);
     this.store.api = this.api;
