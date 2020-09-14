@@ -12,7 +12,12 @@ module Urbit.Arvo.Common
   , AmesDest(..), Ipv4(..), Ipv6(..), Patp(..), Galaxy, AmesAddress(..)
   ) where
 
-import Urbit.Prelude hiding (Term)
+--import Urbit.Prelude hiding (Term)
+import ClassyPrelude
+import Urbit.Noun
+import Data.Void
+import Control.Arrow    ((>>>))
+
 
 import qualified Network.HTTP.Types.Method as H
 import qualified Urbit.Ob                  as Ob

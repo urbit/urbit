@@ -3,14 +3,17 @@
 -}
 module Urbit.Arvo.Event where
 
-import Urbit.Noun.Tree (HoonMap, HoonSet)
-import Urbit.Prelude   hiding (Term)
+import ClassyPrelude
+import Urbit.Noun
+import Data.Function  ((&))
+import Data.Void
 
 import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Desk, Mime)
 import Urbit.Arvo.Common (Header(..), HttpEvent)
 import Urbit.Arvo.Common (AmesDest, Ipv4, Ipv6, Port, Turf)
 import Urbit.Arvo.Common (ReOrg(..), reorgThroughNoun)
+import Urbit.Noun.Tree (HoonMap, HoonSet)
 
 import qualified Crypto.Sign.Ed25519       as Ed
 import qualified Data.ByteString           as BS

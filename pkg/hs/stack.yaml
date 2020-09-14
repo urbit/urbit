@@ -6,6 +6,7 @@ packages:
   - proto
   - racquire
   - terminal-progress-bar
+  - urbit-arvo
   - urbit-atom
   - urbit-azimuth
   - urbit-eventlog-lmdb

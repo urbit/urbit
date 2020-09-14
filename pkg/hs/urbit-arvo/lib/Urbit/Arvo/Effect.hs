@@ -3,8 +3,11 @@
 -}
 module Urbit.Arvo.Effect where
 
+import ClassyPrelude
+import Data.Function ((&))
+import Data.Void
+import Urbit.Noun
 import Urbit.Noun.Time
-import Urbit.Prelude
 
 import Urbit.Arvo.Common (KingId(..), ServId(..))
 import Urbit.Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)

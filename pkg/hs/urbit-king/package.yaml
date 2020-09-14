@@ -101,6 +101,7 @@ dependencies:
   - unliftio
   - unliftio-core
   - unordered-containers
+  - urbit-arvo
   - urbit-atom
   - urbit-eventlog-lmdb
   - urbit-hob
