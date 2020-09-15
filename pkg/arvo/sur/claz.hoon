@@ -29,6 +29,10 @@
       ::    to generate such a file, try |claz-invites ~star 1 10 %/out/txt
       ::
       [%invites as-who=ship file=path]
+      ::  %prefab: spawn, setup & transfer for every ship in
+      ::           ship,ticket,owner,manager,crypt,auth file
+      ::
+      [%prefab file=path]
       ::  %lock-prep: prepare for lockup by transfering ships to the ceremony address
       ::
       [%lock-prep what=(list ship)]

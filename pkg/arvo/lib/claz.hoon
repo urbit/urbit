@@ -5,7 +5,7 @@
 =,  ethereum
 ::
 |%
-++  read-invites  ::TODO  lib
+++  read-invites
   |=  file=path
   ^-  (list [=ship ticket=@q =address])
   =+  txt=.^((list cord) %cx file)
@@ -20,6 +20,26 @@
     ;~(pfix sig fed:ag)
     ;~(pfix sig feq:ag)
     ;~(pfix (jest '0x') hex)
+  ==
+::
+++  read-prefabs
+  |=  file=path
+  ^-  (list [=ship ticket=@q owner=address manager=address crypt=@ux auth=@ux])
+  =+  txt=.^((list cord) %cx file)
+  %+  murn  txt
+  |=  line=cord
+  ^-  (unit [ship @q address address @ux @ux])
+  ?:  =('' line)  ~
+  %-  some
+  ~|  line
+  %+  rash  line
+  ;~  (glue com)
+    ;~(pfix sig fed:ag)
+    ;~(pfix sig feq:ag)
+    ;~(pfix (jest '0x') hex)
+    ;~(pfix (jest '0x') hex)
+    hex
+    hex
   ==
 ::
 ++  get-contracts
