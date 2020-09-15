@@ -4,12 +4,6 @@
 =<  [sur .]
 =,  sur
 |%
-++  app-to-mark
-  |=  app=app-name
-  ?+  app  ~|("nonexistent app" !!)
-    %chat  %graph-validator-chat
-    %publish  %graph-validator-publish
-  ==
 ++  dejs
   =,  dejs:format
   |%
@@ -26,46 +20,38 @@
     ==
     ::
     ++  create
-      %-  ot
-      :~  resource+dejs:resource
-          title+so
-          description+so
-          app+app
-          associated+associated
-      ==
-    ::
-    ++  app
-      |=  jon=json
-      ^-  app-name
-      ?>  ?=(%s -.jon)
-      ?+  p.jon  !!
-        %chat     %chat
-        %publish  %publish
+      %-  ou
+      :~  resource+(un dejs:resource)
+          title+(un so)
+          description+(un so)
+          mark+(uf ~ (mu so))
+          app+(un so)
+          associated+(un associated)
       ==
     ::
     ++  leave
       %-  ot
       :~  resource+dejs:resource
-          app+app
+          app+so
       ==
     ::
     ++  delete
       %-  ot
       :~  resource+dejs:resource
-          app+app
+          app+so
       ==
     ::
     ++  join
       %-  ot
       :~  resource+dejs:resource
-          app+app
+          app+so
           ship+(su ;~(pfix sig fed:ag))
       ==
     ::
     ++  groupify  
       %-  ou
       :~  resource+(un dejs:resource)
-          app+(un app)
+          app+(un so)
           to+(uf ~ (mu dejs:resource))
       ==
     ++  invite    !!

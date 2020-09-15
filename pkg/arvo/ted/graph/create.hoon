@@ -32,7 +32,7 @@
 ?.  =(our.bowl entity.rid.action)
   (strand-fail:strandio %bad-request ~)
 =/  =update:graph
-  [%0 now.bowl %add-graph rid.action *graph:graph `(app-to-mark:graph-view app.action)]
+  [%0 now.bowl %add-graph rid.action *graph:graph mark.action]
 ;<  ~  bind:m
   (poke-our %graph-store graph-update+!>(update))
 ;<  ~  bind:m

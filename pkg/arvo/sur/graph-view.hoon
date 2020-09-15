@@ -8,9 +8,6 @@
   $%  [%group rid=resource]
       [%policy =policy]
   ==
-::  $app: An app that is associated to a graph-store mark
-::
-+$  app-name  ?(%chat %publish %links)
 ::
 ::  $error: An error from a graph-view poke
 ::  
@@ -34,14 +31,15 @@
         rid=resource
         title=@t
         description=@t
-        app=app-name
+        mark=(unit mark)
+        app=@tas
         =associated
     ==
-    [%delete rid=resource app=app-name]
-    [%leave rid=resource app=app-name]
-    [%join rid=resource app=app-name =ship] 
+    [%delete rid=resource app=@tas]
+    [%leave rid=resource app=@tas]
+    [%join rid=resource app=@tas =ship] 
     ::[%invite rid=resource ships=(set ship)]
-    [%groupify rid=resource app=app-name to=(unit resource)]
+    [%groupify rid=resource app=@tas to=(unit resource)]
   ==
 --
 
