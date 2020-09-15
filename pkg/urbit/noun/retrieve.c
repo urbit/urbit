@@ -219,9 +219,25 @@ u3r_mean(u3_noun som, ...)
   return ret_o;
 }
 
-#define SONG_NONE 0
-#define SONG_HEAD 1
-#define SONG_TAIL 2
+//  stack frame for tracking noun comparison and unification
+//
+//    We're always comparing arbitrary nouns in a %none frame.
+//    When we comparing two cells, we change the none frame to
+//    a head-frame and push a new %none frame for the heads.
+//    If the heads were equal, the head-frame has the context to
+//    unify their head pointers. We then repeat with the tails,
+//    mutatis mutandis.
+//
+//    In Hoon, this structure would be as follows:
+//
+//    $%  [%none a=* b=*]
+//        [%head a=^ b=^]
+//        [%tail a=^ b=^]
+//    ==
+//
+#define SING_NONE 0
+#define SING_HEAD 1
+#define SING_TAIL 2
 
 typedef struct {
   c3_y     sat_y;
@@ -229,26 +245,43 @@ typedef struct {
   u3_noun  b;
 } eqframe;
 
+/* _cr_sing_push(): push a new stack frame, initialized as SING_NONE.
+*/
 static inline eqframe*
-_eq_push(u3a_pile* pil_u, u3_noun a, u3_noun b)
+_cr_sing_push(u3a_pile* pil_u, u3_noun a, u3_noun b)
 {
   eqframe* fam_u = u3a_push(pil_u);
-  fam_u->sat_y   = SONG_NONE;
+  fam_u->sat_y   = SING_NONE;
   fam_u->a       = a;
   fam_u->b       = b;
   return fam_u;
 }
 
-/* _song_atom(): check if atom [a] is indirect and equal to noun [b]
+/* _cr_sing_mug(): short-circuit comparison if mugs are present and not equal.
 */
 static inline c3_o
-_song_atom(u3_atom a, u3_noun b)
+_cr_sing_mug(u3a_noun* a_u, u3a_noun* b_u)
+{
+  //  XX debug assertions that both mugs are 31-bit
+  //  (ie, not u3a_take() relocation references)
+  //
+  if ( a_u->mug_w && b_u->mug_w && (a_u->mug_w != b_u->mug_w) ) {
+    return c3n;
+  }
+
+  return c3y;
+}
+
+/* _cr_sing_atom(): check if atom [a] is indirect and equal to noun [b]
+*/
+static inline c3_o
+_cr_sing_atom(u3_atom a, u3_noun b)
 {
   //  [a] is an atom, not pointer-equal to noun [b].
   //  if they're not both indirect atoms, they can't be equal.
   //
-  if ( (c3n == u3a_is_pug(a)) ||
-       (c3n == u3a_is_pug(b)) )
+  if (  (c3n == u3a_is_pug(a))
+     || (c3n == u3a_is_pug(b)) )
   {
     return c3n;
   }
@@ -256,23 +289,26 @@ _song_atom(u3_atom a, u3_noun b)
     u3a_atom* a_u = u3a_to_ptr(a);
     u3a_atom* b_u = u3a_to_ptr(b);
 
-    if ( (0 != a_u->mug_w) &&
-         (0 != b_u->mug_w) &&
-         (a_u->mug_w != b_u->mug_w) )
-    {
+    //  [a] and [b] are not equal if their mugs are present and not equal.
+    //
+    if ( c3n == _cr_sing_mug((u3a_noun*)a_u, (u3a_noun*)b_u) ) {
       return c3n;
     }
     else {
-      c3_w w_rez = a_u->len_w;
-      c3_w w_mox = b_u->len_w;
+      c3_w a_w = a_u->len_w;
+      c3_w b_w = b_u->len_w;
 
-      if ( w_rez != w_mox ) {
+      //  [a] and [b] are not equal if their lengths are not equal
+      //
+      if ( a_w != b_w ) {
         return c3n;
       }
       else {
         c3_w i_w;
 
-        for ( i_w = 0; i_w < w_rez; i_w++ ) {
+        //  XX memcmp
+        //
+        for ( i_w = 0; i_w < a_w; i_w++ ) {
           if ( a_u->buf_w[i_w] != b_u->buf_w[i_w] ) {
             return c3n;
           }
@@ -284,11 +320,45 @@ _song_atom(u3_atom a, u3_noun b)
   return c3y;
 }
 
-/* _song_x_cape(): unifying equality with comparison deduplication
- *                 (tightly coupled to _song_x)
+/* _cr_sing_cape_test(): check for previous comparison of [a] and [b].
+*/
+static inline c3_o
+_cr_sing_cape_test(u3p(u3h_root) har_p, u3_noun a, u3_noun b)
+{
+  u3_noun key = u3nc(u3a_to_off(a), u3a_to_off(b));
+  u3_noun val;
+
+  u3t_off(euq_o);
+  val = u3h_git(har_p, key);
+  u3t_on(euq_o);
+
+  u3z(key);
+  return ( u3_none == val ) ? c3y : c3n;
+}
+
+/* _cr_sing_cape_keep(): store [a] and [b] to short-circuit subsequent tests.
+**                   NB: [a] and [b] (which MUST be equal nouns)
+**                       are cons'd as offsets (direct atoms) to avoid refcount churn.
+*/
+static inline void
+_cr_sing_cape_keep(u3p(u3h_root) har_p, u3_noun a, u3_noun b)
+{
+  //  only store if [a] and [b] are copies of each other
+  //
+  if ( a != b ) {
+    u3_noun key = u3nc(u3a_to_off(a), u3a_to_off(b));
+    u3t_off(euq_o);
+    u3h_put(har_p, key, c3y);
+    u3t_on(euq_o);
+    u3z(key);
+  }
+}
+
+/* _cr_sing_cape(): unifying equality with comparison deduplication
+ *                  (tightly coupled to _cr_sing)
  */
 static c3_o
-_song_x_cape(u3a_pile* pil_u, u3p(u3h_root) har_p)
+_cr_sing_cape(u3a_pile* pil_u, u3p(u3h_root) har_p)
 {
   eqframe* fam_u = u3a_peek(pil_u);
   u3_noun   a, b, key;
@@ -296,17 +366,22 @@ _song_x_cape(u3a_pile* pil_u, u3p(u3h_root) har_p)
   u3a_cell* a_u;
   u3a_cell* b_u;
 
-  while ( c3n == u3a_pile_done(pil_u) ) {
+  //  loop while arguments remain on the stack
+  //
+  do {
     a = fam_u->a;
     b = fam_u->b;
 
     switch ( fam_u->sat_y ) {
-      case SONG_NONE:
+
+      //  [a] and [b] are arbitrary nouns
+      //
+      case SING_NONE: {
         if ( a == b ) {
           break;
         }
         else if ( c3y == u3a_is_atom(a) ) {
-          if ( c3n == _song_atom(a, b) ) {
+          if ( c3n == _cr_sing_atom(a, b) ) {
             return c3n;
           }
           else {
@@ -316,76 +391,75 @@ _song_x_cape(u3a_pile* pil_u, u3p(u3h_root) har_p)
         else if ( c3y == u3a_is_atom(b) ) {
           return c3n;
         }
+        //  [a] and [b] are cells
+        //
         else {
           a_u = u3a_to_ptr(a);
           b_u = u3a_to_ptr(b);
 
-          if ( (0 != a_u->mug_w) &&
-               (0 != b_u->mug_w) &&
-               (a_u->mug_w != b_u->mug_w) )
-          {
+          //  short-circuiting mug check
+          //
+          if ( c3n == _cr_sing_mug((u3a_noun*)a_u, (u3a_noun*)b_u) ) {
             return c3n;
           }
+          //  short-circuiting re-comparison check
+          //
+          else if ( c3y == _cr_sing_cape_test(har_p, a, b) ) {
+            fam_u = u3a_pop(pil_u);
+            continue;
+          }
+          //  upgrade none-frame to head-frame, check heads
+          //
           else {
-            key = u3nc(u3a_to_off(a), u3a_to_off(b));
-            u3t_off(euq_o);
-            got = u3h_get(har_p, key);
-            u3t_on(euq_o);
-            u3z(key);
-
-            if ( u3_none != got ) {
-              fam_u = u3a_pop(pil_u);
-            }
-            else {
-              fam_u->sat_y = SONG_HEAD;
-              fam_u = _eq_push(pil_u, a_u->hed, b_u->hed);
-            }
+            fam_u->sat_y = SING_HEAD;
+            fam_u = _cr_sing_push(pil_u, a_u->hed, b_u->hed);
             continue;
           }
         }
+      } break;
 
-      case SONG_HEAD:
+      //  cells [a] and [b] have equal heads
+      //
+      case SING_HEAD: {
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
         u3a_wed(&(a_u->hed), &(b_u->hed));
 
-        fam_u->sat_y = SONG_TAIL;
-        fam_u = _eq_push(pil_u, a_u->tel, b_u->tel);
+        //  upgrade head-frame to tail-frame, check tails
+        //
+        fam_u->sat_y = SING_TAIL;
+        fam_u = _cr_sing_push(pil_u, a_u->tel, b_u->tel);
         continue;
+      }
 
-      case SONG_TAIL:
+      //  cells [a] and [b] are equal
+      //
+      case SING_TAIL: {
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
         u3a_wed(&(a_u->tel), &(b_u->tel));
-        break;
+      } break;
 
-      default:
+      default: {
         c3_assert(0);
-        break;
+      } break;
     }
 
-    //  [har_p] is effectively a set of equal pairs.
-    //  we cons [a] and [b] as posts so that we don't
-    //  touch their reference counts.
+    //  track equal pairs to short-circuit possible (re-)comparison
     //
-    if ( a != b ) {
-      key = u3nc(u3a_to_off(a), u3a_to_off(b));
-      u3t_off(euq_o);
-      u3h_put(har_p, key, c3y);
-      u3t_on(euq_o);
-      u3z(key);
-    }
+    _cr_sing_cape_keep(har_p, a, b);
 
     fam_u = u3a_pop(pil_u);
   }
+  while ( c3n == u3a_pile_done(pil_u) );
 
   return c3y;
 }
 
-/* _song_x(): yes if a and b are the same noun, use uni to unify
+/* _cr_sing(): yes if a and b are the same noun, use uni to unify
 */
 static c3_o
-_song_x(u3_noun a, u3_noun b)
+_cr_sing(u3_noun a, u3_noun b)
 {
   c3_s     ovr_s = 0;
   u3a_cell*  a_u;
@@ -393,20 +467,27 @@ _song_x(u3_noun a, u3_noun b)
   eqframe* fam_u;
   u3a_pile pil_u;
 
+  //  initialize stack control, push arguments onto the stack (none-frame)
+  //
   u3a_pile_prep(&pil_u, sizeof(eqframe));
-  fam_u = _eq_push(&pil_u, a, b);
+  fam_u = _cr_sing_push(&pil_u, a, b);
 
+  //  loop while arguments are on the stack
+  //
   while ( c3n == u3a_pile_done(&pil_u) ) {
     a = fam_u->a;
     b = fam_u->b;
 
     switch ( fam_u->sat_y ) {
-      case SONG_NONE:
+
+      //  [a] and [b] are arbitrary nouns
+      //
+      case SING_NONE: {
         if ( a == b ) {
           break;
         }
         else if ( c3y == u3a_is_atom(a) ) {
-          if ( c3n == _song_atom(a, b) ) {
+          if ( c3n == _cr_sing_atom(a, b) ) {
             u3R->cap_p = pil_u.top_p;
             return c3n;
           }
@@ -418,50 +499,62 @@ _song_x(u3_noun a, u3_noun b)
           u3R->cap_p = pil_u.top_p;
           return c3n;
         }
+        //  [a] and [b] are cells
+        //
         else {
           a_u = u3a_to_ptr(a);
           b_u = u3a_to_ptr(b);
 
-          if ( (0 != a_u->mug_w) &&
-               (0 != b_u->mug_w) &&
-               (a_u->mug_w != b_u->mug_w) )
-          {
+          //  short-circuiting mug check
+          //
+          if ( c3n == _cr_sing_mug((u3a_noun*)a_u, (u3a_noun*)b_u) ) {
             u3R->cap_p = pil_u.top_p;
             return c3n;
           }
+          //  upgrade none-frame to head-frame, check heads
+          //
           else {
-            fam_u->sat_y = SONG_HEAD;
-            fam_u = _eq_push(&pil_u, a_u->hed, b_u->hed);
+            fam_u->sat_y = SING_HEAD;
+            fam_u = _cr_sing_push(&pil_u, a_u->hed, b_u->hed);
             continue;
           }
         }
+      } break;
 
-      case SONG_HEAD:
+      //  cells [a] and [b] have equal heads
+      //
+      case SING_HEAD: {
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
         u3a_wed(&(a_u->hed), &(b_u->hed));
 
-        fam_u->sat_y = SONG_TAIL;
-        fam_u = _eq_push(&pil_u, a_u->tel, b_u->tel);
+        //  upgrade head-frame to tail-frame, check tails
+        //
+        fam_u->sat_y = SING_TAIL;
+        fam_u = _cr_sing_push(&pil_u, a_u->tel, b_u->tel);
         continue;
+      }
 
-      case SONG_TAIL:
+      //  cells [a] and [b] are equal
+      //
+      case SING_TAIL: {
         a_u = u3a_to_ptr(a);
         b_u = u3a_to_ptr(b);
         u3a_wed(&(a_u->tel), &(b_u->tel));
-        break;
+      } break;
 
-      default:
+      default: {
         c3_assert(0);
-        break;
+      } break;
     }
 
-    //  [ovr_s] counts iterations. when it overflows, we know we've hit a
-    //  pathological case and MUST start de-duplicating comparisons.
+    //  [ovr_s] counts comparisons, if it overflows, we've likely hit
+    //  a pathological case (highly duplicated tree), so we de-duplicate
+    //  subsequent comparisons by maintaing a set of equal pairs.
     //
     if ( 0 == ++ovr_s ) {
       u3p(u3h_root) har_p = u3h_new();
-      c3_o ret_o = _song_x_cape(&pil_u, har_p);
+      c3_o ret_o = _cr_sing_cape(&pil_u, har_p);
       u3h_free(har_p);
       u3R->cap_p = pil_u.top_p;
       return ret_o;
@@ -480,7 +573,7 @@ u3r_sing(u3_noun a, u3_noun b)
 {
   c3_o ret_o;
   u3t_on(euq_o);
-  ret_o = _song_x(a, b);
+  ret_o = _cr_sing(a, b);
   u3t_off(euq_o);
   return ret_o;
 }
