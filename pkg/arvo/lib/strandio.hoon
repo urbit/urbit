@@ -502,6 +502,17 @@
       `[%skip ~]
     `[%done +>.sign-arvo.u.in.tin]
   ==
+::  +check-online: require that peer respond before timeout
+::
+++  check-online
+  |=  [who=ship lag=@dr]
+  =/  m  (strand ,~)
+  ^-  form:m
+  %+  (map-err ,~)  |=(* [%offline *tang])
+  %+  (set-timeout ,~)  lag
+  ;<  ~  bind:m
+    (poke [who %hood] %helm-hi !>(~))
+  (pure:m ~)
 ::
 ::  Queue on skip, try next on fail %ignore
 ::

@@ -7,19 +7,8 @@
 ++  poke  poke:strandio
 ++  poke-our   poke-our:strandio
 ::
-++  check-live
-  |=  who=ship
-  =/  m  (strand ,~)
-  ^-  form:m
-  %+  (map-err:strandio ,~)  
-    |=(* [%offline *tang])
-  %+  (set-timeout:strandio ,~)  ~s20
-  ;<  ~  bind:m
-    (poke [who %hood] %helm-hi !>(~))
-  (pure:m ~)
-::
 ++  scry-metadata
-  |=  [app=app-name:graph-view rid=resource]
+  |=  [app=@tas rid=resource]
   =/  m  (strand ,(unit resource))
   ^-  form:m
   ;<  pax=(unit (set path))  bind:m
@@ -46,7 +35,6 @@
   (fail %bad-request ~)
 ;<  group=(unit resource)  bind:m  
   (scry-metadata app.action rid.action)
-;<  ~  bind:m  (check-live entity.rid.action)
 ?^  group
   ::  We have group, graph is managed
   ;<  ~  bind:m  
