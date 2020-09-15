@@ -100,9 +100,7 @@
   ?~  path
     ::  new subscribe
     ::
-    =/  [=graph:store mark=(unit mark:store)]
-      (get-graph:gra resource)
-    [%0 now.bowl [%add-graph resource graph mark]]
+    (get-graph:gra resource)
   ::  resubscribe
   ::
   =/  =time  (slav %da i.path)
