@@ -1,4 +1,5 @@
 /+  store=graph-store
+/+  met=metadata
 /+  res=resource
 /+  graph
 /+  group
@@ -18,6 +19,14 @@
   ==
 ::
 +$  agent  (push-hook:push-hook config)
+::
+++  is-member
+  |=  [=resource:res =bowl:gall]
+  ^-  ?
+  =/  grp  ~(. group bowl)
+  =/  group-paths  (groups-from-resource:met [%graph (en-path:res resource)])
+  ?~  group-paths  %.n
+  (is-member:grp src.bowl i.group-paths)
 --
 ::
 %-  agent:dbug
@@ -44,30 +53,23 @@
 ++  should-proxy-update
   |=  =vase
   ^-  ?
-  |^
   =/  =update:store  !<(update:store vase)
   ?-  -.q.update
-      %add-graph          (is-member resource.q.update)
-      %remove-graph       (is-member resource.q.update)
-      %add-nodes          (is-member resource.q.update)
-      %remove-nodes       (is-member resource.q.update)
-      %add-signatures     (is-member resource.uid.q.update)
-      %remove-signatures  (is-member resource.uid.q.update)
-      %archive-graph      (is-member resource.q.update)
+      %add-graph          (is-member resource.q.update bowl)
+      %remove-graph       (is-member resource.q.update bowl)
+      %add-nodes          (is-member resource.q.update bowl)
+      %remove-nodes       (is-member resource.q.update bowl)
+      %add-signatures     (is-member resource.uid.q.update bowl)
+      %remove-signatures  (is-member resource.uid.q.update bowl)
+      %archive-graph      (is-member resource.q.update bowl)
       %unarchive-graph    %.n
       %add-tag            %.n
       %remove-tag         %.n
       %keys               %.n
       %tags               %.n
       %tag-queries        %.n
-      %run-updates        (is-member resource.q.update)
+      %run-updates        (is-member resource.q.update bowl)
   ==
-  ::
-  ++  is-member
-    |=  =resource:res
-    ^-  ?
-    (is-member:grp src.bowl (en-path:res resource))
-  --
 ::
 ++  resource-for-update
   |=  =vase
@@ -93,7 +95,7 @@
 ++  initial-watch
   |=  [=path =resource:res]
   ^-  vase
-  ?>  (is-member:grp src.bowl (en-path:res resource))
+  ?>  (is-member resource bowl)
   !>  ^-  update:store
   ?~  path
     ::  new subscribe
