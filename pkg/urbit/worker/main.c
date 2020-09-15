@@ -254,6 +254,9 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
 
     if ( eve_d ) {
       //  XX need not be fatal, need a u3m_reboot equivalent
+      //  XX can spuriously fail do to corrupt memory-image checkpoint,
+      //  need a u3m_half_boot equivalent
+      //  workaround is to delete/move the checkpoint in case of corruption
       //
       if ( c3n == u3u_uncram(u3V.dir_c, eve_d) ) {
         fprintf(stderr, "serf (%" PRIu64 "): rock load failed\r\n", eve_d);
@@ -368,6 +371,10 @@ _cw_queu(c3_i argc, c3_c* argv[])
     u3V.dir_c = strdup(dir_c);
     u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
 
+    //  XX can spuriously fail do to corrupt memory-image checkpoint,
+    //  need a u3m_half_boot equivalent
+    //  workaround is to delete/move the checkpoint in case of corruption
+    //
     if ( c3n == u3u_uncram(dir_c, eve_d) ) {
       fprintf(stderr, "urbit-worker: queu: failed\r\n");
       exit(1);
