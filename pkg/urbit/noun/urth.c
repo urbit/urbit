@@ -57,10 +57,10 @@ _cu_atom_to_ref(ur_root_t* rot_u, u3a_atom* vat_u)
 
       c3_assert( len_d );
 
-      //  NB: this call will accounts for any trailing null bytes
+      //  NB: this call will account for any trailing null bytes
       //  caused by an overestimate in [len_d]
       //
-      ref = ur_coin_bytes(rot_u, byt_y, len_d);
+      ref = ur_coin_bytes(rot_u, len_d, byt_y);
     } break;
   }
 

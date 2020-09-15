@@ -15,7 +15,7 @@
 //  declarations of inline functions
 //
 uint64_t
-ur_met0_bytes_unsafe(uint8_t *byt, uint64_t len);
+ur_met0_bytes_unsafe(uint64_t len, uint8_t *byt);
 
 static void*
 _oom(const char* cap, void* v)
@@ -543,7 +543,7 @@ ur_met(ur_root_t *r, uint8_t bloq, ur_nref ref)
         uint64_t len = r->atoms.lens[idx];
         uint8_t *byt = r->atoms.bytes[idx];
 
-        m_bit = ur_met0_bytes_unsafe(byt, len);
+        m_bit = ur_met0_bytes_unsafe(len, byt);
       }
 
       switch ( bloq ) {
@@ -568,7 +568,7 @@ ur_met(ur_root_t *r, uint8_t bloq, ur_nref ref)
 }
 
 static ur_nref
-_coin_unsafe(ur_atoms_t *atoms, ur_mug mug, uint8_t *byt, uint64_t len)
+_coin_unsafe(ur_atoms_t *atoms, ur_mug mug, uint64_t len, uint8_t *byt)
 {
   uint64_t fill = atoms->fill;
   ur_tag    tag = ur_iatom;
@@ -606,7 +606,7 @@ _cons_unsafe(ur_cells_t *cells, ur_mug mug, ur_nref hed, ur_nref tal)
 }
 
 ur_nref
-ur_coin_bytes_unsafe(ur_root_t *r, uint8_t *byt, uint64_t len)
+ur_coin_bytes_unsafe(ur_root_t *r, uint64_t len, uint8_t *byt)
 {
   ur_atoms_t *atoms = &(r->atoms);
   ur_dict_t   *dict = &(atoms->dict);
@@ -641,7 +641,7 @@ ur_coin_bytes_unsafe(ur_root_t *r, uint8_t *byt, uint64_t len)
       ur_atoms_grow(atoms);
     }
 
-    tom = _coin_unsafe(atoms, mug, byt, len);
+    tom = _coin_unsafe(atoms, mug, len, byt);
 
     bucket->refs[b_fill] = tom;
     bucket->fill = 1 + b_fill;
@@ -651,7 +651,7 @@ ur_coin_bytes_unsafe(ur_root_t *r, uint8_t *byt, uint64_t len)
 }
 
 ur_nref
-ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
+ur_coin_bytes(ur_root_t *r, uint64_t len, uint8_t *byt)
 {
   //  strip trailing zeroes
   //
@@ -661,7 +661,7 @@ ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
 
   //  produce a direct atom if possible
   //
-  if ( 62 >= ur_met0_bytes_unsafe(byt, len) ) {
+  if ( 62 >= ur_met0_bytes_unsafe(len, byt) ) {
     uint64_t i, direct = 0;
 
     for ( i = 0; i < len; i++ ) {
@@ -674,7 +674,7 @@ ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len)
     uint8_t *copy = _oom("coin_bytes", malloc(len));
     memcpy(copy, byt, len);
 
-    return ur_coin_bytes_unsafe(r, copy, len);
+    return ur_coin_bytes_unsafe(r, len, copy);
   }
 }
 
@@ -699,7 +699,7 @@ ur_coin64(ur_root_t *r, uint64_t n)
     byt[6] = ur_mask_8(n >> 48);
     byt[7] = ur_mask_8(n >> 56);
 
-    return ur_coin_bytes_unsafe(r, byt, 8);
+    return ur_coin_bytes_unsafe(r, 8, byt);
   }
 }
 

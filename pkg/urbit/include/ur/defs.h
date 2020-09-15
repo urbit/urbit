@@ -64,7 +64,7 @@ typedef uint8_t  ur_bool_t;
 **  unsafe wrt trailing null bytes, which are invalid
 */
 inline uint64_t
-ur_met0_bytes_unsafe(uint8_t *byt, uint64_t len)
+ur_met0_bytes_unsafe(uint64_t len, uint8_t *byt)
 {
   uint64_t last = len - 1;
   return (last << 3) + ur_met0_8(byt[last]);

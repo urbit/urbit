@@ -174,10 +174,10 @@ ur_met(ur_root_t *r, uint8_t bloq, ur_nref ref);
 **  allocated with system malloc) and trailing null bytes (not allowed).
 */
 ur_nref
-ur_coin_bytes_unsafe(ur_root_t *r, uint8_t *byt, uint64_t len);
+ur_coin_bytes_unsafe(ur_root_t *r, uint64_t len, uint8_t *byt);
 
 ur_nref
-ur_coin_bytes(ur_root_t *r, uint8_t *byt, uint64_t len);
+ur_coin_bytes(ur_root_t *r, uint64_t len, uint8_t *byt);
 
 ur_nref
 ur_coin64(ur_root_t *r, uint64_t n);

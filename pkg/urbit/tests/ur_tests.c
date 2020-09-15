@@ -1810,13 +1810,13 @@ _test_jam_cue(void)
   {
     uint8_t inp[33] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
     uint8_t res[35] = { 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8 };
-    TEST_CASE("wide", ur_coin_bytes(r, inp, sizeof(inp)));
+    TEST_CASE("wide", ur_coin_bytes(r, sizeof(inp), inp));
   }
 
   {
     uint8_t inp[16] = { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc, 0xa8, 0xab, 0x60, 0xef, 0x2d, 0xd, 0x0, 0x0, 0x80 };
     uint8_t res[19] = { 0x0, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x18, 0x50, 0x57, 0xc1, 0xde, 0x5b, 0x1a, 0x0, 0x0, 0x0, 0x1 };
-    TEST_CASE("date", ur_coin_bytes(r, inp, sizeof(inp)));
+    TEST_CASE("date", ur_coin_bytes(r, sizeof(inp), inp));
   }
 
   ur_root_free(r);

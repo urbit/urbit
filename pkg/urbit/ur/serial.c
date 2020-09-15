@@ -214,7 +214,7 @@ _cue_next(ur_root_t      *r,
             len_byt--;
           }
 
-          *out = ur_coin_bytes_unsafe(r, byt, len_byt);
+          *out = ur_coin_bytes_unsafe(r, len_byt, byt);
         }
 
         ur_dict64_put(r, dict, bits, (uint64_t)*out);
