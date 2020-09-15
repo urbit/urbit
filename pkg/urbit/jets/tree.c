@@ -472,16 +472,6 @@ static c3_c* _141_pen_loot_ha[] = {
   0
 };
 
-  static u3j_harm _141_pen__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
-  static c3_c* _141_pen__ut_crop_ha[] = {
-    "d83e5e47f712870aba815d79943d287cbefdc00640409464b30bf755115d4a1a",
-    0
-  };
-  static u3j_harm _141_pen__ut_fuse_a[] = {{".2", u3wfu_fuse}, {}};
-  static c3_c* _141_pen__ut_fuse_ha[] = {
-    "43d8bfdf9255f548bb58d9975bac273e2dcebe5ae98bd7e466b6fff6ff43a944",
-    0
-  };
   static u3j_harm _141_pen__ut_mint_a[] = {{".2", u3wfu_mint}, {}};
   static c3_c* _141_pen__ut_mint_ha[] = {
     "43a06316365bcd14a94f8ed1f3fe5a8f61d1da5bea989296a192b62a966fca11",
@@ -514,8 +504,6 @@ static c3_c* _141_pen_loot_ha[] = {
 
 static u3j_core _141_pen__ut_d[] =
   {
-    { "crop", 7, _141_pen__ut_crop_a, 0, _141_pen__ut_crop_ha },
-    { "fuse", 7, _141_pen__ut_fuse_a, 0, _141_pen__ut_fuse_ha },
     { "mint", 7, _141_pen__ut_mint_a, 0, _141_pen__ut_mint_ha },
     { "mull", 7, _141_pen__ut_mull_a, 0, _141_pen__ut_mull_ha },
     { "nest", 7, 0, _141_pen__ut_nest_d, _141_pen__ut_nest_ha },
