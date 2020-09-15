@@ -20,7 +20,6 @@ export default class DojoApp extends Component {
     this.store.setStateHandler(this.setState.bind(this));
 
     this.state = this.store.state;
-    this.resetControllers = this.resetControllers.bind(this);
   }
 
   resetControllers() {
