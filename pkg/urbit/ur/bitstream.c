@@ -875,11 +875,10 @@ _bsw32_unsafe(ur_bsw_t *bsw, uint8_t len, uint32_t val)
 void
 ur_bsw32(ur_bsw_t *bsw, uint8_t len, uint32_t val)
 {
-  uint8_t bits, need;
+  uint8_t need;
 
   len  = ur_min(32, len);
-  bits = bsw->off + len;
-  need = (bits >> 3) + !!ur_mask_3(bits);
+  need = ur_bloq_up3( bsw->off + len );
 
   if ( bsw->fill + need >= bsw->size ) {
     ur_bsw_grow(bsw, ur_max(need, bsw->prev));
@@ -999,11 +998,10 @@ _bsw64_unsafe(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 void
 ur_bsw64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 {
-  uint8_t bits, need;
+  uint8_t need;
 
   len  = ur_min(64, len);
-  bits = bsw->off + len;
-  need = (bits >> 3) + !!ur_mask_3(bits);
+  need = ur_bloq_up3( bsw->off + len );
 
   if ( bsw->fill + need >= bsw->size ) {
     ur_bsw_grow(bsw, ur_max(need, bsw->prev));
@@ -1080,8 +1078,7 @@ _bsw_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 void
 ur_bsw_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 {
-  uint8_t  bits = len + bsw->off;
-  uint64_t need = (bits >> 3) + !!ur_mask_3(bits);
+  uint64_t need = ur_bloq_up3(len + bsw->off);
 
   if ( bsw->fill + need >= bsw->size ) {
     ur_bsw_grow(bsw, ur_max(need, bsw->prev));
@@ -1117,8 +1114,7 @@ _bsw_bex_unsafe(ur_bsw_t *bsw, uint8_t n)
 void
 ur_bsw_bex(ur_bsw_t *bsw, uint8_t n)
 {
-  uint32_t bits = 1 + n + bsw->off;
-  uint8_t  need = (bits >> 3) + !!ur_mask_3(bits);
+  uint64_t need = ur_bloq_up3(1 + n + bsw->off);
 
   if ( bsw->fill + need >= bsw->size ) {
     ur_bsw_grow(bsw, ur_max(need, bsw->prev));
@@ -1144,15 +1140,18 @@ _bsw_mat64_unsafe(ur_bsw_t *bsw, uint8_t len, uint64_t val)
   }
 }
 
+/*
+*  the length of a "mat" run-length encoded atom of [len] bits
+*/
+#define MAT_LEN(len)  ( ( 0 == len ) ? 1 : len + (2 * ur_met0_64((uint64_t)len)) )
+
 void
 ur_bsw_mat64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 {
-  uint8_t next, bits, need;
+  uint8_t need;
 
   len  = ur_min(64, len);
-  next = ( 0 == len ) ? 1 : len + (2 * ur_met0_64(len));
-  bits = bsw->off + next;
-  need = (bits >> 3) + !!ur_mask_3(bits);
+  need = ur_bloq_up3( bsw->off + MAT_LEN(len) );
 
   if ( bsw->fill + need >= bsw->size ) {
     ur_bsw_grow(bsw, ur_max(need, bsw->prev));
@@ -1183,9 +1182,7 @@ _bsw_mat_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 void
 ur_bsw_mat_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 {
-  uint64_t next = ( 0 == len ) ? 1 : len + (2 * ur_met0_64(len));
-  uint64_t bits = bsw->off + next;
-  uint64_t need = (bits >> 3) + !!ur_mask_3(bits);
+  uint64_t need = ur_bloq_up3( bsw->off + MAT_LEN(len) );
 
   if ( bsw->fill + need >= bsw->size ) {
     ur_bsw_grow(bsw, ur_max(need, bsw->prev));
@@ -1204,9 +1201,10 @@ _bsw_back64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 void
 ur_bsw_back64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 {
-  uint64_t next = ( 0 == len ) ? 1 : len + (2 * ur_met0_64(len));
-  uint64_t bits = 2 + bsw->off + next;
-  uint64_t need = (bits >> 3) + !!ur_mask_3(bits);
+  uint8_t need;
+
+  len  = ur_min(64, len);
+  need = ur_bloq_up3( 2 + bsw->off + MAT_LEN(len) );
 
   if ( bsw->fill + need >= bsw->size ) {
     ur_bsw_grow(bsw, ur_max(need, bsw->prev));
@@ -1225,9 +1223,10 @@ _bsw_atom64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 void
 ur_bsw_atom64(ur_bsw_t *bsw, uint8_t len, uint64_t val)
 {
-  uint64_t next = ( 0 == len ) ? 1 : len + (2 * ur_met0_64(len));
-  uint64_t bits = 1 + bsw->off + next;
-  uint64_t need = (bits >> 3) + !!ur_mask_3(bits);
+  uint8_t need;
+
+  len  = ur_min(64, len);
+  need = ur_bloq_up3( 1 + bsw->off + MAT_LEN(len) );
 
   if ( bsw->fill + need >= bsw->size ) {
     ur_bsw_grow(bsw, ur_max(need, bsw->prev));
@@ -1246,9 +1245,7 @@ _bsw_atom_bytes_unsafe(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 void
 ur_bsw_atom_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 {
-  uint64_t next = ( 0 == len ) ? 1 : len + (2 * ur_met0_64(len));
-  uint64_t bits = 1 + bsw->off + next;
-  uint64_t need = (bits >> 3) + !!ur_mask_3(bits);
+  uint64_t need = ur_bloq_up3( 1 + bsw->off + MAT_LEN(len) );
 
   if ( bsw->fill + need >= bsw->size ) {
     ur_bsw_grow(bsw, ur_max(need, bsw->prev));
@@ -1260,8 +1257,7 @@ ur_bsw_atom_bytes(ur_bsw_t *bsw, uint64_t len, uint8_t *byt)
 void
 ur_bsw_cell(ur_bsw_t *bsw)
 {
-  uint8_t bits = 2 + bsw->off;
-  uint8_t need = (bits >> 3) + !!ur_mask_3(bits);
+  uint8_t need = ur_bloq_up3( 2 + bsw->off );
 
   if ( bsw->fill + need >= bsw->size ) {
     ur_bsw_grow(bsw, ur_max(need, bsw->prev));
