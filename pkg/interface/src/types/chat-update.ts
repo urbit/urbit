@@ -73,6 +73,10 @@ export interface Envelope {
   letter: Letter;
 }
 
+export type IMessage = Envelope & {
+  pending?: boolean
+};
+
 interface LetterText {
   text: string;
 }

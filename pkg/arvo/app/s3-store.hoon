@@ -1,3 +1,7 @@
+::  s3-store [landscape]:
+::
+::  stores s3 keys for uploading and sharing images and objects
+::
 /-  *s3
 /+  s3-json, default-agent, verb, dbug
 ~%  %s3-top  ..is  ~
@@ -89,7 +93,18 @@
   --
 ::
 ++  on-leave  on-leave:def
-++  on-peek   on-peek:def
+++  on-peek
+  ~/  %s3-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?.  (team:title our.bowl src.bowl)  ~
+  ?+    path  [~ ~]
+      [%x %credentials ~]
+    [~ ~ %s3-update !>(`update`[%credentials credentials])]
+  ::
+      [%x %configuration ~]
+    [~ ~ %s3-update !>(`update`[%configuration configuration])]
+  ==
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def

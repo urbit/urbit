@@ -5,6 +5,10 @@ export default class BaseStore<S extends object> {
     this.state = this.initialState();
   }
 
+  dehydrate() {}
+
+  rehydrate() {}
+
   initialState() {
     return {} as S;
   }

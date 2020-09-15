@@ -70,10 +70,6 @@ h2 {
   line-height: 16px;
 }
 
-.chat-md-message > pre {
-  overflow-x: auto;
-}
-
 .mono {
   font-family: "Source Code Pro", monospace;
 }
@@ -120,20 +116,8 @@ h2 {
   100% {transform: rotate(360deg);}
 }
 
-/* embeds */
-.embed-container {
-  position: relative;
-  height: 0;
-  overflow: hidden;
-  padding-bottom: 28.125%;
-}
-
-.embed-container iframe, .embed-container object, .embed-container embed {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.embed-container iframe {
+  max-width: 100%;
 }
 
 .mh-16 {
@@ -192,9 +176,6 @@ h2 {
   .h-100-minus-96-s {
     height: calc(100% - 96px);
   }
-  .embed-container {
-    padding-bottom: 56.25%;
-  }
   .unread-notice {
     top: 96px;
   }
@@ -204,17 +185,11 @@ h2 {
   .flex-basis-250-m {
     flex-basis: 250px;
   }
-  .embed-container {
-    padding-bottom: 56.25%;
-  }
 }
 
 @media all and (min-width: 46.875em) and (max-width: 60em) {
   .flex-basis-250-l {
     flex-basis: 250px;
-  }
-  .embed-container {
-    padding-bottom: 37.5%;
   }
 }
 
@@ -256,9 +231,21 @@ blockquote {
     font-family: 'Inter';
 }
 
-.chat .CodeMirror.cm-s-code.chat .cm-s-tlon * {
-   font-family: 'Source Code Pro';
+pre, code {
+  background-color: var(--light-gray);
+}
 
+pre code {
+  background-color: transparent;
+  white-space: pre-wrap;
+}
+
+code, .code, .chat.code .react-codemirror2 .CodeMirror * {
+  font-family: 'Source Code Pro';
+}
+
+.chat .CodeMirror.cm-s-code.chat * {
+   font-family: 'Source Code Pro';
 }
 
 .chat .CodeMirror-selected { background:#BAE3FE !important; color: black; }
@@ -267,6 +254,7 @@ pre.CodeMirror-placeholder.CodeMirror-line-like { color: var(--gray); }
 .chat .cm-s-tlon span { font-family: "Inter"}
 .chat .cm-s-tlon span.cm-meta { color: var(--gray); }
 .chat .cm-s-tlon span.cm-number { color: var(--gray); }
+.chat .cm-s-tlon span.cm-quote { color: var(--gray); }
 .chat .cm-s-tlon span.cm-keyword { line-height: 1em; font-weight: bold; color: var(--gray); }
 .chat .cm-s-tlon span.cm-atom { font-weight: bold; color: var(--gray); }
 .chat .cm-s-tlon span.cm-def { color: black; }

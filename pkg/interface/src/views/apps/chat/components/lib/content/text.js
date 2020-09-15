@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import urbitOb from 'urbit-ob';
+import { Box } from '@tlon/indigo-react';
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
-  'blockquote',
   'atxHeading',
   'thematicBreak',
   'list',
@@ -56,9 +56,9 @@ export default class TextContent extends Component {
       );
     } else {
       return (
-        <section className="chat-md-message">
+        <Box style={{ overflowWrap: 'break-word' }}>
           <MessageMarkdown source={content.text} />
-        </section>
+        </Box>
       );
     }
   }

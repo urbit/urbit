@@ -1,4 +1,5 @@
-::  contact-hook:
+::  contact-hook [landscape]
+::
 ::
 /-  group-hook,
     *contact-hook,
@@ -54,7 +55,7 @@
     =/  old  !<(versioned-state old-vase)
     =|  cards=(list card)
     |^
-    |-  ^-  (quip card _this) 
+    |-  ^-  (quip card _this)
     ?:  ?=(%3 -.old)
       [cards this(state old)]
     ?:  ?=(%2 -.old)
@@ -80,7 +81,7 @@
       %_    $
         -.old  %2
         ::
-          synced.old  
+          synced.old
         %-  malt
         %+  turn
           ~(tap by synced.old)
@@ -126,7 +127,7 @@
           %json
         (poke-json:cc !<(json vase))
       ::
-          %contact-action  
+          %contact-action
         (poke-contact-action:cc !<(contact-action vase))
       ::
           %contact-hook-action
@@ -149,7 +150,7 @@
         %kick       [(kick:cc wire) this]
         %watch-ack
       =^  cards  state
-        (watch-ack:cc wire p.sign) 
+        (watch-ack:cc wire p.sign)
       [cards this]
     ::
         %fact
@@ -164,10 +165,7 @@
           (fact-group-update:cc wire !<(update:group-store q.cage.sign))
         [cards this]
       ::
-          %invite-update
-        =^  cards  state
-          (fact-invite-update:cc wire !<(invite-update q.cage.sign))
-        [cards this]
+        %invite-update  [~ this]
       ==
     ==
   ::
@@ -304,8 +302,8 @@
     [%pass /group %agent [our.bol %group-store] %watch /groups]~
   ::
       [%contacts @ *]
-    =/  wir  
-      ?:  =(%ship i.t.wir) 
+    =/  wir
+      ?:  =(%ship i.t.wir)
         wir
       (migrate wir)
     ?>  ?=([%contacts @ @ *] wir)
@@ -480,17 +478,6 @@
     =/  act=invite-action  [%invite /contacts (shaf %msg-uid eny.bol) invite]
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   --
-::
-++  fact-invite-update
-  |=  [wir=wire fact=invite-update]
-  ^-  (quip card _state)
-  ?+  -.fact  [~ state]
-      %accepted
-    =/  rid=resource
-      (de-path:resource path.invite.fact)
-    :_  state
-    ~[(contact-view-poke %join rid)]
-  ==
 ::
 ++  group-hook-poke
   |=  =action:group-hook

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import urbitOb from 'urbit-ob';
+import { Link } from 'react-router-dom';
+
 import { InviteSearch } from '~/views/components/InviteSearch';
 import { Spinner } from '~/views/components/Spinner';
-import { Link } from 'react-router-dom';
 import { makeRoutePath, deSig } from '~/logic/lib/util';
-import urbitOb from 'urbit-ob';
 
 export class NewScreen extends Component {
   constructor(props) {

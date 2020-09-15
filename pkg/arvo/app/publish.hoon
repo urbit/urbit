@@ -1,3 +1,7 @@
+::  publish [landscape]
+::
+::  stores notebooks in clay, subscribes and allow subscriptions to notebooks
+::
 /-  *publish
 /-  *group
 /-  group-hook
@@ -96,7 +100,7 @@
         ==
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~publish' /app/landscape %.n])
+            !>([%serve-dir /'~publish' /app/landscape %.n %.y])
         ==
         [%pass /groups %agent [our.bol %group-store] %watch /groups]
     ==
@@ -126,7 +130,7 @@
             [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
             :*  %pass  /srv  %agent  [our.bol %file-server]
                 %poke  %file-server-action
-                !>([%serve-dir /'~publish' /app/landscape %.n])
+                !>([%serve-dir /'~publish' /app/landscape %.n %.y])
             ==
         ==
       =+  ^-  [kick-cards=(list card) old-subs=(jug @tas @p)]  kick-subs
@@ -197,7 +201,7 @@
             [%pass /view-bind %arvo %e %connect [~ /'publish-view'] %publish]
             :*  %pass  /srving  %agent  [our.bol %file-server]
                 %poke  %file-server-action
-                !>([%serve-dir /'~publish' /app/landscape %.n])
+                !>([%serve-dir /'~publish' /app/landscape %.n %.y])
         ==  ==
       ==
     ::
@@ -2347,7 +2351,6 @@
   ::  all notebooks, short form
       [[[~ %json] [%'publish-view' %notebooks ~]] ~]
     %-  json-response:gen
-    %-  json-to-octs
     (notebooks-map:enjs our.bol books)
   ::
   ::  notes pagination
@@ -2366,7 +2369,6 @@
     ?~  length
       not-found:gen
     %-  json-response:gen
-    %-  json-to-octs
     :-  %o
     (notes-page:enjs notes.u.book u.start u.length)
   ::
@@ -2390,7 +2392,6 @@
     ?~  length
       not-found:gen
     %-  json-response:gen
-    %-  json-to-octs
     (comments-page:enjs comments.u.note u.start u.length)
   ::
   ::  single notebook with initial 50 notes in short form, as json
@@ -2409,7 +2410,7 @@
       (~(put by p.notebook-json) %subscribers (get-subscribers-json book-name))
     =.  p.notebook-json
       (~(put by p.notebook-json) %writers (get-writers-json u.host book-name))
-    (json-response:gen (json-to-octs (pairs notebook+notebook-json ~)))
+    (json-response:gen (pairs notebook+notebook-json ~))
   ::
   ::  single note, with initial 50 comments, as json
       [[[~ %json] [%'publish-view' @ @ @ ~]] ~]
@@ -2424,7 +2425,7 @@
     ?~  note  not-found:gen
     =/  jon=json
       o+(note-presentation:enjs u.book note-name u.note)
-    (json-response:gen (json-to-octs jon))
+    (json-response:gen jon)
   ==
 ::
 --

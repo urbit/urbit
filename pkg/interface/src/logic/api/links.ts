@@ -44,8 +44,8 @@ export default class LinksApi extends BaseApi<StoreState> {
     this.fetchLink(
       endpoint,
       (res) => {
-        if (res.data.submission) {
-          callback(res.data.submission);
+        if (res.data?.['link-update']?.submission) {
+          callback(res.data?.['link-update']?.submission);
         } else {
           console.error('unexpected submission response', res);
         }

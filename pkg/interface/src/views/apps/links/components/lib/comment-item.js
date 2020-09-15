@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Sigil } from '~/logic/lib/sigil';
 import { cite } from '~/logic/lib/util';
 import moment from 'moment';
+import { Box, Text, Row } from '@tlon/indigo-react';
+import RichText from '~/views/components/RichText';
 
 export class CommentItem extends Component {
   constructor(props) {
@@ -35,9 +37,9 @@ export class CommentItem extends Component {
 
     const member = props.member || false;
 
-    const pending = props.pending ? 'o-60' : '';
-
-    const img = (props.avatar)
+    const showAvatar = props.avatar && !props.hideAvatars;
+    const showNickname = props.nickname && !props.hideNicknames;
+    const img = showAvatar
       ? <img src={props.avatar} height={36} width={36} className="dib" />
       : <Sigil
         ship={'~' + props.ship}
@@ -47,22 +49,20 @@ export class CommentItem extends Component {
         />;
 
     return (
-      <div className={'w-100 pv3 ' + pending}>
-        <div className="flex bg-white bg-gray0-d">
-        {img}
-          <p className="gray2 f9 flex items-center ml2">
-            <span className={'black white-d ' + props.nameClass}
-            title={props.ship}
-            >
-              {props.nickname ? props.nickname : cite(props.ship)}
-            </span>
-            <span className="ml2">
+      <Box width="100%" py={3} opacity={props.pending ? '0.6' : '1'}>
+        <Row backgroundColor='white'>
+          {img}
+          <Row fontSize={0} alignItems="center" ml={2}>
+            <Text mono={!props.hasNickname} title={props.ship}>
+              {showNickname ? props.nickname : cite(props.ship)}
+            </Text>
+            <Text gray ml={2}>
               {this.state.timeSinceComment}
-            </span>
-          </p>
-        </div>
-        <p className="inter f8 pv3 white-d">{props.content}</p>
-      </div>
+            </Text>
+          </Row>
+        </Row>
+        <Text display="block" py={3} fontSize={1}><RichText remoteContentPolicy={props.remoteContentPolicy}>{props.content}</RichText></Text>
+      </Box>
     );
   }
 }

@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
+
 export function resourceAsPath(resource) {
   const { name, ship } = resource;
   return `/ship/~${ship}/${name}`;
@@ -73,6 +75,14 @@ export function uxToHex(ux) {
 
   const value = ux.replace('.', '').padStart(6, '0');
   return value;
+}
+
+export function hexToUx(hex) {
+   const ux = _.chain(hex.split(""))
+     .chunk(4)
+     .map((x) => _.dropWhile(x, (y) => y === 0).join(""))
+     .join(".");
+   return `0x${ux}`;
 }
 
 function hexToDec(hex) {
