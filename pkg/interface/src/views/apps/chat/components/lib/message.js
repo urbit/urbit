@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { OverlaySigil } from './overlay-sigil';
 import MessageContent from './message-content';
 import { uxToHex, cite, writeText } from '~/logic/lib/util';
 import moment from 'moment';
-
 
 export const Message = (props) => {
   const {
@@ -22,7 +21,6 @@ export const Message = (props) => {
     moment.unix(msg.when / 1000).format(
       renderSigil ? 'hh:mm a' : 'hh:mm'
     );
-
 
   return (
     <div className={containerClass}
@@ -70,6 +68,17 @@ const renderWithSigil = (props, timestamp) => {
     name = cite(props.msg.author);
   }
 
+  let nameSpan = null;
+
+  const copyNotice = (saveName) => {
+    if (nameSpan !== null) {
+      nameSpan.innerText = 'Copied';
+      setTimeout(() => {
+        nameSpan.innerText = saveName;
+      }, 800);
+    }
+  };
+
   return (
     <div className="flex w-100">
       <OverlaySigil
@@ -92,8 +101,10 @@ const renderWithSigil = (props, timestamp) => {
                 'mw5 db truncate pointer ' +
                 (showNickname ? '' : 'mono')
               }
+              ref={(e) => nameSpan = e}
               onClick={() => {
-                writeText(props.msg.author);
+                writeText(`~${props.msg.author}`);
+                copyNotice(name);
               }}
               title={`~${props.msg.author}`}
             >
@@ -109,5 +120,5 @@ const renderWithSigil = (props, timestamp) => {
       </div>
     </div>
   );
-}
+};
 
