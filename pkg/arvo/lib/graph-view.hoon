@@ -25,33 +25,28 @@
           title+(un so)
           description+(un so)
           mark+(uf ~ (mu so))
-          app+(un so)
           associated+(un associated)
       ==
     ::
     ++  leave
       %-  ot
       :~  resource+dejs:resource
-          app+so
       ==
     ::
     ++  delete
       %-  ot
       :~  resource+dejs:resource
-          app+so
       ==
     ::
     ++  join
       %-  ot
       :~  resource+dejs:resource
-          app+so
           ship+(su ;~(pfix sig fed:ag))
       ==
     ::
     ++  groupify  
       %-  ou
       :~  resource+(un dejs:resource)
-          app+(un so)
           to+(uf ~ (mu dejs:resource))
       ==
     ++  invite    !!

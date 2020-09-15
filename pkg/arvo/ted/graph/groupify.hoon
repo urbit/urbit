@@ -27,7 +27,7 @@
   (pure:m u.ugroup)
 ::
 ++  scry-metadatum
-  |=  [app=app-name:graph-view rid=resource]
+  |=  rid=resource
   =/  m  (strand ,metadata)
   ^-  form:m
   =/  enc-path=@t
@@ -35,7 +35,7 @@
   ;<  umeta=(unit metadata)  bind:m
     %+  scry:strandio  (unit metadata)
     %+  weld  /gx/metadata-store/metadata
-    /[enc-path]/[app]/[enc-path]/noun
+    /[enc-path]/graph/[enc-path]/noun
   ?>  ?=(^ umeta)
   (pure:m u.umeta)
 --
@@ -50,7 +50,7 @@
 ?.  hidden.group
   (strand-fail:strandio %bad-request ~)
 ;<  =metadata  bind:m
-  (scry-metadatum app.action rid.action)
+  (scry-metadatum rid.action)
 ?~  to.action
   ;<  ~  bind:m
     %+  poke-our  %contact-view
@@ -63,11 +63,12 @@
 =/  app-path
   (en-path:resource rid.action)
 =/  add-md=metadata-action
-  [%add new-path [app.action app-path] metadata]
+  [%add new-path graph+app-path metadata]
 ;<  ~  bind:m
   (poke-our %metadata-store metadata-action+!>(add-md))
 ;<  ~  bind:m
-  (poke-our %metadata-store metadata-action+!>([%remove app-path [app.action app-path]]))
+  %+  poke-our  %metadata-store
+  metadata-action+!>([%remove app-path graph+app-path])
 ;<  ~  bind:m
   (poke-our %group-store %group-update !>([%remove-group rid.action]))
 (pure:m !>(~))

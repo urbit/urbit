@@ -8,13 +8,13 @@
 ++  poke-our   poke-our:strandio
 ::
 ++  scry-metadata
-  |=  [app=@tas rid=resource]
+  |=  rid=resource
   =/  m  (strand ,(unit resource))
   ^-  form:m
   ;<  pax=(unit (set path))  bind:m
     %+  scry:strandio   ,(unit (set path))
     ;:  weld
-      /gx/metadata-store/resource/[app]
+      /gx/metadata-store/resource/graph
       (en-path:resource rid)
       /noun
     ==
@@ -33,8 +33,7 @@
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ?:  =(our.bowl entity.rid.action)
   (fail %bad-request ~)
-;<  group=(unit resource)  bind:m  
-  (scry-metadata app.action rid.action)
+;<  group=(unit resource)  bind:m  (scry-metadata rid.action)
 ?^  group
   ::  We have group, graph is managed
   ;<  ~  bind:m  

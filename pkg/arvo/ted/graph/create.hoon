@@ -53,7 +53,7 @@
     creator  our.bowl
   ==
 =/  act=metadata-action
-  [%add group-path [app.action (en-path:resource rid.action)] metadata]
+  [%add group-path graph+(en-path:resource rid.action) metadata]
 ;<  ~  bind:m  (poke-our %metadata-hook %metadata-action !>(act))
 ;<  ~  bind:m
   (poke-our %metadata-hook %metadata-hook-action !>([%add-owned group-path]))

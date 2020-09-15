@@ -7,13 +7,13 @@
 ++  poke-our   poke-our:strandio
 ::
 ++  scry-metadata
-  |=  [app=app-name:graph-view rid=resource]
+  |=  rid=resource
   =/  m  (strand ,resource)
   ^-  form:m
   ;<  pax=(unit (set path))  bind:m
     %+  scry:strandio   ,(unit (set path))
     ;:  weld
-      /gx/metadata-store/resource/[app]
+      /gx/metadata-store/resource/graph
       (en-path:resource rid)
       /noun
     ==
@@ -22,13 +22,13 @@
   (pure:m (de-path:resource n.u.pax))
 ::
 ++  scry-group
-  |=  [app=app-name:graph-view rid=resource]
+  |=  rid=resource
   =/  m  (strand ,group)
   ^-  form:m
   ;<  ugroup=(unit group)  bind:m
     %+  scry:strandio   ,(unit group)
     ;:  weld
-      /gx/group-store/resource/[app]
+      /gx/group-store/resource/graph
       (en-path:resource rid)
       /noun
     ==
@@ -54,10 +54,8 @@
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ?:  =(our.bowl entity.rid.action)
   (strand-fail:strandio %bad-request ~)
-;<  group-rid=resource  bind:m  
-  (scry-metadata app.action rid.action)
-;<  g=group  bind:m
-  (scry-group app.action group-rid)
+;<  group-rid=resource  bind:m  (scry-metadata rid.action)
+;<  g=group  bind:m  (scry-group group-rid)
 ?.  hidden.g
   ;<  ~  bind:m  (delete-graph rid.action)
   (pure:m !>(~))

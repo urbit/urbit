@@ -32,14 +32,13 @@
         title=@t
         description=@t
         mark=(unit mark)
-        app=@tas
         =associated
     ==
-    [%delete rid=resource app=@tas]
-    [%leave rid=resource app=@tas]
-    [%join rid=resource app=@tas =ship] 
+    [%delete rid=resource]
+    [%leave rid=resource]
+    [%join rid=resource =ship] 
     ::[%invite rid=resource ships=(set ship)]
-    [%groupify rid=resource app=@tas to=(unit resource)]
+    [%groupify rid=resource to=(unit resource)]
   ==
 --
 
