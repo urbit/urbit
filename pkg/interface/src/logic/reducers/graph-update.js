@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { OrderedMap } from "~/logic/lib/OrderedMap";
 
 
 export const GraphReducer = (json, state) => {
@@ -19,7 +20,7 @@ const keys = (json, state) => {
       let resource = res.ship + '/' + res.name;
 
       if (!(resource in state.graphs)) {
-        state.graphs[resource] = new Map();
+        state.graphs[resource] = new OrderedMap();
       }
 
       return resource;
@@ -32,12 +33,12 @@ const addGraph = (json, state) => {
   const _processNode = (node) => {
     //  is empty
     if (!node.children) {
-      node.children = new Map();
+      node.children = new OrderedMap();
       return node;
     }
 
     //  is graph
-    let converted = new Map();
+    let converted = new OrderedMap();
     for (let i in node.children) {
       let item = node.children[i];
       let index = item[0].split('/').slice(1).map((ind) => {
@@ -62,7 +63,7 @@ const addGraph = (json, state) => {
     }
 
     let resource = data.resource.ship + '/' + data.resource.name;
-    state.graphs[resource] = new Map();
+    state.graphs[resource] = new OrderedMap();
 
     for (let i in data.graph) {
       let item = data.graph[i];
@@ -92,7 +93,7 @@ const removeGraph = (json, state) => {
 };
 
 const mapifyChildren = (children) => {
-  return new Map(
+  return new OrderedMap(
     children.map(([idx, node]) => {
       const nd = {...node, children: mapifyChildren(node.children || []) }; 
       return [parseInt(idx.slice(1), 10), nd];
