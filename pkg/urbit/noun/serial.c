@@ -501,111 +501,35 @@ u3s_jam_file(u3_noun a, c3_c* pas_c)
   }
 }
 
-#define CUE_ROOT 0
-#define CUE_HEAD 1
-#define CUE_TAIL 2
-
-//  stack frame for recording head vs tail iteration
-//
-//    In Hoon, this structure would be as follows:
-//
-//    $%  [%root ~]
-//        [%head cell-cursor=@]
-//        [%tail cell-cursor=@ hed-width=@ hed-value=*]
-//    ==
-//
-typedef struct _cs_cue_frame
-{
-  c3_y    tag_y;
-  u3_atom cur;
-  u3_atom wid;
-  u3_noun hed;
-} cueframe;
-
-/* _cs_cue_push(): construct a cueframe and push it onto the road stack.
+/* _cs_cue: stack frame for tracking intermediate cell results
 */
-static inline void
-_cs_cue_push(c3_ys   mov,
-             c3_ys   off,
-             c3_y    tag_y,
-             u3_atom cur,
-             u3_atom wid,
-             u3_noun hed)
+typedef struct _cs_cue {
+  u3_weak hed;  //  head of a cell or u3_none
+  u3_atom wid;  //  bitwidth of [hed] or 0
+  u3_atom cur;  //  bit-cursor position
+} _cs_cue;
+
+/* _cs_rub: rub, TRANSFER [cur], RETAIN [a]
+*/
+static inline u3_noun
+_cs_rub(u3_atom cur, u3_atom a)
 {
-  u3R->cap_p += mov;
-
-  //  ensure we haven't overflowed the stack
-  //  (off==0 means we're on a north road)
-  //
-  if ( 0 == off ) {
-    if( !(u3R->cap_p > u3R->hat_p) ) {
-      u3m_bail(c3__meme);
-    }
-  }
-  else {
-    if( !(u3R->cap_p < u3R->hat_p) ) {
-      u3m_bail(c3__meme);
-    }
-  }
-
-  cueframe* fam_u = u3to(cueframe, u3R->cap_p + off);
-  fam_u->tag_y = tag_y;
-  fam_u->cur   = cur;
-  fam_u->wid   = wid;
-  fam_u->hed   = hed;
+  u3_noun pro = u3qe_rub(cur, a);
+  u3z(cur);
+  return pro;
 }
 
-/* _cs_cue_pop(): pop a cueframe off the road stack and return it.
+/* _cs_cue_next(): advance into [a], reading next value
+**                 TRANSFER [cur], RETAIN [a]
 */
-static inline cueframe
-_cs_cue_pop(c3_ys mov, c3_ys off)
+static inline u3_noun
+_cs_cue_next(u3a_pile*     pil_u,
+             u3p(u3h_root) har_p,
+             u3_atom         cur,
+             u3_atom           a,
+             u3_atom*        wid)
 {
-  cueframe* fam_u = u3to(cueframe, u3R->cap_p + off);
-  u3R->cap_p -= mov;
-
-  return *fam_u;
-}
-
-/* u3s_cue(): cue [a]
-*/
-u3_noun
-u3s_cue(u3_atom a)
-{
-  //  initialize signed stack offsets (relative to north/south road)
-  //
-  c3_ys mov, off;
-  {
-    c3_y wis_y = c3_wiseof(cueframe);
-    c3_o nor_o = u3a_is_north(u3R);
-    mov = ( c3y == nor_o ? -wis_y : wis_y );
-    off = ( c3y == nor_o ? 0 : -wis_y );
-  }
-
-  //  initialize a hash table for dereferencing backrefs
-  //
-  u3p(u3h_root) har_p = u3h_new();
-
-  //  stash the current stack post
-  //
-  u3p(cueframe) cap_p = u3R->cap_p;
-
-  //  push the (only) ROOT stack frame (our termination condition)
-  //
-  _cs_cue_push(mov, off, CUE_ROOT, 0, 0, 0);
-
-  // initialize cursor to bit-position 0
-  //
-  u3_atom cur = 0;
-
-  //  the bitwidth and product from reading at cursor
-  //
-  u3_atom wid, pro;
-
-  //  read from atom at cursor
-  //
-  //    TRANSFER .cur
-  //
-  advance: {
+  while ( 1 ) {
     //  read tag bit at cur
     //
     c3_y tag_y = u3qc_cut(0, cur, 1, a);
@@ -615,19 +539,14 @@ u3s_cue(u3_atom a)
     //    produce atom and the width we read
     //
     if ( 0 == tag_y ) {
-      u3_noun bur;
-      {
-        u3_noun x = u3qa_inc(cur);
-        bur = u3qe_rub(x, a);
-        u3z(x);
-      }
+      u3_noun bur = _cs_rub(u3i_vint(cur), a);
+      u3_noun pro = u3k(u3t(bur));
 
-      pro = u3k(u3t(bur));
       u3h_put(har_p, cur, u3k(pro));
-      wid = u3qa_inc(u3h(bur));
+      *wid = u3qa_inc(u3h(bur));
 
       u3z(bur);
-      goto retreat;
+      return pro;
     }
     else {
       //  read tag bit at (1 + cur)
@@ -643,86 +562,94 @@ u3s_cue(u3_atom a)
       //    produce referenced value and the width we read
       //
       if ( 1 == tag_y ) {
-        u3_noun bur;
-        {
-          u3_noun x = u3ka_add(2, cur);
-          bur = u3qe_rub(x, a);
-          u3z(x);
-        }
+        u3_noun bur = _cs_rub(u3ka_add(2, cur), a);
+        u3_noun pro = u3x_good(u3h_get(har_p, u3t(bur)));
 
-        pro = u3h_get(har_p, u3k(u3t(bur)));
-
-        if ( u3_none == pro ) {
-          return u3m_bail(c3__exit);
-        }
-
-        wid = u3qa_add(2, u3h(bur));
+        *wid = u3qa_add(2, u3h(bur));
 
         u3z(bur);
-        goto retreat;
+        return pro;
       }
       //  next bit unset, (2 + cur) points to the head of a cell
       //
-      //    push a frame to mark HEAD recursion and read the head
+      //    push a head-frame onto the road stack and read the head
       //
       else {
-        _cs_cue_push(mov, off, CUE_HEAD, cur, 0, 0);
+        _cs_cue* fam_u = u3a_push(pil_u);
+        u3a_pile_sane(pil_u);
+
+        //  NB: fam_u->wid unused in head-frame
+        //
+        fam_u->hed = u3_none;
+        fam_u->cur = cur;
 
         cur = u3qa_add(2, cur);
-        goto advance;
+        continue;
       }
     }
   }
+}
 
-  //  consume: popped stack frame, .wid and .pro from above.
+u3_noun
+u3s_cue(u3_atom a)
+{
+  //  pro:   cue'd noun product
+  //  wid:   bitwidth read to produce [pro]
+  //  fam_u: stack frame
+  //  har_p: backreference table
+  //  pil_u: stack control structur
   //
-  //    TRANSFER .wid, .pro, and contents of .fam_u
-  //    (.cur is in scope, but we have already lost our reference to it)
+  u3_noun         pro;
+  u3_atom    wid, cur = 0;
+  _cs_cue*      fam_u;
+  u3p(u3h_root) har_p = u3h_new();
+  u3a_pile      pil_u;
+
+  //  initialize stack control
   //
-  retreat: {
-    cueframe fam_u = _cs_cue_pop(mov, off);
+  u3a_pile_prep(&pil_u, sizeof(*fam_u));
 
-    switch ( fam_u.tag_y ) {
-      default: {
-        c3_assert(0);
-      }
+  //  commence cueing at bit-position 0
+  //
+  pro = _cs_cue_next(&pil_u, har_p, 0, a, &wid);
 
-      //  fam_u is our stack root, we're done.
+  //  process cell results
+  //
+  if ( c3n == u3a_pile_done(&pil_u) ) {
+    fam_u = u3a_peek(&pil_u);
+
+    do {
+      //  fam_u is a head-frame: stash [pro] and [wid]; continue into the tail
       //
-      case CUE_ROOT: {
-        break;
-      }
+      if ( u3_none == fam_u->hed ) {
+        //  NB: fam_u->wid unused in head-frame
+        //
+        fam_u->hed = pro;
+        fam_u->wid = wid;
 
-      //  .wid and .pro are the head of the cell at fam_u.cur.
-      //  save them (and the cell cursor) in a TAIL frame,
-      //  set the cursor to the tail and read there.
+        //  continue reading at the bit-position after [pro]
+        {
+          u3_noun cur = u3ka_add(2, u3qa_add(wid, fam_u->cur));
+          pro = _cs_cue_next(&pil_u, har_p, cur, a, &wid);
+        }
+
+        fam_u = u3a_peek(&pil_u);
+      }
+      //  fam_u is a tail-frame: cons cell and save for backrefs,
+      //  recalculate [wid], and pop the stack
       //
-      case CUE_HEAD: {
-        _cs_cue_push(mov, off, CUE_TAIL, fam_u.cur, wid, pro);
-
-        cur = u3ka_add(2, u3qa_add(wid, fam_u.cur));
-        goto advance;
+      else {
+        pro   = u3nc(fam_u->hed, pro);
+        u3h_put(har_p, fam_u->cur, u3k(pro));
+        u3z(fam_u->cur);
+        wid   = u3ka_add(2, u3ka_add(wid, fam_u->wid));
+        fam_u = u3a_pop(&pil_u);
       }
-
-      //  .wid and .pro are the tail of the cell at fam_u.cur,
-      //  construct the cell, memoize it, and produce it along with
-      //  its total width (as if it were a read from above).
-      //
-      case CUE_TAIL: {
-        pro = u3nc(fam_u.hed, pro);
-        u3h_put(har_p, fam_u.cur, u3k(pro));
-        wid = u3ka_add(2, u3ka_add(wid, fam_u.wid));
-        goto retreat;
-      }
-    }
+    } while ( c3n == u3a_pile_done(&pil_u) );
   }
 
   u3z(wid);
   u3h_free(har_p);
-
-  //  sanity check
-  //
-  c3_assert( u3R->cap_p == cap_p );
 
   return pro;
 }
