@@ -31,6 +31,13 @@ typedef uint8_t  ur_bool_t;
 #define ur_mask_62(a)  (a & 0x3fffffffffffffffULL)
 
 /*
+**  bloq (binary exponent) conversions
+*/
+#define ur_bloq_up1(a) ( (a + 0x1) >> 1 )
+#define ur_bloq_up2(a) ( (a + 0x3) >> 2 )
+#define ur_bloq_up3(a) ( (a + 0x7) >> 3 )
+
+/*
 **  atom measurement
 */
 #if    (32 == (CHAR_BIT * __SIZEOF_INT__))
@@ -70,16 +77,8 @@ ur_met0_bytes_unsafe(uint64_t len, uint8_t *byt)
   return (last << 3) + ur_met0_8(byt[last]);
 }
 
-#define ur_met3_8(a)                         \
-        ({ uint8_t _a = ur_met0_8(a);        \
-           ( (_a >> 3) + !!ur_mask_3(_a) ); })
-
-#define ur_met3_32(a)                        \
-        ({ uint8_t _a = ur_met0_32(a);       \
-           ( (_a >> 3) + !!ur_mask_3(_a) ); })
-
-#define ur_met3_64(a)                        \
-        ({ uint8_t _a = ur_met0_64(a);       \
-           ( (_a >> 3) + !!ur_mask_3(_a) ); })
+#define ur_met3_8(a)   ur_bloq_up3(ur_met0_8(a))
+#define ur_met3_32(a)  ur_bloq_up3(ur_met0_32(a))
+#define ur_met3_64(a)  ur_bloq_up3(ur_met0_64(a))
 
 #endif
