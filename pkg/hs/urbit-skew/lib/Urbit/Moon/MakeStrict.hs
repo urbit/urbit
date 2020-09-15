@@ -228,37 +228,37 @@
 
     What does MakeStrict operate on?
 
-    Lambda expressions whose free variables are uruk values.
+    Lambda expressions whose free variables are skew values.
 
-    What is an uruk value?
+    What is an skew value?
 
-      An application of two uruk values
+      An application of two skew values
 
-      S, K, J, D, or a jet.
+      S, K, E, W, or a jet.
 
     In the `pak` example:
 
       In the `pak` example:
 
       ```
-      ++  (pak n)    (J J K (n sksucc skzero))
+      ++  (pak n)    (E E K (n sksucc skzero))
       ```
 
-    We have this body: `(J J K (n sksucc skzero))`
+    We have this body: `(E E K (n sksucc skzero))`
 
-    Here we have an expression that contains three uruk values: `J`,
-    `J`, and `K`. Would combining them be the right anwser?
+    Here we have an expression that contains three skew values: `E`,
+    `E`, and `K`. Would combining them be the right answer?
 
     I guess no.
 
       What is the arity of this?
 
-        `(J J x)`
+        `(E E x)`
 
-      Well, we can't know because we don't know if `x` is a `J`
+      Well, we can't know because we don't know if `x` is a ``
       or not.
 
-      However, `J` has arity 2, and `(J J)` also has arity two. The
+      However, `E` has arity 2, and `(E E)` also has arity two. The
       given value-arity machinery knows this. So, actually, yes: I think
       combining applications of values into values will give correct
       arity information.
@@ -266,9 +266,9 @@
   ## TODO Automatic Recognition of Jet Literals
 
   ```
-  J [^J] (λx.B)
-  J J [^J] (λx.λy.B)
-  J J J [^J] (λx.λy.λz.B)
+  E [^E] (λx.B)
+  E E [^E] (λx.λy.B)
+  E E E [^E] (λx.λy.λz.B)
   ...
   ```
 

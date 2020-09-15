@@ -40,7 +40,7 @@ type Type = Value
 -- | Terms in normal form. Kovacs distinguishes these, which is nice for type
 -- safety, but also, supposedly, opens the way to faster performance with
 -- better representations. For example, we might eventually do our compile-time
--- computation in Uruk, so that Value is an Uruk value, and use D to get it
+-- computation in Skew, so that Value is an Skew value, and use W to get it
 -- back out.
 data Value a
   = VVAp a [Value a]                  -- ^ free var applied to (reversed) args

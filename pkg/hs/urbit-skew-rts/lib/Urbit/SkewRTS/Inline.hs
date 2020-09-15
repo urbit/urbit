@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -Wall -Werror #-}
 
-module Urbit.UrukRTS.Inline (inline) where
+module Urbit.SkewRTS.Inline (inline) where
 
 import ClassyPrelude
 
-import Urbit.UrukRTS.Types
+import Urbit.SkewRTS.Types
 
 --port Text.Show.Pretty           (ppShow)
 

@@ -1,6 +1,6 @@
 -- OPTIONS_GHC -Wall -Werror #-}
 
-module Urbit.Uruk.Dash.Parser where
+module Urbit.Skew.Dash.Parser where
 
 import ClassyPrelude hiding (exp, init, many, some, try, elem, Prim)
 
@@ -11,7 +11,7 @@ import Text.Megaparsec.Char
 import Data.Tree
 import Urbit.Pos
 import Urbit.Moon.Arity
-import Urbit.Uruk.Dash.Exp
+import Urbit.Skew.Dash.Exp
 
 import Bound                 (abstract1, toScope, fromScope)
 import Bound.Var             (Var(..))
@@ -20,7 +20,7 @@ import Numeric.Natural       (Natural)
 import Prelude               (read)
 import Text.Show.Pretty      (pPrint, ppShow)
 import Urbit.Atom            (Atom)
-import Urbit.Uruk.JetSpec    (jetSpec)
+import Urbit.Skew.JetSpec    (jetSpec)
 import Urbit.Moon.MakeStrict (makeStrict, Prim(..))
 import qualified Data.Char           as C
 import qualified Language.Haskell.TH as TH
@@ -256,7 +256,7 @@ astExp = \case
 
 tryDash :: IO ()
 tryDash = do
-  txt <- readFileUtf8 "urbit-uruk/jets.dash"
+  txt <- readFileUtf8 "urbit-skew/jets.dash"
   parseDecs txt & \case
     Left err -> putStrLn err
     Right ds -> do

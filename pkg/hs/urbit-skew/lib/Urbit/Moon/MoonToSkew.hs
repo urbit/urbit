@@ -1,12 +1,12 @@
 {-- OPTIONS_GHC -Wall -Werror #-}
 
-module Urbit.Moon.MoonToUruk where
+module Urbit.Moon.MoonToSkew where
 
 import Bound
 import ClassyPrelude
 import Control.Monad.Except
 import Urbit.Moon.AST
-import Urbit.Uruk.Class
+import Urbit.Skew.Class
 
 import Bound.Var               (unvar)
 import Data.Void               (Void)
@@ -20,7 +20,7 @@ import qualified Urbit.Moon.AST        as AST
 import qualified Urbit.Moon.Bracket    as B
 import qualified Urbit.Moon.MakeStrict as B
 import qualified Urbit.Moon.Parser     as Parser
-import qualified Urbit.Uruk.JetEval    as JetEval
+import qualified Urbit.Skew.JetEval    as JetEval
 
 
 --------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ mergePrim = go B.Pri
   wrap g = unvar (B.Var . B) (fmap F . g)
 
 compileExp
-  :: Uruk p
+  :: Skew p
   => (Text -> Either Text p)
   -> (B.Exp p () Void -> B.Exp p () Void)
   -> (B.Exp p () Void -> p)
@@ -68,7 +68,7 @@ compileExp lkup strict comp ctBind = do
 
 
 compileAST
-  :: Uruk p
+  :: Skew p
   => (Text -> Either Text p)
   -> (B.Exp p () Void -> B.Exp p () Void)
   -> (B.Exp p () Void -> p)
@@ -81,7 +81,7 @@ compileAST lkup strict comp =
 -- Compile Expression ----------------------------------------------------------
 
 compile
-  :: Uruk p
+  :: Skew p
   => (Text -> Either Text p)
   -> (B.Exp p () Void -> B.Exp p () Void)
   -> (B.Exp p () Void -> p)
@@ -96,7 +96,7 @@ compile lkup strict comp inpu = do
 
 compileFile
   :: forall p
-   . Uruk p
+   . Skew p
   => (Text -> Either Text p)
   -> (B.Exp p () Void -> B.Exp p () Void)
   -> (B.Exp p () Void -> p)
@@ -128,11 +128,11 @@ compileFile lkup strict comp eval inpu = do
 
 
 
-usApp :: Uruk p => p -> p -> p
+usApp :: Skew p => p -> p -> p
 usApp x y = unsafePerformIO (uApp x y)
 
-urukPrim :: Uruk p => B.Prim p
-urukPrim = B.Prim
+skewPrim :: Skew p => B.Prim p
+skewPrim = B.Prim
   { pSeq = uSeq
   , pEye = uEye . fromIntegral
   , pKay = uKay
@@ -140,65 +140,65 @@ urukPrim = B.Prim
   , pArg = uArity
   }
 
-urukOut :: Uruk p => (p, p, p -> p -> p)
-urukOut = (uEss, uKay, usApp)
+skewOut :: Skew p => (p, p, p -> p -> p)
+skewOut = (uEss, uKay, usApp)
 
 
 -- Examples --------------------------------------------------------------------
 
-strictBracket :: (Uruk p, Eq p) => Text -> Either Text (CompileTrace p)
+strictBracket :: (Skew p, Eq p) => Text -> Either Text (CompileTrace p)
 strictBracket =
-  compile getGlobal (makeStrict urukPrim) (B.outToUruk urukOut . B.naiveBracket)
+  compile getGlobal (makeStrict skewPrim) (B.outToSkew skewOut . B.naiveBracket)
 
-lazyBracket :: (Uruk p, Eq p) => Text -> Either Text (CompileTrace p)
-lazyBracket = compile getGlobal id (B.outToUruk urukOut . B.naiveBracket)
+lazyBracket :: (Skew p, Eq p) => Text -> Either Text (CompileTrace p)
+lazyBracket = compile getGlobal id (B.outToSkew skewOut . B.naiveBracket)
 
-strictTromp :: (Uruk p, Eq p) => Text -> Either Text (CompileTrace p)
+strictTromp :: (Skew p, Eq p) => Text -> Either Text (CompileTrace p)
 strictTromp = compile getGlobal
-                      (makeStrict urukPrim)
-                      (B.outToUruk urukOut . B.johnTrompBracket)
+                      (makeStrict skewPrim)
+                      (B.outToSkew skewOut . B.johnTrompBracket)
 
-lazyTromp :: (Uruk p, Eq p) => Text -> Either Text (CompileTrace p)
-lazyTromp = compile getGlobal id (B.outToUruk urukOut . B.johnTrompBracket)
+lazyTromp :: (Skew p, Eq p) => Text -> Either Text (CompileTrace p)
+lazyTromp = compile getGlobal id (B.outToSkew skewOut . B.johnTrompBracket)
 
-strictOleg :: (Uruk p, Eq p) => Text -> Either Text (CompileTrace p)
-strictOleg = compile getGlobal (makeStrict urukPrim) oleg
+strictOleg :: (Skew p, Eq p) => Text -> Either Text (CompileTrace p)
+strictOleg = compile getGlobal (makeStrict skewPrim) oleg
 
-lazyOleg :: (Uruk p, Eq p) => Text -> Either Text (CompileTrace p)
+lazyOleg :: (Skew p, Eq p) => Text -> Either Text (CompileTrace p)
 lazyOleg = compile getGlobal id oleg
 
-strictBracketFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+strictBracketFile :: (Skew p, Eq p) => (p -> p) -> Text -> Either Text p
 strictBracketFile = compileFile getGlobal
-                                (makeStrict urukPrim)
-                                (B.outToUruk urukOut . B.naiveBracket)
+                                (makeStrict skewPrim)
+                                (B.outToSkew skewOut . B.naiveBracket)
 
-lazyBracketFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+lazyBracketFile :: (Skew p, Eq p) => (p -> p) -> Text -> Either Text p
 lazyBracketFile =
-  compileFile getGlobal id (B.outToUruk urukOut . B.naiveBracket)
+  compileFile getGlobal id (B.outToSkew skewOut . B.naiveBracket)
 
-strictTrompFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+strictTrompFile :: (Skew p, Eq p) => (p -> p) -> Text -> Either Text p
 strictTrompFile = compileFile getGlobal
-                              (makeStrict urukPrim)
-                              (B.outToUruk urukOut . B.johnTrompBracket)
+                              (makeStrict skewPrim)
+                              (B.outToSkew skewOut . B.johnTrompBracket)
 
-lazyTrompFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+lazyTrompFile :: (Skew p, Eq p) => (p -> p) -> Text -> Either Text p
 lazyTrompFile =
-  compileFile getGlobal id (B.outToUruk urukOut . B.johnTrompBracket)
+  compileFile getGlobal id (B.outToSkew skewOut . B.johnTrompBracket)
 
-strictOlegFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
-strictOlegFile = compileFile getGlobal (makeStrict urukPrim) oleg
+strictOlegFile :: (Skew p, Eq p) => (p -> p) -> Text -> Either Text p
+strictOlegFile = compileFile getGlobal (makeStrict skewPrim) oleg
 
-strictOlegFile' :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
-strictOlegFile' = compileFile getGlobal (makeStrict urukPrim) oleg
+strictOlegFile' :: (Skew p, Eq p) => (p -> p) -> Text -> Either Text p
+strictOlegFile' = compileFile getGlobal (makeStrict skewPrim) oleg
 
-lazyOlegFile :: (Uruk p, Eq p) => (p -> p) -> Text -> Either Text p
+lazyOlegFile :: (Skew p, Eq p) => (p -> p) -> Text -> Either Text p
 lazyOlegFile = compileFile getGlobal id oleg
 
 
 
 -- Entry Points ----------------------------------------------------------------
 
-getGlobal :: Uruk p => Text -> Either Text p
+getGlobal :: Skew p => Text -> Either Text p
 getGlobal = \case
   "S"     -> Right uEss
   "K"     -> Right uKay
@@ -224,22 +224,22 @@ getGlobal = \case
 
 -- Entry Points ----------------------------------------------------------------
 
-gogogoOleg :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
+gogogoOleg :: (Eq p, Skew p) => Text -> ExceptT Text IO p
 gogogoOleg = ExceptT . pure . strictOlegFile id
 
-gogogoLazyOleg :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyOleg :: (Eq p, Skew p) => Text -> ExceptT Text IO p
 gogogoLazyOleg = ExceptT . pure . lazyOlegFile id
 
-gogogoTromp :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
+gogogoTromp :: (Eq p, Skew p) => Text -> ExceptT Text IO p
 gogogoTromp = ExceptT . pure . strictTrompFile id
 
-gogogoLazyTromp :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyTromp :: (Eq p, Skew p) => Text -> ExceptT Text IO p
 gogogoLazyTromp = ExceptT . pure . lazyTrompFile id
 
-gogogoNaive :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
+gogogoNaive :: (Eq p, Skew p) => Text -> ExceptT Text IO p
 gogogoNaive = ExceptT . pure . strictBracketFile id
 
-gogogoLazyNaive :: (Eq p, Uruk p) => Text -> ExceptT Text IO p
+gogogoLazyNaive :: (Eq p, Skew p) => Text -> ExceptT Text IO p
 gogogoLazyNaive = ExceptT . pure . lazyBracketFile id
 
 gogogo'new :: Text -> ExceptT Text IO JetEval.Exp

@@ -1,9 +1,9 @@
-module Urbit.Uruk.JetSpec (jetSpec) where
+module Urbit.Skew.JetSpec (jetSpec) where
 
 import ClassyPrelude
 import Data.FileEmbed      (embedStringFile)
 import Text.RawString.QQ
-import Urbit.Uruk.Dash.Exp (SingJet(..))
+import Urbit.Skew.Dash.Exp (SingJet(..))
 
 
 --------------------------------------------------------------------------------

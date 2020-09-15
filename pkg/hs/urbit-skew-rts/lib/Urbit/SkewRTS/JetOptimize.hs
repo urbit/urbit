@@ -1,4 +1,4 @@
-module Urbit.UrukRTS.JetOptimize where
+module Urbit.SkewRTS.JetOptimize where
 
 import ClassyPrelude    hiding (evaluate, try)
 import System.IO.Unsafe
@@ -10,8 +10,8 @@ import Numeric.Positive (Positive)
 import Prelude          ((!!))
 
 import qualified GHC.Exts            as GHC
-import qualified Urbit.Uruk.Dash.Exp as Exp
-import qualified Urbit.UrukRTS.Types as F
+import qualified Urbit.Skew.Dash.Exp as Exp
+import qualified Urbit.SkewRTS.Types as F
 
 --------------------------------------------------------------------------------
 

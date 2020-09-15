@@ -9,7 +9,7 @@
     frequently pattern matched on should have at most 7 branches.
 -}
 
-module Urbit.UrukRTS.Types where
+module Urbit.SkewRTS.Types where
 
 import ClassyPrelude             hiding (evaluate, fromList, seq, try)
 import Control.Monad.Primitive
@@ -32,7 +32,7 @@ import Prelude           ((!!))
 
 import qualified GHC.Exts            as GHC.Exts
 import qualified Urbit.Atom          as Atom
-import qualified Urbit.Uruk.Dash.Exp as Exp
+import qualified Urbit.Skew.Dash.Exp as Exp
 
 -- Useful Types ----------------------------------------------------------------
 

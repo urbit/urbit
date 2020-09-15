@@ -1,4 +1,4 @@
-module Urbit.Uruk.JetEval where
+module Urbit.Skew.JetEval where
 
 import ClassyPrelude
 import Data.Tree
@@ -9,16 +9,16 @@ import Data.List           (iterate, (!!))
 import Numeric.Natural     (Natural)
 import Urbit.Moon.Arity    (Arity(..), appArity)
 import Urbit.Pos           (Pos)
-import Urbit.Uruk.Class    (Uruk(..))
-import Urbit.Uruk.Dash.Exp (DataJet(..), ExpTree(..), SingJet(..))
+import Urbit.Skew.Class    (Skew(..))
+import Urbit.Skew.Dash.Exp (DataJet(..), ExpTree(..), SingJet(..))
 
 import qualified Data.ByteString         as BS
 import qualified Debug.Trace             as Debug.Trace
 import qualified Urbit.Atom              as Atom
-import qualified Urbit.Uruk.Dash.DataJet as Jets
-import qualified Urbit.Uruk.Dash.Exp     as Dash
-import qualified Urbit.Uruk.Dash.Parser  as Dash
-import qualified Urbit.Uruk.Jets         as Jets
+import qualified Urbit.Skew.Dash.DataJet as Jets
+import qualified Urbit.Skew.Dash.Exp     as Dash
+import qualified Urbit.Skew.Dash.Parser  as Dash
+import qualified Urbit.Skew.Jets         as Jets
 
 
 -- Types -----------------------------------------------------------------------
@@ -129,7 +129,7 @@ pattern FindAssoc = N (M (MS FIND_ASSOC) 3 [])
 type Exp = Dash.ExpTree Ur
 type Val = Exp
 
-instance Uruk Exp where
+instance Skew Exp where
   uApp x y = pure (x :& y)
 
   uEss = NS

@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wall -Werror #-}
 
-module Urbit.Uruk.Dash.Exp
+module Urbit.Skew.Dash.Exp
   ( SingJet(..)
   , DataJet(..)
   , Ur(..)

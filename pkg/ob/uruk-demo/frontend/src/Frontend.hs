@@ -28,17 +28,17 @@ import Language.Javascript.JSaddle (eval, liftJSM)
 import Prelude                     ()
 import System.IO.Unsafe            (unsafePerformIO)
 import Urbit.Moon.Repl             (evalText, evalText')
-import Urbit.Uruk.UrukDemo         (Env, EvalResult(..), Exp, Inp(..),
+import Urbit.Skew.SkewDemo         (Env, EvalResult(..), Exp, Inp(..),
                                     InpResult(..))
-import Urbit.Uruk.UrukDemo         (execInp, execText, parseInps,
+import Urbit.Skew.SkewDemo         (execInp, execText, parseInps,
                                     prettyInpResult)
-import Urbit.UrukRTS               (dumpEventsFile, toJSON, vProfDone)
+import Urbit.SkewRTS               (dumpEventsFile, toJSON, vProfDone)
 
 import qualified Data.Text          as T
 import qualified Data.Text.Encoding as T
 
-import qualified Urbit.Moon.MoonToUruk as MU
-import qualified Urbit.UrukRTS.Types   as RTS
+import qualified Urbit.Moon.MoonToSkew as MU
+import qualified Urbit.SkewRTS.Types   as RTS
 
 --------------------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ slowResultWContext context txt = do
   res <- holdDyn thinking e
   pure res
 
-urukResult
+skewResult
   :: ( TriggerEvent t m
      , MonadHold t m
      , Reflex t
@@ -105,19 +105,19 @@ urukResult
      )
   => Dynamic t (Env, Text)
   -> m (Dynamic t (Either Text (Env, [InpResult])))
-urukResult envTxt = do
+skewResult envTxt = do
   (e, f) <- newTriggerEvent
   let think = Left thinking
 
   let goInp :: (Env, Text) -> Either Text (Env, [InpResult])
       goInp (env, txt) = parseInps txt >>= inpSeq env
 
-  performEvent_ (compute urukBrain think f (pure . goInp) <$> updated envTxt)
+  performEvent_ (compute skewBrain think f (pure . goInp) <$> updated envTxt)
 
   holdDyn think e
 
 
-urukResultTrace
+skewResultTrace
   :: ( TriggerEvent t m
      , MonadHold t m
      , Reflex t
@@ -126,7 +126,7 @@ urukResultTrace
      )
   => Dynamic t (Text)
   -> m (Dynamic t (Either Text (Env, [InpResult])))
-urukResultTrace envTxt = do
+skewResultTrace envTxt = do
   (e, f) <- newTriggerEvent
   let think = Left thinking
 
@@ -135,7 +135,7 @@ urukResultTrace envTxt = do
   let goInp :: Text -> Either Text (Env, [InpResult])
       goInp txt = parseInps txt >>= inpSeq (mempty :: Env)
 
-  performEvent_ (compute urukBrain think f (pure . goInp) <$> updated envTxt)
+  performEvent_ (compute skewBrain think f (pure . goInp) <$> updated envTxt)
 
   holdDyn think e
 
@@ -154,8 +154,8 @@ fastBrain = unsafePerformIO (newMVar Nothing)
 slowBrain :: MVar (Maybe (Async ()))
 slowBrain = unsafePerformIO (newMVar Nothing)
 
-urukBrain :: MVar (Maybe (Async ()))
-urukBrain = unsafePerformIO (newMVar Nothing)
+skewBrain :: MVar (Maybe (Async ()))
+skewBrain = unsafePerformIO (newMVar Nothing)
 
 compute
   :: MonadIO m
@@ -293,7 +293,7 @@ fullReductionTrace eRes = do
         el "pre" (text err)
     Right results -> do
       elAttr "p" ("class" =: "trace") $ do
-        -- TODO: Insert the original uruk statement here.
+        -- TODO: Insert the original skew statement here.
         traverse_ inpTraceDownwards results
 
 
@@ -349,7 +349,7 @@ urdocSection sectionName id content = do
     elAttr "div" ("class" =: "collapsible-content") $ do
       content
 
-urukW
+skewW
   :: ( Monad m
      , MonadSample s m
      , Reflex s
@@ -362,7 +362,7 @@ urukW
      , MonadFix m
      )
   => m ()
-urukW = do
+skewW = do
   elAttr "div" ("class" =: "demo") $ mdo
     void $ widgetHold (pure ()) (prettyHistoryW <$> updated history)
 
@@ -372,7 +372,7 @@ urukW = do
       $  (def & inputElementConfig_initialValue .~ "(K K K)")
 
     envD  <- holdDyn (mempty :: Env) evEnvUpdate
-    resD  <- urukResult (zipDyn envD val)
+    resD  <- skewResult (zipDyn envD val)
     press <- button "Execute"
 
     void $ widgetHold (pure ()) (resultPreview <$> updated (fmap snd <$> resD))
@@ -454,14 +454,14 @@ reduceDemo input = do
       $  (def & inputElementConfig_initialValue .~ input)
 
     -- TODO: I tried to build a constant Dyn, but the next line seems to reduce
-    -- to just mempty? The type is just Env? Copy urukResult for now.
+    -- to just mempty? The type is just Env? Copy skewResult for now.
     --
     -- Given what I want to do, this is also just not what we really want: we
     -- want a dead simple input a value, click a button which replaces another
     -- value.
 
 --    envD  <- constDyn (mempty :: Env)
-    resD  <- urukResultTrace val --(zipDyn envD val)
+    resD  <- skewResultTrace val --(zipDyn envD val)
 
     -- TODO: If we stuff the initial input into the input element and live
     -- update it, we don't really want an Execute button, but a Reset one.
@@ -549,7 +549,7 @@ li x = el "li" (text $ unlines x)
 frontend :: Frontend (R FrontendRoute)
 frontend = Frontend
   { _frontend_head = do
-                       el "title" $ text "Uruk Demo"
+                       el "title" $ text "Skew Demo"
                        elAttr
                          "link"
                          (  "href"
@@ -1102,7 +1102,7 @@ frontend = Frontend
           ]
 
       el "h2" (text "Demo")
-      urukW
+      skewW
 
     when False $ do
       el "hr" $ pure ()

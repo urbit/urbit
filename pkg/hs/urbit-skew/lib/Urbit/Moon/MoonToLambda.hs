@@ -5,7 +5,7 @@ module Urbit.Moon.MoonToLambda (moonToLambda) where
 import Bound
 import ClassyPrelude
 import GHC.Natural
-import Urbit.Uruk.Class
+import Urbit.Skew.Class
 
 import Urbit.Moon.Bracket (Exp((:@)))
 
@@ -19,7 +19,7 @@ import qualified Urbit.Moon.Bracket as B
 {- |
     Compile Moon expressions to Enriched Lambda Calculus.
 -}
-moonToLambda :: forall p v. Uruk p => M.Exp v -> B.Exp p () v
+moonToLambda :: forall p v. Skew p => M.Exp v -> B.Exp p () v
 moonToLambda = go
  where
   go :: M.Exp a -> B.Exp p () a

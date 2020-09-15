@@ -21,11 +21,11 @@
 
 -}
 
-module Urbit.UrukRTS.RegOpt (regOpt) where
+module Urbit.SkewRTS.RegOpt (regOpt) where
 
 import ClassyPrelude
 
-import Urbit.UrukRTS.Types
+import Urbit.SkewRTS.Types
 
 import Control.Monad.State.Strict (State, get, put, runState)
 

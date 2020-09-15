@@ -4,15 +4,15 @@
    DONE Need to handle data jets too.
 -}
 
-module Urbit.Uruk.Jets
+module Urbit.Skew.Jets
   ( sjArity, jetArity
   , sjTag, jetTag
   , sjBody, jetBody
   , sjTuple, jetTuple
   , sjMatch, jetMatch
   , sjUnMatch, jetUnMatch
-  , module Urbit.Uruk.Dash.DataJet
-  , module Urbit.Uruk.Dash.Exp
+  , module Urbit.Skew.Dash.DataJet
+  , module Urbit.Skew.Dash.Exp
   )
 where
 
@@ -21,12 +21,12 @@ import ClassyPrelude
 import Data.List               (iterate, (!!))
 import Numeric.Natural         (Natural)
 import Urbit.Pos               (Pos)
-import Urbit.Uruk.Dash.DataJet (djArity, djBody, djMatch, djTag, djTuple, jn)
-import Urbit.Uruk.Dash.Exp     (DataJet(..), SingJet(..))
-import Urbit.Uruk.Dash.Exp     (ExpTree(..), Ur(..), Val)
+import Urbit.Skew.Dash.DataJet (djArity, djBody, djMatch, djTag, djTuple, jn)
+import Urbit.Skew.Dash.Exp     (DataJet(..), SingJet(..))
+import Urbit.Skew.Dash.Exp     (ExpTree(..), Ur(..), Val)
 
 import qualified Urbit.Atom             as Atom
-import qualified Urbit.Uruk.Dash.Parser as Dash
+import qualified Urbit.Skew.Dash.Parser as Dash
 
 
 --------------------------------------------------------------------------------

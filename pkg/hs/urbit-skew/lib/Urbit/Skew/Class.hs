@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wall -Werror #-}
 
-module Urbit.Uruk.Class where
+module Urbit.Skew.Class where
 
 import ClassyPrelude
 
@@ -11,7 +11,7 @@ import Urbit.Pos        (Pos)
 
 --------------------------------------------------------------------------------
 
-class Show p => Uruk p where
+class Show p => Skew p where
   uApp :: p -> p -> IO p
 
   uEss :: p
@@ -40,11 +40,11 @@ class Show p => Uruk p where
   uGlobal :: Text -> Maybe p
   uGlobal = const Nothing
 
-mkAtom :: Uruk p => Either Text p -> p
+mkAtom :: Skew p => Either Text p -> p
 mkAtom (Left t)  = uNat (utf8Atom t)
 mkAtom (Right x) = x
 
-instance Uruk p => Uruk (Either Text p) where
+instance Skew p => Skew (Either Text p) where
   uApp x y = do
     res <- uApp (mkAtom x) (mkAtom y)
     pure (Right res)

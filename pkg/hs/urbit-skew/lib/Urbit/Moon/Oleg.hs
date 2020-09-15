@@ -12,7 +12,7 @@ import Numeric.Natural    (Natural)
 import System.IO.Unsafe   (unsafePerformIO)
 import Urbit.Moon.Bracket (Exp(..))
 import Urbit.Pos          (Pos)
-import Urbit.Uruk.Class   (Uruk(..))
+import Urbit.Skew.Class   (Skew(..))
 
 import qualified Bound as Bound
 
@@ -112,10 +112,10 @@ ski deb = case deb of
   o n = fromIntegral n
 
 
--- Convert to Uruk -------------------------------------------------------------
+-- Convert to Skew -------------------------------------------------------------
 
-comToUruk :: Uruk p => Com p -> p
-comToUruk = \case
+comToSkew :: Skew p => Com p -> p
+comToSkew = \case
   P p         -> p
   K           -> uKay
   S           -> uEss
@@ -126,12 +126,12 @@ comToUruk = \case
   Bn n        -> uBee n
   C           -> uSea 1
   Cn n        -> uSea n
-  x :# y      -> unsafePerformIO (uApp (comToUruk x) (comToUruk y))
+  x :# y      -> unsafePerformIO (uApp (comToSkew x) (comToSkew y))
 
 -- Entry Point -----------------------------------------------------------------
 
-oleg :: Uruk p => Exp p () Void -> p
-oleg = comToUruk . snd . ski . expDeb
+oleg :: Skew p => Exp p () Void -> p
+oleg = comToSkew . snd . ski . expDeb
 
 {-
 instance IsString (Exp p () String)

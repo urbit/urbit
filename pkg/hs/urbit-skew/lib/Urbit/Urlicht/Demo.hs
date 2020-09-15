@@ -19,10 +19,10 @@ import qualified Urbit.Urlicht.SimpleToCoreHack as S2C
 import qualified Urbit.Urlicht.CoreToMoon as C2M
 import Urbit.Urlicht.Unify
 
-import Urbit.Moon.MoonToUruk (compileExp, urukPrim, CompileTrace(..))
+import Urbit.Moon.MoonToSkew (compileExp, skewPrim, CompileTrace(..))
 import Urbit.Moon.MakeStrict (makeStrict)
 import Urbit.Moon.Oleg       (oleg)
-import qualified Urbit.Uruk.JetEval as J
+import qualified Urbit.Skew.JetEval as J
 
 udemo :: Text -> IO ()
 udemo prog = runElabIO do
@@ -34,11 +34,11 @@ udemo prog = runElabIO do
   putStrLn ("ELABORATED:\n" <> runic c)
   putStrLn ("TYPE:\n" <> runic t)
   tell
-  putStrLn "URUK:"
-  let u = coreToUruk c
+  putStrLn "SKEW:"
+  let u = coreToSkew c
   liftIO $ pPrint u
   putStrLn ""
-  putStrLn "URUK EVAL TRACE:"
+  putStrLn "SKEW EVAL TRACE:"
   liftIO $ for_ (J.exec u) pPrint
 
 dunify :: Text -> Text -> IO ()
@@ -53,9 +53,9 @@ parse = parseCst >>> \case
   Left err -> terror ("parser: " <> err)
   Right c -> pure c
 
-coreToUruk :: C.Core Text -> J.Exp
-coreToUruk = C2M.down
-         >>> compileExp (const (Left "whatever")) (makeStrict urukPrim) oleg
+coreToSkew :: C.Core Text -> J.Exp
+coreToSkew = C2M.down
+         >>> compileExp (const (Left "whatever")) (makeStrict skewPrim) oleg
          >>> \case
            Left blah -> terror blah
            Right (CompileTrace{ctDone}) -> ctDone

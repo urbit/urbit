@@ -16,17 +16,17 @@ import System.Directory    (createDirectoryIfMissing, getHomeDirectory,
                             listDirectory, removeFile)
 import System.IO.Unsafe    (unsafePerformIO)
 import Text.Show.Pretty    (ppShow)
-import Urbit.Uruk.UrukDemo (Env, EvalResult(..), Inp(..), InpResult(..))
-import Urbit.Uruk.UrukDemo (execInp, execText, parseInps, printInpResult)
+import Urbit.Skew.SkewDemo (Env, EvalResult(..), Inp(..), InpResult(..))
+import Urbit.Skew.SkewDemo (execInp, execText, parseInps, printInpResult)
 
 #if !defined(__GHCJS__)
 import qualified System.Console.Haskeline as HL
 #endif
 import qualified Urbit.Atom               as Atom
-import qualified Urbit.Moon.MoonToUruk    as MU
+import qualified Urbit.Moon.MoonToSkew    as MU
 import qualified Urbit.Moon.Parser        as Parser
-import qualified Urbit.Uruk.JetEval       as JetEval
-import qualified Urbit.Uruk.UrukDemo      as Dem
+import qualified Urbit.Skew.JetEval       as JetEval
+import qualified Urbit.Skew.SkewDemo      as Dem
 
 
 --------------------------------------------------------------------------------
@@ -135,12 +135,12 @@ replLazyOleg = repl' "compile" goLazyOleg
 
 replRefr :: IO ()
 replRefr = do
-  vEnv <- readUrukDemoEnv >>= newIORef
+  vEnv <- readSkewDemoEnv >>= newIORef
   HL.runInputT HL.defaultSettings (loop vEnv)
  where
   loop :: IORef Env -> HL.InputT IO ()
   loop vEnv = do
-    minput <- HL.getInputLine "uruk> "
+    minput <- HL.getInputLine "skew> "
     case minput of
       Nothing    -> return ()
       Just "!!"  -> return ()
@@ -202,8 +202,8 @@ runFileOleg = runFile'' goAll
 runFileLazyOleg :: FilePath -> IO ()
 runFileLazyOleg = runFile' goLazyOleg
 
-evalTextUruk :: Text -> IO Text
-evalTextUruk = evalText' goInp
+evalTextSkew :: Text -> IO Text
+evalTextSkew = evalText' goInp
 
 evalText :: Text -> IO Text
 evalText = evalText' goNew
@@ -220,16 +220,16 @@ type Ident = Text
 persistInpResu :: InpResult -> IO ()
 persistInpResu = \case
   InpExpr _ _                  -> pure ()
-  InpWipe n                    -> writeUrukDemoBind n Nothing
-  InpDecl n _ (EvalResult r _) -> writeUrukDemoBind n (Just r)
+  InpWipe n                    -> writeSkewDemoBind n Nothing
+  InpDecl n _ (EvalResult r _) -> writeSkewDemoBind n (Just r)
 
-writeUrukDemoBind :: Ident -> Maybe Dem.Exp -> IO ()
-writeUrukDemoBind iden mExp =
-  writeUrukDemoBindBytes iden (toStrict . serialise <$> mExp)
+writeSkewDemoBind :: Ident -> Maybe Dem.Exp -> IO ()
+writeSkewDemoBind iden mExp =
+  writeSkewDemoBindBytes iden (toStrict . serialise <$> mExp)
 
 --  Throws `DeserialiseFailure` exception on decode failure.
-readUrukDemoEnv :: IO (Map Ident Dem.Exp)
-readUrukDemoEnv = readUrukDemoEnvBytes >>= traverse cvt
+readSkewDemoEnv :: IO (Map Ident Dem.Exp)
+readSkewDemoEnv = readSkewDemoEnvBytes >>= traverse cvt
  where
   cvt :: ByteString -> IO Dem.Exp
   cvt byt = evaluate $ force $ deserialise $ fromStrict byt
@@ -237,10 +237,10 @@ readUrukDemoEnv = readUrukDemoEnvBytes >>= traverse cvt
 
 -- Reading and writing bind files ----------------------------------------------
 
-readUrukDemoEnvBytes :: IO (Map Ident ByteString)
-readUrukDemoEnvBytes = do
+readSkewDemoEnvBytes :: IO (Map Ident ByteString)
+readSkewDemoEnvBytes = do
   hom <- getHomeDirectory
-  let dir = hom <> "/.uruk/uruk-demo/"
+  let dir = hom <> "/.skew/skew-demo/"
   createDirectoryIfMissing True dir
   fmap mapFromList $ listDirectory dir >>= traverse (loadEnt dir)
  where
@@ -250,10 +250,10 @@ readUrukDemoEnvBytes = do
     byt <- readFile pax
     pure (pack ent, byt)
 
-writeUrukDemoBindBytes :: Ident -> Maybe ByteString -> IO ()
-writeUrukDemoBindBytes iden mByt = do
+writeSkewDemoBindBytes :: Ident -> Maybe ByteString -> IO ()
+writeSkewDemoBindBytes iden mByt = do
   hom <- getHomeDirectory
-  let dir = hom <> "/.uruk/uruk-demo/"
+  let dir = hom <> "/.skew/skew-demo/"
   let pax = dir <> unpack iden
   createDirectoryIfMissing True dir
   case mByt of

@@ -1,4 +1,4 @@
-# Uruk Benefits Document
+# SKEW Benefits Document
 
 - Brainstorm about benefits with Harrison.
 - Brainstorm about benefits with Ted.
@@ -12,7 +12,7 @@
 - Make demo environment general (not tied to terminal)
 - Presistent bindings for demo environment (local storage)
 - Implement UI for demo environment.
-- Write documentation for Uruk and introduction to demo environment.
+- Write documentation for SKEW and introduction to demo environment.
 
 # SK Compiler Demo
 

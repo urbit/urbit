@@ -14,7 +14,7 @@
   TODO Web (Local Storage) persistance.
 -}
 
-module Urbit.Uruk.UrukDemo
+module Urbit.Skew.SkewDemo
   ( main
   , Exp(..)
   , Ur(..)

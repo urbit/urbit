@@ -5,13 +5,13 @@ import Control.Monad.Except
 
 import Control.Concurrent  (threadDelay)
 import Urbit.Moon.Repl     (runFile')
-import Urbit.UrukRTS       (dumpEventsFile, kVVV, toJSON, vProfDone)
-import Urbit.UrukSerialize
+import Urbit.SkewRTS       (dumpEventsFile, kVVV, toJSON, vProfDone)
+import Urbit.SkewSerialize
 
 import Data.Text.IO (readFile, writeFile)
 
-import qualified Urbit.Moon.MoonToUruk as MU
-import qualified Urbit.UrukRTS.Types   as RTS
+import qualified Urbit.Moon.MoonToSkew as MU
+import qualified Urbit.SkewRTS.Types   as RTS
 
 import qualified System.Console.Haskeline as HL
 

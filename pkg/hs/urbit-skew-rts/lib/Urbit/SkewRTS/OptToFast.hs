@@ -1,4 +1,4 @@
-module Urbit.UrukRTS.OptToFast (optToFast) where
+module Urbit.SkewRTS.OptToFast (optToFast) where
 
 import ClassyPrelude             hiding (evaluate, fromList, try)
 import Data.Primitive.Array
@@ -11,8 +11,8 @@ import Numeric.Natural  (Natural)
 import Numeric.Positive (Positive)
 import Prelude          ((!!))
 
-import qualified Urbit.UrukRTS.JetOptimize as O
-import qualified Urbit.UrukRTS.Types       as F
+import qualified Urbit.SkewRTS.JetOptimize as O
+import qualified Urbit.SkewRTS.Types       as F
 
 --------------------------------------------------------------------------------
 

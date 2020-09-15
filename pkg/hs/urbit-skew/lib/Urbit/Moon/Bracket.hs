@@ -7,7 +7,7 @@ module Urbit.Moon.Bracket
   , SK(..)
   , naiveBracket
   , johnTrompBracket
-  , outToUruk
+  , outToSkew
   )
 where
 
@@ -227,8 +227,8 @@ johnTrompBracket = go . wrapSK
     (CB m :@ b) :@ (CB n :@ p) | b==p -> abs (PS :@ Pri m :@ Pri n :@ b)
     x   :@ y                          -> PS :@ abs x :@ abs y
 
-outToUruk :: (p, p, p -> p -> p) -> Out (SK p) Void -> p
-outToUruk (s,k,app) = go
+outToSkew :: (p, p, p -> p -> p) -> Out (SK p) Void -> p
+outToSkew (s,k,app) = go
  where
   go = \case
     Lam b _   -> absurd b

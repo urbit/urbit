@@ -1,4 +1,4 @@
-module Urbit.Uruk.Reference (Exp(..), Ur(..), reduce, eval) where
+module Urbit.Skew.Reference (Exp(..), Ur(..), reduce, eval) where
 
 import ClassyPrelude
 import Data.Bits

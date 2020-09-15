@@ -66,7 +66,7 @@
         `callN :: Val -> Array (IO Val) -> Val`
 -}
 
-module Urbit.UrukRTS where
+module Urbit.SkewRTS where
 
 import ClassyPrelude           hiding (evaluate, fromList, seq, toList, try)
 import Control.Monad.Primitive
@@ -78,8 +78,8 @@ import Data.Primitive.SmallArray
 import GHC.Prim                  hiding (seq)
 import System.IO.Unsafe
 import Urbit.Moon.Arity
-import Urbit.Uruk.Class
-import Urbit.UrukRTS.Types
+import Urbit.Skew.Class
+import Urbit.SkewRTS.Types
 
 import Control.Arrow         ((>>>))
 import Control.Concurrent    (threadDelay)
@@ -98,14 +98,14 @@ import qualified Data.Store                as Store
 import qualified Data.Store.TH             as Store
 import qualified System.IO                 as Sys
 import qualified Urbit.Atom                as Atom
-import qualified Urbit.Uruk.Dash.DataJet   as Jets
-import qualified Urbit.Uruk.Dash.Exp       as Dash
-import qualified Urbit.Uruk.Dash.Parser    as Dash
-import qualified Urbit.Uruk.Jets           as Jets
-import qualified Urbit.UrukRTS.Inline      as Opt
-import qualified Urbit.UrukRTS.JetOptimize as Opt
-import qualified Urbit.UrukRTS.OptToFast   as Opt
-import qualified Urbit.UrukRTS.RegOpt      as Opt
+import qualified Urbit.Skew.Dash.DataJet   as Jets
+import qualified Urbit.Skew.Dash.Exp       as Dash
+import qualified Urbit.Skew.Dash.Parser    as Dash
+import qualified Urbit.Skew.Jets           as Jets
+import qualified Urbit.SkewRTS.Inline      as Opt
+import qualified Urbit.SkewRTS.JetOptimize as Opt
+import qualified Urbit.SkewRTS.OptToFast   as Opt
+import qualified Urbit.SkewRTS.RegOpt      as Opt
 
 
 -- Profiling Events ------------------------------------------------------------
@@ -122,7 +122,7 @@ Store.makeStore ''EventDisk
 mkNode :: Int -> Node -> Val
 mkNode n c = VFun (Fun n c mempty)
 
-instance Uruk Val where
+instance Skew Val where
   uApp x y = kVV x y
 
   uEss = mkNode 3 Ess
