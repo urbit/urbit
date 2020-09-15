@@ -26,7 +26,7 @@ export default class GraphApi extends BaseApi<StoreState> {
     return this.spider('graph-view-action', 'json', threadName, action);
   }
 
-  createManagedGraph(name: string, title: string, description: string, app: string, group: Path) {
+  createManagedGraph(name: string, title: string, description: string, group: Path) {
     const associated = { group: resourceFromPath(group) };
 
     const resource = makeResource(`~${window.ship}`, name);
@@ -35,13 +35,12 @@ export default class GraphApi extends BaseApi<StoreState> {
         resource,
         title,
         description,
-        app,
         associated
       }
     });
   }
 
-  createUnmanagedGraph(name: string, title: string, description: string, app: string, policy: Enc<GroupPolicy>) {
+  createUnmanagedGraph(name: string, title: string, description: string, policy: Enc<GroupPolicy>) {
 
     const resource = makeResource(`~${window.ship}`, name);
     return this.viewAction('graph-create', {
@@ -49,19 +48,17 @@ export default class GraphApi extends BaseApi<StoreState> {
         resource,
         title,
         description,
-        app,
         associated: { policy }
       }
     });
   }
 
-  joinGraph(ship: Patp, name: string, app: string) {
+  joinGraph(ship: Patp, name: string) {
     const resource = makeResource(ship, name);
     return this.viewAction('graph-join', {
       join: {
         resource,
         ship,
-        app
       }
     });
   }
@@ -75,14 +72,13 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  groupifyGraph(ship: Patp, name: string, app: string, toPath?: string) {
+  groupifyGraph(ship: Patp, name: string, toPath?: string) {
     const resource = makeResource(ship, name);
     const to = toPath && resourceFromPath(toPath);
 
     return this.viewAction('graph-groupify', {
       groupify: {
         resource,
-        app,
         to
       }
     });
