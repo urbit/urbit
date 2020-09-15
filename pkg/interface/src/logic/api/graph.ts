@@ -3,7 +3,7 @@ import { StoreState } from '../store/type';
 import { Patp, Path, PatpNoSig } from '~/types/noun';
 import _ from 'lodash';
 import {makeResource, resourceFromPath} from '../lib/group';
-import {GroupPolicy, Enc, Post} from '~/types';
+import {GroupPolicy, Enc, Post, NodeMap} from '~/types';
 
 export const createPost = (contents: Object[], parentIndex: string = '') => {
   return {
@@ -122,8 +122,8 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  addNodes(ship: Patp, name: string, nodes: Object) {
-    this.storeAction({
+  addNodes(ship: Patp, name: string, nodes: NodeMap) {
+    return this.storeAction({
       'add-nodes': {
         resource: { ship, name },
         nodes
@@ -188,9 +188,9 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getNode(ship: string, resource: string, index: string) {
-    this.scry<any>(
+    return this.scry<any>(
       'graph-store',
-      `/node/${ship}/${resource}/${index}`
+      `/node/${ship}/${resource}${index}`
     ).then((node) => {
       this.store.handleEvent({
         data: node

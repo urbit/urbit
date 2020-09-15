@@ -497,7 +497,7 @@
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
     =/  =index:store
-      (turn t.t.t.t.path |=(=cord (slav %ud cord)))
+      (turn t.t.t.t.path |=(=cord (rash cord dem:ag)))
     =/  node=(unit node:store)  (get-node ship term index)
     ?~  node  [~ ~]
     :-  ~  :-  ~  :-  %graph-update

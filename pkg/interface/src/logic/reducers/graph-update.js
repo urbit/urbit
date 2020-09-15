@@ -91,6 +91,14 @@ const removeGraph = (json, state) => {
   }
 };
 
+const mapifyChildren = (children) => {
+  return new Map(
+    children.map(([idx, node]) => {
+      const nd = {...node, children: mapifyChildren(node.children || []) }; 
+      return [parseInt(idx.slice(1), 10), nd];
+    }));
+};
+
 const addNodes = (json, state) => {
   const _addNode = (graph, index, node) => {
     //  set child of graph
@@ -127,8 +135,8 @@ const addNodes = (json, state) => {
 
       if (index.length === 0) { return; }
 
-      //  TODO: support adding nodes with children
-      item[1].children = new Map();
+      item[1].children = mapifyChildren(item[1].children || []);
+
       
       state.graphs[resource] = _addNode(
         state.graphs[resource],

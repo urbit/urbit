@@ -302,7 +302,15 @@
       :~  [%post post]
           ::  TODO: support adding nodes with children by supporting the
           ::  graph key
-          [%children (of [%empty ul]~)]
+          [%children internal-graph]
+          :: [%children (of [%empty ul]~)]
+      ==
+    ::
+    ++  internal-graph
+      ^-  $-(json ^internal-graph)
+      %-  of
+      :~  [%empty ul]
+          [%graph graph]
       ==
     ::
     ++  post
