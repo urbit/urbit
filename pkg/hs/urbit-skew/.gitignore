@@ -1,4 +1,4 @@
 .stack-work
 *.cabal
-urbit-uruk.cabal
+urbit-skew.cabal
 dist-newstyle/

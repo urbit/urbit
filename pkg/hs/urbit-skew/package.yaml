@@ -1,4 +1,4 @@
-name: urbit-uruk
+name: urbit-skew
 version: 0.1.0
 license: MIT
 license-file: LICENSE
@@ -94,7 +94,7 @@ executables:
     main: Main.hs
     source-dirs: app/moon
     dependencies:
-      - urbit-uruk
+      - urbit-skew
     ghc-options:
       - -threaded
       - -rtsopts
@@ -103,11 +103,11 @@ executables:
       - "-with-rtsopts=-N"
       - -fwarn-incomplete-patterns
 
-  uruk-jets:
+  skew-jets:
     main: Main.hs
     source-dirs: app/jets
     dependencies:
-      - urbit-uruk
+      - urbit-skew
     ghc-options:
       - -threaded
       - -rtsopts

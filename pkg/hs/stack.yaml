@@ -8,9 +8,9 @@ packages:
   - urbit-azimuth
   - urbit-eventlog-lmdb
   - urbit-king
-  - urbit-uruk
+  - urbit-skew
   - urbit-skew-reference
-  - urbit-uruk-rts
+  - urbit-skew-rts
   - urbit-noun
   - urbit-noun-core
 

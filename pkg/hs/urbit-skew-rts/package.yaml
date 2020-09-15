@@ -1,4 +1,4 @@
-name: urbit-uruk-rts
+name: urbit-skew-rts
 version: 0.1.0
 license: MIT
 license-file: LICENSE
@@ -15,8 +15,8 @@ executables:
     main: Main.hs
     source-dirs: app/supermoon
     dependencies:
-      - urbit-uruk
-      - urbit-uruk-rts
+      - urbit-skew
+      - urbit-skew-rts
     ghc-options:
       - -threaded
       - -rtsopts
@@ -30,8 +30,8 @@ executables:
     source-dirs: app/arvomoon
     dependencies:
       - haskeline
-      - urbit-uruk
-      - urbit-uruk-rts
+      - urbit-skew
+      - urbit-skew-rts
     ghc-options:
       - -threaded
       - -rtsopts
@@ -74,7 +74,7 @@ dependencies:
   - unordered-containers
   - urbit-atom
   - urbit-noun
-  - urbit-uruk
+  - urbit-skew
 
 default-extensions:
   - ApplicativeDo
