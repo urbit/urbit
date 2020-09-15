@@ -6,6 +6,7 @@ import { Spinner } from "~/views/components/Spinner";
 import { Comments } from "./Comments";
 import { NoteNavigation } from "./NoteNavigation";
 import GlobalApi from "~/logic/api/global";
+import { getLatestRevision, getComments } from '~/logic/lib/publish';
 import { Author } from "./Author";
 import { Contacts, GraphNode, Graph, LocalUpdateRemoteContentPolicy } from "~/types";
 
@@ -34,18 +35,24 @@ export function Note(props: NoteProps & RouteComponentProps) {
     props.history.push(baseUrl);
   };
 
-  const comments = note?.children
-  const file = note?.post?.contents[1]?.text || "";
-  const newfile = file ? file.slice(file.indexOf(";>") + 2) : "";
-
+  const comments = getComments(note);
+  const [revNum, title, body, post] = getLatestRevision(note);
+ 
   const noteId = parseInt(note.post.index.split('/')[1], 10);
 
   let adminLinks: JSX.Element | null = null;
   if (window.ship === note?.post?.author) {
     adminLinks = (
       <Box display="inline-block">
+        <Link to={`${baseUrl}/note/${noteId}/edit`}>
         <Text
-          className="dib f9 red2 ml2 pointer"
+          color="green"
+          ml={2}
+        >
+          Update
+        </Text>
+      </Link>
+        <Text
           color="red"
           ml={2}
           onClick={deletePost}
@@ -72,20 +79,20 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Text>{"<- Notebook Index"}</Text>
       </Link>
       <Col>
-        <Text display="block" mb={2}>{note?.post?.contents[0]?.text || ""}</Text>
+        <Text display="block" mb={2}>{title || ""}</Text>
         <Box display="flex">
           <Author
             hideNicknames={props.hideNicknames}
             hideAvatars={props.hideAvatars}
-            ship={note?.post?.author}
+            ship={post?.author}
             contacts={contacts}
-            date={note?.post?.["time-sent"]}
+            date={post?.["time-sent"]}
           />
           <Text ml={2}>{adminLinks}</Text>
         </Box>
       </Col>
       <Box color="black" className="md" style={{ overflowWrap: "break-word" }}>
-        <ReactMarkdown source={newfile} linkTarget={"_blank"} />
+        <ReactMarkdown source={body} linkTarget={"_blank"} />
       </Box>
       <NoteNavigation
         notebook={notebook}

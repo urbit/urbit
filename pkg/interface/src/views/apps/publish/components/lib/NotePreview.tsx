@@ -8,6 +8,11 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { GraphNode } from "~/types/graph-update";
+import {
+  getComments,
+  getLatestRevision,
+  getSnippet,
+} from "~/logic/lib/publish";
 
 interface NotePreviewProps {
   host: string;
@@ -36,7 +41,7 @@ export function NotePreview(props: NotePreviewProps) {
     name = cite(post?.author);
   }
 
-  const numComments = node.children.size;
+  const numComments = getComments(node).children.size;
   const commentDesc =
     numComments === 0
       ? "No Comments"
@@ -51,15 +56,19 @@ export function NotePreview(props: NotePreviewProps) {
   // stubbing pending notification-store
   const isRead = true;
 
+  const [rev, title, body] = getLatestRevision(node);
+
+  const snippet = getSnippet(body);
+
   return (
     <Link to={url}>
       <Col mb={4}>
-        <WrappedBox mb={1}>{post.contents[0]?.text}</WrappedBox>
+        <WrappedBox mb={1}>{title}</WrappedBox>
         <WrappedBox mb={1}>
           <ReactMarkdown
             unwrapDisallowed
             allowedTypes={["text", "root", "break", "paragraph"]}
-            source={post.contents[1]?.text}
+            source={snippet}
           />
         </WrappedBox>
         <Box color="gray" display="flex">
@@ -74,7 +83,8 @@ export function NotePreview(props: NotePreviewProps) {
           <Box color={isRead ? "gray" : "green"} mr={3}>
             {date}
           </Box>
-          <Box>{commentDesc}</Box>
+          <Box mr={3}>{commentDesc}</Box>
+          <Box>{rev === 1 ? `1 Revision` : `${rev} Revisions`}</Box>
         </Box>
       </Col>
     </Link>

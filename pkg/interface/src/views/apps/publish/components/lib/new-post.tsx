@@ -7,6 +7,7 @@ import { PostForm, PostFormSchema } from "./NoteForm";
 import {createPost} from "~/logic/api/graph";
 import {Graph} from "~/types/graph-update";
 import {Association} from "~/types";
+import {newPost} from "~/logic/lib/publish";
 
 interface NewPostProps {
   api: GlobalApi;
@@ -27,13 +28,8 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
   ) => {
     const { title, body } = values;
     try {
-      const post = createPost([{ text: title }, { text: body }])
-      const noteId = parseInt(post.index.split('/')[1], 10);
-      await api.graph.addPost(ship, book, post)
-      await waiter(p => {
-        const { graph } = p;
-        return graph.has(noteId);
-      });
+      const [noteId, nodes] = newPost(title, body)
+      await api.graph.addNodes(ship, book, nodes)
       history.push(`/~publish/notebook/ship/${ship}/${book}/note/${noteId}`);
     } catch (e) {
       console.error(e);

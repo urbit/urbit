@@ -13,7 +13,7 @@ import {createPost} from "~/logic/api/graph";
 import { LocalUpdateRemoteContentPolicy } from "~/types";
 
 interface CommentsProps {
-  comments: Graph;
+  comments: GraphNode;
   book: string;
   note: GraphNode;
   ship: string;
@@ -32,7 +32,7 @@ export function Comments(props: CommentsProps) {
     actions: FormikHelpers<{ comment: string }>
   ) => {
     try {
-      const post = createPost([{ text: comment }], note?.post?.index);
+      const post = createPost([{ text: comment }], comments?.post?.index);
       await api.graph.addPost(ship, book, post)
       actions.resetForm();
       actions.setStatus({ success: null });
@@ -45,7 +45,7 @@ export function Comments(props: CommentsProps) {
   return (
     <Col>
       <CommentInput onSubmit={onSubmit} />
-      {Array.from(comments).reverse().map(([idx, comment]) => (
+      {Array.from(comments.children).reverse().map(([idx, comment]) => (
         <CommentItem
           comment={comment}
           key={idx}

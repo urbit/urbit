@@ -3,6 +3,7 @@ import moment from "moment";
 import { Box } from "@tlon/indigo-react";
 import { Link } from "react-router-dom";
 import {Graph, GraphNode} from "~/types";
+import {getLatestRevision} from "~/logic/lib/publish";
 
 function NavigationItem(props: {
   url: string;
@@ -36,6 +37,10 @@ function getAdjacentId(graph: Graph, child: number, backwards = false): number |
   const target = children[backwards ? i-1 : i+1];
   return target?.[0] || null;
 }
+
+function makeNoteUrl(ship: string, book: string, noteId: number) {
+  return `/~publish/notebook/ship/${ship}/${book}/note/${noteId}`;
+}
   
 
 interface NoteNavigationProps {
@@ -48,8 +53,6 @@ interface NoteNavigationProps {
 export function NoteNavigation(props: NoteNavigationProps) {
   let nextComponent = <Box />;
   let prevComponent = <Box />;
-  let nextUrl = "";
-  let prevUrl = "";
   const { noteId, notebook } = props;
   if(!notebook) {
     return null;
@@ -63,10 +66,10 @@ export function NoteNavigation(props: NoteNavigationProps) {
     return null;
   }
 
-  if (next) {
-    nextUrl = `/~publish/notebook/ship/${props.ship}/${props.book}/note/${nextId}`;
-    const title = next.post.contents[0]?.text;
-    const date = next.post['time-sent'];
+  if (next && nextId) {
+    const nextUrl = makeNoteUrl(props.ship, props.book, nextId);
+    const [,title,, post] = getLatestRevision(next);
+    const date = post['time-sent'];
     nextComponent = (
       <NavigationItem
         title={title}
@@ -75,10 +78,10 @@ export function NoteNavigation(props: NoteNavigationProps) {
       />
     );
   }
-  if (prev) {
-    prevUrl = `/~publish/notebook/ship/${props.ship}/${props.book}/note/${prevId}`;
-    const title = prev.post.contents[0]?.text;
-    const date = prev.post['time-sent'];
+  if (prev && prevId) {
+    const prevUrl = makeNoteUrl(props.ship, props.book, prevId);
+    const [,title,, post] = getLatestRevision(prev);
+    const date = post['time-sent'];
     prevComponent = (
       <NavigationItem
         title={title}
