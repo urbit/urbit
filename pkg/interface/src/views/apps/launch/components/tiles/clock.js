@@ -192,7 +192,7 @@ class Clock extends React.Component {
     const newX = cx + (ctr - 15) * Math.cos(this.angle);
     const newY = cy + (ctr - 15) * Math.sin(this.angle);
 
-    // Initial background
+    // Center white circle with time and date
     circle(
       ctx,
       ctr,
@@ -333,18 +333,6 @@ class Clock extends React.Component {
     );
 
     // Outer borders
-    circleOutline(
-      ctx,
-      ctr,
-      ctr,
-      ctr,
-      -1,
-      2 * Math.PI,
-      background,
-      1
-    );
-
-    // Center white circle with time and date
     circle(
       ctx,
       ctr,
@@ -352,7 +340,8 @@ class Clock extends React.Component {
       ctr/1.85,
       -1,
       2 * Math.PI,
-      background
+      background,
+      1
     );
 
     // Center white circle border
@@ -401,7 +390,7 @@ export default class ClockTile extends React.Component {
 
   renderWrapper(child) {
     return (
-      <Tile>
+      <Tile transparent>
         {child}
       </Tile>
     );

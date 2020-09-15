@@ -9,6 +9,7 @@ import { Cage } from '~/types/cage';
 import ContactReducer from '../reducers/contact-update';
 import LinkUpdateReducer from '../reducers/link-update';
 import S3Reducer from '../reducers/s3-update';
+import { GraphReducer } from '../reducers/graph-update';
 import GroupReducer from '../reducers/group-update';
 import PermissionReducer from '../reducers/permission-update';
 import PublishUpdateReducer from '../reducers/publish-update';
@@ -34,6 +35,14 @@ export default class GlobalStore extends BaseStore<StoreState> {
   launchReducer = new LaunchReducer();
   connReducer = new ConnectionReducer();
 
+  rehydrate() {
+    this.localReducer.rehydrate(this.state);
+  }
+
+  dehydrate() {
+    this.localReducer.dehydrate(this.state);
+  }
+
 
   initialState(): StoreState {
     return {
@@ -42,7 +51,17 @@ export default class GlobalStore extends BaseStore<StoreState> {
       connection: 'connected',
       sidebarShown: true,
       omniboxShown: false,
+      suspendedFocus: null,
       baseHash: null,
+      background: undefined,
+      remoteContentPolicy: {
+        imageShown: true,
+        audioShown: true,
+        videoShown: true,
+        oembedShown: true,
+      },
+      hideAvatars: false,
+      hideNicknames: false,
       invites: {},
       associations: {
         chat: {},
@@ -52,6 +71,8 @@ export default class GlobalStore extends BaseStore<StoreState> {
       },
       groups: {},
       groupKeys: new Set(),
+      graphs: {},
+      graphKeys: new Set(),
       launch: {
         firstTime: false,
         tileOrdering: [],
@@ -94,5 +115,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.launchReducer.reduce(data, this.state);
     this.linkListenReducer.reduce(data, this.state);
     this.connReducer.reduce(data, this.state);
+    GraphReducer(data, this.state);
   }
 }

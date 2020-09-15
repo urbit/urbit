@@ -40,8 +40,6 @@ export class LinkItem extends Component {
   render() {
     const props = this.props;
 
-    const mono = (props.nickname) ? 'inter white-d' : 'mono white-d';
-
     const URLparser = new RegExp(/((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/);
 
     let hostname = URLparser.exec(props.url);
@@ -58,7 +56,12 @@ export class LinkItem extends Component {
 
     const member = this.props.member || false;
 
-    const img = (this.props.avatar)
+    const showAvatar = props.avatar && !props.hideAvatars;
+    const showNickname = props.nickname && !props.hideNicknames;
+
+    const mono = showNickname ? 'inter white-d' : 'mono white-d';
+
+    const img = showAvatar
       ? <img src={this.props.avatar} height={38} width={38} className="dib" />
       : <Sigil
         ship={'~' + props.ship}
@@ -84,7 +87,7 @@ export class LinkItem extends Component {
             <span className={'f9 pr2 dib ' + mono}
             title={props.ship}
             >
-            {(props.nickname)
+            {showNickname
               ? props.nickname
               : cite(props.ship)}
             </span>

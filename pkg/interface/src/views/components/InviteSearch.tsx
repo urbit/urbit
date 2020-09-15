@@ -395,7 +395,7 @@ export class InviteSearch extends Component<
         );
       });
 
-      const shipResults = state.searchResults.ships.map((ship) => {
+      const shipResults = Array.from(new Set(state.searchResults.ships)).map((ship) => {
         const nicknames = (this.state.contacts.get(ship) || [])
           .filter((e) => {
             return !(e === '');

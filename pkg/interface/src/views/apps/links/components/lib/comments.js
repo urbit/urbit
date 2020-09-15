@@ -40,6 +40,8 @@ export class Comments extends Component {
     ? props.comments.totalPages
     : 1;
 
+    const { hideNicknames, hideAvatars, remoteContentPolicy } = props;
+
     const commentsList = Object.keys(commentsPage)
     .map((entry) => {
       const commentObj = commentsPage[entry];
@@ -51,7 +53,7 @@ export class Comments extends Component {
 
       const { nickname, color, member, avatar } = getContactDetails(contacts[ship]);
 
-      const nameClass = nickname ? 'inter' : 'mono';
+      const nameClass = nickname && !hideNicknames ? 'inter' : 'mono';
 
       return(
         <CommentItem
@@ -60,10 +62,13 @@ export class Comments extends Component {
           time={time}
           content={udon}
           nickname={nickname}
-          nameClass={nameClass}
+          hasNickname={Boolean(nickname)}
           color={color}
           avatar={avatar}
           member={member}
+          hideNicknames={hideNicknames}
+          hideAvatars={hideAvatars}
+          remoteContentPolicy={remoteContentPolicy}
         />
       );
     });

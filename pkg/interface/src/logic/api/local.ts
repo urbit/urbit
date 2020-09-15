@@ -1,5 +1,6 @@
 import BaseApi from "./base";
 import { StoreState } from "../store/type";
+import { BackgroundConfig, LocalUpdateRemoteContentPolicy } from "../types/local-update";
 
 export default class LocalApi extends BaseApi<StoreState> {
   getBaseHash() {
@@ -28,7 +29,7 @@ export default class LocalApi extends BaseApi<StoreState> {
     });
   }
 
-    setOmnibox() {
+  setOmnibox() {
     this.store.handleEvent({
       data: {
         local: {
@@ -36,6 +37,50 @@ export default class LocalApi extends BaseApi<StoreState> {
         },
       },
     });
+  }
+
+  setBackground(backgroundConfig: BackgroundConfig) {
+    this.store.handleEvent({
+      data: {
+        local: {
+          backgroundConfig
+        }
+      }
+    });
+  }
+
+  hideAvatars(hideAvatars: boolean) {
+    this.store.handleEvent({
+      data: {
+        local: {
+          hideAvatars
+        }
+      }
+    });
+  }
+
+  hideNicknames(hideNicknames: boolean) {
+    this.store.handleEvent({
+      data: {
+        local: {
+          hideNicknames
+        }
+      }
+    });
+  }
+
+  setRemoteContentPolicy(policy: LocalUpdateRemoteContentPolicy) {
+    this.store.handleEvent({
+      data: {
+        local: {
+          remoteContentPolicy: policy
+        }
+      }
+    });
+  }
+
+  dehydrate() {
+    this.store.dehydrate();
   }
 
 }

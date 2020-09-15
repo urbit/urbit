@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
 import classnames from 'classnames';
+import Helmet from 'react-helmet';
 
 import { Popout } from './components/lib/icons/popout';
 import { History } from './components/history';
@@ -28,8 +29,6 @@ export default class DojoApp extends Component {
   }
 
   componentDidMount() {
-    document.title = 'OS1 - Dojo';
-
     const channel = new window.channel();
     this.api = new Api(this.props.ship, channel);
     this.store.api = this.api;
@@ -46,56 +45,60 @@ export default class DojoApp extends Component {
 
   render() {
     return (
-      <div
-        className="bg-white bg-gray0-d"
-        style={{ height: 'calc(100vh - 45px)' }}
-      >
-        <Route
-          exact
-          path="/~dojo/:popout?"
-          render={(props) => {
-            const popout = Boolean(props.match.params.popout);
+      <>
+        <Helmet>
+          <title>OS1 - Dojo</title>
+        </Helmet>
+        <div
+          style={{ height: '100%' }}
+        >
+          <Route
+            exact
+            path="/~dojo/:popout?"
+            render={(props) => {
+              const popout = Boolean(props.match.params.popout);
 
-            const popoutClasses = classnames({
-              'mh4-m mh4-l mh4-xl': !popout,
-              'mb4-m mb4-l mb4-xl': !popout,
-              'ba-m ba-l ba-xl': !popout
-            });
+              const popoutClasses = classnames({
+                'mh4-m mh4-l mh4-xl': !popout,
+                'mb4-m mb4-l mb4-xl': !popout,
+                'ba-m ba-l ba-xl': !popout
+              });
 
-            return (
-              <div className="w-100 h-100 flex-m flex-l flex-xl">
-                <div
-                  className="db dn-m dn-l dn-xl inter bg-white bg-gray0-d dt w-100"
-                  style={{ height: 40 }}
-                >
+              return (
+                <div className="w-100 h-100 flex-m flex-l flex-xl">
+                  <div
+                    className="db dn-m dn-l dn-xl inter dt w-100"
+                    style={{ height: 40 }}
+                  >
+                  </div>
+                  <div
+                    className={
+                      'pa3 bg-white bg-gray0-d black white-d mono w-100 f8 relative' +
+                      ' h-100-m40-s b--gray2 br1 flex-auto flex flex-column ' +
+                      popoutClasses
+                    }
+                    style={{
+                      lineHeight: '1.4',
+                      cursor: 'text'
+                    }}
+                  >
+                    <Popout popout={popout} />
+                    <History commandLog={this.state.txt} />
+                    <Input
+                      ship={this.props.ship}
+                      cursor={this.state.cursor}
+                      prompt={this.state.prompt}
+                      input={this.state.input}
+                      api={this.api}
+                      store={this.store}
+                    />
+                  </div>
                 </div>
-                <div
-                  className={
-                    'pa3 bg-white bg-gray0-d black white-d mono w-100 f8 relative' +
-                    ' h-100-m40-s b--gray2 br1 flex-auto flex flex-column ' +
-                    popoutClasses
-                  }
-                  style={{
-                    lineHeight: '1.4',
-                    cursor: 'text'
-                  }}
-                >
-                  <Popout popout={popout} />
-                  <History commandLog={this.state.txt} />
-                  <Input
-                    ship={this.props.ship}
-                    cursor={this.state.cursor}
-                    prompt={this.state.prompt}
-                    input={this.state.input}
-                    api={this.api}
-                    store={this.store}
-                  />
-                </div>
-              </div>
-            );
-          }}
-        />
-      </div>
+              );
+            }}
+          />
+        </div>
+      </>
     );
   }
 }

@@ -25,7 +25,6 @@ const schema = Yup.object().shape({
 export class JoinScreen extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       awaiting: false
     };
@@ -38,17 +37,17 @@ export class JoinScreen extends Component {
   }
 
   onSubmit(values) {
-    console.log(values);
+    const { props } = this;
     this.setState({ awaiting: true }, () => {
-      console.log(values);
       const station = values.station.trim();
-      if (`/${station}` in this.props.chatSynced) {
-        this.props.history.push(`/~chat/room/${station}`);
+      if (`/${station}` in props.chatSynced) {
+        props.history.push(`/~chat/room${station}`);
         return;
       }
+      const ship = station.substr(1).slice(0,station.substr(1).indexOf('/'));
 
-      props.api.chat.join(ship, station, true)
-      this.props.history.push(`/~chat/room/${station}`);
+      props.api.chat.join(ship, station, true);
+      props.history.push(`/~chat/room${station}`);
     });
   }
 
@@ -84,7 +83,7 @@ export class JoinScreen extends Component {
                 mt={4}
                 id="station"
                 placeholder="~zod/chatroom"
-                fontFamily="mono" 
+                fontFamily="mono"
                 caption="Chat names use lowercase, hyphens, and slashes." />
               <Button>Join Chat</Button>
               <Spinner

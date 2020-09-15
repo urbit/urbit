@@ -62,8 +62,9 @@ export class OverlaySigil extends Component {
 
   render() {
     const { props, state } = this;
+    const { hideAvatars } = props;
 
-    const img = (props.contact && (props.contact.avatar !== null))
+    const img = (props.contact && (props.contact.avatar !== null) && !hideAvatars)
       ? <img src={props.contact.avatar} height={24} width={24} className="dib" />
       : <Sigil
         ship={props.ship}
@@ -89,6 +90,8 @@ export class OverlaySigil extends Component {
             association={props.association}
             group={props.group}
             onDismiss={this.profileHide}
+            hideAvatars={hideAvatars}
+            hideNicknames={props.hideNicknames}
           />
         )}
         {img}

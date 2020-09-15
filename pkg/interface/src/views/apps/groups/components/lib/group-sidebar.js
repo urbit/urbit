@@ -18,30 +18,6 @@ export class GroupSidebar extends Component {
 
     const selectedClass = (props.selected === 'me') ? 'bg-gray4 bg-gray1-d' : 'bg-white bg-gray0-d';
 
-    const rootIdentity = <Link
-            key={1}
-            to={'/~groups/me'}
-                         >
-            <div
-              className={
-                'w-100 pl4 pt1 pb1 f9 flex justify-start content-center ' +
-                selectedClass}
-            >
-              <Sigil
-              ship={window.ship}
-              color="#000000"
-              classes="mix-blend-diff"
-              size={32}
-              />
-              <p
-                className="f9 w-70 dib v-mid ml2 nowrap mono"
-                style={{ paddingTop: 6 }}
-              >
-                {cite(window.ship)}
-              </p>
-            </div>
-          </Link>;
-
     const inviteItems =
       Object.keys(props.invites)
       .map((uid) => {
@@ -127,8 +103,6 @@ export class GroupSidebar extends Component {
             <p className="f9 pt4 pl4 green2 bn">Join Group</p>
           </Link>
           <Welcome contacts={props.contacts} />
-          <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Your Identity</h2>
-          {rootIdentity}
           {inviteItems}
           <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Groups</h2>
           {groupItems}

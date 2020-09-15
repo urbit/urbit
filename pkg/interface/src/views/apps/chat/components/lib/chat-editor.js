@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { UnControlled as CodeEditor } from 'react-codemirror2';
+import { MOBILE_BROWSER_REGEX } from "~/logic/lib/util";
 import CodeMirror from 'codemirror';
 
 import 'codemirror/mode/markdown/markdown';
@@ -15,7 +16,7 @@ const MARKDOWN_CONFIG = {
   name: 'markdown',
   tokenTypeOverrides: {
     header: 'presentation',
-    quote: 'presentation',
+    quote: 'quote',
     list1: 'presentation',
     list2: 'presentation',
     list3: 'presentation',
@@ -100,9 +101,14 @@ export default class ChatEditor extends Component {
   }
 
   render() {
-    const { props } = this;
+    const {
+      inCodeMode,
+      placeholder,
+      message,
+      ...props
+    } = this.props;
 
-    const codeTheme = props.inCodeMode ? ' code' : '';
+    const codeTheme = inCodeMode ? ' code' : '';
 
     const options = {
       mode: MARKDOWN_CONFIG,
@@ -111,29 +117,35 @@ export default class ChatEditor extends Component {
       lineWrapping: true,
       scrollbarStyle: 'native',
       cursorHeight: 0.85,
-      placeholder: props.inCodeMode ? 'Code...' : props.placeholder,
+      placeholder: inCodeMode ? 'Code...' : placeholder,
       extraKeys: {
         'Enter': () => {
           this.submit();
+        },
+        'Esc': () => {
+          this.editor?.getInputField().blur();
         }
       }
     };
 
     return (
       <div
-        className="chat fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center"
-        style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}
-      >
+        className={
+          'chat fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center' +
+          (inCodeMode ? ' code' : '')
+        }
+        style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}>
         <CodeEditor
-          value={props.message}
+          value={message}
           options={options}
           onChange={(e, d, v) => this.messageChange(e, d, v)}
           editorDidMount={(editor) => {
             this.editor = editor;
-            if (!(BROWSER_REGEX.test(navigator.userAgent))) {
+            if (!MOBILE_BROWSER_REGEX.test(navigator.userAgent)) {
               editor.focus();
             }
           }}
+          {...props}
         />
       </div>
     );
