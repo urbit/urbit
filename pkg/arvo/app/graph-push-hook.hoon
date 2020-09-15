@@ -44,23 +44,30 @@
 ++  should-proxy-update
   |=  =vase
   ^-  ?
+  |^
   =/  =update:store  !<(update:store vase)
   ?-  -.q.update
-      %add-graph          %.y
-      %remove-graph       %.y
-      %add-nodes          %.y
-      %remove-nodes       %.y
-      %add-signatures     %.y
-      %remove-signatures  %.y
-      %archive-graph      %.y
+      %add-graph          (is-member resource.q.update)
+      %remove-graph       (is-member resource.q.update)
+      %add-nodes          (is-member resource.q.update)
+      %remove-nodes       (is-member resource.q.update)
+      %add-signatures     (is-member resource.uid.q.update)
+      %remove-signatures  (is-member resource.uid.q.update)
+      %archive-graph      (is-member resource.q.update)
       %unarchive-graph    %.n
       %add-tag            %.n
       %remove-tag         %.n
       %keys               %.n
       %tags               %.n
       %tag-queries        %.n
-      %run-updates        %.y
+      %run-updates        (is-member resource.q.update)
   ==
+  ::
+  ++  is-member
+    |=  =resource:res
+    ^-  ?
+    (is-member:grp src.bowl (en-path:res resource))
+  --
 ::
 ++  resource-for-update
   |=  =vase
@@ -86,7 +93,7 @@
 ++  initial-watch
   |=  [=path =resource:res]
   ^-  vase
-  ?>  (can-join:grp resource src.bowl)
+  ?>  (is-member:grp src.bowl (en-path:res resource))
   !>  ^-  update:store
   ?~  path
     ::  new subscribe
