@@ -188,7 +188,7 @@
           =/  =hash:store  `@ux`(sham validated-portion)
           ?~  hash.p  node(signatures.post *signatures:store)
           ~|  "signatures do not match the calculated hash"
-          ?>  (are-signatures-valid:sigs signatures.p hash now.bowl)
+          ?>  (are-signatures-valid:sigs our.bowl signatures.p hash now.bowl)
           ~|  "hash of post does not match calculated hash"
           ?>  =(hash u.hash.p)
           node
@@ -296,7 +296,7 @@
           ~|  "cannot add signatures to a node missing a hash"
           ?>  ?=(^ hash.post.node)
           ~|  "signatures did not match public keys!"
-          ?>  (are-signatures-valid:sigs signatures u.hash.post.node now.bowl)
+          ?>  (are-signatures-valid:sigs our.bowl signatures u.hash.post.node now.bowl)
           node(signatures.post (~(uni in signatures) signatures.post.node))
         ~|  "child graph does not exist to add signatures to!"
         ?>  ?=(%graph -.children.node)
