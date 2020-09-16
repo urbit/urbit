@@ -1,48 +1,50 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Virtuoso as VirtualList } from 'react-virtuoso';
 
+import { ContactItem } from './contact-item';
+import { ShareSheet } from './share-sheet';
 import { Sigil } from '~/logic/lib/sigil';
 import { Spinner } from '~/views/components/Spinner';
 import { cite } from '~/logic/lib/util';
 import { roleForShip, resourceFromPath } from '~/logic/lib/group';
 import { Path, PatpNoSig } from '~/types/noun';
-import { Contacts } from '~/types/contact-update';
+import { Rolodex, Contacts, Contact } from '~/types/contact-update';
 import { Groups, Group } from '~/types/group-update';
 import GlobalApi from '~/logic/api/global';
-import VirtualScroller from '~/views/components/VirtualScroller';
-
-import { ContactItem } from './contact-item';
-import { ShareSheet } from './share-sheet';
 
 interface ContactSidebarProps {
-	activeDrawer: 'contacts' | 'detail' | 'rightPanel';
-	groups: Groups;
-	group: Group
-	contacts: Contacts;
-	path: Path;
-	api: GlobalApi;
-	defaultContacts: Contacts;
-	selectedContact?: PatpNoSig;
+  activeDrawer: 'contacts' | 'detail' | 'rightPanel';
+  groups: Groups;
+  group: Group
+  contacts: Contacts;
+  path: Path;
+  api: GlobalApi;
+  defaultContacts: Contacts;
+  selectedContact?: PatpNoSig;
 }
-
 interface ContactSidebarState {
-	awaiting: boolean;
+  awaiting: boolean;
+  memberboxHeight: number;
 }
 
-export class ContactSidebar extends PureComponent<ContactSidebarProps, ContactSidebarState> {
-  private virtualList: VirtualScroller | null;
 
+
+export class ContactSidebar extends Component<ContactSidebarProps, ContactSidebarState> {
   constructor(props) {
     super(props);
     this.state = {
-      awaiting: false
+      awaiting: false,
+      memberboxHeight: 0
     };
-    this.virtualList = null;
+    this.memberbox = this.memberbox.bind(this);
   }
 
-  componentDidUpdate(prevProps: ContactSidebarProps, prevState: ContactSidebarState) {
-    if (prevProps.path !== this.props.path && this.virtualList) {
-      this.virtualList.calculateVisibleItems();
+  memberbox(element) {
+    if (element) {
+      this.setState({
+        memberboxHeight: element.getBoundingClientRect().height
+      })
     }
   }
 
@@ -55,17 +57,17 @@ export class ContactSidebar extends PureComponent<ContactSidebarProps, ContactSi
 
     const group = props.groups[props.path];
 
-   const members = new Set(group.members || []);
+    const members = new Set(group.members || []);
 
     const me = (window.ship in props.contacts)
-        ?  props.contacts[window.ship]
-        :  (window.ship in props.defaultContacts)
-        ?  props.defaultContacts[window.ship]
+      ? props.contacts[window.ship]
+      : (window.ship in props.defaultContacts)
+        ? props.defaultContacts[window.ship]
         : { color: '0x0', nickname: null, avatar: null };
 
     const shareSheet =
       !(window.ship in props.contacts) ?
-      ( <ShareSheet
+        (<ShareSheet
           ship={window.ship}
           nickname={me.nickname}
           avatar={me.avatar}
@@ -73,57 +75,57 @@ export class ContactSidebar extends PureComponent<ContactSidebarProps, ContactSi
           path={props.path}
           selected={props.path + '/' + window.ship === props.selectedContact}
         />
-      ) : (
-        <>
-          <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">You</h2>
-          <ContactItem
-            ship={window.ship}
-            nickname={me.nickname}
-            avatar={me.avatar}
-            color={me.color}
-            path={props.path}
-            selected={props.path + '/' + window.ship === props.selectedContact}
-          />
-        </>
-      );
+        ) : (
+          <>
+            <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">You</h2>
+            <ContactItem
+              ship={window.ship}
+              nickname={me.nickname}
+              avatar={me.avatar}
+              color={me.color}
+              path={props.path}
+              selected={props.path + '/' + window.ship === props.selectedContact}
+            />
+          </>
+        );
     members.delete(window.ship);
 
     const contactItems =
       Object.keys(props.contacts)
-      .filter(c => c !== window.ship)
-      .map((contact) => {
-        members.delete(contact);
-        const path = props.path + '/' + contact;
-        const obj = props.contacts[contact];
-        return (
-          <ContactItem
-            key={contact}
-            ship={contact}
-            nickname={obj.nickname}
-            color={obj.color}
-            avatar={obj.avatar}
-            path={props.path}
-            selected={path === props.selectedContact}
-            share={false}
-          />
-        );
-      });
+        .filter(c => c !== window.ship)
+        .map((contact) => {
+          members.delete(contact);
+          const path = props.path + '/' + contact;
+          const obj = props.contacts[contact];
+          return (
+            <ContactItem
+              key={contact}
+              ship={contact}
+              nickname={obj.nickname}
+              color={obj.color}
+              avatar={obj.avatar}
+              path={props.path}
+              selected={path === props.selectedContact}
+              share={false}
+            />
+          );
+        });
 
     const role = roleForShip(group, window.ship);
 
-	  const resource = resourceFromPath(props.path);
+    const resource = resourceFromPath(props.path);
     const groupItems =
       Array.from(members).map((member) => {
         const memberRole = roleForShip(group, member);
         const adminOpt = (role === 'admin' && memberRole !== 'admin')
-              || (role === 'moderator' &&
-                  (memberRole !== 'admin' && memberRole !== 'moderator'))
+          || (role === 'moderator' &&
+            (memberRole !== 'admin' && memberRole !== 'moderator'))
           ? 'dib' : 'dn';
         return (
           <div
-          key={member}
-          className={'pl4 pt1 pb1 f9 flex justify-start content-center ' +
-            'bg-white bg-gray0-d relative'}
+            key={member}
+            className={'pl4 pt1 pb1 f9 flex justify-start content-center ' +
+              'bg-white bg-gray0-d relative'}
           >
             <Sigil
               ship={member}
@@ -156,18 +158,10 @@ export class ContactSidebar extends PureComponent<ContactSidebarProps, ContactSi
 
     const detailHref = `/~groups/detail${props.path}`;
 
-    const items = new Map();
-    groupItems.forEach((item, index) => {
-      items.set(index + 1, item);
-    });
-    contactItems.forEach((item, index) => {
-      items.set(index + groupItems.length + 1, item);
-    });
-
     return (
-      <div className={'bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 ' +
-      'flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative ' +
-      'overflow-hidden flex-shrink-0 ' + responsiveClasses}
+      <div ref={this.memberbox} className={'bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 ' +
+        'flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative ' +
+        'overflow-hidden flex-shrink-0 ' + responsiveClasses}
       >
         <div className="pt3 pb5 pl3 f8 db dn-m dn-l dn-xl">
           <Link to="/~groups/">{'⟵ All Groups'}</Link>
@@ -186,20 +180,21 @@ export class ContactSidebar extends PureComponent<ContactSidebarProps, ContactSi
           >Channels</Link>
           {shareSheet}
           <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Members</h2>
-          <VirtualScroller
-            ref={list => {this.virtualList = list}}
-            origin="top"
-            style={{ height: '100%' }}
-            loadRows={(start, end) => {}}
-            size={contactItems.length + groupItems.length}
-            data={items}
-            renderer={({ index, measure, scrollWindow }) => {
-              return <div key={index} onLoad={event => measure(event.target)}>{items.get(index)}</div>;
-            }}
+          <VirtualList
+            style={{ height: this.state.memberboxHeight, width: '100%' }}
+            className="flex-auto"
+            totalCount={contactItems.length + groupItems.length}
+            itemHeight={44} // We happen to know this
+            item={
+              (index) => index <= (contactItems.length - 1) // If the index is within the length of contact items,
+                ? contactItems[index] // show a contact item
+                : groupItems[index - contactItems.length] // Otherwise show a group item
+            }
           />
+
         </div>
         <Spinner awaiting={this.state.awaiting} text="Removing from group..." classes="pa2 ba absolute right-1 bottom-1 b--gray1-d" />
-        </div>
+      </div>
     );
   }
 }

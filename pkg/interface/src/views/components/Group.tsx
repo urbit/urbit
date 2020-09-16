@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import _, { capitalize } from 'lodash';
+import { Virtuoso as VirtualList } from 'react-virtuoso';
 
 import { cite, deSig } from '~/logic/lib/util';
 import { roleForShip, resourceFromPath } from '~/logic/lib/group';
-
-import VirtualScroller from '~/views/components/VirtualScroller';
-
 import {
   Group,
   InvitePolicy,
@@ -85,7 +83,7 @@ interface GroupViewProps {
 export class GroupView extends Component<
   GroupViewProps,
   { invites: Invites; awaiting: boolean }
-> {
+  > {
   constructor(props) {
     super(props);
     this.setInvites = this.setInvites.bind(this);
@@ -205,23 +203,22 @@ export class GroupView extends Component<
     });
   }
 
-  memberElements(): Map<number, JSX.Element> {
+  memberElements() {
     const { group, permissions } = this.props;
     const { members } = group;
     const isAdmin = this.isAdmin();
-    const map: Map<number, JSX.Element> = new Map();
-    Array.from(members).sort((a, b) => b.localeCompare(a)).map((ship, index) => {
+    return Array.from(members).map((ship) => {
       const role = roleForShip(group, deSig(ship));
       const onRoleRemove =
         role && isAdmin
           ? () => {
-              this.removeTag(ship, { tag: role });
-            }
+            this.removeTag(ship, { tag: role });
+          }
           : undefined;
       const [present, missing] = this.getAppTags(ship);
       const options = this.optionsForShip(ship, missing);
 
-      map.set(index, (
+      return (
         <GroupMember ship={ship} options={options}>
           {((permissions && role) || present.length > 0) && (
             <div className='flex mt1'>
@@ -243,9 +240,8 @@ export class GroupView extends Component<
             </div>
           )}
         </GroupMember>
-      ));
-    });
-    return map;
+      );
+    })
   }
 
   setInvites(invites: Invites) {
@@ -336,15 +332,10 @@ export class GroupView extends Component<
         {'open' in group.policy && this.renderBanned(group.policy)}
         <div className='flex flex-column'>
           <div className='f9 gray2 mt6 mb3'>Members</div>
-          <VirtualScroller
-            size={memberElements.size}
+          <VirtualList
             style={{ height: '500px', width: '100%' }}
-            origin="top"
-            loadRows={(start, end) => {}}
-            data={memberElements}
-            renderer={({ index, measure, scrollWindow }) => {
-              return  <div key={index} onLoad={event => measure(event.target)} className='flex flex-column pv3'>{memberElements.get(index)}</div>;
-            }}
+            totalCount={memberElements.length}
+            item={(index) => <div key={index} className='flex flex-column pv3'>{memberElements[index]}</div>}
           />
         </div>
 
