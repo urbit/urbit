@@ -1,0 +1,5 @@
+--- a/src/fault-linux-x86_64-old.h	2020-08-29 11:21:52.143076848 +0200
++++ b/src/fault-linux-x86_64-old.h	2020-08-29 11:21:52.143076848 +0200
+@@ -15,2 +15,1 @@
+ 
+-#include <asm/sigcontext.h>

@@ -1,51 +1,70 @@
-# Run using:
-#
-#     $(nix-build --no-link -A fullBuildScript)
-{
-  stack2nix-output-path ? "custom-stack2nix-output.nix",
-}:
+{ stdenv, haskell-nix, gmp, zlib }:
+
 let
-  cabalPackageName = "urbit-king";
-  compiler = "ghc865"; # matching stack.yaml
 
-  # Pin static-haskell-nix version.
-  static-haskell-nix =
-    if builtins.pathExists ../.in-static-haskell-nix
-      then toString ../. # for the case that we're in static-haskell-nix itself, so that CI always builds the latest version.
-      # Update this hash to use a different `static-haskell-nix` version:
-      else fetchTarball https://github.com/nh2/static-haskell-nix/archive/d1b20f35ec7d3761e59bd323bbe0cca23b3dfc82.tar.gz;
+  staticFlags = stdenv.lib.optionals stdenv.hostPlatform.isStatic [
+    "--disable-executable-dynamic"
+    "--disable-shared"
+    "--ghc-option=-optl=-pthread"
+    "--ghc-option=-optl=-static"
+    "--ghc-option=-optl=-L${gmp.override { withStatic = true; }}/lib"
+    "--ghc-option=-optl=-L${zlib.override { shared = false; static = true; }}/lib"
+  ];
 
-  # Pin nixpkgs version
-  # By default to the one `static-haskell-nix` provides, but you may also give
-  # your own as long as it has the necessary patches, using e.g.
-  #     pkgs = import (fetchTarball https://github.com/nh2/nixpkgs/archive/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa123.tar.gz) {};
-  pkgs = import "${static-haskell-nix}/nixpkgs.nix";
-
-  stack2nix-script = import "${static-haskell-nix}/static-stack2nix-builder/stack2nix-script.nix" {
-    inherit pkgs;
-    stack-project-dir = toString ./.; # where stack.yaml is
-    hackageSnapshot = "2020-01-20T00:00:00Z"; # pins e.g. extra-deps without hashes or revisions
+in haskell-nix.stackProject {
+  src = haskell-nix.cleanSourceHaskell {
+    name = "urbit-hs";
+    src = ./.;
   };
 
-  static-stack2nix-builder = import "${static-haskell-nix}/static-stack2nix-builder/default.nix" {
-    normalPkgs = pkgs;
-    inherit cabalPackageName compiler stack2nix-output-path;
-    # disableOptimization = true; # for compile speed
-  };
+  modules = [{
+    # This corresponds to the set of packages (boot libs) that ship with GHC.
+    # We declare them here to ensure any dependency gets them from GHC itself
+    # rather than trying to re-install them into the package database.
+    nonReinstallablePkgs = [
+      "Cabal"
+      "Win32"
+      "array"
+      "base"
+      "binary"
+      "bytestring"
+      "containers"
+      "deepseq"
+      "directory"
+      "filepath"
+      "ghc"
+      "ghc-boot"
+      "ghc-boot-th"
+      "ghc-compact"
+      "ghc-heap"
+      "ghc-prim"
+      "ghci"
+      "ghcjs-prim"
+      "ghcjs-th"
+      "haskeline"
+      "hpc"
+      "integer-gmp"
+      "integer-simple"
+      "mtl"
+      "parsec"
+      "pretty"
+      "process"
+      "rts"
+      "stm"
+      "template-haskell"
+      "terminfo"
+      "text"
+      "time"
+      "transformers"
+      "unix"
+      "xhtml"
+    ];
 
-  # Full invocation, including pinning `nix` version itself.
-  fullBuildScript = pkgs.writeShellScript "stack2nix-and-build-script.sh" ''
-    set -eu -o pipefail
-    STACK2NIX_OUTPUT_PATH=$(${stack2nix-script})
-    export NIX_PATH=nixpkgs=${pkgs.path}
-    ${pkgs.nix}/bin/nix-build --no-link -A static_package --argstr stack2nix-output-path "$STACK2NIX_OUTPUT_PATH" "$@"
-  '';
-
-in
-  {
-    static_package = static-stack2nix-builder.static_package;
-    inherit fullBuildScript;
-    # For debugging:
-    inherit stack2nix-script;
-    inherit static-stack2nix-builder;
-  }
+    packages = {
+      # Disable the urbit-king test-suite for now - since it relies
+      # on relative paths to lfs pills.
+      urbit-king.doCheck = false;
+      urbit-king.components.exes.urbit-king.configureFlags = staticFlags;
+    };
+  }];
+}

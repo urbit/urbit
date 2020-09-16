@@ -2,11 +2,11 @@
 
 set -e
 
-URBIT_VERSION="0.10.8"
+URBIT_VERSION="$(cat ./version)"
 
-deps="                                                                \
-  curl gmp sigsegv argon2 ed25519 ent h2o scrypt uv murmur3 secp256k1 \
-  softfloat3 ssl crypto z lmdb ge-additions aes_siv pthread           \
+deps="                                                                   \
+  ssh2 nghttp2 curl gmp sigsegv argon2 ed25519 ent h2o scrypt uv murmur3 \
+  secp256k1 softfloat3 ssl crypto z lmdb ge-additions aes_siv pthread    \
 "
 
 headers="             \
@@ -76,8 +76,9 @@ case $(tr A-Z a-z <<< $os) in
      ;;
 esac
 
+libs=""
 for dep in ${osdeps-} $deps
-do LDFLAGS="${LDFLAGS-} -l$dep"
+do libs="${libs} -l$dep"
    ${PKG_CONFIG-pkg-config} --cflags --libs $dep 2>/dev/null || true
 done
 
@@ -87,7 +88,7 @@ done
 
 cat >config.mk <<EOF
 CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math -std=gnu99
-LDFLAGS := $LDFLAGS
+LDFLAGS := $LDFLAGS -Wl,--start-group $libs -Wl,--end-group
 CC      := ${CC-cc}
 EOF
 

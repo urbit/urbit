@@ -1,0 +1,16 @@
+--- a/src/handler-unix.c	2020-09-15 10:57:17.188815298 +0200
++++ b/src/handler-unix.c	2020-09-15 10:57:05.721739725 +0200
+@@ -89,11 +89,11 @@
+    Leaving a signal handler executing on the alternate stack.  */
+ #include "leave.h"
+ 
+-#if HAVE_STACKVMA
+-
+ /* Address of the last byte belonging to the stack vma.  */
+ static uintptr_t stack_top = 0;
+ 
++#if HAVE_STACKVMA
++
+ /* Needs to be called once only.  */
+ static void
+ remember_stack_top (void *some_variable_on_stack)
