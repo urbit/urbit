@@ -1,4 +1,4 @@
-::  Uruk +mock
+::  Skew +mock
 ::
 
 ::  runtime base letter representations
@@ -62,7 +62,7 @@
   ~/  1  crip
   (rap 8)
 
-::  renders a skewdata as a string of the Uruk for easier reading
+::  renders a skewdata as a string of the Skew for easier reading
 ::
 =/  skewdata-to-string
   |=  top

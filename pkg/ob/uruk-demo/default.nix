@@ -13,8 +13,8 @@ project ./. ({ ... }: {
     urbit-atom = ../../hs/urbit-atom;
     urbit-noun = ../../hs/urbit-noun;
     urbit-noun-core = ../../hs/urbit-noun-core;
-    urbit-uruk = ../../hs/urbit-uruk;
-    urbit-uruk-rts = ../../hs/urbit-uruk-rts;
+    urbit-skew = ../../hs/urbit-skew;
+    urbit-skew-rts = ../../hs/urbit-skew-rts;
   };
   android.applicationId = "systems.obsidian.obelisk.examples.minimal";
   android.displayName = "Obelisk Minimal Example";

@@ -7,7 +7,7 @@
 
 ::
 :: Natural number operations and low level stuff that don't exist as jets in
-:: Uruk, but should.
+:: Skew, but should.
 ::
 :: Note, at this level, we can use ?: instead of +iff and ?- instead of +cas,
 :: but in the dash file, we'll need to rebuild these in the lower level syntax
