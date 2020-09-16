@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Sigil } from '~/logic/lib/sigil';
 import {
   ProfileOverlay,
   OVERLAY_HEIGHT
 } from './profile-overlay';
 
-export class OverlaySigil extends Component {
+export class OverlaySigil extends PureComponent {
   constructor() {
     super();
     this.state = {
@@ -19,45 +19,38 @@ export class OverlaySigil extends Component {
 
     this.profileShow = this.profileShow.bind(this);
     this.profileHide = this.profileHide.bind(this);
+    this.updateContainerOffset = this.updateContainerOffset.bind(this);
     this.updateContainerInterval = null;
   }
 
   profileShow() {
     this.updateContainerOffset();
     this.setState({ profileClicked: true });
-    this.updateContainerInterval = setInterval(
-      this.updateContainerOffset.bind(this),
-      1000
-    );
+    this.props.scrollWindow.addEventListener('scroll', this.updateContainerOffset);
   }
 
   profileHide() {
     this.setState({ profileClicked: false });
-    if(this.updateContainerInterval) {
-      clearInterval(this.updateContainerInterval);
-      this.updateContainerInterval = null;
-    }
+    this.props.scrollWindow.removeEventListener('scroll', this.updateContainerOffset, true);
   }
 
   updateContainerOffset() {
     if (this.containerRef && this.containerRef.current) {
-      const parent = this.containerRef.current.offsetParent;
-      const { offsetTop } = this.containerRef.current;
+      const container = this.containerRef.current;
+      const scrollWindow = this.props.scrollWindow;
 
-      let bottomSpace, topSpace;
+      const bottomSpace = scrollWindow.scrollHeight - container.offsetTop - scrollWindow.scrollTop;
+      const topSpace = scrollWindow.offsetHeight - bottomSpace - OVERLAY_HEIGHT;
 
-      if(navigator.userAgent.includes('Firefox')) {
-        topSpace = offsetTop - parent.scrollTop - OVERLAY_HEIGHT / 2;
-        bottomSpace = parent.clientHeight - topSpace - OVERLAY_HEIGHT;
-      } else {
-        topSpace = offsetTop + parent.scrollHeight - parent.clientHeight - parent.scrollTop;
-        bottomSpace = parent.clientHeight - topSpace - OVERLAY_HEIGHT;
-      }
       this.setState({
         topSpace,
         bottomSpace
       });
     }
+  }
+
+  componentWillUnmount() {
+    this.props.scrollWindow?.removeEventListener('scroll', this.updateContainerOffset, true);
   }
 
   render() {

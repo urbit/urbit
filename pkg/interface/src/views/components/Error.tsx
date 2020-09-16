@@ -12,7 +12,7 @@ class ErrorComponent extends Component<ErrorProps> {
   render () {
     const { code, error, history, description } = this.props;
     return (
-      <Col alignItems="center" justifyContent="center" height="100%" p="4" backgroundColor="white">
+      <Col alignItems="center" justifyContent="center" height="100%" p="4" backgroundColor="white" maxHeight="100%">
         <Box mb={4}>
           <Text fontSize={3}>
            {code ? code : 'Error'}
@@ -20,13 +20,13 @@ class ErrorComponent extends Component<ErrorProps> {
        </Box>
        { description && (<Box mb={4}><Text>{description}</Text></Box>) }
        {error && (
-         <Box mb={4}>
+         <Box mb={4} style={{maxWidth: '100%'}}>
            <Box mb={2}>
              <Text fontFamily="mono"><code>&ldquo;{error.message}&rdquo;</code></Text>
            </Box>
             <details>
               <summary>Stack trace</summary>
-              <pre style={{ wordWrap: 'break-word' }} className="tl">{error.stack}</pre>
+              <pre style={{ wordWrap: 'break-word', overflowX: 'scroll' }} className="tl">{error.stack}</pre>
             </details>
           </Box>
        )}

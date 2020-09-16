@@ -1,17 +1,18 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Link } from 'react-router-dom';
-import { Virtuoso as VirtualList } from 'react-virtuoso';
 
-import { ContactItem } from './contact-item';
-import { ShareSheet } from './share-sheet';
 import { Sigil } from '~/logic/lib/sigil';
 import { Spinner } from '~/views/components/Spinner';
 import { cite } from '~/logic/lib/util';
 import { roleForShip, resourceFromPath } from '~/logic/lib/group';
 import { Path, PatpNoSig } from '~/types/noun';
-import { Rolodex, Contacts, Contact } from '~/types/contact-update';
+import { Contacts } from '~/types/contact-update';
 import { Groups, Group } from '~/types/group-update';
 import GlobalApi from '~/logic/api/global';
+import VirtualScroller from '~/views/components/VirtualScroller';
+
+import { ContactItem } from './contact-item';
+import { ShareSheet } from './share-sheet';
 
 interface ContactSidebarProps {
 	activeDrawer: 'contacts' | 'detail' | 'rightPanel';
@@ -23,28 +24,25 @@ interface ContactSidebarProps {
 	defaultContacts: Contacts;
 	selectedContact?: PatpNoSig;
 }
+
 interface ContactSidebarState {
 	awaiting: boolean;
-  memberboxHeight: number;
 }
 
+export class ContactSidebar extends PureComponent<ContactSidebarProps, ContactSidebarState> {
+  private virtualList: VirtualScroller | null;
 
-
-export class ContactSidebar extends Component<ContactSidebarProps, ContactSidebarState> {
   constructor(props) {
     super(props);
     this.state = {
-      awaiting: false,
-      memberboxHeight: 0
+      awaiting: false
     };
-    this.memberbox = this.memberbox.bind(this);
+    this.virtualList = null;
   }
 
-  memberbox(element) {
-    if (element) {
-      this.setState({
-        memberboxHeight: element.getBoundingClientRect().height
-      })
+  componentDidUpdate(prevProps: ContactSidebarProps, prevState: ContactSidebarState) {
+    if (prevProps.path !== this.props.path && this.virtualList) {
+      this.virtualList.calculateVisibleItems();
     }
   }
 
@@ -158,8 +156,16 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
 
     const detailHref = `/~groups/detail${props.path}`;
 
+    const items = new Map();
+    groupItems.forEach((item, index) => {
+      items.set(index + 1, item);
+    });
+    contactItems.forEach((item, index) => {
+      items.set(index + groupItems.length + 1, item);
+    });
+
     return (
-      <div ref={this.memberbox} className={'bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 ' +
+      <div className={'bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 ' +
       'flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative ' +
       'overflow-hidden flex-shrink-0 ' + responsiveClasses}
       >
@@ -180,18 +186,17 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
           >Channels</Link>
           {shareSheet}
           <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">Members</h2>
-          <VirtualList
-            style={{ height: this.state.memberboxHeight, width: '100%' }}
-            className="flex-auto"
-            totalCount={contactItems.length + groupItems.length}
-            itemHeight={44} // We happen to know this
-            item={
-              (index) =>  index <= (contactItems.length - 1) // If the index is within the length of contact items,
-                ? contactItems[index] // show a contact item
-                : groupItems[index - contactItems.length] // Otherwise show a group item
-            }
+          <VirtualScroller
+            ref={list => {this.virtualList = list}}
+            origin="top"
+            style={{ height: '100%' }}
+            loadRows={(start, end) => {}}
+            size={contactItems.length + groupItems.length}
+            data={items}
+            renderer={({ index, measure, scrollWindow }) => {
+              return <div key={index} onLoad={event => measure(event.target)}>{items.get(index)}</div>;
+            }}
           />
-
         </div>
         <Spinner awaiting={this.state.awaiting} text="Removing from group..." classes="pa2 ba absolute right-1 bottom-1 b--gray1-d" />
         </div>
