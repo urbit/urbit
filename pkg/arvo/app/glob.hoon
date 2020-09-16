@@ -5,7 +5,7 @@
 /-  glob
 /+  default-agent, verb, dbug
 |%
-++  hash  0v4.kdc52.27is2.c7mnh.7vsrb.ij4jo
+++  hash  0v6.cvqlg.l55tn.kk8qp.lv4q3.f06lj
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
 +$  all-states
   $%  state-0
