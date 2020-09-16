@@ -33,7 +33,7 @@ interface ChatInputState {
 }
 
 
-export class ChatInput extends Component<ChatInputProps, ChatInputState> {
+export default class ChatInput extends Component<ChatInputProps, ChatInputState> {
   public s3Uploader: React.RefObject<S3Upload>;
   private chatEditor: React.RefObject<ChatEditor>;
 

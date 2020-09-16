@@ -5,7 +5,7 @@ import { TabBar } from '~/views/components/chat-link-tabbar';
 import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { deSig } from '~/logic/lib/util';
 
-export const ChatHeader = (props) => {
+const ChatHeader = (props) => {
   const isInPopout = props.popout ? 'popout/' : '';
   const group = Array.from(props.group.members);
   let title = props.station.substr(1);
@@ -59,3 +59,5 @@ export const ChatHeader = (props) => {
     </Fragment>
   );
 };
+
+export default ChatHeader;
