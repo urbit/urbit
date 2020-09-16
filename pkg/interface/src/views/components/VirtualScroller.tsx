@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import _ from 'lodash';
+import normalizeWheel from 'normalize-wheel';
 
 interface VirtualScrollerProps {
   origin: 'top' | 'bottom';
@@ -220,7 +221,8 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     if (this.props.origin === 'bottom') {
       element.addEventListener('wheel', (event) => {
         event.preventDefault();
-        element.scrollBy(0, event.deltaY * -1);
+        const normalized = normalizeWheel(event);
+        element.scrollBy(0, normalized.pixelY * -1);
         return false;
       }, { passive: false });
       window.addEventListener('keydown', this.invertedKeyHandler, { passive: false });
