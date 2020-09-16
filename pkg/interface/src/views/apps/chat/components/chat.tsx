@@ -1,11 +1,7 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import moment from "moment";
+import { RouteComponentProps } from "react-router-dom";
 
-import { Link, RouteComponentProps } from "react-router-dom";
-
-import { ChatWindow } from './lib/chat-window';
-import { ChatHeader } from './lib/chat-header';
-import { ChatInput } from "./lib/chat-input";
 import { deSig } from "~/logic/lib/util";
 import { ChatHookUpdate } from "~/types/chat-hook-update";
 import { Inbox, Envelope } from "~/types/chat-update";
@@ -15,8 +11,11 @@ import GlobalApi from "~/logic/api/global";
 import { Association } from "~/types/metadata-update";
 import {Group} from "~/types/group-update";
 import { LocalUpdateRemoteContentPolicy } from "~/types";
-import { S3Upload, SubmitDragger } from '~/views/components/s3-upload';
-import { IUnControlledCodeMirror } from "react-codemirror2";
+import { SubmitDragger } from '~/views/components/s3-upload';
+
+import ChatWindow from './lib/ChatWindow';
+import ChatHeader from './lib/ChatHeader';
+import ChatInput from "./lib/ChatInput";
 
 
 type ChatScreenProps = RouteComponentProps<{

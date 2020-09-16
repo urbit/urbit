@@ -79,6 +79,7 @@ export class GroupItem extends Component {
 
     if (props.index === 'dm') {
       dmLink = <Link
+                key="link"
                 className="absolute right-0 f9 top-0 mr4 green2 bg-gray5 bg-gray1-d b--transparent br1"
                 to="/~chat/new/dm"
                 style={{ padding: '0rem 0.2rem' }}
@@ -88,7 +89,7 @@ export class GroupItem extends Component {
     }
     return (
       <div className={first + 'relative'}>
-      <p className="f9 ph4 gray3">{title}</p>
+        <p className="f9 ph4 gray3" key="p">{title}</p>
         {dmLink}
         {channelItems}
       </div>

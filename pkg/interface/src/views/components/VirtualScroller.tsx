@@ -53,6 +53,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     this.recalculateTotalHeight = this.recalculateTotalHeight.bind(this);
     this.calculateVisibleItems = this.calculateVisibleItems.bind(this);
     this.estimateIndexFromScrollTop = this.estimateIndexFromScrollTop.bind(this);
+    this.invertedKeyHandler = this.invertedKeyHandler.bind(this);
     this.heightOf = this.heightOf.bind(this);
     this.setScrollTop = this.setScrollTop.bind(this);
     this.scrollToData = this.scrollToData.bind(this);
@@ -195,6 +196,23 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
       start, end
     };
   }
+
+  invertedKeyHandler(event): void | false {
+    if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (event.code === 'ArrowUp') {
+        this.window.scrollBy(0, 30);
+      } else if (event.code === 'ArrowDown') {
+        this.window.scrollBy(0, -30);
+      }
+      return false;
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.invertedKeyHandler, true);
+  }
   
   setWindow(element) {
     if (this.window) return;
@@ -205,6 +223,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
         element.scrollBy(0, event.deltaY * -1);
         return false;
       }, { passive: false });
+      window.addEventListener('keydown', this.invertedKeyHandler, { passive: false });
     }
     this.resetScroll();
   }

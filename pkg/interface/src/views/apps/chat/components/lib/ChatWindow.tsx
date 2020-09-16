@@ -12,7 +12,7 @@ import { LocalUpdateRemoteContentPolicy } from "~/types";
 
 import VirtualScroller from "~/views/components/VirtualScroller";
 
-import ChatMessage, { MessagePlaceholder } from './chat-message';
+import ChatMessage, { MessagePlaceholder } from './ChatMessage';
 import { UnreadNotice } from "./unread-notice";
 import { ResubscribeElement } from "./resubscribe-element";
 import { BacklogElement } from "./backlog-element";
@@ -48,12 +48,9 @@ interface ChatWindowState {
   fetchPending: boolean;
   idle: boolean;
   initialized: boolean;
-  lastMessageNumber: number;
-  messagesToRender: Map<number, Envelope | IMessage>;
 }
 
-export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
-  private unreadReference: React.RefObject<HTMLDivElement>;
+export default class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
   private virtualList: VirtualScroller | null;
   
   INITIALIZATION_MAX_TIME = 1500;
@@ -64,9 +61,7 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
     this.state = {
       fetchPending: false,
       idle: true,
-      initialized: false,
-      lastMessageNumber: 0,
-      messagesToRender: new Map(),
+      initialized: false
     };
     
     this.dismissUnread = this.dismissUnread.bind(this);
@@ -75,17 +70,15 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
     this.handleWindowBlur = this.handleWindowBlur.bind(this);
     this.handleWindowFocus = this.handleWindowFocus.bind(this);
     this.stayLockedIfActive = this.stayLockedIfActive.bind(this);
-    this.assembleMessages = this.assembleMessages.bind(this);
+    this.firstUnread = this.firstUnread.bind(this);
     
     this.virtualList = null;
-    this.unreadReference = React.createRef();
   }
 
   componentDidMount() {
     window.addEventListener('blur', this.handleWindowBlur);
     window.addEventListener('focus', this.handleWindowFocus);
     this.initialFetch();
-    this.assembleMessages();
     setTimeout(() => {
       this.setState({ initialized: true });
     }, this.INITIALIZATION_MAX_TIME);
@@ -105,14 +98,11 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
   }
 
   initialIndex() {
-    const { unreadCount } = this.props;
-    const { lastMessageNumber } = this.state;
-    return Math.min(Math.max(lastMessageNumber - 1 < INITIAL_LOAD
+    const { mailboxSize, unreadCount } = this.props;
+    return Math.min(Math.max(mailboxSize - 1 < INITIAL_LOAD
       ? 0
-      : unreadCount // otherwise if there are unread messages
-        ? lastMessageNumber - unreadCount // put the one right before at the top
-        : lastMessageNumber,
-    0), lastMessageNumber);
+      : this.firstUnread(),
+    0), mailboxSize);
   }
 
   initialFetch() {
@@ -153,43 +143,16 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
     if ((mailboxSize !== prevProps.mailboxSize) || (envelopes.length !== prevProps.envelopes.length)) {
       this.virtualList?.calculateVisibleItems();
       this.stayLockedIfActive();
-      this.assembleMessages();
     }
 
     if (stationPendingMessages.length !== prevProps.stationPendingMessages.length) {
       this.virtualList?.calculateVisibleItems();
       this.virtualList?.scrollToData(mailboxSize);
-      this.assembleMessages();
     }
 
     if (!this.state.fetchPending && prevState.fetchPending) {
       this.virtualList?.calculateVisibleItems();
     }
-  }
-
-  assembleMessages() {
-    const { envelopes, stationPendingMessages } = this.props;
-    const messages: Map<number, Envelope | IMessage> = new Map();
-    let lastMessageNumber = 0;
-
-    [...envelopes]
-      .sort((a, b) => a.when - b.when)
-      .forEach((message) => {
-        messages.set(message.number, message);
-        if (message.number > lastMessageNumber) {
-          lastMessageNumber = message.number;
-        }
-      });
-
-    if (lastMessageNumber !== this.state.lastMessageNumber) {
-      this.setState({ lastMessageNumber });
-    }
-    
-    stationPendingMessages.sort((a, b) => a.when - b.when).forEach((message, index) => {
-      messages.set(lastMessageNumber + index + 1, message);
-    });
-
-    this.setState({ messagesToRender: messages });
   }
 
   stayLockedIfActive() {
@@ -231,9 +194,15 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
         this.setState({ fetchPending: false });
       });
   }
+
+  firstUnread() {
+    const { mailboxSize, unreadCount } = this.props;
+    return mailboxSize - unreadCount + 1;
+  }
   
   render() {
     const {
+      envelopes,
       stationPendingMessages,
       unreadCount,
       unreadMsg,
@@ -250,8 +219,26 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
       hideNicknames,
       remoteContentPolicy,
     } = this.props;
+
+    const messages = new Map();
+    let lastMessage = 0;
     
-    const messages = this.state.messagesToRender;
+    [...envelopes]
+      .sort((a, b) => a.when - b.when)
+      .forEach(message => {
+        messages.set(message.number, message);
+        lastMessage = message.number;
+      });
+
+    stationPendingMessages
+      .sort((a, b) => a.when - b.when)
+      .forEach((message, index) => {
+        index = index + 1; // To 1-index it
+        messages.set(envelopes.length + index, message);
+        lastMessage = envelopes.length + index;
+      });
+
+    const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy };
     
     return (
       <>
@@ -279,33 +266,22 @@ export class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
           data={messages}
           size={mailboxSize + stationPendingMessages.length}
           renderer={({ index, measure, scrollWindow }) => {
-            const msg = messages.get(index);
+            const msg: Envelope | IMessage = messages.get(index);
             if (!msg) return null;
             if (!this.state.initialized) {
               return <MessagePlaceholder key={index} height="64px" index={index} />;
             }
+            const isPending: boolean = 'pending' in msg && Boolean(msg.pending);
+            const isFirstUnread: boolean = Boolean(unreadCount && index === this.firstUnread());
+            const isLastMessage: boolean = Boolean(index === lastMessage)
+            const props = { measure, scrollWindow, isPending, isFirstUnread, msg, ...messageProps };
             return (
               <ChatMessage
-                measure={measure}
-                scrollWindow={scrollWindow}
                 key={index}
-                unreadRef={this.unreadReference}
-                isPending={msg && 'pending' in msg && Boolean(msg.pending)}
-                isFirstUnread={
-                  Boolean(unreadCount
-                  && this.state.lastMessageNumber - unreadCount === index
-                  && !(unreadCount === 1 && msg.author === window.ship))
-                }
-                msg={msg}
                 previousMsg={messages.get(index + 1)}
                 nextMsg={messages.get(index - 1)}
-                association={association}
-                group={group}
-                contacts={contacts}
-                hideAvatars={hideAvatars}
-                hideNicknames={hideNicknames}
-                remoteContentPolicy={remoteContentPolicy}
-                className={index === this.state.lastMessageNumber + stationPendingMessages.length ? 'pb3' : ''}
+                className={isLastMessage ? 'pb3' : ''}
+                {...props}
               />
             );
           }}

@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { Component, PureComponent } from "react";
 import moment from "moment";
 import _ from "lodash";
 
@@ -13,7 +13,11 @@ import RemoteContent from '~/views/components/RemoteContent';
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
 export const UnreadMarker = React.forwardRef(({ dayBreak, when, style }, ref) => (
-  <div ref={ref} className="green2 flex items-center f9 absolute w-100" style={style}>
+  <div ref={element => {
+    setTimeout(() => {
+      element.style.opacity = '1';
+    }, 250);
+  }} className="green2 flex items-center f9 absolute w-100" style={{...style, opacity: '0'}}>
     <hr className="dn-s ma0 w2 b--green2 bt-0" />
     <p className="mh4">New messages below</p>
     <hr className="ma0 flex-grow-1 b--green2 bt-0" />
@@ -49,7 +53,7 @@ interface ChatMessageProps {
   scrollWindow: HTMLDivElement;
 }
 
-export default class ChatMessage extends PureComponent<ChatMessageProps> {
+export default class ChatMessage extends Component<ChatMessageProps> {
   private divRef: React.RefObject<HTMLDivElement>;
 
   constructor(props) {
