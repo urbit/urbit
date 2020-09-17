@@ -177,3 +177,8 @@
       */
         u3p(u3h_root)
         u3h_take(u3p(u3h_root) har_p);
+
+      /* u3h_wyt(): number of entries
+      */
+        c3_w
+        u3h_wyt(u3p(u3h_root) har_p);
