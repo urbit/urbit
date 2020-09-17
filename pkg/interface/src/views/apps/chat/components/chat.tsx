@@ -79,7 +79,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
   }
 
   onDragEnter(event) {
-    if (!this.readyToUpload() || !event.dataTransfer.files.length) {
+    if (!this.readyToUpload() || (!event.dataTransfer.files.length && !event.dataTransfer.types.includes('Files'))) {
       return;
     }
     this.setState({ dragover: true });
@@ -149,7 +149,12 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
             this.setState({ dragover: true });
           }
         }}
-        onDragLeave={() => this.setState({ dragover: false })}
+        onDragLeave={(event) => {
+          const over = document.elementFromPoint(event.clientX, event.clientY);
+          if (!over || !event.currentTarget.contains(over)) {
+            this.setState({ dragover: false });
+          }}
+        }
         onDrop={this.onDrop.bind(this)}
       >
         {this.state.dragover ? <SubmitDragger /> : null}

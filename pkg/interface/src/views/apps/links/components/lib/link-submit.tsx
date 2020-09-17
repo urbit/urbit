@@ -83,11 +83,12 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
         fetch(`https://noembed.com/embed?url=${linkValue}`)
         .then(response => response.json())
         .then((result) => {
-          if (result.title) {
+          if (result.title && !this.state.linkTitle) {
             this.setState({ linkTitle: result.title });
           }
         }).catch((error) => {/*noop*/});
       } else {
+        if (this.state.linkTitle) return;
         this.setState({
           linkTitle: decodeURIComponent(linkValue
             .split('/')

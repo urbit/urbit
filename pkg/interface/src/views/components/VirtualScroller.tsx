@@ -58,6 +58,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     this.heightOf = this.heightOf.bind(this);
     this.setScrollTop = this.setScrollTop.bind(this);
     this.scrollToData = this.scrollToData.bind(this);
+    this.scrollKeyMap = this.scrollKeyMap.bind(this);
     this.loadRows = _.memoize(this.loadRows).bind(this);
   }
 
@@ -149,7 +150,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
       }
     });
 
-    endgap += Math.abs(totalSize - data.size) * averageHeight;
+    // endgap += Math.abs(totalSize - data.size) * averageHeight; // Uncomment to make full height of backlog
     startBuffer = new Map([...startBuffer].reverse().slice(0, visibleItems.size));
     
     startBuffer.forEach((datum, index) => {
@@ -164,7 +165,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
       this.loadRows(firstNeededKey, firstVisibleKey - 1);
     }
     const lastVisibleKey = Array.from(visibleItems.keys())[visibleItems.size - 1] ?? this.estimateIndexFromScrollTop(scrollTop + windowHeight);
-    const lastNeededKey = Math.min(lastVisibleKey + this.OVERSCAN_SIZE, totalSize)
+    const lastNeededKey = Math.min(lastVisibleKey + this.OVERSCAN_SIZE, totalSize);
     if (!data.has(lastNeededKey - 1)) {
       this.loadRows(lastVisibleKey + 1, lastNeededKey);
     }
@@ -198,25 +199,46 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     };
   }
 
+  scrollKeyMap(): Map<string, number> {
+    return new Map([
+      ['ArrowUp', this.state.averageHeight],
+      ['ArrowDown', this.state.averageHeight * -1],
+      ['PageUp', this.window.offsetHeight],
+      ['PageDown', this.window.offsetHeight * -1],
+      ['Home', this.window.scrollHeight],
+      ['End', this.window.scrollHeight * -1],
+      ['Space', this.window.offsetHeight * -1]
+    ]);
+  }
+
   invertedKeyHandler(event): void | false {
-    if (event.code === 'ArrowUp' || event.code === 'ArrowDown') {
+    const map = this.scrollKeyMap();
+    if (map.has(event.code) && document.body.isSameNode(document.activeElement)) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      if (event.code === 'ArrowUp') {
-        this.window.scrollBy(0, 30);
-      } else if (event.code === 'ArrowDown') {
-        this.window.scrollBy(0, -30);
+      let distance = map.get(event.code);
+      if (event.code === 'Space' && event.shiftKey) {
+        distance = distance * -1;
       }
+      this.window.scrollBy(0, distance);
       return false;
     }
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.invertedKeyHandler, true);
+    window.removeEventListener('keydown', this.invertedKeyHandler);
   }
   
   setWindow(element) {
-    if (this.window) return;
+    if (!element) return;
+    if (this.window) {
+      if (this.window.isSameNode(element)) {
+        return;
+      } else {
+        window.removeEventListener('keydown', this.invertedKeyHandler);
+      }
+    }
+    
     this.window = element;
     if (this.props.origin === 'bottom') {
       element.addEventListener('wheel', (event) => {
@@ -309,3 +331,4 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     );
   }
 }
+// SDG
