@@ -12,7 +12,8 @@ export class Note extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      deleting: false
+      deleting: false,
+      sentRead: false
     };
     moment.updateLocale('en', {
       relativeTime: {
@@ -46,16 +47,19 @@ export class Note extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { props } = this;
+    const { props, state } = this;
     if ((prevProps && prevProps.api !== props.api) || props.api) {
       if (!(props.notebooks[props.ship]?.[props.book]?.notes?.[props.note]?.file)) {
         props.api.publish.fetchNote(props.ship, props.book, props.note);
       }
 
-      if (prevProps) {
-        if ((prevProps.book !== props.book) ||
-          (prevProps.note !== props.note) ||
-          (prevProps.ship !== props.ship)) {
+      if (prevProps && prevProps.note !== props.note) {
+        this.setState({ sentRead: false });
+      }
+
+      if (!state.sentRead &&
+        props.notebooks?.[props.ship]?.[props.book]?.notes?.[props.note] &&
+        !props.notebooks[props.ship][props.book].notes[props.note].read) {
           const readAction = {
             read: {
               who: props.ship.slice(1),
@@ -63,9 +67,10 @@ export class Note extends Component {
               note: props.note
             }
           };
-          props.api.publish.publishAction(readAction);
+          this.setState({ sentRead: true }, () => {
+            props.api.publish.publishAction(readAction);
+          });
         }
-      }
     }
   }
 

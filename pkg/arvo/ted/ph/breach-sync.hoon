@@ -13,6 +13,10 @@
 ;<  ~              bind:m  (real-ship az ~marbud)
 ;<  file=@t        bind:m  (touch-file ~bud %kids %foo)
 ;<  ~              bind:m  (check-file-touched ~marbud %home file)
+::  Merge so that when we unify history with the %this merge later, we
+::  don't get a spurious conflict in %home
+::
+;<  ~              bind:m  (dojo ~marbud "|merge %kids our %home")
 ;<  ~              bind:m  (breach-and-hear az ~bud ~marbud)
 ;<  ~              bind:m  (real-ship az ~bud)
 ;<  ~              bind:m  (dojo ~bud "|merge %kids ~marbud %kids, =gem %this")

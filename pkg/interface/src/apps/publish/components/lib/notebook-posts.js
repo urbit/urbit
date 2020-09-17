@@ -84,7 +84,7 @@ export class NotebookPosts extends Component {
                ' gray2 mr3'}
                title={note.author}
               >{name}</div>
-              <div className="gray2 mr3">{date}</div>
+              <div className={((note.read) ? "gray2 " : "green2 ") + "mr3"}>{date}</div>
               <div className="gray2">{comment}</div>
             </div>
           </div>

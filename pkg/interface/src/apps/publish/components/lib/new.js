@@ -165,8 +165,7 @@ export class NewScreen extends Component {
             </p>
             <Link className="green2 absolute right-0 bottom-0 f9" to="/~groups/new">Create Group</Link>
             <p className="f9 gray2 db mv1 pb4">
-              Selected ships will be invited to read your notebook. Selected
-              groups will be invited to read and write notes.
+              Selected ships or group will be invited to read your notebook. Additional writers can be added from the &apos;subscribers&apos; panel.
           </p>
           </div>
           <InviteSearch

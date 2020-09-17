@@ -752,10 +752,11 @@ u3_king_commence()
   uv_timer_init(u3L, &u3K.tim_u);
 
   //  start up a "fast-compile" arvo for internal use only
-  //  (with hashboard always disabled)
+  //  (with hashboard and sample-profiling always disabled)
   //
   sag_w = u3C.wag_w;
   u3C.wag_w |= u3o_hashless;
+  u3C.wag_w &= ~u3o_debug_cpu;
 
   u3m_boot_lite();
 

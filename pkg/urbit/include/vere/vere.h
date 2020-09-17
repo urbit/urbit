@@ -44,7 +44,7 @@
 
     /* u3_moor_bail: bailout callback function.
     */
-      typedef void (*u3_moor_bail)(void*, const c3_c* err_c);
+      typedef void (*u3_moor_bail)(void*, ssize_t err_i, const c3_c* err_c);
 
     /* u3_meat: blob message block.
     */
@@ -136,14 +136,6 @@
         c3_w        pid_w;                  //  pid of checkpoint process
       } u3_save;
 
-    /* u3_ubuf: unix tty i/o buffer.
-    */
-      typedef struct _u3_ubuf {
-        struct _u3_ubuf* nex_u;
-        c3_w             len_w;
-        c3_y             hun_y[0];          //  bytes to send
-      } u3_ubuf;
-
     /* u3_utat: unix terminal state.
     */
       typedef struct {
@@ -153,8 +145,10 @@
         } siz;
 
         struct {
-          c3_w* lin_w;                      //  current line (utf32)
-          c3_w  len_w;                      //  length of current line
+          c3_y* lin_y;                      //  current line (utf8)
+          c3_w  byt_w;                      //  utf8 line-length
+          c3_w  wor_w;                      //  utf32 line-length
+          c3_w  sap_w;                      //  escape chars in line
           c3_w  cus_w;                      //  cursor position
         } mir;
 
@@ -189,25 +183,26 @@
     /* u2_utfo: unix terminfo strings.
     */
       typedef struct {
+        //    disabled, currently unused
+        //
+        // struct {
+        //   uv_buf_t kcuu1_u;              //  key_up
+        //   uv_buf_t kcud1_u;              //  key_down
+        //   uv_buf_t kcub1_u;              //  key_back
+        //   uv_buf_t kcuf1_u;              //  key_forward
+        // } inn;
         struct {
-          const c3_y* kcuu1_y;              //  key_up
-          const c3_y* kcud1_y;              //  key_down
-          const c3_y* kcub1_y;              //  key_back
-          const c3_y* kcuf1_y;              //  key_forward
-          c3_w        max_w;                //  maximum input sequence length
-        } inn;
-        struct {
-          const c3_y* clear_y;              //  clear_screen
-          const c3_y* el_y;                 //  clr_bol clear to beginning
-          // const c3_y* el1_y;                //  clr_eol clear to end
-          const c3_y* ed_y;                 //  clear to end of screen
-          const c3_y* bel_y;                //  bel sound bell
-          const c3_y* cub1_y;               //  parm_left
-          const c3_y* cuf1_y;               //  parm_right
-          const c3_y* cuu1_y;               //  parm_up
-          const c3_y* cud1_y;               //  parm_down
-          // const c3_y* cub_y;                //  parm_left_cursor #num
-          // const c3_y* cuf_y;                //  parm_right_cursor #num
+          uv_buf_t clear_u;              //  clear_screen
+          uv_buf_t el_u;                 //  clr_bol clear to beginning
+          // uv_buf_t el1_u;             //  clr_eol clear to end
+          uv_buf_t ed_u;                 //  clear to end of screen
+          uv_buf_t bel_u;                //  bel sound bell
+          uv_buf_t cub1_u;               //  parm_left
+          uv_buf_t cuf1_u;               //  parm_right
+          uv_buf_t cuu1_u;               //  parm_up
+          uv_buf_t cud1_u;               //  parm_down
+          // uv_buf_t cub_u;             //  parm_left_cursor #num
+          // uv_buf_t cuf_u;             //  parm_right_cursor #num
         } out;
       } u3_utfo;
 
@@ -380,6 +375,36 @@
       /* u3_peek_cb: namespace read response callback.
       */
         typedef void (*u3_peek_cb)(void*, u3_noun);
+
+      /* u3_pico_type: kinds of proto-peek
+      */
+        typedef enum {
+          u3_pico_full = 0,
+          u3_pico_mine = 1,
+          u3_pico_last = 2
+        } u3_pico_type;
+
+      /* u3_pico: proto-peek
+      */
+        typedef struct _u3_pico {
+          struct _u3_pico* nex_u;               //  next in queue
+          void*            ptr_v;               //  context
+          u3_peek_cb       fun_f;               //  callback
+          u3_noun            gan;               //  leakset
+          u3_pico_type     typ_e;               //  type-tagged
+          union {                               //
+            u3_noun          ful;               //  full: /care/beam
+            struct {                            //  mine:
+              c3_m         car_m;               //    care
+              u3_noun        pax;               //    /desk/case/path
+            } min_u;                            //
+            struct {                            //  last:
+              c3_m         car_m;               //    care
+              u3_atom        des;               //    desk
+              u3_noun        pax;               //    /path
+            } las_u;
+          };
+        } u3_pico;
 
       /* u3_peek: namespace read request
       */
@@ -604,6 +629,10 @@
             u3_play*       pay_u;               //    recompute
             u3_work*       wok_u;               //    work
           };
+          struct {
+            u3_pico*       ent_u;
+            u3_pico*       ext_u;
+          } pec_u;
           // XX remove
           c3_s             por_s;               //  UDP port
           u3_save*         sav_u;               //  autosave
@@ -759,6 +788,16 @@
       */
         void
         u3_ovum_free(u3_ovum *egg_u);
+
+      /* u3_pico_init(): initialize a scry request struct
+      */
+        u3_pico*
+        u3_pico_init();
+
+      /* u3_pico_free(): dispose a scry request struct
+      */
+        void
+        u3_pico_free(u3_pico* pic_u);
 
       /* u3_mcut_char(): measure/cut character.
       */
@@ -969,35 +1008,10 @@
         void
         u3_lord_play(u3_lord* god_u, u3_info fon_u);
 
-      /* u3_lord_peek(): read namespace.
+      /* u3_lord_peek(): read namespace, injecting what's missing.
       */
         void
-        u3_lord_peek(u3_lord*   god_u,
-                     u3_noun      gan,
-                     u3_noun      ful,
-                     void*      ptr_v,
-                     u3_peek_cb fun_f);
-
-      /* u3_lord_peek_mine(): read namespace, injecting ship.
-      */
-        void
-        u3_lord_peek_mine(u3_lord*   god_u,
-                          u3_noun      gan,
-                          c3_m       car_m,
-                          u3_noun      pax,
-                          void*      ptr_v,
-                          u3_peek_cb fun_f);
-
-      /* u3_lord_peek_last(): read namespace, injecting ship and case.
-      */
-        void
-        u3_lord_peek_last(u3_lord*   god_u,
-                          u3_noun      gan,
-                          c3_m       car_m,
-                          u3_atom      des,
-                          u3_noun      pax,
-                          void*      ptr_v,
-                          u3_peek_cb fun_f);
+        u3_lord_peek(u3_lord* god_u, u3_pico* pic_u);
 
     /**  Filesystem (new api).
     **/
@@ -1209,6 +1223,38 @@
       */
         void
         u3_newt_mojo_stop(u3_mojo* moj_u, u3_moor_bail bal_f);
+
+    /** Pier scries.
+    **/
+      /* u3_pier_peek(): read namespace.
+      */
+        void
+        u3_pier_peek(u3_pier*   pir_u,
+                     u3_noun      gan,
+                     u3_noun      ful,
+                     void*      ptr_v,
+                     u3_peek_cb fun_f);
+
+      /* u3_pier_peek_mine(): read namespace, injecting ship.
+      */
+        void
+        u3_pier_peek_mine(u3_pier*   pir_u,
+                          u3_noun      gan,
+                          c3_m       car_m,
+                          u3_noun      pax,
+                          void*      ptr_v,
+                          u3_peek_cb fun_f);
+
+      /* u3_pier_peek_last(): read namespace, injecting ship and case.
+      */
+        void
+        u3_pier_peek_last(u3_pier*   pir_u,
+                          u3_noun      gan,
+                          c3_m       car_m,
+                          u3_atom      des,
+                          u3_noun      pax,
+                          void*      ptr_v,
+                          u3_peek_cb fun_f);
 
     /** Pier control.
     **/

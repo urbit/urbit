@@ -10,6 +10,7 @@ import Network.Socket              hiding (recvFrom, sendTo)
 import Urbit.Arvo                  hiding (Fake)
 import Urbit.King.Config
 import Urbit.Vere.Pier.Types
+import Urbit.Vere.Ports
 
 import Urbit.King.App      (HasKingId(..), HasPierEnv(..))
 import Urbit.Vere.Ames.DNS (NetworkMode(..), ResolvServ(..))
@@ -105,7 +106,10 @@ udpPort isFake who = do
   mPort <- view (networkConfigL . ncAmesPort)
   pure $ maybe (listenPort mode who) fromIntegral mPort
 
-udpServ :: (HasLogFunc e, HasNetworkConfig e) => Bool -> Ship -> RIO e UdpServ
+udpServ :: (HasLogFunc e, HasNetworkConfig e, HasPortControlApi e)
+        => Bool
+        -> Ship
+        -> RIO e UdpServ
 udpServ isFake who = do
   mode <- netMode isFake
   port <- udpPort isFake who
@@ -170,7 +174,7 @@ ames' who isFake stderr = do
 -}
 ames
   :: forall e
-   . (HasLogFunc e, HasNetworkConfig e, HasKingId e)
+   . (HasLogFunc e, HasNetworkConfig e, HasPortControlApi e, HasKingId e)
   => e
   -> Ship
   -> Bool
@@ -229,7 +233,7 @@ ames env who isFake enqueueEv stderr = (initialEvents, runAmes)
 
     NewtEfSend (_id, ()) dest (MkBytes bs) -> do
       atomically (readTVar aTurfs) >>= \case
-        Nothing    -> pure ()
+        Nothing    -> stderr "ames: send before turfs" >> pure ()
         Just turfs -> sendPacket drv mode dest bs
 
   sendPacket :: AmesDrv -> NetworkMode -> AmesDest -> ByteString -> RIO e ()

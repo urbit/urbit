@@ -6,21 +6,24 @@
 -}
 module Urbit.King.CLI where
 
-import ClassyPrelude
+import ClassyPrelude                   hiding (log)
 import Options.Applicative
 import Options.Applicative.Help.Pretty
 
 import Data.Word          (Word16)
+import RIO                (LogLevel(..))
 import System.Environment (getProgName)
 
 --------------------------------------------------------------------------------
 
-data KingOpts = KingOpts
-  { koSharedHttpPort  :: Maybe Word16
-  , koSharedHttpsPort :: Maybe Word16
+data Host = Host
+  { hSharedHttpPort  :: Maybe Word16
+  , hSharedHttpsPort :: Maybe Word16
+  , hUseNatPmp       :: Nat
   }
  deriving (Show)
 
+-- | Options for each running pier.
 data Opts = Opts
     { oQuiet        :: Bool
     , oHashless     :: Bool
@@ -44,6 +47,19 @@ data Opts = Opts
     }
   deriving (Show)
 
+-- | Options for the logging subsystem.
+data Log = Log
+    { lTarget  :: Maybe (LogTarget FilePath)
+    , lLevel   :: LogLevel
+    }
+  deriving (Show)
+
+data LogTarget a
+  = LogOff
+  | LogStderr
+  | LogFile a
+  deriving (Show)
+
 data BootType
   = BootComet
   | BootFake Text
@@ -53,6 +69,12 @@ data BootType
 data PillSource
   = PillSourceFile FilePath
   | PillSourceURL String
+  deriving (Show)
+
+data Nat
+  = NatAlways
+  | NatWhenPrivateNetwork
+  | NatNever
   deriving (Show)
 
 data New = New
@@ -102,8 +124,8 @@ data Bug
   deriving (Show)
 
 data Cmd
-    = CmdNew New Opts
-    | CmdRun KingOpts [(Run, Opts, Bool)]
+    = CmdNew New  Opts
+    | CmdRun Host [(Run, Opts, Bool)]
     | CmdBug Bug
     | CmdCon FilePath
   deriving (Show)
@@ -135,7 +157,7 @@ footNote exe = string $ intercalate "\n"
 
 --------------------------------------------------------------------------------
 
-parseArgs :: IO Cmd
+parseArgs :: IO (Cmd, Log)
 parseArgs = do
     nm <- getProgName
 
@@ -293,7 +315,7 @@ opts = do
 
     oVerbose   <- switch $ short 'v'
                         <> long "verbose"
-                        <> help "Verbose"
+                        <> help "Puts the serf and king into verbose mode"
                         <> hidden
 
     oExit      <- switch $ short 'x'
@@ -332,22 +354,69 @@ opts = do
 
     oFullReplay <- switch
           $ long "full-log-replay"
-         <> help "Ignores the snapshot and recomputes state from log"
+         <> help "Ignores snapshot and recomputes state from event log"
          <> hidden
 
     pure (Opts{..})
 
-newShip :: Parser Cmd
-newShip = CmdNew <$> new <*> opts
+log :: Parser Log
+log = do
+  lTarget <-
+    optional
+      $ ( flag' LogStderr
+        $ long "log-to-stderr"
+       <> long "stderr"
+       <> help "Display logs on stderr"
+       <> hidden
+        )
+    <|> ( fmap LogFile . strOption
+        $ long "log-to"
+       <> metavar "LOG_FILE"
+       <> help "Append logs to the given file"
+       <> hidden
+        )
+    <|> ( flag' LogOff
+        $ long "no-logging"
+       <> help "Disable logging entirely"
+       <> hidden
+        )
+
+  lLevel <-
+        ( flag' LevelDebug
+        $ long "log-debug"
+       <> help "Log errors, warnings, info, and debug messages"
+       <> hidden
+        )
+    <|> ( flag' LevelInfo
+        $ long "log-info"
+       <> help "Log errors, warnings, and info"
+       <> hidden
+        )
+    <|> ( flag' LevelWarn
+        $ long "log-warn"
+       <> help "Log errors and warnings (default)"
+       <> hidden
+        )
+    <|> ( flag' LevelError
+        $ long "log-error"
+       <> help "Log errors only"
+       <> hidden
+        )
+    <|> pure LevelWarn
+
+  pure (Log{..})
+
+newShip :: Parser (Cmd, Log)
+newShip = (,) <$> (CmdNew <$> new <*> opts) <*> log
 
 runOneShip :: Parser (Run, Opts, Bool)
 runOneShip = (,,) <$> fmap Run pierPath <*> opts <*> df
  where
   df = switch (short 'd' <> long "daemon" <> help "Daemon mode" <> hidden)
 
-kingOpts :: Parser KingOpts
-kingOpts = do
-  koSharedHttpPort <-
+host :: Parser Host
+host = do
+  hSharedHttpPort <-
     optional
     $  option auto
     $  metavar "PORT"
@@ -355,7 +424,7 @@ kingOpts = do
     <> help "HTTP port"
     <> hidden
 
-  koSharedHttpsPort <-
+  hSharedHttpsPort <-
     optional
     $  option auto
     $  metavar "PORT"
@@ -363,10 +432,29 @@ kingOpts = do
     <> help "HTTPS port"
     <> hidden
 
-  pure (KingOpts{..})
+  hUseNatPmp <-
+     ( flag' NatAlways
+     $ long "port-forwarding"
+    <> help "Always try to search for a router to forward ames ports"
+    <> hidden
+     ) <|>
+     ( flag' NatNever
+     $ long "no-port-forwarding"
+    <> help "Disable trying to ask the router to forward ames ports"
+    <> hidden
+     ) <|>
+     ( flag' NatWhenPrivateNetwork
+     $ long "port-forwarding-when-internal"
+    <> help ("Try asking the router to forward when ip is 192.168.0.0/16, " <>
+             "172.16.0.0/12 or 10.0.0.0/8 (default).")
+    <> hidden
+     ) <|>
+     (pure $ NatWhenPrivateNetwork)
 
-runShip :: Parser Cmd
-runShip = CmdRun <$> kingOpts <*> some runOneShip
+  pure (Host{..})
+
+runShip :: Parser (Cmd, Log)
+runShip = (,) <$> (CmdRun <$> host <*> some runOneShip) <*> log
 
 valPill :: Parser Bug
 valPill = do
@@ -410,8 +498,8 @@ browseEvs = EventBrowser <$> pierPath
 checkDawn :: Parser Bug
 checkDawn = CheckDawn <$> keyfilePath
 
-bugCmd :: Parser Cmd
-bugCmd = fmap CmdBug
+bugCmd :: Parser (Cmd, Log)
+bugCmd = (flip (,) <$> log <*>) $ fmap CmdBug
         $ subparser
         $ command "validate-pill"
             ( info (valPill <**> helper)
@@ -446,15 +534,15 @@ bugCmd = fmap CmdBug
             $ progDesc "Shows the list of stars accepting comets"
             )
 
-conCmd :: Parser Cmd
-conCmd = CmdCon <$> pierPath
+conCmd :: Parser (Cmd, Log)
+conCmd = (,) <$> (CmdCon <$> pierPath) <*> log
 
 allFx :: Parser Bug
 allFx = do
     bPierPath <- strArgument (metavar "PIER" <> help "Path to pier")
     pure CollectAllFX{..}
 
-cmd :: Parser Cmd
+cmd :: Parser (Cmd, Log)
 cmd = subparser
         $ command "new" ( info (newShip <**> helper)
                         $ progDesc "Boot a new ship."

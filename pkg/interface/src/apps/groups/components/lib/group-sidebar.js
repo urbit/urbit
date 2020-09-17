@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { GroupItem } from './group-item';
 import { Sigil } from '../../../../lib/sigil';
-import { SidebarInvite } from './sidebar-invite';
+import SidebarInvite from '../../../../components/SidebarInvite';
 import { Welcome } from './welcome';
 
 import { cite } from '../../../../lib/util';
@@ -48,10 +48,18 @@ export class GroupSidebar extends Component {
         return (
           <SidebarInvite
             key={uid}
-            api={props.api}
             invite={invite}
-            uid={uid}
-            history={props.history}
+            onAccept={() => {
+              const [,,ship, name] = invite.path.split('/');
+              const resource = { ship, name };
+              api.contacts.join(resource).then(() => {
+                api.invite.accept('/contacts', uid);
+              });
+              props.history.push(`/~groups${invite.path}`);
+            }}
+            onDecline={() => {
+              api.invite.decline('/contacts', uid);
+            }}
           />
         );
       });
@@ -63,16 +71,6 @@ export class GroupSidebar extends Component {
           (!path.startsWith('/~/')) &&
           (path in props.groups)
         );
-      })
-      .filter((path) => {
-        const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
-        if (selectedGroups.length === 0) {
-          return true;
-        }
-        const selectedPaths = selectedGroups.map(((e) => {
-        return e[0];
-      }));
-        return (selectedPaths.includes(path));
       })
       .sort((a, b) => {
         let aName = a.substr(1);

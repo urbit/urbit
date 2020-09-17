@@ -41,7 +41,7 @@ export class LinksApp extends Component {
   render() {
     const { props } = this;
 
-    const contacts = props.contacts ? props.contacts : {}; 
+    const contacts = props.contacts ? props.contacts : {};
 
     const groups = props.groups ? props.groups : {};
 
@@ -51,18 +51,9 @@ export class LinksApp extends Component {
 
     const seen = props.linksSeen ? props.linksSeen : {};
 
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
-
-    const selGroupPaths = selectedGroups.map(g => g[0]);
     const totalUnseen = _.reduce(
       links,
-      (acc, collection, path) => {
-        if(selGroupPaths.length > 0
-           && !selGroupPaths.includes(associations.link?.[path]?.['group-path'])) {
-          return acc;
-        }
-        return acc + collection.unseenCount;
-      },
+      (acc, collection) => acc + collection.unseenCount,
       0
     );
 
@@ -91,7 +82,6 @@ export class LinksApp extends Component {
                 groups={groups}
                 rightPanelHide={true}
                 sidebarShown={sidebarShown}
-                selectedGroups={selectedGroups}
                 links={links}
                 listening={listening}
                 api={api}
@@ -109,7 +99,6 @@ export class LinksApp extends Component {
                 invites={invites}
                 groups={groups}
                 sidebarShown={sidebarShown}
-                selectedGroups={selectedGroups}
                 links={links}
                 listening={listening}
                 api={api}
@@ -157,7 +146,6 @@ export class LinksApp extends Component {
                 groups={groups}
                 selected={resourcePath}
                 sidebarShown={sidebarShown}
-                selectedGroups={selectedGroups}
                 links={links}
                 listening={listening}
                 api={api}
@@ -198,7 +186,6 @@ export class LinksApp extends Component {
                 groups={groups}
                 selected={resourcePath}
                 sidebarShown={sidebarShown}
-                selectedGroups={selectedGroups}
                 popout={popout}
                 links={links}
                 listening={listening}
@@ -253,7 +240,6 @@ export class LinksApp extends Component {
                   groups={groups}
                   selected={resourcePath}
                   sidebarShown={sidebarShown}
-                  selectedGroups={selectedGroups}
                   sidebarHideMobile={true}
                   popout={popout}
                   links={links}
@@ -311,7 +297,6 @@ export class LinksApp extends Component {
                   groups={groups}
                   selected={resourcePath}
                   sidebarShown={sidebarShown}
-                  selectedGroups={selectedGroups}
                   sidebarHideMobile={true}
                   popout={popout}
                   links={links}

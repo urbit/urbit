@@ -82,7 +82,7 @@ wsConn pre inp out wsc = do
 
     flip finally cleanup $ do
          res <- atomically (waitCatchSTM writer <|> waitCatchSTM reader)
-         logDebug $ displayShow (res :: Either SomeException ())
+         logInfo $ displayShow (res :: Either SomeException ())
 
 
 --------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ wsClient pax por = do
     out <- io $ newTBMChanIO 5
     con <- pure (mkConn inp out)
 
-    logDebug "NOUNSERV (wsClie) Trying to connect"
+    logInfo "NOUNSERV (wsClie) Trying to connect"
 
     tid <- io $ async
               $ WS.runClient "127.0.0.1" por (unpack pax)
@@ -111,7 +111,7 @@ wsServApp :: (HasLogFunc e, ToNoun o, FromNoun i, Show i, Show o)
           -> WS.PendingConnection
           -> RIO e ()
 wsServApp cb pen = do
-    logDebug "NOUNSERV (wsServer) Got connection!"
+    logInfo "NOUNSERV (wsServer) Got connection!"
     wsc <- io $ WS.acceptRequest pen
     inp <- io $ newTBMChanIO 5
     out <- io $ newTBMChanIO 5
@@ -125,10 +125,10 @@ wsServer = do
 
     tid <- async $ do
         env <- ask
-        logDebug "NOUNSERV (wsServer) Starting server"
+        logInfo "NOUNSERV (wsServer) Starting server"
         io $ WS.runServer "127.0.0.1" 9999
            $ runRIO env . wsServApp (writeTBMChan con)
-        logDebug "NOUNSERV (wsServer) Server died"
+        logInfo "NOUNSERV (wsServer) Server died"
         atomically $ closeTBMChan con
 
     pure $ Server (readTBMChan con) tid 9999

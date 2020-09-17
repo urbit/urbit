@@ -35,9 +35,15 @@ static ur_dict32_t dic_u;             //  cue dictionary
 /* _cw_serf_fail(): failure stub.
 */
 static void
-_cw_serf_fail(void* vod_p, const c3_c* wut_c)
+_cw_serf_fail(void* ptr_v, ssize_t err_i, const c3_c* err_c)
 {
-  fprintf(stderr, "serf: fail: %s\r\n", wut_c);
+  if ( UV_EOF == err_i ) {
+    fprintf(stderr, "serf: pier unexpectedly shut down\r\n");
+  }
+  else {
+    fprintf(stderr, "serf: pier error: %s\r\n", err_c);
+  }
+
   exit(1);
 }
 
@@ -122,7 +128,7 @@ _cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
   if (  (c3n == ret_o)
      || (c3n == u3_serf_writ(&u3V, jar, &ret)) )
   {
-    _cw_serf_fail(0, "bad jar");
+    _cw_serf_fail(0, -1, "bad jar");
   }
   else {
     _cw_serf_send(ret);

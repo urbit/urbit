@@ -226,7 +226,7 @@ readRowsBatch :: ∀e. HasLogFunc e
 readRowsBatch env dbi first = readRows
   where
     readRows = do
-        logDebug $ display ("(readRowsBatch) From: " <> tshow first)
+        logInfo $ display ("(readRowsBatch) From: " <> tshow first)
         withWordPtr first $ \pIdx ->
             withKVPtrs' (MDB_val 8 (castPtr pIdx)) nullVal $ \pKey pVal ->
             rwith (readTxn env) $ \txn ->
