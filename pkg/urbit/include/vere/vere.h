@@ -40,7 +40,7 @@
 
     /* u3_moor_poke: poke callback function.
     */
-      typedef void (*u3_moor_poke)(void*, u3_atom);
+      typedef void (*u3_moor_poke)(void*, c3_d, c3_y*);
 
     /* u3_moor_bail: bailout callback function.
     */
@@ -424,15 +424,15 @@
           u3_writ_play = 2,
           u3_writ_save = 3,
           u3_writ_cram = 4,
-          u3_writ_pack = 5,
-          u3_writ_exit = 6
+          u3_writ_meld = 5,
+          u3_writ_pack = 6,
+          u3_writ_exit = 7
         } u3_writ_type;
 
       /* u3_writ: ipc message from king to serf
       */
         typedef struct _u3_writ {
           struct timeval   tim_u;               //  time enqueued
-          u3_atom            mat;               //  serialized
           struct _u3_writ* nex_u;               //  next in queue
           u3_writ_type     typ_e;               //  type-tagged
           union {                               //
@@ -470,6 +470,7 @@
           uv_process_t         cub_u;           //  process handle
           uv_process_options_t ops_u;           //  process configuration
           uv_stdio_container_t cod_u[3];        //  process options
+          void*                dic_u;           //  cue dictionary
           time_t               wen_t;           //  process creation time
           u3_mojo              inn_u;           //  client's stdin
           u3_moat              out_u;           //  client's stdout
@@ -987,6 +988,16 @@
         c3_o
         u3_lord_cram(u3_lord* god_u);
 
+      /* u3_lord_meld(): globally deduplicate persistent state.
+      */
+        void
+        u3_lord_meld(u3_lord* god_u);
+
+      /* u3_lord_pack(): defragment persistent state.
+      */
+        void
+        u3_lord_pack(u3_lord* god_u);
+
       /* u3_lord_work(): attempt work.
       */
         void
@@ -1183,10 +1194,10 @@
         void
         u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d);
 
-      /* u3_newt_write(): write atom to stream; free atom.
+      /* u3_newt_send(): write buffer to stream.
       */
         void
-        u3_newt_write(u3_mojo* moj_u, u3_atom mat);
+        u3_newt_send(u3_mojo* moj_u, c3_d len_d, c3_y* byt_y);
 
       /* u3_newt_read_sync(): start reading; multiple msgs synchronous.
       */
@@ -1266,6 +1277,16 @@
       */
         c3_o
         u3_pier_cram(u3_pier* pir_u);
+
+      /* u3_pier_meld(): globally deduplicate persistent state.
+      */
+        void
+        u3_pier_meld(u3_pier* pir_u);
+
+      /* u3_pier_pack(): defragment persistent state.
+      */
+        void
+        u3_pier_pack(u3_pier* pir_u);
 
       /* u3_pier_info(): print status info.
       */

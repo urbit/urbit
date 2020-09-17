@@ -1679,13 +1679,14 @@ _term_io_kick(u3_auto* car_u, u3_noun wir, u3_noun cad)
           // uv_timer_start(&u3K.tim_u, (uv_timer_cb)u3_king_grab, 0, 0);
         } break;
 
-        //  ignore pack (processed in worker)
-        //
+        case c3__meld: {
+          ret_o = c3y;
+          u3_pier_meld(car_u->pir_u);
+        } break;
+
         case c3__pack: {
           ret_o = c3y;
-          //  XX would be
-          //
-          // u3_assure(u3_pier_pack(car_u->pir_u));
+          u3_pier_pack(car_u->pir_u);
         } break;
       }
     }

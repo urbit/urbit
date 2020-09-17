@@ -39,6 +39,8 @@ struct _cd_save {
 };
 
 #undef VERBOSE_DISK
+#undef DISK_TRACE_JAM
+#undef DISK_TRACE_CUE
 
 static void
 _disk_commit(u3_disk* log_u);
@@ -168,10 +170,22 @@ _disk_commit_start(struct _cd_save* req_u)
 static c3_w
 _disk_serialize_v0(u3_fact* tac_u, c3_y** dat_y)
 {
-  u3_atom mat = u3ke_jam(u3nc(tac_u->bug_l, u3k(tac_u->job)));
-  c3_w  len_w = u3r_met(3, mat);
+  u3_noun val = u3nc(tac_u->bug_l, u3k(tac_u->job));
+  u3_atom mat;
+  c3_w  len_w;
+
+#ifdef DISK_TRACE_JAM
+  u3t_event_trace("king disk jam", 'B');
+#endif
+
+  mat    = u3ke_jam(val);
+  len_w  = u3r_met(3, mat);
   *dat_y = c3_malloc(len_w);
   u3r_bytes(0, len_w, *dat_y, mat);
+
+#ifdef DISK_TRACE_JAM
+  u3t_event_trace("king disk jam", 'E');
+#endif
 
   u3z(mat);
 
@@ -368,19 +382,27 @@ _disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
   u3_fact* tac_u;
 
   {
-    //  XX u3m_soft?
-    //
-    u3_noun dat = u3ke_cue(u3i_bytes(val_i, val_p));
-    u3_noun mug, job;
+    u3_noun val, mug, job;
     c3_l  bug_l;
 
+#ifdef DISK_TRACE_CUE
+    u3t_event_trace("king disk cue", 'B');
+#endif
 
-    if (  (c3n == u3r_cell(dat, &mug, &job))
+    //  XX u3m_soft?
+    //
+    val = u3ke_cue(u3i_bytes(val_i, val_p));
+
+#ifdef DISK_TRACE_CUE
+    u3t_event_trace("king disk cue", 'E');
+#endif
+
+    if (  (c3n == u3r_cell(val, &mug, &job))
        || (c3n == u3r_safe_word(mug, &bug_l)) ) // XX
     {
       //  failure here triggers cleanup in _disk_read_start_cb()
       //
-      u3z(dat);
+      u3z(val);
       return c3n;
     }
 
@@ -389,7 +411,7 @@ _disk_read_one_cb(void* ptr_v, c3_d eve_d, size_t val_i, void* val_p)
     tac_u = u3_fact_init(eve_d, 0, u3k(job));
     tac_u->bug_l = bug_l;
 
-    u3z(dat);
+    u3z(val);
   }
 
   if ( !red_u->ent_u ) {
@@ -643,6 +665,10 @@ u3_disk_exit(u3_disk* log_u)
   u3_dire_free(log_u->com_u);
 
   c3_free(log_u);
+
+#if defined(DISK_TRACE_JAM) || defined(DISK_TRACE_CUE)
+  u3t_trace_close();
+#endif
 }
 
 /* u3_disk_info(): print status info.
@@ -785,6 +811,10 @@ u3_disk_init(c3_c* pax_c, u3_disk_cb cb_u)
   }
 
   log_u->liv_o = c3y;
+
+#if defined(DISK_TRACE_JAM) || defined(DISK_TRACE_CUE)
+  u3t_trace_open(pax_c);
+#endif
 
   return log_u;
 }
