@@ -261,8 +261,7 @@ _cue_bench(void)
     gettimeofday(&b4, 0);
 
     {
-      ur_dict_t dic_u = {0};
-      u3_noun       out;
+      ur_cue_test_t *t = ur_cue_test_init();
 
       c3_w  len_w = u3r_met(3, vat);
       // XX assumes little-endian
@@ -271,20 +270,17 @@ _cue_bench(void)
                   ? (c3_y*)&vat
                   : (c3_y*)((u3a_atom*)u3a_to_ptr(vat))->buf_w;
 
-      ur_dict_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
-
       for ( i_w = 0; i_w < max_w; i_w++ ) {
-        ur_cue_test_unsafe(&dic_u, len_w, byt_y);
-        ur_dict_wipe(&dic_u);
+        ur_cue_test_with(t, len_w, byt_y);
       }
 
-      ur_dict_free(&dic_u);
+      ur_cue_test_done(t);
     }
 
     gettimeofday(&f2, 0);
     timersub(&f2, &b4, &d0);
     mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-    fprintf(stderr, "  cue test unsafe: %u ms\r\n", mil_w);
+    fprintf(stderr, "  cue test with: %u ms\r\n", mil_w);
   }
 
   {
