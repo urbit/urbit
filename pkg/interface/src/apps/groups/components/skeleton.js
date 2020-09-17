@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { GroupSidebar } from './lib/group-sidebar';
+import ErrorBoundary from '../../../components/ErrorBoundary';
 
 export class Skeleton extends Component {
   render() {
@@ -16,7 +17,6 @@ export class Skeleton extends Component {
             invites={props.invites}
             activeDrawer={props.activeDrawer}
             selected={props.selected}
-            selectedGroups={props.selectedGroups}
             history={props.history}
             api={props.api}
             associations={props.associations}
@@ -25,7 +25,9 @@ export class Skeleton extends Component {
             className={'h-100 w-100 relative ' + rightPanelClasses}
             style={{ flexGrow: 1 }}
           >
-            {props.children}
+            <ErrorBoundary>
+              {props.children}
+            </ErrorBoundary>
           </div>
         </div>
       </div>

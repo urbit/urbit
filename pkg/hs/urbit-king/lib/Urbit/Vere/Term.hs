@@ -30,6 +30,7 @@ import Urbit.King.API      (readPortsFile)
 import Urbit.TermSize      (TermSize(TermSize))
 import Urbit.Vere.Term.API (Client(Client))
 
+import qualified Data.Set                 as S
 import qualified Data.ByteString.Internal as BS
 import qualified Data.ByteString.UTF8     as BS
 import qualified System.Console.ANSI      as ANSI
@@ -342,12 +343,63 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       Clr ()        -> do T.clearScreen
                           termRefreshLine ls
       Hop w         -> termShowCursor ls (fromIntegral w)
+      Klr s         -> do ls2 <- termShowClear ls
+                          termShowStub ls2 s
       Lin c         -> do ls2 <- termShowClear ls
                           termShowLine ls2 (pack c)
       Mor ()        -> termShowMore ls
       Sag path noun -> pure ls
       Sav path atom -> pure ls
       Url url       -> pure ls
+
+    termRenderDeco :: Deco -> Char
+    termRenderDeco = \case
+      DecoBr   -> '1'
+      DecoUn   -> '4'
+      DecoBl   -> '5'
+      DecoNull -> '0'
+
+    termRenderTint :: Tint -> Char
+    termRenderTint = \case
+      TintK    -> '0'
+      TintR    -> '1'
+      TintG    -> '2'
+      TintY    -> '3'
+      TintB    -> '4'
+      TintM    -> '5'
+      TintC    -> '6'
+      TintW    -> '7'
+      TintNull -> '9'
+
+    -- Wraps the appropriate escape sequence around a piece of styled text
+    termRenderStubSegment :: Stye -> [Char] -> [Char]
+    termRenderStubSegment Stye {..} tape =
+        case (S.null decoset, back, fore) of
+          (True, TintNull, TintNull) -> tape
+          _                          -> styled
+      where
+        decoset = setFromHoonSet deco
+        escape  = [chr 27, '[']
+
+        styles = intercalate ";" $ filter (not . null)
+          [ intersperse ';' $ fmap termRenderDeco $ toList decoset
+          , case back of
+              TintNull -> []
+              tint     -> ['4', termRenderTint tint]
+          , case fore of
+              TintNull -> []
+              tint     -> ['3', termRenderTint tint]
+          ]
+
+        styled = mconcat [escape, styles, "m", tape, escape, "0m"]
+
+    -- Displays and sets styled text as the current line
+    termShowStub :: LineState -> Stub -> RIO e LineState
+    termShowStub ls (Stub s) = do
+      let visualLength = sum $ fmap (length . snd) s
+      let outText = pack $ mconcat $ fmap (uncurry termRenderStubSegment) s
+      putStr outText
+      pure ls { lsLine = outText, lsCurPos = visualLength }
 
     -- Moves the cursor to the requested position
     termShowCursor :: LineState -> Int -> RIO e LineState
@@ -472,7 +524,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                 loop rd
               else if w == 3 then do
                 -- ETX (^C)
-                logDebug $ displayShow "Ctrl-c interrupt"
+                logInfo $ displayShow "Ctrl-c interrupt"
                 atomically $ do
                   writeTQueue wq [Term.Trace "interrupt\r\n"]
                   writeTQueue rq $ Ctl $ Cord "c"

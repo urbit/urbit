@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import _, { capitalize } from 'lodash';
+import { FixedSizeList as List } from 'react-window';
+
 import { Dropdown } from '../apps/publish/components/lib/dropdown';
 import { cite, deSig } from '../lib/util';
 import { roleForShip, resourceFromPath } from '../lib/group';
@@ -143,7 +145,7 @@ export class GroupView extends Component<
 
   isAdmin(): boolean {
     const us = `~${window.ship}`;
-    const role = roleForShip(this.props.group, us);
+    const role = roleForShip(this.props.group, window.ship);
     const resource = resourceFromPath(this.props.resourcePath);
     return resource.ship == us || role === 'admin';
   }
@@ -156,10 +158,15 @@ export class GroupView extends Component<
       return options;
     }
     const role = roleForShip(group, ship);
+    const myRole = roleForShip(group, window.ship);
     if (role === 'admin' || resource.ship === ship) {
       return [];
     }
-    if ('open' in group.policy) {
+    if (
+      'open' in group.policy // If blacklist, not whitelist
+      && (this.isAdmin()) // And we can ban people (TODO: add || role === 'moderator')
+      && ship !== window.ship // We can't ban ourselves
+    ) {
       options.unshift({ text: 'Ban', onSelect: () => this.banUser(ship) });
     }
     if (this.isAdmin() && !role) {
@@ -199,52 +206,45 @@ export class GroupView extends Component<
     });
   }
 
-  renderMembers() {
+  memberElements() {
     const { group, permissions } = this.props;
     const { members } = group;
     const isAdmin = this.isAdmin();
-    return (
-      <div className='flex flex-column'>
-        <div className='f9 gray2 mt6 mb3'>Members</div>
-        {Array.from(members).map((ship) => {
-          const role = roleForShip(group, deSig(ship));
-          const onRoleRemove =
-            role && isAdmin
-              ? () => {
-                  this.removeTag(ship, { tag: role });
-                }
-              : undefined;
-          const [present, missing] = this.getAppTags(ship);
-          const options = this.optionsForShip(ship, missing);
+    return Array.from(members).map((ship) => {
+      const role = roleForShip(group, deSig(ship));
+      const onRoleRemove =
+        role && isAdmin
+          ? () => {
+              this.removeTag(ship, { tag: role });
+            }
+          : undefined;
+      const [present, missing] = this.getAppTags(ship);
+      const options = this.optionsForShip(ship, missing);
 
-          return (
-            <div key={ship} className='flex flex-column pv3'>
-              <GroupMember ship={ship} options={options}>
-                {((permissions && role) || present.length > 0) && (
-                  <div className='flex mt1'>
-                    {role && (
-                      <Tag
-                        onRemove={onRoleRemove}
-                        description={capitalize(role)}
-                      />
-                    )}
-                    {present.map((tag, idx) => (
-                      <Tag
-                        key={idx}
-                        onRemove={this.doIfAdmin(() =>
-                          this.removeTag(ship, tag)
-                        )}
-                        description={tag.desc}
-                      />
-                    ))}
-                  </div>
-                )}
-              </GroupMember>
+      return (
+        <GroupMember ship={ship} options={options}>
+          {((permissions && role) || present.length > 0) && (
+            <div className='flex mt1'>
+              {role && (
+                <Tag
+                  onRemove={onRoleRemove}
+                  description={capitalize(role)}
+                />
+              )}
+              {present.map((tag, idx) => (
+                <Tag
+                  key={idx}
+                  onRemove={this.doIfAdmin(() =>
+                    this.removeTag(ship, tag)
+                  )}
+                  description={tag.desc}
+                />
+              ))}
             </div>
-          );
-        })}
-      </div>
-    );
+          )}
+        </GroupMember>
+      );
+    })
   }
 
   setInvites(invites: Invites) {
@@ -321,6 +321,7 @@ export class GroupView extends Component<
   render() {
     const { group, resourcePath, className } = this.props;
     const resource = resourceFromPath(resourcePath);
+    const memberElements = this.memberElements();
 
     return (
       <div className={className}>
@@ -332,7 +333,17 @@ export class GroupView extends Component<
         </div>
         {'invite' in group.policy && this.renderInvites(group.policy)}
         {'open' in group.policy && this.renderBanned(group.policy)}
-        {this.renderMembers()}
+        <div className='flex flex-column'>
+          <div className='f9 gray2 mt6 mb3'>Members</div>
+          <List
+            height={500}
+            itemCount={memberElements.length}
+            itemSize={44}
+            width="100%"
+          >
+          {({ index, style }) => <div key={index} style={style} className='flex flex-column pv3'>{memberElements[index]}</div>}
+          </List>
+        </div>
 
         <Spinner
           awaiting={this.state.awaiting}

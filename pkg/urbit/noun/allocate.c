@@ -3,6 +3,21 @@
 */
 #include "all.h"
 
+//  declarations of inline functions
+//
+void
+u3a_drop(const u3a_pile* pil_u);
+void*
+u3a_peek(const u3a_pile* pil_u);
+void*
+u3a_pop(const u3a_pile* pil_u);
+void*
+u3a_push(const u3a_pile* pil_u);
+void
+u3a_pile_sane(const u3a_pile* pil_u);
+c3_o
+u3a_pile_done(const u3a_pile* pil_u);
+
 /* _box_count(): adjust memory count.
 */
 #ifdef  U3_CPU_DEBUG
@@ -589,67 +604,24 @@ u3a_wealloc(void* lag_v, c3_w len_w)
     }
   }
 }
-/* u3a_push(): allocate space on the road stack
-*/
-void*
-u3a_push(c3_w len_w)
-{
-  void *cur, *top = u3to(void, u3R->cap_p);
-  if ( c3y == u3a_is_north(u3R) ) {
-    top -= len_w;
-    cur = top;
-    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
 
-    if( !( cap_p < u3R->mat_p &&
-           cap_p > u3R->hat_p ) )
-    {
-      u3m_bail(c3__meme);
-    }
-
-    return cur;
-  }
-  else {
-    cur = top;
-    top += len_w;
-    u3R->cap_p = u3of(void, top);
-    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
-
-    if( !( cap_p > u3R->mat_p &&
-           cap_p < u3R->hat_p ) )
-    {
-      u3m_bail(c3__meme);
-    }
-
-    return cur;
-  }
-}
-
-/* u3a_pop(): deallocate space on the road stack
+/* u3a_pile_prep(): initialize stack control.
 */
 void
-u3a_pop(c3_w len_w)
+u3a_pile_prep(u3a_pile* pil_u, c3_w len_w)
 {
-  void* top = u3to(void, u3R->cap_p);
-  if ( c3y == u3a_is_north(u3R) ) {
-    top += len_w;
-    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
-    c3_assert(cap_p <= u3R->mat_p);
-    c3_assert(cap_p > u3R->hat_p);
-  }
-  else {
-    top -= len_w;
-    u3p(void) cap_p = u3R->cap_p = u3of(void, top);
-    c3_assert(cap_p >= u3R->mat_p);
-    c3_assert(cap_p < u3R->hat_p);
-  }
-}
+  //  frame size, in words
+  //
+  c3_w wor_w = (len_w + 3) >> 2;
+  c3_o nor_o = u3a_is_north(u3R);
 
-/* u3a_peek(): examine the top of the road stack
-*/
-void*
-u3a_peek(c3_w len_w)
-{
-  return u3to(void, u3R->cap_p) - (c3y == u3a_is_north(u3R) ? 0 : len_w);
+  pil_u->mov_ws = (c3y == nor_o) ? -wor_w :  wor_w;
+  pil_u->off_ws = (c3y == nor_o) ?      0 : -wor_w;
+  pil_u->top_p  = u3R->cap_p;
+
+#ifdef U3_MEMORY_DEBUG
+  pil_u->rod_u  = u3R;
+#endif
 }
 
 /* u3a_wfree(): free storage.

@@ -179,7 +179,7 @@ streamBlocks env init getAct = send init >> loop
 
   send "" = pure ()
   send c  = do
-    runRIO env (logTrace (display ("sending chunk " <> tshow c)))
+    runRIO env (logDebug (display ("sending chunk " <> tshow c)))
     yield $ Chunk $ fromByteString c
     yield Flush
 

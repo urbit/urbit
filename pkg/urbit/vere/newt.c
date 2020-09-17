@@ -216,7 +216,7 @@ _newt_read(u3_moat*        mot_u,
       fprintf(stderr, "newt: read failed %s\r\n", uv_strerror(len_i));
     }
 
-    mot_u->bal_f(mot_u->ptr_v, uv_strerror(len_i));
+    mot_u->bal_f(mot_u->ptr_v, len_i, uv_strerror(len_i));
     return c3n;
   }
   //  EAGAIN/EWOULDBLOCK
@@ -298,7 +298,7 @@ _newt_read_init(u3_moat* mot_u, uv_read_cb read_cb_f)
                                      read_cb_f)) )
     {
       fprintf(stderr, "newt: read failed %s\r\n", uv_strerror(sas_i));
-      mot_u->bal_f(mot_u->ptr_v, uv_strerror(sas_i));
+      mot_u->bal_f(mot_u->ptr_v, sas_i, uv_strerror(sas_i));
     }
   }
 }
@@ -309,7 +309,7 @@ static void
 _moat_stop_cb(uv_handle_t* han_u)
 {
   u3_moat* mot_u = han_u->data;
-  mot_u->bal_f(mot_u->ptr_v, "");
+  mot_u->bal_f(mot_u->ptr_v, -1, "");
 }
 
 /* u3_newt_moat_stop(); newt stop/close input stream.
@@ -408,7 +408,7 @@ _newt_write_cb(uv_write_t* wri_u, c3_i sas_i)
     }
     else {
       fprintf(stderr, "newt: write failed %s\r\n", uv_strerror(sas_i));
-      moj_u->bal_f(moj_u->ptr_v, uv_strerror(sas_i));
+      moj_u->bal_f(moj_u->ptr_v, sas_i, uv_strerror(sas_i));
     }
   }
 }
@@ -419,7 +419,7 @@ static void
 _mojo_stop_cb(uv_handle_t* han_u)
 {
   u3_mojo* moj_u = han_u->data;
-  moj_u->bal_f(moj_u->ptr_v, "");
+  moj_u->bal_f(moj_u->ptr_v, -1, "");
 }
 
 /* u3_newt_mojo_stop(); newt stop/close output stream.
@@ -471,7 +471,7 @@ u3_newt_send(u3_mojo* moj_u, c3_d len_d, c3_y* byt_y)
     {
       c3_free(req_u);
       fprintf(stderr, "newt: write failed %s\r\n", uv_strerror(sas_i));
-      moj_u->bal_f(moj_u->ptr_v, uv_strerror(sas_i));
+      moj_u->bal_f(moj_u->ptr_v, sas_i, uv_strerror(sas_i));
     }
   }
 }

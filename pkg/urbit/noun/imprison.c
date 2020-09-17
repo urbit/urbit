@@ -10,7 +10,6 @@ u3i_bytes(c3_w        a_w,
           const c3_y* b_y)
 {
   u3_noun pro;
-  u3t_on(mal_o);
 
   //  Strip trailing zeroes.
   //
@@ -40,6 +39,7 @@ u3i_bytes(c3_w        a_w,
 
   //  Allocate, fill, return.
   //
+  u3t_on(mal_o);
   {
     c3_w      len_w = (a_w + 3) >> 2;
     c3_w*     nov_w = u3a_walloc((len_w + c3_wiseof(u3a_atom)));
@@ -70,8 +70,8 @@ u3i_bytes(c3_w        a_w,
 
     pro = u3a_to_pug(u3a_outa(nov_w));
   }
-
   u3t_off(mal_o);
+
   return pro;
 }
 
@@ -82,7 +82,6 @@ u3i_words(c3_w        a_w,
           const c3_w* b_w)
 {
   u3_noun pro;
-  u3t_on(mal_o);
 
   //  Strip trailing zeroes.
   //
@@ -101,6 +100,7 @@ u3i_words(c3_w        a_w,
 
   //  Allocate, fill, return.
   //
+  u3t_on(mal_o);
   {
     c3_w*     nov_w = u3a_walloc(a_w + c3_wiseof(u3a_atom));
     u3a_atom* nov_u = (void*)nov_w;
@@ -120,8 +120,8 @@ u3i_words(c3_w        a_w,
 
     pro = u3a_to_pug(u3a_outa(nov_w));
   }
-
   u3t_off(mal_o);
+
   return pro;
 }
 
@@ -132,7 +132,6 @@ u3i_chubs(c3_w        a_w,
           const c3_d* b_d)
 {
   u3_noun pro;
-  u3t_on(mal_o);
 
   //  Strip trailing zeroes.
   //
@@ -151,6 +150,7 @@ u3i_chubs(c3_w        a_w,
 
   //  Allocate, fill, return.
   //
+  u3t_on(mal_o);
   {
     c3_w len_w = 2 * a_w;
 
@@ -192,8 +192,8 @@ u3i_chubs(c3_w        a_w,
 
     pro = u3a_to_pug(u3a_outa(nov_w));
   }
-
   u3t_off(mal_o);
+
   return pro;
 }
 

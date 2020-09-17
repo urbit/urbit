@@ -168,6 +168,16 @@
         u3a_flag_sand  = 0x1,                 //  bump allocation (XX not impl)
       };
 
+    /* u3a_pile: stack control, abstracted over road direction.
+    */
+      typedef struct _u3a_pile {
+        c3_ws    mov_ws;
+        c3_ws    off_ws;
+        u3_post   top_p;
+#ifdef U3_MEMORY_DEBUG
+        u3a_road* rod_u;
+#endif
+      } u3a_pile;
 
   /**  Macros.  Should be better commented.
   **/
@@ -302,6 +312,87 @@
 
 #   define u3_Loom      ((c3_w *)(void *)U3_OS_LoomBase)
 
+  /**  inline functions.
+  **/
+    /**  road stack.
+    **/
+        /* u3a_drop(): drop a road stack frame per [pil_u].
+        */
+          inline void
+          u3a_drop(const u3a_pile* pil_u)
+          {
+            u3R->cap_p -= pil_u->mov_ws;
+          }
+
+        /* u3a_peek(): examine the top of the road stack.
+        */
+          inline void*
+          u3a_peek(const u3a_pile* pil_u)
+          {
+            return u3to(void, (u3R->cap_p + pil_u->off_ws));
+          }
+
+        /* u3a_pop(): drop a road stack frame, peek at the new top.
+        */
+          inline void*
+          u3a_pop(const u3a_pile* pil_u)
+          {
+            u3a_drop(pil_u);
+            return u3a_peek(pil_u);
+          }
+
+        /* u3a_push(): push a frame onto the road stack, per [pil_u].
+        */
+          inline void*
+          u3a_push(const u3a_pile* pil_u)
+          {
+            u3R->cap_p += pil_u->mov_ws;
+            return u3a_peek(pil_u);
+          }
+
+        //  we have to forward-declare u3m_bail() here, as our
+        //  headers don't have the necessary guards.
+        //
+          c3_i
+          u3m_bail(c3_m how_m) __attribute__((noreturn));
+
+        /* u3a_pile_sane(): bail on invalid road stack state.
+        */
+          inline void
+          u3a_pile_sane(const u3a_pile* pil_u)
+          {
+            //  !off means we're on a north road
+            //
+            if ( !pil_u->off_ws ) {
+              if( !(u3R->cap_p > u3R->hat_p) ) {
+                u3m_bail(c3__meme);
+              }
+#ifdef U3_MEMORY_DEBUG
+              c3_assert( pil_u->top_p >= u3R->cap_p );
+#endif
+            }
+            else {
+              if( !(u3R->cap_p < u3R->hat_p) ) {
+                u3m_bail(c3__meme);
+              }
+#ifdef U3_MEMORY_DEBUG
+              c3_assert( pil_u->top_p <= u3R->cap_p );
+#endif
+            }
+
+#ifdef U3_MEMORY_DEBUG
+            c3_assert( pil_u->rod_u == u3R );
+#endif
+          }
+
+        /* u3a_pile_done(): assert valid upon completion.
+        */
+          inline c3_o
+          u3a_pile_done(const u3a_pile* pil_u)
+          {
+            return (pil_u->top_p == u3R->cap_p) ? c3y : c3n;
+          }
+
   /**  Functions.
   **/
     /**  Allocation.
@@ -328,21 +419,10 @@
           void*
           u3a_wealloc(void* lag_v, c3_w len_w);
 
-        /* u3a_push(): allocate space on the road stack
-        */
-          void*
-          u3a_push(c3_w len_w);
-
-        /* u3a_pop(): deallocate space on the road stack
+        /* u3a_pile_prep(): initialize stack control.
         */
           void
-          u3a_pop(c3_w len_w);
-
-        /* u3a_peek(): examine the top of the road stack
-        */
-          void*
-          u3a_peek(c3_w len_w);
-
+          u3a_pile_prep(u3a_pile* pil_u, c3_w len_w);
 
       /* C-style aligned allocation - *not* compatible with above.
       */

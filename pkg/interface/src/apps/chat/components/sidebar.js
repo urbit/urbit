@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import Welcome from './lib/welcome';
 import { alphabetiseAssociations } from '../../../lib/util';
-import { SidebarInvite } from './lib/sidebar-invite';
+import SidebarInvite from '../../../components/SidebarInvite';
 import { GroupItem } from './lib/group-item';
 
 export class Sidebar extends Component {
@@ -12,8 +12,6 @@ export class Sidebar extends Component {
 
   render() {
     const { props } = this;
-
-    const selectedGroups = props.selectedGroups ? props.selectedGroups : [];
 
     const contactAssoc =
       (props.associations && 'contacts' in props.associations)
@@ -51,25 +49,16 @@ export class Sidebar extends Component {
       .map((uid) => {
         return (
           <SidebarInvite
-            uid={uid}
             key={uid}
             invite={props.invites[uid]}
-            api={props.api}
+            onAccept={() => props.api.invite.accept('/chat', uid)}
+            onDecline={() => props.api.invite.decline('/chat', uid)}
           />
         );
       });
 
     const groupedItems = Object.keys(contactAssoc)
       .filter(each => (groupedChannels[each] || []).length !== 0)
-      .filter((each) => {
-        if (selectedGroups.length === 0) {
-          return true;
-        }
-        const selectedPaths = selectedGroups.map((e) => {
-          return e[0];
-        });
-        return selectedPaths.includes(each);
-      })
       .map((each, i) => {
         const channels = groupedChannels[each] || [];
         return(

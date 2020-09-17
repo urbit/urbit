@@ -53,6 +53,14 @@
   }
 
   static u3_noun
+  _last_k(u3_noun zyc, u3_noun naz)
+  {
+    u3_noun pro = _last(zyc, naz);
+    u3z(zyc); u3z(naz);
+    return pro;
+  }
+
+  static u3_noun
   _next(u3_noun tub)
   {
     u3_noun p_tub, q_tub;
@@ -910,6 +918,13 @@
     }
   }
 
+/* _stir_pair(): stack frame recording intermediate parse results
+*/
+  typedef struct {
+    u3_noun har;  //  hair, p_vex
+    u3_noun res;  //  parse-result, puq_vex
+  } _stir_pair;
+
 /* stir
 */
   static u3_noun
@@ -918,42 +933,71 @@
                 u3_noun fel,
                 u3_noun tub)
   {
-    u3_noun vex = u3x_good(u3n_slam_on(u3k(fel), u3k(tub)));
-    u3_noun p_vex, q_vex;
-    u3_noun ret;
+    //  pil_u: stack control structure
+    //  par_u: frame pointer
+    //  wag:   initial accumulator (deconstructed)
+    //
+    u3a_pile    pil_u;
+    _stir_pair* par_u;
+    u3_noun     p_wag, puq_wag, quq_wag;
 
-    u3x_cell(vex, &p_vex, &q_vex);
-    if ( c3n == u3du(q_vex) ) {
-      ret = u3nq(u3k(p_vex),
-                 u3_nul,
-                 u3k(rud),
-                 u3k(tub));
-    }
-    else {
-      u3_noun uq_vex = u3t(q_vex);
-      u3_noun puq_vex, quq_vex;
-      u3_noun wag, p_wag, q_wag, uq_wag, puq_wag, quq_wag;
+    u3a_pile_prep(&pil_u, sizeof(*par_u));
 
-      u3x_cell(uq_vex, &puq_vex, &quq_vex);
-      wag = _cqe_stir_fun(rud, raq, fel, quq_vex);
+    //  push incremental, successful [fel] parse results onto road stack
+    //
+    {
+      u3_noun    vex, p_vex, q_vex, puq_vex, quq_vex;
+      u3j_site fel_u;
+      u3j_gate_prep(&fel_u, u3k(fel));
 
-      u3x_cell(wag, &p_wag, &q_wag);
-      if ( c3n == u3du(q_wag) ) {
-        return u3m_bail(c3__fail);
+      vex = u3j_gate_slam(&fel_u, u3k(tub));
+      u3x_cell(vex, &p_vex, &q_vex);
+
+      u3k(tub);
+
+      while ( u3_nul != q_vex ) {
+        u3x_trel(q_vex, 0, &puq_vex, &quq_vex);
+
+        par_u = u3a_push(&pil_u);
+        par_u->har = u3k(p_vex);
+        par_u->res = u3k(puq_vex);
+
+        u3z(tub);
+        tub = u3k(quq_vex);
+
+        u3z(vex);
+        vex = u3j_gate_slam(&fel_u, u3k(tub));
+        u3x_cell(vex, &p_vex, &q_vex);
       }
-      uq_wag = u3t(q_wag);
-      u3x_cell(uq_wag, &puq_wag, &quq_wag);
 
-      ret = u3nq(_last(p_vex, p_wag),
-                 u3_nul,
-                 u3x_good(u3n_slam_on(u3k(raq),
-                                      u3nc(u3k(puq_vex),
-                                           u3k(puq_wag)))),
-                 u3k(quq_wag));
-      u3z(wag);
+      p_wag   = u3k(p_vex);
+      puq_wag = u3k(rud);
+      quq_wag = tub;
+
+      u3z(vex);
+      u3j_gate_lose(&fel_u);
     }
-    u3z(vex);
-    return ret;
+
+    //  unwind the stack, folding parse results into [wag] by way of [raq]
+    //
+    if ( c3n == u3a_pile_done(&pil_u) ) {
+      u3j_site raq_u;
+      u3j_gate_prep(&raq_u, u3k(raq));
+
+      //  check for stack overflow
+      //
+      u3a_pile_sane(&pil_u);
+
+      while ( c3n == u3a_pile_done(&pil_u) ) {
+        p_wag   = _last_k(par_u->har, p_wag);
+        puq_wag = u3j_gate_slam(&raq_u, u3nc(par_u->res, puq_wag));
+        par_u   = u3a_pop(&pil_u);
+      }
+
+      u3j_gate_lose(&raq_u);
+    }
+
+    return u3nq(p_wag, u3_nul, puq_wag, quq_wag);
   }
 
   u3_noun
