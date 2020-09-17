@@ -81,7 +81,7 @@ export default class ChatApi extends BaseApi<StoreState> {
    * If we don't host the chat, then it just leaves
    */
   delete(path: Path) {
-    this.viewAction({ delete: { 'app-path': path } });
+    return this.viewAction({ delete: { 'app-path': path } });
   }
 
   /**

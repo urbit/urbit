@@ -31,7 +31,7 @@ export function JoinScreen(props: JoinScreenProps & RouteComponentProps) {
     try {
       await api.publish.publishAction(action);
       await waiter((p) => !!p.notebooks?.[ship]?.[book]);
-      props.history.push(`/~publish/notebook/${ship}/${book}`);
+      props.history.replace(`/~publish/notebook/${ship}/${book}`);
     } catch (e) {
       console.error(e);
       setError(true);
