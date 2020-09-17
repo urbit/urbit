@@ -20,6 +20,7 @@ import { Groups } from "~/types/group-update";
 import { Contacts, Rolodex } from "~/types/contact-update";
 import GlobalApi from "~/logic/api/global";
 import styled from "styled-components";
+import {Associations} from "~/types";
 
 const TabList = styled(_TabList)`
   margin-bottom: ${(p) => p.theme.space[4]}px;
@@ -40,6 +41,7 @@ interface NotebookProps {
   hideNicknames: boolean;
   baseUrl: string;
   rootUrl: string;
+  associations: Associations;
 }
 
 export function Notebook(props: NotebookProps & RouteComponentProps) {
@@ -134,6 +136,8 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
                 api={api}
                 notebook={notebook}
                 contacts={notebookContacts}
+                associations={props.associations}
+                groups={groups}
               />
             </TabPanel>
           </TabPanels>

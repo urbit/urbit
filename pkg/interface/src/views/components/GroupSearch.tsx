@@ -88,7 +88,7 @@ export function GroupSearch(props: InviteSearchProps) {
       caption={props.caption}
       candidates={groups}
       renderCandidate={renderCandidate}
-      disabled={value.length !== 0}
+      disabled={value && value.length !== 0}
       search={(s: string, a: Association) =>
         a.metadata.title.toLowerCase().startsWith(s.toLowerCase())
       }

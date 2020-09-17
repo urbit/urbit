@@ -8,7 +8,8 @@ import { Groups } from "../../../../types/group-update";
 import { Contacts, Rolodex } from "../../../../types/contact-update";
 import Notebook from "./Notebook";
 import NewPost from "./new-post";
-import { NoteRoutes } from "./NoteRoutes";
+import { NoteRoutes } from './NoteRoutes';
+import { LocalUpdateRemoteContentPolicy, Associations } from "~/types";
 
 interface NotebookRoutesProps {
   api: GlobalApi;
@@ -20,6 +21,10 @@ interface NotebookRoutesProps {
   groups: Groups;
   baseUrl?: string;
   rootUrl?: string;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
+  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
+  associations: Associations;
 }
 
 export function NotebookRoutes(
@@ -75,8 +80,9 @@ export function NotebookRoutes(
               notebook={notebook}
               note={note}
               contacts={notebookContacts}
-              hideAvatars={false}
-              hideNicknames={false}
+              hideAvatars={props.hideAvatars}
+              hideNicknames={props.hideNicknames}
+              remoteContentPolicy={props.remoteContentPolicy}
               {...routeProps}
             />
           );

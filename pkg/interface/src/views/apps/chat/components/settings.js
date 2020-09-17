@@ -1,15 +1,12 @@
 import React, { Component, Fragment } from 'react';
-import { deSig } from '~/logic/lib/util';
-import { Link } from 'react-router-dom';
 
-import { ChatHeader } from './lib/chat-header';
-import { MetadataSettings } from './lib/metadata-settings';
+import { deSig } from '~/logic/lib/util';
+import { MetadataSettings } from '~/views/components/metadata/settings';
+import { Spinner } from '~/views/components/Spinner';
+
+import ChatHeader from './lib/ChatHeader';
 import { DeleteButton } from './lib/delete-button';
 import { GroupifyButton } from './lib/groupify-button';
-import { Spinner } from '~/views/components/Spinner';
-import { ChatTabBar } from './lib/chat-tabbar';
-import SidebarSwitcher from '~/views/components/SidebarSwitch';
-
 
 export class SettingsScreen extends Component {
   constructor(props) {
@@ -89,13 +86,17 @@ export class SettingsScreen extends Component {
           isOwner={isOwner}
           changeLoading={this.changeLoading}
           station={station}
+          association={association}
+          contacts={contacts}
           api={api} />
         <MetadataSettings
           isOwner={isOwner}
           changeLoading={this.changeLoading}
           api={api}
           association={association}
-          station={station} />
+          resource="chat"
+          app="chat"
+        />
         <Spinner
           awaiting={this.state.awaiting}
           classes="absolute right-2 bottom-2 ba pa2 b--gray1-d"
@@ -121,13 +122,13 @@ export class SettingsScreen extends Component {
     const isInPopout = popout ? "popout/" : "";
     const title =
       ( association &&
-        ('metadata' in association) && 
+        ('metadata' in association) &&
         (association.metadata.title !== '')
       ) ? association.metadata.title : station.substr(1);
 
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column white-d">
-        <ChatHeader 
+        <ChatHeader
           match={match}
           location={location}
           api={api}

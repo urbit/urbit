@@ -1,3 +1,6 @@
+::  graph-store [landscape]
+::
+::
 /+  store=graph-store, sigs=signatures, res=resource, default-agent, dbug
 ~%  %graph-store-top  ..is  ~
 |%
@@ -282,7 +285,7 @@
         ?~  index  graph
         =*  atom   i.index
         =/  =node:store
-          ~|  "node does not exist to add signatures to!" 
+          ~|  "node does not exist to add signatures to!"
           (need (get:orm graph atom))
         ::  last index in list
         ::
@@ -327,7 +330,7 @@
         ?~  index  graph
         =*  atom   i.index
         =/  =node:store
-          ~|  "node does not exist to add signatures to!" 
+          ~|  "node does not exist to add signatures to!"
           (need (get:orm graph atom))
         ::  last index in list
         ::
@@ -447,16 +450,29 @@
   |^
   ?>  (team:title our.bowl src.bowl)
   ?+  path  (on-peek:def path)
-      [%x %keys ~]         ``noun+!>(~(key by graphs))
-      [%x %tags ~]         ``noun+!>(~(key by tag-queries))
-      [%x %tag-queries ~]  ``noun+!>(tag-queries)
+      [%x %keys ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>(`update:store`[%0 now.bowl [%keys ~(key by graphs)]])
+  ::
+      [%x %tags ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>(`update:store`[%0 now.bowl [%tags ~(key by tag-queries)]])
+  ::
+      [%x %tag-queries ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>(`update:store`[%0 now.bowl [%tag-queries tag-queries]])
+  ::
       [%x %graph @ @ ~]
     =/  =ship   (slav %p i.t.t.path)
     =/  =term   i.t.t.t.path
     =/  result=(unit marked-graph:store)
       (~(get by graphs) [ship term])
     ?~  result  [~ ~]
-    ``noun+!>(u.result)
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    [%add-graph [ship term] `graph:store`p.u.result q.u.result]
   ::
       [%x %graph-subset @ @ @ @ ~]
     =/  =ship  (slav %p i.t.t.path)
@@ -466,7 +482,16 @@
     =/  graph=(unit marked-graph:store)
       (~(get by graphs) [ship term])
     ?~  graph  [~ ~]
-    ``noun+!>(`graph:store`(subset:orm p.u.graph start end))
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0  now.bowl
+    :+  %add-nodes
+      [ship term]
+    %-  ~(gas by *(map index:store node:store))
+    %+  turn  (tap:orm `graph:store`(subset:orm p.u.graph start end))
+    |=  [=atom =node:store]
+    ^-  [index:store node:store]
+    [~[atom] node]
   ::
       [%x %node @ @ @ *]
     =/  =ship  (slav %p i.t.t.path)
@@ -475,28 +500,13 @@
       (turn t.t.t.t.path |=(=cord (slav %ud cord)))
     =/  node=(unit node:store)  (get-node ship term index)
     ?~  node  [~ ~]
-    ``noun+!>(u.node)
-  ::
-      [%x %post @ @ @ *]
-    =/  =ship         (slav %p i.t.t.path)
-    =/  =term         i.t.t.t.path
-    =/  =index:store
-      (turn t.t.t.t.path |=(=cord (slav %ud cord)))
-    =/  node=(unit node:store)  (get-node ship term index)
-    ?~  node  [~ ~]
-    ``noun+!>(post.u.node)
-  ::
-      [%x %node-children @ @ @ *]
-    =/  =ship  (slav %p i.t.t.path)
-    =/  =term  i.t.t.t.path
-    =/  =index:store
-      (turn t.t.t.t.path |=(=cord (slav %ud cord)))
-    =/  node=(unit node:store)  (get-node ship term index)
-    ?~  node  [~ ~]
-    ?-  -.children.u.node
-        %empty  [~ ~]
-        %graph  ``noun+!>(p.children.u.node)
-    ==
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    :+  %add-nodes
+      [ship term]
+    (~(gas by *(map index:store node:store)) [index u.node] ~)
   ::
       [%x %node-children-subset @ @ @ @ @ *]
     =/  =ship  (slav %p i.t.t.path)
@@ -509,7 +519,18 @@
     ?~  node  [~ ~]
     ?-  -.children.u.node
         %empty  [~ ~]
-        %graph  ``noun+!>(`graph:store`(subset:orm p.children.u.node start end))
+        %graph
+      :-  ~  :-  ~  :-  %graph-update
+      !>  ^-  update:store
+      :+  %0
+        now.bowl
+      :+  %add-nodes
+        [ship term]
+      %-  ~(gas by *(map index:store node:store))
+      %+  turn  (tap:orm `graph:store`(subset:orm p.children.u.node start end))
+      |=  [=atom =node:store]
+      ^-  [index:store node:store]
+      [(snoc index atom) node]
     ==
   ::
       [%x %update-log @ @ ~]
@@ -525,7 +546,7 @@
     =/  update-log=(unit update-log:store)  (~(get by update-logs) [ship term])
     ?~  update-log  [~ ~]
     =/  result=(unit [time update:store])
-      (peek:orm-log:store u.update-log) 
+      (peek:orm-log:store u.update-log)
     ?~  result  [~ ~]
     ``noun+!>([~ -.u.result])
   ==

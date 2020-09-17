@@ -1,4 +1,6 @@
-::  contact-view: sets up contact JS client and combines commands
+::  contact-view [landscape]:
+::
+::  sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
 /-

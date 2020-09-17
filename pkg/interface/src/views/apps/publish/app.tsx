@@ -63,6 +63,7 @@ export default function PublishApp(props: PublishAppProps) {
     associations,
     hideNicknames,
     hideAvatars,
+    remoteContentPolicy
   } = props;
 
   const active = location.pathname.endsWith("/~publish")
@@ -71,7 +72,7 @@ export default function PublishApp(props: PublishAppProps) {
 
   return (
     <>
-      <Helmet>
+      <Helmet defer={false}>
         <title>{unreadTotal > 0 ? `(${unreadTotal}) ` : ""}OS1 - Publish</title>
       </Helmet>
       <Route
@@ -161,6 +162,8 @@ export default function PublishApp(props: PublishAppProps) {
                     api={api}
                     hideNicknames={hideNicknames}
                     hideAvatars={hideAvatars}
+                    remoteContentPolicy={remoteContentPolicy}
+                    associations={associations}
                     {...props}
                   />
                 );

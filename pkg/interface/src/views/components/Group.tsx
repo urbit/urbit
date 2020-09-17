@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import _, { capitalize } from 'lodash';
-import { FixedSizeList as List } from 'react-window';
+import { Virtuoso as VirtualList } from 'react-virtuoso';
 
 import { cite, deSig } from '~/logic/lib/util';
 import { roleForShip, resourceFromPath } from '~/logic/lib/group';
@@ -83,7 +83,7 @@ interface GroupViewProps {
 export class GroupView extends Component<
   GroupViewProps,
   { invites: Invites; awaiting: boolean }
-> {
+  > {
   constructor(props) {
     super(props);
     this.setInvites = this.setInvites.bind(this);
@@ -143,10 +143,8 @@ export class GroupView extends Component<
   }
 
   isAdmin(): boolean {
-    const us = `~${window.ship}`;
     const role = roleForShip(this.props.group, window.ship);
-    const resource = resourceFromPath(this.props.resourcePath);
-    return resource.ship == us || role === 'admin';
+    return role === 'admin';
   }
 
   optionsForShip(ship: Patp, missing: GroupViewAppTag[]) {
@@ -214,8 +212,8 @@ export class GroupView extends Component<
       const onRoleRemove =
         role && isAdmin
           ? () => {
-              this.removeTag(ship, { tag: role });
-            }
+            this.removeTag(ship, { tag: role });
+          }
           : undefined;
       const [present, missing] = this.getAppTags(ship);
       const options = this.optionsForShip(ship, missing);
@@ -334,14 +332,11 @@ export class GroupView extends Component<
         {'open' in group.policy && this.renderBanned(group.policy)}
         <div className='flex flex-column'>
           <div className='f9 gray2 mt6 mb3'>Members</div>
-          <List
-            height={500}
-            itemCount={memberElements.length}
-            itemSize={44}
-            width="100%"
-          >
-          {({ index, style }) => <div key={index} style={style} className='flex flex-column pv3'>{memberElements[index]}</div>}
-          </List>
+          <VirtualList
+            style={{ height: '500px', width: '100%' }}
+            totalCount={memberElements.length}
+            item={(index) => <div key={index} className='flex flex-column pv3'>{memberElements[index]}</div>}
+          />
         </div>
 
         <Spinner

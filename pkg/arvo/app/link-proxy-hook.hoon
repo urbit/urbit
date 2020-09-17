@@ -1,4 +1,6 @@
-::  link-proxy-hook: make local pages available to foreign ships
+::  link-proxy-hook [landscape]:
+::
+::  make local pages available to foreign ships
 ::
 ::    this is a "proxy" style hook, relaying foreign subscriptions into local
 ::    stores if permission conditions are met.

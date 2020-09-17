@@ -27,12 +27,18 @@ const groupSubscriptions: AppSubscription[] = [
   ['/synced', 'contact-hook']
 ];
 
-type AppName = 'publish' | 'chat' | 'link' | 'groups';
+const graphSubscriptions: AppSubscription[] = [
+  ['/keys', 'graph-store'],
+  ['/updates', 'graph-store']
+];
+
+type AppName = 'publish' | 'chat' | 'link' | 'groups' | 'graph';
 const appSubscriptions: Record<AppName, AppSubscription[]> = {
   chat: chatSubscriptions,
   publish: publishSubscriptions,
   link: linkSubscriptions,
-  groups: groupSubscriptions
+  groups: groupSubscriptions,
+  graph: graphSubscriptions
 };
 
 export default class GlobalSubscription extends BaseSubscription<StoreState> {
@@ -40,8 +46,10 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     chat: [],
     publish: [],
     link: [],
-    groups: []
+    groups: [],
+    graph: []
   };
+
   start() {
     this.subscribe('/all', 'invite-store');
     this.subscribe('/groups', 'group-store');
@@ -67,7 +75,8 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
       console.log(`${app} already started`);
       return;
     }
-    this.openSubscriptions[app] = appSubscriptions[app].map(([path, agent]) => this.subscribe(path, agent));
+    this.openSubscriptions[app] =
+      appSubscriptions[app].map(([path, agent]) => this.subscribe(path, agent));
   }
 
   stopApp(app: AppName) {

@@ -4,10 +4,8 @@ import { Col } from "@tlon/indigo-react";
 
 import { Association } from "~/types/metadata-update";
 import { StoreState } from "~/logic/store/type";
-import { ChatScreen } from "./components/chat";
-import { ChatWindow } from "./components/lib/chat-window";
-import { ChatHeader } from "./components/lib/chat-header";
-import { ChatInput } from "./components/lib/chat-input";
+import ChatWindow from "./components/lib/ChatWindow";
+import ChatInput from "./components/lib/ChatInput";
 import GlobalApi from "~/logic/api/global";
 import { deSig } from "~/logic/lib/util";
 
@@ -27,8 +25,8 @@ export function ChatResource(props: ChatResourceProps) {
   const { read, length } = config;
 
   const groupPath = props.association["group-path"];
-  const group = props.groups[groupPath] || groupBunts.group();
-  const contacts = props.contacts[groupPath];
+  const group = props.groups[groupPath];
+  const contacts = props.contacts[groupPath] || {};
 
   const pendingMessages = (props.pendingMessages.get(props.station) || []).map(
     (value) => ({
@@ -41,25 +39,23 @@ export function ChatResource(props: ChatResourceProps) {
     props.chatInitialized &&
     !(station in props.inbox) &&
     props.chatSynced &&
-    !(station in props.chatSynced);
+    !(station in props.chatSynced) || false;
 
   const isChatLoading =
     props.chatInitialized &&
     !(station in props.inbox) &&
     props.chatSynced &&
-    station in props.chatSynced;
+    station in props.chatSynced || false;
 
   const isChatUnsynced =
-    props.chatSynced && !(station in props.chatSynced) && envelopes.length > 0;
+    props.chatSynced && !(station in props.chatSynced) && envelopes.length > 0 || false;
 
   const unreadCount = length - read;
   const unreadMsg = unreadCount > 0 && envelopes[unreadCount - 1];
 
 
 
-  const roomContacts = contacts[groupPath] || {};
 
-  const popout = props.match.url.includes("/popout/");
   const [, owner, name] = station.split("/");
   const ownerContact = contacts?.[deSig(owner)];
   const lastMsgNum = 0;
@@ -67,16 +63,18 @@ export function ChatResource(props: ChatResourceProps) {
   return (
     <Col overflow="hidden" position="relative">
       <ChatWindow
+        remoteContentPolicy={props.remoteContentPolicy}
+        mailboxSize={length}
+        match={props.match as any}
+        stationPendingMessages={[]}
         history={props.history}
         isChatMissing={isChatMissing}
         isChatLoading={isChatLoading}
         isChatUnsynced={isChatUnsynced}
         unreadCount={unreadCount}
         unreadMsg={unreadMsg}
-        pendingMessages={pendingMessages}
-        messages={envelopes}
-        length={length}
-        contacts={roomContacts}
+        envelopes={envelopes || []}
+        contacts={contacts}
         association={props.association}
         group={group}
         ship={owner}
@@ -84,6 +82,7 @@ export function ChatResource(props: ChatResourceProps) {
         api={props.api}
         hideNicknames={props.hideNicknames}
         hideAvatars={props.hideAvatars}
+        location={props.location}
       />
       <ChatInput
         api={props.api}
@@ -91,14 +90,15 @@ export function ChatResource(props: ChatResourceProps) {
         station={station}
         owner={deSig(owner)}
         ownerContact={ownerContact}
-        envelopes={envelopes}
-        contacts={roomContacts}
+        envelopes={envelopes || []}
+        contacts={contacts}
         onUnmount={(msg: string) => {
           /*this.setState({
             messages: this.state.messages.set(props.station, msg),
           }) */
         }}
         s3={props.s3}
+        hideAvatars={props.hideAvatars}
         placeholder="Message..."
         message={"" || ""}
         deleteMessage={() => {}}

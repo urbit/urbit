@@ -136,7 +136,7 @@
     ::
     :_  this
     %+  give-simple-payload:app  eyre-id.u.job.state
-    (json-response:gen (json-to-octs jon))
+    (json-response:gen jon)
   ::
   ++  take-sole-effect
     |=  fec=sole-effect
@@ -186,7 +186,7 @@
     %+  give-simple-payload:app  eyre-id.u.job.state
     ?-  -.u.out
         %json
-      (json-response:gen (json-to-octs json.u.out))
+      (json-response:gen json.u.out)
     ::
         %mime
       =/  headers

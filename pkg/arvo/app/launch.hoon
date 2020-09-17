@@ -1,3 +1,7 @@
+::  launch [landscape]:
+::
+::  registers Landscape (and third party) applications, tiles
+::
 /+  store=launch-store, default-agent, dbug
 |%
 +$  card  card:agent:gall

@@ -1,5 +1,6 @@
 ::
-::  Soto: A Dojo relay for Urbit's Landscape interface
+::  soto [landscape]: A Dojo relay for Urbit's Landscape interface
+::
 ::  Relays sole-effects to subscribers and forwards sole-action pokes
 ::
 /-  sole
