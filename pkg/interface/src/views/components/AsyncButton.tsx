@@ -35,7 +35,7 @@ export function AsyncButton({
   }, [status]);
 
   return (
-    <Button border disabled={!isValid} type="submit" {...rest}>
+    <Button disabled={!isValid} type="submit" {...rest}>
       {isSubmitting ? (
         <Spinner awaiting text={loadingText} />
       ) : success === true ? (

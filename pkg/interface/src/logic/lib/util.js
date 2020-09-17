@@ -64,6 +64,9 @@ export function dateToDa(d, mil) {
 }
 
 export function deSig(ship) {
+  if(!ship) {
+    return null;
+  }
   return ship.replace('~', '');
 }
 
@@ -148,6 +151,10 @@ export function cite(ship) {
   return `~${patp}`;
 }
 
+export function alphabeticalOrder(a,b) {
+  return a.toLowerCase().localeCompare(b.toLowerCase());
+}
+
 export function alphabetiseAssociations(associations) {
   const result = {};
   Object.keys(associations).sort((a, b) => {
@@ -163,7 +170,7 @@ export function alphabetiseAssociations(associations) {
         ? associations[b].metadata.title
         : b.substr(1);
     }
-    return aName.toLowerCase().localeCompare(bName.toLowerCase());
+    return alphabeticalOrder(aName,bName);
   }).map((each) => {
     result[each] = associations[each];
   });
