@@ -136,7 +136,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
           api={props.api}
           numMsgs={lastMsgNum}
           station={props.station}
-          owner={deSig(props.match.params.ship)}
+          owner={deSig(props.match.params.ship || "")}
           ownerContact={ownerContact}
           envelopes={props.envelopes}
           contacts={props.contacts}
