@@ -6,7 +6,11 @@
 /+  shoe, verb, dbug, default-agent
 |%
 +$  state-0  [%0 ~]
-+$  command  ~
++$  command
+  $?  %demo
+      %row
+      %table
+  ==
 ::
 +$  card  card:shoe
 --
@@ -41,22 +45,46 @@
 ++  command-parser
   |=  sole-id=@ta
   ^+  |~(nail *(like [? command]))
-  (cold [& ~] (jest 'demo'))
+  %+  stag  &
+  (perk %demo %row %table ~)
 ::
 ++  tab-list
   |=  sole-id=@ta
   ^-  (list [@t tank])
   :~  ['demo' leaf+"run example command"]
+      ['row' leaf+"print a row"]
+      ['table' leaf+"display a table"]
   ==
 ::
 ++  on-command
   |=  [sole-id=@ta =command]
   ^-  (quip card _this)
-  =-  [[%shoe ~ %sole -]~ this]
-  =/  =tape  "{(scow %p src.bowl)} ran the command"
-  ?.  =(src our):bowl
-    [%txt tape]
-  [%klr [[`%br ~ `%g] [(crip tape)]~]~]
+  =;  [to=(list _sole-id) fec=shoe-effect:shoe]
+    [[%shoe to fec]~ this]
+  ?-  command
+      %demo
+    :-  ~
+    :-  %sole
+    =/  =tape  "{(scow %p src.bowl)} ran the command"
+    ?.  =(src our):bowl
+      [%txt tape]
+    [%klr [[`%br ~ `%g] [(crip tape)]~]~]
+  ::
+      %row
+    :-  [sole-id]~
+    :+  %row
+      ~[8 27 35 5]
+    ~[p+src.bowl da+now.bowl t+'plenty room here!' t+'less here!']
+  ::
+      %table
+    :-  [sole-id]~
+    :^  %table
+        ~[t+'ship' t+'date' t+'long text' t+'tldr']
+      ~[8 27 35 5]
+    :~  ~[p+src.bowl da+now.bowl t+'plenty room here!' t+'less here!']
+        ~[p+~marzod t+'yesterday' t+'sometimes:\0anewlines' t+'newlines']
+    ==
+  ==
 ::
 ++  can-connect
   |=  sole-id=@ta
