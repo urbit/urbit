@@ -788,13 +788,12 @@ _cs_cue_put(u3p(u3h_root) har_p, c3_d key_d, u3_noun val)
   return val;
 }
 
-/* _cs_cue_full_next(): read next value from bitstream.
+/* _cs_cue_bytes_next(): read next value from bitstream.
 */
 static inline u3_noun
-_cs_cue_full_next(c3_ys           mov,
-                  c3_ys           off,
-                  u3p(u3h_root) har_p,
-                  ur_bsr_t*     red_u)
+_cs_cue_bytes_next(u3a_pile*     pil_u,
+                   u3p(u3h_root) har_p,
+                   ur_bsr_t*     red_u)
 {
   while ( 1 ) {
     c3_d  len_d, bit_d = red_u->bits;
@@ -806,31 +805,11 @@ _cs_cue_full_next(c3_ys           mov,
       default: c3_assert(0);
 
       case ur_jam_cell: {
-        //  wind the stack
-        //
-        u3R->cap_p += mov;
+        _cue_frame_t* fam_u = u3a_push(pil_u);
+        u3a_pile_sane(pil_u);
 
-        //  ensure we haven't overflowed (ie, run into the heap)
-        //  (off==0 means we're on a north road)
-        //
-        if ( 0 == off ) {
-          if( !(u3R->cap_p > u3R->hat_p) ) {
-            u3m_bail(c3__meme);
-          }
-        }
-        else {
-          if( !(u3R->cap_p < u3R->hat_p) ) {
-            u3m_bail(c3__meme);
-          }
-        }
-
-        //  save a head-frame and read the head from the stream
-        //
-        {
-          _cue_frame_t* fam_u = u3to(_cue_frame_t, u3R->cap_p + off);
-          fam_u->ref   = u3_none;
-          fam_u->bit_d = bit_d;
-        }
+        fam_u->ref   = u3_none;
+        fam_u->bit_d = bit_d;
         continue;
       }
 
@@ -889,23 +868,19 @@ _cs_cue_full_next(c3_ys           mov,
 u3_noun
 u3s_cue_bytes(c3_d len_d, const c3_y* byt_y)
 {
-  ur_bsr_t red_u = {0};
-  u3_noun    ref;
+  ur_bsr_t      red_u = {0};
+  u3a_pile      pil_u;
+  _cue_frame_t* fam_u;
+  u3p(u3h_root) har_p;
+  u3_noun         ref;
+
+  //  initialize stack control
+  //
+  u3a_pile_prep(&pil_u, sizeof(*fam_u));
 
   //  initialize a hash table for dereferencing backrefs
   //
-  u3p(u3h_root) har_p = u3h_new();
-  const u3_post top_p = u3R->cap_p;
-
-  //  initialize signed stack offsets (relative to north/south road)
-  //
-  c3_ys mov, off;
-  {
-    c3_o nor_o = u3a_is_north(u3R);
-    c3_y wis_y = c3_wiseof(_cue_frame_t);
-    mov = ( c3y == nor_o ? -wis_y : wis_y );
-    off = ( c3y == nor_o ? 0 : -wis_y );
-  }
+  har_p = u3h_new();
 
   //  init bitstream-reader
   //
@@ -919,28 +894,30 @@ u3s_cue_bytes(c3_d len_d, const c3_y* byt_y)
 
   //  advance into stream
   //
-  ref = _cs_cue_full_next(mov, off, har_p, &red_u);
+  ref = _cs_cue_bytes_next(&pil_u, har_p, &red_u);
 
-  //  process result
+  //  process cell results
   //
-  while ( top_p != u3R->cap_p ) {
-    //  peek at the top of the stack
-    //
-    _cue_frame_t* fam_u = u3to(_cue_frame_t, u3R->cap_p + off);
+  if ( c3n == u3a_pile_done(&pil_u) ) {
+    fam_u = u3a_peek(&pil_u);
 
-    //  f is a head-frame; stash result and read the tail from the stream
-    //
-    if ( u3_none == fam_u->ref ) {
-      fam_u->ref = ref;
-      ref = _cs_cue_full_next(mov, off, har_p, &red_u);
+    do {
+      //  f is a head-frame; stash result and read the tail from the stream
+      //
+      if ( u3_none == fam_u->ref ) {
+        fam_u->ref = ref;
+        ref        = _cs_cue_bytes_next(&pil_u, har_p, &red_u);
+        fam_u      = u3a_peek(&pil_u);
+      }
+      //  f is a tail-frame; pop the stack and continue
+      //
+      else {
+        ref   = u3nc(fam_u->ref, ref);
+        _cs_cue_put(har_p, fam_u->bit_d, ref);
+        fam_u = u3a_pop(&pil_u);
+      }
     }
-    //  f is a tail-frame; pop the stack and continue
-    //
-    else {
-      ref = u3nc(fam_u->ref, ref);
-      _cs_cue_put(har_p, fam_u->bit_d, ref);
-      u3R->cap_p -= mov;
-    }
+    while ( c3n == u3a_pile_done(&pil_u) );
   }
 
   u3h_free(har_p);
