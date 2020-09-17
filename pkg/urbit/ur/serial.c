@@ -216,15 +216,25 @@ _cue_next(ur_root_t      *r,
   }
 }
 
-ur_cue_res_e
-ur_cue_unsafe(ur_root_t       *r,
-              ur_dict64_t  *dict,
-              uint64_t       len,
-              const uint8_t *byt,
-              ur_nref       *out)
+/*
+**  define opaque struct ur_cue_s (ie, ur_cue_t)
+*/
+struct ur_cue_s {
+  ur_root_t     *r;
+  _cue_stack_t   s;
+  ur_dict64_t dict;
+};
+
+static ur_cue_res_e
+_cue(ur_cue_t        *c,
+     uint64_t       len,
+     const uint8_t *byt,
+     ur_nref       *out)
 {
-  ur_bsr_t     bsr = {0};
-  _cue_stack_t   s = {0};
+  ur_bsr_t      bsr = {0};
+  ur_root_t      *r = c->r;
+  _cue_stack_t   *s = &c->s;
+  ur_dict64_t *dict = &c->dict;
   ur_cue_res_e res;
   ur_nref      ref;
 
@@ -239,44 +249,87 @@ ur_cue_unsafe(ur_root_t       *r,
     return ur_cue_meme;
   }
 
-  //  setup stack
-  //
-  s.prev = ur_fib10;
-  s.size = ur_fib11;
-  s.f = _oom("cue stack", malloc(s.size * sizeof(*s.f)));
-
   //  advance into stream
   //
-  res = _cue_next(r, &s, &bsr, dict, &ref);
+  res = _cue_next(r, s, &bsr, dict, &ref);
 
   //  process result
   //
-  while ( s.fill && (ur_cue_good == res) ) {
+  while ( s->fill && (ur_cue_good == res) ) {
     //  peek at the top of the stack
     //
-    _cue_frame_t *f = &(s.f[s.fill - 1]);
+    _cue_frame_t *f = &(s->f[s->fill - 1]);
 
     //  f is a head-frame; stash result and read the tail from the stream
     //
     if ( CUE_HEAD == f->ref ) {
       f->ref = ref;
-      res    = _cue_next(r, &s, &bsr, dict, &ref);
+      res    = _cue_next(r, s, &bsr, dict, &ref);
     }
     //  f is a tail-frame; pop the stack and continue
     //
     else {
       ref = ur_cons(r, f->ref, ref);
       ur_dict64_put(r, dict, f->bits, (uint64_t)ref);
-      s.fill--;
+      s->fill--;
     }
   }
-
-  free(s.f);
 
   if ( ur_cue_good == res ) {
     *out = ref;
   }
   return res;
+}
+
+ur_cue_t*
+ur_cue_init_with(ur_root_t    *r,
+                 uint64_t d_prev,
+                 uint64_t d_size,
+                 uint32_t s_prev,
+                 uint32_t s_size)
+{
+  ur_cue_t* c = _oom("cue_init", calloc(sizeof(*c), 1));
+  c->r = r;
+
+  ur_dict64_grow(r, &c->dict, d_prev, d_size);
+
+  c->s.prev = s_prev;
+  c->s.size = s_size;
+  c->s.f = _oom("cue_test_init", malloc(s_size * sizeof(*c->s.f)));
+
+  return c;
+}
+
+ur_cue_t*
+ur_cue_init(ur_root_t *r)
+{
+  return ur_cue_init_with(r, ur_fib11, ur_fib12,    //  dict sizes
+                             ur_fib10, ur_fib11);   //  stack sizes
+}
+
+ur_cue_res_e
+ur_cue_with(ur_cue_t        *c,
+            uint64_t       len,
+            const uint8_t *byt,
+            ur_nref       *out)
+{
+  ur_cue_res_e res = _cue(c, len, byt, out);
+
+  //  XX check size, shrink if above threshold
+  //
+  ur_dict64_wipe(&c->dict);
+  c->s.fill = 0;
+
+  return res;
+}
+
+void
+ur_cue_done(ur_cue_t *c)
+{
+
+  ur_dict_free((ur_dict_t*)&c->dict);
+  free(c->s.f);
+  free(c);
 }
 
 ur_cue_res_e
@@ -285,12 +338,10 @@ ur_cue(ur_root_t       *r,
        const uint8_t *byt,
        ur_nref       *out)
 {
-  ur_dict64_t dict = {0};
-  ur_dict64_grow(r, &dict, ur_fib11, ur_fib12);
+  ur_cue_t       *c = ur_cue_init(r);
+  ur_cue_res_e res = _cue(c, len, byt, out);
 
-  ur_cue_res_e res = ur_cue_unsafe(r, &dict, len, byt, out);
-
-  ur_dict_free((ur_dict_t*)&dict);
+  ur_cue_done(c);
   return res;
 }
 
@@ -378,14 +429,23 @@ _cue_test_next(_cue_test_stack_t *s,
   }
 }
 
-ur_cue_res_e
-ur_cue_test_unsafe(ur_dict_t    *dict,
-                   uint64_t       len,
-                   const uint8_t *byt)
+/*
+**  define opaque struct ur_cue_test_s (ie, ur_cue_test_t)
+*/
+struct ur_cue_test_s {
+  _cue_test_stack_t s;
+  ur_dict_t      dict;
+};
+
+static ur_cue_res_e
+_cue_test(ur_cue_test_t   *t,
+          uint64_t       len,
+          const uint8_t *byt)
 {
-  ur_bsr_t        bsr = {0};
-  _cue_test_stack_t s = {0};
-  ur_cue_res_e    res;
+  ur_bsr_t         bsr = {0};
+  _cue_test_stack_t *s = &t->s;
+  ur_dict_t      *dict = &t->dict;
+  ur_cue_res_e     res;
 
   //  init bitstream-reader
   //
@@ -398,50 +458,87 @@ ur_cue_test_unsafe(ur_dict_t    *dict,
     return ur_cue_meme;
   }
 
-  //  setup stack
-  //
-  s.prev = ur_fib10;
-  s.size = ur_fib11;
-  s.f =  _oom("cue_test", malloc(s.size * sizeof(*s.f)));
-
   //  advance into stream
   //
-  res = _cue_test_next(&s, &bsr, dict);
+  res = _cue_test_next(s, &bsr, dict);
 
   //  process result
   //
-  while ( s.fill && (ur_cue_good == res) ) {
+  while ( s->fill && (ur_cue_good == res) ) {
     //  peek at the top of the stack
     //
-    _cue_test_frame_t *f = &(s.f[s.fill - 1]);
+    _cue_test_frame_t *f = &(s->f[s->fill - 1]);
 
     //  f is a head-frame; stash result and read the tail from the stream
     //
     if ( !f->tal ) {
       f->tal = 1;
-      res    = _cue_test_next(&s, &bsr, dict);
+      res    = _cue_test_next(s, &bsr, dict);
     }
     //  f is a tail-frame; pop the stack and continue
     //
     else {
       ur_dict_put((ur_root_t*)0, dict, f->bits);
-      s.fill--;
+      s->fill--;
     }
   }
 
-  free(s.f);
-
   return res;
+}
+
+ur_cue_test_t*
+ur_cue_test_init_with(uint64_t d_prev,
+                      uint64_t d_size,
+                      uint32_t s_prev,
+                      uint32_t s_size)
+{
+  ur_cue_test_t* t = _oom("cue_test_init", calloc(sizeof(*t), 1));
+
+  ur_dict_grow((ur_root_t*)0, &t->dict, d_prev, d_size);
+
+  t->s.prev = s_prev;
+  t->s.size = s_size;
+  t->s.f = _oom("cue_test_init", malloc(s_size * sizeof(*t->s.f)));
+
+  return t;
+}
+
+ur_cue_test_t*
+ur_cue_test_init(void)
+{
+  return ur_cue_test_init_with(ur_fib11, ur_fib12,    //  dict sizes
+                               ur_fib10, ur_fib11);   //  stack sizes
+}
+
+ur_bool_t
+ur_cue_test_with(ur_cue_test_t   *t,
+                 uint64_t       len,
+                 const uint8_t *byt)
+{
+  ur_bool_t ret = ur_cue_good == _cue_test(t, len, byt);
+
+  //  XX check size, shrink if above threshold
+  //
+  ur_dict_wipe(&t->dict);
+  t->s.fill = 0;
+
+  return ret;
+}
+
+void
+ur_cue_test_done(ur_cue_test_t *t)
+{
+  ur_dict_free(&t->dict);
+  free(t->s.f);
+  free(t);
 }
 
 ur_bool_t
 ur_cue_test(uint64_t len, const uint8_t *byt)
 {
-  ur_dict_t dict = {0};
-  ur_dict_grow((ur_root_t*)0, &dict, ur_fib11, ur_fib12);
+  ur_cue_test_t *t = ur_cue_test_init();
+  ur_bool_t    ret = ur_cue_good == _cue_test(t, len, byt);
 
-  ur_bool_t ret = ur_cue_good == ur_cue_test_unsafe(&dict, len, byt);
-
-  ur_dict_free(&dict);
+  ur_cue_test_done(t);
   return ret;
 }
