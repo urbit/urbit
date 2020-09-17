@@ -1,4 +1,4 @@
-/-  *group
+/-  *group, store=graph-store
 /+  resource
 ^?
 |%
@@ -39,6 +39,7 @@
     [%join rid=resource =ship] 
     ::[%invite rid=resource ships=(set ship)]
     [%groupify rid=resource to=(unit resource)]
+    [%forward rid=resource =update:store]
   ==
 --
 
