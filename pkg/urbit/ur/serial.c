@@ -30,16 +30,21 @@ _bsw_atom(ur_root_t *r, ur_nref ref, ur_bsw_t *bsw, uint64_t len)
   }
 }
 
-typedef struct _jam_s {
-  ur_dict64_t *dict;
+/*
+**  define opaque struct ur_jam_s (ie, ur_jam_t)
+*/
+struct ur_jam_s {
+  ur_root_t      *r;
+  ur_walk_fore_t *w;
+  ur_dict64_t  dict;
   ur_bsw_t      bsw;
-} _jam_t;
+};
 
 static void
 _jam_atom(ur_root_t *r, ur_nref ref, void *ptr)
 {
-  _jam_t         *j = ptr;
-  ur_dict64_t *dict = j->dict;
+  ur_jam_t       *j = ptr;
+  ur_dict64_t *dict = &j->dict;
   ur_bsw_t     *bsw = &j->bsw;
   uint64_t bak, len = ur_met(r, 0, ref);
 
@@ -63,8 +68,8 @@ _jam_atom(ur_root_t *r, ur_nref ref, void *ptr)
 static ur_bool_t
 _jam_cell(ur_root_t *r, ur_nref ref, void *ptr)
 {
-  _jam_t         *j = ptr;
-  ur_dict64_t *dict = j->dict;
+  ur_jam_t       *j = ptr;
+  ur_dict64_t *dict = &j->dict;
   ur_bsw_t     *bsw = &j->bsw;
   uint64_t      bak;
 
@@ -80,32 +85,69 @@ _jam_cell(ur_root_t *r, ur_nref ref, void *ptr)
   }
 }
 
-uint64_t
-ur_jam_unsafe(ur_root_t      *r,
-              ur_nref       ref,
-              ur_dict64_t *dict,
-              uint64_t     *len,
-              uint8_t     **byt)
+static uint64_t
+_jam(ur_jam_t   *j,
+     ur_nref   ref,
+     uint64_t *len,
+     uint8_t **byt)
 {
-  _jam_t j = { .dict = dict };
-  ur_bsw_init(&j.bsw, ur_fib11, ur_fib12);
+  ur_bsw_init(&j->bsw, ur_fib11, ur_fib12);
+  ur_walk_fore_with(j->w, ref, j, _jam_atom, _jam_cell);
+  return ur_bsw_done(&j->bsw, len, byt);
+}
 
-  ur_walk_fore(r, ref, &j, _jam_atom, _jam_cell);
+ur_jam_t*
+ur_jam_init_with(ur_root_t    *r,
+                 uint64_t d_prev,
+                 uint64_t d_size,
+                 uint32_t s_prev,
+                 uint32_t s_size)
+{
+  ur_jam_t *j = _oom("jam_init", calloc(sizeof(*j), 1));
+  j->w = ur_walk_fore_init_with(r, s_prev, s_size);
+  j->r = r;
 
-  return ur_bsw_done(&j.bsw, len, byt);
+  ur_dict64_grow(r, &j->dict, d_prev, d_size);
+
+  return j;
+}
+
+ur_jam_t*
+ur_jam_init(ur_root_t *r)
+{
+  return ur_jam_init_with(r, ur_fib11, ur_fib12,    //  dict sizes
+                             ur_fib10, ur_fib11);   //  stack sizes
 }
 
 uint64_t
-ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt)
+ur_jam_with(ur_jam_t   *j,
+            ur_nref   ref,
+            uint64_t *len,
+            uint8_t **byt)
 {
-  ur_dict64_t dict = {0};
-  ur_dict64_grow(r, &dict, ur_fib11, ur_fib12);
+  uint64_t bits = _jam(j, ref, len, byt);
+  ur_dict64_wipe(&j->dict);
+  return bits;
+}
 
-  {
-    uint64_t bits = ur_jam_unsafe(r, ref, &dict, len, byt);
-    ur_dict_free((ur_dict_t*)&dict);
-    return bits;
-  }
+void
+ur_jam_done(ur_jam_t *j)
+{
+  ur_dict_free((ur_dict_t*)&j->dict);
+  free(j->w);
+  free(j);
+}
+
+uint64_t
+ur_jam(ur_root_t  *r,
+       ur_nref   ref,
+       uint64_t *len,
+       uint8_t **byt)
+{
+  ur_jam_t   *j = ur_jam_init(r);
+  uint64_t bits = _jam(j, ref, len, byt);
+  ur_jam_done(j);
+  return bits;
 }
 
 /*
