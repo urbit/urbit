@@ -41,9 +41,17 @@
     ::
         %state
       =?  grab.dbug  =('' grab.dbug)  '-'
-      =-  [(sell -)]~
+      =;  product=^vase
+        [(sell product)]~
+      =/  state=^vase
+        ::  if the underlying app has implemented a /dbug/state scry endpoint,
+        ::  use that vase in place of +on-save's.
+        ::
+        =/  result=(each ^vase tang)
+          (mule |.(q:(need (need (on-peek:ag /x/dbug/state)))))
+        ?:(?=(%& -.result) p.result on-save:ag)
       %+  slap
-        (slop on-save:ag !>([bowl=bowl ..zuse]))
+        (slop state !>([bowl=bowl ..zuse]))
       (ream grab.dbug)
     ::
         %incoming
