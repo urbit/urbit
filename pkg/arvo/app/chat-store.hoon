@@ -1,4 +1,6 @@
-:: chat-store: data store that holds linear sequences of chat messages
+:: chat-store [landscape]:
+::
+:: data store that holds linear sequences of chat messages
 ::
 /+  store=chat-store, default-agent, verb, dbug, group-store
 ~%  %chat-store-top  ..is  ~

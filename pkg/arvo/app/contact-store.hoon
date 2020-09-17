@@ -1,4 +1,6 @@
-:: contact-store: data store that holds group-based contact data
+:: contact-store [landscape]:
+::
+:: data store that holds group-based contact data
 ::
 /+  *contact-json, default-agent, dbug
 |%
@@ -253,7 +255,7 @@
 ++  send-diff
   |=  [pax=path upd=contact-update]
   ^-  (list card)
-  :~  :*  
+  :~  :*
     %give  %fact
     ~[/all /updates [%contacts pax]]
     %contact-update  !>(upd)

@@ -116,20 +116,8 @@ h2 {
   100% {transform: rotate(360deg);}
 }
 
-/* embeds */
-.embed-container {
-  position: relative;
-  height: 0;
-  overflow: hidden;
-  padding-bottom: 28.125%;
-}
-
-.embed-container iframe, .embed-container object, .embed-container embed {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.embed-container iframe {
+  max-width: 100%;
 }
 
 .mh-16 {
@@ -188,9 +176,6 @@ h2 {
   .h-100-minus-96-s {
     height: calc(100% - 96px);
   }
-  .embed-container {
-    padding-bottom: 56.25%;
-  }
   .unread-notice {
     top: 96px;
   }
@@ -200,17 +185,11 @@ h2 {
   .flex-basis-250-m {
     flex-basis: 250px;
   }
-  .embed-container {
-    padding-bottom: 56.25%;
-  }
 }
 
 @media all and (min-width: 46.875em) and (max-width: 60em) {
   .flex-basis-250-l {
     flex-basis: 250px;
-  }
-  .embed-container {
-    padding-bottom: 37.5%;
   }
 }
 
@@ -252,12 +231,13 @@ blockquote {
     font-family: 'Inter';
 }
 
-code {
-  white-space: normal;
+pre, code {
+  background-color: var(--light-gray);
 }
 
-code, pre.code {
-  background-color: var(--light-gray);
+pre code {
+  background-color: transparent;
+  white-space: pre-wrap;
 }
 
 code, .code, .chat.code .react-codemirror2 .CodeMirror * {

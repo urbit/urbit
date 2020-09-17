@@ -1,7 +1,9 @@
 import BaseApi from './base';
 import { StoreState } from '../store/type';
 import { Patp, Path, PatpNoSig } from '~/types/noun';
-
+import _ from 'lodash';
+import {makeResource, resourceFromPath} from '../lib/group';
+import {GroupPolicy, Enc, Post} from '~/types';
 
 export const createPost = (contents: Object[], parentIndex: string = '') => {
   return {
@@ -18,6 +20,68 @@ export default class GraphApi extends BaseApi<StoreState> {
 
   private storeAction(action: any): Promise<any> {
     return this.action('graph-store', 'graph-update', action)
+  }
+
+  private viewAction(threadName: string, action: any) {
+    return this.spider('graph-view-action', 'json', threadName, action);
+  }
+
+  createManagedGraph(name: string, title: string, description: string, group: Path) {
+    const associated = { group: resourceFromPath(group) };
+
+    const resource = makeResource(`~${window.ship}`, name);
+    return this.viewAction('graph-create', {
+      "create": {
+        resource,
+        title,
+        description,
+        associated
+      }
+    });
+  }
+
+  createUnmanagedGraph(name: string, title: string, description: string, policy: Enc<GroupPolicy>) {
+
+    const resource = makeResource(`~${window.ship}`, name);
+    return this.viewAction('graph-create', {
+      "create": {
+        resource,
+        title,
+        description,
+        associated: { policy }
+      }
+    });
+  }
+
+  joinGraph(ship: Patp, name: string) {
+    const resource = makeResource(ship, name);
+    return this.viewAction('graph-join', {
+      join: {
+        resource,
+        ship,
+      }
+    });
+  }
+
+  deleteGraph(name: string) {
+    const resource = makeResource(`~${window.ship}`, name);
+    return this.viewAction('graph-delete', {
+      "delete": {
+        resource
+      }
+    });
+  }
+
+  groupifyGraph(ship: Patp, name: string, toPath?: string) {
+    const resource = makeResource(ship, name);
+    const to = toPath && resourceFromPath(toPath);
+
+    return this.viewAction('graph-groupify', {
+      groupify: {
+        resource,
+        to
+      }
+    });
   }
 
   addGraph(ship: Patp, name: string, graph: any, mark: any) {
@@ -38,8 +102,9 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  addPost(ship: Patp, name: string, post: Object) {
+  addPost(ship: Patp, name: string, post: Post) {
     let nodes = {};
+    const resource = { ship, name };
     nodes[post.index] = {
       post,
       children: { empty: null }
@@ -47,7 +112,7 @@ export default class GraphApi extends BaseApi<StoreState> {
 
     return this.storeAction({
       'add-nodes': {
-        resource: { ship, name },
+        resource,
         nodes
       }
     });
@@ -63,7 +128,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   removeNodes(ship: Patp, name: string, indices: string[]) {
-    this.storeAction({
+    return this.storeAction({
       'remove-nodes': {
         resource: { ship, name },
         indices
@@ -107,7 +172,7 @@ export default class GraphApi extends BaseApi<StoreState> {
       });
   }
 
-  getGraphSubset(ship: string, resource: string, start: string, end: start) {
+  getGraphSubset(ship: string, resource: string, start: string, end: string) {
     this.scry<any>(
       'graph-store',
       `/graph-subset/${ship}/${resource}/${end}/${start}`

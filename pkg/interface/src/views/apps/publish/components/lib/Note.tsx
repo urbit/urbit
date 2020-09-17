@@ -13,6 +13,7 @@ import {
 import { Contacts } from "~/types/contact-update";
 import GlobalApi from "~/logic/api/global";
 import { Author } from "./Author";
+import { LocalUpdateRemoteContentPolicy } from "~/types";
 
 interface NoteProps {
   ship: string;
@@ -24,6 +25,7 @@ interface NoteProps {
   api: GlobalApi;
   hideAvatars: boolean;
   hideNicknames: boolean;
+  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
 }
 
 export function Note(props: NoteProps & RouteComponentProps) {
@@ -115,6 +117,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
           api={props.api}
           hideNicknames={props.hideNicknames}
           hideAvatars={props.hideAvatars}
+          remoteContentPolicy={props.remoteContentPolicy}
         />
       )}
       <Spinner

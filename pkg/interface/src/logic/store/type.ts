@@ -11,7 +11,8 @@ import { Permissions } from '~/types/permission-update';
 import { LaunchState, WeatherState } from '~/types/launch-update';
 import { LinkComments, LinkCollections, LinkSeen } from '~/types/link-update';
 import { ConnectionStatus } from '~/types/connection';
-import { BackgroundConfig } from '~/types/local-update';
+import { BackgroundConfig, LocalUpdateRemoteContentPolicy } from '~/types/local-update';
+import {Graphs} from '~/types/graph-update';
 
 export interface StoreState {
   // local state
@@ -22,6 +23,7 @@ export interface StoreState {
   connection: ConnectionStatus;
   baseHash: string | null;
   background: BackgroundConfig;
+  remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   hideAvatars: boolean;
   hideNicknames: boolean;
   // invite state
@@ -35,7 +37,7 @@ export interface StoreState {
   groupKeys: Set<Path>;
   permissions: Permissions;
   s3: S3State;
-  graphs: Object;
+  graphs: Graphs;
   graphKeys: Set<String>;
 
 

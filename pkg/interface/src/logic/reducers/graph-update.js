@@ -140,10 +140,21 @@ const addNodes = (json, state) => {
 };
 
 const removeNodes = (json, state) => {
+  const _remove = (graph, index) => {
+    if (index.length === 1) {
+        graph.delete(index[0]);
+      } else {
+        const child = graph.get(index[0]);
+        _remove(child.children, index.slice(1));
+        graph.set(index[0], child);
+      }
+  };
   const data = _.get(json, 'remove-nodes', false);
   if (data) {
     console.log(data);
-    if (!(data.resource in state.graphs)) { return; }
+    const { ship, name } = data.resource;
+    const res = `${ship}/${name}`;
+    if (!(res in state.graphs)) { return; }
 
     data.indices.forEach((index) => {
       console.log(index);
@@ -151,13 +162,7 @@ const removeNodes = (json, state) => {
       let indexArr = index.split('/').slice(1).map((ind) => {
         return parseInt(ind, 10);
       });
-
-      if (indexArr.length === 1) {
-        state.graphs[data.resource].delete(indexArr[0]);
-      } else {
-        // TODO: recursive
-      }
-
+      _remove(state.graphs[res], indexArr);
     });
   }
 };

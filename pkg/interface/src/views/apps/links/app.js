@@ -19,6 +19,7 @@ import {
   base64urlDecode
 } from '~/logic/lib/util';
 
+
 export class LinksApp extends Component {
   componentDidMount() {
     // preload spinner asset
@@ -45,7 +46,7 @@ export class LinksApp extends Component {
     const invites = props.invites ?
       props.invites : {};
 
-    const { api, sidebarShown, hideAvatars, hideNicknames } = this.props;
+    const { api, sidebarShown, hideAvatars, hideNicknames, s3, remoteContentPolicy } = this.props;
 
     return (
       <>
@@ -240,7 +241,8 @@ export class LinksApp extends Component {
                     sidebarShown={sidebarShown}
                     api={api}
                     hideAvatars={hideAvatars}
-                    hideNicknames={hideNicknames} />
+                    hideNicknames={hideNicknames}
+                    remoteContentPolicy={remoteContentPolicy} />
                 </Skeleton>
               );
             }}

@@ -1,4 +1,4 @@
-::  chat-hook:
+::  chat-hook [landscape]:
 ::  mirror chat data from foreign to local based on read permissions
 ::  allow sending chat messages to foreign paths based on write perms
 ::
@@ -114,7 +114,7 @@
           i.syncs
         ?>  ?=(^ pax)
         ?.  =('~' i.pax)
-          $(syncs t.syncs) 
+          $(syncs t.syncs)
         =/  new-path=path
           t.pax
         =.  synced.old

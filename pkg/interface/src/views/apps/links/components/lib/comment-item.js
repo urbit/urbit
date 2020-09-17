@@ -3,6 +3,7 @@ import { Sigil } from '~/logic/lib/sigil';
 import { cite } from '~/logic/lib/util';
 import moment from 'moment';
 import { Box, Text, Row } from '@tlon/indigo-react';
+import RichText from '~/views/components/RichText';
 
 export const CommentItem = (props) => {
   const content = props.post.contents[0].text;
@@ -30,9 +31,13 @@ export const CommentItem = (props) => {
           </Text>
           <Text gray ml={2}>{timeSent}</Text>
         </Row>
-      </Row>
-      <Text display="block" py={3} fontSize={1}>{content}</Text>
-    </Box>
-  );
+        <Text display="block" py={3} fontSize={1}>
+          <RichText remoteContentPolicy={props.remoteContentPolicy}>
+            {content}
+          </RichText>
+        </Text>
+      </Box>
+    );
+  }
 }
 

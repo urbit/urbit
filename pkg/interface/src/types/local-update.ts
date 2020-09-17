@@ -1,12 +1,3 @@
-export type LocalUpdate =
-  LocalUpdateSidebarToggle
-| LocalUpdateSetDark
-| LocalUpdateBaseHash
-| LocalUpdateBackgroundConfig
-| LocalUpdateHideAvatars
-| LocalUpdateHideNicknames
-| LocalUpdateSetOmniboxShown;
-
 interface LocalUpdateSidebarToggle {
   sidebarToggle: boolean;
 }
@@ -31,7 +22,16 @@ interface LocalUpdateHideNicknames {
   hideNicknames: boolean;
 }
 
-export type BackgroundConfig = BackgroundConfigUrl | BackgroundConfigColor | undefined;
+interface LocalUpdateSetOmniboxShown {
+  omniboxShown: boolean;
+}
+
+export interface LocalUpdateRemoteContentPolicy {
+  imageShown: boolean;
+  audioShown: boolean;
+  videoShown: boolean;
+  oembedShown: boolean;
+}
 
 interface BackgroundConfigUrl {
   type: 'url';
@@ -43,6 +43,14 @@ interface BackgroundConfigColor {
   color: string;
 }
 
-interface LocalUpdateSetOmniboxShown {
-  omniboxShown: boolean;
-}
+export type BackgroundConfig = BackgroundConfigUrl | BackgroundConfigColor | undefined;
+
+export type LocalUpdate =
+  LocalUpdateSidebarToggle
+| LocalUpdateSetDark
+| LocalUpdateBaseHash
+| LocalUpdateBackgroundConfig
+| LocalUpdateHideAvatars
+| LocalUpdateHideNicknames
+| LocalUpdateSetOmniboxShown
+| LocalUpdateRemoteContentPolicy;
