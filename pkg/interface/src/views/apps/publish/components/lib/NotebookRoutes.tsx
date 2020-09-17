@@ -8,19 +8,18 @@ import { Groups } from "../../../../types/group-update";
 import { Contacts, Rolodex } from "../../../../types/contact-update";
 import Notebook from "./Notebook";
 import NewPost from "./new-post";
-import { NoteRoutes } from './NoteRoutes';
+import { NoteRoutes } from "./NoteRoutes";
 
 interface NotebookRoutesProps {
   api: GlobalApi;
   ship: string;
   book: string;
-  notes: any;
   notebook: INotebook;
   notebookContacts: Contacts;
   contacts: Rolodex;
   groups: Groups;
-  hideAvatars: boolean;
-  hideNicknames: boolean;
+  baseUrl?: string;
+  rootUrl?: string;
 }
 
 export function NotebookRoutes(
@@ -33,8 +32,8 @@ export function NotebookRoutes(
     api.publish.fetchNotebook(ship, book);
   }, [ship, book]);
 
-
-  const baseUrl = `/~publish/notebook/${ship}/${book}`;
+  const baseUrl = props.baseUrl || `/~publish/notebook/${ship}/${book}`;
+  const rootUrl = props.rootUrl || '/~publish';
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
   return (
@@ -43,7 +42,7 @@ export function NotebookRoutes(
         path={baseUrl}
         exact
         render={(routeProps) => {
-          return <Notebook {...props} />;
+          return <Notebook {...props} rootUrl={rootUrl} baseUrl={baseUrl}  />;
         }}
       />
       <Route
@@ -55,6 +54,7 @@ export function NotebookRoutes(
             book={book}
             ship={ship}
             notebook={notebook}
+            baseUrl={baseUrl}
           />
         )}
       />
@@ -63,8 +63,11 @@ export function NotebookRoutes(
         render={(routeProps) => {
           const { noteId } = routeProps.match.params;
           const note = notebook?.notes[noteId];
+          const noteUrl = relativePath(`/note/${noteId}`);
           return (
             <NoteRoutes
+              rootUrl={baseUrl}
+              baseUrl={noteUrl}
               api={api}
               book={book}
               ship={ship}
@@ -72,8 +75,8 @@ export function NotebookRoutes(
               notebook={notebook}
               note={note}
               contacts={notebookContacts}
-              hideAvatars={props.hideAvatars}
-              hideNicknames={props.hideNicknames}
+              hideAvatars={false}
+              hideNicknames={false}
               {...routeProps}
             />
           );

@@ -24,6 +24,7 @@ interface NoteProps {
   api: GlobalApi;
   hideAvatars: boolean;
   hideNicknames: boolean;
+  rootUrl?: string;
 }
 
 export function Note(props: NoteProps & RouteComponentProps) {
@@ -33,12 +34,12 @@ export function Note(props: NoteProps & RouteComponentProps) {
     api.publish.fetchNote(ship, book, noteId);
   }, [ship, book, noteId]);
 
-  const baseUrl = `/~publish/notebook/${props.ship}/${props.book}`;
+  const rootUrl = props.rootUrl || `/~publish/notebook/${props.ship}/${props.book}`;
 
   const deletePost = async () => {
     setDeleting(true);
     await api.publish.delNote(ship.slice(1), book, noteId);
-    props.history.push(baseUrl);
+    props.history.push(rootUrl);
   };
 
   const comments = note?.comments || [];
@@ -77,7 +78,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       gridRowGap={4}
       mx="auto"
     >
-      <Link to={baseUrl}>
+      <Link to={rootUrl}>
         <Text>{"<- Notebook Index"}</Text>
       </Link>
       <Col>

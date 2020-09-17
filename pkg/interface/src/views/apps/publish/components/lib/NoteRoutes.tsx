@@ -16,12 +16,16 @@ interface NoteRoutesProps {
   notebook: Notebook;
   contacts: Contacts;
   api: GlobalApi;
+  hideNicknames: boolean;
+  hideAvatars: boolean;
+  baseUrl?: string;
+  rootUrl?: string;
 }
 
 export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {
   const { ship, book, noteId } = props;
 
-  const baseUrl = `/~publish/notebook/${ship}/${book}/note/${noteId}`;
+  const baseUrl = props.baseUrl || `/~publish/notebook/${ship}/${book}/note/${noteId}`;
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
   return (

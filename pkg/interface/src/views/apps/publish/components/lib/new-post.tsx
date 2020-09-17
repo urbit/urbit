@@ -12,6 +12,7 @@ interface NewPostProps {
   book: string;
   ship: string;
   notebook: Notebook;
+  baseUrl: string;
 }
 
 export default function NewPost(props: NewPostProps & RouteComponentProps) {
@@ -42,7 +43,7 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
       await waiter((p) => {
         return !!p?.notebook?.notes[noteId];
       });
-      history.push(`/~publish/notebook/${ship}/${book}/note/${noteId}`);
+      history.push(`${props.baseUrl}/note/${noteId}`);
     } catch (e) {
       console.error(e);
       actions.setStatus({ error: "Posting note failed" });

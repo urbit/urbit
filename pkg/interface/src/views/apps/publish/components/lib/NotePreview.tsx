@@ -38,7 +38,7 @@ export function NotePreview(props: NotePreviewProps) {
   }
   const date = moment(note["date-created"]).fromNow();
   //const popout = props.popout ? "popout/" : "";
-  const url = `/~publish/notebook/${props.host}/${props.book}/note/${note["note-id"]}`;
+  const url = `${props.book}/note/${note["note-id"]}`;
 
   return (
     <Link to={url}>

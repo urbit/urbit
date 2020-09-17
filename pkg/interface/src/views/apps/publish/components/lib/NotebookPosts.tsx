@@ -10,6 +10,7 @@ interface NotebookPostsProps {
   notes: Notes;
   host: string;
   book: string;
+  baseUrl: string;
   hideNicknames?: boolean;
 }
 
@@ -30,6 +31,7 @@ export function NotebookPosts(props: NotebookPostsProps) {
             note={note}
             contact={props.contacts[note.author.substr(1)]}
             hideNicknames={props.hideNicknames}
+            baseUrl={props.baseUrl}
           />
         );
       })}

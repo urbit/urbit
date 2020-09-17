@@ -38,6 +38,8 @@ interface NotebookProps {
   contacts: Rolodex;
   groups: Groups;
   hideNicknames: boolean;
+  baseUrl: string;
+  rootUrl: string;
 }
 
 export function Notebook(props: NotebookProps & RouteComponentProps) {
@@ -56,6 +58,8 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
   const notes = notebook?.notes || {};
   const showNickname = contact?.nickname && !props.hideNicknames;
 
+  const relativePath = (p: string) => props.baseUrl + p;
+
   return (
     <Box
       pt={4}
@@ -68,7 +72,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
       gridColumnGap={3}
     >
       <Box display={["block", "none"]} gridColumn={["1/2", "1/3"]}>
-        <Link to="/~publish">{"<- All Notebooks"}</Link>
+        <Link to={props.rootUrl}>{"<- All Notebooks"}</Link>
       </Box>
       <Box>
         <Text> {notebook?.title}</Text>
@@ -80,7 +84,7 @@ export function Notebook(props: NotebookProps & RouteComponentProps) {
       </Box>
       <Row justifyContent={["flex-start", "flex-end"]}>
         {isWriter && (
-          <Link to={`/~publish/notebook/${ship}/${book}/new`}>
+          <Link to={relativePath('/new')}>
             <Button primary border>
               New Post
             </Button>
