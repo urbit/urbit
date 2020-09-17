@@ -1,7 +1,6 @@
 import React from "react";
 
 import { ChatResource } from "~/views/apps/chat/ChatResource";
-import { LinkResource } from "~/views/apps/links/LinkResource";
 import { PublishResource } from "~/views/apps/publish/PublishResource";
 
 import { Association } from "~/types/metadata-update";
@@ -26,7 +25,7 @@ export function Resource(props: ResourceProps) {
     return <PublishResource {...props} />;
   }
   if (app === 'link') {
-    return <LinkResource {...props} />; 
+    return null; //return <LinkResource {...props} />; 
   }
   return null;
 }
