@@ -87,20 +87,12 @@ ur_jam_unsafe(ur_root_t      *r,
               uint64_t     *len,
               uint8_t     **byt)
 {
-  _jam_t j = {0};
-
-  j.dict = dict;
-
-  j.bsw.prev  = ur_fib11;
-  j.bsw.size  = ur_fib12;
-  j.bsw.bytes = _oom("jam", calloc(j.bsw.size, 1));
+  _jam_t j = { .dict = dict };
+  ur_bsw_init(&j.bsw, ur_fib11, ur_fib12);
 
   ur_walk_fore(r, ref, &j, _jam_atom, _jam_cell);
 
-  *len = j.bsw.fill + !!j.bsw.off;
-  *byt = j.bsw.bytes;
-
-  return j.bsw.bits;
+  return ur_bsw_done(&j.bsw, len, byt);
 }
 
 uint64_t

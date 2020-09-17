@@ -290,12 +290,9 @@ c3_d
 u3s_jam_xeno(u3_noun a, c3_d* len_d, c3_y** byt_y)
 {
   _jam_xeno_t jam_u = {0};
+  ur_bsw_init(&jam_u.rit_u, ur_fib11, ur_fib12);
 
   jam_u.har_p = u3h_new();
-
-  jam_u.rit_u.prev  = ur_fib11;
-  jam_u.rit_u.size  = ur_fib12;
-  jam_u.rit_u.bytes = c3_calloc(jam_u.rit_u.size);
 
   //  as this is a hot path, we unsafely elide overflow checks
   //
@@ -304,12 +301,9 @@ u3s_jam_xeno(u3_noun a, c3_d* len_d, c3_y** byt_y)
   u3a_walk_fore_unsafe(a, &jam_u, _cs_jam_xeno_atom,
                                   _cs_jam_xeno_cell);
 
-  *len_d = jam_u.rit_u.fill + !!jam_u.rit_u.off;
-  *byt_y = jam_u.rit_u.bytes;
-
   u3h_free(jam_u.har_p);
 
-  return jam_u.rit_u.bits;
+  return ur_bsw_done(&jam_u.rit_u, len_d, byt_y);
 }
 
 #define CUE_ROOT 0
