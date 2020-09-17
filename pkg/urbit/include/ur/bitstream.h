@@ -131,6 +131,12 @@ ur_cue_res_e
 ur_bsr_rub_len(ur_bsr_t *bsr, uint64_t *out);
 
 /*
+**  initialize bitstream-writer with prev/size for fibonacci growth.
+*/
+void
+ur_bsw_init(ur_bsw_t *bsw, uint64_t prev, uint64_t size);
+
+/*
 **  reallocate bitstream write buffer with max(fibonacci, step) growth.
 */
 void
@@ -141,6 +147,12 @@ ur_bsw_grow(ur_bsw_t *bsw, uint64_t step);
 */
 ur_bool_t
 ur_bsw_sane(ur_bsw_t *bsw);
+
+/*
+**  return bit-length, produce byte-buffer.
+*/
+uint64_t
+ur_bsw_done(ur_bsw_t *bsw, uint64_t *len, uint8_t **byt);
 
 /*
 **  write a bit

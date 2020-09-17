@@ -703,6 +703,20 @@ ur_bsr_rub_len(ur_bsr_t *bsr, uint64_t *out)
 */
 
 void
+ur_bsw_init(ur_bsw_t *bsw, uint64_t prev, uint64_t size)
+{
+  bsw->prev  = prev;
+  bsw->size  = size;
+  bsw->bytes = calloc(size, 1);
+
+  if ( !bsw->bytes ) {
+    fprintf(stderr,
+            "ur: bitstream-init allocation failed, out of memory\r\n");
+    abort();
+  }
+}
+
+void
 ur_bsw_grow(ur_bsw_t *bsw, uint64_t step)
 {
   uint64_t size = bsw->size;
@@ -727,6 +741,19 @@ ur_bsw_sane(ur_bsw_t *bsw)
 {
   return (  (8 > bsw->off)
          && ((bsw->fill << 3) + bsw->off == bsw->bits) );
+}
+
+uint64_t
+ur_bsw_done(ur_bsw_t *bsw, uint64_t *len, uint8_t **byt)
+{
+  uint64_t bits = bsw->bits;
+
+  *len = bsw->fill + !!bsw->off;
+  *byt = bsw->bytes;
+
+  memset(bsw, 0, sizeof(*bsw));
+
+  return bits;
 }
 
 static inline void
