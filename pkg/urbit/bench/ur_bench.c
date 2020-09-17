@@ -117,25 +117,22 @@ _jam_bench(void)
       gettimeofday(&b4, 0);
 
       {
-        ur_dict64_t dic_u = {0};
-        c3_d  len_d;
-        c3_y* byt_y;
-
-        ur_dict64_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
+        ur_jam_t *jam_u = ur_jam_init(rot_u);
+        c3_d      len_d;
+        c3_y*     byt_y;
 
         for ( i_w = 0; i_w < max_w; i_w++ ) {
-          ur_jam_unsafe(rot_u, ref, &dic_u, &len_d, &byt_y);
+          ur_jam_with(jam_u, ref, &len_d, &byt_y);
           c3_free(byt_y);
-          ur_dict64_wipe(&dic_u);
         }
 
-        ur_dict_free((ur_dict_t*)&dic_u);
+        ur_jam_done(jam_u);
       }
 
       gettimeofday(&f2, 0);
       timersub(&f2, &b4, &d0);
       mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-      fprintf(stderr, "  jam cons unsafe: %u ms\r\n", mil_w);
+      fprintf(stderr, "  jam cons with: %u ms\r\n", mil_w);
     }
 
     ur_root_free(rot_u);

@@ -10,10 +10,13 @@
 **  supports up to 64-bits of bit-addressed output (nearly 2 EiB).
 **  (as this is an impractical volume data, cursor overflow is not checked.)
 **
-**  unsafe variant is unsafe wrt its [dict] parameter, which must be empty,
-**  but can be passed in order to skip reallocation inside hot loops.
+**  jam_with* api factors out stack/dict (re)allocation,
+**  for better performance inside hot loops.
 **
 */
+
+typedef struct ur_jam_s ur_jam_t;
+
 uint64_t
 ur_jam_unsafe(ur_root_t      *r,
               ur_nref       ref,
@@ -22,7 +25,28 @@ ur_jam_unsafe(ur_root_t      *r,
               uint8_t     **byt);
 
 uint64_t
-ur_jam(ur_root_t *r, ur_nref ref, uint64_t *len, uint8_t **byt);
+ur_jam(ur_root_t  *r,
+       ur_nref   ref,
+       uint64_t *len,
+       uint8_t **byt);
+
+ur_jam_t*
+ur_jam_init_with(ur_root_t    *r,
+                 uint64_t d_prev,
+                 uint64_t d_size,
+                 uint32_t s_prev,
+                 uint32_t s_size);
+
+ur_jam_t*
+ur_jam_init(ur_root_t *r);
+
+uint64_t
+ur_jam_with(ur_jam_t   *j,
+            ur_nref   ref,
+            uint64_t *len,
+            uint8_t **byt);
+void
+ur_jam_done(ur_jam_t *j);
 
 /*
 **  bitwise deserialization of a byte-buffer into a noun.
