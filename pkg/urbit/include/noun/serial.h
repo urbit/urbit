@@ -1,6 +1,12 @@
 /* i/n/serial.h
 **
 */
+    /*  opaque handles
+    */
+      /* u3_cue_sill: handle for cue-ing with an off-loom dictionary.
+      */
+        typedef struct _u3_cue_sill u3_cue_sill;
+
     /*  forward declarations
     */
       /* ur_dict32_s: off-loom 32-bit dictionary.
@@ -27,6 +33,34 @@
       */
         u3_noun
         u3s_cue(u3_atom a);
+
+      /* u3s_cue_sill_init_with(): initialize a cue_sill handle as specified.
+      */
+        u3_cue_sill*
+        u3s_cue_sill_init_with(c3_d pre_d, c3_d siz_d);
+
+      /* u3s_cue_sill_init(): initialize a cue_sill handle.
+      */
+        u3_cue_sill*
+        u3s_cue_sill_init(void);
+
+      /* u3s_cue_sill_init(): cue on-loom, with off-loom dictionary in handle.
+      */
+        u3_weak
+        u3s_cue_sill_with(u3_cue_sill* sil_u,
+                          c3_d         len_d,
+                          const c3_y*  byt_y);
+
+      /* u3s_cue_sill_init(): dispose cue_sill handle.
+      */
+        void
+        u3s_cue_sill_done(u3_cue_sill* sil_u);
+
+      /* u3s_cue_sill(): cue on-loom, with off-loom dictionary.
+      */
+        u3_weak
+        u3s_cue_sill(c3_d        len_d,
+                     const c3_y* byt_y);
 
       /* u3s_cue_xeno_unsafe(): cue onto the loom, all bookkeeping off-loom.
       */
