@@ -482,7 +482,9 @@
     =/  =term   i.t.t.t.path
     =/  result=(unit marked-graph:store)
       (~(get by archive) [ship term])
-    ?~  result  [~ ~]
+    ?~  result
+      ~&  no-archived-graph+[ship term]
+      [~ ~]
     :-  ~  :-  ~  :-  %graph-update
     !>  ^-  update:store
     :+  %0

@@ -4,7 +4,7 @@
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [[=ship graph=term ~] ~]
     ==
-:-  %noun
+:-  %graph-update
 =/  our  (scot %p p.bec)
 =/  wen  (scot %da now)
 =/  who  (scot %p ship)
