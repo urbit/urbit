@@ -501,8 +501,8 @@ _test_bsw_bex()
   int    ret = 1;
   ur_bsw_t a = {0};
   ur_bsw_t b = {0};
-  uint8_t  i, l;
-  uint32_t j, k;
+  uint8_t  i;
+  uint32_t j;
 
   for ( i = 0; i < 8; i++) {
     for ( j = 0; j < 256; j++ ) {
@@ -1363,7 +1363,7 @@ _test_bsr_skip_any_loop(const char *cap, uint8_t len, uint8_t val)
   uint64_t   max = (len << 3) + 7;
   ur_bsr_t  a, b;
   uint8_t *bytes, *c;
-  uint8_t   i, j, k;
+  uint8_t   i, j;
 
   c     = malloc(1 + len);
   bytes = malloc(len);
@@ -1510,7 +1510,7 @@ _test_bsr_log_loop(const char *cap, uint8_t len, uint8_t val)
   int          ret = 1;
   ur_bsr_t    a, b;
   uint8_t    *bytes, c, d;
-  uint8_t     i, j, k;
+  uint8_t     i, j;
   ur_cue_res_e   e, f;
 
   bytes = malloc(len);
@@ -1602,7 +1602,7 @@ _test_bsr_tag_loop(const char *cap, uint8_t len, uint8_t val)
   ur_bsr_t     a, b;
   uint8_t    *bytes;
   ur_cue_tag_e c, d;
-  uint8_t      i, j, k;
+  uint8_t      i, j;
   ur_cue_res_e    e, f;
 
   bytes = malloc(len);
