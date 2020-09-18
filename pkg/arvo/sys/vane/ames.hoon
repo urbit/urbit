@@ -756,6 +756,8 @@
           =([%$ %da now] lot)
           =(%$ syd)
       ==
+    ?.  for.veb.bug.ames-state  ~
+    ~>  %slog.0^leaf/"ames: scry-fail {<[why=why lot=lot now=now syd=syd]>}"
     ~
   ::  /ax/protocol/version           @
   ::  /ax/peers                      (map ship ?(%alien %known))
