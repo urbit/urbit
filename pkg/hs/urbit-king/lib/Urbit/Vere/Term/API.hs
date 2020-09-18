@@ -1,7 +1,12 @@
 {-|
     Interface Terminal API.
 -}
-module Urbit.Vere.Term.API (Ev(..), Client(..), trace, spin, stopSpin) where
+module Urbit.Vere.Term.API (Ev(..),
+                            Client(..),
+                            trace,
+                            slog,
+                            spin,
+                            stopSpin) where
 
 import Urbit.Prelude hiding (trace)
 
@@ -15,11 +20,13 @@ import Urbit.Arvo (Belt, Blit)
 
     %blits -- list of blits from arvo.
     %trace -- stderr line from runtime.
+    %slog  -- nock worker logging with priority
     %blank -- print a blank line
     %spinr -- Start or stop the spinner
 -}
 data Ev = Blits [Blit]
         | Trace Cord
+        | Slog (Atom, Tank)
         | Blank
         | Spinr (Maybe (Maybe Cord))
   deriving (Show)
@@ -36,6 +43,9 @@ deriveNoun ''Ev
 
 trace :: Client -> Text -> STM ()
 trace ts = give ts . singleton . Trace . Cord
+
+slog :: Client -> (Atom, Tank) -> STM ()
+slog ts = give ts . singleton . Slog
 
 spin :: Client -> Maybe Text -> STM ()
 spin ts = give ts . singleton . Spinr . Just . fmap Cord
