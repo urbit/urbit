@@ -67,7 +67,8 @@ export class SettingsScreen extends Component {
       groups,
       api,
       station,
-      match
+      match,
+      history
     } = this.props;
     const isOwner = deSig(match.params.ship) === window.ship;
 
@@ -88,6 +89,7 @@ export class SettingsScreen extends Component {
           station={station}
           association={association}
           contacts={contacts}
+          history={history}
           api={api} />
         <MetadataSettings
           isOwner={isOwner}
