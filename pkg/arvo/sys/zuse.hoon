@@ -5335,13 +5335,14 @@
 ++  format  ^?
   |%
   ::  0 ending a line (invalid @t) is not preserved     ::  ++to-wain:format
-  ++  to-wain                                           ::  @t to line list
+  ++  to-wain                                           ::  cord to line list
     ~%  %leer  ..is  ~
-    |=  txt=@t
+    |=  txt=cord
+    ^-  wain
     =/  len=@  (met 3 txt)
     =/  cut  =+(cut -(a 3, c 1, d txt))
     =/  sub  sub
-    =|  [i=@ out=(list @t)]
+    =|  [i=@ out=wain]
     |-  ^+  out
     =+  |-  ^-  j=@
         ?:  ?|  =(i len)
@@ -5355,8 +5356,8 @@
       (flop out)
     $(i +(j))
   ::                                                    ::  ++of-wain:format
-  ++  of-wain                                           ::  line list to atom
-    |=  tez/(list @t)
+  ++  of-wain                                           ::  line list to cord
+    |=  tez=wain  ^-  cord
     (rap 3 (join '\0a' tez))
   ::                                                    ::  ++of-wall:format
   ++  of-wall                                           ::  line list to tape
