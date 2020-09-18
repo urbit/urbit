@@ -474,6 +474,20 @@
       now.bowl
     [%add-graph [ship term] `graph:store`p.u.result q.u.result]
   ::
+      ::  note: near-duplicate of /x/graph
+      ::
+      [%x %archive @ @ ~]
+    =/  =ship   (slav %p i.t.t.path)
+    =/  =term   i.t.t.t.path
+    =/  result=(unit marked-graph:store)
+      (~(get by archive) [ship term])
+    ?~  result  [~ ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    [%add-graph [ship term] `graph:store`p.u.result q.u.result]
+  ::
       [%x %graph-subset @ @ @ @ ~]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path

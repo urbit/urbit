@@ -1,0 +1,11 @@
+/+  graph-store
+::
+:-  %say
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [=ship graph=term ~]
+    ==
+:-  %noun
+=/  our  (scot %p p.bec)
+=/  wen  (scot %da now)
+=/  who  (scot %p ship)
+.^(update:graph-store /gx/[our]/graph-store/[wen]/[who]/[graph])
