@@ -3,15 +3,9 @@
 */
     /*  opaque handles
     */
-      /* u3_cue_sill: handle for cue-ing with an off-loom dictionary.
+      /* u3_cue_xeno: handle for cue-ing with an off-loom dictionary.
       */
-        typedef struct _u3_cue_sill u3_cue_sill;
-
-    /*  forward declarations
-    */
-      /* ur_dict32_s: off-loom 32-bit dictionary.
-      */
-        struct ur_dict32_s;
+        typedef struct _u3_cue_xeno u3_cue_xeno;
 
     /*  Noun serialization. All noun arguments RETAINED.
     */
@@ -34,32 +28,32 @@
         u3_noun
         u3s_cue(u3_atom a);
 
-      /* u3s_cue_sill_init_with(): initialize a cue_sill handle as specified.
+      /* u3s_cue_xeno_init_with(): initialize a cue_xeno handle as specified.
       */
-        u3_cue_sill*
-        u3s_cue_sill_init_with(c3_d pre_d, c3_d siz_d);
+        u3_cue_xeno*
+        u3s_cue_xeno_init_with(c3_d pre_d, c3_d siz_d);
 
-      /* u3s_cue_sill_init(): initialize a cue_sill handle.
+      /* u3s_cue_xeno_init(): initialize a cue_xeno handle.
       */
-        u3_cue_sill*
-        u3s_cue_sill_init(void);
+        u3_cue_xeno*
+        u3s_cue_xeno_init(void);
 
-      /* u3s_cue_sill_init(): cue on-loom, with off-loom dictionary in handle.
+      /* u3s_cue_xeno_init(): cue on-loom, with off-loom dictionary in handle.
       */
         u3_weak
-        u3s_cue_sill_with(u3_cue_sill* sil_u,
+        u3s_cue_xeno_with(u3_cue_xeno* sil_u,
                           c3_d         len_d,
                           const c3_y*  byt_y);
 
-      /* u3s_cue_sill_init(): dispose cue_sill handle.
+      /* u3s_cue_xeno_init(): dispose cue_xeno handle.
       */
         void
-        u3s_cue_sill_done(u3_cue_sill* sil_u);
+        u3s_cue_xeno_done(u3_cue_xeno* sil_u);
 
-      /* u3s_cue_sill(): cue on-loom, with off-loom dictionary.
+      /* u3s_cue_xeno(): cue on-loom, with off-loom dictionary.
       */
         u3_weak
-        u3s_cue_sill(c3_d        len_d,
+        u3s_cue_xeno(c3_d        len_d,
                      const c3_y* byt_y);
 
       /* u3s_cue_bytes(): cue bytes onto the loom.

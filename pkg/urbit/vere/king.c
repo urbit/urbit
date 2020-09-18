@@ -713,15 +713,15 @@ _king_boot_ivory(void)
   }
 
   {
-    u3_cue_sill* sil_u = u3s_cue_sill_init_with(ur_fib27, ur_fib28);
+    u3_cue_xeno* sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
     u3_weak        pil;
 
-    if ( u3_none == (pil = u3s_cue_sill_with(sil_u, len_d, byt_y)) ) {
+    if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
       u3l_log("lite: unable to cue ivory pill\r\n");
       exit(1);
     }
 
-    u3s_cue_sill_done(sil_u);
+    u3s_cue_xeno_done(sil_u);
 
     if ( c3n == u3v_boot_lite(pil)) {
       u3l_log("lite: boot failed\r\n");

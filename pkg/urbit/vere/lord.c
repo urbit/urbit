@@ -74,7 +74,7 @@ _lord_stop_cb(void*       ptr_v,
   void (*exit_f)(void*) = god_u->cb_u.exit_f;
   void* exit_v = god_u->cb_u.ptr_v;
 
-  u3s_cue_sill_done(god_u->sil_u);
+  u3s_cue_xeno_done(god_u->sil_u);
   c3_free(god_u);
 
   if ( exit_f ) {
@@ -682,7 +682,7 @@ _lord_on_plea(void* ptr_v, c3_d len_d, c3_y* byt_y)
   u3t_event_trace("king ipc cue", 'B');
 #endif
 
-  jar = u3s_cue_sill_with(god_u->sil_u, len_d, byt_y);
+  jar = u3s_cue_xeno_with(god_u->sil_u, len_d, byt_y);
 
 #ifdef LORD_TRACE_CUE
   u3t_event_trace("king ipc cue", 'E');
@@ -1169,7 +1169,7 @@ u3_lord_init(c3_c* pax_c, c3_w wag_w, c3_d key_d[4], u3_lord_cb cb_u)
 #endif
 
   {
-    god_u->sil_u = u3s_cue_sill_init();
+    god_u->sil_u = u3s_cue_xeno_init();
   }
 
   //  start reading from proc

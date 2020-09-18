@@ -532,10 +532,10 @@ u3s_cue(u3_atom a)
   return pro;
 }
 
-/* _cs_cue_sill_back(): cue a backref, off-loom dictionary.
+/* _cs_cue_xeno_back(): cue a backref, off-loom dictionary.
 */
 static inline ur_cue_res_e
-_cs_cue_sill_back(ur_bsr_t*    red_u,
+_cs_cue_xeno_back(ur_bsr_t*    red_u,
                   ur_dict32_t* dic_u,
                   u3_noun*       out)
 {
@@ -562,10 +562,10 @@ _cs_cue_sill_back(ur_bsr_t*    red_u,
   }
 }
 
-/* _cs_cue_sill_atom(): cue an atom, off-loom dictionary.
+/* _cs_cue_xeno_atom(): cue an atom, off-loom dictionary.
 */
 static inline ur_cue_res_e
-_cs_cue_sill_atom(ur_bsr_t*    red_u,
+_cs_cue_xeno_atom(ur_bsr_t*    red_u,
                   ur_dict32_t* dic_u,
                   c3_d         bit_d,
                   u3_noun*       out)
@@ -619,11 +619,10 @@ typedef struct _cue_frame_s {
   c3_d  bit_d;
 } _cue_frame_t;
 
-/* _cs_cue_sill_next(): read next value from bitstream, dictionary off-loom.
-**                  NB: this is _cs_cue_xeno_next, using the road stack.
+/* _cs_cue_xeno_next(): read next value from bitstream, dictionary off-loom.
 */
 static inline ur_cue_res_e
-_cs_cue_sill_next(u3a_pile*    pil_u,
+_cs_cue_xeno_next(u3a_pile*    pil_u,
                   ur_bsr_t*    red_u,
                   ur_dict32_t* dic_u,
                   u3_noun*       out)
@@ -650,24 +649,24 @@ _cs_cue_sill_next(u3a_pile*    pil_u,
       }
 
       case ur_jam_back: {
-        return _cs_cue_sill_back(red_u, dic_u, out);
+        return _cs_cue_xeno_back(red_u, dic_u, out);
       }
 
       case ur_jam_atom: {
-        return _cs_cue_sill_atom(red_u, dic_u, bit_d, out);
+        return _cs_cue_xeno_atom(red_u, dic_u, bit_d, out);
       }
     }
   }
 }
 
-struct _u3_cue_sill {
+struct _u3_cue_xeno {
   ur_dict32_t dic_u;
 };
 
-/* _cs_cue_sill(): cue on-loom, with off-loom dictionary in handle.
+/* _cs_cue_xeno(): cue on-loom, with off-loom dictionary in handle.
 */
 static u3_weak
-_cs_cue_sill(u3_cue_sill* sil_u,
+_cs_cue_xeno(u3_cue_xeno* sil_u,
              c3_d         len_d,
              const c3_y*  byt_y)
 {
@@ -695,7 +694,7 @@ _cs_cue_sill(u3_cue_sill* sil_u,
 
   //  advance into stream
   //
-  res_e = _cs_cue_sill_next(&pil_u, &red_u, dic_u, &ref);
+  res_e = _cs_cue_xeno_next(&pil_u, &red_u, dic_u, &ref);
 
   //  process cell results
   //
@@ -709,7 +708,7 @@ _cs_cue_sill(u3_cue_sill* sil_u,
       //
       if ( u3_none == fam_u->ref ) {
         fam_u->ref = ref;
-        res_e = _cs_cue_sill_next(&pil_u, &red_u, dic_u, &ref);
+        res_e = _cs_cue_xeno_next(&pil_u, &red_u, dic_u, &ref);
         fam_u = u3a_peek(&pil_u);
       }
       //  f is a tail-frame; pop the stack and continue
@@ -744,12 +743,12 @@ _cs_cue_sill(u3_cue_sill* sil_u,
   return u3_none;
 }
 
-/* u3s_cue_sill_init_with(): initialize a cue_sill handle as specified.
+/* u3s_cue_xeno_init_with(): initialize a cue_xeno handle as specified.
 */
-u3_cue_sill*
-u3s_cue_sill_init_with(c3_d pre_d, c3_d siz_d)
+u3_cue_xeno*
+u3s_cue_xeno_init_with(c3_d pre_d, c3_d siz_d)
 {
-  u3_cue_sill* sil_u;
+  u3_cue_xeno* sil_u;
 
   c3_assert( &(u3H->rod_u) == u3R );
 
@@ -759,18 +758,18 @@ u3s_cue_sill_init_with(c3_d pre_d, c3_d siz_d)
   return sil_u;
 }
 
-/* u3s_cue_sill_init(): initialize a cue_sill handle.
+/* u3s_cue_xeno_init(): initialize a cue_xeno handle.
 */
-u3_cue_sill*
-u3s_cue_sill_init(void)
+u3_cue_xeno*
+u3s_cue_xeno_init(void)
 {
-  return u3s_cue_sill_init_with(ur_fib10, ur_fib11);
+  return u3s_cue_xeno_init_with(ur_fib10, ur_fib11);
 }
 
-/* u3s_cue_sill_init(): cue on-loom, with off-loom dictionary in handle.
+/* u3s_cue_xeno_init(): cue on-loom, with off-loom dictionary in handle.
 */
 u3_weak
-u3s_cue_sill_with(u3_cue_sill* sil_u,
+u3s_cue_xeno_with(u3_cue_xeno* sil_u,
                   c3_d         len_d,
                   const c3_y*  byt_y)
 {
@@ -778,34 +777,34 @@ u3s_cue_sill_with(u3_cue_sill* sil_u,
 
   c3_assert( &(u3H->rod_u) == u3R );
 
-  som = _cs_cue_sill(sil_u, len_d, byt_y);
+  som = _cs_cue_xeno(sil_u, len_d, byt_y);
   ur_dict32_wipe(&sil_u->dic_u);
   return som;
 }
 
-/* u3s_cue_sill_init(): dispose cue_sill handle.
+/* u3s_cue_xeno_init(): dispose cue_xeno handle.
 */
 void
-u3s_cue_sill_done(u3_cue_sill* sil_u)
+u3s_cue_xeno_done(u3_cue_xeno* sil_u)
 {
   ur_dict_free((ur_dict_t*)&sil_u->dic_u);
   c3_free(sil_u);
 }
 
-/* u3s_cue_sill(): cue on-loom, with off-loom dictionary.
+/* u3s_cue_xeno(): cue on-loom, with off-loom dictionary.
 */
 u3_weak
-u3s_cue_sill(c3_d        len_d,
+u3s_cue_xeno(c3_d        len_d,
              const c3_y* byt_y)
 {
-  u3_cue_sill* sil_u;
+  u3_cue_xeno* sil_u;
   u3_weak        som;
 
   c3_assert( &(u3H->rod_u) == u3R );
 
-  sil_u = u3s_cue_sill_init();
-  som   = _cs_cue_sill(sil_u, len_d, byt_y);
-  u3s_cue_sill_done(sil_u);
+  sil_u = u3s_cue_xeno_init();
+  som   = _cs_cue_xeno(sil_u, len_d, byt_y);
+  u3s_cue_xeno_done(sil_u);
   return som;
 }
 

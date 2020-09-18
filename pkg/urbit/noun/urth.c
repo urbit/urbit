@@ -842,11 +842,11 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
   {
     //  XX tune the initial dictionary size for less reallocation
     //
-    u3_cue_sill* sil_u = u3s_cue_sill_init_with(ur_fib33, ur_fib34);
-    u3_weak        ref = u3s_cue_sill_with(sil_u, len_d, byt_y);
+    u3_cue_xeno* sil_u = u3s_cue_xeno_init_with(ur_fib33, ur_fib34);
+    u3_weak        ref = u3s_cue_xeno_with(sil_u, len_d, byt_y);
     u3_noun   roc, cod;
 
-    u3s_cue_sill_done(sil_u);
+    u3s_cue_xeno_done(sil_u);
 
     if ( u3_none == ref ) {
       fprintf(stderr, "uncram: failed to cue rock\r\n");
