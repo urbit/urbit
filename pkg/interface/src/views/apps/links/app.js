@@ -83,6 +83,9 @@ export class LinksApp extends Component {
                   graphKeys={graphKeys}>
                   <NewScreen
                     api={api}
+                    graphKeys={graphKeys}
+                    associations={associations}
+                    groups={groups}
                     {...props}
                   />
                 </Skeleton>
@@ -199,8 +202,6 @@ export class LinksApp extends Component {
                   associations.link[resourcePath] : { metadata: {} };
               const popout = props.match.url.includes('/popout/');
               const contactDetails = contacts[resource['group-path']] || {};
-
-              console.log(props.match.params.index.split('-'));
 
               const indexArr = props.match.params.index.split('-');
               const graph = graphs[resourcePath] || null;

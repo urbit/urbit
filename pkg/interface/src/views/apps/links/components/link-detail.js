@@ -10,7 +10,6 @@ import { getContactDetails } from '~/logic/lib/util';
 
 
 export const LinkDetail = (props) => {
-  console.log(props);
   if (!props.node) {
     // TODO: something
     return (

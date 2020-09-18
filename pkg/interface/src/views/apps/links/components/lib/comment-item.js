@@ -36,8 +36,8 @@ export const CommentItem = (props) => {
             {content}
           </RichText>
         </Text>
-      </Box>
-    );
-  }
+      </Row>
+    </Box>
+  );
 }
 

@@ -22,12 +22,16 @@ export const ChannelSidebar = (props) => {
   const associations = props.associations.contacts ?
     alphabetiseAssociations(props.associations.contacts) : {};
 
+  const graphAssoc = props.associations.graph || {};
+
   const groupedChannels = {};
-  [...props.graphKeys].map((path) => {
-    const groupPath = props.associations.link[path] ?
-      props.associations.link[path]['group-path'] : '';
+  [...props.graphKeys].map((gKey) => {
+    const path = `/ship/~${gKey.split('/')[0]}/${gKey.split('/')[1]}`;
+    const groupPath = graphAssoc[path] ? graphAssoc[path]['group-path'] : '';
 
     if (groupPath in associations) {
+      // managed
+
       if (groupedChannels[groupPath]) {
         const array = groupedChannels[groupPath];
         array.push(path);
@@ -35,51 +39,51 @@ export const ChannelSidebar = (props) => {
       } else {
         groupedChannels[groupPath] = [path];
       }
+
     } else {
+      // unmanaged
+
       if (groupedChannels['/~/']) {
         const array = groupedChannels['/~/'];
         array.push(path);
         groupedChannels['/~/'] = array;
       } else {
         groupedChannels['/~/'] = [path];
-      };
+      }
     }
   });
 
-  let i = -1;
-  //TODO handle unmanaged links
+  const groupedItems = Object.keys(associations).map((each, i) => {
+    const channels = groupedChannels[each];
+    if (!channels || channels.length === 0) { return; }
 
-  const groupedItems = Object.keys(associations)
-    .map((each) => {
-      const channels = groupedChannels[each];
-      if (!channels || channels.length === 0)
-        return;
-      i++;
-      if (groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
-        i++;
-      }
+    return (
+      <GroupItem
+        key={i + 1}
+        unmanaged={false}
+        association={associations[each]}
+        metadata={graphAssoc}
+        channels={channels}
+        selected={props.selected}
+      />
+    );
+  });
 
-      return (
-        <GroupItem
-          key={i}
-          index={i}
-          association={associations[each]}
-          linkMetadata={props.associations['link']}
-          channels={channels}
-          selected={props.selected}
-        />
-      );
-    });
+  if (groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
+    groupedItems.push(
+      <GroupItem
+        key={0}
+        unmanaged={true}
+        association={'/~/'}
+        metadata={graphAssoc}
+        channels={groupedChannels['/~/']}
+        selected={props.selected}
+      />
+    );
+  }
 
   const activeClasses = (props.active === 'collections') ? ' ' : 'dn-s ';
-
-  let hiddenClasses = true;
-
-  if (props.popout) {
-    hiddenClasses = false;
-  } else {
-    hiddenClasses = props.sidebarShown;
-  }
+  const hiddenClasses = !!props.popout ? false : props.sidebarShown;
 
   return (
     <div className={

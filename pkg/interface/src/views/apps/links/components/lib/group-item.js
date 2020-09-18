@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { ChannelItem } from './channel-item';
+import { deSig } from '~/logic/lib/util';
+
 
 export const GroupItem = (props) => {
   const association = props.association ? props.association : {};
@@ -13,16 +15,18 @@ export const GroupItem = (props) => {
   }
 
   const channels = props.channels ? props.channels : [];
-  const first = (props.index === 0) ? 'pt1' : 'pt6';
+  const unmanaged = props.unmanaged ? 'pt6' : 'pt1';
 
   const channelItems = channels.map((each, i) => {
-    const meta = props.linkMetadata[each];
+    const meta = props.metadata[each];
     if (!meta) { return null; }
+    const link = `${deSig(each.split('/')[2])}/${each.split('/')[3]}`;
+
     const selected = (props.selected === each);
     return (
-      <ChannelsItem
+      <ChannelItem
         key={each}
-        link={each}
+        link={link}
         selected={selected}
         name={meta.metadata.title}
       />
@@ -30,7 +34,7 @@ export const GroupItem = (props) => {
   });
 
   return (
-    <div className={first}>
+    <div className={unmanaged}>
       <p className="f9 ph4 pb2 gray3">{title}</p>
       {channelItems}
     </div>
