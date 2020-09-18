@@ -1198,7 +1198,8 @@ _term_it_show_stub(u3_utty* uty_u,
       u3x_trel(tyl, &dec, &bag, &fog);
 
       c3_o tyl_o = c3n;
-      if ( (u3_nul != dec) || (u3_nul != bag) || (u3_nul != fog) ) {
+      if ( ( c3n == u3_Host.ops_u.tem ) &&
+           ( (u3_nul != dec) || (u3_nul != bag) || (u3_nul != fog) ) ) {
         tyl_o = c3y;
       }
 
