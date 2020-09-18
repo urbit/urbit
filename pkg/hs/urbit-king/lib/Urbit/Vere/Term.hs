@@ -182,7 +182,9 @@ localClient doneSignal = fst <$> mkRAcquire start stop
     start = do
       tsWriteQueue  <- newTQueueIO :: RIO e (TQueue [Term.Ev])
       spinnerMVar   <- newEmptyTMVarIO :: RIO e (TMVar ())
-      pWriterThread <- asyncBound (writeTerminal tsWriteQueue spinnerMVar)
+      tsizeTVar     <- io $ T.termSize >>= newTVarIO
+      pWriterThread <- asyncBound
+        (writeTerminal tsWriteQueue spinnerMVar tsizeTVar)
 
       pPreviousConfiguration <- io $ getTerminalAttributes stdInput
 
@@ -203,7 +205,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
                           , give = writeTQueue tsWriteQueue
                           }
 
-      tsize <- io $ T.termSize
+      tsize <- io $ T.liveTermSize (\ts -> atomically $ writeTVar tsizeTVar ts)
 
       pure ((tsize, client), Private{..})
 
@@ -245,8 +247,8 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
     -- Writes data to the terminal. Both the terminal reading, normal logging,
     -- and effect handling can all emit bytes which go to the terminal.
-    writeTerminal :: TQueue [Term.Ev] -> TMVar () -> RIO e ()
-    writeTerminal q spinner = do
+    writeTerminal :: TQueue [Term.Ev] -> TMVar () -> TVar TermSize -> RIO e ()
+    writeTerminal q spinner termSizeVar = do
         currentTime <- io $ now
         loop (LineState "" 0 Nothing Nothing True 0 currentTime)
       where
@@ -258,6 +260,17 @@ localClient doneSignal = fst <$> mkRAcquire start stop
             putStr "\r"
             T.clearLine
             putStr p
+            termRefreshLine ls
+
+        writeSlog :: LineState -> (Atom, Tank) -> RIO e LineState
+        writeSlog ls slog = do
+            putStr "\r"
+            T.clearLine
+            TermSize width _ <- atomically $ readTVar termSizeVar
+            -- TODO: Ignoring priority for now.
+            putStr (tshow width <> "\r\n")
+            let lines = fmap unTape $ wash (WashCfg 0 width) $ tankTree $ snd slog
+            forM lines $ \line -> putStr (line <> "\r\n")
             termRefreshLine ls
 
         {-
@@ -310,6 +323,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
         execEv ls = \case
             Term.Blits bs         -> foldM writeBlit ls bs
             Term.Trace p          -> writeTrace ls (unCord p)
+            Term.Slog s           -> writeSlog ls s
             Term.Blank            -> writeBlank ls
             Term.Spinr (Just txt) -> doSpin ls (unCord <$> txt)
             Term.Spinr Nothing    -> unspin ls
