@@ -1,76 +1,145 @@
-import React from 'react';
-import { Box, Col, Row, Text, IconButton, Button, Icon } from '@tlon/indigo-react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import {
+  Center,
+  Box,
+  Col,
+  Row,
+  Text,
+  IconButton,
+  Button,
+  Icon,
+} from "@tlon/indigo-react";
+import { uxToHex } from "~/logic/lib/util";
+import { Link } from "react-router-dom";
 
-import { Association, } from "~/types/metadata-update";
+import { Association, Associations } from "~/types/metadata-update";
 import { Dropdown } from "~/views/components/Dropdown";
 
-
-const GroupSwitcherItem = ({ to, children, ...rest }) => (
+const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
-    <Row {...rest} px={1} mb={2} alignItems="center">
-      {children}
-    </Row>
+    <Box
+      py={1}
+      {...rest}
+      borderBottom={bottom ? 0 : 1}
+      borderBottomColor="lightGray"
+    >
+      <Row p={2} alignItems="center">
+        {children}
+      </Row>
+    </Box>
   </Link>
 );
 
-export function GroupSwitcher(props: { association: Association; baseUrl: string }) {
+function RecentGroups(props: { recent: string[]; associations: Associations }) {
+  const { associations, recent } = props;
+  if (recent.length < 2) {
+    return null;
+  }
+
+  return (
+    <Col borderBottom={1} borderBottomColor="lightGray" p={1}>
+      <Box px={1} py={2} color="gray">
+        Recent Groups
+      </Box>
+      {props.recent.slice(1, 5).map((g) => {
+        const assoc = associations.contacts[g];
+        const color = uxToHex(assoc?.metadata?.color);
+        return (
+          <Row key={g} px={1} pb={2} alignItems="center">
+            <Box
+              borderRadius={1}
+              border={1}
+              borderColor="lightGray"
+              height="16px"
+              width="16px"
+              bg={color}
+              mr={2}
+              display="block"
+            />
+            <Link to={`/~groups${g}`}>{assoc?.metadata?.title}</Link>
+          </Row>
+        );
+      })}
+    </Col>
+  );
+}
+
+export function GroupSwitcher(props: {
+  association: Association;
+  associations: Associations;
+  baseUrl: string;
+  recentGroups: string[];
+}) {
   const { title } = props.association.metadata;
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
     <Box position="sticky" top="0px" p={2}>
-      <Col bg="white" borderRadius={1} border={1} borderColor="washedGray">
-        <Row justifyContent="space-between">
+      <Col
+        justifyContent="center"
+        bg="white"
+        borderRadius={1}
+        border={1}
+        borderColor="washedGray"
+      >
+        <Row alignItems="center" justifyContent="space-between">
           <Dropdown
-            width="220px"
+            width="200px"
             options={
-              <Col width="100%" alignItems="flex-start">
-                <Row
-                  alignItems="center"
-                  px={2}
-                  pb={2}
-                  my={2}
-                  borderBottom={1}
-                  borderBottomColor="washedGray"
-                >
-                  <img
-                    src="/~landscape/img/groups.png"
-                    height="12px"
-                    width="12px"
+              <Col bg="white" width="100%" alignItems="stretch">
+                <GroupSwitcherItem to="">
+                  <Icon
+                    mr={2}
+                    stroke="gray"
+                    fill="rgba(0,0,0,0)"
+                    display="block"
+                    icon="Groups"
                   />
-                  <Text ml={2}>Switch Groups</Text>
-                </Row>
+                  <Text>All Groups</Text>
+                </GroupSwitcherItem>
+                <RecentGroups
+                  recent={props.recentGroups}
+                  associations={props.associations}
+                />
                 <GroupSwitcherItem to={navTo("/popover/participants")}>
-                  <Icon mr={2} icon="Circle" />
+                  <Icon mr={2} fill="none" stroke="gray" icon="CircleDot" />
                   <Text> Participants</Text>
                 </GroupSwitcherItem>
                 <GroupSwitcherItem to={navTo("/popover/settings")}>
-                  <Icon mr={2} icon="Circle" />
+                  <Icon mr={2} fill="none" stroke="gray" icon="Gear" />
                   <Text> Settings</Text>
                 </GroupSwitcherItem>
-                <GroupSwitcherItem to={navTo("/popover/settings")}>
-                  <Icon mr={2} icon="Circle" />
-                  <Text>Group Settings</Text>
-                </GroupSwitcherItem>
-                <GroupSwitcherItem to={navTo("/invites")}>
-                  <Icon mr={2} fill="blue" icon="Circle" />
+                <GroupSwitcherItem bottom to={navTo("/invites")}>
+                  <Icon
+                    mr={2}
+                    fill="rgba(0,0,0,0)"
+                    stroke="blue"
+                    icon="CreateGroup"
+                  />
                   <Text color="blue">Invite to group</Text>
                 </GroupSwitcherItem>
               </Col>
             }
           >
-            <Button width="max-content">
-              <Box display="flex">
-                <Box width="max-content">
-                  <Text>{title}</Text>
-                </Box>
-                <Icon icon="ChevronSouth" />
+            <Box p={2} alignItems="center" display="flex">
+              <Box mr={1}>
+                <Text>{title}</Text>
               </Box>
-            </Button>
+              <Icon mt="2px" display="block" icon="ChevronSouth" />
+            </Box>
           </Dropdown>
-          <Link to={navTo("/popover/settings")}>
-            <IconButton icon="MagnifyingGlass" />
-          </Link>
+          <Row collapse pr={1} justifyContent="flex-end" alignItems="center">
+            <Link to={navTo("/invites")}>
+              <Icon
+                display="block"
+                fill="rgba(0,0,0,0)"
+                stroke="blue"
+                icon="CreateGroup"
+              />
+            </Link>
+            <Link to={navTo("/popover/settings")}>
+              <Icon display="block" ml={2} icon="Gear" />
+            </Link>
+          </Row>
         </Row>
       </Col>
     </Box>

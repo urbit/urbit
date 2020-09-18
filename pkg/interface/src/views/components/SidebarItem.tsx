@@ -22,7 +22,15 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   }
 }
 
+const getAppIcon = (app: string) => {
+  if (app === "link") {
+    return "Links";
+  }
+  return _.capitalize(app);
+};
+
 export function SidebarItem(props: {
+  hideUnjoined: boolean;
   association: Association;
   path: string;
   selected: boolean;
@@ -43,6 +51,12 @@ export function SidebarItem(props: {
     ? `/~groups${groupPath}/resource/${appName}${appPath}`
     : `/~groups${groupPath}/join/${appName}${appPath}`;
 
+  const color = selected ? 'black' : isSynced ? 'gray' : 'lightGray';
+
+  if(props.hideUnjoined && !isSynced) {
+    return null;
+  }
+
   return (
     <HoverBoxLink
       to={to}
@@ -58,11 +72,13 @@ export function SidebarItem(props: {
       selected={selected}
     >
       <Row alignItems="center">
-        <Box ml={2} lineHeight="1.33" fontWeight={hasUnread ? "600" : "400"}>
-          <Text color={isSynced ? "black" : "lightGray"}>{title}</Text>
+        <Icon display="block" fill="rgba(0,0,0,0)" stroke={color} icon={getAppIcon(appName)} />
+        <Box flexShrink={2} ml={2} lineHeight="1.33" fontWeight={hasUnread ? "600" : "400"}>
+          <Text color={selected || isSynced ? 'black' : 'lightGray'}>
+            {title}
+          </Text>
         </Box>
       </Row>
-      <SidebarItemIndicator status={status} />
     </HoverBoxLink>
   );
 }

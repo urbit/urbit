@@ -15,9 +15,10 @@ const ClickBox = styled(Box)`
   cursor: pointer;
 `;
 
-const DropdownOptions = styled(Box)`
+const DropdownOptions = styled(Box)<{ pos: string }>`
   z-index: 20;
   position: absolute;
+  ${(p) => p.pos}: -1px;
 `;
 
 export function Dropdown(props: DropdownProps) {
@@ -35,20 +36,18 @@ export function Dropdown(props: DropdownProps) {
 
   const [open, setOpen] = useState(false);
 
-  const position = { [props.position]: "0px" };
-
   const align = props.position === "right" ? "flex-end" : "flex-start";
 
   return (
-    <Box width="min-content" position="relative">
+    <Box position={open ? "relative" : "static"}>
       <ClickBox onClick={() => setOpen((o) => !o)}> {children}</ClickBox>
       {open && (
-        <DropdownOptions {...position} ref={dropdownRef}>
+        <DropdownOptions pos={props.position} ref={dropdownRef}>
           <Col
             alignItems={align}
             width={props.width || "max-content"}
             border={1}
-            borderColor="black"
+            borderColor="lightGray"
             bg="white"
             borderRadius={2}
           >

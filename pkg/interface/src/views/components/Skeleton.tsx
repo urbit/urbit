@@ -10,8 +10,10 @@ import { Notebooks } from "~/types/publish-update";
 import GlobalApi from "~/logic/api/global";
 import { Path, AppName } from "~/types/noun";
 import { LinkCollections } from "~/types/link-update";
+import styled from "styled-components";
 interface SkeletonProps {
   children: ReactNode;
+  recentGroups: string[];
   associations: Associations;
   chatSynced: ChatHookUpdate | null;
   linkListening: Set<Path>;
@@ -30,6 +32,12 @@ const buntAppConfig = (name: string) => ({
   name,
   getStatus: (s: string) => undefined,
 });
+
+const TruncatedBox = styled(Box)`
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
 
 export function Skeleton(props: SkeletonProps) {
   const chatConfig = {
@@ -108,6 +116,7 @@ export function Skeleton(props: SkeletonProps) {
         gridTemplateRows="32px 1fr"
       >
         <Sidebar
+          recentGroups={props.recentGroups}
           selected={props.selected}
           selectedGroup={props.selectedGroup}
           selectedApp={props.selectedApp}
@@ -134,7 +143,14 @@ export function Skeleton(props: SkeletonProps) {
           >
             <Link to={`/~groups${props.selectedGroup}`}> {"<- Back"}</Link>
           </Box>
-          <Box>{association?.metadata?.title}</Box>
+          <Box mr={2}>{association?.metadata?.title}</Box>
+          <TruncatedBox
+            maxWidth="50%"
+            flexShrink={1}
+            color="gray"
+          >
+            {association?.metadata?.description}
+          </TruncatedBox>
         </Box>
         {props.children}
       </Box>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Box } from '@tlon/indigo-react';
 
 import GlobalApi from "~/logic/api/global";
 import { StoreState } from "~/logic/store/type";
@@ -20,19 +21,23 @@ export function PublishResource(props: PublishResourceProps) {
   const notebookContacts = props.contacts[association["group-path"]];
 
   return (
-    <NotebookRoutes
-      api={api}
-      ship={ship}
-      book={book}
-      contacts={props.contacts}
-      groups={props.groups}
-      notebook={notebook}
-      notebookContacts={notebookContacts}
-      rootUrl={baseUrl}
-      baseUrl={`${baseUrl}/resource/publish/${ship}/${book}`}
-      history={props.history}
-      match={props.match}
-      location={props.location}
-    />
+    <Box height="100%" width="100%" overflowY="auto">
+      <NotebookRoutes
+        api={api}
+        ship={ship}
+        book={book}
+        contacts={props.contacts}
+        groups={props.groups}
+        notebook={notebook}
+        notebookContacts={notebookContacts}
+        rootUrl={baseUrl}
+        baseUrl={`${baseUrl}/resource/publish/${ship}/${book}`}
+        history={props.history}
+        match={props.match}
+        location={props.location}
+        hideAvatars={props.hideAvatars}
+        hideNicknames={props.hideNicknames}
+      />
+    </Box>
   );
 }

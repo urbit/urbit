@@ -5,6 +5,7 @@ import {
   Text,
   Icon,
   MenuItem as _MenuItem,
+  IconButton,
 } from "@tlon/indigo-react";
 import { capitalize } from "lodash";
 
@@ -15,6 +16,12 @@ import { alphabeticalOrder } from "~/logic/lib/util";
 import { GroupSwitcher } from "~/views/apps/groups/components/GroupSwitcher";
 import { AppInvites, Associations, AppAssociations } from "~/types";
 import { SidebarItem } from "./SidebarItem";
+import {
+  SidebarListHeader,
+  SidebarListConfig,
+  SidebarSort,
+} from "./SidebarListHeader";
+import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
 
 interface SidebarAppConfig {
   name: string;
@@ -31,81 +38,51 @@ export type SidebarItemStatus =
   | "disconnected"
   | "loading";
 
-function ItemGroup(props: {
-  app: string;
-  apps: SidebarAppConfigs;
-  associations: Associations;
-  selected?: string;
-  group: string;
-}) {
-  const { selected, apps, associations } = props;
-  const [open, setOpen] = useState(true);
-
-  const toggleOpen = () => setOpen((o) => !o);
-
-  const assoc = associations[props.app as AppName];
-
-  const items = _.pickBy(
-    assoc,
-    (value) =>
-      value["group-path"] === props.group && value["app-name"] === props.app
-  );
-
-  if (Object.keys(items).length === 0) {
-    return null;
-  }
-
-  return (
-    <Box mb={3}>
-      <Row alignItems="center" onClick={toggleOpen} pl={2} mb={1}>
-        <Icon
-          mb="1px"
-          fill="lightGray"
-          icon={open ? "TriangleSouth" : "TriangleEast"}
-        />
-        <Text pl={1} color="lightGray">
-          {capitalize(props.app)}
-        </Text>
-      </Row>
-      {open && <SidebarItems selected={selected} items={items} apps={apps} />}
-    </Box>
-  );
-}
-
-const apps = ["chat", "publish", "link"];
-const GroupItems = (props: {
-  associations: Associations;
-  group: string;
-  apps: SidebarAppConfigs;
-  selected?: string;
-}) => (
-  <>
-    {apps.map((app) => (
-      <ItemGroup app={app} {...props} />
-    ))}
-  </>
-);
-
-function SidebarItems(props: {
-  apps: SidebarAppConfigs;
-  items: AppAssociations;
-  selected?: string;
-}) {
-  const { items, associations, selected } = props;
-
-  const ordered = Object.keys(items).sort((a, b) => {
-    const aAssoc = items[a];
-    const bAssoc = items[b];
+function sidebarSort(
+  associations: AppAssociations
+): Record<SidebarSort, (a: string, b: string) => number> {
+  const alphabetical = (a: string, b: string) => {
+    const aAssoc = associations[a];
+    const bAssoc = associations[b];
     const aTitle = aAssoc?.metadata?.title || b;
     const bTitle = bAssoc?.metadata?.title || b;
 
     return alphabeticalOrder(aTitle, bTitle);
-  });
+  };
+
+  return {
+    asc: alphabetical,
+    desc: (a, b) => alphabetical(b, a),
+  };
+}
+
+const apps = ["chat", "publish", "link"];
+
+function SidebarItems(props: {
+  apps: SidebarAppConfigs;
+  config: SidebarListConfig;
+  associations: Associations;
+  group: string;
+  selected?: string;
+}) {
+  const { selected, group, config } = props;
+  const associations = {
+    ...props.associations.chat,
+    ...props.associations.publish,
+    ...props.associations.link,
+  };
+
+  const ordered = Object.keys(associations)
+    .filter((a) => {
+      const assoc = associations[a];
+      return assoc["group-path"] === group;
+    })
+    .sort(sidebarSort(associations)[config.sortBy]);
 
   return (
     <>
       {ordered.map((path) => {
-        const assoc = items[path];
+        const assoc = associations[path];
         return (
           <SidebarItem
             key={path}
@@ -113,6 +90,7 @@ function SidebarItems(props: {
             selected={path === selected}
             association={assoc}
             apps={props.apps}
+            hideUnjoined={config.hideUnjoined}
           />
         );
       })}
@@ -122,6 +100,7 @@ function SidebarItems(props: {
 
 interface SidebarProps {
   children: ReactNode;
+  recentGroups: string[];
   invites: AppInvites;
   api: GlobalApi;
   associations: Associations;
@@ -139,6 +118,17 @@ export function Sidebar(props: SidebarProps) {
   if (!groupAsssociation) {
     return null;
   }
+  if (!associations) {
+    return null;
+  }
+
+  const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
+    `group-config:${props.selectedGroup}`,
+    {
+      sortBy: "asc",
+      hideUnjoined: false,
+    }
+  );
   return (
     <Box
       display={display}
@@ -153,7 +143,12 @@ export function Sidebar(props: SidebarProps) {
       bg="white"
       position="relative"
     >
-      <GroupSwitcher baseUrl={props.baseUrl} association={groupAsssociation} />
+      <GroupSwitcher
+        associations={associations}
+        recentGroups={props.recentGroups}
+        baseUrl={props.baseUrl}
+        association={groupAsssociation}
+      />
       {Object.keys(invites).map((appPath) =>
         Object.keys(invites[appPath]).map((uid) => (
           <SidebarInvite
@@ -164,11 +159,13 @@ export function Sidebar(props: SidebarProps) {
           />
         ))
       )}
-      <GroupItems
-        group={props.selectedGroup}
-        apps={apps}
+      <SidebarListHeader initialValues={config} handleSubmit={setConfig} />
+      <SidebarItems
+        config={config}
+        associations={associations}
         selected={selected}
-        associations={associations || {}}
+        group={props.selectedGroup}
+        apps={props.apps}
       />
     </Box>
   );
