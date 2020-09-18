@@ -27,7 +27,7 @@
 static u3_serf        u3V;             //  one serf per process
 static u3_moat      inn_u;             //  input stream
 static u3_mojo      out_u;             //  output stream
-static u3_cue_sill* sil_u;             //  cue handle
+static u3_cue_xeno* sil_u;             //  cue handle
 
 #undef SERF_TRACE_JAM
 #undef SERF_TRACE_CUE
@@ -116,7 +116,7 @@ _cw_serf_writ(void* vod_p, c3_d len_d, c3_y* byt_y)
   u3t_event_trace("serf ipc cue", 'B');
 #endif
 
-  jar = u3s_cue_sill_with(sil_u, len_d, byt_y);
+  jar = u3s_cue_xeno_with(sil_u, len_d, byt_y);
 
 #ifdef SERF_TRACE_CUE
   u3t_event_trace("serf ipc cue", 'E');
@@ -162,7 +162,7 @@ _cw_serf_stdio(c3_i* inn_i, c3_i* out_i)
 static void
 _cw_serf_exit(void)
 {
-  u3s_cue_sill_done(sil_u);
+  u3s_cue_xeno_done(sil_u);
   u3t_trace_close();
 }
 
@@ -236,7 +236,7 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
     uv_stream_set_blocking((uv_stream_t*)&out_u.pyp_u, 1);
   }
 
-  sil_u = u3s_cue_sill_init();
+  sil_u = u3s_cue_xeno_init();
 
   //  set up writing
   //

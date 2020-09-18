@@ -389,7 +389,7 @@ _test_cue_spec(const c3_c* cap_c,
   {
     u3_noun out;
 
-    if ( u3_none == (out = u3s_cue_sill(len_w, byt_y)) ) {
+    if ( u3_none == (out = u3s_cue_xeno(len_w, byt_y)) ) {
       fprintf(stderr, "\033[31mcue %s fail 3\033[0m\r\n", cap_c);
       ret_i = 0;
     }
