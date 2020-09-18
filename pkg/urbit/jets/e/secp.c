@@ -207,7 +207,7 @@ u3qe_reco(u3_atom has,
   ret = secp256k1_ecdsa_recover(ctx_u,                      /* IN: context */
                                 & puk_u,                     /* OUT: pub key */
                                 & sig_u,                        /* IN: signature */
-                                (const c3_y *) & has);        /* IN: message has */
+                                has_y);                       /* IN: message has */
 
   if (1 != ret) {
     u3l_log("\rsecp jet: crypto package error\n");
