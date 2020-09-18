@@ -36,6 +36,7 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
     new Image().src = '/~landscape/img/Spinner.png';
 
     this.props.subscription.startApp('groups')
+    this.props.subscription.startApp('graph');
     this.props.subscription.startApp('chat')
     
   }
@@ -43,6 +44,7 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
   componentWillUnmount() {
     this.props.subscription.stopApp('groups')
     this.props.subscription.stopApp('chat')
+    this.props.subscription.stopApp('graph');
   }
 
 

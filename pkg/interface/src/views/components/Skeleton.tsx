@@ -11,6 +11,7 @@ import GlobalApi from "~/logic/api/global";
 import { Path, AppName } from "~/types/noun";
 import { LinkCollections } from "~/types/link-update";
 import styled from "styled-components";
+
 interface SkeletonProps {
   children: ReactNode;
   recentGroups: string[];
@@ -20,6 +21,8 @@ interface SkeletonProps {
   links: LinkCollections;
   notebooks: Notebooks;
   inbox: Inbox;
+  graphs: Object;
+  graphKeys: Set<string>;
   selected?: string;
   selectedApp?: AppName;
   selectedGroup: string;
@@ -54,7 +57,7 @@ export function Skeleton(props: SkeletonProps) {
     },
   };
   const publishConfig = {
-    name: "chat",
+    name: "publish",
     getStatus: (s: string) => {
       const [, host, name] = s.split("/");
       const notebook = props.notebooks?.[host]?.[name];
@@ -70,22 +73,19 @@ export function Skeleton(props: SkeletonProps) {
   const linkConfig = {
     name: "link",
     getStatus: (s: string) => {
-      if (!props.linkListening.has(s)) {
-        return "unsubscribed";
-      }
-      const link = props.links[s];
+      const [,,ship,name] = s.split('/');
+      const graphKey = `${ship.slice(1)}/${name}`;
+      console.log(graphKey);
+      const link = props.graphKeys.has(graphKey);
       if (!link) {
-        return undefined;
-      }
-      if (link.unseenCount > 0) {
-        return "unread";
+        return 'unsubscribed';
       }
       return undefined;
     },
   };
   const config = {
     publish: publishConfig,
-    link: linkConfig,
+    graph: linkConfig,
     chat: chatConfig,
   };
 

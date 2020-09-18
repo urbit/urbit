@@ -2,6 +2,7 @@ import React from "react";
 
 import { ChatResource } from "~/views/apps/chat/ChatResource";
 import { PublishResource } from "~/views/apps/publish/PublishResource";
+import { LinkResource } from "~/views/apps/links/LinkResource";
 
 import { Association } from "~/types/metadata-update";
 import { StoreState } from "~/logic/store/type";
@@ -24,8 +25,8 @@ export function Resource(props: ResourceProps) {
   if (app === "publish") {
     return <PublishResource {...props} />;
   }
-  if (app === 'link') {
-    return null; //return <LinkResource {...props} />; 
+  if (app === 'graph') {
+    return <LinkResource {...props} />;
   }
   return null;
 }

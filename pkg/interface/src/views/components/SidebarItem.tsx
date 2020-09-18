@@ -23,7 +23,7 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
 }
 
 const getAppIcon = (app: string) => {
-  if (app === "link") {
+  if (app === "graph") {
     return "Links";
   }
   return _.capitalize(app);
@@ -39,13 +39,15 @@ export function SidebarItem(props: {
   const { association, path, selected, apps } = props;
   const title = association?.metadata?.title || path;
   const appName = association?.["app-name"];
-  const appPath = association?.["app-path"];
+  let appPath = association?.["app-path"];
   const groupPath = association?.["group-path"];
   const app = apps[appName];
   const status = app.getStatus(path);
   const hasUnread = status === "unread" || status === "mention";
 
   const isSynced = status !== "unsubscribed";
+
+  appPath = appPath.startsWith('/ship') ? appPath.slice(5) : appPath;
 
   const to = isSynced
     ? `/~groups${groupPath}/resource/${appName}${appPath}`

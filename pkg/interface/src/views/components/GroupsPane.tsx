@@ -46,10 +46,11 @@ export function GroupsPane(props: GroupsPaneProps) {
     if (!groupPath) {
       return;
     }
+
     setRecentGroups((gs) => _.uniq([groupPath, ...gs]));
   }, [groupPath]);
 
-  if(!groupAssociation) {
+  if (!groupAssociation) {
     return null;
   }
 
@@ -83,10 +84,11 @@ export function GroupsPane(props: GroupsPaneProps) {
             string,
             string
           >;
-          const resource = `/${host}/${name}`;
           const appName = app as AppName;
+          const resource =
+            app === "graph" ? `/ship/${host}/${name}` : `/${host}/${name}`;
           const association = associations[appName][resource];
-          const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
+          const resourceUrl = `${baseUrl}/resource/${app}/${host}/${name}`;
 
           if (!association) {
             return null;

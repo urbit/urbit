@@ -56,8 +56,6 @@ function sidebarSort(
   };
 }
 
-const apps = ["chat", "publish", "link"];
-
 function SidebarItems(props: {
   apps: SidebarAppConfigs;
   config: SidebarListConfig;
@@ -69,7 +67,7 @@ function SidebarItems(props: {
   const associations = {
     ...props.associations.chat,
     ...props.associations.publish,
-    ...props.associations.link,
+    ...props.associations.graph,
   };
 
   const ordered = Object.keys(associations)
@@ -112,7 +110,7 @@ interface SidebarProps {
 }
 
 export function Sidebar(props: SidebarProps) {
-  const { invites, api, associations, selected, apps } = props;
+  const { invites, associations, selected } = props;
   const groupAsssociation = associations.contacts[props.selectedGroup];
   const display = props.mobileHide ? ["none", "flex"] : "flex";
   if (!groupAsssociation) {
