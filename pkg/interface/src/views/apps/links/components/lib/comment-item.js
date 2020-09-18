@@ -31,6 +31,8 @@ export const CommentItem = (props) => {
           </Text>
           <Text gray ml={2}>{timeSent}</Text>
         </Row>
+      </Row>
+      <Row>
         <Text display="block" py={3} fontSize={1}>
           <RichText remoteContentPolicy={props.remoteContentPolicy}>
             {content}
