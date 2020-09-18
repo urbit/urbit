@@ -1,5 +1,5 @@
 /+  store=graph-store
-/+  met=metadata
+/+  metadata
 /+  res=resource
 /+  graph
 /+  group
@@ -20,13 +20,16 @@
 ::
 +$  agent  (push-hook:push-hook config)
 ::
-++  is-member
+++  is-allowed
   |=  [=resource:res =bowl:gall]
   ^-  ?
   =/  grp  ~(. group bowl)
+  =/  met  ~(. metadata bowl)
   =/  group-paths  (groups-from-resource:met [%graph (en-path:res resource)])
   ?~  group-paths  %.n
-  (is-member:grp src.bowl i.group-paths)
+  ?|  (is-member:grp src.bowl i.group-paths)
+      (is-admin:grp src.bowl i.group-paths)
+  ==
 --
 ::
 %-  agent:dbug
@@ -55,20 +58,20 @@
   ^-  ?
   =/  =update:store  !<(update:store vase)
   ?-  -.q.update
-      %add-graph          (is-member resource.q.update bowl)
-      %remove-graph       (is-member resource.q.update bowl)
-      %add-nodes          (is-member resource.q.update bowl)
-      %remove-nodes       (is-member resource.q.update bowl)
-      %add-signatures     (is-member resource.uid.q.update bowl)
-      %remove-signatures  (is-member resource.uid.q.update bowl)
-      %archive-graph      (is-member resource.q.update bowl)
+      %add-graph          (is-allowed resource.q.update bowl)
+      %remove-graph       (is-allowed resource.q.update bowl)
+      %add-nodes          (is-allowed resource.q.update bowl)
+      %remove-nodes       (is-allowed resource.q.update bowl)
+      %add-signatures     (is-allowed resource.uid.q.update bowl)
+      %remove-signatures  (is-allowed resource.uid.q.update bowl)
+      %archive-graph      (is-allowed resource.q.update bowl)
       %unarchive-graph    %.n
       %add-tag            %.n
       %remove-tag         %.n
       %keys               %.n
       %tags               %.n
       %tag-queries        %.n
-      %run-updates        (is-member resource.q.update bowl)
+      %run-updates        (is-allowed resource.q.update bowl)
   ==
 ::
 ++  resource-for-update
@@ -95,7 +98,7 @@
 ++  initial-watch
   |=  [=path =resource:res]
   ^-  vase
-  ?>  (is-member resource bowl)
+  ?>  (is-allowed resource bowl)
   !>  ^-  update:store
   ?~  path
     ::  new subscribe
