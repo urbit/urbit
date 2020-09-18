@@ -247,20 +247,24 @@
     |%
     ++  decode
       %-  of
-      :~  [%add-graph add-graph]
-          [%remove-graph remove-graph]
-          [%add-nodes add-nodes]
+      :~  [%add-nodes add-nodes]
           [%remove-nodes remove-nodes]
           [%add-signatures add-signatures]
           [%remove-signatures remove-signatures]
+        ::
+          [%add-graph add-graph]
+          [%remove-graph remove-graph]
+        ::
           [%add-tag add-tag]
           [%remove-tag remove-tag]
+        ::
           [%archive-graph archive-graph]
           [%unarchive-graph unarchive-graph]
+          [%run-updates run-updates]
+        ::
           [%keys keys]
           [%tags tags]
           [%tag-queries tag-queries]
-          [%run-updates run-updates]
       ==
     ::
     ++  add-graph

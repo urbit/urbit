@@ -1,4 +1,6 @@
-::  contact-view: sets up contact JS client and combines commands
+::  contact-view [landscape]:
+::
+::  sets up contact JS client and combines commands
 ::  into semantic actions for the UI
 ::
 /-
@@ -48,7 +50,7 @@
         (contact-poke:cc [%add /~/default our.bowl *contact])
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~groups' /app/landscape %.n])
+            !>([%serve-dir /'~groups' /app/landscape %.n %.y])
         ==
     ==
   ::
@@ -63,7 +65,7 @@
         [%pass / %arvo %e %connect [~ /'contact-view'] %contact-view]
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~groups' /app/landscape %.n])
+            !>([%serve-dir /'~groups' /app/landscape %.n %.y])
         ==
     ==
   ::

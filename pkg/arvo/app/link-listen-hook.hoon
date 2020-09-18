@@ -1,4 +1,6 @@
-::  link-listen-hook: get your friends' bookmarks
+::  link-listen-hook [landscape]:
+::
+::  get your friends' bookmarks
 ::
 ::    keeps track of a listening=(set app-path). users can manually add to and
 ::    remove from this set.
@@ -118,7 +120,7 @@
           /app-indices
         ==
       |-
-      ?~  resources  
+      ?~  resources
         upgrade-loop(old [%2 +.old])
       =,  i.resources
       =/  members=(set ship)

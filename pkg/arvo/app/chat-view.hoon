@@ -1,4 +1,6 @@
-::  chat-view: sets up chat JS client, paginates data, and combines commands
+::  chat-view [landscape]:
+::
+::  sets up chat JS client, paginates data, and combines commands
 ::  into semantic actions for the UI
 ::
 /-  *permission-store,
@@ -61,7 +63,7 @@
     :_  this
     :~  :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~chat' /app/landscape %.n])
+            !>([%serve-dir /'~chat' /app/landscape %.n %.y])
         ==
       [%pass / %arvo %e %connect [~ /'chat-view'] %chat-view]
       [%pass /updates %agent [our.bol %chat-store] %watch /updates]
@@ -157,7 +159,7 @@
     (on-arvo:def wire sign-arvo)
   ::
   ++  on-save  !>(state)
-  ++  on-load  
+  ++  on-load
     |=  old-vase=vase
     ^-  (quip card _this)
     =/  old  ((soft state-0) q.old-vase)
@@ -167,7 +169,7 @@
         [%pass / %arvo %e %connect [~ /'chat-view'] %chat-view]
         :*  %pass  /srv  %agent  [our.bol %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~chat' /app/landscape %.n])
+            !>([%serve-dir /'~chat' /app/landscape %.n %.y])
         ==
     ==
   ::
@@ -193,7 +195,6 @@
     =/  pax  t.t.t.t.site.url
     =/  envelopes  (envelope-scry [(scot %ud start) (scot %ud end) pax])
     %-  json-response:gen
-    %-  json-to-octs
     %-  update:enjs:store
     [%messages pax start end envelopes]
   ==
@@ -212,8 +213,8 @@
   ?-  -.act
       %create
     ?>  ?=(^ app-path.act)
-    ?>  ?|  =(+:group-path.act app-path.act) 
-            =(~(tap in members.act) ~) 
+    ?>  ?|  =(+:group-path.act app-path.act)
+            =(~(tap in members.act) ~)
         ==
     ?^  (chat-scry app-path.act)
       ~&  %chat-already-exists
@@ -296,6 +297,7 @@
       ~[(chat-hook-poke %add-synced ship.act app-path.act ask-history.act)]
     =/  rid=resource
       (de-path:resource ship+app-path.act)
+    ?:  =(our.bol entity.rid)  ~
     =/  =cage
       :-  %group-update
       !>  ^-  action:group-store

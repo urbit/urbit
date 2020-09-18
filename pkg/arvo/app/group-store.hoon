@@ -1,4 +1,6 @@
-::  group-store: Store groups of ships
+::  group-store [landscape]:
+::
+::  Store groups of ships
 ::
 ::    group-store stores groups of ships, so that resources in other apps can be
 ::    associated with a group. The current model of group-store rolls
@@ -128,7 +130,7 @@
       ^-  [resource group]
       =/  members=(set ship)
         (~(got by groups.old) pax)
-      =|  =invite:policy 
+      =|  =invite:policy
       ?>  ?=(^ pax)
       =/  rid=resource
         (resource-from-old-path t.pax)
@@ -149,7 +151,7 @@
       |=  pax=path
       =/  members
         (~(got by groups.old) pax)
-      =|  =invite:policy  
+      =|  =invite:policy
       =/  rid=resource
         (resource-from-old-path pax)
       =/  =tags
@@ -227,8 +229,11 @@
 
 ++  peek-group-join
   |=  [rid=resource =ship]
-  =/  =group
-    (~(gut by groups) rid *group)
+  =/  ugroup
+    (~(get by groups) rid)
+  ?~  ugroup
+    %.n
+  =*  group   u.ugroup
   =*  policy  policy.group
   ?-  -.policy
       %invite
@@ -236,7 +241,7 @@
         (~(has in members.group) ship)
     ==
       %open
-    ?!  ?|  
+    ?!  ?|
       (~(has in banned.policy) ship)
       (~(has in ban-ranks.policy) (clan:title ship))
     ==
@@ -282,7 +287,7 @@
     ^-  resource
     ?>  ?=([@ @ *] path)
     :-  (slav %p i.path)
-    i.t.path 
+    i.t.path
   ::
   ++  add-new
     |=  =permission:permission-store
@@ -290,7 +295,7 @@
     ?:  ?=(%black kind.permission)
       [~ ~ [%open ~ who.permission] %.y]
     [who.permission ~ [%invite ~] %.y]
-  ::   
+  ::
   ++  update-existing
     |=  =permission:permission-store
     |=  =group

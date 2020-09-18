@@ -1,4 +1,6 @@
-::  link: social bookmarking
+::  link [landscape]:
+::
+::  social bookmarking
 ::
 ::    the paths under which links are submitted are generally expected to
 ::    correspond to existing group paths. for strictly-local collections of
