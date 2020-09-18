@@ -612,7 +612,7 @@ _cs_cue_xeno_next(u3a_pile*    pil_u,
             c3_d byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
 
             if ( 0xffffffffULL < byt_d) {
-              return u3m_bail(c3__meme);
+              return ur_cue_meme;
             }
 
             //  XX assumes little-endian
