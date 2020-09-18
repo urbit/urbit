@@ -615,7 +615,6 @@ ur_bsr_log(ur_bsr_t *bsr, uint8_t *out)
   }
   else {
     uint8_t      off = bsr->off;
-    uint8_t     rest = 8 - off;
     const uint8_t *b = bsr->bytes;
     uint8_t      byt = b[0] >> off;
     uint8_t     skip = 0;
@@ -625,13 +624,11 @@ ur_bsr_log(ur_bsr_t *bsr, uint8_t *out)
         return _bsr_log_meme(bsr);
       }
 
-      skip++;
+      byt = b[++skip];
 
       if ( skip == left ) {
         return _bsr_set_gone(bsr, (skip << 3) - off);
       }
-
-      byt = b[skip];
     }
 
     {
@@ -646,10 +643,10 @@ ur_bsr_log(ur_bsr_t *bsr, uint8_t *out)
 
         left -= bytes;
 
-        bsr->bytes  = left ? (b + bytes) : 0;
-        bsr->bits  += 1 + zeros;
-        bsr->left   = left;
-        bsr->off    = ur_mask_3(bits);
+        bsr->bytes = left ? (b + bytes) : 0;
+        bsr->bits += 1 + zeros;
+        bsr->left  = left;
+        bsr->off   = ur_mask_3(bits);
 
         *out = zeros;
         return ur_cue_good;
