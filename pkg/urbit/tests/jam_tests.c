@@ -407,6 +407,23 @@ _test_cue_spec(const c3_c* cap_c,
     u3z(pro);
   }
 
+  {
+    u3_noun out;
+
+    if ( u3_none == (out = u3s_cue_sill(len_w, byt_y)) ) {
+      fprintf(stderr, "\033[31mcue %s fail 5\033[0m\r\n", cap_c);
+      ret_i = 0;
+    }
+    else if ( c3n == u3r_sing(ref, out) ) {
+      fprintf(stderr, "\033[31mcue %s fail 6\033[0m\r\n", cap_c);
+      u3m_p("ref", ref);
+      u3m_p("out", out);
+      ret_i = 0;
+    }
+
+    u3z(out);
+  }
+
   return ret_i;
 }
 

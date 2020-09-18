@@ -181,6 +181,54 @@ _cue_bench(void)
     gettimeofday(&b4, 0);
 
     {
+      c3_w  len_w = u3r_met(3, vat);
+      // XX assumes little-endian
+      //
+      c3_y* byt_y = ( c3y == u3a_is_cat(vat) )
+                  ? (c3_y*)&vat
+                  : (c3_y*)((u3a_atom*)u3a_to_ptr(vat))->buf_w;
+
+      for ( i_w = 0; i_w < max_w; i_w++ ) {
+        u3z(u3s_cue_sill(len_w, byt_y));
+      }
+    }
+
+    gettimeofday(&f2, 0);
+    timersub(&f2, &b4, &d0);
+    mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+    fprintf(stderr, "  cue sill: %u ms\r\n", mil_w);
+  }
+
+  {
+    gettimeofday(&b4, 0);
+
+    {
+      u3_cue_sill* sil_u = u3s_cue_sill_init();
+
+      c3_w  len_w = u3r_met(3, vat);
+      // XX assumes little-endian
+      //
+      c3_y* byt_y = ( c3y == u3a_is_cat(vat) )
+                  ? (c3_y*)&vat
+                  : (c3_y*)((u3a_atom*)u3a_to_ptr(vat))->buf_w;
+
+      for ( i_w = 0; i_w < max_w; i_w++ ) {
+        u3z(u3s_cue_sill_with(sil_u, len_w, byt_y));
+      }
+
+      u3s_cue_sill_done(sil_u);
+    }
+
+    gettimeofday(&f2, 0);
+    timersub(&f2, &b4, &d0);
+    mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+    fprintf(stderr, "  cue sill with: %u ms\r\n", mil_w);
+  }
+
+  {
+    gettimeofday(&b4, 0);
+
+    {
       u3_noun out;
       c3_w  len_w = u3r_met(3, vat);
       // XX assumes little-endian
