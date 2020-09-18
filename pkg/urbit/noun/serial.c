@@ -532,6 +532,82 @@ u3s_cue(u3_atom a)
   return pro;
 }
 
+/* _cs_cue_xeno_back(): cue a backref, off-loom dictionary.
+*/
+static inline ur_cue_res_e
+_cs_cue_xeno_back(ur_bsr_t*    red_u,
+                  ur_dict32_t* dic_u,
+                  u3_noun*       out)
+{
+  ur_root_t*   rot_u = 0;
+  ur_cue_res_e res_e;
+  c3_d         len_d;
+
+  if ( ur_cue_good != (res_e = ur_bsr_rub_len(red_u, &len_d)) ) {
+    return res_e;
+  }
+  else if ( 62 < len_d ) {
+    return ur_cue_meme;
+  }
+  else {
+    c3_d bak_d = ur_bsr64_any(red_u, len_d);
+    c3_w bak_w;
+
+    if ( !ur_dict32_get(rot_u, dic_u, bak_d, &bak_w) ) {
+      return ur_cue_back;
+    }
+
+    *out = u3k((u3_noun)bak_w);
+    return ur_cue_good;
+  }
+}
+
+/* _cs_cue_xeno_atom(): cue an atom, off-loom dictionary.
+*/
+static inline ur_cue_res_e
+_cs_cue_xeno_atom(ur_bsr_t*    red_u,
+                  ur_dict32_t* dic_u,
+                  c3_d         bit_d,
+                  u3_noun*       out)
+{
+  ur_root_t*   rot_u = 0;
+  ur_cue_res_e res_e;
+  c3_d         len_d;
+
+  if ( ur_cue_good != (res_e = ur_bsr_rub_len(red_u, &len_d)) ) {
+    return res_e;
+  }
+
+  if ( 31 >= len_d ) {
+    *out = (u3_noun)ur_bsr32_any(red_u, len_d);
+  }
+  //  XX need a ur_bsr_words_any()
+  //
+  else {
+    c3_w* wor_w;
+    c3_y* byt_y;
+
+    {
+      c3_d byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
+
+      if ( 0xffffffffULL < byt_d) {
+        return u3m_bail(c3__meme);
+      }
+
+      //  XX assumes little-endian
+      //
+      wor_w = u3a_slaq(3, byt_d);
+      byt_y = (c3_y*)wor_w;
+    }
+
+    ur_bsr_bytes_any(red_u, len_d, byt_y);
+    *out = u3a_malt(wor_w);
+  }
+
+  ur_dict32_put(rot_u, dic_u, bit_d, *out);
+  return ur_cue_good;
+}
+
 /*
 **  stack frame for recording head vs tail iteration
 **
@@ -543,6 +619,8 @@ typedef struct _cue_frame_s {
   c3_d  bit_d;
 } _cue_frame_t;
 
+/* _cue_stack_t: heap-allocated struct, used to bypass the road stack.
+*/
 typedef struct _cue_stack_s {
   c3_w          pre_w;
   c3_w          siz_w;
@@ -558,10 +636,8 @@ _cs_cue_xeno_next(_cue_stack_t* tac_u,
                   ur_dict32_t*  dic_u,
                   u3_noun*        out)
 {
-  ur_root_t* rot_u = 0;
-
   while ( 1 ) {
-    c3_d  len_d, bit_d = red_u->bits;
+    c3_d         bit_d = red_u->bits;
     ur_cue_tag_e tag_e;
     ur_cue_res_e res_e;
 
@@ -593,58 +669,11 @@ _cs_cue_xeno_next(_cue_stack_t* tac_u,
       }
 
       case ur_jam_back: {
-        if ( ur_cue_good != (res_e = ur_bsr_rub_len(red_u, &len_d)) ) {
-          return res_e;
-        }
-        else if ( 62 < len_d ) {
-          return ur_cue_meme;
-        }
-        else {
-          c3_d bak_d = ur_bsr64_any(red_u, len_d);
-          c3_w bak_w;
-
-          if ( !ur_dict32_get(rot_u, dic_u, bak_d, &bak_w) ) {
-            return ur_cue_back;
-          }
-
-          *out = u3k((u3_noun)bak_w);
-          return ur_cue_good;
-        }
+        return _cs_cue_xeno_back(red_u, dic_u, out);
       }
 
       case ur_jam_atom: {
-        if ( ur_cue_good != (res_e = ur_bsr_rub_len(red_u, &len_d)) ) {
-          return res_e;
-        }
-
-        if ( 31 >= len_d ) {
-          *out = (u3_noun)ur_bsr32_any(red_u, len_d);
-        }
-        //  XX need a ur_bsr_words_any()
-        //
-        else {
-          c3_w* wor_w;
-          c3_y* byt_y;
-
-          {
-            c3_d byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
-
-            if ( 0xffffffffULL < byt_d) {
-              return u3m_bail(c3__meme);
-            }
-
-            //  XX assumes little-endian
-            //
-            wor_w = u3a_slaq(3, byt_d);
-            byt_y = (c3_y*)wor_w;
-          }
-
-          ur_bsr_bytes_any(red_u, len_d, byt_y);
-          *out = u3a_malt(wor_w);
-        }
-
-        ur_dict32_put(rot_u, dic_u, bit_d, *out);
-        return ur_cue_good;
+        return _cs_cue_xeno_atom(red_u, dic_u, bit_d, out);
       }
     }
   }
