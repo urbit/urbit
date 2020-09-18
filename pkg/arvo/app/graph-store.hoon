@@ -449,6 +449,7 @@
   ^-  (unit (unit cage))
   |^
   ?>  (team:title our.bowl src.bowl)
+  ~&  path=path
   ?+  path  (on-peek:def path)
       [%x %keys ~]
     :-  ~  :-  ~  :-  %graph-update
