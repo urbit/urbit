@@ -4325,6 +4325,10 @@
           (into.j p)
         scalar
       ::
+      ++  valid-hash
+        |=  has=@
+        (lte (met 3 has) bytes)
+      ::
       ++  in-order
         |=  i=@
         ?&  (gth i 0)
@@ -4340,7 +4344,7 @@
         |=  [hash=@ private-key=@]
         ^-  @
         ?>  (in-order private-key)
-        ::  hash is truncated to bytes
+        ?>  (valid-hash hash)
         =/  v  (fil 3 bytes 1)
         =/  k  0
         =.  k  %+  hmc  [bytes k]
@@ -4366,6 +4370,7 @@
       ++  ecdsa-raw-sign
         |=  [hash=@ private-key=@]
         ^-  [r=@ s=@ y=@]
+        ::  make-k and priv-to pub will validate inputs
         =/  k   (make-k hash private-key)
         =/  rp  (priv-to-pub k)
         =*  r   x.rp
@@ -4401,9 +4406,11 @@
       ++  make-k
         ~/  %make
         |=  [hash=@uvI private-key=@]
+        ::  checks sizes
         (make-k:curve hash private-key)
       ++  priv-to-pub
         |=  private-key=@
+        ::  checks sizes
         (priv-to-pub:curve private-key)
       ::
       ++  ecdsa-raw-sign
@@ -4411,6 +4418,7 @@
         |=  [hash=@uvI private-key=@]
         ^-  [v=@ r=@ s=@]
         =/  c  curve
+        ::  raw-sign checks sizes
         =+  (ecdsa-raw-sign.c hash private-key)
         =/  rp=point  [r y]
         =/  s-high  (gte (mul 2 s) n.domain.c)
@@ -4429,7 +4437,7 @@
         ^-  point
         ?>  (lte v.sig 3)
         =/  c   curve
-        ?>  (in-order.c hash)
+        ?>  (valid-hash.c hash)
         ?>  (in-order.c r.sig)
         ?>  (in-order.c s.sig)
         =/  x  ?:  (gte v.sig 2)
