@@ -1,26 +1,88 @@
-# Lagoon for Urbit
-## Linear Algebra in hOON
+# Urbit
 
-LAGOON, the _Linear AlGebra in hOON_ library, implements a suite of basic matrix operations for numerical applications. Lagoon endeavors to be mathematically accurate and notationally convenient. The fundamental problem Lagoon solves is representing memory-adjacent array data in a uniformly accessible way to Hoon.
+[Urbit](https://urbit.org) is a personal server stack built from scratch. It
+has an identity layer (Azimuth), virtual machine (Vere), and operating system
+(Arvo).
 
-What I do have done:
-- definition of auras `@lvs`, `@lvd`, `@lms` (and their presumed analogues for other types)
-- vector library + jets in `@rs` and `@rd`
-- matrix library + jets in `@rs`
+A running Urbit "ship" is designed to operate with other ships peer-to-peer.
+Urbit is a general-purpose, peer-to-peer computer and network.
 
-What I don't have done:
-- matrix library + jets in `@rd`
-- profiling data on performance
-- some utility routines, in particular pretty-printing and import/export
+This repository contains:
 
-I considered adding in ATLAS, TensorFlow, or another BLAS package as a dependency but ultimately decided not to for the alpha version.  Instead everything is done via SoftFloat as with other Urbit floating-point operations.  I have some basic unit test setups but as of Ford Fusion it seems that unit testing is itself broken.  Large tests and rigorous profiling will require import/export routines as well to avoid tedious manual entry.  I'd also like jet-by-jet comparison with the Hoon, which I didn't have time to finish.
+- The [Arvo OS][arvo]
+- [herb][herb], a tool for Unix control of an Urbit ship
+- Source code for [Landscape's web interface][land]
+- Source code for the [vere][vere] virtual machine.
 
-The future roadmap:
-- Full unit testing suite compatible with whatever the recommended practice is or will be.
-- More utility routines, firstly I/O.
-- Prospectus for a sister library of scientific algorithms (based on `lazytrig` but jetted), provisionally Saloon (Scientific ALgorithms in hOON).
-- Vectors and matrices in other significant types (`@ud`, `@rh`, `@rq` come to mind).  Creation of a complex type, without which certain operations (like eigenvalues/eigenvectors) will not be supportable.
-- Code refactor of Lagoon:  I have done some terrible terrible things, like being inconsistent on 0-indexing and 1-indexing.  The code works but should be prettier, more consistent, and more legible.
-- I'd like to write a blog post on jetting for those interested.
+For more on the identity layer, see [Azimuth][azim]. To manage your Urbit
+identity, use [Bridge][brid].
 
-(Do not, of course, include this branch's README file in any PRs.)
+[arvo]: https://github.com/urbit/urbit/tree/master/pkg/arvo
+[azim]: https://github.com/urbit/azimuth
+[brid]: https://github.com/urbit/bridge
+[herb]: https://github.com/urbit/urbit/tree/master/pkg/herb
+[land]: https://github.com/urbit/urbit/tree/master/pkg/interface
+[vere]: https://github.com/urbit/urbit/tree/master/pkg/urbit
+
+## Install
+
+To install and run Urbit, please follow the instructions at
+[urbit.org/using/install][start].  You'll be on the live network in a
+few minutes.
+
+If you're interested in Urbit development, keep reading.
+
+[start]: https://urbit.org/using/install/
+
+## Development
+
+[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)][trav]
+
+Urbit uses [Nix][nix] to manage builds.  On Linux and macOS you can install Nix
+via:
+
+```
+curl -L https://nixos.org/nix/install | sh
+```
+
+The Makefile in the project's root directory contains useful phony targets for
+building, installing, testing, and so on.  You can use it to avoid dealing with
+Nix explicitly.
+
+To build the Urbit virtual machine binary, for example, use:
+
+```
+make build
+```
+
+The test suite can similarly be run via a simple:
+
+```
+make test
+```
+
+Note that some of the Makefile targets need access to pills tracked via [git
+LFS][git-lfs], so you'll also need to have those available locally:
+
+```
+git lfs install
+git lfs pull
+```
+
+[trav]: https://github.com/urbit/urbit.git
+[nix]: https://nixos.org/nix/
+[git-lfs]: https://git-lfs.github.com
+
+## Contributing
+
+Contributions of any form are more than welcome!  Please take a look at our
+[contributing guidelines][cont] for details on our git practices, coding
+styles, how we manage issues, and so on.
+
+For instructions on contributing to Landscape, see [its][lcont] guidelines.
+
+You might also be interested in joining the [urbit-dev][list] mailing list.
+
+[list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
+[cont]: https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md
+[lcont]: https://github.com/urbit/urbit/blob/master/pkg/interface/CONTRIBUTING.md
