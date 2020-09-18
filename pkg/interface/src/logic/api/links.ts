@@ -10,7 +10,7 @@ export default class LinksApi extends BaseApi<StoreState> {
   getCommentsPage(path: Path, url: string, page: number) {
     const strictUrl = stringToTa(url);
     const endpoint = '/json/' + page + '/discussions/' + strictUrl + path;
-    this.fetchLink(
+    return this.fetchLink(
       endpoint,
       (res) => {
         if (res.data['link-update']['initial-discussions']) {
@@ -28,7 +28,7 @@ export default class LinksApi extends BaseApi<StoreState> {
 
   getPage(path: Path, page: number) {
     const endpoint = '/json/' + page + '/submissions' + path;
-    this.fetchLink(
+    return this.fetchLink(
       endpoint,
       (dat) => {
         this.store.handleEvent(dat);
@@ -41,7 +41,7 @@ export default class LinksApi extends BaseApi<StoreState> {
   getSubmission(path: Path, url: string, callback) {
     const strictUrl = stringToTa(url);
     const endpoint = '/json/0/submission/' + strictUrl + path;
-    this.fetchLink(
+    return this.fetchLink(
       endpoint,
       (res) => {
         if (res.data?.['link-update']?.submission) {
@@ -118,7 +118,7 @@ export default class LinksApi extends BaseApi<StoreState> {
   }
 
   private fetchLink(path: Path, result, fail, quit) {
-    this.subscribe.bind(this)(
+    return this.subscribe.bind(this)(
       path,
       'PUT',
       this.ship,
