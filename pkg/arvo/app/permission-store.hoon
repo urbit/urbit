@@ -1,4 +1,6 @@
-::  permission-store: track black- and whitelists of ships
+::  permission-store [landscape]:
+::
+::  track black- and whitelists of ships
 ::
 /-  *permission-store
 /+  default-agent, verb, dbug

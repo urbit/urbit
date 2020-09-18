@@ -1,4 +1,6 @@
-::  link-view: frontend endpoints
+::  link-view [landscape]:
+::
+::frontend endpoints
 ::
 ::  endpoints, mapping onto link-store's paths. p is for page as in pagination.
 ::  only the /0/submissions endpoint provides updates.
@@ -65,7 +67,7 @@
         [%pass - %agent [our.bowl %invite-store] %watch -]
         :*  %pass  /srv  %agent  [our.bowl %file-server]
             %poke  %file-server-action
-            !>([%serve-dir /'~link' /app/landscape %.n])
+            !>([%serve-dir /'~link' /app/landscape %.n %.y])
         ==
     ==
   ::
@@ -81,7 +83,7 @@
       :-  [%pass /connect %arvo %e %disconnect [~ /'~link']]
       :~  :*  %pass  /srv  %agent  [our.bowl %file-server]
           %poke  %file-server-action
-          !>([%serve-dir /'~link' /app/landscape %.n])
+          !>([%serve-dir /'~link' /app/landscape %.n %.y])
       ==  ==
     ==
   ::

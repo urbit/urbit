@@ -1,4 +1,6 @@
-::  metadata-store: data store for application metadata and mappings
+::  metadata-store [landscape]:
+::
+::  data store for application metadata and mappings
 ::  between groups and resources within applications
 ::
 ::  group-paths are expected to be an existing group path
