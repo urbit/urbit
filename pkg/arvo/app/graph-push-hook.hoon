@@ -21,12 +21,14 @@
 +$  agent  (push-hook:push-hook config)
 ::
 ++  is-allowed
-  |=  [=resource:res =bowl:gall]
+  |=  [=resource:res =bowl:gall requires-admin=?]
   ^-  ?
   =/  grp  ~(. group bowl)
   =/  met  ~(. metadata bowl)
   =/  group-paths  (groups-from-resource:met [%graph (en-path:res resource)])
   ?~  group-paths  %.n
+  ?:  requires-admin
+    (is-admin:grp src.bowl i.group-paths)
   ?|  (is-member:grp src.bowl i.group-paths)
       (is-admin:grp src.bowl i.group-paths)
   ==
@@ -58,20 +60,20 @@
   ^-  ?
   =/  =update:store  !<(update:store vase)
   ?-  -.q.update
-      %add-graph          (is-allowed resource.q.update bowl)
-      %remove-graph       (is-allowed resource.q.update bowl)
-      %add-nodes          (is-allowed resource.q.update bowl)
-      %remove-nodes       (is-allowed resource.q.update bowl)
-      %add-signatures     (is-allowed resource.uid.q.update bowl)
-      %remove-signatures  (is-allowed resource.uid.q.update bowl)
-      %archive-graph      (is-allowed resource.q.update bowl)
+      %add-graph          (is-allowed resource.q.update bowl %.y)
+      %remove-graph       (is-allowed resource.q.update bowl %.y)
+      %add-nodes          (is-allowed resource.q.update bowl %.n)
+      %remove-nodes       (is-allowed resource.q.update bowl %.y)
+      %add-signatures     (is-allowed resource.uid.q.update bowl %.n)
+      %remove-signatures  (is-allowed resource.uid.q.update bowl %.y)
+      %archive-graph      (is-allowed resource.q.update bowl %.y)
       %unarchive-graph    %.n
       %add-tag            %.n
       %remove-tag         %.n
       %keys               %.n
       %tags               %.n
       %tag-queries        %.n
-      %run-updates        (is-allowed resource.q.update bowl)
+      %run-updates        (is-allowed resource.q.update bowl %.y)
   ==
 ::
 ++  resource-for-update
@@ -98,7 +100,7 @@
 ++  initial-watch
   |=  [=path =resource:res]
   ^-  vase
-  ?>  (is-allowed resource bowl)
+  ?>  (is-allowed resource bowl %.n)
   !>  ^-  update:store
   ?~  path
     ::  new subscribe
