@@ -14,7 +14,6 @@ import { LinkList } from './components/link-list';
 import { LinkDetail } from './components/link-detail';
 
 import {
-  makeRoutePath,
   amOwnerOfGroup,
   base64urlDecode
 } from '~/logic/lib/util';
@@ -39,7 +38,8 @@ export class LinksApp extends Component {
     const { props } = this;
     const contacts = props.contacts ? props.contacts : {};
     const groups = props.groups ? props.groups : {};
-    const associations = props.associations ? props.associations : { link: {}, contacts: {} };
+    const associations =
+      props.associations ? props.associations : { graph: {}, contacts: {} };
     const graphKeys = props.graphKeys || new Set([]);
     const graphs = props.graphs || {};
 
@@ -113,9 +113,10 @@ export class LinksApp extends Component {
               const resourcePath = 
                 `${props.match.params.ship}/${props.match.params.name}`;
               const popout = props.match.url.includes('/popout/');
+              const metPath = `/ship/~${resourcePath}`;
               const resource =
-                associations.link[resourcePath] ?
-                  associations.link[resourcePath] : { metadata: {} };
+                associations.graph[metPath] ?
+                  associations.graph[metPath] : { metadata: {} };
 
               const contactDetails = contacts[resource['group-path']] || {};
               const group = groups[resource['group-path']] || new Set([]);
@@ -152,8 +153,8 @@ export class LinksApp extends Component {
               const resourcePath = 
                 `${props.match.params.ship}/${props.match.params.name}`;
               const resource =
-                associations.link[resourcePath] ?
-                  associations.link[resourcePath] : { metadata: {} };
+                associations.graph[resourcePath] ?
+                  associations.graph[resourcePath] : { metadata: {} };
               const contactDetails = contacts[resource['group-path']] || {};
               const popout = props.match.url.includes('/popout/');
               const graph = graphs[resourcePath] || null;
@@ -198,8 +199,8 @@ export class LinksApp extends Component {
               const resourcePath = 
                 `${props.match.params.ship}/${props.match.params.name}`;
               const resource =
-                associations.link[resourcePath] ?
-                  associations.link[resourcePath] : { metadata: {} };
+                associations.graph[resourcePath] ?
+                  associations.graph[resourcePath] : { metadata: {} };
               const popout = props.match.url.includes('/popout/');
               const contactDetails = contacts[resource['group-path']] || {};
 

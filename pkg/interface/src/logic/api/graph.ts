@@ -87,6 +87,15 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
+  leaveGraph(ship: Patp, name: string) {
+    const resource = makeResource(ship, name);
+    return this.viewAction('graph-leave', {
+      "leave": {
+        resource
+      }
+    });
+  }
+
   groupifyGraph(ship: Patp, name: string, toPath?: string) {
     const resource = makeResource(ship, name);
     const to = toPath && resourceFromPath(toPath);
@@ -105,14 +114,6 @@ export default class GraphApi extends BaseApi<StoreState> {
         resource: { ship, name },
         graph,
         mark
-      }
-    });
-  }
-
-  removeGraph(ship: Patp, name: string) {
-    return this.storeAction({
-      'remove-graph': {
-        resource: { ship, name }
       }
     });
   }

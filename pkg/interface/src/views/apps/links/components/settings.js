@@ -26,6 +26,8 @@ export class SettingsScreen extends Component {
   componentDidUpdate() {
     const { props, state } = this;
 
+    console.log(props.resource);
+
     if (Boolean(state.isLoading) && !props.resource) {
       this.setState({
         isLoading: false
@@ -52,7 +54,10 @@ export class SettingsScreen extends Component {
       type: 'Removing'
     });
 
-    // TODO: removeCollection
+    props.api.graph.leaveGraph(
+      `~${props.match.params.ship}`,
+      props.match.params.name
+    );
   }
 
   deleteCollection() {
@@ -64,22 +69,29 @@ export class SettingsScreen extends Component {
       type: 'Deleting'
     });
 
-    // TODO: deleteCollection
+    console.log(props.match.params.name);
+    props.api.graph.deleteGraph(props.match.params.name);
   }
 
   renderRemove() {
-    return (
-      <div className="w-100 fl mt3">
-        <p className="f8 mt3 lh-copy db">Remove Collection</p>
-        <p className="f9 gray2 db mb4">
-          Remove this collection from your collection list.
-        </p>
-        <a onClick={this.removeCollection.bind(this)}
-           className="dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer">
-          Remove collection
-        </a>
-      </div>
-    );
+    const { props } = this;
+
+    if (props.amOwner) {
+      return null;
+    } else {
+      return (
+        <div className="w-100 fl mt3">
+          <p className="f8 mt3 lh-copy db">Remove Collection</p>
+          <p className="f9 gray2 db mb4">
+            Remove this collection from your collection list.
+          </p>
+          <a onClick={this.removeCollection.bind(this)}
+             className="dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer">
+            Remove collection
+          </a>
+        </div>
+      );
+    }
   }
 
   renderDelete() {
@@ -107,6 +119,7 @@ export class SettingsScreen extends Component {
     const { props, state } = this;
 
     const title = props.resource.metadata.title || props.resourcePath;
+    console.log(props);
 
     if (!props.graphResource || !props.resource.metadata.color) {
       return <LoadingScreen />;
@@ -145,10 +158,6 @@ export class SettingsScreen extends Component {
           </div>
         <div className="w-100 pl3 mt4 cf">
           <h2 className="f8 pb2">Collection Settings</h2>
-          <p className="f8 mt3 lh-copy db">Mark all links as read</p>
-          <p className="f9 gray2 db mb4">
-            Mark all links in this collection as read.
-          </p>
           {this.renderRemove()}
           {this.renderDelete()}
           <MetadataSettings
@@ -157,7 +166,7 @@ export class SettingsScreen extends Component {
             api={props.api}
             association={props.resource}
             resource="collection"
-            app="link"
+            app="graph"
           />
           <Spinner
             awaiting={this.state.awaiting}

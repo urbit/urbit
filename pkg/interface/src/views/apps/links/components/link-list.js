@@ -35,7 +35,7 @@ export const LinkList = (props) => {
           sidebarShown={props.sidebarShown}
           popout={props.popout}
           api={props.api} />
-        <h2 className='dib f9 fw4 lh-solid v-top pt2'>{title}</h2>
+        <h2 className='white-d dib f9 fw4 lh-solid v-top pt2'>{title}</h2>
         <TabBar
           location={props.location}
           popout={props.popout}
