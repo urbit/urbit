@@ -526,15 +526,12 @@ ur_met(ur_root_t *r, uint8_t bloq, ur_nref ref)
     case 0: return m_bit;
     case 1: return ur_bloq_up1(m_bit);
     case 2: return ur_bloq_up2(m_bit);
+    case 3: return ur_bloq_up3(m_bit);
 
-    {
+    default: {
       uint64_t m_byt = ur_bloq_up3(m_bit);
-
-      case 3: return m_byt;
-      default: {
-        uint8_t off = (bloq - 3);
-        return (m_byt + ((1ULL << off) - 1)) >> off;
-      }
+      uint8_t    off = (bloq - 3);
+      return (m_byt + ((1ULL << off) - 1)) >> off;
     }
   }
 }
