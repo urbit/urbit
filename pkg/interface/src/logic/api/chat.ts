@@ -157,7 +157,7 @@ export default class ChatApi extends BaseApi<StoreState> {
       this.store.state.pendingMessages.set(path, [envelope]);
     }
 
-    this.store.setState({
+    return this.store.setState({
       pendingMessages: this.store.state.pendingMessages
     });
   }
