@@ -9,26 +9,6 @@
 #include "all.h"
 #include "ur/ur.h"
 
-/* _cu_met_3(): atom bytewidth a la u3r_met(3, ...)
-*/
-static inline c3_w
-_cu_met_3(u3a_atom* vat_u)
-{
-  c3_w  len_w = vat_u->len_w;
-  c3_w* buf_w = vat_u->buf_w;
-
-  if ( !len_w ) {
-    return 0;
-  }
-  else {
-    c3_w gal_w = len_w - 1;
-    c3_w daz_w = buf_w[gal_w];
-
-    return (gal_w << 2)
-            + ((daz_w >> 24) ? 4 : (daz_w >> 16) ? 3 : (daz_w >> 8) ? 2 : 1);
-  }
-}
-
 /* _cu_atom_to_ref(): allocate indirect atom off-loom.
 */
 static inline ur_nref
