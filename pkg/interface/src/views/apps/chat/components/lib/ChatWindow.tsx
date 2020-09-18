@@ -20,6 +20,7 @@ import { BacklogElement } from "./backlog-element";
 const INITIAL_LOAD = 20;
 const DEFAULT_BACKLOG_SIZE = 100;
 const IDLE_THRESHOLD = 64;
+const MAX_BACKLOG_SIZE = 1000;
 
 type ChatWindowProps = RouteComponentProps<{
   ship: Patp;
@@ -188,8 +189,11 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
     this.setState({ fetchPending: true });
     
+    start = Math.min(mailboxSize - start, mailboxSize);
+    end = Math.max(mailboxSize - end, 0, start - MAX_BACKLOG_SIZE);
+    
     return api.chat
-      .fetchMessages(Math.max(mailboxSize - end, 0), Math.min(mailboxSize - start, mailboxSize), station)
+      .fetchMessages(end, start, station)
       .finally(() => {
         this.setState({ fetchPending: false });
       });
