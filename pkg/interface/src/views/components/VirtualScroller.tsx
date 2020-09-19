@@ -150,13 +150,13 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
       }
     });
 
-    endgap += Math.abs(totalSize - data.size) * averageHeight;
+    // endgap += Math.abs(totalSize - data.size) * averageHeight; // Uncomment to make full height of backlog
     startBuffer = new Map([...startBuffer].reverse().slice(0, visibleItems.size));
-    
+
     startBuffer.forEach((datum, index) => {
       startgap -= this.heightOf(index);
     });
-    
+
     visibleItems = new Map([...visibleItems].reverse());
     endBuffer = new Map([...endBuffer].reverse());
     const firstVisibleKey = Array.from(visibleItems.keys())[0] ?? this.estimateIndexFromScrollTop(scrollTop);
@@ -228,7 +228,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
   componentWillUnmount() {
     window.removeEventListener('keydown', this.invertedKeyHandler);
   }
-  
+
   setWindow(element) {
     if (!element) return;
     if (this.window) {
@@ -278,7 +278,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
     if (scrollTop !== scrollHeight) {
       this.setState({ scrollTop });
     }
-    
+
     this.calculateVisibleItems();
     onScroll ? onScroll({ scrollTop, scrollHeight, windowHeight }) : null;
     if (scrollTop === 0) {
@@ -294,7 +294,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
       endgap,
       visibleItems
     } = this.state;
-    
+
     const {
       origin = 'top',
       loadRows,
@@ -302,7 +302,7 @@ export default class VirtualScroller extends PureComponent<VirtualScrollerProps,
       style,
       data
     } = this.props;
-    
+
     const indexesToRender = Array.from(visibleItems.keys());
 
     const transform = origin === 'top' ? 'scale3d(1, 1, 1)' : 'scale3d(1, -1, 1)';
