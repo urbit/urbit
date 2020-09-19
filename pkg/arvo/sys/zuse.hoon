@@ -4182,10 +4182,10 @@
     ::                                                  ::::
   ++  new-secp  !.
     ::  TODO: as-octs and hmc are outside of jet parent
-    =>  :+  hmc=hmac-sha256l:hmac:crypto
-          as-octs=as-octs:mimes:html
-        ..is
-    ~%  %secp  ..is  ~
+    =>  :+  ..is
+          hmc=hmac-sha256l:hmac:crypto
+        as-octs=as-octs:mimes:html
+    ~%  %secp  +<  ~
     |%
     +=  jacobian   [x=@ y=@ z=@]                    ::  jacobian point
     +=  point      [x=@ y=@]                        ::  curve point
