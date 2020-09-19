@@ -44,8 +44,8 @@ export function JoinScreen(props: JoinScreenProps & RouteComponentProps) {
 
   return (
     <Col p={4}>
-      <Text fontSize={1}>Joining Notebook</Text>
-      <Spinner awaiting text="Joining..." />
+      <Text display='block' fontSize={1} mb='6'>Joining Notebook</Text>
+      <Spinner awaiting text="Joining notebook..." />
       {error && <ErrorMessage>Unable to join notebook</ErrorMessage>}
     </Col>
   );
