@@ -4180,7 +4180,7 @@
   ::                                                    ::
   ::::                    ++secp:crypto                 ::  (2b9) secp family
     ::                                                  ::::
-  ++  new-secp  !.
+  ++  secp  !.
     ::  TODO: as-octs and hmc are outside of jet parent
     =>  :+  ..is
           hmc=hmac-sha256l:hmac:crypto
@@ -4316,6 +4316,11 @@
             (double $(scalar (rsh 0 1 scalar)))
           (add a (double $(scalar (rsh 0 1 scalar))))
         --
+      ++  add-points
+        |=  [a=point b=point]
+        ^-  point
+        =/  j  jc
+        (from.j (add.j (into.j a) (into.j b)))
       ++  mul-point-scalar
         |=  [p=point scalar=@]
         ^-  point
@@ -4402,7 +4407,12 @@
               baae.dce6.af48.a03b.bfd2.5e8c.d036.4141
         ==
       ::
-      ++  curve  ~(. secp 32 t)
+      ++  curve             ~(. secp 32 t)
+      ++  serialize-point   serialize-point:curve
+      ++  compress-point    compress-point:curve
+      ++  decompress-point  decompress-point:curve
+      ++  add-points        add-points:curve
+      ++  mul-point-scalar  mul-point-scalar:curve
       ++  make-k
         ~/  %make
         |=  [hash=@uvI private-key=@]
@@ -4460,187 +4470,6 @@
         =/  pub  (from.j qj)
         ?<  =([0 0] pub)
         pub
-      --
-    --
-  ++  secp
-    ~%  %secp  ..is  ~
-    |%
-    +=  jaco  [x=@ y=@ z=@]                             ::  jacobian point
-    +=  pont  [x=@ y=@]                                 ::  curve point
-    ::
-    ++  secp256k1
-      %+  secp  32
-      :*  p=0xffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.  ::  modulo
-              ffff.ffff.ffff.ffff.ffff.fffe.ffff.fc2f
-          a=0                                           ::  y^2=x^3+ax+b
-          b=7
-          ^=  g                                         ::  "prime" point
-          :*  x=0x79be.667e.f9dc.bbac.55a0.6295.ce87.0b07.
-                  029b.fcdb.2dce.28d9.59f2.815b.16f8.1798
-              y=0x483a.da77.26a3.c465.5da4.fbfc.0e11.08a8.
-                  fd17.b448.a685.5419.9c47.d08f.fb10.d4b8
-          ==
-          n=0xffff.ffff.ffff.ffff.ffff.ffff.ffff.fffe.  ::  prime order of g
-              baae.dce6.af48.a03b.bfd2.5e8c.d036.4141
-      ==
-    ::
-    ++  secp
-      ~/  %secp
-      |=  [w=@ p=@ a=@ b=@ g=pont n=@]  :: being passed in from above
-      =/  p  ~(. fo p)
-      =/  n  ~(. fo n)
-      ~%  %helper  ..$  ~
-      |%
-      ++  compress-point
-        ~/  %compress-point
-        |=  pont
-        ^-  @
-        (can 3 ~[w^x 1^(add 0x2 (cut 0 [0 1] y))])
-      ::
-      ++  serialize-point
-        ~/  %serialize-point
-        |=  pont
-        ^-  @
-        (can 3 ~[w^y w^x 1^0x4])
-      ::
-      ++  decompress-point
-        ~/  %decompress-point
-        |=  dat=@
-        ^-  pont
-        =+  x=(end 3 w a)
-        =+  y=:(add (pow x 3) (mul a x) b)
-        =+  s=(rsh 3 32 dat)
-        :-  x
-        ?:  =(0x2 s)  y
-        ?:  =(0x3 s)  y
-        ~|  [`@ux`s `@ux`dat]
-        !!
-      ::
-      ++  priv-to-pub                                   ::  get pub from priv
-        ~/  %priv-to-pub
-        |=  prv=@
-        ^-  pont
-        (jc-mul g prv)
-      ::
-      ++  make-k                                        ::  deterministic nonce
-        ~/  %make-k
-        =,  mimes:html
-        |=  [has=@uvI prv=@]
-        ^-  @
-        =*  hmc  hmac-sha256l:hmac
-        =/  v  (fil 3 w 1)
-        =/  k  0
-        =.  k  (hmc w^k (as-octs (can 3 [w has] [w prv] [1 0x0] [w v] ~)))
-        =.  v  (hmc w^k w^v)
-        =.  k  (hmc w^k (as-octs (can 3 [w has] [w prv] [1 0x1] [w v] ~)))
-        =.  v  (hmc w^k w^v)
-        (hmc w^k w^v)
-      ::
-      ++  ecdsa-raw-sign                                ::  generate signature
-        ~/  %ecdsa-raw-sign
-        |=  [has=@uvI prv=@]
-        ^-  [v=@ r=@ s=@]
-        =/  z  has
-        =/  k  (make-k has prv)
-        =+  [r y]=(jc-mul g k)
-        =/  s  (pro.n `@`(inv.n k) `@`(sum.n z (mul r prv)))
-        =/  big-s  (gte (mul 2 s) ^n)
-        :*  v=(mix (end 0 1 y) ?:(big-s 1 0))
-            r=r
-            s=?.(big-s s (sub ^n s))
-        ==
-      ::
-      ++  ecdsa-raw-recover                             ::  get pubkey from sig
-        ~/  %ecdsa-raw-recover
-        |=  [has=@uvI sig=[v=@ r=@ s=@]]
-        ^-  pont
-        ?>  (lte v.sig 7)
-        =/  x  r.sig
-        =/  ysq  (sum.p b (exp.p 3 x))               ::  omits A=0
-        =/  bet  (exp.p (div +(^p) 4) ysq)
-        =/  y  ?:(=(1 (end 0 1 (mix v.sig bet))) bet (dif.p 0 bet))
-        ?>  =(0 (dif.p ysq (pro.p y y)))
-        ?<  =(0 (sit.n r.sig))
-        ?<  =(0 (sit.n s.sig))
-        =/  gz  (mul:jc [x y 1]:g (dif.n 0 has))
-        =/  xy  (mul:jc [x y 1] s.sig)
-        =/  qr  (add:jc gz xy)
-        (from:jc (mul:jc qr (inv.n r.sig)))
-      ::
-      ++  jc-mul                                        ::  point x scalar
-        |=  [a=pont n=@]
-        ^-  pont
-        (from:jc (mul:jc (into:jc a) n))
-      ::
-      ++  jc-add                                        ::  add points
-        |=  [a=pont b=pont]
-        ^-  pont
-        (from:jc (add:jc (into:jc a) (into:jc b)))
-      ::
-      ++  jc                                            ::  jacobian core
-        |%
-        ++  add                                         ::  addition
-          |=  [a=jaco b=jaco]
-          ^-  jaco
-          ?:  =(0 y.a)  b
-          ?:  =(0 y.b)  a
-          =/  u1  :(pro.p x.a z.b z.b)
-          =/  u2  :(pro.p x.b z.a z.a)
-          =/  s1  :(pro.p y.a z.b z.b z.b)
-          =/  s2  :(pro.p y.b z.a z.a z.a)
-          ?:  =(u1 u2)
-            ?.  =(s1 s2)
-              [0 0 1]
-            (dub a)
-          =/  h  (dif.p u2 u1)
-          =/  r  (dif.p s2 s1)
-          =/  h2  (pro.p h h)
-          =/  h3  (pro.p h2 h)
-          =/  u1h2  (pro.p u1 h2)
-          =/  nx  (dif.p (pro.p r r) :(sum.p h3 u1h2 u1h2))
-          =/  ny  (dif.p (pro.p r (dif.p u1h2 nx)) (pro.p s1 h3))
-          =/  nz  :(pro.p h z.a z.b)
-          [nx ny nz]
-        ::
-        ++  dub                                         ::  double
-          |=  a=jaco
-          ^-  jaco
-          ?:  =(0 y.a)
-            [0 0 0]
-          =/  ysq  (pro.p y.a y.a)
-          =/  s  :(pro.p 4 x.a ysq)
-          =/  m  :(pro.p 3 x.a x.a)                     ::  omits A=0
-          =/  nx  (dif.p (pro.p m m) (sum.p s s))
-          =/  ny  (dif.p (pro.p m (dif.p s nx)) :(pro.p 8 ysq ysq))
-          =/  nz  :(pro.p 2 y.a z.a)
-          [nx ny nz]
-        ::
-        ++  mul                                         :: jaco x scalar
-          |=  [a=jaco n=@]
-          ^-  jaco
-          ?:  =(0 y.a)
-            [0 0 1]
-          ?:  =(0 n)
-            [0 0 1]
-          ?:  =(1 n)
-            a
-          ?:  (gte n ^^n)
-            $(n (mod n ^^n))
-          ?:  =(0 (mod n 2))
-            (dub $(n (div n 2)))
-          (add a (dub $(n (div n 2))))
-        ::
-        ++  from                                        :: jaco -> point
-          |=  a=jaco
-          ^-  pont
-          =/  z  (inv.p z.a)
-          [:(pro.p x.a z z) :(pro.p y.a z z z)]
-        ::
-        ++  into                                        :: point -> jaco
-          |=  pont
-          ^-  jaco
-          [x y z=1]
-        --
       --
     --
   ::
