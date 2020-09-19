@@ -4,6 +4,7 @@ import { Spinner } from "~/views/components/Spinner";
 import { Notebooks } from "~/types/publish-update";
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
 import { RouteComponentProps } from "react-router-dom";
+import { deSig } from "~/logic/lib/util";
 
 interface JoinScreenProps {
   api: any; // GlobalApi;
@@ -21,15 +22,9 @@ export function JoinScreen(props: JoinScreenProps & RouteComponentProps) {
 
   const onJoin = useCallback(async () => {
     joining.current = true;
-    const action = {
-      subscribe: {
-        who: ship.replace("~", ""),
-        book,
-      },
-    };
 
     try {
-      await api.publish.publishAction(action);
+      await api.publish.subscribeNotebook(deSig(ship), book);
       await waiter((p) => !!p.notebooks?.[ship]?.[book]);
       props.history.replace(`/~publish/notebook/${ship}/${book}`);
     } catch (e) {
