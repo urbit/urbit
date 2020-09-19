@@ -10,7 +10,7 @@ function NavigationItem(props: {
   date: number;
   prev?: boolean;
 }) {
-  const date = moment(date).fromNow();
+  const date = moment(props.date).fromNow();
   return (
     <Box
       justifySelf={props.prev ? "start" : "end"}
