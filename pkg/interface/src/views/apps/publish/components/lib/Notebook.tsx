@@ -59,8 +59,10 @@ export class Notebook extends PureComponent<NotebookProps & RouteComponentProps,
   render() {
     const { api, ship, book, notebook, notebookContacts, groups, history, hideNicknames, associations } = this.props;
 
-    const contact = notebookContacts[ship];
     const group = groups[notebook?.["writers-group-path"]];
+    if (!group) return null; // Waitin on groups to populate
+
+    const contact = notebookContacts[ship];
     const role = group ? roleForShip(group, window.ship) : undefined;
     const isOwn = `~${window.ship}` === ship;
     const isAdmin = role === "admin" || isOwn;
