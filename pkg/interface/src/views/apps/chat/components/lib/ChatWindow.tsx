@@ -238,8 +238,8 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       .sort((a, b) => a.when - b.when)
       .forEach((message, index) => {
         index = index + 1; // To 1-index it
-        messages.set(envelopes.length + index, message);
-        lastMessage = envelopes.length + index;
+        messages.set(mailboxSize + index, message);
+        lastMessage = mailboxSize + index;
       });
 
     const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy };
