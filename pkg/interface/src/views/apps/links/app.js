@@ -159,13 +159,6 @@ export class LinksApp extends Component {
               const popout = props.match.url.includes('/popout/');
               const graph = graphs[resourcePath] || null;
 
-              if (!graph) {
-                api.graph.getGraph(
-                  `~${props.match.params.ship}`,
-                  props.match.params.name
-                );
-              }
-
               return (
                 <Skeleton
                   associations={associations}
@@ -181,6 +174,7 @@ export class LinksApp extends Component {
                     {...props}
                     api={api}
                     graph={graph}
+                    graphResource={graphKeys.has(resourcePath)}
                     popout={popout}
                     metadata={resource.metadata}
                     contacts={contactDetails}
@@ -214,13 +208,6 @@ export class LinksApp extends Component {
               const index = parseInt(indexArr[1], 10);
               const node = !!graph ? graph.get(index) : null;
 
-              if (!graph) { 
-                api.graph.getGraph(
-                  `~${props.match.params.ship}`,
-                  props.match.params.name
-                );
-              }
-              
               return (
                 <Skeleton
                   associations={associations}
@@ -235,6 +222,7 @@ export class LinksApp extends Component {
                   <LinkDetail
                     {...props}
                     node={node}
+                    graphResource={graphKeys.has(resourcePath)}
                     ship={props.match.params.ship}
                     name={props.match.params.name}
                     resource={resource}
