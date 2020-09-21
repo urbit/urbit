@@ -99,7 +99,10 @@ export class LinksApp extends Component {
 
               const autoJoin = () => {
                 try {
-                  // TODO: graph join
+                  api.graph.joinGraph(
+                    `~${props.match.params.ship}`,
+                    props.match.params.name
+                  );
                   props.history.push(`/~link/${resource}`);
                 } catch(err) {
                   setTimeout(autoJoin, 2000);
@@ -121,6 +124,7 @@ export class LinksApp extends Component {
               const contactDetails = contacts[resource['group-path']] || {};
               const group = groups[resource['group-path']] || new Set([]);
               const amOwner = amOwnerOfGroup(resource['group-path']);
+              const hasGraph = !!graphs[resourcePath];
 
               return (
                 <Skeleton
@@ -138,6 +142,7 @@ export class LinksApp extends Component {
                     contacts={contacts}
                     contactDetails={contactDetails}
                     graphResource={graphKeys.has(resourcePath)}
+                    hasGraph={!!hasGraph}
                     group={group}
                     amOwner={amOwner}
                     resourcePath={resourcePath}
