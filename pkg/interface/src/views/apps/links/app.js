@@ -92,25 +92,6 @@ export class LinksApp extends Component {
               );
             }}
           />
-          <Route exact path="/~link/join/:ship/:name"
-            render={ (props) => {
-              const resource =
-                `${props.match.params.ship}/${props.match.params.name}`;
-
-              const autoJoin = () => {
-                try {
-                  api.graph.joinGraph(
-                    `~${props.match.params.ship}`,
-                    props.match.params.name
-                  );
-                  props.history.push(`/~link/${resource}`);
-                } catch(err) {
-                  setTimeout(autoJoin, 2000);
-                }
-              };
-              autoJoin();
-            }}
-          />
           <Route exact path="/~link/(popout)?/:ship/:name/settings"
             render={ (props) => {
               const resourcePath = 

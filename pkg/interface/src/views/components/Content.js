@@ -54,7 +54,8 @@ export const Content = (props) => {
           path={[
             '/~chat',
             '/~publish',
-            '/~link'
+            '/~link',
+            '/~graph'
           ]}
           render={ p => (
             <TwoPaneApp
