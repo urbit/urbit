@@ -91,6 +91,7 @@ let
   # Additional top-level package attributes exposed for convenience.
   extraPackages = with localPackages; {
     urbit-debug = urbit.override { withDebug = true; };
+
     urbit-tests = localLib.testFakeShip {
       inherit urbit herb;
 
