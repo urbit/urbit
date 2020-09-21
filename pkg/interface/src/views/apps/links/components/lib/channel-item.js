@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { makeRoutePath } from '~/logic/lib/util';
 
-export class ChannelsItem extends Component {
+
+export class ChannelItem extends Component {
   render() {
     const { props } = this;
 
@@ -15,7 +15,7 @@ export class ChannelsItem extends Component {
       : null;
 
     return (
-      <Link to={makeRoutePath(props.link)}>
+      <Link to={`/~link/${props.link}`}>
         <div className={'w-100 v-mid f9 ph5 z1 pv1 relative ' + selectedClass}>
           <p className="f9 dib">{props.name}</p>
           <p className="f9 dib fr">

@@ -86,8 +86,9 @@ const removeGraph = (json, state) => {
     if (!('graphs' in state)) {
       state.graphs = {};
     }
-    let resource = data.resource.ship + '/' + data.resource.name;
+    let resource = data.ship + '/' + data.name;
     delete state.graphs[resource];
+    state.graphKeys.delete(resource);
   }
 };
 

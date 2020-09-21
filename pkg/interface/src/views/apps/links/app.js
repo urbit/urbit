@@ -10,26 +10,20 @@ import { Skeleton } from './components/skeleton';
 import { NewScreen } from './components/new';
 import { SettingsScreen } from './components/settings';
 import { MessageScreen } from './components/lib/message-screen';
-import { Links } from './components/links-list';
-import { LinkDetail } from './components/link';
+import { LinkList } from './components/link-list';
+import { LinkDetail } from './components/link-detail';
 
 import {
-  makeRoutePath,
   amOwnerOfGroup,
   base64urlDecode
 } from '~/logic/lib/util';
 
-export class LinksApp extends Component {
-  constructor(props) {
-    super(props);
-  }
 
+export class LinksApp extends Component {
   componentDidMount() {
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
-    this.props.api.links.getPage('', 0);
-    this.props.subscription.startApp('link');
     this.props.subscription.startApp('graph');
     if (!this.props.sidebarShown) {
       this.props.api.local.sidebarToggle();
@@ -37,7 +31,6 @@ export class LinksApp extends Component {
   }
 
   componentWillUnmount() {
-    this.props.subscription.stopApp('link');
     this.props.subscription.stopApp('graph');
   }
 
@@ -45,26 +38,20 @@ export class LinksApp extends Component {
     const { props } = this;
     const contacts = props.contacts ? props.contacts : {};
     const groups = props.groups ? props.groups : {};
-    const associations = props.associations ? props.associations : { link: {}, contacts: {} };
-    const links = props.links ? props.links : {};
-    const comments = props.linkComments ? props.linkComments : {};
-    const seen = props.linksSeen ? props.linksSeen : {};
-    const totalUnseen = _.reduce(
-      links,
-      (acc, collection) => acc + collection.unseenCount,
-      0
-    );
+    const associations =
+      props.associations ? props.associations : { graph: {}, contacts: {} };
+    const graphKeys = props.graphKeys || new Set([]);
+    const graphs = props.graphs || {};
 
     const invites = props.invites ?
       props.invites : {};
 
-    const listening = props.linkListening;
     const { api, sidebarShown, hideAvatars, hideNicknames, s3, remoteContentPolicy } = this.props;
 
     return (
       <>
         <Helmet defer={false}>
-          <title>{totalUnseen > 0 ? `(${totalUnseen}) ` : ''}OS1 - Links</title>
+          <title>OS1 - Links</title>
         </Helmet>
         <Switch>
           <Route exact path="/~link"
@@ -77,10 +64,8 @@ export class LinksApp extends Component {
                   groups={groups}
                   rightPanelHide={true}
                   sidebarShown={sidebarShown}
-                  links={links}
-                  listening={listening}
                   api={api}
-                >
+                  graphKeys={graphKeys}>
                   <MessageScreen text="Select or create a collection to begin." />
                 </Skeleton>
               );
@@ -94,85 +79,33 @@ export class LinksApp extends Component {
                   invites={invites}
                   groups={groups}
                   sidebarShown={sidebarShown}
-                  links={links}
-                  listening={listening}
                   api={api}
-                >
+                  graphKeys={graphKeys}>
                   <NewScreen
+                    api={api}
+                    graphKeys={graphKeys}
                     associations={associations}
                     groups={groups}
-                    contacts={contacts}
-                    api={api}
                     {...props}
                   />
                 </Skeleton>
               );
             }}
           />
-          <Route exact path="/~link/join/:resource"
+          <Route exact path="/~link/(popout)?/:ship/:name/settings"
             render={ (props) => {
-              const resourcePath = '/' + props.match.params.resource;
-
-              const autoJoin = () => {
-                try {
-                  api.links.joinCollection(resourcePath);
-                  props.history.push(makeRoutePath(resourcePath));
-                } catch(err) {
-                  setTimeout(autoJoin, 2000);
-                }
-              };
-              autoJoin();
-            }}
-          />
-          <Route exact path="/~link/(popout)?/:resource/members"
-            render={(props) => {
+              const resourcePath = 
+                `${props.match.params.ship}/${props.match.params.name}`;
               const popout = props.match.url.includes('/popout/');
-              const resourcePath = '/' + props.match.params.resource;
-              const resource = associations.link[resourcePath] || { metadata: {} };
+              const metPath = `/ship/~${resourcePath}`;
+              const resource =
+                associations.graph[metPath] ?
+                  associations.graph[metPath] : { metadata: {} };
 
               const contactDetails = contacts[resource['group-path']] || {};
               const group = groups[resource['group-path']] || new Set([]);
               const amOwner = amOwnerOfGroup(resource['group-path']);
-
-              return (
-                <Skeleton
-                  associations={associations}
-                  invites={invites}
-                  groups={groups}
-                  selected={resourcePath}
-                  sidebarShown={sidebarShown}
-                  links={links}
-                  listening={listening}
-                  api={api}
-                >
-                  <MemberScreen
-                    sidebarShown={sidebarShown}
-                    resource={resource}
-                    contacts={contacts}
-                    contactDetails={contactDetails}
-                    groupPath={resource['group-path']}
-                    group={group}
-                    groups={groups}
-                    associations={associations}
-                    amOwner={amOwner}
-                    resourcePath={resourcePath}
-                    popout={popout}
-                    api={api}
-                    {...props}
-                  />
-                </Skeleton>
-              );
-            }}
-          />
-          <Route exact path="/~link/(popout)?/:resource/settings"
-            render={ (props) => {
-              const popout = props.match.url.includes('/popout/');
-              const resourcePath = '/' + props.match.params.resource;
-              const resource = associations.link[resourcePath] || false;
-
-              const contactDetails = contacts[resource['group-path']] || {};
-              const group = groups[resource['group-path']] || new Set([]);
-              const amOwner = amOwnerOfGroup(resource['group-path']);
+              const hasGraph = !!graphs[resourcePath];
 
               return (
                 <Skeleton
@@ -182,149 +115,114 @@ export class LinksApp extends Component {
                   selected={resourcePath}
                   sidebarShown={sidebarShown}
                   popout={popout}
-                  links={links}
-                  listening={listening}
-                  api={api}
-                >
+                  graphKeys={graphKeys}
+                  api={api}>
                   <SettingsScreen
                     sidebarShown={sidebarShown}
                     resource={resource}
                     contacts={contacts}
                     contactDetails={contactDetails}
-                    groupPath={resource['group-path']}
+                    graphResource={graphKeys.has(resourcePath)}
+                    hasGraph={!!hasGraph}
                     group={group}
                     amOwner={amOwner}
                     resourcePath={resourcePath}
                     popout={popout}
                     api={api}
+                    {...props} />
+                </Skeleton>
+              );
+            }}
+          />
+          <Route exact path="/~link/(popout)?/:ship/:name"
+            render={ (props) => {
+              const resourcePath = 
+                `${props.match.params.ship}/${props.match.params.name}`;
+              const resource =
+                associations.graph[resourcePath] ?
+                  associations.graph[resourcePath] : { metadata: {} };
+              const contactDetails = contacts[resource['group-path']] || {};
+              const popout = props.match.url.includes('/popout/');
+              const graph = graphs[resourcePath] || null;
+
+              return (
+                <Skeleton
+                  associations={associations}
+                  invites={invites}
+                  groups={groups}
+                  selected={resourcePath}
+                  sidebarShown={sidebarShown}
+                  sidebarHideMobile={true}
+                  popout={popout}
+                  api={api}
+                  graphKeys={graphKeys}>
+                  <LinkList
                     {...props}
+                    api={api}
+                    graph={graph}
+                    graphResource={graphKeys.has(resourcePath)}
+                    popout={popout}
+                    metadata={resource.metadata}
+                    contacts={contactDetails}
+                    hideAvatars={hideAvatars}
+                    hideNicknames={hideNicknames}
+                    sidebarShown={sidebarShown}
+                    ship={props.match.params.ship}
+                    name={props.match.params.name}
                   />
                 </Skeleton>
               );
             }}
           />
-            <Route exact path="/~link/(popout)?/:resource/:page?"
-              render={ (props) => {
-                const resourcePath = '/' + props.match.params.resource;
-                const resource = associations.link[resourcePath] || { metadata: {} };
+          <Route exact path="/~link/(popout)?/:ship/:name/:index"
+            render={ (props) => {
+              const resourcePath = 
+                `${props.match.params.ship}/${props.match.params.name}`;
+              const resource =
+                associations.graph[resourcePath] ?
+                  associations.graph[resourcePath] : { metadata: {} };
+              const popout = props.match.url.includes('/popout/');
+              const contactDetails = contacts[resource['group-path']] || {};
 
-                const amOwner = amOwnerOfGroup(resource['group-path']);
+              const indexArr = props.match.params.index.split('-');
+              const graph = graphs[resourcePath] || null;
 
-                const contactDetails = contacts[resource['group-path']] || {};
+              if (indexArr.length <= 1) {
+                return <div>Malformed URL</div>;
+              }
 
-                const page = props.match.params.page || 0;
+              const index = parseInt(indexArr[1], 10);
+              const node = !!graph ? graph.get(index) : null;
 
-                const popout = props.match.url.includes('/popout/');
-
-                const channelLinks = links[resourcePath]
-                ? links[resourcePath]
-                : { local: {} };
-
-                const channelComments = comments[resourcePath]
-                  ? comments[resourcePath]
-                  : {};
-
-                const channelSeen = seen[resourcePath]
-                  ? seen[resourcePath]
-                  : {};
-
-                return (
-                  <Skeleton
-                    associations={associations}
-                    invites={invites}
-                    groups={groups}
-                    selected={resourcePath}
-                    sidebarShown={sidebarShown}
-                    sidebarHideMobile={true}
-                    popout={popout}
-                    links={links}
-                    listening={listening}
-                    api={api}
-                  >
-                    <Links
+              return (
+                <Skeleton
+                  associations={associations}
+                  invites={invites}
+                  groups={groups}
+                  selected={resourcePath}
+                  sidebarShown={sidebarShown}
+                  sidebarHideMobile={true}
+                  popout={popout}
+                  graphKeys={graphKeys}
+                  api={api}>
+                  <LinkDetail
                     {...props}
-                    contacts={contactDetails}
-                    links={channelLinks}
-                    comments={channelComments}
-                    seen={channelSeen}
-                    page={page}
-                    resourcePath={resourcePath}
+                    node={node}
+                    graphResource={graphKeys.has(resourcePath)}
+                    ship={props.match.params.ship}
+                    name={props.match.params.name}
                     resource={resource}
-                    amOwner={amOwner}
-                    popout={popout}
-                    sidebarShown={sidebarShown}
-                    api={api}
-                    hideNicknames={hideNicknames}
-                    hideAvatars={hideAvatars}
-                    s3={s3}
-                  />
-                  </Skeleton>
-                );
-              }}
-            />
-            <Route exact path="/~link/(popout)?/:resource/:page/:index/:encodedUrl/:commentpage?"
-              render={ (props) => {
-                const resourcePath = '/' + props.match.params.resource;
-                const resource = associations.link[resourcePath] || { metadata: {} };
-
-                const amOwner = amOwnerOfGroup(resource['group-path']);
-
-                const popout = props.match.url.includes('/popout/');
-
-                const contactDetails = contacts[resource['group-path']] || {};
-
-                const index = props.match.params.index || 0;
-                const page = props.match.params.page || 0;
-                const url = base64urlDecode(props.match.params.encodedUrl);
-
-                const data = links[resourcePath]
-                  ? links[resourcePath][page]
-                    ? links[resourcePath][page][index]
-                    : {}
-                  : {};
-                const coms = !comments[resourcePath]
-                  ? undefined
-                  : comments[resourcePath][url];
-
-                const commentPage = props.match.params.commentpage || 0;
-
-                return (
-                  <Skeleton
-                    associations={associations}
-                    invites={invites}
-                    groups={groups}
-                    selected={resourcePath}
-                    sidebarShown={sidebarShown}
-                    sidebarHideMobile={true}
-                    popout={popout}
-                    links={links}
-                    listening={listening}
-                    api={api}
-                  >
-                    <LinkDetail
-                    {...props}
-                    resource={resource}
-                    page={page}
-                    url={url}
-                    linkIndex={index}
                     contacts={contactDetails}
-                    resourcePath={resourcePath}
-                    groupPath={resource['group-path']}
-                    amOwner={amOwner}
                     popout={popout}
                     sidebarShown={sidebarShown}
-                    data={data}
-                    comments={coms}
-                    commentPage={commentPage}
                     api={api}
                     hideAvatars={hideAvatars}
                     hideNicknames={hideNicknames}
-                    remoteContentPolicy={remoteContentPolicy}
-                    />
-                  </Skeleton>
-                );
-              }}
-            />
+                    remoteContentPolicy={remoteContentPolicy} />
+                </Skeleton>
+              );
+            }}
+          />
         </Switch>
       </>
     );

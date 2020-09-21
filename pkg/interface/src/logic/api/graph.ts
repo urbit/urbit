@@ -4,6 +4,7 @@ import { Patp, Path, PatpNoSig } from '~/types/noun';
 import _ from 'lodash';
 import {makeResource, resourceFromPath} from '../lib/group';
 import {GroupPolicy, Enc, Post} from '~/types';
+import { deSig } from '~/logic/lib/util';
 
 export const createPost = (contents: Object[], parentIndex: string = '') => {
   return {
@@ -26,10 +27,19 @@ export default class GraphApi extends BaseApi<StoreState> {
     return this.spider('graph-view-action', 'json', threadName, action);
   }
 
-  createManagedGraph(name: string, title: string, description: string, group: Path) {
-    const associated = { group: resourceFromPath(group) };
+  private hookAction(ship: Patp, action: any): Promise<any> {
+    return this.action('graph-push-hook', 'graph-update', action, deSig(ship));
+  }
 
+  createManagedGraph(
+    name: string,
+    title: string,
+    description: string,
+    group: Path
+  ) {
+    const associated = { group: resourceFromPath(group) };
     const resource = makeResource(`~${window.ship}`, name);
+
     return this.viewAction('graph-create', {
       "create": {
         resource,
@@ -40,9 +50,14 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  createUnmanagedGraph(name: string, title: string, description: string, policy: Enc<GroupPolicy>) {
-
+  createUnmanagedGraph(
+    name: string,
+    title: string,
+    description: string,
+    policy: Enc<GroupPolicy>
+  ) {
     const resource = makeResource(`~${window.ship}`, name);
+
     return this.viewAction('graph-create', {
       "create": {
         resource,
@@ -72,6 +87,15 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
+  leaveGraph(ship: Patp, name: string) {
+    const resource = makeResource(ship, name);
+    return this.viewAction('graph-leave', {
+      "leave": {
+        resource
+      }
+    });
+  }
+
   groupifyGraph(ship: Patp, name: string, toPath?: string) {
     const resource = makeResource(ship, name);
     const to = toPath && resourceFromPath(toPath);
@@ -85,19 +109,11 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   addGraph(ship: Patp, name: string, graph: any, mark: any) {
-    this.storeAction({
+    return this.storeAction({
       'add-graph': {
         resource: { ship, name },
         graph,
         mark
-      }
-    });
-  }
-
-  removeGraph(ship: Patp, name: string) {
-    this.storeAction({
-      'remove-graph': {
-        resource: { ship, name }
       }
     });
   }
@@ -110,7 +126,7 @@ export default class GraphApi extends BaseApi<StoreState> {
       children: { empty: null }
     };
 
-    return this.storeAction({
+    return this.hookAction(ship, {
       'add-nodes': {
         resource,
         nodes
@@ -119,7 +135,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   addNodes(ship: Patp, name: string, nodes: Object) {
-    this.storeAction({
+    this.hookAction(ship, {
       'add-nodes': {
         resource: { ship, name },
         nodes
@@ -128,7 +144,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   removeNodes(ship: Patp, name: string, indices: string[]) {
-    return this.storeAction({
+    return this.hookAction(ship, {
       'remove-nodes': {
         resource: { ship, name },
         indices

@@ -41,7 +41,7 @@
   ;<  ~  bind:m
     (poke-our %graph-pull-hook %pull-hook-action !>([%remove rid]))
   ;<  ~  bind:m
-    (poke-our %graph-store %graph-update !>([%archive-graph rid]))
+    (poke-our %graph-store %graph-update !>([%remove-graph rid]))
   (pure:m ~)
 --
 ::
@@ -62,6 +62,6 @@
 ;<  ~  bind:m
   (poke-our %group-push-hook %pull-hook-action !>([%remove rid.action]))
 ;<  ~  bind:m
-  (poke-our %group-store %group-action !>([%remove-group rid.action]))
+  (poke-our %group-store %group-action !>([%remove-group rid.action ~]))
 ;<  ~  bind:m  (delete-graph rid.action)
 (pure:m !>(~))

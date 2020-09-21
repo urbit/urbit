@@ -66,7 +66,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       associations: {
         chat: {},
         contacts: {},
-        link: {},
+        graph: {},
         publish: {}
       },
       groups: {},
