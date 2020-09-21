@@ -43,11 +43,7 @@ export function NewScreen(props: object) {
           resourceId,
           name,
           description,
-          { open: {
-              banRanks: [],
-              banned: [],
-            }
-          }
+          { invite: { pending: [] } }
         );
       }
 
