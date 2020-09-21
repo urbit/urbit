@@ -380,20 +380,34 @@ value of the function. Unlike Nock 4K, SKEW is entirely pure: if I give you a
 value, you can see whether it has a jet annotation, and you can properly
 serialize that this value has a jet annotation.
 
-Our final requirement is being able to virtualize computations: we must have a
-way of running a function which we don't know if it will error by infinite
-looping in predictable ways. We thus need to be able to declare a +mock
-function with the signature `a -> Either err a`. SKEW supports introspection
-with the W combinator, which is the final, five reduction rules. For `(W a s k
-e w x)`, the W combinator will switch on x. Mnemonic: *sWitch*.
+Our final requirement is being able to virtualize computations: you must be
+able to write a function which takes an arbitrary value in your core language
+for virtualization or serialization. You must be able to write an interpreter
+function in Nock which takes an arbitrary Nock value and evaluates
+it. Likewise, for all Nock 4K values, you have a serialization function `+jam`
+which converts any arbitrary Nock 4K value into a bytestring; the serialization
+format for Nock 4K is a function written in Nock 4K.
+
+We must preserve this property, so SKEW code must be able to inspect arbitrary
+SKEW values. SKEW supports introspection with the W combinator, which is the
+final, five reduction rules. For `(W a s k e w x)`, the `W` combinator will
+switch on x. Mnemonic: *sWitch*.
 
     (W 0 1 2 3 4 K)
     2
 
 sWitch gives us generalized introspection on SKEW code and is designed to look
 similar to conditionals as implemented on top of the unenriched lambda
-calculus. However, this operation is very naive so we expect that the only
-practical use will be in the specification of jets.
+calculus. Nock 4K is able to reflect using its noun equality test and cell/atom
+discrimination, and SKEW is able to reflect using the unrolled switch statement
+that is `W`.
+
+When we have `W`, we can implement functions which interpret arbitrary trees of
+SKEW data, meaning we can write virtualization and serialization. That said,
+this operation is very naive so we expect that the only usage of `W` is in the
+specification of jets: much like math on Church numerals, the formal
+specification is in SKEW, but execution relies on the more practical jet
+implementation.
 
 ## Data Jets
 
