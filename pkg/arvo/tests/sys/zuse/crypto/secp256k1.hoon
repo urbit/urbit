@@ -1,7 +1,7 @@
 ::  tests for secp256k1 elliptic curve cryptography
 ::
 /+  *test
-=/  ecc  secp256k1:new-secp:crypto
+=/  ecc  secp256k1:secp:crypto
 |%
 ::  from libsecp256k1 src/modules/recovery/tests_impl.h
 ::  there are more tests there, ports would be welcome
