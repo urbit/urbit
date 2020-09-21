@@ -9,7 +9,6 @@ export default class BaseApi<S extends object = {}> {
 
   unsubscribe(id: number) {
     this.channel.unsubscribe(id);
-
   }
 
   subscribe(path: Path, method, ship = this.ship, app: string, success, fail, quit) {
@@ -37,19 +36,20 @@ export default class BaseApi<S extends object = {}> {
     );
   }
 
-  action(appl: string, mark: string, data: any): Promise<any> {
+  action(
+    appl: string,
+    mark: string,
+    data: any,
+    ship = (window as any).ship
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
       this.channel.poke(
-        (window as any).ship,
+        ship,
         appl,
         mark,
         data,
-        (json) => {
-          resolve(json);
-        },
-        (err) => {
-          reject(err);
-        }
+        (json) => { resolve(json); },
+        (err) => { reject(err); }
       );
     });
   }
@@ -57,4 +57,14 @@ export default class BaseApi<S extends object = {}> {
   scry<T>(app: string, path: Path): Promise<T> {
     return fetch(`/~/scry/${app}${path}.json`).then(r => r.json() as Promise<T>);
   }
+
+  async spider<T>(inputMark: string, outputMark: string, threadName: string, body: any): Promise<T> {
+    const res = await fetch(`/spider/${inputMark}/${threadName}/${outputMark}.json`, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+
+    return res.json();
+  }
+
 }

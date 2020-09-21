@@ -13,3 +13,8 @@ export function resourceFromPath(path: Path): Resource {
   const [, , ship, name] = path.split('/');
   return { ship, name }
 }
+
+export function makeResource(ship: string, name:string) {
+  return { ship, name };
+}
+

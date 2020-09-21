@@ -13,12 +13,24 @@
 ::
 ++  get-graph
   |=  res=resource
-  ^-  marked-graph:store
-  %+  scry-for  marked-graph:store
+  ^-  update:store
+  %+  scry-for  update:store
   /graph/(scot %p entity.res)/[name.res]
 ::
-++  peek-log
+++  get-update-log
+  |=  rid=resource 
+  ^-  update-log:store
+  %+  scry-for  update-log:store
+  /update-log/(scot %p entity.rid)/[name.rid]
+::
+++  peek-update-log
   |=  res=resource
   ^-  (unit time)
   (scry-for (unit time) /peek-update-log/(scot %p entity.res)/[name.res])
+::
+++  get-update-log-subset
+  |=  [res=resource start=@da]
+  ^-  update-log:store
+  %+  scry-for  update-log:store
+  /update-log-subset/(scot %p entity.res)/[name.res]/(scot %da start)/'~'
 --
