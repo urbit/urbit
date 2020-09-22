@@ -139,6 +139,46 @@ _ames_mug_body(c3_w len_w, c3_y* byt_y)
   return u3r_mug_bytes(byt_y, len_w) & 0xfffff;
 }
 
+/* _ames_sift_head(): parse packet header.
+*/
+static void
+_ames_sift_head(u3_head* hed_u, c3_y buf_y[4])
+{
+  c3_w hed_w = buf_y[0]
+             | (buf_y[1] <<  8)
+             | (buf_y[2] << 16)
+             | (buf_y[3] << 24);
+
+  //  XX only version 0 currently recognized
+  //
+  hed_u->ver_y = hed_w & 0x7;
+  hed_u->mug_l = (hed_w >>  3) & 0xfffff; // 20 bits
+  hed_u->sac_y = (hed_w >> 23) & 0x3;
+  hed_u->rac_y = (hed_w >> 25) & 0x3;
+  hed_u->enc_o = (hed_w >> 27) & 0x1;
+}
+
+/* _ames_etch_head(): serialize packet header.
+*/
+static void
+_ames_etch_head(u3_head* hed_u, c3_y buf_y[4])
+{
+  c3_w hed_w = hed_u->ver_y
+             | (hed_u->mug_l <<  3)
+             | (hed_u->sac_y << 23)
+             | (hed_u->rac_y << 25)
+             | (hed_u->enc_o << 27);
+
+  //  only version 0 currently recognized
+  //
+  c3_assert( 0 == hed_u->ver_y );
+
+  buf_y[0] = hed_w & 0xff;
+  buf_y[1] = (hed_w >>  8) & 0xff;
+  buf_y[2] = (hed_w >> 16) & 0xff;
+  buf_y[3] = (hed_w >> 24) & 0xff;
+}
+
 /* _ames_send_cb(): send callback.
 */
 static void
@@ -438,16 +478,7 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
 
     //  now we can serialize the head
     //
-    u3_head* hed_u = &pac_u->hed_u;
-    c3_w     hed_w = hed_u->ver_y
-                   | (hed_u->mug_l << 3)
-                   | (hed_u->sac_y << 23)
-                   | (hed_u->rac_y << 25)
-                   | (hed_u->enc_o << 27);
-
-    //  XX assumes little-endian
-    //
-    memcpy(pac_y, &hed_w, 4);
+    _ames_etch_head(&pac_u->hed_u, pac_y);
 
     pac = u3i_bytes(4 + sen_y + rec_y + bod_u->con_w, pac_y);
     c3_free(pac_y);
@@ -766,20 +797,10 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   if ( 4 >= nrd_i ) {
     pas_o = c3n;
   }
+
   //  unpack the packet header
   //
-  else {
-    c3_w hed_w = (byt_y[0] <<  0)
-               | (byt_y[1] <<  8)
-               | (byt_y[2] << 16)
-               | (byt_y[3] << 24);
-
-    hed_u.ver_y = hed_w & 0x7;
-    hed_u.mug_l = (hed_w >> 3) & 0xfffff; //NOTE ((1 << 20) - 1)
-    hed_u.sac_y = (hed_w >> 23) & 0x3;
-    hed_u.rac_y = (hed_w >> 25) & 0x3;
-    hed_u.enc_o = (hed_w >> 27) & 0x1;
-  }
+  _ames_sift_head(&hed_u, byt_y);
 
   //  ensure the protocol version matches ours
   //
