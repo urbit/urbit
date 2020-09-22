@@ -83,10 +83,11 @@ in dimensionWith "system" systems (systemName: system:
 
       hs = dimensionHaskell pkgs "haskell" staticPackages.hs;
 
-      # Push various artefacts to the remote storage bucket.
-      push = dimension "push" {
-        tarball = pushObject "urbit-${system}" "tar.gz" releaseTarball;
+      # Push the release tarball artefact to the remote storage bucket.
+      tarball = pushObject "urbit-${system}" "tar.gz" releaseTarball;
 
+      # Only push the pills if we're evaluating on a linux build agent.
+    } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
         ivory = pushPill "ivory" sharedPackages.ivory;
         brass = pushPill "brass" sharedPackages.brass;
         solid = pushPill "solid" sharedPackages.solid;
