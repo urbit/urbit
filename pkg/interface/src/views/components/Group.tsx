@@ -83,7 +83,7 @@ interface GroupViewProps {
 export class GroupView extends Component<
   GroupViewProps,
   { invites: Invites; awaiting: boolean }
-> {
+  > {
   constructor(props) {
     super(props);
     this.setInvites = this.setInvites.bind(this);
@@ -212,8 +212,8 @@ export class GroupView extends Component<
       const onRoleRemove =
         role && isAdmin
           ? () => {
-              this.removeTag(ship, { tag: role });
-            }
+            this.removeTag(ship, { tag: role });
+          }
           : undefined;
       const [present, missing] = this.getAppTags(ship);
       const options = this.optionsForShip(ship, missing);

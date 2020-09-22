@@ -1,18 +1,21 @@
-import React, { Component, Fragment } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { LocalUpdateRemoteContentPolicy } from "~/types/local-update";
 import { Button } from '@tlon/indigo-react';
 import { hasProvider } from 'oembed-parser';
 import EmbedContainer from 'react-oembed-container';
+import { memoize } from 'lodash';
 
 interface RemoteContentProps {
   url: string;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
-  unfold: boolean;
-  renderUrl: boolean;
-  imageProps: any;
-  audioProps: any;
-  videoProps: any;
-  oembedProps: any;
+  unfold?: boolean;
+  renderUrl?: boolean;
+  imageProps?: any;
+  audioProps?: any;
+  videoProps?: any;
+  oembedProps?: any;
+  style?: any;
+  onLoad?(): void;
 }
 
 interface RemoteContentState {
@@ -24,7 +27,10 @@ const IMAGE_REGEX = new RegExp(/(jpg|img|png|gif|tiff|jpeg|webp|webm|svg)$/i);
 const AUDIO_REGEX = new RegExp(/(mp3|wav|ogg)$/i);
 const VIDEO_REGEX = new RegExp(/(mov|mp4|ogv)$/i);
 
-export default class RemoteContent extends Component<RemoteContentProps, RemoteContentState> {
+const memoizedFetch = memoize(fetch);
+
+export default class RemoteContent extends PureComponent<RemoteContentProps, RemoteContentState> {
+  private fetchController: AbortController | undefined;
   constructor(props) {
     super(props);
     this.state = {
@@ -36,20 +42,30 @@ export default class RemoteContent extends Component<RemoteContentProps, RemoteC
     this.wrapInLink = this.wrapInLink.bind(this);
   }
 
+  componentWillUnmount() {
+    if (this.fetchController) {
+      this.fetchController.abort();
+    }
+  }
+
   unfoldEmbed() {
     let unfoldState = this.state.unfold;
     unfoldState = !unfoldState;
     this.setState({ unfold: unfoldState });
+    setTimeout(this.props.onLoad, 500);
   }
 
   loadOembed() {
-    fetch(`https://noembed.com/embed?url=${this.props.url}`)
-    .then(response => response.json())
+    this.fetchController = new AbortController();
+    memoizedFetch(`https://noembed.com/embed?url=${this.props.url}`, {
+      signal: this.fetchController.signal
+    })
+    .then(response => response.clone().json())
     .then((result) => {
       this.setState({ embed: result });
     }).catch((error) => {
+      if (error.name === 'AbortError') return;
       this.setState({ embed: 'error' });
-      console.log('error fetching oembed', error);
     });
   }
 
@@ -74,6 +90,8 @@ export default class RemoteContent extends Component<RemoteContentProps, RemoteC
       audioProps = {},
       videoProps = {},
       oembedProps = {},
+      style = {},
+      onLoad = () => {},
       ...props
     } = this.props;
     const isImage = IMAGE_REGEX.test(url);
@@ -85,6 +103,8 @@ export default class RemoteContent extends Component<RemoteContentProps, RemoteC
       return this.wrapInLink(
         <img
           src={url}
+          style={style}
+          onLoad={onLoad}
           {...imageProps}
           {...props}
         />
@@ -97,6 +117,7 @@ export default class RemoteContent extends Component<RemoteContentProps, RemoteC
             controls
             className="db"
             src={url}
+            style={style}
             {...audioProps}
             {...props}
           />
@@ -110,6 +131,8 @@ export default class RemoteContent extends Component<RemoteContentProps, RemoteC
             controls
             className="db"
             src={url}
+            style={style}
+            onLoad={onLoad}
             {...videoProps}
             {...props}
           />
@@ -133,6 +156,8 @@ export default class RemoteContent extends Component<RemoteContentProps, RemoteC
           </Button> : null}
           <div
             className={'embed-container mb2 w-100 w-75-l w-50-xl ' + (this.state.unfold ? 'db' : 'dn')}
+            style={style}
+            onLoad={onLoad}
             {...oembedProps}
             {...props}
           >

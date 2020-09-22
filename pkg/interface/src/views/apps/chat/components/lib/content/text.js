@@ -27,6 +27,21 @@ const DISABLED_INLINE_TOKENS = [
 const MessageMarkdown = React.memo(props => (
   <ReactMarkdown
     {...props}
+    unwrapDisallowed={true}
+    allowNode={(node, index, parent) => {
+      if (
+        node.type === 'blockquote'
+        && parent.type === 'root'
+        && node.children.length
+        && node.children[0].type === 'paragraph'
+        && node.children[0].position.start.offset < 2
+      ) {
+        node.children[0].children[0].value = '>' + node.children[0].children[0].value;
+        return false;
+      }
+      
+      return true;
+    }}
     plugins={[[
       RemarkDisableTokenizers,
       { block: DISABLED_BLOCK_TOKENS, inline: DISABLED_INLINE_TOKENS }

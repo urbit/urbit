@@ -28,19 +28,23 @@ export class JoinScreen extends Component {
       const incomingGroup = `${props.ship}/${props.name}`;
       // push to group if already exists
       if (`/ship/${incomingGroup}` in props.groups) {
-        this.props.history.push(`/~groups/ship/${incomingGroup}`);
+        this.props.history.replace(`/~groups/ship/${incomingGroup}`);
         return;
       }
       this.setState({ group: incomingGroup }, () => {
         this.onClickJoin();
       });
     }
-    // once we've joined, push to group page
+    // once we've joined, replace to group page
     if (props.groups) {
       if (state.awaiting) {
         const group = `/ship/${state.group}`;
         if (group in props.groups) {
-          props.history.push(`/~groups${group}`);
+          if (props.ship && props.name) {
+            props.history.replace(`/~groups${group}`);
+          } else {
+            props.history.push(`/~groups${group}`);
+          }
         }
       }
     }

@@ -157,7 +157,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getKeys() {
-    this.scry<any>('graph-store', '/keys')
+    return this.scry<any>('graph-store', '/keys')
       .then((keys) => {
         this.store.handleEvent({
           data: keys
@@ -166,7 +166,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getTags() {
-    this.scry<any>('graph-store', '/tags')
+    return this.scry<any>('graph-store', '/tags')
       .then((tags) => {
         this.store.handleEvent({
           data: tags
@@ -175,7 +175,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getTagQueries() {
-    this.scry<any>('graph-store', '/tag-queries')
+    return this.scry<any>('graph-store', '/tag-queries')
       .then((tagQueries) => {
         this.store.handleEvent({
           data: tagQueries
@@ -184,7 +184,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getGraph(ship: string, resource: string) {
-    this.scry<any>('graph-store', `/graph/${ship}/${resource}`)
+    return this.scry<any>('graph-store', `/graph/${ship}/${resource}`)
       .then((graph) => {
         this.store.handleEvent({
           data: graph
@@ -193,7 +193,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getGraphSubset(ship: string, resource: string, start: string, end: string) {
-    this.scry<any>(
+    return this.scry<any>(
       'graph-store',
       `/graph-subset/${ship}/${resource}/${end}/${start}`
     ).then((subset) => {
@@ -204,7 +204,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getNode(ship: string, resource: string, index: string) {
-    this.scry<any>(
+    return this.scry<any>(
       'graph-store',
       `/node/${ship}/${resource}/${index}`
     ).then((node) => {

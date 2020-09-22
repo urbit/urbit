@@ -101,7 +101,7 @@ export class OmniboxResult extends Component {
                 verticalAlign="middle"
                 color='white'
                 maxWidth="60%"
-                style={{ 'flex-shrink': 0 }}
+                style={{ flexShrink: 0 }}
                 mr='1'>
                 {text}
               </Text>
@@ -123,7 +123,7 @@ export class OmniboxResult extends Component {
                 display="inline-block"
                 verticalAlign="middle"
                 maxWidth="60%"
-                style={{ 'flex-shrink': 0 }}
+                style={{ flexShrink: 0 }}
               >
               {text}
             </Text>

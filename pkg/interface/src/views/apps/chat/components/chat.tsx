@@ -1,11 +1,7 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import moment from "moment";
+import { RouteComponentProps } from "react-router-dom";
 
-import { Link, RouteComponentProps } from "react-router-dom";
-
-import { ChatWindow } from './lib/chat-window';
-import { ChatHeader } from './lib/chat-header';
-import { ChatInput } from "./lib/chat-input";
 import { deSig } from "~/logic/lib/util";
 import { ChatHookUpdate } from "~/types/chat-hook-update";
 import { Inbox, Envelope } from "~/types/chat-update";
@@ -15,8 +11,11 @@ import GlobalApi from "~/logic/api/global";
 import { Association } from "~/types/metadata-update";
 import {Group} from "~/types/group-update";
 import { LocalUpdateRemoteContentPolicy } from "~/types";
-import { S3Upload, SubmitDragger } from '~/views/components/s3-upload';
-import { IUnControlledCodeMirror } from "react-codemirror2";
+import { SubmitDragger } from '~/views/components/s3-upload';
+
+import ChatWindow from './lib/ChatWindow';
+import ChatHeader from './lib/ChatHeader';
+import ChatInput from "./lib/ChatInput";
 
 
 type ChatScreenProps = RouteComponentProps<{
@@ -79,8 +78,8 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
     return Boolean(this.chatInput.current?.s3Uploader.current?.inputRef.current);
   }
 
-  onDragEnter() {
-    if (!this.readyToUpload()) {
+  onDragEnter(event) {
+    if (!this.readyToUpload() || (!event.dataTransfer.files.length && !event.dataTransfer.types.includes('Files'))) {
       return;
     }
     this.setState({ dragover: true });
@@ -88,7 +87,12 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
 
   onDrop(event: DragEvent) {
     this.setState({ dragover: false });
+    event.preventDefault();
     if (!event.dataTransfer || !event.dataTransfer.files.length) {
+      return;
+    }
+    if (event.dataTransfer.items.length && !event.dataTransfer.files.length) {
+      event.preventDefault();
       return;
     }
     event.preventDefault();
@@ -135,11 +139,22 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
         onDragEnter={this.onDragEnter.bind(this)}
         onDragOver={event => {
           event.preventDefault();
-          if (!this.state.dragover) {
+          if (
+            !this.state.dragover
+            && (
+              (event.dataTransfer.files.length && event.dataTransfer.files[0].kind === 'file')
+              || (event.dataTransfer.items.length && event.dataTransfer.items[0].kind === 'file')
+            )
+          ) {
             this.setState({ dragover: true });
           }
         }}
-        onDragLeave={() => this.setState({ dragover: false })}
+        onDragLeave={(event) => {
+          const over = document.elementFromPoint(event.clientX, event.clientY);
+          if (!over || !event.currentTarget.contains(over)) {
+            this.setState({ dragover: false });
+          }}
+        }
         onDrop={this.onDrop.bind(this)}
       >
         {this.state.dragover ? <SubmitDragger /> : null}

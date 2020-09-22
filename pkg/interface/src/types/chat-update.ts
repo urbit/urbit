@@ -69,7 +69,7 @@ export interface Envelope {
   uid: string;
   number: number;
   author: Patp;
-  when: string;
+  when: number;
   letter: Letter;
 }
 

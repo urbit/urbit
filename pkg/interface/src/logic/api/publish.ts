@@ -10,7 +10,7 @@ export default class PublishApi extends BaseApi {
   }
 
   fetchNotebooks() {
-    fetch('/publish-view/notebooks.json')
+    return fetch('/publish-view/notebooks.json')
     .then(response => response.json())
     .then((json) => {
       this.handleEvent({
@@ -21,7 +21,7 @@ export default class PublishApi extends BaseApi {
   }
 
   fetchNotebook(host: PatpNoSig, book: BookId) {
-    fetch(`/publish-view/${host}/${book}.json`)
+    return fetch(`/publish-view/${host}/${book}.json`)
     .then(response => response.json())
     .then((json) => {
       this.handleEvent({
@@ -34,7 +34,7 @@ export default class PublishApi extends BaseApi {
   }
 
   fetchNote(host: PatpNoSig, book: BookId, note: NoteId) {
-    fetch(`/publish-view/${host}/${book}/${note}.json`)
+    return fetch(`/publish-view/${host}/${book}/${note}.json`)
     .then(response => response.json())
     .then((json) => {
       this.handleEvent({
@@ -48,7 +48,7 @@ export default class PublishApi extends BaseApi {
   }
 
   fetchNotesPage(host: PatpNoSig, book: BookId, start: number, length: number) {
-    fetch(`/publish-view/notes/${host}/${book}/${start}/${length}.json`)
+    return fetch(`/publish-view/notes/${host}/${book}/${start}/${length}.json`)
     .then(response => response.json())
     .then((json) => {
       this.handleEvent({
@@ -63,7 +63,7 @@ export default class PublishApi extends BaseApi {
   }
 
   fetchCommentsPage(host: PatpNoSig, book: BookId, note: NoteId, start: number, length: number) {
-    fetch(`/publish-view/comments/${host}/${book}/${note}/${start}/${length}.json`)
+    return fetch(`/publish-view/comments/${host}/${book}/${note}/${start}/${length}.json`)
     .then(response => response.json())
     .then((json) => {
       this.handleEvent({
@@ -75,6 +75,24 @@ export default class PublishApi extends BaseApi {
         startIndex: start,
         length: length
       });
+    });
+  }
+
+  subscribeNotebook(who: PatpNoSig, book: BookId) {
+    return this.publishAction({
+      subscribe: {
+        who,
+        book
+      }
+    });
+  }
+
+  unsubscribeNotebook(who: PatpNoSig, book: BookId) {
+    return this.publishAction({
+      unsubscribe: {
+        who,
+        book
+      }
     });
   }
 

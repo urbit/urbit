@@ -1,11 +1,12 @@
 import React, { Component, Fragment } from 'react';
-import { deSig } from '~/logic/lib/util';
 
-import { ChatHeader } from './lib/chat-header';
+import { deSig } from '~/logic/lib/util';
 import { MetadataSettings } from '~/views/components/metadata/settings';
+import { Spinner } from '~/views/components/Spinner';
+
+import ChatHeader from './lib/ChatHeader';
 import { DeleteButton } from './lib/delete-button';
 import { GroupifyButton } from './lib/groupify-button';
-import { Spinner } from '~/views/components/Spinner';
 
 export class SettingsScreen extends Component {
   constructor(props) {
@@ -66,7 +67,8 @@ export class SettingsScreen extends Component {
       groups,
       api,
       station,
-      match
+      match,
+      history
     } = this.props;
     const isOwner = deSig(match.params.ship) === window.ship;
 
@@ -87,6 +89,7 @@ export class SettingsScreen extends Component {
           station={station}
           association={association}
           contacts={contacts}
+          history={history}
           api={api} />
         <MetadataSettings
           isOwner={isOwner}
