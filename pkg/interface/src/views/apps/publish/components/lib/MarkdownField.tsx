@@ -1,27 +1,38 @@
-import React from 'react';
-import styled from 'styled-components';
-import { MarkdownEditor as _MarkdownEditor, Box, ErrorMessage } from '@tlon/indigo-react';
-import { useField } from 'formik';
+import React, { useCallback } from "react";
+import styled from "styled-components";
+import { Box, ErrorLabel } from "@tlon/indigo-react";
+import { useField } from "formik";
+import { MarkdownEditor } from "~/views/components/MarkdownEditor";
 
-const MarkdownEditor = styled(_MarkdownEditor)`
-  border: 1px solid ${(p) => p.theme.colors.lightGray};
-  border-radius: ${(p) => p.theme.radii[2]}px;
-`;
+export const MarkdownField = ({
+  id,
+  ...rest
+}: { id: string } & Parameters<typeof Box>[0]) => {
+  const [{ value }, { error, touched }, { setValue, setTouched }] = useField(
+    id
+  );
 
-export const MarkdownField = ({ id, ...rest }: { id: string; } & Parameters<typeof Box>[0]) => {
-  const [{ value }, { error, touched }, { setValue, setTouched }] = useField(id);
+  const onChange = useCallback(
+    (s: string) => {
+      setValue(s);
+      setTouched(true);
+    },
+    [setValue, setTouched]
+  );
 
   return (
-    <Box overflowY="hidden" width="100%" display="flex" flexDirection="column" {...rest}>
-      <MarkdownEditor
-        onFocus={() => setTouched(true)}
-        onBlur={() => setTouched(false)}
-        value={value}
-        onBeforeChange={(e, d, v) => setValue(v)}
-      />
-      <ErrorMessage>{touched && error}</ErrorMessage>
+    <Box
+      border={1}
+      borderRadius={1}
+      borderColor="washedGray"
+      overflowY="hidden"
+      width="100%"
+      display="flex"
+      flexDirection="column"
+      {...rest}
+    >
+      <MarkdownEditor content={value} onChange={onChange} />
+      <ErrorLabel>{touched && error}</ErrorLabel>
     </Box>
   );
 };
-
-
