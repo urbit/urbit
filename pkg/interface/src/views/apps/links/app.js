@@ -19,7 +19,7 @@ import {
 } from '~/logic/lib/util';
 
 
-export class LinksApp extends Component {
+export default class LinksApp extends Component {
   componentDidMount() {
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
@@ -46,7 +46,10 @@ export class LinksApp extends Component {
     const invites = props.invites ?
       props.invites : {};
 
-    const { api, sidebarShown, hideAvatars, hideNicknames, s3, remoteContentPolicy } = this.props;
+    const {
+      api, sidebarShown, s3,
+      hideAvatars, hideNicknames, remoteContentPolicy
+    } = this.props;
 
     return (
       <>
@@ -55,42 +58,38 @@ export class LinksApp extends Component {
         </Helmet>
         <Switch>
           <Route exact path="/~link"
-            render={ (props) => {
-              return (
-                <Skeleton
-                  active="collections"
-                  associations={associations}
-                  invites={invites}
-                  groups={groups}
-                  rightPanelHide={true}
-                  sidebarShown={sidebarShown}
-                  api={api}
-                  graphKeys={graphKeys}>
-                  <MessageScreen text="Select or create a collection to begin." />
-                </Skeleton>
-              );
-            }}
+            render={ (props) => (
+              <Skeleton
+                active="collections"
+                associations={associations}
+                invites={invites}
+                groups={groups}
+                rightPanelHide={true}
+                sidebarShown={sidebarShown}
+                api={api}
+                graphKeys={graphKeys}>
+                <MessageScreen text="Select or create a collection to begin." />
+              </Skeleton>
+            )}
           />
           <Route exact path="/~link/new"
-            render={(props) => {
-              return (
-                <Skeleton
-                  associations={associations}
-                  invites={invites}
-                  groups={groups}
-                  sidebarShown={sidebarShown}
+            render={ (props) => (
+              <Skeleton
+                associations={associations}
+                invites={invites}
+                groups={groups}
+                sidebarShown={sidebarShown}
+                api={api}
+                graphKeys={graphKeys}>
+                <NewScreen
                   api={api}
-                  graphKeys={graphKeys}>
-                  <NewScreen
-                    api={api}
-                    graphKeys={graphKeys}
-                    associations={associations}
-                    groups={groups}
-                    {...props}
-                  />
-                </Skeleton>
-              );
-            }}
+                  graphKeys={graphKeys}
+                  associations={associations}
+                  groups={groups}
+                  {...props}
+                />
+              </Skeleton>
+            )}
           />
           <Route exact path="/~link/(popout)?/:ship/:name/settings"
             render={ (props) => {
@@ -229,4 +228,3 @@ export class LinksApp extends Component {
   }
 }
 
-export default LinksApp;

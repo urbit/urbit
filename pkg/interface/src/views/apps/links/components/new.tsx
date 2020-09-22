@@ -36,14 +36,16 @@ export function NewScreen(props: object) {
           resourceId,
           name,
           description,
-          group
+          group,
+          "link"
         );
       } else {
         await props.api.graph.createUnmanagedGraph(
           resourceId,
           name,
           description,
-          { invite: { pending: [] } }
+          { invite: { pending: [] } },
+          "link"
         );
       }
 
