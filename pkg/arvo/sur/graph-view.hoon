@@ -33,6 +33,7 @@
         description=@t
         mark=(unit mark)
         =associated
+        module=@t
     ==
     [%delete rid=resource]
     [%leave rid=resource]
