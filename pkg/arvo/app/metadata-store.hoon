@@ -89,10 +89,11 @@
         %*  .  *state-3
             associations
           %-  malt
-          %+  turn  ~(tap by associations.old)
+          %+  murn  ~(tap by associations.old)
           |=  [[=group-path =md-resource] m=metadata-0]
-          :-  [group-path md-resource]
-          (old-md-to-new m)
+          ^-  (unit [[^group-path ^md-resource] metadata])
+          ?:  =(app-name.md-resource %link)  ~
+          `[[group-path md-resource] (old-md-to-new m)]
         ==
       $(old new-state)
     ?:  ?=(%1 -.old)
