@@ -4,6 +4,7 @@
 #include <inttypes.h>
 #include <ur/defs.h>
 #include <ur/bitstream.h>
+#include <ur/hashcons.h>
 
 /*
 **  bit-wise serialization of a noun into a byte-buffer.
