@@ -73,32 +73,31 @@ in dimensionWith "system" systems (systemName: system:
       };
     };
     
-    # Filter out attributes we don't want to recurse into for ci.
-    #
-    # We remove Haskell packages/projects and instead use the `haskellProject`
-    # function from above to force evaluation via `recurseIntoAttrs` and to better
-    # display the individual components instead of all the haskell-nix attributes.
-    extraPackages = {
-      urbit = staticPackages.urbit;
+    # # Filter out attributes we don't want to recurse into for ci.
+    # #
+    # # We remove Haskell packages/projects and instead use the `haskellProject`
+    # # function from above to force evaluation via `recurseIntoAttrs` and to better
+    # # display the individual components instead of all the haskell-nix attributes.
+    # extraPackages = {
+    #   urbit = staticPackages.urbit;
 
-      hs = dimensionHaskell pkgs "haskell" staticPackages.hs;
+    #   hs = dimensionHaskell pkgs "haskell" staticPackages.hs;
 
-      # Push the release tarball artefact to the remote storage bucket.
-      tarball = pushObject "urbit-${system}" "tar.gz" releaseTarball;
+    #   # Push the release tarball artefact to the remote storage bucket.
+    #   tarball = pushObject "urbit-${system}" "tar.gz" releaseTarball;
 
-      # Only push the pills if we're evaluating on a linux build agent.
-    } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
-        ivory = pushPill "ivory" sharedPackages.ivory;
-        brass = pushPill "brass" sharedPackages.brass;
-        solid = pushPill "solid" sharedPackages.solid;
+    #   # Only push the pills if we're evaluating on a linux build agent.
+    # } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+    #   ivory = pushPill "ivory" sharedPackages.ivory;
+    #   brass = pushPill "brass" sharedPackages.brass;
+    #   solid = pushPill "solid" sharedPackages.solid;
 
-        ivory-ropsten = pushPill "ivory-ropsten" sharedPackages.ivory-ropsten;
-        brass-ropsten = pushPill "brass-ropsten" sharedPackages.brass-ropsten;
-      };
-    };
+    #   ivory-ropsten = pushPill "ivory-ropsten" sharedPackages.ivory-ropsten;
+    #   brass-ropsten = pushPill "brass-ropsten" sharedPackages.brass-ropsten;
+    # };
 
     platformFilter = platformFilterGeneric pkgs.lib system;
 
-  in filterAttrsOnlyRecursive pkgs.lib (_: v: platformFilter v)
-      (sharedPackages // extraPackages)
+  in filterAttrsOnlyRecursive pkgs.lib (_: v: platformFilter v) sharedPackages
+      # (sharedPackages // extraPackages)
 )
