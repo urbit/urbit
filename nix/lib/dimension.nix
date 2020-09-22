@@ -1,9 +1,7 @@
-{ recurseIntoAttrs, haskell-nix }:
-
 # Borrowed from https://github.com/cachix/ghcide-nix/pull/4/files#diff-70bfff902f4dec33e545cac10ee5844d
 # Tweaked to use builtins.mapAttrs instead of needing the one from nixpkgs lib
-rec {
-  /*
+
+/*
     dimension: name -> attrs -> function -> attrs
     where
       function: keyText -> value -> attrsOf package
@@ -80,36 +78,37 @@ rec {
                 }
               );
         in releases;
-   */
+*/
 
+rec {
   dimension = name: attrs:
     dimensionWith name attrs (_k: v: v);
 
   dimensionWith = name: attrs: f:
-    recurseIntoAttrs
-      ((builtins.mapAttrs
-        (k: v:
-          let o = f k v;
-          in o // { recurseForDerivations = o.recurseForDerivations or true; })
-        attrs)
-      // { meta.dimension.name = name; });
+    builtins.mapAttrs
+      (k: v:
+       let o = f k v;
+       in o // { recurseForDerivations = o.recurseForDerivations or true; }
+      )
+      attrs
+    // { meta.dimension.name = name; };
 
   # These functions pull out from the Haskell package all the components of
   # a particular type - which ci will then build as top-level attributes.
-  dimensionHaskell = name: project:
+  dimensionHaskell = pkgs: name: project:
     let
       collectChecks = _: xs:
-        recurseIntoAttrs (builtins.mapAttrs (_: x: x.checks) xs);
+        pkgs.recurseIntoAttrs (builtins.mapAttrs (_: x: x.checks) xs);
 
       collectComponents = type: xs:
-        haskell-nix.haskellLib.collectComponents' type xs;
+        pkgs.haskell-nix.haskellLib.collectComponents' type xs;
 
       packages =
-        haskell-nix.haskellLib.selectProjectPackages project;
+        pkgs.haskell-nix.haskellLib.selectProjectPackages project;
 
     # This computes the Haskell package set sliced by component type - these
     # are then displayed as the haskell build attributes in hercules ci.
-    in recurseIntoAttrs (dimensionWith name {
+    in pkgs.recurseIntoAttrs (dimensionWith name {
       library = collectComponents;
       tests = collectComponents;
       benchmarks = collectComponents;
