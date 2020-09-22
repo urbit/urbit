@@ -136,7 +136,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
     if (stationPendingMessages.length !== prevProps.stationPendingMessages.length) {
       this.virtualList?.calculateVisibleItems();
-      this.virtualList?.scrollToData(mailboxSize);
     }
 
     if (!this.state.fetchPending && prevState.fetchPending) {
