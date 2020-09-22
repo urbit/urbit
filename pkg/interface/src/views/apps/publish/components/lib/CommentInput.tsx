@@ -48,7 +48,7 @@ export default function CommentInput(props: CommentInputProps) {
           id="comment"
           placeholder={props.placeholder || ""}
         />
-        <AsyncButton loadingText={loading} border type="submit">
+        <AsyncButton mt={2} loadingText={loading} border type="submit">
           {label}
         </AsyncButton>
       </Form>

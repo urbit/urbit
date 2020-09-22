@@ -106,7 +106,8 @@ export function Sidebar(props: any) {
       pt={[3, 0]}
       overflowY="auto"
       display={display}
-      maxWidth={["none", "250px"]}
+      flexShrink={0}
+      width={["auto", "250px"]}
     >
       <Box>
         <Link to="/~publish/new" className="green2 pa4 f9 dib">

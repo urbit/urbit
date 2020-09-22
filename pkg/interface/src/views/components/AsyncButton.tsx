@@ -37,7 +37,7 @@ export function AsyncButton({
     <Button border disabled={!isValid} type="submit" {...rest}>
       {isSubmitting ? (
         <LoadingSpinner
-          foreground="white"
+          foreground={rest.primary ? "white" : 'black'}
           background="transparent"
           awaiting
           text={loadingText}

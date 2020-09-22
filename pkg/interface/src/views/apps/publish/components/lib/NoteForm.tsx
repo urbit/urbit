@@ -1,6 +1,6 @@
 import React from "react";
 import * as Yup from "yup";
-import { Box, Input } from "@tlon/indigo-react";
+import { Box, ManagedTextInputField as Input } from "@tlon/indigo-react";
 import { AsyncButton } from "../../../../components/AsyncButton";
 import { Formik, Form, FormikHelpers } from "formik";
 import { MarkdownField } from "./MarkdownField";
