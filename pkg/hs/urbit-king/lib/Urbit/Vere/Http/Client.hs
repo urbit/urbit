@@ -17,7 +17,7 @@ import Urbit.Arvo (BlipEv(..), Ev(..), HttpClientEf(..), HttpClientEv(..),
                    HttpClientReq(..), HttpEvent(..), KingId, ResponseHeader(..))
 
 
-import qualified Data.Map                as M
+import qualified Data.Map.Strict         as M
 import qualified Network.HTTP.Client     as H
 import qualified Network.HTTP.Client.TLS as TLS
 import qualified Network.HTTP.Types      as HT
