@@ -48,9 +48,9 @@ let
   # Utilise nixpkgs's top-level/static.nix overlay if required.
   hostPackages = if withStatic then pkgs.pkgsStatic else pkgs;
 
-  # Local library functions such as `fetchGitHubLFS`, etc. which local package
-  # defintions are dependent.
-  localLib = pkgs.callPackage ./nix/lib { };
+  # Local library import from derivation functions such as `fetchGitHubLFS`, etc.
+  # upon which local package defintions are dependent.
+  localLib = pkgs.callPackage ./nix/drv { };
 
   # Local vendored packages defined in `./pkg`.
   # For non-vendored nixpkgs specific package overrides, see `./nix/overlays`.

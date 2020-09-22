@@ -12,43 +12,19 @@ Examples
 
 let
 
-  pkgs = import ./nix/pkgs.nix { };
-
-  inherit (pkgs.callPackage ./nix/lib { })
+  inherit (import ./nix/lib)
     dimensionWith
     dimension
     dimensionHaskell
-    makeReleaseTarball
-    pushStorageObject
     platformFilterGeneric
     filterAttrsOnlyRecursive;
+
+  pkgs = import ./nix/pkgs.nix { };
+  drv = pkgs.callPackage ./nix/drv { };
 
   # The key with google storage bucket write permission,
   # deployed to ci via nixops `deployment.keys."service-account.json"`.
   serviceAccountKey = builtins.readFile ("/var/run/keys/service-account.json");
-
-  # Sources are expected to be a split-derivation containing "out" and "md5".
-  pushObject = name: extension: src:
-    let md5 = builtins.readFile src.md5;
-    in pushStorageObject {
-      inherit serviceAccountKey md5;
-
-      src = src.out;
-      bucket = "tlon-us-terraform";
-      object = "releases/${name}-${md5}.${extension}";
-    };
-
-  # Push a pill with the ".build" file extension.
-  pushPill = name: src: pushObject name "pill" src.build;
-
-  makeTarball = ps: makeReleaseTarball {
-    name = "urbit";
-    contents = {
-      "urbit" = "${ps.urbit}/bin/urbit";
-      "urbit-worker" = "${ps.urbit}/bin/urbit-worker";
-      "urbit-king" = "${ps.hs.urbit-king.components.exes.urbit-king}/bin/urbit-king";
-    };
-  };
 
   systems = pkgs.lib.filterAttrs (_: v: builtins.elem v supportedSystems) {
     linux = "x86_64-linux";
@@ -58,6 +34,22 @@ let
 in dimensionWith "system" systems (systemName: system:
 
   let
+
+    # Sources are expected to be a split-derivation containing "out" and "md5"
+    # attributes.
+    pushObject = name: extension: src:
+      let md5 = builtins.readFile src.md5;
+      in drv.pushStorageObject {
+        inherit serviceAccountKey md5;
+
+        src = src.out;
+        bucket = "tlon-us-terraform";
+        object = "releases/${name}-${md5}.${extension}";
+      };
+
+    # Push a pill split-derivation containing "build" attribute with the
+    # with the ".pill" file extension.
+    pushPill = name: src: pushObject name "pill" src.build;
 
     # Instantiate shared and static libraries/executables for the specific system.
     sharedPackages = import ./default.nix { inherit system; };
@@ -71,6 +63,16 @@ in dimensionWith "system" systems (systemName: system:
           else null;
     };
 
+    releaseTarball = drv.makeReleaseTarball {
+      name = "urbit-${system}";
+      contents = {
+        "urbit" = "${staticPackages.urbit}/bin/urbit";
+        "urbit-worker" = "${staticPackages.urbit}/bin/urbit-worker";
+        "urbit-king" =
+          "${staticPackages.hs.urbit-king.components.exes.urbit-king}/bin/urbit-king";
+      };
+    };
+    
     # Filter out attributes we don't want to recurse into for ci.
     #
     # We remove Haskell packages/projects and instead use the `haskellProject`
@@ -79,11 +81,11 @@ in dimensionWith "system" systems (systemName: system:
     extraPackages = {
       urbit = staticPackages.urbit;
 
-      hs = dimensionHaskell "haskell" staticPackages.hs;
+      hs = dimensionHaskell pkgs "haskell" staticPackages.hs;
 
       # Push various artefacts to the remote storage bucket.
-      release = dimension "release" {
-        tarball = pushObject "urbit-${system}" "tar.gz" (makeTarball staticPackages);
+      push = dimension "push" {
+        tarball = pushObject "urbit-${system}" "tar.gz" releaseTarball;
 
         ivory = pushPill "ivory" sharedPackages.ivory;
         brass = pushPill "brass" sharedPackages.brass;
@@ -94,5 +96,8 @@ in dimensionWith "system" systems (systemName: system:
       };
     };
 
-  in filterAttrsOnlyRecursive (_: v: platformFilterGeneric system v) (sharedPackages // extraPackages)
+    platformFilter = platformFilterGeneric pkgs.lib system;
+
+  in filterAttrsOnlyRecursive pkgs.lib (_: v: platformFilter v)
+      (sharedPackages // extraPackages)
 )
