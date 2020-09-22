@@ -7,46 +7,21 @@ Examples
     $ NIX_PATH="" nix-instantiate ci.nix
 
 */
-{ system ? builtins.currentSystem }:
+
+{ supportedSystems ? [ "x86_64-linux" "x86_64-darwin" ] }:
 
 let
 
-  pkgs = import ./nix/pkgs.nix { inherit system; };
+  pkgs = import ./nix/pkgs.nix { };
 
-  localLib = pkgs.callPackage ./nix/lib { };
-
-  sharedPackages = import ./default.nix { inherit system; };
-  staticPackages = import ./default.nix {
-    inherit system;
-
-    withStatic = true;
-    crossSystem =
-      if pkgs.stdenv.isLinux
-        then pkgs.lib.systems.examples.musl64
-        else null;
-  };
-
-  # These functions pull out from the Haskell package all the components of
-  # a particular type - which ci will then build as top-level attributes.
-  haskellProject = project:
-    let
-      collectChecks = _: xs:
-        pkgs.recurseIntoAttrs (builtins.mapAttrs (_: x: x.checks) xs);
-
-      collectComponents = type: xs:
-        pkgs.haskell-nix.haskellLib.collectComponents' type xs;
-
-      packages = pkgs.haskell-nix.haskellLib.selectProjectPackages project;
-
-    # This computes the Haskell package set sliced by component type - these
-    # are then displayed as the haskell build attributes in hercules ci.
-    in pkgs.recurseIntoAttrs (localLib.dimensionWith "haskell" {
-      library = collectComponents;
-      tests = collectComponents;
-      benchmarks = collectComponents;
-      exes = collectComponents;
-      checks = collectChecks;
-    } (type: selector: (selector type) packages));
+  inherit (pkgs.callPackage ./nix/lib { })
+    dimensionWith
+    dimension
+    dimensionHaskell
+    makeReleaseTarball
+    pushStorageObject
+    platformFilterGeneric
+    filterAttrsOnlyRecursive;
 
   # The key with google storage bucket write permission,
   # deployed to ci via nixops `deployment.keys."service-account.json"`.
@@ -55,7 +30,7 @@ let
   # Sources are expected to be a split-derivation containing "out" and "md5".
   pushObject = name: extension: src:
     let md5 = builtins.readFile src.md5;
-    in localLib.pushStorageObject {
+    in pushStorageObject {
       inherit serviceAccountKey md5;
 
       src = src.out;
@@ -66,7 +41,7 @@ let
   # Push a pill with the ".build" file extension.
   pushPill = name: src: pushObject name "pill" src.build;
 
-  makeTarball = ps: localLib.makeReleaseTarball {
+  makeTarball = ps: makeReleaseTarball {
     name = "urbit";
     contents = {
       "urbit" = "${ps.urbit}/bin/urbit";
@@ -75,27 +50,49 @@ let
     };
   };
 
-  # Filter out attributes we don't want to recurse into for ci.
-  #
-  # We remove Haskell packages/projects and instead use the `haskellProject`
-  # function from above to force evaluation via `recurseIntoAttrs` and to better
-  # display the individual components instead of all the haskell-nix attributes.
-  extraPackages = {
-    urbit = staticPackages.urbit;
-
-    hs = haskellProject staticPackages.hs;
-
-    # Push various artefacts to the remote storage bucket.
-    release = localLib.dimension "release" {
-      tarball = pushObject "urbit" "tar.gz" (makeTarball staticPackages);
-
-      ivory = pushPill "ivory" sharedPackages.ivory;
-      brass = pushPill "brass" sharedPackages.brass;
-      solid = pushPill "solid" sharedPackages.solid;
-
-      ivory-ropsten = pushPill "ivory-ropsten" sharedPackages.ivory-ropsten;
-      brass-ropsten = pushPill "brass-ropsten" sharedPackages.brass-ropsten;
-    };
+  systems = pkgs.lib.filterAttrs (_: v: builtins.elem v supportedSystems) {
+    linux = "x86_64-linux";
+    darwin = "x86_64-darwin";
   };
 
-in localLib.dimension "system" (sharedPackages // extraPackages)
+in dimensionWith "system" systems (systemName: system:
+
+  let
+
+    # Instantiate shared and static libraries/executables for the specific system.
+    sharedPackages = import ./default.nix { inherit system; };
+    staticPackages = import ./default.nix {
+      inherit system;
+
+      withStatic = true;
+      crossSystem =
+        if pkgs.stdenv.isLinux
+          then pkgs.lib.systems.examples.musl64
+          else null;
+    };
+
+    # Filter out attributes we don't want to recurse into for ci.
+    #
+    # We remove Haskell packages/projects and instead use the `haskellProject`
+    # function from above to force evaluation via `recurseIntoAttrs` and to better
+    # display the individual components instead of all the haskell-nix attributes.
+    extraPackages = {
+      urbit = staticPackages.urbit;
+
+      hs = dimensionHaskell "haskell" staticPackages.hs;
+
+      # Push various artefacts to the remote storage bucket.
+      release = dimension "release" {
+        tarball = pushObject "urbit-${system}" "tar.gz" (makeTarball staticPackages);
+
+        ivory = pushPill "ivory" sharedPackages.ivory;
+        brass = pushPill "brass" sharedPackages.brass;
+        solid = pushPill "solid" sharedPackages.solid;
+
+        ivory-ropsten = pushPill "ivory-ropsten" sharedPackages.ivory-ropsten;
+        brass-ropsten = pushPill "brass-ropsten" sharedPackages.brass-ropsten;
+      };
+    };
+
+  in filterAttrsOnlyRecursive (_: v: platformFilterGeneric system v) (sharedPackages // extraPackages)
+)
