@@ -240,7 +240,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     let lastMessage = 0;
     
     [...envelopes]
-      .sort((a, b) => a.when - b.when)
+      .sort((a, b) => a.number - b.number)
       .forEach(message => {
         messages.set(message.number, message);
         lastMessage = message.number;
