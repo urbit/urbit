@@ -7,7 +7,6 @@ Examples
     $ NIX_PATH="" nix-instantiate ci.nix
 
 */
-
 { system ? builtins.currentSystem }:
 
 let
