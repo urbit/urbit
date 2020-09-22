@@ -37,7 +37,7 @@
 ?^  group
   ::  We have group, graph is managed
   ;<  ~  bind:m  
-     %+  poke-our   %graph-pull-hook
+     %+  poke-our  %graph-pull-hook
      pull-hook-action+!>([%add ship.action rid.action])
   (pure:m !>(~))
 :: Else, add group then join

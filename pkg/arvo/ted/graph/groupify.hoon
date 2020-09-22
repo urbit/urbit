@@ -30,8 +30,7 @@
   |=  rid=resource
   =/  m  (strand ,metadata)
   ^-  form:m
-  =/  enc-path=@t
-    (scot %t (spat (en-path:resource rid)))
+  =/  enc-path=@t  (scot %t (spat (en-path:resource rid)))
   ;<  umeta=(unit metadata)  bind:m
     %+  scry:strandio  (unit metadata)
     %+  weld  /gx/metadata-store/metadata
@@ -49,19 +48,17 @@
 ;<  =group  bind:m  (scry-group rid.action)
 ?.  hidden.group
   (strand-fail:strandio %bad-request ~)
-;<  =metadata  bind:m
-  (scry-metadatum rid.action)
+;<  =metadata  bind:m  (scry-metadatum rid.action)
 ?~  to.action
   ;<  ~  bind:m
     %+  poke-our  %contact-view
-    contact-view-action+!>([%groupify rid.action title.metadata description.metadata])
+    :-  %contact-view-action
+    !>([%groupify rid.action title.metadata description.metadata])
   (pure:m !>(~))
 ;<  new=^group  bind:m  (scry-group u.to.action)
 ?<  hidden.new
-=/  new-path
-  (en-path:resource u.to.action)
-=/  app-path
-  (en-path:resource rid.action)
+=/  new-path  (en-path:resource u.to.action)
+=/  app-path  (en-path:resource rid.action)
 =/  add-md=metadata-action
   [%add new-path graph+app-path metadata]
 ;<  ~  bind:m

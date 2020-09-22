@@ -47,10 +47,11 @@
 ::
 =/  =metadata
   %*  .  *metadata
-    title  title.action
-    description  description.action
+    title         title.action
+    description   description.action
     date-created  now.bowl
-    creator  our.bowl
+    creator       our.bowl
+    module        module.action
   ==
 =/  act=metadata-action
   [%add group-path graph+(en-path:resource rid.action) metadata]

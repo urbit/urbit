@@ -35,7 +35,8 @@ export default class GraphApi extends BaseApi<StoreState> {
     name: string,
     title: string,
     description: string,
-    group: Path
+    group: Path,
+    mod: string
   ) {
     const associated = { group: resourceFromPath(group) };
     const resource = makeResource(`~${window.ship}`, name);
@@ -45,7 +46,8 @@ export default class GraphApi extends BaseApi<StoreState> {
         resource,
         title,
         description,
-        associated
+        associated,
+        "module": mod
       }
     });
   }
@@ -54,7 +56,8 @@ export default class GraphApi extends BaseApi<StoreState> {
     name: string,
     title: string,
     description: string,
-    policy: Enc<GroupPolicy>
+    policy: Enc<GroupPolicy>,
+    mod: string
   ) {
     const resource = makeResource(`~${window.ship}`, name);
 
@@ -63,7 +66,8 @@ export default class GraphApi extends BaseApi<StoreState> {
         resource,
         title,
         description,
-        associated: { policy }
+        associated: { policy },
+        "module": mod
       }
     });
   }

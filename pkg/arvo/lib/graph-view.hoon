@@ -26,6 +26,7 @@
           description+(un so)
           mark+(uf ~ (mu so))
           associated+(un associated)
+          module+(un so)
       ==
     ::
     ++  leave
