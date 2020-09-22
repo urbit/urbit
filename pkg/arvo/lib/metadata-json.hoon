@@ -78,7 +78,6 @@
       [%date-created s+(scot %da date-created.met)]
       [%creator s+(scot %p creator.met)]
       [%module s+module.met]
-
   ==
 ::
 ++  update-to-json
