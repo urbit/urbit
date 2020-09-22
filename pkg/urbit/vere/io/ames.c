@@ -131,13 +131,11 @@ _ames_panc_free(u3_panc* pac_u) {
   c3_free(pac_u);
 }
 
-/* _ca_mug_body(): truncated mug hash of bytes
+/* _ames_mug_body(): truncated (20 least-significant bits) mug hash of bytes
 */
 static c3_l
-_ca_mug_body(c3_w len_w, c3_y* byt_y)
+_ames_mug_body(c3_w len_w, c3_y* byt_y)
 {
-  //  mask off ((1 << 20) - 1)
-  //
   return u3r_mug_bytes(byt_y, len_w) & 0xfffff;
 }
 
@@ -434,7 +432,7 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
     //  if we updated the origin lane, we need to update the mug too
     //
     if ( c3y == nal_o ) {
-      pac_u->hed_u.mug_l = _ca_mug_body(sen_y + rec_y + bod_u->con_w,
+      pac_u->hed_u.mug_l = _ames_mug_body(sen_y + rec_y + bod_u->con_w,
                                         pac_y + 4);
     }
 
@@ -800,7 +798,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   //  ensure the mug is valid
   //
   if ( c3y == pas_o
-    && (hed_u.mug_l != _ca_mug_body(nrd_i - 4, bod_y)) )
+    && (hed_u.mug_l != _ames_mug_body(nrd_i - 4, bod_y)) )
   {
     pas_o = c3n;
 
