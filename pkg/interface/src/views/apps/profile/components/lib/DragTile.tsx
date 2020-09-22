@@ -4,11 +4,11 @@ import { usePreview } from "react-dnd-multi-backend";
 import { capitalize } from "lodash";
 import { TileTypeBasic, Tile } from "../../../../types/launch-update";
 
-import { Box, Img as _Img, Text } from "@tlon/indigo-react";
+import { Box, Image as _Image, Text } from "@tlon/indigo-react";
 import styled from "styled-components";
 
 // Need to change dojo image
-const Img = styled(_Img)<{ invert?: boolean }>`
+const Image = styled(_Image)<{ invert?: boolean }>`
   ${(p) =>
     p.theme.colors.white !== "rgba(255,255,255,1)" ? `filter: invert(1);` : ``}
 

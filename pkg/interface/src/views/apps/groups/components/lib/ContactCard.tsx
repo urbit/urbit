@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { EditElement } from "./edit-element";
 import { Spinner } from "~/views/components/Spinner";
 import { uxToHex } from "~/logic/lib/util";
-import { Col, Input, Box, Text, Row } from "@tlon/indigo-react";
+import { Col, ManagedTextInputField as Input, Box, Text, Row } from "@tlon/indigo-react";
 import { Formik, Form, FormikHelpers } from "formik";
 import { Contact } from "~/types/contact-update";
 import { AsyncButton } from "~/views/components/AsyncButton";

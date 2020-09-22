@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, Col, Button, InputLabel, InputCaption } from "@tlon/indigo-react";
+import { Box, Col, Button, Label } from "@tlon/indigo-react";
 import GlobalApi from "~/logic/api/global";
 import { Notebook } from "~/types/publish-update";
 import { Contacts } from "~/types/contact-update";
@@ -50,11 +50,11 @@ export function Settings(props: SettingsProps) {
       <MetadataForm {...props} />
       <Divider />
       <Col mb={4}>
-        <InputLabel>Delete Notebook</InputLabel>
-        <InputCaption>
+        <Label>Delete Notebook</Label>
+        <Label gray mt="2">
           Permanently delete this notebook. (All current members will no longer
           see this notebook.)
-        </InputCaption>
+        </Label>
         <Button onClick={onDelete} mt={1} border error>
           Delete this notebook
         </Button>

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 
 import {
-  Input,
+  ManagedTextInputField as Input,
   Box,
   Button,
   Col,

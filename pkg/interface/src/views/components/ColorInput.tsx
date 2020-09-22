@@ -1,7 +1,7 @@
 import React from "react";
 import { useField } from "formik";
 import styled from "styled-components";
-import { Col, InputLabel, Row, Box, ErrorMessage } from "@tlon/indigo-react";
+import { Col, Label, Row, Box, ErrorLabel } from "@tlon/indigo-react";
 
 import { uxToHex, hexToUx } from "~/logic/lib/util";
 
@@ -44,7 +44,7 @@ export function ColorInput(props: ColorInputProps) {
 
   return (
     <Col {...rest}>
-      <InputLabel htmlFor={id}>{label}</InputLabel>
+      <Label htmlFor={id}>{label}</Label>
       <Row mt={2}>
         <Input onChange={onChange} value={hex} />
         <Box
@@ -58,7 +58,7 @@ export function ColorInput(props: ColorInputProps) {
           bg={`#${padded}`}
         />
       </Row>
-      <ErrorMessage mt="2">{error}</ErrorMessage>
+      <ErrorLabel mt="2">{error}</ErrorLabel>
     </Col>
   );
 }

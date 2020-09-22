@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 
 import {
-  Input,
+  ManagedTextInputField as Input,
   Box,
   Button,
   Col,
@@ -13,7 +13,7 @@ import {
 } from "@tlon/indigo-react";
 import { Formik, Form } from "formik";
 
-import GlobalApi from "../../../../api/global";
+import GlobalApi from "~/logic/api/global";
 
 export function BucketList({
   buckets,

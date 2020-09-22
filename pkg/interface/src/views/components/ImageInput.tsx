@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, useState } from "react";
 
-import { Box, Input, Img, Button } from "@tlon/indigo-react";
+import { Box, ManagedTextInputField as Input, Button } from "@tlon/indigo-react";
 import GlobalApi from "~/api/global";
 import { useField } from "formik";
 import { S3State } from "~/types/s3-update";

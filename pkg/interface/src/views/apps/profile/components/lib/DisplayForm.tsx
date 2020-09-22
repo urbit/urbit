@@ -2,8 +2,8 @@ import React from "react";
 
 import {
   Box,
-  InputLabel,
-  Checkbox,
+  Label,
+  ManagedCheckboxField as Checkbox,
   Button,
 } from "@tlon/indigo-react";
 import { Formik, Form } from "formik";
@@ -107,9 +107,9 @@ export default function DisplayForm(props: DisplayFormProps) {
               Display Preferences
             </Box>
             <Box mb={2}>
-              <InputLabel display="block" pb={2}>
+              <Label display="block" pb={2}>
                 Tile Order
-              </InputLabel>
+              </Label>
               <DropLaunchTiles
                 id="tileOrdering"
                 name="tileOrdering"

@@ -1,9 +1,14 @@
-import React from 'react';
-import { Box, InputLabel, Radio, Input } from '@tlon/indigo-react';
+import React from "react";
+import {
+  Box,
+  Label,
+  ManagedRadioButtonField as Radio,
+  ManagedTextInputField as Input,
+} from "@tlon/indigo-react";
 
-import GlobalApi from '~/logic/api/global';
-import { S3State } from '~/types';
-import { ImageInput } from '~/views/components/ImageInput';
+import GlobalApi from "~/logic/api/global";
+import { S3State } from "~/types";
+import { ImageInput } from "~/views/components/ImageInput";
 
 export type BgType = "none" | "url" | "color";
 
@@ -20,7 +25,7 @@ export function BackgroundPicker({
 }) {
   return (
     <Box>
-      <InputLabel>Landscape Background</InputLabel>
+      <Label>Landscape Background</Label>
       <Box display="flex" alignItems="center">
         <Box mt={3} mr={7}>
           <Radio label="Image" id="url" name="bgType" />
@@ -41,7 +46,6 @@ export function BackgroundPicker({
               type="text"
               label="Color"
               id="bgColor"
-              name="bgColor"
             />
           )}
           <Radio label="None" id="none" name="bgType" />
@@ -50,5 +54,3 @@ export function BackgroundPicker({
     </Box>
   );
 }
-
-
