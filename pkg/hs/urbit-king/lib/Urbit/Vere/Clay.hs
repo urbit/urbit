@@ -191,7 +191,7 @@ clay env plan =
         atomically $ plan (EvErr syncEv syncFailed)
 
 
-        atomically $ modifyTVar
+        atomically $ modifyTVar'
             (cdMountPoints cd)
             (applyActionsToMountPoints desk actions)
 
@@ -206,7 +206,7 @@ clay env plan =
         let hashedActions = map (calculateActionHash dir) actions
         for_ hashedActions (performAction mountPoint)
 
-        atomically $ modifyTVar
+        atomically $ modifyTVar'
             (cdMountPoints cd)
             (applyActionsToMountPoints desk hashedActions)
 
@@ -214,7 +214,7 @@ clay env plan =
         logInfo $ displayShow ("(clay) ogre:", p, desk)
         pierPath <- view pierPathL
         removeDirectoryRecursive $ pierPath </> deskToPath desk
-        atomically $ modifyTVar (cdMountPoints cd) (M.delete desk)
+        atomically $ modifyTVar' (cdMountPoints cd) (M.delete desk)
 
 
     -- Change the structures off of the event into something we can work with

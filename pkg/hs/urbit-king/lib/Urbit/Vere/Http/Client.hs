@@ -126,7 +126,7 @@ client env plan = (initialEvents, runHttpClient)
     newReq :: HttpClientDrv -> ReqId -> HttpClientReq -> RIO e ()
     newReq drv id req = do
       async <- runReq drv id req
-      atomically $ modifyTVar (hcdLive drv) (insertMap id async)
+      atomically $ modifyTVar' (hcdLive drv) (insertMap id async)
 
     -- The problem with the original http client code was that it was written
     -- to the idea of what the events "should have" been instead of what they
