@@ -44,6 +44,7 @@ export function PostForm(props: PostFormProps) {
         validationSchema={formSchema}
         initialValues={initial}
         onSubmit={onSubmit}
+        validateOnBlur
       >
         <Form style={{ display: "contents" }}>
           <Input width="100%" placeholder="Post Title" id="title" />

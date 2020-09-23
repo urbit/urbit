@@ -29,6 +29,7 @@ interface NotebookProps {
 
 interface NotebookState {
   isUnsubscribing: boolean;
+  tab: string;
 }
 
 export class Notebook extends PureComponent<
@@ -44,7 +45,7 @@ export class Notebook extends PureComponent<
     this.setTab = this.setTab.bind(this);
   }
 
-  setTab(tab) {
+  setTab(tab: string) {
     this.setState({ tab });
   }
 
@@ -102,9 +103,7 @@ export class Notebook extends PureComponent<
         <Row justifyContent={["flex-start", "flex-end"]}>
           {isWriter && (
             <Link to={`/~publish/notebook/${ship}/${book}/new`}>
-              <Button primary border>
-                New Post
-              </Button>
+              <Button primary>New Post</Button>
             </Link>
           )}
           {!isOwn ? (
@@ -117,8 +116,7 @@ export class Notebook extends PureComponent<
             ) : (
               <Button
                 ml={isWriter ? 2 : 0}
-                error
-                border
+                destructive
                 onClick={() => {
                   this.setState({ isUnsubscribing: true });
                   api.publish
@@ -150,18 +148,22 @@ export class Notebook extends PureComponent<
               label="About"
               id="about"
             />
-            <Tab
-              selected={state.tab}
-              setSelected={this.setTab}
-              label="Subscribers"
-              id="subscribers"
-            />
-            <Tab
-              selected={state.tab}
-              setSelected={this.setTab}
-              label="Settings"
-              id="settings"
-            />
+            {isAdmin && (
+              <>
+                <Tab
+                  selected={state.tab}
+                  setSelected={this.setTab}
+                  label="Subscribers"
+                  id="subscribers"
+                />
+                <Tab
+                  selected={state.tab}
+                  setSelected={this.setTab}
+                  label="Settings"
+                  id="settings"
+                />
+              </>
+            )}
           </Tabs>
           {state.tab === "all" && (
             <NotebookPosts
@@ -173,7 +175,11 @@ export class Notebook extends PureComponent<
               hideNicknames={hideNicknames}
             />
           )}
-          {state.tab === "about" && <Box color="black">{notebook?.about}</Box>}
+          {state.tab === "about" && (
+            <Box mt="3" color="black">
+              {notebook?.about}
+            </Box>
+          )}
           {state.tab === "subscribers" && (
             <Subscribers
               host={ship}

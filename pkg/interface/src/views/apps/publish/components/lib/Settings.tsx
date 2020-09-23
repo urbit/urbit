@@ -20,7 +20,7 @@ interface SettingsProps {
 }
 
 const Divider = (props) => (
-  <Box {...props} mb={4} borderBottom={1} borderBottomColor="lightGray" />
+  <Box {...props} borderBottom={1} borderBottomColor="lightGray" />
 );
 export function Settings(props: SettingsProps) {
   const history = useHistory();
@@ -36,10 +36,11 @@ export function Settings(props: SettingsProps) {
     <Box
       mx="auto"
       maxWidth="300px"
-      mb={4}
+      my={4}
       gridTemplateColumns="1fr"
       gridAutoRows="auto"
       display="grid"
+      gridRowGap={5}
     >
       {isUnmanaged && (
         <>
@@ -55,7 +56,7 @@ export function Settings(props: SettingsProps) {
           Permanently delete this notebook. (All current members will no longer
           see this notebook.)
         </Label>
-        <Button onClick={onDelete} mt={1} border error>
+        <Button mt="2" onClick={onDelete} destructive>
           Delete this notebook
         </Button>
       </Col>
