@@ -1,7 +1,9 @@
 import React from "react";
 import {
   Box,
+  Row,
   Label,
+  Col,
   ManagedRadioButtonField as Radio,
   ManagedTextInputField as Input,
 } from "@tlon/indigo-react";
@@ -23,34 +25,32 @@ export function BackgroundPicker({
   api: GlobalApi;
   s3: S3State;
 }) {
+
+  const rowSpace = { my: 0, alignItems: 'center' };
+  const radioProps = { my: 4, mr: 4, name: 'bgType' };
   return (
-    <Box>
-      <Label>Landscape Background</Label>
-      <Box display="flex" alignItems="center">
-        <Box mt={3} mr={7}>
-          <Radio label="Image" id="url" name="bgType" />
-          {bgType === "url" && (
-            <ImageInput
-              api={api}
-              s3={s3}
-              id="bgUrl"
-              name="bgUrl"
-              label="URL"
-              url={bgUrl || ""}
-            />
-          )}
-          <Radio label="Color" id="color" name="bgType" />
-          {bgType === "color" && (
-            <Input
-              ml={4}
-              type="text"
-              label="Color"
-              id="bgColor"
-            />
-          )}
-          <Radio label="None" id="none" name="bgType" />
-        </Box>
-      </Box>
-    </Box>
+    <Col>
+      <Label mb="2">Landscape Background</Label>
+      <Row {...rowSpace}>
+        <Radio {...radioProps} label="Image" id="url" />
+        {bgType === "url" && (
+          <ImageInput
+            api={api}
+            s3={s3}
+            id="bgUrl"
+            name="bgUrl"
+            label="URL"
+            url={bgUrl || ""}
+          />
+        )}
+      </Row>
+      <Row {...rowSpace}>
+        <Radio label="Color" id="color" {...radioProps} />
+        {bgType === "color" && (
+          <Input ml={4} type="text" label="Color" id="bgColor" />
+        )}
+      </Row>
+      <Radio label="None" id="none" {...radioProps} />
+    </Col>
   );
 }

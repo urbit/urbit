@@ -83,7 +83,7 @@ function DragTileBasic(props: {
       }
       style={props.style}
     >
-      <Img width="48px" height="48px" src={tile.iconUrl} invert={isDojo} />
+      <Image width="48px" height="48px" src={tile.iconUrl} invert={isDojo} />
       <Text
         color={
           "black" // isDojo ? "white" : "black"

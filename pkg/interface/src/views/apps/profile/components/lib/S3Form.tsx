@@ -2,16 +2,17 @@ import React, { useCallback } from "react";
 
 import {
   ManagedTextInputField as Input,
+  ManagedForm as Form,
   Box,
   Button,
   Col,
   Text,
-  Menu
+  Menu,
 } from "@tlon/indigo-react";
 
-import { Formik, Form } from "formik";
+import { Formik } from "formik";
 import GlobalApi from "../../../../api/global";
-import { BucketList } from './BucketList';
+import { BucketList } from "./BucketList";
 import { S3State } from "../../../../types";
 
 interface FormSchema {
@@ -49,9 +50,6 @@ export default function S3Form(props: S3FormProps) {
   return (
     <>
       <Col>
-        <Box color="black" mb={4} fontSize={1} fontWeight={900}>
-          S3 Credentials
-        </Box>
         <Formik
           initialValues={
             {
@@ -64,23 +62,23 @@ export default function S3Form(props: S3FormProps) {
           }
           onSubmit={onSubmit}
         >
-          <Form>
-            <Input width="256px" type="text" label="Endpoint" id="s3endpoint" />
+          <Form
+            display="grid"
+            gridTemplateColumns="100%"
+            gridAutoRows="auto"
+            gridRowGap={5}
+          >
+            <Box color="black" fontSize={1} fontWeight={900}>
+              S3 Credentials
+            </Box>
+            <Input label="Endpoint" id="s3endpoint" />
+            <Input label="Access Key ID" id="s3accessKeyId" />
             <Input
-              width="256px"
-              type="text"
-              label="Access Key ID"
-              id="s3accessKeyId"
-            />
-            <Input
-              width="256px"
               type="password"
               label="Secret Access Key"
               id="s3secretAccessKey"
             />
-            <Button border={1} type="submit">
-              Submit
-            </Button>
+            <Button type="submit">Submit</Button>
           </Form>
         </Formik>
       </Col>
