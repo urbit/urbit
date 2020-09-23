@@ -8,6 +8,10 @@ export class OmniboxInput extends Component {
     <input
       ref={(el) => {
         this.input = el;
+          if (el) {
+            el.blur();
+            el.focus();
+          }
         }
       }
       className='ba b--transparent w-100 br2 white-d bg-gray0-d inter f9 pa2'
