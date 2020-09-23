@@ -138,7 +138,7 @@ ames' who isFake stderr = do
       vail <- readTVar avail
       if vail > 0
         then do
-          modifyTVar avail (subtract 1)
+          modifyTVar' avail (subtract 1)
           writeTQueue ventQ p
           pure Intake
         else do
