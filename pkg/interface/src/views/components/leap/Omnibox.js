@@ -179,18 +179,15 @@ export class Omnibox extends Component {
         })
       );
       if (currentIndex > 0) {
-        const nextApp = flattenedResults[currentIndex - 1].app;
-        const nextLink = flattenedResults[currentIndex - 1].link;
-        this.setState({ selected: [nextApp, nextLink] });
+        const { app, link } = flattenedResults[currentIndex - 1];
+        this.setState({ selected: [app, link] });
       } else {
-        const nextApp = flattenedResults[totalLength - 1].app;
-        const nextLink = flattenedResults[totalLength - 1].link;
-        this.setState({ selected: [nextApp, nextLink] });
+        const { app, link } = flattenedResults[totalLength - 1];
+        this.setState({ selected: [app, link] });
       }
     } else {
-      const nextApp = flattenedResults[totalLength - 1].app;
-      const nextLink = flattenedResults[totalLength - 1].link;
-      this.setState({ selected: [nextApp, nextLink] });
+      const { app, link } = flattenedResults[totalLength - 1];
+      this.setState({ selected: [app, link] });
     }
   }
 
@@ -204,18 +201,15 @@ export class Omnibox extends Component {
         })
       );
       if (currentIndex < flattenedResults.length - 1) {
-      const nextApp = flattenedResults[currentIndex + 1].app;
-      const nextLink = flattenedResults[currentIndex + 1].link;
-      this.setState({ selected: [nextApp, nextLink] });
+        const { app, link } = flattenedResults[currentIndex + 1];
+        this.setState({ selected: [app, link] });
       } else {
-      const nextApp = flattenedResults[0].app;
-      const nextLink = flattenedResults[0].link;
-      this.setState({ selected: [nextApp, nextLink] });
+        const { app, link } = flattenedResults[0];
+        this.setState({ selected: [app, link] });
       }
     } else {
-      const nextApp = flattenedResults[0].app;
-      const nextLink = flattenedResults[0].link;
-      this.setState({ selected: [nextApp, nextLink] });
+      const { app, link } = flattenedResults[0];
+      this.setState({ selected: [app, link] });
     }
   }
 
