@@ -54,10 +54,10 @@ data Ef
   deriving (Show)
 
 data St = St
-    { sHistory :: Seq Text
-    , sLine    :: Text
-    , sCurPos  :: Word
-    , sSpinner :: SpinnerState
+    { sHistory :: !(Seq Text)
+    , sLine    :: !Text
+    , sCurPos  :: !Word
+    , sSpinner :: !SpinnerState
     }
   deriving (Show)
 
@@ -86,7 +86,7 @@ step st@St{..} = \case
     word = fromIntegral
 
     record :: Text -> St -> St
-    record t st@St{..} = st { sHistory = trim (sHistory |> t) }
+    record !t st@St{..} = st { sHistory = trim (sHistory |> t) }
 
     trim :: Seq a -> Seq a
     trim s | length s < 20 = s
