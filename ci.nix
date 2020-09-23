@@ -53,25 +53,25 @@ in dimensionWith "system" systems (systemName: system:
 
     # Instantiate shared and static libraries/executables for the specific system.
     sharedPackages = import ./default.nix { inherit system; };
-    staticPackages = import ./default.nix {
-      inherit system;
+    # staticPackages = import ./default.nix {
+    #   inherit system;
 
-      withStatic = true;
-      crossSystem =
-        if pkgs.stdenv.isLinux
-          then pkgs.lib.systems.examples.musl64
-          else null;
-    };
+    #   withStatic = true;
+    #   crossSystem =
+    #     if pkgs.stdenv.isLinux
+    #       then pkgs.lib.systems.examples.musl64
+    #       else null;
+    # };
 
-    releaseTarball = drv.makeReleaseTarball {
-      name = "urbit-${system}";
-      contents = {
-        "urbit" = "${staticPackages.urbit}/bin/urbit";
-        "urbit-worker" = "${staticPackages.urbit}/bin/urbit-worker";
-        "urbit-king" =
-          "${staticPackages.hs.urbit-king.components.exes.urbit-king}/bin/urbit-king";
-      };
-    };
+    # releaseTarball = drv.makeReleaseTarball {
+    #   name = "urbit-${system}";
+    #   contents = {
+    #     "urbit" = "${staticPackages.urbit}/bin/urbit";
+    #     "urbit-worker" = "${staticPackages.urbit}/bin/urbit-worker";
+    #     "urbit-king" =
+    #       "${staticPackages.hs.urbit-king.components.exes.urbit-king}/bin/urbit-king";
+    #   };
+    # };
     
     # # Filter out attributes we don't want to recurse into for ci.
     # #
