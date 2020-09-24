@@ -12,6 +12,8 @@ let
   ];
 
 in haskell-nix.stackProject {
+  index-state = "2020-09-24T00:00:00Z";
+
   src = haskell-nix.cleanSourceHaskell {
     name = "urbit-hs";
     src = ./.;
@@ -19,7 +21,7 @@ in haskell-nix.stackProject {
 
   modules = [{
     # This corresponds to the set of packages (boot libs) that ship with GHC.
-    # We declare them here to ensure any dependency gets them from GHC itself
+    # We declare them yere to ensure any dependency gets them from GHC itself
     # rather than trying to re-install them into the package database.
     nonReinstallablePkgs = [
       "Cabal"
