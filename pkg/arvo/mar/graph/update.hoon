@@ -5,7 +5,6 @@
   |%
   ++  noun  upd
   ++  json  (update:enjs upd)
-  ++  noun  upd
   --
 ::
 ++  grab
