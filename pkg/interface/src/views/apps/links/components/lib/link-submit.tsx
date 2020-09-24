@@ -183,12 +183,10 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
       ? 'b--black b--white-d'
       : 'b--gray4 b--gray2-d';
 
-    console.log(this.props.s3);
-
     const isS3Ready =
-      ( this.props.s3.secretAccessKey &&
-        this.props.s3.endpoint &&
-        this.props.s3.accessKeyId
+      ( this.props.s3.credentials.secretAccessKey &&
+        this.props.s3.credentials.endpoint &&
+        this.props.s3.credentials.accessKeyId
       );
 
     return (
