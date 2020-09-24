@@ -8,6 +8,8 @@ export const LinkItem = (props) => {
   const {
     node,
     nickname,
+    color,
+    avatar,
     resource,
     hideAvatars,
     hideNicknames
@@ -18,14 +20,14 @@ export const LinkItem = (props) => {
   const size = node.children ? node.children.size : 0;
   const contents = node.post.contents;
 
-  const showAvatar = props.avatar && !hideAvatars;
+  const showAvatar = avatar && !hideAvatars;
   const showNickname = nickname && !hideNicknames;
 
   const mono = showNickname ? 'inter white-d' : 'mono white-d';
 
   const img = showAvatar
-    ? <img src={props.avatar} height={38} width={38} className="dib" />
-    : <Sigil ship={`~${author}`} size={38} color={'#' + props.color} />;
+    ? <img src={avatar} height={38} width={38} className="dib" />
+    : <Sigil ship={`~${author}`} size={38} color={'#' + color} />;
 
   return (
     <div className="w-100 pv3 flex bg-white bg-gray0-d lh-solid">

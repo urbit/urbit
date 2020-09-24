@@ -68,12 +68,17 @@ export const LinkList = (props) => {
               ship={props.ship}
               api={props.api} />
           </div>
-          { Array.from(props.graph.values()).reverse().map((node) => {
+          { Array.from(props.graph.values()).map((node) => {
+              const { nickname, color, avatar } =
+                getContactDetails(props.contacts[ship]);
+
               return (
                 <LinkItem
                   resource={resource}
                   node={node}
-                  nickname={props.metadata.nickname}
+                  nickname={nickname}
+                  color={color}
+                  avatar={avatar}
                   hideAvatars={props.hideAvatars}
                   hideNicknames={props.hideNicknames}
                 />

@@ -185,6 +185,7 @@ export default class LinksApp extends Component {
                 associations.graph[metPath] ?
                   associations.graph[metPath] : { metadata: {} };
               const popout = props.match.url.includes('/popout/');
+
               const contactDetails = contacts[resource['group-path']] || {};
 
               const indexArr = props.match.params.index.split('-');
