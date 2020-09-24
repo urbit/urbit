@@ -42,8 +42,8 @@ export function PostForm(props: PostFormProps) {
         validateOnBlur
       >
         <Form style={{ display: "contents" }}>
-          <Row flexDirection={["column-reverse", "row"]} mb={4} gapX={4}>
-            <Input flexGrow={1} placeholder="Post Title" id="title" />
+          <Row flexDirection={["column-reverse", "row"]} mb={4} gapX={4} justifyContent='space-between'>
+            <Input maxWidth='40rem' flexGrow={1} placeholder="Post Title" id="title" />
             <AsyncButton
               ml={[0,2]}
               mb={[4,0]}
