@@ -21,8 +21,9 @@ import Omnibox from './components/leap/Omnibox';
 import GlobalStore from '~/logic/store/store';
 import GlobalSubscription from '~/logic/subscription/global';
 import GlobalApi from '~/logic/api/global';
-import { uxToHex } from '~/logic/lib/util';
+import { uxToHex, manifestUrl, cite, blobUrl } from '~/logic/lib/util';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
+import Manifest from '~/views/components/Manifest';
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -76,6 +77,7 @@ class App extends React.Component {
 
     this.updateTheme = this.updateTheme.bind(this);
     this.faviconString = this.faviconString.bind(this);
+    this.icon = this.icon.bind(this);
   }
 
   componentDidMount() {
@@ -100,7 +102,7 @@ class App extends React.Component {
     this.api.local.setDark(e.matches);
   }
 
-  faviconString() {
+  icon() {
     let background = '#ffffff';
     if (this.state.contacts.hasOwnProperty('/~/default')) {
       background = `#${uxToHex(this.state.contacts['/~/default'][window.ship].color)}`;
@@ -112,7 +114,10 @@ class App extends React.Component {
       size: 16,
       colors: [background, foreground]
     });
-    const dataurl = 'data:image/svg+xml;base64,' + btoa(svg);
+  }
+
+  faviconString() {
+    const dataurl = 'data:image/svg+xml;base64,' + btoa(this.icon());
     return dataurl;
   }
 
@@ -125,10 +130,30 @@ class App extends React.Component {
 
     return (
       <ThemeProvider theme={theme}>
+        <Manifest data={{
+          name: window.ship,
+          short_name: 'OS1',
+          background_color: '#ffffff',
+          theme_color: '#000000',
+          start_url: window.location.origin,
+          display: 'minimal-ui',
+          icons: [{
+            src: 'https://user-images.githubusercontent.com/1195363/93526624-b67cb400-f905-11ea-8888-7423c89d3878.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }, {
+            src: blobUrl(this.icon(), 'image/svg+xml'),
+            type: 'image/svg+xml',
+            sizes: '512x512'
+          }],
+          orientation: 'any',
+          scope: '/'
+        }}/>
         <Helmet>
           {window.ship.length < 14
             ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
             : null}
+          <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         </Helmet>
         <Root background={background} >
           <Router>

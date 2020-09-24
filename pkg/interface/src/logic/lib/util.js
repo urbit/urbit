@@ -323,3 +323,11 @@ export function scrollIsAtBottom(container) {
   }
 }
 
+export function blobUrl(data, type) {
+  const blob = new Blob([data], {type});
+  return URL.createObjectURL(blob);
+}
+
+export function manifestUrl(json) {
+  return blobUrl(JSON.stringify(json), 'application/manifest+json');
+}
