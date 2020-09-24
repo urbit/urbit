@@ -213,6 +213,7 @@ _cw_serf_commence(c3_i argc, c3_c* argv[])
   //  enter loop
   //
   uv_run(lup_u, UV_RUN_DEFAULT);
+  u3m_stop();
 }
 
 /* _cw_info(); print pier info
@@ -226,6 +227,7 @@ _cw_info(c3_i argc, c3_c* argv[])
   c3_d  eve_d = u3m_boot(dir_c);
 
   fprintf(stderr, "urbit-worker: %s at event %" PRIu64 "\r\n", dir_c, eve_d);
+  u3m_stop();
 }
 
 /* _cw_grab(); gc pier.
@@ -238,6 +240,7 @@ _cw_grab(c3_i argc, c3_c* argv[])
   c3_c* dir_c = argv[2];
   u3m_boot(dir_c);
   u3_serf_grab();
+  u3m_stop();
 }
 
 /* _cw_cram(); jam persistent state (rock), and exit.
@@ -258,6 +261,7 @@ _cw_cram(c3_i argc, c3_c* argv[])
   }
 
   fprintf(stderr, "urbit-worker: cram: rock saved at event %" PRIu64 "\r\n", eve_d);
+  u3m_stop();
 }
 
 /* _cw_queu(); cue rock, save, and exit.
@@ -285,6 +289,7 @@ _cw_queu(c3_i argc, c3_c* argv[])
     u3e_save();
 
     fprintf(stderr, "urbit-worker: queu: rock loaded at event %" PRIu64 "\r\n", eve_d);
+    u3m_stop();
   }
 }
 
@@ -301,6 +306,7 @@ _cw_pack(c3_i argc, c3_c* argv[])
   u3a_print_memory(stderr, "urbit-worker: pack: gained", u3m_pack());
 
   u3e_save();
+  u3m_stop();
 }
 
 /* _cw_usage(): print urbit-worker usage.

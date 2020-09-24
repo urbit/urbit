@@ -807,7 +807,7 @@ _urcrypt_argon2_free(uint8_t* memory, size_t bytes)
 #define SZ_32(s) ( sizeof(size_t) <= sizeof(uint32_t) || s <= 0xFFFFFFFF )
 
 const char*
-urcrypt_argon2(urcrypt_argon2_type type,
+urcrypt_argon2(uint8_t  type,
                uint32_t version,
                uint32_t threads,
                uint32_t memory_cost,
@@ -920,6 +920,37 @@ urcrypt_blake2(size_t message_length,
   }
 }
 
+static secp256k1_context* _urcrypt_secp_ctx = NULL;
+
+int
+urcrypt_secp_init(uint8_t entropy[32])
+{
+  if ( NULL != _urcrypt_secp_ctx ) {
+    return -1;
+  }
+  else {
+    _urcrypt_secp_ctx = secp256k1_context_create(
+        SECP256K1_CONTEXT_VERIFY | SECP256K1_CONTEXT_SIGN);
+    if ( 1 == secp256k1_context_randomize(_urcrypt_secp_ctx, entropy) ) {
+      return 0;
+    }
+    else {
+      secp256k1_context_destroy(_urcrypt_secp_ctx);
+      _urcrypt_secp_ctx = NULL;
+      return -2;
+    }
+  }
+}
+
+void
+urcrypt_secp_cleanup(void)
+{
+  if ( NULL != _urcrypt_secp_ctx) {
+    secp256k1_context_destroy(_urcrypt_secp_ctx);
+    _urcrypt_secp_ctx = NULL;
+  }
+}
+
 int
 urcrypt_secp_make(uint8_t hash[32], uint8_t key[32], uint8_t out[32])
 {
@@ -938,5 +969,90 @@ urcrypt_secp_make(uint8_t hash[32], uint8_t key[32], uint8_t out[32])
   else {
     _urcrypt_reverse(32, out);
     return 0;
+  }
+}
+
+int
+urcrypt_secp_reco(uint8_t hash[32],
+                  uint8_t key_v,
+                  const uint8_t key_r[32],
+                  const uint8_t key_s[32],
+                  uint8_t out_x[32],
+                  uint8_t out_y[32])
+{
+  if ( (NULL == _urcrypt_secp_ctx) || 
+       (NULL == hash) ||
+       (NULL == key_r) ||
+       (NULL == key_s) ) {
+    return -1;
+  }
+  else if ( key_v > 3 ) {
+    return -2;
+  }
+  else {
+    secp256k1_ecdsa_recoverable_signature signature;
+    uint8_t private[64];
+    size_t i, j;
+    // make big private key out of two smaller parts, reversing endianness
+    for ( j = 31, i = 0; i < 32; ++i, --j) {
+      private[i] = key_r[j];
+    }
+    for ( j = 31; i < 64; ++i, --j ) {
+      private[i] = key_s[j];
+    }
+    memset(&signature, 0, sizeof(secp256k1_ecdsa_recoverable_signature));
+    if ( 1 != secp256k1_ecdsa_recoverable_signature_parse_compact(
+          _urcrypt_secp_ctx, /* IN:  context */
+          &signature,        /* OUT: sig */
+          private,           /* IN:  r/s */
+          key_v) ) {         /* IN:  v */
+      return -3;
+    }
+    else {
+      secp256k1_pubkey public;
+      memset(&public, 0, sizeof(secp256k1_pubkey));
+      // the code we ported from looks like it intended to reverse hash
+      // at some point, but doesn't actually.
+      if ( 1 != secp256k1_ecdsa_recover(
+            _urcrypt_secp_ctx, /* IN:  context */
+            &public,           /* OUT: pub key */
+            &signature,        /* IN: signature */
+            hash) ) {          /* IN: message hash */
+        return -4;
+      }
+      else {
+        /* convert pub into serialized form that we can get x, y out of */
+        uint8_t serialized[65];
+        size_t outputlen = 65;
+        memset(serialized, 0, outputlen);
+        if ( 1 != secp256k1_ec_pubkey_serialize(
+            _urcrypt_secp_ctx,             /* IN:  context */
+            serialized,                    /* OUT: output */
+            &outputlen,                    /* IN/OUT: outputlen */
+            &public,                       /* IN: pubkey*/
+            SECP256K1_EC_UNCOMPRESSED) ) { /* IN: flags */
+          return -5;
+        }
+        else {
+          /* in file
+             subprojects/secp256k1/src/eckey_impl.h
+             func
+             secp256k1_eckey_pubkey_parse()
+             we can see
+             byte      0: signal bits (???)
+             bytes  1-32: x
+             bytes 33-64: y
+
+             convert endianness while we're at it   */
+          for (j = 32, i = 0; i < 32; ++i, --j) {
+            out_x[i] = serialized[j];
+          }
+          for (j = 64, i = 0; i < 32; ++i, --j) {
+            out_y[i] = serialized[j];
+          }
+          return 0;
+        }
+      }
+    }
   }
 }

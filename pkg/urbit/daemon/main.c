@@ -619,7 +619,6 @@ main(c3_i   argc,
   if ( c3y == u3_Host.ops_u.tex ) {
     u3_Host.bot_f = _stop_on_boot_completed_cb;
   }
-
 #if 0
   if ( 0 == getuid() ) {
     chroot(u3_Host.dir_c);
@@ -748,12 +747,17 @@ main(c3_i   argc,
       }
     }
 
+    /* FIXME
     //  Initialize OpenSSL for client and server
     //
     {
       SSL_library_init();
       SSL_load_error_strings();
     }
+    */
+
+    // openssl won't init after this libcurl call, probably because it links
+    // against openssl and does allocations with it.
 
     //  initialize curl
     //

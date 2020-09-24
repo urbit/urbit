@@ -710,6 +710,11 @@ u3_king_commence()
   u3C.wag_w |= u3o_hashless;
 
   u3m_boot_lite();
+    {
+#include <openssl/ssl.h>
+      SSL_library_init();
+      SSL_load_error_strings();
+    }
 
   //  wire up signal controls
   //
@@ -761,6 +766,7 @@ u3_king_commence()
   _king_loop_init();
   uv_run(u3L, UV_RUN_DEFAULT);
   _king_loop_exit();
+  u3m_stop();
 }
 
 /* u3_king_stub(): get the One Pier for unreconstructed code.

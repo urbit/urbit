@@ -8,7 +8,7 @@
 */
 
   static c3_t
-  _cqear_unpack_type(urcrypt_argon2_type *out, u3_atom in)
+  _cqear_unpack_type(c3_y* out, u3_atom in)
   {
     switch ( in ) {
       default:
@@ -39,7 +39,7 @@
                // input params
                u3_atom wid, u3_atom dat, u3_atom wis, u3_atom sat )
   {
-    urcrypt_argon2_type typ_u;
+    c3_y typ_u;
     c3_w out_w, wik_w, wix_w, wid_w, wis_w, ver_w, ted_w, mem_w, tim_w;
 
     if ( !(u3r_word_fit(&out_w, out) &&

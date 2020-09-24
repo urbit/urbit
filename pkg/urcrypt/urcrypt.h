@@ -158,15 +158,13 @@ void urcrypt_shas(uint8_t *salt, size_t salt_length,
                   const uint8_t *message, size_t message_length,
                   uint8_t out[32]);
 
-typedef enum urcrypt_argon2_type {
-  urcrypt_argon2_d  = 0,
-  urcrypt_argon2_i  = 1,
-  urcrypt_argon2_id = 2,
-  urcrypt_argon2_u  = 10,
-} urcrypt_argon2_type;
+#define urcrypt_argon2_d  0
+#define urcrypt_argon2_i  1
+#define urcrypt_argon2_id 2
+#define urcrypt_argon2_u  10
 
 /* returns a constant error message string or NULL for success */
-const char* urcrypt_argon2(urcrypt_argon2_type type,
+const char* urcrypt_argon2(uint8_t  type,  // one of the urcrpyt_argon2_*
                            uint32_t version,
                            uint32_t threads,
                            uint32_t memory_cost,
@@ -191,6 +189,31 @@ int urcrypt_blake2(size_t message_length,
                    size_t out_length,
                    uint8_t *out);
 
+/* there is some long-term context associated with the secp library
+ * (precomputed tables, etc). Because the context itself is thread-safe,
+ * we have opted to manage it statically and present a simple calling
+ * interface that doesn't mention it. 
+ */
+
+/* initialize static secp context (not thread-safe). Recommmendation:
+ * call this once at main thread startup before calling other secp functions.
+ * Use a high quality source of entropy.
+ */
+int urcrypt_secp_init(uint8_t entropy[32]);
+
+/* restore initial secp context conditons (not thread-safe). Recommendation:
+ * call this just before that main thread exits to make valgrind etc. happy
+ */
+void urcrypt_secp_cleanup(void); 
+
+// technically usable without the secp context
 int urcrypt_secp_make(uint8_t hash[32], uint8_t key[32], uint8_t out[32]);
+
+int urcrypt_secp_reco(uint8_t hash[32],
+                      uint8_t key_v, // 0, 1, 2, 3
+                      const uint8_t key_r[32],
+                      const uint8_t key_s[32],
+                      uint8_t out_x[32],
+                      uint8_t out_y[32]);
 
 #endif

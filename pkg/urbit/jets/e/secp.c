@@ -32,6 +32,9 @@ _cqe_is_8(const c3_w words[8], u3_noun non)
  * +secp256k1 passes these constants to it. This should be restructured so
  * that the constants are matched as part of the batteries in the core stack
  * of the jetted gates.
+ *
+ * The hoon also doesn't, in general, check the size of any of its arguments;
+ * we return u3_none when they are mis-sized.
 */
 static c3_t
 _cqe_256k1_veri(u3_noun cor)
@@ -211,6 +214,28 @@ u3we_reco(u3_noun cor)
   }
 }
 
+static u3_noun
+_cqe_reco(u3_atom has,
+          u3_atom siv,  /* signature: v */
+          u3_atom sir,  /* signature: r */
+          u3_atom sis)  /* signature: s */
+{
+  c3_y has_y[32], sir_y[32], sis_y[32], x_y[32], y_y[32];
+
+  if ( !((siv < 4) &&
+         u3r_bytes_fit(32, has_y, has) &&
+         u3r_bytes_fit(32, sir_y, sir) &&
+         u3r_bytes_fit(32, sis_y, sis) &&
+         (0 == urcrypt_secp_reco(has_y, (c3_y) siv, sir_y, sis_y, x_y, y_y))) )
+  {
+    return u3_none;
+  }
+  else {
+    return u3nc(u3i_bytes(32, x_y),
+                u3i_bytes(32, y_y));
+  }
+}
+
 u3_noun
 u3qe_reco(u3_atom has,
           u3_atom siv,  /* signature: v */
@@ -318,15 +343,11 @@ _cqe_make(u3_atom has,
 {
   c3_y has_y[32], prv_y[32], out_y[32];
 
-  if ( ( u3r_met(3, has) > 32 ) ||
-       ( u3r_met(3, prv) > 32 ) ) {
-    // hoon doesn't check size
+  if ( !(u3r_bytes_fit(32, has_y, has) &&
+         u3r_bytes_fit(32, prv_y, prv)) ) {
     return u3_none;
   }
   else {
-    u3r_bytes(0, 32, has_y, has);
-    u3r_bytes(0, 32, prv_y, prv);
-
     return ( 0 == urcrypt_secp_make(has_y, prv_y, out_y) )
       ? u3i_bytes(32, out_y)
       : u3_none;
