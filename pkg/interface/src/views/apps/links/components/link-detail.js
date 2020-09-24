@@ -70,7 +70,9 @@ export const LinkDetail = (props) => {
             post={props.node.post}
             nickname={nickname}
             hideNicknames={props.hideNicknames}
-            commentNumber={props.node.children.size} />
+            commentNumber={props.node.children.size} 
+            remoteContentPolicy={props.remoteContentPolicy}
+          />
           <div className="flex">
             <CommentSubmit
               name={props.name}

@@ -160,6 +160,7 @@ export default class LinksApp extends Component {
                   <LinkList
                     {...props}
                     api={api}
+                    s3={s3}
                     graph={graph}
                     graphResource={graphKeys.has(resourcePath)}
                     resourcePath={resourcePath}

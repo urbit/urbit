@@ -4,7 +4,7 @@ import { TabBar } from '~/views/components/chat-link-tabbar';
 import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { Link } from 'react-router-dom';
 import { LinkItem } from './lib/link-item';
-import { LinkSubmit } from './lib/link-submit';
+import LinkSubmit from './lib/link-submit';
 
 import { getContactDetails } from '~/logic/lib/util';
 
@@ -66,7 +66,8 @@ export const LinkList = (props) => {
             <LinkSubmit
               name={props.name}
               ship={props.ship}
-              api={props.api} />
+              api={props.api}
+              s3={props.s3} />
           </div>
           { Array.from(props.graph.values()).map((node) => {
               const { nickname, color, avatar } =
