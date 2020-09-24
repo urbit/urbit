@@ -21,4 +21,7 @@ in {
       ];
   });
 
+  gmp6 = overrideAttrsWhen isDarwin prev.gmp6 (old: {
+    doCheck = false;
+  });
 }
