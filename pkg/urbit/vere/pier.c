@@ -971,10 +971,12 @@ _pier_on_lord_slog(void* ptr_v, c3_w pri_w, u3_noun tan)
     c3_c* tan_c = u3r_string(tan);
     u3C.stderr_log_f(tan_c);
     c3_free(tan_c);
-    u3z(tan);
+
+    pir_u->sog_f(pir_u->sop_p, pri_w, tan);
   }
   else {
-    u3_pier_tank(0, pri_w, tan);
+    u3_pier_tank(0, pri_w, u3k(tan));
+    pir_u->sog_f(pir_u->sop_p, pri_w, tan);
   }
 }
 
