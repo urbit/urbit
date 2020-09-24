@@ -16,7 +16,7 @@ let
 in {
   libiconv = overrideAttrsWhen isDarwin prev.libiconv (old: {
     nativeBuildInputs =
-      optionalsNull (old.nativeBuildInputs or {}) ++ [
+      (old.nativeBuildInputs or []) ++ [
         prev.buildPackages.stdenv.cc
       ];
   });
