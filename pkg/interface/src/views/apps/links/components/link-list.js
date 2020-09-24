@@ -48,7 +48,11 @@ export const LinkList = (props) => {
           sidebarShown={props.sidebarShown}
           popout={props.popout}
           api={props.api} />
-        <h2 className='white-d dib f9 fw4 lh-solid v-top pt2'>{title}</h2>
+        <h2
+          className="dib f9 fw4 pt2 lh-solid v-top black white-d"
+          style={{ width: 'max-content' }}>
+          {title}
+        </h2>
         <TabBar
           location={props.location}
           popout={props.popout}
@@ -64,7 +68,7 @@ export const LinkList = (props) => {
               ship={props.ship}
               api={props.api} />
           </div>
-          { Array.from(props.graph.values()).map((node) => {
+          { Array.from(props.graph.values()).reverse().map((node) => {
               return (
                 <LinkItem
                   resource={resource}

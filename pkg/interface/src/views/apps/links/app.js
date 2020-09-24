@@ -137,9 +137,11 @@ export default class LinksApp extends Component {
             render={ (props) => {
               const resourcePath = 
                 `${props.match.params.ship}/${props.match.params.name}`;
+              const metPath = `/ship/~${resourcePath}`;
               const resource =
-                associations.graph[resourcePath] ?
-                  associations.graph[resourcePath] : { metadata: {} };
+                associations.graph[metPath] ?
+                  associations.graph[metPath] : { metadata: {} };
+
               const contactDetails = contacts[resource['group-path']] || {};
               const popout = props.match.url.includes('/popout/');
               const graph = graphs[resourcePath] || null;
@@ -160,6 +162,7 @@ export default class LinksApp extends Component {
                     api={api}
                     graph={graph}
                     graphResource={graphKeys.has(resourcePath)}
+                    resourcePath={resourcePath}
                     popout={popout}
                     metadata={resource.metadata}
                     contacts={contactDetails}
@@ -177,9 +180,10 @@ export default class LinksApp extends Component {
             render={ (props) => {
               const resourcePath = 
                 `${props.match.params.ship}/${props.match.params.name}`;
+              const metPath = `/ship/~${resourcePath}`;
               const resource =
-                associations.graph[resourcePath] ?
-                  associations.graph[resourcePath] : { metadata: {} };
+                associations.graph[metPath] ?
+                  associations.graph[metPath] : { metadata: {} };
               const popout = props.match.url.includes('/popout/');
               const contactDetails = contacts[resource['group-path']] || {};
 
