@@ -26,8 +26,9 @@ let
   ];
 
   extraCrossOverlays = [
-    # Add general musl overrides which are guarded by the host platform
-    # so we can apply them unconditionally.
+    # Add general overrides guarded by the host platform so
+    # we can apply them unconditionally.
+    (import ./overlays/darwin.nix)
     (import ./overlays/musl.nix)
   ];
 
