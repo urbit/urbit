@@ -6,7 +6,8 @@ import { getContactDetails } from '~/logic/lib/util';
 export const Comments = (props) => {
   const {
     hideNicknames,
-    hideAvatars
+    hideAvatars,
+    remoteContentPolicy
   } = props;
 
   const contacts = props.contacts ? props.contacts : {};
@@ -30,6 +31,7 @@ export const Comments = (props) => {
               member={member}
               hideNicknames={hideNicknames}
               hideAvatars={hideAvatars}
+              remoteContentPolicy={remoteContentPolicy}
             />
           );
         })
