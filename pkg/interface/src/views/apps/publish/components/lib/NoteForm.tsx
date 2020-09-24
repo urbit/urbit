@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import {
   Box,
   ManagedTextInputField as Input,
-  TwoUp,
+  Row,
   Col,
 } from "@tlon/indigo-react";
 import { AsyncButton } from "../../../../components/AsyncButton";
@@ -42,16 +42,18 @@ export function PostForm(props: PostFormProps) {
         validateOnBlur
       >
         <Form style={{ display: "contents" }}>
-          <TwoUp mb={4} gap={4}>
-            <Input
-              flexGrow={1}
-              placeholder="Post Title"
-              id="title"
-            />
-            <AsyncButton flexShrink={1} primary loadingText={loadingText}>
+          <Row flexDirection={["column-reverse", "row"]} mb={4} gapX={4}>
+            <Input flexGrow={1} placeholder="Post Title" id="title" />
+            <AsyncButton
+              ml={[0,2]}
+              mb={[4,0]}
+              flexShrink={1}
+              primary
+              loadingText={loadingText}
+            >
               {submitLabel}
             </AsyncButton>
-          </TwoUp>
+          </Row>
           <MarkdownField flexGrow={1} id="body" />
         </Form>
       </Formik>
