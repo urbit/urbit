@@ -69,8 +69,8 @@ export function ImageInput(props: ImageInputProps) {
           <>
             <Button
               ml={1}
-              border={3}
-              borderColor="washedGray"
+              border={1}
+              borderColor="lightGray"
               onClick={onClick}
             >
               {uploading ? "Uploading" : "Upload"}

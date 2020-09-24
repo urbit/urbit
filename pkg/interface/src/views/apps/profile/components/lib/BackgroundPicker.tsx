@@ -35,6 +35,7 @@ export function BackgroundPicker({
         <Radio {...radioProps} label="Image" id="url" />
         {bgType === "url" && (
           <ImageInput
+            ml="3"
             api={api}
             s3={s3}
             id="bgUrl"
