@@ -835,7 +835,7 @@ runMultipleShips ships = do
 
 --------------------------------------------------------------------------------
 
-connTerm :: ∀e. HasLogFunc e => FilePath -> RIO e ()
+connTerm :: forall e. HasLogFunc e => FilePath -> RIO e ()
 connTerm = Term.runTerminalClient
 
 
