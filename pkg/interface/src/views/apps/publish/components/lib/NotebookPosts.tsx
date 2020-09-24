@@ -15,7 +15,7 @@ interface NotebookPostsProps {
 
 export function NotebookPosts(props: NotebookPostsProps) {
   return (
-    <Col>
+    <Col mt="3">
       {props.list.map((noteId: NoteId) => {
         const note = props.notes[noteId];
         if (!note) {

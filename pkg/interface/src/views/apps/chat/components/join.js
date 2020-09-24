@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Spinner } from '../../../components/Spinner';
 import urbitOb from 'urbit-ob';
-import { Box, Text, Input, Button } from '@tlon/indigo-react';
+import { Box, Text, ManagedTextInputField as Input, Button } from '@tlon/indigo-react';
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup';
 

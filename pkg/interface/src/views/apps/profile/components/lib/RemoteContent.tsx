@@ -1,5 +1,9 @@
 import React from "react";
-import { Box, Button, Checkbox } from '@tlon/indigo-react';
+import {
+  Box,
+  Button,
+  ManagedCheckboxField as Checkbox,
+} from "@tlon/indigo-react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 
@@ -10,7 +14,7 @@ const formSchema = Yup.object().shape({
   imageShown: Yup.boolean(),
   audioShown: Yup.boolean(),
   videoShown: Yup.boolean(),
-  oembedShown: Yup.boolean()
+  oembedShown: Yup.boolean(),
 });
 
 interface FormSchema {
@@ -39,7 +43,7 @@ export default function RemoteContentForm(props: RemoteContentFormProps) {
           imageShown,
           audioShown,
           videoShown,
-          oembedShown
+          oembedShown,
         } as FormSchema
       }
       onSubmit={(values, actions) => {
@@ -47,7 +51,7 @@ export default function RemoteContentForm(props: RemoteContentFormProps) {
           imageShown: values.imageShown,
           audioShown: values.audioShown,
           videoShown: values.videoShown,
-          oembedShown: values.oembedShown
+          oembedShown: values.oembedShown,
         });
         api.local.dehydrate();
         actions.setSubmitting(false);
@@ -59,36 +63,26 @@ export default function RemoteContentForm(props: RemoteContentFormProps) {
             display="grid"
             gridTemplateColumns="1fr"
             gridTemplateRows="audio"
-            gridRowGap={3}
+            gridRowGap={5}
           >
-            <Box color="black" fontSize={1} mb={3} fontWeight={900}>
+            <Box color="black" fontSize={1} fontWeight={900}>
               Remote Content
             </Box>
-            <Box>
-              <Checkbox
-                label="Load images"
-                id="imageShown"
-              />
-              <Checkbox
-                label="Load audio files"
-                id="audioShown"
-              />
-              <Checkbox
-                label="Load video files"
-                id="videoShown"
-              />
-              <Checkbox
-                label="Load embedded content"
-                id="oembedShown"
-                caption="Embedded content may contain scripts"
-              />
-            </Box>
+            <Checkbox label="Load images" id="imageShown" />
+            <Checkbox label="Load audio files" id="audioShown" />
+            <Checkbox label="Load video files" id="videoShown" />
+            <Checkbox
+              label="Load embedded content"
+              id="oembedShown"
+              caption="Embedded content may contain scripts"
+            />
+            <Button border={1} borderColor="washedGray" type="submit">
+              Save
+            </Button>
           </Box>
-          <Button border={1} borderColor="washedGray" type="submit">
-            Save
-          </Button>
         </Form>
       )}
     </Formik>
   );
 }
+

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, Col, Button, InputLabel, InputCaption } from "@tlon/indigo-react";
+import { Box, Col, Button, Label } from "@tlon/indigo-react";
 import GlobalApi from "~/logic/api/global";
 import { Notebook } from "~/types/publish-update";
 import { Contacts } from "~/types/contact-update";
@@ -20,7 +20,7 @@ interface SettingsProps {
 }
 
 const Divider = (props) => (
-  <Box {...props} mb={4} borderBottom={1} borderBottomColor="lightGray" />
+  <Box {...props} borderBottom={1} borderBottomColor="lightGray" />
 );
 export function Settings(props: SettingsProps) {
   const history = useHistory();
@@ -36,10 +36,11 @@ export function Settings(props: SettingsProps) {
     <Box
       mx="auto"
       maxWidth="300px"
-      mb={4}
+      my={4}
       gridTemplateColumns="1fr"
       gridAutoRows="auto"
       display="grid"
+      gridRowGap={5}
     >
       {isUnmanaged && (
         <>
@@ -50,12 +51,12 @@ export function Settings(props: SettingsProps) {
       <MetadataForm {...props} />
       <Divider />
       <Col mb={4}>
-        <InputLabel>Delete Notebook</InputLabel>
-        <InputCaption>
+        <Label>Delete Notebook</Label>
+        <Label gray mt="2">
           Permanently delete this notebook. (All current members will no longer
           see this notebook.)
-        </InputCaption>
-        <Button onClick={onDelete} mt={1} border error>
+        </Label>
+        <Button mt="2" onClick={onDelete} destructive>
           Delete this notebook
         </Button>
       </Col>
