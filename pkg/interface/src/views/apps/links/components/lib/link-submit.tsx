@@ -188,7 +188,7 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
     const isS3Ready =
       ( this.props.s3.secretAccessKey &&
         this.props.s3.endpoint &&
-        this.props.s3.accessKeyId 
+        this.props.s3.accessKeyId
       );
 
     return (
@@ -206,7 +206,7 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
       >
         {this.state.dragover ? <SubmitDragger /> : null}
         <div className="relative">
-          { 
+          {
             ( this.state.linkValue ||
               this.state.urlFocus ||
               this.state.disabled
@@ -260,7 +260,7 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
         </div>
           <input
             type="text"
-            className="pl2 bg-transparent w-100 f8 white-d"
+            className="pl2 bg-transparent w-100 f8 white-d linkTitle"
             style={{
               resize: 'none',
               height: 40
@@ -292,8 +292,8 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
             Post link
           </button> : null}
           <Spinner awaiting={this.state.disabled} classes="nowrap flex items-center pr2 pl2 pt2 pb4" style={{flex: '1 1 14rem'}} text="Posting to collection..." />
-        
-        
+
+
       </div>
     ) ;
   }
