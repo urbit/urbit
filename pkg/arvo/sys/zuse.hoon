@@ -79,7 +79,7 @@
 ::
 ::    TODO: Rename to +mime once the current +mime and +mite are gone. The
 ::
-++  octs  {p/@ud q/@t}                                  ::  octet-stream
+++  octs  {p/@ud q/@}                                   ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
 ::+|
 ::
