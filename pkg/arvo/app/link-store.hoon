@@ -55,9 +55,9 @@
   %+  turn  ~(tap by by-group.s)
   |=  [=path =links]
   ^-  (list card)
-  ?.  ?=([@ @ *] path)
+  ?.  ?=([@ ~] path)
     (on-bad-path path links)
-  =/  =resource  [(slav %p i.path) i.t.path]
+  =/  =resource  [(slav %p our.bowl) i.path]
   :_  [(archive-graph resource)]~
   %+  add-graph  resource
   ^-  graph:gra
