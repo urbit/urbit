@@ -7,6 +7,7 @@ export const Tab = ({ selected, id, label, setSelected }) => (
     borderBottom={1}
     borderBottomColor={selected === id ? "black" : "washedGray"}
     px={2}
+    cursor='pointer'
     flexGrow={1}
     display="flex"
     alignItems="center"
