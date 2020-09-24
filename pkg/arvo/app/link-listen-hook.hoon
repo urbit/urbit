@@ -36,9 +36,15 @@
   ^-  card
   [%pass wire %agent [ship term] %leave ~]
 ::
+++  on-arvo
+  |=  [=wire =sign-arvo]
+  ^-  (quip card _this)
+  ?+  sign-arvo  (on-arvo:def wire sign-arvo)
+      [%b *]     [~ this]
+  ==
+::
 ++  on-agent  on-agent:def
 ++  on-poke   on-poke:def
-++  on-arvo   on-arvo:def
 ++  on-peek   on-peek:def
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
