@@ -4,7 +4,7 @@ import { TabBar } from '~/views/components/chat-link-tabbar';
 import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { Link } from 'react-router-dom';
 import { LinkItem } from './lib/link-item';
-import { LinkSubmit } from './lib/link-submit';
+import LinkSubmit from './lib/link-submit';
 
 import { getContactDetails } from '~/logic/lib/util';
 
@@ -48,7 +48,11 @@ export const LinkList = (props) => {
           sidebarShown={props.sidebarShown}
           popout={props.popout}
           api={props.api} />
-        <h2 className='white-d dib f9 fw4 lh-solid v-top pt2'>{title}</h2>
+        <h2
+          className="dib f9 fw4 pt2 lh-solid v-top black white-d"
+          style={{ width: 'max-content' }}>
+          {title}
+        </h2>
         <TabBar
           location={props.location}
           popout={props.popout}
@@ -62,14 +66,20 @@ export const LinkList = (props) => {
             <LinkSubmit
               name={props.name}
               ship={props.ship}
-              api={props.api} />
+              api={props.api}
+              s3={props.s3} />
           </div>
           { Array.from(props.graph.values()).map((node) => {
+              const { nickname, color, avatar } =
+                getContactDetails(props.contacts[ship]);
+
               return (
                 <LinkItem
                   resource={resource}
                   node={node}
-                  nickname={props.metadata.nickname}
+                  nickname={nickname}
+                  color={color}
+                  avatar={avatar}
                   hideAvatars={props.hideAvatars}
                   hideNicknames={props.hideNicknames}
                 />

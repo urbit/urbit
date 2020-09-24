@@ -1,57 +1,5 @@
 ::  link [landscape]:
 ::
-::  social bookmarking
-::
-::    the paths under which links are submitted are generally expected to
-::    correspond to existing group paths. for strictly-local collections of
-::    links, arbitrary paths are probably fair game, but could trip up
-::    primitive ui implementations.
-::
-::    urls in paths are expected to be encoded using +wood, for @ta sanity.
-::    generally, use /lib/link's +build-discussion-path.
-::
-::    see link-listen-hook to see what's synced in, and similarly
-::    see link-proxy-hook to see what's exposed.
-::
-::  scry and subscription paths:
-::
-::      (map path pages)                      %local-pages
-::    /local-pages                          our saved pages
-::    /local-pages/some-path                our saved pages on path
-::
-::      (map path submissions)                %submissions
-::    /submissions                          all submissions we've seen
-::    /submissions/some-path                all submissions we've seen on path
-::
-::      (map path (map url notes))            %annotations
-::    /annotations                          our comments
-::    /annotations/wood-url                 our comments on url
-::    /annotations/wood-url/some-path       our comments on url on path
-::    /annotations//some-path               our comments on path
-::
-::      (map path (map url comments))         %discussions
-::    /discussions                          all comments
-::    /discussions/wood-url                 all comments on url
-::    /discussions/wood-url/some-path       all comments on url on path
-::    /discussions//some-path               all comments on path
-::
-::  subscription-only paths:
-::
-::      [path url]                            %observation
-::    /seen                                 updates whenever an item is seen
-::
-::  scry-only paths:
-::
-::
-::      (map path (set url))
-::    /unseen                               the ones we haven't seen yet
-::
-::      (set url)
-::    /unseen/some-path                     the ones we haven't seen here yet
-::
-::      ?
-::    /seen/wood-url/some-path              have we seen this here
-::
 /-  *link, gra=graph-store, *resource
 /+  store=link-store, graph-store, default-agent, verb, dbug
 ::
