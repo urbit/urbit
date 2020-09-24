@@ -20,6 +20,7 @@ import { BacklogElement } from "./backlog-element";
 const INITIAL_LOAD = 20;
 const DEFAULT_BACKLOG_SIZE = 100;
 const IDLE_THRESHOLD = 64;
+const MAX_BACKLOG_SIZE = 1000;
 
 type ChatWindowProps = RouteComponentProps<{
   ship: Patp;
@@ -48,10 +49,12 @@ interface ChatWindowState {
   fetchPending: boolean;
   idle: boolean;
   initialized: boolean;
+  lastRead: number;
 }
 
 export default class ChatWindow extends Component<ChatWindowProps, ChatWindowState> {
   private virtualList: VirtualScroller | null;
+  private unreadMarkerRef: React.RefObject<HTMLDivElement>;
   
   INITIALIZATION_MAX_TIME = 1500;
 
@@ -61,18 +64,20 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     this.state = {
       fetchPending: false,
       idle: true,
-      initialized: false
+      initialized: false,
+      lastRead: props.unreadCount ? props.mailboxSize - props.unreadCount : Infinity,
     };
     
     this.dismissUnread = this.dismissUnread.bind(this);
-    this.initialIndex = this.initialIndex.bind(this);
     this.scrollToUnread = this.scrollToUnread.bind(this);
     this.handleWindowBlur = this.handleWindowBlur.bind(this);
     this.handleWindowFocus = this.handleWindowFocus.bind(this);
     this.stayLockedIfActive = this.stayLockedIfActive.bind(this);
-    this.firstUnread = this.firstUnread.bind(this);
+    this.dismissIfLineVisible = this.dismissIfLineVisible.bind(this);
+    this.lastRead = this.lastRead.bind(this);
     
     this.virtualList = null;
+    this.unreadMarkerRef = React.createRef();
   }
 
   componentDidMount() {
@@ -97,14 +102,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     this.setState({ idle: false });
   }
 
-  initialIndex() {
-    const { mailboxSize, unreadCount } = this.props;
-    return Math.min(Math.max(mailboxSize - 1 < INITIAL_LOAD
-      ? 0
-      : this.firstUnread(),
-    0), mailboxSize);
-  }
-
   initialFetch() {
     const { envelopes, mailboxSize, unreadCount } = this.props;
     if (envelopes.length > 0) {
@@ -112,17 +109,9 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       this.stayLockedIfActive();
       this.fetchMessages(start, start + DEFAULT_BACKLOG_SIZE, true).then(() => {
         if (!this.virtualList) return;
-        const initialIndex = this.initialIndex();
-        this.virtualList.scrollToData(initialIndex).then(() => {
-          if (
-            initialIndex === mailboxSize
-            || (this.virtualList && this.virtualList.window && this.virtualList.window.scrollTop === 0)
-          ) {
-            this.setState({ idle: false });
-            this.dismissUnread();
-          }
-          this.setState({ initialized: true });
-        });
+        this.setState({ idle: false });
+        this.setState({ initialized: true });
+        this.dismissIfLineVisible();
       });
     } else {
       setTimeout(() => {
@@ -147,7 +136,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
     if (stationPendingMessages.length !== prevProps.stationPendingMessages.length) {
       this.virtualList?.calculateVisibleItems();
-      this.virtualList?.scrollToData(mailboxSize);
     }
 
     if (!this.state.fetchPending && prevState.fetchPending) {
@@ -188,16 +176,41 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
     this.setState({ fetchPending: true });
     
+    start = Math.min(mailboxSize - start, mailboxSize);
+    end = Math.max(mailboxSize - end, 0, start - MAX_BACKLOG_SIZE);
+    
     return api.chat
-      .fetchMessages(Math.max(mailboxSize - end, 0), Math.min(mailboxSize - start, mailboxSize), station)
+      .fetchMessages(end, start, station)
       .finally(() => {
         this.setState({ fetchPending: false });
       });
   }
 
-  firstUnread() {
+  lastRead() {
     const { mailboxSize, unreadCount } = this.props;
-    return mailboxSize - unreadCount + 1;
+    return mailboxSize - unreadCount;
+  }
+
+  onScroll({ scrollTop, scrollHeight, windowHeight }) {
+    if (!this.state.idle && scrollTop > IDLE_THRESHOLD) {
+      this.setState({ idle: true });
+    }
+
+    this.dismissIfLineVisible();
+  }
+
+  dismissIfLineVisible() {
+    if (this.props.unreadCount === 0) return;
+    if (!this.unreadMarkerRef.current || !this.virtualList?.window) return;
+    const parent = this.unreadMarkerRef.current.parentElement?.parentElement;
+    if (!parent) return;
+    const { scrollTop, scrollHeight, offsetHeight } = this.virtualList.window;
+    if (
+      (scrollHeight - parent.offsetTop > scrollTop)
+      && (scrollHeight - parent.offsetTop < scrollTop + offsetHeight)
+    ) {
+      this.dismissUnread();
+    }
   }
   
   render() {
@@ -220,11 +233,13 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       remoteContentPolicy,
     } = this.props;
 
+    const unreadMarkerRef = this.unreadMarkerRef;
+
     const messages = new Map();
     let lastMessage = 0;
     
     [...envelopes]
-      .sort((a, b) => a.when - b.when)
+      .sort((a, b) => a.number - b.number)
       .forEach(message => {
         messages.set(message.number, message);
         lastMessage = message.number;
@@ -234,11 +249,11 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       .sort((a, b) => a.when - b.when)
       .forEach((message, index) => {
         index = index + 1; // To 1-index it
-        messages.set(envelopes.length + index, message);
-        lastMessage = envelopes.length + index;
+        messages.set(mailboxSize + index, message);
+        lastMessage = mailboxSize + index;
       });
 
-    const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy };
+    const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy, unreadMarkerRef };
     
     return (
       <>
@@ -258,11 +273,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
             this.setState({ idle: false });
             this.dismissUnread();
           }}
-          onScroll={({ scrollTop }) => {
-            if (!this.state.idle && scrollTop > IDLE_THRESHOLD) {
-              this.setState({ idle: true });
-            }
-          }}
+          onScroll={this.onScroll.bind(this)}
           data={messages}
           size={mailboxSize + stationPendingMessages.length}
           renderer={({ index, measure, scrollWindow }) => {
@@ -272,15 +283,14 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
               return <MessagePlaceholder key={index} height="64px" index={index} />;
             }
             const isPending: boolean = 'pending' in msg && Boolean(msg.pending);
-            const isFirstUnread: boolean = Boolean(unreadCount && index === this.firstUnread());
             const isLastMessage: boolean = Boolean(index === lastMessage)
-            const props = { measure, scrollWindow, isPending, isFirstUnread, msg, ...messageProps };
+            const isLastRead: boolean = Boolean(!isLastMessage && index === this.state.lastRead);
+            const props = { measure, scrollWindow, isPending, isLastRead, isLastMessage, msg, ...messageProps };
             return (
               <ChatMessage
                 key={index}
                 previousMsg={messages.get(index + 1)}
                 nextMsg={messages.get(index - 1)}
-                className={isLastMessage ? 'pb3' : ''}
                 {...props}
               />
             );

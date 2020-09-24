@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 
-export const DeleteButton = memo(({ isOwner, station, changeLoading, association, contacts, api }) => {
+export const DeleteButton = memo(({ isOwner, station, changeLoading, association, contacts, api, history }) => {
   const leaveButtonClasses = (!isOwner) ? 'pointer' : 'c-default';
   const deleteButtonClasses = (isOwner) ? 
     'b--red2 red2 pointer bg-gray0-d' :
@@ -12,7 +12,9 @@ export const DeleteButton = memo(({ isOwner, station, changeLoading, association
       true,
       isOwner ? 'Deleting chat...' : 'Leaving chat...',
       () => {
-        api.chat.delete(station);
+        api.chat.delete(station).then(() => {
+          history.push("/~chat");
+        });
       }
     );
   };

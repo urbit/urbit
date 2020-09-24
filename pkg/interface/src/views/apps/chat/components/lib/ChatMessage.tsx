@@ -1,6 +1,7 @@
 import React, { Component, PureComponent } from "react";
 import moment from "moment";
 import _ from "lodash";
+import { Box } from "@tlon/indigo-react";
 
 import { OverlaySigil } from './overlay-sigil';
 import { uxToHex, cite, writeText } from '~/logic/lib/util';
@@ -12,14 +13,10 @@ import RemoteContent from '~/views/components/RemoteContent';
 
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
-export const UnreadMarker = React.forwardRef(({ dayBreak, when, style }, ref) => (
-  <div ref={element => {
-    setTimeout(() => {
-      element.style.opacity = '1';
-    }, 250);
-  }} className="green2 flex items-center f9 absolute w-100" style={{...style, opacity: '0'}}>
+export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
+  <div ref={ref} className="green2 flex items-center f9 absolute w-100 left-0">
     <hr className="dn-s ma0 w2 b--green2 bt-0" />
-    <p className="mh4">New messages below</p>
+    <p className="mh4" style={{ whiteSpace: 'normal' }}>New messages below</p>
     <hr className="ma0 flex-grow-1 b--green2 bt-0" />
     {dayBreak
       ? <p className="gray2 mh4">{moment(when).calendar()}</p>
@@ -39,18 +36,19 @@ interface ChatMessageProps {
   msg: Envelope | IMessage;
   previousMsg: Envelope | IMessage | undefined;
   nextMsg: Envelope | IMessage | undefined;
-  isFirstUnread: boolean;
+  isLastRead: boolean;
   group: Group;
   association: Association;
   contacts: Contacts;
-  unreadRef: React.RefObject<HTMLDivElement>;
   hideAvatars: boolean;
   hideNicknames: boolean;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
-  className: string;
+  className?: string;
   isPending: boolean;
   style?: any;
   scrollWindow: HTMLDivElement;
+  isLastMessage?: boolean;
+  unreadMarkerRef: React.RefObject<HTMLDivElement>;
 }
 
 export default class ChatMessage extends Component<ChatMessageProps> {
@@ -72,11 +70,10 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       msg,
       previousMsg,
       nextMsg,
-      isFirstUnread,
+      isLastRead,
       group,
       association,
       contacts,
-      unreadRef,
       hideAvatars,
       hideNicknames,
       remoteContentPolicy,
@@ -84,7 +81,9 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       isPending,
       style,
       measure,
-      scrollWindow
+      scrollWindow,
+      isLastMessage,
+      unreadMarkerRef
     } = this.props;
   
     const renderSigil = Boolean((nextMsg && msg.author !== nextMsg.author) || !nextMsg || msg.number === 1);
@@ -92,7 +91,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
 
     const containerClass = `${renderSigil
       ? `w-100 flex flex-wrap cf pr3 f7 pt4 pl3 lh-copy`
-      : `w-100 flex flex-wrap cf pr3 hide-child`} ${isPending ? ' o-40' : ''} ${className}`
+      : `w-100 flex flex-wrap cf pr3 hide-child`} ${isPending ? 'o-40' : ''} ${isLastMessage ? 'pb3' : ''} ${className}`
 
     const timestamp = moment.unix(msg.when / 1000).format(renderSigil ? 'hh:mm a' : 'hh:mm');
 
@@ -116,15 +115,19 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       scrollWindow
     };
 
+    const unreadContainerStyle = {
+      height: isLastRead ? '1.66em' : '0',
+    };
+
     return (
       <div ref={this.divRef} className={containerClass} style={style} data-number={msg.number}>
-        {dayBreak && !isFirstUnread ? <DayBreak when={msg.when} /> : null}
+        {dayBreak && !isLastRead ? <DayBreak when={msg.when} /> : null}
         {renderSigil
           ? <MessageWithSigil {...messageProps} />
           : <MessageWithoutSigil {...messageProps} />}
-        {isFirstUnread
-          ? <UnreadMarker ref={unreadRef} dayBreak={dayBreak} when={msg.when} style={{ marginTop: (renderSigil ? "-17px" : "-6px") }} />
-          : null}
+        <Box fontSize='0' position='relative' width='100%' overflow='hidden' style={unreadContainerStyle}>{isLastRead
+          ? <UnreadMarker dayBreak={dayBreak} when={msg.when} ref={unreadMarkerRef} />
+          : null}</Box>
       </div>
     );
   }

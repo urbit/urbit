@@ -19,7 +19,7 @@ import {
 } from '~/logic/lib/util';
 
 
-export class LinksApp extends Component {
+export default class LinksApp extends Component {
   componentDidMount() {
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
@@ -46,7 +46,10 @@ export class LinksApp extends Component {
     const invites = props.invites ?
       props.invites : {};
 
-    const { api, sidebarShown, hideAvatars, hideNicknames, s3, remoteContentPolicy } = this.props;
+    const {
+      api, sidebarShown, s3,
+      hideAvatars, hideNicknames, remoteContentPolicy
+    } = this.props;
 
     return (
       <>
@@ -55,58 +58,38 @@ export class LinksApp extends Component {
         </Helmet>
         <Switch>
           <Route exact path="/~link"
-            render={ (props) => {
-              return (
-                <Skeleton
-                  active="collections"
-                  associations={associations}
-                  invites={invites}
-                  groups={groups}
-                  rightPanelHide={true}
-                  sidebarShown={sidebarShown}
-                  api={api}
-                  graphKeys={graphKeys}>
-                  <MessageScreen text="Select or create a collection to begin." />
-                </Skeleton>
-              );
-            }}
+            render={ (props) => (
+              <Skeleton
+                active="collections"
+                associations={associations}
+                invites={invites}
+                groups={groups}
+                rightPanelHide={true}
+                sidebarShown={sidebarShown}
+                api={api}
+                graphKeys={graphKeys}>
+                <MessageScreen text="Select or create a collection to begin." />
+              </Skeleton>
+            )}
           />
           <Route exact path="/~link/new"
-            render={(props) => {
-              return (
-                <Skeleton
-                  associations={associations}
-                  invites={invites}
-                  groups={groups}
-                  sidebarShown={sidebarShown}
+            render={ (props) => (
+              <Skeleton
+                associations={associations}
+                invites={invites}
+                groups={groups}
+                sidebarShown={sidebarShown}
+                api={api}
+                graphKeys={graphKeys}>
+                <NewScreen
                   api={api}
-                  graphKeys={graphKeys}>
-                  <NewScreen
-                    api={api}
-                    graphKeys={graphKeys}
-                    associations={associations}
-                    groups={groups}
-                    {...props}
-                  />
-                </Skeleton>
-              );
-            }}
-          />
-          <Route exact path="/~link/join/:ship/:name"
-            render={ (props) => {
-              const resource =
-                `${props.match.params.ship}/${props.match.params.name}`;
-
-              const autoJoin = () => {
-                try {
-                  // TODO: graph join
-                  props.history.push(`/~link/${resource}`);
-                } catch(err) {
-                  setTimeout(autoJoin, 2000);
-                }
-              };
-              autoJoin();
-            }}
+                  graphKeys={graphKeys}
+                  associations={associations}
+                  groups={groups}
+                  {...props}
+                />
+              </Skeleton>
+            )}
           />
           <Route exact path="/~link/(popout)?/:ship/:name/settings"
             render={ (props) => {
@@ -121,6 +104,7 @@ export class LinksApp extends Component {
               const contactDetails = contacts[resource['group-path']] || {};
               const group = groups[resource['group-path']] || new Set([]);
               const amOwner = amOwnerOfGroup(resource['group-path']);
+              const hasGraph = !!graphs[resourcePath];
 
               return (
                 <Skeleton
@@ -138,6 +122,7 @@ export class LinksApp extends Component {
                     contacts={contacts}
                     contactDetails={contactDetails}
                     graphResource={graphKeys.has(resourcePath)}
+                    hasGraph={!!hasGraph}
                     group={group}
                     amOwner={amOwner}
                     resourcePath={resourcePath}
@@ -159,13 +144,6 @@ export class LinksApp extends Component {
               const popout = props.match.url.includes('/popout/');
               const graph = graphs[resourcePath] || null;
 
-              if (!graph) {
-                api.graph.getGraph(
-                  `~${props.match.params.ship}`,
-                  props.match.params.name
-                );
-              }
-
               return (
                 <Skeleton
                   associations={associations}
@@ -181,6 +159,7 @@ export class LinksApp extends Component {
                     {...props}
                     api={api}
                     graph={graph}
+                    graphResource={graphKeys.has(resourcePath)}
                     popout={popout}
                     metadata={resource.metadata}
                     contacts={contactDetails}
@@ -214,13 +193,6 @@ export class LinksApp extends Component {
               const index = parseInt(indexArr[1], 10);
               const node = !!graph ? graph.get(index) : null;
 
-              if (!graph) { 
-                api.graph.getGraph(
-                  `~${props.match.params.ship}`,
-                  props.match.params.name
-                );
-              }
-              
               return (
                 <Skeleton
                   associations={associations}
@@ -235,6 +207,7 @@ export class LinksApp extends Component {
                   <LinkDetail
                     {...props}
                     node={node}
+                    graphResource={graphKeys.has(resourcePath)}
                     ship={props.match.params.ship}
                     name={props.match.params.name}
                     resource={resource}
@@ -255,4 +228,3 @@ export class LinksApp extends Component {
   }
 }
 
-export default LinksApp;

@@ -64,6 +64,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
     .then((result) => {
       this.setState({ embed: result });
     }).catch((error) => {
+      if (error.name === 'AbortError') return;
       this.setState({ embed: 'error' });
     });
   }

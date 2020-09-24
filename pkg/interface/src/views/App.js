@@ -39,6 +39,24 @@ const Root = styled.div`
   }
   display: flex;
   flex-flow: column nowrap;
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: ${ p => p.theme.colors.gray } ${ p => p.theme.colors.white };
+  }
+  
+  /* Works on Chrome/Edge/Safari */
+  *::-webkit-scrollbar {
+    width: 12px;
+  }
+  *::-webkit-scrollbar-track {
+    background: ${ p => p.theme.colors.white };
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: ${ p => p.theme.colors.gray };
+    border-radius: 1rem;
+    border: 3px solid ${ p => p.theme.colors.white };
+  }
 `;
 
 const StatusBarWithRouter = withRouter(StatusBar);

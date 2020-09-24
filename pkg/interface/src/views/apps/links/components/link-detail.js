@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { TabBar } from '~/views/components/chat-link-tabbar';
 import { LinkPreview } from './lib/link-preview';
 import { LinkSubmit } from './lib/link-submit';
@@ -10,14 +10,25 @@ import { getContactDetails } from '~/logic/lib/util';
 
 
 export const LinkDetail = (props) => {
-  if (!props.node) {
-    // TODO: something
+  if (!props.node && props.graphResource) {
+    useEffect(() => {
+      props.api.graph.getGraph(
+        `~${props.match.params.ship}`,
+        props.match.params.name
+      );
+    });
+
     return (
-      <div>
-        Not found
-      </div>
+      <div>Loading...</div>
     );
   }
+
+  if (!props.node) {
+    return (
+      <div>Not found</div>
+    );
+  }
+
   const { nickname } = getContactDetails(props.contacts[ship]);
   const our = getContactDetails(props.contacts[window.ship]);
   const resourcePath = `${props.ship}/${props.name}`;

@@ -26,8 +26,6 @@ export class SettingsScreen extends Component {
   componentDidUpdate() {
     const { props, state } = this;
 
-    console.log(props.resource);
-
     if (Boolean(state.isLoading) && !props.resource) {
       this.setState({
         isLoading: false
@@ -69,7 +67,6 @@ export class SettingsScreen extends Component {
       type: 'Deleting'
     });
 
-    console.log(props.match.params.name);
     props.api.graph.deleteGraph(props.match.params.name);
   }
 
@@ -117,12 +114,16 @@ export class SettingsScreen extends Component {
 
   render() {
     const { props, state } = this;
-
     const title = props.resource.metadata.title || props.resourcePath;
-    console.log(props);
 
-    if (!props.graphResource || !props.resource.metadata.color) {
+    if (
+      (!props.hasGraph || !props.resource.metadata.color)
+      && props.graphResource
+    ) {
       return <LoadingScreen />;
+    } else if (!props.graphResource) {
+      props.history.push('/~link');
+      return <div></div>;
     }
 
     return (

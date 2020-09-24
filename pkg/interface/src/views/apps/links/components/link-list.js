@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 
 import { TabBar } from '~/views/components/chat-link-tabbar';
 import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
@@ -11,6 +11,19 @@ import { getContactDetails } from '~/logic/lib/util';
 export const LinkList = (props) => {
   const resource = `${props.ship}/${props.name}`;
   const title = props.metadata.title || resource;
+
+  if (!props.graph && props.graphResource) {
+    useEffect(() => {
+      props.api.graph.getGraph(
+        `~${props.match.params.ship}`,
+        props.match.params.name
+      );
+    });
+
+    return (
+      <div>Loading...</div>
+    );
+  }
 
   if (!props.graph) {
     return (
