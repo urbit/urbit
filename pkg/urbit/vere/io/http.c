@@ -91,6 +91,7 @@ typedef struct _u3_h2o_serv {
   typedef struct _u3_hfig {
     u3_form*         for_u;             //  config from %eyre
     struct _u3_hreq* seq_u;             //  open slog requests
+    uv_timer_t*      sit_u;             //  slog stream heartbeat
   } u3_hfig;
 
 /* u3_httd: general http device
@@ -107,6 +108,7 @@ static void _http_serv_start_all(u3_httd* htd_u);
 static void _http_form_free(u3_httd* htd_u);
 
 static const c3_i TCP_BACKLOG = 16;
+static const c3_w HEARTBEAT_TIMEOUT = 20 * 1000;
 
 /* _http_close_cb(): uv_close_cb that just free's handle
 */
@@ -1911,6 +1913,27 @@ _http_stream_slog(void* vop_p, c3_w pri_w, u3_noun tan)
   u3z(tan);
 }
 
+/* _http_seq_heartbeat_cb(): send heartbeat to slog streams and restart timer
+*/
+static void
+_http_seq_heartbeat_cb(uv_timer_t* tim_u)
+{
+  u3_httd* htd_u = tim_u->data;
+  u3_hreq* seq_u = htd_u->fig_u.seq_u;
+
+  if ( 0 != seq_u ) {
+    u3_noun dat = u3nt(u3_nul, 1, c3_s1('\n'));
+    while ( 0 != seq_u ) {
+      _http_continue_respond(seq_u, u3k(dat), c3y);
+      seq_u = seq_u->nex_u;
+    }
+    u3z(dat);
+  }
+
+  uv_timer_start(htd_u->fig_u.sit_u, _http_seq_heartbeat_cb,
+                 HEARTBEAT_TIMEOUT, 0);
+}
+
 /* _reck_mole(): parse simple atomic mole.
 */
 static u3_noun
@@ -2081,6 +2104,12 @@ u3_http_io_init(u3_pier* pir_u)
 
   pir_u->sop_p = htd_u;
   pir_u->sog_f = _http_stream_slog;
+
+  uv_timer_t* sit_u = c3_malloc(sizeof(*sit_u));
+  sit_u->data = htd_u;
+  uv_timer_init(u3L, sit_u);
+  uv_timer_start(sit_u, _http_seq_heartbeat_cb, HEARTBEAT_TIMEOUT, 0);
+  htd_u->fig_u.sit_u = sit_u;
 
   //  XX retry up to N?
   //
