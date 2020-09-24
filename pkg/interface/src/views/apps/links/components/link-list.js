@@ -69,7 +69,7 @@ export const LinkList = (props) => {
               api={props.api}
               s3={props.s3} />
           </div>
-          { Array.from(props.graph.values()).map((node) => {
+          { Array.from(props.graph).map(([date, node]) => {
               const { nickname, color, avatar } =
                 getContactDetails(props.contacts[ship]);
 

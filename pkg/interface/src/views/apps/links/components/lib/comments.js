@@ -13,7 +13,7 @@ export const Comments = (props) => {
 
   return (
     <div>
-      { Array.from(props.comments.values()).map((comment) => {
+      { Array.from(props.comments).map(([date, comment]) => {
           const { nickname, color, member, avatar } =
             getContactDetails(contacts[comment.post.author]);
 
