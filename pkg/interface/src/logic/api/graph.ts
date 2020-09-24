@@ -28,7 +28,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   private hookAction(ship: Patp, action: any): Promise<any> {
-    return this.action('graph-push-hook', 'graph-update', action, deSig(ship));
+    return this.action('graph-push-hook', 'graph-update', action);
   }
 
   createManagedGraph(
