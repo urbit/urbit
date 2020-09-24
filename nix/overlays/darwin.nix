@@ -2,7 +2,7 @@ final: prev:
 
 let
 
-  isMusl = prev.stdenv.hostPlatform.isDarwin;
+  isDarwin = prev.stdenv.hostPlatform.isDarwin;
 
   optionalsNull = xs:
     prev.lib.optionals (xs != null) xs;
