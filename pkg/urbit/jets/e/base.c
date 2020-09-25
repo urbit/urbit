@@ -64,53 +64,86 @@ _of_hex_digit(c3_y inp_y, c3_y* out_y)
   return c3n;
 }
 
+static inline c3_o
+_of_hex_odd(u3_atom inp, c3_w len_w, c3_w byt_w, c3_y* buf_y)
+{
+  c3_y low_y, hig_y, lit_y, hit_y;
+
+  hig_y = u3r_byte(--byt_w, inp);
+
+  while ( --len_w ) {
+    low_y = u3r_byte(--byt_w, inp);
+
+    if (  (c3n == _of_hex_digit(low_y, &lit_y))
+       || (c3n == _of_hex_digit(hig_y, &hit_y)) )
+    {
+      return c3n;
+    }
+    else {
+      *buf_y++ = (hit_y & 0xf) ^ (lit_y << 4);
+    }
+
+    hig_y = u3r_byte(--byt_w, inp);
+  }
+
+  if ( c3n == _of_hex_digit(hig_y, &hit_y) ) {
+    return c3n;
+  }
+  else {
+    *buf_y = hit_y & 0xf;
+  }
+
+  return c3y;
+}
+
+static inline c3_o
+_of_hex_even(u3_atom inp, c3_w len_w, c3_y* buf_y)
+{
+  c3_y lit_y, hit_y;
+  c3_s inp_s;
+
+  while ( len_w-- ) {
+    inp_s = u3r_short(len_w, inp);
+
+    if (  (c3n == _of_hex_digit(inp_s & 0xff, &lit_y))
+       || (c3n == _of_hex_digit(inp_s >> 8,   &hit_y)) )
+    {
+      return c3n;
+    }
+    else {
+      *buf_y++ = (hit_y & 0xf) ^ (lit_y << 4);
+    }
+  }
+
+  return c3y;
+}
+
 u3_noun
 u3qe_de_base16(u3_atom inp)
 {
-  c3_w  sor_w = u3r_met(4, inp);
-  c3_w  len_w = sor_w;
+  c3_w  len_w = u3r_met(4, inp);
   c3_y* buf_y = u3a_malloc(len_w);
-  c3_y* dat_y = buf_y;
+  c3_o  ret_o;
 
-  //  handle odd-numbered input lengths
-  //
   {
     c3_w byt_w = u3r_met(3, inp);
 
     if ( byt_w & 1 ) {
-      c3_y inp_y = u3r_byte(byt_w - 1, inp);
-      c3_y dit_y;
-
-      if ( c3n == _of_hex_digit(inp_y, &dit_y) ) {
-        u3a_free(dat_y);
-        return u3_nul;
-      }
-      else {
-        *buf_y++ = dit_y & 0xf;
-        len_w--;
-      }
-    }
-  }
-
-  while ( len_w-- ) {
-    c3_s inp_s = u3r_short(len_w, inp);
-    c3_y low_y, hig_y;
-
-    if (  (c3n == _of_hex_digit(inp_s & 0xff, &low_y))
-       || (c3n == _of_hex_digit(inp_s >> 8,   &hig_y)) )
-    {
-      u3a_free(dat_y);
-      return u3_nul;
+      ret_o = _of_hex_odd(inp, len_w, byt_w, buf_y);
     }
     else {
-      *buf_y++ = (hig_y & 0xf) ^ (low_y << 4);
+      ret_o = _of_hex_even(inp, len_w, buf_y);
     }
   }
 
-  {
-    u3_noun dat = u3i_bytes(sor_w, dat_y);
-    u3a_free(dat_y);
-    return u3nt(u3_nul, u3i_words(1, &sor_w), dat);
+  if ( c3n == ret_o ) {
+    u3a_free(buf_y);
+    return u3_nul;
+  }
+  else {
+    u3_noun dat = u3i_bytes(len_w, buf_y);
+    u3a_free(buf_y);
+    return u3nt(u3_nul, u3i_words(1, &len_w), dat);
   }
 }
 
