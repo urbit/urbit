@@ -52,7 +52,7 @@ in dimensionWith "system" systems (systemName: system:
     pushPill = name: src: pushObject name "pill" src.build;
 
     # Instantiate shared and static libraries/executables for the specific system.
-    sharedPackages = import ./default.nix { inherit system; };
+    sharedPackages = import ./default.nix { inherit system; crossSystem = null; withStatic = false; };
     # staticPackages = import ./default.nix {
     #   inherit system;
 
