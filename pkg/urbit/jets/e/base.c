@@ -7,12 +7,9 @@ const c3_y hex_y[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
                          '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'  };
 
 u3_noun
-u3qe_en_base16(u3_noun cot)
+u3qe_en_base16(u3_atom len, u3_atom dat)
 {
   c3_w len_w, byt_w;
-  u3_atom  len, dat;
-  u3x_cell(cot, &len, &dat);
-  u3x_atom(len); u3x_atom(dat);
 
   if ( c3n == u3a_is_cat(len) ) {
     return u3m_bail(c3__fail);
@@ -150,7 +147,9 @@ u3qe_de_base16(u3_atom inp)
 u3_noun
 u3we_en_base16(u3_noun cor)
 {
-  return u3qe_en_base16(u3x_at(u3x_sam, cor));
+  u3_noun a, b;
+  u3x_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0);
+  return u3qe_en_base16(u3x_atom(a), u3x_atom(b));
 }
 
 u3_noun
