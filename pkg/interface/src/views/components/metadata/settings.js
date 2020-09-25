@@ -42,7 +42,7 @@ export const MetadataSettings = (props) => {
               val,
               association.metadata.description,
               association.metadata['date-created'],
-              module
+              module,
               uxToHex(association.metadata.color)
             ).then(() => {
               changeLoading(false, false, '', () => {});
