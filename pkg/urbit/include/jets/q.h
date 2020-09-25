@@ -152,6 +152,9 @@
     u3_noun u3qe_reco(u3_atom has, u3_atom sig_v, u3_atom sig_r, u3_atom sig_s);
     u3_noun u3qe_sign(u3_atom has, u3_atom prv);
 
+    u3_noun u3qe_en_base16(u3_noun cot);
+    u3_noun u3qe_de_base16(u3_atom inp);
+
     u3_noun u3qeo_raw(u3_atom, u3_atom);
 
     u3_noun u3qef_drg(u3_noun, u3_atom);

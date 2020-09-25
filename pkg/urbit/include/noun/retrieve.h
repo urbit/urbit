@@ -368,6 +368,14 @@
         u3r_mp(mpz_t   a_mp,
                u3_atom b);
 
+      /* u3r_short():
+      **
+      **   Return short (a_w) of (b).
+      */
+        c3_s
+        u3r_short(c3_w  a_w,
+                  u3_atom b);
+
       /* u3r_word():
       **
       **   Return word (a_w) of (b).
