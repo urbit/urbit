@@ -19,11 +19,9 @@ export default class Subscription {
 
   setupSlog() {
     const slog = new EventSource('/~/slog', { withCredentials: true });
-    let available = false;
 
     slog.onopen = e => {
       console.log('slog: opened stream');
-      available = true;
     }
 
     slog.onmessage = e => {
@@ -32,17 +30,11 @@ export default class Subscription {
 
     slog.onerror = e => {
       console.error('slog: eventsource error:', e);
-      if (!available) {
-        this.handleEvent({ txt:
-          'landscape: no printf stream. bad connection or old binary.'
-        });
-      } else {
-        window.setTimeout(() => {
-          if (slog.readyState !== EventSource.CLOSED) return;
-          console.log('slog: reconnecting...');
-          this.setupSlog();
-        }, 10000);
-      }
+      window.setTimeout(() => {
+        if (slog.readyState !== EventSource.CLOSED) return;
+        console.log('slog: reconnecting...');
+        this.setupSlog();
+      }, 10000);
     }
   }
 
