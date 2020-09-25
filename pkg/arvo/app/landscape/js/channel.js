@@ -103,14 +103,16 @@ class Channel {
       path,
       connectionErrFunc = () => {},
       eventFunc = () => {},
-      quitFunc = () => {}) {
+      quitFunc = () => {},
+      subAckFunc = () => {}) {
     let id = this.nextId();
     this.outstandingSubscriptions.set(
       id,
       {
         err: connectionErrFunc,
         event: eventFunc,
-        quit: quitFunc
+        quit: quitFunc,
+        subAck: subAckFunc
       }
     );
 
@@ -209,6 +211,9 @@ class Channel {
         //
         if (obj.hasOwnProperty("err")) {
           funcs["err"](obj.err);
+          this.outstandingSubscriptions.delete(obj.id);
+        } else if (obj.hasOwnProperty("ok")) {
+          funcs["subAck"](obj);
           this.outstandingSubscriptions.delete(obj.id);
         }
       } else if (obj.response == "diff") {
