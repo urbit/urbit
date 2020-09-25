@@ -245,7 +245,7 @@
       ?:  ?=(%& -.res)
         ?.  &(?=(^ p.res) run.u.p.res)
           [[~ cli-state] shoe]
-        (run-command cmd.u.p.res)
+        (run-command | cmd.u.p.res)
       :_  shoe
       ::  parsing failed
       ::
@@ -269,21 +269,20 @@
       =/  res=(unit [? cmd=command-type])
         %+  rust  (tufa buf.cli-state)
         (command-parser:og sole-id)
-      ?^  res  (run-command cmd.u.res)
+      ?^  res  (run-command & cmd.u.res)
       [[[(effect %bel ~)]~ cli-state] shoe]
     ::
     ++  run-command
-      |=  cmd=command-type
+      |=  [history=? cmd=command-type]
       ^+  [[*(list card) cli-state] shoe]
       =^  cards  shoe  (on-command:og sole-id cmd)
       ::  clear buffer
       ::
       =^  clear  cli-state  (~(transmit sole cli-state) [%set ~])
       =-  [[[- cards] cli-state] shoe]
-      %+  effect  %mor
-      :~  [%nex ~]
-          [%det clear]
-      ==
+      %-  effect
+      ?.  history  [%det clear]
+      [%mor ~[[%nex ~] [%det clear]]]
     ::
     ++  tab
       |=  pos=@ud
