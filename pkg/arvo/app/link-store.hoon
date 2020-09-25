@@ -5,7 +5,7 @@
 ::
 |%
 +$  state-any  $%(state-1 state-0)
-+$  state-1  [%1 ~]
++$  state-1  [%1 cards=(list card)]
 +$  state-0
   $:  %0
       by-group=(map path links)
@@ -44,9 +44,15 @@
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
+  ::
   =/  s  !<(state-any old)
   ?:  ?=(%1 -.s)
     [~ this(state s)]
+  ::  defer card emission to later event
+  ::
+  =;  [cards=(list card) that=_this]
+    :_  that(state [%1 cards])
+    [%pass /load %arvo %b %wait now.bowl]~
   ::
   :_  this(state *state-1)
   =/  orm  orm:graph-store
@@ -55,9 +61,9 @@
   %+  turn  ~(tap by by-group.s)
   |=  [=path =links]
   ^-  (list card)
-  ?.  ?=([@ @ *] path)
+  ?.  ?=([@ ~] path)
     (on-bad-path path links)
-  =/  =resource  [(slav %p i.path) i.t.path]
+  =/  =resource  [our.bowl i.path]
   :_  [(archive-graph resource)]~
   %+  add-graph  resource
   ^-  graph:gra
@@ -101,7 +107,7 @@
   ++  on-bad-path
     |=  [=path =links]
     ^-  (list card)
-    ~|  discarding-malformed-links+[path links]
+    ~&  discarding-malformed-links+[path links]
     ~
   ::
   ++  add-graph
@@ -124,11 +130,20 @@
     ==
   --
 ::
-++  on-poke   on-poke:def
+++  on-poke   ::on-poke:def
+  |=  [=mark =vase]
+  ^-  (quip card _this)
+  [cards.state this]
 ++  on-peek   on-peek:def
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-agent  on-agent:def
-++  on-arvo   on-arvo:def
+++  on-arvo
+  |=  [=wire =sign-arvo]
+  ^-  (quip card _this)
+  ?+    sign-arvo  (on-arvo:def wire sign-arvo)
+      [%b %wake *]
+    [cards.state this]
+  ==
 ++  on-fail   on-fail:def
 --
