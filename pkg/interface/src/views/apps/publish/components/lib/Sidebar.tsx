@@ -96,7 +96,7 @@ export function Sidebar(props: any) {
     );
   }
 
-  const display = props.path ? ['none', 'block'] : 'block';
+  const display = props.hidden ? ['none', 'block'] : 'block';
 
   return (
     <Col
