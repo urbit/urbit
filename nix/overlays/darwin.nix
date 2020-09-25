@@ -14,6 +14,10 @@ let
     if cond then pkg.overrideAttrs f else pkg;
 
 in {
+  gmp6 = overrideAttrsWhen isDarwin prev.gmp6 (old: {
+    doCheck = false;
+  });
+
   libiconv = overrideAttrsWhen isDarwin prev.libiconv (old: {
     nativeBuildInputs =
       (old.nativeBuildInputs or []) ++ [
@@ -21,7 +25,7 @@ in {
       ];
   });
 
-  gmp6 = overrideAttrsWhen isDarwin prev.gmp6 (old: {
-    doCheck = false;
-  });
+  vim = overrideWhen isDarwin prev.vim {
+    darwinSupport = true;
+  }
 }
