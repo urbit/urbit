@@ -1,12 +1,13 @@
 import React, { useMemo, useCallback } from "react";
 import { Box, Text, Row, Col } from "@tlon/indigo-react";
 import _ from "lodash";
+import ob from "urbit-ob";
 import { useField } from "formik";
 import styled from "styled-components";
 
 import { DropdownSearch } from "./DropdownSearch";
 import { Associations, Association } from "~/types/metadata-update";
-import { cite } from '~/logic/lib/util';
+import { cite, deSig } from "~/logic/lib/util";
 import { Rolodex, Groups } from "~/types";
 import { HoverBox } from "./HoverBox";
 
@@ -91,7 +92,7 @@ export function ShipSearch(props: InviteSearchProps) {
 
   const renderCandidate = useCallback(
     (s: string, selected: boolean, onSelect: (s: string) => void) => {
-      const detail = _.uniq(nicknames.get(s)).join(', ');
+      const detail = _.uniq(nicknames.get(s)).join(", ");
       const onClick = () => {
         onSelect(s);
       };
@@ -113,6 +114,11 @@ export function ShipSearch(props: InviteSearchProps) {
       <DropdownSearch<string>
         label={props.label}
         id={props.id}
+        isExact={(s) => {
+          const ship = `~${deSig(s)}`;
+          const result = ob.isValidPatp(ship);
+          return result ? deSig(s) : undefined;
+        }}
         placeholder="Search for ships"
         caption={props.caption}
         candidates={peers}

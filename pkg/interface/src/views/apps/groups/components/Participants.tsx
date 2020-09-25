@@ -198,7 +198,8 @@ function Participant(props: {
           <Text>{_.capitalize(role)}</Text>
         </Col>
         <Dropdown
-          position="right"
+          alignX="right"
+          alignY="top"
           options={
             <>
               <Button onClick={sendMessage}>

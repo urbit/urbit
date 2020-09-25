@@ -31,7 +31,7 @@ export function SidebarListHeader(props: {
       </Box>
       <Dropdown
         width="200px"
-        position="right"
+        alignY="top"
         options={
           <FormikOnBlur initialValues={props.initialValues} onSubmit={onSubmit}>
             <Col>

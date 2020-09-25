@@ -11,33 +11,28 @@ import GlobalApi from "~/logic/api/global";
 import { Path, AppName } from "~/types/noun";
 import { LinkCollections } from "~/types/link-update";
 import styled from "styled-components";
+import GlobalSubscription from "~/logic/subscription/global";
+import {Workspace} from "~/types";
+
 interface SkeletonProps {
   children: ReactNode;
   recentGroups: string[];
   associations: Associations;
   chatSynced: ChatHookUpdate | null;
+  graphKeys: Set<string>;
   linkListening: Set<Path>;
   links: LinkCollections;
   notebooks: Notebooks;
   inbox: Inbox;
   selected?: string;
   selectedApp?: AppName;
-  selectedGroup: string;
   baseUrl: string;
   mobileHide?: boolean;
   api: GlobalApi;
+  subscription: GlobalSubscription;
+  includeUnmanaged: boolean;
+  workspace: Workspace;
 }
-
-const buntAppConfig = (name: string) => ({
-  name,
-  getStatus: (s: string) => undefined,
-});
-
-const TruncatedBox = styled(Box)`
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-`;
 
 export function Skeleton(props: SkeletonProps) {
   const chatConfig = {
@@ -46,8 +41,12 @@ export function Skeleton(props: SkeletonProps) {
       if (!(s in (props.chatSynced || {}))) {
         return "unsubscribed";
       }
-      const { config } = props.inbox[s];
-      if (config.read !== config.length) {
+      const mailbox = props?.inbox?.[s];
+      if(!mailbox) {
+        return undefined;
+      }
+      const { config } = mailbox;
+      if (config?.read !== config?.length) {
         return "unread";
       }
       return undefined;
@@ -70,7 +69,10 @@ export function Skeleton(props: SkeletonProps) {
   const linkConfig = {
     name: "link",
     getStatus: (s: string) => {
-      if (!props.linkListening.has(s)) {
+      const [, , host, name] = s.split("/");
+      const graphKey = `${host.slice(1)}/${name}`;
+
+      if (!props.graphKeys.has(graphKey)) {
         return "unsubscribed";
       }
       const link = props.links[s];
@@ -93,14 +95,8 @@ export function Skeleton(props: SkeletonProps) {
     props.api.publish.fetchNotebooks();
     props.subscription.startApp("chat");
     props.subscription.startApp("publish");
-    props.subscription.startApp("link");
-    props.api.links.getPage("", 0);
+    props.subscription.startApp("graph");
   }, []);
-
-  const association =
-    props.selected && props.selectedApp
-      ? props.associations?.[props.selectedApp]?.[props.selected]
-      : null;
 
   return (
     <Box fontSize={0} px={[0, 3]} pb={[0, 3]} height="100%" width="100%">
@@ -113,45 +109,20 @@ export function Skeleton(props: SkeletonProps) {
         border={[0, 1]}
         borderColor={["washedGray", "washedGray"]}
         gridTemplateColumns={["1fr", "250px 1fr"]}
-        gridTemplateRows="32px 1fr"
+        gridTemplateRows="1fr"
       >
         <Sidebar
           recentGroups={props.recentGroups}
           selected={props.selected}
-          selectedGroup={props.selectedGroup}
           selectedApp={props.selectedApp}
           associations={props.associations}
           invites={{}}
           apps={config}
           baseUrl={props.baseUrl}
-          onlyGroups={[props.selectedGroup]}
+          includeUnmanaged={!props.selectedGroup}
           mobileHide={props.mobileHide}
+          workspace={props.workspace}
         ></Sidebar>
-        <Box
-          p={2}
-          display="flex"
-          alignItems="center"
-          borderBottom={1}
-          borderBottomColor="washedGray"
-        >
-          <Box
-            borderRight={1}
-            borderRightColor="gray"
-            pr={2}
-            mr={2}
-            display={["block", "none"]}
-          >
-            <Link to={`/~groups${props.selectedGroup}`}> {"<- Back"}</Link>
-          </Box>
-          <Box mr={2}>{association?.metadata?.title}</Box>
-          <TruncatedBox
-            maxWidth="50%"
-            flexShrink={1}
-            color="gray"
-          >
-            {association?.metadata?.description}
-          </TruncatedBox>
-        </Box>
         {props.children}
       </Box>
     </Box>

@@ -93,7 +93,7 @@ export function GroupSettings(props: GroupSettingsProps) {
                 longer see this group.)
               </InputCaption>
               <Button onClick={onDelete} mt={1} border error>
-                Delete this notebook
+                Delete this group
               </Button>
             </Col>
             <Box mb={4} borderBottom={1} borderBottomColor="washedGray" />

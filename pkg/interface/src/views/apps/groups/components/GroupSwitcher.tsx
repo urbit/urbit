@@ -14,6 +14,8 @@ import { Link } from "react-router-dom";
 
 import { Association, Associations } from "~/types/metadata-update";
 import { Dropdown } from "~/views/components/Dropdown";
+import {Workspace} from "~/types";
+import {getTitleFromWorkspace} from "~/logic/lib/workspace";
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
@@ -65,12 +67,13 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
 }
 
 export function GroupSwitcher(props: {
-  association: Association;
   associations: Associations;
+  workspace: Workspace;
   baseUrl: string;
   recentGroups: string[];
 }) {
-  const { title } = props.association.metadata;
+  const { associations, workspace } = props;
+  const title = getTitleFromWorkspace(associations, workspace)
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
     <Box position="sticky" top="0px" p={2}>
@@ -83,7 +86,8 @@ export function GroupSwitcher(props: {
       >
         <Row alignItems="center" justifyContent="space-between">
           <Dropdown
-            width="200px"
+            width="220px"
+            alignY="top"
             options={
               <Col bg="white" width="100%" alignItems="stretch">
                 <GroupSwitcherItem to="">
@@ -100,23 +104,27 @@ export function GroupSwitcher(props: {
                   recent={props.recentGroups}
                   associations={props.associations}
                 />
-                <GroupSwitcherItem to={navTo("/popover/participants")}>
-                  <Icon mr={2} fill="none" stroke="gray" icon="CircleDot" />
-                  <Text> Participants</Text>
-                </GroupSwitcherItem>
-                <GroupSwitcherItem to={navTo("/popover/settings")}>
-                  <Icon mr={2} fill="none" stroke="gray" icon="Gear" />
-                  <Text> Settings</Text>
-                </GroupSwitcherItem>
-                <GroupSwitcherItem bottom to={navTo("/invites")}>
-                  <Icon
-                    mr={2}
-                    fill="rgba(0,0,0,0)"
-                    stroke="blue"
-                    icon="CreateGroup"
-                  />
-                  <Text color="blue">Invite to group</Text>
-                </GroupSwitcherItem>
+                {workspace.type === 'group' && (
+                  <>
+                    <GroupSwitcherItem to={navTo("/popover/participants")}>
+                      <Icon mr={2} fill="none" stroke="gray" icon="CircleDot" />
+                      <Text> Participants</Text>
+                    </GroupSwitcherItem>
+                    <GroupSwitcherItem to={navTo("/popover/settings")}>
+                      <Icon mr={2} fill="none" stroke="gray" icon="Gear" />
+                      <Text> Settings</Text>
+                    </GroupSwitcherItem>
+                    <GroupSwitcherItem bottom to={navTo("/invites")}>
+                      <Icon
+                        mr={2}
+                        fill="rgba(0,0,0,0)"
+                        stroke="blue"
+                        icon="CreateGroup"
+                      />
+                      <Text color="blue">Invite to group</Text>
+                    </GroupSwitcherItem>
+                  </>
+                )}
               </Col>
             }
           >
@@ -128,17 +136,21 @@ export function GroupSwitcher(props: {
             </Box>
           </Dropdown>
           <Row collapse pr={1} justifyContent="flex-end" alignItems="center">
-            <Link to={navTo("/invites")}>
-              <Icon
-                display="block"
-                fill="rgba(0,0,0,0)"
-                stroke="blue"
-                icon="CreateGroup"
-              />
-            </Link>
-            <Link to={navTo("/popover/settings")}>
-              <Icon display="block" ml={2} icon="Gear" />
-            </Link>
+            { workspace.type === 'group' && (
+              <>
+                <Link to={navTo("/invites")}>
+                  <Icon
+                    display="block"
+                    fill="rgba(0,0,0,0)"
+                    stroke="blue"
+                    icon="CreateGroup"
+                  />
+                </Link>
+                <Link to={navTo("/popover/settings")}>
+                  <Icon display="block" ml={2} icon="Gear" />
+                </Link>
+              </>
+            )}
           </Row>
         </Row>
       </Col>

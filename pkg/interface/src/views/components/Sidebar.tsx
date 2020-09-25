@@ -6,15 +6,17 @@ import {
   Icon,
   MenuItem as _MenuItem,
   IconButton,
+  Button,
 } from "@tlon/indigo-react";
 import { capitalize } from "lodash";
+import { Link } from "react-router-dom";
 
 import { SidebarInvite } from "./SidebarInvite";
 import GlobalApi from "~/logic/api/global";
 import { AppName } from "~/types/noun";
 import { alphabeticalOrder } from "~/logic/lib/util";
 import { GroupSwitcher } from "~/views/apps/groups/components/GroupSwitcher";
-import { AppInvites, Associations, AppAssociations } from "~/types";
+import { AppInvites, Associations, AppAssociations, Workspace } from "~/types";
 import { SidebarItem } from "./SidebarItem";
 import {
   SidebarListHeader,
@@ -22,6 +24,7 @@ import {
   SidebarSort,
 } from "./SidebarListHeader";
 import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
+import {getGroupFromWorkspace} from "~/logic/lib/workspace";
 
 interface SidebarAppConfig {
   name: string;
@@ -62,7 +65,7 @@ function SidebarItems(props: {
   apps: SidebarAppConfigs;
   config: SidebarListConfig;
   associations: Associations;
-  group: string;
+  group?: string;
   selected?: string;
 }) {
   const { selected, group, config } = props;
@@ -70,12 +73,16 @@ function SidebarItems(props: {
     ...props.associations.chat,
     ...props.associations.publish,
     ...props.associations.link,
+    ...props.associations.graph,
   };
 
   const ordered = Object.keys(associations)
     .filter((a) => {
       const assoc = associations[a];
-      return assoc["group-path"] === group;
+      console.log(a);
+      return group
+        ? assoc["group-path"] === group
+        : !(assoc["group-path"] in props.associations.contacts);
     })
     .sort(sidebarSort(associations)[config.sortBy]);
 
@@ -105,25 +112,26 @@ interface SidebarProps {
   api: GlobalApi;
   associations: Associations;
   selected?: string;
-  selectedGroup: string;
+  selectedGroup?: string;
+  includeUnmanaged?: boolean;
   apps: SidebarAppConfigs;
   baseUrl: string;
   mobileHide?: boolean;
+  workspace: Workspace;
 }
 
 export function Sidebar(props: SidebarProps) {
-  const { invites, api, associations, selected, apps } = props;
-  const groupAsssociation = associations.contacts[props.selectedGroup];
+  const { invites, api, associations, selected, apps, workspace } = props;
+  const groupPath = getGroupFromWorkspace(workspace)
+  const groupAsssociation =
+    groupPath && associations.contacts[groupPath];
   const display = props.mobileHide ? ["none", "flex"] : "flex";
-  if (!groupAsssociation) {
-    return null;
-  }
   if (!associations) {
     return null;
   }
 
   const [config, setConfig] = useLocalStorageState<SidebarListConfig>(
-    `group-config:${props.selectedGroup}`,
+    `group-config:${groupPath || "home"}`,
     {
       sortBy: "asc",
       hideUnjoined: false,
@@ -134,7 +142,8 @@ export function Sidebar(props: SidebarProps) {
       display={display}
       flexDirection="column"
       width="100%"
-      gridRow="1/3"
+      height="100%"
+      gridRow="1/2"
       gridColumn="1/2"
       borderRight={1}
       borderRightColor="washedGray"
@@ -147,7 +156,7 @@ export function Sidebar(props: SidebarProps) {
         associations={associations}
         recentGroups={props.recentGroups}
         baseUrl={props.baseUrl}
-        association={groupAsssociation}
+        workspace={props.workspace}
       />
       {Object.keys(invites).map((appPath) =>
         Object.keys(invites[appPath]).map((uid) => (
@@ -164,9 +173,29 @@ export function Sidebar(props: SidebarProps) {
         config={config}
         associations={associations}
         selected={selected}
-        group={props.selectedGroup}
+        group={groupPath}
         apps={props.apps}
       />
+      <Box
+        display="flex"
+        justifyContent="center"
+        position="sticky"
+        bottom="8px"
+        width="100%"
+        my={2}
+      >
+        <Link to={`/~groups${props.selectedGroup}/new`}>
+          <Box
+            bg="white"
+            p={2}
+            borderRadius={1}
+            border={1}
+            borderColor="lightGray"
+          >
+            + New Channel
+          </Box>
+        </Link>
+      </Box>
     </Box>
   );
 }

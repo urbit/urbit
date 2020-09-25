@@ -21,6 +21,7 @@ import {Resource} from '~/views/components/Resource';
 import {PopoverRoutes} from './components/PopoverRoutes';
 import {UnjoinedResource} from '~/views/components/UnjoinedResource';
 import {GroupsPane} from '~/views/components/GroupsPane';
+import {Workspace} from '~/types';
 
 
 type GroupsAppProps = StoreState & {
@@ -288,12 +289,20 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               const { host, name } = routeProps.match.params as Record<string, string>;
               const groupPath = `/ship/${host}/${name}`;
               const baseUrl = `/~groups${groupPath}`;
+              const ws: Workspace = { type: 'group', group: groupPath };
 
               return (
-                <GroupsPane baseUrl={baseUrl} groupPath={groupPath} {...props} />
+                <GroupsPane workspace={ws} baseUrl={baseUrl} {...props} />
               )
             }}/>
+          <Route path="/~groups/home"
+            render={routeProps => {
+              const ws: Workspace = { type: 'home' };
 
+              return (<GroupsPane workspace={ws} baseUrl="/~groups/home" {...props} />);
+
+            }}
+          />
           <Route exact path="/~groups/view/ship/:ship/:group/:contact"
             render={(props) => {
               const groupPath =

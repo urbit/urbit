@@ -6,6 +6,7 @@ import { Association } from "~/types/metadata-update";
 
 import { SidebarAppConfigs, SidebarItemStatus } from "./Sidebar";
 import { HoverBoxLink } from "./HoverBox";
+import {Groups} from "~/types";
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   switch (props.status) {
@@ -22,9 +23,12 @@ function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
   }
 }
 
-const getAppIcon = (app: string) => {
-  if (app === "link") {
-    return "Links";
+const getAppIcon = (app: string, module: string) => {
+  if (app === "graph") {
+    if (module === "link") {
+      return "Links";
+    }
+    return _.capitalize(module);
   }
   return _.capitalize(app);
 };
@@ -32,28 +36,36 @@ const getAppIcon = (app: string) => {
 export function SidebarItem(props: {
   hideUnjoined: boolean;
   association: Association;
+  groups: Groups;
   path: string;
   selected: boolean;
   apps: SidebarAppConfigs;
 }) {
-  const { association, path, selected, apps } = props;
+  const { association, path, selected, apps, groups } = props;
   const title = association?.metadata?.title || path;
   const appName = association?.["app-name"];
+  const module = association?.metadata?.module || appName;
   const appPath = association?.["app-path"];
   const groupPath = association?.["group-path"];
-  const app = apps[appName];
+  const app = apps[module];
+  const isUnmanaged = groups[groupPath]?.hidden || false;
+  if (!app) {
+    return null;
+  }
   const status = app.getStatus(path);
   const hasUnread = status === "unread" || status === "mention";
 
   const isSynced = status !== "unsubscribed";
 
+  const baseUrl = isUnmanaged ? `/~groups/home` : `/~groups${groupPath}`;
+
   const to = isSynced
-    ? `/~groups${groupPath}/resource/${appName}${appPath}`
-    : `/~groups${groupPath}/join/${appName}${appPath}`;
+    ? `${baseUrl}/resource/${module}${appPath}`
+    : `${baseUrl}/join/${module}${appPath}`;
 
-  const color = selected ? 'black' : isSynced ? 'gray' : 'lightGray';
+  const color = selected ? "black" : isSynced ? "gray" : "lightGray";
 
-  if(props.hideUnjoined && !isSynced) {
+  if (props.hideUnjoined && !isSynced) {
     return null;
   }
 
@@ -72,9 +84,19 @@ export function SidebarItem(props: {
       selected={selected}
     >
       <Row alignItems="center">
-        <Icon display="block" fill="rgba(0,0,0,0)" stroke={color} icon={getAppIcon(appName)} />
-        <Box flexShrink={2} ml={2} lineHeight="1.33" fontWeight={hasUnread ? "600" : "400"}>
-          <Text color={selected || isSynced ? 'black' : 'lightGray'}>
+        <Icon
+          display="block"
+          fill="rgba(0,0,0,0)"
+          stroke={color}
+          icon={getAppIcon(appName, module)}
+        />
+        <Box
+          flexShrink={2}
+          ml={2}
+          lineHeight="1.33"
+          fontWeight={hasUnread ? "600" : "400"}
+        >
+          <Text color={selected || isSynced ? "black" : "lightGray"}>
             {title}
           </Text>
         </Box>

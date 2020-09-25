@@ -5,7 +5,7 @@ import {
   useLocation,
   RouteComponentProps,
 } from "react-router-dom";
-import { Center } from "@tlon/indigo-react";
+import { Center, Box } from "@tlon/indigo-react";
 import _ from "lodash";
 
 import { Resource } from "~/views/components/Resource";
@@ -22,74 +22,87 @@ import { StoreState } from "~/logic/store/type";
 import { UnjoinedResource } from "./UnjoinedResource";
 import { InvitePopover } from "../apps/groups/components/InvitePopover";
 import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
+import { NewChannel } from "../apps/groups/components/lib/NewChannel";
+
+import "~/views/apps/links/css/custom.css";
+import "~/views/apps/publish/css/custom.css";
+import { Workspace } from "~/types";
+import { getGroupFromWorkspace } from "~/logic/lib/workspace";
 
 type GroupsPaneProps = StoreState & {
   baseUrl: string;
-  groupPath: string;
+  workspace: Workspace;
   api: GlobalApi;
 };
 
 export function GroupsPane(props: GroupsPaneProps) {
-  const { baseUrl, associations, groups, contacts, api, groupPath } = props;
+  const { baseUrl, associations, groups, contacts, api, workspace } = props;
   const relativePath = (path: string) => baseUrl + path;
+  const groupPath = getGroupFromWorkspace(workspace);
 
-  const groupContacts = contacts[groupPath];
-  const groupAssociation = associations.contacts[groupPath];
-  const group = groups[groupPath];
-
+  const groupContacts = groupPath && contacts[groupPath] || undefined;
+  const groupAssociation = groupPath && associations.contacts[groupPath] || undefined;
+  const group = groupPath && groups[groupPath] || undefined;
   const [recentGroups, setRecentGroups] = useLocalStorageState<string[]>(
     "recent-groups",
     []
   );
 
   useEffect(() => {
-    if (!groupPath) {
+    if (workspace.type !== "group") {
       return;
     }
-    setRecentGroups((gs) => _.uniq([groupPath, ...gs]));
-  }, [groupPath]);
+    setRecentGroups((gs) => _.uniq([workspace.group, ...gs]));
+  }, [workspace]);
 
-  if(!groupAssociation) {
+  if (!associations) {
     return null;
   }
 
-  const popovers = (routeProps: RouteComponentProps, baseUrl: string) => (
-    <>
-      <PopoverRoutes
-        contacts={groupContacts}
-        association={groupAssociation}
-        group={group}
-        api={api}
-        s3={props.s3}
-        {...routeProps}
-        baseUrl={baseUrl}
-      />
-      <InvitePopover
-        api={api}
-        association={groupAssociation}
-        baseUrl={baseUrl}
-        groups={props.groups}
-        contacts={props.contacts}
-      />
-    </>
-  );
+  const popovers = (routeProps: RouteComponentProps, baseUrl: string) =>
+    (groupPath && (
+      <>
+        <PopoverRoutes
+          contacts={groupContacts || {}}
+          association={groupAssociation!}
+          group={group!}
+          api={api}
+          s3={props.s3}
+          {...routeProps}
+          baseUrl={baseUrl}
+        />
+        <InvitePopover
+          api={api}
+          association={groupAssociation!}
+          baseUrl={baseUrl}
+          groups={props.groups}
+          contacts={props.contacts}
+        />
+      </>
+    )) ||
+    null;
 
   return (
     <Switch>
       <Route
-        path={[relativePath("/resource/:app/:host/:name")]}
+        path={[relativePath("/resource/:app/(ship)?/:host/:name")]}
         render={(routeProps) => {
           const { app, host, name } = routeProps.match.params as Record<
             string,
             string
           >;
-          const resource = `/${host}/${name}`;
           const appName = app as AppName;
-          const association = associations[appName][resource];
+          const isShip = app === "link";
+
+          const resource = `${isShip ? "/ship" : ""}/${host}/${name}`;
+          const association =
+            appName === "link"
+              ? associations.graph[resource]
+              : associations[appName][resource];
           const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
 
           if (!association) {
-            return null;
+            return <Box>Loading</Box>;
           }
 
           return (
@@ -98,7 +111,6 @@ export function GroupsPane(props: GroupsPaneProps) {
               recentGroups={recentGroups}
               selected={resource}
               selectedApp={appName}
-              selectedGroup={groupPath}
               {...props}
               baseUrl={resourceUrl}
             >
@@ -126,7 +138,6 @@ export function GroupsPane(props: GroupsPaneProps) {
               recentGroups={recentGroups}
               mobileHide
               selected={appPath}
-              selectedGroup={groupPath}
               {...props}
               baseUrl={baseUrl}
             >
@@ -137,15 +148,29 @@ export function GroupsPane(props: GroupsPaneProps) {
         }}
       />
       <Route
+        path={relativePath("/new")}
+        render={(routeProps) => {
+          const newUrl = `${baseUrl}/new`;
+          return (
+            <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
+              <NewChannel
+                {...routeProps}
+                api={api}
+                associations={associations}
+                groups={groups}
+                group={groupPath}
+                contacts={props.contacts}
+              />
+              {popovers(routeProps, baseUrl)}
+            </Skeleton>
+          );
+        }}
+      />
+      <Route
         path={relativePath("")}
         render={(routeProps) => {
           return (
-            <Skeleton
-              recentGroups={recentGroups}
-              selectedGroup={groupPath}
-              {...props}
-              baseUrl={baseUrl}
-            >
+            <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
               <Center display={["none", "auto"]}>
                 Open something to get started
               </Center>
