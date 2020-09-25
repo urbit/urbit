@@ -31,4 +31,11 @@ in {
         prev.buildPackages.stdenv.cc
       ];
   });
+
+  libiconv = overrideAttrsWhen isDarwin prev.libiconv (old: {
+    nativeBuildInputs =
+      (old.nativeBuildInputs or []) ++ [
+        prev.buildPackages.stdenv.cc
+      ];
+  });
 }
