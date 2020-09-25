@@ -31,7 +31,7 @@ import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.King.API         (TermConn)
 import Urbit.Noun.Time        (Wen)
-import Urbit.TermSize         (TermSize(..))
+import Urbit.TermSize         (TermSize(..), termSize)
 import Urbit.Vere.Serf        (Serf)
 
 import qualified Data.Text              as T
@@ -283,8 +283,10 @@ pier (serf, log) vSlog startedSig = do
     writeTVar (King.kTermConn kingApi) (Just $ writeTQueue q)
     pure q
 
+  initialTermSize <- io $ termSize
+
   (demux :: Term.Demux, muxed :: Term.Client) <- atomically $ do
-    res <- Term.mkDemux
+    res <- Term.mkDemux initialTermSize
     pure (res, Term.useDemux res)
 
   void $ acquireWorker "TERMSERV Listener" $ forever $ do
@@ -312,7 +314,7 @@ pier (serf, log) vSlog startedSig = do
   (bootEvents, startDrivers) <- do
     env <- ask
     let err = atomically . Term.trace muxed . (<> "\r\n")
-    let siz = TermSize { tsWide = 80, tsTall = 24 }
+    siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
     drivers env ship fak compute (siz, muxed) err sigint
 

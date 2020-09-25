@@ -37,4 +37,6 @@ termSize = size <&> \case
 liveTermSize :: (TermSize -> IO ()) -> IO TermSize
 liveTermSize cb = do
   Sys.installHandler Sys.sigWINCH (Sys.Catch (termSize >>= cb)) Nothing
-  termSize
+  ts <- termSize
+  cb ts
+  pure ts

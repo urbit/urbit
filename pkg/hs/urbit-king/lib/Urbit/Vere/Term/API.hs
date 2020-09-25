@@ -3,6 +3,7 @@
 -}
 module Urbit.Vere.Term.API (Ev(..),
                             Client(..),
+                            ClientTake(..),
                             trace,
                             slog,
                             spin,
@@ -12,6 +13,7 @@ import Urbit.Prelude hiding (trace)
 
 import Urbit.Arvo (Belt, Blit)
 
+import Urbit.TermSize
 
 -- External Types --------------------------------------------------------------
 
@@ -31,8 +33,31 @@ data Ev = Blits [Blit]
         | Spinr (Maybe (Maybe Cord))
   deriving (Show)
 
+data ClientTake
+  = ClientTakeBelt Belt
+  | ClientTakeSize TermSize
+  deriving (Show)
+
+instance ToNoun ClientTake where
+  toNoun = \case
+    ClientTakeBelt b              -> toNoun $ (Cord "belt", b)
+    ClientTakeSize (TermSize w h) -> toNoun $ (Cord "size", (w, h))
+
+instance FromNoun ClientTake where
+  parseNoun n = named "ClientTake" $ do
+    (Cord name, rest) <- parseNoun n
+    case name of
+      "belt" -> do
+        b <- parseNoun rest
+        pure (ClientTakeBelt b)
+      "size" -> do
+        (w, h) <- parseNoun rest
+        pure (ClientTakeSize (TermSize w h))
+      _ -> fail "weird client take"
+
+
 data Client = Client
-    { take :: STM (Maybe Belt)
+    { take :: STM (Maybe ClientTake)
     , give :: [Ev] -> STM ()
     }
 
