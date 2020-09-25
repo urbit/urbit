@@ -1373,12 +1373,12 @@
         %&  q.p.yoki
         %|  (~(run by q.p.yoki) |=(=lobe |+lobe))
       ==
-    =/  old-lobes=(map path lobe)
+    =/  old-yaki
       ?:  =(0 let.dom)
-        ~
-      q:(aeon-to-yaki:ze let.dom)
+        *yaki
+      (aeon-to-yaki:ze let.dom)
     =/  [deletes=(set path) changes=(map path (each page lobe))]
-      (get-changes old-lobes new-data)
+      (get-changes q.old-yaki new-data)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
     ::
     ::  promote ford cache
@@ -1391,13 +1391,6 @@
             |(!=(~ sys-changes) !=(~ (need-vane-update changes)))
         ==
       (sys-update yoki new-data changes)
-    =.  ..park
-      %-  emil
-      =/  changed=(set path)  ~(key by changes)
-      =/  existed=(set path)  ~(key by old-lobes)
-      %^  print  deletes
-        (~(int in changed) existed)
-      (~(dif in changed) existed)
     ::  clear caches if zuse reloaded
     ::
     =/  is-zuse-new=?  !=(~ sys-changes)
@@ -1408,7 +1401,7 @@
     =.  fer.dom  `(build-reef fer.dom ~(key by changes) new-data)
     =?  ank.dom  is-zuse-new  *ankh
     =?  changes  is-zuse-new
-      (changes-for-upgrade old-lobes deletes changes)
+      (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  =args:ford:fusion
       [zuse:(need fer.dom) ank.dom deletes changes lat.ran fod.dom]
@@ -1428,6 +1421,12 @@
         %|  p.value
         %&  lobe:(~(got by change-cages) path)
       ==
+    ::  if we didn't change the data and it's not a merge commit, abort
+    ::
+    ::  very important to keep all permanent changes below this point
+    ::
+    ?:  &(=([r.old-yaki ~] p.p.yoki) =(data q.old-yaki))
+      ..park
     =/  =yaki
       ?-  -.yoki
         %&  (make-yaki p.p.yoki data now)
@@ -1450,6 +1449,7 @@
       (checkout-mime args deletes ~(key by changes))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     =.  fod.dom  ford-cache.args
+    =.  ..park  (emil (print q.old-yaki data))
     ::
     wake:(ergo mim)
     ::
@@ -1739,8 +1739,14 @@
     ::  Print notification to console
     ::
     ++  print
-      |=  [deletes=(set path) changes=(set path) additions=(set path)]
+      |=  [old=(map path lobe) new=(map path lobe)]
       ^-  (list move)
+      =/  [deletes=(set path) upserts=(map path (each page lobe))]
+        (get-changes old (~(run by new) |=(=lobe |+lobe)))
+      =/  upsert-set  ~(key by upserts)
+      =/  old-set     ~(key by old)
+      =/  changes=(set path)    (~(int in upsert-set) old-set)
+      =/  additions=(set path)  (~(dif in upsert-set) old-set)
       ?~  hun
         ~
       ?:  =(0 let.dom)
@@ -2026,13 +2032,13 @@
       ^-  (each (unit merge-result) [term tang])
       ?-    germ
       ::
-      ::  If this is a %this merge, we check to see if ali's and bob's
+      ::  If this is a %only-this merge, we check to see if ali's and bob's
       ::  commits are the same, in which case we're done.  Otherwise, we
       ::  check to see if ali's commit is in the ancestry of bob's, in
       ::  which case we're done.  Otherwise, we create a new commit with
       ::  bob's data plus ali and bob as parents.
       ::
-          %this
+          %only-this
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
         ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
@@ -2043,17 +2049,47 @@
             lat=~
         ==
       ::
-      ::  If this is a %that merge, we check to see if ali's and bob's
+      ::  If this is a %only-that merge, we check to see if ali's and bob's
       ::  commits are the same, in which case we're done.  Otherwise, we
       ::  create a new commit with ali's data plus ali and bob as
       ::  parents.
       ::
-          %that
+          %only-that
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
         :*  %&  ~
             conflicts=~
             new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki q.ali-yaki)]
+            lat=~
+        ==
+      ::
+      ::  Create a merge commit with exactly the contents of the
+      ::  destination desk except take any files from the source commit
+      ::  which are not in the destination desk.
+      ::
+          %take-this
+        ?:  =(r.ali-yaki r.bob-yaki)
+          &+~
+        ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
+          &+~
+        =/  new-data  (~(uni by q.ali-yaki) q.bob-yaki)
+        :*  %&  ~
+            conflicts=~
+            new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki new-data)]
+            lat=~
+        ==
+      ::
+      ::  Create a merge commit with exactly the contents of the source
+      ::  commit except preserve any files from the destination desk
+      ::  which are not in the source commit.
+      ::
+          %take-that
+        ?:  =(r.ali-yaki r.bob-yaki)
+          &+~
+        =/  new-data  (~(uni by q.bob-yaki) q.ali-yaki)
+        :*  %&  ~
+            conflicts=~
+            new=&+[[r.bob-yaki r.ali-yaki ~] (to-yuki new-data)]
             lat=~
         ==
       ::
@@ -2076,20 +2112,20 @@
           ==
         &+`[conflicts=~ new=|+ali-yaki lat=~]
       ::
-          ?(%meet %mate %meld)
+          ?(%meet %mate %meld %meet-this %meet-that)
         ?:  =(r.ali-yaki r.bob-yaki)
           &+~
         ?:  (~(has in (reachable-takos:ze r.bob-yaki)) r.ali-yaki)
           &+~
         ?:  (~(has in (reachable-takos:ze r.ali-yaki)) r.bob-yaki)
           $(germ %fine)
-        =/  merge-points  find-merge-points
+        =/  merge-points  (find-merge-points ali-yaki bob-yaki)
         ?~  merge-points
           :~  %|  %merge-no-merge-base
               leaf+"consider a %this or %that merge to get a mergebase"
           ==
         =/  merge-point=yaki  n.merge-points
-        ?.  ?=(%meet germ)
+        ?:  ?=(?(%mate %meld) germ)
           =/  ali-diffs=cane  (diff-base ali-yaki bob-yaki merge-point)
           =/  bob-diffs=cane  (diff-base bob-yaki ali-yaki merge-point)
           =/  bof=(map path (unit cage))
@@ -2107,13 +2143,35 @@
           %-  ~(uni by `(map path *)`cal.bob-diffs)
           %-  ~(uni by `(map path *)`can.bob-diffs)
           `(map path *)`old.bob-diffs
-        ?.  =(~ both-diffs)
+        ?:  &(?=(%meet germ) !=(~ both-diffs))
           :~  %|  %meet-conflict
             >~(key by both-diffs)<
             leaf+"consider a %mate merge"
           ==
+        =/  both-done=(map path lobe)
+          |^
+          ?-  germ
+            %meet       ~
+            %meet-this  (resolve (~(uni by new.bob-diffs) cal.bob-diffs))
+            %meet-that  (resolve (~(uni by new.ali-diffs) cal.ali-diffs))
+          ==
+          ++  resolve
+            |=  news=(map path lobe)
+            %-  malt  ^-  (list [path lobe])
+            %+  murn  ~(tap by both-diffs)
+            |=  [=path *]
+            ^-  (unit [^path lobe])
+            =/  new  (~(get by news) path)
+            ?~  new
+              ~
+            `[path u.new]
+          --
+        ::
+        =/  deleted
+          %-  ~(dif by (~(uni by old.ali-diffs) old.bob-diffs))
+          (~(run by both-done) |=(* ~))
         =/  not-deleted=(map path lobe)
-          %+  roll  ~(tap by (~(uni by old.ali-diffs) old.bob-diffs))
+          %+  roll  ~(tap by deleted)
           =<  .(not-deleted q.merge-point)
           |=  [[pax=path ~] not-deleted=(map path lobe)]
           (~(del by not-deleted) pax)
@@ -2134,42 +2192,6 @@
         |=  m=(map path lobe)
         ^-  (map path (each page lobe))
         (~(run by m) |=(=lobe |+lobe))
-      ::
-      ::  Find the most recent common ancestor(s).
-      ::
-      ::    Pretty sure this could be a lot more efficient.
-      ::
-      ++  find-merge-points
-        ^-  (set yaki)
-        %-  reduce-merge-points
-        =+  r=(reachable-takos:ze r.ali-yaki)
-        |-  ^-  (set yaki)
-        ~!  bob-yaki
-        ?:  (~(has in r) r.bob-yaki)  (~(put in *(set yaki)) bob-yaki)
-        %+  roll  p.bob-yaki
-        |=  [t=tako s=(set yaki)]
-        ?:  (~(has in r) t)
-          (~(put in s) (~(got by hut.ran) t))
-        (~(uni in s) ^$(bob-yaki (~(got by hut.ran) t)))
-      ::
-      ::  Eliminate redundant merge-point candidates
-      ::
-      ++  reduce-merge-points
-        |=  unk=(set yaki)
-        =|  gud=(set yaki)
-        =/  zar=(map tako (set tako))
-          %+  roll  ~(tap in unk)
-          |=  [yak=yaki qar=(map tako (set tako))]
-          (~(put by qar) r.yak (reachable-takos:ze r.yak))
-        |-
-        ^-  (set yaki)
-        ?~  unk  gud
-        =+  bun=(~(del in `(set yaki)`unk) n.unk)
-        ?:  %+  levy  ~(tap by (~(uni in gud) bun))
-            |=  yak=yaki
-            !(~(has in (~(got by zar) r.yak)) r.n.unk)
-          $(gud (~(put in gud) n.unk), unk bun)
-        $(unk bun)
       ::
       ::  The set of changes between the mergebase and one of the desks
       ::  being merged
@@ -2395,7 +2417,7 @@
           [%| %mate-conflict -]
         =/  old=(map path lobe)                         ::  oldies but goodies
           %+  roll  ~(tap by (~(uni by old.dal) old.dob))
-          =<  .(old q.bas)
+          =<  .(old q.bob)
           |=  [[pax=path ~] old=(map path lobe)]
           (~(del by old) pax)
         =/  [hot=(map path lobe) lat=(map lobe blob)]   ::  new content
@@ -2424,6 +2446,62 @@
         ==
       --
     --
+  ::
+  ::  Find the most recent common ancestor(s).
+  ::
+  ::    For performance, this depends on +reachable-takos being
+  ::    memoized.
+  ::
+  ++  find-merge-points
+    |=  [=ali=yaki =bob=yaki]
+    ^-  (set yaki)
+    ::  Loop through ancestors breadth-first, lazily generating ancestry
+    ::
+    =/  ali-takos  (reachable-takos:ze r.ali-yaki)
+    ::  Tako worklist
+    ::
+    =/  takos=(list tako)  ~[r.bob-yaki]
+    ::  Mergebase candidates.  Have proven they're common ancestors, but
+    ::  not that they're a most recent
+    ::
+    =|  bases=(set tako)
+    ::  Takos we've already checked or are in our worklist
+    ::
+    =|  done=(set tako)
+    |-  ^-  (set yaki)
+    =*  outer-loop  $
+    ::  If we've finished our worklist, convert to yakis and return
+    ::
+    ?~  takos
+      (silt (turn ~(tap in bases) ~(got by hut.ran)))
+    =.  done  (~(put in done) i.takos)
+    ::  If this is a common ancestor, stop recursing through our
+    ::  parentage.  Check if it's comparable to any existing candidate.
+    ::
+    ?:  (~(has in ali-takos) i.takos)
+      =/  base-list  ~(tap in bases)
+      |-  ^-  (set yaki)
+      =*  bases-loop  $
+      ?~  base-list
+        ::  Proven it's not an ancestor of any previous candidate.
+        ::  Remove all ancestors of new candidate and add it to the
+        ::  candidate list.
+        ::
+        =.  bases
+          =/  new-reachable  (reachable-takos:ze i.takos)
+          (~(put in (~(dif in bases) new-reachable)) i.takos)
+        outer-loop(takos t.takos)
+      ::  If it's an ancestor of another candidate, this is not most
+      ::  recent, so skip and try next in worklist.
+      ::
+      =/  base-reachable  (reachable-takos:ze i.base-list)
+      ?:  (~(has in base-reachable) i.takos)
+        outer-loop(takos t.takos)
+      bases-loop(base-list t.base-list)
+    ::  Append parents to list and recurse
+    ::
+    =/  bob-yaki  (~(got by hut.ran) i.takos)
+    outer-loop(takos (weld t.takos (skip p.bob-yaki ~(has in done))))
   ::
   ::  Update mime cache
   ::
@@ -3342,6 +3420,7 @@
     ++  reachable-takos                                 ::  reachable
       |=  p/tako
       ^-  (set tako)
+      ~+
       =|  s=(set tako)
       |-  ^-  (set tako)
       =.  s  (~(put in s) p)
@@ -3563,7 +3642,7 @@
     ++  read-s
       |=  [yon=aeon pax=path]
       ^-  (unit (unit cage))
-      ?.  ?=([?(%yaki %blob %hash %cage %open %late) * ~] pax)
+      ?.  ?=([?(%yaki %blob %hash %cage %open %late %base) * *] pax)
         `~
       ?-    i.pax
           %yaki
@@ -3600,6 +3679,19 @@
         ``open+!>(prelude:(ford:fusion static-ford-args))
       ::
           %late  !!  :: handled in +aver
+          %base
+        ?>  ?=(^ t.t.pax)
+        :^  ~  ~  %uvs  !>
+        ^-  (list @uv)
+        =/  him  (slav %p i.t.pax)
+        =/  other  dom:((de our now ski hen ruf) him i.t.t.pax)
+        ?:  =(0 let.other)
+          ~
+        =/  our-yaki  (~(got by hut.ran) (~(got by hit.dom) yon))
+        =/  other-yaki  (~(got by hut.ran) (~(got by hit.other) let.other))
+        %+  turn  ~(tap in (find-merge-points other-yaki our-yaki))
+        |=  =yaki
+        r.yaki
       ==
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::
@@ -3849,7 +3941,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%4                                        ::  vane version
+    $:  ver=%5                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
@@ -4108,8 +4200,14 @@
   ~!  [old=old new=*state-4]
   =?  old  ?=(%2 -.old)  (load-2-to-3 old)
   =?  old  ?=(%3 -.old)  (load-3-to-4 old)
-  ?>  ?=(%4 -.old)
+  =?  old  ?=(%4 -.old)  (load-4-to-5 old)
+  ?>  ?=(%5 -.old)
   ..^^$(ruf +.old)
+  ::
+  ++  load-4-to-5
+    |=  =state-4
+    ^-  state-5
+    state-4(- %5, pun ~)
   ::
   ++  load-3-to-4
     |=  =state-3
@@ -4318,8 +4416,19 @@
       --
     --
   ::
-  +$  any-state  $%(state-4 state-3 state-2)
-  +$  state-4  [%4 raft]
+  +$  any-state  $%(state-5 state-4 state-3 state-2)
+  +$  state-5  [%5 raft]
+  +$  state-4
+    $:  %4
+        rom=room
+        hoy=(map ship rung)
+        ran=rang
+        mon=(map term beam)
+        hez=(unit duct)
+        cez=(map @ta crew)
+        pud=(unit [=desk =yoki])
+        pun=(list *)
+    ==
   +$  state-3
     $:  %3
         rom=room-3
@@ -4329,7 +4438,7 @@
         hez=(unit duct)
         cez=(map @ta crew)
         pud=(unit [=desk =yoki])
-        pun=(list move)
+        pun=(list *)
     ==
   +$  rung-3  rus=(map desk rede-3)
   +$  rede-3

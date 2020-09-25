@@ -247,7 +247,7 @@
     (~(put by builds) uri q.r.u.p.gift)
   =.  ford-diagnostics
     (~(del by ford-diagnostics) uri)
-  =+  .^(=open:clay %cs /(scot %p our.bow)/home/(scot %da now.bow)/open)
+  =+  .^(=open:clay %cs /(scot %p our.bow)/home/(scot %da now.bow)/open/foo)
   =/  =type  -:(open (uri-to-path:build uri))
   =.  preludes
     (~(put by preludes) uri type)
