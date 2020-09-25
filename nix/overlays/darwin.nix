@@ -27,5 +27,5 @@ in {
 
   vim = overrideWhen isDarwin prev.vim {
     darwinSupport = true;
-  }
+  };
 }
