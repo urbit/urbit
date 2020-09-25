@@ -843,7 +843,7 @@
       ?~  redirect
         %-  handle-response
         :*  %start
-            :-  status-code=200
+            :-  status-code=204
             ^=  headers
               :~  ['set-cookie' cookie-line]
               ==
@@ -1282,7 +1282,7 @@
         =^  http-moves  state
           %-  handle-response
           :*  %start
-              [status-code=200 headers=~]
+              [status-code=204 headers=~]
               data=~
               complete=%.y
           ==
