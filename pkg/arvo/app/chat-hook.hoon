@@ -96,18 +96,20 @@
         ?.  ?=([@ @ @ *] path)  out
         =/  pax=^path  [i.t.path i.t.t.path ~]
         (~(put ju out) pax ship)
+      =/  group  ~(. grpl bol)
       =.  cards
         %+  weld  cards
         ^-  (list card)
-        %+  murn  ~(tap by subscribers)
-        |=  [=path ships=(set ship)]
+        %+  murn  ~(tap in ~(key by synced.old))
+        |=  =path
         ^-  (unit card)
         ?>  ?=([@ @ ~] path)
         =/  group-path  (group-from-chat:cc path)
-        =/  members     (members-from-path:grp group-path)
-        ?:  (is-managed-path:grp group-path)  ~
+        =/  members     (members-from-path:group group-path)
+        ?:  (is-managed-path:group group-path)  ~
+        =/  ships=(set ship)  (~(get ju subscribers) path)
         %-  some
-        =+  [%invite t.path (~(dif in members) ships)]
+        =+  [%invite path (~(dif in members) ships)]
         [%pass /inv %agent [our.bol %chat-view] %poke %chat-view-action !>(-)]
       $(-.old %8)
     ?:  ?=(%6 -.old)
