@@ -66,7 +66,7 @@ export default class GraphApi extends BaseApi<StoreState> {
         resource,
         title,
         description,
-        associated: { policy },
+        associated: policy,
         "module": mod
       }
     });

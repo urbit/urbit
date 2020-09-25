@@ -44,7 +44,7 @@ export function NewScreen(props: object) {
           resourceId,
           name,
           description,
-          { invite: { pending: [] } },
+          { policy: { invite: { pending: [] } } },
           "link"
         );
       }
