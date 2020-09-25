@@ -30,6 +30,11 @@ in {
       (old.nativeBuildInputs or []) ++ [
         prev.buildPackages.stdenv.cc
       ];
+
+    buildInputs = with prev.darwin; [
+      libobjc
+      darwin.apple_sdk.frameworks.Foundation
+    ];
   });
 
   libiconv = overrideAttrsWhen isDarwin prev.libiconv (old: {
