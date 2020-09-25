@@ -16,6 +16,8 @@ let
 in {
   bootstrap_cmds = overrideWhen isDarwin prev.bootstrap_cmds {
     stdenv = prev.llvmPackages_X.stdenv;
+
+    nativeBuildInputs = [ prev.yacc prev.flex prev.llvmPackages_X.stdenv.cc ];
   };
 
   gmp6 = overrideAttrsWhen isDarwin prev.gmp6 (old: {
