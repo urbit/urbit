@@ -28,7 +28,7 @@ in {
   bootstrap_cmds = overrideAttrsWhen isDarwin prev.bootstrap_cmds (old: {
     nativeBuildInputs =
       (old.nativeBuildInputs or []) ++ [
-        prev.buildPackages.stdenv.cc
+        prev.buildPackages.clang
       ];
 
     buildInputs = with prev.darwin; [
