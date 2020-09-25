@@ -20,12 +20,12 @@ in {
   #   nativeBuildInputs = [ prev.yacc prev.flex prev.llvmPackages_X.stdenv.cc ];
   # };
 
-  gmp6 = overrideAttrsWhen isDarwin prev.gmp6 (old: {
-    # FIXME: This needs to be revisited.
-    doCheck = false;
-  });
+  # gmp6 = overrideAttrsWhen isDarwin prev.gmp6 (old: {
+  #   # FIXME: This needs to be revisited.
+  #   doCheck = false;
+  # });
 
-  libiconv = overrideAttrsWhen isDarwin prev.libiconv (old: {
+  bootstrap_cmds = overrideAttrsWhen isDarwin prev.libiconv (old: {
     nativeBuildInputs =
       (old.nativeBuildInputs or []) ++ [
         prev.buildPackages.stdenv.cc
