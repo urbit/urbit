@@ -28,7 +28,7 @@ import Data.List           ((!!))
 import RIO.Directory       (createDirectoryIfMissing)
 import Urbit.King.API      (readPortsFile)
 import Urbit.TermSize      (TermSize(TermSize))
-import Urbit.Vere.Term.API (Client(Client))
+import Urbit.Vere.Term.API (Client(Client), ClientTake(..))
 
 import qualified Data.Set                 as S
 import qualified Data.ByteString.Internal as BS
@@ -71,7 +71,7 @@ data Private = Private
 
 -- Utils -----------------------------------------------------------------------
 
-initialBlew w h = EvBlip $ BlipEvTerm $ TermEvBlew (UD 1, ()) w h
+blewEvent w h = EvBlip $ BlipEvTerm $ TermEvBlew (UD 1, ()) w h
 
 initialHail = EvBlip $ BlipEvTerm $ TermEvHail (UD 1, ()) ()
 
@@ -98,7 +98,7 @@ isTerminalBlit _         = True
 
 --------------------------------------------------------------------------------
 
-connClient :: Serv.Conn Belt [Term.Ev] -> Client
+connClient :: Serv.Conn ClientTake [Term.Ev] -> Client
 connClient c = Client
     { give = Serv.cSend c
     , take = Serv.cRecv c
@@ -135,7 +135,7 @@ runTerminalClient pier = runRAcquire $ do
     mPort      <- runRIO (HCD pier) readPortsFile
     port       <- maybe (error "Can't connect") pure mPort
     mExit      <- io newEmptyTMVarIO
-    (siz, cli) <- localClient (putTMVar mExit ())
+    cli        <- localClient (putTMVar mExit ())
     (tid, sid) <- connectToRemote (Port $ fromIntegral port) cli
     atomically $ waitSTM tid <|> waitSTM sid <|> takeTMVar mExit
 
@@ -175,14 +175,28 @@ _spin_idle_us = 500000
 -}
 localClient :: ∀e. HasLogFunc e
             => STM ()
-            -> RAcquire e (TermSize, Client)
+            -> RAcquire e Client
 localClient doneSignal = fst <$> mkRAcquire start stop
   where
-    start :: HasLogFunc e => RIO e ((TermSize, Client), Private)
+    start :: HasLogFunc e => RIO e (Client, Private)
     start = do
       tsWriteQueue  <- newTQueueIO :: RIO e (TQueue [Term.Ev])
       spinnerMVar   <- newEmptyTMVarIO :: RIO e (TMVar ())
-      tsizeTVar     <- io $ T.termSize >>= newTVarIO
+
+      -- Track the terminal size, keeping track of the size of the local
+      -- terminal for our own printing, as well as putting size changes into an
+      -- event queue so we can send changes to the terminal muxing system.
+      tsizeTVar         <- newTVarIO (TermSize 80 24) -- Value doesn't matter.
+      tsSizeChangeQueue <- newTQueueIO
+      io $ T.liveTermSize (\ts -> atomically $ do
+                              -- We keep track of the console's local size for
+                              -- our own tank washing.
+                              writeTVar tsizeTVar ts
+
+                              -- We queue up changes so we can broadcast them
+                              -- to the muxing client.
+                              writeTQueue tsSizeChangeQueue ts)
+
       pWriterThread <- asyncBound
         (writeTerminal tsWriteQueue spinnerMVar tsizeTVar)
 
@@ -201,17 +215,18 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       pReaderThread <- asyncBound
           (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
-      let client = Client { take = Just <$> readTQueue tsReadQueue
+      let client = Client { take = Just <$> asum [
+                              readTQueue tsReadQueue <&> ClientTakeBelt,
+                              readTQueue tsSizeChangeQueue <&> ClientTakeSize
+                              ]
                           , give = writeTQueue tsWriteQueue
                           }
 
-      tsize <- io $ T.liveTermSize (\ts -> atomically $ writeTVar tsizeTVar ts)
-
-      pure ((tsize, client), Private{..})
+      pure (client, Private{..})
 
     stop :: HasLogFunc e
-         => ((TermSize, Client), Private) -> RIO e ()
-    stop ((_, Client{..}), Private{..}) = do
+         => (Client, Private) -> RIO e ()
+    stop (Client{..}, Private{..}) = do
       -- Note that we don't `cancel pReaderThread` here. This is a deliberate
       -- decision because fdRead calls into a native function which the runtime
       -- can't kill. If we were to cancel here, the internal `waitCatch` would
@@ -583,7 +598,7 @@ term'
   -> RIO e ([Ev], RAcquire e (DriverApi TermEf))
 term' (tsize, client) serfSIGINT = do
   let TermSize wi hi = tsize
-      initEv = [initialBlew wi hi, initialHail]
+      initEv = [blewEvent wi hi, initialHail]
 
   pure (initEv, runDriver)
  where
@@ -619,13 +634,16 @@ term env (tsize, Client{..}) plan serfSIGINT = runTerm
     readLoop :: RIO e ()
     readLoop = forever $ do
         atomically take >>= \case
-            Nothing -> pure ()
-            Just b  -> do
+            Nothing                              -> pure ()
+            Just (ClientTakeBelt b)              -> do
                 when (b == Ctl (Cord "c")) $ do
                   io serfSIGINT
                 let beltEv       = EvBlip $ BlipEvTerm $ TermEvBelt (UD 1, ()) $ b
                 let beltFailed _ = pure ()
                 atomically $ plan (EvErr beltEv beltFailed)
+            Just (ClientTakeSize ts@(TermSize w h)) -> do
+                let blewFailed _ = pure ()
+                atomically $ plan (EvErr (blewEvent w h) blewFailed)
 
     handleEffect :: TermEf -> RIO e ()
     handleEffect = \case
