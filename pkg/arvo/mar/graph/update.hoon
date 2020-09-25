@@ -3,8 +3,8 @@
 ++  grad  %noun
 ++  grow
   |%
-  ++  json  (update:enjs upd)
   ++  noun  upd
+  ++  json  (update:enjs upd)
   --
 ::
 ++  grab
