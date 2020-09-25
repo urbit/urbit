@@ -103,7 +103,7 @@ export class Notebook extends PureComponent<
         gridColumnGap={3}
       >
         <Box display={["block", "none"]} gridColumn={["1/2", "1/3"]}>
-          <Link to={props.rootUrl}>{"<- All Notebooks"}</Link>
+          <Link to={this.props.rootUrl}>{"<- All Notebooks"}</Link>
         </Box>
         <Box>
           <Text> {notebook?.title}</Text>
@@ -171,7 +171,7 @@ export class Notebook extends PureComponent<
                   host={ship}
                   book={book}
                   contacts={notebookContacts}
-                  hideNicknames={props.hideNicknames}
+                  hideNicknames={hideNicknames}
                 />
               </TabPanel>
               <TabPanel>
@@ -193,7 +193,7 @@ export class Notebook extends PureComponent<
                   api={api}
                   notebook={notebook}
                   contacts={notebookContacts}
-                  associations={props.associations}
+                  associations={associations}
                   groups={groups}
                 />
               </TabPanel>
