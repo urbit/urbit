@@ -1,11 +1,11 @@
 ::  glob [landscape]:
 ::
 ::  prompts content delivery and Gall state storage for Landscape JS blob
-++  hash  0v5.6e3d0.3hm4q.iib09.rb2jb.9h4k4
+::
 /-  glob
 /+  default-agent, verb, dbug
 |%
-++  hash  0v4.6aspk.m4l21.aha5i.79git.eu8bv
+++  hash  0v5.6e3d0.3hm4q.iib09.rb2jb.9h4k4
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
 +$  all-states
   $%  state-0
