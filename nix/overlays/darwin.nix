@@ -24,8 +24,4 @@ in {
         prev.buildPackages.stdenv.cc
       ];
   });
-
-  vim = overrideWhen isDarwin prev.vim {
-    darwinSupport = true;
-  };
 }
