@@ -1,7 +1,7 @@
 ::  glob [landscape]:
 ::
 ::  prompts content delivery and Gall state storage for Landscape JS blob
-::
+++  hash  0v5.6e3d0.3hm4q.iib09.rb2jb.9h4k4
 /-  glob
 /+  default-agent, verb, dbug
 |%
