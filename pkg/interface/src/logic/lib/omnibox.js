@@ -103,6 +103,10 @@ export default function index(associations, apps) {
           app = 'groups';
         };
 
+        if (each['app-name'] === 'graph') {
+          app = each.metadata.module;
+        }
+
         const shipStart = each['app-path'].substr(each['app-path'].indexOf('~'));
 
         if (app === 'groups') {
