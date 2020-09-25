@@ -14,20 +14,20 @@ let
     if cond then pkg.overrideAttrs f else pkg;
 
 in {
-  bootstrap_cmds = overrideWhen isDarwin prev.bootstrap_cmds {
-    stdenv = prev.llvmPackages_X.stdenv;
+  # bootstrap_cmds = overrideWhen isDarwin prev.bootstrap_cmds {
+  #   stdenv = prev.llvmPackages_X.stdenv;
 
-    nativeBuildInputs = [ prev.yacc prev.flex prev.llvmPackages_X.stdenv.cc ];
-  };
+  #   nativeBuildInputs = [ prev.yacc prev.flex prev.llvmPackages_X.stdenv.cc ];
+  # };
 
-  gmp6 = overrideAttrsWhen isDarwin prev.gmp6 (old: {
-    doCheck = false;
-  });
+  # gmp6 = overrideAttrsWhen isDarwin prev.gmp6 (old: {
+  #   doCheck = false;
+  # });
 
-  libiconv = overrideAttrsWhen isDarwin prev.libiconv (old: {
-    nativeBuildInputs =
-      (old.nativeBuildInputs or []) ++ [
-        prev.buildPackages.stdenv.cc
-      ];
-  });
+  # libiconv = overrideAttrsWhen isDarwin prev.libiconv (old: {
+  #   nativeBuildInputs =
+  #     (old.nativeBuildInputs or []) ++ [
+  #       prev.buildPackages.stdenv.cc
+  #     ];
+  # });
 }
