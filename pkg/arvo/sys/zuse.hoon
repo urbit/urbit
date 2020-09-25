@@ -6029,6 +6029,7 @@
   ::::                    ++mimes:html                  ::  (2e1) MIME
     ::                                                  ::::
   ++  mimes  ^?
+    ~%  %mimes  ..is  ~
     |%
     ::                                                  ::  ++as-octs:mimes:html
     ++  as-octs                                         ::  atom to octstream
@@ -6046,6 +6047,57 @@
       ?~  myn  ~
       ?:  =(~ t.myn)  (trip i.myn)
       (weld (trip i.myn) `tape`['/' $(myn t.myn)])
+    ::
+    ::  |base16: en/decode arbitrary MSB-first hex strings
+    ::
+    ++  base16
+      ~%  %base16  +  ~
+      |%
+      ++  en
+        ~/  %en
+        |=  a=(pair @ud @)  ::  $octs, but safe
+        ^-  cord
+        ::  trailing zero bytes, possible truncated input
+        ::
+        =/  [pad=@ud dat=@]
+          =/  wid  (met 3 q.a)
+          ?:  (gte p.a wid)
+            [(sub p.a wid) q.a]
+          =/  dat  (cut 3 [0 p.a] q.a)
+          =.  wid  (met 3 dat)
+          [(sub p.a wid) dat]
+        ::
+        =/  dap  (add (mod (met 2 dat) 2) (mul 2 pad))
+        %+  rap  3
+        %+  weld  (reap dap '0')
+        %-  flop
+        %+  turn  (rip 2 dat)
+        |=  a=@C  ^-  cord
+        ?:  (lth a 10)
+          (add '0' a)
+        (add 'a' (sub a 10))
+      ::
+      ++  de
+        ~/  %de
+        |=  a=cord
+        ^-  (unit (pair @ud @))  ::  $octs, but safe
+        (rush a rule)
+      ::
+      ++  rule
+        |^  (bass 3 16 (star hit))
+        ::
+        ::  shadowed for bloq-length capture
+        ::
+        ++  bass
+          |*  [boq=@u wuc=@u tyd=^rule]
+          %+  cook
+            |=  waq=(list @)
+            =/  wid  (mul (lent waq) (dec (xeb wuc)))
+            :-  (rsh 0 boq (add wid (dec (bex boq))))
+            (roll waq |=([p=@ q=@] (add (end 0 wuc p) (mul wuc q))))
+          tyd
+        --
+      --
     ::                                                  ::  ++en-base64:mimes:
     ++  en-base64                                       ::  encode base64
       |=  tig/@
