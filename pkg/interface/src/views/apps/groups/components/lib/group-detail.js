@@ -281,7 +281,8 @@ export class GroupDetail extends Component {
                       this.state.title,
                       association.metadata.description,
                       association.metadata['date-created'],
-                      uxToHex(association.metadata.color)
+                      uxToHex(association.metadata.color),
+                      ''
                     ).then(() => {
                       this.setState({ awaiting: false });
                     });

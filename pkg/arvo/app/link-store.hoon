@@ -130,10 +130,7 @@
     ==
   --
 ::
-++  on-poke   ::on-poke:def
-  |=  [=mark =vase]
-  ^-  (quip card _this)
-  [cards.state this]
+++  on-poke   on-poke:def
 ++  on-peek   on-peek:def
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def

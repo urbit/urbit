@@ -169,6 +169,7 @@ export class SettingsScreen extends Component {
             association={props.resource}
             resource="collection"
             app="graph"
+            module="link"
           />
           <Spinner
             awaiting={this.state.awaiting}
