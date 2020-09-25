@@ -120,7 +120,8 @@ export default function index(associations, apps) {
         } else {
           const obj = result(
             title,
-            `/~${each['app-name']}/join${each['app-path']}`,
+            `/~${each['app-name']}/join${each['app-path']}${
+              (each.metadata.module && '/' + each.metadata.module) || ''}`,
             app.charAt(0).toUpperCase() + app.slice(1),
             (associations?.contacts?.[each['group-path']]?.metadata?.title || null)
           );

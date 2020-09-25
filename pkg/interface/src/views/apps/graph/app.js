@@ -44,8 +44,12 @@ export default class GraphApp extends PureComponent {
                 setTimeout(autoJoin, 2000);
               }
             };
-            autoJoin();
 
+            if(!graphKeys.has(resource)) {
+              autoJoin();
+            } else if(props.match.params.module) {
+              props.history.push(`/~${props.match.params.module}/${resource}`);
+            }
             return (
               <Center width="100%" height="100%">
                 <Text fontSize={1}>Redirecting...</Text>
