@@ -8,6 +8,8 @@ import 'codemirror/addon/display/placeholder';
 
 import 'codemirror/lib/codemirror.css';
 
+import '../../css/custom.css';
+
 const BROWSER_REGEX =
   new RegExp(String(/Android|webOS|iPhone|iPad|iPod|BlackBerry/i));
 
@@ -116,7 +118,7 @@ export default class ChatEditor extends Component {
       lineNumbers: false,
       lineWrapping: true,
       scrollbarStyle: 'native',
-      cursorHeight: 0.85,
+      cursorHeight: 1,
       placeholder: inCodeMode ? 'Code...' : placeholder,
       extraKeys: {
         'Enter': () => {
@@ -131,7 +133,7 @@ export default class ChatEditor extends Component {
     return (
       <div
         className={
-          'chat fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center' +
+          'chat fr h-100 flex bg-gray0-d lh-copy pl2 w-100 items-center pv2' +
           (inCodeMode ? ' code' : '')
         }
         style={{ flexGrow: 1, maxHeight: '224px', width: 'calc(100% - 72px)' }}>

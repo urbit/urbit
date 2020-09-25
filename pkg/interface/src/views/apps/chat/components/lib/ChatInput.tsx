@@ -183,26 +183,26 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
         props.ownerContact &&
         ((props.ownerContact.avatar !== null) && !props.hideAvatars)
       )
-      ? <img src={props.ownerContact.avatar} height={24} width={24} className="dib" />
+      ? <img src={props.ownerContact.avatar} height={16} width={16} className="dib" />
       : <Sigil
         ship={window.ship}
-        size={24}
+        size={16}
         color={`#${color}`}
         classes={sigilClass}
         />;
 
     return (
       <div className={
-             "pa3 cf flex black white-d bt b--gray4 b--gray1-d bg-white " +
+             "cf items-center flex black white-d bt b--gray4 b--gray1-d bg-white " +
              "bg-gray0-d relative"
            }
            style={{ flexGrow: 1 }}
            >
-        <div className="fl"
+        <div className="ml2 flex items-center"
              style={{
-                marginTop: 6,
-                flexBasis: 24,
-                height: 24
+                flexBasis: 16,
+                 height: 16,
+                 width: 16
               }}>
           {avatar}
         </div>
@@ -220,7 +220,6 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
                 height: '16px',
                 width: '16px',
                 flexBasis: 16,
-                marginTop: 10
               }}>
           <S3Upload
             ref={this.s3Uploader}
@@ -238,11 +237,10 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
             />
           </S3Upload>
         </div>
-        <div style={{
+        <div className="mr2" style={{
             height: '16px',
             width: '16px',
             flexBasis: 16,
-            marginTop: 10
           }}>
           <img style={{
               filter: state.inCodeMode ? 'invert(100%)' : '',

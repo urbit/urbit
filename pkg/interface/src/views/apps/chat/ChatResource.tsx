@@ -61,7 +61,7 @@ export function ChatResource(props: ChatResourceProps) {
   const lastMsgNum = 0;
 
   return (
-    <Col overflow="hidden" position="relative">
+    <Col height="100%" overflow="hidden" position="relative">
       <ChatWindow
         remoteContentPolicy={props.remoteContentPolicy}
         mailboxSize={length}
