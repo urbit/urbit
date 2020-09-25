@@ -14,6 +14,10 @@ let
     if cond then pkg.overrideAttrs f else pkg;
 
 in {
+  bootstrap_cmds = overrideWhen isDarwin prev.bootstrap_cmds {
+    stdenv = prev.llvmPackages_X.stdenv;
+  };
+
   gmp6 = overrideAttrsWhen isDarwin prev.gmp6 (old: {
     doCheck = false;
   });
