@@ -15,12 +15,12 @@ const chatSubscriptions: AppSubscription[] = [
 ];
 
 const publishSubscriptions: AppSubscription[] = [
-  ['/primary', 'publish'],
+//  ['/primary', 'publish'],
 ];
 
 const linkSubscriptions: AppSubscription[] = [
-  ['/json/seen', 'link-view'],
-  ['/listening', 'link-listen-hook']
+//  ['/json/seen', 'link-view'],
+//  ['/listening', 'link-listen-hook']
 ]
 
 const groupSubscriptions: AppSubscription[] = [

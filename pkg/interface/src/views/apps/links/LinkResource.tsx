@@ -1,0 +1,144 @@
+import React, { useEffect } from "react";
+import { Box, Row, Col, Center } from "@tlon/indigo-react";
+import { Switch, Route, Link } from "react-router-dom";
+
+import GlobalApi from "~/logic/api/global";
+import { StoreState } from "~/logic/store/type";
+import { Association, GraphNode } from "~/types";
+import { RouteComponentProps } from "react-router-dom";
+import { LinkList } from "./components/link-list";
+import { LinkDetail } from "./components/link-detail";
+
+import { LinkItem } from "./components/lib/link-item";
+import { LinkSubmit } from "./components/lib/link-submit";
+import { LinkPreview } from "./components/lib/link-preview";
+import { CommentSubmit } from "./components/lib/comment-submit";
+import { Comments } from "./components/lib/comments";
+import "./css/custom.css";
+
+type LinkResourceProps = StoreState & {
+  association: Association;
+  api: GlobalApi;
+  baseUrl: string;
+} & RouteComponentProps;
+
+export function LinkResource(props: LinkResourceProps) {
+  const {
+    association,
+    api,
+    baseUrl,
+    graphs,
+    contacts,
+    groups,
+    associations,
+    graphKeys,
+    s3,
+    hideAvatars,
+    hideNicknames,
+    remoteContentPolicy,
+  } = props;
+
+  const appPath = association["app-path"];
+
+  const relativePath = (p: string) => `${baseUrl}/resource/link${appPath}${p}`;
+
+  const [, , ship, name] = appPath.split("/");
+  const resourcePath = `${ship.slice(1)}/${name}`;
+  const resource = associations.graph[resourcePath]
+    ? associations.graph[resourcePath]
+    : { metadata: {} };
+  const contactDetails = contacts[resource["group-path"]] || {};
+  const popout = props.match.url.includes("/popout/");
+  const graph = graphs[resourcePath] || null;
+
+  useEffect(() => {
+    api.graph.getGraph(ship, name);
+  }, [association]);
+
+  const resourceUrl = `${baseUrl}/resource/link${appPath}`;
+  if (!graph) {
+    return <Center>Loading...</Center>;
+  }
+
+  return (
+    <Col alignItems="center" height="100%" width="100%" overflowY="auto">
+      <Switch>
+        <Route
+          exact
+          path={relativePath("")}
+          render={(props) => {
+            return (
+              <Col width="100%" p={3} alignItems="center" maxWidth="640px">
+                <Row>
+                  <LinkSubmit name={name} ship={ship.slice(1)} api={api} />
+                </Row>
+                {Array.from(graph.values()).map((node: GraphNode) => {
+                  const contact = contactDetails[node.post.author];
+                  return (
+                    <LinkItem
+                      resource={resourcePath}
+                      node={node}
+                      nickname={contact?.nickname}
+                      hideAvatars={hideAvatars}
+                      hideNicknames={hideNicknames}
+                      baseUrl={resourceUrl}
+                    />
+                  );
+                })}
+              </Col>
+            );
+          }}
+        />
+        <Route
+          path={relativePath("/:index")}
+          render={(props) => {
+            const indexArr = props.match.params.index.split("-");
+
+            if (indexArr.length <= 1) {
+              return <div>Malformed URL</div>;
+            }
+
+            const index = parseInt(indexArr[1], 10);
+            const node = !!graph ? graph.get(index) : null;
+
+            if (!node) {
+              return <Box>Not found</Box>;
+            }
+
+            const contact = contactDetails[node.post.author];
+
+            return (
+              <Col width="100%" p={3} maxWidth="640px">
+                <Link to={resourceUrl}>{"<- Back"}</Link>
+                <LinkPreview
+                  resourcePath={resourcePath}
+                  post={node.post}
+                  nickname={contact?.nickname}
+                  hideNicknames={hideNicknames}
+                  commentNumber={node.children.size}
+                />
+                <Row>
+                  <CommentSubmit
+                    name={name}
+                    ship={ship}
+                    api={api}
+                    parentIndex={node.post.index}
+                  />
+                </Row>
+                <Comments
+                  comments={node.children}
+                  resourcePath={resourcePath}
+                  contacts={contactDetails}
+                  popout={false}
+                  api={api}
+                  hideAvatars={hideAvatars}
+                  hideNicknames={hideNicknames}
+                />
+              </Col>
+            );
+          }}
+        />
+      </Switch>
+    </Col>
+  );
+}

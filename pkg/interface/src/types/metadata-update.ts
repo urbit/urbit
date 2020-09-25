@@ -51,4 +51,5 @@ interface Metadata {
   'date-created': string;
   description: string;
   title: string;
+  module: string;
 }

@@ -5,7 +5,7 @@ import { Path, Patp } from '~/types/noun';
 
 export default class MetadataApi extends BaseApi<StoreState> {
 
-  metadataAdd(appName: string, appPath: Path, groupPath: Path, title: string, description: string, dateCreated: string, color: string) {
+  metadataAdd(appName: string, appPath: Path, groupPath: Path, title: string, description: string, dateCreated: string, color: string, module: string = '') {
     const creator = `~${this.ship}`;
     return this.metadataAction({
       add: {
@@ -19,7 +19,8 @@ export default class MetadataApi extends BaseApi<StoreState> {
           description,
           color,
           'date-created': dateCreated,
-          creator
+          creator,
+          module
         }
       }
     });

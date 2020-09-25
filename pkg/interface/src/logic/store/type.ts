@@ -38,7 +38,7 @@ export interface StoreState {
   permissions: Permissions;
   s3: S3State;
   graphs: Graphs;
-  graphKeys: Set<String>;
+  graphKeys: Set<string>;
 
 
   // App specific states

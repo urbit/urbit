@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Row, Col, Anchor, Box, Text } from '@tlon/indigo-react';
 
 import { Sigil } from '~/logic/lib/sigil';
 import { Link } from 'react-router-dom';
@@ -24,32 +25,43 @@ export const LinkItem = (props) => {
   const mono = showNickname ? 'inter white-d' : 'mono white-d';
 
   const img = showAvatar
-    ? <img src={props.avatar} height={38} width={38} className="dib" />
-    : <Sigil ship={`~${author}`} size={38} color={'#' + props.color} />;
+    ? <img src={props.avatar} height={36} width={36} className="dib" />
+    : <Sigil ship={`~${author}`} size={36} color={'#' + props.color} />;
+
+  const baseUrl = props.baseUrl || `/~link/${resource}`;
+
+  let hostname = '';
+  try {
+    const url = new URL(contents[1].url);
+    hostname = url.hostname;
+  } catch (e) {}
+
 
   return (
-    <div className="w-100 pv3 flex bg-white bg-gray0-d lh-solid">
+    <Row alignItems="center" py={3} bg="white">
       {img}
-      <div className="flex flex-column ml2 flex-auto">
-        <a href={contents[1].url}
-           className="w-100 flex"
-           target="_blank"
-           rel="noopener noreferrer">
-          <p className="f8 truncate">{props.title}</p>
-          <span className="gray2 dib v-btm ml2 f8 flex-shrink-0">
-            {contents[0].text} ↗
-          </span>
-        </a>
-        <div className="w-100">
-          <span className={'f9 pr2 pl2 dib ' + mono} title={author}>
-            { showNickname ? nickname : cite(author) }
-          </span>
-          <Link to={`/~link/${resource}/${index}`}>
-            <span className="f9 inter gray2 dib">{size} comments</span>
+      <Col height="100%" justifyContent="space-between" ml={2}>
+        <Anchor
+          lineHeight="tall"
+          textDecoration="none"
+          href={contents[1].url}
+          width="100%"
+          target="_blank"
+          rel="noopener noreferrer">
+          <Text> {contents[0].text}</Text>
+            <Text ml="2" color="gray">{hostname} ↗</Text> 
+        </Anchor>
+        <Box width="100%">
+          <Text
+            fontFamily={showNickname ? 'sans' : 'mono'} pr={2}>
+            {showNickname ? nickname : cite(author) }
+          </Text>
+          <Link to={`${baseUrl}/${index}`}>
+            <Text color="gray">{size} comments</Text>
           </Link>
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Col>
+    </Row>
   );
 }
 

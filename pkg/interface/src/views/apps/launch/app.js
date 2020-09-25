@@ -1,12 +1,14 @@
 import React from 'react';
 import Helmet from 'react-helmet';
+import { Link } from 'react-router-dom';
 
-import { Box } from '@tlon/indigo-react';
+import { Box, Row, Icon, Text } from '@tlon/indigo-react';
 
 import './css/custom.css';
 
 import Tiles from './components/tiles';
 import Welcome from './components/welcome';
+import Groups from './components/Groups';
 
 export default class LaunchApp extends React.Component {
 
@@ -25,8 +27,30 @@ export default class LaunchApp extends React.Component {
           <title>OS1 - Home</title>
         </Helmet>
         <div className="h-100 flex flex-column h-100">
-          <div className='v-mid ph2 dtc-m dtc-l dtc-xl flex justify-between flex-wrap' style={{ maxWidth: '40rem' }}>
-            <Welcome firstTime={props.launch.firstTime} api={props.api} />
+          <Welcome firstTime={props.launch.firstTime} api={props.api} />
+          <Row flexWrap="wrap" mb={4} pitch={4}>
+            <Box 
+              border={1}
+              borderRadius={1}
+              borderColor="lightGray"
+              m={2}
+              bg="white"
+              width="126px"
+              height="126px"
+            >
+              <Link to='/~groups/home'>
+                <Box p={2} bg="washedGreen" width="100%" height="100%">
+                  <Row alignItems="center">
+                    <Icon
+                      stroke="green"
+                      fill="rgba(0,0,0,0)"
+                      icon="CircleDot" 
+                    />
+                    <Text ml="1" color="green">Home</Text>
+                  </Row>
+                </Box>
+              </Link>
+            </Box>
             <Tiles
               tiles={props.launch.tiles}
               tileOrdering={props.launch.tileOrdering}
@@ -34,7 +58,8 @@ export default class LaunchApp extends React.Component {
               location={props.userLocation}
               weather={props.weather}
             />
-          </div>
+          </Row>
+          <Groups associations={props.associations} />
           <Box 
             position="absolute"
             fontFamily="mono"
