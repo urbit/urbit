@@ -6,6 +6,7 @@
 , curl
 , google-cloud-sdk
 , jq
+, unixtools
 , xxd
 }:
 
@@ -15,7 +16,7 @@
   };
 
   testFakeShip = import ./test-fake-ship.nix {
-    inherit stdenvNoCC cacert;
+    inherit stdenvNoCC cacert unixtools;
   };
 
   fetchGitHubLFS = import ./fetch-github-lfs.nix {
