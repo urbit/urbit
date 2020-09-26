@@ -1,7 +1,6 @@
 { system ? builtins.currentSystem
 , crossSystem ? null
 , overlays ? [ ]
-, crossOverlays ? [ ]
 , config ? { }
 , sources ? { } 
 }:
@@ -23,9 +22,7 @@ let
 
     # General native nixpkgs package overrides.
     (import ./overlays/nixpkgs.nix)
-  ];
 
-  extraCrossOverlays = [
     # Add general overrides guarded by the host platform so
     # we can apply them unconditionally.
     (import ./overlays/darwin.nix)
@@ -35,7 +32,6 @@ let
   pkgs = import allSources.nixpkgs {
     inherit system crossSystem;
 
-    crossOverlays = extraCrossOverlays ++ crossOverlays;
     overlays = haskellNix.overlays ++ extraOverlays ++ overlays;
     config = haskellNix.config // config;
   };

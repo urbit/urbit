@@ -27,7 +27,6 @@ Examples
 { system ? builtins.currentSystem
 , crossSystem ? null
 , overlays ? [ ]
-, crossOverlays ? [ ]
 , config ? { }
 , sources ? { }
 
@@ -39,7 +38,7 @@ Examples
 let
 
   pkgs = import ./nix/pkgs.nix {
-    inherit system crossSystem overlays crossOverlays config sources;
+    inherit system crossSystem overlays config sources;
   };
 
   # Enrich the global package set with our local functions and packages.
