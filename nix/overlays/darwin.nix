@@ -25,22 +25,22 @@ in {
   #   doCheck = false;
   # });
 
-  bootstrap_cmds = overrideAttrsWhen isDarwin prev.bootstrap_cmds (old: {
-    nativeBuildInputs =
-      (old.nativeBuildInputs or []) ++ [
-        prev.buildPackages.clang
-      ];
+  # bootstrap_cmds = overrideAttrsWhen isDarwin prev.bootstrap_cmds (old: {
+  #   nativeBuildInputs =
+  #     (old.nativeBuildInputs or []) ++ [
+  #       prev.buildPackages.clang
+  #     ];
 
-    buildInputs = with prev.darwin; [
-      libobjc
-      darwin.apple_sdk.frameworks.Foundation
-    ];
-  });
+  #   buildInputs = with prev.darwin; [
+  #     libobjc
+  #     darwin.apple_sdk.frameworks.Foundation
+  #   ];
+  # });
 
-  libiconv = overrideAttrsWhen isDarwin prev.libiconv (old: {
-    nativeBuildInputs =
-      (old.nativeBuildInputs or []) ++ [
-        prev.buildPackages.stdenv.cc
-      ];
-  });
+  # libiconv = overrideAttrsWhen isDarwin prev.libiconv (old: {
+  #   nativeBuildInputs =
+  #     (old.nativeBuildInputs or []) ++ [
+  #       prev.buildPackages.stdenv.cc
+  #     ];
+  # });
 }
