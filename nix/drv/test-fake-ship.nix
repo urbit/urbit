@@ -26,6 +26,8 @@ stdenvNoCC.mkDerivation {
     PILL=${pill}
     SHIP=${ship}
 
+    netstat -a -p udp
+
     if [ -z "$ARVO" ]; then
       urbit -d -F $SHIP -B $PILL ./pier 2> urbit-output
     else
