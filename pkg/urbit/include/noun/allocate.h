@@ -179,21 +179,6 @@
 #endif
       } u3a_pile;
 
-    /* u3a_slab_new: atom builder.
-    */
-      typedef struct _u3a_slab_new {
-        struct {                              //  internals
-          u3a_atom* _vat_u;                   //  heap atom (nullable)
-          c3_w      _sat_w;                   //  static storage
-        } _;                                  //
-        union {                               //
-          c3_y*      buf_y;                   //  bytes
-          c3_w*      buf_w;                   //  words
-        };                                    //
-        c3_d         byt_d;                   //  byte len
-        c3_w         wor_w;                   //  word len
-      } u3a_slab_new;
-
   /**  Macros.  Should be better commented.
   **/
     /* In and out of the box.
@@ -665,50 +650,6 @@
 
       /* Atoms from proto-atoms.
       */
-        /* u3a_slab_init(); configure and initialize a slab of bloq-length.
-        */
-          void
-          u3a_slab_init(u3a_slab_new* sab_u, c3_g met_g, c3_w len_w);
-
-        /* u3a_slab_bare(); configure a slab of bloq-length, with uninitialized memory.
-        */
-          void
-          u3a_slab_bare(u3a_slab_new* sab_u, c3_g met_g, c3_w len_w);
-
-        /* u3a_slab_grow(); resize a slab, reallocating as necessary
-        */
-          void
-          u3a_slab_grow(u3a_slab_new* sab_u, c3_g met_g, c3_w len_w);
-
-        /* u3a_slab_free(); dispose of a slab.
-        */
-          void
-          u3a_slab_free(u3a_slab_new* sab_u);
-
-        //  XX assumes little-endian
-        //
-        #define u3a_slab_moot_bytes u3a_slab_moot
-
-        /* u3a_slab_mint(); produce atom from slab, trimming.
-        */
-          u3_atom
-          u3a_slab_mint(u3a_slab_new* sab_u);
-
-        /* u3a_slab_moot(); produce atom from slab, no trimming.
-        */
-          u3_atom
-          u3a_slab_moot(u3a_slab_new* sab_u);
-
-        /* u3a_slab_mint_bytes(); produce atom from byte-slab, trimming.
-        ** XX assumes little-endian, implement swap to support big-endian
-        */
-#  define u3a_slab_mint_bytes u3a_slab_mint
-
-        /* u3a_slab_moot_bytes(); produce atom from byte-slab, no trimming.
-        ** XX assumes little-endian, implement swap to support big-endian
-        */
-#  define u3a_slab_moot_bytes u3a_slab_moot
-
         /* u3a_slab(): create a length-bounded proto-atom.
         */
           c3_w*
