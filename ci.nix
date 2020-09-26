@@ -12,15 +12,8 @@ Examples
 
 let
 
-  inherit (import ./nix/lib)
-    dimensionWith
-    dimension
-    dimensionHaskell
-    platformFilterGeneric
-    filterAttrsOnlyRecursive;
-
+  ci = import ./nix/ci-lib.nix;
   pkgs = import ./nix/pkgs.nix { };
-  drv = pkgs.callPackage ./nix/drv { };
 
   # The key with google storage bucket write permission,
   # deployed to ci via nixops `deployment.keys."service-account.json"`.
@@ -31,7 +24,7 @@ let
     darwin = "x86_64-darwin";
   };
 
-in dimensionWith "system" systems (systemName: system:
+in ci.dimensionWith "system" systems (systemName: system:
 
   let
 
@@ -39,7 +32,7 @@ in dimensionWith "system" systems (systemName: system:
     # attributes.
     pushObject = name: extension: src:
       let md5 = builtins.readFile src.md5;
-      in drv.pushStorageObject {
+      in pkgs.local-lib.pushStorageObject {
         inherit serviceAccountKey md5;
 
         src = src.out;
@@ -81,7 +74,7 @@ in dimensionWith "system" systems (systemName: system:
     # extraPackages = {
     #   urbit = staticPackages.urbit;
 
-    #   hs = dimensionHaskell pkgs "haskell" staticPackages.hs;
+    #   hs = ci.dimensionHaskell pkgs "haskell" staticPackages.hs;
 
     #   # Push the release tarball artefact to the remote storage bucket.
     #   tarball = pushObject "urbit-${system}" "tar.gz" releaseTarball;
@@ -96,8 +89,8 @@ in dimensionWith "system" systems (systemName: system:
     #   brass-ropsten = pushPill "brass-ropsten" sharedPackages.brass-ropsten;
     # };
 
-    platformFilter = platformFilterGeneric pkgs.lib system;
+    platformFilter = ci.platformFilterGeneric pkgs.lib system;
 
-  in filterAttrsOnlyRecursive pkgs.lib (_: v: platformFilter v) sharedPackages
+  in ci.filterAttrsOnlyRecursive pkgs.lib (_: v: platformFilter v) sharedPackages
       # (sharedPackages // extraPackages)
 )

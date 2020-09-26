@@ -49,7 +49,7 @@ let
 
   # Local library import from derivation functions such as `fetchGitHubLFS`, etc.
   # upon which local package defintions are dependent.
-  localLib = pkgs.callPackage ./nix/drv { };
+  localLib = pkgs.callPackage ./nix/lib { };
 
   # Local vendored packages defined in `./pkg`.
   # For non-vendored nixpkgs specific package overrides, see `./nix/overlays`.
