@@ -71,13 +71,13 @@
 
         /* u3i_bytes(): Copy [a] bytes from [b] to an LSB first atom.
         */
-          u3_noun
+          u3_atom
           u3i_bytes(c3_w        a_w,
                     const c3_y* b_y);
 
         /* u3i_words(): Copy [a] words from [b] into an atom.
         */
-          u3_noun
+          u3_atom
           u3i_words(c3_w        a_w,
                     const c3_w* b_w);
 
@@ -89,12 +89,12 @@
 
         /* u3i_mp(): Copy the GMP integer [a] into an atom, and clear it.
         */
-          u3_noun
+          u3_atom
           u3i_mp(mpz_t a_mp);
 
         /* u3i_vint(): increment [a].
         */
-          u3_noun
+          u3_atom
           u3i_vint(u3_noun a);
 
         /* u3i_cell(): Produce the cell `[a b]`.
