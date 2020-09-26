@@ -22,7 +22,7 @@ const SidebarItem = ({ children, view, current }) => {
         px={3}
         backgroundColor={selected ? "washedBlue" : "white"}
       >
-        <Icon mr={2} display="inline-block" icon="Circle" fill={color} />
+        <Icon mr={2} display="inline-block" icon="Circle" color={color} />
         <Text color={color} fontSize={0}>
           {children}
         </Text>

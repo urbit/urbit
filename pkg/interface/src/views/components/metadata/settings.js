@@ -12,7 +12,8 @@ export const MetadataSettings = (props) => {
     changeLoading,
     api,
     resource,
-    app
+    app,
+    module
   } = props;
 
   const title =
@@ -41,6 +42,7 @@ export const MetadataSettings = (props) => {
               val,
               association.metadata.description,
               association.metadata['date-created'],
+              module,
               uxToHex(association.metadata.color)
             ).then(() => {
               changeLoading(false, false, '', () => {});
@@ -61,7 +63,8 @@ export const MetadataSettings = (props) => {
                 association.metadata.title,
                 val,
                 association.metadata['date-created'],
-                uxToHex(association.metadata.color)
+                uxToHex(association.metadata.color),
+                module
               ).then(() => {
                 changeLoading(false, false, '', () => {});
               });
@@ -80,7 +83,8 @@ export const MetadataSettings = (props) => {
               association.metadata.title,
               association.metadata.description,
               association.metadata['date-created'],
-              val
+              val,
+              module
             ).then(() => {
               changeLoading(false, false, '', () => {});
             });

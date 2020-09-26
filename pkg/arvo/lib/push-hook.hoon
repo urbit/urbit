@@ -21,10 +21,11 @@
 ::   ##  Pokes
 ::
 ::   %push-hook-action: Add/remove a resource from pushing.
-::   [update-mark.config]: A poke to proxy to the local store
+::   [update-mark.config]: A poke to proxy to the local store or a
+::   foreign push-hook
 ::
 /-  *push-hook
-/+  default-agent, resource
+/+  default-agent, resource, verb
 |%
 +$  card  card:agent:gall
 ::
@@ -182,6 +183,9 @@
         [cards this]
       ::
       ?:  =(mark update-mark.config)
+        ?:  (team:title [our src]:bowl)
+          :_  this
+          (forward-update:hc vase)
         =^  cards  state
           (poke-update:hc vase)
         [cards this]
@@ -201,7 +205,7 @@
       =/  =resource
         (de-path:resource t.path)
       =/  =vase
-        (initial-watch:og t.t.t.path resource)
+        (initial-watch:og t.t.t.t.path resource)
       :_  this
       [%give %fact ~ update-mark.config vase]~
     ::
@@ -333,5 +337,19 @@
     =/  =path
       resource+(en-path:resource u.rid)
     [%give %fact ~[path] update-mark.config vase]~
+  ::
+  ++  forward-update
+    |=  =vase
+    ^-  (list card:agent:gall)
+    =/  rid=(unit resource)
+      (resource-for-update:og vase)
+    ?~  rid  ~
+    =/  =path
+      resource+(en-path:resource u.rid)
+    =/  =wire
+      (make-wire resource+(en-path:resource u.rid))
+    =/  dap=term
+      ?:(=(our.bowl entity.u.rid) store-name.config dap.bowl)
+    [%pass wire %agent [entity.u.rid dap] %poke update-mark.config vase]~
   --
 --

@@ -1,46 +1,43 @@
 import React, { Component } from 'react';
-import { ChannelsItem } from './channels-item';
+import { ChannelItem } from './channel-item';
+import { deSig } from '~/logic/lib/util';
 
-export class GroupItem extends Component {
-  render() {
-    const { props } = this;
-    const association = props.association ? props.association : {};
 
-    let title = association['app-path'] ? association['app-path'] : 'Unmanaged Collections';
+export const GroupItem = (props) => {
+  const association = props.association ? props.association : {};
 
-    if (association.metadata && association.metadata.title) {
-      title = association.metadata.title !== ''
-        ? association.metadata.title : title;
-    }
+  let title =
+    association['app-path'] ? association['app-path'] : 'Unmanaged Collections';
 
-    const channels = props.channels ? props.channels : [];
-    const first = (props.index === 0) ? 'pt1' : 'pt6';
-
-    const channelItems = channels.map((each, i) => {
-      const meta = props.linkMetadata[each];
-      if (!meta)
-        return null;
-      const selected = (props.selected === each);
-      const unseenCount = props.links[each]
-        ? props.links[each].unseenCount
-        : 0;
-        return (
-          <ChannelsItem
-            key={each}
-            link={each}
-            selected={selected}
-            unseenCount={unseenCount}
-            name={meta.metadata.title}
-          />
-        );
-    });
-    return (
-      <div className={first}>
-      <p className="f9 ph4 pb2 gray3">{title}</p>
-        {channelItems}
-      </div>
-    );
+  if (association.metadata && association.metadata.title) {
+    title = association.metadata.title !== ''
+      ? association.metadata.title : title;
   }
-}
 
-export default GroupItem;
+  const channels = props.channels ? props.channels : [];
+  const unmanaged = props.unmanaged ? 'pt6' : 'pt1';
+
+  const channelItems = channels.map((each, i) => {
+    const meta = props.metadata[each];
+    if (!meta) { return null; }
+    const link = `${deSig(each.split('/')[2])}/${each.split('/')[3]}`;
+
+    const selected = (props.selected === each);
+    return (
+      <ChannelItem
+        key={each}
+        link={link}
+        selected={selected}
+        name={meta.metadata.title}
+      />
+    );
+  });
+
+  return (
+    <div className={unmanaged}>
+      <p className="f9 ph4 pb2 gray3">{title}</p>
+      {channelItems}
+    </div>
+  );
+};
+

@@ -100,6 +100,9 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
   handleWindowFocus() {
     this.setState({ idle: false });
+    if (this.virtualList?.window?.scrollTop === 0) {
+      this.dismissUnread();
+    }
   }
 
   initialFetch() {
@@ -121,7 +124,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   }
 
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
-    const { isChatMissing, history, envelopes, mailboxSize, stationPendingMessages } = this.props;
+    const { isChatMissing, history, envelopes, mailboxSize, stationPendingMessages, unreadCount } = this.props;
 
     if (isChatMissing) {
       history.push("/~chat");
@@ -134,9 +137,14 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       this.stayLockedIfActive();
     }
 
+    if (unreadCount > prevProps.unreadCount && this.state.idle) {
+      this.setState({
+        lastRead: unreadCount ? mailboxSize - unreadCount : Infinity,
+      });
+    }
+
     if (stationPendingMessages.length !== prevProps.stationPendingMessages.length) {
       this.virtualList?.calculateVisibleItems();
-      this.virtualList?.scrollToData(mailboxSize);
     }
 
     if (!this.state.fetchPending && prevState.fetchPending) {

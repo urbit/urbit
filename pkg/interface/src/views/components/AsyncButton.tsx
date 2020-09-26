@@ -1,8 +1,7 @@
 import React, { ReactNode, useState, useEffect } from "react";
 
-import { Button } from "@tlon/indigo-react";
+import { Button, LoadingSpinner } from "@tlon/indigo-react";
 
-import { Spinner } from "./Spinner";
 import { useFormikContext } from "formik";
 
 interface AsyncButtonProps {
@@ -37,7 +36,12 @@ export function AsyncButton({
   return (
     <Button border disabled={!isValid} type="submit" {...rest}>
       {isSubmitting ? (
-        <Spinner awaiting text={loadingText} />
+        <LoadingSpinner
+          foreground={rest.primary ? "white" : 'black'}
+          background="transparent"
+          awaiting
+          text={loadingText}
+        />
       ) : success === true ? (
         "Done"
       ) : success === false ? (
