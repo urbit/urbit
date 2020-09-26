@@ -632,6 +632,28 @@ u3a_wfree(void* tox_v)
   _box_free(u3a_botox(tox_v));
 }
 
+/* u3a_wtrim(): trim storage.
+*/
+void
+u3a_wtrim(void* tox_v, c3_w old_w, c3_w len_w)
+{
+  c3_w* nov_w = tox_v;
+
+  if (  (old_w > len_w)
+     && ((old_w - len_w) >= u3a_minimum) )
+  {
+    c3_w* box_w = (void *)u3a_botox(nov_w);
+    c3_w* end_w = (nov_w + len_w + 1);
+    c3_w  asz_w = (end_w - box_w);
+    c3_w  bsz_w = box_w[0] - asz_w;
+
+    _box_attach(_box_make(end_w, bsz_w, 0));
+
+    box_w[0] = asz_w;
+    box_w[asz_w - 1] = asz_w;
+  }
+}
+
 /* u3a_calloc(): allocate and zero-initialize array
 */
 void*

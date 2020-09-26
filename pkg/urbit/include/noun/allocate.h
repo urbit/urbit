@@ -429,6 +429,11 @@
           void
           u3a_wfree(void* lag_v);
 
+        /* u3a_wtrim(): trim storage.
+        */
+          void
+          u3a_wtrim(void* tox_v, c3_w old_w, c3_w len_w);
+
         /* u3a_wealloc(): word realloc.
         */
           void*
