@@ -1,11 +1,11 @@
 { lib, stdenvNoCC, python }:
 
-# We don't want to use the following - as withPackages actually creates
-# a wrapper script to correctly set PYTHONPATH. This script is then set
-# as the shebang for herb - which is not allowed on Darwin.
-# python.withPackages (py: [ py.requests ])) ];
+# Avoid using `python.withPackages` as it creates a wrapper script to set
+# PYTHONPATH, and the script is used verbatim as a python shebang.
 #
-# Instead, calling wrapPythonPrograms allows cross platform usage.
+# Unfortunately Darwin does not allow scripts as a shebang - so to get a
+# cross platform python interpreter with appropriate site-packages setup
+# we use `wrapPython/Packages` which handles these cases correctly.
 
 stdenvNoCC.mkDerivation {
   name  = "herb";
