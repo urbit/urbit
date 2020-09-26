@@ -306,124 +306,62 @@ u3i_word(c3_w dat_w)
 
 /* u3i_bytes(): Copy [a] bytes from [b] to an LSB first atom.
 */
-u3_noun
+u3_atom
 u3i_bytes(c3_w        a_w,
           const c3_y* b_y)
 {
-  u3_noun pro;
-
-  //  Strip trailing zeroes.
+  //  strip trailing zeroes.
   //
   while ( a_w && !b_y[a_w - 1] ) {
     a_w--;
   }
 
-  //  Check for cat.
-  //
-  if ( a_w <= 4 ) {
-    if ( !a_w ) {
-      return 0;
-    }
-    else if ( a_w == 1 ) {
-      return b_y[0];
-    }
-    else if ( a_w == 2 ) {
-      return (b_y[0] | (b_y[1] << 8));
-    }
-    else if ( a_w == 3 ) {
-      return (b_y[0] | (b_y[1] << 8) | (b_y[2] << 16));
-    }
-    else if ( (b_y[3] <= 0x7f) ) {
-      return (b_y[0] | (b_y[1] << 8) | (b_y[2] << 16) | (b_y[3] << 24));
-    }
+  if ( !a_w ) {
+    return (u3_atom)0;
   }
+  else {
+    u3i_slab sab_u;
 
-  //  Allocate, fill, return.
-  //
-  u3t_on(mal_o);
-  {
-    c3_w      len_w = (a_w + 3) >> 2;
-    c3_w*     nov_w = u3a_walloc((len_w + c3_wiseof(u3a_atom)));
-    u3a_atom* nov_u = (void*)nov_w;
+    u3i_slab_bare(&sab_u, 3, a_w);
 
-    nov_u->mug_w = 0;
-    nov_u->len_w = len_w;
-
-    //  Clear the words.
-    //
+    u3t_on(mal_o);
     {
-      c3_w i_w;
-
-      for ( i_w=0; i_w < len_w; i_w++ ) {
-        nov_u->buf_w[i_w] = 0;
-      }
+      //  zero-initialize last word
+      //
+      sab_u.buf_w[sab_u.wor_w - 1] = 0;
+      memcpy(sab_u.buf_y, b_y, a_w);
     }
+    u3t_off(mal_o);
 
-    //  Fill the bytes.
-    //
-    {
-      c3_w i_w;
-
-      for ( i_w=0; i_w < a_w; i_w++ ) {
-        nov_u->buf_w[i_w >> 2] |= (b_y[i_w] << ((i_w & 3) * 8));
-      }
-    }
-
-    pro = u3a_to_pug(u3a_outa(nov_w));
+    return u3i_slab_moot_bytes(&sab_u);
   }
-  u3t_off(mal_o);
-
-  return pro;
 }
 
 /* u3i_words(): Copy [a] words from [b] into an atom.
 */
-u3_noun
+u3_atom
 u3i_words(c3_w        a_w,
           const c3_w* b_w)
 {
-  u3_noun pro;
-
-  //  Strip trailing zeroes.
+  //  strip trailing zeroes.
   //
   while ( a_w && !b_w[a_w - 1] ) {
     a_w--;
   }
 
-  //  Check for cat.
-  //
   if ( !a_w ) {
-    return 0;
+    return (u3_atom)0;
   }
-  else if ( (a_w == 1) && !(b_w[0] >> 31) ) {
-    return b_w[0];
+  else {
+    u3i_slab sab_u;
+    u3i_slab_bare(&sab_u, 5, a_w);
+
+    u3t_on(mal_o);
+    memcpy(sab_u.buf_w, b_w, (size_t)4 * a_w);
+    u3t_off(mal_o);
+
+    return u3i_slab_moot(&sab_u);
   }
-
-  //  Allocate, fill, return.
-  //
-  u3t_on(mal_o);
-  {
-    c3_w*     nov_w = u3a_walloc(a_w + c3_wiseof(u3a_atom));
-    u3a_atom* nov_u = (void*)nov_w;
-
-    nov_u->mug_w = 0;
-    nov_u->len_w = a_w;
-
-    //  Fill the words.
-    //
-    {
-      c3_w i_w;
-
-      for ( i_w=0; i_w < a_w; i_w++ ) {
-        nov_u->buf_w[i_w] = b_w[i_w];
-      }
-    }
-
-    pro = u3a_to_pug(u3a_outa(nov_w));
-  }
-  u3t_off(mal_o);
-
-  return pro;
 }
 
 /* u3i_chubs(): Copy [a] chubs from [b] into an atom.
@@ -432,75 +370,29 @@ u3_atom
 u3i_chubs(c3_w        a_w,
           const c3_d* b_d)
 {
-  u3_noun pro;
+  u3i_slab sab_u;
+  u3i_slab_bare(&sab_u, 6, a_w);
 
-  //  Strip trailing zeroes.
-  //
-  while ( a_w && !b_d[a_w - 1] ) {
-    a_w--;
-  }
-
-  //  Check for cat.
-  //
-  if ( !a_w ) {
-    return 0;
-  }
-  else if ( (1 == a_w) && !(b_d[0] >> 31) ) {
-    return (c3_w)b_d[0];
-  }
-
-  //  Allocate, fill, return.
-  //
   u3t_on(mal_o);
   {
-    c3_w len_w = 2 * a_w;
+    c3_w* buf_w = sab_u.buf_w;
+    c3_w    i_w;
+    c3_d    i_d;
 
-    if ( !(b_d[a_w - 1] >> 32) ) {
-      len_w--;
+    for ( i_w = 0; i_w < a_w; i_w++ ) {
+      i_d = b_d[i_w];
+      *buf_w++ = i_d & 0xffffffffULL;
+      *buf_w++ = i_d >> 32;
     }
-
-    c3_w*     nov_w = u3a_walloc(len_w + c3_wiseof(u3a_atom));
-    u3a_atom* nov_u = (void*)nov_w;
-
-    nov_u->mug_w = 0;
-    nov_u->len_w = len_w;
-
-    //  Fill the words.
-    //
-    {
-      c3_w i_w, x_w, max_w = a_w - 1;
-      c3_d i_d;
-
-      for ( i_w = 0; i_w < max_w; i_w++ ) {
-        i_d = b_d[i_w];
-        x_w = 2 * i_w;
-        nov_u->buf_w[x_w] = i_d & 0xffffffffULL;
-        x_w++;
-        nov_u->buf_w[x_w] = i_d >> 32;
-      }
-
-      {
-        i_d = b_d[i_w];
-        x_w = 2 * i_w;
-        nov_u->buf_w[x_w] = i_d & 0xffffffffULL;
-        x_w++;
-      }
-
-      if ( x_w < len_w ) {
-        nov_u->buf_w[x_w] = i_d >> 32;
-      }
-    }
-
-    pro = u3a_to_pug(u3a_outa(nov_w));
   }
   u3t_off(mal_o);
 
-  return pro;
+  return u3i_slab_mint(&sab_u);
 }
 
 /* u3i_mp(): Copy the GMP integer [a] into an atom, and clear it.
 */
-u3_noun
+u3_atom
 u3i_mp(mpz_t a_mp)
 {
   c3_w     pyg_w = mpz_size(a_mp) * (sizeof(mp_limb_t) / sizeof(c3_w));
@@ -515,18 +407,13 @@ u3i_mp(mpz_t a_mp)
 
 /* u3i_vint(): increment [a].
 */
-u3_noun
+u3_atom
 u3i_vint(u3_noun a)
 {
   c3_assert(u3_none != a);
 
   if ( _(u3a_is_cat(a)) ) {
-    c3_w vin_w = (a + 1);
-
-    if ( a == 0x7fffffff ) {
-      return u3i_words(1, &vin_w);
-    }
-    else return vin_w;
+    return ( a == 0x7fffffff ) ? u3i_word(a + 1) : (a + 1);
   }
   else if ( _(u3a_is_cell(a)) ) {
     return u3m_bail(c3__exit);
