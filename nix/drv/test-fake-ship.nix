@@ -1,4 +1,4 @@
-{ stdenvNoCC, cacert }:
+{ stdenvNoCC, cacert, unixtools }:
 
 { urbit
 , herb
@@ -10,7 +10,7 @@
 stdenvNoCC.mkDerivation {
   name = "test-${ship}";
 
-  buildInputs = [ cacert urbit herb ];
+  buildInputs = [ cacert urbit herb unixtools.netstat ];
 
   phases = [ "buildPhase" "installPhase "];
 
