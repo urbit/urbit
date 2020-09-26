@@ -42,23 +42,19 @@ u3_noun u3qc_rip(u3_atom bloq, u3_atom b) {
   c3_w    tub_w = ((dif_w == 0) ? san_w : (san_w - dif_w));
 
   for ( c3_w i_w = 0; i_w < met_w; i_w++ ) {
-    c3_w  pat_w = (met_w - (i_w + 1));
-    c3_w  wut_w = (pat_w << san_g);
-    c3_w  sap_w = ((0 == i_w) ? tub_w : san_w);
-    c3_w* sal_w = u3a_slab(sap_w);
-
-    if ( 0 == sal_w ) {
-      return u3m_bail(c3__fail);
-    }
-
-    c3_w    j_w;
-    u3_atom rip;
+    c3_w     pat_w = (met_w - (i_w + 1));
+    c3_w     wut_w = (pat_w << san_g);
+    c3_w     sap_w = ((0 == i_w) ? tub_w : san_w);
+    c3_w       j_w;
+    u3_atom    rip;
+    u3i_slab sab_u;
+    u3i_slab_init(&sab_u, 5, sap_w);
 
     for ( j_w = 0; j_w < sap_w; j_w++ ) {
-      sal_w[j_w] = u3r_word(wut_w + j_w, b);
+      sab_u.buf_w[j_w] = u3r_word(wut_w + j_w, b);
     }
 
-    rip = u3a_malt(sal_w);
+    rip = u3i_slab_mint(&sab_u);
     acc = u3nc(rip, acc);
     len_w -= san_w;
   }
