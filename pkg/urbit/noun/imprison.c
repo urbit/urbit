@@ -503,13 +503,14 @@ u3i_chubs(c3_w        a_w,
 u3_noun
 u3i_mp(mpz_t a_mp)
 {
-  c3_w  pyg_w = mpz_size(a_mp) * ((sizeof(mp_limb_t)) / 4);
-  c3_w* buz_w = u3a_slab(4 * pyg_w);
+  c3_w     pyg_w = mpz_size(a_mp) * (sizeof(mp_limb_t) / sizeof(c3_w));
+  u3i_slab sab_u;
+  u3i_slab_init(&sab_u, 5, sizeof(c3_w) * pyg_w);
 
-  mpz_export(buz_w, 0, -1, sizeof(c3_w), 0, 0, a_mp);
+  mpz_export(sab_u.buf_w, 0, -1, sizeof(c3_w), 0, 0, a_mp);
   mpz_clear(a_mp);
 
-  return u3a_malt(buz_w);
+  return u3i_slab_mint(&sab_u);
 }
 
 /* u3i_vint(): increment [a].
