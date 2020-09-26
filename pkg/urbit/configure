@@ -88,7 +88,7 @@ done
 
 cat >config.mk <<EOF
 CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math -std=gnu99
-LDFLAGS := $LDFLAGS -Wl,--start-group $libs -Wl,--end-group
+LDFLAGS := $LDFLAGS $libs
 CC      := ${CC-cc}
 EOF
 

@@ -1,39 +1,39 @@
 { system ? builtins.currentSystem
 , crossSystem ? null
-, overlays ? [ ]
-, config ? { }
-, sources ? { } 
+, sourcesOverride ? { }
+, configOverride ? { } 
+, overlaysOverride ? [ ]
 }:
 
 let
 
-  allSources = import ./sources.nix { inherit pkgs; } // sources;
+  sources = import ./sources.nix { inherit pkgs; } // sourcesOverride;
 
-  haskellNix = import allSources."haskell.nix" {
+  haskellNix = import sources."haskell.nix" {
     sourcesOverride = {
-      hackage = allSources."hackage.nix";
-      stackage = allSources."stackage.nix";
+      hackage = sources."hackage.nix";
+      stackage = sources."stackage.nix";
     };
   };
 
-  extraOverlays = [
+  config = haskellNix.config // configOverride;
+
+  overlays = [
     # Add top-level `.sources` attribute.
-    (_final: _prev: { sources = allSources; })
+    (_final: _prev: { inherit sources; })
 
     # General native nixpkgs package overrides.
     (import ./overlays/nixpkgs.nix)
 
-    # Add general overrides guarded by the host platform so
-    # we can apply them unconditionally.
+    # Additional overrides guarded by the host platform so we can
+    # apply them unconditionally.
     (import ./overlays/darwin.nix)
     (import ./overlays/musl.nix)
-  ];
+  ] ++ haskellNix.overlays
+    ++ overlaysOverride;
 
-  pkgs = import allSources.nixpkgs {
-    inherit system crossSystem;
-
-    overlays = haskellNix.overlays ++ extraOverlays ++ overlays;
-    config = haskellNix.config // config;
+  pkgs = import sources.nixpkgs {
+    inherit system crossSystem config overlays;
   };
 
 in pkgs

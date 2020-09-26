@@ -26,9 +26,9 @@ Examples
 
 { system ? builtins.currentSystem
 , crossSystem ? null
-, overlays ? [ ]
-, config ? { }
-, sources ? { }
+, sourcesOverride ? { }
+, configOverride ? { }
+, overlaysOverride ? [ ]
 
 # Whether to use `pkgs.pkgsStatic.*` to obtain statically linked package
 # dependencies - ie. when building fully-static libraries or executables. 
@@ -38,7 +38,7 @@ Examples
 let
 
   pkgs = import ./nix/pkgs.nix {
-    inherit system crossSystem overlays config sources;
+    inherit system crossSystem sourcesOverride configOverride overlaysOverride;
   };
 
   # Enrich the global package set with our local functions and packages.
