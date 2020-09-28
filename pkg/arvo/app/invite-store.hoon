@@ -101,9 +101,19 @@
   ?>  (team:title our.bowl src.bowl)
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
-      %invite-action  (poke-invite-action !<(action:store vase))
+        %invite-action  (poke-invite-action !<(action:store vase))
+    ::
+        %import
+      ?>  ?=(@ q.vase)
+      (poke-import q.vase)
     ==
   [cards this]
+  ::
+  ++  poke-import
+    |=  jammed=@
+    ^-  (quip card _state)
+    =/  sty=state-1  ;;(state-1 (cue jammed))
+    [~ sty]
   ::
   ++  poke-invite-action
     |=  =action:store
@@ -205,5 +215,7 @@
     :^  ~  ~  %noun
     !>  ^-  (unit invite:store)
     (~(get by invitatory) serial)
+  ::
+      [%x %export ~]      ``noun+!>((jam state))
   ==
 --
