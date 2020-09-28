@@ -8,13 +8,6 @@
 #include "all.h"
 #include "ur/ur.h"
 
-/* _cs_met0_w(): safe bitwidth for any c3_w
-*/
-static inline c3_w
-_cs_met0_w(c3_w wid_w) {
-  return ( wid_w >> 31 ) ? 32 : u3r_met(0, wid_w);
-}
-
 /* _cs_jam_buf: struct for tracking the fibonacci-allocated jam of a noun
 */
 struct _cs_jam_fib {
@@ -85,7 +78,7 @@ _cs_jam_fib_mat(struct _cs_jam_fib* fib_u, u3_noun a)
   }
   else {
     c3_w a_w = u3r_met(0, a);
-    c3_w b_w = _cs_met0_w(a_w);
+    c3_w b_w = c3_bits_word(a_w);
 
     _cs_jam_fib_chop(fib_u, b_w+1, 1 << b_w);
     _cs_jam_fib_chop(fib_u, b_w-1, a_w & ((1 << (b_w-1)) - 1));
