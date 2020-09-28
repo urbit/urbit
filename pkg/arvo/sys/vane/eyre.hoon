@@ -1516,9 +1516,6 @@
       |=  channel-id=@t
       ^-  [(list move) server-state]
       ::
-      ?~  connection-state=(~(get by connections.state) duct)
-        [~ state]
-      ::
       =/  res
         %-  handle-response
         :*  %continue
