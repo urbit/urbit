@@ -15,8 +15,8 @@
       **   returns atom-suitable words, and *bit_w will have
       **   the length (in bits). return should be freed with u3a_wfree().
       */
-        c3_w*
-        u3s_jam_fib(u3_noun a, c3_w* bit_w);
+        c3_w
+        u3s_jam_fib(u3i_slab* sab_u, u3_noun a);
 
       /* u3s_jam_xeno(): jam with off-loom buffer (re-)allocation.
       */

@@ -37,16 +37,9 @@ u3qe_jam(u3_atom a)
   }
 #endif
 
-  c3_w     bit_w;
-  c3_w*    wor_w = u3s_jam_fib(a, &bit_w);
-  c3_w     len_w = (bit_w + 0x1f) >> 5;
   u3i_slab sab_u;
-  u3i_slab_init(&sab_u, 5, len_w);
-
-  memcpy(sab_u.buf_y, wor_w, len_w * sizeof(c3_w));
-  u3a_wfree(wor_w);
-
-  return u3i_slab_moot(&sab_u);
+  u3s_jam_fib(&sab_u, a);
+  return u3i_slab_mint(&sab_u);
 }
 
 u3_noun
