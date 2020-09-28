@@ -48,7 +48,7 @@ u3_noun u3qc_rip(u3_atom bloq, u3_atom b) {
     c3_w       j_w;
     u3_atom    rip;
     u3i_slab sab_u;
-    u3i_slab_init(&sab_u, 5, sap_w);
+    u3i_slab_bare(&sab_u, 5, sap_w);
 
     for ( j_w = 0; j_w < sap_w; j_w++ ) {
       sab_u.buf_w[j_w] = u3r_word(wut_w + j_w, b);
