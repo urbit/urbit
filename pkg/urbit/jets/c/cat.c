@@ -25,9 +25,8 @@
       }
       else {
         u3i_slab sab_u;
-        u3i_slab_init(&sab_u, a_g, all_w);
+        u3i_slab_from(&sab_u, b, a_g, all_w);
 
-        u3r_chop(a_g, 0, lew_w, 0, sab_u.buf_w, b);
         u3r_chop(a_g, 0, ler_w, lew_w, sab_u.buf_w, c);
 
         return u3i_slab_mint(&sab_u);
