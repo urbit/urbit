@@ -33,7 +33,7 @@ To boot a fake ship with a custom pill, use the `-B` flag:
 urbit -F zod -A /path/to/arvo -B /path/to.pill -c fakezod
 ```
 
-To run all tests in `/tests`, run `+test` in dojo. `+test /some/path` would only run all tests in `/tests/some/path`.
+To run all tests in `/tests`, run `-test %/tests` in dojo. To run only the tests in `/tests/some/path`, use `-test %/tests/some/path`.
 
 ## Maintainers
 
