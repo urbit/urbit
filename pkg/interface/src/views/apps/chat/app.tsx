@@ -16,12 +16,13 @@ import GlobalApi from '~/logic/api/global';
 import { StoreState } from '~/logic/store/type';
 import GlobalSubscription from '~/logic/subscription/global';
 import {groupBunts} from '~/types/group-update';
-import Manifest from '~/views/components/Manifest';
+import Manifest, { PWAManifest } from '~/views/components/Manifest';
 
 type ChatAppProps = StoreState & {
   ship: PatpNoSig;
   api: GlobalApi;
   subscription: GlobalSubscription;
+  manifest: PWAManifest;
 };
 
 export default class ChatApp extends React.Component<ChatAppProps, {}> {
@@ -90,7 +91,8 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
       groups,
       hideAvatars,
       hideNicknames,
-      remoteContentPolicy
+      remoteContentPolicy,
+      manifest
     } = props;
 
     const renderChannelSidebar = (props, station?) => (
@@ -109,21 +111,22 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
 
     return (
       <>
-        <Manifest data={{
+        <Manifest data={{...manifest, ...{
           name: 'Chat',
           short_name: 'Chat',
           start_url: window.location.origin + '/~chat',
+          scope: '/',
           icons: [{
-            src: 'https://marpem-files.sfo2.digitaloceanspaces.com/chat-app.png',
+            src: '/~landscape/img/chat-app.png',
             type: 'image/png',
             sizes: '512x512',
             purpose: 'maskable any'
           }]
-        }} />
+        }}} />
         <Helmet defer={false}>
           <title>{totalUnreads > 0 ? `(${totalUnreads}) ` : ''}OS1 - Chat</title>
-          <link rel="shortcut icon" href="https://marpem-files.sfo2.digitaloceanspaces.com/chat-app.png" />
-          <link rel="apple-touch-icon" href="https://marpem-files.sfo2.digitaloceanspaces.com/chat-app.png" />
+          <link rel="shortcut icon" href="/~landscape/img/chat-app.png" />
+          <link rel="apple-touch-icon" href="/~landscape/img/chat-app.png" />
         </Helmet>
         <Switch>
           <Route

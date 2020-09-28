@@ -12,6 +12,7 @@ import { SettingsScreen } from './components/settings';
 import { MessageScreen } from './components/lib/message-screen';
 import { LinkList } from './components/link-list';
 import { LinkDetail } from './components/link-detail';
+import Manifest, { PWAManifest } from '~/views/components/Manifest';
 
 import {
   amOwnerOfGroup,
@@ -48,13 +49,28 @@ export default class LinksApp extends Component {
 
     const {
       api, sidebarShown, s3,
-      hideAvatars, hideNicknames, remoteContentPolicy
+      hideAvatars, hideNicknames, remoteContentPolicy,
+      manifest
     } = this.props;
 
     return (
       <>
+        <Manifest data={{...manifest, ...{
+          name: 'Links',
+          short_name: 'Links',
+          start_url: window.location.origin + '/~link',
+          scope: '/',
+          icons: [{
+            src: '/~landscape/img/links-app.png',
+            type: 'image/png',
+            sizes: '512x512',
+            purpose: 'maskable any'
+          }]
+        }}} />
         <Helmet defer={false}>
           <title>OS1 - Links</title>
+          <link rel="shortcut icon" href="/~landscape/img/links-app.png" />
+          <link rel="apple-touch-icon" href="/~landscape/img/links-app.png" />
         </Helmet>
         <Switch>
           <Route exact path="/~link"

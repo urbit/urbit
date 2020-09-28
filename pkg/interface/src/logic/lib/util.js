@@ -328,6 +328,6 @@ export function blobUrl(data, type) {
   return URL.createObjectURL(blob);
 }
 
-export function manifestUrl(json) {
+export function manifestURL(json) {
   return blobUrl(JSON.stringify(json), 'application/manifest+json');
 }

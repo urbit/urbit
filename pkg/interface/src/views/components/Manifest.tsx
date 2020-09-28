@@ -1,6 +1,6 @@
 import { string } from 'prop-types';
 import React, { Component } from 'react';
-import { manifestUrl } from '~/logic/lib/util';
+import { manifestURL } from '~/logic/lib/util';
 
 interface PWAIcon {
   src: string;
@@ -23,7 +23,7 @@ interface PWAShortcut {
   icons?: PWAIcon[];
 }
 
-interface WebAppManifest {
+export interface PWAManifest {
   background_color?: string;
   categories?: string[];
   description?: string;
@@ -45,50 +45,15 @@ interface WebAppManifest {
 }
 
 interface ManifestProps {
-  data: WebAppManifest;
+  data: PWAManifest;
 }
 
 
-
-// Basically the pattern of this component is:
-// 1. Wrapper renders default manifest
-// 2. Child receives new information,
-// 3. Child gets current information
-// 4. Overwrites current information where specified
-// 5. Generates new blob and replaces link[rel=manifest].href
-// 6. Hopefully no one gets in each other's way
-interface ManifestState {}
-
-export default class Manifest extends Component<ManifestProps, ManifestState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      content: {}
-    };
-  }
-
+export default class Manifest extends Component<ManifestProps, {}> {
   componentDidMount() {
-    console.log('blob2', this.props);
-    const oldLink = document.querySelector('link[rel=manifest]');
-    console.log('blobold', oldLink);
-    if (!oldLink) {
-      const link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = manifestUrl(this.props.data);
-      document.head.appendChild(link);
-    } else {
-      const url = oldLink.href;
-      fetch(url).then(r => r.text()).then(json => {
-        const oldManifest = JSON.parse(json);
-        const newManifest = this.props.data;
-        Object.keys(oldManifest).forEach(key => {
-          if (!newManifest[key]) {
-            newManifest[key] = oldManifest[key];
-          }
-        });
-        oldLink.href = manifestUrl(newManifest);
-      });
-    }
+    const link: HTMLLinkElement | null = document.querySelector('link[rel=manifest]');
+    if (!link) return;
+    link.href = manifestURL(this.props.data);
   }
 
   render() {

@@ -21,9 +21,10 @@ import Omnibox from './components/leap/Omnibox';
 import GlobalStore from '~/logic/store/store';
 import GlobalSubscription from '~/logic/subscription/global';
 import GlobalApi from '~/logic/api/global';
-import { uxToHex, manifestUrl, cite, blobUrl } from '~/logic/lib/util';
+import { uxToHex, blobUrl } from '~/logic/lib/util';
 import { foregroundFromBackground } from '~/logic/lib/sigil';
-import Manifest from '~/views/components/Manifest';
+import Manifest, { PWAManifest } from '~/views/components/Manifest';
+import { StoreState } from '~/logic/store/type';
 
 const Root = styled.div`
   font-family: ${p => p.theme.fonts.sans};
@@ -62,22 +63,34 @@ const Root = styled.div`
 
 const StatusBarWithRouter = withRouter(StatusBar);
 
-class App extends React.Component {
+type AppState = StoreState & {
+  manifest: PWAManifest;
+}
+
+class App extends React.Component<{}, AppState> {
+  private ship: string;
+  private store: GlobalStore;
+  private appChannel: any; // Comes from channel.js
+  private api: GlobalApi;
+  private subscription: GlobalSubscription;
+  private themeWatcher?: MediaQueryList;
+
   constructor(props) {
     super(props);
     this.ship = window.ship;
     this.store = new GlobalStore();
     this.store.setStateHandler(this.setState.bind(this));
-    this.state = this.store.state;
-
+    
     this.appChannel = new window.channel();
     this.api = new GlobalApi(this.ship, this.appChannel, this.store);
     this.subscription =
-      new GlobalSubscription(this.store, this.api, this.appChannel);
-
+    new GlobalSubscription(this.store, this.api, this.appChannel);
+    
     this.updateTheme = this.updateTheme.bind(this);
-    this.faviconString = this.faviconString.bind(this);
     this.icon = this.icon.bind(this);
+    this.defaultManifest = this.defaultManifest.bind(this);
+    this.state = this.store.state;
+    this.state.manifest = this.defaultManifest();
   }
 
   componentDidMount() {
@@ -95,14 +108,37 @@ class App extends React.Component {
   }
 
   componentWillUnmount() {
+    if (!this.themeWatcher) return;
     this.themeWatcher.removeListener(this.updateTheme);
   }
 
-  updateTheme(e) {
+  defaultManifest(): PWAManifest {
+    return {
+      name: window.ship,
+      short_name: 'OS1',
+      background_color: '#ffffff',
+      theme_color: '#000000',
+      start_url: window.location.origin,
+      display: 'fullscreen',
+      icons: [{
+        src: '/~landscape/img/os1-app.png',
+        sizes: '512x512',
+        type: 'image/png'
+      }, {
+        src: blobUrl(this.icon(), 'image/svg+xml'),
+        type: 'image/svg+xml',
+        sizes: '512x512'
+      }],
+      orientation: 'any',
+      scope: '/'
+    };
+  }
+
+  updateTheme(e): void {
     this.api.local.setDark(e.matches);
   }
 
-  icon() {
+  icon(): string {
     let background = '#ffffff';
     if (this.state.contacts.hasOwnProperty('/~/default')) {
       background = `#${uxToHex(this.state.contacts['/~/default'][window.ship].color)}`;
@@ -114,11 +150,7 @@ class App extends React.Component {
       size: 16,
       colors: [background, foreground]
     });
-  }
-
-  faviconString() {
-    const dataurl = 'data:image/svg+xml;base64,' + btoa(this.icon());
-    return dataurl;
+    return svg;
   }
 
   render() {
@@ -130,28 +162,10 @@ class App extends React.Component {
 
     return (
       <ThemeProvider theme={theme}>
-        <Manifest data={{
-          name: window.ship,
-          short_name: 'OS1',
-          background_color: '#ffffff',
-          theme_color: '#000000',
-          start_url: window.location.origin,
-          display: 'minimal-ui',
-          icons: [{
-            src: 'https://user-images.githubusercontent.com/1195363/93526624-b67cb400-f905-11ea-8888-7423c89d3878.png',
-            sizes: '512x512',
-            type: 'image/png'
-          }, {
-            src: blobUrl(this.icon(), 'image/svg+xml'),
-            type: 'image/svg+xml',
-            sizes: '512x512'
-          }],
-          orientation: 'any',
-          scope: '/'
-        }}/>
+        <Manifest data={this.state.manifest} />
         <Helmet>
           {window.ship.length < 14
-            ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
+            ? <link rel="icon" type="image/svg+xml" href={blobUrl(this.icon(), 'image/svg+xml')} />
             : null}
           <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         </Helmet>
