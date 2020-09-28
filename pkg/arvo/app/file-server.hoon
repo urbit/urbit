@@ -216,9 +216,10 @@
         =/  file  (as-octs:mimes:html .^(@ %cx scry-path))
         :_  public.u.content
         ?+  ext.req-line  not-found:gen
-            [~ %js]    (js-response:gen file)
-            [~ %css]   (css-response:gen file)
-            [~ %png]   (png-response:gen file)
+            [~ %js]     (js-response:gen file)
+            [~ %css]    (css-response:gen file)
+            [~ %png]    (png-response:gen file)
+            [~ %woff2]  (woff2-response:gen file)
           ::
               [~ %html]
             %.  file
