@@ -20,10 +20,7 @@
       c3_w     len_w = c3_max(lna_w, lnb_w);
       c3_w       i_w;
       u3i_slab sab_u;
-
-      u3i_slab_init(&sab_u, 5, len_w);
-
-      u3r_chop(5, 0, lna_w, 0, sab_u.buf_w, a);
+      u3i_slab_from(&sab_u, a, 5, len_w);
 
       for ( i_w = 0; i_w < lnb_w; i_w++ ) {
         sab_u.buf_w[i_w] |= u3r_word(i_w, b);

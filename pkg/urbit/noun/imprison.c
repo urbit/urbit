@@ -155,6 +155,18 @@ u3i_slab_bare(u3i_slab* sab_u, c3_g met_g, c3_w len_w)
   u3t_off(mal_o);
 }
 
+/* u3i_slab_from(): configure bloq-length slab, initialize with [a].
+*/
+void
+u3i_slab_from(u3i_slab* sab_u, u3_atom a, c3_g met_g, c3_w len_w)
+{
+  u3i_slab_bare(sab_u, met_g, len_w);
+
+  //  copies [a], zero-initializes any additional space
+  //
+  u3r_words(0, sab_u->wor_w, sab_u->buf_w, a);
+}
+
 /* u3i_slab_grow(): resize slab, reallocating as necessary.
 */
 void
