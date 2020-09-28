@@ -51,7 +51,13 @@
     `this
   ::
   ++  on-leave  on-leave:def
-  ++  on-peek   on-peek:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (on-peek:def path)
+        [%x %export ~]
+      ``noun+!>((jam state))
+    ==
   ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
   ++  on-poke
@@ -65,6 +71,12 @@
     ::
         %metadata-action
       [(poke-action:hc !<(metadata-action vase)) this]
+    ::
+        %import
+      ?>  ?=(@ q.vase)
+      =^  cards  state
+        (poke-import:hc q.vase)
+      [cards this]
     ==
   ::
   ++  on-watch
@@ -165,6 +177,19 @@
     ?>  ?=(^ path)
     !=(i.path '~')
   --
+::
+++  poke-import
+  |=  jammed=@
+  ^-  (quip card _state)
+  =/  sty=state-one  ;;(state-one (cue jammed))
+  :_  sty
+  %+  roll  ~(tap by synced.sty)
+  |=  [[=group-path =ship] out=(list card)]
+  ?:  =(ship our.bowl)
+    out
+  =/  =path  [%group group-path]
+  :_  out
+  [%pass path %agent [ship %metadata-hook] %watch path]
 ::
 ++  watch-group
   |=  =path
