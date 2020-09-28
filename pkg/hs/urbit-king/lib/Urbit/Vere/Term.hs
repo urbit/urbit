@@ -282,8 +282,8 @@ localClient doneSignal = fst <$> mkRAcquire start stop
             putStr "\r"
             T.clearLine
             TermSize width _ <- atomically $ readTVar termSizeVar
-            -- TODO: Ignoring priority for now.
-            putStr (tshow width <> "\r\n")
+            -- TODO: Ignoring priority for now. Priority changes the color of,
+            -- and adds a prefix of '>' to, the output.
             let lines = fmap unTape $ wash (WashCfg 0 width) $ tankTree $ snd slog
             forM lines $ \line -> putStr (line <> "\r\n")
             termRefreshLine ls
