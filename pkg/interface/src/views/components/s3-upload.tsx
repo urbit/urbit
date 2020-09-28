@@ -99,22 +99,25 @@ export class S3Upload extends Component<S3UploadProps, S3UploadState> {
     const timestamp = deSig(dateToDa(new Date()));
     let bucket = props.configuration.currentBucket;
 
-    this.setState({ isUploading: true });
+    setTimeout(() => {
+      if (this.state.isUploading) return;
+      this.setState({ isUploading: true });
+      this.s3.upload(bucket, `${window.ship}/${timestamp}-${fileName}.${fileExtension}`, file)
+        .then((data) => {
+          if (!data || !('Location' in data)) {
+            return;
+          }
+          this.props.uploadSuccess(data.Location);
+        })
+        .catch((err) => {
+          console.error(err);
+          this.props.uploadError(err);
+        })
+        .finally(() => {
+          this.setState({ isUploading: false });
+        });
+    }, 200);
 
-    this.s3.upload(bucket, `${window.ship}/${timestamp}-${fileName}.${fileExtension}`, file)
-      .then((data) => {
-        if (!data || !('Location' in data)) {
-          return;
-        }
-        this.props.uploadSuccess(data.Location);
-      })
-      .catch((err) => {
-        console.error(err);
-        this.props.uploadError(err);
-      })
-      .finally(() => {
-        this.setState({ isUploading: false });
-      });
   }
 
   onClick() {
