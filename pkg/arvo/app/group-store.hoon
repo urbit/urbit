@@ -29,7 +29,7 @@
 ::      Modify the group. Further documented in /sur/group-store.hoon
 ::
 ::
-/-  *group, permission-store
+/-  *group, permission-store, *contact-view
 /+  store=group-store, default-agent, verb, dbug, resource
 |%
 +$  card  card:agent:gall
@@ -165,12 +165,16 @@
     ^-  (quip card _this)
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
-      ?+    mark  (on-poke:def mark vase)
-        %noun  (poke-noun:gc vase)
-        ::
+      ?+  mark  (on-poke:def mark vase)
+          %noun
+        (poke-noun:gc vase)
+      ::
           ?(%group-update %group-action)
         (poke-group-update:gc !<(update:store vase))
-        ::
+      ::
+          %import
+        ?>  ?=(@ q.vase)
+        (poke-import:gc q.vase)
       ==
     [cards this]
   ::
@@ -214,6 +218,9 @@
         (slav %p i.t.t.t.t.t.t.path)
       ?~  rid  ~
       ``noun+!>((peek-group-join u.rid ship))
+    ::
+        [%x %export ~]
+      ``noun+!>((jam state))
     ==
   ::
   ++  on-agent  on-agent:def
@@ -226,7 +233,7 @@
   |=  rid=resource
   ^-  (unit group)
   (~(get by groups) rid)
-
+::
 ++  peek-group-join
   |=  [rid=resource =ship]
   =/  ugroup
@@ -246,6 +253,28 @@
       (~(has in ban-ranks.policy) (clan:title ship))
     ==
   ==
+::
+++  poke-import
+  |=  jammed=@
+  ^-  (quip card _state)
+  =/  sty=state-one  ;;(state-one (cue jammed))
+  :_  sty
+  %+  roll  ~(tap by groups.sty)
+  |=  [[=resource =group] out=(list card)]
+  ?:  =(entity.resource our.bol)
+    %+  weld  out
+    %+  roll  ~(tap in members.group)
+    |=  [recipient=@p out=(list card)]
+    ?:  =(recipient our.bol)
+      out
+    :_  out
+    %-  poke-contact
+    :*  %invite  resource  recipient
+        (crip "Rejoin disconnected group {<entity.resource>}/{<name.resource>}")
+    ==
+  :_  out
+  (poke-contact [%join resource])
+::
 ++  poke-noun
   |=  =vase
   ^-  (quip card _state)
@@ -604,6 +633,11 @@
   |=  =action:store
   ^-  card
   [%pass / %agent [our.bol %group-store] %poke %group-action !>(action)]
+::
+++  poke-contact
+  |=  act=contact-view-action
+  ^-  card
+  [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
 ::  +send-diff: update subscribers of new state
 ::
 ::    We only allow subscriptions on /groups
