@@ -6,6 +6,7 @@ if [ $# -eq 0 ]; then
     exit 2
 fi
 PIER=$1
+EXCLUDE_FILE=ignore_files.txt
 
 while getopts "w" opt; do
     case ${opt} in
@@ -18,13 +19,13 @@ while getopts "w" opt; do
 done
 
 if [ -z "$WATCH_MODE" ]; then
-    echo "Installed %coiny-store"
-    rsync -r --exclude '.*' --exclude '*.sh' --exclude '*.md' * $PIER/
+    echo "Installed %bippy"
+    rsync -r --exclude-from=$EXCLUDE_FILE * $PIER/
 else
    echo "Watching for changes to copy to ${PIER}..."
    while [ 0 ]
    do
     sleep 0.8
-    rsync -r --exclude '.*' --exclude '*.sh' --exclude '*.md' * $PIER/
+    rsync -r --exclude-from=$EXCLUDE_FILE * $PIER/
    done
 fi
