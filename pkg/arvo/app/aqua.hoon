@@ -21,7 +21,7 @@
 ::  We get ++unix-event and ++pill from /-aquarium
 ::
 /-  aquarium
-/+  pill, default-agent
+/+  pill, default-agent, dbug, verb
 =,  pill-lib=pill
 =,  aquarium
 =>  $~  |%
@@ -45,6 +45,8 @@
 =|  state
 =*  all-state  -
 =<
+  %-  agent:dbug
+  %+  verb  |
   ^-  agent:gall
   |_  =bowl:gall
   +*  this       .
