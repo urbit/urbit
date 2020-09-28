@@ -126,7 +126,7 @@ runSerf vSlog pax = do
     { scSerf = env ^. pierConfigL . pcSerfExe . to (maybe serfProg unpack)
     , scPier = pax
     , scFlag = env ^. pierConfigL . pcSerfFlags
-    , scSlog = slog   -- printTank slog pri tank
+    , scSlog = slog
     , scStdr = \txt -> slog (0, (textToTank txt))
     , scDead = pure () -- TODO: What can be done?
     }
@@ -353,7 +353,6 @@ pier (serf, log) vSlog startedSig = do
 
   let slog :: Text -> IO ()
       slog txt = do
-        -- TODO: What is this and is it right?
         fn <- atomically (readTVar vSlog)
         fn (0, textToTank txt)
 
