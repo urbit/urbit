@@ -369,6 +369,10 @@
       ::
           %chat-hook-action
         (poke-chat-hook-action:cc !<(action:hook vase))
+      ::
+          %import
+        ?>  ?=(@ q.vase)
+        (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -417,7 +421,13 @@
     ==
   ::
   ++  on-leave  on-leave:def
-  ++  on-peek   on-peek:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (on-peek:def path)
+        [%x %export ~]
+      ``noun+!>((jam state))
+    ==
   ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
   --
@@ -676,6 +686,20 @@
         (pull-backlog-subscriptions u.ship path.act)
     ==
   ==
+::
+++  poke-import
+  |=  jammed=@
+  ^-  (quip card _state)
+  =/  sty=state-8  ;;(state-8 (cue jammed))
+  :_  sty
+  %+  turn  ~(tap by synced.sty)
+  |=  [=path =ship]
+  ^-  card
+  =/  watch-path=^path  [%mailbox path]
+  ?:  =(our.bol ship)
+    =/  store-wire=wire  [%store path]
+    [%pass store-wire %agent [our.bol %chat-store] %watch watch-path]
+  [%pass watch-path %agent [ship %chat-hook] %watch watch-path]
 ::
 ++  watch-synced
   |=  pax=path

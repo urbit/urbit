@@ -89,9 +89,13 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-        %json         (poke-json:cc !<(json vase))
-        %chat-action  (poke-chat-action:cc !<(action:store vase))
-        %noun         [~ (poke-noun:cc !<(admin-action vase))]
+          %json         (poke-json:cc !<(json vase))
+          %chat-action  (poke-chat-action:cc !<(action:store vase))
+          %noun         [~ (poke-noun:cc !<(admin-action vase))]
+      ::
+          %import
+        ?>  ?=(@ q.vase)
+        (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -139,6 +143,9 @@
       ?~  mailbox
         ~
       ``noun+!>(config.u.mailbox)
+    ::
+        [%x %export ~]
+      ``noun+!>((jam state))
     ==
   ::
   ++  on-agent  on-agent:def
@@ -234,6 +241,12 @@
         =^  read-moves  state  (handle-read [%read path.action])
         [(weld message-moves read-moves) state]
   ==
+::
+++  poke-import
+  |=  jammed=@
+  ^-  (quip card _state)
+  =/  sty=state-3  ;;(state-3 (cue jammed))
+  [~ sty]
 ::
 ++  handle-create
   |=  =action:store
