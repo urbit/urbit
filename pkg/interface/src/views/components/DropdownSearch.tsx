@@ -128,7 +128,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
   );
 
   return (
-    <Box position="relative">
+    <Box position="relative" zIndex={9}>
       <Label htmlFor={props.id}>{props.label}</Label>
       {caption ? <Label mt="2" gray>{caption}</Label> : null}
       {!props.disabled && (
