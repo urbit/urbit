@@ -121,8 +121,13 @@
     ?>  (team:title our.bowl src.bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
-        ::%json            (poke-json:cc !<(json vase))
-        %contact-action  (poke-contact-action:cc !<(contact-action vase))
+          ::%json            (poke-json:cc !<(json vase))
+          %contact-action
+        (poke-contact-action:cc !<(contact-action vase))
+      ::
+          %import
+        ?>  ?=(@ q.vase)
+        (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -169,6 +174,9 @@
       ?~  contacts
         ~
       ``noun+!>((~(get by u.contacts) ship))
+    ::
+        [%x %export ~]
+      ``noun+!>((jam state))
     ==
   ::
   ++  on-agent  on-agent:def
@@ -196,6 +204,12 @@
       %remove   (handle-remove +.action)
       %edit     (handle-edit +.action)
   ==
+::
+++  poke-import
+  |=  jammed=@
+  ^-  (quip card _state)
+  =/  sty=state-three  ;;(state-three (cue jammed))
+  [~ sty]
 ::
 ++  handle-create
   |=  =path

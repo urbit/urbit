@@ -132,6 +132,10 @@
       ::
           %contact-hook-action
         (poke-hook-action:cc !<(contact-hook-action vase))
+      ::
+          %import
+        ?>  ?=(@ q.vase)
+        (poke-import:cc q.vase)
       ==
     [cards this]
   ::
@@ -170,7 +174,13 @@
     ==
   ::
   ++  on-leave  on-leave:def
-  ++  on-peek   on-peek:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?+  path  (on-peek:def path)
+        [%x %export ~]
+      ``noun+!>((jam state))
+    ==
   ++  on-arvo   on-arvo:def
   ++  on-fail   on-fail:def
   --
@@ -259,6 +269,19 @@
         cards
     ==
   ==
+::
+++  poke-import
+  |=  jammed=@
+  ^-  (quip card _state)
+  =/  sty=state-three  ;;(state-three (cue jammed))
+  :_  sty
+  %+  turn  ~(tap by synced.sty)
+  |=  [=path =ship]
+  ^-  card
+  =/  contact-path  [%contacts path]
+  ?:  =(our.bol ship)
+    [%pass contact-path %agent [our.bol %contact-store] %watch contact-path]
+  [%pass contact-path %agent [ship %contact-hook] %watch contact-path]
 ::
 ++  watch-contacts
   |=  pax=path
