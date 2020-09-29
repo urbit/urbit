@@ -100,30 +100,10 @@ _ci_atom_mint(u3a_atom* vat_u, c3_w len_w)
 void
 u3i_slab_init(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
 {
+  u3i_slab_bare(sab_u, met_g, len_d);
+
   u3t_on(mal_o);
-  {
-    c3_d byt_d;
-    c3_w wor_w = _ci_slab_size(met_g, len_d, &byt_d);
-
-    //  if we only need one word, use the static storage in [sab_u]
-    //
-    if ( 1 == wor_w ) {
-      sab_u->_._vat_u = 0;
-      sab_u->buf_w    = &sab_u->_._sat_w;
-      sab_u->wor_w    = 1;
-    }
-    //  allocate an indirect atom
-    //
-    else {
-      _ci_slab_init(sab_u, wor_w);
-    }
-
-    sab_u->byt_d = byt_d;
-
-    //  XX refactor
-    //
-    memset(sab_u->buf_y, 0, (size_t)wor_w * 4);
-  }
+  memset(sab_u->buf_y, 0, (size_t)sab_u->wor_w * 4);
   u3t_off(mal_o);
 }
 
@@ -206,17 +186,20 @@ u3i_slab_grow(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
 void
 u3i_slab_free(u3i_slab* sab_u)
 {
+  c3_w      len_w = sab_u->wor_w;
+  u3a_atom* vat_u = sab_u->_._vat_u;
+
   u3t_on(mal_o);
-  if ( 1 == sab_u->wor_w ) {
-    c3_assert( !sab_u->_._vat_u );
+
+  if ( 1 == len_w ) {
+    c3_assert( !vat_u );
   }
   else {
-    u3a_atom* vat_u = sab_u->_._vat_u;
-
-    c3_assert( (sab_u->buf_w - c3_wiseof(u3a_atom)) == (c3_w*)vat_u );
-
+    c3_w* tav_w = (sab_u->buf_w - c3_wiseof(u3a_atom));
+    c3_assert( tav_w == (c3_w*)vat_u );
     u3a_wfree(vat_u);
   }
+
   u3t_off(mal_o);
 }
 
@@ -225,14 +208,16 @@ u3i_slab_free(u3i_slab* sab_u)
 u3_atom
 u3i_slab_mint(u3i_slab* sab_u)
 {
-  u3_atom pro;
+  c3_w      len_w = sab_u->wor_w;
+  u3a_atom* vat_u = sab_u->_._vat_u;
+  u3_atom     pro;
 
   u3t_on(mal_o);
 
-  if ( 1 == sab_u->wor_w ) {
+  if ( 1 == len_w ) {
     c3_w dat_w = *sab_u->buf_w;
 
-    c3_assert( !sab_u->_._vat_u );
+    c3_assert( !vat_u );
 
     u3t_off(mal_o);
     pro = u3i_word(dat_w);
@@ -240,10 +225,11 @@ u3i_slab_mint(u3i_slab* sab_u)
   }
   else {
     u3a_atom* vat_u = sab_u->_._vat_u;
-    c3_w      len_w = sab_u->wor_w;
+    c3_w* tav_w = (sab_u->buf_w - c3_wiseof(u3a_atom));
+    c3_assert( tav_w == (c3_w*)vat_u );
 
-    c3_assert( (sab_u->buf_w - c3_wiseof(u3a_atom)) == (c3_w*)vat_u );
-
+    //  trim trailing zeros
+    //
     while ( len_w && !(sab_u->buf_w[len_w - 1]) ) {
       len_w--;
     }
@@ -261,11 +247,13 @@ u3i_slab_mint(u3i_slab* sab_u)
 u3_atom
 u3i_slab_moot(u3i_slab* sab_u)
 {
-  u3_atom pro;
+  c3_w      len_w = sab_u->wor_w;
+  u3a_atom* vat_u = sab_u->_._vat_u;
+  u3_atom     pro;
 
   u3t_on(mal_o);
 
-  if ( 1 == sab_u->wor_w ) {
+  if ( 1 == len_w) {
     c3_w dat_w = *sab_u->buf_w;
 
     c3_assert( !sab_u->_._vat_u );
@@ -276,9 +264,8 @@ u3i_slab_moot(u3i_slab* sab_u)
   }
   else {
     u3a_atom* vat_u = sab_u->_._vat_u;
-    c3_w      len_w = sab_u->wor_w;
-
-    c3_assert( (sab_u->buf_w - c3_wiseof(u3a_atom)) == (c3_w*)vat_u );
+    c3_w* tav_w = (sab_u->buf_w - c3_wiseof(u3a_atom));
+    c3_assert( tav_w == (c3_w*)vat_u );
 
     pro = _ci_atom_mint(vat_u, len_w);
   }
