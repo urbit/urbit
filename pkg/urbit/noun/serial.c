@@ -290,12 +290,9 @@ c3_d
 u3s_jam_xeno(u3_noun a, c3_d* len_d, c3_y** byt_y)
 {
   _jam_xeno_t jam_u = {0};
+  ur_bsw_init(&jam_u.rit_u, ur_fib11, ur_fib12);
 
   jam_u.har_p = u3h_new();
-
-  jam_u.rit_u.prev  = ur_fib11;
-  jam_u.rit_u.size  = ur_fib12;
-  jam_u.rit_u.bytes = c3_calloc(jam_u.rit_u.size);
 
   //  as this is a hot path, we unsafely elide overflow checks
   //
@@ -304,12 +301,9 @@ u3s_jam_xeno(u3_noun a, c3_d* len_d, c3_y** byt_y)
   u3a_walk_fore_unsafe(a, &jam_u, _cs_jam_xeno_atom,
                                   _cs_jam_xeno_cell);
 
-  *len_d = jam_u.rit_u.fill + !!jam_u.rit_u.off;
-  *byt_y = jam_u.rit_u.bytes;
-
   u3h_free(jam_u.har_p);
 
-  return jam_u.rit_u.bits;
+  return ur_bsw_done(&jam_u.rit_u, len_d, byt_y);
 }
 
 #define CUE_ROOT 0
@@ -549,20 +543,13 @@ typedef struct _cue_frame_s {
   c3_d  bit_d;
 } _cue_frame_t;
 
-typedef struct _cue_stack_s {
-  c3_w          pre_w;
-  c3_w          siz_w;
-  c3_w          fil_w;
-  _cue_frame_t* fam_u;
-} _cue_stack_t;
-
-/* _cs_cue_xeno_next(): read next value from bitstream, bookkeeping off-loom.
+/* _cs_cue_xeno_next(): read next value from bitstream, dictionary off-loom.
 */
 static inline ur_cue_res_e
-_cs_cue_xeno_next(_cue_stack_t* tac_u,
-                  ur_bsr_t*     red_u,
-                  ur_dict32_t*  dic_u,
-                  u3_noun*        out)
+_cs_cue_xeno_next(u3a_pile*    pil_u,
+                  ur_bsr_t*    red_u,
+                  ur_dict32_t* dic_u,
+                  u3_noun*       out)
 {
   ur_root_t* rot_u = 0;
 
@@ -579,22 +566,11 @@ _cs_cue_xeno_next(_cue_stack_t* tac_u,
       default: c3_assert(0);
 
       case ur_jam_cell: {
-        //  reallocate the stack if full
-        //
-        if ( tac_u->fil_w == tac_u->siz_w ) {
-          c3_w nex_w = tac_u->pre_w + tac_u->siz_w;
-          tac_u->fam_u = c3_realloc(tac_u->fam_u, nex_w * sizeof(*tac_u->fam_u));
-          tac_u->pre_w = tac_u->siz_w;
-          tac_u->siz_w = nex_w;
-        }
+        _cue_frame_t* fam_u = u3a_push(pil_u);
+        u3a_pile_sane(pil_u);
 
-        //  save a head-frame and read the head from the stream
-        //
-        {
-          _cue_frame_t* fam_u = &(tac_u->fam_u[tac_u->fil_w++]);
-          fam_u->ref   = u3_none;
-          fam_u->bit_d = bit_d;
-        }
+        fam_u->ref   = u3_none;
+        fam_u->bit_d = bit_d;
         continue;
       }
 
@@ -636,7 +612,7 @@ _cs_cue_xeno_next(_cue_stack_t* tac_u,
             c3_d byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
 
             if ( 0xffffffffULL < byt_d) {
-              return u3m_bail(c3__meme);
+              return ur_cue_meme;
             }
 
             //  XX assumes little-endian
@@ -656,20 +632,27 @@ _cs_cue_xeno_next(_cue_stack_t* tac_u,
   }
 }
 
-/* u3s_cue_xeno_unsafe(): cue onto the loom, all bookkeeping off-loom.
-**
-**   NB: unsafe wrt to [dic_u], which must be empty.
+struct _u3_cue_xeno {
+  ur_dict32_t dic_u;
+};
+
+/* _cs_cue_xeno(): cue on-loom, with off-loom dictionary in handle.
 */
-c3_o
-u3s_cue_xeno_unsafe(ur_dict32_t* dic_u,
-                    c3_d         len_d,
-                    const c3_y*  byt_y,
-                    u3_noun*       out)
+static u3_weak
+_cs_cue_xeno(u3_cue_xeno* sil_u,
+             c3_d         len_d,
+             const c3_y*  byt_y)
 {
-  ur_bsr_t     red_u = {0};
-  _cue_stack_t tac_u = {0};
-  ur_cue_res_e res_e;
-  u3_noun        ref;
+  ur_bsr_t      red_u = {0};
+  ur_dict32_t*  dic_u = &sil_u->dic_u;
+  u3a_pile      pil_u;
+  _cue_frame_t* fam_u;
+  ur_cue_res_e  res_e;
+  u3_noun         ref;
+
+  //  initialize stack control
+  //
+  u3a_pile_prep(&pil_u, sizeof(*fam_u));
 
   //  init bitstream-reader
   //
@@ -682,80 +665,120 @@ u3s_cue_xeno_unsafe(ur_dict32_t* dic_u,
     return c3n;
   }
 
-  //  setup stack
-  //
-  tac_u.pre_w = ur_fib10;
-  tac_u.siz_w = ur_fib11;
-  tac_u.fam_u = c3_malloc(tac_u.siz_w * sizeof(*tac_u.fam_u));
-
   //  advance into stream
   //
-  res_e = _cs_cue_xeno_next(&tac_u, &red_u, dic_u, &ref);
+  res_e = _cs_cue_xeno_next(&pil_u, &red_u, dic_u, &ref);
 
-  //  process result
+  //  process cell results
   //
-  while ( tac_u.fil_w && (ur_cue_good == res_e) ) {
-    //  peek at the top of the stack
-    //
-    _cue_frame_t* fam_u = &(tac_u.fam_u[tac_u.fil_w - 1]);
+  if (  (c3n == u3a_pile_done(&pil_u))
+     && (ur_cue_good == res_e) )
+  {
+    fam_u = u3a_peek(&pil_u);
 
-    //  f is a head-frame; stash result and read the tail from the stream
-    //
-    if ( u3_none == fam_u->ref ) {
-      fam_u->ref = ref;
-      res_e      = _cs_cue_xeno_next(&tac_u, &red_u, dic_u, &ref);
-    }
-    //  f is a tail-frame; pop the stack and continue
-    //
-    else {
-      ur_root_t* rot_u = 0;
+    do {
+      //  f is a head-frame; stash result and read the tail from the stream
+      //
+      if ( u3_none == fam_u->ref ) {
+        fam_u->ref = ref;
+        res_e = _cs_cue_xeno_next(&pil_u, &red_u, dic_u, &ref);
+        fam_u = u3a_peek(&pil_u);
+      }
+      //  f is a tail-frame; pop the stack and continue
+      //
+      else {
+        ur_root_t* rot_u = 0;
 
-      ref = u3nc(fam_u->ref, ref);
-      ur_dict32_put(rot_u, dic_u, fam_u->bit_d, ref);
-      tac_u.fil_w--;
+        ref   = u3nc(fam_u->ref, ref);
+        ur_dict32_put(rot_u, dic_u, fam_u->bit_d, ref);
+        fam_u = u3a_pop(&pil_u);
+      }
     }
+    while (  (c3n == u3a_pile_done(&pil_u))
+          && (ur_cue_good == res_e) );
   }
 
   if ( ur_cue_good == res_e ) {
-    *out = ref;
-    c3_free(tac_u.fam_u);
-    return c3y;
+    return ref;
   }
-  else {
-    //  unwind the stack, disposing intermediate nouns
-    //
-    while ( tac_u.fil_w ) {
-      _cue_frame_t* fam_u = &(tac_u.fam_u[--tac_u.fil_w]);
-
+  //  on failure, unwind the stack and dispose of intermediate nouns
+  //
+  else if ( c3n == u3a_pile_done(&pil_u) ) {
+    do {
       if ( u3_none != fam_u->ref ) {
         u3z(fam_u->ref);
       }
+      fam_u = u3a_pop(&pil_u);
     }
-
-    c3_free(tac_u.fam_u);
-    return c3n;
+    while ( c3n == u3a_pile_done(&pil_u) );
   }
+
+  return u3_none;
 }
 
-/* u3s_cue_xeno(): cue onto the loom, bookkeeping off the loom.
+/* u3s_cue_xeno_init_with(): initialize a cue_xeno handle as specified.
 */
-c3_o
-u3s_cue_xeno(c3_d len_d, const c3_y* byt_y, u3_noun* out)
+u3_cue_xeno*
+u3s_cue_xeno_init_with(c3_d pre_d, c3_d siz_d)
 {
-  ur_dict32_t  dic_u = {0};
-  c3_o         ret_o;
+  u3_cue_xeno* sil_u;
 
   c3_assert( &(u3H->rod_u) == u3R );
 
-  //  XX tune the initial dictionary size for less reallocation
-  //
-  ur_dict32_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
+  sil_u = c3_calloc(sizeof(*sil_u));
+  ur_dict32_grow((ur_root_t*)0, &sil_u->dic_u, pre_d, siz_d);
 
-  ret_o = u3s_cue_xeno_unsafe(&dic_u, len_d, byt_y, out);
+  return sil_u;
+}
 
-  ur_dict_free((ur_dict_t*)&dic_u);
+/* u3s_cue_xeno_init(): initialize a cue_xeno handle.
+*/
+u3_cue_xeno*
+u3s_cue_xeno_init(void)
+{
+  return u3s_cue_xeno_init_with(ur_fib10, ur_fib11);
+}
 
-  return ret_o;
+/* u3s_cue_xeno_init(): cue on-loom, with off-loom dictionary in handle.
+*/
+u3_weak
+u3s_cue_xeno_with(u3_cue_xeno* sil_u,
+                  c3_d         len_d,
+                  const c3_y*  byt_y)
+{
+  u3_weak som;
+
+  c3_assert( &(u3H->rod_u) == u3R );
+
+  som = _cs_cue_xeno(sil_u, len_d, byt_y);
+  ur_dict32_wipe(&sil_u->dic_u);
+  return som;
+}
+
+/* u3s_cue_xeno_init(): dispose cue_xeno handle.
+*/
+void
+u3s_cue_xeno_done(u3_cue_xeno* sil_u)
+{
+  ur_dict_free((ur_dict_t*)&sil_u->dic_u);
+  c3_free(sil_u);
+}
+
+/* u3s_cue_xeno(): cue on-loom, with off-loom dictionary.
+*/
+u3_weak
+u3s_cue_xeno(c3_d        len_d,
+             const c3_y* byt_y)
+{
+  u3_cue_xeno* sil_u;
+  u3_weak        som;
+
+  c3_assert( &(u3H->rod_u) == u3R );
+
+  sil_u = u3s_cue_xeno_init();
+  som   = _cs_cue_xeno(sil_u, len_d, byt_y);
+  u3s_cue_xeno_done(sil_u);
+  return som;
 }
 
 /* _cs_cue_need(): bail on ur_cue_* read failures.
@@ -794,13 +817,12 @@ _cs_cue_put(u3p(u3h_root) har_p, c3_d key_d, u3_noun val)
   return val;
 }
 
-/* _cs_cue_full_next(): read next value from bitstream.
+/* _cs_cue_bytes_next(): read next value from bitstream.
 */
 static inline u3_noun
-_cs_cue_full_next(c3_ys           mov,
-                  c3_ys           off,
-                  u3p(u3h_root) har_p,
-                  ur_bsr_t*     red_u)
+_cs_cue_bytes_next(u3a_pile*     pil_u,
+                   u3p(u3h_root) har_p,
+                   ur_bsr_t*     red_u)
 {
   while ( 1 ) {
     c3_d  len_d, bit_d = red_u->bits;
@@ -812,31 +834,11 @@ _cs_cue_full_next(c3_ys           mov,
       default: c3_assert(0);
 
       case ur_jam_cell: {
-        //  wind the stack
-        //
-        u3R->cap_p += mov;
+        _cue_frame_t* fam_u = u3a_push(pil_u);
+        u3a_pile_sane(pil_u);
 
-        //  ensure we haven't overflowed (ie, run into the heap)
-        //  (off==0 means we're on a north road)
-        //
-        if ( 0 == off ) {
-          if( !(u3R->cap_p > u3R->hat_p) ) {
-            u3m_bail(c3__meme);
-          }
-        }
-        else {
-          if( !(u3R->cap_p < u3R->hat_p) ) {
-            u3m_bail(c3__meme);
-          }
-        }
-
-        //  save a head-frame and read the head from the stream
-        //
-        {
-          _cue_frame_t* fam_u = u3to(_cue_frame_t, u3R->cap_p + off);
-          fam_u->ref   = u3_none;
-          fam_u->bit_d = bit_d;
-        }
+        fam_u->ref   = u3_none;
+        fam_u->bit_d = bit_d;
         continue;
       }
 
@@ -895,23 +897,19 @@ _cs_cue_full_next(c3_ys           mov,
 u3_noun
 u3s_cue_bytes(c3_d len_d, const c3_y* byt_y)
 {
-  ur_bsr_t red_u = {0};
-  u3_noun    ref;
+  ur_bsr_t      red_u = {0};
+  u3a_pile      pil_u;
+  _cue_frame_t* fam_u;
+  u3p(u3h_root) har_p;
+  u3_noun         ref;
+
+  //  initialize stack control
+  //
+  u3a_pile_prep(&pil_u, sizeof(*fam_u));
 
   //  initialize a hash table for dereferencing backrefs
   //
-  u3p(u3h_root) har_p = u3h_new();
-  const u3_post top_p = u3R->cap_p;
-
-  //  initialize signed stack offsets (relative to north/south road)
-  //
-  c3_ys mov, off;
-  {
-    c3_o nor_o = u3a_is_north(u3R);
-    c3_y wis_y = c3_wiseof(_cue_frame_t);
-    mov = ( c3y == nor_o ? -wis_y : wis_y );
-    off = ( c3y == nor_o ? 0 : -wis_y );
-  }
+  har_p = u3h_new();
 
   //  init bitstream-reader
   //
@@ -925,28 +923,30 @@ u3s_cue_bytes(c3_d len_d, const c3_y* byt_y)
 
   //  advance into stream
   //
-  ref = _cs_cue_full_next(mov, off, har_p, &red_u);
+  ref = _cs_cue_bytes_next(&pil_u, har_p, &red_u);
 
-  //  process result
+  //  process cell results
   //
-  while ( top_p != u3R->cap_p ) {
-    //  peek at the top of the stack
-    //
-    _cue_frame_t* fam_u = u3to(_cue_frame_t, u3R->cap_p + off);
+  if ( c3n == u3a_pile_done(&pil_u) ) {
+    fam_u = u3a_peek(&pil_u);
 
-    //  f is a head-frame; stash result and read the tail from the stream
-    //
-    if ( u3_none == fam_u->ref ) {
-      fam_u->ref = ref;
-      ref = _cs_cue_full_next(mov, off, har_p, &red_u);
+    do {
+      //  f is a head-frame; stash result and read the tail from the stream
+      //
+      if ( u3_none == fam_u->ref ) {
+        fam_u->ref = ref;
+        ref        = _cs_cue_bytes_next(&pil_u, har_p, &red_u);
+        fam_u      = u3a_peek(&pil_u);
+      }
+      //  f is a tail-frame; pop the stack and continue
+      //
+      else {
+        ref   = u3nc(fam_u->ref, ref);
+        _cs_cue_put(har_p, fam_u->bit_d, ref);
+        fam_u = u3a_pop(&pil_u);
+      }
     }
-    //  f is a tail-frame; pop the stack and continue
-    //
-    else {
-      ref = u3nc(fam_u->ref, ref);
-      _cs_cue_put(har_p, fam_u->bit_d, ref);
-      u3R->cap_p -= mov;
-    }
+    while ( c3n == u3a_pile_done(&pil_u) );
   }
 
   u3h_free(har_p);
