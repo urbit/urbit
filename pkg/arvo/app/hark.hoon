@@ -99,15 +99,15 @@
       ::  set up subscriptions and create entry in maps
       ::
       =/  by-group
-        %+  ~(gut by unreads.state)
+        %+  ~(gut by unreads)
           u.group-resource
         *(map =app=resource unread-mop:store)
       ::
       ?:  (~(has by by-group) app-resource)
         [~ state]
       ::
-      =.  unreads.state
-        %+  ~(put by unreads.state)  u.group-resource
+      =.  unreads
+        %+  ~(put by unreads)  u.group-resource
         (~(put by by-group) app-resource *unread-mop:store)
       ::
       :_  state
@@ -116,8 +116,22 @@
     ++  ignore
       |=  =app=resource
       ^-  (quip card _state)
-      ::  remove subscriptions and delete entry in maps
-      [~ state]
+      =/  group-resource=(unit resource)
+        (group-from-app-resource:met %graph app-resource)
+      ?~  group-resource
+        ~|  no-group-for-app-resource+app-resource
+        !!
+      =/  by-group  (~(get by unreads) u.group-resource)
+      ?~  by-group
+        [~ state]
+      =.  u.by-group  (~(del by u.by-group) app-resource)
+      =.  unreads
+        ?~  u.by-group
+          (~(del by unreads) u.group-resource)
+        (~(put by unreads) u.group-resource u.by-group)
+      ::
+      :_  state
+      [%give %fact [/updates]~ %hark-update !>([%0 %ignore app-resource])]~
     ::
     ++  read
       |=  =read-type:store
