@@ -40,7 +40,7 @@ export const LinkList = (props) => {
       </div>
       <div className={
              'pl4 pt2 flex relative overflow-x-scroll' +
-             'overflow-x-auto-l overflow-x-auto-xl flex-shrink-0' + 
+             'overflow-x-auto-l overflow-x-auto-xl flex-shrink-0' +
              'bb b--gray4 b--gray1-d bg-gray0-d'
            }
            style={{ height: 48 }}>
@@ -71,10 +71,10 @@ export const LinkList = (props) => {
           </div>
           { Array.from(props.graph).map(([date, node]) => {
               const { nickname, color, avatar } =
-                getContactDetails(props.contacts[ship]);
-
+                getContactDetails(props.contacts[node?.post?.author]);
               return (
                 <LinkItem
+                  key={date}
                   resource={resource}
                   node={node}
                   nickname={nickname}
