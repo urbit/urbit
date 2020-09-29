@@ -68,7 +68,7 @@ const appIndex = function (apps) {
     });
   // add groups separately
   applications.push(
-    result('Groups', '/~groups', 'groups', null)
+    result('Groups', '/~groups', 'Groups', null)
   );
   return applications;
 };
