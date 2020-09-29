@@ -119,7 +119,7 @@ u3i_slab_bare(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
 
     //  if we only need one word, use the static storage in [sab_u]
     //
-    if ( 1 == wor_w ) {
+    if ( (0 == wor_w) || (1 == wor_w) ) {
       sab_u->_._vat_u = 0;
       sab_u->buf_w    = &sab_u->_._sat_w;
       sab_u->len_w    = 1;
