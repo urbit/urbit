@@ -1,6 +1,6 @@
 ::  hark: notifications [landscape]
 ::
-/-  *resource, store=hark, post
+/-  *resource, store=hark, post, group-store, graph-store, metadata-store
 /+  default-agent, dbug
 =*  resource  resource:post
 ::
@@ -29,7 +29,12 @@
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::
-++  on-init  [~ this]
+++  on-init
+  :_  this
+  :~  [%pass /metadata %agent [our.bowl %metadata-store] %watch /updates]
+      [%pass /group %agent [our.bowl %group-store] %watch /groups]
+  ==
+::
 ++  on-save  !>(state)
 ++  on-load
   |=  old=vase
@@ -116,19 +121,58 @@
     --
   --
 ::
+++  on-agent
+  ~/  %hark-agent
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
+  |^
+  ?+  -.sign  (on-agent:def wire sign)
+      %kick
+    ::  TODO resubscribe on kick
+    [~ this]
+  ::
+      %fact
+    ?+  p.cage.sign  (on-agent:def wire sign)
+        %group-update
+      =^  cards  state
+        (group-update wire !<(update:group-store q.cage.sign))
+      [cards this]
+    ::
+        %graph-update
+      =^  cards  state
+        (graph-update wire !<(update:graph-store q.cage.sign))
+      [cards this]
+    ::
+        %metadata-update
+      =^  cards  state
+        (metadata-update wire !<(update:metadata-store q.cage.sign))
+      [cards this]
+    ==
+  ==
+  ::
+  ++  group-update
+    |=  [=wire =update:group-store]
+    ^-  (quip card _state)
+    [~ state]
+  ::
+  ++  graph-update
+    |=  [=wire =update:graph-store]
+    ^-  (quip card _state)
+    [~ state]
+  ::
+  ++  metadata-update
+    |=  [=wire =update:metadata-store]
+    ^-  (quip card _state)
+    [~ state]
+  --
+::
 ++  on-peek
   ~/  %hark-peek
   |=  =path
   ^-  (unit (unit cage))
   !!
 ::
-++  on-arvo
-  ~/  %hark-arvo
-  |=  [=wire =sign-arvo]
-  ^-  (quip card _this)
-  !!
-::
-++  on-agent  on-agent:def  ::  TODO resubscribe on kick
 ++  on-leave  on-leave:def
+++  on-arvo  on-arvo:def
 ++  on-fail   on-fail:def
 --
