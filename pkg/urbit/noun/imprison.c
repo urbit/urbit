@@ -9,8 +9,7 @@ static c3_w
 _ci_slab_size(c3_g met_g, c3_d len_d)
 {
   c3_d bit_d = len_d << met_g;
-  c3_d byt_d = (bit_d + 0x7) >> 3;
-  c3_d wor_d = (byt_d + 0x3) >> 2;
+  c3_d wor_d = (bit_d + 0x1f) >> 5;
   c3_w wor_w = (c3_w)wor_d;
 
   if (  (wor_w != wor_d)
@@ -23,7 +22,7 @@ _ci_slab_size(c3_g met_g, c3_d len_d)
 }
 
 /* _ci_slab_init(): initialize slab with heap allocation.
-**              NB: [len_w] must be >0
+**              NB: callers must ensure [len_w] >0
 */
 static void
 _ci_slab_init(u3i_slab* sab_u, c3_w len_w)
@@ -36,7 +35,7 @@ _ci_slab_init(u3i_slab* sab_u, c3_w len_w)
 
   sab_u->_._vat_u = vat_u;
   sab_u->buf_w    = vat_u->buf_w;
-  sab_u->wor_w    = len_w;
+  sab_u->len_w    = len_w;
 }
 
 /* _ci_slab_grow(): update slab with heap reallocation.
@@ -54,7 +53,7 @@ _ci_slab_grow(u3i_slab* sab_u, c3_w len_w)
 
   sab_u->_._vat_u = vat_u;
   sab_u->buf_w    = vat_u->buf_w;
-  sab_u->wor_w    = len_w;
+  sab_u->len_w    = len_w;
 }
 
 /* _ci_atom_mint(): finalize a heap-allocated atom at specified length.
@@ -101,7 +100,7 @@ u3i_slab_init(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
   u3i_slab_bare(sab_u, met_g, len_d);
 
   u3t_on(mal_o);
-  memset(sab_u->buf_y, 0, (size_t)sab_u->wor_w * 4);
+  memset(sab_u->buf_y, 0, (size_t)sab_u->len_w * 4);
   u3t_off(mal_o);
 }
 
@@ -119,7 +118,7 @@ u3i_slab_bare(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
     if ( 1 == wor_w ) {
       sab_u->_._vat_u = 0;
       sab_u->buf_w    = &sab_u->_._sat_w;
-      sab_u->wor_w    = 1;
+      sab_u->len_w    = 1;
     }
     //  allocate an indirect atom
     //
@@ -139,7 +138,7 @@ u3i_slab_from(u3i_slab* sab_u, u3_atom a, c3_g met_g, c3_d len_d)
 
   //  copies [a], zero-initializes any additional space
   //
-  u3r_words(0, sab_u->wor_w, sab_u->buf_w, a);
+  u3r_words(0, sab_u->len_w, sab_u->buf_w, a);
 }
 
 /* u3i_slab_grow(): resize slab, reallocating as necessary.
@@ -153,12 +152,12 @@ u3i_slab_grow(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
 
     //  XX actually shrink?
     //
-    if ( wor_w <= sab_u->wor_w ) {
-      sab_u->wor_w = wor_w;
+    if ( wor_w <= sab_u->len_w ) {
+      sab_u->len_w = wor_w;
     }
     //  upgrade from static storage
     //
-    else if ( 1 == sab_u->wor_w ) {
+    else if ( 1 == sab_u->len_w ) {
       c3_w dat_w = *sab_u->buf_w;
 
       _ci_slab_init(sab_u, wor_w);
@@ -178,7 +177,7 @@ u3i_slab_grow(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
 void
 u3i_slab_free(u3i_slab* sab_u)
 {
-  c3_w      len_w = sab_u->wor_w;
+  c3_w      len_w = sab_u->len_w;
   u3a_atom* vat_u = sab_u->_._vat_u;
 
   u3t_on(mal_o);
@@ -200,7 +199,7 @@ u3i_slab_free(u3i_slab* sab_u)
 u3_atom
 u3i_slab_mint(u3i_slab* sab_u)
 {
-  c3_w      len_w = sab_u->wor_w;
+  c3_w      len_w = sab_u->len_w;
   u3a_atom* vat_u = sab_u->_._vat_u;
   u3_atom     pro;
 
@@ -239,7 +238,7 @@ u3i_slab_mint(u3i_slab* sab_u)
 u3_atom
 u3i_slab_moot(u3i_slab* sab_u)
 {
-  c3_w      len_w = sab_u->wor_w;
+  c3_w      len_w = sab_u->len_w;
   u3a_atom* vat_u = sab_u->_._vat_u;
   u3_atom     pro;
 
@@ -332,7 +331,7 @@ u3i_bytes(c3_w        a_w,
     {
       //  zero-initialize last word
       //
-      sab_u.buf_w[sab_u.wor_w - 1] = 0;
+      sab_u.buf_w[sab_u.len_w - 1] = 0;
       memcpy(sab_u.buf_y, b_y, a_w);
     }
     u3t_off(mal_o);

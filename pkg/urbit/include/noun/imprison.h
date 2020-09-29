@@ -16,7 +16,7 @@
           c3_y*      buf_y;                   //  bytes
           c3_w*      buf_w;                   //  words
         };                                    //
-        c3_w         wor_w;                   //  word len
+        c3_w         len_w;                   //  word length
       } u3i_slab;
 
       /* staged atom-building api
