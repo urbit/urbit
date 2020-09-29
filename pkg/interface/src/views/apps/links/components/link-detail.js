@@ -29,8 +29,7 @@ export const LinkDetail = (props) => {
     );
   }
 
-  const { nickname } = getContactDetails(props.contacts[ship]);
-  const our = getContactDetails(props.contacts[window.ship]);
+  const { nickname } = getContactDetails(props.contacts[props.node?.post?.author]);
   const resourcePath = `${props.ship}/${props.name}`;
   const title = props.resource.metadata.title || resourcePath;
 
