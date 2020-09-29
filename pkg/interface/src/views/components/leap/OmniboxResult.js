@@ -33,7 +33,7 @@ export class OmniboxResult extends Component {
     if (defaultApps.includes(icon.toLowerCase()) || icon.toLowerCase() === 'links') {
       icon = (icon === 'Dojo') ? 'ChevronEast' : icon;
       icon = (icon === 'Link') ? 'Links' : icon;
-      graphic = <Icon display="inline-block" verticalAlign="middle" icon={icon} mr='2' size='16px' color={iconFill} />;
+      graphic = <Icon display="inline-block" verticalAlign="middle" icon={icon} mr='2' size='16px' color='transparent' stroke={iconFill} />;
     } else if (icon === 'logout') {
       graphic = <Icon display="inline-block" verticalAlign="middle" icon='ArrowWest' mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'profile') {
