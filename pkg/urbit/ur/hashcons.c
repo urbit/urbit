@@ -526,15 +526,12 @@ ur_met(ur_root_t *r, uint8_t bloq, ur_nref ref)
     case 0: return m_bit;
     case 1: return ur_bloq_up1(m_bit);
     case 2: return ur_bloq_up2(m_bit);
+    case 3: return ur_bloq_up3(m_bit);
 
-    {
+    default: {
       uint64_t m_byt = ur_bloq_up3(m_bit);
-
-      case 3: return m_byt;
-      default: {
-        uint8_t off = (bloq - 3);
-        return (m_byt + ((1ULL << off) - 1)) >> off;
-      }
+      uint8_t    off = (bloq - 3);
+      return (m_byt + ((1ULL << off) - 1)) >> off;
     }
   }
 }
@@ -894,6 +891,93 @@ ur_nvec_init(ur_nvec_t *v, uint64_t size)
   v->refs = _oom("nvec_init", calloc(size, sizeof(ur_nref)));
 }
 
+/*
+**  define opaque struct ur_walk_fore_s (ie, ur_walk_fore_t)
+*/
+struct ur_walk_fore_s {
+  ur_root_t  *r;
+  uint32_t prev;
+  uint32_t size;
+  uint32_t fill;
+  ur_nref  *top;
+};
+
+ur_walk_fore_t*
+ur_walk_fore_init_with(ur_root_t    *r,
+                       uint32_t s_prev,
+                       uint32_t s_size)
+{
+  ur_walk_fore_t *w = _oom("walk_fore", malloc(sizeof(*w)));
+  w->top = _oom("walk_fore", malloc(s_size * sizeof(*w->top)));
+  w->prev = s_prev;
+  w->size = s_size;
+  w->fill = 0;
+  w->r    = r;
+
+  return w;
+}
+
+ur_walk_fore_t*
+ur_walk_fore_init(ur_root_t *r)
+{
+  return ur_walk_fore_init_with(r, ur_fib10, ur_fib11);
+}
+
+void
+ur_walk_fore_with(ur_walk_fore_t *w,
+                  ur_nref       ref,
+                  void           *v,
+                  void       (*atom)(ur_root_t*, ur_nref, void*),
+                  ur_bool_t  (*cell)(ur_root_t*, ur_nref, void*))
+{
+  ur_root_t *r = w->r;
+  ur_nref *don = w->top;
+
+  w->top += ++w->fill;
+  *w->top = ref;
+
+  while ( w->top != don ) {
+    //  visit atom, pop stack
+    //
+    if ( !ur_deep(ref) ) {
+      atom(r, ref, v);
+      w->top--; w->fill--;
+    }
+    //  visit cell, pop stack if false
+    //
+    else if ( !cell(r, ref, v) ) {
+      w->top--; w->fill--;
+    }
+    //  push the tail, continue into the head
+    //
+    else {
+      *w->top = ur_tail(r, ref);
+
+      //  reallocate "stack" if full
+      //
+      if ( w->size == w->fill ) {
+        uint32_t next = w->prev + w->size;
+        don     = _oom("walk_fore", realloc(don, next * sizeof(*don)));
+        w->top  = don + w->fill;
+        w->prev = w->size;
+        w->size = next;
+      }
+
+      w->top++; w->fill++;
+      *w->top = ur_head(r, ref);
+    }
+
+    ref = *w->top;
+  }
+}
+
+void
+ur_walk_fore_done(ur_walk_fore_t *w)
+{
+  free(w->top);
+  free(w);
+}
+
 void
 ur_walk_fore(ur_root_t *r,
              ur_nref  ref,
@@ -901,46 +985,7 @@ ur_walk_fore(ur_root_t *r,
              void      (*atom)(ur_root_t*, ur_nref, void*),
              ur_bool_t (*cell)(ur_root_t*, ur_nref, void*))
 {
-  uint64_t prev = ur_fib11, size = ur_fib12, fill = 0;
-  ur_nref *top, *don;
-
-  don  = _oom("walk_fore", malloc(size * sizeof(*don)));
-  top  = don + ++fill;
-  *top = ref;
-
-  while ( top != don ) {
-    //  visit atom, pop stack
-    //
-    if ( !ur_deep(ref) ) {
-      atom(r, ref, v);
-      top--; fill--;
-    }
-    //  visit cell, pop stack if false
-    //
-    else if ( !cell(r, ref, v) ) {
-      top--; fill--;
-    }
-    //  push the tail, continue into the head
-    //
-    else {
-      *top = ur_tail(r, ref);
-
-      //  reallocate "stack" if full
-      //
-      if ( size == fill ) {
-        uint64_t next = prev + size;
-        don  = _oom("walk_fore", realloc(don, next * sizeof(*don)));
-        top  = don + fill;
-        prev = size;
-        size = next;
-      }
-
-      top++; fill++;
-      *top = ur_head(r, ref);
-    }
-
-    ref = *top;
-  }
-
-  free(don);
+  ur_walk_fore_t *w = ur_walk_fore_init(r);
+  ur_walk_fore_with(w, ref, v, atom, cell);
+  ur_walk_fore_done(w);
 }

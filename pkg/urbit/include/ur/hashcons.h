@@ -112,6 +112,11 @@ typedef struct ur_nvec_s {
 } ur_nvec_t;
 
 /*
+**  opaque handle for repeated traversal.
+*/
+typedef struct ur_walk_fore_s ur_walk_fore_t;
+
+/*
 **  type-specific dictionary operations.
 **
 **    NB: [r] is only used to retrieve the stored mug of cells and
@@ -225,10 +230,28 @@ ur_nvec_free(ur_nvec_t *v);
 **  depth-first, pre-order noun traversal, cells can short-circuit.
 */
 void
-ur_walk_fore(ur_root_t *r,
-             ur_nref  ref,
-             void      *v,
+ur_walk_fore(ur_root_t     *r,
+             ur_nref      ref,
+             void          *v,
              void      (*atom)(ur_root_t*, ur_nref, void*),
              ur_bool_t (*cell)(ur_root_t*, ur_nref, void*));
+
+ur_walk_fore_t*
+ur_walk_fore_init_with(ur_root_t    *r,
+                       uint32_t s_prev,
+                       uint32_t s_size);
+
+ur_walk_fore_t*
+ur_walk_fore_init(ur_root_t *r);
+
+void
+ur_walk_fore_with(ur_walk_fore_t *w,
+                  ur_nref       ref,
+                  void           *v,
+                  void       (*atom)(ur_root_t*, ur_nref, void*),
+                  ur_bool_t  (*cell)(ur_root_t*, ur_nref, void*));
+
+void
+ur_walk_fore_done(ur_walk_fore_t *w);
 
 #endif
