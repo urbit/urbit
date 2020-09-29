@@ -23,7 +23,7 @@
       u3i_slab_from(&sab_u, a, 5, len_w);
 
       for ( i_w = 0; i_w < len_w; i_w++ ) {
-        sab_u.buf_w[i_w] &= (i_w >= lnb_w) ? 0 : u3r_word(i_w, b);
+        sab_u.buf_w[i_w] &= u3r_word(i_w, b);
       }
 
       return u3i_slab_mint(&sab_u);
