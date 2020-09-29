@@ -407,14 +407,19 @@ u3i_chubs(c3_w        a_w,
 u3_atom
 u3i_mp(mpz_t a_mp)
 {
-  c3_w     pyg_w = mpz_size(a_mp) * (sizeof(mp_limb_t) / sizeof(c3_w));
+  size_t   siz_i = mpz_sizeinbase(a_mp, 2);
   u3i_slab sab_u;
-  u3i_slab_init(&sab_u, 5, sizeof(c3_w) * pyg_w);
+  u3i_slab_init(&sab_u, 0, siz_i);
 
   mpz_export(sab_u.buf_w, 0, -1, sizeof(c3_w), 0, 0, a_mp);
   mpz_clear(a_mp);
 
-  return u3i_slab_mint(&sab_u);
+  //  per the mpz_export() docs:
+  //
+  //    > If op is non-zero then the most significant word produced
+  //    >  will be non-zero.
+  //
+  return u3i_slab_moot(&sab_u);
 }
 
 /* u3i_vint(): increment [a].
