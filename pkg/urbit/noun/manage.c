@@ -1,7 +1,6 @@
 /* n/m.c
 **
 */
-#include <ent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -1602,39 +1601,21 @@ _cm_signals(void)
   }
 }
 
+extern void u3e_secp_init(void);
+extern void u3e_secp_stop(void);
+
 static void
-_cm_crypto_init()
+_cm_crypto()
 {
-  /* Initialize OpenSSL with loom allocation functions.
-   * IMPORTANT: this should come before the urcrypt_set_openssl [...]
-   * call, because in usual circumstances that will override the functions
-   * we set here, but weird linking situations we don't currently encounter
-   * could mean we need to set both, and it doesn't hurt.
-   */
+  /* Initialize OpenSSL with loom allocation functions. */
   if ( 0 == CRYPTO_set_mem_functions(&u3a_malloc_ssl,
                                      &u3a_realloc_ssl,
                                      &u3a_free_ssl) ) {
     u3l_log("%s\r\n", "openssl initialization failed");
-    exit(1);
+    abort();
   }
 
-  /* Initialize cryptography suite */
-  if ( 0 != urcrypt_set_openssl_mem_functions(&u3a_malloc,
-                                              &u3a_realloc,
-                                              &u3a_free) ) {
-    u3l_log("%s\r\n", "urcrypt-openssl initialization failed");
-    exit(1);
-  }
-
-  {
-    c3_y ent_y[32];
-    ent_getentropy(ent_y, 32);
-
-    if ( 0 != urcrypt_secp_init(ent_y) ) {
-      u3l_log("%s\r\n", "urcrypt-secp initialization failed");
-      exit(1);
-    }
-  }
+  u3e_secp_init();
 }
 
 /* u3m_init(): start the environment.
@@ -1644,7 +1625,7 @@ u3m_init(void)
 {
   _cm_limits();
   _cm_signals();
-  _cm_crypto_init();
+  _cm_crypto();
 
   /* Make sure GMP uses our malloc.
   */
@@ -1687,7 +1668,7 @@ u3m_init(void)
 void
 u3m_stop()
 {
-  urcrypt_secp_cleanup();
+  u3e_secp_stop();
 }
 
 /* u3m_boot(): start the u3 system. return next event, starting from 1.

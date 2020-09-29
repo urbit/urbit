@@ -7,6 +7,19 @@
 /* helpers
 */
 
+  static int
+  argon2_alloc(uint8_t** output, size_t bytes)
+  {
+    *output = u3a_malloc(bytes);
+    return (NULL != *output);
+  }
+
+  static void
+  argon2_free(uint8_t* memory, size_t bytes)
+  {
+    u3a_free(memory);
+  }
+
   static c3_t
   _cqear_unpack_type(c3_y* out, u3_atom in)
   {
@@ -72,8 +85,8 @@
           wid_w, dat_y,
           wis_w, sat_y,
           out_w, out_y,
-          &u3a_malloc,
-          &u3a_free);
+          &argon2_alloc,
+          &argon2_free);
 
       u3a_free(key_y);
       u3a_free(ex_y);

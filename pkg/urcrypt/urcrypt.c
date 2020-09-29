@@ -16,47 +16,16 @@
 #include <secp256k1.h>
 #include <secp256k1_recovery.h>
 
-static urcrypt_malloc_t _urcrypt_ssl_malloc_ptr;
-static urcrypt_realloc_t _urcrypt_ssl_realloc_ptr;
-static urcrypt_free_t _urcrypt_ssl_free_ptr;
-
-static void*
-_urcrypt_malloc_ssl(size_t len
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-               , const char* file, int line
-#endif
-) { return (*_urcrypt_ssl_malloc_ptr)(len); }
-
-static void*
-_urcrypt_realloc_ssl(void* ptr, size_t len
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-               , const char* file, int line
-#endif
-) { return (*_urcrypt_ssl_realloc_ptr)(ptr, len); }
-
-static void
-_urcrypt_free_ssl(void* ptr
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-               , const char* file, int line
-#endif
-) { (*_urcrypt_ssl_free_ptr)(ptr); }
-
 int
-urcrypt_set_openssl_mem_functions(urcrypt_malloc_t malloc_ptr,
-                                  urcrypt_realloc_t realloc_ptr,
-                                  urcrypt_free_t free_ptr)
+urcrypt_set_openssl_mem_functions(urcrypt_openssl_malloc_t m,
+                                  urcrypt_openssl_realloc_t r,
+                                  urcrypt_openssl_free_t f)
 {
-  if ( CRYPTO_set_mem_functions(&_urcrypt_malloc_ssl,
-                                &_urcrypt_realloc_ssl,
-                                &_urcrypt_free_ssl) ) {
-    _urcrypt_ssl_malloc_ptr = malloc_ptr;
-    _urcrypt_ssl_realloc_ptr = realloc_ptr;
-    _urcrypt_ssl_free_ptr = free_ptr;
-    return 0;
-  }
-  else {
-    return -1;
-  }
+#ifdef URCRYPT_STATIC
+  return -2;
+#else
+  return ( CRYPTO_set_mem_functions(m, r, f) ) ? 0 : -1;
+#endif
 }
 
 int
@@ -783,25 +752,6 @@ urcrypt_shas(uint8_t *salt, size_t salt_length,
   }
 }
 
-/* argon2 does memory allocation, but takes function pointers in the context.
- * the signatures don't match, so we need these wrappers.
- */
-static urcrypt_malloc_t _urcrypt_argon2_malloc_ptr;
-static urcrypt_free_t _urcrypt_argon2_free_ptr;
-
-static int
-_urcrypt_argon2_alloc(uint8_t** output, size_t bytes)
-{
-  *output = (*_urcrypt_argon2_malloc_ptr)(bytes);
-  return (NULL != *output);
-}
-
-static void
-_urcrypt_argon2_free(uint8_t* memory, size_t bytes)
-{
-  (*_urcrypt_argon2_free_ptr)(memory);
-}
-
 // library convention is to have sizes in size_t, but argon2 wants them
 // in uint32_t, so here's a helper macro for ensuring equivalence.
 #define SZ_32(s) ( sizeof(size_t) <= sizeof(uint32_t) || s <= 0xFFFFFFFF )
@@ -822,8 +772,8 @@ urcrypt_argon2(uint8_t  type,
                uint8_t *salt,
                size_t out_length,
                uint8_t *out,
-               urcrypt_malloc_t malloc_ptr,
-               urcrypt_free_t free_ptr)
+               urcrypt_argon2_malloc_t malloc_ptr,
+               urcrypt_argon2_free_t free_ptr)
 {
   if ( !( SZ_32(secret_length) &&
           SZ_32(associated_length) &&
@@ -874,8 +824,8 @@ urcrypt_argon2(uint8_t  type,
       threads,
       threads,
       version,               // algorithm version
-      &_urcrypt_argon2_alloc,// custom memory allocation function
-      &_urcrypt_argon2_free, // custom memory deallocation function
+      malloc_ptr,            // custom memory allocation function
+      free_ptr,              // custom memory deallocation function
       ARGON2_DEFAULT_FLAGS   // by default only internal memory is cleared
     };
 
@@ -920,35 +870,39 @@ urcrypt_blake2(size_t message_length,
   }
 }
 
-static secp256k1_context* _urcrypt_secp_ctx = NULL;
+#define SECP_FLAGS SECP256K1_CONTEXT_VERIFY | SECP256K1_CONTEXT_SIGN;
+
+struct urcrypt_secp_context_struct {
+  secp256k1_context* secp;
+};
+
+size_t
+urcrypt_secp_prealloc_size()
+{
+  return secp256k1_context_preallocated_size(SECP_FLAGS);
+}
 
 int
-urcrypt_secp_init(uint8_t entropy[32])
+urcrypt_secp_init(urcrypt_secp_context *context,
+                  void *prealloc,
+                  uint8_t entropy[32])
 {
-  if ( NULL != _urcrypt_secp_ctx ) {
-    return -1;
+  secp256k1_context* secp =
+    secp256k1_context_preallocated_create(prealloc, SECP_FLAGS);
+  if ( 1 == secp256k1_context_randomize(secp, entropy) ) {
+    context->secp = secp;
+    return 0;
   }
   else {
-    _urcrypt_secp_ctx = secp256k1_context_create(
-        SECP256K1_CONTEXT_VERIFY | SECP256K1_CONTEXT_SIGN);
-    if ( 1 == secp256k1_context_randomize(_urcrypt_secp_ctx, entropy) ) {
-      return 0;
-    }
-    else {
-      secp256k1_context_destroy(_urcrypt_secp_ctx);
-      _urcrypt_secp_ctx = NULL;
-      return -2;
-    }
+    secp256k1_context_preallocated_destroy(secp);
+    return -1;
   }
 }
 
 void
-urcrypt_secp_cleanup(void)
+urcrypt_secp_destroy(urcrypt_secp_context *context)
 {
-  if ( NULL != _urcrypt_secp_ctx) {
-    secp256k1_context_destroy(_urcrypt_secp_ctx);
-    _urcrypt_secp_ctx = NULL;
-  }
+  secp256k1_context_preallocated_destroy(context->secp);
 }
 
 int
@@ -973,15 +927,15 @@ urcrypt_secp_make(uint8_t hash[32], uint8_t key[32], uint8_t out[32])
 }
 
 int
-urcrypt_secp_reco(uint8_t hash[32],
+urcrypt_secp_reco(urcrypt_secp_context* context,
+                  uint8_t hash[32],
                   uint8_t key_v,
                   const uint8_t key_r[32],
                   const uint8_t key_s[32],
                   uint8_t out_x[32],
                   uint8_t out_y[32])
 {
-  if ( (NULL == _urcrypt_secp_ctx) || 
-       (NULL == hash) ||
+  if ( (NULL == hash) ||
        (NULL == key_r) ||
        (NULL == key_s) ) {
     return -1;
@@ -1002,22 +956,21 @@ urcrypt_secp_reco(uint8_t hash[32],
     }
     memset(&signature, 0, sizeof(secp256k1_ecdsa_recoverable_signature));
     if ( 1 != secp256k1_ecdsa_recoverable_signature_parse_compact(
-          _urcrypt_secp_ctx, /* IN:  context */
-          &signature,        /* OUT: sig */
-          private,           /* IN:  r/s */
-          key_v) ) {         /* IN:  v */
+          context->secp, /* IN:  context */
+          &signature,    /* OUT: sig */
+          private,       /* IN:  r/s */
+          key_v) ) {     /* IN:  v */
       return -3;
     }
     else {
       secp256k1_pubkey public;
       memset(&public, 0, sizeof(secp256k1_pubkey));
-      // the code we ported from looks like it intended to reverse hash
-      // at some point, but doesn't actually.
+      _urcrypt_reverse(32, hash);
       if ( 1 != secp256k1_ecdsa_recover(
-            _urcrypt_secp_ctx, /* IN:  context */
-            &public,           /* OUT: pub key */
-            &signature,        /* IN: signature */
-            hash) ) {          /* IN: message hash */
+            context->secp, /* IN:  context */
+            &public,       /* OUT: pub key */
+            &signature,    /* IN: signature */
+            hash) ) {      /* IN: message hash */
         return -4;
       }
       else {
@@ -1026,7 +979,7 @@ urcrypt_secp_reco(uint8_t hash[32],
         size_t outputlen = 65;
         memset(serialized, 0, outputlen);
         if ( 1 != secp256k1_ec_pubkey_serialize(
-            _urcrypt_secp_ctx,             /* IN:  context */
+            context->secp,                 /* IN:  context */
             serialized,                    /* OUT: output */
             &outputlen,                    /* IN/OUT: outputlen */
             &public,                       /* IN: pubkey*/

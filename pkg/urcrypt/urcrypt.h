@@ -5,10 +5,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef void *(*urcrypt_malloc_t)(size_t);
-typedef void *(*urcrypt_realloc_t)(void*, size_t);
-typedef void (*urcrypt_free_t)(void*);
-
 /* We depend on OpenSSL for various reasons, which doesn't promise not to
  * allocate memory and has the annoying CRYPTO_set_mem_functions api. We
  * are therefore forced to support it in some fashion.
@@ -18,9 +14,31 @@ typedef void (*urcrypt_free_t)(void*);
  *
  * urcrypt will not use these functions directly.
  */
-int urcrypt_set_openssl_mem_functions(urcrypt_malloc_t malloc_ptr,
-                                      urcrypt_realloc_t realloc_ptr,
-                                      urcrypt_free_t free_ptr);
+
+typedef void *(*urcrypt_openssl_malloc_t)(size_t
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+    , const char*, int
+#endif
+    );
+
+typedef void *(*urcrypt_openssl_realloc_t)(void*, size_t
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+    , const char*, int
+#endif
+    );
+
+typedef void (*urcrypt_openssl_free_t)(void*,
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+    , const char*, int
+#endif
+    );
+
+typedef int (*urcrypt_argon2_alloc_t)(uint8_t**, size_t);
+typedef void (*urcrypt_argon2_free)(uint8_t*, size_t);
+
+int urcrypt_set_openssl_mem_functions(urcrypt_openssl_malloc_t,
+                                      urcrypt_openssl_realloc_t,
+                                      urcrypt_openssl_free_t);
 
 // const arguments are not written to, non-const arguments may be
 // all arrays are in little-endian byte order.
@@ -179,8 +197,8 @@ const char* urcrypt_argon2(uint8_t  type,  // one of the urcrpyt_argon2_*
                            uint8_t *salt,
                            size_t out_length,
                            uint8_t *out,
-                           urcrypt_malloc_t malloc_ptr,
-                           urcrypt_free_t free_ptr);
+                           urcrypt_argon2_malloc_t malloc_ptr,
+                           urcrypt_argon2_free_t free_ptr);
 
 int urcrypt_blake2(size_t message_length,
                    uint8_t *message,
@@ -190,16 +208,18 @@ int urcrypt_blake2(size_t message_length,
                    uint8_t *out);
 
 /* there is some long-term context associated with the secp library
- * (precomputed tables, etc). Because the context itself is thread-safe,
- * we have opted to manage it statically and present a simple calling
- * interface that doesn't mention it. 
+ * (precomputed tables, etc), so secp functions require a context object
  */
+typedef struct urcrypt_secp_context_struct urcrypt_secp_context;
 
-/* initialize static secp context (not thread-safe). Recommmendation:
- * call this once at main thread startup before calling other secp functions.
- * Use a high quality source of entropy.
- */
-int urcrypt_secp_init(uint8_t entropy[32]);
+// malloc a pointer of this size and pass it to init
+size_t urcrypt_secp_prealloc_size(void);
+// call this once at per context with high quality entropy
+int urcrypt_secp_init(urcrypt_secp_context *context,
+                      void* prealloc,
+                      uint8_t entropy[32]);
+// call just before freeing prealloc'd pointer
+void urcrypt_secp_destroy(urcrypt_secp_context *context);
 
 /* restore initial secp context conditons (not thread-safe). Recommendation:
  * call this just before that main thread exits to make valgrind etc. happy

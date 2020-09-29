@@ -6,11 +6,11 @@ PREFIX ?= ./out
 
 .PHONY: all install clean
 
-CFLAGS := $(CFLAGS) -O3 -Wall -Werror -pedantic -std=gnu99
+CFLAGS := $(CFLAGS) -g -O3 -Wall -Werror -pedantic -std=gnu99
 SOURCES = urcrypt.c urcrypt.h
 
 liburcrypt.a: $(SOURCES)
-	$(CC) $(CFLAGS) -c urcrypt.c -o urcrypt-static.o
+	$(CC) $(CFLAGS) -D URCRYPT_STATIC -c urcrypt.c -o urcrypt-static.o
 	$(AR) rcs liburcrypt.a urcrypt-static.o
 
 liburcrypt.so: $(SOURCES)

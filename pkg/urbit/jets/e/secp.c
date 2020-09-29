@@ -5,66 +5,32 @@
 #include "../include/secp256k1.h"
 #include "../include/secp256k1_recovery.h"
 #include "urcrypt.h"
+#include <ent.h>
+
+static void* pre_u;
+static urcrypt_secp_context sec_u;
+
+void u3e_secp_init()
+{
+  c3_y ent_y[32];
+  ent_getentropy(ent_y, 32);
+  pre_u = malloc(urcrypt_secp_prealloc_size());
+
+  if ( 0 != urcrypt_secp_init(&sec_u, pre_u, ent_y) ) {
+    u3l_log("%s\r\n", "u3e_secp_init failed");
+    abort();
+  }
+}
+
+void u3e_secp_stop()
+{
+  urcrypt_secp_destroy(&sec_u);
+  free(pre_u);
+  pre_u = NULL;
+}
 
 /* util funcs
  */
-
-static c3_t
-_cqe_is_8(const c3_w words[8], u3_noun non)
-{
-  if ( (c3n == u3ud(non)) ||
-       (8 != u3r_met(5, non)) ) {
-    return 0;
-  }
-  else {
-    c3_w i;
-    for ( i = 0; i < 8; ++i ) {
-      if ( words[i] != u3r_word(i, non) ) {
-        return 0;
-      }
-    }
-    return 1;
-  }
-}
-
-/* FIXME!!!
- * The hoon contains a generic secp core which is actually jetted, and then
- * +secp256k1 passes these constants to it. This should be restructured so
- * that the constants are matched as part of the batteries in the core stack
- * of the jetted gates.
- *
- * The hoon also doesn't, in general, check the size of any of its arguments;
- * we return u3_none when they are mis-sized.
-*/
-static c3_t
-_cqe_256k1_veri(u3_noun cor)
-{
-  static const c3_w pow_w[8] = {
-    0xfffffc2f, 0xfffffffe, 0xffffffff, 0xffffffff,
-    0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };
-  static const c3_w xow_w[8] = {
-    0x16f81798, 0x59f2815b, 0x2dce28d9, 0x29bfcdb,
-    0xce870b07, 0x55a06295, 0xf9dcbbac, 0x79be667e };
-  static const c3_w yow_w[8] = {
-    0xfb10d4b8, 0x9c47d08f, 0xa6855419, 0xfd17b448,
-    0xe1108a8,  0x5da4fbfc, 0x26a3c465, 0x483ada77 };
-  static const c3_w now_w[8] = {
-    0xd0364141, 0xbfd25e8c, 0xaf48a03b, 0xbaaedce6,
-    0xfffffffe, 0xffffffff, 0xffffffff, 0xffffffff };
-
-  u3_noun w, p, b, mor, a, g, x, y, n, sam = u3x_at(254, cor);
-  u3x_qual(sam, &w, &p, &b, &mor);
-  u3x_trel(mor, &a, &g, &n);
-  u3x_cell(g, &x, &y);
-
-  return ( 32 == w &&
-           0  == b &&
-           7  == a &&
-           _cqe_is_8(pow_w, p) &&
-           _cqe_is_8(xow_w, x) &&
-           _cqe_is_8(yow_w, y) &&
-           _cqe_is_8(now_w, n) );
-}
 
 /* no guarantees if 'in' and 'out' overlap / are the same */
 static void byte_reverse(c3_y *i_y,  /* in */

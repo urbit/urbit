@@ -709,13 +709,6 @@ u3_king_commence()
   sag_w = u3C.wag_w;
   u3C.wag_w |= u3o_hashless;
 
-  u3m_boot_lite();
-    {
-#include <openssl/ssl.h>
-      SSL_library_init();
-      SSL_load_error_strings();
-    }
-
   //  wire up signal controls
   //
   u3C.sign_hold_f = _king_sign_hold;
