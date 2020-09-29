@@ -33,6 +33,10 @@ _ci_slab_init(u3i_slab* sab_u, c3_w len_w)
   vat_u->mug_w = 0;
   vat_u->len_w = len_w;
 
+#ifdef U3_MEMORY_DEBUG
+  c3_assert( len_w );
+#endif
+
   sab_u->_._vat_u = vat_u;
   sab_u->buf_w    = vat_u->buf_w;
   sab_u->len_w    = len_w;
