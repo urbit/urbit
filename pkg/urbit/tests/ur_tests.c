@@ -11,7 +11,7 @@
 **  initialize helper for bitstream-writer tests.
 */
 static void
-_bsw_init(ur_bsw_t *bsw, uint64_t prev, uint64_t size)
+_bsw_reinit(ur_bsw_t *bsw, uint64_t prev, uint64_t size)
 {
   bsw->prev = prev;
   bsw->size = size;
@@ -58,7 +58,7 @@ _test_bsw_bit_ones(void)
 {
   int      ret = 1;
   ur_bsw_t bsw = {0};
-  _bsw_init(&bsw, 1, 1);
+  _bsw_reinit(&bsw, 1, 1);
 
   ret &= _bsw_bit_check("bsw ones init", &bsw, 0x0, 0);
 
@@ -104,7 +104,7 @@ _test_bsw_bit_zeros(void)
 {
   int      ret = 1;
   ur_bsw_t bsw = {0};
-  _bsw_init(&bsw, 1, 1);
+  _bsw_reinit(&bsw, 1, 1);
 
   ret &= _bsw_bit_check("bsw zeros init", &bsw, 0x0, 0);
 
@@ -150,7 +150,7 @@ _test_bsw_bit_alt(void)
 {
   int      ret = 1;
   ur_bsw_t bsw = {0};
-  _bsw_init(&bsw, 1, 1);
+  _bsw_reinit(&bsw, 1, 1);
 
   ret &= _bsw_bit_check("bsw alt init", &bsw, 0x0, 0);
 
@@ -286,8 +286,8 @@ _test_bsw8_loop(const char* cap, uint8_t val)
 
   for ( i = 0; i < 8; i++) {
     for ( j = 0; j <= 8; j++ ) {
-      _bsw_init(&a, 1, 1);
-      _bsw_init(&b, 1, 1);
+      _bsw_reinit(&a, 1, 1);
+      _bsw_reinit(&b, 1, 1);
       a.off = a.bits = b.off = b.bits = i;
 
       _bsw8_slow(&a, j, val);
@@ -338,8 +338,8 @@ _test_bsw32_loop(const char* cap, uint32_t val)
 
   for ( i = 0; i < 8; i++) {
     for ( j = 0; j <= 32; j++ ) {
-      _bsw_init(&a, 1, 1);
-      _bsw_init(&b, 1, 1);
+      _bsw_reinit(&a, 1, 1);
+      _bsw_reinit(&b, 1, 1);
       a.off = a.bits = b.off = b.bits = i;
 
       _bsw32_slow(&a, j, val);
@@ -390,8 +390,8 @@ _test_bsw64_loop(const char* cap, uint64_t val)
 
   for ( i = 0; i < 8; i++) {
     for ( j = 0; j <= 64; j++ ) {
-      _bsw_init(&a, 1, 1);
-      _bsw_init(&b, 1, 1);
+      _bsw_reinit(&a, 1, 1);
+      _bsw_reinit(&b, 1, 1);
       a.off = a.bits = b.off = b.bits = i;
 
       _bsw64_slow(&a, j, val);
@@ -447,8 +447,8 @@ _test_bsw_bytes_loop(const char* cap, uint64_t len, uint8_t val)
 
   for ( i = 0; i < 8; i++) {
     for ( j = 0; j < len_bit; j++ ) {
-      _bsw_init(&a, 1, 1);
-      _bsw_init(&b, 1, 1);
+      _bsw_reinit(&a, 1, 1);
+      _bsw_reinit(&b, 1, 1);
       a.off = a.bits = b.off = b.bits = i;
 
       _bsw_bytes_slow(&a, j, byt);
@@ -501,13 +501,13 @@ _test_bsw_bex()
   int    ret = 1;
   ur_bsw_t a = {0};
   ur_bsw_t b = {0};
-  uint8_t  i, l;
-  uint32_t j, k;
+  uint8_t  i;
+  uint32_t j;
 
   for ( i = 0; i < 8; i++) {
     for ( j = 0; j < 256; j++ ) {
-      _bsw_init(&a, 1, 1);
-      _bsw_init(&b, 1, 1);
+      _bsw_reinit(&a, 1, 1);
+      _bsw_reinit(&b, 1, 1);
       a.off = a.bits = b.off = b.bits = i;
 
       _bsw_bex_slow(&a, j);
@@ -1363,7 +1363,7 @@ _test_bsr_skip_any_loop(const char *cap, uint8_t len, uint8_t val)
   uint64_t   max = (len << 3) + 7;
   ur_bsr_t  a, b;
   uint8_t *bytes, *c;
-  uint8_t   i, j, k;
+  uint8_t   i, j;
 
   c     = malloc(1 + len);
   bytes = malloc(len);
@@ -1510,7 +1510,7 @@ _test_bsr_log_loop(const char *cap, uint8_t len, uint8_t val)
   int          ret = 1;
   ur_bsr_t    a, b;
   uint8_t    *bytes, c, d;
-  uint8_t     i, j, k;
+  uint8_t     i, j;
   ur_cue_res_e   e, f;
 
   bytes = malloc(len);
@@ -1602,7 +1602,7 @@ _test_bsr_tag_loop(const char *cap, uint8_t len, uint8_t val)
   ur_bsr_t     a, b;
   uint8_t    *bytes;
   ur_cue_tag_e c, d;
-  uint8_t      i, j, k;
+  uint8_t      i, j;
   ur_cue_res_e    e, f;
 
   bytes = malloc(len);
