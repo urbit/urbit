@@ -341,7 +341,7 @@ _test_jam_spec(const c3_c* cap_c,
     u3i_slab sab_u;
     c3_w     bit_w = u3s_jam_fib(&sab_u, ref);
 
-    out_d = sab_u.byt_d;
+    out_d = ((c3_d)bit_w + 0x7) >> 3;
     //  XX assumes little-endian
     //
     out_y = sab_u.buf_y;
