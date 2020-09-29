@@ -7,6 +7,8 @@ import { Spinner } from '~/views/components/Spinner';
 import { TabBar } from '~/views/components/chat-link-tabbar';
 import SidebarSwitcher from '~/views/components/SidebarSwitch';
 
+import { Box } from '@tlon/indigo-react';
+
 import { MetadataSettings } from '~/views/components/metadata/settings';
 
 export class SettingsScreen extends Component {
@@ -132,12 +134,16 @@ export class SettingsScreen extends Component {
              style={{ height: '1rem' }}>
           <Link to="/~link">{'⟵ All Collections'}</Link>
         </div>
-        <div
-          className={
-            "pl4 pt2 bb b--gray4 b--gray1-d flex relative overflow-x-scroll " +
-            "overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
-          }
-          style={{ height: 48 }}>
+        <Box
+          pl='12px'
+          pt='2'
+          display='flex'
+          position='relative'
+          overflowX={['scroll', 'auto']}
+          flexShrink='0'
+          borderBottom='1px solid'
+          borderColor='washedGray'
+          height='48px'>
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
             popout={this.props.popout}
@@ -157,7 +163,7 @@ export class SettingsScreen extends Component {
             popoutHref={`/~link/popout/${props.resourcePath}/settings`}
             settings={`/~link/${props.resourcePath}/settings`}
           />
-          </div>
+          </Box>
         <div className="w-100 pl3 mt4 cf">
           <h2 className="f8 pb2">Collection Settings</h2>
           {this.renderRemove()}

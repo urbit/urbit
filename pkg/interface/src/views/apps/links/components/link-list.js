@@ -5,6 +5,7 @@ import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { Link } from 'react-router-dom';
 import { LinkItem } from './lib/link-item';
 import LinkSubmit from './lib/link-submit';
+import { Box } from '@tlon/indigo-react';
 
 import { getContactDetails } from '~/logic/lib/util';
 
@@ -38,12 +39,16 @@ export const LinkList = (props) => {
         style={{ height: '1rem' }}>
        <Link to="/~link">{'⟵ All Channels'}</Link>
       </div>
-      <div className={
-             'pl4 pt2 flex relative overflow-x-scroll' +
-             'overflow-x-auto-l overflow-x-auto-xl flex-shrink-0' +
-             'bb b--gray4 b--gray1-d bg-gray0-d'
-           }
-           style={{ height: 48 }}>
+      <Box
+        pl='12px'
+        pt='2'
+        display='flex'
+        position='relative'
+        overflowX={['scroll', 'auto']}
+        flexShrink='0'
+        borderBottom='1px solid'
+        borderColor='washedGray'
+        height='48px'>
         <SidebarSwitcher
           sidebarShown={props.sidebarShown}
           popout={props.popout}
@@ -59,7 +64,7 @@ export const LinkList = (props) => {
           popoutHref={`/~link/popout/${resource}`}
           settings={`/~link/${resource}/settings`}
         />
-      </div>
+      </Box>
       <div className="w-100 mt6 flex justify-center overflow-y-scroll ph4 pb4">
         <div className="w-100 mw7">
           <div className="flex">
