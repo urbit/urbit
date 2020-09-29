@@ -1,6 +1,7 @@
 /-  *resource, post
 |%
-+$  unread-mop  ((mop atom unread) gte)
++$  unread-mop  ((mop index:post unread) compare-indexes:post)
+::
 +$  read-type
   $%  [%group =group=resource]
       [%app =app=resource]

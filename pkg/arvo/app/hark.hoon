@@ -16,7 +16,7 @@
       unreads=(map group=resource (map =app=resource unread-mop:store))
   ==
 ::
-++  orm  ((ordered-map atom unread:store) gth)
+++  orm  ((ordered-map index:post unread:store) compare-indexes:post)
 --
 ::
 =|  state-0
@@ -91,23 +91,19 @@
     ++  listen
       |=  =app=resource
       ^-  (quip card _state)
-      =/  group-resource=(unit resource)
-        (group-from-app-resource:met %graph app-resource)
-      ?~  group-resource
-        ~|  no-group-for-app-resource+app-resource
-        !!
+      =/  group-resource=resource  (get-group-resource app-resource)
       ::  set up subscriptions and create entry in maps
       ::
       =/  by-group
         %+  ~(gut by unreads)
-          u.group-resource
+          group-resource
         *(map =app=resource unread-mop:store)
       ::
       ?:  (~(has by by-group) app-resource)
         [~ state]
       ::
       =.  unreads
-        %+  ~(put by unreads)  u.group-resource
+        %+  ~(put by unreads)  group-resource
         (~(put by by-group) app-resource *unread-mop:store)
       ::
       :_  state
@@ -116,43 +112,64 @@
     ++  ignore
       |=  =app=resource
       ^-  (quip card _state)
-      =/  group-resource=(unit resource)
-        (group-from-app-resource:met %graph app-resource)
-      ?~  group-resource
-        ~|  no-group-for-app-resource+app-resource
-        !!
-      =/  by-group  (~(get by unreads) u.group-resource)
+      =/  group-resource=resource  (get-group-resource app-resource)
+      =/  by-group  (~(get by unreads) group-resource)
       ?~  by-group
         [~ state]
       =.  u.by-group  (~(del by u.by-group) app-resource)
       =.  unreads
         ?~  u.by-group
-          (~(del by unreads) u.group-resource)
-        (~(put by unreads) u.group-resource u.by-group)
+          (~(del by unreads) group-resource)
+        (~(put by unreads) group-resource u.by-group)
       ::
       :_  state
       [%give %fact [/updates]~ %hark-update !>([%0 %ignore app-resource])]~
     ::
     ++  read
-      |=  =read-type:store
+      |=  item=read-type:store
       ^-  (quip card _state)
-      ?-  -.read-type
+      :-  [%give %fact [/updates]~ %hark-update !>([%0 %read item])]~
+      ?-  -.item
           %group
-        ::  group-resource.read-type
-        [~ state]
+        =.  unreads
+          %+  ~(jab by unreads)  group-resource.item
+          |=  by-group=(map =app=resource unread-mop:store)
+          (~(run by by-group) |=(* *unread-mop:store))
+        state
+     ::
           %app
-        ::  app-resource.read-type
-        [~ state]
+        =/  group-resource=resource  (get-group-resource app-resource.item)
+        =.  unreads
+          %+  ~(jab by unreads)  group-resource
+          |=  by-group=(map =app=resource unread-mop:store)
+          (~(put by by-group) app-resource.item *unread-mop:store)
+        state
+     ::
           %app-at-index
-        ::  app-resource.read-type
-        ::  index.read-type
-        [~ state]
+        =/  group-resource=resource  (get-group-resource app-resource.item)
+        =.  unreads
+          %+  ~(jab by unreads)  group-resource
+          |=  by-group=(map =app=resource unread-mop:store)
+          %+  ~(jab by by-group)  app-resource.item
+          |=  by-app=unread-mop:store
+          +:(del:orm by-app index.item)
+        state
       ==
     ::
     ++  give
       |=  [paths=(list path) update=update-0:store]
       ^-  (list card)
       [%give %fact paths [%hark-update !>([%0 update])]]~
+    ::
+    ++  get-group-resource
+      |=  =app=resource
+      ^-  resource
+      =/  group-resource=(unit resource)
+        (group-from-app-resource:met %graph app-resource)
+      ?~  group-resource
+        ~|  no-group-for-app-resource+app-resource
+        !!
+      u.group-resource
     --
   --
 ::

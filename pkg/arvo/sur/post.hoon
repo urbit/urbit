@@ -34,4 +34,20 @@
       ::  TODO: maybe use a cask?
       ::[%cage =cage]
   ==
+::  +compare-indexes: total ordering function for $index
+::
+++  compare-indexes
+  |=  [a=index b=index]
+  ^-  ?
+  ?-    [a b]
+      [~ ~]  &
+      [~ *]  |
+      [* ~]  &
+      *
+    ?>  ?=(^ a)
+    ?>  ?=(^ b)
+    ?:  =(i.a i.b)
+      $(a t.a, b t.b)
+    (gth i.a i.b)
+  ==
 --
