@@ -6,15 +6,15 @@
 /* _ci_slab_size(): calculate slab bloq-size, checking for overflow.
 */
 static c3_w
-_ci_slab_size(c3_g met_g, c3_w len_w, c3_d* out_d)
+_ci_slab_size(c3_g met_g, c3_d len_d, c3_d* out_d)
 {
-  c3_d bit_d = (c3_d)len_w << met_g;
+  c3_d bit_d = len_d << met_g;
   c3_d byt_d = (bit_d + 0x7) >> 3;
   c3_d wor_d = (byt_d + 0x3) >> 2;
-  c3_w wor_w = (c3_d)wor_d;
+  c3_w wor_w = (c3_w)wor_d;
 
   if (  (wor_w != wor_d)
-     || (len_w != (bit_d >> met_g)) )
+     || (len_d != (bit_d >> met_g)) )
   {
     return (c3_w)u3m_bail(c3__fail);
   }
@@ -98,12 +98,12 @@ _ci_atom_mint(u3a_atom* vat_u, c3_w len_w)
 /* u3i_slab_init(): configure bloq-length slab, zero-initialize.
 */
 void
-u3i_slab_init(u3i_slab* sab_u, c3_g met_g, c3_w len_w)
+u3i_slab_init(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
 {
   u3t_on(mal_o);
   {
     c3_d byt_d;
-    c3_w wor_w = _ci_slab_size(met_g, len_w, &byt_d);
+    c3_w wor_w = _ci_slab_size(met_g, len_d, &byt_d);
 
     //  if we only need one word, use the static storage in [sab_u]
     //
@@ -130,12 +130,12 @@ u3i_slab_init(u3i_slab* sab_u, c3_g met_g, c3_w len_w)
 /* u3i_slab_bare(): configure bloq-length slab, uninitialized.
 */
 void
-u3i_slab_bare(u3i_slab* sab_u, c3_g met_g, c3_w len_w)
+u3i_slab_bare(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
 {
   u3t_on(mal_o);
   {
     c3_d byt_d;
-    c3_w wor_w = _ci_slab_size(met_g, len_w, &byt_d);
+    c3_w wor_w = _ci_slab_size(met_g, len_d, &byt_d);
 
     //  if we only need one word, use the static storage in [sab_u]
     //
@@ -158,9 +158,9 @@ u3i_slab_bare(u3i_slab* sab_u, c3_g met_g, c3_w len_w)
 /* u3i_slab_from(): configure bloq-length slab, initialize with [a].
 */
 void
-u3i_slab_from(u3i_slab* sab_u, u3_atom a, c3_g met_g, c3_w len_w)
+u3i_slab_from(u3i_slab* sab_u, u3_atom a, c3_g met_g, c3_d len_d)
 {
-  u3i_slab_bare(sab_u, met_g, len_w);
+  u3i_slab_bare(sab_u, met_g, len_d);
 
   //  copies [a], zero-initializes any additional space
   //
@@ -170,12 +170,12 @@ u3i_slab_from(u3i_slab* sab_u, u3_atom a, c3_g met_g, c3_w len_w)
 /* u3i_slab_grow(): resize slab, reallocating as necessary.
 */
 void
-u3i_slab_grow(u3i_slab* sab_u, c3_g met_g, c3_w len_w)
+u3i_slab_grow(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
 {
   u3t_on(mal_o);
   {
     c3_d byt_d;
-    c3_w wor_w = _ci_slab_size(met_g, len_w, &byt_d);
+    c3_w wor_w = _ci_slab_size(met_g, len_d, &byt_d);
 
     //  XX actually shrink?
     //

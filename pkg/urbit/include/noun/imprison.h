@@ -25,22 +25,22 @@
         /* u3i_slab_init(): configure bloq-length slab, zero-initialize.
         */
           void
-          u3i_slab_init(u3i_slab* sab_u, c3_g met_g, c3_w len_w);
+          u3i_slab_init(u3i_slab* sab_u, c3_g met_g, c3_d len_d);
 
         /* u3i_slab_bare(): configure bloq-length slab, uninitialized.
         */
           void
-          u3i_slab_bare(u3i_slab* sab_u, c3_g met_g, c3_w len_w);
+          u3i_slab_bare(u3i_slab* sab_u, c3_g met_g, c3_d len_d);
 
         /* u3i_slab_from(): configure bloq-length slab, initialize with [a].
         */
           void
-          u3i_slab_from(u3i_slab* sab_u, u3_atom a, c3_g met_g, c3_w len_w);
+          u3i_slab_from(u3i_slab* sab_u, u3_atom a, c3_g met_g, c3_d len_d);
 
         /* u3i_slab_grow(): resize slab, reallocating as necessary.
         */
           void
-          u3i_slab_grow(u3i_slab* sab_u, c3_g met_g, c3_w len_w);
+          u3i_slab_grow(u3i_slab* sab_u, c3_g met_g, c3_d len_d);
 
         /* u3i_slab_free(): dispose memory backing slab.
         */
