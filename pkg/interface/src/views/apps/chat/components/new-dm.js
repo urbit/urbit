@@ -52,7 +52,7 @@ export class NewDmScreen extends Component {
 
   titleChange(event) {
     const asciiSafe = event.target.value.toLowerCase()
-      .replace(/[^a-z0-9~_.-]/g, '-');
+      .replace(/[^a-z0-9_-]/g, '-');
     this.setState({
       idName: asciiSafe,
       title: event.target.value
