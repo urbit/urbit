@@ -1,6 +1,7 @@
 ::  metadata: helpers for getting data from the metadata-store
 ::
 /-  *metadata-store
+/+  res=resource
 ::
 |_  =bowl:gall
 ++  app-paths-from-group
@@ -20,6 +21,15 @@
   ^-  (unit app-path)
   ?.  =(app-name.md-resource app-name)  ~
   `app-path.md-resource
+::
+++  group-from-app-resource
+  |=  [app=term =app=resource:res]
+  ^-  (unit resource:res)
+  =/  app-path  (en-path:res app-resource)
+  =/  group-paths  (groups-from-resource app app-path)
+  ?~  group-paths
+    ~
+  `(de-path:res i.group-paths)
 ::
 ++  groups-from-resource
   |=  =md-resource

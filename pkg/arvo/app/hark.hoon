@@ -1,7 +1,7 @@
 ::  hark: notifications [landscape]
 ::
 /-  *resource, store=hark, post, group-store, graph-store, metadata-store
-/+  default-agent, dbug
+/+  res=resource, metadata, default-agent, dbug
 =*  resource  resource:post
 ::
 ~%  %hark-top  ..is  ~
@@ -28,11 +28,13 @@
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
+    met   ~(. metadata bowl)
 ::
 ++  on-init
   :_  this
   :~  [%pass /metadata %agent [our.bowl %metadata-store] %watch /updates]
       [%pass /group %agent [our.bowl %group-store] %watch /groups]
+      [%pass /graph %agent [our.bowl %graph-store] %watch /updates]
   ==
 ::
 ++  on-save  !>(state)
@@ -89,8 +91,27 @@
     ++  listen
       |=  =app=resource
       ^-  (quip card _state)
+      =/  group-resource=(unit resource)
+        (group-from-app-resource:met %graph app-resource)
+      ?~  group-resource
+        ~|  no-group-for-app-resource+app-resource
+        !!
       ::  set up subscriptions and create entry in maps
-      [~ state]
+      ::
+      =/  by-group
+        %+  ~(gut by unreads.state)
+          u.group-resource
+        *(map =app=resource unread-mop:store)
+      ::
+      ?:  (~(has by by-group) app-resource)
+        [~ state]
+      ::
+      =.  unreads.state
+        %+  ~(put by unreads.state)  u.group-resource
+        (~(put by by-group) app-resource *unread-mop:store)
+      ::
+      :_  state
+      [%give %fact [/updates]~ %hark-update !>([%0 %listen app-resource])]~
     ::
     ++  ignore
       |=  =app=resource
@@ -135,33 +156,33 @@
     ?+  p.cage.sign  (on-agent:def wire sign)
         %group-update
       =^  cards  state
-        (group-update wire !<(update:group-store q.cage.sign))
+        (group-update !<(update:group-store q.cage.sign))
       [cards this]
     ::
         %graph-update
       =^  cards  state
-        (graph-update wire !<(update:graph-store q.cage.sign))
+        (graph-update !<(update:graph-store q.cage.sign))
       [cards this]
     ::
         %metadata-update
       =^  cards  state
-        (metadata-update wire !<(update:metadata-store q.cage.sign))
+        (metadata-update !<(metadata-update:metadata-store q.cage.sign))
       [cards this]
     ==
   ==
   ::
   ++  group-update
-    |=  [=wire =update:group-store]
+    |=  =update:group-store
     ^-  (quip card _state)
     [~ state]
   ::
   ++  graph-update
-    |=  [=wire =update:graph-store]
+    |=  =update:graph-store
     ^-  (quip card _state)
     [~ state]
   ::
   ++  metadata-update
-    |=  [=wire =update:metadata-store]
+    |=  update=metadata-update:metadata-store
     ^-  (quip card _state)
     [~ state]
   --
