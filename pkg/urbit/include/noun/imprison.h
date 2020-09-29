@@ -16,7 +16,6 @@
           c3_y*      buf_y;                   //  bytes
           c3_w*      buf_w;                   //  words
         };                                    //
-        c3_d         byt_d;                   //  byte len
         c3_w         wor_w;                   //  word len
       } u3i_slab;
 

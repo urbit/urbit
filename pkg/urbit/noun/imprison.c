@@ -6,7 +6,7 @@
 /* _ci_slab_size(): calculate slab bloq-size, checking for overflow.
 */
 static c3_w
-_ci_slab_size(c3_g met_g, c3_d len_d, c3_d* out_d)
+_ci_slab_size(c3_g met_g, c3_d len_d)
 {
   c3_d bit_d = len_d << met_g;
   c3_d byt_d = (bit_d + 0x7) >> 3;
@@ -18,10 +18,8 @@ _ci_slab_size(c3_g met_g, c3_d len_d, c3_d* out_d)
   {
     return (c3_w)u3m_bail(c3__fail);
   }
-  else {
-    *out_d = byt_d;
-    return wor_w;
-  }
+
+  return wor_w;
 }
 
 /* _ci_slab_init(): initialize slab with heap allocation.
@@ -114,8 +112,7 @@ u3i_slab_bare(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
 {
   u3t_on(mal_o);
   {
-    c3_d byt_d;
-    c3_w wor_w = _ci_slab_size(met_g, len_d, &byt_d);
+    c3_w wor_w = _ci_slab_size(met_g, len_d);
 
     //  if we only need one word, use the static storage in [sab_u]
     //
@@ -129,8 +126,6 @@ u3i_slab_bare(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
     else {
       _ci_slab_init(sab_u, wor_w);
     }
-
-    sab_u->byt_d = byt_d;
   }
   u3t_off(mal_o);
 }
@@ -154,8 +149,7 @@ u3i_slab_grow(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
 {
   u3t_on(mal_o);
   {
-    c3_d byt_d;
-    c3_w wor_w = _ci_slab_size(met_g, len_d, &byt_d);
+    c3_w wor_w = _ci_slab_size(met_g, len_d);
 
     //  XX actually shrink?
     //
@@ -175,8 +169,6 @@ u3i_slab_grow(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
     else {
       _ci_slab_grow(sab_u, wor_w);
     }
-
-    sab_u->byt_d = byt_d;
   }
   u3t_off(mal_o);
 }
