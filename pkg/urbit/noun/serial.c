@@ -612,21 +612,12 @@ _cs_cue_xeno_next(_cue_stack_t* tac_u,
         if ( 31 >= len_d ) {
           *out = (u3_noun)ur_bsr32_any(red_u, len_d);
         }
-        //  XX need a ur_bsr_words_any()
-        //
         else {
-          c3_d byt_d = (len_d + 0x7) >> 3;
+          u3i_slab sab_u;
+          u3i_slab_init(&sab_u, 0, len_d);
 
-          if ( 0xffffffffULL < byt_d) {
-            return u3m_bail(c3__meme);
-          }
-          else {
-            u3i_slab sab_u;
-            u3i_slab_init(&sab_u, 3, (c3_w)byt_d);
-
-            ur_bsr_bytes_any(red_u, len_d, sab_u.buf_y);
-            *out = u3i_slab_mint_bytes(&sab_u);
-          }
+          ur_bsr_bytes_any(red_u, len_d, sab_u.buf_y);
+          *out = u3i_slab_mint_bytes(&sab_u);
         }
 
         ur_dict32_put(rot_u, dic_u, bit_d, *out);
@@ -841,21 +832,12 @@ _cs_cue_full_next(c3_ys           mov,
         if ( 31 >= len_d ) {
           vat = (u3_noun)ur_bsr32_any(red_u, len_d);
         }
-        //  XX need a ur_bsr_words_any()
-        //
         else {
-          c3_d byt_d = (len_d + 0x7) >> 3;
+          u3i_slab sab_u;
+          u3i_slab_init(&sab_u, 0, len_d);
 
-          if ( 0xffffffffULL < byt_d) {
-            return u3m_bail(c3__meme);
-          }
-          else {
-            u3i_slab sab_u;
-            u3i_slab_init(&sab_u, 3, (c3_w)byt_d);
-
-            ur_bsr_bytes_any(red_u, len_d, sab_u.buf_y);
-            vat = u3i_slab_mint_bytes(&sab_u);
-          }
+          ur_bsr_bytes_any(red_u, len_d, sab_u.buf_y);
+          vat = u3i_slab_mint_bytes(&sab_u);
         }
 
         return _cs_cue_put(har_p, bit_d, vat);
