@@ -74,6 +74,11 @@
           u3_atom
           u3i_word(c3_w dat_w);
 
+        /* u3i_chub(): construct u3_atom from c3_d.
+        */
+          u3_atom
+          u3i_chub(c3_d dat_d);
+
         /* u3i_bytes(): Copy [a] bytes from [b] to an LSB first atom.
         */
           u3_atom

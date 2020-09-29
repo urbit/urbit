@@ -316,6 +316,19 @@ u3i_word(c3_w dat_w)
   return pro;
 }
 
+/* u3i_chub(): construct u3_atom from c3_d.
+*/
+u3_atom
+u3i_chub(c3_d dat_d)
+{
+  c3_w dat_w[2] = {
+    dat_d & 0xffffffffULL,
+    dat_d >> 32
+  };
+
+  return u3i_words(2, dat_w);
+}
+
 /* u3i_bytes(): Copy [a] bytes from [b] to an LSB first atom.
 */
 u3_atom
@@ -382,24 +395,38 @@ u3_atom
 u3i_chubs(c3_w        a_w,
           const c3_d* b_d)
 {
-  u3i_slab sab_u;
-  u3i_slab_bare(&sab_u, 6, a_w);
-
-  u3t_on(mal_o);
-  {
-    c3_w* buf_w = sab_u.buf_w;
-    c3_w    i_w;
-    c3_d    i_d;
-
-    for ( i_w = 0; i_w < a_w; i_w++ ) {
-      i_d = b_d[i_w];
-      *buf_w++ = i_d & 0xffffffffULL;
-      *buf_w++ = i_d >> 32;
-    }
+  //  strip trailing zeroes.
+  //
+  while ( a_w && !b_d[a_w - 1] ) {
+    a_w--;
   }
-  u3t_off(mal_o);
 
-  return u3i_slab_mint(&sab_u);
+  if ( !a_w ) {
+    return (u3_atom)0;
+  }
+  else if ( 1 == a_w ) {
+    return u3i_chub(b_d[0]);
+  }
+  else {
+    u3i_slab sab_u;
+    u3i_slab_bare(&sab_u, 6, a_w);
+
+    u3t_on(mal_o);
+    {
+      c3_w* buf_w = sab_u.buf_w;
+      c3_w    i_w;
+      c3_d    i_d;
+
+      for ( i_w = 0; i_w < a_w; i_w++ ) {
+        i_d = b_d[i_w];
+        *buf_w++ = i_d & 0xffffffffULL;
+        *buf_w++ = i_d >> 32;
+      }
+    }
+    u3t_off(mal_o);
+
+    return u3i_slab_mint(&sab_u);
+  }
 }
 
 /* u3i_mp(): Copy the GMP integer [a] into an atom, and clear it.
