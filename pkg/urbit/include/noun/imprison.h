@@ -36,7 +36,7 @@
           void
           u3i_slab_from(u3i_slab* sab_u, u3_atom a, c3_g met_g, c3_d len_d);
 
-        /* u3i_slab_grow(): resize slab, reallocating as necessary.
+        /* u3i_slab_grow(): resize slab, zero-initializing new space.
         */
           void
           u3i_slab_grow(u3i_slab* sab_u, c3_g met_g, c3_d len_d);
