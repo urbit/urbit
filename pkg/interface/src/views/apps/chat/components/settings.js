@@ -82,6 +82,7 @@ export class SettingsScreen extends Component {
           contacts={contacts}
           groups={groups}
           api={api}
+          station={station}
           changeLoading={this.changeLoading} />
         <DeleteButton
           isOwner={isOwner}
