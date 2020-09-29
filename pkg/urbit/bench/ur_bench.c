@@ -117,25 +117,22 @@ _jam_bench(void)
       gettimeofday(&b4, 0);
 
       {
-        ur_dict64_t dic_u = {0};
-        c3_d  len_d;
-        c3_y* byt_y;
-
-        ur_dict64_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
+        ur_jam_t *jam_u = ur_jam_init(rot_u);
+        c3_d      len_d;
+        c3_y*     byt_y;
 
         for ( i_w = 0; i_w < max_w; i_w++ ) {
-          ur_jam_unsafe(rot_u, ref, &dic_u, &len_d, &byt_y);
+          ur_jam_with(jam_u, ref, &len_d, &byt_y);
           c3_free(byt_y);
-          ur_dict64_wipe(&dic_u);
         }
 
-        ur_dict_free((ur_dict_t*)&dic_u);
+        ur_jam_done(jam_u);
       }
 
       gettimeofday(&f2, 0);
       timersub(&f2, &b4, &d0);
       mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-      fprintf(stderr, "  jam cons unsafe: %u ms\r\n", mil_w);
+      fprintf(stderr, "  jam cons with: %u ms\r\n", mil_w);
     }
 
     ur_root_free(rot_u);
@@ -184,7 +181,6 @@ _cue_bench(void)
     gettimeofday(&b4, 0);
 
     {
-      u3_noun out;
       c3_w  len_w = u3r_met(3, vat);
       // XX assumes little-endian
       //
@@ -193,8 +189,7 @@ _cue_bench(void)
                   : (c3_y*)((u3a_atom*)u3a_to_ptr(vat))->buf_w;
 
       for ( i_w = 0; i_w < max_w; i_w++ ) {
-        u3s_cue_xeno(len_w, byt_y, &out);
-        u3z(out);
+        u3z(u3s_cue_xeno(len_w, byt_y));
       }
     }
 
@@ -208,8 +203,7 @@ _cue_bench(void)
     gettimeofday(&b4, 0);
 
     {
-      ur_dict32_t dic_u = {0};
-      u3_noun       out;
+      u3_cue_xeno* sil_u = u3s_cue_xeno_init();
 
       c3_w  len_w = u3r_met(3, vat);
       // XX assumes little-endian
@@ -218,21 +212,17 @@ _cue_bench(void)
                   ? (c3_y*)&vat
                   : (c3_y*)((u3a_atom*)u3a_to_ptr(vat))->buf_w;
 
-      ur_dict32_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
-
       for ( i_w = 0; i_w < max_w; i_w++ ) {
-        u3s_cue_xeno_unsafe(&dic_u, len_w, byt_y, &out);
-        u3z(out);
-        ur_dict32_wipe(&dic_u);
+        u3z(u3s_cue_xeno_with(sil_u, len_w, byt_y));
       }
 
-      ur_dict_free((ur_dict_t*)&dic_u);
+      u3s_cue_xeno_done(sil_u);
     }
 
     gettimeofday(&f2, 0);
     timersub(&f2, &b4, &d0);
     mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-    fprintf(stderr, "  cue xeno unsafe: %u ms\r\n", mil_w);
+    fprintf(stderr, "  cue xeno with: %u ms\r\n", mil_w);
   }
 
   {
@@ -261,8 +251,7 @@ _cue_bench(void)
     gettimeofday(&b4, 0);
 
     {
-      ur_dict_t dic_u = {0};
-      u3_noun       out;
+      ur_cue_test_t *t = ur_cue_test_init();
 
       c3_w  len_w = u3r_met(3, vat);
       // XX assumes little-endian
@@ -271,20 +260,17 @@ _cue_bench(void)
                   ? (c3_y*)&vat
                   : (c3_y*)((u3a_atom*)u3a_to_ptr(vat))->buf_w;
 
-      ur_dict_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
-
       for ( i_w = 0; i_w < max_w; i_w++ ) {
-        ur_cue_test_unsafe(&dic_u, len_w, byt_y);
-        ur_dict_wipe(&dic_u);
+        ur_cue_test_with(t, len_w, byt_y);
       }
 
-      ur_dict_free(&dic_u);
+      ur_cue_test_done(t);
     }
 
     gettimeofday(&f2, 0);
     timersub(&f2, &b4, &d0);
     mil_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-    fprintf(stderr, "  cue test unsafe: %u ms\r\n", mil_w);
+    fprintf(stderr, "  cue test with: %u ms\r\n", mil_w);
   }
 
   {

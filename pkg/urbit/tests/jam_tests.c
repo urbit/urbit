@@ -367,12 +367,12 @@ _test_cue_spec(const c3_c* cap_c,
   c3_i ret_i = 1;
 
   {
-    ur_dict32_t dic_u = {0};
-    u3_noun       out;
+    u3_noun pro = u3m_soft(0, u3s_cue_atom, u3i_bytes(len_w, byt_y));
+    u3_noun tag, out;
 
-    ur_dict32_grow((ur_root_t*)0, &dic_u, ur_fib10, ur_fib11);
+    u3x_cell(pro, &tag, &out);
 
-    if ( c3n == u3s_cue_xeno_unsafe(&dic_u, len_w, byt_y, &out) ) {
+    if ( u3_blip != tag ) {
       fprintf(stderr, "\033[31mcue %s fail 1\033[0m\r\n", cap_c);
       ret_i = 0;
     }
@@ -383,17 +383,13 @@ _test_cue_spec(const c3_c* cap_c,
       ret_i = 0;
     }
 
-    u3z(out);
-    ur_dict_free((ur_dict_t*)&dic_u);
+    u3z(pro);
   }
 
   {
-    u3_noun pro = u3m_soft(0, u3s_cue_atom, u3i_bytes(len_w, byt_y));
-    u3_noun tag, out;
+    u3_noun out;
 
-    u3x_cell(pro, &tag, &out);
-
-    if ( u3_blip != tag ) {
+    if ( u3_none == (out = u3s_cue_xeno(len_w, byt_y)) ) {
       fprintf(stderr, "\033[31mcue %s fail 3\033[0m\r\n", cap_c);
       ret_i = 0;
     }
@@ -404,7 +400,7 @@ _test_cue_spec(const c3_c* cap_c,
       ret_i = 0;
     }
 
-    u3z(pro);
+    u3z(out);
   }
 
   return ret_i;
