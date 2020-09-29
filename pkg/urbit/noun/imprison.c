@@ -145,32 +145,42 @@ u3i_slab_from(u3i_slab* sab_u, u3_atom a, c3_g met_g, c3_d len_d)
   u3r_words(0, sab_u->len_w, sab_u->buf_w, a);
 }
 
-/* u3i_slab_grow(): resize slab, reallocating as necessary.
+/* u3i_slab_grow(): resize slab, zero-initializing new space.
 */
 void
 u3i_slab_grow(u3i_slab* sab_u, c3_g met_g, c3_d len_d)
 {
+  c3_w old_w = sab_u->len_w;
+
   u3t_on(mal_o);
   {
     c3_w wor_w = _ci_slab_size(met_g, len_d);
 
     //  XX actually shrink?
     //
-    if ( wor_w <= sab_u->len_w ) {
+    if ( wor_w <= old_w ) {
       sab_u->len_w = wor_w;
     }
-    //  upgrade from static storage
-    //
-    else if ( 1 == sab_u->len_w ) {
-      c3_w dat_w = *sab_u->buf_w;
-
-      _ci_slab_init(sab_u, wor_w);
-      sab_u->buf_w[0] = dat_w;
-    }
-    //  reallocate
-    //
     else {
-      _ci_slab_grow(sab_u, wor_w);
+      //  upgrade from static storage
+      //
+      if ( 1 == old_w ) {
+        c3_w dat_w = *sab_u->buf_w;
+
+        _ci_slab_init(sab_u, wor_w);
+        sab_u->buf_w[0] = dat_w;
+      }
+      //  reallocate
+      //
+      else {
+        _ci_slab_grow(sab_u, wor_w);
+      }
+
+      {
+        c3_y*  buf_y = (void*)(sab_u->buf_w + old_w);
+        size_t dif_i = wor_w - old_w;
+        memset(buf_y, 0, dif_i * 4);
+      }
     }
   }
   u3t_off(mal_o);

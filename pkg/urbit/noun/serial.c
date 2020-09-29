@@ -44,12 +44,6 @@ _cs_jam_fib_grow(struct _cs_jam_fib* fib_u, c3_w mor_w)
     }
 
     u3i_slab_grow(fib_u->sab_u, 0, c_w);
-
-    {
-      c3_w  dif_w = fib_u->sab_u->len_w - old_w;
-      c3_w* buf_w = fib_u->sab_u->buf_w + old_w;
-      memset(buf_w, 0, dif_w * sizeof(c3_w));
-    }
   }
 }
 
