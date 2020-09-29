@@ -55,15 +55,17 @@
 +$  state-1   [%1 base-state-0]
 +$  state-2   [%2 base-state-0]
 +$  state-3   [%3 base-state-1]
++$  state-4   [%4 base-state-1]
 +$  versioned-state
   $%  state-0
       state-1
       state-2
       state-3
+      state-4
   ==
 --
 ::
-=|  state-3
+=|  state-4
 =*  state  -
 %+  verb  |
 %-  agent:dbug
@@ -82,8 +84,21 @@
     =/  old  !<(versioned-state vase)
     =|  cards=(list card)
     |^
-    ?:  ?=(%3 -.old)
+    ?:  ?=(%4 -.old)
       [cards this(state old)]
+    ?:  ?=(%3 -.old)
+      %_    $
+        -.old  %4
+        ::
+          resource-indices.old
+        (rebuild-resource-indices associations.old)
+        ::
+          app-indices.old
+        (rebuild-app-indices associations.old)
+        ::
+          group-indices.old
+        (rebuild-group-indices associations.old)
+      ==
     ?:  ?=(%2 -.old)
       =/  new-state=state-3
         %*  .  *state-3
@@ -118,6 +133,41 @@
         resource-indices  (migrate-resource-indices resource-indices.old)
       ==
     $(old new-state-1)
+    ::
+    ++  rebuild-app-indices
+      =|  app-indices=(jug app-name [group-path app-path])
+      |=  =^associations
+      ^-  (jug app-name [group-path app-path])
+      ?~  associations  app-indices
+      =.  app-indices
+        %+  ~(put ju app-indices)  app-name.p.n.associations
+        [-.p.n.associations app-path.p.n.associations]
+      %-  ~(uni by $(associations l.associations))
+      $(associations r.associations)
+    ::
+    ++  rebuild-group-indices
+      =|  group-indices=(jug group-path md-resource)
+      |=  =^associations
+      ^-  (jug group-path md-resource)
+      ?~  associations  group-indices
+      =.  group-indices
+        %+  ~(put ju group-indices)  
+          -.p.n.associations 
+        +.p.n.associations
+      %-  ~(uni by $(associations l.associations))
+      $(associations r.associations)
+    ::
+    ++  rebuild-resource-indices
+      =|  resource-indices=(jug md-resource group-path)
+      |=  =^associations
+      ^-  (jug md-resource group-path)
+      ?~  associations  resource-indices
+      =.  resource-indices
+        %+  ~(put ju resource-indices)  
+          +.p.n.associations
+        -.p.n.associations
+      %-  ~(uni by $(associations l.associations)) 
+      $(associations r.associations)
     ::
     ++  poke-md-hook
       |=  act=metadata-hook-action

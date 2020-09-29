@@ -98,6 +98,7 @@ export class SettingsScreen extends Component {
           association={association}
           resource="chat"
           app="chat"
+          module=""
         />
         <Spinner
           awaiting={this.state.awaiting}

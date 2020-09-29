@@ -89,7 +89,9 @@ export function Skeleton(props: SkeletonProps) {
     }, 1500);
   }, [noteId, notebook, ship, notebooks])
 
-  const panelDisplay = !path ? ["none", "block"] : "block";
+  const hideSidebar = path || props.location.pathname.endsWith('/new')
+
+  const panelDisplay = !hideSidebar ? ["none", "block"] : "block";
   return (
     <Box height="100%" width="100%" px={[0, 3]} pb={[0, 3]}>
       <Box
@@ -105,6 +107,7 @@ export function Skeleton(props: SkeletonProps) {
           notebooks={props.notebooks}
           contacts={props.contacts}
           path={path}
+          hidden={hideSidebar}
           invites={props.invites}
           associations={props.associations}
           api={props.api}

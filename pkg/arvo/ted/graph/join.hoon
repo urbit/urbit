@@ -53,7 +53,7 @@
 ::
 ;<  ~  bind:m
   %+  poke-our  %metadata-hook
-  metadata-hook-action+!>([%add-synced ship.action rid.action])
+  metadata-hook-action+!>([%add-synced ship.action (en-path:resource rid.action)])
 ::
 ;<  ~  bind:m  
   %+  poke-our  %graph-pull-hook

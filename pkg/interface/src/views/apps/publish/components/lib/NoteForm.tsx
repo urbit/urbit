@@ -1,6 +1,11 @@
 import React from "react";
 import * as Yup from "yup";
-import { Box, Input } from "@tlon/indigo-react";
+import {
+  Box,
+  ManagedTextInputField as Input,
+  Row,
+  Col,
+} from "@tlon/indigo-react";
 import { AsyncButton } from "../../../../components/AsyncButton";
 import { Formik, Form, FormikHelpers } from "formik";
 import { MarkdownField } from "./MarkdownField";
@@ -29,32 +34,29 @@ export function PostForm(props: PostFormProps) {
   const { initial, onSubmit, submitLabel, loadingText } = props;
 
   return (
-    <Box
-      width="100%"
-      height="100%"
-      p={[2, 4]}
-      display="grid"
-      justifyItems="start"
-      gridTemplateRows={["64px 64px 1fr", "64px 1fr"]}
-      gridTemplateColumns={["100%", "1fr 1fr"]}
-      gridColumnGap={2}
-      gridRowGap={2}
-    >
+    <Col width="100%" height="100%" p={[2, 4]}>
       <Formik
         validationSchema={formSchema}
         initialValues={initial}
         onSubmit={onSubmit}
+        validateOnBlur
       >
         <Form style={{ display: "contents" }}>
-          <Input width="100%" placeholder="Post Title" id="title" />
-          <Box gridRow={["1/2", "auto"]} mt={1} justifySelf={["start", "end"]}>
-            <AsyncButton primary loadingText={loadingText}>
+          <Row flexDirection={["column-reverse", "row"]} mb={4} gapX={4} justifyContent='space-between'>
+            <Input maxWidth='40rem' flexGrow={1} placeholder="Post Title" id="title" />
+            <AsyncButton
+              ml={[0,2]}
+              mb={[4,0]}
+              flexShrink={1}
+              primary
+              loadingText={loadingText}
+            >
               {submitLabel}
             </AsyncButton>
-          </Box>
-          <MarkdownField gridColumn={["1/2", "1/3"]} id="body" />
+          </Row>
+          <MarkdownField flexGrow={1} id="body" />
         </Form>
       </Formik>
-    </Box>
+    </Col>
   );
 }

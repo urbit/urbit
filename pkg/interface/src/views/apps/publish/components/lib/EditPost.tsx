@@ -38,7 +38,7 @@ export function EditPost(props: EditPostProps & RouteComponentProps) {
     <PostForm
       initial={initial}
       onSubmit={onSubmit}
-      submitLabel={`Update ${note.title}`}
+      submitLabel="Update"
       loadingText="Updating..."
     />
   );

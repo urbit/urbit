@@ -6,14 +6,15 @@ import { getContactDetails } from '~/logic/lib/util';
 export const Comments = (props) => {
   const {
     hideNicknames,
-    hideAvatars
+    hideAvatars,
+    remoteContentPolicy
   } = props;
 
   const contacts = props.contacts ? props.contacts : {};
 
   return (
     <div>
-      { Array.from(props.comments.values()).map((comment) => {
+      { Array.from(props.comments).map(([date, comment]) => {
           const { nickname, color, member, avatar } =
             getContactDetails(contacts[comment.post.author]);
 
@@ -30,6 +31,7 @@ export const Comments = (props) => {
               member={member}
               hideNicknames={hideNicknames}
               hideAvatars={hideAvatars}
+              remoteContentPolicy={remoteContentPolicy}
             />
           );
         })

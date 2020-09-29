@@ -1,10 +1,10 @@
 import React, { Component, useEffect } from "react";
 
-import { TabBar } from "~/views/components/chat-link-tabbar";
-import { SidebarSwitcher } from "~/views/components/SidebarSwitch";
-import { Link } from "react-router-dom";
-import { LinkItem } from "./lib/link-item";
-import { LinkSubmit } from "./lib/link-submit";
+import { TabBar } from '~/views/components/chat-link-tabbar';
+import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
+import { Link } from 'react-router-dom';
+import { LinkItem } from './lib/link-item';
+import LinkSubmit from './lib/link-submit';
 
 import { getContactDetails } from "~/logic/lib/util";
 
@@ -45,9 +45,12 @@ export const LinkList = (props) => {
         <SidebarSwitcher
           sidebarShown={props.sidebarShown}
           popout={props.popout}
-          api={props.api}
-        />
-        <h2 className="white-d dib f9 fw4 lh-solid v-top pt2">{title}</h2>
+          api={props.api} />
+        <h2
+          className="dib f9 fw4 pt2 lh-solid v-top black white-d"
+          style={{ width: 'max-content' }}>
+          {title}
+        </h2>
         <TabBar
           location={props.location}
           popout={props.popout}
@@ -58,19 +61,29 @@ export const LinkList = (props) => {
       <div className="w-100 mt6 flex justify-center overflow-y-scroll ph4 pb4">
         <div className="w-100 mw7">
           <div className="flex">
-            <LinkSubmit name={props.name} ship={props.ship} api={props.api} />
+            <LinkSubmit
+              name={props.name}
+              ship={props.ship}
+              api={props.api}
+              s3={props.s3} />
           </div>
-          {Array.from(props.graph.values()).map((node) => {
-            return (
-              <LinkItem
-                resource={resource}
-                node={node}
-                nickname={props.metadata.nickname}
-                hideAvatars={props.hideAvatars}
-                hideNicknames={props.hideNicknames}
-              />
-            );
-          })}
+          { Array.from(props.graph).map(([date, node]) => {
+              const { nickname, color, avatar } =
+                getContactDetails(props.contacts[ship]);
+
+              return (
+                <LinkItem
+                  resource={resource}
+                  node={node}
+                  nickname={nickname}
+                  color={color}
+                  avatar={avatar}
+                  hideAvatars={props.hideAvatars}
+                  hideNicknames={props.hideNicknames}
+                />
+              );
+            })
+          }
         </div>
       </div>
     </div>

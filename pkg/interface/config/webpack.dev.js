@@ -44,6 +44,8 @@ let devServer = {
   contentBase: path.join(__dirname, '../dist'),
   hot: true,
   port: 9000,
+  host: '0.0.0.0',
+  disableHostCheck: true,
   historyApiFallback: true
 };
 

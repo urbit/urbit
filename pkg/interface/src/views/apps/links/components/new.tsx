@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Box, Input, Col } from "@tlon/indigo-react";
+import { Box, ManagedTextInputField as Input, Col } from "@tlon/indigo-react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 
@@ -69,7 +69,7 @@ export function NewScreen(props: object) {
           <Box
             display="grid"
             gridTemplateRows="auto"
-            gridRowGap={2}
+            gridRowGap={4}
             gridTemplateColumns="300px">
             <Input
               id="name"

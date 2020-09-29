@@ -22,8 +22,10 @@
       state-5
       state-6
       state-7
+      state-8
   ==
 ::
++$  state-8  [%8 state-base]
 +$  state-7  [%7 state-base]
 +$  state-6  [%6 state-base]
 +$  state-5  [%5 state-base]
@@ -54,7 +56,7 @@
   $%  [%chat-update update:store]
   ==
 --
-=|  state-7
+=|  state-8
 =*  state  -
 ::
 %-  agent:dbug
@@ -83,8 +85,33 @@
     =/  old  !<(versioned-state old-vase)
     =|  cards=(list card)
     |-
-    ?:  ?=(%7 -.old)
+    ?:  ?=(%8 -.old)
       [cards this(state old)]
+    ?:  ?=(%7 -.old)
+      =/  subscribers=(jug path ship)
+        %+  roll  ~(val by sup.bol)
+        |=  [[=ship =path] out=(jug path ship)]
+        ::  /(mailbox|backlog)/~ship/resource.name
+        ::
+        ?.  ?=([@ @ @ *] path)  out
+        =/  pax=^path  [i.t.path i.t.t.path ~]
+        (~(put ju out) pax ship)
+      =/  group  ~(. grpl bol)
+      =.  cards
+        %+  weld  cards
+        ^-  (list card)
+        %+  murn  ~(tap in ~(key by synced.old))
+        |=  =path
+        ^-  (unit card)
+        ?>  ?=([@ @ ~] path)
+        =/  group-path  (group-from-chat:cc path)
+        =/  members     (members-from-path:group group-path)
+        ?:  (is-managed-path:group group-path)  ~
+        =/  ships=(set ship)  (~(get ju subscribers) path)
+        %-  some
+        =+  [%invite path (~(dif in members) ships)]
+        [%pass /inv %agent [our.bol %chat-view] %poke %chat-view-action !>(-)]
+      $(-.old %8)
     ?:  ?=(%6 -.old)
       =.  cards
         %+  weld  cards

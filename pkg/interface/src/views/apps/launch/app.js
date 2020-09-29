@@ -44,7 +44,7 @@ export default class LaunchApp extends React.Component {
                     <Icon
                       stroke="green"
                       fill="rgba(0,0,0,0)"
-                      icon="CircleDot" 
+                      icon="Circle" 
                     />
                     <Text ml="1" color="green">Home</Text>
                   </Row>

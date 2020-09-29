@@ -48,8 +48,13 @@ export const LinkDetail = (props) => {
           popout={props.popout}
           api={props.api}
         />
-        <Link className="dib f9 fw4 pt2 gray2 lh-solid" to="/~link">
-          {`<- ${title}`}
+        <Link className="dib f9 fw4 pt2 gray2 lh-solid"
+              to={`/~link/${resourcePath}`}>
+          <h2
+            className="dib f9 fw4 lh-solid v-top black white-d"
+            style={{ width: 'max-content' }}>
+            {`<- ${title}`}
+          </h2>
         </Link>
         <TabBar
           location={props.location}
@@ -65,7 +70,9 @@ export const LinkDetail = (props) => {
             post={props.node.post}
             nickname={nickname}
             hideNicknames={props.hideNicknames}
-            commentNumber={props.node.children.size} />
+            commentNumber={props.node.children.size}
+            remoteContentPolicy={props.remoteContentPolicy}
+          />
           <div className="flex">
             <CommentSubmit
               name={props.name}
@@ -80,7 +87,8 @@ export const LinkDetail = (props) => {
             popout={props.popout}
             api={props.api}
             hideAvatars={props.hideAvatars}
-            hideNicknames={props.hideNicknames} />
+            hideNicknames={props.hideNicknames}
+            remoteContentPolicy={props.remoteContentPolicy} />
         </div>
       </div>
     </div>

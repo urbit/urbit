@@ -156,6 +156,7 @@ class App extends React.Component {
           />
           </Router>
         </Root>
+        <div id="portal-root" />
       </ThemeProvider>
     );
   }

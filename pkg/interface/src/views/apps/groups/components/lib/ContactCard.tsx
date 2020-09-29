@@ -1,13 +1,17 @@
-import React, { Component } from "react";
+import React from "react";
 import { Sigil } from "~/logic/lib/sigil";
 import * as Yup from "yup";
 
-import { Link } from "react-router-dom";
-import { EditElement } from "./edit-element";
-import { Spinner } from "~/views/components/Spinner";
 import { uxToHex } from "~/logic/lib/util";
-import { Col, Input, Box, Text, Row } from "@tlon/indigo-react";
-import { Formik, Form, FormikHelpers } from "formik";
+import {
+  ManagedForm as Form,
+  Col,
+  ManagedTextInputField as Input,
+  Box,
+  Text,
+  Row,
+} from "@tlon/indigo-react";
+import { Formik, FormikHelpers } from "formik";
 import { Contact } from "~/types/contact-update";
 import { AsyncButton } from "~/views/components/AsyncButton";
 import { ColorInput } from "~/views/components/ColorInput";
@@ -103,30 +107,34 @@ export function ContactCard(props: ContactCardProps) {
         initialValues={contact || emptyContact}
         onSubmit={onSubmit}
       >
-        <Form>
-          <Col>
-            <Row
-              borderBottom={1}
-              borderBottomColor="washedGray"
-              pb={3}
-              alignItems="center"
-            >
-              <Sigil size={32} classes="" color={hexColor} ship={us} />
-              <Box ml={2}>
-                <Text fontFamily="mono">{us}</Text>
-              </Box>
-            </Row>
-            <ImageInput mt={3} id="avatar" label="Avatar" s3={props.s3} />
-            <ColorInput id="color" label="Sigil Color" />
-            <Input id="nickname" label="Nickname" />
-            <Input id="email" label="Email" />
-            <Input id="phone" label="Phone" />
-            <Input id="website" label="Website" />
-            <Input id="notes" label="Notes" />
-            <AsyncButton primary loadingText="Updating..." border>
-              Save
-            </AsyncButton>
-          </Col>
+        <Form
+          display="grid"
+          gridAutoRows="auto"
+          gridTemplateColumns="100%"
+          gridRowGap="5"
+          maxWidth="400px"
+        >
+          <Row
+            borderBottom={1}
+            borderBottomColor="washedGray"
+            pb={3}
+            alignItems="center"
+          >
+            <Sigil size={32} classes="" color={hexColor} ship={us} />
+            <Box ml={2}>
+              <Text fontFamily="mono">{us}</Text>
+            </Box>
+          </Row>
+          <ImageInput id="avatar" label="Avatar" s3={props.s3} />
+          <ColorInput id="color" label="Sigil Color" />
+          <Input id="nickname" label="Nickname" />
+          <Input id="email" label="Email" />
+          <Input id="phone" label="Phone" />
+          <Input id="website" label="Website" />
+          <Input id="notes" label="Notes" />
+          <AsyncButton primary loadingText="Updating..." border>
+            Save
+          </AsyncButton>
         </Form>
       </Formik>
     </Box>

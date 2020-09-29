@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React  from 'react';
 import { Row, Col, Anchor, Box, Text } from '@tlon/indigo-react';
 
 import { Sigil } from '~/logic/lib/sigil';
@@ -9,33 +9,31 @@ export const LinkItem = (props) => {
   const {
     node,
     nickname,
+    color,
+    avatar,
     resource,
     hideAvatars,
     hideNicknames
   } = props;
 
+  const URLparser = new RegExp(
+    /((?:([\w\d\.-]+)\:\/\/?){1}(?:(www)\.?){0,1}(((?:[\w\d-]+\.)*)([\w\d-]+\.[\w\d]+))){1}(?:\:(\d+)){0,1}((\/(?:(?:[^\/\s\?]+\/)*))(?:([^\?\/\s#]+?(?:.[^\?\s]+){0,1}){0,1}(?:\?([^\s#]+)){0,1})){0,1}(?:#([^#\s]+)){0,1}/
+  );
+
   const author = node.post.author;
   const index = node.post.index.split('/').join('-');
   const size = node.children ? node.children.size : 0;
   const contents = node.post.contents;
+  const hostname = URLparser.exec(contents[1].url) ? URLparser.exec(contents[1].url)[4] : null;
 
-  const showAvatar = props.avatar && !hideAvatars;
+  const showAvatar = avatar && !hideAvatars;
   const showNickname = nickname && !hideNicknames;
-
-  const mono = showNickname ? 'inter white-d' : 'mono white-d';
 
   const img = showAvatar
     ? <img src={props.avatar} height={36} width={36} className="dib" />
     : <Sigil ship={`~${author}`} size={36} color={'#' + props.color} />;
 
   const baseUrl = props.baseUrl || `/~link/${resource}`;
-
-  let hostname = '';
-  try {
-    const url = new URL(contents[1].url);
-    hostname = url.hostname;
-  } catch (e) {}
-
 
   return (
     <Row alignItems="center" py={3} bg="white">
@@ -63,5 +61,5 @@ export const LinkItem = (props) => {
       </Col>
     </Row>
   );
-}
+};
 

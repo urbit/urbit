@@ -1,6 +1,13 @@
 import React, { useCallback } from "react";
 import * as Yup from "yup";
-import { Row, Box, Icon, Radio, Col, Checkbox } from "@tlon/indigo-react";
+import {
+  Row,
+  Box,
+  Icon,
+  ManagedRadioButtonField as Radio,
+  ManagedCheckboxField as Checkbox,
+  Col,
+} from "@tlon/indigo-react";
 import { FormikOnBlur } from "./FormikOnBlur";
 import { Dropdown } from "./Dropdown";
 import { FormikHelpers } from "formik";
@@ -53,7 +60,7 @@ export function SidebarListHeader(props: {
           </FormikOnBlur>
         }
       >
-        <Icon stroke="gray" icon="Menu" />
+        <Icon stroke="gray" icon="Circle" />
       </Dropdown>
     </Row>
   );

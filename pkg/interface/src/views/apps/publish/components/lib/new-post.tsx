@@ -59,7 +59,7 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
     <PostForm
       initial={initialValues}
       onSubmit={onSubmit}
-      submitLabel={`Publish to ${notebook?.title}`}
+      submitLabel="Publish"
       loadingText="Posting..."
     />
   );

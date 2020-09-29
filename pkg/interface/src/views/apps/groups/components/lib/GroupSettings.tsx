@@ -3,13 +3,11 @@ import { AsyncButton } from "../../../../components/AsyncButton";
 import * as Yup from "yup";
 import {
   Box,
-  Input,
-  Checkbox,
+  ManagedTextInputField as Input,
+  ManagedCheckboxField as Checkbox,
   Col,
-  InputLabel,
-  InputCaption,
+  Label,
   Button,
-  Center,
 } from "@tlon/indigo-react";
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
 import { FormError } from "~/views/components/FormError";
@@ -87,12 +85,12 @@ export function GroupSettings(props: GroupSettingsProps) {
             mx={4}
           >
             <Col mb={4}>
-              <InputLabel>Delete Group</InputLabel>
-              <InputCaption>
+              <Label>Delete Group</Label>
+              <Label gray mt="2">
                 Permanently delete this group. (All current members will no
                 longer see this group.)
-              </InputCaption>
-              <Button onClick={onDelete} mt={1} border error>
+              </Label>
+              <Button onClick={onDelete} mt={1} destructive>
                 Delete this group
               </Button>
             </Col>

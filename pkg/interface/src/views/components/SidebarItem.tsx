@@ -48,7 +48,7 @@ export function SidebarItem(props: {
   const appPath = association?.["app-path"];
   const groupPath = association?.["group-path"];
   const app = apps[module];
-  const isUnmanaged = groups[groupPath]?.hidden || false;
+  const isUnmanaged = groups?.[groupPath]?.hidden || false;
   if (!app) {
     return null;
   }

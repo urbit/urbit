@@ -56,7 +56,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.localReducer.dehydrate(this.state);
   }
 
-
   initialState(): StoreState {
     return {
       pendingMessages: new Map(),

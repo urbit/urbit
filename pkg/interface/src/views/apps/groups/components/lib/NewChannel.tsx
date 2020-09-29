@@ -1,5 +1,11 @@
 import React, { useCallback } from "react";
-import { Box, Input, Col, InputLabel, Radio, Text } from "@tlon/indigo-react";
+import {
+  Box,
+  ManagedTextInputField as Input,
+  Col,
+  ManagedRadioButtonField as Radio,
+  Text,
+} from "@tlon/indigo-react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import GlobalApi from "~/logic/api/global";
@@ -59,7 +65,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
             appPath,
             groupPath,
             EMPTY_INVITE_POLICY,
-            ships.map(s => `~${s}`),
+            ships.map((s) => `~${s}`),
             true,
             false
           );

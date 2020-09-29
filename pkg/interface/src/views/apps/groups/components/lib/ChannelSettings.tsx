@@ -3,16 +3,11 @@ import { AsyncButton } from "../../../../components/AsyncButton";
 import * as Yup from "yup";
 import {
   Box,
-  Input,
-  Checkbox,
+  ManagedTextInputField as Input,
   Col,
-  InputLabel,
-  InputCaption,
-  Button,
-  Center,
+  Label,
   Text,
 } from "@tlon/indigo-react";
-
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
 import GlobalApi from "~/logic/api/global";
 import { FormError } from "~/views/components/FormError";
@@ -79,9 +74,9 @@ export function ChannelSettings(props: ChannelSettingsProps) {
           >
             <Col mb={3}>
               <Text fontWeight="bold">Channel Host Settings</Text>
-              <InputCaption>
+              <Label>
                 Adjust channel settings, only available for channel's hosts
-              </InputCaption>
+              </Label>
             </Col>
             <Input
               id="title"

@@ -4,18 +4,9 @@ import { NotebookPosts } from "./NotebookPosts";
 import { Subscribers } from "./Subscribers";
 import { Settings } from "./Settings";
 import { Spinner } from "~/views/components/Spinner";
+import { Tabs, Tab } from "~/views/components/Tab";
 import { roleForShip } from "~/logic/lib/group";
-import {
-  Box,
-  Button,
-  Text,
-  Tab as _Tab,
-  Tabs,
-  TabList as _TabList,
-  TabPanels,
-  TabPanel,
-  Row,
-} from "@tlon/indigo-react";
+import { Box, Button, Text, Row } from "@tlon/indigo-react";
 import { Notebook as INotebook } from "~/types/publish-update";
 import { Groups } from "~/types/group-update";
 import { Contacts, Rolodex } from "~/types/contact-update";
@@ -23,14 +14,6 @@ import GlobalApi from "~/logic/api/global";
 import styled from "styled-components";
 import { Associations } from "~/types";
 import { deSig } from "~/logic/lib/util";
-
-const TabList = styled(_TabList)`
-  margin-bottom: ${(p) => p.theme.space[4]}px;
-`;
-
-const Tab = styled(_Tab)`
-  flex-grow: 1;
-`;
 
 interface NotebookProps {
   api: GlobalApi;
@@ -48,17 +31,24 @@ interface NotebookProps {
 
 interface NotebookState {
   isUnsubscribing: boolean;
+  tab: string;
 }
 
 export class Notebook extends PureComponent<
   NotebookProps & RouteComponentProps,
   NotebookState
 > {
-  constructor(props: NotebookProps & RouteComponentProps) {
+  constructor(props) {
     super(props);
     this.state = {
       isUnsubscribing: false,
+      tab: "all",
     };
+    this.setTab = this.setTab.bind(this);
+  }
+
+  setTab(tab: string) {
+    this.setState({ tab });
   }
 
   render() {
@@ -73,6 +63,7 @@ export class Notebook extends PureComponent<
       hideNicknames,
       associations,
     } = this.props;
+    const { state } = this;
 
     const group = groups[notebook?.["writers-group-path"]];
     if (!group) return null; // Waitin on groups to populate
@@ -131,8 +122,7 @@ export class Notebook extends PureComponent<
             ) : (
               <Button
                 ml={isWriter ? 2 : 0}
-                error
-                border
+                destructive
                 onClick={() => {
                   this.setState({ isUnsubscribing: true });
                   api.publish
@@ -149,56 +139,74 @@ export class Notebook extends PureComponent<
               </Button>
             )
           ) : null}
-          {!isOwn && (
-            <Button ml={isWriter ? 2 : 0} error border>
-              Unsubscribe
-            </Button>
-          )}
         </Row>
         <Box gridColumn={["1/2", "1/3"]}>
           <Tabs>
-            <TabList>
-              <Tab>All Posts</Tab>
-              <Tab>About</Tab>
-              {isAdmin && <Tab>Subscribers</Tab>}
-              {isOwn && <Tab>Settings</Tab>}
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <NotebookPosts
-                  notes={notes}
-                  list={notesList}
-                  host={ship}
-                  book={book}
-                  contacts={notebookContacts}
-                  hideNicknames={hideNicknames}
+            <Tab
+              selected={state.tab}
+              setSelected={this.setTab}
+              label="All Posts"
+              id="all"
+            />
+            <Tab
+              selected={state.tab}
+              setSelected={this.setTab}
+              label="About"
+              id="about"
+            />
+            {isAdmin && (
+              <>
+                <Tab
+                  selected={state.tab}
+                  setSelected={this.setTab}
+                  label="Subscribers"
+                  id="subscribers"
                 />
-              </TabPanel>
-              <TabPanel>
-                <Box color="black">{notebook?.about}</Box>
-              </TabPanel>
-              <TabPanel>
-                <Subscribers
-                  host={ship}
-                  book={book}
-                  notebook={notebook}
-                  api={api}
-                  groups={groups}
+                <Tab
+                  selected={state.tab}
+                  setSelected={this.setTab}
+                  label="Settings"
+                  id="settings"
                 />
-              </TabPanel>
-              <TabPanel>
-                <Settings
-                  host={ship}
-                  book={book}
-                  api={api}
-                  notebook={notebook}
-                  contacts={notebookContacts}
-                  associations={associations}
-                  groups={groups}
-                />
-              </TabPanel>
-            </TabPanels>
+              </>
+            )}
           </Tabs>
+          {state.tab === "all" && (
+            <NotebookPosts
+              notes={notes}
+              list={notesList}
+              host={ship}
+              book={book}
+              contacts={notebookContacts}
+              hideNicknames={hideNicknames}
+
+            />
+          )}
+          {state.tab === "about" && (
+            <Box mt="3" color="black">
+              {notebook?.about}
+            </Box>
+          )}
+          {state.tab === "subscribers" && (
+            <Subscribers
+              host={ship}
+              book={book}
+              notebook={notebook}
+              api={api}
+              groups={groups}
+            />
+          )}
+          {state.tab === "settings" && (
+            <Settings
+              host={ship}
+              book={book}
+              api={api}
+              notebook={notebook}
+              contacts={notebookContacts}
+              associations={associations}
+              groups={groups}
+            />
+          )}
         </Box>
       </Box>
     );

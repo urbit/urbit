@@ -143,7 +143,8 @@ export class SettingsScreen extends Component {
             popout={this.props.popout}
             api={this.props.api}
           />
-          <Link to="/~link" className="pt2">
+          <Link className="dib f9 fw4 pt2 gray2 lh-solid"
+                to={`/~link/${props.resourcePath}`}>
             <h2
               className="dib f9 fw4 lh-solid v-top"
               style={{ width: 'max-content' }}>
@@ -153,8 +154,8 @@ export class SettingsScreen extends Component {
           <TabBar
             location={props.location}
             popout={props.popout}
-            popoutHref={`/~link/popout/${props.resource}/settings`}
-            settings={`/~link/${props.resource}/settings`}
+            popoutHref={`/~link/popout/${props.resourcePath}/settings`}
+            settings={`/~link/${props.resourcePath}/settings`}
           />
           </div>
         <div className="w-100 pl3 mt4 cf">
@@ -168,6 +169,7 @@ export class SettingsScreen extends Component {
             association={props.resource}
             resource="collection"
             app="graph"
+            module="link"
           />
           <Spinner
             awaiting={this.state.awaiting}
