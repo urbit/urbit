@@ -144,7 +144,7 @@ export function ShipSearch(props: InviteSearchProps) {
             borderColor="washedGrey"
             color="black"
             fontSize={0}
-            mb={2}
+            mt={2}
             mr={2}
           >
             <Text fontFamily="mono">{cite(s)}</Text>

@@ -40,9 +40,10 @@ export function GroupsPane(props: GroupsPaneProps) {
   const relativePath = (path: string) => baseUrl + path;
   const groupPath = getGroupFromWorkspace(workspace);
 
-  const groupContacts = groupPath && contacts[groupPath] || undefined;
-  const groupAssociation = groupPath && associations.contacts[groupPath] || undefined;
-  const group = groupPath && groups[groupPath] || undefined;
+  const groupContacts = (groupPath && contacts[groupPath]) || undefined;
+  const groupAssociation =
+    (groupPath && associations.contacts[groupPath]) || undefined;
+  const group = (groupPath && groups[groupPath]) || undefined;
   const [recentGroups, setRecentGroups] = useLocalStorageState<string[]>(
     "recent-groups",
     []
@@ -126,13 +127,14 @@ export function GroupsPane(props: GroupsPaneProps) {
         }}
       />
       <Route
-        path={relativePath("/join/:app/:host/:name")}
+        path={relativePath("/join/:app/(ship)?/:host/:name")}
         render={(routeProps) => {
           const { app, host, name } = routeProps.match.params;
           const appName = app as AppName;
-          const appPath = `/${host}/${name}`;
-          const association = associations[appName][appPath];
-          const resourceUrl = `${baseUrl}/join/${app}/${host}/${name}`;
+          const isShip = app === "link";
+          const appPath = `${isShip ? '/ship/' : '/'}${host}/${name}`;
+          const association = isShip ? associations.graph[appPath] : associations[appName][appPath];
+          const resourceUrl = `${baseUrl}/join/${app}${appPath}`;
           return (
             <Skeleton
               recentGroups={recentGroups}
@@ -141,7 +143,13 @@ export function GroupsPane(props: GroupsPaneProps) {
               {...props}
               baseUrl={baseUrl}
             >
-              <UnjoinedResource association={association} />
+              <UnjoinedResource
+                notebooks={props.notebooks}
+                inbox={props.inbox}
+                baseUrl={baseUrl}
+                api={api}
+                association={association}
+              />
               {popovers(routeProps, resourceUrl)}
             </Skeleton>
           );

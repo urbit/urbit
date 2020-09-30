@@ -6,16 +6,20 @@ import React, {
   useCallback,
 } from "react";
 import styled from "styled-components";
+import _ from 'lodash';
 import { Box, Col } from "@tlon/indigo-react";
 import { useOutsideClick } from "~/logic/lib/useOutsideClick";
 import { useLocation } from "react-router-dom";
 import { Portal } from "./Portal";
 
+type AlignY = "top" | "bottom";
+type AlignX = "left" | "right";
+
 interface DropdownProps {
   children: ReactNode;
   options: ReactNode;
-  alignY: "top" | "bottom";
-  alignX: "left" | "right";
+  alignY: AlignY | AlignY[];
+  alignX: AlignX | AlignX[];
   width?: string;
 }
 
@@ -31,7 +35,7 @@ const DropdownOptions = styled(Box)`
 `;
 
 export function Dropdown(props: DropdownProps) {
-  const { children, options, alignX, alignY } = props;
+  const { children, options } = props;
   const dropdownRef = useRef<HTMLElement>(null);
   const anchorRef = useRef<HTMLElement>(null);
   const { pathname } = useLocation();
@@ -47,10 +51,34 @@ export function Dropdown(props: DropdownProps) {
         bottom: document.documentElement.clientHeight - rect.bottom,
         right: document.documentElement.clientWidth - rect.right,
       };
+      const alignX = _.isArray(props.alignX) ? props.alignX : [props.alignX];
+      const alignY = _.isArray(props.alignY) ? props.alignY : [props.alignY];
 
       let newCoords = {
-        [alignX]: `${bounds[alignX]}px`,
-        [alignY]: `${bounds[alignY]}px`,
+        ..._.reduce(
+          alignX,
+          (acc, a, idx) => ({
+            ...acc,
+            [a]: _.zipWith(
+              [...Array(idx), `${bounds[a]}px`],
+              acc[a] || [],
+              (a, b) => a || b || null
+            ),
+          }),
+          {}
+        ),
+        ..._.reduce(
+          alignY,
+          (acc, a, idx) => ({
+            ...acc,
+            [a]: _.zipWith(
+              [...Array(idx), `${bounds[a]}px`],
+              acc[a] || [],
+              (a, b) => a || b || null
+            ),
+          }),
+          {}
+        )
       };
       setCoords(newCoords);
     }

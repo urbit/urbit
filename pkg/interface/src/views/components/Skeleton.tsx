@@ -1,8 +1,8 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useMemo } from "react";
 import { Box, Text } from "@tlon/indigo-react";
 import { Link } from "react-router-dom";
 
-import { Sidebar } from "./Sidebar";
+import { Sidebar } from "./Sidebar/Sidebar";
 import { ChatHookUpdate } from "~/types/chat-hook-update";
 import { Inbox } from "~/types/chat-update";
 import { Associations } from "~/types/metadata-update";
@@ -12,14 +12,18 @@ import { Path, AppName } from "~/types/noun";
 import { LinkCollections } from "~/types/link-update";
 import styled from "styled-components";
 import GlobalSubscription from "~/logic/subscription/global";
-import {Workspace} from "~/types";
+import { Workspace, Groups, Graphs } from "~/types";
+import { useChat, usePublish, useLinks } from "./Sidebar/Apps";
+import { Body } from "./Body";
 
 interface SkeletonProps {
   children: ReactNode;
   recentGroups: string[];
+  groups: Groups;
   associations: Associations;
   chatSynced: ChatHookUpdate | null;
   graphKeys: Set<string>;
+  graphs: Graphs;
   linkListening: Set<Path>;
   links: LinkCollections;
   notebooks: Notebooks;
@@ -32,99 +36,55 @@ interface SkeletonProps {
   subscription: GlobalSubscription;
   includeUnmanaged: boolean;
   workspace: Workspace;
+  hideSidebar?: boolean;
 }
 
 export function Skeleton(props: SkeletonProps) {
-  const chatConfig = {
-    name: "chat",
-    getStatus: (s: string) => {
-      if (!(s in (props.chatSynced || {}))) {
-        return "unsubscribed";
-      }
-      const mailbox = props?.inbox?.[s];
-      if(!mailbox) {
-        return undefined;
-      }
-      const { config } = mailbox;
-      if (config?.read !== config?.length) {
-        return "unread";
-      }
-      return undefined;
-    },
-  };
-  const publishConfig = {
-    name: "chat",
-    getStatus: (s: string) => {
-      const [, host, name] = s.split("/");
-      const notebook = props.notebooks?.[host]?.[name];
-      if (!notebook) {
-        return "unsubscribed";
-      }
-      if (notebook["num-unread"]) {
-        return "unread";
-      }
-      return undefined;
-    },
-  };
-  const linkConfig = {
-    name: "link",
-    getStatus: (s: string) => {
-      const [, , host, name] = s.split("/");
-      const graphKey = `${host.slice(1)}/${name}`;
-
-      if (!props.graphKeys.has(graphKey)) {
-        return "unsubscribed";
-      }
-      const link = props.links[s];
-      if (!link) {
-        return undefined;
-      }
-      if (link.unseenCount > 0) {
-        return "unread";
-      }
-      return undefined;
-    },
-  };
-  const config = {
-    publish: publishConfig,
-    link: linkConfig,
-    chat: chatConfig,
-  };
+  const chatConfig = useChat(props.inbox, props.chatSynced);
+  const publishConfig = usePublish(props.notebooks);
+  const linkConfig = useLinks(props.graphKeys, props.graphs);
+  const config = useMemo(
+    () => ({
+      publish: publishConfig,
+      link: linkConfig,
+      chat: chatConfig,
+    }),
+    [publishConfig, linkConfig, chatConfig]
+  );
 
   useEffect(() => {
     props.api.publish.fetchNotebooks();
     props.subscription.startApp("chat");
     props.subscription.startApp("publish");
     props.subscription.startApp("graph");
+
+    return () => {
+      props.subscription.stopApp("chat");
+      props.subscription.stopApp("publish");
+      props.subscription.stopApp("graph");
+    };
   }, []);
 
   return (
-    <Box fontSize={0} px={[0, 3]} pb={[0, 3]} height="100%" width="100%">
-      <Box
-        bg="white"
-        height="100%"
-        width="100%"
-        display="grid"
-        borderRadius={1}
-        border={[0, 1]}
-        borderColor={["washedGray", "washedGray"]}
-        gridTemplateColumns={["1fr", "250px 1fr"]}
-        gridTemplateRows="1fr"
-      >
+    <Body
+      display="grid"
+      gridTemplateColumns={["1fr", "250px 1fr"]}
+      gridTemplateRows="1fr"
+    >
+      {!props.hideSidebar && (
         <Sidebar
           recentGroups={props.recentGroups}
           selected={props.selected}
-          selectedApp={props.selectedApp}
           associations={props.associations}
           invites={{}}
           apps={config}
           baseUrl={props.baseUrl}
-          includeUnmanaged={!props.selectedGroup}
+          groups={props.groups}
           mobileHide={props.mobileHide}
           workspace={props.workspace}
         ></Sidebar>
-        {props.children}
-      </Box>
-    </Box>
+      )}
+      {props.children}
+    </Body>
   );
 }

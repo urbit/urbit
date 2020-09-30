@@ -51,17 +51,6 @@ const StatusBar = (props) => {
             {metaKey}/
           </Text>
         </StatusBarItem>
-        <StatusBarItem
-          onClick={() => props.history.push('/~groups')}
-          badge={Object.keys(invites).length > 0}>
-          <img
-            className='invert-d v-mid'
-            src='/~landscape/img/groups.png'
-            height='15'
-            width='15'
-          />
-          <Text display={["none", "inline"]} ml={2}>Groups</Text>
-        </StatusBarItem>
         <ReconnectButton
           connection={props.connection}
           subscription={props.subscription}
