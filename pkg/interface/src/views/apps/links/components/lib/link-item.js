@@ -36,12 +36,12 @@ export const LinkItem = (props) => {
   const baseUrl = props.baseUrl || `/~link/${resource}`;
 
   return (
-    <Row alignItems="center" py={3} bg="white">
+    <Row width="100%" alignItems="center" py={3} bg="white">
       {img}
       <Col height="100%" justifyContent="space-between" ml={2}>
         <Anchor
           lineHeight="tall"
-          textDecoration="none"
+          style={{ textDecoration: 'none' }}
           href={contents[1].url}
           width="100%"
           target="_blank"

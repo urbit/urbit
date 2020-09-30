@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Link } from 'react-router-dom';
 import { GroupItem } from './group-item';
-import SidebarInvite from '~/views/components/SidebarInvite';
+import SidebarInvite from '~/views/components/Sidebar/SidebarInvite';
 import { Welcome } from './welcome';
 import { alphabetiseAssociations } from '~/logic/lib/util';
 

@@ -4,6 +4,7 @@ import { Switch, Route, Link } from "react-router-dom";
 
 import GlobalApi from "~/logic/api/global";
 import { StoreState } from "~/logic/store/type";
+import { uxToHex } from '~/logic/lib/util';
 import { Association, GraphNode } from "~/types";
 import { RouteComponentProps } from "react-router-dom";
 import { LinkList } from "./components/link-list";
@@ -44,8 +45,8 @@ export function LinkResource(props: LinkResourceProps) {
 
   const [, , ship, name] = appPath.split("/");
   const resourcePath = `${ship.slice(1)}/${name}`;
-  const resource = associations.graph[resourcePath]
-    ? associations.graph[resourcePath]
+  const resource = associations.graph[appPath]
+    ? associations.graph[appPath]
     : { metadata: {} };
   const contactDetails = contacts[resource["group-path"]] || {};
   const popout = props.match.url.includes("/popout/");
@@ -68,9 +69,9 @@ export function LinkResource(props: LinkResourceProps) {
           path={relativePath("")}
           render={(props) => {
             return (
-              <Col width="100%" p={3} alignItems="center" maxWidth="640px">
-                <Row>
-                  <LinkSubmit name={name} ship={ship.slice(1)} api={api} />
+              <Col width="100%" p={4} alignItems="center" maxWidth="768px">
+                <Row width="100%">
+                  <LinkSubmit s3={s3} name={name} ship={ship.slice(1)} api={api} />
                 </Row>
                 {Array.from(graph.values()).map((node: GraphNode) => {
                   const contact = contactDetails[node.post.author];
@@ -82,6 +83,7 @@ export function LinkResource(props: LinkResourceProps) {
                       hideAvatars={hideAvatars}
                       hideNicknames={hideNicknames}
                       baseUrl={resourceUrl}
+                      color={uxToHex(contact?.color || '0x0')}
                     />
                   );
                 })}
