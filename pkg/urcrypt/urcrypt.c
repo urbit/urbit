@@ -15,6 +15,7 @@
 
 #include <secp256k1.h>
 #include <secp256k1_recovery.h>
+#include <secp256k1_preallocated.h>
 
 int
 urcrypt_set_openssl_mem_functions(urcrypt_openssl_malloc_t m,
@@ -772,7 +773,7 @@ urcrypt_argon2(uint8_t  type,
                uint8_t *salt,
                size_t out_length,
                uint8_t *out,
-               urcrypt_argon2_malloc_t malloc_ptr,
+               urcrypt_argon2_alloc_t alloc_ptr,
                urcrypt_argon2_free_t free_ptr)
 {
   if ( !( SZ_32(secret_length) &&
@@ -824,13 +825,11 @@ urcrypt_argon2(uint8_t  type,
       threads,
       threads,
       version,               // algorithm version
-      malloc_ptr,            // custom memory allocation function
+      alloc_ptr,             // custom memory allocation function
       free_ptr,              // custom memory deallocation function
       ARGON2_DEFAULT_FLAGS   // by default only internal memory is cleared
     };
 
-    _urcrypt_argon2_malloc_ptr = malloc_ptr;
-    _urcrypt_argon2_free_ptr = free_ptr;
     result = (*f)(&context);
 
     if ( ARGON2_OK != result ) {
@@ -870,25 +869,26 @@ urcrypt_blake2(size_t message_length,
   }
 }
 
-#define SECP_FLAGS SECP256K1_CONTEXT_VERIFY | SECP256K1_CONTEXT_SIGN;
+#define SECP_FLAGS SECP256K1_CONTEXT_VERIFY | SECP256K1_CONTEXT_SIGN
 
 struct urcrypt_secp_context_struct {
   secp256k1_context* secp;
+  uint8_t prealloc[];
 };
 
 size_t
 urcrypt_secp_prealloc_size()
 {
-  return secp256k1_context_preallocated_size(SECP_FLAGS);
+  return sizeof(urcrypt_secp_context) +
+    secp256k1_context_preallocated_size(SECP_FLAGS);
 }
 
 int
 urcrypt_secp_init(urcrypt_secp_context *context,
-                  void *prealloc,
                   uint8_t entropy[32])
 {
   secp256k1_context* secp =
-    secp256k1_context_preallocated_create(prealloc, SECP_FLAGS);
+    secp256k1_context_preallocated_create(context->prealloc, SECP_FLAGS);
   if ( 1 == secp256k1_context_randomize(secp, entropy) ) {
     context->secp = secp;
     return 0;

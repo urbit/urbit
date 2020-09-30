@@ -748,16 +748,16 @@ main(c3_i   argc,
       }
     }
 
+    // starting u3m configures OpenSSL memory functions, so we must do it
+    // before any OpenSSL allocations
+    u3m_boot_lite();
+
     //  Initialize OpenSSL for client and server
     //
     {
       SSL_library_init();
       SSL_load_error_strings();
     }
-
-    // must come before curl initialization because curl will use
-    // openssl malloc and prevent us from installing our custom allocator
-    u3m_boot_lite();
 
     //  initialize curl
     //

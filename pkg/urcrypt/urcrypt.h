@@ -27,14 +27,14 @@ typedef void *(*urcrypt_openssl_realloc_t)(void*, size_t
 #endif
     );
 
-typedef void (*urcrypt_openssl_free_t)(void*,
+typedef void (*urcrypt_openssl_free_t)(void*
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
     , const char*, int
 #endif
     );
 
 typedef int (*urcrypt_argon2_alloc_t)(uint8_t**, size_t);
-typedef void (*urcrypt_argon2_free)(uint8_t*, size_t);
+typedef void (*urcrypt_argon2_free_t)(uint8_t*, size_t);
 
 int urcrypt_set_openssl_mem_functions(urcrypt_openssl_malloc_t,
                                       urcrypt_openssl_realloc_t,
@@ -85,6 +85,8 @@ int urcrypt_aes_ecbb_en(uint8_t key[24], uint8_t block[16], uint8_t out[16]);
 int urcrypt_aes_ecbb_de(uint8_t key[24], uint8_t block[16], uint8_t out[16]);
 int urcrypt_aes_ecbc_en(uint8_t key[32], uint8_t block[16], uint8_t out[16]);
 int urcrypt_aes_ecbc_de(uint8_t key[32], uint8_t block[16], uint8_t out[16]);
+
+typedef void* (*urcrypt_realloc_t)(void*, size_t);
 
 // message and length are read/write so
 // realloc_ptr can be used as realloc to pad message
@@ -197,7 +199,7 @@ const char* urcrypt_argon2(uint8_t  type,  // one of the urcrpyt_argon2_*
                            uint8_t *salt,
                            size_t out_length,
                            uint8_t *out,
-                           urcrypt_argon2_malloc_t malloc_ptr,
+                           urcrypt_argon2_alloc_t alloc_ptr,
                            urcrypt_argon2_free_t free_ptr);
 
 int urcrypt_blake2(size_t message_length,
@@ -212,13 +214,12 @@ int urcrypt_blake2(size_t message_length,
  */
 typedef struct urcrypt_secp_context_struct urcrypt_secp_context;
 
-// malloc a pointer of this size and pass it to init
+// size of opaque secp handle, malloc and pass to init
 size_t urcrypt_secp_prealloc_size(void);
 // call this once at per context with high quality entropy
 int urcrypt_secp_init(urcrypt_secp_context *context,
-                      void* prealloc,
                       uint8_t entropy[32]);
-// call just before freeing prealloc'd pointer
+// call before freeing opaque secp handle
 void urcrypt_secp_destroy(urcrypt_secp_context *context);
 
 /* restore initial secp context conditons (not thread-safe). Recommendation:
@@ -229,7 +230,8 @@ void urcrypt_secp_cleanup(void);
 // technically usable without the secp context
 int urcrypt_secp_make(uint8_t hash[32], uint8_t key[32], uint8_t out[32]);
 
-int urcrypt_secp_reco(uint8_t hash[32],
+int urcrypt_secp_reco(urcrypt_secp_context* context,
+                      uint8_t hash[32],
                       uint8_t key_v, // 0, 1, 2, 3
                       const uint8_t key_r[32],
                       const uint8_t key_s[32],

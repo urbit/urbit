@@ -7,16 +7,15 @@
 #include "urcrypt.h"
 #include <ent.h>
 
-static void* pre_u;
-static urcrypt_secp_context sec_u;
+static urcrypt_secp_context* sec_u;
 
 void u3e_secp_init()
 {
   c3_y ent_y[32];
   ent_getentropy(ent_y, 32);
-  pre_u = malloc(urcrypt_secp_prealloc_size());
+  sec_u = malloc(urcrypt_secp_prealloc_size());
 
-  if ( 0 != urcrypt_secp_init(&sec_u, pre_u, ent_y) ) {
+  if ( 0 != urcrypt_secp_init(sec_u, ent_y) ) {
     u3l_log("%s\r\n", "u3e_secp_init failed");
     abort();
   }
@@ -24,9 +23,9 @@ void u3e_secp_init()
 
 void u3e_secp_stop()
 {
-  urcrypt_secp_destroy(&sec_u);
-  free(pre_u);
-  pre_u = NULL;
+  urcrypt_secp_destroy(sec_u);
+  free(sec_u);
+  sec_u = NULL;
 }
 
 /* util funcs
@@ -192,7 +191,8 @@ _cqe_reco(u3_atom has,
          u3r_bytes_fit(32, has_y, has) &&
          u3r_bytes_fit(32, sir_y, sir) &&
          u3r_bytes_fit(32, sis_y, sis) &&
-         (0 == urcrypt_secp_reco(has_y, (c3_y) siv, sir_y, sis_y, x_y, y_y))) )
+         (0 == urcrypt_secp_reco(sec_u, has_y,
+                                 (c3_y) siv, sir_y, sis_y, x_y, y_y))) )
   {
     return u3_none;
   }
@@ -333,9 +333,6 @@ u3we_make(u3_noun cor)
     return u3m_bail(c3__exit);
   }
   else {
-    return u3l_punt("secp-make",
-        _cqe_256k1_veri(cor)
-        ? _cqe_make(has, prv)
-        : u3_none);
+    return u3l_punt("secp-make", _cqe_make(has, prv));
   }
 }
