@@ -103,14 +103,16 @@ class Channel {
       path,
       connectionErrFunc = () => {},
       eventFunc = () => {},
-      quitFunc = () => {}) {
+      quitFunc = () => {},
+      subAckFunc = () => {}) {
     let id = this.nextId();
     this.outstandingSubscriptions.set(
       id,
       {
         err: connectionErrFunc,
         event: eventFunc,
-        quit: quitFunc
+        quit: quitFunc,
+        subAck: subAckFunc
       }
     );
 
@@ -205,11 +207,12 @@ class Channel {
       } else if (obj.response == "subscribe" ||
                 (obj.response == "poke" && !!subFuncs)) {
         let funcs = subFuncs;
-        //  on a response to a subscribe, we only notify the caller on err
-        //
+
         if (obj.hasOwnProperty("err")) {
           funcs["err"](obj.err);
           this.outstandingSubscriptions.delete(obj.id);
+        } else if (obj.hasOwnProperty("ok")) {
+          funcs["subAck"](obj);
         }
       } else if (obj.response == "diff") {
         let funcs = subFuncs;
