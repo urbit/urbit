@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Spinner } from '~/views/components/Spinner';
+import { Body } from '~/views/components/Body';
 import urbitOb from 'urbit-ob';
 
 export class JoinScreen extends Component {
@@ -88,6 +89,7 @@ export class JoinScreen extends Component {
     }
 
     return (
+      <Body>
       <div className={'h-100 w-100 pt4 overflow-x-hidden flex flex-column ' +
       'bg-gray0-d white-d pa3'}
       >
@@ -130,6 +132,7 @@ export class JoinScreen extends Component {
           <Spinner awaiting={this.state.awaiting} classes="mt4" text="Joining group..." />
         </div>
       </div>
+      </Body>
     );
   }
 }

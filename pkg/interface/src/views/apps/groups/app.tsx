@@ -38,12 +38,16 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
 
     this.props.subscription.startApp('groups')
     this.props.subscription.startApp('chat')
+    this.props.subscription.startApp('publish');
+    this.props.subscription.startApp('graph');
     
   }
 
   componentWillUnmount() {
     this.props.subscription.stopApp('groups')
     this.props.subscription.stopApp('chat')
+    this.props.subscription.stopApp('publish');
+    this.props.subscription.stopApp('graph');
   }
 
 
@@ -92,22 +96,12 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
           <Route exact path="/~groups/new"
             render={(props) => {
               return (
-                <Skeleton
+                <NewScreen
                   history={props.history}
-                  api={api}
-                  contacts={contacts}
                   groups={groups}
-                  invites={invites}
-                  associations={associations}
-                  activeDrawer="rightPanel"
-                >
-                  <NewScreen
-                    history={props.history}
-                    groups={groups}
-                    contacts={contacts}
-                    api={api}
-                  />
-                </Skeleton>
+                  contacts={contacts}
+                  api={api}
+                />
               );
             }}
           />
@@ -116,24 +110,14 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               const ship = props.match.params.ship || '';
               const name = props.match.params.name || '';
               return (
-                <Skeleton
+                <JoinScreen
                   history={props.history}
-                  api={api}
-                  contacts={contacts}
                   groups={groups}
-                  invites={invites}
-                  associations={associations}
-                  activeDrawer="rightPanel"
-                >
-                  <JoinScreen
-                    history={props.history}
-                    groups={groups}
-                    contacts={contacts}
-                    api={api}
-                    ship={ship}
-                    name={name}
-                  />
-                </Skeleton>
+                  contacts={contacts}
+                  api={api}
+                  ship={ship}
+                  name={name}
+                />
               );
             }}
           />

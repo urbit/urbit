@@ -92,7 +92,7 @@ export function InvitePopover(props: InvitePopoverProps) {
                   borderTopColor="washedGray"
                   justifyContent="flex-end"
                 >
-                  <AsyncButton border="none" primary loadingText="Inviting...">
+                  <AsyncButton border={0} color="blue" loadingText="Inviting...">
                     Send
                   </AsyncButton>
                 </Row>

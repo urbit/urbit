@@ -81,20 +81,21 @@ export function GroupSettings(props: GroupSettingsProps) {
             gridTemplateColumns="1fr"
             gridAutoRows="auto"
             display="grid"
+            gridRowGap={4}
             my={3}
             mx={4}
           >
-            <Col mb={4}>
+            <Col>
               <Label>Delete Group</Label>
               <Label gray mt="2">
                 Permanently delete this group. (All current members will no
                 longer see this group.)
               </Label>
-              <Button onClick={onDelete} mt={1} destructive>
+              <Button onClick={onDelete} mt={2} destructive>
                 Delete this group
               </Button>
             </Col>
-            <Box mb={4} borderBottom={1} borderBottomColor="washedGray" />
+            <Box borderBottom={1} borderBottomColor="washedGray" />
             <Input
               id="name"
               label="Group Name"

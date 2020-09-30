@@ -40,7 +40,7 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
 
   return (
     <Col borderBottom={1} borderBottomColor="lightGray" p={1}>
-      <Box px={1} py={2} color="gray">
+      <Box fontSize={0} px={1} py={2} color="gray">
         Recent Groups
       </Box>
       {props.recent.slice(1, 5).map((g) => {
@@ -58,7 +58,7 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               mr={2}
               display="block"
             />
-            <Link to={`/~groups${g}`}>{assoc?.metadata?.title}</Link>
+            <Link to={`/~groups${g}`}><Text>{assoc?.metadata?.title}</Text></Link>
           </Row>
         );
       })}
@@ -76,7 +76,7 @@ export function GroupSwitcher(props: {
   const title = getTitleFromWorkspace(associations, workspace)
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
-    <Box position="sticky" top="0px" p={2}>
+    <Box zIndex="2" position="sticky" top="0px" p={2}>
       <Col
         justifyContent="center"
         bg="white"
@@ -94,7 +94,7 @@ export function GroupSwitcher(props: {
                   <Icon
                     mr={2}
                     stroke="gray"
-                    fill="rgba(0,0,0,0)"
+                    color="transparent"
                     display="block"
                     icon="Groups"
                   />
@@ -104,20 +104,28 @@ export function GroupSwitcher(props: {
                   recent={props.recentGroups}
                   associations={props.associations}
                 />
+                <GroupSwitcherItem to="/~groups/new">
+                  <Icon mr="2" color="transparent" stroke="gray" icon="Plus" />
+                  <Text> New Group</Text>
+                </GroupSwitcherItem>
+                <GroupSwitcherItem to="/~groups/join">
+                  <Icon mr="2" color="transparent" stroke="gray" icon="Boot" />
+                  <Text> Join Group</Text>
+                </GroupSwitcherItem>
                 {workspace.type === 'group' && (
                   <>
                     <GroupSwitcherItem to={navTo("/popover/participants")}>
-                      <Icon mr={2} fill="none" stroke="gray" icon="CircleDot" />
+                      <Icon mr={2} color="transparent" stroke="gray" icon="Circle" />
                       <Text> Participants</Text>
                     </GroupSwitcherItem>
                     <GroupSwitcherItem to={navTo("/popover/settings")}>
-                      <Icon mr={2} fill="none" stroke="gray" icon="Gear" />
+                      <Icon mr={2} color="transparent" stroke="gray" icon="Gear" />
                       <Text> Settings</Text>
                     </GroupSwitcherItem>
                     <GroupSwitcherItem bottom to={navTo("/invites")}>
                       <Icon
                         mr={2}
-                        fill="rgba(0,0,0,0)"
+                        color="transparent"
                         stroke="blue"
                         icon="CreateGroup"
                       />

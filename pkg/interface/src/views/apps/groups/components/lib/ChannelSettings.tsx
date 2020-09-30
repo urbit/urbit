@@ -10,6 +10,7 @@ import {
 } from "@tlon/indigo-react";
 import { Formik, Form, useFormikContext, FormikHelpers } from "formik";
 import GlobalApi from "~/logic/api/global";
+import { uxToHex } from '~/logic/lib/util';
 import { FormError } from "~/views/components/FormError";
 import { ColorInput } from "~/views/components/ColorInput";
 import { Association } from "~/types";
@@ -51,7 +52,7 @@ export function ChannelSettings(props: ChannelSettingsProps) {
         title,
         description,
         date,
-        color.slice(2),
+        uxToHex(color),
         metadata.module
       );
       actions.setStatus({ success: null });
@@ -71,6 +72,7 @@ export function ChannelSettings(props: ChannelSettingsProps) {
             maxWidth="512px"
             gridAutoRows="auto"
             width="100%"
+            gridRowGap={4}
           >
             <Col mb={3}>
               <Text fontWeight="bold">Channel Host Settings</Text>
