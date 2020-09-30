@@ -19,7 +19,7 @@
 ++  pubkey-to-point
   |=  =pubkey
   ^-  pont:secp:crypto
-  ~&  (lent pubkey)
+  ~&  >>  "compressed pubkey length: {<(lent pubkey)>}"
   %-  decompress-point:secp256k1:secp:crypto
     (big-endian-brap pubkey)
 ::
@@ -34,6 +34,7 @@
     (de-base58:mimes:html xpub)
   =/  bytes=(list @ux)
     (big-endian-brip as-atom)
+  ~&  >>  "parse-xpub, depth: {<(snag 4 bytes)>}"
   =/  pp=parsed-xpub
     [(swag [13 32] bytes) (swag [45 33] bytes)]
   ?:  (is-point pubk.pp)
@@ -59,9 +60,13 @@
   [il ir]
 ++  child-from-xpub
   |=  [xpub=tape index=@ud]
-  =/  is=(unit il-ir)
-    %+  bind
-      (parse-xpub xpub)
-    |=(px=parsed-xpub (compute-i px index))
-  is
+  =,  secp256k1:secp:crypto
+  =/  upx=(unit parsed-xpub)
+    (parse-xpub xpub)
+  ?~  upx  ~
+  =/  px=parsed-xpub  u.upx
+  =/  is  (compute-i px index)
+  (compress-point (jc-add (priv-to-pub (big-endian-brap il.is)) (pubkey-to-point pubk.px)))
 --
+
+::  `@ux`(compress-point:secp256k1:secp:crypto (jc-add:secp256k1:secp:crypto (pubkey-to-point:btca pubk.u.px) x))
