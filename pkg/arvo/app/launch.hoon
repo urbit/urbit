@@ -53,7 +53,9 @@
   ^-  (quip card _this)
   =/  old-state  !<(versioned-state old)
   |-
-  ?:  ?&(=(1 2) ?=(?(%4 %5) -.old-state))
+  ?:  ?=(%5 -.old-state)
+    `this(state old-state)
+  ?:  ?=(%4 -.old-state)
     :-  [%pass / %arvo %e %disconnect [~ /]]~
     =.  tiles.old-state
       (~(del by tiles.old-state) %chat)

@@ -12,20 +12,27 @@ interface GroupsProps {
 
 // Sort by recent, then by channel size? Should probably sort
 // by num unreads when notif-store drops
-const sortGroups = (_assocs: Associations, recent: string[]) => (
+const sortGroupsRecent = (recent: string[]) => (
   a: Association,
   b: Association
 ) => {
-  return alphabeticalOrder(a.metadata.title, b.metadata.title);
   //
   const aRecency = recent.findIndex((r) => a["group-path"] === r);
   const bRecency = recent.findIndex((r) => b["group-path"] === r);
-  const diff =
-    ((aRecency !== -1 || bRecency !== -1) && bRecency - aRecency) || 0;
-  if (diff !== 0) {
-    return diff;
+  if(aRecency === -1) {
+    if(bRecency === -1) {
+      return 0;
+    }
+    return 1;
   }
+  if(bRecency === -1) {
+    return -1;
+  }
+  return Math.max(0,bRecency) - Math.max(0, aRecency);
 };
+
+const sortGroupsAlph = (a: Association, b: Association) => 
+  alphabeticalOrder(a.metadata.title, b.metadata.title);
 
 export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   const { associations, ...boxProps } = props;
@@ -34,20 +41,19 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
     []
   );
 
-  const groups = Object.values(props?.associations?.contacts || {}).sort(
-    sortGroups(props.associations, recentGroups)
-  );
+  const groups = Object.values(props?.associations?.contacts || {})
+    .sort(sortGroupsAlph)
+    .sort(sortGroupsRecent(recentGroups))
+    .slice(0,5);
 
   return (
     <Box
+      {...boxProps}
       display="grid"
       gridAutoRows="124px"
-      gridAutoColumns="124px"
+      gridTemplateColumns="repeat(auto-fit, 124px)"
       gridGap={3}
       p={2}
-      width="100%"
-      gridAutoFlow="column"
-      {...boxProps}
     >
       {groups.map((group) => (
         <Link to={`/~groups${group["group-path"]}`}>
