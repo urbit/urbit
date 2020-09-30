@@ -311,49 +311,26 @@ static c3_c* _141_hex_argon_ha[] = {
   0
 };
 
-  static u3j_harm _141_hex_secp_make_a[] = {{".2", u3we_make, c3y}, {}};
-  static c3_c* _141_hex_secp_make_ha[] = {
-    "171cae298e8f73b6b77c72f957d9d7afd495ed1ca7d78fe9d5f869ea2203bada",
-    0
-  };
-  static u3j_harm _141_hex_secp_sign_a[] = {{".2", u3we_sign, c3y}, {}};
-  static c3_c* _141_hex_secp_sign_ha[] = {
-    "aac58cd537481d41fc4d941a7a0ed247552d64af6c9dce71e0d74c39384e2d60",
-    0
-  };
-  static u3j_harm _141_hex_secp_reco_a[] = {{".2", u3we_reco, c3y}, {}};
-  static c3_c* _141_hex_secp_reco_ha[] = {
-    "390d4cd3a04817b6436035a6fa77fe3008008afa164db732c8f4d5c52954fbee",
-    0
-  };
-static u3j_core _141_hex_secp_secp_helper_d[] =
-  { { "make-k",            7, _141_hex_secp_make_a, 0, _141_hex_secp_make_ha },
-    { "ecdsa-raw-sign",    7, _141_hex_secp_sign_a, 0, _141_hex_secp_sign_ha },
-    { "ecdsa-raw-recover", 7, _141_hex_secp_reco_a, 0, _141_hex_secp_reco_ha },
+static c3_c* _141_hex_secp_secp256k1_make_ha[] = { 0 };
+static u3j_harm _141_hex_secp_secp256k1_make_a[] = {{".2", u3we_make, c3y}, {}};
+static c3_c* _141_hex_secp_secp256k1_sign_ha[] = { 0 };
+static u3j_harm _141_hex_secp_secp256k1_sign_a[] = {{".2", u3we_sign, c3y}, {}};
+static c3_c* _141_hex_secp_secp256k1_reco_ha[] = { 0 };
+static u3j_harm _141_hex_secp_secp256k1_reco_a[] = {{".2", u3we_reco, c3y}, {}};
+
+static c3_c* _141_hex_secp_secp256k1_ha[] = { 0 };
+static u3j_core _141_hex_secp_secp256k1_d[] =
+  { { "make", 7, _141_hex_secp_secp256k1_make_a, 0, _141_hex_secp_secp256k1_make_ha },
+    { "sign", 7, _141_hex_secp_secp256k1_sign_a, 0, _141_hex_secp_secp256k1_sign_ha },
+    { "reco", 7, _141_hex_secp_secp256k1_reco_a, 0, _141_hex_secp_secp256k1_reco_ha },
     {}
   };
-static c3_c* _141_hex_secp_secp_helper_ha[] = {
-  "24175b141f1efc2e2de00c39a2b70cf3491f2b82371e0e15f63dfb6d2d86eac5",
-  0
-};
 
-static u3j_core _141_hex_secp_secp_d[] =
-  { { "helper", 15, 0, _141_hex_secp_secp_helper_d, _141_hex_secp_secp_helper_ha },
-    {}
-  };
-static c3_c* _141_hex_secp_secp_ha[] = {
-  "42f57966a293fdadbce8b0cc2108039f1f7fafe0b12f1fec52b2d1937a8347d7",
-  0
-};
-
+static c3_c* _141_hex_secp_ha[] = { 0 };
 static u3j_core _141_hex_secp_d[] =
-  { { "secp", 7, 0, _141_hex_secp_secp_d, _141_hex_secp_secp_ha },
+  { { "secp256k1", 3, 0, _141_hex_secp_secp256k1_d, _141_hex_secp_secp256k1_ha },
     {}
   };
-static c3_c* _141_hex_secp_ha[] = {
-  "e153a8c88f04bfed03dc882f560f912eaf3f5e3911f55dbb054519c2e1b4d778",
-  0
-};
 
   static u3j_harm _141_hex_blake2b_a[] = {{".2", u3we_blake, c3y}, {}};
   static c3_c* _141_hex_blake2b_ha[] = {
@@ -396,7 +373,7 @@ static u3j_core _141_hex_d[] =
   { "argon",  31, 0, _141_hex_argon_d, _141_hex_argon_ha },
   { "blake",  31, 0, _141_hex_blake_d, _141_hex_blake_ha },
   { "ripemd", 31, 0, _141_hex_ripe_d,  _141_hex_ripe_ha  },
-  { "secp",   31, 0, _141_hex_secp_d,  _141_hex_secp_ha  },
+  { "secp",   6, 0, _141_hex_secp_d, _141_hex_secp_ha },
   {}
 };
 static c3_c* _141_hex_ha[] = {
