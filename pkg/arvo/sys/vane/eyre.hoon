@@ -69,7 +69,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2020.5.29
+      date=%~2020.9.30
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -87,6 +87,9 @@
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
       bindings=(list [=binding =duct =action])
+      ::  cors-registry: state used and managed by the +cors core
+      ::
+      =cors-registry
       ::  connections: open http connections not fully complete
       ::
       connections=(map duct outstanding-connection)
@@ -571,6 +574,29 @@
       [action [authenticated secure address request] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
+    ::  figure out whether this is a cors request,
+    ::  whether the origin is approved or not,
+    ::  and maybe add it to the "pending approval" set
+    ::
+    =/  origin=(unit origin)
+      (get-header:http 'origin' header-list.request)
+    =^  cors-approved  requests.cors-registry.state
+      =,  cors-registry.state
+      ?~  origin                         [| requests]
+      ?:  (~(has in approved) u.origin)  [& requests]
+      ?:  (~(has in rejected) u.origin)  [| requests]
+      [| (~(put in requests) u.origin)]
+    ::  if this is a cors preflight request from an approved origin
+    ::  handle it synchronously
+    ::
+    ?:  &(?=(^ origin) cors-approved ?=(%'OPTIONS' method.request))
+      %-  handle-response
+      =;  =header-list:http
+        [%start [204 header-list] ~ &]
+      ::NOTE  +handle-response will add the rest of the headers
+      :~  'Access-Control-Allow-Methods'^'*'
+          'Access-Control-Allow-Headers'^'*'
+      ==
     ::
     ?-    -.action
         %gen
@@ -1654,10 +1680,25 @@
               (session-cookie-string u.session-id &)
             headers.response-header.http-event
           ::
+          =/  connection=outstanding-connection
+            (~(got by connections.state) duct)
+          ::  if the request was a simple cors request from an approved origin
+          ::  append the necessary cors headers to the response
+          ::
+          =/  origin=(unit origin)
+            %+  get-header:http  'origin'
+            header-list.request.inbound-request.connection
+          =?  headers.response-header
+              ?&  ?=(^ origin)
+                  (~(has in approved.cors-registry.state) u.origin)
+              ==
+            %^  set-header:http  'Access-Control-Allow-Origin'       u.origin
+            %^  set-header:http  'Access-Control-Allow-Credentials'  'true'
+            headers.response-header
+          ::
           =.  response-header.http-event  response-header
           =.  connections.state
-            %+  ~(jab by connections.state)  duct
-            |=  connection=outstanding-connection
+            %+  ~(put by connections.state)  duct
             %_  connection
               response-header  `response-header
               bytes-sent  ?~(data.http-event 0 p.u.data.http-event)
@@ -2081,6 +2122,22 @@
       %disconnect
     =.  server-state.ax  (remove-binding:server binding.task)
     [~ http-server-gate]
+  ::
+      %approve-origin
+    =.  cors-registry.server-state.ax
+      =,  cors-registry.server-state.ax
+      :+  (~(del in requests) origin.task)
+        (~(put in approved) origin.task)
+      (~(del in rejected) origin.task)
+    [~ http-server-gate]
+  ::
+      %reject-origin
+    =.  cors-registry.server-state.ax
+      =,  cors-registry.server-state.ax
+      :+  (~(del in requests) origin.task)
+        (~(del in approved) origin.task)
+      (~(put in rejected) origin.task)
+    [~ http-server-gate]
   ==
 ::
 ++  take
@@ -2266,6 +2323,19 @@
 ::
 ++  load
   =>  |%
+      +$  axle-2020-5-29
+        [date=%~2020.5.29 server-state=server-state-2020-5-29]
+      ::
+      +$  server-state-2020-5-29
+        $:  bindings=(list [=binding =duct =action])
+            connections=(map duct outstanding-connection)
+            =authentication-state
+            =channel-state
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+        ==
       +$  axle-2019-10-6
         [date=%~2019.10.6 server-state=server-state-2019-10-6]
       ::
@@ -2280,12 +2350,18 @@
             outgoing-duct=duct
         ==
       --
-  |=  old=$%(axle axle-2019-10-6)
+  |=  old=$%(axle axle-2019-10-6 axle-2020-5-29)
   ^+  ..^$
   ::
   ~!  %loading
   ?-  -.old
-    %~2020.5.29  ..^$(ax old)
+    %~2020.9.30  ..^$(ax old)
+  ::
+      %~2020.5.29
+    %_  $
+      date.old          %~2020.9.30
+      server-state.old  [-.server-state.old *cors-registry +.server-state.old]
+    ==
   ::
       %~2019.10.6
     =^  success  bindings.server-state.old
@@ -2314,8 +2390,6 @@
   ?.  ?=(%& -.why)
     ~
   =*  who  p.why
-  ?.  ?=(%$ ren)
-    [~ ~]
   ?:  =(tyl /whey)
     =/  maz=(list mass)
       :~  bindings+&+bindings.server-state.ax
@@ -2332,6 +2406,25 @@
       [~ ~]
     ~&  [%r %scry-foreign-host who]
     ~
+  ?:  &(?=(%x ren) ?=(~ syd))
+    =,  server-state.ax
+    ?+  tyl  [~ ~]
+      [%cors ~]            ``noun+!>(cors-registry)
+      [%cors %requests ~]  ``noun+!>(requests.cors-registry)
+      [%cors %approved ~]  ``noun+!>(approved.cors-registry)
+      [%cors %rejected ~]  ``noun+!>(rejected.cors-registry)
+    ::
+        [%cors ?(%approved %rejected) @ ~]
+      =*  kind  i.t.tyl
+      =*  orig  i.t.t.tyl
+      ?~  origin=(slaw %t orig)  [~ ~]
+      ?-  kind
+        %approved  ``noun+!>((~(has in approved.cors-registry) u.origin))
+        %rejected  ``noun+!>((~(has in rejected.cors-registry) u.origin))
+      ==
+    ==
+  ?.  ?=(%$ ren)
+    [~ ~]
   ?+  syd  [~ ~]
     %bindings              ``noun+!>(bindings.server-state.ax)
     %connections           ``noun+!>(connections.server-state.ax)

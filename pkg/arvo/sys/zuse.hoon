@@ -1279,9 +1279,25 @@
           ::  notifies us that web login code changed
           ::
           [%code-changed ~]
+          ::  start responding positively to cors requests from origin
+          ::
+          [%approve-origin =origin]
+          ::  start responding negatively to cors requests from origin
+          ::
+          [%reject-origin =origin]
       ==
     ::
     --
+  ::  +origin: request origin as specified in an Origin header
+  ::
+  +$  origin  @torigin
+  ::  +cors-registry: origins categorized by approval status
+  ::
+  +$  cors-registry
+    $:  requests=(set origin)
+        approved=(set origin)
+        rejected=(set origin)
+    ==
   ::  +outstanding-connection: open http connections not fully complete:
   ::
   ::    This refers to outstanding connections where the connection to
