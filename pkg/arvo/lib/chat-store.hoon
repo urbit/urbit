@@ -61,8 +61,9 @@
     ^-  json
     %+  frond  %chat-update
     %-  pairs
-    :~
-    ?:  ?=(%initial -.upd)
+    :_  ~
+    ?-  -.upd
+        %initial
       :-  %initial
       %-  pairs
       %+  turn  ~(tap by inbox.upd)
@@ -73,27 +74,37 @@
       :~  [%envelopes [%a (turn envelopes.mailbox envelope)]]
           [%config (config config.mailbox)]
       ==
-    ?:  ?=(%message -.upd)
-        :-  %message
-        %-  pairs
-        :~  [%path (path path.upd)]
-            [%envelope (envelope envelope.upd)]
-        ==
-    ?:  ?=(%messages -.upd)
-        :-  %messages
-        %-  pairs
-        :~  [%path (path path.upd)]
-            [%start (numb start.upd)]
-            [%end (numb end.upd)]
-            [%envelopes [%a (turn envelopes.upd envelope)]]
-        ==
-    ?:  ?=(%read -.upd)
-        [%read (pairs [%path (path path.upd)]~)]
-    ?:  ?=(%create -.upd)
-        [%create (pairs [%path (path path.upd)]~)]
-    ?:  ?=(%delete -.upd)
-        [%delete (pairs [%path (path path.upd)]~)]
-    [*@t *json]
+    ::
+        %message
+      :-  %message
+      %-  pairs
+      :~  [%path (path path.upd)]
+          [%envelope (envelope envelope.upd)]
+      ==
+    ::
+        %messages
+      :-  %messages
+      %-  pairs
+      :~  [%path (path path.upd)]
+          [%start (numb start.upd)]
+          [%end (numb end.upd)]
+          [%envelopes [%a (turn envelopes.upd envelope)]]
+      ==
+    ::
+        %read
+      [%read (pairs [%path (path path.upd)]~)]
+    ::
+        %create
+      [%create (pairs [%path (path path.upd)]~)]
+    ::
+        %delete
+      [%delete (pairs [%path (path path.upd)]~)]
+    ::
+        %keys
+      :-  %keys
+      :-  %a
+      %+  turn  ~(tap by keys.upd)
+      |=  pax=^path  (path pax)
     ==
   --
 ++  dejs

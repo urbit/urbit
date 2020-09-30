@@ -208,7 +208,7 @@
   ::
   ++  get-germ
     |=  =desk
-    =+  .^(=cass:clay %cw /(scot %p our)/home/(scot %da now))
+    =+  .^(=cass:clay %cw /(scot %p our)/[desk]/(scot %da now))
     ?-  ud.cass
       %0  %init
       %1  %that
@@ -341,13 +341,22 @@
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
   abet:abet:start-sync:(auto hos)
 ::
+++  ota-info
+  ?~  ota
+    "OTAs disabled"
+  "OTAs enabled from {<desk.u.ota>} on {<ship.u.ota>}"
+::
+++  poke-ota-info
+  |=  *
+  =<  abet  %-  spam
+  :~  [%leaf ota-info]
+      [%leaf "use |ota %disable or |ota ~sponsor %kids to reset it"]
+  ==
+::
 ++  poke-syncs                                        ::  print sync config
   |=  ~
   =<  abet  %-  spam
-  :-  :-  %leaf
-      ?~  ota
-        "OTAs disabled"
-      "OTAs from {<desk.u.ota>} on {<ship.u.ota>}"
+  :-  [%leaf ota-info]
   ?:  =(0 ~(wyt by syn))
     [%leaf "no other syncs configured"]~
   %+  turn  ~(tap in ~(key by syn))
@@ -416,6 +425,7 @@
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
     %kiln-ota                =;(f (f !<(_+<.f vase)) poke:update)
+    %kiln-ota-info           =;(f (f !<(_+<.f vase)) poke-ota-info)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)

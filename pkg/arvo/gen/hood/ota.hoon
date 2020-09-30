@@ -8,7 +8,11 @@
   ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [arg=?(~ [her=@p sud=@tas ~]) ~]
+        [arg=?(~ [%disable ~] [her=@p sud=@tas ~]) ~]
     ==
+?~  arg
+  :-  %kiln-ota-info  ~
 :-  %kiln-ota
-?~(arg ~ `[her sud]:arg)
+?:  ?=([%disable ~] arg)
+  ~
+`[her sud]:arg

@@ -33,14 +33,14 @@ export interface LaunchState {
   }
 }
 
-interface Tile {
+export interface Tile {
   isShown: boolean;
   type: TileType;
 }
 
 type TileType = TileTypeBasic | TileTypeCustom;
 
-interface TileTypeBasic {
+export interface TileTypeBasic {
   basic: {
     iconUrl: string;
     linkedUrl: string;

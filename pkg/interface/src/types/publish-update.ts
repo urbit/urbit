@@ -129,7 +129,7 @@ export interface Notebook {
   'writers-group-path': Path;
 }
 
-type Notes = {
+export type Notes = {
   [id in NoteId]: Note;
 };
 
@@ -148,7 +148,7 @@ export interface Note {
   title: string;
 }
 
-interface Comment {
+export interface Comment {
   [date: string]: {
     author: Patp;
     content: string;

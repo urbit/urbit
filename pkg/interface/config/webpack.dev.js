@@ -52,7 +52,7 @@ if(urbitrc.URL) {
     ...devServer,
     index: '',
     proxy: {
-      '/~landscape/js/index.js': {
+      '/~landscape/js/bundle/index.*.js': {
         target: 'http://localhost:9000',
         pathRewrite: (req, path) => '/index.js'
       },

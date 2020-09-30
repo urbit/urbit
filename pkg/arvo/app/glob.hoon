@@ -1,7 +1,11 @@
+::  glob [landscape]:
+::
+::  prompts content delivery and Gall state storage for Landscape JS blob
+::
 /-  glob
 /+  default-agent, verb, dbug
 |%
-++  hash  0v5.knd3c.vvtvt.h0gg0.8qcau.8iii4
+++  hash  0v5.6e3d0.3hm4q.iib09.rb2jb.9h4k4
 +$  state-0  [%0 hash=@uv glob=(unit (each glob:glob tid=@ta))]
 +$  all-states
   $%  state-0
@@ -41,7 +45,7 @@
 --
 =|  state=state-0
 =.  hash.state  hash
-=/  serve-path=path  /'~landscape'/js/index
+=/  serve-path=path  /'~landscape'/js/bundle
 ^-  agent:gall
 %+  verb  |
 %-  agent:dbug
@@ -58,7 +62,6 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ~&  >  %initting
   =+  !<(old=all-states old-state)
   ?>  ?=(%0 -.old)
   ?~  glob.old
@@ -83,9 +86,19 @@
     :_  this
     =/  home=path  /(scot %p our.bowl)/home/(scot %da now.bowl)
     =+  .^(=tube:clay %cc (weld home /js/mime))
-    =+  .^(js=@t %cx (weld home /app/landscape/js/index/js))
+    =+  .^(arch %cy (weld home /app/landscape/js/bundle))
+    =/  bundle=path
+      %-  need
+      ^-  (unit path)
+      %-  ~(rep by dir)
+      |=  [[file=@t ~] out=(unit path)]
+      ?^  out  out
+      ?.  =((end 3 5 file) 'index')
+        ~
+      `/[file]/js
+    =+  .^(js=@t %cx :(weld home /app/landscape/js/bundle bundle))
     =+  !<(=mime (tube !>(js)))
-    =/  =glob:glob  (~(put by *glob:glob) /js mime)
+    =/  =glob:glob  (~(put by *glob:glob) bundle mime)
     =/  =path  /(cat 3 'glob-' (scot %uv (sham glob)))/glob
     [%pass /make %agent [our.bowl %hood] %poke %drum-put !>([path (jam glob)])]~
   ::

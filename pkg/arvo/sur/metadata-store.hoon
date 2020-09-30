@@ -1,16 +1,18 @@
 |%
 +$  group-path    path
-+$  app-name      @tas
++$  app-name      term
 +$  app-path      path
 +$  md-resource   [=app-name =app-path]
 +$  associations  (map [group-path md-resource] metadata)
 ::
++$  color  @ux
 +$  metadata
-  $:  title=@t
-      description=@t
-      color=@ux
-      date-created=@da
-      creator=@p
+  $:  title=cord
+      description=cord
+      =color
+      date-created=time
+      creator=ship
+      module=term
   ==
 ::
 +$  metadata-action
