@@ -64,7 +64,7 @@
   =^  d  drum.state  (on-load:drum-core -.old drum.tup)
   =^  h  helm.state  (on-load:helm-core -.old helm.tup)
   =^  k  kiln.state  (on-load:kiln-core -.old kiln.tup)
-  [:(weld d h k) this]
+  [:(welp d h k) this]
 ::
 ++  on-poke
   |=  [=mark =vase]
