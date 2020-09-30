@@ -18,11 +18,6 @@ const keys = (json, state) => {
   if (data) {
     state.graphKeys = new Set(data.map((res) => {
       let resource = res.ship + '/' + res.name;
-
-      if (!(resource in state.graphs)) {
-        state.graphs[resource] = new OrderedMap();
-      }
-
       return resource;
     }));
   }
@@ -175,4 +170,3 @@ const removeNodes = (json, state) => {
     });
   }
 };
-

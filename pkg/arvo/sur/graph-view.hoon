@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /-  *group
+=======
+/-  *group, store=graph-store
+>>>>>>> release/next-userspace
 /+  resource
 ^?
 |%
@@ -8,9 +12,12 @@
   $%  [%group rid=resource]
       [%policy =policy]
   ==
+<<<<<<< HEAD
 ::  $app: An app that is associated to a graph-store mark
 ::
 +$  app-name  ?(%chat %publish %links)
+=======
+>>>>>>> release/next-userspace
 ::
 ::  $error: An error from a graph-view poke
 ::  
@@ -34,6 +41,7 @@
         rid=resource
         title=@t
         description=@t
+<<<<<<< HEAD
         app=app-name
         =associated
     ==
@@ -42,6 +50,18 @@
     [%join rid=resource =ship app=app-name] 
     ::[%invite rid=resource ships=(set ship)]
     [%groupify rid=resource app=app-name to=(unit resource)]
+=======
+        mark=(unit mark)
+        =associated
+        module=@t
+    ==
+    [%delete rid=resource]
+    [%leave rid=resource]
+    [%join rid=resource =ship] 
+    ::[%invite rid=resource ships=(set ship)]
+    [%groupify rid=resource to=(unit resource)]
+    [%forward rid=resource =update:store]
+>>>>>>> release/next-userspace
   ==
 --
 

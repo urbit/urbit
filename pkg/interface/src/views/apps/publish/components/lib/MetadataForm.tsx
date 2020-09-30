@@ -3,11 +3,9 @@ import { AsyncButton } from "../../../../components/AsyncButton";
 import * as Yup from "yup";
 import {
   Box,
-  Input,
-  Checkbox,
+  ManagedTextInputField as Input,
+  ManagedCheckboxField as Checkbox,
   Col,
-  InputLabel,
-  InputCaption,
   Button,
   Center,
 } from "@tlon/indigo-react";

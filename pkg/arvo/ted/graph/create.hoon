@@ -29,8 +29,10 @@
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ::  Add graph to graph-store
 ::
+?.  =(our.bowl entity.rid.action)
+  (strand-fail:strandio %bad-request ~)
 =/  =update:graph
-  [%0 now.bowl %add-graph rid.action *graph:graph `(app-to-mark:graph-view app.action)]
+  [%0 now.bowl %add-graph rid.action *graph:graph mark.action]
 ;<  ~  bind:m
   (poke-our %graph-store graph-update+!>(update))
 ;<  ~  bind:m
@@ -45,13 +47,14 @@
 ::
 =/  =metadata
   %*  .  *metadata
-    title  title.action
-    description  description.action
+    title         title.action
+    description   description.action
     date-created  now.bowl
-    creator  our.bowl
+    creator       our.bowl
+    module        module.action
   ==
 =/  act=metadata-action
-  [%add group-path [app.action (en-path:resource rid.action)] metadata]
+  [%add group-path graph+(en-path:resource rid.action) metadata]
 ;<  ~  bind:m  (poke-our %metadata-hook %metadata-action !>(act))
 ;<  ~  bind:m
   (poke-our %metadata-hook %metadata-hook-action !>([%add-owned group-path]))

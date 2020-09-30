@@ -46,7 +46,7 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
     <PostForm
       initial={initialValues}
       onSubmit={onSubmit}
-      submitLabel={`Publish to ${association?.metadata?.title}`}
+      submitLabel="Publish"
       loadingText="Posting..."
     />
   );

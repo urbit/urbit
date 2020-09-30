@@ -9,7 +9,6 @@ import MetadataApi from './metadata';
 import ContactsApi from './contacts';
 import GroupsApi from './groups';
 import LaunchApi from './launch';
-import LinksApi from './links';
 import GraphApi from './graph';
 import S3Api from './s3';
 
@@ -21,10 +20,8 @@ export default class GlobalApi extends BaseApi<StoreState> {
   contacts = new ContactsApi(this.ship, this.channel, this.store);
   groups = new GroupsApi(this.ship, this.channel, this.store);
   launch = new LaunchApi(this.ship, this.channel, this.store);
-  links = new LinksApi(this.ship, this.channel, this.store);
   s3 = new S3Api(this.ship, this.channel, this.store);
   graph = new GraphApi(this.ship, this.channel, this.store);
-
 
   constructor(
     public ship: Patp,

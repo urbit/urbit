@@ -75,24 +75,37 @@ export class GroupDetail extends Component {
       return app !== 'contacts';
     }).map((app) => {
       Object.keys(props.associations[app]).filter((channel) => {
-        return props.associations[app][channel]['group-path'] === props.association['group-path'];
+        return props.associations[app][channel]['group-path'] === 
+               props.association['group-path'];
       })
       .map((channel) => {
         const channelObj = props.associations[app][channel];
         const title =
-        channelObj.metadata?.title || channelObj['app-path'] || '';
+          channelObj.metadata?.title || channelObj['app-path'] || '';
 
         const color = uxToHex(channelObj.metadata?.color) || '000000';
-        const channelPath = channelObj['app-path'];
-        const link = `/~${app}/join${channelPath}`;
-        return(
-          channelList.push({
-            title: title,
-            color: color,
-            app: app.charAt(0).toUpperCase() + app.slice(1),
-            link: link
-          })
-        );
+        const link = `/~${app}/join${channelObj['app-path']}`;
+        const module = channelObj.metadata?.module || '';
+
+        if (app === 'graph' && module) {
+          return (
+            channelList.push({
+              title: title,
+              color: color,
+              app: module.charAt(0).toUpperCase() + module.slice(1),
+              link: `${link}/${module}`
+            })
+          );
+        } else {
+          return (
+            channelList.push({
+              title: title,
+              color: color,
+              app: app.charAt(0).toUpperCase() + app.slice(1),
+              link: link
+            })
+          );
+        }
       });
     });
 
@@ -268,7 +281,8 @@ export class GroupDetail extends Component {
                       this.state.title,
                       association.metadata.description,
                       association.metadata['date-created'],
-                      uxToHex(association.metadata.color)
+                      uxToHex(association.metadata.color),
+                      ''
                     ).then(() => {
                       this.setState({ awaiting: false });
                     });

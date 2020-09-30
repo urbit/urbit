@@ -10,7 +10,7 @@ export type Content =  TextContent | UrlContent | CodeContent | ReferenceContent
 export interface Post {
   author: Patp;
   contents: Content[];
-  hash?: string | null;
+  hash?: string;
   index: string;
   pending?: boolean;
   signatures: string[];
@@ -26,10 +26,5 @@ export interface GraphNode {
 export type Graph = Map<number, GraphNode>;
 
 export type Graphs = { [rid: string]: Graph };
-
-/**
- *  `(map index node)` to be sent over the wire
- */
-export type NodeMap = Record<string, any>;
 
 

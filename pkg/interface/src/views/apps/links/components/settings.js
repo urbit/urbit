@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import { uxToHex, makeRoutePath } from '~/logic/lib/util';
 import { Link } from 'react-router-dom';
 
 import { LoadingScreen } from './loading';
@@ -21,7 +20,6 @@ export class SettingsScreen extends Component {
     };
 
     this.renderDelete = this.renderDelete.bind(this);
-    this.markAllAsSeen = this.markAllAsSeen.bind(this);
     this.changeLoading = this.changeLoading.bind(this);
   }
 
@@ -53,12 +51,11 @@ export class SettingsScreen extends Component {
       awaiting: true,
       type: 'Removing'
     });
-    props.api.links.removeCollection(props.resourcePath)
-    .then(() => {
-      this.setState({
-        isLoading: false
-      });
-    });
+
+    props.api.graph.leaveGraph(
+      `~${props.match.params.ship}`,
+      props.match.params.name
+    );
   }
 
   deleteCollection() {
@@ -69,32 +66,29 @@ export class SettingsScreen extends Component {
       awaiting: true,
       type: 'Deleting'
     });
-    props.api.links.deleteCollection(props.resourcePath)
-    .then(() => {
-      this.setState({
-        isLoading: false
-      });
-    });
-  }
 
-  markAllAsSeen() {
-    this.props.api.links.seenLink(this.props.resourcePath);
+    props.api.graph.deleteGraph(props.match.params.name);
   }
 
   renderRemove() {
-    return (
-      <div className="w-100 fl mt3">
-        <p className="f8 mt3 lh-copy db">Remove Collection</p>
-        <p className="f9 gray2 db mb4">
-          Remove this collection from your collection list.
-        </p>
-        <a onClick={this.removeCollection.bind(this)}
-           className="dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer"
-        >
-          Remove collection
-        </a>
-      </div>
-    );
+    const { props } = this;
+
+    if (props.amOwner) {
+      return null;
+    } else {
+      return (
+        <div className="w-100 fl mt3">
+          <p className="f8 mt3 lh-copy db">Remove Collection</p>
+          <p className="f9 gray2 db mb4">
+            Remove this collection from your collection list.
+          </p>
+          <a onClick={this.removeCollection.bind(this)}
+             className="dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer">
+            Remove collection
+          </a>
+        </div>
+      );
+    }
   }
 
   renderDelete() {
@@ -110,8 +104,7 @@ export class SettingsScreen extends Component {
             Delete this collection, for you and all group members.
           </p>
           <a onClick={this.deleteCollection.bind(this)}
-             className="dib f9 ba pa2 b--red2 red2 pointer bg-gray0-d mb4"
-          >
+             className="dib f9 ba pa2 b--red2 red2 pointer bg-gray0-d mb4">
             Delete collection
           </a>
         </div>
@@ -121,96 +114,52 @@ export class SettingsScreen extends Component {
 
   render() {
     const { props, state } = this;
+    const title = props.resource.metadata.title || props.resourcePath;
 
-    if (props.groupPath === undefined) {
+    if (
+      (!props.hasGraph || !props.resource.metadata.color)
+      && props.graphResource
+    ) {
       return <LoadingScreen />;
-    }
-
-    if (state.isLoading) {
-      return (
-        <div className="h-100 w-100 overflow-x-hidden flex flex-column white-d">
-          <div
-            className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
-            style={{ height: '1rem' }}
-          >
-            <Link to="/~link">{'⟵ All Collections'}</Link>
-          </div>
-          <div
-            className="pl4 pt2 bb b--gray4 b--gray2-d bg-gray0-d flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
-            style={{ height: 48 }}
-          >
-            <SidebarSwitcher
-              sidebarShown={this.props.sidebarShown}
-              popout={this.props.popout}
-              api={this.props.api}
-            />
-            <Link to={makeRoutePath(props.resourcePath, props.popout)}
-            className="pt2 white-d"
-            >
-              <h2
-                className="dib f9 fw4 lh-solid v-top"
-                style={{ width: 'max-content' }}
-              >
-                {props.resource.metadata.title}
-              </h2>
-            </Link>
-            <TabBar
-              location={props.location}
-              popout={props.popout}
-              popoutHref={makeRoutePath(props.resourcePath, true, props.page)}
-              settings={makeRoutePath(props.resourcePath, props.popout) + '/settings'}
-            />
-          </div>
-          <div className="w-100 pl3 mt4 cf">
-            <h2 className="f8 pb2">Removing...</h2>
-          </div>
-        </div>
-      );
+    } else if (!props.graphResource) {
+      props.history.push('/~link');
+      return <div></div>;
     }
 
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column white-d">
-        <div
-          className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
-          style={{ height: '1rem' }}
-        >
+        <div className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
+             style={{ height: '1rem' }}>
           <Link to="/~link">{'⟵ All Collections'}</Link>
         </div>
         <div
-          className="pl4 pt2 bb b--gray4 b--gray1-d flex relative overflow-x-scroll overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
-          style={{ height: 48 }}
-        >
+          className={
+            "pl4 pt2 bb b--gray4 b--gray1-d flex relative overflow-x-scroll " +
+            "overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
+          }
+          style={{ height: 48 }}>
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
             popout={this.props.popout}
             api={this.props.api}
           />
-          <Link to={makeRoutePath(props.resourcePath, props.popout)}
-          className="pt2"
-          >
+          <Link className="dib f9 fw4 pt2 gray2 lh-solid"
+                to={`/~link/${props.resourcePath}`}>
             <h2
               className="dib f9 fw4 lh-solid v-top"
-              style={{ width: 'max-content' }}
-            >
-              {props.resource.metadata.title}
+              style={{ width: 'max-content' }}>
+              {title}
             </h2>
           </Link>
           <TabBar
             location={props.location}
             popout={props.popout}
-            popoutHref={makeRoutePath(props.resourcePath, true, props.page)}
-            settings={makeRoutePath(props.resourcePath, props.popout) + '/settings'}
+            popoutHref={`/~link/popout/${props.resourcePath}/settings`}
+            settings={`/~link/${props.resourcePath}/settings`}
           />
           </div>
         <div className="w-100 pl3 mt4 cf">
           <h2 className="f8 pb2">Collection Settings</h2>
-          <p className="f8 mt3 lh-copy db">Mark all links as read</p>
-          <p className="f9 gray2 db mb4">Mark all links in this collection as read.</p>
-          <a className="dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer"
-            onClick={this.markAllAsSeen}
-          >
-              Mark all as read
-            </a>
           {this.renderRemove()}
           {this.renderDelete()}
           <MetadataSettings
@@ -219,7 +168,8 @@ export class SettingsScreen extends Component {
             api={props.api}
             association={props.resource}
             resource="collection"
-            app="link"
+            app="graph"
+            module="link"
           />
           <Spinner
             awaiting={this.state.awaiting}

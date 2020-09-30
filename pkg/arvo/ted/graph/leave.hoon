@@ -8,19 +8,23 @@
 ::
 ++  scry-metadata
   |=  rid=resource
-  =/  m  (strand ,(unit resource))
-  ;<  pax=(unit path)  bind:m
-    %+  scry:strandio   ,(unit path)
+  =/  m  (strand ,resource)
+  ^-  form:m
+  ;<  pax=(unit (set path))  bind:m
+    %+  scry:strandio   ,(unit (set path))
     ;:  weld
       /gx/metadata-store/resource/graph
       (en-path:resource rid)
       /noun
     ==
-  (pure:m (bind pax de-path:resource))
+  ?>  ?=(^ pax)
+  ?>  ?=(^ u.pax)
+  (pure:m (de-path:resource n.u.pax))
 ::
 ++  scry-group
   |=  rid=resource
-  =/  m  (strand ,(unit resource))
+  =/  m  (strand ,group)
+  ^-  form:m
   ;<  ugroup=(unit group)  bind:m
     %+  scry:strandio   ,(unit group)
     ;:  weld
@@ -33,10 +37,11 @@
 ++  delete-graph
   |=  rid=resource
   =/  m  (strand ,~)
+  ^-  form:m
   ;<  ~  bind:m
-    (poke-our %graph-pull-hook %pull-hook-action [%remove rid.action])
+    (poke-our %graph-pull-hook %pull-hook-action !>([%remove rid]))
   ;<  ~  bind:m
-    (poke-our %graph-store %graph-update [%archive-graph rid.action])
+    (poke-our %graph-store %graph-update !>([%remove-graph rid]))
   (pure:m ~)
 --
 ::
@@ -47,18 +52,16 @@
 =+  !<([=action:graph-view ~] arg)
 ?>  ?=(%leave -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
-?<  =(our.bowl entity.rid.action)
-;<  ugroup-rid=(unit resource)  bind:m  
-  (scry-metadata rid.action)
-?~  ugroup-rid  !!
-;<  ugroup=(unit group)
-  (scry-group u.ugroup-rid)
-?~  ugroup  (fail:m %nonexistent)
-?.  hidden.u.ugroup
-  (delete-graph rid.action)
+?:  =(our.bowl entity.rid.action)
+  (strand-fail:strandio %bad-request ~)
+;<  group-rid=resource  bind:m  (scry-metadata rid.action)
+;<  g=group  bind:m  (scry-group group-rid)
+?.  hidden.g
+  ;<  ~  bind:m  (delete-graph rid.action)
+  (pure:m !>(~))
 ;<  ~  bind:m
   (poke-our %group-push-hook %pull-hook-action !>([%remove rid.action]))
 ;<  ~  bind:m
-  (poke-our %group-store %group-action !>([%remove-group rid.action])
+  (poke-our %group-store %group-action !>([%remove-group rid.action ~]))
 ;<  ~  bind:m  (delete-graph rid.action)
 (pure:m !>(~))

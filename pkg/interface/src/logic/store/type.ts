@@ -13,6 +13,7 @@ import { LinkComments, LinkCollections, LinkSeen } from '~/types/link-update';
 import { ConnectionStatus } from '~/types/connection';
 import {Graphs} from '~/types/graph-update';
 import { BackgroundConfig, LocalUpdateRemoteContentPolicy } from '~/types/local-update';
+import {Graphs} from '~/types/graph-update';
 
 export interface StoreState {
   // local state

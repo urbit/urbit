@@ -6,120 +6,105 @@ import SidebarInvite from '~/views/components/SidebarInvite';
 import { Welcome } from './welcome';
 import { alphabetiseAssociations } from '~/logic/lib/util';
 
-export class ChannelsSidebar extends Component {
-  // drawer to the left
-
-  render() {
-    const { props } = this;
-
-    const sidebarInvites = Object.keys(props.invites)
-      .map((uid) => {
-        return (
-          <SidebarInvite
-            key={uid}
-            invite={props.invites[uid]}
-            onAccept={() => props.api.invite.accept('/link', uid)}
-            onDecline={() => props.api.invite.decline('/link', uid)}
-          />
-        );
-      });
-
-    const associations = props.associations.contacts ? alphabetiseAssociations(props.associations.contacts) : {};
-
-    const groupedChannels = {};
-    [...props.listening].map((path) => {
-      const groupPath = props.associations.link[path] ?
-        props.associations.link[path]['group-path'] : '';
-
-
-      if (groupPath in associations) {
-        if (groupedChannels[groupPath]) {
-          const array = groupedChannels[groupPath];
-          array.push(path);
-          groupedChannels[groupPath] = array;
-        } else {
-          groupedChannels[groupPath] = [path];
-        }
-      } else {
-        if (groupedChannels['/~/']) {
-          const array = groupedChannels['/~/'];
-          array.push(path);
-          groupedChannels['/~/'] = array;
-        } else {
-          groupedChannels['/~/'] = [path];
-        };
-      }
-    });
-
-    let i = -1;
-    const groupedItems = Object.keys(associations)
-    .map((each) => {
-      const channels = groupedChannels[each];
-      if (!channels || channels.length === 0)
-        return;
-      i++;
-      if (groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
-        i++;
-      }
-
+export const ChannelSidebar = (props) => {
+  const sidebarInvites = Object.keys(props.invites)
+    .map((uid) => {
       return (
-        <GroupItem
-          key={i}
-          index={i}
-          association={associations[each]}
-          linkMetadata={props.associations['link']}
-          channels={channels}
-          selected={props.selected}
-          links={props.links}
+        <SidebarInvite
+          key={uid}
+          invite={props.invites[uid]}
+          onAccept={() => props.api.invite.accept('/link', uid)}
+          onDecline={() => props.api.invite.decline('/link', uid)}
         />
       );
     });
-    if (groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
-      groupedItems.unshift(
-        <GroupItem
-          key={'/~/'}
-          index={0}
-          association={'/~/'}
-          linkMetadata={props.associations['link']}
-          channels={groupedChannels['/~/']}
-          selected={props.selected}
-          links={props.links}
-        />
-      );
-    }
 
-    const activeClasses = (props.active === 'collections') ? ' ' : 'dn-s ';
+  const associations = props.associations.contacts ?
+    alphabetiseAssociations(props.associations.contacts) : {};
 
-    let hiddenClasses = true;
+  const graphAssoc = props.associations.graph || {};
 
-    if (props.popout) {
-      hiddenClasses = false;
+  const groupedChannels = {};
+  [...props.graphKeys].map((gKey) => {
+    const path = `/ship/~${gKey.split('/')[0]}/${gKey.split('/')[1]}`;
+    const groupPath = graphAssoc[path] ? graphAssoc[path]['group-path'] : '';
+
+    if (groupPath in associations) {
+      // managed
+
+      if (groupedChannels[groupPath]) {
+        const array = groupedChannels[groupPath];
+        array.push(path);
+        groupedChannels[groupPath] = array;
+      } else {
+        groupedChannels[groupPath] = [path];
+      }
+
     } else {
-      hiddenClasses = props.sidebarShown;
+      // unmanaged
+
+      if (groupedChannels['/~/']) {
+        const array = groupedChannels['/~/'];
+        array.push(path);
+        groupedChannels['/~/'] = array;
+      } else {
+        groupedChannels['/~/'] = [path];
+      }
     }
+  });
+
+  const groupedItems = Object.keys(associations).map((each, i) => {
+    const channels = groupedChannels[each];
+    if (!channels || channels.length === 0) { return; }
 
     return (
-      <div className={`bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100
-       flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl
-        relative ` + activeClasses + ((hiddenClasses)
-        ? 'flex-basis-100-s flex-basis-30-ns'
-        : 'dn')}
-      >
-        <div className="overflow-y-scroll h-100">
-          <div className="w-100 bg-transparent">
-            <Link
-              className="dib f9 pointer green2 gray4-d pa4"
-              to={'/~link/new'}
-            >
-              New Collection
-            </Link>
-          </div>
-          <Welcome associations={props.associations} />
-          {sidebarInvites}
-          {groupedItems}
-        </div>
-      </div>
+      <GroupItem
+        key={i + 1}
+        unmanaged={false}
+        association={associations[each]}
+        metadata={graphAssoc}
+        channels={channels}
+        selected={props.selected}
+      />
+    );
+  });
+
+  if (groupedChannels['/~/'] && groupedChannels['/~/'].length !== 0) {
+    groupedItems.push(
+      <GroupItem
+        key={0}
+        unmanaged={true}
+        association={'/~/'}
+        metadata={graphAssoc}
+        channels={groupedChannels['/~/']}
+        selected={props.selected}
+      />
     );
   }
-}
+
+  const activeClasses = (props.active === 'collections') ? ' ' : 'dn-s ';
+  const hiddenClasses = !!props.popout ? false : props.sidebarShown;
+
+  return (
+    <div className={
+      `bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100` +
+      `flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl relative ` +
+      activeClasses +
+      ((hiddenClasses) ? 'flex-basis-100-s flex-basis-30-ns' : 'dn')
+    }>
+      <div className="overflow-y-scroll h-100">
+        <div className="w-100 bg-transparent">
+          <Link
+            className="dib f9 pointer green2 gray4-d pa4"
+            to={'/~link/new'}>
+            New Collection
+          </Link>
+        </div>
+        <Welcome associations={props.associations} />
+        {sidebarInvites}
+        {groupedItems}
+      </div>
+    </div>
+  );
+};
 

@@ -14,17 +14,17 @@ import { Groups, Group } from '~/types/group-update';
 import GlobalApi from '~/logic/api/global';
 
 interface ContactSidebarProps {
-	activeDrawer: 'contacts' | 'detail' | 'rightPanel';
-	groups: Groups;
-	group: Group
-	contacts: Contacts;
-	path: Path;
-	api: GlobalApi;
-	defaultContacts: Contacts;
-	selectedContact?: PatpNoSig;
+  activeDrawer: 'contacts' | 'detail' | 'rightPanel';
+  groups: Groups;
+  group: Group
+  contacts: Contacts;
+  path: Path;
+  api: GlobalApi;
+  defaultContacts: Contacts;
+  selectedContact?: PatpNoSig;
 }
 interface ContactSidebarState {
-	awaiting: boolean;
+  awaiting: boolean;
   memberboxHeight: number;
 }
 
@@ -57,17 +57,17 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
 
     const group = props.groups[props.path];
 
-   const members = new Set(group.members || []);
+    const members = new Set(group.members || []);
 
     const me = (window.ship in props.contacts)
-        ?  props.contacts[window.ship]
-        :  (window.ship in props.defaultContacts)
-        ?  props.defaultContacts[window.ship]
+      ? props.contacts[window.ship]
+      : (window.ship in props.defaultContacts)
+        ? props.defaultContacts[window.ship]
         : { color: '0x0', nickname: null, avatar: null };
 
     const shareSheet =
       !(window.ship in props.contacts) ?
-      ( <ShareSheet
+        (<ShareSheet
           ship={window.ship}
           nickname={me.nickname}
           avatar={me.avatar}
@@ -75,57 +75,57 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
           path={props.path}
           selected={props.path + '/' + window.ship === props.selectedContact}
         />
-      ) : (
-        <>
-          <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">You</h2>
-          <ContactItem
-            ship={window.ship}
-            nickname={me.nickname}
-            avatar={me.avatar}
-            color={me.color}
-            path={props.path}
-            selected={props.path + '/' + window.ship === props.selectedContact}
-          />
-        </>
-      );
+        ) : (
+          <>
+            <h2 className="f9 pt4 pr4 pb2 pl4 gray2 c-default">You</h2>
+            <ContactItem
+              ship={window.ship}
+              nickname={me.nickname}
+              avatar={me.avatar}
+              color={me.color}
+              path={props.path}
+              selected={props.path + '/' + window.ship === props.selectedContact}
+            />
+          </>
+        );
     members.delete(window.ship);
 
     const contactItems =
       Object.keys(props.contacts)
-      .filter(c => c !== window.ship)
-      .map((contact) => {
-        members.delete(contact);
-        const path = props.path + '/' + contact;
-        const obj = props.contacts[contact];
-        return (
-          <ContactItem
-            key={contact}
-            ship={contact}
-            nickname={obj.nickname}
-            color={obj.color}
-            avatar={obj.avatar}
-            path={props.path}
-            selected={path === props.selectedContact}
-            share={false}
-          />
-        );
-      });
+        .filter(c => c !== window.ship)
+        .map((contact) => {
+          members.delete(contact);
+          const path = props.path + '/' + contact;
+          const obj = props.contacts[contact];
+          return (
+            <ContactItem
+              key={contact}
+              ship={contact}
+              nickname={obj.nickname}
+              color={obj.color}
+              avatar={obj.avatar}
+              path={props.path}
+              selected={path === props.selectedContact}
+              share={false}
+            />
+          );
+        });
 
     const role = roleForShip(group, window.ship);
 
-	  const resource = resourceFromPath(props.path);
+    const resource = resourceFromPath(props.path);
     const groupItems =
       Array.from(members).map((member) => {
         const memberRole = roleForShip(group, member);
         const adminOpt = (role === 'admin' && memberRole !== 'admin')
-              || (role === 'moderator' &&
-                  (memberRole !== 'admin' && memberRole !== 'moderator'))
+          || (role === 'moderator' &&
+            (memberRole !== 'admin' && memberRole !== 'moderator'))
           ? 'dib' : 'dn';
         return (
           <div
-          key={member}
-          className={'pl4 pt1 pb1 f9 flex justify-start content-center ' +
-            'bg-white bg-gray0-d relative'}
+            key={member}
+            className={'pl4 pt1 pb1 f9 flex justify-start content-center ' +
+              'bg-white bg-gray0-d relative'}
           >
             <Sigil
               ship={member}
@@ -160,8 +160,8 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
 
     return (
       <div ref={this.memberbox} className={'bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100 ' +
-      'flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative ' +
-      'overflow-hidden flex-shrink-0 ' + responsiveClasses}
+        'flex-basis-100-s flex-basis-30-ns mw5-m mw5-l mw5-xl relative ' +
+        'overflow-hidden flex-shrink-0 ' + responsiveClasses}
       >
         <div className="pt3 pb5 pl3 f8 db dn-m dn-l dn-xl">
           <Link to="/~groups/">{'⟵ All Groups'}</Link>
@@ -186,7 +186,7 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
             totalCount={contactItems.length + groupItems.length}
             itemHeight={44} // We happen to know this
             item={
-              (index) =>  index <= (contactItems.length - 1) // If the index is within the length of contact items,
+              (index) => index <= (contactItems.length - 1) // If the index is within the length of contact items,
                 ? contactItems[index] // show a contact item
                 : groupItems[index - contactItems.length] // Otherwise show a group item
             }
@@ -194,7 +194,7 @@ export class ContactSidebar extends Component<ContactSidebarProps, ContactSideba
 
         </div>
         <Spinner awaiting={this.state.awaiting} text="Removing from group..." classes="pa2 ba absolute right-1 bottom-1 b--gray1-d" />
-        </div>
+      </div>
     );
   }
 }

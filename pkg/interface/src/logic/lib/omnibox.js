@@ -68,7 +68,7 @@ const appIndex = function (apps) {
     });
   // add groups separately
   applications.push(
-    result('Groups', '/~groups', 'groups', null)
+    result('Groups', '/~groups', 'Groups', null)
   );
   return applications;
 };
@@ -103,6 +103,10 @@ export default function index(associations, apps) {
           app = 'groups';
         };
 
+        if (each['app-name'] === 'graph') {
+          app = each.metadata.module;
+        }
+
         const shipStart = each['app-path'].substr(each['app-path'].indexOf('~'));
 
         if (app === 'groups') {
@@ -116,7 +120,8 @@ export default function index(associations, apps) {
         } else {
           const obj = result(
             title,
-            `/~${each['app-name']}/join${each['app-path']}`,
+            `/~${each['app-name']}/join${each['app-path']}${
+              (each.metadata.module && '/' + each.metadata.module) || ''}`,
             app.charAt(0).toUpperCase() + app.slice(1),
             (associations?.contacts?.[each['group-path']]?.metadata?.title || null)
           );

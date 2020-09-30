@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Box, Input, Col } from "@tlon/indigo-react";
+import { Box, ManagedTextInputField as Input, Col } from "@tlon/indigo-react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import GlobalApi from "~/logic/api/global";

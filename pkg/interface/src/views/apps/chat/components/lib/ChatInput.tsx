@@ -33,7 +33,7 @@ interface ChatInputState {
 }
 
 
-export class ChatInput extends Component<ChatInputProps, ChatInputState> {
+export default class ChatInput extends Component<ChatInputProps, ChatInputState> {
   public s3Uploader: React.RefObject<S3Upload>;
   private chatEditor: React.RefObject<ChatEditor>;
 
@@ -160,6 +160,7 @@ export class ChatInput extends Component<ChatInputProps, ChatInputState> {
     if (!this.readyToUpload()) {
       return;
     }
+    if (!this.s3Uploader.current || !this.s3Uploader.current.inputRef.current) return;
     this.s3Uploader.current.inputRef.current.files = files;
     const fire = document.createEvent("HTMLEvents");
     fire.initEvent("change", true, true);

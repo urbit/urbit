@@ -26,42 +26,57 @@ export default class GraphApi extends BaseApi<StoreState> {
     return this.spider('graph-view-action', 'json', threadName, action);
   }
 
-  createManagedGraph(name: string, title: string, description: string, app: string, group: Path) {
+  private hookAction(ship: Patp, action: any): Promise<any> {
+    return this.action('graph-push-hook', 'graph-update', action);
+  }
+
+  createManagedGraph(
+    name: string,
+    title: string,
+    description: string,
+    group: Path,
+    mod: string
+  ) {
     const associated = { group: resourceFromPath(group) };
-
     const resource = makeResource(`~${window.ship}`, name);
+
     return this.viewAction('graph-create', {
       "create": {
         resource,
         title,
         description,
-        app,
-        associated
+        associated,
+        "module": mod
       }
     });
   }
 
-  createUnmanagedGraph(name: string, title: string, description: string, app: string, policy: Enc<GroupPolicy>) {
-
+  createUnmanagedGraph(
+    name: string,
+    title: string,
+    description: string,
+    policy: Enc<GroupPolicy>,
+    mod: string
+  ) {
     const resource = makeResource(`~${window.ship}`, name);
+
     return this.viewAction('graph-create', {
       "create": {
         resource,
         title,
         description,
-        app,
-        associated: { policy }
+        associated: { policy },
+        "module": mod
       }
     });
   }
 
-  joinGraph(ship: Patp, name: string, app: string) {
+  joinGraph(ship: Patp, name: string) {
     const resource = makeResource(ship, name);
     return this.viewAction('graph-join', {
       join: {
         resource,
         ship,
-        app
       }
     });
   }
@@ -75,33 +90,33 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  groupifyGraph(ship: Patp, name: string, app: string, toPath?: string) {
+  leaveGraph(ship: Patp, name: string) {
+    const resource = makeResource(ship, name);
+    return this.viewAction('graph-leave', {
+      "leave": {
+        resource
+      }
+    });
+  }
+
+  groupifyGraph(ship: Patp, name: string, toPath?: string) {
     const resource = makeResource(ship, name);
     const to = toPath && resourceFromPath(toPath);
 
     return this.viewAction('graph-groupify', {
       groupify: {
         resource,
-        app,
         to
       }
     });
   }
 
   addGraph(ship: Patp, name: string, graph: any, mark: any) {
-    this.storeAction({
+    return this.storeAction({
       'add-graph': {
         resource: { ship, name },
         graph,
         mark
-      }
-    });
-  }
-
-  removeGraph(ship: Patp, name: string) {
-    this.storeAction({
-      'remove-graph': {
-        resource: { ship, name }
       }
     });
   }
@@ -114,7 +129,7 @@ export default class GraphApi extends BaseApi<StoreState> {
       children: { empty: null }
     };
 
-    return this.storeAction({
+    return this.hookAction(ship, {
       'add-nodes': {
         resource,
         nodes
@@ -122,8 +137,8 @@ export default class GraphApi extends BaseApi<StoreState> {
     });
   }
 
-  addNodes(ship: Patp, name: string, nodes: NodeMap) {
-    return this.storeAction({
+  addNodes(ship: Patp, name: string, nodes: Object) {
+    this.hookAction(ship, {
       'add-nodes': {
         resource: { ship, name },
         nodes
@@ -132,7 +147,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   removeNodes(ship: Patp, name: string, indices: string[]) {
-    return this.storeAction({
+    return this.hookAction(ship, {
       'remove-nodes': {
         resource: { ship, name },
         indices
@@ -141,7 +156,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getKeys() {
-    this.scry<any>('graph-store', '/keys')
+    return this.scry<any>('graph-store', '/keys')
       .then((keys) => {
         this.store.handleEvent({
           data: keys
@@ -150,7 +165,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getTags() {
-    this.scry<any>('graph-store', '/tags')
+    return this.scry<any>('graph-store', '/tags')
       .then((tags) => {
         this.store.handleEvent({
           data: tags
@@ -159,7 +174,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getTagQueries() {
-    this.scry<any>('graph-store', '/tag-queries')
+    return this.scry<any>('graph-store', '/tag-queries')
       .then((tagQueries) => {
         this.store.handleEvent({
           data: tagQueries
@@ -168,7 +183,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getGraph(ship: string, resource: string) {
-    this.scry<any>('graph-store', `/graph/${ship}/${resource}`)
+    return this.scry<any>('graph-store', `/graph/${ship}/${resource}`)
       .then((graph) => {
         this.store.handleEvent({
           data: graph
@@ -177,7 +192,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getGraphSubset(ship: string, resource: string, start: string, end: string) {
-    this.scry<any>(
+    return this.scry<any>(
       'graph-store',
       `/graph-subset/${ship}/${resource}/${end}/${start}`
     ).then((subset) => {

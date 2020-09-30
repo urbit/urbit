@@ -151,26 +151,26 @@ export class InviteSearch extends Component<
           );
         });
 
-        for (const contact of state.contacts.keys()) {
-          const thisContact = state.contacts.get(contact) || [];
-          const match = thisContact.filter((e) => {
-            return e.toLowerCase().includes(searchTerm);
-          });
-          if (match.length > 0) {
-            if (!(contact in shipMatches)) {
-              shipMatches.push(contact);
-            }
+      for (const contact of state.contacts.keys()) {
+        const thisContact = state.contacts.get(contact) || [];
+        const match = thisContact.filter((e) => {
+          return e.toLowerCase().includes(searchTerm);
+        });
+        if (match.length > 0) {
+          if (!(contact in shipMatches) && props.shipResults) {
+            shipMatches.push(contact);
           }
         }
+      }
 
-        let isValid = true;
-        if (!urbitOb.isValidPatp('~' + searchTerm)) {
-          isValid = false;
-        }
+      let isValid = true;
+      if (!urbitOb.isValidPatp('~' + searchTerm)) {
+        isValid = false;
+      }
 
-        if (props.shipResults && isValid && shipMatches.findIndex((s) => s === searchTerm) < 0) {
-          shipMatches.unshift(searchTerm);
-        }
+      if (props.shipResults && isValid && shipMatches.findIndex((s) => s === searchTerm) < 0) {
+        shipMatches.unshift(searchTerm);
+      }
 
       const { selected } = state;
       const groupIdx = groupMatches.findIndex(([path]) => path === selected);

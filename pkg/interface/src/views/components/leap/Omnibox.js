@@ -58,7 +58,7 @@ export class Omnibox extends Component {
   control(evt) {
     if (evt.key === 'Escape') {
       if (this.state.query.length > 0) {
-        this.setState({ query: '', results: this.initialResults() });
+        this.setState({ query: '', results: this.initialResults(), selected: [] });
       } else if (this.props.show) {
         this.props.api.local.setOmnibox();
       }
@@ -78,8 +78,10 @@ export class Omnibox extends Component {
 
     if (evt.key === 'Enter') {
       evt.preventDefault();
-      if (this.state.selected !== []) {
+      if (this.state.selected.length > 0) {
         this.navigate(this.state.selected[0], this.state.selected[1]);
+      } else if (Array.from(this.state.results.values()).flat().length === 0) {
+        return;
       } else {
         this.navigate(
           Array.from(this.state.results.values()).flat()[0].app,
@@ -90,7 +92,7 @@ export class Omnibox extends Component {
 
   handleClickOutside(evt) {
     if (this.props.show && !this.omniBox.contains(evt.target)) {
-      this.setState({ results: this.initialResults(), query: '' }, () => {
+      this.setState({ results: this.initialResults(), query: '', selected: [] }, () => {
         this.props.api.local.setOmnibox();
       });
     }
@@ -115,7 +117,7 @@ export class Omnibox extends Component {
     const { props } = this;
     this.setState({ results: this.initialResults(), query: '' }, () => {
       props.api.local.setOmnibox();
-      if (defaultApps.includes(app.toLowerCase()) || app === 'profile') {
+      if (defaultApps.includes(app.toLowerCase()) || app === 'profile' || app === 'Links') {
         props.history.push(link);
       } else {
         window.location.href = link;
@@ -158,9 +160,9 @@ export class Omnibox extends Component {
       );
     });
 
-    const flattenedResultLinks = Array.from(results.values()).flat().map(result => result.link);
+    const flattenedResultLinks = Array.from(results.values()).flat().map(result => [result.app, result.link]);
     if (!flattenedResultLinks.includes(selected)) {
-      selected = flattenedResultLinks[0];
+      selected = flattenedResultLinks[0] || [];
     }
 
     this.setState({ results, selected });
@@ -177,18 +179,15 @@ export class Omnibox extends Component {
         })
       );
       if (currentIndex > 0) {
-        const nextApp = flattenedResults[currentIndex - 1].app;
-        const nextLink = flattenedResults[currentIndex - 1].link;
-        this.setState({ selected: [nextApp, nextLink] });
+        const { app, link } = flattenedResults[currentIndex - 1];
+        this.setState({ selected: [app, link] });
       } else {
-        const nextApp = flattenedResults[totalLength - 1].app;
-        const nextLink = flattenedResults[totalLength - 1].link;
-        this.setState({ selected: [nextApp, nextLink] });
+        const { app, link } = flattenedResults[totalLength - 1];
+        this.setState({ selected: [app, link] });
       }
     } else {
-      const nextApp = flattenedResults[totalLength - 1].app;
-      const nextLink = flattenedResults[totalLength - 1].link;
-      this.setState({ selected: [nextApp, nextLink] });
+      const { app, link } = flattenedResults[totalLength - 1];
+      this.setState({ selected: [app, link] });
     }
   }
 
@@ -202,18 +201,15 @@ export class Omnibox extends Component {
         })
       );
       if (currentIndex < flattenedResults.length - 1) {
-      const nextApp = flattenedResults[currentIndex + 1].app;
-      const nextLink = flattenedResults[currentIndex + 1].link;
-      this.setState({ selected: [nextApp, nextLink] });
+        const { app, link } = flattenedResults[currentIndex + 1];
+        this.setState({ selected: [app, link] });
       } else {
-      const nextApp = flattenedResults[0].app;
-      const nextLink = flattenedResults[0].link;
-      this.setState({ selected: [nextApp, nextLink] });
+        const { app, link } = flattenedResults[0];
+        this.setState({ selected: [app, link] });
       }
     } else {
-      const nextApp = flattenedResults[0].app;
-      const nextLink = flattenedResults[0].link;
-      this.setState({ selected: [nextApp, nextLink] });
+      const { app, link } = flattenedResults[0];
+      this.setState({ selected: [app, link] });
     }
   }
 

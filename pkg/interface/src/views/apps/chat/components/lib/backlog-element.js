@@ -5,7 +5,7 @@ export const BacklogElement = (props) => {
     return null;
   }
   return (
-    <div className="center mw6">
+    <div className="center mw6 absolute z-9999" style={{ left: 0, right: 0, top: 48}}>
       <div className={
              "db pa3 ma3 ba b--gray4 bg-gray5 b--gray2-d bg-gray1-d " +
              "white-d flex items-center"

@@ -78,7 +78,7 @@ export class Subscribers extends Component<SubscribersProps> {
     const role = roleForShip(group, window.ship)
 
     return (
-      <Box>
+      <Box mt="3">
         { role === 'admin' && (
           <Button mb={3} border onClick={this.addAll}>
             Add all members as writers

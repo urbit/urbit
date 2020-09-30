@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Spinner } from '../../../components/Spinner';
 import urbitOb from 'urbit-ob';
-import { Box, Text, Input, Button } from '@tlon/indigo-react';
+import { Box, Text, ManagedTextInputField as Input, Button } from '@tlon/indigo-react';
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup';
 
@@ -41,13 +41,22 @@ export class JoinScreen extends Component {
     this.setState({ awaiting: true }, () => {
       const station = values.station.trim();
       if (`/${station}` in props.chatSynced) {
-        props.history.push(`/~chat/room${station}`);
+        if (props.station) {
+          props.history.replace(`/~chat/room${station}`);
+        } else {
+          props.history.push(`/~chat/room${station}`);
+        }
         return;
       }
       const ship = station.substr(1).slice(0,station.substr(1).indexOf('/'));
 
-      props.api.chat.join(ship, station, true);
-      props.history.push(`/~chat/room${station}`);
+      props.api.chat.join(ship, station, true).then(() => {
+        if (props.station) {
+          props.history.replace(`/~chat/room${station}`);
+        } else {
+          props.history.push(`/~chat/room${station}`);
+        }
+      });
     });
   }
 

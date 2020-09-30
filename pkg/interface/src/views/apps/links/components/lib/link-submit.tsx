@@ -7,10 +7,14 @@ import { Icon } from "@tlon/indigo-react";
 import GlobalApi from '~/logic/api/global';
 import { S3State } from '~/types';
 
+import { createPost } from '~/logic/api/graph';
+
+
 interface LinkSubmitProps {
   api: GlobalApi;
-  resourcePath: string;
   s3: S3State;
+  name: string;
+  ship: string;
 }
 
 interface LinkSubmitState {
@@ -51,8 +55,19 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
     const title = this.state.linkTitle
       ? this.state.linkTitle
       : this.state.linkValue;
-      this.setState({ disabled: true });
-    this.props.api.links.postLink(this.props.resourcePath, link, title).then((r) => {
+    this.setState({ disabled: true });
+
+    const parentIndex = this.props.parentIndex || '';
+    let post = createPost([
+      { text: title },
+      { url: link }
+    ], parentIndex);
+
+    this.props.api.graph.addPost(
+      `~${this.props.ship}`,
+      this.props.name,
+      post
+    ).then((r) => {
       this.setState({
         disabled: false,
         linkValue: '',
@@ -83,11 +98,11 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
         fetch(`https://noembed.com/embed?url=${linkValue}`)
         .then(response => response.json())
         .then((result) => {
-          if (result.title) {
+          if (result.title && !this.state.linkTitle) {
             this.setState({ linkTitle: result.title });
           }
         }).catch((error) => {/*noop*/});
-      } else {
+      } else if (!this.state.linkTitle) {
         this.setState({
           linkTitle: decodeURIComponent(linkValue
             .split('/')
@@ -168,25 +183,55 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
       ? 'b--black b--white-d'
       : 'b--gray4 b--gray2-d';
 
+    const isS3Ready =
+      ( this.props.s3.credentials.secretAccessKey &&
+        this.props.s3.credentials.endpoint &&
+        this.props.s3.credentials.accessKeyId
+      );
+
     return (
       <div
         className={`relative ba br1 w-100 mb6 ${focus}`}
         onDragEnter={this.onDragEnter.bind(this)}
-        onDragOver={e => {e.preventDefault();this.setState({ dragover: true})}}
+        onDragOver={e => {
+          e.preventDefault();
+          if (isS3Ready) {
+            this.setState({ dragover: true})
+          }
+        }}
         onDragLeave={() => this.setState({ dragover: false })}
         onDrop={this.onDrop}
       >
         {this.state.dragover ? <SubmitDragger /> : null}
         <div className="relative">
-          {(this.state.linkValue || this.state.urlFocus || this.state.disabled) ? null : <span className="gray2 absolute pl2 pt3 pb2 f8" style={{pointerEvents: 'none'}}>
-            Drop or <span className="pointer green2" style={{pointerEvents: 'all'}} onClick={(event) => {
-              if (!this.readyToUpload()) {
-                return;
-              }
-               this.s3Uploader.current.inputRef.current.click();
-            }}>upload</span> a file, or paste a link here
-          </span>}
-          {!this.state.disabled ? <S3Upload
+          {
+            ( this.state.linkValue ||
+              this.state.urlFocus ||
+              this.state.disabled
+            ) ? null : (
+              isS3Ready ? (
+                <span className="gray2 absolute pl2 pt3 pb2 f8"
+                      style={{pointerEvents: 'none'}}>
+                  Drop or
+                  <span className="pointer green2"
+                        style={{pointerEvents: 'all'}}
+                        onClick={(event) => {
+                          if (!this.readyToUpload()) {
+                            return;
+                          }
+                           this.s3Uploader.current.inputRef.current.click();
+                        }}> upload </span>
+                  a file, or paste a link here
+                </span>
+              ) : (
+                <span className="gray2 absolute pl2 pt3 pb2 f8"
+                      style={{pointerEvents: 'none'}}>
+                  Paste a link here
+                </span>
+              )
+            )
+          }
+          {!this.state.disabled && isS3Ready ? <S3Upload
             ref={this.s3Uploader}
             configuration={this.props.s3.configuration}
             credentials={this.props.s3.credentials}
@@ -213,7 +258,7 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
         </div>
           <input
             type="text"
-            className="pl2 bg-transparent w-100 f8 white-d"
+            className="pl2 bg-transparent w-100 f8 white-d linkTitle"
             style={{
               resize: 'none',
               height: 40
@@ -245,8 +290,8 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
             Post link
           </button> : null}
           <Spinner awaiting={this.state.disabled} classes="nowrap flex items-center pr2 pl2 pt2 pb4" style={{flex: '1 1 14rem'}} text="Posting to collection..." />
-        
-        
+
+
       </div>
     ) ;
   }
