@@ -2,6 +2,6 @@
 :-  %say
 |=  [[now=@da eny=@uvJ bec=beak] [zpub=tape ~] ~]
 :-  %noun
-=/  bs=[(list @ux) (list @ux)]
+=/  pp=(unit parsed-xpub:btca)
   (parse-zpub:btca zpub)
-bs
+pp
