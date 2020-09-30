@@ -1,6 +1,14 @@
 import React, { useState, useMemo, SyntheticEvent, ChangeEvent } from "react";
-import { Col, Box, Row, Text, Icon, Center, Button } from "@tlon/indigo-react";
-import styled from "styled-components";
+import {
+  Col,
+  Box,
+  Row,
+  Text,
+  Icon,
+  Center,
+  Button,
+  Action,
+} from "@tlon/indigo-react";
 import _ from "lodash";
 import { Contact, Contacts } from "~/types/contact-update";
 import { Sigil } from "~/logic/lib/sigil";
@@ -21,10 +29,6 @@ const searchParticipant = (search: string) => (p: Participant) => {
   const s = search.toLowerCase();
   return p.patp.includes(s) || p.nickname.toLowerCase().includes(search);
 };
-
-const UnmanagedInput = styled.input`
-  width: 100%;
-`;
 
 const emptyContact = (patp: string, pending: boolean): Participant => ({
   nickname: "",
@@ -113,6 +117,7 @@ export function Participants(props: {
         top="0px"
         mb={2}
         px={2}
+        zIndex={1}
       >
         <Row>
           <Tab
@@ -136,7 +141,6 @@ export function Participants(props: {
             label={`${adminCount} Admin${adminCount > 1 ? "s" : ""}`}
           />
         </Row>
-        <UnmanagedInput value={search} onChange={setSearch} />
       </Row>
       <Box
         display="grid"
@@ -190,7 +194,11 @@ function Participant(props: {
           {cite(contact.patp)}
         </Text>
       </Col>
-      <Box display="flex" gridColumn={["1 / 3", "auto"]} alignItems="center">
+      <Row
+        width="100%"
+        justifyContent="space-between"
+        gridColumn={["1 / 3", "auto"]}
+        alignItems="center">
         <Col>
           <Text mb={1} color="lightGray">
             Role
@@ -201,22 +209,22 @@ function Participant(props: {
           alignX="right"
           alignY="top"
           options={
-            <>
-              <Button onClick={sendMessage}>
+            <Col gapY={1} p={2}>
+              <Action onClick={sendMessage}>
                 <Text color="green">Send Message</Text>
-              </Button>
+              </Action>
               {isInvite && (
-                <Button onClick={() => {}}>
+                <Action onClick={() => {}}>
                   <Text color="red">Ban from {title}</Text>
-                </Button>
+                </Action>
               )}
-              <Button onSelect={() => {}}>Promote to Admin</Button>
-            </>
+              <Action onSelect={() => {}}>Promote to Admin</Action>
+            </Col>
           }
         >
           <Icon mr={2} icon="Ellipsis" />
         </Dropdown>
-      </Box>
+      </Row>
       <Box
         borderBottom={1}
         borderBottomColor="washedGray"

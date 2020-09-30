@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Box, Text, Col } from "@tlon/indigo-react";
 import { Link } from "react-router-dom";
-import SidebarInvite from "~/views/components/SidebarInvite";
+import SidebarInvite from "~/views/components/Sidebar/SidebarInvite";
 import { Welcome } from "./Welcome";
 import { GroupItem } from "./GroupItem";
 import { alphabetiseAssociations } from "~/logic/lib/util";

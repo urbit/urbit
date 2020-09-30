@@ -15,7 +15,7 @@ const chatSubscriptions: AppSubscription[] = [
 ];
 
 const publishSubscriptions: AppSubscription[] = [
-//  ['/primary', 'publish'],
+  ['/primary', 'publish'],
 ];
 
 const linkSubscriptions: AppSubscription[] = [

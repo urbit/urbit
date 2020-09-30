@@ -20,7 +20,6 @@ export function NotebookPosts(props: NotebookPostsProps) {
       {props.list.map((noteId: NoteId) => {
         const note = props.notes[noteId];
         if (!note) {
-          console.log(noteId);
           return null;
         }
         return (

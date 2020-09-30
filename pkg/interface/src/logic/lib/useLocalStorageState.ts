@@ -27,9 +27,9 @@ export function useLocalStorageState<T>(key: string, initial: T) {
     (s: SetState<T>) => {
       const updated = typeof s === "function" ? s(state) : s;
       _setState(updated);
-      localStorage.setItem(key, JSON.stringify(s));
+      localStorage.setItem(key, JSON.stringify(updated));
     },
-    [_setState]
+    [_setState, key, state]
   );
 
   return [state, setState] as const;
