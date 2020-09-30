@@ -1,9 +1,10 @@
 |%
++$  pubkey       (list @ux)
++$  chaincode    (list @ux)
++$  parsed-xpub  [cc=chaincode pubk=pubkey]
++$  il-ir        [il=(list @ux) ir=(list @ux)]
 ::  b[ytes]rip: 0x6261 -> ~[98 97]
 ::
-+$  pubkey     (list @ux)
-+$  chaincode  (list @ux)
-+$  parsed-xpub  [cc=chaincode pubk=pubkey]
 ++  big-endian-brip
   |=  a=@ux
   ^-  (list @ux)
@@ -40,6 +41,27 @@
   ~
 ::
 ++  compute-i
-  |=  pp=parsed-xpub
-  %.y
+  |=  [=parsed-xpub index=@ud]
+  ^-  il-ir
+  ~|  'Public key cannot use a hardened index'
+  ?>  (lth index (bex 31))
+  ::  "append" index to pubkey as 4 bytes
+  =/  data=@
+    %+  add
+      (lsh 3 4 (big-endian-brap pubk.parsed-xpub))
+    index
+  =/  chaincode=@
+    (big-endian-brap cc.parsed-xpub)
+  =/  i=(list @ux)
+    (big-endian-brip (hmac-sha512:hmac:crypto chaincode data))
+  =/  il=(list @ux)  (swag [0 32] i)
+  =/  ir=(list @ux)  (swag [32 32] i)
+  [il ir]
+++  child-from-xpub
+  |=  [xpub=tape index=@ud]
+  =/  is=(unit il-ir)
+    %+  bind
+      (parse-xpub xpub)
+    |=(px=parsed-xpub (compute-i px index))
+  is
 --
