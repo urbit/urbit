@@ -159,35 +159,37 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
       >
         {this.state.dragover ? <SubmitDragger /> : null}
         <ChatHeader {...props} />
-        <ChatWindow
-          isChatMissing={isChatMissing}
-          isChatLoading={isChatLoading}
-          isChatUnsynced={isChatUnsynced}
-          unreadCount={unreadCount}
-          unreadMsg={unreadMsg}
-          stationPendingMessages={pendingMessages}
-          ship={props.match.params.ship}
-          {...props} />
-        <ChatInput
-          ref={this.chatInput}
-          api={props.api}
-          numMsgs={lastMsgNum}
-          station={props.station}
-          owner={deSig(props.match.params.ship || "")}
-          ownerContact={ownerContact}
-          envelopes={props.envelopes}
-          contacts={props.contacts}
-          onUnmount={(msg: string) => this.setState({
-            messages: this.state.messages.set(props.station, msg)
-          })}
-          s3={props.s3}
-          placeholder="Message..."
-          message={this.state.messages.get(props.station) || ""}
-          deleteMessage={() => this.setState({
-            messages: this.state.messages.set(props.station, "")
-          })}
-          hideAvatars={props.hideAvatars}
-        />
+        <div className="h-100 w-100 overflow-hidden flex flex-column relative">
+          <ChatWindow
+            isChatMissing={isChatMissing}
+            isChatLoading={isChatLoading}
+            isChatUnsynced={isChatUnsynced}
+            unreadCount={unreadCount}
+            unreadMsg={unreadMsg}
+            stationPendingMessages={pendingMessages}
+            ship={props.match.params.ship}
+            {...props} />
+          <ChatInput
+            ref={this.chatInput}
+            api={props.api}
+            numMsgs={lastMsgNum}
+            station={props.station}
+            owner={deSig(props.match.params.ship || "")}
+            ownerContact={ownerContact}
+            envelopes={props.envelopes}
+            contacts={props.contacts}
+            onUnmount={(msg: string) => this.setState({
+              messages: this.state.messages.set(props.station, msg)
+            })}
+            s3={props.s3}
+            placeholder="Message..."
+            message={this.state.messages.get(props.station) || ""}
+            deleteMessage={() => this.setState({
+              messages: this.state.messages.set(props.station, "")
+            })}
+            hideAvatars={props.hideAvatars}
+          />
+        </div>
       </div>
     );
   }

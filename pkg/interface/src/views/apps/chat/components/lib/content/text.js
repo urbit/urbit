@@ -64,7 +64,7 @@ export default class TextContent extends Component {
       && (group[0] === content.text))) { // entire message is room name?
       return (
         <Link
-          className="bb b--black b--white-d f7 mono lh-copy v-top"
+          className="bb b--black b--white-d f9 mono lh-copy v-top"
           to={'/~groups/join/' + group.input}>
           {content.text}
         </Link>

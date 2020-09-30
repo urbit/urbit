@@ -247,7 +247,7 @@ export const MessageContent = ({ content, remoteContentPolicy, measure }) => {
     );
   } else if ('me' in content) {
     return (
-      <p className='f7 i lh-copy v-top'>
+      <p className='f9 i lh-copy v-top'>
         {content.me}
       </p>
     );
