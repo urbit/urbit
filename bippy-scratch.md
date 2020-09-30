@@ -12,13 +12,12 @@ Converts a base58 zpub to hex
 ```
 =btca -build-file %/lib/btc-address/hoon
 =bip32 -build-file %/lib/bip32/hoon
-=xpub2 "xpub6DnWFmBQfQm1wxvKkCJjXwE6H4v8FTwUuhjDQ9ZpJnFDfhA8Dwmg71yPKyjUE93D2CB6MdnWNvGmwsb3fpd4oRJ2YcyMZoMpLU3BjpmQAny"
+=xpub "xpub6DnWFmBQfQm1wxvKkCJjXwE6H4v8FTwUuhjDQ9ZpJnFDfhA8Dwmg71yPKyjUE93D2CB6MdnWNvGmwsb3fpd4oRJ2YcyMZoMpLU3BjpmQAny"
 ```
 
 **Test child public key from xpub**
 ```
-`@ux`(child-from-xpub:btca xpub2 0)
-`@ux`(child-from-xpub:btca xpub 1)
+`@ux`(child-from-xpub:btca xpub 0)
 (child-from-xpub:btca xpub (dec (bex 31)))
 
 ::  should error as index is too high (hardened key range)
@@ -27,7 +26,7 @@ Converts a base58 zpub to hex
 
 **Same, with Jose's bip32 library**
 ```
-`@ux`(compress-point:secp256k1:secp:crypto pub:(derive-public:(from-extended:bip32 xpub2) 0))
+`@ux`(compress-point:secp256k1:secp:crypto pub:(derive-public:(from-extended:bip32 xpub) 0))
 ```
 
 **Test xpub parsing**
@@ -37,7 +36,7 @@ Converts a base58 zpub to hex
 
 **Test addition and ECC point checking**
 ```
-=px (parse-xpub:btca xpub2)
+=px (parse-xpub:btca xpub)
 =pubk ?~  px  ~  pubk.u.px
 (is-point:btca pubk)
 (pubkey-to-point:btca pubk)
