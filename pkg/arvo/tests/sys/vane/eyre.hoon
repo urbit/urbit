@@ -1110,7 +1110,7 @@
             card.i.moves
         ::
           %+  expect-eq
-            !>  put-200-response
+            !>  put-204-response
             !>  i.t.moves
         ::
           %+  expect-eq
@@ -1210,7 +1210,7 @@
             card.i.moves
         ::
           %+  expect-eq
-            !>  put-200-response
+            !>  put-204-response
             !>  i.t.moves
         ::
           %+  expect-eq
@@ -1313,7 +1313,7 @@
             card.i.moves
         ::
           %+  expect-eq
-            !>  put-200-response
+            !>  put-204-response
             !>  i.t.moves
         ::
           %+  expect-eq
@@ -1463,7 +1463,7 @@
             card.i.moves
         ::
           %+  expect-eq
-            !>  put-200-response
+            !>  put-204-response
             !>  i.t.moves
     ==  ==
   ::  gall responds on the second subscription.
@@ -1682,7 +1682,7 @@
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         %+  expect-eq
-          !>  put-200-response
+          !>  put-204-response
           !>  i.moves
     ==
   ::  the client connection is detected to be broken
@@ -2206,7 +2206,7 @@
             card.i.t.moves
         ::
           %+  expect-eq
-            !>  put-200-response
+            !>  put-204-response
             !>  i.t.t.moves
         ::
           %+  expect-eq
@@ -2243,14 +2243,14 @@
   ?~  data  headers
   %+  weld  headers
   ['content-length' (crip ((d-co:co 1) p.u.data))]~
-::  produce the 200 response to a put request
+::  produce the 204 response to a put request
 ::
-++  put-200-response
+++  put-204-response
   :*  ~[/http-put-request]
       %give
       %response
       %start
-      [200 ['set-cookie' cookie-string]~]
+      [204 ['set-cookie' cookie-string]~]
       ~
       %.y
   ==
