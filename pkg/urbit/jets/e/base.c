@@ -111,29 +111,29 @@ _of_hex_even(u3_atom inp, c3_w len_w, c3_y* buf_y)
 u3_noun
 u3qe_de_base16(u3_atom inp)
 {
-  c3_w  len_w = u3r_met(4, inp);
-  c3_y* buf_y = u3a_malloc(len_w);
-  c3_o  ret_o;
+  c3_w     len_w = u3r_met(4, inp);
+  u3i_slab sab_u;
 
+  u3i_slab_bare(&sab_u, 3, len_w);
+  sab_u.buf_w[sab_u.len_w - 1] = 0;
+
+  //  even byte-length input can be parsed in aligned, 16-bit increments,
+  //  but odd byte-length input cannot, and is expressed more simply in bytes.
+  //
   {
     c3_w byt_w = u3r_met(3, inp);
+    c3_o ret_o = ( byt_w & 1 )
+               ? _of_hex_odd(inp, len_w, byt_w, sab_u.buf_y)
+               : _of_hex_even(inp, len_w, sab_u.buf_y);
 
-    if ( byt_w & 1 ) {
-      ret_o = _of_hex_odd(inp, len_w, byt_w, buf_y);
+    if ( c3n == ret_o ) {
+      u3i_slab_free(&sab_u);
+      return u3_nul;
     }
     else {
-      ret_o = _of_hex_even(inp, len_w, buf_y);
+      u3_noun dat = u3i_slab_mint_bytes(&sab_u);
+      return u3nt(u3_nul, u3i_word(len_w), dat);
     }
-  }
-
-  if ( c3n == ret_o ) {
-    u3a_free(buf_y);
-    return u3_nul;
-  }
-  else {
-    u3_noun dat = u3i_bytes(len_w, buf_y);
-    u3a_free(buf_y);
-    return u3nt(u3_nul, u3i_words(1, &len_w), dat);
   }
 }
 
