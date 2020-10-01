@@ -1,11 +1,11 @@
 /* i/n/serial.h
 **
 */
-    /*  forward declarations
+    /*  opaque handles
     */
-      /* ur_dict32_s: off-loom 32-bit dictionary.
+      /* u3_cue_xeno: handle for cue-ing with an off-loom dictionary.
       */
-        struct ur_dict32_s;
+        typedef struct _u3_cue_xeno u3_cue_xeno;
 
     /*  Noun serialization. All noun arguments RETAINED.
     */
@@ -15,8 +15,8 @@
       **   returns atom-suitable words, and *bit_w will have
       **   the length (in bits). return should be freed with u3a_wfree().
       */
-        c3_w*
-        u3s_jam_fib(u3_noun a, c3_w* bit_w);
+        c3_w
+        u3s_jam_fib(u3i_slab* sab_u, u3_noun a);
 
       /* u3s_jam_xeno(): jam with off-loom buffer (re-)allocation.
       */
@@ -28,18 +28,33 @@
         u3_noun
         u3s_cue(u3_atom a);
 
-      /* u3s_cue_xeno_unsafe(): cue onto the loom, all bookkeeping off-loom.
+      /* u3s_cue_xeno_init_with(): initialize a cue_xeno handle as specified.
       */
-        c3_o
-        u3s_cue_xeno_unsafe(struct ur_dict32_s* dic_u,
-                            c3_d         len_d,
-                            const c3_y*  byt_y,
-                            u3_noun*       out);
+        u3_cue_xeno*
+        u3s_cue_xeno_init_with(c3_d pre_d, c3_d siz_d);
 
-      /* u3s_cue_xeno(): cue onto the loom, bookkeeping off the loom.
+      /* u3s_cue_xeno_init(): initialize a cue_xeno handle.
       */
-        c3_o
-        u3s_cue_xeno(c3_d len_d, const c3_y* byt_y, u3_noun* out);
+        u3_cue_xeno*
+        u3s_cue_xeno_init(void);
+
+      /* u3s_cue_xeno_init(): cue on-loom, with off-loom dictionary in handle.
+      */
+        u3_weak
+        u3s_cue_xeno_with(u3_cue_xeno* sil_u,
+                          c3_d         len_d,
+                          const c3_y*  byt_y);
+
+      /* u3s_cue_xeno_init(): dispose cue_xeno handle.
+      */
+        void
+        u3s_cue_xeno_done(u3_cue_xeno* sil_u);
+
+      /* u3s_cue_xeno(): cue on-loom, with off-loom dictionary.
+      */
+        u3_weak
+        u3s_cue_xeno(c3_d        len_d,
+                     const c3_y* byt_y);
 
       /* u3s_cue_bytes(): cue bytes onto the loom.
       */
