@@ -63,6 +63,7 @@ export function MarkdownEditor(
       {...boxProps}
     >
       <CodeEditor
+        autoCursor={false}
         onBlur={onBlur}
         value={value}
         options={options}
