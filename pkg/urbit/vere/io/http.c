@@ -801,42 +801,118 @@ typedef struct _h2o_uv_sock {         //  see private st_h2o_uv_socket_t
   uv_stream_t*     han_u;             //  client stream handler (u3_hcon)
 } h2o_uv_sock;
 
+/* _http_req_prepare(): creates u3 req from h2o req and initializes its timer
+*/
+static u3_hreq*
+_http_req_prepare(h2o_req_t* rec_u,
+                  u3_hreq* (*new_f)(u3_hcon*, h2o_req_t*))
+{
+  h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
+                         callbacks->get_socket(rec_u->conn);
+  u3_hcon* hon_u = (u3_hcon*)suv_u->han_u;
+
+  //  sanity check
+  c3_assert( hon_u->sok_u == &suv_u->sok_u );
+
+  u3_hreq* seq_u = new_f(hon_u, rec_u);
+
+  seq_u->tim_u = c3_malloc(sizeof(*seq_u->tim_u));
+  seq_u->tim_u->data = seq_u;
+  uv_timer_init(u3L, seq_u->tim_u);
+  uv_timer_start(seq_u->tim_u, _http_req_timer_cb, 600 * 1000, 0);
+
+  return seq_u;
+}
+
+static void
+_http_seq_continue(void* vod_p, u3_noun nun)
+{
+  h2o_req_t* rec_u = vod_p;
+  u3_weak    aut   = u3r_at(7, nun);
+
+  //  if the request is authenticated properly, send slogstream/sse headers
+  //
+  if ( c3y == aut ) {
+    u3_hreq* req_u = _http_req_prepare(rec_u, _http_seq_new);
+    u3_noun  hed   = u3nl(u3nc(u3i_string("Content-Type"),
+                               u3i_string("text/event-stream")),
+                          u3nc(u3i_string("Cache-Control"),
+                               u3i_string("no-cache")),
+                          u3nc(u3i_string("Connection"),
+                               u3i_string("keep-alive")),
+                          u3_none);
+
+    _http_start_respond(req_u, 200, hed, u3_nul, c3n);
+  }
+  //  if the scry failed, the result is unexpected, or there is no auth,
+  //  respond with the appropriate status code
+  //
+  else {
+    //NOTE  we use req_new because we don't want to consider this a slog stream
+    //      request, but this means we need to manuualy skip past the "in event
+    //      queue" state on the hreq.
+    u3_hreq* req_u = _http_req_prepare(rec_u, _http_req_new);
+    req_u->sat_e = u3_rsat_plan;
+
+    if ( c3n == aut ) {
+      _http_start_respond(req_u, 403, u3_nul, u3_nul, c3y);
+    }
+    else if ( u3_none == aut ) {
+      u3l_log("http: authentication scry failed\n");
+      _http_start_respond(req_u, 500, u3_nul, u3_nul, c3y);
+    }
+    else {
+      u3m_p("http: weird authentication scry result", aut);
+      _http_start_respond(req_u, 500, u3_nul, u3_nul, c3y);
+    }
+  }
+
+  u3z(nun);
+}
+
 /* _http_seq_accept(): handle incoming http request on slogstream endpoint
 */
 static int
 _http_seq_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
 {
-  //  store the request in state
+  //  try to find a cookie header
   //
-  u3_hreq* seq_u;
+  u3_weak coo = u3_none;
   {
+    u3_noun hed = _http_heds_to_noun(rec_u->headers.entries,
+                                     rec_u->headers.size);
+    u3_noun deh = hed;
+    while ( u3_nul != deh ) {
+      if ( c3y == u3r_sing_c("cookie", u3h(u3h(deh))) ) {
+        coo = u3k(u3t(u3h(deh)));
+        //TODO  http2 allows the client to put multiple 'cookie' headers
+        break;
+      }
+      deh = u3t(deh);
+    }
+    u3z(hed);
+  }
+
+  //  if there is no cookie header, it can't possibly be authenticated
+  //
+  if ( u3_none == coo ) {
+    u3_hreq* req_u = _http_req_prepare(rec_u, _http_req_new);
+    req_u->sat_e = u3_rsat_plan;
+    _http_start_respond(req_u, 403, u3_nul, u3_nul, c3y);
+  }
+  //  if there is a cookie, scry to see if it constitutes authentication
+  //
+  else {
     h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
                            callbacks->get_socket(rec_u->conn);
     u3_hcon* hon_u = (u3_hcon*)suv_u->han_u;
 
-    // sanity check
-    c3_assert( hon_u->sok_u == &suv_u->sok_u );
-
-    seq_u = _http_seq_new(hon_u, rec_u);
-
-    seq_u->tim_u = c3_malloc(sizeof(*seq_u->tim_u));
-    seq_u->tim_u->data = seq_u;
-    uv_timer_init(u3L, seq_u->tim_u);
-    uv_timer_start(seq_u->tim_u, _http_req_timer_cb, 600 * 1000, 0);
-  }
-
-  //  send the initial response
-  //
-  {
-    u3_noun hed = u3nl(u3nc(u3i_string("Content-Type"),
-                            u3i_string("text/event-stream")),
-                       u3nc(u3i_string("Cache-Control"),
-                            u3i_string("no-cache")),
-                       u3nc(u3i_string("Connection"),
-                            u3i_string("keep-alive")),
-                       u3_none);
-
-    _http_start_respond(seq_u, 200, hed, u3_nul, c3n);
+    u3_noun pax = u3nq(u3i_string("authenticated"),
+                       u3i_string("cookie"),
+                       u3dc("scot", 't', coo),
+                       u3_nul);
+    u3_pier_peek_last(hon_u->htp_u->htd_u->car_u.pir_u, u3_nul, c3__ex,
+                      u3_nul, pax, rec_u, _http_seq_continue);
   }
 
   return 0;
@@ -858,20 +934,7 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     h2o_send_error_generic(rec_u, 400, msg_c, msg_c, 0);
   }
   else {
-    h2o_uv_sock* suv_u = (h2o_uv_sock*)rec_u->conn->
-                           callbacks->get_socket(rec_u->conn);
-    u3_hcon* hon_u = (u3_hcon*)suv_u->han_u;
-
-    // sanity check
-    c3_assert( hon_u->sok_u == &suv_u->sok_u );
-
-    u3_hreq* req_u = _http_req_new(hon_u, rec_u);
-
-    req_u->tim_u = c3_malloc(sizeof(*req_u->tim_u));
-    req_u->tim_u->data = req_u;
-    uv_timer_init(u3L, req_u->tim_u);
-    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 600 * 1000, 0);
-
+    u3_hreq* req_u = _http_req_prepare(rec_u, _http_req_new);
     _http_req_dispatch(req_u, req);
   }
 
