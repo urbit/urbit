@@ -996,7 +996,7 @@
                 %give
                 %response
                 %start
-                :-  204
+                :-  200
                 :~  ['content-type' 'text/event-stream']
                     ['cache-control' 'no-cache']
                     ['connection' 'keep-alive']
