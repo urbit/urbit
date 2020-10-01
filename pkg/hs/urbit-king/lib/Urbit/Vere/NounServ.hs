@@ -44,7 +44,7 @@ data Server i o a = Server
 
 --------------------------------------------------------------------------------
 
-withRIOThread ∷ RIO e a → RIO e (Async a)
+withRIOThread :: RIO e a -> RIO e (Async a)
 withRIOThread act = do
     env <- ask
     io $ async $ runRIO env $ act
@@ -87,7 +87,7 @@ wsConn pre inp out wsc = do
 
 --------------------------------------------------------------------------------
 
-wsClient :: ∀i o e. (ToNoun o, FromNoun i, Show o, Show i, HasLogFunc e)
+wsClient :: forall i o e. (ToNoun o, FromNoun i, Show o, Show i, HasLogFunc e)
          => Text -> W.Port -> RIO e (Client i o)
 wsClient pax por = do
     env <- ask
@@ -118,7 +118,7 @@ wsServApp cb pen = do
     atomically $ cb (mkConn inp out)
     wsConn "NOUNSERV (wsServ) " inp out wsc
 
-wsServer :: ∀i o e. (ToNoun o, FromNoun i, Show i, Show o, HasLogFunc e)
+wsServer :: forall i o e. (ToNoun o, FromNoun i, Show i, Show o, HasLogFunc e)
          => RIO e (Server i o W.Port)
 wsServer = do
     con <- io $ newTBMChanIO 5

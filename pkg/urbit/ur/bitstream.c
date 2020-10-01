@@ -615,7 +615,6 @@ ur_bsr_log(ur_bsr_t *bsr, uint8_t *out)
   }
   else {
     uint8_t      off = bsr->off;
-    uint8_t     rest = 8 - off;
     const uint8_t *b = bsr->bytes;
     uint8_t      byt = b[0] >> off;
     uint8_t     skip = 0;
@@ -625,13 +624,11 @@ ur_bsr_log(ur_bsr_t *bsr, uint8_t *out)
         return _bsr_log_meme(bsr);
       }
 
-      skip++;
+      byt = b[++skip];
 
       if ( skip == left ) {
         return _bsr_set_gone(bsr, (skip << 3) - off);
       }
-
-      byt = b[skip];
     }
 
     {
@@ -646,10 +643,10 @@ ur_bsr_log(ur_bsr_t *bsr, uint8_t *out)
 
         left -= bytes;
 
-        bsr->bytes  = left ? (b + bytes) : 0;
-        bsr->bits  += 1 + zeros;
-        bsr->left   = left;
-        bsr->off    = ur_mask_3(bits);
+        bsr->bytes = left ? (b + bytes) : 0;
+        bsr->bits += 1 + zeros;
+        bsr->left  = left;
+        bsr->off   = ur_mask_3(bits);
 
         *out = zeros;
         return ur_cue_good;
@@ -703,6 +700,20 @@ ur_bsr_rub_len(ur_bsr_t *bsr, uint64_t *out)
 */
 
 void
+ur_bsw_init(ur_bsw_t *bsw, uint64_t prev, uint64_t size)
+{
+  bsw->prev  = prev;
+  bsw->size  = size;
+  bsw->bytes = calloc(size, 1);
+
+  if ( !bsw->bytes ) {
+    fprintf(stderr,
+            "ur: bitstream-init allocation failed, out of memory\r\n");
+    abort();
+  }
+}
+
+void
 ur_bsw_grow(ur_bsw_t *bsw, uint64_t step)
 {
   uint64_t size = bsw->size;
@@ -727,6 +738,19 @@ ur_bsw_sane(ur_bsw_t *bsw)
 {
   return (  (8 > bsw->off)
          && ((bsw->fill << 3) + bsw->off == bsw->bits) );
+}
+
+uint64_t
+ur_bsw_done(ur_bsw_t *bsw, uint64_t *len, uint8_t **byt)
+{
+  uint64_t bits = bsw->bits;
+
+  *len = bsw->fill + !!bsw->off;
+  *byt = bsw->bytes;
+
+  memset(bsw, 0, sizeof(*bsw));
+
+  return bits;
 }
 
 static inline void
