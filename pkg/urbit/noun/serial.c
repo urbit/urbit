@@ -8,21 +8,14 @@
 #include "all.h"
 #include "ur/ur.h"
 
-/* _cs_met0_w(): safe bitwidth for any c3_w
-*/
-static inline c3_w
-_cs_met0_w(c3_w wid_w) {
-  return ( wid_w >> 31 ) ? 32 : u3r_met(0, wid_w);
-}
-
 /* _cs_jam_buf: struct for tracking the fibonacci-allocated jam of a noun
 */
 struct _cs_jam_fib {
+  u3i_slab*     sab_u;
   u3p(u3h_root) har_p;
   c3_w          a_w;
   c3_w          b_w;
   c3_w          bit_w;
-  c3_w*         buf_w;
 };
 
 /* _cs_jam_fib_grow(): reallocate buffer with fibonacci growth
@@ -39,12 +32,8 @@ _cs_jam_fib_grow(struct _cs_jam_fib* fib_u, c3_w mor_w)
   }
 
   if ( wan_w > fib_u->a_w ) {
-    c3_w old_w, new_w, c_w = 0;
-
-    old_w = fib_u->a_w >> 5;
-    if ( (old_w << 5) != fib_u->a_w ) {
-      ++old_w;
-    }
+    c3_w old_w = fib_u->sab_u->len_w;
+    c3_w   c_w = 0;
 
     //  fibonacci growth
     //
@@ -54,13 +43,7 @@ _cs_jam_fib_grow(struct _cs_jam_fib* fib_u, c3_w mor_w)
       fib_u->a_w = c_w;
     }
 
-    new_w = c_w >> 5;
-    if ( (new_w << 5) != c_w ) {
-      ++new_w;
-    }
-
-    fib_u->buf_w = u3a_wealloc(fib_u->buf_w, new_w);
-    memset(fib_u->buf_w + old_w, 0, (new_w - old_w) * sizeof(c3_w));
+    u3i_slab_grow(fib_u->sab_u, 0, c_w);
   }
 }
 
@@ -71,8 +54,12 @@ _cs_jam_fib_chop(struct _cs_jam_fib* fib_u, c3_w met_w, u3_noun a)
 {
   c3_w bit_w = fib_u->bit_w;
   _cs_jam_fib_grow(fib_u, met_w);
-  u3r_chop(0, 0, met_w, bit_w, fib_u->buf_w, a);
   fib_u->bit_w += met_w;
+
+  {
+    c3_w* buf_w = fib_u->sab_u->buf_w;
+    u3r_chop(0, 0, met_w, bit_w, buf_w, a);
+  }
 }
 
 /* _cs_jam_fib_mat(): length-prefixed encode (mat) [a] into [fib_u]
@@ -85,7 +72,7 @@ _cs_jam_fib_mat(struct _cs_jam_fib* fib_u, u3_noun a)
   }
   else {
     c3_w a_w = u3r_met(0, a);
-    c3_w b_w = _cs_met0_w(a_w);
+    c3_w b_w = c3_bits_word(a_w);
 
     _cs_jam_fib_chop(fib_u, b_w+1, 1 << b_w);
     _cs_jam_fib_chop(fib_u, b_w-1, a_w & ((1 << (b_w-1)) - 1));
@@ -156,28 +143,21 @@ _cs_jam_fib_cell_cb(u3_noun a, void* ptr_v)
 **   returns atom-suitable words, and *bit_w will have
 **   the length (in bits). return should be freed with u3a_wfree().
 */
-c3_w*
-u3s_jam_fib(u3_noun a, c3_w* bit_w)
+c3_w
+u3s_jam_fib(u3i_slab* sab_u, u3_noun a)
 {
   struct _cs_jam_fib fib_u;
   fib_u.har_p = u3h_new();
+  fib_u.sab_u = sab_u;
+
   //  fib(12) is small enough to be reasonably fast to allocate.
-  //
-  fib_u.a_w   = 144;
   //  fib(11) is needed to get fib(13).
   //
-  fib_u.b_w   = 89;
+  //
+  fib_u.a_w   = ur_fib12;
+  fib_u.b_w   = ur_fib11;
   fib_u.bit_w = 0;
-
-  {
-    c3_w len_w = fib_u.a_w >> 5;
-    if ( (len_w << 5) != fib_u.a_w ) {
-      ++len_w;
-    }
-
-    fib_u.buf_w = u3a_walloc(len_w);
-    memset(fib_u.buf_w, 0, len_w * sizeof(c3_w));
-  }
+  u3i_slab_init(sab_u, 0, fib_u.a_w);
 
   //  as this is a hot path, we unsafely elide overflow checks
   //
@@ -186,9 +166,9 @@ u3s_jam_fib(u3_noun a, c3_w* bit_w)
   u3a_walk_fore_unsafe(a, &fib_u, _cs_jam_fib_atom_cb,
                                   _cs_jam_fib_cell_cb);
 
-  *bit_w = fib_u.bit_w;
   u3h_free(fib_u.har_p);
-  return fib_u.buf_w;
+
+  return fib_u.bit_w;
 }
 
 typedef struct _jam_xeno_s {
@@ -602,27 +582,18 @@ _cs_cue_xeno_next(u3a_pile*    pil_u,
         if ( 31 >= len_d ) {
           *out = (u3_noun)ur_bsr32_any(red_u, len_d);
         }
-        //  XX need a ur_bsr_words_any()
-        //
         else {
-          c3_w* wor_w;
-          c3_y* byt_y;
+          c3_d     byt_d = (len_d + 0x7) >> 3;
+          u3i_slab sab_u;
 
-          {
-            c3_d byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
-
-            if ( 0xffffffffULL < byt_d) {
-              return ur_cue_meme;
-            }
-
-            //  XX assumes little-endian
-            //
-            wor_w = u3a_slaq(3, byt_d);
-            byt_y = (c3_y*)wor_w;
+          if ( 0xffffffffULL < byt_d) {
+            return ur_cue_meme;
           }
-
-          ur_bsr_bytes_any(red_u, len_d, byt_y);
-          *out = u3a_malt(wor_w);
+          else {
+            u3i_slab_init(&sab_u, 3, byt_d);
+            ur_bsr_bytes_any(red_u, len_d, sab_u.buf_y);
+            *out = u3i_slab_mint_bytes(&sab_u);
+          }
         }
 
         ur_dict32_put(rot_u, dic_u, bit_d, *out);
@@ -863,27 +834,12 @@ _cs_cue_bytes_next(u3a_pile*     pil_u,
         if ( 31 >= len_d ) {
           vat = (u3_noun)ur_bsr32_any(red_u, len_d);
         }
-        //  XX need a ur_bsr_words_any()
-        //
         else {
-          c3_w* wor_w;
-          c3_y* byt_y;
+          u3i_slab sab_u;
+          u3i_slab_init(&sab_u, 0, len_d);
 
-          {
-            c3_d byt_d = (len_d >> 3) + !!ur_mask_3(len_d);
-
-            if ( 0xffffffffULL < byt_d) {
-              return u3m_bail(c3__meme);
-            }
-
-            //  XX assumes little-endian
-            //
-            wor_w = u3a_slaq(3, byt_d);
-            byt_y = (c3_y*)wor_w;
-          }
-
-          ur_bsr_bytes_any(red_u, len_d, byt_y);
-          vat = u3a_malt(wor_w);
+          ur_bsr_bytes_any(red_u, len_d, sab_u.buf_y);
+          vat = u3i_slab_mint_bytes(&sab_u);
         }
 
         return _cs_cue_put(har_p, bit_d, vat);

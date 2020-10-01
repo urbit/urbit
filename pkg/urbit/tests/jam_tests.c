@@ -338,13 +338,13 @@ _test_jam_spec(const c3_c* cap_c,
   }
 
   {
-    c3_w  bit_w;
-    c3_w* wor_w = u3s_jam_fib(ref, &bit_w);
+    u3i_slab sab_u;
+    c3_w     bit_w = u3s_jam_fib(&sab_u, ref);
 
-    out_d = (bit_w >> 3) + !!ur_mask_3(bit_w);
+    out_d = ((c3_d)bit_w + 0x7) >> 3;
     //  XX assumes little-endian
     //
-    out_y = (c3_y*)wor_w;
+    out_y = sab_u.buf_y;
 
     if ( 0 != memcmp(out_y, byt_y, len_w) ) {
       fprintf(stderr, "\033[31mjam fib %s fail\033[0m\r\n", cap_c);
@@ -352,7 +352,7 @@ _test_jam_spec(const c3_c* cap_c,
       ret_i = 0;
     }
 
-    u3a_wfree(wor_w);
+    u3i_slab_free(&sab_u);
   }
 
   return ret_i;
