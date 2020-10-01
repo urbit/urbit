@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import styled from "styled-components";
-import _ from 'lodash';
+import _ from "lodash";
 import { Box, Col } from "@tlon/indigo-react";
 import { useOutsideClick } from "~/logic/lib/useOutsideClick";
 import { useLocation } from "react-router-dom";
@@ -78,7 +78,7 @@ export function Dropdown(props: DropdownProps) {
             ),
           }),
           {}
-        )
+        ),
       };
       setCoords(newCoords);
     }
@@ -117,16 +117,12 @@ export function Dropdown(props: DropdownProps) {
       </ClickBox>
       {open && (
         <Portal>
-          <DropdownOptions {...coords} ref={dropdownRef}>
-            <Col
-              width={props.width || "max-content"}
-              border={1}
-              borderColor="lightGray"
-              bg="white"
-              borderRadius={2}
-            >
-              {options}
-            </Col>
+          <DropdownOptions
+            width={props.width || "max-content"}
+            {...coords}
+            ref={dropdownRef}
+          >
+            {options}
           </DropdownOptions>
         </Portal>
       )}

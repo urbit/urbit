@@ -12,7 +12,7 @@ export function Body(
         bg="white"
         height="100%"
         width="100%"
-        borderRadius={1}
+        borderRadius={2}
         border={[0, 1]}
         borderColor={["washedGray", "washedGray"]}
         {...boxProps}

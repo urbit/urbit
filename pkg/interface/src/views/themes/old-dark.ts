@@ -133,6 +133,7 @@ const theme = {
   fontWeights: {
     thin: 300,
     regular: 400,
+    semibold: 500,
     bold: 600,
   },
   // line-height

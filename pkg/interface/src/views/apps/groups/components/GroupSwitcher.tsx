@@ -14,8 +14,8 @@ import { Link } from "react-router-dom";
 
 import { Association, Associations } from "~/types/metadata-update";
 import { Dropdown } from "~/views/components/Dropdown";
-import {Workspace} from "~/types";
-import {getTitleFromWorkspace} from "~/logic/lib/workspace";
+import { Workspace } from "~/types";
+import { getTitleFromWorkspace } from "~/logic/lib/workspace";
 
 const GroupSwitcherItem = ({ to, children, bottom = false, ...rest }) => (
   <Link to={to}>
@@ -45,7 +45,7 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
       </Box>
       {props.recent.slice(1, 5).map((g) => {
         const assoc = associations.contacts[g];
-        const color = uxToHex(assoc?.metadata?.color);
+        const color = uxToHex(assoc?.metadata?.color || "0x0");
         return (
           <Row key={g} px={1} pb={2} alignItems="center">
             <Box
@@ -58,7 +58,9 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               mr={2}
               display="block"
             />
-            <Link to={`/~groups${g}`}><Text>{assoc?.metadata?.title}</Text></Link>
+            <Link to={`/~groups${g}`}>
+              <Text>{assoc?.metadata?.title}</Text>
+            </Link>
           </Row>
         );
       })}
@@ -73,7 +75,7 @@ export function GroupSwitcher(props: {
   recentGroups: string[];
 }) {
   const { associations, workspace } = props;
-  const title = getTitleFromWorkspace(associations, workspace)
+  const title = getTitleFromWorkspace(associations, workspace);
   const navTo = (to: string) => `${props.baseUrl}${to}`;
   return (
     <Box zIndex="2" position="sticky" top="0px" p={2}>
@@ -89,7 +91,14 @@ export function GroupSwitcher(props: {
             width="220px"
             alignY="top"
             options={
-              <Col bg="white" width="100%" alignItems="stretch">
+              <Col
+                borderRadius={1}
+                border={1}
+                borderColor="lightGray"
+                bg="white"
+                width="100%"
+                alignItems="stretch"
+              >
                 <GroupSwitcherItem to="">
                   <Icon
                     mr={2}
@@ -112,14 +121,24 @@ export function GroupSwitcher(props: {
                   <Icon mr="2" color="transparent" stroke="gray" icon="Boot" />
                   <Text> Join Group</Text>
                 </GroupSwitcherItem>
-                {workspace.type === 'group' && (
+                {workspace.type === "group" && (
                   <>
                     <GroupSwitcherItem to={navTo("/popover/participants")}>
-                      <Icon mr={2} color="transparent" stroke="gray" icon="Circle" />
+                      <Icon
+                        mr={2}
+                        color="transparent"
+                        stroke="gray"
+                        icon="Circle"
+                      />
                       <Text> Participants</Text>
                     </GroupSwitcherItem>
                     <GroupSwitcherItem to={navTo("/popover/settings")}>
-                      <Icon mr={2} color="transparent" stroke="gray" icon="Gear" />
+                      <Icon
+                        mr={2}
+                        color="transparent"
+                        stroke="gray"
+                        icon="Gear"
+                      />
                       <Text> Settings</Text>
                     </GroupSwitcherItem>
                     <GroupSwitcherItem bottom to={navTo("/invites")}>
@@ -144,7 +163,7 @@ export function GroupSwitcher(props: {
             </Box>
           </Dropdown>
           <Row collapse pr={1} justifyContent="flex-end" alignItems="center">
-            { workspace.type === 'group' && (
+            {workspace.type === "group" && (
               <>
                 <Link to={navTo("/invites")}>
                   <Icon
@@ -155,7 +174,7 @@ export function GroupSwitcher(props: {
                   />
                 </Link>
                 <Link to={navTo("/popover/settings")}>
-                  <Icon display="block" ml={2} icon="Gear" />
+                  <Icon display="block" m={2} icon="Gear" />
                 </Link>
               </>
             )}

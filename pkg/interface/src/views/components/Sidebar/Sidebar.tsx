@@ -1,4 +1,5 @@
 import React, { ReactNode, useState } from "react";
+import styled from 'styled-components';
 import {
   Box,
   Row,
@@ -52,6 +53,19 @@ interface SidebarProps {
   mobileHide?: boolean;
   workspace: Workspace;
 }
+
+// Magic spacer that because firefox doesn't correctly calculate
+// position: sticky on a flex child
+// remove when https://bugzilla.mozilla.org/show_bug.cgi?id=1488080
+// is fixed
+const SidebarStickySpacer = styled(Box)`
+  height: 0px;
+  @-moz-document url-prefix() {
+    & {
+      height: ${p => p.theme.space[6] }px;
+    }
+  }
+`;
 
 export function Sidebar(props: SidebarProps) {
   const { invites, api, associations, selected, apps, workspace } = props;
@@ -108,6 +122,7 @@ export function Sidebar(props: SidebarProps) {
         apps={props.apps}
         baseUrl={props.baseUrl}
       />
+      <SidebarStickySpacer flexShrink={0} />
       <Box
         display="flex"
         justifyContent="center"

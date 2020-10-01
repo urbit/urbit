@@ -7,14 +7,12 @@ import {
   ManagedRadioButtonField as Radio,
   ManagedCheckboxField as Checkbox,
   Col,
-  Text
+  Text,
 } from "@tlon/indigo-react";
 import { FormikOnBlur } from "../FormikOnBlur";
 import { Dropdown } from "../Dropdown";
 import { FormikHelpers } from "formik";
-import { SidebarListConfig } from './types';
-
-
+import { SidebarListConfig } from "./types";
 
 export function SidebarListHeader(props: {
   initialValues: SidebarListConfig;
@@ -29,19 +27,32 @@ export function SidebarListHeader(props: {
   );
 
   return (
-    <Row alignItems="center" justifyContent="space-between" py={2} pr={2} pl={3}>
+    <Row
+      alignItems="center"
+      justifyContent="space-between"
+      py={2}
+      pr={2}
+      pl={3}
+    >
       <Box>
-        {props.initialValues.hideUnjoined ? "Joined Channels" : "All Channels"}
+        <Text>
+          {props.initialValues.hideUnjoined ? "Joined Channels" : "All Channels"}
+        </Text>
       </Box>
       <Dropdown
         width="200px"
         alignY="top"
-        alignX={['right', 'left']}
+        alignX={["right", "left"]}
         options={
           <FormikOnBlur initialValues={props.initialValues} onSubmit={onSubmit}>
-            <Col>
-              <Col gapY="2" borderBottom={1} borderBottomColor="washedGray" p={2}>
-                <Box >
+            <Col bg="white" borderRadius={1} border={1} borderColor="lightGray">
+              <Col
+                gapY="2"
+                borderBottom={1}
+                borderBottomColor="washedGray"
+                p={2}
+              >
+                <Box>
                   <Text color="gray">Sort Order</Text>
                 </Box>
                 <Radio mb="1" label="A -> Z" id="asc" name="sortBy" />

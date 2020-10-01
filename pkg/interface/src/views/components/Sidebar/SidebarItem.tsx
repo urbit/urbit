@@ -34,6 +34,19 @@ const getAppIcon = (app: string, module: string) => {
   return _.capitalize(app);
 };
 
+const DM_REGEX = /\/~([a-z]|-)*\/dm--/;
+function getItemTitle(association: Association) {
+  if(DM_REGEX.test(association['app-path'])) {
+    const [,ship,name] = association['app-path'].split('/');
+    if(ship.slice(1) === window.ship) {
+      return `~${name.slice(4)}`;
+    }
+    return ship;
+
+  }
+  return association.metadata.title || association['app-path'];
+}
+
 export function SidebarItem(props: {
   hideUnjoined: boolean;
   association: Association;
@@ -43,7 +56,7 @@ export function SidebarItem(props: {
   apps: SidebarAppConfigs;
 }) {
   const { association, path, selected, apps, groups } = props;
-  const title = association?.metadata?.title || path;
+  const title = getItemTitle(association);
   const appName = association?.["app-name"];
   const module = association?.metadata?.module || appName;
   const appPath = association?.["app-path"];
@@ -93,8 +106,8 @@ export function SidebarItem(props: {
         />
         <Box flexShrink={2} ml={2}>
           <Text
-            lineHeight="1.33"
-            fontWeight={hasUnread ? "600" : "400"}
+            lineHeight="short"
+            fontWeight={hasUnread ? "bold" : "regular"}
             color={selected || isSynced ? "black" : "lightGray"}
           >
             {title}
