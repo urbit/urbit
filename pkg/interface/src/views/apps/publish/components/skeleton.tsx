@@ -20,6 +20,7 @@ type SkeletonProps = RouteComponentProps<{
   associations: Associations;
   contacts: Rolodex;
   graphs: Graphs;
+  graphKeys: Set<string>;
   api: GlobalApi;
   children: React.ReactNode;
 };
@@ -90,6 +91,7 @@ export function Skeleton(props: SkeletonProps) {
         <Sidebar
           notebooks={props.notebooks}
           graphs={props.graphs}
+          graphKeys={props.graphKeys}
           contacts={props.contacts}
           path={path}
           hidden={hideSidebar}

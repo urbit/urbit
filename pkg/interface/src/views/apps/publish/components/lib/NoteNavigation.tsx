@@ -34,7 +34,7 @@ function NavigationItem(props: {
 function getAdjacentId(graph: Graph, child: number, backwards = false): number | null {
   const children = Array.from(graph);
   const i = children.findIndex(([index]) => index === child);
-  const target = children[backwards ? i-1 : i+1];
+  const target = children[backwards ? i+1 : i-1];
   return target?.[0] || null;
 }
 

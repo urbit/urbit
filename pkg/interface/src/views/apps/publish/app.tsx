@@ -71,13 +71,13 @@ export default function PublishApp(props: PublishAppProps) {
     ? "sidebar"
     : "rightPanel";
 
-  const appAssociations = props.associations?.publish || {}; 
+  const appAssociations = props.associations?.graph || {}; 
   const graphs = props.graphs || {}
 
   return (
     <>
-      <Helmet defer={false}>
-        <title>{unreadTotal > 0 ? `(${unreadTotal}) ` : ""}OS1 - Publish</title>
+      <Helmet>
+        <title>OS1 - Publish</title>
       </Helmet>
       <Route
         path={[
@@ -88,7 +88,6 @@ export default function PublishApp(props: PublishAppProps) {
         ]}
       >
         <RouterSkeleton
-          popout={location.pathname.includes("popout/")}
           active={active}
           sidebarShown={sidebarShown}
           invites={invites}
@@ -97,6 +96,7 @@ export default function PublishApp(props: PublishAppProps) {
           associations={associations}
           contacts={contacts}
           api={api}
+          graphKeys={props.graphKeys}
         >
           <Switch>
             <Route exact path="/~publish">
@@ -156,10 +156,10 @@ export default function PublishApp(props: PublishAppProps) {
                 const notebookContacts =
                   bookGroupPath in contacts ? contacts[bookGroupPath] : {};
 
-                const notebook = notebooks?.[ship]?.[book];
+                const graph = graphs[`${ship.slice(1)}/${book}`];
+
                 return (
                   <NotebookRoutes
-                    notebook={notebook}
                     ship={ship}
                     book={book}
                     groups={groups}
@@ -168,12 +168,11 @@ export default function PublishApp(props: PublishAppProps) {
                     association={association}
                     associations={associations}
                     graphs={graphs}
-                    sidebarShown={sidebarShown}
                     api={api}
                     hideNicknames={hideNicknames}
                     hideAvatars={hideAvatars}
                     remoteContentPolicy={remoteContentPolicy}
-                    associations={associations}
+                    graph={graph}
                     {...props}
                   />
                 );

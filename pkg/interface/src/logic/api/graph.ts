@@ -138,7 +138,7 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   addNodes(ship: Patp, name: string, nodes: Object) {
-    this.hookAction(ship, {
+    return this.hookAction(ship, {
       'add-nodes': {
         resource: { ship, name },
         nodes

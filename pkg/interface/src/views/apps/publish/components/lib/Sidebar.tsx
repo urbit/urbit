@@ -25,14 +25,14 @@ export function Sidebar(props: any) {
       ? alphabetiseAssociations(props.associations.contacts)
       : {};
   const appAssociations =
-    props.associations && "publish" in props.associations
-      ? props.associations.publish
+    props.associations && "graph" in props.associations
+      ? props.associations.graph
       : {};
 
   const groups = props.groups || {};
 
-  const groupedItems = _.chain(props.graphs)
-    .reduce((acc, g, path) => {
+  const groupedItems = _.chain(Array.from(props.graphKeys))
+    .reduce((acc, path) => {
       const appPath = `/ship/~${path}`;
       return appPath in appAssociations
         ? [...acc, appAssociations[appPath]]

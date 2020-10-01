@@ -34,7 +34,7 @@ export function EditPost(props: EditPostProps & RouteComponentProps) {
       const nodes = editPost(newRev, noteId, title, body);
       await api.graph.addNodes(ship, book, nodes);
       await waiter(p => {
-        const [rev] = getLatestRevision(note);
+        const [rev] = getLatestRevision(p.note);
         return rev === newRev;
       });
       history.push(`/~publish/notebook/ship/${ship}/${book}/note/${noteId}`);

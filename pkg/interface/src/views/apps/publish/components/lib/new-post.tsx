@@ -30,6 +30,7 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
     try {
       const [noteId, nodes] = newPost(title, body)
       await api.graph.addNodes(ship, book, nodes)
+      await waiter(p => p.graph.has(noteId));
       history.push(`/~publish/notebook/ship/${ship}/${book}/note/${noteId}`);
     } catch (e) {
       console.error(e);

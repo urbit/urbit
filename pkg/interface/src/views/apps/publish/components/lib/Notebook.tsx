@@ -12,7 +12,7 @@ import { Groups } from "~/types/group-update";
 import { Contacts, Rolodex } from "~/types/contact-update";
 import GlobalApi from "~/logic/api/global";
 import styled from "styled-components";
-import { Associations } from "~/types";
+import { Associations, Graph, Association } from "~/types";
 import { deSig } from "~/logic/lib/util";
 
 interface NotebookProps {
@@ -55,16 +55,18 @@ export class Notebook extends PureComponent<
       api,
       ship,
       book,
-      notebook,
       notebookContacts,
       groups,
       history,
       hideNicknames,
       associations,
+      association,
+      graph
     } = this.props;
     const { state } = this;
+    const { metadata } = association;
 
-    const group = groups[notebook?.["writers-group-path"]];
+    const group = groups[association?.['group-path']];
     if (!group) return null; // Waitin on groups to populate
 
     const contact = notebookContacts[ship];
@@ -75,8 +77,6 @@ export class Notebook extends PureComponent<
     const isWriter =
       isOwn || group.tags?.publish?.[`writers-${book}`]?.has(window.ship);
 
-    const notesList = notebook?.["notes-by-date"] || [];
-    const notes = notebook?.notes || {};
     const showNickname = contact?.nickname && !hideNicknames;
 
     return (
@@ -94,7 +94,7 @@ export class Notebook extends PureComponent<
           <Link to="/~publish">{"<- All Notebooks"}</Link>
         </Box>
         <Box>
-          <Text> {notebook?.title}</Text>
+          <Text> {metadata?.title}</Text>
           <br />
           <Text color="lightGray">by </Text>
           <Text fontFamily={showNickname ? "sans" : "mono"}>
@@ -103,7 +103,7 @@ export class Notebook extends PureComponent<
         </Box>
         <Row justifyContent={["flex-start", "flex-end"]}>
           {isWriter && (
-            <Link to={`/~publish/notebook/${ship}/${book}/new`}>
+            <Link to={`/~publish/notebook/ship/${ship}/${book}/new`}>
               <Button primary>New Post</Button>
             </Link>
           )}
@@ -120,8 +120,8 @@ export class Notebook extends PureComponent<
                 destructive
                 onClick={() => {
                   this.setState({ isUnsubscribing: true });
-                  api.publish
-                    .unsubscribeNotebook(deSig(ship), book)
+
+                  api.graph.leaveGraph(ship, book)
                     .then(() => {
                       history.push("/~publish");
                     })
@@ -168,8 +168,7 @@ export class Notebook extends PureComponent<
           </Tabs>
           {state.tab === "all" && (
             <NotebookPosts
-              notes={notes}
-              list={notesList}
+              graph={graph}
               host={ship}
               book={book}
               contacts={notebookContacts}
@@ -178,16 +177,17 @@ export class Notebook extends PureComponent<
           )}
           {state.tab === "about" && (
             <Box mt="3" color="black">
-              {notebook?.about}
+              {metadata?.description}
             </Box>
           )}
           {state.tab === "subscribers" && (
             <Subscribers
-              host={ship}
               book={book}
-              notebook={notebook}
               api={api}
               groups={groups}
+              associations={associations}
+              association={association}
+              contacts={{}}
             />
           )}
           {state.tab === "settings" && (
@@ -195,9 +195,9 @@ export class Notebook extends PureComponent<
               host={ship}
               book={book}
               api={api}
-              notebook={notebook}
               contacts={notebookContacts}
               associations={associations}
+              association={association}
               groups={groups}
             />
           )}

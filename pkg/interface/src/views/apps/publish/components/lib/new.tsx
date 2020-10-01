@@ -44,16 +44,16 @@ export function NewScreen(props: NewScreenProps & RouteComponentProps) {
           bookId,
           name,
           description,
+          group,
           "publish",
-          group
         );
       } else {
         await props.api.graph.createUnmanagedGraph(
           bookId,
           name,
           description,
+          { open: { banned: [], banRanks: [] } },
           "publish",
-          { open: { banned: [], banRanks: [] } }
         );
       }
 
