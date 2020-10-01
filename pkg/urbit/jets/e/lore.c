@@ -3,25 +3,20 @@
 */
 #include "all.h"
 
-  static u3_noun
-  _lore_cut(c3_w pos_w, c3_w len_w, u3_noun src)
+  static u3_atom
+  _lore_cut(c3_w pos_w, c3_w len_w, u3_atom src)
   {
     if ( 0 == len_w ) {
       return 0;
     }
     else {
-      // as an optimization, we alloc small lines on the stack
-      // (only small to prevent stack overflow)
-      c3_t  big_t = len_w > 255;
-      c3_y* buf_y = big_t ? u3a_malloc(len_w) : alloca(len_w);
-      u3_noun red;
+      u3i_slab sab_u;
+      u3i_slab_bare(&sab_u, 3, len_w);
+      sab_u.buf_w[sab_u.len_w - 1] = 0;
 
-      u3r_bytes(pos_w, len_w, buf_y, src);
-      red = u3i_bytes(len_w, buf_y);
-      if ( big_t ) {
-        u3a_free(buf_y);
-      }
-      return red;
+      u3r_bytes(pos_w, len_w, sab_u.buf_y, src);
+
+      return u3i_slab_mint_bytes(&sab_u);
     }
   }
 
