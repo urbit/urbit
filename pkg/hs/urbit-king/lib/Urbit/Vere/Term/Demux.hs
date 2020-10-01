@@ -95,12 +95,12 @@ dTake Demux{..} = do
         (_, Just (ClientTakeBelt b)) -> pure (Just (ClientTakeBelt b))
 
         (k, Just (ClientTakeSize s)) -> do
-          newSizeTree <- modifyAndReturnTVar dSizes (insertMap k s)
+          newSizeTree <- modifyAndReadTVar' dSizes (insertMap k s)
           maybeUpdateTerminalSize newSizeTree
 
         (k, Nothing) -> do
           writeTVar dConns (ksDelete k conns)
-          newSizeTree <- modifyAndReturnTVar dSizes (deleteMap k)
+          newSizeTree <- modifyAndReadTVar' dSizes (deleteMap k)
           maybeUpdateTerminalSize newSizeTree
 
   where
@@ -120,10 +120,10 @@ dTake Demux{..} = do
           writeTVar dMinSize termSize
           pure $ Just (ClientTakeSize termSize)
 
-    modifyAndReturnTVar :: TVar a -> (a -> a) -> STM a
-    modifyAndReturnTVar var fun = do
+    modifyAndReadTVar' :: TVar a -> (a -> a) -> STM a
+    modifyAndReadTVar' var fun = do
       pre <- readTVar var
-      let post = fun pre
+      let !post = fun pre
       writeTVar var post
       pure post
 

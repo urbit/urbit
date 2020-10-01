@@ -110,7 +110,7 @@ step st@St{..} = \case
 drawState :: St -> [Ev]
 drawState St{..} = hist <> out <> cur <> spin
   where
-    hist = fmap drawHistory $ toList sHistory
+    hist = drawHistory <$> toList sHistory
     out  = if null sLine   then [] else [EvEdit sLine]
     cur  = if 0 == sCurPos then [] else [EvMove $ fromIntegral $ sCurPos]
     spin = maybe [] (singleton . EvSpin . Just) sSpinner
