@@ -186,8 +186,8 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       -- Track the terminal size, keeping track of the size of the local
       -- terminal for our own printing, as well as putting size changes into an
       -- event queue so we can send changes to the terminal muxing system.
-      tsizeTVar         <- newTVarIO (TermSize 80 24) -- Value doesn't matter.
-      tsSizeChangeQueue <- newTQueueIO
+      tsizeTVar    <- newTVarIO (TermSize 80 24) -- Value doesn't matter.
+      tsSizeChange <- newEmptyTMVarIO
       io $ T.liveTermSize (\ts -> atomically $ do
                               -- We keep track of the console's local size for
                               -- our own tank washing.
@@ -195,7 +195,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
                               -- We queue up changes so we can broadcast them
                               -- to the muxing client.
-                              writeTQueue tsSizeChangeQueue ts)
+                              putTMVar tsSizeChange ts)
 
       pWriterThread <- asyncBound
         (writeTerminal tsWriteQueue spinnerMVar tsizeTVar)
@@ -215,9 +215,9 @@ localClient doneSignal = fst <$> mkRAcquire start stop
       pReaderThread <- asyncBound
           (readTerminal tsReadQueue tsWriteQueue (bell tsWriteQueue))
 
-      let client = Client { take = Just <$> asum [
-                              readTQueue tsReadQueue <&> ClientTakeBelt,
-                              readTQueue tsSizeChangeQueue <&> ClientTakeSize
+      let client = Client { take = Just <$> asum
+                              [ readTQueue tsReadQueue <&> ClientTakeBelt,
+                                takeTMVar tsSizeChange <&> ClientTakeSize
                               ]
                           , give = writeTQueue tsWriteQueue
                           }
