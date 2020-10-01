@@ -1924,7 +1924,7 @@ _http_seq_heartbeat_cb(uv_timer_t* tim_u)
   if ( 0 != seq_u ) {
     u3_noun dat = u3nt(u3_nul, 1, c3_s1('\n'));
     while ( 0 != seq_u ) {
-      _http_continue_respond(seq_u, u3k(dat), c3y);
+      _http_continue_respond(seq_u, u3k(dat), c3n);
       seq_u = seq_u->nex_u;
     }
     u3z(dat);
