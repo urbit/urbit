@@ -82,6 +82,7 @@ export class SettingsScreen extends Component {
           contacts={contacts}
           groups={groups}
           api={api}
+          station={station}
           changeLoading={this.changeLoading} />
         <DeleteButton
           isOwner={isOwner}
@@ -121,13 +122,6 @@ export class SettingsScreen extends Component {
       match,
       location
     } = this.props;
-
-    const isInPopout = popout ? "popout/" : "";
-    const title =
-      ( association &&
-        ('metadata' in association) &&
-        (association.metadata.title !== '')
-      ) ? association.metadata.title : station.substr(1);
 
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column white-d">
