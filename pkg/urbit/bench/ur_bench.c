@@ -52,11 +52,11 @@ _jam_bench(void)
     gettimeofday(&b4, 0);
 
     {
-      c3_w* wor_w, bit_w;
+      u3i_slab sab_u;
 
       for ( i_w = 0; i_w < max_w; i_w++ ) {
-        wor_w = u3s_jam_fib(wit, &bit_w);
-        u3a_wfree(wor_w);
+        u3s_jam_fib(&sab_u, wit);
+        u3i_slab_free(&sab_u);
       }
     }
 
