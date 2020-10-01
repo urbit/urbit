@@ -713,17 +713,15 @@ _king_boot_ivory(void)
   }
 
   {
-    ur_dict32_t  dic_u = {0};
-    u3_noun        pil;
+    u3_cue_xeno* sil_u = u3s_cue_xeno_init_with(ur_fib27, ur_fib28);
+    u3_weak        pil;
 
-    ur_dict32_grow((ur_root_t*)0, &dic_u, ur_fib27, ur_fib28);
-
-    if ( c3n == u3s_cue_xeno_unsafe(&dic_u, len_d, byt_y, &pil) ) {
+    if ( u3_none == (pil = u3s_cue_xeno_with(sil_u, len_d, byt_y)) ) {
       u3l_log("lite: unable to cue ivory pill\r\n");
       exit(1);
     }
 
-    ur_dict_free((ur_dict_t*)&dic_u);
+    u3s_cue_xeno_done(sil_u);
 
     if ( c3n == u3v_boot_lite(pil)) {
       u3l_log("lite: boot failed\r\n");

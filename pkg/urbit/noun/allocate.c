@@ -632,6 +632,28 @@ u3a_wfree(void* tox_v)
   _box_free(u3a_botox(tox_v));
 }
 
+/* u3a_wtrim(): trim storage.
+*/
+void
+u3a_wtrim(void* tox_v, c3_w old_w, c3_w len_w)
+{
+  c3_w* nov_w = tox_v;
+
+  if (  (old_w > len_w)
+     && ((old_w - len_w) >= u3a_minimum) )
+  {
+    c3_w* box_w = (void *)u3a_botox(nov_w);
+    c3_w* end_w = (nov_w + len_w + 1);
+    c3_w  asz_w = (end_w - box_w);
+    c3_w  bsz_w = box_w[0] - asz_w;
+
+    _box_attach(_box_make(end_w, bsz_w, 0));
+
+    box_w[0] = asz_w;
+    box_w[asz_w - 1] = asz_w;
+  }
+}
+
 /* u3a_calloc(): allocate and zero-initialize array
 */
 void*
@@ -2457,77 +2479,6 @@ u3a_rewrite_noun(u3_noun som)
   cel->tel = u3a_rewritten_noun(cel->tel);
 }
 
-/* u3a_slab(): create a length-bounded proto-atom.
-*/
-c3_w*
-u3a_slab(c3_w len_w)
-{
-  c3_w*     nov_w = u3a_walloc(len_w + c3_wiseof(u3a_atom));
-  u3a_atom* pug_u = (void *)nov_w;
-
-  pug_u->mug_w = 0;
-  pug_u->len_w = len_w;
-
-  /* Clear teh slab.
-  */
-  {
-    c3_w i_w;
-
-    for ( i_w=0; i_w < len_w; i_w++ ) {
-      pug_u->buf_w[i_w] = 0;
-    }
-  }
-  return pug_u->buf_w;
-}
-
-/* u3a_slaq(): u3a_slab() with a defined blocksize.
-*/
-c3_w*
-u3a_slaq(c3_g met_g, c3_w len_w)
-{
-  return u3a_slab(((len_w << met_g) + 31) >> 5);
-}
-
-/* u3a_malt(): measure and finish a proto-atom.
-*/
-u3_noun
-u3a_malt(c3_w* sal_w)
-{
-  c3_w*     nov_w = (sal_w - c3_wiseof(u3a_atom));
-  u3a_atom* nov_u = (void *)nov_w;
-  c3_w      len_w;
-
-  for ( len_w = nov_u->len_w; len_w; len_w-- ) {
-    if ( 0 != nov_u->buf_w[len_w - 1] ) {
-      break;
-    }
-  }
-  return u3a_mint(sal_w, len_w);
-}
-
-/* u3a_moot(): finish a pre-measured proto-atom; dangerous.
-*/
-u3_noun
-u3a_moot(c3_w* sal_w)
-{
-  c3_w*     nov_w = (sal_w - c3_wiseof(u3a_atom));
-  u3a_atom* nov_u = (void*)nov_w;
-  c3_w      len_w = nov_u->len_w;
-  c3_w      las_w = nov_u->buf_w[len_w - 1];
-
-  c3_assert(0 != len_w);
-  c3_assert(0 != las_w);
-
-  if ( 1 == len_w ) {
-    if ( _(u3a_is_cat(las_w)) ) {
-      u3a_wfree(nov_w);
-
-      return las_w;
-    }
-  }
-  return u3a_to_pug(u3a_outa(nov_w));
-}
-
 #if 0
 /* _ca_detect(): in u3a_detect().
 */
@@ -2573,53 +2524,6 @@ u3a_detect(u3_noun fum, u3_noun som)
   return ret_o;
 }
 #endif
-
-/* u3a_mint(): finish a measured proto-atom.
-*/
-u3_noun
-u3a_mint(c3_w* sal_w, c3_w len_w)
-{
-  c3_w*     nov_w = (sal_w - c3_wiseof(u3a_atom));
-  u3a_atom* nov_u = (void*)nov_w;
-
-  /* See if we can free the slab entirely.
-  */
-  if ( len_w == 0 ) {
-    u3a_wfree(nov_w);
-
-    return 0;
-  }
-  else if ( len_w == 1 ) {
-    c3_w low_w = nov_u->buf_w[0];
-
-    if ( _(u3a_is_cat(low_w)) ) {
-      u3a_wfree(nov_w);
-
-      return low_w;
-    }
-  }
-
-  /* See if we can strip off a block on the end.
-  */
-  {
-    c3_w old_w = nov_u->len_w;
-    c3_w dif_w = (old_w - len_w);
-
-    if ( dif_w >= u3a_minimum ) {
-      c3_w* box_w = (void *)u3a_botox(nov_w);
-      c3_w* end_w = (nov_w + c3_wiseof(u3a_atom) + len_w + 1);
-      c3_w  asz_w = (end_w - box_w);
-      c3_w  bsz_w = box_w[0] - asz_w;
-
-      _box_attach(_box_make(end_w, bsz_w, 0));
-
-      box_w[0] = asz_w;
-      box_w[asz_w - 1] = asz_w;
-    }
-    nov_u->len_w = len_w;
-  }
-  return u3a_to_pug(u3a_outa(nov_w));
-}
 
 #ifdef U3_MEMORY_DEBUG
 /* u3a_lush(): leak push.

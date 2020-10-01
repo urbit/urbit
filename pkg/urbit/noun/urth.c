@@ -9,26 +9,6 @@
 #include "all.h"
 #include "ur/ur.h"
 
-/* _cu_met_3(): atom bytewidth a la u3r_met(3, ...)
-*/
-static inline c3_w
-_cu_met_3(u3a_atom* vat_u)
-{
-  c3_w  len_w = vat_u->len_w;
-  c3_w* buf_w = vat_u->buf_w;
-
-  if ( !len_w ) {
-    return 0;
-  }
-  else {
-    c3_w gal_w = len_w - 1;
-    c3_w daz_w = buf_w[gal_w];
-
-    return (gal_w << 2)
-            + ((daz_w >> 24) ? 4 : (daz_w >> 16) ? 3 : (daz_w >> 8) ? 2 : 1);
-  }
-}
-
 /* _cu_atom_to_ref(): allocate indirect atom off-loom.
 */
 static inline ur_nref
@@ -860,23 +840,20 @@ u3u_uncram(c3_c* dir_c, c3_d eve_d)
   //    XX errors are fatal, barring a full "u3m_reboot"-type operation.
   //
   {
-    ur_dict32_t  dic_u = {0};
-    u3_noun   roc, cod, ref;
-
     //  XX tune the initial dictionary size for less reallocation
     //
-    ur_dict32_grow((ur_root_t*)0, &dic_u, ur_fib33, ur_fib34);
+    u3_cue_xeno* sil_u = u3s_cue_xeno_init_with(ur_fib33, ur_fib34);
+    u3_weak        ref = u3s_cue_xeno_with(sil_u, len_d, byt_y);
+    u3_noun   roc, cod;
 
-    if ( c3n == u3s_cue_xeno_unsafe(&dic_u, len_d, byt_y, &ref) ) {
+    u3s_cue_xeno_done(sil_u);
+
+    if ( u3_none == ref ) {
       fprintf(stderr, "uncram: failed to cue rock\r\n");
-      ur_dict_free((ur_dict_t*)&dic_u);
       c3_free(nam_c);
       return c3n;
     }
-
-    ur_dict_free((ur_dict_t*)&dic_u);
-
-    if ( c3n == u3r_pq(ref, c3__fast, &roc, &cod) ) {
+    else if ( c3n == u3r_pq(ref, c3__fast, &roc, &cod) ) {
       fprintf(stderr, "uncram: failed: invalid rock format\r\n");
       u3z(ref);
       c3_free(nam_c);
