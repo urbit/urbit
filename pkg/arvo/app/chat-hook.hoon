@@ -23,8 +23,10 @@
       state-6
       state-7
       state-8
+      state-9
   ==
 ::
++$  state-9  [%9 state-base]
 +$  state-8  [%8 state-base]
 +$  state-7  [%7 state-base]
 +$  state-6  [%6 state-base]
@@ -56,7 +58,7 @@
   $%  [%chat-update update:store]
   ==
 --
-=|  state-8
+=|  state-9
 =*  state  -
 ::
 %-  agent:dbug
@@ -85,8 +87,20 @@
     =/  old  !<(versioned-state old-vase)
     =|  cards=(list card)
     |-
-    ?:  ?=(%8 -.old)
+    ?:  ?=(%9 -.old)
       [cards this(state old)]
+    ?:  ?=(%8 -.old)
+      =/  list-paths=(list path)
+        %+  murn  ~(tap in ~(key by synced.old))
+        |=  =app=path
+        ^-  (unit path)
+        ?~  (groups-of-chat:cc app-path)  ~
+        `app-path
+      |-
+      ?~  list-paths
+        ^$(-.old %9)
+      =.  synced.old  (~(del by synced.old) i.list-paths)
+      $(list-paths t.list-paths)
     ?:  ?=(%7 -.old)
       =/  subscribers=(jug path ship)
         %+  roll  ~(val by sup.bol)
@@ -104,9 +118,10 @@
         |=  =path
         ^-  (unit card)
         ?>  ?=([@ @ ~] path)
-        =/  group-path  (group-from-chat:cc path)
-        =/  members     (members-from-path:group group-path)
-        ?:  (is-managed-path:group group-path)  ~
+        =/  group-paths  (groups-of-chat:cc path)
+        ?~  group-paths  ~
+        =/  members     (members-from-path:group i.group-paths)
+        ?:  (is-managed-path:group i.group-paths)  ~
         =/  ships=(set ship)  (~(get ju subscribers) path)
         %-  some
         =+  [%invite path (~(dif in members) ships)]
