@@ -1,13 +1,13 @@
 ## NOTE
 The below requires norsyr's fix to `decompress-point` in order to work.
 
-## base58
-Converts a base58 zpub to hex
+## Working with BTC RPC Library
 ```
-+bip84 "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
+:btc-node-hook|command [%credentials 'http://127.0.0.1:18443' 'poopman' 'chAiM31eeJ1MK3y8BC3mR9q2']
+:btc-node-hook|action [%get-block-count ~]
 ```
 
-### btc-address
+## btc-address
 **Import lib; optionally set up env**
 ```
 =btca -build-file %/lib/btc-address/hoon
@@ -36,7 +36,7 @@ Converts a base58 zpub to hex
 `@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 parent-zpub) 0) 0))
 ```
 
-## Deprecateed: Sample Child Derivations
+## Deprecated: Sample Child Derivations
 
 **Test xpub parsing**
 ```
