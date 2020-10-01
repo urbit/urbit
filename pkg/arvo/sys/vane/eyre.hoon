@@ -2422,6 +2422,14 @@
         %approved  ``noun+!>((~(has in approved.cors-registry) u.origin))
         %rejected  ``noun+!>((~(has in rejected.cors-registry) u.origin))
       ==
+    ::
+        [%authenticated %cookie @ ~]
+      ?~  cookies=(slaw %t i.t.t.tyl)  [~ ~]
+      :^  ~  ~  %noun
+      !>  ^-  ?
+      %-  =<  request-is-logged-in:authentication
+          (per-server-event [our eny *duct now scry-gate] server-state.ax)
+      %*(. *request:http header-list ['cookie' u.cookies]~)
     ==
   ?.  ?=(%$ ren)
     [~ ~]
