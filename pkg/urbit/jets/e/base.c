@@ -9,21 +9,18 @@ const c3_y hex_y[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
 u3_noun
 u3qe_en_base16(u3_atom len, u3_atom dat)
 {
-  c3_w len_w, byt_w;
-
   if ( c3n == u3a_is_cat(len) ) {
     return u3m_bail(c3__fail);
   }
   else {
-    len_w = (c3_w)len;
-    byt_w = len_w * 2;
+    c3_w     len_w = (c3_w)len;
+    u3i_slab sab_u;
 
-    if ( (byt_w / 2) != len_w ) {
-      return u3m_bail(c3__fail);
-    }
-    else {
-      c3_y* buf_y = u3a_malloc(byt_w);
-      c3_y* dat_y = buf_y;
+    u3i_slab_bare(&sab_u, 4, len_w);
+    sab_u.buf_w[sab_u.len_w - 1] = 0;
+
+    {
+      c3_y* buf_y = sab_u.buf_y;
       c3_y  inp_y;
 
       while ( len_w-- ) {
@@ -32,13 +29,9 @@ u3qe_en_base16(u3_atom len, u3_atom dat)
         *buf_y++ = hex_y[inp_y >> 4];
         *buf_y++ = hex_y[inp_y & 0xf];
       }
-
-      {
-        u3_noun pro = u3i_bytes(byt_w, dat_y);
-        u3a_free(dat_y);
-        return pro;
-      }
     }
+
+    return u3i_slab_moot_bytes(&sab_u);
   }
 }
 
