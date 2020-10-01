@@ -121,18 +121,14 @@ _cj_bash(u3_noun bat)
       rod_u = u3to(u3_road, rod_u->par_p);
     }
     else {
-      c3_w    bit_w, met_w;
-      c3_w*   wor_w;
-      c3_y*   fat_y;
-      c3_y    dig_y[32];
+      u3i_slab sab_u;
+      c3_w     bit_w = u3s_jam_fib(&sab_u, bat);
+      c3_w     met_w = (bit_w + 0x7) >> 3;
+      //  XX assumes little-endian
+      //
+      c3_y*    fat_y = sab_u.buf_y;
+      c3_y     dig_y[32];
 
-      wor_w = u3s_jam_fib(bat, &bit_w);
-      met_w = bit_w >> 3;
-      if ( bit_w != met_w << 3 ) {
-        ++met_w;
-      }
-      // assume little-endian
-      fat_y = (c3_y*) wor_w;
 #if defined(U3_OS_osx)
       CC_SHA256_CTX ctx_h;
 
@@ -146,9 +142,10 @@ _cj_bash(u3_noun bat)
       SHA256_Update(&ctx_h, fat_y, met_w);
       SHA256_Final(dig_y, &ctx_h);
 #endif
+
       pro = u3i_bytes(32, dig_y);
       u3h_put(u3R->jed.bas_p, bat, u3k(pro));
-      u3a_wfree(wor_w);
+      u3i_slab_free(&sab_u);
       break;
     }
   }

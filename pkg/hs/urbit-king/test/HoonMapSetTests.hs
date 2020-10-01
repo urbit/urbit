@@ -38,7 +38,7 @@ type TreeTests = [TreeTest]
 
 -- Utils -----------------------------------------------------------------------
 
-roundTrip :: ∀a. Eq a => (a -> a) -> a -> Bool
+roundTrip :: forall a. Eq a => (a -> a) -> a -> Bool
 roundTrip f x = f x == x
 
 

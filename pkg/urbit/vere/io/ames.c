@@ -12,6 +12,7 @@
 
 #include "all.h"
 #include "vere/vere.h"
+#include "ur/serial.h"
 
 /* u3_pact: ames packet, coming or going.
 */
@@ -35,6 +36,8 @@
       uv_udp_t       wax_u;             //
       uv_handle_t    had_u;             //
     };                                  //
+    ur_cue_test_t*   tes_u;             //  cue-test handle
+    u3_cue_xeno*     sil_u;             //  cue handle
     c3_c*            dns_c;             //  domain XX multiple/fallback
     c3_d             dop_d;             //  drop count
     c3_d             fal_d;             //  crash count
@@ -365,8 +368,11 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
     u3_noun lon, bod;
     {
       //NOTE we checked for cue safety in _ames_recv_cb
-      u3_noun old = u3ke_cue(u3i_bytes(pac_u->bod_u.con_w, pac_u->bod_u.con_y));
-      u3x_cell(old, &lon, &bod);
+      //
+      u3_weak old = u3s_cue_xeno_with(pac_u->sam_u->sil_u,
+                                      pac_u->bod_u.con_w,
+                                      pac_u->bod_u.con_y);
+      u3x_cell(u3x_good(old), &lon, &bod);
       u3k(lon); u3k(bod);
       u3z(old);
     }
@@ -798,6 +804,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   c3_d  rec_d[2];
   c3_w  con_w = nrd_i - 4 - sen_y - rec_y;
   c3_y* con_y = NULL;
+
   if ( c3y == pas_o ) {
     u3_noun sen = u3i_bytes(sen_y, bod_y);
     u3_noun rec = u3i_bytes(rec_y, bod_y + sen_y);
@@ -810,9 +817,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 
     //  ensure the content is cue-able
     //
-    u3_noun pro = u3m_soft(0, u3ke_cue, u3i_bytes(con_w, con_y));
-    pas_o = (u3_blip == u3h(pro)) ? c3y : c3n;
-    u3z(pro);
+    pas_o = ur_cue_test_with(sam_u->tes_u, con_w, con_y) ? c3y : c3n;
   }
 
   //  if we can scry,
@@ -1165,6 +1170,9 @@ _ames_exit_cb(uv_handle_t* had_u)
 
   u3h_free(sam_u->lax_p);
 
+  u3s_cue_xeno_done(sam_u->sil_u);
+  ur_cue_test_done(sam_u->tes_u);
+
   c3_free(sam_u);
 }
 
@@ -1224,6 +1232,9 @@ u3_ames_io_init(u3_pier* pir_u)
 
   c3_assert( !uv_udp_init(u3L, &sam_u->wax_u) );
   sam_u->wax_u.data = sam_u;
+
+  sam_u->sil_u = u3s_cue_xeno_init();
+  sam_u->tes_u = ur_cue_test_init();
 
   //  Disable networking for fake ships
   //

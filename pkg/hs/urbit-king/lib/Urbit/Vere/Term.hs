@@ -104,7 +104,7 @@ connClient c = Client
     , take = Serv.cRecv c
     }
 
-connectToRemote :: ∀e. HasLogFunc e
+connectToRemote :: forall e. HasLogFunc e
                 => Port
                 -> Client
                 -> RAcquire e (Async (), Async ())
@@ -130,7 +130,7 @@ data HackConfigDir = HCD { _hcdPax :: FilePath }
 makeLenses ''HackConfigDir
 instance HasPierPath HackConfigDir where pierPathL = hcdPax
 
-runTerminalClient :: ∀e. HasLogFunc e => FilePath -> RIO e ()
+runTerminalClient :: forall e. HasLogFunc e => FilePath -> RIO e ()
 runTerminalClient pier = runRAcquire $ do
     mPort      <- runRIO (HCD pier) readPortsFile
     port       <- maybe (error "Can't connect") pure mPort
@@ -173,7 +173,7 @@ _spin_idle_us = 500000
 {-|
     Initializes the generalized input/output parts of the terminal.
 -}
-localClient :: ∀e. HasLogFunc e
+localClient :: forall e. HasLogFunc e
             => STM ()
             -> RAcquire e (TermSize, Client)
 localClient doneSignal = fst <$> mkRAcquire start stop
@@ -415,7 +415,7 @@ localClient doneSignal = fst <$> mkRAcquire start stop
 
     -- Moves the cursor left without any mutation of the LineState. Used only
     -- in cursor spinning.
-    _termSpinnerMoveLeft :: Int → RIO e ()
+    _termSpinnerMoveLeft :: Int -> RIO e ()
     _termSpinnerMoveLeft = T.cursorLeft
 
     -- Displays and sets the current line
