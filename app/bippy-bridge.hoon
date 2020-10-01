@@ -1,6 +1,7 @@
-::  bippy-provider.hoon
+::  bippy-bridge.hoon
 ::  Provider for accessing BTC full node
 ::
+/-  *bippy-bridge
 /+  dbug, default-agent
 |%
 +$  versioned-state
@@ -23,7 +24,7 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  '%bippy-provider initialized successfully'
+  ~&  >  '%bippy-bridge initialized successfully'
   `this
 ++  on-save
   ^-  vase
@@ -31,7 +32,7 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ~&  >  '%bippy-provider recompiled successfully'
+  ~&  >  '%bippy-bridge recompiled successfully'
   `this(state !<(versioned-state old-state))
 ++  on-poke
   |=  [=mark =vase]
@@ -41,10 +42,7 @@
     ?+    q.vase  (on-poke:def mark vase)
         %send-tx
       ~&  >>>  %send-tx
-      :_  this
-      ~
-      ::  :~  [%pass /[url.action] %arvo %i %request (get-url url.action) *outbound-config:iris]
-      ==
+      `this
     ==
   ==
 ::
