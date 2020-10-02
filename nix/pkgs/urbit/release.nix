@@ -4,7 +4,6 @@
   ent,
   name ? "urbit",
   debug ? false,
-  ge-additions,
   libaes_siv
 }:
 
@@ -16,7 +15,7 @@ let
 
   vendor =
     with deps;
-    [ argon2 softfloat3 ed25519 ge-additions urcrypt libaes_siv h2o scrypt uv murmur3 secp256k1 ivory-header ca-header ];
+    [ argon2 softfloat3 ed25519 urcrypt libaes_siv h2o scrypt uv murmur3 secp256k1 ivory-header ca-header ];
 
 in
 

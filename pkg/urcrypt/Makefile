@@ -9,14 +9,23 @@ PREFIX ?= ./out
 CFLAGS := $(CFLAGS) -g -O3 -Wall -Werror -pedantic -std=gnu99
 SOURCES = urcrypt.c urcrypt.h
 
-liburcrypt.a: $(SOURCES)
-	$(CC) $(CFLAGS) -D URCRYPT_STATIC -c urcrypt.c -o urcrypt-static.o
-	$(AR) rcs liburcrypt.a urcrypt-static.o
+GEO = ge-additions/ge-additions.o
 
-liburcrypt.so: $(SOURCES)
+$(GEO): ge-additions/ge-additions.c ge-additions/ge-additions.h
+	$(CC) $(CFLAGS) -c ge-additions/ge-additions.c -o $(GEO)
+
+urcrypt-static.o: $(SOURCES) $(GEO)
+	$(CC) $(CFLAGS) -D URCRYPT_STATIC -c urcrypt.c -o urcrypt-static.o
+
+liburcrypt.a: urcrypt-static.o $(GEO)
+	$(AR) rcs liburcrypt.a urcrypt-static.o $(GEO)
+
+urcrypt-shared.o: $(SOURCES) $(GEO)
 	$(CC) $(CFLAGS) -fPIC -c urcrypt.c -o urcrypt-shared.o
-	$(CC) -shared urcrypt-shared.o -o liburcrypt.so \
-		-led25519 -lge-additions -lssl -largon2 -laes_siv -lgmp -lsecp256k1 \
+
+liburcrypt.so: urcrypt-shared.o
+	$(CC) -shared urcrypt-shared.o $(GEO) -o liburcrypt.so \
+		-led25519 -lssl -largon2 -laes_siv -lgmp -lsecp256k1 \
 		-Wl,--no-undefined
 
 all: liburcrypt.a liburcrypt.so

@@ -9,24 +9,19 @@ let
   arvo-ropsten = import ./arvo-ropsten { inherit pkgs; };
   herb         = import ../../pkg/herb { inherit pkgs; };
 
-  ge-additions = import ./ge-additions {
-    inherit pkgs;
-    inherit (deps) ed25519;
-  };
-
   libaes_siv = import ./libaes_siv {
     inherit pkgs;
   };
 
   urcrypt = import ./urcrypt {
-    inherit ge-additions libaes_siv;
+    inherit libaes_siv;
     inherit (pkgs) stdenv openssl gmp;
     inherit (deps) ed25519 argon2 secp256k1;
   };
 
   mkUrbit = { debug }:
     import ./urbit {
-      inherit pkgs ent debug ge-additions urcrypt libaes_siv;
+      inherit pkgs ent debug urcrypt libaes_siv;
       inherit (deps) argon2 murmur3 uv ed25519 scrypt softfloat3;
       inherit (deps) secp256k1 h2o ivory-header ca-header;
     };
@@ -36,4 +31,4 @@ let
 
 in
 
-{ inherit ent ge-additions urcrypt libaes_siv arvo arvo-ropsten herb urbit urbit-debug; }
+{ inherit ent urcrypt libaes_siv arvo arvo-ropsten herb urbit urbit-debug; }

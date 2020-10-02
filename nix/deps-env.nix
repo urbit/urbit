@@ -20,7 +20,7 @@ let
 
   vendor =
     with deps;
-    [ argon2 ed25519 h2o murmur3 scrypt secp256k1 softfloat3 uv ent ge-additions urcrypt ivory-header ca-header ];
+    [ argon2 ed25519 h2o murmur3 scrypt secp256k1 softfloat3 uv ent urcrypt ivory-header ca-header ];
 
 in
 

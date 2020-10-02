@@ -16,9 +16,6 @@ let
   ent = env:
     import ./pkgs/ent/cross.nix env;
 
-  ge-additions = env:
-    import ./pkgs/ge-additions/cross.nix env;
-
   libaes_siv = env:
     import ./pkgs/libaes_siv/cross.nix env;
 
@@ -27,7 +24,6 @@ let
       inherit debug;
       name         = if debug then "urbit-debug" else "urbit";
       ent          = ent env;
-      ge-additions = ge-additions env;
       libaes_siv   = libaes_siv env;
     };
 
@@ -36,7 +32,6 @@ let
       inherit (plat.env) curl libgmp libsigsegv openssl zlib lmdb;
       inherit (plat.env) cmake_toolchain;
       ent          = ent          plat;
-      ge-additions = ge-additions plat;
       libaes_siv   = libaes_siv   plat;
       urbit        = urbit { env = plat; debug = false; };
       urbit-debug  = urbit { env = plat; debug = true;  };
