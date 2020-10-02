@@ -6021,9 +6021,21 @@
       ++  z-co  |=(dat/@ `tape`['0' 'x' ((x-co 1) dat)])
       --
   |%
+  ::  +em-co: format in numeric base
+  ::
+  ::  in .bas, format .min digits of .hol with .par
+  ::
+  ::    - .hol is processed least-significant digit first
+  ::    - all available digits in .hol will be processed, but
+  ::      .min digits can exceed the number available in .hol
+  ::    - .par handles all accumulated output on each call,
+  ::      and can edit it, prepend or append digits, &c
+  ::    - until .hol is exhausted, .par's sample is [| digit output],
+  ::      subsequently, it's [& 0 output]
+  ::
   ++  em-co
-    |=  {{bas/@ min/@} par/$-({? @ tape} tape)}
-    |=  hol/@
+    |=  [[bas=@ min=@] par=$-([? @ tape] tape)]
+    |=  hol=@
     ^-  tape
     ?:  &(=(0 hol) =(0 min))
       rep
@@ -6034,11 +6046,17 @@
       rep  (par =(0 dar) rad rep)
     ==
   ::
+  ::  +ed-co: format in numeric base, with output length
+  ::
+  ::    - like +em-co, but .par's sample will be [| digit output]
+  ::      on the first call, regardless of the available digits in .hol
+  ::    - used only for @r* floats
+  ::
   ++  ed-co
-    |=  {{bas/@ min/@} par/$-({? @ tape} tape)}
-    =+  [fir=& cou=0]
-    |=  hol/@
-    ^-  {tape @}
+    |=  [[bas=@ min=@] par=$-([? @ tape] tape)]
+    =|  [fir=? cou=@ud]
+    |=  hol=@
+    ^-  [tape @]
     ?:  &(=(0 hol) =(0 min))
       [rep cou]
     =/  [dar=@ rad=@]  (dvr hol bas)
@@ -6050,17 +6068,33 @@
       cou  +(cou)
     ==
   ::
+  ::  +ox-co: format '.'-separated digit sequences in numeric base
+  ::
+  ::  in .bas, format each digit of .hol with .dug,
+  ::  with '.' separators every .gop digits.
+  ::
+  ::    - .hol is processed least-significant digit first
+  ::    - .dug handles individual digits, output is prepended
+  ::    - every segment but the last is zero-padded to .gop
+  ::
   ++  ox-co
-    |=  {{bas/@ gop/@} dug/$-(@ @)}
+    |=  [[bas=@ gop=@] dug=$-(@ @)]
     %+  em-co
       [(pow bas gop) 0]
-    |=  {top/? seg/@ res/tape}
+    |=  [top=? seg=@ res=tape]
     %+  weld
       ?:(top ~ `tape`['.' ~])
     %.  seg
     %+  em-co(rep res)
       [bas ?:(top 0 gop)]
-    |=({? b/@ c/tape} [(dug b) c])
+    |=([? b=@ c=tape] [(dug b) c])
+  ::
+  ::  +ro-co: format '.'-prefixed bloqs in numeric base
+  ::
+  ::  in .bas, for .buz bloqs 0 to .dop, format at least one
+  ::  digit of .hol, prefixed with '.'
+  ::
+  ::    - used only for @i* addresses
   ::
   ++  ro-co
     |=  [[buz=@ bas=@ dop=@] dug=$-(@ @)]
