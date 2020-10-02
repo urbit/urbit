@@ -1,4 +1,5 @@
 /+  default-agent, *server
+::
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -16,27 +17,28 @@
 ++  jael-delay  ~m10
 ++  poke-delay  ~m30
 --
+::
 =|  [%0 state-0]
 =*  state  -
 ^-  agent:gall
-|_  bol=bowl:gall
+|_  =bowl:gall
 +*  this  .
-    def  ~(. (default-agent this %|) bol)
+    def  ~(. (default-agent this %|) bowl)
 ::
 ++  on-init
   ^-  (quip card _this)
   =/  ships
-    .^((set @p) %j /(scot %p our.bol)/ships-with-deeds/(scot %da now.bol))
+    .^((set @p) %j /(scot %p our.bowl)/ships-with-deeds/(scot %da now.bowl))
   =^  pokes  ship-info
     %-  ~(rep in ships)
     |=  [who=@p [cad=(list card) dat=_ship-info]]
-    :_  (~(put by dat) who [%waiting-for-coup now.bol] ~)
+    :_  (~(put by dat) who [%waiting-for-coup now.bowl] ~)
     :_  cad
     [%pass /poke/(scot %p who) %agent [who %publish] %poke %noun !>('')]
   :_  this
   %+  welp  pokes
-  :~  [%pass /bind %arvo %e %connect [~ /'~radar'] %radar]
-      [%pass /jael-scry %arvo %b %wait (add now.bol jael-delay)]
+  :~  [%pass /bind %arvo %e %connect [~ /'~radar'] dap.bowl]
+      [%pass /jael-scry %arvo %b %wait (add now.bowl jael-delay)]
   ==
 ::
 ++  on-save   !>(state)
@@ -56,8 +58,8 @@
   =/  who=ship  (slav %p i.t.wir)
   =/  info  (~(got by ship-info) who)
   ?>  ?=(%waiting-for-coup -.status.info)
-  =.  data.info  [[poked.status.info now.bol] data.info]
-  =/  wake-time=@da  (add now.bol poke-delay)
+  =.  data.info  [[poked.status.info now.bowl] data.info]
+  =/  wake-time=@da  (add now.bowl poke-delay)
   =.  ship-info  (~(put by ship-info) who [%on-delay wake-time] data.info)
   :_  this
   [%pass /delay/(scot %p who) %arvo %b %wait wake-time]~
@@ -71,8 +73,9 @@
     [~ this]
   ::
       [%jael-scry ~]
+    ?>  ?=(%wake +<.sin)
     =/  new-ships
-      .^((set @p) %j /(scot %p our.bol)/ships-with-deeds/(scot %da now.bol))
+      .^((set @p) %j /(scot %p our.bowl)/ships-with-deeds/(scot %da now.bowl))
     =/  old-ships  ~(key by ship-info)
     =/  added    (~(dif in new-ships) old-ships)
     ::  removed should always be empty? do nothing with it for now
@@ -84,19 +87,20 @@
     =^  pokes  ship-info
       %-  ~(rep in added)
       |=  [who=@p [cad=(list card) dat=_ship-info]]
-      :_  (~(put by dat) who [%waiting-for-coup now.bol] ~)
+      :_  (~(put by dat) who [%waiting-for-coup now.bowl] ~)
       :_  cad
       [%pass /poke/(scot %p who) %agent [who %hood] %poke %helm-hi !>('')]
     :_  this
     :_  pokes
-    [%pass /jael-scry %arvo %b %wait (add now.bol jael-delay)]
+    [%pass /jael-scry %arvo %b %wait (add now.bowl jael-delay)]
   ::
       [%delay @ ~]
+    ?>  ?=(%wake +<.sin)
     =/  who=ship  (slav %p i.t.wir)
     =/  info  (~(got by ship-info) who)
     ?>  ?=(%on-delay -.status.info)
     =.  ship-info
-      (~(put by ship-info) who [%waiting-for-coup now.bol] data.info)
+      (~(put by ship-info) who [%waiting-for-coup now.bowl] data.info)
     :_  this
     [%pass /poke/(scot %p who) %agent [who %publish] %poke %noun !>('')]~
   ==
@@ -140,7 +144,7 @@
       ?~  ship=(rush i.t.t.site.url fed:ag)  |
       ?~  info=(~(get by ship-info) u.ship)  |
       ?~  data.u.info                        |
-      (gth couped.i.data.u.info (sub now.bol ~d1))
+      (gth couped.i.data.u.info (sub now.bowl ~d1))
     ==
   ==
 ::
