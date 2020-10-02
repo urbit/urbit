@@ -30,7 +30,7 @@ export class GroupifyButton extends Component {
     return this.state.targetGroup ? (
       <div className="mt4">
       <Toggle
-        boolean={inclusive}
+        boolean={this.state.inclusive}
         change={this.changeInclusive.bind(this)}
       />
         <span className="dib f9 white-d inter ml3">
@@ -42,7 +42,7 @@ export class GroupifyButton extends Component {
       </div>
     ) : <div />;
   }
-  
+
   render() {
     const { inclusive, targetGroup } = this.state;
     const {
@@ -52,7 +52,8 @@ export class GroupifyButton extends Component {
       associations,
       contacts,
       groups,
-      station
+      station,
+      changeLoading
     } = this.props;
 
     const groupPath = association['group-path'];
@@ -94,7 +95,7 @@ export class GroupifyButton extends Component {
           });
         }}
            className={
-             'dib f9 black gray4-d bg-gray0-d ba pa2 mt4 b--black ' + 
+             'dib f9 black gray4-d bg-gray0-d ba pa2 mt4 b--black ' +
              'b--gray1-d pointer'
            }>Convert to group</a>
       </div>
