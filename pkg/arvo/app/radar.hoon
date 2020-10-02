@@ -120,7 +120,6 @@
       not-found:gen
     ^-  simple-payload:http
     %-  json-response:gen
-    %-  json-to-octs
     :-  %o
     %-  ~(rep by ship-info)
     |=  [[who=@p ship-status =data] out=(map @t json)]
