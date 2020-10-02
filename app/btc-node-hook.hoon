@@ -1,8 +1,8 @@
 ::  btc-node-hook: send JSON rpc requests to bitcoin full node
 ::  and poke the responses into the btc-node-store
 ::
-/-  *btc-node-hook, *btc-node-store, sole
-/+  default-agent, sole, base64, lib=btc-node-json, verb
+/-  *btc-node-hook, *btc-node-store
+/+  default-agent, base64, lib=btc-node-json, verb, dbug
 ::
 =>  |%
     +$  card  card:agent:gall
@@ -14,6 +14,7 @@
       $:  user=@t
           pass=@t
           endpoint=@t
+          watched-calls=(set term)
       ==
     --
 ::
@@ -21,6 +22,7 @@
 =*  state  -
 ::  Main
 ::
+%-  agent:dbug
 %+  verb  |
 ^-  agent:gall
 =<  |_  =bowl:gall
@@ -31,7 +33,7 @@
     ::
     ++  on-init
       ^-  (quip card _this)
-      [~ this(user '', pass '', endpoint '')]
+      [~ this(user '', pass '', endpoint '', watched-calls *(set term))]
     ::
     ++  on-save   !>(state)
     ++  on-load
@@ -41,6 +43,7 @@
     ++  on-poke
       |=  [=mark =vase]
       ^-  (quip card _this)
+      ?>  (team:title our.bowl src.bowl)
       =^  cards  state
         ?+    mark    (on-poke:def mark vase)
             %btc-node-hook-action
@@ -51,7 +54,14 @@
         ==
       [cards this]
     ::
-    ++  on-watch  on-watch:def
+    ++  on-watch
+      |=  pax=path
+      ^-  (quip card _this)
+      ::  We restrict access to the local ship and its moons,
+      ::  because we handle permissioning at higher-level agents.
+      ::
+      ?>  (team:title our.bowl src.bowl)
+      `this
     ++  on-leave  on-leave:def
     ++  on-peek   on-peek:def
     ++  on-agent  on-agent:def
