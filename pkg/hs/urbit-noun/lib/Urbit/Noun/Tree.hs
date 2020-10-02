@@ -27,14 +27,14 @@ import GHC.Natural      (Natural)
 -- Types -----------------------------------------------------------------------
 
 data NounVal a = NounVal
-    { non ∷ Noun
+    { non ∷ !Noun
     , val ∷ !a
     }
 
 data HoonTreeNode a = NTN
-    { n ∷ NounVal a
-    , l ∷ HoonTree a
-    , r ∷ HoonTree a
+    { n ∷ !(NounVal a)
+    , l ∷ !(HoonTree a)
+    , r ∷ !(HoonTree a)
     }
   deriving (Eq, Ord, Show)
 

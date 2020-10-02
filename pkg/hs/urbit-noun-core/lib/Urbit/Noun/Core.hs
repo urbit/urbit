@@ -34,8 +34,8 @@ import qualified Data.Char as C
 -- Types -----------------------------------------------------------------------
 
 data Noun
-    = NCell Int Word Noun Noun
-    | NAtom Int Atom
+    = NCell Int Word !Noun !Noun
+    | NAtom Int !Atom
 
 pattern Cell x y <- NCell _ _ x y where Cell = mkCell
 pattern Atom a   <- NAtom _ a     where Atom = mkAtom

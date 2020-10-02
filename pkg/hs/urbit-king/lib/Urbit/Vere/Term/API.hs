@@ -18,10 +18,10 @@ import Urbit.Arvo (Belt, Blit)
     %blank -- print a blank line
     %spinr -- Start or stop the spinner
 -}
-data Ev = Blits [Blit]
-        | Trace Cord
+data Ev = Blits ![Blit]
+        | Trace !Cord
         | Blank
-        | Spinr (Maybe (Maybe Cord))
+        | Spinr !(Maybe (Maybe Cord))
   deriving (Show)
 
 data Client = Client
