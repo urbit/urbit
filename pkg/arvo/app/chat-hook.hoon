@@ -860,13 +860,7 @@
     ?:  =(i.t.wir '~')
       ?>  ?=(^ chat)
       (migrate-listen t.chat)
-    :_  state
-    %.  ~[(chat-view-poke %delete chat)]
-    %-  slog
-    :*  leaf+"chat-hook failed subscribe on {(spud chat)}"
-        leaf+"stack trace:"
-        u.saw
-    ==
+    [~ state]
   ==
 ::
 ++  chat-poke
