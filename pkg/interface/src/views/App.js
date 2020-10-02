@@ -17,6 +17,7 @@ import dark from './themes/old-dark';
 import { Content } from './components/Content';
 import StatusBar from './components/StatusBar';
 import Omnibox from './components/leap/Omnibox';
+import ErrorBoundary from '~/views/components/ErrorBoundary';
 
 import GlobalStore from '~/logic/store/store';
 import GlobalSubscription from '~/logic/subscription/global';
@@ -132,28 +133,34 @@ class App extends React.Component {
         </Helmet>
         <Root background={background} >
           <Router>
-            <StatusBarWithRouter
-              props={this.props}
-              associations={associations}
-              invites={this.state.invites}
-              api={this.api}
-              connection={this.state.connection}
-              subscription={this.subscription}
-              ship={this.ship}
-            />
-            <Omnibox
-              associations={state.associations}
-              apps={state.launch}
-              api={this.api}
-              dark={state.dark}
-              show={state.omniboxShown}
-            />
-          <Content
-            ship={this.ship}
-            api={this.api}
-            subscription={this.subscription}
-            {...state}
-          />
+            <ErrorBoundary>
+              <StatusBarWithRouter
+                props={this.props}
+                associations={associations}
+                invites={this.state.invites}
+                api={this.api}
+                connection={this.state.connection}
+                subscription={this.subscription}
+                ship={this.ship}
+              />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <Omnibox
+                associations={state.associations}
+                apps={state.launch}
+                api={this.api}
+                dark={state.dark}
+                show={state.omniboxShown}
+              />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <Content
+                ship={this.ship}
+                api={this.api}
+                subscription={this.subscription}
+                {...state}
+              />
+            </ErrorBoundary>
           </Router>
         </Root>
       </ThemeProvider>
