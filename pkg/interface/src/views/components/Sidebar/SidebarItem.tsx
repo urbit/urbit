@@ -97,18 +97,23 @@ export function SidebarItem(props: {
       pr={2}
       selected={selected}
     >
-      <Row alignItems="center">
+      <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
         <Icon
           display="block"
           color="transparent"
           stroke={color}
           icon={getAppIcon(appName, module) as any}
         />
-        <Box flexShrink={2} ml={2}>
+        <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
           <Text
             lineHeight="short"
+            display='inline-block'
+            flex='1'
+            overflow='hidden'
+            width='100%'
             fontWeight={hasUnread ? "bold" : "regular"}
             color={selected || isSynced ? "black" : "lightGray"}
+            style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}
           >
             {title}
           </Text>

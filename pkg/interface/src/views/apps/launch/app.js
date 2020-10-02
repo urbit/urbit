@@ -13,8 +13,11 @@ import Welcome from './components/welcome';
 import Groups from './components/Groups';
 
 const Tile = ({ children, bg, to, ...rest }) => (
-  <Box 
-    m={2}
+  <Box
+    mt='0'
+    ml='2'
+    mr='2'
+    mb={3}
     bg="white"
     width="126px"
     height="126px"
@@ -54,7 +57,7 @@ export default class LaunchApp extends React.Component {
         </Helmet>
         <div className="h-100 flex flex-column h-100">
           <Welcome firstTime={props.launch.firstTime} api={props.api} />
-          <Row flexWrap="wrap" mb={4} pitch={4}>
+          <Row ml='2' flexWrap="wrap" mb={4} pitch={4}>
             <Tile
               border={1}
               bg="washedGreen"
@@ -65,7 +68,7 @@ export default class LaunchApp extends React.Component {
                 <Icon
                   stroke="green"
                   fill="rgba(0,0,0,0)"
-                  icon="Circle" 
+                  icon="Circle"
                 />
                 <Text ml="1" color="green">Home</Text>
               </Row>
@@ -88,7 +91,7 @@ export default class LaunchApp extends React.Component {
             />
           </Row>
           <Groups associations={props.associations} />
-          <Box 
+          <Box
             position="absolute"
             fontFamily="mono"
             left="0"

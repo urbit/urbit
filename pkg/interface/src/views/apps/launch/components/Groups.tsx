@@ -31,7 +31,7 @@ const sortGroupsRecent = (recent: string[]) => (
   return Math.max(0,bRecency) - Math.max(0, aRecency);
 };
 
-const sortGroupsAlph = (a: Association, b: Association) => 
+const sortGroupsAlph = (a: Association, b: Association) =>
   alphabeticalOrder(a.metadata.title, b.metadata.title);
 
 export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
@@ -48,6 +48,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   return (
     <Box
       {...boxProps}
+      ml='2'
       display="grid"
       gridAutoRows="124px"
       gridTemplateColumns="repeat(auto-fit, 124px)"
