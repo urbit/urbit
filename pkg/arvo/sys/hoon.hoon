@@ -6027,7 +6027,7 @@
     ^-  tape
     ?:  &(=(0 hol) =(0 min))
       rep
-    =+  [rad=(mod hol bas) dar=(div hol bas)]
+    =/  [dar=@ rad=@]  (dvr hol bas)
     %=  $
       min  ?:(=(0 min) 0 (dec min))
       hol  dar
@@ -6041,7 +6041,7 @@
     ^-  {tape @}
     ?:  &(=(0 hol) =(0 min))
       [rep cou]
-    =+  [rad=(mod hol bas) dar=(div hol bas)]
+    =/  [dar=@ rad=@]  (dvr hol bas)
     %=  $
       min  ?:(=(0 min) 0 (dec min))
       hol  dar
