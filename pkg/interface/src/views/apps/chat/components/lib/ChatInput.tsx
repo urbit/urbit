@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ChatEditor from './chat-editor';
-import { S3Upload, SubmitDragger } from '~/views/components/s3-upload'
-;
+import { S3Upload, SubmitDragger } from '~/views/components/s3-upload' ;
 import { uxToHex } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
@@ -13,8 +12,7 @@ interface ChatInputProps {
   api: GlobalApi;
   numMsgs: number;
   station: any;
-  owner: string;
-  ownerContact: any;
+  ourContact: any;
   envelopes: Envelope[];
   contacts: Contacts;
   onUnmount(msg: string): void;
@@ -173,17 +171,17 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
   render() {
     const { props, state } = this;
 
-    const color = props.ownerContact
-      ? uxToHex(props.ownerContact.color) : '000000';
+    const color = props.ourContact
+      ? uxToHex(props.ourContact.color) : '000000';
 
-    const sigilClass = props.ownerContact
+    const sigilClass = props.ourContact
       ? '' : 'mix-blend-diff';
 
     const avatar = (
-        props.ownerContact &&
-        ((props.ownerContact.avatar !== null) && !props.hideAvatars)
+        props.ourContact &&
+        ((props.ourContact.avatar !== null) && !props.hideAvatars)
       )
-      ? <img src={props.ownerContact.avatar} height={16} width={16} className="dib" />
+      ? <img src={props.ourContact.avatar} height={16} width={16} className="dib" />
       : <Sigil
         ship={window.ship}
         size={16}
@@ -193,17 +191,12 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
 
     return (
       <div className={
-             "cf items-center flex black white-d bt b--gray4 b--gray1-d bg-white " +
+             "cf items-center flex black white-d bt b--gray4 b--gray1-d bg-white"  +
              "bg-gray0-d relative"
            }
            style={{ flexGrow: 1 }}
            >
-        <div className="ml2 flex items-center"
-             style={{
-                flexBasis: 16,
-                 height: 16,
-                 width: 16
-              }}>
+        <div className="pa2 flex items-center">
           {avatar}
         </div>
         <ChatEditor

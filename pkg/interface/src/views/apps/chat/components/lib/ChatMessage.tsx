@@ -91,7 +91,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
 
     const containerClass = `${renderSigil
       ? `f9 w-100 flex flex-wrap cf pr3 pt4 pl3 lh-copy`
-      : `f9 w-100 flex flex-wrap cf pr3 hide-child`} ${isPending ? 'o-40' : ''} ${isLastMessage ? 'pb3' : ''} ${className}`
+      : `f9 w-100 flex flex-wrap items-center cf pr3 hide-child`} ${isPending ? 'o-40' : ''} ${isLastMessage ? 'pb3' : ''} ${className}`
 
     const timestamp = moment.unix(msg.when / 1000).format(renderSigil ? 'hh:mm a' : 'hh:mm');
 
@@ -197,7 +197,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           className="fl pr3 v-top bg-white bg-gray0-d"
         />
         <div className="fr clamp-message white-d" style={{ flexGrow: 1, marginTop: -8 }}>
-          <div className="hide-child" style={{ paddingTop: '6px' }}>
+          <div className="hide-child" style={{ paddingTop: '4px' }}>
             <p className="v-mid f9 gray2 dib mr3 c-default">
               <span
                 className={`mw5 db truncate pointer ${showNickname ? '' : 'mono'}`}
@@ -221,7 +221,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
 
 export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
   <>
-    <p className="child pt2 pl2 pr1 mono f9 gray2 dib">{timestamp}</p>
+    <p className="child ph1 mono f9 gray2 dib">{timestamp}</p>
     <div className="fr clamp-message white-d pr3 lh-copy" style={{ flexGrow: 1 }}>
       <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
     </div>

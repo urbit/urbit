@@ -58,10 +58,10 @@ export class OverlaySigil extends PureComponent {
     const { hideAvatars } = props;
 
     const img = (props.contact && (props.contact.avatar !== null) && !hideAvatars)
-      ? <img src={props.contact.avatar} height={24} width={24} className="dib" />
+      ? <img src={props.contact.avatar} height={16} width={16} className="dib" />
       : <Sigil
         ship={props.ship}
-        size={24}
+        size={16}
         color={props.color}
         classes={props.sigilClass}
         />;
@@ -71,7 +71,7 @@ export class OverlaySigil extends PureComponent {
         onClick={this.profileShow}
         className={props.className + ' pointer relative'}
         ref={this.containerRef}
-        style={{ height: '24px' }}
+        style={{ height: '16px' }}
       >
         {state.profileClicked && (
           <ProfileOverlay

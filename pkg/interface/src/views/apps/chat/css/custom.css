@@ -380,6 +380,7 @@ pre.CodeMirror-placeholder.CodeMirror-line-like { color: var(--gray); }
   .chat .cm-s-tlon.CodeMirror {
     background: #333;
     color: #fff;
+    font-size: 12px;
   }
 
   .chat .cm-s-tlon span.cm-def {
