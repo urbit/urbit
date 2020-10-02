@@ -5852,14 +5852,14 @@
   ::
 ++  co
   ~%  %co  ..co  ~
-  =<  |_  lot/coin
-      ++  rear  |=(rom/tape =>(.(rep rom) rend))
+  =<  |_  lot=coin
+      ++  rear  |=(rom=tape rend(rep rom))
       ++  rent  `@ta`(rap 3 rend)
       ++  rend
         ^-  tape
-        ?:  ?=($blob -.lot)
+        ?:  ?=(%blob -.lot)
           ['~' '0' ((v-co 1) (jam p.lot))]
-        ?:  ?=($many -.lot)
+        ?:  ?=(%many -.lot)
           :-  '.'
           |-  ^-  tape
           ?~   p.lot
@@ -5868,10 +5868,10 @@
         =+  [yed=(end 3 1 p.p.lot) hay=(cut 3 [1 1] p.p.lot)]
         |-  ^-  tape
         ?+    yed  (z-co q.p.lot)
-            $c   ['~' '-' (weld (rip 3 (wood (tuft q.p.lot))) rep)]
-            $d
+            %c   ['~' '-' (weld (rip 3 (wood (tuft q.p.lot))) rep)]
+            %d
           ?+    hay  (z-co q.p.lot)
-              $a
+              %a
             =+  yod=(yore q.p.lot)
             =?  rep  ?=(^ f.t.yod)  ['.' (s-co f.t.yod)]
             =?  rep  ?&  ?=(^ f.t.yod)
@@ -5885,7 +5885,7 @@
             =?  rep  !a.yod  ['-' rep]
             ['~' (a-co y.yod)]
           ::
-              $r
+              %r
             =+  yug=(yell q.p.lot)
             =?  rep  ?=(^ f.yug)  ['.' (s-co f.yug)]
             :-  '~'
@@ -5898,19 +5898,19 @@
             +.rep
           ==
         ::
-            $f
+            %f
           ?:  =(& q.p.lot)
             ['.' 'y' rep]
           ?:(=(| q.p.lot) ['.' 'n' rep] (z-co q.p.lot))
         ::
-            $n   ['~' rep]
-            $i
+            %n   ['~' rep]
+            %i
           ?+  hay  (z-co q.p.lot)
-            $f  ((ro-co [3 10 4] |=(a/@ ~(d ne a))) q.p.lot)
-            $s  ((ro-co [4 16 8] |=(a/@ ~(x ne a))) q.p.lot)
+            %f  ((ro-co [3 10 4] |=(a=@ ~(d ne a))) q.p.lot)
+            %s  ((ro-co [4 16 8] |=(a=@ ~(x ne a))) q.p.lot)
           ==
         ::
-            $p
+            %p
           =+  sxz=(fein:ob q.p.lot)
           =+  dyx=(met 3 sxz)
           :-  '~'
@@ -5931,48 +5931,48 @@
                    rep
           ==     ==
         ::
-            $q
-          =*  val  q.p.lot
+            %q
           :+  '.'  '~'
-          =-  =.(rep (weld - rep) rep)
-          %-  tail
-          %+  roll  ?:(=(0 val) ~[0] (rip 3 val))
+          =;  res=(pair ? tape)
+            (weld q.res rep)
+          %+  roll
+            =*  val  q.p.lot
+            ?:(=(0 val) ~[0] (rip 3 val))
           |=  [q=@ s=? r=tape]
           :-  !s
-          ;:  weld
-            (trip (?:(s tod:po tos:po) q))
-            ?:(&(s !=(r "")) "-" ~)
-            r
-          ==
+          %+  weld
+           (trip (?:(s tod:po tos:po) q))
+          ?.(&(s !=(r "")) r ['-' r])
         ::
-            $r
+            %r
           ?+  hay  (z-co q.p.lot)
-            $d  ['.' '~' (r-co (rlyd q.p.lot))]
-            $h  ['.' '~' '~' (r-co (rlyh q.p.lot))]
-            $q  ['.' '~' '~' '~' (r-co (rlyq q.p.lot))]
-            $s  ['.' (r-co (rlys q.p.lot))]
+            %d  ['.' '~' (r-co (rlyd q.p.lot))]
+            %h  ['.' '~' '~' (r-co (rlyh q.p.lot))]
+            %q  ['.' '~' '~' '~' (r-co (rlyq q.p.lot))]
+            %s  ['.' (r-co (rlys q.p.lot))]
           ==
         ::
-            $u
-          ?:  ?=($c hay)
+            %u
+          ?:  ?=(%c hay)
             %+  welp  ['0' 'c' (reap (pad:fa q.p.lot) '1')]
             (c-co (enc:fa q.p.lot))
-          =-  (weld p.gam ?:(=(0 q.p.lot) `tape`['0' ~] q.gam))
-          ^=  gam  ^-  {p/tape q/tape}
-          ?+  hay  [~ ((ox-co [10 3] |=(a/@ ~(d ne a))) q.p.lot)]
-            $b  [['0' 'b' ~] ((ox-co [2 4] |=(a/@ ~(d ne a))) q.p.lot)]
-            $i  [['0' 'i' ~] ((d-co 1) q.p.lot)]
-            $x  [['0' 'x' ~] ((ox-co [16 4] |=(a/@ ~(x ne a))) q.p.lot)]
-            $v  [['0' 'v' ~] ((ox-co [32 5] |=(a/@ ~(x ne a))) q.p.lot)]
-            $w  [['0' 'w' ~] ((ox-co [64 5] |=(a/@ ~(w ne a))) q.p.lot)]
+          ::
+          =;  gam=(pair tape tape)
+            (weld p.gam ?:(=(0 q.p.lot) `tape`['0' ~] q.gam))
+          ?+  hay  [~ ((ox-co [10 3] |=(a=@ ~(d ne a))) q.p.lot)]
+            %b  [['0' 'b' ~] ((ox-co [2 4] |=(a=@ ~(d ne a))) q.p.lot)]
+            %i  [['0' 'i' ~] ((d-co 1) q.p.lot)]
+            %x  [['0' 'x' ~] ((ox-co [16 4] |=(a=@ ~(x ne a))) q.p.lot)]
+            %v  [['0' 'v' ~] ((ox-co [32 5] |=(a=@ ~(x ne a))) q.p.lot)]
+            %w  [['0' 'w' ~] ((ox-co [64 5] |=(a=@ ~(w ne a))) q.p.lot)]
           ==
         ::
-            $s
+            %s
           %+  weld
             ?:((syn:si q.p.lot) "--" "-")
           $(yed 'u', q.p.lot (abs:si q.p.lot))
         ::
-            $t
+            %t
           ?:  =('a' hay)
             ?:  =('s' (cut 3 [2 1] p.p.lot))
               (weld (rip 3 q.p.lot) rep)
