@@ -142,7 +142,6 @@ export class SettingsScreen extends Component {
         >
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
-            popout={this.props.popout}
             api={this.props.api}
           />
           <Link className="dib f9 fw4 pt2 gray2 lh-solid"
@@ -157,8 +156,6 @@ export class SettingsScreen extends Component {
           </Link>
           <TabBar
             location={props.location}
-            popout={props.popout}
-            popoutHref={`/~link/popout/${props.resourcePath}/settings`}
             settings={`/~link/${props.resourcePath}/settings`}
           />
           </Row>

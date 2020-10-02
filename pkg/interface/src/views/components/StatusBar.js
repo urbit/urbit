@@ -12,9 +12,6 @@ const StatusBar = (props) => {
   const location = useLocation();
   const atHome = Boolean(location.pathname === '/');
 
-  const display = (!window.location.href.includes('popout/'))
-      ? 'grid' : 'none';
-
   const invites = (props.invites && props.invites['/contacts'])
     ? props.invites['/contacts']
     : {};
@@ -24,7 +21,7 @@ const StatusBar = (props) => {
 
   return (
     <Box
-      display={display}
+      display='grid'
       width="100%"
       gridTemplateRows="30px"
       gridTemplateColumns="3fr 1fr"

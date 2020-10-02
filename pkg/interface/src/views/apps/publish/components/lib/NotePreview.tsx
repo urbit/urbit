@@ -37,7 +37,6 @@ export function NotePreview(props: NotePreviewProps) {
     comment = `${note["num-comments"]} Comments`;
   }
   const date = moment(note["date-created"]).fromNow();
-  //const popout = props.popout ? "popout/" : "";
   const url = `${props.book}/note/${note["note-id"]}`;
 
   return (

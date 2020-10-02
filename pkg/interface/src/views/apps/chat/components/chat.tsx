@@ -33,7 +33,6 @@ type ChatScreenProps = RouteComponentProps<{
   group: Group;
   pendingMessages: Map<Path, Envelope[]>;
   s3: any;
-  popout: boolean;
   sidebarShown: boolean;
   chatInitialized: boolean;
   envelopes: Envelope[];
@@ -131,7 +130,7 @@ export class ChatScreen extends Component<ChatScreenProps, ChatScreenState> {
 
     const unreadCount = props.mailboxSize - props.read;
     const unreadMsg = unreadCount > 0 && props.envelopes[unreadCount - 1];
-    
+
     return (
       <div
         key={props.station}

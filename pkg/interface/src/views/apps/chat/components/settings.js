@@ -117,7 +117,6 @@ export class SettingsScreen extends Component {
       group,
       association,
       station,
-      popout,
       sidebarShown,
       match,
       location
@@ -133,7 +132,7 @@ export class SettingsScreen extends Component {
           association={association}
           station={station}
           sidebarShown={sidebarShown}
-          popout={popout} />
+        />
         <Box width='100%' pl='3' mt='3'>
           {(state.isLoading) ? this.renderLoading() : this.renderNormal() }
         </Box>

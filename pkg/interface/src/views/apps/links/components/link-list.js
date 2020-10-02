@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { TabBar } from '~/views/components/chat-link-tabbar';
 import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
@@ -44,7 +44,6 @@ export const LinkList = (props) => {
       >
         <SidebarSwitcher
           sidebarShown={props.sidebarShown}
-          popout={props.popout}
           api={props.api} />
         <h2
           className="dib f9 fw4 pt2 lh-solid v-top black white-d"
@@ -53,8 +52,6 @@ export const LinkList = (props) => {
         </h2>
         <TabBar
           location={props.location}
-          popout={props.popout}
-          popoutHref={`/~link/popout/${resource}`}
           settings={`/~link/${resource}/settings`}
         />
       </div>

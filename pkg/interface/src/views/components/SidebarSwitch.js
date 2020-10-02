@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 
 export class SidebarSwitcher extends Component {
   render() {
-    const popoutSwitcher = this.props.popout
-      ? ' dn-m dn-l dn-xl'
-      : ' dib-m dib-l dib-xl';
 
     const classes = this.props.classes ? this.props.classes : '';
 
@@ -21,7 +18,7 @@ export class SidebarSwitcher extends Component {
           }}
         >
           <img
-            className={'pr3 dn ' + popoutSwitcher}
+            className='pr3 dn dib-m dib-l dib-xl'
             src={
               this.props.sidebarShown
                 ? '/~landscape/img/ChatSwitcherLink.png'
