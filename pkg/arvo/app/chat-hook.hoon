@@ -92,6 +92,17 @@
     ?:  ?=(%10 -.old)
       [cards this(state old)]
     ?:  ?=(%9 -.old)
+      =.  cards
+        %+  weld  cards
+        ^-  (list card)
+        %+  roll  ~(tap in ~(key by wex.bol))
+        |=  [[=wire =ship =term] out=(list card)]
+        ?>  ?=([@ *] wire)
+        ?.  ?&(=(ship our.bol) =(term %chat-hook))
+          out
+        :_  out
+        =-  [%pass / %agent [our.bol %chat-hook] %poke %chat-hook-action !>(-)]
+        [%remove t.wire]
       =/  chat-keys=(set path)  (scry-for (set path) %chat-store [%keys ~])
       =.  cards
         %+  weld  cards
