@@ -5917,22 +5917,19 @@
           ?:  (lte dyx 1)
             (weld (trip (tod:po sxz)) rep)
           =+  dyy=(met 4 sxz)
-          =+  imp=*@
+          =|  imp=@ud
           |-  ^-  tape
           ?:  =(imp dyy)
             rep
           %=  $
-            sxz  (rsh 4 1 sxz)
-            imp      +(imp)
-            rep
-              =+  log=(end 4 1 sxz)
-              ;:  weld
-                (trip (tos:po (rsh 3 1 log)))
-                (trip (tod:po (end 3 1 log)))
-                ?:(=((mod imp 4) 0) ?:(=(imp 0) "" "--") "-")
-                rep
-             ==
-          ==
+            imp  +(imp)
+            rep  =/  log  (cut 4 [imp 1] sxz)
+                 ;:  weld
+                   (trip (tos:po (rsh 3 1 log)))
+                   (trip (tod:po (end 3 1 log)))
+                   ?:(=((mod imp 4) 0) ?:(=(imp 0) "" "--") "-")
+                   rep
+          ==     ==
         ::
             $q
           =*  val  q.p.lot
