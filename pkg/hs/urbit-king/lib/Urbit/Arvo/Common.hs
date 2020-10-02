@@ -1,3 +1,5 @@
+{-# LANGUAGE StrictData #-}
+
 {-|
     Types used in both Events and Effects.
 -}

@@ -1,3 +1,5 @@
+{-# LANGUAGE StrictData #-}
+
 {-|
   Low-Level IPC flows for interacting with the serf process.
 
