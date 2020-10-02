@@ -5992,20 +5992,21 @@
       ++  c-co  (em-co [58 1] |=({? b/@ c/tape} [~(c ne b) c]))
       ++  d-co  |=(min/@ (em-co [10 min] |=({? b/@ c/tape} [~(d ne b) c])))
       ++  r-co
-        |=  a/dn
-        ?:  ?=({$i *} a)  (weld ?:(s.a "inf" "-inf") rep)
-        ?:  ?=({$n *} a)  (weld "nan" rep)
-        =+  ^=  e  %+  ed-co  [10 1]
-          |=  {a/? b/@ c/tape}
-          ?:  a  [~(d ne b) '.' c]
-          [~(d ne b) c]
-        =+  ^=  f
-          =>(.(rep ~) (e a.a))
-        =.  e.a  (sum:si e.a (sun:si (dec +.f)))
-        =+  b=?:((syn:si e.a) "e" "e-")
-        =>  .(rep ?~(e.a rep (weld b ((d-co 1) (abs:si e.a)))))
-        =>  .(rep (weld -.f rep))
-        ?:(s.a rep ['-' rep])
+        |=  a=dn
+        ?:  ?=([%i *] a)  (weld ?:(s.a "inf" "-inf") rep)
+        ?:  ?=([%n *] a)  (weld "nan" rep)
+        =/  f=(pair tape @)
+          %.  a.a
+          %+  ed-co(rep ~)  [10 1]
+          |=([a=? b=@ c=tape] [~(d ne b) ?.(a c ['.' c])])
+        =.  e.a  (sum:si e.a (sun:si (dec q.f)))
+        =/  res
+          %+  weld  p.f
+          ?~  e.a
+            rep
+          %+  weld  ?:((syn:si e.a) "e" "e-")
+          ((d-co 1) (abs:si e.a))
+        ?:(s.a res ['-' res])
       ::
       ++  s-co
         |=  esc/(list @)  ^-  tape
