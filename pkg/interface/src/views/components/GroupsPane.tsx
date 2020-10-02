@@ -23,6 +23,7 @@ import { UnjoinedResource } from "./UnjoinedResource";
 import { InvitePopover } from "../apps/groups/components/InvitePopover";
 import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
 import { NewChannel } from "../apps/groups/components/lib/NewChannel";
+import { Loading } from './Loading';
 
 import "~/views/apps/links/css/custom.css";
 import "~/views/apps/publish/css/custom.css";
@@ -103,7 +104,7 @@ export function GroupsPane(props: GroupsPaneProps) {
           const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
 
           if (!association) {
-            return <Box>Loading</Box>;
+            return <Loading />;
           }
 
           return (
@@ -144,6 +145,7 @@ export function GroupsPane(props: GroupsPaneProps) {
               baseUrl={baseUrl}
             >
               <UnjoinedResource
+                graphKeys={props.graphKeys}
                 notebooks={props.notebooks}
                 inbox={props.inbox}
                 baseUrl={baseUrl}

@@ -66,13 +66,16 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             </Link>
           </Box>
         )}
-        <Box mr={2}>{title}</Box>
+        <Box pr={1} mr={2}>
+          <Text>{title}</Text>
+        </Box>
         {atRoot && (
           <>
             <TruncatedBox
               display={["none", "block"]}
-              maxWidth="50%"
+              maxWidth="60%"
               flexShrink={1}
+              title={association?.metadata?.description}
               color="gray"
             >
               {association?.metadata?.description}

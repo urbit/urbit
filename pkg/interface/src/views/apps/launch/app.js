@@ -12,13 +12,13 @@ import Tiles from './components/tiles';
 import Welcome from './components/welcome';
 import Groups from './components/Groups';
 
-const Tile = ({ children, bg, to, borderRadius = 1, ...rest }) => (
+const Tile = ({ children, bg, to, ...rest }) => (
   <Box 
     m={2}
     bg="white"
     width="126px"
     height="126px"
-    borderRadius={borderRadius}
+    borderRadius={2}
     overflow="hidden"
     {...rest}>
     <Link to={to}>
@@ -57,7 +57,6 @@ export default class LaunchApp extends React.Component {
           <Row flexWrap="wrap" mb={4} pitch={4}>
             <Tile
               border={1}
-              borderRadius={1}
               bg="washedGreen"
               borderColor="green"
               to="/~groups/home"

@@ -59,7 +59,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
       default:
         throw new Error("Invalid app name");
     }
-    history.push(`/~groups${association?.['group-path']}`);
+    history.push(`/~groups${association?.["group-path"]}`);
   }, [api, association]);
 
   const onDelete = useCallback(async () => {
@@ -77,12 +77,13 @@ export function ChannelMenu(props: ChannelMenuProps) {
       default:
         throw new Error("Invalid app name");
     }
+    history.push(`/~groups${association?.["group-path"]}`);
   }, [api, association]);
 
   return (
     <Dropdown
       options={
-        <Col>
+        <Col bg="white" border={1} borderRadius={1} borderColor="lightGray">
           {isOurs ? (
             <>
               <ChannelMenuItem color="red" icon="TrashCan">
@@ -100,7 +101,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
             </>
           ) : (
             <ChannelMenuItem color="red" bottom icon="ArrowEast">
-              <Action m="2" destructive onClick={onUnsubscribe}>
+              <Action bg="white" m="2" destructive onClick={onUnsubscribe}>
                 Unsubscribe from Channel
               </Action>
             </ChannelMenuItem>
@@ -111,7 +112,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
       alignY="top"
       width="250px"
     >
-      <Icon icon="Menu" stroke="gray" />
+      <Icon display="block" icon="Menu" stroke="gray" />
     </Dropdown>
   );
 }

@@ -44,7 +44,6 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   const groups = Object.values(props?.associations?.contacts || {})
     .sort(sortGroupsAlph)
     .sort(sortGroupsRecent(recentGroups))
-    .slice(0,5);
 
   return (
     <Box

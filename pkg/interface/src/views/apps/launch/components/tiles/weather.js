@@ -117,7 +117,7 @@ export default class WeatherTile extends React.Component {
     return (
       <Tile>
       <div
-        className={'relative ' + weatherStyle.text}
+        className={'relative br2 ba b--gray3 b--gray2-d ' + weatherStyle.text}
         style={{
           width: 126,
           height: 126,
@@ -151,9 +151,7 @@ export default class WeatherTile extends React.Component {
       );
     }
     return this.renderWrapper(
-      <div className={'pa2 w-100 h-100 bg-white bg-gray0-d black white-d ' +
-      'b--black b--gray1-d ba'}
-      >
+      <div className="pa2 w-100 h-100 bg-white bg-gray0-d black white-d ">
         <a
           className="f9 black white-d pointer absolute"
           style={{ top: 8 }}
@@ -205,7 +203,7 @@ export default class WeatherTile extends React.Component {
   renderNoData() {
     return this.renderWrapper((
       <div
-        className={'pa2 w-100 h-100 b--black b--gray1-d ba ' +
+        className={'pa2 w-100 h-100 ' +
         'bg-white bg-gray0-d black white-d'}
       onClick={() => this.setState({ manualEntry: !this.state.manualEntry })}
       >
@@ -230,7 +228,7 @@ export default class WeatherTile extends React.Component {
     const da = moment.unix(d.sunsetTime).format('h:mm a') || '';
 
     return this.renderWrapper(
-      <div className="w-100 h-100 b--black b--gray1-d ba"
+      <div className="w-100 h-100"
       style={{ backdropFilter: 'blur(80px)' }}
       >
         <p className="f9 absolute" style={{ left: 8, top: 8 }}>
@@ -269,7 +267,7 @@ export default class WeatherTile extends React.Component {
     if (this.props.location) {
       return this.renderWrapper((
         <div
-          className={'pa2 w-100 h-100 b--black b--gray1-d ba ' +
+          className={'pa2 w-100 h-100 ' +
           'bg-white bg-gray0-d black white-d'}>
             <p className="f9 absolute"
               style={{ left: 8, top: 8 }}
