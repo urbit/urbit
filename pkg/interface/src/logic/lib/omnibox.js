@@ -34,7 +34,7 @@ const commandIndex = function () {
 
       title = title.charAt(0).toUpperCase() + title.slice(1);
 
-      let obj = result(`${title}: Create`, `/~${e}/new`, e, null);
+      let obj = result(`${title}: Create`, `/~${e}/new`, title, null);
       commands.push(obj);
 
       if (title === 'Groups') {
