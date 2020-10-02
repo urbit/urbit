@@ -115,21 +115,34 @@
     %+  give-simple-payload:app    id
     %+  require-authorization:app  req
     |=  req=inbound-request:eyre
-    =/  url  (parse-request-line url.request.req)
-    ?.  ?=([[[~ %json] [%'~radar' ~]] ~] url)
-      not-found:gen
-    ^-  simple-payload:http
-    %-  json-response:gen
-    :-  %o
-    %-  ~(rep by ship-info)
-    |=  [[who=@p ship-status =data] out=(map @t json)]
-    %+  ~(put by out)  (scot %p who)
-    :-  %a
-    %+  turn  data
-    |=  [poked=@da couped=@da]
-    %-  pairs:enjs:format
-    :~  ping+(time:enjs:format poked)
-        response+(time:enjs:format couped)
+    =/  url=request-line
+      (parse-request-line url.request.req)
+    ?+  url  not-found:gen
+        [[[~ %json] [%'~radar' ~]] ~]
+      ^-  simple-payload:http
+      %-  json-response:gen
+      :-  %o
+      %-  ~(rep by ship-info)
+      |=  [[who=@p ship-status =data] out=(map @t json)]
+      %+  ~(put by out)  (scot %p who)
+      :-  %a
+      %+  turn  data
+      |=  [poked=@da couped=@da]
+      %-  pairs:enjs:format
+      :~  ping+(time:enjs:format poked)
+          response+(time:enjs:format couped)
+      ==
+    ::
+        [[[~ %json] [%'~radar' %alive @ ~]] ~]
+      ^-  simple-payload:http
+      %-  json-response:gen
+      :-  %b
+      ::  produce true if the ship was responsive in the last day
+      ::
+      ?~  ship=(rush i.t.t.site.url fed:ag)  |
+      ?~  info=(~(get by ship-info) u.ship)  |
+      ?~  data.u.info                        |
+      (gth couped.i.data.u.info (sub now.bol ~d1))
     ==
   ==
 ::
