@@ -53,6 +53,7 @@
       |=  [=mark =vase]
       ^-  (quip card _this)
       |^
+      ?>  (team:title our.bowl src.bowl)
       ?+    mark    (on-poke:def mark vase)
           %btc-node-store-action
         (store-action !<(btc-node-store-action vase))
