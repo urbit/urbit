@@ -6063,15 +6063,17 @@
     |=({? b/@ c/tape} [(dug b) c])
   ::
   ++  ro-co
-    |=  {{buz/@ bas/@ dop/@} dug/$-(@ @)}
-    |=  hol/@
+    |=  [[buz=@ bas=@ dop=@] dug=$-(@ @)]
+    |=  hol=@
     ^-  tape
     ?:  =(0 dop)
       rep
-    =>  .(rep $(dop (dec dop)))
     :-  '.'
-    %-  (em-co [bas 1] |=({? b/@ c/tape} [(dug b) c]))
-    [(cut buz [(dec dop) 1] hol)]
+    =/  pod  (dec dop)
+    %.  (cut buz [pod 1] hol)
+    %+  em-co(rep $(dop pod))
+      [bas 1]
+    |=([? b=@ c=tape] [(dug b) c])
   --
 ::
 ::::  4l: atom parsing
