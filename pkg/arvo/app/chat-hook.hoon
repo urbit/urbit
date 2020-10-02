@@ -94,8 +94,9 @@
         %+  murn  ~(tap in ~(key by synced.old))
         |=  =app=path
         ^-  (unit path)
-        ?~  (groups-of-chat:cc app-path)  ~
-        `app-path
+        ?~  (groups-of-chat:cc app-path)
+          `app-path
+        ~
       |-
       ?~  list-paths
         ^$(-.old %9)
