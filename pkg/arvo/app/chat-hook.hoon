@@ -114,7 +114,7 @@
         ~
       |-
       ?~  list-paths
-        ^$(-.old %9)
+        ^$(-.old %10)
       =.  synced.old  (~(del by synced.old) i.list-paths)
       $(list-paths t.list-paths)
     ?:  ?=(%8 -.old)
