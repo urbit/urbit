@@ -61,7 +61,11 @@
       ::  because we handle permissioning at higher-level agents.
       ::
       ?>  (team:title our.bowl src.bowl)
-      `this
+      ?+  pax  (on-watch:def pax)
+          [%response ~]
+        ~&  >  "%btc-node-hook: subscription on {pax}"
+        `this
+      ==
     ++  on-leave  on-leave:def
     ++  on-peek   on-peek:def
     ++  on-agent  on-agent:def
@@ -181,6 +185,15 @@
   |=  btc-resp=btc-node-hook-response
   ^-  (quip card _state)
   :_  state
+  ::  If the head term is a type of call we are watching, then
+  ::  broadcast it to subscribers on the response path
+  ::
+  =/  broadcast-response=(list card)
+    ?:  (~(has in watched-calls) -.btc-resp)
+      ~[[%give %fact ~[/response] %noun !>(3)]]
+    ~
+  %+  weld
+    broadcast-response
   ^-  (list card)
   ?+    -.btc-resp
       ::  By default we just print all RPC responses that are not

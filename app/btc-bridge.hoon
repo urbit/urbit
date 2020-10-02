@@ -1,7 +1,7 @@
-::  bippy-bridge.hoon
-::  Provider for accessing BTC full node
+::  btc-bridge.hoon
+::  Proxy for accessing BTC full node
 ::
-/-  *bippy-bridge
+/-  *btc-bridge
 /+  dbug, default-agent
 |%
 +$  versioned-state
@@ -24,15 +24,16 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  '%bippy-bridge initialized successfully'
-  `this
+  ~&  >  '%btc-bridge initialized successfully'
+  :-  ~[[%pass /response %agent [our.bowl %btc-node-hook] %watch /response]]
+  this
 ++  on-save
   ^-  vase
   !>(state)
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ~&  >  '%bippy-bridge recompiled successfully'
+  ~&  >  '%btc-bridge recompiled successfully'
   `this(state !<(versioned-state old-state))
 ++  on-poke
   |=  [=mark =vase]

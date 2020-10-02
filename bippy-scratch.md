@@ -11,32 +11,29 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 **Import lib; optionally set up env**
 ```
 =btca -build-file %/lib/btc-address/hoon
+=mnemonic="abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
+
 =bip32 -build-file %/lib/bip32/hoon
 =ecc secp256k1:secp:crypto
-=xpub "xpub6DnWFmBQfQm1wxvKkCJjXwE6H4v8FTwUuhjDQ9ZpJnFDfhA8Dwmg71yPKyjUE93D2CB6MdnWNvGmwsb3fpd4oRJ2YcyMZoMpLU3BjpmQAny"
-=parent-zpub "zpub6rmyMSPvm5aexi2PidLFG5ERHCeNQgT3KrkXT6pEPK82zFntRUE5MqwEZCanG5NPzmDvfJ9vAr6NxzTx9FAPTAEN1JFPcL1M7CXNd5WKcP9"
-=zpub "zpub6sLyD5WyhVybzoATevSndC5jmhHjfxKjDA5A21DXzoYUJyFyfUo9cW7WX7veTkKVzHjh2Npvfcm5KTT89go29p3PJtscYH4CiYzVbwV5iJW"
+=zpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
 ```
 
 **Test child public key from xpub**
 ```
-`@ux`(child-from-xpub:btca xpub 0)
+`@ux`(child-from-xpub:btca zpub 0)
 (child-from-xpub:btca xpub (dec (bex 31)))
 
 ::  should error as index is too high (hardened key range)
-(child-from-xpub:btca xpub (bex 31))
+(child-from-xpub:btca zpub (bex 31))
 ```
 
 **Same, with Jose's bip32 library**
 ```
-`@ux`(compress-point:secp256k1:secp:crypto pub:(derive-public:(from-extended:bip32 xpub) 0))
-`@ux`(compress-point:secp256k1:secp:crypto pub:(derive-public:(from-extended:bip32 zpub) 0))
-
-::  get same zpub point as above starting from parent-zpub
-`@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 parent-zpub) 0) 0))
+::  get 0 index in non-change account
+`@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 zpub) 0) 0))
 ```
 
-## Deprecated: Sample Child Derivations
+## Deprecated: `btc-address` Child Derivations
 
 **Test xpub parsing**
 ```
