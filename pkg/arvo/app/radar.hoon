@@ -113,8 +113,6 @@
     =+  !<([id=@ta req=inbound-request:eyre] vas)
     :_  this
     %+  give-simple-payload:app    id
-    %+  require-authorization:app  req
-    |=  req=inbound-request:eyre
     =/  url=request-line
       (parse-request-line url.request.req)
     ?+  url  not-found:gen
