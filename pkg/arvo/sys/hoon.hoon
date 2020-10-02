@@ -6053,7 +6053,7 @@
   ++  ox-co
     |=  {{bas/@ gop/@} dug/$-(@ @)}
     %+  em-co
-      [|-(?:(=(0 gop) 1 (mul bas $(gop (dec gop))))) 0]
+      [(pow bas gop) 0]
     |=  {top/? seg/@ res/tape}
     %+  weld
       ?:(top ~ `tape`['.' ~])
