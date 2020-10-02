@@ -5986,11 +5986,25 @@
           ['~' '~' (weld (rip 3 (wood q.p.lot)) rep)]
         ==
       --
-  =+  rep=*tape
+  =|  rep=tape
   =<  |%
-      ++  a-co  |=(dat/@ ((d-co 1) dat))
-      ++  c-co  (em-co [58 1] |=({? b/@ c/tape} [~(c ne b) c]))
-      ++  d-co  |=(min/@ (em-co [10 min] |=({? b/@ c/tape} [~(d ne b) c])))
+      ::  rendering idioms, output zero-padded to minimum lengths
+      ::
+      ::  +a-co: decimal
+      ::  +c-co: base58check
+      ::  +d-co: decimal, takes minimum output digits
+      ::  +r-co: floating point
+      ::  +s-co: list of '.'-prefixed base16, 4 digit minimum
+      ::  +v-co: base32, takes minimum output digits
+      ::  +w-co: base64, takes minimum output digits
+      ::  +x-co: base16, takes minimum output digits
+      ::  +y-co: decimal, 2 digit minimum
+      ::  +z-co: '0x'-prefixed base16
+      ::
+      ++  a-co  |=(dat=@ ((d-co 1) dat))
+      ++  c-co  (em-co [58 1] |=([? b=@ c=tape] [~(c ne b) c]))
+      ++  d-co  |=(min=@ (em-co [10 min] |=([? b=@ c=tape] [~(d ne b) c])))
+      ::
       ++  r-co
         |=  a=dn
         ?:  ?=([%i *] a)  (weld ?:(s.a "inf" "-inf") rep)
@@ -6009,17 +6023,15 @@
         ?:(s.a res ['-' res])
       ::
       ++  s-co
-        |=  esc/(list @)  ^-  tape
-        ?~  esc
-          rep
-        :-  '.'
-        =>(.(rep $(esc t.esc)) ((x-co 4) i.esc))
+        |=  esc=(list @)  ^-  tape
+        ?~  esc  rep
+        ['.' =>(.(rep $(esc t.esc)) ((x-co 4) i.esc))]
       ::
-      ++  v-co  |=(min/@ (em-co [32 min] |=({? b/@ c/tape} [~(v ne b) c])))
-      ++  w-co  |=(min/@ (em-co [64 min] |=({? b/@ c/tape} [~(w ne b) c])))
-      ++  x-co  |=(min/@ (em-co [16 min] |=({? b/@ c/tape} [~(x ne b) c])))
-      ++  y-co  |=(dat/@ ((d-co 2) dat))
-      ++  z-co  |=(dat/@ `tape`['0' 'x' ((x-co 1) dat)])
+      ++  v-co  |=(min=@ (em-co [32 min] |=([? b=@ c=tape] [~(v ne b) c])))
+      ++  w-co  |=(min=@ (em-co [64 min] |=([? b=@ c=tape] [~(w ne b) c])))
+      ++  x-co  |=(min=@ (em-co [16 min] |=([? b=@ c=tape] [~(x ne b) c])))
+      ++  y-co  |=(dat=@ ((d-co 2) dat))
+      ++  z-co  |=(dat=@ `tape`['0' 'x' ((x-co 1) dat)])
       --
   |%
   ::  +em-co: format in numeric base
