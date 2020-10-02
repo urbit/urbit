@@ -5873,31 +5873,28 @@
           ?+    hay  (z-co q.p.lot)
               $a
             =+  yod=(yore q.p.lot)
-            =>  ^+(. .(rep ?~(f.t.yod rep ['.' (s-co f.t.yod)])))
-            =>  ^+  .
-                %=    .
-                    rep
-                  ?:  &(=(~ f.t.yod) =(0 h.t.yod) =(0 m.t.yod) =(0 s.t.yod))
-                    rep
-                  =>  .(rep ['.' (y-co s.t.yod)])
-                  =>  .(rep ['.' (y-co m.t.yod)])
-                  ['.' '.' (y-co h.t.yod)]
-                ==
-            =>  .(rep ['.' (a-co d.t.yod)])
-            =>  .(rep ['.' (a-co m.yod)])
-            =>  .(rep ?:(a.yod rep ['-' rep]))
+            =?  rep  ?=(^ f.t.yod)  ['.' (s-co f.t.yod)]
+            =?  rep  ?&  ?=(^ f.t.yod)
+                         !|(=(0 h.t.yod) =(0 m.t.yod) =(0 s.t.yod))
+                     ==
+              =.  rep  ['.' (y-co s.t.yod)]
+              =.  rep  ['.' (y-co m.t.yod)]
+              ['.' '.' (y-co h.t.yod)]
+            =.  rep  ['.' (a-co d.t.yod)]
+            =.  rep  ['.' (a-co m.yod)]
+            =?  rep  !a.yod  ['-' rep]
             ['~' (a-co y.yod)]
           ::
               $r
             =+  yug=(yell q.p.lot)
-            =>  ^+(. .(rep ?~(f.yug rep ['.' (s-co f.yug)])))
+            =?  rep  ?=(^ f.yug)  ['.' (s-co f.yug)]
             :-  '~'
             ?:  &(=(0 d.yug) =(0 m.yug) =(0 h.yug) =(0 s.yug))
               ['s' '0' rep]
-            =>  ^+(. ?:(=(0 s.yug) . .(rep ['.' 's' (a-co s.yug)])))
-            =>  ^+(. ?:(=(0 m.yug) . .(rep ['.' 'm' (a-co m.yug)])))
-            =>  ^+(. ?:(=(0 h.yug) . .(rep ['.' 'h' (a-co h.yug)])))
-            =>  ^+(. ?:(=(0 d.yug) . .(rep ['.' 'd' (a-co d.yug)])))
+            =?  rep  !=(0 s.yug)  ['.' 's' (a-co s.yug)]
+            =?  rep  !=(0 m.yug)  ['.' 'm' (a-co m.yug)]
+            =?  rep  !=(0 h.yug)  ['.' 'h' (a-co h.yug)]
+            =?  rep  !=(0 d.yug)  ['.' 'd' (a-co d.yug)]
             +.rep
           ==
         ::
