@@ -597,7 +597,7 @@ u3s_cue(u3_atom a)
   //  wid:   bitwidth read to produce [pro]
   //  fam_u: stack frame
   //  har_p: backreference table
-  //  pil_u: stack control structur
+  //  pil_u: stack control structure
   //
   u3_noun         pro;
   u3_atom    wid, cur = 0;
@@ -619,7 +619,7 @@ u3s_cue(u3_atom a)
     fam_u = u3a_peek(&pil_u);
 
     do {
-      //  fam_u is a head-frame: stash [pro] and [wid]; continue into the tail
+      //  head-frame: stash [pro] and [wid]; continue into the tail
       //
       if ( u3_none == fam_u->hed ) {
         //  NB: fam_u->wid unused in head-frame
@@ -635,8 +635,7 @@ u3s_cue(u3_atom a)
 
         fam_u = u3a_peek(&pil_u);
       }
-      //  fam_u is a tail-frame: cons cell and save for backrefs,
-      //  recalculate [wid], and pop the stack
+      //  tail-frame: cons cell, recalculate [wid], and pop the stack
       //
       else {
         pro   = u3nc(fam_u->hed, pro);

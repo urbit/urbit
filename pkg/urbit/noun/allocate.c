@@ -1094,6 +1094,9 @@ _ca_take_cell(u3a_cell* old_u, u3_noun hed, u3_noun tel)
   return new;
 }
 
+/* _ca_take: stack frame for recording cell travesal
+**           (u3_none == hed) == head-frame
+*/
 typedef struct _ca_take
 {
   u3_weak hed;  //  taken head
@@ -1232,7 +1235,7 @@ _ca_take_north(u3_noun veb)
     fam_u = u3a_peek(&pil_u);
 
     do {
-      //  fam_u is a head-frame: stash copy and continue into the tail
+      //  head-frame: stash copy and continue into the tail
       //
       if ( u3_none == fam_u->hed ) {
         u3a_cell* old_u = u3a_to_ptr(fam_u->old);
@@ -1240,7 +1243,7 @@ _ca_take_north(u3_noun veb)
         pro        = _ca_take_next_north(&pil_u, old_u->tel);
         fam_u      = u3a_peek(&pil_u);
       }
-      //  fam_u is a tail-frame: copy cell and pop the stack
+      //  tail-frame: copy cell and pop the stack
       //
       else {
         u3a_cell* old_u = u3a_to_ptr(fam_u->old);
@@ -1272,7 +1275,7 @@ _ca_take_south(u3_noun veb)
     fam_u = u3a_peek(&pil_u);
 
     do {
-      //  fam_u is a head-frame: stash copy and continue into the tail
+      //  head-frame: stash copy and continue into the tail
       //
       if ( u3_none == fam_u->hed ) {
         u3a_cell* old_u = u3a_to_ptr(fam_u->old);
@@ -1280,7 +1283,7 @@ _ca_take_south(u3_noun veb)
         pro        = _ca_take_next_south(&pil_u, old_u->tel);
         fam_u      = u3a_peek(&pil_u);
       }
-      //  fam_u is a tail-frame: copy cell and pop the stack
+      //  tail-frame: copy cell and pop the stack
       //
       else {
         u3a_cell* old_u = u3a_to_ptr(fam_u->old);

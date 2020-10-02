@@ -221,14 +221,14 @@ u3r_mean(u3_noun som, ...)
 
 //  stack frame for tracking noun comparison and unification
 //
-//    We're always comparing arbitrary nouns in a %none frame.
-//    When we comparing two cells, we change the none frame to
-//    a head-frame and push a new %none frame for the heads.
-//    If the heads were equal, the head-frame has the context to
-//    unify their head pointers. We then repeat with the tails,
+//    we always comparing arbitrary nouns in a none-frame.
+//    when we compare two cells, we change the none-frame to a
+//    head-frame and push a new none-frame for the heads.
+//    if the heads are equal, the head-frame has the context to
+//    unify their head pointers. we then repeat with the tails,
 //    mutatis mutandis.
 //
-//    In Hoon, this structure would be as follows:
+//    in Hoon, this structure would be:
 //
 //    $%  [%none a=* b=*]
 //        [%head a=^ b=^]
@@ -262,7 +262,7 @@ _cr_sing_push(u3a_pile* pil_u, u3_noun a, u3_noun b)
 static inline c3_o
 _cr_sing_mug(u3a_noun* a_u, u3a_noun* b_u)
 {
-  //  XX debug assertions that both mugs are 31-bit
+  //  XX add debug assertions that both mugs are 31-bit
   //  (ie, not u3a_take() relocation references)
   //
   if ( a_u->mug_w && b_u->mug_w && (a_u->mug_w != b_u->mug_w) ) {
@@ -456,7 +456,7 @@ _cr_sing_cape(u3a_pile* pil_u, u3p(u3h_root) har_p)
   return c3y;
 }
 
-/* _cr_sing(): yes if a and b are the same noun, use uni to unify
+/* _cr_sing(): unifying equality.
 */
 static c3_o
 _cr_sing(u3_noun a, u3_noun b)
@@ -550,7 +550,7 @@ _cr_sing(u3_noun a, u3_noun b)
 
     //  [ovr_s] counts comparisons, if it overflows, we've likely hit
     //  a pathological case (highly duplicated tree), so we de-duplicate
-    //  subsequent comparisons by maintaing a set of equal pairs.
+    //  subsequent comparisons by maintaining a set of equal pairs.
     //
     if ( 0 == ++ovr_s ) {
       u3p(u3h_root) har_p = u3h_new();
@@ -1543,7 +1543,7 @@ u3r_mug_cell(u3_noun hed,
   return u3r_mug_both(lus_w, biq_w);
 }
 
-/* _cr_mug: stack frame for recording cell travesal
+/* _cr_mug: stack frame for recording cell traversal
 **          !mug == head-frame
 */
 typedef struct {
@@ -1569,7 +1569,7 @@ _cr_mug_next(u3a_pile* pil_u, u3_noun veb)
 
       //  veb has already been mugged, return memoized value
       //
-      //    XX debug mode, assert 31-bit?
+      //    XX add debug assertion that mug is 31-bit?
       //
       if ( veb_u->mug_w ) {
         return (c3_l)veb_u->mug_w;
@@ -1628,7 +1628,7 @@ u3r_mug(u3_noun veb)
     fam_u = u3a_peek(&pil_u);
 
     do {
-      //  fam_u is a head-frame: stash mug and continue into the tail
+      //  head-frame: stash mug and continue into the tail
       //
       if ( !fam_u->mug_l ) {
         u3a_cell* cel_u = u3a_to_ptr(fam_u->cel);
@@ -1637,7 +1637,7 @@ u3r_mug(u3_noun veb)
         mug_l        = _cr_mug_next(&pil_u, cel_u->tel);
         fam_u        = u3a_peek(&pil_u);
       }
-      //  fam_u is a tail-frame: calculate/memoize cell mug and pop the stack
+      //  tail-frame: calculate/memoize cell mug and pop the stack
       //
       else {
         u3a_cell* cel_u = u3a_to_ptr(fam_u->cel);
