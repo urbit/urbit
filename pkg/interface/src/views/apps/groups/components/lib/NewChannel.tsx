@@ -130,7 +130,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
             gridTemplateColumns="300px"
           >
             <Col gapY="2">
-              <Box mb={2}>Channel Type</Box>
+              <Box color="black" mb={2}>Channel Type</Box>
               <Radio label="Chat" id="chat" name="type" />
               <Radio label="Notebook" id="publish" name="type" />
               <Radio label="Collection" id="links" name="type" />

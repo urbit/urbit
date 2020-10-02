@@ -19,29 +19,13 @@ const result = function(title, link, app, host) {
   };
 };
 
-const commandIndex = function () {
+const commandIndex = function (currentGroup) {
   // commands are special cased for default suite
   const commands = [];
-  defaultApps
-    .filter((e) => {
-      return e !== 'dojo';
-    })
-    .map((e) => {
-      let title = e;
-      if (e === 'link') {
-        title = 'Links';
-      }
-
-      title = title.charAt(0).toUpperCase() + title.slice(1);
-
-      let obj = result(`${title}: Create`, `/~${e}/new`, e, null);
-      commands.push(obj);
-
-      if (title === 'Groups') {
-        obj = result(`${title}: Join Group`, `/~${e}/join`, title, null);
-        commands.push(obj);
-      }
-    });
+  const workspace = currentGroup || '/home';
+  commands.push(result(`Groups: Create`, `/~groups/new`, 'Groups', null));
+  commands.push(result(`Groups: Join`, `/~groups/join`, 'Groups', null));
+  commands.push(result(`Channel: Create`, `/~groups${workspace}/new`, 'Groups', null));
 
   return commands;
 };
@@ -70,6 +54,7 @@ const appIndex = function (apps) {
   applications.push(
     result('Groups', '/~groups', 'groups', null)
   );
+  return [];
   return applications;
 };
 
@@ -81,7 +66,7 @@ const otherIndex = function() {
   return other;
 };
 
-export default function index(associations, apps) {
+export default function index(associations, apps, currentGroup) {
   // all metadata from all apps is indexed
   // into subscriptions and groups
   const subscriptions = [];
@@ -112,16 +97,16 @@ export default function index(associations, apps) {
         if (app === 'groups') {
           const obj = result(
             title,
-            `/~${app}${each['app-path']}`,
+            `/~groups${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
             cite(shipStart.slice(0, shipStart.indexOf('/')))
           );
           groups.push(obj);
         } else {
+          const app = each.metadata.module || each['app-name'];
           const obj = result(
             title,
-            `/~${each['app-name']}/join${each['app-path']}${
-              (each.metadata.module && '/' + each.metadata.module) || ''}`,
+            `/~groups${each['group-path']}/join/${app}${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
             (associations?.contacts?.[each['group-path']]?.metadata?.title || null)
           );
@@ -130,7 +115,7 @@ export default function index(associations, apps) {
       });
   });
 
-  indexes.set('commands', commandIndex());
+  indexes.set('commands', commandIndex(currentGroup));
   indexes.set('subscriptions', subscriptions);
   indexes.set('groups', groups);
   indexes.set('apps', appIndex(apps));

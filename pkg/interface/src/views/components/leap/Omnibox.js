@@ -28,7 +28,10 @@ export class Omnibox extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps !== this.props) {
-      this.setState({ index: index(this.props.associations, this.props.apps.tiles) });
+      const { pathname } = this.props.location;
+      const selectedGroup = pathname.startsWith('/~groups/ship/') ? '/' + pathname.split('/').slice(2,5).join('/') : null;
+
+      this.setState({ index: index(this.props.associations, this.props.apps.tiles, selectedGroup) });
     }
 
     if (prevProps && (prevProps.apps !== this.props.apps) && (this.state.query === '')) {
