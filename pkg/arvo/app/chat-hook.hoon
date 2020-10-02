@@ -114,7 +114,7 @@
         ~
       |-
       ?~  list-paths
-        ^$(-.old %9)
+        ^$(-.old %10)
       =.  synced.old  (~(del by synced.old) i.list-paths)
       $(list-paths t.list-paths)
     ?:  ?=(%8 -.old)
@@ -861,13 +861,7 @@
     ?:  =(i.t.wir '~')
       ?>  ?=(^ chat)
       (migrate-listen t.chat)
-    :_  state
-    %.  ~[(chat-view-poke %delete chat)]
-    %-  slog
-    :*  leaf+"chat-hook failed subscribe on {(spud chat)}"
-        leaf+"stack trace:"
-        u.saw
-    ==
+    [~ state]
   ==
 ::
 ++  chat-poke
