@@ -8,8 +8,14 @@ Uses the fork [btc-urbit](https://github.com/timlucmiptev/btc-urbit), with custo
 ## `btc-node` Patch
 Includes a custom version of `btc-node` that supports access control and returning responses to a local subscriber.
 
+### Changes
+
+
+### New Commands
+```
+:btc-node-hook|command [%watch %get-block-count]
+:btc-node-hook|command [%unwatch %get-block-count]
+```
+
 ## Data Flow
 
-### Local/Private Agents
-- `btc-node-store`
-- `btc-node-hook` (watch)

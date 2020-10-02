@@ -2020,6 +2020,12 @@
     $%  ::  Loads RPC node URL+credentials
         ::
         [%credentials url=@t user=@t pass=@t]
+        ::  Adds an RPC call to the set of calls that trigger a broadcast to subscribers
+        ::
+        [%watch call=term]
+        :: Removes an RPC call from the set of calls that trigger a broadcast to subscribers
+        ::
+        [%unwatch call=term]
         ::  TODO: Sync data/wallets...
         ::
         [%sync ~]
