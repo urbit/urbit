@@ -24,8 +24,10 @@
       state-7
       state-8
       state-9
+      state-10
   ==
 ::
++$  state-10  [%10 state-base]
 +$  state-9  [%9 state-base]
 +$  state-8  [%8 state-base]
 +$  state-7  [%7 state-base]
@@ -58,7 +60,7 @@
   $%  [%chat-update update:store]
   ==
 --
-=|  state-9
+=|  state-10
 =*  state  -
 ::
 %-  agent:dbug
@@ -87,9 +89,22 @@
     =/  old  !<(versioned-state old-vase)
     =|  cards=(list card)
     |-
-    ?:  ?=(%9 -.old)
+    ?:  ?=(%10 -.old)
       [cards this(state old)]
-    ?:  ?=(%8 -.old)
+    ?:  ?=(%9 -.old)
+      =/  chat-keys=(set path)  (scry-for (set path) %chat-store [%keys ~])
+      =.  cards
+        %+  weld  cards
+        ^-  (list card)
+        %+  turn  ~(tap in chat-keys)
+        |=  =app=path
+        ^-  card
+        ?>  ?=([@ @ ~] app-path)
+        =/  =ship  (slav %p i.app-path)
+        ?:  =(ship our.bol)
+          (add-owned app-path %.y)
+        (add-synced ship app-path)
+      ::       
       =/  list-paths=(list path)
         %+  murn  ~(tap in ~(key by synced.old))
         |=  =app=path
@@ -102,6 +117,8 @@
         ^$(-.old %9)
       =.  synced.old  (~(del by synced.old) i.list-paths)
       $(list-paths t.list-paths)
+    ?:  ?=(%8 -.old)
+      $(-.old %9)
     ?:  ?=(%7 -.old)
       =/  subscribers=(jug path ship)
         %+  roll  ~(val by sup.bol)
@@ -203,6 +220,17 @@
       ^-  (list (list card))
       (turn ~(tap in keys) generate-cards)
     ==
+    ::
+    ++  scry-for
+      |*  [=mold app=term =path]
+      .^  mold
+        %gx
+        (scot %p our.bol)
+        app
+        (scot %da now.bol)
+        (snoc `^path`path %noun)
+      ==
+    ::
     ++  kick-old-subs
       |=  old-path=path
       ^-  (list card)
