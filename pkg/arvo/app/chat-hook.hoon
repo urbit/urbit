@@ -594,6 +594,7 @@
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
+    ?<  =(ship.act our.bol)
     ?:  (~(has by synced) path.act)  [~ state]
     =.  synced  (~(put by synced) path.act ship.act)
     ?.  ask-history.act
