@@ -8,6 +8,8 @@ import ChatHeader from './lib/ChatHeader';
 import { DeleteButton } from './lib/delete-button';
 import { GroupifyButton } from './lib/groupify-button';
 
+import { Text, Col, Box } from '@tlon/indigo-react';
+
 export class SettingsScreen extends Component {
   constructor(props) {
     super(props);
@@ -59,7 +61,6 @@ export class SettingsScreen extends Component {
   }
 
   renderNormal() {
-    const { state } = this;
     const {
       associations,
       association,
@@ -74,7 +75,7 @@ export class SettingsScreen extends Component {
 
     return (
       <Fragment>
-        <h2 className="f8 pb2">Chat Settings</h2>
+        <Text display='block' pb='2' fontSize='1'>Chat Settings</Text>
         <GroupifyButton
           isOwner={isOwner}
           association={association}
@@ -122,15 +123,8 @@ export class SettingsScreen extends Component {
       location
     } = this.props;
 
-    const isInPopout = popout ? "popout/" : "";
-    const title =
-      ( association &&
-        ('metadata' in association) &&
-        (association.metadata.title !== '')
-      ) ? association.metadata.title : station.substr(1);
-
     return (
-      <div className="h-100 w-100 overflow-x-hidden flex flex-column white-d">
+      <Col height='100%' width='100%' overflowX='hidden'>
         <ChatHeader
           match={match}
           location={location}
@@ -140,10 +134,10 @@ export class SettingsScreen extends Component {
           station={station}
           sidebarShown={sidebarShown}
           popout={popout} />
-        <div className="w-100 pl3 mt4 cf">
+        <Box width='100%' pl='3' mt='3'>
           {(state.isLoading) ? this.renderLoading() : this.renderNormal() }
-        </div>
-      </div>
+        </Box>
+      </Col>
     );
   }
 }
