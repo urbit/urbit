@@ -41,16 +41,21 @@
   ?+    mark  (on-poke:def mark vase)
       %noun
     ?+    q.vase  (on-poke:def mark vase)
-        %send-tx
-      ~&  >>>  %send-tx
-      `this
+        %status
+      :_  this
+      ~[[%pass / %agent [our.bowl %btc-node-hook] %poke %btc-node-hook-action !>([%get-block-count ~])]]
     ==
   ==
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
-++  on-agent  on-agent:def
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
+::  ?+  (on-agent:def wire sign)
+  ~&  >>  "{<sign>}"
+  `this
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --

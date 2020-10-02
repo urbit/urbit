@@ -117,6 +117,12 @@
       %credentials
     :_  state(endpoint url.comm, user user.comm, pass pass.comm)
     [%pass / %arvo %d %flog [%text "credentials updated..."]]~
+      %watch
+    ~&  >>  comm
+    `state(watched-calls (~(put in watched-calls) call.comm))
+      %unwatch
+    ~&  >>  comm
+    `state(watched-calls (~(del in watched-calls) call.comm))
   ==
 ::
 ++  httr-to-rpc-response
