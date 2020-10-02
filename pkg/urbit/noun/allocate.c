@@ -1064,7 +1064,7 @@ _ca_take_atom(u3a_atom* old_u)
   return new;
 }
 
-/* _ca_take_cell(): reallocate a cell atom off the stack.
+/* _ca_take_cell(): reallocate a cell off the stack.
 */
 static inline u3_cell
 _ca_take_cell(u3a_cell* old_u, u3_noun hed, u3_noun tel)
