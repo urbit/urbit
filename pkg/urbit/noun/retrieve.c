@@ -221,12 +221,12 @@ u3r_mean(u3_noun som, ...)
 
 //  stack frame for tracking noun comparison and unification
 //
-//    we always comparing arbitrary nouns in a none-frame.
-//    when we compare two cells, we change the none-frame to a
-//    head-frame and push a new none-frame for the heads.
-//    if the heads are equal, the head-frame has the context to
-//    unify their head pointers. we then repeat with the tails,
-//    mutatis mutandis.
+//    we always compare arbitrary nouns in a none-frame.
+//    when we compare two cells, we change the none-frame to a head-frame
+//    and push a new none-frame for their heads. if the heads are equal,
+//    we get the cells from the head-frame and unify their head pointers.
+//    then, we convert the head-frame to a tail-frame and repeat with
+//    the tails, mutatis mutandis.
 //
 //    in Hoon, this structure would be:
 //
