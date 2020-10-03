@@ -1,7 +1,7 @@
 ::  btc-bridge.hoon
 ::  Proxy for accessing BTC full node
 ::
-/-  *btc-bridge
+/-  *btc-bridge, bnh=btc-node-hook
 /+  dbug, default-agent
 |%
 +$  versioned-state
@@ -25,7 +25,7 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-bridge initialized successfully'
-  :-  ~[[%pass /response %agent [our.bowl %btc-node-hook] %watch /response]]
+  :-  ~[[%pass /btc-node-hook/[(scot %da now.bowl)] %agent [our.bowl %btc-node-hook] %watch /responses]]
   this
 ++  on-save
   ^-  vase
@@ -53,9 +53,16 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
-::  ?+  (on-agent:def wire sign)
-  ~&  >>  "{<sign>}"
-  `this
+  ?+  -.sign  (on-agent:def wire sign)
+      %fact
+    ?+  -.cage.sign  (on-agent:def wire sign)
+        %btc-node-hook-response
+      =/  resp=btc-node-hook-response:bnh
+        !<(btc-node-hook-response:bnh +.cage.sign)
+      ~&  >  resp
+      `this
+    ==
+  ==
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
