@@ -20,6 +20,7 @@ import GHC.Prim         (ctz#)
 import GHC.Word         (Word(..))
 import System.IO.Unsafe (unsafePerformIO)
 import Text.Printf      (printf)
+import Control.Monad.Fail (MonadFail (fail))
 
 import qualified Data.ByteString.Unsafe as BS
 import qualified Data.HashTable.IO      as H
@@ -136,6 +137,7 @@ instance Monad Get where
         runGet (f x') end tbl s'
     {-# INLINE (>>=) #-}
 
+instance MonadFail Get where
     fail msg = Get $ \end tbl s -> do
       badEncoding end s msg
     {-# INLINE fail #-}

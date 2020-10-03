@@ -13,8 +13,7 @@ module Urbit.Noun.Convert
 import ClassyPrelude hiding (hash)
 
 import Urbit.Noun.Core
-
-import qualified Control.Monad.Fail as Fail
+import Control.Monad.Fail (MonadFail (fail))
 
 
 -- Types -----------------------------------------------------------------------
@@ -31,7 +30,7 @@ instance Applicative IResult where
     pure  = ISuccess
     (<*>) = ap
 
-instance Fail.MonadFail IResult where
+instance MonadFail IResult where
     fail err = IError [] err
 
 instance Monad IResult where
@@ -65,7 +64,7 @@ instance Applicative Result where
     pure  = Success
     (<*>) = ap
 
-instance Fail.MonadFail Result where
+instance MonadFail Result where
     fail err = Error err
 
 instance Monad Result where
@@ -110,7 +109,7 @@ instance Monad Parser where
                                        in runParser m path kf ks'
     return = pure
 
-instance Fail.MonadFail Parser where
+instance MonadFail Parser where
     fail msg = Parser $ \path kf _ks -> kf (reverse path) msg
 
 instance Functor Parser where
