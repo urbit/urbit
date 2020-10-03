@@ -13,6 +13,7 @@
 :-  %btc-node-hook-command
 ?+  -.comm  ~|  [%unsupported-command -.comm]  !!
       %credentials  comm
-      %watch  comm
+      %watch    comm
       %unwatch  comm
+      %ping     comm
 ==

@@ -2028,9 +2028,12 @@
         ::  Adds an RPC call to the set of calls that trigger a broadcast to subscribers
         ::
         [%watch call=term]
-        :: Removes an RPC call from the set of calls that trigger a broadcast to subscribers
+        ::  Removes an RPC call from the set of calls that trigger a broadcast to subscribers
         ::
         [%unwatch call=term]
+        ::  Check connectivity of node and return to subscribers
+        ::
+        [%ping ~]
         ::  TODO: Sync data/wallets...
         ::
         [%sync ~]
