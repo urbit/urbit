@@ -4,6 +4,7 @@ rec {
   argon2       = import ./argon2       { inherit pkgs; };
   murmur3      = import ./murmur3      { inherit pkgs; };
   uv           = import ./uv           { inherit pkgs; };
+  libaes_siv   = import ./libaes_siv   { inherit pkgs; };
   ed25519      = import ./ed25519      { inherit pkgs; };
   scrypt       = import ./scrypt       { inherit pkgs; };
   softfloat3   = import ./softfloat3   { inherit pkgs; };

@@ -1,0 +1,6 @@
+build-aux
+Makefile.in
+aclocal.m4
+config.h.*
+configure
+.deps

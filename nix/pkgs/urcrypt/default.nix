@@ -1,4 +1,4 @@
-{ stdenv, openssl, gmp, ed25519, secp256k1, argon2, libaes_siv }:
+{ stdenv, openssl, gmp, secp256k1, argon2, scrypt, libaes_siv }:
 
 stdenv.mkDerivation rec {
   name    = "urcrypt";
@@ -6,6 +6,6 @@ stdenv.mkDerivation rec {
   src     = ../../../pkg/urcrypt;
 
   buildInputs = [
-    openssl gmp ed25519 secp256k1 argon2 libaes_siv
+    openssl gmp secp256k1 argon2 scrypt libaes_siv
   ];
 }

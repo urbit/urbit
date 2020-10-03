@@ -1,8 +1,8 @@
 #include "urcrypt.h"
-#include "ge-additions/ge-additions.h"
-
 #include <string.h>
+
 #include <ed25519.h>
+#include <ge-additions.h>
 
 #include <openssl/crypto.h>
 #include <openssl/ripemd.h>
