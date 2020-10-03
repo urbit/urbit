@@ -36,7 +36,6 @@ instance Fail.MonadFail IResult where
 
 instance Monad IResult where
     return = pure
-    fail   = Fail.fail
     ISuccess a      >>= k = k a
     IError path err >>= _ = IError path err
 
@@ -71,7 +70,6 @@ instance Fail.MonadFail Result where
 
 instance Monad Result where
     return = pure
-    fail   = Fail.fail
 
     Success a >>= k = k a
     Error err >>= _ = Error err
@@ -111,7 +109,6 @@ instance Monad Parser where
     m >>= g = Parser $ \path kf ks -> let ks' a = runParser (g a) path kf ks
                                        in runParser m path kf ks'
     return = pure
-    fail = Fail.fail
 
 instance Fail.MonadFail Parser where
     fail msg = Parser $ \path kf _ks -> kf (reverse path) msg
