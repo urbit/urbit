@@ -75,7 +75,10 @@
       =*  response  client-response.sign-arvo
       =^  cards  state
         ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
-            %http-response    (http-response:bc wire response)
+            %http-response
+          ?.  ?=([%ping *] wire)
+            (http-response:bc wire response)
+          (broadcast-status:bc response)
         ==
       [cards this]
     ::
@@ -83,10 +86,11 @@
     --
 ::
 |_  =bowl:gall
+::  Create an HTTP request to the BTC RPC endpoint
 ::
-++  handle-action
+++  gen-request
   |=  act=btc-node-hook-action
-  ^-  (quip card _state)
+  ^-  request:http
   =/  body=request:rpc:jstd
     (request-to-rpc:btc-rpc:lib act)
   =/  =header-list:http
@@ -97,16 +101,21 @@
             %-  ~(en base64 | &)
             (as-octs:mimes:html :((cury cat 3) user ':' pass))
     ==  ==
-  =/  req=request:http
-    :*  %'POST'
-        (endpoint-url act)
-        header-list
-        =,  html
-        %-  some
-          %-  as-octt:mimes
-            (en-json (request-to-json:rpc:jstd body))
-    ==
+  :*  %'POST'
+      (endpoint-url act)
+      header-list
+      =,  html
+      %-  some
+        %-  as-octt:mimes
+          (en-json (request-to-json:rpc:jstd body))
+  ==
+::
+++  handle-action
+  |=  act=btc-node-hook-action
+  ^-  (quip card _state)
   =/  out  *outbound-config:iris
+  =/  req=request:http
+    (gen-request act)
   :_  state
   [%pass /[(scot %da now.bowl)] %arvo %i %request req out]~
 ::
@@ -117,13 +126,36 @@
       %credentials
     :_  state(endpoint url.comm, user user.comm, pass pass.comm)
     [%pass / %arvo %d %flog [%text "credentials updated..."]]~
+    ::
       %watch
     ~&  >  "Watching {<call.comm>}"
     `state(watched-calls (~(put in watched-calls) call.comm))
+    ::
       %unwatch
       ~&  >  "Unwatching {<call.comm>}"
     `state(watched-calls (~(del in watched-calls) call.comm))
+    ::  Use a dummy call to `%uptime` to see whether the server is connected
+    ::
+      %ping
+    ping-rpc
   ==
+::
+++  ping-rpc
+  ^-  (quip card _state)
+  =/  out  *outbound-config:iris
+  =/  req=request:http
+    (gen-request (btc-node-hook-action [%uptime ~]))
+  :_  state
+  [%pass /ping/[(scot %da now.bowl)] %arvo %i %request req out]~
+::
+++  broadcast-status
+  |=  response=client-response:iris
+  ^-  (quip card _state)
+  ?.  ?=(%finished -.response)
+    [~ state]
+  =*  status    status-code.response-header.response
+  :_  state
+  [%give %fact ~[/responses] %btc-node-hook-response !>([%status =(status 200) status])]~
 ::
 ++  httr-to-rpc-response
   |=  hit=httr:eyre
@@ -176,8 +208,6 @@
   ?.  ?=(%finished -.response)
     [~ state]
   =*  status    status-code.response-header.response
-  ?.  =(200 status)
-    (handle-connection-error status)
   =/  rpc-resp=response:rpc:jstd
     %-  httr-to-rpc-response
     %+  to-httr:iris
@@ -188,13 +218,6 @@
     [~ state]
   %-  handle-btc-response
   (parse-response:btc-rpc:lib rpc-resp)
-::
-++  handle-connection-error
-  |=  status-code=@ud
-  ^-  (quip card _state)
-  ~&  >>>  "Connection error: {<[%error status-code]>}"
-  :_  state
-  ~[[%give %fact ~[/responses] %btc-node-hook-response !>([%status %.n status-code])]]
 ::
 ++  handle-btc-response
   |=  btc-resp=btc-node-hook-response
