@@ -4,7 +4,9 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 ## Working with BTC RPC Library
 ```
 :btc-node-hook|command [%credentials 'http://127.0.0.1:18443' 'poopman' 'chAiM31eeJ1MK3y8BC3mR9q2']
+:btc-node-hook|command [%watch %get-block-count]
 :btc-node-hook|action [%get-block-count ~]
+:btc-node-hook|command [%unwatch %get-block-count]
 ```
 
 ## btc-address

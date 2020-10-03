@@ -62,7 +62,7 @@
       ::
       ?>  (team:title our.bowl src.bowl)
       ?+  pax  (on-watch:def pax)
-          [%response ~]
+          [%responses ~]
         ~&  >  "%btc-node-hook: subscription on {pax}"
         `this
       ==
@@ -118,10 +118,10 @@
     :_  state(endpoint url.comm, user user.comm, pass pass.comm)
     [%pass / %arvo %d %flog [%text "credentials updated..."]]~
       %watch
-    ~&  >>  comm
+    ~&  >  "Watching {<call.comm>}"
     `state(watched-calls (~(put in watched-calls) call.comm))
       %unwatch
-    ~&  >>  comm
+      ~&  >  "Unwatching {<call.comm>}"
     `state(watched-calls (~(del in watched-calls) call.comm))
   ==
 ::
@@ -176,6 +176,8 @@
   ?.  ?=(%finished -.response)
     [~ state]
   =*  status    status-code.response-header.response
+  ?.  =(200 status)
+    (handle-connection-error status)
   =/  rpc-resp=response:rpc:jstd
     %-  httr-to-rpc-response
     %+  to-httr:iris
@@ -187,6 +189,13 @@
   %-  handle-btc-response
   (parse-response:btc-rpc:lib rpc-resp)
 ::
+++  handle-connection-error
+  |=  status-code=@ud
+  ^-  (quip card _state)
+  ~&  >>>  "Connection error: {<[%error status-code]>}"
+  :_  state
+  ~[[%give %fact ~[/responses] %btc-node-hook-response !>([%status %.n status-code])]]
+::
 ++  handle-btc-response
   |=  btc-resp=btc-node-hook-response
   ^-  (quip card _state)
@@ -196,7 +205,7 @@
   ::
   =/  broadcast-response=(list card)
     ?:  (~(has in watched-calls) -.btc-resp)
-      ~[[%give %fact ~[/response] %noun !>(3)]]
+      ~[[%give %fact ~[/responses] %btc-node-hook-response !>(btc-resp)]]
     ~
   %+  weld
     broadcast-response
