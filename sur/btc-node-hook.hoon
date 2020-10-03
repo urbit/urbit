@@ -571,8 +571,13 @@
 |%
 ::
 +$  btc-node-hook-action    request:btc-rpc
-+$  btc-node-hook-response  response:btc-rpc
 +$  btc-node-hook-command   command:btc-rpc
+::  Expand the response type to include connectivity
+::
++$  btc-node-hook-response
+  $%  [%status connected=? status-code=@ud]
+      response:btc-rpc
+  ==
 ::
 ++  btc-rpc
   |%
@@ -2020,6 +2025,15 @@
     $%  ::  Loads RPC node URL+credentials
         ::
         [%credentials url=@t user=@t pass=@t]
+        ::  Adds an RPC call to the set of calls that trigger a broadcast to subscribers
+        ::
+        [%watch call=term]
+        ::  Removes an RPC call from the set of calls that trigger a broadcast to subscribers
+        ::
+        [%unwatch call=term]
+        ::  Check connectivity of node and return to subscribers
+        ::
+        [%ping ~]
         ::  TODO: Sync data/wallets...
         ::
         [%sync ~]

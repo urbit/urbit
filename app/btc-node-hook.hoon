@@ -1,8 +1,8 @@
 ::  btc-node-hook: send JSON rpc requests to bitcoin full node
 ::  and poke the responses into the btc-node-store
 ::
-/-  *btc-node-hook, *btc-node-store, sole
-/+  default-agent, sole, base64, lib=btc-node-json, verb
+/-  *btc-node-hook, *btc-node-store
+/+  default-agent, base64, lib=btc-node-json, verb, dbug
 ::
 =>  |%
     +$  card  card:agent:gall
@@ -14,6 +14,7 @@
       $:  user=@t
           pass=@t
           endpoint=@t
+          watched-calls=(set term)
       ==
     --
 ::
@@ -21,6 +22,7 @@
 =*  state  -
 ::  Main
 ::
+%-  agent:dbug
 %+  verb  |
 ^-  agent:gall
 =<  |_  =bowl:gall
@@ -31,7 +33,7 @@
     ::
     ++  on-init
       ^-  (quip card _this)
-      [~ this(user '', pass '', endpoint '')]
+      [~ this(user '', pass '', endpoint '', watched-calls *(set term))]
     ::
     ++  on-save   !>(state)
     ++  on-load
@@ -41,6 +43,7 @@
     ++  on-poke
       |=  [=mark =vase]
       ^-  (quip card _this)
+      ?>  (team:title our.bowl src.bowl)
       =^  cards  state
         ?+    mark    (on-poke:def mark vase)
             %btc-node-hook-action
@@ -51,7 +54,18 @@
         ==
       [cards this]
     ::
-    ++  on-watch  on-watch:def
+    ++  on-watch
+      |=  pax=path
+      ^-  (quip card _this)
+      ::  We restrict access to the local ship and its moons,
+      ::  because we handle permissioning at higher-level agents.
+      ::
+      ?>  (team:title our.bowl src.bowl)
+      ?+  pax  (on-watch:def pax)
+          [%responses ~]
+        ~&  >  "%btc-node-hook: subscription on {pax}"
+        `this
+      ==
     ++  on-leave  on-leave:def
     ++  on-peek   on-peek:def
     ++  on-agent  on-agent:def
@@ -61,7 +75,10 @@
       =*  response  client-response.sign-arvo
       =^  cards  state
         ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
-            %http-response    (http-response:bc wire response)
+            %http-response
+          ?.  ?=([%ping *] wire)
+            (http-response:bc wire response)
+          (broadcast-status:bc response)
         ==
       [cards this]
     ::
@@ -69,10 +86,11 @@
     --
 ::
 |_  =bowl:gall
+::  Create an HTTP request to the BTC RPC endpoint
 ::
-++  handle-action
+++  gen-request
   |=  act=btc-node-hook-action
-  ^-  (quip card _state)
+  ^-  request:http
   =/  body=request:rpc:jstd
     (request-to-rpc:btc-rpc:lib act)
   =/  =header-list:http
@@ -83,16 +101,21 @@
             %-  ~(en base64 | &)
             (as-octs:mimes:html :((cury cat 3) user ':' pass))
     ==  ==
-  =/  req=request:http
-    :*  %'POST'
-        (endpoint-url act)
-        header-list
-        =,  html
-        %-  some
-          %-  as-octt:mimes
-            (en-json (request-to-json:rpc:jstd body))
-    ==
+  :*  %'POST'
+      (endpoint-url act)
+      header-list
+      =,  html
+      %-  some
+        %-  as-octt:mimes
+          (en-json (request-to-json:rpc:jstd body))
+  ==
+::
+++  handle-action
+  |=  act=btc-node-hook-action
+  ^-  (quip card _state)
   =/  out  *outbound-config:iris
+  =/  req=request:http
+    (gen-request act)
   :_  state
   [%pass /[(scot %da now.bowl)] %arvo %i %request req out]~
 ::
@@ -103,7 +126,36 @@
       %credentials
     :_  state(endpoint url.comm, user user.comm, pass pass.comm)
     [%pass / %arvo %d %flog [%text "credentials updated..."]]~
+    ::
+      %watch
+    ~&  >  "Watching {<call.comm>}"
+    `state(watched-calls (~(put in watched-calls) call.comm))
+    ::
+      %unwatch
+      ~&  >  "Unwatching {<call.comm>}"
+    `state(watched-calls (~(del in watched-calls) call.comm))
+    ::  Use a dummy call to `%uptime` to see whether the server is connected
+    ::
+      %ping
+    ping-rpc
   ==
+::
+++  ping-rpc
+  ^-  (quip card _state)
+  =/  out  *outbound-config:iris
+  =/  req=request:http
+    (gen-request (btc-node-hook-action [%uptime ~]))
+  :_  state
+  [%pass /ping/[(scot %da now.bowl)] %arvo %i %request req out]~
+::
+++  broadcast-status
+  |=  response=client-response:iris
+  ^-  (quip card _state)
+  ?.  ?=(%finished -.response)
+    [~ state]
+  =*  status    status-code.response-header.response
+  :_  state
+  [%give %fact ~[/responses] %btc-node-hook-response !>([%status =(status 200) status])]~
 ::
 ++  httr-to-rpc-response
   |=  hit=httr:eyre
@@ -171,6 +223,15 @@
   |=  btc-resp=btc-node-hook-response
   ^-  (quip card _state)
   :_  state
+  ::  If the head term is a type of call we are watching, then
+  ::  broadcast it to subscribers on the response path
+  ::
+  =/  broadcast-response=(list card)
+    ?:  (~(has in watched-calls) -.btc-resp)
+      ~[[%give %fact ~[/responses] %btc-node-hook-response !>(btc-resp)]]
+    ~
+  %+  weld
+    broadcast-response
   ^-  (list card)
   ?+    -.btc-resp
       ::  By default we just print all RPC responses that are not

@@ -1,7 +1,7 @@
-::  bippy-bridge.hoon
-::  Provider for accessing BTC full node
+::  btc-bridge.hoon
+::  Proxy for accessing BTC full node
 ::
-/-  *bippy-bridge
+/-  *btc-bridge, bnh=btc-node-hook
 /+  dbug, default-agent
 |%
 +$  versioned-state
@@ -24,15 +24,16 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  '%bippy-bridge initialized successfully'
-  `this
+  ~&  >  '%btc-bridge initialized successfully'
+  :-  ~[[%pass /btc-node-hook/[(scot %da now.bowl)] %agent [our.bowl %btc-node-hook] %watch /responses]]
+  this
 ++  on-save
   ^-  vase
   !>(state)
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ~&  >  '%bippy-bridge recompiled successfully'
+  ~&  >  '%btc-bridge recompiled successfully'
   `this(state !<(versioned-state old-state))
 ++  on-poke
   |=  [=mark =vase]
@@ -40,16 +41,28 @@
   ?+    mark  (on-poke:def mark vase)
       %noun
     ?+    q.vase  (on-poke:def mark vase)
-        %send-tx
-      ~&  >>>  %send-tx
-      `this
+        %status
+      :_  this
+      ~[[%pass / %agent [our.bowl %btc-node-hook] %poke %btc-node-hook-action !>([%get-block-count ~])]]
     ==
   ==
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
-++  on-agent  on-agent:def
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
+  ?+  -.sign  (on-agent:def wire sign)
+      %fact
+    ?+  -.cage.sign  (on-agent:def wire sign)
+        %btc-node-hook-response
+      =/  resp=btc-node-hook-response:bnh
+        !<(btc-node-hook-response:bnh +.cage.sign)
+      ~&  >  resp
+      `this
+    ==
+  ==
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
