@@ -179,6 +179,11 @@
       ::
       ~&(btc-resp ~)
   ::
+     %get-block
+   ::  TODO: %get-block can potentially return a very big value
+   ::  (e.g. a very long hex encoded string or a list of txs in a block)
+   ::
+   ~&(success+'printing %get-block output is not implemented' ~)
       :: %abandon-transaction
       :: %abort-rescan
       :: %add-multisig-address
