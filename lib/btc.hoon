@@ -28,8 +28,9 @@
     ==
   $(ret (snoc ret num), bits (slag n ((list @) bits)))
 ::
-++  polymod
+++  bech32-polymod
   |=  values=(list @)
+  ^-  @
   =/  gen=(list @ux)
     ~[0x3b6a.57b2 0x2650.8e6d 0x1ea1.19fa 0x3d42.33dd 0x2a14.62b3]
   =/  chk=@  1
@@ -56,13 +57,28 @@
 ::
 ++  verify-checksum
   |=  [hrp=tape data-and-checksum=(list @)]
-  %-  polymod
+  %-  bech32-polymod
   (weld (expand-hrp hrp) data-and-checksum)
+::
+++  checksum
+  |=  [hrp=tape data=(list @)]
+  ^-  (list @)
+  ::  xor 1 with the polymod
+  =/  polymod=@
+    %+  mix  1
+    %-  bech32-polymod
+    (zing ~[(expand-hrp hrp) data (reap 6 0)])
+  %+  turn  (gulf 0 5)
+  |=(i=@ (dis 31 (mul (sub 5 i) (rsh 0 5 polymod))))
 ::
 ++  charset-to-value
   |=  c=@tD
   ^-  (unit @)
   (find ~[c] charset)
+++  value-to-charset
+  |=  index=@
+  ^-  @tD
+  (snag index charset)
 ::
 ++  is-valid
   |=  [bech=tape last-1-pos=@]  ^-  ?
@@ -95,6 +111,16 @@
     ~
   =/  checksum-pos  (sub (lent data-and-checksum) 6)
   `[hrp (scag checksum-pos data-and-checksum) (slag checksum-pos data-and-checksum)]
+::  data should be 5bit words
+::
+++  encode-bech32
+  |=  [hrp=tape data=(list @)]
+  ^-  tape
+  =/  combined=(list @)
+    (weld data (checksum hrp data))
+  (zing ~[hrp "1" (turn combined value-to-charset)])
+::  combined = data + bech32_create_checksum(hrp, data)
+::  return hrp + '1' + ''.join([CHARSET[d] for d in combined])
 ::
 ++  decode-segwit
   |=  segwit=tape
