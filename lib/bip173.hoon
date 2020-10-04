@@ -1,7 +1,9 @@
 |%
 +$  address  ?([@uc [%bech32 @t]])
 +$  decoded-bech32  [hrp=tape data=(list @) checksum=(list @)]
+::
 ++  charset  "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
+::
 ++  polymod
   |=  values=(list @)
   =/  gen=(list @ux)
@@ -69,6 +71,13 @@
     ~
   =/  checksum-pos  (sub (lent data-and-checksum) 6)
   `[hrp (scag checksum-pos data-and-checksum) (slag checksum-pos data-and-checksum)]
+::
+++  hash-160
+  |=  pubkey=@ux
+  ^-  @ux
+  =/  sha  (swp 3 (shax (swp 3 pubkey)))
+    %-  ripemd-160:ripemd:crypto
+    [(met 3 sha) sha]
 ::
 ++  decode-segwit
   |=  segwit=tape
