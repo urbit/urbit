@@ -24,6 +24,7 @@ import Network.Socket     (tupleToHostAddress)
 import Urbit.King.App     (HasKingId(..))
 
 import qualified Urbit.EventLog.LMDB as Log
+import qualified Urbit.Noun.Time     as Time
 
 
 --------------------------------------------------------------------------------
@@ -91,13 +92,31 @@ runGala
 runGala point = do
     env <- ask
     que <- newTQueueIO
+    cry <- newTQueueIO
+    flip mkRAcquire cancel $ async $ forever $ do
+      act <- atomically $ readTQueue cry
+      putStrLn "taking action"
+      io act
     let enqueue = \p -> writeTQueue que p $> Intake
-    let (_, runAmes) = ames env (fromIntegral point) True enqueue noStderr
+    let (_, runAmes) =
+          ames env (fromIntegral point) True (scry cry) enqueue noStderr
     cb <- runAmes
     io (cb turfEf)
     pure (que, cb)
   where
     noStderr _ = pure ()
+    scry :: TQueue (IO ()) -> Time.Wen -> Gang -> Path -> (Maybe (Term, Noun) -> IO ()) -> STM ()
+    scry q _ _ (Path p) cb = writeTQueue q $ case unKnot <$> p of
+      ["ax",_,"",_,"protocol","version"] -> (putStrLn "yes" >>) $ cb $ Just
+        ( error "ames test: should not depend on scry term"
+        , A 0
+        ) :: IO ()
+      ["ax",_,"",_,"peers",ship,"forward-lane"] -> cb $ Just
+        ( error "ames test: should not depend on scry term"
+        , toNoun [fromIntegral $ hash ship :: Word32]
+        )
+      pax -> error ("ames test: fell scry " <> show pax)
+        
 
 waitForPacket :: TQueue EvErr -> Bytes -> IO Bool
 waitForPacket q val = go
