@@ -42,12 +42,20 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 =bip173 -build-file %/lib/bip173/hoon
 ```
 
-### BTC pubkey -> address hashing
+### Bech32 Algo
+- hash = hash160(pubkey)
+- words = convert(hash, 8bitTo5bit)
+- encode('bc', [0x00 words])
+
+### BTC pubkey -> address hashing (Hash-160)
 Uses the example data here:
 https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses
 
 That one starts with pubkey below. The following runs it through sha256 and ripemd160 to yield the hash:
-`0xf54a.5851.e937.2b87.810a.8e60.cdd2.e7cf.d80b.6e31`
+```
+0xf54a.5851.e937.2b87.810a.8e60.cdd2.e7cf.d80b.6e31
+```
+
 Use `@uc` to make the Hash-160 into a BTC P2PKH address
 ```
 =pubkey 0x2.5086.3ad6.4a87.ae8a.2fe8.3c1a.f1a8.403c.b53f.53e4.86d8.511d.ad8a.0488.7e5b.2352
