@@ -71,22 +71,15 @@
         ::
         bech32+addr
       `@uc`u.res
-    ::  %to-hex: parses hexadecimal to @ux with separator dots and 0x
-    ::
-    ++  to-hex
-      |=  h=@t
-      ^-  @ux
-      ?:  =('' h)  0x0
-      ::  Add leading 00
+      ::  %to-hex: parses hex-encoded cord to @ux
       ::
-      =+  (lsh 3 2 h)
-      ::  Group by 4-size block
+      ++  to-hex
+        |=  h=cord
+        ^-  @ux
+        =/  parsed=(unit (pair @ud @ux))  (de:base16:mimes:html h)
+        ?~  parsed  ~|(%non-hex-cord !!)
+        q.u.parsed
       ::
-      =+  (rsh 3 2 -)
-      ::  Parse hex to atom
-      ::
-      `@ux`(rash - hex)
-    ::
     ++  ip-port-to-cord
       |=  [ip=@if port=@ud]
       %-  crip
