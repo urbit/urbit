@@ -85,7 +85,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       isLastMessage,
       unreadMarkerRef
     } = this.props;
-  
+
     const renderSigil = Boolean((nextMsg && msg.author !== nextMsg.author) || !nextMsg || msg.number === 1);
     const dayBreak = nextMsg && new Date(msg.when).getDate() !== new Date(nextMsg.when).getDate();
 
@@ -221,7 +221,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
 
 export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
   <>
-    <p className="child ph1 mono f9 gray2 dib">{timestamp}</p>
+    <p className="child pr1 mono f9 gray2 dib">{timestamp}</p>
     <div className="fr clamp-message white-d pr3 lh-copy" style={{ flexGrow: 1 }}>
       <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
     </div>
