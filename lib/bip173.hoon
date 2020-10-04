@@ -1,5 +1,6 @@
 |%
 +$  address  ?([@uc [%bech32 @t]])
++$  decoded-bech32  [hrp=tape data=(list @) checksum=(list @)]
 ++  charset  "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
 ++  polymod
   |=  values=(list @)
@@ -28,9 +29,9 @@
   (zing ~[front ~[0] back])
 ::
 ++  verify-checksum
-  |=  [hrp=tape data=(list @) checksum=(list @)]
+  |=  [hrp=tape data-and-checksum=(list @)]
   %-  polymod
-    (zing ~[(expand-hrp hrp) data checksum])
+  (weld (expand-hrp hrp) data-and-checksum)
 ::
 ++  charset-to-value
   |=  c=@tD
@@ -39,25 +40,24 @@
 ::
 ++  decode-bech32
   |=  bech=tape
-  ^-  (unit [hrp=tape data=(list @) checksum=(list @)])
+  ^-  (unit decoded-bech32)
   ::  TODO: error handling and checksum verify
   =.  bech  (cass bech)         ::  to lowercase
   =/  pos  (flop (fand "1" bech))
   ?~  pos  ~
   =/  last-1=@  i.pos
-  =/  data-and-checksum=(list @)
+  =/  encoded-data-and-checksum=(list @)
     (slag +(last-1) bech)
-  =/  from-base32=(list @)
-    %+  murn  data-and-checksum
+  =/  data-and-checksum=(list @)
+    %+  murn  encoded-data-and-checksum
     charset-to-value
-  ?.  =((lent data-and-checksum) (lent from-base32))
+  ?.  =((lent encoded-data-and-checksum) (lent data-and-checksum))    ::  ensure all were in CHARSET
     ~
-  =/  checksum-pos  (sub (lent from-base32) 6)
-  :-  ~
-  :*  hrp=(scag last-1 bech)
-      data=(scag checksum-pos from-base32)
-      checksum=(slag checksum-pos from-base32)
-  ==
+  =/  hrp  (scag last-1 bech)
+  ?.  =(1 (verify-checksum hrp data-and-checksum))
+    ~
+  =/  checksum-pos  (sub (lent data-and-checksum) 6)
+  `[hrp (scag checksum-pos data-and-checksum) (slag checksum-pos data-and-checksum)]
 ::
 ++  decode-segwit
   |=  segwit=tape
