@@ -235,11 +235,12 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
     scryVersion \v -> do
       v0 <- readTVarIO versSlot
       atomically $ writeTVar versSlot (Just v)
+      putStrLn "wow"
       if (v0 == Just v)
         then logInfo $ displayShow ("ames: proto version unchanged at", v)
         else stderr ("ames: protocol version now " <> tshow v)
 
-    threadDelay (10 * 60 * 1_000_000)  -- 10m
+    threadDelay (1_000_000)  -- 10m
 
   queuePacketsThread :: HasLogFunc e
                      => TVar Word
@@ -258,7 +259,7 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
         logDebug $ displayShow ("ames: bon packet", pkt, showUD $ bytesAtom b)
 
         if pktRcvr == who
-          then serf'sUp p a b
+          then serfsUp p a b
           else lan pktRcvr $ \case
             Just (dest:_) -> forward dest $ encode pkt
               { pktOrigin = pktOrigin <|> Just (ipDest p a) }
@@ -269,7 +270,7 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
       Left e -> logInfo $ displayShow ("ames: dropping malformed", e)
 
     where
-      serf'sUp p a b =
+      serfsUp p a b =
         atomically (enqueueEv (EvErr (hearEv p a b) hearFailed)) >>= \case
           Intake -> pure ()
           Ouster -> do
