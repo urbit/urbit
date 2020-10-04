@@ -7,9 +7,10 @@
 ++  hash-160
   |=  pubkey=@ux
   ^-  @ux
-  =/  sha  (swp 3 (shax (swp 3 pubkey)))
-    %-  ripemd-160:ripemd:crypto
-    [(met 3 sha) sha]
+  =,  ripemd:crypto
+  ::  use shay to preserve little endian length when there are trailing zeros
+  =/  sha256  (swp 3 (shay 33 (swp 3 pubkey)))
+    (ripemd-160 [32 sha256])
 ::  Converts an atom to a list of n-bit numbers, flop to preserve big-endian
 ::
 ++  to-n-bit
