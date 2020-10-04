@@ -4,6 +4,29 @@
 ::
 ++  charset  "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
 ::
+++  hash-160
+  |=  pubkey=@ux
+  ^-  @ux
+  =/  sha  (swp 3 (shax (swp 3 pubkey)))
+    %-  ripemd-160:ripemd:crypto
+    [(met 3 sha) sha]
+::  Converts an atom to a list of n-bit numbers, flop to preserve big-endian
+::
+++  to-n-bit
+  |=  [n=@ input=@]
+  ^-  (list @)
+  =/  bits  (flop (rip 0 input))
+  =|  ret=(list @)
+  |-  ?~  bits  ret
+  =/  n-bits  (scag n ((list @) bits))
+  ::  left-shift the "missing" number of bits
+  =/  num=@
+    %:  lsh  0
+        (sub n (lent n-bits))
+        (rep 0 (flop n-bits))
+    ==
+  $(ret (snoc ret num), bits (slag n ((list @) bits)))
+::
 ++  polymod
   |=  values=(list @)
   =/  gen=(list @ux)
@@ -71,13 +94,6 @@
     ~
   =/  checksum-pos  (sub (lent data-and-checksum) 6)
   `[hrp (scag checksum-pos data-and-checksum) (slag checksum-pos data-and-checksum)]
-::
-++  hash-160
-  |=  pubkey=@ux
-  ^-  @ux
-  =/  sha  (swp 3 (shax (swp 3 pubkey)))
-    %-  ripemd-160:ripemd:crypto
-    [(met 3 sha) sha]
 ::
 ++  decode-segwit
   |=  segwit=tape
