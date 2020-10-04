@@ -37,6 +37,11 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 `@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 zpub) 0) 0))
 ```
 
+## BIP 173 (Bech32 Addresses)
+```
+=bip173 -build-file %/lib/bip173/hoon
+```
+
 ## Deprecated: `btc-address` Child Derivations
 
 **Test xpub parsing**
