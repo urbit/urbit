@@ -38,14 +38,26 @@
   ^-  (unit @)
   (find ~[c] charset)
 ::
+++  is-valid
+  |=  [bech=tape last-1-pos=@]  ^-  ?
+  ?&  ?|(=((cass bech) bech) =((cuss bech) bech))       ::  to upper or to lower is same as bech
+      (gte last-1-pos 1)
+      (lte (add last-1-pos 7) (lent bech))
+      (lte (lent bech) 90)
+      (levy bech |=(c=@tD (gte c 33)))
+      (levy bech |=(c=@tD (lte c 126)))
+  ==
+::
 ++  decode-bech32
   |=  bech=tape
   ^-  (unit decoded-bech32)
-  ::  TODO: error handling and checksum verify
-  =.  bech  (cass bech)         ::  to lowercase
+  =.  bech  (cass bech)              ::  to lowercase
   =/  pos  (flop (fand "1" bech))
   ?~  pos  ~
   =/  last-1=@  i.pos
+  ?.  (is-valid bech last-1)         ::  check bech32 validity (not segwit validity or checksum)
+    ~
+  =/  hrp  (scag last-1 bech)
   =/  encoded-data-and-checksum=(list @)
     (slag +(last-1) bech)
   =/  data-and-checksum=(list @)
@@ -53,7 +65,6 @@
     charset-to-value
   ?.  =((lent encoded-data-and-checksum) (lent data-and-checksum))    ::  ensure all were in CHARSET
     ~
-  =/  hrp  (scag last-1 bech)
   ?.  =(1 (verify-checksum hrp data-and-checksum))
     ~
   =/  checksum-pos  (sub (lent data-and-checksum) 6)
