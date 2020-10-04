@@ -1328,7 +1328,7 @@
                     difficulty=@t
                     chain-work=@ux
                     n-tx=@ud
-                    previous-blockhash=@ux
+                    previous-blockhash=(unit @ux)
                     next-blockhash=(unit @ux)
         ==  ==  ==
       ::
@@ -1397,7 +1397,7 @@
                     difficulty=@t
                     chain-work=@ux
                     n-tx=@ud
-                    previous-blockhash=@ux
+                    previous-blockhash=(unit @ux)
                     next-blockhash=(unit @ux)
         ==  ==  ==
       ::

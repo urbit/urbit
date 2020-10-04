@@ -71,15 +71,15 @@
         ::
         bech32+addr
       `@uc`u.res
-      ::  %to-hex: parses hex-encoded cord to @ux
-      ::
-      ++  to-hex
-        |=  h=cord
-        ^-  @ux
-        =/  parsed=(unit (pair @ud @ux))  (de:base16:mimes:html h)
-        ?~  parsed  ~|(%non-hex-cord !!)
-        q.u.parsed
-      ::
+    ::  %to-hex: parses hex-encoded cord to @ux
+    ::
+    ++  to-hex
+      |=  h=cord
+      ^-  @ux
+      =/  parsed=(unit (pair @ud @ux))  (de:base16:mimes:html h)
+      ?~  parsed  ~|(%non-hex-cord !!)
+      q.u.parsed
+    ::
     ++  ip-port-to-cord
       |=  [ip=@if port=@ud]
       %-  crip
@@ -1453,7 +1453,7 @@
               ['difficulty' (un no)]
               ['chainwork' (un (cu to-hex so))]
               ['nTx' (un ni)]
-              ['previousblockhash' (un (cu to-hex so))]
+              ['previousblockhash' (uf ~ (mu (cu to-hex so)))]
               ['nextblockhash' (uf ~ (mu (cu to-hex so)))]
       ==  ==
     ::
@@ -1546,7 +1546,7 @@
           ['difficulty' (un no)]
           ['chainwork' (un (cu to-hex so))]
           ['nTx' (un ni)]
-          ['previousblockhash' (un (cu to-hex so))]
+          ['previousblockhash' (uf ~ (mu (cu to-hex so)))]
           ['nextblockhash' (uf ~ (mu (cu to-hex so)))]
       ==
     ::
