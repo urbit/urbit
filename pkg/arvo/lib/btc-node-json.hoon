@@ -1831,13 +1831,13 @@
             ['rules' (ar (cu ^rule so))]
             ['vbavailable' (om ni)]
             ['vbrequired' ni]
-            ['previousblockhash' (su hex)]
+            ['previousblockhash' (cu to-hex so)]
             :-  'transactions'
               %-  ar
               %-  ot
-                :~  ['data' (su hex)]
-                    ['txid' (su hex)]
-                    ['hash' (su hex)]
+                :~  ['data' (cu to-hex so)]
+                    ['txid' (cu to-hex so)]
+                    ['hash' (cu to-hex so)]
                     ['depends' (ar ni)]
                     ['fee' ni]
                     ['sigops' ni]
@@ -1845,7 +1845,7 @@
                 ==
             ['coinbaseaux' (ot ~[flags+so])]
             ['coinbasevalue' ni]
-            ['target' (su hex)]
+            ['target' (cu to-hex so)]
             ['mintime' (cu from-unix:chrono:userlib ni)]
             ['mutable' (ar (cu mutable so))]
             ['noncerange' so]
@@ -1853,9 +1853,9 @@
             ['sizelimit' ni]
             ['weightlimit' ni]
             ['curtime' (cu from-unix:chrono:userlib ni)]
-            ['bits' (su hex)]
+            ['bits' (cu to-hex so)]
             ['height' ni]
-            ['default_witness_commitment' (su hex)]
+            ['default_witness_commitment' (cu to-hex so)]
         ==
     ::
         %get-mining-info

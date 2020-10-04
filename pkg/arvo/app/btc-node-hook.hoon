@@ -184,7 +184,14 @@
    ::  (e.g. a very long hex encoded string or a list of txs in a block)
    ::
    ~&(success+'printing %get-block output is not implemented' ~)
-      :: %abandon-transaction
+ ::
+     %get-block-template
+   ::  TODO: %get-block-template can potentially return a very big value
+   ::  (e.g. hashes for all txs in a block)
+   ::
+   ~&(success+'printing %get-block-template output is not implemented' ~)
+ ::
+     :: %abandon-transaction
       :: %abort-rescan
       :: %add-multisig-address
       :: %backup-wallet
