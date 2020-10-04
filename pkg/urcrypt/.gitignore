@@ -1,6 +1,11 @@
 build-aux
+Makefile
 Makefile.in
 aclocal.m4
-config.h.*
+autom4te.cache
+config.h*
+config.status
+config.log
 configure
 .deps
+.dirstamp

@@ -5,7 +5,7 @@ in
 
 import ./default.nix {
   inherit (pkgs)
-    stdenv openssl gmp;
+    stdenv openssl gmp pkgconfig;
   inherit (deps)
     libaes_siv argon2 scrypt secp256k1;
 }
