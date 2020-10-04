@@ -39,7 +39,7 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 
 ## BIP 173 (Bech32 Addresses)
 ```
-=bip173 -build-file %/lib/bip173/hoon
+=btc -build-file %/lib/btc/hoon
 ```
 
 ### Bech32 Algo
@@ -59,8 +59,8 @@ That one starts with pubkey below. The following runs it through sha256 and ripe
 Use `@uc` to make the Hash-160 into a BTC P2PKH address
 ```
 =pubkey 0x2.5086.3ad6.4a87.ae8a.2fe8.3c1a.f1a8.403c.b53f.53e4.86d8.511d.ad8a.0488.7e5b.2352
-(hash-160:bip173 pubkey)
-`@uc`(hash-160:bip173 pubkey)`@uc`(hash-160:bip173 pubkey)
+(hash-160:btc pubkey)
+`@uc`(hash-160:btc pubkey)`@uc`(hash-160:btc pubkey)
 ```
 
 ### trailing zeros
