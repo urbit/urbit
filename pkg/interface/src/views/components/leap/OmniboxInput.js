@@ -17,6 +17,8 @@ export class OmniboxInput extends Component {
       }
       width='100%'
       p='2'
+      backgroundColor='white'
+      color='black'
       border='1px solid transparent'
       borderRadius='2'
       maxWidth='calc(600px - 1.15rem)'
