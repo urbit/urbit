@@ -113,6 +113,7 @@ export function ChatResource(props: ChatResourceProps) {
         group={group}
         ship={owner}
         station={station}
+        allStations={Object.keys(props.inbox)}
         api={props.api}
         hideNicknames={props.hideNicknames}
         hideAvatars={props.hideAvatars}

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { cite } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
+import { Center, Button } from "@tlon/indigo-react";
+
 export const OVERLAY_HEIGHT = 250;
 
 export class ProfileOverlay extends PureComponent {
@@ -11,6 +13,7 @@ export class ProfileOverlay extends PureComponent {
 
     this.popoverRef = React.createRef();
     this.onDocumentClick = this.onDocumentClick.bind(this);
+    this.createAndRedirectToDM = this.createAndRedirectToDM.bind(this);
   }
 
   componentDidMount() {
@@ -21,6 +24,42 @@ export class ProfileOverlay extends PureComponent {
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.onDocumentClick);
     document.removeEventListener('touchstart', this.onDocumentClick);
+  }
+
+  createAndRedirectToDM() {
+    const { api, ship, history, allStations } = this.props;
+    const station = `/~${window.ship}/dm--${ship}`;
+    const theirStation = `/~${ship}/dm--${window.ship}`;
+
+    if (allStations.indexOf(station) !== -1) {
+      history.push(`/~groups/home/resource/chat${station}`);
+      return;
+    }
+
+    if (allStations.indexOf(theirStation) !== -1) {
+      history.push(`/~groups/home/resource/chat${theirStation}`);
+      return;
+    }
+
+    const groupPath = `/ship/~${window.ship}/dm--${ship}`;
+    const aud = ship !== window.ship ? [`~${ship}`] : [];
+    const title = `${cite(window.ship)} <-> ${cite(ship)}`;
+
+    api.chat.create(
+      title,
+      '',
+      station,
+      groupPath,
+      { invite: { pending: aud } },
+      aud,
+      true,
+      false
+    );
+
+    //  TODO: make a pretty loading state
+    setTimeout(() => {
+      history.push(`/~groups/home/resource/chat${station}`);
+    }, 5000);
   }
 
   onDocumentClick(event) {
@@ -65,11 +104,9 @@ export class ProfileOverlay extends PureComponent {
         />;
     const showNickname = contact?.nickname && !hideNicknames;
 
-      if (!group.hidden) {
-        img = <Link to={`/~groups/view${association['group-path']}/${ship}`}>{img}</Link>;
-      }
-
-    //  TODO: create a chat DM
+    if (!group.hidden) {
+      img = <Link to={`/~groups/view${association['group-path']}/${ship}`}>{img}</Link>;
+    }
 
     return (
       <div
@@ -78,20 +115,17 @@ export class ProfileOverlay extends PureComponent {
         className="flex-col shadow-6 br2 bg-white bg-gray0-d inter absolute z-1 f9 lh-solid"
       >
         <div style={{ height: '160px', width: '160px' }}>
-        {img}
+          {img}
         </div>
-        <div className="pv3 pl3 pr2">
+        <div className="pv3 pl3 pr3">
           {showNickname && (
             <div className="b white-d truncate">{contact.nickname}</div>
           )}
           <div className="mono gray2">{cite(`~${ship}`)}</div>
           {!isOwn && (
-            <Link
-              to={`/~todo/~${ship}`}
-              className="b--green0 b--green2-d b--solid ba green2 mt3 tc pa2 pointer db"
-            >
+            <Button mt={2} width="100%" onClick={this.createAndRedirectToDM}>
               Send Message
-            </Link>
+            </Button>
           )}
           {isOwn && (
             <Link
