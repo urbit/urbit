@@ -157,7 +157,7 @@
       |=  [app=@tas =^associations]
       ^+  associations
       %-  malt
-      %+  murn  ~(tap by associations.old)
+      %+  murn  ~(tap by associations)
       |=  [[=group-path =md-resource] m=metadata]
       ^-  (unit [[^group-path ^md-resource] metadata])
       ?.  =(app-name.md-resource app)  ~
