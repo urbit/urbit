@@ -11,16 +11,11 @@ AM_INIT_AUTOMAKE([foreign subdir-objects -Wall -Werror])
 AM_PROG_AR
 LT_INIT
 AC_PROG_CC
-AC_CHECK_LIB([gmp], [mpz_init])
 AC_CHECK_LIB([aes_siv], [AES_SIV_CTX_new])
 
 PKG_CHECK_MODULES([SECP256K1], [libsecp256k1])
 
 ## Checks for libraries.
-#AC_CHECK_LIB([ed25519], [main])
-## FIXME: Replace `main' with a function in `-lgmp':
-## FIXME: Replace `main' with a function in `-lsecp256k1':
-#AC_CHECK_LIB([secp256k1], [main])
 ## FIXME: Replace `main' with a function in `-lssl':
 #AC_CHECK_LIB([ssl], [main])
 
