@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { Association } from "~/types/metadata-update";
 import { Box, Text, Button, Col, Center } from "@tlon/indigo-react";
+import RichText from '~/views/components/RichText';
 import { Link, useHistory } from "react-router-dom";
 import GlobalApi from "~/logic/api/global";
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
@@ -84,7 +85,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
           <Text>{title}</Text>
         </Box>
         <Box mb={4}>
-          <Text color="gray">{description}</Text>
+          <RichText color="gray">{description}</RichText>
         </Box>
         <StatelessAsyncButton onClick={onJoin} mx="auto" border>
           Join Channel
