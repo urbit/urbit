@@ -1,10 +1,9 @@
 ::  btc-scratch.hoon
+/-  *btc
 /+  bip32, btc
 =+  ecc=secp256k1:secp:crypto
 =,  bech32:btc
 |%
-+$  bech32-address  $%([%bech32 tape])
-+$  address  ?(@uc bech32-address)
 ++  bip84
   |_  [network=network:btc xpub=tape]
   ++  address
