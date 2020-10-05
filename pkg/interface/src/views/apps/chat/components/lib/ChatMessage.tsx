@@ -14,7 +14,7 @@ import RemoteContent from '~/views/components/RemoteContent';
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
 export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
-  <div ref={ref} style={{ color: "#219dff" }} className="flex items-center f9 absolute w-100 left-0 pt2">
+  <div ref={ref} style={{ color: "#219dff" }} className="flex items-center f9 absolute w-100 left-0 pv0">
     <hr style={{ borderColor: "#219dff" }} className="dn-s ma0 w2 bt-0" />
     <p className="mh4 z-2" style={{ whiteSpace: 'normal' }}>New messages below</p>
     <hr style={{ borderColor: "#219dff" }} className="ma0 flex-grow-1 bt-0" />
@@ -125,7 +125,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         {renderSigil
           ? <MessageWithSigil {...messageProps} />
           : <MessageWithoutSigil {...messageProps} />}
-        <Box fontSize='0' position='relative' width='100%' overflow='hidden' style={unreadContainerStyle}>{isLastRead
+        <Box fontSize='0' position='relative' width='100%' overflow='visible' style={unreadContainerStyle}>{isLastRead
           ? <UnreadMarker dayBreak={dayBreak} when={msg.when} ref={unreadMarkerRef} />
           : null}</Box>
       </div>
