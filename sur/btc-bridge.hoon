@@ -7,11 +7,15 @@
       [%client connected=? host=ship]
   ==
 +$  action
-  $%  [%connect-as-host =credentials]
-      [%connect-as-client host=ship]
-      [%check-status ~]
+  $%  [%check-status ~]
       [%balance =address]
       [%transactions =address]
+  ==
+::
++$  command
+  $%  [%connect-as-host =credentials]
+      [%connect-as-client host=ship]
+      [%add-clients clients=(set ship)]
       [%broadcast-tx =tx]
   ==
 --
