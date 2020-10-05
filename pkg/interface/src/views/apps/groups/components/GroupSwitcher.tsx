@@ -57,9 +57,10 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               bg={color}
               mr={2}
               display="block"
+              flexShrink='0'
             />
-            <Link to={`/~groups${g}`}>
-              <Text>{assoc?.metadata?.title}</Text>
+            <Link style={{ minWidth: 0 }} to={`/~groups${g}`}>
+              <Text verticalAlign='top' maxWidth='100%' overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{assoc?.metadata?.title}</Text>
             </Link>
           </Row>
         );
