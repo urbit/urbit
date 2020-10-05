@@ -24,7 +24,7 @@ export function InvitePopover(props: InvitePopoverProps) {
   const { baseUrl, api, association } = props;
 
   const relativePath = (p: string) => baseUrl + p;
-  const { title } = association.metadata;
+  const { title } = association?.metadata || '';
   const innerRef = useRef(null);
   const history = useHistory();
 

@@ -9,6 +9,8 @@ import SidebarSwitcher from '~/views/components/SidebarSwitch';
 
 import { MetadataSettings } from '~/views/components/metadata/settings';
 
+import { Box, Text, Button, Col, Row } from '@tlon/indigo-react';
+
 export class SettingsScreen extends Component {
   constructor(props) {
     super(props);
@@ -77,16 +79,15 @@ export class SettingsScreen extends Component {
       return null;
     } else {
       return (
-        <div className="w-100 fl mt3">
-          <p className="f8 mt3 lh-copy db">Remove Collection</p>
-          <p className="f9 gray2 db mb4">
-            Remove this collection from your collection list.
-          </p>
-          <a onClick={this.removeCollection.bind(this)}
-             className="dib f9 black gray4-d bg-gray0-d ba pa2 b--black b--gray1-d pointer">
+        <Box width='100%' mt='3'>
+          <Text display='block' mt='3' fontSize='1' mb='1'>Remove Collection</Text>
+          <Text display='block' fontSize='0' gray mb='4'>
+            Remove this collection from your collection list
+          </Text>
+          <Button onClick={this.removeCollection.bind(this)}>
             Remove collection
-          </a>
-        </div>
+          </Button>
+        </Box>
       );
     }
   }
@@ -98,16 +99,15 @@ export class SettingsScreen extends Component {
       return null;
     } else {
       return (
-        <div className="w-100 fl mt3">
-          <p className="f8 mt3 lh-copy db">Delete Collection</p>
-          <p className="f9 gray2 db mb4">
-            Delete this collection, for you and all group members.
-          </p>
-          <a onClick={this.deleteCollection.bind(this)}
-             className="dib f9 ba pa2 b--red2 red2 pointer bg-gray0-d mb4">
+        <Box width='100%' mt='3'>
+          <Text fontSize='1' mt='3' display='block' mb='1'>Delete collection</Text>
+          <Text fontSize='0' gray display='block' mb='4'>
+            Delete this collection, for you and all group members
+          </Text>
+          <Button primary onClick={this.deleteCollection.bind(this)} destructive mb='4'>
             Delete collection
-          </a>
-        </div>
+          </Button>
+        </Box>
       );
     }
   }
@@ -123,43 +123,44 @@ export class SettingsScreen extends Component {
       return <LoadingScreen />;
     } else if (!props.graphResource) {
       props.history.push('/~link');
-      return <div></div>;
+      return <Box />;
     }
 
     return (
-      <div className="h-100 w-100 overflow-x-hidden flex flex-column white-d">
-        <div className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
-             style={{ height: '1rem' }}>
+      <Col height='100%' width='100' overflowX='hidden'>
+        <Box width='100%' display={['block', 'none']} pt='4' pb='6' pl='3' fontSize='1' height='1rem'>
           <Link to="/~link">{'⟵ All Collections'}</Link>
-        </div>
-        <div
-          className={
-            "pl4 pt2 bb b--gray4 b--gray1-d flex relative overflow-x-scroll " +
-            "overflow-x-auto-l overflow-x-auto-xl flex-shrink-0"
-          }
-          style={{ height: 48 }}>
+        </Box>
+        <Row
+          pl='12px'
+          pt='2'
+          borderBottom='1px solid'
+          borderColor='washedGray'
+          flexShrink='0'
+          overflowX={['scroll', 'auto']}
+          height='48px'
+        >
           <SidebarSwitcher
             sidebarShown={this.props.sidebarShown}
-            popout={this.props.popout}
             api={this.props.api}
           />
           <Link className="dib f9 fw4 pt2 gray2 lh-solid"
                 to={`/~link/${props.resourcePath}`}>
-            <h2
-              className="dib f9 fw4 lh-solid v-top"
-              style={{ width: 'max-content' }}>
+            <Text
+              display='inline-block'
+              fontSize='0'
+              verticalAlign='top'
+              width='max-content'>
               {title}
-            </h2>
+            </Text>
           </Link>
           <TabBar
             location={props.location}
-            popout={props.popout}
-            popoutHref={`/~link/popout/${props.resourcePath}/settings`}
             settings={`/~link/${props.resourcePath}/settings`}
           />
-          </div>
-        <div className="w-100 pl3 mt4 cf">
-          <h2 className="f8 pb2">Collection Settings</h2>
+          </Row>
+        <Box width='100' pl='3' mt='3'>
+          <Text display='block' fontSize='1' pb='2'>Collection Settings</Text>
           {this.renderRemove()}
           {this.renderDelete()}
           <MetadataSettings
@@ -176,8 +177,8 @@ export class SettingsScreen extends Component {
             classes="absolute right-1 bottom-1 pa2 ba b--black b--gray0-d white-d"
             text={this.state.type}
           />
-        </div>
-      </div>
+        </Box>
+      </Col>
     );
   }
 }

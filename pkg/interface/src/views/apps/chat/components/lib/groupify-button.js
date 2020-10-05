@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import Toggle from '~/views/components/toggle';
 import { InviteSearch } from '~/views/components/InviteSearch';
 
+import { Button, Text, Box } from '@tlon/indigo-react';
 
 export class GroupifyButton extends Component {
-
   constructor(props) {
     super(props);
 
@@ -26,23 +26,23 @@ export class GroupifyButton extends Component {
     this.setState({ inclusive: Boolean(event.target.checked) });
   }
 
-  renderInclusiveToggle() {
+  renderInclusiveToggle(inclusive) {
     return this.state.targetGroup ? (
-      <div className="mt4">
+      <Box mt='4'>
       <Toggle
         boolean={inclusive}
         change={this.changeInclusive.bind(this)}
       />
-        <span className="dib f9 white-d inter ml3">
+        <Text display='inline-block' fontSize='0' ml='3'>
           Add all members to group
-        </span>
-        <p className="f9 gray2 pt1" style={{ paddingLeft: 40 }}>
+        </Text>
+        <Text display='block' fontSize='0' gray pt='1' pl='40px'>
           Add chat members to the group if they aren't in it yet
-        </p>
-      </div>
-    ) : <div />;
+        </Text>
+      </Box>
+    ) : <Box />;
   }
-  
+
   render() {
     const { inclusive, targetGroup } = this.state;
     const {
@@ -65,12 +65,12 @@ export class GroupifyButton extends Component {
     }
 
     return (
-      <div className={'w-100 fl mt3'} style={{ maxWidth: '29rem' }}>
-        <p className="f8 mt3 lh-copy db">Convert Chat</p>
-        <p className="f9 gray2 db mb4">
+      <Box width='100%' mt='3' maxWidth='29rem'>
+        <Text display='block' fontSize='1' mt='3' mb='1'>Convert Chat</Text>
+        <Text gray display='block' mb='4' fontSize='0'>
           Convert this chat into a group with associated chat, or select a
-          group to add this chat to.
-        </p>
+          group to add this chat to
+        </Text>
         <InviteSearch
           groups={groups}
           contacts={contacts}
@@ -83,8 +83,8 @@ export class GroupifyButton extends Component {
           }}
           setInvite={this.changeTargetGroup.bind(this)}
         />
-        {this.renderInclusiveToggle()}
-        <a onClick={() => {
+        {this.renderInclusiveToggle(inclusive)}
+        <Button mt='3' onClick={() => {
           changeLoading(true, true, 'Converting to group...', () => {
             api.chat.groupify(
               station, targetGroup, inclusive
@@ -93,11 +93,8 @@ export class GroupifyButton extends Component {
             });
           });
         }}
-           className={
-             'dib f9 black gray4-d bg-gray0-d ba pa2 mt4 b--black ' + 
-             'b--gray1-d pointer'
-           }>Convert to group</a>
-      </div>
+        >Convert to group</Button>
+      </Box>
     );
   }
 }

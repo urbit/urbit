@@ -2,6 +2,7 @@ import React from 'react';
 
 import { MetadataColor } from './color';
 import { MetadataInput } from './input';
+import { Box } from '@tlon/indigo-react';
 import { uxToHex } from '~/logic/lib/util';
 
 
@@ -27,7 +28,7 @@ export const MetadataSettings = (props) => {
     `#${uxToHex(props.association.metadata.color)}` : '';
 
   return (
-    <div className="cf mt6">
+    <Box mt='6'>
       <MetadataInput
         title='Rename'
         description={`Change the name of this ${resource}`}
@@ -90,7 +91,7 @@ export const MetadataSettings = (props) => {
             });
           });
         }} />
-    </div>
+    </Box>
   );
 };
 

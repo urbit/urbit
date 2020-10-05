@@ -220,9 +220,9 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
         />
         <Route
           exact
-          path="/~chat/(popout)?/room/(~)?/:ship/:station+"
+          path="/~chat/room/(~)?/:ship/:station+"
           render={(props) => {
-            let station = `/${props.match.params.ship}/${props.match.params.station}`;
+            const station = `/${props.match.params.ship}/${props.match.params.station}`;
             const mailbox = inbox[station] || {
               config: {
                 read: 0,
@@ -247,14 +247,11 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
 
             const group = groups[association['group-path']] || groupBunts.group();
 
-            const popout = props.match.url.includes('/popout/');
-
             return (
               <Skeleton
                 associations={associations}
                 invites={invites}
                 sidebarHideOnMobile={true}
-                popout={popout}
                 sidebarShown={sidebarShown}
                 sidebar={renderChannelSidebar(props, station)}
               >
@@ -271,7 +268,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
                   group={group}
                   pendingMessages={pendingMessages}
                   s3={s3}
-                  popout={popout}
                   sidebarShown={sidebarShown}
                   chatInitialized={chatInitialized}
                   hideAvatars={hideAvatars}
@@ -285,10 +281,9 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
           />
           <Route
             exact
-            path="/~chat/(popout)?/settings/(~)?/:ship/:station+"
+            path="/~chat/settings/(~)?/:ship/:station+"
             render={(props) => {
               let station = `/${props.match.params.ship}/${props.match.params.station}`;
-              const popout = props.match.url.includes('/popout/');
 
               const association =
                 station in associations['chat'] ? associations.chat[station] : {};
@@ -299,7 +294,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
                   associations={associations}
                   invites={invites}
                   sidebarHideOnMobile={true}
-                  popout={popout}
                   sidebarShown={sidebarShown}
                   sidebar={renderChannelSidebar(props, station)}
                 >
@@ -313,7 +307,6 @@ export default class ChatApp extends React.Component<ChatAppProps, {}> {
                     associations={associations.contacts}
                     api={api}
                     inbox={inbox}
-                    popout={popout}
                     sidebarShown={sidebarShown}
                   />
                 </Skeleton>

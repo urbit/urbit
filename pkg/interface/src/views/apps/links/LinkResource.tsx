@@ -49,7 +49,6 @@ export function LinkResource(props: LinkResourceProps) {
     ? associations.graph[appPath]
     : { metadata: {} };
   const contactDetails = contacts[resource["group-path"]] || {};
-  const popout = props.match.url.includes("/popout/");
   const graph = graphs[resourcePath] || null;
 
   useEffect(() => {
@@ -131,7 +130,6 @@ export function LinkResource(props: LinkResourceProps) {
                   comments={node.children}
                   resourcePath={resourcePath}
                   contacts={contactDetails}
-                  popout={false}
                   api={api}
                   hideAvatars={hideAvatars}
                   hideNicknames={hideNicknames}

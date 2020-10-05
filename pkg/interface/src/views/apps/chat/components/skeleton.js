@@ -6,7 +6,7 @@ import ErrorBoundary from '~/views/components/ErrorBoundary';
 export class Skeleton extends Component {
   render() {
     // sidebar and chat panel conditional classes
-    const sidebarHide = (!this.props.sidebarShown || this.props.popout)
+    const sidebarHide = (!this.props.sidebarShown)
       ? 'dn' : '';
 
     const sidebarHideOnMobile = this.props.sidebarHideOnMobile
@@ -22,18 +22,11 @@ export class Skeleton extends Component {
       'w-100 inter pt4 f8': !this.props.chatHideOnMobile
     });
 
-    // popout switches out window chrome and borders
-    const popoutWindow = this.props.popout
-      ? '' : 'ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl';
-
-    const popoutBorder = this.props.popout
-      ? '' : 'ba-m ba-l ba-xl b--gray4 b--gray1-d br1 ';
-
     return (
       // app outer skeleton
-      <div className={'h-100 w-100 ' + popoutWindow}>
+      <div className='h-100 w-100 ph4-m ph4-l ph4-xl pb4-m pb4-l pb4-xl'>
       {/* app window borders */}
-        <div className={ 'bg-white bg-gray0-d cf w-100 flex h-100 ' + popoutBorder }>
+        <div className='bg-white bg-gray0-d cf w-100 flex h-100 ba-m ba-l ba-xl b--gray4 b--gray1-d br1'>
           {/* sidebar skeleton, hidden on mobile when in chat panel */}
           <div
             className={

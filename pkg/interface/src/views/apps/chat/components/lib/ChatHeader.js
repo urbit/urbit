@@ -6,7 +6,6 @@ import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { deSig } from '~/logic/lib/util';
 
 const ChatHeader = (props) => {
-  const isInPopout = props.popout ? 'popout/' : '';
   const group = Array.from(props.group.members);
   let title = props.station.substr(1);
   if (props.association &&
@@ -32,11 +31,10 @@ const ChatHeader = (props) => {
       >
         <SidebarSwitcher
           sidebarShown={props.sidebarShown}
-          popout={props.popout}
           api={props.api}
         />
         <Link
-          to={'/~chat/' + isInPopout + 'room' + props.station}
+          to={'/~chat/' + 'room' + props.station}
           className="pt2 white-d"
         >
           <h2
@@ -51,9 +49,7 @@ const ChatHeader = (props) => {
         </Link>
         <TabBar
           location={props.location}
-          popoutHref={`/~chat/popout/room${props.station}`}
-          settings={`/~chat/${isInPopout}settings${props.station}`}
-          popout={props.popout}
+          settings={`/~chat/settings${props.station}`}
         />
       </div>
     </Fragment>
