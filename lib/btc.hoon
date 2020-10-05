@@ -4,7 +4,7 @@
   |=  pubkey=@ux
   ^-  @ux
   =,  ripemd:crypto
-  ::  use shay to preserve little endian length when there are trailing zeros
+  ::  use shay to preserve byte length when there are trailing zeros
   =/  sha256  (swp 3 (shay 33 (swp 3 pubkey)))
     (ripemd-160 [32 sha256])
 ::  Converts a list of bits to a list of n-bit numbers
@@ -144,8 +144,6 @@
       ~
     =/  checksum-pos  (sub (lent data-and-checksum) 6)
     `[hrp (scag checksum-pos data-and-checksum) (slag checksum-pos data-and-checksum)]
-::  combined = data + bech32_create_checksum(hrp, data)
-::  return hrp + '1' + ''.join([CHARSET[d] for d in combined])
   ++  encode-pubkey
     |=  [=network pubkey=@ux]
     ^-  (unit tape)
