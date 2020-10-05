@@ -36,7 +36,7 @@ export const LinkItem = (props) => {
   const baseUrl = props.baseUrl || `/~link/${resource}`;
 
   return (
-    <Row width="100%" alignItems="center" py={3} bg="white">
+    <Row flexShrink='0' width="100%" alignItems="center" py={3} bg="white">
       {img}
       <Col height="100%" justifyContent="space-between" ml={2}>
         <Anchor
@@ -47,7 +47,7 @@ export const LinkItem = (props) => {
           target="_blank"
           rel="noopener noreferrer">
           <Text> {contents[0].text}</Text>
-            <Text ml="2" color="gray">{hostname} ↗</Text> 
+            <Text ml="2" color="gray">{hostname} ↗</Text>
         </Anchor>
         <Box width="100%">
           <Text
