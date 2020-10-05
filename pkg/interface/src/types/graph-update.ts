@@ -10,7 +10,7 @@ export type Content =  TextContent | UrlContent | CodeContent | ReferenceContent
 export interface Post {
   author: Patp;
   contents: Content[];
-  hash?: string;
+  hash: string | null;
   index: string;
   pending?: boolean;
   signatures: string[];
