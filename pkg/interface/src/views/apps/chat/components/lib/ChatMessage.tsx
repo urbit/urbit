@@ -196,7 +196,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           scrollWindow={scrollWindow}
           className="fl pr3 v-top bg-white bg-gray0-d"
         />
-        <div className="fr clamp-message white-d" style={{ flexGrow: 1, marginTop: -12 }}>
+        <div className="fr f8 clamp-message white-d" style={{ flexGrow: 1, marginTop: -12 }}>
           <div className="hide-child" style={{ paddingTop: '8px' }}>
             <p className="v-mid f9 black white-d dib mr3 c-default">
               <span
