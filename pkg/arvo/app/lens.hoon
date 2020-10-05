@@ -43,12 +43,16 @@
   =/  com=command:lens
     (json:grab:lens-mark jon)
   ::
-  ?:  ?=(%export -.source.com)
+  ?+  -.source.com
+    :_  this(job.state (some [eyre-id com]))
+    [%pass /sole %agent [our.bowl %dojo] %watch /sole/[eyre-id]]~
+  ::
+      %export
     ~&  [%export app.source.com]
     :_  this(job.state (some [eyre-id com]))
     [%pass /export %agent [our.bowl app.source.com] %watch /export]~
   ::
-  ?:  ?=(%import -.source.com)
+      %import
     ?~  enc=(de:base64 base64-jam.source.com)
       !!
     ::
@@ -57,8 +61,51 @@
     :_  this(job.state (some [eyre-id com]))
     [%pass /import %agent [our.bowl app.source.com] %poke %import !>(c)]~
   ::
-  :_  this(job.state (some [eyre-id com]))
-  [%pass /sole %agent [our.bowl %dojo] %watch /sole/[eyre-id]]~
+      %export-all
+    |^
+    =/  output  (crip "{<our.bowl>}-export/atom")
+    =/  jon
+      =/  =atom  (jam export-all)
+      =/  =octs  [(met 3 atom) atom]
+      =/  enc    (en:base64 octs)
+      (pairs:enjs:format file+s+output data+s+enc ~)
+    :_  this
+    %+  give-simple-payload:app  eyre-id
+    (json-response:gen jon)
+    ::
+    ++  export-app
+      |=  app=@tas
+      .^(@ %gx /(scot %p our.bowl)/[app]/(scot %da now.bowl)/export/noun)
+    ++  export-all
+      ^-  (list [@tas @])
+      %+  turn
+        ^-  (list @tas)
+        :~  %group-store
+            %metadata-store
+            %metadata-hook
+            %contact-store
+            %contact-hook
+            %invite-store
+            %chat-store
+            %chat-hook
+            %publish
+            %graph-store
+        ==
+      |=  app=@tas
+      [app (export-app app)]
+    --
+  ::
+      %import-all
+    =/  enc  (de:base64 base64-jam.source.com)
+    ?~  enc  !!
+    =/  by-app  ;;((list [@tas @]) (cue q.u.enc))
+    :_  this
+    %+  weld  (give-simple-payload:app eyre-id not-found:gen)
+    %+  turn  by-app
+    |=  [app=@tas data=@]
+    ^-  card:agent:gall
+    [%pass /import-all %agent [our.bowl app] %poke %import !>(data)]
+  ==
 ::
 ++  on-watch
   |=  =path
