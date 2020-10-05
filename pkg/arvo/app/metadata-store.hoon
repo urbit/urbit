@@ -56,16 +56,18 @@
 +$  state-2   [%2 base-state-0]
 +$  state-3   [%3 base-state-1]
 +$  state-4   [%4 base-state-1]
++$  state-5   [%5 base-state-1]
 +$  versioned-state
   $%  state-0
       state-1
       state-2
       state-3
       state-4
+      state-5
   ==
 --
 ::
-=|  state-4
+=|  state-5
 =*  state  -
 %+  verb  |
 %-  agent:dbug
@@ -84,8 +86,24 @@
     =/  old  !<(versioned-state vase)
     =|  cards=(list card)
     |^
-    ?:  ?=(%4 -.old)
+    ?:  ?=(%5 -.old)
       [cards this(state old)]
+    ?:  ?=(%4 -.old)
+      =/  =^associations
+        (migrate-app-to-graph-store %publish associations.old)
+      %_    $
+        -.old  %5
+        associations.old  associations
+      ::
+          resource-indices.old
+        (rebuild-resource-indices associations)
+        ::
+          app-indices.old
+        (rebuild-app-indices associations)
+        ::
+          group-indices.old
+        (rebuild-group-indices associations)
+      ==
     ?:  ?=(%3 -.old)
       %_    $
         -.old  %4
@@ -133,6 +151,17 @@
         resource-indices  (migrate-resource-indices resource-indices.old)
       ==
     $(old new-state-1)
+    ::
+    ::
+    ++  migrate-app-to-graph-store
+      |=  [app=@tas =^associations]
+      ^+  associations
+      %-  malt
+      %+  murn  ~(tap by associations.old)
+      |=  [[=group-path =md-resource] m=metadata]
+      ^-  (unit [[^group-path ^md-resource] metadata])
+      ?.  =(app-name.md-resource app)  ~
+      `[[group-path [%graph app-path.md-resource]] m]
     ::
     ++  rebuild-app-indices
       =|  app-indices=(jug app-name [group-path app-path])
