@@ -88,7 +88,7 @@ export function GroupSwitcher(props: {
       >
         <Row alignItems="center" justifyContent="space-between">
           <Dropdown
-            width="220px"
+            width="231px"
             alignY="top"
             options={
               <Col
