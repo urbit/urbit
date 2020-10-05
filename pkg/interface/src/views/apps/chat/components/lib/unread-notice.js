@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import moment from 'moment';
+import { Box, Text } from '@tlon/indigo-react';
 
 export const UnreadNotice = (props) => {
   const { unreadCount, unreadMsg, dismissUnread, onClick } = props;
@@ -16,26 +17,41 @@ export const UnreadNotice = (props) => {
   }
 
   return (
-    <div style={{ left: '0px' }}
-         className="pa4 w-100 absolute z-1 unread-notice">
-      <div className={
-        "ba b--green2 green2 bg-white bg-gray0-d flex items-center " +
-        "pa2 f9 justify-between br1"
-      }>
-        <p className="lh-copy db pointer" onClick={onClick}>
+    <Box style={{ left: '0px' }}
+      p='4'
+      width='100%'
+      position='absolute'
+      zIndex='1'
+      className='unread-notice'
+    >
+      <Box
+        backgroundColor='white'
+        display='flex'
+        alignItems='center'
+        p='2'
+        fontSize='0'
+        justifyContent='space-between'
+        borderRadius='1'
+        border='1'
+        borderColor='blue'>
+        <Text flexShrink='0' display='block' cursor='pointer' onClick={onClick}>
           {unreadCount} new messages since{' '}
           {datestamp && (
             <>
-              <span className="green3">~{datestamp}</span> at{' '}
+              <Text color='blue'>~{datestamp}</Text> at{' '}
             </>
           )}
-          <span className="green3">{timestamp}</span>
-        </p>
-        <div onClick={dismissUnread}
-             className="ml4 inter b--green2 pointer tr lh-copy">
+          <Text color='blue'>{timestamp}</Text>
+        </Text>
+        <Text
+          ml='4'
+          color='blue'
+          cursor='pointer'
+          textAlign='right'
+          onClick={dismissUnread}>
           Mark as Read
-        </div>
-      </div>
-    </div>
+        </Text>
+      </Box>
+    </Box>
   );
 }
