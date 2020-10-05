@@ -8,7 +8,7 @@
     $%  state-0
     ==
 ::
-+$  state-0  [%0 counter=@]
++$  state-0  [%0 =status]
 ::
 +$  card  card:agent:gall
 ::
@@ -17,6 +17,7 @@
 =|  state-0
 =*  state  -
 ^-  agent:gall
+=<
 |_  =bowl:gall
 +*  this      .
     def   ~(. (default-agent this %|) bowl)
@@ -38,14 +39,13 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ?+    mark  (on-poke:def mark vase)
-      %noun
-    ?+    q.vase  (on-poke:def mark vase)
-        %status
-      :_  this
-      ~[[%pass / %agent [our.bowl %btc-node-hook] %poke %btc-node-hook-action !>([%ping ~])]]
+  ::  TODO only allow poke if we are a host (in status)
+  =^  cards  state
+    ?+  mark  (on-poke:def mark vase)
+        %btc-bridge-command
+      (handle-command:hc !<(command vase))
     ==
-  ==
+  [cards this]
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
@@ -67,3 +67,10 @@
 ++  on-fail   on-fail:def
 --
 ::  helper core
+|_  =bowl:gall
+++  handle-command
+  |=  comm=command
+  ^-  (quip card _state)
+  ~&  >>>  comm
+  `state
+--
