@@ -15,10 +15,10 @@ noinst_HEADERS = ed25519/src/ed25519.h \
 		 argon2/src/blake2/blake2.h
 
 # main library
-liburcrypt_la_CPPFLAGS = -Ied25519/src \
-			 -Ige-additions \
-			 -Iargon2/include \
-			 -Iargon2/src/blake2
+liburcrypt_la_CPPFLAGS = -I$(srcdir)/ed25519/src \
+			 -I$(srcdir)/ge-additions \
+			 -I$(srcdir)/argon2/include \
+			 -I$(srcdir)/argon2/src/blake2
 liburcrypt_la_LIBADD = $(CRYPTO_LIBS) \
 		       $(SECP256K1_LIBS) \
 		       libed25519.la \
@@ -48,12 +48,12 @@ libed25519_la_SOURCES = ed25519/src/fixedint.h \
 			ed25519/src/sign.c
 
 # ge-additions
-libge_additions_la_CPPFLAGS = -Ied25519/src
+libge_additions_la_CPPFLAGS = -I$(srcdir)/ed25519/src
 libge_additions_la_CFLAGS = -Werror -pedantic -std=gnu99
 libge_additions_la_SOURCES = ge-additions/ge-additions.c
 
 # argon2
-libargon2_la_CPPFLAGS = -Iargon2/include -DARGON2_NO_THREADS 
+libargon2_la_CPPFLAGS = -I$(srcdir)/argon2/include -DARGON2_NO_THREADS
 libargon2_la_CFLAGS = -Wno-unused-value -Wno-unused-function
 libargon2_la_SOURCES = argon2/src/core.h \
 		       argon2/src/thread.h \
