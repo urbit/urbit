@@ -13,8 +13,12 @@ Includes a custom version of `btc-node` that supports access control and returni
 
 ### New Commands
 ```
+::  send results of this RPC call to subscribers, if watched
 :btc-node-hook|command [%watch %get-block-count]
 :btc-node-hook|command [%unwatch %get-block-count]
+
+::  send a message to subscribers as to whether the external node is live
+:btc-node-hook|command [%ping ~]
 ```
 
 ## Bech32 Support
