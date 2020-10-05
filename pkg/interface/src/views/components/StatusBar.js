@@ -17,7 +17,7 @@ const StatusBar = (props) => {
       width="100%"
       gridTemplateRows="30px"
       gridTemplateColumns="3fr 1fr"
-      py={2}
+      py={3}
       px={3}
       >
       <Row collapse>

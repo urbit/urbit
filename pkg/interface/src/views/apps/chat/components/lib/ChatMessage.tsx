@@ -196,9 +196,9 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           scrollWindow={scrollWindow}
           className="fl pr3 v-top bg-white bg-gray0-d"
         />
-        <div className="fr clamp-message white-d" style={{ flexGrow: 1, marginTop: -8 }}>
-          <div className="hide-child" style={{ paddingTop: '4px' }}>
-            <p className="v-mid f9 gray2 dib mr3 c-default">
+        <div className="fr clamp-message white-d" style={{ flexGrow: 1, marginTop: -12 }}>
+          <div className="hide-child" style={{ paddingTop: '8px' }}>
+            <p className="v-mid f9 black white-d dib mr3 c-default">
               <span
                 className={`mw5 db truncate pointer ${showNickname ? '' : 'mono'}`}
                 ref={e => nameSpan = e}
@@ -222,7 +222,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
 export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
   <>
     <p className="child pr1 mono f9 gray2 dib">{timestamp}</p>
-    <div className="fr clamp-message white-d pr3 lh-copy" style={{ flexGrow: 1 }}>
+    <div className="fr f8 clamp-message white-d pr3 lh-copy" style={{ flexGrow: 1 }}>
       <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
     </div>
   </>

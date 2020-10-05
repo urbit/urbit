@@ -39,7 +39,7 @@ const MessageMarkdown = React.memo(props => (
         node.children[0].children[0].value = '>' + node.children[0].children[0].value;
         return false;
       }
-      
+
       return true;
     }}
     plugins={[[
@@ -71,7 +71,7 @@ export default class TextContent extends Component {
       );
     } else {
       return (
-        <Box style={{ overflowWrap: 'break-word' }}>
+        <Box fontSize='1' color='darkGray' style={{ overflowWrap: 'break-word' }}>
           <MessageMarkdown source={content.text} />
         </Box>
       );
