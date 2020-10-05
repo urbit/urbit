@@ -231,6 +231,11 @@ blockquote {
     font-family: 'Inter';
 }
 
+.chat .cm-s-tlon.CodeMirror {
+  font-size: 16px;
+  margin-top: 6px;
+}
+
 pre, code {
   background-color: var(--light-gray);
 }
@@ -380,7 +385,8 @@ pre.CodeMirror-placeholder.CodeMirror-line-like { color: var(--gray); }
   .chat .cm-s-tlon.CodeMirror {
     background: #333;
     color: #fff;
-    font-size: 12px;
+    font-size: 16px;
+    margin-top: 6px;
   }
 
   .chat .cm-s-tlon span.cm-def {
