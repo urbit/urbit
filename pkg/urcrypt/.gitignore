@@ -1,4 +1,6 @@
 build-aux
+libtool
+stamp-h1
 Makefile
 Makefile.in
 aclocal.m4
@@ -8,4 +10,8 @@ config.status
 config.log
 configure
 .deps
+.libs
 .dirstamp
+*.lo
+*.o
+*.la

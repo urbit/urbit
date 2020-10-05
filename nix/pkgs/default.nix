@@ -16,7 +16,7 @@ let
   urcrypt = import ./urcrypt {
     inherit libaes_siv;
     inherit (pkgs) stdenv pkgconfig openssl gmp;
-    inherit (deps) ed25519 argon2 secp256k1;
+    inherit (deps) scrypt secp256k1;
   };
 
   mkUrbit = { debug }:
