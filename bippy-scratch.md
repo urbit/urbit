@@ -1,8 +1,6 @@
 ## NOTE
 The below requires norsyr's fix to `decompress-point` in order to work.
 
-:: TODO -- get leading 0s into `to-n-bit`
-
 ## Working with BTC RPC Library
 ```
 |start :btc-bridge
@@ -13,27 +11,15 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 :btc-node-hook|command [%unwatch %get-block-count]
 ```
 
-## btc-address
+## Handling XPubs
 **Import lib; optionally set up env**
 ```
-=btca -build-file %/lib/btc-address/hoon
-=mnemonic="abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
-
 =bip32 -build-file %/lib/bip32/hoon
 =ecc secp256k1:secp:crypto
 =zpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
 ```
 
-**Test child public key from xpub**
-```
-`@ux`(child-from-xpub:btca zpub 0)
-(child-from-xpub:btca xpub (dec (bex 31)))
-
-::  should error as index is too high (hardened key range)
-(child-from-xpub:btca zpub (bex 31))
-```
-
-**Same, with Jose's bip32 library**
+**with `~norsyr-torryn`'s bip32 library**
 ```
 ::  get 0 index in non-change account
 `@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 zpub) 0) 0))
@@ -46,14 +32,14 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 
 ### Bech32 Algo
 - hash = hash160(pubkey)
-- words = convert([0x00 hash] 8bitTo5bit)
-- encode('bc', words)
+- 5-bit-words = convert-bits(8, 5, hash-atom)
+- encode("bc", [0, 5-bit-words])
 
 ### BTC pubkey -> address hashing (Hash-160)
 Uses the example data here:
 https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses
 
-That one starts with pubkey below. The following runs it through sha256 and ripemd160 to yield the hash:
+That one starts with pubkey below. The following runs it through sha256 and ripemd160 to get Hash-160:
 ```
 0xf54a.5851.e937.2b87.810a.8e60.cdd2.e7cf.d80b.6e31
 ```
@@ -89,7 +75,19 @@ process child keen cargo design install parrot hold pole unveil dance reason dri
 0x3.109a.2082.eaa6.8925.1465.5393.d635.7fb9.d9b5.e191.3826.8837.69cd.db88.7a4b.b4f0
 ```
 
-## Deprecated: `btc-address` Child Derivations
+## Deprecated: `btc-address` library
+Left here just for reference
+
+**Test child public key from xpub**
+```
+=btca -build-file %/lib/btc-address/hoon
+=ecc secp256k1:secp:crypto
+`@ux`(child-from-xpub:btca zpub 0)
+(child-from-xpub:btca xpub (dec (bex 31)))
+
+::  should error as index is too high (hardened key range)
+(child-from-xpub:btca zpub (bex 31))
+```
 
 **Test xpub parsing**
 ```
