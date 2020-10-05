@@ -1,6 +1,8 @@
 ## NOTE
 The below requires norsyr's fix to `decompress-point` in order to work.
 
+:: TODO -- get leading 0s into `to-n-bit`
+
 ## Working with BTC RPC Library
 ```
 |start :btc-bridge
@@ -44,8 +46,8 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 
 ### Bech32 Algo
 - hash = hash160(pubkey)
-- words = convert(hash, 8bitTo5bit)
-- encode('bc', [0x00 words])
+- words = convert([0x00 hash] 8bitTo5bit)
+- encode('bc', words)
 
 ### BTC pubkey -> address hashing (Hash-160)
 Uses the example data here:
@@ -69,6 +71,24 @@ Need to test with this because it shows need to input num bytes
 0x3.f3c1.3839.3683.93e7.0caf.4148.4775.b805.312d.58be.d157.1308.3d27.5cf5.6998.0100
 ```
 
+###  bip173 test pubkey
+Pubkey
+0x2.79be.667e.f9dc.bbac.55a0.6295.ce87.0b07.029b.fcdb.2dce.28d9.59f2.815b.16f8.1798
+
+Hash-160 (has leading 0s, so good to check)
+751e76e8199196d454941c45d1b3a323f1433bd6
+0xf54a.5851.e937.2b87.810a.8e60.cdd2.e7cf.d80b.6e31
+
+###  bip84 public keys
+From seed mnemonic:
+```
+process child keen cargo design install parrot hold pole unveil dance reason drink cash fix
+
+0x2.88b5.a58a.5c26.6cef.d41b.f329.9165.46cc.1703.c4d9.a32e.1ea3.ef3d.1823.c493.05ac
+0x3.289a.4e24.4381.8992.fe20.0831.3551.a3af.2266.ef3d.2038.5df9.6daa.92e3.4df2.16c4
+0x3.109a.2082.eaa6.8925.1465.5393.d635.7fb9.d9b5.e191.3826.8837.69cd.db88.7a4b.b4f0
+```
+
 ## Deprecated: `btc-address` Child Derivations
 
 **Test xpub parsing**
@@ -90,12 +110,3 @@ Need to test with this because it shows need to input num bytes
 ```
 (bind px |=(px=parsed-xpub:btca (compute-i:btca px 1)))
 ```
-
-
-0xf54a.5851.e937.2b87.810a.8e60.cdd2.e7cf.d80b.6e31
-
-0x2.b092.22c4.98c3.ab97.ce2b.6c4d.e68f.07d4.b031.589c.4d6b.bd31.7791.068f.7347.5201
-
-0x2.5086.3ad6.4a87.ae8a.2fe8.3c1a.f1a8.403c.b53f.53e4.86d8.511d.ad8a.0488.7e5b.2352
-0x2.3db4.d241.5936.c340.3de9.b0d9.e5e9.5dfb.43e6.0acd.aec9.0c9d.c17a.5c7c.26be.3150
-
