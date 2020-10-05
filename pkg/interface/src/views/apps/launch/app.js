@@ -55,7 +55,7 @@ export default class LaunchApp extends React.Component {
         <Helmet>
           <title>OS1 - Home</title>
         </Helmet>
-        <div className="h-100 flex flex-column h-100">
+        <div className="h-100 overflow-y-scroll">
           <Welcome firstTime={props.launch.firstTime} api={props.api} />
           <Row ml='2' flexWrap="wrap" mb={4} pitch={4}>
             <Tile
