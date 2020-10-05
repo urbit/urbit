@@ -31,7 +31,7 @@ function isJoined(app: string, path: string) {
         return props.graphKeys.has(path);
       case "publish":
         [, ship, name] = path.split("/");
-        return !!props.notebooks[ship.slice(1)][name];
+        return !!props.notebooks[ship]?.[name];
       case "chat":
         return !!props.inbox[path];
       default:
