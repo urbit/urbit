@@ -55,15 +55,15 @@ data Ef
   deriving (Show)
 
 data History
-    = HistoryText Text
-    | HistorySlog (Atom, Tank)
+    = HistoryText !Text
+    | HistorySlog !(Atom, Tank)
   deriving (Show)
 
 data St = St
-    { sHistory :: Seq History
-    , sLine    :: Text
-    , sCurPos  :: Word
-    , sSpinner :: SpinnerState
+    { sHistory :: !(Seq History)
+    , sLine    :: !Text
+    , sCurPos  :: !Word
+    , sSpinner :: !SpinnerState
     }
   deriving (Show)
 
@@ -93,12 +93,12 @@ step st@St{..} = \case
     word = fromIntegral
 
     recordText :: Text -> St -> St
-    recordText t st@St{..} = st {
+    recordText !t st@St{..} = st {
       sHistory = trim (sHistory |> (HistoryText t))
       }
 
     recordSlog :: (Atom, Tank) -> St -> St
-    recordSlog t st@St{..} = st {
+    recordSlog !t st@St{..} = st {
       sHistory = trim (sHistory |> (HistorySlog t))
       }
 

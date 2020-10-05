@@ -26,11 +26,11 @@ import Urbit.TermSize
     %blank -- print a blank line
     %spinr -- Start or stop the spinner
 -}
-data Ev = Blits [Blit]
-        | Trace Cord
-        | Slog (Atom, Tank)
+data Ev = Blits ![Blit]
+        | Trace !Cord
+        | Slog !(Atom, Tank)
         | Blank
-        | Spinr (Maybe (Maybe Cord))
+        | Spinr !(Maybe (Maybe Cord))
   deriving (Show)
 
 data ClientTake
