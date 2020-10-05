@@ -117,6 +117,7 @@ export function LinkResource(props: LinkResourceProps) {
                   nickname={contact?.nickname}
                   hideNicknames={hideNicknames}
                   commentNumber={node.children.size}
+                  remoteContentPolicy={remoteContentPolicy}
                 />
                 <Row>
                   <CommentSubmit
@@ -133,6 +134,7 @@ export function LinkResource(props: LinkResourceProps) {
                   api={api}
                   hideAvatars={hideAvatars}
                   hideNicknames={hideNicknames}
+                  remoteContentPolicy={remoteContentPolicy}
                 />
               </Col>
             );
