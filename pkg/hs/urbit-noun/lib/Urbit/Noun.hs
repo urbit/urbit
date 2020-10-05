@@ -49,7 +49,7 @@ data LoadErr
 
 instance Exception LoadErr
 
-loadFile :: ∀a. FromNoun a => FilePath -> IO (Either LoadErr a)
+loadFile :: forall a. FromNoun a => FilePath -> IO (Either LoadErr a)
 loadFile pax = try $ do
     byt <- try (readFile pax) >>= either (throwIO . FileErr) pure
     non <- cueBS byt & either (throwIO . CueErr) pure
