@@ -107,7 +107,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
         ship={props.ship}
         book={props.book}
       />
-      {notebook.comments && (
+      {notebook?.comments && (
         <Comments
           ship={ship}
           book={props.book}
