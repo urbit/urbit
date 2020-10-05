@@ -43,7 +43,7 @@
     ?+    q.vase  (on-poke:def mark vase)
         %status
       :_  this
-      ~[[%pass / %agent [our.bowl %btc-node-hook] %poke %btc-node-hook-action !>([%get-block-count ~])]]
+      ~[[%pass / %agent [our.bowl %btc-node-hook] %poke %btc-node-hook-action !>([%ping ~])]]
     ==
   ==
 ::
