@@ -81,9 +81,9 @@
                      u3_noun c,
                      u3_noun d);
 
-      /* u3r_mug(): MurmurHash3 on a noun.
+      /* u3r_mug(): statefully mug a noun with 31-bit murmur3.
       */
-        c3_w
+        c3_l
         u3r_mug(u3_noun veb);
 
       /* u3r_fing():

@@ -300,7 +300,7 @@ streamEvents log first = do
     for_ batch yield
     streamEvents log (first + word (length batch))
 
-streamEffectsRows :: ∀e. HasLogFunc e
+streamEffectsRows :: forall e. HasLogFunc e
                   => EventLog -> Word64
                   -> ConduitT () (Word64, ByteString) (RIO e) ()
 streamEffectsRows log = go
@@ -352,7 +352,7 @@ readBatch log first = start
 {-|
    Read 1000 rows from the database, starting from key `first`.
 -}
-readRowsBatch :: ∀e. HasLogFunc e
+readRowsBatch :: forall e. HasLogFunc e
               => Env -> Dbi -> Word64 -> RIO e (V.Vector (Word64, ByteString))
 readRowsBatch env dbi first = readRows
   where

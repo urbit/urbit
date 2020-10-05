@@ -175,10 +175,10 @@ logStderr action = do
   logFunc <- view stderrLogFuncL
   runRIO logFunc action
 
-logSlogs :: HasStderrLogFunc e => RIO e (TVar (Text -> IO ()))
+logSlogs :: HasStderrLogFunc e => RIO e (TVar ((Atom, Tank) -> IO ()))
 logSlogs = logStderr $ do
   env <- ask
-  newTVarIO (runRIO env . logOther "serf" . display . T.strip)
+  newTVarIO (runRIO env . logOther "serf" . display . T.strip . tankToText . snd)
 
 tryBootFromPill
   :: Bool
@@ -200,7 +200,7 @@ tryBootFromPill oExit pill lite ship boot = do
     pure sls
 
 runOrExitImmediately
-  :: TVar (Text -> IO ())
+  :: TVar ((Atom, Tank) -> IO ())
   -> RAcquire PierEnv (Serf, Log.EventLog)
   -> Bool
   -> MVar ()
@@ -240,7 +240,8 @@ tryPlayShip exitImmediately fullReplay playFrom mStart = do
   north shipPath = shipPath <> "/.urb/chk/north.bin"
   south shipPath = shipPath <> "/.urb/chk/south.bin"
 
-  resumeShip :: TVar (Text -> IO ()) -> RAcquire PierEnv (Serf, Log.EventLog)
+  resumeShip :: TVar ((Atom, Tank) -> IO ())
+             -> RAcquire PierEnv (Serf, Log.EventLog)
   resumeShip vSlog = do
     view pierPathL >>= lockFile
     rio $ logInfo "RESUMING SHIP"
@@ -835,7 +836,7 @@ runMultipleShips ships = do
 
 --------------------------------------------------------------------------------
 
-connTerm :: ∀e. HasLogFunc e => FilePath -> RIO e ()
+connTerm :: forall e. HasLogFunc e => FilePath -> RIO e ()
 connTerm = Term.runTerminalClient
 
 
