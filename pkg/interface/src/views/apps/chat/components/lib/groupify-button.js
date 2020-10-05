@@ -30,7 +30,7 @@ export class GroupifyButton extends Component {
     return this.state.targetGroup ? (
       <Box mt='4'>
       <Toggle
-        boolean={inclusive}
+        boolean={this.state.inclusive}
         change={this.changeInclusive.bind(this)}
       />
         <Text display='inline-block' fontSize='0' ml='3'>
@@ -52,7 +52,8 @@ export class GroupifyButton extends Component {
       associations,
       contacts,
       groups,
-      station
+      station,
+      changeLoading
     } = this.props;
 
     const groupPath = association['group-path'];

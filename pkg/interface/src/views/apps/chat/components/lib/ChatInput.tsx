@@ -160,12 +160,9 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
     }
     if (!this.s3Uploader.current || !this.s3Uploader.current.inputRef.current) return;
     this.s3Uploader.current.inputRef.current.files = files;
-    setTimeout(() => {
-      if (this.s3Uploader.current.state.isUploading) return;
-      const fire = document.createEvent("HTMLEvents");
-      fire.initEvent("change", true, true);
-      this.s3Uploader.current?.inputRef.current?.dispatchEvent(fire);
-    }, 200);
+    const fire = document.createEvent("HTMLEvents");
+    fire.initEvent("change", true, true);
+    this.s3Uploader.current?.inputRef.current?.dispatchEvent(fire);
   }
 
   render() {

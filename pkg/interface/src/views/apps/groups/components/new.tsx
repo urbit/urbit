@@ -6,8 +6,8 @@ import { Spinner } from '~/views/components/Spinner';
 import { Toggle } from '~/views/components/toggle';
 import { RouteComponentProps } from 'react-router-dom';
 
-import { Groups, GroupPolicy, Resource } from '~/types/group-update';
-import { Contacts, Rolodex } from '~/types/contact-update';
+import { Groups, GroupPolicy } from '~/types/group-update';
+import { Rolodex } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
 import { Patp, PatpNoSig, Enc } from '~/types/noun';
 import {Body} from '~/views/components/Body';
@@ -20,7 +20,6 @@ type NewScreenProps = Pick<RouteComponentProps, 'history'> & {
 
 type TextChange = React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>;
 type BooleanChange = React.ChangeEvent<HTMLInputElement>;
-
 
 interface NewScreenState {
   groupName: string;
@@ -56,7 +55,7 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
   groupNameChange(event: TextChange) {
     const asciiSafe = event.target.value
       .toLowerCase()
-      .replace(/[^a-z0-9~_.-]/g, '-');
+      .replace(/[^a-z0-9_-]/g, '-');
     this.setState({
       groupName: asciiSafe,
       title: event.target.value,

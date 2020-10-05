@@ -5,6 +5,7 @@ import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { Link } from 'react-router-dom';
 import { LinkItem } from './lib/link-item';
 import LinkSubmit from './lib/link-submit';
+import { Box } from '@tlon/indigo-react';
 
 import { getContactDetails } from "~/logic/lib/util";
 
@@ -34,14 +35,16 @@ export const LinkList = (props) => {
       >
         <Link to="/~link">{"⟵ All Channels"}</Link>
       </div>
-      <div
-        className={
-          "pl4 pt2 flex relative overflow-x-scroll" +
-          "overflow-x-auto-l overflow-x-auto-xl flex-shrink-0" +
-          "bb b--gray4 b--gray1-d bg-gray0-d"
-        }
-        style={{ height: 48 }}
-      >
+      <Box
+        pl='12px'
+        pt='2'
+        display='flex'
+        position='relative'
+        overflowX={['scroll', 'auto']}
+        flexShrink='0'
+        borderBottom='1px solid'
+        borderColor='washedGray'
+        height='48px'>
         <SidebarSwitcher
           sidebarShown={props.sidebarShown}
           api={props.api} />
@@ -54,7 +57,7 @@ export const LinkList = (props) => {
           location={props.location}
           settings={`/~link/${resource}/settings`}
         />
-      </div>
+      </Box>
       <div className="w-100 mt6 flex justify-center overflow-y-scroll ph4 pb4">
         <div className="w-100 mw7">
           <div className="flex">
@@ -66,10 +69,10 @@ export const LinkList = (props) => {
           </div>
           { Array.from(props.graph).map(([date, node]) => {
               const { nickname, color, avatar } =
-                getContactDetails(props.contacts[ship]);
-
+                getContactDetails(props.contacts[node?.post?.author]);
               return (
                 <LinkItem
+                  key={date}
                   resource={resource}
                   node={node}
                   nickname={nickname}

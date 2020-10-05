@@ -1,13 +1,13 @@
-import React, { Component, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { TabBar } from '~/views/components/chat-link-tabbar';
 import { LinkPreview } from './lib/link-preview';
-import { LinkSubmit } from './lib/link-submit';
 import { CommentSubmit } from './lib/comment-submit';
 import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
 import { Link } from 'react-router-dom';
 import { Comments } from './lib/comments';
 import { getContactDetails } from '~/logic/lib/util';
 
+import { Box } from '@tlon/indigo-react';
 
 export const LinkDetail = (props) => {
   if (!props.node && props.graphResource) {
@@ -29,37 +29,42 @@ export const LinkDetail = (props) => {
     );
   }
 
-  const { nickname } = getContactDetails(props.contacts[ship]);
-  const our = getContactDetails(props.contacts[window.ship]);
+  const { nickname } = getContactDetails(props.contacts[props.node?.post?.author]);
   const resourcePath = `${props.ship}/${props.name}`;
   const title = props.resource.metadata.title || resourcePath;
 
   return (
     <div className="h-100 w-100 overflow-hidden flex flex-column">
-      <div
-        className={
-          'pl4 pt2 flex relative overflow-x-scroll ' +
-          'overflow-x-auto-l overflow-x-auto-xl flex-shrink-0 ' +
-          'bb bn-m bn-l bn-xl b--gray4'
-        }
-        style={{ height: 48 }}>
+      <Box
+        pl='12px'
+        pt='2'
+        display='flex'
+        position='relative'
+        overflowX={['scroll', 'auto']}
+        flexShrink='0'
+        borderBottom='1px solid'
+        borderColor='washedGray'
+        height='48px'
+      >
         <SidebarSwitcher
           sidebarShown={props.sidebarShown}
           api={props.api}
         />
         <Link className="dib f9 fw4 pt2 gray2 lh-solid"
-              to={`/~link/${resourcePath}`}>
+              to={`/~link/${resourcePath}`}
+        >
           <h2
             className="dib f9 fw4 lh-solid v-top black white-d"
-            style={{ width: 'max-content' }}>
-            {`<- ${title}`}
+            style={{ width: 'max-content' }}
+          >
+            {`${title}`}
           </h2>
         </Link>
         <TabBar
           location={props.location}
           settings={`/~link/${resourcePath}/settings`}
         />
-      </div>
+      </Box>
       <div className="w-100 mt2 flex justify-center overflow-y-scroll ph4 pb4">
         <div className="w-100 mw7">
           <LinkPreview
@@ -75,7 +80,8 @@ export const LinkDetail = (props) => {
               name={props.name}
               ship={props.ship}
               api={props.api}
-              parentIndex={props.node.post.index} />
+              parentIndex={props.node.post.index}
+            />
           </div>
           <Comments
             comments={props.node.children}
@@ -84,10 +90,11 @@ export const LinkDetail = (props) => {
             api={props.api}
             hideAvatars={props.hideAvatars}
             hideNicknames={props.hideNicknames}
-            remoteContentPolicy={props.remoteContentPolicy} />
+            remoteContentPolicy={props.remoteContentPolicy}
+          />
         </div>
       </div>
     </div>
   );
-}
+};
 

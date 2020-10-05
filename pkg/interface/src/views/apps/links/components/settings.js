@@ -7,6 +7,8 @@ import { Spinner } from '~/views/components/Spinner';
 import { TabBar } from '~/views/components/chat-link-tabbar';
 import SidebarSwitcher from '~/views/components/SidebarSwitch';
 
+import { Box } from '@tlon/indigo-react';
+
 import { MetadataSettings } from '~/views/components/metadata/settings';
 
 import { Box, Text, Button, Col, Row } from '@tlon/indigo-react';

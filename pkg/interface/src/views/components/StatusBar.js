@@ -10,7 +10,6 @@ import { Sigil } from '~/logic/lib/sigil';
 const StatusBar = (props) => {
 
   const location = useLocation();
-  const atHome = Boolean(location.pathname === '/');
 
   const invites = (props.invites && props.invites['/contacts'])
     ? props.invites['/contacts']
@@ -30,17 +29,10 @@ const StatusBar = (props) => {
       >
       <Row collapse>
           <StatusBarItem mr={2} onClick={() => props.history.push('/')}>
-            <img
-              className='invert-d'
-              src='/~landscape/img/icon-home.png'
-              height='11'
-              width='11'
-            />
+          <Icon icon='Home' color='transparent' stroke='black' />
           </StatusBarItem>
         <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
-          <Text display='inline-block' style={{ transform: 'rotate(180deg)' }}>
-            ↩
-          </Text>
+        <Icon icon='LeapArrow'/>
           <Text ml={2} color='black'>
             Leap
           </Text>

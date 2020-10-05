@@ -243,7 +243,10 @@
         %+  rose  (tufa buf.cli-state)
         (command-parser:og sole-id)
       ?:  ?=(%& -.res)
-        ?.  &(?=(^ p.res) run.u.p.res)
+        ::  only auto-run eligible commands if they were typed out
+        ::  (that is, not retrieved from command history)
+        ::
+        ?.  &(?=(^ p.res) run.u.p.res !?=(%set -.ted.sole-change))
           [[~ cli-state] shoe]
         (run-command cmd.u.p.res)
       :_  shoe
