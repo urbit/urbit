@@ -1,3 +1,4 @@
+::  DEPRECATED: use lib/bip32.hoon
 |%
 +$  pubkey       (list @ux)
 +$  chaincode    (list @ux)

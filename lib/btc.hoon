@@ -75,13 +75,11 @@
     =/  back   (turn hrp |=(p=@tD (dis 31 p)))
     (zing ~[front ~[0] back])
   ::
-  ++  equ
-    |=  [a=@ b=@]  ^-  ?
-    ~&((lte a b) (lte b a))
   ++  verify-checksum
     |=  [hrp=tape data-and-checksum=(list @)]
     ^-  ?
-    %+  equ  1
+    %+  |=([a=@ b=@] =(a b))
+      1
     %-  polymod
     (weld (expand-hrp hrp) data-and-checksum)
   ::
@@ -144,14 +142,17 @@
       ~
     =/  checksum-pos  (sub (lent data-and-checksum) 6)
     `[hrp (scag checksum-pos data-and-checksum) (slag checksum-pos data-and-checksum)]
+  ::  pubkey is the 33 byte ECC compressed public key
   ++  encode-pubkey
     |=  [=network pubkey=@ux]
     ^-  (unit tape)
+    ?.  =(33 (met 3 pubkey))
+      ~|('pubkey must be a 33 byte ECC compressed public key' !!)
     =/  prefix  (~(get by prefixes) network)
     ?~  prefix  ~
     :-  ~
     %+  encode-raw  u.prefix
-    (weld ~[0] (convert:bits 8 5 pubkey))
+    (weld ~[0] (convert:bits 8 5 (hash-160 pubkey)))
   --
 ::
 --
