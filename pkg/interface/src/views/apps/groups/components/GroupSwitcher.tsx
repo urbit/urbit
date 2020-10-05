@@ -144,8 +144,7 @@ export function GroupSwitcher(props: {
                     <GroupSwitcherItem bottom to={navTo("/invites")}>
                       <Icon
                         mr={2}
-                        color="transparent"
-                        stroke="blue"
+                        color="blue"
                         icon="CreateGroup"
                       />
                       <Text color="blue">Invite to group</Text>
@@ -159,7 +158,7 @@ export function GroupSwitcher(props: {
               <Box mr={1} flex='1'>
                 <Text overflow='hidden' display='inline-block' maxWidth='144px'  style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
               </Box>
-              <Icon mt="2px" display="block" icon="ChevronSouth" />
+              <Icon mt="0px" display="block" icon="ChevronSouth" />
             </Box>
           </Dropdown>
           <Row collapse pr={1} justifyContent="flex-end" alignItems="center">
@@ -168,13 +167,12 @@ export function GroupSwitcher(props: {
                 <Link to={navTo("/invites")}>
                   <Icon
                     display="block"
-                    fill="rgba(0,0,0,0)"
-                    stroke="blue"
+                    color='blue'
                     icon="CreateGroup"
                   />
                 </Link>
                 <Link to={navTo("/popover/settings")}>
-                  <Icon display="block" m={2} icon="Gear" />
+                  <Icon color='gray' display="block" m={2} icon="Gear" />
                 </Link>
               </>
             )}
