@@ -323,3 +323,15 @@ export function scrollIsAtBottom(container) {
   }
 }
 
+/**
+ * Formats a numbers as a `@ud` inserting dot where needed
+ */
+export function numToUd(num) {
+  return _.chain(num.toString())
+    .split('')
+    .reverse()
+    .chunk(3)
+    .reverse()
+    .map(s => s.join('')).join('.')
+    .value();
+}

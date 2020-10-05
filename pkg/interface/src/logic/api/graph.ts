@@ -4,6 +4,7 @@ import { Patp, Path, PatpNoSig } from '~/types/noun';
 import _ from 'lodash';
 import {makeResource, resourceFromPath} from '../lib/group';
 import {GroupPolicy, Enc, Post, NodeMap} from '~/types';
+import { numToUd } from '~/logic/lib/util';
 
 export const createPost = (contents: Object[], parentIndex: string = '') => {
   return {
@@ -203,9 +204,10 @@ export default class GraphApi extends BaseApi<StoreState> {
   }
 
   getNode(ship: string, resource: string, index: string) {
+    const idx = index.split('/').map(numToUd).join('/');
     return this.scry<any>(
       'graph-store',
-      `/node/${ship}/${resource}${index}`
+      `/node/${ship}/${resource}${idx}`
     ).then((node) => {
       this.store.handleEvent({
         data: node
