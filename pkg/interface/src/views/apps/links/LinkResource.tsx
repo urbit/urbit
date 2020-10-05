@@ -119,7 +119,7 @@ export function LinkResource(props: LinkResourceProps) {
                   commentNumber={node.children.size}
                   remoteContentPolicy={remoteContentPolicy}
                 />
-                <Row>
+                <Row flexShrink='0'>
                   <CommentSubmit
                     name={name}
                     ship={ship}
