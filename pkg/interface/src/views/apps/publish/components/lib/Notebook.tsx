@@ -86,6 +86,7 @@ export class Notebook extends PureComponent<
       <Box
         pt={4}
         mx="auto"
+        px={3}
         display="grid"
         gridAutoRows="min-content"
         gridTemplateColumns={["100%", "1fr 1fr"]}

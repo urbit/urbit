@@ -72,6 +72,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   return (
     <Box
       my={3}
+      px={3}
       display="grid"
       gridTemplateColumns="1fr"
       gridAutoRows="min-content"

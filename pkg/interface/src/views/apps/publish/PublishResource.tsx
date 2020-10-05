@@ -37,6 +37,7 @@ export function PublishResource(props: PublishResourceProps) {
         location={props.location}
         hideAvatars={props.hideAvatars}
         hideNicknames={props.hideNicknames}
+        remoteContentPolicy={props.remoteContentPolicy}
       />
     </Box>
   );
