@@ -12,8 +12,3 @@
     ==
 :-  %btc-bridge-command
 comm
-::?+    -.comm  ~|([%unsupported-command -.comm] !!)
-::    %connect-as-host  comm
-::    %connect-as-client  comm
-::    %allow-clients  comm
-::==
