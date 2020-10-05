@@ -9,13 +9,6 @@ import { Sigil } from '~/logic/lib/sigil';
 
 const StatusBar = (props) => {
 
-  const location = useLocation();
-
-  const invites = (props.invites && props.invites['/contacts'])
-    ? props.invites['/contacts']
-    : {};
-
-
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
 
   return (
@@ -24,7 +17,7 @@ const StatusBar = (props) => {
       width="100%"
       gridTemplateRows="30px"
       gridTemplateColumns="3fr 1fr"
-      py={3}
+      py={2}
       px={3}
       >
       <Row collapse>
