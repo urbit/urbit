@@ -18,7 +18,7 @@ export const LinkPreview = (props) => {
   const url = props.post.contents[1].url;
   const hostname = URLparser.exec(url) ? URLparser.exec(url)[4] : null;
 
-  const timeSent = 
+  const timeSent =
     moment.unix(props.post['time-sent'] / 1000).format('hh:mm a');
 
   const embed = (
@@ -40,7 +40,7 @@ export const LinkPreview = (props) => {
            target="_blank"
            rel="noopener noreferrer">
           <p className="f8 truncate">{title}</p>
-          <span className="gray2 ml2 f8 dib v-btm flex-shrink-0">
+          <span className="gray2 ml2 f8 dib v-btm flex-shrink-0" style={{ whiteSpace: 'nowrap' }}>
             {hostname} ↗
           </span>
         </a>
