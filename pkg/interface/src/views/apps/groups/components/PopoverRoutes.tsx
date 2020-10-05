@@ -57,7 +57,7 @@ export function PopoverRoutes(
             <Box
               px={[3, 7, 8]}
               py={[3, 5]}
-              bg="gray"
+              backgroundColor='scales.black30'
               left="0px"
               top="0px"
               width="100vw"
