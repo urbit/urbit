@@ -14,14 +14,14 @@ import RemoteContent from '~/views/components/RemoteContent';
 export const DATESTAMP_FORMAT = '[~]YYYY.M.D';
 
 export const UnreadMarker = React.forwardRef(({ dayBreak, when }, ref) => (
-  <div ref={ref} className="green2 flex items-center f9 absolute w-100 left-0">
-    <hr className="dn-s ma0 w2 b--green2 bt-0" />
-    <p className="mh4" style={{ whiteSpace: 'normal' }}>New messages below</p>
-    <hr className="ma0 flex-grow-1 b--green2 bt-0" />
+  <div ref={ref} style={{ color: "#219dff" }} className="flex items-center f9 absolute w-100 left-0 pt2">
+    <hr style={{ borderColor: "#219dff" }} className="dn-s ma0 w2 bt-0" />
+    <p className="mh4 z-2" style={{ whiteSpace: 'normal' }}>New messages below</p>
+    <hr style={{ borderColor: "#219dff" }} className="ma0 flex-grow-1 bt-0" />
     {dayBreak
       ? <p className="gray2 mh4">{moment(when).calendar()}</p>
       : null}
-    <hr style={{ width: "calc(50% - 48px)" }} className="b--green2 ma0 bt-0" />
+    <hr style={{ width: "calc(50% - 48px)" }} style={{ borderColor: "#219dff" }} className="ma0 bt-0" />
   </div>
 ));
 
