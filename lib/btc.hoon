@@ -1,5 +1,5 @@
+/-  *btc
 |%
-+$  network  ?(%main %testnet)
 ++  hash-160
   |=  pubkey=@ux
   ^-  @ux
@@ -154,5 +154,6 @@
     %+  encode-raw  u.prefix
     (weld ~[0] (convert:bits 8 5 (hash-160 pubkey)))
   --
+
 ::
 --

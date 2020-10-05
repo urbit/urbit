@@ -1,14 +1,15 @@
+/-  *btc
 |%
-+$  address  ?(@uc [%bech32 @t])
 +$  tx  @
 +$  credentials  [rpc-url=@t rpc-user=@t rpc-password=@t]
-+$  bio  $:  mode=?(%remote %local)
-             =credentials            ::  for connecting to btc-provider
-             clients=(set ship)      ::  allowed clients for this node
-         ==
++$  status
+  $:  [%host connected=? clients=(set ship)]
+      [%client connected=? host=ship]
+  ==
 +$  action
-  $%  [%connect =credentials]
-      [%status ~]
+  $%  [%connect-as-host =credentials]
+      [%connect-as-client host=ship]
+      [%check-status ~]
       [%balance =address]
       [%transactions =address]
       [%broadcast-tx =tx]
