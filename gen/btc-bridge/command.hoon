@@ -11,9 +11,9 @@
         [[comm=command ~] ~]
     ==
 :-  %btc-bridge-command
-?+    -.comm  ~|  [%unsupported-command -.comm]  !!
-    %connect-as-host  comm
-    %connect-as-client  comm
-    %add-clients  comm
-    %broadcast-tx  comm
-==
+comm
+::?+    -.comm  ~|([%unsupported-command -.comm] !!)
+::    %connect-as-host  comm
+::    %connect-as-client  comm
+::    %allow-clients  comm
+::==
