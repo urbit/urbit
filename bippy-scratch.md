@@ -13,16 +13,25 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 
 ## Handling XPubs
 **Import lib; optionally set up env**
+XPub is BIP84, mnemonic:
+abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about
+```
+=b -build-file %/lib/btc-scratch/hoon
+=xpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
+```
+
+### Getting BIP84 Address from `xpub`
+```
+(~(address bip84:b %main xpub))
+```
+
+### with `~norsyr-torryn`'s bip32 library
 ```
 =bip32 -build-file %/lib/bip32/hoon
 =ecc secp256k1:secp:crypto
-=zpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
-```
 
-**with `~norsyr-torryn`'s bip32 library**
-```
 ::  get 0 index in non-change account
-`@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 zpub) 0) 0))
+`@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 xpub) 0) 0))
 ```
 
 ## BIP 173 (Bech32 Addresses)
@@ -51,7 +60,8 @@ Use `@uc` to make the Hash-160 into a BTC P2PKH address
 `@uc`(hash-160:btc pubkey)`@uc`(hash-160:btc pubkey)
 ```
 
-### trailing zeros
+### trailing zero
+s
 Need to test with this because it shows need to input num bytes
 ```
 0x3.f3c1.3839.3683.93e7.0caf.4148.4775.b805.312d.58be.d157.1308.3d27.5cf5.6998.0100
