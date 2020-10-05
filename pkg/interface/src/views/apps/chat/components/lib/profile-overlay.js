@@ -69,6 +69,8 @@ export class ProfileOverlay extends PureComponent {
         img = <Link to={`/~groups/view${association['group-path']}/${ship}`}>{img}</Link>;
       }
 
+    //  TODO: create a chat DM
+
     return (
       <div
         ref={this.popoverRef}
@@ -85,7 +87,7 @@ export class ProfileOverlay extends PureComponent {
           <div className="mono gray2">{cite(`~${ship}`)}</div>
           {!isOwn && (
             <Link
-              to={`/~chat/new/dm/~${ship}`}
+              to={`/~todo/~${ship}`}
               className="b--green0 b--green2-d b--solid ba green2 mt3 tc pa2 pointer db"
             >
               Send Message

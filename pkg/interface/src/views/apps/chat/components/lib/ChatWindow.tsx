@@ -127,7 +127,8 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     const { isChatMissing, history, envelopes, mailboxSize, stationPendingMessages, unreadCount } = this.props;
 
     if (isChatMissing) {
-      history.push("/~chat");
+      //  TODO: fix this and push a different route
+      history.push("/~404");
     } else if (envelopes.length !== prevProps.envelopes.length && this.state.fetchPending) {
       this.setState({ fetchPending: false });
     }

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { TwoPaneApp } from './TwoPaneApp';
 import LaunchApp from '../apps/launch/app';
 import DojoApp from '../apps/dojo/app';
 import GroupsApp from '../apps/groups/app';
@@ -51,21 +50,6 @@ export const Content = (props) => {
           )}
         />
         <Route
-          path={[
-            '/~chat',
-            '/~publish',
-            '/~link',
-            '/~graph'
-          ]}
-          render={ p => (
-            <TwoPaneApp
-              history={p.history}
-              location={p.location}
-              match={p.match}
-              {...props} />
-          )}
-        />
-        <Route
           path="/~profile"
           render={ p => (
             <Profile
@@ -73,8 +57,6 @@ export const Content = (props) => {
             />
           )}
         />
-
-
         <Route
           render={p => (
             <ErrorComponent
