@@ -231,6 +231,11 @@ blockquote {
     font-family: 'Inter';
 }
 
+.chat .cm-s-tlon.CodeMirror {
+    font-size: 16px;
+    margin-top: 6px;
+}
+
 pre, code {
   background-color: var(--light-gray);
 }
