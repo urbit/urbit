@@ -1,5 +1,3 @@
-{-# LANGUAGE StrictData #-}
-
 {-|
   Low-Level IPC flows for interacting with the serf process.
 
@@ -76,6 +74,7 @@ import Data.Bits
 import Data.Conduit
 import System.Process
 import Urbit.Vere.Serf.Types
+import Urbit.Vere.Serf.IPC.Types
 
 import Control.Monad.STM            (retry)
 import Control.Monad.Trans.Resource (MonadResource, allocate, runResourceT)
@@ -103,55 +102,6 @@ data Serf = Serf
   , serfSlog :: Slog -> IO ()
   , serfLock :: MVar (Maybe SerfState)
   }
-
-
--- Internal Protocol Types -----------------------------------------------------
-
-data Live
-  = LExit Atom -- exit status code
-  | LSave EventId
-  | LCram EventId
-  | LPack ()
- deriving (Show)
-
-data Play
-  = PDone Mug
-  | PBail PlayBail
- deriving (Show)
-
-data Scry
-  = SDone (Maybe (Term, Noun))
-  | SBail Goof
- deriving (Show)
-
-data Work
-  = WDone EventId Mug FX
-  | WSwap EventId Mug (Wen, Noun) FX
-  | WBail [Goof]
- deriving (Show)
-
-data Writ
-  = WLive Live
-  | WPeek Atom Wen Gang Path
-  | WPlay EventId [Noun]
-  | WWork Atom Wen Ev
- deriving (Show)
-
-data Plea
-  = PLive ()
-  | PRipe SerfInfo
-  | PSlog Slog
-  | PPeek Scry
-  | PPlay Play
-  | PWork Work
- deriving (Show)
-
-deriveNoun ''Live
-deriveNoun ''Play
-deriveNoun ''Scry
-deriveNoun ''Work
-deriveNoun ''Writ
-deriveNoun ''Plea
 
 
 -- Access Current Serf State ---------------------------------------------------
