@@ -26,8 +26,9 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-bridge initialized successfully'
-  :-  ~[[%pass /btc-node-hook/[(scot %da now.bowl)] %agent [our.bowl %btc-node-hook] %watch /responses]]
-  this
+  :-  ~
+::  :-  ~[[%pass /btc-node-hook/[(scot %da now.bowl)] %agent [our.bowl %btc-node-hook] %watch /responses]]
+  this(status [%client connected=%.n host=~])
 ++  on-save
   ^-  vase
   !>(state)
@@ -39,7 +40,8 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ::  TODO only allow poke if we are a host (in status)
+  ::  Only allow poke from our ship, unless we're a host
+  ?>  ?|((team:title our.bowl src.bowl) ?=(%host -.status))
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
         %btc-bridge-command
@@ -71,6 +73,18 @@
 ++  handle-command
   |=  comm=command
   ^-  (quip card _state)
-  ~&  >>>  comm
-  `state
+  ?-  -.comm
+      %connect-as-host
+      ::  TODO send a subscription to the node hook; update status in on-agent when ack'd
+    `state
+      %connect-as-client
+      ::  TODO send a subscription to the btc-bridge host
+      ::  update status in on-agent when ack'd by BTC-BRIDGE
+    `state
+      %allow-clients
+    ?+  -.status  ~&(>>> 'Only a %host can add clients' `state)
+        %host
+      `state(clients.status (~(uni in clients.status) users.comm))
+    ==
+  ==
 --

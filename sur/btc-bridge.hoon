@@ -2,8 +2,8 @@
 |%
 +$  credentials  [rpc-url=@t rpc-user=@t rpc-password=@t]
 +$  status
-  $:  [%host connected=? clients=(set ship)]
-      [%client connected=? host=ship]
+  $%  [%host connected=? clients=(set ship)]
+      [%client connected=? host=(unit ship)]
   ==
 +$  action
   $%  [%check-status ~]
@@ -14,6 +14,6 @@
 +$  command
   $%  [%connect-as-host =credentials]
       [%connect-as-client host=ship]
-      [%allow-clients clients=(set ship)]
+      [%allow-clients users=(set ship)]
   ==
 --
