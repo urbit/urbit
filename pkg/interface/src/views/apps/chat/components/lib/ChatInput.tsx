@@ -49,7 +49,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
 
     this.submit = this.submit.bind(this);
     this.toggleCode = this.toggleCode.bind(this);
-    
+
   }
 
   toggleCode() {
@@ -81,7 +81,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
     }
   }
 
-  
+
 
   submit(text) {
     const { props, state } = this;
@@ -133,7 +133,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
         { url }
       );
     }
-    
+
   }
 
   uploadError(error) {
@@ -205,7 +205,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
           onPaste={this.onPaste.bind(this)}
           placeholder='Message...'
         />
-        <div className="ml2 mr2"
+        <div className="ml2 mr2 flex-shrink-0"
              style={{
                 height: '16px',
                 width: '16px',
@@ -227,7 +227,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
             />
           </S3Upload>
         </div>
-        <div className="mr2" style={{
+        <div className="mr2 flex-shrink-0" style={{
             height: '16px',
             width: '16px',
             flexBasis: 16,
