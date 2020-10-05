@@ -17,7 +17,7 @@ export function PublishResource(props: PublishResourceProps) {
   const { association, api, baseUrl, notebooks } = props;
   const appPath = association["app-path"];
   const [, ship, book] = appPath.split("/");
-  const notebook = notebooks[ship][book];
+  const notebook = notebooks[ship]?.[book];
   const notebookContacts = props.contacts[association["group-path"]];
 
   return (
