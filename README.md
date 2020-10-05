@@ -13,9 +13,20 @@ Includes a custom version of `btc-node` that supports access control and returni
 
 ### New Commands
 ```
+::  send results of this RPC call to subscribers, if watched
 :btc-node-hook|command [%watch %get-block-count]
 :btc-node-hook|command [%unwatch %get-block-count]
+
+::  send a message to subscribers as to whether the external node is live
+:btc-node-hook|command [%ping ~]
 ```
 
-## Data Flow
+## Bech32 Support
+Commit the files, and then run:
+```
+=btc -build-file %/lib/btc/hoon
+=pubkey 0x2.79be.667e.f9dc.bbac.55a0.6295.ce87.0b07.029b.fcdb.2dce.28d9.59f2.815b.16f8.1798
+(hash-160:btc pubkey)
+=result (encode-pubkey:bech32:btc %main pubkey)
+```
 

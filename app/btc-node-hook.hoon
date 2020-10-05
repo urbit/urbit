@@ -63,7 +63,6 @@
       ?>  (team:title our.bowl src.bowl)
       ?+  pax  (on-watch:def pax)
           [%responses ~]
-        ~&  >  "%btc-node-hook: subscription on {pax}"
         `this
       ==
     ++  on-leave  on-leave:def
