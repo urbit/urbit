@@ -11,7 +11,7 @@ export const BacklogElement = (props) => {
              "white-d flex items-center"
             }>
         <img className="invert-d spin-active v-mid"
-          src="/~chat/img/Spinner.png"
+          src="/~landscape/img/Spinner.png"
           width={16}
           height={16}
         />

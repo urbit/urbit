@@ -5,8 +5,8 @@ import { Col } from "@tlon/indigo-react";
 import { Association } from "~/types/metadata-update";
 import { StoreState } from "~/logic/store/type";
 import { useFileDrag } from "~/logic/lib/useDrag";
-import ChatWindow from "./components/lib/ChatWindow";
-import ChatInput from "./components/lib/ChatInput";
+import ChatWindow from "./components/ChatWindow";
+import ChatInput from "./components/ChatInput";
 import GlobalApi from "~/logic/api/global";
 import { deSig } from "~/logic/lib/util";
 import { SubmitDragger } from "~/views/components/s3-upload";
@@ -113,6 +113,7 @@ export function ChatResource(props: ChatResourceProps) {
         group={group}
         ship={owner}
         station={station}
+        allStations={Object.keys(props.inbox)}
         api={props.api}
         hideNicknames={props.hideNicknames}
         hideAvatars={props.hideAvatars}

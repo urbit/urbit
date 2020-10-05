@@ -8,7 +8,7 @@ import 'codemirror/addon/display/placeholder';
 
 import 'codemirror/lib/codemirror.css';
 
-import '../../css/custom.css';
+import '../css/custom.css';
 
 const BROWSER_REGEX =
   new RegExp(String(/Android|webOS|iPhone|iPad|iPod|BlackBerry/i));

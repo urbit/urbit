@@ -39,6 +39,7 @@ type ChatWindowProps = RouteComponentProps<{
   group: Group;
   ship: Patp;
   station: any;
+  allStations: any;
   api: GlobalApi;
   hideNicknames: boolean;
   hideAvatars: boolean;
@@ -127,7 +128,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     const { isChatMissing, history, envelopes, mailboxSize, stationPendingMessages, unreadCount } = this.props;
 
     if (isChatMissing) {
-      history.push("/~chat");
+      history.push("/~404");
     } else if (envelopes.length !== prevProps.envelopes.length && this.state.fetchPending) {
       this.setState({ fetchPending: false });
     }
@@ -240,6 +241,8 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       hideAvatars,
       hideNicknames,
       remoteContentPolicy,
+      allStations,
+      history
     } = this.props;
 
     const unreadMarkerRef = this.unreadMarkerRef;
@@ -262,7 +265,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
         lastMessage = mailboxSize + index;
       });
 
-    const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy, unreadMarkerRef };
+    const messageProps = { association, group, contacts, hideAvatars, hideNicknames, remoteContentPolicy, unreadMarkerRef, allStations, history, api };
     
     return (
       <>

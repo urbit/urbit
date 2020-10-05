@@ -221,7 +221,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
           >
             <img
               className="invert-d"
-              src="/~chat/img/ImageUpload.png"
+              src="/~landscape/img/ImageUpload.png"
               width="16"
               height="16"
             />
@@ -238,7 +238,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
               width: '14px',
             }}
             onClick={this.toggleCode}
-            src="/~chat/img/CodeEval.png"
+            src="/~landscape/img/CodeEval.png"
             className="contrast-10-d bg-white bg-none-d ba b--gray1-d br1" />
         </div>
       </div>

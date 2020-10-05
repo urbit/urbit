@@ -46,9 +46,12 @@ interface ChatMessageProps {
   className?: string;
   isPending: boolean;
   style?: any;
+  allStations: any;
   scrollWindow: HTMLDivElement;
   isLastMessage?: boolean;
   unreadMarkerRef: React.RefObject<HTMLDivElement>;
+  history: any;
+  api: any;
 }
 
 export default class ChatMessage extends Component<ChatMessageProps> {
@@ -83,7 +86,10 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       measure,
       scrollWindow,
       isLastMessage,
-      unreadMarkerRef
+      unreadMarkerRef,
+      allStations,
+      history,
+      api
     } = this.props;
 
     const renderSigil = Boolean((nextMsg && msg.author !== nextMsg.author) || !nextMsg || msg.number === 1);
@@ -112,6 +118,9 @@ export default class ChatMessage extends Component<ChatMessageProps> {
       style,
       containerClass,
       isPending,
+      allStations,
+      history,
+      api,
       scrollWindow
     };
 
@@ -145,6 +154,7 @@ interface MessageProps {
   containerClass: string;
   isPending: boolean;
   style: any;
+  allStations: any;
   measure(element): void;
   scrollWindow: HTMLDivElement;
 };
@@ -161,6 +171,9 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
       hideAvatars,
       remoteContentPolicy,
       measure,
+      allStations,
+      history,
+      api,
       scrollWindow
     } = this.props;
 
@@ -194,6 +207,9 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           hideAvatars={hideAvatars}
           hideNicknames={hideNicknames}
           scrollWindow={scrollWindow}
+          allStations={allStations}
+          history={history}
+          api={api}
           className="fl pr3 v-top bg-white bg-gray0-d"
         />
         <div className="fr f8 clamp-message white-d" style={{ flexGrow: 1, marginTop: -12 }}>

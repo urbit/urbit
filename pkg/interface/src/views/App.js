@@ -131,7 +131,7 @@ class App extends React.Component {
             ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
             : null}
         </Helmet>
-        <Root background={background} >
+        <Root background={background}>
           <Router>
             <ErrorBoundary>
               <StatusBarWithRouter
