@@ -6,6 +6,7 @@
 =+  !<([who=@p ~] arg)
 =/  m  (strand ,vase)
 ;<  az=tid:spider  bind:m  start-azimuth
+~&  az+az
 =/  hearer=@p  ?:(=(who ~zod) ~bus ~zod)
 ::
 ;<  ~  bind:m  (spawn az ~zod)

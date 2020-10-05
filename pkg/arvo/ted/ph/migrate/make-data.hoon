@@ -1,11 +1,12 @@
 /-  spider,
     chat-view,
     publish,
-    link-view,
     contact-view,
-    link-listen-hook,
     chat-store,
-    link-store
+    graph-store,
+    post,
+    *resource,
+    metadata-store
 /+  *ph-io, strandio
 =,  strand=strand:spider
 =>
@@ -18,16 +19,6 @@
     ==
   (poke-app our %chat-hook %chat-action act)
 ::
-++  make-link
-  |=  [our=@p =path title=@t url=@t]
-  =/  act=action:link-store  [%save path title url]
-  (poke-app our %link-store %link-action act)
-::
-++  link-comment
-  |=  [our=@p =path url=@t body=@t]
-  =/  act=action:link-store  [%note path url body]
-  (poke-app our %link-store %link-action act)
-::
 ++  publish-note
   |=  [our=@p host=@p book=@tas note=@tas title=@t body=@t]
   =/  act=action:publish  [%new-note host book note title body]
@@ -37,11 +28,20 @@
   |=  [our=@p host=@p book=@tas note=@tas body=@t]
   =/  act=action:publish  [%new-comment host book note body]
   (poke-app our %publish %publish-action act)
+::
+++  graph-post
+  |=  [our=@p wen=@da rid=resource body=cord id=@]
+  =/  =index:post  [id]~
+  =/  =post:post  [our index wen [%text body]~ ~ ~]
+  =/  =node:graph-store  [post %empty ~]
+  =/  act=update:graph-store  [%0 wen %add-nodes rid (my [index node] ~)]
+  (poke-app our %graph-push-hook %graph-update act)
 --
 ::
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
+;<  az=tid:spider  bind:m  start-azimuth
 ;<  bol=bowl:spider  bind:m  get-bowl:strandio
 ::
 ::  group setup
@@ -183,52 +183,54 @@
 ;<  ~  bind:m  (publish-comment ~bus ~zod %book-1 %note-1 'comment 1')
 ;<  ~  bind:m  (publish-comment ~zod ~web %book-3 %note-3 'comment 3')
 ::
-::  links setup
+::  graph setup
 ::
-::=/  link-1=action:link-view
-::  :*  %create
-::      /link-1  'Link 1'  ''
-::      [%group /ship/~zod/group-1]
-::      %.n
-::  ==
-::=/  link-2=action:link-view
-::  :*  %create
-::      /link-2  'Link 1'  ''
-::      [%group /ship/~zod/group-1]
-::      %.n
-::  ==
-::=/  link-3=action:link-view
-::  :*  %create
-::      /link-3  'Link 1'  ''
-::      [%ships (sy ~zod ~bus ~)]
-::      %.n
-::  ==
-::=/  join-1=action:link-listen-hook  [%watch /link-1]
-::=/  join-2=action:link-listen-hook  [%watch /link-2]
-::=/  join-3=action:link-listen-hook  [%watch /link-3]
-::::
-::;<  ~  bind:m  (poke-app ~zod %link-view %link-view-action link-1)
-::;<  ~  bind:m  (poke-app ~bus %link-view %link-view-action link-2)
-::;<  ~  bind:m  (poke-app ~web %link-view %link-view-action link-3)
-::;<  ~  bind:m  (sleep ~s30)
-::::
-::;<  ~  bind:m  (poke-app ~bus %link-listen-hook %link-listen-action join-1)
-::;<  ~  bind:m  (poke-app ~web %link-listen-hook %link-listen-action join-1)
-::::
-::;<  ~  bind:m  (poke-app ~zod %link-listen-hook %link-listen-action join-2)
-::;<  ~  bind:m  (poke-app ~web %link-listen-hook %link-listen-action join-2)
-::::
-::;<  ~  bind:m  (poke-app ~zod %link-listen-hook %link-listen-action join-3)
-::;<  ~  bind:m  (poke-app ~bus %link-listen-hook %link-listen-action join-3)
-::;<  ~  bind:m  (sleep ~s30)
-::::
-::;<  ~  bind:m  (make-link ~bus /link-1 'link 1' 'link1.com')
-::;<  ~  bind:m  (make-link ~web /link-2 'link 2' 'link2.com')
-::;<  ~  bind:m  (make-link ~zod /link-3 'link 3' 'link3.com')
-::;<  ~  bind:m  (sleep ~s30)
-::;<  ~  bind:m  (link-comment ~web /link-1 'link1.com' 'comment 1')
-::;<  ~  bind:m  (link-comment ~zod /link-2 'link2.com' 'comment 2')
-::;<  ~  bind:m  (link-comment ~bus /link-3 'link3.com' 'comment 3')
+=/  group-path  /ship/~zod/group-1
+=/  graph-1=update:graph-store
+  [%0 now.bol %add-graph [~zod %graph-1] *graph:graph-store ~]
+=/  graph-2=update:graph-store
+  [%0 now.bol %add-graph [~bus %graph-2] *graph:graph-store ~]
+=/  g1-meta=metadata-action:metadata-store
+  :*  %add  group-path  /graph/ship/~zod/graph-1
+      ['graph-1' '' 0x0 now.bol ~zod %foo]
+  ==
+=/  g2-meta=metadata-action:metadata-store
+  :*  %add  group-path  /graph/ship/~bus/graph-2
+      ['graph-2' '' 0x0 now.bol ~bus %foo]
+  ==
+;<  ~  bind:m  (poke-app ~zod %graph-store %graph-update graph-1)
+;<  ~  bind:m
+  (poke-app ~zod %graph-push-hook %push-hook-action [%add ~zod %graph-1])
+;<  ~  bind:m  (poke-app ~zod %metadata-hook %metadata-action g1-meta)
+;<  ~  bind:m
+  (poke-app ~zod %metadata-hook %metadata-hook-action [%add-owned group-path])
 ::
-;<  ~  bind:m  (wait-for-output ~web "foo")
+;<  ~  bind:m  (poke-app ~bus %graph-store %graph-update graph-2)
+;<  ~  bind:m
+  (poke-app ~bus %graph-push-hook %push-hook-action [%add ~bus %graph-2])
+;<  ~  bind:m  (poke-app ~bus %metadata-hook %metadata-action g2-meta)
+;<  ~  bind:m
+  (poke-app ~bus %metadata-hook %metadata-hook-action [%add-owned group-path])
+::
+;<  ~  bind:m  (sleep ~s5)
+;<  ~  bind:m
+  (poke-app ~bus %graph-pull-hook %pull-hook-action [%add ~zod [~zod %graph-1]])
+;<  ~  bind:m
+  (poke-app ~web %graph-pull-hook %pull-hook-action [%add ~zod [~zod %graph-1]])
+;<  ~  bind:m
+  (poke-app ~zod %graph-pull-hook %pull-hook-action [%add ~bus [~bus %graph-2]])
+;<  ~  bind:m
+  (poke-app ~web %graph-pull-hook %pull-hook-action [%add ~bus [~bus %graph-2]])
+;<  ~  bind:m  (sleep ~s30)
+::
+;<  ~  bind:m  (graph-post ~zod now.bol [~zod %graph-1] 'post 1' 1)
+;<  ~  bind:m  (graph-post ~bus now.bol [~zod %graph-1] 'post 2' 2)
+;<  ~  bind:m  (graph-post ~web now.bol [~zod %graph-1] 'post 3' 3)
+::
+;<  ~  bind:m  (graph-post ~zod now.bol [~bus %graph-2] 'post 4' 4)
+;<  ~  bind:m  (graph-post ~bus now.bol [~bus %graph-2] 'post 5' 5)
+;<  ~  bind:m  (graph-post ~web now.bol [~bus %graph-2] 'post 6' 6)
+::
+;<  ~  bind:m  (wait-for-output ~web "XXXX")
+;<  ~  bind:m  end-azimuth
 (pure:m *vase)

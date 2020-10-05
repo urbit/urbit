@@ -21,5 +21,6 @@
 ;<  ~  bind:m  (send-hi ~bus ~web)
 ;<  ~  bind:m  (send-hi ~web ~bus)
 ::
+;<  ~  bind:m  (wait-for-output ~zod "XXXX")
 ;<  ~  bind:m  end-azimuth
 (pure:m *vase)

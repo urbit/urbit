@@ -1,14 +1,14 @@
 /-  spider,
     chat-view,
     publish,
-    link-view,
     contact-view,
     contact-store,
-    link-listen-hook,
     chat-store,
-    link-store,
     group-store,
-    metadata-store
+    metadata-store,
+    post,
+    graph-store,
+    *resource
 /+  *ph-io, strandio
 =,  strand=strand:spider
 =>
@@ -21,16 +21,6 @@
     ==
   (poke-app our %chat-hook %chat-action act)
 ::
-++  make-link
-  |=  [our=@p =path title=@t url=@t]
-  =/  act=action:link-store  [%save path title url]
-  (poke-app our %link-store %link-action act)
-::
-++  link-comment
-  |=  [our=@p =path url=@t body=@t]
-  =/  act=action:link-store  [%note path url body]
-  (poke-app our %link-store %link-action act)
-::
 ++  publish-note
   |=  [our=@p host=@p book=@tas note=@tas title=@t body=@t]
   =/  act=action:publish  [%new-note host book note title body]
@@ -40,12 +30,21 @@
   |=  [our=@p host=@p book=@tas note=@tas body=@t]
   =/  act=action:publish  [%new-comment host book note body]
   (poke-app our %publish %publish-action act)
+::
+++  graph-post
+  |=  [our=@p wen=@da rid=resource body=cord id=@]
+  =/  =index:post  [id]~
+  =/  =post:post  [our index wen [%text body]~ ~ ~]
+  =/  =node:graph-store  [post %empty ~]
+  =/  act=update:graph-store  [%0 wen %add-nodes rid (my [index node] ~)]
+  (poke-app our %graph-push-hook %graph-update act)
 --
 ::
 ::
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
+;<  az=tid:spider  bind:m  start-azimuth
 ;<  bol=bowl:spider  bind:m  get-bowl:strandio
 ::
 ::  test group import
@@ -101,9 +100,9 @@
   ==
 ;<  ~  bind:m  (poke-app ~zod %contact-hook %contact-action add-zod)
 ;<  ~  bind:m  (poke-app ~bus %contact-hook %contact-action add-bus)
-::
-::  test chat import
-::
+
+  test chat import
+
 =/  join-1  [%join ~zod /~zod/chat-1 %.y]
 ;<  ~  bind:m  (poke-app ~bus %chat-view %chat-view-action join-1)
 ;<  ~  bind:m  (poke-app ~web %chat-view %chat-view-action join-1)
@@ -131,21 +130,19 @@
 ;<  ~  bind:m  (publish-comment ~zod ~web %book-3 %post-import-5 'c1')
 ;<  ~  bind:m  (publish-comment ~bus ~web %book-3 %post-import-5 'c2')
 ::
-::  test link import
+::  test graph import
 ::
-::;<  ~  bind:m  (make-link ~bus /link-1 'post import link 1' '1.com')
-::;<  ~  bind:m  (make-link ~bus /link-2 'post import link 2' '2.com')
-::;<  ~  bind:m  (make-link ~bus /link-3 'post import link 3' '3.com')
-::;<  ~  bind:m  (make-link ~zod /link-1 'post import link 4' '4.com')
-::;<  ~  bind:m  (make-link ~zod /link-2 'post import link 5' '5.com')
-::;<  ~  bind:m  (make-link ~zod /link-3 'post import link 6' '6.com')
-::;<  ~  bind:m  (sleep ~s60)
-::;<  ~  bind:m  (link-comment ~web /link-1 '1.com' 'comment 1')
-::;<  ~  bind:m  (link-comment ~zod /link-2 '2.com' 'comment 2')
-::;<  ~  bind:m  (link-comment ~bus /link-3 '2.com' 'comment 3')
-::;<  ~  bind:m  (link-comment ~web /link-1 '4.com' 'comment 4')
-::;<  ~  bind:m  (link-comment ~zod /link-2 '5.com' 'comment 5')
-::;<  ~  bind:m  (link-comment ~bus /link-3 '6.com' 'comment 6')
+;<  ~  bind:m
+  (poke-app ~bus %graph-pull-hook %pull-hook-action [%add ~zod ~zod %graph-1])
+;<  ~  bind:m
+  (poke-app ~web %graph-pull-hook %pull-hook-action [%add ~zod ~zod %graph-1])
+;<  ~  bind:m  (sleep ~s30)
+;<  ~  bind:m  (graph-post ~zod now.bol [~bus %graph-2] 'post 7' 7)
+;<  ~  bind:m  (graph-post ~web now.bol [~bus %graph-2] 'post 8' 8)
+;<  ~  bind:m  (graph-post ~bus now.bol [~bus %graph-2] 'post 9' 9)
+;<  ~  bind:m  (graph-post ~zod now.bol [~zod %graph-1] 'post 10' 10)
+;<  ~  bind:m  (graph-post ~web now.bol [~zod %graph-1] 'post 11' 11)
+;<  ~  bind:m  (graph-post ~bus now.bol [~zod %graph-1] 'post 12' 12)
 ::
 ;<  ~  bind:m  (wait-for-output ~web "XXXX")
 (pure:m *vase)

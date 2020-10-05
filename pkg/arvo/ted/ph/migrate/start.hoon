@@ -48,10 +48,9 @@
   ;<  ~  bind:m  (start-agent ship %contact-hook)
   ;<  ~  bind:m  (start-agent ship %contact-view)
   ::
-::  ;<  ~  bind:m  (start-agent ship %link-store)
-::  ;<  ~  bind:m  (start-agent ship %link-proxy-hook)
-::  ;<  ~  bind:m  (start-agent ship %link-listen-hook)
-::  ;<  ~  bind:m  (start-agent ship %link-view)
+  ;<  ~  bind:m  (start-agent ship %graph-store)
+  ;<  ~  bind:m  (start-agent ship %graph-push-hook)
+  ;<  ~  bind:m  (start-agent ship %graph-pull-hook)
   ::
   (pure:m ~)
 ::
@@ -60,6 +59,7 @@
 |=  arg=vase
 =+  !<(who=?(~ [@p ~]) arg)
 =/  m  (strand ,vase)
+;<  az=tid:spider  bind:m  start-azimuth
 ::
 ?~  who
   ;<  ~  bind:m  (dojo ~zod "|mount %")
@@ -68,8 +68,10 @@
   ;<  ~  bind:m  (start-agents ~zod)
   ;<  ~  bind:m  (start-agents ~bus)
   ;<  ~  bind:m  (start-agents ~web)
+  ;<  ~  bind:m  end-azimuth
   (pure:m *vase)
 ::
 ;<  ~  bind:m  (dojo -.who "|mount %")
 ;<  ~  bind:m  (start-agents -.who)
+;<  ~  bind:m  end-azimuth
 (pure:m *vase)

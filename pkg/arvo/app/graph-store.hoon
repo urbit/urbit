@@ -169,6 +169,9 @@
   =^  cards  state
     ?+  mark           (on-poke:def mark vase)
         %graph-update  (graph-update !<(update:store vase))
+        %import
+      ?>  ?=(@ q.vase)
+      (poke-import q.vase)
     ==
   [cards this]
   ::
@@ -551,6 +554,23 @@
       ^-  (list card)
       [%give %fact paths [%graph-update !>([%0 now.bowl update])]]~
     --
+  ::
+  ++  poke-import
+    |=  jammed=@
+    ^-  (quip card _state)
+    =/  sty  ;;(state-0 (cue jammed))
+    :_  sty
+    %+  turn  ~(tap by graphs.sty)
+    |=  [rid=resource:store =marked-graph:store]
+    ^-  card
+    ?:  =(our.bowl entity.rid)
+      (poke-our %graph-push-hook %push-hook-action !>([%add rid]))
+    (poke-our %graph-pull-hook %pull-hook-action !>([%add entity.rid rid]))
+  ::
+  ++  poke-our
+    |=  [app=term =cage]
+    ^-  card
+    [%pass / %agent [our.bowl app] %poke cage]
   --
 ::
 ++  on-peek
@@ -599,6 +619,9 @@
     :+  %0
       now.bowl
     [%add-graph [ship term] `graph:store`p.u.result q.u.result]
+  ::
+      [%x %export ~]
+    ``noun+!>((jam state))
   ::
       [%x %graph-subset @ @ @ @ ~]
     =/  =ship  (slav %p i.t.t.path)

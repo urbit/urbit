@@ -42,8 +42,7 @@
         %chat-store
         %chat-hook
         %publish
-::        %link-store
-::        %link-listen-hook
+        %graph-store
     ==
   |=  app=@tas
   [app (export-app who app)]
