@@ -1,6 +1,5 @@
 /-  *btc
 |%
-+$  tx  @
 +$  credentials  [rpc-url=@t rpc-user=@t rpc-password=@t]
 +$  status
   $:  [%host connected=? clients=(set ship)]
@@ -15,7 +14,6 @@
 +$  command
   $%  [%connect-as-host =credentials]
       [%connect-as-client host=ship]
-      [%add-clients clients=(set ship)]
-      [%broadcast-tx =tx]
+      [%allow-clients clients=(set ship)]
   ==
 --
