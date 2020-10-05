@@ -275,6 +275,13 @@
         %7
       [cards this(state p.old-state)]
     ==
+    ++  blank-note-node
+      |=  =note
+      %*  .   *node:graph-store
+        author.post  author.note
+        time-sent.post  date-created.note
+      ==
+    ::
     ++  notebook-to-graph
       |=  =notebook
       ^-  graph:graph-store
@@ -283,10 +290,44 @@
       |=  [@ta =note]
       ^-  [atom node:graph-store]
       :-  date-created.note
-      (note-to-node note)
+      %*  .   (blank-note-node note)
+        index.post   ~[date-created.note]
+        ::
+          children
+        :-  %graph
+        (note-to-revision-container notebook note)
+      ==
     ::
-    ++  comments-to-children
-      |=  [=index:graph-store =note]
+    ++  note-to-revision-container
+      |=  [=notebook =note]
+      ^-  graph:graph-store
+      %+  gas:orm:graph-store  *graph:graph-store
+      :~
+        :-  %1
+        %*  .   (blank-note-node note)
+          index.post   ~[date-created.note %1]
+          children     graph+(note-to-revisions note)
+        ==
+      ::
+        :-  %2
+        %*  .   (blank-note-node note)
+          index.post   ~[date-created.note %2]
+          children  (comments-to-internal-graph note)
+        ==
+      ==
+    ::
+    ++  note-to-revisions
+      |=  =note
+      ^-  graph:graph-store
+      %^  put:orm:graph-store
+        *graph:graph-store  %1
+      %*  .  (blank-note-node note)
+        index.post   ~[date-created.note %1 %1]
+        contents.post  ~[text+title.note text+filename.note]
+      ==
+    ::
+    ++  comments-to-internal-graph
+      |=  =note
       ^-  internal-graph:graph-store
       ?:  =(~ comments.note)
         [%empty ~]
@@ -296,31 +337,11 @@
       |=  [when=@da =comment]
       ^-  [atom node:graph-store]
       :-  when
-      :_  [%empty ~]
-      ^-  post:graph-store
-      :*  author.comment
-          (snoc index when)
-          when
-          [%text content.comment]~
-          ~  ~
-      ==
-    ::
-    ++  note-to-node
-      |=  =note
-      ^-  node:graph-store
-      =/  =index:graph-store
-        ~[date-created.note]
-      =/  contents=(list content:graph-store)
-        :~  [%text title.note]
-            [%text file.note]
-        ==
-      :_  (comments-to-children index note)
-      ^-  post:graph-store
-      :*  author.note
-          index
-          date-created.note
-          contents
-          ~  ~
+      %*  .  *node:graph-store
+        author.post  author.comment
+        index.post  ~[date-created.note %2 when] 
+        time-sent.post  when
+        contents.post  [%text content.comment]~
       ==
     ::
     ++  poke-our
