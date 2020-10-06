@@ -27,25 +27,10 @@ urcrypt:
   * Some property of the routine is cryptographically useful (SHA, RIPE, etc)
   * The routine typically lives in a crypto library, for whatever reason.
 
-Shared or static?
------------------
-Urcrypt has a number of dependencies, and there is something of a matrix of
-combinations of static and shared versions of those dependencies. To keep things
-simple, two modes are currently supported:
-
-  * A static library archive (urcrypt.a)
-  * A shared object with internal, statically linked dependencies
-    (urcrypt.{so, dll, dylib, etc})
-
-pkg-config can be used in the normal way to obtain the link parameters.
-
 A word on OpenSSL
 -----------------
-Urcrypt depends on OpenSSL's libcrypto, which has custom malloc functions.
-Urcrypt tries to avoid dealing with global/static state, and mostly succeeds,
-but users who need to control memory management will want to use
-`CRYPTO_set_mem_functions` from OpenSSL. This is no problem for a statically
-linked urcrypt, but the shared object doesn't expose that symbol to users.
-`urcrypt_set_openssl_mem_functions` is a trivial wrapper that is exposed,
-and can be used to configure shared urcrypt's internal libcrypto malloc.
-The function always fails in statically linked urcrypt.
+Urcrypt depends on OpenSSL's libcrypto, which has global state. In order
+to avoid dealing with this state, urcrypt refuses to build with an internal
+libcrypto. Either build statically (pass `--disable-shared` to `./configure`)
+or provide a shared libcrypto for urcrypt to link against. It is the library
+user's responsibility to initialize openssl, set custom memory functions, etc.

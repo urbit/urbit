@@ -8,6 +8,7 @@ AC_CONFIG_SRCDIR([urcrypt.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux/m4])
+AC_CANONICAL_HOST
 
 # Initialize automake
 AM_INIT_AUTOMAKE([foreign subdir-objects -Wall -Werror])
@@ -20,11 +21,36 @@ LT_INIT
 AC_PROG_CC
 
 # Checks for pkg-config capable libraries
-PKG_CHECK_MODULES([SECP256K1], [libsecp256k1])
-PKG_CHECK_MODULES([CRYPTO], [libcrypto])
+PKG_CHECK_MODULES([libsecp256k1], [libsecp256k1])
+PKG_CHECK_MODULES([libcrypto], [libcrypto])
+
+AS_IF([test "$enable_shared" == "yes"],
+  [# ensure crypto will be shared for shared object (see README.md)
+   save_LDFLAGS=$LDFLAGS
+   save_CLAGS=$CFLAGS
+   LDFLAGS=$libcrypto_LIBS
+   CFLAGS=$libcrypto_CFLAGS
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <openssl/err.h>],
+                                   [ERR_load_crypto_strings()])],
+     [AC_PROG_GREP
+      AC_CHECK_TOOL([NM], [nm])
+      AC_MSG_CHECKING([shared libcrypto])
+      AS_IF(
+        [$NM -f posix conftest$EXEEXT |
+         $GREP 'ERR_load_crypto_strings U' 2>&1 >/dev/null],
+        [AC_MSG_RESULT([yes])],
+        [AC_MSG_ERROR([cannot find shared object for libcrypto.])])],
+     [AC_MSG_ERROR([unable to link libcrypto.])])
+     LDFLAGS=$save_LDFLAGS
+     CFLAGS=$save_CFLAGS])
 
 # Checks for non pkg-config libraries
-AC_CHECK_LIB([aes_siv], [AES_SIV_CTX_new])
+AC_CHECK_LIB([aes_siv], [AES_SIV_CTX_new],
+             [libaes_siv_LIBS="-laes_siv"
+              AC_SUBST([libaes_siv_LIBS])
+              AC_DEFINE([HAVE_LIBAES_SIV], [1],
+                        [Define this symbol if libaes_siv is installed])],
+             [AC_MSG_ERROR([libaes_siv is required.])])
 
 # Checks for header files.
 AC_CHECK_HEADERS([limits.h stddef.h stdint.h stdlib.h string.h])

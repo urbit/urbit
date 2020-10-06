@@ -5,40 +5,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-/* We depend on OpenSSL for various reasons, which doesn't promise not to
- * allocate memory and has the annoying CRYPTO_set_mem_functions api. We
- * are therefore forced to support it in some fashion.
- *
- * If you need to control urcrypt's internal OpenSSL allocation, you can call
- * this function. It wraps the OpenSSL function, returning 0 on success.
- *
- * urcrypt will not use these functions directly.
- */
-
-typedef void *(*urcrypt_openssl_malloc_t)(size_t
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-    , const char*, int
-#endif
-    );
-
-typedef void *(*urcrypt_openssl_realloc_t)(void*, size_t
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-    , const char*, int
-#endif
-    );
-
-typedef void (*urcrypt_openssl_free_t)(void*
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-    , const char*, int
-#endif
-    );
-
 typedef int (*urcrypt_argon2_alloc_t)(uint8_t**, size_t);
 typedef void (*urcrypt_argon2_free_t)(uint8_t*, size_t);
-
-int urcrypt_set_openssl_mem_functions(urcrypt_openssl_malloc_t,
-                                      urcrypt_openssl_realloc_t,
-                                      urcrypt_openssl_free_t);
 
 // const arguments are not written to, non-const arguments may be
 // all arrays are in little-endian byte order.

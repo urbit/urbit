@@ -18,18 +18,6 @@
 #include <secp256k1_preallocated.h>
 
 int
-urcrypt_set_openssl_mem_functions(urcrypt_openssl_malloc_t m,
-                                  urcrypt_openssl_realloc_t r,
-                                  urcrypt_openssl_free_t f)
-{
-#ifdef URCRYPT_STATIC
-  return -2;
-#else
-  return ( CRYPTO_set_mem_functions(m, r, f) ) ? 0 : -1;
-#endif
-}
-
-int
 urcrypt_ed_point_add(const uint8_t a[32],
                      const uint8_t b[32],
                      uint8_t out[32])
