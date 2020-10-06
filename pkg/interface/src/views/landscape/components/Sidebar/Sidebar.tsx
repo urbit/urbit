@@ -24,6 +24,7 @@ import {
   AppAssociations,
   Workspace,
   Groups,
+  Invites,
 } from "~/types";
 import { SidebarItem } from "./SidebarItem";
 import {
@@ -35,13 +36,14 @@ import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
 import { getGroupFromWorkspace } from "~/logic/lib/workspace";
 import { SidebarAppConfigs } from './types';
 import {SidebarList} from "./SidebarList";
+import {SidebarInvites} from "./SidebarInvites";
 
 const apps = ["chat", "publish", "link"];
 
 interface SidebarProps {
   children: ReactNode;
   recentGroups: string[];
-  invites: AppInvites;
+  invites: Invites ;
   api: GlobalApi;
   associations: Associations;
   selected?: string;
@@ -102,16 +104,17 @@ export function Sidebar(props: SidebarProps) {
         baseUrl={props.baseUrl}
         workspace={props.workspace}
       />
-      {Object.keys(invites).map((appPath) =>
+      <SidebarInvites invites={invites} api={props.api} />
+      {/*Object.keys(invites).map((appPath) =>
         Object.keys(invites[appPath]).map((uid) => (
           <SidebarInvite
             key={uid}
-            invite={props.invites[uid]}
+            invite={invites[appPath][uid]}
             onAccept={() => props.api.invite.accept(appPath, uid)}
             onDecline={() => props.api.invite.decline(appPath, uid)}
           />
         ))
-      )}
+      )*/}
       <SidebarListHeader initialValues={config} handleSubmit={setConfig} />
       <SidebarList
         config={config}

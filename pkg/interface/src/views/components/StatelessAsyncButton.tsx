@@ -5,7 +5,6 @@ import { Button, LoadingSpinner } from "@tlon/indigo-react";
 import { useFormikContext } from "formik";
 
 interface AsyncButtonProps {
-  loadingText: string;
   children: ReactNode;
   onClick: (e: React.MouseEvent) => Promise<void>;
 }
@@ -43,7 +42,9 @@ export function StatelessAsyncButton({
         "Error"
       ) : state === "loading" ? (
         <LoadingSpinner
-          foreground={rest.primary ? "white" : "black"}
+          foreground={
+            rest.primary ? "white" : rest.destructive ? "red" : "black"
+          }
           background="transparent"
         />
       ) : state === "success" ? (
