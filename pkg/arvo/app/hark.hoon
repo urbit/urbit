@@ -207,36 +207,22 @@
     ^-  (quip card _state)
     ?+    -.update  [~ state]
         %add-members
-      =/  =unread:store
-        :*  date=now.bowl
-            module=%group
-            group-resource=resource.update
-            app-resource=resource.update  ::  unused
-            body=[%group %add-members ships.update]
-        ==
-      =.  unreads
-        %+  ~(jab by unreads)  resource.update
-        |=  by-group=(map =app=resource unread-mop:store)
-        %+  ~(jab by by-group)  resource.update
-        |=  =unread-mop:store
-        (put:orm unread-mop [now.bowl]~ unread)
-      :_(state (give [/updates]~ [%add unread]))
+      %+  add-unread  resource.update
+      :*  date=now.bowl
+          module=%group
+          group-resource=resource.update
+          app-resource=resource.update  ::  unused
+          body=[%group %add-members ships.update]
+      ==
     ::
         %remove-members
-      =/  =unread:store
-        :*  date=now.bowl
-            module=%group
-            group-resource=resource.update
-            app-resource=resource.update  ::  unused
-            body=[%group %remove-members ships.update]
-        ==
-      =.  unreads
-        %+  ~(jab by unreads)  resource.update
-        |=  by-group=(map =app=resource unread-mop:store)
-        %+  ~(jab by by-group)  resource.update
-        |=  =unread-mop:store
-        (put:orm unread-mop [now.bowl]~ unread)
-      :_(state (give [/updates]~ [%add unread]))
+      %+  add-unread  resource.update
+      :*  date=now.bowl
+          module=%group
+          group-resource=resource.update
+          app-resource=resource.update  ::  unused
+          body=[%group %remove-members ships.update]
+      ==
     ::
         %remove-group
       =.  unreads  (~(put by unreads) resource.update ~)
@@ -252,6 +238,17 @@
     |=  update=metadata-update:metadata-store
     ^-  (quip card _state)
     [~ state]
+  ::
+  ++  add-unread
+    |=  [=resource =unread:store]
+    ^-  (quip card _state)
+    =.  unreads
+      %+  ~(jab by unreads)  resource
+      |=  by-group=(map =app=^resource unread-mop:store)
+      %+  ~(jab by by-group)  resource
+      |=  =unread-mop:store
+      (put:orm unread-mop [now.bowl]~ unread)
+    :_(state (give [/updates]~ [%add unread]))
   ::  TODO: duplicate with above
   ::
   ++  give
