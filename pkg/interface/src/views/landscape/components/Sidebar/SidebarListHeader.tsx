@@ -70,7 +70,7 @@ export function SidebarListHeader(props: {
           </FormikOnBlur>
         }
       >
-        <Icon stroke="gray" icon="Menu" />
+        <Icon color="gray" icon="Menu" />
       </Dropdown>
     </Row>
   );

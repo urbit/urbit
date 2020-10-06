@@ -103,8 +103,7 @@ export function GroupSwitcher(props: {
                 <GroupSwitcherItem to="">
                   <Icon
                     mr={2}
-                    stroke="gray"
-                    color="transparent"
+                    color="gray"
                     display="block"
                     icon="Groups"
                   />
@@ -115,11 +114,11 @@ export function GroupSwitcher(props: {
                   associations={props.associations}
                 />
                 <GroupSwitcherItem to="/~landscape/new">
-                  <Icon mr="2" color="transparent" stroke="gray" icon="Plus" />
+                  <Icon mr="2" color="gray" icon="Plus" />
                   <Text> New Group</Text>
                 </GroupSwitcherItem>
                 <GroupSwitcherItem to="/~landscape/join">
-                  <Icon mr="2" color="transparent" stroke="gray" icon="Boot" />
+                  <Icon mr="2" color="gray" icon="Boot" />
                   <Text> Join Group</Text>
                 </GroupSwitcherItem>
                 {workspace.type === "group" && (
@@ -127,8 +126,7 @@ export function GroupSwitcher(props: {
                     <GroupSwitcherItem to={navTo("/popover/participants")}>
                       <Icon
                         mr={2}
-                        color="transparent"
-                        stroke="gray"
+                        color="gray"
                         icon="Circle"
                       />
                       <Text> Participants</Text>
@@ -136,8 +134,7 @@ export function GroupSwitcher(props: {
                     <GroupSwitcherItem to={navTo("/popover/settings")}>
                       <Icon
                         mr={2}
-                        color="transparent"
-                        stroke="gray"
+                        color="gray"
                         icon="Gear"
                       />
                       <Text> Settings</Text>

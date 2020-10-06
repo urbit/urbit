@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { sigil, reactRenderer } from 'urbit-sigil-js';
+import { sigil, reactRenderer } from '@tlon/sigil-js';
 
 export const foregroundFromBackground = (background) => {
   const rgb = {

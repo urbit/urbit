@@ -22,7 +22,7 @@ const StatusBar = (props) => {
       >
       <Row collapse>
           <StatusBarItem mr={2} onClick={() => props.history.push('/')}>
-          <Icon icon='Home' color='transparent' stroke='black' />
+          <Icon icon='Home' color='black'/>
           </StatusBarItem>
         <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
         <Icon icon='LeapArrow'/>
