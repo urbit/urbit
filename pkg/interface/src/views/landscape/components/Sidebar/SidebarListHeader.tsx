@@ -9,8 +9,8 @@ import {
   Col,
   Text,
 } from "@tlon/indigo-react";
-import { FormikOnBlur } from "../FormikOnBlur";
-import { Dropdown } from "../Dropdown";
+import { FormikOnBlur } from "~/views/components/FormikOnBlur";
+import { Dropdown } from "~/views/components/Dropdown";
 import { FormikHelpers } from "formik";
 import { SidebarListConfig } from "./types";
 

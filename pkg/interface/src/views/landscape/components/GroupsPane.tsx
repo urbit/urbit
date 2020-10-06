@@ -8,9 +8,11 @@ import {
 import { Center, Box } from "@tlon/indigo-react";
 import _ from "lodash";
 
-import { Resource } from "~/views/components/Resource";
-import { PopoverRoutes } from "~/views/apps/groups/components/PopoverRoutes";
-import { Skeleton } from "~/views/components/Skeleton";
+import { Resource } from "./Resource";
+import { PopoverRoutes } from "./PopoverRoutes";
+import { Skeleton } from "./Skeleton";
+import { InvitePopover } from "./InvitePopover";
+import { NewChannel } from "./NewChannel";
 
 import { Resource as IResource, Groups } from "~/types/group-update";
 import { Associations } from "~/types/metadata-update";
@@ -19,11 +21,9 @@ import { AppName } from "~/types/noun";
 import { Contacts, Rolodex } from "~/types/contact-update";
 import GlobalApi from "~/logic/api/global";
 import { StoreState } from "~/logic/store/type";
-import { UnjoinedResource } from "./UnjoinedResource";
-import { InvitePopover } from "../apps/groups/components/InvitePopover";
+import { UnjoinedResource } from "~/views/components/UnjoinedResource";
 import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
-import { NewChannel } from "../apps/groups/components/lib/NewChannel";
-import { Loading } from './Loading';
+import { Loading } from '~/views/components/Loading';
 
 import "~/views/apps/links/css/custom.css";
 import "~/views/apps/publish/css/custom.css";

@@ -3,14 +3,16 @@ import { Route, Switch, RouteComponentProps, Link } from "react-router-dom";
 import { Box, Row, Col, Icon, Text } from "@tlon/indigo-react";
 import { useOutsideClick } from "~/logic/lib/useOutsideClick";
 import { HoverBoxLink } from "~/views/components/HoverBox";
-import { GroupSettings } from "./lib/GroupSettings";
 import { Contacts } from "~/types/contact-update";
-import { Participants } from "./Participants";
 import { Group } from "~/types/group-update";
 import { Association } from "~/types/metadata-update";
 import GlobalApi from "~/logic/api/global";
-import { ContactCard } from "./lib/ContactCard";
 import {S3State} from "~/types";
+
+import { ContactCard } from "./ContactCard";
+import { GroupSettings } from "./GroupSettings";
+import { Participants } from "./Participants";
+
 
 const SidebarItem = ({ selected, icon, text, to }) => {
   return (

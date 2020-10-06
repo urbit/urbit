@@ -65,7 +65,7 @@ export default class TextContent extends Component {
       return (
         <Link
           className="bb b--black b--white-d f8 mono lh-copy v-top"
-          to={'/~groups/join/' + group.input}>
+          to={'/~landscape/join/' + group.input}>
           {content.text}
         </Link>
       );

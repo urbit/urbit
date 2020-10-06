@@ -1,11 +1,9 @@
-import defaultApps from './default-apps';
 import { cite } from '~/logic/lib/util';
 
   const indexes = new Map([
     ['commands', []],
     ['subscriptions', []],
     ['groups', []],
-    ['apps', []],
     ['other', []]
   ]);
 
@@ -23,39 +21,11 @@ const commandIndex = function (currentGroup) {
   // commands are special cased for default suite
   const commands = [];
   const workspace = currentGroup || '/home';
-  commands.push(result(`Groups: Create`, `/~groups/new`, 'Groups', null));
-  commands.push(result(`Groups: Join`, `/~groups/join`, 'Groups', null));
-  commands.push(result(`Channel: Create`, `/~groups${workspace}/new`, 'Groups', null));
+  commands.push(result(`Groups: Create`, `/~landscape/new`, 'Groups', null));
+  commands.push(result(`Groups: Join`, `/~landscape/join`, 'Groups', null));
+  commands.push(result(`Channel: Create`, `/~landscape${workspace}/new`, 'Groups', null));
 
   return commands;
-};
-
-const appIndex = function (apps) {
-  // all apps are indexed from launch data
-  // indexed into 'apps'
-  const applications = [];
-  Object.keys(apps)
-    .filter((e) => {
-      return apps[e]?.type?.basic;
-    })
-    .sort((a,b) => {
-      return a.localeCompare(b);
-    })
-    .map((e) => {
-      const obj = result(
-        apps[e].type.basic.title,
-        apps[e].type.basic.linkedUrl,
-        apps[e].type.basic.title,
-        null
-      );
-      applications.push(obj);
-    });
-  // add groups separately
-  applications.push(
-    result('Groups', '/~groups', 'Groups', null)
-  );
-  return [];
-  return applications;
 };
 
 const otherIndex = function() {
@@ -68,9 +38,9 @@ const otherIndex = function() {
 
 export default function index(associations, apps, currentGroup) {
   // all metadata from all apps is indexed
-  // into subscriptions and groups
+  // into subscriptions and landscape
   const subscriptions = [];
-  const groups = [];
+  const landscape = [];
   Object.keys(associations).filter((e) => {
     // skip apps with no metadata
     return Object.keys(associations[e]).length > 0;
@@ -97,16 +67,16 @@ export default function index(associations, apps, currentGroup) {
         if (app === 'groups') {
           const obj = result(
             title,
-            `/~groups${each['app-path']}`,
+            `/~landscape${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
             cite(shipStart.slice(0, shipStart.indexOf('/')))
           );
-          groups.push(obj);
+          landscape.push(obj);
         } else {
           const app = each.metadata.module || each['app-name'];
           const obj = result(
             title,
-            `/~groups${each['group-path']}/join/${app}${each['app-path']}`,
+            `/~landscape${each['group-path']}/join/${app}${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
             (associations?.contacts?.[each['group-path']]?.metadata?.title || null)
           );
@@ -117,8 +87,7 @@ export default function index(associations, apps, currentGroup) {
 
   indexes.set('commands', commandIndex(currentGroup));
   indexes.set('subscriptions', subscriptions);
-  indexes.set('groups', groups);
-  indexes.set('apps', appIndex(apps));
+  indexes.set('groups', landscape);
   indexes.set('other', otherIndex());
 
   return indexes;

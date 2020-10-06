@@ -32,12 +32,12 @@ export class ProfileOverlay extends PureComponent {
     const theirStation = `/~${ship}/dm--${window.ship}`;
 
     if (allStations.indexOf(station) !== -1) {
-      history.push(`/~groups/home/resource/chat${station}`);
+      history.push(`/~landscape/home/resource/chat${station}`);
       return;
     }
 
     if (allStations.indexOf(theirStation) !== -1) {
-      history.push(`/~groups/home/resource/chat${theirStation}`);
+      history.push(`/~landscape/home/resource/chat${theirStation}`);
       return;
     }
 
@@ -58,7 +58,7 @@ export class ProfileOverlay extends PureComponent {
 
     //  TODO: make a pretty loading state
     setTimeout(() => {
-      history.push(`/~groups/home/resource/chat${station}`);
+      history.push(`/~landscape/home/resource/chat${station}`);
     }, 5000);
   }
 
@@ -89,10 +89,6 @@ export class ProfileOverlay extends PureComponent {
 
     const isOwn = window.ship === ship;
 
-    const identityHref = group.hidden
-      ? '/~profile/identity'
-      : `/~groups/view${association['group-path']}/${window.ship}`;
-
     let img = contact?.avatar && !hideAvatars
       ? <img src={contact.avatar} height={160} width={160} className="brt2 dib" />
       : <Sigil
@@ -104,9 +100,9 @@ export class ProfileOverlay extends PureComponent {
         />;
     const showNickname = contact?.nickname && !hideNicknames;
 
-    if (!group.hidden) {
-      img = <Link to={`/~groups/view${association['group-path']}/${ship}`}>{img}</Link>;
-    }
+    //  TODO: we need to rethink this "top-level profile view" of other ships
+    /*if (!group.hidden) {
+    }*/
 
     return (
       <div
@@ -127,9 +123,9 @@ export class ProfileOverlay extends PureComponent {
               Send Message
             </Button>
           )}
-          {isOwn && (
+          {isOwn && !group.hidden (
             <Link
-              to={identityHref}
+              to={'/~profile/identity'}
               className="b--black b--white-d ba black white-d mt3 tc pa2 pointer db"
             >
               Edit Group Identity

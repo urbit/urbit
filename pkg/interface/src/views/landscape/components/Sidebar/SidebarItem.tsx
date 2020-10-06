@@ -6,7 +6,7 @@ import { Icon, Row, Box, Text } from "@tlon/indigo-react";
 import { Association } from "~/types/metadata-update";
 
 import { SidebarAppConfigs, SidebarItemStatus } from "./Sidebar";
-import { HoverBoxLink } from "../HoverBox";
+import { HoverBoxLink } from "~/views/components/HoverBox";
 import { Groups } from "~/types";
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {
@@ -71,7 +71,7 @@ export function SidebarItem(props: {
 
   const isSynced = itemStatus !== "unsubscribed";
 
-  const baseUrl = isUnmanaged ? `/~groups/home` : `/~groups${groupPath}`;
+  const baseUrl = isUnmanaged ? `/~landscape/home` : `/~landscape${groupPath}`;
 
   const to = isSynced
     ? `${baseUrl}/resource/${module}${appPath}`

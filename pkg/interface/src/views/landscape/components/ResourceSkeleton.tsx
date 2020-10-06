@@ -10,7 +10,7 @@ import { Association } from "~/types/metadata-update";
 import { StoreState } from "~/logic/store/type";
 import GlobalApi from "~/logic/api/global";
 import { RouteComponentProps, Route, Switch } from "react-router-dom";
-import { ChannelSettings } from "../apps/groups/components/lib/ChannelSettings";
+import { ChannelSettings } from "./ChannelSettings";
 import { ChannelMenu } from "./ChannelMenu";
 
 const TruncatedBox = styled(Box)`
@@ -51,7 +51,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             mr={2}
             display={["block", "none"]}
           >
-            <Link to={`/~groups${selectedGroup}`}> {"<- Back"}</Link>
+            <Link to={`/~landscape${selectedGroup}`}> {"<- Back"}</Link>
           </Box>
         ) : (
           <Box
@@ -61,7 +61,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             pr={2}
             mr={2}
           >
-            <Link to={`/~groups${selectedGroup}/resource/${app}${appPath}`}>
+            <Link to={`/~landscape${selectedGroup}/resource/${app}${appPath}`}>
               <Text color="blue">Go back to channel</Text>
             </Link>
           </Box>

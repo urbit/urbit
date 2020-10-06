@@ -17,7 +17,7 @@ import { SidebarInvite } from "./SidebarInvite";
 import GlobalApi from "~/logic/api/global";
 import { AppName } from "~/types/noun";
 import { alphabeticalOrder } from "~/logic/lib/util";
-import { GroupSwitcher } from "~/views/apps/groups/components/GroupSwitcher";
+import { GroupSwitcher } from "../GroupSwitcher";
 import {
   AppInvites,
   Associations,
@@ -132,7 +132,7 @@ export function Sidebar(props: SidebarProps) {
         my={2}
       >
         <Link
-          to={!!groupPath ? `/~groups${groupPath}/new` : `/~groups/home/new`}
+          to={!!groupPath ? `/~landscape${groupPath}/new` : `/~landscape/home/new`}
         >
           <Box
             bg="white"
