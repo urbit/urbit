@@ -63,13 +63,21 @@ const circle = (ctx, x, y, r, from, to, fill) => {
   ctx.fill();
 };
 
+const circleClip = (ctx, x, y, r, from, to, fill) => {
+  ctx.globalCompositeOperation = 'xor';
+  circle(ctx, x, y, r, from, to, fill);
+  ctx.globalCompositeOperation = 'source-over';
+};
+
 const circleOutline = (ctx, x, y, r, from, to, stroke, lineWidth) => {
   ctx.beginPath();
   ctx.arc( x, y, r, from, to );
   ctx.fillStyle = 'rgba(0,0,0,0)';
   ctx.lineWidth = lineWidth;
   ctx.strokeStyle = stroke || 'rgba(0,0,0,0)';
-  ctx.stroke();
+  if (lineWidth) {
+    ctx.stroke();  
+  }
 };
 
 const arc = (ctx, x, y, r, from, to, fill) => {
@@ -211,7 +219,7 @@ class Clock extends React.Component {
       ctr / 2,
       state.sunriseEnd,
       state.sunset,
-      '#6792FF'
+      'rgba(33, 157, 255, .3)'
     );
 
     // Sunrise
@@ -220,9 +228,9 @@ class Clock extends React.Component {
       ctr,
       ctr,
       ctr / 2,
-      state.nightEnd,
+      state.sunsetStart,
       state.sunriseEnd,
-      '#FCC440'
+      '#FFC700'
     );
 
     // Sunset
@@ -231,31 +239,9 @@ class Clock extends React.Component {
       ctr,
       ctr,
       ctr / 2,
-      state.nightEnd,
-      splitArc(state.sunriseEnd, state.nightEnd),
-      '#FF611E'
-    );
-
-    // Sunset
-    degArc(
-      ctx,
-      ctr,
-      ctr,
-      ctr / 2,
-      state.sunset,
-      state.night,
-      '#FCC440'
-    );
-
-    // Sunset
-    degArc(
-      ctx,
-      ctr,
-      ctr,
-      ctr / 2,
-      splitArc(state.sunset, state.night),
-      state.night,
-      '#FF611E'
+      state.dusk,
+      state.dawn,
+      'rgba(255, 65, 54, .8)'
     );
 
     // Night
@@ -266,7 +252,7 @@ class Clock extends React.Component {
       ctr / 2,
       state.night,
       state.nightEnd,
-      'rgb(26, 26, 26)'
+      'rgba(0, 0, 0, .8)'
     );
 
     if (
@@ -328,20 +314,8 @@ class Clock extends React.Component {
       ctr-1,
       -1,
       2 * Math.PI,
-      text,
-      1
-    );
-
-    // Outer borders
-    circle(
-      ctx,
-      ctr,
-      ctr,
-      ctr/1.85,
-      -1,
-      2 * Math.PI,
-      background,
-      1
+      'none',
+      0
     );
 
     // Center white circle border
@@ -352,8 +326,19 @@ class Clock extends React.Component {
       ctr/1.85,
       -1,
       2 * Math.PI,
-      text,
-      1
+      'none',
+      0
+    );
+
+    // Inner hole
+    circle(
+      ctx,
+      ctr,
+      ctr,
+      ctr/1.85,
+      -1,
+      2 * Math.PI,
+      background
     );
 
     // Text for time and date
@@ -373,13 +358,13 @@ class Clock extends React.Component {
   }
 
   render() {
-    return <div style={{ position:'relative' }}>
+    return (
       <canvas
-      style={{ position:'absolute' }}
-      ref={ canvasRef => this.canvasRef = canvasRef }
-      id="clock-canvas"
+        style={{ height: '100%', width: '100%'}}
+        ref={ canvasRef => this.canvasRef = canvasRef }
+        id="clock-canvas"
       />
-    </div>;
+    );
   }
 }
 
@@ -390,7 +375,7 @@ export default class ClockTile extends React.Component {
 
   renderWrapper(child) {
     return (
-      <Tile transparent>
+      <Tile p={0} bg="transparent" border={0}>
         {child}
       </Tile>
     );

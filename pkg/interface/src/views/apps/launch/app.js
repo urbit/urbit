@@ -9,28 +9,9 @@ import './css/custom.css';
 
 import { Sigil } from "~/logic/lib/sigil";
 import Tiles from './components/tiles';
+import Tile from './components/tiles/tile';
 import Welcome from './components/welcome';
 import Groups from './components/Groups';
-
-const Tile = ({ children, bg, to, ...rest }) => (
-  <Box
-    mt='0'
-    ml='2'
-    mr='2'
-    mb={3}
-    bg="white"
-    width="126px"
-    height="126px"
-    borderRadius={2}
-    overflow="hidden"
-    {...rest}>
-    <Link to={to}>
-      <Box p={2} bg={bg} width="100%" height="100%">
-        {children}
-      </Box>
-    </Link>
-  </Box>
-);
 
 export default class LaunchApp extends React.Component {
 
@@ -57,7 +38,14 @@ export default class LaunchApp extends React.Component {
         </Helmet>
         <div className="h-100 overflow-y-scroll">
           <Welcome firstTime={props.launch.firstTime} api={props.api} />
-          <Row ml='2' flexWrap="wrap" mb={4} pitch={4}>
+          <Box
+            ml='2'
+            display='grid'
+            gridAutoRows='124px'
+            gridTemplateColumns='repeat(auto-fit, 124px)'
+            gridGap={3}
+            p={2}
+          >
             <Tile
               border={1}
               bg="washedGreen"
@@ -89,7 +77,7 @@ export default class LaunchApp extends React.Component {
               location={props.userLocation}
               weather={props.weather}
             />
-          </Row>
+          </Box>
           <Groups associations={props.associations} />
           <Box
             position="absolute"

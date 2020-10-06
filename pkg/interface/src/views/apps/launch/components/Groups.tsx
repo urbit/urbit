@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@tlon/indigo-react";
+import { Box, Text } from "@tlon/indigo-react";
 import { Link } from "react-router-dom";
 
 import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
@@ -62,12 +62,12 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
             width="100%"
             bg="white"
             border={1}
-            borderRadius={1}
+            borderRadius={2}
             borderColor="lightGray"
             p={2}
             fontSize={0}
           >
-            {group.metadata.title}
+            <Text>{group.metadata.title}</Text>
           </Box>
         </Link>
       ))}
