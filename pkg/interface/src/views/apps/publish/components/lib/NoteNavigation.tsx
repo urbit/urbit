@@ -54,7 +54,7 @@ export function NoteNavigation(props: NoteNavigationProps) {
   }
 
   if (next) {
-    nextUrl = `${props.prevId}`;
+    nextUrl = `${props.nextId}`;
     nextComponent = (
       <NavigationItem
         title={next.title}
