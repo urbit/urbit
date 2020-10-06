@@ -973,21 +973,17 @@ _pier_on_lord_slog(void* ptr_v, c3_w pri_w, u3_noun tan)
     c3_free(tan_c);
 
     if ( 0 != pir_u->sog_f ) {
-      pir_u->sog_f(pir_u->sop_p, pri_w, tan);
-    }
-    else {
-      u3z(tan);
+      pir_u->sog_f(pir_u->sop_p, pri_w, u3k(tan));
     }
   }
   else {
     u3_pier_tank(0, pri_w, u3k(tan));
     if ( 0 != pir_u->sog_f ) {
-      pir_u->sog_f(pir_u->sop_p, pri_w, tan);
-    }
-    else {
-      u3z(tan);
+      pir_u->sog_f(pir_u->sop_p, pri_w, u3k(tan));
     }
   }
+
+  u3z(tan);
 }
 
 /* _pier_on_lord_save(): worker (non-portable) snapshot complete.

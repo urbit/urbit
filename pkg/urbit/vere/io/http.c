@@ -832,6 +832,9 @@ _http_seq_continue(void* vod_p, u3_noun nun)
 
   //  if the request is authenticated properly, send slogstream/sse headers
   //
+  //TODO  authentication might expire after the connection has been opened!
+  //      eyre could notify us about this, or we could re-check periodically.
+  //
   if ( c3y == aut ) {
     u3_hreq* req_u = _http_req_prepare(rec_u, _http_seq_new);
     u3_noun  hed   = u3nl(u3nc(u3i_string("Content-Type"),
@@ -849,7 +852,7 @@ _http_seq_continue(void* vod_p, u3_noun nun)
   //
   else {
     //NOTE  we use req_new because we don't want to consider this a slog stream
-    //      request, but this means we need to manuualy skip past the "in event
+    //      request, but this means we need to manually skip past the "in event
     //      queue" state on the hreq.
     u3_hreq* req_u = _http_req_prepare(rec_u, _http_req_new);
     req_u->sat_e = u3_rsat_plan;
@@ -2128,7 +2131,8 @@ _http_io_exit(u3_auto* car_u)
   // }
 
   {
-    u3_noun dat = u3nt(u3_nul, 25, u3i_string("data:urbit shutting down\n\n"));
+    u3_atom lin = u3i_string("data:urbit shutting down\n\n");
+    u3_noun dat = u3nt(u3_nul, u3r_met(3, lin), lin);
     u3_hreq* seq_u = htd_u->fig_u.seq_u;
     while ( 0 != seq_u ) {
       _http_continue_respond(seq_u, u3k(dat), c3y);
