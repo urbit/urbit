@@ -75,10 +75,6 @@
 ++  life  @ud                                           ::  ship key revision
 ++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
-::
-::
-::    TODO: Rename to +mime once the current +mime and +mite are gone. The
-::
 ++  octs  {p/@ud q/@}                                   ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
 ::+|
@@ -1559,9 +1555,7 @@
         $put                                            ::  PUT
         $trac                                           ::  TRACE
     ==                                                  ::
-  ++  mite  (list @ta)                                  ::  mime type
   ++  moth  {p/meth q/math r/(unit octs)}               ::  http operation
-  ++  octs  {p/@ud q/@t}                                ::  octet-stream
   ++  oryx  @t                                          ::  CSRF secret
   ++  pork  {p/(unit @ta) q/(list @t)}                  ::  fully parsed url
   :: +prox: proxy notification
@@ -6035,6 +6029,7 @@
   ::::                    ++mimes:html                  ::  (2e1) MIME
     ::                                                  ::::
   ++  mimes  ^?
+    ~%  %mimes  ..is  ~
     |%
     ::                                                  ::  ++as-octs:mimes:html
     ++  as-octs                                         ::  atom to octstream
@@ -6052,6 +6047,28 @@
       ?~  myn  ~
       ?:  =(~ t.myn)  (trip i.myn)
       (weld (trip i.myn) `tape`['/' $(myn t.myn)])
+    ::
+    ::  |base16: en/decode arbitrary MSB-first hex strings
+    ::
+    ++  base16
+      ~%  %base16  +  ~
+      |%
+      ++  en
+        ~/  %en
+        |=  a=octs  ^-  cord
+        (crip ((x-co:co (mul p.a 2)) (end 3 p.a q.a)))
+      ::
+      ++  de
+        ~/  %de
+        |=  a=cord  ^-  (unit octs)
+        (rush a rule)
+      ::
+      ++  rule
+        %+  cook
+          |=  a=(list @)  ^-  octs
+          [(add (dvr (lent a) 2)) (repn 4 (flop a))]
+        (star hit)
+      --
     ::                                                  ::  ++en-base64:mimes:
     ++  en-base64                                       ::  encode base64
       |=  tig/@

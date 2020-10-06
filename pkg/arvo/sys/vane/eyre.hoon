@@ -1772,6 +1772,12 @@
     |=  [=binding =action]
     ^-  [(list move) server-state]
     =^  success  bindings.state
+      ::  prevent binding in reserved namespaces
+      ::
+      ?:  ?|  ?=([%'~' *] path.binding)    ::  eyre
+              ?=([%'~_~' *] path.binding)  ::  runtime
+          ==
+        [| bindings.state]
       (insert-binding [binding duct action] bindings.state)
     :_  state
     [duct %give %bound success binding]~
