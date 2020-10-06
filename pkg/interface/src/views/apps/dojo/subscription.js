@@ -18,8 +18,8 @@ export default class Subscription {
   }
 
   setupSlog() {
-    const slog = new EventSource('/~/slog', { withCredentials: true });
     let available = false;
+    const slog = new EventSource('/~_~/slog', { withCredentials: true });
 
     slog.onopen = e => {
       console.log('slog: opened stream');
