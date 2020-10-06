@@ -129,7 +129,7 @@ export class Notebook extends PureComponent<
                   api.publish
                     .unsubscribeNotebook(deSig(ship), book)
                     .then(() => {
-                      history.push("/~publish");
+                      history.push(this.props.baseUrl);
                     })
                     .catch(() => {
                       this.setState({ isUnsubscribing: false });
@@ -206,6 +206,7 @@ export class Notebook extends PureComponent<
               contacts={notebookContacts}
               associations={associations}
               groups={groups}
+              baseUrl={this.props.baseUrl}
             />
           )}
         </Box>

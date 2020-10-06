@@ -1,7 +1,7 @@
 import React from "react";
 import * as Yup from "yup";
 import { Formik, FormikHelpers, Form, useFormikContext } from "formik";
-import { AsyncButton } from "../../../../components/AsyncButton";
+import { AsyncButton } from "../../../components/AsyncButton";
 import { ManagedTextAreaField as TextArea } from "@tlon/indigo-react";
 
 interface FormSchema {
