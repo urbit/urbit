@@ -101,7 +101,7 @@ export default function index(associations, apps, currentGroup) {
             app.charAt(0).toUpperCase() + app.slice(1),
             cite(shipStart.slice(0, shipStart.indexOf('/')))
           );
-          groups.push(obj);
+          landscape.push(obj);
         } else {
           const app = each.metadata.module || each['app-name'];
           const obj = result(
