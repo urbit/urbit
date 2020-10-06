@@ -824,6 +824,8 @@ _http_req_prepare(h2o_req_t* rec_u,
   return seq_u;
 }
 
+/* _http_seq_continue(): respond to slogstream request based on auth scry result
+*/
 static void
 _http_seq_continue(void* vod_p, u3_noun nun)
 {
