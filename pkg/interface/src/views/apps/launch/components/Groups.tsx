@@ -35,13 +35,18 @@ const sortGroupsAlph = (a: Association, b: Association) =>
   alphabeticalOrder(a.metadata.title, b.metadata.title);
 
 export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
-  const { associations, ...boxProps } = props;
+  const { associations, invites, api, ...boxProps } = props;
   const [recentGroups, setRecentGroups] = useLocalStorageState<string[]>(
     "recent-groups",
     []
   );
 
-  const groups = Object.values(props?.associations?.contacts || {})
+  const incomingGroups = Object.values(invites?.['/contacts'] || {});
+  const getKeyByValue = (object, value) => {
+    return Object.keys(object).find(key => object[key] === value);
+  }
+
+  const groups = Object.values(associations?.contacts || {})
     .sort(sortGroupsAlph)
     .sort(sortGroupsRecent(recentGroups))
 
@@ -55,6 +60,36 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
       gridGap={3}
       p={2}
     >
+      {incomingGroups.map((invite) => (
+        <Box
+          height='100%'
+          width='100%'
+          bg='white'
+          border='1'
+          borderRadius='2'
+          borderColor='lightGray'
+          p='2'
+          fontSize='0'
+        >
+          <Text display='block' pb='2' gray>You have been invited to:</Text>
+          <Text display='inline-block' overflow='hidden' maxWidth='100%' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }} title={invite.path.slice(6)}>{invite.path.slice(6)}</Text>
+          <Box pt='5'>
+            <Text
+            onClick={() => api.invite.accept('/contacts', getKeyByValue(invites['/contacts'], invite))}
+            color='blue'
+            mr='2'
+            cursor='pointer'>
+              Accept
+            </Text>
+            <Text
+              color='red'
+              onClick={() => api.invite.decline('/contacts', getKeyByValue(invites['/contacts'], invite))}
+              cursor='pointer'>
+                Reject
+              </Text>
+          </Box>
+        </Box>
+      ))}
       {groups.map((group) => (
         <Link to={`/~landscape${group["group-path"]}`}>
           <Box
