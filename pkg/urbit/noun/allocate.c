@@ -789,6 +789,10 @@ u3a_cellblock(c3_w num_w)
 c3_w*
 u3a_celloc(void)
 {
+#ifdef U3_CPU_DEBUG
+  u3R->pro.cel_d++;
+#endif
+
 #ifdef U3_MEMORY_DEBUG
   if ( u3C.wag_w & u3o_debug_ram ) {
     return u3a_walloc(c3_wiseof(u3a_cell));
