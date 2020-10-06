@@ -1195,6 +1195,39 @@ u3r_mp(mpz_t   a_mp,
   }
 }
 
+/* u3r_short():
+**
+**   Return short (a_w) of (b).
+*/
+c3_s
+u3r_short(c3_w  a_w,
+          u3_atom b)
+{
+  c3_assert( u3_none != b );
+  c3_assert( c3y == u3a_is_atom(b) );
+
+  if ( c3y == u3a_is_cat(b) ) {
+    switch ( a_w ) {
+      case 0:  return b & 0xffff;
+      case 1:  return b >> 16;
+      default: return 0;
+    }
+  }
+  else {
+    u3a_atom* b_u = u3a_to_ptr(b);
+    c3_w    nix_w = a_w >> 1;
+
+    if ( nix_w >= b_u->len_w ) {
+      return 0;
+    }
+    else {
+      c3_w wor_w = b_u->buf_w[nix_w];
+
+      return ( a_w & 1 ) ? (wor_w >> 16) : (wor_w & 0xffff);
+    }
+  }
+}
+
 /* u3r_word():
 **
 **   Return word (a_w) of (b).
