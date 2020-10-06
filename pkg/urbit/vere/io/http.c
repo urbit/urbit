@@ -1422,7 +1422,7 @@ _http_serv_init_h2o(SSL_CTX* tls_u, c3_o log, c3_o red)
 
   //  register slog stream endpoint
   //
-  h2o_pathconf_t* pac_u = h2o_config_register_path(h2o_u->hos_u, "/~/slog", 0);
+  h2o_pathconf_t* pac_u = h2o_config_register_path(h2o_u->hos_u, "/~_~/slog", 0);
   h2o_handler_t*  han_u = h2o_create_handler(pac_u, sizeof(*han_u));
   han_u->on_req = _http_seq_accept;
 
