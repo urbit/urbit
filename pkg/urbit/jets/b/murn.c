@@ -29,8 +29,9 @@ u3qb_murn(u3_noun a, u3_noun b)
 
         if ( u3_nul != res ) {
           *lit = u3i_defcons(&hed, &tel);
-          *hed = u3t(res);
+          *hed = u3k(u3t(res));
           lit  = tel;
+          u3z(res);
         }
       }
       while ( u3_nul != t );
