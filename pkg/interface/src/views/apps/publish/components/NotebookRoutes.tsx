@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
 import { RouteComponentProps, Link, Route, Switch } from "react-router-dom";
 import { Box, Text } from "@tlon/indigo-react";
-import GlobalApi from "../../../../api/global";
-import { PublishContent } from "./PublishContent";
-import { Notebook as INotebook } from "../../../../types/publish-update";
-import { Groups } from "../../../../types/group-update";
-import { Contacts, Rolodex } from "../../../../types/contact-update";
+import GlobalApi from "~/api/global";
+import { Notebook as INotebook } from "~/types/publish-update";
+import { Groups } from "~/types/group-update";
+import { Contacts, Rolodex } from "~/types/contact-update";
+import { LocalUpdateRemoteContentPolicy, Associations } from "~/types";
+
 import Notebook from "./Notebook";
 import NewPost from "./new-post";
 import { NoteRoutes } from './NoteRoutes';
-import { LocalUpdateRemoteContentPolicy, Associations } from "~/types";
+
 
 interface NotebookRoutesProps {
   api: GlobalApi;

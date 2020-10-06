@@ -5,7 +5,7 @@ import GlobalApi from "~/logic/api/global";
 import { StoreState } from "~/logic/store/type";
 import { Association } from "~/types";
 import { RouteComponentProps } from "react-router-dom";
-import { NotebookRoutes } from "./components/lib/NotebookRoutes";
+import { NotebookRoutes } from "./components/NotebookRoutes";
 
 type PublishResourceProps = StoreState & {
   association: Association;

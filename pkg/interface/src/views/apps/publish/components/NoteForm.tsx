@@ -6,7 +6,7 @@ import {
   Row,
   Col,
 } from "@tlon/indigo-react";
-import { AsyncButton } from "../../../../components/AsyncButton";
+import { AsyncButton } from "../../../components/AsyncButton";
 import { Formik, Form, FormikHelpers } from "formik";
 import { MarkdownField } from "./MarkdownField";
 
