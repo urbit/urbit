@@ -1,7 +1,7 @@
 
 import BaseApi from './base';
 import { StoreState } from '../store/type';
-import { Path, Patp } from '~/types/noun';
+import { Path, Patp, Association, Metadata } from '~/types';
 
 export default class MetadataApi extends BaseApi<StoreState> {
 
@@ -23,6 +23,20 @@ export default class MetadataApi extends BaseApi<StoreState> {
           creator,
           'module': moduleName
         }
+      }
+    });
+  }
+
+  update(association: Association, newMetadata: Partial<Metadata>) {
+    const metadata = {...association.metadata, ...newMetadata };
+    return this.metadataAction({ 
+      add: {
+        'group-path': association['group-path'], 
+        resource: {
+          'app-path': association['app-path'],
+          'app-name': association['app-name'],
+        },
+        metadata
       }
     });
   }

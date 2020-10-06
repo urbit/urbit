@@ -152,12 +152,12 @@ export function GroupSwitcher(props: {
               </Col>
             }
           >
-            <Box p={2} alignItems="center" display="flex">
-              <Box mr={1} flex='1'>
+            <Row p={2} alignItems="center">
+              <Row alignItems="center" mr={1} flex='1'>
                 <Text overflow='hidden' display='inline-block' maxWidth='144px'  style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
-              </Box>
+              </Row>
               <Icon mt="0px" display="block" icon="ChevronSouth" />
-            </Box>
+            </Row>
           </Dropdown>
           <Row collapse pr={1} justifyContent="flex-end" alignItems="center">
             {workspace.type === "group" && (

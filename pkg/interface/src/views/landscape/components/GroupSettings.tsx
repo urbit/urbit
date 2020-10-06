@@ -17,16 +17,19 @@ import { Association } from "~/types/metadata-update";
 import GlobalApi from "~/logic/api/global";
 import { resourceFromPath, roleForShip } from "~/logic/lib/group";
 import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
+import { ColorInput } from "~/views/components/ColorInput";
 
 interface FormSchema {
-  name: string;
-  description?: string;
+  title: string;
+  description: string;
+  color: string;
   isPrivate: boolean;
 }
 
 const formSchema = Yup.object({
-  name: Yup.string().required("Group must have a name"),
+  title: Yup.string().required("Group must have a name"),
   description: Yup.string(),
+  color: Yup.string(),
   isPrivate: Yup.boolean(),
 });
 
@@ -40,8 +43,9 @@ export function GroupSettings(props: GroupSettingsProps) {
   const { metadata } = association;
   const currentPrivate = "invite" in props.group.policy;
   const initialValues: FormSchema = {
-    name: metadata.title,
+    title: metadata.title,
     description: metadata.description,
+    color: metadata.color,
     isPrivate: currentPrivate,
   };
 
@@ -50,8 +54,8 @@ export function GroupSettings(props: GroupSettingsProps) {
     actions: FormikHelpers<FormSchema>
   ) => {
     try {
-      const { name, description, isPrivate } = values;
-      await props.api.metadata.editGroup(props.association, name, description);
+      const { title, description, color, isPrivate } = values;
+      await props.api.metadata.update(props.association, { title, description, color });
       if (isPrivate !== currentPrivate) {
         const resource = resourceFromPath(props.association["group-path"]);
         const newPolicy: Enc<GroupPolicy> = isPrivate
@@ -108,7 +112,7 @@ export function GroupSettings(props: GroupSettingsProps) {
               </>
             )}
             <Input
-              id="name"
+              id="title"
               label="Group Name"
               caption="The name for your group to be called by"
               disabled={disabled}
@@ -117,6 +121,12 @@ export function GroupSettings(props: GroupSettingsProps) {
               id="description"
               label="Group Description"
               caption="The description of your group"
+              disabled={disabled}
+            />
+            <ColorInput
+              id="color"
+              label="Group color"
+              caption="A color to represent your group"
               disabled={disabled}
             />
             <Checkbox

@@ -45,7 +45,7 @@ export type Association = Resource & {
   metadata: Metadata;
 };
 
-interface Metadata {
+export interface Metadata {
   color: string;
   creator: Patp;
   'date-created': string;

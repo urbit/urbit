@@ -130,6 +130,7 @@ export function PopoverRoutes(
                         group={props.group}
                         contacts={props.contacts}
                         association={props.association}
+                        api={props.api}
                       />
                     )}
                     {view === "profile" && (
