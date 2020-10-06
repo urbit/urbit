@@ -25,7 +25,7 @@
 
         mpz_tdiv_qr(a_mp, b_mp, a_mp, b_mp);
 
-        return u3nc(u3k(u3i_mp(a_mp)), u3k(u3i_mp(b_mp)));
+        return u3nc(u3i_mp(a_mp), u3i_mp(b_mp));
       }
     }
   }
