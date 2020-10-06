@@ -7,14 +7,13 @@ import { StoreState } from "~/logic/store/type";
 import { uxToHex } from '~/logic/lib/util';
 import { Association, GraphNode } from "~/types";
 import { RouteComponentProps } from "react-router-dom";
-import { LinkList } from "./components/link-list";
-import { LinkDetail } from "./components/link-detail";
 
-import { LinkItem } from "./components/lib/link-item";
-import { LinkSubmit } from "./components/lib/link-submit";
-import { LinkPreview } from "./components/lib/link-preview";
-import { CommentSubmit } from "./components/lib/comment-submit";
-import { Comments } from "./components/lib/comments";
+import { LinkItem } from "./components/link-item";
+import { LinkSubmit } from "./components/link-submit";
+import { LinkPreview } from "./components/link-preview";
+import { CommentSubmit } from "./components/comment-submit";
+import { Comments } from "./components/comments";
+
 import "./css/custom.css";
 
 type LinkResourceProps = StoreState & {

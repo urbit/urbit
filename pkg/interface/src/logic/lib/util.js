@@ -232,29 +232,6 @@ export function stringToTa(string) {
   return '~.' + out;
 }
 
-// used in Links
-
-export function makeRoutePath(
-  resource,
-  page = 0,
-  url = null,
-  index = 0,
-  compage = 0
-) {
-  let route = '/~link' + resource;
-  if (!url) {
-    if (page !== 0) {
-      route = route + '/' + page;
-    }
-  } else {
-    route = `${route}/${page}/${index}/${base64urlEncode(url)}`;
-    if (compage !== 0) {
-      route = route + '/' + compage;
-    }
-  }
-  return route;
-}
-
 export function amOwnerOfGroup(groupPath) {
   if (!groupPath)
 return false;
