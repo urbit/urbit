@@ -176,7 +176,10 @@ export default class WeatherTile extends React.Component {
         height='100%'
         onClick={() => this.setState({ manualEntry: !this.state.manualEntry })}
       >
+      <Box>
+        <Icon icon='Weather' color='black' display='inline-block' verticalAlign='top' pt='3px' pr='2px' />
         <Text>Weather</Text>
+      </Box>
         <Text style={{ cursor: 'pointer' }}>
           -> Set location
         </Text>
@@ -213,7 +216,7 @@ export default class WeatherTile extends React.Component {
         alignItems='space-between'
       >
         <Text>
-          <Icon icon='Weather' color='transparent' stroke='black' display='inline' style={{ position: 'relative', top: '.3em'}} />
+          <Icon icon='Weather' color='black' display='inline' style={{ position: 'relative', top: '.3em'}} />
           Weather
           <a
           className='pointer'
@@ -256,6 +259,7 @@ export default class WeatherTile extends React.Component {
         <div
           className={'pa2 w-100 h-100 ' +
           'bg-white bg-gray0-d black white-d'}>
+            <Icon icon='Weather' color='black' display='inline' style={{ position: 'relative', top: '.3em' }} />
             <Text>Weather</Text>
           <p className="w-100 flex-col f9">
           Loading, please check again later...

@@ -17,9 +17,12 @@ export default class BasicTile extends React.PureComponent {
           {props.title === 'Dojo'
             ? <Icon
               icon='ChevronEast'
-              color='transparent'
               color='#fff'
-              style={{ position: 'relative', top: '.3em'}}
+              size='12px'
+              display='inline-block'
+              verticalAlign='top'
+              pt='5px'
+              pr='2px'
             />
             : null
           }{props.title}
