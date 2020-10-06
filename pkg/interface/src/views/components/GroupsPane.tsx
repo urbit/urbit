@@ -22,7 +22,7 @@ import { StoreState } from "~/logic/store/type";
 import { UnjoinedResource } from "./UnjoinedResource";
 import { InvitePopover } from "../apps/groups/components/InvitePopover";
 import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
-import { NewChannel } from "../apps/groups/components/lib/NewChannel";
+import { NewChannel } from "../apps/groups/components/NewChannel";
 import { Loading } from './Loading';
 
 import "~/views/apps/links/css/custom.css";

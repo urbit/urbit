@@ -91,7 +91,7 @@ export class ProfileOverlay extends PureComponent {
 
     const identityHref = group.hidden
       ? '/~profile/identity'
-      : `/~groups/view${association['group-path']}/${window.ship}`;
+      : '/~404';
 
     let img = contact?.avatar && !hideAvatars
       ? <img src={contact.avatar} height={160} width={160} className="brt2 dib" />
@@ -104,9 +104,9 @@ export class ProfileOverlay extends PureComponent {
         />;
     const showNickname = contact?.nickname && !hideNicknames;
 
-    if (!group.hidden) {
-      img = <Link to={`/~groups/view${association['group-path']}/${ship}`}>{img}</Link>;
-    }
+    //  TODO: we need to rethink this "top-level profile view" of other ships
+    /*if (!group.hidden) {
+    }*/
 
     return (
       <div

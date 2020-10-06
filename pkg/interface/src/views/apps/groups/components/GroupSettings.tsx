@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { AsyncButton } from "../../../../components/AsyncButton";
+import { AsyncButton } from "../../../components/AsyncButton";
 import * as Yup from "yup";
 import {
   Box,
