@@ -35,6 +35,7 @@
     "react-oembed-container": "^1.0.0",
     "react-router-dom": "^5.0.0",
     "react-virtuoso": "^0.20.0",
+    "react-visibility-sensor": "^5.1.1",
     "remark-disable-tokenizers": "^1.0.24",
     "style-loader": "^1.2.1",
     "styled-components": "^5.1.0",
