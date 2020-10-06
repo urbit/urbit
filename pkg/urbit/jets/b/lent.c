@@ -3,44 +3,20 @@
 */
 #include "all.h"
 
+STATIC_ASSERT( (UINT32_MAX > u3a_cells),
+               "length precision" );
+
 u3_noun
 u3qb_lent(u3_noun a)
 {
-  if ( u3_nul == a ) {
-    return 0;
+  c3_w len_w = 0;
+
+  while ( u3_nul != a ) {
+    a = u3t(a);
+    len_w++;
   }
 
-  //  loop until we overflow [len_w]
-  //
-  {
-    c3_w len_w = 1;
-
-    do {
-      a = u3t(a);
-
-      if ( u3_nul == a ) {
-        return u3i_words(1, &len_w);
-      }
-    }
-    while ( ++len_w );
-  }
-
-  //  continue with arbitrary precision
-  //
-  {
-    u3_noun len = u3qc_bex(32);
-
-    while ( 1 ) {
-      a = u3t(a);
-
-      if ( u3_nul == a ) {
-        return len;
-      }
-      else {
-        len = u3i_vint(len);
-      }
-    }
-  }
+  return u3i_word(len_w);
 }
 
 u3_noun
