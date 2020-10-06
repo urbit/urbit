@@ -55,7 +55,7 @@ export class Omnibox extends Component {
   }
 
   getSearchedCategories() {
-    return ['apps', 'commands', 'groups', 'subscriptions', 'other'];
+    return ['commands', 'groups', 'subscriptions', 'other'];
   }
 
   control(evt) {

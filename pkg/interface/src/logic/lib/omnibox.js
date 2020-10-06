@@ -1,11 +1,9 @@
-import defaultApps from './default-apps';
 import { cite } from '~/logic/lib/util';
 
   const indexes = new Map([
     ['commands', []],
     ['subscriptions', []],
-    ['landscape', []],
-    ['apps', []],
+    ['groups', []],
     ['other', []]
   ]);
 
@@ -23,39 +21,11 @@ const commandIndex = function (currentGroup) {
   // commands are special cased for default suite
   const commands = [];
   const workspace = currentGroup || '/home';
-  commands.push(result(`Groups: Create`, `/~landscape/new`, 'Landscape', null));
-  commands.push(result(`Groups: Join`, `/~landscape/join`, 'Landscape', null));
-  commands.push(result(`Channel: Create`, `/~landscape${workspace}/new`, 'Landscape', null));
+  commands.push(result(`Groups: Create`, `/~landscape/new`, 'Groups', null));
+  commands.push(result(`Groups: Join`, `/~landscape/join`, 'Groups', null));
+  commands.push(result(`Channel: Create`, `/~landscape${workspace}/new`, 'Groups', null));
 
   return commands;
-};
-
-const appIndex = function (apps) {
-  // all apps are indexed from launch data
-  // indexed into 'apps'
-  const applications = [];
-  Object.keys(apps)
-    .filter((e) => {
-      return apps[e]?.type?.basic;
-    })
-    .sort((a,b) => {
-      return a.localeCompare(b);
-    })
-    .map((e) => {
-      const obj = result(
-        apps[e].type.basic.title,
-        apps[e].type.basic.linkedUrl,
-        apps[e].type.basic.title,
-        null
-      );
-      applications.push(obj);
-    });
-  // add landscape separately
-  applications.push(
-    result('Landscape', '/~landscape', 'Landscape', null)
-  );
-  return [];
-  return applications;
 };
 
 const otherIndex = function() {
@@ -117,8 +87,7 @@ export default function index(associations, apps, currentGroup) {
 
   indexes.set('commands', commandIndex(currentGroup));
   indexes.set('subscriptions', subscriptions);
-  indexes.set('landscape', landscape);
-  indexes.set('apps', appIndex(apps));
+  indexes.set('groups', landscape);
   indexes.set('other', otherIndex());
 
   return indexes;
