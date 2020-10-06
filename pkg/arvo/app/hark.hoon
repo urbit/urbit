@@ -205,7 +205,43 @@
   ++  group-update
     |=  =update:group-store
     ^-  (quip card _state)
-    [~ state]
+    ?+    -.update  [~ state]
+        %add-members
+      =/  =unread:store
+        :*  date=now.bowl
+            module=%group
+            group-resource=resource.update
+            app-resource=resource.update  ::  unused
+            body=[%group %add-members ships.update]
+        ==
+      =.  unreads
+        %+  ~(jab by unreads)  resource.update
+        |=  by-group=(map =app=resource unread-mop:store)
+        %+  ~(jab by by-group)  resource.update
+        |=  =unread-mop:store
+        (put:orm unread-mop [now.bowl]~ unread)
+      :_(state (give [/updates]~ [%add unread]))
+    ::
+        %remove-members
+      =/  =unread:store
+        :*  date=now.bowl
+            module=%group
+            group-resource=resource.update
+            app-resource=resource.update  ::  unused
+            body=[%group %remove-members ships.update]
+        ==
+      =.  unreads
+        %+  ~(jab by unreads)  resource.update
+        |=  by-group=(map =app=resource unread-mop:store)
+        %+  ~(jab by by-group)  resource.update
+        |=  =unread-mop:store
+        (put:orm unread-mop [now.bowl]~ unread)
+      :_(state (give [/updates]~ [%add unread]))
+    ::
+        %remove-group
+      =.  unreads  (~(put by unreads) resource.update ~)
+      :_(state (give [/updates]~ [%read %group resource.update]))
+    ==
   ::
   ++  graph-update
     |=  =update:graph-store
@@ -216,6 +252,12 @@
     |=  update=metadata-update:metadata-store
     ^-  (quip card _state)
     [~ state]
+  ::  TODO: duplicate with above
+  ::
+  ++  give
+    |=  [paths=(list path) update=update-0:store]
+    ^-  (list card)
+    [%give %fact paths [%hark-update !>([%0 update])]]~
   --
 ::
 ++  on-peek

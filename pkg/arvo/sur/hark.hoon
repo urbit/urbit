@@ -41,8 +41,8 @@
   ==
 ::
 +$  group-body
-  $%  [%ship-joined =ship]
-      [%ship-left =ship]
+  $%  [%add-members ships=(set ship)]
+      [%remove-members ships=(set ship)]
   ==
 ::
 +$  metadata-body

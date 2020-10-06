@@ -32,6 +32,8 @@
 ::    %remove-group: remove a group from the store
 ::    %expose: unset .hidden flag
 ::
+::    TODO: move .resource out of the $%
+::
 +$  action
   $%  [%add-group =resource =policy hidden=?]
       [%add-members =resource ships=(set ship)]
