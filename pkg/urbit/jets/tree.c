@@ -15,6 +15,33 @@
 
 #include "all.h"
 
+static u3j_harm _141_hex_mimes_base16_en_a[] = {{".2", u3we_en_base16}, {}};
+static c3_c* _141_hex_mimes_base16_en_ha[] = {
+  0
+};
+
+static u3j_harm _141_hex_mimes_base16_de_a[] = {{".2", u3we_de_base16}, {}};
+static c3_c* _141_hex_mimes_base16_de_ha[] = {
+  0
+};
+
+static u3j_core _141_hex_mimes_base16_d[] =
+  { { "en", 7, _141_hex_mimes_base16_en_a, 0, _141_hex_mimes_base16_en_ha },
+    { "de", 7, _141_hex_mimes_base16_de_a, 0, _141_hex_mimes_base16_de_ha },
+    {}
+  };
+static c3_c* _141_hex_mimes_base16_ha[] = {
+  0
+};
+
+static u3j_core _141_hex_mimes_d[] =
+  { { "base16", 3, 0, _141_hex_mimes_base16_d, _141_hex_mimes_base16_ha },
+    {}
+  };
+static c3_c* _141_hex_mimes_ha[] = {
+  0
+};
+
 static u3j_harm _141_hex_aes_ecba_en_a[] = {{".2", u3wea_ecba_en}, {}};
 static c3_c* _141_hex_aes_ecba_en_ha[] = {
   "a4eaaead7ffeb213cf8d611f20d7be4786b34f31a27f41c77538125992107c2d",
@@ -397,6 +424,7 @@ static u3j_core _141_hex_d[] =
   { "blake",  31, 0, _141_hex_blake_d, _141_hex_blake_ha },
   { "ripemd", 31, 0, _141_hex_ripe_d,  _141_hex_ripe_ha  },
   { "secp",   31, 0, _141_hex_secp_d,  _141_hex_secp_ha  },
+  { "mimes",  31, 0, _141_hex_mimes_d, _141_hex_mimes_ha  },
   {}
 };
 static c3_c* _141_hex_ha[] = {
