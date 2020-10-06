@@ -24,15 +24,18 @@
     */
 #     define u3a_bytes  (c3_w)((1 << (2 + u3a_bits)))
 
-    /* u3a_minimum: minimum number of words in a box.
-    **
-    **  wiseof(u3a_cell) + wiseof(u3a_box) + 1 (trailing siz_w)
+    /* u3a_cells: number of representable cells.
     */
-#ifdef U3_MEMORY_DEBUG
-#     define u3a_minimum   8
-#else
-#     define u3a_minimum   6
-#endif
+#     define u3a_cells  (c3_w)(u3a_words / u3a_minimum)
+
+    /* u3a_maximum: maximum loom object size (largest possible atom).
+    */
+#     define u3a_maximum   \
+        (c3_w)(u3a_words - (c3_wiseof(u3a_box) + c3_wiseof(u3a_atom)))
+
+    /* u3a_minimum: minimum loom object size (actual size of a cell).
+    */
+#     define u3a_minimum   (c3_w)(1 + c3_wiseof(u3a_box) + c3_wiseof(u3a_cell))
 
     /* u3a_fbox_no: number of free lists per size.
     */
