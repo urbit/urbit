@@ -882,18 +882,11 @@ _http_seq_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
   //
   u3_weak coo = u3_none;
   {
-    u3_noun hed = _http_heds_to_noun(rec_u->headers.entries,
-                                     rec_u->headers.size);
-    u3_noun deh = hed;
-    while ( u3_nul != deh ) {
-      if ( c3y == u3r_sing_c("cookie", u3h(u3h(deh))) ) {
-        coo = u3k(u3t(u3h(deh)));
-        //TODO  http2 allows the client to put multiple 'cookie' headers
-        break;
-      }
-      deh = u3t(deh);
+    //TODO  http2 allows the client to put multiple 'cookie' headers
+    ssize_t hin_i = h2o_find_header_by_str(&rec_u->headers, "cookie", 6, -1);
+    if ( hin_i != -1 ) {
+      coo = _http_vec_to_atom(rec_u->headers.entries[hin_i].value);
     }
-    u3z(hed);
   }
 
   //  if there is no cookie header, it can't possibly be authenticated
