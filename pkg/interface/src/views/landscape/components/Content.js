@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 
-import LaunchApp from '../apps/launch/app';
-import DojoApp from '../apps/dojo/app';
-import GroupsApp from '../apps/groups/app';
-import Profile from '../apps/profile/profile';
-import ErrorComponent from './Error';
+import LaunchApp from '~/views/apps/launch/app';
+import DojoApp from '~/views/apps/dojo/app';
+import Landscape from '~/views/landscape/index';
+import Profile from '~/views/apps/profile/profile';
+import ErrorComponent from '~/views/components/Error';
 
 
 export const Container = styled.div`
@@ -42,7 +42,7 @@ export const Content = (props) => {
         <Route
           path='/~groups'
           render={p => (
-            <GroupsApp
+            <Landscape
               history={p.history}
               location={p.location}
               match={p.match}

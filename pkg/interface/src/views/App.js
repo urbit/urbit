@@ -14,7 +14,7 @@ import './css/fonts.css';
 import light from './themes/light';
 import dark from './themes/old-dark';
 
-import { Content } from './components/Content';
+import { Content } from './landscape/components/Content';
 import StatusBar from './components/StatusBar';
 import Omnibox from './components/leap/Omnibox';
 import ErrorBoundary from '~/views/components/ErrorBoundary';

@@ -11,8 +11,8 @@ import { Association } from "~/types/metadata-update";
 import { StoreState } from "~/logic/store/type";
 import GlobalApi from "~/logic/api/global";
 import { RouteComponentProps, Route, Switch } from "react-router-dom";
-import { ChannelSettings } from "../apps/groups/components/ChannelSettings";
-import { ResourceSkeleton } from "../apps/groups/components/ResourceSkeleton";
+import { ChannelSettings } from "./ChannelSettings";
+import { ResourceSkeleton } from "./ResourceSkeleton";
 
 const TruncatedBox = styled(Box)`
   white-space: nowrap;

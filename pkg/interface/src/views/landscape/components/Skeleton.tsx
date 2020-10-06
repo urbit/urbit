@@ -14,7 +14,7 @@ import styled from "styled-components";
 import GlobalSubscription from "~/logic/subscription/global";
 import { Workspace, Groups, Graphs } from "~/types";
 import { useChat, usePublish, useLinks } from "./Sidebar/Apps";
-import { Body } from "./Body";
+import { Body } from "~/views/components/Body";
 
 interface SkeletonProps {
   children: ReactNode;

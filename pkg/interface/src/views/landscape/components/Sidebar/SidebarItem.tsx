@@ -6,7 +6,7 @@ import { Icon, Row, Box, Text } from "@tlon/indigo-react";
 import { Association } from "~/types/metadata-update";
 
 import { SidebarAppConfigs, SidebarItemStatus } from "./Sidebar";
-import { HoverBoxLink } from "../HoverBox";
+import { HoverBoxLink } from "~/views/components/HoverBox";
 import { Groups } from "~/types";
 
 function SidebarItemIndicator(props: { status?: SidebarItemStatus }) {

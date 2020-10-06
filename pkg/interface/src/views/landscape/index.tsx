@@ -4,28 +4,26 @@ import { Box, Center } from '@tlon/indigo-react';
 
 import './css/custom.css';
 
-import { Skeleton as NewSkeleton } from '~/views/components/Skeleton';
-
 import { PatpNoSig, AppName } from '~/types/noun';
 import GlobalApi from '~/logic/api/global';
 import { StoreState } from '~/logic/store/type';
 import GlobalSubscription from '~/logic/subscription/global';
-import {Resource} from '~/views/components/Resource';
-import {PopoverRoutes} from './components/PopoverRoutes';
-import {UnjoinedResource} from '~/views/components/UnjoinedResource';
-import {GroupsPane} from '~/views/components/GroupsPane';
-import {Workspace} from '~/types';
+import { Resource } from '~/views/components/Resource';
+import { PopoverRoutes } from './components/PopoverRoutes';
+import { UnjoinedResource } from '~/views/components/UnjoinedResource';
+import { GroupsPane } from './components/GroupsPane';
+import { Workspace } from '~/types';
 
 
-type GroupsAppProps = StoreState & {
+type LandscapeProps = StoreState & {
   ship: PatpNoSig;
   api: GlobalApi;
   subscription: GlobalSubscription;
 }
 
-export default class GroupsApp extends Component<GroupsAppProps, {}> {
+export default class Landscape extends Component<LandscapeProps, {}> {
   componentDidMount() {
-    document.title = 'OS1 - Groups';
+    document.title = 'OS1 - Landscape';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
