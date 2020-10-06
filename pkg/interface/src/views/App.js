@@ -3,7 +3,7 @@ import 'react-hot-loader';
 import * as React from 'react';
 import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
-import { sigil as sigiljs, stringRenderer } from 'urbit-sigil-js';
+import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
 import Helmet from 'react-helmet';
 
 import Mousetrap from 'mousetrap';
