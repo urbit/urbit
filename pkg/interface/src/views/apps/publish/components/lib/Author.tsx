@@ -18,7 +18,10 @@ interface AuthorProps {
 export function Author(props: AuthorProps) {
   const { contacts, ship = '', date, showImage } = props;
   const noSig = ship.slice(1);
-  const contact = noSig in contacts ? contacts[noSig] : null;
+  let contact = null;
+  if (contacts) {
+    contact = noSig in contacts ? contacts[noSig] : null;
+  }
   const color = contact?.color ? `#${uxToHex(contact?.color)}` : "#000000";
   const showAvatar = !props.hideAvatars && contact?.avatar;
   const showNickname = !props.hideNicknames && contact?.nickname;

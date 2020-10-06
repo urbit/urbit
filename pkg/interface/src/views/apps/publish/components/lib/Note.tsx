@@ -33,6 +33,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
   const { notebook, note, contacts, ship, book, noteId, api } = props;
   useEffect(() => {
+    api.publish.readNote(ship.slice(1), book, noteId);
     api.publish.fetchNote(ship, book, noteId);
   }, [ship, book, noteId]);
 

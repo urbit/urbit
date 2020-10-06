@@ -118,7 +118,10 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
 
   const dropdown = useMemo(() => {
     const first = props.isExact(query);
-    const opts = first ? [first, ...options] : options;
+    let opts = options;
+    if (first) {
+      opts = options.includes(first) ? opts : [first, ...options];
+    }
     return _.take(opts, 5).map((o, idx) =>
       props.renderCandidate(
         o,

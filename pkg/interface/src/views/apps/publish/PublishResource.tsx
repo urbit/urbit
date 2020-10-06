@@ -29,6 +29,7 @@ export function PublishResource(props: PublishResourceProps) {
         contacts={props.contacts}
         groups={props.groups}
         notebook={notebook}
+        associations={props.associations}
         notebookContacts={notebookContacts}
         rootUrl={baseUrl}
         baseUrl={`${baseUrl}/resource/publish/${ship}/${book}`}

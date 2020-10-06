@@ -70,7 +70,7 @@ export class Notebook extends PureComponent<
 
     const relativePath = (p: string) => this.props.baseUrl + p;
 
-    const contact = notebookContacts[ship];
+    const contact = notebookContacts?.[ship];
     const role = group ? roleForShip(group, window.ship) : undefined;
     const isOwn = `~${window.ship}` === ship;
     const isAdmin = role === "admin" || isOwn;
