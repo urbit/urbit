@@ -66,7 +66,7 @@ export default class LaunchApp extends React.Component {
             >
               <Row alignItems="center">
                 <Icon
-                  stroke="green"
+                  color="green"
                   fill="rgba(0,0,0,0)"
                   icon="Circle"
                 />

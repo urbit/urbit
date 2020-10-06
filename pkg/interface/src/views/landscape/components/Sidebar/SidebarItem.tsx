@@ -100,8 +100,7 @@ export function SidebarItem(props: {
       <Row width='100%' alignItems="center" flex='1 auto' minWidth='0'>
         <Icon
           display="block"
-          color="transparent"
-          stroke={color}
+          color={color}
           icon={getAppIcon(appName, module) as any}
         />
         <Box width='100%' flexShrink={2} ml={2} display='flex' overflow='hidden'>
