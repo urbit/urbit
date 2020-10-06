@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { OrderedMap } from "~/logic/lib/OrderedMap";
 
 
 export const GraphReducer = (json, state) => {
@@ -17,11 +18,6 @@ const keys = (json, state) => {
   if (data) {
     state.graphKeys = new Set(data.map((res) => {
       let resource = res.ship + '/' + res.name;
-
-      if (!(resource in state.graphs)) {
-        state.graphs[resource] = new Map();
-      }
-
       return resource;
     }));
   }
@@ -32,12 +28,12 @@ const addGraph = (json, state) => {
   const _processNode = (node) => {
     //  is empty
     if (!node.children) {
-      node.children = new Map();
+      node.children = new OrderedMap();
       return node;
     }
 
     //  is graph
-    let converted = new Map();
+    let converted = new OrderedMap();
     for (let i in node.children) {
       let item = node.children[i];
       let index = item[0].split('/').slice(1).map((ind) => {
@@ -62,7 +58,7 @@ const addGraph = (json, state) => {
     }
 
     let resource = data.resource.ship + '/' + data.resource.name;
-    state.graphs[resource] = new Map();
+    state.graphs[resource] = new OrderedMap();
 
     for (let i in data.graph) {
       let item = data.graph[i];
@@ -89,6 +85,14 @@ const removeGraph = (json, state) => {
     let resource = data.resource.ship + '/' + data.resource.name;
     delete state.graphs[resource];
   }
+};
+
+const mapifyChildren = (children) => {
+  return new OrderedMap(
+    children.map(([idx, node]) => {
+      const nd = {...node, children: mapifyChildren(node.children || []) }; 
+      return [parseInt(idx.slice(1), 10), nd];
+    }));
 };
 
 const addNodes = (json, state) => {
@@ -127,8 +131,8 @@ const addNodes = (json, state) => {
 
       if (index.length === 0) { return; }
 
-      //  TODO: support adding nodes with children
-      item[1].children = new Map();
+      item[1].children = mapifyChildren(item[1].children || []);
+
       
       state.graphs[resource] = _addNode(
         state.graphs[resource],
@@ -140,10 +144,21 @@ const addNodes = (json, state) => {
 };
 
 const removeNodes = (json, state) => {
+  const _remove = (graph, index) => {
+    if (index.length === 1) {
+        graph.delete(index[0]);
+      } else {
+        const child = graph.get(index[0]);
+        _remove(child.children, index.slice(1));
+        graph.set(index[0], child);
+      }
+  };
   const data = _.get(json, 'remove-nodes', false);
   if (data) {
     console.log(data);
-    if (!(data.resource in state.graphs)) { return; }
+    const { ship, name } = data.resource;
+    const res = `${ship}/${name}`;
+    if (!(res in state.graphs)) { return; }
 
     data.indices.forEach((index) => {
       console.log(index);
@@ -151,14 +166,7 @@ const removeNodes = (json, state) => {
       let indexArr = index.split('/').slice(1).map((ind) => {
         return parseInt(ind, 10);
       });
-
-      if (indexArr.length === 1) {
-        state.graphs[data.resource].delete(indexArr[0]);
-      } else {
-        // TODO: recursive
-      }
-
+      _remove(state.graphs[res], indexArr);
     });
   }
 };
-

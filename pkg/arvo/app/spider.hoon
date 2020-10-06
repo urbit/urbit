@@ -1,5 +1,5 @@
 /-  spider
-/+  libstrand=strand, default-agent, verb
+/+  libstrand=strand, default-agent, verb, server 
 =,  strand=strand:libstrand
 |%
 +$  card         card:agent:gall
@@ -17,15 +17,25 @@
   $:  starting=(map yarn [=trying =vase])
       running=trie
       tid=(map tid yarn)
+      serving=(map tid [@ta =mark])
   ==
 ::
 +$  clean-slate-any
   $^  clean-slate-ket
   $%  clean-slate-sig
+      clean-slate-1
       clean-slate
   ==
 ::
 +$  clean-slate
+  $:  %2
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [@ta =mark])
+  ==
+::
++$  clean-slate-1
   $:  %1
       starting=(map yarn [=trying =vase])
       running=(list yarn)
@@ -133,7 +143,10 @@
       sc           ~(. spider-core bowl)
       def          ~(. (default-agent this %|) bowl)
   ::
-  ++  on-init   on-init:def
+  ++  on-init   
+    ^-  (quip card _this)
+    :_  this
+    ~[bind-eyre:sc]
   ++  on-save   clean-state:sc
   ++  on-load
     |^
@@ -141,7 +154,9 @@
     =+  !<(any=clean-slate-any old-state)
     =?  any  ?=(^ -.any)  (old-to-1 any)
     =?  any  ?=(~ -.any)  (old-to-1 any)
-    ?>  ?=(%1 -.any)
+    =^  upgrade-cards  any  
+      (old-to-2 any)
+    ?>  ?=(%2 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
@@ -149,17 +164,31 @@
       ~(tap in ~(key by starting.any))
     |-  ^-  (quip card _this)
     ?~  yarns
-      `this
+      [~[bind-eyre:sc] this]
     =^  cards-1  state
       (handle-stop-thread:sc (yarn-to-tid i.yarns) |)
     =^  cards-2  this
       $(yarns t.yarns)
-    [(weld cards-1 cards-2) this]
+    [:(weld upgrade-cards cards-1 cards-2) this]
     ::
     ++  old-to-1
       |=  old=clean-slate-ket
-      ^-  clean-slate
+      ^-  clean-slate-1
       1+old(starting (~(run by starting.old) |=([* v=vase] none+v)))
+    ::
+    ++  old-to-2
+      |=  old=clean-slate-any
+      ^-  (quip card clean-slate)
+      ?>  ?=(?(%1 %2) -.old)
+      ?:  ?=(%2 -.old)
+        `old
+      :-  ~[bind-eyre:sc]
+      :*  %2
+        starting.old
+        running.old
+        tid.old
+        ~
+      ==
     --
   ::
   ++  on-poke
@@ -172,6 +201,9 @@
         %spider-input  (on-poke-input:sc !<(input vase))
         %spider-start  (handle-start-thread:sc !<(start-args vase))
         %spider-stop   (handle-stop-thread:sc !<([tid ?] vase))
+      ::
+          %handle-http-request   
+        (handle-http-request:sc !<([@ta =inbound-request:eyre] vase))
       ==
     [cards this]
   ::
@@ -182,6 +214,7 @@
       ?+  path  (on-watch:def path)
         [%thread @ *]         (on-watch:sc t.path)
         [%thread-result @ ~]  (on-watch-result:sc i.t.path)
+        [%http-response *]     `state
       ==
     [cards this]
   ::
@@ -216,6 +249,7 @@
       ?+  wire  (on-arvo:def wire sign-arvo)
         [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
         [%build @ ~]   (handle-build:sc i.t.wire sign-arvo)
+        [%bind ~]      `state
       ==
     [cards this]
   ::  On unexpected failure, kill all outstanding strands
@@ -228,6 +262,41 @@
   --
 ::
 |_  =bowl:gall
+::
+++  bind-eyre
+  ^-  card
+  [%pass /bind %arvo %e %connect [~ /spider] %spider]
+::
+++  handle-http-request
+  |=  [eyre-id=@ta =inbound-request:eyre]
+  ^-  (quip card _state)
+  ?>  authenticated.inbound-request
+  =/  url 
+    (parse-request-line:server url.request.inbound-request)
+  ?>  ?=([%spider @t @t @t ~] site.url)
+  =*  input-mark   i.t.site.url
+  =*  thread       i.t.t.site.url
+  =*  output-mark  i.t.t.t.site.url
+  =/  =tid
+    (scot %uv (sham eny.bowl))
+  =.  serving.state
+    (~(put by serving.state) tid [eyre-id output-mark])
+  =+  .^
+      =tube:clay
+      %cc 
+      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/json/[input-mark]
+    ==
+  ?>  ?=(^ body.request.inbound-request)
+  =/  body=json
+    (need (de-json:html q.u.body.request.inbound-request))
+  =/  input=vase
+    (tube !>(body))
+  =/  =start-args
+    [~ `tid thread input]
+  =^  cards  state
+    (handle-start-thread start-args)
+  [cards state]
+::
 ++  on-poke-input
   |=  input
   =/  yarn  (~(got by tid.state) tid)
@@ -394,6 +463,25 @@
   :~  [%give %fact ~[/thread-result/[tid]] %thread-fail !>([term tang])]
       [%give %kick ~[/thread-result/[tid]] ~]
   ==
+++  thread-http-fail
+  |=  [=tid =term =tang]
+  ^-  (quip card ^state)
+  =-  (fall - `state)
+  %+  bind  
+    (~(get by serving.state) tid)
+  |=  [eyre-id=@ta output=mark]
+  :_  state(serving (~(del by serving.state) tid))
+  %+  give-simple-payload:app:server  eyre-id
+  ^-  simple-payload:http
+  :_  ~  :_  ~
+  ?.  ?=(http-error:spider term)
+    ((slog tang) 500)
+  ?-  term
+    %bad-request  400
+    %forbidden    403
+    %nonexistent  404
+    %offline      504
+  ==
 ::
 ++  thread-fail
   |=  [=yarn =term =tang]
@@ -402,7 +490,24 @@
   =/  =tid  (yarn-to-tid yarn)
   =/  fail-cards  (thread-say-fail tid term tang)
   =^  cards  state  (thread-clean yarn)
-  [(weld fail-cards cards) state]
+  =^  http-cards  state  (thread-http-fail tid term tang)
+  [:(weld fail-cards cards http-cards) state]
+::
+++  thread-http-response
+  |=  [=tid =vase]
+  ^-  (quip card ^state)
+  =-  (fall - `state)
+  %+  bind  
+    (~(get by serving.state) tid)
+  |=  [eyre-id=@ta output=mark]
+  =+    .^
+      =tube:clay
+      %cc
+      /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[output]/json
+    ==
+  :_  state(serving (~(del by serving.state) tid))
+  %+  give-simple-payload:app:server  eyre-id
+  (json-response:gen:server !<(json (tube vase)))
 ::
 ++  thread-done
   |=  [=yarn =vase]
@@ -413,8 +518,10 @@
     :~  [%give %fact ~[/thread-result/[tid]] %thread-done vase]
         [%give %kick ~[/thread-result/[tid]] ~]
     ==
+  =^  http-cards  state
+    (thread-http-response tid vase)
   =^  cards  state  (thread-clean yarn)
-  [(weld done-cards cards) state]
+  [:(weld done-cards cards http-cards) state]
 ::
 ++  thread-clean
   |=  =yarn
@@ -474,5 +581,5 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  1+state(running (turn (tap-yarn running.state) head))
+  2+state(running (turn (tap-yarn running.state) head))
 --

@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import LinksApp from '../apps/links/app';
 import PublishApp from '../apps/publish/app';
 import ChatApp from '../apps/chat/app';
+import GraphApp from '../apps/graph/app';
 
 
 export const TwoPaneApp = (props) => {
@@ -33,6 +34,16 @@ export const TwoPaneApp = (props) => {
         path='/~publish'
         render={p => (
           <PublishApp
+            location={p.location}
+            match={p.match}
+            history={p.history}
+            {...props} />
+        )}
+      />
+      <Route
+        path='/~graph'
+        render={p => (
+          <GraphApp
             location={p.location}
             match={p.match}
             history={p.history}

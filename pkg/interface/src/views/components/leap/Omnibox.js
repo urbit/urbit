@@ -117,7 +117,7 @@ export class Omnibox extends Component {
     const { props } = this;
     this.setState({ results: this.initialResults(), query: '' }, () => {
       props.api.local.setOmnibox();
-      if (defaultApps.includes(app.toLowerCase()) || app === 'profile') {
+      if (defaultApps.includes(app.toLowerCase()) || app === 'profile' || app === 'Links') {
         props.history.push(link);
       } else {
         window.location.href = link;

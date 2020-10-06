@@ -22,8 +22,14 @@
       state-5
       state-6
       state-7
+      state-8
+      state-9
+      state-10
   ==
 ::
++$  state-10  [%10 state-base]
++$  state-9  [%9 state-base]
++$  state-8  [%8 state-base]
 +$  state-7  [%7 state-base]
 +$  state-6  [%6 state-base]
 +$  state-5  [%5 state-base]
@@ -54,7 +60,7 @@
   $%  [%chat-update update:store]
   ==
 --
-=|  state-7
+=|  state-10
 =*  state  -
 ::
 %-  agent:dbug
@@ -83,8 +89,73 @@
     =/  old  !<(versioned-state old-vase)
     =|  cards=(list card)
     |-
-    ?:  ?=(%7 -.old)
+    ?:  ?=(%10 -.old)
       [cards this(state old)]
+    ?:  ?=(%9 -.old)
+      =.  cards
+        %+  weld  cards
+        ^-  (list card)
+        %+  roll  ~(tap in ~(key by wex.bol))
+        |=  [[=wire =ship =term] out=(list card)]
+        ?>  ?=([@ *] wire)
+        ?.  ?&(=(ship our.bol) =(term %chat-hook))
+          out
+        :_  out
+        =-  [%pass / %agent [our.bol %chat-hook] %poke %chat-hook-action !>(-)]
+        [%remove t.wire]
+      =/  chat-keys=(set path)  (scry-for (set path) %chat-store [%keys ~])
+      =.  cards
+        %+  weld  cards
+        ^-  (list card)
+        %+  turn  ~(tap in chat-keys)
+        |=  =app=path
+        ^-  card
+        ?>  ?=([@ @ ~] app-path)
+        =/  =ship  (slav %p i.app-path)
+        ?:  =(ship our.bol)
+          (add-owned app-path %.y)
+        (add-synced ship app-path)
+      ::       
+      =/  list-paths=(list path)
+        %+  murn  ~(tap in ~(key by synced.old))
+        |=  =app=path
+        ^-  (unit path)
+        ?~  (groups-of-chat:cc app-path)
+          `app-path
+        ~
+      |-
+      ?~  list-paths
+        ^$(-.old %10)
+      =.  synced.old  (~(del by synced.old) i.list-paths)
+      $(list-paths t.list-paths)
+    ?:  ?=(%8 -.old)
+      $(-.old %9)
+    ?:  ?=(%7 -.old)
+      =/  subscribers=(jug path ship)
+        %+  roll  ~(val by sup.bol)
+        |=  [[=ship =path] out=(jug path ship)]
+        ::  /(mailbox|backlog)/~ship/resource.name
+        ::
+        ?.  ?=([@ @ @ *] path)  out
+        =/  pax=^path  [i.t.path i.t.t.path ~]
+        (~(put ju out) pax ship)
+      =/  group  ~(. grpl bol)
+      =.  cards
+        %+  weld  cards
+        ^-  (list card)
+        %+  murn  ~(tap in ~(key by synced.old))
+        |=  =path
+        ^-  (unit card)
+        ?>  ?=([@ @ ~] path)
+        =/  group-paths  (groups-of-chat:cc path)
+        ?~  group-paths  ~
+        =/  members     (members-from-path:group i.group-paths)
+        ?:  (is-managed-path:group i.group-paths)  ~
+        =/  ships=(set ship)  (~(get ju subscribers) path)
+        %-  some
+        =+  [%invite path (~(dif in members) ships)]
+        [%pass /inv %agent [our.bol %chat-view] %poke %chat-view-action !>(-)]
+      $(-.old %8)
     ?:  ?=(%6 -.old)
       =.  cards
         %+  weld  cards
@@ -160,6 +231,17 @@
       ^-  (list (list card))
       (turn ~(tap in keys) generate-cards)
     ==
+    ::
+    ++  scry-for
+      |*  [=mold app=term =path]
+      .^  mold
+        %gx
+        (scot %p our.bol)
+        app
+        (scot %da now.bol)
+        (snoc `^path`path %noun)
+      ==
+    ::
     ++  kick-old-subs
       |=  old-path=path
       ^-  (list card)
@@ -523,6 +605,7 @@
   ::
       %add-synced
     ?>  (team:title our.bol src.bol)
+    ?<  =(ship.act our.bol)
     ?:  (~(has by synced) path.act)  [~ state]
     =.  synced  (~(put by synced) path.act ship.act)
     ?.  ask-history.act
@@ -789,13 +872,7 @@
     ?:  =(i.t.wir '~')
       ?>  ?=(^ chat)
       (migrate-listen t.chat)
-    :_  state
-    %.  ~[(chat-view-poke %delete chat)]
-    %-  slog
-    :*  leaf+"chat-hook failed subscribe on {(spud chat)}"
-        leaf+"stack trace:"
-        u.saw
-    ==
+    [~ state]
   ==
 ::
 ++  chat-poke

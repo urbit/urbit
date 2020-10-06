@@ -204,6 +204,16 @@
   |=  [=binding:eyre =generator:eyre]  =<  abet
   (emit %pass /helm/serv %arvo %e %serve binding generator)
 ::
+++  poke-cors-approve
+  |=  =origin:eyre
+  =<  abet
+  (emit %pass /helm/cors/approve %arvo %e %approve-origin origin)
+::
+++  poke-cors-reject
+  |=  =origin:eyre
+  =<  abet
+  (emit %pass /helm/cors/reject %arvo %e %reject-origin origin)
+::
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-helm-bad-mark mark] !!)
@@ -213,6 +223,8 @@
     %helm-atom             =;(f (f !<(_+<.f vase)) poke-atom)
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
+    %helm-cors-approve     =;(f (f !<(_+<.f vase)) poke-cors-approve)
+    %helm-cors-reject      =;(f (f !<(_+<.f vase)) poke-cors-reject)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-knob             =;(f (f !<(_+<.f vase)) poke-knob)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)

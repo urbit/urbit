@@ -43,7 +43,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.localReducer.dehydrate(this.state);
   }
 
-
   initialState(): StoreState {
     return {
       pendingMessages: new Map(),
@@ -66,7 +65,7 @@ export default class GlobalStore extends BaseStore<StoreState> {
       associations: {
         chat: {},
         contacts: {},
-        link: {},
+        graph: {},
         publish: {}
       },
       groups: {},

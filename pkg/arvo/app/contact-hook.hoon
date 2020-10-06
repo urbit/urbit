@@ -479,11 +479,6 @@
     [%pass / %agent [our.bol %invite-hook] %poke %invite-action !>(act)]
   --
 ::
-++  group-hook-poke
-  |=  =action:group-hook
-  ^-  card
-  [%pass / %agent [our.bol %group-hook] %poke %group-hook-action !>(action)]
-::
 ++  invite-poke
   |=  act=invite-action
   ^-  card
@@ -493,26 +488,6 @@
   |=  act=contact-action
   ^-  card
   [%pass / %agent [our.bol %contact-store] %poke %contact-action !>(act)]
-::
-++  contact-view-poke
-  |=  act=contact-view-action
-  ^-  card
-  [%pass / %agent [our.bol %contact-view] %poke %contact-view-action !>(act)]
-::
-++  group-poke
-  |=  act=action:group-store
-  ^-  card
-  [%pass / %agent [our.bol %group-store] %poke %group-action !>(act)]
-::
-++  metadata-poke
-  |=  act=metadata-action
-  ^-  card
-  [%pass / %agent [our.bol %metadata-store] %poke %metadata-action !>(act)]
-::
-++  metadata-hook-poke
-  |=  act=metadata-hook-action
-  ^-  card
-  [%pass / %agent [our.bol %metadata-hook] %poke %metadata-hook-action !>(act)]
 ::
 ++  contacts-scry
   |=  pax=path
@@ -524,16 +499,6 @@
       /noun
     ==
   .^((unit contacts) %gx pax)
-::
-++  invite-scry
-  |=  uid=serial
-  ^-  (unit invite)
-  =/  pax
-    ;:  weld
-      /(scot %p our.bol)/invite-store/(scot %da now.bol)
-      /invite/contacts/(scot %uv uid)/noun
-    ==
-  .^((unit invite) %gx pax)
 ::
 ++  group-scry
   |=  pax=path

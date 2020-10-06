@@ -28,7 +28,6 @@ const groupSubscriptions: AppSubscription[] = [
 ];
 
 const graphSubscriptions: AppSubscription[] = [
-  ['/keys', 'graph-store'],
   ['/updates', 'graph-store']
 ];
 
@@ -58,6 +57,7 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
     this.subscribe('/all', 's3-store');
     this.subscribe('/all', 'launch');
     this.subscribe('/all', 'weather');
+    this.subscribe('/keys', 'graph-store');
   }
 
   restart() {

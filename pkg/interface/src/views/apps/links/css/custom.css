@@ -6,6 +6,10 @@
   padding-bottom: 56.25%;
 }
 
+.linkTitle::placeholder {
+  color: #7f7f7f;
+}
+
 .links.embed-container iframe, .links.embed-container object, .links.embed-container embed {
   position: absolute;
   top: 0;

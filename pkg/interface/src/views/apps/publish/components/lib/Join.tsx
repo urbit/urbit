@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef, useEffect } from "react";
-import { Col, Text, ErrorMessage } from "@tlon/indigo-react";
+import { Col, Text, ErrorLabel } from "@tlon/indigo-react";
 import { Spinner } from "~/views/components/Spinner";
 import { Notebooks } from "~/types/publish-update";
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
@@ -46,7 +46,7 @@ export function JoinScreen(props: JoinScreenProps & RouteComponentProps) {
     <Col p={4}>
       <Text fontSize={1}>Joining Notebook</Text>
       <Spinner awaiting text="Joining..." />
-      {error && <ErrorMessage>Unable to join notebook</ErrorMessage>}
+      {error && <ErrorLabel>Unable to join notebook</ErrorLabel>}
     </Col>
   );
 }

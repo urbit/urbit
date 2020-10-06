@@ -10,9 +10,8 @@ import _ from "lodash";
 import Mousetrap from "mousetrap";
 import {
   Box,
-  InputLabel,
-  ErrorMessage,
-  InputCaption,
+  Label,
+  ErrorLabel,
 } from "@tlon/indigo-react";
 import { useDropdown } from "~/logic/lib/useDropdown";
 import styled from "styled-components";
@@ -129,9 +128,9 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
   );
 
   return (
-    <Box position="relative">
-      <InputLabel htmlFor={props.id}>{props.label}</InputLabel>
-      {caption ? <InputCaption>{caption}</InputCaption> : null}
+    <Box position="relative" zIndex={9}>
+      <Label htmlFor={props.id}>{props.label}</Label>
+      {caption ? <Label mt="2" gray>{caption}</Label> : null}
       {!props.disabled && (
         <TextArea
           ref={textarea}
@@ -165,7 +164,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
           })}
         </Box>
       )}
-      <ErrorMessage>{props.error}</ErrorMessage>
+      <ErrorLabel>{props.error}</ErrorLabel>
     </Box>
   );
 }

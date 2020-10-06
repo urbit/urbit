@@ -10,7 +10,6 @@ import { Sigil } from '~/logic/lib/sigil';
 const StatusBar = (props) => {
 
   const location = useLocation();
-  const atHome = Boolean(location.pathname === '/');
 
   const display = (!window.location.href.includes('popout/'))
       ? 'grid' : 'none';
@@ -33,17 +32,10 @@ const StatusBar = (props) => {
       >
       <Row collapse>
           <StatusBarItem mr={2} onClick={() => props.history.push('/')}>
-            <img
-              className='invert-d'
-              src='/~landscape/img/icon-home.png'
-              height='11'
-              width='11'
-            />
+          <Icon icon='Home' color='transparent' stroke='black' />
           </StatusBarItem>
         <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
-          <Text display='inline-block' style={{ transform: 'rotate(180deg)' }}>
-            ↩
-          </Text>
+        <Icon icon='LeapArrow'/>
           <Text ml={2} color='black'>
             Leap
           </Text>
@@ -54,12 +46,7 @@ const StatusBar = (props) => {
         <StatusBarItem
           onClick={() => props.history.push('/~groups')}
           badge={Object.keys(invites).length > 0}>
-          <img
-            className='invert-d v-mid'
-            src='/~landscape/img/groups.png'
-            height='15'
-            width='15'
-          />
+          <Icon icon='Groups' color='transparent' stroke='black'/>
           <Text display={["none", "inline"]} ml={2}>Groups</Text>
         </StatusBarItem>
         <ReconnectButton
