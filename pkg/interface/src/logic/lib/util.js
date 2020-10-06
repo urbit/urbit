@@ -19,11 +19,6 @@ export function uuid() {
   return str.slice(0,-1);
 }
 
-export function isPatTa(str) {
-  const r = /^[a-z,0-9,\-,\.,_,~]+$/.exec(str);
-  return Boolean(r);
-}
-
 /*
   Goes from:
     ~2018.7.17..23.15.09..5be5    // urbit @da
@@ -88,23 +83,6 @@ export function hexToUx(hex) {
    return `0x${ux}`;
 }
 
-function hexToDec(hex) {
-  const alphabet = '0123456789ABCDEF'.split('');
-  return hex.reverse().reduce((acc, digit, idx) => {
-    const dec = alphabet.findIndex(a => a === digit.toUpperCase());
-    if(dec < 0) {
-      console.error(hex);
-      throw new Error('Incorrect hex formatting');
-    }
-    return acc + dec * (16 ** idx);
-  }, 0);
-}
-
-export function hexToRgba(hex, a) {
-  const [r,g,b] = _.chunk(hex, 2).map(hexToDec);
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
-}
-
 export function writeText(str) {
   return new Promise(((resolve, reject) => {
     const range = document.createRange();
@@ -155,6 +133,7 @@ export function alphabeticalOrder(a,b) {
   return a.toLowerCase().localeCompare(b.toLowerCase());
 }
 
+//  TODO: deprecated
 export function alphabetiseAssociations(associations) {
   const result = {};
   Object.keys(associations).sort((a, b) => {
@@ -175,24 +154,6 @@ export function alphabetiseAssociations(associations) {
     result[each] = associations[each];
   });
   return result;
-}
-
-// encodes string into base64url,
-// by encoding into base64 and replacing non-url-safe characters.
-//
-export function base64urlEncode(string) {
-  return window.btoa(string)
-    .split('+').join('-')
-    .split('/').join('_');
-}
-
-// decode base64url. inverse of base64urlEncode above.
-//
-export function base64urlDecode(string) {
-  return window.atob(
-    string.split('_').join('/')
-          .split('-').join('+')
-  );
 }
 
 // encode the string into @ta-safe format, using logic from +wood.
@@ -271,39 +232,5 @@ export function stringToSymbol(str) {
     return dateToDa(new Date());
   }
   return result;
-}
-
-export function scrollIsAtTop(container) {
-  if (
-    (navigator.userAgent.includes('Safari') &&
-      navigator.userAgent.includes('Chrome')) ||
-    navigator.userAgent.includes('Firefox')
-  ) {
-    return container.scrollTop === 0;
-  } else if (navigator.userAgent.includes('Safari')) {
-    return (
-      container.scrollHeight + Math.round(container.scrollTop) <=
-      container.clientHeight + 10
-    );
-  } else {
-    return false;
-  }
-}
-
-export function scrollIsAtBottom(container) {
-  if (
-    (navigator.userAgent.includes('Safari') &&
-      navigator.userAgent.includes('Chrome')) ||
-    navigator.userAgent.includes('Firefox')
-  ) {
-    return (
-      container.scrollHeight - Math.round(container.scrollTop) <=
-      container.clientHeight + 10
-    );
-  } else if (navigator.userAgent.includes('Safari')) {
-    return container.scrollTop === 0;
-  } else {
-    return false;
-  }
 }
 
