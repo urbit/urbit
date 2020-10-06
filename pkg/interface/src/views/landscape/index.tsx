@@ -34,14 +34,6 @@ export default class Landscape extends Component<LandscapeProps, {}> {
     
   }
 
-  componentWillUnmount() {
-    this.props.subscription.stopApp('groups')
-    this.props.subscription.stopApp('chat')
-    this.props.subscription.stopApp('publish');
-    this.props.subscription.stopApp('graph');
-  }
-
-
   render() {
     const { props } = this;
 

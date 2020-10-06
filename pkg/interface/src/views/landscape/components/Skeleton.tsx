@@ -52,19 +52,6 @@ export function Skeleton(props: SkeletonProps) {
     [publishConfig, linkConfig, chatConfig]
   );
 
-  useEffect(() => {
-    props.api.publish.fetchNotebooks();
-    props.subscription.startApp("chat");
-    props.subscription.startApp("publish");
-    props.subscription.startApp("graph");
-
-    return () => {
-      props.subscription.stopApp("chat");
-      props.subscription.stopApp("publish");
-      props.subscription.stopApp("graph");
-    };
-  }, []);
-
   return (
     <Body
       display="grid"
