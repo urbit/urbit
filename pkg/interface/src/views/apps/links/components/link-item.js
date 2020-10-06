@@ -33,7 +33,7 @@ export const LinkItem = (props) => {
     ? <img src={props.avatar} height={36} width={36} className="dib" />
     : <Sigil ship={`~${author}`} size={36} color={'#' + props.color} />;
 
-  const baseUrl = props.baseUrl || `/~link/${resource}`;
+  const baseUrl = props.baseUrl || `/~404/${resource}`;
 
   return (
     <Row minWidth='0' flexShrink='0' width="100%" alignItems="center" py={3} bg="white">
