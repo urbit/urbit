@@ -1951,13 +1951,18 @@ _http_stream_slog(void* vop_p, c3_w pri_w, u3_noun tan)
 
       if ( u3_none != wol ) {
         u3_noun low = wol;
-        u3_atom txt = u3_nul;
+        u3_noun paz = u3_nul;
         while ( u3_nul != low ) {
-          u3_atom lin = u3qc_cat(3, u3qc_rap(3, u3k(u3h(low))), c3_s2('\n', '\n'));
-          txt = u3qc_cat(3, txt, u3qc_cat(3, u3i_string("data:"), lin));
+          u3_noun lin = u3i_list(u3i_string("data:"),
+                                 u3qc_rap(3, u3h(low)),
+                                 c3_s2('\n', '\n'),
+                                 u3_none);
+          paz = u3kb_weld(paz, lin);
           low = u3t(low);
         }
+        u3_atom txt = u3qc_rap(3, paz);
         data = u3nt(u3_nul, u3r_met(3, txt), txt);
+        u3z(paz);
       }
 
       u3z(wol);
