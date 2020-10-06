@@ -59,7 +59,7 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               display="block"
               flexShrink='0'
             />
-            <Link style={{ minWidth: 0 }} to={`/~groups${g}`}>
+            <Link style={{ minWidth: 0 }} to={`/~landscape${g}`}>
               <Text verticalAlign='top' maxWidth='100%' overflow='hidden' display='inline-block' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }}>{assoc?.metadata?.title}</Text>
             </Link>
           </Row>
@@ -114,11 +114,11 @@ export function GroupSwitcher(props: {
                   recent={props.recentGroups}
                   associations={props.associations}
                 />
-                <GroupSwitcherItem to="/~groups/new">
+                <GroupSwitcherItem to="/~landscape/new">
                   <Icon mr="2" color="transparent" stroke="gray" icon="Plus" />
                   <Text> New Group</Text>
                 </GroupSwitcherItem>
-                <GroupSwitcherItem to="/~groups/join">
+                <GroupSwitcherItem to="/~landscape/join">
                   <Icon mr="2" color="transparent" stroke="gray" icon="Boot" />
                   <Text> Join Group</Text>
                 </GroupSwitcherItem>

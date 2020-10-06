@@ -29,7 +29,7 @@ export class Omnibox extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps !== this.props) {
       const { pathname } = this.props.location;
-      const selectedGroup = pathname.startsWith('/~groups/ship/') ? '/' + pathname.split('/').slice(2,5).join('/') : null;
+      const selectedGroup = pathname.startsWith('/~landscape/ship/') ? '/' + pathname.split('/').slice(2,5).join('/') : null;
 
       this.setState({ index: index(this.props.associations, this.props.apps.tiles, selectedGroup) });
     }

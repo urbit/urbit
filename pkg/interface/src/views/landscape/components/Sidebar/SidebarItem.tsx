@@ -71,7 +71,7 @@ export function SidebarItem(props: {
 
   const isSynced = itemStatus !== "unsubscribed";
 
-  const baseUrl = isUnmanaged ? `/~groups/home` : `/~groups${groupPath}`;
+  const baseUrl = isUnmanaged ? `/~landscape/home` : `/~landscape${groupPath}`;
 
   const to = isSynced
     ? `${baseUrl}/resource/${module}${appPath}`

@@ -56,7 +56,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
       p={2}
     >
       {groups.map((group) => (
-        <Link to={`/~groups${group["group-path"]}`}>
+        <Link to={`/~landscape${group["group-path"]}`}>
           <Box
             height="100%"
             width="100%"

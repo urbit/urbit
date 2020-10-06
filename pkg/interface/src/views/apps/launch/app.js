@@ -62,7 +62,7 @@ export default class LaunchApp extends React.Component {
               border={1}
               bg="washedGreen"
               borderColor="green"
-              to="/~groups/home"
+              to="/~landscape/home"
             >
               <Row alignItems="center">
                 <Icon

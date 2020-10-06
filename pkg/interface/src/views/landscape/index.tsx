@@ -61,26 +61,26 @@ export default class Landscape extends Component<LandscapeProps, {}> {
 
     return (
       <Switch>
-        <Route path="/~groups/ship/:host/:name"
+        <Route path="/~landscape/ship/:host/:name"
           render={routeProps => {
             const {
               host,
               name
             } = routeProps.match.params as Record<string, string>;
             const groupPath = `/ship/${host}/${name}`;
-            const baseUrl = `/~groups${groupPath}`;
+            const baseUrl = `/~landscape${groupPath}`;
             const ws: Workspace = { type: 'group', group: groupPath };
 
             return (
               <GroupsPane workspace={ws} baseUrl={baseUrl} {...props} />
             )
           }}/>
-        <Route path="/~groups/home"
+        <Route path="/~landscape/home"
           render={routeProps => {
             const ws: Workspace = { type: 'home' };
 
             return (
-              <GroupsPane workspace={ws} baseUrl="/~groups/home" {...props} />
+              <GroupsPane workspace={ws} baseUrl="/~landscape/home" {...props} />
             );
           }}
         />

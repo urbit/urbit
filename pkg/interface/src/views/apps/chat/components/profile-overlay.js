@@ -32,12 +32,12 @@ export class ProfileOverlay extends PureComponent {
     const theirStation = `/~${ship}/dm--${window.ship}`;
 
     if (allStations.indexOf(station) !== -1) {
-      history.push(`/~groups/home/resource/chat${station}`);
+      history.push(`/~landscape/home/resource/chat${station}`);
       return;
     }
 
     if (allStations.indexOf(theirStation) !== -1) {
-      history.push(`/~groups/home/resource/chat${theirStation}`);
+      history.push(`/~landscape/home/resource/chat${theirStation}`);
       return;
     }
 
@@ -58,7 +58,7 @@ export class ProfileOverlay extends PureComponent {
 
     //  TODO: make a pretty loading state
     setTimeout(() => {
-      history.push(`/~groups/home/resource/chat${station}`);
+      history.push(`/~landscape/home/resource/chat${station}`);
     }, 5000);
   }
 

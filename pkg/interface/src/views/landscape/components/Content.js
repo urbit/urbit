@@ -40,7 +40,7 @@ export const Content = (props) => {
           )}
         />
         <Route
-          path='/~groups'
+          path='/~landscape'
           render={p => (
             <Landscape
               history={p.history}

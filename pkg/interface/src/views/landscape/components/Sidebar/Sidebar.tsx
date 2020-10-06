@@ -132,7 +132,7 @@ export function Sidebar(props: SidebarProps) {
         my={2}
       >
         <Link
-          to={!!groupPath ? `/~groups${groupPath}/new` : `/~groups/home/new`}
+          to={!!groupPath ? `/~landscape${groupPath}/new` : `/~landscape/home/new`}
         >
           <Box
             bg="white"

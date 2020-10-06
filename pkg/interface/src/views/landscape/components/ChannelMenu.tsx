@@ -34,7 +34,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
   const history = useHistory();
   const { metadata } = association;
   const app = metadata.module || association["app-name"];
-  const baseUrl = `/~groups${association?.["group-path"]}/resource/${app}${association["app-path"]}`;
+  const baseUrl = `/~landscape${association?.["group-path"]}/resource/${app}${association["app-path"]}`;
   const appPath = association["app-path"];
 
   const [, ship, name] = appPath.startsWith("/ship/")
@@ -59,7 +59,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
       default:
         throw new Error("Invalid app name");
     }
-    history.push(`/~groups${association?.["group-path"]}`);
+    history.push(`/~landscape${association?.["group-path"]}`);
   }, [api, association]);
 
   const onDelete = useCallback(async () => {
@@ -77,7 +77,7 @@ export function ChannelMenu(props: ChannelMenuProps) {
       default:
         throw new Error("Invalid app name");
     }
-    history.push(`/~groups${association?.["group-path"]}`);
+    history.push(`/~landscape${association?.["group-path"]}`);
   }, [api, association]);
 
   return (
