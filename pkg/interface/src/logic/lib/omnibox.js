@@ -4,7 +4,7 @@ import { cite } from '~/logic/lib/util';
   const indexes = new Map([
     ['commands', []],
     ['subscriptions', []],
-    ['groups', []],
+    ['landscape', []],
     ['apps', []],
     ['other', []]
   ]);
@@ -23,9 +23,9 @@ const commandIndex = function (currentGroup) {
   // commands are special cased for default suite
   const commands = [];
   const workspace = currentGroup || '/home';
-  commands.push(result(`Groups: Create`, `/~groups/new`, 'Groups', null));
-  commands.push(result(`Groups: Join`, `/~groups/join`, 'Groups', null));
-  commands.push(result(`Channel: Create`, `/~groups${workspace}/new`, 'Groups', null));
+  commands.push(result(`Groups: Create`, `/~landscape/new`, 'Landscape', null));
+  commands.push(result(`Groups: Join`, `/~landscape/join`, 'Landscape', null));
+  commands.push(result(`Channel: Create`, `/~landscape${workspace}/new`, 'Landscape', null));
 
   return commands;
 };
@@ -50,9 +50,9 @@ const appIndex = function (apps) {
       );
       applications.push(obj);
     });
-  // add groups separately
+  // add landscape separately
   applications.push(
-    result('Groups', '/~groups', 'Groups', null)
+    result('Landscape', '/~landscape', 'Landscape', null)
   );
   return [];
   return applications;
@@ -68,9 +68,9 @@ const otherIndex = function() {
 
 export default function index(associations, apps, currentGroup) {
   // all metadata from all apps is indexed
-  // into subscriptions and groups
+  // into subscriptions and landscape
   const subscriptions = [];
-  const groups = [];
+  const landscape = [];
   Object.keys(associations).filter((e) => {
     // skip apps with no metadata
     return Object.keys(associations[e]).length > 0;
@@ -97,7 +97,7 @@ export default function index(associations, apps, currentGroup) {
         if (app === 'groups') {
           const obj = result(
             title,
-            `/~groups${each['app-path']}`,
+            `/~landscape${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
             cite(shipStart.slice(0, shipStart.indexOf('/')))
           );
@@ -106,7 +106,7 @@ export default function index(associations, apps, currentGroup) {
           const app = each.metadata.module || each['app-name'];
           const obj = result(
             title,
-            `/~groups${each['group-path']}/join/${app}${each['app-path']}`,
+            `/~landscape${each['group-path']}/join/${app}${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
             (associations?.contacts?.[each['group-path']]?.metadata?.title || null)
           );
@@ -117,7 +117,7 @@ export default function index(associations, apps, currentGroup) {
 
   indexes.set('commands', commandIndex(currentGroup));
   indexes.set('subscriptions', subscriptions);
-  indexes.set('groups', groups);
+  indexes.set('landscape', landscape);
   indexes.set('apps', appIndex(apps));
   indexes.set('other', otherIndex());
 

@@ -89,10 +89,6 @@ export class ProfileOverlay extends PureComponent {
 
     const isOwn = window.ship === ship;
 
-    const identityHref = group.hidden
-      ? '/~profile/identity'
-      : '/~404';
-
     let img = contact?.avatar && !hideAvatars
       ? <img src={contact.avatar} height={160} width={160} className="brt2 dib" />
       : <Sigil
@@ -127,9 +123,9 @@ export class ProfileOverlay extends PureComponent {
               Send Message
             </Button>
           )}
-          {isOwn && (
+          {isOwn && !group.hidden (
             <Link
-              to={identityHref}
+              to={'/~profile/identity'}
               className="b--black b--white-d ba black white-d mt3 tc pa2 pointer db"
             >
               Edit Group Identity
