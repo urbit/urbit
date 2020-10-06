@@ -38,8 +38,8 @@ export function NotebookRoutes(
     api.publish.fetchNotebook(ship, book);
   }, [ship, book]);
 
-  const baseUrl = props.baseUrl || `/~publish/notebook/${ship}/${book}`;
-  const rootUrl = props.rootUrl || '/~publish';
+  const baseUrl = props.baseUrl || `/~404`;
+  const rootUrl = props.rootUrl || '/~404';
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
   return (

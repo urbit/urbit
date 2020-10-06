@@ -37,12 +37,12 @@ export function Note(props: NoteProps & RouteComponentProps) {
     api.publish.fetchNote(ship, book, noteId);
   }, [ship, book, noteId]);
 
-  const rootUrl = props.rootUrl || `/~publish/notebook/${props.ship}/${props.book}`;
+  const rootUrl = props.baseUrl || '/~404';
 
   const deletePost = async () => {
     setDeleting(true);
     await api.publish.delNote(ship.slice(1), book, noteId);
-    props.history.push(rootUrl);
+    props.history.push(baseUrl);
   };
 
   const comments = note?.comments || [];

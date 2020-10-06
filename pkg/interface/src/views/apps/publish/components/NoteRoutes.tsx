@@ -25,7 +25,7 @@ interface NoteRoutesProps {
 export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {
   const { ship, book, noteId } = props;
 
-  const baseUrl = props.baseUrl || `/~publish/notebook/${ship}/${book}/note/${noteId}`;
+  const baseUrl = props.baseUrl || '/~404';
 
   const relativePath = (path: string) => `${baseUrl}${path}`;
   return (

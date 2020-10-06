@@ -26,7 +26,7 @@ export function Settings(props: SettingsProps) {
   const history = useHistory();
   const onDelete = async () => {
     await props.api.publish.delBook(props.book);
-    history.push("/~publish");
+    history.push(this.props.baseUrl || '/~404');
   };
   const groupPath = props.notebook?.["writers-group-path"];
 

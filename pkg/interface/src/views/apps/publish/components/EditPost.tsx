@@ -28,7 +28,7 @@ export function EditPost(props: EditPostProps & RouteComponentProps) {
     const host = ship.slice(1);
     try {
       await api.publish.editNote(host, book, noteId, title, body);
-      history.push(`/~publish/notebook/${ship}/${book}/note/${noteId}`);
+      history.push(this.props.baseUrl);
     } catch (e) {
       actions.setStatus({ error: "Failed to edit notebook" });
     }
