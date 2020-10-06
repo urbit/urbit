@@ -7,7 +7,6 @@ import { Rolodex } from '~/types/contact-update';
 import { Notebooks } from '~/types/publish-update';
 import { Groups } from '~/types/group-update';
 import { S3State } from '~/types/s3-update';
-import { Permissions } from '~/types/permission-update';
 import { LaunchState, WeatherState } from '~/types/launch-update';
 import { ConnectionStatus } from '~/types/connection';
 import { BackgroundConfig, LocalUpdateRemoteContentPolicy } from '~/types/local-update';
@@ -25,6 +24,7 @@ export interface StoreState {
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
   hideAvatars: boolean;
   hideNicknames: boolean;
+
   // invite state
   invites: Invites;
   // metadata state
@@ -34,7 +34,6 @@ export interface StoreState {
   // groups state
   groups: Groups;
   groupKeys: Set<Path>;
-  permissions: Permissions;
   s3: S3State;
   graphs: Graphs;
   graphKeys: Set<string>;

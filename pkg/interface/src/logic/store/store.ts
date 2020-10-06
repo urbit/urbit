@@ -10,7 +10,6 @@ import ContactReducer from '../reducers/contact-update';
 import S3Reducer from '../reducers/s3-update';
 import { GraphReducer } from '../reducers/graph-update';
 import GroupReducer from '../reducers/group-update';
-import PermissionReducer from '../reducers/permission-update';
 import PublishUpdateReducer from '../reducers/publish-update';
 import PublishResponseReducer from '../reducers/publish-response';
 import LaunchReducer from '../reducers/launch-update';
@@ -38,7 +37,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
   contactReducer = new ContactReducer();
   s3Reducer = new S3Reducer();
   groupReducer = new GroupReducer();
-  permissionReducer = new PermissionReducer();
   publishUpdateReducer = new PublishUpdateReducer();
   publishResponseReducer = new PublishResponseReducer();
   launchReducer = new LaunchReducer();
@@ -88,7 +86,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
       },
       weather: {},
       userLocation: null,
-      permissions: {},
       s3: {
         configuration: {
           buckets: new Set(),
@@ -112,7 +109,6 @@ export default class GlobalStore extends BaseStore<StoreState> {
     this.contactReducer.reduce(data, this.state);
     this.s3Reducer.reduce(data, this.state);
     this.groupReducer.reduce(data, this.state);
-    this.permissionReducer.reduce(data, this.state);
     this.publishUpdateReducer.reduce(data, this.state);
     this.publishResponseReducer.reduce(data, this.state);
     this.launchReducer.reduce(data, this.state);
