@@ -19,8 +19,8 @@ const publishSubscriptions: AppSubscription[] = [
 ];
 
 const linkSubscriptions: AppSubscription[] = [
-  ['/json/seen', 'link-view'],
-  ['/listening', 'link-listen-hook']
+//  ['/json/seen', 'link-view'],
+//  ['/listening', 'link-listen-hook']
 ]
 
 const groupSubscriptions: AppSubscription[] = [

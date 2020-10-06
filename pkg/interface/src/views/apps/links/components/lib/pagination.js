@@ -20,12 +20,12 @@ export class Pagination extends Component {
     return (
       <div className="w-100 inter relative pv6">
         <div className={prevDisplay + ' inter f8'}>
-          <Link to={makeRoutePath(props.resourcePath, props.popout, prevPage)}>
+          <Link to={makeRoutePath(props.resourcePath, prevPage)}>
             &#60;- Previous Page
           </Link>
         </div>
         <div className={nextDisplay + ' inter f8'}>
-          <Link to={makeRoutePath(props.resourcePath, props.popout, nextPage)}>
+          <Link to={makeRoutePath(props.resourcePath, nextPage)}>
             Next Page -&gt;
           </Link>
         </div>

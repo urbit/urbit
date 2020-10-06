@@ -191,7 +191,7 @@ export class LinkSubmit extends Component<LinkSubmitProps, LinkSubmitState> {
 
     return (
       <div
-        className={`relative ba br1 w-100 mb6 ${focus}`}
+        className={`flex-shrink-0 relative ba br1 w-100 mb6 ${focus}`}
         onDragEnter={this.onDragEnter.bind(this)}
         onDragOver={e => {
           e.preventDefault();

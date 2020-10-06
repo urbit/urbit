@@ -45,13 +45,13 @@ const Root = styled.div`
     scrollbar-width: thin;
     scrollbar-color: ${ p => p.theme.colors.gray } ${ p => p.theme.colors.white };
   }
-  
+
   /* Works on Chrome/Edge/Safari */
   *::-webkit-scrollbar {
     width: 12px;
   }
   *::-webkit-scrollbar-track {
-    background: ${ p => p.theme.colors.white };
+    background: transparent;
   }
   *::-webkit-scrollbar-thumb {
     background-color: ${ p => p.theme.colors.gray };
@@ -131,7 +131,7 @@ class App extends React.Component {
             ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
             : null}
         </Helmet>
-        <Root background={background} >
+        <Root background={background}>
           <Router>
             <ErrorBoundary>
               <StatusBarWithRouter
@@ -163,6 +163,7 @@ class App extends React.Component {
             </ErrorBoundary>
           </Router>
         </Root>
+        <div id="portal-root" />
       </ThemeProvider>
     );
   }

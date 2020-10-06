@@ -9,25 +9,15 @@ import { Sigil } from '~/logic/lib/sigil';
 
 const StatusBar = (props) => {
 
-  const location = useLocation();
-
-  const display = (!window.location.href.includes('popout/'))
-      ? 'grid' : 'none';
-
-  const invites = (props.invites && props.invites['/contacts'])
-    ? props.invites['/contacts']
-    : {};
-
-
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
 
   return (
     <Box
-      display={display}
+      display='grid'
       width="100%"
       gridTemplateRows="30px"
       gridTemplateColumns="3fr 1fr"
-      py={2}
+      py={3}
       px={3}
       >
       <Row collapse>
@@ -42,12 +32,6 @@ const StatusBar = (props) => {
           <Text display={['none', 'inline']} ml={4} color='gray'>
             {metaKey}/
           </Text>
-        </StatusBarItem>
-        <StatusBarItem
-          onClick={() => props.history.push('/~groups')}
-          badge={Object.keys(invites).length > 0}>
-          <Icon icon='Groups' color='transparent' stroke='black'/>
-          <Text display={["none", "inline"]} ml={2}>Groups</Text>
         </StatusBarItem>
         <ReconnectButton
           connection={props.connection}

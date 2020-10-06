@@ -25,6 +25,7 @@ interface NoteProps {
   api: GlobalApi;
   hideAvatars: boolean;
   hideNicknames: boolean;
+  rootUrl?: string;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
 }
 
@@ -35,12 +36,12 @@ export function Note(props: NoteProps & RouteComponentProps) {
     api.publish.fetchNote(ship, book, noteId);
   }, [ship, book, noteId]);
 
-  const baseUrl = `/~publish/notebook/${props.ship}/${props.book}`;
+  const rootUrl = props.rootUrl || `/~publish/notebook/${props.ship}/${props.book}`;
 
   const deletePost = async () => {
     setDeleting(true);
     await api.publish.delNote(ship.slice(1), book, noteId);
-    props.history.push(baseUrl);
+    props.history.push(rootUrl);
   };
 
   const comments = note?.comments || [];
@@ -71,6 +72,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   return (
     <Box
       my={3}
+      px={3}
       display="grid"
       gridTemplateColumns="1fr"
       gridAutoRows="min-content"
@@ -79,7 +81,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
       gridRowGap={4}
       mx="auto"
     >
-      <Link to={baseUrl}>
+      <Link to={rootUrl}>
         <Text>{"<- Notebook Index"}</Text>
       </Link>
       <Col>
@@ -105,7 +107,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
         ship={props.ship}
         book={props.book}
       />
-      {notebook.comments && (
+      {notebook?.comments && (
         <Comments
           ship={ship}
           book={props.book}

@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from 'react';
+import React, { useEffect } from "react";
 
 import { TabBar } from '~/views/components/chat-link-tabbar';
 import { SidebarSwitcher } from '~/views/components/SidebarSwitch';
@@ -7,37 +7,33 @@ import { LinkItem } from './lib/link-item';
 import LinkSubmit from './lib/link-submit';
 import { Box } from '@tlon/indigo-react';
 
-import { getContactDetails } from '~/logic/lib/util';
+import { getContactDetails } from "~/logic/lib/util";
 
 export const LinkList = (props) => {
   const resource = `${props.ship}/${props.name}`;
   const title = props.metadata.title || resource;
+  useEffect(() => {
+    props.api.graph.getGraph(
+      `~${props.match.params.ship}`,
+      props.match.params.name
+    );
+  }, [props.match.params.ship, props.match.params.name]);
 
   if (!props.graph && props.graphResource) {
-    useEffect(() => {
-      props.api.graph.getGraph(
-        `~${props.match.params.ship}`,
-        props.match.params.name
-      );
-    });
-
-    return (
-      <div>Loading...</div>
-    );
+    return <div>Loading...</div>;
   }
 
   if (!props.graph) {
-    return (
-      <div>Not found</div>
-    );
+    return <div>Not found</div>;
   }
 
   return (
     <div className="h-100 w-100 overflow-hidden flex flex-column">
       <div
         className="w-100 dn-m dn-l dn-xl inter pt4 pb6 pl3 f8"
-        style={{ height: '1rem' }}>
-       <Link to="/~link">{'⟵ All Channels'}</Link>
+        style={{ height: "1rem" }}
+      >
+        <Link to="/~link">{"⟵ All Channels"}</Link>
       </div>
       <Box
         pl='12px'
@@ -51,7 +47,6 @@ export const LinkList = (props) => {
         height='48px'>
         <SidebarSwitcher
           sidebarShown={props.sidebarShown}
-          popout={props.popout}
           api={props.api} />
         <h2
           className="dib f9 fw4 pt2 lh-solid v-top black white-d"
@@ -60,8 +55,6 @@ export const LinkList = (props) => {
         </h2>
         <TabBar
           location={props.location}
-          popout={props.popout}
-          popoutHref={`/~link/popout/${resource}`}
           settings={`/~link/${resource}/settings`}
         />
       </Box>
@@ -95,5 +88,4 @@ export const LinkList = (props) => {
       </div>
     </div>
   );
-}
-
+};

@@ -25,6 +25,8 @@ interface RenderChoiceProps<C> {
 interface DropdownSearchProps<C> {
   label: string;
   id: string;
+  // check if entry is exact match
+  isExact: (s: string) => C | undefined;
   // Options for dropdown
   candidates: C[];
   // Present options in dropdown
@@ -114,18 +116,17 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
     [setQuery]
   );
 
-  const dropdown = useMemo(
-    () =>
-      _.take(options, 5).map((o, idx) =>
-        props.renderCandidate(
-          o,
-          !_.isUndefined(selected) &&
-            props.getKey(o) === props.getKey(selected),
-          onSelect
-        )
-      ),
-    [options, props.getKey, props.renderCandidate, selected]
-  );
+  const dropdown = useMemo(() => {
+    const first = props.isExact(query);
+    const opts = first ? [first, ...options] : options;
+    return _.take(opts, 5).map((o, idx) =>
+      props.renderCandidate(
+        o,
+        !_.isUndefined(selected) && props.getKey(o) === props.getKey(selected),
+        onSelect
+      )
+    );
+  }, [options, props.getKey, props.renderCandidate, selected]);
 
   return (
     <Box position="relative" zIndex={9}>
@@ -144,7 +145,7 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
           autocomplete="off"
         />
       )}
-      {options.length !== 0 && query.length !== 0 && (
+      {dropdown.length !== 0 && query.length !== 0 && (
         <Box
           mt={1}
           border={1}

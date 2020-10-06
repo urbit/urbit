@@ -24,6 +24,8 @@ interface NotebookProps {
   contacts: Rolodex;
   groups: Groups;
   hideNicknames: boolean;
+  baseUrl: string;
+  rootUrl: string;
   associations: Associations;
 }
 
@@ -66,6 +68,8 @@ export class Notebook extends PureComponent<
     const group = groups[notebook?.["writers-group-path"]];
     if (!group) return null; // Waitin on groups to populate
 
+    const relativePath = (p: string) => this.props.baseUrl + p;
+
     const contact = notebookContacts[ship];
     const role = group ? roleForShip(group, window.ship) : undefined;
     const isOwn = `~${window.ship}` === ship;
@@ -82,6 +86,7 @@ export class Notebook extends PureComponent<
       <Box
         pt={4}
         mx="auto"
+        px={3}
         display="grid"
         gridAutoRows="min-content"
         gridTemplateColumns={["100%", "1fr 1fr"]}
@@ -90,7 +95,7 @@ export class Notebook extends PureComponent<
         gridColumnGap={3}
       >
         <Box display={["block", "none"]} gridColumn={["1/2", "1/3"]}>
-          <Link to="/~publish">{"<- All Notebooks"}</Link>
+          <Link to={this.props.rootUrl}>{"<- All Notebooks"}</Link>
         </Box>
         <Box>
           <Text> {notebook?.title}</Text>
@@ -102,8 +107,10 @@ export class Notebook extends PureComponent<
         </Box>
         <Row justifyContent={["flex-start", "flex-end"]}>
           {isWriter && (
-            <Link to={`/~publish/notebook/${ship}/${book}/new`}>
-              <Button primary>New Post</Button>
+            <Link to={relativePath("/new")}>
+              <Button primary border>
+                New Post
+              </Button>
             </Link>
           )}
           {!isOwn ? (
@@ -173,6 +180,7 @@ export class Notebook extends PureComponent<
               book={book}
               contacts={notebookContacts}
               hideNicknames={hideNicknames}
+
             />
           )}
           {state.tab === "about" && (

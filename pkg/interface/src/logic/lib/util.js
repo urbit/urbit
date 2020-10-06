@@ -64,6 +64,9 @@ export function dateToDa(d, mil) {
 }
 
 export function deSig(ship) {
+  if(!ship) {
+    return null;
+  }
   return ship.replace('~', '');
 }
 
@@ -78,10 +81,10 @@ export function uxToHex(ux) {
 }
 
 export function hexToUx(hex) {
-   const ux = _.chain(hex.split(""))
+   const ux = _.chain(hex.split(''))
      .chunk(4)
-     .map((x) => _.dropWhile(x, (y) => y === 0).join(""))
-     .join(".");
+     .map(x => _.dropWhile(x, y => y === 0).join(''))
+     .join('.');
    return `0x${ux}`;
 }
 
@@ -148,6 +151,10 @@ export function cite(ship) {
   return `~${patp}`;
 }
 
+export function alphabeticalOrder(a,b) {
+  return a.toLowerCase().localeCompare(b.toLowerCase());
+}
+
 export function alphabetiseAssociations(associations) {
   const result = {};
   Object.keys(associations).sort((a, b) => {
@@ -163,7 +170,7 @@ export function alphabetiseAssociations(associations) {
         ? associations[b].metadata.title
         : b.substr(1);
     }
-    return aName.toLowerCase().localeCompare(bName.toLowerCase());
+    return alphabeticalOrder(aName,bName);
   }).map((each) => {
     result[each] = associations[each];
   });
@@ -229,28 +236,28 @@ export function stringToTa(string) {
 
 export function makeRoutePath(
   resource,
-  popout = false,
   page = 0,
   url = null,
   index = 0,
   compage = 0
 ) {
-  let route = "/~link" + (popout ? "/popout" : "") + resource;
+  let route = '/~link' + resource;
   if (!url) {
     if (page !== 0) {
-      route = route + "/" + page;
+      route = route + '/' + page;
     }
   } else {
     route = `${route}/${page}/${index}/${base64urlEncode(url)}`;
     if (compage !== 0) {
-      route = route + "/" + compage;
+      route = route + '/' + compage;
     }
   }
   return route;
 }
 
 export function amOwnerOfGroup(groupPath) {
-  if (!groupPath) return false;
+  if (!groupPath)
+return false;
   const groupOwner = /(\/~)?\/~([a-z-]{3,})\/.*/.exec(groupPath)[2];
   return window.ship === groupOwner;
 }
@@ -258,20 +265,20 @@ export function amOwnerOfGroup(groupPath) {
 export function getContactDetails(contact) {
   const member = !contact;
   contact = contact || {
-    nickname: "",
+    nickname: '',
     avatar: null,
-    color: "0x0",
+    color: '0x0'
   };
-  const nickname = contact.nickname || "";
-  const color = uxToHex(contact.color || "0x0");
+  const nickname = contact.nickname || '';
+  const color = uxToHex(contact.color || '0x0');
   const avatar = contact.avatar || null;
   return { nickname, color, member, avatar };
 }
 
 export function stringToSymbol(str) {
   let result = '';
-  for (var i = 0; i < str.length; i++) {
-    var n = str.charCodeAt(i);
+  for (let i = 0; i < str.length; i++) {
+    const n = str.charCodeAt(i);
     if (((n >= 97) && (n <= 122)) ||
       ((n >= 48) && (n <= 57))) {
       result += str[i];
@@ -291,12 +298,12 @@ export function stringToSymbol(str) {
 
 export function scrollIsAtTop(container) {
   if (
-    (navigator.userAgent.includes("Safari") &&
-      navigator.userAgent.includes("Chrome")) ||
-    navigator.userAgent.includes("Firefox")
+    (navigator.userAgent.includes('Safari') &&
+      navigator.userAgent.includes('Chrome')) ||
+    navigator.userAgent.includes('Firefox')
   ) {
     return container.scrollTop === 0;
-  } else if (navigator.userAgent.includes("Safari")) {
+  } else if (navigator.userAgent.includes('Safari')) {
     return (
       container.scrollHeight + Math.round(container.scrollTop) <=
       container.clientHeight + 10
@@ -308,15 +315,15 @@ export function scrollIsAtTop(container) {
 
 export function scrollIsAtBottom(container) {
   if (
-    (navigator.userAgent.includes("Safari") &&
-      navigator.userAgent.includes("Chrome")) ||
-    navigator.userAgent.includes("Firefox")
+    (navigator.userAgent.includes('Safari') &&
+      navigator.userAgent.includes('Chrome')) ||
+    navigator.userAgent.includes('Firefox')
   ) {
     return (
       container.scrollHeight - Math.round(container.scrollTop) <=
       container.clientHeight + 10
     );
-  } else if (navigator.userAgent.includes("Safari")) {
+  } else if (navigator.userAgent.includes('Safari')) {
     return container.scrollTop === 0;
   } else {
     return false;

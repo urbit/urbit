@@ -54,7 +54,7 @@ export function NoteNavigation(props: NoteNavigationProps) {
   }
 
   if (next) {
-    nextUrl = `/~publish/notebook/${props.ship}/${props.book}/note/${props.nextId}`;
+    nextUrl = `${props.prevId}`;
     nextComponent = (
       <NavigationItem
         title={next.title}
@@ -64,7 +64,7 @@ export function NoteNavigation(props: NoteNavigationProps) {
     );
   }
   if (prev) {
-    prevUrl = `/~publish/notebook/${props.ship}/${props.book}/note/${props.prevId}`;
+    prevUrl = `${props.prevId}`;
     prevComponent = (
       <NavigationItem
         title={prev.title}

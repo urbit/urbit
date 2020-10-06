@@ -84,7 +84,6 @@ export default function PublishApp(props: PublishAppProps) {
         ]}
       >
         <RouterSkeleton
-          popout={location.pathname.includes("popout/")}
           active={active}
           sidebarShown={sidebarShown}
           invites={invites}

@@ -9,7 +9,8 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Groups, GroupPolicy } from '~/types/group-update';
 import { Rolodex } from '~/types/contact-update';
 import GlobalApi from '~/logic/api/global';
-import { Enc } from '~/types/noun';
+import { Patp, PatpNoSig, Enc } from '~/types/noun';
+import {Body} from '~/views/components/Body';
 
 type NewScreenProps = Pick<RouteComponentProps, 'history'> & {
   groups: Groups;
@@ -132,6 +133,7 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
     }
 
     return (
+      <Body>
       <div className='h-100 w-100 mw6 pa3 pt4 overflow-x-hidden bg-gray0-d white-d flex flex-column'>
         <div className='w-100 dn-m dn-l dn-xl inter pt1 pb6 f8'>
           <Link to='/~groups/'>{'⟵ All Groups'}</Link>
@@ -207,7 +209,7 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
           >
             Start Group
           </button>
-          <Link to='/~groups'>
+          <Link to='/'>
             <button className='f9 ml3 ba pa2 b--black pointer bg-transparent b--white-d white-d'>
               Cancel
             </button>
@@ -219,6 +221,7 @@ export class NewScreen extends Component<NewScreenProps, NewScreenState> {
           />
         </div>
       </div>
+    </Body>
     );
   }
 }

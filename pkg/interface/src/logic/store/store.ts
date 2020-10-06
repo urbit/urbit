@@ -18,6 +18,19 @@ import LaunchReducer from '../reducers/launch-update';
 import LinkListenReducer from '../reducers/listen-update';
 import ConnectionReducer from '../reducers/connection';
 
+export const homeAssociation = {
+  "app-path": "/home",
+  "app-name": "contact",
+  "group-path": "/home",
+  metadata: {
+    color: "0x0",
+    title: "Home",
+    description: "",
+    "date-created": "",
+    module: "",
+  },
+};
+
 
 export default class GlobalStore extends BaseStore<StoreState> {
   inviteReducer = new InviteReducer();

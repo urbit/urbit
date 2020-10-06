@@ -57,6 +57,16 @@ const formSchema = Yup.object({
   ),
 });
 
+const emptyContact = {
+  avatar: null,
+  color: '0',
+  nickname: '',
+  email: '',
+  phone: '',
+  website: '', 
+  notes: ''
+};
+
 export function ContactCard(props: ContactCardProps) {
   const us = `~${window.ship}`;
   const { contact } = props;
@@ -88,13 +98,13 @@ export function ContactCard(props: ContactCardProps) {
     }
   };
 
-  const hexColor = contact.color ? `#${uxToHex(contact.color)}` : "#000000";
+  const hexColor = contact?.color ? `#${uxToHex(contact.color)}` : "#000000";
 
   return (
     <Box p={4} height="100%" overflowY="auto">
       <Formik
         validationSchema={formSchema}
-        initialValues={contact}
+        initialValues={contact || emptyContact}
         onSubmit={onSubmit}
       >
         <Form

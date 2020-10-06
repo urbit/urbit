@@ -48,7 +48,6 @@ export const LinkDetail = (props) => {
       >
         <SidebarSwitcher
           sidebarShown={props.sidebarShown}
-          popout={props.popout}
           api={props.api}
         />
         <Link className="dib f9 fw4 pt2 gray2 lh-solid"
@@ -63,8 +62,6 @@ export const LinkDetail = (props) => {
         </Link>
         <TabBar
           location={props.location}
-          popout={props.popout}
-          popoutHref={`/~link/popout/${resourcePath}/${props.match.params.index}`}
           settings={`/~link/${resourcePath}/settings`}
         />
       </Box>
@@ -90,7 +87,6 @@ export const LinkDetail = (props) => {
             comments={props.node.children}
             resourcePath={resourcePath}
             contacts={props.contacts}
-            popout={props.popout}
             api={props.api}
             hideAvatars={props.hideAvatars}
             hideNicknames={props.hideNicknames}

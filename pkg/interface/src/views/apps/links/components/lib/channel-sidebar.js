@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Link } from 'react-router-dom';
 import { GroupItem } from './group-item';
-import SidebarInvite from '~/views/components/SidebarInvite';
+import SidebarInvite from '~/views/components/Sidebar/SidebarInvite';
 import { Welcome } from './welcome';
 import { alphabetiseAssociations } from '~/logic/lib/util';
 
@@ -83,14 +83,13 @@ export const ChannelSidebar = (props) => {
   }
 
   const activeClasses = (props.active === 'collections') ? ' ' : 'dn-s ';
-  const hiddenClasses = !!props.popout ? false : props.sidebarShown;
 
   return (
     <div className={
       `bn br-m br-l br-xl b--gray4 b--gray1-d lh-copy h-100` +
       `flex-shrink-0 mw5-m mw5-l mw5-xl pt3 pt0-m pt0-l pt0-xl relative ` +
       activeClasses +
-      ((hiddenClasses) ? 'flex-basis-100-s flex-basis-30-ns' : 'dn')
+      ((props.sidebarShown) ? 'flex-basis-100-s flex-basis-30-ns' : 'dn')
     }>
       <div className="overflow-y-scroll h-100">
         <div className="w-100 bg-transparent">

@@ -91,11 +91,10 @@ export default class LinksApp extends Component {
               </Skeleton>
             )}
           />
-          <Route exact path="/~link/(popout)?/:ship/:name/settings"
+          <Route exact path="/~link/:ship/:name/settings"
             render={ (props) => {
-              const resourcePath = 
+              const resourcePath =
                 `${props.match.params.ship}/${props.match.params.name}`;
-              const popout = props.match.url.includes('/popout/');
               const metPath = `/ship/~${resourcePath}`;
               const resource =
                 associations.graph[metPath] ?
@@ -113,7 +112,6 @@ export default class LinksApp extends Component {
                   groups={groups}
                   selected={resourcePath}
                   sidebarShown={sidebarShown}
-                  popout={popout}
                   graphKeys={graphKeys}
                   api={api}>
                   <SettingsScreen
@@ -126,16 +124,15 @@ export default class LinksApp extends Component {
                     group={group}
                     amOwner={amOwner}
                     resourcePath={resourcePath}
-                    popout={popout}
                     api={api}
                     {...props} />
                 </Skeleton>
               );
             }}
           />
-          <Route exact path="/~link/(popout)?/:ship/:name"
+          <Route exact path="/~link/:ship/:name"
             render={ (props) => {
-              const resourcePath = 
+              const resourcePath =
                 `${props.match.params.ship}/${props.match.params.name}`;
               const metPath = `/ship/~${resourcePath}`;
               const resource =
@@ -143,7 +140,6 @@ export default class LinksApp extends Component {
                   associations.graph[metPath] : { metadata: {} };
 
               const contactDetails = contacts[resource['group-path']] || {};
-              const popout = props.match.url.includes('/popout/');
               const graph = graphs[resourcePath] || null;
 
               return (
@@ -154,7 +150,6 @@ export default class LinksApp extends Component {
                   selected={resourcePath}
                   sidebarShown={sidebarShown}
                   sidebarHideMobile={true}
-                  popout={popout}
                   api={api}
                   graphKeys={graphKeys}>
                   <LinkList
@@ -164,7 +159,6 @@ export default class LinksApp extends Component {
                     graph={graph}
                     graphResource={graphKeys.has(resourcePath)}
                     resourcePath={resourcePath}
-                    popout={popout}
                     metadata={resource.metadata}
                     contacts={contactDetails}
                     hideAvatars={hideAvatars}
@@ -177,15 +171,14 @@ export default class LinksApp extends Component {
               );
             }}
           />
-          <Route exact path="/~link/(popout)?/:ship/:name/:index"
+          <Route exact path="/~link/:ship/:name/:index"
             render={ (props) => {
-              const resourcePath = 
+              const resourcePath =
                 `${props.match.params.ship}/${props.match.params.name}`;
               const metPath = `/ship/~${resourcePath}`;
               const resource =
                 associations.graph[metPath] ?
                   associations.graph[metPath] : { metadata: {} };
-              const popout = props.match.url.includes('/popout/');
 
               const contactDetails = contacts[resource['group-path']] || {};
 
@@ -197,7 +190,7 @@ export default class LinksApp extends Component {
               }
 
               const index = parseInt(indexArr[1], 10);
-              const node = !!graph ? graph.get(index) : null;
+              const node = Boolean(graph) ? graph.get(index) : null;
 
               return (
                 <Skeleton
@@ -207,7 +200,6 @@ export default class LinksApp extends Component {
                   selected={resourcePath}
                   sidebarShown={sidebarShown}
                   sidebarHideMobile={true}
-                  popout={popout}
                   graphKeys={graphKeys}
                   api={api}>
                   <LinkDetail
@@ -218,7 +210,6 @@ export default class LinksApp extends Component {
                     name={props.match.params.name}
                     resource={resource}
                     contacts={contactDetails}
-                    popout={popout}
                     sidebarShown={sidebarShown}
                     api={api}
                     hideAvatars={hideAvatars}

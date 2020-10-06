@@ -10,6 +10,7 @@ interface NotebookPostsProps {
   notes: Notes;
   host: string;
   book: string;
+  baseUrl: string;
   hideNicknames?: boolean;
 }
 
@@ -19,7 +20,6 @@ export function NotebookPosts(props: NotebookPostsProps) {
       {props.list.map((noteId: NoteId) => {
         const note = props.notes[noteId];
         if (!note) {
-          console.log(noteId);
           return null;
         }
         return (
@@ -30,6 +30,7 @@ export function NotebookPosts(props: NotebookPostsProps) {
             note={note}
             contact={props.contacts[note.author.substr(1)]}
             hideNicknames={props.hideNicknames}
+            baseUrl={props.baseUrl}
           />
         );
       })}

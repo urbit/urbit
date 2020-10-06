@@ -161,7 +161,7 @@ h2 {
 }
 
 .unread-notice {
-  top: 48px;
+  top: 0px;
 }
 
 /* responsive */
@@ -229,6 +229,11 @@ blockquote {
 
 .chat .CodeMirror * {
     font-family: 'Inter';
+}
+
+.chat .cm-s-tlon.CodeMirror {
+  font-size: 16px;
+  margin-top: 6px;
 }
 
 pre, code {
@@ -380,6 +385,8 @@ pre.CodeMirror-placeholder.CodeMirror-line-like { color: var(--gray); }
   .chat .cm-s-tlon.CodeMirror {
     background: #333;
     color: #fff;
+    font-size: 16px;
+    margin-top: 6px;
   }
 
   .chat .cm-s-tlon span.cm-def {

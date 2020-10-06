@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import Helmet from 'react-helmet';
+import { Box, Center } from '@tlon/indigo-react';
 
 import './css/custom.css';
 
 import { Skeleton } from './components/skeleton';
+import { Skeleton as NewSkeleton } from '~/views/components/Skeleton';
 import { NewScreen } from './components/new';
 import { ContactSidebar } from './components/lib/contact-sidebar';
 import { ContactCard } from './components/lib/contact-card';
@@ -12,10 +13,15 @@ import { AddScreen } from './components/lib/add-contact';
 import { JoinScreen } from './components/join';
 import GroupDetail from './components/lib/group-detail';
 
-import { PatpNoSig } from '~/types/noun';
+import { PatpNoSig, AppName } from '~/types/noun';
 import GlobalApi from '~/logic/api/global';
 import { StoreState } from '~/logic/store/type';
 import GlobalSubscription from '~/logic/subscription/global';
+import {Resource} from '~/views/components/Resource';
+import {PopoverRoutes} from './components/PopoverRoutes';
+import {UnjoinedResource} from '~/views/components/UnjoinedResource';
+import {GroupsPane} from '~/views/components/GroupsPane';
+import {Workspace} from '~/types';
 
 
 type GroupsAppProps = StoreState & {
@@ -26,14 +32,22 @@ type GroupsAppProps = StoreState & {
 
 export default class GroupsApp extends Component<GroupsAppProps, {}> {
   componentDidMount() {
+    document.title = 'OS1 - Groups';
     // preload spinner asset
     new Image().src = '/~landscape/img/Spinner.png';
 
     this.props.subscription.startApp('groups')
+    this.props.subscription.startApp('chat')
+    this.props.subscription.startApp('publish');
+    this.props.subscription.startApp('graph');
+    
   }
 
   componentWillUnmount() {
     this.props.subscription.stopApp('groups')
+    this.props.subscription.stopApp('chat')
+    this.props.subscription.stopApp('publish');
+    this.props.subscription.stopApp('graph');
   }
 
 
@@ -55,10 +69,6 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
 
 
     return (
-      <>
-        <Helmet>
-          <title>OS1 - Groups</title>
-        </Helmet>
         <Switch>
           <Route exact path="/~groups"
             render={(props) => {
@@ -86,22 +96,12 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
           <Route exact path="/~groups/new"
             render={(props) => {
               return (
-                <Skeleton
+                <NewScreen
                   history={props.history}
-                  api={api}
-                  contacts={contacts}
                   groups={groups}
-                  invites={invites}
-                  associations={associations}
-                  activeDrawer="rightPanel"
-                >
-                  <NewScreen
-                    history={props.history}
-                    groups={groups}
-                    contacts={contacts}
-                    api={api}
-                  />
-                </Skeleton>
+                  contacts={contacts}
+                  api={api}
+                />
               );
             }}
           />
@@ -110,28 +110,18 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               const ship = props.match.params.ship || '';
               const name = props.match.params.name || '';
               return (
-                <Skeleton
+                <JoinScreen
                   history={props.history}
-                  api={api}
-                  contacts={contacts}
                   groups={groups}
-                  invites={invites}
-                  associations={associations}
-                  activeDrawer="rightPanel"
-                >
-                  <JoinScreen
-                    history={props.history}
-                    groups={groups}
-                    contacts={contacts}
-                    api={api}
-                    ship={ship}
-                    name={name}
-                  />
-                </Skeleton>
+                  contacts={contacts}
+                  api={api}
+                  ship={ship}
+                  name={name}
+                />
               );
             }}
           />
-          <Route exact path="/~groups/(detail)?/(settings)?/ship/:ship/:group/"
+          <Route exact path="/~groups/dep/(detail)?/(settings)?/ship/:ship/:group/"
             render={(props) => {
               const groupPath =
                 `/ship/${props.match.params.ship}/${props.match.params.group}`;
@@ -278,6 +268,25 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               );
             }}
           />
+          <Route path="/~groups/ship/:host/:name"
+            render={routeProps => {
+              const { host, name } = routeProps.match.params as Record<string, string>;
+              const groupPath = `/ship/${host}/${name}`;
+              const baseUrl = `/~groups${groupPath}`;
+              const ws: Workspace = { type: 'group', group: groupPath };
+
+              return (
+                <GroupsPane workspace={ws} baseUrl={baseUrl} {...props} />
+              )
+            }}/>
+          <Route path="/~groups/home"
+            render={routeProps => {
+              const ws: Workspace = { type: 'home' };
+
+              return (<GroupsPane workspace={ws} baseUrl="/~groups/home" {...props} />);
+
+            }}
+          />
           <Route exact path="/~groups/view/ship/:ship/:group/:contact"
             render={(props) => {
               const groupPath =
@@ -333,8 +342,34 @@ export default class GroupsApp extends Component<GroupsAppProps, {}> {
               );
             }}
           />
+          <Route exact path="/~groups/me"
+            render={(props) => {
+              const me = defaultContacts[window.ship] || {};
+
+              return (
+                <Skeleton
+                  history={props.history}
+                  api={api}
+                  contacts={contacts}
+                  groups={groups}
+                  invites={invites}
+                  activeDrawer="rightPanel"
+                  selected="me"
+                  associations={associations}
+                >
+                  <ContactCard
+                    api={api}
+                    history={props.history}
+                    path="/~/default"
+                    contact={me}
+                    s3={s3}
+                    ship={window.ship}
+                  />
+                </Skeleton>
+              );
+            }}
+          />
         </Switch>
-      </>
     );
   }
 }

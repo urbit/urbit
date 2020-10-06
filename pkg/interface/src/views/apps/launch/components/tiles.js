@@ -10,7 +10,9 @@ export default class Tiles extends React.PureComponent {
     const { props } = this;
 
     const tiles = props.tileOrdering.filter((key) => {
-      return props.tiles[key].isShown;
+      const tile = props.tiles[key];
+
+      return tile.isShown;
     }).map((key) => {
       const tile = props.tiles[key];
       if ('basic' in tile.type) {
