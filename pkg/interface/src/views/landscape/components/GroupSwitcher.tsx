@@ -54,7 +54,7 @@ function RecentGroups(props: { recent: string[]; associations: Associations }) {
               borderColor="lightGray"
               height="16px"
               width="16px"
-              bg={color}
+              bg={`#${color}`}
               mr={2}
               display="block"
               flexShrink='0'
