@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, Row, Col, Center } from "@tlon/indigo-react";
+import { Box, Row, Col, Center, LoadingSpinner } from "@tlon/indigo-react";
 import { Switch, Route, Link } from "react-router-dom";
 
 import GlobalApi from "~/logic/api/global";
@@ -56,7 +56,7 @@ export function LinkResource(props: LinkResourceProps) {
 
   const resourceUrl = `${baseUrl}/resource/link${appPath}`;
   if (!graph) {
-    return <Center>Loading...</Center>;
+    return <Center width='100%' height='100%'><LoadingSpinner/></Center>;
   }
 
   return (

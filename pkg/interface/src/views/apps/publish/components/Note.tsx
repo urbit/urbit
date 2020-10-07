@@ -25,13 +25,13 @@ interface NoteProps {
   api: GlobalApi;
   hideAvatars: boolean;
   hideNicknames: boolean;
-  rootUrl?: string;
+  baseUrl?: string;
   remoteContentPolicy: LocalUpdateRemoteContentPolicy;
 }
 
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
-  const { notebook, note, contacts, ship, book, noteId, api } = props;
+  const { notebook, note, contacts, ship, book, noteId, api, baseUrl } = props;
   useEffect(() => {
     api.publish.readNote(ship.slice(1), book, noteId);
     api.publish.fetchNote(ship, book, noteId);
@@ -42,7 +42,7 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const deletePost = async () => {
     setDeleting(true);
     await api.publish.delNote(ship.slice(1), book, noteId);
-    props.history.push(baseUrl);
+    props.history.push(rootUrl);
   };
 
   const comments = note?.comments || [];
@@ -89,8 +89,8 @@ export function Note(props: NoteProps & RouteComponentProps) {
         <Text display="block" mb={2}>{note?.title || ""}</Text>
         <Box display="flex">
           <Author
-            hideNicknames={props.hideNicknames}
-            hideAvatars={props.hideAvatars}
+            hideNicknames={props?.hideNicknames}
+            hideAvatars={props?.hideAvatars}
             ship={note?.author}
             contacts={contacts}
             date={note?.["date-created"]}
@@ -105,22 +105,22 @@ export function Note(props: NoteProps & RouteComponentProps) {
         notebook={notebook}
         prevId={note?.["prev-note"] || undefined}
         nextId={note?.["next-note"] || undefined}
-        ship={props.ship}
-        book={props.book}
+        ship={ship}
+        book={book}
       />
       {notebook?.comments && (
         <Comments
           ship={ship}
-          book={props.book}
-          noteId={props.noteId}
-          note={props.note}
+          book={book}
+          noteId={noteId}
+          note={note}
           comments={comments}
-          numComments={props.note["num-comments"]}
-          contacts={props.contacts}
-          api={props.api}
-          hideNicknames={props.hideNicknames}
-          hideAvatars={props.hideAvatars}
-          remoteContentPolicy={props.remoteContentPolicy}
+          numComments={note?.["num-comments"]}
+          contacts={contacts}
+          api={api}
+          hideNicknames={props?.hideNicknames}
+          hideAvatars={props?.hideAvatars}
+          remoteContentPolicy={props?.remoteContentPolicy}
         />
       )}
       <Spinner

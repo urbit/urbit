@@ -53,7 +53,7 @@ export default function ProfileScreen(props: any) {
           return null;
         }
         if (!view && !MOBILE_BROWSER_REGEX.test(window.navigator.userAgent)) {
-          history.replace("/~profile/settings");
+          history.replace("/~profile/identity");
         }
 
         return (

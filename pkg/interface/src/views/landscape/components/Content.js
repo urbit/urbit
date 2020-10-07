@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Box } from '@tlon/indigo-react';
 import { Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -9,8 +10,11 @@ import Profile from '~/views/apps/profile/profile';
 import ErrorComponent from '~/views/components/Error';
 
 
-export const Container = styled.div`
-   height: calc(100% - 45px);
+export const Container = styled(Box)`
+   flex-grow: 1;
+   overflow: hidden;
+   width: 100%;
+   height: calc(100% - 62px);
 `;
 
 

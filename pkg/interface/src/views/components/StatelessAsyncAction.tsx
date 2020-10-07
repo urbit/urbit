@@ -1,43 +1,41 @@
 import React, { ReactNode, useState, useEffect, useCallback } from "react";
+import { useStatelessAsyncClickable } from '~/logic/lib/useStatelessAsyncClickable';
 
-import { Button, LoadingSpinner } from "@tlon/indigo-react";
+import { Button, LoadingSpinner, Action } from "@tlon/indigo-react";
+
 import { useFormikContext } from "formik";
 
-import { useStatelessAsyncClickable } from "~/logic/lib/useStatelessAsyncClickable";
-
-interface AsyncButtonProps {
+interface AsyncActionProps {
   children: ReactNode;
   name: string;
   onClick: (e: React.MouseEvent) => Promise<void>;
 }
 
-export function StatelessAsyncButton({
+export function StatelessAsyncAction({
   children,
   onClick,
-  name = "",
+  name = '',
   ...rest
-}: AsyncButtonProps & Parameters<typeof Button>[0]) {
+}: AsyncActionProps & Parameters<typeof Action>[0]) {
   const {
     onClick: handleClick,
     buttonState: state,
   } = useStatelessAsyncClickable(onClick, name);
 
   return (
-    <Button onClick={handleClick} {...rest}>
+    <Action onClick={handleClick} {...rest}>
       {state === "error" ? (
         "Error"
       ) : state === "loading" ? (
         <LoadingSpinner
-          foreground={
-            rest.primary ? "white" : rest.destructive ? "red" : "black"
-          }
-          background="gray"
+          foreground={rest.destructive ? "red" : "black"}
+          background="transparent"
         />
       ) : state === "success" ? (
         "Done"
       ) : (
         children
       )}
-    </Button>
+    </Action>
   );
 }

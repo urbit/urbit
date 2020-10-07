@@ -26,9 +26,6 @@ if (dark.matches) {
 function darkColors(dark) {
   if (dark.matches) {
     text = '#7f7f7f';
-    background = '#333';
-  } else {
-    text = '#000000';
     background = '#ffffff';
   }
  }
@@ -375,7 +372,7 @@ export default class ClockTile extends React.Component {
 
   renderWrapper(child) {
     return (
-      <Tile p={0} bg="transparent" border={0}>
+      <Tile p={0} border={0}>
         {child}
       </Tile>
     );

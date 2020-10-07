@@ -38,7 +38,7 @@ export function NoteRoutes(props: NoteRoutesProps & RouteComponentProps) {
         path={baseUrl}
         exact
         render={(routeProps) => {
-          return <Note {...routeProps} {...props} />;
+          return <Note baseUrl={baseUrl} {...routeProps} {...props} />;
         }}
       />
 

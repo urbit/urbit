@@ -6,7 +6,11 @@ export function useOutsideClick(
 ) {
   useEffect(() => {
     function handleClick(event: MouseEvent) {
-      if (ref.current && !ref.current.contains(event.target as any)) {
+      if (
+        ref.current &&
+        !ref.current.contains(event.target as any) &&
+        !document.querySelector("#portal-root")!.contains(event.target as any)
+      ) {
         onClick();
       }
     }

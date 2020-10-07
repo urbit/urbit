@@ -2,6 +2,21 @@ import _ from 'lodash';
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
+export function clamp(x,min,max) {
+  return Math.max(min, Math.min(max, x));
+}
+
+// color is a #000000 color
+export function adjustHex(color, amount) {
+  const res = _.chain(color.slice(1))
+    .split('').chunk(2) // get individual color channels
+    .map(c => parseInt(c.join(''), 16)) // as hex
+    .map(c => clamp(c + amount, 0, 255).toString(16)) // adjust
+    .join('').value();
+  return `#${res}`;
+}
+
+
 export function resourceAsPath(resource) {
   const { name, ship } = resource;
   return `/ship/~${ship}/${name}`;

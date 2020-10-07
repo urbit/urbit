@@ -12,7 +12,7 @@ import { Path, AppName } from "~/types/noun";
 import { LinkCollections } from "~/types/link-update";
 import styled from "styled-components";
 import GlobalSubscription from "~/logic/subscription/global";
-import { Workspace, Groups, Graphs } from "~/types";
+import { Workspace, Groups, Graphs, Invites } from "~/types";
 import { useChat, usePublish, useLinks } from "./Sidebar/Apps";
 import { Body } from "~/views/components/Body";
 
@@ -27,6 +27,7 @@ interface SkeletonProps {
   linkListening: Set<Path>;
   links: LinkCollections;
   notebooks: Notebooks;
+  invites: Invites;
   inbox: Inbox;
   selected?: string;
   selectedApp?: AppName;
@@ -55,15 +56,16 @@ export function Skeleton(props: SkeletonProps) {
   return (
     <Body
       display="grid"
-      gridTemplateColumns={["1fr", "250px 1fr"]}
-      gridTemplateRows="1fr"
+      gridTemplateColumns={["100%", "250px 1fr"]}
+      gridTemplateRows="100%"
     >
       {!props.hideSidebar && (
         <Sidebar
+          api={props.api}
           recentGroups={props.recentGroups}
           selected={props.selected}
           associations={props.associations}
-          invites={{}}
+          invites={props.invites}
           apps={config}
           baseUrl={props.baseUrl}
           groups={props.groups}

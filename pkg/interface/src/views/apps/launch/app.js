@@ -3,7 +3,7 @@ import Helmet from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { Box, Row, Icon, Text, Center } from '@tlon/indigo-react';
-import { uxToHex } from "~/logic/lib/util";
+import { uxToHex, adjustHex } from "~/logic/lib/util";
 
 import './css/custom.css';
 
@@ -62,9 +62,9 @@ export default class LaunchApp extends React.Component {
               </Row>
             </Tile>
             <Tile
+              borderColor={adjustHex(sigilColor, -40)}
               bg={sigilColor}
               to="/~profile"
-              borderRadius="3"
             >
               <Center height="100%">
                 <Sigil ship={`~${window.ship}`} size={80} color={sigilColor} />

@@ -17,8 +17,8 @@ const StatusBar = (props) => {
       width="100%"
       gridTemplateRows="30px"
       gridTemplateColumns="3fr 1fr"
-      py={3}
-      px={3}
+      py={[2,3]}
+      px={[2,3]}
       >
       <Row collapse>
           <StatusBarItem mr={2} onClick={() => props.history.push('/')}>

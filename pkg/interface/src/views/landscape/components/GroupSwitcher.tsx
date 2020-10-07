@@ -137,7 +137,7 @@ export function GroupSwitcher(props: {
                         color="gray"
                         icon="Gear"
                       />
-                      <Text> Settings</Text>
+                      <Text> Group Settings</Text>
                     </GroupSwitcherItem>
                     <GroupSwitcherItem bottom to={navTo("/invites")}>
                       <Icon
@@ -152,14 +152,14 @@ export function GroupSwitcher(props: {
               </Col>
             }
           >
-            <Box p={2} alignItems="center" display="flex">
-              <Box mr={1} flex='1'>
+            <Row p={2} alignItems="center">
+              <Row alignItems="center" mr={1} flex='1'>
                 <Text overflow='hidden' display='inline-block' maxWidth='144px'  style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
-              </Box>
+              </Row>
               <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
-            </Box>
+            </Row>
           </Dropdown>
-          <Row collapse pr={1} justifyContent="flex-end" alignItems="center">
+          <Row pr={1} justifyContent="flex-end" alignItems="center">
             {workspace.type === "group" && (
               <>
                 <Link to={navTo("/invites")}>

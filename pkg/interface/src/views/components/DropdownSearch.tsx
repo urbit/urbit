@@ -12,10 +12,9 @@ import {
   Box,
   Label,
   ErrorLabel,
+  StatelessTextInput as Input
 } from "@tlon/indigo-react";
 import { useDropdown } from "~/logic/lib/useDropdown";
-import styled from "styled-components";
-import { space, color, layout, border } from "styled-system";
 
 interface RenderChoiceProps<C> {
   candidate: C;
@@ -47,22 +46,8 @@ interface DropdownSearchProps<C> {
   caption?: string;
   disabled?: boolean;
   error?: string;
+  placeholder?: string;
 }
-
-const TextArea = styled.input`
-  box-sizing: border-box;
-  min-width: 0;
-  width: 100%;
-  resize: none;
-  margin-top: ${(p) => p.theme.space[1]}px;
-  padding: ${(p) => p.theme.space[2]}px;
-  font-size: ${(p) => p.theme.fontSizes[0]}px;
-  line-height: 1.2;
-  ${space}
-  ${color}
-  ${layout}
-  ${border}
-`;
 
 export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
   const textarea = useRef<HTMLTextAreaElement>();
@@ -136,16 +121,12 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
       <Label htmlFor={props.id}>{props.label}</Label>
       {caption ? <Label mt="2" gray>{caption}</Label> : null}
       {!props.disabled && (
-        <TextArea
+        <Input
           ref={textarea}
-          border={1}
-          borderColor="washedGray"
-          bg="white"
-          color="black"
-          borderRadius={2}
           onChange={onChange}
           value={query}
           autocomplete="off"
+          placeholder={props.placeholder || ""}
         />
       )}
       {dropdown.length !== 0 && query.length !== 0 && (

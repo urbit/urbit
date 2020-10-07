@@ -1,18 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import defaultApps from '~/logic/lib/default-apps';
-const routeList = defaultApps.map((e) => {
-  return `/~${e}`;
-});
 
 import { Box } from "@tlon/indigo-react";
+const routeList = defaultApps.map(a => `/~${a}`);
 
 export default class Tile extends React.Component {
-  render() {
-    const { bg, to, p, ...props } = this.props;
+  render() { 
+    const { bg, to, href, p, ...props } = this.props;
 
     let childElement = (
-      <Box p={typeof p === 'undefined' ? 2 : p} bg={bg} width="100%" height="100%">
+      <Box p={typeof p === 'undefined' ? 2 : p} width="100%" height="100%">
         {props.children}
       </Box>
     );
@@ -25,6 +23,7 @@ export default class Tile extends React.Component {
       }
 
     }
+      
 
     return (
       <Box
@@ -32,9 +31,16 @@ export default class Tile extends React.Component {
         borderRadius={2}
         borderColor="lightGray"
         overflow="hidden"
+        bg={bg && "white"}
         {...props}
       >
-        {childElement}
+        <Box
+          bg={bg}
+          height="100%"
+          width="100%"
+        >
+          {childElement}
+        </Box>
       </Box>
     );
   }

@@ -30,8 +30,12 @@ textarea, select, input, button { outline: none; }
 
 button {
   background-color: transparent;
+  cursor: pointer;
 }
 
+* {
+  -webkit-user-drag: none;
+}
 
 /*  stolen from  indigo-react reset.css
  *  TODO: remove and add reset.css properly

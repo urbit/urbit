@@ -261,8 +261,8 @@ export class Omnibox extends Component {
     return (
         <Box
           backgroundColor='scales.black30'
-          width='100vw'
-          height='100vh'
+          width='100%'
+          height='100%'
           position='absolute'
           top='0'
           right='0'

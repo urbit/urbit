@@ -28,6 +28,7 @@ export function SidebarListHeader(props: {
 
   return (
     <Row
+      flexShrink="0"
       alignItems="center"
       justifyContent="space-between"
       py={2}

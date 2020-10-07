@@ -134,7 +134,7 @@ export function ShipSearch(props: InviteSearchProps) {
         value={undefined}
         error={error}
       />
-      <Row flexWrap="wrap">
+      <Row minHeight="34px" flexWrap="wrap">
         {value.map((s) => (
           <Box
             fontFamily="mono"
