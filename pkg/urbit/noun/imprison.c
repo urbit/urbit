@@ -480,8 +480,11 @@ u3i_defcons(u3_noun** hed, u3_noun** tel)
 
     nov_u->mug_w = 0;
 
-    //  XX zero-initialize head and tail?
-    //
+#ifdef U3_MEMORY_DEBUG
+    nov_u->hed = u3_none;
+    nov_u->tel = u3_none;
+#endif
+
     *hed = &nov_u->hed;
     *tel = &nov_u->tel;
 
