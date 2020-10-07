@@ -6224,7 +6224,13 @@
   ++  twid
     ~+
     ;~  pose
-      (cook |=(a/@ [%blob (cue a)]) ;~(pfix (just '0') vum:ag))
+      %+  stag  %blob
+      %+  sear
+        ::  XX use +mole once available
+        ::
+        |=(a=@ `(unit)`=/(b (mule |.((cue a))) ?-(-.b %| ~, %& `p.b)))
+      ;~(pfix (just '0') vum:ag)
+    ::
       (stag %$ crub)
     ==
   ::
