@@ -98,7 +98,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
             bg="white"
             border={1}
             borderRadius={2}
-            borderColor="lightGray"
+            borderColor="washedGray"
             p={2}
             fontSize={0}
           >

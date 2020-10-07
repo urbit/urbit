@@ -278,7 +278,7 @@ class Clock extends React.Component {
         8,
         0,
         2 * Math.PI,
-        '#6792FF',
+        'rgba(0, 0, 0, 0.1)',
         1
       );
     } else {
@@ -300,7 +300,7 @@ class Clock extends React.Component {
         8,
         0,
         2 * Math.PI,
-        '#000000',
+        'rgba(0, 0, 0, 0.1)',
         1
       );
     }

@@ -30,7 +30,7 @@ export default class Tile extends React.Component {
       <Box
         border={1}
         borderRadius={2}
-        borderColor="lightGray"
+        borderColor="washedGray"
         overflow="hidden"
         {...props}
       >
