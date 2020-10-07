@@ -64,7 +64,6 @@ export default class LaunchApp extends React.Component {
             <Tile
               bg={sigilColor}
               to="/~profile"
-              borderRadius="3"
             >
               <Center height="100%">
                 <Sigil ship={`~${window.ship}`} size={80} color={sigilColor} />

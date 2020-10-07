@@ -30,6 +30,7 @@ textarea, select, input, button { outline: none; }
 
 button {
   background-color: transparent;
+  cursor: pointer;
 }
 
 
