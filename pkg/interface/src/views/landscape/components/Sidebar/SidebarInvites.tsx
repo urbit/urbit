@@ -3,7 +3,7 @@ import _ from "lodash";
 import { Invites, Invite } from "~/types";
 import { Box, Col, Icon, Row, Text } from "@tlon/indigo-react";
 import GlobalApi from "~/logic/api/global";
-import { StatelessAsyncButton } from "../StatelessAsyncButton";
+import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
 import { cite } from "~/logic/lib/util";
 import { resourceFromPath } from "~/logic/lib/group";
 

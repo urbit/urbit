@@ -58,7 +58,9 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
       gridAutoRows="124px"
       gridTemplateColumns="repeat(auto-fit, 124px)"
       gridGap={3}
-      p={2}
+      px={2}
+      pt={2}
+      pb="7"
     >
       {incomingGroups.map((invite) => (
         <Box
