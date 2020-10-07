@@ -20,6 +20,9 @@ import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
 import { ColorInput } from "~/views/components/ColorInput";
 import { useHistory } from "react-router-dom";
 
+import { uxToHex } from '~/logic/lib/util';
+
+
 interface FormSchema {
   title: string;
   description: string;
@@ -57,10 +60,11 @@ export function GroupSettings(props: GroupSettingsProps) {
   ) => {
     try {
       const { title, description, color, isPrivate } = values;
+      const uxColor = uxToHex(color);
       await props.api.metadata.update(props.association, {
         title,
         description,
-        color,
+        color: uxColor
       });
       if (isPrivate !== currentPrivate) {
         const resource = resourceFromPath(props.association["group-path"]);
