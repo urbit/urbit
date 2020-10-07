@@ -87,7 +87,7 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
         <Box mb={4}>
           <RichText color="gray">{description}</RichText>
         </Box>
-        <StatelessAsyncButton onClick={onJoin} mx="auto" border>
+        <StatelessAsyncButton onClick={onJoin} mx="auto" border style={{ cursor: 'pointer' }}>
           Join Channel
         </StatelessAsyncButton>
       </Col>

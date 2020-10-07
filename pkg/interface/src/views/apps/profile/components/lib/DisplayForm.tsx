@@ -126,7 +126,7 @@ export default function DisplayForm(props: DisplayFormProps) {
               id="nicknames"
               caption="Do not show user-set nicknames"
             />
-            <Button border={1} borderColor="washedGray" type="submit">
+            <Button border={1} style={{ cursor: 'pointer' }} borderColor="washedGray" type="submit">
               Save
             </Button>
           </Box>

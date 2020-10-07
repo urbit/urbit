@@ -151,6 +151,7 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
             style={{ display: 'inline-flex', height: '1.66em' }} // Height is hacked to line-height until Button supports proper size
             ml={1}
             onClick={this.unfoldEmbed}
+            style={{ cursor: 'pointer' }}
           >
             {this.state.unfold ? 'collapse' : 'expand'}
           </Button> : null}

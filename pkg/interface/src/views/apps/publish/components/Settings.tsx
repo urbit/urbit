@@ -56,7 +56,7 @@ export function Settings(props: SettingsProps) {
           Permanently delete this notebook. (All current members will no longer
           see this notebook.)
         </Label>
-        <Button mt="2" onClick={onDelete} destructive>
+        <Button mt="2" onClick={onDelete} destructive style={{ cursor: 'pointer' }}>
           Delete this notebook
         </Button>
       </Col>

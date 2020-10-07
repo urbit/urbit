@@ -119,7 +119,7 @@ export class ProfileOverlay extends PureComponent {
           )}
           <div className="mono gray2">{cite(`~${ship}`)}</div>
           {!isOwn && (
-            <Button mt={2} width="100%" onClick={this.createAndRedirectToDM}>
+            <Button mt={2} width="100%" style={{ cursor: 'pointer' }} onClick={this.createAndRedirectToDM}>
               Send Message
             </Button>
           )}
