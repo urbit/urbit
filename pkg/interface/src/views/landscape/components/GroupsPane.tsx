@@ -5,7 +5,7 @@ import {
   useLocation,
   RouteComponentProps,
 } from "react-router-dom";
-import { Center, Box } from "@tlon/indigo-react";
+import { Col, Box, Text } from "@tlon/indigo-react";
 import _ from "lodash";
 
 import { Resource } from "./Resource";
@@ -185,9 +185,15 @@ export function GroupsPane(props: GroupsPaneProps) {
         render={(routeProps) => {
           return (
             <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
-              <Center display={["none", "auto"]}>
-                Open something to get started
-              </Center>
+              <Col
+                alignItems="center"
+                justifyContent="center"
+                display={["none", "flex"]}
+              >
+                <Box><Text fontSize="1">
+                  Open something, or create a channel to get started
+                </Text></Box>
+              </Col>
               {popovers(routeProps, baseUrl)}
             </Skeleton>
           );

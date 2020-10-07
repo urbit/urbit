@@ -28,7 +28,7 @@ const sortGroupsRecent = (recent: string[]) => (
   if(bRecency === -1) {
     return -1;
   }
-  return Math.max(0,bRecency) - Math.max(0, aRecency);
+  return Math.max(0, aRecency) - Math.max(0,bRecency);
 };
 
 const sortGroupsAlph = (a: Association, b: Association) =>

@@ -13,6 +13,8 @@ import { PopoverRoutes } from './components/PopoverRoutes';
 import { UnjoinedResource } from '~/views/components/UnjoinedResource';
 import { GroupsPane } from './components/GroupsPane';
 import { Workspace } from '~/types';
+import {NewGroup} from './components/NewGroup';
+import {JoinGroup} from './components/JoinGroup';
 
 
 type LandscapeProps = StoreState & {
@@ -73,6 +75,30 @@ export default class Landscape extends Component<LandscapeProps, {}> {
 
             return (
               <GroupsPane workspace={ws} baseUrl="/~landscape/home" {...props} />
+            );
+          }}
+        />
+        <Route path="/~landscape/new"
+          render={routeProps=> {
+            return (
+              <NewGroup
+                groups={props.groups}
+                contacts={props.contacts}
+                api={props.api} 
+                {...routeProps}
+              />
+            );
+          }}
+        />
+        <Route path="/~landscape/join"
+          render={routeProps=> {
+            return (
+              <JoinGroup 
+                groups={props.groups}
+                contacts={props.contacts}
+                api={props.api} 
+                {...routeProps}
+              />
             );
           }}
         />

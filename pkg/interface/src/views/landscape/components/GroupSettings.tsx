@@ -18,6 +18,7 @@ import GlobalApi from "~/logic/api/global";
 import { resourceFromPath, roleForShip } from "~/logic/lib/group";
 import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
 import { ColorInput } from "~/views/components/ColorInput";
+import { useHistory } from "react-router-dom";
 
 interface FormSchema {
   title: string;
@@ -41,6 +42,7 @@ interface GroupSettingsProps {
 export function GroupSettings(props: GroupSettingsProps) {
   const { group, association } = props;
   const { metadata } = association;
+  const history = useHistory();
   const currentPrivate = "invite" in props.group.policy;
   const initialValues: FormSchema = {
     title: metadata?.title,
@@ -55,7 +57,11 @@ export function GroupSettings(props: GroupSettingsProps) {
   ) => {
     try {
       const { title, description, color, isPrivate } = values;
-      await props.api.metadata.update(props.association, { title, description, color });
+      await props.api.metadata.update(props.association, {
+        title,
+        description,
+        color,
+      });
       if (isPrivate !== currentPrivate) {
         const resource = resourceFromPath(props.association["group-path"]);
         const newPolicy: Enc<GroupPolicy> = isPrivate
@@ -74,6 +80,13 @@ export function GroupSettings(props: GroupSettingsProps) {
 
   const onDelete = async () => {
     await props.api.contacts.delete(association["group-path"]);
+    history.push("/");
+  };
+
+  const onLeave = async () => {
+    const [, , ship] = association["group-path"].split("/");
+    await props.api.contacts.remove(association["group-path"], ship);
+    history.push("/");
   };
   const disabled =
     resourceFromPath(association["group-path"]).ship.slice(1) !== window.ship &&
@@ -96,21 +109,30 @@ export function GroupSettings(props: GroupSettingsProps) {
             my={3}
             mx={4}
           >
-            {!disabled && (
-              <>
-                <Col>
-                  <Label>Delete Group</Label>
-                  <Label gray mt="2">
-                    Permanently delete this group. (All current members will no
-                    longer see this group.)
-                  </Label>
-                  <StatelessAsyncButton onClick={onDelete} mt={2} destructive>
-                    Delete this group
-                  </StatelessAsyncButton>
-                </Col>
-                <Box borderBottom={1} borderBottomColor="washedGray" />
-              </>
+            {!disabled ? (
+              <Col>
+                <Label>Delete Group</Label>
+                <Label gray mt="2">
+                  Permanently delete this group. (All current members will no
+                  longer see this group.)
+                </Label>
+                <StatelessAsyncButton onClick={onDelete} mt={2} destructive>
+                  Delete this group
+                </StatelessAsyncButton>
+              </Col>
+            ) : (
+              <Col>
+                <Label>Leave Group</Label>
+                <Label gray mt="2">
+                  Leave this group. You can rejoin if it is an open group, or if
+                  you are reinvited
+                </Label>
+                <StatelessAsyncButton onClick={onLeave} mt={2} destructive>
+                  Leave this group
+                </StatelessAsyncButton>
+              </Col>
             )}
+            <Box borderBottom={1} borderBottomColor="washedGray" />
             <Input
               id="title"
               label="Group Name"
