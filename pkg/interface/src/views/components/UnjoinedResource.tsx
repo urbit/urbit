@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { Association } from "~/types/metadata-update";
 import { Box, Text, Button, Col, Center } from "@tlon/indigo-react";
-import RichText from '~/views/components/RichText';
+import RichText from "~/views/components/RichText";
 import { Link, useHistory } from "react-router-dom";
 import GlobalApi from "~/logic/api/global";
 import { useWaitForProps } from "~/logic/lib/useWaitForProps";
@@ -80,14 +80,21 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
 
   return (
     <Center p={6}>
-      <Col maxWidth="400px" p={4} border={1} borderColor="washedGray">
-        <Box mb={4}>
+      <Col
+        maxWidth="400px"
+        p={4}
+        border={1}
+        borderColor="lightGray"
+        borderRadius="1"
+        gapY="3"
+      >
+        <Box>
           <Text>{title}</Text>
         </Box>
-        <Box mb={4}>
+        <Box>
           <RichText color="gray">{description}</RichText>
         </Box>
-        <StatelessAsyncButton onClick={onJoin} mx="auto" border>
+        <StatelessAsyncButton primary width="fit-content" onClick={onJoin}>
           Join Channel
         </StatelessAsyncButton>
       </Col>
