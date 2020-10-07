@@ -78,7 +78,7 @@ export default function S3Form(props: S3FormProps) {
               label="Secret Access Key"
               id="s3secretAccessKey"
             />
-            <Button type="submit">Submit</Button>
+            <Button style={{ cursor: 'pointer' }} type="submit">Submit</Button>
           </Form>
         </Formik>
       </Col>

@@ -108,7 +108,7 @@ export class Notebook extends PureComponent<
         <Row justifyContent={["flex-start", "flex-end"]}>
           {isWriter && (
             <Link to={relativePath("/new")}>
-              <Button primary border>
+              <Button primary border style={{ cursor: 'pointer' }}>
                 New Post
               </Button>
             </Link>
@@ -124,6 +124,7 @@ export class Notebook extends PureComponent<
               <Button
                 ml={isWriter ? 2 : 0}
                 destructive
+                style={{ cursor: 'pointer' }}
                 onClick={() => {
                   this.setState({ isUnsubscribing: true });
                   api.publish

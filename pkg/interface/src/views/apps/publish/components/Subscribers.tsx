@@ -82,7 +82,7 @@ export class Subscribers extends Component<SubscribersProps> {
     return (
       <Box mt="3">
         { role === 'admin' && (
-          <Button mb={3} border onClick={this.addAll}>
+          <Button mb={3} border onClick={this.addAll} style={{ cursor: 'pointer' }}>
             Add all members as writers
           </Button>
         )}

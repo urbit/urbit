@@ -44,7 +44,7 @@ export function StatelessAsyncButton({
       ) : state === "loading" ? (
         <LoadingSpinner
           foreground={rest.primary ? "white" : "black"}
-          background="transparent"
+          background="gray"
         />
       ) : state === "success" ? (
         "Done"
