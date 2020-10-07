@@ -75,9 +75,9 @@ export function ChannelSettings(props: ChannelSettingsProps) {
             gridRowGap={4}
           >
             <Col mb={3}>
-              <Text fontWeight="bold">Channel Host Settings</Text>
-              <Label>
-                Adjust channel settings, only available for channel's hosts
+              <Text fontWeight="bold">Channel Settings</Text>
+              <Label gray mt='2'>
+                Set the title, description and colour of the channel
               </Label>
             </Col>
             <Input
