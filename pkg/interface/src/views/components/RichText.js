@@ -29,8 +29,8 @@ const RichText = React.memo(({ remoteContentPolicy, ...props }) => (
         }
         return <BaseAnchor target='_blank' rel='noreferrer noopener' borderBottom='1px solid' {...props}>{props.children}</BaseAnchor>;
       },
-      paragraph: (paraProps) => {
-        return <Text display='block' mb='2' {...props} {...paraProps}>{props.children}</Text>;
+      paragraph: (props) => {
+        return <Text display='block' mb='2'>{props.children}</Text>;
       }
     }}
     plugins={[[
