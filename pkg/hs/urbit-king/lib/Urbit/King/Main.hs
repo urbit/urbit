@@ -727,6 +727,7 @@ runShipRestarting serfExe r o = do
       loop
     Right () -> do
       logTrace $ display (pier <> " shutdown requested")
+      atomically $ putTMVar vKillPier ()
       race_ (wait tid) $ do
         threadDelay 5_000_000
         logInfo $ display (pier <> " not down after 5s, killing with fire.")
