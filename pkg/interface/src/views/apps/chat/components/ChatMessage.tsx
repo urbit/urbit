@@ -1,7 +1,7 @@
 import React, { Component, PureComponent } from "react";
 import moment from "moment";
 import _ from "lodash";
-import { Box } from "@tlon/indigo-react";
+import { Box, Row, Text } from "@tlon/indigo-react";
 
 import { OverlaySigil } from './overlay-sigil';
 import { uxToHex, cite, writeText } from '~/logic/lib/util';
@@ -96,8 +96,8 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     const dayBreak = nextMsg && new Date(msg.when).getDate() !== new Date(nextMsg.when).getDate();
 
     const containerClass = `${renderSigil
-      ? `f9 w-100 flex flex-wrap cf pr3 pt4 pl3 lh-copy`
-      : `f9 w-100 flex flex-wrap items-center cf pr3 hide-child`} ${isPending ? 'o-40' : ''} ${isLastMessage ? 'pb3' : ''} ${className}`
+      ? `cf pt2 pl3 lh-copy`
+      : `items-center cf hide-child`} ${isPending ? 'o-40' : ''} ${className}`
 
     const timestamp = moment.unix(msg.when / 1000).format(renderSigil ? 'hh:mm a' : 'hh:mm');
 
@@ -129,15 +129,25 @@ export default class ChatMessage extends Component<ChatMessageProps> {
     };
 
     return (
-      <div ref={this.divRef} className={containerClass} style={style} data-number={msg.number}>
+      <Box
+        width='100%'
+        display='flex'
+        flexWrap='wrap'
+        pr={3}
+        pb={isLastMessage ? 3 : 0}
+        ref={this.divRef}
+        className={containerClass}
+        style={style}
+        data-number={msg.number}
+      >
         {dayBreak && !isLastRead ? <DayBreak when={msg.when} /> : null}
         {renderSigil
           ? <MessageWithSigil {...messageProps} />
           : <MessageWithoutSigil {...messageProps} />}
-        <Box fontSize='0' position='relative' width='100%' overflow='visible' style={unreadContainerStyle}>{isLastRead
+        <Box fontSize={0} position='relative' width='100%' overflow='visible' style={unreadContainerStyle}>{isLastRead
           ? <UnreadMarker dayBreak={dayBreak} when={msg.when} ref={unreadMarkerRef} />
           : null}</Box>
-      </div>
+      </Box>
     );
   }
 }
@@ -210,25 +220,32 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
           allStations={allStations}
           history={history}
           api={api}
-          className="fl pr3 v-top bg-white bg-gray0-d"
+          className="fl pr3 v-top bg-white bg-gray0-d pt1"
         />
-        <div className="fr f8 clamp-message white-d" style={{ flexGrow: 1, marginTop: -12 }}>
-          <div className="hide-child" style={{ paddingTop: '8px' }}>
-            <p className="v-mid f9 black white-d dib mr3 c-default">
-              <span
-                className={`mw5 db truncate pointer ${showNickname ? '' : 'mono'}`}
-                ref={e => nameSpan = e}
-                onClick={() => {
-                  writeText(msg.author);
-                  copyNotice(name);
-                }}
-                title={`~${msg.author}`}
-              >{name}</span>
-            </p>
-            <p className="v-mid mono f9 gray2 dib">{timestamp}</p>
-            <p className="v-mid mono f9 gray2 dib ml2 child dn-s">{datestamp}</p>
-          </div>
-          <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} />
+        <div className="clamp-message" style={{ flexGrow: 1 }}>
+          <Box
+            className="hide-child"
+            pt={1}
+            pb={1}
+            display='flex'
+            alignItems='center'
+          >
+            <Text
+              fontSize={0}
+              mr={3}
+              mono={!showNickname}
+              className={`mw5 db truncate pointer`}
+              ref={e => nameSpan = e}
+              onClick={() => {
+                writeText(msg.author);
+                copyNotice(name);
+              }}
+              title={`~${msg.author}`}
+            >{name}</Text>
+            <Text gray mono className="v-mid">{timestamp}</Text>
+            <Text gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
+          </Box>
+          <Box fontSize={1}><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
         </div>
       </>
     );
@@ -238,9 +255,9 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
 export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
   <>
     <p className="child pr1 mono f9 gray2 dib">{timestamp}</p>
-    <div className="fr f8 clamp-message white-d pr3 lh-copy" style={{ flexGrow: 1 }}>
+    <Box fontSize={1} className="clamp-message" style={{ flexGrow: 1 }}>
       <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
-    </div>
+    </Box>
   </>
 );
 
@@ -249,17 +266,19 @@ export const MessageContent = ({ content, remoteContentPolicy, measure }) => {
     return <CodeContent content={content} />;
   } else if ('url' in content) {
     return (
-      <RemoteContent
-        url={content.url}
-        remoteContentPolicy={remoteContentPolicy}
-        onLoad={measure}
-        imageProps={{style: {
+      <Text fontSize={1} lineHeight="tall">
+        <RemoteContent
+          url={content.url}
+          remoteContentPolicy={remoteContentPolicy}
+          onLoad={measure}
+          imageProps={{style: {
+              maxWidth: '18rem'
+          }}}
+          videoProps={{style: {
             maxWidth: '18rem'
-        }}}
-        videoProps={{style: {
-          maxWidth: '18rem'
-        }}}
-      />
+          }}}
+        />
+      </Text>
     );
   } else if ('me' in content) {
     return (
