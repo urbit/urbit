@@ -10,5 +10,4 @@
 |=  $:  [now=@da eny=@uvJ =beak]
         [[comm=command ~] ~]
     ==
-:-  %btc-bridge-command
-comm
+[%btc-bridge-command comm]
