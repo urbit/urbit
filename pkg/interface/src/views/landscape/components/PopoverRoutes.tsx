@@ -25,8 +25,8 @@ const SidebarItem = ({ selected, icon, text, to }) => {
       px={3}
       py={1}
     >
-      <Icon icon={icon} />
-      <Text ml="2" color={selected ? "black" : "gray"}>{text}</Text>
+      <Icon icon={icon} mr='2'/>
+      <Text color={selected ? "black" : "gray"}>{text}</Text>
     </HoverBoxLink>
   );
 };
@@ -90,7 +90,7 @@ export function PopoverRoutes(
                     borderRightColor="washedGray"
                   >
                     <SidebarItem
-                      icon="Circle"
+                      icon="Node"
                       selected={view === "participants"}
                       to={relativeUrl("/participants")}
                       text="Participants"

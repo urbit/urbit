@@ -43,9 +43,9 @@ export function GroupSettings(props: GroupSettingsProps) {
   const { metadata } = association;
   const currentPrivate = "invite" in props.group.policy;
   const initialValues: FormSchema = {
-    title: metadata.title,
-    description: metadata.description,
-    color: metadata.color,
+    title: metadata?.title,
+    description: metadata?.description,
+    color: metadata?.color,
     isPrivate: currentPrivate,
   };
 

@@ -31,7 +31,7 @@ export function StatelessAsyncButton({
           foreground={
             rest.primary ? "white" : rest.destructive ? "red" : "black"
           }
-          background="transparent"
+          background="gray"
         />
       ) : state === "success" ? (
         "Done"
