@@ -55,14 +55,12 @@
 ::
 +$  publish-body
   $%  [%post-new author=ship title=@t snippet=@t]
-      [%post-deleted author=ship title=@t]
       [%post-edit author=ship title=@t]
       [%comment author=ship title=@t snippet=@t]
   ==
 ::
 +$  link-body
   $%  [%new author=ship title=@t url=@t]
-      [%deleted author=ship title=@t url=@t]
       [%comment author=ship title=@t snippet=@t]
   ==
 --
