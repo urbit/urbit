@@ -8,7 +8,7 @@
     $%  state-0
     ==
 ::
-+$  state-0  [%0 counter=@]
++$  state-0  [%0 =status]
 ::
 +$  card  card:agent:gall
 ::
@@ -17,6 +17,7 @@
 =|  state-0
 =*  state  -
 ^-  agent:gall
+=<
 |_  =bowl:gall
 +*  this      .
     def   ~(. (default-agent this %|) bowl)
@@ -25,8 +26,9 @@
 ++  on-init
   ^-  (quip card _this)
   ~&  >  '%btc-bridge initialized successfully'
-  :-  ~[[%pass /btc-node-hook/[(scot %da now.bowl)] %agent [our.bowl %btc-node-hook] %watch /responses]]
-  this
+  :-  ~
+::  :-  ~[[%pass /btc-node-hook/[(scot %da now.bowl)] %agent [our.bowl %btc-node-hook] %watch /responses]]
+  this(status [%client connected=%.n host=~])
 ++  on-save
   ^-  vase
   !>(state)
@@ -38,14 +40,14 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ?+    mark  (on-poke:def mark vase)
-      %noun
-    ?+    q.vase  (on-poke:def mark vase)
-        %status
-      :_  this
-      ~[[%pass / %agent [our.bowl %btc-node-hook] %poke %btc-node-hook-action !>([%get-block-count ~])]]
+  ::  Only allow poke from our ship, unless we're a host
+  ?>  ?|((team:title our.bowl src.bowl) ?=(%host -.status))
+  =^  cards  state
+    ?+  mark  (on-poke:def mark vase)
+        %btc-bridge-command
+      (handle-command:hc !<(command vase))
     ==
-  ==
+  [cards this]
 ::
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
@@ -67,3 +69,22 @@
 ++  on-fail   on-fail:def
 --
 ::  helper core
+|_  =bowl:gall
+++  handle-command
+  |=  comm=command
+  ^-  (quip card _state)
+  ?-  -.comm
+      %connect-as-host
+      ::  TODO send a subscription to the node hook; update status in on-agent when ack'd
+    `state
+      %connect-as-client
+      ::  TODO send a subscription to the btc-bridge host
+      ::  update status in on-agent when ack'd by BTC-BRIDGE
+    `state
+      %allow-clients
+    ?+  -.status  ~&(>>> 'Only a %host can add clients' `state)
+        %host
+      `state(clients.status (~(uni in clients.status) users.comm))
+    ==
+  ==
+--
