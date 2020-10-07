@@ -154,7 +154,7 @@ export function GroupSwitcher(props: {
           >
             <Row p={2} alignItems="center">
               <Row alignItems="center" mr={1} flex='1'>
-                <Text overflow='hidden' display='inline-block' maxWidth='144px'  style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
+                <Text overflow='hidden' display='inline-block' maxWidth='131px'  style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
               </Row>
               <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
             </Row>
