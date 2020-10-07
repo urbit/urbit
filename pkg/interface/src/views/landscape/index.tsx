@@ -33,6 +33,7 @@ export default class Landscape extends Component<LandscapeProps, {}> {
     this.props.subscription.startApp('chat')
     this.props.subscription.startApp('publish');
     this.props.subscription.startApp('graph');
+    this.props.api.publish.fetchNotebooks();
     
   }
 

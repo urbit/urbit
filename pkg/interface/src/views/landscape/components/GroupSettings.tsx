@@ -83,11 +83,6 @@ export function GroupSettings(props: GroupSettingsProps) {
     history.push("/");
   };
 
-  const onLeave = async () => {
-    const [, , ship] = association["group-path"].split("/");
-    await props.api.contacts.remove(association["group-path"], ship);
-    history.push("/");
-  };
   const disabled =
     resourceFromPath(association["group-path"]).ship.slice(1) !== window.ship &&
     roleForShip(group, window.ship) !== "admin";
@@ -127,7 +122,7 @@ export function GroupSettings(props: GroupSettingsProps) {
                   Leave this group. You can rejoin if it is an open group, or if
                   you are reinvited
                 </Label>
-                <StatelessAsyncButton onClick={onLeave} mt={2} destructive>
+                <StatelessAsyncButton onClick={onDelete} mt={2} destructive>
                   Leave this group
                 </StatelessAsyncButton>
               </Col>

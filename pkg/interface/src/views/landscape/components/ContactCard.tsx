@@ -72,6 +72,14 @@ export function ContactCard(props: ContactCardProps) {
   const { contact } = props;
   const onSubmit = async (values: Contact, actions: FormikHelpers<Contact>) => {
     try {
+      if(!contact) {
+        const [,,ship] = props.path.split('/');
+        values.color = uxToHex(values.color);
+        await props.api.contacts.share(ship, props.path, us, values)
+        actions.setStatus({ success: null });
+        return;
+      }
+
       await Object.keys(values).reduce((acc, key) => {
         const newValue = key !== "color" ? values[key] : uxToHex(values[key]);
         if (newValue !== contact[key]) {
