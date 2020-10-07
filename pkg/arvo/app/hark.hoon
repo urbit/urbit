@@ -22,11 +22,13 @@
 =|  state-0
 =*  state  -
 ::
+=<
 %-  agent:dbug
 ^-  agent:gall
 ~%  %hark-agent  ..card  ~
 |_  =bowl:gall
 +*  this  .
+    ha    ~(. +> bowl)
     def   ~(. (default-agent this %|) bowl)
     met   ~(. metadata bowl)
 ::
@@ -47,24 +49,17 @@
   ~/  %hark-watch
   |=  =path
   ^-  (quip card _this)
-  |^
   ?>  (team:title our.bowl src.bowl)
   =/  cards=(list card)
     ?+  path           (on-watch:def path)
         [%updates ~]
-      %-  give
+      %+  give:ha  ~
       :-  %keys
       %-  ~(run by unreads)
       |=  res=(map app=resource unread-mop:store)
       ~(key by res)
     ==
   [cards this]
-  ::
-  ++  give
-    |=  =update-0:store
-    ^-  (list card)
-    [%give %fact ~ [%hark-update !>([%0 update-0])]]~
-  --
 ::
 ++  on-poke
   ~/  %hark-poke
@@ -83,11 +78,11 @@
     ^-  (quip card _state)
     |^
     ?-  -.action
+      %read    (read +.action)
       %listen  (listen +.action)
       %ignore  (ignore +.action)
-      %read    (read +.action)
     ==
-    ::
+    ++  read  mark-as-read:ha
     ++  listen
       |=  =app=resource
       ^-  (quip card _state)
@@ -106,8 +101,7 @@
         %+  ~(put by unreads)  group-resource
         (~(put by by-group) app-resource *unread-mop:store)
       ::
-      :_  state
-      [%give %fact [/updates]~ %hark-update !>([%0 %listen app-resource])]~
+      :_(state (give:ha [/updates]~ %listen app-resource))
     ::
     ++  ignore
       |=  =app=resource
@@ -122,54 +116,7 @@
           (~(del by unreads) group-resource)
         (~(put by unreads) group-resource u.by-group)
       ::
-      :_  state
-      [%give %fact [/updates]~ %hark-update !>([%0 %ignore app-resource])]~
-    ::
-    ++  read
-      |=  item=read-type:store
-      ^-  (quip card _state)
-      :-  [%give %fact [/updates]~ %hark-update !>([%0 %read item])]~
-      ?-  -.item
-          %group
-        =.  unreads
-          %+  ~(jab by unreads)  group-resource.item
-          |=  by-group=(map =app=resource unread-mop:store)
-          (~(run by by-group) |=(* *unread-mop:store))
-        state
-     ::
-          %app
-        =/  group-resource=resource  (get-group-resource app-resource.item)
-        =.  unreads
-          %+  ~(jab by unreads)  group-resource
-          |=  by-group=(map =app=resource unread-mop:store)
-          (~(put by by-group) app-resource.item *unread-mop:store)
-        state
-     ::
-          %app-at-index
-        =/  group-resource=resource  (get-group-resource app-resource.item)
-        =.  unreads
-          %+  ~(jab by unreads)  group-resource
-          |=  by-group=(map =app=resource unread-mop:store)
-          %+  ~(jab by by-group)  app-resource.item
-          |=  by-app=unread-mop:store
-          +:(del:orm by-app index.item)
-        state
-      ==
-    ::
-    ++  give
-      |=  [paths=(list path) update=update-0:store]
-      ^-  (list card)
-      [%give %fact paths [%hark-update !>([%0 update])]]~
-    ::
-    ++  get-group-resource
-      |=  =app=resource
-      ^-  resource
-      =/  group-resource=(unit resource)
-        (group-from-app-resource:met %graph app-resource)
-      ?~  group-resource
-        ~|  no-group-for-app-resource+app-resource
-        !!
-      u.group-resource
+      :_(state (give:ha [/updates]~ %ignore app-resource))
     --
   --
 ::
@@ -208,11 +155,11 @@
     ?+    -.update  [~ state]
         %add-members
       =/  =body:store  [%group %add-members ships.update]
-      (add-unread resource.update %group resource.update [now.bowl]~ body)
+      (add-unread:ha resource.update %group resource.update [now.bowl]~ body)
     ::
         %remove-members
       =/  =body:store  [%group %remove-members ships.update]
-      (add-unread resource.update %group resource.update [now.bowl]~ body)
+      (add-unread:ha resource.update %group resource.update [now.bowl]~ body)
     ::
         %remove-group
       =.  unreads  (~(put by unreads) resource.update ~)
@@ -261,35 +208,39 @@
           ==
         =/  =body:store  [%link index.post link-body]
         =/  [c=(list card) s=_state]
-          (add-unread u.group-resource %link app-resource index.post body)
+          (add-unread:ha u.group-resource %link app-resource index.post body)
         $(nodes t.nodes, cards (weld c cards), state s)
       ==
     ::
-        %remove-nodes  !!
+        %remove-nodes
+      =/  app-resource=resource  resource.q.update
+      =/  group-resource=(unit resource)
+        (group-from-app-resource:metadata %graph app-resource)
+      ?~  group-resource
+        [~ state]
+      =/  meta=(unit metadata:metadata)
+        (peek-metadata:metadata %graph u.group-resource app-resource)
+      ?~  meta
+        [~ state]
+      ?+    module.u.meta  [~ state]
+          %publish
+        [~ state]  ::  TODO: integrate with :graph-store %publish
+      ::
+          %link
+        =/  indices  ~(tap in indices.q.update)
+        =|  cards=(list card)
+        |-  ^-  (quip card _state)
+        ?~  indices  [cards state]
+        =/  [c=(list card) s=_state]
+          (mark-as-read:ha %app-at-index resource.q.update i.indices)
+        $(indices t.indices, cards (weld c cards), state s)
+      ==
     ==
   ::
   ++  metadata-update
     |=  update=metadata-update:metadata-store
     ^-  (quip card _state)
     [~ state]
-  ::
-  ++  add-unread
-    |=  [=group=resource module=term =app=resource =index:post =body:store]
-    ^-  (quip card _state)
-    =/  =unread:store  [now.bowl module group-resource app-resource body]
-    =.  unreads
-      %+  ~(jab by unreads)  group-resource
-      |=  by-group=(map =app=resource unread-mop:store)
-      %+  ~(jab by by-group)  group-resource
-      |=  =unread-mop:store
-      (put:orm unread-mop index unread)
-    :_(state (give [/updates]~ [%add unread]))
-  ::  TODO: duplicate with above
-  ::
-  ++  give
-    |=  [paths=(list path) update=update-0:store]
-    ^-  (list card)
-    [%give %fact paths [%hark-update !>([%0 update])]]~
   --
 ::
 ++  on-peek
@@ -301,4 +252,64 @@
 ++  on-leave  on-leave:def
 ++  on-arvo  on-arvo:def
 ++  on-fail   on-fail:def
+--
+|_  =bowl:gall
++*  met  ~(. metadata bowl)
+++  mark-as-read
+  |=  item=read-type:store
+  ^-  (quip card _state)
+  :-  [%give %fact [/updates]~ %hark-update !>([%0 %read item])]~
+  ?-  -.item
+      %group
+    =.  unreads
+      %+  ~(jab by unreads)  group-resource.item
+      |=  by-group=(map =app=resource unread-mop:store)
+      (~(run by by-group) |=(* *unread-mop:store))
+    state
+ ::
+      %app
+    =/  group-resource=resource  (get-group-resource app-resource.item)
+    =.  unreads
+      %+  ~(jab by unreads)  group-resource
+      |=  by-group=(map =app=resource unread-mop:store)
+      (~(put by by-group) app-resource.item *unread-mop:store)
+    state
+ ::
+      %app-at-index
+    =/  group-resource=resource  (get-group-resource app-resource.item)
+    =.  unreads
+      %+  ~(jab by unreads)  group-resource
+      |=  by-group=(map =app=resource unread-mop:store)
+      %+  ~(jab by by-group)  app-resource.item
+      |=  by-app=unread-mop:store
+      +:(del:orm by-app index.item)
+    state
+  ==
+::
+++  get-group-resource
+  |=  =app=resource
+  ^-  resource
+  =/  group-resource=(unit resource)
+    (group-from-app-resource:met %graph app-resource)
+  ?~  group-resource
+    ~|  no-group-for-app-resource+app-resource
+    !!
+  u.group-resource
+::
+++  add-unread
+  |=  [=group=resource module=term =app=resource =index:post =body:store]
+  ^-  (quip card _state)
+  =/  =unread:store  [now.bowl module group-resource app-resource body]
+  =.  unreads
+    %+  ~(jab by unreads)  group-resource
+    |=  by-group=(map =app=resource unread-mop:store)
+    %+  ~(jab by by-group)  group-resource
+    |=  =unread-mop:store
+    (put:orm unread-mop index unread)
+  :_(state (give [/updates]~ [%add unread]))
+::
+++  give
+  |=  [paths=(list path) update=update-0:store]
+  ^-  (list card)
+  [%give %fact paths [%hark-update !>([%0 update])]]~
 --
