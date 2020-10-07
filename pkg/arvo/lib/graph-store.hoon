@@ -31,6 +31,21 @@
 ++  orm      ((ordered-map atom node) gth)
 ++  orm-log  ((ordered-map time logged-update) gth)
 ::
+++  util
+  |_  =bowl:gall
+  ++  peek-post
+    |=  [=app=resource =index]
+    ^-  post
+    =/  her=cord  (scot %p entity.app-resource)
+    =/  nam=cord  name.app-resource
+    =/  inx=path  (turn index |=(@ (scot %ud +<)))
+    =<  post
+    .^  node
+      %gx  (scot %p our.bowl)  %graph-store  (scot %da now.bowl)
+      %post  her  nam  inx
+    ==
+  --
+::
 ++  enjs
   =,  enjs:format
   |%
