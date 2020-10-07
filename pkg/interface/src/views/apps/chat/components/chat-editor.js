@@ -133,10 +133,10 @@ export default class ChatEditor extends Component {
     return (
       <div
         className={
-          'chat fr h-100 flex bg-gray0-d lh-copy w-100 items-center ' +
+          'chat fr flex h-100 bg-gray0-d lh-copy w-100 items-center ' +
           (inCodeMode ? ' code' : '')
         }
-        style={{ flexGrow: 1, paddingBottom: '3px', maxHeight: '224px', width: 'calc(100% - 88px)' }}>
+        style={{ flexGrow: 1, paddingBottom: '2px', maxHeight: '224px', width: 'calc(100% - 88px)' }}>
         <CodeEditor
           value={message}
           options={options}

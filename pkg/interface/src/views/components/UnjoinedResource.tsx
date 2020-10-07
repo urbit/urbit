@@ -94,7 +94,12 @@ export function UnjoinedResource(props: UnjoinedResourceProps) {
         <Box>
           <RichText color="gray">{description}</RichText>
         </Box>
-        <StatelessAsyncButton primary width="fit-content" onClick={onJoin}>
+        <StatelessAsyncButton
+          name={appPath}
+          primary
+          width="fit-content"
+          onClick={onJoin}
+        >
           Join Channel
         </StatelessAsyncButton>
       </Col>

@@ -39,12 +39,10 @@ export function Resource(props: ResourceProps) {
       <Route
         path={relativePath("/settings")}
         render={(routeProps) => {
-          const title = `Channel Settings: ${association?.metadata?.title}`;
           return (
             <ResourceSkeleton
               baseUrl={props.baseUrl}
               {...skelProps}
-              title={title}
             >
               <ChannelSettings api={api} association={association} />
             </ResourceSkeleton>

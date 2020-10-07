@@ -62,6 +62,7 @@ interface SidebarProps {
 // is fixed
 const SidebarStickySpacer = styled(Box)`
   height: 0px;
+  flex-grow: 1;
   @-moz-document url-prefix() {
     & {
       height: ${p => p.theme.space[6] }px;
@@ -88,12 +89,11 @@ export function Sidebar(props: SidebarProps) {
     <Col
       display={display}
       width="100%"
-      height="100%"
       gridRow="1/2"
       gridColumn="1/2"
       borderRight={1}
       borderRightColor="washedGray"
-      overflowY="auto"
+      overflowY="scroll"
       fontSize={0}
       bg="white"
       position="relative"
@@ -127,12 +127,14 @@ export function Sidebar(props: SidebarProps) {
       />
       <SidebarStickySpacer flexShrink={0} />
       <Box
+        flexShrink="0"
         display="flex"
         justifyContent="center"
         position="sticky"
-        bottom="8px"
+        bottom={"8px"}
         width="100%"
-        my={2}
+        height="fit-content"
+        py="2"
       >
         <Link
           to={!!groupPath ? `/~landscape${groupPath}/new` : `/~landscape/home/new`}

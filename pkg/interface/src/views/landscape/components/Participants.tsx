@@ -29,6 +29,13 @@ import { useHistory, Link } from "react-router-dom";
 import { Dropdown } from "~/views/components/Dropdown";
 import GlobalApi from "~/logic/api/global";
 import { StatelessAsyncAction } from "~/views/components/StatelessAsyncAction";
+import styled from "styled-components";
+
+const TruncText = styled(Box)`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
 type Participant = Contact & { patp: string; pending: boolean };
 type ParticipantsTabId = "total" | "pending" | "admin";
@@ -108,6 +115,8 @@ export function Participants(props: {
     [props.group]
   );
 
+  const ourRole = roleForShip(props.group, window.ship);
+
   const [filter, setFilter] = useState<ParticipantsTabId>("total");
 
   const [search, _setSearch] = useState("");
@@ -137,18 +146,27 @@ export function Participants(props: {
     [search, filter, participants]
   );
 
+  // Sticky positioning needs to be disabled on safari due to this bug
+  // https://bugs.webkit.org/show_bug.cgi?id=210656
+  // TODO: remove when resolved
+  const isSafari = useMemo(() => {
+    const ua = window.navigator.userAgent;
+    return ua.includes("Safari") && !ua.includes("Chrome");
+  }, []);
+
   return (
-    <Col height="100%" overflowY="auto" p={2} position="relative">
+    <Col height="100%" overflowY="scroll" p={2} position="relative">
       <Row
         bg="white"
         border={1}
         borderColor="washedGray"
         borderRadius={1}
-        position="sticky"
+        position={isSafari ? "static" : "sticky"}
         top="0px"
         mb={2}
         px={2}
         zIndex={1}
+        flexShrink="0"
       >
         <Row mr="4" flexShrink="0">
           <Tab
@@ -173,20 +191,8 @@ export function Participants(props: {
           />
         </Row>
       </Row>
-      <Box
-        display="grid"
-        gridAutoRows={["48px 48px 1px", "48px 1px"]}
-        gridTemplateColumns={["48px 1fr", "48px 1fr 144px"]}
-        gridRowGap={2}
-        alignItems="center"
-      >
-        <Row
-          alignItems="center"
-          gridColumn={["1 / 3", "1 / 4"]}
-          bg="washedGray"
-          borderRadius="1"
-          px="2"
-        >
+      <Col flexShrink="0" width="100%" height="fit-content">
+        <Row alignItems="center" bg="washedGray" borderRadius="1" px="2" my="2">
           <Icon stroke="gray" icon="MagnifyingGlass" />
           <Input
             maxWidth="256px"
@@ -198,36 +204,39 @@ export function Participants(props: {
           />
         </Row>
         <Box
-          borderBottom={1}
-          borderBottomColor="washedGray"
-          gridColumn={["1 / 3", "1 / 4"]}
-        />
-        {filtered.map((cs, idx) => (
-          <VisibilitySensor
-            key={idx}
-            offset={{ top: -800, bottom: -800 }}
-            partialVisibility
-            scrollDelay={150}
-          >
-            {({ isVisible }) =>
-              isVisible ? (
-                cs.map((c) => (
-                  <Participant
-                    api={api}
-                    key={c.patp}
-                    role="admin"
-                    group={props.group}
-                    contact={c}
-                    association={props.association}
-                  />
-                ))
-              ) : (
-                <BlankParticipant length={cs.length} />
-              )
-            }
-          </VisibilitySensor>
-        ))}
-      </Box>
+          display="grid"
+          gridAutoRows={["48px 48px 1px", "48px 1px"]}
+          gridTemplateColumns={["48px 1fr", "48px 2fr 1fr", "48px 3fr 1fr"]}
+          gridRowGap={2}
+          alignItems="center"
+        >
+          {filtered.map((cs, idx) => (
+            <VisibilitySensor
+              key={idx}
+              offset={{ top: -800, bottom: -800 }}
+              partialVisibility
+              scrollDelay={150}
+            >
+              {({ isVisible }) =>
+                isVisible ? (
+                  cs.map((c) => (
+                    <Participant
+                      api={api}
+                      key={c.patp}
+                      role={ourRole}
+                      group={props.group}
+                      contact={c}
+                      association={props.association}
+                    />
+                  ))
+                ) : (
+                  <BlankParticipant length={cs.length} />
+                )
+              }
+            </VisibilitySensor>
+          ))}
+        </Box>
+      </Col>
     </Col>
   );
 }
@@ -239,7 +248,6 @@ function Participant(props: {
   role?: RoleTags;
   api: GlobalApi;
 }) {
-  const history = useHistory();
   const { contact, association, group, api } = props;
   const { title } = association.metadata;
 
@@ -279,19 +287,22 @@ function Participant(props: {
         <Sigil ship={contact.patp} size={32} color={`#${color}`} />
       </Box>
       <Col justifyContent="center" gapY="1" height="100%">
-        {contact.nickname && <Text>{contact.nickname}</Text>}
-        <Text color="gray" fontFamily="mono">
+        {contact.nickname && (
+          <TruncText title={contact.nickname} maxWidth="85%">
+            {contact.nickname}
+          </TruncText>
+        )}
+        <Text title={contact.patp} color="gray" fontFamily="mono">
           {cite(contact.patp)}
         </Text>
       </Col>
       <Row
-        width="100%"
         justifyContent="space-between"
         gridColumn={["1 / 3", "auto"]}
         alignItems="center"
       >
         <Col>
-          <Text mb={1} color="lightGray">
+          <Text color="lightGray" mb="1">
             Role
           </Text>
           <Text>{_.capitalize(role)}</Text>
@@ -334,7 +345,7 @@ function Participant(props: {
             </Col>
           }
         >
-          <Icon mr={2} icon="Ellipsis" />
+          <Icon display="block" icon="Ellipsis" />
         </Dropdown>
       </Row>
       <Box

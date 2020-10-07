@@ -137,7 +137,7 @@ export function GroupSwitcher(props: {
                         color="gray"
                         icon="Gear"
                       />
-                      <Text> Settings</Text>
+                      <Text> Group Settings</Text>
                     </GroupSwitcherItem>
                     <GroupSwitcherItem bottom to={navTo("/invites")}>
                       <Icon

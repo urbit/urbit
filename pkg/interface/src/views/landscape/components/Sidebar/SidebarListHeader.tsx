@@ -28,6 +28,7 @@ export function SidebarListHeader(props: {
 
   return (
     <Row
+      flexShrink="0"
       alignItems="center"
       justifyContent="space-between"
       py={2}
@@ -70,7 +71,7 @@ export function SidebarListHeader(props: {
           </FormikOnBlur>
         }
       >
-        <Icon color="gray" icon="Menu" />
+        <Icon color="gray" icon="Adjust" />
       </Dropdown>
     </Row>
   );

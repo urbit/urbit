@@ -56,8 +56,8 @@ export function Skeleton(props: SkeletonProps) {
   return (
     <Body
       display="grid"
-      gridTemplateColumns={["1fr", "250px 1fr"]}
-      gridTemplateRows="1fr"
+      gridTemplateColumns={["100%", "250px 1fr"]}
+      gridTemplateRows="100%"
     >
       {!props.hideSidebar && (
         <Sidebar

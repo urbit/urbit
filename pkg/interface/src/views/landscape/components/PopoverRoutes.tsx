@@ -26,7 +26,7 @@ const SidebarItem = ({ selected, icon, text, to }) => {
       py={1}
     >
       <Icon icon={icon} />
-      <Text color={selected ? "black" : "gray"}>{text}</Text>
+      <Text ml="2" color={selected ? "black" : "gray"}>{text}</Text>
     </HoverBoxLink>
   );
 };
@@ -57,13 +57,13 @@ export function PopoverRoutes(
           const { view } = routeProps.match.params;
           return (
             <Box
-              px={[3, 7, 8]}
+              px={[3, 5, 8]}
               py={[3, 5]}
               backgroundColor='scales.black30'
               left="0px"
               top="0px"
-              width="100vw"
-              height="100vh"
+              width="100%"
+              height="100%"
               zIndex={4}
               position="fixed"
             >
@@ -79,7 +79,7 @@ export function PopoverRoutes(
                 <Box
                   display="grid"
                   gridTemplateRows={["32px 1fr", "100%"]}
-                  gridTemplateColumns={["100%", "200px 1fr"]}
+                  gridTemplateColumns={["100%", "150px 1fr"]}
                   height="100%"
                   width="100%"
                 >
@@ -96,13 +96,13 @@ export function PopoverRoutes(
                       text="Participants"
                     />
                     <SidebarItem
-                      icon="Circle"
+                      icon="Gear"
                       selected={view === "settings"}
                       to={relativeUrl("/settings")}
                       text="Group Settings"
                     />
                     <SidebarItem
-                      icon="Circle"
+                      icon="Smiley"
                       selected={view === "profile"}
                       to={relativeUrl("/profile")}
                       text="Group Profile"

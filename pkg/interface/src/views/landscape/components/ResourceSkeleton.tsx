@@ -37,7 +37,8 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
   return (
     <Col width="100%" height="100%" overflowY="hidden">
       <Box
-        p={2}
+        py="2"
+        px="2"
         display="flex"
         alignItems="center"
         borderBottom={1}
@@ -47,8 +48,9 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
           <Box
             borderRight={1}
             borderRightColor="gray"
-            pr={2}
-            mr={2}
+            pr={3}
+            mr={3}
+            my="1"
             display={["block", "none"]}
           >
             <Link to={`/~landscape${selectedGroup}`}> {"<- Back"}</Link>
@@ -56,8 +58,6 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
         ) : (
           <Box
             color="blue"
-            borderRight={1}
-            borderRightColor="gray"
             pr={2}
             mr={2}
           >
@@ -66,11 +66,12 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             </Link>
           </Box>
         )}
-        <Box pr={1} mr={2}>
-          <Text>{title}</Text>
-        </Box>
+        
         {atRoot && (
           <>
+            <Box pr={1} mr={2}>
+              <Text>{title}</Text>
+            </Box>
             <TruncatedBox
               display={["none", "block"]}
               maxWidth="60%"
