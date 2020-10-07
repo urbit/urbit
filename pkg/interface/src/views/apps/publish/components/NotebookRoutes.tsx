@@ -69,7 +69,7 @@ export function NotebookRoutes(
         path={relativePath("/note/:noteId")}
         render={(routeProps) => {
           const { noteId } = routeProps.match.params;
-          const note = notebook?.notes[noteId];
+          const note = notebook?.notes?.[noteId];
           const noteUrl = relativePath(`/note/${noteId}`);
           if(!note) {
             return <Center height="100%"><LoadingSpinner /></Center>;
