@@ -136,6 +136,10 @@ export function GroupsPane(props: GroupsPaneProps) {
           const appPath = `${isShip ? '/ship/' : '/'}${host}/${name}`;
           const association = isShip ? associations.graph[appPath] : associations[appName][appPath];
           const resourceUrl = `${baseUrl}/join/${app}${appPath}`;
+
+          if (!association) {
+            return <Loading />;
+          }
           return (
             <Skeleton
               recentGroups={recentGroups}
