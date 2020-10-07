@@ -63,7 +63,7 @@ export default class TextContent extends Component {
       && (urbitOb.isValidPatp(group[2]) // valid patp?
       && (group[0] === content.text))) { // entire message is room name?
       return (
-        <Text fontSize={1} lineHeight="tall">
+        <Text fontSize={0} color='gray' lineHeight="tall">
           <Link
             className="bb b--black b--white-d mono"
             to={'/~landscape/join/' + group.input}>
@@ -73,7 +73,7 @@ export default class TextContent extends Component {
       );
     } else {
       return (
-        <Text fontSize={1} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
+        <Text color='gray' fontSize={0} lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
           <MessageMarkdown source={content.text} />
         </Text>
       );

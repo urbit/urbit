@@ -71,7 +71,6 @@ export class OverlaySigil extends PureComponent {
         onClick={this.profileShow}
         className={props.className + ' pointer relative'}
         ref={this.containerRef}
-        style={{ height: '16px' }}
       >
         {state.profileClicked && (
           <ProfileOverlay

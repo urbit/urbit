@@ -72,7 +72,8 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
   wrapInLink(contents) {
     return (<a
       href={this.props.url}
-      className={`word-break-all ${(typeof contents === 'string') ? 'bb b--white-d b--black' : ''}`}
+      style={{ color: 'inherit' }}
+      className={`word-break-all ${(typeof contents === 'string') ? 'bb' : ''}`}
       target="_blank"
       rel="noopener noreferrer"
     >

@@ -139,6 +139,7 @@ export default class ChatMessage extends Component<ChatMessageProps> {
         className={containerClass}
         style={style}
         data-number={msg.number}
+        mb={1}
       >
         {dayBreak && !isLastRead ? <DayBreak when={msg.when} /> : null}
         {renderSigil
@@ -245,7 +246,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
             <Text gray mono className="v-mid">{timestamp}</Text>
             <Text gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
           </Box>
-          <Box fontSize={1}><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
+          <Box fontSize={0}><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
         </div>
       </>
     );
@@ -255,7 +256,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
 export const MessageWithoutSigil = ({ timestamp, msg, remoteContentPolicy, measure }) => (
   <>
     <p className="child pr1 mono f9 gray2 dib">{timestamp}</p>
-    <Box fontSize={1} className="clamp-message" style={{ flexGrow: 1 }}>
+    <Box fontSize={0} className="clamp-message" style={{ flexGrow: 1 }}>
       <MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure}/>
     </Box>
   </>
@@ -266,7 +267,7 @@ export const MessageContent = ({ content, remoteContentPolicy, measure }) => {
     return <CodeContent content={content} />;
   } else if ('url' in content) {
     return (
-      <Text fontSize={1} lineHeight="tall">
+      <Text fontSize={0} lineHeight="tall" color='gray'>
         <RemoteContent
           url={content.url}
           remoteContentPolicy={remoteContentPolicy}
