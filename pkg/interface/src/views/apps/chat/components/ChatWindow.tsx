@@ -75,7 +75,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
     this.handleWindowFocus = this.handleWindowFocus.bind(this);
     this.stayLockedIfActive = this.stayLockedIfActive.bind(this);
     this.dismissIfLineVisible = this.dismissIfLineVisible.bind(this);
-    this.lastRead = this.lastRead.bind(this);
     
     this.virtualList = null;
     this.unreadMarkerRef = React.createRef();
@@ -125,7 +124,7 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
   }
 
   componentDidUpdate(prevProps: ChatWindowProps, prevState) {
-    const { isChatMissing, history, envelopes, mailboxSize, stationPendingMessages, unreadCount } = this.props;
+    const { isChatMissing, history, envelopes, mailboxSize, stationPendingMessages, unreadCount, station } = this.props;
 
     if (isChatMissing) {
       history.push("/~404");
@@ -150,6 +149,14 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
 
     if (!this.state.fetchPending && prevState.fetchPending) {
       this.virtualList?.calculateVisibleItems();
+    }
+
+    if (station !== prevProps.station) {
+      this.virtualList?.resetScroll();
+      this.scrollToUnread();
+      this.setState({
+        lastRead: unreadCount ? mailboxSize - unreadCount : Infinity,
+      });
     }
   }
 
@@ -194,11 +201,6 @@ export default class ChatWindow extends Component<ChatWindowProps, ChatWindowSta
       .finally(() => {
         this.setState({ fetchPending: false });
       });
-  }
-
-  lastRead() {
-    const { mailboxSize, unreadCount } = this.props;
-    return mailboxSize - unreadCount;
   }
 
   onScroll({ scrollTop, scrollHeight, windowHeight }) {
