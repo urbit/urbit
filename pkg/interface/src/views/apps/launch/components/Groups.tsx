@@ -50,6 +50,14 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
     .sort(sortGroupsAlph)
     .sort(sortGroupsRecent(recentGroups))
 
+  const acceptInvite = (invite) => {
+    const [, , ship, name] = invite.path.split('/');
+    const resource = { ship, name };
+    return api.contacts.join(resource).then(() => {
+      api.invite.accept('/contacts', getKeyByValue(invites['/contacts'], invite));
+    });
+  };
+
   return (
     <Box
       {...boxProps}
@@ -77,7 +85,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
           <Text display='inline-block' overflow='hidden' maxWidth='100%' style={{ textOverflow: 'ellipsis', whiteSpace: 'pre' }} title={invite.path.slice(6)}>{invite.path.slice(6)}</Text>
           <Box pt='5'>
             <Text
-            onClick={() => api.invite.accept('/contacts', getKeyByValue(invites['/contacts'], invite))}
+              onClick={() => acceptInvite(invite)}
             color='blue'
             mr='2'
             cursor='pointer'>
