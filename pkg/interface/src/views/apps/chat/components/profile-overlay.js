@@ -73,7 +73,7 @@ export class ProfileOverlay extends PureComponent {
   }
 
   render() {
-    const { contact, ship, color, topSpace, bottomSpace, group, association, hideNicknames, hideAvatars } = this.props;
+    const { contact, ship, color, topSpace, bottomSpace, group, association, hideNicknames, hideAvatars, history } = this.props;
 
     let top, bottom;
     if (topSpace < OVERLAY_HEIGHT / 2) {
@@ -104,6 +104,8 @@ export class ProfileOverlay extends PureComponent {
     /*if (!group.hidden) {
     }*/
 
+    const isHidden = group.hidden;
+
     return (
       <div
         ref={this.popoverRef}
@@ -123,14 +125,16 @@ export class ProfileOverlay extends PureComponent {
               Send Message
             </Button>
           )}
-          {isOwn && !group.hidden (
-            <Link
-              to={'/~profile/identity'}
-              className="b--black b--white-d ba black white-d mt3 tc pa2 pointer db"
+          {(isOwn) ? (
+            <Button
+              mt='2'
+              width='100%'
+              style={{ cursor: 'pointer '}}
+              onClick={() => (isHidden) ? history.push('/~profile/identity') : history.push(`${history.location.pathname}/popover/profile`)}
             >
-              Edit Group Identity
-            </Link>
-          )}
+              Edit Identity
+            </Button>
+          ) : <div />}
         </div>
       </div>
     );
