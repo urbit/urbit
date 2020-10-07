@@ -127,7 +127,7 @@ export function GroupSwitcher(props: {
                       <Icon
                         mr={2}
                         color="gray"
-                        icon="Circle"
+                        icon="Node"
                       />
                       <Text> Participants</Text>
                     </GroupSwitcherItem>
@@ -156,7 +156,7 @@ export function GroupSwitcher(props: {
               <Box mr={1} flex='1'>
                 <Text overflow='hidden' display='inline-block' maxWidth='144px'  style={{ textOverflow: 'ellipsis', whiteSpace: 'pre'}}>{title}</Text>
               </Box>
-              <Icon mt="0px" display="block" icon="ChevronSouth" />
+              <Icon size='12px' ml='1' mt="0px" display="inline-block" icon="ChevronSouth" />
             </Box>
           </Dropdown>
           <Row collapse pr={1} justifyContent="flex-end" alignItems="center">
