@@ -183,6 +183,9 @@ export function GroupsPane(props: GroupsPaneProps) {
       <Route
         path={relativePath("")}
         render={(routeProps) => {
+          const hasDescription = groupAssociation?.metadata?.description;
+          const description = (hasDescription && hasDescription !== "")
+            ? hasDescription : "Create or select a channel to get started"
           return (
             <Skeleton recentGroups={recentGroups} {...props} baseUrl={baseUrl}>
               <Col
@@ -190,8 +193,8 @@ export function GroupsPane(props: GroupsPaneProps) {
                 justifyContent="center"
                 display={["none", "flex"]}
               >
-                <Box><Text fontSize="1">
-                  Open something, or create a channel to get started
+                <Box><Text fontSize="0" color='gray'>
+                  {description}
                 </Text></Box>
               </Col>
               {popovers(routeProps, baseUrl)}
