@@ -1,44 +1,24 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode } from "react";
 import styled from 'styled-components';
 import {
   Box,
-  Row,
-  Text,
-  Icon,
-  MenuItem as _MenuItem,
-  IconButton,
-  Button,
   Col,
 } from "@tlon/indigo-react";
-import { capitalize } from "lodash";
 import { Link } from "react-router-dom";
 
-import { SidebarInvite } from "./SidebarInvite";
 import GlobalApi from "~/logic/api/global";
-import { AppName } from "~/types/noun";
-import { alphabeticalOrder } from "~/logic/lib/util";
 import { GroupSwitcher } from "../GroupSwitcher";
 import {
-  AppInvites,
   Associations,
-  AppAssociations,
   Workspace,
   Groups,
   Invites,
 } from "~/types";
-import { SidebarItem } from "./SidebarItem";
-import {
-  SidebarListHeader,
-  SidebarListConfig,
-  SidebarSort,
-} from "./SidebarListHeader";
+import { SidebarListHeader } from "./SidebarListHeader";
 import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
 import { getGroupFromWorkspace } from "~/logic/lib/workspace";
 import { SidebarAppConfigs } from './types';
 import {SidebarList} from "./SidebarList";
-import {SidebarInvites} from "./SidebarInvites";
-
-const apps = ["chat", "publish", "link"];
 
 interface SidebarProps {
   children: ReactNode;
@@ -104,17 +84,6 @@ export function Sidebar(props: SidebarProps) {
         baseUrl={props.baseUrl}
         workspace={props.workspace}
       />
-      <SidebarInvites invites={invites} api={props.api} />
-      {/*Object.keys(invites).map((appPath) =>
-        Object.keys(invites[appPath]).map((uid) => (
-          <SidebarInvite
-            key={uid}
-            invite={invites[appPath][uid]}
-            onAccept={() => props.api.invite.accept(appPath, uid)}
-            onDecline={() => props.api.invite.decline(appPath, uid)}
-          />
-        ))
-      )*/}
       <SidebarListHeader initialValues={config} handleSubmit={setConfig} />
       <SidebarList
         config={config}
