@@ -148,8 +148,9 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
         <Fragment>
           {renderUrl ? this.wrapInLink(this.state.embed && this.state.embed.title ? this.state.embed.title : url) : null}
           {this.state.embed !== 'error' && this.state.embed?.html && !unfold ? <Button
+            display='inline-flex'
             border={1}
-            style={{ display: 'inline-flex', height: '1.66em' }} // Height is hacked to line-height until Button supports proper size
+            height={3}
             ml={1}
             onClick={this.unfoldEmbed}
             style={{ cursor: 'pointer' }}
