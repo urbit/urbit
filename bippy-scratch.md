@@ -11,6 +11,14 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 :btc-node-hook|command [%unwatch %get-block-count]
 ```
 
+### address checking
+```
+:btc-node-hook|action [%create-wallet 'catch-all' disable-private-keys=`%.y blank=`%.y ~ ~]
+:btc-node-hook|action [%get-new-address ~ `%bech32]
+:btc-node-hook|action [%import-address [%bech32 'bc1q20xxd4rep620a0754gc7du9tlxj0h3lu2xwyg5'] ~ ~ ~]
+:btc-node-hook|action [%list-unspent [~ [~ ~ `~[[%bech32 'bc1q20xxd4rep620a0754gc7du9tlxj0h3lu2xwyg5']] ~ ~]]]
+```
+
 ## Handling XPubs
 **Import lib; optionally set up env**
 XPub is BIP84, mnemonic:
@@ -118,3 +126,6 @@ Left here just for reference
 ```
 (bind px |=(px=parsed-xpub:btca (compute-i:btca px 1)))
 ```
+
+
+0x3.1589.edf6.2798.1d49.77a1.d4e2.58b8.aeaa.060a.d518.94e1.e122.406f.af29.b197.c1f1
