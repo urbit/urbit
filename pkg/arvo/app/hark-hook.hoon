@@ -1,10 +1,10 @@
-::  hark: notifications [landscape]
+::  hark-hook: notifications [landscape]
 ::
-/-  *resource, store=hark, post, group-store, graph-store, metadata-store
+/-  *resource, store=hark-hook, post, group-store, graph-store, metadata-store
 /+  res=resource, metadata, default-agent, dbug
 =*  resource  resource:post
 ::
-~%  %hark-top  ..is  ~
+~%  %hark-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
@@ -25,7 +25,7 @@
 =<
 %-  agent:dbug
 ^-  agent:gall
-~%  %hark-agent  ..card  ~
+~%  %hark-hook-agent  ..card  ~
 |_  =bowl:gall
 +*  this  .
     ha    ~(. +> bowl)
@@ -46,7 +46,7 @@
   [~ this(state !<(state-0 old))]
 ::
 ++  on-watch
-  ~/  %hark-watch
+  ~/  %hark-hook-watch
   |=  =path
   ^-  (quip card _this)
   ?>  (team:title our.bowl src.bowl)
@@ -62,7 +62,7 @@
   [cards this]
 ::
 ++  on-poke
-  ~/  %hark-poke
+  ~/  %hark-hook-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
   |^
@@ -121,7 +121,7 @@
   --
 ::
 ++  on-agent
-  ~/  %hark-agent
+  ~/  %hark-hook-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   |^
@@ -244,7 +244,7 @@
   --
 ::
 ++  on-peek
-  ~/  %hark-peek
+  ~/  %hark-hook-peek
   |=  =path
   ^-  (unit (unit cage))
   !!
