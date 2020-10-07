@@ -22,6 +22,18 @@
   ?.  =(app-name.md-resource app-name)  ~
   `app-path.md-resource
 ::
+++  peek-metadata
+  |=  [app-name=term =group=resource:res =app=resource:res]
+  ^-  (unit metadata)
+  =/  group-cord=cord  (spat (en-path:res group-resource))
+  =/  app-cord=cord    (spat (en-path:res app-resource))
+  =/  our=cord  (scot %p our.bowl)
+  =/  now=cord  (scot %da now.bowl)
+  .^  (unit metadata)
+    %gx  (scot %p our.bowl)  %metadata-store  (scot %da now.bowl)
+    %metadata  app-name  group-cord  app-cord
+  ==
+::
 ++  group-from-app-resource
   |=  [app=term =app=resource:res]
   ^-  (unit resource:res)

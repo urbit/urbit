@@ -207,22 +207,12 @@
     ^-  (quip card _state)
     ?+    -.update  [~ state]
         %add-members
-      %+  add-unread  resource.update
-      :*  date=now.bowl
-          module=%group
-          group-resource=resource.update
-          app-resource=resource.update  ::  unused
-          body=[%group %add-members ships.update]
-      ==
+      =/  =body:store  [%group %add-members ships.update]
+      (add-unread resource.update %group resource.update [now.bowl]~ body)
     ::
         %remove-members
-      %+  add-unread  resource.update
-      :*  date=now.bowl
-          module=%group
-          group-resource=resource.update
-          app-resource=resource.update  ::  unused
-          body=[%group %remove-members ships.update]
-      ==
+      =/  =body:store  [%group %remove-members ships.update]
+      (add-unread resource.update %group resource.update [now.bowl]~ body)
     ::
         %remove-group
       =.  unreads  (~(put by unreads) resource.update ~)
@@ -232,7 +222,51 @@
   ++  graph-update
     |=  =update:graph-store
     ^-  (quip card _state)
-    [~ state]
+    ?+    -.q.update  [~ state]
+        %add-nodes
+      =/  app-resource=resource  resource.q.update
+      =/  group-resource=(unit resource)
+        (group-from-app-resource:metadata %graph app-resource)
+      ?~  group-resource
+        [~ state]
+      =/  meta=(unit metadata:metadata)
+        (peek-metadata:metadata %graph u.group-resource app-resource)
+      ?~  meta
+        [~ state]
+      ?+    module.u.meta  [~ state]
+          %publish
+        [~ state]  ::  TODO: integrate with :graph-store %publish
+      ::
+          %link
+        =/  nodes=(list node:graph-store)
+          ~(val by nodes.q.update)
+        =|  cards=(list card)
+        |-  ^-  (quip card _state)
+        ?~  nodes  [cards state]
+        =*  post  post.i.nodes
+        =/  =link-body:store
+          ?+    index.post  ~|(index+index.post !!)
+              ::  top-level links post; title and url
+              ::
+              [@ ~]
+            ?>  ?=([[%text @] [%url @] ~] contents.post)
+            [%new author text.i.contents url.i.t.contents]:post
+          ::
+              ::  comment on link post; comment text
+              ::
+              [@ @ ~]
+            ?>  ?=([[%text @] ~] contents.post)
+            =/  title=@t  !!
+            [%comment author.post title snippet=text.i.contents.post]
+          ==
+        =/  =body:store  [%link index.post link-body]
+        =/  [c=(list card) s=_state]
+          (add-unread u.group-resource %link app-resource index.post body)
+        $(nodes t.nodes, cards (weld c cards), state s)
+      ==
+    ::
+        %remove-nodes  !!
+    ==
   ::
   ++  metadata-update
     |=  update=metadata-update:metadata-store
@@ -240,14 +274,15 @@
     [~ state]
   ::
   ++  add-unread
-    |=  [=resource =unread:store]
+    |=  [=group=resource module=term =app=resource =index:post =body:store]
     ^-  (quip card _state)
+    =/  =unread:store  [now.bowl module group-resource app-resource body]
     =.  unreads
-      %+  ~(jab by unreads)  resource
-      |=  by-group=(map =app=^resource unread-mop:store)
-      %+  ~(jab by by-group)  resource
+      %+  ~(jab by unreads)  group-resource
+      |=  by-group=(map =app=resource unread-mop:store)
+      %+  ~(jab by by-group)  group-resource
       |=  =unread-mop:store
-      (put:orm unread-mop [now.bowl]~ unread)
+      (put:orm unread-mop index unread)
     :_(state (give [/updates]~ [%add unread]))
   ::  TODO: duplicate with above
   ::

@@ -524,6 +524,22 @@
       [ship term]
     (~(gas by *(map index:store node:store)) [index u.node] ~)
   ::
+      [%x %post @ @ @ *]
+    =/  =ship  (slav %p i.t.t.path)
+    =/  =term  i.t.t.t.path
+    =/  =index:store
+      (turn t.t.t.t.path |=(=cord (slav %ud cord)))
+    =/  node=(unit node:store)  (get-node ship term index)
+    ?~  node  [~ ~]
+    :-  ~  :-  ~  :-  %graph-update
+    !>  ^-  update:store
+    :+  %0
+      now.bowl
+    :+  %add-nodes
+      [ship term]
+    =.  children.u.node  [%empty ~]
+    (~(gas by *(map index:store node:store)) [index u.node] ~)
+  ::
       [%x %node-children-subset @ @ @ @ @ *]
     =/  =ship  (slav %p i.t.t.path)
     =/  =term  i.t.t.t.path
