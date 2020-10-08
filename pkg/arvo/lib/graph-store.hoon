@@ -49,6 +49,20 @@
 ++  enjs
   =,  enjs:format
   |%
+  ::
+  ++  index
+    |=  i=^index
+    ^-  json
+    =/  j=^tape  ""
+    |-
+    ?~  i  [%s (crip j)]
+    =/  k=json  (numb i.i)
+    ?>  ?=(%n -.k)
+    %_  $
+        i  t.i
+        j  (weld j (weld "/" (trip +.k)))
+    ==
+  ::
   ++  update
     |=  upd=^update
     ^-  json
@@ -146,19 +160,6 @@
       :-  %a
       :~  (index [a]~)
           (node n)
-      ==
-    ::
-    ++  index
-      |=  i=^index
-      ^-  json
-      =/  j=^tape  ""
-      |-
-      ?~  i  [%s (crip j)]
-      =/  k=json  (numb i.i)
-      ?>  ?=(%n -.k)
-      %_  $
-          i  t.i
-          j  (weld j (weld "/" (trip +.k)))
       ==
     ::
     ++  node

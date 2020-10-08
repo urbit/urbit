@@ -1,4 +1,5 @@
 /-  *resource, post
+^?
 |%
 +$  unread-mop  ((mop index:post unread) compare-indexes:post)
 ::
