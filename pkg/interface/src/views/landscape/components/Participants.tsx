@@ -319,7 +319,7 @@ function Participant(props: {
               gapY={2}
               p={2}
             >
-              <Action>
+              <Action bg="transparent">
                 <Link to={`/~chat/new/dm/${contact.patp}`}>
                   <Text color="green">Send Message</Text>
                 </Link>
@@ -327,16 +327,16 @@ function Participant(props: {
               {props.role === "admin" && (
                 <>
                   {!isInvite && (
-                    <StatelessAsyncAction onClick={onBan}>
+                    <StatelessAsyncAction onClick={onBan} bg="transparent">
                       <Text color="red">Ban from {title}</Text>
                     </StatelessAsyncAction>
                   )}
                   {role === "admin" ? (
-                    <StatelessAsyncAction onClick={onDemote}>
+                    <StatelessAsyncAction onClick={onDemote} bg="transparent">
                       Demote from Admin
                     </StatelessAsyncAction>
                   ) : (
-                    <StatelessAsyncAction onClick={onPromote}>
+                    <StatelessAsyncAction onClick={onPromote} bg="transparent">
                       Promote to Admin
                     </StatelessAsyncAction>
                   )}
