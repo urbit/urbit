@@ -25,10 +25,10 @@ function isJoined(app: string, path: string) {
     props: Pick<UnjoinedResourceProps, "inbox" | "graphKeys" | "notebooks">
   ) {
     let ship, name;
+    const graphKey = path.substr(7);
     switch (app) {
       case "link":
-        [, , ship, name] = path.split("/");
-        return props.graphKeys.has(path);
+        return props.graphKeys.has(graphKey);
       case "publish":
         [, ship, name] = path.split("/");
         return !!props.notebooks[ship]?.[name];
