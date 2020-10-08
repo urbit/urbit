@@ -374,7 +374,7 @@ export default class ClockTile extends React.Component {
 
   renderWrapper(child) {
     return (
-      <Tile p={0} border={0}>
+      <Tile p={0} border={0} bg='transparent' boxShadow='none'>
         {child}
       </Tile>
     );
