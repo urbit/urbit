@@ -173,11 +173,11 @@
         %add-nodes
       =/  app-resource=resource  resource.q.update
       =/  group-resource=(unit resource)
-        (group-from-app-resource:metadata %graph app-resource)
+        (group-from-app-resource:met %graph app-resource)
       ?~  group-resource
         [~ state]
-      =/  meta=(unit metadata:metadata)
-        (peek-metadata:metadata %graph u.group-resource app-resource)
+      =/  meta=(unit metadata:metadata-store)
+        (peek-metadata:met %graph u.group-resource app-resource)
       ?~  meta
         [~ state]
       ?+    module.u.meta  [~ state]
@@ -215,11 +215,11 @@
         %remove-nodes
       =/  app-resource=resource  resource.q.update
       =/  group-resource=(unit resource)
-        (group-from-app-resource:metadata %graph app-resource)
+        (group-from-app-resource:met %graph app-resource)
       ?~  group-resource
         [~ state]
-      =/  meta=(unit metadata:metadata)
-        (peek-metadata:metadata %graph u.group-resource app-resource)
+      =/  meta=(unit metadata:metadata-store)
+        (peek-metadata:met %graph u.group-resource app-resource)
       ?~  meta
         [~ state]
       ?+    module.u.meta  [~ state]
