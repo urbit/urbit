@@ -39,6 +39,8 @@ export function PopoverRoutes(
     association: Association;
     s3: S3State;
     api: GlobalApi;
+    hideAvatars: boolean;
+    hideNicknames: boolean;
   } & RouteComponentProps
 ) {
   const relativeUrl = (url: string) => `${props.baseUrl}/popover${url}`;
@@ -131,6 +133,8 @@ export function PopoverRoutes(
                         contacts={props.contacts}
                         association={props.association}
                         api={props.api}
+                        hideAvatars={props.hideAvatars}
+                        hideNicknames={props.hideNicknames}
                       />
                     )}
                     {view === "profile" && (

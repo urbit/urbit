@@ -102,8 +102,10 @@ export function Participants(props: {
   group: Group;
   association: Association;
   api: GlobalApi;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
 }) {
-  const { api } = props;
+  const { api, hideAvatars, hideNicknames } = props;
   const tabFilters: Record<
     ParticipantsTabId,
     (p: Participant) => boolean
@@ -228,6 +230,8 @@ export function Participants(props: {
                       group={props.group}
                       contact={c}
                       association={props.association}
+                      hideAvatars={hideAvatars}
+                      hideNicknames={hideNicknames}
                     />
                   ))
                 ) : (
@@ -248,6 +252,8 @@ function Participant(props: {
   group: Group;
   role?: RoleTags;
   api: GlobalApi;
+  hideAvatars: boolean;
+  hideNicknames: boolean;
 }) {
   const { contact, association, group, api } = props;
   const { title } = association.metadata;
@@ -282,13 +288,24 @@ function Participant(props: {
     });
   }, [api, association]);
 
+  const avatar = (
+    (contact?.avatar !== null) && !props.hideAvatars)
+    ? <img src={contact.avatar} height={32} width={32} className="dib" />
+    : <Sigil
+      ship={contact.patp}
+      size={32}
+      color={`#${color}`}
+    />;
+
+  const hasNickname = contact.nickname && !props.hideNicknames;
+
   return (
     <>
       <Box>
-        <Sigil ship={contact.patp} size={32} color={`#${color}`} />
+        {avatar}
       </Box>
       <Col justifyContent="center" gapY="1" height="100%">
-        {contact.nickname && (
+        {hasNickname && (
           <TruncText title={contact.nickname} maxWidth="85%" color="black">
             {contact.nickname}
           </TruncText>
