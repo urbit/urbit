@@ -633,6 +633,9 @@
             u3_pico*       ent_u;
             u3_pico*       ext_u;
           } pec_u;
+          void*            sop_p;               //  slog stream data
+          void           (*sog_f)               //  slog stream callback
+                         (void*, c3_w, u3_noun);//
           // XX remove
           c3_s             por_s;               //  UDP port
           u3_save*         sav_u;               //  autosave

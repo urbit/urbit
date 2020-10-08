@@ -31,7 +31,7 @@ import System.Posix.Files     (ownerModes, setFileMode)
 import Urbit.EventLog.LMDB    (EventLog)
 import Urbit.King.API         (TermConn)
 import Urbit.Noun.Time        (Wen)
-import Urbit.TermSize         (TermSize(..))
+import Urbit.TermSize         (TermSize(..), termSize)
 import Urbit.Vere.Serf        (Serf)
 
 import qualified Data.Text              as T
@@ -111,14 +111,9 @@ writeJobs log !jobs = do
 
 -- Acquire a running serf. -----------------------------------------------------
 
-printTank :: (Text -> IO ()) -> Atom -> Tank -> IO ()
-printTank f _priority = f . unlines . fmap unTape . wash (WashCfg 0 80) . tankTree
- where
-  tankTree (Tank t) = t
-
 runSerf
   :: HasPierEnv e
-  => TVar (Text -> IO ())
+  => TVar ((Atom, Tank) -> IO ())
   -> FilePath
   -> RAcquire e Serf
 runSerf vSlog pax = do
@@ -126,13 +121,13 @@ runSerf vSlog pax = do
   serfProg <- io getSerfProg
   Serf.withSerf (config env serfProg)
  where
-  slog txt = atomically (readTVar vSlog) >>= (\f -> f txt)
+  slog s = atomically (readTVar vSlog) >>= (\f -> f s)
   config env serfProg = Serf.Config
     { scSerf = env ^. pierConfigL . pcSerfExe . to (maybe serfProg unpack)
     , scPier = pax
     , scFlag = env ^. pierConfigL . pcSerfFlags
-    , scSlog = \(pri, tank) -> printTank slog pri tank
-    , scStdr = \txt -> slog (txt <> "\r\n")
+    , scSlog = slog
+    , scStdr = \txt -> slog (0, (textToTank txt))
     , scDead = pure () -- TODO: What can be done?
     }
   getSerfProg :: IO FilePath
@@ -147,7 +142,7 @@ runSerf vSlog pax = do
 -- Boot a new ship. ------------------------------------------------------------
 
 booted
-  :: TVar (Text -> IO ())
+  :: TVar ((Atom, Tank) -> IO ())
   -> Pill
   -> Bool
   -> Ship
@@ -198,7 +193,7 @@ bootNewShip pill lite ship bootEv = do
 -- Resume an existing ship. ----------------------------------------------------
 
 resumed
-  :: TVar (Text -> IO ())
+  :: TVar ((Atom, Tank) -> IO ())
   -> Maybe Word64
   -> RAcquire PierEnv (Serf, EventLog)
 resumed vSlog replayUntil = do
@@ -267,7 +262,7 @@ acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
 
 pier
   :: (Serf, EventLog)
-  -> TVar (Text -> IO ())
+  -> TVar ((Atom, Tank) -> IO ())
   -> MVar ()
   -> RAcquire PierEnv ()
 pier (serf, log) vSlog startedSig = do
@@ -288,8 +283,10 @@ pier (serf, log) vSlog startedSig = do
     writeTVar (King.kTermConn kingApi) (Just $ writeTQueue q)
     pure q
 
+  initialTermSize <- io $ termSize
+
   (demux :: Term.Demux, muxed :: Term.Client) <- atomically $ do
-    res <- Term.mkDemux
+    res <- Term.mkDemux initialTermSize
     pure (res, Term.useDemux res)
 
   void $ acquireWorker "TERMSERV Listener" $ forever $ do
@@ -301,9 +298,9 @@ pier (serf, log) vSlog startedSig = do
 
   --  Slogs go to both stderr and to the terminal.
   env <- ask
-  atomically $ writeTVar vSlog $ \txt -> runRIO env $ do
-      atomically $ Term.trace muxed txt
-      logOther "serf" (display $ T.strip txt)
+  atomically $ writeTVar vSlog $ \s@(_, tank) -> runRIO env $ do
+      atomically $ Term.slog muxed s
+      logOther "serf" (display $ T.strip $ tankToText tank)
 
   -- Our call above to set the logging function which echos errors from the
   -- Serf doesn't have the appended \r\n because those \r\n s are added in
@@ -317,7 +314,7 @@ pier (serf, log) vSlog startedSig = do
   (bootEvents, startDrivers) <- do
     env <- ask
     let err = atomically . Term.trace muxed . (<> "\r\n")
-    let siz = TermSize { tsWide = 80, tsTall = 24 }
+    siz <- atomically $ Term.curDemuxSize demux
     let fak = isFake logId
     drivers env ship fak compute (siz, muxed) err sigint
 
@@ -357,7 +354,7 @@ pier (serf, log) vSlog startedSig = do
   let slog :: Text -> IO ()
       slog txt = do
         fn <- atomically (readTVar vSlog)
-        fn txt
+        fn (0, textToTank txt)
 
   drivz <- startDrivers
   tExec <- acquireWorker "Effects" (router slog (readTQueue executeQ) drivz)

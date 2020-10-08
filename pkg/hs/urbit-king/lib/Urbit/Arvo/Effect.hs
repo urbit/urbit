@@ -1,3 +1,5 @@
+{-# LANGUAGE StrictData #-}
+
 {-|
     Effect Types and Their Noun Conversions
 -}

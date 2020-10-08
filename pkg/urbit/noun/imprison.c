@@ -465,18 +465,44 @@ u3i_vint(u3_noun a)
   }
 }
 
+/* u3i_defcons(): allocate cell for deferred construction.
+**            NB: [hed] and [tel] pointers MUST be filled.
+*/
+u3_cell
+u3i_defcons(u3_noun** hed, u3_noun** tel)
+{
+  u3_noun pro;
+
+  u3t_on(mal_o);
+  {
+    c3_w*     nov_w = u3a_celloc();
+    u3a_cell* nov_u = (void *)nov_w;
+
+    nov_u->mug_w = 0;
+
+#ifdef U3_MEMORY_DEBUG
+    nov_u->hed = u3_none;
+    nov_u->tel = u3_none;
+#endif
+
+    *hed = &nov_u->hed;
+    *tel = &nov_u->tel;
+
+    pro = u3a_to_pom(u3a_outa(nov_w));
+  }
+  u3t_off(mal_o);
+
+  return pro;
+}
+
 /* u3i_cell(): Produce the cell `[a b]`.
 */
 u3_noun
 u3i_cell(u3_noun a, u3_noun b)
 {
   u3_noun pro;
+
   u3t_on(mal_o);
-
-#ifdef U3_CPU_DEBUG
-  u3R->pro.cel_d++;
-#endif
-
   {
     c3_w*     nov_w = u3a_celloc();
     u3a_cell* nov_u = (void *)nov_w;
@@ -487,8 +513,8 @@ u3i_cell(u3_noun a, u3_noun b)
 
     pro = u3a_to_pom(u3a_outa(nov_w));
   }
-
   u3t_off(mal_o);
+
   return pro;
 }
 
