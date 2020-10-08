@@ -66,7 +66,7 @@ class Channel {
   }
 
   deleteOnUnload() {
-    window.addEventListener("unload", (event) => {
+    window.addEventListener("beforeunload", (event) => {
       this.delete();
     });
   }
