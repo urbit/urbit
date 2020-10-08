@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useLocalStorageState } from "~/logic/lib/useLocalStorageState";
 import { Associations, Association } from "~/types";
 import { alphabeticalOrder } from "~/logic/lib/util";
+import Tile from '../components/tiles/tile';
 
 interface GroupsProps {
   associations: Associations;
@@ -101,20 +102,9 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
         </Box>
       ))}
       {groups.map((group) => (
-        <Link to={`/~landscape${group["group-path"]}`}>
-          <Box
-            height="100%"
-            width="100%"
-            bg="white"
-            border={1}
-            borderRadius={2}
-            borderColor="lightGray"
-            p={2}
-            fontSize={0}
-          >
-            <Text>{group.metadata.title}</Text>
-          </Box>
-        </Link>
+        <Tile to={`/~landscape${group["group-path"]}`}>
+          <Text>{group.metadata.title}</Text>
+        </Tile>
       ))}
     </Box>
   );

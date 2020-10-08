@@ -48,18 +48,22 @@ export default class LaunchApp extends React.Component {
           >
             <Tile
               border={1}
-              bg="washedGreen"
+              bg="#fff"
               borderColor="green"
               to="/~landscape/home"
+              boxShadow='none'
+              p={0}
             >
-              <Row alignItems="center">
-                <Icon
-                  color="green"
-                  fill="rgba(0,0,0,0)"
-                  icon="Circle"
-                />
-                <Text ml="1" color="green">Home</Text>
-              </Row>
+              <Box p={2} height='100%' width='100%' bg='washedGreen'>
+                <Row alignItems='center'>
+                  <Icon
+                    color="green"
+                    fill="rgba(0,0,0,0)"
+                    icon="Circle"
+                  />
+                  <Text ml="1" color="green">Home</Text>
+                </Row>
+              </Box>
             </Tile>
             <Tile
               borderColor={adjustHex(sigilColor, -40)}

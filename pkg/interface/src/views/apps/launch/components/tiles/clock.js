@@ -14,18 +14,20 @@ const innerSize = 124; // clock size
 //   }
 // }
 
-let text = '#000000', background = '#ffffff';
+let timeTextColor = '#000000', dateTextColor = '#333333', background = '#ffffff';
 
 const dark = window.matchMedia('(prefers-color-scheme: dark)');
 
 if (dark.matches) {
-  text = '#7f7f7f';
+  timeTextColor = '#ffffff';
+  dateTextColor = '#7f7f7f';
   background = '#333';
 }
 
 function darkColors(dark) {
   if (dark.matches) {
-    text = '#7f7f7f';
+    timeTextColor = '#ffffff';
+    dateTextColor = '#7f7f7f';
     background = '#ffffff';
   }
  }
@@ -344,10 +346,10 @@ class Clock extends React.Component {
       : moment().format('h:mm A');
     const dateText = moment().format('MMM Do');
     ctx.textAlign = 'center';
-    ctx.fillStyle = text;
+    ctx.fillStyle = timeTextColor;
     ctx.font = '12px Inter';
     ctx.fillText(timeText, ctr, ctr + 6 - 7);
-    ctx.fillStyle = text;
+    ctx.fillStyle = dateTextColor;
     ctx.font = '12px Inter';
     ctx.fillText(dateText, ctr, ctr + 6 + 7);
 
@@ -372,7 +374,7 @@ export default class ClockTile extends React.Component {
 
   renderWrapper(child) {
     return (
-      <Tile p={0} border={0}>
+      <Tile p={0} border={0} bg='transparent' boxShadow='none'>
         {child}
       </Tile>
     );
