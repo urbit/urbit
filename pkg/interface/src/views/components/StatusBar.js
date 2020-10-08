@@ -9,30 +9,20 @@ import { Sigil } from '~/logic/lib/sigil';
 
 const StatusBar = (props) => {
 
-  const location = useLocation();
-
-  const display = (!window.location.href.includes('popout/'))
-      ? 'grid' : 'none';
-
-  const invites = (props.invites && props.invites['/contacts'])
-    ? props.invites['/contacts']
-    : {};
-
-
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
 
   return (
     <Box
-      display={display}
+      display='grid'
       width="100%"
       gridTemplateRows="30px"
       gridTemplateColumns="3fr 1fr"
-      py={2}
-      px={3}
+      py={[2,3]}
+      px={[2,3]}
       >
       <Row collapse>
           <StatusBarItem mr={2} onClick={() => props.history.push('/')}>
-          <Icon icon='Home' color='transparent' stroke='black' />
+          <Icon icon='Home' color='black'/>
           </StatusBarItem>
         <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
         <Icon icon='LeapArrow'/>
@@ -42,12 +32,6 @@ const StatusBar = (props) => {
           <Text display={['none', 'inline']} ml={4} color='gray'>
             {metaKey}/
           </Text>
-        </StatusBarItem>
-        <StatusBarItem
-          onClick={() => props.history.push('/~groups')}
-          badge={Object.keys(invites).length > 0}>
-          <Icon icon='Groups' color='transparent' stroke='black'/>
-          <Text display={["none", "inline"]} ml={2}>Groups</Text>
         </StatusBarItem>
         <ReconnectButton
           connection={props.connection}

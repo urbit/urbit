@@ -76,7 +76,7 @@ export default function RemoteContentForm(props: RemoteContentFormProps) {
               id="oembedShown"
               caption="Embedded content may contain scripts"
             />
-            <Button border={1} borderColor="washedGray" type="submit">
+            <Button style={{ cursor: 'pointer' }} border={1} borderColor="washedGray" type="submit">
               Save
             </Button>
           </Box>

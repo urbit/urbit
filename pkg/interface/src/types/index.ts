@@ -17,3 +17,4 @@ export * from './permission-update';
 export * from './publish-response';
 export * from './publish-update';
 export * from './s3-update';
+export * from './workspace';

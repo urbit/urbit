@@ -12,10 +12,9 @@ import {
   Box,
   Label,
   ErrorLabel,
+  StatelessTextInput as Input
 } from "@tlon/indigo-react";
 import { useDropdown } from "~/logic/lib/useDropdown";
-import styled from "styled-components";
-import { space, color, layout, border } from "styled-system";
 
 interface RenderChoiceProps<C> {
   candidate: C;
@@ -25,6 +24,8 @@ interface RenderChoiceProps<C> {
 interface DropdownSearchProps<C> {
   label: string;
   id: string;
+  // check if entry is exact match
+  isExact: (s: string) => C | undefined;
   // Options for dropdown
   candidates: C[];
   // Present options in dropdown
@@ -45,22 +46,8 @@ interface DropdownSearchProps<C> {
   caption?: string;
   disabled?: boolean;
   error?: string;
+  placeholder?: string;
 }
-
-const TextArea = styled.input`
-  box-sizing: border-box;
-  min-width: 0;
-  width: 100%;
-  resize: none;
-  margin-top: ${(p) => p.theme.space[1]}px;
-  padding: ${(p) => p.theme.space[2]}px;
-  font-size: ${(p) => p.theme.fontSizes[0]}px;
-  line-height: 1.2;
-  ${space}
-  ${color}
-  ${layout}
-  ${border}
-`;
 
 export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
   const textarea = useRef<HTMLTextAreaElement>();
@@ -114,37 +101,35 @@ export function DropdownSearch<C>(props: DropdownSearchProps<C>) {
     [setQuery]
   );
 
-  const dropdown = useMemo(
-    () =>
-      _.take(options, 5).map((o, idx) =>
-        props.renderCandidate(
-          o,
-          !_.isUndefined(selected) &&
-            props.getKey(o) === props.getKey(selected),
-          onSelect
-        )
-      ),
-    [options, props.getKey, props.renderCandidate, selected]
-  );
+  const dropdown = useMemo(() => {
+    const first = props.isExact(query);
+    let opts = options;
+    if (first) {
+      opts = options.includes(first) ? opts : [first, ...options];
+    }
+    return _.take(opts, 5).map((o, idx) =>
+      props.renderCandidate(
+        o,
+        !_.isUndefined(selected) && props.getKey(o) === props.getKey(selected),
+        onSelect
+      )
+    );
+  }, [options, props.getKey, props.renderCandidate, selected]);
 
   return (
     <Box position="relative" zIndex={9}>
       <Label htmlFor={props.id}>{props.label}</Label>
       {caption ? <Label mt="2" gray>{caption}</Label> : null}
       {!props.disabled && (
-        <TextArea
+        <Input
           ref={textarea}
-          border={1}
-          borderColor="washedGray"
-          bg="white"
-          color="black"
-          borderRadius={2}
           onChange={onChange}
           value={query}
           autocomplete="off"
+          placeholder={props.placeholder || ""}
         />
       )}
-      {options.length !== 0 && query.length !== 0 && (
+      {dropdown.length !== 0 && query.length !== 0 && (
         <Box
           mt={1}
           border={1}

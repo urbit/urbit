@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { sigil, reactRenderer } from 'urbit-sigil-js';
+import { sigil, reactRenderer } from '@tlon/sigil-js';
 
 export const foregroundFromBackground = (background) => {
   const rgb = {
@@ -13,7 +13,7 @@ export const foregroundFromBackground = (background) => {
   return ((whiteBrightness - brightness) < 50) ? 'black' : 'white';
 }
 
-export const Sigil = memo(({ classes = '', color, ship, size, svgClass = '' }) => {
+export const Sigil = memo(({ classes = '', color, ship, size, svgClass = '', icon = false }) => {
   return ship.length > 14
     ? (<div
       className={'bg-black dib ' + classes}
@@ -27,6 +27,7 @@ export const Sigil = memo(({ classes = '', color, ship, size, svgClass = '' }) =
         patp: ship,
         renderer: reactRenderer,
         size: size,
+        icon,
         colors: [
           color,
           foregroundFromBackground(color)

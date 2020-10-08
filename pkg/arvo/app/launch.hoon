@@ -11,6 +11,7 @@
       [%2 *]
       [%3 *]
       [%4 state-zero]
+      [%5 state-zero]
   ==
 ::
 +$  state-zero
@@ -20,7 +21,7 @@
   ==
 --
 ::
-=|  [%4 state-zero]
+=|  [%5 state-zero]
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -35,48 +36,51 @@
     %_  new-state
         tiles
       %-  ~(gas by *tiles:store)
-      %+  turn  `(list term)`[%chat %publish %links %weather %clock %dojo ~]
+      %+  turn  `(list term)`[%weather %clock %dojo ~]
       |=  =term
       :-  term
       ^-  tile:store
       ?+  term      [[%custom ~] %.y]
-          %chat     [[%basic 'Chat' '/~landscape/img/Chat.png' '/~chat'] %.y]
-          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~link'] %.y]
           %dojo     [[%basic 'Dojo' '/~landscape/img/Dojo.png' '/~dojo'] %.y]
-          %publish
-        [[%basic 'Publish' '/~landscape/img/Publish.png' '/~publish'] %.y]
       ==
-        tile-ordering  [%chat %publish %links %weather %clock %dojo ~]
+        tile-ordering  [%weather %clock %dojo ~]
     ==
-  [~ this(state [%4 new-state])]
+  [~ this(state [%5 new-state])]
 ::
 ++  on-save  !>(state)
 ++  on-load
   |=  old=vase
   ^-  (quip card _this)
   =/  old-state  !<(versioned-state old)
+  |-
+  ?:  ?=(%5 -.old-state)
+    `this(state old-state)
   ?:  ?=(%4 -.old-state)
     :-  [%pass / %arvo %e %disconnect [~ /]]~
-    this(state old-state)
+    =.  tiles.old-state
+      (~(del by tiles.old-state) %chat)
+    =.  tiles.old-state
+      (~(del by tiles.old-state) %publish)
+    =.  tiles.old-state
+      (~(del by tiles.old-state) %links)
+    =.  tile-ordering.old-state
+      (skip tile-ordering.old-state |=(=term ?=(?(%links %chat %publish) term)))
+    this(state [%5 +.old-state])
   =/  new-state  *state-zero
   =.  new-state
     %_  new-state
         tiles
       %-  ~(gas by *tiles:store)
-      %+  turn  `(list term)`[%chat %publish %links %weather %clock %dojo ~]
+      %+  turn  `(list term)`[%weather %clock %dojo ~]
       |=  =term
       :-  term
       ^-  tile:store
       ?+  term      [[%custom ~] %.y]
-          %chat     [[%basic 'Chat' '/~landscape/img/Chat.png' '/~chat'] %.y]
-          %links    [[%basic 'Links' '/~landscape/img/Links.png' '/~link'] %.y]
           %dojo     [[%basic 'Dojo' '/~landscape/img/Dojo.png' '/~dojo'] %.y]
-          %publish
-        [[%basic 'Publish' '/~landscape/img/Publish.png' '/~publish'] %.y]
       ==
-        tile-ordering  [%chat %publish %links %weather %clock %dojo ~]
+        tile-ordering  [%weather %clock %dojo ~]
     ==
-  :_  this(state [%4 new-state])
+  :_  this(state [%5 new-state])
   %+  welp
     :~  [%pass / %arvo %e %disconnect [~ /]]
         :*  %pass  /srv  %agent  [our.bowl %file-server]

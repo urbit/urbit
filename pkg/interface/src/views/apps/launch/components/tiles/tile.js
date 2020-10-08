@@ -1,15 +1,47 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import defaultApps from '~/logic/lib/default-apps';
 
+import { Box } from "@tlon/indigo-react";
+const routeList = defaultApps.map(a => `/~${a}`);
 
 export default class Tile extends React.Component {
-  render() {
-    const { transparent } = this.props;
-    const bgClasses = transparent ? ' ' : ' bg-white bg-gray0-d ';
+  render() { 
+    const { bg, to, href, p, ...props } = this.props;
+
+    let childElement = (
+      <Box p={typeof p === 'undefined' ? 2 : p} width="100%" height="100%">
+        {props.children}
+      </Box>
+    );
+
+    if (to) {
+      if (routeList.indexOf(to) !== -1 || to === '/~landscape/home' || to === '/~profile') {
+        childElement= (<Link to={to}>{childElement}</Link>);
+      } else {
+        childElement= (<a href={to}>{childElement}</a>);
+      }
+
+    }
+      
+
     return (
-      <div className={"fl ma2 overflow-hidden" + bgClasses}
-           style={{ height: '126px', width: '126px' }}> 
-      {this.props.children} 
-      </div>
+      <Box
+        border={1}
+        borderRadius={2}
+        borderColor="lightGray"
+        overflow="hidden"
+        bg={bg && "white"}
+        {...props}
+      >
+        <Box
+          bg={bg}
+          height="100%"
+          width="100%"
+        >
+          {childElement}
+        </Box>
+      </Box>
     );
   }
 }

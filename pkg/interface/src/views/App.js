@@ -3,7 +3,7 @@ import 'react-hot-loader';
 import * as React from 'react';
 import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
-import { sigil as sigiljs, stringRenderer } from 'urbit-sigil-js';
+import { sigil as sigiljs, stringRenderer } from '@tlon/sigil-js';
 import Helmet from 'react-helmet';
 
 import Mousetrap from 'mousetrap';
@@ -14,7 +14,7 @@ import './css/fonts.css';
 import light from './themes/light';
 import dark from './themes/old-dark';
 
-import { Content } from './components/Content';
+import { Content } from './landscape/components/Content';
 import StatusBar from './components/StatusBar';
 import Omnibox from './components/leap/Omnibox';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
@@ -45,13 +45,13 @@ const Root = styled.div`
     scrollbar-width: thin;
     scrollbar-color: ${ p => p.theme.colors.gray } ${ p => p.theme.colors.white };
   }
-  
+
   /* Works on Chrome/Edge/Safari */
   *::-webkit-scrollbar {
     width: 12px;
   }
   *::-webkit-scrollbar-track {
-    background: ${ p => p.theme.colors.white };
+    background: transparent;
   }
   *::-webkit-scrollbar-thumb {
     background-color: ${ p => p.theme.colors.gray };
@@ -131,7 +131,7 @@ class App extends React.Component {
             ? <link rel="icon" type="image/svg+xml" href={this.faviconString()} />
             : null}
         </Helmet>
-        <Root background={background} >
+        <Root background={background}>
           <Router>
             <ErrorBoundary>
               <StatusBarWithRouter
@@ -163,6 +163,7 @@ class App extends React.Component {
             </ErrorBoundary>
           </Router>
         </Root>
+        <div id="portal-root" />
       </ThemeProvider>
     );
   }

@@ -87,6 +87,7 @@ export function GroupSearch(props: InviteSearchProps) {
       id={props.id}
       caption={props.caption}
       candidates={groups}
+      isExact={() => undefined}
       renderCandidate={renderCandidate}
       disabled={value && value.length !== 0}
       search={(s: string, a: Association) =>

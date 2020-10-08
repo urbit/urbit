@@ -2,6 +2,21 @@ import _ from 'lodash';
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
+export function clamp(x,min,max) {
+  return Math.max(min, Math.min(max, x));
+}
+
+// color is a #000000 color
+export function adjustHex(color, amount) {
+  const res = _.chain(color.slice(1))
+    .split('').chunk(2) // get individual color channels
+    .map(c => parseInt(c.join(''), 16)) // as hex
+    .map(c => clamp(c + amount, 0, 255).toString(16)) // adjust
+    .join('').value();
+  return `#${res}`;
+}
+
+
 export function resourceAsPath(resource) {
   const { name, ship } = resource;
   return `/ship/~${ship}/${name}`;
@@ -17,11 +32,6 @@ export function uuid() {
   }
 
   return str.slice(0,-1);
-}
-
-export function isPatTa(str) {
-  const r = /^[a-z,0-9,\-,\.,_,~]+$/.exec(str);
-  return Boolean(r);
 }
 
 /*
@@ -64,6 +74,9 @@ export function dateToDa(d, mil) {
 }
 
 export function deSig(ship) {
+  if(!ship) {
+    return null;
+  }
   return ship.replace('~', '');
 }
 
@@ -78,28 +91,11 @@ export function uxToHex(ux) {
 }
 
 export function hexToUx(hex) {
-   const ux = _.chain(hex.split(""))
+   const ux = _.chain(hex.split(''))
      .chunk(4)
-     .map((x) => _.dropWhile(x, (y) => y === 0).join(""))
-     .join(".");
+     .map(x => _.dropWhile(x, y => y === 0).join(''))
+     .join('.');
    return `0x${ux}`;
-}
-
-function hexToDec(hex) {
-  const alphabet = '0123456789ABCDEF'.split('');
-  return hex.reverse().reduce((acc, digit, idx) => {
-    const dec = alphabet.findIndex(a => a === digit.toUpperCase());
-    if(dec < 0) {
-      console.error(hex);
-      throw new Error('Incorrect hex formatting');
-    }
-    return acc + dec * (16 ** idx);
-  }, 0);
-}
-
-export function hexToRgba(hex, a) {
-  const [r,g,b] = _.chunk(hex, 2).map(hexToDec);
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
 
 export function writeText(str) {
@@ -148,6 +144,11 @@ export function cite(ship) {
   return `~${patp}`;
 }
 
+export function alphabeticalOrder(a,b) {
+  return a.toLowerCase().localeCompare(b.toLowerCase());
+}
+
+//  TODO: deprecated
 export function alphabetiseAssociations(associations) {
   const result = {};
   Object.keys(associations).sort((a, b) => {
@@ -163,29 +164,11 @@ export function alphabetiseAssociations(associations) {
         ? associations[b].metadata.title
         : b.substr(1);
     }
-    return aName.toLowerCase().localeCompare(bName.toLowerCase());
+    return alphabeticalOrder(aName,bName);
   }).map((each) => {
     result[each] = associations[each];
   });
   return result;
-}
-
-// encodes string into base64url,
-// by encoding into base64 and replacing non-url-safe characters.
-//
-export function base64urlEncode(string) {
-  return window.btoa(string)
-    .split('+').join('-')
-    .split('/').join('_');
-}
-
-// decode base64url. inverse of base64urlEncode above.
-//
-export function base64urlDecode(string) {
-  return window.atob(
-    string.split('_').join('/')
-          .split('-').join('+')
-  );
 }
 
 // encode the string into @ta-safe format, using logic from +wood.
@@ -225,32 +208,9 @@ export function stringToTa(string) {
   return '~.' + out;
 }
 
-// used in Links
-
-export function makeRoutePath(
-  resource,
-  popout = false,
-  page = 0,
-  url = null,
-  index = 0,
-  compage = 0
-) {
-  let route = "/~link" + (popout ? "/popout" : "") + resource;
-  if (!url) {
-    if (page !== 0) {
-      route = route + "/" + page;
-    }
-  } else {
-    route = `${route}/${page}/${index}/${base64urlEncode(url)}`;
-    if (compage !== 0) {
-      route = route + "/" + compage;
-    }
-  }
-  return route;
-}
-
 export function amOwnerOfGroup(groupPath) {
-  if (!groupPath) return false;
+  if (!groupPath)
+return false;
   const groupOwner = /(\/~)?\/~([a-z-]{3,})\/.*/.exec(groupPath)[2];
   return window.ship === groupOwner;
 }
@@ -258,20 +218,20 @@ export function amOwnerOfGroup(groupPath) {
 export function getContactDetails(contact) {
   const member = !contact;
   contact = contact || {
-    nickname: "",
+    nickname: '',
     avatar: null,
-    color: "0x0",
+    color: '0x0'
   };
-  const nickname = contact.nickname || "";
-  const color = uxToHex(contact.color || "0x0");
+  const nickname = contact.nickname || '';
+  const color = uxToHex(contact.color || '0x0');
   const avatar = contact.avatar || null;
   return { nickname, color, member, avatar };
 }
 
 export function stringToSymbol(str) {
   let result = '';
-  for (var i = 0; i < str.length; i++) {
-    var n = str.charCodeAt(i);
+  for (let i = 0; i < str.length; i++) {
+    const n = str.charCodeAt(i);
     if (((n >= 97) && (n <= 122)) ||
       ((n >= 48) && (n <= 57))) {
       result += str[i];
@@ -287,39 +247,5 @@ export function stringToSymbol(str) {
     return dateToDa(new Date());
   }
   return result;
-}
-
-export function scrollIsAtTop(container) {
-  if (
-    (navigator.userAgent.includes("Safari") &&
-      navigator.userAgent.includes("Chrome")) ||
-    navigator.userAgent.includes("Firefox")
-  ) {
-    return container.scrollTop === 0;
-  } else if (navigator.userAgent.includes("Safari")) {
-    return (
-      container.scrollHeight + Math.round(container.scrollTop) <=
-      container.clientHeight + 10
-    );
-  } else {
-    return false;
-  }
-}
-
-export function scrollIsAtBottom(container) {
-  if (
-    (navigator.userAgent.includes("Safari") &&
-      navigator.userAgent.includes("Chrome")) ||
-    navigator.userAgent.includes("Firefox")
-  ) {
-    return (
-      container.scrollHeight - Math.round(container.scrollTop) <=
-      container.clientHeight + 10
-    );
-  } else if (navigator.userAgent.includes("Safari")) {
-    return container.scrollTop === 0;
-  } else {
-    return false;
-  }
 }
 

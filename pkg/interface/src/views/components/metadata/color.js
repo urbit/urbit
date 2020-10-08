@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Box, Text, Row, BaseInput } from '@tlon/indigo-react';
 
 export class MetadataColor extends Component {
   constructor(props) {
@@ -39,29 +40,46 @@ export class MetadataColor extends Component {
   render() {
     const { props, state } = this;
     return (
-      <div className={'cf w-100 mb3 ' + ((props.isDisabled) ? 'o-30' : '')}>
-        <p className="f8 lh-copy">Change color</p>
-        <p className="f9 gray2 db mb4">Give this {props.resource} a color when viewing group channels</p>
-        <div className="relative w-100 flex"
-          style={{ maxWidth: '10rem' }}
+      <Box
+        width='100%'
+        mb='3'
+        opacity={(props.isDisabled) ? '0.3' : '1'}
+      >
+      <Text my='1' display='block' fontSize='1'>Change color</Text>
+        <Text fontSize='0' gray display='block' mb='3'>Give this {props.resource} a color when viewing group channels</Text>
+        <Row
+          position='relative'
+          maxWidth='10rem'
+          width='100%'
         >
-          <div className="absolute"
-            style={{
-              height: 16,
-              width: 16,
-              backgroundColor: state.color,
-              top: 13,
-              left: 11
-            }} />
-          <input
-            className={'pl7 f8 ba b--gray3 b--gray2-d bg-gray0-d white-d ' +
-              'focus-b--black focus-b--white-d pa3 db w-100 flex-auto mr3'}
-            value={state.color}
-            disabled={props.isDisabled}
-            onChange={this.changeColor}
-            onBlur={this.submitColor} />
-        </div>
-      </div>
+        <Box
+          position='absolute'
+          height='16px'
+          width='16px'
+          backgroundColor={state.color}
+          style={{ top: 18, left: 11 }}
+        />
+        <BaseInput
+          pl='5'
+          fontSize='1'
+          border='1px solid'
+          borderColor='gray'
+          backgroundColor='white'
+          pt='3'
+          pb='3'
+          pr='3'
+          display='block'
+          width='100%'
+          flex='auto'
+          color='black'
+          mr='3'
+          value={state.color}
+          disabled={props.isDisabled}
+          onChange={this.changeColor}
+          onBlur={this.submitColor}
+        />
+        </Row>
+      </Box>
     );
   }
 }

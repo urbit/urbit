@@ -72,7 +72,8 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
   wrapInLink(contents) {
     return (<a
       href={this.props.url}
-      className={`word-break-all ${(typeof contents === 'string') ? 'bb b--white-d b--black' : ''}`}
+      style={{ color: 'inherit' }}
+      className={`word-break-all ${(typeof contents === 'string') ? 'bb' : ''}`}
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -139,18 +140,20 @@ export default class RemoteContent extends PureComponent<RemoteContentProps, Rem
         </>
       );
     } else if (isOembed && remoteContentPolicy.oembedShown) {
-      if (!this.state.embed) {
+      if (!this.state.embed || this.state.embed?.html === '') {
         this.loadOembed();
       }
 
       return (
         <Fragment>
           {renderUrl ? this.wrapInLink(this.state.embed && this.state.embed.title ? this.state.embed.title : url) : null}
-          {this.state.embed !== 'error' && !unfold ? <Button
+          {this.state.embed !== 'error' && this.state.embed?.html && !unfold ? <Button
+            display='inline-flex'
             border={1}
-            style={{ display: 'inline-flex', height: '1.66em' }} // Height is hacked to line-height until Button supports proper size
+            height={3}
             ml={1}
             onClick={this.unfoldEmbed}
+            style={{ cursor: 'pointer' }}
           >
             {this.state.unfold ? 'collapse' : 'expand'}
           </Button> : null}
