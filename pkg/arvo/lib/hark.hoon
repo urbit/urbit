@@ -145,16 +145,16 @@
     ==
   ::
   ++  unread-mop
-    |=  [group=resource =app=resource unread-mop=(list ^unread)]
+    |=  [group=resource app-rid=resource =^unread-mop]
     ^-  json
     %-  pairs
-    :~  group+s+(enjs-path:resource)
-        resource+s+(enjs-path:resource)
+    :~  group+s+(enjs-path:resource group)
+        resource+s+(enjs-path:resource app-rid)
         ::
-          :-  unreads
+        :-  %unreads
         %-  pairs
         %+  turn  (tap:unreads-orm unread-mop)
-        |=  [=index:post u=unread]
+        |=  [=index:post u=^unread]
         =/  idx
           (index:enjs:graph-store index)
         ?>  ?=(%s -.idx)
@@ -175,9 +175,9 @@
     ==
   --
 ++  dejs
-  |%
   =,  dejs:format
   =,  dejs:jsonl
+  |%
   ::
   ++  read-app-idx
     ^-  $-(json [resource index:post])
@@ -191,7 +191,7 @@
     %-  of
     :~  group+dejs-path:resource
         app+dejs-path:resource
-        'appIndex'^read-app-idx
+        app-at-index+read-app-idx
     ==
   ::
   ++  action

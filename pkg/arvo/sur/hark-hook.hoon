@@ -22,6 +22,7 @@
 +$  update-0
   $%  [%keys keys=(map =group=resource (set =app=resource))]
       [%add =unread]
+      [%unreads =group=resource =app=resource unreads=unread-mop]
       action
   ==
 ::
