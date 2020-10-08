@@ -132,8 +132,16 @@
       [%delete ~]
   ==
 ::  channel-timeout: the delay before a channel should be reaped
+::  
+::    Channels are reaped after a period of channel-timeout passes
+::    from the associated eventstream being cancelled. Channels are
+::    reaped immediately when a %delete action is sent from the browser.
+::    The channel subsystem supports re-establishing a eventstream,
+::    however in practice this is not used to due to the general
+::    unreliability of communication to Earth. As such, we aggressively
+::    reap channels.
 ::
-++  channel-timeout  ~h12
+++  channel-timeout  ~m5
 ::  session-timeout: the delay before an idle session expires
 ::
 ++  session-timeout  ~d7
