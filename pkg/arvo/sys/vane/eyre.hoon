@@ -137,6 +137,10 @@
 ::  session-timeout: the delay before an idle session expires
 ::
 ++  session-timeout  ~d7
+::  max-unacked-events: number of unacked events to allow before reaping
+::  channel
+::
+++  max-unacked-events  100
 --
 ::  utilities
 ::
@@ -1428,7 +1432,14 @@
         :^  duct  %pass
           (subscription-wire channel-id request-id ship app)
         [%g %deal [our ship] app `task:agent:gall`[%leave ~]]
+      ::  discard channel if it has too many unacked events in its queue
       ::
+      ?:  ?&  (~(has by session.channel-state.state) channel-id)
+              %+  lte  max-unacked-events
+              %~  wyt  in
+              events:(~(got by session.channel-state.state) channel-id)
+          == 
+        (discard-channel channel-id |)
       ?-    -.sign
           %poke-ack
         =/  =json
