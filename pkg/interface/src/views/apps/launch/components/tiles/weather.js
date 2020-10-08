@@ -54,34 +54,34 @@ export default class WeatherTile extends React.Component {
 
     switch (data.daily.icon) {
       case 'clear-day':
-        weatherStyle = { bg: '#FEF4E0', text: 'black' };
+        weatherStyle = { bg: '#FEF4E0', text: '#333' };
         break;
       case 'clear-night':
-        weatherStyle = { bg: '#000080', text: 'white' };
+        weatherStyle = { bg: '#000080', text: '#fff' };
         break;
       case 'rain':
-        weatherStyle = { bg: '#b0c7ff', text: 'black' };
+        weatherStyle = { bg: '#b0c7ff', text: '#333' };
         break;
       case 'snow':
-        weatherStyle = { bg: '#f9f9f9', text: 'black' };
+        weatherStyle = { bg: '#f9f9f9', text: '#333' };
         break;
       case 'sleet':
-        weatherStyle = { bg: '#f9f9f9', text: 'black' };
+        weatherStyle = { bg: '#f9f9f9', text: '#333' };
         break;
       case 'wind':
-        weatherStyle = { bg: '#fff', text: 'black' };
+        weatherStyle = { bg: '#fff', text: '#333' };
         break;
       case 'fog':
-        weatherStyle = { bg: '#fff', text: 'black' };
+        weatherStyle = { bg: '#fff', text: '#333' };
         break;
       case 'cloudy':
-        weatherStyle = { bg: '#b1b2b3', text: 'black' };
+        weatherStyle = { bg: '#b1b2b3', text: '#333' };
         break;
       case 'partly-cloudy-day':
-        weatherStyle = { bg: '#b1b2b3', text: 'black' };
+        weatherStyle = { bg: '#b1b2b3', text: '#333' };
         break;
       case 'partly-cloudy-night':
-        weatherStyle = { bg: '#56668e', text: 'white' };
+        weatherStyle = { bg: '#56668e', text: '#fff' };
         break;
       default:
         weatherStyle = { bg: 'white', text: 'black' };
@@ -93,7 +93,7 @@ export default class WeatherTile extends React.Component {
     weatherStyle = { bg: 'white', text: 'black' }
     ) {
     return (
-      <Tile bg={weatherStyle.bg} color={weatherStyle.color}>
+      <Tile bg={weatherStyle.bg} color={weatherStyle.text}>
         {child}
       </Tile>
     );
@@ -176,10 +176,10 @@ export default class WeatherTile extends React.Component {
         height='100%'
         onClick={() => this.setState({ manualEntry: !this.state.manualEntry })}
       >
-      <Box>
-        <Icon icon='Weather' color='black' display='inline-block' verticalAlign='top' pt='3px' pr='2px' />
-        <Text>Weather</Text>
-      </Box>
+        <Box>
+          <Icon icon='Weather' display='inline-block' verticalAlign='top' pt='3px' pr='2px' />
+          <Text>Weather</Text>
+        </Box>
         <Text style={{ cursor: 'pointer' }}>
           -> Set location
         </Text>
@@ -215,11 +215,12 @@ export default class WeatherTile extends React.Component {
         flexDirection='column'
         alignItems='space-between'
       >
-        <Text>
-          <Icon icon='Weather' color='black' display='inline' style={{ position: 'relative', top: '.3em'}} />
+        <Text color={weatherStyle.text}>
+          <Icon icon='Weather' color={weatherStyle.text} display='inline' style={{ position: 'relative', top: '.3em'}} />
           Weather
           <a
-          className='pointer'
+            style={{ color: weatherStyle.text }}
+            className='pointer'
             onClick={() =>
               this.setState({ manualEntry: !this.state.manualEntry })
             }
@@ -234,9 +235,9 @@ export default class WeatherTile extends React.Component {
           display="flex"
           flexDirection="column"
         >
-          <Text>{c.summary}</Text>
-          <Text>{Math.round(c.temperature)}°</Text>
-          <Text>{nextSolarEvent}</Text>
+          <Text color={weatherStyle.text}>{c.summary}</Text>
+          <Text color={weatherStyle.text}>{Math.round(c.temperature)}°</Text>
+          <Text color={weatherStyle.text}>{nextSolarEvent}</Text>
         </Box>
       </Box>
     , weatherStyle);
