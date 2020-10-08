@@ -15,7 +15,7 @@
     mpz_init(b_mp);
     mpz_sqrtrem(a_mp, b_mp, a_mp);
 
-    return u3nc(u3k(u3i_mp(a_mp)), u3k(u3i_mp(b_mp)));
+    return u3nc(u3i_mp(a_mp), u3i_mp(b_mp));
   }
   u3_noun
   u3wc_sqt(u3_noun cor)

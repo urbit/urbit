@@ -380,6 +380,7 @@
 #   define c3__emph   c3_s4('e','m','p','h')
 #   define c3__end    c3_s3('e','n','d')
 #   define c3__eq     c3_s2('e','q')
+#   define c3__ex     c3_s2('e','x')
 #   define c3__esh    c3_s3('e','s','h')
 #   define c3__ergo   c3_s4('e','r','g','o')
 #   define c3__etch   c3_s4('e','t','c','h')

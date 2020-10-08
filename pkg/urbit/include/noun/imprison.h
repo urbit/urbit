@@ -111,6 +111,12 @@
           u3_noun
           u3i_cell(u3_noun a, u3_noun b);
 
+        /* u3i_defcons(): allocate cell for deferred construction.
+        **            NB: [hed] and [tel] pointers MUST be filled.
+        */
+          u3_cell
+          u3i_defcons(u3_noun** hed, u3_noun** tel);
+
         /* u3i_trel(): Produce the triple `[a b c]`.
         */
           u3_noun

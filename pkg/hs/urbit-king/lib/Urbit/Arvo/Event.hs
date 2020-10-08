@@ -1,3 +1,5 @@
+{-# LANGUAGE StrictData #-}
+
 {-|
     Event Types and Noun Conversion
 -}

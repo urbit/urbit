@@ -41,9 +41,9 @@ import qualified Data.Vector            as V
 -- Public Types ----------------------------------------------------------------
 
 data LogIdentity = LogIdentity
-  { who          :: Ship
-  , isFake       :: Bool
-  , lifecycleLen :: Word
+  { who          :: !Ship
+  , isFake       :: !Bool
+  , lifecycleLen :: !Word
   } deriving (Eq, Ord, Show)
 
 deriveNoun ''LogIdentity
