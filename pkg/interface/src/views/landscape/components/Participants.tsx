@@ -288,7 +288,7 @@ function Participant(props: {
       </Box>
       <Col justifyContent="center" gapY="1" height="100%">
         {contact.nickname && (
-          <TruncText title={contact.nickname} maxWidth="85%">
+          <TruncText title={contact.nickname} maxWidth="85%" color="gray">
             {contact.nickname}
           </TruncText>
         )}
