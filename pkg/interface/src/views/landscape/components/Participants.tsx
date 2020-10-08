@@ -90,6 +90,7 @@ const Tab = ({ selected, id, label, setSelected }) => (
     borderBottom={selected === id ? 1 : 0}
     borderBottomColor="black"
     mr={2}
+    cursor='pointer'
     onClick={() => setSelected(id)}
   >
     <Text color={selected === id ? "black" : "gray"}>{label}</Text>
