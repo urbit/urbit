@@ -6,7 +6,7 @@ import { Box, DisclosureBox } from "@tlon/indigo-react";
 const routeList = defaultApps.map(a => `/~${a}`);
 
 export default class Tile extends React.Component {
-  render() { 
+  render() {
     const { bg, to, href, p, boxShadow, ...props } = this.props;
 
     let childElement = (
@@ -16,14 +16,14 @@ export default class Tile extends React.Component {
     );
 
     if (to) {
-      if (routeList.indexOf(to) !== -1 || to === '/~landscape/home' || to === '/~profile') {
+      if (routeList.indexOf(to) !== -1 || to === '/~landscape/home' || to === '/~profile' || to.startsWith('/~landscape/ship')) {
         childElement= (<Link to={to}>{childElement}</Link>);
       } else {
         childElement= (<a href={to}>{childElement}</a>);
       }
 
     }
-      
+
 
     return (
       <Box
