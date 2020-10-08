@@ -31,13 +31,11 @@ interface NoteProps {
 
 export function Note(props: NoteProps & RouteComponentProps) {
   const [deleting, setDeleting] = useState(false);
-  const { notebook, note, contacts, ship, book, noteId, api, baseUrl } = props;
+  const { notebook, note, contacts, ship, book, noteId, api, rootUrl } = props;
   useEffect(() => {
     api.publish.readNote(ship.slice(1), book, noteId);
     api.publish.fetchNote(ship, book, noteId);
   }, [ship, book, noteId]);
-
-  const rootUrl = props.baseUrl || '/~404';
 
   const deletePost = async () => {
     setDeleting(true);
