@@ -49,7 +49,7 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([=action:graph-view ~] arg)
+=+  !<(=action:graph-view arg)
 ?>  ?=(%leave -.action)
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ?:  =(our.bowl entity.rid.action)
