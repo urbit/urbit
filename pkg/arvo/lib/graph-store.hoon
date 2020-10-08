@@ -253,6 +253,9 @@
 ++  dejs
   =,  dejs:format
   |%
+  ::
+  ++  index  (su ;~(pfix net (more net dem)))
+  ::
   ++  update
     |=  jon=json
     ^-  ^update
@@ -381,8 +384,6 @@
       :~  [%resource dejs:res]
           [%index index]          
       ==
-    ::
-    ++  index  (su ;~(pfix net (more net dem)))
     ::
     ++  add-tag
       %-  ot
