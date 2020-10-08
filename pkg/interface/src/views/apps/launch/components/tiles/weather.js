@@ -52,36 +52,36 @@ export default class WeatherTile extends React.Component {
       text: ''
     };
 
-    switch (data.daily.icon) {
+    switch (data.currently.icon) {
       case 'clear-day':
-        weatherStyle = { bg: '#FEF4E0', text: '#333' };
+        weatherStyle = { bg: '#E9F5FF', text: '#333' };
         break;
       case 'clear-night':
-        weatherStyle = { bg: '#000080', text: '#fff' };
+        weatherStyle = { bg: '#14263C', text: '#fff' };
         break;
       case 'rain':
-        weatherStyle = { bg: '#b0c7ff', text: '#333' };
+        weatherStyle = { bg: '#2E1611', text: '#fff' };
         break;
       case 'snow':
-        weatherStyle = { bg: '#f9f9f9', text: '#333' };
+        weatherStyle = { bg: '#F9F9FB', text: '#333' };
         break;
       case 'sleet':
-        weatherStyle = { bg: '#f9f9f9', text: '#333' };
+        weatherStyle = { bg: '#EFF1F3', text: '#333' };
         break;
       case 'wind':
-        weatherStyle = { bg: '#fff', text: '#333' };
+        weatherStyle = { bg: '#F7FEF6', text: '#333' };
         break;
       case 'fog':
-        weatherStyle = { bg: '#fff', text: '#333' };
+        weatherStyle = { bg: '#504D44', text: '#fff' };
         break;
       case 'cloudy':
-        weatherStyle = { bg: '#b1b2b3', text: '#333' };
+        weatherStyle = { bg: '#EEF1F5', text: '#333' };
         break;
       case 'partly-cloudy-day':
-        weatherStyle = { bg: '#b1b2b3', text: '#333' };
+        weatherStyle = { bg: '#F3F6FA', text: '#333' };
         break;
       case 'partly-cloudy-night':
-        weatherStyle = { bg: '#56668e', text: '#fff' };
+        weatherStyle = { bg: '#283442', text: '#fff' };
         break;
       default:
         weatherStyle = { bg: 'white', text: 'black' };

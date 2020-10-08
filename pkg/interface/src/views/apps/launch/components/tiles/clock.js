@@ -218,7 +218,7 @@ class Clock extends React.Component {
       ctr / 2,
       state.sunriseEnd,
       state.sunset,
-      'rgba(33, 157, 255, .3)'
+      'rgba(33, 157, 255, .2)'
     );
 
     // Sunrise
@@ -277,7 +277,7 @@ class Clock extends React.Component {
         8,
         0,
         2 * Math.PI,
-        '#6792FF',
+        'rgba(0,0,0,0.1)',
         1
       );
     } else {
