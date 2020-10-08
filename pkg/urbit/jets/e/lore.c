@@ -83,25 +83,40 @@
   u3_noun
   u3qe_leer(u3_atom txt)
   {
-    c3_w pos_w, i_w = 0, len_w = u3r_met(3, txt);
-    u3_noun out = u3_nul;
+    u3_noun  pro;
+    u3_noun* lit = &pro;
 
-    while ( 1 ) {
-      // scan till end or newline
-      for ( pos_w = i_w; i_w < len_w; ++i_w ) {
-        if ( 10 == u3r_byte(i_w, txt) ) {
+    {
+      c3_w pos_w, i_w = 0, len_w = u3r_met(3, txt);
+
+      while ( 1 ) {
+        // scan till end or newline
+        for ( pos_w = i_w; i_w < len_w; ++i_w ) {
+          if ( 10 == u3r_byte(i_w, txt) ) {
+            break;
+          }
+        }
+
+        // append to list
+        {
+          u3_noun* hed;
+          u3_noun* tel;
+
+          *lit = u3i_defcons(&hed, &tel);
+          *hed = _lore_cut(pos_w, i_w - pos_w, txt);
+          lit  = tel;
+        }
+
+        // finish or advance
+        if ( i_w++ == len_w ) {
           break;
         }
       }
-      // append to list
-      out = u3nc(_lore_cut(pos_w, i_w - pos_w, txt), out);
-      // finish or advance
-      if ( i_w++ == len_w ) {
-        break;
-      }
     }
 
-    return u3kb_flop(out);
+    *lit = u3_nul;
+
+    return pro;
   }
 
   u3_noun
