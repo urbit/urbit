@@ -37,6 +37,11 @@
   %-  spat
   (en-path resource)
 ::
+++  dejs-path
+  |=  jon=json
+  ?>  ?=(%s -.jon)
+  (de-path (stab p.jon))
+::
 ++  dejs
   =,  dejs:format
   ^-  $-(json resource)

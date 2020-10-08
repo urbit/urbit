@@ -4,6 +4,7 @@
 =<  [. sur]
 =,  sur
 |%
+++  unreads-orm  ((ordered-map index:post unread) compare-indexes:post)
 ++  enjs
   =,  enjs:format
   =,  enjs:jsonl
@@ -114,6 +115,7 @@
         snippet+s+snippet.publish-body
       (publish-body-content [author title]:publish-body)
     ==
+  ::
   ++  link-body
     |=  [=index:post =^link-body]
     ^-  json
@@ -142,15 +144,62 @@
       %link      (link-body +.body)
     ==
   ::
+  ++  unread-mop
+    |=  [group=resource =app=resource unread-mop=(list ^unread)]
+    ^-  json
+    %-  pairs
+    :~  group+s+(enjs-path:resource)
+        resource+s+(enjs-path:resource)
+        ::
+          :-  unreads
+        %-  pairs
+        %+  turn  (tap:unreads-orm unread-mop)
+        |=  [=index:post u=unread]
+        =/  idx
+          (index:enjs:graph-store index)
+        ?>  ?=(%s -.idx)
+        [p.idx (unread u)]
+    ==
+  ::
   ++  update
     |=  upd=^update
     ^-  json
     ?>  ?=(%0 -.upd)
     ?:  ?=(?(%read %listen %ignore) -.+.upd)
       (action +.upd)
+    %+  frond  -.+.upd
     ?-  -.+.upd
       %keys  (keys +.+.upd)
       %add   (unread +.+.upd)
+      %unreads  (unread-mop +.+.upd)
+    ==
+  --
+++  dejs
+  |%
+  =,  dejs:format
+  =,  dejs:jsonl
+  ::
+  ++  read-app-idx
+    ^-  $-(json [resource index:post])
+    %-  ot
+    :~  app+dejs-path:resource
+        index+index:dejs:graph-store
+    ==
+  ::
+  ++  read-type
+    ^-  $-(json ^read-type)
+    %-  of
+    :~  group+dejs-path:resource
+        app+dejs-path:resource
+        'appIndex'^read-app-idx
+    ==
+  ::
+  ++  action
+    ^-  $-(json ^action)
+    %-  of
+    :~  listen+dejs-path:resource
+        ignore+dejs-path:resource
+        read+read-type
     ==
   --
 --
