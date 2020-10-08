@@ -37,7 +37,7 @@ const otherIndex = function() {
   return other;
 };
 
-export default function index(associations, apps, currentGroup) {
+export default function index(associations, apps, currentGroup, groups) {
   // all metadata from all apps is indexed
   // into subscriptions and landscape
   const subscriptions = [];
@@ -75,9 +75,11 @@ export default function index(associations, apps, currentGroup) {
           landscape.push(obj);
         } else {
           const app = each.metadata.module || each['app-name'];
+          const group = (groups[each['group-path']]?.hidden)
+            ? '/home' : each['group-path'];
           const obj = result(
             title,
-            `/~landscape${each['group-path']}/join/${app}${each['app-path']}`,
+            `/~landscape${group}/join/${app}${each['app-path']}`,
             app.charAt(0).toUpperCase() + app.slice(1),
             (associations?.contacts?.[each['group-path']]?.metadata?.title || null)
           );

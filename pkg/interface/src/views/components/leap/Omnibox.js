@@ -31,7 +31,7 @@ export class Omnibox extends Component {
       const { pathname } = this.props.location;
       const selectedGroup = pathname.startsWith('/~landscape/ship/') ? '/' + pathname.split('/').slice(2,5).join('/') : null;
 
-      this.setState({ index: index(this.props.associations, this.props.apps.tiles, selectedGroup) });
+      this.setState({ index: index(this.props.associations, this.props.apps.tiles, selectedGroup, this.props.groups) });
     }
 
     if (prevProps && (prevProps.apps !== this.props.apps) && (this.state.query === '')) {

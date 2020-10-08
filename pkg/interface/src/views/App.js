@@ -150,6 +150,7 @@ class App extends React.Component {
                 apps={state.launch}
                 api={this.api}
                 dark={state.dark}
+                groups={state.groups}
                 show={state.omniboxShown}
               />
             </ErrorBoundary>
