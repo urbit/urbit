@@ -48,7 +48,7 @@ const Root = styled.div`
 
   /* Works on Chrome/Edge/Safari */
   *::-webkit-scrollbar {
-    width: 12px;
+    width: 6px;
   }
   *::-webkit-scrollbar-track {
     background: transparent;
@@ -56,7 +56,7 @@ const Root = styled.div`
   *::-webkit-scrollbar-thumb {
     background-color: ${ p => p.theme.colors.gray };
     border-radius: 1rem;
-    border: 3px solid ${ p => p.theme.colors.white };
+    border: 0px solid transparent;
   }
 `;
 
