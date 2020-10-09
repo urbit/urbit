@@ -71,10 +71,11 @@ export function LinkResource(props: LinkResourceProps) {
                 <Row width="100%" flexShrink='0'>
                   <LinkSubmit s3={s3} name={name} ship={ship.slice(1)} api={api} />
                 </Row>
-                {Array.from(graph.values()).map((node: GraphNode) => {
+                {Array.from(graph).map(([date, node]) => {
                   const contact = contactDetails[node.post.author];
                   return (
                     <LinkItem
+                      key={date}
                       resource={resourcePath}
                       node={node}
                       nickname={contact?.nickname}
