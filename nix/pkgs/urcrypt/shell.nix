@@ -4,8 +4,6 @@ let
 in
 
 import ./default.nix {
-  inherit (pkgs)
-    stdenv openssl gmp pkgconfig;
-  inherit (deps)
-    libaes_siv scrypt secp256k1;
+  inherit pkgs;
+  inherit deps;
 }

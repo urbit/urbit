@@ -4,9 +4,11 @@ set -e
 
 URBIT_VERSION="0.10.8"
 
-deps="                                                                \
-  curl gmp sigsegv argon2 ed25519 ent h2o scrypt uv murmur3 secp256k1 \
-  softfloat3 ssl crypto z lmdb aes_siv urcrypt pthread   \
+pkg_config_deps="liburcrypt"
+
+extra_libs="\
+  urcrypt curl gmp sigsegv ent h2o scrypt uv murmur3 \
+  softfloat3 ssl z lmdb pthread \
 "
 
 headers="             \
@@ -65,7 +67,7 @@ case $(tr A-Z a-z <<< $os) in
      ;;
   *freebsd*)
      defmacro U3_OS_bsd 1
-     osdeps="kvm"
+     extra_libs="${extra_libs} kvm"
      ;;
   *openbsd*)
      defmacro U3_OS_bsd 1
@@ -76,13 +78,15 @@ case $(tr A-Z a-z <<< $os) in
      ;;
 esac
 
-for dep in ${osdeps-} $deps
-do LDFLAGS="${LDFLAGS-} -l$dep"
-   ${PKG_CONFIG-pkg-config} --cflags --libs $dep 2>/dev/null || true
+CFLAGS="${CFLAGS-} $(${PKG_CONFIG-pkg-config} --cflags $pkg_config_deps)"
+LDFLAGS="${LDFLAGS-} $(${PKG_CONFIG-pkg-config} --libs --static $pkg_config_deps)"
+
+for lib in ${extra_libs}; do
+  LDFLAGS="${LDFLAGS-} -l$lib"
 done
 
-for header in $headers
-do LDFLAGS="${LDFLAGS-} -I$header"
+for header in $headers; do
+  CFLAGS="${CFLAGS-} -I$header"
 done
 
 cat >config.mk <<EOF

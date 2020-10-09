@@ -1,11 +1,16 @@
-{ stdenv, pkgconfig, openssl, gmp, secp256k1, scrypt, libaes_siv }:
+{ pkgs, deps }:
 
-stdenv.mkDerivation rec {
+pkgs.stdenv.mkDerivation rec {
   name    = "urcrypt";
   builder = ./builder.sh;
   src     = ../../../pkg/urcrypt;
 
-  buildInputs = [
-    pkgconfig openssl gmp secp256k1 scrypt libaes_siv
-  ];
+  nativeBuildInputs =
+    with pkgs;
+    [ autoconf automake libtool m4 pkgconfig ];
+
+  buildInputs =
+    with pkgs;
+    with deps;
+    [ openssl gmp secp256k1 scrypt libaes_siv ];
 }

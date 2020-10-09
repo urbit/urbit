@@ -17,6 +17,10 @@ AM_INIT_AUTOMAKE([foreign subdir-objects -Wall -Werror])
 AM_PROG_AR
 LT_INIT
 
+# Initialize pkgconfig
+PKG_PROG_PKG_CONFIG
+PKG_INSTALLDIR
+
 # Checks for programs
 AC_PROG_CC
 
@@ -66,5 +70,5 @@ AC_TYPE_UINT8_T
 AC_CHECK_FUNCS([memset])
 
 # Finish and output
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile liburcrypt.pc])
 AC_OUTPUT

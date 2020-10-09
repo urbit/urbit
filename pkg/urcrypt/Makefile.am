@@ -15,6 +15,8 @@ noinst_HEADERS = ed25519/src/ed25519.h \
 		 argon2/src/blake2/blake2.h
 
 # main library
+pkgconfig_DATA = liburcrypt.pc
+
 liburcrypt_la_CPPFLAGS = -I$(srcdir)/ed25519/src \
 			 -I$(srcdir)/ge-additions \
 			 -I$(srcdir)/argon2/include \
