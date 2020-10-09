@@ -902,6 +902,55 @@ urcrypt_secp_make(uint8_t hash[32], uint8_t key[32], uint8_t out[32])
 }
 
 int
+urcrypt_secp_sign(urcrypt_secp_context* context,
+                  uint8_t hash[32],
+                  uint8_t key[32],
+                  uint8_t* out_v,
+                  uint8_t out_r[32],
+                  uint8_t out_s[32])
+{
+  secp256k1_ecdsa_recoverable_signature signature;
+
+  urcrypt__reverse(32, hash);
+  urcrypt__reverse(32, key);
+
+  /* sign
+     N.B. if we want the 'v' field we can't use default secp256k1_ecdsa_sign(),
+     but must use secp256k1_ecdsa_sign_recoverable() */
+  if ( 1 != secp256k1_ecdsa_sign_recoverable(
+        context->secp, /* IN: context object */
+        &signature,    /* OUT: signature */
+        hash,          /* IN: 32 byte hash to be signed */
+        key,           /* IN: 32 byte secret key */
+        NULL,          /* IN: nonce-function ptr ; NULL = default */
+        NULL) ) {      /* IN: data for nonce function; not used  */
+    return -1;
+  }
+  else {
+    uint8_t sigbytes[64];
+    if ( 1 != secp256k1_ecdsa_recoverable_signature_serialize_compact(
+        context->secp,  /* IN: context object */
+        sigbytes,       /* OUT: 64 byte sig (r,s) */
+        out_v,          /* OUT: v */
+        &signature) ) { /* IN:  65 byte sig */
+      return -2;
+    }
+    else {
+      /* read sigbytes into r and s
+         convert endianness while we're at it */
+      uint8_t i, j;
+      for ( j = 31, i = 0; i < 32; ++i, --j) {
+        out_r[j] = sigbytes[i];
+      }
+      for ( j = 31; i < 64; ++i, --j ) {
+        out_s[j] = sigbytes[i];
+      }
+      return 0;
+    }
+  }
+}
+
+int
 urcrypt_secp_reco(urcrypt_secp_context* context,
                   uint8_t hash[32],
                   uint8_t key_v,
@@ -921,7 +970,7 @@ urcrypt_secp_reco(urcrypt_secp_context* context,
   else {
     secp256k1_ecdsa_recoverable_signature signature;
     uint8_t private[64];
-    size_t i, j;
+    uint8_t i, j;
     // make big private key out of two smaller parts, reversing endianness
     for ( j = 31, i = 0; i < 32; ++i, --j) {
       private[i] = key_r[j];

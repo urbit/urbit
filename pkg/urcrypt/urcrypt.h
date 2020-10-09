@@ -197,7 +197,12 @@ void urcrypt_secp_cleanup(void);
 
 // technically usable without the secp context
 int urcrypt_secp_make(uint8_t hash[32], uint8_t key[32], uint8_t out[32]);
-
+int urcrypt_secp_sign(urcrypt_secp_context* context,
+                      uint8_t hash[32],
+                      uint8_t key[32],
+                      uint8_t* out_v,
+                      uint8_t out_r[32],
+                      uint8_t out_s[32]);
 int urcrypt_secp_reco(urcrypt_secp_context* context,
                       uint8_t hash[32],
                       uint8_t key_v, // 0, 1, 2, 3
