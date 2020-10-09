@@ -2654,25 +2654,28 @@
   ::  we remove it from `ref` and tell the foreign ship to cancel as well.
   ::
   ++  cancel-request                                    ::  release request
-    ^+  .
+    ^+  ..cancel-request
     =^  wos/(list wove)  qyx
       :_  (~(run by qyx) |=(a/(set duct) (~(del in a) hen)))
       %-  ~(rep by qyx)
       |=  {{a/wove b/(set duct)} c/(list wove)}
       ?.((~(has in b) hen) c [a c])
+    ::
     ?~  ref
-      =>  .(ref `(unit rind)`ref)     ::  XX TMI
-      ?:  =(~ wos)  +                                   ::  XX handle?
-      |-  ^+  +>
-      ?~  wos  +>
-      $(wos t.wos, +> (run-if-future rove.i.wos |=(@da (best hen +<))))
-    ^+  ..cancel-request
-    =+  nux=(~(get by fod.u.ref) hen)
-    ?~  nux  ..cancel-request
+      =>  .(ref `(unit rind)`ref)             ::  XX TMI
+      ?:  =(~ wos)  ..cancel-request                    ::  XX handle?
+      |-  ^+  ..cancel-request
+      ?~  wos  ..cancel-request
+      =.  ..cancel-request  (run-if-future rove.i.wos |=(@da (best hen +<)))
+      $(wos t.wos)
+    ::
+    ?~  nux=(~(get by fod.u.ref) hen)
+      ..cancel-request(ref `(unit rind)`ref)  ::  XX TMI
     =:  fod.u.ref  (~(del by fod.u.ref) hen)
         bom.u.ref  (~(del by bom.u.ref) u.nux)
       ==
-    (send-over-ames hen her u.nux syd ~)
+    %.  [hen her u.nux [syd ~]]
+    send-over-ames(ref `(unit rind)`ref)      ::  XX TMI
   ::
   ::  Handles a request.
   ::
