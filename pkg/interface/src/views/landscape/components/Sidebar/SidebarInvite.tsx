@@ -1,30 +1,40 @@
 import React, { Component } from 'react';
 import { Invite } from '~/types/invite-update';
+import { Text, Box, Button, Row } from '@tlon/indigo-react';
 
 export class SidebarInvite extends Component<{invite: Invite, onAccept: Function, onDecline: Function}, {}> {
   render() {
     const { props } = this;
 
     return (
-      <div className='w-100 bg-white bg-gray0-d pa4 bb b--gray4 b--gray1-d  z-5' style={{position: 'sticky', top: 0}}>
-        <div className='w-100 v-mid'>
-          <p className="dib f8 mono gray4-d">
-            {props.invite.text ? props.invite.text : props.invite.path}
-          </p>
-        </div>
-        <a
-          className="dib pointer pa2 f9 bg-green2 white mt4"
+      <Box width='100%' p='4' mb='4' borderBottom='1px solid lightGray' position='sticky' style={{ top: 0 }}>
+        <Box width='100%' verticalAlign='middle'>
+          <Text display='block' pb='2' gray>You have been invited to:</Text>
+          <Text display='inline-block'>
+            {props.invite.path.substr(1)}
+          </Text>
+        </Box>
+        <Row>
+        <Button
+          cursor='pointer'
+          primary
+          mt='4'
+          display='inline-block'
           onClick={this.props.onAccept.bind(this)}
         >
-          Accept Invite
-        </a>
-        <a
-          className="dib pointer ml4 pa2 f9 bg-black bg-gray0-d white mt4"
+          Accept
+        </Button>
+        <Button
+          display='inline-block'
+          cursor='pointer'
+          ml='4'
+          mt='4'
           onClick={this.props.onDecline.bind(this)}
         >
           Decline
-        </a>
-      </div>
+        </Button>
+        </Row>
+      </Box>
     );
   }
 }
