@@ -4,6 +4,7 @@ import { cite } from '~/logic/lib/util';
     ['commands', []],
     ['subscriptions', []],
     ['groups', []],
+    ['apps', []],
     ['other', []]
   ]);
 
@@ -26,6 +27,29 @@ const commandIndex = function (currentGroup) {
   commands.push(result(`Channel: Create`, `/~landscape${workspace}/new`, 'Groups', null));
 
   return commands;
+};
+
+const appIndex = function (apps) {
+  // all apps are indexed from launch data
+  // indexed into 'apps'
+  const applications = [];
+  Object.keys(apps)
+    .filter((e) => {
+      return apps[e]?.type?.basic;
+    })
+    .sort((a, b) => {
+      return a.localeCompare(b);
+    })
+    .map((e) => {
+      const obj = result(
+        apps[e].type.basic.title,
+        apps[e].type.basic.linkedUrl,
+        apps[e].type.basic.title,
+        null
+      );
+      applications.push(obj);
+    });
+  return applications;
 };
 
 const otherIndex = function() {
@@ -91,6 +115,7 @@ export default function index(associations, apps, currentGroup, groups) {
   indexes.set('commands', commandIndex(currentGroup));
   indexes.set('subscriptions', subscriptions);
   indexes.set('groups', landscape);
+  indexes.set('apps', appIndex(apps));
   indexes.set('other', otherIndex());
 
   return indexes;

@@ -55,7 +55,7 @@ export class Omnibox extends Component {
   }
 
   getSearchedCategories() {
-    return ['commands', 'groups', 'subscriptions', 'other'];
+    return ['commands', 'groups', 'subscriptions', 'apps', 'other'];
   }
 
   control(evt) {
@@ -105,9 +105,6 @@ export class Omnibox extends Component {
     return new Map(this.getSearchedCategories().map((category) => {
       if (!this.state) {
         return [category, []];
-      }
-      if (category === 'apps') {
-        return ['apps', this.state.index.get('apps')];
       }
       if (category === 'other') {
         return ['other', this.state.index.get('other')];
