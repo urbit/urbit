@@ -7,12 +7,13 @@
   ==
 +$  action
   $%  [%check-status ~]
+      [%get-block-count ~]
       [%balance =address]
       [%transactions =address]
   ==
 ::
 +$  command
-  $%  [%connect-as-host =credentials]
+  $%  [%become-host =credentials]
       [%connect-as-client host=ship]
       [%allow-clients users=(set ship)]
   ==
