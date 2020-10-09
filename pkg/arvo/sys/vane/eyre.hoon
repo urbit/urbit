@@ -558,12 +558,13 @@
   ++  request
     |=  [secure=? =address =request:http]
     ^-  [(list move) server-state]
+    =*  headers  header-list.request
     ::  for requests from localhost, respect the "forwarded" header
     ::
     =?  address  =([%ipv4 .127.0.0.1] address)
-      (fall (forwarded-for header-list.request) address)
+      (fall (forwarded-for headers) address)
     ::
-    =/  host  (get-header:http 'host' header-list.request)
+    =/  host  (get-header:http 'host' headers)
     =/  [=action suburl=@t]
       (get-action-for-binding host url.request)
     ::
@@ -579,7 +580,7 @@
     ::  and maybe add it to the "pending approval" set
     ::
     =/  origin=(unit origin)
-      (get-header:http 'origin' header-list.request)
+      (get-header:http 'origin' headers)
     =^  cors-approved  requests.cors-registry.state
       =,  cors-registry.state
       ?~  origin                         [| requests]
@@ -593,9 +594,18 @@
       %-  handle-response
       =;  =header-list:http
         [%start [204 header-list] ~ &]
+      ::  allow the method and headers that were asked for,
+      ::  falling back to wildcard if none specified
+      ::
       ::NOTE  +handle-response will add the rest of the headers
-      :~  'Access-Control-Allow-Methods'^'*'
-          'Access-Control-Allow-Headers'^'*'
+      ::
+      :~  :-  'Access-Control-Allow-Methods'
+          =-  (fall - '*')
+          (get-header:http 'access-control-request-method' headers)
+        ::
+          :-  'Access-Control-Allow-Headers'
+          =-  (fall - '*')
+          (get-header:http 'access-control-request-headers' headers)
       ==
     ::
     ?-    -.action
