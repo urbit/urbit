@@ -10802,8 +10802,8 @@
       ^-  ?
       =-  ?:  -  &
           ?.  tel  |
-          ::  ~_  (dunk %need)
-          ::  ~_  (dunk(sut ref) %have)
+          ~_  (dunk %need)
+          ~_  (dunk(sut ref) %have)
           ~>  %mean.'nest-fail'
           !!
       ?:  =(sut ref)  &
