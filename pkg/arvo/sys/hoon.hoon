@@ -12060,7 +12060,7 @@
   =/  res  (mule trap)
   ?-  -.res
     %&  p.res
-    %|  (mean leaf+"road: new" p.res)
+    %|  (mean p.res)
   ==
 ::
 ++  slew                                                ::  get axis in vase
