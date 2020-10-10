@@ -2,10 +2,10 @@
 **
 */
 #include "all.h"
-
 #include <stdint.h>
 #include <errno.h>
 
+#include <urcrypt.h>
 #include <libscrypt.h>
 #include <sha256.h>
 
@@ -153,38 +153,14 @@ static int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
       c3_w    pwd_w, sal_w, out_w;
       c3_y   *pwd_y = u3r_bytes_all(&pwd_w, p),
              *sal_y = u3r_bytes_all(&sal_w, s),
-             *out_y = u3r_malloc(d);
-      urcrypt_scrypt_pbk(pwd_y, pwd_w, sal_y, sal_w, c, d);
+             *out_y = u3a_malloc(d);
+      urcrypt_scrypt_pbk(pwd_y, pwd_w, sal_y, sal_w, c, d, out_y);
       pro = u3i_bytes(d, out_y);
       u3a_free(pwd_y);
       u3a_free(sal_y);
       u3a_free(out_y);
       return pro;
     }
-  }
-
-
-  u3_noun
-  u3qes_pbk(u3_atom p, u3_atom s, u3_atom c, u3_atom d)
-  {
-    if (!(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
-          _(u3a_is_cat(c))  && _(u3a_is_cat(d))  &&
-           (d <= (1 << 30)) &&  (c <= (1 << 28)) &&
-           (c != 0)))
-        return u3m_bail(c3__exit);
-
-    c3_w   pl = u3r_met(3, p);      c3_w   sl = u3r_met(3, s);
-    c3_y* b_p = u3a_malloc(pl + 1); c3_y* b_s= u3a_malloc(pl + 1);
-    u3r_bytes(0, pl, b_p, p);       u3r_bytes(0, sl, b_s, s);
-    b_p[pl] = 0; b_s[sl]=0;
-    c3_y* buf = u3a_malloc(d);
-
-    libscrypt_PBKDF2_SHA256(b_p, pl, b_s, sl, c, buf, d);
-
-    u3_noun res = u3i_bytes(d, buf);
-    u3a_free(b_p); u3a_free(b_s); u3a_free(buf);
-
-    return res;
   }
 
   u3_noun
@@ -199,9 +175,7 @@ static int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
       return u3m_bail(c3__exit);
     }
     else {
-      u3l_log("scrypt-pbk\r\n");
       return _cqes_pbk(p, s, c, d);
-      //return u3qes_pbk(p, s, c, d);
     }
   }
 
