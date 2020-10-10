@@ -139,6 +139,31 @@ static int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
     return u3qes_pbl(p, pl, s, sl, c, d);
   }
 
+  static u3_atom
+  _cqes_pbk(u3_atom p, u3_atom s, u3_atom c, u3_atom d)
+  {
+    if ( (c > (1 << 28)) ||
+         (d > (1 << 30)) ) {
+      // max key length 1gb
+      // max iterations 2^28
+      return u3m_bail(c3__exit);
+    }
+    else {
+      u3_noun pro;
+      c3_w    pwd_w, sal_w, out_w;
+      c3_y   *pwd_y = u3r_bytes_all(&pwd_w, p),
+             *sal_y = u3r_bytes_all(&sal_w, s),
+             *out_y = u3r_malloc(d);
+      urcrypt_scrypt_pbk(pwd_y, pwd_w, sal_y, sal_w, c, d);
+      pro = u3i_bytes(d, out_y);
+      u3a_free(pwd_y);
+      u3a_free(sal_y);
+      u3a_free(out_y);
+      return pro;
+    }
+  }
+
+
   u3_noun
   u3qes_pbk(u3_atom p, u3_atom s, u3_atom c, u3_atom d)
   {
@@ -169,7 +194,15 @@ static int _crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t,
 
     u3x_qual(u3r_at(u3x_sam, cor), &p, &s, &c, &d);
 
-    return u3qes_pbk(p, s, c, d);
+    if ( !(_(u3a_is_atom(p)) && _(u3a_is_atom(s)) &&
+           _(u3a_is_atom(c)) && _(u3a_is_atom(d))) ) {
+      return u3m_bail(c3__exit);
+    }
+    else {
+      u3l_log("scrypt-pbk\r\n");
+      return _cqes_pbk(p, s, c, d);
+      //return u3qes_pbk(p, s, c, d);
+    }
   }
 
 /**

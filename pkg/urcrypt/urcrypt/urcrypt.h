@@ -1,13 +1,8 @@
 #ifndef URCRYPT_H
 #define URCRYPT_H
-
 #include <stdint.h>
 #include <stdbool.h>
-#include <stdlib.h>
-
-typedef int (*urcrypt_argon2_alloc_t)(uint8_t**, size_t);
-typedef void (*urcrypt_argon2_free_t)(uint8_t*, size_t);
-
+#include <stddef.h>
 // const arguments are not written to, non-const arguments may be
 // all arrays are in little-endian byte order.
 // array sizes[64] are purely documentary
@@ -146,6 +141,9 @@ void urcrypt_shas(uint8_t *salt, size_t salt_length,
                   const uint8_t *message, size_t message_length,
                   uint8_t out[32]);
 
+typedef int (*urcrypt_argon2_alloc_t)(uint8_t**, size_t);
+typedef void (*urcrypt_argon2_free_t)(uint8_t*, size_t);
+
 #define urcrypt_argon2_d  0
 #define urcrypt_argon2_i  1
 #define urcrypt_argon2_id 2
@@ -211,4 +209,12 @@ int urcrypt_secp_reco(urcrypt_secp_context* context,
                       uint8_t out_x[32],
                       uint8_t out_y[32]);
 
+void
+urcrypt_scrypt_pbk(const uint8_t *passwd,
+                   size_t passwdlen,
+                   const uint8_t *salt,
+                   size_t saltlen,
+                   uint64_t count,
+                   size_t outlen, // must be at most 32*(2^32-1)
+                   uint8_t *out);
 #endif
