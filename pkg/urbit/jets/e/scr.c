@@ -6,7 +6,6 @@
 
 /* functions
 */
-
   static u3_weak
   _cqes_hs(u3_atom p, c3_w pwd_w,
            u3_atom s, c3_w sal_w,

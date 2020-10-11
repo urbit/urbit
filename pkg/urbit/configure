@@ -7,7 +7,7 @@ URBIT_VERSION="0.10.8"
 pkg_config_deps="liburcrypt"
 
 extra_libs="\
-  urcrypt curl gmp sigsegv ent h2o scrypt uv murmur3 \
+  urcrypt curl gmp sigsegv ent h2o uv murmur3 \
   softfloat3 ssl z lmdb pthread \
 "
 
