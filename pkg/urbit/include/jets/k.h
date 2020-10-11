@@ -4,6 +4,7 @@
 */
   /** Tier 1.
   **/
+    u3_noun u3ka_dec(u3_noun a);
     u3_noun u3ka_add(u3_noun a, u3_noun b);
     u3_noun u3ka_sub(u3_noun a, u3_noun b);
     u3_noun u3ka_mul(u3_noun a, u3_noun b);
@@ -18,6 +19,12 @@
 
 /* u3kc: tier 3 functions
 */
+
+  /* u3kc_bex(): binary exponent.
+  */
+    u3_noun
+    u3kc_bex(u3_atom);
+
   /* u3kc_mix(): binary xor.
   */
     u3_noun

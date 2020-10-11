@@ -22,6 +22,11 @@
     }
   }
   u3_noun
+  u3kc_bex(u3_atom a)
+  {
+    return u3qc_bex(u3k(a));
+  }
+  u3_noun
   u3wc_bex(u3_noun cor)
   {
     u3_noun a;

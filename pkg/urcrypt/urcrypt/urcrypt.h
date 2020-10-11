@@ -209,12 +209,21 @@ int urcrypt_secp_reco(urcrypt_secp_context* context,
                       uint8_t out_x[32],
                       uint8_t out_y[32]);
 
-void
-urcrypt_scrypt_pbk(const uint8_t *passwd,
+void urcrypt_scrypt_pbkdf_sha256(const uint8_t *passwd,
+                                 size_t passwdlen,
+                                 const uint8_t *salt,
+                                 size_t saltlen,
+                                 uint64_t count,
+                                 size_t outlen, // must be at most 32*(2^32-1)
+                                 uint8_t *out);
+
+int urcrypt_scrypt(const uint8_t *passwd,
                    size_t passwdlen,
                    const uint8_t *salt,
                    size_t saltlen,
-                   uint64_t count,
-                   size_t outlen, // must be at most 32*(2^32-1)
+                   uint64_t n,
+                   uint32_t r,
+                   uint32_t p,
+                   size_t outlen,
                    uint8_t *out);
 #endif

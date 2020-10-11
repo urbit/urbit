@@ -24,7 +24,6 @@
     ::  TODO: until scrypt has been jetted, we can only test the
     ::  first vector; the others do not finish in a reasonable
     ::  amount of time.
-    %+  scag  1  ^-  (list vector)
     :~
       :*
         0x0
@@ -37,8 +36,8 @@
       ==
     ::
       :*
-        0x7061.7373.776f.7264
-        0x4e61.436c
+        `@ux`'password'
+        `@ux`'NaCl'
         1.024  8  16
         0xfdba.be1c.9d34.7200.7856.e719.0d01.e9fe.
           7c6a.d7cb.c823.7830.e773.7663.4b37.3162.
@@ -47,8 +46,8 @@
       ==
     ::
       :*
-        0x70.6c65.6173.656c.6574.6d65.696e
-        0x536f.6469.756d.4368.6c6f.7269.6465
+        `@ux`'pleaseletmein'
+        `@ux`'SodiumChloride'
         16.384  8  1
         0x7023.bdcb.3afd.7348.461c.06cd.81fd.38eb.
           fda8.fbba.904f.8e3e.a9b5.43f6.545d.a1f2.
@@ -57,8 +56,8 @@
       ==
     ::
       :*
-        0x70.6c65.6173.656c.6574.6d65.696e
-        0x536f.6469.756d.4368.6c6f.7269.6465
+        `@ux`'pleaseletmein'
+        `@ux`'SodiumChloride'
         1.048.576  8  1
         0x2101.cb9b.6a51.1aae.addb.be09.cf70.f881.
           ec56.8d57.4a2f.fd4d.abe5.ee98.20ad.aa47.
