@@ -4,7 +4,7 @@ set -e
 
 URBIT_VERSION="0.10.8"
 
-pkg_config_deps="liburcrypt"
+pkg_config_deps="liburcrypt-0"
 
 extra_libs="\
   urcrypt curl gmp sigsegv ent h2o uv murmur3 \
