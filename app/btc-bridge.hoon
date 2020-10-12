@@ -46,7 +46,8 @@
     ?+  mark  (on-poke:def mark vase)
         %btc-bridge-command
       (handle-command:hc !<(command vase))
-        %btc-bridge-action
+        %btc-bridge-rpc-action
+      ~&  >  !<(rpc-action vase)
       `state
     ==
   [cards this]
