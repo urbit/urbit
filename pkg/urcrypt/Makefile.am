@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I build-aux/m4
 
-AM_CFLAGS = -Wall
+AM_CFLAGS = -Wall -g -O3
 
 lib_LTLIBRARIES = liburcrypt.la
 noinst_LTLIBRARIES = libed25519.la \
@@ -20,7 +20,7 @@ noinst_HEADERS = urcrypt/util.h \
 
 # main library
 pkgconfig_DATA = liburcrypt-$(URCRYPT_API_VERSION).pc
-CLEANFILES = $(pkgconfig_DATA)
+DISTCLEANFILES = $(pkgconfig_DATA)
 
 liburcrypt_la_CPPFLAGS = -I$(srcdir)/ed25519/src \
 			 -I$(srcdir)/ge-additions \

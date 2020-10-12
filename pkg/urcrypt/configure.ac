@@ -56,6 +56,8 @@ AC_PROG_CC
 
 # Checks for pkg-config capable libraries
 PKG_CHECK_MODULES([LIBSECP256K1], [libsecp256k1])
+AC_CHECK_HEADER([secp256k1_recovery.h], [],
+                [AC_MSG_ERROR([libsecp256k1 must have recovery enabled.])])
 PKG_CHECK_MODULES([LIBCRYPTO], [libcrypto])
 
 AS_IF([test "$enable_shared" == "yes"],
@@ -64,14 +66,14 @@ AS_IF([test "$enable_shared" == "yes"],
    save_CLAGS=$CFLAGS
    LDFLAGS=$LIBCRYPTO_LIBS
    CFLAGS=$LIBCRYPTO_CFLAGS
-   AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <openssl/err.h>],
-                                   [ERR_load_crypto_strings()])],
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <openssl/sha.h>],
+                                   [[unsigned char sha[32];
+                                     SHA256("hello", 5, sha);]])],
      [AC_PROG_GREP
       AC_CHECK_TOOL([NM], [nm])
       AC_MSG_CHECKING([for shared libcrypto])
       AS_IF(
-        [$NM -f posix conftest$EXEEXT |
-         $GREP 'ERR_load_crypto_strings U' 2>&1 >/dev/null],
+        [$NM conftest$EXEEXT | $GREP 'U SHA256' 2>&1 >/dev/null],
         [AC_MSG_RESULT([yes])],
         [AC_MSG_ERROR([cannot find shared object for libcrypto.])])],
      [AC_MSG_ERROR([unable to link libcrypto.])])
