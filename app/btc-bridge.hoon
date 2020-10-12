@@ -47,8 +47,11 @@
         %btc-bridge-command
       (handle-command:hc !<(command vase))
         %btc-bridge-rpc-action
-      ~&  >  !<(rpc-action vase)
-      `state
+      =/  act=rpc-action  !<(rpc-action vase)
+      ?+  -.act  (on-poke:def mark vase)
+          %brpc
+        (handle-action +.act)
+      ==
     ==
   [cards this]
 ::
@@ -76,8 +79,7 @@
   ^-  (quip card _state)
   ?-  -.comm
       %become-host
-      ::  TODO send a subscription to the node hook; update status in on-agent when ack'd
-    `state(credentials credentials.comm)
+    `state(credentials credentials.comm, status [%host connected=%.y clients=*(set ship)])
       %connect-as-client
       ::  TODO send a subscription to the btc-bridge host
       ::  update status in on-agent when ack'd by BTC-BRIDGE
@@ -170,6 +172,7 @@
 ++  http-response
   |=  [=wire response=client-response:iris]
   ^-  (quip card _state)
+  ~&  >>  response
   ?.  ?=(%finished -.response)
     [~ state]
   =*  status    status-code.response-header.response
@@ -181,8 +184,7 @@
   ?.  ?=([%result *] rpc-resp)
     ~&  [%error +.rpc-resp]
     [~ state]
+  ~&  >  (parse-response:btc-rpc:lib rpc-resp)
   [~ state]
-::  %-  handle-btc-response
-::  (parse-response:btc-rpc:lib rpc-resp)
 ::
 --
