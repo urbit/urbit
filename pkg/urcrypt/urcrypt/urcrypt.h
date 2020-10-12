@@ -188,12 +188,6 @@ int urcrypt_secp_init(urcrypt_secp_context *context,
 // call before freeing opaque secp handle
 void urcrypt_secp_destroy(urcrypt_secp_context *context);
 
-/* restore initial secp context conditons (not thread-safe). Recommendation:
- * call this just before that main thread exits to make valgrind etc. happy
- */
-void urcrypt_secp_cleanup(void); 
-
-// technically usable without the secp context
 int urcrypt_secp_make(uint8_t hash[32], uint8_t key[32], uint8_t out[32]);
 int urcrypt_secp_sign(urcrypt_secp_context* context,
                       uint8_t hash[32],

@@ -1,9 +1,39 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
+# There are two versions numbers that must be updated on each public release.
+#  1.  The libtool version (useful to the linker)
+#  2.  The semantic version (useful to humans)
+
+# Follow these instructions sequentially for the libtool version:
+#  1. If the library source code has changed at all since the last update,
+#     then increment revision (‘c:r:a’ becomes ‘c:r+1:a’).
+#  2. If any interfaces have been added, removed, or changed since the last
+#     update, increment current, and set revision to 0.
+#  3. If any interfaces have been added since the last public release,
+#     then increment age.
+#  4. If any interfaces have been removed or changed since the last public
+#     release, then set age to 0.
+m4_define([urcrypt_lt_current],  [0])
+m4_define([urcrypt_lt_revision], [0])
+m4_define([urcrypt_lt_age],      [0])
+
+# The package version uses semantic versioning (semver.org).
+# In summary,increment the:
+#  1. MAJOR version when you make incompatible API changes,
+#  2. MINOR version when you add functionality in a backwards compatible manner, and
+#  3. PATCH version when you make backwards compatible bug fixes.
+m4_define([urcrypt_sv_major], [0])
+m4_define([urcrypt_sv_minor], [1])
+m4_define([urcrypt_sv_patch], [0])
+
 # Initialize autoconf
 AC_PREREQ([2.69])
-AC_INIT([urcrypt], [1.0])
+AC_INIT([urcrypt], [urcrypt_sv_major.urcrypt_sv_minor.urcrypt_sv_patch])
+AC_SUBST([URCRYPT_API_VERSION], [urcrypt_sv_major])
+AC_SUBST([URCRYPT_LT_VERSION],
+         [urcrypt_lt_current:urcrypt_lt_revision:urcrypt_lt_age])
+
 AC_CONFIG_SRCDIR([urcrypt/util.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -25,15 +55,15 @@ PKG_INSTALLDIR
 AC_PROG_CC
 
 # Checks for pkg-config capable libraries
-PKG_CHECK_MODULES([libsecp256k1], [libsecp256k1])
-PKG_CHECK_MODULES([libcrypto], [libcrypto])
+PKG_CHECK_MODULES([LIBSECP256K1], [libsecp256k1])
+PKG_CHECK_MODULES([LIBCRYPTO], [libcrypto])
 
 AS_IF([test "$enable_shared" == "yes"],
   [# ensure crypto will be shared for shared object (see README.md)
    save_LDFLAGS=$LDFLAGS
    save_CLAGS=$CFLAGS
-   LDFLAGS=$libcrypto_LIBS
-   CFLAGS=$libcrypto_CFLAGS
+   LDFLAGS=$LIBCRYPTO_LIBS
+   CFLAGS=$LIBCRYPTO_CFLAGS
    AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <openssl/err.h>],
                                    [ERR_load_crypto_strings()])],
      [AC_PROG_GREP
@@ -50,8 +80,7 @@ AS_IF([test "$enable_shared" == "yes"],
 
 # Checks for non pkg-config libraries
 AC_CHECK_LIB([aes_siv], [AES_SIV_CTX_new],
-             [libaes_siv_LIBS="-laes_siv"
-              AC_SUBST([libaes_siv_LIBS])],
+             [AC_SUBST([LIBAES_SIV_LIBS], "-laes_siv")],
              [AC_MSG_ERROR([libaes_siv is required.])])
 
 # Checks for header files.
@@ -70,5 +99,5 @@ AC_TYPE_UINT8_T
 AC_CHECK_FUNCS([memset])
 
 # Finish and output
-AC_CONFIG_FILES([Makefile liburcrypt.pc])
+AC_CONFIG_FILES([Makefile liburcrypt-$URCRYPT_API_VERSION.pc:liburcrypt.pc.in])
 AC_OUTPUT

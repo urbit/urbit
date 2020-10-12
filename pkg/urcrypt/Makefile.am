@@ -19,7 +19,7 @@ noinst_HEADERS = urcrypt/util.h \
 		 scrypt/libscrypt.h
 
 # main library
-pkgconfig_DATA = liburcrypt.pc
+pkgconfig_DATA = liburcrypt-$(URCRYPT_API_VERSION).pc
 
 liburcrypt_la_CPPFLAGS = -I$(srcdir)/ed25519/src \
 			 -I$(srcdir)/ge-additions \
@@ -37,7 +37,8 @@ liburcrypt_la_CFLAGS = $(libcrypto_CFLAGS) \
 		       $(libsecp256k1_CFLAGS) \
 		       $(libaes_siv_CFLAGS)
 # urcrypt_ is used for public symbols, urcrypt__ for internal.
-liburcrypt_la_LDFLAGS = -export-symbols-regex '^urcrypt_[^_]'
+liburcrypt_la_LDFLAGS = -export-symbols-regex '^urcrypt_[^_]' \
+												-version-info $(URCRYPT_LT_VERSION)
 liburcrypt_la_SOURCES = urcrypt/aes_cbc.c \
 			urcrypt/aes_ecb.c \
 			urcrypt/aes_siv.c \
