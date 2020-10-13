@@ -1,7 +1,8 @@
 /-  *btc, bnh=btc-node-hook
-
 |%
-+$  credentials  [rpc-url=@t rpc-user=@t rpc-password=@t]
++$  btc-credentials  [rpc-url=@t rpc-user=@t rpc-password=@t]
++$  electrum-credentials  [rpc-url=@t]
++$  credentials  [bc=btc-credentials ec=electrum-credentials]
 +$  status
   $%  [%host connected=? clients=(set ship)]
       [%client connected=? host=(unit ship)]
@@ -19,20 +20,21 @@
       [%allow-clients users=(set ship)]
   ==
 +$  rpc-action
-  $%  [%erpc action:electrum:rpc]
-      [%brpc action:bitcoin-core:rpc]
+  $%  [%erpc request:electrum:rpc]
+      [%brpc request:bitcoin-core:rpc]
   ==
 ++  rpc
   |%
   ++  electrum
     |%
-    +$  action
-      $%  [%timluc ~]
+    +$  request
+      $%  [%get-address-balance =address]
       ==
     --
   ++  bitcoin-core
     |%
-    +$  action  btc-node-hook-action:bnh
+    +$  request  btc-node-hook-action:bnh
     --
   --
 --
+

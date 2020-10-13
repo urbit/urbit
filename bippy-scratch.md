@@ -1,6 +1,14 @@
 ## NOTE
 The below requires norsyr's fix to `decompress-point` in order to work.
 
+## Set Credentials and Ping Servers
+```
+:btc-bridge|command [%become-host [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-password='b813c98bde1d4489e2889269559d1f42920fb367c59ed43eb7668ceeabde2272'] [rpc-url='http://localhost:50001']]
+
+:btc-bridge|rpc-action [%brpc %get-block-count ~]
+:btc-bridge|rpc-action [%erpc %get-balance-scripthash 'c5d92092c3d6793e159d93a195c4b12b4110d2b4721862b1e208ae206858c25c']
+```
+
 ## Working with BTC RPC Library
 ```
 |start :btc-bridge
