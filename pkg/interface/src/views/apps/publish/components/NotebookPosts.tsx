@@ -8,8 +8,8 @@ interface NotebookPostsProps {
   graph: Graph;
   host: string;
   book: string;
-  baseUrl: string;
   hideNicknames?: boolean;
+  baseUrl: string;
 }
 
 export function NotebookPosts(props: NotebookPostsProps) {
@@ -25,6 +25,7 @@ export function NotebookPosts(props: NotebookPostsProps) {
               contact={props.contacts[node.post.author]}
               node={node}
               hideNicknames={props.hideNicknames}
+              baseUrl={props.baseUrl}
             />
           )
       )}

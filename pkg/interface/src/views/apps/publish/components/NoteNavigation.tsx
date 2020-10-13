@@ -38,16 +38,15 @@ function getAdjacentId(graph: Graph, child: number, backwards = false): number |
   return target?.[0] || null;
 }
 
-function makeNoteUrl(ship: string, book: string, noteId: number) {
-  return `/~publish/notebook/ship/${ship}/${book}/note/${noteId}`;
+function makeNoteUrl(noteId: number) {
+  return noteId.toString();
 }
   
 
 interface NoteNavigationProps {
-  book: string;
   noteId: number;
-  ship: string;
   notebook: Graph;
+  baseUrl: string;
 }
 
 export function NoteNavigation(props: NoteNavigationProps) {
@@ -67,7 +66,7 @@ export function NoteNavigation(props: NoteNavigationProps) {
   }
 
   if (next && nextId) {
-    const nextUrl = makeNoteUrl(props.ship, props.book, nextId);
+    const nextUrl = makeNoteUrl(nextId);
     const [,title,, post] = getLatestRevision(next);
     const date = post['time-sent'];
     nextComponent = (
@@ -79,7 +78,7 @@ export function NoteNavigation(props: NoteNavigationProps) {
     );
   }
   if (prev && prevId) {
-    const prevUrl = makeNoteUrl(props.ship, props.book, prevId);
+    const prevUrl = makeNoteUrl(prevId);
     const [,title,, post] = getLatestRevision(prev);
     const date = post['time-sent'];
     prevComponent = (

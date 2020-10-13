@@ -96,11 +96,11 @@ export function GroupsPane(props: GroupsPaneProps) {
             string
           >;
           const appName = app as AppName;
-          const isShip = app === "link";
+          const isGraph = app === "link" || app === 'publish';
 
-          const resource = `${isShip ? "/ship" : ""}/${host}/${name}`;
+          const resource = `${isGraph ? "/ship" : ""}/${host}/${name}`;
           const association =
-            appName === "link"
+            isGraph
               ? associations.graph[resource]
               : associations[appName][resource];
           const resourceUrl = `${baseUrl}/resource/${app}${resource}`;
@@ -134,9 +134,9 @@ export function GroupsPane(props: GroupsPaneProps) {
         render={(routeProps) => {
           const { app, host, name } = routeProps.match.params;
           const appName = app as AppName;
-          const isShip = app === "link";
-          const appPath = `${isShip ? '/ship/' : '/'}${host}/${name}`;
-          const association = isShip ? associations.graph[appPath] : associations[appName][appPath];
+          const isGraph = app === "link" || app === 'publish';
+          const appPath = `${isGraph ? '/ship/' : '/'}${host}/${name}`;
+          const association = isGraph ? associations.graph[appPath] : associations[appName][appPath];
           const resourceUrl = `${baseUrl}/join/${app}${appPath}`;
 
           if (!association) {
@@ -195,7 +195,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                 justifyContent="center"
                 display={["none", "flex"]}
               >
-                <Box><Text fontSize="0" color='gray'>
+                <Box p="4"><Text fontSize="0" color='gray'>
                   {description}
                 </Text></Box>
               </Col>

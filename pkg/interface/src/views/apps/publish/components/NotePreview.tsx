@@ -20,6 +20,7 @@ interface NotePreviewProps {
   node: GraphNode;
   contact?: Contact;
   hideNicknames?: boolean;
+  baseUrl: string;
 }
 
 const WrappedBox = styled(Box)`
@@ -49,9 +50,7 @@ export function NotePreview(props: NotePreviewProps) {
       ? "1 Comment"
       : `${numComments} Comments`;
   const date = moment(post["time-sent"]).fromNow();
-  const url = `/~publish/notebook/ship/${props.host}/${props.book}/note/${
-    post.index.split("/")[1]
-  }`;
+  const url = `${props.baseUrl}/note/${post.index.split("/")[1]}`;
 
   // stubbing pending notification-store
   const isRead = true;

@@ -32,7 +32,7 @@ export default function NewPost(props: NewPostProps & RouteComponentProps) {
       const [noteId, nodes] = newPost(title, body)
       await api.graph.addNodes(ship, book, nodes)
       await waiter(p => p.graph.has(noteId));
-      history.push(`/${props.baseUrl}/note/${noteId}`);
+      history.push(`${props.baseUrl}/note/${noteId}`);
     } catch (e) {
       console.error(e);
       actions.setStatus({ error: "Posting note failed" });

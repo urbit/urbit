@@ -61,7 +61,7 @@ export function SidebarItem(props: {
   const module = association?.metadata?.module || appName;
   const appPath = association?.["app-path"];
   const groupPath = association?.["group-path"];
-  const app = apps[module];
+  const app = apps[appName];
   const isUnmanaged = groups?.[groupPath]?.hidden || false;
   if (!app) {
     return null;

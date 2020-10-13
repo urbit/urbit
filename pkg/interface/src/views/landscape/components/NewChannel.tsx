@@ -71,16 +71,15 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
           );
           break;
         case "publish":
-          await props.api.publish.newBook(resId, name, description, group);
-          break;
         case "links":
+          const module = type === 'links' ? 'link' : type;
           if (group) {
             await api.graph.createManagedGraph(
               resId,
               name,
               description,
               group,
-              "link"
+              module 
             );
           } else {
             await api.graph.createUnmanagedGraph(
@@ -88,7 +87,7 @@ export function NewChannel(props: NewChannelProps & RouteComponentProps) {
               name,
               description,
               EMPTY_INVITE_POLICY,
-              "link"
+              module
             );
           }
           break;

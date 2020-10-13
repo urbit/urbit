@@ -1,19 +1,15 @@
 import React, { PureComponent } from "react";
 import { Link, RouteComponentProps, Route, Switch } from "react-router-dom";
 import { NotebookPosts } from "./NotebookPosts";
-import { Subscribers } from "./Subscribers";
-import { Settings } from "./Settings";
-import { Spinner } from "~/views/components/Spinner";
-import { Tabs, Tab } from "~/views/components/Tab";
 import { roleForShip } from "~/logic/lib/group";
-import { Box, Button, Text, Row } from "@tlon/indigo-react";
-import { Notebook as INotebook } from "~/types/publish-update";
+import { Box, Button, Text, Row, Col } from "@tlon/indigo-react";
 import { Groups } from "~/types/group-update";
 import { Contacts, Rolodex } from "~/types/contact-update";
 import GlobalApi from "~/logic/api/global";
 import styled from "styled-components";
 import { Associations, Graph, Association } from "~/types";
 import { deSig } from "~/logic/lib/util";
+import { StatelessAsyncButton } from "~/views/components/StatelessAsyncButton";
 
 interface NotebookProps {
   api: GlobalApi;
@@ -36,69 +32,35 @@ interface NotebookState {
   tab: string;
 }
 
-export class Notebook extends PureComponent<
-  NotebookProps & RouteComponentProps,
-  NotebookState
-> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isUnsubscribing: false,
-      tab: "all",
-    };
-    this.setTab = this.setTab.bind(this);
-  }
+export function Notebook(props: NotebookProps & RouteComponentProps) {
+  const {
+    ship,
+    book,
+    notebookContacts,
+    groups,
+    hideNicknames,
+    association,
+    graph,
+  } = props;
+  const { metadata } = association;
 
-  setTab(tab: string) {
-    this.setState({ tab });
-  }
+  const group = groups[association?.["group-path"]];
+  if (!group) return null; // Waitin on groups to populate
 
-  render() {
-    const {
-      api,
-      ship,
-      book,
-      notebookContacts,
-      groups,
-      history,
-      hideNicknames,
-      associations,
-      association,
-      graph
-    } = this.props;
-    const { state } = this;
-    const { metadata } = association;
+  const relativePath = (p: string) => props.baseUrl + p;
 
-    const group = groups[association?.['group-path']];
-    if (!group) return null; // Waitin on groups to populate
+  const contact = notebookContacts?.[ship];
+  const role = group ? roleForShip(group, window.ship) : undefined;
+  const isOwn = `~${window.ship}` === ship;
 
-    const relativePath = (p: string) => this.props.baseUrl + p;
+  const isWriter =
+    isOwn || group.tags?.publish?.[`writers-${book}`]?.has(window.ship);
 
-    const contact = notebookContacts?.[ship];
-    const role = group ? roleForShip(group, window.ship) : undefined;
-    const isOwn = `~${window.ship}` === ship;
-    const isAdmin = role === "admin" || isOwn;
+  const showNickname = contact?.nickname && !hideNicknames;
 
-    const isWriter =
-      isOwn || group.tags?.publish?.[`writers-${book}`]?.has(window.ship);
-
-    const showNickname = contact?.nickname && !hideNicknames;
-
-    return (
-      <Box
-        pt={4}
-        mx="auto"
-        px={3}
-        display="grid"
-        gridAutoRows="min-content"
-        gridTemplateColumns={["100%", "1fr 1fr"]}
-        maxWidth="500px"
-        gridRowGap={[4, 6]}
-        gridColumnGap={3}
-      >
-        <Box display={["block", "none"]} gridColumn={["1/2", "1/3"]}>
-          <Link to={this.props.rootUrl}>{"<- All Notebooks"}</Link>
-        </Box>
+  return (
+    <Col gapY="4" pt={4} mx="auto" px={3} maxWidth="500px">
+      <Row justifyContent="space-between">
         <Box>
           <Text> {metadata?.title}</Text>
           <br />
@@ -107,114 +69,25 @@ export class Notebook extends PureComponent<
             {showNickname ? contact?.nickname : ship}
           </Text>
         </Box>
-        <Row justifyContent={["flex-start", "flex-end"]}>
-          {isWriter && (
-            <Link to={relativePath("/new")}>
-              <Button primary border style={{ cursor: 'pointer' }}>
-                New Post
-              </Button>
-            </Link>
-          )}
-          {!isOwn ? (
-            this.state.isUnsubscribing ? (
-              <Spinner
-                awaiting={this.state.isUnsubscribing}
-                classes="mt2 ml2"
-                text="Unsubscribing..."
-              />
-            ) : (
-              <Button
-                ml={isWriter ? 2 : 0}
-                destructive
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  this.setState({ isUnsubscribing: true });
-
-                  api.graph.leaveGraph(ship, book)
-                    .then(() => {
-                      history.push(this.props.baseUrl);
-                    })
-                    .catch(() => {
-                      this.setState({ isUnsubscribing: false });
-                    });
-                }}
-              >
-                Unsubscribe
-              </Button>
-            )
-          ) : null}
-        </Row>
-        <Box gridColumn={["1/2", "1/3"]}>
-          <Tabs>
-            <Tab
-              selected={state.tab}
-              setSelected={this.setTab}
-              label="All Posts"
-              id="all"
-            />
-            <Tab
-              selected={state.tab}
-              setSelected={this.setTab}
-              label="About"
-              id="about"
-            />
-            {isAdmin && (
-              <>
-                <Tab
-                  selected={state.tab}
-                  setSelected={this.setTab}
-                  label="Subscribers"
-                  id="subscribers"
-                />
-                <Tab
-                  selected={state.tab}
-                  setSelected={this.setTab}
-                  label="Settings"
-                  id="settings"
-                />
-              </>
-            )}
-          </Tabs>
-          {state.tab === "all" && (
-            <NotebookPosts
-              graph={graph}
-              host={ship}
-              book={book}
-              contacts={notebookContacts}
-              hideNicknames={hideNicknames}
-              baseUrl={this.props.baseUrl} 
-            />
-          )}
-          {state.tab === "about" && (
-            <Box mt="3" color="black">
-              {metadata?.description}
-            </Box>
-          )}
-          {state.tab === "subscribers" && (
-            <Subscribers
-              book={book}
-              api={api}
-              groups={groups}
-              associations={associations}
-              association={association}
-              contacts={{}}
-            />
-          )}
-          {state.tab === "settings" && (
-            <Settings
-              host={ship}
-              book={book}
-              api={api}
-              contacts={notebookContacts}
-              associations={associations}
-              association={association}
-              groups={groups}
-              baseUrl={this.props.baseUrl}
-            />
-          )}
-        </Box>
-      </Box>
-    );
-  }
+        {isWriter && (
+          <Link to={relativePath("/new")}>
+            <Button primary style={{ cursor: "pointer" }}>
+              New Post
+            </Button>
+          </Link>
+        )}
+      </Row>
+      <Box borderBottom="1" borderBottomColor="washedGray" />
+      <NotebookPosts
+        graph={graph}
+        host={ship}
+        book={book}
+        contacts={notebookContacts}
+        hideNicknames={hideNicknames}
+        baseUrl={props.baseUrl}
+      />
+    </Col>
+  );
 }
+
 export default Notebook;

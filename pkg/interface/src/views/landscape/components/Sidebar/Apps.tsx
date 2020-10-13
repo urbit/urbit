@@ -38,43 +38,10 @@ export function useChat(
   return { lastUpdated, getStatus };
 }
 
-export function usePublish(notebooks: Notebooks): SidebarAppConfig {
-  const getStatus = useCallback(
-    (s: string) => {
-      const [, host, name] = s.split("/");
-      const notebook = notebooks?.[host]?.[name];
-      if (!notebook) {
-        return "unsubscribed";
-      }
-      if (notebook["num-unread"]) {
-        return "unread";
-      }
-      return undefined;
-    },
-    [notebooks]
-  );
 
-  const lastUpdated = useCallback(
-    (s: string) => {
-      //  we can't get publish timestamps without loading posts
-      //  so we just return the number of unreads, this ensures
-      //  that unread notebooks don't get lost on the bottom
-      const [, host, name] = s.split("/");
-      const notebook = notebooks?.[host]?.[name];
-      if(!notebook) {
-        return 0;
-      }
-      return notebook?.["num-unread"]+1;
-    },
-    [notebooks]
-  );
-
-  return { getStatus, lastUpdated };
-}
-
-export function useLinks(
+export function useGraphModule(
   graphKeys: Set<string>,
-  graphs: Graphs
+  graphs: Graphs,
 ): SidebarAppConfig {
   const getStatus = useCallback(
     (s: string) => {

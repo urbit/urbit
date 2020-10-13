@@ -13,7 +13,7 @@ import { LinkCollections } from "~/types/link-update";
 import styled from "styled-components";
 import GlobalSubscription from "~/logic/subscription/global";
 import { Workspace, Groups, Graphs, Invites } from "~/types";
-import { useChat, usePublish, useLinks } from "./Sidebar/Apps";
+import { useChat, useGraphModule } from "./Sidebar/Apps";
 import { Body } from "~/views/components/Body";
 
 interface SkeletonProps {
@@ -42,15 +42,13 @@ interface SkeletonProps {
 
 export function Skeleton(props: SkeletonProps) {
   const chatConfig = useChat(props.inbox, props.chatSynced);
-  const publishConfig = usePublish(props.notebooks);
-  const linkConfig = useLinks(props.graphKeys, props.graphs);
+  const graphConfig = useGraphModule(props.graphKeys, props.graphs);
   const config = useMemo(
     () => ({
-      publish: publishConfig,
-      link: linkConfig,
+      graph: graphConfig,
       chat: chatConfig,
     }),
-    [publishConfig, linkConfig, chatConfig]
+    [graphConfig, chatConfig]
   );
 
   return (
