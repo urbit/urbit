@@ -29,10 +29,10 @@ type ResourceSkeletonProps = {
 };
 
 export function ResourceSkeleton(props: ResourceSkeletonProps) {
-  const { association, api, children, atRoot } = props;
+  const { association, api, baseUrl, children, atRoot } = props;
   const app = association?.metadata?.module || association["app-name"];
   const appPath = association["app-path"];
-  const selectedGroup = association["group-path"];
+  const workspace = (baseUrl === '/~landscape/home') ? '/home' : association["group-path"];
   const title = props.title || association?.metadata?.title;
   return (
     <Col width="100%" height="100%" overflowY="hidden">
@@ -53,7 +53,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             my="1"
             display={["block", "none"]}
           >
-            <Link to={`/~landscape${selectedGroup}`}> {"<- Back"}</Link>
+            <Link to={`/~landscape${workspace}`}> {"<- Back"}</Link>
           </Box>
         ) : (
           <Box
@@ -61,12 +61,12 @@ export function ResourceSkeleton(props: ResourceSkeletonProps) {
             pr={2}
             mr={2}
           >
-            <Link to={`/~landscape${selectedGroup}/resource/${app}${appPath}`}>
+            <Link to={`/~landscape${workspace}/resource/${app}${appPath}`}>
               <Text color="blue">Go back to channel</Text>
             </Link>
           </Box>
         )}
-        
+
         {atRoot && (
           <>
             <Box pr={1} mr={2}>
