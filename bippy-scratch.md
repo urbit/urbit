@@ -3,28 +3,10 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 
 ## Set Credentials and Ping Servers
 ```
-:btc-bridge|command [%become-host [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-password='b813c98bde1d4489e2889269559d1f42920fb367c59ed43eb7668ceeabde2272'] [rpc-url='http://localhost:50001']]
+:btc-bridge|command [%become-host [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-password='8e12e5bad1808aed64627192165304e9b804f971efa34f36ae93e9fb088fe22c'] [rpc-url='http://localhost:50002']]
 
 :btc-bridge|rpc-action [%brpc %get-block-count ~]
-:btc-bridge|rpc-action [%erpc %get-balance-scripthash 'c5d92092c3d6793e159d93a195c4b12b4110d2b4721862b1e208ae206858c25c']
-```
-
-## Working with BTC RPC Library
-```
-|start :btc-bridge
-:btc-node-hook|command [%credentials 'http://127.0.0.1:18443' 'poopman' 'chAiM31eeJ1MK3y8BC3mR9q2']
-:btc-node-hook|command [%ping ~]
-:btc-node-hook|command [%watch %get-block-count]
-:btc-node-hook|action [%get-block-count ~]
-:btc-node-hook|command [%unwatch %get-block-count]
-```
-
-### address checking
-```
-:btc-node-hook|action [%create-wallet 'catch-all' disable-private-keys=`%.y blank=`%.y ~ ~]
-:btc-node-hook|action [%get-new-address ~ `%bech32]
-:btc-node-hook|action [%import-address [%bech32 'bc1q20xxd4rep620a0754gc7du9tlxj0h3lu2xwyg5'] ~ ~ ~]
-:btc-node-hook|action [%list-unspent [~ [~ ~ `~[[%bech32 'bc1q20xxd4rep620a0754gc7du9tlxj0h3lu2xwyg5']] ~ ~]]]
+:btc-bridge|rpc-action [%erpc %get-address-balance [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66']]
 ```
 
 ## Transactions
