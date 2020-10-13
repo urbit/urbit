@@ -41,7 +41,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.tsx']
   },
-  devtool: 'inline-source-map',
+  devtool: 'none',
   // devServer: {
   //   contentBase: path.join(__dirname, './'),
   //   hot: true,
