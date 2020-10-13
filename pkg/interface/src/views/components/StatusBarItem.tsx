@@ -31,10 +31,8 @@ export function StatusBarItem({
         <Icon
           size="22px"
           icon="Bullet"
-          fill="blue"
-          position="absolute"
-          top={"-10px"}
-          right={"-12px"}
+          color="blue"
+          style={{ position: 'absolute', top: '-10', right: '-11' }}
         />
       )}
     </Row>

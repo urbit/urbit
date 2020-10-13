@@ -9,58 +9,29 @@ import { Sigil } from '~/logic/lib/sigil';
 
 const StatusBar = (props) => {
 
-  const location = useLocation();
-  const atHome = Boolean(location.pathname === '/');
-
-  const display = (!window.location.href.includes('popout/'))
-      ? 'grid' : 'none';
-
-  const invites = (props.invites && props.invites['/contacts'])
-    ? props.invites['/contacts']
-    : {};
-
-
   const metaKey = (window.navigator.platform.includes('Mac')) ? '⌘' : 'Ctrl+';
 
   return (
     <Box
-      display={display}
+      display='grid'
       width="100%"
       gridTemplateRows="30px"
       gridTemplateColumns="3fr 1fr"
-      py={2}
-      px={3}
+      py={[2,3]}
+      px={[2,3]}
       >
       <Row collapse>
           <StatusBarItem mr={2} onClick={() => props.history.push('/')}>
-            <img
-              className='invert-d'
-              src='/~landscape/img/icon-home.png'
-              height='11'
-              width='11'
-            />
+          <Icon icon='Home' color='black'/>
           </StatusBarItem>
         <StatusBarItem mr={2} onClick={() => props.api.local.setOmnibox()}>
-          <Text display='inline-block' style={{ transform: 'rotate(180deg)' }}>
-            ↩
-          </Text>
+        <Icon icon='LeapArrow'/>
           <Text ml={2} color='black'>
             Leap
           </Text>
           <Text display={['none', 'inline']} ml={4} color='gray'>
             {metaKey}/
           </Text>
-        </StatusBarItem>
-        <StatusBarItem
-          onClick={() => props.history.push('/~groups')}
-          badge={Object.keys(invites).length > 0}>
-          <img
-            className='invert-d v-mid'
-            src='/~landscape/img/groups.png'
-            height='15'
-            width='15'
-          />
-          <Text display={["none", "inline"]} ml={2}>Groups</Text>
         </StatusBarItem>
         <ReconnectButton
           connection={props.connection}

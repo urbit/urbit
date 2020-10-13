@@ -10,7 +10,7 @@
 ::  encode group-path and app-path using (scot %t (spat group-path))
 ::
 ::  +watch paths:
-::  /all                                  assocations + updates
+::  /all                                  associations + updates
 ::  /updates                              just updates
 ::  /app-name/%app-name                   specific app's associations + updates
 ::
@@ -74,9 +74,9 @@
 ^-  agent:gall
 =<
   |_  =bowl:gall
-  +*  this           .
-      mc             ~(. +> bowl)
-      def            ~(. (default-agent this %|) bowl)
+  +*  this  .
+      mc    ~(. +> bowl)
+      def   ~(. (default-agent this %|) bowl)
   ::
   ++  on-init  on-init:def
   ++  on-save  !>(state)
@@ -152,6 +152,27 @@
       ==
     $(old new-state-1)
     ::
+    ++  rebuild-resource-indices
+      |=  =^associations
+      %-  ~(gas ju *(jug md-resource group-path))
+      %+  turn  ~(tap in ~(key by associations))
+      |=  [g=group-path r=md-resource]
+      ^-  [md-resource group-path]
+      [r g] 
+    ::
+    ++  rebuild-group-indices
+      |=  =^associations 
+      %-  ~(gas ju *(jug group-path md-resource))
+      ~(tap in ~(key by associations))
+    ::
+    ++  rebuild-app-indices
+      |=  =^associations
+      %-  ~(gas ju *(jug app-name [group-path app-path]))
+      %+  turn  ~(tap in ~(key by associations))
+      |=  [g=group-path r=md-resource]
+      ^-  [app-name [group-path app-path]]
+      [app-name.r [g app-path.r]]
+
     ::
     ++  migrate-app-to-graph-store
       |=  [app=@tas =^associations]
@@ -162,41 +183,6 @@
       ^-  (unit [[^group-path ^md-resource] metadata])
       ?.  =(app-name.md-resource app)  ~
       `[[group-path [%graph app-path.md-resource]] m]
-    ::
-    ++  rebuild-app-indices
-      =|  app-indices=(jug app-name [group-path app-path])
-      |=  =^associations
-      ^-  (jug app-name [group-path app-path])
-      ?~  associations  app-indices
-      =.  app-indices
-        %+  ~(put ju app-indices)  app-name.p.n.associations
-        [-.p.n.associations app-path.p.n.associations]
-      %-  ~(uni by $(associations l.associations))
-      $(associations r.associations)
-    ::
-    ++  rebuild-group-indices
-      =|  group-indices=(jug group-path md-resource)
-      |=  =^associations
-      ^-  (jug group-path md-resource)
-      ?~  associations  group-indices
-      =.  group-indices
-        %+  ~(put ju group-indices)  
-          -.p.n.associations 
-        +.p.n.associations
-      %-  ~(uni by $(associations l.associations))
-      $(associations r.associations)
-    ::
-    ++  rebuild-resource-indices
-      =|  resource-indices=(jug md-resource group-path)
-      |=  =^associations
-      ^-  (jug md-resource group-path)
-      ?~  associations  resource-indices
-      =.  resource-indices
-        %+  ~(put ju resource-indices)  
-          +.p.n.associations
-        -.p.n.associations
-      %-  ~(uni by $(associations l.associations)) 
-      $(associations r.associations)
     ::
     ++  poke-md-hook
       |=  act=metadata-hook-action

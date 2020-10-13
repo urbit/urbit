@@ -15,10 +15,11 @@ import { uxToHex, hexToUx } from "~/logic/lib/util";
 type ColorInputProps = Parameters<typeof Col>[0] & {
   id: string;
   label: string;
+  disabled: boolean;
 };
 
 export function ColorInput(props: ColorInputProps) {
-  const { id, label, caption, ...rest } = props;
+  const { id, label, caption, disabled, ...rest } = props;
   const [{ value, onBlur }, meta, { setValue }] = useField(id);
 
   const hex = value.substr(2).replace(".", "");
@@ -50,6 +51,7 @@ export function ColorInput(props: ColorInputProps) {
           onBlur={onBlur}
           onChange={onChange}
           value={hex}
+          disabled={disabled || false}
         />
         <Box
           borderBottomRightRadius={1}

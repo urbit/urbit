@@ -18,11 +18,6 @@ const publishSubscriptions: AppSubscription[] = [
   ['/primary', 'publish'],
 ];
 
-const linkSubscriptions: AppSubscription[] = [
-  ['/json/seen', 'link-view'],
-  ['/listening', 'link-listen-hook']
-]
-
 const groupSubscriptions: AppSubscription[] = [
   ['/synced', 'contact-hook']
 ];
@@ -31,11 +26,10 @@ const graphSubscriptions: AppSubscription[] = [
   ['/updates', 'graph-store']
 ];
 
-type AppName = 'publish' | 'chat' | 'link' | 'groups' | 'graph';
+type AppName = 'publish' | 'chat' | 'groups' | 'graph';
 const appSubscriptions: Record<AppName, AppSubscription[]> = {
   chat: chatSubscriptions,
   publish: publishSubscriptions,
-  link: linkSubscriptions,
   groups: groupSubscriptions,
   graph: graphSubscriptions
 };
@@ -44,7 +38,6 @@ export default class GlobalSubscription extends BaseSubscription<StoreState> {
   openSubscriptions: Record<AppName, number[]> = {
     chat: [],
     publish: [],
-    link: [],
     groups: [],
     graph: []
   };

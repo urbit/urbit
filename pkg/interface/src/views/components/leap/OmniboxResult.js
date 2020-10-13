@@ -31,15 +31,16 @@ export class OmniboxResult extends Component {
 
     let graphic = <div />;
     if (defaultApps.includes(icon.toLowerCase()) || icon.toLowerCase() === 'links') {
-      icon = (icon === 'Dojo') ? 'ChevronEast' : icon;
       icon = (icon === 'Link') ? 'Links' : icon;
-      graphic = <Icon display="inline-block" verticalAlign="middle" icon={icon} mr='2' size='16px' color='transparent' stroke={iconFill} />;
+      graphic = <Icon display="inline-block" verticalAlign="middle" icon={icon} mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'logout') {
       graphic = <Icon display="inline-block" verticalAlign="middle" icon='ArrowWest' mr='2' size='16px' color={iconFill} />;
     } else if (icon === 'profile') {
       graphic = <Sigil color={sigilFill} classes='dib v-mid mr2' ship={window.ship} size={16} />;
+    } else if (icon === 'home') {
+      graphic = <Icon display='inline-block' verticalAlign='middle' icon='Circle' mr='2' size='16px' color={iconFill} />;
     } else {
-      graphic = <Icon verticalAlign="middle" mr='2' size="16px" color={iconFill} />;
+      graphic = <Icon icon='NullIcon' verticalAlign="middle" mr='2' size="16px" color={iconFill} />;
     }
 
     return graphic;

@@ -28,7 +28,10 @@ export class Omnibox extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps !== this.props) {
-      this.setState({ index: index(this.props.associations, this.props.apps.tiles) });
+      const { pathname } = this.props.location;
+      const selectedGroup = pathname.startsWith('/~landscape/ship/') ? '/' + pathname.split('/').slice(2,5).join('/') : null;
+
+      this.setState({ index: index(this.props.associations, this.props.apps.tiles, selectedGroup, this.props.groups) });
     }
 
     if (prevProps && (prevProps.apps !== this.props.apps) && (this.state.query === '')) {
@@ -52,7 +55,7 @@ export class Omnibox extends Component {
   }
 
   getSearchedCategories() {
-    return ['apps', 'commands', 'groups', 'subscriptions', 'other'];
+    return ['commands', 'groups', 'subscriptions', 'apps', 'other'];
   }
 
   control(evt) {
@@ -103,9 +106,6 @@ export class Omnibox extends Component {
       if (!this.state) {
         return [category, []];
       }
-      if (category === 'apps') {
-        return ['apps', this.state.index.get('apps')];
-      }
       if (category === 'other') {
         return ['other', this.state.index.get('other')];
       }
@@ -117,7 +117,7 @@ export class Omnibox extends Component {
     const { props } = this;
     this.setState({ results: this.initialResults(), query: '' }, () => {
       props.api.local.setOmnibox();
-      if (defaultApps.includes(app.toLowerCase()) || app === 'profile' || app === 'Links') {
+      if (defaultApps.includes(app.toLowerCase()) || app === 'profile' || app === 'Links' || app === 'home') {
         props.history.push(link);
       } else {
         window.location.href = link;
@@ -258,8 +258,8 @@ export class Omnibox extends Component {
     return (
         <Box
           backgroundColor='scales.black30'
-          width='100vw'
-          height='100vh'
+          width='100%'
+          height='100%'
           position='absolute'
           top='0'
           right='0'
