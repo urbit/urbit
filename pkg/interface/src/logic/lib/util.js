@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import f from 'lodash/fp';
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
@@ -8,11 +9,12 @@ export function clamp(x,min,max) {
 
 // color is a #000000 color
 export function adjustHex(color, amount) {
-  const res = _.chain(color.slice(1))
-    .split('').chunk(2) // get individual color channels
-    .map(c => parseInt(c.join(''), 16)) // as hex
-    .map(c => clamp(c + amount, 0, 255).toString(16)) // adjust
-    .join('').value();
+  const res = f.flow(
+    f.split(''), f.chunk(2), // get individual color channels
+    f.map(c => parseInt(c.join(''), 16)), // as hex
+    f.map(c => clamp(c + amount, 0, 255).toString(16)), // adjust
+    f.join('')
+  )(color.slice(1))
   return `#${res}`;
 }
 
@@ -91,10 +93,11 @@ export function uxToHex(ux) {
 }
 
 export function hexToUx(hex) {
-   const ux = _.chain(hex.split(''))
-     .chunk(4)
-     .map(x => _.dropWhile(x, y => y === 0).join(''))
-     .join('.');
+   const ux = f.flow(
+     f.chunk(4),
+     f.map(x => _.dropWhile(x, y => y === 0).join('')),
+     f.join('.')
+   )(hex.split(''))
    return `0x${ux}`;
 }
 
