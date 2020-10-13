@@ -27,6 +27,13 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 :btc-node-hook|action [%list-unspent [~ [~ ~ `~[[%bech32 'bc1q20xxd4rep620a0754gc7du9tlxj0h3lu2xwyg5']] ~ ~]]]
 ```
 
+## Transactions
+bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66
+
+```
+createrawtransaction '[{"txid" : "033f693fdf995a5ea7fe5c951ab6858c7e6a5fffc58579922cd4fc319c614c5b", "vout" : 0}]' '{"bc1qwsqxh3sdjqgdxl7ewgxftdfm8jjajta5xmv8eu" : 0.00001}'
+```
+
 ## Handling XPubs
 **Import lib; optionally set up env**
 XPub is BIP84, mnemonic:
@@ -48,6 +55,15 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 
 ::  get 0 index in non-change account
 `@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 xpub) 0) 0))
+```
+
+## Legacy BTC Address Parsing
+```
+::  yields the initial addresss
+`@uc`(scan "17xg1BZLn63zCxdTxbsFLoWpQeSnD7zSHW" fim:ag)
+
+::  as a cord
+`@t`(scot %uc `@uc`(scan "17xg1BZLn63zCxdTxbsFLoWpQeSnD7zSHW" fim:ag))
 ```
 
 ## BIP 173 (Bech32 Addresses)

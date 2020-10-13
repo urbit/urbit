@@ -122,6 +122,7 @@
   |=  ract=rpc-action
   ^-  request:http
   ?-  -.ract
+
       %erpc
     (gen-electrum-request +.ract)
       %brpc
