@@ -235,12 +235,11 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
     scryVersion \v -> do
       v0 <- readTVarIO versSlot
       atomically $ writeTVar versSlot (Just v)
-      putStrLn "wow"
       if (v0 == Just v)
         then logInfo $ displayShow ("ames: proto version unchanged at", v)
         else stderr ("ames: protocol version now " <> tshow v)
 
-    threadDelay (1_000_000)  -- 10m
+    threadDelay (10 * 60 * 1_000_000)  -- 10m
 
   queuePacketsThread :: HasLogFunc e
                      => TVar Word
@@ -335,7 +334,6 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
     wen <- io Time.now
     let nkt = MkKnot $ tshow $ Time.MkDate wen
     let pax = Path $ "ax" : MkKnot (tshow who) : "" : nkt : p
-    putStrLn ("scrying for " <> tshow pax)
     let kon = runRIO env . \case
           Just (_, fromNoun @n -> Just v) -> k (Just v)
           Just (_, n) -> do

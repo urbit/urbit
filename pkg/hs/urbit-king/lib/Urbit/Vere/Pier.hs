@@ -277,7 +277,6 @@ pier (serf, log) vSlog startedSig = do
   -- TODO Instead of using a TMVar, pull directly from the IO driver
   -- event sources.
   computeQ :: TMVar RunReq      <- newEmptyTMVarIO
-
   persistQ :: TQueue (Fact, FX) <- newTQueueIO
   executeQ :: TQueue FX         <- newTQueueIO
   saveSig :: TMVar ()           <- newEmptyTMVarIO
@@ -305,7 +304,7 @@ pier (serf, log) vSlog startedSig = do
       atomically $ Term.trace muxed txt
       logOther "serf" (display $ T.strip txt)
 
-  scrySig <- newEmptyTMVarIO
+  scryQ <- newTQueueIO
   onKill  <- view onKillPierSigL
 
   -- Our call above to set the logging function which echos errors from the
@@ -315,7 +314,7 @@ pier (serf, log) vSlog startedSig = do
   let compute = putTMVar computeQ
   let execute = writeTQueue executeQ
   let persist = writeTQueue persistQ
-  let scry    = \w b g k -> putTMVar scrySig (w, b, g, k)
+  let scry    = \w b g k -> writeTQueue scryQ (w, b, g, k)
   let sigint  = Serf.sendSIGINT serf
 
   (bootEvents, startDrivers) <- do
@@ -328,7 +327,7 @@ pier (serf, log) vSlog startedSig = do
   let computeConfig = ComputeConfig { ccOnWork      = takeTMVar computeQ
                                     , ccOnKill      = onKill
                                     , ccOnSave      = takeTMVar saveSig
-                                    , ccOnScry      = takeTMVar scrySig
+                                    , ccOnScry      = readTQueue scryQ
                                     , ccPutResult   = persist
                                     , ccShowSpinner = Term.spin muxed
                                     , ccHideSpinner = Term.stopSpin muxed
