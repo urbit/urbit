@@ -1,8 +1,9 @@
+
 ::  btc-bridge.hoon
 ::  Proxy for accessing BTC full node
 ::
 /-  *btc-bridge, bnh=btc-node-hook
-/+  dbug, default-agent, base64, blib=btc-node-json
+/+  dbug, default-agent, base64, blib=btc-node-json, elib=electrum-rpc-http
 |%
 +$  versioned-state
     $%  state-0
@@ -62,7 +63,13 @@
   =^  cards  state
   ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
       %http-response
-    (http-response:hc wire response)
+    ?+    wire  (on-arvo:def wire sign-arvo)
+        [%erpc *]
+      ~&  >>>  response
+      `state
+        [%brpc *]
+      (btc-http-response:hc wire response)
+    ==
   ==
   [cards this]
 ::
@@ -95,7 +102,7 @@
   %-  ~(en base64 | &)
   (as-octs:mimes:html :((cury cat 3) user ':' pass))
   ==
-++  gen-btc-request
+++  btc-gen-request
   |=  req=request:bitcoin-core:rpc
   ^-  request:http
   =*  endpoint  rpc-url.bc.credentials
@@ -114,29 +121,30 @@
       (en-json (request-to-json:rpc:jstd body))
   ==
 ::
-++  gen-electrum-request
+++  electrum-gen-request
   |=  req=request:electrum:rpc
-  ~&  >>>  req
-  *request:http
+  %+  request-to-http:electrum-rpc:elib
+  rpc-url.ec.credentials  req
 ++  gen-request
   |=  ract=rpc-action
   ^-  request:http
   ?-  -.ract
-
       %erpc
-    (gen-electrum-request +.ract)
+    (electrum-gen-request +.ract)
       %brpc
-    (gen-btc-request +.ract)
+    (btc-gen-request +.ract)
   ==
 ::
 ++  handle-rpc-action
   |=  ract=rpc-action
   ^-  (quip card _state)
+  =/  out-wire=path
+    /[-.ract]/[(scot %da now.bowl)]
   =/  out  *outbound-config:iris
   =/  req=request:http
     (gen-request ract)
   :_  state
-  [%pass /[(scot %da now.bowl)] %arvo %i %request req out]~
+  [%pass out-wire %arvo %i %request req out]~
 ::
 ++  httr-to-rpc-response
   |=  hit=httr:eyre
@@ -183,10 +191,9 @@
           ['message' (uf '' so)]
   ==  ==
 ::
-++  http-response
+++  btc-http-response
   |=  [=wire response=client-response:iris]
   ^-  (quip card _state)
-  ~&  >>  response
   ?.  ?=(%finished -.response)
     [~ state]
   =*  status    status-code.response-header.response
