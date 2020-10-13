@@ -22,6 +22,7 @@ data Packet = Packet
   , pktOrigin     :: Maybe AmesDest
   , pktContent    :: Bytes
   }
+  deriving Eq
 
 instance Show Packet where
   show Packet {..}
