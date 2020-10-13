@@ -66,7 +66,7 @@ class Channel {
   }
 
   deleteOnUnload() {
-    window.addEventListener("unload", (event) => {
+    window.addEventListener("beforeunload", (event) => {
       this.delete();
     });
   }
@@ -167,9 +167,11 @@ class Channel {
       //    The server side puts messages it sends us in a queue until we
       //    acknowledge that we received it.
       //
-      let x = JSON.stringify(
-        [{action: "ack", "event-id": parseInt(this.lastEventId)}, j]
-      );
+      let payload = [{action: "ack", "event-id": parseInt(this.lastEventId)}];
+      if(j) {
+        payload.push(j)
+      }
+      let x = JSON.stringify(payload);
       req.send(x);
 
       this.lastEventId = this.lastAcknowledgedEventId;
@@ -215,6 +217,8 @@ class Channel {
           funcs["subAck"](obj);
         }
       } else if (obj.response == "diff") {
+        // ack subscription
+        this.sendJSONToChannel();
         let funcs = subFuncs;
         funcs["event"](obj.json);
       } else if (obj.response == "quit") {
