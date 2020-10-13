@@ -2,7 +2,7 @@
 ::  Proxy for accessing BTC full node
 ::
 /-  *btc-bridge, bnh=btc-node-hook
-/+  dbug, default-agent, base64, lib=btc-node-json
+/+  dbug, default-agent, base64, blib=btc-node-json
 |%
 +$  versioned-state
     $%  state-0
@@ -47,11 +47,7 @@
         %btc-bridge-command
       (handle-command:hc !<(command vase))
         %btc-bridge-rpc-action
-      =/  act=rpc-action  !<(rpc-action vase)
-      ?+  -.act  (on-poke:def mark vase)
-          %brpc
-        (handle-action +.act)
-      ==
+      (handle-rpc-action !<(rpc-action vase))
     ==
   [cards this]
 ::
@@ -90,22 +86,25 @@
       `state(clients.status (~(uni in clients.status) users.comm))
     ==
   ==
-++  gen-request
-  |=  act=btc-node-hook-action:bnh
+++  btc-rpc-auth-header
+  =*  user  rpc-user.bc.credentials
+  =*  pass  rpc-password.bc.credentials
+  :-  'Authorization'
+  ;:  (cury cat 3)
+  'Basic '
+  %-  ~(en base64 | &)
+  (as-octs:mimes:html :((cury cat 3) user ':' pass))
+  ==
+++  gen-btc-request
+  |=  req=request:bitcoin-core:rpc
   ^-  request:http
-  =*  user  rpc-user.credentials
-  =*  pass  rpc-password.credentials
-  =*  endpoint  rpc-url.credentials
+  =*  endpoint  rpc-url.bc.credentials
   =/  body=request:rpc:jstd
-    (request-to-rpc:btc-rpc:lib act)
+    (request-to-rpc:btc-rpc:blib req)
   =/  =header-list:http
     :~  ['Content-Type' 'application/json']
-        :-  'Authorization'
-        ;:  (cury cat 3)
-       'Basic '
-        %-  ~(en base64 | &)
-        (as-octs:mimes:html :((cury cat 3) user ':' pass))
-    ==  ==
+        btc-rpc-auth-header
+    ==
   :*  %'POST'
       endpoint
       header-list
@@ -115,12 +114,26 @@
       (en-json (request-to-json:rpc:jstd body))
   ==
 ::
-++  handle-action
-  |=  act=btc-node-hook-action:bnh
+++  gen-electrum-request
+  |=  req=request:electrum:rpc
+  ~&  >>>  req
+  *request:http
+++  gen-request
+  |=  ract=rpc-action
+  ^-  request:http
+  ?-  -.ract
+      %erpc
+    (gen-electrum-request +.ract)
+      %brpc
+    (gen-btc-request +.ract)
+  ==
+::
+++  handle-rpc-action
+  |=  ract=rpc-action
   ^-  (quip card _state)
   =/  out  *outbound-config:iris
   =/  req=request:http
-    (gen-request act)
+    (gen-request ract)
   :_  state
   [%pass /[(scot %da now.bowl)] %arvo %i %request req out]~
 ::
@@ -184,7 +197,7 @@
   ?.  ?=([%result *] rpc-resp)
     ~&  [%error +.rpc-resp]
     [~ state]
-  ~&  >  (parse-response:btc-rpc:lib rpc-resp)
+  ~&  >  (parse-response:btc-rpc:blib rpc-resp)
   [~ state]
 ::
 --
