@@ -1,5 +1,6 @@
 |%
 +$  network  ?(%main %testnet)
-+$  bech32-address  $%([%bech32 tape])
-+$  address  ?(@uc bech32-address)
++$  legacy-address  $%([%legacy @uc])
++$  bech32-address  $%([%bech32 cord])
++$  address  ?(legacy-address bech32-address)
 --
