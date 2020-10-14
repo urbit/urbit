@@ -44,6 +44,7 @@
     c3_w             imp_w[256];        //  imperial IPs
     time_t           imp_t[256];        //  imperial IP timestamps
     c3_o             imp_o[256];        //  imperial print status
+    c3_o             net_o;             //  can send
     c3_o             see_o;             //  can scry
     c3_d             saw_d;             //  successive scry failures
     c3_o             fit_o;             //  filtering active
@@ -146,9 +147,14 @@ static void
 _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
 {
   u3_pact* pac_u = (u3_pact*)req_u;
+  u3_ames* sam_u = pac_u->sam_u;
 
-  if ( 0 != sas_i ) {
+  if ( sas_i && (c3y == sam_u->net_o)  ) {
     u3l_log("ames: send fail: %s\n", uv_strerror(sas_i));
+    sam_u->net_o = c3n;
+  }
+  else {
+    sam_u->net_o = c3y;
   }
 
   _ames_pact_free(pac_u);
@@ -165,23 +171,31 @@ _ames_send(u3_pact* pac_u)
     _ames_pact_free(pac_u);
     return;
   }
+  else {
+    struct sockaddr_in add_u;
 
-  struct sockaddr_in add_u;
+    memset(&add_u, 0, sizeof(add_u));
+    add_u.sin_family = AF_INET;
+    add_u.sin_addr.s_addr = htonl(pac_u->pip_w);
+    add_u.sin_port = htons(pac_u->por_s);
 
-  memset(&add_u, 0, sizeof(add_u));
-  add_u.sin_family = AF_INET;
-  add_u.sin_addr.s_addr = htonl(pac_u->pip_w);
-  add_u.sin_port = htons(pac_u->por_s);
+    {
+      uv_buf_t buf_u = uv_buf_init((c3_c*)pac_u->hun_y, pac_u->len_w);
+      c3_i     sas_i = uv_udp_send(&pac_u->snd_u,
+                                   &sam_u->wax_u,
+                                   &buf_u, 1,
+                                   (const struct sockaddr*)&add_u,
+                                   _ames_send_cb);
 
-  uv_buf_t buf_u = uv_buf_init((c3_c*)pac_u->hun_y, pac_u->len_w);
-  c3_i sas_i;
+      if ( sas_i ) {
+        if ( c3y == sam_u->net_o ) {
+          u3l_log("ames: send fail: %s\n", uv_strerror(sas_i));
+          sam_u->net_o = c3n;
+        }
 
-  if ( 0 != (sas_i = uv_udp_send(&pac_u->snd_u,
-                                 &sam_u->wax_u,
-                                 &buf_u, 1,
-                                 (const struct sockaddr*)&add_u,
-                                 _ames_send_cb)) ) {
-    u3l_log("ames: send: %s\n", uv_strerror(sas_i));
+        _ames_pact_free(pac_u);
+      }
+    }
   }
 }
 
@@ -1209,6 +1223,7 @@ u3_ames_io_init(u3_pier* pir_u)
   u3_ames* sam_u  = c3_calloc(sizeof(*sam_u));
   sam_u->pir_u    = pir_u;
   sam_u->dop_d    = 0;
+  sam_u->net_o    = c3y;
   sam_u->see_o    = c3y;
   sam_u->fit_o    = c3n;
   sam_u->foq_d    = 0;
