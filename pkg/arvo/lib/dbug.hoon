@@ -90,6 +90,17 @@
       ==
     ==
   ::
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    ?.  ?=([@ %dbug *] path)
+      (on-peek:ag path)
+    ?+  path  [~ ~]
+      [%u %dbug ~]                 ``noun+!>(&)
+      [%x %dbug %state ~]          ``noun+!>(on-save:ag)
+      [%x %dbug %subscriptions ~]  ``noun+!>([wex sup]:bowl)
+    ==
+  ::
   ++  on-init
     ^-  (quip card:agent:gall agent:gall)
     =^  cards  agent  on-init:ag
@@ -114,8 +125,6 @@
     ^-  (quip card:agent:gall agent:gall)
     =^  cards  agent  (on-leave:ag path)
     [cards this]
-  ::
-  ++  on-peek  on-peek:ag
   ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]

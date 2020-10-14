@@ -69,13 +69,37 @@
   |=  [ovo=ovum ken=*]
   [~ (slum ken [now ovo])]
 ::
-::  our boot-ova is a list containing one massive formula:
+::  boot-one: lifecycle formula (from +brass)
+::
+=/  boot-one
+  =>  [boot-formula=** full-sequence=**]
+  !=  =+  [state-gate main-sequence]=.*(full-sequence boot-formula)
+  |-
+  ?@  main-sequence
+    state-gate
+  %=  $
+    main-sequence  +.main-sequence
+    state-gate  .*(state-gate [%9 2 %10 [6 %1 -.main-sequence] %0 1])
+  ==
+::
+::  kernel-formula
 ::
 ::    We evaluate :arvo-formula (for jet registration),
-::    then ignore the result and produce :installed
+::    then ignore the result and produce .installed
+::
+=/  kernel-formula
+  [%7 arvo-formula %1 installed]
+::
+::  boot-two: startup formula
+::
+=/  boot-two
+  =>  [kernel-formula=** main-sequence=**]
+  !=  [.*(0 kernel-formula) main-sequence]
+::
+::  boot-ova
 ::
 =/  boot-ova=(list)
-  [[%7 arvo-formula %1 installed] ~]
+  [boot-one boot-two kernel-formula ~]
 ::
 ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
 ::

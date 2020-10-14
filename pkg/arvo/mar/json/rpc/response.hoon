@@ -3,6 +3,11 @@
 ::
 |_  res=response
 ::
+++  grad  %noun
+++  grow
+  |%
+  ++  noun  res
+  --
 ++  grab                                                ::  convert from
   |%
   ++  noun  response                                    ::  from noun

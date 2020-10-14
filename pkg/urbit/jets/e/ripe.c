@@ -17,15 +17,7 @@
     u3r_bytes(0, wid, (void*)dat_y, dat);
 
     const EVP_MD* rip_u = EVP_ripemd160(); // ripem algorithm
-    static EVP_MD_CTX* con_u = NULL;       // context
-
-    /* build library context object
-       we do this once (and only once)
-    */
-
-    if (NULL == con_u) {
-      con_u = EVP_MD_CTX_create();
-    }
+    EVP_MD_CTX* con_u = EVP_MD_CTX_create();
 
     /* perform signature
     */
@@ -37,22 +29,27 @@
     ret_w = EVP_DigestInit_ex(con_u, rip_u, NULL);
     if ( 1 != ret_w ) {
       u3a_free(dat_y);
+      EVP_MD_CTX_destroy(con_u);
       u3l_log("\rripe jet: crypto library fail 1\n");
-      return u3m_bail(c3__exit);
+      return u3m_bail(c3__fail);
     }
 
     ret_w = EVP_DigestUpdate(con_u, (void*)dat_y, wid);
     u3a_free(dat_y);
     if (1 != ret_w) {
+      EVP_MD_CTX_destroy(con_u);
       u3l_log("\rripe jet: crypto library fail 2\n");
-      return u3m_bail(c3__exit);
+      return u3m_bail(c3__fail);
     }
 
     ret_w = EVP_DigestFinal_ex(con_u, sib_y, &sil_w);
     if ( 1 != ret_w ) {
+      EVP_MD_CTX_destroy(con_u);
       u3l_log("\rripe jet: crypto library fail 3\n");
-      return u3m_bail(c3__exit);
+      return u3m_bail(c3__fail);
     }
+
+    EVP_MD_CTX_destroy(con_u);
 
     /* endian conversion;
        turn into noun for return

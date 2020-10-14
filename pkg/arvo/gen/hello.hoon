@@ -2,6 +2,7 @@
 ::
 ::::  /hoon/hello/gen
   ::
+::  TODO: reinstate
 /?    310
 ::
 ::::

@@ -1,5 +1,5 @@
 /-  *publish
-|_  com=comment
+|_  com=?(comment-2 comment-3)
 ::
 ::
 ++  grow
@@ -9,6 +9,13 @@
     (as-octs:mimes:html (of-wain:format txt))
   ++  txt
     ^-  wain
+    ?:  ?=(comment-2 com)
+      :*  (cat 3 'author: ' (scot %p author.com))
+          (cat 3 'date-created: ' (scot %da date-created.com))
+          '-----'
+          (to-wain:format content.com)
+      ==
+    ?>  ?=(comment-3 com)
     :*  (cat 3 'author: ' (scot %p author.com))
         (cat 3 'date-created: ' (scot %da date-created.com))
         '-----'
@@ -52,7 +59,7 @@
         old-parser
       ==
     --
-  ++  noun  comment
+  ++  noun  ?(comment-2 comment-3)
   --
 ++  grad  %mime
 --

@@ -1,4 +1,6 @@
-::  permission-hook: mirror remote permissions
+::  permission-hook [landscape]:
+::
+::  mirror remote permissions
 ::
 ::    allows mirroring permissions between local and foreign ships.
 ::    local permission path are exposed according to the permssion paths
@@ -189,6 +191,7 @@
   |=  diff=permission-update
   ^-  (quip card _state)
   ?-  -.diff
+      %initial  [~ state]
       %create  [~ state]
       %add     (change-local-permission %add [path who]:diff)
       %remove  (change-local-permission %remove [path who]:diff)
@@ -231,6 +234,7 @@
   |=  diff=permission-update
   ^-  (quip card _state)
   ?-  -.diff
+      %initial  [~ state]
       ?(%create %add %remove)
     (change-foreign-permission path.diff diff)
   ::
@@ -294,7 +298,12 @@
 ++  permission-scry
   |=  pax=path
   ^-  permission
-  =.  pax  ;:(weld /=permission-store/(scot %da now.bowl)/permission pax /noun)
+  =.  pax
+    ;:  weld
+      /(scot %p our.bowl)/permission-store/(scot %da now.bowl)/permission
+      pax
+      /noun
+    ==
   (need .^((unit permission) %gx pax))
 ::
 ++  permitted

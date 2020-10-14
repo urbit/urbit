@@ -7,13 +7,13 @@ chmod -R u+rw ./pier
 
 $URBIT -d ./pier
 
-cleanup () {
+shutdown () {
   if [ -e ./pier/.vere.lock ]
   then kill $(< ./pier/.vere.lock) || true;
   fi
 }
 
-trap cleanup EXIT
+trap shutdown EXIT
 
 #  update pill strategy to ensure correct staging
 #
@@ -74,6 +74,8 @@ herb ./pier -p hood -d "+hood/commit %stage"
 herb ./pier -p hood -d "+hood/unmount %stage"
 
 herb ./pier -P solid.pill -d '+solid /=stage=/sys, =dub &'
+
+herb ./pier -p hood -d '+hood/exit' || true
 
 mv solid.pill $out
 

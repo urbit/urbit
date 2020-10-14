@@ -287,12 +287,17 @@
         c3_w
         u3j_mark(FILE* fil_u);
 
-      /* u3j_free_hank(): free an entry from the hank cache.
-      */
-        void
-        u3j_free_hank(u3_noun kev);
-
       /* u3j_free(): free jet state.
       */
         void
         u3j_free(void);
+
+      /* u3j_reclaim(): clear ad-hoc persistent caches to reclaim memory.
+      */
+        void
+        u3j_reclaim(void);
+
+      /* u3j_rewrite_compact(): rewrite jet state for compaction.
+      */
+        void
+        u3j_rewrite_compact();

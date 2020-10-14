@@ -9,6 +9,7 @@
 =,  html
 |_  xml/@t
 ::
+++  grad  %mime
 ++  grow                                                ::  convert to
   |%                                                    ::
   ++  mime  [/application/xml (as-octs xml)]            ::  to %mime

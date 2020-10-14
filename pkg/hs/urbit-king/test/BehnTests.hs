@@ -9,37 +9,36 @@ import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
 import Urbit.Arvo
+import Urbit.EventLog.LMDB
 import Urbit.Noun
+import Urbit.Noun.Time
 import Urbit.Prelude
-import Urbit.Time
 import Urbit.Vere.Behn
-import Urbit.Vere.Log
 import Urbit.Vere.Pier.Types
 
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
 import Network.Socket     (tupleToHostAddress)
-import Urbit.King.App     (runApp)
+import Urbit.King.App     (runKingEnvNoLog, HasKingId(..))
 
-import qualified Urbit.Time     as Time
-import qualified Urbit.Vere.Log as Log
+import qualified Urbit.EventLog.LMDB as Log
+import qualified Urbit.Noun.Time     as Time
 
 
 --------------------------------------------------------------------------------
 
-king :: KingId
-king = KingId 0
-
 -- TODO Timers always fire immediatly. Something is wrong!
 timerFires :: Property
-timerFires = forAll arbitrary (ioProperty . runApp . runTest)
+timerFires = forAll arbitrary (ioProperty . runKingEnvNoLog . runTest)
   where
-    runTest :: () -> RIO e Bool
+    runTest :: HasKingId e => () -> RIO e Bool
     runTest () = do
+      envr <- ask
+      king <- fromIntegral <$> view kingIdL
       q <- newTQueueIO
-      rwith (liftAcquire $ snd $ behn king (writeTQueue q)) $ \cb -> do
-        cb (BehnEfDoze (king, ()) (Just (2^20)))
+      rwith (liftAcquire $ behn envr (writeTQueue q)) $ \cb -> do
+        io $ cb (BehnEfDoze (king, ()) (Just (2^20)))
         t <- atomically $ readTQueue q
         pure True
 

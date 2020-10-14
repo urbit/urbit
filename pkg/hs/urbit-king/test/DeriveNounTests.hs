@@ -7,15 +7,15 @@ import Test.QuickCheck       hiding ((.&.))
 import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
+import Urbit.EventLog.LMDB
 import Urbit.Prelude
-import Urbit.Vere.Log
 import Urbit.Vere.Pier.Types
 
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
 
-import qualified Urbit.Vere.Log as Log
+import qualified Urbit.EventLog.LMDB as Log
 
 
 -- Sum Types -------------------------------------------------------------------

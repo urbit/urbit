@@ -417,14 +417,17 @@
   :*  to
       (mul windup-years yer:yo)
       stars
-      (div (mul unlock-years yer:yo) stars)
       1
+      (div (mul unlock-years yer:yo) stars)
   ==
 ::
 ++  register-conditional
   |=  [to=address [b1=@ud b2=@ud b3=@ud] unlock-years-per-batch=@ud]
   %-  register-conditional:dat
-  =-  [`address`to b1 b2 b3 `@ud`- 1]
-  (div (mul unlock-years-per-batch yer:yo) :(add b1 b2 b3))
+  :*  to
+      b1  b2  b3
+      1
+      (div (mul unlock-years-per-batch yer:yo) :(add b1 b2 b3))
+  ==
 ::
 --

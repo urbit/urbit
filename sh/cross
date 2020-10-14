@@ -26,6 +26,3 @@ res=$(release "$env.$pkg")
 mkdir -p ./cross/$env
 traced cp -f $res/bin/$pkg ./cross/$env/$pkg
 traced cp -f $res/bin/$pkg-worker ./cross/$env/$pkg-worker
-traced cp -r $res/bin/$pkg-terminfo ./cross/$env/$pkg-terminfo
-
-chmod -R u+wr ./cross/$env/$pkg-terminfo

@@ -1,45 +1,69 @@
+stages:
+  - compile
+  # Don't run the combine stage in pull requests, because deploy is disabled there.
+  - name: combine
+    if: type != pull_request
+
 jobs:
   include:
-  - os: linux
+  - stage: compile
+    os: linux
     language: nix
-    nix: 2.1.3
-    env: STACK_YAML=pkg/hs/stack.yaml
+    nix: 2.3.6
     before_install:
       - git lfs pull
-      - sh/travis-install-stack
-
+      - echo "trusted-users = root travis" | sudo tee -a /etc/nix/nix.conf && sudo pkill nix-daemon
     install:
       - nix-env -iA cachix -f https://cachix.org/api/v1/install
-      - stack --no-terminal --install-ghc build urbit-king --only-dependencies
-
     script:
       - cachix use urbit2
       - ./sh/cachix
       - make build
       - make release
-      - sh/release-king-linux64-dynamic
       - sh/ci-tests
 
-  - os: osx
+  - stage: compile
+    os: linux
+    language: generic
+    env: STACK_YAML=pkg/hs/stack.yaml
+    cache:
+      directories:
+      - $HOME/.ghc
+      - $HOME/.cabal
+      - $HOME/.stack
+      - $TRAVIS_BUILD_DIR/.stack-work
+    before_install:
+      - sh/travis-install-stack
+    install:
+      - stack --no-terminal --install-ghc build urbit-king --only-dependencies
+    script:
+      - stack test
+      - sh/release-king-linux64-dynamic
+
+  - stage: compile
+    os: osx
     language: generic
     sudo: required
     env: STACK_YAML=pkg/hs/stack.yaml
-
+    cache:
+      directories:
+      - $HOME/.ghc
+      - $HOME/.cabal
+      - $HOME/.stack
+      - $TRAVIS_BUILD_DIR/.stack-work
     before_install:
       - sh/travis-install-stack
-
     install:
       - stack --no-terminal --install-ghc build urbit-king --only-dependencies
-
     script:
+      - stack test
       - sh/release-king-darwin-dynamic
 
-cache:
-  directories:
-  - $HOME/.ghc
-  - $HOME/.cabal
-  - $HOME/.stack
-  - $TRAVIS_BUILD_DIR/.stack-work
+  - stage: combine
+    os: linux
+    language: generic
+    script:
+      - sh/combine-release-builds
 
 deploy:
   - skip_cleanup: true

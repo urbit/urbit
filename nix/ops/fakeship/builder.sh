@@ -13,7 +13,7 @@ check () {
   [ 3 -eq "$(herb $out -d 3)" ]
 }
 
-if check
+if check && sleep 10 && check
 then
     echo "Boot success." >&2
     herb $out -p hood -d '+hood/exit' || true

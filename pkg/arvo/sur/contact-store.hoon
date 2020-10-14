@@ -36,7 +36,7 @@
   ==
 ::
 +$  contact-update
-  $%  [%rolodex =rolodex]
+  $%  [%initial =rolodex]
       [%contacts =path =contacts]
       contact-action
   ==

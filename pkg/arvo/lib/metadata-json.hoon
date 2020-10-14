@@ -6,19 +6,19 @@
   ^-  json
   %-  pairs
   %+  turn  ~(tap by associations)
-  |=  [[=group-path =resource] =metadata]
+  |=  [[=group-path =md-resource] =metadata]
   ^-  [cord json]
   :-
   %-  crip
   ;:  weld
       (trip (spat group-path))
-      (weld "/" (trip app-name.resource))
-      (trip (spat app-path.resource))
+      (weld "/" (trip app-name.md-resource))
+      (trip (spat app-path.md-resource))
   ==
   %-  pairs
   :~  [%group-path (path group-path)]
-      [%app-name s+app-name.resource]
-      [%app-path (path app-path.resource)]
+      [%app-name s+app-name.md-resource]
+      [%app-path (path app-path.md-resource)]
       [%metadata (metadata-to-json metadata)]
   ==
 ::
@@ -37,13 +37,13 @@
   ++  add
     %-  ot
     :~  [%group-path pa]
-        [%resource resource]
+        [%resource md-resource]
         [%metadata metadata]
     ==
   ++  remove
     %-  ot
     :~  [%group-path pa]
-        [%resource resource]
+        [%resource md-resource]
     ==
   ::
   ++  nu
@@ -59,7 +59,7 @@
         [%date-created (se %da)]
         [%creator (su ;~(pfix sig fed:ag))]
     ==
-  ++  resource
+  ++  md-resource
     %-  ot
     :~  [%app-name so]
         [%app-path pa]

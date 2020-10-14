@@ -207,10 +207,6 @@
             ::
             (vent %e /vane/eyre)
             ::
-            ::  sys/vane/ford: build
-            ::
-            (vent %f /vane/ford)
-            ::
             ::  sys/vane/gall: applications
             ::
             (vent %g /vane/gall)

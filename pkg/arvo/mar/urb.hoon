@@ -6,6 +6,7 @@
 =,  html
 |_  own/manx
 ::
+++  grad  %mime
 ++  grow                                                ::  convert to
   |%
   ++  hymn  ;html:(head body:"+{own}")                  ::  convert to %hymn

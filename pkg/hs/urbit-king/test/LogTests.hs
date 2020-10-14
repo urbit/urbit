@@ -7,16 +7,16 @@ import Test.QuickCheck       hiding ((.&.))
 import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
+import Urbit.EventLog.LMDB
 import Urbit.Prelude
-import Urbit.Vere.Log
 import Urbit.Vere.Pier.Types
 
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
-import Urbit.King.App     (App, runApp)
+import Urbit.King.App     (KingEnv, runKingEnvNoLog)
 
-import qualified Urbit.Vere.Log as Log
+import qualified Urbit.EventLog.LMDB as Log
 
 
 -- Utils -----------------------------------------------------------------------
@@ -42,13 +42,13 @@ data Db = Db LogIdentity [ByteString] (Map Word64 ByteString)
 addEvents :: Db -> [ByteString] -> Db
 addEvents (Db id evs efs) new = Db id (evs <> new) efs
 
-readDb :: EventLog -> RIO App Db
+readDb :: EventLog -> RIO KingEnv Db
 readDb log = do
     events  <- runConduit (streamEvents log 1 .| consume)
     effects <- runConduit (streamEffectsRows log 0 .| consume)
     pure $ Db (Log.identity log) events (mapFromList effects)
 
-withDb :: FilePath -> Db -> (EventLog -> RIO App a) -> RIO App a
+withDb :: FilePath -> Db -> (EventLog -> RIO KingEnv a) -> RIO KingEnv a
 withDb dir (Db dId dEvs dFx) act = do
     rwith (Log.new dir dId) $ \log -> do
         Log.appendEvents log (fromList dEvs)
@@ -58,10 +58,13 @@ withDb dir (Db dId dEvs dFx) act = do
 
 --------------------------------------------------------------------------------
 
+runApp :: RIO KingEnv a -> IO a
+runApp = runKingEnvNoLog
+
 tryReadIdentity :: Property
 tryReadIdentity = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: LogIdentity -> RIO App Bool
+    runTest :: LogIdentity -> RIO KingEnv Bool
     runTest ident = do
         env <- ask
         io $ runInBoundThread $ runRIO env $
@@ -77,7 +80,7 @@ tryReadIdentity = forAll arbitrary (ioProperty . runApp . runTest)
 tryReadDatabase :: Property
 tryReadDatabase = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: Db -> RIO App Bool
+    runTest :: Db -> RIO KingEnv Bool
     runTest db = do
         env <- ask
         io $ runInBoundThread $ runRIO env $
@@ -89,7 +92,7 @@ tryReadDatabase = forAll arbitrary (ioProperty . runApp . runTest)
 tryReadDatabaseFuzz :: Property
 tryReadDatabaseFuzz = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: Db -> RIO App Bool
+    runTest :: Db -> RIO KingEnv Bool
     runTest db = do
         env <- ask
         io $ runInBoundThread $ runRIO env $
@@ -106,7 +109,7 @@ tryReadDatabaseFuzz = forAll arbitrary (ioProperty . runApp . runTest)
 tryAppend :: Property
 tryAppend = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: ([ByteString], Db) -> RIO App Bool
+    runTest :: ([ByteString], Db) -> RIO KingEnv Bool
     runTest (extra, db) = do
         env <- ask
         io $ runInBoundThread $ runRIO env $
@@ -123,7 +126,7 @@ tryAppend = forAll arbitrary (ioProperty . runApp . runTest)
 tryAppendHuge :: Property
 tryAppendHuge = forAll arbitrary (ioProperty . runApp . runTest)
   where
-    runTest :: ([ByteString], Db) -> RIO App Bool
+    runTest :: ([ByteString], Db) -> RIO KingEnv Bool
     runTest (extra, db) = do
         env <- ask
         io $ runInBoundThread $ runRIO env $ do

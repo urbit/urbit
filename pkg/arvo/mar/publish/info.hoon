@@ -31,7 +31,7 @@
     ++  old-parser
       ;~  plug
         (key-val (jest 'owner: ~') fed:ag)
-        (key-val (jest 'title: ') (cook crip (star qit)))
+        (key-val (jest 'title: ') (cook crip (star prn)))
         (key-val (jest 'filename: ') sym)
         %+  key-val  (jest 'comments: ')
           ;~(pose (jest %open) (jest %closed) (jest %none))
@@ -45,8 +45,8 @@
       ==
     ++  new-parser
       ;~  plug
-        (key-val (jest 'title: ') (cook crip (star qit)))
-        (key-val (jest 'description: ') (cook crip (star qit)))
+        (key-val (jest 'title: ') (cook crip (star prn)))
+        (key-val (jest 'description: ') (cook crip (star prn)))
         %+  key-val  (jest 'comments: ')
           (cook |=(a=@ =(%on a)) ;~(pose (jest %on) (jest %off)))
         (key-val (jest 'writers: ') ;~(pfix net (more net urs:ab)))

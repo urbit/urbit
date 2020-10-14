@@ -1,9 +1,0 @@
-.DS_Store
-
-.urbitrc
-
-node_modules/
-dist/
-urbit-code/web/landscape/js/*
-urbit-code/web/landscape/css/*
-*.swp

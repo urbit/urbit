@@ -6,6 +6,11 @@
 ::
 |_  del=notebook-delta
 ::
+++  grad  %noun
+++  grow
+  |%
+  ++  noun  del
+  --
 ++  grab
   |%
   ++  noun  notebook-delta

@@ -15,6 +15,33 @@
 
 #include "all.h"
 
+static u3j_harm _141_hex_mimes_base16_en_a[] = {{".2", u3we_en_base16}, {}};
+static c3_c* _141_hex_mimes_base16_en_ha[] = {
+  0
+};
+
+static u3j_harm _141_hex_mimes_base16_de_a[] = {{".2", u3we_de_base16}, {}};
+static c3_c* _141_hex_mimes_base16_de_ha[] = {
+  0
+};
+
+static u3j_core _141_hex_mimes_base16_d[] =
+  { { "en", 7, _141_hex_mimes_base16_en_a, 0, _141_hex_mimes_base16_en_ha },
+    { "de", 7, _141_hex_mimes_base16_de_a, 0, _141_hex_mimes_base16_de_ha },
+    {}
+  };
+static c3_c* _141_hex_mimes_base16_ha[] = {
+  0
+};
+
+static u3j_core _141_hex_mimes_d[] =
+  { { "base16", 3, 0, _141_hex_mimes_base16_d, _141_hex_mimes_base16_ha },
+    {}
+  };
+static c3_c* _141_hex_mimes_ha[] = {
+  0
+};
+
 static u3j_harm _141_hex_aes_ecba_en_a[] = {{".2", u3wea_ecba_en}, {}};
 static c3_c* _141_hex_aes_ecba_en_ha[] = {
   "a4eaaead7ffeb213cf8d611f20d7be4786b34f31a27f41c77538125992107c2d",
@@ -74,6 +101,30 @@ static c3_c* _141_hex_aes_cbcc_en_ha[] = {
 static u3j_harm _141_hex_aes_cbcc_de_a[] = {{".2", u3wea_cbcc_de}, {}};
 static c3_c* _141_hex_aes_cbcc_de_ha[] = {
   "b9d521b4d5e1d9387b34bbf5ca38f4d52ba86952ea54490dad7e2670183c572b",
+  0
+};
+static u3j_harm _141_hex_aes_siva_en_a[] = {{".2", u3wea_siva_en}, {}};
+static c3_c* _141_hex_aes_siva_en_ha[] = {
+  0
+};
+static u3j_harm _141_hex_aes_siva_de_a[] = {{".2", u3wea_siva_de}, {}};
+static c3_c* _141_hex_aes_siva_de_ha[] = {
+  0
+};
+static u3j_harm _141_hex_aes_sivb_en_a[] = {{".2", u3wea_sivb_en}, {}};
+static c3_c* _141_hex_aes_sivb_en_ha[] = {
+  0
+};
+static u3j_harm _141_hex_aes_sivb_de_a[] = {{".2", u3wea_sivb_de}, {}};
+static c3_c* _141_hex_aes_sivb_de_ha[] = {
+  0
+};
+static u3j_harm _141_hex_aes_sivc_en_a[] = {{".2", u3wea_sivc_en}, {}};
+static c3_c* _141_hex_aes_sivc_en_ha[] = {
+  0
+};
+static u3j_harm _141_hex_aes_sivc_de_a[] = {{".2", u3wea_sivc_de}, {}};
+static c3_c* _141_hex_aes_sivc_de_ha[] = {
   0
 };
 
@@ -137,6 +188,31 @@ static c3_c* _141_hex_aes_cbcc_ha[] = {
   0
 };
 
+static u3j_core _141_hex_aes_siva_d[] =
+  { { "en", 7, _141_hex_aes_siva_en_a, 0, _141_hex_aes_siva_en_ha },
+    { "de", 7, _141_hex_aes_siva_de_a, 0, _141_hex_aes_siva_de_ha },
+    {}
+  };
+static c3_c* _141_hex_aes_siva_ha[] = {
+  0
+};
+static u3j_core _141_hex_aes_sivb_d[] =
+  { { "en", 7, _141_hex_aes_sivb_en_a, 0, _141_hex_aes_sivb_en_ha },
+    { "de", 7, _141_hex_aes_sivb_de_a, 0, _141_hex_aes_sivb_de_ha },
+    {}
+  };
+static c3_c* _141_hex_aes_sivb_ha[] = {
+  0
+};
+static u3j_core _141_hex_aes_sivc_d[] =
+  { { "en", 7, _141_hex_aes_sivc_en_a, 0, _141_hex_aes_sivc_en_ha },
+    { "de", 7, _141_hex_aes_sivc_de_a, 0, _141_hex_aes_sivc_de_ha },
+    {}
+  };
+static c3_c* _141_hex_aes_sivc_ha[] = {
+  0
+};
+
 static u3j_core _141_hex_aes_d[] =
   { { "ecba", 7, 0, _141_hex_aes_ecba_d, _141_hex_aes_ecba_ha },
     { "ecbb", 7, 0, _141_hex_aes_ecbb_d, _141_hex_aes_ecbb_ha },
@@ -144,6 +220,9 @@ static u3j_core _141_hex_aes_d[] =
     { "cbca", 7, 0, _141_hex_aes_cbca_d, _141_hex_aes_cbca_ha },
     { "cbcb", 7, 0, _141_hex_aes_cbcb_d, _141_hex_aes_cbcb_ha },
     { "cbcc", 7, 0, _141_hex_aes_cbcc_d, _141_hex_aes_cbcc_ha },
+    { "siva", 7, 0, _141_hex_aes_siva_d, _141_hex_aes_siva_ha },
+    { "sivb", 7, 0, _141_hex_aes_sivb_d, _141_hex_aes_sivb_ha },
+    { "sivc", 7, 0, _141_hex_aes_sivc_d, _141_hex_aes_sivc_ha },
     {}
   };
 static c3_c* _141_hex_aes_ha[] = {
@@ -345,6 +424,7 @@ static u3j_core _141_hex_d[] =
   { "blake",  31, 0, _141_hex_blake_d, _141_hex_blake_ha },
   { "ripemd", 31, 0, _141_hex_ripe_d,  _141_hex_ripe_ha  },
   { "secp",   31, 0, _141_hex_secp_d,  _141_hex_secp_ha  },
+  { "mimes",  31, 0, _141_hex_mimes_d, _141_hex_mimes_ha  },
   {}
 };
 static c3_c* _141_hex_ha[] = {
@@ -425,11 +505,6 @@ static c3_c* _141_pen_loot_ha[] = {
     "d83e5e47f712870aba815d79943d287cbefdc00640409464b30bf755115d4a1a",
     0
   };
-  static u3j_harm _141_pen__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
-  static c3_c* _141_pen__ut_fond_ha[] = {
-    "0da0cc79c938eb06515a5cc24a17b82cd60a50c0f1a02e2c68e5d1cf71c96054",
-    0
-  };
   static u3j_harm _141_pen__ut_fish_a[] = {{".2", u3wfu_fish}, {}};
   static c3_c* _141_pen__ut_fish_ha[] = {
     "2fd315436f48351002d9aa8c137649ca95b01fd57dba09db53d7235f84a284bf",
@@ -464,16 +539,6 @@ static c3_c* _141_pen_loot_ha[] = {
       { "nest-in", 7, 0, _141_pen__ut_nest_in_d, _141_pen__ut_nest_in_ha },
       {}
     };
-  static u3j_harm _141_pen__ut_peek_a[] = {{".2", u3wfu_peek}, {}};
-  static c3_c* _141_pen__ut_peek_ha[] = {
-    "904ff7359e89d1886f884c4409f104269cdb8dfb4683f116ff00bc98a4720df7",
-    0
-  };
-  static u3j_harm _141_pen__ut_play_a[] = {{".2", u3wfu_play}, {}};
-  static c3_c* _141_pen__ut_play_ha[] = {
-    "bdc5c072632f7133b4c64c465b1b214d7465b0c1163842b121b7369aba1b9b03",
-    0
-  };
   static u3j_harm _141_pen__ut_rest_a[] = {{".2", u3wfu_rest}, {}};
   static c3_c* _141_pen__ut_rest_ha[] = {
     "2e2d15f3efca0a4bf8ce08cca48c54d1d5a7204e2b0525137f59c3e7b037d2fd",
@@ -483,14 +548,11 @@ static c3_c* _141_pen_loot_ha[] = {
 static u3j_core _141_pen__ut_d[] =
   {
     { "crop", 7, _141_pen__ut_crop_a, 0, _141_pen__ut_crop_ha },
-    { "fond", 7, _141_pen__ut_fond_a, 0, _141_pen__ut_fond_ha },
     { "fish", 7, _141_pen__ut_fish_a, 0, _141_pen__ut_fish_ha },
     { "fuse", 7, _141_pen__ut_fuse_a, 0, _141_pen__ut_fuse_ha },
     { "mint", 7, _141_pen__ut_mint_a, 0, _141_pen__ut_mint_ha },
     { "mull", 7, _141_pen__ut_mull_a, 0, _141_pen__ut_mull_ha },
     { "nest", 7, 0, _141_pen__ut_nest_d, _141_pen__ut_nest_ha },
-    { "peek", 7, _141_pen__ut_peek_a, 0, _141_pen__ut_peek_ha },
-    { "play", 7, _141_pen__ut_play_a, 0, _141_pen__ut_play_ha },
     { "rest", 7, _141_pen__ut_rest_a, 0, _141_pen__ut_rest_ha },
     {}
   };

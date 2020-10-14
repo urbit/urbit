@@ -1,3 +1,5 @@
+{-# LANGUAGE StrictData #-}
+
 {-|
     Event Types and Noun Conversion
 -}
@@ -202,9 +204,16 @@ deriveNoun ''AmesEv
 
 -- Arvo Events -----------------------------------------------------------------
 
+newtype Entropy = Entropy { entropyBits :: Word512 }
+ deriving newtype (Eq, Ord, FromNoun, ToNoun)
+
+instance Show Entropy where
+  show = const "\"ENTROPY (secret)\""
+
+
 data ArvoEv
     = ArvoEvWhom ()   Ship
-    | ArvoEvWack ()   Word512
+    | ArvoEvWack ()   Entropy
     | ArvoEvWarn Path Noun
     | ArvoEvCrud Path Noun
     | ArvoEvVeer Atom Noun
@@ -350,6 +359,7 @@ instance FromNoun Ev where
     ReOrg "vane" s t p v -> fmap EvVane $ parseNoun $ toNoun (s,t,p,v)
     ReOrg _      _ _ _ _ -> fail "First path-elem must be ?($ %vane)"
 
+
 -- Short Event Names -----------------------------------------------------------
 
 {-
@@ -374,3 +384,10 @@ getSpinnerNameForEvent = \case
   where
     isRet (TermEvBelt _ (Ret ())) = True
     isRet _                       = False
+
+summarizeEvent :: Ev -> Text
+summarizeEvent ev =
+  fromNoun (toNoun ev) & \case
+    Nothing -> "//invalid %event"
+    Just (pax :: [Cord], tag :: Cord, val :: Noun) ->
+      "/" <> intercalate "/" (unCord <$> pax) <> " %" <> unCord tag

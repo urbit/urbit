@@ -81,9 +81,9 @@
                      u3_noun c,
                      u3_noun d);
 
-      /* u3r_mug(): MurmurHash3 on a noun.
+      /* u3r_mug(): statefully mug a noun with 31-bit murmur3.
       */
-        c3_w
+        c3_l
         u3r_mug(u3_noun veb);
 
       /* u3r_fing():
@@ -368,6 +368,14 @@
         u3r_mp(mpz_t   a_mp,
                u3_atom b);
 
+      /* u3r_short():
+      **
+      **   Return short (a_w) of (b).
+      */
+        c3_s
+        u3r_short(c3_w  a_w,
+                  u3_atom b);
+
       /* u3r_word():
       **
       **   Return word (a_w) of (b).
@@ -403,6 +411,21 @@
                   c3_w    b_w,
                   c3_d*   c_d,
                   u3_atom d);
+
+      /* u3r_safe_byte(): validate and retrieve byte.
+      */
+        c3_o
+        u3r_safe_byte(u3_noun dat, c3_y* out_y);
+
+      /* u3r_safe_word(): validate and retrieve word.
+      */
+        c3_o
+        u3r_safe_word(u3_noun dat, c3_w* out_w);
+
+      /* u3r_safe_chub(): validate and retrieve chub.
+      */
+        c3_o
+        u3r_safe_chub(u3_noun dat, c3_d* out_d);
 
       /* u3r_string(): `a`, a text atom, as malloced C string.
       */

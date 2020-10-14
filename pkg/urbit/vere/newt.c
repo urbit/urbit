@@ -24,350 +24,454 @@
 #include <netinet/in.h>
 #include <uv.h>
 #include <errno.h>
-#include <ncurses/curses.h>
-#include <termios.h>
-#include <ncurses/term.h>
 
 #include "all.h"
 #include "vere/vere.h"
 
-/* _newt_gain_meat(): add a block to an existing message
+/* _newt_mess_head(): await next msg header.
 */
 static void
-_newt_gain_meat(u3_moat* mot_u)
+_newt_mess_head(u3_mess* mes_u)
 {
-  c3_assert( 0 != mot_u->mes_u );
-
-  //  create block
-  //
-  u3_meat* met_u = c3_malloc(mot_u->len_d + (c3_d) sizeof(u3_meat));
-  met_u->nex_u = 0;
-  met_u->len_d = mot_u->len_d;
-  memcpy(met_u->hun_y, mot_u->rag_y, mot_u->len_d);
-
-  //  enqueue block
-  //
-  if ( !mot_u->mes_u->meq_u ) {
-    mot_u->mes_u->meq_u = mot_u->mes_u->qem_u = met_u;
-  }
-  else {
-    mot_u->mes_u->qem_u->nex_u = met_u;
-    mot_u->mes_u->qem_u = met_u;
-  }
-  mot_u->mes_u->has_d += met_u->len_d;
-
-  //  free consumed stray bytes
-  //
-  c3_free(mot_u->rag_y);
-  mot_u->len_d = 0;
-  mot_u->rag_y = 0;
+  mes_u->sat_e = u3_mess_head;
+  mes_u->hed_u.has_y = 0;
 }
 
-/* _newt_gain_mess(): begin parsing a new message
+/* _newt_mess_tail(): await msg body.
 */
 static void
-_newt_gain_mess(u3_moat* mot_u)
+_newt_mess_tail(u3_mess* mes_u, c3_d len_d)
 {
-  c3_assert( 8ULL <= mot_u->len_d );
-  c3_assert( 0 == mot_u->mes_u );
+  u3_meat* met_u = c3_malloc(len_d + sizeof(*met_u));
+  met_u->nex_u   = 0;
+  met_u->len_d   = len_d;
 
-  c3_d nel_d = 0ULL;
+  mes_u->sat_e = u3_mess_tail;
+  mes_u->tal_u.has_d = 0;
+  mes_u->tal_u.met_u = met_u;
+}
 
-  nel_d |= ((c3_d) mot_u->rag_y[0]) << 0ULL;
-  nel_d |= ((c3_d) mot_u->rag_y[1]) << 8ULL;
-  nel_d |= ((c3_d) mot_u->rag_y[2]) << 16ULL;
-  nel_d |= ((c3_d) mot_u->rag_y[3]) << 24ULL;
-  nel_d |= ((c3_d) mot_u->rag_y[4]) << 32ULL;
-  nel_d |= ((c3_d) mot_u->rag_y[5]) << 40ULL;
-  nel_d |= ((c3_d) mot_u->rag_y[6]) << 48ULL;
-  nel_d |= ((c3_d) mot_u->rag_y[7]) << 56ULL;
-
-  c3_assert( 0ULL != nel_d );
-
-  //  very likely to be a bad write, we can't jam anything this big
-  //
-  if ( 0xFFFFFFFFULL < nel_d ) {
-    u3l_log("newt: %d warn: large read %" PRIu64 "\r\n",
-            getpid(),
-            nel_d);
-  }
-
-  mot_u->len_d -= 8ULL;
-
-  mot_u->mes_u = c3_malloc(sizeof(u3_mess));
-  mot_u->mes_u->len_d = nel_d;
-  mot_u->mes_u->has_d = 0;
-  mot_u->mes_u->meq_u = mot_u->mes_u->qem_u = 0;
-
-  if ( 0ULL == mot_u->len_d ) {
-    c3_free(mot_u->rag_y);
-    mot_u->rag_y = 0;
+/* _newt_meat_plan(): enqueue complete msg.
+*/
+static void
+_newt_meat_plan(u3_moat* mot_u, u3_meat* met_u)
+{
+  if ( mot_u->ent_u ) {
+    mot_u->ent_u->nex_u = met_u;
+    mot_u->ent_u = met_u;
   }
   else {
-    //  remove consumed length from stray bytes
-    //
-    c3_y* buf_y = c3_malloc(mot_u->len_d);
-    memcpy(buf_y, mot_u->rag_y + 8, mot_u->len_d);
-
-    c3_free(mot_u->rag_y);
-    mot_u->rag_y = buf_y;
+    mot_u->ent_u = mot_u->ext_u = met_u;
   }
 }
 
-/* _newt_poke_mess(): pass message to [mot_u] callback
+/* _newt_meat_poke(): deliver completed msg.
 */
 static void
-_newt_poke_mess(u3_moat* mot_u)
+_newt_meat_poke(u3_moat* mot_u, u3_meat* met_u)
 {
-  c3_assert( 0 != mot_u->mes_u );
-  c3_assert( mot_u->mes_u->has_d >= mot_u->mes_u->len_d );
+  mot_u->pok_f(mot_u->ptr_v, met_u->len_d, met_u->hun_y);
+  c3_free(met_u);
+}
 
-  c3_d     len_d = mot_u->mes_u->len_d;
-  c3_y*    buf_y = c3_malloc(len_d);
-  c3_d     pat_d = 0;
-  u3_meat* met_u;
+/* _newt_meat_next_sync(): deliver completed msgs, synchronously.
+*/
+static void
+_newt_meat_next_sync(u3_moat* mot_u)
+{
+  u3_meat* met_u = mot_u->ext_u;
 
-  //  we should have just cleared this
-  //
-  c3_assert(!mot_u->rag_y);
-  c3_assert(!mot_u->len_d);
+  while ( met_u ) {
+    u3_meat* nex_u = met_u->nex_u;
+    _newt_meat_poke(mot_u, met_u);
+    met_u = nex_u;
+  }
 
-  //  collect queue blocks, cleaning them up; return any spare meat
-  //  to the rag.
-  //
-  {
-    met_u = mot_u->mes_u->meq_u;
+  mot_u->ent_u = mot_u->ext_u = 0;
+}
 
-    while ( met_u && (pat_d < len_d) ) {
-      u3_meat* nex_u = met_u->nex_u;
-      c3_d     end_d = (pat_d + met_u->len_d);
-      c3_d     eat_d;
-      c3_d     rem_d;
+static void
+_newt_meat_next_cb(uv_timer_t* tim_u);
 
-      eat_d = c3_min(len_d, end_d) - pat_d;
-      memcpy(buf_y + pat_d, met_u->hun_y, eat_d);
-      pat_d += eat_d;
+/* _newt_meat_next(): deliver completed msgs, asynchronously.
+*/
+static void
+_newt_meat_next(u3_moat* mot_u)
+{
+  u3_meat* met_u = mot_u->ext_u;
 
-      rem_d = (met_u->len_d - eat_d);
-      if ( rem_d ) {
-        mot_u->rag_y = c3_malloc(rem_d);
-        memcpy(mot_u->rag_y, met_u->hun_y + eat_d, rem_d);
-        mot_u->len_d = rem_d;
+  if ( met_u ) {
+    mot_u->ext_u = met_u->nex_u;
 
-        //  one: unless we got a bad length, this has to be the last
-        //  block in the message.
-        //
-        //  two: bad data on a newt channel can cause us to assert.
-        //  that's actually the right thing for a private channel.
-        ///
-        c3_assert(0 == nex_u);
-      }
-
-      c3_free(met_u);
-      met_u = nex_u;
+    if ( mot_u->ext_u ) {
+      uv_timer_start(&mot_u->tim_u, _newt_meat_next_cb, 0, 0);
+    }
+    else {
+      mot_u->ent_u = 0;
     }
 
-    c3_assert(pat_d == len_d);
-
-    //  clear the message
-    //
-    c3_free(mot_u->mes_u);
-    mot_u->mes_u = 0;
+    _newt_meat_poke(mot_u, met_u);
   }
+}
 
-  //  build and send the object
-  //
-  {
-    u3_noun mat = u3i_bytes((c3_w)len_d, buf_y);
-    mot_u->pok_f(mot_u->vod_p, mat);
-  }
-
-  c3_free(buf_y);
+/* _newt_meat_next_cb(): handle next msg after timer.
+*/
+static void
+_newt_meat_next_cb(uv_timer_t* tim_u)
+{
+  u3_moat* mot_u = tim_u->data;
+  _newt_meat_next(mot_u);
 }
 
 /* u3_newt_decode(): decode a (partial) length-prefixed byte buffer
 */
 void
-u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_w len_w)
+u3_newt_decode(u3_moat* mot_u, c3_y* buf_y, c3_d len_d)
 {
-  //  grow read buffer by `len_d` bytes
+  u3_mess* mes_u = &mot_u->mes_u;
+
+  while ( len_d ) {
+    switch( mes_u->sat_e ) {
+
+      //  read up to 8 length bytes as needed
+      //
+      case u3_mess_head: {
+        c3_y* len_y = mes_u->hed_u.len_y;
+        c3_y  has_y = mes_u->hed_u.has_y;
+        c3_y  ned_y = 8 - has_y;
+        c3_y  cop_y = c3_min(ned_y, len_d);
+
+        memcpy(len_y + has_y, buf_y, cop_y);
+        buf_y += cop_y;
+        len_d -= cop_y;
+        ned_y -= cop_y;
+
+        //  moar bytes needed, yield
+        //
+        if ( ned_y ) {
+          mes_u->hed_u.has_y = (has_y + cop_y);
+        }
+        //  length known, allocate message
+        //
+        else {
+          c3_d met_d = (((c3_d)len_y[0]) <<  0)
+                     | (((c3_d)len_y[1]) <<  8)
+                     | (((c3_d)len_y[2]) << 16)
+                     | (((c3_d)len_y[3]) << 24)
+                     | (((c3_d)len_y[4]) << 32)
+                     | (((c3_d)len_y[5]) << 40)
+                     | (((c3_d)len_y[6]) << 48)
+                     | (((c3_d)len_y[7]) << 56);
+
+          //  must be non-zero, only 32 bits supported
+          //
+          c3_assert( met_d );
+          c3_assert( 0xFFFFFFFFULL > met_d );
+
+          //  await body
+          //
+          _newt_mess_tail(mes_u, met_d);
+        }
+      } break;
+
+      case u3_mess_tail: {
+        u3_meat* met_u = mes_u->tal_u.met_u;
+        c3_d     has_d = mes_u->tal_u.has_d;
+        c3_d     ned_d = met_u->len_d - has_d;
+        c3_d     cop_d = c3_min(ned_d, len_d);
+
+        memcpy(met_u->hun_y + has_d, buf_y, cop_d);
+        buf_y += cop_d;
+        len_d -= cop_d;
+        ned_d -= cop_d;
+
+        //  moar bytes needed, yield
+        //
+        if ( ned_d ) {
+          mes_u->tal_u.has_d = (has_d + cop_d);
+        }
+        //  message completed, enqueue and await next header
+        //
+        else {
+          _newt_meat_plan(mot_u, met_u);
+          _newt_mess_head(mes_u);
+        }
+      } break;
+    }
+  }
+}
+
+/* _newt_read(): handle async read result.
+*/
+static c3_o
+_newt_read(u3_moat*        mot_u,
+           ssize_t         len_i,
+           const uv_buf_t* buf_u)
+{
+  if ( 0 > len_i ) {
+    c3_free(buf_u->base);
+    uv_read_stop((uv_stream_t*)&mot_u->pyp_u);
+
+    if ( UV_EOF != len_i ) {
+      fprintf(stderr, "newt: read failed %s\r\n", uv_strerror(len_i));
+    }
+
+    mot_u->bal_f(mot_u->ptr_v, len_i, uv_strerror(len_i));
+    return c3n;
+  }
+  //  EAGAIN/EWOULDBLOCK
   //
-  if ( mot_u->rag_y ) {
-    //  XX check SIZE_MAX?
-    //
-    c3_d nel_d = mot_u->len_d + len_w;
-
-    mot_u->rag_y = c3_realloc(mot_u->rag_y, nel_d);
-    memcpy(mot_u->rag_y + mot_u->len_d, buf_y, len_w);
-
-    mot_u->len_d = nel_d;
-    c3_free(buf_y);
+  else if ( 0 == len_i ) {
+    c3_free(buf_u->base);
+    return c3n;
   }
   else {
-    mot_u->rag_y = buf_y;
-    mot_u->len_d = (c3_d)len_w;
-  }
-
-  //  process stray bytes, trying to create a new message
-  //  or add a block to an existing one.
-  //
-  while ( mot_u->rag_y ) {
-    //  no message
-    //
-    if ( !mot_u->mes_u ) {
-      //  but enough stray bytes to start one
-      //
-      if ( 8ULL <= mot_u->len_d ) {
-        _newt_gain_mess(mot_u);
-      }
-      else {
-        break;
-      }
-    }
-    else {
-      //  there is a live message, add a block to the queue.
-      //
-      _newt_gain_meat(mot_u);
-
-      //  check for message completions
-      //
-      if ( mot_u->mes_u->has_d >= mot_u->mes_u->len_d ) {
-        _newt_poke_mess(mot_u);
-      }
-    }
+    u3_newt_decode(mot_u, (c3_y*)buf_u->base, (c3_d)len_i);
+    c3_free(buf_u->base);
+    return c3y;
   }
 }
 
-/* _raft_alloc(): libuv-style allocator for raft.
+/* _newt_read_sync_cb(): async read callback, sync msg delivery.
 */
 static void
-_newt_alloc(uv_handle_t* had_u,
-            size_t len_i,
-            uv_buf_t* buf_u)
+_newt_read_sync_cb(uv_stream_t*    str_u,
+                   ssize_t         len_i,
+                   const uv_buf_t* buf_u)
 {
-  void* ptr_v = c3_malloc(len_i);
+  u3_moat* mot_u = (void *)str_u;
 
-  *buf_u = uv_buf_init(ptr_v, len_i);
+  if ( c3y == _newt_read(mot_u, len_i, buf_u) ) {
+    _newt_meat_next_sync(mot_u);
+  }
 }
 
-/* _newt_read_cb(): stream input callback.
+/* _newt_read_cb(): async read callback, async msg delivery.
 */
-void
+static void
 _newt_read_cb(uv_stream_t*    str_u,
               ssize_t         len_i,
               const uv_buf_t* buf_u)
 {
   u3_moat* mot_u = (void *)str_u;
 
-  if ( 0 > len_i ) {
-    c3_free(buf_u->base);
-    uv_read_stop(str_u);
-    mot_u->bal_f(mot_u->vod_p, uv_strerror(len_i));
-  }
-  //  EAGAIN/EWOULDBLOCK
-  //
-  else if ( 0 == len_i ) {
-    c3_free(buf_u->base);
-  }
-  else {
-    u3_newt_decode(mot_u, (c3_y*)buf_u->base, (c3_w)len_i);
+  if ( c3y == _newt_read(mot_u, len_i, buf_u) ) {
+    _newt_meat_next(mot_u);
   }
 }
 
-/* u3_newt_read(): start stream reading.
+/* _newt_alloc(): libuv-style allocator.
+*/
+static void
+_newt_alloc(uv_handle_t* had_u,
+            size_t len_i,
+            uv_buf_t* buf_u)
+{
+  //  XX pick an appropriate size
+  //
+  void* ptr_v = c3_malloc(len_i);
+
+  *buf_u = uv_buf_init(ptr_v, len_i);
+}
+
+static void
+_newt_read_init(u3_moat* mot_u, uv_read_cb read_cb_f)
+{
+  //  zero-initialize completed msg queue
+  //
+  mot_u->ent_u = mot_u->ext_u = 0;
+
+  //  store pointer for libuv handle callback
+  //
+  mot_u->pyp_u.data = mot_u;
+  mot_u->tim_u.data = mot_u;
+
+  //  await next msg header
+  //
+  _newt_mess_head(&mot_u->mes_u);
+
+  {
+    c3_i sas_i;
+
+    if ( 0 != (sas_i = uv_read_start((uv_stream_t*)&mot_u->pyp_u,
+                                     _newt_alloc,
+                                     read_cb_f)) )
+    {
+      fprintf(stderr, "newt: read failed %s\r\n", uv_strerror(sas_i));
+      mot_u->bal_f(mot_u->ptr_v, sas_i, uv_strerror(sas_i));
+    }
+  }
+}
+
+/* _moat_stop_cb(): finalize stop/close input stream..
+*/
+static void
+_moat_stop_cb(uv_handle_t* han_u)
+{
+  u3_moat* mot_u = han_u->data;
+  mot_u->bal_f(mot_u->ptr_v, -1, "");
+}
+
+/* u3_newt_moat_stop(); newt stop/close input stream.
+*/
+void
+u3_newt_moat_stop(u3_moat* mot_u, u3_moor_bail bal_f)
+{
+  mot_u->pyp_u.data = mot_u;
+
+  if ( bal_f ) {
+    mot_u->bal_f = bal_f;
+  }
+
+  uv_close((uv_handle_t*)&mot_u->pyp_u, _moat_stop_cb);
+  uv_close((uv_handle_t*)&mot_u->tim_u, 0);
+
+  //  dispose in-process message
+  //
+  if ( u3_mess_tail == mot_u->mes_u.sat_e ) {
+    c3_free(mot_u->mes_u.tal_u.met_u);
+    _newt_mess_head(&mot_u->mes_u);
+  }
+
+  //  dispose pending messages
+  {
+    u3_meat* met_u = mot_u->ext_u;
+    u3_meat* nex_u;
+
+    while ( met_u ) {
+      nex_u = met_u->nex_u;
+      c3_free(met_u);
+      met_u = nex_u;
+    }
+
+    mot_u->ent_u = mot_u->ext_u = 0;
+  }
+}
+
+/* u3_newt_read_sync(): start reading; multiple msgs synchronous.
+*/
+void
+u3_newt_read_sync(u3_moat* mot_u)
+{
+  _newt_read_init(mot_u, _newt_read_sync_cb);
+}
+
+/* u3_newt_read(): start reading; each msg asynchronous.
 */
 void
 u3_newt_read(u3_moat* mot_u)
 {
-  c3_i err_i;
+  _newt_read_init(mot_u, _newt_read_cb);
+}
 
-  mot_u->mes_u = 0;
-  mot_u->len_d = 0;
-  mot_u->rag_y = 0;
+/* u3_newt_moat_info(); print status info.
+*/
+void
+u3_newt_moat_info(u3_moat* mot_u)
+{
+  u3_meat* met_u = mot_u->ext_u;
+  c3_w     len_w = 0;
 
-  err_i = uv_read_start((uv_stream_t*) &mot_u->pyp_u,
-                        _newt_alloc,
-                        _newt_read_cb);
+    while ( met_u ) {
+      len_w++;
+      met_u = met_u->nex_u;
+    }
 
-  if ( err_i != 0 ) {
-    mot_u->bal_f(mot_u, uv_strerror(err_i));
+  if ( len_w ) {
+    u3l_log("    newt: %u inbound ipc messages pending\n", len_w);
   }
 }
 
-/* u3_write_t: write request for newt
+/* n_req: write request for newt
 */
-typedef struct _u3_write_t {
+typedef struct _n_req {
   uv_write_t wri_u;
   u3_mojo*   moj_u;
-  void*      vod_p;
   c3_y*      buf_y;
-} u3_write_t;
+  c3_y       len_y[8];
+} n_req;
 
 /* _newt_write_cb(): generic write callback.
 */
 static void
 _newt_write_cb(uv_write_t* wri_u, c3_i sas_i)
 {
-  u3_write_t* req_u = (struct _u3_write_t*)wri_u;
-  void*       vod_p = req_u->vod_p;
-  u3_mojo*    moj_u = req_u->moj_u;
+  n_req*   req_u = (n_req*)wri_u;
+  u3_mojo* moj_u = req_u->moj_u;
 
   c3_free(req_u->buf_y);
   c3_free(req_u);
 
   if ( 0 != sas_i ) {
-    u3l_log("newt: bad write %d\r\n", sas_i);
-    moj_u->bal_f(vod_p, uv_strerror(sas_i));
+    if ( UV_ECANCELED == sas_i ) {
+      fprintf(stderr, "newt: write canceled\r\n");
+    }
+    else {
+      fprintf(stderr, "newt: write failed %s\r\n", uv_strerror(sas_i));
+      moj_u->bal_f(moj_u->ptr_v, sas_i, uv_strerror(sas_i));
+    }
   }
 }
 
-/* u3_newt_encode(): encode an atom to a length-prefixed byte buffer
+/* _mojo_stop_cb(): finalize stop/close output stream..
 */
-c3_y*
-u3_newt_encode(u3_atom mat, c3_w* len_w)
+static void
+_mojo_stop_cb(uv_handle_t* han_u)
 {
-  c3_w  met_w = u3r_met(3, mat);
-  c3_y* buf_y;
-
-  *len_w = 8 + met_w;
-  buf_y  = c3_malloc(*len_w);
-
-  //  write header; c3_d is futureproofing
-  //
-  buf_y[0] = ((met_w >> 0) & 0xff);
-  buf_y[1] = ((met_w >> 8) & 0xff);
-  buf_y[2] = ((met_w >> 16) & 0xff);
-  buf_y[3] = ((met_w >> 24) & 0xff);
-  buf_y[4] = buf_y[5] = buf_y[6] = buf_y[7] = 0;
-
-  u3r_bytes(0, met_w, buf_y + 8, mat);
-  u3z(mat);
-
-  return buf_y;
+  u3_mojo* moj_u = han_u->data;
+  moj_u->bal_f(moj_u->ptr_v, -1, "");
 }
 
-/* u3_newt_write(): write atom to stream; free atom.
+/* u3_newt_mojo_stop(); newt stop/close output stream.
 */
 void
-u3_newt_write(u3_mojo* moj_u,
-              u3_atom  mat,
-              void*    vod_p)
+u3_newt_mojo_stop(u3_mojo* moj_u, u3_moor_bail bal_f)
 {
-  u3_write_t* req_u = c3_malloc(sizeof(*req_u));
-  c3_w        len_w;
-  c3_y*       buf_y = u3_newt_encode(mat, &len_w);
-  uv_buf_t    buf_u;
-  c3_i        err_i;
+  moj_u->pyp_u.data = moj_u;
 
+  if ( bal_f ) {
+    moj_u->bal_f = bal_f;
+  }
+
+  uv_close((uv_handle_t*)&moj_u->pyp_u, _mojo_stop_cb);
+}
+
+/* u3_newt_send(): write buffer to stream.
+*/
+void
+u3_newt_send(u3_mojo* moj_u, c3_d len_d, c3_y* byt_y)
+{
+  n_req* req_u = c3_malloc(sizeof(*req_u));
   req_u->moj_u = moj_u;
-  req_u->buf_y = buf_y;
-  buf_u = uv_buf_init((c3_c*)buf_y, len_w);
+  req_u->buf_y = byt_y;
 
-  if ( 0 != (err_i = uv_write((uv_write_t*)req_u,
-                              (uv_stream_t*)&moj_u->pyp_u,
-                              &buf_u, 1,
-                              _newt_write_cb)) )
+  //  write header
+  //
+  req_u->len_y[0] = ( len_d        & 0xff);
+  req_u->len_y[1] = ((len_d >>  8) & 0xff);
+  req_u->len_y[2] = ((len_d >> 16) & 0xff);
+  req_u->len_y[3] = ((len_d >> 24) & 0xff);
+  req_u->len_y[4] = ((len_d >> 32) & 0xff);
+  req_u->len_y[5] = ((len_d >> 40) & 0xff);
+  req_u->len_y[6] = ((len_d >> 48) & 0xff);
+  req_u->len_y[7] = ((len_d >> 56) & 0xff);
+
   {
-    moj_u->bal_f(moj_u, uv_strerror(err_i));
+    uv_buf_t buf_u[2] = {
+      uv_buf_init((c3_c*)req_u->len_y, 8),
+      uv_buf_init((c3_c*)req_u->buf_y, len_d)
+    };
+
+    c3_i     sas_i;
+
+    if ( 0 != (sas_i = uv_write(&req_u->wri_u,
+                                (uv_stream_t*)&moj_u->pyp_u,
+                                buf_u, 2,
+                                _newt_write_cb)) )
+    {
+      c3_free(req_u);
+      fprintf(stderr, "newt: write failed %s\r\n", uv_strerror(sas_i));
+      moj_u->bal_f(moj_u->ptr_v, sas_i, uv_strerror(sas_i));
+    }
   }
 }

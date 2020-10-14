@@ -1,5 +1,5 @@
 /-  *contact-view, *contact-hook
-/+  base64
+/+  base64, group-store, resource
 |%
 ++  nu                                              ::  parse number as hex
   |=  jon/json
@@ -21,7 +21,6 @@
   |=  rolo=rolodex
   =,  enjs:format
   ^-  json
-  %+  frond  %contact-initial
   %-  pairs
   %+  turn  ~(tap by rolo)
   |=  [pax=^path =contacts]
@@ -74,7 +73,7 @@
     :-  %s
     %-  crip
     %-  zing
-    :~  "/~groups/avatar"
+    :~  "/contact-view"
         (trip (spat path))
         "/"
         (trip (scot %p ship))
@@ -90,6 +89,8 @@
   %+  frond  %contact-update
   %-  pairs
   :~
+    ?:  ?=(%initial -.upd)
+      [%initial (rolodex-to-json rolodex.upd)]
     ?:  ?=(%create -.upd)
       [%create (pairs [%path (path path.upd)]~)]
     ?:  ?=(%delete -.upd)
@@ -127,16 +128,25 @@
     %-  of
     :~  [%create create]
         [%delete delete]
+        [%join dejs:resource]
+        [%invite invite]
         [%remove remove]
         [%share share]
     ==
   ::
   ++  create
     %-  ot
-    :~  [%path pa]
-        [%ships (as (su ;~(pfix sig fed:ag)))]
+    :~  [%name so]
+        [%policy policy:dejs:group-store]
         [%title so]
         [%description so]
+    ==
+  ::
+  ++  invite
+    %-  ot
+    :~  [%resource dejs:resource]
+        [%ship (su ;~(pfix sig fed:ag))]
+        [%text so]
     ==
   ::
   ++  delete  (ot [%path pa]~)

@@ -2,8 +2,6 @@
 
 set -e
 
-stack test urbit-king --fast
-
 pkg=$(nix-build nix/ops -A test --no-out-link "$@")
 
 hdr () {
