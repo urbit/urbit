@@ -1,7 +1,7 @@
 /-  *btc
 |%
-::  big endian sha256: input and output are both big endian
-++  bsha256
+::  big endian sha256: input and output are both MSB first (big endian)
+++  sha256
   |=  =byts
   ^-  @ux
   %+  swp  3
@@ -11,7 +11,7 @@
   ^-  @ux
   =,  ripemd:crypto
   %+  ripemd-160  32
-  %-  bsha256  [(met 3 pubkey) pubkey]
+  %-  sha256  [(met 3 pubkey) pubkey]
 ::  Converts a list of bits to a list of n-bit numbers
 ::  input-bits should be big-endian
 ::
