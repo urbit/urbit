@@ -10802,8 +10802,8 @@
       ^-  ?
       =-  ?:  -  &
           ?.  tel  |
-          ::  ~_  (dunk %need)
-          ::  ~_  (dunk(sut ref) %have)
+          ~_  (dunk %need)
+          ~_  (dunk(sut ref) %have)
           ~>  %mean.'nest-fail'
           !!
       ?:  =(sut ref)  &
@@ -12060,7 +12060,7 @@
   =/  res  (mule trap)
   ?-  -.res
     %&  p.res
-    %|  (mean leaf+"road: new" p.res)
+    %|  (mean p.res)
   ==
 ::
 ++  slew                                                ::  get axis in vase
