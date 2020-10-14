@@ -625,12 +625,12 @@
 ++  murn                                                ::  maybe transform
   ~/  %murn
   |*  {a/(list) b/$-(* (unit))}
-  |-
+  =>  .(a (homo a))
+  |-  ^-  (list _?>(?=(^ a) (need (b i.a))))
   ?~  a  ~
-  =+  c=(b i.a)
-  ?~  c
-    $(a t.a)
-  [i=u.c t=$(a t.a)]
+  =/  c  (b i.a)
+  ?~  c  $(a t.a)
+  [+.c $(a t.a)]
 ::
 ++  oust                                                ::  remove
   ~/  %oust
