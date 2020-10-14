@@ -246,7 +246,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
             <Text gray mono className="v-mid">{timestamp}</Text>
             <Text gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
           </Box>
-          <Box fontSize={0}><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
+          <Box fontSize='14px'><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
         </div>
       </>
     );
@@ -267,7 +267,7 @@ export const MessageContent = ({ content, remoteContentPolicy, measure }) => {
     return <CodeContent content={content} />;
   } else if ('url' in content) {
     return (
-      <Text fontSize={0} lineHeight="tall" color='gray'>
+      <Text fontSize='14px' lineHeight="tall" color='gray'>
         <RemoteContent
           url={content.url}
           remoteContentPolicy={remoteContentPolicy}
