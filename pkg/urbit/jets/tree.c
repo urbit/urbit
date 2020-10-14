@@ -230,6 +230,10 @@ static c3_c* _141_hex_aes_ha[] = {
   0
 };
 
+static u3j_harm _141_hex_leer_a[] = {{".2", u3we_leer}, {}};
+static c3_c* _141_hex_leer_ha[] = {
+  0
+};
 static u3j_harm _141_hex_lore_a[] = {{".2", u3we_lore}, {}};
 static c3_c* _141_hex_lore_ha[] = {
   "19b13cfea49fd14aafbb20b8b888ba454f809c3f50a7cfeebd43f87336fe052d",
@@ -413,6 +417,7 @@ static c3_c* _141_hex_ripe_ha[] = {
 
 static u3j_core _141_hex_d[] =
 { { "lore",   63, _141_hex_lore_a, 0, _141_hex_lore_ha },
+  { "leer",   63, _141_hex_leer_a, 0, _141_hex_leer_ha },
   { "loss",   63, _141_hex_loss_a, 0, _141_hex_loss_ha },
   { "lune",  127, _141_hex_lune_a, 0, _141_hex_lune_ha },
 
