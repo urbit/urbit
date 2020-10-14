@@ -83,15 +83,15 @@ export function ChannelMenu(props: ChannelMenuProps) {
   return (
     <Dropdown
       options={
-        <Col bg="white" border={1} borderRadius={1} borderColor="lightGray">
+        <Col backgroundColor="white" border={1} borderRadius={1} borderColor="lightGray">
           {isOurs ? (
             <>
               <ChannelMenuItem color="red" icon="TrashCan">
-                <Action m="2" destructive onClick={onDelete}>
+                <Action m="2" backgroundColor='white' destructive onClick={onDelete}>
                   Delete Channel
                 </Action>
               </ChannelMenuItem>
-              <ChannelMenuItem bottom icon="Gear">
+              <ChannelMenuItem bottom icon="Gear" color='black'>
                 <Link to={`${baseUrl}/settings`}>
                   <Box fontSize={0} p="2">
                     Channel Settings
