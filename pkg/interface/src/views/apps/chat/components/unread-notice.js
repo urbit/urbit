@@ -17,7 +17,7 @@ export const UnreadNotice = (props) => {
   }
 
   return (
-    <Box style={{ left: '0px' }}
+    <Box style={{ left: '0px', top: '0px' }}
       p='4'
       width='100%'
       position='absolute'
@@ -34,7 +34,7 @@ export const UnreadNotice = (props) => {
         borderRadius='1'
         border='1'
         borderColor='blue'>
-        <Text flexShrink='0' display='block' cursor='pointer' onClick={onClick}>
+        <Text flexShrink='1' textOverflow='ellipsis' whiteSpace='pre' overflow='hidden' display='block' cursor='pointer' onClick={onClick}>
           {unreadCount} new messages since{' '}
           {datestamp && (
             <>
@@ -48,6 +48,7 @@ export const UnreadNotice = (props) => {
           color='blue'
           cursor='pointer'
           textAlign='right'
+          flexShrink='0'
           onClick={dismissUnread}>
           Mark as Read
         </Text>
