@@ -51,12 +51,12 @@ export function Note(props: NoteProps & RouteComponentProps) {
   const editUrl = props.location.pathname + "/edit";
   if (`~${window.ship}` === note?.author) {
     editPost = (
-      <Box display="inline-block">
+      <Box display="inline-block" verticalAlign='middle'>
         <Link to={editUrl}>
-          <Text color="green">Edit</Text>
+          <Text display='inline-block' color="green">Edit</Text>
         </Link>
         <Text
-          className="dib f9 red2 ml2 pointer"
+          display='inline-block'
           color="red"
           ml={2}
           onClick={deletePost}
