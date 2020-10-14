@@ -135,3 +135,10 @@ Left here just for reference
 
 
 0x3.1589.edf6.2798.1d49.77a1.d4e2.58b8.aeaa.060a.d518.94e1.e122.406f.af29.b197.c1f1
+
+## Signing Scratch
+=unsigned 0x100.0000.015a.800f.d903.679a.cfe9.d4e2.fedb.752b.24c4.d7a5.74b4.c82a.113d.fb99.3b38.64b7.7201.0000.0019.76a9.1495.3de6.57be.4b30.5f60.6d9a.9fbd.35b0.70a6.8247.5788.acff.ffff.ff01.c09e.e605.0000.0000.1976.a914.dd6c.ce9f.255a.8cc1.7bda.8ba0.373d.f8e8.61cb.866e.88ac.0000.0000.0100.0000
+
+=txhash (shay (met 3 unsigned) (swp 3 unsigned))
+
+=privkey 0xdc57.c6d0.6737.6c36.bbed.632c.9d00.f037.6786.7f33.7d5a.86b5.b030.8a60.004f.08ee

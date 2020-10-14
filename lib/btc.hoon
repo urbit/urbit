@@ -1,12 +1,17 @@
 /-  *btc
 |%
+::  big endian sha256: input and output are both big endian
+++  bsha256
+  |=  =byts
+  ^-  @ux
+  %+  swp  3
+  (shay wid.byts (swp 3 dat.byts))
 ++  hash-160
   |=  pubkey=@ux
   ^-  @ux
   =,  ripemd:crypto
-  ::  use shay to preserve byte length when there are trailing zeros
-  =/  sha256  (swp 3 (shay 33 (swp 3 pubkey)))
-    (ripemd-160 [32 sha256])
+  %+  ripemd-160  32
+  %-  bsha256  [(met 3 pubkey) pubkey]
 ::  Converts a list of bits to a list of n-bit numbers
 ::  input-bits should be big-endian
 ::
