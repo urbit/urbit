@@ -7,6 +7,7 @@ import tokenizeMessage, { isUrl } from '~/logic/lib/tokenizeMessage';
 import GlobalApi from '~/logic/api/global';
 import { Envelope } from '~/types/chat-update';
 import { Contacts, S3Configuration } from '~/types';
+import { Row } from '@tlon/indigo-react';
 
 interface ChatInputProps {
   api: GlobalApi;
@@ -187,12 +188,16 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
         />;
 
     return (
-      <div className={
-             "cf items-center flex black white-d bt b--gray4 b--gray1-d bg-white"  +
-             "bg-gray0-d relative"
-           }
-           style={{ flexGrow: 1 }}
-           >
+      <Row
+        alignItems='center'
+        position='relative'
+        flexGrow='1'
+        flexShrink='0'
+        borderTop='1'
+        borderTopColor='washedGray'
+        backgroundColor='white'
+        className='cf'
+      >
         <div className="pa2 flex items-center">
           {avatar}
         </div>
@@ -241,7 +246,7 @@ export default class ChatInput extends Component<ChatInputProps, ChatInputState>
             src="/~landscape/img/CodeEval.png"
             className="contrast-10-d bg-white bg-none-d ba b--gray1-d br1" />
         </div>
-      </div>
+      </Row>
     );
   }
 }
