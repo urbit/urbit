@@ -236,7 +236,7 @@ blockquote {
 }
 
 .chat .cm-s-tlon.CodeMirror {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 pre, code {
@@ -387,7 +387,7 @@ pre.CodeMirror-placeholder.CodeMirror-line-like { color: var(--gray); }
   /* codemirror */
   .chat .cm-s-tlon.CodeMirror {
     color: #fff;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .chat .cm-s-tlon span.cm-def {
