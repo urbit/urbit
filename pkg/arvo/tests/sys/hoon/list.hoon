@@ -55,6 +55,11 @@
     %+  expect-eq
       !>  ~
       !>  (find `(list @)`~[6] l)
+    ::  Checks for incomplete match
+    ::
+    %+  expect-eq
+      !>  ~
+      !>  (find "bcd" "abc")
   ==
 ::
 ++  test-list-flop
