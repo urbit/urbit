@@ -3,42 +3,43 @@
 */
 #include "all.h"
 
-
-/* functions
-*/
 u3_noun
 u3qb_zing(u3_noun a)
 {
-  u3_noun top = u3qb_flop(a);
-  u3_noun top_orig = top;
-  u3_noun l = 0;
+  u3_noun  pro;
+  u3_noun* lit = &pro;
 
-  while ( u3_nul != top ) {
-    u3_noun f = u3qb_flop(u3h(top));
-    u3_noun f_orig = f;
+  if ( u3_nul == a ) {
+    *lit = u3_nul;
+  }
+  else {
+    u3_noun i, t = a;
+    u3x_cell(t, &i, &t);
 
-    while ( u3_nul != f ) {
-      l = u3nc(u3k(u3h(f)), l);
-      f = u3t(f);
+    while ( u3_nul != t ) {
+      u3_noun* hed;
+      u3_noun* tel;
+      u3_noun  i_i, t_i = i;
+
+      while ( u3_nul != t_i ) {
+        u3x_cell(t_i, &i_i, &t_i);
+
+        *lit = u3i_defcons(&hed, &tel);
+        *hed = u3k(i_i);
+        lit  = tel;
+      }
+
+      u3x_cell(t, &i, &t);
     }
 
-    u3z(f_orig);
-    top = u3t(top);
+    *lit = u3k(i);
   }
 
-  u3z(top_orig);
-
-  return l;
+  return pro;
 }
 
 u3_noun
 u3wb_zing(u3_noun cor)
 {
-  u3_noun a;
-
-  if ( c3n == u3r_mean(cor, u3x_sam, &a, 0) ) {
-    return u3m_bail(c3__exit);
-  } else {
-    return u3qb_zing(a);
-  }
+  return u3qb_zing(u3x_at(u3x_sam, cor));
 }
