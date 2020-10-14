@@ -243,7 +243,7 @@ export class MessageWithSigil extends PureComponent<MessageProps> {
               }}
               title={`~${msg.author}`}
             >{name}</Text>
-            <Text gray mono className="v-mid">{timestamp}</Text>
+            <Text flexShrink='0' gray mono className="v-mid">{timestamp}</Text>
             <Text gray mono ml={2} className="v-mid child dn-s">{datestamp}</Text>
           </Box>
           <Box fontSize='14px'><MessageContent content={msg.letter} remoteContentPolicy={remoteContentPolicy} measure={measure} /></Box>
