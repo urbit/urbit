@@ -83,6 +83,7 @@
     u3_noun u3qdb_int(u3_noun, u3_noun);
     u3_noun u3qdb_key(u3_noun);
     u3_noun u3qdb_put(u3_noun, u3_noun, u3_noun);
+    u3_noun u3qdb_run(u3_noun, u3_noun);
 #   define u3qdb_tap u3qdi_tap
     u3_noun u3qdb_uni(u3_noun, u3_noun);
 
