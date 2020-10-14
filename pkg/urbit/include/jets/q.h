@@ -90,6 +90,7 @@
     u3_noun u3qdi_int(u3_noun, u3_noun);
     u3_noun u3qdi_put(u3_noun, u3_noun);
     u3_noun u3qdi_rep(u3_noun, u3_noun);
+    u3_noun u3qdi_run(u3_noun, u3_noun);
     u3_noun u3qdi_tap(u3_noun);
     u3_noun u3qdi_uni(u3_noun, u3_noun);
     u3_noun u3qdi_wyt(u3_noun);
