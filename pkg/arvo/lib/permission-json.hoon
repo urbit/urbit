@@ -1,10 +1,57 @@
 /-  *permission-store
 |%
+++  update-to-json
+  |=  upd=permission-update
+  ^-  json
+  =,  enjs:format
+  %+  frond  %permission-update
+  %-  pairs
+  :~
+    ?:  =(%initial -.upd)
+      ?>  ?=(%initial -.upd)
+      [%initial (permission-to-json permissions.upd)]
+    ::
+    ::  %create
+    ?:  =(%create -.upd)
+      ?>  ?=(%create -.upd)
+      :-  %create
+      %-  pairs
+      :~  [%path (path path.upd)]
+          [%kind s+kind.permission.upd]
+          [%who [%a (turn ~(tap in who.permission.upd) ship)]]
+      ==
+    ::
+    ::  %delete
+    ?:  =(%delete -.upd)
+      ?>  ?=(%delete -.upd)
+      [%delete (path path.upd)]
+    ::
+    ::  %add
+    ?:  =(%add -.upd)
+      ?>  ?=(%add -.upd)
+      :-  %add
+      %-  pairs
+      :~  [%path (path path.upd)]
+          [%who [%a (turn ~(tap in who.upd) ship)]]
+      ==
+    ::
+    ::  %remove
+    ?:  =(%remove -.upd)
+      ?>  ?=(%remove -.upd)
+      :-  %remove
+      %-  pairs
+      :~  [%path (path path.upd)]
+          [%who [%a (turn ~(tap in who.upd) ship)]]
+      ==
+    ::
+    ::  %noop
+    [*@t *^json]
+  ==
+::
 ++  permission-to-json
   |=  pem=permission-map
   =,  enjs:format
   ^-  json
-  %+  frond  %permission-initial
   %-  pairs
   %+  turn  ~(tap by pem)
   |=  [pax=^path =permission]

@@ -3,8 +3,8 @@
 /-  *group-store
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[=path members=(list ship) ~] ~]
+        [[=ship =term ships=(list ship) ~] ~]
     ==
 :-  %group-action
-^-  group-action
-[%remove (sy members) path]
+^-  action
+[%remove-members [p.beak term] (sy ships)]

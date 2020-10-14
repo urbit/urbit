@@ -46,7 +46,11 @@
   ::  probably the best option because the thread can delay until it
   ::  gets a positive ack on the subscription.
   ::
-  ;<  ~  bind:m  (sleep ~s0)
+  ::  Threads might not get built until a %writ is dripped back to
+  ::  spider.  Drips are at +(now), so we sleep until two clicks in the
+  ::  future.
+  ::
+  ;<  ~  bind:m  (sleep `@dr`2)
   (pure:m ~)
 ::
 ++  end-test
@@ -150,7 +154,7 @@
   ::  hit the first of these cases, and other ships will hit the
   ::  second.
   ::
-  ?:  ?|  (f "clay: committed initial filesystem (all)")
+  ?:  ?|  (f ":dojo>")
           (f "is your neighbor")
       ==
     (pure:m ~)
@@ -212,13 +216,18 @@
   |=  [her=ship =desk extra=@t]
   =/  m  (strand ,@t)
   ^-  form:m
+  (touch her desk /sur/aquarium/hoon extra)
+::
+::  Modify path on the given ship
+::
+++  touch
+  |=  [her=ship =desk pax=path extra=@t]
+  =/  m  (strand ,@t)
+  ^-  form:m
   ~&  >  "touching file on {<her>}/{<desk>}"
   ;<  ~        bind:m  (mount her desk)
   ;<  our=@p   bind:m  get-our
   ;<  now=@da  bind:m  get-time
-  =/  host-pax
-    /(scot %p our)/home/(scot %da now)/sur/aquarium/hoon
-  =/  pax  /sur/aquarium/hoon
   =/  aqua-pax
     ;:  weld
         /i/(scot %p her)/cx/(scot %p her)/[desk]/(scot %da now)
@@ -229,13 +238,20 @@
     %^  cat  3  '=>  .  '
     %^  cat  3  extra
     (need (scry-aqua:util (unit @) our now aqua-pax))
-  ;<  ~  bind:m  (send-events (insert-file:util her desk host-pax warped))
+  ;<  ~  bind:m  (send-events (insert-files:util her desk [pax warped] ~))
   (pure:m warped)
 ::
 ::  Check /sur/aquarium/hoon on the given has the given contents.
 ::
 ++  check-file-touched
   |=  [=ship =desk warped=@t]
+  =/  m  (strand ,~)
+  (check-touched ship desk /sur/aquarium/hoon warped)
+::
+::  Check path on the given desk has the given contents.
+::
+++  check-touched
+  |=  [=ship =desk pax=path warped=@t]
   =/  m  (strand ,~)
   ~&  >  "checking file touched on {<ship>}/{<desk>}"
   ;<  ~                         bind:m  (mount ship desk)
@@ -250,7 +266,6 @@
   ::
   ?.  &(=(ship her) ?=(?(%init %ergo %doze) -.q.unix-effect))
     loop
-  =/  pax  /sur/aquarium/hoon
   =/  aqua-pax
     ;:  weld
         /i/(scot %p ship)/cx/(scot %p ship)/[desk]/(scot %da now)

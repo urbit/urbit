@@ -10,7 +10,7 @@ let
 
   libs =
     with pkgs;
-    [ openssl zlib curl gmp scrypt libsigsegv ncurses openssl zlib lmdb ];
+    [ openssl curl gmp scrypt libsigsegv openssl zlib lmdb ];
 
   osx =
     with pkgs;
@@ -20,7 +20,7 @@ let
 
   vendor =
     with deps;
-    [ argon2 ed25519 h2o murmur3 scrypt secp256k1 sni softfloat3 uv ent ge-additions ivory-header ca-header ];
+    [ argon2 ed25519 h2o murmur3 scrypt secp256k1 softfloat3 uv ent ge-additions ivory-header ca-header ];
 
 in
 

@@ -6,6 +6,7 @@
 =,  format
 |_  txt/cord
 ::
+++  grad  %mime
 ++  grab                                                ::  convert from
   |%
   ++  noun  @t                                          ::  clam from %noun

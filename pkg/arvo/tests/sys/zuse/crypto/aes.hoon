@@ -567,6 +567,18 @@
   ^-  (list vector-siv)
   :~
   ::
+  ::  failed in the wild, see https://github.com/urbit/urbit/pull/3013
+  ::
+    :^    0xfdef.6253.d284.a940.1b5d.d1b7.fbcd.4489.
+            3071.bf93.ace9.37da.7c5d.77d2.1f3e.cda4.
+            83be.1c51.a88b.c9ba.8741.e1ee.935b.c0ef.
+            888a.feff.0249.bdb6.1344.0ff9.4e1b.fca5
+        ad=~
+      inp=0x97.0341.38e3.960e.87e1
+    :+  iv=0x249f.85e3.c9a8.29b6.3122.ec22.cde6.76df
+      len=9
+    cph=0xdc.bdcd.e4f1.4fd4.2d8d
+  ::
   :: from RFC 5297, with extended key
   ::
     :^    0xfffe.fdfc.fbfa.f9f8.f7f6.f5f4.f3f2.f1f0.

@@ -1,25 +1,33 @@
-::  metadata-hook: allow syncing foreign metadata
+::  metadata-hook [landscape]:
+::
+::  allow syncing foreign metadata
 ::
 ::  watch paths:
 ::  /group/%group-path                      all updates related to this group
 ::
 /-  *metadata-store, *metadata-hook
-/+  default-agent, dbug
+/+  default-agent, dbug, verb, grpl=group
 ~%  %metadata-hook-top  ..is  ~
 |%
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-zero
+      state-one
   ==
 ::
 +$  state-zero
   $:  %0
       synced=(map group-path ship)
   ==
++$   state-one
+  $:  %1
+      synced=(map group-path ship)
+  ==
 --
-=|  state-zero
+=|  state-one
 =*  state  -
 %-  agent:dbug
+%+  verb  |
 ^-  agent:gall
 =<
   |_  =bowl:gall
@@ -31,7 +39,17 @@
     [[%pass /updates %agent [our.bowl %metadata-store] %watch /updates]~ this]
   ::
   ++  on-save   !>(state)
-  ++  on-load   |=(=vase `this(state !<(state-zero vase)))
+  ++  on-load
+    |=  =vase
+    =/  old
+      !<(versioned-state vase)
+    ?:  ?=(%1 -.old)
+      `this(state old)
+    ::  groups OTA did not migrate metadata syncs
+    ::  we clear our syncs, and wait for metadata-store
+    ::  to poke us with the syncs
+    `this
+  ::
   ++  on-leave  on-leave:def
   ++  on-peek   on-peek:def
   ++  on-arvo   on-arvo:def
@@ -47,7 +65,7 @@
     ::
         %metadata-action
       [(poke-action:hc !<(metadata-action vase)) this]
-    == 
+    ==
   ::
   ++  on-watch
     |=  =path
@@ -73,6 +91,7 @@
   --
 ::
 |_  =bowl:gall
++*  grp  ~(. grpl bowl)
 ++  poke-hook-action
   |=  act=metadata-hook-action
   ^-  (quip card _state)
@@ -120,7 +139,7 @@
         %add     (send group-path.act)
         %remove  (send group-path.act)
     ==
-  ?>  (is-permitted src.bowl group-path.act)
+  ?>  (is-member:grp src.bowl group-path.act)
   ?-  -.act
       %add     (metadata-poke our.bowl %metadata-store)
       %remove  (metadata-poke our.bowl %metadata-store)
@@ -131,7 +150,6 @@
     ^-  (list card)
     =/  =ship
       %+  slav  %p
-      ?:  (is-managed group-path)  (snag 0 group-path)
       (snag 1 group-path)
     =/  app  ?:(=(ship our.bowl) %metadata-store %metadata-hook)
     (metadata-poke ship app)
@@ -153,16 +171,21 @@
   ^-  (list card)
   |^
   ?>  =(our.bowl (~(got by synced) path))
-  ?>  (is-permitted src.bowl path)
+  ?>  (is-member:grp src.bowl path)
   %+  turn  ~(tap by (metadata-scry path))
-  |=  [[=group-path =resource] =metadata]
+  |=  [[=group-path =md-resource] =metadata]
   ^-  card
-  [%give %fact ~ %metadata-update !>([%add group-path resource metadata])]
+  [%give %fact ~ %metadata-update !>([%add group-path md-resource metadata])]
   ::
   ++  metadata-scry
     |=  pax=^path
     ^-  associations
-    =.  pax  ;:(weld /=metadata-store/(scot %da now.bowl)/group pax /noun)
+    =.  pax
+      ;:  weld
+        /(scot %p our.bowl)/metadata-store/(scot %da now.bowl)/group
+        pax
+        /noun
+      ==
     .^(associations %gx pax)
   --
 ::
@@ -235,14 +258,4 @@
   ?>  ?=(^ wir)
   [~ ?~(saw state state(synced (~(del by synced) t.wir)))]
 ::
-++  is-permitted
-  |=  [=ship pax=path]
-  ^-  ?
-  =.  pax
-    ;:  weld
-        /=permission-store/(scot %da now.bowl)/permitted
-        [(scot %p ship) pax]
-        /noun
-    ==
-  .^(? %gx pax)
 --

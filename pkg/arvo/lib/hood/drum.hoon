@@ -1,33 +1,16 @@
-::                                                      ::  ::
-::::  /hoon/drum/hood/lib                               ::  ::
-  ::                                                    ::  ::
-/?    310                                               ::  version
-/-    *sole
-/+    sole
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
-|%                                                      ::  ::
-++  part      {$drum $2 pith-2}                         ::
-++  part-old  {$drum $1 pith-1}                         ::
-::                                                      ::
-++  pith-1                                              ::       pre-style
-  %+  cork  pith-2                                      ::
-  |:($:pith-2 +<(bin ((map bone source-1))))            ::
-::                                                      ::
-++  source-1                                            ::
-  %+  cork  source                                      ::
-  |:($:source +<(mir ((pair @ud (list @c)))))           ::  style-less mir
-::                                                      ::
+/-  *sole
+/+  sole
+|%
++$  any-state  $%(state)
++$  state  [%2 pith-2]
+::
 ++  pith-2                                              ::
   $:  eel/(set gill:gall)                               ::  connect to
       ray/(set well:gall)                               ::
       fur/(map dude:gall (unit server))                 ::  servers
       bin/(map bone source)                             ::  terminals
   ==                                                    ::
-::                                                      ::  ::
-::::                                                    ::  ::
-  ::                                                    ::  ::
+::                                                      ::
 ++  server                                              ::  running server
   $:  syd/desk                                          ::  app identity
       cas/case                                          ::  boot case
@@ -72,7 +55,7 @@
   ::                                                    ::  ::
 |%
 ++  deft-apes                                           ::  default servers
-  |=  [our/ship lit/?]
+  |=  [our=ship lit=?]
   %-  ~(gas in *(set well:gall))
   ^-  (list well:gall)
   ::  boot all default apps off the home desk
@@ -97,13 +80,13 @@
       %publish
       %weather
       %group-store
-      %group-hook
+      %group-pull-hook
+      %group-push-hook
       %permission-store
       %permission-hook
       %permission-group-hook
       %invite-store
       %invite-hook
-      %invite-view
       %chat-store
       %chat-hook
       %chat-view
@@ -119,44 +102,40 @@
       %metadata-store
       %metadata-hook
       %s3-store
+      %file-server
+      %glob
+      %graph-store
   ==
 ::
 ++  deft-fish                                           ::  default connects
-  |=  our/ship
+  |=  our=ship
   %-  ~(gas in *(set gill:gall))
   ^-  (list gill:gall)
   [[our %dojo] [our %chat-cli]~]
 ::
-++  make                                                ::  initial part
-  |=  our/ship
-  ^-  part
-  :*  %drum
-      %2
-      eel=(deft-fish our)
-      ray=~
-      fur=~
-      bin=~
-  ==
-::
-::
 ++  en-gill                                           ::  gill to wire
-  |=  gyl/gill:gall
+  |=  gyl=gill:gall
   ^-  wire
   [%drum %phat (scot %p p.gyl) q.gyl ~]
 ::
 ++  de-gill                                           ::  gill from wire
-  |=  way/wire  ^-  gill:gall
-  ?>(?=({@ @ ~} way) [(slav %p i.way) i.t.way])
+  |=  way=wire  ^-  gill:gall
+  ?>(?=([@ @ ~] way) [(slav %p i.way) i.t.way])
 --
+::  TODO: remove .ost
 ::
-::::
-  ::
-|=  {hid/bowl:gall part}                          ::  main drum work
+|=  [hid=bowl:gall state]
+=*  sat  +<+
 =/  ost  0
 =+  (~(gut by bin) ost *source)
 =*  dev  -
-|_  {moz/(list card:agent:gall) biz/(list dill-blit:dill)}
-+*  this  .
+=|  moz=(list card:agent:gall)
+=|  biz=(list dill-blit:dill)
+|%
+++  this  .
++$  state      ^state      ::  proxy
++$  any-state  ^any-state  ::  proxy
+++  on-init  se-abet:this(eel (deft-fish our.hid))
 ++  diff-sole-effect-phat                             ::  app event
   |=  {way/wire fec/sole-effect}
   =<  se-abet  =<  se-view
@@ -172,14 +151,15 @@
   (se-text "[{<src.hid>}, driving {<our.hid>}]")
 ::
 ++  poke-set-boot-apps                                ::
-  |=  lit/?
-  ^-  (quip card:agent:gall part)
+  |=  lit=?
+  ^-  (quip card:agent:gall ^state)
   ::  We do not run se-abet:se-view here because that starts the apps,
   ::  and some apps are not ready to start (eg Talk crashes because the
   ::  terminal has width 0).  It appears the first message to drum must
   ::  be the peer.
   ::
-  [~ +<+.^$(ray (deft-apes our.hid lit))]
+  =.  ray  (deft-apes our.hid lit)
+  [~ sat]
 ::
 ++  poke-dill-belt                                    ::  terminal event
   |=  bet/dill-belt:dill
@@ -193,7 +173,7 @@
 ++  poke-start                                        ::  start app
   |=  wel/well:gall
   =<  se-abet  =<  se-view
-  (se-born wel)
+  (se-born & wel)
 ::
 ++  poke-link                                         ::  connect app
   |=  gyl/gill:gall
@@ -216,60 +196,47 @@
 ++  poke
   |=  [=mark =vase]
   ?+  mark  ~|([%poke-drum-bad-mark mark] !!)
-    %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
-    %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
-    %drum-unlink         =;(f (f !<(_+<.f vase)) poke-unlink)
+    %drum-dill-belt      =;(f (f !<(_+<.f vase)) poke-dill-belt)
+    %drum-dill-blit      =;(f (f !<(_+<.f vase)) poke-dill-blit)
     %drum-exit           =;(f (f !<(_+<.f vase)) poke-exit)
-    %drum-start          =;(f (f !<(_+<.f vase)) poke-start)
+    %drum-link           =;(f (f !<(_+<.f vase)) poke-link)
+    %drum-put            =;(f (f !<(_+<.f vase)) poke-put)
     %drum-set-boot-apps  =;(f (f !<(_+<.f vase)) poke-set-boot-apps)
+    %drum-start          =;(f (f !<(_+<.f vase)) poke-start)
+    %drum-unlink         =;(f (f !<(_+<.f vase)) poke-unlink)
   ==
 ::
 ++  on-load
-  |=  ver=?(%1 %2 %3)
-  ?-    ver
-      %1
-    =<  se-abet  =<  se-view
-    =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
-    =<  (se-born %home %goad)
-    =<  (se-born %home %metadata-store)
-    =<  (se-born %home %metadata-hook)
-    =<  (se-born %home %contact-store)
-    =<  (se-born %home %contact-hook)
-    =<  (se-born %home %contact-view)
-    =<  (se-born %home %link-store)
-    =<  (se-born %home %link-proxy-hook)
-    =<  (se-born %home %link-listen-hook)
-    =<  (se-born %home %link-view)
-    (se-born %home %s3-store)
-  ::
-      %2
-    =<  se-abet  =<  se-view
-    =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
-    =<  (se-born %home %metadata-store)
-    =<  (se-born %home %metadata-hook)
-    =<  (se-born %home %contact-store)
-    =<  (se-born %home %contact-hook)
-    =<  (se-born %home %contact-view)
-    =<  (se-born %home %link-store)
-    =<  (se-born %home %link-proxy-hook)
-    =<  (se-born %home %link-listen-hook)
-    =<  (se-born %home %link-view)
-    (se-born %home %s3-store)
-  ::
-      %3
-    =<  se-abet  =<  se-view
-    =<  (se-emit %pass /kiln %arvo %g %sear ~wisrut-nocsub)
-    =<  (se-born %home %metadata-store)
-    =<  (se-born %home %metadata-hook)
-    =<  (se-born %home %contact-store)
-    =<  (se-born %home %contact-hook)
-    =<  (se-born %home %contact-view)
-    =<  (se-born %home %link-store)
-    =<  (se-born %home %link-proxy-hook)
-    =<  (se-born %home %link-listen-hook)
-    =<  (se-born %home %link-view)
-    (se-born %home %s3-store)
-  ==
+  |=  [hood-version=?(%1 %2 %3 %4 %5 %6 %7 %8 %9) old=any-state]
+  =<  se-abet  =<  se-view
+  =.  sat  old
+  =.  dev  (~(gut by bin) ost *source)
+  =?  ..on-load  (lte hood-version %4)
+    ~>  %slog.0^leaf+"drum: starting os1 agents"
+    =>  (se-born | %home %s3-store)
+    =>  (se-born | %home %link-view)
+    =>  (se-born | %home %link-listen-hook)
+    =>  (se-born | %home %link-store)
+    =>  (se-born | %home %link-proxy-hook)
+    =>  (se-born | %home %contact-view)
+    =>  (se-born | %home %contact-hook)
+    =>  (se-born | %home %contact-store)
+    =>  (se-born | %home %metadata-hook)
+    =>  (se-born | %home %metadata-store)
+    =>  (se-born | %home %goad)
+    ~>  %slog.0^leaf+"drum: resubscribing to %dojo and %chat-cli"
+    =>  (se-drop:(se-pull our.hid %dojo) | our.hid %dojo)
+    (se-drop:(se-pull our.hid %chat-cli) | our.hid %chat-cli)
+  =?  ..on-load  (lte hood-version %5)
+    (se-born | %home %file-server)
+  =?  ..on-load  (lte hood-version %7)
+    (se-born | %home %glob)
+  =?  ..on-load  (lte hood-version %8)
+    =>  (se-born | %home %group-push-hook)
+    (se-born | %home %group-pull-hook)
+  =?  ..on-load  (lte hood-version %9)
+   (se-born | %home %graph-store)
+  ..on-load
 ::
 ++  reap-phat                                         ::  ack connect
   |=  {way/wire saw/(unit tang)}
@@ -282,7 +249,7 @@
   ::
   (se-drop & gyl)
 ::
-++  take                                              ::
+++  take-arvo
   |=  [=wire =sign-arvo]
   %+  take-onto  wire
   ?>  ?=(%onto +<.sign-arvo)
@@ -336,10 +303,9 @@
 ::::                                                  ::  ::
   ::                                                  ::  ::
 ++  se-abet                                           ::  resolve
-  ^-  (quip card:agent:gall part)
-  =*  pith  +<+.$
+  ^-  (quip card:agent:gall state)
   =.  .  se-subze:se-adze:se-adit
-  :_  pith(bin (~(put by bin) ost dev))
+  :_  sat(bin (~(put by bin) ost dev))
   ^-  (list card:agent:gall)
   ?~  biz  (flop moz)
   :_  (flop moz)
@@ -360,14 +326,14 @@
   =/  hig=(unit (unit server))
     (~(get by fur) q.wel)
   ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))
-    this
+    $(servers t.servers)
   =.  fur
     (~(put by fur) q.wel ~)
   =.  this
     (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   =.  this
     %-  se-emit
-    [%pass wire %arvo %g %conf [our.hid q.wel] our.hid p.wel]
+    [%pass wire %arvo %g %conf q.wel]
   $(servers t.servers)
   ::
   ++  priorities
@@ -384,7 +350,8 @@
           %metadata-store
       ==
       :: ensure chat-cli can sub to invites
-      (sy ~[%chat-hook])
+      :: and file server can receive pokes
+      (sy ~[%chat-hook %file-server])
     ==
   ++  sort-by-priorities
     =/  priorities  priorities
@@ -487,9 +454,10 @@
   ta-abet:(ta-belt:(se-tame u.gul) bet)
 ::
 ++  se-born                                           ::  new server
-  |=  wel/well:gall
+  |=  [print-on-repeat=? wel=well:gall]
   ^+  +>
   ?:  (~(has in ray) wel)
+    ?.  print-on-repeat  +>
     (se-text "[already running {<p.wel>}/{<q.wel>}]")
   %=  +>
     ray  (~(put in ray) wel)
@@ -633,8 +601,9 @@
 ::
 ++  se-peer                                           ::  send a peer
   |=  gyl/gill:gall
+  =/  =path  /sole/(cat 3 'drum_' (scot %p our.hid))
   %-  se-emit(fug (~(put by fug) gyl ~))
-  [%pass (en-gill gyl) %agent gyl %watch /sole/drum]
+  [%pass (en-gill gyl) %agent gyl %watch path]
 ::
 ++  se-pull                                           ::  cancel subscription
   |=  gyl/gill:gall
@@ -662,6 +631,8 @@
     |=  act/sole-action
     ^+  +>
     (ta-poke %sole-action !>(act))
+  ::
+  ++  ta-id  (cat 3 'drum_' (scot %p our.hid))        ::  per-ship duct id
   ::
   ++  ta-aro                                          ::  hear arrow
     |=  key/?($d $l $r $u)
@@ -703,7 +674,7 @@
     |=  ted/sole-edit
     ^+  +>
     %^    ta-act
-        %drum
+        ta-id
       %det
     [[his.ven.say.inp own.ven.say.inp] (sham buf.say.inp) ted]
   ::
@@ -715,7 +686,7 @@
       .(str.u.ris (scag (dec (lent str.u.ris)) str.u.ris))
     ?:  =(0 pos.inp)
       ?~  buf.say.inp
-        (ta-act %drum %clr ~)
+        (ta-act ta-id %clr ~)
       ta-bel
     (ta-hom %del (dec pos.inp))
   ::
@@ -1003,10 +974,10 @@
     ==
   ::
   ++  ta-ret                                          ::  hear return
-    (ta-act %drum %ret ~)
+    (ta-act ta-id %ret ~)
   ::
   ++  ta-tab                                          ::  hear tab
-    (ta-act %drum %tab pos.inp)
+    (ta-act ta-id %tab pos.inp)
   ::
   ++  ta-ser                                          ::  reverse search
     |=  ext/(list @c)

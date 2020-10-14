@@ -24,7 +24,9 @@
 ++  app
   |%
   ::
-  ::  +require-authorization: redirect to the login page when unauthenticated
+  ::  +require-authorization:
+  ::      redirect to the login page when unauthenticated
+  ::      otherwise call handler on inbound request
   ::
   ++  require-authorization
     |=  $:  =inbound-request:eyre
@@ -36,6 +38,23 @@
       ~!  this
       ~!  +:*handler
       (handler inbound-request)
+    ::
+    =/  redirect=cord
+      %-  crip
+      "/~/login?redirect={(trip url.request.inbound-request)}"
+    [[307 ['location' redirect]~] ~]
+  ::
+  ::  +require-authorization-simple:
+  ::      redirect to the login page when unauthenticated
+  ::      otherwise pass through simple-paylod
+  ::
+  ++  require-authorization-simple
+    |=  [=inbound-request:eyre =simple-payload:http]
+    ^-  simple-payload:http
+    ::
+    ?:  authenticated.inbound-request
+      ~!  this
+      simple-payload
     ::
     =/  redirect=cord
       %-  crip
@@ -61,9 +80,11 @@
   ++  max-1-wk  ['cache-control' 'max-age=604800']
   ::
   ++  html-response
+    =|  cache=?
     |=  =octs
     ^-  simple-payload:http
-    [[200 [['content-type' 'text/html'] max-1-wk ~]] `octs]
+    :_  `octs
+    [200 [['content-type' 'text/html'] ?:(cache [max-1-wk ~] ~)]]
   ::
   ++  js-response
     |=  =octs
@@ -71,9 +92,9 @@
     [[200 [['content-type' 'text/javascript'] max-1-da ~]] `octs]
   ::
   ++  json-response
-    |=  =octs
+    |=  =json
     ^-  simple-payload:http
-    [[200 ['content-type' 'application/json']~] `octs]
+    [[200 ['content-type' 'application/json']~] `(json-to-octs json)]
   ::
   ++  css-response
     |=  =octs

@@ -1,20 +1,19 @@
-::                                                      ::  /van/zuse
-::                                                      ::  %reference/1
-::  %zuse: arvo library.
+::  /sys/zuse
+::  %reference/1
+::  %zuse: arvo library
 ::
 ::  %zuse is two nested cores: the first for models
 ::  (data structures), the second for engines (functions
 ::  or classes).
 ::
 ::  each of these stages is split into cores for each of
-::  arvo's nine major vanes (kernel modules).  these are:
+::  arvo's eight major vanes (kernel modules).  these are:
 ::
 ::      - %ames: networking         (rhymes with "games")
 ::      - %behn: scheduling         ("bane")
 ::      - %clay: revision control   ("play")
 ::      - %dill: console            ("pill")
 ::      - %eyre: http server        ("fair")
-::      - %ford: build              ("lord")
 ::      - %gall: application        ("ball")
 ::      - %iris: http client        ("virus")
 ::      - %jael: security           ("jail")
@@ -70,6 +69,9 @@
     ==
 ::
 ++  coop  (unit ares)                                   ::  possible error
+::  +disc: a desk on a ship; can be used as a beak that varies with time
+::
++$  disc  [=ship =desk]
 ++  life  @ud                                           ::  ship key revision
 ++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
@@ -211,9 +213,6 @@
       ::  kernel upgraded
       ::
       [%vega ~]
-      ::  produce labeled state (for memory measurement)
-      ::
-      [%wegh ~]
       ::  receive message via %ames
       ::
       ::    TODO: move .vane from $plea to here
@@ -357,6 +356,45 @@
       t.header-list
     ::
     [i.header-list $(header-list t.header-list)]
+  ::  +unpack-header: parse header field values
+  ::
+  ++  unpack-header
+    |^  |=  value=@t
+        ^-  (unit (list (map @t @t)))
+        (rust (cass (trip value)) values)
+    ::
+    ++  values
+      %+  more
+        (ifix [. .]:(star ;~(pose ace (just '\09'))) com)
+      pairs
+    ::
+    ++  pairs
+      %+  cook
+        ~(gas by *(map @t @t))
+      %+  more  (ifix [. .]:(star ace) mic)
+      ;~(plug token ;~(pose ;~(pfix tis value) (easy '')))
+    ::
+    ++  value
+      ;~(pose token quoted-string)
+    ::
+    ++  token                                         ::  7230 token
+      %+  cook  crip
+      ::NOTE  this is ptok:de-purl:html, but can't access that here
+      %-  plus
+      ;~  pose
+        aln  zap  hax  bus  cen  pad  say  tar  lus
+        hep  dot  ket  cab  tec  bar  sig
+      ==
+    ::
+    ++  quoted-string                                 ::  7230 quoted string
+      %+  cook  crip
+      %+  ifix  [. .]:;~(less (jest '\\"') yel)
+      %-  star
+      ;~  pose
+        ;~(pfix bat ;~(pose (just '\09') ace prn))
+        ;~(pose (just '\09') ;~(less (mask "\22\5c\7f") (shim 0x20 0xff)))
+      ==
+    --
   ::  +simple-payload: a simple, one event response used for generators
   ::
   +$  simple-payload
@@ -395,8 +433,8 @@
     ::    %init: vane boot
     ::    %sift: limit verbosity to .ships
     ::    %spew: set verbosity toggles
+    ::    %trim: release memory
     ::    %vega: kernel reload notification
-    ::    %wegh: request for memory usage report
     ::
     +$  task
       $%  [%hear =lane =blob]
@@ -410,8 +448,9 @@
           $>(%init vane-task)
           [%sift ships=(list ship)]
           [%spew veb=(list verb)]
+          [%stir arg=@t]
+          $>(%trim vane-task)
           $>(%vega vane-task)
-          $>(%wegh vane-task)
       ==
     ::  $gift: effect from ames
     ::
@@ -425,7 +464,6 @@
     ::
     ::    System and Lifecycle Gifts
     ::
-    ::    %mass: memory usage report
     ::    %turf: domain report, relayed from jael
     ::
     +$  gift
@@ -435,7 +473,6 @@
           [%lost ~]
           [%send =lane =blob]
       ::
-          [%mass p=mass]
           [%turf turfs=(list turf)]
       ==
     --  ::able
@@ -490,6 +527,259 @@
   ::    payload: semantic message contents
   ::
   +$  plea  [vane=@tas =path payload=*]
+  ::
+  :: +|  %atomics
+  ::
+  +$  bone           @udbone
+  +$  fragment       @uwfragment
+  +$  fragment-num   @udfragmentnum
+  +$  message-blob   @udmessageblob
+  +$  message-num    @udmessagenum
+  +$  public-key     @uwpublickey
+  +$  symmetric-key  @uwsymmetrickey
+  ::
+  :: +|  %kinetics
+  ::  $ack: positive ack, nack packet, or nack trace
+  ::
+  +$  ack
+    $%  [%ok ~]
+        [%nack ~]
+        [%naxplanation =error]
+    ==
+  ::
+  :: +|  %statics
+  ::  $ship-state: all we know about a peer
+  ::
+  ::    %alien: no PKI data, so enqueue actions to perform once we learn it
+  ::    %known: we know their life and public keys, so we have a channel
+  ::
+  +$  ship-state
+    $%  [%alien alien-agenda]
+        [%known peer-state]
+    ==
+  ::  $alien-agenda: what to do when we learn a peer's life and keys
+  ::
+  ::    messages: pleas local vanes have asked us to send
+  ::    packets: packets we've tried to send
+  ::    heeds: local tracking requests; passed through into $peer-state
+  ::
+  +$  alien-agenda
+    $:  messages=(list [=duct =plea])
+        packets=(set =blob)
+        heeds=(set duct)
+    ==
+  ::  $peer-state: state for a peer with known life and keys
+  ::
+  ::    route: transport-layer destination for packets to peer
+  ::    qos: quality of service; connection status to peer
+  ::    ossuary: bone<->duct mapper
+  ::    snd: per-bone message pumps to send messages as fragments
+  ::    rcv: per-bone message sinks to assemble messages from fragments
+  ::    nax: unprocessed nacks (negative acknowledgments)
+  ::         Each value is ~ when we've received the ack packet but not a
+  ::         nack-trace, or an error when we've received a nack-trace but
+  ::         not the ack packet.
+  ::
+  ::         When we hear a nack packet or an explanation, if there's no
+  ::         entry in .nax, we make a new entry. Otherwise, if this new
+  ::         information completes the packet+nack-trace, we remove the
+  ::         entry and emit a nack to the local vane that asked us to send
+  ::         the message.
+  ::    heeds: listeners for %clog notifications
+  ::
+  +$  peer-state
+    $:  $:  =symmetric-key
+            =life
+            =public-key
+            sponsor=ship
+        ==
+        route=(unit [direct=? =lane])
+        =qos
+        =ossuary
+        snd=(map bone message-pump-state)
+        rcv=(map bone message-sink-state)
+        nax=(set [=bone =message-num])
+        heeds=(set duct)
+    ==
+  ::  $qos: quality of service; how is our connection to a peer doing?
+  ::
+  ::    .last-contact: last time we heard from peer, or if %unborn, when
+  ::    we first started tracking time
+  ::
+  +$  qos
+    $~  [%unborn *@da]
+    [?(%live %dead %unborn) last-contact=@da]
+  ::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
+  ::
+  ::    The first bone is 0. They increment by 4, since each flow includes
+  ::    a bit for each message determining forward vs. backward and a
+  ::    second bit for whether the message is on the normal flow or the
+  ::    associated diagnostic flow (for naxplanations).
+  ::
+  ::    The least significant bit of a $bone is:
+  ::    1 if "forward", i.e. we send %plea's on this flow, or
+  ::    0 if "backward", i.e. we receive %plea's on this flow.
+  ::
+  ::    The second-least significant bit is 1 if the bone is a
+  ::    naxplanation bone, and 0 otherwise.  Only naxplanation
+  ::    messages can be sent on a naxplanation bone, as %boon's.
+  ::
+  +$  ossuary
+    $:  =next=bone
+        by-duct=(map duct bone)
+        by-bone=(map bone duct)
+    ==
+  ::  $message-pump-state: persistent state for |message-pump
+  ::
+  ::    Messages queue up in |message-pump's .unsent-messages until they
+  ::    can be packetized and fed into |packet-pump for sending.  When we
+  ::    pop a message off .unsent-messages, we push as many fragments as
+  ::    we can into |packet-pump, which sends every packet it eats.
+  ::    Packets rejected by |packet-pump are placed in .unsent-fragments.
+  ::
+  ::    When we hear a packet ack, we send it to |packet-pump to be
+  ::    removed from its queue of unacked packets.
+  ::
+  ::    When we hear a message ack (positive or negative), we treat that
+  ::    as though all fragments have been acked.  If this message is not
+  ::    .current, then this ack is for a future message and .current has
+  ::    not yet been acked, so we place the ack in .queued-message-acks.
+  ::
+  ::    If we hear a message ack before we've sent all the fragments for
+  ::    that message, clear .unsent-fragments and have |packet-pump delete
+  ::    all sent fragments from the message. If this early message ack was
+  ::    positive, print it out because it indicates the peer is not
+  ::    behaving properly.
+  ::
+  ::    If the ack is for the current message, have |packet-pump delete
+  ::    all packets from the message, give the message ack back
+  ::    to the client vane, increment .current, and check if this next
+  ::    message is in .queued-message-acks.  If it is, emit the message
+  ::    (n)ack, increment .current, and check the next message.  Repeat
+  ::    until .current is not fully acked.
+  ::
+  ::    The following equation is always true:
+  ::    .next - .current == number of messages in flight
+  ::
+  ::    At the end of a task, |message-pump sends a %halt task to
+  ::    |packet-pump, which can trigger a timer to be set or cleared based
+  ::    on congestion control calculations. When the timer fires, it will
+  ::    generally cause a packet to be re-sent.
+  ::
+  ::    Message sequence numbers start at 1 so that the first message will
+  ::    be greater than .last-acked.message-sink-state on the receiver.
+  ::
+  ::    current: sequence number of earliest message sent or being sent
+  ::    next: sequence number of next message to send
+  ::    unsent-messages: messages to be sent after current message
+  ::    unsent-fragments: fragments of current message waiting for sending
+  ::    queued-message-acks: future message acks to be applied after current
+  ::    packet-pump-state: state of corresponding |packet-pump
+  ::
+  +$  message-pump-state
+    $:  current=_`message-num`1
+        next=_`message-num`1
+        unsent-messages=(qeu message-blob)
+        unsent-fragments=(list static-fragment)
+        queued-message-acks=(map message-num ack)
+        =packet-pump-state
+    ==
+  +$  static-fragment
+    $:  =message-num
+        num-fragments=fragment-num
+        =fragment-num
+        =fragment
+    ==
+  ::  $packet-pump-state: persistent state for |packet-pump
+  ::
+  ::    next-wake: last timer we've set, or null
+  ::    live: packets in flight; sent but not yet acked
+  ::    metrics: congestion control information
+  ::
+  +$  packet-pump-state
+    $:  next-wake=(unit @da)
+        live=(tree [live-packet-key live-packet-val])
+        metrics=pump-metrics
+    ==
+  ::  $pump-metrics: congestion control state for a |packet-pump
+  ::
+  ::    This is an Ames adaptation of TCP's Reno congestion control
+  ::    algorithm.  The information signals and their responses are
+  ::    identical to those of the "NewReno" variant of Reno; the
+  ::    implementation differs because Ames acknowledgments differ from
+  ::    TCP's, because this code uses functional data structures, and
+  ::    because TCP's sequence numbers reset when a peer becomes
+  ::    unresponsive, whereas Ames sequence numbers only change when a
+  ::    ship breaches.
+  ::
+  ::    A deviation from Reno is +fast-resend-after-ack, which re-sends
+  ::    timed-out packets when a peer starts responding again after a
+  ::    period of unresponsiveness.
+  ::
+  ::    If .skips reaches 3, we perform a fast retransmit and fast
+  ::    recovery.  This corresponds to Reno's handling of "three duplicate
+  ::    acks".
+  ::
+  ::    rto: retransmission timeout
+  ::    rtt: roundtrip time estimate, low-passed using EWMA
+  ::    rttvar: mean deviation of .rtt, also low-passed with EWMA
+  ::    num-live: how many packets sent, awaiting ack
+  ::    ssthresh: slow-start threshold
+  ::    cwnd: congestion window; max unacked packets
+  ::
+  +$  pump-metrics
+    $:  rto=_~s1
+        rtt=_~s1
+        rttvar=_~s1
+        ssthresh=_10.000
+        cwnd=_1
+        num-live=@ud
+        counter=@ud
+    ==
+  +$  live-packet
+    $:  key=live-packet-key
+        val=live-packet-val
+    ==
+  +$  live-packet-key
+    $:  =message-num
+        =fragment-num
+    ==
+  +$  live-packet-val
+    $:  packet-state
+        num-fragments=fragment-num
+        =fragment
+    ==
+  +$  packet-state
+    $:  last-sent=@da
+        retries=@ud
+        skips=@ud
+    ==
+  ::  $message-sink-state: state of |message-sink to assemble messages
+  ::
+  ::    last-acked: highest $message-num we've fully acknowledged
+  ::    last-heard: highest $message-num we've heard all fragments on
+  ::    pending-vane-ack: heard but not processed by local vane
+  ::    live-messages: partially received messages
+  ::
+  +$  message-sink-state
+    $:  last-acked=message-num
+        last-heard=message-num
+        pending-vane-ack=(qeu [=message-num message=*])
+        live-messages=(map message-num partial-rcv-message)
+        nax=(set message-num)
+    ==
+  ::  $partial-rcv-message: message for which we've received some fragments
+  ::
+  ::    num-fragments: total number of fragments in this message
+  ::    num-received: how many fragments we've received so far
+  ::    fragments: fragments we've received, eventually producing a $message
+  ::
+  +$  partial-rcv-message
+    $:  num-fragments=fragment-num
+        num-received=fragment-num
+        fragments=(map fragment-num fragment)
+    ==
+  ::
   --  ::ames
 ::                                                      ::::
 ::::                    ++behn                            ::  (1b) timekeeping
@@ -503,9 +793,9 @@
     |%
     ++  gift                                            ::  out result <-$
       $%  [%doze p=(unit @da)]                          ::  next alarm
-          [%mass p=mass]                                ::  memory usage
           [%wake error=(unit tang)]                     ::  wakeup or failed
           [%meta p=vase]
+          [%heck syn=sign-arvo]                         ::  response to %huck
       ==
     ++  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
@@ -513,12 +803,11 @@
           $>(%crud vane-task)                           ::  error with trace
           [%rest p=@da]                                 ::  cancel alarm
           [%drip p=vase]                                ::  give in next event
-          [%huck p=vase]                                ::  give back
+          [%huck syn=sign-arvo]                         ::  give back
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           [%wait p=@da]                                 ::  set alarm
           [%wake ~]                                     ::  timer activate
-          $>(%wegh vane-task)                           ::  report memory
       ==
     --  ::able
   --  ::behn
@@ -540,7 +829,6 @@
           {$ergo p/@tas q/mode}                         ::  version update
           {$hill p/(list @tas)}                         ::  mount points
           [%done error=(unit error:ames)]               ::  ames message (n)ack
-          {$mass p/mass}                                ::  memory usage
           {$mere p/(each (set path) (pair term tang))}  ::  merge result
           {$note p/@tD q/tank}                          ::  debug message
           {$ogre p/@tas}                                ::  delete mount point
@@ -564,15 +852,16 @@
               her/@p  dem/desk  cas/case                ::  source
               how/germ                                  ::  method
           ==                                            ::
-          {$mont des/desk bem/beam}                     ::  mount to unix
+          {$mont pot/term bem/beam}                     ::  mount to unix
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
+          {$park des/desk yok/yoki ran/rang}            ::  synchronous commit
           {$perm des/desk pax/path rit/rite}            ::  change permissions
+          {$pork ~}                                     ::  resume commit
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
-          {$werp who/ship wer/ship rif/riff}            ::  external file req
-          $>(%wegh vane-task)                           ::  report memory
+          {$werp who/ship wer/ship rif/riff-any}        ::  external file req
           $>(%plea vane-task)                           ::  ames request
       ==                                                ::
     --  ::able
@@ -591,7 +880,14 @@
     $%  {$delta p/lobe q/{p/mark q/lobe} r/page}        ::  delta on q
         {$direct p/lobe q/page}                         ::  immediate
     ==                                                  ::
-  ++  care  ?($d $p $t $u $v $w $x $y $z)               ::  clay submode
+  ::  +cable: a reference to something on the filesystem
+  ::    face: the face to wrap around the imported file
+  ::    file-path: location in clay
+  +$  cable
+    $:  face=(unit term)
+        file-path=term
+    ==
+  ++  care  ?($a $b $c $d $p $r $s $t $u $v $w $x $y $z)  ::  clay submode
   ++  case                                              ::  ship desk case spur
     $%  {$da p/@da}                                     ::  date
         {$tas p/@tas}                                   ::  label
@@ -648,6 +944,7 @@
     $%  {%& p/suba}                                     ::  delta
         {%| p/@tas}                                     ::  label
     ==                                                  ::
+  ++  open  $-(path vase)                               ::  get prelude
   ++  page  (cask *)                                    ::  untyped cage
   ++  plop  blob                                        ::  unvalidated blob
   ++  rang                                              ::  repository
@@ -670,7 +967,10 @@
         who/(pair (set ship) (map @ta crew))            ::
     ==                                                  ::
   ++  regs  (map path rule)                             ::  rules for paths
-  ++  riff  {p/desk q/(unit rave)}                      ::  request+desist
+  +$  riff  [p=desk q=(unit rave)]                      ::  request+desist
+  +$  riff-any
+    $^  [[%1 ~] riff]
+    riff
   ++  rite                                              ::  new permissions
     $%  {$r red/(unit rule)}                            ::  for read
         {$w wit/(unit rule)}                            ::  for write
@@ -691,12 +991,108 @@
     ==                                                  ::
   ++  urge  |*(a/mold (list (unce a)))                  ::  list change
   ++  whom  (each ship @ta)                             ::  ship or named crew
+  ++  yoki  (each yuki yaki)                            ::  commit
+  ++  yuki                                              ::  proto-commit
+    $:  p/(list tako)                                   ::  parents
+        q/(map path (each page lobe))                   ::  namespace
+    ==                                                  ::
   ++  yaki                                              ::  commit
     $:  p/(list tako)                                   ::  parents
         q/(map path lobe)                               ::  namespace
         r/tako                                          ::  self-reference
         t/@da                                           ::  date
     ==                                                  ::
+  ::
+  ::  +page-to-lobe: hash a page to get a lobe.
+  ::
+  ++  page-to-lobe  |=(page (shax (jam +<)))
+  ::
+  ::  +make-yaki: make commit out of a list of parents, content, and date.
+  ::
+  ++  make-yaki
+    |=  {p/(list tako) q/(map path lobe) t/@da}
+    ^-  yaki
+    =+  ^=  has
+        %^  cat  7  (sham [%yaki (roll p add) q t])
+        (sham [%tako (roll p add) q t])
+    [p q has t]
+  ::  $pile: preprocessed hoon source file
+  ::
+  ::    /-  sur-file            ::  surface imports from /sur
+  ::    /+  lib-file            ::  library imports from /lib
+  ::    /=  face  /path         ::  imports built hoon file at path
+  ::    /*  face  %mark  /path  ::  unbuilt file imports, as mark
+  ::
+  +$  pile
+    $:  sur=(list taut)
+        lib=(list taut)
+        raw=(list [face=term =path])
+        bar=(list [face=term =mark =path])
+        =hoon
+    ==
+  ::  $taut: file import from /lib or /sur
+  ::
+  +$  taut  [face=(unit term) pax=term]
+  ::  $mars: mark conversion request
+  ::  $tube: mark conversion gate
+  ::
+  +$  mars  [a=mark b=mark]
+  +$  tube  $-(vase vase)
+  ::  $dais: processed mark core
+  ::
+  +$  dais
+    $_  ^|
+    |_  sam=vase
+    ++  bunt  sam
+    ++  diff  |~(new=_sam *vase)
+    ++  form  *mark
+    ++  join  |~([a=vase b=vase] *(unit (unit vase)))
+    ++  mash
+      |~  [a=[ship desk diff=vase] b=[ship desk diff=vase]]
+      *(unit vase)
+    ++  pact  |~(diff=vase sam)
+    ++  vale  |~(noun sam)
+    ++  volt  |~(noun sam)
+    --
+  ::
+  ++  get-fit
+    |=  [bek=beak pre=@tas pax=@tas]
+    ^-  (unit path)
+    =/  paz  (segments pax)
+    |-  ^-  (unit path)
+    ?~  paz
+      ~
+    =/  puz=path  (snoc `path`[pre i.paz] %hoon)
+    =+  .^(=arch cy+[(scot %p p.bek) q.bek (scot r.bek) puz])
+    ?^  fil.arch
+      `puz
+    $(paz t.paz)
+  ::  +segments: compute all paths from :path-part, replacing some `/`s with `-`s
+  ::
+  ::    For example, when passed a :path-part of 'foo-bar-baz',
+  ::    the product will contain:
+  ::    ```
+  ::    dojo> (segments 'foo-bar-baz')
+  ::    ~[/foo-bar-baz /foo-bar/baz /foo/bar-baz /foo/bar/baz]
+  ::    ```
+  ::
+  ++  segments
+    |=  suffix=@tas
+    ^-  (list path)
+    =/  parser
+      (most hep (cook crip ;~(plug low (star ;~(pose low nud)))))
+    =/  torn=(list @tas)  (fall (rush suffix parser) ~[suffix])
+    %-  flop
+    |-  ^-  (list (list @tas))
+    ?<  ?=(~ torn)
+    ?:  ?=([@ ~] torn)
+      ~[torn]
+    %-  zing
+    %+  turn  $(torn t.torn)
+    |=  s=(list @tas)
+    ^-  (list (list @tas))
+    ?>  ?=(^ s)
+    ~[[i.torn s] [(crip "{(trip i.torn)}-{(trip i.s)}") t.s]]
   --  ::clay
 ::                                                      ::::
 ::::                    ++dill                            ::  (1d) console
@@ -714,11 +1110,11 @@
           {$burl p/@t}                                  ::  activate url
           {$init p/@p}                                  ::  set owner
           {$logo ~}                                     ::  logout
-          {$lyra p/@t q/@t}                             ::  upgrade kernel
-          {$mass p/mass}                                ::  memory usage
+          [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
           {$pack ~}                                     ::  compact memory
           {$veer p/@ta q/path r/@t}                     ::  install vane
           {$verb ~}                                     ::  verbose mode
+          [%whey ~]                                     ::  memory report
       ==                                                ::
     ++  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
@@ -733,7 +1129,7 @@
           {$hook ~}                                     ::  this term hung up
           {$harm ~}                                     ::  all terms hung up
           $>(%init vane-task)                           ::  after gall ready
-          {$lyra p/@t q/@t}                             ::  upgrade kernel
+          [%lyra hoon=(unit @t) arvo=@t]                ::  upgrade kernel
           {$noop ~}                                     ::  no operation
           {$pack ~}                                     ::  compact memory
           {$talk p/tank}                                ::
@@ -799,7 +1195,7 @@
   ++  flog                                              ::  sent to %dill
     $%  {$crud p/@tas q/(list tank)}                    ::
         {$heft ~}                                       ::
-        {$lyra p/@t q/@t}                               ::  upgrade kernel
+        [%lyra hoon=(unit @t) arvo=@t]                  ::  upgrade kernel
         {$pack ~}                                       ::  compact memory
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
@@ -829,9 +1225,6 @@
           ::    not allowed.
           ::
           [%bound accepted=? =binding]
-          ::  memory usage report
-          ::
-          [%mass p=mass]
       ==
     ::
     ++  task
@@ -878,12 +1271,118 @@
           ::    the first place.
           ::
           [%disconnect =binding]
-          ::  memory usage request
-          ::
-          $>(%wegh vane-task)
       ==
     ::
     --
+  ::  +outstanding-connection: open http connections not fully complete:
+  ::
+  ::    This refers to outstanding connections where the connection to
+  ::    outside is opened and we are currently waiting on an app to
+  ::    produce the results.
+  ::
+  +$  outstanding-connection
+    $:  ::  action: the action that had matched
+        ::
+        =action
+        ::  inbound-request: the original request which caused this connection
+        ::
+        =inbound-request
+        ::  response-header: set when we get our first %start
+        ::
+        response-header=(unit response-header:http)
+        ::  bytes-sent: the total bytes sent in response
+        ::
+        bytes-sent=@ud
+    ==
+  ::  +authentication-state: state used in the login system
+  ::
+  +$  authentication-state
+    $:  ::  sessions: a mapping of session cookies to session information
+        ::
+        sessions=(map @uv session)
+    ==
+  ::  +session: server side data about a session
+  ::
+  +$  session
+    $:  ::  expiry-time: when this session expires
+        ::
+        ::    We check this server side, too, so we aren't relying on the browser
+        ::    to properly handle cookie expiration as a security mechanism.
+        ::
+        expiry-time=@da
+        ::  channels: channels opened by this session
+        ::
+        channels=(set @t)
+        ::
+        ::  TODO: We should add a system for individual capabilities; we should
+        ::  mint some sort of long lived cookie for mobile apps which only has
+        ::  access to a single application path.
+    ==
+  ::  channel-state: state used in the channel system
+  ::
+  +$  channel-state
+    $:  ::  session: mapping between an arbitrary key to a channel
+        ::
+        session=(map @t channel)
+        ::  by-duct: mapping from ducts to session key
+        ::
+        duct-to-key=(map duct @t)
+    ==
+  ::  +timer: a reference to a timer so we can cancel or update it.
+  ::
+  +$  timer
+    $:  ::  date: time when the timer will fire
+        ::
+        date=@da
+        ::  duct: duct that set the timer so we can cancel
+        ::
+        =duct
+    ==
+  ::  channel: connection to the browser
+  ::
+  ::    Channels are the main method where a webpage communicates with Gall
+  ::    apps. Subscriptions and pokes are issues with PUT requests on a path,
+  ::    while GET requests on that same path open a persistent EventSource
+  ::    channel.
+  ::
+  ::    The EventSource API is a sequence number based API that browser provide
+  ::    which allow the server to push individual events to the browser over a
+  ::    connection held open. In case of reconnection, the browser will send a
+  ::    'Last-Event-Id: ' header to the server; the server then resends all
+  ::    events since then.
+  ::
+  +$  channel
+    $:  ::  channel-state: expiration time or the duct currently listening
+        ::
+        ::    For each channel, there is at most one open EventSource
+        ::    connection. A 400 is issues on duplicate attempts to connect to the
+        ::    same channel. When an EventSource isn't connected, we set a timer
+        ::    to reap the subscriptions. This timer shouldn't be too short
+        ::    because the
+        ::
+        state=(each timer duct)
+        ::  next-id: next sequence number to use
+        ::
+        next-id=@ud
+        ::  events: unacknowledged events
+        ::
+        ::    We keep track of all events where we haven't received a
+        ::    'Last-Event-Id: ' response from the client or a per-poke {'ack':
+        ::    ...} call. When there's an active EventSource connection on this
+        ::    channel, we send the event but we still add it to events because we
+        ::    can't assume it got received until we get an acknowledgment.
+        ::
+        events=(qeu [id=@ud lines=wall])
+        ::  subscriptions: gall subscriptions
+        ::
+        ::    We maintain a list of subscriptions so if a channel times out, we
+        ::    can cancel all the subscriptions we've made.
+        ::
+        subscriptions=(map wire [ship=@p app=term =path duc=duct])
+        ::  heartbeat: sse heartbeat timer
+        ::
+        heartbeat=(unit timer)
+    ==
   ::  +binding: A rule to match a path.
   ::
   ::    A +binding is a system unique mapping for a path to match. A +binding
@@ -902,6 +1401,31 @@
         ::    /~myapp will match /~myapp or /~myapp/longer/path
         ::
         path=(list @t)
+    ==
+  ::  +action: the action to take when a binding matches an incoming request
+  ::
+  +$  action
+    $%  ::  dispatch to a generator
+        ::
+        [%gen =generator]
+        ::  dispatch to an application
+        ::
+        [%app app=term]
+        ::  internal authentication page
+        ::
+        [%authentication ~]
+        ::  internal logout page
+        ::
+        [%logout ~]
+        ::  gall channel system
+        ::
+        [%channel ~]
+        ::  gall scry endpoint
+        ::
+        [%scry ~]
+        ::  respond with the default file not found page
+        ::
+        [%four-oh-four ~]
     ==
   ::  +generator: a generator on the local ship that handles requests
   ::
@@ -1091,718 +1615,56 @@
         ::
         (gte i.b 224)
     ==
+  ::  +ipa: parse ip address
+  ::
+  ++  ipa
+    ;~(pose (stag %ipv4 ip4) (stag %ipv6 ip6))
+  ::  +ip4: parse ipv4 address
+  ::
+  ++  ip4
+    =+  byt=(ape:ag ted:ab)
+    (bass 256 ;~(plug byt (stun [3 3] ;~(pfix dot byt))))
+  ::  +ip6: parse ipv6 address
+  ::
+  ++  ip6
+    %+  bass  0x1.0000
+    %+  sear
+      |=  hexts=(list $@(@ [~ %zeros]))
+      ^-  (unit (list @))
+      ::  not every list of hextets is an ipv6 address
+      ::
+      =/  legit=?
+        =+  l=(lent hexts)
+        =+  c=|=(a=* ?=([~ %zeros] a))
+        ?|  &((lth l 8) ?=([* ~] (skim hexts c)))
+            &(=(8 l) !(lien hexts c))
+        ==
+      ?.  legit  ~
+      %-  some
+      ::  expand zeros
+      ::
+      %-  zing
+      %+  turn  hexts
+      |=  hext=$@(@ [~ %zeros])
+      ?@  hext  [hext]~
+      (reap (sub 9 (lent hexts)) 0)
+    ::  parse hextets, producing cell for shorthand zeroes
+    ::
+    |^  %+  cook
+          |=  [a=(list @) b=(list [~ %zeros]) c=(list @)]
+          :(welp a b c)
+        ;~  plug
+          (more col het)
+          (stun [0 1] cel)
+          (more col het)
+        ==
+    ++  cel  (cold `%zeros ;~(plug col col))
+    ++  het  (bass 16 (stun [1 4] six:ab))
+    --
+  ::
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
   ++  user  knot                                        ::  username
   --  ::eyre
-::                                                      ::::
-::::                    ++ford                            ::  (1f) build
-  ::                                                    ::::
-::  |ford: build system vane interface
-::
-++  ford  ^?
-  |%
-  ::  |able:ford: ford's public +move interface
-  ::
-  ++  able  ^?
-    |%
-    ::  +task:able:ford: requests to ford
-    ::
-    +=  task
-      $~  [%vega ~]
-      $%  ::  %build: perform a build, either live or once
-          ::
-          $:  %build
-              ::  live: whether we run this build live
-              ::
-              ::    A live build will subscribe to further updates and keep the
-              ::    build around.
-              ::
-              live=?
-              ::  plan: the schematic to build
-              ::
-              =schematic
-          ==
-          ::  %keep: reset cache sizes
-          ::
-          [%keep compiler-cache=@ud build-cache=@ud]
-          ::  %kill: stop a build; send on same duct as original %build request
-          ::
-          [%kill ~]
-          ::  trim state (in response to memory pressure)
-          ::
-          $>(%trim vane-task)
-          ::  %vega: report kernel upgrade
-          ::
-          $>(%vega vane-task)
-          ::  %wegh: produce memory usage information
-          ::
-          $>(%wegh vane-task)
-          ::  %wipe: wipes stored builds
-          ::
-          [%wipe percent-to-remove=@ud]
-      ==
-    ::  +gift:able:ford: responses from ford
-    ::
-    +=  gift
-      $%  ::  %mass: memory usage; response to %wegh +task
-          ::
-          [%mass p=mass]
-          ::  %made: build result; response to %build +task
-          ::
-          $:  %made
-              ::  date: formal date of the build
-              ::
-              date=@da
-              ::  result: result of the build; either complete build, or error
-              ::
-              result=made-result
-      ==  ==
-    --
-  ::  +made-result: the main payload for a %made +gift
-  ::
-  +=  made-result
-    $%  ::  %complete: contains the result of the completed build
-        ::
-        [%complete =build-result]
-        ::  %incomplete: couldn't finish build; contains error message
-        ::
-        [%incomplete =tang]
-    ==
-  ::  +disc: a desk on a ship; can be used as a beak that varies with time
-  ::
-  +=  disc  [=ship =desk]
-  ::  +rail: a time-varying full path
-  ::
-  ::    This can be thought of as a +beam without a +case, which is what
-  ::    would specify the time. :spur is flopped just like the +spur in a +beam.
-  ::
-  +=  rail  [=disc =spur]
-  ::  +resource: time-varying dependency on a value from the urbit namespace
-  ::
-  +=  resource
-    $:  ::  vane which we are querying
-        ::
-        vane=%c
-        ::  type of request
-        ::
-        ::    TODO: care:clay should be cleaned up in zuse as it is a general
-        ::    type, not a clay specific one.
-        ::
-        care=care:clay
-        ::  path on which to depend, missing time, which will be filled in
-        ::
-        =rail
-    ==
-  ::  +build-result: the referentially transparent result of a +build
-  ::
-  ::    A +build produces either an error or a result. A result is a tagged
-  ::    union of the various kinds of datatypes a build can produce. The tag
-  ::    represents the sub-type of +schematic that produced the result.
-  ::
-  +=  build-result
-    $%  ::  %error: the build produced an error whose description is :message
-        ::
-        [%error message=tang]
-        ::  %success: result of successful +build, tagged by +schematic sub-type
-        ::
-        $:  %success
-            $^  [head=build-result tail=build-result]
-            $%  [%$ =cage]
-                [%alts =build-result]
-                [%bake =cage]
-                [%bunt =cage]
-                [%call =vase]
-                [%cast =cage]
-                [%core =vase]
-                [%diff =cage]
-                [%hood =scaffold]
-                [%join =cage]
-                [%list results=(list build-result)]
-                [%mash =cage]
-                [%mute =cage]
-                [%pact =cage]
-                [%path =rail]
-                [%plan =vase]
-                [%reef =vase]
-                [%ride =vase]
-                [%scry =cage]
-                [%slim [=type =nock]]
-                [%slit =type]
-                [%vale =cage]
-                [%volt =cage]
-                [%walk results=(list mark-action)]
-    ==  ==  ==
-  ::  +mark-action: represents a single mark conversion step
-  ::
-  ::    In mark conversion, we want to convert from :source to :target. We also
-  ::    need to keep track of what type of conversion this is. If %grab, we
-  ::    want to use the definitions in the :target mark. If %grow, we want to
-  ::    use the :source mark.
-  ::
-  +=  mark-action  [type=?(%grow %grab) source=term target=term]
-  ::
-  ::  +schematic: plan for building
-  ::
-  ++  schematic
-    ::    If the head of the +schematic is a pair, it's an auto-cons
-    ::    schematic. Its result will be the pair of results of its
-    ::    sub-schematics.
-    ::
-    $^  [head=schematic tail=schematic]
-    ::
-    $%  ::  %$: literal value. Produces its input unchanged.
-        ::
-        $:  %$
-            ::  literal: the value to be produced by the build
-            ::
-            literal=cage
-        ==
-        ::  %pin: pins a sub-schematic to a date
-        ::
-        ::    There is a difference between live builds and once builds. In
-        ::    live builds, we produce results over and over again and aren't
-        ::    pinned to a specifc time. In once builds, we want to specify a
-        ::    specific date, which we apply recursively to any sub-schematics
-        ::    contained within :schematic.
-        ::
-        ::    If a build has a %pin at the top level, we consider it to be a
-        ::    once build. Otherwise, we consider it to be a live build. We do
-        ::    this so schematics which depend on the result of a once build can
-        ::    be cached, giving the client explicit control over the caching
-        ::    behaviour.
-        ::
-        $:  %pin
-            ::  date: time at which to perform the build
-            ::
-            date=@da
-            ::  schematic: wrapped schematic of pinned time
-            ::
-            =schematic
-        ==
-        ::  %alts: alternative build choices
-        ::
-        ::    Try each choice in :choices, in order; accept the first one that
-        ::    succeeds. Note that the result inherits the dependencies of all
-        ::    failed schematics, as well as the successful one.
-        ::
-        $:  %alts
-            ::  choices: list of build options to try
-            ::
-            choices=(list schematic)
-        ==
-        ::  %bake: run a file through a renderer
-        ::
-        $:  %bake
-            ::  renderer: name of renderer; also its file path in ren/
-            ::
-            renderer=term
-            ::  query-string: the query string of the renderer's http path
-            ::
-            query-string=coin
-            ::  path-to-render: full path of file to render
-            ::
-            path-to-render=rail
-        ==
-        ::  %bunt: produce the default value for a mark
-        ::
-        $:  %bunt
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark; also its file path in mar/
-            ::
-            mark=term
-        ==
-        ::  %call: call a gate on a sample
-        ::
-        $:  %call
-            ::  gate: schematic whose result is a gate
-            ::
-            gate=schematic
-            ::  sample:  schematic whose result will be the gate's sample
-            ::
-            sample=schematic
-        ==
-        ::  %cast: cast the result of a schematic through a mark
-        ::
-        $:  %cast
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark; also its file path in ren/
-            ::
-            mark=term
-            ::  input: schematic whose result will be run through the mark
-            ::
-            input=schematic
-        ==
-        ::  %core: build a hoon program from a source file
-        ::
-        $:  %core
-            ::  source-path: clay path from which to load hoon source
-            ::
-            source-path=rail
-        ==
-        ::  %diff: produce marked diff from :first to :second
-        ::
-        $:  %diff
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  old: schematic producing data to be used as diff starting point
-            ::
-            start=schematic
-            ::  new: schematic producing data to be used as diff ending point
-            ::
-            end=schematic
-        ==
-        ::  %dude: wrap a failure's error message with an extra message
-        ::
-        $:  %dude
-            ::  error: a trap producing an error message to wrap the original
-            ::
-            error=tank
-            ::  attempt: the schematic to try, whose error we wrap, if any
-            ::
-            attempt=schematic
-        ==
-        ::  %hood: create a +hood from a hoon source file
-        ::
-        $:  %hood
-            ::  source-path: clay path from which to load hoon source
-            ::
-            source-path=rail
-        ==
-        ::  %join: merge two diffs into one diff; produces `~` if conflicts
-        ::
-        $:  %join
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of the mark to use for diffs; also file path in mar/
-            ::
-            mark=term
-            ::  first: schematic producing first diff
-            ::
-            first=schematic
-            ::  second: schematic producing second diff
-            ::
-            second=schematic
-        ==
-        ::  %list: performs a list of schematics, returns a list of +builds-results
-        ::
-        $:  %list
-            ::  schematics: list of builds to perform
-            ::
-            schematics=(list schematic)
-        ==
-        ::  %mash: force a merge, annotating any conflicts
-        ::
-        $:  %mash
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark used in diffs; also file path in mar/
-            ::
-            mark=term
-            ::  first: marked schematic producing first diff
-            ::
-            first=[=disc mark=term =schematic]
-            ::  second: marked schematic producing second diff
-            ::
-            second=[=disc mark=term =schematic]
-        ==
-        ::  %mute: mutate a noun by replacing its wings with new values
-        ::
-        $:  %mute
-            ::  subject: schematic producing the noun to mutate
-            ::
-            subject=schematic
-            ::  mutations: axes and schematics to produce their new contents
-            ::
-            mutations=(list (pair wing schematic))
-        ==
-        ::  %pact: patch a marked noun by applying a diff
-        ::
-        $:  %pact
-            ::  disc where in clay to load marks from
-            ::
-            =disc
-            ::  start: schematic producing a noun to be patched
-            ::
-            start=schematic
-            ::  diff: schematic producing the diff to apply to :start
-            ::
-            diff=schematic
-        ==
-        ::  %path: resolve a path with `-`s to a path with `/`s
-        ::
-        ::    Resolve +raw-path to a path containing a file, replacing
-        ::    any `-`s in the path with `/`s if no file exists at the
-        ::    original path. Produces an error if multiple files match,
-        ::    e.g. a/b/c and a/b-c, or a/b/c and a-b/c.
-        ::
-        $:  %path
-            ::  disc: the +disc forming the base of the path to be resolved
-            ::
-            =disc
-            ::  prefix: path prefix under which to resolve :raw-path, e.g. lib
-            ::
-            prefix=@tas
-            ::  raw-path: the file path to be resolved
-            ::
-            raw-path=@tas
-        ==
-        ::  %plan: build a hoon program from a preprocessed source file
-        ::
-        $:  %plan
-            ::  path-to-render: the clay path of a file being rendered
-            ::
-            ::    TODO: Once we've really implemented this, write the
-            ::    documentation. (This is the path that starts out as the path
-            ::    of the hoon source which generated the scaffold, but can be
-            ::    changed with `/:`.)
-            ::
-            path-to-render=rail
-            ::  query-string: the query string of the http request
-            ::
-            query-string=coin
-            ::  scaffold: preprocessed hoon source and imports
-            ::
-            =scaffold
-        ==
-        ::  %reef: produce a hoon+zuse kernel. used internally for caching
-        ::
-        $:  %reef
-            ::  disc: location of sys/hoon/hoon and sys/zuse/hoon
-            ::
-            =disc
-        ==
-        ::  %ride: eval hoon as formula with result of a schematic as subject
-        ::
-        $:  %ride
-            ::  formula: a hoon to be evaluated against a subject
-            ::
-            formula=hoon
-            ::  subject: a schematic whose result will be used as subject
-            ::
-            subject=schematic
-        ==
-        ::  %same: the identity function
-        ::
-        ::    Functionally used to "unpin" a build for caching reasons. If you
-        ::    run a %pin build, it is treated as a once build and is therefore
-        ::    not cached. Wrapping the %pin schematic in a %same schematic
-        ::    converts it to a live build, which will be cached due to live
-        ::    build subscription semantics.
-        ::
-        $:  %same
-            ::  schematic that we evaluate to
-            ::
-            =schematic
-        ==
-        ::  %scry: lookup a value from the urbit namespace
-        ::
-        $:  %scry
-            ::  resource: a namespace request, with unspecified time
-            ::
-            ::    Schematics can only be resolved when specifying a time,
-            ::    which will convert this +resource into a +scry-request.
-            ::
-            =resource
-        ==
-        ::  %slim: compile a hoon against a subject type
-        ::
-        $:  %slim
-            ::  compile-time subject type for the :formula
-            ::
-            subject-type=type
-            ::  formula: a +hoon to be compiled to (pair type nock)
-            ::
-            formula=hoon
-        ==
-        ::  %slit: get type of gate product
-        ::
-        $:  %slit
-            ::  gate: a vase containing a gate
-            ::
-            gate=vase
-            ::  sample: a vase containing the :gate's sample
-            ::
-            sample=vase
-        ==
-        ::  %vale: coerce a noun to a mark, validated
-        ::
-        $:  %vale
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark to use; also file path in mar/
-            ::
-            mark=term
-            ::  input: the noun to be converted using the mark
-            ::
-            input=*
-        ==
-        ::  %volt: coerce a noun to a mark, unsafe
-        ::
-        $:  %volt
-            ::  disc where in clay to load the mark from
-            ::
-            =disc
-            ::  mark: name of mark to use; also file path in mar/
-            ::
-            mark=term
-            ::  input: the noun to be converted using the mark
-            ::
-            input=*
-        ==
-        ::  %walk: finds a mark conversion path between two marks
-        ::
-        $:  %walk
-            ::  disc in clay to load the marks from
-            ::
-            =disc
-            ::  source: the original mark type
-            ::
-            source=term
-            ::  target: the destination mark type
-            ::
-            target=term
-        ==
-    ==
-  ::
-  ::  +scaffold: program construction in progress
-  ::
-  ::    A source file with all its imports and requirements, which will be
-  ::    built and combined into one final product.
-  ::
-  +=  scaffold
-    $:  ::  source-rail: the file this scaffold was parsed from
-        ::
-        source-rail=rail
-        ::  zuse-version: the kelvin version of the standard library
-        ::
-        zuse-version=@ud
-        ::  structures: files from %/sur which are included
-        ::
-        structures=(list cable)
-        ::  libraries: files from %/lib which are included
-        ::
-        libraries=(list cable)
-        ::  cranes: a list of resources to transform and include
-        ::
-        cranes=(list crane)
-        ::  sources: hoon sources, either parsed or on the filesystem
-        ::
-        sources=(list hoon)
-    ==
-  ::  +cable: a reference to something on the filesystem
-  ::
-  +=  cable
-    $:  ::  face: the face to wrap around the imported file
-        ::
-        face=(unit term)
-        ::  file-path: location in clay
-        ::
-        file-path=term
-    ==
-  ::  +truss: late-bound path
-  ::
-  ::    TODO: the +tyke data structure should be rethought, possibly as part
-  ::    of this effort since it is actually a `(list (unit hoon))`, when it
-  ::    only represents @tas. It should be a structure which explicitly
-  ::    represents a path with holes that need to be filled in.
-  ::
-  +=  truss
-    $:  pre=(unit tyke)
-        pof=(unit [p=@ud q=tyke])
-    ==
-  ::  +crane: parsed rune used to include and transform resources
-  ::
-  ::    Cranes lifting cranes lifting cranes!
-  ::
-  ::    A recursive tree of Ford directives that specifies instructions for
-  ::    including and transforming resources from the Urbit namespace.
-  ::
-  +=  crane
-    $%  $:  ::  %fssg: `/~` hoon literal
-            ::
-            ::    `/~ <hoon>` produces a crane that evaluates arbitrary hoon.
-            ::
-            %fssg
-            =hoon
-        ==
-        $:  ::  %fsbc: `/$` process query string
-            ::
-            ::    `/$` will call a gate with the query string supplied to this
-            ::    build. If no query string, this errors.
-            ::
-            %fsbc
-            =hoon
-        ==
-        $:  ::  %fsbr: `/|` first of many options that succeeds
-            ::
-            ::    `/|` takes a series of cranes and produces the first one
-            ::    (left-to-right) that succeeds. If none succeed, it produces
-            ::    stack traces from all of its arguments.
-            ::
-            %fsbr
-            ::  choices: cranes to try
-            ::
-            choices=(list crane)
-        ==
-        $:  ::  %fsts: `/=` wrap a face around a crane
-            ::
-            ::    /= runs a crane (usually produced by another ford rune), takes
-            ::    the result of that crane, and wraps a face around it.
-            ::
-            %fsts
-            ::  face: face to apply
-            ::
-            face=term
-            ::  crane: internal build step
-            ::
-            =crane
-        ==
-        $:  ::  %fsdt: `/.` null-terminated list
-            ::
-            ::    Produce a null-terminated list from a sequence of cranes,
-            ::    terminated by a `==`.
-            ::
-            %fsdt
-            ::  items: cranes to evaluate
-            ::
-            items=(list crane)
-        ==
-        $:  ::  %fscm: `/,` switch by path
-            ::
-            ::    `/,` is a switch statement, which picks a branch to evaluate
-            ::    based on whether the current path matches the path in the
-            ::    switch statement. Takes a sequence of pairs of (path, crane)
-            ::    terminated by a `==`.
-            ::
-            %fscm
-            ::  cases: produces evaluated crane of first +spur match
-            ::
-            cases=(list (pair spur crane))
-        ==
-        $:  ::  %fspm: `/&` pass through a series of marks
-            ::
-            ::    `/&` passes a crane through multiple marks, right-to-left.
-            ::
-            %fspm
-            ::  marks: marks to apply to :crane, in reverse order
-            ::
-            marks=(list mark)
-            =crane
-        ==
-        $:  ::  %fscb: `/_` run a crane on each file in the current directory
-            ::
-            ::    `/_` takes a crane as an argument. It produces a new crane
-            ::    representing the result of mapping the supplied crane over the
-            ::    list of files in the current directory. The keys in the
-            ::    resulting map are the basenames of the files in the directory,
-            ::    and each value is the result of running that crane on the
-            ::    contents of the file.
-            ::
-            %fscb
-            =crane
-        ==
-        $:  ::  %fssm: `/;` operate on
-            ::
-            ::    `/;` takes a hoon and a crane. The hoon should evaluate to a
-            ::    gate, which is then called with the result of the crane as its
-            ::    sample.
-            ::
-            %fssm
-            =hoon
-            =crane
-        ==
-        $:  ::  %fscl: `/:` evaluate at path
-            ::
-            ::    `/:` takes a path and a +crane, and evaluates the crane with
-            ::    the current path set to the supplied path.
-            ::
-            %fscl
-            ::  path: late bound path to be resolved relative to current beak
-            ::
-            ::    This becomes current path of :crane
-            ::
-            path=truss
-            =crane
-        ==
-        $:  ::  %fskt: `/^` cast
-            ::
-            ::    `/^` takes a +mold and a +crane, and casts the result of the
-            ::    crane to the mold.
-            ::
-            %fskt
-            ::  mold: evaluates to a mold to be applied to :crane
-            ::
-            =spec
-            =crane
-        ==
-        $:  ::  %fstr: `/*` run :crane on all files with current path as prefix
-            ::
-            %fstr
-            =crane
-        ==
-        $:  ::  %fszp: `/!mark/` evaluate as hoon, then pass through mark
-            ::
-            %fszp
-            =mark
-        ==
-        $:  ::  %fszy: `/mark/` passes current path through :mark
-            ::
-            %fszy
-            =mark
-    ==  ==
-  ::  +result-to-cage: extract a +cage from a +build-result
-  ::
-  ++  result-to-cage
-    |=  result=build-result
-    ^-  cage
-    ?:  ?=(%error -.result)
-      [%tang !>(message.result)]
-    ?-    -.+.result
-        ^      [%noun (slop q:$(result head.result) q:$(result tail.result))]
-        %$     cage.result
-        %alts  $(result build-result.result)
-        %bake  cage.result
-        %bunt  cage.result
-        %call  [%noun vase.result]
-        %cast  cage.result
-        %core  [%noun vase.result]
-        %diff  cage.result
-        %hood  [%noun !>(scaffold.result)]
-        %join  cage.result
-        %list  [%noun -:!>(*(list cage)) (turn results.result result-to-cage)]
-        %mash  cage.result
-        %mute  cage.result
-        %pact  cage.result
-        %path  [%noun !>(rail.result)]
-        %plan  [%noun vase.result]
-        %reef  [%noun vase.result]
-        %ride  [%noun vase.result]
-        %scry  cage.result
-        %slim  [%noun !>([type nock]:result)]
-        %slit  [%noun !>(type.result)]
-        %vale  cage.result
-        %volt  cage.result
-        %walk  [%noun !>(results.result)]
-    ==
-  ::  +result-as-error: extracts a tang out of a made-result
-  ::
-  ++  made-result-as-error
-    |=  result=made-result
-    ^-  tang
-    ?:  ?=([%incomplete *] result)
-      tang.result
-    ?:  ?=([%complete %error *] result)
-      message.build-result.result
-    ~
-  --
 ::                                                      ::::
 ::::                    ++gall                            ::  (1g) extensions
   ::                                                    ::::
@@ -1816,13 +1678,12 @@
     ++  gift                                            ::  outgoing result
       $%  [%boon payload=*]                             ::  ames response
           [%done error=(unit error:ames)]               ::  ames message (n)ack
-          [%mass p=mass]                                ::  memory usage
           [%onto p=(each suss tang)]                    ::  about agent
           [%unto p=sign:agent]                          ::
       ==                                                ::
     ++  task                                            ::  incoming request
       $~  [%vega ~]                                     ::
-      $%  [$conf p=dock q=dock]                         ::  configure app
+      $%  [%conf dap=term]                              ::  start agent
           [$deal p=sock q=term r=deal]                  ::  full transmission
           [%goad force=? agent=(unit dude)]             ::  rebuild agent(s)
           [%sear =ship]                                 ::  clear pending queues
@@ -1830,8 +1691,6 @@
           $>(%trim vane-task)                           ::  trim state
           $>(%vega vane-task)                           ::  report upgrade
           $>(%plea vane-task)                           ::  network request
-          [%wash ~]                                     ::  clear caches
-          $>(%wegh vane-task)                           ::  report memory
       ==                                                ::
     --  ::able
   ++  bitt  (map duct (pair ship path))                 ::  incoming subs
@@ -1963,9 +1822,6 @@
           ::  %response: response to the caller
           ::
           [%http-response =client-response]
-          ::  memory usage report
-          ::
-          [%mass p=mass]
       ==
     ::
     ++  task
@@ -1991,9 +1847,6 @@
           ::  receives http data from outside
           ::
           [%receive id=@ud =http-event:http]
-          ::  memory usage request
-          ::
-          $>(%wegh vane-task)
       ==
     --
   ::  +client-response: one or more client responses given to the caller
@@ -2077,7 +1930,6 @@
     ::                                                  ::
     ++  gift                                            ::  out result <-$
       $%  [%init p=ship]                                ::  report install unix
-          [%mass p=mass]                                ::  memory usage report
           [%done error=(unit error:ames)]               ::  ames message (n)ack
           [%boon payload=*]                             ::  ames response
           [%private-keys =life vein=(map life ring)]    ::  private keys
@@ -2103,7 +1955,6 @@
           $>(%trim vane-task)                           ::  trim state
           [%turf ~]                                     ::  view domains
           $>(%vega vane-task)                           ::  report upgrade
-          $>(%wegh vane-task)                           ::  memory usage request
           $>(%plea vane-task)                           ::  ames request
       ==                                                ::
     ::
@@ -2293,7 +2144,6 @@
       gift:able:clay
       gift:able:dill
       gift:able:eyre
-      gift:able:ford
       gift:able:gall
       gift:able:iris
       gift:able:jael
@@ -2304,7 +2154,6 @@
       task:able:behn
       task:able:dill
       task:able:eyre
-      task:able:ford
       task:able:gall
       task:able:iris
       task:able:jael
@@ -2316,7 +2165,6 @@
       {$c task:able:clay}
       {$d task:able:dill}
       [%e task:able:eyre]
-      {$f task:able:ford}
       {$g task:able:gall}
       [%i task:able:iris]
       {$j task:able:jael}
@@ -2326,14 +2174,14 @@
   $%  {$a gift:able:ames}
       $:  $b
           $%  gift:able:behn
-              [%writ riot:clay]
+              $>(%wris gift:able:clay)
+              $>(%writ gift:able:clay)
               $>(%mere gift:able:clay)
               $>(%unto gift:able:gall)
           ==
       ==
       {$c gift:able:clay}
       {$d gift:able:dill}
-      {$f gift:able:ford}
       [%e gift:able:eyre]
       {$g gift:able:gall}
       [%i gift:able:iris]
@@ -3262,62 +3110,53 @@
     ::                                                  ::  ++s2va:aes:crypto
     ++  s2va                                            ::  AES-128 S2V
       ~/  %s2va
-      |=  {key/@H ads/(list @)}
-      =+  res=(maca key `16 0x0)
-      %^  maca  key  ~
-      |-  ^-  @uxH
+      |=  [key=@H ads=(list @)]
       ?~  ads  (maca key `16 0x1)
+      =/  res  (maca key `16 0x0)
+      %+  maca  key
+      |-  ^-  [[~ @ud] @uxH]
       ?~  t.ads
-        ?:  (gte (xeb i.ads) 128)
-          (mix i.ads res)
-        %+  mix
-          (doub res)
-          (mpad (met 3 i.ads) i.ads)
+        =/  wyt  (met 3 i.ads)
+        ?:  (gte wyt 16)
+          [`wyt (mix i.ads res)]
+        [`16 (mix (doub res) (mpad wyt i.ads))]
       %=  $
-        res  %+  mix
-               (doub res)
-               (maca key ~ i.ads)
         ads  t.ads
+        res  (mix (doub res) (maca key ~ i.ads))
       ==
     ::                                                  ::  ++s2vb:aes:crypto
     ++  s2vb                                            ::  AES-192 S2V
       ~/  %s2vb
-      |=  {key/@I ads/(list @)}
-      =+  res=(macb key `16 0x0)
-      %^  macb  key  ~
-      |-  ^-  @uxH
+      |=  [key=@I ads=(list @)]
       ?~  ads  (macb key `16 0x1)
+      =/  res  (macb key `16 0x0)
+      %+  macb  key
+      |-  ^-  [[~ @ud] @uxH]
       ?~  t.ads
-        ?:  (gte (xeb i.ads) 128)
-          (mix i.ads res)
-        %+  mix
-          (doub res)
-          (mpad (met 3 i.ads) i.ads)
+        =/  wyt  (met 3 i.ads)
+        ?:  (gte wyt 16)
+          [`wyt (mix i.ads res)]
+        [`16 (mix (doub res) (mpad wyt i.ads))]
       %=  $
-        res  %+  mix
-               (doub res)
-               (macb key ~ i.ads)
         ads  t.ads
+        res  (mix (doub res) (macb key ~ i.ads))
       ==
     ::                                                  ::  ++s2vc:aes:crypto
     ++  s2vc                                            ::  AES-256 S2V
       ~/  %s2vc
-      |=  {key/@I ads/(list @)}
-      =+  res=(macc key `16 0x0)
-      %^  macc  key  ~
-      |-  ^-  @uxH
+      |=  [key=@I ads=(list @)]
       ?~  ads  (macc key `16 0x1)
+      =/  res  (macc key `16 0x0)
+      %+  macc  key
+      |-  ^-  [[~ @ud] @uxH]
       ?~  t.ads
-        ?:  (gte (xeb i.ads) 128)
-          (mix i.ads res)
-        %+  mix
-          (doub res)
-          (mpad (met 3 i.ads) i.ads)
+        =/  wyt  (met 3 i.ads)
+        ?:  (gte wyt 16)
+          [`wyt (mix i.ads res)]
+        [`16 (mix (doub res) (mpad wyt i.ads))]
       %=  $
-        res  %+  mix
-               (doub res)
-               (macc key ~ i.ads)
         ads  t.ads
+        res  (mix (doub res) (macc key ~ i.ads))
       ==
     ::                                                  ::  ++siva:aes:crypto
     ++  siva                                            ::  AES-128 SIV
@@ -5460,12 +5299,26 @@
       ~
     (some (~(run by lum) need))
   ::                                                    ::  ++drop-pole:unity
-  ++  drop-pole                                         ::  unit tuple
-    |*  but/(pole (unit))
-    ?~  but  !!
-    ?~  +.but
-      u:->.but
-    [u:->.but (drop-pole +.but)]
+  ++  drop-pole                                         ::  collapse to tuple
+    |^  |*  pul=(pole (unit))
+        ?:  (test-pole pul)  ~
+        (some (need-pole pul))
+    ::
+    ++  test-pole
+      |*  pul=(pole (unit))
+      ^-  ?
+      ?~  pul  &
+      ?|  ?=(~ -.pul)
+          ?~(+.pul | (test-pole +.pul))
+      ==
+    ::
+    ++  need-pole
+      |*  pul=(pole (unit))
+      ?~  pul  !!
+      ?~  +.pul
+        u:->.pul
+      [u:->.pul (need-pole +.pul)]
+    --
   --
 ::                                                      ::::
 ::::                      ++format                      ::  (2d) common formats
@@ -5537,9 +5390,9 @@
         ==
         ;~  pose
           ;~  pfix
-            (just 'e')
+            (mask "eE")
             ;~  plug
-              ;~(pose (cold | hep) (easy &))
+              ;~(pose (cold | hep) (cold & lus) (easy &))
               ;~  pose
                 ;~(pfix (plus (just '0')) dim:ag)
                 dim:ag
@@ -6469,8 +6322,16 @@
       ;~  plug
         ;~(pfix (plus whit) name)
         ;~  pose
-          (ifix [;~(plug tis yel) yel] (star ;~(less yel escp)))
-          (ifix [;~(plug tis say) say] (star ;~(less say escp)))
+          %+  ifix
+            :_  yel
+            ;~(plug (ifix [. .]:(star whit) tis) yel)
+          (star ;~(less yel escp))
+        ::
+          %+  ifix
+            :_  say
+            ;~(plug (ifix [. .]:(star whit) tis) say)
+          (star ;~(less say escp))
+        ::
           (easy ~)
         ==
       ==
@@ -6710,7 +6571,7 @@
       ;~(pose pure pesc pold net wut col com)
     ::                                                  ::  ++pure:de-purl:html
     ++  pure                                            ::  2396 unreserved
-      ;~(pose aln hep dot cab sig)
+      ;~(pose aln hep cab dot zap sig tar say lit rit)
     ::                                                  ::  ++psub:de-purl:html
     ++  psub                                            ::  3986 sub-delims
       ;~  pose
@@ -7225,6 +7086,332 @@
       =^  oldest  queue  get
       ::
       $(pops [oldest pops])
+    --
+  --
+::
+::  +mop: constructs and validates ordered ordered map based on key,
+::  val, and comparator gate
+::
+++  mop
+  |*  [key=mold value=mold]
+  |=  ord=$-([key key] ?)
+  |=  a=*
+  =/  b  ;;((tree [key=key val=value]) a)
+  ?>  (check-balance:((ordered-map key value) ord) b)
+  b
+::
+::  $mk-item: constructor for +ordered-map item type
+::
+++  mk-item  |$  [key val]  [key=key val=val]
+::  +ordered-map: treap with user-specified horizontal order
+::
+::    Conceptually smaller items go on the left, so the item with the
+::    smallest key can be popped off the head. If $key is `@` and
+::    .compare is +lte, then the numerically smallest item is the head.
+::
+::  WARNING: ordered-map will not work properly if two keys can be
+::  unequal under noun equality but equal via the compare gate
+::
+++  ordered-map
+  |*  [key=mold val=mold]
+  =>  |%
+      +$  item  (mk-item key val)
+      --
+  ::  +compare: item comparator for horizontal order
+  ::
+  |=  compare=$-([key key] ?)
+  |%
+  ::  +check-balance: verify horizontal and vertical orderings
+  ::
+  ++  check-balance
+    =|  [l=(unit key) r=(unit key)]
+    |=  a=(tree item)
+    ^-  ?
+    ::  empty tree is valid
+    ::
+    ?~  a  %.y
+    ::  nonempty trees must maintain several criteria
+    ::
+    ?&  ::  if .n.a is left of .u.l, assert horizontal comparator
+        ::
+        ?~(l %.y (compare key.n.a u.l))
+        ::  if .n.a is right of .u.r, assert horizontal comparator
+        ::
+        ?~(r %.y (compare u.r key.n.a))
+        ::  if .a is not leftmost element, assert vertical order between
+        ::  .l.a and .n.a and recurse to the left with .n.a as right
+        ::  neighbor
+        ::
+        ?~(l.a %.y &((mor key.n.a key.n.l.a) $(a l.a, l `key.n.a)))
+        ::  if .a is not rightmost element, assert vertical order
+        ::  between .r.a and .n.a and recurse to the right with .n.a as
+        ::  left neighbor
+        ::
+        ?~(r.a %.y &((mor key.n.a key.n.r.a) $(a r.a, r `key.n.a)))
+    ==
+  ::  +put: ordered item insert
+  ::
+  ++  put
+    |=  [a=(tree item) =key =val]
+    ^-  (tree item)
+    ::  base case: replace null with single-item tree
+    ::
+    ?~  a  [n=[key val] l=~ r=~]
+    ::  base case: overwrite existing .key with new .val
+    ::
+    ?:  =(key.n.a key)  a(val.n val)
+    ::  if item goes on left, recurse left then rebalance vertical order
+    ::
+    ?:  (compare key key.n.a)
+      =/  l  $(a l.a)
+      ?>  ?=(^ l)
+      ?:  (mor key.n.a key.n.l)
+        a(l l)
+      l(r a(l r.l))
+    ::  item goes on right; recurse right then rebalance vertical order
+    ::
+    =/  r  $(a r.a)
+    ?>  ?=(^ r)
+    ?:  (mor key.n.a key.n.r)
+      a(r r)
+    r(l a(r l.r))
+  ::  +peek: produce head (smallest item) or null
+  ::
+  ++  peek
+    |=  a=(tree item)
+    ^-  (unit item)
+    ::
+    ?~  a    ~
+    ?~  l.a  `n.a
+    $(a l.a)
+  ::
+  ::  +pop: produce .head (smallest item) and .rest or crash if empty
+  ::
+  ++  pop
+    |=  a=(tree item)
+    ^-  [head=item rest=(tree item)]
+    ::
+    ?~  a    !!
+    ?~  l.a  [n.a r.a]
+    ::
+    =/  l  $(a l.a)
+    :-  head.l
+    ::  load .rest.l back into .a and rebalance
+    ::
+    ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
+      a(l rest.l)
+    rest.l(r a(r r.rest.l))
+  ::  +del: delete .key from .a if it exists, producing value iff deleted
+  ::
+  ++  del
+    |=  [a=(tree item) =key]
+    ^-  [(unit val) (tree item)]
+    ::
+    ?~  a  [~ ~]
+    ::  we found .key at the root; delete and rebalance
+    ::
+    ?:  =(key key.n.a)
+      [`val.n.a (nip a)]
+    ::  recurse left or right to find .key
+    ::
+    ?:  (compare key key.n.a)
+      =+  [found lef]=$(a l.a)
+      [found a(l lef)]
+    =+  [found rig]=$(a r.a)
+    [found a(r rig)]
+  ::  +nip: remove root; for internal use
+  ::
+  ++  nip
+    |=  a=(tree item)
+    ^-  (tree item)
+    ::
+    ?>  ?=(^ a)
+    ::  delete .n.a; merge and balance .l.a and .r.a
+    ::
+    |-  ^-  (tree item)
+    ?~  l.a  r.a
+    ?~  r.a  l.a
+    ?:  (mor key.n.l.a key.n.r.a)
+      l.a(r $(l.a r.l.a))
+    r.a(l $(r.a l.r.a))
+  ::  +traverse: stateful partial inorder traversal
+  ::
+  ::    Mutates .state on each run of .f.  Starts at .start key, or if
+  ::    .start is ~, starts at the head (item with smallest key).  Stops
+  ::    when .f produces .stop=%.y.  Traverses from smaller to larger
+  ::    keys.  Each run of .f can replace an item's value or delete the
+  ::    item.
+  ::
+  ++  traverse
+    |*  state=mold
+    |=  $:  a=(tree item)
+            =state
+            f=$-([state item] [(unit val) ? state])
+        ==
+    ^+  [state a]
+    ::  acc: accumulator
+    ::
+    ::    .stop: set to %.y by .f when done traversing
+    ::    .state: threaded through each run of .f and produced by +abet
+    ::
+    =/  acc  [stop=`?`%.n state=state]
+    =<  abet  =<  main
+    |%
+    ++  abet  [state.acc a]
+    ::  +main: main recursive loop; performs a partial inorder traversal
+    ::
+    ++  main
+      ^+  .
+      ::  stop if empty or we've been told to stop
+      ::
+      ?~  a  .
+      ?:  stop.acc  .
+      ::  inorder traversal: left -> node -> right, until .f sets .stop
+      ::
+      =>  left
+      ?:  stop.acc  .
+      =>  node
+      ?:  stop.acc  .
+      right
+    ::  +node: run .f on .n.a, updating .a, .state, and .stop
+    ::
+    ++  node
+      ^+  .
+      ::  run .f on node, updating .stop.acc and .state.acc
+      ::
+      =^  res  acc
+        ?>  ?=(^ a)
+        (f state.acc n.a)
+      ::  apply update to .a from .f's product
+      ::
+      =.  a
+        ::  if .f requested node deletion, merge and balance .l.a and .r.a
+        ::
+        ?~  res  (nip a)
+        ::  we kept the node; replace its .val; order is unchanged
+        ::
+        ?>  ?=(^ a)
+        a(val.n u.res)
+      ::
+      ..node
+    ::  +left: recurse on left subtree, copying mutant back into .l.a
+    ::
+    ++  left
+      ^+  .
+      ?~  a  .
+      =/  lef  main(a l.a)
+      lef(a a(l a.lef))
+    ::  +right: recurse on right subtree, copying mutant back into .r.a
+    ::
+    ++  right
+      ^+  .
+      ?~  a  .
+      =/  rig  main(a r.a)
+      rig(a a(r a.rig))
+    --
+  ::  +tap: convert to list, smallest to largest
+  ::
+  ++  tap
+    |=  a=(tree item)
+    ^-  (list item)
+    ::
+    =|  b=(list item)
+    |-  ^+  b
+    ?~  a  b
+    ::
+    $(a l.a, b [n.a $(a r.a)])
+  ::  +gas: put a list of items
+  ::
+  ++  gas
+    |=  [a=(tree item) b=(list item)]
+    ^-  (tree item)
+    ::
+    ?~  b  a
+    $(b t.b, a (put a i.b))
+  ::  +uni: unify two ordered maps
+  ::
+  ::    .b takes precedence over .a if keys overlap.
+  ::
+  ++  uni
+    |=  [a=(tree item) b=(tree item)]
+    ^-  (tree item)
+    ::
+    ?~  b  a
+    ?~  a  b
+    ?:  =(key.n.a key.n.b)
+      ::
+      [n=n.b l=$(a l.a, b l.b) r=$(a r.a, b r.b)]
+    ::
+    ?:  (mor key.n.a key.n.b)
+      ::
+      ?:  (compare key.n.b key.n.a)
+        $(l.a $(a l.a, r.b ~), b r.b)
+      $(r.a $(a r.a, l.b ~), b l.b)
+    ::
+    ?:  (compare key.n.a key.n.b)
+      $(l.b $(b l.b, r.a ~), a r.a)
+    $(r.b $(b r.b, l.a ~), a l.a)
+  ::
+  ::  +get: get val at key or return ~
+  ::
+  ++  get
+    |=  [a=(tree item) b=key]
+    ^-  (unit val)
+    ?~  a  ~
+    ?:  =(b key.n.a)
+      `val.n.a
+    ?:  (compare b key.n.a)
+      $(a l.a)
+    $(a r.a)
+  ::
+  ::  +subset: take a range excluding start and/or end and all elements
+  ::  outside the range
+  ::
+  ++  subset
+    |=  $:  tre=(tree item)
+            start=(unit key)
+            end=(unit key)
+        ==
+    ^-  (tree item)
+    |^
+    ?:  ?&(?=(~ start) ?=(~ end))
+      tre
+    ?~  start
+      (del-span tre %end end)
+    ?~  end
+      (del-span tre %start start)
+    ?>  (compare u.start u.end)
+    =.  tre  (del-span tre %start start)
+    (del-span tre %end end)
+    ::
+    ++  del-span
+      |=  [a=(tree item) b=?(%start %end) c=(unit key)]
+      ^-  (tree item)
+      ?~  a  a
+      ?~  c  a
+      ?-  b
+          %start
+        ::  found key
+        ?:  =(key.n.a u.c)
+          (nip a(l ~))
+        ::  traverse to find key
+        ?:  (compare key.n.a u.c)
+          ::  found key to the left of start
+          $(a (nip a(l ~)))
+        ::  found key to the right of start
+        a(l $(a l.a))
+      ::
+          %end
+        ::  found key
+        ?:  =(u.c key.n.a)
+          (nip a(r ~))
+        ::  traverse to find key
+        ?:  (compare key.n.a u.c)
+          :: found key to the left of end
+          a(r $(a r.a))
+        :: found key to the right of end
+        $(a (nip a(r ~)))
+      ==
     --
   --
 ::                                                      ::

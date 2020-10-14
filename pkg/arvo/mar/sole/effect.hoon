@@ -43,6 +43,7 @@
 ::
 |_  sef/sole-effect
 ::
+++  grad  %noun
 ++  grab                                                ::  convert from
   |%
   ++  noun  sole-effect                                 ::  clam from %noun
@@ -50,6 +51,7 @@
 ++  grow
   =,  enjs
   |%
+  ++  noun  sef
   ++  json
     ^-  ^json
     ?+    -.sef

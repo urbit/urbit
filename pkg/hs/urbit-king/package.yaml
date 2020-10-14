@@ -1,5 +1,5 @@
 name: urbit-king
-version: 0.10.4
+version: 0.10.8
 license: MIT
 license-file: LICENSE
 
@@ -50,6 +50,8 @@ dependencies:
   - Glob
   - hashable
   - hashtables
+  - heap
+  - hexstring
   - http-client
   - http-client-tls
   - http-types
@@ -64,6 +66,7 @@ dependencies:
   - mtl
   - multimap
   - murmur3
+  - natpmp-static
   - network
   - optparse-applicative
   - para
@@ -72,6 +75,7 @@ dependencies:
   - primitive
   - process
   - QuickCheck
+  - racquire
   - random
   - regex-tdfa
   - regex-tdfa-text
@@ -88,18 +92,21 @@ dependencies:
   - tasty-th
   - template-haskell
   - terminal-progress-bar
-  - terminal-size
   - text
   - these
   - time
+  - tls
   - transformers
   - unix
   - unliftio
   - unliftio-core
   - unordered-containers
   - urbit-atom
-  - urbit-azimuth
+  - urbit-eventlog-lmdb
   - urbit-hob
+  - urbit-noun
+  - urbit-noun-core
+  - urbit-termsize
   - utf8-string
   - vector
   - wai
@@ -107,7 +114,6 @@ dependencies:
   - wai-websockets
   - warp
   - warp-tls
-  - web3
   - websockets
 
 default-extensions:

@@ -10,6 +10,45 @@
 +$  test-func  (trap tang)
 --
 |%
+++  run-test
+  ::  executes an individual test.
+  |=  [pax=path test=test-func]
+  ^-  [ok=? =tang]
+  =+  name=(spud pax)
+  =+  run=(mule test)
+  ?-  -.run
+    %|  :-  %|  ::  the stack is already flopped for output?
+        ;:  weld
+          p.run
+          `tang`[[%leaf (weld "CRASHED " name)] ~]
+        ==
+    %&  ?:  =(~ p.run)
+          &+[[%leaf (weld "OK      " name)] ~]
+        ::  Create a welded list of all failures indented.
+        :-  %|
+        %-  flop
+        ;:  weld
+          `tang`[[%leaf (weld "FAILED  " name)] ~]
+          ::TODO indent
+          :: %+  turn  p:run
+          ::   |=  {i/tape}
+          ::   ^-  tank
+          ::   [%leaf (weld "  " i)]
+          p.run
+        ==
+  ==
+::  +filter-tests-by-prefix
+::
+++  filter-tests-by-prefix
+  |=  [prefix=path tests=(list test)]
+  ^+  tests
+  ::
+  =/  prefix-length=@ud  (lent prefix)
+  ::
+  %+  skim  tests
+  ::
+  |=  [=path *]
+  =(prefix (scag prefix-length path))
 ::  +resolve-test-paths: add test names to file paths to form full identifiers
 ::
 ++  resolve-test-paths

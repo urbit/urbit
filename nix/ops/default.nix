@@ -31,15 +31,15 @@ let
     ship = "zod";
   };
 
+in
+
+rec {
+
   bus = import ./fakeship {
     inherit pkgs herb urbit arvo;
     pill = bootsolid;
     ship = "bus";
   };
-
-in
-
-rec {
 
   test = import ./test {
     inherit pkgs herb urbit;

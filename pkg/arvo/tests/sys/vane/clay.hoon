@@ -1,460 +1,169 @@
-/+  *test, test-ford-external
-::
-/=  clay-raw  /:  /===/sys/vane/clay  /!noun/
+/+  *test
+/=  clay-raw  /sys/vane/clay
+/*  hello-gen     %hoon  /gen/hello/hoon
+/*  strandio-lib  %hoon  /lib/strandio/hoon
+/*  strand-lib    %hoon  /lib/strand/hoon
+/*  spider-sur    %hoon  /sur/spider/hoon
 ::
 !:
 =,  format
 ::
-=/  test-pit=vase  !>(..zuse)
-=/  clay-gate  (clay-raw test-pit)
+=/  bud=vase  !>(..zuse)
+=/  clay-gate  (clay-raw bud)
+=/  fusion  fusion:clay-gate
 ::
 |%
-++  test-info  ^-  tang
-  =^  results0  clay-gate
-    %-  clay-call  :*
-      clay-gate
-      now=~1111.1.1
-      scry=*sley
-      call-args=[duct=~[/init] -:!>(*task:able:clay) [%init ~nul]]
-      expected-moves=~
+++  test-parse-pile  ^-  tang
+  %+  expect-eq
+    !>  ^-  pile:fusion
+        :*  ~  ~  ~  ~
+            tssg+[%dbug [/sur/foo/hoon [[1 1] [1 2]]] [%cnts ~[[%.y 1]] ~]]~
+        ==
+    !>  (parse-pile:(ford):fusion /sur/foo/hoon ".")
+::
+++  test-parse-multiline-faslus  ^-  tang
+  =/  src
+    """
+    ::                                                      ::  ::
+    ::::  /hoon/hood/app                                    ::  ::
+      ::                                                    ::  ::
+    /?    310                                               ::  zuse version
+    /-  *sole
+    /+  sole                                                ::  libraries
+        ::  XX these should really be separate apps, as
+        ::     none of them interact with each other in
+        ::     any fashion; however, to reduce boot-time
+        ::     complexity and work around the current
+        ::     non-functionality of end-to-end acknowledgments,
+        ::     they have been bundled into :hood
+        ::
+        ::  |command handlers
+    /+  hood-helm, hood-kiln, hood-drum, hood-write
+    ::                                                      ::  ::
+    .
+    """
+  %+  expect-eq
+    !>  ^-  pile:fusion
+        :*  sur=`(list taut:fusion)`[~ %sole]~
+            ^=  lib  ^-  (list taut:fusion)
+            :~  [`%sole %sole]
+                [`%hood-helm %hood-helm]
+                [`%hood-kiln %hood-kiln]
+                [`%hood-drum %hood-drum]
+                [`%hood-write %hood-write]
+            ==
+            raw=~  bar=~
+            hoon=tssg+[p:(need q:(tall:(vang & /app/hood/hoon) [17 1] "."))]~
+        ==
+    !>  (parse-pile:(ford):fusion /app/hood/hoon src)
+::
+++  test-cycle  ^-  tang
+  =/  source=@t
+    '''
+    /+  self
+    .
+    '''
+  =/  =ankh:clay
+    :-  fil=~
+    %-  ~(gas by *(map @tas ankh:clay))
+    :~  :+  %lib  fil=~
+        %-  ~(gas by *(map @tas ankh:clay))
+        :~  :+  %self  fil=~
+            %-  ~(gas by *(map @tas ankh:clay))
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(source)]  dir=~
+    ==  ==  ==
+  %-  expect-fail
+  |.
+  =/  ford
+    %:  ford:fusion
+      bud
+      ankh
+      deletes=~
+      changes=~
+      file-store=~
+      *ford-cache:fusion
     ==
-  ::
-  =^  results1  clay-gate
-    %-  clay-call-with-comparator  :*
-      clay-gate
-      now=~1111.1.1
-      scry=*sley
-      ^=  call-args
-        :+  duct=~[/info]  type=-:!>(*task:able:clay)
-        ^-  task:able:clay
-        :+  %info  %home
-        ^-  nori:clay
-        :-  %&
-        ^-  soba:clay
-        :~  [/file1/noun `miso:clay`[%ins [%noun %noun 'file1']]]
-            [/file2/noun `miso:clay`[%ins [%noun %noun 'file2']]]
-        ==
-      ^=  move-comparator
-        |=  moves=(list move:clay-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ^-  tang
-        ;:  weld
-        ::
-          ^-  tang
-          ::
-          =/  move=move:clay-gate                        i.moves
-          =/  =duct                                      p.move
-          =/  card=(wind note:clay-gate gift:able:clay)  q.move
-          ::
-          %+  weld
-            (expect-eq !>(~[/info]) !>(duct))
-          ::
-          ?.  ?=(%pass -.card)
-            [%leaf "bad move, not a %pass: {<move>}"]~
-          ::
-          =/  =wire  p.card
-          ::
-          %+  weld
-            (expect-eq !>(/commit/home/inserts) !>(wire))
-          ::
-          =/  note=note:clay-gate  q.card
-          ::
-          ?.  ?=([%f %build *] note)
-            [%leaf "bad move, not a %build: {<move>}"]~
-          ::
-          %+  weld
-            (expect-eq !>(%.n) !>(live.note))
-          ::
-          %-  expect-schematic:test-ford-external
-          :_  schematic.note
-          ^-  schematic:ford
-          :+  %pin  ~1111.1.1
-          :-  %list
-          :~  :-  [%$ %path -:!>(*path) /file1/noun]
-              :^  %cast  [~nul %home]  %noun
-              [%$ %noun %noun 'file1']
-          ::
-              :-  [%$ %path -:!>(*path) /file2/noun]
-              :^  %cast  [~nul %home]  %noun
-              [%$ %noun %noun 'file2']
-          ==
-    ==  ==
-  ::
-  ::  inserting
-  ::
-  =^  results2  clay-gate
-    %-  clay-take-with-comparator  :*
-      clay-gate
-      now=~1111.1.1
-      scry=*sley
-      ^=  take-args
-        :*  wire=/commit/home/inserts
-            duct=~[/info]
-            -:!>(*sign:clay-gate)
-            ^-  sign:clay-gate
-            :*  %f  %made  ~1111.1.1  %complete  %success  %list
-                ^-  (list build-result:ford)
-                :~  :+  %success
-                      [%success %$ %path -:!>(*path) /file1/noun]
-                    [%success %cast %noun %noun 'file1']
-                ::
-                    :+  %success
-                      [%success %$ %path -:!>(*path) /file2/noun]
-                    [%success %cast %noun %noun 'file2']
-        ==  ==  ==
-      ^=  comparator
-        |=  moves=(list move:clay-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        %+  expect-eq
-          !>  ^-  move:clay-gate
-              :-  duct=~[/info]
-              ^-  (wind note:clay-gate gift:able:clay)
-              :+  %pass  /commit/home/diffs
-              ^-  note:clay-gate
-              :-  %f
-              [%build live=%.n [%pin ~1111.1.1 [%list ~]]]
-          !>  i.moves
-    ==  ::  ==
-  ::
-  ::  diffing
-  ::
-  =^  results3  clay-gate
-    %-  clay-take-with-comparator  :*
-      clay-gate
-      now=~1111.1.1
-      scry=*sley
-      ^=  take-args
-        :*  wire=/commit/home/diffs
-            duct=~[/info]
-            -:!>(*sign:clay-gate)
-            ^-  sign:clay-gate
-            [%f %made ~1111.1.1 %complete %success %list ~]
-        ==
-      ^=  move-comparator
-        |=  moves=(list move:clay-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        %+  expect-eq
-          !>  ^-  move:clay-gate
-              :-  duct=~[/info]
-              ^-  (wind note:clay-gate gift:able:clay)
-              :+  %pass  /commit/home/casts
-              ^-  note:clay-gate
-              :-  %f
-              [%build live=%.n [%pin ~1111.1.1 [%list ~]]]
-          !>  i.moves
+  (build-file:ford /lib/self/hoon)
+::
+++  test-parse-fail  ^-  tang
+  %-  expect-fail
+  |.  (parse-pile:(ford):fusion /sur/foo/hoon "[")
+::
+++  test-hello-gen  ^-  tang
+  =/  =ankh:clay
+    :-  fil=~
+    %-  ~(gas by *(map @tas ankh:clay))
+    :~  :+  %gen  fil=~
+        %-  ~(gas by *(map @tas ankh:clay))
+        :~  :+  %hello  fil=~
+            %-  ~(gas by *(map @tas ankh:clay))
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(hello-gen)]  dir=~
+    ==  ==  ==
+  =/  ford
+    %:  ford:fusion
+      bud
+      ankh
+      deletes=~
+      changes=(my [/gen/hello/hoon &+hoon+hello-gen]~)
+      file-store=~
+      *ford-cache:fusion
     ==
+  =/  [res=vase nub=state:ford:fusion]  (build-file:ford /gen/hello/hoon)
+  ;:  weld
+    %+  expect-eq
+      !>  noun+'hello, bob'
+      (slap res (ream '(+ [*^ [%bob ~] ~])'))
   ::
-  ::  castifying
-  ::
-  =^  results4  clay-gate
-    %-  clay-take-with-comparator  :*
-      clay-gate
-      now=~1111.1.1
-      scry=*sley
-      ^=  take-args
-        :*  wire=/commit/home/casts
-            duct=~[/info]
-            -:!>(*sign:clay-gate)
-            ^-  sign:clay-gate
-            [%f %made ~1111.1.1 %complete %success %list ~]
-        ==
-      ^=  comparator
-        |=  moves=(list move:clay-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        =/  move=move:clay-gate                        i.moves
-        =/  =duct                                      p.move
-        =/  card=(wind note:clay-gate gift:able:clay)  q.move
-        ::
-        %+  weld
-          (expect-eq !>(~[/info]) !>(duct))
-        ::
-        ?.  ?=(%pass -.card)
-          [%leaf "bad move, not a %pass: {<move>}"]~
-        ::
-        =/  =wire  p.card
-        ::
-        %+  weld
-          (expect-eq !>(/commit/home/mutates) !>(wire))
-        ::
-        =/  note=note:clay-gate  q.card
-        ::
-        ?.  ?=([%f %build *] note)
-          [%leaf "bad move, not a %build: {<move>}"]~
-        ::
-        %+  weld
-          (expect-eq !>(%.n) !>(live.note))
-        ::
-        %-  expect-schematic:test-ford-external
-        :_  schematic.note
-        ^-  schematic:ford
-        [%pin ~1111.1.1 %list ~]
-    ==
-  ::
-  ::  mutating
-  ::
-  =^  results5  clay-gate
-    %-  clay-take-with-comparator  :*
-      clay-gate
-      now=~1111.1.1
-      scry=*sley
-      ^=  take-args
-        :*  wire=/commit/home/mutates
-            duct=~[/info]
-            -:!>(*sign:clay-gate)
-            ^-  sign:clay-gate
-            [%f %made ~1111.1.1 %complete %success %list ~]
-        ==
-      ^=  comparator
-        |=  moves=(list move:clay-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        =/  move=move:clay-gate                        i.moves
-        =/  =duct                                      p.move
-        =/  card=(wind note:clay-gate gift:able:clay)  q.move
-        ::
-        %+  weld
-          (expect-eq !>(~[/info]) !>(duct))
-        ::
-        ?.  ?=(%pass -.card)
-          [%leaf "bad move, not a %pass: {<move>}"]~
-        ::
-        =/  =wire  p.card
-        ::
-        %+  weld
-          (expect-eq !>(/commit/home/checkout) !>(wire))
-        ::
-        =/  note=note:clay-gate  q.card
-        ::
-        ?.  ?=([%f %build *] note)
-          [%leaf "bad move, not a %build: {<move>}"]~
-        ::
-        %+  weld
-          (expect-eq !>(%.n) !>(live.note))
-        ::
-        %-  expect-schematic:test-ford-external
-        :_  schematic.note
-        ^-  schematic:ford
-        :-  %list
-        ^-  (list schematic:ford)
-        :~  :-  :^  %$  %path-hash  -:!>([*path *@uvI])
-                :-  /file1/noun
-                0v1u.egg7f.h1o7a.22g2g.torgm.2kcfj.k8b3s.n5hlf.57i21.5m1nn.bhob7
-            ::
-            [%volt [~nul %home] %noun 'file1']
-        ::
-            :-  :^  %$  %path-hash  -:!>([*path *@uvI])
-                :-  /file2/noun
-                0vj.5f6kr.5o1of.dubnd.6k5a7.jprgp.8ifgp.0ljbi.dqau7.7c0q0.fj144
-            ::
-            [%volt [~nul %home] %noun 'file2']
-    ==  ==
-  ::
-  ::  patching
-  ::
-  =^  results6  clay-gate
-    %-  clay-take  :*
-      clay-gate
-      now=~1111.1.1
-      scry=*sley
-      ^=  take-args
-        :*  wire=/commit/home/checkout
-            duct=~[/info]
-            -:!>(*sign:clay-gate)
-            ^-  sign:clay-gate
-            :*  %f  %made  ~1111.1.1  %complete  %success  %list
-                ^-  (list build-result:ford)
-                :~  :+  %success
-                      :*  %success  %$  %path-hash  -:!>([*path *@uvI])
-                          /file1/noun
-                          0v1u.egg7f.h1o7a.22g2g.torgm.2kcfj.
-                          k8b3s.n5hlf.57i21.5m1nn.bhob7
-                      ==
-                    [%success %volt %noun %noun 'file1']
-                ::
-                    :+  %success
-                      :*  %success  %$  %path-hash  -:!>([*path *@uvI])
-                          /file2/noun
-                          0vj.5f6kr.5o1of.dubnd.6k5a7.jprgp.
-                          8ifgp.0ljbi.dqau7.7c0q0.fj144
-                      ==
-                    [%success %volt %noun %noun 'file2']
-        ==  ==  ==
-      ^=  expected-moves
-        :~  :*  duct=~[/init]  %give  %note  '+'  %rose  ["/" "/" ~]
-                :~  [%leaf "~nul"]
-                    [%leaf "home"]
-                    [%leaf "1"]
-                    [%leaf "file1"]
-                    [%leaf "noun"]
-            ==  ==
-        ::
-            :*  duct=~[/init]  %give  %note  '+'  %rose  ["/" "/" ~]
-                :~  [%leaf "~nul"]
-                    [%leaf "home"]
-                    [%leaf "1"]
-                    [%leaf "file2"]
-                    [%leaf "noun"]
-    ==  ==  ==  ==
-  ::  make a second write request during the same arvo event
-  ::
-  ::    This should produce a Behn timer at `now` to run the write
-  ::    request.
-  ::
-  =^  results7  clay-gate
-    %-  clay-call-with-comparator  :*
-      clay-gate
-      now=~1111.1.1
-      scry=*sley
-      ^=  call-args
-        :+  duct=~[/info2]  type=-:!>(*task:able:clay)
-        ^-  task:able:clay
-        :+  %info  %home
-        ^-  nori:clay
-        :-  %&
-        ^-  soba:clay
-        :~  [/file3/noun `miso:clay`[%ins [%noun %noun 'file3']]]
-            [/file4/noun `miso:clay`[%ins [%noun %noun 'file4']]]
-        ==
-      ^=  comparator
-        |=  moves=(list move:clay-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* ~] moves)
-          [%leaf "wrong number of moves: {<moves>}"]~
-        ::
-        =/  move=move:clay-gate                        i.moves
-        =/  =duct                                      p.move
-        =/  card=(wind note:clay-gate gift:able:clay)  q.move
-        ::
-        %+  weld
-          (expect-eq !>(~[/info2]) !>(duct))
-        ::
-        ?.  ?=(%pass -.card)
-          [%leaf "bad move, not a %pass: {<move>}"]~
-        ::
-        =/  =wire  p.card
-        ::
-        %+  weld
-          (expect-eq !>(/queued-request) !>(wire))
-        ::
-        =/  note=note:clay-gate  q.card
-        ::
-        ?.  ?=([%b %wait *] note)
-          [%leaf "bad move, not a %wait: {<move>}"]~
-        ::
-        (expect-eq !>(~1111.1.1) !>(p.note))
-    ==
-  ::
-  =^  results8  clay-gate
-    %-  clay-take-with-comparator  :*
-      clay-gate
-      now=~2222.2.2
-      scry=*sley
-      ^=  take-args
-        :*  wire=/queued-request
-            duct=~[/info2]
-            -:!>(*sign:clay-gate)
-            ^-  sign:clay-gate
-            [%b %wake ~]
-        ==
-      ^=  comparator
-        |=  moves=(list move:clay-gate)
-        ^-  tang
-        ::
-        ?.  ?=([* * * ~] moves)
-          [%leaf "wrong number of moves: {<(lent moves)>}"]~
-        ::
-        ^-  tang
-        ;:  weld
-          %+  expect-eq
-            !>  ^-  move:clay-gate
-                :-  duct=~[/info2]
-                ^-  (wind note:clay-gate gift:able:clay)
-                :+  %pass  /castifying/~nul/home/~2222.2.2
-                ^-  note:clay-gate
-                :-  %f
-                [%build live=%.n [%pin ~2222.2.2 [%list ~]]]
-            !>  i.moves
-        ::
-          %+  expect-eq
-            !>  ^-  move:clay-gate
-                :-  duct=~[/info2]
-                ^-  (wind note:clay-gate gift:able:clay)
-                :+  %pass  /diffing/~nul/home/~2222.2.2
-                ^-  note:clay-gate
-                :-  %f
-                [%build live=%.n [%pin ~2222.2.2 [%list ~]]]
-            !>  i.t.moves
-        ::
-          ^-  tang
-          ::
-          =/  move=move:clay-gate                        i.t.t.moves
-          =/  =duct                                      p.move
-          =/  card=(wind note:clay-gate gift:able:clay)  q.move
-          ::
-          %+  weld
-            (expect-eq !>(~[/info2]) !>(duct))
-          ::
-          ?.  ?=(%pass -.card)
-            [%leaf "bad move, not a %pass: {<move>}"]~
-          ::
-          =/  =wire  p.card
-          ::
-          %+  weld
-            (expect-eq !>(/inserting/~nul/home/~2222.2.2) !>(wire))
-          ::
-          =/  note=note:clay-gate  q.card
-          ::
-          ?.  ?=([%f %build *] note)
-            [%leaf "bad move, not a %build: {<move>}"]~
-          ::
-          %+  weld
-            (expect-eq !>(%.n) !>(live.note))
-          ::
-          %-  expect-schematic:test-ford-external
-          :_  schematic.note
-          ^-  schematic:ford
-          :+  %pin  ~2222.2.2
-          :-  %list
-          :~  :-  [%$ %path -:!>(*path) /file3/noun]
-              :^  %cast  [~nul %home]  %noun
-              [%$ %noun %noun 'file3']
-          ::
-              :-  [%$ %path -:!>(*path) /file4/noun]
-              :^  %cast  [~nul %home]  %noun
-              [%$ %noun %noun 'file4']
-          ==
-    ==  ==
-  ::
-  ;:  welp
-    results0
-    results1
-    results2
-    results3
-    results4
-    results5
-    results6
-    results7
+    %+  expect-eq
+      !>  (~(gas in *(set path)) /gen/hello/hoon ~)
+      !>  dez:(~(got by vases.cache.nub) /gen/hello/hoon)
   ==
+::
+++  test-strandio-lib  ^-  tang
+  =/  =ankh:clay
+    :-  fil=~
+    %-  ~(gas by *(map @tas ankh:clay))
+    :~  :+  %lib  fil=~
+        %-  ~(gas by *(map @tas ankh:clay))
+        :~  :+  %strandio  fil=~
+            %-  ~(gas by *(map @tas ankh:clay))
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(strandio-lib)]  dir=~
+            ==
+        ::
+            :+  %strand  fil=~
+            %-  ~(gas by *(map @tas ankh:clay))
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(strand-lib)]  dir=~
+        ==  ==
+    ::
+        :+  %sur  fil=~
+        %-  ~(gas by *(map @tas ankh:clay))
+        :~  :+  %spider  fil=~
+            %-  ~(gas by *(map @tas ankh:clay))
+            :~  :+  %hoon  fil=`[*lobe:clay hoon+!>(spider-sur)]  dir=~
+    ==  ==  ==
+  =/  ford
+    %:  ford:fusion
+      bud
+      ankh
+      deletes=~
+      changes=~
+      file-store=~
+      *ford-cache:fusion
+    ==
+  =/  [res=vase nub=state:ford:fusion]  (build-file:ford /lib/strandio/hoon)
+  ;:  weld
+    %-  expect
+    !>((slab %read %get-our -.res))
+  ::
+    %+  expect-eq
+      !>  %-  ~(gas in *(set path))
+          :~  /lib/strandio/hoon
+              /lib/strand/hoon
+              /sur/spider/hoon
+          ==
+      !>  dez:(~(got by vases.cache.nub) /lib/strandio/hoon)
+  ==
+::
 ::  |utilities: helper functions for testing
 ::
 ::    TODO: make these utilities generic for any vane

@@ -1,9 +1,14 @@
 /-  *link-view
 =,  dejs:format
-|_  act=view-action
+|_  act=action
+++  grad  %noun
+++  grow
+  |%
+  ++  noun  act
+  --
 ++  grab
   |%
-  ++  noun  view-action
+  ++  noun  action
   ++  json
     |^  %-  of
         :~  %create^create
@@ -33,10 +38,5 @@
     ++  ships
       (cu sy (ar (su ;~(pfix sig fed:ag))))
     --
-  --
-::
-++  grow
-  |%
-  ++  noun  act
   --
 --

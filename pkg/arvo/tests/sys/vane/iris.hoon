@@ -1,6 +1,5 @@
 /+  *test
-::
-/=  http-client-raw  /:  /===/sys/vane/iris  /!noun/
+/=  http-client-raw  /sys/vane/iris
 ::
 !:
 ::

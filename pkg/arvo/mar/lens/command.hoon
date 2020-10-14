@@ -1,5 +1,10 @@
 /-  lens
 |_  com/command:lens
+++  grad  %noun
+++  grow
+  |%
+  ++  noun  com
+  --
 ++  grab
   |%
   ++  noun  command:lens

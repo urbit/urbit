@@ -1,5 +1,25 @@
-{-|
-    King Haskell Entry Point
+{- |
+  # Signal Handling (SIGTERM, SIGINT)
+
+  We handle SIGTERM by causing the main thread to raise a `UserInterrupt`
+  exception. This is the same behavior as SIGINT (the signal sent upon
+  `CTRL-C`).
+
+  The main thread is therefore responsible for handling this exception
+  and causing everything to shut down properly.
+
+  # Crashing and Shutting Down
+
+  Rule number one: The King never crashes.
+
+  This rule is asperational at the moment, but it needs to become as
+  close to truth as possible. Shut down ships in extreme cases, but
+  never let the king go down.
+-}
+
+{-
+    TODO These some old scribbled notes. They don't belong here
+    anymore. Do something about it.
 
     # Event Pruning
 
@@ -62,18 +82,20 @@ import Urbit.Arvo
 import Urbit.King.Config
 import Urbit.Vere.Dawn
 import Urbit.Vere.Pier
+import Urbit.Vere.Ports
+import Urbit.Vere.Eyre.Multi (multiEyre, MultiEyreConf(..))
 import Urbit.Vere.Pier.Types
 import Urbit.Vere.Serf
+import Urbit.King.App
 
 import Control.Concurrent     (myThreadId)
 import Control.Exception      (AsyncException(UserInterrupt))
 import Control.Lens           ((&))
 import System.Process         (system)
+import System.IO              (hPutStrLn)
 import Text.Show.Pretty       (pPrint)
-import Urbit.King.App         (runApp, runAppLogFile, runAppNoLog, runPierApp)
-import Urbit.King.App         (HasConfigDir(..), HasStderrLogFunc(..))
 import Urbit.Noun.Conversions (cordToUW)
-import Urbit.Time             (Wen)
+import Urbit.Noun.Time        (Wen)
 import Urbit.Vere.LockFile    (lockFile)
 
 import qualified Data.Set                as Set
@@ -82,18 +104,14 @@ import qualified Network.HTTP.Client     as C
 import qualified System.Posix.Signals    as Sys
 import qualified System.ProgressBar      as PB
 import qualified System.Random           as Sys
+import qualified Urbit.EventLog.LMDB     as Log
 import qualified Urbit.King.CLI          as CLI
 import qualified Urbit.King.EventBrowser as EventBrowser
 import qualified Urbit.Ob                as Ob
-import qualified Urbit.Vere.Log          as Log
 import qualified Urbit.Vere.Pier         as Pier
 import qualified Urbit.Vere.Serf         as Serf
 import qualified Urbit.Vere.Term         as Term
 
---------------------------------------------------------------------------------
-
-zod :: Ship
-zod = 0
 
 --------------------------------------------------------------------------------
 
@@ -103,28 +121,33 @@ removeFileIfExists pax = do
   when exists $ do
       removeFile pax
 
---------------------------------------------------------------------------------
 
-toSerfFlags :: CLI.Opts -> Serf.Flags
+-- Compile CLI Flags to Pier Configuration -------------------------------------
+
+{-
+  TODO: This is not all of the flags.
+  Urbit is basically useless with hashboard, so we ignore that flag.
+-}
+toSerfFlags :: CLI.Opts -> [Serf.Flag]
 toSerfFlags CLI.Opts{..} = catMaybes m
   where
-    -- TODO: This is not all the flags.
-    m = [ from oQuiet Serf.Quiet
-        , from oTrace Serf.Trace
-        , from oHashless Serf.Hashless
-        , from oQuiet Serf.Quiet
-        , from oVerbose Serf.Verbose
-        , from (oDryRun || isJust oDryFrom) Serf.DryRun
+    m = [ setFrom oQuiet Serf.Quiet
+        , setFrom oTrace Serf.Trace
+        , setFrom (oHashless || True) Serf.Hashless
+        , setFrom oQuiet Serf.Quiet
+        , setFrom oVerbose Serf.Verbose
+        , setFrom (oDryRun || isJust oDryFrom) Serf.DryRun
         ]
-    from True flag = Just flag
-    from False _   = Nothing
+    setFrom True flag = Just flag
+    setFrom False _   = Nothing
 
-
-toPierConfig :: FilePath -> CLI.Opts -> PierConfig
-toPierConfig pierPath CLI.Opts {..} = PierConfig { .. }
+toPierConfig :: FilePath -> Maybe Text -> CLI.Opts -> PierConfig
+toPierConfig pierPath serfExe o@(CLI.Opts{..}) = PierConfig { .. }
  where
-  _pcPierPath = pierPath
-  _pcDryRun   = oDryRun || isJust oDryFrom
+  _pcPierPath  = pierPath
+  _pcDryRun    = oDryRun || isJust oDryFrom
+  _pcSerfExe   = serfExe
+  _pcSerfFlags = toSerfFlags o
 
 toNetworkConfig :: CLI.Opts -> NetworkConfig
 toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
@@ -143,157 +166,185 @@ toNetworkConfig CLI.Opts {..} = NetworkConfig { .. }
   _ncHttpPort  = oHttpPort
   _ncHttpsPort = oHttpsPort
   _ncLocalPort = oLoopbackPort
+  _ncNoAmes    = oNoAmes
+  _ncNoHttp    = oNoHttp
+  _ncNoHttps   = oNoHttps
 
-tryBootFromPill :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
-                   , HasConfigDir e, HasStderrLogFunc e
-                   )
-                => Bool -> Pill -> Bool -> Serf.Flags -> Ship
-                -> LegacyBootEvent
-                -> RIO e ()
-tryBootFromPill oExit pill lite flags ship boot = do
-    mStart <- newEmptyMVar
-    runOrExitImmediately bootedPier oExit mStart
-  where
-    bootedPier = do
-        view pierPathL >>= lockFile
-        rio $ logTrace "Starting boot"
-        sls <- Pier.booted pill lite flags ship boot
-        rio $ logTrace "Completed boot"
-        pure sls
+logStderr :: HasStderrLogFunc e => RIO LogFunc a -> RIO e a
+logStderr action = do
+  logFunc <- view stderrLogFuncL
+  runRIO logFunc action
 
-runOrExitImmediately :: ( HasLogFunc e, HasNetworkConfig e, HasPierConfig e
-                        , HasConfigDir e
-                        )
-                     => RAcquire e (Serf e, Log.EventLog, SerfState)
-                     -> Bool
-                     -> MVar ()
-                     -> RIO e ()
-runOrExitImmediately getPier oExit mStart =
-    rwith getPier $ if oExit then shutdownImmediately else runPier
-  where
-    shutdownImmediately (serf, log, ss) = do
-        logTrace "Sending shutdown signal"
-        logTrace $ displayShow ss
+logSlogs :: HasStderrLogFunc e => RIO e (TVar ((Atom, Tank) -> IO ()))
+logSlogs = logStderr $ do
+  env <- ask
+  newTVarIO (runRIO env . logOther "serf" . display . T.strip . tankToText . snd)
 
-        -- Why is this here? Do I need to force a snapshot to happen?
-        io $ threadDelay 500000
+tryBootFromPill
+  :: Bool
+  -> Pill
+  -> Bool
+  -> Ship
+  -> LegacyBootEvent
+  -> RIO PierEnv ()
+tryBootFromPill oExit pill lite ship boot = do
+  mStart <- newEmptyMVar
+  vSlog  <- logSlogs
+  runOrExitImmediately vSlog (bootedPier vSlog) oExit mStart
+ where
+  bootedPier vSlog = do
+    view pierPathL >>= lockFile
+    rio $ logInfo "Starting boot"
+    sls <- Pier.booted vSlog pill lite ship boot
+    rio $ logInfo "Completed boot"
+    pure sls
 
-        ss <- shutdown serf 0
-        logTrace $ displayShow ss
-        logTrace "Shutdown!"
+runOrExitImmediately
+  :: TVar ((Atom, Tank) -> IO ())
+  -> RAcquire PierEnv (Serf, Log.EventLog)
+  -> Bool
+  -> MVar ()
+  -> RIO PierEnv ()
+runOrExitImmediately vSlog getPier oExit mStart = do
+  rwith getPier (if oExit then shutdownImmediately else runPier)
+ where
+  shutdownImmediately :: (Serf, Log.EventLog) -> RIO PierEnv ()
+  shutdownImmediately (serf, log) = do
+    logInfo "Sending shutdown signal"
+    Serf.stop serf
+    logInfo "Shutdown!"
 
-    runPier sls = do
-        runRAcquire $ Pier.pier sls mStart
+  runPier :: (Serf, Log.EventLog) -> RIO PierEnv ()
+  runPier serfLog = do
+    runRAcquire (Pier.pier serfLog vSlog mStart)
 
-tryPlayShip :: ( HasStderrLogFunc e, HasLogFunc e, HasNetworkConfig e
-               , HasPierConfig e, HasConfigDir e
-               )
-            => Bool -> Bool -> Maybe Word64 -> Serf.Flags -> MVar () -> RIO e ()
-tryPlayShip exitImmediately fullReplay playFrom flags mStart = do
-    when fullReplay wipeSnapshot
-    runOrExitImmediately resumeShip exitImmediately mStart
-  where
-    wipeSnapshot = do
-        shipPath <- view pierPathL
-        logTrace "wipeSnapshot"
-        logDebug $ display $ pack @Text ("Wiping " <> north shipPath)
-        logDebug $ display $ pack @Text ("Wiping " <> south shipPath)
-        removeFileIfExists (north shipPath)
-        removeFileIfExists (south shipPath)
+tryPlayShip
+  :: Bool
+  -> Bool
+  -> Maybe Word64
+  -> MVar ()
+  -> RIO PierEnv ()
+tryPlayShip exitImmediately fullReplay playFrom mStart = do
+  when fullReplay wipeSnapshot
+  vSlog <- logSlogs
+  runOrExitImmediately vSlog (resumeShip vSlog) exitImmediately mStart
+ where
+  wipeSnapshot = do
+    shipPath <- view pierPathL
+    logInfo "wipeSnapshot"
+    logInfo $ display $ pack @Text ("Wiping " <> north shipPath)
+    logInfo $ display $ pack @Text ("Wiping " <> south shipPath)
+    removeFileIfExists (north shipPath)
+    removeFileIfExists (south shipPath)
 
-    north shipPath = shipPath <> "/.urb/chk/north.bin"
-    south shipPath = shipPath <> "/.urb/chk/south.bin"
+  north shipPath = shipPath <> "/.urb/chk/north.bin"
+  south shipPath = shipPath <> "/.urb/chk/south.bin"
 
-    resumeShip = do
-        view pierPathL >>= lockFile
-        rio $ logTrace "RESUMING SHIP"
-        sls <- Pier.resumed playFrom flags
-        rio $ logTrace "SHIP RESUMED"
-        pure sls
+  resumeShip :: TVar ((Atom, Tank) -> IO ())
+             -> RAcquire PierEnv (Serf, Log.EventLog)
+  resumeShip vSlog = do
+    view pierPathL >>= lockFile
+    rio $ logInfo "RESUMING SHIP"
+    sls <- Pier.resumed vSlog playFrom
+    rio $ logInfo "SHIP RESUMED"
+    pure sls
 
 runRAcquire :: (MonadUnliftIO (m e),  MonadIO (m e), MonadReader e (m e))
             => RAcquire e a -> m e a
 runRAcquire act = rwith act pure
 
+
 --------------------------------------------------------------------------------
 
-checkEvs :: forall e. HasLogFunc e => FilePath -> Word64 -> Word64 -> RIO e ()
+checkEvs :: FilePath -> Word64 -> Word64 -> RIO KingEnv ()
 checkEvs pierPath first last = do
-    rwith (Log.existing logPath) $ \log -> do
-        let ident = Log.identity log
-        let pbSty = PB.defStyle { PB.stylePostfix = PB.exact }
-        logTrace (displayShow ident)
+  rwith (Log.existing logPath) $ \log -> do
+    let ident = Log.identity log
+    let pbSty = PB.defStyle { PB.stylePostfix = PB.exact }
+    logInfo (displayShow ident)
 
-        last <- Log.lastEv log <&> \lastReal -> min last lastReal
+    last <- atomically $ Log.lastEv log <&> \lastReal -> min last lastReal
 
-        let evCount = fromIntegral (last - first)
+    let evCount = fromIntegral (last - first)
 
-        pb <- PB.newProgressBar pbSty 10 (PB.Progress 1 evCount ())
+    pb <- PB.newProgressBar pbSty 10 (PB.Progress 1 evCount ())
 
-        runConduit $ Log.streamEvents log first
-                  .| showEvents pb first (fromIntegral $ lifecycleLen ident)
-  where
-    logPath :: FilePath
-    logPath = pierPath <> "/.urb/log"
+    runConduit $ Log.streamEvents log first .| showEvents
+      pb
+      first
+      (fromIntegral $ lifecycleLen ident)
+ where
+  logPath :: FilePath
+  logPath = pierPath <> "/.urb/log"
 
-    showEvents :: PB.ProgressBar () -> EventId -> EventId
-               -> ConduitT ByteString Void (RIO e) ()
-    showEvents pb eId _ | eId > last = pure ()
-    showEvents pb eId cycle          = await >>= \case
-        Nothing -> do
-            lift $ PB.killProgressBar pb
-            lift $ logTrace "Everything checks out."
-        Just bs -> do
-            lift $ PB.incProgress pb 1
-            lift $ do
-                n <- io $ cueBSExn bs
-                when (eId > cycle) $ do
-                    (mug, wen, evNoun) <- unpackJob n
-                    fromNounErr evNoun & \case
-                        Left err       -> logError (displayShow (eId, err))
-                        Right (_ ∷ Ev) -> pure ()
-            showEvents pb (succ eId) cycle
+  showEvents
+    :: PB.ProgressBar ()
+    -> EventId
+    -> EventId
+    -> ConduitT ByteString Void (RIO KingEnv) ()
+  showEvents pb eId _ | eId > last = pure ()
+  showEvents pb eId cycle          = await >>= \case
+    Nothing -> do
+      lift $ PB.killProgressBar pb
+      lift $ logInfo "Everything checks out."
+    Just bs -> do
+      lift $ PB.incProgress pb 1
+      lift $ do
+        n <- io $ cueBSExn bs
+        when (eId > cycle) $ do
+          (mug, wen, evNoun) <- unpackJob n
+          fromNounErr evNoun & \case
+            Left  err       -> logError (displayShow (eId, err))
+            Right (_ :: Ev) -> pure ()
+      showEvents pb (succ eId) cycle
 
-    unpackJob :: Noun -> RIO e (Mug, Wen, Noun)
-    unpackJob = io . fromNounExn
+  unpackJob :: Noun -> RIO KingEnv (Mug, Wen, Noun)
+  unpackJob = io . fromNounExn
+
 
 --------------------------------------------------------------------------------
 
+collectAllFx :: FilePath -> RIO KingEnv ()
+collectAllFx = error "TODO"
+
+{-
 {-|
     This runs the serf at `$top/.tmpdir`, but we disable snapshots,
     so this should never actually be created. We just do this to avoid
     letting the serf use an existing snapshot.
 -}
-collectAllFx :: ∀e. HasLogFunc e => FilePath -> RIO e ()
+collectAllFx :: FilePath -> RIO KingEnv ()
 collectAllFx top = do
-    logTrace $ display $ pack @Text top
-    rwith collectedFX $ \() ->
-        logTrace "Done collecting effects!"
+    logInfo $ display $ pack @Text top
+    vSlog <- logSlogs
+    rwith (collectedFX vSlog) $ \() ->
+        logInfo "Done collecting effects!"
   where
     tmpDir :: FilePath
     tmpDir = top </> ".tmpdir"
 
-    collectedFX :: RAcquire e ()
-    collectedFX = do
+    collectedFX :: TVar (Text -> IO ()) -> RAcquire KingEnv ()
+    collectedFX vSlog = do
         lockFile top
         log  <- Log.existing (top <> "/.urb/log")
-        serf <- Serf.run (Serf.Config tmpDir serfFlags)
+        serf <- Pier.runSerf vSlog tmpDir serfFlags
         rio $ Serf.collectFX serf log
 
-    serfFlags :: Serf.Flags
+    serfFlags :: [Serf.Flag]
     serfFlags = [Serf.Hashless, Serf.DryRun]
+-}
+
 
 --------------------------------------------------------------------------------
 
-replayPartEvs :: ∀e. (HasStderrLogFunc e, HasLogFunc e)
-              => FilePath -> Word64 -> RIO e ()
+replayPartEvs :: FilePath -> Word64 -> RIO KingEnv ()
 replayPartEvs top last = do
-    logTrace $ display $ pack @Text top
+    logInfo $ display $ pack @Text top
     fetchSnapshot
     rwith replayedEvs $ \() ->
-        logTrace "Done replaying events!"
+        logInfo "Done replaying events!"
   where
-    fetchSnapshot :: RIO e ()
+    fetchSnapshot :: RIO KingEnv ()
     fetchSnapshot = do
       snap <- Pier.getSnapshot top last
       case snap of
@@ -305,19 +356,27 @@ replayPartEvs top last = do
     tmpDir :: FilePath
     tmpDir = top </> ".partial-replay" </> show last
 
-    replayedEvs :: RAcquire e ()
+    replayedEvs :: RAcquire KingEnv ()
     replayedEvs = do
         lockFile top
         log  <- Log.existing (top <> "/.urb/log")
-        serf <- Serf.run (Serf.Config tmpDir serfFlags)
+        let onSlog = print
+        let onStdr = print
+        let onDead = error "DIED"
+        let config = Serf.Config "urbit-worker" tmpDir serfFlags onSlog onStdr onDead
+        (serf, info) <- io (Serf.start config)
         rio $ do
-          ss <- Serf.replay serf log $ Just last
-          Serf.snapshot serf ss
+          eSs <- Serf.execReplay serf log (Just last)
+          case eSs of
+            Left bail -> error (show bail)
+            Right 0   -> io (Serf.snapshot serf)
+            Right num -> pure ()
           io $ threadDelay 500000 -- Copied from runOrExitImmediately
           pure ()
 
-    serfFlags :: Serf.Flags
+    serfFlags :: [Serf.Flag]
     serfFlags = [Serf.Hashless]
+
 
 --------------------------------------------------------------------------------
 
@@ -326,84 +385,103 @@ replayPartEvs top last = do
 -}
 testPill :: HasLogFunc e => FilePath -> Bool -> Bool -> RIO e ()
 testPill pax showPil showSeq = do
-  putStrLn "Reading pill file."
+  logInfo "Reading pill file."
   pillBytes <- readFile pax
 
-  putStrLn "Cueing pill file."
+  logInfo "Cueing pill file."
   pillNoun <- io $ cueBS pillBytes & either throwIO pure
 
-  putStrLn "Parsing pill file."
+  logInfo "Parsing pill file."
   pill <- fromNounErr pillNoun & either (throwIO . uncurry ParseErr) pure
 
-  putStrLn "Using pill to generate boot sequence."
-  bootSeq <- generateBootSeq zod pill False (Fake $ Ship 0)
+  logInfo "Using pill to generate boot sequence."
+  bootSeq <- genBootSeq (Ship 0) pill False (Fake (Ship 0))
 
-  putStrLn "Validate jam/cue and toNoun/fromNoun on pill value"
+  logInfo "Validate jam/cue and toNoun/fromNoun on pill value"
   reJam <- validateNounVal pill
 
-  putStrLn "Checking if round-trip matches input file:"
+  logInfo "Checking if round-trip matches input file:"
   unless (reJam == pillBytes) $ do
-    putStrLn "    Our jam does not match the file...\n"
-    putStrLn "    This is surprising, but it is probably okay."
+    logInfo "    Our jam does not match the file...\n"
+    logInfo "    This is surprising, but it is probably okay."
 
   when showPil $ do
-      putStrLn "\n\n== Pill ==\n"
+      logInfo "\n\n== Pill ==\n"
       io $ pPrint pill
 
   when showSeq $ do
-      putStrLn "\n\n== Boot Sequence ==\n"
+      logInfo "\n\n== Boot Sequence ==\n"
       io $ pPrint bootSeq
 
 validateNounVal :: (HasLogFunc e, Eq a, ToNoun a, FromNoun a)
                 => a -> RIO e ByteString
 validateNounVal inpVal = do
-    putStrLn "  jam"
+    logInfo "  jam"
     inpByt <- evaluate $ jamBS $ toNoun inpVal
 
-    putStrLn "  cue"
+    logInfo "  cue"
     outNon <- cueBS inpByt & either throwIO pure
 
-    putStrLn "  fromNoun"
+    logInfo "  fromNoun"
     outVal <- fromNounErr outNon & either (throwIO . uncurry ParseErr) pure
 
-    putStrLn "  toNoun"
+    logInfo "  toNoun"
     outNon <- evaluate (toNoun outVal)
 
-    putStrLn "  jam"
+    logInfo "  jam"
     outByt <- evaluate $ jamBS outNon
 
-    putStrLn "Checking if: x == cue (jam x)"
+    logInfo "Checking if: x == cue (jam x)"
     unless (inpVal == outVal) $
         error "Value fails test: x == cue (jam x)"
 
-    putStrLn "Checking if: jam x == jam (cue (jam x))"
+    logInfo "Checking if: jam x == jam (cue (jam x))"
     unless (inpByt == outByt) $
         error "Value fails test: jam x == jam (cue (jam x))"
 
     pure outByt
 
+
 --------------------------------------------------------------------------------
 
-pillFrom :: CLI.PillSource -> RIO e Pill
+pillFrom :: CLI.PillSource -> RIO HostEnv Pill
+pillFrom = \case
+  CLI.PillSourceFile pillPath -> do
+    logInfo $ display $ "boot: reading pill from " ++ (pack pillPath :: Text)
+    io (loadFile pillPath >>= either throwIO pure)
 
-pillFrom (CLI.PillSourceFile pillPath) = do
-  putStrLn $ "boot: reading pill from " ++ pack pillPath
-  io (loadFile pillPath >>= either throwIO pure)
+  CLI.PillSourceURL url -> do
+    logInfo $ display $ "boot: retrieving pill from " ++ (pack url :: Text)
+    -- Get the jamfile with the list of stars accepting comets right now.
+    manager <- io $ C.newManager tlsManagerSettings
+    request <- io $ C.parseRequest url
+    response <- io $ C.httpLbs (C.setRequestCheckStatus request) manager
+    let body = toStrict $ C.responseBody response
 
-pillFrom (CLI.PillSourceURL url) = do
-  putStrLn $ "boot: retrieving pill from " ++ pack url
-  -- Get the jamfile with the list of stars accepting comets right now.
-  manager <- io $ C.newManager tlsManagerSettings
-  request <- io $ C.parseRequest url
-  response <- io $ C.httpLbs (C.setRequestCheckStatus request) manager
-  let body = toStrict $ C.responseBody response
+    noun <- cueBS body & either throwIO pure
+    fromNounErr noun & either (throwIO . uncurry ParseErr) pure
 
-  noun <- cueBS body & either throwIO pure
-  fromNounErr noun & either (throwIO . uncurry ParseErr) pure
+newShip :: CLI.New -> CLI.Opts -> RIO KingEnv ()
+newShip CLI.New{..} opts = do
+  {-
+    TODO XXX HACK
 
-newShip :: forall e. HasLogFunc e => CLI.New -> CLI.Opts -> RIO e ()
-newShip CLI.New{..} opts
-  | CLI.BootComet <- nBootType = do
+    Because the "new ship" flow *may* automatically start the ship,
+    we need to create this, but it's not actually correct.
+
+    The right solution is to separate out the "new ship" flow from the
+    "run ship" flow, and possibly sequence them from the outside if
+    that's really needed.
+  -}
+  multi <- multiEyre (MultiEyreConf Nothing Nothing True)
+
+  -- TODO: We hit the same problem as above: we need a host env to boot a ship
+  -- because it may autostart the ship, so build an inactive port configuration.
+  let ports = buildInactivePorts
+
+  -- here we are with a king env, and we now need a multi env.
+  runHostEnv multi ports $ case nBootType of
+    CLI.BootComet -> do
       pill <- pillFrom nPillSource
       putStrLn "boot: retrieving list of stars currently accepting comets"
       starList <- dawnCometList
@@ -415,12 +493,12 @@ newShip CLI.New{..} opts
       putStrLn ("boot: found comet " ++ renderShip (sShip seed))
       bootFromSeed pill seed
 
-  | CLI.BootFake name <- nBootType = do
+    CLI.BootFake name -> do
       pill <- pillFrom nPillSource
       ship <- shipFrom name
       runTryBootFromPill pill name ship (Fake ship)
 
-  | CLI.BootFromKeyfile keyFile <- nBootType = do
+    CLI.BootFromKeyfile keyFile -> do
       text <- readFileUtf8 keyFile
       asAtom <- case cordToUW (Cord $ T.strip text) of
         Nothing -> error "Couldn't parse keyfile. Hint: keyfiles start with 0w?"
@@ -436,7 +514,7 @@ newShip CLI.New{..} opts
       bootFromSeed pill seed
 
   where
-    shipFrom :: Text -> RIO e Ship
+    shipFrom :: Text -> RIO HostEnv Ship
     shipFrom name = case Ob.parsePatp name of
       Left x  -> error "Invalid ship name"
       Right p -> pure $ Ship $ fromIntegral $ Ob.fromPatp p
@@ -446,7 +524,7 @@ newShip CLI.New{..} opts
       Just x  -> x
       Nothing -> "./" <> unpack name
 
-    nameFromShip :: Ship -> RIO e Text
+    nameFromShip :: HasKingEnv e => Ship -> RIO e Text
     nameFromShip s = name
       where
         nameWithSig = Ob.renderPatp $ Ob.patp $ fromIntegral s
@@ -454,7 +532,7 @@ newShip CLI.New{..} opts
           Nothing -> error "Urbit.ob didn't produce string with ~"
           Just x  -> pure x
 
-    bootFromSeed :: Pill -> Seed -> RIO e ()
+    bootFromSeed :: Pill -> Seed -> RIO HostEnv ()
     bootFromSeed pill seed = do
       ethReturn <- dawnVent seed
 
@@ -465,42 +543,63 @@ newShip CLI.New{..} opts
           name <- nameFromShip ship
           runTryBootFromPill pill name ship (Dawn dawn)
 
-    flags = toSerfFlags opts
-
     -- Now that we have all the information for running an application with a
     -- PierConfig, do so.
+    runTryBootFromPill :: Pill
+                       -> Text
+                       -> Ship
+                       -> LegacyBootEvent
+                       -> RIO HostEnv ()
     runTryBootFromPill pill name ship bootEvent = do
-      let pierConfig = toPierConfig (pierPath name) opts
+      vKill <- view (kingEnvL . kingEnvKillSignal)
+      let pierConfig = toPierConfig (pierPath name) nSerfExe opts
       let networkConfig = toNetworkConfig opts
-      io $ runPierApp pierConfig networkConfig True $
-        tryBootFromPill True pill nLite flags ship bootEvent
-------  tryBootFromPill (CLI.oExit opts) pill nLite flags ship bootEvent
+      runPierEnv pierConfig networkConfig vKill $
+        tryBootFromPill True pill nLite ship bootEvent
 
+runShipEnv :: Maybe Text -> CLI.Run -> CLI.Opts -> TMVar () -> RIO PierEnv a
+           -> RIO HostEnv a
+runShipEnv serfExe (CLI.Run pierPath) opts vKill act = do
+  runPierEnv pierConfig netConfig vKill act
+ where
+  pierConfig = toPierConfig pierPath serfExe opts
+  netConfig = toNetworkConfig opts
 
-runShip :: CLI.Run -> CLI.Opts -> Bool -> IO ()
+runShip
+  :: CLI.Run -> CLI.Opts -> Bool -> RIO PierEnv ()
 runShip (CLI.Run pierPath) opts daemon = do
-    tid <- myThreadId
-    let onTermExit = throwTo tid UserInterrupt
-    mStart <- newEmptyMVar
+    mStart  <- newEmptyMVar
     if daemon
     then runPier mStart
     else do
+      -- Wait until the pier has started up, then connect a terminal. If
+      -- the terminal ever shuts down, ask the ship to go down.
       connectionThread <- async $ do
         readMVar mStart
-        finally (runAppNoLog $ connTerm pierPath) onTermExit
-      finally (runPier mStart) (cancel connectionThread)
-  where
-    runPier mStart =
-          runPierApp pierConfig networkConfig daemon $
-            tryPlayShip
-              (CLI.oExit opts)
-              (CLI.oFullReplay opts)
-              (CLI.oDryFrom opts)
-              (toSerfFlags opts)
-              mStart
-    pierConfig = toPierConfig pierPath opts
-    networkConfig = toNetworkConfig opts
+        finally (connTerm pierPath) $ do
+          view killPierActionL >>= atomically
 
+      -- Run the pier until it finishes, and then kill the terminal.
+      finally (runPier mStart) $ do
+        cancel connectionThread
+  where
+    runPier :: MVar () -> RIO PierEnv ()
+    runPier mStart = do
+      tryPlayShip
+        (CLI.oExit opts)
+        (CLI.oFullReplay opts)
+        (CLI.oDryFrom opts)
+        mStart
+
+
+buildPortHandler :: HasLogFunc e => CLI.Nat -> RIO e PortControlApi
+buildPortHandler CLI.NatNever  = pure buildInactivePorts
+-- TODO: Figure out what to do about logging here. The "port: " messages are
+-- the sort of thing that should be put on the muxed terminal log, but we don't
+-- have that at this layer.
+buildPortHandler CLI.NatAlways = buildNatPorts (io . hPutStrLn stderr . unpack)
+buildPortHandler CLI.NatWhenPrivateNetwork =
+  buildNatPortsWhenPrivate (io . hPutStrLn stderr . unpack)
 
 startBrowser :: HasLogFunc e => FilePath -> RIO e ()
 startBrowser pierPath = runRAcquire $ do
@@ -540,33 +639,206 @@ checkComet = do
 
 main :: IO ()
 main = do
+  (args, log) <- CLI.parseArgs
+
+  hSetBuffering stdout NoBuffering
+  setupSignalHandlers
+
+  runKingEnv args log $ case args of
+    CLI.CmdRun ko ships                       -> runShips ko ships
+    CLI.CmdNew n  o                           -> newShip n o
+    CLI.CmdBug (CLI.CollectAllFX pax        ) -> collectAllFx pax
+    CLI.CmdBug (CLI.EventBrowser pax        ) -> startBrowser pax
+    CLI.CmdBug (CLI.ValidatePill   pax pil s) -> testPill pax pil s
+    CLI.CmdBug (CLI.ValidateEvents pax f   l) -> checkEvs pax f l
+    CLI.CmdBug (CLI.ValidateFX     pax f   l) -> checkFx pax f l
+    CLI.CmdBug (CLI.ReplayEvents pax l      ) -> replayPartEvs pax l
+    CLI.CmdBug (CLI.CheckDawn pax           ) -> checkDawn pax
+    CLI.CmdBug CLI.CheckComet                 -> checkComet
+    CLI.CmdCon pier                           -> connTerm pier
+
+ where
+  runKingEnv args log =
+    let
+      verb = verboseLogging args
+      CLI.Log {..} = log
+    in case logTarget lTarget args of
+       CLI.LogFile f -> runKingEnvLogFile verb lLevel f
+       CLI.LogStderr -> runKingEnvStderr  verb lLevel
+       CLI.LogOff    -> runKingEnvNoLog
+
+  setupSignalHandlers = do
     mainTid <- myThreadId
+    let onKillSig = throwTo mainTid UserInterrupt
+    for_ [Sys.sigTERM, Sys.sigINT] $ \sig -> do
+      Sys.installHandler sig (Sys.Catch onKillSig) Nothing
 
-    hSetBuffering stdout NoBuffering
+  verboseLogging :: CLI.Cmd -> Bool
+  verboseLogging = \case
+    CLI.CmdRun ko ships -> any CLI.oVerbose (ships <&> \(_, o, _) -> o)
+    _                   -> False
 
-    let onTermSig = throwTo mainTid UserInterrupt
+  -- If the user hasn't specified where to log, what we do depends on what
+  -- command she has issued. Notably, the LogFile Nothing outcome means that
+  -- runKingEnvLogFile should run an IO action to get the official app data
+  -- directory and open a canonically named log file there.
+  logTarget :: Maybe (CLI.LogTarget FilePath)
+            -> CLI.Cmd
+            -> CLI.LogTarget (Maybe FilePath)
+  logTarget = \case
+    Just (CLI.LogFile f) -> const $ CLI.LogFile (Just f)
+    Just CLI.LogStderr   -> const $ CLI.LogStderr
+    Just CLI.LogOff      -> const $ CLI.LogOff
+    Nothing              -> \case
+      CLI.CmdCon _                             -> CLI.LogFile Nothing
+      CLI.CmdRun ko [(_,_,daemon)] | daemon    -> CLI.LogStderr
+                                   | otherwise -> CLI.LogFile Nothing
+      CLI.CmdRun ko _                          -> CLI.LogStderr
+      _                                        -> CLI.LogStderr
 
-    Sys.installHandler Sys.sigTERM (Sys.Catch onTermSig) Nothing
 
-    CLI.parseArgs >>= \case
-        CLI.CmdRun r o d                        -> runShip r o d
-        CLI.CmdNew n o                          -> runApp $ newShip n o
-        CLI.CmdBug (CLI.CollectAllFX pax)       -> runApp $ collectAllFx pax
-        CLI.CmdBug (CLI.EventBrowser pax)       -> runApp $ startBrowser pax
-        CLI.CmdBug (CLI.ValidatePill pax pil s) -> runApp $ testPill pax pil s
-        CLI.CmdBug (CLI.ValidateEvents pax f l) -> runApp $ checkEvs pax f l
-        CLI.CmdBug (CLI.ValidateFX pax f l)     -> runApp $ checkFx  pax f l
-        CLI.CmdBug (CLI.ReplayEvents pax l)     -> runApp $ replayPartEvs pax l
-        CLI.CmdBug (CLI.CheckDawn pax)          -> runApp $ checkDawn pax
-        CLI.CmdBug CLI.CheckComet               -> runApp $ checkComet
-        CLI.CmdCon pier                         -> runAppLogFile $ connTerm pier
+{-
+  Runs a ship but restarts it if it crashes or shuts down on it's own.
+
+  Once `waitForKillRequ` returns, the ship will be terminated and this
+  routine will exit.
+-}
+runShipRestarting
+  :: Maybe Text -> CLI.Run -> CLI.Opts -> RIO HostEnv ()
+runShipRestarting serfExe r o = do
+  let pier = pack (CLI.rPierPath r)
+      loop = runShipRestarting serfExe r o
+
+  onKill    <- view onKillKingSigL
+  vKillPier <- newEmptyTMVarIO
+
+  tid <- asyncBound $ runShipEnv serfExe r o vKillPier $ runShip r o True
+
+  let onShipExit = Left <$> waitCatchSTM tid
+      onKillRequ = Right <$> onKill
+
+  atomically (onShipExit <|> onKillRequ) >>= \case
+    Left exit -> do
+      case exit of
+        Left err -> logError $ display (tshow err <> ": " <> pier)
+        Right () ->
+          logError $ display ("Ship exited on it's own. Why? " <> pier)
+      threadDelay 250_000
+      loop
+    Right () -> do
+      logTrace $ display (pier <> " shutdown requested")
+      atomically $ putTMVar vKillPier ()
+      race_ (wait tid) $ do
+        threadDelay 5_000_000
+        logInfo $ display (pier <> " not down after 5s, killing with fire.")
+        cancel tid
+      logTrace $ display ("Ship terminated: " <> pier)
+
+{-
+  TODO This is messy and shared a lot of logic with `runShipRestarting`.
+-}
+runShipNoRestart
+  :: Maybe Text -> CLI.Run -> CLI.Opts -> Bool -> RIO HostEnv ()
+runShipNoRestart serfExe r o d = do
+  -- killing ship same as killing king
+  vKill  <- view (kingEnvL . kingEnvKillSignal)
+  tid    <- asyncBound (runShipEnv serfExe r o vKill $ runShip r o d)
+  onKill <- view onKillKingSigL
+
+  let pier = pack (CLI.rPierPath r)
+
+  let onShipExit = Left <$> waitCatchSTM tid
+      onKillRequ = Right <$> onKill
+
+  atomically (onShipExit <|> onKillRequ) >>= \case
+    Left (Left err) -> do
+      logError $ display (tshow err <> ": " <> pier)
+    Left (Right ()) -> do
+      logError $ display (pier <> " exited on it's own. Why?")
+    Right () -> do
+      logTrace $ display (pier <> " shutdown requested")
+      race_ (wait tid) $ do
+        threadDelay 5_000_000
+        logTrace $ display (pier <> " not down after 5s, killing with fire.")
+        cancel tid
+      logTrace $ display (pier <> " terminated.")
+
+runShips :: CLI.Host -> [(CLI.Run, CLI.Opts, Bool)] -> RIO KingEnv ()
+runShips CLI.Host {..} ships = do
+  let meConf = MultiEyreConf
+        { mecHttpPort      = fromIntegral <$> hSharedHttpPort
+        , mecHttpsPort     = fromIntegral <$> hSharedHttpsPort
+        , mecLocalhostOnly = False -- TODO Localhost-only needs to be
+                                   -- a king-wide option.
+        }
+
+  multi <- multiEyre meConf
+
+  ports <- buildPortHandler hUseNatPmp
+
+  runHostEnv multi ports (go ships)
+ where
+  go :: [(CLI.Run, CLI.Opts, Bool)] ->  RIO HostEnv ()
+  go = \case
+    []    -> pure ()
+    [rod] -> runSingleShip hSerfExe rod
+    ships -> runMultipleShips hSerfExe (ships <&> \(r, o, _) -> (r, o))
+
+
+-- TODO Duplicated logic.
+runSingleShip :: Maybe Text -> (CLI.Run, CLI.Opts, Bool) -> RIO HostEnv ()
+runSingleShip serfExe (r, o, d) = do
+  shipThread <- async (runShipNoRestart serfExe r o d)
+
+  {-
+    Wait for the ship to go down.
+
+    Since `waitCatch` will never throw an exception, the `onException`
+    block will only happen if this thread is killed with an async
+    exception.  The one we expect is `UserInterrupt` which will be raised
+    on this thread upon SIGKILL or SIGTERM.
+
+    If this thread is killed, we first ask the ship to go down, wait
+    for the ship to actually go down, and then go down ourselves.
+  -}
+  onException (void $ waitCatch shipThread) $ do
+    logTrace "KING IS GOING DOWN"
+    atomically =<< view killKingActionL
+    waitCatch shipThread
+    pure ()
+
+
+runMultipleShips :: Maybe Text -> [(CLI.Run, CLI.Opts)] -> RIO HostEnv ()
+runMultipleShips serfExe ships = do
+  shipThreads <- for ships $ \(r, o) -> do
+    async (runShipRestarting serfExe r o)
+
+  {-
+    Since `spin` never returns, this will run until the main
+    thread is killed with an async exception.  The one we expect is
+    `UserInterrupt` which will be raised on this thread upon SIGKILL
+    or SIGTERM.
+
+    Once that happens, we send a shutdown signal which will cause all
+    ships to be shut down, and then we `wait` for them to finish before
+    returning.
+
+    This is different than the single-ship flow, because ships never
+    go down on their own in this flow. If they go down, they just bring
+    themselves back up.
+  -}
+  let spin = forever (threadDelay maxBound)
+  finally spin $ do
+    logTrace "KING IS GOING DOWN"
+    view killKingActionL >>= atomically
+    for_ shipThreads waitCatch
 
 
 --------------------------------------------------------------------------------
 
-connTerm :: ∀e. HasLogFunc e => FilePath -> RIO e ()
-connTerm pier =
-    Term.runTerminalClient pier
+connTerm :: forall e. HasLogFunc e => FilePath -> RIO e ()
+connTerm = Term.runTerminalClient
+
 
 --------------------------------------------------------------------------------
 

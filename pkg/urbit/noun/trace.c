@@ -285,8 +285,8 @@ u3t_trace_open(c3_c* dir_c)
     mkdir(fil_c, 0700);
   }
 
-  c3_c lif_c[2048];
-  snprintf(lif_c, 2048, "%s/%d.json", fil_c, u3_Host.tra_u.fun_w);
+  c3_c lif_c[2056];
+  snprintf(lif_c, 2056, "%s/%d.json", fil_c, u3_Host.tra_u.fun_w);
 
   u3_Host.tra_u.fil_u = fopen(lif_c, "w");
   u3_Host.tra_u.nid_w = (int)getpid();

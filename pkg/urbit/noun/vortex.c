@@ -8,10 +8,10 @@
 #define _CVX_POKE 47
 #define _CVX_PEEK 46
 
-/* _cv_life(): execute initial lifecycle, producing Arvo core.
+/* u3v_life(): execute initial lifecycle, producing Arvo core.
 */
-static u3_noun
-_cv_life(u3_noun eve)
+u3_noun
+u3v_life(u3_noun eve)
 {
   u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
   u3_noun gat = u3n_nock_on(eve, lyf);
@@ -31,7 +31,7 @@ u3v_boot(u3_noun eve)
   u3A->roc = 0;
 
   {
-    u3_noun pro = u3m_soft(0, _cv_life, eve);
+    u3_noun pro = u3m_soft(0, u3v_life, eve);
 
     if ( u3_blip != u3h(pro) ) {
       u3z(pro);
@@ -50,30 +50,29 @@ u3v_boot(u3_noun eve)
 static u3_noun
 _cv_lite(u3_noun pil)
 {
-  u3_noun arv = u3ke_cue(pil);
   u3_noun eve, pro;
 
-  u3x_trel(arv, &eve, 0, 0);
+  u3x_trel(pil, &eve, 0, 0);
 
-  u3l_log("lite: arvo formula %x\r\n", u3r_mug(arv));
-  pro = _cv_life(u3k(eve));
+  u3l_log("lite: arvo formula %x\r\n", u3r_mug(pil));
+  pro = u3v_life(u3k(eve));
   u3l_log("lite: core %x\r\n", u3r_mug(pro));
 
-  u3z(arv);
+  u3z(pil);
   return pro;
 }
 
 /* u3v_boot_lite(): light bootstrap sequence, just making a kernel.
 */
 c3_o
-u3v_boot_lite(u3_atom lit)
+u3v_boot_lite(u3_noun pil)
 {
   //  ensure zero-initialized kernel
   //
   u3A->roc = 0;
 
   {
-    u3_noun pro = u3m_soft(0, _cv_lite, lit);
+    u3_noun pro = u3m_soft(0, _cv_lite, pil);
 
     if ( u3_blip != u3h(pro) ) {
       u3z(pro);
@@ -126,58 +125,6 @@ u3v_wish(const c3_c* str_c)
 
   u3z(txt);
   return exp;
-}
-
-/* _cv_nock_poke(): call poke through hardcoded interface.
-*/
-static u3_noun
-_cv_nock_poke(u3_noun ovo)
-{
-  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_POKE, u3A->roc)));
-  u3_noun sam, pro;
-  u3_noun cod_w;
-
-  sam = u3nc(u3k(u3A->now), ovo);
-#if 0
-  {
-    c3_c*   ovi_c = u3r_string(u3h(u3t(ovo)));
-    u3_noun tox = u3do("spat", u3k(u3h(ovo)));
-    c3_c*   tox_c = u3r_string(tox);
-
-    u3l_log("poke: %%%s (%x) on %s\r\n", ovi_c, u3r_mug(ovo), tox_c);
-    c3_free(tox_c); c3_free(ovi_c); u3z(tox);
-  }
-#endif
-
-  cod_w = u3a_lush(u3h(u3t(ovo)));
-  pro = u3n_slam_on(fun, sam);
-  u3a_lop(cod_w);
-
-#if 0
-  {
-    c3_c*   ovi_c = u3r_string(u3h(u3t(ovo)));
-
-    if ( u3_nul == u3h(pro) ) {
-      u3l_log("  blank: %s\r\n", ovi_c);
-    } else {
-      u3l_log("  happy: %s: %d\r\n", ovi_c, u3kb_lent(u3k(u3h(pro))));
-    }
-    c3_free(ovi_c);
-  }
-#endif
-
-  return pro;
-}
-
-/* _cv_nock_peek(): call peek through hardcoded interface.
-*/
-static u3_noun
-_cv_nock_peek(u3_noun hap)
-{
-  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_PEEK, u3A->roc)));
-  u3_noun sam = u3nc(u3k(u3A->now), hap);
-
-  return u3n_slam_on(fun, sam);
 }
 
 /* u3v_do(): use a kernel gate.
@@ -249,7 +196,10 @@ _cv_time_bump(u3_reck* rec_u)
 u3_noun
 u3v_peek(u3_noun hap)
 {
-  return u3m_soft_sure(_cv_nock_peek, hap);
+  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_PEEK, u3A->roc)));
+  u3_noun sam = u3nc(u3k(u3A->now), hap);
+
+  return u3n_slam_on(fun, sam);
 }
 
 #if 0
@@ -305,7 +255,17 @@ _cv_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
 u3_noun
 u3v_poke(u3_noun ovo)
 {
-  return _cv_nock_poke(ovo);
+  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_POKE, u3A->roc)));
+  u3_noun sam = u3nc(u3k(u3A->now), ovo);
+  u3_noun pro;
+
+  {
+    c3_w cod_w = u3a_lush(u3h(u3t(ovo)));
+    pro = u3n_slam_on(fun, sam);
+    u3a_lop(cod_w);
+  }
+
+  return pro;
 }
 
 /* u3v_tank(): dump single tank.
@@ -365,3 +325,39 @@ u3v_mark(FILE* fil_u)
   tot_w += u3a_maid(fil_u, "  wish cache", u3a_mark_noun(arv_u->yot));
   return   u3a_maid(fil_u, "total arvo stuff", tot_w);
 }
+
+/* u3v_reclaim(): clear ad-hoc persistent caches to reclaim memory.
+*/
+void
+u3v_reclaim(void)
+{
+  //  clear the u3v_wish cache
+  //
+  //    NB: this would leak if not on the home road
+  //
+  if ( &(u3H->rod_u) == u3R ) {
+    u3z(u3A->yot);
+    u3A->yot = u3_nul;
+  }
+}
+
+/* u3v_rewrite_compact(): rewrite arvo kernel for compaction.
+*/
+void
+u3v_rewrite_compact()
+{
+  u3v_arvo* arv_u = &(u3H->arv_u);
+
+  u3a_rewrite_noun(arv_u->roc);
+  u3a_rewrite_noun(arv_u->now);
+  u3a_rewrite_noun(arv_u->wen);
+  u3a_rewrite_noun(arv_u->sen);
+  u3a_rewrite_noun(arv_u->yot);
+
+  arv_u->roc = u3a_rewritten_noun(arv_u->roc);
+  arv_u->now = u3a_rewritten_noun(arv_u->now);
+  arv_u->wen = u3a_rewritten_noun(arv_u->wen);
+  arv_u->sen = u3a_rewritten_noun(arv_u->sen);
+  arv_u->yot = u3a_rewritten_noun(arv_u->yot);
+}
+

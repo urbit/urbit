@@ -318,7 +318,11 @@
       %watch-ack
     ?~  p.sign
       [~ this]
-    %-  (slog leaf+"eth-watcher couldn't start listen to thread" u.p.sign)
+    %-  (slog leaf+"eth-watcher couldn't start listening to thread" u.p.sign)
+    ::  TODO: kill thread that may have started, although it may not
+    ::  have started yet since we get this response before the
+    ::  %start-spider poke is processed
+    ::
     [~ (clear-running t.wire)]
   ::
       %kick  [~ (clear-running t.wire)]
@@ -413,7 +417,7 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card agent:gall)
-  ?+  +<.sign-arvo  ~|([%strange-sign-arvo -.sign-arvo] !!)
+  ?+    +<.sign-arvo  ~|([%strange-sign-arvo -.sign-arvo] !!)
       %wake
     ?.  ?=([%timer *] wire)  ~&  weird-wire=wire  [~ this]
     =*  path  t.wire

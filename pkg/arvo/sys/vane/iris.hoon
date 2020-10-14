@@ -366,20 +366,6 @@
       %receive
     =^  moves  state.ax  (receive:client +.task)
     [moves light-gate]
-  ::
-      %wegh
-    :_  light-gate
-    :~  :*  duct
-            %give
-            %mass
-            ^-  mass
-            :+  %iris  %|
-            :~  nex+&+next-id.state.ax
-                outbound+&+outbound-duct.state.ax
-                by-id+&+connection-by-id.state.ax
-                by-duct+&+connection-by-duct.state.ax
-                axle+&+ax
-    ==  ==  ==
   ==
 ::  http-client issues no requests to other vanes
 ::
@@ -404,6 +390,18 @@
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  *
+  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
+  ^-  (unit (unit cage))
+  ?.  ?=(%& -.why)  ~
+  =*  his  p.why
+  ?:  &(=(ren %$) =(tyl /whey))
+    =/  maz=(list mass)
+      :~  nex+&+next-id.state.ax
+          outbound+&+outbound-duct.state.ax
+          by-id+&+connection-by-id.state.ax
+          by-duct+&+connection-by-duct.state.ax
+          axle+&+ax
+      ==
+    ``mass+!>(maz)
   [~ ~]
 --

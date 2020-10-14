@@ -6,8 +6,10 @@
 ::
 |_  act=action
 ::
+++  grad  %noun
 ++  grow
   |%
+  ++  noun  act
   ++  tank  >act<
   --
 ::

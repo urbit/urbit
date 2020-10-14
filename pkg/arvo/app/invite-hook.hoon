@@ -1,4 +1,6 @@
-::  invite-hook: receive invites from any source
+::  invite-hook [landscape]:
+::
+::  receive invites from any source
 ::
 ::    only handles %invite actions. accepts json, but only from the host team.
 ::    can be poked by the host team to send an invite out to someone.
@@ -100,14 +102,22 @@
   |=  pax=path
   ^-  (unit invitatory)
   =.  pax
-    ;:(weld /=invite-store/(scot %da now.bowl)/invitatory pax /noun)
+    ;:  weld
+      /(scot %p our.bowl)/invite-store/(scot %da now.bowl)/invitatory
+      pax
+      /noun
+    ==
   .^((unit invitatory) %gx pax)
 ::
 ++  invite-scry
   |=  [pax=path uid=serial]
   ^-  (unit invite)
   =.  pax
-    ;:(weld /=invite-store/(scot %da now.bowl)/invite pax /(scot %uv uid)/noun)
+    ;:  weld
+      /(scot %p our.bowl)/invite-store/(scot %da now.bowl)/invite
+      pax
+      /(scot %uv uid)/noun
+    ==
   .^((unit invite) %gx pax)
 --
 

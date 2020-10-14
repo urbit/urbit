@@ -1,8 +1,11 @@
 ::  Print keys for a ship
 ::
 :-  %say
-|=  [[now=time *] [=ship ~] ~]
+|=  [[now=time @ our=ship ^] [her=ship ~] ~]
+=/  our  (scot %p our)
+=/  now  (scot %da now)
+=/  her  (scot %p her)
 :*  %noun
-    life=.^((unit @ud) %j /=lyfe/(scot %da now)/(scot %p ship))
-    rift=.^((unit @ud) %j /=ryft/(scot %da now)/(scot %p ship))
+    life=.^((unit @ud) %j /[our]/lyfe/[now]/[her])
+    rift=.^((unit @ud) %j /[our]/ryft/[now]/[her])
 ==

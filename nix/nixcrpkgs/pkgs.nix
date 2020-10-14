@@ -24,10 +24,6 @@ rec {
     inherit crossenv;
   };
 
-  ncurses = import ./pkgs/ncurses {
-    inherit crossenv;
-  };
-
   pdcurses = import ./pkgs/pdcurses {
     inherit crossenv;
   };

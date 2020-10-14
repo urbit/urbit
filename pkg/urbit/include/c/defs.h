@@ -30,6 +30,7 @@
 #       define c3_assert(x)                       \
           do {                                    \
             if (!(x)) {                           \
+              fflush(stderr);                     \
               fprintf(stderr, "\rAssertion '%s' " \
                       "failed in %s:%d\n",        \
                       #x, __FILE__, __LINE__);    \
@@ -41,7 +42,7 @@
 
     /* Stub.
     */
-#     define c3_stub       (assert(!"stub"), 0)
+#     define c3_stub       c3_assert(!"stub")
 
     /* Size in words.
     */
