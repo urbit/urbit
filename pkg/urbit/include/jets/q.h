@@ -82,6 +82,7 @@
 #   define u3qdb_tap u3qdi_tap
     u3_noun u3qdb_uni(u3_noun, u3_noun);
 
+    u3_noun u3qdi_apt(u3_noun);
     u3_noun u3qdi_bif(u3_noun, u3_noun);
     u3_noun u3qdi_dif(u3_noun, u3_noun);
     u3_noun u3qdi_gas(u3_noun, u3_noun);
