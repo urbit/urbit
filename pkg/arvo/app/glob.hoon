@@ -85,20 +85,33 @@
       %glob-make
     :_  this
     =/  home=path  /(scot %p our.bowl)/home/(scot %da now.bowl)
-    =+  .^(=tube:clay %cc (weld home /js/mime))
+    =+  .^(=js=tube:clay %cc (weld home /js/mime))
+    =+  .^(=map=tube:clay %cc (weld home /map/mime))
     =+  .^(arch %cy (weld home /app/landscape/js/bundle))
-    =/  bundle=path
-      %-  need
-      ^-  (unit path)
+    =/  bundle-hash=@t
+      %-  need 
+      ^-  (unit @t)
       %-  ~(rep by dir)
-      |=  [[file=@t ~] out=(unit path)]
+      |=  [[file=@t ~] out=(unit @t)]
       ?^  out  out
-      ?.  =((end 3 5 file) 'index')
-        ~
-      `/[file]/js
-    =+  .^(js=@t %cx :(weld home /app/landscape/js/bundle bundle))
-    =+  !<(=mime (tube !>(js)))
-    =/  =glob:glob  (~(put by *glob:glob) bundle mime)
+      ?.  ?&  =((end 3 6 file) 'index.')
+              !=('sj.' (end 3 3 (swp 3 file)))
+          ==
+        out
+      ``@t`(rsh 3 6 file)
+    =/  js-name
+      (cat 3 'index.' bundle-hash)
+    =/  map-name
+      (cat 3 js-name '.js')
+    =+  .^(js=@t %cx :(weld home /app/landscape/js/bundle /[js-name]/js))
+    =+  .^(map=@t %cx :(weld home /app/landscape/js/bundle /[map-name]/map))
+    =+  !<(=js=mime (js-tube !>(js)))
+    =+  !<(=map=mime (map-tube !>(map)))
+    =/  =glob:glob
+      %-  ~(gas by *glob:glob)
+      :~  /[js-name]/js^js-mime
+          /[map-name]/map^map-mime
+      ==
     =/  =path  /(cat 3 'glob-' (scot %uv (sham glob)))/glob
     [%pass /make %agent [our.bowl %hood] %poke %drum-put !>([path (jam glob)])]~
   ::
