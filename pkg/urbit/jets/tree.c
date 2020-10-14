@@ -1626,9 +1626,8 @@ static c3_c* _141_two_xeb_ha[] = {
     0
   };
 
-  // https://github.com/urbit/urbit/issues/328
-  // static u3j_harm _141_two__in_int_a[] = {{".2", u3wdi_int}, {}};
-  // static c3_c* _141_two__in_int_ha[] = {0};
+  static u3j_harm _141_two__in_int_a[] = {{".2", u3wdi_int}, {}};
+  static c3_c* _141_two__in_int_ha[] = {0};
 
   static u3j_harm _141_two__in_put_a[] = {{".2", u3wdi_put}, {}};
   static c3_c* _141_two__in_put_ha[] = {
@@ -1666,7 +1665,7 @@ static u3j_core _141_two__in_d[] =
     { "dif", 7, _141_two__in_dif_a, 0, _141_two__in_dif_ha },
     { "gas", 7, _141_two__in_gas_a, 0, _141_two__in_gas_ha },
     { "has", 7, _141_two__in_has_a, 0, _141_two__in_has_ha },
-    // { "int", 7, _141_two__in_int_a, 0, _141_two__in_int_ha },
+    { "int", 7, _141_two__in_int_a, 0, _141_two__in_int_ha },
     { "put", 7, _141_two__in_put_a, 0, _141_two__in_put_ha },
     { "rep", 7, _141_two__in_rep_a, 0, _141_two__in_rep_ha },
     { "run", 7, _141_two__in_run_a, 0, _141_two__in_run_ha },
