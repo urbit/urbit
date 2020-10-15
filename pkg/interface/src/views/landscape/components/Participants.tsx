@@ -337,11 +337,6 @@ function Participant(props: {
               gapY={2}
               p={2}
             >
-              <Action bg="transparent">
-                <Link to={`/~chat/new/dm/${contact.patp}`}>
-                  <Text color="green">Send Message</Text>
-                </Link>
-              </Action>
               {props.role === "admin" && (
                 <>
                   {!isInvite && (

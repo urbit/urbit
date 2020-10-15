@@ -63,26 +63,12 @@ h2 {
   max-width: calc(100% - 36px - 1.5rem);
 }
 
-.clamp-attachment {
-  overflow: auto;
-  max-height: 10em;
-  max-width: 100%;
-}
-
-.lh-16 {
-  line-height: 16px;
-}
-
 .mono {
   font-family: "Source Code Pro", monospace;
 }
 
 .bg-welcome-green {
   background-color: #ECF6F2;
-}
-
-.list-ship {
-  line-height: 2.2;
 }
 
 .c-default {
@@ -387,7 +373,6 @@ pre.CodeMirror-placeholder.CodeMirror-line-like { color: var(--gray); }
   /* codemirror */
   .chat .cm-s-tlon.CodeMirror {
     color: #fff;
-    font-size: 14px;
   }
 
   .chat .cm-s-tlon span.cm-def {

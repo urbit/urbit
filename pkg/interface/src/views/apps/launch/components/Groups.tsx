@@ -11,36 +11,11 @@ interface GroupsProps {
   associations: Associations;
 }
 
-// Sort by recent, then by channel size? Should probably sort
-// by num unreads when notif-store drops
-const sortGroupsRecent = (recent: string[]) => (
-  a: Association,
-  b: Association
-) => {
-  //
-  const aRecency = recent.findIndex((r) => a["group-path"] === r);
-  const bRecency = recent.findIndex((r) => b["group-path"] === r);
-  if(aRecency === -1) {
-    if(bRecency === -1) {
-      return 0;
-    }
-    return 1;
-  }
-  if(bRecency === -1) {
-    return -1;
-  }
-  return Math.max(0, aRecency) - Math.max(0,bRecency);
-};
-
 const sortGroupsAlph = (a: Association, b: Association) =>
   alphabeticalOrder(a.metadata.title, b.metadata.title);
 
 export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   const { associations, invites, api, ...boxProps } = props;
-  const [recentGroups, setRecentGroups] = useLocalStorageState<string[]>(
-    "recent-groups",
-    []
-  );
 
   const incomingGroups = Object.values(invites?.['/contacts'] || {});
   const getKeyByValue = (object, value) => {
@@ -48,8 +23,7 @@ export default function Groups(props: GroupsProps & Parameters<typeof Box>[0]) {
   }
 
   const groups = Object.values(associations?.contacts || {})
-    .sort(sortGroupsAlph)
-    .sort(sortGroupsRecent(recentGroups))
+    .sort(sortGroupsAlph);
 
   const acceptInvite = (invite) => {
     const [, , ship, name] = invite.path.split('/');
