@@ -1,17 +1,48 @@
 /-  *btc
 |%
 ::  big endian sha256: input and output are both MSB first (big endian)
+::
 ++  sha256
   |=  =byts
-  ^-  @ux
+  ^-  ^byts
+  ::  if there are leading 0s, lshift by their amount after flip to little endian to preserve
+  =/  pad=@  (sub wid.byts (met 3 dat.byts))
+  =/  little-endian=@
+    (lsh 3 pad (swp 3 dat.byts))
+  :-  32
   %+  swp  3
-  (shay wid.byts (swp 3 dat.byts))
+  (shay wid.byts little-endian)
 ++  hash-160
   |=  pubkey=@ux
   ^-  @ux
   =,  ripemd:crypto
-  %+  ripemd-160  32
+  %-  ripemd-160
   %-  sha256  [(met 3 pubkey) pubkey]
+::
+++  script
+  |%
+  ::  DUMMY
+  ++  compile
+    |=  chunks=(list @ux)
+    ^-  @ux
+    0x0
+  --
+++  payments
+  |%
+  ++  p2pkh
+    |=  script=@ux
+::    ^-  @ux
+    ^-  (list @ux)
+    =/  chunks=(list (list @))
+      :~  ~[op-dup:ops]
+          ~[op-hash160:ops]
+          ~[(met 3 script)]
+          ::TODO FLOP rip in HERE
+          ~[op-equalverify:ops]
+          ~[op-checksig:ops]
+       ==
+     (zing chunks)
+  --
 ::  Converts a list of bits to a list of n-bit numbers
 ::  input-bits should be big-endian
 ::
@@ -24,15 +55,15 @@
     ^-  (list @)
     =/  bits=(list @)  (flop (rip 0 a))
     =/  r=@  (mod (lent bits) bitwidth)
-    ?:  =(0 r)  bits                                         ::  no remainder, i.e. no leading zeros
+    ?:  ?&(=(0 r) (gth (lent bits) 0))                             ::  no remainder & more than 0 bits
+      bits
     (weld (reap (sub bitwidth r) 0) bits)
-  ::  converts from atom a with bitwidth s to a list of atoms each with bitwidth d
+  ::  converts from bit list to a list of atoms each with bitwidth d(est)
   ::
   ++  convert
-    |=  [s=@ d=@ a=@]
+    |=  [d=@ bits=(list @)]
     ^-  (list @)
     =|  ret=(list @)
-    =/  bits  (zeros-brip s a)
     |-  ?~  bits  ret
     =/  dest-bits  (scag d ((list @) bits))
     ::  left-shift the "missing" number of bits
@@ -42,6 +73,23 @@
           (rep 0 (flop dest-bits))
       ==
     $(ret (snoc ret num), bits (slag d ((list @) bits)))
+  ::  Converts e.g. ~[0 0 31 31 31 31 0 0] in base32 (5 bitwidth)
+  ::  to ~[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0]
+  ::
+  ++  from-digits
+    |=  [bitwidth=@ digits=(list @)]
+    ^-  (list @)
+    %-  zing
+    %+  turn  digits
+    |=  d=@  (zeros-brip bitwidth d)
+  ::  converts 40 bits: ~[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0]
+  ::  to 0x3fff.fc00 when cast to hex
+  ::
+  ++  to-atom
+    |=  bits=(list @)
+    ^-  @
+    %+  rep  0
+    %-  flop  bits
   --
 ::
 ++  bech32
@@ -147,7 +195,18 @@
       ~
     =/  checksum-pos  (sub (lent data-and-checksum) 6)
     `[hrp (scag checksum-pos data-and-checksum) (slag checksum-pos data-and-checksum)]
+  ::  goes from a bech32 address to hex
+  ::
+  ++  to-hex
+    |=  bech=tape
+    ^-  @ux
+    =/  d=(unit raw-decoded)  (decode-raw bech)
+    ?~  d  ~|("Invalid bech32 address" !!)
+    %-  to-atom:bits
+    %+  from-digits:bits  5
+    (slag 1 data.u.d)
   ::  pubkey is the 33 byte ECC compressed public key
+  ::
   ++  encode-pubkey
     |=  [=network pubkey=@ux]
     ^-  (unit tape)
@@ -157,8 +216,7 @@
     ?~  prefix  ~
     :-  ~
     %+  encode-raw  u.prefix
-    (weld ~[0] (convert:bits 8 5 (hash-160 pubkey)))
+    (weld ~[0] (convert:bits 5 (zeros-brip:bits 8 (hash-160 pubkey))))
   --
-
 ::
 --
