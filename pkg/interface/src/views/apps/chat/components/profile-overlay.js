@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Link } from 'react-router-dom';
 import { cite } from '~/logic/lib/util';
 import { Sigil } from '~/logic/lib/sigil';
 
-import { Center, Button } from "@tlon/indigo-react";
+import { Box, Col, Button, Text } from "@tlon/indigo-react";
 
 export const OVERLAY_HEIGHT = 250;
 
@@ -107,19 +106,31 @@ export class ProfileOverlay extends PureComponent {
     const isHidden = group.hidden;
 
     return (
-      <div
+      <Col
         ref={this.popoverRef}
+        boxShadow="2px 4px 20px rgba(0, 0, 0, 0.25)"
+        position='absolute'
+        backgroundColor='white'
+        zIndex='3'
+        fontSize='0'
         style={containerStyle}
-        className="flex-col shadow-6 br2 bg-white bg-gray0-d inter absolute z-1 f9 lh-solid"
       >
-        <div style={{ height: '160px', width: '160px' }}>
+        <Box height='160px' width='160px'>
           {img}
-        </div>
-        <div className="pv3 pl3 pr3">
+        </Box>
+        <Box p='3'>
           {showNickname && (
-            <div className="b white-d truncate">{contact.nickname}</div>
+            <Text
+              fontWeight='600'
+              display='block'
+              textOverflow='ellipsis'
+              overflow='hidden'
+              whiteSpace='pre'
+            >
+              {contact.nickname}
+            </Text>
           )}
-          <div className="mono gray2">{cite(`~${ship}`)}</div>
+          <Text mono gray>{cite(`~${ship}`)}</Text>
           {!isOwn && (
             <Button mt={2} width="100%" style={{ cursor: 'pointer' }} onClick={this.createAndRedirectToDM}>
               Send Message
@@ -135,8 +146,8 @@ export class ProfileOverlay extends PureComponent {
               Edit Identity
             </Button>
           ) : <div />}
-        </div>
-      </div>
+        </Box>
+      </Col>
     );
   }
 }
