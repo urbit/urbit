@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-
+import { Box, Text } from '@tlon/indigo-react';
 
 export default class CodeContent extends Component {
-
   render() {
     const { props } = this;
     const content = props.content;
@@ -11,18 +10,37 @@ export default class CodeContent extends Component {
       (Boolean(content.code.output) &&
        content.code.output.length && content.code.output.length > 0) ?
       (
-        <pre className={`code f9 clamp-attachment pa1 mt0 mb0`}>
+        <Text
+          display='block'
+          mono
+          p='1'
+          my='0'
+          fontSize='14px'
+          overflow='auto'
+          maxHeight='10em'
+          maxWidth='100%'
+          backgroundColor='scales.black10'
+        >
           {content.code.output[0].join('\n')}
-        </pre>
+        </Text>
       ) : null;
 
     return (
-      <div className="mv2">
-        <pre className={`code f9 clamp-attachment pa1 mt0 mb0`}>
+      <Box my='2'>
+        <Text
+          display='block'
+          mono
+          my='0'
+          p='1'
+          fontSize='14px'
+          overflow='auto'
+          maxHeight='10em'
+          maxWidth='100%'
+        >
           {content.code.expression}
-        </pre>
+        </Text>
         {outputElement}
-      </div>
+      </Box>
     );
   }
 }
