@@ -32,9 +32,9 @@ export default class Tile extends React.Component {
         bg={bg || "white"}
         color='washedGray'
         boxShadow={boxShadow || '0 0 0px 1px inset'}
-        {...props}
       >
         <Box
+          {...props}
           height="100%"
           width="100%"
         >
