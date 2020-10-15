@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Body } from "~/views/components/Body";
 import {
   Col,
@@ -6,7 +6,7 @@ import {
   Text,
   ManagedTextInputField as Input
 } from "@tlon/indigo-react";
-import { Formik, Form, FormikHelpers } from "formik";
+import { Formik, Form, FormikHelpers, useFormikContext } from "formik";
 import { AsyncButton } from "~/views/components/AsyncButton";
 import * as Yup from "yup";
 import { Groups, Rolodex } from "~/types";
@@ -35,12 +35,25 @@ interface JoinGroupProps {
   groups: Groups;
   contacts: Rolodex;
   api: GlobalApi;
+  autojoin: string | null;
+}
+
+function Autojoin(props: { autojoin: string | null; }) {
+  const { submitForm } = useFormikContext();
+
+  useEffect(() => {
+    if(props.autojoin) {
+      submitForm();
+    }
+  },[]);
+
+  return null;
 }
 
 export function JoinGroup(props: JoinGroupProps & RouteComponentProps) {
-  const { api, history } = props;
+  const { api, history, autojoin } = props;
   const initialValues: FormSchema = {
-    group: "",
+    group: autojoin || "",
   };
 
   const waiter = useWaitForProps(props);
@@ -77,6 +90,7 @@ export function JoinGroup(props: JoinGroupProps & RouteComponentProps) {
           onSubmit={onSubmit}
         >
           <Form>
+            <Autojoin autojoin={autojoin} />
             <Col gapY="4">
               <Input
                 id="group"
