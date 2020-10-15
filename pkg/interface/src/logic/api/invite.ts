@@ -22,6 +22,6 @@ export default class InviteApi extends BaseApi<StoreState> {
   }
 
   private inviteAction(action) {
-    return this.action('invite-store', 'json', action);
+    return this.action('invite-store', 'invite-action', action);
   }
 }
