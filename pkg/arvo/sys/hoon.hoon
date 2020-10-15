@@ -11243,9 +11243,6 @@
     ?:  (~(has in fan) leg)
       ~>(%mean.'rest-loop' !!)
     =>  .(fan (~(put in fan) leg))
-    %-  fork
-    %~  tap  in
-    %-  ~(put in *(set type))
     (play(sut p.leg) q.leg)
   ::
   ++  take
