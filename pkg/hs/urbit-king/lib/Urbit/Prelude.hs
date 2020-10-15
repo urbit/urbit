@@ -15,6 +15,7 @@ module Urbit.Prelude
     , module RIO
     , io, rio
     , logTrace
+    , acquireWorker, acquireWorkerBound
     ) where
 
 import ClassyPrelude
@@ -46,3 +47,21 @@ rio = liftRIO
 
 logTrace :: HasLogFunc e => Utf8Builder -> RIO e ()
 logTrace = logOther "trace"
+
+
+-- Utils for Spawning Worker Threads -------------------------------------------
+
+acquireWorker :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
+acquireWorker nam act = mkRAcquire (async act) kill
+ where
+  kill tid = do
+    logInfo ("Killing worker thread: " <> display nam)
+    cancel tid
+
+acquireWorkerBound :: HasLogFunc e => Text -> RIO e () -> RAcquire e (Async ())
+acquireWorkerBound nam act = mkRAcquire (asyncBound act) kill
+ where
+  kill tid = do
+    logInfo ("Killing worker thread: " <> display nam)
+    cancel tid
+

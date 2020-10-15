@@ -26,7 +26,8 @@ import RIO.Prelude        (decodeUtf8Lenient)
 import System.Random      (randomIO)
 import Urbit.Vere.Http    (convertHeaders, unconvertHeaders)
 
-import qualified Network.HTTP.Types as H
+import qualified Network.HTTP.Types  as H
+import qualified Network.Wai.Conduit as W
 
 
 -- Types -----------------------------------------------------------------------
@@ -176,8 +177,9 @@ startServ
   -> HttpServerConf
   -> (EvErr -> STM ())
   -> (Text -> RIO e ())
+  -> W.Application
   -> RIO e Serv
-startServ who isFake conf plan stderr = do
+startServ who isFake conf plan stderr sub = do
   logInfo (displayShow ("EYRE", "startServ"))
 
   multi <- view multiEyreApiL
@@ -226,7 +228,7 @@ startServ who isFake conf plan stderr = do
   atomically (joinMultiEyre multi who mCre onReq onKilReq)
 
   logInfo $ displayShow ("EYRE", "Starting loopback server")
-  lop <- serv vLive $ ServConf
+  lop <- serv sub vLive $ ServConf
     { scHost = soHost (pttLop ptt)
     , scPort = soWhich (pttLop ptt)
     , scRedi = Nothing
@@ -238,7 +240,7 @@ startServ who isFake conf plan stderr = do
     }
 
   logInfo $ displayShow ("EYRE", "Starting insecure server")
-  ins <- serv vLive $ ServConf
+  ins <- serv sub vLive $ ServConf
     { scHost = soHost (pttIns ptt)
     , scPort = soWhich (pttIns ptt)
     , scRedi = secRedi
@@ -251,7 +253,7 @@ startServ who isFake conf plan stderr = do
 
   mSec <- for mTls $ \tls -> do
     logInfo "Starting secure server"
-    serv vLive $ ServConf
+    serv sub vLive $ ServConf
       { scHost = soHost (pttSec ptt)
       , scPort = soWhich (pttSec ptt)
       , scRedi = Nothing
@@ -291,14 +293,15 @@ eyre'
   => Ship
   -> Bool
   -> (Text -> RIO e ())
+  -> W.Application
   -> RIO e ([Ev], RAcquire e (DriverApi HttpServerEf))
 
-eyre' who isFake stderr = do
+eyre' who isFake stderr sub = do
   ventQ :: TQueue EvErr <- newTQueueIO
   env <- ask
 
   let (bornEvs, startDriver) =
-        eyre env who (writeTQueue ventQ) isFake stderr
+        eyre env who (writeTQueue ventQ) isFake stderr sub
 
   let runDriver = do
         diOnEffect <- startDriver
@@ -327,8 +330,9 @@ eyre
   -> (EvErr -> STM ())
   -> Bool
   -> (Text -> RIO e ())
+  -> W.Application
   -> ([Ev], RAcquire e (HttpServerEf -> IO ()))
-eyre env who plan isFake stderr = (initialEvents, runHttpServer)
+eyre env who plan isFake sub stderr = (initialEvents, runHttpServer)
  where
   king = fromIntegral (env ^. kingIdL)
   multi = env ^. multiEyreApiL
@@ -352,7 +356,7 @@ eyre env who plan isFake stderr = (initialEvents, runHttpServer)
   restart :: Drv -> HttpServerConf -> RIO e Serv
   restart (Drv var) conf = do
     logInfo "Restarting http server"
-    let startAct = startServ who isFake conf plan stderr
+    let startAct = startServ who isFake conf plan sub stderr
     res <- fromEither =<< restartService var startAct kill
     logInfo "Done restating http server"
     pure res

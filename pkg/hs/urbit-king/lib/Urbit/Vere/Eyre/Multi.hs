@@ -22,6 +22,8 @@ import Urbit.Vere.Eyre.Wai
 
 import Network.TLS (Credential)
 
+import Network.Wai as W
+
 
 -- Types -----------------------------------------------------------------------
 
@@ -70,8 +72,8 @@ leaveMultiEyre MultiEyreApi {..} who = do
   modifyTVar' meaPlan (deleteMap who)
   modifyTVar' meaTlsC (deleteMap who)
 
-multiEyre :: HasLogFunc e => MultiEyreConf -> RIO e MultiEyreApi
-multiEyre conf@MultiEyreConf {..} = do
+multiEyre :: HasLogFunc e => MultiEyreConf -> W.Application -> RIO e MultiEyreApi
+multiEyre conf@MultiEyreConf {..} sub = do
   logInfo (displayShow ("EYRE", "MULTI", conf))
 
   vLive <- io emptyLiveReqs >>= newTVarIO
@@ -97,7 +99,7 @@ multiEyre conf@MultiEyreConf {..} = do
 
   mIns <- for mecHttpPort $ \por -> do
     logInfo (displayShow ("EYRE", "MULTI", "HTTP", por))
-    serv vLive $ ServConf
+    serv sub vLive $ ServConf
       { scHost = host
       , scPort = SPChoices $ singleton $ fromIntegral por
       , scRedi = Nothing -- TODO
@@ -110,7 +112,7 @@ multiEyre conf@MultiEyreConf {..} = do
 
   mSec <- for mecHttpsPort $ \por -> do
     logInfo (displayShow ("EYRE", "MULTI", "HTTPS", por))
-    serv vLive $ ServConf
+    serv sub vLive $ ServConf
       { scHost = host
       , scPort = SPChoices $ singleton $ fromIntegral por
       , scRedi = Nothing
