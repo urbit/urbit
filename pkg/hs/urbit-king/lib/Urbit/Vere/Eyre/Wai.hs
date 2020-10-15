@@ -25,6 +25,7 @@ module Urbit.Vere.Eyre.Wai
 where
 
 import Urbit.Prelude hiding (Builder)
+import Urbit.Prelude (RIO)
 
 import Data.Binary.Builder (Builder, fromByteString)
 import Data.Bits           (shiftL, (.|.))
@@ -206,24 +207,28 @@ app
   :: HasLogFunc e
   => e
   -> Ship
+  -> W.Application
   -> TVar LiveReqs
   -> (Word64 -> ReqInfo -> STM ())
   -> (Word64 -> STM ())
   -> W.Application
-app env who liv inform cancel req respond =
-  runRIO env $ rwith (liveReq who liv) $ \(reqId, respApi) -> do
-    bod <- io (toStrict <$> W.strictRequestBody req)
-    met <- maybe (error "bad method") pure (cookMeth req)
-
-    let adr = reqAddr req
-        hdr = W.requestHeaders req
-        url = reqUrl req
-
-    atomically $ inform reqId $ ReqInfo adr met url hdr bod
-
-    try (sendResponse respond respApi) >>= \case
-      Right rr  -> pure rr
-      Left  exn -> do
-        atomically (cancel reqId)
-        logError $ display ("Exception during request" <> tshow exn)
-        throwIO (exn :: SomeException)
+app env who kingSubsite liv inform cancel req respond =
+  case W.pathInfo req of
+    ("~_~":_) -> kingSubsite req respond
+    _ ->
+      runRIO env $ rwith (liveReq who liv) $ \(reqId, respApi) -> do
+        bod <- io (toStrict <$> W.strictRequestBody req)
+        met <- maybe (error "bad method") pure (cookMeth req)
+    
+        let adr = reqAddr req
+            hdr = W.requestHeaders req
+            url = reqUrl req
+        
+        atomically $ inform reqId $ ReqInfo adr met url hdr bod
+    
+        try (sendResponse respond respApi) >>= \case
+          Right rr  -> pure rr
+          Left  exn -> do
+            atomically (cancel reqId)
+            logError $ display ("Exception during request" <> tshow exn)
+            throwIO (exn :: SomeException)

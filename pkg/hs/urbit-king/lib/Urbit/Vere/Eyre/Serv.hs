@@ -247,9 +247,10 @@ startServer
   -> W.Port
   -> Net.Socket
   -> Maybe W.Port
+  -> W.Application
   -> TVar E.LiveReqs
   -> RIO e ()
-startServer typ hos por sok red vLive = do
+startServer typ hos por sok red sub vLive = do
   envir <- ask
 
   let host = case hos of
@@ -262,7 +263,8 @@ startServer typ hos por sok red vLive = do
           & W.setPort (fromIntegral por)
           & W.setTimeout (5 * 60)
 
-  let runAppl who = E.app envir who vLive
+  -- TODO build Eyre.Site.app in pier, thread through here
+  let runAppl who = E.app envir who sub vLive
       reqShip = hostShip . W.requestHeaderHost
 
   case typ of
@@ -329,8 +331,8 @@ getFirstTlsConfig (MTC var) = do
     []  -> STM.retry
     x:_ -> pure (fst x)
 
-realServ :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
-realServ vLive conf@ServConf {..} = do
+realServ :: HasLogFunc e => W.Application -> TVar E.LiveReqs -> ServConf -> RIO e ServApi
+realServ sub vLive conf@ServConf {..} = do
   logInfo (displayShow ("EYRE", "SERV", "Running Real Server"))
   kil <- newEmptyTMVarIO
   por <- newEmptyTMVarIO
@@ -347,10 +349,10 @@ realServ vLive conf@ServConf {..} = do
     logInfo (displayShow ("EYRE", "SERV", "runServ"))
     rwith (forceOpenSocket scHost scPort) $ \(por, sok) -> do
       atomically (putTMVar vPort por)
-      startServer scType scHost por sok scRedi vLive
+      startServer scType scHost por sok scRedi sub vLive
 
-serv :: HasLogFunc e => TVar E.LiveReqs -> ServConf -> RIO e ServApi
-serv vLive conf = do
+serv :: HasLogFunc e => W.Application -> TVar E.LiveReqs -> ServConf -> RIO e ServApi
+serv sub vLive conf = do
   if scFake conf
     then fakeServ conf
-    else realServ vLive conf
+    else realServ sub vLive conf
