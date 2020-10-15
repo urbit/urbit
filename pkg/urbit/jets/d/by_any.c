@@ -13,8 +13,10 @@ _by_any(u3_noun a, u3j_site* sit_u)
     u3_noun n_a, l_a, r_a;
     u3x_trel(a, &n_a, &l_a, &r_a);
 
-    if ( c3y == u3j_gate_slam(sit_u, u3k(u3t(n_a))) ) {
-      return c3y;
+    switch ( u3j_gate_slam(sit_u, u3k(u3t(n_a))) ) {
+      case c3y: return c3y;
+      case c3n: break;
+      default:  return u3m_bail(c3__exit);
     }
 
     if ( c3y == _by_any(l_a, sit_u) ) {
