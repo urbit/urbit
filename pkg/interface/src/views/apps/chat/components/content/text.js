@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import urbitOb from 'urbit-ob';
-import { Box, Text } from '@tlon/indigo-react';
+import { Text } from '@tlon/indigo-react';
 
 const DISABLED_BLOCK_TOKENS = [
   'indentedCode',
@@ -63,7 +63,7 @@ export default class TextContent extends Component {
       && (urbitOb.isValidPatp(group[2]) // valid patp?
       && (group[0] === content.text))) { // entire message is room name?
       return (
-        <Text fontSize='14px' color='gray' lineHeight="tall">
+        <Text fontSize='14px' color='black' lineHeight="tall">
           <Link
             className="bb b--black b--white-d mono"
             to={'/~landscape/join/' + group.input}>
@@ -73,7 +73,7 @@ export default class TextContent extends Component {
       );
     } else {
       return (
-        <Text color='gray' fontSize='14px' lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
+        <Text color='black' fontSize='14px' lineHeight="tall" style={{ overflowWrap: 'break-word' }}>
           <MessageMarkdown source={content.text} />
         </Text>
       );
