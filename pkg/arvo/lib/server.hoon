@@ -92,9 +92,9 @@
     [[200 [['content-type' 'text/javascript'] max-1-da ~]] `octs]
   ::
   ++  json-response
-    |=  =octs
+    |=  =json
     ^-  simple-payload:http
-    [[200 ['content-type' 'application/json']~] `octs]
+    [[200 ['content-type' 'application/json']~] `(json-to-octs json)]
   ::
   ++  css-response
     |=  =octs

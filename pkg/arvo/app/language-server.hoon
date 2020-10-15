@@ -113,7 +113,7 @@
 ++  json-response
   |=  [eyre-id=@ta jon=json]
   ^-  (list card)
-  (give-simple-payload:app eyre-id (json-response:gen (json-to-octs jon)))
+  (give-simple-payload:app eyre-id (json-response:gen jon))
 ::
 ++  give-rpc-notification
   |=  res=out:notification:lsp-sur

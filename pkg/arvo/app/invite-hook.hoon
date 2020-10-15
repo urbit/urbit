@@ -1,4 +1,6 @@
-::  invite-hook: receive invites from any source
+::  invite-hook [landscape]:
+::
+::  receive invites from any source
 ::
 ::    only handles %invite actions. accepts json, but only from the host team.
 ::    can be poked by the host team to send an invite out to someone.
