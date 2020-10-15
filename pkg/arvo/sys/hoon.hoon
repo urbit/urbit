@@ -11231,22 +11231,22 @@
       {$core *}   [%cell %noun p.sut]
       {$face *}   q.sut
       {$hint *}   q.sut
-      {$hold *}   (rest [[p.sut q.sut] ~])
+      {$hold *}   (rest [p.sut q.sut])
       $noun       (fork [%atom %$ ~] [%cell %noun %noun] ~)
       *           ~>(%mean.'repo-fltt' !!)
     ==
   ::
   ++  rest
     ~/  %rest
-    |=  leg/(list {p/type q/hoon})
+    |=  leg/{p/type q/hoon}
     ^-  type
-    ?:  (lien leg |=({p/type q/hoon} (~(has in fan) [p q])))
+    ?:  (~(has in fan) leg)
       ~>(%mean.'rest-loop' !!)
-    =>  .(fan (~(gas in fan) leg))
+    =>  .(fan (~(put in fan) leg))
     %-  fork
     %~  tap  in
-    %-  ~(gas in *(set type))
-    (turn leg |=({p/type q/hoon} (play(sut p) q)))
+    %-  ~(put in *(set type))
+    (play(sut p.leg) q.leg)
   ::
   ++  take
     |=  {vit/vein duz/$-(type type)}
