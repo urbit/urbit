@@ -491,6 +491,7 @@ newShip CLI.New{..} opts = do
       eny <- io $ Sys.randomIO
       let seed = mineComet (Set.fromList starList) eny
       putStrLn ("boot: found comet " ++ renderShip (sShip seed))
+      putStrLn ("code: " ++ (tshow $ deriveCode $ sRing seed))
       bootFromSeed pill seed
 
     CLI.BootFake name -> do
