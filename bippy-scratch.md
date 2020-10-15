@@ -3,7 +3,7 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 
 ## Set Credentials and Ping Servers
 ```
-:btc-bridge|command [%become-host [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-password='8e12e5bad1808aed64627192165304e9b804f971efa34f36ae93e9fb088fe22c'] [rpc-url='http://localhost:50002']]
+:btc-bridge|command [%become-host [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-password='2cce52a532a078764cd9e56630603adaedfbb130ccf3b2f0a5f0dd718a5c35e0'] [rpc-url='http://localhost:50002']]
 
 :btc-bridge|rpc-action [%brpc %get-block-count ~]
 :btc-bridge|rpc-action [%erpc %get-address-balance [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66']]
@@ -48,6 +48,52 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 `@t`(scot %uc `@uc`(scan "17xg1BZLn63zCxdTxbsFLoWpQeSnD7zSHW" fim:ag))
 ```
 
+## sha256 Implementation
+This is needed for hashing to/from big endian, possibly with leading and trailing 0s.
+
+We use 20 byte value `0x7f5a.997b.83f5.1f79.3b89.10be.9950.8b00.a136.f900`
+
+### JS Reference Values
+```
+val = "7f5a997b83f51f793b8910be99508b00a136f900";
+b = Buffer.from(val, "hex");
+createHash('sha256').update(b).digest();
+// yields: <Buffer 4d 9a 8e 9b 96 6c f8 3a 69 5c 60 7b c3 23 74 a0 d2 70 35 aa 52 a0 b6 73 8d c4 73 fe 95 c6 8f b3>
+
+val2 = "007f5a997b83f51f793b8910be99508b00a136f900";
+b2 = Buffer.from(val2, "hex");
+createHash('sha256').update(b2).digest();
+// yields: <Buffer 66 ee cb 4f b5 0e 9d 93 f8 5e 78 69 6a 34 09 7a b8 59 fb c9 b7 f6 f0 87 33 29 42 3b 5f dd 80 72>
+```
+
+In the Hoon version, we indicate leading zeros by increasing the byte count, rather than with a string
+```
+::  trailing 0s
+=val 0x7f5a.997b.83f5.1f79.3b89.10be.9950.8b00.a136.f900
+`@ux`dat:(sha256:btc 20 val)
+:: gives 0x4d9a.8e9b.966c.f83a.695c.607b.c323.74a0.d270.35aa.52a0.b673.8dc4.73fe.95c6.8fb3
+
+::  leading 0s--pass 21 as byte count
+`@ux`dat:(sha256:btc 21 val)
+0x66ee.cb4f.b50e.9d93.f85e.7869.6a34.097a.b859.fbc9.b7f6.f087.3329.423b.5fdd.8072
+```
+
+## 8bit to 5bit conversion, and back again
+Start with a Hash160 (8bit hex). Convert to bech32. Decode the bech32, drop the leading 0, and run through `digits-to-atom`.
+
+### 8 bits to 5 bits
+
+### 5 bits to 8 bits
+```
+::  base32:
+=val ~[0 0 31 31 31 31 0 0]
+(from-digits:bits:btc 5 val)
+::  gives ~[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0]
+
+`@ux`(to-atom:bits:btc (from-digits:bits:btc 5 val))
+::  gives 0x3fff.fc00
+```
+
 ## BIP 173 (Bech32 Addresses)
 ```
 =btc -build-file %/lib/btc/hoon
@@ -64,30 +110,40 @@ https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses
 
 That one starts with pubkey below. The following runs it through sha256 and ripemd160 to get Hash-160:
 ```
-0xf54a.5851.e937.2b87.810a.8e60.cdd2.e7cf.d80b.6e31
 ```
 
 Use `@uc` to make the Hash-160 into a BTC P2PKH address
 ```
 =pubkey 0x2.5086.3ad6.4a87.ae8a.2fe8.3c1a.f1a8.403c.b53f.53e4.86d8.511d.ad8a.0488.7e5b.2352
 (hash-160:btc pubkey)
-`@uc`(hash-160:btc pubkey)`@uc`(hash-160:btc pubkey)
+::  gives 0xf54a.5851.e937.2b87.810a.8e60.cdd2.e7cf.d80b.6e31
+
+`@uc`(hash-160:btc pubkey)
+:: gives 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
 ```
 
 ### trailing zero
-s
 Need to test with this because it shows need to input num bytes
 ```
 0x3.f3c1.3839.3683.93e7.0caf.4148.4775.b805.312d.58be.d157.1308.3d27.5cf5.6998.0100
 ```
 
 ###  bip173 test pubkey
-Pubkey
-0x2.79be.667e.f9dc.bbac.55a0.6295.ce87.0b07.029b.fcdb.2dce.28d9.59f2.815b.16f8.1798
+The below code also shows how to convert from bech32 back to a 20-byte hash. This is used for transaction building.
+```
+=pubkey 0x2.79be.667e.f9dc.bbac.55a0.6295.ce87.0b07.029b.fcdb.2dce.28d9.59f2.815b.16f8.1798
+(encode-pubkey:bech32:btc %main pubkey)
+::  should be [~ "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"]
 
-Hash-160 (has leading 0s, so good to check)
-751e76e8199196d454941c45d1b3a323f1433bd6
-0xf54a.5851.e937.2b87.810a.8e60.cdd2.e7cf.d80b.6e31
+(hash-160:btc pubkey)
+::  should be 0x751e.76e8.1991.96d4.5494.1c45.d1b3.a323.f143.3bd6
+
+(decode-raw:bech32:btc "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4")
+:: prints data: ~[0 14 20 15 7 13 26 0 25 18 6 11 13 8 21 4 20 3 17 2 29 3 12 29 3 4 15 24 20 6 14 30 22]
+
+(to-hex:bech32:btc "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4")
+:: gives 0x751e.76e8.1991.96d4.5494.1c45.d1b3.a323.f143.3bd6, the hash160
+```
 
 ###  bip84 public keys
 From seed mnemonic:
@@ -99,42 +155,6 @@ process child keen cargo design install parrot hold pole unveil dance reason dri
 0x3.109a.2082.eaa6.8925.1465.5393.d635.7fb9.d9b5.e191.3826.8837.69cd.db88.7a4b.b4f0
 ```
 
-## Deprecated: `btc-address` library
-Left here just for reference
-
-**Test child public key from xpub**
-```
-=btca -build-file %/lib/btc-address/hoon
-=ecc secp256k1:secp:crypto
-`@ux`(child-from-xpub:btca zpub 0)
-(child-from-xpub:btca xpub (dec (bex 31)))
-
-::  should error as index is too high (hardened key range)
-(child-from-xpub:btca zpub (bex 31))
-```
-
-**Test xpub parsing**
-```
-(parse-xpub:btca xpub)
-```
-
-**Test addition and ECC point checking**
-```
-=px (parse-xpub:btca xpub)
-=pubk ?~  px  ~  pubk.u.px
-(is-point:btca pubk)
-(pubkey-to-point:btca pubk)
-=index 256
-`@ux`(add (lsh 3 4 (big-endian-brap:btca pubk)) index)
-```
-
-**Test computing I**
-```
-(bind px |=(px=parsed-xpub:btca (compute-i:btca px 1)))
-```
-
-
-0x3.1589.edf6.2798.1d49.77a1.d4e2.58b8.aeaa.060a.d518.94e1.e122.406f.af29.b197.c1f1
 
 ## Signing Scratch
 =unsigned 0x100.0000.015a.800f.d903.679a.cfe9.d4e2.fedb.752b.24c4.d7a5.74b4.c82a.113d.fb99.3b38.64b7.7201.0000.0019.76a9.1495.3de6.57be.4b30.5f60.6d9a.9fbd.35b0.70a6.8247.5788.acff.ffff.ff01.c09e.e605.0000.0000.1976.a914.dd6c.ce9f.255a.8cc1.7bda.8ba0.373d.f8e8.61cb.866e.88ac.0000.0000.0100.0000
@@ -142,3 +162,31 @@ Left here just for reference
 =txhash (shay (met 3 unsigned) (swp 3 unsigned))
 
 =privkey 0xdc57.c6d0.6737.6c36.bbed.632c.9d00.f037.6786.7f33.7d5a.86b5.b030.8a60.004f.08ee
+
+0x7f5a.997b.83f5.1f79.3b89.10be.9950.8b00.a136.f922
+
+0xbd9.a59c.4ffc.92d3.f5dd.8ba3.a2ed.93b3.d1d9.f9cf.91cf.0982.db70.9be7.0a37.db76
+
+
+### cutting off the last 20 bytes (for bech32 address outputs):
+```
+`@ux`(end 3 2 0x14.6655)
+::  gives 0x6655
+```
+
+### BIP143 Reference
+https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki#P2SHP2WPKH
+
+## more scratch
+7f5a997b83f51f793b8910be99508b00a136f922
+0x7f5a.997b.83f5.1f79.3b89.10be.9950.8b00.a136.f922
+
+db6b1b20aa0fd7b23880be2ecbd4a98130974cf4748fb66092ac4d3ceb1a547701000000
+
+
+0x46.c323.0000.0000
+
+bip143 hash preimage:
+0x100.0000.96b8.27c8.483d.4e9b.9671.2b67.13a7.b68d.6e80.03a7.81fe.ba36.c311.4347.0b4e.fd37.52b0.a642.eea2.fb7a.e638.c36f.6252.b675.0293.dbe5.74a8.0698.4b8e.4d85.4833.9a3b.ef51.e1b8.04cc.89d1.82d2.7965.5c3a.a89e.815b.1b30.9fe2.87d9.b2b5.5d57.b90e.c68a.0100.0000.1976.a914.1d0f.172a.0ecb.48ae.e1be.1f26.87d2.963a.e33f.71a1.88ac.0046.c323.0000.0000.ffff.ffff.863e.f3e1.a92a.fbfd.b97f.31ad.0fc7.683e.e943.e9ab.cf25.0159.0ff8.f655.1f47.e5e5.1100.0000.0100.0000
+
+
