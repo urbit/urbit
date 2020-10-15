@@ -477,10 +477,6 @@ shaf salt ruz = (mix a b)
 
 -- Given a ring, derives the network login code.
 --
--- The Urbit implementation of +code is just overly complicated. It first
--- takes the ring, then passes it into the encryption system, and then has
--- the encryption system spit the input ring back out.
---
 -- Note that the network code is a patp, not a patq: the bytes have been
 -- scrambled.
 deriveCode :: Ring -> Ob.Patp
