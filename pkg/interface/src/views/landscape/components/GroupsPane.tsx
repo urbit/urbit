@@ -194,7 +194,7 @@ export function GroupsPane(props: GroupsPaneProps) {
                 alignItems="center"
                 justifyContent="center"
                 display={["none", "flex"]}
-                p='2'
+                p='4'
               >
                 <Box><Text fontSize="0" color='gray'>
                   {description}
