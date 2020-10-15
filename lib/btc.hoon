@@ -195,16 +195,18 @@
       ~
     =/  checksum-pos  (sub (lent data-and-checksum) 6)
     `[hrp (scag checksum-pos data-and-checksum) (slag checksum-pos data-and-checksum)]
-  ::  goes from a bech32 address to hex
+  ::  goes from a bech32 address to hex. Returns byts to preserve leading 0s
   ::
   ++  to-hex
     |=  bech=tape
-    ^-  @ux
+    ^-  byts
     =/  d=(unit raw-decoded)  (decode-raw bech)
     ?~  d  ~|("Invalid bech32 address" !!)
-    %-  to-atom:bits
-    %+  from-digits:bits  5
-    (slag 1 data.u.d)
+    =/  bs=(list @)
+      (from-digits:bits 5 (slag 1 data.u.d))
+    ?.  =(0 (mod (lent bs) 8))
+      ~|("Invalid bech32 address: not 8bit" !!)
+    [(div (lent bs) 8) (to-atom:bits bs)]
   ::  pubkey is the 33 byte ECC compressed public key
   ::
   ++  encode-pubkey
