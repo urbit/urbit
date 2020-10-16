@@ -29,7 +29,6 @@ where
 import Urbit.King.Config
 import Urbit.Prelude
 
-import RIO                    (logGeneric)
 import System.Directory       ( createDirectoryIfMissing
                               , getXdgDirectory
                               , XdgDirectory(XdgCache)
@@ -89,9 +88,7 @@ runKingEnvStderr verb lvl inner = do
       <&> setLogUseTime True
       <&> setLogUseLoc False
       <&> setLogMinLevel lvl
-  withLogFunc logOptions $ \logFunc ->
-    let lf = wrapCarriage logFunc
-    in runKingEnv lf lf inner
+  withLogFunc logOptions $ \logFunc -> runKingEnv logFunc logFunc inner
 
 runKingEnvLogFile :: Bool -> LogLevel -> Maybe FilePath -> RIO KingEnv a -> IO a
 runKingEnvLogFile verb lvl fileM inner = do
@@ -110,18 +107,13 @@ runKingEnvLogFile verb lvl fileM inner = do
         <&> setLogUseLoc False
         <&> setLogMinLevel lvl
     withLogFunc stderrLogOptions $ \stderrLogFunc -> withLogFunc logOptions
-      $ \logFunc -> runKingEnv logFunc (wrapCarriage stderrLogFunc) inner
+      $ \logFunc -> runKingEnv logFunc stderrLogFunc inner
 
 withLogFileHandle :: FilePath -> (Handle -> IO a) -> IO a
 withLogFileHandle f act =
   withFile f AppendMode $ \handle -> do
     hSetBuffering handle LineBuffering
     act handle
-
--- XX loses callstack
-wrapCarriage :: LogFunc -> LogFunc
-wrapCarriage lf = mkLogFunc $ \_ ls ll bldr ->
-  runRIO lf $ logGeneric ls ll (bldr <> "\r")
 
 defaultLogFile :: IO FilePath
 defaultLogFile = do
