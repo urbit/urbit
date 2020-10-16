@@ -3,8 +3,7 @@
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
-  |=  =byts
-  ^-  ^byts
+  |=  =byts  ^-  hash
   ::  if there are leading 0s, lshift by their amount after flip to little endian to preserve
   =/  pad=@  (sub wid.byts (met 3 dat.byts))
   =/  little-endian=@
@@ -18,7 +17,7 @@
   (sha256 (sha256 byts))
 ::
 ++  hash-160
-  |=  pubkey=@ux  ^-  byts
+  |=  pubkey=@ux  ^-  hash
   =,  ripemd:crypto
   :-  20
   %-  ripemd-160
@@ -69,20 +68,24 @@
 ++  unsigned-tx
   =,  buffer
   |_  ut=unsigned:tx
-  ++  prevout-buffer
+  ++  prevouts-buffer
     |=  =input:tx  ^-  buffer:tx
     %+  weld
       (from-byts tx-hash.input)
     (from-atom-le 4 witness-ver.input)
   ::
-  ++  output-buffer
+  ++  sequence-buffer
+    |=  =input:tx  ^-  buffer:tx
+    (from-byts sequence.input)
+  ::
+  ++  outputs-buffer
     |=  =output:tx  ^-  buffer:tx
     %+  weld
-      (from-atom-le 4 value.output)
+      (from-atom-le 8 value.output)
     (address-to-script-pubkey address.output)
   ::
   ++  sighash
-    |=  input-index=@  ^-  byts
+    |=  input-index=@  ^-  hash
     ?:  (gte input-index (lent inputs.ut))
       ~|("Input index out of range" !!)
     =/  =input:tx  (snag input-index inputs.ut)
@@ -91,21 +94,20 @@
     (sighash-legacy input)
   ::
   ++  sighash-witness
-    |=  =input:tx  ^-  byts
+    |=  =input:tx  ^-  hash
     =/  prevouts=byts
-      %-  concat-as-byts  (turn inputs.ut prevout-buffer)
+      %-  concat-as-byts  (turn inputs.ut prevouts-buffer)
     =/  sequences=byts
       %-  concat-as-byts
-      %+  reap  (lent inputs.ut)
-      (from-byts [4 0xffff.ffff])
+      (turn inputs.ut sequence-buffer)
     =/  outputs=byts
-      %-  concat-as-byts  (turn outputs.ut output-buffer)
-    ~&  >  `[@ @ux]`prevouts
-    (dsha256 prevouts)
+      %-  concat-as-byts  (turn outputs.ut outputs-buffer)
+    ~&  >  [prevouts=(dsha256 prevouts) sequences=(dsha256 sequences) outputs=(dsha256 outputs)]
+    [0 0x0]
   ::
   ++  sighash-legacy
-    |=  =input:tx  ^-  byts
-    [0 0]
+    |=  =input:tx  ^-  hash
+    [0 0x0]
   --
 ::
 ::  Converts a list of bits to a list of n-bit numbers

@@ -186,16 +186,13 @@ Using [BIP 143](https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki#P
 Native P2WPKH
 ```
 =btcs -build-file %/sur/btc/hoon
-=input0 (input:tx:btcs [[32 0xfff7.f788.1a80.99af.a694.0d42.d1e7.f636.2bec.3817.1ea3.edf4.3354.1db4.e4ad.969f] 0 0 [35 0x21.03c9.f483.6b9a.4f77.fc0d.81f7.bcb0.1b7f.1b35.9168.64b9.476c.241c.e9fc.198b.d254.32ac] ~ ~ 625.000.000])
-=input1 (input:tx:btcs [[32 0xef51.e1b8.04cc.89d1.82d2.7965.5c3a.a89e.815b.1b30.9fe2.87d9.b2b5.5d57.b90e.c68a] 0 1 [22 0x14.1d0f.172a.0ecb.48ae.e1be.1f26.87d2.963a.e33f.71a1] ~ `[33 0x2.5476.c2e8.3188.368d.a1ff.3e29.2e7a.cafc.db35.66bb.0ad2.53f6.2fc7.0f07.aeee.6357] 600.000.000])
+=input0 (input:tx:btcs [[32 0xfff7.f788.1a80.99af.a694.0d42.d1e7.f636.2bec.3817.1ea3.edf4.3354.1db4.e4ad.969f] 0 0 [4 0xeeff.ffff] [35 0x21.03c9.f483.6b9a.4f77.fc0d.81f7.bcb0.1b7f.1b35.9168.64b9.476c.241c.e9fc.198b.d254.32ac] ~ ~ 625.000.000])
+=input1 (input:tx:btcs [[32 0xef51.e1b8.04cc.89d1.82d2.7965.5c3a.a89e.815b.1b30.9fe2.87d9.b2b5.5d57.b90e.c68a] 0 1 [4 0xffff.ffff] [22 0x14.1d0f.172a.0ecb.48ae.e1be.1f26.87d2.963a.e33f.71a1] ~ `[33 0x2.5476.c2e8.3188.368d.a1ff.3e29.2e7a.cafc.db35.66bb.0ad2.53f6.2fc7.0f07.aeee.6357] 600.000.000])
 
 =output0 (output:tx:btcs [[%bech32 'bc1qs2qtxl0n0rdenan0shy457p6w6k85m2e36f7ze'] 112.340.000])
 =output1 (output:tx:btcs [[%bech32 'bc1q800y9klw0exmu63pkt2sechszel64q2enddkt4'] 223.450.000])
 =utx (unsigned:tx:btcs [~[input0 input1] ~[output0 output1]])
-
-
 ```
-0x3bde.42db.ee7e.4dbe.6a21.b2d5.0ce2.f016.7faa.8159
 
 ## cutting off the last 20 bytes (for bech32 address outputs):
 ```
