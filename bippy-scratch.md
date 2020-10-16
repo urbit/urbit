@@ -191,7 +191,10 @@ Native P2WPKH
 
 =output0 (output:tx:btcs [[%bech32 'bc1qs2qtxl0n0rdenan0shy457p6w6k85m2e36f7ze'] 112.340.000])
 =output1 (output:tx:btcs [[%bech32 'bc1q800y9klw0exmu63pkt2sechszel64q2enddkt4'] 223.450.000])
-=utx (unsigned:tx:btcs [~[input0 input1] ~[output0 output1]])
+=utx (unsigned:tx:btcs [1 0x11 ~[input0 input1] ~[output0 output1]])
+
+(~(sighash unsigned-tx:btc utx) 1)
+:: gives [wid=32 dat=0xc37a.f311.16d1.b27c.af68.aae9.e3ac.82f1.4779.2901.4d5b.9176.57d0.eb49.478c.b670]
 ```
 
 ## cutting off the last 20 bytes (for bech32 address outputs):
