@@ -5695,6 +5695,7 @@
 ++  mes  %+  cook                                       ::  hexbyte
            |=({a/@ b/@} (add (mul 16 a) b))
          ;~(plug hit hit)
+++  lyn  (cold `@t`0xa (jest '  '))                     ::  newline
 ++  nix  (boss 256 (star ;~(pose aln cab)))             ::
 ++  nud  (shim '0' '9')                                 ::  numeric
 ++  prn  ;~(less (just `@`127) (shim 32 256))           ::  non-control
@@ -5704,7 +5705,7 @@
          ==
 ++  qit  ;~  pose                                       ::  chars in a cord
              ;~(less bat say prn)
-             ;~(pfix bat ;~(pose bat say mes))          ::  escape chars
+             ;~(pfix bat ;~(pose bat say mes lyn))      ::  escape chars
          ==
 ++  qut  ;~  simu  say                                  ::  cord
            ;~  pose
@@ -11364,6 +11365,8 @@
       ['\\' i.mil $(mil t.mil)]
     ?:  (lte ' ' i.mil)
       [i.mil $(mil t.mil)]
+    ?:  =(`@`0xa i.mil)
+      ['\\' ' ' ' ' $(mil t.mil)]
     ['\\' ~(x ne (rsh 2 1 i.mil)) ~(x ne (end 2 1 i.mil)) $(mil t.mil)]
   ::
   ++  deal  |=(lum/* (dish dole lum))
@@ -12527,7 +12530,7 @@
       %+  cook  |=(a/(list $@(@ tuna:hoot)) a)
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose (mask "-+*%;\{") bas yel bix:ab))
+        ;~(pfix bas ;~(pose (mask "-+*%;\{") bas yel bix:ab lyn))
         inline-embed
         ;~(less bas lob ?:(in-tall-form fail toc) prn)
         ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
@@ -13667,7 +13670,7 @@
         %+  ifix  [yel yel]
         %-  star
         ;~  pose
-          ;~(pfix bas ;~(pose bas yel lob bix:ab))
+          ;~(pfix bas ;~(pose bas yel lob bix:ab lyn))
           ;~(less yel bas lob prn)
           (stag ~ sump)
         ==
@@ -13677,7 +13680,7 @@
         [(jest '"""\0a') (jest '\0a"""')]
       %-  star
       ;~  pose
-        ;~(pfix bas ;~(pose bas lob bix:ab))
+        ;~(pfix bas ;~(pose bas lob bix:ab lyn))
         ;~(less bas lob prn)
         ;~(less (jest '\0a"""') (just `@`10))
         (stag ~ sump)
