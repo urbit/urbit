@@ -12,66 +12,115 @@
   :-  32
   %+  swp  3
   (shay wid.byts little-endian)
+::
+++  dsha256
+  |=  =byts
+  (sha256 (sha256 byts))
+::
 ++  hash-160
-  |=  pubkey=@ux
-  ^-  @ux
+  |=  pubkey=@ux  ^-  byts
   =,  ripemd:crypto
+  :-  20
   %-  ripemd-160
   %-  sha256  [(met 3 pubkey) pubkey]
+::
+++  address-to-script-pubkey
+  |=  =address  ^-  buffer:tx
+  ?.  ?=(%bech32 -.address)
+    ~|("Only bech32 addressess supported right now" !!)
+  =/  hex=byts  (to-hex:bech32 (trip +.address))
+  ?.  =(wid.hex 20)
+    ~|("Only 20-byte P2WPKH bech32 supported" !!)
+  %-  zing
+    :~  ~[0x19 0x76 0xa9 0x14]
+        (from-byts:buffer hex)
+        ~[0x88 0xac]
+    ==
 ::
 ::  list of @ux that is big endian for hashing purposes
 ::  used to preserve 0s when concatenating byte sequences
 ::
 ++  buffer
   |%
-  ::  from-byts: converts byts to list, preserving leading 0s
-  ::
   ++  from-byts
-    |=  =byts
-    ^-  buffer:tx
+    |=  =byts  ^-  buffer:tx
     =/  b=(list @ux)
       (flop (rip 3 dat.byts))
     =/  pad=@  (sub wid.byts (lent b))
     (weld (reap pad 0x0) b)
+  ::  converts an atom to a little endian buffer with wid length (trailing 0s)
+  ::  atom 1 with wid=4 becomes ~[0x1 0x0 0x0 0x0]
+  ::  0xff11 with wid=8 becomes ~[0x11 0xff 0x0 0x0 0x0 0x0 0x0 0x0]
+  ::
+  ++  from-atom-le
+    |=  [wid=@ a=@]  ^-  buffer:tx
+    =/  b=(list @ux)  (rip 3 a)
+    =/  pad=@  (sub wid (lent b))
+    (weld b (reap pad 0x0))
   ::
   ++  to-byts
-    |=  b=buffer:tx
-    ^-  byts
+    |=  b=buffer:tx  ^-  byts
     [(lent b) (rep 3 (flop b))]
+  ++  concat-as-byts
+    |=  bs=(list buffer:tx)  ^-  byts
+    %-  to-byts  (zing bs)
   --
 ::
-++  payments
-  |%
-  ++  p2pkh
-    |=  script=@ux
-::    ^-  @ux
-    ^-  (list @ux)
-    =/  chunks=(list (list @))
-      :~  ~[op-dup:ops]
-          ~[op-hash160:ops]
-          ~[(met 3 script)]
-          ::TODO FLOP rip in HERE
-          ~[op-equalverify:ops]
-          ~[op-checksig:ops]
-       ==
-     (zing chunks)
+++  unsigned-tx
+  =,  buffer
+  |_  ut=unsigned:tx
+  ++  prevout-buffer
+    |=  =input:tx  ^-  buffer:tx
+    %+  weld
+      (from-byts tx-hash.input)
+    (from-atom-le 8 witness-ver.input)
+  ::
+  ++  output-buffer
+    |=  =output:tx  ^-  buffer:tx
+    %+  weld
+      (from-atom-le 4 value.output)
+    (address-to-script-pubkey address.output)
+  ::
+  ++  sighash
+    |=  input-index=@  ^-  byts
+    ?:  (gte input-index (lent inputs.ut))
+      ~|("Input index out of range" !!)
+    =/  =input:tx  (snag input-index inputs.ut)
+    ?:  =(1 witness-ver.input)
+      (sighash-witness input)
+    (sighash-legacy input)
+  ::
+  ++  sighash-witness
+    |=  =input:tx  ^-  byts
+    =/  prevouts=byts
+      %-  concat-as-byts  (turn inputs.ut prevout-buffer)
+    =/  sequences=byts
+      %-  concat-as-byts
+      %+  reap  (lent inputs.ut)
+      (from-byts [4 0xffff.ffff])
+    =/  outputs=byts
+      %-  concat-as-byts  (turn outputs.ut output-buffer)
+    (dsha256 prevouts)
+  ::
+  ++  sighash-legacy
+      |=  =input:tx  ^-  byts
+      [0 0]
   --
+::
 ::  Converts a list of bits to a list of n-bit numbers
 ::  input-bits should be big-endian
 ::
 ++  bits
   |%
-  ::  rip atom of bitwidth wordlen. Preserve leading 0s, big endian
+  ::  rip atom a with num-bits. Preserve leading 0s, big endian
   ::  returns a list of bits
   ::
   ++  zeros-brip
-    |=  [bitwidth=@ a=@]
+    |=  [num-bits=@ a=@]
     ^-  (list @)
     =/  bits=(list @)  (flop (rip 0 a))
-    =/  r=@  (mod (lent bits) bitwidth)
-    ?:  ?&(=(0 r) (gth (lent bits) 0))                             ::  no remainder & more than 0 bits
-      bits
-    (weld (reap (sub bitwidth r) 0) bits)
+    =/  pad=@  (sub num-bits (lent bits))
+    (weld (reap pad 0) bits)
   ::  converts from bit list to a list of atoms each with bitwidth d(est)
   ::
   ++  convert
@@ -232,7 +281,15 @@
     ?~  prefix  ~
     :-  ~
     %+  encode-raw  u.prefix
-    (weld ~[0] (convert:bits 5 (zeros-brip:bits 8 (hash-160 pubkey))))
+    [0 (convert:bits 5 (zeros-brip:bits 160 dat:(hash-160 pubkey)))]
+  ++  encode-hash-160
+    |=  [=network h160=byts]
+    ^-  (unit tape)
+    =/  prefix  (~(get by prefixes) network)
+    ?~  prefix  ~
+    :-  ~
+    %+  encode-raw  u.prefix
+    [0 (convert:bits 5 (zeros-brip:bits 160 dat.h160))]
   --
 ::
 --
