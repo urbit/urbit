@@ -1,16 +1,27 @@
 ::  invite-store [landscape]
 /-  *invite-store
-/+  default-agent, dbug
+/+  res=resource, default-agent, dbug
 |%
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-0
+      state-1
   ==
 ::
-+$  state-0  [%0 =invites]
++$  invitatory-0  (map serial invite-0)
++$  invite-0
+  $:  =ship           ::  ship to subscribe to upon accepting invite
+      app=@tas        ::  app to subscribe to upon accepting invite
+      =path           ::  path to subscribe to upon accepting invite
+      recipient=ship  ::  recipient to receive invite
+      text=cord       ::  text to describe the invite
+  ==
+::
++$  state-0  [%0 invites=(map path invitatory-0)]
++$  state-1  [%1 =invites]
 --
 ::
-=|  state-0
+=|  state-1
 =*  state  -
 %-  agent:dbug
 ^-  agent:gall
@@ -18,25 +29,52 @@
 |_  =bowl:gall
 +*  this      .
     def       ~(. (default-agent this %|) bowl)
+::
 ++  on-init   on-init:def
 ++  on-save   !>(state)
 ++  on-load
-  |=  old=vase
-  `this(state !<(state-0 old))
+  |=  old-vase=vase
+  =/  old  !<(versioned-state old-vase)
+  ?:  ?=(%1 -.old)
+   `this(state old)
+  :-  ~
+  %=  this
+      state
+    :-  %1
+    %-  ~(gas by *^invites)
+    %+  turn  ~(tap by invites.old)
+    |=  [=path =invitatory-0]
+    ^-  [resource invitatory]
+    ?>  ?=([@ @ ~] path)
+    :-  [(slav %p i.path) i.t.path]
+    %-  ~(gas by *invitatory)
+    %+  turn  ~(tap by invitatory-0)
+    |=  [uid=serial =invite-0]
+    ^-  [serial invite]
+    :-  uid
+    :*  ship.invite-0
+        app.invite-0
+        (de-path:res path.invite-0)
+        recipient.invite-0
+        text.invite-0
+    ==
+  ==
 ::
 ++  on-agent  on-agent:def
 ++  on-arvo   on-arvo:def
+++  on-leave  on-leave:def
 ++  on-fail   on-fail:def
 ::
 ++  on-watch
   |=  =path
   ^-  (quip card _this)
+  ?>  (team:title our.bowl src.bowl)
   =/  cards=(list card)
     ?+    path  (on-watch:def path)
         [%all ~]      [%give %fact ~ %invite-update !>([%initial invites])]~
         [%updates ~]  ~
         [%invitatory *]
-      =/  inv=invitatory  (~(got by invites) t.path)
+      =/  inv=invitatory  (~(got by invites) (de-path:res t.path))
       [%give %fact ~ %invite-update !>([%invitatory inv])]~
     ==
   [cards this]
@@ -56,86 +94,80 @@
     |=  action=invite-action
     ^-  (quip card _state)
     ?-  -.action
-        %create   (handle-create action)
-        %delete   (handle-delete action)
-        %invite   (handle-invite action)
-        %accept   (handle-accept action)
-        %decline  (handle-decline action)
+        %create   (handle-create +.action)
+        %delete   (handle-delete +.action)
+        %invite   (handle-invite +.action)
+        %accept   (handle-accept +.action)
+        %decline  (handle-decline +.action)
     ==
   ::
   ++  handle-create
-    |=  act=invite-action
+    |=  =resource
     ^-  (quip card _state)
-    ?>  ?=(%create -.act)
-    ?:  (~(has by invites) path.act)
+    ?:  (~(has by invites) resource)
       [~ state]
-    :-  (send-diff path.act act)
-    state(invites (~(put by invites) path.act *invitatory))
+    :-  (send-diff resource [%create resource])
+    state(invites (~(put by invites) resource *invitatory))
   ::
   ++  handle-delete
-    |=  act=invite-action
+    |=  =resource
     ^-  (quip card _state)
-    ?>  ?=(%delete -.act)
-    ?.  (~(has by invites) path.act)
+    ?.  (~(has by invites) resource)
       [~ state]
-    :-  (send-diff path.act act)
-    state(invites (~(del by invites) path.act))
+    :-  (send-diff resource [%delete resource])
+    state(invites (~(del by invites) resource))
   ::
   ++  handle-invite
-    |=  act=invite-action
+    |=  [=resource uid=serial =invite]
     ^-  (quip card _state)
-    ?>  ?=(%invite -.act)
-    ?.  (~(has by invites) path.act)
+    ?.  (~(has by invites) resource)
       [~ state]
-    =/  container  (~(got by invites) path.act)
-    =.  uid.act  (sham eny.bowl)
-    =.  container  (~(put by container) uid.act invite.act)
-    :-  (send-diff path.act act)
-    state(invites (~(put by invites) path.act container))
+    =/  container  (~(got by invites) resource)
+    =.  uid  (sham eny.bowl)
+    =.  container  (~(put by container) uid invite)
+    :-  (send-diff resource [%invite resource uid invite])
+    state(invites (~(put by invites) resource container))
   ::
   ++  handle-accept
-    |=  act=invite-action
+    |=  [=resource uid=serial]
     ^-  (quip card _state)
-    ?>  ?=(%accept -.act)
-    ?.  (~(has by invites) path.act)
+    ?.  (~(has by invites) resource)
       [~ state]
-    =/  container  (~(got by invites) path.act)
-    =/  invite  (~(get by container) uid.act)
+    =/  container  (~(got by invites) resource)
+    =/  invite  (~(get by container) uid)
     ?~  invite
       [~ state]
-    =.  container  (~(del by container) uid.act)
-    :-  (send-diff path.act [%accepted path.act uid.act u.invite])
-    state(invites (~(put by invites) path.act container))
+    =.  container  (~(del by container) uid)
+    :-  (send-diff resource [%accepted resource uid u.invite])
+    state(invites (~(put by invites) resource container))
   ::
   ++  handle-decline
-    |=  act=invite-action
+    |=  [=resource uid=serial]
     ^-  (quip card _state)
-    ?>  ?=(%decline -.act)
-    ?.  (~(has by invites) path.act)
+    ?.  (~(has by invites) resource)
       [~ state]
-    =/  container  (~(got by invites) path.act)
-    =/  invite  (~(get by container) uid.act)
+    =/  container  (~(got by invites) resource)
+    =/  invite  (~(get by container) uid)
     ?~  invite
       [~ state]
-    =.  container  (~(del by container) uid.act)
-    :-  (send-diff path.act act)
-    state(invites (~(put by invites) path.act container))
+    =.  container  (~(del by container) uid)
+    :-  (send-diff resource [%decline resource uid])
+    state(invites (~(put by invites) resource container))
   ::
   ++  update-subscribers
-    |=  [pax=path upd=invite-update]
+    |=  [=path upd=invite-update]
     ^-  card
-    [%give %fact ~[pax] %invite-update !>(upd)]
+    [%give %fact ~[path] %invite-update !>(upd)]
   ::
   ++  send-diff
-    |=  [pax=path upd=invite-update]
+    |=  [=resource upd=invite-update]
     ^-  (list card)
     :~  (update-subscribers /all upd)
         (update-subscribers /updates upd)
-        (update-subscribers [%invitatory pax] upd)
+        (update-subscribers [%invitatory (en-path:res resource)] upd)
     ==
   --
 ::
-++  on-leave  on-leave:def
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
@@ -151,7 +183,8 @@
     ^-  (unit (unit cage))
     ?~  pax
       ~
-    =/  invitatory=(unit invitatory)  (~(get by invites) pax)
+    =/  invitatory=(unit invitatory)
+      (~(get by invites) (de-path:res pax))
     [~ ~ %noun !>(invitatory)]
   ::
   ++  peek-x-invite
@@ -163,7 +196,8 @@
       ~
     =/  uid=serial  (slav %uv i.pas)
     =.  pax  (scag (dec (lent pax)) `(list @ta)`pax)
-    =/  invitatory=(unit invitatory)  (~(get by invites) pax)
+    =/  invitatory=(unit invitatory)
+      (~(get by invites) (de-path:res pax))
     ?~  invitatory
       ~
     =/  invite=(unit invite)  (~(get by u.invitatory) uid)
