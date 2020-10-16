@@ -153,8 +153,11 @@ The below code also shows how to convert from bech32 back to a 20-byte hash. Thi
 (encode-pubkey:bech32:btc %main pubkey)
 ::  should be [~ "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"]
 
-(hash-160:btc pubkey)
-::  should be 0x751e.76e8.1991.96d4.5494.1c45.d1b3.a323.f143.3bd6
+`[@ @ux]`(hash-160:btc pubkey)
+::  gives [20 0x751e.76e8.1991.96d4.5494.1c45.d1b3.a323.f143.3bd6]
+
+(encode-hash-160:bech32:btc %main (hash-160:btc pubkey))
+:: gives [~ "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"]
 ```
 
 ### Decode Bech32 to hex
@@ -173,24 +176,24 @@ From seed mnemonic:
 process child keen cargo design install parrot hold pole unveil dance reason drink cash fix
 
 0x2.88b5.a58a.5c26.6cef.d41b.f329.9165.46cc.1703.c4d9.a32e.1ea3.ef3d.1823.c493.05ac
-0x3.289a.4e24.4381.8992.fe20.0831.3551.a3af.2266.ef3d.2038.5df9.6daa.92e3.4df2.16c4
+0x3.289a.4e24.4381.8992.fe20.0831.3551.a3af.2266.ef3d.2038.5df9.6daa.g92e3.4df2.16c4
 0x3.109a.2082.eaa6.8925.1465.5393.d635.7fb9.d9b5.e191.3826.8837.69cd.db88.7a4b.b4f0
 ```
 
+## Unsigned Transactions
+Using [BIP 143](https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki#P2SHP2WPKH) as a reference.
 
-## Signing Scratch
-=unsigned 0x100.0000.015a.800f.d903.679a.cfe9.d4e2.fedb.752b.24c4.d7a5.74b4.c82a.113d.fb99.3b38.64b7.7201.0000.0019.76a9.1495.3de6.57be.4b30.5f60.6d9a.9fbd.35b0.70a6.8247.5788.acff.ffff.ff01.c09e.e605.0000.0000.1976.a914.dd6c.ce9f.255a.8cc1.7bda.8ba0.373d.f8e8.61cb.866e.88ac.0000.0000.0100.0000
+Native P2WPKH
+```
+=btcs -build-file %/sur/btc/hoon
+=input0 (input:tx:btcs [[32 0xfff7.f788.1a80.99af.a694.0d42.d1e7.f636.2bec.3817.1ea3.edf4.3354.1db4.e4ad.969f] 0 0 [35 0x21.03c9.f483.6b9a.4f77.fc0d.81f7.bcb0.1b7f.1b35.9168.64b9.476c.241c.e9fc.198b.d254.32ac] ~ ~ 625.000.000])
+=input1 (input:tx:btcs [[32 0xef51.e1b8.04cc.89d1.82d2.7965.5c3a.a89e.815b.1b30.9fe2.87d9.b2b5.5d57.b90e.c68a] 0 1 [22 0x14.1d0f.172a.0ecb.48ae.e1be.1f26.87d2.963a.e33f.71a1] ~ `[33 0x2.5476.c2e8.3188.368d.a1ff.3e29.2e7a.cafc.db35.66bb.0ad2.53f6.2fc7.0f07.aeee.6357] 600.000.000])
 
-=txhash (shay (met 3 unsigned) (swp 3 unsigned))
+output0=[[%bech32 'bc1qs2qtxl0n0rdenan0shy457p6w6k85m2e36f7ze']]
+```
+0x8280.b37d.f378.db99.f66f.85c9.5a78.3a76.ac7a.6d59
 
-=privkey 0xdc57.c6d0.6737.6c36.bbed.632c.9d00.f037.6786.7f33.7d5a.86b5.b030.8a60.004f.08ee
-
-0x7f5a.997b.83f5.1f79.3b89.10be.9950.8b00.a136.f922
-
-0xbd9.a59c.4ffc.92d3.f5dd.8ba3.a2ed.93b3.d1d9.f9cf.91cf.0982.db70.9be7.0a37.db76
-
-
-### cutting off the last 20 bytes (for bech32 address outputs):
+## cutting off the last 20 bytes (for bech32 address outputs):
 ```
 `@ux`(end 3 2 0x14.6655)
 ::  gives 0x6655
