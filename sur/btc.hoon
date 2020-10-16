@@ -4,6 +4,7 @@
 +$  bech32-address  $%([%bech32 cord])
 +$  address  ?(legacy-address bech32-address)
 +$  sats  @ud
++$  hash  [wid=@ dat=@ux]
 ++  tx
   |%
   +$  buffer  (list @ux)
@@ -15,6 +16,7 @@
     $:  tx-hash=byts
         tx-index=@
         witness-ver=@
+        sequence=byts
         script-pubkey=byts
         redeem-script=(unit byts)
         pubkey=(unit byts)
