@@ -314,8 +314,11 @@ pier (serf, log) vSlog startedSig = do
   let compute = putTMVar computeQ
   let execute = writeTQueue executeQ
   let persist = writeTQueue persistQ
-  let scry    = \w b g k -> writeTQueue scryQ (w, b, g, k)
   let sigint  = Serf.sendSIGINT serf
+  let scry    = \w b g -> do
+        res <- newEmptyMVar
+        atomically $ writeTQueue scryQ (w, b, g, putMVar res)
+        takeMVar res
 
   (bootEvents, startDrivers) <- do
     env <- ask
@@ -410,7 +413,7 @@ drivers
   -> Ship
   -> Bool
   -> (RunReq -> STM ())
-  -> (Wen -> Gang -> Path -> (Maybe (Term, Noun) -> IO ()) -> STM ())
+  -> (Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
   -> (TermSize, Term.Client)
   -> (Text -> RIO e ())
   -> IO ()
