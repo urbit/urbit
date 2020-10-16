@@ -208,6 +208,36 @@ _ames_ship_to_chubs(c3_d sip_d[2], c3_y len_y, c3_y* buf_y)
   sip_d[1] = _ames_chub_bytes(sip_y + 8);
 }
 
+/* _ames_chub_bytes(): c3_d to c3_y[8]
+** XX move
+*/
+static inline void
+_ames_bytes_chub(c3_y byt_y[8], c3_d num_d)
+{
+  byt_y[0] = num_d & 0xff;
+  byt_y[1] = (num_d >>  8) & 0xff;
+  byt_y[2] = (num_d >> 16) & 0xff;
+  byt_y[3] = (num_d >> 24) & 0xff;
+  byt_y[4] = (num_d >> 32) & 0xff;
+  byt_y[5] = (num_d >> 40) & 0xff;
+  byt_y[6] = (num_d >> 48) & 0xff;
+  byt_y[7] = (num_d >> 56) & 0xff;
+}
+
+/* _ames_ship_of_chubs(): unpack c3_d[2] into [len_y] bytes.
+** XX move
+*/
+static inline void
+_ames_ship_of_chubs(c3_d sip_d[2], c3_y len_y, c3_y* buf_y)
+{
+  c3_y sip_y[16] = {0};
+
+  _ames_bytes_chub(sip_y, sip_d[0]);
+  _ames_bytes_chub(sip_y + 8, sip_d[1]);
+
+  memcpy(buf_y, sip_y, c3_min(16, len_y));
+}
+
 /* _ames_send_cb(): send callback.
 */
 static void
@@ -489,13 +519,10 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
     //
     u3_body* bod_u = &pac_u->bod_u;
     c3_y*    pac_y = c3_malloc(4 + sen_y + rec_y + bod_u->con_w);
-    {
-      u3_atom sen = u3i_chubs(2, bod_u->sen_d);
-      u3_atom rec = u3i_chubs(2, bod_u->rec_d);
-      u3r_bytes(0, sen_y, pac_y + 4,         sen);
-      u3r_bytes(0, rec_y, pac_y + 4 + sen_y, rec);
-      u3z(sen); u3z(rec);
-    }
+
+    _ames_ship_of_chubs(bod_u->sen_d, sen_y, pac_y + 4);
+    _ames_ship_of_chubs(bod_u->rec_d, rec_y, pac_y + 4 + sen_y);
+
     memcpy(pac_y + 4 + sen_y + rec_y, bod_u->con_y, bod_u->con_w);
 
     //  if we updated the origin lane, we need to update the mug too
