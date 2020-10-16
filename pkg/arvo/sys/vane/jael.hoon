@@ -1033,10 +1033,7 @@
     =/  who  (slaw %p i.tyl)
     ?~  who  [~ ~]
     =/  sec  (~(got by jaw.own.pki.lex) lyf.own.pki.lex)
-    =/  cub  (nol:nu:crub:crypto sec)
-    ::  XX use pac:ex:cub?
-    ::
-    ``[%noun !>((end 6 1 (shaf %pass (shax sec:ex:cub))))]
+    ``[%noun !>((end 6 1 (shaf %pass (shax sec))))]
   ::
       %life
     ?.  ?=([@ ~] tyl)  [~ ~]

@@ -10,6 +10,7 @@ module Urbit.Vere.Dawn ( dawnVent
                        , mix
                        , shas
                        , shaf
+                       , deriveCode
                        , cometFingerprintBS
                        , cometFingerprint
                        ) where
@@ -461,8 +462,11 @@ mix a b = BS.pack $ loop (BS.unpack a) (BS.unpack b)
     loop [] b          = b
     loop (x:xs) (y:ys) = (xor x y) : loop xs ys
 
+shax :: BS.ByteString -> BS.ByteString
+shax = SHA256.hash
+
 shas :: BS.ByteString -> BS.ByteString -> BS.ByteString
-shas salt = SHA256.hash . mix salt . SHA256.hash
+shas salt = shax . mix salt . shax
 
 shaf :: BS.ByteString -> BS.ByteString -> BS.ByteString
 shaf salt ruz = (mix a b)
@@ -470,6 +474,18 @@ shaf salt ruz = (mix a b)
     haz = shas salt ruz
     a = (take 16 haz)
     b = (drop 16 haz)
+
+-- Given a ring, derives the network login code.
+--
+-- Note that the network code is a patp, not a patq: the bytes have been
+-- scrambled.
+deriveCode :: Ring -> Ob.Patp
+deriveCode Ring {..} = Ob.patp $
+                       bytesAtom $
+                       take 8 $
+                       shaf (C.pack "pass") $
+                       shax $
+                       C.singleton 'B' <> ringSign <> ringCrypt
 
 cometFingerprintBS :: Pass -> ByteString
 cometFingerprintBS = (shaf $ C.pack "bfig") . passToBS
