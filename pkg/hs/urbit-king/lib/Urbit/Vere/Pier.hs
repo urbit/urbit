@@ -34,22 +34,21 @@ import Urbit.Noun.Time        (Wen)
 import Urbit.TermSize         (TermSize(..), termSize)
 import Urbit.Vere.Serf        (Serf)
 
-import qualified Data.Text              as T
-import qualified Network.Wai            as W
-import qualified System.Entropy         as Ent
-import qualified Urbit.EventLog.LMDB    as Log
-import qualified Urbit.King.API         as King
-import qualified Urbit.Noun.Time        as Time
-import qualified Urbit.Vere.Ames        as Ames
-import qualified Urbit.Vere.Behn        as Behn
-import qualified Urbit.Vere.Clay        as Clay
-import qualified Urbit.Vere.Eyre        as Eyre
-import qualified Urbit.Vere.Eyre.Site   as Site
-import qualified Urbit.Vere.Http.Client as Iris
-import qualified Urbit.Vere.Serf        as Serf
-import qualified Urbit.Vere.Term        as Term
-import qualified Urbit.Vere.Term.API    as Term
-import qualified Urbit.Vere.Term.Demux  as Term
+import qualified Data.Text                   as T
+import qualified System.Entropy              as Ent
+import qualified Urbit.EventLog.LMDB         as Log
+import qualified Urbit.King.API              as King
+import qualified Urbit.Noun.Time             as Time
+import qualified Urbit.Vere.Ames             as Ames
+import qualified Urbit.Vere.Behn             as Behn
+import qualified Urbit.Vere.Clay             as Clay
+import qualified Urbit.Vere.Eyre             as Eyre
+import qualified Urbit.Vere.Eyre.KingSubsite as Site
+import qualified Urbit.Vere.Http.Client      as Iris
+import qualified Urbit.Vere.Serf             as Serf
+import qualified Urbit.Vere.Term             as Term
+import qualified Urbit.Vere.Term.API         as Term
+import qualified Urbit.Vere.Term.Demux       as Term
 
 
 -- Initialize pier directory. --------------------------------------------------
@@ -282,7 +281,7 @@ pier (serf, log) vSlog startedSig = do
 
   -- Set up the runtime subsite server and its capability to slog
   siteSlog <- newTVarIO (const $ pure ())
-  runtimeSubsite <- Site.app siteSlog
+  runtimeSubsite <- Site.kingSubsite siteSlog
 
   --  Slogs go to stderr, to the runtime subsite, and to the terminal.
   env <- ask
@@ -412,7 +411,7 @@ drivers
   -> (TermSize, Term.Client)
   -> (Text -> RIO e ())
   -> IO ()
-  -> W.Application
+  -> Site.KingSubsite
   -> RAcquire e ([Ev], RAcquire e Drivers)
 drivers env who isFake plan termSys stderr serfSIGINT sub = do
   (behnBorn, runBehn) <- rio Behn.behn'
