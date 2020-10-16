@@ -1,6 +1,7 @@
 const path = require('path');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -16,6 +17,7 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env', '@babel/typescript', '@babel/preset-react'],
             plugins: [
+              'lodash',
               '@babel/transform-runtime',
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
@@ -41,7 +43,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.tsx']
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   // devServer: {
   //   contentBase: path.join(__dirname, './'),
   //   hot: true,
@@ -49,6 +51,7 @@ module.exports = {
   //   historyApiFallback: true
   // },
   plugins: [
+    new MomentLocalesPlugin(),
     new CleanWebpackPlugin(),
     // new HtmlWebpackPlugin({
     //   title: 'Hot Module Replacement',
