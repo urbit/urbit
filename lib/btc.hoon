@@ -23,19 +23,21 @@
   %-  ripemd-160
   %-  sha256  [(met 3 pubkey) pubkey]
 ::
+++  to-script-pubkey
+  |=  script=byts  ^-  buffer:tx
+  %-  zing
+  :~  ~[0x19 0x76 0xa9 0x14]
+      (from-byts:buffer script)
+      ~[0x88 0xac]
+  ==
 ++  address-to-script-pubkey
   |=  =address  ^-  buffer:tx
   ?.  ?=(%bech32 -.address)
-    ~|("Only bech32 addressess supported right now" !!)
+    ~|("Only bech32 addresses supported right now" !!)
   =/  hex=byts  (to-hex:bech32 (trip +.address))
   ?.  =(wid.hex 20)
     ~|("Only 20-byte P2WPKH bech32 supported" !!)
-  %-  zing
-    :~  ~[0x19 0x76 0xa9 0x14]
-        (from-byts:buffer hex)
-        ~[0x88 0xac]
-    ==
-::
+  (to-script-pubkey hex)
 ::  list of @ux that is big endian for hashing purposes
 ::  used to preserve 0s when concatenating byte sequences
 ::
