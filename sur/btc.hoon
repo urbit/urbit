@@ -3,12 +3,13 @@
 +$  legacy-address  $%([%legacy @uc])
 +$  bech32-address  $%([%bech32 cord])
 +$  address  ?(legacy-address bech32-address)
++$  sats  @ud
 ++  tx
   |%
   +$  buffer  (list @ux)
   +$  unsigned
-    $:  (list input)
-        (list output)
+    $:  inputs=(list input)
+        outputs=(list output)
     ==
   +$  input
     $:  tx-hash=byts
@@ -16,11 +17,12 @@
         witness-ver=@
         script-pubkey=byts
         redeem-script=(unit byts)
-        pubkey=byts
+        pubkey=(unit byts)
+        value=sats
     ==
   +$  output
     $:  =address
-        value=@
+        value=sats
     ==
   --
 ++  ops
