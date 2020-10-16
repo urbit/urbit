@@ -197,6 +197,20 @@ Native P2WPKH
 :: gives [wid=32 dat=0xc37a.f311.16d1.b27c.af68.aae9.e3ac.82f1.4779.2901.4d5b.9176.57d0.eb49.478c.b670]
 ```
 
+### Signing the above
+```
+=ecc secp256k1:secp:crypto
+=h dat:(~(sighash unsigned-tx:btc utx) 1)
+=priv 0x6.19c3.3502.5c7f.4012.e556.c2a5.8b25.06e3.0b85.11b5.3ade.95ea.316f.d8c0.3286.feb9
+(ecdsa-raw-sign:ecc h priv)
+
+::  desired r of sig:
+::  3609e17b84f6a7d30c80bfa610b5b4542f32a8a0d5447a12fb1366d7f01cc44a
+::
+::  desired s of sig:
+::  573a954c4518331561406f90300e8f3358f51928d43c212a8caed02de67eebee
+```
+
 ## cutting off the last 20 bytes (for bech32 address outputs):
 ```
 `@ux`(end 3 2 0x14.6655)
