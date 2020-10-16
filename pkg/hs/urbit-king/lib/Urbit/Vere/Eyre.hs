@@ -20,14 +20,14 @@ import Urbit.Vere.Eyre.Service
 import Urbit.Vere.Eyre.Wai
 import Urbit.Vere.Pier.Types
 
-import Data.List.NonEmpty (NonEmpty((:|)))
-import Data.PEM           (pemParseBS, pemWriteBS)
-import RIO.Prelude        (decodeUtf8Lenient)
-import System.Random      (randomIO)
-import Urbit.Vere.Http    (convertHeaders, unconvertHeaders)
+import Data.List.NonEmpty          (NonEmpty((:|)))
+import Data.PEM                    (pemParseBS, pemWriteBS)
+import RIO.Prelude                 (decodeUtf8Lenient)
+import System.Random               (randomIO)
+import Urbit.Vere.Http             (convertHeaders, unconvertHeaders)
+import Urbit.Vere.Eyre.KingSubsite (KingSubsite)
 
 import qualified Network.HTTP.Types  as H
-import qualified Network.Wai.Conduit as W
 
 
 -- Types -----------------------------------------------------------------------
@@ -177,7 +177,7 @@ startServ
   -> HttpServerConf
   -> (EvErr -> STM ())
   -> (Text -> RIO e ())
-  -> W.Application
+  -> KingSubsite
   -> RIO e Serv
 startServ who isFake conf plan stderr sub = do
   logInfo (displayShow ("EYRE", "startServ"))
@@ -225,27 +225,27 @@ startServ who isFake conf plan stderr sub = do
 
   logInfo (displayShow ("EYRE", "joinMultiEyre", who, mTls, mCre))
 
-  atomically (joinMultiEyre multi who mCre onReq onKilReq)
+  atomically (joinMultiEyre multi who mCre onReq onKilReq sub)
 
   logInfo $ displayShow ("EYRE", "Starting loopback server")
-  lop <- serv sub vLive $ ServConf
+  lop <- serv vLive $ ServConf
     { scHost = soHost (pttLop ptt)
     , scPort = soWhich (pttLop ptt)
     , scRedi = Nothing
     , scFake = False
-    , scType = STHttp who $ ReqApi
+    , scType = STHttp who sub $ ReqApi
         { rcReq = onReq Loopback
         , rcKil = onKilReq
         }
     }
 
   logInfo $ displayShow ("EYRE", "Starting insecure server")
-  ins <- serv sub vLive $ ServConf
+  ins <- serv vLive $ ServConf
     { scHost = soHost (pttIns ptt)
     , scPort = soWhich (pttIns ptt)
     , scRedi = secRedi
     , scFake = noHttp
-    , scType = STHttp who $ ReqApi
+    , scType = STHttp who sub $ ReqApi
         { rcReq = onReq Insecure
         , rcKil = onKilReq
         }
@@ -253,12 +253,12 @@ startServ who isFake conf plan stderr sub = do
 
   mSec <- for mTls $ \tls -> do
     logInfo "Starting secure server"
-    serv sub vLive $ ServConf
+    serv vLive $ ServConf
       { scHost = soHost (pttSec ptt)
       , scPort = soWhich (pttSec ptt)
       , scRedi = Nothing
       , scFake = noHttps
-      , scType = STHttps who tls $ ReqApi
+      , scType = STHttps who tls sub $ ReqApi
           { rcReq = onReq Secure
           , rcKil = onKilReq
           }
@@ -293,7 +293,7 @@ eyre'
   => Ship
   -> Bool
   -> (Text -> RIO e ())
-  -> W.Application
+  -> KingSubsite
   -> RIO e ([Ev], RAcquire e (DriverApi HttpServerEf))
 
 eyre' who isFake stderr sub = do
@@ -330,9 +330,9 @@ eyre
   -> (EvErr -> STM ())
   -> Bool
   -> (Text -> RIO e ())
-  -> W.Application
+  -> KingSubsite
   -> ([Ev], RAcquire e (HttpServerEf -> IO ()))
-eyre env who plan isFake sub stderr = (initialEvents, runHttpServer)
+eyre env who plan isFake stderr sub = (initialEvents, runHttpServer)
  where
   king = fromIntegral (env ^. kingIdL)
   multi = env ^. multiEyreApiL
@@ -356,7 +356,7 @@ eyre env who plan isFake sub stderr = (initialEvents, runHttpServer)
   restart :: Drv -> HttpServerConf -> RIO e Serv
   restart (Drv var) conf = do
     logInfo "Restarting http server"
-    let startAct = startServ who isFake conf plan sub stderr
+    let startAct = startServ who isFake conf plan stderr sub
     res <- fromEither =<< restartService var startAct kill
     logInfo "Done restating http server"
     pure res
