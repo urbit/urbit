@@ -1,13 +1,13 @@
 { pkgs }:
 
 pkgs.stdenv.mkDerivation rec {
-  name = "libaes_siv-50955";
+  name = "libaes_siv-96812";
   buildInputs = [ pkgs.cmake pkgs.openssl ];
   builder = ./builder.sh;
   src = pkgs.fetchFromGitHub {
-    owner = "frodwith";
+    owner = "dfoxfranke";
     repo = "libaes_siv";
-    rev = "509550e92a416172b9b8255e275f3a04d5fd4545";
-    sha256 = "11clbvasyyc7ml2x9g5z3il6hs9gzsa10fcnj4grmijzm7gkb3qq";
+    rev = "9681279cfaa6e6399bb7ca3afbbc27fc2e19df4b";
+    sha256 = "1g4wy0m5wpqx7z6nillppkh5zki9fkx9rdw149qcxh7mc5vlszzi";
   };
 }
