@@ -95,6 +95,7 @@ export function Sidebar(props: SidebarProps) {
       width="100%"
       gridRow="1/2"
       gridColumn="1/2"
+      borderTopLeftRadius='2'
       borderRight={1}
       borderRightColor="washedGray"
       overflowY="scroll"
