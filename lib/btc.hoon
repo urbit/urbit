@@ -93,15 +93,14 @@
     =/  =input:tx  (snag input-index inputs.ut)
     ?:  =(1 witness-ver.input)
       (sighash-witness input)
-    (sighash-legacy input)
+    (sighash-legacy input-index)
   ::
   ++  sighash-witness
     |=  =input:tx  ^-  hash
     =/  prevouts=byts
       %-  concat-as-byts  (turn inputs.ut prevouts-buffer)
     =/  sequences=byts
-      %-  concat-as-byts
-      (turn inputs.ut sequence-buffer)
+      %-  concat-as-byts  (turn inputs.ut sequence-buffer)
     =/  outputs=byts
       %-  concat-as-byts  (turn outputs.ut outputs-buffer)
     ::  Hash inputs in order, as per BIP143 examples
@@ -139,8 +138,11 @@
     ==
   ::
   ++  sighash-legacy
-    |=  =input:tx  ^-  hash
-    [0 0x0]
+    |=  input-index=@  ^-  hash
+    ::  TODO: turn each input
+    ::  make the script be 0x0
+    ::  at the end, use snap to replace ONLY the one at input-index with the real script
+   [0 0x0]
   --
 ::
 ::  Converts a list of bits to a list of n-bit numbers
