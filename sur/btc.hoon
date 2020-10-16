@@ -9,7 +9,9 @@
 ++  tx
   |%
   +$  unsigned
-    $:  inputs=(list input)
+    $:  version=@
+        locktime=@
+        inputs=(list input)
         outputs=(list output)
     ==
   +$  input
@@ -35,3 +37,4 @@
   ++  op-checksig     172
   --
 --
+

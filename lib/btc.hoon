@@ -104,15 +104,39 @@
       (turn inputs.ut sequence-buffer)
     =/  outputs=byts
       %-  concat-as-byts  (turn outputs.ut outputs-buffer)
-    ::  all the variables
+    ::  Hash inputs in order, as per BIP143 examples
+    ::
+    =/  n-version=^buffer  (from-atom-le 4 version.ut)
+    =/  hash-prevouts=^buffer
+      %-  from-byts  (dsha256 prevouts)
+    =/  hash-sequence=^buffer
+      %-  from-byts  (dsha256 sequences)
+    =/  outpoint=^buffer
+      %+  weld  (from-byts tx-hash.input)
+      (from-atom-le 4 witness-ver.input)
     =/  script-code=^buffer
       %-  to-script-pubkey
       (slag 2 (from-byts script-pubkey.input))
     =/  amount=^buffer
       (from-atom-le 8 value.input)
     =/  n-sequence=^buffer  (sequence-buffer input)
-    ~&  >  [prevouts=(dsha256 prevouts) sequences=(dsha256 sequences) outputs=(dsha256 outputs)]
-    [0 0x0]
+    =/  hash-outputs=^buffer
+      %-  from-byts  (dsha256 outputs)
+    =/  n-locktime=^buffer  (from-atom-le 4 locktime.ut)
+    =/  n-hashtype=^buffer  (from-atom-le 4 1)
+    %-  dsha256
+    %-  concat-as-byts
+    :~  n-version
+        hash-prevouts
+        hash-sequence
+        outpoint
+        script-code
+        amount
+        n-sequence
+        hash-outputs
+        n-locktime
+        n-hashtype
+    ==
   ::
   ++  sighash-legacy
     |=  =input:tx  ^-  hash
