@@ -151,22 +151,22 @@ The below code also shows how to convert from bech32 back to a 20-byte hash. Thi
 ```
 =pubkey 0x2.79be.667e.f9dc.bbac.55a0.6295.ce87.0b07.029b.fcdb.2dce.28d9.59f2.815b.16f8.1798
 (encode-pubkey:bech32:btc %main pubkey)
-::  should be [~ "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"]
+::  gives [~ %bech32 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4']
 
 `[@ @ux]`(hash-160:btc pubkey)
 ::  gives [20 0x751e.76e8.1991.96d4.5494.1c45.d1b3.a323.f143.3bd6]
 
 (encode-hash-160:bech32:btc %main (hash-160:btc pubkey))
-:: gives [~ "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"]
+::  gives [~ %bech32 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4']
 ```
 
 ### Decode Bech32 to hex
 Return val as `byts` to preserve leading zeros.
 ```
-(decode-raw:bech32:btc "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4")
+(decode-raw:bech32:btc [%bech32 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4'])
 :: prints data: ~[0 14 20 15 7 13 26 0 25 18 6 11 13 8 21 4 20 3 17 2 29 3 12 29 3 4 15 24 20 6 14 30 22]
 
-`[@ @ux]`(to-hex:bech32:btc "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4")
+(to-hex:bech32:btc [%bech32 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4'])
 :: gives [20 0x751e.76e8.1991.96d4.5494.1c45.d1b3.a323.f143.3bd6]
 ```
 

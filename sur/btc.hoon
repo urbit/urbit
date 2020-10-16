@@ -5,9 +5,9 @@
 +$  address  ?(legacy-address bech32-address)
 +$  sats  @ud
 +$  hash  [wid=@ dat=@ux]
++$  buffer  (list @ux)
 ++  tx
   |%
-  +$  buffer  (list @ux)
   +$  unsigned
     $:  inputs=(list input)
         outputs=(list output)

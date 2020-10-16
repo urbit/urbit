@@ -24,17 +24,17 @@
   %-  sha256  [(met 3 pubkey) pubkey]
 ::
 ++  to-script-pubkey
-  |=  script=buffer:tx  ^-  buffer:tx
+  |=  script=^buffer  ^-  ^buffer
   %-  zing
   :~  ~[0x19 0x76 0xa9 0x14]
       script
       ~[0x88 0xac]
   ==
 ++  address-to-script-pubkey
-  |=  =address  ^-  buffer:tx
+  |=  =address  ^-  ^buffer
   ?.  ?=(%bech32 -.address)
     ~|("Only bech32 addresses supported right now" !!)
-  =/  hex=byts  (to-hex:bech32 (trip +.address))
+  =/  hex=byts  (to-hex:bech32 address)
   ?.  =(wid.hex 20)
     ~|("Only 20-byte P2WPKH bech32 supported" !!)
   (to-script-pubkey (from-byts:buffer hex))
@@ -44,7 +44,7 @@
 ++  buffer
   |%
   ++  from-byts
-    |=  =byts  ^-  buffer:tx
+    |=  =byts  ^-  ^buffer
     =/  b=(list @ux)
       (flop (rip 3 dat.byts))
     =/  pad=@  (sub wid.byts (lent b))
@@ -54,16 +54,16 @@
   ::  0xff11 with wid=8 becomes ~[0x11 0xff 0x0 0x0 0x0 0x0 0x0 0x0]
   ::
   ++  from-atom-le
-    |=  [wid=@ a=@]  ^-  buffer:tx
+    |=  [wid=@ a=@]  ^-  ^buffer
     =/  b=(list @ux)  (rip 3 a)
     =/  pad=@  (sub wid (lent b))
     (weld b (reap pad 0x0))
   ::
   ++  to-byts
-    |=  b=buffer:tx  ^-  byts
+    |=  b=^buffer  ^-  byts
     [(lent b) (rep 3 (flop b))]
   ++  concat-as-byts
-    |=  bs=(list buffer:tx)  ^-  byts
+    |=  bs=(list ^buffer)  ^-  byts
     %-  to-byts  (zing bs)
   --
 ::
@@ -71,17 +71,17 @@
   =,  buffer
   |_  ut=unsigned:tx
   ++  prevouts-buffer
-    |=  =input:tx  ^-  buffer:tx
+    |=  =input:tx  ^-  ^buffer
     %+  weld
       (from-byts tx-hash.input)
     (from-atom-le 4 witness-ver.input)
   ::
   ++  sequence-buffer
-    |=  =input:tx  ^-  buffer:tx
+    |=  =input:tx  ^-  ^buffer
     (from-byts sequence.input)
   ::
   ++  outputs-buffer
-    |=  =output:tx  ^-  buffer:tx
+    |=  =output:tx  ^-  ^buffer
     %+  weld
       (from-atom-le 8 value.output)
     (address-to-script-pubkey address.output)
@@ -104,11 +104,13 @@
       (turn inputs.ut sequence-buffer)
     =/  outputs=byts
       %-  concat-as-byts  (turn outputs.ut outputs-buffer)
-    =/  script-code=buffer:tx
+    ::  all the variables
+    =/  script-code=^buffer
       %-  to-script-pubkey
       (slag 2 (from-byts script-pubkey.input))
-    =/  amount=buffer:tx
+    =/  amount=^buffer
       (from-atom-le 8 value.input)
+    =/  n-sequence=^buffer  (sequence-buffer input)
     ~&  >  [prevouts=(dsha256 prevouts) sequences=(dsha256 sequences) outputs=(dsha256 outputs)]
     [0 0x0]
   ::
@@ -243,14 +245,16 @@
   ::
   ++  encode-raw
     |=  [hrp=tape data=(list @)]
-    ^-  tape
+    ^-  bech32-address
     =/  combined=(list @)
-    (weld data (checksum hrp data))
+      (weld data (checksum hrp data))
+    :-  %bech32
+    %-  crip
     (zing ~[hrp "1" (tape (murn combined value-to-charset))])
   ++  decode-raw
-    |=  bech=tape
+    |=  b=bech32-address
     ^-  (unit raw-decoded)
-    =.  bech  (cass bech)              ::  to lowercase
+    =/  bech  (cass (trip +.b))              ::  to lowercase
     =/  pos  (flop (fand "1" bech))
     ?~  pos  ~
     =/  last-1=@  i.pos
@@ -271,9 +275,8 @@
   ::  goes from a bech32 address to hex. Returns byts to preserve leading 0s
   ::
   ++  to-hex
-    |=  bech=tape
-    ^-  byts
-    =/  d=(unit raw-decoded)  (decode-raw bech)
+    |=  b=bech32-address  ^-  hash
+    =/  d=(unit raw-decoded)  (decode-raw b)
     ?~  d  ~|("Invalid bech32 address" !!)
     =/  bs=(list @)
       (from-digits:bits 5 (slag 1 data.u.d))
@@ -284,7 +287,7 @@
   ::
   ++  encode-pubkey
     |=  [=network pubkey=@ux]
-    ^-  (unit tape)
+    ^-  (unit bech32-address)
     ?.  =(33 (met 3 pubkey))
       ~|('pubkey must be a 33 byte ECC compressed public key' !!)
     =/  prefix  (~(get by prefixes) network)
@@ -294,7 +297,7 @@
     [0 (convert:bits 5 (zeros-brip:bits 160 dat:(hash-160 pubkey)))]
   ++  encode-hash-160
     |=  [=network h160=byts]
-    ^-  (unit tape)
+    ^-  (unit bech32-address)
     =/  prefix  (~(get by prefixes) network)
     ?~  prefix  ~
     :-  ~
