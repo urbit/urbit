@@ -24,6 +24,7 @@ export const MarkdownField = ({
   return (
     <Box
       overflowY="hidden"
+      height='100%'
       width="100%"
       display="flex"
       flexDirection="column"
