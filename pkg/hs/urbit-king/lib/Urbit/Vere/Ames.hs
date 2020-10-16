@@ -135,7 +135,7 @@ ames'
   :: HasPierEnv e
   => Ship
   -> Bool
-  -> (Time.Wen -> Gang -> Path -> (Maybe (Term, Noun) -> IO ()) -> STM ())
+  -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
   -> (Text -> RIO e ())
   -> RIO e ([Ev], RAcquire e (DriverApi NewtEf))
 ames' who isFake scry stderr = do
@@ -189,7 +189,7 @@ ames
   => e
   -> Ship
   -> Bool
-  -> (Time.Wen -> Gang -> Path -> (Maybe (Term, Noun) -> IO ()) -> STM ())
+  -> (Time.Wen -> Gang -> Path -> IO (Maybe (Term, Noun)))
   -> (EvErr -> STM PacketOutcome)
   -> (Text -> RIO e ())
   -> ([Ev], RAcquire e (NewtEf -> IO ()))
@@ -209,7 +209,7 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
   start :: RIO e AmesDrv
   start = do
     mode <- rio (netMode isFake)
-    cache <- laneCache scryLane
+    cachedScryLane <- cache scryLane
 
     aTurfs   <- newTVarIO Nothing
     aDropped <- newTVarIO 0
@@ -220,7 +220,7 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
     aRecvTid <- queuePacketsThread
       aDropped
       aVersion
-      (byCache cache)
+      cachedScryLane
       (send aUdpServ aResolvr mode)
       aUdpServ
 
@@ -230,21 +230,22 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
 
   trackVersionThread :: HasLogFunc e => TVar (Maybe Version) -> RIO e (Async ())
   trackVersionThread versSlot = async $ forever do
-    env <- ask
+    scryVersion >>= \case
+      Just v -> do
+        v0 <- readTVarIO versSlot
+        atomically $ writeTVar versSlot (Just v)
+        if (v0 == Just v)
+          then logInfo $ displayShow ("ames: proto version unchanged at", v)
+          else stderr ("ames: protocol version now " <> tshow v)
 
-    scryVersion \v -> do
-      v0 <- readTVarIO versSlot
-      atomically $ writeTVar versSlot (Just v)
-      if (v0 == Just v)
-        then logInfo $ displayShow ("ames: proto version unchanged at", v)
-        else stderr ("ames: protocol version now " <> tshow v)
+      Nothing -> logError "ames: could not scry for version"
 
     threadDelay (10 * 60 * 1_000_000)  -- 10m
 
   queuePacketsThread :: HasLogFunc e
                      => TVar Word
                      -> TVar (Maybe Version)
-                     -> (Ship -> (Maybe [AmesDest] -> RIO e ()) -> RIO e ())
+                     -> (Ship -> RIO e (Maybe [AmesDest]))
                      -> (AmesDest -> ByteString -> RIO e ())
                      -> UdpServ
                      -> RIO e (Async ())
@@ -259,7 +260,7 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
 
         if pktRcvr == who
           then serfsUp p a b
-          else lan pktRcvr $ \case
+          else lan pktRcvr >>= \case
             Just (dest:_) -> forward dest $ encode pkt
               { pktOrigin = pktOrigin <|> Just (ipDest p a) }
             _ -> logInfo $ displayShow ("ames: dropping unroutable", pkt)
@@ -314,33 +315,29 @@ ames env who isFake scry enqueueEv stderr = (initialEvents, runAmes)
         EachYes gala -> io (rsSend resolvr gala byt)
         EachNo  addr -> to (ipv4Addr addr)
 
-  scryVersion :: HasLogFunc e => (Version -> RIO e ()) -> RIO e ()
+  scryVersion :: HasLogFunc e => RIO e (Maybe Version)
   scryVersion = scry' ["protocol", "version"]
-              . maybe (logError "ames: could not scry for version")
 
   scryLane :: HasLogFunc e
            => Ship
-           -> (Maybe [AmesDest] -> RIO e ())
-           -> RIO e ()
+           -> RIO e (Maybe [AmesDest])
   scryLane ship = scry' ["peers", MkKnot $ tshow ship, "forward-lane"]
 
   scry' :: forall e n
          . (HasLogFunc e, FromNoun n)
         => [Knot]
-        -> (Maybe n -> RIO e ())
-        -> RIO e ()
-  scry' p k = do
+        -> RIO e (Maybe n)
+  scry' p = do
     env <- ask
     wen <- io Time.now
     let nkt = MkKnot $ tshow $ Time.MkDate wen
     let pax = Path $ "ax" : MkKnot (tshow who) : "" : nkt : p
-    let kon = runRIO env . \case
-          Just (_, fromNoun @n -> Just v) -> k (Just v)
-          Just (_, n) -> do
-            logError $ displayShow ("ames: uncanny scry result", pax, n)
-            k Nothing
-          Nothing -> k Nothing
-    atomically $ scry wen Nothing pax kon
+    io (scry wen Nothing pax) >>= \case
+      Just (_, fromNoun @n -> Just v) -> pure $ Just v
+      Just (_, n) -> do
+        logError $ displayShow ("ames: uncanny scry result", pax, n)
+        pure Nothing
+      Nothing -> pure Nothing
 
   ipv4Addr (Jammed (AAVoid v  )) = absurd v
   ipv4Addr (Jammed (AAIpv4 a p)) = SockAddrInet (fromIntegral p) (unIpv4 a)

@@ -1,4 +1,4 @@
-module Urbit.Vere.Ames.LaneCache (LaneCache, laneCache, byCache) where
+module Urbit.Vere.Ames.LaneCache (cache) where
 
 import Urbit.Prelude
 
@@ -7,28 +7,26 @@ import Urbit.Noun.Time
 expiry :: Gap
 expiry = (2 * 60) ^. from secs
 
-data LaneCache m a b = LaneCache
-  { lcCache    :: TVar (Map a (Wen, b))
-  , lcAction   :: a -> (b -> m ()) -> m ()
-  }
+cache :: forall a b m n
+       . (Ord a, MonadIO m, MonadIO n)
+      => (a -> m b)
+      -> n (a -> m b)
+cache act = do
+  cas <- newTVarIO (mempty :: Map a (Wen, b))
 
-laneCache :: (Ord a, MonadIO n)
-          => (a -> (b -> m ()) -> m ())
-          -> n (LaneCache m a b)
-laneCache act = LaneCache <$> newTVarIO mempty <*> pure act
+  let fun x = lookup x <$> readTVarIO cas >>= \case
+        Nothing -> thru
+        Just (t, v) -> do
+          t' <- io now
+          if gap t' t > expiry
+            then thru
+            else pure v
+        where
+          thru :: m b
+          thru = do
+            t <- io now
+            v <- act x
+            atomically $ modifyTVar' cas (insertMap x (t, v))
+            pure v
 
-byCache :: (Ord a, MonadIO m)
-        => LaneCache m a b
-        -> a -> (b -> m ()) -> m ()
-byCache LaneCache {..} x f = lookup x <$> readTVarIO lcCache >>= \case
-  Nothing -> go
-  Just (t, v) -> do
-    t' <- io now
-    if gap t' t > expiry
-      then go
-      else f v
-  where
-    go = lcAction x $ \v -> do
-      t <- io now
-      atomically $ modifyTVar' lcCache (insertMap x (t, v))
-      f v
+  pure fun
