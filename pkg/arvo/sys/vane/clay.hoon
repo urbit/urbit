@@ -2460,7 +2460,7 @@
     =/  ali-takos  (reachable-takos:ze r.ali-yaki)
     ::  Tako worklist
     ::
-    =/  takos=(list tako)  ~[r.bob-yaki]
+    =/  takos=(qeu tako)  [r.bob-yaki ~ ~]
     ::  Mergebase candidates.  Have proven they're common ancestors, but
     ::  not that they're a most recent
     ::
@@ -2472,13 +2472,14 @@
     =*  outer-loop  $
     ::  If we've finished our worklist, convert to yakis and return
     ::
-    ?~  takos
+    ?:  =(~ takos)
       (silt (turn ~(tap in bases) ~(got by hut.ran)))
-    =.  done  (~(put in done) i.takos)
+    =^  =tako  takos  ~(get to takos)
+    =.  done  (~(put in done) tako)
     ::  If this is a common ancestor, stop recursing through our
     ::  parentage.  Check if it's comparable to any existing candidate.
     ::
-    ?:  (~(has in ali-takos) i.takos)
+    ?:  (~(has in ali-takos) tako)
       =/  base-list  ~(tap in bases)
       |-  ^-  (set yaki)
       =*  bases-loop  $
@@ -2488,20 +2489,24 @@
         ::  candidate list.
         ::
         =.  bases
-          =/  new-reachable  (reachable-takos:ze i.takos)
-          (~(put in (~(dif in bases) new-reachable)) i.takos)
-        outer-loop(takos t.takos)
+          =/  new-reachable  (reachable-takos:ze tako)
+          (~(put in (~(dif in bases) new-reachable)) tako)
+        outer-loop
       ::  If it's an ancestor of another candidate, this is not most
       ::  recent, so skip and try next in worklist.
       ::
       =/  base-reachable  (reachable-takos:ze i.base-list)
-      ?:  (~(has in base-reachable) i.takos)
-        outer-loop(takos t.takos)
+      ?:  (~(has in base-reachable) tako)
+        outer-loop
       bases-loop(base-list t.base-list)
     ::  Append parents to list and recurse
     ::
-    =/  bob-yaki  (~(got by hut.ran) i.takos)
-    outer-loop(takos (weld t.takos (skip p.bob-yaki ~(has in done))))
+    =/  bob-yaki  (~(got by hut.ran) tako)
+    =/  new-candidates  (skip p.bob-yaki ~(has in done))
+    %_  outer-loop
+      done   (~(gas in done) new-candidates)
+      takos  (~(gas to takos) new-candidates)
+    ==
   ::
   ::  Update mime cache
   ::
