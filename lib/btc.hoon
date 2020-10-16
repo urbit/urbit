@@ -73,7 +73,7 @@
     |=  =input:tx  ^-  buffer:tx
     %+  weld
       (from-byts tx-hash.input)
-    (from-atom-le 8 witness-ver.input)
+    (from-atom-le 4 witness-ver.input)
   ::
   ++  output-buffer
     |=  =output:tx  ^-  buffer:tx
@@ -100,11 +100,12 @@
       (from-byts [4 0xffff.ffff])
     =/  outputs=byts
       %-  concat-as-byts  (turn outputs.ut output-buffer)
+    ~&  >  `[@ @ux]`prevouts
     (dsha256 prevouts)
   ::
   ++  sighash-legacy
-      |=  =input:tx  ^-  byts
-      [0 0]
+    |=  =input:tx  ^-  byts
+    [0 0]
   --
 ::
 ::  Converts a list of bits to a list of n-bit numbers
