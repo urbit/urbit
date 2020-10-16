@@ -75,7 +75,25 @@ In the Hoon version, we indicate leading zeros by increasing the byte count, rat
 
 ::  leading 0s--pass 21 as byte count
 `@ux`dat:(sha256:btc 21 val)
-0x66ee.cb4f.b50e.9d93.f85e.7869.6a34.097a.b859.fbc9.b7f6.f087.3329.423b.5fdd.8072
+::  gives 0x66ee.cb4f.b50e.9d93.f85e.7869.6a34.097a.b859.fbc9.b7f6.f087.3329.423b.5fdd.8072
+```
+
+## Byte Buffers
+Makes it easy to concatenate hex sequences with leading 0s, and then convert them back to bytes for hashing.
+
+### JS Reference
+```
+b = Buffer.from("000000000000ff00", "hex");
+createHash('sha256').update(b).digest()
+//  yields: <Buffer e8 83 e8 6b ff eb ac 72 cc 7d 32 0a b7 2f e1 e5 5c 19 9d 55 d8 41 bf 43 cb d8 03 c5 55 a7 10 06>
+```
+
+Hoon:
+```
+=b (from-byts:buffer:btc [8 0xff00])
+`[@ @ux]`(sha256:btc (to-byts:buffer:btc b))
+
+::  gives [32 0xe883.e86b.ffeb.ac72.cc7d.320a.b72f.e1e5.5c19.9d55.d841.bf43.cbd8.03c5.55a7.1006]
 ```
 
 ## 8bit to 5bit conversion, and back again

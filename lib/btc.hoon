@@ -19,14 +19,27 @@
   %-  ripemd-160
   %-  sha256  [(met 3 pubkey) pubkey]
 ::
-++  script
+::  list of @ux that is big endian for hashing purposes
+::  used to preserve 0s when concatenating byte sequences
+::
+++  buffer
   |%
-  ::  DUMMY
-  ++  compile
-    |=  chunks=(list @ux)
-    ^-  @ux
-    0x0
+  ::  from-byts: converts byts to list, preserving leading 0s
+  ::
+  ++  from-byts
+    |=  =byts
+    ^-  buffer:tx
+    =/  b=(list @ux)
+      (flop (rip 3 dat.byts))
+    =/  pad=@  (sub wid.byts (lent b))
+    (weld (reap pad 0x0) b)
+  ::
+  ++  to-byts
+    |=  b=buffer:tx
+    ^-  byts
+    [(lent b) (rep 3 (flop b))]
   --
+::
 ++  payments
   |%
   ++  p2pkh
@@ -49,6 +62,7 @@
 ++  bits
   |%
   ::  rip atom of bitwidth wordlen. Preserve leading 0s, big endian
+  ::  returns a list of bits
   ::
   ++  zeros-brip
     |=  [bitwidth=@ a=@]
