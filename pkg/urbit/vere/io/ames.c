@@ -179,6 +179,35 @@ _ames_etch_head(u3_head* hed_u, c3_y buf_y[4])
   buf_y[3] = (hed_w >> 24) & 0xff;
 }
 
+/* _ames_chub_bytes(): c3_y[8] to c3_d
+** XX move
+*/
+static inline c3_d
+_ames_chub_bytes(c3_y byt_y[8])
+{
+  return (c3_d)byt_y[0]
+       | (c3_d)byt_y[1] << 8
+       | (c3_d)byt_y[2] << 16
+       | (c3_d)byt_y[3] << 24
+       | (c3_d)byt_y[4] << 32
+       | (c3_d)byt_y[5] << 40
+       | (c3_d)byt_y[6] << 48
+       | (c3_d)byt_y[7] << 56;
+}
+
+/* _ames_ship_to_chubs(): pack [len_y] bytes into c3_d[2]
+** XX move
+*/
+static inline void
+_ames_ship_to_chubs(c3_d sip_d[2], c3_y len_y, c3_y* buf_y)
+{
+  c3_y sip_y[16] = {0};
+  memcpy(sip_y, buf_y, c3_min(16, len_y));
+
+  sip_d[0] = _ames_chub_bytes(sip_y);
+  sip_d[1] = _ames_chub_bytes(sip_y + 8);
+}
+
 /* _ames_send_cb(): send callback.
 */
 static void
@@ -839,11 +868,8 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   c3_y* con_y = NULL;
 
   if ( c3y == pas_o ) {
-    u3_noun sen = u3i_bytes(sen_y, bod_y);
-    u3_noun rec = u3i_bytes(rec_y, bod_y + sen_y);
-    u3r_chubs(0, 2, rec_d, rec);
-    u3r_chubs(0, 2, sen_d, sen);
-    u3z(sen); u3z(rec);
+    _ames_ship_to_chubs(sen_d, sen_y, bod_y);
+    _ames_ship_to_chubs(rec_d, rec_y, bod_y + sen_y);
 
     con_y = c3_malloc(con_w);
     memcpy(con_y, bod_y + sen_y + rec_y, con_w);
