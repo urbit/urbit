@@ -24,10 +24,10 @@
   %-  sha256  [(met 3 pubkey) pubkey]
 ::
 ++  to-script-pubkey
-  |=  script=byts  ^-  buffer:tx
+  |=  script=buffer:tx  ^-  buffer:tx
   %-  zing
   :~  ~[0x19 0x76 0xa9 0x14]
-      (from-byts:buffer script)
+      script
       ~[0x88 0xac]
   ==
 ++  address-to-script-pubkey
@@ -37,7 +37,7 @@
   =/  hex=byts  (to-hex:bech32 (trip +.address))
   ?.  =(wid.hex 20)
     ~|("Only 20-byte P2WPKH bech32 supported" !!)
-  (to-script-pubkey hex)
+  (to-script-pubkey (from-byts:buffer hex))
 ::  list of @ux that is big endian for hashing purposes
 ::  used to preserve 0s when concatenating byte sequences
 ::
@@ -104,6 +104,11 @@
       (turn inputs.ut sequence-buffer)
     =/  outputs=byts
       %-  concat-as-byts  (turn outputs.ut outputs-buffer)
+    =/  script-code=buffer:tx
+      %-  to-script-pubkey
+      (slag 2 (from-byts script-pubkey.input))
+    =/  amount=buffer:tx
+      (from-atom-le 8 value.input)
     ~&  >  [prevouts=(dsha256 prevouts) sequences=(dsha256 sequences) outputs=(dsha256 outputs)]
     [0 0x0]
   ::
