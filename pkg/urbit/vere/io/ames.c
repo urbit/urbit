@@ -238,6 +238,45 @@ _ames_ship_of_chubs(c3_d sip_d[2], c3_y len_y, c3_y* buf_y)
   memcpy(buf_y, sip_y, c3_min(16, len_y));
 }
 
+/* _ames_etch_pack(): serialize packet header and body.
+*/
+static c3_w
+_ames_etch_pack(u3_head* hed_u,
+                u3_body* bod_u,
+                c3_o     mug_o,
+                c3_y**   out_y)
+{
+  //  start with the body
+  //
+  c3_y  sen_y = 2 << hed_u->sac_y;             //  sender len
+  c3_y  rec_y = 2 << hed_u->rac_y;             //  receiver len
+  c3_w  bod_w = sen_y + rec_y + bod_u->con_w;  //  body len
+  c3_w  len_w = 4 + bod_w;                     //  packet len
+  c3_y* pac_y = c3_malloc(len_w);
+  c3_y* bod_y = pac_y + 4;
+
+  _ames_ship_of_chubs(bod_u->sen_d, sen_y, bod_y);
+  _ames_ship_of_chubs(bod_u->rec_d, rec_y, bod_y + sen_y);
+
+  {
+    c3_y* con_y = bod_y + sen_y + rec_y;
+    memcpy(con_y, bod_u->con_y, bod_u->con_w);
+  }
+
+  //  if we updated the origin lane, we need to update the mug too
+  //
+  if ( c3y == mug_o ) {
+    hed_u->mug_l = _ames_mug_body(bod_w, bod_y);
+  }
+
+  //  now we can serialize the head
+  //
+  _ames_etch_head(hed_u, pac_y);
+
+  *out_y = pac_y;
+  return len_w;
+}
+
 /* _ames_send_cb(): send callback.
 */
 static void
@@ -467,8 +506,6 @@ _ames_lane_from_cache(u3p(u3h_root) lax_p, u3_noun who) {
 static u3_noun
 _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
 {
-  c3_y sen_y = 2 << pac_u->hed_u.sac_y;
-  c3_y rec_y = 2 << pac_u->hed_u.rac_y;
   c3_o nal_o = c3n;
 
   //  update the body's lane, if desired
@@ -513,34 +550,19 @@ _ames_serialize_packet(u3_panc* pac_u, c3_o dop_o)
 
   //  serialize the packet
   //
-  u3_noun pac;
+  //    XX serialize on stack?
+  //
   {
-    //  start with the body
-    //
-    u3_body* bod_u = &pac_u->bod_u;
-    c3_y*    pac_y = c3_malloc(4 + sen_y + rec_y + bod_u->con_w);
-
-    _ames_ship_of_chubs(bod_u->sen_d, sen_y, pac_y + 4);
-    _ames_ship_of_chubs(bod_u->rec_d, rec_y, pac_y + 4 + sen_y);
-
-    memcpy(pac_y + 4 + sen_y + rec_y, bod_u->con_y, bod_u->con_w);
-
-    //  if we updated the origin lane, we need to update the mug too
-    //
-    if ( c3y == nal_o ) {
-      pac_u->hed_u.mug_l = _ames_mug_body(sen_y + rec_y + bod_u->con_w,
-                                        pac_y + 4);
-    }
-
-    //  now we can serialize the head
-    //
-    _ames_etch_head(&pac_u->hed_u, pac_y);
-
-    pac = u3i_bytes(4 + sen_y + rec_y + bod_u->con_w, pac_y);
+    u3_noun pac;
+    c3_y* pac_y;
+    c3_w  len_w = _ames_etch_pack(&pac_u->hed_u,
+                                  &pac_u->bod_u,
+                                  nal_o, &pac_y);
+    pac = u3i_bytes(len_w, pac_y);
     c3_free(pac_y);
-  }
 
-  return pac;
+    return pac;
+  }
 }
 
 /* _ames_czar(): galaxy address resolution.
