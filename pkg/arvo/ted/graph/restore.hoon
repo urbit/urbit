@@ -11,7 +11,9 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([rid=resource title=@t description=@t group=resource module=@t ~] arg)
++=  !<
+      [[rid=resource title=@t description=@t group=resource module=@t ~] ~]
+    arg
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ::  unarchive graph and share it
 ;<  ~  bind:m
