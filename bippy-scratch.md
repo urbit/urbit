@@ -35,8 +35,9 @@ abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon 
 =bip32 -build-file %/lib/bip32/hoon
 =ecc secp256k1:secp:crypto
 
-::  get 0 index in non-change account
+=xpub "zpub6rFR7y4Q2AijBEqTUquhVz398htDFrtymD9xYYfG1m4wAcvPhXNfE3EfH1r1ADqtfSdVCToUG868RvUUkgDKf31mGDtKsAYz2oz2AGutZYs"
 `@ux`(compress-point:ecc pub:(derive-public:(derive-public:(from-extended:bip32 xpub) 0) 0))
+::  gets 0 index in non-change account
 ```
 
 ## Legacy BTC Address Parsing
@@ -185,6 +186,7 @@ Using [BIP 143](https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki#P
 
 Native P2WPKH
 ```
+=btc -build-file %/lib/btc/hoon
 =btcs -build-file %/sur/btc/hoon
 =input0 (input:tx:btcs [[32 0xfff7.f788.1a80.99af.a694.0d42.d1e7.f636.2bec.3817.1ea3.edf4.3354.1db4.e4ad.969f] 0 0 [4 0xeeff.ffff] [35 0x21.03c9.f483.6b9a.4f77.fc0d.81f7.bcb0.1b7f.1b35.9168.64b9.476c.241c.e9fc.198b.d254.32ac] ~ ~ 625.000.000])
 =input1 (input:tx:btcs [[32 0xef51.e1b8.04cc.89d1.82d2.7965.5c3a.a89e.815b.1b30.9fe2.87d9.b2b5.5d57.b90e.c68a] 0 1 [4 0xffff.ffff] [22 0x14.1d0f.172a.0ecb.48ae.e1be.1f26.87d2.963a.e33f.71a1] ~ `[33 0x2.5476.c2e8.3188.368d.a1ff.3e29.2e7a.cafc.db35.66bb.0ad2.53f6.2fc7.0f07.aeee.6357] 600.000.000])
@@ -201,15 +203,19 @@ Native P2WPKH
 ```
 =ecc secp256k1:secp:crypto
 =h dat:(~(sighash unsigned-tx:btc utx) 1)
-=priv 0x6.19c3.3502.5c7f.4012.e556.c2a5.8b25.06e3.0b85.11b5.3ade.95ea.316f.d8c0.3286.feb9
-(ecdsa-raw-sign:ecc h priv)
+=privkey 0x619c.3350.25c7.f401.2e55.6c2a.58b2.506e.30b8.511b.53ad.e95e.a316.fd8c.3286.feb9
 
+`@ux`(compress-point:ecc (priv-to-pub:ecc privkey))
+`[@ r=@ux s=@ux]`(ecdsa-raw-sign:ecc (@uvI h) privkey)
+::  compress-point gives 0x2.5476.c2e8.3188.368d.a1ff.3e29.2e7a.cafc.db35.66bb.0ad2.53f6.2fc7.0f07.aeee.6357
+::  pubkey gives
 ::  desired r of sig:
 ::  3609e17b84f6a7d30c80bfa610b5b4542f32a8a0d5447a12fb1366d7f01cc44a
 ::
 ::  desired s of sig:
 ::  573a954c4518331561406f90300e8f3358f51928d43c212a8caed02de67eebee
 ```
+619c.3350.25c7.f401.2e55.6c2a.58b2.506e.30b8.511b.53ad.e95e.a316.fd8c.3286.feb9
 
 ## cutting off the last 20 bytes (for bech32 address outputs):
 ```
