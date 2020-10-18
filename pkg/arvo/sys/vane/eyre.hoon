@@ -1214,10 +1214,9 @@
           events
         =^  head  queue  ~(get to queue)
         =,  p.head
-        =/  sign=(unit sign:agent:gall)
-          (channel-event-to-sign channel-event)
-        ?~  sign  $
-        $(events [(event-json-to-wall id (sign-to-json request-id u.sign)) events])
+        ?~  sign=(channel-event-to-sign channel-event)  $
+        ?~  json=(sign-to-json request-id u.sign)       $
+        $(events [(event-json-to-wall id u.json) events])
       ::  send the start event to the client
       ::
       =^  http-moves  state
@@ -1363,7 +1362,7 @@
           :^  duct  %pass
             (subscription-wire channel-id request-id ship app)
           :*  %g  %deal  [our ship]  app
-              `task:agent:gall`[%watch-as %json path]
+              `task:agent:gall`[%watch path]
           ==
         ::
         =.  session.channel-state.state
@@ -1469,6 +1468,8 @@
       ::
       =?  moves  ?=([%| *] state.u.channel)
         ^-  (list move)
+        ?~  json=(sign-to-json request-id sign)
+          moves
         :_  moves
         :+  p.state.u.channel  %give
         ^-  gift:able
@@ -1476,7 +1477,7 @@
         ::
             ^=  data
             %-  wall-to-octs
-            (event-json-to-wall event-id (sign-to-json request-id sign))
+            (event-json-to-wall event-id u.json)
         ::
             complete=%.n
         ==
@@ -1513,29 +1514,37 @@
       =/  res  (mule |.((vale:dais noun.event)))
       ?:  ?=(%| -.res)
         ((slog leaf+"eyre: stale fact of mark {(trip have)}" ~) ~)
-      =*  vase  p.res
-      ::  find and use tube from fact mark to json
-      ::TODO  move into sign-to-json
-      ::
-      =*  desc=tape  "from {(trip have)} to json"
-      =/  tube=(unit tube:clay)
-        ?:  =(have %json)  `(bake same ^vase)
-        =/  tuc=(unit (unit cage))
-          (scry [%141 %noun] ~ %cc [our %home da+now] (flop /[have]/json))
-        ?.  ?=([~ ~ *] tuc)  ~
-        `!<(tube:clay q.u.u.tuc)
-      ?~  tube
-        ((slog leaf+"eyre: no tube {desc}" ~) ~)
-      ::
-      =/  res  (mule |.((u.tube vase)))
-      ?:  ?=(%& -.res)
-        `[%fact %json p.res]
-      ((slog leaf+"eyre: failed tube {desc}" ~) ~)
+      `[%fact have p.res]
     ::  +sign-to-json: render sign from request-id as json channel event
     ::
     ++  sign-to-json
       |=  [request-id=@ud =sign:agent:gall]
-      ^-  json
+      ^-  (unit json)
+      ::  for facts, we try to convert the result to json
+      ::
+      =/  jsyn=(unit sign:agent:gall)
+        ?.  ?=(%fact -.sign)       `sign
+        ?:  ?=(%json p.cage.sign)  `sign
+        ::  find and use tube from fact mark to json
+        ::
+        =*  have=mark  p.cage.sign
+        =*  desc=tape  "from {(trip have)} to json"
+        =/  tube=(unit tube:clay)
+          =/  tuc=(unit (unit cage))
+            (scry [%141 %noun] ~ %cc [our %home da+now] (flop /[have]/json))
+          ?.  ?=([~ ~ *] tuc)  ~
+          `!<(tube:clay q.u.u.tuc)
+        ?~  tube
+          ((slog leaf+"eyre: no tube {desc}" ~) ~)
+        ::
+        =/  res  (mule |.((u.tube q.cage.sign)))
+        ?:  ?=(%& -.res)
+          `[%fact %json p.res]
+        ((slog leaf+"eyre: failed tube {desc}" ~) ~)
+      ::
+      ?~  jsyn  ~
+      %-  some
+      =*  sign  u.jsyn
       =,  enjs:format
       %-  pairs
       ^-  (list [@t json])
@@ -1553,7 +1562,7 @@
         :~  ['response' [%s 'diff']]
           ::
             :-  'json'
-            ::TODO  do mark conversion here
+            ~|  [%unexpected-fact-mark p.cage.sign]
             ?>  =(%json p.cage.sign)
             ;;(json q.q.cage.sign)
         ==
