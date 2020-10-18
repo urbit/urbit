@@ -385,9 +385,9 @@
         :-  'subscriptions'
         :-  %a
         %+  turn  ~(tap by subscriptions)
-        |=  [=wire [=^ship app=term =^path *]]
+        |=  [id=@ud [=^ship app=term =^path *]]
         %-  pairs
-        :~  'wire'^(^path wire)
+        :~  'id'^(numb id)
             'ship'^(^ship ship)
             'app'^s+app
             'path'^(^path path)

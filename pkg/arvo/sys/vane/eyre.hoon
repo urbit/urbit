@@ -1353,8 +1353,6 @@
           %subscribe
         ::
         =,  i.requests
-        =/  channel-wire=wire
-          (channel-wire channel-id request-id)
         ::
         =.  gall-moves
           :_  gall-moves
@@ -1368,24 +1366,26 @@
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
           |=  =channel
-          channel(subscriptions (~(put by subscriptions.channel) channel-wire [ship app path duct]))
+          =-  channel(subscriptions -)
+          %+  ~(put by subscriptions.channel)
+            request-id
+          [ship app path duct]
         ::
         $(requests t.requests)
       ::
           %unsubscribe
-        =/  channel-wire=wire
-          (channel-wire channel-id subscription-id.i.requests)
+        =,  i.requests
         ::
         =/  usession  (~(get by session.channel-state.state) channel-id)
         ?~  usession
           $(requests t.requests)
         =/  subscriptions  subscriptions:u.usession
         ::
-        ?~  maybe-subscription=(~(get by subscriptions) channel-wire)
+        ?~  maybe-subscription=(~(get by subscriptions) subscription-id)
           ::  the client sent us a weird request referring to a subscription
           ::  which isn't active.
           ::
-          ~&  [%missing-subscription-in-unsubscribe channel-wire]
+          ~&  [%missing-subscription-in-unsubscribe channel-id subscription-id]
           $(requests t.requests)
         ::
         =.  gall-moves
@@ -1401,7 +1401,9 @@
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
           |=  =channel
-          channel(subscriptions (~(del by subscriptions.channel) channel-wire))
+          =-  channel(subscriptions -)
+          %-  ~(del by subscriptions.channel)
+          subscription-id
         ::
         $(requests t.requests)
       ::
@@ -1646,10 +1648,10 @@
       ::  produce a list of moves which cancels every gall subscription
       ::
       %+  turn  ~(tap by subscriptions.session)
-      |=  [channel-wire=wire ship=@p app=term =path duc=^duct]
+      |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
       :^  duc  %pass
-        (weld channel-wire /(scot %p ship)/[app])
+        (subscription-wire channel-id request-id ship app)
       [%g %deal [our ship] app %leave ~]
     --
   ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup
@@ -2448,8 +2450,17 @@
       ::      than wiping channels entirely.
         session.channel-state.server-state.old
       %-  ~(run by session.channel-state.server-state.old)
-      |=  =channel-2020-9-30
-      channel-2020-9-30(events *(qeu [@ud @ud channel-event]))
+      |=  old-channel=channel-2020-9-30
+      ^-  channel
+      %=  old-channel
+        events  *(qeu [@ud @ud channel-event])
+      ::
+          subscriptions
+        %-  ~(gas by *(map @ud [@p term path duct]))
+        %+  turn  ~(tap by subscriptions.old-channel)
+        |=  [=wire rest=[@p term path duct]]
+        [(slav %ud (snag 3 wire)) rest]
+      ==
     ==
   ::
       %~2020.5.29
