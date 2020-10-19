@@ -3,21 +3,22 @@
 +$  btc-credentials  [rpc-url=@t rpc-user=@t rpc-password=@t]
 +$  electrum-credentials  [rpc-url=@t]
 +$  credentials  [bc=btc-credentials ec=electrum-credentials]
-+$  status
-  $%  [%host connected=? clients=(set ship)]
-      [%client connected=? host=(unit ship)]
-  ==
++$  status  [creds=credentials connected=? clients=(set ship)]
 +$  action
-  $%  [%check-status ~]
-      [%get-block-count ~]
-      [%balance =address]
-      [%transactions =address]
+  $%  [%get-balance addresses=(set address)]
+      [%get-transactions addresses=(set address)]
+  ==
++$  response
+  $%  [%block-count count=@]
+      [%balance (set [=address balance=sats])]
+  ==
++$  update                              ::  sub updates from /clients path (connection etc.)
+  $%  [%status connected=?]
   ==
 ::
 +$  command
-  $%  [%become-host =credentials]
-      [%connect-as-client host=ship]
-      [%allow-clients users=(set ship)]
+  $%  [%set-credentials creds=credentials]
+      [%whitelist-clients clients=(set ship)]
   ==
 +$  rpc-action
   $%  [%erpc request:electrum:rpc]
