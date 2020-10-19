@@ -200,6 +200,7 @@ Native P2WPKH
 ```
 
 ### Signing the above
+Signing input index 1 (witness)
 ```
 =ecc secp256k1:secp:crypto
 =h dat:(~(sighash unsigned-tx:btc utx) 1)
@@ -210,32 +211,36 @@ Native P2WPKH
 ::  compress-point gives 0x2.5476.c2e8.3188.368d.a1ff.3e29.2e7a.cafc.db35.66bb.0ad2.53f6.2fc7.0f07.aeee.6357
 ::  pubkey gives
 ::  desired r of sig:
-::  3609e17b84f6a7d30c80bfa610b5b4542f32a8a0d5447a12fb1366d7f01cc44a
+::  0x3609.e17b.84f6.a7d3.0c80.bfa6.10b5.b454.2f32.a8a0.d544.7a12.fb13.66d7.f01c.c44a
 ::
 ::  desired s of sig:
 ::  573a954c4518331561406f90300e8f3358f51928d43c212a8caed02de67eebee
 ```
-619c.3350.25c7.f401.2e55.6c2a.58b2.506e.30b8.511b.53ad.e95e.a316.fd8c.3286.feb9
 
-## cutting off the last 20 bytes (for bech32 address outputs):
+Signing input index 0 (non-witness)
 ```
-`@ux`(end 3 2 0x14.6655)
-::  gives 0x6655
+=h2 dat:(~(sighash unsigned-tx:btc utx) 0)
+=privkey2 0xbbc2.7228.ddcb.9209.d7fd.6f36.b02f.7dfa.6252.af40.bb2f.1cbc.7a55.7da8.027f.f866
+`[@ r=@ux s=@ux]`(ecdsa-raw-sign:ecc (@uvI h2) privkey2)
+
+::  desired r;
+::  0x8b9d.1dc2.6ba6.a9cb.6212.7b02.742f.a9d7.54cd.3beb.f337.f7a5.5d11.4c8e.5cdd.30be
 ```
+
+### A sample legacy address-only transaction
+```
+=linput0 (input:tx:btcs [[32 0xeccf.7e30.3418.9b85.1985.d871.f913.84b8.ee35.7cd4.7c30.2473.6e56.76eb.2deb.b3f2] 1 0 [4 0xffff.ffff] [25 0x76.a914.0109.6677.6006.953d.5567.439e.5e39.f86a.0d27.3bee.88ac] ~ ~ 100.000.000])
+=loutput0 (output:tx:btcs [[%legacy 0c1runeksijzfVxyrpiyCY2LCBvYsSiFsCm] 99.900.000])
+=lutx (unsigned:tx:btcs [1 0x0 ~[linput0] ~[loutput0]])
+
+=lh dat:(~(sighash unsigned-tx:btc lutx) 0)
+=lprivkey 0x18e1.4a7b.6a30.7f42.6a94.f811.4701.e7c8.e774.e7f9.a47e.2c20.35db.29a2.0632.1725
+`[@ r=@ux s=@ux]`(ecdsa-raw-sign:ecc (@uvI lh) lprivkey)
+```
+0x970.7252.4438.d003.d23a.2f23.edb6.5aae.1bb3.e469
 
 ### BIP143 Reference
 https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki#P2SHP2WPKH
 
 ## more scratch
-7f5a997b83f51f793b8910be99508b00a136f922
-0x7f5a.997b.83f5.1f79.3b89.10be.9950.8b00.a136.f922
-
-db6b1b20aa0fd7b23880be2ecbd4a98130974cf4748fb66092ac4d3ceb1a547701000000
-
-
-0x46.c323.0000.0000
-
-bip143 hash preimage:
-0x100.0000.96b8.27c8.483d.4e9b.9671.2b67.13a7.b68d.6e80.03a7.81fe.ba36.c311.4347.0b4e.fd37.52b0.a642.eea2.fb7a.e638.c36f.6252.b675.0293.dbe5.74a8.0698.4b8e.4d85.4833.9a3b.ef51.e1b8.04cc.89d1.82d2.7965.5c3a.a89e.815b.1b30.9fe2.87d9.b2b5.5d57.b90e.c68a.0100.0000.1976.a914.1d0f.172a.0ecb.48ae.e1be.1f26.87d2.963a.e33f.71a1.88ac.0046.c323.0000.0000.ffff.ffff.863e.f3e1.a92a.fbfd.b97f.31ad.0fc7.683e.e943.e9ab.cf25.0159.0ff8.f655.1f47.e5e5.1100.0000.0100.0000
-
 

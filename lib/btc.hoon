@@ -32,11 +32,16 @@
   ==
 ++  address-to-script-pubkey
   |=  =address  ^-  ^buffer
-  ?.  ?=(%bech32 -.address)
-    ~|("Only bech32 addresses supported right now" !!)
-  =/  hex=byts  (to-hex:bech32 address)
+  =/  hex=byts
+    ?-  -.address
+        %bech32
+      (to-hex:bech32 address)
+        %legacy
+      =/  h=@ux  (@ux +.address)
+      [(met 3 h) h]
+    ==
   ?.  =(wid.hex 20)
-    ~|("Only 20-byte P2WPKH bech32 supported" !!)
+    ~|("Only 20-byte addresses supported" !!)
   (to-script-pubkey (from-byts:buffer hex))
 ::  list of @ux that is big endian for hashing purposes
 ::  used to preserve 0s when concatenating byte sequences
@@ -67,15 +72,14 @@
     %-  to-byts  (zing bs)
   --
 ::
+::  TODO: current status
+::  - creates sighash for witness correctly
+::  - creates sighash for 1-input legacy correctly
+::  - don't know yet whether the sighash for multiple-input legacy is correct -- test w JS
+::
 ++  unsigned-tx
   =,  buffer
   |_  ut=unsigned:tx
-  ++  prevouts-buffer
-    |=  =input:tx  ^-  ^buffer
-    %+  weld
-      (from-byts tx-hash.input)
-    (from-atom-le 4 witness-ver.input)
-  ::
   ++  sequence-buffer
     |=  =input:tx  ^-  ^buffer
     (from-byts sequence.input)
@@ -96,7 +100,8 @@
     (sighash-legacy input-index)
   ::
   ++  sighash-witness
-    |=  =input:tx  ^-  hash
+    |=  =input:tx
+    |^  ^-  hash
     =/  prevouts=byts
       %-  concat-as-byts  (turn inputs.ut prevouts-buffer)
     =/  sequences=byts
@@ -136,13 +141,62 @@
         n-locktime
         n-hashtype
     ==
+    ::
+    ++  prevouts-buffer
+      |=  =input:tx  ^-  ^buffer
+      %+  weld
+      (from-byts tx-hash.input)
+      (from-atom-le 4 witness-ver.input)
+    --
   ::
   ++  sighash-legacy
-    |=  input-index=@  ^-  hash
-    ::  TODO: turn each input
-    ::  make the script be 0x0
-    ::  at the end, use snap to replace ONLY the one at input-index with the real script
-   [0 0x0]
+    ::  TODO: Not working--wrong sighash for multiple inputs (works for 1)
+    |=  index-to-sign=@
+    |^  ^-  hash
+    =/  n-version=^buffer  (from-atom-le 4 version.ut)
+    =/  num-inputs=^buffer  ~[(@ux (lent inputs.ut))]
+    =/  prevouts=^buffer
+      %-  zing
+      (turn inputs-with-index (cury prevouts-buffer index-to-sign))
+    =/  num-outputs=^buffer  ~[(@ux (lent outputs.ut))]
+    =/  outputs=^buffer
+      %-  zing  (turn outputs.ut outputs-buffer)
+    =/  n-locktime=^buffer  (from-atom-le 4 locktime.ut)
+    =/  n-hashtype=^buffer  (from-atom-le 4 1)             ::  we only support SIGHASH_ALL
+    =/  struct=(list ^buffer)
+      :~  v=n-version
+          ni=num-inputs
+          prev=prevouts
+          no=num-outputs
+          os=outputs
+          lock=n-locktime
+          hash-type=n-hashtype
+      ==
+::    ~&  >>>  struct
+    (dsha256 (concat-as-byts struct))
+    ::
+    ++  inputs-with-index
+      ^-  (list [@ input:tx])
+      %+  turn  (gulf 0 (dec (lent inputs.ut)))
+      |=  i=@  [i (snag i inputs.ut)]
+    ++  prevouts-buffer
+      |=  [index-to-sign=@ index=@ =input:tx]
+      ^-  ^buffer
+      %-  zing
+      :~  (from-byts tx-hash.input)
+          (from-atom-le 4 tx-index.input)
+          ::  only insert script-pubkey if we're on the input index being signed
+          ?:  =(index-to-sign index)
+            (format-script-pubkey (from-byts script-pubkey.input))
+          ~[0x0]
+          (from-byts sequence.input)
+      ==
+    ++  format-script-pubkey
+      |=  spk=^buffer  ^-  ^buffer
+      ?:  =((^buffer ~[0x76 0xa9]) (scag 2 spk))
+        [0x19 spk]
+      spk
+    --
   --
 ::
 ::  Converts a list of bits to a list of n-bit numbers
