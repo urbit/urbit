@@ -7520,6 +7520,8 @@
     ?~  lez  %void
     ?:  ?=({* ~ ~} lez)  n.lez
     [%fork lez]
+  ?:  =(%noun i.yed)
+    %noun
   %=    $
       yed  t.yed
       lez
