@@ -380,6 +380,7 @@
         'connected'^b+!-.state
         'expiry'^?-(-.state %& (time date.p.state), %| ~)
         'next-id'^(numb next-id)
+        'last-ack'^(time last-ack)
         'unacked'^a+(turn (sort (turn ~(tap in events) head) dor) numb)
       ::
         :-  'subscriptions'
@@ -391,6 +392,7 @@
             'ship'^(^ship ship)
             'app'^s+app
             'path'^(^path path)
+            'unacked'^(numb (~(gut by unacked) id 0))
         ==
     ==
   ==

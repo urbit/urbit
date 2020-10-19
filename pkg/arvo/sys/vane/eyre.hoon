@@ -131,6 +131,12 @@
       ::
       [%delete ~]
   ==
+::  clog-timeout: the delay between acks after which clog-threshold kicks in
+::
+++  clog-timeout     ~s30
+::  clog-threshold: maximum per-subscription event buildup, after clog-timeout
+::
+++  clog-threshold   50
 ::  channel-timeout: the delay before a channel should be reaped
 ::
 ++  channel-timeout  ~h12
@@ -152,22 +158,45 @@
   (can 3 a)
 ::  +prune-events: removes all items from the front of the queue up to :id
 ::
+::    also produces, per request-id, the amount of events that have got acked,
+::    for use with +subtract-acked-events.
+::
 ++  prune-events
+  =|  acked=(map @ud @ud)
   |=  [q=(qeu [id=@ud @ud channel-event]) id=@ud]
-  ^+  q
+  ^+  [acked q]
   ::  if the queue is now empty, that's fine
   ::
   ?:  =(~ q)
-    ~
+    [acked ~]
   ::
-  =/  next=[item=[id=@ud @ud channel-event] _q]  ~(get to q)
+  =/  next=[item=[id=@ud request-id=@ud channel-event] _q]  ~(get to q)
   ::  if the head of the queue is newer than the acknowledged id, we're done
   ::
   ?:  (gth id.item.next id)
-    q
-  ::  otherwise, check next item
+    [acked q]
+  ::  otherwise, note the ack, and check next item
   ::
-  $(q +:next)
+  %_  $
+    q  +:next
+  ::
+      acked
+    =,  item.next
+    %+  ~(put by acked)  request-id
+    +((~(gut by acked) request-id 0))
+  ==
+::  +subtract-acked-events: update the subscription map's pending ack counts
+::
+++  subtract-acked-events
+  |=  [acked=(map @ud @ud) unacked=(map @ud @ud)]
+  ^+  unacked
+  %+  roll  ~(tap by acked)
+  |=  [[rid=@ud ack=@ud] unacked=_unacked]
+  ?~  sus=(~(get by unacked) rid)
+    unacked
+  %+  ~(put by unacked)  rid
+  ?:  (lte u.sus ack)  0
+  (sub u.sus ack)
 ::  +parse-channel-request: parses a list of channel-requests
 ::
 ::    Parses a json array into a list of +channel-request. If any of the items
@@ -1123,7 +1152,7 @@
         %_    ..update-timeout-timer-for
             session.channel-state.state
           %+  ~(put by session.channel-state.state)  channel-id
-          [[%& expiration-time duct] 0 ~ ~ ~]
+          [[%& expiration-time duct] 0 now ~ ~ ~ ~]
         ::
             moves
           [(set-timeout-move channel-id expiration-time) moves]
@@ -1267,7 +1296,11 @@
         %+  ~(jab by session.channel-state.state)  channel-id
         |=  =channel
         ^+  channel
-        channel(events (prune-events events.channel last-event-id))
+        =^  acked  events.channel
+          (prune-events events.channel last-event-id)
+        =.  unacked.channel
+          (subtract-acked-events acked unacked.channel)
+        channel(last-ack now)
       ==
     ::  +on-put-request: handles a PUT request
     ::
@@ -1401,9 +1434,10 @@
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
           |=  =channel
-          =-  channel(subscriptions -)
-          %-  ~(del by subscriptions.channel)
-          subscription-id
+          %_  channel
+            subscriptions  (~(del by subscriptions.channel) subscription-id)
+            unacked        (~(del by unacked.channel) subscription-id)
+          ==
         ::
         $(requests t.requests)
       ::
@@ -1450,10 +1484,9 @@
     ::    send it to a connected browser so in case of disconnection, we can
     ::    resend it.
     ::
-    ::    This function is responsible for taking the raw json lines and
-    ::    converting them into a text/event-stream. The :event-stream-lines
-    ::    then may get sent, and are stored for later resending until
-    ::    acknowledged by the client.
+    ::    This function is responsible for taking the event sign and converting
+    ::    it into a text/event-stream. The :sign then may get sent, and is
+    ::    stored for later resending until acknowledged by the client.
     ::
     ++  emit-event
       |=  [channel-id=@t request-id=@ud =sign:agent:gall]
@@ -1466,6 +1499,11 @@
         [duct %pass /flog %d %flog %crud %eyre-no-channel >id=channel-id< ~]
       ::
       =/  event-id  next-id.u.channel
+      ::  store the event as unacked
+      ::
+      =.  events.u.channel
+        %-  ~(put to events.u.channel)
+        [event-id request-id (sign-to-channel-event sign)]
       ::  if a client is connected, send this event to them.
       ::
       =?  moves  ?=([%| *] state.u.channel)
@@ -1483,22 +1521,65 @@
         ::
             complete=%.n
         ==
+      ::  update channel's unacked counts, find out if clogged
       ::
-      =/  =channel-event
-        ?.  ?=(%fact -.sign)  sign
-        [%fact [p q.q]:cage.sign]
+      =^  clogged  unacked.u.channel
+        ::  poke-acks are one-offs, don't apply clog logic to them
+        ::
+        ?:  ?=(%poke-ack -.sign)  [| unacked.u.channel]
+        =/  num=@ud
+          (~(gut by unacked.u.channel) request-id 0)
+        :_  (~(put by unacked.u.channel) request-id +(num))
+        ?&  (gte num clog-threshold)
+            (lth (add last-ack.u.channel clog-timeout) now)
+        ==
+      ::
+      ~?  clogged  [%e %clogged channel-id request-id]
+      ::  if we're clogged, end this gall subscription
+      ::
+      =?  moves      clogged
+        :_  moves
+        =+  (~(got by subscriptions.u.channel) request-id)
+        :^  duct  %pass
+          (subscription-wire channel-id request-id ship app)
+        [%g %deal [our ship] app %leave ~]
+      =?  event-id   clogged  +(event-id)
+      =?  u.channel  clogged
+        %_  u.channel
+          subscriptions  (~(del by subscriptions.u.channel) request-id)
+          unacked        (~(del by unacked.u.channel) request-id)
+          events         %-  ~(put to events.u.channel)
+                         [event-id request-id (sign-to-channel-event %kick ~)]
+        ==
+      ::  if a client is connected, send the kick event to them
+      ::
+      =?  moves  &(clogged ?=([%| *] state.u.channel))
+        :_  moves
+        :+  p.state.u.channel  %give
+        ^-  gift:able
+        :*  %response  %continue
+        ::
+            ^=  data
+            %-  wall-to-octs
+            %+  event-json-to-wall  event-id
+            (need (sign-to-json request-id %kick ~))
+        ::
+            complete=%.n
+        ==
+      ::
       :-  moves
       %_    state
           session.channel-state
-        %+  ~(jab by session.channel-state.state)  channel-id
-        |=  =^channel
-        ^+  channel
-        ::
-        %_  channel
-          next-id  +(next-id.channel)
-          events  (~(put to events.channel) [event-id request-id channel-event])
-        ==
+        %+  ~(put by session.channel-state.state)  channel-id
+        u.channel(next-id +(event-id))
       ==
+    ::  +sign-to-channel-event: strip the vase from a sign:agent:gall
+    ::
+    ++  sign-to-channel-event
+      |=  =sign:agent:gall
+      ^-  channel-event
+      ?.  ?=(%fact -.sign)  sign
+      [%fact [p q.q]:cage.sign]
     ::  +channel-event-to-sign: attempt to recover a sign from a channel-event
     ::
     ++  channel-event-to-sign
@@ -2450,16 +2531,17 @@
       ::      than wiping channels entirely.
         session.channel-state.server-state.old
       %-  ~(run by session.channel-state.server-state.old)
-      |=  old-channel=channel-2020-9-30
+      |=  channel-2020-9-30
       ^-  channel
-      %=  old-channel
-        events  *(qeu [@ud @ud channel-event])
-      ::
-          subscriptions
+      =/  subscriptions
         %-  ~(gas by *(map @ud [@p term path duct]))
-        %+  turn  ~(tap by subscriptions.old-channel)
+        %+  turn  ~(tap by subscriptions)
         |=  [=wire rest=[@p term path duct]]
         [(slav %ud (snag 3 wire)) rest]
+      :*  state  next-id  now
+          *(qeu [@ud @ud channel-event])
+          *(map @ud @ud)
+          subscriptions  heartbeat
       ==
     ==
   ::
