@@ -70,11 +70,15 @@
   =^  cards  state
   ?+    +<.sign-arvo    (on-arvo:def wire sign-arvo)
       %http-response
+    ?.  ?=(%finished -.response)
+      `state
+    =/  [status=@ud rpc-resp=response:rpc:jstd]
+      [status-code.response-header.response (get-rpc-response:hc response)]
     ?+    wire  (on-arvo:def wire sign-arvo)
         [%erpc *]
-      (electrum-http-response:hc wire response)
+      (electrum-http-response:hc status rpc-resp)
         [%brpc *]
-      (btc-http-response:hc wire response)
+      (btc-http-response:hc status rpc-resp)
     ==
   ==
   [cards this]
@@ -133,6 +137,7 @@
   |=  req=request:electrum:rpc
   %+  request-to-http:electrum-rpc:elib
   rpc-url.ec.creds.status  req
+::
 ++  gen-request
   |=  ract=rpc-action
   ^-  request:http
@@ -182,6 +187,15 @@
   ~|  jon
   `(parse-error jon)
 ::
+++  get-rpc-response
+  |=  response=client-response:iris
+  ^-  response:rpc:jstd
+  ?>  ?=(%finished -.response)
+  %-  httr-to-rpc-response
+    %+  to-httr:iris
+      response-header.response
+    full-file.response
+::
 ++  parse-error
   |=  =json
   ^-  response:rpc:jstd
@@ -200,16 +214,8 @@
   ==  ==
 ::
 ++  btc-http-response
-  |=  [=wire response=client-response:iris]
+  |=  [status=@ud rpc-resp=response:rpc:jstd]
   ^-  (quip card _state)
-  ?.  ?=(%finished -.response)
-    [~ state]
-  =*  status    status-code.response-header.response
-  =/  rpc-resp=response:rpc:jstd
-    %-  httr-to-rpc-response
-    %+  to-httr:iris
-      response-header.response
-    full-file.response
   ?.  ?=([%result *] rpc-resp)
     ~&  [%error +.rpc-resp]
     [~ state]
@@ -217,16 +223,8 @@
   [~ state]
 ::
 ++  electrum-http-response
-  |=  [=wire response=client-response:iris]
+  |=  [status=@ud rpc-resp=response:rpc:jstd]
   ^-  (quip card _state)
-  ?.  ?=(%finished -.response)
-    `state
-  =*  status-code  status-code.response-header.response
-  =/  rpc-resp=response:rpc:jstd
-    %-  httr-to-rpc-response
-    %+  to-httr:iris
-      response-header.response
-    full-file.response
   ~&  >  rpc-resp
   `state
 ::
