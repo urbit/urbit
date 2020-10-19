@@ -3,8 +3,7 @@
 ::  big endian sha256: input and output are both MSB first (big endian)
 ::
 ++  sha256
-  |=  =byts
-  ^-  ^byts
+  |=  =byts  ^-  hash
   ::  if there are leading 0s, lshift by their amount after flip to little endian to preserve
   =/  pad=@  (sub wid.byts (met 3 dat.byts))
   =/  little-endian=@
@@ -12,52 +11,208 @@
   :-  32
   %+  swp  3
   (shay wid.byts little-endian)
+::
+++  dsha256
+  |=  =byts
+  (sha256 (sha256 byts))
+::
 ++  hash-160
-  |=  pubkey=@ux
-  ^-  @ux
+  |=  pubkey=@ux  ^-  hash
   =,  ripemd:crypto
+  :-  20
   %-  ripemd-160
   %-  sha256  [(met 3 pubkey) pubkey]
 ::
-++  script
+++  to-script-pubkey
+  |=  script=^buffer  ^-  ^buffer
+  %-  zing
+  :~  ~[0x19 0x76 0xa9 0x14]
+      script
+      ~[0x88 0xac]
+  ==
+++  address-to-script-pubkey
+  |=  =address  ^-  ^buffer
+  =/  hex=byts
+    ?-  -.address
+        %bech32
+      (to-hex:bech32 address)
+        %legacy
+      =/  h=@ux  (@ux +.address)
+      [(met 3 h) h]
+    ==
+  ?.  =(wid.hex 20)
+    ~|("Only 20-byte addresses supported" !!)
+  (to-script-pubkey (from-byts:buffer hex))
+::  list of @ux that is big endian for hashing purposes
+::  used to preserve 0s when concatenating byte sequences
+::
+++  buffer
   |%
-  ::  DUMMY
-  ++  compile
-    |=  chunks=(list @ux)
-    ^-  @ux
-    0x0
+  ++  from-byts
+    |=  =byts  ^-  ^buffer
+    =/  b=(list @ux)
+      (flop (rip 3 dat.byts))
+    =/  pad=@  (sub wid.byts (lent b))
+    (weld (reap pad 0x0) b)
+  ::  converts an atom to a little endian buffer with wid length (trailing 0s)
+  ::  atom 1 with wid=4 becomes ~[0x1 0x0 0x0 0x0]
+  ::  0xff11 with wid=8 becomes ~[0x11 0xff 0x0 0x0 0x0 0x0 0x0 0x0]
+  ::
+  ++  from-atom-le
+    |=  [wid=@ a=@]  ^-  ^buffer
+    =/  b=(list @ux)  (rip 3 a)
+    =/  pad=@  (sub wid (lent b))
+    (weld b (reap pad 0x0))
+  ::
+  ++  to-byts
+    |=  b=^buffer  ^-  byts
+    [(lent b) (rep 3 (flop b))]
+  ++  concat-as-byts
+    |=  bs=(list ^buffer)  ^-  byts
+    %-  to-byts  (zing bs)
   --
-++  payments
-  |%
-  ++  p2pkh
-    |=  script=@ux
-::    ^-  @ux
-    ^-  (list @ux)
-    =/  chunks=(list (list @))
-      :~  ~[op-dup:ops]
-          ~[op-hash160:ops]
-          ~[(met 3 script)]
-          ::TODO FLOP rip in HERE
-          ~[op-equalverify:ops]
-          ~[op-checksig:ops]
-       ==
-     (zing chunks)
+::
+::  TODO: current status
+::  - creates sighash for witness correctly
+::  - creates sighash for 1-input legacy correctly
+::  - don't know yet whether the sighash for multiple-input legacy is correct -- test w JS
+::
+++  unsigned-tx
+  =,  buffer
+  |_  ut=unsigned:tx
+  ++  sequence-buffer
+    |=  =input:tx  ^-  ^buffer
+    (from-byts sequence.input)
+  ::
+  ++  outputs-buffer
+    |=  =output:tx  ^-  ^buffer
+    %+  weld
+      (from-atom-le 8 value.output)
+    (address-to-script-pubkey address.output)
+  ::
+  ++  sighash
+    |=  input-index=@  ^-  hash
+    ?:  (gte input-index (lent inputs.ut))
+      ~|("Input index out of range" !!)
+    =/  =input:tx  (snag input-index inputs.ut)
+    ?:  =(1 witness-ver.input)
+      (sighash-witness input)
+    (sighash-legacy input-index)
+  ::
+  ++  sighash-witness
+    |=  =input:tx
+    |^  ^-  hash
+    =/  prevouts=byts
+      %-  concat-as-byts  (turn inputs.ut prevouts-buffer)
+    =/  sequences=byts
+      %-  concat-as-byts  (turn inputs.ut sequence-buffer)
+    =/  outputs=byts
+      %-  concat-as-byts  (turn outputs.ut outputs-buffer)
+    ::  Hash inputs in order, as per BIP143 examples
+    ::
+    =/  n-version=^buffer  (from-atom-le 4 version.ut)
+    =/  hash-prevouts=^buffer
+      %-  from-byts  (dsha256 prevouts)
+    =/  hash-sequence=^buffer
+      %-  from-byts  (dsha256 sequences)
+    =/  outpoint=^buffer
+      %+  weld  (from-byts tx-hash.input)
+      (from-atom-le 4 witness-ver.input)
+    =/  script-code=^buffer
+      %-  to-script-pubkey
+      (slag 2 (from-byts script-pubkey.input))
+    =/  amount=^buffer
+      (from-atom-le 8 value.input)
+    =/  n-sequence=^buffer  (sequence-buffer input)
+    =/  hash-outputs=^buffer
+      %-  from-byts  (dsha256 outputs)
+    =/  n-locktime=^buffer  (from-atom-le 4 locktime.ut)
+    =/  n-hashtype=^buffer  (from-atom-le 4 1)
+    %-  dsha256
+    %-  concat-as-byts
+    :~  n-version
+        hash-prevouts
+        hash-sequence
+        outpoint
+        script-code
+        amount
+        n-sequence
+        hash-outputs
+        n-locktime
+        n-hashtype
+    ==
+    ::
+    ++  prevouts-buffer
+      |=  =input:tx  ^-  ^buffer
+      %+  weld
+      (from-byts tx-hash.input)
+      (from-atom-le 4 witness-ver.input)
+    --
+  ::
+  ++  sighash-legacy
+    ::  TODO: Not working--wrong sighash for multiple inputs (works for 1)
+    |=  index-to-sign=@
+    |^  ^-  hash
+    =/  n-version=^buffer  (from-atom-le 4 version.ut)
+    =/  num-inputs=^buffer  ~[(@ux (lent inputs.ut))]
+    =/  prevouts=^buffer
+      %-  zing
+      (turn inputs-with-index (cury prevouts-buffer index-to-sign))
+    =/  num-outputs=^buffer  ~[(@ux (lent outputs.ut))]
+    =/  outputs=^buffer
+      %-  zing  (turn outputs.ut outputs-buffer)
+    =/  n-locktime=^buffer  (from-atom-le 4 locktime.ut)
+    =/  n-hashtype=^buffer  (from-atom-le 4 1)             ::  we only support SIGHASH_ALL
+    =/  struct=(list ^buffer)
+      :~  v=n-version
+          ni=num-inputs
+          prev=prevouts
+          no=num-outputs
+          os=outputs
+          lock=n-locktime
+          hash-type=n-hashtype
+      ==
+::    ~&  >>>  struct
+    (dsha256 (concat-as-byts struct))
+    ::
+    ++  inputs-with-index
+      ^-  (list [@ input:tx])
+      %+  turn  (gulf 0 (dec (lent inputs.ut)))
+      |=  i=@  [i (snag i inputs.ut)]
+    ++  prevouts-buffer
+      |=  [index-to-sign=@ index=@ =input:tx]
+      ^-  ^buffer
+      %-  zing
+      :~  (from-byts tx-hash.input)
+          (from-atom-le 4 tx-index.input)
+          ::  only insert script-pubkey if we're on the input index being signed
+          ?:  =(index-to-sign index)
+            (format-script-pubkey (from-byts script-pubkey.input))
+          ~[0x0]
+          (from-byts sequence.input)
+      ==
+    ++  format-script-pubkey
+      |=  spk=^buffer  ^-  ^buffer
+      ?:  =((^buffer ~[0x76 0xa9]) (scag 2 spk))
+        [0x19 spk]
+      spk
+    --
   --
+::
 ::  Converts a list of bits to a list of n-bit numbers
 ::  input-bits should be big-endian
 ::
 ++  bits
   |%
-  ::  rip atom of bitwidth wordlen. Preserve leading 0s, big endian
+  ::  rip atom a with num-bits. Preserve leading 0s, big endian
+  ::  returns a list of bits
   ::
   ++  zeros-brip
-    |=  [bitwidth=@ a=@]
+    |=  [num-bits=@ a=@]
     ^-  (list @)
     =/  bits=(list @)  (flop (rip 0 a))
-    =/  r=@  (mod (lent bits) bitwidth)
-    ?:  ?&(=(0 r) (gth (lent bits) 0))                             ::  no remainder & more than 0 bits
-      bits
-    (weld (reap (sub bitwidth r) 0) bits)
+    =/  pad=@  (sub num-bits (lent bits))
+    (weld (reap pad 0) bits)
   ::  converts from bit list to a list of atoms each with bitwidth d(est)
   ::
   ++  convert
@@ -170,14 +325,16 @@
   ::
   ++  encode-raw
     |=  [hrp=tape data=(list @)]
-    ^-  tape
+    ^-  bech32-address
     =/  combined=(list @)
-    (weld data (checksum hrp data))
+      (weld data (checksum hrp data))
+    :-  %bech32
+    %-  crip
     (zing ~[hrp "1" (tape (murn combined value-to-charset))])
   ++  decode-raw
-    |=  bech=tape
+    |=  b=bech32-address
     ^-  (unit raw-decoded)
-    =.  bech  (cass bech)              ::  to lowercase
+    =/  bech  (cass (trip +.b))              ::  to lowercase
     =/  pos  (flop (fand "1" bech))
     ?~  pos  ~
     =/  last-1=@  i.pos
@@ -198,9 +355,8 @@
   ::  goes from a bech32 address to hex. Returns byts to preserve leading 0s
   ::
   ++  to-hex
-    |=  bech=tape
-    ^-  byts
-    =/  d=(unit raw-decoded)  (decode-raw bech)
+    |=  b=bech32-address  ^-  hash
+    =/  d=(unit raw-decoded)  (decode-raw b)
     ?~  d  ~|("Invalid bech32 address" !!)
     =/  bs=(list @)
       (from-digits:bits 5 (slag 1 data.u.d))
@@ -211,14 +367,22 @@
   ::
   ++  encode-pubkey
     |=  [=network pubkey=@ux]
-    ^-  (unit tape)
+    ^-  (unit bech32-address)
     ?.  =(33 (met 3 pubkey))
       ~|('pubkey must be a 33 byte ECC compressed public key' !!)
     =/  prefix  (~(get by prefixes) network)
     ?~  prefix  ~
     :-  ~
     %+  encode-raw  u.prefix
-    (weld ~[0] (convert:bits 5 (zeros-brip:bits 8 (hash-160 pubkey))))
+    [0 (convert:bits 5 (zeros-brip:bits 160 dat:(hash-160 pubkey)))]
+  ++  encode-hash-160
+    |=  [=network h160=byts]
+    ^-  (unit bech32-address)
+    =/  prefix  (~(get by prefixes) network)
+    ?~  prefix  ~
+    :-  ~
+    %+  encode-raw  u.prefix
+    [0 (convert:bits 5 (zeros-brip:bits 160 dat.h160))]
   --
 ::
 --
