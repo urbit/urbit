@@ -1,13 +1,13 @@
-::  Sends a command to the BTC Bridge
+::  Sends a command to the BTC Provider
 ::
 ::  Commands:
 ::
 ::
 ::
-/-  *btc-bridge
+/-  *btc-provider
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
         [[comm=command ~] ~]
     ==
-[%btc-bridge-command comm]
+[%btc-provider-command comm]
