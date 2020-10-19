@@ -1,6 +1,5 @@
 
-/-  *btc-bridge, *btc
-/+  lib=btc-node-json
+/-  *btc-provider, *btc
 |%
 ++  address-to-cord
   |=  =address  ^-  cord
@@ -14,6 +13,9 @@
 ::
 ++  electrum-rpc
   |%
+  ++  parse-response
+    |=  rpc-resp=@t
+    %.y
   ++  request-to-http
     |=  [endpoint=@t req=request:electrum:rpc]
     ^-  request:http

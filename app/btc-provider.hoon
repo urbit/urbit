@@ -1,15 +1,15 @@
 
-::  btc-bridge.hoon
-::  Proxy for accessing BTC full node
+::  btc-provider.hoon
+::  Proxy that serves a BTC full node and ElectRS address indexer
 ::
-/-  *btc-bridge, bnh=btc-node-hook
+/-  *btc-provider, bnh=btc-node-hook
 /+  dbug, default-agent, base64, blib=btc-node-json, elib=electrum-rpc-http
 |%
 +$  versioned-state
     $%  state-0
     ==
 ::
-+$  state-0  [%0 =credentials =status]
++$  state-0  [%0 =status whitelist=(set ship)]
 ::
 +$  card  card:agent:gall
 ::
@@ -26,39 +26,43 @@
 ::
 ++  on-init
   ^-  (quip card _this)
-  ~&  >  '%btc-bridge initialized successfully'
-  `this(status [%client connected=%.n host=~])
+  ~&  >  '%btc-provider initialized successfully'
+  `this(status [*credentials connected=%.n clients=*(set ship)], whitelist *(set ship))
 ++  on-save
   ^-  vase
   !>(state)
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  ~&  >  '%btc-bridge recompiled successfully'
+  ~&  >  '%btc-provider recompiled successfully'
   `this(state !<(versioned-state old-state))
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  ::  Only allow poke from our ship, unless we're a host
+  ::  Only allow clients/authorized to poke
   ::
-  ?>  ?|((team:title our.bowl src.bowl) ?=(%host -.status))
+  ?>  ?|((team:title our.bowl src.bowl) (is-client:hc src.bowl))
   =^  cards  state
     ?+  mark  (on-poke:def mark vase)
-        %btc-bridge-command
+        %btc-provider-command
       (handle-command:hc !<(command vase))
-        %btc-bridge-rpc-action
+        %btc-provider-rpc-action
       (handle-rpc-action !<(rpc-action vase))
     ==
   [cards this]
-++  on-watch  on-watch:def
-::  TODO: handle /clients path here
-::  only allow if we're a host
-::  only allow if it's a valid client
+++  on-watch
+  |=  pax=path
+  ^-  (quip card _this)
+  ~&  >>  pax
+  `this
+::  ?>  (is-whitelisted:hc src.bowl)
+::  ~&  >  "added client {<src.bowl>}"
+::  :_  this(clients.status (~(put in clients.status) src.bowl))
+::  ~[[%give %fact ~ [%btc-provider-update !>([%status connected.status])]]]
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
-::  TODO: add our host to status if we're a client when subscription is ack'd here
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
@@ -68,8 +72,7 @@
       %http-response
     ?+    wire  (on-arvo:def wire sign-arvo)
         [%erpc *]
-      ~&  >>>  response
-      `state
+      (electrum-http-response:hc wire response)
         [%brpc *]
       (btc-http-response:hc wire response)
     ==
@@ -84,25 +87,23 @@
   |=  comm=command
   ^-  (quip card _state)
   ?-  -.comm
-      %become-host
-    `state(credentials credentials.comm, status [%host connected=%.y clients=*(set ship)])
+      %set-credentials
+    `state(status [creds.comm connected=%.y clients=*(set ship)])
     ::
-      %connect-as-client
-    :_  state
-    ~[[%pass /connect-client %agent [host.comm %btc-provider] %watch /clients]]
-    ::
-      %allow-clients
-    ?+  -.status  ~&(>>> 'Only a %host can add clients' `state)
-        %host
-      `state(clients.status (~(uni in clients.status) users.comm))
-    ==
+      %whitelist-clients
+    `state(whitelist (~(uni in whitelist) clients.comm))
+  ==
+++  is-whitelisted
+  |=  user=ship  ^-  ?
+  ?|  (~(has in whitelist) user)
+      =(our.bowl user)
   ==
 ++  is-client
   |=  user=ship  ^-  ?
-  %.n
+  (~(has in clients.status) user)
 ++  btc-rpc-auth-header
-  =*  user  rpc-user.bc.credentials
-  =*  pass  rpc-password.bc.credentials
+  =*  user  rpc-user.bc.creds.status
+  =*  pass  rpc-password.bc.creds.status
   :-  'Authorization'
   ;:  (cury cat 3)
   'Basic '
@@ -112,7 +113,7 @@
 ++  btc-gen-request
   |=  req=request:bitcoin-core:rpc
   ^-  request:http
-  =*  endpoint  rpc-url.bc.credentials
+  =*  endpoint  rpc-url.bc.creds.status
   =/  body=request:rpc:jstd
     (request-to-rpc:btc-rpc:blib req)
   =/  =header-list:http
@@ -131,7 +132,7 @@
 ++  electrum-gen-request
   |=  req=request:electrum:rpc
   %+  request-to-http:electrum-rpc:elib
-  rpc-url.ec.credentials  req
+  rpc-url.ec.creds.status  req
 ++  gen-request
   |=  ract=rpc-action
   ^-  request:http
@@ -214,5 +215,19 @@
     [~ state]
   ~&  >  (parse-response:btc-rpc:blib rpc-resp)
   [~ state]
+::
+++  electrum-http-response
+  |=  [=wire response=client-response:iris]
+  ^-  (quip card _state)
+  ?.  ?=(%finished -.response)
+    `state
+  =*  status-code  status-code.response-header.response
+  =/  rpc-resp=response:rpc:jstd
+    %-  httr-to-rpc-response
+    %+  to-httr:iris
+      response-header.response
+    full-file.response
+  ~&  >  rpc-resp
+  `state
 ::
 --

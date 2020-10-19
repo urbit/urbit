@@ -3,10 +3,11 @@ The below requires norsyr's fix to `decompress-point` in order to work.
 
 ## Set Credentials and Ping Servers
 ```
-:btc-bridge|command [%become-host [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-password='2cce52a532a078764cd9e56630603adaedfbb130ccf3b2f0a5f0dd718a5c35e0'] [rpc-url='http://localhost:50002']]
+=rpc-pass '57669fe0365412f8b2152cba2aa6fbada8a9483f9f01fee24b05ed407b1c1635'
+:btc-provider|command [%set-credentials [rpc-url='http://localhost:8332' rpc-user='__cookie__' rpc-pass] [rpc-url='http://localhost:50002']]
 
-:btc-bridge|rpc-action [%brpc %get-block-count ~]
-:btc-bridge|rpc-action [%erpc %get-address-balance [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66']]
+:btc-provider|rpc-action [%brpc %get-block-count ~]
+:btc-provider|rpc-action [%erpc %get-address-balance [%bech32 'bc1q59u5epktervh6fxqay2dlph0wxu9hjnx6v8n66']]
 ```
 
 ## Transactions

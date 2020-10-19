@@ -1,6 +1,7 @@
 ::  btc-wallet.hoon
 ::  Manages wallet pubkeys
 ::
+/-  *btc-wallet
 /+  shoe, dbug, default-agent
 |%
 +$  versioned-state
@@ -54,6 +55,9 @@
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
+::  TODO: add our provider to status if we're a client when subscription is ack'd here
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
+
+::      ~[[%pass /connect-client %agent [host.comm %btc-provider] %watch /clients]]
