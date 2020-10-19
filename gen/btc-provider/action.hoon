@@ -8,6 +8,6 @@
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ =beak]
-        [[ract=rpc-action ~] ~]
+        [[act=action ~] ~]
 ==
-[%btc-bridge-rpc-action ract]
+[%btc-bridge-action act]
