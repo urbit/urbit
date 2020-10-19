@@ -300,10 +300,7 @@
     ++  node
       %-  ot
       :~  [%post post]
-          ::  TODO: support adding nodes with children by supporting the
-          ::  graph key
           [%children internal-graph]
-          :: [%children (of [%empty ul]~)]
       ==
     ::
     ++  internal-graph

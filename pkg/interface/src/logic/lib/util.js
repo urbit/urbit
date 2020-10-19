@@ -3,6 +3,10 @@ import f from 'lodash/fp';
 
 export const MOBILE_BROWSER_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i;
 
+export function appIsGraph(app) {
+  return app === 'link' || app === 'publish';
+}
+
 export function clamp(x,min,max) {
   return Math.max(min, Math.min(max, x));
 }
